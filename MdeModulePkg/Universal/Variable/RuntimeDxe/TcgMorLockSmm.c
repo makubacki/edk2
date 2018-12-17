@@ -127,14 +127,24 @@ SetMorLockVariable (
   )
 {
   EFI_STATUS  Status;
+  BOOLEAN     CommandInProgress;
+  BOOLEAN     ReenterFunction;
+  EFI_GUID    InProgressNvStorageInstanceId;
 
   mMorLockPassThru = TRUE;
+  //
+  // Note: CommandInProgress and InProgressNvStorageInstanceId will get passed through by globals.
+  // They do not need to be retained by this function.
+  //
   Status = VariableServiceSetVariable (
              MEMORY_OVERWRITE_REQUEST_CONTROL_LOCK_NAME,
              &gEfiMemoryOverwriteRequestControlLockGuid,
              EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
              sizeof(Data),
-             &Data
+             &Data,
+             &CommandInProgress,
+             &InProgressNvStorageInstanceId,
+             &ReenterFunction
              );
   mMorLockPassThru = FALSE;
   return Status;
@@ -420,6 +430,9 @@ MorLockInitAtEndOfDxe (
   UINTN      MorSize;
   EFI_STATUS MorStatus;
   EFI_STATUS TcgStatus;
+  EFI_GUID   InProgressNvStorageInstanceId;
+  BOOLEAN    CommandInProgress;
+  BOOLEAN    ReenterFunction;
   VOID       *TcgInterface;
 
   if (!mMorLockInitializationRequired) {
@@ -440,7 +453,9 @@ MorLockInitAtEndOfDxe (
                 &gEfiMemoryOverwriteControlDataGuid,
                 NULL,                                   // Attributes
                 &MorSize,
-                NULL                                    // Data
+                NULL,                                   // Data
+                &CommandInProgress,
+                &InProgressNvStorageInstanceId
                 );
   //
   // We provided a zero-sized buffer, so the above call can never succeed.
@@ -497,7 +512,10 @@ MorLockInitAtEndOfDxe (
       &gEfiMemoryOverwriteControlDataGuid,
       0,                                      // Attributes
       0,                                      // DataSize
-      NULL                                    // Data
+      NULL,                                   // Data
+      &CommandInProgress,
+      &InProgressNvStorageInstanceId,
+      &ReenterFunction
       );
     mMorPassThru = FALSE;
   }
@@ -522,7 +540,10 @@ MorLockInitAtEndOfDxe (
     &gEfiMemoryOverwriteRequestControlLockGuid,
     0,                                          // Attributes
     0,                                          // DataSize
-    NULL                                        // Data
+    NULL,                                       // Data
+    &CommandInProgress,
+    &InProgressNvStorageInstanceId,
+    &ReenterFunction
     );
   mMorLockPassThru = FALSE;
 

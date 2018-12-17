@@ -4,7 +4,7 @@
   This module clears MemoryOverwriteRequestControlLock variable to indicate
   MOR lock control unsupported.
 
-Copyright (c) 2016, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2016 - 2018, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -70,6 +70,10 @@ MorLockInit (
   VOID
   )
 {
+  BOOLEAN   CommandInProgress;
+  BOOLEAN   ReenterFunction;
+  EFI_GUID  InProgressNvStorageInstanceId;
+
   //
   // Always clear variable to report unsupported to OS.
   // The reason is that the DXE version is not proper to provide *protection*.
@@ -80,7 +84,10 @@ MorLockInit (
     &gEfiMemoryOverwriteRequestControlLockGuid,
     0,                                          // Attributes
     0,                                          // DataSize
-    NULL                                        // Data
+    NULL,                                       // Data
+    &CommandInProgress,                         // CommandInProgress
+    &InProgressNvStorageInstanceId,             // InProgressInstanceGuid
+    &ReenterFunction                            // ReenterFunction
     );
 
   //
@@ -103,7 +110,10 @@ MorLockInit (
     &gEfiMemoryOverwriteControlDataGuid,
     0,                                      // Attributes
     0,                                      // DataSize
-    NULL                                    // Data
+    NULL,                                   // Data
+    &CommandInProgress,                     // CommandInProgress
+    &InProgressNvStorageInstanceId,         // InProgressInstanceGuid
+    &ReenterFunction                        // ReenterFunction
     );
   VariableLockRequestToLock (
     &mVariableLock,

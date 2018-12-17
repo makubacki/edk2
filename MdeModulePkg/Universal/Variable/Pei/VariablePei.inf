@@ -39,6 +39,7 @@
 
 [LibraryClasses]
   BaseMemoryLib
+  MemoryAllocationLib
   PcdLib
   HobLib
   PeimEntryPoint
@@ -56,21 +57,20 @@
   ## SOMETIMES_PRODUCES   ## HOB
   ## SOMETIMES_CONSUMES   ## HOB
   gEfiVariableIndexTableGuid
-  gEfiSystemNvDataFvGuid            ## SOMETIMES_CONSUMES   ## GUID
+  ## CONSUMES             ## GUID # Variable cache HOB
   ## SOMETIMES_CONSUMES   ## HOB
-  ## CONSUMES             ## GUID # Dependence
-  gEdkiiFaultTolerantWriteGuid
+  gPeiVariableCacheHobGuid
 
 [Ppis]
-  gEfiPeiReadOnlyVariable2PpiGuid   ## PRODUCES
+  gEfiPeiReadOnlyVariable2PpiGuid                ## PRODUCES
+  gPeiReadOnlyVariablePreMemoryDescriptorPpiGuid ## PRODUCES
+  gEdkiiVariableStoragePpiGuid                   ## CONSUMES
+  gEdkiiVariableStorageSelectorPpiGuid           ## CONSUMES
 
 [Pcd]
-  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase      ## SOMETIMES_CONSUMES
-  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase64    ## CONSUMES
-  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableSize      ## CONSUMES
 
 [Depex]
-  gEdkiiFaultTolerantWriteGuid
+  TRUE
 
 # [BootMode]
 # RECOVERY_FULL             ## SOMETIMES_CONSUMES

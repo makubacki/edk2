@@ -13,7 +13,7 @@
 
   InitCommunicateBuffer() is really function to check the variable data size.
 
-Copyright (c) 2010 - 2017, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2010 - 2018, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -30,6 +30,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Protocol/SmmVariable.h>
 #include <Protocol/VariableLock.h>
 #include <Protocol/VarCheck.h>
+#include <Protocol/VariableStorageIoCompletionProtocol.h>
 
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
@@ -37,6 +38,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Library/UefiDriverEntryPoint.h>
 #include <Library/UefiRuntimeLib.h>
 #include <Library/BaseMemoryLib.h>
+#include <Library/TimerLib.h>
 #include <Library/DebugLib.h>
 #include <Library/UefiLib.h>
 #include <Library/BaseLib.h>
@@ -45,18 +47,22 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Guid/SmmVariableCommon.h>
 
 #include "PrivilegePolymorphic.h"
+#include "Variable.h" ///< For SMM_VARIABLE_COMMUNICATE_HEADER2 - can remove once converged with MdeModulePkg
 
-EFI_HANDLE                       mHandle                    = NULL;
-EFI_SMM_VARIABLE_PROTOCOL       *mSmmVariable               = NULL;
-EFI_EVENT                        mVirtualAddressChangeEvent = NULL;
-EFI_SMM_COMMUNICATION_PROTOCOL  *mSmmCommunication          = NULL;
-UINT8                           *mVariableBuffer            = NULL;
-UINT8                           *mVariableBufferPhysical    = NULL;
-UINTN                            mVariableBufferSize;
-UINTN                            mVariableBufferPayloadSize;
-EFI_LOCK                         mVariableServicesLock;
-EDKII_VARIABLE_LOCK_PROTOCOL     mVariableLock;
-EDKII_VAR_CHECK_PROTOCOL         mVarCheck;
+EFI_HANDLE                                      mHandle                                   = NULL;
+EFI_SMM_VARIABLE_PROTOCOL                       *mSmmVariable                             = NULL;
+EFI_EVENT                                       mVirtualAddressChangeEvent                = NULL;
+EFI_SMM_COMMUNICATION_PROTOCOL                  *mSmmCommunication                        = NULL;
+EDKII_VARIABLE_STORAGE_IO_COMPLETION_PROTOCOL   **mVariableStoreIoCompletionProtocols     = NULL;
+UINTN                                           mVariableStoreIoCompletionProtocolsCount  = 0;
+UINT8                                           *mVariableBuffer                          = NULL;
+UINT8                                           *mVariableBufferPhysical                  = NULL;
+UINTN                                           mVariableBufferSize;
+UINTN                                           mVariableBufferPayloadSize;
+EFI_LOCK                                        mVariableServicesLock;
+EDKII_VARIABLE_LOCK_PROTOCOL                    mVariableLock;
+EDKII_VAR_CHECK_PROTOCOL                        mVarCheck;
+STATIC EFI_EVENT                                mVariableWriteReadyWaitEvent;
 
 /**
   Some Secure Boot Policy Variable may update following other variable changes(SecureBoot follows PK change, etc).
@@ -65,7 +71,7 @@ EDKII_VAR_CHECK_PROTOCOL         mVarCheck;
 **/
 VOID
 EFIAPI
-RecordSecureBootPolicyVarData(
+RecordSecureBootPolicyVarData (
   VOID
   );
 
@@ -116,7 +122,7 @@ ReleaseLockOnlyAtBootTime (
 /**
   Initialize the communicate buffer using DataSize and Function.
 
-  The communicate size is: SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER_SIZE +
+  The communicate size is: SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER2_SIZE +
   DataSize.
 
   Caution: This function may receive untrusted input.
@@ -138,18 +144,18 @@ InitCommunicateBuffer (
   )
 {
   EFI_SMM_COMMUNICATE_HEADER                *SmmCommunicateHeader;
-  SMM_VARIABLE_COMMUNICATE_HEADER           *SmmVariableFunctionHeader;
+  SMM_VARIABLE_COMMUNICATE_HEADER2          *SmmVariableFunctionHeader;
 
 
-  if (DataSize + SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER_SIZE > mVariableBufferSize) {
+  if (DataSize + SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER2_SIZE > mVariableBufferSize) {
     return EFI_INVALID_PARAMETER;
   }
 
   SmmCommunicateHeader = (EFI_SMM_COMMUNICATE_HEADER *) mVariableBuffer;
   CopyGuid (&SmmCommunicateHeader->HeaderGuid, &gEfiSmmVariableProtocolGuid);
-  SmmCommunicateHeader->MessageLength = DataSize + SMM_VARIABLE_COMMUNICATE_HEADER_SIZE;
+  SmmCommunicateHeader->MessageLength = DataSize + SMM_VARIABLE_COMMUNICATE_HEADER2_SIZE;
 
-  SmmVariableFunctionHeader = (SMM_VARIABLE_COMMUNICATE_HEADER *) SmmCommunicateHeader->Data;
+  SmmVariableFunctionHeader = (SMM_VARIABLE_COMMUNICATE_HEADER2 *) SmmCommunicateHeader->Data;
   SmmVariableFunctionHeader->Function = Function;
   if (DataPtr != NULL) {
     *DataPtr = SmmVariableFunctionHeader->Data;
@@ -170,21 +176,92 @@ InitCommunicateBuffer (
 **/
 EFI_STATUS
 SendCommunicateBuffer (
-  IN      UINTN                             DataSize
+  IN      UINTN                             DataSize,
+  OUT     BOOLEAN                           *CommandInProgress,
+  OUT     EFI_GUID                          *InProgressNvStorageInstanceId,
+  OUT     BOOLEAN                           *ReenterFunction,
+  OUT     BOOLEAN                           *VariableServicesInUse
   )
 {
   EFI_STATUS                                Status;
   UINTN                                     CommSize;
   EFI_SMM_COMMUNICATE_HEADER                *SmmCommunicateHeader;
-  SMM_VARIABLE_COMMUNICATE_HEADER           *SmmVariableFunctionHeader;
+  SMM_VARIABLE_COMMUNICATE_HEADER2          *SmmVariableFunctionHeader;
 
-  CommSize = DataSize + SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER_SIZE;
+  CommSize                  = DataSize + SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER2_SIZE;
+  SmmCommunicateHeader      = (EFI_SMM_COMMUNICATE_HEADER *) mVariableBuffer;
+  SmmVariableFunctionHeader = (SMM_VARIABLE_COMMUNICATE_HEADER2 *)SmmCommunicateHeader->Data;
+  ZeroMem (&SmmVariableFunctionHeader->InProgressNvStorageInstanceId, sizeof (EFI_GUID));
+  SmmVariableFunctionHeader->CommandInProgress      = FALSE;
+  SmmVariableFunctionHeader->ReenterFunction        = FALSE;
+  SmmVariableFunctionHeader->VariableServicesInUse  = FALSE;
+
   Status = mSmmCommunication->Communicate (mSmmCommunication, mVariableBufferPhysical, &CommSize);
   ASSERT_EFI_ERROR (Status);
 
-  SmmCommunicateHeader      = (EFI_SMM_COMMUNICATE_HEADER *) mVariableBuffer;
-  SmmVariableFunctionHeader = (SMM_VARIABLE_COMMUNICATE_HEADER *)SmmCommunicateHeader->Data;
+  if (CommandInProgress != NULL) {
+    *CommandInProgress = SmmVariableFunctionHeader->CommandInProgress;
+  }
+  if (InProgressNvStorageInstanceId != NULL) {
+    CopyMem (InProgressNvStorageInstanceId, &SmmVariableFunctionHeader->InProgressNvStorageInstanceId, sizeof (EFI_GUID));
+  }
+  if (ReenterFunction != NULL) {
+    *ReenterFunction = SmmVariableFunctionHeader->ReenterFunction;
+  }
+  if (VariableServicesInUse != NULL) {
+    *VariableServicesInUse = SmmVariableFunctionHeader->VariableServicesInUse;
+  }
   return  SmmVariableFunctionHeader->ReturnStatus;
+}
+
+/**
+  Gets the EDKII_VARIABLE_STORAGE_IO_COMPLETION_PROTOCOL for the given Variable Storage Protocol Instance GUID
+
+  @param[in]   InstanceId                           The Variable Storage Protocol Instance GUID
+  @param[out]  VariableStorageIoCompletionProtocol  The found EDKII_VARIABLE_STORAGE_IO_COMPLETION_PROTOCOL
+
+  @retval EFI_INVALID_PARAMETER       InstanceId is NULL.
+  @retval EFI_SUCCESS                 EDKII_VARIABLE_STORAGE_IO_COMPLETION_PROTOCOL successfully found.
+  @retval EFI_NOT_FOUND               EDKII_VARIABLE_STORAGE_IO_COMPLETION_PROTOCOL not found
+
+**/
+EFI_STATUS
+GetVariableStorageIoCompletionProtocol (
+  IN  EFI_GUID                                        *InstanceId,
+  OUT EDKII_VARIABLE_STORAGE_IO_COMPLETION_PROTOCOL   **VariableStorageIoCompletionProtocol
+  )
+{
+  EFI_GUID                                        InstanceGuid;
+  EFI_STATUS                                      Status;
+  UINTN                                           Index;
+  EDKII_VARIABLE_STORAGE_IO_COMPLETION_PROTOCOL   *CurrentInstance;
+
+  *VariableStorageIoCompletionProtocol = NULL;
+  if (InstanceId == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+  if (mVariableStoreIoCompletionProtocols == NULL) {
+    return EFI_NOT_FOUND;
+  }
+
+  for ( Index = 0;
+        Index < mVariableStoreIoCompletionProtocolsCount;
+        Index++) {
+    CurrentInstance = mVariableStoreIoCompletionProtocols[Index];
+    if (CurrentInstance == NULL) {
+      continue;
+    }
+    ZeroMem ((VOID *) &InstanceGuid, sizeof (EFI_GUID));
+    Status = CurrentInstance->GetId (CurrentInstance, &InstanceGuid);
+    if (EFI_ERROR (Status)) {
+      return Status;
+    }
+    if (CompareGuid (InstanceId, &InstanceGuid)) {
+      *VariableStorageIoCompletionProtocol = CurrentInstance;
+      return EFI_SUCCESS;
+    }
+  }
+  return EFI_NOT_FOUND;
 }
 
 /**
@@ -233,14 +310,17 @@ VariableLockRequestToLock (
 
   //
   // Init the communicate buffer. The buffer data size is:
-  // SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER_SIZE + PayloadSize.
+  // SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER2_SIZE + PayloadSize.
   //
   PayloadSize = OFFSET_OF (SMM_VARIABLE_COMMUNICATE_LOCK_VARIABLE, Name) + VariableNameSize;
   Status = InitCommunicateBuffer ((VOID **) &VariableToLock, PayloadSize, SMM_VARIABLE_FUNCTION_LOCK_VARIABLE);
   if (EFI_ERROR (Status)) {
     goto Done;
   }
-  ASSERT (VariableToLock != NULL);
+  if (VariableToLock == NULL) {
+    ASSERT (VariableToLock != NULL);
+    return EFI_OUT_OF_RESOURCES;
+  }
 
   CopyGuid (&VariableToLock->Guid, VendorGuid);
   VariableToLock->NameSize = VariableNameSize;
@@ -249,7 +329,7 @@ VariableLockRequestToLock (
   //
   // Send data to SMM.
   //
-  Status = SendCommunicateBuffer (PayloadSize);
+  Status = SendCommunicateBuffer (PayloadSize, NULL, NULL, NULL, NULL);
 
 Done:
   ReleaseLockOnlyAtBootTime (&mVariableServicesLock);
@@ -333,14 +413,18 @@ VarCheckVariablePropertySet (
 
   //
   // Init the communicate buffer. The buffer data size is:
-  // SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER_SIZE + PayloadSize.
+  // SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER2_SIZE + PayloadSize.
   //
   PayloadSize = OFFSET_OF (SMM_VARIABLE_COMMUNICATE_VAR_CHECK_VARIABLE_PROPERTY, Name) + VariableNameSize;
   Status = InitCommunicateBuffer ((VOID **) &CommVariableProperty, PayloadSize, SMM_VARIABLE_FUNCTION_VAR_CHECK_VARIABLE_PROPERTY_SET);
   if (EFI_ERROR (Status)) {
     goto Done;
   }
-  ASSERT (CommVariableProperty != NULL);
+
+  if (CommVariableProperty == NULL) {
+    ASSERT (CommVariableProperty != NULL);
+    return EFI_OUT_OF_RESOURCES;
+  }
 
   CopyGuid (&CommVariableProperty->Guid, Guid);
   CopyMem (&CommVariableProperty->VariableProperty, VariableProperty, sizeof (*VariableProperty));
@@ -350,7 +434,7 @@ VarCheckVariablePropertySet (
   //
   // Send data to SMM.
   //
-  Status = SendCommunicateBuffer (PayloadSize);
+  Status = SendCommunicateBuffer (PayloadSize, NULL, NULL, NULL, NULL);
 
 Done:
   ReleaseLockOnlyAtBootTime (&mVariableServicesLock);
@@ -404,14 +488,18 @@ VarCheckVariablePropertyGet (
 
   //
   // Init the communicate buffer. The buffer data size is:
-  // SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER_SIZE + PayloadSize.
+  // SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER2_SIZE + PayloadSize.
   //
   PayloadSize = OFFSET_OF (SMM_VARIABLE_COMMUNICATE_VAR_CHECK_VARIABLE_PROPERTY, Name) + VariableNameSize;
   Status = InitCommunicateBuffer ((VOID **) &CommVariableProperty, PayloadSize, SMM_VARIABLE_FUNCTION_VAR_CHECK_VARIABLE_PROPERTY_GET);
   if (EFI_ERROR (Status)) {
     goto Done;
   }
-  ASSERT (CommVariableProperty != NULL);
+
+  if (CommVariableProperty == NULL) {
+    ASSERT (CommVariableProperty != NULL);
+    return EFI_OUT_OF_RESOURCES;
+  }
 
   CopyGuid (&CommVariableProperty->Guid, Guid);
   CommVariableProperty->NameSize = VariableNameSize;
@@ -420,7 +508,7 @@ VarCheckVariablePropertyGet (
   //
   // Send data to SMM.
   //
-  Status = SendCommunicateBuffer (PayloadSize);
+  Status = SendCommunicateBuffer (PayloadSize, NULL, NULL, NULL, NULL);
   if (Status == EFI_SUCCESS) {
     CopyMem (VariableProperty, &CommVariableProperty->VariableProperty, sizeof (*VariableProperty));
   }
@@ -428,6 +516,28 @@ VarCheckVariablePropertyGet (
 Done:
   ReleaseLockOnlyAtBootTime (&mVariableServicesLock);
   return Status;
+}
+
+/**
+  Clears the global CommandInProgress indicator in SMM
+
+**/
+VOID
+EFIAPI
+ClearCommandInProgress (
+  VOID
+  )
+{
+  //
+  // Init the communicate buffer. The buffer data size is:
+  // SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER2_SIZE.
+  //
+  InitCommunicateBuffer (NULL, 0, SMM_VARIABLE_FUNCTION_CLEAR_COMMAND_IN_PROGRESS);
+
+  //
+  // Send data to SMM.
+  //
+  SendCommunicateBuffer (0, NULL, NULL, NULL, NULL);
 }
 
 /**
@@ -459,11 +569,18 @@ RuntimeServiceGetVariable (
   OUT     VOID                              *Data
   )
 {
-  EFI_STATUS                                Status;
-  UINTN                                     PayloadSize;
-  SMM_VARIABLE_COMMUNICATE_ACCESS_VARIABLE  *SmmVariableHeader;
-  UINTN                                     TempDataSize;
-  UINTN                                     VariableNameSize;
+  EFI_STATUS                                      Status;
+  EFI_STATUS                                      Status2;
+  UINTN                                           PayloadSize;
+  SMM_VARIABLE_COMMUNICATE_ACCESS_VARIABLE        *SmmVariableHeader;
+  UINTN                                           TempDataSize;
+  UINTN                                           VariableNameSize;
+  UINTN                                           DelayTimer;
+  EDKII_VARIABLE_STORAGE_IO_COMPLETION_PROTOCOL   *IoCompletionProtocol;
+  BOOLEAN                                         CommandInProgress;
+  BOOLEAN                                         ReenterFunction;
+  BOOLEAN                                         VariableServicesInUse;
+  EFI_GUID                                        InProgressNvStorageInstanceId;
 
   if (VariableName == NULL || VendorGuid == NULL || DataSize == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -484,7 +601,7 @@ RuntimeServiceGetVariable (
 
   //
   // Init the communicate buffer. The buffer data size is:
-  // SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER_SIZE + PayloadSize.
+  // SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER2_SIZE + PayloadSize.
   //
   if (TempDataSize > mVariableBufferPayloadSize - OFFSET_OF (SMM_VARIABLE_COMMUNICATE_ACCESS_VARIABLE, Name) - VariableNameSize) {
     //
@@ -498,7 +615,10 @@ RuntimeServiceGetVariable (
   if (EFI_ERROR (Status)) {
     goto Done;
   }
-  ASSERT (SmmVariableHeader != NULL);
+  if (SmmVariableHeader == NULL) {
+    ASSERT (SmmVariableHeader != NULL);
+    return EFI_OUT_OF_RESOURCES;
+  }
 
   CopyGuid (&SmmVariableHeader->Guid, VendorGuid);
   SmmVariableHeader->DataSize   = TempDataSize;
@@ -513,7 +633,78 @@ RuntimeServiceGetVariable (
   //
   // Send data to SMM.
   //
-  Status = SendCommunicateBuffer (PayloadSize);
+  IoCompletionProtocol  = NULL;
+  CommandInProgress     = FALSE;
+  ReenterFunction       = FALSE;
+  VariableServicesInUse = FALSE;
+  ZeroMem (&InProgressNvStorageInstanceId, sizeof (EFI_GUID));
+  Status  = SendCommunicateBuffer (
+              PayloadSize,
+              &CommandInProgress,
+              &InProgressNvStorageInstanceId,
+              &ReenterFunction,
+              &VariableServicesInUse
+              );
+  if (VariableServicesInUse) {
+    //
+    // Wait for 5 seconds
+    //
+    for (DelayTimer = 0; DelayTimer < 5000; DelayTimer++) {
+      MicroSecondDelay (1000);
+    }
+    //
+    // Retry the command
+    //
+    CommandInProgress     = FALSE;
+    ReenterFunction       = FALSE;
+    VariableServicesInUse = FALSE;
+    ZeroMem (&InProgressNvStorageInstanceId, sizeof (EFI_GUID));
+    Status  = SendCommunicateBuffer (
+                PayloadSize,
+                &CommandInProgress,
+                &InProgressNvStorageInstanceId,
+                &ReenterFunction,
+                &VariableServicesInUse
+                );
+    if (VariableServicesInUse) {
+      //
+      // 5 seconds is the maximum time we will wait
+      //
+      Status = EFI_DEVICE_ERROR;
+      goto Done;
+    }
+  }
+  if (CommandInProgress) {
+    Status2 = GetVariableStorageIoCompletionProtocol (&InProgressNvStorageInstanceId, &IoCompletionProtocol);
+    if (!EFI_ERROR (Status2) && (IoCompletionProtocol != NULL)) {
+      Status2 = IoCompletionProtocol->Complete (IoCompletionProtocol, FALSE);
+      if (!EFI_ERROR (Status2) && ReenterFunction) {
+        //
+        // Resend the command
+        //
+        CommandInProgress = FALSE;
+        ZeroMem (&InProgressNvStorageInstanceId, sizeof (EFI_GUID));
+        Status = SendCommunicateBuffer (PayloadSize, &CommandInProgress, NULL, NULL, &VariableServicesInUse);
+        //
+        // Command should complete immediately this time
+        //
+        ASSERT (!CommandInProgress);
+        ASSERT (!VariableServicesInUse);
+        if (CommandInProgress || VariableServicesInUse) {
+          Status = EFI_DEVICE_ERROR;
+        }
+        if (CommandInProgress) {
+          ClearCommandInProgress ();
+        }
+      } else if (EFI_ERROR (Status2)) {
+        Status = Status2;
+        ClearCommandInProgress ();
+      }
+    } else {
+      Status = EFI_DEVICE_ERROR;
+      ClearCommandInProgress ();
+    }
+  }
 
   //
   // Get data from SMM.
@@ -591,7 +782,7 @@ RuntimeServiceGetNextVariableName (
 
   //
   // Init the communicate buffer. The buffer data size is:
-  // SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER_SIZE + PayloadSize.
+  // SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER2_SIZE + PayloadSize.
   //
   if (OutVariableNameSize > mVariableBufferPayloadSize - OFFSET_OF (SMM_VARIABLE_COMMUNICATE_GET_NEXT_VARIABLE_NAME, Name)) {
     //
@@ -608,7 +799,10 @@ RuntimeServiceGetNextVariableName (
   if (EFI_ERROR (Status)) {
     goto Done;
   }
-  ASSERT (SmmGetNextVariableName != NULL);
+  if (SmmGetNextVariableName == NULL) {
+    ASSERT (SmmGetNextVariableName != NULL);
+    return EFI_OUT_OF_RESOURCES;
+  }
 
   //
   // SMM comm buffer->NameSize is buffer size for return string
@@ -627,7 +821,7 @@ RuntimeServiceGetNextVariableName (
   //
   // Send data to SMM
   //
-  Status = SendCommunicateBuffer (PayloadSize);
+  Status = SendCommunicateBuffer (PayloadSize, NULL, NULL, NULL, NULL);
 
   //
   // Get data from SMM.
@@ -681,10 +875,17 @@ RuntimeServiceSetVariable (
   IN VOID                                   *Data
   )
 {
-  EFI_STATUS                                Status;
-  UINTN                                     PayloadSize;
-  SMM_VARIABLE_COMMUNICATE_ACCESS_VARIABLE  *SmmVariableHeader;
-  UINTN                                     VariableNameSize;
+  EFI_STATUS                                      Status;
+  EFI_STATUS                                      Status2;
+  UINTN                                           PayloadSize;
+  SMM_VARIABLE_COMMUNICATE_ACCESS_VARIABLE        *SmmVariableHeader;
+  UINTN                                           VariableNameSize;
+  UINTN                                           DelayTimer;
+  EDKII_VARIABLE_STORAGE_IO_COMPLETION_PROTOCOL   *IoCompletionProtocol;
+  BOOLEAN                                         CommandInProgress;
+  BOOLEAN                                         ReenterFunction;
+  BOOLEAN                                         VariableServicesInUse;
+  EFI_GUID                                        InProgressNvStorageInstanceId;
 
   //
   // Check input parameters.
@@ -712,14 +913,19 @@ RuntimeServiceSetVariable (
 
   //
   // Init the communicate buffer. The buffer data size is:
-  // SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER_SIZE + PayloadSize.
+  // SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER2_SIZE + PayloadSize.
   //
   PayloadSize = OFFSET_OF (SMM_VARIABLE_COMMUNICATE_ACCESS_VARIABLE, Name) + VariableNameSize + DataSize;
   Status = InitCommunicateBuffer ((VOID **)&SmmVariableHeader, PayloadSize, SMM_VARIABLE_FUNCTION_SET_VARIABLE);
   if (EFI_ERROR (Status)) {
     goto Done;
   }
-  ASSERT (SmmVariableHeader != NULL);
+
+  if (SmmVariableHeader == NULL) {
+    ASSERT (SmmVariableHeader != NULL);
+    Status = EFI_OUT_OF_RESOURCES;
+    goto Done;
+  }
 
   CopyGuid ((EFI_GUID *) &SmmVariableHeader->Guid, VendorGuid);
   SmmVariableHeader->DataSize   = DataSize;
@@ -729,9 +935,70 @@ RuntimeServiceSetVariable (
   CopyMem ((UINT8 *) SmmVariableHeader->Name + SmmVariableHeader->NameSize, Data, DataSize);
 
   //
-  // Send data to SMM.
+  // Send data to SMM. For SetVariable we may need to reenter SMM an arbitary number of times in order to complete
+  // the write request. Continue to reenter SMM until ReenterFunction comes back FALSE
   //
-  Status = SendCommunicateBuffer (PayloadSize);
+  ReenterFunction = TRUE;
+  while (ReenterFunction) {
+    IoCompletionProtocol  = NULL;
+    CommandInProgress     = FALSE;
+    ReenterFunction       = FALSE;
+    VariableServicesInUse = FALSE;
+    ZeroMem (&InProgressNvStorageInstanceId, sizeof (EFI_GUID));
+    Status  = SendCommunicateBuffer (
+                PayloadSize,
+                &CommandInProgress,
+                &InProgressNvStorageInstanceId,
+                &ReenterFunction,
+                &VariableServicesInUse
+                );
+    if (VariableServicesInUse) {
+      //
+      // Wait for 5 seconds
+      //
+      for (DelayTimer = 0; DelayTimer < 5000; DelayTimer++) {
+        MicroSecondDelay (1000);
+      }
+      //
+      // Retry the command
+      //
+      CommandInProgress     = FALSE;
+      ReenterFunction       = FALSE;
+      VariableServicesInUse = FALSE;
+      ZeroMem (&InProgressNvStorageInstanceId, sizeof (EFI_GUID));
+      Status  = SendCommunicateBuffer (
+                  PayloadSize,
+                  &CommandInProgress,
+                  &InProgressNvStorageInstanceId,
+                  &ReenterFunction,
+                  &VariableServicesInUse
+                  );
+      if (VariableServicesInUse) {
+        //
+        // 5 seconds is the maximum time we will wait
+        //
+        Status = EFI_DEVICE_ERROR;
+        goto Done;
+      }
+    }
+    if (CommandInProgress) {
+      Status2 = GetVariableStorageIoCompletionProtocol (&InProgressNvStorageInstanceId, &IoCompletionProtocol);
+      if (!EFI_ERROR (Status2) && (IoCompletionProtocol != NULL)) {
+        Status2 = IoCompletionProtocol->Complete (IoCompletionProtocol, TRUE);
+        Status = Status2;
+        if (EFI_ERROR (Status2)) {
+          break;
+        }
+      } else {
+        Status = EFI_DEVICE_ERROR;
+        break;
+      }
+    } else {
+      ReenterFunction = FALSE;
+      break;
+    }
+  }
+  ClearCommandInProgress ();
 
 Done:
   ReleaseLockOnlyAtBootTime (&mVariableServicesLock);
@@ -788,21 +1055,24 @@ RuntimeServiceQueryVariableInfo (
 
   //
   // Init the communicate buffer. The buffer data size is:
-  // SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER_SIZE + PayloadSize;
+  // SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER2_SIZE + PayloadSize;
   //
   PayloadSize = sizeof (SMM_VARIABLE_COMMUNICATE_QUERY_VARIABLE_INFO);
   Status = InitCommunicateBuffer ((VOID **)&SmmQueryVariableInfo, PayloadSize, SMM_VARIABLE_FUNCTION_QUERY_VARIABLE_INFO);
   if (EFI_ERROR (Status)) {
     goto Done;
   }
-  ASSERT (SmmQueryVariableInfo != NULL);
+  if (SmmQueryVariableInfo == NULL) {
+    ASSERT (SmmQueryVariableInfo != NULL);
+    return EFI_OUT_OF_RESOURCES;
+  }
 
   SmmQueryVariableInfo->Attributes  = Attributes;
 
   //
   // Send data to SMM.
   //
-  Status = SendCommunicateBuffer (PayloadSize);
+  Status = SendCommunicateBuffer (PayloadSize, NULL, NULL, NULL, NULL);
   if (EFI_ERROR (Status)) {
     goto Done;
   }
@@ -818,7 +1088,6 @@ Done:
   ReleaseLockOnlyAtBootTime (&mVariableServicesLock);
   return Status;
 }
-
 
 /**
   Exit Boot Services Event notification handler.
@@ -838,14 +1107,14 @@ OnExitBootServices (
 {
   //
   // Init the communicate buffer. The buffer data size is:
-  // SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER_SIZE.
+  // SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER2_SIZE.
   //
   InitCommunicateBuffer (NULL, 0, SMM_VARIABLE_FUNCTION_EXIT_BOOT_SERVICE);
 
   //
   // Send data to SMM.
   //
-  SendCommunicateBuffer (0);
+  SendCommunicateBuffer (0, NULL, NULL, NULL, NULL);
 }
 
 
@@ -867,14 +1136,14 @@ OnReadyToBoot (
 {
   //
   // Init the communicate buffer. The buffer data size is:
-  // SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER_SIZE.
+  // SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER2_SIZE.
   //
   InitCommunicateBuffer (NULL, 0, SMM_VARIABLE_FUNCTION_READY_TO_BOOT);
 
   //
   // Send data to SMM.
   //
-  SendCommunicateBuffer (0);
+  SendCommunicateBuffer (0, NULL, NULL, NULL, NULL);
 
   gBS->CloseEvent (Event);
 }
@@ -897,6 +1166,18 @@ VariableAddressChangeEvent (
   IN VOID                                   *Context
   )
 {
+  UINTN                                           Index;
+  EDKII_VARIABLE_STORAGE_IO_COMPLETION_PROTOCOL   *VariableStoreIoCompletionProtocol;
+
+  for ( Index = 0;
+        Index < mVariableStoreIoCompletionProtocolsCount;
+        Index++) {
+    VariableStoreIoCompletionProtocol = mVariableStoreIoCompletionProtocols[Index];
+    EfiConvertPointer (0x0, (VOID **) &VariableStoreIoCompletionProtocol->Complete);
+    EfiConvertPointer (0x0, (VOID **) &VariableStoreIoCompletionProtocol->GetId);
+    EfiConvertPointer (0x0, (VOID **) &mVariableStoreIoCompletionProtocols[Index]);
+  }
+  EfiConvertPointer (0x0, (VOID **) &mVariableStoreIoCompletionProtocols);
   EfiConvertPointer (0x0, (VOID **) &mVariableBuffer);
   EfiConvertPointer (0x0, (VOID **) &mSmmCommunication);
 }
@@ -919,7 +1200,7 @@ GetVariablePayloadSize (
   EFI_STATUS                                Status;
   SMM_VARIABLE_COMMUNICATE_GET_PAYLOAD_SIZE *SmmGetPayloadSize;
   EFI_SMM_COMMUNICATE_HEADER                *SmmCommunicateHeader;
-  SMM_VARIABLE_COMMUNICATE_HEADER           *SmmVariableFunctionHeader;
+  SMM_VARIABLE_COMMUNICATE_HEADER2          *SmmVariableFunctionHeader;
   UINTN                                     CommSize;
   UINT8                                     *CommBuffer;
 
@@ -934,9 +1215,9 @@ GetVariablePayloadSize (
 
   //
   // Init the communicate buffer. The buffer data size is:
-  // SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER_SIZE + sizeof (SMM_VARIABLE_COMMUNICATE_GET_PAYLOAD_SIZE);
+  // SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER2_SIZE + sizeof (SMM_VARIABLE_COMMUNICATE_GET_PAYLOAD_SIZE);
   //
-  CommSize = SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER_SIZE + sizeof (SMM_VARIABLE_COMMUNICATE_GET_PAYLOAD_SIZE);
+  CommSize = SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER2_SIZE + sizeof (SMM_VARIABLE_COMMUNICATE_GET_PAYLOAD_SIZE);
   CommBuffer = AllocateZeroPool (CommSize);
   if (CommBuffer == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
@@ -945,9 +1226,9 @@ GetVariablePayloadSize (
 
   SmmCommunicateHeader = (EFI_SMM_COMMUNICATE_HEADER *) CommBuffer;
   CopyGuid (&SmmCommunicateHeader->HeaderGuid, &gEfiSmmVariableProtocolGuid);
-  SmmCommunicateHeader->MessageLength = SMM_VARIABLE_COMMUNICATE_HEADER_SIZE + sizeof (SMM_VARIABLE_COMMUNICATE_GET_PAYLOAD_SIZE);
+  SmmCommunicateHeader->MessageLength = SMM_VARIABLE_COMMUNICATE_HEADER2_SIZE + sizeof (SMM_VARIABLE_COMMUNICATE_GET_PAYLOAD_SIZE);
 
-  SmmVariableFunctionHeader = (SMM_VARIABLE_COMMUNICATE_HEADER *) SmmCommunicateHeader->Data;
+  SmmVariableFunctionHeader = (SMM_VARIABLE_COMMUNICATE_HEADER2 *) SmmCommunicateHeader->Data;
   SmmVariableFunctionHeader->Function = SMM_VARIABLE_FUNCTION_GET_PAYLOAD_SIZE;
   SmmGetPayloadSize = (SMM_VARIABLE_COMMUNICATE_GET_PAYLOAD_SIZE *) SmmVariableFunctionHeader->Data;
 
@@ -990,6 +1271,8 @@ SmmVariableReady (
   )
 {
   EFI_STATUS                                Status;
+  EFI_HANDLE                                *Handles;
+  UINTN                                     Index;
 
   Status = gBS->LocateProtocol (&gEfiSmmVariableProtocolGuid, NULL, (VOID **)&mSmmVariable);
   if (EFI_ERROR (Status)) {
@@ -1004,9 +1287,52 @@ SmmVariableReady (
   //
   Status = GetVariablePayloadSize (&mVariableBufferPayloadSize);
   ASSERT_EFI_ERROR (Status);
-  mVariableBufferSize  = SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER_SIZE + mVariableBufferPayloadSize;
+  mVariableBufferSize  = SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER2_SIZE + mVariableBufferPayloadSize;
   mVariableBuffer      = AllocateRuntimePool (mVariableBufferSize);
   ASSERT (mVariableBuffer != NULL);
+
+  //
+  // Locate the EDKII_VARIABLE_STORAGE_IO_COMPLETION_PROTOCOLs
+  //
+  Handles = NULL;
+  Status  = gBS->LocateHandleBuffer (
+                   ByProtocol,
+                   &gEdkiiVariableStorageIoCompletionProtocolGuid,
+                   NULL,
+                   &mVariableStoreIoCompletionProtocolsCount,
+                   &Handles
+                   );
+  if (!EFI_ERROR (Status)) {
+    mVariableStoreIoCompletionProtocols = AllocateRuntimeZeroPool (
+                                            sizeof (EDKII_VARIABLE_STORAGE_IO_COMPLETION_PROTOCOL *) *
+                                            mVariableStoreIoCompletionProtocolsCount
+                                            );
+    ASSERT (mVariableStoreIoCompletionProtocols != NULL);
+    if (mVariableStoreIoCompletionProtocols != NULL) {
+      for ( Index = 0;
+            Index < mVariableStoreIoCompletionProtocolsCount;
+            Index++) {
+        Status = gBS->OpenProtocol (
+                  Handles[Index],
+                  &gEdkiiVariableStorageIoCompletionProtocolGuid,
+                  (VOID **) &mVariableStoreIoCompletionProtocols[Index],
+                  gImageHandle,
+                  NULL,
+                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                  );
+        ASSERT_EFI_ERROR (Status);
+        if (EFI_ERROR (Status)) {
+          mVariableStoreIoCompletionProtocolsCount = Index + 1;
+          break;
+        }
+      }
+    }
+    FreePool (Handles);
+  } else {
+    if (Status != EFI_NOT_FOUND) {
+      ASSERT_EFI_ERROR (Status);
+    }
+  }
 
   //
   // Save the buffer physical address used for SMM conmunication.
@@ -1052,6 +1378,63 @@ SmmVariableReady (
   gBS->CloseEvent (Event);
 }
 
+/**
+  Waits for any internal variable operations to finish before the variable write architecture
+  protocol is installed.
+
+  @param  Event                 Indicates the event that invoke this function.
+  @param  Context               Indicates the calling context.
+**/
+VOID
+EFIAPI
+VariableWriteReadyWaitHandler (
+  IN  EFI_EVENT                 Event,
+  IN  VOID                      *Context
+  )
+{
+  EFI_STATUS    Status;
+  VOID          *ProtocolOps;
+  UINT32        Count;
+  EFI_TPL       OriginalTpl;
+
+  gBS->CloseEvent (Event);
+
+  OriginalTpl = EfiGetCurrentTpl ();
+
+  //
+  // Lower TPL to allow any TPL_CALLBACK (and higher) code required for asynchronous operations to execute
+  //
+  if (OriginalTpl > TPL_APPLICATION) {
+    gBS->RestoreTPL (TPL_APPLICATION);
+  }
+
+  //
+  // Wait for any possible asynchronous operations to finish (may take a while depending on storage technology)
+  //
+  Status = gBS->LocateProtocol (&gEdkiiVariableWriteReadyOperationsCompleteGuid, NULL, (VOID **) &ProtocolOps);
+  for (Count = 0; (Status == EFI_NOT_FOUND) && (Count < 600); Count++) {
+    Status = gBS->LocateProtocol (&gEdkiiVariableWriteReadyOperationsCompleteGuid, NULL, (VOID **) &ProtocolOps);
+    if (Status == EFI_NOT_FOUND) {
+      MicroSecondDelay (1000 * 50);
+    }
+  }
+  ASSERT_EFI_ERROR (Status);
+
+  if (OriginalTpl > TPL_APPLICATION) {
+    gBS->RaiseTPL (OriginalTpl);
+  }
+
+  if (!EFI_ERROR (Status)) {
+    Status = gBS->InstallProtocolInterface (
+                    &mHandle,
+                    &gEfiVariableWriteArchProtocolGuid,
+                    EFI_NATIVE_INTERFACE,
+                    NULL
+                    );
+    ASSERT_EFI_ERROR (Status);
+  }
+}
+
 
 /**
   SMM Non-Volatile variable write service is ready notify event handler.
@@ -1082,15 +1465,19 @@ SmmVariableWriteReady (
   // Some Secure Boot Policy Var (SecureBoot, etc) updates following other
   // Secure Boot Policy Variable change.  Record their initial value.
   //
-  RecordSecureBootPolicyVarData();
+  RecordSecureBootPolicyVarData ();
 
-  Status = gBS->InstallProtocolInterface (
-                  &mHandle,
-                  &gEfiVariableWriteArchProtocolGuid,
-                  EFI_NATIVE_INTERFACE,
-                  NULL
-                  );
-  ASSERT_EFI_ERROR (Status);
+  if (PcdGetBool (PcdNvVariableEmulationMode)) {
+    Status = gBS->InstallProtocolInterface (
+                    &mHandle,
+                    &gEfiVariableWriteArchProtocolGuid,
+                    EFI_NATIVE_INTERFACE,
+                    NULL
+                    );
+    ASSERT_EFI_ERROR (Status);
+  } else {
+    gBS->SignalEvent (mVariableWriteReadyWaitEvent);
+  }
 
   gBS->CloseEvent (Event);
 }
@@ -1177,6 +1564,17 @@ VariableSmmRuntimeInitialize (
     NULL,
     &LegacyBootEvent
     );
+
+  //
+  // Register an event to wait for variable write ready operations to complete.
+  //
+  gBS->CreateEvent (
+        EVT_NOTIFY_SIGNAL,
+        TPL_CALLBACK,
+        VariableWriteReadyWaitHandler,
+        NULL,
+        &mVariableWriteReadyWaitEvent
+        );
 
   //
   // Register the event to convert the pointer for runtime.

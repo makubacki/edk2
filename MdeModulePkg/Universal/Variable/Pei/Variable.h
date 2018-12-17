@@ -2,7 +2,7 @@
   The internal header file includes the common header files, defines
   internal structure and functions used by PeiVariable module.
 
-Copyright (c) 2006 - 2017, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2006 - 2018, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -18,25 +18,29 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #include <PiPei.h>
 #include <Ppi/ReadOnlyVariable2.h>
+#include <Ppi/ReadOnlyVariablePreMemoryDescriptorPpi.h>
+#include <Ppi/VariableStoragePpi.h>
+#include <Ppi/VariableStorageSelectorPpi.h>
 
 #include <Library/DebugLib.h>
 #include <Library/PeimEntryPoint.h>
 #include <Library/HobLib.h>
 #include <Library/PcdLib.h>
 #include <Library/BaseMemoryLib.h>
+#include <Library/MemoryAllocationLib.h>
 #include <Library/PeiServicesTablePointerLib.h>
 #include <Library/PeiServicesLib.h>
 
+#include <Guid/VariableCacheHobGuid.h>
 #include <Guid/VariableFormat.h>
 #include <Guid/VariableIndexTable.h>
 #include <Guid/SystemNvDataGuid.h>
-#include <Guid/FaultTolerantWrite.h>
 
 typedef enum {
-  VariableStoreTypeHob,
-  VariableStoreTypeNv,
-  VariableStoreTypeMax
-} VARIABLE_STORE_TYPE;
+  VariableHobTypeDefault,
+  VariableHobTypeCache,
+  VariableHobTypeMax
+} VARIABLE_HOB_TYPE;
 
 typedef struct {
   VARIABLE_STORE_HEADER                   *VariableStoreHeader;
@@ -46,9 +50,10 @@ typedef struct {
   // partial content is still in NV storage, but another partial content is backed up
   // in spare block.
   //
-  FAULT_TOLERANT_WRITE_LAST_WRITE_DATA    *FtwLastWriteData;
   BOOLEAN                                 AuthFlag;
 } VARIABLE_STORE_INFO;
+
+
 
 //
 // Functions

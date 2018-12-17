@@ -1,7 +1,7 @@
 /** @file
   Provides variable driver extended services.
 
-Copyright (c) 2015, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2015 - 2018, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -43,14 +43,19 @@ VariableExLibFindVariable (
   EFI_STATUS                    Status;
   VARIABLE_POINTER_TRACK        Variable;
   AUTHENTICATED_VARIABLE_HEADER *AuthVariable;
+  BOOLEAN                       CommandInProgress;
+  EFI_GUID                      InProgressNvStorageInstanceId;
 
   Status = FindVariable (
              VariableName,
              VendorGuid,
              &Variable,
              &mVariableModuleGlobal->VariableGlobal,
-             FALSE
+             FALSE,
+             &CommandInProgress,
+             &InProgressNvStorageInstanceId
              );
+  ASSERT (!CommandInProgress);  ///< We should have all required variables in NV cache before getting to AuthVariableLib
   if (EFI_ERROR (Status)) {
     AuthVariableInfo->Data = NULL;
     AuthVariableInfo->DataSize = 0;
@@ -59,6 +64,15 @@ VariableExLibFindVariable (
     AuthVariableInfo->MonotonicCount = 0;
     AuthVariableInfo->TimeStamp = NULL;
     return Status;
+  }
+  if (CommandInProgress) {
+    AuthVariableInfo->Data = NULL;
+    AuthVariableInfo->DataSize = 0;
+    AuthVariableInfo->Attributes = 0;
+    AuthVariableInfo->PubKeyIndex = 0;
+    AuthVariableInfo->MonotonicCount = 0;
+    AuthVariableInfo->TimeStamp = NULL;
+    return EFI_DEVICE_ERROR;
   }
 
   AuthVariableInfo->DataSize        = DataSizeOfVariable (Variable.CurrPtr);
@@ -100,16 +114,30 @@ VariableExLibFindNextVariable (
   OUT AUTH_VARIABLE_INFO    *AuthVariableInfo
   )
 {
+  CHAR16                        TempName[2048];
+  EFI_GUID                      TempGuid;
+  VARIABLE_POINTER_TRACK        Variable;
   EFI_STATUS                    Status;
+  UINTN                         TempNameSize;
   VARIABLE_HEADER               *VariablePtr;
   AUTHENTICATED_VARIABLE_HEADER *AuthVariablePtr;
+  BOOLEAN                       CommandInProgress;
+  EFI_GUID                      InProgressNvStorageInstanceId;
 
+  ASSERT (StrLen (VariableName) < 2048);
+  if (StrLen (VariableName) >= 2048) {
+    return EFI_OUT_OF_RESOURCES;
+  }
+  TempNameSize = 2048 * sizeof (CHAR16);
+  StrCpyS ((CHAR16 *) TempName, TempNameSize, VariableName);
+  CopyMem (&TempGuid, VendorGuid, sizeof (EFI_GUID));
   Status = VariableServiceGetNextVariableInternal (
-             VariableName,
-             VendorGuid,
-             &VariablePtr
+             &TempNameSize,
+             &TempName[0],
+             &TempGuid
              );
   if (EFI_ERROR (Status)) {
+    ASSERT (Status != EFI_BUFFER_TOO_SMALL);
     AuthVariableInfo->VariableName = NULL;
     AuthVariableInfo->VendorGuid = NULL;
     AuthVariableInfo->Data = NULL;
@@ -119,6 +147,39 @@ VariableExLibFindNextVariable (
     AuthVariableInfo->MonotonicCount = 0;
     AuthVariableInfo->TimeStamp = NULL;
     return Status;
+  } else {
+    Status = FindVariable (
+               &TempName[0],
+               &TempGuid,
+               &Variable,
+               &mVariableModuleGlobal->VariableGlobal,
+               FALSE,
+               &CommandInProgress,
+               &InProgressNvStorageInstanceId
+               );
+    ASSERT_EFI_ERROR (Status);
+    ASSERT (!CommandInProgress);  ///< We should have all required variables in NV cache
+    if (EFI_ERROR (Status)) {
+      AuthVariableInfo->VariableName = NULL;
+      AuthVariableInfo->VendorGuid = NULL;
+      AuthVariableInfo->Data = NULL;
+      AuthVariableInfo->DataSize = 0;
+      AuthVariableInfo->Attributes = 0;
+      AuthVariableInfo->PubKeyIndex = 0;
+      AuthVariableInfo->MonotonicCount = 0;
+      AuthVariableInfo->TimeStamp = NULL;
+      return Status;
+    }
+    if (CommandInProgress) {
+      AuthVariableInfo->Data = NULL;
+      AuthVariableInfo->DataSize = 0;
+      AuthVariableInfo->Attributes = 0;
+      AuthVariableInfo->PubKeyIndex = 0;
+      AuthVariableInfo->MonotonicCount = 0;
+      AuthVariableInfo->TimeStamp = NULL;
+      return EFI_DEVICE_ERROR;
+    }
+    VariablePtr = Variable.CurrPtr;
   }
 
   AuthVariableInfo->VariableName    = GetVariableNamePtr (VariablePtr);
@@ -155,8 +216,22 @@ VariableExLibUpdateVariable (
   )
 {
   VARIABLE_POINTER_TRACK    Variable;
+  BOOLEAN                   CommandInProgress;
+  EFI_GUID                  InProgressNvStorageInstanceId;
 
-  FindVariable (AuthVariableInfo->VariableName, AuthVariableInfo->VendorGuid, &Variable, &mVariableModuleGlobal->VariableGlobal, FALSE);
+  FindVariable (
+    AuthVariableInfo->VariableName,
+    AuthVariableInfo->VendorGuid,
+    &Variable,
+    &mVariableModuleGlobal->VariableGlobal,
+    FALSE,
+    &CommandInProgress,
+    &InProgressNvStorageInstanceId
+    );
+  ASSERT (!CommandInProgress);  ///< We should have all required variables in NV cache before getting to AuthVariableLib
+  if (CommandInProgress) {
+    return EFI_DEVICE_ERROR;
+  }
   return UpdateVariable (
            AuthVariableInfo->VariableName,
            AuthVariableInfo->VendorGuid,

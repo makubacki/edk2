@@ -1,7 +1,7 @@
 /** @file
   Measure TCG required variable.
 
-Copyright (c) 2013 - 2017, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2013 - 2018, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -290,7 +290,7 @@ SecureBootHook (
      ASSERT(mSecureBootVarData != NULL);
 
      if (CompareMem(mSecureBootVarData, VariableData, VariableDataSize) != 0) {
-       FreePool(mSecureBootVarData);
+       FreePool (mSecureBootVarData);
        mSecureBootVarData     = VariableData;
        mSecureBootVarDataSize = VariableDataSize;
 

@@ -14,7 +14,7 @@
   VariableServiceSetVariable(), VariableServiceQueryVariableInfo(), ReclaimForOS(),
   SmmVariableGetStatistics() should also do validation based on its own knowledge.
 
-Copyright (c) 2010 - 2016, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2010 - 2018, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -25,6 +25,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 **/
 
+#include <Protocol/EdkiiSmmVariable.h>
 #include <Protocol/SmmVariable.h>
 #include <Protocol/SmmFirmwareVolumeBlock.h>
 #include <Protocol/SmmFaultTolerantWrite.h>
@@ -37,14 +38,43 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Guid/SmmVariableCommon.h>
 #include "Variable.h"
 
-extern VARIABLE_INFO_ENTRY                           *gVariableInfo;
-EFI_HANDLE                                           mSmmVariableHandle      = NULL;
-EFI_HANDLE                                           mVariableHandle         = NULL;
-BOOLEAN                                              mAtRuntime              = FALSE;
-UINT8                                                *mVariableBufferPayload = NULL;
-UINTN                                                mVariableBufferPayloadSize;
-extern BOOLEAN                                       mEndOfDxe;
-extern VAR_CHECK_REQUEST_SOURCE                      mRequestSource;
+typedef struct _SMM_VARIABLE_IO_COMPLETION_STATE {
+  BOOLEAN                           CommandInProgress;
+  BOOLEAN                           ReenterFunction;
+  BOOLEAN                           FromSmm;
+  EFI_GUID                          InProgressNvStorageInstanceId;
+  UINTN                             VariableFunction;
+  VOID                              *Context;
+  CHAR16                            VariableName[MAX_VARIABLE_NAME_SIZE];
+  EFI_GUID                          VendorGuid;
+  UINT32                            Attributes;
+  UINTN                             DataSize;
+  VOID                              *Data;
+  EDKII_SMM_GET_VARIABLE_CALLBACK   GetVariableCallback;
+  EDKII_SMM_SET_VARIABLE_CALLBACK   SetVariableCallback;
+} SMM_VARIABLE_IO_COMPLETION_STATE;
+
+typedef struct _SMM_VARIABLE_FLUSH_HOB_CONTEXT {
+  CHAR16                                            *VariableName;
+  EFI_GUID                                          *VendorGuid;
+  VARIABLE_HEADER                                   *Variable;
+  BOOLEAN                                           ErrorFlag;
+  EFI_PHYSICAL_ADDRESS                              HobVariableBase;
+  VARIABLE_HOB_FLUSH_COMPLETE_CALLBACK              HobFlushCompleteCallback;
+} SMM_VARIABLE_FLUSH_HOB_CONTEXT;
+
+extern VARIABLE_INFO_ENTRY                          *gVariableInfo;
+EFI_HANDLE                                          mSmmVariableHandle            = NULL;
+EFI_HANDLE                                          mVariableHandle               = NULL;
+BOOLEAN                                             mAtRuntime                    = FALSE;
+UINT8                                               *mVariableBufferPayload       = NULL;
+UINTN                                               mVariableBufferPayloadSize;
+extern BOOLEAN                                      mEndOfDxe;
+extern VAR_CHECK_REQUEST_SOURCE                     mRequestSource;
+extern BOOLEAN                                      mFromSmm;
+extern BOOLEAN                                      mIgnoreAuthCheck;
+static SMM_VARIABLE_FLUSH_HOB_CONTEXT               mSmmVariableFlushHobContext;
+static SMM_VARIABLE_IO_COMPLETION_STATE             mSmmVariableIoCompletionState;
 
 /**
   SecureBoot Hook for SetVariable.
@@ -61,6 +91,342 @@ SecureBootHook (
   )
 {
   return ;
+}
+
+/**
+  Begins the operation to find variable in storage blocks (Volatile or Non-Volatile).
+  At a later point in time, when the value of the variable is ready the provided
+  callback function will be invoked.
+
+  Caution: This function may receive untrusted input.
+  This function may be invoked in SMM mode, and datasize is external input.
+  This function will do basic validation, before parse the data.
+
+  @param[in]       Context       A caller provided pointer that will be passed to the callback
+                                 function when the callback is invoked. The caller may use this to
+                                 help identify which variable operation the callback is being invoked for.
+  @param[in]       VariableName  A Null-terminated string that is the name of the vendor's
+                                 variable.
+  @param[in]       VendorGuid    A unique identifier for the vendor.
+  @param[in]       DataSize      The size in bytes of the return Data buffer.
+  @param[out]      Data          The buffer to return the contents of the variable.
+  @param[in]       Callback      The function to invoke once the variable data is ready.
+
+  @retval EFI_SUCCESS            The function completed successfully.
+  @retval EFI_INVALID_PARAMETER  VariableName is NULL.
+  @retval EFI_INVALID_PARAMETER  VendorGuid is NULL.
+  @retval EFI_INVALID_PARAMETER  DataSize is NULL.
+  @retval EFI_INVALID_PARAMETER  The DataSize is not too small and Data is NULL.
+  @retval EFI_NOT_READY          Another driver is presently using the Variable Services
+
+**/
+EFI_STATUS
+EFIAPI
+SmmVariableGetVariable (
+  IN      VOID                              *Context,       OPTIONAL
+  IN      CHAR16                            *VariableName,
+  IN      EFI_GUID                          *VendorGuid,
+  IN      UINTN                             DataSize,
+  IN      VOID                              *Data,
+  IN      EDKII_SMM_GET_VARIABLE_CALLBACK   Callback
+  )
+{
+  EFI_STATUS  Status;
+  UINTN       dataSize = DataSize;
+  UINT32      Attributes;
+
+  if (mSmmVariableIoCompletionState.CommandInProgress) {
+    DEBUG ((DEBUG_WARN, "UEFI Variable Services already in use, unable to perform GetVariable().\n"));
+    return EFI_NOT_READY;
+  }
+  if (Callback == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+  //
+  // Indicate that the caller is SMM code
+  //
+  ZeroMem ((VOID *) &mSmmVariableIoCompletionState, sizeof (SMM_VARIABLE_IO_COMPLETION_STATE));
+  mFromSmm                                          = TRUE;
+  mSmmVariableIoCompletionState.FromSmm             = TRUE;
+  mSmmVariableIoCompletionState.VariableFunction    = SMM_VARIABLE_FUNCTION_GET_VARIABLE;
+  mSmmVariableIoCompletionState.Context             = Context;
+  mSmmVariableIoCompletionState.DataSize            = DataSize;
+  mSmmVariableIoCompletionState.Data                = Data;
+  mSmmVariableIoCompletionState.GetVariableCallback = Callback;
+  Status    = VariableServiceGetVariable (
+                VariableName,
+                VendorGuid,
+                &Attributes,
+                &dataSize,
+                Data,
+                &mSmmVariableIoCompletionState.CommandInProgress,
+                &mSmmVariableIoCompletionState.InProgressNvStorageInstanceId
+                );
+  mFromSmm  = FALSE;
+  if (!mSmmVariableIoCompletionState.CommandInProgress) {
+    ZeroMem ((VOID *) &mSmmVariableIoCompletionState, sizeof (SMM_VARIABLE_IO_COMPLETION_STATE));
+    if (Callback != NULL) {
+      Callback (Context, Status, Attributes, dataSize, Data);
+    }
+    return EFI_SUCCESS;
+  } else {
+    StrCpyS (
+      &mSmmVariableIoCompletionState.VariableName[0],
+      sizeof (mSmmVariableIoCompletionState.VariableName),
+      VariableName
+      );
+    CopyMem (&mSmmVariableIoCompletionState.VendorGuid, &VendorGuid, sizeof (EFI_GUID));
+  }
+  return Status;
+}
+
+/**
+
+  This code finds variable in storage blocks (Volatile or Non-Volatile).
+
+  Caution: This function may receive untrusted input.
+  This function may be invoked in SMM mode, and datasize is external input.
+  This function will do basic validation, before parse the data.
+
+  @param VariableName               Name of Variable to be found.
+  @param VendorGuid                 Variable vendor GUID.
+  @param Attributes                 Attribute value of the variable found.
+  @param DataSize                   Size of Data found. If size is less than the
+                                    data, this value contains the required size.
+  @param Data                       Data pointer.
+
+  @return EFI_INVALID_PARAMETER     Invalid parameter.
+  @return EFI_SUCCESS               Find the specified variable.
+  @return EFI_NOT_FOUND             Not found.
+  @return EFI_BUFFER_TO_SMALL       DataSize is too small for the result.
+
+**/
+EFI_STATUS
+EFIAPI
+SmmLegacyVariableGetVariable (
+  IN      CHAR16            *VariableName,
+  IN      EFI_GUID          *VendorGuid,
+  OUT     UINT32            *Attributes OPTIONAL,
+  IN OUT  UINTN             *DataSize,
+  OUT     VOID              *Data
+  )
+{
+  EFI_STATUS                 Status;
+  BOOLEAN                    CommandInProgress;
+  EFI_GUID                   InProgressNvStorageInstanceId;
+
+  if (mSmmVariableIoCompletionState.CommandInProgress) {
+    DEBUG ((DEBUG_WARN, "UEFI Variable Services already in use, unable to perform GetVariable().\n"));
+    return EFI_NOT_READY;
+  }
+  //
+  // Indicate that the caller is SMM code
+  //
+  mFromSmm  = TRUE;
+  Status    = VariableServiceGetVariable (
+                VariableName,
+                VendorGuid,
+                Attributes,
+                DataSize,
+                Data,
+                &CommandInProgress,
+                &InProgressNvStorageInstanceId
+                );
+  mFromSmm  = FALSE;
+  //
+  // Asyncronous reads are not supported by the old protocol
+  //
+  ASSERT (!CommandInProgress);
+  if (CommandInProgress) {
+    return EFI_DEVICE_ERROR;
+  }
+  return Status;
+}
+
+/**
+
+  This code Finds the Next available variable.
+
+  Caution: This function may receive untrusted input.
+  This function may be invoked in SMM mode. This function will do basic validation, before parse the data.
+
+  @param VariableNameSize           Size of the variable name.
+  @param VariableName               Pointer to variable name.
+  @param VendorGuid                 Variable Vendor Guid.
+
+  @return EFI_INVALID_PARAMETER     Invalid parameter.
+  @return EFI_SUCCESS               Find the specified variable.
+  @return EFI_NOT_FOUND             Not found.
+  @return EFI_BUFFER_TO_SMALL       DataSize is too small for the result.
+
+**/
+EFI_STATUS
+EFIAPI
+SmmVariableGetNextVariableName (
+  IN OUT  UINTN             *VariableNameSize,
+  IN OUT  CHAR16            *VariableName,
+  IN OUT  EFI_GUID          *VendorGuid
+  )
+{
+  EFI_STATUS                 Status;
+
+  //
+  // Indicate that the caller is SMM code
+  //
+  mFromSmm  = TRUE;
+  Status    = VariableServiceGetNextVariableName (VariableNameSize, VariableName, VendorGuid);
+  mFromSmm  = FALSE;
+  return Status;
+}
+
+/**
+  Begins the operation to set a variable in storage blocks (Volatile or Non-Volatile).
+  At a later point in time, when the variable write operation is complete the provided
+  callback function will be invoked.
+
+  @param[in]  Context            A caller provided pointer that will be passed to the callback
+                                 function when the callback is invoked. The caller may use this to
+                                 help identify which variable operation the callback is being invoked for.
+  @param[in]  VariableName       A Null-terminated string that is the name of the vendor's variable.
+                                 Each VariableName is unique for each VendorGuid. VariableName must
+                                 contain 1 or more characters. If VariableName is an empty string,
+                                 then EFI_INVALID_PARAMETER is returned.
+  @param[in]  VendorGuid         A unique identifier for the vendor.
+  @param[in]  Attributes         Attributes bitmask to set for the variable.
+  @param[in]  DataSize           The size in bytes of the Data buffer. Unless the EFI_VARIABLE_APPEND_WRITE,
+                                 EFI_VARIABLE_AUTHENTICATED_WRITE_ACCESS, or
+                                 EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS attribute is set, a size of zero
+                                 causes the variable to be deleted. When the EFI_VARIABLE_APPEND_WRITE attribute is
+                                 set, then a SetVariable() call with a DataSize of zero will not cause any change to
+                                 the variable value (the timestamp associated with the variable may be updated however
+                                 even if no new data value is provided,see the description of the
+                                 EFI_VARIABLE_AUTHENTICATION_2 descriptor below. In this case the DataSize will not
+                                 be zero since the EFI_VARIABLE_AUTHENTICATION_2 descriptor will be populated).
+  @param[in]  Data               The contents for the variable.
+  @param[in]  Callback           The function to invoke once the variable is written.
+  @param[in]  IgnoreAuthCheck    Indicates whether the set variable service should ignore authenticated variable checks.
+                                 This should only be TRUE if authenticated variables are flushed before AuthSupport is
+                                 enabled.
+
+  @retval EFI_SUCCESS            The write request has been successfully queued.
+  @retval EFI_INVALID_PARAMETER  An invalid combination of attribute bits, name, and GUID was supplied, or the
+                                 DataSize exceeds the maximum allowed.
+  @retval EFI_INVALID_PARAMETER  VariableName is an empty string.
+  @retval EFI_NOT_READY          Another driver is presently using the Variable Services
+
+**/
+EFI_STATUS
+EFIAPI
+SmmVariableSetVariableInternal (
+  IN      VOID                              *Context,         OPTIONAL
+  IN      CHAR16                            *VariableName,
+  IN      EFI_GUID                          *VendorGuid,
+  IN      UINT32                            Attributes,
+  IN      UINTN                             DataSize,
+  IN      VOID                              *Data,
+  IN      EDKII_SMM_SET_VARIABLE_CALLBACK   Callback,
+  IN      BOOLEAN                           IgnoreAuthCheck
+  )
+{
+  EFI_STATUS    Status;
+
+  if (mSmmVariableIoCompletionState.CommandInProgress) {
+    DEBUG ((DEBUG_WARN, "UEFI Variable Services already in use, unable to perform SetVariable().\n"));
+    return EFI_NOT_READY;
+  }
+  ZeroMem ((VOID *) &mSmmVariableIoCompletionState, sizeof (SMM_VARIABLE_IO_COMPLETION_STATE));
+  mSmmVariableIoCompletionState.FromSmm             = TRUE;
+  mSmmVariableIoCompletionState.VariableFunction    = SMM_VARIABLE_FUNCTION_SET_VARIABLE;
+  mSmmVariableIoCompletionState.Context             = Context;
+  mSmmVariableIoCompletionState.SetVariableCallback = Callback;
+  //
+  // Disable write protection when the calling SetVariable() through EFI_SMM_VARIABLE_PROTOCOL.
+  //
+  mFromSmm          = TRUE;
+  mIgnoreAuthCheck  = IgnoreAuthCheck;
+  mRequestSource    = VarCheckFromTrusted;
+  Status            = VariableServiceSetVariable (
+                        VariableName,
+                        VendorGuid,
+                        Attributes,
+                        DataSize,
+                        Data,
+                        &mSmmVariableIoCompletionState.CommandInProgress,
+                        &mSmmVariableIoCompletionState.InProgressNvStorageInstanceId,
+                        &mSmmVariableIoCompletionState.ReenterFunction
+                        );
+  mFromSmm          = FALSE;
+  mIgnoreAuthCheck  = FALSE;
+  mRequestSource    = VarCheckFromUntrusted;
+  if (!mSmmVariableIoCompletionState.CommandInProgress) {
+    ZeroMem ((VOID *) &mSmmVariableIoCompletionState, sizeof (SMM_VARIABLE_IO_COMPLETION_STATE));
+    if (Callback != NULL) {
+      Callback (Context, Status);
+      return EFI_SUCCESS;
+    }
+  } else {
+    StrCpyS (
+      &mSmmVariableIoCompletionState.VariableName[0],
+      sizeof (mSmmVariableIoCompletionState.VariableName),
+      VariableName
+      );
+    CopyMem (&mSmmVariableIoCompletionState.VendorGuid, &VendorGuid, sizeof (EFI_GUID));
+    mSmmVariableIoCompletionState.Attributes  = Attributes;
+    mSmmVariableIoCompletionState.DataSize    = DataSize;
+    mSmmVariableIoCompletionState.Data        = Data;
+  }
+  return Status;
+}
+
+/**
+  Begins the operation to set a variable in storage blocks (Volatile or Non-Volatile).
+  At a later point in time, when the variable write operation is complete the provided
+  callback function will be invoked.
+
+  @param[in]  Context            A caller provided pointer that will be passed to the callback
+                                 function when the callback is invoked. The caller may use this to
+                                 help identify which variable operation the callback is being invoked for.
+  @param[in]  VariableName       A Null-terminated string that is the name of the vendor's variable.
+                                 Each VariableName is unique for each VendorGuid. VariableName must
+                                 contain 1 or more characters. If VariableName is an empty string,
+                                 then EFI_INVALID_PARAMETER is returned.
+  @param[in]  VendorGuid         A unique identifier for the vendor.
+  @param[in]  Attributes         Attributes bitmask to set for the variable.
+  @param[in]  DataSize           The size in bytes of the Data buffer. Unless the EFI_VARIABLE_APPEND_WRITE,
+                                 EFI_VARIABLE_AUTHENTICATED_WRITE_ACCESS, or
+                                 EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS attribute is set, a size of zero
+                                 causes the variable to be deleted. When the EFI_VARIABLE_APPEND_WRITE attribute is
+                                 set, then a SetVariable() call with a DataSize of zero will not cause any change to
+                                 the variable value (the timestamp associated with the variable may be updated however
+                                 even if no new data value is provided,see the description of the
+                                 EFI_VARIABLE_AUTHENTICATION_2 descriptor below. In this case the DataSize will not
+                                 be zero since the EFI_VARIABLE_AUTHENTICATION_2 descriptor will be populated).
+  @param[in]  Data               The contents for the variable.
+  @param[in]  Callback           The function to invoke once the variable is written.
+
+  @retval EFI_SUCCESS            The write request has been successfully queued.
+  @retval EFI_INVALID_PARAMETER  An invalid combination of attribute bits, name, and GUID was supplied, or the
+                                 DataSize exceeds the maximum allowed.
+  @retval EFI_INVALID_PARAMETER  VariableName is an empty string.
+  @retval EFI_NOT_READY          Another driver is presently using the Variable Services
+
+**/
+EFI_STATUS
+EFIAPI
+SmmVariableSetVariable (
+  IN      VOID                              *Context,         OPTIONAL
+  IN      CHAR16                            *VariableName,
+  IN      EFI_GUID                          *VendorGuid,
+  IN      UINT32                            Attributes,
+  IN      UINTN                             DataSize,
+  IN      VOID                              *Data,
+  IN      EDKII_SMM_SET_VARIABLE_CALLBACK   Callback
+  )
+{
+  if (Callback == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+  return SmmVariableSetVariableInternal (Context, VariableName, VendorGuid, Attributes, DataSize, Data, Callback, FALSE);
 }
 
 /**
@@ -83,7 +449,7 @@ SecureBootHook (
 **/
 EFI_STATUS
 EFIAPI
-SmmVariableSetVariable (
+SmmLegacyVariableSetVariable (
   IN CHAR16                  *VariableName,
   IN EFI_GUID                *VendorGuid,
   IN UINT32                  Attributes,
@@ -91,33 +457,234 @@ SmmVariableSetVariable (
   IN VOID                    *Data
   )
 {
+  return SmmVariableSetVariableInternal (NULL, VariableName, VendorGuid, Attributes, DataSize, Data, NULL, FALSE);
+}
+
+/**
+  Notifies the core variable driver that the Variable Storage Driver has completed the previously requested
+  SMM phase asyncronous I/O. If the operation was a read, the data is now present in the NV storage cache.
+
+  This function will only be used by the SMM implementation of UEFI Variables
+
+  @param[in]  VariableStorageInstanceGuid   The instance GUID of the variable storage protocol invoking this function
+  @param[in]  Status                        The result of the variable I/O operation. Possible values are:
+                            EFI_SUCCESS            The variable I/O completed successfully.
+                            EFI_NOT_FOUND          The variable was not found.
+                            EFI_OUT_OF_RESOURCES   Not enough storage is available to hold the variable and its data.
+                            EFI_DEVICE_ERROR       The variable I/O could not complete due to a hardware error.
+                            EFI_WRITE_PROTECTED    The variable in question is read-only.
+                            EFI_WRITE_PROTECTED    The variable in question cannot be deleted.
+                            EFI_SECURITY_VIOLATION The variable I/O could not complete due to an authentication failure.
+
+**/
+VOID
+EFIAPI
+VariableStorageSupportNotifySmmIoComplete (
+  IN      EFI_GUID                    *VariableStorageInstanceGuid,
+  IN      EFI_STATUS                  Status
+  )
+{
+  EFI_GUID    InProgressNvStorageInstanceId;
+  EFI_STATUS  Status2;
+  UINTN       DataSize;
+  UINT32      Attributes;
+  BOOLEAN     CommandInProgress;
+
+  if (!mSmmVariableIoCompletionState.CommandInProgress) {
+    return;
+  }
+  if (!CompareGuid (&mSmmVariableIoCompletionState.InProgressNvStorageInstanceId, VariableStorageInstanceGuid)) {
+    return;
+  }
+  switch (mSmmVariableIoCompletionState.VariableFunction) {
+    case SMM_VARIABLE_FUNCTION_GET_VARIABLE:
+      if (EFI_ERROR (Status)) {
+        if (mSmmVariableIoCompletionState.GetVariableCallback != NULL) {
+          mSmmVariableIoCompletionState.GetVariableCallback (
+            mSmmVariableIoCompletionState.Context,
+            Status,
+            0,
+            0,
+            mSmmVariableIoCompletionState.Data
+            );
+        }
+        goto Done;
+      }
+      //
+      // The data should be in the NV cache now, we should be able to retrieve it
+      //
+      DataSize  = mSmmVariableIoCompletionState.DataSize;
+      mFromSmm  = TRUE;
+      Status2   = VariableServiceGetVariable (
+                    &mSmmVariableIoCompletionState.VariableName[0],
+                    &mSmmVariableIoCompletionState.VendorGuid,
+                    &Attributes,
+                    &DataSize,
+                    mSmmVariableIoCompletionState.Data,
+                    &CommandInProgress,
+                    &InProgressNvStorageInstanceId
+                    );
+      mFromSmm  = FALSE;
+      ASSERT (!CommandInProgress);
+      if (CommandInProgress) {
+        goto Done;
+      }
+      if (EFI_ERROR (Status2)) {
+        if (mSmmVariableIoCompletionState.GetVariableCallback != NULL) {
+          mSmmVariableIoCompletionState.GetVariableCallback (
+            mSmmVariableIoCompletionState.Context,
+            Status2,
+            0,
+            0,
+            mSmmVariableIoCompletionState.Data
+            );
+        }
+        goto Done;
+      }
+      if (mSmmVariableIoCompletionState.GetVariableCallback != NULL) {
+        mSmmVariableIoCompletionState.GetVariableCallback (
+          mSmmVariableIoCompletionState.Context,
+          Status,
+          Attributes,
+          DataSize,
+          mSmmVariableIoCompletionState.Data
+          );
+      }
+      break;
+    case SMM_VARIABLE_FUNCTION_SET_VARIABLE:
+      if (EFI_ERROR (Status)) {
+        if (mSmmVariableIoCompletionState.SetVariableCallback) {
+          mSmmVariableIoCompletionState.CommandInProgress = FALSE;
+          mSmmVariableIoCompletionState.SetVariableCallback (
+            mSmmVariableIoCompletionState.Context,
+            Status
+            );
+        }
+        goto Done;
+      }
+      if (mSmmVariableIoCompletionState.ReenterFunction) {
+        mSmmVariableIoCompletionState.CommandInProgress = FALSE;
+        mSmmVariableIoCompletionState.ReenterFunction   = FALSE;
+        mSmmVariableIoCompletionState.FromSmm           = TRUE;
+        ZeroMem (&mSmmVariableIoCompletionState.InProgressNvStorageInstanceId, sizeof (EFI_GUID));
+        mFromSmm        = TRUE;
+        mRequestSource  = VarCheckFromTrusted;
+        Status2         = VariableServiceSetVariable (
+                            &mSmmVariableIoCompletionState.VariableName[0],
+                            &mSmmVariableIoCompletionState.VendorGuid,
+                            mSmmVariableIoCompletionState.Attributes,
+                            mSmmVariableIoCompletionState.DataSize,
+                            mSmmVariableIoCompletionState.Data,
+                            &mSmmVariableIoCompletionState.CommandInProgress,
+                            &mSmmVariableIoCompletionState.InProgressNvStorageInstanceId,
+                            &mSmmVariableIoCompletionState.ReenterFunction
+                            );
+        mRequestSource  = VarCheckFromUntrusted;
+        mFromSmm        = FALSE;
+        if (!mSmmVariableIoCompletionState.CommandInProgress || EFI_ERROR (Status2)) {
+          if (mSmmVariableIoCompletionState.SetVariableCallback) {
+            mSmmVariableIoCompletionState.CommandInProgress = FALSE;
+            mSmmVariableIoCompletionState.SetVariableCallback (
+              mSmmVariableIoCompletionState.Context,
+              Status2
+              );
+          }
+          goto Done;
+        }
+        //
+        // Don't clear mSmmVariableIoCompletionState in this case since we will reenter this function later
+        //
+        return;
+      } else {
+        if (mSmmVariableIoCompletionState.SetVariableCallback) {
+          mSmmVariableIoCompletionState.CommandInProgress = FALSE;
+          mSmmVariableIoCompletionState.SetVariableCallback (
+            mSmmVariableIoCompletionState.Context,
+            Status
+            );
+        }
+      }
+      break;
+    default:
+      break;
+  }
+Done:
+  if (!mSmmVariableIoCompletionState.CommandInProgress) {
+    ZeroMem ((VOID *) &mSmmVariableIoCompletionState, sizeof (SMM_VARIABLE_IO_COMPLETION_STATE));
+  }
+}
+
+/**
+
+  This code returns information about the EFI variables.
+
+  Caution: This function may receive untrusted input.
+  This function may be invoked in SMM mode. This function will do basic validation, before parse the data.
+
+  @param Attributes                     Attributes bitmask to specify the type of variables
+                                        on which to return information.
+  @param MaximumVariableStorageSize     Pointer to the maximum size of the storage space available
+                                        for the EFI variables associated with the attributes specified.
+  @param RemainingVariableStorageSize   Pointer to the remaining size of the storage space available
+                                        for EFI variables associated with the attributes specified.
+  @param MaximumVariableSize            Pointer to the maximum size of an individual EFI variables
+                                        associated with the attributes specified.
+
+  @return EFI_SUCCESS                   Query successfully.
+
+**/
+EFI_STATUS
+EFIAPI
+SmmVariableQueryVariableInfo (
+  IN  UINT32                 Attributes,
+  OUT UINT64                 *MaximumVariableStorageSize,
+  OUT UINT64                 *RemainingVariableStorageSize,
+  OUT UINT64                 *MaximumVariableSize
+  )
+{
   EFI_STATUS                 Status;
 
   //
-  // Disable write protection when the calling SetVariable() through EFI_SMM_VARIABLE_PROTOCOL.
+  // Indicate that the caller is SMM code
   //
-  mRequestSource = VarCheckFromTrusted;
-  Status         = VariableServiceSetVariable (
-                     VariableName,
-                     VendorGuid,
-                     Attributes,
-                     DataSize,
-                     Data
-                     );
-  mRequestSource = VarCheckFromUntrusted;
+  mFromSmm  = TRUE;
+  Status    = VariableServiceQueryVariableInfoInternal (
+                Attributes,
+                MaximumVariableStorageSize,
+                RemainingVariableStorageSize,
+                MaximumVariableSize
+                );
+  mFromSmm  = FALSE;
   return Status;
 }
 
-EFI_SMM_VARIABLE_PROTOCOL      gSmmVariable = {
-  VariableServiceGetVariable,
-  VariableServiceGetNextVariableName,
+EDKII_SMM_VARIABLE_PROTOCOL             gSmmVariable = {
+  SmmVariableGetVariable,
+  SmmVariableGetNextVariableName,
   SmmVariableSetVariable,
-  VariableServiceQueryVariableInfo
+  SmmVariableQueryVariableInfo
 };
 
-EDKII_SMM_VAR_CHECK_PROTOCOL mSmmVarCheck = { VarCheckRegisterSetVariableCheckHandler,
-                                              VarCheckVariablePropertySet,
-                                              VarCheckVariablePropertyGet };
+///
+/// This is the legacy SMM Variable Protocol, which is only provided for backward compatibility
+/// new code should use EDKII_SMM_VARIABLE_PROTOCOL whenever possible.
+///
+EFI_SMM_VARIABLE_PROTOCOL               gSmmLegacyVariable = {
+  SmmLegacyVariableGetVariable,
+  SmmVariableGetNextVariableName,
+  SmmLegacyVariableSetVariable,
+  SmmVariableQueryVariableInfo
+};
+
+EDKII_SMM_VAR_CHECK_PROTOCOL            mSmmVarCheck = { VarCheckRegisterSetVariableCheckHandler,
+                                                         VarCheckVariablePropertySet,
+                                                         VarCheckVariablePropertyGet };
+
+EDKII_VARIABLE_STORAGE_SUPPORT_PROTOCOL mVariableStorageSupport = {
+  VariableStorageSupportNotifyWriteServiceReady,
+  VariableStorageSupportNotifySmmIoComplete,
+  VariableStorageSupportUpdateNvCache
+};
 
 /**
   Return TRUE if ExitBootServices () has been called.
@@ -197,130 +764,6 @@ ReleaseLockOnlyAtBootTime (
 {
 
 }
-
-/**
-  Retrieve the SMM Fault Tolerent Write protocol interface.
-
-  @param[out] FtwProtocol       The interface of SMM Ftw protocol
-
-  @retval EFI_SUCCESS           The SMM FTW protocol instance was found and returned in FtwProtocol.
-  @retval EFI_NOT_FOUND         The SMM FTW protocol instance was not found.
-  @retval EFI_INVALID_PARAMETER SarProtocol is NULL.
-
-**/
-EFI_STATUS
-GetFtwProtocol (
-  OUT VOID                                **FtwProtocol
-  )
-{
-  EFI_STATUS                              Status;
-
-  //
-  // Locate Smm Fault Tolerent Write protocol
-  //
-  Status = gSmst->SmmLocateProtocol (
-                    &gEfiSmmFaultTolerantWriteProtocolGuid,
-                    NULL,
-                    FtwProtocol
-                    );
-  return Status;
-}
-
-
-/**
-  Retrieve the SMM FVB protocol interface by HANDLE.
-
-  @param[in]  FvBlockHandle     The handle of SMM FVB protocol that provides services for
-                                reading, writing, and erasing the target block.
-  @param[out] FvBlock           The interface of SMM FVB protocol
-
-  @retval EFI_SUCCESS           The interface information for the specified protocol was returned.
-  @retval EFI_UNSUPPORTED       The device does not support the SMM FVB protocol.
-  @retval EFI_INVALID_PARAMETER FvBlockHandle is not a valid EFI_HANDLE or FvBlock is NULL.
-
-**/
-EFI_STATUS
-GetFvbByHandle (
-  IN  EFI_HANDLE                          FvBlockHandle,
-  OUT EFI_FIRMWARE_VOLUME_BLOCK_PROTOCOL  **FvBlock
-  )
-{
-  //
-  // To get the SMM FVB protocol interface on the handle
-  //
-  return gSmst->SmmHandleProtocol (
-                  FvBlockHandle,
-                  &gEfiSmmFirmwareVolumeBlockProtocolGuid,
-                  (VOID **) FvBlock
-                  );
-}
-
-
-/**
-  Function returns an array of handles that support the SMM FVB protocol
-  in a buffer allocated from pool.
-
-  @param[out]  NumberHandles    The number of handles returned in Buffer.
-  @param[out]  Buffer           A pointer to the buffer to return the requested
-                                array of  handles that support SMM FVB protocol.
-
-  @retval EFI_SUCCESS           The array of handles was returned in Buffer, and the number of
-                                handles in Buffer was returned in NumberHandles.
-  @retval EFI_NOT_FOUND         No SMM FVB handle was found.
-  @retval EFI_OUT_OF_RESOURCES  There is not enough pool memory to store the matching results.
-  @retval EFI_INVALID_PARAMETER NumberHandles is NULL or Buffer is NULL.
-
-**/
-EFI_STATUS
-GetFvbCountAndBuffer (
-  OUT UINTN                               *NumberHandles,
-  OUT EFI_HANDLE                          **Buffer
-  )
-{
-  EFI_STATUS                              Status;
-  UINTN                                   BufferSize;
-
-  if ((NumberHandles == NULL) || (Buffer == NULL)) {
-    return EFI_INVALID_PARAMETER;
-  }
-
-  BufferSize     = 0;
-  *NumberHandles = 0;
-  *Buffer        = NULL;
-  Status = gSmst->SmmLocateHandle (
-                    ByProtocol,
-                    &gEfiSmmFirmwareVolumeBlockProtocolGuid,
-                    NULL,
-                    &BufferSize,
-                    *Buffer
-                    );
-  if (EFI_ERROR(Status) && Status != EFI_BUFFER_TOO_SMALL) {
-    return EFI_NOT_FOUND;
-  }
-
-  *Buffer = AllocatePool (BufferSize);
-  if (*Buffer == NULL) {
-    return EFI_OUT_OF_RESOURCES;
-  }
-
-  Status = gSmst->SmmLocateHandle (
-                    ByProtocol,
-                    &gEfiSmmFirmwareVolumeBlockProtocolGuid,
-                    NULL,
-                    &BufferSize,
-                    *Buffer
-                    );
-
-  *NumberHandles = BufferSize / sizeof(EFI_HANDLE);
-  if (EFI_ERROR(Status)) {
-    *NumberHandles = 0;
-    FreePool (*Buffer);
-    *Buffer = NULL;
-  }
-
-  return Status;
-}
-
 
 /**
   Get the variable statistics information from the information buffer pointed by gVariableInfo.
@@ -468,7 +911,7 @@ SmmVariableHandler (
   )
 {
   EFI_STATUS                                       Status;
-  SMM_VARIABLE_COMMUNICATE_HEADER                  *SmmVariableFunctionHeader;
+  SMM_VARIABLE_COMMUNICATE_HEADER2                 *SmmVariableFunctionHeader;
   SMM_VARIABLE_COMMUNICATE_ACCESS_VARIABLE         *SmmVariableHeader;
   SMM_VARIABLE_COMMUNICATE_GET_NEXT_VARIABLE_NAME  *GetNextVariableName;
   SMM_VARIABLE_COMMUNICATE_QUERY_VARIABLE_INFO     *QueryVariableInfo;
@@ -490,11 +933,11 @@ SmmVariableHandler (
 
   TempCommBufferSize = *CommBufferSize;
 
-  if (TempCommBufferSize < SMM_VARIABLE_COMMUNICATE_HEADER_SIZE) {
+  if (TempCommBufferSize < SMM_VARIABLE_COMMUNICATE_HEADER2_SIZE) {
     DEBUG ((EFI_D_ERROR, "SmmVariableHandler: SMM communication buffer size invalid!\n"));
     return EFI_SUCCESS;
   }
-  CommBufferPayloadSize = TempCommBufferSize - SMM_VARIABLE_COMMUNICATE_HEADER_SIZE;
+  CommBufferPayloadSize = TempCommBufferSize - SMM_VARIABLE_COMMUNICATE_HEADER2_SIZE;
   if (CommBufferPayloadSize > mVariableBufferPayloadSize) {
     DEBUG ((EFI_D_ERROR, "SmmVariableHandler: SMM communication buffer payload size invalid!\n"));
     return EFI_SUCCESS;
@@ -505,11 +948,19 @@ SmmVariableHandler (
     return EFI_SUCCESS;
   }
 
-  SmmVariableFunctionHeader = (SMM_VARIABLE_COMMUNICATE_HEADER *)CommBuffer;
+  SmmVariableFunctionHeader = (SMM_VARIABLE_COMMUNICATE_HEADER2 *)CommBuffer;
   switch (SmmVariableFunctionHeader->Function) {
     case SMM_VARIABLE_FUNCTION_GET_VARIABLE:
       if (CommBufferPayloadSize < OFFSET_OF(SMM_VARIABLE_COMMUNICATE_ACCESS_VARIABLE, Name)) {
         DEBUG ((EFI_D_ERROR, "GetVariable: SMM communication buffer size invalid!\n"));
+        return EFI_SUCCESS;
+      }
+      if (mSmmVariableIoCompletionState.CommandInProgress && mSmmVariableIoCompletionState.FromSmm) {
+        //
+        // The variable services are already in use by SMM, inform the Runtime DXE driver to wait for SMM to finish
+        //
+        DEBUG ((DEBUG_INFO, "UEFI Variable Services already in use, waiting in Runtime DXE for completion.\n"));
+        SmmVariableFunctionHeader->VariableServicesInUse = TRUE;
         return EFI_SUCCESS;
       }
       //
@@ -551,14 +1002,25 @@ SmmVariableHandler (
         goto EXIT;
       }
 
+      SmmVariableFunctionHeader->CommandInProgress = FALSE;
       Status = VariableServiceGetVariable (
                  SmmVariableHeader->Name,
                  &SmmVariableHeader->Guid,
                  &SmmVariableHeader->Attributes,
                  &SmmVariableHeader->DataSize,
-                 (UINT8 *)SmmVariableHeader->Name + SmmVariableHeader->NameSize
+                 (UINT8 *)SmmVariableHeader->Name + SmmVariableHeader->NameSize,
+                 &SmmVariableFunctionHeader->CommandInProgress,
+                 &SmmVariableFunctionHeader->InProgressNvStorageInstanceId
                  );
       CopyMem (SmmVariableFunctionHeader->Data, mVariableBufferPayload, CommBufferPayloadSize);
+      if (SmmVariableFunctionHeader->CommandInProgress) {
+        SmmVariableFunctionHeader->ReenterFunction      = TRUE;
+        mSmmVariableIoCompletionState.CommandInProgress = TRUE;
+        mSmmVariableIoCompletionState.FromSmm           = FALSE;
+      } else {
+        mSmmVariableIoCompletionState.CommandInProgress = FALSE;
+        mSmmVariableIoCompletionState.FromSmm           = FALSE;
+      }
       break;
 
     case SMM_VARIABLE_FUNCTION_GET_NEXT_VARIABLE_NAME:
@@ -611,6 +1073,14 @@ SmmVariableHandler (
         DEBUG ((EFI_D_ERROR, "SetVariable: SMM communication buffer size invalid!\n"));
         return EFI_SUCCESS;
       }
+      if (mSmmVariableIoCompletionState.CommandInProgress && mSmmVariableIoCompletionState.FromSmm) {
+        //
+        // The variable services are already in use by SMM, inform the Runtime DXE driver to wait for SMM to finish
+        //
+        DEBUG ((DEBUG_INFO, "UEFI Variable Services already in use, waiting in Runtime DXE for completion.\n"));
+        SmmVariableFunctionHeader->VariableServicesInUse = TRUE;
+        return EFI_SUCCESS;
+      }
       //
       // Copy the input communicate buffer payload to pre-allocated SMM variable buffer payload.
       //
@@ -656,8 +1126,18 @@ SmmVariableHandler (
                  &SmmVariableHeader->Guid,
                  SmmVariableHeader->Attributes,
                  SmmVariableHeader->DataSize,
-                 (UINT8 *)SmmVariableHeader->Name + SmmVariableHeader->NameSize
+                 (UINT8 *)SmmVariableHeader->Name + SmmVariableHeader->NameSize,
+                 &SmmVariableFunctionHeader->CommandInProgress,
+                 &SmmVariableFunctionHeader->InProgressNvStorageInstanceId,
+                 &SmmVariableFunctionHeader->ReenterFunction
                  );
+      if (SmmVariableFunctionHeader->CommandInProgress) {
+        mSmmVariableIoCompletionState.CommandInProgress = TRUE;
+        mSmmVariableIoCompletionState.FromSmm           = FALSE;
+      } else {
+        mSmmVariableIoCompletionState.CommandInProgress = FALSE;
+        mSmmVariableIoCompletionState.FromSmm           = FALSE;
+      }
       break;
 
     case SMM_VARIABLE_FUNCTION_QUERY_VARIABLE_INFO:
@@ -710,20 +1190,21 @@ SmmVariableHandler (
 
     case SMM_VARIABLE_FUNCTION_GET_STATISTICS:
       VariableInfo = (VARIABLE_INFO_ENTRY *) SmmVariableFunctionHeader->Data;
-      InfoSize = TempCommBufferSize - SMM_VARIABLE_COMMUNICATE_HEADER_SIZE;
+      InfoSize = TempCommBufferSize - SMM_VARIABLE_COMMUNICATE_HEADER2_SIZE;
 
       //
       // Do not need to check SmmVariableFunctionHeader->Data in SMRAM here.
       // It is covered by previous CommBuffer check
       //
 
-      //
-      // Do not need to check CommBufferSize buffer as it should point to SMRAM
-      // that was used by SMM core to cache CommSize from SmmCommunication protocol.
-      //
+      if (!SmmIsBufferOutsideSmmValid ((EFI_PHYSICAL_ADDRESS)(UINTN)CommBufferSize, sizeof(UINTN))) {
+        DEBUG ((EFI_D_ERROR, "GetStatistics: SMM communication buffer in SMRAM!\n"));
+        Status = EFI_ACCESS_DENIED;
+        goto EXIT;
+      }
 
       Status = SmmVariableGetStatistics (VariableInfo, &InfoSize);
-      *CommBufferSize = InfoSize + SMM_VARIABLE_COMMUNICATE_HEADER_SIZE;
+      *CommBufferSize = InfoSize + SMM_VARIABLE_COMMUNICATE_HEADER2_SIZE;
       break;
 
     case SMM_VARIABLE_FUNCTION_LOCK_VARIABLE:
@@ -799,6 +1280,11 @@ SmmVariableHandler (
                  );
       CopyMem (SmmVariableFunctionHeader->Data, mVariableBufferPayload, CommBufferPayloadSize);
       break;
+    case SMM_VARIABLE_FUNCTION_CLEAR_COMMAND_IN_PROGRESS:
+      if (mSmmVariableIoCompletionState.CommandInProgress && !mSmmVariableIoCompletionState.FromSmm) {
+        mSmmVariableIoCompletionState.CommandInProgress = FALSE;
+      }
+      break;
 
     default:
       Status = EFI_UNSUPPORTED;
@@ -845,123 +1331,73 @@ SmmEndOfDxeCallback (
 }
 
 /**
-  SMM Fault Tolerant Write protocol notification event handler.
+  Non-Volatile variable write service is ready event handler.
 
-  Non-Volatile variable write may needs FTW protocol to reclaim when
-  writting variable.
-
-  @param  Protocol   Points to the protocol's unique identifier
-  @param  Interface  Points to the interface instance
-  @param  Handle     The handle on which the interface was installed
-
-  @retval EFI_SUCCESS   SmmEventCallback runs successfully
-  @retval EFI_NOT_FOUND The Fvb protocol for variable is not found.
-
- **/
-EFI_STATUS
+**/
+VOID
 EFIAPI
-SmmFtwNotificationEvent (
-  IN CONST EFI_GUID                       *Protocol,
-  IN VOID                                 *Interface,
-  IN EFI_HANDLE                           Handle
+InstallVariableWriteReady (
+  VOID
   )
 {
-  EFI_STATUS                              Status;
-  EFI_SMM_FIRMWARE_VOLUME_BLOCK_PROTOCOL  *FvbProtocol;
-  EFI_SMM_FAULT_TOLERANT_WRITE_PROTOCOL   *FtwProtocol;
-  EFI_PHYSICAL_ADDRESS                    NvStorageVariableBase;
-  UINTN                                   FtwMaxBlockSize;
+  EFI_STATUS    Status;
+  VOID          *Interface;
 
-  if (mVariableModuleGlobal->FvbInstance != NULL) {
-    return EFI_SUCCESS;
+  DEBUG ((DEBUG_INFO, "Installing SmmVariableWriteGuid to notify wrapper\n"));
+
+  Status = gBS->LocateProtocol (&gSmmVariableWriteGuid, NULL, (VOID **) &Interface);
+  if (Status == EFI_NOT_FOUND) {
+    //
+    // Notify the variable wrapper driver the variable write service is ready
+    //
+    Status = gBS->InstallProtocolInterface (
+                    &mSmmVariableHandle,
+                    &gSmmVariableWriteGuid,
+                    EFI_NATIVE_INTERFACE,
+                    NULL
+                    );
+    ASSERT_EFI_ERROR (Status);
   }
-
-  //
-  // Ensure SMM FTW protocol is installed.
-  //
-  Status = GetFtwProtocol ((VOID **)&FtwProtocol);
-  if (EFI_ERROR (Status)) {
-    return Status;
-  }
-
-  Status = FtwProtocol->GetMaxBlockSize (FtwProtocol, &FtwMaxBlockSize);
-  if (!EFI_ERROR (Status)) {
-    ASSERT (PcdGet32 (PcdFlashNvStorageVariableSize) <= FtwMaxBlockSize);
-  }
-
-  //
-  // Find the proper FVB protocol for variable.
-  //
-  NvStorageVariableBase = (EFI_PHYSICAL_ADDRESS) PcdGet64 (PcdFlashNvStorageVariableBase64);
-  if (NvStorageVariableBase == 0) {
-    NvStorageVariableBase = (EFI_PHYSICAL_ADDRESS) PcdGet32 (PcdFlashNvStorageVariableBase);
-  }
-  Status = GetFvbInfoByAddress (NvStorageVariableBase, NULL, &FvbProtocol);
-  if (EFI_ERROR (Status)) {
-    return EFI_NOT_FOUND;
-  }
-
-  mVariableModuleGlobal->FvbInstance = FvbProtocol;
-
-  Status = VariableWriteServiceInitialize ();
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Variable write service initialization failed. Status = %r\n", Status));
-  }
-
-  //
-  // Notify the variable wrapper driver the variable write service is ready
-  //
-  Status = gBS->InstallProtocolInterface (
-                  &mSmmVariableHandle,
-                  &gSmmVariableWriteGuid,
-                  EFI_NATIVE_INTERFACE,
-                  NULL
-                  );
-  ASSERT_EFI_ERROR (Status);
-
-  return EFI_SUCCESS;
 }
 
-
 /**
-  Variable Driver main entry point. The Variable driver places the 4 EFI
-  runtime services in the EFI System Table and installs arch protocols
-  for variable read and write services being available. It also registers
-  a notification function for an EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE event.
+  Common variable initialization for SMM variable support.
 
-  @param[in] ImageHandle    The firmware allocated handle for the EFI image.
-  @param[in] SystemTable    A pointer to the EFI System Table.
-
-  @retval EFI_SUCCESS       Variable service successfully initialized.
+  @retval EFI_SUCCESS    SMM variable initialization ran successfully
 
 **/
 EFI_STATUS
 EFIAPI
-VariableServiceInitialize (
-  IN EFI_HANDLE                           ImageHandle,
-  IN EFI_SYSTEM_TABLE                     *SystemTable
+VariableSmmCommonInitialize (
+  VOID
   )
 {
-  EFI_STATUS                              Status;
-  EFI_HANDLE                              VariableHandle;
-  VOID                                    *SmmFtwRegistration;
-  VOID                                    *SmmEndOfDxeRegistration;
+  EFI_STATUS             Status;
+  EFI_HANDLE             VariableHandle;
 
-  //
-  // Variable initialize.
-  //
+  ///
+  /// Variable initialize.
+  ///
   Status = VariableCommonInitialize ();
   ASSERT_EFI_ERROR (Status);
 
-  //
-  // Install the Smm Variable Protocol on a new handle.
-  //
+  ///
+  /// Install the Smm Variable Protocol on a new handle.
+  ///
   VariableHandle = NULL;
+  Status = gSmst->SmmInstallProtocolInterface (
+                    &VariableHandle,
+                    &gEdkiiSmmVariableProtocolGuid,
+                    EFI_NATIVE_INTERFACE,
+                    &gSmmVariable
+                    );
+  ASSERT_EFI_ERROR (Status);
+
   Status = gSmst->SmmInstallProtocolInterface (
                     &VariableHandle,
                     &gEfiSmmVariableProtocolGuid,
                     EFI_NATIVE_INTERFACE,
-                    &gSmmVariable
+                    &gSmmLegacyVariable
                     );
   ASSERT_EFI_ERROR (Status);
 
@@ -973,7 +1409,15 @@ VariableServiceInitialize (
                     );
   ASSERT_EFI_ERROR (Status);
 
-  mVariableBufferPayloadSize = GetMaxVariableSize () +
+  Status = gSmst->SmmInstallProtocolInterface (
+                    &VariableHandle,
+                    &gEdkiiVariableStorageSupportProtocolGuid,
+                    EFI_NATIVE_INTERFACE,
+                    &mVariableStorageSupport
+                    );
+  ASSERT_EFI_ERROR (Status);
+
+  mVariableBufferPayloadSize = GetNonVolatileMaxVariableSize () +
                                OFFSET_OF (SMM_VARIABLE_COMMUNICATE_VAR_CHECK_VARIABLE_PROPERTY, Name) - GetVariableHeaderSize ();
 
   Status = gSmst->SmmAllocatePool (
@@ -993,13 +1437,338 @@ VariableServiceInitialize (
   //
   // Notify the variable wrapper driver the variable service is ready
   //
-  Status = SystemTable->BootServices->InstallProtocolInterface (
-                                        &mVariableHandle,
-                                        &gEfiSmmVariableProtocolGuid,
-                                        EFI_NATIVE_INTERFACE,
-                                        &gSmmVariable
-                                        );
+  Status = gBS->InstallProtocolInterface (
+                  &mVariableHandle,
+                  &gEfiSmmVariableProtocolGuid,
+                  EFI_NATIVE_INTERFACE,
+                  &gSmmLegacyVariable
+                  );
   ASSERT_EFI_ERROR (Status);
+
+  return EFI_SUCCESS;
+}
+
+/**
+  SMM EDKII_VARIABLE_STORAGE_SELECTOR_PROTOCOL notification event handler.
+
+  @param  Protocol       Points to the protocol's unique identifier
+  @param  Interface      Points to the interface instance
+  @param  Handle         The handle on which the interface was installed
+
+  @retval EFI_SUCCESS    SmmVariableStorageSelectorNotify runs successfully
+  @retval EFI_NOT_READY  The SMM variable storage selector protocol was not found
+
+**/
+EFI_STATUS
+EFIAPI
+SmmVariableStorageSelectorNotify (
+  IN CONST EFI_GUID      *Protocol,
+  IN VOID                *Interface,
+  IN EFI_HANDLE          Handle
+  )
+{
+  EFI_STATUS             Status;
+  EFI_HANDLE             *Handles;
+  UINTN                  Index;
+
+  Handles = NULL;
+
+  ///
+  /// Locate the variable storage selector protocol
+  ///
+  Status = gSmst->SmmLocateProtocol (
+                    &gEdkiiSmmVariableStorageSelectorProtocolGuid,
+                    NULL,
+                    (VOID **) &mVariableModuleGlobal->VariableGlobal.VariableStorageSelectorProtocol
+                    );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_INFO, "VariableStorageSelectorProtocol not found.\n"));
+    return EFI_NOT_READY;
+  }
+  ///
+  /// Determine the number of handles
+  ///
+  Status = gSmst->SmmLocateHandle (
+                    ByProtocol,
+                    &gEdkiiVariableStorageProtocolGuid,
+                    NULL,
+                    &mVariableModuleGlobal->VariableGlobal.VariableStoresCount,
+                    Handles
+                    );
+  if (Status != EFI_BUFFER_TOO_SMALL) {
+    DEBUG ((DEBUG_INFO, "No SMM VariableStorageProtocol instances exist\n"));
+    return EFI_NOT_READY;
+  }
+  Handles = AllocateZeroPool (mVariableModuleGlobal->VariableGlobal.VariableStoresCount);
+  if (Handles == NULL) {
+    ASSERT (Handles != NULL);
+    return EFI_OUT_OF_RESOURCES;
+  }
+  mVariableModuleGlobal->VariableGlobal.VariableStores = NULL;
+  Status = gSmst->SmmAllocatePool (
+                    EfiRuntimeServicesData,
+                    sizeof (EDKII_VARIABLE_STORAGE_PROTOCOL *) * (mVariableModuleGlobal->VariableGlobal.VariableStoresCount / sizeof(EFI_HANDLE)),
+                    (VOID **)&mVariableModuleGlobal->VariableGlobal.VariableStores
+                    );
+  ASSERT_EFI_ERROR (Status);
+  ASSERT (mVariableModuleGlobal->VariableGlobal.VariableStores != NULL);
+  if (EFI_ERROR (Status) || mVariableModuleGlobal->VariableGlobal.VariableStores == NULL) {
+    FreePool (Handles);
+    return EFI_OUT_OF_RESOURCES;
+  }
+  ///
+  /// Get the handles
+  ///
+  Status = gSmst->SmmLocateHandle (
+                    ByProtocol,
+                    &gEdkiiVariableStorageProtocolGuid,
+                    NULL,
+                    &mVariableModuleGlobal->VariableGlobal.VariableStoresCount,
+                    Handles
+                    );
+  if (EFI_ERROR (Status)) {
+    ASSERT_EFI_ERROR (Status);
+    gSmst->SmmFreePool (mVariableModuleGlobal->VariableGlobal.VariableStores);
+    FreePool (Handles);
+    return Status;
+  }
+  mVariableModuleGlobal->VariableGlobal.VariableStoresCount /= sizeof (EFI_HANDLE);
+
+  for ( Index = 0;
+        Index < mVariableModuleGlobal->VariableGlobal.VariableStoresCount;
+        Index++) {
+    Status = gSmst->SmmHandleProtocol (
+              Handles[Index],
+              &gEdkiiVariableStorageProtocolGuid,
+              (VOID **) &mVariableModuleGlobal->VariableGlobal.VariableStores[Index]
+              );
+    ASSERT_EFI_ERROR (Status);
+    if (EFI_ERROR (Status)) {
+      FreePool (Handles);
+      return Status;
+    }
+  }
+  FreePool (Handles);
+
+  Status = VariableSmmCommonInitialize ();
+  ASSERT_EFI_ERROR (Status);
+
+  return EFI_SUCCESS;
+}
+
+/**
+  A callback function that is invoked after the last HOB variable was attempted to be flushed to non-volatile media.
+
+  @param[in]       Context       The HOB variable flush context.
+  @param[in]       Status        The result of the last HOB flush variable write operation.
+
+**/
+VOID
+EFIAPI
+FlushHobVariableToStorageSmmCallback (
+  IN      VOID                              *Context,            OPTIONAL
+  IN      EFI_STATUS                        Status
+  )
+{
+  //
+  // Clear completion state context to prepare for a potentially new SetVariable call
+  //
+  ZeroMem ((VOID *) &mSmmVariableIoCompletionState, sizeof (SMM_VARIABLE_IO_COMPLETION_STATE));
+
+  if (!EFI_ERROR (Status)) {
+    //
+    // If set variable successful, or the updated or deleted variable is matched with the HOB variable,
+    // set the HOB variable to DELETED state in local.
+    //
+    DEBUG ((
+      EFI_D_INFO,
+      "  Variable Driver: HOB variable set to DELETED state in local: %g %s\n",
+      GetVendorGuidPtr (mSmmVariableFlushHobContext.Variable),
+      GetVariableNamePtr (mSmmVariableFlushHobContext.Variable)
+      ));
+    mSmmVariableFlushHobContext.Variable->State &= VAR_DELETED;
+  } else {
+    DEBUG ((DEBUG_ERROR, "Variable Driver: Error attempting to set the HOB variable. Status = %r.\n", Status));
+    mSmmVariableFlushHobContext.ErrorFlag = TRUE;
+  }
+  //
+  // Restore HOB variable base to the value in the original call
+  //
+  mVariableModuleGlobal->VariableGlobal.HobVariableBase = mSmmVariableFlushHobContext.HobVariableBase;
+
+  FlushHobVariableToStorage (
+    mSmmVariableFlushHobContext.VariableName,
+    mSmmVariableFlushHobContext.VendorGuid,
+    mSmmVariableFlushHobContext.HobFlushCompleteCallback
+    );
+}
+
+/**
+  Flush the HOB variable to storage.
+
+  @param[in] VariableName       Name of variable has been updated or deleted.
+  @param[in] VendorGuid         Guid of variable has been updated or deleted.
+  @param[in] Callback           An optional callback function with activities that should occur after HOB flush.
+
+**/
+VOID
+FlushHobVariableToStorage (
+  IN CHAR16                               *VariableName,
+  IN EFI_GUID                             *VendorGuid,
+  IN VARIABLE_HOB_FLUSH_COMPLETE_CALLBACK Callback      OPTIONAL
+  )
+{
+  EFI_STATUS                    Status;
+  VARIABLE_STORE_HEADER         *VariableStoreHeader;
+  VARIABLE_HEADER               *Variable;
+
+  if (mVariableModuleGlobal->VariableGlobal.HobVariableBase == 0) {
+    return;
+  } else if (mSmmVariableFlushHobContext.ErrorFlag) {
+    mSmmVariableFlushHobContext.ErrorFlag = FALSE;
+    ZeroMem ((VOID *) &mSmmVariableFlushHobContext, sizeof (SMM_VARIABLE_FLUSH_HOB_CONTEXT));
+    if (Callback != NULL) {
+      Callback ();
+    }
+    return;
+  }
+
+  mSmmVariableFlushHobContext.HobFlushCompleteCallback = Callback;
+  mSmmVariableFlushHobContext.HobVariableBase = mVariableModuleGlobal->VariableGlobal.HobVariableBase;
+  mSmmVariableFlushHobContext.VariableName = VariableName;
+  mSmmVariableFlushHobContext.VendorGuid = VendorGuid;
+
+  VariableStoreHeader = (VARIABLE_STORE_HEADER *) (UINTN) mVariableModuleGlobal->VariableGlobal.HobVariableBase;
+  //
+  // Set HobVariableBase to 0, it can avoid SetVariable to call back.
+  //
+  mVariableModuleGlobal->VariableGlobal.HobVariableBase = 0;
+  for ( Variable = GetStartPointer (VariableStoreHeader)
+      ; IsValidVariableHeader (Variable, GetEndPointer (VariableStoreHeader))
+      ; Variable = GetNextVariablePtr (Variable)
+      ) {
+    if (Variable->State != VAR_ADDED) {
+      //
+      // The HOB variable has been set to DELETED state in local.
+      //
+      continue;
+    }
+    ASSERT ((Variable->Attributes & EFI_VARIABLE_NON_VOLATILE) != 0);
+    if (
+      VendorGuid == NULL ||
+      VariableName == NULL ||
+      !CompareGuid (VendorGuid, GetVendorGuidPtr (Variable)) ||
+      StrCmp (VariableName, GetVariableNamePtr (Variable)) != 0
+      ) {
+      mSmmVariableFlushHobContext.Variable = Variable;
+      Status =  SmmVariableSetVariableInternal (
+                  (VOID *) &mSmmVariableFlushHobContext,
+                  GetVariableNamePtr (Variable),
+                  GetVendorGuidPtr (Variable),
+                  Variable->Attributes,
+                  DataSizeOfVariable (Variable),
+                  GetVariableDataPtr (Variable),
+                  FlushHobVariableToStorageSmmCallback,
+                  TRUE
+                  );
+      DEBUG ((
+        EFI_D_INFO,
+        "  Variable Driver: Flushing HOB variable to storage: %g %s %r\n",
+        GetVendorGuidPtr (Variable),
+        GetVariableNamePtr (Variable),
+        Status
+        ));
+      break;
+    }
+  }
+
+  if (!IsValidVariableHeader (Variable, GetEndPointer (VariableStoreHeader))) {
+    if (mSmmVariableFlushHobContext.ErrorFlag) {
+      //
+      // Some HOB variable(s) are still not flushed to storage.
+      //
+      mVariableModuleGlobal->VariableGlobal.HobVariableBase = (EFI_PHYSICAL_ADDRESS) (UINTN) VariableStoreHeader;
+    } else {
+      //
+      // All HOB variables have been flushed to storage.
+      //
+      DEBUG ((EFI_D_INFO, "  Variable Driver: All HOB variables have been flushed to storage.\n"));
+      if (!AtRuntime ()) {
+        FreePool ((VOID *) VariableStoreHeader);
+      }
+    }
+    ZeroMem ((VOID *) &mSmmVariableFlushHobContext, sizeof (SMM_VARIABLE_FLUSH_HOB_CONTEXT));
+    if (Callback != NULL) {
+      Callback ();
+    }
+  }
+}
+
+/**
+  Variable SMM Driver main entry point.
+
+  @param[in] ImageHandle    The firmware allocated handle for the EFI image.
+  @param[in] SystemTable    A pointer to the EFI System Table.
+
+  @retval EFI_SUCCESS       Variable service successfully initialized.
+
+**/
+EFI_STATUS
+EFIAPI
+VariableServiceInitialize (
+  IN EFI_HANDLE                           ImageHandle,
+  IN EFI_SYSTEM_TABLE                     *SystemTable
+  )
+{
+  EFI_STATUS                              Status;
+  VOID                                    *SmmEndOfDxeRegistration;
+  VOID                                    *SmmVariableStorageSelectorNotifyRegistration;
+
+  ///
+  /// Allocate runtime memory for variable driver global structure.
+  ///
+  mVariableModuleGlobal = NULL;
+  Status = gSmst->SmmAllocatePool (
+                    EfiRuntimeServicesData,
+                    sizeof (VARIABLE_MODULE_GLOBAL),
+                    (VOID **)&mVariableModuleGlobal
+                    );
+  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status) || mVariableModuleGlobal == NULL) {
+    return EFI_OUT_OF_RESOURCES;
+  }
+  ZeroMem (mVariableModuleGlobal, sizeof (VARIABLE_MODULE_GLOBAL));
+  ZeroMem ((VOID *) &mSmmVariableIoCompletionState, sizeof (SMM_VARIABLE_IO_COMPLETION_STATE));
+
+  mVariableModuleGlobal->VariableGlobal.VariableStoresCount = 0;
+
+  ///
+  /// Determine if Force Volatile Mode is enabled
+  ///
+  mNvVariableEmulationMode = PcdGetBool (PcdNvVariableEmulationMode);
+
+  if (!mNvVariableEmulationMode) {
+    //
+    // Register EDKII_VARIABLE_STORAGE_SELECTOR_PROTOCOL notify function.
+    //
+    Status = gSmst->SmmRegisterProtocolNotify (
+                      &gEdkiiSmmVariableStorageSelectorProtocolGuid,
+                      SmmVariableStorageSelectorNotify,
+                      &SmmVariableStorageSelectorNotifyRegistration
+                      );
+    if (EFI_ERROR (Status)) {
+      ASSERT_EFI_ERROR (Status);
+      return Status;
+    }
+    Status = SmmVariableStorageSelectorNotify (NULL, NULL, NULL);
+    if (EFI_ERROR (Status) && Status != EFI_NOT_READY) {
+      ASSERT_EFI_ERROR (Status);
+      return Status;
+    }
+  } else {
+    Status = VariableSmmCommonInitialize ();
+    ASSERT_EFI_ERROR (Status);
+  }
 
   //
   // Register EFI_SMM_END_OF_DXE_PROTOCOL_GUID notify function.
@@ -1011,19 +1780,5 @@ VariableServiceInitialize (
                     );
   ASSERT_EFI_ERROR (Status);
 
-  //
-  // Register FtwNotificationEvent () notify function.
-  //
-  Status = gSmst->SmmRegisterProtocolNotify (
-                    &gEfiSmmFaultTolerantWriteProtocolGuid,
-                    SmmFtwNotificationEvent,
-                    &SmmFtwRegistration
-                    );
-  ASSERT_EFI_ERROR (Status);
-
-  SmmFtwNotificationEvent (NULL, NULL, NULL);
-
   return EFI_SUCCESS;
 }
-
-

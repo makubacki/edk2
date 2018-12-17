@@ -254,6 +254,8 @@
   #  Include/Guid/SmmVariableCommon.h
   gSmmVariableWriteGuid  = { 0x93ba1826, 0xdffb, 0x45dd, { 0x82, 0xa7, 0xe7, 0xdc, 0xaa, 0x3b, 0xbd, 0xf3 }}
 
+  gPeiVariableCacheHobGuid  = { 0x35212b29, 0x128a, 0x4754, { 0xb9, 0x96, 0x62, 0x45, 0xcc, 0xa8, 0xa0, 0x66}}
+
   ## Performance protocol guid that also acts as the performance HOB guid and performance variable GUID
   #  Include/Guid/Performance.h
   gPerformanceProtocolGuid       = { 0x76B6BDFA, 0x2ACD, 0x4462, { 0x9E, 0x3F, 0xCB, 0x58, 0xC9, 0x69, 0xD9, 0x37 } }
@@ -462,6 +464,9 @@
   ## Include/Ppi/IpmiPpi.h
   gPeiIpmiPpiGuid               =  { 0xa9731431, 0xd968, 0x4277, { 0xb7, 0x52, 0xa3, 0xa9, 0xa6, 0xae, 0x18, 0x98 }}
 
+  ## Include/Ppi/ReadOnlyVariablePreMemoryDescriptorPpi.h
+  gPeiReadOnlyVariablePreMemoryDescriptorPpiGuid  =  { 0xbe136fc9, 0xc277, 0x4dd1, { 0xbe, 0x42, 0xce, 0xf0, 0x9f, 0xf4, 0x3f, 0x55 }}
+
   ## Include/Ppi/SdMmcHostController.h
   gEdkiiPeiSdMmcHostControllerPpiGuid = { 0xb30dfeed, 0x947f, 0x4396, { 0xb1, 0x5a, 0xdf, 0xbd, 0xb9, 0x16, 0xdc, 0x24 }}
 
@@ -479,6 +484,12 @@
 
   ## Include/Ppi/NvmExpressHostController.h
   gEdkiiPeiNvmExpressHostControllerPpiGuid  = { 0xcae3aa63, 0x676f, 0x4da3, { 0xbd, 0x50, 0x6c, 0xc5, 0xed, 0xde, 0x9a, 0xad } }
+
+  ## Include/Ppi/VariableStoragePpi.h
+  gEdkiiVariableStoragePpiGuid  =  { 0x90d915c5, 0xe4c1, 0x4da8, { 0xa7, 0x6f, 0x9,  0xe5, 0x78, 0x91, 0x65, 0x48 }}
+
+  ## Include/Ppi/VariableStorageSelectorPpi.h
+  gEdkiiVariableStorageSelectorPpiGuid  =  { 0x782546d1, 0x03ab, 0x41e4, { 0xa0, 0x1d, 0x7a, 0x9b, 0x22, 0xba, 0x2e, 0x1e }}
 
 [Protocols]
   ## Load File protocol provides capability to load and unload EFI image into memory and execute it.
@@ -532,6 +543,26 @@
 
   ## Include/Protocol/SmmVarCheck.h
   gEdkiiSmmVarCheckProtocolGuid  = { 0xb0d8f3c1, 0xb7de, 0x4c11, { 0xbc, 0x89, 0x2f, 0xb5, 0x62, 0xc8, 0xc4, 0x11 } }
+
+  ## Include/Protocol/EdkiiSmmVariable.h
+  gEdkiiSmmVariableProtocolGuid  =  { 0x4113c18f, 0xd650, 0x488c, { 0x92, 0x93, 0xa0, 0x56, 0xa5, 0x0c, 0xd3, 0xf6 }}
+
+  ## Include/Protocol/VariableStorageSelectorProtocol.h
+  gEdkiiSmmVariableStorageSelectorProtocolGuid  =  { 0x1dbbe48c, 0x9087, 0x44e7, { 0x96, 0x6e, 0x80, 0x75, 0xe4, 0x12, 0x0b, 0xd8 }}
+
+  ## Include/Protocol/VariableStorageIoCompletionProtocol.h
+  gEdkiiVariableStorageIoCompletionProtocolGuid = { 0x2e1c3ff9, 0xdc75, 0x41c5, { 0xbd, 0x48, 0x26, 0x08, 0x7b, 0x5d, 0xc9, 0x2a }}
+
+  ## Include/Protocol/VariableStorageProtocol.h
+  gEdkiiVariableStorageProtocolGuid = { 0xa073a3a6, 0x96ec, 0x4173, { 0xa9, 0xbc, 0x39, 0x95, 0x06, 0xcd, 0xea, 0xc6 }}
+
+  ## Include/Protocol/VariableStorageSelectorProtocol.h
+  gEdkiiVariableStorageSelectorProtocolGuid = { 0xd56ede61, 0x81f5, 0x48f3, { 0xaf, 0x4b, 0x8d, 0x54, 0x83, 0xb9, 0xec, 0xc9 }}
+
+  ## Include/Protocol/VariableStorageSupportProtocol.h
+  gEdkiiVariableStorageSupportProtocolGuid = { 0x9c6e6668, 0x371d, 0x45f4, { 0x80, 0x48, 0xfd, 0xd1, 0x62, 0x2f, 0xd1, 0xf9 }}
+
+  gEdkiiVariableWriteReadyOperationsCompleteGuid  =  { 0x2b24c602, 0xb825, 0x4ffe, { 0xb3, 0x35, 0xb4, 0x63, 0x9e, 0x51, 0xcb, 0x77 }}
 
   ## This protocol is similar with DXE FVB protocol and used in the UEFI SMM evvironment.
   #  Include/Protocol/SmmFirmwareVolumeBlock.h
@@ -2010,6 +2041,12 @@
   ## This dynamic PCD holds the information if there is any test key used by the platform.
   # @Prompt If there is any test key used by the platform.
   gEfiMdeModulePkgTokenSpaceGuid.PcdTestKeyUsed|FALSE|BOOLEAN|0x00030003
+
+  ## Causes all UEFI variables to be treated as volatile and hence never written to non-volatile
+  ## storage.
+  ## This is useful in cases such as a simulation environment that does not emulate a non-volatile
+  ## storage device or in recovery scenarios where system errors prevent non-volatile storage from being accessed
+  gEfiMdeModulePkgTokenSpaceGuid.PcdNvVariableEmulationMode|FALSE|BOOLEAN|0x00030010
 
 [PcdsDynamicEx]
   ## This dynamic PCD enables the default variable setting.

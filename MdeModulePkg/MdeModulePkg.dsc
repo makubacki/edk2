@@ -437,7 +437,6 @@
   }
 
 [Components.IA32, Components.X64, Components.Ebc]
-  MdeModulePkg/Universal/Variable/EmuRuntimeDxe/EmuVariableRuntimeDxe.inf
 
 [Components.IA32, Components.X64]
   MdeModulePkg/Application/SmiHandlerProfileInfo/SmiHandlerProfileInfo.inf

@@ -2,7 +2,7 @@
   The internal header file includes the common header files, defines
   internal structure and functions used by Variable modules.
 
-Copyright (c) 2006 - 2017, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2006 - 2018, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -18,19 +18,19 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #include <PiDxe.h>
 #include <Protocol/VariableWrite.h>
-#include <Protocol/FaultTolerantWrite.h>
-#include <Protocol/FirmwareVolumeBlock.h>
 #include <Protocol/Variable.h>
 #include <Protocol/VariableLock.h>
 #include <Protocol/VarCheck.h>
+#include <Protocol/VariableStorageProtocol.h>
+#include <Protocol/VariableStorageSelectorProtocol.h>
+#include <Protocol/VariableStorageSupportProtocol.h>
 #include <Library/PcdLib.h>
 #include <Library/HobLib.h>
-#include <Library/UefiDriverEntryPoint.h>
-#include <Library/DxeServicesTableLib.h>
 #include <Library/UefiRuntimeLib.h>
 #include <Library/DebugLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/UefiBootServicesTableLib.h>
+#include <Library/UefiRuntimeServicesTableLib.h>
 #include <Library/UefiLib.h>
 #include <Library/BaseLib.h>
 #include <Library/SynchronizationLib.h>
@@ -41,8 +41,8 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Guid/EventGroup.h>
 #include <Guid/VariableFormat.h>
 #include <Guid/SystemNvDataGuid.h>
-#include <Guid/FaultTolerantWrite.h>
 #include <Guid/VarErrorFlag.h>
+#include <Guid/ImageAuthentication.h>
 
 #include "PrivilegePolymorphic.h"
 
@@ -58,10 +58,13 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 ///
 #define ISO_639_2_ENTRY_SIZE    3
 
+#define MAX_VARIABLE_NAME_SIZE  1024
+#define DEFAULT_NV_STORE_SIZE   0x20000
+
 typedef enum {
   VariableStoreTypeVolatile,
   VariableStoreTypeHob,
-  VariableStoreTypeNv,
+  VariableStoreTypeNvCache,
   VariableStoreTypeMax
 } VARIABLE_STORE_TYPE;
 
@@ -80,19 +83,20 @@ typedef struct {
 } VARIABLE_POINTER_TRACK;
 
 typedef struct {
-  EFI_PHYSICAL_ADDRESS  HobVariableBase;
-  EFI_PHYSICAL_ADDRESS  VolatileVariableBase;
-  EFI_PHYSICAL_ADDRESS  NonVolatileVariableBase;
-  EFI_LOCK              VariableServicesLock;
-  UINT32                ReentrantState;
-  BOOLEAN               AuthFormat;
-  BOOLEAN               AuthSupport;
+  EFI_PHYSICAL_ADDRESS                      HobVariableBase;
+  EFI_PHYSICAL_ADDRESS                      VolatileVariableBase;
+  EDKII_VARIABLE_STORAGE_PROTOCOL           **VariableStores;
+  EDKII_VARIABLE_STORAGE_SELECTOR_PROTOCOL  *VariableStorageSelectorProtocol;
+  UINTN                                     VariableStoresCount;
+  EFI_LOCK                                  VariableServicesLock;
+  UINT32                                    ReentrantState;
+  BOOLEAN                                   AuthFormat;
+  BOOLEAN                                   AuthSupport;
 } VARIABLE_GLOBAL;
 
 typedef struct {
   VARIABLE_GLOBAL VariableGlobal;
   UINTN           VolatileLastVariableOffset;
-  UINTN           NonVolatileLastVariableOffset;
   UINTN           CommonVariableSpace;
   UINTN           CommonMaxUserVariableSpace;
   UINTN           CommonRuntimeVariableSpace;
@@ -107,41 +111,48 @@ typedef struct {
   CHAR8           *LangCodes;
   CHAR8           *PlatformLang;
   CHAR8           Lang[ISO_639_2_ENTRY_SIZE + 1];
-  EFI_FIRMWARE_VOLUME_BLOCK_PROTOCOL *FvbInstance;
+  BOOLEAN         WriteServiceReady;
 } VARIABLE_MODULE_GLOBAL;
 
-/**
-  Flush the HOB variable to flash.
+//@todo: Make the change to MdeModulePkg/Include/Guid/SmmVariableCommon.h instead of defining a new struct here
+typedef struct {
+  UINTN       Function;
+  EFI_STATUS  ReturnStatus;
+  EFI_GUID    InProgressNvStorageInstanceId;
+  BOOLEAN     CommandInProgress;
+  BOOLEAN     ReenterFunction;
+  BOOLEAN     VariableServicesInUse;
+  UINT8       Reserved[1];
+  UINT8       Data[1];
+} SMM_VARIABLE_COMMUNICATE_HEADER2;
+#define SMM_VARIABLE_COMMUNICATE_HEADER2_SIZE  (OFFSET_OF (SMM_VARIABLE_COMMUNICATE_HEADER2, Data))
 
-  @param[in] VariableName       Name of variable has been updated or deleted.
-  @param[in] VendorGuid         Guid of variable has been updated or deleted.
+//@todo: Make the change to MdeModulePkg/Include/Guid/SmmVariableCommon.h instead of defining here
+#define SMM_VARIABLE_FUNCTION_CLEAR_COMMAND_IN_PROGRESS 12
+
+/**
+  A callback function that is invoked once the HOB flush operation is completed.
 
 **/
+typedef
 VOID
-FlushHobVariableToFlash (
-  IN CHAR16                     *VariableName,
-  IN EFI_GUID                   *VendorGuid
+(EFIAPI *VARIABLE_HOB_FLUSH_COMPLETE_CALLBACK)(
+  VOID
   );
 
 /**
-  Writes a buffer to variable storage space, in the working block.
+  Flush the HOB variable to storage.
 
-  This function writes a buffer to variable storage space into a firmware
-  volume block device. The destination is specified by the parameter
-  VariableBase. Fault Tolerant Write protocol is used for writing.
-
-  @param  VariableBase   Base address of the variable to write.
-  @param  VariableBuffer Point to the variable data buffer.
-
-  @retval EFI_SUCCESS    The function completed successfully.
-  @retval EFI_NOT_FOUND  Fail to locate Fault Tolerant Write protocol.
-  @retval EFI_ABORTED    The function could not complete successfully.
+  @param[in] VariableName       Name of variable has been updated or deleted.
+  @param[in] VendorGuid         Guid of variable has been updated or deleted.
+  @param[in] Callback           An optional callback function with activities that should occur after HOB flush.
 
 **/
-EFI_STATUS
-FtwVariableSpace (
-  IN EFI_PHYSICAL_ADDRESS   VariableBase,
-  IN VARIABLE_STORE_HEADER  *VariableBuffer
+VOID
+FlushHobVariableToStorage (
+  IN CHAR16                               *VariableName,
+  IN EFI_GUID                             *VendorGuid,
+  IN VARIABLE_HOB_FLUSH_COMPLETE_CALLBACK Callback      OPTIONAL
   );
 
 /**
@@ -163,6 +174,13 @@ FtwVariableSpace (
                                       NV variable storage area, and a lock.
   @param[in]   IgnoreRtCheck          Ignore EFI_VARIABLE_RUNTIME_ACCESS attribute
                                       check at runtime when searching variable.
+  @param[out]  CommandInProgress      TRUE if the command requires asyncronous I/O and has not completed yet.
+                                      If this parameter is TRUE, then PtrTrack will not be updated and will
+                                      not contain valid data.  Asyncronous I/O should only be required during
+                                      OS runtime phase, this return value will be FALSE during all Pre-OS stages.
+                                      If CommandInProgress is returned TRUE, then this function will return EFI_SUCCESS
+  @param[out]  InProgressInstanceGuid If CommandInProgress is TRUE, this will contain the instance GUID of the Variable
+                                      Storage driver that is performing the asyncronous I/O
 
   @retval EFI_INVALID_PARAMETER       If VariableName is not an empty string, while
                                       VendorGuid is NULL.
@@ -176,7 +194,23 @@ FindVariable (
   IN  EFI_GUID                *VendorGuid,
   OUT VARIABLE_POINTER_TRACK  *PtrTrack,
   IN  VARIABLE_GLOBAL         *Global,
-  IN  BOOLEAN                 IgnoreRtCheck
+  IN  BOOLEAN                 IgnoreRtCheck,
+  OUT BOOLEAN                 *CommandInProgress,
+  OUT EFI_GUID                *InProgressInstanceGuid
+  );
+
+/**
+
+  Gets the pointer to the first variable header in given variable store area.
+
+  @param VarStoreHeader  Pointer to the Variable Store Header.
+
+  @return Pointer to the first variable header.
+
+**/
+VARIABLE_HEADER *
+GetStartPointer (
+  IN VARIABLE_STORE_HEADER       *VarStoreHeader
   );
 
 /**
@@ -245,6 +279,37 @@ GetVendorGuidPtr (
 **/
 UINT8 *
 GetVariableDataPtr (
+  IN  VARIABLE_HEADER   *Variable
+  );
+
+/**
+
+  This code checks if variable header is valid or not.
+
+  @param Variable           Pointer to the Variable Header.
+  @param VariableStoreEnd   Pointer to the Variable Store End.
+
+  @retval TRUE              Variable header is valid.
+  @retval FALSE             Variable header is not valid.
+
+**/
+BOOLEAN
+IsValidVariableHeader (
+  IN  VARIABLE_HEADER       *Variable,
+  IN  VARIABLE_HEADER       *VariableStoreEnd
+  );
+
+/**
+
+  This code gets the pointer to the next variable header.
+
+  @param Variable        Pointer to the Variable Header.
+
+  @return Pointer to next variable header.
+
+**/
+VARIABLE_HEADER *
+GetNextVariablePtr (
   IN  VARIABLE_HEADER   *Variable
   );
 
@@ -391,45 +456,6 @@ ReleaseLockOnlyAtBootTime (
   );
 
 /**
-  Retrieve the FVB protocol interface by HANDLE.
-
-  @param[in]  FvBlockHandle     The handle of FVB protocol that provides services for
-                                reading, writing, and erasing the target block.
-  @param[out] FvBlock           The interface of FVB protocol
-
-  @retval EFI_SUCCESS           The interface information for the specified protocol was returned.
-  @retval EFI_UNSUPPORTED       The device does not support the FVB protocol.
-  @retval EFI_INVALID_PARAMETER FvBlockHandle is not a valid EFI_HANDLE or FvBlock is NULL.
-
-**/
-EFI_STATUS
-GetFvbByHandle (
-  IN  EFI_HANDLE                          FvBlockHandle,
-  OUT EFI_FIRMWARE_VOLUME_BLOCK_PROTOCOL  **FvBlock
-  );
-
-/**
-  Function returns an array of handles that support the FVB protocol
-  in a buffer allocated from pool.
-
-  @param[out]  NumberHandles    The number of handles returned in Buffer.
-  @param[out]  Buffer           A pointer to the buffer to return the requested
-                                array of  handles that support FVB protocol.
-
-  @retval EFI_SUCCESS           The array of handles was returned in Buffer, and the number of
-                                handles in Buffer was returned in NumberHandles.
-  @retval EFI_NOT_FOUND         No FVB handle was found.
-  @retval EFI_OUT_OF_RESOURCES  There is not enough pool memory to store the matching results.
-  @retval EFI_INVALID_PARAMETER NumberHandles is NULL or Buffer is NULL.
-
-**/
-EFI_STATUS
-GetFvbCountAndBuffer (
-  OUT UINTN                               *NumberHandles,
-  OUT EFI_HANDLE                          **Buffer
-  );
-
-/**
   Initializes variable store area for non-volatile and volatile variable.
 
   @retval EFI_SUCCESS           Function successfully executed.
@@ -485,36 +511,6 @@ VariableWriteServiceInitialize (
   );
 
 /**
-  Retrieve the SMM Fault Tolerent Write protocol interface.
-
-  @param[out] FtwProtocol       The interface of SMM Ftw protocol
-
-  @retval EFI_SUCCESS           The SMM SAR protocol instance was found and returned in SarProtocol.
-  @retval EFI_NOT_FOUND         The SMM SAR protocol instance was not found.
-  @retval EFI_INVALID_PARAMETER SarProtocol is NULL.
-
-**/
-EFI_STATUS
-GetFtwProtocol (
-  OUT VOID                                **FtwProtocol
-  );
-
-/**
-  Get the proper fvb handle and/or fvb protocol by the given Flash address.
-
-  @param[in] Address        The Flash address.
-  @param[out] FvbHandle     In output, if it is not NULL, it points to the proper FVB handle.
-  @param[out] FvbProtocol   In output, if it is not NULL, it points to the proper FVB protocol.
-
-**/
-EFI_STATUS
-GetFvbInfoByAddress (
-  IN  EFI_PHYSICAL_ADDRESS                Address,
-  OUT EFI_HANDLE                          *FvbHandle OPTIONAL,
-  OUT EFI_FIRMWARE_VOLUME_BLOCK_PROTOCOL  **FvbProtocol OPTIONAL
-  );
-
-/**
 
   This code finds variable in storage blocks (Volatile or Non-Volatile).
 
@@ -529,6 +525,14 @@ GetFvbInfoByAddress (
                                     data, this value contains the required size.
   @param Data                       The buffer to return the contents of the variable. May be NULL
                                     with a zero DataSize in order to determine the size buffer needed.
+  @param CommandInProgress          TRUE if the command requires asyncronous I/O and has not completed yet
+                                    If this parameter is TRUE, then Attributes, DataSize, and Data will not
+                                    be updated and do not contain valid data.  Asyncronous I/O should only
+                                    be required during OS runtime phase, this return value must be
+                                    FALSE otherwise.  This parameter is only be used by the SMM Variable
+                                    Services implementation.  The Runtime DXE implementation always returns FALSE.
+  @param InProgressInstanceGuid     If CommandInProgress is TRUE, this will contain the instance GUID of the Variable
+                                    Storage driver that is performing the asyncronous I/O
 
   @return EFI_INVALID_PARAMETER     Invalid parameter.
   @return EFI_SUCCESS               Find the specified variable.
@@ -543,7 +547,9 @@ VariableServiceGetVariable (
   IN      EFI_GUID          *VendorGuid,
   OUT     UINT32            *Attributes OPTIONAL,
   IN OUT  UINTN             *DataSize,
-  OUT     VOID              *Data OPTIONAL
+  OUT     VOID              *Data OPTIONAL,
+  OUT     BOOLEAN           *CommandInProgress,
+  OUT     EFI_GUID          *InProgressInstanceGuid
   );
 
 /**
@@ -552,9 +558,9 @@ VariableServiceGetVariable (
   Caution: This function may receive untrusted input.
   This function may be invoked in SMM mode. This function will do basic validation, before parse the data.
 
-  @param[in] VariableName   Pointer to variable name.
-  @param[in] VendorGuid     Variable Vendor Guid.
-  @param[out] VariablePtr   Pointer to variable header address.
+  @param VariableNameSize   Size of the variable name.
+  @param VariableName       Pointer to variable name.
+  @param VariableGuid       Variable Vendor Guid.
 
   @retval EFI_SUCCESS           The function completed successfully.
   @retval EFI_NOT_FOUND         The next variable was not found.
@@ -566,9 +572,9 @@ VariableServiceGetVariable (
 EFI_STATUS
 EFIAPI
 VariableServiceGetNextVariableInternal (
-  IN  CHAR16                *VariableName,
-  IN  EFI_GUID              *VendorGuid,
-  OUT VARIABLE_HEADER       **VariablePtr
+  IN OUT UINTN              *VariableNameSize,
+  IN OUT CHAR16             *VariableName,
+  IN OUT EFI_GUID           *VariableGuid
   );
 
 /**
@@ -621,6 +627,12 @@ VariableServiceGetNextVariableName (
   @param DataSize                         Size of Data found. If size is less than the
                                           data, this value contains the required size.
   @param Data                             Data pointer.
+  @param CommandInProgress                TRUE if the command requires asyncronous I/O and has not completed yet.
+                                          Asyncronous I/O should only be required during OS runtime phase.  This
+                                          parameter is only be used by the SMM Variable Services implementation.
+                                          The Runtime DXE implementation always returns FALSE.
+  @param InProgressInstanceGuid           If CommandInProgress is TRUE, this will contain the instance GUID of the Variable
+                                          Storage driver that is performing the asyncronous I/O
 
   @return EFI_INVALID_PARAMETER           Invalid parameter.
   @return EFI_SUCCESS                     Set successfully.
@@ -632,11 +644,14 @@ VariableServiceGetNextVariableName (
 EFI_STATUS
 EFIAPI
 VariableServiceSetVariable (
-  IN CHAR16                  *VariableName,
-  IN EFI_GUID                *VendorGuid,
-  IN UINT32                  Attributes,
-  IN UINTN                   DataSize,
-  IN VOID                    *Data
+  IN  CHAR16                  *VariableName,
+  IN  EFI_GUID                *VendorGuid,
+  IN  UINT32                  Attributes,
+  IN  UINTN                   DataSize,
+  IN  VOID                    *Data,
+  OUT BOOLEAN                 *CommandInProgress,
+  OUT EFI_GUID                *InProgressInstanceGuid,
+  OUT BOOLEAN                 *ReenterFunction
   );
 
 /**
@@ -695,6 +710,48 @@ VariableServiceQueryVariableInfo (
   OUT UINT64                 *MaximumVariableStorageSize,
   OUT UINT64                 *RemainingVariableStorageSize,
   OUT UINT64                 *MaximumVariableSize
+  );
+
+/**
+  Notifies the core variable driver that the Variable Storage Driver's WriteServiceIsReady() function
+  is now returning TRUE instead of FALSE.
+
+  The Variable Storage Driver is required to call this function as quickly as possible.
+
+**/
+VOID
+EFIAPI
+VariableStorageSupportNotifyWriteServiceReady (
+  VOID
+  );
+
+/**
+  Update the non-volatile variable cache with a new value for the given variable
+
+  @param[in]  VariableName       Name of variable.
+  @param[in]  VendorGuid         Guid of variable.
+  @param[in]  Data               Variable data.
+  @param[in]  DataSize           Size of data. 0 means delete.
+  @param[in]  Attributes         Attributes of the variable.
+  @param[in]  KeyIndex           Index of associated public key.
+  @param[in]  MonotonicCount     Value of associated monotonic count.
+  @param[in]  TimeStamp          Value of associated TimeStamp.
+
+  @retval EFI_SUCCESS           The update operation is success.
+  @retval EFI_OUT_OF_RESOURCES  Variable region is full, can not write other data into this region.
+
+**/
+EFI_STATUS
+EFIAPI
+VariableStorageSupportUpdateNvCache (
+  IN      CHAR16                      *VariableName,
+  IN      EFI_GUID                    *VendorGuid,
+  IN      VOID                        *Data,
+  IN      UINTN                       DataSize,
+  IN      UINT32                      Attributes      OPTIONAL,
+  IN      UINT32                      KeyIndex        OPTIONAL,
+  IN      UINT64                      MonotonicCount  OPTIONAL,
+  IN      EFI_TIME                    *TimeStamp      OPTIONAL
   );
 
 /**
@@ -793,6 +850,8 @@ InitializeVariableQuota (
   );
 
 extern VARIABLE_MODULE_GLOBAL  *mVariableModuleGlobal;
+
+extern BOOLEAN                  mNvVariableEmulationMode;
 
 extern AUTH_VAR_LIB_CONTEXT_OUT mAuthContextOut;
 
@@ -924,4 +983,26 @@ VariableExLibAtRuntime (
   VOID
   );
 
+/**
+  Non-Volatile variable write service is ready event handler.
+
+**/
+VOID
+EFIAPI
+InstallVariableWriteReady (
+  VOID
+  );
+
+  /**
+  Determines if any of the NV storage drivers requires asyncronous I/O or not regardless of caller source
+
+  @retval     TRUE                    Asyncronous I/O is required during OS runtime to call to Get/SetVariable()
+  @retval     FALSE                   Asyncronous I/O is not required during OS runtime to call to Get/SetVariable()
+
+**/
+BOOLEAN
+EFIAPI
+VariableStorageAnyAsyncIoRequired (
+  VOID
+  );
 #endif
