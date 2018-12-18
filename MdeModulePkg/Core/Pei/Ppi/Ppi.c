@@ -205,6 +205,51 @@ ConvertPpiPointers (
 
 /**
 
+  Migrate Notify Pointers inside an FV from temporary memory to permanent memory.
+
+  @param PrivateData      Pointer to PeiCore's private data structure.
+  @param OrgFvHandle      Address of FV Handle in temporary memory.
+  @param FvHandle         Address of FV Handle in permanent memory.
+  @param FvSize           Size of the FV.
+
+**/
+VOID
+ConvertPpiPointersFv (
+  IN  PEI_CORE_INSTANCE       *PrivateData,
+  IN  UINTN                   OrgFvHandle,
+  IN  UINTN                   FvHandle,
+  IN  UINTN                   FvSize
+  )
+{
+  UINT8                     Index;
+  UINTN                     Offset;
+  BOOLEAN                   OffsetPositive;
+  IN PEI_PPI_LIST_POINTERS  *PpiPointer;
+
+  if (FvHandle > OrgFvHandle) {
+    OffsetPositive = TRUE;
+    Offset = FvHandle - OrgFvHandle;
+  } else {
+    OffsetPositive = FALSE;
+    Offset = OrgFvHandle - FvHandle;
+  }
+
+  for (Index = 0; Index < PcdGet32 (PcdPeiCoreMaxPpiSupported); Index++) {
+    if (Index < PrivateData->PpiData.PpiListEnd || Index > PrivateData->PpiData.NotifyListEnd) {
+      PpiPointer = &PrivateData->PpiData.PpiListPtrs[Index];
+      ConvertPointer (
+        &PpiPointer,
+        OrgFvHandle,
+        OrgFvHandle + FvSize,
+        Offset,
+        OffsetPositive
+        );
+    }
+  }
+}
+
+/**
+
   This function installs an interface in the PEI PPI database by GUID.
   The purpose of the service is to publish an interface that other parties
   can use to call additional PEIMs.
@@ -808,6 +853,72 @@ ProcessPpiListFromSec (
       Status = PeiInstallSecHobData (PeiServices, SecHobList);
       ASSERT_EFI_ERROR (Status);
     }
+  }
+}
+
+/**
+
+  Migrate PPI Pointers of PEI_CORE from temporary memory to permanent memory.
+
+  @param PrivateData      Pointer to PeiCore's private data structure.
+  @param CoreFvHandle     Address of PEI_CORE FV Handle in temporary memory.
+
+**/
+
+VOID
+ConvertPeiCorePpiPointers (
+  IN  PEI_CORE_INSTANCE        *PrivateData,
+  PEI_CORE_FV_HANDLE           CoreFvHandle
+  )
+{
+  EFI_FV_FILE_INFO      FileInfo;
+  EFI_PHYSICAL_ADDRESS  OrgImageBase;
+  EFI_PHYSICAL_ADDRESS  MigratedImageBase;
+  UINTN                 PeiCoreModuleSize;
+  EFI_PEI_FILE_HANDLE   PeiCoreFileHandle;
+  VOID                  *PeiCoreImageBase;
+  VOID                  *PeiCoreEntryPoint;
+  EFI_STATUS            Status;
+
+  PeiCoreFileHandle = NULL;
+
+  //
+  // Find the PEI Core in the BFV in temporary memory.
+  //
+  Status = CoreFvHandle.FvPpi->FindFileByType (
+                                       CoreFvHandle.FvPpi,
+                                       EFI_FV_FILETYPE_PEI_CORE,
+                                       CoreFvHandle.FvHandle,
+                                       &PeiCoreFileHandle
+                                       );
+  ASSERT_EFI_ERROR (Status);
+
+  if (!EFI_ERROR (Status)) {
+    Status = CoreFvHandle.FvPpi->GetFileInfo (CoreFvHandle.FvPpi, PeiCoreFileHandle, &FileInfo);
+    ASSERT_EFI_ERROR (Status);
+
+    Status = PeiGetPe32Data (PeiCoreFileHandle, &PeiCoreImageBase);
+    ASSERT_EFI_ERROR (Status);
+
+    //
+    // Find PEI Core EntryPoint in the BFV in temporary memory.
+    //
+    Status = PeCoffLoaderGetEntryPoint ((VOID *) (UINTN) PeiCoreImageBase,  &PeiCoreEntryPoint);
+    ASSERT_EFI_ERROR (Status);
+
+    OrgImageBase = (UINTN) PeiCoreImageBase;
+    MigratedImageBase = (UINTN) _ModuleEntryPoint - ((UINTN) PeiCoreEntryPoint - (UINTN) PeiCoreImageBase);
+
+    //
+    // Size of loaded PEI_CORE in permanent memory.
+    //
+    PeiCoreModuleSize = (UINTN)FileInfo.BufferSize - ((UINTN) OrgImageBase - (UINTN) FileInfo.Buffer);
+
+    //
+    // Migrate PEI_CORE PPI pointers from temporary memory to newly
+    // installed PEI_CORE in permanent memory.
+    //
+    ConvertPpiPointersFv (PrivateData, (UINTN) OrgImageBase, (UINTN) MigratedImageBase, PeiCoreModuleSize);
   }
 }
 

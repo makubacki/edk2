@@ -932,6 +932,189 @@ PeiCheckAndSwitchStack (
 }
 
 /**
+  Migrate a PEIM from Temporary RAM to permanent memory.
+
+  @param PeimFileHandle       Pointer to the FFS file header of the image.
+  @param MigratedFileHandle   Pointer to the FFS file header of the migrated image.
+
+  @retval EFI_SUCCESS         Sucessfully migrated the PEIM to permanent memory.
+
+**/
+EFI_STATUS
+EFIAPI
+MigratePeim (
+  IN  EFI_PEI_FILE_HANDLE     FileHandle,
+  IN  EFI_PEI_FILE_HANDLE     MigratedFileHandle
+  )
+{
+  EFI_STATUS                Status;
+  EFI_FFS_FILE_HEADER       *FileHeader;
+  VOID                      *Pe32Data;
+  VOID                      *ImageAddress;
+  CHAR8                     *AsciiString;
+  UINTN                     Index;
+
+  Status = EFI_SUCCESS;
+
+  FileHeader = (EFI_FFS_FILE_HEADER *) FileHandle;
+  ASSERT (!IS_FFS_FILE2 (FileHeader));
+
+  ImageAddress = NULL;
+  PeiGetPe32Data (MigratedFileHandle, &ImageAddress);
+  if (ImageAddress != NULL) {
+    AsciiString = PeCoffLoaderGetPdbPointer (ImageAddress);
+    for (Index = 0; AsciiString[Index] != 0; Index++) {
+      if (AsciiString[Index] == '\\' || AsciiString[Index] == '/') {
+        AsciiString = AsciiString + Index + 1;
+        Index = 0;
+      } else if (AsciiString[Index] == '.') {
+        AsciiString[Index] = 0;
+      }
+    }
+    DEBUG ((DEBUG_INFO, "%a", AsciiString));
+
+    Pe32Data = (VOID *) ((UINTN) ImageAddress - (UINTN) MigratedFileHandle + (UINTN) FileHandle);
+    Status = LoadAndRelocatePeCoffImageInPlace (Pe32Data, ImageAddress);
+    ASSERT_EFI_ERROR (Status);
+  }
+
+  return Status;
+}
+
+/**
+  Migrate Status Code Callback function pointers inside an FV from temporary memory to permanent memory.
+
+  @param OrgFvHandle      Address of FV Handle in temporary memory.
+  @param FvHandle         Address of FV Handle in permanent memory.
+  @param FvSize           Size of the FV.
+
+**/
+VOID
+ConvertStatusCodeCallbacks (
+  IN  UINTN                   OrgFvHandle,
+  IN  UINTN                   FvHandle,
+  IN  UINTN                   FvSize
+  )
+{
+  EFI_PEI_HOB_POINTERS    Hob;
+  UINTN                   *NumberOfEntries;
+  UINTN                   *CallbackEntry;
+  UINTN                   Index;
+
+  Hob.Raw  = GetFirstGuidHob (&gStatusCodeCallbackGuid);
+  while (Hob.Raw != NULL) {
+    NumberOfEntries = GET_GUID_HOB_DATA (Hob);
+    CallbackEntry   = NumberOfEntries + 1;
+    for (Index = 0; Index < *NumberOfEntries; Index++) {
+      if (((VOID *) CallbackEntry[Index]) != NULL) {
+        if ((CallbackEntry[Index] >= OrgFvHandle) && (CallbackEntry[Index] < (OrgFvHandle + FvSize))) {
+          DEBUG ((DEBUG_INFO, "Migrating CallbackEntry[%d] from 0x%08X to ", Index, CallbackEntry[Index]));
+          if (OrgFvHandle > FvHandle) {
+            CallbackEntry[Index] = CallbackEntry[Index] - (OrgFvHandle - FvHandle);
+          } else {
+            CallbackEntry[Index] = CallbackEntry[Index] + (FvHandle - OrgFvHandle);
+          }
+          DEBUG ((DEBUG_INFO, "0x%08X\n", CallbackEntry[Index]));
+        }
+      }
+    }
+    Hob.Raw = GET_NEXT_HOB (Hob);
+    Hob.Raw = GetNextGuidHob (&gStatusCodeCallbackGuid, Hob.Raw);
+  }
+}
+
+/**
+  Migrate FVs out of Temporary RAM before the cache is flushed.
+
+  @param Private                PeiCore's private data structure
+
+  @retval EFI_SUCCESS           Succesfully migrated installed FVs from Temporary RAM to permanent memory.
+  @retval EFI_OUT_OF_RESOURCES  Insufficient memory exists to allocate needed pages.
+
+**/
+EFI_STATUS
+EFIAPI
+EvacuateTempRam (
+  IN PEI_CORE_INSTANCE      *Private
+  )
+{
+  EFI_STATUS                    Status;
+  volatile UINTN                FvIndex;
+  volatile UINTN                FileIndex;
+  EFI_FIRMWARE_VOLUME_HEADER    *FvHeader;
+  EFI_FIRMWARE_VOLUME_HEADER    *MigratedFvHeader;
+  EFI_PEI_FILE_HANDLE           FileHandle;
+  EFI_PEI_FILE_HANDLE           MigratedFileHandle;
+
+  ASSERT (Private->PeiMemoryInstalled);
+
+  Status = EFI_SUCCESS;
+
+  // Migrate PPI Pointers of PEI_CORE from temporary memory to newly
+  // loaded PEI_CORE in permanent memory.
+  ConvertPeiCorePpiPointers (Private, Private->Fv[0]);
+
+  for (FvIndex = 0; FvIndex < Private->FvCount; FvIndex++) {
+    FvHeader = Private->Fv[FvIndex].FvHeader;
+    ASSERT (FvHeader != NULL);
+    ASSERT (FvIndex < Private->FvCount);
+
+    if (
+      !(
+        ((EFI_PHYSICAL_ADDRESS) FvHeader >= Private->PhysicalMemoryBegin) &&
+        (((EFI_PHYSICAL_ADDRESS) FvHeader + FvHeader->FvLength) < Private->FreePhysicalMemoryTop)
+        )
+      ) {
+      Status =  PeiServicesAllocatePages (
+                  EfiBootServicesCode,
+                  EFI_SIZE_TO_PAGES ((UINTN) FvHeader->FvLength),
+                  (EFI_PHYSICAL_ADDRESS *) &MigratedFvHeader
+                  );
+      ASSERT_EFI_ERROR (Status);
+
+      DEBUG ((DEBUG_INFO, "Migrating FV %d from 0x%08X to 0x%08X\n", FvIndex, (UINTN) FvHeader, (UINTN) MigratedFvHeader));
+      CopyMem (MigratedFvHeader, FvHeader, (UINTN) FvHeader->FvLength);
+
+      Private->Fv[FvIndex].FvHeader = MigratedFvHeader;
+      Private->Fv[FvIndex].FvHandle = (EFI_PEI_FV_HANDLE) MigratedFvHeader;
+
+      if (Private->Fv[FvIndex].ScanFv) {
+        for (FileIndex = 0; (FileIndex < PcdGet32 (PcdPeiCoreMaxPeimPerFv)) && (Private->Fv[FvIndex].FvFileHandles[FileIndex] != NULL); FileIndex++) {
+          FileHandle = Private->Fv[FvIndex].FvFileHandles[FileIndex];
+
+          MigratedFileHandle = (EFI_PEI_FILE_HANDLE) ((UINTN) FileHandle - (UINTN) FvHeader + (UINTN) MigratedFvHeader);
+
+          DEBUG ((DEBUG_INFO, "Migrating FileHandle %2d ", FileIndex));
+          Status = MigratePeim (FileHandle, MigratedFileHandle);
+          DEBUG ((DEBUG_INFO, "\n"));
+          ASSERT_EFI_ERROR (Status);
+
+          Private->Fv[FvIndex].FvFileHandles[FileIndex] = MigratedFileHandle;
+          if (FvIndex == Private->CurrentPeimFvCount) {
+            Private->CurrentFvFileHandles[FileIndex] = MigratedFileHandle;
+          }
+        }
+      }
+
+      ConvertPpiPointersFv (
+        Private,
+        (UINTN) FvHeader,
+        (UINTN) MigratedFvHeader,
+        (UINTN) FvHeader->FvLength
+        );
+
+      ConvertStatusCodeCallbacks (
+        (UINTN) FvHeader,
+        (UINTN) MigratedFvHeader,
+        (UINTN) FvHeader->FvLength
+        );
+    }
+  }
+
+  return Status;
+}
+
+/**
   Conduct PEIM dispatch.
 
   @param SecCoreData     Points to a data structure containing information about the PEI core's operating

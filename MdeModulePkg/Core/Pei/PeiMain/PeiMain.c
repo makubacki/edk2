@@ -394,6 +394,7 @@ PeiCore (
     //
     // Try to locate Temporary RAM Done Ppi.
     //
+    EvacuateTempRam (&PrivateData);
     Status = PeiServicesLocatePpi (
                &gEfiTemporaryRamDonePpiGuid,
                0,
