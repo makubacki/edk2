@@ -1,0 +1,86 @@
+## @file
+#  Component description file for the FVB Variable Storage SMM Module
+#
+#  This module implements Firmware Volume Block (FVB) Variable Storage Services
+#  and installs an instance of the VariableStorage SMM protocol.
+#
+#  Copyright (c) 2018, Intel Corporation. All rights reserved.<BR>
+#  This program and the accompanying materials
+#  are licensed and made available under the terms and conditions of the BSD License
+#  which accompanies this distribution. The full text of the license may be found at
+#  http://opensource.org/licenses/bsd-license.php
+#
+#  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = FvbVariableStorageSmm
+  FILE_GUID                      = EA32C776-6C14-41F4-80C6-0349E9E48AF8
+  MODULE_TYPE                    = DXE_SMM_DRIVER
+  VERSION_STRING                 = 1.0
+  PI_SPECIFICATION_VERSION       = 0x0001000A
+  ENTRY_POINT                    = FvbVariableStorageSmmInitialize
+
+[Sources]
+  FvbVariableStorage.c
+  FvbVariableStorageSmm.c
+  Reclaim.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  DebugLib
+  MemoryAllocationLib
+  HobLib
+  PcdLib
+  SmmServicesTableLib
+  UefiDriverEntryPoint
+
+[Guids]
+  gFvbVariableStorageProtocolInstanceGuid  ## PRODUCES
+  ## PRODUCES             ## GUID # Signature of Variable store header
+  ## CONSUMES             ## GUID # Signature of Variable store header
+  ## SOMETIMES_CONSUMES   ## HOB
+  ## SOMETIMES_PRODUCES   ## SystemTable
+  gEfiAuthenticatedVariableGuid
+
+  ## PRODUCES             ## GUID # Signature of Variable store header
+  ## CONSUMES             ## GUID # Signature of Variable store header
+  ## SOMETIMES_CONSUMES   ## HOB
+  ## SOMETIMES_PRODUCES   ## SystemTable
+  gEfiVariableGuid
+  gEfiSystemNvDataFvGuid                        ## CONSUMES             ## GUID
+  gEdkiiFaultTolerantWriteGuid                  ## SOMETIMES_CONSUMES   ## HOB
+  gEdkiiVarErrorFlagGuid                        ## CONSUMES             ## GUID
+
+[Pcd]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdMaxVariableSize                   ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdMaxAuthVariableSize               ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdMaxHardwareErrorVariableSize      ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdHwErrStorageSize                  ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableSize        ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase        ## SOMETIMES_CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase64      ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdNvVariableEmulationMode           ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdEnableFvbVariableStorage          ## CONSUMES
+
+[Protocols]
+  gEdkiiVariableStorageProtocolGuid                                   ## PRODUCES
+  gEfiSmmVariableProtocolGuid                                         ## CONSUMES
+  gEfiSmmFirmwareVolumeBlockProtocolGuid                              ## CONSUMES
+  ## CONSUMES
+  ## NOTIFY
+  gEfiSmmFaultTolerantWriteProtocolGuid
+  ## CONSUMES
+  ## NOTIFY
+  gEdkiiVariableStorageSupportProtocolGuid
+
+[Depex]
+  TRUE

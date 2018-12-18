@@ -375,6 +375,7 @@
   MdeModulePkg/Universal/DisplayEngineDxe/DisplayEngineDxe.inf
   MdeModulePkg/Application/VariableInfo/VariableInfo.inf
   MdeModulePkg/Universal/FaultTolerantWritePei/FaultTolerantWritePei.inf
+  MdeModulePkg/Universal/FvbVariableStorage/Pei/FvbVariableStoragePei.inf
   MdeModulePkg/Universal/Variable/Pei/VariablePei.inf
   MdeModulePkg/Universal/WatchdogTimerDxe/WatchdogTimer.inf
   MdeModulePkg/Universal/TimestampDxe/TimestampDxe.inf
@@ -442,12 +443,14 @@
   MdeModulePkg/Application/SmiHandlerProfileInfo/SmiHandlerProfileInfo.inf
   MdeModulePkg/Core/PiSmmCore/PiSmmIpl.inf
   MdeModulePkg/Core/PiSmmCore/PiSmmCore.inf
+  MdeModulePkg/Universal/FvbVariableStorage/RuntimeDxe/FvbVariableStorageSmm.inf
   MdeModulePkg/Universal/Variable/RuntimeDxe/VariableSmm.inf {
     <LibraryClasses>
       NULL|MdeModulePkg/Library/VarCheckUefiLib/VarCheckUefiLib.inf
       NULL|MdeModulePkg/Library/VarCheckHiiLib/VarCheckHiiLib.inf
       NULL|MdeModulePkg/Library/VarCheckPcdLib/VarCheckPcdLib.inf
   }
+  MdeModulePkg/Universal/FvbVariableStorage/RuntimeDxe/FvbVariableStorageRuntimeDxe.inf
   MdeModulePkg/Universal/Variable/RuntimeDxe/VariableRuntimeDxe.inf {
     <LibraryClasses>
       NULL|MdeModulePkg/Library/VarCheckUefiLib/VarCheckUefiLib.inf
