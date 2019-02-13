@@ -3,7 +3,7 @@
   and volatile storage space and install variable architecture protocol.
 
 Copyright (C) 2013, Red Hat, Inc.
-Copyright (c) 2006 - 2018, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2006 - 2019, Intel Corporation. All rights reserved.<BR>
 (C) Copyright 2015 Hewlett Packard Enterprise Development LP<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
@@ -16,6 +16,10 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 **/
 
 #include "Variable.h"
+#include "VariableHelpers.h"
+#include "VariableStorage.h"
+#include "VariableVolatile.h"
+#include "VariableVolatileCommon.h"
 
 extern VARIABLE_STORE_HEADER        *mNvVariableCache;
 extern VARIABLE_INFO_ENTRY          *gVariableInfo;

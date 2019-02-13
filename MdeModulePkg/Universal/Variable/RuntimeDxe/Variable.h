@@ -2,7 +2,7 @@
   The internal header file includes the common header files, defines
   internal structure and functions used by Variable modules.
 
-Copyright (c) 2006 - 2018, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2006 - 2019, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -69,6 +69,19 @@ typedef enum {
 } VARIABLE_STORE_TYPE;
 
 typedef struct {
+  UINT32                  PendingUpdateOffset;
+  UINT32                  PendingUpdateLength;
+  VARIABLE_STORE_HEADER   *Store;
+} VARIABLE_RUNTIME_CACHE;
+
+typedef struct {
+  BOOLEAN                 *ReadLock;
+  BOOLEAN                 *PendingUpdate;
+  VARIABLE_RUNTIME_CACHE  VariableRuntimeNvCache;
+  VARIABLE_RUNTIME_CACHE  VariableRuntimeVolatileCache;
+} VARIABLE_RUNTIME_CACHE_CONTEXT;
+
+typedef struct {
   VARIABLE_HEADER *CurrPtr;
   //
   // If both ADDED and IN_DELETED_TRANSITION variable are present,
@@ -87,6 +100,7 @@ typedef struct {
   EFI_PHYSICAL_ADDRESS                      VolatileVariableBase;
   EDKII_VARIABLE_STORAGE_PROTOCOL           **VariableStores;
   EDKII_VARIABLE_STORAGE_SELECTOR_PROTOCOL  *VariableStorageSelectorProtocol;
+  VARIABLE_RUNTIME_CACHE_CONTEXT            VariableRuntimeCacheContext;
   UINTN                                     VariableStoresCount;
   EFI_LOCK                                  VariableServicesLock;
   UINT32                                    ReentrantState;
@@ -113,22 +127,6 @@ typedef struct {
   CHAR8           Lang[ISO_639_2_ENTRY_SIZE + 1];
   BOOLEAN         WriteServiceReady;
 } VARIABLE_MODULE_GLOBAL;
-
-//@todo: Make the change to MdeModulePkg/Include/Guid/SmmVariableCommon.h instead of defining a new struct here
-typedef struct {
-  UINTN       Function;
-  EFI_STATUS  ReturnStatus;
-  EFI_GUID    InProgressNvStorageInstanceId;
-  BOOLEAN     CommandInProgress;
-  BOOLEAN     ReenterFunction;
-  BOOLEAN     VariableServicesInUse;
-  UINT8       Reserved[1];
-  UINT8       Data[1];
-} SMM_VARIABLE_COMMUNICATE_HEADER2;
-#define SMM_VARIABLE_COMMUNICATE_HEADER2_SIZE  (OFFSET_OF (SMM_VARIABLE_COMMUNICATE_HEADER2, Data))
-
-//@todo: Make the change to MdeModulePkg/Include/Guid/SmmVariableCommon.h instead of defining here
-#define SMM_VARIABLE_FUNCTION_CLEAR_COMMAND_IN_PROGRESS 12
 
 /**
   A callback function that is invoked once the HOB flush operation is completed.
@@ -200,134 +198,6 @@ FindVariable (
   );
 
 /**
-
-  Gets the pointer to the first variable header in given variable store area.
-
-  @param VarStoreHeader  Pointer to the Variable Store Header.
-
-  @return Pointer to the first variable header.
-
-**/
-VARIABLE_HEADER *
-GetStartPointer (
-  IN VARIABLE_STORE_HEADER       *VarStoreHeader
-  );
-
-/**
-
-  Gets the pointer to the end of the variable storage area.
-
-  This function gets pointer to the end of the variable storage
-  area, according to the input variable store header.
-
-  @param VarStoreHeader  Pointer to the Variable Store Header.
-
-  @return Pointer to the end of the variable storage area.
-
-**/
-VARIABLE_HEADER *
-GetEndPointer (
-  IN VARIABLE_STORE_HEADER       *VarStoreHeader
-  );
-
-/**
-  This code gets the size of variable header.
-
-  @return Size of variable header in bytes in type UINTN.
-
-**/
-UINTN
-GetVariableHeaderSize (
-  VOID
-  );
-
-/**
-
-  This code gets the pointer to the variable name.
-
-  @param Variable        Pointer to the Variable Header.
-
-  @return Pointer to Variable Name which is Unicode encoding.
-
-**/
-CHAR16 *
-GetVariableNamePtr (
-  IN  VARIABLE_HEADER   *Variable
-  );
-
-/**
-  This code gets the pointer to the variable guid.
-
-  @param Variable   Pointer to the Variable Header.
-
-  @return A EFI_GUID* pointer to Vendor Guid.
-
-**/
-EFI_GUID *
-GetVendorGuidPtr (
-  IN VARIABLE_HEADER    *Variable
-  );
-
-/**
-
-  This code gets the pointer to the variable data.
-
-  @param Variable        Pointer to the Variable Header.
-
-  @return Pointer to Variable Data.
-
-**/
-UINT8 *
-GetVariableDataPtr (
-  IN  VARIABLE_HEADER   *Variable
-  );
-
-/**
-
-  This code checks if variable header is valid or not.
-
-  @param Variable           Pointer to the Variable Header.
-  @param VariableStoreEnd   Pointer to the Variable Store End.
-
-  @retval TRUE              Variable header is valid.
-  @retval FALSE             Variable header is not valid.
-
-**/
-BOOLEAN
-IsValidVariableHeader (
-  IN  VARIABLE_HEADER       *Variable,
-  IN  VARIABLE_HEADER       *VariableStoreEnd
-  );
-
-/**
-
-  This code gets the pointer to the next variable header.
-
-  @param Variable        Pointer to the Variable Header.
-
-  @return Pointer to next variable header.
-
-**/
-VARIABLE_HEADER *
-GetNextVariablePtr (
-  IN  VARIABLE_HEADER   *Variable
-  );
-
-/**
-
-  This code gets the size of variable data.
-
-  @param Variable        Pointer to the Variable Header.
-
-  @return Size of variable in bytes.
-
-**/
-UINTN
-DataSizeOfVariable (
-  IN  VARIABLE_HEADER   *Variable
-  );
-
-/**
   This function is to check if the remaining variable space is enough to set
   all Variables from argument list successfully. The purpose of the check
   is to keep the consistency of the Variables to be in variable storage.
@@ -352,6 +222,46 @@ EFIAPI
 CheckRemainingSpaceForConsistencyInternal (
   IN UINT32                     Attributes,
   IN VA_LIST                    Marker
+  );
+
+/**
+  Update the variable region with Variable information. If EFI_VARIABLE_AUTHENTICATED_WRITE_ACCESS is set,
+  index of associated public key is needed.
+
+  @param[in]  VariableName       Name of variable.
+  @param[in]  VendorGuid         Guid of variable.
+  @param[in]  Data               Variable data.
+  @param[in]  DataSize           Size of data. 0 means delete.
+  @param[in]  Attributes         Attributes of the variable.
+  @param[in]  KeyIndex           Index of associated public key.
+  @param[in]  MonotonicCount     Value of associated monotonic count.
+  @param[in, out] CacheVariable The variable information which is used to keep track of variable usage.
+  @param[in]  TimeStamp          Value of associated TimeStamp.
+  @param[in]  OnlyUpdateNvCache  TRUE if only the NV cache should be written to, not the EDKII_VARIABLE_STORAGE_PROTOCOLs
+  @param[out] CommandInProgress  TRUE if the command requires asyncronous I/O and has not completed yet.
+                                 If this parameter is TRUE, then CacheVariable will not be updated and will
+                                 not contain valid data.  Asyncronous I/O should only be required during
+                                 OS runtime phase, this return value will be FALSE during all Pre-OS stages.
+                                 If CommandInProgress is returned TRUE, then this function will return EFI_SUCCESS
+
+  @retval EFI_SUCCESS           The update operation is success.
+  @retval EFI_OUT_OF_RESOURCES  Variable region is full, can not write other data into this region.
+
+**/
+EFI_STATUS
+UpdateVariableInternal (
+  IN      CHAR16                      *VariableName,
+  IN      EFI_GUID                    *VendorGuid,
+  IN      VOID                        *Data,
+  IN      UINTN                       DataSize,
+  IN      UINT32                      Attributes      OPTIONAL,
+  IN      UINT32                      KeyIndex        OPTIONAL,
+  IN      UINT64                      MonotonicCount  OPTIONAL,
+  IN OUT  VARIABLE_POINTER_TRACK      *CacheVariable,
+  IN      EFI_TIME                    *TimeStamp      OPTIONAL,
+  IN      BOOLEAN                     OnlyUpdateNvCache,
+  OUT     BOOLEAN                     *CommandInProgress,
+  OUT     EFI_GUID                    *InProgressInstanceGuid
   );
 
 /**
@@ -473,17 +383,6 @@ VariableCommonInitialize (
 **/
 VOID
 ReclaimForOS(
-  VOID
-  );
-
-/**
-  Get non-volatile maximum variable size.
-
-  @return Non-volatile maximum variable size.
-
-**/
-UINTN
-GetNonVolatileMaxVariableSize (
   VOID
   );
 
@@ -726,35 +625,6 @@ VariableStorageSupportNotifyWriteServiceReady (
   );
 
 /**
-  Update the non-volatile variable cache with a new value for the given variable
-
-  @param[in]  VariableName       Name of variable.
-  @param[in]  VendorGuid         Guid of variable.
-  @param[in]  Data               Variable data.
-  @param[in]  DataSize           Size of data. 0 means delete.
-  @param[in]  Attributes         Attributes of the variable.
-  @param[in]  KeyIndex           Index of associated public key.
-  @param[in]  MonotonicCount     Value of associated monotonic count.
-  @param[in]  TimeStamp          Value of associated TimeStamp.
-
-  @retval EFI_SUCCESS           The update operation is success.
-  @retval EFI_OUT_OF_RESOURCES  Variable region is full, can not write other data into this region.
-
-**/
-EFI_STATUS
-EFIAPI
-VariableStorageSupportUpdateNvCache (
-  IN      CHAR16                      *VariableName,
-  IN      EFI_GUID                    *VendorGuid,
-  IN      VOID                        *Data,
-  IN      UINTN                       DataSize,
-  IN      UINT32                      Attributes      OPTIONAL,
-  IN      UINT32                      KeyIndex        OPTIONAL,
-  IN      UINT64                      MonotonicCount  OPTIONAL,
-  IN      EFI_TIME                    *TimeStamp      OPTIONAL
-  );
-
-/**
   Mark a variable that will become read-only after leaving the DXE phase of execution.
 
   @param[in] This          The VARIABLE_LOCK_PROTOCOL instance.
@@ -993,16 +863,4 @@ InstallVariableWriteReady (
   VOID
   );
 
-  /**
-  Determines if any of the NV storage drivers requires asyncronous I/O or not regardless of caller source
-
-  @retval     TRUE                    Asyncronous I/O is required during OS runtime to call to Get/SetVariable()
-  @retval     FALSE                   Asyncronous I/O is not required during OS runtime to call to Get/SetVariable()
-
-**/
-BOOLEAN
-EFIAPI
-VariableStorageAnyAsyncIoRequired (
-  VOID
-  );
 #endif

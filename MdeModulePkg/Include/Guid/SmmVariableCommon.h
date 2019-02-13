@@ -1,7 +1,7 @@
 /** @file
   The file defined some common structures used for communicating between SMM variable module and SMM variable wrapper module.
 
-Copyright (c) 2011 - 2015, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2011 - 2019, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials are licensed and made available under
 the terms and conditions of the BSD License that accompanies this distribution.
 The full text of the license may be found at
@@ -15,6 +15,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #ifndef _SMM_VARIABLE_COMMON_H_
 #define _SMM_VARIABLE_COMMON_H_
 
+#include <Guid/VariableFormat.h>
 #include <Protocol/VarCheck.h>
 
 #define EFI_SMM_VARIABLE_WRITE_GUID \
@@ -32,6 +33,17 @@ typedef struct {
   EFI_STATUS  ReturnStatus;
   UINT8       Data[1];
 } SMM_VARIABLE_COMMUNICATE_HEADER;
+
+typedef struct {
+  UINTN       Function;
+  EFI_STATUS  ReturnStatus;
+  EFI_GUID    InProgressNvStorageInstanceId;
+  BOOLEAN     CommandInProgress;
+  BOOLEAN     ReenterFunction;
+  BOOLEAN     VariableServicesInUse;
+  UINT8       Reserved[1];
+  UINT8       Data[1];
+} SMM_VARIABLE_COMMUNICATE_HEADER2;
 
 //
 // The payload for this function is SMM_VARIABLE_COMMUNICATE_ACCESS_VARIABLE.
@@ -73,6 +85,18 @@ typedef struct {
 
 #define SMM_VARIABLE_FUNCTION_GET_PAYLOAD_SIZE        11
 
+#define SMM_VARIABLE_FUNCTION_CLEAR_COMMAND_IN_PROGRESS 12
+//
+// The payload for this function is SMM_VARIABLE_COMMUNICATE_RUNTIME_VARIABLE_CACHE_CONTEXT
+//
+#define SMM_VARIABLE_FUNCTION_INIT_RUNTIME_VARIABLE_CACHE_CONTEXT   13
+
+#define SMM_VARIABLE_FUNCTION_SYNC_RUNTIME_CACHE                    14
+//
+// The payload for this function is SMM_VARIABLE_COMMUNICATE_GET_TOTAL_NV_STORAGE_SIZE
+//
+#define SMM_VARIABLE_FUNCTION_GET_TOTAL_STORE_SIZE                  15
+
 ///
 /// Size of SMM communicate header, without including the payload.
 ///
@@ -82,6 +106,7 @@ typedef struct {
 /// Size of SMM variable communicate header, without including the payload.
 ///
 #define SMM_VARIABLE_COMMUNICATE_HEADER_SIZE  (OFFSET_OF (SMM_VARIABLE_COMMUNICATE_HEADER, Data))
+#define SMM_VARIABLE_COMMUNICATE_HEADER2_SIZE  (OFFSET_OF (SMM_VARIABLE_COMMUNICATE_HEADER2, Data))
 
 ///
 /// This structure is used to communicate with SMI handler by SetVariable and GetVariable.
@@ -125,5 +150,17 @@ typedef struct {
 typedef struct {
   UINTN                         VariablePayloadSize;
 } SMM_VARIABLE_COMMUNICATE_GET_PAYLOAD_SIZE;
+
+typedef struct {
+  BOOLEAN                       *ReadLock;
+  BOOLEAN                       *PendingUpdate;
+  VARIABLE_STORE_HEADER         *RuntimeNvCache;
+  VARIABLE_STORE_HEADER         *RuntimeVolatileCache;
+} SMM_VARIABLE_COMMUNICATE_RUNTIME_VARIABLE_CACHE_CONTEXT;
+
+typedef struct {
+  UINTN                         TotalNvStorageSize;
+  UINTN                         TotalVolatileStorageSize;
+} SMM_VARIABLE_COMMUNICATE_GET_TOTAL_STORE_SIZE;
 
 #endif // _SMM_VARIABLE_COMMON_H_

@@ -14,7 +14,7 @@
   VariableServiceSetVariable(), VariableServiceQueryVariableInfo(), ReclaimForOS(),
   SmmVariableGetStatistics() should also do validation based on its own knowledge.
 
-Copyright (c) 2010 - 2018, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2010 - 2019, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -34,9 +34,12 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #include <Library/SmmServicesTableLib.h>
 #include <Library/SmmMemLib.h>
-
 #include <Guid/SmmVariableCommon.h>
+
 #include "Variable.h"
+#include "VariableHelpers.h"
+#include "VariableNonVolatile.h"
+#include "VariableVolatile.h"
 
 typedef struct _SMM_VARIABLE_IO_COMPLETION_STATE {
   BOOLEAN                           CommandInProgress;
@@ -904,25 +907,27 @@ SmmVariableGetStatistics (
 EFI_STATUS
 EFIAPI
 SmmVariableHandler (
-  IN     EFI_HANDLE                                DispatchHandle,
-  IN     CONST VOID                                *RegisterContext,
-  IN OUT VOID                                      *CommBuffer,
-  IN OUT UINTN                                     *CommBufferSize
+  IN     EFI_HANDLE                                       DispatchHandle,
+  IN     CONST VOID                                       *RegisterContext,
+  IN OUT VOID                                             *CommBuffer,
+  IN OUT UINTN                                            *CommBufferSize
   )
 {
-  EFI_STATUS                                       Status;
-  SMM_VARIABLE_COMMUNICATE_HEADER2                 *SmmVariableFunctionHeader;
-  SMM_VARIABLE_COMMUNICATE_ACCESS_VARIABLE         *SmmVariableHeader;
-  SMM_VARIABLE_COMMUNICATE_GET_NEXT_VARIABLE_NAME  *GetNextVariableName;
-  SMM_VARIABLE_COMMUNICATE_QUERY_VARIABLE_INFO     *QueryVariableInfo;
-  SMM_VARIABLE_COMMUNICATE_GET_PAYLOAD_SIZE        *GetPayloadSize;
-  VARIABLE_INFO_ENTRY                              *VariableInfo;
-  SMM_VARIABLE_COMMUNICATE_LOCK_VARIABLE           *VariableToLock;
-  SMM_VARIABLE_COMMUNICATE_VAR_CHECK_VARIABLE_PROPERTY *CommVariableProperty;
-  UINTN                                            InfoSize;
-  UINTN                                            NameBufferSize;
-  UINTN                                            CommBufferPayloadSize;
-  UINTN                                            TempCommBufferSize;
+  EFI_STATUS                                              Status;
+  SMM_VARIABLE_COMMUNICATE_HEADER2                        *SmmVariableFunctionHeader;
+  SMM_VARIABLE_COMMUNICATE_ACCESS_VARIABLE                *SmmVariableHeader;
+  SMM_VARIABLE_COMMUNICATE_GET_NEXT_VARIABLE_NAME         *GetNextVariableName;
+  SMM_VARIABLE_COMMUNICATE_QUERY_VARIABLE_INFO            *QueryVariableInfo;
+  SMM_VARIABLE_COMMUNICATE_GET_PAYLOAD_SIZE               *GetPayloadSize;
+  SMM_VARIABLE_COMMUNICATE_RUNTIME_VARIABLE_CACHE_CONTEXT *RuntimeVariableCacheContext;
+  SMM_VARIABLE_COMMUNICATE_GET_TOTAL_STORE_SIZE           *GetTotalStoreSize;
+  VARIABLE_INFO_ENTRY                                     *VariableInfo;
+  SMM_VARIABLE_COMMUNICATE_LOCK_VARIABLE                  *VariableToLock;
+  SMM_VARIABLE_COMMUNICATE_VAR_CHECK_VARIABLE_PROPERTY    *CommVariableProperty;
+  UINTN                                                   InfoSize;
+  UINTN                                                   NameBufferSize;
+  UINTN                                                   CommBufferPayloadSize;
+  UINTN                                                   TempCommBufferSize;
 
   //
   // If input is invalid, stop processing this SMI
@@ -1283,6 +1288,47 @@ SmmVariableHandler (
     case SMM_VARIABLE_FUNCTION_CLEAR_COMMAND_IN_PROGRESS:
       if (mSmmVariableIoCompletionState.CommandInProgress && !mSmmVariableIoCompletionState.FromSmm) {
         mSmmVariableIoCompletionState.CommandInProgress = FALSE;
+      }
+      break;
+    case SMM_VARIABLE_FUNCTION_INIT_RUNTIME_VARIABLE_CACHE_CONTEXT:
+      if (CommBufferPayloadSize < sizeof (SMM_VARIABLE_FUNCTION_INIT_RUNTIME_VARIABLE_CACHE_CONTEXT)) {
+        DEBUG ((EFI_D_ERROR, "InitRuntimeVariableCacheContext: SMM communication buffer size invalid!\n"));
+        return EFI_SUCCESS;
+      }
+      if (mEndOfDxe) {
+        DEBUG ((EFI_D_ERROR, "InitRuntimeVariableCacheContext: Cannot init context after end of DXE!\n"));
+        return EFI_SUCCESS;
+      } else {
+        RuntimeVariableCacheContext = (SMM_VARIABLE_COMMUNICATE_RUNTIME_VARIABLE_CACHE_CONTEXT *) SmmVariableFunctionHeader->Data;
+
+        mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext.VariableRuntimeNvCache.Store =
+          RuntimeVariableCacheContext->RuntimeNvCache;
+        ASSERT (mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext.VariableRuntimeNvCache.Store != 0);
+        mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext.VariableRuntimeVolatileCache.Store =
+          RuntimeVariableCacheContext->RuntimeVolatileCache;
+        ASSERT (mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext.VariableRuntimeVolatileCache.Store != 0);
+        mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext.PendingUpdate =
+          RuntimeVariableCacheContext->PendingUpdate;
+        ASSERT (mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext.PendingUpdate != 0);
+        mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext.ReadLock =
+          RuntimeVariableCacheContext->ReadLock;
+        ASSERT (mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext.ReadLock != 0);
+      }
+      Status = EFI_SUCCESS;
+      break;
+    case SMM_VARIABLE_FUNCTION_SYNC_RUNTIME_CACHE:
+      Status = SynchronizeRuntimeVariableCacheEx ();
+      break;
+    case SMM_VARIABLE_FUNCTION_GET_TOTAL_STORE_SIZE:
+      if (CommBufferPayloadSize < sizeof (SMM_VARIABLE_COMMUNICATE_GET_TOTAL_STORE_SIZE)) {
+        DEBUG ((EFI_D_ERROR, "GetTotalStoreSize: SMM communication buffer size invalid!\n"));
+        return EFI_SUCCESS;
+      }
+      GetTotalStoreSize = (SMM_VARIABLE_COMMUNICATE_GET_TOTAL_STORE_SIZE *) SmmVariableFunctionHeader->Data;
+      GetTotalStoreSize->TotalVolatileStorageSize = PcdGet32 (PcdVariableStoreSize) + GetNonVolatileMaxVariableSize ();
+      Status = GetTotalNonVolatileVariableStorageSize (&GetTotalStoreSize->TotalNvStorageSize);
+      if (EFI_ERROR (Status)) {
+        GetTotalStoreSize->TotalNvStorageSize = 0;
       }
       break;
 
