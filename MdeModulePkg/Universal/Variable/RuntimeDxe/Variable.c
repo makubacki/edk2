@@ -837,6 +837,20 @@ Reclaim (
     mVariableModuleGlobal->HwErrVariableTotalSize       = HwErrVariableTotalSize;
     mVariableModuleGlobal->CommonVariableTotalSize      = CommonVariableTotalSize;
     mVariableModuleGlobal->CommonUserVariableTotalSize  = CommonUserVariableTotalSize;
+
+    Status =  SynchronizeRuntimeVariableCache (
+                &mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext.VariableRuntimeNvCache,
+                0,
+                (UINTN) (CurrPtr - ValidBuffer)
+                );
+    ASSERT_EFI_ERROR (Status);
+  } else {
+    Status =  SynchronizeRuntimeVariableCache (
+                &mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext.VariableRuntimeVolatileCache,
+                0,
+                (UINTN) (CurrPtr - ValidBuffer)
+                );
+    ASSERT_EFI_ERROR (Status);
   }
 
 Done:
