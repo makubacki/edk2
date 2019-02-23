@@ -76,6 +76,7 @@ extern BOOLEAN                                      mEndOfDxe;
 extern VAR_CHECK_REQUEST_SOURCE                     mRequestSource;
 extern BOOLEAN                                      mFromSmm;
 extern BOOLEAN                                      mIgnoreAuthCheck;
+extern VARIABLE_STORE_HEADER                        *mNvVariableCache;
 static SMM_VARIABLE_FLUSH_HOB_CONTEXT               mSmmVariableFlushHobContext;
 static SMM_VARIABLE_IO_COMPLETION_STATE             mSmmVariableIoCompletionState;
 
@@ -921,9 +922,11 @@ SmmVariableHandler (
   SMM_VARIABLE_COMMUNICATE_GET_PAYLOAD_SIZE               *GetPayloadSize;
   SMM_VARIABLE_COMMUNICATE_RUNTIME_VARIABLE_CACHE_CONTEXT *RuntimeVariableCacheContext;
   SMM_VARIABLE_COMMUNICATE_GET_TOTAL_STORE_SIZE           *GetTotalStoreSize;
-  VARIABLE_INFO_ENTRY                                     *VariableInfo;
   SMM_VARIABLE_COMMUNICATE_LOCK_VARIABLE                  *VariableToLock;
   SMM_VARIABLE_COMMUNICATE_VAR_CHECK_VARIABLE_PROPERTY    *CommVariableProperty;
+  VARIABLE_INFO_ENTRY                                     *VariableInfo;
+  VARIABLE_RUNTIME_CACHE_CONTEXT                          *VariableCacheContext;
+  VARIABLE_STORE_HEADER                                   *VolatileVariableCache;
   UINTN                                                   InfoSize;
   UINTN                                                   NameBufferSize;
   UINTN                                                   CommBufferPayloadSize;
@@ -1293,26 +1296,28 @@ SmmVariableHandler (
     case SMM_VARIABLE_FUNCTION_INIT_RUNTIME_VARIABLE_CACHE_CONTEXT:
       if (CommBufferPayloadSize < sizeof (SMM_VARIABLE_FUNCTION_INIT_RUNTIME_VARIABLE_CACHE_CONTEXT)) {
         DEBUG ((EFI_D_ERROR, "InitRuntimeVariableCacheContext: SMM communication buffer size invalid!\n"));
-        return EFI_SUCCESS;
-      }
-      if (mEndOfDxe) {
+      } else if (mEndOfDxe) {
         DEBUG ((EFI_D_ERROR, "InitRuntimeVariableCacheContext: Cannot init context after end of DXE!\n"));
-        return EFI_SUCCESS;
       } else {
         RuntimeVariableCacheContext = (SMM_VARIABLE_COMMUNICATE_RUNTIME_VARIABLE_CACHE_CONTEXT *) SmmVariableFunctionHeader->Data;
+        VariableCacheContext = &mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext;
 
-        mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext.VariableRuntimeNvCache.Store =
-          RuntimeVariableCacheContext->RuntimeNvCache;
-        ASSERT (mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext.VariableRuntimeNvCache.Store != 0);
-        mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext.VariableRuntimeVolatileCache.Store =
-          RuntimeVariableCacheContext->RuntimeVolatileCache;
-        ASSERT (mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext.VariableRuntimeVolatileCache.Store != 0);
-        mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext.PendingUpdate =
-          RuntimeVariableCacheContext->PendingUpdate;
-        ASSERT (mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext.PendingUpdate != 0);
-        mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext.ReadLock =
-          RuntimeVariableCacheContext->ReadLock;
-        ASSERT (mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext.ReadLock != 0);
+        ASSERT (RuntimeVariableCacheContext->RuntimeNvCache != 0);
+        ASSERT (RuntimeVariableCacheContext->RuntimeVolatileCache != 0);
+        ASSERT (RuntimeVariableCacheContext->PendingUpdate != 0);
+        ASSERT (RuntimeVariableCacheContext->ReadLock != 0);
+
+        VariableCacheContext->VariableRuntimeNvCache.Store       = RuntimeVariableCacheContext->RuntimeNvCache;
+        VariableCacheContext->VariableRuntimeVolatileCache.Store = RuntimeVariableCacheContext->RuntimeVolatileCache;
+        VariableCacheContext->PendingUpdate                      = RuntimeVariableCacheContext->PendingUpdate;
+        VariableCacheContext->ReadLock                           = RuntimeVariableCacheContext->ReadLock;
+
+        VolatileVariableCache = (VARIABLE_STORE_HEADER  *) (UINTN) mVariableModuleGlobal->VariableGlobal.VolatileVariableBase;
+        VariableCacheContext->VariableRuntimeVolatileCache.PendingUpdateOffset   = (UINT32) ((UINT8 *) GetStartPointer (VolatileVariableCache) - (UINT8 *) VolatileVariableCache);
+        VariableCacheContext->VariableRuntimeVolatileCache.PendingUpdateLength   = (UINT32) (GetEndPointer (VolatileVariableCache) - GetStartPointer (VolatileVariableCache));
+        VariableCacheContext->VariableRuntimeNvCache.PendingUpdateOffset = (UINT32) ((UINT8 *) GetStartPointer (mNvVariableCache) - (UINT8 *) mNvVariableCache);
+        VariableCacheContext->VariableRuntimeNvCache.PendingUpdateLength = (UINT32) (GetEndPointer (mNvVariableCache) - GetStartPointer (mNvVariableCache));
+        *(VariableCacheContext->PendingUpdate) = TRUE;
       }
       Status = EFI_SUCCESS;
       break;

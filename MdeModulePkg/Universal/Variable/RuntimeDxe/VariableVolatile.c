@@ -101,6 +101,10 @@ SynchronizeRuntimeVariableCache (
 {
   if (VariableRuntimeCache == NULL) {
     return EFI_INVALID_PARAMETER;
+  } else if (VariableRuntimeCache->Store == NULL) {
+      // Runtime cache is not available yet at this point,
+      // Return EFI_SUCCESS instead of EFI_NOT_AVAILABLE_YET to let it progress
+      return EFI_SUCCESS;
   }
 
   if (

@@ -608,7 +608,7 @@ FindVariableInRuntimeCache (
   IN      EFI_GUID                          *VendorGuid,
   OUT     UINT32                            *Attributes OPTIONAL,
   IN OUT  UINTN                             *DataSize,
-  OUT     VOID                              *Data
+  OUT     VOID                              *Data OPTIONAL
   )
 {
   EFI_STATUS              Status;
@@ -616,7 +616,7 @@ FindVariableInRuntimeCache (
   UINTN                   TempDataSize;
   VARIABLE_POINTER_TRACK  RtPtrTrack;
 
-  if (VariableName == NULL || VendorGuid == NULL || DataSize == NULL || Data == NULL) {
+  if (VariableName == NULL || VendorGuid == NULL || DataSize == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -661,7 +661,9 @@ FindVariableInRuntimeCache (
         ASSERT (TempDataSize != 0);
 
         if (*DataSize >= TempDataSize) {
-          CopyMem (Data, GetVariableDataPtr (RtPtrTrack.CurrPtr), TempDataSize);
+          if (Data != NULL) {
+            CopyMem (Data, GetVariableDataPtr (RtPtrTrack.CurrPtr), TempDataSize);
+          }
           if (Attributes != NULL) {
             *Attributes = RtPtrTrack.CurrPtr->Attributes;
           }
