@@ -34,6 +34,7 @@
   Reset/Reset.c
   Ppi/Ppi.c
   PeiMain/PeiMain.c
+  Migration/Migration.c
   Memory/MemoryServices.c
   Image/Image.c
   Hob/Hob.c
