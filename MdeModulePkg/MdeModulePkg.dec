@@ -1222,6 +1222,14 @@
   # @Prompt Shadow Peim and PeiCore on boot
   gEfiMdeModulePkgTokenSpaceGuid.PcdShadowPeimOnBoot|TRUE|BOOLEAN|0x30001029
 
+  ## Indicates whether firmware volumes in Temporary RAM should be migrated to permanent memory by the PEI Core.<BR><BR>
+  #  This PCD only takes effect if the PcdShadowPeimOnBoot PCD is set on non-S3 boot paths and the
+  #  PcdShadowPeimOnS3Boot is on a S3 boot path.
+  #   TRUE  - Migrate pre-memory firmware volumes to permanent memory installed in Temporary RAM.<BR>
+  #   FALSE - The PEI Core will not migrate firmware volumes from Temporary RAM to permanent memory.<BR>
+  # @Prompt PEI Core will migrate Temporary RAM FVs
+  gEfiMdeModulePkgTokenSpaceGuid.PcdMigrateTemporaryRamFirmwareVolumes|FALSE|BOOLEAN|0x3000102A
+
   ## The mask is used to control memory profile behavior.<BR><BR>
   #  BIT0 - Enable UEFI memory profile.<BR>
   #  BIT1 - Enable SMRAM profile.<BR>

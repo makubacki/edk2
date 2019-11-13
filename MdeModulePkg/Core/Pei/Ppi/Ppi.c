@@ -9,6 +9,74 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include "PeiMain.h"
 
 /**
+  Dumps the contents of the three PPI lists maintained by the PEI Core
+  (callback notify list, dispatch notify list, and PPI list) to DEBUG output.
+
+  @param[in] PrivateData     Points to PeiCore's private instance data.
+
+**/
+VOID
+DumpPpiList (
+  IN PEI_CORE_INSTANCE    *PrivateData
+  )
+{
+  DEBUG_CODE_BEGIN ();
+  UINTN   Index;
+
+  if (PrivateData == NULL) {
+    return;
+  }
+
+  for (Index = 0; Index < PrivateData->PpiData.CallbackNotifyList.CurrentCount; Index++) {
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "CallbackNotify[%2d] {%g} at 0x%x (%a)\n",
+      Index,
+      PrivateData->PpiData.CallbackNotifyList.NotifyPtrs[Index].Notify->Guid,
+      (UINTN) PrivateData->PpiData.CallbackNotifyList.NotifyPtrs[Index].Raw,
+      (
+        !(
+          ((EFI_PHYSICAL_ADDRESS) (UINTN) PrivateData->PpiData.CallbackNotifyList.NotifyPtrs[Index].Raw >= PrivateData->PhysicalMemoryBegin) &&
+          (((EFI_PHYSICAL_ADDRESS) ((UINTN) PrivateData->PpiData.CallbackNotifyList.NotifyPtrs[Index].Raw) + sizeof (EFI_PEI_NOTIFY_DESCRIPTOR)) < PrivateData->FreePhysicalMemoryTop)
+          )
+        ? "CAR" : "Post-Memory"
+        )
+      ));
+  }
+  for (Index = 0; Index < PrivateData->PpiData.DispatchNotifyList.CurrentCount; Index++) {
+    DEBUG ((DEBUG_VERBOSE,
+    "DispatchNotify[%2d] {%g} at 0x%x (%a)\n",
+    Index,
+    PrivateData->PpiData.DispatchNotifyList.NotifyPtrs[Index].Notify->Guid,
+    (UINTN) PrivateData->PpiData.DispatchNotifyList.NotifyPtrs[Index].Raw,
+    (
+      !(
+        ((EFI_PHYSICAL_ADDRESS) (UINTN) PrivateData->PpiData.DispatchNotifyList.NotifyPtrs[Index].Raw >=PrivateData->PhysicalMemoryBegin) &&
+        (((EFI_PHYSICAL_ADDRESS) ((UINTN) PrivateData->PpiData.DispatchNotifyList.NotifyPtrs[Index].Raw) + sizeof (EFI_PEI_NOTIFY_DESCRIPTOR)) < PrivateData->FreePhysicalMemoryTop)
+        )
+      ? "CAR" : "Post-Memory"
+      )
+    ));
+  }
+  for (Index = 0; Index < PrivateData->PpiData.PpiList.CurrentCount; Index++) {
+    DEBUG ((DEBUG_VERBOSE,
+    "PPI[%2d] {%g} at 0x%x (%a)\n",
+    Index,
+    PrivateData->PpiData.PpiList.PpiPtrs[Index].Ppi->Guid,
+    (UINTN) PrivateData->PpiData.PpiList.PpiPtrs[Index].Raw,
+    (
+      !(
+        ((EFI_PHYSICAL_ADDRESS) (UINTN) PrivateData->PpiData.PpiList.PpiPtrs[Index].Raw >= PrivateData->PhysicalMemoryBegin) &&
+        (((EFI_PHYSICAL_ADDRESS) ((UINTN) PrivateData->PpiData.PpiList.PpiPtrs[Index].Raw) + sizeof (EFI_PEI_PPI_DESCRIPTOR)) < PrivateData->FreePhysicalMemoryTop)
+        )
+      ? "CAR" : "Post-Memory"
+      )
+    ));
+  }
+  DEBUG_CODE_END ();
+}
+
+/**
 
   This function installs an interface in the PEI PPI database by GUID.
   The purpose of the service is to publish an interface that other parties

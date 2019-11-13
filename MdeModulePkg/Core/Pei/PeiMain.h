@@ -395,6 +395,43 @@ PeimDispatchReadiness (
   );
 
 /**
+  Migrate a PEIM from Temporary RAM to permanent memory.
+
+  @param[in] FileHandle           Pointer to the FFS file header of the image.
+  @param[in] MigratedFileHandle   Pointer to the FFS file header of the migrated image.
+
+  @retval EFI_SUCCESS         Successfully migrated the PEIM to permanent memory.
+
+**/
+EFI_STATUS
+MigratePeim (
+  IN  EFI_PEI_FILE_HANDLE     FileHandle,
+  IN  EFI_PEI_FILE_HANDLE     MigratedFileHandle
+  );
+
+/**
+  Migrates firmware volumes from temporary RAM to permanent memory.
+
+  Any pointers in PEI core private data structures within the address range
+  covered by the firmware volumes that are migrated are updated from the
+  pre-memory address to the permanent memory address.
+
+  @param[in] Private        PeiCore's private data structure
+  @param[in] SecCoreData    Points to a data structure containing information about the PEI core's operating
+                            environment, such as the size and location of temporary RAM, the stack location and
+                            the BFV location.
+
+  @retval EFI_SUCCESS           Successfully migrated installed firmware volumes from temporary RAM to permanent memory.
+  @retval EFI_OUT_OF_RESOURCES  Insufficient memory exists to allocate the pages needed for migration.
+
+**/
+EFI_STATUS
+MigrateTemporaryRamFvs (
+  IN PEI_CORE_INSTANCE            *Private,
+  IN CONST EFI_SEC_PEI_HAND_OFF   *SecCoreData
+  );
+
+/**
   Conduct PEIM dispatch.
 
   @param SecCoreData     Pointer to the data structure containing SEC to PEI handoff data
@@ -475,6 +512,56 @@ VOID
 ConvertPpiPointers (
   IN CONST EFI_SEC_PEI_HAND_OFF  *SecCoreData,
   IN PEI_CORE_INSTANCE           *PrivateData
+  );
+
+/**
+  Migrate PPI related pointers to addresses within pre-memory FVs to the corresponding
+  address to the FV in permanent memory.
+
+  The descriptor pointer, GUID pointer, and PPI interface (or notification function for Notifies)
+  is updated in that order to the permanent memory address.
+
+  @param[in] PrivateData      Pointer to PeiCore's private data structure.
+  @param[in] OrgFvHandle      Address of FV Handle in temporary memory.
+  @param[in] FvHandle         Address of FV Handle in permanent memory.
+  @param[in] FvSize           Size of the FV.
+
+**/
+VOID
+ConvertPpiPointersFv (
+  IN  PEI_CORE_INSTANCE       *PrivateData,
+  IN  UINTN                   OrgFvHandle,
+  IN  UINTN                   FvHandle,
+  IN  UINTN                   FvSize
+  );
+
+/**
+  Migrate PPI related pointers to the PEI_CORE image in pre-memory to the corresponding
+  address in the PEI_CORE image in permanent memory.
+
+  The descriptor pointer, GUID pointer, and PPI interface (or notification function for Notifies)
+  is updated in that order to the permanent memory address.
+
+  @param[in] PrivateData      Pointer to PeiCore's private data structure.
+  @param[in] CoreFvHandle     Address of PEI_CORE FV Handle in temporary memory.
+
+**/
+VOID
+ConvertPeiCorePpiPointers (
+  IN  PEI_CORE_INSTANCE        *PrivateData,
+  PEI_CORE_FV_HANDLE           CoreFvHandle
+  );
+
+/**
+  Dumps the contents of the three PPI lists maintained by the PEI Core
+  (callback notify list, dispatch notify list, and PPI list) to DEBUG output.
+
+  @param[in] PrivateData     Points to PeiCore's private instance data.
+
+**/
+VOID
+DumpPpiList (
+  IN PEI_CORE_INSTANCE    *PrivateData
   );
 
 /**
@@ -809,6 +896,37 @@ PeiFfsFindNextFile (
   );
 
 /**
+  Go through the file to search SectionType section.
+  Search within encapsulation sections (compression and GUIDed) recursively,
+  until the match section is found.
+
+  @param PeiServices       An indirect pointer to the EFI_PEI_SERVICES table published by the PEI Foundation.
+  @param SectionType       Filter to find only section of this type.
+  @param SectionInstance   Pointer to the filter to find the specific instance of section.
+  @param Section           From where to search.
+  @param SectionSize       The file size to search.
+  @param OutputBuffer      A pointer to the discovered section, if successful.
+                           NULL if section not found
+  @param AuthenticationStatus Updated upon return to point to the authentication status for this section.
+  @param IsFfs3Fv          Indicates the FV format.
+
+  @return EFI_NOT_FOUND    The match section is not found.
+  @return EFI_SUCCESS      The match section is found.
+
+**/
+EFI_STATUS
+ProcessSection (
+  IN CONST EFI_PEI_SERVICES     **PeiServices,
+  IN EFI_SECTION_TYPE           SectionType,
+  IN OUT UINTN                  *SectionInstance,
+  IN EFI_COMMON_SECTION_HEADER  *Section,
+  IN UINTN                      SectionSize,
+  OUT VOID                      **OutputBuffer,
+  OUT UINT32                    *AuthenticationStatus,
+  IN BOOLEAN                    IsFfs3Fv
+  );
+
+/**
   Searches for the next matching section within the specified file.
 
   @param PeiServices     An indirect pointer to the EFI_PEI_SERVICES table published by the PEI Foundation
@@ -929,6 +1047,33 @@ VOID
 MigrateMemoryPages (
   IN PEI_CORE_INSTANCE      *Private,
   IN BOOLEAN                TemporaryRamMigrated
+  );
+
+/**
+  Removes any FV HOBs whose base address is not in PEI installed memory.
+
+  @param[in] Private          Pointer to PeiCore's private data structure.
+
+**/
+VOID
+RemoveFvHobsInTemporaryMemory (
+  IN PEI_CORE_INSTANCE        *Private
+  );
+
+/**
+  Migrate the base address in firmware volume allocation HOBs
+  from temporary memory to PEI installed memory.
+
+  @param[in] PrivateData      Pointer to PeiCore's private data structure.
+  @param[in] OrgFvHandle      Address of FV Handle in temporary memory.
+  @param[in] FvHandle         Address of FV Handle in permanent memory.
+
+**/
+VOID
+ConvertFvHob (
+  IN PEI_CORE_INSTANCE          *PrivateData,
+  IN UINTN                      OrgFvHandle,
+  IN UINTN                      FvHandle
   );
 
 /**
@@ -1247,6 +1392,37 @@ VOID
 InitializeImageServices (
   IN  PEI_CORE_INSTANCE   *PrivateData,
   IN  PEI_CORE_INSTANCE   *OldCoreData
+  );
+
+/**
+  Loads and relocates a PE/COFF image in place.
+
+  @param Pe32Data         The base address of the PE/COFF file that is to be loaded and relocated
+  @param ImageAddress     The base address of the relocated PE/COFF image
+
+  @retval EFI_SUCCESS     The file was loaded and relocated
+
+**/
+EFI_STATUS
+LoadAndRelocatePeCoffImageInPlace (
+  IN  VOID    *Pe32Data,
+  IN  VOID    *ImageAddress
+  );
+
+/**
+  Finds the PE32 data for a FFS file.
+
+  @param[in] FileHandle    Pointer to the FFS file header of the image.
+  @param[out] Pe32Data     Pointer to a (VOID *) PE32 Data pointer.
+
+  @retval EFI_SUCCESS      Image is successfully loaded.
+  @retval EFI_NOT_FOUND    Fail to locate PE32 Data.
+
+**/
+EFI_STATUS
+PeiGetPe32Data (
+  IN     EFI_PEI_FILE_HANDLE          FileHandle,
+  OUT    VOID                         **Pe32Data
   );
 
 /**

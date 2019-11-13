@@ -109,6 +109,7 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdLoadModuleAtFixAddressEnable            ## CONSUMES
   gEfiMdeModulePkgTokenSpaceGuid.PcdShadowPeimOnS3Boot                      ## CONSUMES
   gEfiMdeModulePkgTokenSpaceGuid.PcdShadowPeimOnBoot                        ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdMigrateTemporaryRamFirmwareVolumes      ## CONSUMES
   gEfiMdeModulePkgTokenSpaceGuid.PcdInitValueInTempStack                    ## CONSUMES
 
 # [BootMode]

@@ -418,6 +418,21 @@ PeiCore (
       ProcessPpiListFromSec ((CONST EFI_PEI_SERVICES **) &PrivateData.Ps, PpiList);
     }
   } else {
+    if (((!(PrivateData.HobList.HandoffInformationTable->BootMode == BOOT_ON_S3_RESUME) && PcdGetBool (PcdShadowPeimOnBoot)) ||
+        ((PrivateData.HobList.HandoffInformationTable->BootMode == BOOT_ON_S3_RESUME) && PcdGetBool (PcdShadowPeimOnS3Boot))) &&
+        PcdGetBool (PcdMigrateTemporaryRamFirmwareVolumes)) {
+      DEBUG ((DEBUG_VERBOSE, "PPI lists before Temporary RAM FV migration:\n"));
+      DumpPpiList (&PrivateData);
+
+      //
+      // Migrate firmware volumes from Temporary RAM to permanent memory
+      //
+      MigrateTemporaryRamFvs (&PrivateData, SecCoreData);
+
+      DEBUG ((DEBUG_VERBOSE, "PPI lists after Temporary RAM FV migration:\n"));
+      DumpPpiList (&PrivateData);
+    }
+
     //
     // Try to locate Temporary RAM Done Ppi.
     //
