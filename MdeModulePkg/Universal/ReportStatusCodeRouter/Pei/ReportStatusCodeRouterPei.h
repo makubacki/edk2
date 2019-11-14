@@ -1,7 +1,7 @@
 /** @file
   Internal include file for Report Status Code Router PEIM.
 
-  Copyright (c) 2009 - 2018, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2009 - 2019, Intel Corporation. All rights reserved.<BR>
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
@@ -9,7 +9,7 @@
 #ifndef __PEI_REPORT_STATUS_CODE_ROUTER_H__
 #define __PEI_REPORT_STATUS_CODE_ROUTER_H__
 
-
+#include <Ppi/ConvertPointer.h>
 #include <Ppi/ReportStatusCodeHandler.h>
 #include <Ppi/StatusCode.h>
 

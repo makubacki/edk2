@@ -1,7 +1,7 @@
 /** @file
   Report Status Code Router PEIM which produces Report Stataus Code Handler PPI and Status Code PPI.
 
-  Copyright (c) 2009 - 2018, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2009 - 2019, Intel Corporation. All rights reserved.<BR>
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
@@ -30,6 +30,66 @@ EFI_PEI_PPI_DESCRIPTOR   mStatusCodePpiList[] = {
     EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST,
     &gEfiPeiStatusCodePpiGuid,
     &mStatusCodePpi
+  }
+};
+
+/**
+  Converts status code callback function pointers that still point to pre-memory addresses
+  to permanent memory addresses after the PEI_CONVERT_POINTER_PPI is installed.
+
+  @param[in] PeiServices    Pointer to PEI Services Table.
+  @param[in] NotifyDesc     Pointer to the descriptor for the Notification event that
+                            caused this function to execute.
+  @param[in] Ppi            Pointer to the PPI data associated with this function.
+
+  @retval EFI_STATUS        Always return EFI_SUCCESS
+
+**/
+EFI_STATUS
+EFIAPI
+ConvertPointerPpiNotify (
+  IN EFI_PEI_SERVICES           **PeiServices,
+  IN EFI_PEI_NOTIFY_DESCRIPTOR  *NotifyDesc,
+  IN VOID                       *Ppi
+  )
+{
+  EFI_STATUS                    Status;
+  EFI_PEI_HOB_POINTERS          Hob;
+  EFI_PEI_RSC_HANDLER_CALLBACK  *CallbackEntry;
+  PEI_CONVERT_POINTER_PPI       *ConvertPointerPpi;
+  UINTN                         *NumberOfEntries;
+  UINTN                         Index;
+
+  DEBUG ((DEBUG_INFO, "Converting Status Code callbacks...\n"));
+
+  ConvertPointerPpi = (PEI_CONVERT_POINTER_PPI *) Ppi;
+
+  Hob.Raw  = GetFirstGuidHob (&gStatusCodeCallbackGuid);
+  while (Hob.Raw != NULL) {
+    NumberOfEntries = GET_GUID_HOB_DATA (Hob);
+    CallbackEntry   = (EFI_PEI_RSC_HANDLER_CALLBACK *) (NumberOfEntries + 1);
+    for (Index = 0; Index < *NumberOfEntries; Index++) {
+      if (CallbackEntry[Index] != NULL) {
+        Status = ConvertPointerPpi->ConvertPointer (
+                                      (CONST EFI_PEI_SERVICES **) PeiServices,
+                                      ConvertPointerPpi,
+                                      (VOID **) &CallbackEntry[Index]
+                                      );
+        ASSERT_EFI_ERROR (Status);
+      }
+    }
+    Hob.Raw = GET_NEXT_HOB (Hob);
+    Hob.Raw = GetNextGuidHob (&gStatusCodeCallbackGuid, Hob.Raw);
+  }
+
+  return EFI_SUCCESS;
+}
+
+EFI_PEI_NOTIFY_DESCRIPTOR   mNotifyList[] = {
+  {
+    EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST,
+    &gPeiConvertPointerPpiGuid,
+    ConvertPointerPpiNotify
   }
 };
 
@@ -309,6 +369,9 @@ GenericStatusCodePeiEntry (
   } else {
     Status = PeiServicesInstallPpi (mStatusCodePpiList);
   }
+  ASSERT_EFI_ERROR (Status);
+
+  Status = PeiServicesNotifyPpi (mNotifyList);
   ASSERT_EFI_ERROR (Status);
 
   return EFI_SUCCESS;

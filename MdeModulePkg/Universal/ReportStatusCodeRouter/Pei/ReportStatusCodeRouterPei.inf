@@ -1,7 +1,7 @@
 ## @file
 #  Report Status Code Router PEIM which produces Report Stataus Code Handler PPI and Status Code PPI.
 #
-#  Copyright (c) 2009 - 2018, Intel Corporation. All rights reserved.<BR>
+#  Copyright (c) 2009 - 2019, Intel Corporation. All rights reserved.<BR>
 #
 #  SPDX-License-Identifier: BSD-2-Clause-Patent
 #
@@ -46,6 +46,7 @@
 [Ppis]
   gEfiPeiRscHandlerPpiGuid                      ## PRODUCES
   gEfiPeiStatusCodePpiGuid                      ## PRODUCES
+  gPeiConvertPointerPpiGuid                     ## CONSUMES
 
 
 [Depex]
