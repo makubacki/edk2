@@ -8,6 +8,17 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "PeiMain.h"
 
+PEI_CONVERT_POINTER_PPI mPeiConvertPointerPpi = {
+  ConvertMigratedPointer
+};
+
+EFI_PEI_PPI_DESCRIPTOR  mPeiConvertPointerPpiList = {
+  (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
+  &gPeiConvertPointerPpiGuid,
+  &mPeiConvertPointerPpi
+};
+
+
 /**
 
   Migrate Pointer from the Temporary RAM to PEI installed memory.
@@ -36,6 +47,74 @@ ConvertPointer (
       *Pointer = (VOID *) ((UINTN) *Pointer - Offset);
     }
   }
+}
+
+/**
+  This interface provides a service to convert a pointer to an address in a pre-memory FV
+  to the corresponding address in the permanent memory FV.
+
+  This service is published by the PEI Foundation if the PEI Foundation migrated pre-memory
+  FVs to permanent memory. This service is published before temporary RAM is disabled and
+  can be used by PEIMs to convert pointer such as code function pointers to the permanent
+  memory address before the code in pre-memory is invalidated.
+
+  @param[in]  PeiServices         The pointer to the PEI Services Table.
+  @param[in]  This                The pointer to this instance of the PEI_CONVERT_POINTER_PPI.
+  @param[in]  Address             The pointer to a pointer that is to be converted from
+                                  a pre-memory address in a FV to the corresponding  permanent memory
+                                  address in a FV.
+
+  @retval EFI_SUCCESS             The pointer pointed to by Address was modified successfully.
+  @retval EFI_NOT_FOUND           The address at the pointer pointed to by Address was not found
+                                  in a pre-memory FV address range.
+  @retval EFI_INVALID_PARAMETER   Address is NULL or *Address is NULL.
+
+**/
+EFI_STATUS
+EFIAPI
+ConvertMigratedPointer (
+  IN CONST EFI_PEI_SERVICES          **PeiServices,
+  IN       PEI_CONVERT_POINTER_PPI   *This,
+  IN       VOID                      **Address
+  )
+{
+  PEI_CORE_INSTANCE     *PrivateData;
+  UINTN                 PreMemoryAddress;
+  UINTN                 Index;
+  UINTN                 Offset;
+  BOOLEAN               OffsetPositive;
+
+  if (Address == NULL || *Address == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+  PrivateData = PEI_CORE_INSTANCE_FROM_PS_THIS (PeiServices);
+
+  PreMemoryAddress = (UINTN) *Address;
+
+  ASSERT (PrivateData->MigrationMap.Count <= PrivateData->FvCount);
+  for (Index = 0; Index < PrivateData->MigrationMap.Count; Index++) {
+    if (PrivateData->MigrationMap.Entry[Index].PostMemoryBase > PrivateData->MigrationMap.Entry[Index].PreMemoryBase) {
+      Offset = (UINTN) (PrivateData->MigrationMap.Entry[Index].PostMemoryBase - PrivateData->MigrationMap.Entry[Index].PreMemoryBase);
+      OffsetPositive = TRUE;
+    } else {
+      Offset = (UINTN) (PrivateData->MigrationMap.Entry[Index].PreMemoryBase - PrivateData->MigrationMap.Entry[Index].PostMemoryBase);
+      OffsetPositive = FALSE;
+    }
+
+    if ((PreMemoryAddress >= (UINTN) PrivateData->MigrationMap.Entry[Index].PreMemoryBase) &&
+        (PreMemoryAddress < (PreMemoryAddress + PrivateData->MigrationMap.Entry[Index].PreMemoryLength))) {
+      ConvertPointer (
+        Address,
+        (UINTN) PrivateData->MigrationMap.Entry[Index].PreMemoryBase,
+        (UINTN) PrivateData->MigrationMap.Entry[Index].PreMemoryBase + PrivateData->MigrationMap.Entry[Index].PreMemoryLength,
+        Offset,
+        OffsetPositive
+        );
+      return EFI_SUCCESS;
+    }
+  }
+
+  return EFI_NOT_FOUND;
 }
 
 /**
@@ -780,7 +859,14 @@ MigrateTemporaryRamFvs (
   }
 
   //
+  // Allocate the migration map structure
+  //
+  Private->MigrationMap.Entry = AllocateZeroPool (sizeof (MIGRATION_MAP_ENTRY) * Private->FvCount);
+  ASSERT (Private->MigrationMap.Entry != NULL);
+
+  //
   // Migrate installed firmware volumes in Temporary RAM to permanent memory
+  // and populate the migration map structure
   //
   Status = EFI_SUCCESS;
   for (FvIndex = 0; FvIndex < Private->FvCount; FvIndex++) {
@@ -815,6 +901,14 @@ MigrateTemporaryRamFvs (
         ));
 
       CopyMem (MigratedFvHeader, FvHeader, (UINTN) FvHeader->FvLength);
+
+      if (Private->MigrationMap.Entry != NULL) {
+        Private->MigrationMap.Entry[FvIndex].PreMemoryBase = (EFI_PHYSICAL_ADDRESS) (UINTN) FvHeader;
+        Private->MigrationMap.Entry[FvIndex].PreMemoryLength = (UINTN) FvHeader->FvLength;
+        Private->MigrationMap.Entry[FvIndex].PostMemoryBase = (EFI_PHYSICAL_ADDRESS) (UINTN) MigratedFvHeader;
+        Private->MigrationMap.Entry[FvIndex].PostMemoryLength = (UINTN) FvHeader->FvLength;
+        Private->MigrationMap.Count++;
+      }
 
       //
       // Migrate any child firmware volumes for this firmware volume
@@ -861,7 +955,16 @@ MigrateTemporaryRamFvs (
     }
   }
 
+  //
+  // Remove FV HOBs that still point to pre-memory FVs
+  //
   RemoveFvHobsInTemporaryMemory (Private);
+
+  //
+  // Install the PEI_CONVERT_POINTER_PPI to provide a pointer conversion
+  // service to PEIMs based on the FV address mappings stored during migration
+  //
+  PeiServicesInstallPpi (&mPeiConvertPointerPpiList);
 
   return Status;
 }

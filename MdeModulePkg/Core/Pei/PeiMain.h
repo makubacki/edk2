@@ -26,6 +26,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Ppi/TemporaryRamDone.h>
 #include <Ppi/SecHobData.h>
 #include <Ppi/PeiCoreFvLocation.h>
+#include <Ppi/ConvertPointer.h>
 #include <Library/DebugLib.h>
 #include <Library/PeiCoreEntryPoint.h>
 #include <Library/BaseLib.h>
@@ -173,6 +174,18 @@ typedef struct {
   BOOLEAN                            OffsetPositive;
 } HOLE_MEMORY_DATA;
 
+typedef struct {
+  EFI_PHYSICAL_ADDRESS               PreMemoryBase;
+  EFI_PHYSICAL_ADDRESS               PostMemoryBase;
+  UINTN                              PreMemoryLength;
+  UINTN                              PostMemoryLength;
+} MIGRATION_MAP_ENTRY;
+
+typedef struct {
+  UINTN                              Count;
+  MIGRATION_MAP_ENTRY                *Entry;
+} MIGRATION_MAP;
+
 ///
 /// Forward declaration for PEI_CORE_INSTANCE
 ///
@@ -307,6 +320,11 @@ struct _PEI_CORE_INSTANCE {
   // Those Memory Range will be migrated into physical memory.
   //
   HOLE_MEMORY_DATA                  HoleData[HOLE_MAX_NUMBER];
+
+  //
+  // Migration ranges that should be used for PEI pointer conversion.
+  //
+  MIGRATION_MAP                     MigrationMap;
 };
 
 ///
@@ -429,6 +447,35 @@ EFI_STATUS
 MigrateTemporaryRamFvs (
   IN PEI_CORE_INSTANCE            *Private,
   IN CONST EFI_SEC_PEI_HAND_OFF   *SecCoreData
+  );
+
+/**
+  This interface provides a service to convert a pointer to an address in a pre-memory FV
+  to the corresponding address in the permanent memory FV.
+
+  This service is published by the PEI Foundation if the PEI Foundation migrated pre-memory
+  FVs to permanent memory. This service is published before temporary RAM is disabled and
+  can be used by PEIMs to convert pointer such as code function pointers to the permanent
+  memory address before the code in pre-memory is invalidated.
+
+  @param[in]  PeiServices         The pointer to the PEI Services Table.
+  @param[in]  This                The pointer to this instance of the PEI_CONVERT_POINTER_PPI.
+  @param[in]  Address             The pointer to a pointer that is to be converted from
+                                  a pre-memory address in a FV to the corresponding  permanent memory
+                                  address in a FV.
+
+  @retval EFI_SUCCESS             The pointer pointed to by Address was modified successfully.
+  @retval EFI_NOT_FOUND           The address at the pointer pointed to by Address was not found
+                                  in a pre-memory FV address range.
+  @retval EFI_INVALID_PARAMETER   Address is NULL or *Address is NULL.
+
+**/
+EFI_STATUS
+EFIAPI
+ConvertMigratedPointer (
+  IN CONST EFI_PEI_SERVICES          **PeiServices,
+  IN       PEI_CONVERT_POINTER_PPI   *This,
+  IN       VOID                      **Address
   );
 
 /**
