@@ -1,6 +1,6 @@
 /** @file
 
-  Copyright (c) 2017 - 2018, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2017 - 2019, Intel Corporation. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -13,6 +13,7 @@
 #include <Uefi.h>
 #include <PiPei.h>
 
+#include <Ppi/ConvertPointer.h>
 #include <Ppi/Reset2.h>
 #include <Ppi/PlatformSpecificResetFilter.h>
 #include <Ppi/PlatformSpecificResetNotification.h>

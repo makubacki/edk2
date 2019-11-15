@@ -1,7 +1,7 @@
 ## @file
 # This driver implements Reset2, ResetFilter and ResetHandler PPIs.
 #
-# Copyright (c) 2017, Intel Corporation. All rights reserved.<BR>
+# Copyright (c) 2017 - 2019, Intel Corporation. All rights reserved.<BR>
 #
 # SPDX-License-Identifier: BSD-2-Clause-Patent
 #
@@ -46,6 +46,7 @@
   gEdkiiPlatformSpecificResetFilterPpiGuid       ## PRODUCES
   gEdkiiPlatformSpecificResetHandlerPpiGuid      ## PRODUCES
   gEdkiiPlatformSpecificResetNotificationPpiGuid ## PRODUCES
+  gPeiConvertPointerPpiGuid                      ## SOMETIMES_CONSUMES
 
 [Pcd]
   gEfiMdeModulePkgTokenSpaceGuid.PcdMaximumPeiResetNotifies

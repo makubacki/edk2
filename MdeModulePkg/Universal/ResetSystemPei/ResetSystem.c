@@ -71,6 +71,85 @@ EFI_PEI_PPI_DESCRIPTOR mPpiListReset[] = {
 };
 
 /**
+  Converts reset callback function pointers that still point to pre-memory addresses
+  to permanent memory addresses after the PEI_CONVERT_POINTER_PPI is installed.
+
+  @param[in] PeiServices    Pointer to PEI Services Table.
+  @param[in] NotifyDesc     Pointer to the descriptor for the Notification event that
+                            caused this function to execute.
+  @param[in] Ppi            Pointer to the PPI data associated with this function.
+
+  @retval EFI_STATUS        Always return EFI_SUCCESS
+
+**/
+EFI_STATUS
+EFIAPI
+ConvertPointerPpiNotify (
+  IN EFI_PEI_SERVICES           **PeiServices,
+  IN EFI_PEI_NOTIFY_DESCRIPTOR  *NotifyDesc,
+  IN VOID                       *Ppi
+  )
+{
+  EFI_STATUS                    Status;
+  UINTN                         Index;
+  UINTN                         OrderIndex;
+  VOID                          *Hob;
+  PEI_CONVERT_POINTER_PPI       *ConvertPointerPpi;
+  RESET_FILTER_LIST             *List;
+  UINT8                         *RecursionDepthPointer;
+
+  DEBUG ((DEBUG_INFO, "Converting Reset callbacks...\n"));
+
+  ConvertPointerPpi = (PEI_CONVERT_POINTER_PPI *) Ppi;
+
+  //
+  // The recursion depth is stored in GUIDed HOB using gEfiCallerIdGuid.
+  //
+  Hob = GetFirstGuidHob (&gEfiCallerIdGuid);
+
+  RecursionDepthPointer = (UINT8 *) GET_GUID_HOB_DATA (Hob);
+
+  //
+  // Increase the call depth
+  //
+  (*RecursionDepthPointer)++;
+
+  if (*RecursionDepthPointer <= MAX_RESET_NOTIFY_DEPTH) {
+    //
+    // Iteratively call Reset Filters and Reset Handlers.
+    //
+    for (OrderIndex = 0; OrderIndex < ARRAY_SIZE (mProcessingOrder); OrderIndex++) {
+      Hob = GetFirstGuidHob (mProcessingOrder[OrderIndex]);
+      if (Hob != NULL) {
+        List = (RESET_FILTER_LIST *) GET_GUID_HOB_DATA (Hob);
+        ASSERT (List->Signature == RESET_FILTER_LIST_SIGNATURE);
+
+        for (Index = 0; Index < List->Count; Index++) {
+          if (List->ResetFilters[Index] != NULL) {
+            Status = ConvertPointerPpi->ConvertPointer (
+                                          (CONST EFI_PEI_SERVICES **) PeiServices,
+                                          ConvertPointerPpi,
+                                          (VOID **) &List->ResetFilters[Index]
+                                          );
+            ASSERT_EFI_ERROR (Status);
+          }
+        }
+      }
+    }
+  }
+
+  return EFI_SUCCESS;
+}
+
+EFI_PEI_NOTIFY_DESCRIPTOR   mNotifyList[] = {
+  {
+    EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST,
+    &gPeiConvertPointerPpiGuid,
+    ConvertPointerPpiNotify
+  }
+};
+
+/**
   Register a notification function to be called when ResetSystem() is called.
 
   The RegisterResetNotify() function registers a notification function that is called when
@@ -250,7 +329,10 @@ InitializeResetSystem (
     return EFI_ALREADY_STARTED;
   }
 
-  PeiServicesInstallPpi (mPpiListReset);
+  Status = PeiServicesNotifyPpi (mNotifyList);
+  ASSERT_EFI_ERROR (Status);
+  Status = PeiServicesInstallPpi (mPpiListReset);
+  ASSERT_EFI_ERROR (Status);
 
   return Status;
 }
