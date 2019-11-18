@@ -58,6 +58,47 @@ SecStartupPhase2(
   );
 
 /**
+  Migrates the Global Descriptor Table (GDT) to a new memory buffer.
+
+  This function copies the GDT loaded into a new memory buffer and loads the GDT from the
+  memory buffer. This is useful for reloading the GDT from a permanent memory buffer prior
+  to its location in a temporary memory buffer being invalidated.
+
+  @retval   EFI_SUCCESS           The GDT was migrated successfully.
+  @retval   EFI_OUT_OF_RESOURCES  The GDT could not be migrated due to lack of available memory.
+
+**/
+EFI_STATUS
+MigrateGdt (
+  VOID
+  )
+{
+  EFI_STATUS          Status;
+  IA32_DESCRIPTOR     Gdtr;
+  UINTN               GdtBufferSize;
+  UINT8               *GdtBuffer;
+
+  AsmReadGdtr (&Gdtr);
+  GdtBufferSize = sizeof (IA32_TSS_DESCRIPTOR) + Gdtr.Limit + 1;
+
+  Status =  PeiServicesAllocatePool (
+              GdtBufferSize,
+              (VOID **) &GdtBuffer
+              );
+  ASSERT (GdtBuffer != NULL);
+  if (EFI_ERROR (Status)) {
+    return EFI_OUT_OF_RESOURCES;
+  }
+
+  GdtBuffer = ALIGN_POINTER (GdtBuffer, sizeof (IA32_TSS_DESCRIPTOR));
+  CopyMem ((VOID *) (UINTN) GdtBuffer, (VOID *) Gdtr.Base, Gdtr.Limit + 1);
+  Gdtr.Base = (UINTN) GdtBuffer;
+  AsmWriteGdtr (&Gdtr);
+
+  return EFI_SUCCESS;
+}
+
+/**
   Entry point of the notification callback function itself within the PEIM.
   It is to get SEC performance data and build HOB to convey the SEC performance
   data to DXE phase.
@@ -408,6 +449,12 @@ SecTemporaryRamDone (
   // Disable interrupts and save current interrupt state
   //
   State = SaveAndDisableInterrupts();
+
+  //
+  // Migrate the GDT
+  //
+  Status = MigrateGdt ();
+  ASSERT_EFI_ERROR (Status);
 
   //
   // Disable Temporary RAM after Stack and Heap have been migrated at this point.
