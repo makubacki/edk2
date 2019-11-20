@@ -1,0 +1,11 @@
+// /** @file
+// This library contains functions to dump CPU structure information.
+//
+// Copyright (c) 2019, Intel Corporation. All rights reserved.<BR>
+// SPDX-License-Identifier: BSD-2-Clause-Patent
+//
+// **/
+
+#string STR_MODULE_ABSTRACT             #language en-US "Defines routines to dump CPU structure information to debug output."
+
+#string STR_MODULE_DESCRIPTION          #language en-US "Defines routines to dump CPU structure information to debug output."
