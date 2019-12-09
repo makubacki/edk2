@@ -632,3 +632,41 @@ class PlatformBuildClassObject(object):
     #
     def __hash__(self):
         return hash(self.MetaFile)
+
+
+class TomlBuildClassObject(object):
+    def __init__(self):
+        self.AutoGenVersion          = 0
+        self.MetaFile                = ''
+        self.BaseName                = ''
+        self.ModuleType              = ''
+        self.Guid                    = ''
+        self.Version                 = ''
+
+    ## Convert the class to a string
+    #
+    #  Convert member MetaFile of the class to a string
+    #
+    #  @retval string Formatted String
+    #
+    def __str__(self):
+        return str(self.MetaFile)
+
+    ## Override __eq__ function
+    #
+    # Check whether ModuleBuildClassObjects are the same
+    #
+    # @retval False The two ModuleBuildClassObjects are different
+    # @retval True  The two ModuleBuildClassObjects are the same
+    #
+    def __eq__(self, Other):
+        return self.MetaFile == Other
+
+    ## Override __hash__ function
+    #
+    # Use MetaFile as key in hash table
+    #
+    # @retval string Key for hash table
+    #
+    def __hash__(self):
+        return hash(self.MetaFile)
