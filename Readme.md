@@ -15,7 +15,8 @@ This branch owner: Jiewen Yao <[jiewen.yao@intel.com](mailto:jiewen.yao@intel.co
 
 ### Preface
 
-For rust, we use x86_64-unknown-uefi and i686-unknown-uefi target to generate PE library or .efi image in Windows or Linux.
+For rust, we use x86_64-unknown-uefi (https://github.com/rust-lang/rust/blob/master/src/librustc_target/spec/x86_64_unknown_uefi.rs) and i686-unknown-uefi (https://github.com/rust-lang/rust/blob/master/src/librustc_target/spec/i686_unknown_uefi.rs) target to generate PE library or .efi image in Windows or Linux.
+The module entrypoint name is efi_main(). (https://github.com/rust-lang/rust/blob/master/src/librustc_target/spec/uefi_base.rs)
 
 For C code, we use LLVM9 toolchain to generate PE binary in Windows or Linux.
 
@@ -104,6 +105,9 @@ Currently, we may use ways to build UEFI module with rust support.
   build -p RustPkg/RustPkg.dsc -t CLANGPDB -a X64
   ```
 
+  This will also help to add section header, FFS header, FV header for the .efi image.
+  It supports to generate PEIM/DXE driver/SMM driver in final FD image. See RustPkg/RustPkg.fdf.
+
 ### Supported Build combination
 
 1. C source + Rust source mixed in INF (Library or Module)
@@ -140,11 +144,41 @@ Currently, we may use ways to build UEFI module with rust support.
 
   Same as #4 + #5.
 
-### TODO
+### uefi-rust interaction
+
+#### allocator
+
+Some rust data structures requires GlobalAlloc.
+A UEFI version (uefi_rust_allocation_lib) is implemented at RustPkg\Library\UefiRustAllocationLib.
+
+#### panic
+
+The rust requires panic handler.
+A default one - simple deadloop (uefi_rust_panic_lib) is implemented at RustPkg\Library\UefiRustPanicLib.
+A platform may choose to implement it a different way, such as reporting information via debug message.
+
+### future work
+
+1. uefi-rust definition
+
+* have common crate for the specification defined by UEFI.org. (We have number of efi-rust support in open source,
+  such as r-efi (https://github.com/r-util/r-efi), uefi-rs (https://github.com/rust-osdev/uefi-rs), redox_uefi (https://gitlab.redox-os.org/redox-os?utf8=%E2%9C%93&filter=uefi).
+  Each project defines its own data structures. There is no common definition for UEFI/PI specification so far.
+* add more complete UEFI specification definition
+* add more complete UEFI Platform Initialization (PI) specification definition
+* add more industry standard definition, such as PE/COFF image, TCG, ACPI, SMBIOS, etc.
+
+2. uefi-rust interaction
+
+* add PEI and SMM version GlobalAlloc.
+* add debug output in panic handler. (need standardize the debug output API)
+* add OsString (https://doc.rust-lang.org/stable/std/ffi/) support. (the default string type in UEFI is 16bit Unicode, while default string type in rust is utf8.)
+* add uefi-runtime consideration. (convert the module global address for UEFI runtime.)
+
+3. uefi-rust modules
 
 * support cross module include.
 * add more rust modules.
-
 
 ### Appendix A: Build Rust from source
 
