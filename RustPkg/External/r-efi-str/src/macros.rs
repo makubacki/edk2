@@ -1,0 +1,11 @@
+#[cfg(not(test))]
+#[macro_export]
+macro_rules! ucs2_str {
+    ($source_str:expr, $length: expr) => ({
+            let mut ucs2_str = [0u16; $length];
+            let result = $crate::ucs2::encode($source_str, &mut ucs2_str);
+            result.unwrap();
+            ucs2_str
+        }
+    )
+}

@@ -27,6 +27,12 @@
 
 use r_efi::efi;
 
+//GlobalAlloc and alloc_error_handler installed by r_efi_services
+#[allow(unused_imports)]
+use r_efi_services;
+
+use r_efi_str::{self, OsString};
+
 #[panic_handler]
 fn panic_handler(_info: &core::panic::PanicInfo) -> ! {
     loop {}
@@ -35,18 +41,24 @@ fn panic_handler(_info: &core::panic::PanicInfo) -> ! {
 #[no_mangle]
 #[export_name = "efi_main"]
 pub extern fn main(_h: efi::Handle, st: *mut efi::SystemTable) -> efi::Status {
-    let s = [
-        0x0048u16, 0x0065u16, 0x006cu16, 0x006cu16, 0x006fu16,              // "Hello"
-        0x0020u16,                                                          // " "
-        0x0057u16, 0x006fu16, 0x0072u16, 0x006cu16, 0x0064u16,              // "World"
-        0x0021u16,                                                          // "!"
-        0x000au16,                                                          // "\n"
-        0x0000u16,                                                          // NUL
-    ];
+    unsafe{
+        r_efi_services::boot_service::init(&(*(*st).boot_services));
+    }
 
     // Print "Hello World!".
+    let buf = OsString::from("hello");
     let r = unsafe {
-        ((*(*st).con_out).output_string)((*st).con_out, s.as_ptr() as *mut efi::Char16)
+        ((*(*st).con_out).output_string)((*st).con_out, buf.as_ptr() as *mut efi::Char16)
+    };
+    if r.is_error() {
+        return r;
+    }
+
+    // create a stack array to store ucs2 string from str.
+    // 100 is larger than the len of the "world\r\n".
+    let buf = r_efi_str::ucs2_str!(" world\r\n", 100);
+    let r = unsafe {
+        ((*(*st).con_out).output_string)((*st).con_out, buf.as_ptr() as *mut efi::Char16)
     };
     if r.is_error() {
         return r;
