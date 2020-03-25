@@ -56,7 +56,7 @@ pub extern fn main(_h: efi::Handle, st: *mut efi::SystemTable) -> efi::Status {
 
     // create a stack array to store ucs2 string from str.
     // 100 is larger than the len of the "world\r\n".
-    let buf = r_efi_str::ucs2_str!(" world\r\n", 100);
+    let s = r_efi_str::ucs2_str!(" world\r\n");
     let r = unsafe {
         ((*(*st).con_out).output_string)((*st).con_out, buf.as_ptr() as *mut efi::Char16)
     };
