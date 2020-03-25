@@ -48,10 +48,17 @@ impl BootServices {
         }
     }
 
+    pub fn wait_for_event(&self, num: usize,
+        event: *mut efi::Event,
+        index: *mut usize,
+    ) -> Status {
+        unsafe{(self.inner.unwrap().as_ref().wait_for_event)(num, event, index)}
+    }
+
 }
 
 // access the boot services
-fn boot_services() -> &'static BootServices {
+pub fn boot_services() -> &'static BootServices {
     unsafe { BOOT_SERVICES.inner.expect("need initialize boot service"); &BOOT_SERVICES}
 }
 

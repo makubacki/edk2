@@ -29,7 +29,7 @@ use r_efi::efi;
 
 //GlobalAlloc and alloc_error_handler installed by r_efi_services
 #[allow(unused_imports)]
-use r_efi_services;
+use r_efi_services::{self,boot_service::boot_services};
 
 use r_efi_str::{self, OsString};
 
@@ -67,7 +67,7 @@ pub extern fn main(_h: efi::Handle, st: *mut efi::SystemTable) -> efi::Status {
     // Wait for key input, by waiting on the `wait_for_key` event hook.
     let r = unsafe {
         let mut x: usize = 0;
-        ((*(*st).boot_services).wait_for_event)(1, &mut (*(*st).con_in).wait_for_key, &mut x)
+        boot_services().wait_for_event(1, &mut (*(*st).con_in).wait_for_key, &mut x)
     };
     if r.is_error() {
         return r;
