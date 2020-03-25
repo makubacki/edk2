@@ -28,9 +28,8 @@
 use r_efi::efi;
 
 //GlobalAlloc and alloc_error_handler installed by r_efi_services
-#[allow(unused_imports)]
-use r_efi_services::{self,boot_service::boot_services};
-
+use r_efi_services;
+use r_efi_lib::{self, boot_services};
 use r_efi_str::{self, OsString};
 
 #[panic_handler]
@@ -41,14 +40,16 @@ fn panic_handler(_info: &core::panic::PanicInfo) -> ! {
 #[no_mangle]
 #[export_name = "efi_main"]
 pub extern fn main(_h: efi::Handle, st: *mut efi::SystemTable) -> efi::Status {
-    unsafe{
-        r_efi_services::boot_service::init(&(*(*st).boot_services));
-    }
+
+    // 1. need remove unsafe
+    unsafe { r_efi_services::init(_h, st); }
 
     // Print "Hello World!".
-    let buf = OsString::from("hello");
+    let s = OsString::from("hello");
     let r = unsafe {
-        ((*(*st).con_out).output_string)((*st).con_out, buf.as_ptr() as *mut efi::Char16)
+
+        // 2. need use logger to print output
+        ((*(*st).con_out).output_string)((*st).con_out, s.as_ptr() as *mut efi::Char16)
     };
     if r.is_error() {
         return r;
@@ -58,7 +59,8 @@ pub extern fn main(_h: efi::Handle, st: *mut efi::SystemTable) -> efi::Status {
     // 100 is larger than the len of the "world\r\n".
     let s = r_efi_str::ucs2_str!(" world\r\n");
     let r = unsafe {
-        ((*(*st).con_out).output_string)((*st).con_out, buf.as_ptr() as *mut efi::Char16)
+        // same to 2.
+        ((*(*st).con_out).output_string)((*st).con_out, s.as_ptr() as *mut efi::Char16)
     };
     if r.is_error() {
         return r;
