@@ -32,6 +32,8 @@ use r_efi_services;
 use r_efi_lib::{self, boot_services};
 use r_efi_str::{self, OsString};
 
+use log::Level;
+
 #[panic_handler]
 fn panic_handler(_info: &core::panic::PanicInfo) -> ! {
     loop {}
@@ -41,30 +43,17 @@ fn panic_handler(_info: &core::panic::PanicInfo) -> ! {
 #[export_name = "efi_main"]
 pub extern fn main(_h: efi::Handle, st: *mut efi::SystemTable) -> efi::Status {
 
-    // 1. need remove unsafe
     unsafe { r_efi_services::init(_h, st); }
 
     // Print "Hello World!".
-    let s = OsString::from("hello");
-    let r = unsafe {
+    log::info!("hello world\n");
 
-        // 2. need use logger to print output
-        ((*(*st).con_out).output_string)((*st).con_out, s.as_ptr() as *mut efi::Char16)
-    };
-    if r.is_error() {
-        return r;
-    }
-
-    // create a stack array to store ucs2 string from str.
-    // 100 is larger than the len of the "world\r\n".
-    let s = r_efi_str::ucs2_str!(" world\r\n");
-    let r = unsafe {
-        // same to 2.
-        ((*(*st).con_out).output_string)((*st).con_out, s.as_ptr() as *mut efi::Char16)
-    };
-    if r.is_error() {
-        return r;
-    }
+    // use log to output message
+    log::log!(Level::Error, "hello world, {}\n", "error");
+    log::log!(Level::Info, "hello world, {}\n", "info");
+    log::log!(Level::Trace, "hello world, {}\n", "trace");
+    log::log!(Level::Debug, "hello world, {}\n", "debug");
+    log::log!(Level::Warn, "hello world, {}\n", "wran");
 
     // Wait for key input, by waiting on the `wait_for_key` event hook.
     let r = unsafe {

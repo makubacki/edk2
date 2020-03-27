@@ -2,12 +2,23 @@
 #![no_std]
 #![feature(alloc_error_handler)]
 
+extern crate log;
 use r_efi::efi;
-use r_efi_lib::{Allocator, boot_services};
+use r_efi_lib::{Allocator, boot_services, logger::Logger};
+
+static mut LOGGER: Option<Logger> = None;
 
 pub unsafe fn init(_handle: efi::Handle, st: *mut efi::SystemTable)
 {
+    // init boot_services
     boot_services::init(&(*(*st).boot_services));
+
+    // init logger
+    LOGGER = Some(Logger::new(&mut (*(*st).con_out)));
+    let logger = LOGGER.as_ref().unwrap();
+    log::set_logger(logger).unwrap();
+    log::set_max_level(log::LevelFilter::Trace);
+
 }
 
 #[global_allocator]

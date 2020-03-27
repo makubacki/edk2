@@ -21,3 +21,4 @@ r-efi = { path = "../../External/r-efi"}
 r-efi-lib = { path = "../../External/r-efi-lib" }
 r-efi-services = {path = "../../External/r-efi-services"}
 r-efi-str = { path = "../../External/r-efi-str" }
+log = "0.4.8"

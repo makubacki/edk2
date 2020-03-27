@@ -9,3 +9,4 @@ edition = "2018"
 [dependencies]
 r-efi = { path = "../r-efi"}
 r-efi-lib = { path = "../r-efi-lib" }
+log = "0.4.8"
