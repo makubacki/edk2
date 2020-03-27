@@ -30,7 +30,7 @@ use r_efi::efi;
 //GlobalAlloc and alloc_error_handler installed by r_efi_services
 use r_efi_services;
 use r_efi_lib::{self, boot_services};
-use r_efi_str::{self, OsString};
+use r_efi_str::{self, OsStr, OsString};
 
 use log::Level;
 
@@ -43,10 +43,17 @@ fn panic_handler(_info: &core::panic::PanicInfo) -> ! {
 #[export_name = "efi_main"]
 pub extern fn main(_h: efi::Handle, st: *mut efi::SystemTable) -> efi::Status {
 
+    // After r_efi_servcies::init called boot_services, runtime_service and log avaiable
     unsafe { r_efi_services::init(_h, st); }
 
     // Print "Hello World!".
     log::info!("hello world\n");
+
+    // Print a ucs2 string with NUL
+    let s = r_efi_str::ucs2_str!("get a ucs2 string end with nul\r\n");
+    let s: &OsStr = OsStr::from_slice(&s);
+
+    log::info!("{}", s);
 
     // use log to output message
     log::log!(Level::Error, "hello world, {}\n", "error");
