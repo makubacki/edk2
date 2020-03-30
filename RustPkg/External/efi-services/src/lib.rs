@@ -4,7 +4,7 @@
 
 extern crate log;
 use r_efi::efi;
-use r_efi_lib::{Allocator, boot_services, logger::Logger, RuntimeSercies};
+use efi_lib::{Allocator, boot_services, logger::Logger, RuntimeSercies};
 
 static mut LOGGER: Option<Logger> = None;
 

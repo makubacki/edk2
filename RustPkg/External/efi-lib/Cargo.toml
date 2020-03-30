@@ -1,5 +1,5 @@
 [package]
-name = "r-efi-lib"
+name = "efi-lib"
 version = "0.1.0"
 authors = ["Xiaoyu Lu <xiaoyux.lu@intel.com>"]
 edition = "2018"
@@ -8,6 +8,6 @@ edition = "2018"
 
 [dependencies]
 r-efi = { path = "../../External/r-efi"}
-r-efi-str = { path = "../../External/r-efi-str" }
+efi-str = { path = "../../External/efi-str" }
 log = "0.4.8"
 ucs2 = { version = "0.3.1"}

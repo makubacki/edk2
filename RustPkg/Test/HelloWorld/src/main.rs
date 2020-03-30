@@ -28,9 +28,9 @@
 use r_efi::efi;
 
 //GlobalAlloc and alloc_error_handler installed by r_efi_services
-use r_efi_services;
-use r_efi_lib::{self, boot_services};
-use r_efi_str::{self, OsStr, OsString};
+use efi_services;
+use efi_lib::{self, boot_services};
+use efi_str::{self, OsStr, OsString};
 
 use log::Level;
 
@@ -44,13 +44,13 @@ fn panic_handler(_info: &core::panic::PanicInfo) -> ! {
 pub extern fn main(_h: efi::Handle, st: *mut efi::SystemTable) -> efi::Status {
 
     // After r_efi_servcies::init called boot_services, runtime_service and log avaiable
-    unsafe { r_efi_services::init(_h, st); }
+    unsafe { efi_services::init(_h, st); }
 
     // Print "Hello World!".
     log::info!("hello world\n");
 
     // Print a ucs2 string with NUL
-    let s = r_efi_str::ucs2_str!("get a ucs2 string end with nul\r\n");
+    let s = efi_str::ucs2_str!("get a ucs2 string end with nul\r\n");
     let s: &OsStr = OsStr::from_slice(&s);
 
     log::info!("{}", s);
@@ -71,13 +71,13 @@ pub extern fn main(_h: efi::Handle, st: *mut efi::SystemTable) -> efi::Status {
     let mut vender_guid: efi::Guid = efi::Guid::from_fields(
         0x0, 0x0, 0x0, 0x0, 0x0, &[0x00, 0x0, 0x0, 0x0, 0x0, 0x0]
     );
-    let runtime_services = r_efi_services::runtime_services();
+    let runtime_services = efi_services::runtime_services();
     let mut status = runtime_services.get_next_variable_name(&mut variable_size, &mut variable_name, &mut vender_guid as *mut efi::Guid);
 
     // todo: use iter instead
     loop {
         match status {
-            efi::Status::NOT_FOUND => {log::info!("{}", "not fount\n"); break},
+            efi::Status::NOT_FOUND => {log::info!("End\n"); break},
             efi::Status::SUCCESS => {
                 variable_size = 1024;
                 status = runtime_services.get_next_variable_name(&mut variable_size, &mut variable_name, &mut vender_guid as *mut efi::Guid);
