@@ -55,12 +55,45 @@ pub extern fn main(_h: efi::Handle, st: *mut efi::SystemTable) -> efi::Status {
 
     log::info!("{}", s);
 
+    let s = OsString::from("OsString from &str\n");
+    log::log!(Level::Error, "{}", s);
+
     // use log to output message
     log::log!(Level::Error, "hello world, {}\n", "error");
     log::log!(Level::Info, "hello world, {}\n", "info");
     log::log!(Level::Trace, "hello world, {}\n", "trace");
     log::log!(Level::Debug, "hello world, {}\n", "debug");
     log::log!(Level::Warn, "hello world, {}\n", "wran");
+
+    //runtime-service
+    let mut variable_size: usize = 1024;
+    let mut variable_name: [u16;1024] = [0u16;1024];
+    let mut vender_guid: efi::Guid = efi::Guid::from_fields(
+        0x0, 0x0, 0x0, 0x0, 0x0, &[0x00, 0x0, 0x0, 0x0, 0x0, 0x0]
+    );
+    let runtime_services = r_efi_services::runtime_services();
+    let mut status = runtime_services.get_next_variable_name(&mut variable_size, &mut variable_name, &mut vender_guid as *mut efi::Guid);
+
+    // todo: use iter instead
+    loop {
+        match status {
+            efi::Status::NOT_FOUND => {log::info!("{}", "not fount\n"); break},
+            efi::Status::SUCCESS => {
+                variable_size = 1024;
+                status = runtime_services.get_next_variable_name(&mut variable_size, &mut variable_name, &mut vender_guid as *mut efi::Guid);
+                let vname = OsStr::from_slice(&mut variable_name[..]);
+                log::log!(Level::Info, "Variable Name is: {}\n", vname);
+            },
+            efi::Status::BUFFER_TOO_SMALL => {
+                log::log!(Level::Warn, "Buffer too small\n");
+            }
+            _ => {
+                log::log!(Level::Error, "status is: 0x{:x}", status.value());
+                break
+            }
+        }
+    }
+
 
     // Wait for key input, by waiting on the `wait_for_key` event hook.
     let r = unsafe {

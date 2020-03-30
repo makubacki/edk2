@@ -4,9 +4,13 @@
 
 extern crate log;
 use r_efi::efi;
-use r_efi_lib::{Allocator, boot_services, logger::Logger};
+use r_efi_lib::{Allocator, boot_services, logger::Logger, RuntimeSercies};
 
 static mut LOGGER: Option<Logger> = None;
+
+static mut RUNTIME_SERVICES: RuntimeSercies = RuntimeSercies {
+    inner: None
+};
 
 pub unsafe fn init(_handle: efi::Handle, st: *mut efi::SystemTable)
 {
@@ -19,6 +23,12 @@ pub unsafe fn init(_handle: efi::Handle, st: *mut efi::SystemTable)
     log::set_logger(logger).unwrap();
     log::set_max_level(log::LevelFilter::Trace);
 
+    // init runtime_services
+    RUNTIME_SERVICES.init((*st).runtime_services);
+}
+
+pub fn runtime_services() -> &'static RuntimeSercies {
+    unsafe{&RUNTIME_SERVICES}
 }
 
 #[global_allocator]
