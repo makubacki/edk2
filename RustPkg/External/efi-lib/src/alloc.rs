@@ -1,5 +1,5 @@
 //! This module implements Rust's global allocator interface using UEFI's memory allocation functions.
-//! 
+//!
 
 use r_efi::efi::MemoryType;
 use core::alloc::{GlobalAlloc, Layout};

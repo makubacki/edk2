@@ -5,6 +5,11 @@ authors = ["Xiaoyu Lu <xiaoyux.lu@intel.com>"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[features]
+# no features by default
+#default = ["string"]
+default = ["string"]
+
+string = []
 
 [dependencies]
-ucs2 = { version = "0.3.1"}

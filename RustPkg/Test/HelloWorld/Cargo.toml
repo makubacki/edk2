@@ -20,5 +20,5 @@ panic = "abort" # disable stack unwinding on panic
 r-efi = { path = "../../External/r-efi"}
 efi-lib = { path = "../../External/efi-lib" }
 efi-services = {path = "../../External/efi-services"}
-efi-str = { path = "../../External/efi-str" }
+efi-str = { path = "../../External/efi-str", version="0.1.0", features=["string"]}
 log = "0.4.8"

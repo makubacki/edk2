@@ -27,7 +27,7 @@
 
 use r_efi::efi;
 
-//GlobalAlloc and alloc_error_handler installed by r_efi_services
+//GlobalAlloc and alloc_error_handler installed by efi_services
 use efi_services;
 use efi_lib::{self, boot_services};
 use efi_str::{self, OsStr, OsString};
