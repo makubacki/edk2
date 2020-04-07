@@ -1,0 +1,13 @@
+[package]
+name = "fat_rust"
+version = "0.1.0"
+authors = ["Xiaoyu Lu <xiaoyux.lu@intel.com>"]
+edition = "2018"
+
+[lib]
+name = "fat_rust"
+crate-type = ["staticlib"]
+
+[dependencies]
+r-efi = { path = "../../External/r-efi" }
+debug_lib = { path = "../../MdePkg/Library/DebugLibRust" }
