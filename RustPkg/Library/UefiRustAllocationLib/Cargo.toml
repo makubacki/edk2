@@ -18,6 +18,11 @@ panic = "abort" # disable stack unwinding on panic
 [profile.release]
 panic = "abort" # disable stack unwinding on panic
 
+[features]
+default = ["alloc_by_c"]
+alloc_by_c = []
+alloc_by_bs = []
+
 [dependencies]
 uefi_rust_panic_lib = { path = "../../Library/UefiRustPanicLib" }
 r-efi = { path = "../../External/r-efi"}
