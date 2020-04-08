@@ -10,4 +10,3 @@ edition = "2018"
 r-efi = { path = "../../External/r-efi"}
 efi-str = { path = "../../External/efi-str" }
 log = "0.4.8"
-ucs2 = { version = "0.3.1"}

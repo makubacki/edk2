@@ -4,7 +4,7 @@ use r_efi::efi::protocols::simple_text_output::Protocol;
 use core::ptr::NonNull;
 
 use core::fmt;
-use ucs2;
+use efi_str;
 
 pub struct SimpleTextOutputProtocol(NonNull<Protocol>, efi::Guid);
 
@@ -91,20 +91,25 @@ impl fmt::Write for SimpleTextOutputProtocol {
             i += 1;
 
             if i == BUF_SIZE {
-                flush_buffer(&mut buf, &mut i).map_err(|_| ucs2::Error::BufferOverflow)
-            } else {
-                Ok(())
+                flush_buffer(&mut buf, &mut i).map_err(|_| efi_str::encoder::Error::BufferOverFlow)?;
+            }
+            Ok(())
+        };
+
+        let add_ch = |ret| {
+            match ret {
+                Err(err) => Err(err),
+                Ok(ch) => {
+                    if ch == '\n' as u16 {
+                        add_char('\r' as u16)?;
+                    }
+                    add_char(ch)?;
+                    Ok(ch as usize)
+                }
             }
         };
 
-        let add_ch = |ch| {
-            if ch == '\n' as u16 {
-                add_char('\r' as u16)?;
-            }
-            add_char(ch)
-        };
-
-        ucs2::encode_with(s, add_ch).map_err(|_| fmt::Error)?;
+        efi_str::encoder::encode_fnc(s, add_ch).map_err(|_| fmt::Error)?;
 
         flush_buffer(&mut buf, &mut i)
     }
