@@ -13,9 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#[cfg(not(test))]
-extern crate uefi_rust_panic_lib;
-
 use core::alloc::{GlobalAlloc, Layout};
 use core::ffi::c_void;
 

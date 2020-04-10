@@ -13,9 +13,6 @@
 extern crate alloc;
 
 #[cfg(not(test))]
-extern crate uefi_rust_panic_lib;
-
-#[cfg(not(test))]
 extern crate uefi_rust_allocation_lib;
 
 use alloc::vec::Vec;

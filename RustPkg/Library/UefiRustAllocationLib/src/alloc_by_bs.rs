@@ -20,8 +20,6 @@
 
 #![allow(unused)]
 
-extern crate uefi_rust_panic_lib;
-
 use core::alloc::{GlobalAlloc, Layout};
 use r_efi::efi;
 use r_efi::efi::{Status};
@@ -56,9 +54,11 @@ unsafe impl GlobalAlloc for MyAllocator {
     }
 }
 
+#[cfg(not(test))]
 #[global_allocator]
 static ALLOCATOR: MyAllocator = MyAllocator;
 
+#[cfg(not(test))]
 #[alloc_error_handler]
 fn alloc_error_handler(layout: core::alloc::Layout) -> !
 {
