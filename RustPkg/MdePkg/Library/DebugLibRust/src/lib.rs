@@ -1,43 +1,97 @@
 // Copyright (c) 2019 Intel Corporation
 // Copyright (c) Microsoft Corporation
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// Implementation of the Rust print! and println! macros
+// that use the EDK2 DebugLib as the back-end.
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-#![feature(alloc_layout_extra)]
-#![feature(allocator_api)]
-#![feature(alloc_error_handler)]
-#![feature(asm)]
+// Borrows heavily from Philipp Oppermann's blog on Writing an OS in Rust
+// https://os.phil-opp.com/vga-text-mode/
 
 #![cfg_attr(not(test), no_std)]
 
-#![allow(unused)]
+extern crate alloc;
 
-pub const DEBUG_INIT : usize = 0x00000001;
-pub const DEBUG_WARN : usize = 0x00000002;
-pub const DEBUG_LOAD : usize = 0x00000004;
-pub const DEBUG_FS : usize = 0x00000008;
-pub const DEBUG_POOL : usize = 0x00000010;
-pub const DEBUG_PAGE : usize = 0x00000020;
-pub const DEBUG_INFO : usize = 0x00000040;
-pub const DEBUG_DISPATCH : usize = 0x00000080;
-pub const DEBUG_VARIABLE : usize = 0x00000100;
-pub const DEBUG_BM : usize = 0x00000400;
-pub const DEBUG_BLKIO : usize = 0x00001000;
-pub const DEBUG_NET : usize = 0x00004000;
-pub const DEBUG_UNDI : usize = 0x00010000;
-pub const DEBUG_LOADFILE : usize = 0x00020000;
-pub const DEBUG_EVENT : usize = 0x00080000;
-pub const DEBUG_GCD : usize = 0x00100000;
-pub const DEBUG_CACHE : usize = 0x00200000;
-pub const DEBUG_VERBOSE : usize = 0x00400000;
-pub const DEBUG_ERROR : usize = 0x80000000;
+#[cfg(not(test))]
+extern crate uefi_rust_panic_lib;
+
+#[cfg(not(test))]
+extern crate uefi_rust_allocation_lib;
+
+use alloc::vec::Vec;
+use core::fmt;
+use r_efi::efi;
+
+extern "C" {
+  fn DebugPrintEnabled () -> efi::Boolean;
+  fn DebugPrintLevelEnabled (Level: usize) -> efi::Boolean;
+  fn DebugPrint(ErrorLevel: usize, Format: *const u8, Arg: ...);
+}
+
+pub const DEBUG_INIT      : usize = 0x00000001;
+pub const DEBUG_WARN      : usize = 0x00000002;
+pub const DEBUG_LOAD      : usize = 0x00000004;
+pub const DEBUG_FS        : usize = 0x00000008;
+pub const DEBUG_POOL      : usize = 0x00000010;
+pub const DEBUG_PAGE      : usize = 0x00000020;
+pub const DEBUG_INFO      : usize = 0x00000040;
+pub const DEBUG_DISPATCH  : usize = 0x00000080;
+pub const DEBUG_VARIABLE  : usize = 0x00000100;
+pub const DEBUG_BM        : usize = 0x00000400;
+pub const DEBUG_BLKIO     : usize = 0x00001000;
+pub const DEBUG_NET       : usize = 0x00004000;
+pub const DEBUG_UNDI      : usize = 0x00010000;
+pub const DEBUG_LOADFILE  : usize = 0x00020000;
+pub const DEBUG_EVENT     : usize = 0x00080000;
+pub const DEBUG_GCD       : usize = 0x00100000;
+pub const DEBUG_CACHE     : usize = 0x00200000;
+pub const DEBUG_VERBOSE   : usize = 0x00400000;
+pub const DEBUG_ERROR     : usize = 0x80000000;
+
+fn internal_debug_string(level: usize, string: &str) {
+  // Determine whether we're going to do anything.
+  if unsafe { DebugPrintEnabled() } == efi::Boolean::TRUE &&
+      unsafe { DebugPrintLevelEnabled(level) } == efi::Boolean::TRUE {
+    let mut output_string = string.bytes()
+                            .map(|byte| {
+                              match byte {
+                                  // printable ASCII byte or newline
+                                  0x20..=0x7e | b'\n' => byte,
+                                  // not part of printable ASCII range
+                                  _ => 0xfe,
+                              }
+                            })
+                            .collect::<Vec<u8>>();
+    // We must have a NULL-terminator.
+    output_string.push(0x00);
+
+    unsafe { DebugPrint (level, output_string.as_ptr()) };
+  }
+}
+
+struct DebugWriter;
+
+impl fmt::Write for DebugWriter {
+  fn write_str(&mut self, s: &str) -> fmt::Result {
+    // For now, hard-code what level we're going to use.
+    internal_debug_string(DEBUG_INFO, s);
+    Ok(())
+  }
+}
+
+#[macro_export]
+macro_rules! print {
+    ($($arg:tt)*) => ($crate::_print(format_args!($($arg)*)));
+}
+
+#[macro_export]
+macro_rules! println {
+    () => ($crate::print!("\n"));
+    ($($arg:tt)*) => ($crate::print!("{}\n", format_args!($($arg)*)));
+}
+
+#[doc(hidden)]
+pub fn _print(args: fmt::Arguments) {
+    use core::fmt::Write;
+    DebugWriter{}.write_fmt(args).unwrap();
+}
