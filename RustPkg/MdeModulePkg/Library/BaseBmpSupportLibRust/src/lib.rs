@@ -30,7 +30,6 @@ extern {
   fn FreePool (Buffer: *mut c_void);
 }
 
-use core::panic::PanicInfo;
 use core::ffi::c_void;
 
 use core::mem::size_of;
@@ -40,11 +39,6 @@ use base_lib::offset_of;
 use industry_standard_include::bmp::{BmpColorMap, BmpImageHeader};
 use debug_lib::DEBUG_INFO;
 
-#[panic_handler]
-#[allow(clippy::empty_loop)]
-fn panic(_info: &PanicInfo) -> ! {
-    loop {}
-}
 
 #[no_mangle]
 #[export_name = "TranslateBmpToGopBlt"]
@@ -60,7 +54,7 @@ pub extern fn traslate_bmp_to_gop_blt (
     unsafe {
       DebugPrint (DEBUG_INFO, b"traslate_bmp_to_gop_blt\n\0" as *const u8, 0);
     }
-    if (bmp_image == core::ptr::null_mut()) || 
+    if (bmp_image == core::ptr::null_mut()) ||
        (gop_blt == core::ptr::null_mut()) ||
        (gop_blt_size == core::ptr::null_mut()) ||
        (pixel_height == core::ptr::null_mut()) ||
@@ -99,10 +93,10 @@ pub extern fn traslate_bmp_to_gop_blt (
     }
 
     if (bmp_header.char_b != 'B' as u8) ||
-       (bmp_header.char_m != 'M' as u8) || 
-       (bmp_header.compression_type != 0) || 
-       (bmp_header.pixel_width == 0) || 
-       (bmp_header.pixel_height == 0) || 
+       (bmp_header.char_m != 'M' as u8) ||
+       (bmp_header.compression_type != 0) ||
+       (bmp_header.pixel_width == 0) ||
+       (bmp_header.pixel_height == 0) ||
        (bmp_header.header_size != size_of::<BmpImageHeader>() as u32 - offset_of!(BmpImageHeader, header_size) as u32) {
       return Status::UNSUPPORTED;
     }
@@ -125,8 +119,8 @@ pub extern fn traslate_bmp_to_gop_blt (
       None => {return Status::UNSUPPORTED},
     }
 
-    if (bmp_header.size as usize != bmp_image_size) || 
-       (bmp_header.size <  bmp_header.image_offset) || 
+    if (bmp_header.size as usize != bmp_image_size) ||
+       (bmp_header.size <  bmp_header.image_offset) ||
        (bmp_header.size - bmp_header.image_offset != data_size) {
       return Status::UNSUPPORTED;
     }
@@ -298,7 +292,7 @@ pub extern fn traslate_gop_blt_to_bmp (
       DebugPrint (DEBUG_INFO, b"traslate_gop_blt_to_bmp\n\0" as *const u8, 0);
     }
     if (gop_blt == core::ptr::null_mut()) ||
-       (bmp_image == core::ptr::null_mut()) || 
+       (bmp_image == core::ptr::null_mut()) ||
        (bmp_image_size == core::ptr::null_mut()) ||
        (pixel_height == 0) ||
        (pixel_width == 0) {
