@@ -3,6 +3,9 @@
 #[macro_use]
 mod log;
 
+#[macro_use]
+mod common;
+
 use r_efi::efi;
 
 #[cfg(not(test))]
@@ -11,6 +14,9 @@ mod alloc;
 mod block;
 mod part;
 mod fat;
+
+#[cfg(not(test))]
+mod file;
 
 unsafe fn dump_disk_512(bs: &mut efi::BootServices) {
     let _address = bs.locate_protocol as *const ();
@@ -58,9 +64,59 @@ unsafe fn dump_disk_512(bs: &mut efi::BootServices) {
             log!("handle_protocol error: {:x}", status.value());
             break;
         }
-        let device = block::BlockIoDevice::new(interface as *mut efi::protocols::block_io::Protocol);
-        let _part = part::find_efi_partition(&device);
-        log!("parted info: {} {:?}, \nmedia_id: {}, partition: {}", index,  _part, device.media_id, device.logical_partition);
+        let device = &block::BlockIoDevice::new(interface as *mut efi::protocols::block_io::Protocol);
+
+        #[cfg(not(test))]
+        let device = &*crate::alloc::duplicate(device).unwrap();
+
+        let ret = part::find_efi_partition(device);
+        log!("parted info: {} {:?}, \nmedia_id: {}, partition: {}", index,  ret, device.media_id, device.logical_partition);
+        if ret.is_err() {
+            continue;
+        }
+        let (start, end, part_id) = ret.expect("error");
+
+        let mut fs = fat::Filesystem::new(device, start, end, part_id);
+        if fs.init().is_err() {
+            log!("filesystem init error");
+            continue;
+        }
+        #[cfg(not(test))] {
+            let res = crate::file::FileSystemWrapper::new(fs);
+            if res.is_err() {
+                log!("filesystem wrapper error");
+                continue;
+            }
+            let fs_wrapper = res.expect("error");
+            let mut handle : efi::Handle = core::ptr::null_mut();
+            let status = (bs.install_protocol_interface)(
+                &mut handle as *mut efi::Handle,
+                &mut r_efi::protocols::simple_file_system::PROTOCOL_GUID as *mut efi::Guid,
+                r_efi::efi::InterfaceType::NativeInterface,
+                &mut (*fs_wrapper).proto as *mut efi::protocols::simple_file_system::Protocol as * mut core::ffi::c_void
+            );
+            if status.is_error() {
+                log!("install simple file system protocol failed");
+                continue ;
+            }
+
+            let res = (*fs_wrapper).get_hard_drive_device_path();
+            if res.is_err() {
+                log!("get_hard_drive_device_path failed");
+                continue ;
+            }
+            let status = (bs.install_protocol_interface)(
+                &mut handle as *mut efi::Handle,
+                &mut r_efi::protocols::device_path::PROTOCOL_GUID as *mut efi::Guid,
+                r_efi::efi::InterfaceType::NativeInterface,
+                res.expect("error")
+            );
+            if status.is_error() {
+                log!("install device path protocol failed");
+                continue ;
+            }
+
+        }
     }
 
     #[cfg(not(test))]

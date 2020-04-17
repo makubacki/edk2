@@ -77,7 +77,7 @@ struct FatLongNameEntry {
 }
 
 #[derive(Debug, PartialEq, Clone)]
-enum FatType {
+pub enum FatType {
     Unknown,
     FAT12,
     FAT16,
@@ -85,22 +85,23 @@ enum FatType {
 }
 
 pub struct Filesystem<'a> {
-    device: &'a dyn SectorRead,
-    start: u64,
-    last: u64,
-    bytes_per_sector: u32,
-    sectors: u32,
-    fat_type: FatType,
-    clusters: u32,
-    sectors_per_fat: u32,
-    sectors_per_cluster: u32,
-    fat_count: u32,
-    root_dir_sectors: u32,
-    first_fat_sector: u32,
-    first_data_sector: u32,
-    data_sector_count: u32,
-    data_cluster_count: u32,
-    root_cluster: u32, // FAT32 only
+    pub device: &'a dyn SectorRead,
+    pub start: u64,
+    pub last: u64,
+    pub part_id: u32,
+    pub bytes_per_sector: u32,
+    pub sectors: u32,
+    pub fat_type: FatType,
+    pub clusters: u32,
+    pub sectors_per_fat: u32,
+    pub sectors_per_cluster: u32,
+    pub fat_count: u32,
+    pub root_dir_sectors: u32,
+    pub first_fat_sector: u32,
+    pub first_data_sector: u32,
+    pub data_sector_count: u32,
+    pub data_cluster_count: u32,
+    pub root_cluster: u32, // FAT32 only
 }
 
 pub struct DirectoryEntry {
@@ -405,11 +406,12 @@ fn compare_name(name: &str, de: &DirectoryEntry) -> bool {
 }
 
 impl<'a> Filesystem<'a> {
-    pub fn new(device: &'a dyn SectorRead, start: u64, last: u64) -> Filesystem {
+    pub fn new(device: &'a dyn SectorRead, start: u64, last: u64, part_id: u32) -> Filesystem {
         Filesystem {
             device,
             start,
             last,
+            part_id,
             bytes_per_sector: 0,
             sectors: 0,
             fat_type: FatType::Unknown,
@@ -738,7 +740,7 @@ mod tests {
     fn test_fat_32_init() {
         let d = FakeDisk::new("test\\fat32.img");
         println!("d.total_sectors(): {}", d.total_sectors());
-        let mut fs = crate::fat::Filesystem::new(&d, 0, d.total_sectors());
+        let mut fs = crate::fat::Filesystem::new(&d, 0, d.total_sectors(), 0u32);
         fs.init().expect("failed");
         let mut root_dir = fs.root().expect("no root");
         loop {

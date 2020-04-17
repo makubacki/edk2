@@ -111,7 +111,7 @@ pub fn get_partitions(r: &dyn SectorRead, parts_out: &mut [PartitionEntry]) -> R
 }
 
 /// Find EFI partition
-pub fn find_efi_partition(r: &dyn SectorRead) -> Result<(u64, u64), Error> {
+pub fn find_efi_partition(r: &dyn SectorRead) -> Result<(u64, u64, u32), Error> {
     let mut data: [u8; 512] = [0; 512];
     match r.read(1, &mut data) {
         Ok(_) => {}
@@ -146,7 +146,7 @@ pub fn find_efi_partition(r: &dyn SectorRead) -> Result<(u64, u64), Error> {
 
         for p in parts {
             if p.is_efi_partition() {
-                return Ok((p.first_lba, p.last_lba));
+                return Ok((p.first_lba, p.last_lba, checked_part_count+1));
             }
             checked_part_count += 1;
             if checked_part_count == part_count {
@@ -216,13 +216,14 @@ pub mod tests {
         let d = FakeDisk::new("test\\clear-31380-kvm.img");
         println!("disk.len is {}", d.len());
 
-        assert_eq!(d.len(), 9_169_755_648 / 512);
+        assert_eq!(d.len(), 9_169_755_648);
 
         match super::find_efi_partition(&d) {
-            Ok((start, end)) => {
-                println!("start: {}, end: {}", start, end);
+            Ok((start, end, part_id)) => {
+                println!("start: {}, end: {}, part_id: {}", start, end, part_id);
                 assert_eq!(start, 2048);
                 assert_eq!(end, 1_046_527);
+                assert_eq!(part_id, 1);
             }
             Err(e) => panic!(e),
         }
