@@ -9,7 +9,7 @@ mod common;
 use r_efi::efi;
 
 #[cfg(not(test))]
-mod alloc;
+mod calloc;
 
 mod block;
 mod part;
@@ -67,7 +67,7 @@ unsafe fn dump_disk_512(bs: &mut efi::BootServices) {
         let device = &block::BlockIoDevice::new(interface as *mut efi::protocols::block_io::Protocol);
 
         #[cfg(not(test))]
-        let device = &*crate::alloc::duplicate(device).unwrap();
+        let device = &*crate::calloc::duplicate(device).unwrap();
 
         let ret = part::find_efi_partition(device);
         log!("parted info: {} {:?}, \nmedia_id: {}, partition: {}", index,  ret, device.media_id, device.logical_partition);
@@ -115,12 +115,13 @@ unsafe fn dump_disk_512(bs: &mut efi::BootServices) {
                 log!("install device path protocol failed");
                 continue ;
             }
+            log!("install simple file system ok!");
 
         }
     }
 
     #[cfg(not(test))]
-    crate::alloc::free(handles);
+    crate::calloc::free(handles);
 
 }
 

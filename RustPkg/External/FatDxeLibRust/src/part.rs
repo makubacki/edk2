@@ -213,7 +213,7 @@ pub mod tests {
 
     #[test]
     fn test_find_efi_partition() {
-        let d = FakeDisk::new("test\\clear-31380-kvm.img");
+        let d = FakeDisk::new("test\\clear-32380-kvm.img");
         println!("disk.len is {}", d.len());
 
         assert_eq!(d.len(), 9_169_755_648);

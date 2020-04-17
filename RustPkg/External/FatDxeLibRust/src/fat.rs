@@ -104,6 +104,7 @@ pub struct Filesystem<'a> {
     pub root_cluster: u32, // FAT32 only
 }
 
+#[derive(Clone, Copy)]
 pub struct DirectoryEntry {
     pub name: [u8; 11],
     pub long_name: [u8; 255],
@@ -138,7 +139,7 @@ pub struct File<'a> {
 
 pub struct Directory<'a> {
     filesystem: &'a Filesystem<'a>,
-    cluster: Option<u32>,
+    pub cluster: Option<u32>,
     sector: u32,
     offset: usize,
     cluster_start: Option<u32>,
@@ -617,7 +618,7 @@ impl<'a> Filesystem<'a> {
 
     pub fn open(&self, path: &str) -> Result<DirectoryEntry, Error> {
 
-        crate::log!("EFI_STUB - open path is {:?}\n", path);
+        // crate::log!("fat::open path is {:?}\n", path);
         let mut residual = path;
 
         let mut current_dir = self.root().unwrap();
@@ -629,12 +630,12 @@ impl<'a> Filesystem<'a> {
             long_name: [0; 255],
         };
 
-        crate::log!("EFI_STUB - open - unwrap\n");
+        // crate::log!("EFI_STUB - open - unwrap\n");
         loop {
             // sub is the directory or file name
             // residual is what is left
             if residual.len() == 0 {
-                crate::log!("EFI-STUB - residual.len() is 0\n");
+                // crate::log!("EFI-STUB - residual.len() is 0\n");
                 return Ok(current_directory_entry);
             }
 
@@ -651,31 +652,33 @@ impl<'a> Filesystem<'a> {
                     // +1 due to above find working on substring
                     let sub = &residual[1..=*x];
                     residual = &residual[(*x + 1)..];
-                    crate::log!("EFI_STUB - open sub is {:?}, residual is: {:?}\n", sub, residual);
+                    // crate::log!("EFI_STUB - open sub is {:?}, residual is: {:?}\n", sub, residual);
                     sub
                 }
             };
-            log!("EFI_STUB - sub is: {:?}, residual is: {:?}\n", sub, residual);
+            // log!("EFI_STUB - sub is: {:?}, residual is: {:?}\n", sub, residual);
             if sub.len() == 0 {
-                crate::log!("EFI_STUB - open - sub.len is 0\n");
+                // crate::log!("EFI_STUB - open - sub.len is 0\n");
                 return Ok(current_directory_entry);
             }
 
             loop {
                 match current_dir.next_entry() {
-                    Err(Error::EndOfFile) => return {crate::log!("EFI_STUB: next_entry end\n"); return Err(Error::NotFound);},
+                    Err(Error::EndOfFile) => return {
+                        // crate::log!("EFI_STUB: next_entry end\n");
+                        return Err(Error::NotFound);},
                     Err(e) => {
-                        crate::log!("EFI_STUB - open - error\n");
+                        // crate::log!("EFI_STUB - open - error\n");
                         return Err(e);
                     },
                     Ok(de) => {
                         let filename = unsafe{core::str::from_utf8_unchecked(&de.name)};
-                        log!("EFI-STUB: fsopen: {:?}, filesize: {:?}\n", filename, de.size);
+                        // log!("EFI-STUB: fsopen: {:?}, filesize: {:?}\n", filename, de.size);
                         if compare_name(sub, &de) {
                             match de.file_type {
                                 FileType::Directory => {
                                     current_dir = self.get_directory(de.cluster).unwrap();
-                                    log!("EFI-STUB: current_dir is {:?}", filename);
+                                    // log!("EFI-STUB: current_dir is {:?}", filename);
                                     current_directory_entry = de;
                                     break;
                                 }

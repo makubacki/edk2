@@ -9,5 +9,6 @@ name = "fat_rust"
 crate-type = ["staticlib"]
 
 [dependencies]
-r-efi = { path = "../../External/r-efi" }
+r-efi = { path = "../r-efi" }
 debug_lib = { path = "../../MdePkg/Library/DebugLibRust" }
+efi-str = { path = "../efi-str" }
