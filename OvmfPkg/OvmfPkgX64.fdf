@@ -283,7 +283,9 @@ INF  MdeModulePkg/Universal/Acpi/S3SaveStateDxe/S3SaveStateDxe.inf
 INF  MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
 INF  MdeModulePkg/Universal/Acpi/BootGraphicsResourceTableDxe/BootGraphicsResourceTableDxe.inf
 
-INF  FatPkg/EnhancedFatDxe/Fat.inf
+# INF  FatPkg/EnhancedFatDxe/Fat.inf
+INF  RustPkg/External/FatDxeLibRust/Fat.inf
+
 INF  MdeModulePkg/Universal/Disk/UdfDxe/UdfDxe.inf
 
 !if $(TOOL_CHAIN_TAG) != "XCODE5"
