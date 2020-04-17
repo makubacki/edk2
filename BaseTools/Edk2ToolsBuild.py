@@ -11,7 +11,6 @@ import os
 import sys
 import logging
 import argparse
-import multiprocessing
 from edk2toolext import edk2_logging
 from edk2toolext.environment import self_describing_environment
 from edk2toolext.base_abstract_invocable import BaseAbstractInvocable
@@ -142,8 +141,7 @@ class Edk2ToolsBuild(BaseAbstractInvocable):
             return ret
 
         elif self.tool_chain_tag.lower().startswith("gcc"):
-            cpu_count = self.GetCpuThreads()
-            ret = RunCmd("make", f"-C .  -j {cpu_count}", workingdir=shell_env.get_shell_var("EDK_TOOLS_PATH"))
+            ret = RunCmd("make", "-C .", workingdir=shell_env.get_shell_var("EDK_TOOLS_PATH"))
             if ret != 0:
                 raise Exception("Failed to build.")
 
@@ -155,18 +153,6 @@ class Edk2ToolsBuild(BaseAbstractInvocable):
 
         logging.critical("Tool Chain not supported")
         return -1
-
-    def GetCpuThreads(self) -> int:
-        ''' Function to return number of cpus. If error return 1'''
-        cpus = 1
-        try:
-            cpus = multiprocessing.cpu_count()
-        except:
-            # from the internet there are cases where cpu_count is not implemented.
-            # will handle error by just doing single proc build
-            pass
-        return cpus
-
 
 
 def main():
