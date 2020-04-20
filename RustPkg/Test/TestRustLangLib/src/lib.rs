@@ -245,9 +245,9 @@ pub extern fn test_buffer_alloc (
     unsafe {
       match Global.alloc (layout, AllocInit::Zeroed) {
         Ok(buffer) => {
-            let mut box_buffer = Box::from_raw(from_raw_parts_mut(buffer.as_ptr(), layout.size()));
+          let mut box_buffer = Box::from_raw(from_raw_parts_mut(buffer.ptr.as_ptr(), layout.size()));
           box_buffer[0] = 1;
-          Global.dealloc (buffer, layout);
+          Global.dealloc (buffer.ptr, layout);
           drop (buffer); // It is useless
           box_buffer[0] = 1; // cannot catch
         },
@@ -259,7 +259,7 @@ pub extern fn test_buffer_alloc (
     unsafe {
       match Global.alloc (layout, AllocInit::Zeroed) {
         Ok(buffer) => {
-            Global.dealloc (buffer, layout);
+          Global.dealloc (buffer.ptr, layout);
         },
         Err(_) => handle_alloc_error (layout),
       }
@@ -326,8 +326,8 @@ pub extern fn test_box_convert (
     unsafe {
       match Global.alloc (layout, AllocInit::Zeroed) {
         Ok(buffer) => {
-            let mut box_buffer = Box::<u8>::from_raw(from_raw_parts_mut(buffer.as_ptr(), layout.size()) as *mut [u8] as *mut u8 );
-            Global.dealloc (buffer, layout);
+          let mut box_buffer = Box::<u8>::from_raw(from_raw_parts_mut(buffer.ptr.as_ptr(), layout.size()) as *mut [u8] as *mut u8 );
+          Global.dealloc (buffer.ptr, layout);
           *box_buffer = 1;
           Box::<u8>::into_raw(box_buffer)
         },
