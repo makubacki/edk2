@@ -14,8 +14,8 @@
 
 #![allow(unused)]
 
-use core::fmt;
 use crate::block::SectorRead;
+use core::fmt;
 
 #[repr(packed)]
 struct Header {
@@ -161,8 +161,8 @@ fn ucs2_to_ascii(input: &[u16]) -> [u8; 255] {
 fn get_short_name(input: &[u8; 11]) -> [u8; 11] {
     let mut index = 0;
     let mut i = 0;
-    let mut name_vec: [u8;11] = [0;11];
-    for i in 0..8  {
+    let mut name_vec: [u8; 11] = [0; 11];
+    for i in 0..8 {
         if input[i] != 32 {
             name_vec[index] = input[i];
             index += 1;
@@ -172,7 +172,7 @@ fn get_short_name(input: &[u8; 11]) -> [u8; 11] {
         name_vec[index] = 46;
         index += 1;
         for i in 8..11 {
-            if input[i] !=32 {
+            if input[i] != 32 {
                 name_vec[index] = name_vec[i];
             }
         }
@@ -248,7 +248,7 @@ impl<'a> Directory<'a> {
         }
     }
 
-    fn get_sector(&mut self) ->  Result<u32, Error> {
+    fn get_sector(&mut self) -> Result<u32, Error> {
         let sector = if self.cluster.is_some() {
             if self.sector >= self.filesystem.sectors_per_cluster {
                 match self.filesystem.next_cluster(self.cluster.unwrap()) {
@@ -436,9 +436,7 @@ impl<'a> Filesystem<'a> {
         let mut data: [u8; 512] = [0; 512];
         match self.read(0, &mut data) {
             Ok(_) => {}
-            Err(_) => {
-                return Err(Error::BlockError)
-            },
+            Err(_) => return Err(Error::BlockError),
         };
 
         let h = unsafe { &*(data.as_ptr() as *const Header) };
@@ -561,7 +559,7 @@ impl<'a> Filesystem<'a> {
             _ => {
                 crate::log!("next_cluster unsupported error!\n");
                 Err(Error::Unsupported)
-            },
+            }
         }
     }
 
@@ -578,7 +576,7 @@ impl<'a> Filesystem<'a> {
                     cluster: None,
                     sector: root_directory_start,
                     offset: 0,
-                    cluster_start: None
+                    cluster_start: None,
                 })
             }
             FatType::FAT32 => Ok(Directory {
@@ -586,12 +584,12 @@ impl<'a> Filesystem<'a> {
                 cluster: Some(self.root_cluster),
                 sector: 0,
                 offset: 0,
-                cluster_start: Some(self.root_cluster)
+                cluster_start: Some(self.root_cluster),
             }),
             _ => {
                 crate::log!("root unsupported error!\n");
                 Err(Error::Unsupported)
-            },
+            }
         }
     }
 
@@ -612,17 +610,16 @@ impl<'a> Filesystem<'a> {
             cluster: Some(cluster),
             sector: 0,
             offset: 0,
-            cluster_start: Some(cluster)
+            cluster_start: Some(cluster),
         })
     }
 
     pub fn open(&self, path: &str) -> Result<DirectoryEntry, Error> {
-
         let mut residual = path;
 
         let mut current_dir = self.root().unwrap();
         let mut current_directory_entry = DirectoryEntry {
-            name: [0;11],
+            name: [0; 11],
             file_type: FileType::Directory,
             cluster: self.root().unwrap().cluster.unwrap(),
             size: 0,
@@ -658,13 +655,16 @@ impl<'a> Filesystem<'a> {
 
             loop {
                 match current_dir.next_entry() {
-                    Err(Error::EndOfFile) => return {
-                        return Err(Error::NotFound);},
+                    Err(Error::EndOfFile) => {
+                        return {
+                            return Err(Error::NotFound);
+                        }
+                    }
                     Err(e) => {
                         return Err(e);
-                    },
+                    }
                     Ok(de) => {
-                        let filename = unsafe{core::str::from_utf8_unchecked(&de.name)};
+                        let filename = unsafe { core::str::from_utf8_unchecked(&de.name) };
                         if compare_name(sub, &de) {
                             match de.file_type {
                                 FileType::Directory => {
@@ -686,7 +686,9 @@ impl<'a> Filesystem<'a> {
 
 impl fmt::Display for Filesystem<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Filesystem:
+        write!(
+            f,
+            "Filesystem:
         start: {:?}
         last: {:?}
         bytes_per_sectors: {:?}
@@ -703,24 +705,42 @@ impl fmt::Display for Filesystem<'_> {
         data_cluster_count: {:?}
         root_cluster: {:?}
         ",
-        self.start, self.last, self.bytes_per_sector, self.sectors,
-        self.fat_type, self.clusters, self.sectors_per_fat,
-        self.sectors_per_cluster, self.fat_count, self.root_dir_sectors,
-        self.first_fat_sector, self.first_data_sector,
-        self.data_sector_count, self.data_cluster_count,
-        self.root_cluster
-    )}
+            self.start,
+            self.last,
+            self.bytes_per_sector,
+            self.sectors,
+            self.fat_type,
+            self.clusters,
+            self.sectors_per_fat,
+            self.sectors_per_cluster,
+            self.fat_count,
+            self.root_dir_sectors,
+            self.first_fat_sector,
+            self.first_data_sector,
+            self.data_sector_count,
+            self.data_cluster_count,
+            self.root_cluster
+        )
+    }
 }
 
 impl fmt::Display for Directory<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Directory:[cluster: {:?} sector: {} offset: {}]", self.cluster, self.sector, self.offset)
+        write!(
+            f,
+            "Directory:[cluster: {:?} sector: {} offset: {}]",
+            self.cluster, self.sector, self.offset
+        )
     }
 }
 
 impl fmt::Display for DirectoryEntry {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Directory:[cluster: {:?} name: {:?} ]", self.cluster, self.name)
+        write!(
+            f,
+            "Directory:[cluster: {:?} name: {:?} ]",
+            self.cluster, self.name
+        )
     }
 }
 
@@ -742,13 +762,19 @@ mod tests {
                 Ok(entry) => {
                     println!("entry: {}", entry);
                 }
-                Err(super::Error::EndOfFile) => {println!("end of file"); break;}
-                Err(_) => {println!("error"); break;}
+                Err(super::Error::EndOfFile) => {
+                    println!("end of file");
+                    break;
+                }
+                Err(_) => {
+                    println!("error");
+                    break;
+                }
             }
         }
 
         //fs.open(current_dir, path)
         println!("fs is: {}\n {}", fs, root_dir);
-        assert_eq!(1,1)
+        assert_eq!(1, 1)
     }
 }
