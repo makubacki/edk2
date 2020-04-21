@@ -618,7 +618,6 @@ impl<'a> Filesystem<'a> {
 
     pub fn open(&self, path: &str) -> Result<DirectoryEntry, Error> {
 
-        // crate::log!("fat::open path is {:?}\n", path);
         let mut residual = path;
 
         let mut current_dir = self.root().unwrap();
@@ -630,12 +629,10 @@ impl<'a> Filesystem<'a> {
             long_name: [0; 255],
         };
 
-        // crate::log!("EFI_STUB - open - unwrap\n");
         loop {
             // sub is the directory or file name
             // residual is what is left
             if residual.len() == 0 {
-                // crate::log!("EFI-STUB - residual.len() is 0\n");
                 return Ok(current_directory_entry);
             }
 
@@ -652,33 +649,26 @@ impl<'a> Filesystem<'a> {
                     // +1 due to above find working on substring
                     let sub = &residual[1..=*x];
                     residual = &residual[(*x + 1)..];
-                    // crate::log!("EFI_STUB - open sub is {:?}, residual is: {:?}\n", sub, residual);
                     sub
                 }
             };
-            // log!("EFI_STUB - sub is: {:?}, residual is: {:?}\n", sub, residual);
             if sub.len() == 0 {
-                // crate::log!("EFI_STUB - open - sub.len is 0\n");
                 return Ok(current_directory_entry);
             }
 
             loop {
                 match current_dir.next_entry() {
                     Err(Error::EndOfFile) => return {
-                        // crate::log!("EFI_STUB: next_entry end\n");
                         return Err(Error::NotFound);},
                     Err(e) => {
-                        // crate::log!("EFI_STUB - open - error\n");
                         return Err(e);
                     },
                     Ok(de) => {
                         let filename = unsafe{core::str::from_utf8_unchecked(&de.name)};
-                        // log!("EFI-STUB: fsopen: {:?}, filesize: {:?}\n", filename, de.size);
                         if compare_name(sub, &de) {
                             match de.file_type {
                                 FileType::Directory => {
                                     current_dir = self.get_directory(de.cluster).unwrap();
-                                    // log!("EFI-STUB: current_dir is {:?}", filename);
                                     current_directory_entry = de;
                                     break;
                                 }
@@ -760,225 +750,5 @@ mod tests {
         //fs.open(current_dir, path)
         println!("fs is: {}\n {}", fs, root_dir);
         assert_eq!(1,1)
-
     }
-
-    // #[test]
-    // fn test_fat_file_reads() {
-    //     let images: [&str; 3] = ["fat12.img", "fat16.img", "fat32.img"];
-
-    //     for image in &images {
-    //         let d = FakeDisk::new(image);
-
-    //         for n in 9..16 {
-    //             for o in 0..2 {
-    //                 let v = 2u32.pow(n) - o;
-    //                 let len = d.len();
-    //                 let mut fs = crate::fat::Filesystem::new(&d, 0, len);
-    //                 fs.init().expect("Error initialising filesystem");
-    //                 let path = format!("/A/B/C/{}", v);
-    //                 let mut f = fs.open(&path).expect("Error opening file");
-
-    //                 assert_eq!(f.size, v);
-
-    //                 let mut bytes_so_far = 0;
-    //                 loop {
-    //                     let mut data: [u8; 512] = [0; 512];
-    //                     match f.read(&mut data) {
-    //                         Ok(bytes) => {
-    //                             bytes_so_far += bytes;
-    //                         }
-    //                         Err(super::Error::EndOfFile) => {
-    //                             break;
-    //                         }
-    //                         Err(e) => panic!(e),
-    //                     }
-    //                 }
-
-    //                 assert_eq!(bytes_so_far, f.size);
-    //             }
-    //         }
-    //     }
-    // }
-
-    // #[test]
-    // fn test_fat_file_seek() {
-    //     let images: [&str; 3] = ["fat12.img", "fat16.img", "fat32.img"];
-
-    //     for image in &images {
-    //         let d = FakeDisk::new(image);
-
-    //         for n in 9..16 {
-    //             for o in 0..2 {
-    //                 let v = 2u32.pow(n) - o;
-    //                 let len = d.len();
-    //                 let mut fs = crate::fat::Filesystem::new(&d, 0, len);
-    //                 fs.init().expect("Error initialising filesystem");
-    //                 let path = format!("/A/B/C/{}", v);
-    //                 let mut f = fs.open(&path).expect("Error opening file");
-
-    //                 assert_eq!(f.size, v);
-
-    //                 let mut bytes_so_far = 0;
-    //                 loop {
-    //                     let mut data: [u8; 512] = [0; 512];
-    //                     match f.read(&mut data) {
-    //                         Ok(bytes) => {
-    //                             bytes_so_far += bytes;
-    //                         }
-    //                         Err(super::Error::EndOfFile) => {
-    //                             break;
-    //                         }
-    //                         Err(e) => panic!(e),
-    //                     }
-    //                 }
-
-    //                 assert_eq!(bytes_so_far, f.size);
-
-    //                 f.seek(0).expect("expect seek to work");
-    //                 bytes_so_far = 0;
-    //                 loop {
-    //                     let mut data: [u8; 512] = [0; 512];
-    //                     match f.read(&mut data) {
-    //                         Ok(bytes) => {
-    //                             bytes_so_far += bytes;
-    //                         }
-    //                         Err(super::Error::EndOfFile) => {
-    //                             break;
-    //                         }
-    //                         Err(e) => panic!(e),
-    //                     }
-    //                 }
-
-    //                 assert_eq!(bytes_so_far, f.size);
-
-    //                 if f.size > 512 && f.size % 2 == 0 {
-    //                     f.seek(f.size / 2).expect("expect seek to work");
-    //                     bytes_so_far = f.size / 2;
-    //                     loop {
-    //                         let mut data: [u8; 512] = [0; 512];
-    //                         match f.read(&mut data) {
-    //                             Ok(bytes) => {
-    //                                 bytes_so_far += bytes;
-    //                             }
-    //                             Err(super::Error::EndOfFile) => {
-    //                                 break;
-    //                             }
-    //                             Err(e) => panic!(e),
-    //                         }
-    //                     }
-    //                     assert_eq!(bytes_so_far, f.size);
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
-
-    // #[test]
-    // fn test_fat_init() {
-    //     let d = FakeDisk::new("clear-28660-kvm.img");
-    //     match crate::part::find_efi_partition(&d) {
-    //         Ok((start, end)) => {
-    //             let mut f = crate::fat::Filesystem::new(&d, start, end);
-    //             match f.init() {
-    //                 Ok(()) => {
-    //                     assert_eq!(f.sectors, 1_046_528);
-    //                     assert_eq!(f.fat_type, super::FatType::FAT16);
-    //                 }
-    //                 Err(e) => panic!(e),
-    //             }
-    //         }
-    //         Err(e) => panic!(e),
-    //     }
-    // }
-
-    // #[test]
-    // fn test_fat_open() {
-    //     let d = FakeDisk::new("clear-28660-kvm.img");
-    //     match crate::part::find_efi_partition(&d) {
-    //         Ok((start, end)) => {
-    //             let mut f = crate::fat::Filesystem::new(&d, start, end);
-    //             match f.init() {
-    //                 Ok(()) => {
-    //                     let file = f.open("\\EFI\\BOOT\\BOOTX64.EFI").unwrap();
-    //                     assert_eq!(file.active_cluster, 166);
-    //                     assert_eq!(file.size, 92789);
-    //                 }
-    //                 Err(e) => panic!(e),
-    //             }
-    //         }
-    //         Err(e) => panic!(e),
-    //     }
-    // }
-
-    // #[test]
-    // fn test_fat_list_root() {
-    //     let images: [&str; 3] = ["fat12.img", "fat16.img", "fat32.img"];
-
-    //     for image in &images {
-    //         let disk = FakeDisk::new(image);
-    //         let len = disk.len();
-    //         let mut fs = crate::fat::Filesystem::new(&disk, 0, len);
-    //         fs.init().expect("Error initialising filesystem");
-    //         let mut d = fs.root().unwrap();
-    //         let de = d.next_entry().unwrap();
-    //         assert_eq!(&de.name, b"A          ");
-    //     }
-    // }
-    // #[test]
-    // fn test_fat_list_recurse() {
-    //     let images: [&str; 3] = ["fat12.img", "fat16.img", "fat32.img"];
-
-    //     for image in &images {
-    //         let disk = FakeDisk::new(image);
-    //         let len = disk.len();
-    //         let mut fs = crate::fat::Filesystem::new(&disk, 0, len);
-    //         fs.init().expect("Error initialising filesystem");
-
-    //         let mut d = fs.root().unwrap();
-    //         let de = d.next_entry().unwrap();
-    //         assert_eq!(&de.name, b"A          ");
-
-    //         let mut d = fs.get_directory(de.cluster).unwrap();
-    //         let de = d.next_entry().unwrap();
-    //         assert_eq!(&de.name, b".          ");
-    //         let de = d.next_entry().unwrap();
-    //         assert_eq!(&de.name, b"..         ");
-    //         let de = d.next_entry().unwrap();
-    //         assert_eq!(&de.name, b"B          ");
-    //         assert!(d.next_entry().is_err());
-
-    //         let mut d = fs.get_directory(de.cluster).unwrap();
-    //         let de = d.next_entry().unwrap();
-    //         assert_eq!(&de.name, b".          ");
-    //         let de = d.next_entry().unwrap();
-    //         assert_eq!(&de.name, b"..         ");
-    //         let de = d.next_entry().unwrap();
-    //         assert_eq!(&de.name, b"C          ");
-    //         assert!(d.next_entry().is_err());
-    //     }
-    // }
-
-    // #[test]
-    // fn test_fat_long_file_name() {
-    //     let images: [&str; 3] = ["fat12.img", "fat16.img", "fat32.img"];
-
-    //     for image in &images {
-    //         let d = FakeDisk::new(image);
-    //         let len = d.len();
-    //         let mut fs = crate::fat::Filesystem::new(&d, 0, len);
-    //         fs.init().expect("Error initialising filesystem");
-
-    //         assert!(fs.open("/longfilenametest").is_ok());
-    //     }
-    // }
-
-    // #[test]
-    // fn test_compare_short_name() {
-    //     let mut de: super::DirectoryEntry = unsafe { std::mem::zeroed() };
-    //     de.name.copy_from_slice(b"X       ABC");
-    //     assert!(super::compare_short_name("X.abc", &de));
-    //     de.name.copy_from_slice(b"ABCDEFGHIJK");
-    //     assert!(super::compare_short_name("abcdefgh.ijk", &de));
-    // }
 }
