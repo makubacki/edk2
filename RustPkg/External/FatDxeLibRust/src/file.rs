@@ -102,7 +102,7 @@ impl<'a> FileSystemWrapper<'a> {
                 size: 0,
                 long_name: [0; 255],
             };
-            (*fw).dir = self.fs.get_directory(entry.cluster).unwrap();
+            (*fw).dir = root_dir;
             (*fw).dir_entry = entry;
         }
 
@@ -148,7 +148,7 @@ pub extern "win64" fn filesystem_open_volumn(
         Err(err) => {return err;}
         Ok(fw) => {
             *file = &mut (*fw).proto;
-            log!("open_volumn - status: {:x} - path: \\, file: {:x}", Status::SUCCESS.value(), *file as u64);
+            //log!("open_volumn - status: {:x} - path: \\, file: {:x}", Status::SUCCESS.value(), *file as u64);
             return Status::SUCCESS;
         }
     }
@@ -187,8 +187,8 @@ pub extern "win64" fn open(
         let file_out_wrapper: *mut FileWrapper = fs_wrapper.create_file(false).unwrap();
 
         unsafe{
-            (*file_out_wrapper).fs = wrapper.fs;
-            (*file_out_wrapper).fs_wrapper = wrapper.fs_wrapper;
+        //     (*file_out_wrapper).fs = wrapper.fs;
+        //     (*file_out_wrapper).fs_wrapper = wrapper.fs_wrapper;
             (*file_out_wrapper).root = wrapper.root;
             (*file_out_wrapper).parent = wrapper.parent;
             (*file_out_wrapper).dir_entry = wrapper.dir_entry;
@@ -204,15 +204,14 @@ pub extern "win64" fn open(
     }
     if path == ".." {
         if wrapper.parent.is_none() {
-            log!("open - status: {:x} - path: {}, file_in: {:x}, file_out: {:x}", Status::NOT_FOUND.value(), path_os, file_in as u64, *file_out as u64);
-            return Status::NOT_FOUND;
+            log!("open - status: {:x} - path: {}, file_in: {:x}, file_out: {:x}", Status::INVALID_PARAMETER.value(), path_os, file_in as u64, *file_out as u64);
+            return Status::INVALID_PARAMETER;
         }
-
         let wrapper = wrapper.parent.expect("unwrap");
         let file_out_wrapper: *mut FileWrapper = fs_wrapper.create_file(false).unwrap();
         unsafe{
-            (*file_out_wrapper).fs = wrapper.fs;
-            (*file_out_wrapper).fs_wrapper = wrapper.fs_wrapper;
+            // (*file_out_wrapper).fs = wrapper.fs;
+            // (*file_out_wrapper).fs_wrapper = wrapper.fs_wrapper;
             (*file_out_wrapper).root = wrapper.root;
             (*file_out_wrapper).parent = wrapper.parent;
             (*file_out_wrapper).dir_entry = wrapper.dir_entry;
@@ -240,7 +239,7 @@ pub extern "win64" fn open(
             unsafe {
                 match f.file_type {
                     crate::fat::FileType::Directory => {
-                        let directory = wrapper.fs.get_directory(wrapper.dir_entry.cluster);
+                        let directory = wrapper.fs.get_directory(f.cluster);
                         if directory.is_err(){
                             log!("open - status: {:x}, path: {}, file_in: {:x}, file_out: {:x}", Status::DEVICE_ERROR.value(), path_os, file_in as u64, *file_out as u64);
                             return Status::DEVICE_ERROR;
@@ -250,7 +249,7 @@ pub extern "win64" fn open(
                         (*file_out_wrapper).parent = Some(wrapper);
                     }
                     crate::fat::FileType::File => {
-                        let mut file = wrapper.fs.get_file(wrapper.dir_entry.cluster, wrapper.dir_entry.size);
+                        let mut file = wrapper.fs.get_file(f.cluster, f.size);
                         if file.is_err() {
                             return Status::DEVICE_ERROR;
                         }
@@ -276,9 +275,9 @@ pub extern "win64" fn open(
 }}
 
 pub extern "win64" fn close(proto: *mut FileProtocol) -> Status {
-    log!("file close: {:x}", proto as u64);
+    //log!("file close: {:x}", proto as u64);
     let wrapper = container_of!(proto, FileWrapper, proto);
-    unsafe{crate::calloc::free(wrapper as *mut FileWrapper);}
+    //unsafe{crate::calloc::free(wrapper as *mut FileWrapper);}
     Status::UNSUPPORTED
 }
 
@@ -297,6 +296,7 @@ pub fn ascii_to_ucs2(input: &str, output: &mut [u16]) {
 
 pub extern "win64" fn read(file: *mut FileProtocol, size: *mut usize, buf: *mut c_void) -> Status {
     // log!("read called {:?} {:?}", file, size);
+    let old_size = unsafe{*size};
     let wrapper = container_of_mut!(file, FileWrapper, proto);
     let wrapper:&mut FileWrapper = unsafe{&mut (*wrapper)};
     match wrapper.dir_entry.file_type {
@@ -346,6 +346,7 @@ pub extern "win64" fn read(file: *mut FileProtocol, size: *mut usize, buf: *mut 
                 //     return Status::DEVICE_ERROR;
                 // }
                 // let mut directory = directory.expect("unwrap error");
+
                 let mut directory = &mut wrapper.dir;
                 match directory.next_entry() {
                     Err(crate::fat::Error::EndOfFile) => {
@@ -353,11 +354,14 @@ pub extern "win64" fn read(file: *mut FileProtocol, size: *mut usize, buf: *mut 
                         (*info).attribute = 0;
                         (*info).file_name[0] = 0;
                         (*size) = 0;
-                        return Status::SUCCESS;
+                        let status = Status::SUCCESS;
+                        log!("read -  status: {:x}, file: {:x}, info: {:?}", status.value(), file as u64, *info);
+                        return status;
                     }
                     Err(e) => {
-                        log!("EFI-STUB: next_entry device error\n");
-                        return Status::DEVICE_ERROR;
+                        let status = Status::DEVICE_ERROR;
+                        log!("read -  status: {:x}, file: {:x}, info: {:?}", status.value(), file as u64, *info);
+                        return status;
                     }
                     Ok(de) => {
                         let mut long_name = de.long_name;
@@ -366,7 +370,7 @@ pub extern "win64" fn read(file: *mut FileProtocol, size: *mut usize, buf: *mut 
                                 long_name[i] = de.name[i];
                             }
                         }
-                        let mut fname = unsafe{core::str::from_utf8_unchecked(&long_name)};
+                        let mut fname = core::str::from_utf8_unchecked(&long_name);
                         let filename = &fname as &str;
                         ascii_to_ucs2(filename, &mut (*info).file_name);
                         match de.file_type {
@@ -384,16 +388,14 @@ pub extern "win64" fn read(file: *mut FileProtocol, size: *mut usize, buf: *mut 
                                 (*info).attribute = 0x10;
                             }
                         }
-                        return Status::SUCCESS;
+                        let status = Status::SUCCESS;
+                        log!("read -  status: {:x}, file: {:x}, info: {:?}", status.value(), file as u64, *info);
+                        return status;
                     }
                 }
             }
-            return Status::SUCCESS;
-
         }
     }
-
-
 }
 
 pub extern "win64" fn write(_: *mut FileProtocol, _: *mut usize, _: *mut c_void) -> Status {
