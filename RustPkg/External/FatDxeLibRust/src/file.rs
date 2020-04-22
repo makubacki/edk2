@@ -26,7 +26,7 @@ struct FileInfo {
     _last_access_time: r_efi::system::Time,
     _modification_time: r_efi::system::Time,
     attribute: u64,
-    file_name: [Char16; 256],
+    file_name: [Char16; 261],
 }
 
 impl core::fmt::Debug for FileInfo {
@@ -108,7 +108,7 @@ impl<'a> FileSystemWrapper<'a> {
                 file_type: crate::fat::FileType::Directory,
                 cluster: root_dir.cluster.unwrap(),
                 size: 0,
-                long_name: [0; 255],
+                long_name: [0; 261],
             };
             (*fw).dir = root_dir;
             (*fw).dir_entry = entry;
@@ -440,12 +440,11 @@ pub extern "win64" fn read(file: *mut FileProtocol, size: *mut usize, buf: *mut 
                         let mut long_name = de.long_name;
                         if long_name[0] == 0 {
                             for i in 0..11 {
-                                long_name[i] = de.name[i];
+                                long_name[i] = de.name[i] as u16;
                             }
                         }
-                        let mut fname = core::str::from_utf8_unchecked(&long_name);
-                        let filename = &fname as &str;
-                        ascii_to_ucs2(filename, &mut (*info).file_name);
+
+                        (*info).file_name = long_name;
                         match de.file_type {
                             crate::fat::FileType::File => {
                                 (*info).size = core::mem::size_of::<FileInfo>() as u64;
@@ -510,13 +509,11 @@ pub extern "win64" fn get_info(
                 let mut long_name = wrapper.dir_entry.long_name;
                 if long_name[0] == 0 {
                     for i in 0..11 {
-                        long_name[i] = (*wrapper).dir_entry.name[i];
+                        long_name[i] = (*wrapper).dir_entry.name[i] as u16;
                     }
                 }
-                let filename = core::str::from_utf8_unchecked(&long_name);
 
-                let filename = &filename[0..255] as &str;
-                ascii_to_ucs2(filename, &mut (*info).file_name);
+                (*info).file_name = long_name;
                 match wrapper.dir_entry.file_type {
                     crate::fat::FileType::File => {
                         (*info).size = core::mem::size_of::<FileInfo>() as u64;

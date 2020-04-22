@@ -16,6 +16,9 @@
 
 use crate::block::SectorRead;
 use core::fmt;
+use efi_str::OsStr;
+
+const MAX_FILE_NAME_LEN : usize = 261;
 
 #[repr(packed)]
 struct Header {
@@ -107,10 +110,10 @@ pub struct Filesystem<'a> {
 #[derive(Clone, Copy)]
 pub struct DirectoryEntry {
     pub name: [u8; 11],
-    pub long_name: [u8; 255],
     pub file_type: FileType,
     pub size: u32,
     pub cluster: u32,
+    pub long_name: [u16; MAX_FILE_NAME_LEN],
 }
 
 #[derive(Debug, PartialEq)]
@@ -183,7 +186,7 @@ fn get_short_name(input: &[u8; 11]) -> [u8; 11] {
 impl<'a> Directory<'a> {
     // Returns and then increments to point to the next one, may return EndOfFile if this is the last entry
     pub fn next_entry(&mut self) -> Result<DirectoryEntry, Error> {
-        let mut long_entry = [0u16; 260];
+        let mut long_entry = [0u16; MAX_FILE_NAME_LEN];
         loop {
             let sector = self.get_sector()?;
 
@@ -237,7 +240,7 @@ impl<'a> Directory<'a> {
                     },
                     cluster: (u32::from(d.cluster_high)) << 16 | u32::from(d.cluster_low),
                     size: d.size,
-                    long_name: ucs2_to_ascii(&long_entry[..]),
+                    long_name: long_entry,
                 };
 
                 self.offset = i + 1;
@@ -403,7 +406,8 @@ fn compare_short_name(name: &str, de: &DirectoryEntry) -> bool {
 }
 
 fn compare_name(name: &str, de: &DirectoryEntry) -> bool {
-    compare_short_name(name, de) || &de.long_name[0..name.len()] == name.as_bytes()
+    let long_name = OsStr::from_u16_slice_with_nul(&de.long_name[..]);
+    compare_short_name(name, de) || long_name == name
 }
 
 impl<'a> Filesystem<'a> {
@@ -623,7 +627,7 @@ impl<'a> Filesystem<'a> {
             file_type: FileType::Directory,
             cluster: self.root().unwrap().cluster.unwrap(),
             size: 0,
-            long_name: [0; 255],
+            long_name: [0; MAX_FILE_NAME_LEN],
         };
 
         loop {
