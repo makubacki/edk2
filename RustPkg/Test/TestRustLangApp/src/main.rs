@@ -106,8 +106,6 @@ extern fn ExternInit(data: *mut usize)
 #[no_mangle]
 pub extern fn efi_main(handle: efi::Handle, system_table: *mut efi::SystemTable) -> Status
 {
-    uefi_rust_allocation_lib::init(system_table);
-
     unsafe {
       ST = system_table;
       BS = (*ST).boot_services;
