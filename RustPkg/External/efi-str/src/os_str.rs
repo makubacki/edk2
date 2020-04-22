@@ -26,11 +26,16 @@ impl OsStr {
         self.0.len()
     }
 
-    pub fn from_slice(s: &[u16]) -> &OsStr {
+    pub fn from_u16_slice_with_nul(s: &[u16]) -> &OsStr {unsafe {
+        let len =  OsStr::char16_with_null_len(s as *const [u16] as *const u16);
+        &*(&s[0..len] as *const [u16] as *const OsStr)
+    }}
+
+    pub fn from_u16_slice(s: &[u16]) -> &OsStr {
         unsafe { &*(s as *const [u16] as *const OsStr) }
     }
 
-    pub fn from_slice_mut(s: &mut [u16]) -> &mut OsStr {
+    pub fn from_u16_slice_mut(s: &mut [u16]) -> &mut OsStr {
         unsafe { &mut *(s as *mut [u16] as *mut OsStr) }
     }
 
@@ -49,12 +54,12 @@ impl OsStr {
 
     pub fn from_char16_with_nul(s: *const u16) -> &'static Self {
         let s = unsafe{core::slice::from_raw_parts(s, Self::char16_with_null_len(s))};
-        OsStr::from_slice(s)
+        OsStr::from_u16_slice(s)
     }
 
     pub fn from_char16_with_nul_mut(s: *mut u16) ->&'static mut Self {
         let s = unsafe{core::slice::from_raw_parts_mut(s as *mut u16, Self::char16_with_null_len(s))};
-        OsStr::from_slice_mut(s)
+        OsStr::from_u16_slice_mut(s)
     }
 
     pub fn iter(&self) -> Iter<'_, u16> {
@@ -116,5 +121,48 @@ impl fmt::Display for &mut OsStr {
 impl AsRef<OsStr> for OsStr {
     fn as_ref(&self) -> &OsStr {
         self
+    }
+}
+
+
+impl core::cmp::PartialEq<str> for OsStr {
+    fn eq(&self, other: &str) -> bool {
+        if self.0.len() == other.chars().count() {
+            let mut i = 0;
+            for c in other.chars() {
+                if c as u32 != self.0[i] as u32 {
+                    return false;
+                }
+                i += 1;
+            }
+            return true;
+        }
+        return false;
+    }
+}
+
+
+impl core::cmp::PartialEq<OsStr> for str{
+    fn eq(&self, other: &OsStr) -> bool {
+        if other.0.len() == self.chars().count() {
+            let mut i = 0;
+            for c in self.chars() {
+                if c as u32 != other.0[i] as u32 {
+                    return false;
+                }
+                i += 1;
+            }
+            return true;
+        }
+        return false;
+    }
+}
+
+impl core::cmp::PartialEq<OsStr> for OsStr{
+    fn eq(&self, other: &OsStr) -> bool {
+        if other.0.len() == self.0.len() {
+            return self.0 == other.0;
+        }
+        return false;
     }
 }

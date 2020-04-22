@@ -90,7 +90,7 @@ impl core::ops::Deref for OsString {
 impl core::ops::Index<core::ops::RangeFull> for OsString {
     type Output = OsStr;
     fn index(&self, _index: core::ops::RangeFull) -> &OsStr {
-        OsStr::from_slice(&(self.0[..]))
+        OsStr::from_u16_slice(&(self.0[..]))
     }
 }
 
