@@ -1,4 +1,4 @@
-// Copyright © 2019 Intel Corporation
+// Copyright © 2019-2020 Intel Corporation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ use crate::block::SectorRead;
 use core::fmt;
 use efi_str::OsStr;
 
-const MAX_FILE_NAME_LEN : usize = 261;
+const MAX_FILE_NAME_LEN: usize = 261;
 
 #[repr(packed)]
 struct Header {
@@ -109,7 +109,7 @@ pub struct Filesystem<'a> {
 
 #[derive(Clone, Copy)]
 pub struct DirectoryEntry {
-    pub name: [u8; 11],
+    pub name: [u8; 12],
     pub file_type: FileType,
     pub size: u32,
     pub cluster: u32,
@@ -131,6 +131,24 @@ pub enum FileType {
     Directory,
 }
 
+#[derive(Clone, Copy)]
+pub struct OFileDirectory<'a> {
+    pub dir_ent: DirectoryEntry,
+    pub file: Option<File<'a>>,
+    pub dir: Option<Directory<'a>>,
+}
+
+impl<'a> OFileDirectory<'a> {
+    pub fn new(
+        dir_ent: DirectoryEntry,
+        file: Option<File<'a>>,
+        dir: Option<Directory<'a>>,
+    ) -> OFileDirectory<'a> {
+        OFileDirectory { dir_ent, file, dir }
+    }
+}
+
+#[derive(Clone, Copy)]
 pub struct File<'a> {
     filesystem: &'a Filesystem<'a>,
     start_cluster: u32,
@@ -140,6 +158,7 @@ pub struct File<'a> {
     position: u32,
 }
 
+#[derive(Clone, Copy)]
 pub struct Directory<'a> {
     filesystem: &'a Filesystem<'a>,
     pub cluster: Option<u32>,
@@ -148,35 +167,38 @@ pub struct Directory<'a> {
     cluster_start: Option<u32>,
 }
 
-fn ucs2_to_ascii(input: &[u16]) -> [u8; 255] {
-    let mut output: [u8; 255] = [0; 255];
-    let mut i: usize = 0;
-    while i < output.len() {
-        output[i] = (input[i] & 0xffu16) as u8;
-        if output[i] == 0 {
-            break;
-        }
-        i += 1;
-    }
-    output
-}
-
-fn get_short_name(input: &[u8; 11]) -> [u8; 11] {
+fn get_short_name(input: &[u8; 11]) -> [u8; 12] {
     let mut index = 0;
     let mut i = 0;
-    let mut name_vec: [u8; 11] = [0; 11];
-    for i in 0..8 {
-        if input[i] != 32 {
-            name_vec[index] = input[i];
-            index += 1;
+    let mut name_vec: [u8; 12] = [0; 12];
+
+    let get_len = |vec: &[u8]|{
+        let mut len = 0;
+        let mut j = 0;
+        for i in 0..vec.len() {
+            j = vec.len() - i - 1;
+            if vec[j] != 32 {
+                break;
+            }
         }
+        len = j+1;
+        len
+    };
+
+    for i in 0..get_len(&input[0..8])
+    {
+        name_vec[index] = input[i];
+        index += 1;
     }
+
     if input[8] != 32 {
         name_vec[index] = 46;
         index += 1;
-        for i in 8..11 {
+        let len=8 + get_len(&input[8..11]);
+        for i in 8..len {
             if input[i] != 32 {
-                name_vec[index] = name_vec[i];
+                name_vec[index] = input[i];
+                index += 1;
             }
         }
     }
@@ -265,6 +287,7 @@ impl<'a> Directory<'a> {
                     }
                 }
             }
+
             self.sector
                 + self
                     .filesystem
@@ -273,6 +296,32 @@ impl<'a> Directory<'a> {
             self.sector
         };
         Ok(sector)
+    }
+
+    pub fn get_parent_dir_ent(&self) -> Result<DirectoryEntry, Error> {
+        let mut dir = *self;
+        dir.cluster = dir.cluster_start;
+        dir.offset = 0;
+        dir.sector = 0;
+        loop {
+            let res = dir.next_entry();
+            match res {
+                Ok(de) => {
+                    if compare_name("..", &de) {
+                        return Ok(de);
+                    }
+                }
+                Err(Error::EndOfFile) => {}
+                Err(e) => {}
+            }
+        }
+        Err(Error::NotFound)
+    }
+
+    pub fn reset(&mut self) {
+        self.cluster = self.cluster_start;
+        self.offset = 0;
+        self.sector = 0;
     }
 }
 
@@ -377,32 +426,14 @@ impl<'a> SectorRead for Filesystem<'a> {
 // Do a case-insensitive match on the name with the 8.3 format that you get from FAT.
 // In the FAT directory entry the "." isn't stored and any gaps are padded with " ".
 fn compare_short_name(name: &str, de: &DirectoryEntry) -> bool {
-    // 8.3 (plus 1 for the separator)
-    if name.len() > 12 {
-        return false;
-    }
+    let short_name = de.name;
 
-    let mut i = 0;
-    for (_, a) in name.as_bytes().iter().enumerate() {
-        // Handle cases which are 11 long but not 8.3 (e.g "loader.conf")
-        if i == 11 {
+    for (i, v) in name.bytes().enumerate() {
+        if (short_name[i] != v) {
             return false;
         }
-
-        // Jump to the extension
-        if *a == b'.' {
-            i = 8;
-            continue;
-        }
-
-        let b = de.name[i];
-        if a.to_ascii_uppercase() != b.to_ascii_uppercase() {
-            return false;
-        }
-
-        i += 1;
     }
-    true
+    return true;
 }
 
 fn compare_name(name: &str, de: &DirectoryEntry) -> bool {
@@ -571,25 +602,49 @@ impl<'a> Filesystem<'a> {
         ((cluster - 2) * self.sectors_per_cluster) + self.first_data_sector
     }
 
-    pub fn root(&self) -> Result<Directory, Error> {
+    pub fn root(&self) -> Result<OFileDirectory, Error> {
         match self.fat_type {
             FatType::FAT12 | FatType::FAT16 => {
                 let root_directory_start = self.first_data_sector - self.root_dir_sectors;
-                Ok(Directory {
-                    filesystem: self,
-                    cluster: None,
-                    sector: root_directory_start,
-                    offset: 0,
-                    cluster_start: None,
-                })
+                let mut entry = crate::fat::DirectoryEntry {
+                    name: [0; 12],
+                    file_type: crate::fat::FileType::Directory,
+                    cluster: 0,
+                    size: 0,
+                    long_name: [0; MAX_FILE_NAME_LEN],
+                };
+                Ok(OFileDirectory::new(
+                    entry,
+                    None,
+                    Some(Directory {
+                        filesystem: self,
+                        cluster: None,
+                        sector: root_directory_start,
+                        offset: 0,
+                        cluster_start: None,
+                    }),
+                ))
             }
-            FatType::FAT32 => Ok(Directory {
-                filesystem: self,
-                cluster: Some(self.root_cluster),
-                sector: 0,
-                offset: 0,
-                cluster_start: Some(self.root_cluster),
-            }),
+            FatType::FAT32 => {
+                let mut entry = crate::fat::DirectoryEntry {
+                    name: [0; 12],
+                    file_type: crate::fat::FileType::Directory,
+                    cluster: self.root_cluster,
+                    size: 0,
+                    long_name: [0; MAX_FILE_NAME_LEN],
+                };
+                Ok(OFileDirectory::new(
+                    entry,
+                    None,
+                    Some(Directory {
+                        filesystem: self,
+                        cluster: Some(self.root_cluster),
+                        sector: 0,
+                        offset: 0,
+                        cluster_start: Some(self.root_cluster),
+                    }),
+                ))
+            }
             _ => {
                 crate::log!("root unsupported error!\n");
                 Err(Error::Unsupported)
@@ -618,66 +673,79 @@ impl<'a> Filesystem<'a> {
         })
     }
 
-    pub fn open(&self, path: &str) -> Result<DirectoryEntry, Error> {
+    pub fn open(&self, pfile_in: &OFileDirectory<'a>, path: &str) -> Result<OFileDirectory, Error> {
+        let mut path = &path[..];
+        let mut pfile = &self.root().unwrap();
+        if path.find('/').or_else(|| path.find('\\')) != Some(0) {
+            pfile = pfile_in;
+        } else {
+            path = &path[1..];
+        }
+
         let mut residual = path;
 
-        let mut current_dir = self.root().unwrap();
-        let mut current_directory_entry = DirectoryEntry {
-            name: [0; 11],
-            file_type: FileType::Directory,
-            cluster: self.root().unwrap().cluster.unwrap(),
-            size: 0,
-            long_name: [0; MAX_FILE_NAME_LEN],
-        };
+        if pfile.dir.is_none() {
+            return Err(Error::Unsupported);
+        }
+
+        let mut current_dir = pfile.dir.expect("pfile.dir is not exist");
+        current_dir.reset();
+        let mut current_directory_entry = pfile.dir_ent;
 
         loop {
             // sub is the directory or file name
             // residual is what is left
             if residual.len() == 0 {
-                return Ok(current_directory_entry);
+                let ofile = OFileDirectory::new(current_directory_entry, None, Some(current_dir));
+                return Ok(ofile);
             }
 
-            let sub = match &residual[1..]
+            let sub = match &residual[..]
                 .find('/')
-                .or_else(|| (&residual[1..]).find('\\'))
+                .or_else(|| (&residual[..]).find('\\'))
             {
                 None => {
-                    let sub = &residual[1..];
+                    let sub = &residual[..];
                     residual = "";
                     sub
                 }
                 Some(x) => {
-                    // +1 due to above find working on substring
-                    let sub = &residual[1..=*x];
+                    let sub = &residual[..*x];
                     residual = &residual[(*x + 1)..];
                     sub
                 }
             };
             if sub.len() == 0 {
-                return Ok(current_directory_entry);
+                let ofile = OFileDirectory::new(current_directory_entry, None, Some(current_dir));
+                return Ok(ofile);
             }
-
             loop {
                 match current_dir.next_entry() {
                     Err(Error::EndOfFile) => {
-                        return {
-                            return Err(Error::NotFound);
-                        }
+                        return Err(Error::NotFound);
                     }
                     Err(e) => {
                         return Err(e);
                     }
                     Ok(de) => {
-                        let filename = unsafe { core::str::from_utf8_unchecked(&de.name) };
                         if compare_name(sub, &de) {
                             match de.file_type {
                                 FileType::Directory => {
-                                    current_dir = self.get_directory(de.cluster).unwrap();
-                                    current_directory_entry = de;
+                                    if de.cluster == 0 {
+                                        current_dir = self.root().unwrap().dir.unwrap();
+                                        current_directory_entry = self.root().unwrap().dir_ent;
+                                    } else {
+                                        current_dir = self.get_directory(de.cluster).unwrap();
+                                        current_directory_entry = de;
+                                    }
                                     break;
                                 }
                                 FileType::File => {
-                                    return Ok(de);
+                                    return Ok(OFileDirectory::new(
+                                        de,
+                                        self.get_file(de.cluster, de.size).ok(),
+                                        None,
+                                    ));
                                 }
                             }
                         }
@@ -759,7 +827,7 @@ mod tests {
         println!("d.total_sectors(): {}", d.total_sectors());
         let mut fs = crate::fat::Filesystem::new(&d, 0, d.total_sectors(), 0u32);
         fs.init().expect("failed");
-        let mut root_dir = fs.root().expect("no root");
+        let mut root_dir = fs.root().expect("no root").dir.unwrap();
         loop {
             let res = root_dir.next_entry();
             match res {
@@ -777,8 +845,57 @@ mod tests {
             }
         }
 
-        //fs.open(current_dir, path)
         println!("fs is: {}\n {}", fs, root_dir);
+        assert!(false);
         assert_eq!(1, 1)
+    }
+
+    #[test]
+    fn test_fat_32_open() {
+        let d = FakeDisk::new("test\\clear-31380-kvm.img");
+        println!("disk.len is {}", d.len());
+
+        assert_eq!(d.len(), 9_169_755_648);
+
+        match crate::part::find_efi_partition(&d) {
+            Ok((start, end, part_id)) => {
+                println!("start: {}, end: {}, part_id: {}", start, end, part_id);
+                assert_eq!(start, 2048);
+                assert_eq!(end, 1_046_527);
+                assert_eq!(part_id, 1);
+                let mut fs = crate::fat::Filesystem::new(&d, start, end, part_id);
+                fs.init().expect("failed");
+                let mut root_dir = fs.root().expect("no root");
+                let mut efi_dir = fs.open(&root_dir, "\\EFI").unwrap();
+
+                let mut root_dir2 = fs.open(&efi_dir, "..").unwrap().dir.unwrap();
+
+                let mut boot_dir = fs.open(&root_dir, "\\EFI\\BOOT").unwrap().dir.unwrap();
+                loop {
+                    let entry = boot_dir.next_entry();
+                    if entry.is_err() {
+                        break;
+                    }
+                    println!("entry: {}", entry.unwrap());
+                }
+                let mut bootx64 = fs.open(&root_dir, "\\EFI\\BOOT\\BOOTX64.EFI").unwrap().file.unwrap();
+                log!("file is {}", bootx64.get_size());
+
+                assert!(false)
+            }
+            Err(e) => panic!(e),
+        }
+    }
+
+    #[test]
+    fn test_get_short_name() {
+        let short_name = [66, 79, 79, 84, 88, 54, 52, 0x20, 0x45, 0x46, 0x49];
+        let short_name2 = [66, 79, 79, 84, 88, 54, 52, 66, 0x45, 0x46, 0x49];
+
+        let s = crate::fat::get_short_name(&short_name);
+        println!("shorname: {:?}", s);
+        let s = crate::fat::get_short_name(&short_name2);
+        println!("shorname: {:?}", s);
+        assert!(false);
     }
 }
