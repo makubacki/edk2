@@ -1,4 +1,5 @@
 // Copyright (c) 2019 Intel Corporation
+// Copyright (c) Microsoft Corporation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -51,7 +52,7 @@ extern crate alloc;
 use alloc::vec::Vec;
 use alloc::boxed::Box;
 use alloc::{
-    alloc::{handle_alloc_error, Global, Layout, AllocRef},
+    alloc::{handle_alloc_error, Global, Layout, AllocInit, AllocRef},
 };
 
 
@@ -251,11 +252,11 @@ pub extern fn test_buffer_alloc (
 {
     let layout = unsafe { core::alloc::Layout::from_size_align_unchecked(32, 4) };
     unsafe {
-      match Global.alloc (layout) {
-        Ok((buffer, alloc_size)) => {
-          let mut box_buffer = Box::from_raw(from_raw_parts_mut(buffer.as_ptr(), layout.size()));
+      match Global.alloc (layout, AllocInit::Zeroed) {
+        Ok(buffer) => {
+          let mut box_buffer = Box::from_raw(from_raw_parts_mut(buffer.ptr.as_ptr(), layout.size()));
           box_buffer[0] = 1;
-          Global.dealloc (buffer, layout);
+          Global.dealloc (buffer.ptr, layout);
           drop (buffer); // It is useless
           box_buffer[0] = 1; // cannot catch
         },
@@ -265,9 +266,9 @@ pub extern fn test_buffer_alloc (
 
     let layout = core::alloc::Layout::new::<u32>();
     unsafe {
-      match Global.alloc (layout) {
-        Ok((buffer, alloc_size)) => {
-          Global.dealloc (buffer, layout);
+      match Global.alloc (layout, AllocInit::Zeroed) {
+        Ok(buffer) => {
+          Global.dealloc (buffer.ptr, layout);
         },
         Err(_) => handle_alloc_error (layout),
       }
@@ -332,10 +333,10 @@ pub extern fn test_box_convert (
 {
     let layout = unsafe { core::alloc::Layout::from_size_align_unchecked(size, 4) };
     unsafe {
-      match Global.alloc (layout) {
-        Ok((buffer, alloc_size)) => {
-          let mut box_buffer = Box::<u8>::from_raw(from_raw_parts_mut(buffer.as_ptr(), layout.size()) as *mut [u8] as *mut u8 );
-          Global.dealloc (buffer, layout);
+      match Global.alloc (layout, AllocInit::Zeroed) {
+        Ok(buffer) => {
+          let mut box_buffer = Box::<u8>::from_raw(from_raw_parts_mut(buffer.ptr.as_ptr(), layout.size()) as *mut [u8] as *mut u8 );
+          Global.dealloc (buffer.ptr, layout);
           *box_buffer = 1;
           Box::<u8>::into_raw(box_buffer)
         },
