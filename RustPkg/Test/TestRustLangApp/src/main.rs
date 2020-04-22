@@ -1,4 +1,5 @@
 // Copyright (c) 2019 Intel Corporation
+// Copyright (c) Microsoft Corporation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -108,8 +109,6 @@ extern fn ExternInit(data: *mut usize)
 #[no_mangle]
 pub extern fn efi_main(handle: efi::Handle, system_table: *mut efi::SystemTable) -> Status
 {
-    uefi_rust_allocation_lib::init(system_table);
-
     unsafe {
       ST = system_table;
       BS = (*ST).boot_services;
