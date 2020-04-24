@@ -51,7 +51,7 @@ pub extern fn main(_h: efi::Handle, st: *mut efi::SystemTable) -> efi::Status {
 
     // Print a ucs2 string with NUL
     let s = efi_str::ucs2_str!("get a ucs2 string end with nul\r\n");
-    let s: &OsStr = OsStr::from_slice(&s);
+    let s: &OsStr = OsStr::from_u16_slice(&s);
 
     log::info!("{}", s);
 
@@ -81,7 +81,7 @@ pub extern fn main(_h: efi::Handle, st: *mut efi::SystemTable) -> efi::Status {
             efi::Status::SUCCESS => {
                 variable_size = 1024;
                 status = runtime_services.get_next_variable_name(&mut variable_size, &mut variable_name, &mut vender_guid as *mut efi::Guid);
-                let vname = OsStr::from_slice(&mut variable_name[..]);
+                let vname = OsStr::from_u16_slice(&mut variable_name[..]);
                 log::log!(Level::Info, "Variable Name is: {}\n", vname);
             },
             efi::Status::BUFFER_TOO_SMALL => {

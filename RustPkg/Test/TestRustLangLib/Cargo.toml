@@ -23,4 +23,4 @@ overflow-checks = true
 [dependencies]
 r-efi = { path = "../../External/r-efi"}
 uefi_rust_panic_lib = { path = "../../Library/UefiRustPanicLib" }
-uefi_rust_allocation_lib = { path = "../../Library/UefiRustAllocationLib" }
+uefi_rust_allocation_lib = { path = "../../Library/UefiRustAllocationLib", version = "0.1.0", features = ["alloc_by_bs"],  default-features = false}

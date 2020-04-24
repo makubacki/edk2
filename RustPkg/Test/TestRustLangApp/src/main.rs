@@ -28,8 +28,11 @@
 mod mem;
 
 extern crate test_rust_lang_lib;
-extern crate uefi_rust_intrinsic_lib;
+
+#[cfg(not(test))]
 extern crate uefi_rust_panic_lib;
+
+#[cfg(not(test))]
 extern crate uefi_rust_allocation_lib;
 
 use r_efi::efi;

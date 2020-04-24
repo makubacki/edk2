@@ -25,6 +25,7 @@ mod mem;
 use r_efi::efi;
 use r_efi::efi::{Status};
 
+#[cfg(not(test))]
 extern {
   fn AllocatePool (Size: usize) -> *mut c_void;
   fn FreePool (Buffer: *mut c_void);
@@ -40,7 +41,10 @@ use core::slice;
 use core::slice::from_raw_parts;
 use core::slice::from_raw_parts_mut;
 
+#[cfg(not(test))]
 extern crate uefi_rust_panic_lib;
+
+#[cfg(not(test))]
 extern crate uefi_rust_allocation_lib;
 
 extern crate alloc;
@@ -106,10 +110,12 @@ pub extern fn test_integer_cast (
     data_size
 }
 
+#[cfg(not(test))]
 extern {
   fn ExternInit(Data: *mut usize);
 }
 
+#[cfg(not(test))]
 #[no_mangle]
 #[export_name = "TestUninitializedVariable"]
 pub extern fn test_uninitializd_variable (
@@ -187,6 +193,7 @@ pub extern fn test_buffer_overflow_fixed (
       );
 }
 
+#[cfg(not(test))]
 fn get_buffer<'a> () -> Option<&'a mut TestTableFixed>
 {
     let ptr : *mut c_void = unsafe { AllocatePool (size_of::<TestTableFixed>()) };
@@ -197,12 +204,14 @@ fn get_buffer<'a> () -> Option<&'a mut TestTableFixed>
     Some(buffer)
 }
 
+#[cfg(not(test))]
 fn release_buffer (test_table : &mut TestTableFixed)
 {
   test_table.r#type = 0;
   unsafe { FreePool (test_table as *mut TestTableFixed as *mut c_void) ; }
 }
 
+#[cfg(not(test))]
 #[no_mangle]
 #[export_name = "TestBufferDrop"]
 pub extern fn test_buffer_drop (
