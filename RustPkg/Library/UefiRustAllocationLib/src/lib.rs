@@ -25,3 +25,6 @@ mod alloc_by_c;
 
 #[cfg(feature="alloc_by_bs")]
 mod alloc_by_bs;
+
+#[cfg(feature="alloc_by_bs")]
+pub use alloc_by_bs::init;
