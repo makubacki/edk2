@@ -13,9 +13,9 @@
 
 [Defines]
   INF_VERSION                    = 0x00010005
-  BASE_NAME                      = Fat
+  BASE_NAME                      = FatRust
   #MODULE_UNI_FILE                = Fat.uni
-  FILE_GUID                      = 961578FE-B6B7-44c3-AF35-6BC705CD2B1F
+  FILE_GUID                      = A1A66816-4D44-4612-8151-DB56C10F5D39
   MODULE_TYPE                    = DXE_DRIVER
   VERSION_STRING                 = 1.0
 
