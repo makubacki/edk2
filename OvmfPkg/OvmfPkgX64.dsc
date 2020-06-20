@@ -209,7 +209,6 @@
   VariablePolicyLib|MdeModulePkg/Library/VariablePolicyLib/VariablePolicyLib.inf
   VariablePolicyHelperLib|MdeModulePkg/Library/VariablePolicyHelperLib/VariablePolicyHelperLib.inf
 
-
   #
   # Network libraries
   #
@@ -237,6 +236,10 @@
   Tcg2PhysicalPresenceLib|OvmfPkg/Library/Tcg2PhysicalPresenceLibNull/DxeTcg2PhysicalPresenceLib.inf
   TpmMeasurementLib|MdeModulePkg/Library/TpmMeasurementLibNull/TpmMeasurementLibNull.inf
 !endif
+
+  PrmContextBufferLib|PrmPkg/Library/DxePrmContextBufferLib/DxePrmContextBufferLib.inf
+  PrmModuleDiscoveryLib|PrmPkg/Library/DxePrmModuleDiscoveryLib/DxePrmModuleDiscoveryLib.inf
+  PrmPeCoffLib|PrmPkg/Library/DxePrmPeCoffLib/DxePrmPeCoffLib.inf
 
 [LibraryClasses.common]
   BaseCryptLib|CryptoPkg/Library/BaseCryptLib/BaseCryptLib.inf
@@ -1030,3 +1033,39 @@
       Tpm12DeviceLib|SecurityPkg/Library/Tpm12DeviceLibDTpm/Tpm12DeviceLibDTpm.inf
   }
 !endif
+
+  #
+  # PRM Configuration Driver
+  #
+  PrmPkg/PrmConfigDxe/PrmConfigDxe.inf {
+    <LibraryClasses>
+      NULL|PrmPkg/Samples/PrmSampleAcpiParameterBufferModule/Library/DxeAcpiParameterBufferModuleConfigLib/DxeAcpiParameterBufferModuleConfigLib.inf
+      NULL|PrmPkg/Samples/PrmSampleContextBufferModule/Library/DxeContextBufferModuleConfigLib/DxeContextBufferModuleConfigLib.inf
+      NULL|PrmPkg/Samples/PrmSampleHardwareAccessModule/Library/DxeHardwareAccessModuleConfigLib/DxeHardwareAccessModuleConfigLib.inf
+  }
+
+  #
+  # PRM Module Loader Driver
+  #
+  PrmPkg/PrmLoaderDxe/PrmLoaderDxe.inf
+
+  #
+  # PRM SSDT Installation Driver
+  #
+  PrmPkg/PrmSsdtInstallDxe/PrmSsdtInstallDxe.inf
+
+  #
+  # PRM Sample Modules
+  #
+  PrmPkg/Samples/PrmSamplePrintModule/PrmSamplePrintModule.inf
+  PrmPkg/Samples/PrmSampleAcpiParameterBufferModule/PrmSampleAcpiParameterBufferModule.inf
+  PrmPkg/Samples/PrmSampleHardwareAccessModule/PrmSampleHardwareAccessModule.inf {
+    <LibraryClasses>
+      DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
+  }
+  PrmPkg/Samples/PrmSampleContextBufferModule/PrmSampleContextBufferModule.inf
+
+  #
+  # PRM Information UEFI Application
+  #
+  PrmPkg/Application/PrmInfo/PrmInfo.inf
