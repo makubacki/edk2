@@ -928,7 +928,17 @@ CheckTheImageInternal (
   //
   // Get the dependency from Image.
   //
-  Dependencies = GetImageDependency ((EFI_FIRMWARE_IMAGE_AUTHENTICATION *)Image, ImageSize, &DependenciesSize);
+  Dependencies =  GetImageDependency (
+                    (EFI_FIRMWARE_IMAGE_AUTHENTICATION *) Image,
+                    ImageSize,
+                    &DependenciesSize,
+                    &LocalLastAttemptStatus
+                    );
+  if (LocalLastAttemptStatus != LAST_ATTEMPT_STATUS_SUCCESS) {
+    Status = EFI_ABORTED;
+    *LastAttemptStatus = LocalLastAttemptStatus;
+    goto cleanup;
+  }
 
   //
   // Check the FmpPayloadHeader
@@ -967,11 +977,20 @@ CheckTheImageInternal (
   //
   // Evaluate dependency expression
   //
-  Private->DependenciesSatisfied = CheckFmpDependency (Private->Descriptor.ImageTypeId, Version, Dependencies, DependenciesSize);
+  Private->DependenciesSatisfied =  CheckFmpDependency (
+                                      Private->Descriptor.ImageTypeId,
+                                      Version,
+                                      Dependencies,
+                                      DependenciesSize,
+                                      &LocalLastAttemptStatus
+                                      );
   if (!Private->DependenciesSatisfied) {
     DEBUG ((DEBUG_ERROR, "FmpDxe(%s): CheckTheImage() - Dependency check failed.\n", mImageIdName));
     *ImageUpdatable = IMAGE_UPDATABLE_INVALID;
     Status = EFI_SUCCESS;
+    if (LocalLastAttemptStatus != LAST_ATTEMPT_STATUS_SUCCESS) {
+      *LastAttemptStatus = LocalLastAttemptStatus;
+    }
     goto cleanup;
   }
 
@@ -1184,7 +1203,7 @@ SetTheImage (
   //
   // Get the dependency from Image.
   //
-  Dependencies = GetImageDependency ((EFI_FIRMWARE_IMAGE_AUTHENTICATION *)Image, ImageSize, &DependenciesSize);
+  Dependencies = GetImageDependency ((EFI_FIRMWARE_IMAGE_AUTHENTICATION *)Image, ImageSize, &DependenciesSize, &LastAttemptStatus);
 
   //
   // No functional error in CheckTheImage.  Attempt to get the Version to
