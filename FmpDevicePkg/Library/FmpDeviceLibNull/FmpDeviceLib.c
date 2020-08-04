@@ -2,7 +2,7 @@
   Provides firmware device specific services to support updates of a firmware
   image stored in a firmware device.
 
-  Copyright (c) 2016, Microsoft Corporation. All rights reserved.<BR>
+  Copyright (c) Microsoft Corporation.<BR>
   Copyright (c) 2018 - 2019, Intel Corporation. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
@@ -380,17 +380,26 @@ FmpDeviceGetImage (
   function allows firmware update operation to validate the firmware image
   before FmpDeviceSetImage() is called.
 
-  @param[in]  Image           Points to a new firmware image.
-  @param[in]  ImageSize       Size, in bytes, of a new firmware image.
-  @param[out] ImageUpdatable  Indicates if a new firmware image is valid for
-                              a firmware update to the firmware device.  The
-                              following values from the Firmware Management
-                              Protocol are supported:
-                                IMAGE_UPDATABLE_VALID
-                                IMAGE_UPDATABLE_INVALID
-                                IMAGE_UPDATABLE_INVALID_TYPE
-                                IMAGE_UPDATABLE_INVALID_OLD
-                                IMAGE_UPDATABLE_VALID_WITH_VENDOR_CODE
+  @param[in]  Image               Points to a new firmware image.
+  @param[in]  ImageSize           Size, in bytes, of a new firmware image.
+  @param[out] ImageUpdatable      Indicates if a new firmware image is valid for
+                                  a firmware update to the firmware device.  The
+                                  following values from the Firmware Management
+                                  Protocol are supported:
+                                    IMAGE_UPDATABLE_VALID
+                                    IMAGE_UPDATABLE_INVALID
+                                    IMAGE_UPDATABLE_INVALID_TYPE
+                                    IMAGE_UPDATABLE_INVALID_OLD
+                                    IMAGE_UPDATABLE_VALID_WITH_VENDOR_CODE
+  @param[out] LastAttemptStatus   A pointer to a UINT32 that holds the last attempt
+                                  status to report back to the ESRT table in case
+                                  of error. This value will only be checked when this
+                                  function returns an error. The return status code
+                                  must fall in the range of
+                                  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_MIN_ERROR_CODE_VALUE to
+                                  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_MAX_ERROR_CODE_VALUE.
+                                  If the value falls outside this range, it will be converted
+                                  to LAST_ATTEMPT_STATUS_ERROR_UNSUCCESSFUL.
 
   @retval EFI_SUCCESS            The image was successfully checked.  Additional
                                  status information is returned in
@@ -404,7 +413,8 @@ EFIAPI
 FmpDeviceCheckImage (
   IN  CONST VOID  *Image,
   IN  UINTN       ImageSize,
-  OUT UINT32      *ImageUpdatable
+  OUT UINT32      *ImageUpdatable,
+  OUT UINT32      *LastAttemptStatus
   )
 {
   return EFI_SUCCESS;
@@ -453,6 +463,15 @@ FmpDeviceCheckImage (
                                 EFI_BOOT_SERVICES.AllocatePool().  It is the
                                 caller's responsibility to free this buffer with
                                 EFI_BOOT_SERVICES.FreePool().
+  @param[out] LastAttemptStatus A pointer to a UINT32 that holds the last attempt
+                                status to report back to the ESRT table in case
+                                of error. This value will only be checked when this
+                                function returns an error. The return status code
+                                must fall in the range of
+                                LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_MIN_ERROR_CODE_VALUE to
+                                LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_MAX_ERROR_CODE_VALUE.
+                                If the value falls outside this range, it will be converted
+                                to LAST_ATTEMPT_STATUS_ERROR_UNSUCCESSFUL.
 
   @retval EFI_SUCCESS            The firmware device was successfully updated
                                  with the new firmware image.
@@ -470,7 +489,8 @@ FmpDeviceSetImage (
   IN  CONST VOID                                     *VendorCode,       OPTIONAL
   IN  EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS  Progress,          OPTIONAL
   IN  UINT32                                         CapsuleFwVersion,
-  OUT CHAR16                                         **AbortReason
+  OUT CHAR16                                         **AbortReason,
+  OUT UINT32                                         *LastAttemptStatus
   )
 {
   return EFI_UNSUPPORTED;
