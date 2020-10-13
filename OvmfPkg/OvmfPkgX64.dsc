@@ -475,9 +475,6 @@
 !endif
 
 [PcdsFixedAtBuild]
-  # Set PcdPrmPlatformGuid to the same value as the sample PRM module GUID to test those modules
-  # {a46cbafd-0039-4817-8428-5baf85c11b64}
-  gPrmPkgTokenSpaceGuid.PcdPrmPlatformGuid|{0xfd, 0xba, 0x6c, 0xa4, 0x39, 0x00, 0x17, 0x48, 0x84, 0x28, 0x5b, 0xaf, 0x85, 0xc1, 0x1b, 0x64}
   gEfiMdeModulePkgTokenSpaceGuid.PcdStatusCodeMemorySize|1
 !if $(SMM_REQUIRE) == FALSE
   gEfiMdeModulePkgTokenSpaceGuid.PcdResetOnMemoryTypeInformationChange|FALSE
