@@ -1057,12 +1057,8 @@
   #
   # PRM Sample Modules
   #
-  PrmPkg/Samples/PrmSamplePrintModule/PrmSamplePrintModule.inf
   PrmPkg/Samples/PrmSampleAcpiParameterBufferModule/PrmSampleAcpiParameterBufferModule.inf
-  PrmPkg/Samples/PrmSampleHardwareAccessModule/PrmSampleHardwareAccessModule.inf {
-    <LibraryClasses>
-      DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
-  }
+  PrmPkg/Samples/PrmSampleHardwareAccessModule/PrmSampleHardwareAccessModule.inf
   PrmPkg/Samples/PrmSampleContextBufferModule/PrmSampleContextBufferModule.inf
 
   #
