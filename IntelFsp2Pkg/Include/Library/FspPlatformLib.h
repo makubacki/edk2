@@ -32,7 +32,6 @@ FspGetSystemMemorySize (
   IN OUT UINT64              *HighMemoryLength
   );
 
-
 /**
   Set a new stack frame for the continuation function.
 
@@ -40,8 +39,8 @@ FspGetSystemMemorySize (
 VOID
 EFIAPI
 FspSetNewStackFrame (
-  VOID
-  );
+                     VOID
+                     );
 
 /**
   This function transfer control back to BootLoader after FspSiliconInit.
@@ -50,8 +49,8 @@ FspSetNewStackFrame (
 VOID
 EFIAPI
 FspSiliconInitDone (
-  VOID
-  );
+                    VOID
+                    );
 
 /**
   This function returns control to BootLoader after MemoryInitApi.
@@ -71,8 +70,8 @@ FspMemoryInitDone (
 VOID
 EFIAPI
 FspTempRamExitDone (
-  VOID
-  );
+                    VOID
+                    );
 
 /**
   This function handle NotifyPhase API call from the BootLoader.
@@ -84,8 +83,8 @@ FspTempRamExitDone (
 VOID
 EFIAPI
 FspWaitForNotify (
-  VOID
-  );
+                  VOID
+                  );
 
 /**
   This function transfer control back to BootLoader after FspSiliconInit.

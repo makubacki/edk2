@@ -7,7 +7,6 @@
 
 #include "SecFsp.h"
 
-
 /**
   This function check the FSP API calling condition.
 
@@ -22,17 +21,17 @@ FspApiCallingCheck (
   IN VOID     *ApiParam
   )
 {
-  EFI_STATUS                Status;
-  FSP_GLOBAL_DATA           *FspData;
+  EFI_STATUS       Status;
+  FSP_GLOBAL_DATA  *FspData;
 
-  Status = EFI_SUCCESS;
+  Status  = EFI_SUCCESS;
   FspData = GetFspGlobalDataPointer ();
 
   if (ApiIdx == NotifyPhaseApiIndex) {
     //
     // NotifyPhase check
     //
-    if ((FspData == NULL) || ((UINT32)FspData == 0xFFFFFFFF)) {
+    if ((FspData == NULL) || ((UINT32) FspData == 0xFFFFFFFF)) {
       Status = EFI_UNSUPPORTED;
     } else {
       if (FspData->Signature != FSP_GLOBAL_DATA_SIGNATURE) {
@@ -43,7 +42,7 @@ FspApiCallingCheck (
     //
     // FspMemoryInit check
     //
-    if ((UINT32)FspData != 0xFFFFFFFF) {
+    if ((UINT32) FspData != 0xFFFFFFFF) {
       Status = EFI_UNSUPPORTED;
     } else if (EFI_ERROR (FspUpdSignatureCheck (ApiIdx, ApiParam))) {
       Status = EFI_INVALID_PARAMETER;
@@ -52,7 +51,7 @@ FspApiCallingCheck (
     //
     // TempRamExit check
     //
-    if ((FspData == NULL) || ((UINT32)FspData == 0xFFFFFFFF)) {
+    if ((FspData == NULL) || ((UINT32) FspData == 0xFFFFFFFF)) {
       Status = EFI_UNSUPPORTED;
     } else {
       if (FspData->Signature != FSP_GLOBAL_DATA_SIGNATURE) {
@@ -63,7 +62,7 @@ FspApiCallingCheck (
     //
     // FspSiliconInit check
     //
-    if ((FspData == NULL) || ((UINT32)FspData == 0xFFFFFFFF)) {
+    if ((FspData == NULL) || ((UINT32) FspData == 0xFFFFFFFF)) {
       Status = EFI_UNSUPPORTED;
     } else {
       if (FspData->Signature != FSP_GLOBAL_DATA_SIGNATURE) {

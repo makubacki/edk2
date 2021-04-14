@@ -30,8 +30,8 @@ SetFspGlobalDataPointer (
 FSP_GLOBAL_DATA *
 EFIAPI
 GetFspGlobalDataPointer (
-  VOID
-  );
+                         VOID
+                         );
 
 /**
   This function gets back the FSP API first parameter passed by the bootloader.
@@ -41,8 +41,8 @@ GetFspGlobalDataPointer (
 UINT32
 EFIAPI
 GetFspApiParameter (
-  VOID
-  );
+                    VOID
+                    );
 
 /**
   This function gets back the FSP API second parameter passed by the bootloader.
@@ -52,19 +52,19 @@ GetFspApiParameter (
 UINT32
 EFIAPI
 GetFspApiParameter2 (
-  VOID
-  );
+                     VOID
+                     );
 
 /**
   This function returns the FSP entry stack pointer from address of the first API parameter.
 
   @retval FSP entry stack pointer.
 **/
-VOID*
+VOID *
 EFIAPI
 GetFspEntryStack (
-  VOID
-  );
+                  VOID
+                  );
 
 /**
   This function sets the FSP API parameter in the stack.
@@ -123,8 +123,8 @@ SetFspPlatformDataPointer (
 VOID *
 EFIAPI
 GetFspPlatformDataPointer (
-  VOID
-  );
+                           VOID
+                           );
 
 /**
   This function sets the UPD data pointer.
@@ -145,8 +145,8 @@ SetFspUpdDataPointer (
 VOID *
 EFIAPI
 GetFspUpdDataPointer (
-  VOID
-  );
+                      VOID
+                      );
 
 /**
   This function sets the memory init UPD data pointer.
@@ -167,8 +167,8 @@ SetFspMemoryInitUpdDataPointer (
 VOID *
 EFIAPI
 GetFspMemoryInitUpdDataPointer (
-  VOID
-  );
+                                VOID
+                                );
 
 /**
   This function sets the silicon init UPD data pointer.
@@ -189,8 +189,8 @@ SetFspSiliconInitUpdDataPointer (
 VOID *
 EFIAPI
 GetFspSiliconInitUpdDataPointer (
-  VOID
-  );
+                                 VOID
+                                 );
 
 /**
   Set FSP measurement point timestamp.
@@ -213,8 +213,8 @@ SetFspMeasurePoint (
 FSP_INFO_HEADER *
 EFIAPI
 GetFspInfoHeader (
-  VOID
-  );
+                  VOID
+                  );
 
 /**
   This function sets the FSP info header pointer.
@@ -235,8 +235,8 @@ SetFspInfoHeader (
 FSP_INFO_HEADER *
 EFIAPI
 GetFspInfoHeaderFromApiContext (
-  VOID
-  );
+                                VOID
+                                );
 
 /**
   This function gets the CfgRegion data pointer.
@@ -246,8 +246,8 @@ GetFspInfoHeaderFromApiContext (
 VOID *
 EFIAPI
 GetFspCfgRegionDataPointer (
-  VOID
-  );
+                            VOID
+                            );
 
 /**
   This function gets FSP API calling mode.
@@ -257,8 +257,8 @@ GetFspCfgRegionDataPointer (
 UINT8
 EFIAPI
 GetFspApiCallingIndex (
-  VOID
-  );
+                       VOID
+                       );
 
 /**
   This function sets FSP API calling mode.
@@ -279,9 +279,8 @@ SetFspApiCallingIndex (
 UINT32
 EFIAPI
 GetPhaseStatusCode (
-  VOID
-  );
-
+                    VOID
+                    );
 
 /**
   This function sets FSP Phase StatusCode.
@@ -305,4 +304,5 @@ EFIAPI
 FspApiReturnStatusReset (
   IN UINT32   FspResetType
   );
+
 #endif

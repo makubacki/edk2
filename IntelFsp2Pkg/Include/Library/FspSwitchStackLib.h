@@ -33,8 +33,8 @@
 UINT32
 EFIAPI
 Pei2LoaderSwitchStack (
-  VOID
-  );
+                       VOID
+                       );
 
 /**
 
@@ -49,7 +49,7 @@ Pei2LoaderSwitchStack (
 UINT32
 EFIAPI
 Loader2PeiSwitchStack (
-  VOID
-  );
+                       VOID
+                       );
 
 #endif

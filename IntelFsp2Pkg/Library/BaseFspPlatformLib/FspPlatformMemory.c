@@ -28,7 +28,7 @@ FspGetResourceDescriptorByOwner (
   IN EFI_GUID   *OwnerGuid
   )
 {
-  EFI_PEI_HOB_POINTERS    Hob;
+  EFI_PEI_HOB_POINTERS  Hob;
 
   //
   // Get the HOB list for processing
@@ -42,9 +42,10 @@ FspGetResourceDescriptorByOwner (
     if (Hob.Header->HobType == EFI_HOB_TYPE_RESOURCE_DESCRIPTOR) {
       if ((Hob.ResourceDescriptor->ResourceType == EFI_RESOURCE_MEMORY_RESERVED) && \
           (CompareGuid (&Hob.ResourceDescriptor->Owner, OwnerGuid))) {
-        return  Hob.ResourceDescriptor;
+        return Hob.ResourceDescriptor;
       }
     }
+
     Hob.Raw = GET_NEXT_HOB (Hob);
   }
 
@@ -64,10 +65,10 @@ FspGetSystemMemorySize (
   IN OUT UINT64              *HighMemoryLength
   )
 {
-  EFI_STATUS                  Status;
-  EFI_BOOT_MODE               BootMode;
-  EFI_RESOURCE_ATTRIBUTE_TYPE ResourceAttribute;
-  EFI_PEI_HOB_POINTERS        Hob;
+  EFI_STATUS                   Status;
+  EFI_BOOT_MODE                BootMode;
+  EFI_RESOURCE_ATTRIBUTE_TYPE  ResourceAttribute;
+  EFI_PEI_HOB_POINTERS         Hob;
 
   ResourceAttribute = (
                        EFI_RESOURCE_ATTRIBUTE_PRESENT |
@@ -111,6 +112,7 @@ FspGetSystemMemorySize (
         }
       }
     }
+
     Hob.Raw = GET_NEXT_HOB (Hob);
   }
 }
