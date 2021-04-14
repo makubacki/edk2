@@ -30,8 +30,8 @@ SearchDeviceByPort (
   IN UINT16                              PortMultiplierPort
   )
 {
-  PEI_AHCI_ATA_DEVICE_DATA    *DeviceData;
-  LIST_ENTRY                  *Node;
+  PEI_AHCI_ATA_DEVICE_DATA  *DeviceData;
+  LIST_ENTRY                *Node;
 
   Node = GetFirstNode (&Private->DeviceList);
   while (!IsNull (&Private->DeviceList, Node)) {
@@ -89,47 +89,47 @@ AhciPassThruExecute (
   IN OUT EFI_ATA_PASS_THRU_COMMAND_PACKET    *Packet
   )
 {
-  EFI_STATUS    Status;
+  EFI_STATUS  Status;
 
   switch (Packet->Protocol) {
     case EFI_ATA_PASS_THRU_PROTOCOL_ATA_NON_DATA:
       Status = AhciNonDataTransfer (
-                 Private,
-                 (UINT8) Port,
-                 (UINT8) PortMultiplierPort,
-                 FisIndex,
-                 Packet->Acb,
-                 Packet->Asb,
-                 Packet->Timeout
-                 );
+                                    Private,
+                                    (UINT8) Port,
+                                    (UINT8) PortMultiplierPort,
+                                    FisIndex,
+                                    Packet->Acb,
+                                    Packet->Asb,
+                                    Packet->Timeout
+                                    );
       break;
     case EFI_ATA_PASS_THRU_PROTOCOL_PIO_DATA_IN:
       Status = AhciPioTransfer (
-                 Private,
-                 (UINT8) Port,
-                 (UINT8) PortMultiplierPort,
-                 FisIndex,
-                 TRUE,
-                 Packet->Acb,
-                 Packet->Asb,
-                 Packet->InDataBuffer,
-                 Packet->InTransferLength,
-                 Packet->Timeout
-                 );
+                                Private,
+                                (UINT8) Port,
+                                (UINT8) PortMultiplierPort,
+                                FisIndex,
+                                TRUE,
+                                Packet->Acb,
+                                Packet->Asb,
+                                Packet->InDataBuffer,
+                                Packet->InTransferLength,
+                                Packet->Timeout
+                                );
       break;
     case EFI_ATA_PASS_THRU_PROTOCOL_PIO_DATA_OUT:
       Status = AhciPioTransfer (
-                 Private,
-                 (UINT8) Port,
-                 (UINT8) PortMultiplierPort,
-                 FisIndex,
-                 FALSE,
-                 Packet->Acb,
-                 Packet->Asb,
-                 Packet->OutDataBuffer,
-                 Packet->OutTransferLength,
-                 Packet->Timeout
-                 );
+                                Private,
+                                (UINT8) Port,
+                                (UINT8) PortMultiplierPort,
+                                FisIndex,
+                                FALSE,
+                                Packet->Acb,
+                                Packet->Asb,
+                                Packet->OutDataBuffer,
+                                Packet->OutTransferLength,
+                                Packet->Timeout
+                                );
       break;
     default:
       return EFI_UNSUPPORTED;
@@ -182,11 +182,11 @@ AhciAtaPassThruPassThru (
   IN OUT EFI_ATA_PASS_THRU_COMMAND_PACKET    *Packet
   )
 {
-  UINT32                              IoAlign;
-  PEI_AHCI_CONTROLLER_PRIVATE_DATA    *Private;
-  PEI_AHCI_ATA_DEVICE_DATA            *DeviceData;
-  UINT32                              MaxSectorCount;
-  UINT32                              BlockSize;
+  UINT32                            IoAlign;
+  PEI_AHCI_CONTROLLER_PRIVATE_DATA  *Private;
+  PEI_AHCI_ATA_DEVICE_DATA          *DeviceData;
+  UINT32                            MaxSectorCount;
+  UINT32                            BlockSize;
 
   if (This == NULL || Packet == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -205,20 +205,20 @@ AhciAtaPassThruPassThru (
     return EFI_INVALID_PARAMETER;
   }
 
-  Private = GET_AHCI_PEIM_HC_PRIVATE_DATA_FROM_THIS_PASS_THRU (This);
+  Private    = GET_AHCI_PEIM_HC_PRIVATE_DATA_FROM_THIS_PASS_THRU (This);
   DeviceData = SearchDeviceByPort (Private, Port, PortMultiplierPort);
   if (DeviceData == NULL) {
     return EFI_NOT_FOUND;
   }
 
   MaxSectorCount = mMaxTransferBlockNumber[DeviceData->Lba48Bit];
-  BlockSize      = DeviceData->Media.BlockSize;
+  BlockSize = DeviceData->Media.BlockSize;
 
   //
   // Convert the transfer length from sector count to byte.
   //
   if (((Packet->Length & EFI_ATA_PASS_THRU_LENGTH_BYTES) == 0) &&
-       (Packet->InTransferLength != 0)) {
+      (Packet->InTransferLength != 0)) {
     Packet->InTransferLength = Packet->InTransferLength * BlockSize;
   }
 
@@ -226,7 +226,7 @@ AhciAtaPassThruPassThru (
   // Convert the transfer length from sector count to byte.
   //
   if (((Packet->Length & EFI_ATA_PASS_THRU_LENGTH_BYTES) == 0) &&
-       (Packet->OutTransferLength != 0)) {
+      (Packet->OutTransferLength != 0)) {
     Packet->OutTransferLength = Packet->OutTransferLength * BlockSize;
   }
 
@@ -241,12 +241,12 @@ AhciAtaPassThruPassThru (
   }
 
   return AhciPassThruExecute (
-           Private,
-           DeviceData->Port,
-           DeviceData->PortMultiplier,
-           DeviceData->FisIndex,
-           Packet
-           );
+                              Private,
+                              DeviceData->Port,
+                              DeviceData->PortMultiplier,
+                              DeviceData->FisIndex,
+                              Packet
+                              );
 }
 
 /**
@@ -288,9 +288,9 @@ AhciAtaPassThruGetNextPort (
   IN OUT UINT16                         *Port
   )
 {
-  PEI_AHCI_CONTROLLER_PRIVATE_DATA    *Private;
-  PEI_AHCI_ATA_DEVICE_DATA            *DeviceData;
-  LIST_ENTRY                          *Node;
+  PEI_AHCI_CONTROLLER_PRIVATE_DATA  *Private;
+  PEI_AHCI_ATA_DEVICE_DATA          *DeviceData;
+  LIST_ENTRY                        *Node;
 
   if (This == NULL || Port == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -318,7 +318,7 @@ AhciAtaPassThruGetNextPort (
     while (!IsNull (&Private->DeviceList, Node)) {
       DeviceData = AHCI_PEI_ATA_DEVICE_INFO_FROM_THIS (Node);
 
-      if (DeviceData->Port > *Port){
+      if (DeviceData->Port > *Port) {
         *Port = DeviceData->Port;
         goto Exit;
       }
@@ -398,9 +398,9 @@ AhciAtaPassThruGetNextDevice (
   IN OUT UINT16                         *PortMultiplierPort
   )
 {
-  PEI_AHCI_CONTROLLER_PRIVATE_DATA    *Private;
-  PEI_AHCI_ATA_DEVICE_DATA            *DeviceData;
-  LIST_ENTRY                          *Node;
+  PEI_AHCI_CONTROLLER_PRIVATE_DATA  *Private;
+  PEI_AHCI_ATA_DEVICE_DATA          *DeviceData;
+  LIST_ENTRY                        *Node;
 
   if (This == NULL || PortMultiplierPort == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -425,7 +425,7 @@ AhciAtaPassThruGetNextDevice (
       DeviceData = AHCI_PEI_ATA_DEVICE_INFO_FROM_THIS (Node);
 
       if ((DeviceData->Port == Port) &&
-          (DeviceData->PortMultiplier > *PortMultiplierPort)){
+          (DeviceData->PortMultiplier > *PortMultiplierPort)) {
         *PortMultiplierPort = DeviceData->PortMultiplier;
         goto Exit;
       }
@@ -444,7 +444,7 @@ AhciAtaPassThruGetNextDevice (
     while (!IsNull (&Private->DeviceList, Node)) {
       DeviceData = AHCI_PEI_ATA_DEVICE_INFO_FROM_THIS (Node);
 
-      if (DeviceData->Port == Port){
+      if (DeviceData->Port == Port) {
         *PortMultiplierPort = DeviceData->PortMultiplier;
         goto Exit;
       }
@@ -495,7 +495,7 @@ AhciAtaPassThruGetDevicePath (
   OUT EFI_DEVICE_PATH_PROTOCOL       **DevicePath
   )
 {
-  PEI_AHCI_CONTROLLER_PRIVATE_DATA    *Private;
+  PEI_AHCI_CONTROLLER_PRIVATE_DATA  *Private;
 
   if (This == NULL || DevicePathLength == NULL || DevicePath == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -504,7 +504,7 @@ AhciAtaPassThruGetDevicePath (
   Private = GET_AHCI_PEIM_HC_PRIVATE_DATA_FROM_THIS_PASS_THRU (This);
 
   *DevicePathLength = Private->DevicePathLength;
-  *DevicePath       = AllocateCopyPool (Private->DevicePathLength, Private->DevicePath);
+  *DevicePath = AllocateCopyPool (Private->DevicePathLength, Private->DevicePath);
   if (*DevicePath == NULL) {
     *DevicePathLength = 0;
     return EFI_OUT_OF_RESOURCES;

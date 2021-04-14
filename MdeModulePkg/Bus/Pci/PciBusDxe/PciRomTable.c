@@ -12,18 +12,18 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // PCI ROM image information
 //
 typedef struct {
-  EFI_HANDLE  ImageHandle;
-  UINTN       Seg;
-  UINT8       Bus;
-  UINT8       Dev;
-  UINT8       Func;
-  VOID        *RomImage;
-  UINT64      RomSize;
+  EFI_HANDLE    ImageHandle;
+  UINTN         Seg;
+  UINT8         Bus;
+  UINT8         Dev;
+  UINT8         Func;
+  VOID          *RomImage;
+  UINT64        RomSize;
 } PCI_ROM_IMAGE;
 
-UINTN          mNumberOfPciRomImages     = 0;
-UINTN          mMaxNumberOfPciRomImages  = 0;
-PCI_ROM_IMAGE  *mRomImageTable           = NULL;
+UINTN          mNumberOfPciRomImages    = 0;
+UINTN          mMaxNumberOfPciRomImages = 0;
+PCI_ROM_IMAGE  *mRomImageTable = NULL;
 
 /**
   Add the Rom Image to internal database for later PCI light enumeration.
@@ -47,8 +47,8 @@ PciRomAddImageMapping (
   IN  UINT64      RomSize
   )
 {
-  UINTN           Index;
-  PCI_ROM_IMAGE   *NewTable;
+  UINTN          Index;
+  PCI_ROM_IMAGE  *NewTable;
 
   for (Index = 0; Index < mNumberOfPciRomImages; Index++) {
     if (mRomImageTable[Index].Seg  == Seg &&
@@ -60,7 +60,7 @@ PciRomAddImageMapping (
       // later when updating ImageHandle
       //
       ASSERT ((mRomImageTable[Index].RomImage == NULL) || (RomImage == mRomImageTable[Index].RomImage));
-      ASSERT ((mRomImageTable[Index].RomSize  == 0   ) || (RomSize  == mRomImageTable[Index].RomSize ));
+      ASSERT ((mRomImageTable[Index].RomSize  == 0) || (RomSize  == mRomImageTable[Index].RomSize));
       break;
     }
   }
@@ -71,17 +71,18 @@ PciRomAddImageMapping (
     //
     if (mNumberOfPciRomImages == mMaxNumberOfPciRomImages) {
       NewTable = ReallocatePool (
-                   mMaxNumberOfPciRomImages * sizeof (PCI_ROM_IMAGE),
-                   (mMaxNumberOfPciRomImages + 0x20) * sizeof (PCI_ROM_IMAGE),
-                   mRomImageTable
-                   );
+                                 mMaxNumberOfPciRomImages * sizeof (PCI_ROM_IMAGE),
+                                 (mMaxNumberOfPciRomImages + 0x20) * sizeof (PCI_ROM_IMAGE),
+                                 mRomImageTable
+                                 );
       if (NewTable == NULL) {
-        return ;
+        return;
       }
 
-      mRomImageTable            = NewTable;
+      mRomImageTable = NewTable;
       mMaxNumberOfPciRomImages += 0x20;
     }
+
     //
     // Record the new PCI device
     //
@@ -111,8 +112,8 @@ PciRomGetImageMapping (
   IN  PCI_IO_DEVICE                       *PciIoDevice
   )
 {
-  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL *PciRootBridgeIo;
-  UINTN                           Index;
+  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL  *PciRootBridgeIo;
+  UINTN                            Index;
 
   PciRootBridgeIo = PciIoDevice->PciRootBridgeIo;
 
@@ -121,10 +122,10 @@ PciRomGetImageMapping (
         mRomImageTable[Index].Bus  == PciIoDevice->BusNumber         &&
         mRomImageTable[Index].Dev  == PciIoDevice->DeviceNumber      &&
         mRomImageTable[Index].Func == PciIoDevice->FunctionNumber    ) {
-
       if (mRomImageTable[Index].ImageHandle != NULL) {
         AddDriver (PciIoDevice, mRomImageTable[Index].ImageHandle, NULL);
       }
+
       PciIoDevice->PciIo.RomImage = mRomImageTable[Index].RomImage;
       PciIoDevice->PciIo.RomSize  = mRomImageTable[Index].RomSize;
       return TRUE;

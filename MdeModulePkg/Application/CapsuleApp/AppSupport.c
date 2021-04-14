@@ -8,9 +8,9 @@
 
 #include "CapsuleApp.h"
 
-UINTN  Argc;
-CHAR16 **Argv;
-EFI_SHELL_PROTOCOL      *mShellProtocol = NULL;
+UINTN               Argc;
+CHAR16              **Argv;
+EFI_SHELL_PROTOCOL  *mShellProtocol = NULL;
 
 /**
 
@@ -23,15 +23,15 @@ GetArg (
   VOID
   )
 {
-  EFI_STATUS                    Status;
-  EFI_SHELL_PARAMETERS_PROTOCOL *ShellParameters;
+  EFI_STATUS                     Status;
+  EFI_SHELL_PARAMETERS_PROTOCOL  *ShellParameters;
 
   Status = gBS->HandleProtocol (
-                  gImageHandle,
-                  &gEfiShellParametersProtocolGuid,
-                  (VOID**)&ShellParameters
-                  );
-  if (EFI_ERROR(Status)) {
+                                gImageHandle,
+                                &gEfiShellParametersProtocolGuid,
+                                (VOID **) &ShellParameters
+                                );
+  if (EFI_ERROR (Status)) {
     return Status;
   }
 
@@ -50,14 +50,14 @@ GetShellProtocol (
   VOID
   )
 {
-  EFI_STATUS            Status;
+  EFI_STATUS  Status;
 
   if (mShellProtocol == NULL) {
     Status = gBS->LocateProtocol (
-                    &gEfiShellProtocolGuid,
-                    NULL,
-                    (VOID **) &mShellProtocol
-                    );
+                                  &gEfiShellProtocolGuid,
+                                  NULL,
+                                  (VOID **) &mShellProtocol
+                                  );
     if (EFI_ERROR (Status)) {
       mShellProtocol = NULL;
     }
@@ -84,14 +84,14 @@ ReadFileToBuffer (
   OUT VOID                                 **Buffer
   )
 {
-  EFI_STATUS                        Status;
-  EFI_SHELL_PROTOCOL                *ShellProtocol;
-  SHELL_FILE_HANDLE                 Handle;
-  UINT64                            FileSize;
-  UINTN                             TempBufferSize;
-  VOID                              *TempBuffer;
+  EFI_STATUS          Status;
+  EFI_SHELL_PROTOCOL  *ShellProtocol;
+  SHELL_FILE_HANDLE   Handle;
+  UINT64              FileSize;
+  UINTN               TempBufferSize;
+  VOID                *TempBuffer;
 
-  ShellProtocol = GetShellProtocol();
+  ShellProtocol = GetShellProtocol ();
   if (ShellProtocol == NULL) {
     return EFI_NOT_FOUND;
   }
@@ -100,10 +100,10 @@ ReadFileToBuffer (
   // Open file by FileName.
   //
   Status = ShellProtocol->OpenFileByName (
-                            FileName,
-                            &Handle,
-                            EFI_FILE_MODE_READ
-                            );
+                                          FileName,
+                                          &Handle,
+                                          EFI_FILE_MODE_READ
+                                          );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -113,14 +113,14 @@ ReadFileToBuffer (
   //
   Status = ShellProtocol->GetFileSize (Handle, &FileSize);
   if (EFI_ERROR (Status)) {
-    ShellProtocol->CloseFile (Handle);
+  ShellProtocol->CloseFile (Handle);
     return Status;
   }
 
   TempBufferSize = (UINTN) FileSize;
-  TempBuffer = AllocateZeroPool (TempBufferSize);
+  TempBuffer     = AllocateZeroPool (TempBufferSize);
   if (TempBuffer == NULL) {
-    ShellProtocol->CloseFile (Handle);
+  ShellProtocol->CloseFile (Handle);
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -128,12 +128,12 @@ ReadFileToBuffer (
   // Read the file data to the buffer
   //
   Status = ShellProtocol->ReadFile (
-                            Handle,
-                            &TempBufferSize,
-                            TempBuffer
-                            );
+                                    Handle,
+                                    &TempBufferSize,
+                                    TempBuffer
+                                    );
   if (EFI_ERROR (Status)) {
-    ShellProtocol->CloseFile (Handle);
+  ShellProtocol->CloseFile (Handle);
     return Status;
   }
 
@@ -162,13 +162,13 @@ WriteFileFromBuffer (
   IN  VOID                                 *Buffer
   )
 {
-  EFI_STATUS                        Status;
-  EFI_SHELL_PROTOCOL                *ShellProtocol;
-  SHELL_FILE_HANDLE                 Handle;
-  EFI_FILE_INFO                     *FileInfo;
-  UINTN                             TempBufferSize;
+  EFI_STATUS          Status;
+  EFI_SHELL_PROTOCOL  *ShellProtocol;
+  SHELL_FILE_HANDLE   Handle;
+  EFI_FILE_INFO       *FileInfo;
+  UINTN               TempBufferSize;
 
-  ShellProtocol = GetShellProtocol();
+  ShellProtocol = GetShellProtocol ();
   if (ShellProtocol == NULL) {
     return EFI_NOT_FOUND;
   }
@@ -177,10 +177,10 @@ WriteFileFromBuffer (
   // Open file by FileName.
   //
   Status = ShellProtocol->OpenFileByName (
-                            FileName,
-                            &Handle,
-                            EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE
-                            );
+                                          FileName,
+                                          &Handle,
+                                          EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE
+                                          );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -190,7 +190,7 @@ WriteFileFromBuffer (
   //
   FileInfo = ShellProtocol->GetFileInfo (Handle);
   if (FileInfo == NULL) {
-    ShellProtocol->CloseFile (Handle);
+  ShellProtocol->CloseFile (Handle);
     return EFI_DEVICE_ERROR;
   }
 
@@ -209,6 +209,7 @@ WriteFileFromBuffer (
       return Status;
     }
   }
+
   FreePool (FileInfo);
 
   //
@@ -216,12 +217,12 @@ WriteFileFromBuffer (
   //
   TempBufferSize = BufferSize;
   Status = ShellProtocol->WriteFile (
-                            Handle,
-                            &TempBufferSize,
-                            Buffer
-                            );
+                                     Handle,
+                                     &TempBufferSize,
+                                     Buffer
+                                     );
   if (EFI_ERROR (Status)) {
-    ShellProtocol->CloseFile (Handle);
+  ShellProtocol->CloseFile (Handle);
     return Status;
   }
 
@@ -229,4 +230,3 @@ WriteFileFromBuffer (
 
   return EFI_SUCCESS;
 }
-

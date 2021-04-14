@@ -44,8 +44,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 /// HII specific Vendor Device Path definition.
 ///
 typedef struct {
-  VENDOR_DEVICE_PATH             VendorDevicePath;
-  EFI_DEVICE_PATH_PROTOCOL       End;
+  VENDOR_DEVICE_PATH          VendorDevicePath;
+  EFI_DEVICE_PATH_PROTOCOL    End;
 } HII_VENDOR_DEVICE_PATH;
 #pragma pack()
 
@@ -53,7 +53,7 @@ typedef struct {
 // Constants which are variable names used to access variables
 //
 
-#define VAR_CON_OUT_MODE L"ConOutMode"
+#define VAR_CON_OUT_MODE  L"ConOutMode"
 
 //
 // Variable created with this flag will be "Efi:...."
@@ -61,11 +61,11 @@ typedef struct {
 #define VAR_FLAG  EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE
 
 extern EFI_GUID mBootMaintGuid;
-extern CHAR16   mBootMaintStorageName[];
+extern CHAR16  mBootMaintStorageName[];
 //
 // These are the VFR compiler generated data representing our VFR data.
 //
-extern UINT8    BootMaintenanceManagerBin[];
+extern UINT8  BootMaintenanceManagerBin[];
 
 //
 // Below are the number of options in Baudrate, Databits,
@@ -79,7 +79,7 @@ extern UINT8    BootMaintenanceManagerBin[];
 //
 // Callback function helper
 //
-#define BMM_CALLBACK_DATA_SIGNATURE     SIGNATURE_32 ('C', 'b', 'c', 'k')
+#define BMM_CALLBACK_DATA_SIGNATURE  SIGNATURE_32 ('C', 'b', 'c', 'k')
 #define BMM_CALLBACK_DATA_FROM_THIS(a)  CR (a, BMM_CALLBACK_DATA, BmmConfigAccess, BMM_CALLBACK_DATA_SIGNATURE)
 
 //
@@ -88,7 +88,7 @@ extern UINT8    BootMaintenanceManagerBin[];
 typedef UINT8 BBS_TYPE;
 
 typedef enum _TYPE_OF_TERMINAL {
-  TerminalTypePcAnsi                = 0,
+  TerminalTypePcAnsi = 0,
   TerminalTypeVt100,
   TerminalTypeVt100Plus,
   TerminalTypeVtUtf8,
@@ -110,20 +110,20 @@ typedef enum _TYPE_OF_TERMINAL {
 #define BM_TERMINAL_OPTION_SIGNATURE  SIGNATURE_32 ('t', 'r', 'm', 'l')
 #define BM_MENU_ENTRY_SIGNATURE       SIGNATURE_32 ('e', 'n', 't', 'r')
 
-#define BM_LOAD_CONTEXT_SELECT        0x0
-#define BM_CONSOLE_CONTEXT_SELECT     0x1
-#define BM_FILE_CONTEXT_SELECT        0x2
-#define BM_HANDLE_CONTEXT_SELECT      0x3
-#define BM_TERMINAL_CONTEXT_SELECT    0x5
+#define BM_LOAD_CONTEXT_SELECT      0x0
+#define BM_CONSOLE_CONTEXT_SELECT   0x1
+#define BM_FILE_CONTEXT_SELECT      0x2
+#define BM_HANDLE_CONTEXT_SELECT    0x3
+#define BM_TERMINAL_CONTEXT_SELECT  0x5
 
-#define BM_CONSOLE_IN_CONTEXT_SELECT  0x6
-#define BM_CONSOLE_OUT_CONTEXT_SELECT 0x7
-#define BM_CONSOLE_ERR_CONTEXT_SELECT 0x8
+#define BM_CONSOLE_IN_CONTEXT_SELECT   0x6
+#define BM_CONSOLE_OUT_CONTEXT_SELECT  0x7
+#define BM_CONSOLE_ERR_CONTEXT_SELECT  0x8
 
 //
 // Buffer size for update data
 //
-#define UPDATE_DATA_SIZE        0x100000
+#define UPDATE_DATA_SIZE  0x100000
 
 //
 // Namespace of callback keys used in display and file system navigation
@@ -148,12 +148,12 @@ typedef enum _TYPE_OF_TERMINAL {
 // all these values are computed from the structure
 // defined below
 //
-#define VAR_OFFSET(Field)              ((UINT16) ((UINTN) &(((BMM_FAKE_NV_DATA *) 0)->Field)))
+#define VAR_OFFSET(Field)  ((UINT16) ((UINTN) &(((BMM_FAKE_NV_DATA *) 0)->Field)))
 
 //
 // Question Id of Zero is invalid, so add an offset to it
 //
-#define QUESTION_ID(Field)             (VAR_OFFSET (Field) + CONFIG_OPTION_OFFSET)
+#define QUESTION_ID(Field)  (VAR_OFFSET (Field) + CONFIG_OPTION_OFFSET)
 
 #define BOOT_TIME_OUT_VAR_OFFSET        VAR_OFFSET (BootTimeOut)
 #define BOOT_NEXT_VAR_OFFSET            VAR_OFFSET (BootNext)
@@ -193,47 +193,47 @@ typedef enum _TYPE_OF_TERMINAL {
 #define COM_TERMINAL_VAR_OFFSET         VAR_OFFSET (COMTerminalType)
 #define COM_FLOWCONTROL_VAR_OFFSET      VAR_OFFSET (COMFlowControl)
 
-#define BOOT_TIME_OUT_QUESTION_ID       QUESTION_ID (BootTimeOut)
-#define BOOT_NEXT_QUESTION_ID           QUESTION_ID (BootNext)
-#define COM1_BAUD_RATE_QUESTION_ID      QUESTION_ID (COM1BaudRate)
-#define COM1_DATA_RATE_QUESTION_ID      QUESTION_ID (COM1DataRate)
-#define COM1_STOP_BITS_QUESTION_ID      QUESTION_ID (COM1StopBits)
-#define COM1_PARITY_QUESTION_ID         QUESTION_ID (COM1Parity)
-#define COM1_TERMINAL_QUESTION_ID       QUESTION_ID (COM2TerminalType)
-#define COM2_BAUD_RATE_QUESTION_ID      QUESTION_ID (COM2BaudRate)
-#define COM2_DATA_RATE_QUESTION_ID      QUESTION_ID (COM2DataRate)
-#define COM2_STOP_BITS_QUESTION_ID      QUESTION_ID (COM2StopBits)
-#define COM2_PARITY_QUESTION_ID         QUESTION_ID (COM2Parity)
-#define COM2_TERMINAL_QUESTION_ID       QUESTION_ID (COM2TerminalType)
-#define DRV_ADD_HANDLE_DESC_QUESTION_ID QUESTION_ID (DriverAddHandleDesc)
-#define DRV_ADD_ACTIVE_QUESTION_ID      QUESTION_ID (DriverAddActive)
-#define DRV_ADD_RECON_QUESTION_ID       QUESTION_ID (DriverAddForceReconnect)
-#define CON_IN_COM1_QUESTION_ID         QUESTION_ID (ConsoleInputCOM1)
-#define CON_IN_COM2_QUESTION_ID         QUESTION_ID (ConsoleInputCOM2)
-#define CON_OUT_COM1_QUESTION_ID        QUESTION_ID (ConsoleOutputCOM1)
-#define CON_OUT_COM2_QUESTION_ID        QUESTION_ID (ConsoleOutputCOM2)
-#define CON_ERR_COM1_QUESTION_ID        QUESTION_ID (ConsoleErrorCOM1)
-#define CON_ERR_COM2_QUESTION_ID        QUESTION_ID (ConsoleErrorCOM2)
-#define CON_MODE_QUESTION_ID            QUESTION_ID (ConsoleOutMode)
-#define CON_DEVICE_QUESTION_ID          QUESTION_ID (ConsoleCheck)
-#define CON_IN_DEVICE_QUESTION_ID       QUESTION_ID (ConsoleInCheck)
-#define CON_OUT_DEVICE_QUESTION_ID      QUESTION_ID (ConsoleOutCheck)
-#define CON_ERR_DEVICE_QUESTION_ID      QUESTION_ID (ConsoleErrCheck)
-#define BOOT_OPTION_ORDER_QUESTION_ID   QUESTION_ID (BootOptionOrder)
-#define DRIVER_OPTION_ORDER_QUESTION_ID QUESTION_ID (DriverOptionOrder)
-#define BOOT_OPTION_DEL_QUESTION_ID     QUESTION_ID (BootOptionDel)
-#define DRIVER_OPTION_DEL_QUESTION_ID   QUESTION_ID (DriverOptionDel)
-#define DRIVER_ADD_OPTION_QUESTION_ID   QUESTION_ID (DriverAddHandleOptionalData)
-#define COM_BAUD_RATE_QUESTION_ID       QUESTION_ID (COMBaudRate)
-#define COM_DATA_RATE_QUESTION_ID       QUESTION_ID (COMDataRate)
-#define COM_STOP_BITS_QUESTION_ID       QUESTION_ID (COMStopBits)
-#define COM_PARITY_QUESTION_ID          QUESTION_ID (COMParity)
-#define COM_TERMINAL_QUESTION_ID        QUESTION_ID (COMTerminalType)
-#define COM_FLOWCONTROL_QUESTION_ID     QUESTION_ID (COMFlowControl)
+#define BOOT_TIME_OUT_QUESTION_ID        QUESTION_ID (BootTimeOut)
+#define BOOT_NEXT_QUESTION_ID            QUESTION_ID (BootNext)
+#define COM1_BAUD_RATE_QUESTION_ID       QUESTION_ID (COM1BaudRate)
+#define COM1_DATA_RATE_QUESTION_ID       QUESTION_ID (COM1DataRate)
+#define COM1_STOP_BITS_QUESTION_ID       QUESTION_ID (COM1StopBits)
+#define COM1_PARITY_QUESTION_ID          QUESTION_ID (COM1Parity)
+#define COM1_TERMINAL_QUESTION_ID        QUESTION_ID (COM2TerminalType)
+#define COM2_BAUD_RATE_QUESTION_ID       QUESTION_ID (COM2BaudRate)
+#define COM2_DATA_RATE_QUESTION_ID       QUESTION_ID (COM2DataRate)
+#define COM2_STOP_BITS_QUESTION_ID       QUESTION_ID (COM2StopBits)
+#define COM2_PARITY_QUESTION_ID          QUESTION_ID (COM2Parity)
+#define COM2_TERMINAL_QUESTION_ID        QUESTION_ID (COM2TerminalType)
+#define DRV_ADD_HANDLE_DESC_QUESTION_ID  QUESTION_ID (DriverAddHandleDesc)
+#define DRV_ADD_ACTIVE_QUESTION_ID       QUESTION_ID (DriverAddActive)
+#define DRV_ADD_RECON_QUESTION_ID        QUESTION_ID (DriverAddForceReconnect)
+#define CON_IN_COM1_QUESTION_ID          QUESTION_ID (ConsoleInputCOM1)
+#define CON_IN_COM2_QUESTION_ID          QUESTION_ID (ConsoleInputCOM2)
+#define CON_OUT_COM1_QUESTION_ID         QUESTION_ID (ConsoleOutputCOM1)
+#define CON_OUT_COM2_QUESTION_ID         QUESTION_ID (ConsoleOutputCOM2)
+#define CON_ERR_COM1_QUESTION_ID         QUESTION_ID (ConsoleErrorCOM1)
+#define CON_ERR_COM2_QUESTION_ID         QUESTION_ID (ConsoleErrorCOM2)
+#define CON_MODE_QUESTION_ID             QUESTION_ID (ConsoleOutMode)
+#define CON_DEVICE_QUESTION_ID           QUESTION_ID (ConsoleCheck)
+#define CON_IN_DEVICE_QUESTION_ID        QUESTION_ID (ConsoleInCheck)
+#define CON_OUT_DEVICE_QUESTION_ID       QUESTION_ID (ConsoleOutCheck)
+#define CON_ERR_DEVICE_QUESTION_ID       QUESTION_ID (ConsoleErrCheck)
+#define BOOT_OPTION_ORDER_QUESTION_ID    QUESTION_ID (BootOptionOrder)
+#define DRIVER_OPTION_ORDER_QUESTION_ID  QUESTION_ID (DriverOptionOrder)
+#define BOOT_OPTION_DEL_QUESTION_ID      QUESTION_ID (BootOptionDel)
+#define DRIVER_OPTION_DEL_QUESTION_ID    QUESTION_ID (DriverOptionDel)
+#define DRIVER_ADD_OPTION_QUESTION_ID    QUESTION_ID (DriverAddHandleOptionalData)
+#define COM_BAUD_RATE_QUESTION_ID        QUESTION_ID (COMBaudRate)
+#define COM_DATA_RATE_QUESTION_ID        QUESTION_ID (COMDataRate)
+#define COM_STOP_BITS_QUESTION_ID        QUESTION_ID (COMStopBits)
+#define COM_PARITY_QUESTION_ID           QUESTION_ID (COMParity)
+#define COM_TERMINAL_QUESTION_ID         QUESTION_ID (COMTerminalType)
+#define COM_FLOWCONTROL_QUESTION_ID      QUESTION_ID (COMFlowControl)
 
-#define STRING_DEPOSITORY_NUMBER        8
+#define STRING_DEPOSITORY_NUMBER  8
 
-#define NONE_BOOTNEXT_VALUE             (0xFFFF + 1)
+#define NONE_BOOTNEXT_VALUE  (0xFFFF + 1)
 
 ///
 /// Serial Ports attributes, first one is the value for
@@ -241,125 +241,122 @@ typedef enum _TYPE_OF_TERMINAL {
 /// display the value properly
 ///
 typedef struct {
-  UINTN   Value;
-  UINT16  StringToken;
+  UINTN     Value;
+  UINT16    StringToken;
 } COM_ATTR;
 
 typedef struct {
-  UINT64                    BaudRate;
-  UINT8                     DataBits;
-  UINT8                     Parity;
-  UINT8                     StopBits;
+  UINT64                      BaudRate;
+  UINT8                       DataBits;
+  UINT8                       Parity;
+  UINT8                       StopBits;
 
-  UINT8                     BaudRateIndex;
-  UINT8                     DataBitsIndex;
-  UINT8                     ParityIndex;
-  UINT8                     StopBitsIndex;
+  UINT8                       BaudRateIndex;
+  UINT8                       DataBitsIndex;
+  UINT8                       ParityIndex;
+  UINT8                       StopBitsIndex;
 
-  UINT8                     FlowControl;
+  UINT8                       FlowControl;
 
-  UINT8                     IsConIn;
-  UINT8                     IsConOut;
-  UINT8                     IsStdErr;
-  UINT8                     TerminalType;
+  UINT8                       IsConIn;
+  UINT8                       IsConOut;
+  UINT8                       IsStdErr;
+  UINT8                       TerminalType;
 
-  EFI_DEVICE_PATH_PROTOCOL  *DevicePath;
+  EFI_DEVICE_PATH_PROTOCOL    *DevicePath;
 } BM_TERMINAL_CONTEXT;
 
 typedef struct {
-  BOOLEAN                   IsBootNext;
-  BOOLEAN                   Deleted;
+  BOOLEAN                     IsBootNext;
+  BOOLEAN                     Deleted;
 
-  BOOLEAN                   IsLegacy;
+  BOOLEAN                     IsLegacy;
 
-  UINT32                    Attributes;
-  UINT16                    FilePathListLength;
-  UINT16                    *Description;
-  EFI_DEVICE_PATH_PROTOCOL  *FilePathList;
-  UINT8                     *OptionalData;
+  UINT32                      Attributes;
+  UINT16                      FilePathListLength;
+  UINT16                      *Description;
+  EFI_DEVICE_PATH_PROTOCOL    *FilePathList;
+  UINT8                       *OptionalData;
 } BM_LOAD_CONTEXT;
 
 typedef struct {
+  BOOLEAN                     IsActive;
 
-  BOOLEAN                   IsActive;
+  BOOLEAN                     IsTerminal;
 
-  BOOLEAN                   IsTerminal;
-
-  EFI_DEVICE_PATH_PROTOCOL  *DevicePath;
+  EFI_DEVICE_PATH_PROTOCOL    *DevicePath;
 } BM_CONSOLE_CONTEXT;
 
 typedef struct {
-  UINTN   Column;
-  UINTN   Row;
+  UINTN    Column;
+  UINTN    Row;
 } CONSOLE_OUT_MODE;
 
 typedef struct {
-  EFI_HANDLE                        Handle;
-  EFI_DEVICE_PATH_PROTOCOL          *DevicePath;
-  EFI_FILE_HANDLE                   FHandle;
-  UINT16                            *FileName;
-  EFI_FILE_SYSTEM_VOLUME_LABEL      *Info;
+  EFI_HANDLE                      Handle;
+  EFI_DEVICE_PATH_PROTOCOL        *DevicePath;
+  EFI_FILE_HANDLE                 FHandle;
+  UINT16                          *FileName;
+  EFI_FILE_SYSTEM_VOLUME_LABEL    *Info;
 
-  BOOLEAN                           IsRoot;
-  BOOLEAN                           IsDir;
-  BOOLEAN                           IsRemovableMedia;
-  BOOLEAN                           IsLoadFile;
-  BOOLEAN                           IsBootLegacy;
+  BOOLEAN                         IsRoot;
+  BOOLEAN                         IsDir;
+  BOOLEAN                         IsRemovableMedia;
+  BOOLEAN                         IsLoadFile;
+  BOOLEAN                         IsBootLegacy;
 } BM_FILE_CONTEXT;
 
 typedef struct {
-  EFI_HANDLE                Handle;
-  EFI_DEVICE_PATH_PROTOCOL  *DevicePath;
+  EFI_HANDLE                  Handle;
+  EFI_DEVICE_PATH_PROTOCOL    *DevicePath;
 } BM_HANDLE_CONTEXT;
 
 typedef struct {
-  UINTN           Signature;
-  LIST_ENTRY      Head;
-  UINTN           MenuNumber;
+  UINTN         Signature;
+  LIST_ENTRY    Head;
+  UINTN         MenuNumber;
 } BM_MENU_OPTION;
 
 typedef struct {
-  UINTN           Signature;
-  LIST_ENTRY      Link;
-  UINTN           OptionNumber;
-  UINT16          *DisplayString;
-  UINT16          *HelpString;
-  EFI_STRING_ID   DisplayStringToken;
-  EFI_STRING_ID   HelpStringToken;
-  UINTN           ContextSelection;
-  VOID            *VariableContext;
+  UINTN            Signature;
+  LIST_ENTRY       Link;
+  UINTN            OptionNumber;
+  UINT16           *DisplayString;
+  UINT16           *HelpString;
+  EFI_STRING_ID    DisplayStringToken;
+  EFI_STRING_ID    HelpStringToken;
+  UINTN            ContextSelection;
+  VOID             *VariableContext;
 } BM_MENU_ENTRY;
 
 typedef struct {
+  UINTN                             Signature;
 
-  UINTN                          Signature;
-
-  EFI_HII_HANDLE                 BmmHiiHandle;
-  EFI_HANDLE                     BmmDriverHandle;
+  EFI_HII_HANDLE                    BmmHiiHandle;
+  EFI_HANDLE                        BmmDriverHandle;
   ///
   /// Boot Maintenance  Manager Produced protocols
   ///
-  EFI_HII_CONFIG_ACCESS_PROTOCOL BmmConfigAccess;
-  EFI_FORM_BROWSER2_PROTOCOL     *FormBrowser2;
+  EFI_HII_CONFIG_ACCESS_PROTOCOL    BmmConfigAccess;
+  EFI_FORM_BROWSER2_PROTOCOL        *FormBrowser2;
 
-  BM_MENU_ENTRY                  *MenuEntry;
-  BM_HANDLE_CONTEXT              *HandleContext;
-  BM_FILE_CONTEXT                *FileContext;
-  BM_LOAD_CONTEXT                *LoadContext;
-  BM_TERMINAL_CONTEXT            *TerminalContext;
-  UINTN                          CurrentTerminal;
-  BBS_TYPE                       BbsType;
+  BM_MENU_ENTRY                     *MenuEntry;
+  BM_HANDLE_CONTEXT                 *HandleContext;
+  BM_FILE_CONTEXT                   *FileContext;
+  BM_LOAD_CONTEXT                   *LoadContext;
+  BM_TERMINAL_CONTEXT               *TerminalContext;
+  UINTN                             CurrentTerminal;
+  BBS_TYPE                          BbsType;
 
   //
   // BMM main formset callback data.
   //
 
-  EFI_FORM_ID                    BmmCurrentPageId;
-  EFI_FORM_ID                    BmmPreviousPageId;
-  BOOLEAN                        BmmAskSaveOrNot;
-  BMM_FAKE_NV_DATA               BmmFakeNvData;
-  BMM_FAKE_NV_DATA               BmmOldFakeNVData;
-
+  EFI_FORM_ID                       BmmCurrentPageId;
+  EFI_FORM_ID                       BmmPreviousPageId;
+  BOOLEAN                           BmmAskSaveOrNot;
+  BMM_FAKE_NV_DATA                  BmmFakeNvData;
+  BMM_FAKE_NV_DATA                  BmmOldFakeNVData;
 } BMM_CALLBACK_DATA;
 
 /**
@@ -374,9 +371,9 @@ typedef struct {
 
 **/
 EFI_STATUS
-BOpt_FindDrivers (
-  VOID
-  );
+  BOpt_FindDrivers (
+                    VOID
+                    );
 
 /**
 
@@ -442,9 +439,9 @@ BOpt_GetOptionNumber (
 
 **/
 UINT16
-BOpt_GetBootOptionNumber (
-  VOID
-  );
+  BOpt_GetBootOptionNumber (
+                            VOID
+                            );
 
 /**
 
@@ -454,9 +451,9 @@ Get the Option Number for Driver#### that does not used.
 
 **/
 UINT16
-BOpt_GetDriverOptionNumber (
-  VOID
-  );
+  BOpt_GetDriverOptionNumber (
+                              VOID
+                              );
 
 /**
   Create a menu entry give a Menu type.
@@ -527,6 +524,7 @@ GetDriverOrder (
 //
 // Locate all serial io devices for console
 //
+
 /**
   Build a list containing all serial devices.
 
@@ -535,13 +533,14 @@ GetDriverOrder (
 
 **/
 EFI_STATUS
-LocateSerialIo (
-  VOID
-  );
+  LocateSerialIo (
+                  VOID
+                  );
 
 //
 // Initializing Console menu
 //
+
 /**
   Build up ConsoleOutMenu, ConsoleInpMenu and ConsoleErrMenu
 
@@ -549,13 +548,14 @@ LocateSerialIo (
 
 **/
 EFI_STATUS
-GetAllConsoles(
-  VOID
-  );
+  GetAllConsoles (
+                  VOID
+                  );
 
 //
 // Get current mode information
 //
+
 /**
   Get mode number according to column and row
 
@@ -569,15 +569,16 @@ GetConsoleOutMode (
 //
 // Cleaning up console menu
 //
+
 /**
   Free ConsoleOutMenu, ConsoleInpMenu and ConsoleErrMenu
 
   @retval EFI_SUCCESS    The function always complete successfully.
 **/
 EFI_STATUS
-FreeAllConsoles (
-  VOID
-  );
+  FreeAllConsoles (
+                   VOID
+                   );
 
 /**
   Update the device path that describing a terminal device
@@ -613,6 +614,7 @@ ChangeTerminalDevicePath (
 //
 // Variable operation by menu selection
 //
+
 /**
   This function create a currently loaded Boot Option from
   the BMM. It then appends this Boot Option to the end of
@@ -639,9 +641,9 @@ Var_UpdateBootOption (
 
 **/
 EFI_STATUS
-Var_DelBootOption (
-  VOID
-  );
+  Var_DelBootOption (
+                     VOID
+                     );
 
 /**
   This function create a currently loaded Drive Option from
@@ -677,9 +679,9 @@ Var_UpdateDriverOption (
 
 **/
 EFI_STATUS
-Var_DelDriverOption (
-  VOID
-  );
+  Var_DelDriverOption (
+                       VOID
+                       );
 
 /**
   This function delete and build multi-instance device path ConIn
@@ -689,9 +691,9 @@ Var_DelDriverOption (
   @return The EFI variable can not be saved. See gRT->SetVariable for detail return information.
 **/
 EFI_STATUS
-Var_UpdateConsoleInpOption (
-  VOID
-  );
+  Var_UpdateConsoleInpOption (
+                              VOID
+                              );
 
 /**
   This function delete and build multi-instance device path ConOut console device.
@@ -700,9 +702,9 @@ Var_UpdateConsoleInpOption (
   @return The EFI variable can not be saved. See gRT->SetVariable for detail return information.
 **/
 EFI_STATUS
-Var_UpdateConsoleOutOption (
-  VOID
-  );
+  Var_UpdateConsoleOutOption (
+                              VOID
+                              );
 
 /**
   This function delete and build multi-instance device path ErrOut console device.
@@ -711,9 +713,9 @@ Var_UpdateConsoleOutOption (
   @return The EFI variable can not be saved. See gRT->SetVariable for detail return information.
 **/
 EFI_STATUS
-Var_UpdateErrorOutOption (
-  VOID
-  );
+  Var_UpdateErrorOutOption (
+                            VOID
+                            );
 
 /**
   This function delete and build Out of Band console device.
@@ -794,23 +796,24 @@ Var_UpdateConMode (
 //
 // Following are page create and refresh functions
 //
+
 /**
  Create the global UpdateData structure.
 
 **/
 VOID
-CreateUpdateData (
-  VOID
-  );
+  CreateUpdateData (
+                    VOID
+                    );
 
 /**
   Refresh the global UpdateData structure.
 
 **/
 VOID
-RefreshUpdateData (
-  VOID
-  );
+  RefreshUpdateData (
+                     VOID
+                     );
 
 /**
   Clean up the dynamic opcode at label and form specified by
@@ -923,7 +926,7 @@ UpdateConCOMPage (
 
 **/
 VOID
-UpdateOptionPage(
+UpdateOptionPage (
   IN   BMM_CALLBACK_DATA        *CallbackData,
   IN   EFI_FORM_ID              FormId,
   IN   EFI_DEVICE_PATH_PROTOCOL *DevicePath
@@ -1013,7 +1016,6 @@ DiscardChangeHandler (
   IN  BMM_FAKE_NV_DATA                *CurrentFakeNVMap
   );
 
-
 /**
   This function is to clean some useless data before submit changes.
 
@@ -1043,18 +1045,18 @@ UpdatePageId (
 
 **/
 VOID
-FreeBMPackage(
-  VOID
-  );
+  FreeBMPackage (
+                 VOID
+                 );
 
 /**
   Install BootMaint and FileExplorer HiiPackages.
 
 **/
 VOID
-InitBootMaintenance(
-  VOID
-  );
+  InitBootMaintenance (
+                       VOID
+                       );
 
 /**
 
@@ -1122,7 +1124,6 @@ EFI_STATUS
 BmmSetConsoleMode (
   BOOLEAN  IsSetupMode
   );
-
 
 /**
   This function converts an input device structure to a Unicode string.
@@ -1298,31 +1299,31 @@ BootFromFile (
 //
 // Global variable in this program (defined in data.c)
 //
-extern BM_MENU_OPTION             BootOptionMenu;
-extern BM_MENU_OPTION             DriverOptionMenu;
-extern BM_MENU_OPTION             ConsoleInpMenu;
-extern BM_MENU_OPTION             ConsoleOutMenu;
-extern BM_MENU_OPTION             ConsoleErrMenu;
-extern BM_MENU_OPTION             DriverMenu;
-extern BM_MENU_OPTION             TerminalMenu;
-extern UINT16                     TerminalType[9];
-extern COM_ATTR                   BaudRateList[19];
-extern COM_ATTR                   DataBitsList[4];
-extern COM_ATTR                   ParityList[5];
-extern COM_ATTR                   StopBitsList[3];
-extern EFI_GUID                   TerminalTypeGuid[9];
-extern EFI_DEVICE_PATH_PROTOCOL   EndDevicePath[];
-extern UINT16                     mFlowControlType[2];
-extern UINT32                     mFlowControlValue[2];
+extern BM_MENU_OPTION            BootOptionMenu;
+extern BM_MENU_OPTION            DriverOptionMenu;
+extern BM_MENU_OPTION            ConsoleInpMenu;
+extern BM_MENU_OPTION            ConsoleOutMenu;
+extern BM_MENU_OPTION            ConsoleErrMenu;
+extern BM_MENU_OPTION            DriverMenu;
+extern BM_MENU_OPTION            TerminalMenu;
+extern UINT16                    TerminalType[9];
+extern COM_ATTR                  BaudRateList[19];
+extern COM_ATTR                  DataBitsList[4];
+extern COM_ATTR                  ParityList[5];
+extern COM_ATTR                  StopBitsList[3];
+extern EFI_GUID                  TerminalTypeGuid[9];
+extern EFI_DEVICE_PATH_PROTOCOL  EndDevicePath[];
+extern UINT16                    mFlowControlType[2];
+extern UINT32                    mFlowControlValue[2];
 
 //
 // Shared IFR form update data
 //
-extern VOID                        *mStartOpCodeHandle;
-extern VOID                        *mEndOpCodeHandle;
-extern EFI_IFR_GUID_LABEL          *mStartLabel;
-extern EFI_IFR_GUID_LABEL          *mEndLabel;
-extern BMM_CALLBACK_DATA           gBootMaintenancePrivate;
-extern BMM_CALLBACK_DATA           *mBmmCallbackInfo;
+extern VOID                *mStartOpCodeHandle;
+extern VOID                *mEndOpCodeHandle;
+extern EFI_IFR_GUID_LABEL  *mStartLabel;
+extern EFI_IFR_GUID_LABEL  *mEndLabel;
+extern BMM_CALLBACK_DATA   gBootMaintenancePrivate;
+extern BMM_CALLBACK_DATA   *mBmmCallbackInfo;
 
 #endif

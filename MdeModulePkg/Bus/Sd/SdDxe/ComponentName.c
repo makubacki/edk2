@@ -11,17 +11,17 @@
 //
 // Driver name table
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mSdDxeDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mSdDxeDriverNameTable[] = {
   { "eng;en", L"Edkii Sd Memory Card Device Driver" },
-  { NULL , NULL }
+  { NULL,     NULL                                  }
 };
 
 //
 // Controller name table
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mSdDxeControllerNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mSdDxeControllerNameTable[] = {
   { "eng;en", L"Edkii Sd Host Controller" },
-  { NULL , NULL }
+  { NULL,     NULL                        }
 };
 
 //
@@ -36,7 +36,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gSdDxeComponentName =
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL gSdDxeComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gSdDxeComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) SdDxeComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) SdDxeComponentNameGetControllerName,
   "en"
@@ -90,13 +90,12 @@ SdDxeComponentNameGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mSdDxeDriverNameTable,
-           DriverName,
-           (BOOLEAN)(This == &gSdDxeComponentName)
-           );
-
+                               Language,
+                               This->SupportedLanguages,
+                               mSdDxeDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gSdDxeComponentName)
+                               );
 }
 
 /**
@@ -186,10 +185,10 @@ SdDxeComponentNameGetControllerName (
   // Make sure this driver is currently managing ControllHandle
   //
   Status = EfiTestManagedDevice (
-             ControllerHandle,
-             gSdDxeDriverBinding.DriverBindingHandle,
-             &gEfiSdMmcPassThruProtocolGuid
-             );
+                                 ControllerHandle,
+                                 gSdDxeDriverBinding.DriverBindingHandle,
+                                 &gEfiSdMmcPassThruProtocolGuid
+                                 );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -197,24 +196,25 @@ SdDxeComponentNameGetControllerName (
   ControllerNameTable = mSdDxeControllerNameTable;
   if (ChildHandle != NULL) {
     Status = EfiTestChildHandle (
-               ControllerHandle,
-               ChildHandle,
-               &gEfiSdMmcPassThruProtocolGuid
-               );
+                                 ControllerHandle,
+                                 ChildHandle,
+                                 &gEfiSdMmcPassThruProtocolGuid
+                                 );
     if (EFI_ERROR (Status)) {
       return Status;
     }
+
     //
     // Get the child context
     //
     Status = gBS->OpenProtocol (
-                    ChildHandle,
-                    &gEfiBlockIoProtocolGuid,
-                    (VOID **) &BlockIo,
-                    gSdDxeDriverBinding.DriverBindingHandle,
-                    ChildHandle,
-                    EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                    );
+                                ChildHandle,
+                                &gEfiBlockIoProtocolGuid,
+                                (VOID **) &BlockIo,
+                                gSdDxeDriverBinding.DriverBindingHandle,
+                                ChildHandle,
+                                EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                                );
     if (EFI_ERROR (Status)) {
       return EFI_UNSUPPORTED;
     }
@@ -224,11 +224,10 @@ SdDxeComponentNameGetControllerName (
   }
 
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           ControllerNameTable,
-           ControllerName,
-           (BOOLEAN)(This == &gSdDxeComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               ControllerNameTable,
+                               ControllerName,
+                               (BOOLEAN) (This == &gSdDxeComponentName)
+                               );
 }
-

@@ -30,7 +30,6 @@ UsbHcGetCapability (
   OUT UINT8               *Is64BitCapable
   );
 
-
 /**
   Get the root hub port state.
 
@@ -142,20 +141,20 @@ UsbHcControlTransfer (
 
 **/
 EFI_STATUS
-UsbHcBulkTransfer (
-  IN  USB_BUS                             *UsbBus,
-  IN  UINT8                               DevAddr,
-  IN  UINT8                               EpAddr,
-  IN  UINT8                               DevSpeed,
-  IN  UINTN                               MaxPacket,
-  IN  UINT8                               BufferNum,
-  IN  OUT VOID                            *Data[EFI_USB_MAX_BULK_BUFFER_NUM],
-  IN  OUT UINTN                           *DataLength,
-  IN  OUT UINT8                           *DataToggle,
-  IN  UINTN                               TimeOut,
-  IN  EFI_USB2_HC_TRANSACTION_TRANSLATOR  *Translator,
-  OUT UINT32                              *UsbResult
-  );
+  UsbHcBulkTransfer (
+                     IN  USB_BUS                             *UsbBus,
+                     IN  UINT8                               DevAddr,
+                     IN  UINT8                               EpAddr,
+                     IN  UINT8                               DevSpeed,
+                     IN  UINTN                               MaxPacket,
+                     IN  UINT8                               BufferNum,
+                     IN  OUT VOID                            *Data[EFI_USB_MAX_BULK_BUFFER_NUM],
+                     IN  OUT UINTN                           *DataLength,
+                     IN  OUT UINT8                           *DataToggle,
+                     IN  UINTN                               TimeOut,
+                     IN  EFI_USB2_HC_TRANSACTION_TRANSLATOR  *Translator,
+                     OUT UINT32                              *UsbResult
+                     );
 
 /**
   Queue or cancel an asynchronous interrupt transfer.
@@ -231,7 +230,6 @@ UsbHcSyncInterruptTransfer (
   OUT UINT32                              *UsbResult
   );
 
-
 /**
   Open the USB host controller protocol BY_CHILD.
 
@@ -271,8 +269,8 @@ UsbCloseHostProtoByChild (
 
 **/
 EFI_TPL
-UsbGetCurrentTpl (
-  VOID
-  );
+  UsbGetCurrentTpl (
+                    VOID
+                    );
 
 #endif

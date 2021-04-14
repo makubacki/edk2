@@ -41,20 +41,18 @@ PeiHubGetPortStatus (
   //
   DeviceRequest.RequestType = USB_HUB_GET_PORT_STATUS_REQ_TYPE;
   DeviceRequest.Request     = USB_HUB_GET_PORT_STATUS;
-  DeviceRequest.Index       = Port;
-  DeviceRequest.Length      = (UINT16) sizeof (UINT32);
-
+  DeviceRequest.Index  = Port;
+  DeviceRequest.Length = (UINT16) sizeof (UINT32);
 
   return UsbIoPpi->UsbControlTransfer (
-                     PeiServices,
-                     UsbIoPpi,
-                     &DeviceRequest,
-                     EfiUsbDataIn,
-                     PcdGet32 (PcdUsbTransferTimeoutValue),
-                     PortStatus,
-                     sizeof (UINT32)
-                     );
-
+                                       PeiServices,
+                                       UsbIoPpi,
+                                       &DeviceRequest,
+                                       EfiUsbDataIn,
+                                       PcdGet32 (PcdUsbTransferTimeoutValue),
+                                       PortStatus,
+                                       sizeof (UINT32)
+                                       );
 }
 
 /**
@@ -78,7 +76,7 @@ PeiHubSetPortFeature (
   IN UINT8               Value
   )
 {
-  EFI_USB_DEVICE_REQUEST      DeviceRequest;
+  EFI_USB_DEVICE_REQUEST  DeviceRequest;
 
   ZeroMem (&DeviceRequest, sizeof (EFI_USB_DEVICE_REQUEST));
 
@@ -87,18 +85,18 @@ PeiHubSetPortFeature (
   //
   DeviceRequest.RequestType = USB_HUB_SET_PORT_FEATURE_REQ_TYPE;
   DeviceRequest.Request     = USB_HUB_SET_PORT_FEATURE;
-  DeviceRequest.Value       = Value;
-  DeviceRequest.Index       = Port;
+  DeviceRequest.Value = Value;
+  DeviceRequest.Index = Port;
 
   return UsbIoPpi->UsbControlTransfer (
-                     PeiServices,
-                     UsbIoPpi,
-                     &DeviceRequest,
-                     EfiUsbNoData,
-                     PcdGet32 (PcdUsbTransferTimeoutValue),
-                     NULL,
-                     0
-                     );
+                                       PeiServices,
+                                       UsbIoPpi,
+                                       &DeviceRequest,
+                                       EfiUsbNoData,
+                                       PcdGet32 (PcdUsbTransferTimeoutValue),
+                                       NULL,
+                                       0
+                                       );
 }
 
 /**
@@ -122,7 +120,7 @@ PeiHubClearPortFeature (
   IN UINT8               Value
   )
 {
-  EFI_USB_DEVICE_REQUEST      DeviceRequest;
+  EFI_USB_DEVICE_REQUEST  DeviceRequest;
 
   ZeroMem (&DeviceRequest, sizeof (EFI_USB_DEVICE_REQUEST));
 
@@ -131,18 +129,18 @@ PeiHubClearPortFeature (
   //
   DeviceRequest.RequestType = USB_HUB_CLEAR_FEATURE_PORT_REQ_TYPE;
   DeviceRequest.Request     = USB_HUB_CLEAR_FEATURE_PORT;
-  DeviceRequest.Value       = Value;
-  DeviceRequest.Index       = Port;
+  DeviceRequest.Value = Value;
+  DeviceRequest.Index = Port;
 
   return UsbIoPpi->UsbControlTransfer (
-                     PeiServices,
-                     UsbIoPpi,
-                     &DeviceRequest,
-                     EfiUsbNoData,
-                     PcdGet32 (PcdUsbTransferTimeoutValue),
-                     NULL,
-                     0
-                     );
+                                       PeiServices,
+                                       UsbIoPpi,
+                                       &DeviceRequest,
+                                       EfiUsbNoData,
+                                       PcdGet32 (PcdUsbTransferTimeoutValue),
+                                       NULL,
+                                       0
+                                       );
 }
 
 /**
@@ -173,20 +171,18 @@ PeiHubGetHubStatus (
   //
   DeviceRequest.RequestType = USB_HUB_GET_HUB_STATUS_REQ_TYPE;
   DeviceRequest.Request     = USB_HUB_GET_HUB_STATUS;
-  DeviceRequest.Length      = (UINT16) sizeof (UINT32);
+  DeviceRequest.Length = (UINT16) sizeof (UINT32);
 
   return UsbIoPpi->UsbControlTransfer (
-                     PeiServices,
-                     UsbIoPpi,
-                     &DeviceRequest,
-                     EfiUsbDataIn,
-                     PcdGet32 (PcdUsbTransferTimeoutValue),
-                     HubStatus,
-                     sizeof (UINT32)
-                     );
+                                       PeiServices,
+                                       UsbIoPpi,
+                                       &DeviceRequest,
+                                       EfiUsbDataIn,
+                                       PcdGet32 (PcdUsbTransferTimeoutValue),
+                                       HubStatus,
+                                       sizeof (UINT32)
+                                       );
 }
-
-
 
 /**
   Clear specified feature on a given hub.
@@ -207,7 +203,7 @@ PeiHubClearHubFeature (
   IN UINT8               Value
   )
 {
-  EFI_USB_DEVICE_REQUEST      DeviceRequest;
+  EFI_USB_DEVICE_REQUEST  DeviceRequest;
 
   ZeroMem (&DeviceRequest, sizeof (EFI_USB_DEVICE_REQUEST));
 
@@ -216,17 +212,17 @@ PeiHubClearHubFeature (
   //
   DeviceRequest.RequestType = USB_HUB_CLEAR_FEATURE_REQ_TYPE;
   DeviceRequest.Request     = USB_HUB_CLEAR_FEATURE;
-  DeviceRequest.Value       = Value;
+  DeviceRequest.Value = Value;
 
-  return  UsbIoPpi->UsbControlTransfer (
-                      PeiServices,
-                      UsbIoPpi,
-                      &DeviceRequest,
-                      EfiUsbNoData,
-                      PcdGet32 (PcdUsbTransferTimeoutValue),
-                      NULL,
-                      0
-                      );
+  return UsbIoPpi->UsbControlTransfer (
+                                       PeiServices,
+                                       UsbIoPpi,
+                                       &DeviceRequest,
+                                       EfiUsbNoData,
+                                       PcdGet32 (PcdUsbTransferTimeoutValue),
+                                       NULL,
+                                       0
+                                       );
 }
 
 /**
@@ -253,8 +249,8 @@ PeiGetHubDescriptor (
   OUT EFI_USB_HUB_DESCRIPTOR    *HubDescriptor
   )
 {
-  EFI_USB_DEVICE_REQUEST      DevReq;
-  UINT8                       DescType;
+  EFI_USB_DEVICE_REQUEST  DevReq;
+  UINT8                   DescType;
 
   ZeroMem (&DevReq, sizeof (EFI_USB_DEVICE_REQUEST));
 
@@ -267,18 +263,18 @@ PeiGetHubDescriptor (
   //
   DevReq.RequestType = USB_RT_HUB | 0x80;
   DevReq.Request     = USB_HUB_GET_DESCRIPTOR;
-  DevReq.Value       = (UINT16) (DescType << 8);
-  DevReq.Length      = (UINT16) DescriptorSize;
+  DevReq.Value  = (UINT16) (DescType << 8);
+  DevReq.Length = (UINT16) DescriptorSize;
 
-  return  UsbIoPpi->UsbControlTransfer (
-                      PeiServices,
-                      UsbIoPpi,
-                      &DevReq,
-                      EfiUsbDataIn,
-                      PcdGet32 (PcdUsbTransferTimeoutValue),
-                      HubDescriptor,
-                      (UINT16)DescriptorSize
-                      );
+  return UsbIoPpi->UsbControlTransfer (
+                                       PeiServices,
+                                       UsbIoPpi,
+                                       &DevReq,
+                                       EfiUsbDataIn,
+                                       PcdGet32 (PcdUsbTransferTimeoutValue),
+                                       HubDescriptor,
+                                       (UINT16) DescriptorSize
+                                       );
 }
 
 /**
@@ -305,7 +301,7 @@ PeiUsbHubReadDesc (
   OUT EFI_USB_HUB_DESCRIPTOR    *HubDescriptor
   )
 {
-  EFI_STATUS Status;
+  EFI_STATUS  Status;
 
   //
   // First get the hub descriptor length
@@ -340,7 +336,8 @@ PeiUsbHubCtrlSetHubDepth (
   IN PEI_USB_IO_PPI             *UsbIoPpi
   )
 {
-  EFI_USB_DEVICE_REQUEST        DevReq;
+  EFI_USB_DEVICE_REQUEST  DevReq;
+
   ZeroMem (&DevReq, sizeof (EFI_USB_DEVICE_REQUEST));
 
   //
@@ -348,18 +345,18 @@ PeiUsbHubCtrlSetHubDepth (
   //
   DevReq.RequestType = USB_RT_HUB;
   DevReq.Request     = USB_HUB_REQ_SET_DEPTH;
-  DevReq.Value       = PeiUsbDevice->Tier;
-  DevReq.Length      = 0;
+  DevReq.Value  = PeiUsbDevice->Tier;
+  DevReq.Length = 0;
 
-  return  UsbIoPpi->UsbControlTransfer (
-                      PeiServices,
-                      UsbIoPpi,
-                      &DevReq,
-                      EfiUsbNoData,
-                      PcdGet32 (PcdUsbTransferTimeoutValue),
-                      NULL,
-                      0
-                      );
+  return UsbIoPpi->UsbControlTransfer (
+                                       PeiServices,
+                                       UsbIoPpi,
+                                       &DevReq,
+                                       EfiUsbNoData,
+                                       PcdGet32 (PcdUsbTransferTimeoutValue),
+                                       NULL,
+                                       0
+                                       );
 }
 
 /**
@@ -397,11 +394,11 @@ PeiDoHubConfig (
   // Get the hub descriptor
   //
   Status = PeiUsbHubReadDesc (
-            PeiServices,
-            PeiUsbDevice,
-            UsbIoPpi,
-            HubDescriptor
-            );
+                              PeiServices,
+                              PeiUsbDevice,
+                              UsbIoPpi,
+                              HubDescriptor
+                              );
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
   }
@@ -411,28 +408,28 @@ PeiDoHubConfig (
   if (PeiUsbDevice->DeviceSpeed == EFI_USB_SPEED_SUPER) {
     DEBUG ((EFI_D_INFO, "PeiDoHubConfig: Set Hub Depth as 0x%x\n", PeiUsbDevice->Tier));
     PeiUsbHubCtrlSetHubDepth (
-      PeiServices,
-      PeiUsbDevice,
-      UsbIoPpi
-      );
+                              PeiServices,
+                              PeiUsbDevice,
+                              UsbIoPpi
+                              );
   } else {
     //
-    //  Power all the hub ports
+    // Power all the hub ports
     //
     for (Index = 0; Index < PeiUsbDevice->DownStreamPortNo; Index++) {
       Status = PeiHubSetPortFeature (
-                PeiServices,
-                UsbIoPpi,
-                (UINT8) (Index + 1),
-                EfiUsbPortPower
-                );
+                                     PeiServices,
+                                     UsbIoPpi,
+                                     (UINT8) (Index + 1),
+                                     EfiUsbPortPower
+                                     );
       if (EFI_ERROR (Status)) {
-        DEBUG (( EFI_D_ERROR, "PeiDoHubConfig: PeiHubSetPortFeature EfiUsbPortPower failed %x\n", Index));
+        DEBUG ((EFI_D_ERROR, "PeiDoHubConfig: PeiHubSetPortFeature EfiUsbPortPower failed %x\n", Index));
         continue;
       }
     }
 
-    DEBUG (( EFI_D_INFO, "PeiDoHubConfig: HubDescriptor.PwrOn2PwrGood: 0x%x\n", HubDescriptor->PwrOn2PwrGood));
+    DEBUG ((EFI_D_INFO, "PeiDoHubConfig: HubDescriptor.PwrOn2PwrGood: 0x%x\n", HubDescriptor->PwrOn2PwrGood));
     if (HubDescriptor->PwrOn2PwrGood > 0) {
       MicroSecondDelay (HubDescriptor->PwrOn2PwrGood * USB_SET_PORT_POWER_STALL);
     }
@@ -441,10 +438,10 @@ PeiDoHubConfig (
     // Clear Hub Status Change
     //
     Status = PeiHubGetHubStatus (
-              PeiServices,
-              UsbIoPpi,
-              (UINT32 *) &HubStatus
-              );
+                                 PeiServices,
+                                 UsbIoPpi,
+                                 (UINT32 *) &HubStatus
+                                 );
     if (EFI_ERROR (Status)) {
       return EFI_DEVICE_ERROR;
     } else {
@@ -453,20 +450,21 @@ PeiDoHubConfig (
       //
       if ((HubStatus.HubChangeStatus & HUB_CHANGE_LOCAL_POWER) != 0) {
         PeiHubClearHubFeature (
-          PeiServices,
-          UsbIoPpi,
-          C_HUB_LOCAL_POWER
-          );
+                               PeiServices,
+                               UsbIoPpi,
+                               C_HUB_LOCAL_POWER
+                               );
       }
+
       //
       // Hub change overcurrent happens
       //
       if ((HubStatus.HubChangeStatus & HUB_CHANGE_OVERCURRENT) != 0) {
         PeiHubClearHubFeature (
-          PeiServices,
-          UsbIoPpi,
-          C_HUB_OVER_CURRENT
-          );
+                               PeiServices,
+                               UsbIoPpi,
+                               C_HUB_OVER_CURRENT
+                               );
       }
     }
   }
@@ -489,9 +487,9 @@ PeiResetHubPort (
   IN UINT8               PortNum
   )
 {
-  EFI_STATUS          Status;
-  UINTN               Index;
-  EFI_USB_PORT_STATUS HubPortStatus;
+  EFI_STATUS           Status;
+  UINTN                Index;
+  EFI_USB_PORT_STATUS  HubPortStatus;
 
   MicroSecondDelay (100 * 1000);
 
@@ -499,11 +497,11 @@ PeiResetHubPort (
   // reset root port
   //
   PeiHubSetPortFeature (
-    PeiServices,
-    UsbIoPpi,
-    PortNum,
-    EfiUsbPortReset
-    );
+                        PeiServices,
+                        UsbIoPpi,
+                        PortNum,
+                        EfiUsbPortReset
+                        );
 
   //
   // Drive the reset signal for worst 20ms. Check USB 2.0 Spec
@@ -518,11 +516,11 @@ PeiResetHubPort (
 
   for (Index = 0; Index < USB_WAIT_PORT_STS_CHANGE_LOOP; Index++) {
     Status = PeiHubGetPortStatus (
-               PeiServices,
-               UsbIoPpi,
-               PortNum,
-               (UINT32 *) &HubPortStatus
-               );
+                                  PeiServices,
+                                  UsbIoPpi,
+                                  PortNum,
+                                  (UINT32 *) &HubPortStatus
+                                  );
 
     if (EFI_ERROR (Status)) {
       return;
@@ -544,41 +542,41 @@ PeiResetHubPort (
   // clear reset change root port
   //
   PeiHubClearPortFeature (
-    PeiServices,
-    UsbIoPpi,
-    PortNum,
-    EfiUsbPortResetChange
-    );
+                          PeiServices,
+                          UsbIoPpi,
+                          PortNum,
+                          EfiUsbPortResetChange
+                          );
 
   MicroSecondDelay (1 * 1000);
 
   PeiHubClearPortFeature (
-    PeiServices,
-    UsbIoPpi,
-    PortNum,
-    EfiUsbPortConnectChange
-    );
+                          PeiServices,
+                          UsbIoPpi,
+                          PortNum,
+                          EfiUsbPortConnectChange
+                          );
 
   //
   // Set port enable
   //
   PeiHubSetPortFeature (
-    PeiServices,
-    UsbIoPpi,
-    PortNum,
-    EfiUsbPortEnable
-    );
+                        PeiServices,
+                        UsbIoPpi,
+                        PortNum,
+                        EfiUsbPortEnable
+                        );
 
   //
   // Clear any change status
   //
 
   PeiHubClearPortFeature (
-    PeiServices,
-    UsbIoPpi,
-    PortNum,
-    EfiUsbPortEnableChange
-    );
+                          PeiServices,
+                          UsbIoPpi,
+                          PortNum,
+                          EfiUsbPortEnableChange
+                          );
 
   MicroSecondDelay (10 * 1000);
 

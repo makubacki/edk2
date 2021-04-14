@@ -59,34 +59,40 @@ BrotliGuidedSectionGetInfo (
 
   if (IS_SECTION2 (InputSection)) {
     if (!CompareGuid (
-        &gBrotliCustomDecompressGuid,
-        &(((EFI_GUID_DEFINED_SECTION2 *) InputSection)->SectionDefinitionGuid))) {
+                      &gBrotliCustomDecompressGuid,
+                      &(((EFI_GUID_DEFINED_SECTION2 *) InputSection)->SectionDefinitionGuid)
+                      )) {
       return RETURN_INVALID_PARAMETER;
     }
 
     *SectionAttribute = ((EFI_GUID_DEFINED_SECTION2 *) InputSection)->Attributes;
 
     return BrotliUefiDecompressGetInfo (
-             (UINT8 *) InputSection + ((EFI_GUID_DEFINED_SECTION2 *) InputSection)->DataOffset,
-             SECTION2_SIZE (InputSection) - ((EFI_GUID_DEFINED_SECTION2 *) InputSection)->DataOffset,
-             OutputBufferSize,
-             ScratchBufferSize
-             );
+                                        (UINT8 *) InputSection + ((EFI_GUID_DEFINED_SECTION2 *) InputSection)->DataOffset,
+                                        SECTION2_SIZE (
+                           InputSection
+                           ) - ((EFI_GUID_DEFINED_SECTION2 *) InputSection)->DataOffset,
+                                        OutputBufferSize,
+                                        ScratchBufferSize
+                                        );
   } else {
     if (!CompareGuid (
-        &gBrotliCustomDecompressGuid,
-        &(((EFI_GUID_DEFINED_SECTION *) InputSection)->SectionDefinitionGuid))) {
+                      &gBrotliCustomDecompressGuid,
+                      &(((EFI_GUID_DEFINED_SECTION *) InputSection)->SectionDefinitionGuid)
+                      )) {
       return RETURN_INVALID_PARAMETER;
     }
 
     *SectionAttribute = ((EFI_GUID_DEFINED_SECTION *) InputSection)->Attributes;
 
     return BrotliUefiDecompressGetInfo (
-             (UINT8 *) InputSection + ((EFI_GUID_DEFINED_SECTION *) InputSection)->DataOffset,
-             SECTION_SIZE (InputSection) - ((EFI_GUID_DEFINED_SECTION *) InputSection)->DataOffset,
-             OutputBufferSize,
-             ScratchBufferSize
-             );
+                                        (UINT8 *) InputSection + ((EFI_GUID_DEFINED_SECTION *) InputSection)->DataOffset,
+                                        SECTION_SIZE (
+                          InputSection
+                          ) - ((EFI_GUID_DEFINED_SECTION *) InputSection)->DataOffset,
+                                        OutputBufferSize,
+                                        ScratchBufferSize
+                                        );
   }
 }
 
@@ -127,7 +133,7 @@ EFIAPI
 BrotliGuidedSectionExtraction (
   IN CONST  VOID    *InputSection,
   OUT       VOID    **OutputBuffer,
-  OUT       VOID    *ScratchBuffer,        OPTIONAL
+  OUT       VOID    *ScratchBuffer, OPTIONAL
   OUT       UINT32  *AuthenticationStatus
   )
 {
@@ -136,38 +142,44 @@ BrotliGuidedSectionExtraction (
 
   if (IS_SECTION2 (InputSection)) {
     if (!CompareGuid (
-        &gBrotliCustomDecompressGuid,
-        &(((EFI_GUID_DEFINED_SECTION2 *) InputSection)->SectionDefinitionGuid))) {
+                      &gBrotliCustomDecompressGuid,
+                      &(((EFI_GUID_DEFINED_SECTION2 *) InputSection)->SectionDefinitionGuid)
+                      )) {
       return RETURN_INVALID_PARAMETER;
     }
+
     //
     // Authentication is set to Zero, which may be ignored.
     //
     *AuthenticationStatus = 0;
 
     return BrotliUefiDecompress (
-             (UINT8 *) InputSection + ((EFI_GUID_DEFINED_SECTION2 *) InputSection)->DataOffset,
-             SECTION2_SIZE (InputSection) - ((EFI_GUID_DEFINED_SECTION2 *) InputSection)->DataOffset,
-             *OutputBuffer,
-             ScratchBuffer
-             );
+                                 (UINT8 *) InputSection + ((EFI_GUID_DEFINED_SECTION2 *) InputSection)->DataOffset,
+                                 SECTION2_SIZE (
+                           InputSection
+                           ) - ((EFI_GUID_DEFINED_SECTION2 *) InputSection)->DataOffset,
+                                 *OutputBuffer,
+                                 ScratchBuffer
+                                 );
   } else {
     if (!CompareGuid (
-        &gBrotliCustomDecompressGuid,
-        &(((EFI_GUID_DEFINED_SECTION *) InputSection)->SectionDefinitionGuid))) {
+                      &gBrotliCustomDecompressGuid,
+                      &(((EFI_GUID_DEFINED_SECTION *) InputSection)->SectionDefinitionGuid)
+                      )) {
       return RETURN_INVALID_PARAMETER;
     }
+
     //
     // Authentication is set to Zero, which may be ignored.
     //
     *AuthenticationStatus = 0;
 
     return BrotliUefiDecompress (
-             (UINT8 *) InputSection + ((EFI_GUID_DEFINED_SECTION *) InputSection)->DataOffset,
-             SECTION_SIZE (InputSection) - ((EFI_GUID_DEFINED_SECTION *) InputSection)->DataOffset,
-             *OutputBuffer,
-             ScratchBuffer
-    );
+                                 (UINT8 *) InputSection + ((EFI_GUID_DEFINED_SECTION *) InputSection)->DataOffset,
+                                 SECTION_SIZE (InputSection) - ((EFI_GUID_DEFINED_SECTION *) InputSection)->DataOffset,
+                                 *OutputBuffer,
+                                 ScratchBuffer
+                                 );
   }
 }
 
@@ -184,8 +196,8 @@ BrotliDecompressLibConstructor (
   )
 {
   return ExtractGuidedSectionRegisterHandlers (
-          &gBrotliCustomDecompressGuid,
-          BrotliGuidedSectionGetInfo,
-          BrotliGuidedSectionExtraction
-          );
+                                               &gBrotliCustomDecompressGuid,
+                                               BrotliGuidedSectionGetInfo,
+                                               BrotliGuidedSectionExtraction
+                                               );
 }

@@ -29,8 +29,8 @@ Required Alignment   Alignment Value in FFS   FFS_ATTRIB_DATA_ALIGNMENT2   Align
 8 MB                            6                          1                            23
 16 MB                           7                          1                            24
 **/
-UINT8 mFvAttributes[] = {0, 4, 7, 9, 10, 12, 15, 16};
-UINT8 mFvAttributes2[] = {17, 18, 19, 20, 21, 22, 23, 24};
+UINT8  mFvAttributes[]  = { 0, 4, 7, 9, 10, 12, 15, 16 };
+UINT8  mFvAttributes2[] = { 17, 18, 19, 20, 21, 22, 23, 24 };
 
 /**
   Convert the FFS File Attributes to FV File Attributes
@@ -45,8 +45,8 @@ FfsAttributes2FvFileAttributes (
   IN EFI_FFS_FILE_ATTRIBUTES FfsAttributes
   )
 {
-  UINT8                     DataAlignment;
-  EFI_FV_FILE_ATTRIBUTES    FileAttribute;
+  UINT8                   DataAlignment;
+  EFI_FV_FILE_ATTRIBUTES  FileAttribute;
 
   DataAlignment = (UINT8) ((FfsAttributes & FFS_ATTRIB_DATA_ALIGNMENT) >> 3);
   ASSERT (DataAlignment < 8);
@@ -121,18 +121,18 @@ FvGetNextFile (
   OUT        UINTN                         *Size
   )
 {
-  EFI_STATUS                                  Status;
-  FV_DEVICE                                   *FvDevice;
-  EFI_FV_ATTRIBUTES                           FvAttributes;
-  EFI_FFS_FILE_HEADER                         *FfsFileHeader;
-  UINTN                                       *KeyValue;
-  LIST_ENTRY                                  *Link;
-  FFS_FILE_LIST_ENTRY                         *FfsFileEntry;
+  EFI_STATUS           Status;
+  FV_DEVICE            *FvDevice;
+  EFI_FV_ATTRIBUTES    FvAttributes;
+  EFI_FFS_FILE_HEADER  *FfsFileHeader;
+  UINTN                *KeyValue;
+  LIST_ENTRY           *Link;
+  FFS_FILE_LIST_ENTRY  *FfsFileEntry;
 
   FvDevice = FV_DEVICE_FROM_THIS (This);
 
   Status = FvGetVolumeAttributes (This, &FvAttributes);
-  if (EFI_ERROR (Status)){
+  if (EFI_ERROR (Status)) {
     return Status;
   }
 
@@ -150,8 +150,8 @@ FvGetNextFile (
     return EFI_NOT_FOUND;
   }
 
-  KeyValue = (UINTN *)Key;
-  for (;;) {
+  KeyValue = (UINTN *) Key;
+  for ( ; ;) {
     if (*KeyValue == 0) {
       //
       // Search for 1st matching file
@@ -161,7 +161,7 @@ FvGetNextFile (
       //
       // Key is pointer to FFsFileEntry, so get next one
       //
-      Link = (LIST_ENTRY *)(*KeyValue);
+      Link = (LIST_ENTRY *) (*KeyValue);
     }
 
     if (Link->ForwardLink == &FvDevice->FfsFileListHeader) {
@@ -171,13 +171,13 @@ FvGetNextFile (
       return EFI_NOT_FOUND;
     }
 
-    FfsFileEntry = (FFS_FILE_LIST_ENTRY *)Link->ForwardLink;
-    FfsFileHeader = (EFI_FFS_FILE_HEADER *)FfsFileEntry->FfsHeader;
+    FfsFileEntry  = (FFS_FILE_LIST_ENTRY *) Link->ForwardLink;
+    FfsFileHeader = (EFI_FFS_FILE_HEADER *) FfsFileEntry->FfsHeader;
 
     //
     // remember the key
     //
-    *KeyValue = (UINTN)FfsFileEntry;
+    *KeyValue = (UINTN) FfsFileEntry;
 
     if (FfsFileHeader->Type == EFI_FV_FILETYPE_FFS_PAD) {
       //
@@ -199,7 +199,6 @@ FvGetNextFile (
       //
       break;
     }
-
   }
 
   //
@@ -223,8 +222,6 @@ FvGetNextFile (
 
   return EFI_SUCCESS;
 }
-
-
 
 /**
   Locates a file in the firmware volume and
@@ -278,23 +275,22 @@ FvReadFile (
   OUT      UINT32                        *AuthenticationStatus
   )
 {
-  EFI_STATUS                        Status;
-  FV_DEVICE                         *FvDevice;
-  EFI_GUID                          SearchNameGuid;
-  EFI_FV_FILETYPE                   LocalFoundType;
-  EFI_FV_FILE_ATTRIBUTES            LocalAttributes;
-  UINTN                             FileSize;
-  UINT8                             *SrcPtr;
-  EFI_FFS_FILE_HEADER               *FfsHeader;
-  UINTN                             InputBufferSize;
-  UINTN                             WholeFileSize;
+  EFI_STATUS              Status;
+  FV_DEVICE               *FvDevice;
+  EFI_GUID                SearchNameGuid;
+  EFI_FV_FILETYPE         LocalFoundType;
+  EFI_FV_FILE_ATTRIBUTES  LocalAttributes;
+  UINTN                   FileSize;
+  UINT8                   *SrcPtr;
+  EFI_FFS_FILE_HEADER     *FfsHeader;
+  UINTN                   InputBufferSize;
+  UINTN                   WholeFileSize;
 
   if (NameGuid == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
   FvDevice = FV_DEVICE_FROM_THIS (This);
-
 
   //
   // Keep looking until we find the matching NameGuid.
@@ -304,13 +300,13 @@ FvReadFile (
   do {
     LocalFoundType = 0;
     Status = FvGetNextFile (
-              This,
-              &FvDevice->LastKey,
-              &LocalFoundType,
-              &SearchNameGuid,
-              &LocalAttributes,
-              &FileSize
-              );
+                            This,
+                            &FvDevice->LastKey,
+                            &LocalFoundType,
+                            &SearchNameGuid,
+                            &LocalAttributes,
+                            &FileSize
+                            );
     if (EFI_ERROR (Status)) {
       return EFI_NOT_FOUND;
     }
@@ -328,15 +324,16 @@ FvReadFile (
       //
       // Cache FFS file to memory buffer.
       //
-      WholeFileSize = IS_FFS_FILE2 (FfsHeader) ? FFS_FILE2_SIZE (FfsHeader): FFS_FILE_SIZE (FfsHeader);
-      FfsHeader = AllocateCopyPool (WholeFileSize, FfsHeader);
+      WholeFileSize = IS_FFS_FILE2 (FfsHeader) ? FFS_FILE2_SIZE (FfsHeader) : FFS_FILE_SIZE (FfsHeader);
+      FfsHeader     = AllocateCopyPool (WholeFileSize, FfsHeader);
       if (FfsHeader == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }
+
       //
       // Let FfsHeader in FfsFileEntry point to the cached file buffer.
       //
-      FvDevice->LastKey->FfsHeader = FfsHeader;
+      FvDevice->LastKey->FfsHeader  = FfsHeader;
       FvDevice->LastKey->FileCached = TRUE;
     }
   }
@@ -351,9 +348,10 @@ FvReadFile (
   //
   *FoundType = FfsHeader->Type;
   *FileAttributes = FfsAttributes2FvFileAttributes (FfsHeader->Attributes);
-   if ((FvDevice->FwVolHeader->Attributes & EFI_FVB2_MEMORY_MAPPED) == EFI_FVB2_MEMORY_MAPPED) {
-     *FileAttributes |= EFI_FV_FILE_ATTRIB_MEMORY_MAPPED;
-   }
+  if ((FvDevice->FwVolHeader->Attributes & EFI_FVB2_MEMORY_MAPPED) == EFI_FVB2_MEMORY_MAPPED) {
+    *FileAttributes |= EFI_FV_FILE_ATTRIB_MEMORY_MAPPED;
+  }
+
   //
   // Inherit the authentication status.
   //
@@ -389,7 +387,7 @@ FvReadFile (
     //
     // Callers buffer was not big enough
     //
-    Status = EFI_WARN_BUFFER_TOO_SMALL;
+    Status   = EFI_WARN_BUFFER_TOO_SMALL;
     FileSize = InputBufferSize;
   }
 
@@ -400,8 +398,6 @@ FvReadFile (
 
   return Status;
 }
-
-
 
 /**
   Locates a section in a given FFS File and
@@ -443,13 +439,13 @@ FvReadFileSection (
   OUT       UINT32                         *AuthenticationStatus
   )
 {
-  EFI_STATUS                        Status;
-  FV_DEVICE                         *FvDevice;
-  EFI_FV_FILETYPE                   FileType;
-  EFI_FV_FILE_ATTRIBUTES            FileAttributes;
-  UINTN                             FileSize;
-  UINT8                             *FileBuffer;
-  FFS_FILE_LIST_ENTRY               *FfsEntry;
+  EFI_STATUS              Status;
+  FV_DEVICE               *FvDevice;
+  EFI_FV_FILETYPE         FileType;
+  EFI_FV_FILE_ATTRIBUTES  FileAttributes;
+  UINTN                   FileSize;
+  UINT8                   *FileBuffer;
+  FFS_FILE_LIST_ENTRY     *FfsEntry;
 
   if (NameGuid == NULL || Buffer == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -461,14 +457,14 @@ FvReadFileSection (
   // Read the file
   //
   Status = FvReadFile (
-            This,
-            NameGuid,
-            NULL,
-            &FileSize,
-            &FileType,
-            &FileAttributes,
-            AuthenticationStatus
-            );
+                       This,
+                       NameGuid,
+                       NULL,
+                       &FileSize,
+                       &FileType,
+                       &FileAttributes,
+                       AuthenticationStatus
+                       );
   //
   // Get the last key used by our call to FvReadFile as it is the FfsEntry for this file.
   //
@@ -477,11 +473,13 @@ FvReadFileSection (
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   if (IS_FFS_FILE2 (FfsEntry->FfsHeader)) {
     FileBuffer = ((UINT8 *) FfsEntry->FfsHeader) + sizeof (EFI_FFS_FILE_HEADER2);
   } else {
     FileBuffer = ((UINT8 *) FfsEntry->FfsHeader) + sizeof (EFI_FFS_FILE_HEADER);
   }
+
   //
   // Check to see that the file actually HAS sections before we go any further.
   //
@@ -495,10 +493,10 @@ FvReadFileSection (
   //
   if (FfsEntry->StreamHandle == 0) {
     Status = OpenSectionStream (
-               FileSize,
-               FileBuffer,
-               &FfsEntry->StreamHandle
-               );
+                                FileSize,
+                                FileBuffer,
+                                &FfsEntry->StreamHandle
+                                );
     if (EFI_ERROR (Status)) {
       goto Done;
     }
@@ -508,15 +506,15 @@ FvReadFileSection (
   // If SectionType == 0 We need the whole section stream
   //
   Status = GetSection (
-             FfsEntry->StreamHandle,
-             (SectionType == 0) ? NULL : &SectionType,
-             NULL,
-             (SectionType == 0) ? 0 : SectionInstance,
-             Buffer,
-             BufferSize,
-             AuthenticationStatus,
-             FvDevice->IsFfs3Fv
-             );
+                       FfsEntry->StreamHandle,
+                       (SectionType == 0) ? NULL : &SectionType,
+                       NULL,
+                       (SectionType == 0) ? 0 : SectionInstance,
+                       Buffer,
+                       BufferSize,
+                       AuthenticationStatus,
+                       FvDevice->IsFfs3Fv
+                       );
 
   if (!EFI_ERROR (Status)) {
     //
@@ -532,5 +530,3 @@ FvReadFileSection (
 Done:
   return Status;
 }
-
-

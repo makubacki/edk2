@@ -13,32 +13,32 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define FORM_BROWSER_EXTENSION_PROTOCOL_GUID  \
   { 0x1f73b18d, 0x4630, 0x43c1, { 0xa1, 0xde, 0x6f, 0x80, 0x85, 0x5d, 0x7d, 0xa4 } }
 
-typedef struct _EDKII_FORM_BROWSER_EXTENSION_PROTOCOL   EDKII_FORM_BROWSER_EXTENSION_PROTOCOL;
+typedef struct _EDKII_FORM_BROWSER_EXTENSION_PROTOCOL EDKII_FORM_BROWSER_EXTENSION_PROTOCOL;
 
 //
 // To be compatible, keep EFI_FORM_BROWSER_EXTENSION_PROTOCOL definition
 //
-typedef EDKII_FORM_BROWSER_EXTENSION_PROTOCOL   EFI_FORM_BROWSER_EXTENSION_PROTOCOL;
+typedef EDKII_FORM_BROWSER_EXTENSION_PROTOCOL EFI_FORM_BROWSER_EXTENSION_PROTOCOL;
 
 //
 // Return value of SAVE_REMINDER() that describes whether the changed data is saved or discarded.
 //
-#define BROWSER_NO_CHANGES          0
-#define BROWSER_SAVE_CHANGES        1
-#define BROWSER_DISCARD_CHANGES     2
-#define BROWSER_KEEP_CURRENT        3
+#define BROWSER_NO_CHANGES       0
+#define BROWSER_SAVE_CHANGES     1
+#define BROWSER_DISCARD_CHANGES  2
+#define BROWSER_KEEP_CURRENT     3
 
 //
 // Browser actions. They can be cominbed together.
 // If more than one actions are specified, the action with low bit will be executed first.
 //
-#define BROWSER_ACTION_UNREGISTER   0
-#define BROWSER_ACTION_DISCARD      BIT0
-#define BROWSER_ACTION_DEFAULT      BIT1
-#define BROWSER_ACTION_SUBMIT       BIT2
-#define BROWSER_ACTION_RESET        BIT3
-#define BROWSER_ACTION_EXIT         BIT4
-#define BROWSER_ACTION_GOTO         BIT5
+#define BROWSER_ACTION_UNREGISTER  0
+#define BROWSER_ACTION_DISCARD     BIT0
+#define BROWSER_ACTION_DEFAULT     BIT1
+#define BROWSER_ACTION_SUBMIT      BIT2
+#define BROWSER_ACTION_RESET       BIT3
+#define BROWSER_ACTION_EXIT        BIT4
+#define BROWSER_ACTION_GOTO        BIT5
 
 //
 // Scope for Browser action. It may be Form, FormSet or System level.
@@ -64,10 +64,10 @@ typedef enum {
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *SET_SCOPE) (
-  IN BROWSER_SETTING_SCOPE Scope
-  );
+  EFI_STATUS
+(EFIAPI *SET_SCOPE)(
+                    IN BROWSER_SETTING_SCOPE Scope
+                    );
 
 /**
   Register the hot key with its browser action, or unregistered the hot key.
@@ -86,13 +86,13 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER  KeyData is NULL.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *REGISTER_HOT_KEY) (
-  IN EFI_INPUT_KEY *KeyData,
-  IN UINT32        Action,
-  IN UINT16        DefaultId,
-  IN EFI_STRING    HelpString OPTIONAL
-  );
+  EFI_STATUS
+(EFIAPI *REGISTER_HOT_KEY)(
+                           IN EFI_INPUT_KEY *KeyData,
+                           IN UINT32        Action,
+                           IN UINT16        DefaultId,
+                           IN EFI_STRING    HelpString OPTIONAL
+                           );
 
 /**
   This handler is responsbile for the left things on normal boot after all UI forms are closed.
@@ -101,10 +101,10 @@ EFI_STATUS
   It will be used only when EXIT action is trigged as system level.
 **/
 typedef
-VOID
-(EFIAPI *EXIT_HANDLER) (
   VOID
-  );
+(EFIAPI *EXIT_HANDLER)(
+                       VOID
+                       );
 
 /**
   Register Exit handler function.
@@ -115,10 +115,10 @@ VOID
 
 **/
 typedef
-VOID
-(EFIAPI *REGISTER_EXIT_HANDLER) (
-  IN EXIT_HANDLER Handler
-  );
+  VOID
+(EFIAPI *REGISTER_EXIT_HANDLER)(
+                                IN EXIT_HANDLER Handler
+                                );
 
 /**
   Create reminder to let user to choose save or discard the changed browser data.
@@ -131,19 +131,18 @@ VOID
 
 **/
 typedef
-UINT32
+  UINT32
 (EFIAPI *SAVE_REMINDER)(
-  VOID
-  );
+                        VOID
+                        );
 
 struct _EDKII_FORM_BROWSER_EXTENSION_PROTOCOL {
-  SET_SCOPE              SetScope;
-  REGISTER_HOT_KEY       RegisterHotKey;
-  REGISTER_EXIT_HANDLER  RegiserExitHandler;
-  SAVE_REMINDER          SaveReminder;
+  SET_SCOPE                SetScope;
+  REGISTER_HOT_KEY         RegisterHotKey;
+  REGISTER_EXIT_HANDLER    RegiserExitHandler;
+  SAVE_REMINDER            SaveReminder;
 };
 
-extern EFI_GUID gEdkiiFormBrowserExProtocolGuid;
+extern EFI_GUID  gEdkiiFormBrowserExProtocolGuid;
 
 #endif
-

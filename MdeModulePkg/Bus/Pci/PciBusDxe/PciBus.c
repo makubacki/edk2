@@ -18,7 +18,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // PCI Bus Driver Global Variables
 //
-EFI_DRIVER_BINDING_PROTOCOL                   gPciBusDriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  gPciBusDriverBinding = {
   PciBusDriverBindingSupported,
   PciBusDriverBindingStart,
   PciBusDriverBindingStop,
@@ -31,15 +31,15 @@ EFI_HANDLE                                    gPciHostBrigeHandles[PCI_MAX_HOST_
 EFI_INCOMPATIBLE_PCI_DEVICE_SUPPORT_PROTOCOL  *gIncompatiblePciDeviceSupport = NULL;
 UINTN                                         gPciHostBridgeNumber = 0;
 BOOLEAN                                       gFullEnumeration     = TRUE;
-UINT64                                        gAllOne              = 0xFFFFFFFFFFFFFFFFULL;
-UINT64                                        gAllZero             = 0;
+UINT64                                        gAllOne  = 0xFFFFFFFFFFFFFFFFULL;
+UINT64                                        gAllZero = 0;
 
-EFI_PCI_PLATFORM_PROTOCOL                     *gPciPlatformProtocol;
-EFI_PCI_OVERRIDE_PROTOCOL                     *gPciOverrideProtocol;
-EDKII_IOMMU_PROTOCOL                          *mIoMmuProtocol;
-EDKII_DEVICE_SECURITY_PROTOCOL                *mDeviceSecurityProtocol;
+EFI_PCI_PLATFORM_PROTOCOL       *gPciPlatformProtocol;
+EFI_PCI_OVERRIDE_PROTOCOL       *gPciOverrideProtocol;
+EDKII_IOMMU_PROTOCOL            *mIoMmuProtocol;
+EDKII_DEVICE_SECURITY_PROTOCOL  *mDeviceSecurityProtocol;
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_PCI_HOTPLUG_REQUEST_PROTOCOL mPciHotPlugRequest = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_PCI_HOTPLUG_REQUEST_PROTOCOL  mPciHotPlugRequest = {
   PciHotPlugRequestNotify
 };
 
@@ -77,13 +77,13 @@ PciBusEntryPoint (
   // Install driver model protocol(s).
   //
   Status = EfiLibInstallDriverBindingComponentName2 (
-             ImageHandle,
-             SystemTable,
-             &gPciBusDriverBinding,
-             ImageHandle,
-             &gPciBusComponentName,
-             &gPciBusComponentName2
-             );
+                                                     ImageHandle,
+                                                     SystemTable,
+                                                     &gPciBusDriverBinding,
+                                                     ImageHandle,
+                                                     &gPciBusComponentName,
+                                                     &gPciBusComponentName2
+                                                     );
   ASSERT_EFI_ERROR (Status);
 
   if (FeaturePcdGet (PcdPciBusHotplugDeviceSupport)) {
@@ -92,11 +92,11 @@ PciBusEntryPoint (
     //
     Handle = NULL;
     Status = gBS->InstallProtocolInterface (
-                    &Handle,
-                    &gEfiPciHotPlugRequestProtocolGuid,
-                    EFI_NATIVE_INTERFACE,
-                    &mPciHotPlugRequest
-                    );
+                                            &Handle,
+                                            &gEfiPciHotPlugRequestProtocolGuid,
+                                            EFI_NATIVE_INTERFACE,
+                                            &mPciHotPlugRequest
+                                            );
   }
 
   return Status;
@@ -124,10 +124,10 @@ PciBusDriverBindingSupported (
   IN EFI_DEVICE_PATH_PROTOCOL       *RemainingDevicePath
   )
 {
-  EFI_STATUS                      Status;
-  EFI_DEVICE_PATH_PROTOCOL        *ParentDevicePath;
-  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL *PciRootBridgeIo;
-  EFI_DEV_PATH_PTR                Node;
+  EFI_STATUS                       Status;
+  EFI_DEVICE_PATH_PROTOCOL         *ParentDevicePath;
+  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL  *PciRootBridgeIo;
+  EFI_DEV_PATH_PTR                 Node;
 
   //
   // Check RemainingDevicePath validation
@@ -145,7 +145,7 @@ PciBusDriverBindingSupported (
       Node.DevPath = RemainingDevicePath;
       if (Node.DevPath->Type != HARDWARE_DEVICE_PATH ||
           Node.DevPath->SubType != HW_PCI_DP         ||
-          DevicePathNodeLength(Node.DevPath) != sizeof(PCI_DEVICE_PATH)) {
+          DevicePathNodeLength (Node.DevPath) != sizeof (PCI_DEVICE_PATH)) {
         return EFI_UNSUPPORTED;
       }
     }
@@ -155,13 +155,13 @@ PciBusDriverBindingSupported (
   // Check if Pci Root Bridge IO protocol is installed by platform
   //
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiPciRootBridgeIoProtocolGuid,
-                  (VOID **) &PciRootBridgeIo,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              Controller,
+                              &gEfiPciRootBridgeIoProtocolGuid,
+                              (VOID **) &PciRootBridgeIo,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (Status == EFI_ALREADY_STARTED) {
     return EFI_SUCCESS;
   }
@@ -174,23 +174,23 @@ PciBusDriverBindingSupported (
   // Close the I/O Abstraction(s) used to perform the supported test
   //
   gBS->CloseProtocol (
-        Controller,
-        &gEfiPciRootBridgeIoProtocolGuid,
-        This->DriverBindingHandle,
-        Controller
-        );
+                      Controller,
+                      &gEfiPciRootBridgeIoProtocolGuid,
+                      This->DriverBindingHandle,
+                      Controller
+                      );
 
   //
   // Open the EFI Device Path protocol needed to perform the supported test
   //
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiDevicePathProtocolGuid,
-                  (VOID **) &ParentDevicePath,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              Controller,
+                              &gEfiDevicePathProtocolGuid,
+                              (VOID **) &ParentDevicePath,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (Status == EFI_ALREADY_STARTED) {
     return EFI_SUCCESS;
   }
@@ -203,11 +203,11 @@ PciBusDriverBindingSupported (
   // Close protocol, don't use device path protocol in the Support() function
   //
   gBS->CloseProtocol (
-        Controller,
-        &gEfiDevicePathProtocolGuid,
-        This->DriverBindingHandle,
-        Controller
-        );
+                      Controller,
+                      &gEfiDevicePathProtocolGuid,
+                      This->DriverBindingHandle,
+                      Controller
+                      );
 
   return EFI_SUCCESS;
 }
@@ -234,9 +234,9 @@ PciBusDriverBindingStart (
   IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath
   )
 {
-  EFI_STATUS                      Status;
-  EFI_DEVICE_PATH_PROTOCOL        *ParentDevicePath;
-  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL *PciRootBridgeIo;
+  EFI_STATUS                       Status;
+  EFI_DEVICE_PATH_PROTOCOL         *ParentDevicePath;
+  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL  *PciRootBridgeIo;
 
   //
   // Initialize PciRootBridgeIo to suppress incorrect compiler warning.
@@ -257,10 +257,10 @@ PciBusDriverBindingStart (
   }
 
   gBS->LocateProtocol (
-         &gEfiIncompatiblePciDeviceSupportProtocolGuid,
-         NULL,
-         (VOID **) &gIncompatiblePciDeviceSupport
-         );
+                       &gEfiIncompatiblePciDeviceSupportProtocolGuid,
+                       NULL,
+                       (VOID **) &gIncompatiblePciDeviceSupport
+                       );
 
   //
   // If PCI Platform protocol is available, get it now.
@@ -268,10 +268,10 @@ PciBusDriverBindingStart (
   //
   gPciPlatformProtocol = NULL;
   gBS->LocateProtocol (
-        &gEfiPciPlatformProtocolGuid,
-        NULL,
-        (VOID **) &gPciPlatformProtocol
-        );
+                       &gEfiPciPlatformProtocolGuid,
+                       NULL,
+                       (VOID **) &gPciPlatformProtocol
+                       );
 
   //
   // If PCI Platform protocol doesn't exist, try to Pci Override Protocol.
@@ -279,26 +279,26 @@ PciBusDriverBindingStart (
   if (gPciPlatformProtocol == NULL) {
     gPciOverrideProtocol = NULL;
     gBS->LocateProtocol (
-          &gEfiPciOverrideProtocolGuid,
-          NULL,
-          (VOID **) &gPciOverrideProtocol
-          );
+                         &gEfiPciOverrideProtocolGuid,
+                         NULL,
+                         (VOID **) &gPciOverrideProtocol
+                         );
   }
 
   if (mIoMmuProtocol == NULL) {
-    gBS->LocateProtocol (
-          &gEdkiiIoMmuProtocolGuid,
-          NULL,
-          (VOID **) &mIoMmuProtocol
-          );
+  gBS->LocateProtocol (
+                       &gEdkiiIoMmuProtocolGuid,
+                       NULL,
+                       (VOID **) &mIoMmuProtocol
+                       );
   }
 
   if (mDeviceSecurityProtocol == NULL) {
-    gBS->LocateProtocol (
-          &gEdkiiDeviceSecurityProtocolGuid,
-          NULL,
-          (VOID **) &mDeviceSecurityProtocol
-          );
+  gBS->LocateProtocol (
+                       &gEdkiiDeviceSecurityProtocolGuid,
+                       NULL,
+                       (VOID **) &mDeviceSecurityProtocol
+                       );
   }
 
   if (PcdGetBool (PcdPciDisableBusEnumeration)) {
@@ -311,23 +311,23 @@ PciBusDriverBindingStart (
   // Open Device Path Protocol for PCI root bridge
   //
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiDevicePathProtocolGuid,
-                  (VOID **) &ParentDevicePath,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              Controller,
+                              &gEfiDevicePathProtocolGuid,
+                              (VOID **) &ParentDevicePath,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   ASSERT_EFI_ERROR (Status);
 
   //
   // Report Status Code to indicate PCI bus starts
   //
   REPORT_STATUS_CODE_WITH_DEVICE_PATH (
-    EFI_PROGRESS_CODE,
-    (EFI_IO_BUS_PCI | EFI_IOB_PC_INIT),
-    ParentDevicePath
-    );
+                                       EFI_PROGRESS_CODE,
+                                       (EFI_IO_BUS_PCI | EFI_IOB_PC_INIT),
+                                       ParentDevicePath
+                                       );
 
   Status = EFI_SUCCESS;
   //
@@ -340,13 +340,13 @@ PciBusDriverBindingStart (
     // Get the rootbridge Io protocol to find the host bridge handle
     //
     Status = gBS->OpenProtocol (
-                    Controller,
-                    &gEfiPciRootBridgeIoProtocolGuid,
-                    (VOID **) &PciRootBridgeIo,
-                    gPciBusDriverBinding.DriverBindingHandle,
-                    Controller,
-                    EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                    );
+                                Controller,
+                                &gEfiPciRootBridgeIoProtocolGuid,
+                                (VOID **) &PciRootBridgeIo,
+                                gPciBusDriverBinding.DriverBindingHandle,
+                                Controller,
+                                EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                                );
 
     if (!EFI_ERROR (Status)) {
       Status = PciEnumerator (Controller, PciRootBridgeIo->ParentHandle);
@@ -371,11 +371,11 @@ PciBusDriverBindingStart (
     gFullEnumeration = FALSE;
 
     Status = gBS->InstallProtocolInterface (
-                    &PciRootBridgeIo->ParentHandle,
-                    &gEfiPciEnumerationCompleteProtocolGuid,
-                    EFI_NATIVE_INTERFACE,
-                    NULL
-                    );
+                                            &PciRootBridgeIo->ParentHandle,
+                                            &gEfiPciEnumerationCompleteProtocolGuid,
+                                            EFI_NATIVE_INTERFACE,
+                                            NULL
+                                            );
     ASSERT_EFI_ERROR (Status);
   }
 
@@ -414,21 +414,21 @@ PciBusDriverBindingStop (
     // Close the bus driver
     //
     gBS->CloseProtocol (
-          Controller,
-          &gEfiDevicePathProtocolGuid,
-          This->DriverBindingHandle,
-          Controller
-          );
+                        Controller,
+                        &gEfiDevicePathProtocolGuid,
+                        This->DriverBindingHandle,
+                        Controller
+                        );
     gBS->CloseProtocol (
-          Controller,
-          &gEfiPciRootBridgeIoProtocolGuid,
-          This->DriverBindingHandle,
-          Controller
-          );
+                        Controller,
+                        &gEfiPciRootBridgeIoProtocolGuid,
+                        This->DriverBindingHandle,
+                        Controller
+                        );
 
     DestroyRootBridgeByHandle (
-      Controller
-      );
+                               Controller
+                               );
 
     return EFI_SUCCESS;
   }
@@ -440,7 +440,6 @@ PciBusDriverBindingStop (
   AllChildrenStopped = TRUE;
 
   for (Index = 0; Index < NumberOfChildren; Index++) {
-
     //
     // De register all the pci device
     //
@@ -457,4 +456,3 @@ PciBusDriverBindingStop (
 
   return EFI_SUCCESS;
 }
-

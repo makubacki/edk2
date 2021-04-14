@@ -8,7 +8,7 @@
 
 #include "PiSmmCore.h"
 
-#define CONFIG_TABLE_SIZE_INCREASED 0x10
+#define CONFIG_TABLE_SIZE_INCREASED  0x10
 
 UINTN  mSmmSystemTableAllocateSize = 0;
 
@@ -82,11 +82,10 @@ SmmInstallConfigurationTable (
     // Copy over deleted entry
     //
     CopyMem (
-      &(ConfigurationTable[Index]),
-      &(ConfigurationTable[Index + 1]),
-      (gSmmCoreSmst.NumberOfTableEntries - Index) * sizeof (EFI_CONFIGURATION_TABLE)
-      );
-
+             &(ConfigurationTable[Index]),
+             &(ConfigurationTable[Index + 1]),
+             (gSmmCoreSmst.NumberOfTableEntries - Index) * sizeof (EFI_CONFIGURATION_TABLE)
+             );
   } else {
     //
     // No matching GUIDs were found, so this is an add operation.
@@ -119,10 +118,10 @@ SmmInstallConfigurationTable (
         // Copy the old table to the new table.
         //
         CopyMem (
-          ConfigurationTable,
-          gSmmCoreSmst.SmmConfigurationTable,
-          Index * sizeof (EFI_CONFIGURATION_TABLE)
-          );
+                 ConfigurationTable,
+                 gSmmCoreSmst.SmmConfigurationTable,
+                 Index * sizeof (EFI_CONFIGURATION_TABLE)
+                 );
 
         //
         // Record the old table pointer.
@@ -154,7 +153,7 @@ SmmInstallConfigurationTable (
     //
     // Fill in the new entry
     //
-    CopyGuid ((VOID *)&ConfigurationTable[Index].VendorGuid, Guid);
+    CopyGuid ((VOID *) &ConfigurationTable[Index].VendorGuid, Guid);
     ConfigurationTable[Index].VendorTable = Table;
 
     //

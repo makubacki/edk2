@@ -24,8 +24,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 VOID
 EFIAPI
 ResetCold (
-  VOID
-  );
+           VOID
+           );
 
 /**
   This function causes a system-wide initialization (warm reset), in which all processors
@@ -36,8 +36,8 @@ ResetCold (
 VOID
 EFIAPI
 ResetWarm (
-  VOID
-  );
+           VOID
+           );
 
 /**
   This function causes the system to enter a power state equivalent
@@ -48,8 +48,8 @@ ResetWarm (
 VOID
 EFIAPI
 ResetShutdown (
-  VOID
-  );
+               VOID
+               );
 
 /**
   This function causes a systemwide reset. The exact type of the reset is

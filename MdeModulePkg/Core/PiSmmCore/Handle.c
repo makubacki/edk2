@@ -12,8 +12,8 @@
 // mProtocolDatabase     - A list of all protocols in the system.  (simple list for now)
 // gHandleList           - A list of all the handles in the system
 //
-LIST_ENTRY  mProtocolDatabase  = INITIALIZE_LIST_HEAD_VARIABLE (mProtocolDatabase);
-LIST_ENTRY  gHandleList        = INITIALIZE_LIST_HEAD_VARIABLE (gHandleList);
+LIST_ENTRY  mProtocolDatabase = INITIALIZE_LIST_HEAD_VARIABLE (mProtocolDatabase);
+LIST_ENTRY  gHandleList = INITIALIZE_LIST_HEAD_VARIABLE (gHandleList);
 
 /**
   Check whether a handle is a valid EFI_HANDLE
@@ -31,13 +31,15 @@ SmmValidateHandle (
 {
   IHANDLE  *Handle;
 
-  Handle = (IHANDLE *)UserHandle;
+  Handle = (IHANDLE *) UserHandle;
   if (Handle == NULL) {
     return EFI_INVALID_PARAMETER;
   }
+
   if (Handle->Signature != EFI_HANDLE_SIGNATURE) {
     return EFI_INVALID_PARAMETER;
   }
+
   return EFI_SUCCESS;
 }
 
@@ -56,9 +58,9 @@ SmmFindProtocolEntry (
   IN BOOLEAN    Create
   )
 {
-  LIST_ENTRY          *Link;
-  PROTOCOL_ENTRY      *Item;
-  PROTOCOL_ENTRY      *ProtEntry;
+  LIST_ENTRY      *Link;
+  PROTOCOL_ENTRY  *Item;
+  PROTOCOL_ENTRY  *ProtEntry;
 
   //
   // Search the database for the matching GUID
@@ -68,8 +70,7 @@ SmmFindProtocolEntry (
   for (Link = mProtocolDatabase.ForwardLink;
        Link != &mProtocolDatabase;
        Link = Link->ForwardLink) {
-
-    Item = CR(Link, PROTOCOL_ENTRY, AllEntries, PROTOCOL_ENTRY_SIGNATURE);
+    Item = CR (Link, PROTOCOL_ENTRY, AllEntries, PROTOCOL_ENTRY_SIGNATURE);
     if (CompareGuid (&Item->ProtocolID, Protocol)) {
       //
       // This is the protocol entry
@@ -84,13 +85,13 @@ SmmFindProtocolEntry (
   // allocate a new entry
   //
   if ((ProtEntry == NULL) && Create) {
-    ProtEntry = AllocatePool (sizeof(PROTOCOL_ENTRY));
+    ProtEntry = AllocatePool (sizeof (PROTOCOL_ENTRY));
     if (ProtEntry != NULL) {
       //
       // Initialize new protocol entry structure
       //
       ProtEntry->Signature = PROTOCOL_ENTRY_SIGNATURE;
-      CopyGuid ((VOID *)&ProtEntry->ProtocolID, Protocol);
+      CopyGuid ((VOID *) &ProtEntry->ProtocolID, Protocol);
       InitializeListHead (&ProtEntry->Protocols);
       InitializeListHead (&ProtEntry->Notify);
 
@@ -100,6 +101,7 @@ SmmFindProtocolEntry (
       InsertTailList (&mProtocolDatabase, &ProtEntry->AllEntries);
     }
   }
+
   return ProtEntry;
 }
 
@@ -136,17 +138,19 @@ SmmFindProtocolInterface (
     //
     // Look at each protocol interface for any matches
     //
-    for (Link = Handle->Protocols.ForwardLink; Link != &Handle->Protocols; Link=Link->ForwardLink) {
+    for (Link = Handle->Protocols.ForwardLink; Link != &Handle->Protocols; Link = Link->ForwardLink) {
       //
       // If this protocol interface matches, remove it
       //
-      Prot = CR(Link, PROTOCOL_INTERFACE, Link, PROTOCOL_INTERFACE_SIGNATURE);
+      Prot = CR (Link, PROTOCOL_INTERFACE, Link, PROTOCOL_INTERFACE_SIGNATURE);
       if (Prot->Interface == Interface && Prot->Protocol == ProtEntry) {
         break;
       }
+
       Prot = NULL;
     }
   }
+
   return Prot;
 }
 
@@ -174,12 +178,12 @@ SmmInstallProtocolInterface (
   )
 {
   return SmmInstallProtocolInterfaceNotify (
-           UserHandle,
-           Protocol,
-           InterfaceType,
-           Interface,
-           TRUE
-           );
+                                            UserHandle,
+                                            Protocol,
+                                            InterfaceType,
+                                            Interface,
+                                            TRUE
+                                            );
 }
 
 /**
@@ -229,14 +233,14 @@ SmmInstallProtocolInterfaceNotify (
   //
   // Print debug message
   //
-  DEBUG((DEBUG_LOAD | DEBUG_INFO, "SmmInstallProtocolInterface: %g %p\n", Protocol, Interface));
+  DEBUG ((DEBUG_LOAD | DEBUG_INFO, "SmmInstallProtocolInterface: %g %p\n", Protocol, Interface));
 
   Status = EFI_OUT_OF_RESOURCES;
-  Prot = NULL;
+  Prot   = NULL;
   Handle = NULL;
 
   if (*UserHandle != NULL) {
-    Status = SmmHandleProtocol (*UserHandle, Protocol, (VOID **)&ExistingInterface);
+    Status = SmmHandleProtocol (*UserHandle, Protocol, (VOID **) &ExistingInterface);
     if (!EFI_ERROR (Status)) {
       return EFI_INVALID_PARAMETER;
     }
@@ -253,7 +257,7 @@ SmmInstallProtocolInterfaceNotify (
   //
   // Allocate a new protocol interface structure
   //
-  Prot = AllocateZeroPool (sizeof(PROTOCOL_INTERFACE));
+  Prot = AllocateZeroPool (sizeof (PROTOCOL_INTERFACE));
   if (Prot == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;
@@ -262,9 +266,9 @@ SmmInstallProtocolInterfaceNotify (
   //
   // If caller didn't supply a handle, allocate a new one
   //
-  Handle = (IHANDLE *)*UserHandle;
+  Handle = (IHANDLE *) *UserHandle;
   if (Handle == NULL) {
-    Handle = AllocateZeroPool (sizeof(IHANDLE));
+    Handle = AllocateZeroPool (sizeof (IHANDLE));
     if (Handle == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
       goto Done;
@@ -284,7 +288,7 @@ SmmInstallProtocolInterfaceNotify (
   } else {
     Status = SmmValidateHandle (Handle);
     if (EFI_ERROR (Status)) {
-      DEBUG((DEBUG_ERROR, "SmmInstallProtocolInterface: input handle at 0x%x is invalid\n", Handle));
+      DEBUG ((DEBUG_ERROR, "SmmInstallProtocolInterface: input handle at 0x%x is invalid\n", Handle));
       goto Done;
     }
   }
@@ -298,8 +302,8 @@ SmmInstallProtocolInterfaceNotify (
   // Initialize the protocol interface structure
   //
   Prot->Signature = PROTOCOL_INTERFACE_SIGNATURE;
-  Prot->Handle = Handle;
-  Prot->Protocol = ProtEntry;
+  Prot->Handle    = Handle;
+  Prot->Protocol  = ProtEntry;
   Prot->Interface = Interface;
 
   //
@@ -320,6 +324,7 @@ SmmInstallProtocolInterfaceNotify (
   if (Notify) {
     SmmNotifyProtocol (Prot);
   }
+
   Status = EFI_SUCCESS;
 
 Done:
@@ -335,8 +340,10 @@ Done:
     if (Prot != NULL) {
       FreePool (Prot);
     }
-    DEBUG((DEBUG_ERROR, "SmmInstallProtocolInterface: %g %p failed with %r\n", Protocol, Interface, Status));
+
+    DEBUG ((DEBUG_ERROR, "SmmInstallProtocolInterface: %g %p failed with %r\n", Protocol, Interface, Status));
   }
+
   return Status;
 }
 
@@ -392,7 +399,7 @@ SmmUninstallProtocolInterface (
   // Remove the protocol interface from the protocol
   //
   Status = EFI_NOT_FOUND;
-  Handle = (IHANDLE *)UserHandle;
+  Handle = (IHANDLE *) UserHandle;
   Prot   = SmmRemoveInterfaceFromProtocol (Handle, Protocol, Interface);
 
   if (Prot != NULL) {
@@ -417,6 +424,7 @@ SmmUninstallProtocolInterface (
     RemoveEntryList (&Handle->AllHandles);
     FreePool (Handle);
   }
+
   return Status;
 }
 
@@ -446,18 +454,19 @@ SmmGetProtocolInterface (
     return NULL;
   }
 
-  Handle = (IHANDLE *)UserHandle;
+  Handle = (IHANDLE *) UserHandle;
 
   //
   // Look at each protocol interface for a match
   //
   for (Link = Handle->Protocols.ForwardLink; Link != &Handle->Protocols; Link = Link->ForwardLink) {
-    Prot = CR(Link, PROTOCOL_INTERFACE, Link, PROTOCOL_INTERFACE_SIGNATURE);
+    Prot = CR (Link, PROTOCOL_INTERFACE, Link, PROTOCOL_INTERFACE_SIGNATURE);
     ProtEntry = Prot->Protocol;
     if (CompareGuid (&ProtEntry->ProtocolID, Protocol)) {
       return Prot;
     }
   }
+
   return NULL;
 }
 

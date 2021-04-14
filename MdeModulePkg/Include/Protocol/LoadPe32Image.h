@@ -12,13 +12,13 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define __LOAD_PE32_IMAGE_H__
 
 #define PE32_IMAGE_PROTOCOL_GUID  \
-  {0x5cb5c776,0x60d5,0x45ee,{0x88,0x3c,0x45,0x27,0x8,0xcd,0x74,0x3f }}
+  { 0x5cb5c776, 0x60d5, 0x45ee, { 0x88, 0x3c, 0x45, 0x27, 0x8, 0xcd, 0x74, 0x3f } }
 
 #define EFI_LOAD_PE_IMAGE_ATTRIBUTE_NONE                                 0x00
 #define EFI_LOAD_PE_IMAGE_ATTRIBUTE_RUNTIME_REGISTRATION                 0x01
 #define EFI_LOAD_PE_IMAGE_ATTRIBUTE_DEBUG_IMAGE_INFO_TABLE_REGISTRATION  0x02
 
-typedef struct _EFI_PE32_IMAGE_PROTOCOL   EFI_PE32_IMAGE_PROTOCOL;
+typedef struct _EFI_PE32_IMAGE_PROTOCOL EFI_PE32_IMAGE_PROTOCOL;
 
 /**
 
@@ -53,19 +53,19 @@ typedef struct _EFI_PE32_IMAGE_PROTOCOL   EFI_PE32_IMAGE_PROTOCOL;
                                 platform policy specifies that the image should not be started.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *LOAD_PE_IMAGE)(
-  IN EFI_PE32_IMAGE_PROTOCOL           *This,
-  IN  EFI_HANDLE                       ParentImageHandle,
-  IN  EFI_DEVICE_PATH_PROTOCOL         *FilePath,
-  IN  VOID                             *SourceBuffer       OPTIONAL,
-  IN  UINTN                            SourceSize,
-  IN  EFI_PHYSICAL_ADDRESS             DstBuffer           OPTIONAL,
-  IN OUT UINTN                         *NumberOfPages      OPTIONAL,
-  OUT EFI_HANDLE                       *ImageHandle,
-  OUT EFI_PHYSICAL_ADDRESS             *EntryPoint         OPTIONAL,
-  IN  UINT32                           Attribute
-  );
+                        IN EFI_PE32_IMAGE_PROTOCOL           *This,
+                        IN  EFI_HANDLE                       ParentImageHandle,
+                        IN  EFI_DEVICE_PATH_PROTOCOL         *FilePath,
+                        IN  VOID                             *SourceBuffer       OPTIONAL,
+                        IN  UINTN                            SourceSize,
+                        IN  EFI_PHYSICAL_ADDRESS             DstBuffer           OPTIONAL,
+                        IN OUT UINTN                         *NumberOfPages      OPTIONAL,
+                        OUT EFI_HANDLE                       *ImageHandle,
+                        OUT EFI_PHYSICAL_ADDRESS             *EntryPoint         OPTIONAL,
+                        IN  UINT32                           Attribute
+                        );
 
 /**
 
@@ -80,18 +80,17 @@ EFI_STATUS
 
 --*/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *UNLOAD_PE_IMAGE)(
-  IN EFI_PE32_IMAGE_PROTOCOL          *This,
-  IN EFI_HANDLE                       ImageHandle
-  );
+                          IN EFI_PE32_IMAGE_PROTOCOL          *This,
+                          IN EFI_HANDLE                       ImageHandle
+                          );
 
 struct _EFI_PE32_IMAGE_PROTOCOL {
-  LOAD_PE_IMAGE     LoadPeImage;
-  UNLOAD_PE_IMAGE   UnLoadPeImage;
+  LOAD_PE_IMAGE      LoadPeImage;
+  UNLOAD_PE_IMAGE    UnLoadPeImage;
 };
 
-extern EFI_GUID gEfiLoadPeImageProtocolGuid;
+extern EFI_GUID  gEfiLoadPeImageProtocolGuid;
 
 #endif
-

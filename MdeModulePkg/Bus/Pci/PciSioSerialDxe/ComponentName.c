@@ -20,14 +20,13 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gPciSioSerialComponen
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL gPciSioSerialComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gPciSioSerialComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) SerialComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) SerialComponentNameGetControllerName,
   "en"
 };
 
-
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mSerialDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mSerialDriverNameTable[] = {
   {
     "eng;en",
     L"PCI SIO Serial Driver"
@@ -86,12 +85,12 @@ SerialComponentNameGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mSerialDriverNameTable,
-           DriverName,
-           (BOOLEAN)(This == &gPciSioSerialComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mSerialDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gPciSioSerialComponentName)
+                               );
 }
 
 /**
@@ -183,17 +182,17 @@ SerialComponentNameGetControllerName (
   //
   IoProtocolGuid = &gEfiSioProtocolGuid;
   Status = EfiTestManagedDevice (
-             ControllerHandle,
-             gSerialControllerDriver.DriverBindingHandle,
-             IoProtocolGuid
-             );
+                                 ControllerHandle,
+                                 gSerialControllerDriver.DriverBindingHandle,
+                                 IoProtocolGuid
+                                 );
   if (EFI_ERROR (Status)) {
     IoProtocolGuid = &gEfiPciIoProtocolGuid;
     Status = EfiTestManagedDevice (
-               ControllerHandle,
-               gSerialControllerDriver.DriverBindingHandle,
-               IoProtocolGuid
-               );
+                                   ControllerHandle,
+                                   gSerialControllerDriver.DriverBindingHandle,
+                                   IoProtocolGuid
+                                   );
   }
 
   if (EFI_ERROR (Status)) {
@@ -203,10 +202,10 @@ SerialComponentNameGetControllerName (
   ControllerNameTable = NULL;
   if (ChildHandle != NULL) {
     Status = EfiTestChildHandle (
-               ControllerHandle,
-               ChildHandle,
-               IoProtocolGuid
-               );
+                                 ControllerHandle,
+                                 ChildHandle,
+                                 IoProtocolGuid
+                                 );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -215,13 +214,13 @@ SerialComponentNameGetControllerName (
     // Get the Serial I/O Protocol from the child handle
     //
     Status = gBS->OpenProtocol (
-                    ChildHandle,
-                    &gEfiSerialIoProtocolGuid,
-                    (VOID **) &SerialIo,
-                    gSerialControllerDriver.DriverBindingHandle,
-                    ChildHandle,
-                    EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                    );
+                                ChildHandle,
+                                &gEfiSerialIoProtocolGuid,
+                                (VOID **) &SerialIo,
+                                gSerialControllerDriver.DriverBindingHandle,
+                                ChildHandle,
+                                EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                                );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -234,12 +233,12 @@ SerialComponentNameGetControllerName (
   }
 
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           ControllerNameTable,
-           ControllerName,
-           (BOOLEAN)(This == &gPciSioSerialComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               ControllerNameTable,
+                               ControllerName,
+                               (BOOLEAN) (This == &gPciSioSerialComponentName)
+                               );
 }
 
 /**
@@ -254,26 +253,26 @@ AddName (
   IN  UINT32                                   Instance
   )
 {
-  CHAR16                                       SerialPortName[SERIAL_PORT_NAME_LEN];
-  UnicodeSPrint (
-    SerialPortName,
-    sizeof (SerialPortName),
-    (SerialDevice->PciDeviceInfo != NULL) ? PCI_SERIAL_PORT_NAME : SIO_SERIAL_PORT_NAME,
-    Instance
-    );
-  AddUnicodeString2 (
-    "eng",
-    gPciSioSerialComponentName.SupportedLanguages,
-    &SerialDevice->ControllerNameTable,
-    SerialPortName,
-    TRUE
-    );
-  AddUnicodeString2 (
-    "en",
-    gPciSioSerialComponentName2.SupportedLanguages,
-    &SerialDevice->ControllerNameTable,
-    SerialPortName,
-    FALSE
-    );
+  CHAR16  SerialPortName[SERIAL_PORT_NAME_LEN];
 
+  UnicodeSPrint (
+                 SerialPortName,
+                 sizeof (SerialPortName),
+                 (SerialDevice->PciDeviceInfo != NULL) ? PCI_SERIAL_PORT_NAME : SIO_SERIAL_PORT_NAME,
+                 Instance
+                 );
+  AddUnicodeString2 (
+                     "eng",
+                     gPciSioSerialComponentName.SupportedLanguages,
+                     &SerialDevice->ControllerNameTable,
+                     SerialPortName,
+                     TRUE
+                     );
+  AddUnicodeString2 (
+                     "en",
+                     gPciSioSerialComponentName2.SupportedLanguages,
+                     &SerialDevice->ControllerNameTable,
+                     SerialPortName,
+                     FALSE
+                     );
 }

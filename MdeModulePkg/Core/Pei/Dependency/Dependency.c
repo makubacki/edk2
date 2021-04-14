@@ -49,19 +49,19 @@ IsPpiInstalled (
   // possibilities of alignment faults for cross-compilation
   // environments such as Intel?Itanium(TM).
   //
-  CopyMem(&PpiGuid, Stack->Operator, sizeof(EFI_GUID));
+  CopyMem (&PpiGuid, Stack->Operator, sizeof (EFI_GUID));
 
   //
   // Check if the PPI is installed.
   //
-  Status = PeiServicesLocatePpi(
-             &PpiGuid,        // GUID
-             0,               // INSTANCE
-             NULL,            // EFI_PEI_PPI_DESCRIPTOR
-             &PeiInstance     // PPI
-             );
+  Status = PeiServicesLocatePpi (
+                                 &PpiGuid,    // GUID
+                                 0,           // INSTANCE
+                                 NULL,        // EFI_PEI_PPI_DESCRIPTOR
+                                 &PeiInstance // PPI
+                                 );
 
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     return FALSE;
   }
 
@@ -98,14 +98,12 @@ PeimDispatchReadiness (
   EVAL_STACK_ENTRY               *StackPtr;
   EVAL_STACK_ENTRY               EvalStack[MAX_GRAMMAR_SIZE];
 
-  Iterator  = DependencyExpression;
+  Iterator = DependencyExpression;
 
   StackPtr = EvalStack;
 
   while (TRUE) {
-
     switch (*(Iterator++)) {
-
       //
       // For performance reason we put the frequently used items in front of
       // the rarely used  items
@@ -127,7 +125,10 @@ PeimDispatchReadiness (
         //
         StackPtr->Operator = (VOID *) Iterator;
         Iterator = Iterator + sizeof (EFI_GUID);
-        DEBUG ((DEBUG_DISPATCH, "  PUSH GUID(%g) = %a\n", StackPtr->Operator, IsPpiInstalled (PeiServices, StackPtr) ? "TRUE" : "FALSE"));
+        DEBUG (
+              (DEBUG_DISPATCH, "  PUSH GUID(%g) = %a\n", StackPtr->Operator,
+               IsPpiInstalled (PeiServices, StackPtr) ? "TRUE" : "FALSE")
+              );
         StackPtr++;
         break;
 
@@ -138,6 +139,7 @@ PeimDispatchReadiness (
         } else {
           DEBUG ((DEBUG_DISPATCH, "  OR\n"));
         }
+
         //
         // Check to make sure the dependency grammar doesn't underflow the
         // EvalStack on the two POPs for the AND operation.  Don't need to
@@ -166,15 +168,16 @@ PeimDispatchReadiness (
         //
         if (*(Iterator - 1) == EFI_DEP_AND) {
           if (!(IsPpiInstalled (PeiServices, StackPtr))) {
-            (StackPtr-1)->Result = FALSE;
+            (StackPtr-1)->Result   = FALSE;
             (StackPtr-1)->Operator = NULL;
           }
         } else {
           if (IsPpiInstalled (PeiServices, StackPtr)) {
-            (StackPtr-1)->Result = TRUE;
+            (StackPtr-1)->Result   = TRUE;
             (StackPtr-1)->Operator = NULL;
           }
         }
+
         break;
 
       case (EFI_DEP_END):
@@ -188,6 +191,7 @@ PeimDispatchReadiness (
           DEBUG ((DEBUG_DISPATCH, "  RESULT = FALSE (Underflow Error)\n"));
           return FALSE;
         }
+
         DEBUG ((DEBUG_DISPATCH, "  RESULT = %a\n", IsPpiInstalled (PeiServices, StackPtr) ? "TRUE" : "FALSE"));
         return IsPpiInstalled (PeiServices, StackPtr);
 
@@ -203,7 +207,8 @@ PeimDispatchReadiness (
           DEBUG ((DEBUG_DISPATCH, "  RESULT = FALSE (Underflow Error)\n"));
           return FALSE;
         }
-        (StackPtr-1)->Result = (BOOLEAN) !IsPpiInstalled (PeiServices, (StackPtr-1));
+
+        (StackPtr-1)->Result   = (BOOLEAN) !IsPpiInstalled (PeiServices, (StackPtr-1));
         (StackPtr-1)->Operator = NULL;
         break;
 
@@ -214,6 +219,7 @@ PeimDispatchReadiness (
         } else {
           DEBUG ((DEBUG_DISPATCH, "  FALSE\n"));
         }
+
         //
         // Check to make sure the dependency grammar doesn't overflow the
         // EvalStack on the push
@@ -222,6 +228,7 @@ PeimDispatchReadiness (
           DEBUG ((DEBUG_DISPATCH, "  RESULT = FALSE (Underflow Error)\n"));
           return FALSE;
         }
+
         //
         // Iterator has increased by 1 after we retrieve the operand, so here we
         // should get the value pointed by (Iterator - 1), in order to obtain the
@@ -232,6 +239,7 @@ PeimDispatchReadiness (
         } else {
           StackPtr->Result = FALSE;
         }
+
         StackPtr->Operator = NULL;
         StackPtr++;
         break;

@@ -6,7 +6,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
-
 #include "ScsiDisk.h"
 
 //
@@ -21,16 +20,15 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gScsiDiskComponentNam
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL gScsiDiskComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gScsiDiskComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) ScsiDiskComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) ScsiDiskComponentNameGetControllerName,
   "en"
 };
 
-
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mScsiDiskDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mScsiDiskDriverNameTable[] = {
   { "eng;en", (CHAR16 *) L"Scsi Disk Driver" },
-  { NULL , NULL }
+  { NULL,     NULL                           }
 };
 
 /**
@@ -81,12 +79,12 @@ ScsiDiskComponentNameGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mScsiDiskDriverNameTable,
-           DriverName,
-           (BOOLEAN)(This == &gScsiDiskComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mScsiDiskDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gScsiDiskComponentName)
+                               );
 }
 
 /**
@@ -167,9 +165,9 @@ ScsiDiskComponentNameGetControllerName (
   OUT CHAR16                                          **ControllerName
   )
 {
-  EFI_STATUS            Status;
-  SCSI_DISK_DEV         *ScsiDiskDevice;
-  EFI_BLOCK_IO_PROTOCOL *BlockIo;
+  EFI_STATUS             Status;
+  SCSI_DISK_DEV          *ScsiDiskDevice;
+  EFI_BLOCK_IO_PROTOCOL  *BlockIo;
 
   //
   // This is a device driver, so ChildHandle must be NULL.
@@ -182,24 +180,25 @@ ScsiDiskComponentNameGetControllerName (
   // Make sure this driver is currently managing ControllerHandle
   //
   Status = EfiTestManagedDevice (
-             ControllerHandle,
-             gScsiDiskDriverBinding.DriverBindingHandle,
-             &gEfiScsiIoProtocolGuid
-             );
+                                 ControllerHandle,
+                                 gScsiDiskDriverBinding.DriverBindingHandle,
+                                 &gEfiScsiIoProtocolGuid
+                                 );
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   //
   // Get the device context
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiBlockIoProtocolGuid,
-                  (VOID **) &BlockIo,
-                  gScsiDiskDriverBinding.DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiBlockIoProtocolGuid,
+                              (VOID **) &BlockIo,
+                              gScsiDiskDriverBinding.DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
 
   if (EFI_ERROR (Status)) {
     return Status;
@@ -208,11 +207,10 @@ ScsiDiskComponentNameGetControllerName (
   ScsiDiskDevice = SCSI_DISK_DEV_FROM_BLKIO (BlockIo);
 
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           ScsiDiskDevice->ControllerNameTable,
-           ControllerName,
-           (BOOLEAN)(This == &gScsiDiskComponentName)
-           );
-
+                               Language,
+                               This->SupportedLanguages,
+                               ScsiDiskDevice->ControllerNameTable,
+                               ControllerName,
+                               (BOOLEAN) (This == &gScsiDiskComponentName)
+                               );
 }

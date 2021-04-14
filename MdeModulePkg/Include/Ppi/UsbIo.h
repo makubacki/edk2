@@ -22,13 +22,13 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 ///
 #define PEI_USB_IO_PPI_GUID \
   { \
-    0x7c29785c, 0x66b9, 0x49fc, { 0xb7, 0x97, 0x1c, 0xa5, 0x55, 0xe, 0xf2, 0x83} \
+    0x7c29785c, 0x66b9, 0x49fc, { 0xb7, 0x97, 0x1c, 0xa5, 0x55, 0xe, 0xf2, 0x83 } \
   }
 
 ///
 /// Forward declaration for the PEI_USB_IO_PPI.
 ///
-typedef struct _PEI_USB_IO_PPI  PEI_USB_IO_PPI;
+typedef struct _PEI_USB_IO_PPI PEI_USB_IO_PPI;
 
 /**
   Submits control transfer to a target USB device.
@@ -62,16 +62,16 @@ typedef struct _PEI_USB_IO_PPI  PEI_USB_IO_PPI;
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *PEI_USB_CONTROL_TRANSFER)(
-  IN     EFI_PEI_SERVICES        **PeiServices,
-  IN     PEI_USB_IO_PPI          *This,
-  IN     EFI_USB_DEVICE_REQUEST  *Request,
-  IN     EFI_USB_DATA_DIRECTION  Direction,
-  IN     UINT32                  Timeout,
-  IN OUT VOID                    *Data OPTIONAL,
-  IN     UINTN                   DataLength  OPTIONAL
-  );
+                                   IN     EFI_PEI_SERVICES        **PeiServices,
+                                   IN     PEI_USB_IO_PPI          *This,
+                                   IN     EFI_USB_DEVICE_REQUEST  *Request,
+                                   IN     EFI_USB_DATA_DIRECTION  Direction,
+                                   IN     UINT32                  Timeout,
+                                   IN OUT VOID                    *Data OPTIONAL,
+                                   IN     UINTN                   DataLength  OPTIONAL
+                                   );
 
 /**
   Submits bulk transfer to a target USB device.
@@ -98,15 +98,15 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *PEI_USB_BULK_TRANSFER)(
-  IN EFI_PEI_SERVICES  **PeiServices,
-  IN PEI_USB_IO_PPI    *This,
-  IN UINT8             DeviceEndpoint,
-  IN OUT VOID          *Data,
-  IN OUT UINTN         *DataLength,
-  IN UINTN             Timeout
-  );
+                                IN EFI_PEI_SERVICES  **PeiServices,
+                                IN PEI_USB_IO_PPI    *This,
+                                IN UINT8             DeviceEndpoint,
+                                IN OUT VOID          *Data,
+                                IN OUT UINTN         *DataLength,
+                                IN UINTN             Timeout
+                                );
 
 /**
   Get interface descriptor from a USB device.
@@ -122,12 +122,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *PEI_USB_GET_INTERFACE_DESCRIPTOR)(
-  IN EFI_PEI_SERVICES              **PeiServices,
-  IN PEI_USB_IO_PPI                *This,
-  IN EFI_USB_INTERFACE_DESCRIPTOR  **InterfaceDescriptor
-  );
+                                           IN EFI_PEI_SERVICES              **PeiServices,
+                                           IN PEI_USB_IO_PPI                *This,
+                                           IN EFI_USB_INTERFACE_DESCRIPTOR  **InterfaceDescriptor
+                                           );
 
 /**
   Get endpoint descriptor from a USB device.
@@ -144,13 +144,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *PEI_USB_GET_ENDPOINT_DESCRIPTOR)(
-  IN EFI_PEI_SERVICES               **PeiServices,
-  IN PEI_USB_IO_PPI                 *This,
-  IN UINT8                          EndpointIndex,
-  IN EFI_USB_ENDPOINT_DESCRIPTOR    **EndpointDescriptor
-  );
+                                          IN EFI_PEI_SERVICES               **PeiServices,
+                                          IN PEI_USB_IO_PPI                 *This,
+                                          IN UINT8                          EndpointIndex,
+                                          IN EFI_USB_ENDPOINT_DESCRIPTOR    **EndpointDescriptor
+                                          );
 
 /**
   Issue a port reset to the device.
@@ -164,11 +164,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *PEI_USB_PORT_RESET)(
-  IN EFI_PEI_SERVICES  **PeiServices,
-  IN PEI_USB_IO_PPI    *This
-  );
+                             IN EFI_PEI_SERVICES  **PeiServices,
+                             IN PEI_USB_IO_PPI    *This
+                             );
 
 ///
 /// This PPI contains a set of services to interact with the USB host controller.
@@ -177,13 +177,13 @@ EFI_STATUS
 /// these interfaces.
 ///
 struct _PEI_USB_IO_PPI {
-  PEI_USB_CONTROL_TRANSFER          UsbControlTransfer;
-  PEI_USB_BULK_TRANSFER             UsbBulkTransfer;
-  PEI_USB_GET_INTERFACE_DESCRIPTOR  UsbGetInterfaceDescriptor;
-  PEI_USB_GET_ENDPOINT_DESCRIPTOR   UsbGetEndpointDescriptor;
-  PEI_USB_PORT_RESET                UsbPortReset;
+  PEI_USB_CONTROL_TRANSFER            UsbControlTransfer;
+  PEI_USB_BULK_TRANSFER               UsbBulkTransfer;
+  PEI_USB_GET_INTERFACE_DESCRIPTOR    UsbGetInterfaceDescriptor;
+  PEI_USB_GET_ENDPOINT_DESCRIPTOR     UsbGetEndpointDescriptor;
+  PEI_USB_PORT_RESET                  UsbPortReset;
 };
 
-extern EFI_GUID gPeiUsbIoPpiGuid;
+extern EFI_GUID  gPeiUsbIoPpiGuid;
 
 #endif

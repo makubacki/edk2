@@ -11,17 +11,17 @@
 //
 // Driver name table
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mEmmcDxeDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mEmmcDxeDriverNameTable[] = {
   { "eng;en", L"Edkii Emmc Device Driver" },
-  { NULL , NULL }
+  { NULL,     NULL                        }
 };
 
 //
 // Controller name table
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mEmmcDxeControllerNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mEmmcDxeControllerNameTable[] = {
   { "eng;en", L"Edkii Emmc Host Controller" },
-  { NULL , NULL }
+  { NULL,     NULL                          }
 };
 
 //
@@ -36,7 +36,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gEmmcDxeComponentName
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL gEmmcDxeComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gEmmcDxeComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) EmmcDxeComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) EmmcDxeComponentNameGetControllerName,
   "en"
@@ -90,13 +90,12 @@ EmmcDxeComponentNameGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mEmmcDxeDriverNameTable,
-           DriverName,
-           (BOOLEAN)(This == &gEmmcDxeComponentName)
-           );
-
+                               Language,
+                               This->SupportedLanguages,
+                               mEmmcDxeDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gEmmcDxeComponentName)
+                               );
 }
 
 /**
@@ -187,10 +186,10 @@ EmmcDxeComponentNameGetControllerName (
   // Make sure this driver is currently managing ControllHandle
   //
   Status = EfiTestManagedDevice (
-             ControllerHandle,
-             gEmmcDxeDriverBinding.DriverBindingHandle,
-             &gEfiSdMmcPassThruProtocolGuid
-             );
+                                 ControllerHandle,
+                                 gEmmcDxeDriverBinding.DriverBindingHandle,
+                                 &gEfiSdMmcPassThruProtocolGuid
+                                 );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -198,24 +197,25 @@ EmmcDxeComponentNameGetControllerName (
   ControllerNameTable = mEmmcDxeControllerNameTable;
   if (ChildHandle != NULL) {
     Status = EfiTestChildHandle (
-               ControllerHandle,
-               ChildHandle,
-               &gEfiSdMmcPassThruProtocolGuid
-               );
+                                 ControllerHandle,
+                                 ChildHandle,
+                                 &gEfiSdMmcPassThruProtocolGuid
+                                 );
     if (EFI_ERROR (Status)) {
       return Status;
     }
+
     //
     // Get the child context
     //
     Status = gBS->OpenProtocol (
-                    ChildHandle,
-                    &gEfiBlockIoProtocolGuid,
-                    (VOID **) &BlockIo,
-                    gEmmcDxeDriverBinding.DriverBindingHandle,
-                    ChildHandle,
-                    EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                    );
+                                ChildHandle,
+                                &gEfiBlockIoProtocolGuid,
+                                (VOID **) &BlockIo,
+                                gEmmcDxeDriverBinding.DriverBindingHandle,
+                                ChildHandle,
+                                EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                                );
     if (EFI_ERROR (Status)) {
       return EFI_UNSUPPORTED;
     }
@@ -226,11 +226,10 @@ EmmcDxeComponentNameGetControllerName (
   }
 
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           ControllerNameTable,
-           ControllerName,
-           (BOOLEAN)(This == &gEmmcDxeComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               ControllerNameTable,
+                               ControllerName,
+                               (BOOLEAN) (This == &gEmmcDxeComponentName)
+                               );
 }
-

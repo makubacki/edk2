@@ -15,23 +15,23 @@
 #include <Library/FrameBufferBltLib.h>
 
 struct FRAME_BUFFER_CONFIGURE {
-  UINT32                          PixelsPerScanLine;
-  UINT32                          BytesPerPixel;
-  UINT32                          Width;
-  UINT32                          Height;
-  UINT8                           *FrameBuffer;
-  EFI_GRAPHICS_PIXEL_FORMAT       PixelFormat;
-  EFI_PIXEL_BITMASK               PixelMasks;
-  INT8                            PixelShl[4]; // R-G-B-Rsvd
-  INT8                            PixelShr[4]; // R-G-B-Rsvd
-  UINT8                           LineBuffer[0];
+  UINT32                       PixelsPerScanLine;
+  UINT32                       BytesPerPixel;
+  UINT32                       Width;
+  UINT32                       Height;
+  UINT8                        *FrameBuffer;
+  EFI_GRAPHICS_PIXEL_FORMAT    PixelFormat;
+  EFI_PIXEL_BITMASK            PixelMasks;
+  INT8                         PixelShl[4];    // R-G-B-Rsvd
+  INT8                         PixelShr[4];    // R-G-B-Rsvd
+  UINT8                        LineBuffer[0];
 };
 
-CONST EFI_PIXEL_BITMASK mRgbPixelMasks = {
+CONST EFI_PIXEL_BITMASK  mRgbPixelMasks = {
   0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000
 };
 
-CONST EFI_PIXEL_BITMASK mBgrPixelMasks = {
+CONST EFI_PIXEL_BITMASK  mBgrPixelMasks = {
   0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000
 };
 
@@ -58,22 +58,26 @@ FrameBufferBltLibConfigurePixelFormat (
   ASSERT (BytesPerPixel != NULL);
 
   MergedMasks = 0;
-  Masks = (UINT32*) BitMask;
+  Masks = (UINT32 *) BitMask;
   for (Index = 0; Index < 3; Index++) {
     ASSERT ((MergedMasks & Masks[Index]) == 0);
 
     PixelShl[Index] = (INT8) HighBitSet32 (Masks[Index]) - 23 + (Index * 8);
     if (PixelShl[Index] < 0) {
-      PixelShr[Index] = -PixelShl[Index];
+      PixelShr[Index] = - PixelShl[Index];
       PixelShl[Index] = 0;
     } else {
       PixelShr[Index] = 0;
     }
-    DEBUG ((DEBUG_INFO, "%d: shl:%d shr:%d mask:%x\n", Index,
-            PixelShl[Index], PixelShr[Index], Masks[Index]));
+
+    DEBUG (
+           (DEBUG_INFO, "%d: shl:%d shr:%d mask:%x\n", Index,
+            PixelShl[Index], PixelShr[Index], Masks[Index])
+           );
 
     MergedMasks = (UINT32) (MergedMasks | Masks[Index]);
   }
+
   MergedMasks = (UINT32) (MergedMasks | Masks[3]);
 
   ASSERT (MergedMasks != 0);
@@ -107,35 +111,35 @@ FrameBufferBltConfigure (
   IN OUT UINTN                                 *ConfigureSize
   )
 {
-  CONST EFI_PIXEL_BITMASK                      *BitMask;
-  UINT32                                       BytesPerPixel;
-  INT8                                         PixelShl[4];
-  INT8                                         PixelShr[4];
+  CONST EFI_PIXEL_BITMASK  *BitMask;
+  UINT32                   BytesPerPixel;
+  INT8                     PixelShl[4];
+  INT8                     PixelShr[4];
 
   if (ConfigureSize == NULL) {
     return RETURN_INVALID_PARAMETER;
   }
 
   switch (FrameBufferInfo->PixelFormat) {
-  case PixelRedGreenBlueReserved8BitPerColor:
-    BitMask = &mRgbPixelMasks;
-    break;
+    case PixelRedGreenBlueReserved8BitPerColor:
+      BitMask = &mRgbPixelMasks;
+      break;
 
-  case PixelBlueGreenRedReserved8BitPerColor:
-    BitMask = &mBgrPixelMasks;
-    break;
+    case PixelBlueGreenRedReserved8BitPerColor:
+      BitMask = &mBgrPixelMasks;
+      break;
 
-  case PixelBitMask:
-    BitMask = &FrameBufferInfo->PixelInformation;
-    break;
+    case PixelBitMask:
+      BitMask = &FrameBufferInfo->PixelInformation;
+      break;
 
-  case PixelBltOnly:
-    ASSERT (FrameBufferInfo->PixelFormat != PixelBltOnly);
-    return RETURN_UNSUPPORTED;
+    case PixelBltOnly:
+      ASSERT (FrameBufferInfo->PixelFormat != PixelBltOnly);
+      return RETURN_UNSUPPORTED;
 
-  default:
-    ASSERT (FALSE);
-    return RETURN_INVALID_PARAMETER;
+    default:
+      ASSERT (FALSE);
+      return RETURN_INVALID_PARAMETER;
   }
 
   if (FrameBufferInfo->PixelsPerScanLine < FrameBufferInfo->HorizontalResolution) {
@@ -145,9 +149,9 @@ FrameBufferBltConfigure (
   FrameBufferBltLibConfigurePixelFormat (BitMask, &BytesPerPixel, PixelShl, PixelShr);
 
   if (*ConfigureSize < sizeof (FRAME_BUFFER_CONFIGURE)
-                     + FrameBufferInfo->HorizontalResolution * BytesPerPixel) {
+      + FrameBufferInfo->HorizontalResolution * BytesPerPixel) {
     *ConfigureSize = sizeof (FRAME_BUFFER_CONFIGURE)
-                   + FrameBufferInfo->HorizontalResolution * BytesPerPixel;
+                     + FrameBufferInfo->HorizontalResolution * BytesPerPixel;
     return RETURN_BUFFER_TOO_SMALL;
   }
 
@@ -155,14 +159,14 @@ FrameBufferBltConfigure (
     return RETURN_INVALID_PARAMETER;
   }
 
-  CopyMem (&Configure->PixelMasks, BitMask,  sizeof (*BitMask));
-  CopyMem (Configure->PixelShl,    PixelShl, sizeof (PixelShl));
-  CopyMem (Configure->PixelShr,    PixelShr, sizeof (PixelShr));
-  Configure->BytesPerPixel     = BytesPerPixel;
-  Configure->PixelFormat       = FrameBufferInfo->PixelFormat;
-  Configure->FrameBuffer       = (UINT8*) FrameBuffer;
-  Configure->Width             = FrameBufferInfo->HorizontalResolution;
-  Configure->Height            = FrameBufferInfo->VerticalResolution;
+  CopyMem (&Configure->PixelMasks, BitMask, sizeof (*BitMask));
+  CopyMem (Configure->PixelShl, PixelShl, sizeof (PixelShl));
+  CopyMem (Configure->PixelShr, PixelShr, sizeof (PixelShr));
+  Configure->BytesPerPixel = BytesPerPixel;
+  Configure->PixelFormat   = FrameBufferInfo->PixelFormat;
+  Configure->FrameBuffer   = (UINT8 *) FrameBuffer;
+  Configure->Width  = FrameBufferInfo->HorizontalResolution;
+  Configure->Height = FrameBufferInfo->VerticalResolution;
   Configure->PixelsPerScanLine = FrameBufferInfo->PixelsPerScanLine;
 
   return RETURN_SUCCESS;
@@ -193,17 +197,17 @@ FrameBufferBltLibVideoFill (
   IN  UINTN                         Height
   )
 {
-  UINTN                             IndexX;
-  UINTN                             IndexY;
-  UINT8                             *Destination;
-  UINT8                             Uint8;
-  UINT32                            Uint32;
-  UINT64                            WideFill;
-  BOOLEAN                           UseWideFill;
-  BOOLEAN                           LineBufferReady;
-  UINTN                             Offset;
-  UINTN                             WidthInBytes;
-  UINTN                             SizeInBytes;
+  UINTN    IndexX;
+  UINTN    IndexY;
+  UINT8    *Destination;
+  UINT8    Uint8;
+  UINT32   Uint32;
+  UINT64   WideFill;
+  BOOLEAN  UseWideFill;
+  BOOLEAN  LineBufferReady;
+  UINTN    Offset;
+  UINTN    WidthInBytes;
+  UINTN    SizeInBytes;
 
   //
   // BltBuffer to Video: Source is BltBuffer, destination is Video
@@ -225,18 +229,20 @@ FrameBufferBltLibVideoFill (
 
   WidthInBytes = Width * Configure->BytesPerPixel;
 
-  Uint32 = *(UINT32*) Color;
+  Uint32   = *(UINT32 *) Color;
   WideFill =
     (UINT32) (
-    (((Uint32 << Configure->PixelShl[0]) >> Configure->PixelShr[0]) &
-     Configure->PixelMasks.RedMask) |
-     (((Uint32 << Configure->PixelShl[1]) >> Configure->PixelShr[1]) &
-      Configure->PixelMasks.GreenMask) |
-      (((Uint32 << Configure->PixelShl[2]) >> Configure->PixelShr[2]) &
-       Configure->PixelMasks.BlueMask)
-      );
-  DEBUG ((EFI_D_VERBOSE, "VideoFill: color=0x%x, wide-fill=0x%x\n",
-          Uint32, WideFill));
+              (((Uint32 << Configure->PixelShl[0]) >> Configure->PixelShr[0]) &
+               Configure->PixelMasks.RedMask) |
+              (((Uint32 << Configure->PixelShl[1]) >> Configure->PixelShr[1]) &
+               Configure->PixelMasks.GreenMask) |
+              (((Uint32 << Configure->PixelShl[2]) >> Configure->PixelShr[2]) &
+               Configure->PixelMasks.BlueMask)
+              );
+  DEBUG (
+         (EFI_D_VERBOSE, "VideoFill: color=0x%x, wide-fill=0x%x\n",
+          Uint32, WideFill)
+         );
 
   //
   // If the size of the pixel data evenly divides the sizeof
@@ -245,7 +251,7 @@ FrameBufferBltLibVideoFill (
   UseWideFill = TRUE;
   if ((sizeof (WideFill) % Configure->BytesPerPixel) == 0) {
     for (IndexX = Configure->BytesPerPixel; IndexX < sizeof (WideFill); IndexX++) {
-      ((UINT8*) &WideFill)[IndexX] = ((UINT8*) &WideFill)[IndexX % Configure->BytesPerPixel];
+      ((UINT8 *) &WideFill)[IndexX] = ((UINT8 *) &WideFill)[IndexX % Configure->BytesPerPixel];
     }
   } else {
     //
@@ -253,14 +259,15 @@ FrameBufferBltLibVideoFill (
     // a wide fill operation.
     //
     for (
-      IndexX = 1, Uint8 = ((UINT8*) &WideFill)[0];
-      IndexX < Configure->BytesPerPixel;
-      IndexX++) {
-      if (Uint8 != ((UINT8*) &WideFill)[IndexX]) {
+         IndexX = 1, Uint8 = ((UINT8 *) &WideFill)[0];
+         IndexX < Configure->BytesPerPixel;
+         IndexX++) {
+      if (Uint8 != ((UINT8 *) &WideFill)[IndexX]) {
         UseWideFill = FALSE;
         break;
       }
     }
+
     if (UseWideFill) {
       SetMem (&WideFill, sizeof (WideFill), Uint8);
     }
@@ -277,6 +284,7 @@ FrameBufferBltLibVideoFill (
       Destination += SizeInBytes & ~3;
       SizeInBytes &= 3;
     }
+
     if (SizeInBytes > 0) {
       SetMem (Destination, SizeInBytes, (UINT8) (UINTN) WideFill);
     }
@@ -295,6 +303,7 @@ FrameBufferBltLibVideoFill (
           Destination += SizeInBytes & ~7;
           SizeInBytes &= 7;
         }
+
         if (SizeInBytes > 0) {
           CopyMem (Destination, &WideFill, SizeInBytes);
         }
@@ -304,14 +313,16 @@ FrameBufferBltLibVideoFill (
           CopyMem (Configure->LineBuffer, &WideFill, Configure->BytesPerPixel);
           for (IndexX = 1; IndexX < Width; ) {
             CopyMem (
-              (Configure->LineBuffer + (IndexX * Configure->BytesPerPixel)),
-              Configure->LineBuffer,
-              MIN (IndexX, Width - IndexX) * Configure->BytesPerPixel
-            );
+                     (Configure->LineBuffer + (IndexX * Configure->BytesPerPixel)),
+                     Configure->LineBuffer,
+                     MIN (IndexX, Width - IndexX) * Configure->BytesPerPixel
+                     );
             IndexX += MIN (IndexX, Width - IndexX);
           }
+
           LineBufferReady = TRUE;
         }
+
         CopyMem (Destination, Configure->LineBuffer, WidthInBytes);
       }
     }
@@ -341,7 +352,7 @@ FrameBufferBltLibVideoFill (
 RETURN_STATUS
 FrameBufferBltLibVideoToBltBuffer (
   IN     FRAME_BUFFER_CONFIGURE          *Configure,
-     OUT EFI_GRAPHICS_OUTPUT_BLT_PIXEL   *BltBuffer,
+  OUT EFI_GRAPHICS_OUTPUT_BLT_PIXEL   *BltBuffer,
   IN     UINTN                           SourceX,
   IN     UINTN                           SourceY,
   IN     UINTN                           DestinationX,
@@ -351,15 +362,15 @@ FrameBufferBltLibVideoToBltBuffer (
   IN     UINTN                           Delta
   )
 {
-  UINTN                                  DstY;
-  UINTN                                  SrcY;
-  EFI_GRAPHICS_OUTPUT_BLT_PIXEL          *Blt;
-  UINT8                                  *Source;
-  UINT8                                  *Destination;
-  UINTN                                  IndexX;
-  UINT32                                 Uint32;
-  UINTN                                  Offset;
-  UINTN                                  WidthInBytes;
+  UINTN                          DstY;
+  UINTN                          SrcY;
+  EFI_GRAPHICS_OUTPUT_BLT_PIXEL  *Blt;
+  UINT8                          *Source;
+  UINT8                          *Destination;
+  UINTN                          IndexX;
+  UINT32                         Uint32;
+  UINTN                          Offset;
+  UINTN                          WidthInBytes;
 
   //
   // Video to BltBuffer: Source is Video, destination is BltBuffer
@@ -393,7 +404,6 @@ FrameBufferBltLibVideoToBltBuffer (
   for (SrcY = SourceY, DstY = DestinationY;
        DstY < (Height + DestinationY);
        SrcY++, DstY++) {
-
     Offset = (SrcY * Configure->PixelsPerScanLine) + SourceX;
     Offset = Configure->BytesPerPixel * Offset;
     Source = Configure->FrameBuffer + Offset;
@@ -409,18 +419,18 @@ FrameBufferBltLibVideoToBltBuffer (
     if (Configure->PixelFormat != PixelBlueGreenRedReserved8BitPerColor) {
       for (IndexX = 0; IndexX < Width; IndexX++) {
         Blt = (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)
-          ((UINT8 *) BltBuffer + (DstY * Delta) +
-          (DestinationX + IndexX) * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
-        Uint32 = *(UINT32*) (Configure->LineBuffer + (IndexX * Configure->BytesPerPixel));
-        *(UINT32*) Blt =
+              ((UINT8 *) BltBuffer + (DstY * Delta) +
+               (DestinationX + IndexX) * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
+        Uint32 = *(UINT32 *) (Configure->LineBuffer + (IndexX * Configure->BytesPerPixel));
+        *(UINT32 *) Blt =
           (UINT32) (
-          (((Uint32 & Configure->PixelMasks.RedMask) >>
-            Configure->PixelShl[0]) << Configure->PixelShr[0]) |
-            (((Uint32 & Configure->PixelMasks.GreenMask) >>
-              Configure->PixelShl[1]) << Configure->PixelShr[1]) |
-              (((Uint32 & Configure->PixelMasks.BlueMask) >>
-                Configure->PixelShl[2]) << Configure->PixelShr[2])
-            );
+                    (((Uint32 & Configure->PixelMasks.RedMask) >>
+                      Configure->PixelShl[0]) << Configure->PixelShr[0]) |
+                    (((Uint32 & Configure->PixelMasks.GreenMask) >>
+                      Configure->PixelShl[1]) << Configure->PixelShr[1]) |
+                    (((Uint32 & Configure->PixelMasks.BlueMask) >>
+                      Configure->PixelShl[2]) << Configure->PixelShr[2])
+                    );
       }
     }
   }
@@ -459,15 +469,15 @@ FrameBufferBltLibBufferToVideo (
   IN  UINTN                                 Delta
   )
 {
-  UINTN                                    DstY;
-  UINTN                                    SrcY;
-  EFI_GRAPHICS_OUTPUT_BLT_PIXEL            *Blt;
-  UINT8                                    *Source;
-  UINT8                                    *Destination;
-  UINTN                                    IndexX;
-  UINT32                                   Uint32;
-  UINTN                                    Offset;
-  UINTN                                    WidthInBytes;
+  UINTN                          DstY;
+  UINTN                          SrcY;
+  EFI_GRAPHICS_OUTPUT_BLT_PIXEL  *Blt;
+  UINT8                          *Source;
+  UINT8                          *Destination;
+  UINTN                          IndexX;
+  UINT32                         Uint32;
+  UINTN                          Offset;
+  UINTN                          WidthInBytes;
 
   //
   // BltBuffer to Video: Source is BltBuffer, destination is Video
@@ -498,7 +508,6 @@ FrameBufferBltLibBufferToVideo (
   for (SrcY = SourceY, DstY = DestinationY;
        SrcY < (Height + SourceY);
        SrcY++, DstY++) {
-
     Offset = (DstY * Configure->PixelsPerScanLine) + DestinationX;
     Offset = Configure->BytesPerPixel * Offset;
     Destination = Configure->FrameBuffer + Offset;
@@ -509,21 +518,22 @@ FrameBufferBltLibBufferToVideo (
       for (IndexX = 0; IndexX < Width; IndexX++) {
         Blt =
           (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *) (
-              (UINT8 *) BltBuffer +
-              (SrcY * Delta) +
-              ((SourceX + IndexX) * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL))
-            );
-        Uint32 = *(UINT32*) Blt;
-        *(UINT32*) (Configure->LineBuffer + (IndexX * Configure->BytesPerPixel)) =
+                                             (UINT8 *) BltBuffer +
+                                             (SrcY * Delta) +
+                                             ((SourceX + IndexX) * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL))
+                                             );
+        Uint32 = *(UINT32 *) Blt;
+        *(UINT32 *) (Configure->LineBuffer + (IndexX * Configure->BytesPerPixel)) =
           (UINT32) (
-              (((Uint32 << Configure->PixelShl[0]) >> Configure->PixelShr[0]) &
-               Configure->PixelMasks.RedMask) |
-              (((Uint32 << Configure->PixelShl[1]) >> Configure->PixelShr[1]) &
-               Configure->PixelMasks.GreenMask) |
-              (((Uint32 << Configure->PixelShl[2]) >> Configure->PixelShr[2]) &
-               Configure->PixelMasks.BlueMask)
-            );
+                    (((Uint32 << Configure->PixelShl[0]) >> Configure->PixelShr[0]) &
+                     Configure->PixelMasks.RedMask) |
+                    (((Uint32 << Configure->PixelShl[1]) >> Configure->PixelShr[1]) &
+                     Configure->PixelMasks.GreenMask) |
+                    (((Uint32 << Configure->PixelShl[2]) >> Configure->PixelShr[2]) &
+                     Configure->PixelMasks.BlueMask)
+                    );
       }
+
       Source = Configure->LineBuffer;
     }
 
@@ -559,11 +569,11 @@ FrameBufferBltLibVideoToVideo (
   IN  UINTN                                 Height
   )
 {
-  UINT8                                     *Source;
-  UINT8                                     *Destination;
-  UINTN                                     Offset;
-  UINTN                                     WidthInBytes;
-  INTN                                      LineStride;
+  UINT8  *Source;
+  UINT8  *Destination;
+  UINTN  Offset;
+  UINTN  WidthInBytes;
+  INTN   LineStride;
 
   //
   // Video to Video: Source is Video, destination is Video
@@ -605,7 +615,7 @@ FrameBufferBltLibVideoToVideo (
     //
     Source += Height * LineStride;
     Destination += Height * LineStride;
-    LineStride = -LineStride;
+    LineStride   = - LineStride;
   }
 
   while (Height-- > 0) {
@@ -665,54 +675,54 @@ FrameBufferBlt (
   }
 
   switch (BltOperation) {
-  case EfiBltVideoToBltBuffer:
-    return FrameBufferBltLibVideoToBltBuffer (
-             Configure,
-             BltBuffer,
-             SourceX,
-             SourceY,
-             DestinationX,
-             DestinationY,
-             Width,
-             Height,
-             Delta
-             );
+    case EfiBltVideoToBltBuffer:
+      return FrameBufferBltLibVideoToBltBuffer (
+                                                Configure,
+                                                BltBuffer,
+                                                SourceX,
+                                                SourceY,
+                                                DestinationX,
+                                                DestinationY,
+                                                Width,
+                                                Height,
+                                                Delta
+                                                );
 
-  case EfiBltVideoToVideo:
-    return FrameBufferBltLibVideoToVideo (
-             Configure,
-             SourceX,
-             SourceY,
-             DestinationX,
-             DestinationY,
-             Width,
-             Height
-             );
+    case EfiBltVideoToVideo:
+      return FrameBufferBltLibVideoToVideo (
+                                            Configure,
+                                            SourceX,
+                                            SourceY,
+                                            DestinationX,
+                                            DestinationY,
+                                            Width,
+                                            Height
+                                            );
 
-  case EfiBltVideoFill:
-    return FrameBufferBltLibVideoFill (
-             Configure,
-             BltBuffer,
-             DestinationX,
-             DestinationY,
-             Width,
-             Height
-             );
+    case EfiBltVideoFill:
+      return FrameBufferBltLibVideoFill (
+                                         Configure,
+                                         BltBuffer,
+                                         DestinationX,
+                                         DestinationY,
+                                         Width,
+                                         Height
+                                         );
 
-  case EfiBltBufferToVideo:
-    return FrameBufferBltLibBufferToVideo (
-             Configure,
-             BltBuffer,
-             SourceX,
-             SourceY,
-             DestinationX,
-             DestinationY,
-             Width,
-             Height,
-             Delta
-             );
+    case EfiBltBufferToVideo:
+      return FrameBufferBltLibBufferToVideo (
+                                             Configure,
+                                             BltBuffer,
+                                             SourceX,
+                                             SourceY,
+                                             DestinationX,
+                                             DestinationY,
+                                             Width,
+                                             Height,
+                                             Delta
+                                             );
 
-  default:
-    return RETURN_INVALID_PARAMETER;
+    default:
+      return RETURN_INVALID_PARAMETER;
   }
 }

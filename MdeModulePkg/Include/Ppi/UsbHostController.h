@@ -21,7 +21,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 ///
 #define PEI_USB_HOST_CONTROLLER_PPI_GUID \
   { \
-    0x652b38a9, 0x77f4, 0x453f, { 0x89, 0xd5, 0xe7, 0xbd, 0xc3, 0x52, 0xfc, 0x53} \
+    0x652b38a9, 0x77f4, 0x453f, { 0x89, 0xd5, 0xe7, 0xbd, 0xc3, 0x52, 0xfc, 0x53 } \
   }
 
 ///
@@ -67,20 +67,20 @@ typedef struct _PEI_USB_HOST_CONTROLLER_PPI PEI_USB_HOST_CONTROLLER_PPI;
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *PEI_USB_HOST_CONTROLLER_CONTROL_TRANSFER)(
-  IN EFI_PEI_SERVICES             **PeiServices,
-  IN PEI_USB_HOST_CONTROLLER_PPI  *This,
-  IN     UINT8                    DeviceAddress,
-  IN     UINT8                    DeviceSpeed,
-  IN     UINT8                    MaximumPacketLength,
-  IN     USB_DEVICE_REQUEST       *Request,
-  IN     EFI_USB_DATA_DIRECTION   TransferDirection,
-  IN OUT VOID                     *Data OPTIONAL,
-  IN OUT UINTN                    *DataLength OPTIONAL,
-  IN     UINTN                    TimeOut,
-  OUT    UINT32                   *TransferResult
-  );
+                                                   IN EFI_PEI_SERVICES             **PeiServices,
+                                                   IN PEI_USB_HOST_CONTROLLER_PPI  *This,
+                                                   IN     UINT8                    DeviceAddress,
+                                                   IN     UINT8                    DeviceSpeed,
+                                                   IN     UINT8                    MaximumPacketLength,
+                                                   IN     USB_DEVICE_REQUEST       *Request,
+                                                   IN     EFI_USB_DATA_DIRECTION   TransferDirection,
+                                                   IN OUT VOID                     *Data OPTIONAL,
+                                                   IN OUT UINTN                    *DataLength OPTIONAL,
+                                                   IN     UINTN                    TimeOut,
+                                                   OUT    UINT32                   *TransferResult
+                                                   );
 
 /**
   Initiate a USB bulk transfer using a specific USB Host controller on the USB bus.
@@ -115,19 +115,19 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *PEI_USB_HOST_CONTROLLER_BULK_TRANSFER)(
-  IN     EFI_PEI_SERVICES             **PeiServices,
-  IN     PEI_USB_HOST_CONTROLLER_PPI  *This,
-  IN     UINT8                        DeviceAddress,
-  IN     UINT8                        EndPointAddress,
-  IN     UINT8                        MaximumPacketLength,
-  IN OUT VOID                         *Data,
-  IN OUT UINTN                        *DataLength,
-  IN OUT UINT8                        *DataToggle,
-  IN     UINTN                        TimeOut,
-  OUT    UINT32                       *TransferResult
-  );
+                                                IN     EFI_PEI_SERVICES             **PeiServices,
+                                                IN     PEI_USB_HOST_CONTROLLER_PPI  *This,
+                                                IN     UINT8                        DeviceAddress,
+                                                IN     UINT8                        EndPointAddress,
+                                                IN     UINT8                        MaximumPacketLength,
+                                                IN OUT VOID                         *Data,
+                                                IN OUT UINTN                        *DataLength,
+                                                IN OUT UINT8                        *DataToggle,
+                                                IN     UINTN                        TimeOut,
+                                                OUT    UINT32                       *TransferResult
+                                                );
 
 /**
   Retrieves the number of root hub ports.
@@ -144,12 +144,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *PEI_USB_HOST_CONTROLLER_GET_ROOTHUB_PORT_NUMBER)(
-  IN  EFI_PEI_SERVICES             **PeiServices,
-  IN  PEI_USB_HOST_CONTROLLER_PPI  *This,
-  OUT UINT8                        *PortNumber
-  );
+                                                          IN  EFI_PEI_SERVICES             **PeiServices,
+                                                          IN  PEI_USB_HOST_CONTROLLER_PPI  *This,
+                                                          OUT UINT8                        *PortNumber
+                                                          );
 
 /**
   Retrieves the current status of a USB root hub port.
@@ -169,13 +169,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *PEI_USB_HOST_CONTROLLER_GET_ROOTHUB_PORT_STATUS)(
-  IN  EFI_PEI_SERVICES             **PeiServices,
-  IN  PEI_USB_HOST_CONTROLLER_PPI  *This,
-  IN  UINT8                        PortNumber,
-  OUT EFI_USB_PORT_STATUS          *PortStatus
-  );
+                                                          IN  EFI_PEI_SERVICES             **PeiServices,
+                                                          IN  PEI_USB_HOST_CONTROLLER_PPI  *This,
+                                                          IN  UINT8                        PortNumber,
+                                                          OUT EFI_USB_PORT_STATUS          *PortStatus
+                                                          );
 
 /**
   Sets a feature for the specified root hub port.
@@ -195,13 +195,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *PEI_USB_HOST_CONTROLLER_SET_ROOTHUB_PORT_FEATURE)(
-  IN EFI_PEI_SERVICES             **PeiServices,
-  IN PEI_USB_HOST_CONTROLLER_PPI  *This,
-  IN UINT8                        PortNumber,
-  IN EFI_USB_PORT_FEATURE         PortFeature
-  );
+                                                           IN EFI_PEI_SERVICES             **PeiServices,
+                                                           IN PEI_USB_HOST_CONTROLLER_PPI  *This,
+                                                           IN UINT8                        PortNumber,
+                                                           IN EFI_USB_PORT_FEATURE         PortFeature
+                                                           );
 
 /**
   Clears a feature for the specified root hub port.
@@ -221,13 +221,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *PEI_USB_HOST_CONTROLLER_CLEAR_ROOTHUB_PORT_FEATURE)(
-  IN EFI_PEI_SERVICES             **PeiServices,
-  IN PEI_USB_HOST_CONTROLLER_PPI  *This,
-  IN UINT8                        PortNumber,
-  IN EFI_USB_PORT_FEATURE         PortFeature
-  );
+                                                             IN EFI_PEI_SERVICES             **PeiServices,
+                                                             IN PEI_USB_HOST_CONTROLLER_PPI  *This,
+                                                             IN UINT8                        PortNumber,
+                                                             IN EFI_USB_PORT_FEATURE         PortFeature
+                                                             );
 
 ///
 /// This PPI contains a set of services to interact with the USB host controller.
@@ -236,15 +236,14 @@ EFI_STATUS
 /// Specification for more information on these interfaces.
 ///
 struct _PEI_USB_HOST_CONTROLLER_PPI {
-  PEI_USB_HOST_CONTROLLER_CONTROL_TRANSFER            ControlTransfer;
-  PEI_USB_HOST_CONTROLLER_BULK_TRANSFER               BulkTransfer;
-  PEI_USB_HOST_CONTROLLER_GET_ROOTHUB_PORT_NUMBER     GetRootHubPortNumber;
-  PEI_USB_HOST_CONTROLLER_GET_ROOTHUB_PORT_STATUS     GetRootHubPortStatus;
-  PEI_USB_HOST_CONTROLLER_SET_ROOTHUB_PORT_FEATURE    SetRootHubPortFeature;
-  PEI_USB_HOST_CONTROLLER_CLEAR_ROOTHUB_PORT_FEATURE  ClearRootHubPortFeature;
+  PEI_USB_HOST_CONTROLLER_CONTROL_TRANSFER              ControlTransfer;
+  PEI_USB_HOST_CONTROLLER_BULK_TRANSFER                 BulkTransfer;
+  PEI_USB_HOST_CONTROLLER_GET_ROOTHUB_PORT_NUMBER       GetRootHubPortNumber;
+  PEI_USB_HOST_CONTROLLER_GET_ROOTHUB_PORT_STATUS       GetRootHubPortStatus;
+  PEI_USB_HOST_CONTROLLER_SET_ROOTHUB_PORT_FEATURE      SetRootHubPortFeature;
+  PEI_USB_HOST_CONTROLLER_CLEAR_ROOTHUB_PORT_FEATURE    ClearRootHubPortFeature;
 };
 
-extern EFI_GUID gPeiUsbHostControllerPpiGuid;
+extern EFI_GUID  gPeiUsbHostControllerPpiGuid;
 
 #endif
-

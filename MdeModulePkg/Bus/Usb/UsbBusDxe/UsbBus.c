@@ -9,7 +9,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "UsbBus.h"
 
-EFI_USB_IO_PROTOCOL mUsbIoProtocol = {
+EFI_USB_IO_PROTOCOL  mUsbIoProtocol = {
   UsbIoControlTransfer,
   UsbIoBulkTransfer,
   UsbIoAsyncInterruptTransfer,
@@ -25,7 +25,7 @@ EFI_USB_IO_PROTOCOL mUsbIoProtocol = {
   UsbIoPortReset
 };
 
-EFI_DRIVER_BINDING_PROTOCOL mUsbBusDriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  mUsbBusDriverBinding = {
   UsbBusControllerDriverSupported,
   UsbBusControllerDriverStart,
   UsbBusControllerDriverStop,
@@ -60,17 +60,17 @@ UsbIoControlTransfer (
   IN  EFI_USB_DEVICE_REQUEST  *Request,
   IN  EFI_USB_DATA_DIRECTION  Direction,
   IN  UINT32                  Timeout,
-  IN  OUT VOID                *Data,      OPTIONAL
+  IN  OUT VOID                *Data, OPTIONAL
   IN  UINTN                   DataLength, OPTIONAL
   OUT UINT32                  *UsbStatus
   )
 {
-  USB_DEVICE              *Dev;
-  USB_INTERFACE           *UsbIf;
-  USB_ENDPOINT_DESC       *EpDesc;
-  EFI_TPL                 OldTpl;
-  EFI_STATUS              Status;
-  UINTN                   RequestedDataLength;
+  USB_DEVICE         *Dev;
+  USB_INTERFACE      *UsbIf;
+  USB_ENDPOINT_DESC  *EpDesc;
+  EFI_TPL            OldTpl;
+  EFI_STATUS         Status;
+  UINTN              RequestedDataLength;
 
   if (UsbStatus == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -78,23 +78,23 @@ UsbIoControlTransfer (
 
   OldTpl = gBS->RaiseTPL (USB_BUS_TPL);
 
-  UsbIf  = USB_INTERFACE_FROM_USBIO (This);
-  Dev    = UsbIf->Device;
+  UsbIf = USB_INTERFACE_FROM_USBIO (This);
+  Dev   = UsbIf->Device;
 
   RequestedDataLength = DataLength;
   Status = UsbHcControlTransfer (
-             Dev->Bus,
-             Dev->Address,
-             Dev->Speed,
-             Dev->MaxPacket0,
-             Request,
-             Direction,
-             Data,
-             &DataLength,
-             (UINTN) Timeout,
-             &Dev->Translator,
-             UsbStatus
-             );
+                                 Dev->Bus,
+                                 Dev->Address,
+                                 Dev->Speed,
+                                 Dev->MaxPacket0,
+                                 Request,
+                                 Direction,
+                                 Data,
+                                 &DataLength,
+                                 (UINTN) Timeout,
+                                 &Dev->Translator,
+                                 UsbStatus
+                                 );
   //
   // If the request completed successfully and the Direction of the request is
   // EfiUsbDataIn or EfiUsbDataOut, then make sure the actual number of bytes
@@ -116,12 +116,12 @@ UsbIoControlTransfer (
     ASSERT (Dev->Translator.TranslatorHubAddress < Dev->Bus->MaxDevices);
     if (Dev->Translator.TranslatorHubAddress != 0) {
       UsbHubCtrlClearTTBuffer (
-        Dev->Bus->Devices[Dev->Translator.TranslatorHubAddress],
-        Dev->Translator.TranslatorPortNumber,
-        Dev->Address,
-        0,
-        USB_ENDPOINT_CONTROL
-        );
+                               Dev->Bus->Devices[Dev->Translator.TranslatorHubAddress],
+                               Dev->Translator.TranslatorPortNumber,
+                               Dev->Address,
+                               0,
+                               USB_ENDPOINT_CONTROL
+                               );
     }
 
     goto ON_EXIT;
@@ -139,10 +139,12 @@ UsbIoControlTransfer (
   // Reset the endpoint toggle when endpoint stall is cleared
   //
   if ((Request->Request     == USB_REQ_CLEAR_FEATURE) &&
-      (Request->RequestType == USB_REQUEST_TYPE (EfiUsbNoData, USB_REQ_TYPE_STANDARD,
-                                                 USB_TARGET_ENDPOINT)) &&
+      (Request->RequestType == USB_REQUEST_TYPE (
+                                                 EfiUsbNoData,
+                                                 USB_REQ_TYPE_STANDARD,
+                                                 USB_TARGET_ENDPOINT
+                                                 )) &&
       (Request->Value       == USB_FEATURE_ENDPOINT_HALT)) {
-
     EpDesc = UsbGetEndpointDesc (UsbIf, (UINT8) Request->Index);
 
     if (EpDesc != NULL) {
@@ -158,16 +160,19 @@ UsbIoControlTransfer (
   // completely irrelevant.
   //
   if ((Request->Request == USB_REQ_SET_CONFIG) &&
-      (Request->RequestType == USB_REQUEST_TYPE (EfiUsbNoData, USB_REQ_TYPE_STANDARD,
-                                                 USB_TARGET_DEVICE))) {
+      (Request->RequestType == USB_REQUEST_TYPE (
+                                                 EfiUsbNoData,
+                                                 USB_REQ_TYPE_STANDARD,
+                                                 USB_TARGET_DEVICE
+                                                 ))) {
     //
     // Don't re-create the USB interfaces if configuration isn't changed.
     //
     if ((Dev->ActiveConfig != NULL) &&
         (Request->Value == Dev->ActiveConfig->Desc.ConfigurationValue)) {
-
       goto ON_EXIT;
     }
+
     DEBUG ((EFI_D_INFO, "UsbIoControlTransfer: configure changed!!! Do NOT use old UsbIo!!!\n"));
 
     if (Dev->ActiveConfig != NULL) {
@@ -191,10 +196,12 @@ UsbIoControlTransfer (
   // should remains the same.
   //
   if ((Request->Request     == USB_REQ_SET_INTERFACE) &&
-      (Request->RequestType == USB_REQUEST_TYPE (EfiUsbNoData, USB_REQ_TYPE_STANDARD,
-                                                 USB_TARGET_INTERFACE)) &&
+      (Request->RequestType == USB_REQUEST_TYPE (
+                                                 EfiUsbNoData,
+                                                 USB_REQ_TYPE_STANDARD,
+                                                 USB_TARGET_INTERFACE
+                                                 )) &&
       (Request->Index       == UsbIf->IfSetting->Desc.InterfaceNumber)) {
-
     Status = UsbSelectSetting (UsbIf->IfDesc, (UINT8) Request->Value);
 
     if (!EFI_ERROR (Status)) {
@@ -207,7 +214,6 @@ ON_EXIT:
   gBS->RestoreTPL (OldTpl);
   return Status;
 }
-
 
 /**
   Execute a bulk transfer to the device endpoint.
@@ -236,48 +242,47 @@ UsbIoBulkTransfer (
   OUT UINT32              *UsbStatus
   )
 {
-  USB_DEVICE              *Dev;
-  USB_INTERFACE           *UsbIf;
-  USB_ENDPOINT_DESC       *EpDesc;
-  UINT8                   BufNum;
-  UINT8                   Toggle;
-  EFI_TPL                 OldTpl;
-  EFI_STATUS              Status;
+  USB_DEVICE         *Dev;
+  USB_INTERFACE      *UsbIf;
+  USB_ENDPOINT_DESC  *EpDesc;
+  UINT8              BufNum;
+  UINT8              Toggle;
+  EFI_TPL            OldTpl;
+  EFI_STATUS         Status;
 
-  if ((USB_ENDPOINT_ADDR (Endpoint) == 0) || (USB_ENDPOINT_ADDR(Endpoint) > 15) ||
+  if ((USB_ENDPOINT_ADDR (Endpoint) == 0) || (USB_ENDPOINT_ADDR (Endpoint) > 15) ||
       (UsbStatus == NULL)) {
-
     return EFI_INVALID_PARAMETER;
   }
 
-  OldTpl  = gBS->RaiseTPL (USB_BUS_TPL);
+  OldTpl = gBS->RaiseTPL (USB_BUS_TPL);
 
-  UsbIf   = USB_INTERFACE_FROM_USBIO (This);
-  Dev     = UsbIf->Device;
+  UsbIf = USB_INTERFACE_FROM_USBIO (This);
+  Dev   = UsbIf->Device;
 
-  EpDesc  = UsbGetEndpointDesc (UsbIf, Endpoint);
+  EpDesc = UsbGetEndpointDesc (UsbIf, Endpoint);
 
   if ((EpDesc == NULL) || (USB_ENDPOINT_TYPE (&EpDesc->Desc) != USB_ENDPOINT_BULK)) {
     Status = EFI_INVALID_PARAMETER;
     goto ON_EXIT;
   }
 
-  BufNum  = 1;
-  Toggle  = EpDesc->Toggle;
-  Status  = UsbHcBulkTransfer (
-              Dev->Bus,
-              Dev->Address,
-              Endpoint,
-              Dev->Speed,
-              EpDesc->Desc.MaxPacketSize,
-              BufNum,
-              &Data,
-              DataLength,
-              &Toggle,
-              Timeout,
-              &Dev->Translator,
-              UsbStatus
-              );
+  BufNum = 1;
+  Toggle = EpDesc->Toggle;
+  Status = UsbHcBulkTransfer (
+                              Dev->Bus,
+                              Dev->Address,
+                              Endpoint,
+                              Dev->Speed,
+                              EpDesc->Desc.MaxPacketSize,
+                              BufNum,
+                              &Data,
+                              DataLength,
+                              &Toggle,
+                              Timeout,
+                              &Dev->Translator,
+                              UsbStatus
+                              );
 
   EpDesc->Toggle = Toggle;
 
@@ -289,12 +294,12 @@ UsbIoBulkTransfer (
     ASSERT (Dev->Translator.TranslatorHubAddress < Dev->Bus->MaxDevices);
     if (Dev->Translator.TranslatorHubAddress != 0) {
       UsbHubCtrlClearTTBuffer (
-        Dev->Bus->Devices[Dev->Translator.TranslatorHubAddress],
-        Dev->Translator.TranslatorPortNumber,
-        Dev->Address,
-        0,
-        USB_ENDPOINT_BULK
-        );
+                               Dev->Bus->Devices[Dev->Translator.TranslatorHubAddress],
+                               Dev->Translator.TranslatorPortNumber,
+                               Dev->Address,
+                               0,
+                               USB_ENDPOINT_BULK
+                               );
     }
   }
 
@@ -302,7 +307,6 @@ ON_EXIT:
   gBS->RestoreTPL (OldTpl);
   return Status;
 }
-
 
 /**
   Execute a synchronous interrupt transfer.
@@ -331,25 +335,24 @@ UsbIoSyncInterruptTransfer (
   OUT UINT32              *UsbStatus
   )
 {
-  USB_DEVICE              *Dev;
-  USB_INTERFACE           *UsbIf;
-  USB_ENDPOINT_DESC       *EpDesc;
-  EFI_TPL                 OldTpl;
-  UINT8                   Toggle;
-  EFI_STATUS              Status;
+  USB_DEVICE         *Dev;
+  USB_INTERFACE      *UsbIf;
+  USB_ENDPOINT_DESC  *EpDesc;
+  EFI_TPL            OldTpl;
+  UINT8              Toggle;
+  EFI_STATUS         Status;
 
-  if ((USB_ENDPOINT_ADDR (Endpoint) == 0) || (USB_ENDPOINT_ADDR(Endpoint) > 15) ||
+  if ((USB_ENDPOINT_ADDR (Endpoint) == 0) || (USB_ENDPOINT_ADDR (Endpoint) > 15) ||
       (UsbStatus == NULL)) {
-
     return EFI_INVALID_PARAMETER;
   }
 
-  OldTpl  = gBS->RaiseTPL (USB_BUS_TPL);
+  OldTpl = gBS->RaiseTPL (USB_BUS_TPL);
 
-  UsbIf   = USB_INTERFACE_FROM_USBIO (This);
-  Dev     = UsbIf->Device;
+  UsbIf = USB_INTERFACE_FROM_USBIO (This);
+  Dev   = UsbIf->Device;
 
-  EpDesc  = UsbGetEndpointDesc (UsbIf, Endpoint);
+  EpDesc = UsbGetEndpointDesc (UsbIf, Endpoint);
 
   if ((EpDesc == NULL) || (USB_ENDPOINT_TYPE (&EpDesc->Desc) != USB_ENDPOINT_INTERRUPT)) {
     Status = EFI_INVALID_PARAMETER;
@@ -358,18 +361,18 @@ UsbIoSyncInterruptTransfer (
 
   Toggle = EpDesc->Toggle;
   Status = UsbHcSyncInterruptTransfer (
-             Dev->Bus,
-             Dev->Address,
-             Endpoint,
-             Dev->Speed,
-             EpDesc->Desc.MaxPacketSize,
-             Data,
-             DataLength,
-             &Toggle,
-             Timeout,
-             &Dev->Translator,
-             UsbStatus
-             );
+                                       Dev->Bus,
+                                       Dev->Address,
+                                       Endpoint,
+                                       Dev->Speed,
+                                       EpDesc->Desc.MaxPacketSize,
+                                       Data,
+                                       DataLength,
+                                       &Toggle,
+                                       Timeout,
+                                       &Dev->Translator,
+                                       UsbStatus
+                                       );
 
   EpDesc->Toggle = Toggle;
 
@@ -377,7 +380,6 @@ ON_EXIT:
   gBS->RestoreTPL (OldTpl);
   return Status;
 }
-
 
 /**
   Queue a new asynchronous interrupt transfer, or remove the old
@@ -405,49 +407,49 @@ UsbIoAsyncInterruptTransfer (
   IN EFI_USB_IO_PROTOCOL              *This,
   IN UINT8                            Endpoint,
   IN BOOLEAN                          IsNewTransfer,
-  IN UINTN                            PollInterval,       OPTIONAL
-  IN UINTN                            DataLength,         OPTIONAL
-  IN EFI_ASYNC_USB_TRANSFER_CALLBACK  Callback,           OPTIONAL
+  IN UINTN                            PollInterval, OPTIONAL
+  IN UINTN                            DataLength, OPTIONAL
+  IN EFI_ASYNC_USB_TRANSFER_CALLBACK  Callback, OPTIONAL
   IN VOID                             *Context            OPTIONAL
   )
 {
-  USB_DEVICE              *Dev;
-  USB_INTERFACE           *UsbIf;
-  USB_ENDPOINT_DESC       *EpDesc;
-  EFI_TPL                 OldTpl;
-  UINT8                   Toggle;
-  EFI_STATUS              Status;
+  USB_DEVICE         *Dev;
+  USB_INTERFACE      *UsbIf;
+  USB_ENDPOINT_DESC  *EpDesc;
+  EFI_TPL            OldTpl;
+  UINT8              Toggle;
+  EFI_STATUS         Status;
 
   if ((USB_ENDPOINT_ADDR (Endpoint) == 0) || (USB_ENDPOINT_ADDR (Endpoint) > 15)) {
     return EFI_INVALID_PARAMETER;
   }
 
-  OldTpl  = gBS->RaiseTPL (USB_BUS_TPL);
-  UsbIf   = USB_INTERFACE_FROM_USBIO (This);
-  Dev     = UsbIf->Device;
+  OldTpl = gBS->RaiseTPL (USB_BUS_TPL);
+  UsbIf  = USB_INTERFACE_FROM_USBIO (This);
+  Dev    = UsbIf->Device;
 
-  EpDesc  = UsbGetEndpointDesc (UsbIf, Endpoint);
+  EpDesc = UsbGetEndpointDesc (UsbIf, Endpoint);
 
   if ((EpDesc == NULL) || (USB_ENDPOINT_TYPE (&EpDesc->Desc) != USB_ENDPOINT_INTERRUPT)) {
     Status = EFI_INVALID_PARAMETER;
     goto ON_EXIT;
   }
 
-  Toggle  = EpDesc->Toggle;
-  Status  = UsbHcAsyncInterruptTransfer (
-              Dev->Bus,
-              Dev->Address,
-              Endpoint,
-              Dev->Speed,
-              EpDesc->Desc.MaxPacketSize,
-              IsNewTransfer,
-              &Toggle,
-              PollInterval,
-              DataLength,
-              &Dev->Translator,
-              Callback,
-              Context
-              );
+  Toggle = EpDesc->Toggle;
+  Status = UsbHcAsyncInterruptTransfer (
+                                        Dev->Bus,
+                                        Dev->Address,
+                                        Endpoint,
+                                        Dev->Speed,
+                                        EpDesc->Desc.MaxPacketSize,
+                                        IsNewTransfer,
+                                        &Toggle,
+                                        PollInterval,
+                                        DataLength,
+                                        &Dev->Translator,
+                                        Callback,
+                                        Context
+                                        );
 
   EpDesc->Toggle = Toggle;
 
@@ -455,7 +457,6 @@ ON_EXIT:
   gBS->RestoreTPL (OldTpl);
   return Status;
 }
-
 
 /**
   Execute a synchronous isochronous transfer.
@@ -481,7 +482,6 @@ UsbIoIsochronousTransfer (
 {
   return EFI_UNSUPPORTED;
 }
-
 
 /**
   Queue an asynchronous isochronous transfer.
@@ -511,7 +511,6 @@ UsbIoAsyncIsochronousTransfer (
   return EFI_UNSUPPORTED;
 }
 
-
 /**
   Retrieve the device descriptor of the device.
 
@@ -529,9 +528,9 @@ UsbIoGetDeviceDescriptor (
   OUT EFI_USB_DEVICE_DESCRIPTOR *Descriptor
   )
 {
-  USB_DEVICE              *Dev;
-  USB_INTERFACE           *UsbIf;
-  EFI_TPL                 OldTpl;
+  USB_DEVICE     *Dev;
+  USB_INTERFACE  *UsbIf;
+  EFI_TPL        OldTpl;
 
   if (Descriptor == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -539,15 +538,14 @@ UsbIoGetDeviceDescriptor (
 
   OldTpl = gBS->RaiseTPL (USB_BUS_TPL);
 
-  UsbIf  = USB_INTERFACE_FROM_USBIO (This);
-  Dev    = UsbIf->Device;
+  UsbIf = USB_INTERFACE_FROM_USBIO (This);
+  Dev   = UsbIf->Device;
 
   CopyMem (Descriptor, &Dev->DevDesc->Desc, sizeof (EFI_USB_DEVICE_DESCRIPTOR));
 
   gBS->RestoreTPL (OldTpl);
   return EFI_SUCCESS;
 }
-
 
 /**
   Return the configuration descriptor of the current active configuration.
@@ -567,10 +565,10 @@ UsbIoGetActiveConfigDescriptor (
   OUT EFI_USB_CONFIG_DESCRIPTOR *Descriptor
   )
 {
-  USB_DEVICE              *Dev;
-  USB_INTERFACE           *UsbIf;
-  EFI_STATUS              Status;
-  EFI_TPL                 OldTpl;
+  USB_DEVICE     *Dev;
+  USB_INTERFACE  *UsbIf;
+  EFI_STATUS     Status;
+  EFI_TPL        OldTpl;
 
   if (Descriptor == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -579,8 +577,8 @@ UsbIoGetActiveConfigDescriptor (
   Status = EFI_SUCCESS;
   OldTpl = gBS->RaiseTPL (USB_BUS_TPL);
 
-  UsbIf  = USB_INTERFACE_FROM_USBIO (This);
-  Dev    = UsbIf->Device;
+  UsbIf = USB_INTERFACE_FROM_USBIO (This);
+  Dev   = UsbIf->Device;
 
   if (Dev->ActiveConfig == NULL) {
     Status = EFI_NOT_FOUND;
@@ -593,7 +591,6 @@ ON_EXIT:
   gBS->RestoreTPL (OldTpl);
   return Status;
 }
-
 
 /**
   Retrieve the active interface setting descriptor for this USB IO instance.
@@ -612,8 +609,8 @@ UsbIoGetInterfaceDescriptor (
   OUT EFI_USB_INTERFACE_DESCRIPTOR  *Descriptor
   )
 {
-  USB_INTERFACE           *UsbIf;
-  EFI_TPL                 OldTpl;
+  USB_INTERFACE  *UsbIf;
+  EFI_TPL        OldTpl;
 
   if (Descriptor == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -621,13 +618,12 @@ UsbIoGetInterfaceDescriptor (
 
   OldTpl = gBS->RaiseTPL (USB_BUS_TPL);
 
-  UsbIf  = USB_INTERFACE_FROM_USBIO (This);
+  UsbIf = USB_INTERFACE_FROM_USBIO (This);
   CopyMem (Descriptor, &(UsbIf->IfSetting->Desc), sizeof (EFI_USB_INTERFACE_DESCRIPTOR));
 
   gBS->RestoreTPL (OldTpl);
   return EFI_SUCCESS;
 }
-
 
 /**
   Retrieve the endpoint descriptor from this interface setting.
@@ -649,33 +645,32 @@ UsbIoGetEndpointDescriptor (
   OUT EFI_USB_ENDPOINT_DESCRIPTOR *Descriptor
   )
 {
-  USB_INTERFACE           *UsbIf;
-  EFI_TPL                 OldTpl;
+  USB_INTERFACE  *UsbIf;
+  EFI_TPL        OldTpl;
 
   OldTpl = gBS->RaiseTPL (USB_BUS_TPL);
 
-  UsbIf  = USB_INTERFACE_FROM_USBIO (This);
+  UsbIf = USB_INTERFACE_FROM_USBIO (This);
 
   if ((Descriptor == NULL) || (Index > 15)) {
-    gBS->RestoreTPL (OldTpl);
+  gBS->RestoreTPL (OldTpl);
     return EFI_INVALID_PARAMETER;
   }
 
   if (Index >= UsbIf->IfSetting->Desc.NumEndpoints) {
-    gBS->RestoreTPL (OldTpl);
+  gBS->RestoreTPL (OldTpl);
     return EFI_NOT_FOUND;
   }
 
   CopyMem (
-    Descriptor,
-    &(UsbIf->IfSetting->Endpoints[Index]->Desc),
-    sizeof (EFI_USB_ENDPOINT_DESCRIPTOR)
-    );
+           Descriptor,
+           &(UsbIf->IfSetting->Endpoints[Index]->Desc),
+           sizeof (EFI_USB_ENDPOINT_DESCRIPTOR)
+           );
 
   gBS->RestoreTPL (OldTpl);
   return EFI_SUCCESS;
 }
-
 
 /**
   Retrieve the supported language ID table from the device.
@@ -695,22 +690,21 @@ UsbIoGetSupportedLanguages (
   OUT UINT16              *TableSize
   )
 {
-  USB_DEVICE              *Dev;
-  USB_INTERFACE           *UsbIf;
-  EFI_TPL                 OldTpl;
+  USB_DEVICE     *Dev;
+  USB_INTERFACE  *UsbIf;
+  EFI_TPL        OldTpl;
 
-  OldTpl        = gBS->RaiseTPL (USB_BUS_TPL);
+  OldTpl = gBS->RaiseTPL (USB_BUS_TPL);
 
-  UsbIf         = USB_INTERFACE_FROM_USBIO (This);
-  Dev           = UsbIf->Device;
+  UsbIf = USB_INTERFACE_FROM_USBIO (This);
+  Dev   = UsbIf->Device;
 
-  *LangIDTable  = Dev->LangId;
-  *TableSize    = (UINT16) (Dev->TotalLangId * sizeof (UINT16));
+  *LangIDTable = Dev->LangId;
+  *TableSize   = (UINT16) (Dev->TotalLangId * sizeof (UINT16));
 
   gBS->RestoreTPL (OldTpl);
   return EFI_SUCCESS;
 }
-
 
 /**
   Retrieve an indexed string in the language of LangID.
@@ -733,13 +727,13 @@ UsbIoGetStringDescriptor (
   OUT CHAR16                **String
   )
 {
-  USB_DEVICE                *Dev;
-  USB_INTERFACE             *UsbIf;
-  EFI_USB_STRING_DESCRIPTOR *StrDesc;
-  EFI_TPL                   OldTpl;
-  UINT8                     *Buf;
-  UINT8                     Index;
-  EFI_STATUS                Status;
+  USB_DEVICE                 *Dev;
+  USB_INTERFACE              *UsbIf;
+  EFI_USB_STRING_DESCRIPTOR  *StrDesc;
+  EFI_TPL                    OldTpl;
+  UINT8                      *Buf;
+  UINT8                      Index;
+  EFI_STATUS                 Status;
 
   if ((StringIndex == 0) || (LangID == 0)) {
     return EFI_NOT_FOUND;
@@ -747,8 +741,8 @@ UsbIoGetStringDescriptor (
 
   OldTpl = gBS->RaiseTPL (USB_BUS_TPL);
 
-  UsbIf  = USB_INTERFACE_FROM_USBIO (This);
-  Dev    = UsbIf->Device;
+  UsbIf = USB_INTERFACE_FROM_USBIO (This);
+  Dev   = UsbIf->Device;
 
   //
   // Check whether language ID is supported
@@ -799,7 +793,6 @@ ON_EXIT:
   return Status;
 }
 
-
 /**
   Reset the device, then if that succeeds, reconfigure the
   device with its address and current active configuration.
@@ -816,17 +809,17 @@ UsbIoPortReset (
   IN EFI_USB_IO_PROTOCOL  *This
   )
 {
-  USB_INTERFACE           *UsbIf;
-  USB_INTERFACE           *HubIf;
-  USB_DEVICE              *Dev;
-  EFI_TPL                 OldTpl;
-  EFI_STATUS              Status;
-  UINT8                   DevAddress;
+  USB_INTERFACE  *UsbIf;
+  USB_INTERFACE  *HubIf;
+  USB_DEVICE     *Dev;
+  EFI_TPL        OldTpl;
+  EFI_STATUS     Status;
+  UINT8          DevAddress;
 
   OldTpl = gBS->RaiseTPL (USB_BUS_TPL);
 
-  UsbIf  = USB_INTERFACE_FROM_USBIO (This);
-  Dev    = UsbIf->Device;
+  UsbIf = USB_INTERFACE_FROM_USBIO (This);
+  Dev   = UsbIf->Device;
 
   if (UsbIf->IsHub) {
     Status = EFI_INVALID_PARAMETER;
@@ -837,8 +830,10 @@ UsbIoPortReset (
   Status = HubIf->HubApi->ResetPort (HubIf, Dev->ParentPort);
 
   if (EFI_ERROR (Status)) {
-    DEBUG (( EFI_D_ERROR, "UsbIoPortReset: failed to reset hub port %d@hub  %d, %r \n",
-                Dev->ParentPort, Dev->ParentAddr, Status));
+    DEBUG (
+           (EFI_D_ERROR, "UsbIoPortReset: failed to reset hub port %d@hub  %d, %r \n",
+            Dev->ParentPort, Dev->ParentAddr, Status)
+           );
 
     goto ON_EXIT;
   }
@@ -852,7 +847,7 @@ UsbIoPortReset (
   //
   DevAddress   = Dev->Address;
   Dev->Address = 0;
-  Status  = UsbSetAddress (Dev, DevAddress);
+  Status = UsbSetAddress (Dev, DevAddress);
   Dev->Address = DevAddress;
 
   gBS->Stall (USB_SET_DEVICE_ADDRESS_STALL);
@@ -861,13 +856,15 @@ UsbIoPortReset (
     //
     // It may fail due to device disconnection or other reasons.
     //
-    DEBUG (( EFI_D_ERROR, "UsbIoPortReset: failed to set address for device %d - %r\n",
-                Dev->Address, Status));
+    DEBUG (
+           (EFI_D_ERROR, "UsbIoPortReset: failed to set address for device %d - %r\n",
+            Dev->Address, Status)
+           );
 
     goto ON_EXIT;
   }
 
-  DEBUG (( EFI_D_INFO, "UsbIoPortReset: device is now ADDRESSED at %d\n", Dev->Address));
+  DEBUG ((EFI_D_INFO, "UsbIoPortReset: device is now ADDRESSED at %d\n", Dev->Address));
 
   //
   // Reset the current active configure, after this device
@@ -877,8 +874,10 @@ UsbIoPortReset (
     Status = UsbSetConfig (Dev, Dev->ActiveConfig->Desc.ConfigurationValue);
 
     if (EFI_ERROR (Status)) {
-      DEBUG (( EFI_D_ERROR, "UsbIoPortReset: failed to set configure for device %d - %r\n",
-                  Dev->Address, Status));
+      DEBUG (
+             (EFI_D_ERROR, "UsbIoPortReset: failed to set configure for device %d - %r\n",
+              Dev->Address, Status)
+             );
     }
   }
 
@@ -886,7 +885,6 @@ ON_EXIT:
   gBS->RestoreTPL (OldTpl);
   return Status;
 }
-
 
 /**
   Install Usb Bus Protocol on host controller, and start the Usb bus.
@@ -908,11 +906,11 @@ UsbBusBuildProtocol (
   IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath
   )
 {
-  USB_BUS                 *UsbBus;
-  USB_DEVICE              *RootHub;
-  USB_INTERFACE           *RootIf;
-  EFI_STATUS              Status;
-  EFI_STATUS              Status2;
+  USB_BUS        *UsbBus;
+  USB_DEVICE     *RootHub;
+  USB_INTERFACE  *RootIf;
+  EFI_STATUS     Status;
+  EFI_STATUS     Status2;
 
   UsbBus = AllocateZeroPool (sizeof (USB_BUS));
 
@@ -925,13 +923,13 @@ UsbBusBuildProtocol (
   UsbBus->MaxDevices = USB_MAX_DEVICES;
 
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiDevicePathProtocolGuid,
-                  (VOID **) &UsbBus->DevicePath,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              Controller,
+                              &gEfiDevicePathProtocolGuid,
+                              (VOID **) &UsbBus->DevicePath,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
 
   if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "UsbBusStart: Failed to open device path %r\n", Status));
@@ -949,22 +947,22 @@ UsbBusBuildProtocol (
   // the unconsumed one may be opened by others.
   //
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiUsb2HcProtocolGuid,
-                  (VOID **) &(UsbBus->Usb2Hc),
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              Controller,
+                              &gEfiUsb2HcProtocolGuid,
+                              (VOID **) &(UsbBus->Usb2Hc),
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
 
   Status2 = gBS->OpenProtocol (
-                   Controller,
-                   &gEfiUsbHcProtocolGuid,
-                   (VOID **) &(UsbBus->UsbHc),
-                   This->DriverBindingHandle,
-                   Controller,
-                   EFI_OPEN_PROTOCOL_BY_DRIVER
-                   );
+                               Controller,
+                               &gEfiUsbHcProtocolGuid,
+                               (VOID **) &(UsbBus->UsbHc),
+                               This->DriverBindingHandle,
+                               Controller,
+                               EFI_OPEN_PROTOCOL_BY_DRIVER
+                               );
 
   if (EFI_ERROR (Status) && EFI_ERROR (Status2)) {
     DEBUG ((EFI_D_ERROR, "UsbBusStart: Failed to open USB_HC/USB2_HC %r\n", Status));
@@ -988,11 +986,11 @@ UsbBusBuildProtocol (
   // Install an EFI_USB_BUS_PROTOCOL to host controller to identify it.
   //
   Status = gBS->InstallProtocolInterface (
-                  &Controller,
-                  &gEfiCallerIdGuid,
-                  EFI_NATIVE_INTERFACE,
-                  &UsbBus->BusId
-                  );
+                                          &Controller,
+                                          &gEfiCallerIdGuid,
+                                          EFI_NATIVE_INTERFACE,
+                                          &UsbBus->BusId
+                                          );
 
   if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "UsbBusStart: Failed to install bus protocol %r\n", Status));
@@ -1023,24 +1021,24 @@ UsbBusBuildProtocol (
     goto FREE_ROOTHUB;
   }
 
-  RootHub->Bus            = UsbBus;
+  RootHub->Bus = UsbBus;
   RootHub->NumOfInterface = 1;
   RootHub->Interfaces[0]  = RootIf;
-  RootHub->Tier           = 0;
-  RootIf->Signature       = USB_INTERFACE_SIGNATURE;
-  RootIf->Device          = RootHub;
-  RootIf->DevicePath      = UsbBus->DevicePath;
+  RootHub->Tier      = 0;
+  RootIf->Signature  = USB_INTERFACE_SIGNATURE;
+  RootIf->Device     = RootHub;
+  RootIf->DevicePath = UsbBus->DevicePath;
 
   //
   // Report Status Code here since we will enumerate the USB devices
   //
   REPORT_STATUS_CODE_WITH_DEVICE_PATH (
-    EFI_PROGRESS_CODE,
-    (EFI_IO_BUS_USB | EFI_IOB_PC_DETECT),
-    UsbBus->DevicePath
-    );
+                                       EFI_PROGRESS_CODE,
+                                       (EFI_IO_BUS_USB | EFI_IOB_PC_DETECT),
+                                       UsbBus->DevicePath
+                                       );
 
-  Status                  = mUsbRootHubApi.Init (RootIf);
+  Status = mUsbRootHubApi.Init (RootIf);
 
   if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "UsbBusStart: Failed to init root hub %r\n", Status));
@@ -1056,6 +1054,7 @@ FREE_ROOTHUB:
   if (RootIf != NULL) {
     FreePool (RootIf);
   }
+
   if (RootHub != NULL) {
     FreePool (RootHub);
   }
@@ -1065,33 +1064,34 @@ UNINSTALL_USBBUS:
 
 CLOSE_HC:
   if (UsbBus->Usb2Hc != NULL) {
-    gBS->CloseProtocol (
-          Controller,
-          &gEfiUsb2HcProtocolGuid,
-          This->DriverBindingHandle,
-          Controller
-          );
-  }
-  if (UsbBus->UsbHc != NULL) {
-    gBS->CloseProtocol (
-          Controller,
-          &gEfiUsbHcProtocolGuid,
-          This->DriverBindingHandle,
-          Controller
-          );
-  }
   gBS->CloseProtocol (
-         Controller,
-         &gEfiDevicePathProtocolGuid,
-         This->DriverBindingHandle,
-         Controller
-         );
+                      Controller,
+                      &gEfiUsb2HcProtocolGuid,
+                      This->DriverBindingHandle,
+                      Controller
+                      );
+  }
+
+  if (UsbBus->UsbHc != NULL) {
+  gBS->CloseProtocol (
+                      Controller,
+                      &gEfiUsbHcProtocolGuid,
+                      This->DriverBindingHandle,
+                      Controller
+                      );
+  }
+
+  gBS->CloseProtocol (
+                      Controller,
+                      &gEfiDevicePathProtocolGuid,
+                      This->DriverBindingHandle,
+                      Controller
+                      );
   FreePool (UsbBus);
 
   DEBUG ((EFI_D_ERROR, "UsbBusStart: Failed to start bus driver %r\n", Status));
   return Status;
 }
-
 
 /**
   The USB bus driver entry pointer.
@@ -1111,15 +1111,14 @@ UsbBusDriverEntryPoint (
   )
 {
   return EfiLibInstallDriverBindingComponentName2 (
-           ImageHandle,
-           SystemTable,
-           &mUsbBusDriverBinding,
-           ImageHandle,
-           &mUsbBusComponentName,
-           &mUsbBusComponentName2
-           );
+                                                   ImageHandle,
+                                                   SystemTable,
+                                                   &mUsbBusDriverBinding,
+                                                   ImageHandle,
+                                                   &mUsbBusComponentName,
+                                                   &mUsbBusComponentName2
+                                                   );
 }
-
 
 /**
   Check whether USB bus driver support this device.
@@ -1162,11 +1161,10 @@ UsbBusControllerDriverSupported (
       DevicePathNode.DevPath = RemainingDevicePath;
 
       if ((DevicePathNode.DevPath->Type    != MESSAGING_DEVICE_PATH) ||
-          (DevicePathNode.DevPath->SubType != MSG_USB_DP &&
-           DevicePathNode.DevPath->SubType != MSG_USB_CLASS_DP
-           && DevicePathNode.DevPath->SubType != MSG_USB_WWID_DP
-           )) {
-
+          (  DevicePathNode.DevPath->SubType != MSG_USB_DP &&
+             DevicePathNode.DevPath->SubType != MSG_USB_CLASS_DP
+          && DevicePathNode.DevPath->SubType != MSG_USB_WWID_DP
+          )) {
         return EFI_UNSUPPORTED;
       }
     }
@@ -1176,13 +1174,13 @@ UsbBusControllerDriverSupported (
   // Check whether USB_HC2 protocol is installed
   //
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiUsb2HcProtocolGuid,
-                  (VOID **) &Usb2Hc,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              Controller,
+                              &gEfiUsb2HcProtocolGuid,
+                              (VOID **) &Usb2Hc,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (Status == EFI_ALREADY_STARTED) {
     return EFI_SUCCESS;
   }
@@ -1192,13 +1190,13 @@ UsbBusControllerDriverSupported (
     // If failed to open USB_HC2, fall back to USB_HC
     //
     Status = gBS->OpenProtocol (
-                    Controller,
-                    &gEfiUsbHcProtocolGuid,
-                    (VOID **) &UsbHc,
-                    This->DriverBindingHandle,
-                    Controller,
-                    EFI_OPEN_PROTOCOL_BY_DRIVER
-                    );
+                                Controller,
+                                &gEfiUsbHcProtocolGuid,
+                                (VOID **) &UsbHc,
+                                This->DriverBindingHandle,
+                                Controller,
+                                EFI_OPEN_PROTOCOL_BY_DRIVER
+                                );
     if (Status == EFI_ALREADY_STARTED) {
       return EFI_SUCCESS;
     }
@@ -1211,36 +1209,34 @@ UsbBusControllerDriverSupported (
     // Close the USB_HC used to perform the supported test
     //
     gBS->CloseProtocol (
-          Controller,
-          &gEfiUsbHcProtocolGuid,
-          This->DriverBindingHandle,
-          Controller
-          );
-
+                        Controller,
+                        &gEfiUsbHcProtocolGuid,
+                        This->DriverBindingHandle,
+                        Controller
+                        );
   } else {
-
     //
     // Close the USB_HC2 used to perform the supported test
     //
     gBS->CloseProtocol (
-           Controller,
-           &gEfiUsb2HcProtocolGuid,
-           This->DriverBindingHandle,
-           Controller
-           );
+                        Controller,
+                        &gEfiUsb2HcProtocolGuid,
+                        This->DriverBindingHandle,
+                        Controller
+                        );
   }
 
   //
   // Open the EFI Device Path protocol needed to perform the supported test
   //
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiDevicePathProtocolGuid,
-                  (VOID **) &ParentDevicePath,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              Controller,
+                              &gEfiDevicePathProtocolGuid,
+                              (VOID **) &ParentDevicePath,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (Status == EFI_ALREADY_STARTED) {
     return EFI_SUCCESS;
   }
@@ -1250,18 +1246,17 @@ UsbBusControllerDriverSupported (
     // Close protocol, don't use device path protocol in the Support() function
     //
     gBS->CloseProtocol (
-          Controller,
-          &gEfiDevicePathProtocolGuid,
-          This->DriverBindingHandle,
-          Controller
-          );
+                        Controller,
+                        &gEfiDevicePathProtocolGuid,
+                        This->DriverBindingHandle,
+                        Controller
+                        );
 
     return EFI_SUCCESS;
   }
 
   return Status;
 }
-
 
 /**
   Start to process the controller.
@@ -1284,41 +1279,41 @@ UsbBusControllerDriverStart (
   IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath
   )
 {
-  EFI_USB_BUS_PROTOCOL          *UsbBusId;
-  EFI_STATUS                    Status;
-  EFI_DEVICE_PATH_PROTOCOL      *ParentDevicePath;
+  EFI_USB_BUS_PROTOCOL      *UsbBusId;
+  EFI_STATUS                Status;
+  EFI_DEVICE_PATH_PROTOCOL  *ParentDevicePath;
 
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiDevicePathProtocolGuid,
-                  (VOID **) &ParentDevicePath,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              Controller,
+                              &gEfiDevicePathProtocolGuid,
+                              (VOID **) &ParentDevicePath,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   ASSERT_EFI_ERROR (Status);
 
   //
   // Report Status Code here since we will initialize the host controller
   //
   REPORT_STATUS_CODE_WITH_DEVICE_PATH (
-    EFI_PROGRESS_CODE,
-    (EFI_IO_BUS_USB | EFI_IOB_PC_INIT),
-    ParentDevicePath
-    );
+                                       EFI_PROGRESS_CODE,
+                                       (EFI_IO_BUS_USB | EFI_IOB_PC_INIT),
+                                       ParentDevicePath
+                                       );
 
   //
   // Locate the USB bus protocol, if it is found, USB bus
   // is already started on this controller.
   //
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiCallerIdGuid,
-                  (VOID **) &UsbBusId,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              Controller,
+                              &gEfiCallerIdGuid,
+                              (VOID **) &UsbBusId,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
 
   if (EFI_ERROR (Status)) {
     //
@@ -1329,17 +1324,18 @@ UsbBusControllerDriverStart (
     if (EFI_ERROR (Status)) {
       return Status;
     }
+
     //
     // Try get the Usb Bus protocol interface again
     //
     Status = gBS->OpenProtocol (
-                    Controller,
-                    &gEfiCallerIdGuid,
-                    (VOID **) &UsbBusId,
-                    This->DriverBindingHandle,
-                    Controller,
-                    EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                    );
+                                Controller,
+                                &gEfiCallerIdGuid,
+                                (VOID **) &UsbBusId,
+                                This->DriverBindingHandle,
+                                Controller,
+                                EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                                );
     ASSERT (!EFI_ERROR (Status));
   } else {
     //
@@ -1370,10 +1366,8 @@ UsbBusControllerDriverStart (
     ASSERT (!EFI_ERROR (Status));
   }
 
-
   return EFI_SUCCESS;
 }
-
 
 /**
   Stop handle the controller by this USB bus driver.
@@ -1409,37 +1403,37 @@ UsbBusControllerDriverStop (
   EFI_STATUS            Status;
   EFI_STATUS            ReturnStatus;
 
-  Status  = EFI_SUCCESS;
+  Status = EFI_SUCCESS;
 
   if (NumberOfChildren > 0) {
     //
     // BugBug: Raise TPL to callback level instead of USB_BUS_TPL to avoid TPL conflict
     //
-    OldTpl   = gBS->RaiseTPL (TPL_CALLBACK);
+    OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
 
     ReturnStatus = EFI_SUCCESS;
     for (Index = 0; Index < NumberOfChildren; Index++) {
       Status = gBS->OpenProtocol (
-                      ChildHandleBuffer[Index],
-                      &gEfiUsbIoProtocolGuid,
-                      (VOID **) &UsbIo,
-                      This->DriverBindingHandle,
-                      Controller,
-                      EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                      );
+                                  ChildHandleBuffer[Index],
+                                  &gEfiUsbIoProtocolGuid,
+                                  (VOID **) &UsbIo,
+                                  This->DriverBindingHandle,
+                                  Controller,
+                                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                                  );
 
       if (EFI_ERROR (Status)) {
         //
         // It is possible that the child has already been released:
         // 1. For combo device, free one device will release others.
         // 2. If a hub is released, all devices on its down facing
-        //    ports are released also.
+        // ports are released also.
         //
         continue;
       }
 
-      UsbIf   = USB_INTERFACE_FROM_USBIO (UsbIo);
-      UsbDev  = UsbIf->Device;
+      UsbIf  = USB_INTERFACE_FROM_USBIO (UsbIo);
+      UsbDev = UsbIf->Device;
 
       ReturnStatus = UsbRemoveDevice (UsbDev);
     }
@@ -1448,19 +1442,19 @@ UsbBusControllerDriverStop (
     return ReturnStatus;
   }
 
-  DEBUG (( EFI_D_INFO, "UsbBusStop: usb bus stopped on %p\n", Controller));
+  DEBUG ((EFI_D_INFO, "UsbBusStop: usb bus stopped on %p\n", Controller));
 
   //
   // Locate USB_BUS for the current host controller
   //
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiCallerIdGuid,
-                  (VOID **) &BusId,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              Controller,
+                              &gEfiCallerIdGuid,
+                              (VOID **) &BusId,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
 
   if (EFI_ERROR (Status)) {
     return Status;
@@ -1473,7 +1467,7 @@ UsbBusControllerDriverStop (
   //
   // BugBug: Raise TPL to callback level instead of USB_BUS_TPL to avoid TPL conflict
   //
-  OldTpl  = gBS->RaiseTPL (TPL_CALLBACK);
+  OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
 
   RootHub = Bus->Devices[0];
   RootIf  = RootHub->Interfaces[0];
@@ -1492,9 +1486,9 @@ UsbBusControllerDriverStop (
   gBS->RestoreTPL (OldTpl);
 
   if (!EFI_ERROR (ReturnStatus)) {
-    mUsbRootHubApi.Release (RootIf);
-    gBS->FreePool   (RootIf);
-    gBS->FreePool   (RootHub);
+  mUsbRootHubApi.Release (RootIf);
+  gBS->FreePool (RootIf);
+  gBS->FreePool (RootHub);
 
     Status = UsbBusFreeUsbDPList (&Bus->WantedUsbIoDPList);
     ASSERT (!EFI_ERROR (Status));
@@ -1506,32 +1500,33 @@ UsbBusControllerDriverStop (
 
     if (Bus->Usb2Hc != NULL) {
       Status = gBS->CloseProtocol (
-                      Controller,
-                      &gEfiUsb2HcProtocolGuid,
-                      This->DriverBindingHandle,
-                      Controller
-                      );
+                                   Controller,
+                                   &gEfiUsb2HcProtocolGuid,
+                                   This->DriverBindingHandle,
+                                   Controller
+                                   );
     }
 
     if (Bus->UsbHc != NULL) {
       Status = gBS->CloseProtocol (
-                      Controller,
-                      &gEfiUsbHcProtocolGuid,
-                      This->DriverBindingHandle,
-                      Controller
-                      );
+                                   Controller,
+                                   &gEfiUsbHcProtocolGuid,
+                                   This->DriverBindingHandle,
+                                   Controller
+                                   );
     }
 
     if (!EFI_ERROR (Status)) {
-      gBS->CloseProtocol (
-             Controller,
-             &gEfiDevicePathProtocolGuid,
-             This->DriverBindingHandle,
-             Controller
-             );
+  gBS->CloseProtocol (
+                      Controller,
+                      &gEfiDevicePathProtocolGuid,
+                      This->DriverBindingHandle,
+                      Controller
+                      );
 
       gBS->FreePool (Bus);
     }
   }
+
   return Status;
 }

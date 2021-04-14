@@ -33,14 +33,14 @@ AhciS3GetEumeratePorts (
   OUT UINT32                      *PortBitMap
   )
 {
-  EFI_STATUS                  Status;
-  UINT8                       DummyData;
-  UINTN                       S3InitDevicesLength;
-  EFI_DEVICE_PATH_PROTOCOL    *S3InitDevices;
-  EFI_DEVICE_PATH_PROTOCOL    *DevicePathInst;
-  UINTN                       DevicePathInstLength;
-  BOOLEAN                     EntireEnd;
-  SATA_DEVICE_PATH            *SataDeviceNode;
+  EFI_STATUS                Status;
+  UINT8                     DummyData;
+  UINTN                     S3InitDevicesLength;
+  EFI_DEVICE_PATH_PROTOCOL  *S3InitDevices;
+  EFI_DEVICE_PATH_PROTOCOL  *DevicePathInst;
+  UINTN                     DevicePathInstLength;
+  BOOLEAN                   EntireEnd;
+  SATA_DEVICE_PATH          *SataDeviceNode;
 
   *PortBitMap = 0;
 
@@ -48,10 +48,10 @@ AhciS3GetEumeratePorts (
   // From the LockBox, get the list of device paths for devices need to be
   // initialized in S3.
   //
-  S3InitDevices       = NULL;
+  S3InitDevices = NULL;
   S3InitDevicesLength = sizeof (DummyData);
-  EntireEnd           = FALSE;
-  Status = RestoreLockBox (&gS3StorageDeviceInitListGuid, &DummyData, &S3InitDevicesLength);
+  EntireEnd = FALSE;
+  Status    = RestoreLockBox (&gS3StorageDeviceInitListGuid, &DummyData, &S3InitDevicesLength);
   if (Status != EFI_BUFFER_TOO_SMALL) {
     return 0;
   } else {
@@ -78,16 +78,16 @@ AhciS3GetEumeratePorts (
     // Fetch the size of current device path instance.
     //
     Status = GetDevicePathInstanceSize (
-               S3InitDevices,
-               &DevicePathInstLength,
-               &EntireEnd
-               );
+                                        S3InitDevices,
+                                        &DevicePathInstLength,
+                                        &EntireEnd
+                                        );
     if (EFI_ERROR (Status)) {
       break;
     }
 
     DevicePathInst = S3InitDevices;
-    S3InitDevices  = (EFI_DEVICE_PATH_PROTOCOL *)((UINTN) S3InitDevices + DevicePathInstLength);
+    S3InitDevices  = (EFI_DEVICE_PATH_PROTOCOL *) ((UINTN) S3InitDevices + DevicePathInstLength);
 
     if (HcDevicePathLength >= DevicePathInstLength) {
       continue;
@@ -98,10 +98,10 @@ AhciS3GetEumeratePorts (
     // controller.
     //
     if (CompareMem (
-          DevicePathInst,
-          HcDevicePath,
-          HcDevicePathLength - sizeof (EFI_DEVICE_PATH_PROTOCOL)
-          ) == 0) {
+                    DevicePathInst,
+                    HcDevicePath,
+                    HcDevicePathLength - sizeof (EFI_DEVICE_PATH_PROTOCOL)
+                    ) == 0) {
       //
       // Get the port number.
       //
@@ -117,9 +117,11 @@ AhciS3GetEumeratePorts (
               (SataDeviceNode->PortMultiplierPortNumber != 0xFFFF)) {
             break;
           }
-          *PortBitMap |= (UINT32)BIT0 << SataDeviceNode->HBAPortNumber;
+
+          *PortBitMap |= (UINT32) BIT0 << SataDeviceNode->HBAPortNumber;
           break;
         }
+
         DevicePathInst = NextDevicePathNode (DevicePathInst);
       }
     }

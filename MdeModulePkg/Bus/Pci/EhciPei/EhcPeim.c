@@ -15,19 +15,19 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // to the UEFI protocol's port state (change).
 //
 USB_PORT_STATE_MAP  mUsbPortStateMap[] = {
-  {PORTSC_CONN,     USB_PORT_STAT_CONNECTION},
-  {PORTSC_ENABLED,  USB_PORT_STAT_ENABLE},
-  {PORTSC_SUSPEND,  USB_PORT_STAT_SUSPEND},
-  {PORTSC_OVERCUR,  USB_PORT_STAT_OVERCURRENT},
-  {PORTSC_RESET,    USB_PORT_STAT_RESET},
-  {PORTSC_POWER,    USB_PORT_STAT_POWER},
-  {PORTSC_OWNER,    USB_PORT_STAT_OWNER}
+  { PORTSC_CONN,    USB_PORT_STAT_CONNECTION     },
+  { PORTSC_ENABLED, USB_PORT_STAT_ENABLE         },
+  { PORTSC_SUSPEND, USB_PORT_STAT_SUSPEND        },
+  { PORTSC_OVERCUR, USB_PORT_STAT_OVERCURRENT    },
+  { PORTSC_RESET,   USB_PORT_STAT_RESET          },
+  { PORTSC_POWER,   USB_PORT_STAT_POWER          },
+  { PORTSC_OWNER,   USB_PORT_STAT_OWNER          }
 };
 
 USB_PORT_STATE_MAP  mUsbPortChangeMap[] = {
-  {PORTSC_CONN_CHANGE,    USB_PORT_STAT_C_CONNECTION},
-  {PORTSC_ENABLE_CHANGE,  USB_PORT_STAT_C_ENABLE},
-  {PORTSC_OVERCUR_CHANGE, USB_PORT_STAT_C_OVERCURRENT}
+  { PORTSC_CONN_CHANGE,    USB_PORT_STAT_C_CONNECTION     },
+  { PORTSC_ENABLE_CHANGE,  USB_PORT_STAT_C_ENABLE         },
+  { PORTSC_OVERCUR_CHANGE, USB_PORT_STAT_C_OVERCURRENT    }
 };
 
 /**
@@ -45,7 +45,7 @@ EhcReadOpReg (
   IN  UINT32              Offset
   )
 {
-  UINT32                  Data;
+  UINT32  Data;
 
   ASSERT (Ehc->CapLen != 0);
 
@@ -69,11 +69,9 @@ EhcWriteOpReg (
   IN UINT32               Data
   )
 {
-
   ASSERT (Ehc->CapLen != 0);
 
-  MmioWrite32(Ehc->UsbHostControllerBaseAddress + Ehc->CapLen + Offset, Data);
-
+  MmioWrite32 (Ehc->UsbHostControllerBaseAddress + Ehc->CapLen + Offset, Data);
 }
 
 /**
@@ -91,7 +89,7 @@ EhcSetOpRegBit (
   IN UINT32               Bit
   )
 {
-  UINT32                  Data;
+  UINT32  Data;
 
   Data  = EhcReadOpReg (Ehc, Offset);
   Data |= Bit;
@@ -113,7 +111,7 @@ EhcClearOpRegBit (
   IN UINT32               Bit
   )
 {
-  UINT32                  Data;
+  UINT32  Data;
 
   Data  = EhcReadOpReg (Ehc, Offset);
   Data &= ~Bit;
@@ -143,7 +141,7 @@ EhcWaitOpRegBit (
   IN UINT32               Timeout
   )
 {
-  UINT32                  Index;
+  UINT32  Index;
 
   for (Index = 0; Index < Timeout / EHC_SYNC_POLL_INTERVAL + 1; Index++) {
     if (EHC_REG_BIT_IS_SET (Ehc, Offset, Bit) == WaitToSet) {
@@ -171,9 +169,9 @@ EhcReadCapRegister (
   IN  UINT32              Offset
   )
 {
-  UINT32                  Data;
+  UINT32  Data;
 
-  Data = MmioRead32(Ehc->UsbHostControllerBaseAddress + Offset);
+  Data = MmioRead32 (Ehc->UsbHostControllerBaseAddress + Offset);
 
   return Data;
 }
@@ -195,8 +193,8 @@ EhcSetAndWaitDoorBell (
   IN  UINT32              Timeout
   )
 {
-  EFI_STATUS              Status;
-  UINT32                  Data;
+  EFI_STATUS  Status;
+  UINT32      Data;
 
   EhcSetOpRegBit (Ehc, EHC_USBCMD_OFFSET, USBCMD_IAAD);
 
@@ -247,7 +245,7 @@ EhcEnablePeriodSchd (
   IN UINT32               Timeout
   )
 {
-  EFI_STATUS              Status;
+  EFI_STATUS  Status;
 
   EhcSetOpRegBit (Ehc, EHC_USBCMD_OFFSET, USBCMD_ENABLE_PERIOD);
 
@@ -271,7 +269,7 @@ EhcEnableAsyncSchd (
   IN UINT32               Timeout
   )
 {
-  EFI_STATUS              Status;
+  EFI_STATUS  Status;
 
   EhcSetOpRegBit (Ehc, EHC_USBCMD_OFFSET, USBCMD_ENABLE_ASYNC);
 
@@ -329,7 +327,7 @@ EhcResetHC (
   IN UINT32               Timeout
   )
 {
-  EFI_STATUS              Status;
+  EFI_STATUS  Status;
 
   //
   // Host can only be reset when it is halt. If not so, halt it
@@ -363,7 +361,7 @@ EhcHaltHC (
   IN UINT32              Timeout
   )
 {
-  EFI_STATUS              Status;
+  EFI_STATUS  Status;
 
   EhcClearOpRegBit (Ehc, EHC_USBCMD_OFFSET, USBCMD_RUN);
   Status = EhcWaitOpRegBit (Ehc, EHC_USBSTS_OFFSET, USBSTS_HALT, TRUE, Timeout);
@@ -386,7 +384,7 @@ EhcRunHC (
   IN UINT32               Timeout
   )
 {
-  EFI_STATUS              Status;
+  EFI_STATUS  Status;
 
   EhcSetOpRegBit (Ehc, EHC_USBCMD_OFFSET, USBCMD_RUN);
   Status = EhcWaitOpRegBit (Ehc, EHC_USBSTS_OFFSET, USBSTS_HALT, FALSE, Timeout);
@@ -404,17 +402,17 @@ EhcPowerOnAllPorts (
   IN PEI_USB2_HC_DEV          *Ehc
   )
 {
-  UINT8     PortNumber;
-  UINT8     Index;
-  UINT32    RegVal;
+  UINT8   PortNumber;
+  UINT8   Index;
+  UINT32  RegVal;
 
-  PortNumber = (UINT8)(Ehc->HcStructParams & HCSP_NPORTS);
+  PortNumber = (UINT8) (Ehc->HcStructParams & HCSP_NPORTS);
   for (Index = 0; Index < PortNumber; Index++) {
     //
     // Do not clear port status bits on initialization.  Otherwise devices will
     // not enumerate properly at startup.
     //
-    RegVal  = EhcReadOpReg(Ehc, EHC_PORT_STAT_OFFSET + 4 * Index);
+    RegVal  = EhcReadOpReg (Ehc, EHC_PORT_STAT_OFFSET + 4 * Index);
     RegVal &= ~PORTSC_CHANGE_MASK;
     RegVal |= PORTSC_POWER;
     EhcWriteOpReg (Ehc, EHC_PORT_STAT_OFFSET + 4 * Index, RegVal);
@@ -441,9 +439,9 @@ EhcInitHC (
   IN PEI_USB2_HC_DEV      *Ehc
   )
 {
-  EFI_STATUS              Status;
-  EFI_PHYSICAL_ADDRESS        TempPtr;
-  UINTN               PageNumber;
+  EFI_STATUS            Status;
+  EFI_PHYSICAL_ADDRESS  TempPtr;
+  UINTN                 PageNumber;
 
   ASSERT (EhcIsHalt (Ehc));
 
@@ -454,12 +452,13 @@ EhcInitHC (
   if (Ehc->PeriodFrame != NULL) {
     EhcFreeSched (Ehc);
   }
-  PageNumber =  sizeof(PEI_URB)/PAGESIZE +1;
-  Status = PeiServicesAllocatePages (
-             EfiBootServicesCode,
-             PageNumber,
-             &TempPtr
-             );
+
+  PageNumber =  sizeof (PEI_URB)/PAGESIZE +1;
+  Status     = PeiServicesAllocatePages (
+                                         EfiBootServicesCode,
+                                         PageNumber,
+                                         &TempPtr
+                                         );
   Ehc->Urb = (PEI_URB *) ((UINTN) TempPtr);
   if (Ehc->Urb  == NULL) {
     return Status;
@@ -473,6 +472,7 @@ EhcInitHC (
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   //
   // 1. Program the CTRLDSSEGMENT register with the high 32 bit addr
   //
@@ -563,9 +563,9 @@ EhcBulkTransfer (
   OUT UINT32                              *TransferResult
   )
 {
-  PEI_USB2_HC_DEV         *Ehc;
-  PEI_URB                 *Urb;
-  EFI_STATUS              Status;
+  PEI_USB2_HC_DEV  *Ehc;
+  PEI_URB          *Urb;
+  EFI_STATUS       Status;
 
   //
   // Validate the parameters
@@ -585,9 +585,9 @@ EhcBulkTransfer (
     return EFI_INVALID_PARAMETER;
   }
 
-  Ehc =PEI_RECOVERY_USB_EHC_DEV_FROM_EHCI_THIS(This);
+  Ehc = PEI_RECOVERY_USB_EHC_DEV_FROM_EHCI_THIS (This);
   *TransferResult = EFI_USB_ERR_SYSTEM;
-  Status          = EFI_DEVICE_ERROR;
+  Status = EFI_DEVICE_ERROR;
 
   if (EhcIsHalt (Ehc) || EhcIsSysError (Ehc)) {
     EhcAckAllInterrupt (Ehc);
@@ -601,21 +601,21 @@ EhcBulkTransfer (
   // schedule list, then poll the execution status.
   //
   Urb = EhcCreateUrb (
-          Ehc,
-          DeviceAddress,
-          EndPointAddress,
-          DeviceSpeed,
-          *DataToggle,
-          MaximumPacketLength,
-          Translator,
-          EHC_BULK_TRANSFER,
-          NULL,
-          Data[0],
-          *DataLength,
-          NULL,
-          NULL,
-          1
-          );
+                      Ehc,
+                      DeviceAddress,
+                      EndPointAddress,
+                      DeviceSpeed,
+                      *DataToggle,
+                      MaximumPacketLength,
+                      Translator,
+                      EHC_BULK_TRANSFER,
+                      NULL,
+                      Data[0],
+                      *DataLength,
+                      NULL,
+                      NULL,
+                      1
+                      );
 
   if (Urb == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
@@ -661,17 +661,16 @@ EhcGetRootHubPortNumber (
   OUT UINT8                                 *PortNumber
   )
 {
+  PEI_USB2_HC_DEV  *EhcDev;
 
-  PEI_USB2_HC_DEV             *EhcDev;
   EhcDev = PEI_RECOVERY_USB_EHC_DEV_FROM_EHCI_THIS (This);
 
   if (PortNumber == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
-  *PortNumber = (UINT8)(EhcDev->HcStructParams & HCSP_NPORTS);
+  *PortNumber = (UINT8) (EhcDev->HcStructParams & HCSP_NPORTS);
   return EFI_SUCCESS;
-
 }
 
 /**
@@ -698,14 +697,14 @@ EhcClearRootHubPortFeature (
   IN  EFI_USB_PORT_FEATURE  PortFeature
   )
 {
-  PEI_USB2_HC_DEV         *Ehc;
-  UINT32                  Offset;
-  UINT32                  State;
-  UINT32                  TotalPort;
-  EFI_STATUS              Status;
+  PEI_USB2_HC_DEV  *Ehc;
+  UINT32           Offset;
+  UINT32           State;
+  UINT32           TotalPort;
+  EFI_STATUS       Status;
 
-  Ehc       = PEI_RECOVERY_USB_EHC_DEV_FROM_EHCI_THIS (This);
-  Status    = EFI_SUCCESS;
+  Ehc    = PEI_RECOVERY_USB_EHC_DEV_FROM_EHCI_THIS (This);
+  Status = EFI_SUCCESS;
 
   TotalPort = (Ehc->HcStructParams & HCSP_NPORTS);
 
@@ -714,82 +713,82 @@ EhcClearRootHubPortFeature (
     goto ON_EXIT;
   }
 
-  Offset  = EHC_PORT_STAT_OFFSET + (4 * PortNumber);
-  State   = EhcReadOpReg (Ehc, Offset);
+  Offset = EHC_PORT_STAT_OFFSET + (4 * PortNumber);
+  State  = EhcReadOpReg (Ehc, Offset);
   State &= ~PORTSC_CHANGE_MASK;
 
   switch (PortFeature) {
-  case EfiUsbPortEnable:
-    //
-    // Clear PORT_ENABLE feature means disable port.
-    //
-    State &= ~PORTSC_ENABLED;
-    EhcWriteOpReg (Ehc, Offset, State);
-    break;
+    case EfiUsbPortEnable:
+      //
+      // Clear PORT_ENABLE feature means disable port.
+      //
+      State &= ~PORTSC_ENABLED;
+      EhcWriteOpReg (Ehc, Offset, State);
+      break;
 
-  case EfiUsbPortSuspend:
-    //
-    // A write of zero to this bit is ignored by the host
-    // controller. The host controller will unconditionally
-    // set this bit to a zero when:
-    //   1. software sets the Forct Port Resume bit to a zero from a one.
-    //   2. software sets the Port Reset bit to a one frome a zero.
-    //
-    State &= ~PORSTSC_RESUME;
-    EhcWriteOpReg (Ehc, Offset, State);
-    break;
+    case EfiUsbPortSuspend:
+      //
+      // A write of zero to this bit is ignored by the host
+      // controller. The host controller will unconditionally
+      // set this bit to a zero when:
+      // 1. software sets the Forct Port Resume bit to a zero from a one.
+      // 2. software sets the Port Reset bit to a one frome a zero.
+      //
+      State &= ~PORSTSC_RESUME;
+      EhcWriteOpReg (Ehc, Offset, State);
+      break;
 
-  case EfiUsbPortReset:
-    //
-    // Clear PORT_RESET means clear the reset signal.
-    //
-    State &= ~PORTSC_RESET;
-    EhcWriteOpReg (Ehc, Offset, State);
-    break;
+    case EfiUsbPortReset:
+      //
+      // Clear PORT_RESET means clear the reset signal.
+      //
+      State &= ~PORTSC_RESET;
+      EhcWriteOpReg (Ehc, Offset, State);
+      break;
 
-  case EfiUsbPortOwner:
-    //
-    // Clear port owner means this port owned by EHC
-    //
-    State &= ~PORTSC_OWNER;
-    EhcWriteOpReg (Ehc, Offset, State);
-    break;
+    case EfiUsbPortOwner:
+      //
+      // Clear port owner means this port owned by EHC
+      //
+      State &= ~PORTSC_OWNER;
+      EhcWriteOpReg (Ehc, Offset, State);
+      break;
 
-  case EfiUsbPortConnectChange:
-    //
-    // Clear connect status change
-    //
-    State |= PORTSC_CONN_CHANGE;
-    EhcWriteOpReg (Ehc, Offset, State);
-    break;
+    case EfiUsbPortConnectChange:
+      //
+      // Clear connect status change
+      //
+      State |= PORTSC_CONN_CHANGE;
+      EhcWriteOpReg (Ehc, Offset, State);
+      break;
 
-  case EfiUsbPortEnableChange:
-    //
-    // Clear enable status change
-    //
-    State |= PORTSC_ENABLE_CHANGE;
-    EhcWriteOpReg (Ehc, Offset, State);
-    break;
+    case EfiUsbPortEnableChange:
+      //
+      // Clear enable status change
+      //
+      State |= PORTSC_ENABLE_CHANGE;
+      EhcWriteOpReg (Ehc, Offset, State);
+      break;
 
-  case EfiUsbPortOverCurrentChange:
-    //
-    // Clear PortOverCurrent change
-    //
-    State |= PORTSC_OVERCUR_CHANGE;
-    EhcWriteOpReg (Ehc, Offset, State);
-    break;
+    case EfiUsbPortOverCurrentChange:
+      //
+      // Clear PortOverCurrent change
+      //
+      State |= PORTSC_OVERCUR_CHANGE;
+      EhcWriteOpReg (Ehc, Offset, State);
+      break;
 
-  case EfiUsbPortPower:
-  case EfiUsbPortSuspendChange:
-  case EfiUsbPortResetChange:
-    //
-    // Not supported or not related operation
-    //
-    break;
+    case EfiUsbPortPower:
+    case EfiUsbPortSuspendChange:
+    case EfiUsbPortResetChange:
+      //
+      // Not supported or not related operation
+      //
+      break;
 
-  default:
-    Status = EFI_INVALID_PARAMETER;
-    break;
+    default:
+      Status = EFI_INVALID_PARAMETER;
+      break;
   }
 
 ON_EXIT:
@@ -818,14 +817,14 @@ EhcSetRootHubPortFeature (
   IN EFI_USB_PORT_FEATURE                   PortFeature
   )
 {
-  PEI_USB2_HC_DEV         *Ehc;
-  UINT32                  Offset;
-  UINT32                  State;
-  UINT32                  TotalPort;
-  EFI_STATUS              Status;
+  PEI_USB2_HC_DEV  *Ehc;
+  UINT32           Offset;
+  UINT32           State;
+  UINT32           TotalPort;
+  EFI_STATUS       Status;
 
-  Ehc       = PEI_RECOVERY_USB_EHC_DEV_FROM_EHCI_THIS (This);
-  Status    = EFI_SUCCESS;
+  Ehc    = PEI_RECOVERY_USB_EHC_DEV_FROM_EHCI_THIS (This);
+  Status = EFI_SUCCESS;
 
   TotalPort = (Ehc->HcStructParams & HCSP_NPORTS);
 
@@ -834,8 +833,8 @@ EhcSetRootHubPortFeature (
     goto ON_EXIT;
   }
 
-  Offset  = (UINT32) (EHC_PORT_STAT_OFFSET + (4 * PortNumber));
-  State   = EhcReadOpReg (Ehc, Offset);
+  Offset = (UINT32) (EHC_PORT_STAT_OFFSET + (4 * PortNumber));
+  State  = EhcReadOpReg (Ehc, Offset);
 
   //
   // Mask off the port status change bits, these bits are
@@ -844,54 +843,54 @@ EhcSetRootHubPortFeature (
   State &= ~PORTSC_CHANGE_MASK;
 
   switch (PortFeature) {
-  case EfiUsbPortEnable:
-    //
-    // Sofeware can't set this bit, Port can only be enable by
-    // EHCI as a part of the reset and enable
-    //
-    State |= PORTSC_ENABLED;
-    EhcWriteOpReg (Ehc, Offset, State);
-    break;
+    case EfiUsbPortEnable:
+      //
+      // Sofeware can't set this bit, Port can only be enable by
+      // EHCI as a part of the reset and enable
+      //
+      State |= PORTSC_ENABLED;
+      EhcWriteOpReg (Ehc, Offset, State);
+      break;
 
-  case EfiUsbPortSuspend:
-    State |= PORTSC_SUSPEND;
-    EhcWriteOpReg (Ehc, Offset, State);
-    break;
+    case EfiUsbPortSuspend:
+      State |= PORTSC_SUSPEND;
+      EhcWriteOpReg (Ehc, Offset, State);
+      break;
 
-  case EfiUsbPortReset:
-    //
-    // Make sure Host Controller not halt before reset it
-    //
-    if (EhcIsHalt (Ehc)) {
-      Status = EhcRunHC (Ehc, EHC_GENERIC_TIMEOUT);
+    case EfiUsbPortReset:
+      //
+      // Make sure Host Controller not halt before reset it
+      //
+      if (EhcIsHalt (Ehc)) {
+        Status = EhcRunHC (Ehc, EHC_GENERIC_TIMEOUT);
 
-      if (EFI_ERROR (Status)) {
-        break;
+        if (EFI_ERROR (Status)) {
+          break;
+        }
       }
-    }
 
-    //
-    // Set one to PortReset bit must also set zero to PortEnable bit
-    //
-    State |= PORTSC_RESET;
-    State &= ~PORTSC_ENABLED;
-    EhcWriteOpReg (Ehc, Offset, State);
-    break;
+      //
+      // Set one to PortReset bit must also set zero to PortEnable bit
+      //
+      State |= PORTSC_RESET;
+      State &= ~PORTSC_ENABLED;
+      EhcWriteOpReg (Ehc, Offset, State);
+      break;
 
-  case EfiUsbPortPower:
-    //
-    // Not supported, ignore the operation
-    //
-    Status = EFI_SUCCESS;
-    break;
+    case EfiUsbPortPower:
+      //
+      // Not supported, ignore the operation
+      //
+      Status = EFI_SUCCESS;
+      break;
 
-  case EfiUsbPortOwner:
-    State |= PORTSC_OWNER;
-    EhcWriteOpReg (Ehc, Offset, State);
-    break;
+    case EfiUsbPortOwner:
+      State |= PORTSC_OWNER;
+      EhcWriteOpReg (Ehc, Offset, State);
+      break;
 
-  default:
-    Status = EFI_INVALID_PARAMETER;
+    default:
+      Status = EFI_INVALID_PARAMETER;
   }
 
 ON_EXIT:
@@ -920,20 +919,20 @@ EhcGetRootHubPortStatus (
   OUT EFI_USB_PORT_STATUS                   *PortStatus
   )
 {
-  PEI_USB2_HC_DEV         *Ehc;
-  UINT32                  Offset;
-  UINT32                  State;
-  UINT32                  TotalPort;
-  UINTN                   Index;
-  UINTN                   MapSize;
-  EFI_STATUS              Status;
+  PEI_USB2_HC_DEV  *Ehc;
+  UINT32           Offset;
+  UINT32           State;
+  UINT32           TotalPort;
+  UINTN            Index;
+  UINTN            MapSize;
+  EFI_STATUS       Status;
 
   if (PortStatus == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
-  Ehc       =  PEI_RECOVERY_USB_EHC_DEV_FROM_EHCI_THIS(This);
-  Status    = EFI_SUCCESS;
+  Ehc    =  PEI_RECOVERY_USB_EHC_DEV_FROM_EHCI_THIS (This);
+  Status = EFI_SUCCESS;
 
   TotalPort = (Ehc->HcStructParams & HCSP_NPORTS);
 
@@ -942,11 +941,11 @@ EhcGetRootHubPortStatus (
     goto ON_EXIT;
   }
 
-  Offset                        = (UINT32) (EHC_PORT_STAT_OFFSET + (4 * PortNumber));
-  PortStatus->PortStatus        = 0;
-  PortStatus->PortChangeStatus  = 0;
+  Offset = (UINT32) (EHC_PORT_STAT_OFFSET + (4 * PortNumber));
+  PortStatus->PortStatus = 0;
+  PortStatus->PortChangeStatus = 0;
 
-  State                         = EhcReadOpReg (Ehc, Offset);
+  State = EhcReadOpReg (Ehc, Offset);
 
   //
   // Identify device speed. If in K state, it is low speed.
@@ -956,7 +955,6 @@ EhcGetRootHubPortStatus (
   //
   if (EHC_BIT_IS_SET (State, PORTSC_LINESTATE_K)) {
     PortStatus->PortStatus |= USB_PORT_STAT_LOW_SPEED;
-
   } else if (EHC_BIT_IS_SET (State, PORTSC_ENABLED)) {
     PortStatus->PortStatus |= USB_PORT_STAT_HIGH_SPEED;
   }
@@ -1027,10 +1025,10 @@ EhcControlTransfer (
   OUT UINT32                              *TransferResult
   )
 {
-  PEI_USB2_HC_DEV         *Ehc;
-  PEI_URB                 *Urb;
-  UINT8                   Endpoint;
-  EFI_STATUS              Status;
+  PEI_USB2_HC_DEV  *Ehc;
+  PEI_URB          *Urb;
+  UINT8            Endpoint;
+  EFI_STATUS       Status;
 
   //
   // Validate parameters
@@ -1051,7 +1049,7 @@ EhcControlTransfer (
   }
 
   if ((TransferDirection != EfiUsbNoData) &&
-     ((Data == NULL) || (*DataLength == 0))) {
+      ((Data == NULL) || (*DataLength == 0))) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1060,16 +1058,15 @@ EhcControlTransfer (
     return EFI_INVALID_PARAMETER;
   }
 
-
   if ((DeviceSpeed == EFI_USB_SPEED_LOW) ||
       ((DeviceSpeed == EFI_USB_SPEED_FULL) && (MaximumPacketLength > 64)) ||
       ((EFI_USB_SPEED_HIGH == DeviceSpeed) && (MaximumPacketLength > 512))) {
     return EFI_INVALID_PARAMETER;
   }
 
-  Ehc             = PEI_RECOVERY_USB_EHC_DEV_FROM_EHCI_THIS (This);
+  Ehc = PEI_RECOVERY_USB_EHC_DEV_FROM_EHCI_THIS (This);
 
-  Status          = EFI_DEVICE_ERROR;
+  Status = EFI_DEVICE_ERROR;
   *TransferResult = EFI_USB_ERR_SYSTEM;
 
   if (EhcIsHalt (Ehc) || EhcIsSysError (Ehc)) {
@@ -1090,21 +1087,21 @@ EhcControlTransfer (
   //
   Endpoint = (UINT8) (0 | ((TransferDirection == EfiUsbDataIn) ? 0x80 : 0));
   Urb = EhcCreateUrb (
-          Ehc,
-          DeviceAddress,
-          Endpoint,
-          DeviceSpeed,
-          0,
-          MaximumPacketLength,
-          Translator,
-          EHC_CTRL_TRANSFER,
-          Request,
-          Data,
-          *DataLength,
-          NULL,
-          NULL,
-          1
-          );
+                      Ehc,
+                      DeviceAddress,
+                      Endpoint,
+                      DeviceSpeed,
+                      0,
+                      MaximumPacketLength,
+                      Translator,
+                      EHC_CTRL_TRANSFER,
+                      Request,
+                      Data,
+                      *DataLength,
+                      NULL,
+                      NULL,
+                      1
+                      );
 
   if (Urb == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
@@ -1152,7 +1149,7 @@ EhcEndOfPei (
   IN VOID                       *Ppi
   )
 {
-  PEI_USB2_HC_DEV   *Ehc;
+  PEI_USB2_HC_DEV  *Ehc;
 
   Ehc = PEI_RECOVERY_USB_EHC_DEV_FROM_THIS_NOTIFY (NotifyDescriptor);
 
@@ -1177,14 +1174,14 @@ EhcPeimEntry (
   IN CONST EFI_PEI_SERVICES  **PeiServices
   )
 {
-  PEI_USB_CONTROLLER_PPI      *ChipSetUsbControllerPpi;
-  EFI_STATUS                  Status;
-  UINT8                       Index;
-  UINTN                       ControllerType;
-  UINTN                       BaseAddress;
-  UINTN                       MemPages;
-  PEI_USB2_HC_DEV             *EhcDev;
-  EFI_PHYSICAL_ADDRESS        TempPtr;
+  PEI_USB_CONTROLLER_PPI  *ChipSetUsbControllerPpi;
+  EFI_STATUS              Status;
+  UINT8                   Index;
+  UINTN                   ControllerType;
+  UINTN                   BaseAddress;
+  UINTN                   MemPages;
+  PEI_USB2_HC_DEV         *EhcDev;
+  EFI_PHYSICAL_ADDRESS    TempPtr;
 
   //
   // Shadow this PEIM to run from memory
@@ -1194,11 +1191,11 @@ EhcPeimEntry (
   }
 
   Status = PeiServicesLocatePpi (
-             &gPeiUsbControllerPpiGuid,
-             0,
-             NULL,
-             (VOID **) &ChipSetUsbControllerPpi
-             );
+                                 &gPeiUsbControllerPpiGuid,
+                                 0,
+                                 NULL,
+                                 (VOID **) &ChipSetUsbControllerPpi
+                                 );
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
@@ -1206,12 +1203,12 @@ EhcPeimEntry (
   Index = 0;
   while (TRUE) {
     Status = ChipSetUsbControllerPpi->GetUsbController (
-                                        (EFI_PEI_SERVICES **) PeiServices,
-                                        ChipSetUsbControllerPpi,
-                                        Index,
-                                        &ControllerType,
-                                        &BaseAddress
-                                        );
+                                                        (EFI_PEI_SERVICES **) PeiServices,
+                                                        ChipSetUsbControllerPpi,
+                                                        Index,
+                                                        &ControllerType,
+                                                        &BaseAddress
+                                                        );
     //
     // When status is error, meant no controller is found
     //
@@ -1228,16 +1225,16 @@ EhcPeimEntry (
     }
 
     MemPages = sizeof (PEI_USB2_HC_DEV) / PAGESIZE + 1;
-    Status = PeiServicesAllocatePages (
-               EfiBootServicesCode,
-               MemPages,
-               &TempPtr
-               );
+    Status   = PeiServicesAllocatePages (
+                                         EfiBootServicesCode,
+                                         MemPages,
+                                         &TempPtr
+                                         );
     if (EFI_ERROR (Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
 
-    ZeroMem((VOID *)(UINTN)TempPtr, MemPages*PAGESIZE);
+    ZeroMem ((VOID *) (UINTN) TempPtr, MemPages*PAGESIZE);
     EhcDev = (PEI_USB2_HC_DEV *) ((UINTN) TempPtr);
 
     EhcDev->Signature = USB2_HC_DEV_SIGNATURE;
@@ -1246,10 +1243,9 @@ EhcPeimEntry (
 
     EhcDev->UsbHostControllerBaseAddress = (UINT32) BaseAddress;
 
-
     EhcDev->HcStructParams = EhcReadCapRegister (EhcDev, EHC_HCSPARAMS_OFFSET);
     EhcDev->HcCapParams    = EhcReadCapRegister (EhcDev, EHC_HCCPARAMS_OFFSET);
-    EhcDev->CapLen         = EhcReadCapRegister (EhcDev, EHC_CAPLENGTH_OFFSET) & 0x0FF;
+    EhcDev->CapLen = EhcReadCapRegister (EhcDev, EHC_CAPLENGTH_OFFSET) & 0x0FF;
     //
     // Initialize Uhc's hardware
     //
@@ -1258,16 +1254,16 @@ EhcPeimEntry (
       return Status;
     }
 
-    EhcDev->Usb2HostControllerPpi.ControlTransfer          = EhcControlTransfer;
-    EhcDev->Usb2HostControllerPpi.BulkTransfer             = EhcBulkTransfer;
-    EhcDev->Usb2HostControllerPpi.GetRootHubPortNumber     = EhcGetRootHubPortNumber;
-    EhcDev->Usb2HostControllerPpi.GetRootHubPortStatus     = EhcGetRootHubPortStatus;
-    EhcDev->Usb2HostControllerPpi.SetRootHubPortFeature    = EhcSetRootHubPortFeature;
-    EhcDev->Usb2HostControllerPpi.ClearRootHubPortFeature  = EhcClearRootHubPortFeature;
+    EhcDev->Usb2HostControllerPpi.ControlTransfer = EhcControlTransfer;
+    EhcDev->Usb2HostControllerPpi.BulkTransfer    = EhcBulkTransfer;
+    EhcDev->Usb2HostControllerPpi.GetRootHubPortNumber    = EhcGetRootHubPortNumber;
+    EhcDev->Usb2HostControllerPpi.GetRootHubPortStatus    = EhcGetRootHubPortStatus;
+    EhcDev->Usb2HostControllerPpi.SetRootHubPortFeature   = EhcSetRootHubPortFeature;
+    EhcDev->Usb2HostControllerPpi.ClearRootHubPortFeature = EhcClearRootHubPortFeature;
 
     EhcDev->PpiDescriptor.Flags = (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST);
-    EhcDev->PpiDescriptor.Guid = &gPeiUsb2HostControllerPpiGuid;
-    EhcDev->PpiDescriptor.Ppi = &EhcDev->Usb2HostControllerPpi;
+    EhcDev->PpiDescriptor.Guid  = &gPeiUsb2HostControllerPpiGuid;
+    EhcDev->PpiDescriptor.Ppi   = &EhcDev->Usb2HostControllerPpi;
 
     Status = PeiServicesInstallPpi (&EhcDev->PpiDescriptor);
     if (EFI_ERROR (Status)) {
@@ -1275,8 +1271,9 @@ EhcPeimEntry (
       continue;
     }
 
-    EhcDev->EndOfPeiNotifyList.Flags = (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST);
-    EhcDev->EndOfPeiNotifyList.Guid = &gEfiEndOfPeiSignalPpiGuid;
+    EhcDev->EndOfPeiNotifyList.Flags =
+      (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST);
+    EhcDev->EndOfPeiNotifyList.Guid   = &gEfiEndOfPeiSignalPpiGuid;
     EhcDev->EndOfPeiNotifyList.Notify = EhcEndOfPei;
 
     PeiServicesNotifyPpi (&EhcDev->EndOfPeiNotifyList);
@@ -1300,7 +1297,6 @@ InitializeUsbHC (
   )
 {
   EFI_STATUS  Status;
-
 
   EhcResetHC (EhcDev, EHC_RESET_TIMEOUT);
 

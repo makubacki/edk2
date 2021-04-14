@@ -40,21 +40,21 @@ PeiUsbGetDescriptor (
 
   ASSERT (UsbIoPpi != NULL);
 
-  DevReq.RequestType  = USB_DEV_GET_DESCRIPTOR_REQ_TYPE;
-  DevReq.Request      = USB_DEV_GET_DESCRIPTOR;
-  DevReq.Value        = Value;
-  DevReq.Index        = Index;
-  DevReq.Length       = DescriptorLength;
+  DevReq.RequestType = USB_DEV_GET_DESCRIPTOR_REQ_TYPE;
+  DevReq.Request     = USB_DEV_GET_DESCRIPTOR;
+  DevReq.Value  = Value;
+  DevReq.Index  = Index;
+  DevReq.Length = DescriptorLength;
 
   return UsbIoPpi->UsbControlTransfer (
-                     PeiServices,
-                     UsbIoPpi,
-                     &DevReq,
-                     EfiUsbDataIn,
-                     PcdGet32 (PcdUsbTransferTimeoutValue),
-                     Descriptor,
-                     DescriptorLength
-                     );
+                                       PeiServices,
+                                       UsbIoPpi,
+                                       &DevReq,
+                                       EfiUsbDataIn,
+                                       PcdGet32 (PcdUsbTransferTimeoutValue),
+                                       Descriptor,
+                                       DescriptorLength
+                                       );
 }
 
 /**
@@ -80,24 +80,22 @@ PeiUsbSetDeviceAddress (
 
   ASSERT (UsbIoPpi != NULL);
 
-  DevReq.RequestType  = USB_DEV_SET_ADDRESS_REQ_TYPE;
-  DevReq.Request      = USB_DEV_SET_ADDRESS;
-  DevReq.Value        = AddressValue;
-  DevReq.Index        = 0;
-  DevReq.Length       = 0;
+  DevReq.RequestType = USB_DEV_SET_ADDRESS_REQ_TYPE;
+  DevReq.Request     = USB_DEV_SET_ADDRESS;
+  DevReq.Value  = AddressValue;
+  DevReq.Index  = 0;
+  DevReq.Length = 0;
 
   return UsbIoPpi->UsbControlTransfer (
-                     PeiServices,
-                     UsbIoPpi,
-                     &DevReq,
-                     EfiUsbNoData,
-                     PcdGet32 (PcdUsbTransferTimeoutValue),
-                     NULL,
-                     0
-                     );
+                                       PeiServices,
+                                       UsbIoPpi,
+                                       &DevReq,
+                                       EfiUsbNoData,
+                                       PcdGet32 (PcdUsbTransferTimeoutValue),
+                                       NULL,
+                                       0
+                                       );
 }
-
-
 
 /**
   Configure a usb device to Configuration 1.
@@ -117,21 +115,22 @@ PeiUsbSetConfiguration (
   )
 {
   EFI_USB_DEVICE_REQUEST  DevReq;
+
   ZeroMem (&DevReq, sizeof (EFI_USB_DEVICE_REQUEST));
 
-  DevReq.RequestType  = USB_DEV_SET_CONFIGURATION_REQ_TYPE;
-  DevReq.Request      = USB_DEV_SET_CONFIGURATION;
-  DevReq.Value        = 1;
+  DevReq.RequestType = USB_DEV_SET_CONFIGURATION_REQ_TYPE;
+  DevReq.Request     = USB_DEV_SET_CONFIGURATION;
+  DevReq.Value = 1;
 
   return UsbIoPpi->UsbControlTransfer (
-                     PeiServices,
-                     UsbIoPpi,
-                     &DevReq,
-                     EfiUsbNoData,
-                     PcdGet32 (PcdUsbTransferTimeoutValue),
-                     NULL,
-                     0
-                     );
+                                       PeiServices,
+                                       UsbIoPpi,
+                                       &DevReq,
+                                       EfiUsbNoData,
+                                       PcdGet32 (PcdUsbTransferTimeoutValue),
+                                       NULL,
+                                       0
+                                       );
 }
 
 /**
@@ -173,7 +172,7 @@ PeiUsbGetDeviceSpeed (
 {
   if ((PortStatus & USB_PORT_STAT_LOW_SPEED) != 0) {
     return EFI_USB_SPEED_LOW;
-  } else if ((PortStatus & USB_PORT_STAT_HIGH_SPEED) != 0){
+  } else if ((PortStatus & USB_PORT_STAT_HIGH_SPEED) != 0) {
     return EFI_USB_SPEED_HIGH;
   } else if ((PortStatus & USB_PORT_STAT_SUPER_SPEED) != 0) {
     return EFI_USB_SPEED_SUPER;
@@ -181,5 +180,3 @@ PeiUsbGetDeviceSpeed (
     return EFI_USB_SPEED_FULL;
   }
 }
-
-

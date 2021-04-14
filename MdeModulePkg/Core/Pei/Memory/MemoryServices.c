@@ -27,23 +27,21 @@ InitializeMemoryServices (
   IN PEI_CORE_INSTANCE           *OldCoreData
   )
 {
-
-  PrivateData->SwitchStackSignal    = FALSE;
+  PrivateData->SwitchStackSignal = FALSE;
 
   //
   // First entering PeiCore, following code will initialized some field
   // in PeiCore's private data according to hand off data from SEC core.
   //
   if (OldCoreData == NULL) {
-
     PrivateData->PeiMemoryInstalled = FALSE;
-    PrivateData->HobList.Raw        = SecCoreData->PeiTemporaryRamBase;
+    PrivateData->HobList.Raw = SecCoreData->PeiTemporaryRamBase;
 
     PeiCoreBuildHobHandoffInfoTable (
-      BOOT_WITH_FULL_CONFIGURATION,
-      (EFI_PHYSICAL_ADDRESS) (UINTN) SecCoreData->PeiTemporaryRamBase,
-      (UINTN) SecCoreData->PeiTemporaryRamSize
-      );
+                                     BOOT_WITH_FULL_CONFIGURATION,
+                                     (EFI_PHYSICAL_ADDRESS) (UINTN) SecCoreData->PeiTemporaryRamBase,
+                                     (UINTN) SecCoreData->PeiTemporaryRamSize
+                                     );
 
     //
     // Set Ps to point to ServiceTableShadow in Cache
@@ -78,7 +76,7 @@ PeiInstallPeiMemory (
   IN UINT64                  MemoryLength
   )
 {
-  PEI_CORE_INSTANCE                     *PrivateData;
+  PEI_CORE_INSTANCE  *PrivateData;
 
   DEBUG ((EFI_D_INFO, "PeiInstallPeiMemory MemoryBegin 0x%LX, MemoryLength 0x%LX\n", MemoryBegin, MemoryLength));
   PrivateData = PEI_CORE_INSTANCE_FROM_PS_THIS (PeiServices);
@@ -98,7 +96,7 @@ PeiInstallPeiMemory (
   PrivateData->PhysicalMemoryLength  = MemoryLength;
   PrivateData->FreePhysicalMemoryTop = MemoryBegin + MemoryLength;
 
-  PrivateData->SwitchStackSignal      = TRUE;
+  PrivateData->SwitchStackSignal = TRUE;
 
   return EFI_SUCCESS;
 }
@@ -117,8 +115,8 @@ MigrateMemoryPages (
   IN BOOLEAN                TemporaryRamMigrated
   )
 {
-  EFI_PHYSICAL_ADDRESS      NewMemPagesBase;
-  EFI_PHYSICAL_ADDRESS      MemPagesBase;
+  EFI_PHYSICAL_ADDRESS  NewMemPagesBase;
+  EFI_PHYSICAL_ADDRESS  MemPagesBase;
 
   Private->MemoryPages.Size = (UINTN) (Private->HobList.HandoffInformationTable->EfiMemoryTop -
                                        Private->HobList.HandoffInformationTable->EfiFreeMemoryTop);
@@ -128,11 +126,12 @@ MigrateMemoryPages (
     //
     return;
   }
+
   Private->MemoryPages.Base = Private->HobList.HandoffInformationTable->EfiFreeMemoryTop;
 
   ASSERT (Private->MemoryPages.Size <= Private->FreePhysicalMemoryTop);
-  NewMemPagesBase = Private->FreePhysicalMemoryTop - Private->MemoryPages.Size;
-  NewMemPagesBase &= ~(UINT64)EFI_PAGE_MASK;
+  NewMemPagesBase  = Private->FreePhysicalMemoryTop - Private->MemoryPages.Size;
+  NewMemPagesBase &= ~(UINT64) EFI_PAGE_MASK;
   ASSERT (NewMemPagesBase >= Private->PhysicalMemoryBegin);
   //
   // Copy memory pages at temporary heap top to permanent heap top.
@@ -148,17 +147,18 @@ MigrateMemoryPages (
     } else {
       MemPagesBase -= Private->HeapOffset;
     }
-    CopyMem ((VOID *)(UINTN)NewMemPagesBase, (VOID *)(UINTN)MemPagesBase, Private->MemoryPages.Size);
+
+    CopyMem ((VOID *) (UINTN) NewMemPagesBase, (VOID *) (UINTN) MemPagesBase, Private->MemoryPages.Size);
   } else {
-    CopyMem ((VOID *)(UINTN)NewMemPagesBase, (VOID *)(UINTN)Private->MemoryPages.Base, Private->MemoryPages.Size);
+    CopyMem ((VOID *) (UINTN) NewMemPagesBase, (VOID *) (UINTN) Private->MemoryPages.Base, Private->MemoryPages.Size);
   }
 
   if (NewMemPagesBase >= Private->MemoryPages.Base) {
     Private->MemoryPages.OffsetPositive = TRUE;
-    Private->MemoryPages.Offset = (UINTN)(NewMemPagesBase - Private->MemoryPages.Base);
+    Private->MemoryPages.Offset = (UINTN) (NewMemPagesBase - Private->MemoryPages.Base);
   } else {
     Private->MemoryPages.OffsetPositive = FALSE;
-    Private->MemoryPages.Offset = (UINTN)(Private->MemoryPages.Base - NewMemPagesBase);
+    Private->MemoryPages.Offset = (UINTN) (Private->MemoryPages.Base - NewMemPagesBase);
   }
 
   DEBUG ((DEBUG_INFO, "Pages Offset = 0x%lX\n", (UINT64) Private->MemoryPages.Offset));
@@ -177,27 +177,31 @@ RemoveFvHobsInTemporaryMemory (
   IN PEI_CORE_INSTANCE        *Private
   )
 {
-  EFI_PEI_HOB_POINTERS        Hob;
-  EFI_HOB_FIRMWARE_VOLUME     *FirmwareVolumeHob;
+  EFI_PEI_HOB_POINTERS     Hob;
+  EFI_HOB_FIRMWARE_VOLUME  *FirmwareVolumeHob;
 
   DEBUG ((DEBUG_INFO, "Removing FVs in FV HOB not already migrated to permanent memory.\n"));
 
   for (Hob.Raw = GetHobList (); !END_OF_HOB_LIST (Hob); Hob.Raw = GET_NEXT_HOB (Hob)) {
-    if (GET_HOB_TYPE (Hob) == EFI_HOB_TYPE_FV || GET_HOB_TYPE (Hob) == EFI_HOB_TYPE_FV2 || GET_HOB_TYPE (Hob) == EFI_HOB_TYPE_FV3) {
+    if (GET_HOB_TYPE (Hob) == EFI_HOB_TYPE_FV || GET_HOB_TYPE (Hob) == EFI_HOB_TYPE_FV2 ||
+        GET_HOB_TYPE (Hob) == EFI_HOB_TYPE_FV3) {
       FirmwareVolumeHob = Hob.FirmwareVolume;
       DEBUG ((DEBUG_INFO, "  Found FV HOB.\n"));
-      DEBUG ((
-          DEBUG_INFO,
-          "    BA=%016lx  L=%016lx\n",
-          FirmwareVolumeHob->BaseAddress,
-          FirmwareVolumeHob->Length
-          ));
+      DEBUG (
+             (
+              DEBUG_INFO,
+              "    BA=%016lx  L=%016lx\n",
+              FirmwareVolumeHob->BaseAddress,
+              FirmwareVolumeHob->Length
+             )
+             );
       if (
-        !(
-          ((EFI_PHYSICAL_ADDRESS) (UINTN) FirmwareVolumeHob->BaseAddress >= Private->PhysicalMemoryBegin) &&
-          (((EFI_PHYSICAL_ADDRESS) (UINTN) FirmwareVolumeHob->BaseAddress + (FirmwareVolumeHob->Length - 1)) < Private->FreePhysicalMemoryTop)
-          )
-        ) {
+          !(
+            ((EFI_PHYSICAL_ADDRESS) (UINTN) FirmwareVolumeHob->BaseAddress >= Private->PhysicalMemoryBegin) &&
+            (((EFI_PHYSICAL_ADDRESS) (UINTN) FirmwareVolumeHob->BaseAddress + (FirmwareVolumeHob->Length - 1)) <
+             Private->FreePhysicalMemoryTop)
+            )
+          ) {
         DEBUG ((DEBUG_INFO, "      Removing FV HOB to an FV in T-RAM (was not migrated).\n"));
         Hob.Header->HobType = EFI_HOB_TYPE_UNUSED;
       }
@@ -221,10 +225,10 @@ ConvertFvHob (
   IN UINTN                      FvHandle
   )
 {
-  EFI_PEI_HOB_POINTERS        Hob;
-  EFI_HOB_FIRMWARE_VOLUME     *FirmwareVolumeHob;
-  EFI_HOB_FIRMWARE_VOLUME2    *FirmwareVolume2Hob;
-  EFI_HOB_FIRMWARE_VOLUME3    *FirmwareVolume3Hob;
+  EFI_PEI_HOB_POINTERS      Hob;
+  EFI_HOB_FIRMWARE_VOLUME   *FirmwareVolumeHob;
+  EFI_HOB_FIRMWARE_VOLUME2  *FirmwareVolume2Hob;
+  EFI_HOB_FIRMWARE_VOLUME3  *FirmwareVolume3Hob;
 
   DEBUG ((DEBUG_INFO, "Converting FVs in FV HOB.\n"));
 
@@ -260,10 +264,10 @@ ConvertMemoryAllocationHobs (
   IN PEI_CORE_INSTANCE          *PrivateData
   )
 {
-  EFI_PEI_HOB_POINTERS          Hob;
-  EFI_HOB_MEMORY_ALLOCATION     *MemoryAllocationHob;
-  EFI_PHYSICAL_ADDRESS          OldMemPagesBase;
-  UINTN                         OldMemPagesSize;
+  EFI_PEI_HOB_POINTERS       Hob;
+  EFI_HOB_MEMORY_ALLOCATION  *MemoryAllocationHob;
+  EFI_PHYSICAL_ADDRESS       OldMemPagesBase;
+  UINTN                      OldMemPagesSize;
 
   if (PrivateData->MemoryPages.Size == 0) {
     //
@@ -311,8 +315,8 @@ InternalBuildMemoryAllocationHob (
   IN EFI_MEMORY_TYPE            MemoryType
   )
 {
-  EFI_PEI_HOB_POINTERS          Hob;
-  EFI_HOB_MEMORY_ALLOCATION     *MemoryAllocationHob;
+  EFI_PEI_HOB_POINTERS       Hob;
+  EFI_HOB_MEMORY_ALLOCATION  *MemoryAllocationHob;
 
   //
   // Search unused(freed) memory allocation HOB.
@@ -336,8 +340,8 @@ InternalBuildMemoryAllocationHob (
     MemoryAllocationHob->Header.HobType = EFI_HOB_TYPE_MEMORY_ALLOCATION;
     ZeroMem (&(MemoryAllocationHob->AllocDescriptor.Name), sizeof (EFI_GUID));
     MemoryAllocationHob->AllocDescriptor.MemoryBaseAddress = BaseAddress;
-    MemoryAllocationHob->AllocDescriptor.MemoryLength      = Length;
-    MemoryAllocationHob->AllocDescriptor.MemoryType        = MemoryType;
+    MemoryAllocationHob->AllocDescriptor.MemoryLength = Length;
+    MemoryAllocationHob->AllocDescriptor.MemoryType   = MemoryType;
     //
     // Zero the reserved space to match HOB spec
     //
@@ -348,10 +352,10 @@ InternalBuildMemoryAllocationHob (
     // Build memory allocation HOB normally.
     //
     BuildMemoryAllocationHob (
-      BaseAddress,
-      Length,
-      MemoryType
-      );
+                              BaseAddress,
+                              Length,
+                              MemoryType
+                              );
   }
 }
 
@@ -382,10 +386,11 @@ UpdateOrSplitMemoryAllocationHob (
     // Last pages need to be split out.
     //
     InternalBuildMemoryAllocationHob (
-      Memory + Bytes,
-      (MemoryAllocationHob->AllocDescriptor.MemoryBaseAddress + MemoryAllocationHob->AllocDescriptor.MemoryLength) - (Memory + Bytes),
-      MemoryAllocationHob->AllocDescriptor.MemoryType
-      );
+                                      Memory + Bytes,
+                                      (MemoryAllocationHob->AllocDescriptor.MemoryBaseAddress +
+                                       MemoryAllocationHob->AllocDescriptor.MemoryLength) - (Memory + Bytes),
+                                      MemoryAllocationHob->AllocDescriptor.MemoryType
+                                      );
   }
 
   if (Memory > MemoryAllocationHob->AllocDescriptor.MemoryBaseAddress) {
@@ -393,10 +398,10 @@ UpdateOrSplitMemoryAllocationHob (
     // First pages need to be split out.
     //
     InternalBuildMemoryAllocationHob (
-      MemoryAllocationHob->AllocDescriptor.MemoryBaseAddress,
-      Memory - MemoryAllocationHob->AllocDescriptor.MemoryBaseAddress,
-      MemoryAllocationHob->AllocDescriptor.MemoryType
-      );
+                                      MemoryAllocationHob->AllocDescriptor.MemoryBaseAddress,
+                                      Memory - MemoryAllocationHob->AllocDescriptor.MemoryBaseAddress,
+                                      MemoryAllocationHob->AllocDescriptor.MemoryType
+                                      );
   }
 
   //
@@ -404,7 +409,7 @@ UpdateOrSplitMemoryAllocationHob (
   //
   MemoryAllocationHob->AllocDescriptor.MemoryBaseAddress = Memory;
   MemoryAllocationHob->AllocDescriptor.MemoryLength = Bytes;
-  MemoryAllocationHob->AllocDescriptor.MemoryType = MemoryType;
+  MemoryAllocationHob->AllocDescriptor.MemoryType   = MemoryType;
 }
 
 /**
@@ -419,13 +424,13 @@ MergeFreeMemoryInMemoryAllocationHob (
   VOID
   )
 {
-  EFI_PEI_HOB_POINTERS          Hob;
-  EFI_PEI_HOB_POINTERS          Hob2;
-  EFI_HOB_MEMORY_ALLOCATION     *MemoryHob;
-  EFI_HOB_MEMORY_ALLOCATION     *MemoryHob2;
-  UINT64                        Start;
-  UINT64                        End;
-  BOOLEAN                       Merged;
+  EFI_PEI_HOB_POINTERS       Hob;
+  EFI_PEI_HOB_POINTERS       Hob2;
+  EFI_HOB_MEMORY_ALLOCATION  *MemoryHob;
+  EFI_HOB_MEMORY_ALLOCATION  *MemoryHob2;
+  UINT64                     Start;
+  UINT64                     End;
+  BOOLEAN                    Merged;
 
   Merged = FALSE;
 
@@ -433,7 +438,7 @@ MergeFreeMemoryInMemoryAllocationHob (
   while (Hob.Raw != NULL) {
     if (Hob.MemoryAllocation->AllocDescriptor.MemoryType == EfiConventionalMemory) {
       MemoryHob = (EFI_HOB_MEMORY_ALLOCATION *) Hob.Raw;
-      Start = MemoryHob->AllocDescriptor.MemoryBaseAddress;
+      Start     = MemoryHob->AllocDescriptor.MemoryBaseAddress;
       End = MemoryHob->AllocDescriptor.MemoryBaseAddress + MemoryHob->AllocDescriptor.MemoryLength;
 
       Hob2.Raw = GET_NEXT_HOB (Hob);
@@ -466,10 +471,12 @@ MergeFreeMemoryInMemoryAllocationHob (
             break;
           }
         }
+
         Hob2.Raw = GET_NEXT_HOB (Hob2);
         Hob2.Raw = GetNextHob (EFI_HOB_TYPE_MEMORY_ALLOCATION, Hob2.Raw);
       }
     }
+
     Hob.Raw = GET_NEXT_HOB (Hob);
     Hob.Raw = GetNextHob (EFI_HOB_TYPE_MEMORY_ALLOCATION, Hob.Raw);
   }
@@ -498,10 +505,10 @@ FindFreeMemoryFromMemoryAllocationHob (
   OUT EFI_PHYSICAL_ADDRESS      *Memory
   )
 {
-  EFI_PEI_HOB_POINTERS          Hob;
-  EFI_HOB_MEMORY_ALLOCATION     *MemoryAllocationHob;
-  UINT64                        Bytes;
-  EFI_PHYSICAL_ADDRESS          BaseAddress;
+  EFI_PEI_HOB_POINTERS       Hob;
+  EFI_HOB_MEMORY_ALLOCATION  *MemoryAllocationHob;
+  UINT64                     Bytes;
+  EFI_PHYSICAL_ADDRESS       BaseAddress;
 
   Bytes = LShiftU64 (Pages, EFI_PAGE_SHIFT);
 
@@ -524,9 +531,11 @@ FindFreeMemoryFromMemoryAllocationHob (
       if (BaseAddress >= MemoryAllocationHob->AllocDescriptor.MemoryBaseAddress) {
         break;
       }
+
       BaseAddress = 0;
       MemoryAllocationHob = NULL;
     }
+
     //
     // Continue to find.
     //
@@ -545,6 +554,7 @@ FindFreeMemoryFromMemoryAllocationHob (
       //
       return FindFreeMemoryFromMemoryAllocationHob (MemoryType, Pages, Granularity, Memory);
     }
+
     return EFI_NOT_FOUND;
   }
 }
@@ -580,14 +590,14 @@ PeiAllocatePages (
   OUT      EFI_PHYSICAL_ADDRESS *Memory
   )
 {
-  EFI_STATUS                              Status;
-  PEI_CORE_INSTANCE                       *PrivateData;
-  EFI_PEI_HOB_POINTERS                    Hob;
-  EFI_PHYSICAL_ADDRESS                    *FreeMemoryTop;
-  EFI_PHYSICAL_ADDRESS                    *FreeMemoryBottom;
-  UINTN                                   RemainingPages;
-  UINTN                                   Granularity;
-  UINTN                                   Padding;
+  EFI_STATUS            Status;
+  PEI_CORE_INSTANCE     *PrivateData;
+  EFI_PEI_HOB_POINTERS  Hob;
+  EFI_PHYSICAL_ADDRESS  *FreeMemoryTop;
+  EFI_PHYSICAL_ADDRESS  *FreeMemoryBottom;
+  UINTN                 RemainingPages;
+  UINTN                 Granularity;
+  UINTN                 Padding;
 
   if ((MemoryType != EfiLoaderCode) &&
       (MemoryType != EfiLoaderData) &&
@@ -618,11 +628,12 @@ PeiAllocatePages (
         MemoryType == EfiACPIMemoryNVS       ||
         MemoryType == EfiRuntimeServicesCode ||
         MemoryType == EfiRuntimeServicesData)) {
-
     Granularity = RUNTIME_PAGE_ALLOCATION_GRANULARITY;
 
-    DEBUG ((DEBUG_INFO, "AllocatePages: aligning allocation to %d KB\n",
-      Granularity / SIZE_1KB));
+    DEBUG (
+           (DEBUG_INFO, "AllocatePages: aligning allocation to %d KB\n",
+            Granularity / SIZE_1KB)
+           );
   }
 
   if (!PrivateData->PeiMemoryInstalled && PrivateData->SwitchStackSignal) {
@@ -630,11 +641,11 @@ PeiAllocatePages (
     // When PeiInstallMemory is called but temporary memory has *not* been moved to permanent memory,
     // the AllocatePage will depend on the field of PEI_CORE_INSTANCE structure.
     //
-    FreeMemoryTop     = &(PrivateData->FreePhysicalMemoryTop);
-    FreeMemoryBottom  = &(PrivateData->PhysicalMemoryBegin);
+    FreeMemoryTop    = &(PrivateData->FreePhysicalMemoryTop);
+    FreeMemoryBottom = &(PrivateData->PhysicalMemoryBegin);
   } else {
-    FreeMemoryTop     = &(Hob.HandoffInformationTable->EfiFreeMemoryTop);
-    FreeMemoryBottom  = &(Hob.HandoffInformationTable->EfiFreeMemoryBottom);
+    FreeMemoryTop    = &(Hob.HandoffInformationTable->EfiFreeMemoryTop);
+    FreeMemoryBottom = &(Hob.HandoffInformationTable->EfiFreeMemoryBottom);
   }
 
   //
@@ -654,16 +665,16 @@ PeiAllocatePages (
     // the pages that we will lose to rounding
     //
     InternalBuildMemoryAllocationHob (
-      *(FreeMemoryTop),
-      Padding & ~(UINTN)EFI_PAGE_MASK,
-      EfiConventionalMemory
-      );
+                                      *(FreeMemoryTop),
+                                      Padding & ~(UINTN) EFI_PAGE_MASK,
+                                      EfiConventionalMemory
+                                      );
   }
 
   //
   // Verify that there is sufficient memory to satisfy the allocation.
   //
-  RemainingPages = (UINTN)(*FreeMemoryTop - *FreeMemoryBottom) >> EFI_PAGE_SHIFT;
+  RemainingPages = (UINTN) (*FreeMemoryTop - *FreeMemoryBottom) >> EFI_PAGE_SHIFT;
   //
   // The number of remaining pages needs to be greater than or equal to that of the request pages.
   //
@@ -676,9 +687,10 @@ PeiAllocatePages (
     if (!EFI_ERROR (Status)) {
       return Status;
     }
+
     DEBUG ((EFI_D_ERROR, "AllocatePages failed: No 0x%lx Pages is available.\n", (UINT64) Pages));
     DEBUG ((EFI_D_ERROR, "There is only left 0x%lx pages memory resource to be allocated.\n", (UINT64) RemainingPages));
-    return  EFI_OUT_OF_RESOURCES;
+    return EFI_OUT_OF_RESOURCES;
   } else {
     //
     // Update the PHIT to reflect the memory usage
@@ -694,10 +706,10 @@ PeiAllocatePages (
     // Create a memory allocation HOB.
     //
     InternalBuildMemoryAllocationHob (
-      *(FreeMemoryTop),
-      Pages * EFI_PAGE_SIZE,
-      MemoryType
-      );
+                                      *(FreeMemoryTop),
+                                      Pages * EFI_PAGE_SIZE,
+                                      MemoryType
+                                      );
 
     return EFI_SUCCESS;
   }
@@ -717,9 +729,9 @@ FreeMemoryAllocationHob (
   IN OUT EFI_HOB_MEMORY_ALLOCATION      *MemoryAllocationHobToFree
   )
 {
-  EFI_PEI_HOB_POINTERS                  Hob;
-  EFI_PHYSICAL_ADDRESS                  *FreeMemoryTop;
-  EFI_HOB_MEMORY_ALLOCATION             *MemoryAllocationHob;
+  EFI_PEI_HOB_POINTERS       Hob;
+  EFI_PHYSICAL_ADDRESS       *FreeMemoryTop;
+  EFI_HOB_MEMORY_ALLOCATION  *MemoryAllocationHob;
 
   Hob.Raw = PrivateData->HobList.Raw;
 
@@ -755,9 +767,11 @@ FreeMemoryAllocationHob (
         MemoryAllocationHob = (EFI_HOB_MEMORY_ALLOCATION *) Hob.Raw;
         break;
       }
+
       Hob.Raw = GET_NEXT_HOB (Hob);
       Hob.Raw = GetNextHob (EFI_HOB_TYPE_MEMORY_ALLOCATION, Hob.Raw);
     }
+
     //
     // Free memory allocation HOB iteratively.
     //
@@ -788,16 +802,16 @@ PeiFreePages (
   IN UINTN                      Pages
   )
 {
-  PEI_CORE_INSTANCE             *PrivateData;
-  UINT64                        Bytes;
-  UINT64                        Start;
-  UINT64                        End;
-  EFI_PEI_HOB_POINTERS          Hob;
-  EFI_HOB_MEMORY_ALLOCATION     *MemoryAllocationHob;
+  PEI_CORE_INSTANCE          *PrivateData;
+  UINT64                     Bytes;
+  UINT64                     Start;
+  UINT64                     End;
+  EFI_PEI_HOB_POINTERS       Hob;
+  EFI_HOB_MEMORY_ALLOCATION  *MemoryAllocationHob;
 
   Bytes = LShiftU64 (Pages, EFI_PAGE_SHIFT);
   Start = Memory;
-  End = Start + Bytes - 1;
+  End   = Start + Bytes - 1;
 
   if (Pages == 0 || ((Start & EFI_PAGE_MASK) != 0) || (Start >= End)) {
     return EFI_INVALID_PARAMETER;
@@ -818,13 +832,16 @@ PeiFreePages (
   while (Hob.Raw != NULL) {
     if ((Hob.MemoryAllocation->AllocDescriptor.MemoryType != EfiConventionalMemory) &&
         (Memory >= Hob.MemoryAllocation->AllocDescriptor.MemoryBaseAddress) &&
-        ((Memory + Bytes) <= (Hob.MemoryAllocation->AllocDescriptor.MemoryBaseAddress + Hob.MemoryAllocation->AllocDescriptor.MemoryLength))) {
+        ((Memory + Bytes) <=
+         (Hob.MemoryAllocation->AllocDescriptor.MemoryBaseAddress +
+          Hob.MemoryAllocation->AllocDescriptor.MemoryLength))) {
       //
       // Found the memory allocation HOB that includes the memory pages to be freed.
       //
       MemoryAllocationHob = (EFI_HOB_MEMORY_ALLOCATION *) Hob.Raw;
       break;
     }
+
     Hob.Raw = GET_NEXT_HOB (Hob);
     Hob.Raw = GetNextHob (EFI_HOB_TYPE_MEMORY_ALLOCATION, Hob.Raw);
   }
@@ -862,8 +879,8 @@ PeiAllocatePool (
   OUT      VOID                 **Buffer
   )
 {
-  EFI_STATUS               Status;
-  EFI_HOB_MEMORY_POOL      *Hob;
+  EFI_STATUS           Status;
+  EFI_HOB_MEMORY_POOL  *Hob;
 
   //
   // If some "post-memory" PEIM wishes to allocate larger pool,
@@ -879,10 +896,10 @@ PeiAllocatePool (
   }
 
   Status = PeiServicesCreateHob (
-             EFI_HOB_TYPE_MEMORY_POOL,
-             (UINT16)(sizeof (EFI_HOB_MEMORY_POOL) + Size),
-             (VOID **)&Hob
-             );
+                                 EFI_HOB_TYPE_MEMORY_POOL,
+                                 (UINT16) (sizeof (EFI_HOB_MEMORY_POOL) + Size),
+                                 (VOID **) &Hob
+                                 );
   ASSERT_EFI_ERROR (Status);
 
   if (EFI_ERROR (Status)) {

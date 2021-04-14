@@ -35,34 +35,31 @@ PeiReportStatusCode (
   IN CONST EFI_STATUS_CODE_DATA     *Data OPTIONAL
   )
 {
-  EFI_STATUS                Status;
-  EFI_PEI_PROGRESS_CODE_PPI *StatusCodePpi;
+  EFI_STATUS                 Status;
+  EFI_PEI_PROGRESS_CODE_PPI  *StatusCodePpi;
 
   //
   // Locate StatusCode Ppi.
   //
   Status = PeiServicesLocatePpi (
-             &gEfiPeiStatusCodePpiGuid,
-             0,
-             NULL,
-             (VOID **)&StatusCodePpi
-             );
+                                 &gEfiPeiStatusCodePpiGuid,
+                                 0,
+                                 NULL,
+                                 (VOID **) &StatusCodePpi
+                                 );
 
   if (!EFI_ERROR (Status)) {
     Status = StatusCodePpi->ReportStatusCode (
-                            PeiServices,
-                            CodeType,
-                            Value,
-                            Instance,
-                            CallerId,
-                            Data
-                            );
+                                              PeiServices,
+                                              CodeType,
+                                              Value,
+                                              Instance,
+                                              CallerId,
+                                              Data
+                                              );
 
-   return Status;
+    return Status;
   }
 
-  return  EFI_NOT_AVAILABLE_YET;
+  return EFI_NOT_AVAILABLE_YET;
 }
-
-
-

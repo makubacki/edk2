@@ -18,14 +18,13 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gUfsPassThruComponent
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL gUfsPassThruComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gUfsPassThruComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) UfsPassThruComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) UfsPassThruComponentNameGetControllerName,
   "en"
 };
 
-
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mUfsPassThruDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mUfsPassThruDriverNameTable[] = {
   {
     "eng;en",
     L"Universal Flash Storage (UFS) Pass Thru Driver"
@@ -36,7 +35,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mUfsPassThruDriverNameTab
   }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mUfsPassThruControllerNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mUfsPassThruControllerNameTable[] = {
   {
     "eng;en",
     L"Universal Flash Storage (UFS) Host Controller"
@@ -95,12 +94,12 @@ UfsPassThruComponentNameGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mUfsPassThruDriverNameTable,
-           DriverName,
-           (BOOLEAN)(This == &gUfsPassThruComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mUfsPassThruDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gUfsPassThruComponentName)
+                               );
 }
 
 /**
@@ -181,7 +180,7 @@ UfsPassThruComponentNameGetControllerName (
   OUT CHAR16                                          **ControllerName
   )
 {
-  EFI_STATUS                    Status;
+  EFI_STATUS  Status;
 
   if (Language == NULL || ControllerName == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -198,19 +197,19 @@ UfsPassThruComponentNameGetControllerName (
   // Make sure this driver is currently managing Controller Handle
   //
   Status = EfiTestManagedDevice (
-             ControllerHandle,
-             gUfsPassThruDriverBinding.DriverBindingHandle,
-             &gEdkiiUfsHostControllerProtocolGuid
-             );
+                                 ControllerHandle,
+                                 gUfsPassThruDriverBinding.DriverBindingHandle,
+                                 &gEdkiiUfsHostControllerProtocolGuid
+                                 );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mUfsPassThruControllerNameTable,
-           ControllerName,
-           (BOOLEAN)(This == &gUfsPassThruComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mUfsPassThruControllerNameTable,
+                               ControllerName,
+                               (BOOLEAN) (This == &gUfsPassThruComponentName)
+                               );
 }

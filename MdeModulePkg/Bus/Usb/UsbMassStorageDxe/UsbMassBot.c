@@ -12,7 +12,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // Definition of USB BOT Transport Protocol
 //
-USB_MASS_TRANSPORT mUsbBotTransport = {
+USB_MASS_TRANSPORT  mUsbBotTransport = {
   USB_MASS_STORE_BOT,
   UsbBotInit,
   UsbBotExecCommand,
@@ -84,17 +84,15 @@ UsbBotInit (
     }
 
     if (USB_IS_IN_ENDPOINT (EndPoint.EndpointAddress) &&
-       (UsbBot->BulkInEndpoint == NULL)) {
-
-      UsbBot->BulkInEndpoint  = (EFI_USB_ENDPOINT_DESCRIPTOR *) (UsbBot + 1);
-      CopyMem(UsbBot->BulkInEndpoint, &EndPoint, sizeof (EndPoint));
+        (UsbBot->BulkInEndpoint == NULL)) {
+      UsbBot->BulkInEndpoint = (EFI_USB_ENDPOINT_DESCRIPTOR *) (UsbBot + 1);
+      CopyMem (UsbBot->BulkInEndpoint, &EndPoint, sizeof (EndPoint));
     }
 
     if (USB_IS_OUT_ENDPOINT (EndPoint.EndpointAddress) &&
-       (UsbBot->BulkOutEndpoint == NULL)) {
-
-      UsbBot->BulkOutEndpoint   = (EFI_USB_ENDPOINT_DESCRIPTOR *) (UsbBot + 1) + 1;
-      CopyMem (UsbBot->BulkOutEndpoint, &EndPoint, sizeof(EndPoint));
+        (UsbBot->BulkOutEndpoint == NULL)) {
+      UsbBot->BulkOutEndpoint = (EFI_USB_ENDPOINT_DESCRIPTOR *) (UsbBot + 1) + 1;
+      CopyMem (UsbBot->BulkOutEndpoint, &EndPoint, sizeof (EndPoint));
     }
   }
 
@@ -153,11 +151,11 @@ UsbBotSendCommand (
   IN UINT8                    Lun
   )
 {
-  USB_BOT_CBW               Cbw;
-  EFI_STATUS                Status;
-  UINT32                    Result;
-  UINTN                     DataLen;
-  UINTN                     Timeout;
+  USB_BOT_CBW  Cbw;
+  EFI_STATUS   Status;
+  UINT32       Result;
+  UINTN        DataLen;
+  UINTN        Timeout;
 
   ASSERT ((CmdLen > 0) && (CmdLen <= USB_BOT_MAX_CMDLEN));
 
@@ -165,11 +163,11 @@ UsbBotSendCommand (
   // Fill in the Command Block Wrapper.
   //
   Cbw.Signature = USB_BOT_CBW_SIGNATURE;
-  Cbw.Tag       = UsbBot->CbwTag;
-  Cbw.DataLen   = TransLen;
-  Cbw.Flag      = (UINT8) ((DataDir == EfiUsbDataIn) ? BIT7 : 0);
-  Cbw.Lun       = Lun;
-  Cbw.CmdLen    = CmdLen;
+  Cbw.Tag     = UsbBot->CbwTag;
+  Cbw.DataLen = TransLen;
+  Cbw.Flag    = (UINT8) ((DataDir == EfiUsbDataIn) ? BIT7 : 0);
+  Cbw.Lun     = Lun;
+  Cbw.CmdLen  = CmdLen;
 
   ZeroMem (Cbw.CmdBlock, USB_BOT_MAX_CMDLEN);
   CopyMem (Cbw.CmdBlock, Cmd, CmdLen);
@@ -182,13 +180,13 @@ UsbBotSendCommand (
   // Use USB I/O Protocol to send the Command Block Wrapper to the device.
   //
   Status = UsbBot->UsbIo->UsbBulkTransfer (
-                            UsbBot->UsbIo,
-                            UsbBot->BulkOutEndpoint->EndpointAddress,
-                            &Cbw,
-                            &DataLen,
-                            Timeout,
-                            &Result
-                            );
+                                           UsbBot->UsbIo,
+                                           UsbBot->BulkOutEndpoint->EndpointAddress,
+                                           &Cbw,
+                                           &DataLen,
+                                           Timeout,
+                                           &Result
+                                           );
   if (EFI_ERROR (Status)) {
     if (USB_IS_ERROR (Result, EFI_USB_ERR_STALL) && DataDir == EfiUsbDataOut) {
       //
@@ -203,7 +201,6 @@ UsbBotSendCommand (
 
   return Status;
 }
-
 
 /**
   Transfer the data between the device and host.
@@ -233,9 +230,9 @@ UsbBotDataTransfer (
   IN UINT32                   Timeout
   )
 {
-  EFI_USB_ENDPOINT_DESCRIPTOR *Endpoint;
-  EFI_STATUS                  Status;
-  UINT32                      Result;
+  EFI_USB_ENDPOINT_DESCRIPTOR  *Endpoint;
+  EFI_STATUS                   Status;
+  UINT32                       Result;
 
   //
   // If no data to transfer, just return EFI_SUCCESS.
@@ -257,13 +254,13 @@ UsbBotDataTransfer (
   Timeout = Timeout / USB_MASS_1_MILLISECOND;
 
   Status = UsbBot->UsbIo->UsbBulkTransfer (
-                            UsbBot->UsbIo,
-                            Endpoint->EndpointAddress,
-                            Data,
-                            TransLen,
-                            Timeout,
-                            &Result
-                            );
+                                           UsbBot->UsbIo,
+                                           Endpoint->EndpointAddress,
+                                           Data,
+                                           TransLen,
+                                           Timeout,
+                                           &Result
+                                           );
   if (EFI_ERROR (Status)) {
     if (USB_IS_ERROR (Result, EFI_USB_ERR_STALL)) {
       DEBUG ((EFI_D_INFO, "UsbBotDataTransfer: (%r)\n", Status));
@@ -274,14 +271,14 @@ UsbBotDataTransfer (
     } else {
       DEBUG ((EFI_D_ERROR, "UsbBotDataTransfer: (%r)\n", Status));
     }
-    if(Status == EFI_TIMEOUT){
-      UsbBotResetDevice(UsbBot, FALSE);
+
+    if(Status == EFI_TIMEOUT) {
+      UsbBotResetDevice (UsbBot, FALSE);
     }
   }
 
   return Status;
 }
-
 
 /**
   Get the command execution status from device.
@@ -309,20 +306,20 @@ UsbBotGetStatus (
   OUT UINT8                 *CmdStatus
   )
 {
-  USB_BOT_CSW               Csw;
-  UINTN                     Len;
-  UINT8                     Endpoint;
-  EFI_STATUS                Status;
-  UINT32                    Result;
-  EFI_USB_IO_PROTOCOL       *UsbIo;
-  UINT32                    Index;
-  UINTN                     Timeout;
+  USB_BOT_CSW          Csw;
+  UINTN                Len;
+  UINT8                Endpoint;
+  EFI_STATUS           Status;
+  UINT32               Result;
+  EFI_USB_IO_PROTOCOL  *UsbIo;
+  UINT32               Index;
+  UINTN                Timeout;
 
   *CmdStatus = USB_BOT_COMMAND_ERROR;
   Status     = EFI_DEVICE_ERROR;
   Endpoint   = UsbBot->BulkInEndpoint->EndpointAddress;
-  UsbIo      = UsbBot->UsbIo;
-  Timeout    = USB_BOT_RECV_CSW_TIMEOUT / USB_MASS_1_MILLISECOND;
+  UsbIo   = UsbBot->UsbIo;
+  Timeout = USB_BOT_RECV_CSW_TIMEOUT / USB_MASS_1_MILLISECOND;
 
   for (Index = 0; Index < USB_BOT_RECV_CSW_RETRY; Index++) {
     //
@@ -332,17 +329,18 @@ UsbBotGetStatus (
     Result = 0;
     Len    = sizeof (USB_BOT_CSW);
     Status = UsbIo->UsbBulkTransfer (
-                      UsbIo,
-                      Endpoint,
-                      &Csw,
-                      &Len,
-                      Timeout,
-                      &Result
-                      );
-    if (EFI_ERROR(Status)) {
+                                     UsbIo,
+                                     Endpoint,
+                                     &Csw,
+                                     &Len,
+                                     Timeout,
+                                     &Result
+                                     );
+    if (EFI_ERROR (Status)) {
       if (USB_IS_ERROR (Result, EFI_USB_ERR_STALL)) {
         UsbClearEndpointStall (UsbIo, Endpoint);
       }
+
       continue;
     }
 
@@ -361,14 +359,14 @@ UsbBotGetStatus (
       break;
     }
   }
+
   //
-  //The tag is increased even if there is an error.
+  // The tag is increased even if there is an error.
   //
   UsbBot->CbwTag++;
 
   return Status;
 }
-
 
 /**
   Call the USB Mass Storage Class BOT protocol to issue
@@ -402,13 +400,13 @@ UsbBotExecCommand (
   OUT UINT32                  *CmdStatus
   )
 {
-  USB_BOT_PROTOCOL          *UsbBot;
-  EFI_STATUS                Status;
-  UINTN                     TransLen;
-  UINT8                     Result;
+  USB_BOT_PROTOCOL  *UsbBot;
+  EFI_STATUS        Status;
+  UINTN             TransLen;
+  UINT8             Result;
 
-  *CmdStatus  = USB_MASS_CMD_FAIL;
-  UsbBot      = (USB_BOT_PROTOCOL *) Context;
+  *CmdStatus = USB_MASS_CMD_FAIL;
+  UsbBot     = (USB_BOT_PROTOCOL *) Context;
 
   //
   // Send the command to the device. Return immediately if device
@@ -443,7 +441,6 @@ UsbBotExecCommand (
 
   return EFI_SUCCESS;
 }
-
 
 /**
   Reset the USB mass storage device by BOT protocol.
@@ -487,20 +484,20 @@ UsbBotResetDevice (
   //
   Request.RequestType = 0x21;
   Request.Request     = USB_BOT_RESET_REQUEST;
-  Request.Value       = 0;
-  Request.Index       = UsbBot->Interface.InterfaceNumber;
-  Request.Length      = 0;
-  Timeout             = USB_BOT_RESET_DEVICE_TIMEOUT / USB_MASS_1_MILLISECOND;
+  Request.Value  = 0;
+  Request.Index  = UsbBot->Interface.InterfaceNumber;
+  Request.Length = 0;
+  Timeout = USB_BOT_RESET_DEVICE_TIMEOUT / USB_MASS_1_MILLISECOND;
 
   Status = UsbBot->UsbIo->UsbControlTransfer (
-                            UsbBot->UsbIo,
-                            &Request,
-                            EfiUsbNoData,
-                            Timeout,
-                            NULL,
-                            0,
-                            &Result
-                            );
+                                              UsbBot->UsbIo,
+                                              &Request,
+                                              EfiUsbNoData,
+                                              Timeout,
+                                              NULL,
+                                              0,
+                                              &Result
+                                              );
 
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
@@ -521,7 +518,6 @@ UsbBotResetDevice (
 
   return Status;
 }
-
 
 /**
   Get the max LUN (Logical Unit Number) of USB mass storage device.
@@ -558,20 +554,20 @@ UsbBotGetMaxLun (
   //
   Request.RequestType = 0xA1;
   Request.Request     = USB_BOT_GETLUN_REQUEST;
-  Request.Value       = 0;
-  Request.Index       = UsbBot->Interface.InterfaceNumber;
-  Request.Length      = 1;
-  Timeout             = USB_BOT_RESET_DEVICE_TIMEOUT / USB_MASS_1_MILLISECOND;
+  Request.Value  = 0;
+  Request.Index  = UsbBot->Interface.InterfaceNumber;
+  Request.Length = 1;
+  Timeout = USB_BOT_RESET_DEVICE_TIMEOUT / USB_MASS_1_MILLISECOND;
 
   Status = UsbBot->UsbIo->UsbControlTransfer (
-                            UsbBot->UsbIo,
-                            &Request,
-                            EfiUsbDataIn,
-                            Timeout,
-                            (VOID *) MaxLun,
-                            1,
-                            &Result
-                            );
+                                              UsbBot->UsbIo,
+                                              &Request,
+                                              EfiUsbDataIn,
+                                              Timeout,
+                                              (VOID *) MaxLun,
+                                              1,
+                                              &Result
+                                              );
   if (EFI_ERROR (Status) || *MaxLun > USB_BOT_MAX_LUN) {
     //
     // If the Get LUN request returns an error or the MaxLun is larger than
@@ -604,4 +600,3 @@ UsbBotCleanUp (
   FreePool (Context);
   return EFI_SUCCESS;
 }
-

@@ -43,8 +43,8 @@ UfsRwUfsDescriptor (
   IN OUT UINT32                        *DescSize
   )
 {
-  EFI_STATUS                    Status;
-  UFS_PASS_THRU_PRIVATE_DATA    *Private;
+  EFI_STATUS                  Status;
+  UFS_PASS_THRU_PRIVATE_DATA  *Private;
 
   Private = UFS_PASS_THRU_PRIVATE_DATA_FROM_DEV_CONFIG (This);
 
@@ -53,17 +53,18 @@ UfsRwUfsDescriptor (
   }
 
   Status = UfsRwDeviceDesc (
-             Private,
-             Read,
-             DescId,
-             Index,
-             Selector,
-             Descriptor,
-             DescSize
-             );
+                            Private,
+                            Read,
+                            DescId,
+                            Index,
+                            Selector,
+                            Descriptor,
+                            DescSize
+                            );
   if (Status == EFI_TIMEOUT) {
     Status = EFI_DEVICE_ERROR;
   }
+
   return Status;
 }
 
@@ -94,8 +95,8 @@ UfsRwUfsFlag (
   IN OUT UINT8                         *Flag
   )
 {
-  EFI_STATUS                    Status;
-  UFS_PASS_THRU_PRIVATE_DATA    *Private;
+  EFI_STATUS                  Status;
+  UFS_PASS_THRU_PRIVATE_DATA  *Private;
 
   Private = UFS_PASS_THRU_PRIVATE_DATA_FROM_DEV_CONFIG (This);
 
@@ -107,6 +108,7 @@ UfsRwUfsFlag (
   if (Status == EFI_TIMEOUT) {
     Status = EFI_DEVICE_ERROR;
   }
+
   return Status;
 }
 
@@ -145,11 +147,11 @@ UfsRwUfsAttribute (
   IN OUT UINT32                        *AttrSize
   )
 {
-  EFI_STATUS                    Status;
-  UFS_PASS_THRU_PRIVATE_DATA    *Private;
-  UINT32                        Attribute32;
+  EFI_STATUS                  Status;
+  UFS_PASS_THRU_PRIVATE_DATA  *Private;
+  UINT32                      Attribute32;
 
-  Private = UFS_PASS_THRU_PRIVATE_DATA_FROM_DEV_CONFIG (This);
+  Private     = UFS_PASS_THRU_PRIVATE_DATA_FROM_DEV_CONFIG (This);
   Attribute32 = 0;
 
   if ((This == NULL) || (Attribute == NULL) || (AttrSize == NULL)) {
@@ -169,13 +171,13 @@ UfsRwUfsAttribute (
   }
 
   Status = UfsRwAttributes (
-             Private,
-             Read,
-             AttrId,
-             Index,
-             Selector,
-             &Attribute32
-             );
+                            Private,
+                            Read,
+                            AttrId,
+                            Index,
+                            Selector,
+                            &Attribute32
+                            );
   if (!EFI_ERROR (Status)) {
     if (Read) {
       CopyMem (Attribute, &Attribute32, *AttrSize);
@@ -186,5 +188,6 @@ UfsRwUfsAttribute (
       Status = EFI_DEVICE_ERROR;
     }
   }
+
   return Status;
 }

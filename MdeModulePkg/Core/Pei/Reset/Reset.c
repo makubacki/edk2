@@ -39,11 +39,11 @@ PeiResetSystem (
   // Look for PEI Reset System PPI
   //
   Status = PeiServicesLocatePpi (
-             &gEfiPeiResetPpiGuid,
-             0,
-             NULL,
-             (VOID **)&ResetPpi
-             );
+                                 &gEfiPeiResetPpiGuid,
+                                 0,
+                                 NULL,
+                                 (VOID **) &ResetPpi
+                                 );
   if (!EFI_ERROR (Status)) {
     return ResetPpi->ResetSystem (PeiServices);
   }
@@ -52,14 +52,14 @@ PeiResetSystem (
   // Report Status Code that Reset PPI is not available.
   //
   REPORT_STATUS_CODE (
-    EFI_ERROR_CODE | EFI_ERROR_MINOR,
-    (EFI_SOFTWARE_PEI_CORE | EFI_SW_PS_EC_RESET_NOT_AVAILABLE)
-    );
+                      EFI_ERROR_CODE | EFI_ERROR_MINOR,
+                      (EFI_SOFTWARE_PEI_CORE | EFI_SW_PS_EC_RESET_NOT_AVAILABLE)
+                      );
 
   //
   // No reset PPIs are available yet.
   //
-  return  EFI_NOT_AVAILABLE_YET;
+  return EFI_NOT_AVAILABLE_YET;
 }
 
 /**
@@ -91,13 +91,13 @@ PeiResetSystem2 (
   // Look for PEI Reset System 2 PPI
   //
   Status = PeiServicesLocatePpi (
-             &gEfiPeiReset2PpiGuid,
-             0,
-             NULL,
-             (VOID **)&Reset2Ppi
-             );
+                                 &gEfiPeiReset2PpiGuid,
+                                 0,
+                                 NULL,
+                                 (VOID **) &Reset2Ppi
+                                 );
   if (!EFI_ERROR (Status)) {
-    Reset2Ppi->ResetSystem (ResetType, ResetStatus, DataSize, ResetData);
+  Reset2Ppi->ResetSystem (ResetType, ResetStatus, DataSize, ResetData);
     return;
   }
 
@@ -105,7 +105,7 @@ PeiResetSystem2 (
   // Report Status Code that Reset2 PPI is not available.
   //
   REPORT_STATUS_CODE (
-    EFI_ERROR_CODE | EFI_ERROR_MINOR,
-    (EFI_SOFTWARE_PEI_CORE | EFI_SW_PS_EC_RESET_NOT_AVAILABLE)
-    );
+                      EFI_ERROR_CODE | EFI_ERROR_MINOR,
+                      (EFI_SOFTWARE_PEI_CORE | EFI_SW_PS_EC_RESET_NOT_AVAILABLE)
+                      );
 }

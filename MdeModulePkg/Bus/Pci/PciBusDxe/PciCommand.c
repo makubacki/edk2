@@ -29,21 +29,21 @@ PciOperateRegister (
   OUT UINT16        *PtrCommand
   )
 {
-  UINT16              OldCommand;
-  EFI_STATUS          Status;
-  EFI_PCI_IO_PROTOCOL *PciIo;
+  UINT16               OldCommand;
+  EFI_STATUS           Status;
+  EFI_PCI_IO_PROTOCOL  *PciIo;
 
-  OldCommand  = 0;
-  PciIo       = &PciIoDevice->PciIo;
+  OldCommand = 0;
+  PciIo = &PciIoDevice->PciIo;
 
   if (Operation != EFI_SET_REGISTER) {
     Status = PciIo->Pci.Read (
-                          PciIo,
-                          EfiPciIoWidthUint16,
-                          Offset,
-                          1,
-                          &OldCommand
-                          );
+                              PciIo,
+                              EfiPciIoWidthUint16,
+                              Offset,
+                              1,
+                              &OldCommand
+                              );
 
     if (Operation == EFI_GET_REGISTER) {
       *PtrCommand = OldCommand;
@@ -60,12 +60,12 @@ PciOperateRegister (
   }
 
   return PciIo->Pci.Write (
-                      PciIo,
-                      EfiPciIoWidthUint16,
-                      Offset,
-                      1,
-                      &OldCommand
-                      );
+                           PciIo,
+                           EfiPciIoWidthUint16,
+                           Offset,
+                           1,
+                           &OldCommand
+                           );
 }
 
 /**
@@ -124,11 +124,9 @@ LocateCapabilityRegBlock (
   if (*Offset != 0) {
     CapabilityPtr = *Offset;
   } else {
-
     CapabilityPtr = 0;
     if (IS_CARDBUS_BRIDGE (&PciIoDevice->Pci)) {
-
-      PciIoDevice->PciIo.Pci.Read (
+  PciIoDevice->PciIo.Pci.Read (
                                &PciIoDevice->PciIo,
                                EfiPciIoWidthUint8,
                                EFI_PCI_CARDBUS_BRIDGE_CAPABILITY_PTR,
@@ -136,8 +134,7 @@ LocateCapabilityRegBlock (
                                &CapabilityPtr
                                );
     } else {
-
-      PciIoDevice->PciIo.Pci.Read (
+  PciIoDevice->PciIo.Pci.Read (
                                &PciIoDevice->PciIo,
                                EfiPciIoWidthUint8,
                                PCI_CAPBILITY_POINTER_OFFSET,
@@ -148,13 +145,13 @@ LocateCapabilityRegBlock (
   }
 
   while ((CapabilityPtr >= 0x40) && ((CapabilityPtr & 0x03) == 0x00)) {
-    PciIoDevice->PciIo.Pci.Read (
-                             &PciIoDevice->PciIo,
-                             EfiPciIoWidthUint16,
-                             CapabilityPtr,
-                             1,
-                             &CapabilityEntry
-                             );
+  PciIoDevice->PciIo.Pci.Read (
+                               &PciIoDevice->PciIo,
+                               EfiPciIoWidthUint16,
+                               CapabilityPtr,
+                               1,
+                               &CapabilityEntry
+                               );
 
     CapabilityID = (UINT8) CapabilityEntry;
 
@@ -199,13 +196,13 @@ LocatePciExpressCapabilityRegBlock (
   IN     PCI_IO_DEVICE *PciIoDevice,
   IN     UINT16        CapId,
   IN OUT UINT32        *Offset,
-     OUT UINT32        *NextRegBlock OPTIONAL
+  OUT UINT32        *NextRegBlock OPTIONAL
   )
 {
-  EFI_STATUS           Status;
-  UINT32               CapabilityPtr;
-  UINT32               CapabilityEntry;
-  UINT16               CapabilityID;
+  EFI_STATUS  Status;
+  UINT32      CapabilityPtr;
+  UINT32      CapabilityEntry;
+  UINT16      CapabilityID;
 
   //
   // To check the capability of this device supports
@@ -226,26 +223,28 @@ LocatePciExpressCapabilityRegBlock (
     //
     CapabilityPtr &= 0xFFC;
     Status = PciIoDevice->PciIo.Pci.Read (
-                                      &PciIoDevice->PciIo,
-                                      EfiPciIoWidthUint32,
-                                      CapabilityPtr,
-                                      1,
-                                      &CapabilityEntry
-                                      );
+                                          &PciIoDevice->PciIo,
+                                          EfiPciIoWidthUint32,
+                                          CapabilityPtr,
+                                          1,
+                                          &CapabilityEntry
+                                          );
     if (EFI_ERROR (Status)) {
       break;
     }
 
     if (CapabilityEntry == MAX_UINT32) {
-      DEBUG ((
-        DEBUG_WARN,
-        "%a: [%02x|%02x|%02x] failed to access config space at offset 0x%x\n",
-        __FUNCTION__,
-        PciIoDevice->BusNumber,
-        PciIoDevice->DeviceNumber,
-        PciIoDevice->FunctionNumber,
-        CapabilityPtr
-        ));
+      DEBUG (
+             (
+              DEBUG_WARN,
+              "%a: [%02x|%02x|%02x] failed to access config space at offset 0x%x\n",
+              __FUNCTION__,
+              PciIoDevice->BusNumber,
+              PciIoDevice->DeviceNumber,
+              PciIoDevice->FunctionNumber,
+              CapabilityPtr
+             )
+             );
       break;
     }
 

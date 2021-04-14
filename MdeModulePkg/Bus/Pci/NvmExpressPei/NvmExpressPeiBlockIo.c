@@ -30,46 +30,46 @@ ReadSectors (
   IN  UINT32                     Blocks
   )
 {
-  EFI_STATUS                                        Status;
-  UINT32                                            BlockSize;
-  PEI_NVME_CONTROLLER_PRIVATE_DATA                  *Private;
-  UINT32                                            Bytes;
-  EFI_NVM_EXPRESS_PASS_THRU_COMMAND_PACKET          CommandPacket;
-  EFI_NVM_EXPRESS_COMMAND                           Command;
-  EFI_NVM_EXPRESS_COMPLETION                        Completion;
-  EDKII_PEI_NVM_EXPRESS_PASS_THRU_PPI               *NvmePassThru;
+  EFI_STATUS                                Status;
+  UINT32                                    BlockSize;
+  PEI_NVME_CONTROLLER_PRIVATE_DATA          *Private;
+  UINT32                                    Bytes;
+  EFI_NVM_EXPRESS_PASS_THRU_COMMAND_PACKET  CommandPacket;
+  EFI_NVM_EXPRESS_COMMAND                   Command;
+  EFI_NVM_EXPRESS_COMPLETION                Completion;
+  EDKII_PEI_NVM_EXPRESS_PASS_THRU_PPI       *NvmePassThru;
 
-  Private   = NamespaceInfo->Controller;
+  Private = NamespaceInfo->Controller;
   NvmePassThru = &Private->NvmePassThruPpi;
-  BlockSize = NamespaceInfo->Media.BlockSize;
-  Bytes     = Blocks * BlockSize;
+  BlockSize    = NamespaceInfo->Media.BlockSize;
+  Bytes = Blocks * BlockSize;
 
-  ZeroMem (&CommandPacket, sizeof(EFI_NVM_EXPRESS_PASS_THRU_COMMAND_PACKET));
-  ZeroMem (&Command, sizeof(EFI_NVM_EXPRESS_COMMAND));
-  ZeroMem (&Completion, sizeof(EFI_NVM_EXPRESS_COMPLETION));
+  ZeroMem (&CommandPacket, sizeof (EFI_NVM_EXPRESS_PASS_THRU_COMMAND_PACKET));
+  ZeroMem (&Command, sizeof (EFI_NVM_EXPRESS_COMMAND));
+  ZeroMem (&Completion, sizeof (EFI_NVM_EXPRESS_COMPLETION));
 
-  CommandPacket.NvmeCmd        = &Command;
+  CommandPacket.NvmeCmd = &Command;
   CommandPacket.NvmeCompletion = &Completion;
 
   CommandPacket.NvmeCmd->Cdw0.Opcode = NVME_IO_READ_OPC;
-  CommandPacket.NvmeCmd->Nsid        = NamespaceInfo->NamespaceId;
-  CommandPacket.TransferBuffer       = (VOID *)Buffer;
+  CommandPacket.NvmeCmd->Nsid  = NamespaceInfo->NamespaceId;
+  CommandPacket.TransferBuffer = (VOID *) Buffer;
 
   CommandPacket.TransferLength = Bytes;
   CommandPacket.CommandTimeout = NVME_GENERIC_TIMEOUT;
-  CommandPacket.QueueType      = NVME_IO_QUEUE;
+  CommandPacket.QueueType = NVME_IO_QUEUE;
 
-  CommandPacket.NvmeCmd->Cdw10 = (UINT32)Lba;
-  CommandPacket.NvmeCmd->Cdw11 = (UINT32)RShiftU64(Lba, 32);
+  CommandPacket.NvmeCmd->Cdw10 = (UINT32) Lba;
+  CommandPacket.NvmeCmd->Cdw11 = (UINT32) RShiftU64 (Lba, 32);
   CommandPacket.NvmeCmd->Cdw12 = (Blocks - 1) & 0xFFFF;
 
   CommandPacket.NvmeCmd->Flags = CDW10_VALID | CDW11_VALID | CDW12_VALID;
 
   Status = NvmePassThru->PassThru (
-                           NvmePassThru,
-                           NamespaceInfo->NamespaceId,
-                           &CommandPacket
-                           );
+                                   NvmePassThru,
+                                   NamespaceInfo->NamespaceId,
+                                   &CommandPacket
+                                   );
 
   return Status;
 }
@@ -94,12 +94,12 @@ NvmeRead (
   IN  UINTN                      Blocks
   )
 {
-  EFI_STATUS                          Status;
-  UINT32                              Retries;
-  UINT32                              BlockSize;
-  PEI_NVME_CONTROLLER_PRIVATE_DATA    *Private;
-  UINT32                              MaxTransferBlocks;
-  UINTN                               OrginalBlocks;
+  EFI_STATUS                        Status;
+  UINT32                            Retries;
+  UINT32                            BlockSize;
+  PEI_NVME_CONTROLLER_PRIVATE_DATA  *Private;
+  UINT32                            MaxTransferBlocks;
+  UINTN                             OrginalBlocks;
 
   Status        = EFI_SUCCESS;
   Retries       = 0;
@@ -115,12 +115,12 @@ NvmeRead (
 
   while (Blocks > 0) {
     Status = ReadSectors (
-               NamespaceInfo,
-               Buffer,
-               Lba,
-               Blocks > MaxTransferBlocks ? MaxTransferBlocks : (UINT32)Blocks
-               );
-    if (EFI_ERROR(Status)) {
+                          NamespaceInfo,
+                          Buffer,
+                          Lba,
+                          Blocks > MaxTransferBlocks ? MaxTransferBlocks : (UINT32) Blocks
+                          );
+    if (EFI_ERROR (Status)) {
       Retries++;
       MaxTransferBlocks = MaxTransferBlocks >> 1;
 
@@ -128,12 +128,15 @@ NvmeRead (
         DEBUG ((DEBUG_ERROR, "%a: ReadSectors fail, Status - %r\n", __FUNCTION__, Status));
         break;
       }
-      DEBUG ((
-        DEBUG_BLKIO,
-        "%a: ReadSectors fail, retry with smaller transfer block number - 0x%x\n",
-        __FUNCTION__,
-        MaxTransferBlocks
-        ));
+
+      DEBUG (
+             (
+              DEBUG_BLKIO,
+              "%a: ReadSectors fail, retry with smaller transfer block number - 0x%x\n",
+              __FUNCTION__,
+              MaxTransferBlocks
+             )
+             );
       continue;
     }
 
@@ -142,13 +145,15 @@ NvmeRead (
       Buffer += (MaxTransferBlocks * BlockSize);
       Lba    += MaxTransferBlocks;
     } else {
-      Blocks  = 0;
+      Blocks = 0;
     }
   }
 
-  DEBUG ((DEBUG_BLKIO, "%a: Lba = 0x%08Lx, Original = 0x%08Lx, "
-    "Remaining = 0x%08Lx, BlockSize = 0x%x, Status = %r\n", __FUNCTION__, Lba,
-    (UINT64)OrginalBlocks, (UINT64)Blocks, BlockSize, Status));
+  DEBUG (
+         (DEBUG_BLKIO, "%a: Lba = 0x%08Lx, Original = 0x%08Lx, "
+                       "Remaining = 0x%08Lx, BlockSize = 0x%x, Status = %r\n", __FUNCTION__, Lba,
+          (UINT64) OrginalBlocks, (UINT64) Blocks, BlockSize, Status)
+         );
   return Status;
 }
 
@@ -176,7 +181,7 @@ NvmeBlockIoPeimGetDeviceNo (
   OUT UINTN                          *NumberBlockDevices
   )
 {
-  PEI_NVME_CONTROLLER_PRIVATE_DATA    *Private;
+  PEI_NVME_CONTROLLER_PRIVATE_DATA  *Private;
 
   if (This == NULL || NumberBlockDevices == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -238,7 +243,7 @@ NvmeBlockIoPeimGetMediaInfo (
   OUT EFI_PEI_BLOCK_IO_MEDIA         *MediaInfo
   )
 {
-  PEI_NVME_CONTROLLER_PRIVATE_DATA    *Private;
+  PEI_NVME_CONTROLLER_PRIVATE_DATA  *Private;
 
   if (This == NULL || MediaInfo == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -252,7 +257,7 @@ NvmeBlockIoPeimGetMediaInfo (
 
   MediaInfo->DeviceType   = (EFI_PEI_BLOCK_DEVICE_TYPE) EDKII_PEI_BLOCK_DEVICE_TYPE_NVME;
   MediaInfo->MediaPresent = TRUE;
-  MediaInfo->LastBlock    = (UINTN)Private->NamespaceInfo[DeviceIndex-1].Media.LastBlock;
+  MediaInfo->LastBlock    = (UINTN) Private->NamespaceInfo[DeviceIndex-1].Media.LastBlock;
   MediaInfo->BlockSize    = Private->NamespaceInfo[DeviceIndex-1].Media.BlockSize;
 
   return EFI_SUCCESS;
@@ -303,10 +308,10 @@ NvmeBlockIoPeimReadBlocks (
   OUT VOID                           *Buffer
   )
 {
-  PEI_NVME_CONTROLLER_PRIVATE_DATA    *Private;
-  PEI_NVME_NAMESPACE_INFO             *NamespaceInfo;
-  UINT32                              BlockSize;
-  UINTN                               NumberOfBlocks;
+  PEI_NVME_CONTROLLER_PRIVATE_DATA  *Private;
+  PEI_NVME_NAMESPACE_INFO           *NamespaceInfo;
+  UINT32                            BlockSize;
+  UINTN                             NumberOfBlocks;
 
   Private = GET_NVME_PEIM_HC_PRIVATE_DATA_FROM_THIS_BLKIO (This);
 
@@ -329,7 +334,7 @@ NvmeBlockIoPeimReadBlocks (
   // Check BufferSize and StartLBA
   //
   NamespaceInfo = &(Private->NamespaceInfo[DeviceIndex - 1]);
-  BlockSize = NamespaceInfo->Media.BlockSize;
+  BlockSize     = NamespaceInfo->Media.BlockSize;
   if (BufferSize % BlockSize != 0) {
     return EFI_BAD_BUFFER_SIZE;
   }
@@ -337,12 +342,13 @@ NvmeBlockIoPeimReadBlocks (
   if (StartLBA > NamespaceInfo->Media.LastBlock) {
     return EFI_INVALID_PARAMETER;
   }
+
   NumberOfBlocks = BufferSize / BlockSize;
   if (NumberOfBlocks - 1 > NamespaceInfo->Media.LastBlock - StartLBA) {
     return EFI_INVALID_PARAMETER;
   }
 
-  return NvmeRead (NamespaceInfo, (UINTN)Buffer, StartLBA, NumberOfBlocks);
+  return NvmeRead (NamespaceInfo, (UINTN) Buffer, StartLBA, NumberOfBlocks);
 }
 
 /**
@@ -369,7 +375,7 @@ NvmeBlockIoPeimGetDeviceNo2 (
   OUT UINTN                           *NumberBlockDevices
   )
 {
-  PEI_NVME_CONTROLLER_PRIVATE_DATA    *Private;
+  PEI_NVME_CONTROLLER_PRIVATE_DATA  *Private;
 
   if (This == NULL || NumberBlockDevices == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -431,9 +437,9 @@ NvmeBlockIoPeimGetMediaInfo2 (
   OUT EFI_PEI_BLOCK_IO2_MEDIA         *MediaInfo
   )
 {
-  EFI_STATUS                          Status;
-  PEI_NVME_CONTROLLER_PRIVATE_DATA    *Private;
-  EFI_PEI_BLOCK_IO_MEDIA              Media;
+  EFI_STATUS                        Status;
+  PEI_NVME_CONTROLLER_PRIVATE_DATA  *Private;
+  EFI_PEI_BLOCK_IO_MEDIA            Media;
 
   if (This == NULL || MediaInfo == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -441,21 +447,21 @@ NvmeBlockIoPeimGetMediaInfo2 (
 
   Private = GET_NVME_PEIM_HC_PRIVATE_DATA_FROM_THIS_BLKIO2 (This);
 
-  Status  = NvmeBlockIoPeimGetMediaInfo (
-              PeiServices,
-              &Private->BlkIoPpi,
-              DeviceIndex,
-              &Media
-              );
+  Status = NvmeBlockIoPeimGetMediaInfo (
+                                        PeiServices,
+                                        &Private->BlkIoPpi,
+                                        DeviceIndex,
+                                        &Media
+                                        );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   CopyMem (
-    MediaInfo,
-    &(Private->NamespaceInfo[DeviceIndex - 1].Media),
-    sizeof (EFI_PEI_BLOCK_IO2_MEDIA)
-    );
+           MediaInfo,
+           &(Private->NamespaceInfo[DeviceIndex - 1].Media),
+           sizeof (EFI_PEI_BLOCK_IO2_MEDIA)
+           );
 
   return EFI_SUCCESS;
 }
@@ -505,7 +511,7 @@ NvmeBlockIoPeimReadBlocks2 (
   OUT VOID                            *Buffer
   )
 {
-  PEI_NVME_CONTROLLER_PRIVATE_DATA    *Private;
+  PEI_NVME_CONTROLLER_PRIVATE_DATA  *Private;
 
   if (This == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -513,11 +519,11 @@ NvmeBlockIoPeimReadBlocks2 (
 
   Private = GET_NVME_PEIM_HC_PRIVATE_DATA_FROM_THIS_BLKIO2 (This);
   return NvmeBlockIoPeimReadBlocks (
-           PeiServices,
-           &Private->BlkIoPpi,
-           DeviceIndex,
-           StartLBA,
-           BufferSize,
-           Buffer
-           );
+                                    PeiServices,
+                                    &Private->BlkIoPpi,
+                                    DeviceIndex,
+                                    StartLBA,
+                                    BufferSize,
+                                    Buffer
+                                    );
 }

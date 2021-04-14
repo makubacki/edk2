@@ -16,15 +16,15 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define __MEMORY_TYPE_INFORMATION_GUID_H__
 
 #define EFI_MEMORY_TYPE_INFORMATION_GUID \
-  { 0x4c19049f,0x4137,0x4dd3, { 0x9c,0x10,0x8b,0x97,0xa8,0x3f,0xfd,0xfa } }
+  { 0x4c19049f, 0x4137, 0x4dd3, { 0x9c, 0x10, 0x8b, 0x97, 0xa8, 0x3f, 0xfd, 0xfa } }
 
-#define EFI_MEMORY_TYPE_INFORMATION_VARIABLE_NAME L"MemoryTypeInformation"
+#define EFI_MEMORY_TYPE_INFORMATION_VARIABLE_NAME  L"MemoryTypeInformation"
 
-extern EFI_GUID gEfiMemoryTypeInformationGuid;
+extern EFI_GUID  gEfiMemoryTypeInformationGuid;
 
 typedef struct {
-  UINT32  Type;             ///< EFI memory type defined in UEFI specification.
-  UINT32  NumberOfPages;    ///< The pages of this type memory.
+  UINT32    Type;           ///< EFI memory type defined in UEFI specification.
+  UINT32    NumberOfPages;  ///< The pages of this type memory.
 } EFI_MEMORY_TYPE_INFORMATION;
 
 #endif

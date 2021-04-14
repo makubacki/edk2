@@ -21,15 +21,15 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gXhciComponentName = 
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL gXhciComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gXhciComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) XhciComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) XhciComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mXhciDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mXhciDriverNameTable[] = {
   { "eng;en", L"Usb Xhci Driver" },
-  { NULL , NULL }
+  { NULL,     NULL               }
 };
 
 /**
@@ -80,12 +80,12 @@ XhciComponentNameGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mXhciDriverNameTable,
-           DriverName,
-           (BOOLEAN)(This == &gXhciComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mXhciDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gXhciComponentName)
+                               );
 }
 
 /**
@@ -166,9 +166,9 @@ XhciComponentNameGetControllerName (
   OUT CHAR16                       **ControllerName
   )
 {
-  EFI_STATUS           Status;
-  EFI_USB2_HC_PROTOCOL *Usb2Hc;
-  USB_XHCI_INSTANCE    *XhciDev;
+  EFI_STATUS            Status;
+  EFI_USB2_HC_PROTOCOL  *Usb2Hc;
+  USB_XHCI_INSTANCE     *XhciDev;
 
   //
   // This is a device driver, so ChildHandle must be NULL.
@@ -181,10 +181,10 @@ XhciComponentNameGetControllerName (
   // Make sure this driver is currently managing ControllerHandle
   //
   Status = EfiTestManagedDevice (
-             ControllerHandle,
-             gXhciDriverBinding.DriverBindingHandle,
-             &gEfiPciIoProtocolGuid
-             );
+                                 ControllerHandle,
+                                 gXhciDriverBinding.DriverBindingHandle,
+                                 &gEfiPciIoProtocolGuid
+                                 );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -193,13 +193,13 @@ XhciComponentNameGetControllerName (
   // Get the device context
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiUsb2HcProtocolGuid,
-                  (VOID **) &Usb2Hc,
-                  gXhciDriverBinding.DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiUsb2HcProtocolGuid,
+                              (VOID **) &Usb2Hc,
+                              gXhciDriverBinding.DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -207,11 +207,10 @@ XhciComponentNameGetControllerName (
   XhciDev = XHC_FROM_THIS (Usb2Hc);
 
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           XhciDev->ControllerNameTable,
-           ControllerName,
-           (BOOLEAN)(This == &gXhciComponentName)
-           );
-
+                               Language,
+                               This->SupportedLanguages,
+                               XhciDev->ControllerNameTable,
+                               ControllerName,
+                               (BOOLEAN) (This == &gXhciComponentName)
+                               );
 }

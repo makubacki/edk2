@@ -8,7 +8,9 @@
 
 #include "CapsuleApp.h"
 
-EFI_GUID mCapsuleOnDiskBootOptionGuid = { 0x4CC29BB7, 0x2413, 0x40A2, { 0xB0, 0x6D, 0x25, 0x3E, 0x37, 0x10, 0xF5, 0x32 } };
+EFI_GUID  mCapsuleOnDiskBootOptionGuid = {
+  0x4CC29BB7, 0x2413, 0x40A2, { 0xB0, 0x6D, 0x25, 0x3E, 0x37, 0x10, 0xF5, 0x32 }
+};
 
 /**
   Get file name from file path.
@@ -23,10 +25,10 @@ GetFileNameFromPath (
   CHAR16                            *FilePath
   )
 {
-  EFI_STATUS                        Status;
-  EFI_SHELL_PROTOCOL                *ShellProtocol;
-  SHELL_FILE_HANDLE                 Handle;
-  EFI_FILE_INFO                     *FileInfo;
+  EFI_STATUS          Status;
+  EFI_SHELL_PROTOCOL  *ShellProtocol;
+  SHELL_FILE_HANDLE   Handle;
+  EFI_FILE_INFO       *FileInfo;
 
   ShellProtocol = GetShellProtocol ();
   if (ShellProtocol == NULL) {
@@ -37,10 +39,10 @@ GetFileNameFromPath (
   // Open file by FileName.
   //
   Status = ShellProtocol->OpenFileByName (
-                            FilePath,
-                            &Handle,
-                            EFI_FILE_MODE_READ
-                            );
+                                          FilePath,
+                                          &Handle,
+                                          EFI_FILE_MODE_READ
+                                          );
   if (EFI_ERROR (Status)) {
     return NULL;
   }
@@ -71,10 +73,10 @@ IsEfiSysPartitionDevicePath (
   EFI_DEVICE_PATH_PROTOCOL   *DevicePath
   )
 {
-  EFI_STATUS                 Status;
-  EFI_DEVICE_PATH_PROTOCOL   *TempDevicePath;
-  HARDDRIVE_DEVICE_PATH      *Hd;
-  EFI_HANDLE                 Handle;
+  EFI_STATUS                Status;
+  EFI_DEVICE_PATH_PROTOCOL  *TempDevicePath;
+  HARDDRIVE_DEVICE_PATH     *Hd;
+  EFI_HANDLE                Handle;
 
   //
   // Check if the device path contains GPT node
@@ -83,12 +85,13 @@ IsEfiSysPartitionDevicePath (
 
   while (!IsDevicePathEnd (TempDevicePath)) {
     if ((DevicePathType (TempDevicePath) == MEDIA_DEVICE_PATH) &&
-      (DevicePathSubType (TempDevicePath) == MEDIA_HARDDRIVE_DP)) {
-      Hd = (HARDDRIVE_DEVICE_PATH *)TempDevicePath;
+        (DevicePathSubType (TempDevicePath) == MEDIA_HARDDRIVE_DP)) {
+      Hd = (HARDDRIVE_DEVICE_PATH *) TempDevicePath;
       if (Hd->MBRType == MBR_TYPE_EFI_PARTITION_TABLE_HEADER) {
         break;
       }
     }
+
     TempDevicePath = NextDevicePathNode (TempDevicePath);
   }
 
@@ -112,41 +115,42 @@ DumpAllEfiSysPartition (
   VOID
   )
 {
-  EFI_HANDLE                 *SimpleFileSystemHandles;
-  UINTN                      NumberSimpleFileSystemHandles;
-  UINTN                      Index;
-  EFI_DEVICE_PATH_PROTOCOL   *DevicePath;
-  UINTN                      NumberEfiSystemPartitions;
-  EFI_SHELL_PROTOCOL         *ShellProtocol;
+  EFI_HANDLE                *SimpleFileSystemHandles;
+  UINTN                     NumberSimpleFileSystemHandles;
+  UINTN                     Index;
+  EFI_DEVICE_PATH_PROTOCOL  *DevicePath;
+  UINTN                     NumberEfiSystemPartitions;
+  EFI_SHELL_PROTOCOL        *ShellProtocol;
 
   NumberEfiSystemPartitions = 0;
 
   ShellProtocol = GetShellProtocol ();
   if (ShellProtocol == NULL) {
-    Print (L"Get Shell Protocol Fail\n");;
-    return ;
+    Print (L"Get Shell Protocol Fail\n");
+    return;
   }
 
   Print (L"EFI System Partition list:\n");
 
   gBS->LocateHandleBuffer (
-         ByProtocol,
-         &gEfiSimpleFileSystemProtocolGuid,
-         NULL,
-         &NumberSimpleFileSystemHandles,
-         &SimpleFileSystemHandles
-         );
+                           ByProtocol,
+                           &gEfiSimpleFileSystemProtocolGuid,
+                           NULL,
+                           &NumberSimpleFileSystemHandles,
+                           &SimpleFileSystemHandles
+                           );
 
   for (Index = 0; Index < NumberSimpleFileSystemHandles; Index++) {
     DevicePath = DevicePathFromHandle (SimpleFileSystemHandles[Index]);
     if (IsEfiSysPartitionDevicePath (DevicePath)) {
       NumberEfiSystemPartitions++;
-      Print(L"    %s\n        %s\n", ShellProtocol->GetMapFromDevicePath (&DevicePath), ConvertDevicePathToText (DevicePath, TRUE, TRUE));
+      Print (L"    %s\n        %s\n", ShellProtocol->GetMapFromDevicePath (&DevicePath),
+             ConvertDevicePathToText (DevicePath, TRUE, TRUE));
     }
   }
 
   if (NumberEfiSystemPartitions == 0) {
-    Print(L"    No ESP found.\n");
+    Print (L"    No ESP found.\n");
   }
 }
 
@@ -162,19 +166,19 @@ IsCapsuleProvisioned (
   VOID
   )
 {
-  EFI_STATUS            Status;
-  UINT64                OsIndication;
-  UINTN                 DataSize;
+  EFI_STATUS  Status;
+  UINT64      OsIndication;
+  UINTN       DataSize;
 
   OsIndication = 0;
-  DataSize = sizeof(UINT64);
+  DataSize     = sizeof (UINT64);
   Status = gRT->GetVariable (
-                  L"OsIndications",
-                  &gEfiGlobalVariableGuid,
-                  NULL,
-                  &DataSize,
-                  &OsIndication
-                  );
+                             L"OsIndications",
+                             &gEfiGlobalVariableGuid,
+                             NULL,
+                             &DataSize,
+                             &OsIndication
+                             );
   if (!EFI_ERROR (Status) &&
       (OsIndication & EFI_OS_INDICATIONS_FILE_CAPSULE_DELIVERY_SUPPORTED) != 0) {
     return TRUE;
@@ -199,19 +203,19 @@ GetEfiSysPartition (
   OUT EFI_SIMPLE_FILE_SYSTEM_PROTOCOL  **Fs
   )
 {
-  EFI_HANDLE                 *SimpleFileSystemHandles;
-  UINTN                      NumberSimpleFileSystemHandles;
-  UINTN                      Index;
-  EFI_DEVICE_PATH_PROTOCOL   *DevicePath;
-  EFI_STATUS                 Status;
+  EFI_HANDLE                *SimpleFileSystemHandles;
+  UINTN                     NumberSimpleFileSystemHandles;
+  UINTN                     Index;
+  EFI_DEVICE_PATH_PROTOCOL  *DevicePath;
+  EFI_STATUS                Status;
 
   Status = gBS->LocateHandleBuffer (
-                  ByProtocol,
-                  &gEfiSimpleFileSystemProtocolGuid,
-                  NULL,
-                  &NumberSimpleFileSystemHandles,
-                  &SimpleFileSystemHandles
-                  );
+                                    ByProtocol,
+                                    &gEfiSimpleFileSystemProtocolGuid,
+                                    NULL,
+                                    &NumberSimpleFileSystemHandles,
+                                    &SimpleFileSystemHandles
+                                    );
 
   if (EFI_ERROR (Status)) {
     return EFI_NOT_FOUND;
@@ -220,7 +224,7 @@ GetEfiSysPartition (
   for (Index = 0; Index < NumberSimpleFileSystemHandles; Index++) {
     DevicePath = DevicePathFromHandle (SimpleFileSystemHandles[Index]);
     if (IsEfiSysPartitionDevicePath (DevicePath)) {
-      Status = gBS->HandleProtocol (SimpleFileSystemHandles[Index], &gEfiSimpleFileSystemProtocolGuid, (VOID **)Fs);
+      Status = gBS->HandleProtocol (SimpleFileSystemHandles[Index], &gEfiSimpleFileSystemProtocolGuid, (VOID **) Fs);
       if (!EFI_ERROR (Status)) {
         *FsDevicePath = DevicePath;
         return EFI_SUCCESS;
@@ -250,10 +254,10 @@ GetEfiSysPartitionFromDevPath (
   OUT EFI_SIMPLE_FILE_SYSTEM_PROTOCOL **Fs
   )
 {
-  EFI_STATUS                 Status;
-  EFI_DEVICE_PATH_PROTOCOL   *TempDevicePath;
-  HARDDRIVE_DEVICE_PATH      *Hd;
-  EFI_HANDLE                 Handle;
+  EFI_STATUS                Status;
+  EFI_DEVICE_PATH_PROTOCOL  *TempDevicePath;
+  HARDDRIVE_DEVICE_PATH     *Hd;
+  EFI_HANDLE                Handle;
 
   //
   // Check if the device path contains GPT node
@@ -261,12 +265,13 @@ GetEfiSysPartitionFromDevPath (
   TempDevicePath = DevicePath;
   while (!IsDevicePathEnd (TempDevicePath)) {
     if ((DevicePathType (TempDevicePath) == MEDIA_DEVICE_PATH) &&
-       (DevicePathSubType (TempDevicePath) == MEDIA_HARDDRIVE_DP)) {
-      Hd = (HARDDRIVE_DEVICE_PATH *)TempDevicePath;
+        (DevicePathSubType (TempDevicePath) == MEDIA_HARDDRIVE_DP)) {
+      Hd = (HARDDRIVE_DEVICE_PATH *) TempDevicePath;
       if (Hd->MBRType == MBR_TYPE_EFI_PARTITION_TABLE_HEADER) {
         break;
       }
     }
+
     TempDevicePath = NextDevicePathNode (TempDevicePath);
   }
 
@@ -280,7 +285,7 @@ GetEfiSysPartitionFromDevPath (
     // Search for simple file system on this handler
     //
     if (!EFI_ERROR (Status)) {
-      Status = gBS->HandleProtocol (Handle, &gEfiSimpleFileSystemProtocolGuid, (VOID **)Fs);
+      Status = gBS->HandleProtocol (Handle, &gEfiSimpleFileSystemProtocolGuid, (VOID **) Fs);
       if (!EFI_ERROR (Status)) {
         *FsDevicePath = DevicePathFromHandle (Handle);
         return EFI_SUCCESS;
@@ -310,13 +315,13 @@ GetEfiSysPartitionFromBootOptionFilePath (
   OUT EFI_SIMPLE_FILE_SYSTEM_PROTOCOL  **Fs
   )
 {
-  EFI_STATUS                        Status;
-  EFI_DEVICE_PATH_PROTOCOL          *CurFullPath;
-  EFI_DEVICE_PATH_PROTOCOL          *PreFullPath;
-  EFI_DEVICE_PATH_PROTOCOL          *FsFullPath;
+  EFI_STATUS                Status;
+  EFI_DEVICE_PATH_PROTOCOL  *CurFullPath;
+  EFI_DEVICE_PATH_PROTOCOL  *PreFullPath;
+  EFI_DEVICE_PATH_PROTOCOL  *FsFullPath;
 
   CurFullPath = NULL;
-  FsFullPath = NULL;
+  FsFullPath  = NULL;
   //
   // Try every full device Path generated from bootoption
   //
@@ -337,14 +342,15 @@ GetEfiSysPartitionFromBootOptionFilePath (
     }
 
     DEBUG_CODE (
-      CHAR16 *DevicePathStr;
+                CHAR16 *DevicePathStr;
 
-      DevicePathStr = ConvertDevicePathToText (CurFullPath, TRUE, TRUE);
-      if (DevicePathStr != NULL){
-        DEBUG ((DEBUG_INFO, "Full device path %s\n", DevicePathStr));
-        FreePool (DevicePathStr);
-      }
-    );
+                DevicePathStr = ConvertDevicePathToText (CurFullPath, TRUE, TRUE);
+                if (DevicePathStr != NULL) {
+      DEBUG ((DEBUG_INFO, "Full device path %s\n", DevicePathStr));
+      FreePool (DevicePathStr);
+    }
+
+                );
 
     Status = GetEfiSysPartitionFromDevPath (CurFullPath, &FsFullPath, Fs);
   } while (EFI_ERROR (Status));
@@ -376,7 +382,7 @@ GetUpdateFileSystem (
   OUT UINT16                           *BootNext,
   OUT EFI_SIMPLE_FILE_SYSTEM_PROTOCOL  **Fs,
   OUT BOOLEAN                          *UpdateBootNext
-)
+  )
 {
   EFI_STATUS                      Status;
   CHAR16                          BootOptionName[20];
@@ -396,7 +402,7 @@ GetUpdateFileSystem (
 
   ShellProtocol = GetShellProtocol ();
   if (ShellProtocol == NULL) {
-    Print (L"Get Shell Protocol Fail\n");;
+    Print (L"Get Shell Protocol Fail\n");
     return EFI_NOT_FOUND;
   }
 
@@ -406,11 +412,11 @@ GetUpdateFileSystem (
   //
   if (IsCapsuleProvisioned () && Map == NULL) {
     Status = GetVariable2 (
-               L"BootNext",
-               &gEfiGlobalVariableGuid,
-               (VOID **)&BootNextData,
-               NULL
-               );
+                           L"BootNext",
+                           &gEfiGlobalVariableGuid,
+                           (VOID **) &BootNextData,
+                           NULL
+                           );
     if (EFI_ERROR (Status) || BootNextData == NULL) {
       Print (L"Get Boot Next Data Fail. Status = %r\n", Status);
       return EFI_NOT_FOUND;
@@ -419,11 +425,12 @@ GetUpdateFileSystem (
       Status = EfiBootManagerVariableToLoadOption (BootOptionName, &BootNextOption);
       if (!EFI_ERROR (Status)) {
         DevicePath = BootNextOption.FilePath;
-        Status = GetEfiSysPartitionFromBootOptionFilePath (DevicePath, &FullPath, Fs);
+        Status     = GetEfiSysPartitionFromBootOptionFilePath (DevicePath, &FullPath, Fs);
         if (!EFI_ERROR (Status)) {
           *UpdateBootNext = FALSE;
-          Print(L"Get EFI system partition from BootNext : %s\n", BootNextOption.Description);
-          Print(L"%s %s\n", ShellProtocol->GetMapFromDevicePath (&FullPath), ConvertDevicePathToText (FullPath, TRUE, TRUE));
+          Print (L"Get EFI system partition from BootNext : %s\n", BootNextOption.Description);
+          Print (L"%s %s\n", ShellProtocol->GetMapFromDevicePath (&FullPath),
+                 ConvertDevicePathToText (FullPath, TRUE, TRUE));
           return EFI_SUCCESS;
         }
       }
@@ -436,10 +443,10 @@ GetUpdateFileSystem (
   if (Map != NULL) {
     MappedDevicePath = ShellProtocol->GetDevicePathFromMap (Map);
     if (MappedDevicePath == NULL) {
-      Print(L"'%s' is not a valid mapping.\n", Map);
+      Print (L"'%s' is not a valid mapping.\n", Map);
       return EFI_INVALID_PARAMETER;
     } else if (!IsEfiSysPartitionDevicePath (DuplicateDevicePath (MappedDevicePath))) {
-      Print(L"'%s' is not a EFI System Partition.\n", Map);
+      Print (L"'%s' is not a EFI System Partition.\n", Map);
       return EFI_INVALID_PARAMETER;
     }
   }
@@ -448,9 +455,9 @@ GetUpdateFileSystem (
   // 2. Get EFI system partition form boot options.
   //
   BootOptionBuffer = EfiBootManagerGetLoadOptions (&BootOptionCount, LoadOptionTypeBoot);
-  if ( (BootOptionBuffer == NULL) ||
-       (BootOptionCount == 0 && Map == NULL)
-     ) {
+  if ((BootOptionBuffer == NULL) ||
+      (BootOptionCount == 0 && Map == NULL)
+      ) {
     return EFI_NOT_FOUND;
   }
 
@@ -458,7 +465,7 @@ GetUpdateFileSystem (
     //
     // Get the boot option from the link list
     //
-    DevicePath  = BootOptionBuffer[Index].FilePath;
+    DevicePath = BootOptionBuffer[Index].FilePath;
 
     //
     // Skip inactive or legacy boot options
@@ -469,16 +476,17 @@ GetUpdateFileSystem (
     }
 
     DEBUG_CODE (
-      CHAR16 *DevicePathStr;
+                CHAR16 *DevicePathStr;
 
-      DevicePathStr = ConvertDevicePathToText (DevicePath, TRUE, TRUE);
-      if (DevicePathStr != NULL){
-        DEBUG ((DEBUG_INFO, "Try BootOption %s\n", DevicePathStr));
-        FreePool (DevicePathStr);
-      } else {
-        DEBUG ((DEBUG_INFO, "DevicePathToStr failed\n"));
-      }
-    );
+                DevicePathStr = ConvertDevicePathToText (DevicePath, TRUE, TRUE);
+                if (DevicePathStr != NULL) {
+      DEBUG ((DEBUG_INFO, "Try BootOption %s\n", DevicePathStr));
+      FreePool (DevicePathStr);
+    } else {
+      DEBUG ((DEBUG_INFO, "DevicePathToStr failed\n"));
+    }
+
+                );
 
     Status = GetEfiSysPartitionFromBootOptionFilePath (DevicePath, &FullPath, Fs);
     if (!EFI_ERROR (Status)) {
@@ -486,7 +494,8 @@ GetUpdateFileSystem (
         *BootNext = (UINT16) BootOptionBuffer[Index].OptionNumber;
         *UpdateBootNext = TRUE;
         Print (L"Found EFI system partition on Boot%04x: %s\n", *BootNext, BootOptionBuffer[Index].Description);
-        Print (L"%s %s\n", ShellProtocol->GetMapFromDevicePath (&FullPath), ConvertDevicePathToText (FullPath, TRUE, TRUE));
+        Print (L"%s %s\n", ShellProtocol->GetMapFromDevicePath (&FullPath),
+               ConvertDevicePathToText (FullPath, TRUE, TRUE));
         return EFI_SUCCESS;
       }
 
@@ -507,11 +516,12 @@ GetUpdateFileSystem (
     // If map is assigned, try to get ESP from mapped Fs.
     //
     DevicePath = DuplicateDevicePath (MappedDevicePath);
-    Status = GetEfiSysPartitionFromDevPath (DevicePath, &FullPath, Fs);
+    Status     = GetEfiSysPartitionFromDevPath (DevicePath, &FullPath, Fs);
     if (EFI_ERROR (Status)) {
       Print (L"Error: Cannot get EFI system partiion from '%s' - %r\n", Map, Status);
       return EFI_NOT_FOUND;
     }
+
     Print (L"Warning: Cannot find Boot Option on '%s'!\n", Map);
   } else {
     Status = GetEfiSysPartition (&DevicePath, Fs);
@@ -523,21 +533,21 @@ GetUpdateFileSystem (
 
   Print (L"Create Boot option for capsule on disk:\n");
   Status = EfiBootManagerInitializeLoadOption (
-             &NewOption,
-             LoadOptionNumberUnassigned,
-             LoadOptionTypeBoot,
-             LOAD_OPTION_ACTIVE,
-             L"UEFI Capsule On Disk",
-             DevicePath,
-             (UINT8 *) &mCapsuleOnDiskBootOptionGuid,
-             sizeof(EFI_GUID)
-             );
+                                               &NewOption,
+                                               LoadOptionNumberUnassigned,
+                                               LoadOptionTypeBoot,
+                                               LOAD_OPTION_ACTIVE,
+                                               L"UEFI Capsule On Disk",
+                                               DevicePath,
+                                               (UINT8 *) &mCapsuleOnDiskBootOptionGuid,
+                                               sizeof (EFI_GUID)
+                                               );
   if (!EFI_ERROR (Status)) {
-    Status = EfiBootManagerAddLoadOptionVariable (&NewOption, (UINTN) -1); {
+    Status = EfiBootManagerAddLoadOptionVariable (&NewOption, (UINTN) - 1);{
       if (!EFI_ERROR (Status)) {
         *UpdateBootNext = TRUE;
         *BootNext = (UINT16) NewOption.OptionNumber;
-        Print (L"  Boot%04x: %s\n", *BootNext, ConvertDevicePathToText(DevicePath, TRUE, TRUE));
+        Print (L"  Boot%04x: %s\n", *BootNext, ConvertDevicePathToText (DevicePath, TRUE, TRUE));
         return EFI_SUCCESS;
       }
     }
@@ -569,20 +579,20 @@ WriteUpdateFile (
   IN  CHAR16                               **FileName,
   IN  UINTN                                BufferNum,
   IN  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL      *Fs
-)
+  )
 {
-  EFI_STATUS                          Status;
-  EFI_FILE                            *Root;
-  EFI_FILE                            *FileHandle;
-  EFI_FILE_PROTOCOL                   *DirHandle;
-  UINT64                              FileInfo;
-  VOID                                *Filebuffer;
-  UINTN                               FileSize;
-  UINTN                               Index;
+  EFI_STATUS         Status;
+  EFI_FILE           *Root;
+  EFI_FILE           *FileHandle;
+  EFI_FILE_PROTOCOL  *DirHandle;
+  UINT64             FileInfo;
+  VOID               *Filebuffer;
+  UINTN              FileSize;
+  UINTN              Index;
 
-  DirHandle   = NULL;
-  FileHandle  = NULL;
-  Index       = 0;
+  DirHandle  = NULL;
+  FileHandle = NULL;
+  Index = 0;
 
   //
   // Open Root from SFS
@@ -598,17 +608,26 @@ WriteUpdateFile (
   //
   Status = Root->Open (Root, &DirHandle, L"\\EFI", EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, 0);
   if (EFI_ERROR (Status)) {
-    Status = Root->Open (Root, &DirHandle, L"\\EFI", EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, EFI_FILE_DIRECTORY);
+    Status = Root->Open (Root,
+                         &DirHandle,
+                         L"\\EFI",
+                         EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE,
+                         EFI_FILE_DIRECTORY);
     if (EFI_ERROR (Status)) {
-      Print(L"Unable to create %s directory\n", L"\\EFI");
+      Print (L"Unable to create %s directory\n", L"\\EFI");
       return EFI_NOT_FOUND;
     }
   }
-  Status = Root->Open (Root, &DirHandle, EFI_CAPSULE_FILE_DIRECTORY, EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE , 0);
+
+  Status = Root->Open (Root, &DirHandle, EFI_CAPSULE_FILE_DIRECTORY, EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, 0);
   if (EFI_ERROR (Status)) {
-    Status = Root->Open (Root, &DirHandle, EFI_CAPSULE_FILE_DIRECTORY, EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, EFI_FILE_DIRECTORY);
+    Status = Root->Open (Root,
+                         &DirHandle,
+                         EFI_CAPSULE_FILE_DIRECTORY,
+                         EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE,
+                         EFI_FILE_DIRECTORY);
     if (EFI_ERROR (Status)) {
-      Print(L"Unable to create %s directory\n", EFI_CAPSULE_FILE_DIRECTORY);
+      Print (L"Unable to create %s directory\n", EFI_CAPSULE_FILE_DIRECTORY);
       return EFI_NOT_FOUND;
     }
   }
@@ -619,7 +638,11 @@ WriteUpdateFile (
     //
     // Open UpdateCapsule file
     //
-    Status = DirHandle->Open (DirHandle, &FileHandle, FileName[Index], EFI_FILE_MODE_CREATE | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_READ, 0);
+    Status = DirHandle->Open (DirHandle,
+                              &FileHandle,
+                              FileName[Index],
+                              EFI_FILE_MODE_CREATE | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_READ,
+                              0);
     if (EFI_ERROR (Status)) {
       Print (L"Unable to create %s file\n", FileName[Index]);
       return EFI_NOT_FOUND;
@@ -643,7 +666,7 @@ WriteUpdateFile (
       // Set the file size to 0.
       //
       FileInfo = 0;
-      Status = FileHandleSetSize (FileHandle, FileInfo);
+      Status   = FileHandleSetSize (FileHandle, FileInfo);
       if (EFI_ERROR (Status)) {
         Print (L"Error Deleting %s\n", FileName[Index]);
         FileHandleClose (FileHandle);
@@ -655,8 +678,8 @@ WriteUpdateFile (
     // Write Filebuffer to file
     //
     Filebuffer = Buffer[Index];
-    FileSize = BufferSize[Index];
-    Status = FileHandleWrite (FileHandle, &FileSize, Filebuffer);
+    FileSize   = BufferSize[Index];
+    Status     = FileHandleWrite (FileHandle, &FileSize, Filebuffer);
     if (EFI_ERROR (Status)) {
       Print (L"Unable to write Capsule Update to %s, Status = %r\n", FileName[Index], Status);
       return EFI_NOT_FOUND;
@@ -683,35 +706,36 @@ SetCapsuleStatusVariable (
   BOOLEAN                       SetCap
   )
 {
-  EFI_STATUS                    Status;
-  UINT64                        OsIndication;
-  UINTN                         DataSize;
+  EFI_STATUS  Status;
+  UINT64      OsIndication;
+  UINTN       DataSize;
 
   OsIndication = 0;
-  DataSize = sizeof(UINT64);
+  DataSize     = sizeof (UINT64);
   Status = gRT->GetVariable (
-                  L"OsIndications",
-                  &gEfiGlobalVariableGuid,
-                  NULL,
-                  &DataSize,
-                  &OsIndication
-                  );
+                             L"OsIndications",
+                             &gEfiGlobalVariableGuid,
+                             NULL,
+                             &DataSize,
+                             &OsIndication
+                             );
   if (EFI_ERROR (Status)) {
     OsIndication = 0;
   }
+
   if (SetCap) {
-    OsIndication |= ((UINT64)EFI_OS_INDICATIONS_FILE_CAPSULE_DELIVERY_SUPPORTED);
+    OsIndication |= ((UINT64) EFI_OS_INDICATIONS_FILE_CAPSULE_DELIVERY_SUPPORTED);
+  } else {
+    OsIndication &= ~((UINT64) EFI_OS_INDICATIONS_FILE_CAPSULE_DELIVERY_SUPPORTED);
   }
-  else {
-    OsIndication &= ~((UINT64)EFI_OS_INDICATIONS_FILE_CAPSULE_DELIVERY_SUPPORTED);
-  }
+
   Status = gRT->SetVariable (
-                  L"OsIndications",
-                  &gEfiGlobalVariableGuid,
-                  EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
-                  sizeof(UINT64),
-                  &OsIndication
-                  );
+                             L"OsIndications",
+                             &gEfiGlobalVariableGuid,
+                             EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
+                             sizeof (UINT64),
+                             &OsIndication
+                             );
 
   return Status;
 }
@@ -728,18 +752,18 @@ IsCapsuleOnDiskSupported (
   VOID
   )
 {
-  EFI_STATUS                    Status;
-  UINT64                        OsIndicationsSupported;
-  UINTN                         DataSize;
+  EFI_STATUS  Status;
+  UINT64      OsIndicationsSupported;
+  UINTN       DataSize;
 
-  DataSize = sizeof(UINT64);
-  Status = gRT->GetVariable (
-                  L"OsIndicationsSupported",
-                  &gEfiGlobalVariableGuid,
-                  NULL,
-                  &DataSize,
-                  &OsIndicationsSupported
-                  );
+  DataSize = sizeof (UINT64);
+  Status   = gRT->GetVariable (
+                               L"OsIndicationsSupported",
+                               &gEfiGlobalVariableGuid,
+                               NULL,
+                               &DataSize,
+                               &OsIndicationsSupported
+                               );
   if (EFI_ERROR (Status)) {
     return FALSE;
   }
@@ -773,12 +797,12 @@ ProcessCapsuleOnDisk (
   IN UINTN                         CapsuleNum
   )
 {
-  EFI_STATUS                      Status;
-  UINT16                          BootNext;
-  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *Fs;
-  BOOLEAN                         UpdateBootNext;
-  CHAR16                          *FileName[MAX_CAPSULE_NUM];
-  UINTN                           Index;
+  EFI_STATUS                       Status;
+  UINT16                           BootNext;
+  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL  *Fs;
+  BOOLEAN                          UpdateBootNext;
+  CHAR16                           *FileName[MAX_CAPSULE_NUM];
+  UINTN                            Index;
 
   //
   // Check if Capsule On Disk is supported
@@ -802,7 +826,7 @@ ProcessCapsuleOnDisk (
   //
   // Get file name from file path
   //
-  for (Index = 0; Index < CapsuleNum; Index ++) {
+  for (Index = 0; Index < CapsuleNum; Index++) {
     FileName[Index] = GetFileNameFromPath (FilePath[Index]);
   }
 
@@ -826,13 +850,13 @@ ProcessCapsuleOnDisk (
 
   if (UpdateBootNext) {
     Status = gRT->SetVariable (
-      L"BootNext",
-      &gEfiGlobalVariableGuid,
-      EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
-      sizeof(UINT16),
-      &BootNext
-      );
-    if (EFI_ERROR (Status)){
+                               L"BootNext",
+                               &gEfiGlobalVariableGuid,
+                               EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
+                               sizeof (UINT16),
+                               &BootNext
+                               );
+    if (EFI_ERROR (Status)) {
       Print (L"CapsuleApp: unable to set BootNext variable.\n");
       return Status;
     }

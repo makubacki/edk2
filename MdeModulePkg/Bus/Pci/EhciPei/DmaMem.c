@@ -39,53 +39,56 @@ IoMmuMap (
   OUT VOID                  **Mapping
   )
 {
-  EFI_STATUS    Status;
-  UINT64        Attribute;
+  EFI_STATUS  Status;
+  UINT64      Attribute;
 
   if (IoMmu != NULL) {
     Status = IoMmu->Map (
-                      IoMmu,
-                      Operation,
-                      HostAddress,
-                      NumberOfBytes,
-                      DeviceAddress,
-                      Mapping
-                      );
+                         IoMmu,
+                         Operation,
+                         HostAddress,
+                         NumberOfBytes,
+                         DeviceAddress,
+                         Mapping
+                         );
     if (EFI_ERROR (Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
+
     switch (Operation) {
-    case EdkiiIoMmuOperationBusMasterRead:
-    case EdkiiIoMmuOperationBusMasterRead64:
-      Attribute = EDKII_IOMMU_ACCESS_READ;
-      break;
-    case EdkiiIoMmuOperationBusMasterWrite:
-    case EdkiiIoMmuOperationBusMasterWrite64:
-      Attribute = EDKII_IOMMU_ACCESS_WRITE;
-      break;
-    case EdkiiIoMmuOperationBusMasterCommonBuffer:
-    case EdkiiIoMmuOperationBusMasterCommonBuffer64:
-      Attribute = EDKII_IOMMU_ACCESS_READ | EDKII_IOMMU_ACCESS_WRITE;
-      break;
-    default:
-      ASSERT(FALSE);
-      return EFI_INVALID_PARAMETER;
+      case EdkiiIoMmuOperationBusMasterRead:
+      case EdkiiIoMmuOperationBusMasterRead64:
+        Attribute = EDKII_IOMMU_ACCESS_READ;
+        break;
+      case EdkiiIoMmuOperationBusMasterWrite:
+      case EdkiiIoMmuOperationBusMasterWrite64:
+        Attribute = EDKII_IOMMU_ACCESS_WRITE;
+        break;
+      case EdkiiIoMmuOperationBusMasterCommonBuffer:
+      case EdkiiIoMmuOperationBusMasterCommonBuffer64:
+        Attribute = EDKII_IOMMU_ACCESS_READ | EDKII_IOMMU_ACCESS_WRITE;
+        break;
+      default:
+        ASSERT (FALSE);
+        return EFI_INVALID_PARAMETER;
     }
+
     Status = IoMmu->SetAttribute (
-                      IoMmu,
-                      *Mapping,
-                      Attribute
-                      );
+                                  IoMmu,
+                                  *Mapping,
+                                  Attribute
+                                  );
     if (EFI_ERROR (Status)) {
-      IoMmu->Unmap (IoMmu, Mapping);
+  IoMmu->Unmap (IoMmu, Mapping);
       *Mapping = NULL;
       return Status;
     }
   } else {
     *DeviceAddress = (EFI_PHYSICAL_ADDRESS) (UINTN) HostAddress;
     *Mapping = NULL;
-    Status = EFI_SUCCESS;
+    Status   = EFI_SUCCESS;
   }
+
   return Status;
 }
 
@@ -103,8 +106,8 @@ IoMmuUnmap (
   )
 {
   if (IoMmu != NULL) {
-    IoMmu->SetAttribute (IoMmu, Mapping, 0);
-    IoMmu->Unmap (IoMmu, Mapping);
+  IoMmu->SetAttribute (IoMmu, Mapping, 0);
+  IoMmu->Unmap (IoMmu, Mapping);
   }
 }
 
@@ -140,61 +143,64 @@ IoMmuAllocateBuffer (
   UINTN                 NumberOfBytes;
   EFI_PHYSICAL_ADDRESS  HostPhyAddress;
 
-  *HostAddress = NULL;
+  *HostAddress   = NULL;
   *DeviceAddress = 0;
   *Mapping = NULL;
 
   if (IoMmu != NULL) {
     Status = IoMmu->AllocateBuffer (
-                      IoMmu,
-                      EfiBootServicesData,
-                      Pages,
-                      HostAddress,
-                      0
-                      );
+                                    IoMmu,
+                                    EfiBootServicesData,
+                                    Pages,
+                                    HostAddress,
+                                    0
+                                    );
     if (EFI_ERROR (Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
 
     NumberOfBytes = EFI_PAGES_TO_SIZE (Pages);
     Status = IoMmu->Map (
-                      IoMmu,
-                      EdkiiIoMmuOperationBusMasterCommonBuffer,
-                      *HostAddress,
-                      &NumberOfBytes,
-                      DeviceAddress,
-                      Mapping
-                      );
+                         IoMmu,
+                         EdkiiIoMmuOperationBusMasterCommonBuffer,
+                         *HostAddress,
+                         &NumberOfBytes,
+                         DeviceAddress,
+                         Mapping
+                         );
     if (EFI_ERROR (Status)) {
-      IoMmu->FreeBuffer (IoMmu, Pages, *HostAddress);
+  IoMmu->FreeBuffer (IoMmu, Pages, *HostAddress);
       *HostAddress = NULL;
       return EFI_OUT_OF_RESOURCES;
     }
+
     Status = IoMmu->SetAttribute (
-                      IoMmu,
-                      *Mapping,
-                      EDKII_IOMMU_ACCESS_READ | EDKII_IOMMU_ACCESS_WRITE
-                      );
+                                  IoMmu,
+                                  *Mapping,
+                                  EDKII_IOMMU_ACCESS_READ | EDKII_IOMMU_ACCESS_WRITE
+                                  );
     if (EFI_ERROR (Status)) {
-      IoMmu->Unmap (IoMmu, *Mapping);
-      IoMmu->FreeBuffer (IoMmu, Pages, *HostAddress);
-      *Mapping = NULL;
+  IoMmu->Unmap (IoMmu, *Mapping);
+  IoMmu->FreeBuffer (IoMmu, Pages, *HostAddress);
+      *Mapping     = NULL;
       *HostAddress = NULL;
       return Status;
     }
   } else {
     Status = PeiServicesAllocatePages (
-               EfiBootServicesCode,
-               Pages,
-               &HostPhyAddress
-               );
+                                       EfiBootServicesCode,
+                                       Pages,
+                                       &HostPhyAddress
+                                       );
     if (EFI_ERROR (Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
-    *HostAddress = (VOID *) (UINTN) HostPhyAddress;
+
+    *HostAddress   = (VOID *) (UINTN) HostPhyAddress;
     *DeviceAddress = HostPhyAddress;
     *Mapping = NULL;
   }
+
   return Status;
 }
 
@@ -216,9 +222,9 @@ IoMmuFreeBuffer (
   )
 {
   if (IoMmu != NULL) {
-    IoMmu->SetAttribute (IoMmu, Mapping, 0);
-    IoMmu->Unmap (IoMmu, Mapping);
-    IoMmu->FreeBuffer (IoMmu, Pages, HostAddress);
+  IoMmu->SetAttribute (IoMmu, Mapping, 0);
+  IoMmu->Unmap (IoMmu, Mapping);
+  IoMmu->FreeBuffer (IoMmu, Pages, HostAddress);
   }
 }
 
@@ -234,10 +240,9 @@ IoMmuInit (
   )
 {
   PeiServicesLocatePpi (
-    &gEdkiiIoMmuPpiGuid,
-    0,
-    NULL,
-    (VOID **) IoMmu
-    );
+                        &gEdkiiIoMmuPpiGuid,
+                        0,
+                        NULL,
+                        (VOID **) IoMmu
+                        );
 }
-

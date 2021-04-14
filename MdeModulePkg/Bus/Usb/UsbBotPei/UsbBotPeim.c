@@ -12,26 +12,26 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // Global function
 //
-EFI_PEI_NOTIFY_DESCRIPTOR        mNotifyList = {
+EFI_PEI_NOTIFY_DESCRIPTOR  mNotifyList = {
   EFI_PEI_PPI_DESCRIPTOR_NOTIFY_DISPATCH | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST,
   &gPeiUsbIoPpiGuid,
   NotifyOnUsbIoPpi
 };
 
-EFI_PEI_RECOVERY_BLOCK_IO_PPI    mRecoveryBlkIoPpi = {
+EFI_PEI_RECOVERY_BLOCK_IO_PPI  mRecoveryBlkIoPpi = {
   BotGetNumberOfBlockDevices,
   BotGetMediaInfo,
   BotReadBlocks
 };
 
-EFI_PEI_RECOVERY_BLOCK_IO2_PPI   mRecoveryBlkIo2Ppi = {
+EFI_PEI_RECOVERY_BLOCK_IO2_PPI  mRecoveryBlkIo2Ppi = {
   EFI_PEI_RECOVERY_BLOCK_IO2_PPI_REVISION,
   BotGetNumberOfBlockDevices2,
   BotGetMediaInfo2,
   BotReadBlocks2
 };
 
-EFI_PEI_PPI_DESCRIPTOR           mPpiList[2] = {
+EFI_PEI_PPI_DESCRIPTOR  mPpiList[2] = {
   {
     EFI_PEI_PPI_DESCRIPTOR_PPI,
     &gEfiPeiVirtualBlockIoPpiGuid,
@@ -78,10 +78,10 @@ PeimInitializeUsbBot (
   IN CONST EFI_PEI_SERVICES    **PeiServices
   )
 {
-  EFI_STATUS                  Status;
-  UINTN                       UsbIoPpiInstance;
-  EFI_PEI_PPI_DESCRIPTOR      *TempPpiDescriptor;
-  PEI_USB_IO_PPI              *UsbIoPpi;
+  EFI_STATUS              Status;
+  UINTN                   UsbIoPpiInstance;
+  EFI_PEI_PPI_DESCRIPTOR  *TempPpiDescriptor;
+  PEI_USB_IO_PPI          *UsbIoPpi;
 
   //
   // Shadow this PEIM to run from memory
@@ -94,17 +94,17 @@ PeimInitializeUsbBot (
   // locate all usb io PPIs
   //
   for (UsbIoPpiInstance = 0; UsbIoPpiInstance < PEI_FAT_MAX_USB_IO_PPI; UsbIoPpiInstance++) {
-
     Status = PeiServicesLocatePpi (
-                              &gPeiUsbIoPpiGuid,
-                              UsbIoPpiInstance,
-                              &TempPpiDescriptor,
-                              (VOID **) &UsbIoPpi
-                              );
+                                   &gPeiUsbIoPpiGuid,
+                                   UsbIoPpiInstance,
+                                   &TempPpiDescriptor,
+                                   (VOID **) &UsbIoPpi
+                                   );
     if (EFI_ERROR (Status)) {
       break;
     }
   }
+
   //
   // Register a notify function
   //
@@ -170,45 +170,45 @@ InitUsbBot (
   // Check its interface
   //
   Status = UsbIoPpi->UsbGetInterfaceDescriptor (
-                      PeiServices,
-                      UsbIoPpi,
-                      &InterfaceDesc
-                      );
+                                                PeiServices,
+                                                UsbIoPpi,
+                                                &InterfaceDesc
+                                                );
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   //
   // Check if it is the BOT device we support
   //
   if ((InterfaceDesc->InterfaceClass != 0x08) || (InterfaceDesc->InterfaceProtocol != 0x50)) {
-
     return EFI_NOT_FOUND;
   }
 
   MemPages = sizeof (PEI_BOT_DEVICE) / EFI_PAGE_SIZE + 1;
-  Status = PeiServicesAllocatePages (
-             EfiBootServicesCode,
-             MemPages,
-             &AllocateAddress
-             );
+  Status   = PeiServicesAllocatePages (
+                                       EfiBootServicesCode,
+                                       MemPages,
+                                       &AllocateAddress
+                                       );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  PeiBotDevice                  = (PEI_BOT_DEVICE *) ((UINTN) AllocateAddress);
+  PeiBotDevice = (PEI_BOT_DEVICE *) ((UINTN) AllocateAddress);
 
-  PeiBotDevice->Signature       = PEI_BOT_DEVICE_SIGNATURE;
-  PeiBotDevice->UsbIoPpi        = UsbIoPpi;
+  PeiBotDevice->Signature = PEI_BOT_DEVICE_SIGNATURE;
+  PeiBotDevice->UsbIoPpi  = UsbIoPpi;
   PeiBotDevice->AllocateAddress = (UINTN) AllocateAddress;
   PeiBotDevice->BotInterface    = InterfaceDesc;
 
   //
   // Default value
   //
-  PeiBotDevice->Media.DeviceType  = UsbMassStorage;
-  PeiBotDevice->Media.BlockSize   = 0x200;
-  PeiBotDevice->Media2.InterfaceType = MSG_USB_DP;
-  PeiBotDevice->Media2.BlockSize     = 0x200;
+  PeiBotDevice->Media.DeviceType      = UsbMassStorage;
+  PeiBotDevice->Media.BlockSize       = 0x200;
+  PeiBotDevice->Media2.InterfaceType  = MSG_USB_DP;
+  PeiBotDevice->Media2.BlockSize      = 0x200;
   PeiBotDevice->Media2.RemovableMedia = FALSE;
   PeiBotDevice->Media2.ReadOnly       = FALSE;
 
@@ -217,11 +217,11 @@ InitUsbBot (
   //
   for (Index = 0; Index < 2; Index++) {
     Status = UsbIoPpi->UsbGetEndpointDescriptor (
-                        PeiServices,
-                        UsbIoPpi,
-                        Index,
-                        &EndpointDesc
-                        );
+                                                 PeiServices,
+                                                 UsbIoPpi,
+                                                 Index,
+                                                 &EndpointDesc
+                                                 );
 
     if (EFI_ERROR (Status)) {
       return Status;
@@ -235,38 +235,38 @@ InitUsbBot (
   }
 
   CopyMem (
-    &(PeiBotDevice->BlkIoPpi),
-    &mRecoveryBlkIoPpi,
-    sizeof (EFI_PEI_RECOVERY_BLOCK_IO_PPI)
-    );
+           &(PeiBotDevice->BlkIoPpi),
+           &mRecoveryBlkIoPpi,
+           sizeof (EFI_PEI_RECOVERY_BLOCK_IO_PPI)
+           );
   CopyMem (
-    &(PeiBotDevice->BlkIo2Ppi),
-    &mRecoveryBlkIo2Ppi,
-    sizeof (EFI_PEI_RECOVERY_BLOCK_IO2_PPI)
-    );
+           &(PeiBotDevice->BlkIo2Ppi),
+           &mRecoveryBlkIo2Ppi,
+           sizeof (EFI_PEI_RECOVERY_BLOCK_IO2_PPI)
+           );
   CopyMem (
-    &(PeiBotDevice->BlkIoPpiList),
-    &mPpiList[0],
-    sizeof (EFI_PEI_PPI_DESCRIPTOR)
-    );
+           &(PeiBotDevice->BlkIoPpiList),
+           &mPpiList[0],
+           sizeof (EFI_PEI_PPI_DESCRIPTOR)
+           );
   CopyMem (
-    &(PeiBotDevice->BlkIo2PpiList),
-    &mPpiList[1],
-    sizeof (EFI_PEI_PPI_DESCRIPTOR)
-    );
+           &(PeiBotDevice->BlkIo2PpiList),
+           &mPpiList[1],
+           sizeof (EFI_PEI_PPI_DESCRIPTOR)
+           );
   PeiBotDevice->BlkIoPpiList.Ppi  = &PeiBotDevice->BlkIoPpi;
   PeiBotDevice->BlkIo2PpiList.Ppi = &PeiBotDevice->BlkIo2Ppi;
 
-  Status                          = PeiUsbInquiry (PeiServices, PeiBotDevice);
+  Status = PeiUsbInquiry (PeiServices, PeiBotDevice);
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   Status = PeiServicesAllocatePages (
-             EfiBootServicesCode,
-             1,
-             &AllocateAddress
-             );
+                                     EfiBootServicesCode,
+                                     1,
+                                     &AllocateAddress
+                                     );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -361,24 +361,24 @@ BotGetMediaInfo (
   // First test unit ready
   //
   PeiUsbTestUnitReady (
-    PeiServices,
-    PeiBotDev
-    );
+                       PeiServices,
+                       PeiBotDev
+                       );
 
   Status = PeiBotDetectMedia (
-            PeiServices,
-            PeiBotDev
-            );
+                              PeiServices,
+                              PeiBotDev
+                              );
 
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
   }
 
   CopyMem (
-    MediaInfo,
-    &(PeiBotDev->Media),
-    sizeof (EFI_PEI_BLOCK_IO_MEDIA)
-    );
+           MediaInfo,
+           &(PeiBotDev->Media),
+           sizeof (EFI_PEI_BLOCK_IO_MEDIA)
+           );
 
   return EFI_SUCCESS;
 }
@@ -464,28 +464,27 @@ BotReadBlocks (
   NumberOfBlocks = BufferSize / (PeiBotDev->Media.BlockSize);
 
   if (Status == EFI_SUCCESS) {
-
     Status = PeiUsbTestUnitReady (
-              PeiServices,
-              PeiBotDev
-              );
+                                  PeiServices,
+                                  PeiBotDev
+                                  );
     if (Status == EFI_SUCCESS) {
       Status = PeiUsbRead10 (
-                PeiServices,
-                PeiBotDev,
-                Buffer,
-                StartLBA,
-                1
-                );
+                             PeiServices,
+                             PeiBotDev,
+                             Buffer,
+                             StartLBA,
+                             1
+                             );
     }
   } else {
     //
     // To generate sense data for DetectMedia use.
     //
     PeiUsbTestUnitReady (
-      PeiServices,
-      PeiBotDev
-      );
+                         PeiServices,
+                         PeiBotDev
+                         );
   }
 
   if (EFI_ERROR (Status)) {
@@ -494,9 +493,9 @@ BotReadBlocks (
     // update the media info accordingly.
     //
     Status = PeiBotDetectMedia (
-              PeiServices,
-              PeiBotDev
-              );
+                                PeiServices,
+                                PeiBotDev
+                                );
     if (Status != EFI_SUCCESS) {
       return EFI_DEVICE_ERROR;
     }
@@ -520,20 +519,19 @@ BotReadBlocks (
     }
 
     Status = PeiUsbRead10 (
-              PeiServices,
-              PeiBotDev,
-              Buffer,
-              StartLBA,
-              NumberOfBlocks
-              );
+                           PeiServices,
+                           PeiBotDev,
+                           Buffer,
+                           StartLBA,
+                           NumberOfBlocks
+                           );
 
     switch (Status) {
+      case EFI_SUCCESS:
+        return EFI_SUCCESS;
 
-    case EFI_SUCCESS:
-      return EFI_SUCCESS;
-
-    default:
-      return EFI_DEVICE_ERROR;
+      default:
+        return EFI_DEVICE_ERROR;
     }
   } else {
     StartLBA += 1;
@@ -545,20 +543,18 @@ BotReadBlocks (
     }
 
     Status = PeiUsbRead10 (
-              PeiServices,
-              PeiBotDev,
-              Buffer,
-              StartLBA,
-              NumberOfBlocks
-              );
+                           PeiServices,
+                           PeiBotDev,
+                           Buffer,
+                           StartLBA,
+                           NumberOfBlocks
+                           );
     switch (Status) {
+      case EFI_SUCCESS:
+        return EFI_SUCCESS;
 
-    case EFI_SUCCESS:
-      return EFI_SUCCESS;
-
-    default:
-      return EFI_DEVICE_ERROR;
-
+      default:
+        return EFI_DEVICE_ERROR;
     }
   }
 }
@@ -639,21 +635,21 @@ BotGetMediaInfo2 (
   PeiBotDev = PEI_BOT_DEVICE2_FROM_THIS (This);
 
   Status = BotGetMediaInfo (
-             PeiServices,
-             &PeiBotDev->BlkIoPpi,
-             DeviceIndex,
-             &PeiBotDev->Media
-             );
+                            PeiServices,
+                            &PeiBotDev->BlkIoPpi,
+                            DeviceIndex,
+                            &PeiBotDev->Media
+                            );
 
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   CopyMem (
-    MediaInfo,
-    &(PeiBotDev->Media2),
-    sizeof (EFI_PEI_BLOCK_IO2_MEDIA)
-    );
+           MediaInfo,
+           &(PeiBotDev->Media2),
+           sizeof (EFI_PEI_BLOCK_IO2_MEDIA)
+           );
 
   return EFI_SUCCESS;
 }
@@ -714,13 +710,13 @@ BotReadBlocks2 (
   PeiBotDev = PEI_BOT_DEVICE2_FROM_THIS (This);
 
   Status = BotReadBlocks (
-             PeiServices,
-             &PeiBotDev->BlkIoPpi,
-             DeviceIndex,
-             StartLBA,
-             BufferSize,
-             Buffer
-             );
+                          PeiServices,
+                          &PeiBotDev->BlkIoPpi,
+                          DeviceIndex,
+                          StartLBA,
+                          BufferSize,
+                          Buffer
+                          );
 
   return Status;
 }
@@ -742,27 +738,27 @@ PeiBotDetectMedia (
   IN  PEI_BOT_DEVICE          *PeiBotDev
   )
 {
-  EFI_STATUS                  Status;
-  EFI_STATUS                  FloppyStatus;
-  UINTN                       SenseCounts;
-  BOOLEAN                     NeedReadCapacity;
-  EFI_PHYSICAL_ADDRESS        AllocateAddress;
-  ATAPI_REQUEST_SENSE_DATA    *SensePtr;
-  UINTN                       Retry;
+  EFI_STATUS                Status;
+  EFI_STATUS                FloppyStatus;
+  UINTN                     SenseCounts;
+  BOOLEAN                   NeedReadCapacity;
+  EFI_PHYSICAL_ADDRESS      AllocateAddress;
+  ATAPI_REQUEST_SENSE_DATA  *SensePtr;
+  UINTN                     Retry;
 
   //
   // if there is no media present,or media not changed,
   // the request sense command will detect faster than read capacity command.
   // read capacity command can be bypassed, thus improve performance.
   //
-  SenseCounts       = 0;
-  NeedReadCapacity  = TRUE;
+  SenseCounts = 0;
+  NeedReadCapacity = TRUE;
 
   Status = PeiServicesAllocatePages (
-             EfiBootServicesCode,
-             1,
-             &AllocateAddress
-             );
+                                     EfiBootServicesCode,
+                                     1,
+                                     &AllocateAddress
+                                     );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -771,20 +767,20 @@ PeiBotDetectMedia (
   ZeroMem (SensePtr, EFI_PAGE_SIZE);
 
   Status = PeiUsbRequestSense (
-            PeiServices,
-            PeiBotDev,
-            &SenseCounts,
-            (UINT8 *) SensePtr
-            );
+                               PeiServices,
+                               PeiBotDev,
+                               &SenseCounts,
+                               (UINT8 *) SensePtr
+                               );
 
   if (Status == EFI_SUCCESS) {
     //
     // No Media
     //
     if (IsNoMedia (SensePtr, SenseCounts)) {
-      NeedReadCapacity              = FALSE;
-      PeiBotDev->Media.MediaPresent = FALSE;
-      PeiBotDev->Media.LastBlock    = 0;
+      NeedReadCapacity = FALSE;
+      PeiBotDev->Media.MediaPresent  = FALSE;
+      PeiBotDev->Media.LastBlock     = 0;
       PeiBotDev->Media2.MediaPresent = FALSE;
       PeiBotDev->Media2.LastBlock    = 0;
     } else {
@@ -795,6 +791,7 @@ PeiBotDetectMedia (
         PeiBotDev->Media.MediaPresent  = TRUE;
         PeiBotDev->Media2.MediaPresent = TRUE;
       }
+
       //
       // Media Error
       //
@@ -802,14 +799,12 @@ PeiBotDetectMedia (
         //
         // if media error encountered, make it look like no media present.
         //
-        PeiBotDev->Media.MediaPresent = FALSE;
-        PeiBotDev->Media.LastBlock    = 0;
+        PeiBotDev->Media.MediaPresent  = FALSE;
+        PeiBotDev->Media.LastBlock     = 0;
         PeiBotDev->Media2.MediaPresent = FALSE;
         PeiBotDev->Media2.LastBlock    = 0;
       }
-
     }
-
   }
 
   if (NeedReadCapacity) {
@@ -818,43 +813,45 @@ PeiBotDetectMedia (
     //
     for (Retry = 0; Retry < 4; Retry++) {
       switch (PeiBotDev->DeviceType) {
-      case USBCDROM:
-        Status = PeiUsbReadCapacity (
-                  PeiServices,
-                  PeiBotDev
-                  );
-        break;
+        case USBCDROM:
+          Status = PeiUsbReadCapacity (
+                                       PeiServices,
+                                       PeiBotDev
+                                       );
+          break;
 
-      case USBFLOPPY2:
-        Status = PeiUsbReadFormattedCapacity (
-                  PeiServices,
-                  PeiBotDev
-                  );
-          if (EFI_ERROR(Status)||
+        case USBFLOPPY2:
+          Status = PeiUsbReadFormattedCapacity (
+                                                PeiServices,
+                                                PeiBotDev
+                                                );
+          if (EFI_ERROR (Status) ||
               !PeiBotDev->Media.MediaPresent) {
-          //
-          // retry the ReadCapacity command
-          //
-          PeiBotDev->DeviceType = USBFLOPPY;
-          Status = EFI_DEVICE_ERROR;
-        }
-        break;
+            //
+            // retry the ReadCapacity command
+            //
+            PeiBotDev->DeviceType = USBFLOPPY;
+            Status = EFI_DEVICE_ERROR;
+          }
 
-      case USBFLOPPY:
-        Status = PeiUsbReadCapacity (
-                  PeiServices,
-                  PeiBotDev
-                  );
-        if (EFI_ERROR (Status)) {
-          //
-          // retry the ReadFormatCapacity command
-          //
-          PeiBotDev->DeviceType = USBFLOPPY2;
-        }
-        break;
+          break;
 
-      default:
-        return EFI_INVALID_PARAMETER;
+        case USBFLOPPY:
+          Status = PeiUsbReadCapacity (
+                                       PeiServices,
+                                       PeiBotDev
+                                       );
+          if (EFI_ERROR (Status)) {
+            //
+            // retry the ReadFormatCapacity command
+            //
+            PeiBotDev->DeviceType = USBFLOPPY2;
+          }
+
+          break;
+
+        default:
+          return EFI_INVALID_PARAMETER;
       }
 
       SenseCounts = 0;
@@ -865,11 +862,11 @@ PeiBotDetectMedia (
       }
 
       FloppyStatus = PeiUsbRequestSense (
-                      PeiServices,
-                      PeiBotDev,
-                      &SenseCounts,
-                      (UINT8 *) SensePtr
-                      );
+                                         PeiServices,
+                                         PeiBotDev,
+                                         &SenseCounts,
+                                         (UINT8 *) SensePtr
+                                         );
 
       //
       // If Request Sense data failed,retry.
@@ -877,12 +874,13 @@ PeiBotDetectMedia (
       if (EFI_ERROR (FloppyStatus)) {
         continue;
       }
+
       //
       // No Media
       //
       if (IsNoMedia (SensePtr, SenseCounts)) {
-        PeiBotDev->Media.MediaPresent = FALSE;
-        PeiBotDev->Media.LastBlock    = 0;
+        PeiBotDev->Media.MediaPresent  = FALSE;
+        PeiBotDev->Media.LastBlock     = 0;
         PeiBotDev->Media2.MediaPresent = FALSE;
         PeiBotDev->Media2.LastBlock    = 0;
         break;
@@ -892,13 +890,14 @@ PeiBotDetectMedia (
         //
         // if media error encountered, make it look like no media present.
         //
-        PeiBotDev->Media.MediaPresent = FALSE;
-        PeiBotDev->Media.LastBlock    = 0;
+        PeiBotDev->Media.MediaPresent  = FALSE;
+        PeiBotDev->Media.LastBlock     = 0;
         PeiBotDev->Media2.MediaPresent = FALSE;
         PeiBotDev->Media2.LastBlock    = 0;
         break;
       }
     }
+
     //
     // ENDFOR
     //

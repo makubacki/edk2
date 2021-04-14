@@ -12,7 +12,7 @@
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL gNvmExpressComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gNvmExpressComponentName = {
   NvmExpressComponentNameGetDriverName,
   NvmExpressComponentNameGetControllerName,
   "eng"
@@ -21,20 +21,20 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL gNvmExpressComponentNa
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL gNvmExpressComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gNvmExpressComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) NvmExpressComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) NvmExpressComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mNvmExpressDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mNvmExpressDriverNameTable[] = {
   { "eng;en", L"NVM Express Driver" },
-  { NULL, NULL }
+  { NULL,     NULL                  }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mNvmExpressControllerNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mNvmExpressControllerNameTable[] = {
   { "eng;en", L"NVM Express Controller" },
-  { NULL, NULL }
+  { NULL,     NULL                      }
 };
 
 /**
@@ -85,12 +85,12 @@ NvmExpressComponentNameGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mNvmExpressDriverNameTable,
-           DriverName,
-           (BOOLEAN)(This == &gNvmExpressComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mNvmExpressDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gNvmExpressComponentName)
+                               );
 }
 
 /**
@@ -171,19 +171,19 @@ NvmExpressComponentNameGetControllerName (
   OUT CHAR16                                          **ControllerName
   )
 {
-  EFI_STATUS                          Status;
-  EFI_BLOCK_IO_PROTOCOL               *BlockIo;
-  NVME_DEVICE_PRIVATE_DATA            *Device;
-  EFI_UNICODE_STRING_TABLE            *ControllerNameTable;
+  EFI_STATUS                Status;
+  EFI_BLOCK_IO_PROTOCOL     *BlockIo;
+  NVME_DEVICE_PRIVATE_DATA  *Device;
+  EFI_UNICODE_STRING_TABLE  *ControllerNameTable;
 
   //
   // Make sure this driver is currently managing ControllHandle
   //
   Status = EfiTestManagedDevice (
-             ControllerHandle,
-             gNvmExpressDriverBinding.DriverBindingHandle,
-             &gEfiPciIoProtocolGuid
-             );
+                                 ControllerHandle,
+                                 gNvmExpressDriverBinding.DriverBindingHandle,
+                                 &gEfiPciIoProtocolGuid
+                                 );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -191,37 +191,38 @@ NvmExpressComponentNameGetControllerName (
   ControllerNameTable = mNvmExpressControllerNameTable;
   if (ChildHandle != NULL) {
     Status = EfiTestChildHandle (
-               ControllerHandle,
-               ChildHandle,
-               &gEfiNvmExpressPassThruProtocolGuid
-               );
+                                 ControllerHandle,
+                                 ChildHandle,
+                                 &gEfiNvmExpressPassThruProtocolGuid
+                                 );
     if (EFI_ERROR (Status)) {
       return Status;
     }
+
     //
     // Get the child context
     //
     Status = gBS->OpenProtocol (
-                    ChildHandle,
-                    &gEfiBlockIoProtocolGuid,
-                    (VOID **) &BlockIo,
-                    gNvmExpressDriverBinding.DriverBindingHandle,
-                    ChildHandle,
-                    EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                    );
+                                ChildHandle,
+                                &gEfiBlockIoProtocolGuid,
+                                (VOID **) &BlockIo,
+                                gNvmExpressDriverBinding.DriverBindingHandle,
+                                ChildHandle,
+                                EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                                );
     if (EFI_ERROR (Status)) {
       return EFI_UNSUPPORTED;
     }
+
     Device = NVME_DEVICE_PRIVATE_DATA_FROM_BLOCK_IO (BlockIo);
     ControllerNameTable = Device->ControllerNameTable;
   }
 
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           ControllerNameTable,
-           ControllerName,
-           (BOOLEAN)(This == &gNvmExpressComponentName)
-           );
-
+                               Language,
+                               This->SupportedLanguages,
+                               ControllerNameTable,
+                               ControllerName,
+                               (BOOLEAN) (This == &gNvmExpressComponentName)
+                               );
 }

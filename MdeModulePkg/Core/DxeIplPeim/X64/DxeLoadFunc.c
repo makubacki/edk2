@@ -9,8 +9,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include "DxeIpl.h"
 #include "X64/VirtualMemory.h"
 
-
-
 /**
    Transfers control to DxeCore.
 
@@ -28,15 +26,15 @@ HandOffToDxeCore (
   IN EFI_PEI_HOB_POINTERS   HobList
   )
 {
-  VOID                            *BaseOfStack;
-  VOID                            *TopOfStack;
-  EFI_STATUS                      Status;
-  UINTN                           PageTables;
-  UINT32                          Index;
-  EFI_VECTOR_HANDOFF_INFO         *VectorInfo;
-  EFI_PEI_VECTOR_HANDOFF_INFO_PPI *VectorHandoffInfoPpi;
-  VOID                            *GhcbBase;
-  UINTN                           GhcbSize;
+  VOID                             *BaseOfStack;
+  VOID                             *TopOfStack;
+  EFI_STATUS                       Status;
+  UINTN                            PageTables;
+  UINT32                           Index;
+  EFI_VECTOR_HANDOFF_INFO          *VectorInfo;
+  EFI_PEI_VECTOR_HANDOFF_INFO_PPI  *VectorHandoffInfoPpi;
+  VOID                             *GhcbBase;
+  UINTN                            GhcbSize;
 
   //
   // Clear page 0 and mark it as allocated if NULL pointer detection is enabled.
@@ -50,24 +48,25 @@ HandOffToDxeCore (
   // Get Vector Hand-off Info PPI and build Guided HOB
   //
   Status = PeiServicesLocatePpi (
-             &gEfiVectorHandoffInfoPpiGuid,
-             0,
-             NULL,
-             (VOID **)&VectorHandoffInfoPpi
-             );
+                                 &gEfiVectorHandoffInfoPpiGuid,
+                                 0,
+                                 NULL,
+                                 (VOID **) &VectorHandoffInfoPpi
+                                 );
   if (Status == EFI_SUCCESS) {
     DEBUG ((EFI_D_INFO, "Vector Hand-off Info PPI is gotten, GUIDed HOB is created!\n"));
     VectorInfo = VectorHandoffInfoPpi->Info;
     Index = 1;
     while (VectorInfo->Attribute != EFI_VECTOR_HANDOFF_LAST_ENTRY) {
-      VectorInfo ++;
-      Index ++;
+      VectorInfo++;
+      Index++;
     }
+
     BuildGuidDataHob (
-      &gEfiVectorHandoffInfoPpiGuid,
-      VectorHandoffInfoPpi->Info,
-      sizeof (EFI_VECTOR_HANDOFF_INFO) * Index
-      );
+                      &gEfiVectorHandoffInfoPpiGuid,
+                      VectorHandoffInfoPpi->Info,
+                      sizeof (EFI_VECTOR_HANDOFF_INFO) * Index
+                      );
   }
 
   //
@@ -94,8 +93,12 @@ HandOffToDxeCore (
     //
     // Create page table and save PageMapLevel4 to CR3
     //
-    PageTables = CreateIdentityMappingPageTables ((EFI_PHYSICAL_ADDRESS) (UINTN) BaseOfStack, STACK_SIZE,
-                                                  (EFI_PHYSICAL_ADDRESS) (UINTN) GhcbBase, GhcbSize);
+    PageTables = CreateIdentityMappingPageTables (
+                                                  (EFI_PHYSICAL_ADDRESS) (UINTN) BaseOfStack,
+                                                  STACK_SIZE,
+                                                  (EFI_PHYSICAL_ADDRESS) (UINTN) GhcbBase,
+                                                  GhcbSize
+                                                  );
   } else {
     //
     // Set NX for stack feature also require PcdDxeIplBuildPageTables be TRUE
@@ -118,15 +121,15 @@ HandOffToDxeCore (
   //
   // Update the contents of BSP stack HOB to reflect the real stack info passed to DxeCore.
   //
-  UpdateStackHob ((EFI_PHYSICAL_ADDRESS)(UINTN) BaseOfStack, STACK_SIZE);
+  UpdateStackHob ((EFI_PHYSICAL_ADDRESS) (UINTN) BaseOfStack, STACK_SIZE);
 
   //
   // Transfer the control to the entry point of DxeCore.
   //
   SwitchStack (
-    (SWITCH_STACK_ENTRY_POINT)(UINTN)DxeCoreEntryPoint,
-    HobList.Raw,
-    NULL,
-    TopOfStack
-    );
+               (SWITCH_STACK_ENTRY_POINT) (UINTN) DxeCoreEntryPoint,
+               HobList.Raw,
+               NULL,
+               TopOfStack
+               );
 }

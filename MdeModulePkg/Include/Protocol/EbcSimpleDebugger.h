@@ -35,12 +35,12 @@ typedef struct _EFI_EBC_SIMPLE_DEBUGGER_PROTOCOL EFI_EBC_SIMPLE_DEBUGGER_PROTOCO
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EBC_DEBUGGER_SIGNAL_EXCEPTION) (
-  IN EFI_EBC_SIMPLE_DEBUGGER_PROTOCOL           *This,
-  IN VM_CONTEXT                                 *VmPtr,
-  IN EFI_EXCEPTION_TYPE                         ExceptionType
-  );
+  EFI_STATUS
+(EFIAPI *EBC_DEBUGGER_SIGNAL_EXCEPTION)(
+                                        IN EFI_EBC_SIMPLE_DEBUGGER_PROTOCOL           *This,
+                                        IN VM_CONTEXT                                 *VmPtr,
+                                        IN EFI_EXCEPTION_TYPE                         ExceptionType
+                                        );
 
 /**
   Given a pointer to a new VM context, debug one or more instructions.
@@ -53,11 +53,11 @@ EFI_STATUS
 
 **/
 typedef
-VOID
-(EFIAPI *EBC_DEBUGGER_DEBUG) (
-  IN EFI_EBC_SIMPLE_DEBUGGER_PROTOCOL           *This,
-  IN VM_CONTEXT                                 *VmPtr
-  );
+  VOID
+(EFIAPI *EBC_DEBUGGER_DEBUG)(
+                             IN EFI_EBC_SIMPLE_DEBUGGER_PROTOCOL           *This,
+                             IN VM_CONTEXT                                 *VmPtr
+                             );
 
 /**
   Given a pointer to a new VM context, dump one or more instructions.
@@ -72,13 +72,13 @@ VOID
 
 **/
 typedef
-UINT32
-(EFIAPI *EBC_DEBUGGER_DASM) (
-  IN EFI_EBC_SIMPLE_DEBUGGER_PROTOCOL           *This,
-  IN VM_CONTEXT                                 *VmPtr,
-  IN UINT16                                     *DasmString OPTIONAL,
-  IN UINT32                                     DasmStringSize
-  );
+  UINT32
+(EFIAPI *EBC_DEBUGGER_DASM)(
+                            IN EFI_EBC_SIMPLE_DEBUGGER_PROTOCOL           *This,
+                            IN VM_CONTEXT                                 *VmPtr,
+                            IN UINT16                                     *DasmString OPTIONAL,
+                            IN UINT32                                     DasmStringSize
+                            );
 
 /**
   This interface allows you to configure the EBC debug support
@@ -95,23 +95,23 @@ UINT32
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EBC_DEBUGGER_CONFIGURE) (
-  IN EFI_EBC_SIMPLE_DEBUGGER_PROTOCOL           *This,
-  IN UINT32                                     ConfigId,
-  IN UINTN                                      ConfigValue
-  );
+  EFI_STATUS
+(EFIAPI *EBC_DEBUGGER_CONFIGURE)(
+                                 IN EFI_EBC_SIMPLE_DEBUGGER_PROTOCOL           *This,
+                                 IN UINT32                                     ConfigId,
+                                 IN UINTN                                      ConfigValue
+                                 );
 
 //
 // Prototype for the actual EBC debug support protocol interface
 //
 struct _EFI_EBC_SIMPLE_DEBUGGER_PROTOCOL {
-  EBC_DEBUGGER_DEBUG            Debugger;
-  EBC_DEBUGGER_SIGNAL_EXCEPTION SignalException;
-  EBC_DEBUGGER_DASM             Dasm;
-  EBC_DEBUGGER_CONFIGURE        Configure;
+  EBC_DEBUGGER_DEBUG               Debugger;
+  EBC_DEBUGGER_SIGNAL_EXCEPTION    SignalException;
+  EBC_DEBUGGER_DASM                Dasm;
+  EBC_DEBUGGER_CONFIGURE           Configure;
 };
 
-extern EFI_GUID gEfiEbcSimpleDebuggerProtocolGuid;
+extern EFI_GUID  gEfiEbcSimpleDebuggerProtocolGuid;
 
 #endif

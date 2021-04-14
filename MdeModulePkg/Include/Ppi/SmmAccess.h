@@ -21,9 +21,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define _SMM_ACCESS_PPI_H_
 
 #define PEI_SMM_ACCESS_PPI_GUID \
-  { 0x268f33a9, 0xcccd, 0x48be, { 0x88, 0x17, 0x86, 0x5, 0x3a, 0xc3, 0x2e, 0xd6 }}
+  { 0x268f33a9, 0xcccd, 0x48be, { 0x88, 0x17, 0x86, 0x5, 0x3a, 0xc3, 0x2e, 0xd6 } }
 
-typedef struct _PEI_SMM_ACCESS_PPI  PEI_SMM_ACCESS_PPI;
+typedef struct _PEI_SMM_ACCESS_PPI PEI_SMM_ACCESS_PPI;
 
 /**
   Opens the SMRAM area to be accessible by a PEIM driver.
@@ -42,12 +42,12 @@ typedef struct _PEI_SMM_ACCESS_PPI  PEI_SMM_ACCESS_PPI;
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *PEI_SMM_OPEN)(
-  IN EFI_PEI_SERVICES                **PeiServices,
-  IN PEI_SMM_ACCESS_PPI              *This,
-  IN UINTN                           DescriptorIndex
-  );
+                       IN EFI_PEI_SERVICES                **PeiServices,
+                       IN PEI_SMM_ACCESS_PPI              *This,
+                       IN UINTN                           DescriptorIndex
+                       );
 
 /**
   Inhibits access to the SMRAM.
@@ -65,12 +65,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *PEI_SMM_CLOSE)(
-  IN EFI_PEI_SERVICES                **PeiServices,
-  IN PEI_SMM_ACCESS_PPI              *This,
-  IN UINTN                           DescriptorIndex
-  );
+                        IN EFI_PEI_SERVICES                **PeiServices,
+                        IN PEI_SMM_ACCESS_PPI              *This,
+                        IN UINTN                           DescriptorIndex
+                        );
 
 /**
   Inhibits access to the SMRAM.
@@ -89,12 +89,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *PEI_SMM_LOCK)(
-  IN EFI_PEI_SERVICES                **PeiServices,
-  IN PEI_SMM_ACCESS_PPI              *This,
-  IN UINTN                           DescriptorIndex
-  );
+                       IN EFI_PEI_SERVICES                **PeiServices,
+                       IN PEI_SMM_ACCESS_PPI              *This,
+                       IN UINTN                           DescriptorIndex
+                       );
 
 /**
   Queries the memory controller for the possible regions that will support SMRAM.
@@ -111,29 +111,29 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *PEI_SMM_CAPABILITIES)(
-  IN EFI_PEI_SERVICES                **PeiServices,
-  IN PEI_SMM_ACCESS_PPI              *This,
-  IN OUT UINTN                       *SmramMapSize,
-  IN OUT EFI_SMRAM_DESCRIPTOR        *SmramMap
-  );
+                               IN EFI_PEI_SERVICES                **PeiServices,
+                               IN PEI_SMM_ACCESS_PPI              *This,
+                               IN OUT UINTN                       *SmramMapSize,
+                               IN OUT EFI_SMRAM_DESCRIPTOR        *SmramMap
+                               );
 
 ///
-///  EFI SMM Access PPI is used to control the visibility of the SMRAM on the platform.
-///  It abstracts the location and characteristics of SMRAM. The platform should report
-///  all MMRAM via PEI_SMM_ACCESS_PPI. The expectation is that the north bridge or
-///  memory controller would publish this PPI.
+/// EFI SMM Access PPI is used to control the visibility of the SMRAM on the platform.
+/// It abstracts the location and characteristics of SMRAM. The platform should report
+/// all MMRAM via PEI_SMM_ACCESS_PPI. The expectation is that the north bridge or
+/// memory controller would publish this PPI.
 ///
 struct _PEI_SMM_ACCESS_PPI {
-  PEI_SMM_OPEN          Open;
-  PEI_SMM_CLOSE         Close;
-  PEI_SMM_LOCK          Lock;
-  PEI_SMM_CAPABILITIES  GetCapabilities;
-  BOOLEAN               LockState;
-  BOOLEAN               OpenState;
+  PEI_SMM_OPEN            Open;
+  PEI_SMM_CLOSE           Close;
+  PEI_SMM_LOCK            Lock;
+  PEI_SMM_CAPABILITIES    GetCapabilities;
+  BOOLEAN                 LockState;
+  BOOLEAN                 OpenState;
 };
 
-extern EFI_GUID gPeiSmmAccessPpiGuid;
+extern EFI_GUID  gPeiSmmAccessPpiGuid;
 
 #endif

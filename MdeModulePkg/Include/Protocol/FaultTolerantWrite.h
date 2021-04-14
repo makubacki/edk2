@@ -14,13 +14,13 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #define EFI_FAULT_TOLERANT_WRITE_PROTOCOL_GUID \
   { \
-    0x3ebd9e82, 0x2c78, 0x4de6, {0x97, 0x86, 0x8d, 0x4b, 0xfc, 0xb7, 0xc8, 0x81 } \
+    0x3ebd9e82, 0x2c78, 0x4de6, { 0x97, 0x86, 0x8d, 0x4b, 0xfc, 0xb7, 0xc8, 0x81 } \
   }
 
 //
 // Forward reference for pure ANSI compatability
 //
-typedef struct _EFI_FAULT_TOLERANT_WRITE_PROTOCOL  EFI_FAULT_TOLERANT_WRITE_PROTOCOL;
+typedef struct _EFI_FAULT_TOLERANT_WRITE_PROTOCOL EFI_FAULT_TOLERANT_WRITE_PROTOCOL;
 
 /**
   Get the size of the largest block that can be updated in a fault-tolerant manner.
@@ -35,11 +35,11 @@ typedef struct _EFI_FAULT_TOLERANT_WRITE_PROTOCOL  EFI_FAULT_TOLERANT_WRITE_PROT
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_FAULT_TOLERANT_WRITE_GET_MAX_BLOCK_SIZE)(
-  IN EFI_FAULT_TOLERANT_WRITE_PROTOCOL    * This,
-  OUT UINTN                               *BlockSize
-  );
+                                                      IN EFI_FAULT_TOLERANT_WRITE_PROTOCOL    *This,
+                                                      OUT UINTN                               *BlockSize
+                                                      );
 
 /**
   Allocates space for the protocol to maintain information about writes.
@@ -63,13 +63,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_FAULT_TOLERANT_WRITE_ALLOCATE)(
-  IN EFI_FAULT_TOLERANT_WRITE_PROTOCOL    * This,
-  IN EFI_GUID                             * CallerId,
-  IN UINTN                                PrivateDataSize,
-  IN UINTN                                NumberOfWrites
-  );
+                                            IN EFI_FAULT_TOLERANT_WRITE_PROTOCOL    *This,
+                                            IN EFI_GUID                             *CallerId,
+                                            IN UINTN                                PrivateDataSize,
+                                            IN UINTN                                NumberOfWrites
+                                            );
 
 /**
   Starts a target block update. This records information about the write
@@ -99,16 +99,16 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_FAULT_TOLERANT_WRITE_WRITE)(
-  IN EFI_FAULT_TOLERANT_WRITE_PROTOCOL     * This,
-  IN EFI_LBA                               Lba,
-  IN UINTN                                 Offset,
-  IN UINTN                                 Length,
-  IN VOID                                  *PrivateData,
-  IN EFI_HANDLE                            FvbHandle,
-  IN VOID                                  *Buffer
-  );
+                                         IN EFI_FAULT_TOLERANT_WRITE_PROTOCOL     *This,
+                                         IN EFI_LBA                               Lba,
+                                         IN UINTN                                 Offset,
+                                         IN UINTN                                 Length,
+                                         IN VOID                                  *PrivateData,
+                                         IN EFI_HANDLE                            FvbHandle,
+                                         IN VOID                                  *Buffer
+                                         );
 
 /**
   Restarts a previously interrupted write. The caller must provide the
@@ -124,11 +124,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_FAULT_TOLERANT_WRITE_RESTART)(
-  IN EFI_FAULT_TOLERANT_WRITE_PROTOCOL     * This,
-  IN EFI_HANDLE                            FvbHandle
-  );
+                                           IN EFI_FAULT_TOLERANT_WRITE_PROTOCOL     *This,
+                                           IN EFI_HANDLE                            FvbHandle
+                                           );
 
 /**
   Aborts all previously allocated writes.
@@ -141,10 +141,10 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_FAULT_TOLERANT_WRITE_ABORT)(
-  IN EFI_FAULT_TOLERANT_WRITE_PROTOCOL     * This
-  );
+                                         IN EFI_FAULT_TOLERANT_WRITE_PROTOCOL     *This
+                                         );
 
 /**
   Starts a target block update. This function records information about the write
@@ -172,30 +172,30 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_FAULT_TOLERANT_WRITE_GET_LAST_WRITE)(
-  IN EFI_FAULT_TOLERANT_WRITE_PROTOCOL     * This,
-  OUT EFI_GUID                             * CallerId,
-  OUT EFI_LBA                              *Lba,
-  OUT UINTN                                *Offset,
-  OUT UINTN                                *Length,
-  IN OUT UINTN                             *PrivateDataSize,
-  OUT VOID                                 *PrivateData,
-  OUT BOOLEAN                              *Complete
-  );
+                                                  IN EFI_FAULT_TOLERANT_WRITE_PROTOCOL     *This,
+                                                  OUT EFI_GUID                             *CallerId,
+                                                  OUT EFI_LBA                              *Lba,
+                                                  OUT UINTN                                *Offset,
+                                                  OUT UINTN                                *Length,
+                                                  IN OUT UINTN                             *PrivateDataSize,
+                                                  OUT VOID                                 *PrivateData,
+                                                  OUT BOOLEAN                              *Complete
+                                                  );
 
 //
 // Protocol declaration
 //
 struct _EFI_FAULT_TOLERANT_WRITE_PROTOCOL {
-  EFI_FAULT_TOLERANT_WRITE_GET_MAX_BLOCK_SIZE GetMaxBlockSize;
-  EFI_FAULT_TOLERANT_WRITE_ALLOCATE           Allocate;
-  EFI_FAULT_TOLERANT_WRITE_WRITE              Write;
-  EFI_FAULT_TOLERANT_WRITE_RESTART            Restart;
-  EFI_FAULT_TOLERANT_WRITE_ABORT              Abort;
-  EFI_FAULT_TOLERANT_WRITE_GET_LAST_WRITE     GetLastWrite;
+  EFI_FAULT_TOLERANT_WRITE_GET_MAX_BLOCK_SIZE    GetMaxBlockSize;
+  EFI_FAULT_TOLERANT_WRITE_ALLOCATE              Allocate;
+  EFI_FAULT_TOLERANT_WRITE_WRITE                 Write;
+  EFI_FAULT_TOLERANT_WRITE_RESTART               Restart;
+  EFI_FAULT_TOLERANT_WRITE_ABORT                 Abort;
+  EFI_FAULT_TOLERANT_WRITE_GET_LAST_WRITE        GetLastWrite;
 };
 
-extern EFI_GUID gEfiFaultTolerantWriteProtocolGuid;
+extern EFI_GUID  gEfiFaultTolerantWriteProtocolGuid;
 
 #endif

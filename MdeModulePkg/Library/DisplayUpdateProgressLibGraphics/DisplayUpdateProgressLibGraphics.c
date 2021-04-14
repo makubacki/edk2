@@ -34,7 +34,7 @@ EFI_GRAPHICS_OUTPUT_PROTOCOL  *mGop = NULL;
 //
 // Set to 100 percent so it is reset on first call.
 //
-UINTN mPreviousProgress = 100;
+UINTN  mPreviousProgress = 100;
 
 //
 // Display coordinates for the progress bar.
@@ -99,7 +99,7 @@ const EFI_GRAPHICS_OUTPUT_BLT_PIXEL_UNION  mProgressBarDefaultColor = {
 // Set to TRUE if a valid Graphics Output Protocol is found and the progress
 // bar fits under the boot logo using the current graphics mode.
 //
-BOOLEAN mGraphicsGood = FALSE;
+BOOLEAN  mGraphicsGood = FALSE;
 
 /**
   Internal function used to find the bounds of the white logo (on black or
@@ -110,7 +110,7 @@ BOOLEAN mGraphicsGood = FALSE;
 **/
 VOID
 FindDim (
-   VOID
+  VOID
   )
 {
   EFI_STATUS                           Status;
@@ -143,10 +143,10 @@ FindDim (
   // Get boot logo protocol so we know where on the screen to grab
   //
   Status = gBS->LocateProtocol (
-                  &gEdkiiBootLogo2ProtocolGuid,
-                  NULL,
-                  (VOID **)&BootLogo
-                  );
+                                &gEdkiiBootLogo2ProtocolGuid,
+                                NULL,
+                                (VOID **) &BootLogo
+                                );
   if ((BootLogo == NULL) || (EFI_ERROR (Status))) {
     DEBUG ((DEBUG_ERROR, "Failed to locate gEdkiiBootLogo2ProtocolGuid.  No Progress bar support. \n", Status));
     return;
@@ -156,13 +156,13 @@ FindDim (
   // Get logo location and size
   //
   Status = BootLogo->GetBootLogo (
-                       BootLogo,
-                       &Logo,
-                       &OffsetX,
-                       &OffsetY,
-                       &Width,
-                       &Height
-                       );
+                                  BootLogo,
+                                  &Logo,
+                                  &OffsetX,
+                                  &OffsetY,
+                                  &Width,
+                                  &Height
+                                  );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Failed to Get Boot Logo Status = %r.  No Progress bar support. \n", Status));
     return;
@@ -178,8 +178,8 @@ FindDim (
   // Find left side of logo in logo coordinates
   //
   for (LogoX = 0, LogoStartX = Width; LogoX < LogoStartX; LogoX++) {
-    Pixel = (EFI_GRAPHICS_OUTPUT_BLT_PIXEL_UNION *)(Logo + LogoX);
-    for (LogoY = 0; LogoY < (INTN)Height; LogoY++) {
+    Pixel = (EFI_GRAPHICS_OUTPUT_BLT_PIXEL_UNION *) (Logo + LogoX);
+    for (LogoY = 0; LogoY < (INTN) Height; LogoY++) {
       if ((Pixel->Raw & mLogoDetectionColorMask.Raw) != 0x0) {
         LogoStartX = LogoX;
         //
@@ -189,6 +189,7 @@ FindDim (
         DEBUG ((DEBUG_INFO, "StartX found at (%d, %d) Color is: 0x%X \n", LogoX, LogoY, Pixel->Raw));
         break;
       }
+
       Pixel = Pixel + Width;
     }
   }
@@ -197,13 +198,14 @@ FindDim (
   // Find right side of logo
   //
   for (LogoX = Width - 1; LogoX >= LogoEndX; LogoX--) {
-    Pixel = (EFI_GRAPHICS_OUTPUT_BLT_PIXEL_UNION *)(Logo + LogoX);
-    for (LogoY = 0; LogoY < (INTN)Height; LogoY++) {
+    Pixel = (EFI_GRAPHICS_OUTPUT_BLT_PIXEL_UNION *) (Logo + LogoX);
+    for (LogoY = 0; LogoY < (INTN) Height; LogoY++) {
       if ((Pixel->Raw & mLogoDetectionColorMask.Raw) != 0x0) {
         LogoEndX = LogoX;
         DEBUG ((DEBUG_INFO, "EndX found at (%d, %d) Color is: 0x%X \n", LogoX, LogoY, Pixel->Raw));
         break;
       }
+
       Pixel = Pixel + Width;
     }
   }
@@ -224,15 +226,16 @@ FindDim (
   // Find the top of the logo
   //
   for (LogoY = 0, LogoStartY = Height; LogoY < LogoStartY; LogoY++) {
-    Pixel = (EFI_GRAPHICS_OUTPUT_BLT_PIXEL_UNION *)(Logo + (Width * LogoY));
-    for (LogoX = 0; LogoX < (INTN)Width; LogoX++) {
-      //not black or red
+    Pixel = (EFI_GRAPHICS_OUTPUT_BLT_PIXEL_UNION *) (Logo + (Width * LogoY));
+    for (LogoX = 0; LogoX < (INTN) Width; LogoX++) {
+      // not black or red
       if ((Pixel->Raw & mLogoDetectionColorMask.Raw) != 0x0) {
         LogoStartY = LogoY;
-        LogoEndY = LogoY; //for next loop will search from bottom side back to this row.
+        LogoEndY   = LogoY; // for next loop will search from bottom side back to this row.
         DEBUG ((DEBUG_INFO, "StartY found at (%d, %d) Color is: 0x%X \n", LogoX, LogoY, Pixel->Raw));
         break;
       }
+
       Pixel++;
     }
   }
@@ -241,13 +244,14 @@ FindDim (
   // Find the bottom of the logo
   //
   for (LogoY = Height - 1; LogoY >= LogoEndY; LogoY--) {
-    Pixel = (EFI_GRAPHICS_OUTPUT_BLT_PIXEL_UNION *)(Logo + (Width * LogoY));
-    for (LogoX = 0; LogoX < (INTN)Width; LogoX++) {
+    Pixel = (EFI_GRAPHICS_OUTPUT_BLT_PIXEL_UNION *) (Logo + (Width * LogoY));
+    for (LogoX = 0; LogoX < (INTN) Width; LogoX++) {
       if ((Pixel->Raw & mLogoDetectionColorMask.Raw) != 0x0) {
         LogoEndY = LogoY;
         DEBUG ((DEBUG_INFO, "EndY found at (%d, %d) Color is: 0x%X \n", LogoX, LogoY, Pixel->Raw));
         break;
       }
+
       Pixel++;
     }
   }
@@ -277,10 +281,10 @@ FindDim (
   // Fill the progress bar with the background color
   //
   SetMem32 (
-    mProgressBarBackground,
-    (mBlockWidth * 100 * mBlockHeight * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)),
-    mProgressBarBackgroundColor.Raw
-    );
+            mProgressBarBackground,
+            (mBlockWidth * 100 * mBlockHeight * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)),
+            mProgressBarBackgroundColor.Raw
+            );
 
   //
   // Allocate mBlockBitmap
@@ -297,7 +301,10 @@ FindDim (
   //
   if ((mBlockHeight > Height) || (mBlockWidth > Width) || (mBlockHeight < 1) || (mBlockWidth < 1)) {
     DEBUG ((DEBUG_ERROR, "DisplayUpdateProgressLib - Progress - Failed to get valid width and height.\n"));
-    DEBUG ((DEBUG_ERROR, "DisplayUpdateProgressLib - Progress - mBlockHeight: 0x%X  mBlockWidth: 0x%X.\n", mBlockHeight, mBlockWidth));
+    DEBUG (
+          (DEBUG_ERROR, "DisplayUpdateProgressLib - Progress - mBlockHeight: 0x%X  mBlockWidth: 0x%X.\n", mBlockHeight,
+           mBlockWidth)
+          );
     FreePool (mProgressBarBackground);
     FreePool (mBlockBitmap);
     return;
@@ -358,12 +365,12 @@ DisplayUpdateProgress (
   //
   if (mGop == NULL) {
     Status = gBS->HandleProtocol (
-                    gST->ConsoleOutHandle,
-                    &gEfiGraphicsOutputProtocolGuid,
-                    (VOID**)&mGop
-                    );
+                                  gST->ConsoleOutHandle,
+                                  &gEfiGraphicsOutputProtocolGuid,
+                                  (VOID **) &mGop
+                                  );
     if (EFI_ERROR (Status)) {
-      Status = gBS->LocateProtocol (&gEfiGraphicsOutputProtocolGuid, NULL, (VOID **)&mGop);
+      Status = gBS->LocateProtocol (&gEfiGraphicsOutputProtocolGuid, NULL, (VOID **) &mGop);
       if (EFI_ERROR (Status)) {
         mGop = NULL;
         DEBUG ((DEBUG_ERROR, "Show Progress Function could not locate GOP.  Status = %r\n", Status));
@@ -393,30 +400,32 @@ DisplayUpdateProgress (
     // Draw progress bar background
     //
     mGop->Blt (
-            mGop,
-            mProgressBarBackground,
-            EfiBltBufferToVideo,
-            0,
-            0,
-            mStartX,
-            mStartY,
-            (mBlockWidth * 100),
-            mBlockHeight,
-            0
-            );
+               mGop,
+               mProgressBarBackground,
+               EfiBltBufferToVideo,
+               0,
+               0,
+               mStartX,
+               mStartY,
+               (mBlockWidth * 100),
+               mBlockHeight,
+               0
+               );
 
-    DEBUG ((DEBUG_VERBOSE, "Color is 0x%X\n",
-      (Color == NULL) ? mProgressBarDefaultColor.Raw : Color->Raw
-      ));
+    DEBUG (
+           (DEBUG_VERBOSE, "Color is 0x%X\n",
+            (Color == NULL) ? mProgressBarDefaultColor.Raw : Color->Raw
+           )
+           );
 
     //
     // Update block bitmap with correct color
     //
     SetMem32 (
-      mBlockBitmap,
-      (mBlockWidth * mBlockHeight * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)),
-      (Color == NULL) ? mProgressBarDefaultColor.Raw : Color->Raw
-      );
+              mBlockBitmap,
+              (mBlockWidth * mBlockHeight * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)),
+              (Color == NULL) ? mProgressBarDefaultColor.Raw : Color->Raw
+              );
 
     //
     // Clear previous
@@ -428,7 +437,10 @@ DisplayUpdateProgress (
   // Can not update progress bar if Completion is less than previous
   //
   if (Completion < mPreviousProgress) {
-    DEBUG ((DEBUG_WARN, "WARNING: Completion (%d) should not be lesss than Previous (%d)!!!\n", Completion, mPreviousProgress));
+    DEBUG (
+          (DEBUG_WARN, "WARNING: Completion (%d) should not be lesss than Previous (%d)!!!\n", Completion,
+           mPreviousProgress)
+          );
     return EFI_INVALID_PARAMETER;
   }
 
@@ -438,17 +450,17 @@ DisplayUpdateProgress (
     // Show progress by coloring new area
     //
     mGop->Blt (
-            mGop,
-            mBlockBitmap,
-            EfiBltBufferToVideo,
-            0,
-            0,
-            PreX,
-            mStartY,
-            mBlockWidth,
-            mBlockHeight,
-            0
-            );
+               mGop,
+               mBlockBitmap,
+               EfiBltBufferToVideo,
+               0,
+               0,
+               PreX,
+               mStartY,
+               mBlockWidth,
+               mBlockHeight,
+               0
+               );
     PreX += mBlockWidth;
   }
 

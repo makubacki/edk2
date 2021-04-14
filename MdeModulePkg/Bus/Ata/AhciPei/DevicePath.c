@@ -59,7 +59,7 @@ DevicePathNodeLength (
   )
 {
   ASSERT (Node != NULL);
-  return ReadUnaligned16 ((UINT16 *)&((EFI_DEVICE_PATH_PROTOCOL *)(Node))->Length[0]);
+  return ReadUnaligned16 ((UINT16 *) &((EFI_DEVICE_PATH_PROTOCOL *) (Node))->Length[0]);
 }
 
 /**
@@ -79,7 +79,7 @@ NextDevicePathNode (
   )
 {
   ASSERT (Node != NULL);
-  return (EFI_DEVICE_PATH_PROTOCOL *)((UINT8 *)(Node) + DevicePathNodeLength(Node));
+  return (EFI_DEVICE_PATH_PROTOCOL *) ((UINT8 *) (Node) + DevicePathNodeLength (Node));
 }
 
 /**
@@ -102,7 +102,7 @@ GetDevicePathInstanceSize (
   OUT BOOLEAN                     *EntireDevicePathEnd
   )
 {
-  EFI_DEVICE_PATH_PROTOCOL    *Walker;
+  EFI_DEVICE_PATH_PROTOCOL  *Walker;
 
   if (DevicePath == NULL || InstanceSize == NULL || EntireDevicePathEnd == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -152,8 +152,8 @@ AhciIsHcDevicePathValid (
   IN UINTN                       DevicePathLength
   )
 {
-  EFI_DEVICE_PATH_PROTOCOL    *Start;
-  UINTN                       Size;
+  EFI_DEVICE_PATH_PROTOCOL  *Start;
+  UINTN                     Size;
 
   if (DevicePath == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -224,15 +224,15 @@ AhciBuildDevicePath (
   OUT EFI_DEVICE_PATH_PROTOCOL            **DevicePath
   )
 {
-  EFI_DEVICE_PATH_PROTOCOL    *DevicePathWalker;
-  SATA_DEVICE_PATH            *SataDeviceNode;
+  EFI_DEVICE_PATH_PROTOCOL  *DevicePathWalker;
+  SATA_DEVICE_PATH          *SataDeviceNode;
 
   if (DevicePathLength == NULL || DevicePath == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
   *DevicePathLength = Private->DevicePathLength + sizeof (SATA_DEVICE_PATH);
-  *DevicePath       = AllocatePool (*DevicePathLength);
+  *DevicePath = AllocatePool (*DevicePathLength);
   if (*DevicePath == NULL) {
     *DevicePathLength = 0;
     return EFI_OUT_OF_RESOURCES;
@@ -243,35 +243,35 @@ AhciBuildDevicePath (
   //
   DevicePathWalker = *DevicePath;
   CopyMem (
-    DevicePathWalker,
-    Private->DevicePath,
-    Private->DevicePathLength - sizeof (EFI_DEVICE_PATH_PROTOCOL)
-    );
+           DevicePathWalker,
+           Private->DevicePath,
+           Private->DevicePathLength - sizeof (EFI_DEVICE_PATH_PROTOCOL)
+           );
 
   //
   // Construct the SATA device node
   //
-  DevicePathWalker = (EFI_DEVICE_PATH_PROTOCOL *) ((UINT8 *)DevicePathWalker +
-                     (Private->DevicePathLength - sizeof (EFI_DEVICE_PATH_PROTOCOL)));
+  DevicePathWalker = (EFI_DEVICE_PATH_PROTOCOL *) ((UINT8 *) DevicePathWalker +
+                                                   (Private->DevicePathLength - sizeof (EFI_DEVICE_PATH_PROTOCOL)));
   CopyMem (
-    DevicePathWalker,
-    &mAhciSataDevicePathNodeTemplate,
-    sizeof (mAhciSataDevicePathNodeTemplate)
-    );
-  SataDeviceNode                           = (SATA_DEVICE_PATH *)DevicePathWalker;
-  SataDeviceNode->HBAPortNumber            = Port;
+           DevicePathWalker,
+           &mAhciSataDevicePathNodeTemplate,
+           sizeof (mAhciSataDevicePathNodeTemplate)
+           );
+  SataDeviceNode = (SATA_DEVICE_PATH *) DevicePathWalker;
+  SataDeviceNode->HBAPortNumber = Port;
   SataDeviceNode->PortMultiplierPortNumber = PortMultiplierPort;
 
   //
   // Construct the end device node
   //
-  DevicePathWalker = (EFI_DEVICE_PATH_PROTOCOL *) ((UINT8 *)DevicePathWalker +
-                     sizeof (SATA_DEVICE_PATH));
+  DevicePathWalker = (EFI_DEVICE_PATH_PROTOCOL *) ((UINT8 *) DevicePathWalker +
+                                                   sizeof (SATA_DEVICE_PATH));
   CopyMem (
-    DevicePathWalker,
-    &mAhciEndDevicePathNodeTemplate,
-    sizeof (mAhciEndDevicePathNodeTemplate)
-    );
+           DevicePathWalker,
+           &mAhciEndDevicePathNodeTemplate,
+           sizeof (mAhciEndDevicePathNodeTemplate)
+           );
 
   return EFI_SUCCESS;
 }

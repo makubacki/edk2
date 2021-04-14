@@ -13,6 +13,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // Function prototypes
 //
+
 /**
   Test controller is a keyboard Controller.
 
@@ -87,7 +88,7 @@ KbdFreeNotifyList (
 //
 // DriverBinding Protocol Instance
 //
-EFI_DRIVER_BINDING_PROTOCOL gKeyboardControllerDriver = {
+EFI_DRIVER_BINDING_PROTOCOL  gKeyboardControllerDriver = {
   KbdControllerDriverSupported,
   KbdControllerDriverStart,
   KbdControllerDriverStop,
@@ -114,22 +115,22 @@ KbdControllerDriverSupported (
   IN EFI_DEVICE_PATH_PROTOCOL       *RemainingDevicePath
   )
 {
-  EFI_STATUS                                 Status;
-  EFI_SIO_PROTOCOL                           *Sio;
-  EFI_DEVICE_PATH_PROTOCOL                   *DevicePath;
-  ACPI_HID_DEVICE_PATH                       *Acpi;
+  EFI_STATUS                Status;
+  EFI_SIO_PROTOCOL          *Sio;
+  EFI_DEVICE_PATH_PROTOCOL  *DevicePath;
+  ACPI_HID_DEVICE_PATH      *Acpi;
 
   //
   // Check whether the controller is keyboard.
   //
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiDevicePathProtocolGuid,
-                  (VOID **) &DevicePath,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              Controller,
+                              &gEfiDevicePathProtocolGuid,
+                              (VOID **) &DevicePath,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -152,13 +153,13 @@ KbdControllerDriverSupported (
   // Open the IO Abstraction(s) needed to perform the supported test
   //
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiSioProtocolGuid,
-                  (VOID **) &Sio,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              Controller,
+                              &gEfiSioProtocolGuid,
+                              (VOID **) &Sio,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -167,11 +168,11 @@ KbdControllerDriverSupported (
   // Close the I/O Abstraction(s) used to perform the supported test
   //
   gBS->CloseProtocol (
-         Controller,
-         &gEfiSioProtocolGuid,
-         This->DriverBindingHandle,
-         Controller
-         );
+                      Controller,
+                      &gEfiSioProtocolGuid,
+                      This->DriverBindingHandle,
+                      Controller
+                      );
 
   return Status;
 }
@@ -193,74 +194,77 @@ KbdControllerDriverStart (
   IN EFI_DEVICE_PATH_PROTOCOL       *RemainingDevicePath
   )
 {
-  EFI_STATUS                                Status;
-  EFI_STATUS                                Status1;
-  EFI_SIO_PROTOCOL                          *Sio;
-  KEYBOARD_CONSOLE_IN_DEV                   *ConsoleIn;
-  UINT8                                     Data;
-  EFI_STATUS_CODE_VALUE                     StatusCode;
-  EFI_DEVICE_PATH_PROTOCOL                  *DevicePath;
+  EFI_STATUS                Status;
+  EFI_STATUS                Status1;
+  EFI_SIO_PROTOCOL          *Sio;
+  KEYBOARD_CONSOLE_IN_DEV   *ConsoleIn;
+  UINT8                     Data;
+  EFI_STATUS_CODE_VALUE     StatusCode;
+  EFI_DEVICE_PATH_PROTOCOL  *DevicePath;
 
   StatusCode = 0;
 
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiDevicePathProtocolGuid,
-                  (VOID **) &DevicePath,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              Controller,
+                              &gEfiDevicePathProtocolGuid,
+                              (VOID **) &DevicePath,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   //
   // Report that the keyboard is being enabled
   //
   REPORT_STATUS_CODE_WITH_DEVICE_PATH (
-    EFI_PROGRESS_CODE,
-    EFI_PERIPHERAL_KEYBOARD | EFI_P_PC_ENABLE,
-    DevicePath
-    );
+                                       EFI_PROGRESS_CODE,
+                                       EFI_PERIPHERAL_KEYBOARD | EFI_P_PC_ENABLE,
+                                       DevicePath
+                                       );
 
   //
   // Get the ISA I/O Protocol on Controller's handle
   //
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiSioProtocolGuid,
-                  (VOID **) &Sio,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              Controller,
+                              &gEfiSioProtocolGuid,
+                              (VOID **) &Sio,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   //
   // Allocate private data
   //
   ConsoleIn = AllocateZeroPool (sizeof (KEYBOARD_CONSOLE_IN_DEV));
   if (ConsoleIn == NULL) {
-    Status      = EFI_OUT_OF_RESOURCES;
-    StatusCode  = EFI_PERIPHERAL_KEYBOARD | EFI_P_EC_CONTROLLER_ERROR;
+    Status     = EFI_OUT_OF_RESOURCES;
+    StatusCode = EFI_PERIPHERAL_KEYBOARD | EFI_P_EC_CONTROLLER_ERROR;
     goto ErrorExit;
   }
+
   //
   // Setup the device instance
   //
-  ConsoleIn->Signature              = KEYBOARD_CONSOLE_IN_DEV_SIGNATURE;
-  ConsoleIn->Handle                 = Controller;
-  (ConsoleIn->ConIn).Reset          = KeyboardEfiReset;
+  ConsoleIn->Signature     = KEYBOARD_CONSOLE_IN_DEV_SIGNATURE;
+  ConsoleIn->Handle        = Controller;
+  (ConsoleIn->ConIn).Reset = KeyboardEfiReset;
   (ConsoleIn->ConIn).ReadKeyStroke  = KeyboardReadKeyStroke;
   ConsoleIn->DataRegisterAddress    = KEYBOARD_8042_DATA_REGISTER;
   ConsoleIn->StatusRegisterAddress  = KEYBOARD_8042_STATUS_REGISTER;
   ConsoleIn->CommandRegisterAddress = KEYBOARD_8042_COMMAND_REGISTER;
-  ConsoleIn->DevicePath             = DevicePath;
+  ConsoleIn->DevicePath = DevicePath;
 
-  ConsoleIn->ConInEx.Reset               = KeyboardEfiResetEx;
-  ConsoleIn->ConInEx.ReadKeyStrokeEx     = KeyboardReadKeyStrokeEx;
-  ConsoleIn->ConInEx.SetState            = KeyboardSetState;
+  ConsoleIn->ConInEx.Reset = KeyboardEfiResetEx;
+  ConsoleIn->ConInEx.ReadKeyStrokeEx = KeyboardReadKeyStrokeEx;
+  ConsoleIn->ConInEx.SetState = KeyboardSetState;
   ConsoleIn->ConInEx.RegisterKeyNotify   = KeyboardRegisterKeyNotify;
   ConsoleIn->ConInEx.UnregisterKeyNotify = KeyboardUnregisterKeyNotify;
 
@@ -283,8 +287,8 @@ KbdControllerDriverStart (
       // If nobody decodes KBC I/O port, it will read back as 0xFF.
       // Check the Time-Out and Parity bit to see if it has an active KBC in system
       //
-      Status      = EFI_DEVICE_ERROR;
-      StatusCode  = EFI_PERIPHERAL_KEYBOARD | EFI_P_EC_NOT_DETECTED;
+      Status     = EFI_DEVICE_ERROR;
+      StatusCode = EFI_PERIPHERAL_KEYBOARD | EFI_P_EC_NOT_DETECTED;
       goto ErrorExit;
     }
   }
@@ -293,121 +297,122 @@ KbdControllerDriverStart (
   // Setup the WaitForKey event
   //
   Status = gBS->CreateEvent (
-                  EVT_NOTIFY_WAIT,
-                  TPL_NOTIFY,
-                  KeyboardWaitForKey,
-                  ConsoleIn,
-                  &((ConsoleIn->ConIn).WaitForKey)
-                  );
+                             EVT_NOTIFY_WAIT,
+                             TPL_NOTIFY,
+                             KeyboardWaitForKey,
+                             ConsoleIn,
+                             &((ConsoleIn->ConIn).WaitForKey)
+                             );
   if (EFI_ERROR (Status)) {
-    Status      = EFI_OUT_OF_RESOURCES;
-    StatusCode  = EFI_PERIPHERAL_KEYBOARD | EFI_P_EC_CONTROLLER_ERROR;
+    Status     = EFI_OUT_OF_RESOURCES;
+    StatusCode = EFI_PERIPHERAL_KEYBOARD | EFI_P_EC_CONTROLLER_ERROR;
     goto ErrorExit;
   }
+
   //
   // Setup the WaitForKeyEx event
   //
   Status = gBS->CreateEvent (
-                  EVT_NOTIFY_WAIT,
-                  TPL_NOTIFY,
-                  KeyboardWaitForKeyEx,
-                  ConsoleIn,
-                  &(ConsoleIn->ConInEx.WaitForKeyEx)
-                  );
+                             EVT_NOTIFY_WAIT,
+                             TPL_NOTIFY,
+                             KeyboardWaitForKeyEx,
+                             ConsoleIn,
+                             &(ConsoleIn->ConInEx.WaitForKeyEx)
+                             );
   if (EFI_ERROR (Status)) {
-    Status      = EFI_OUT_OF_RESOURCES;
-    StatusCode  = EFI_PERIPHERAL_KEYBOARD | EFI_P_EC_CONTROLLER_ERROR;
+    Status     = EFI_OUT_OF_RESOURCES;
+    StatusCode = EFI_PERIPHERAL_KEYBOARD | EFI_P_EC_CONTROLLER_ERROR;
     goto ErrorExit;
   }
+
   // Setup a periodic timer, used for reading keystrokes at a fixed interval
   //
   Status = gBS->CreateEvent (
-                  EVT_TIMER | EVT_NOTIFY_SIGNAL,
-                  TPL_NOTIFY,
-                  KeyboardTimerHandler,
-                  ConsoleIn,
-                  &ConsoleIn->TimerEvent
-                  );
+                             EVT_TIMER | EVT_NOTIFY_SIGNAL,
+                             TPL_NOTIFY,
+                             KeyboardTimerHandler,
+                             ConsoleIn,
+                             &ConsoleIn->TimerEvent
+                             );
   if (EFI_ERROR (Status)) {
-    Status      = EFI_OUT_OF_RESOURCES;
-    StatusCode  = EFI_PERIPHERAL_KEYBOARD | EFI_P_EC_CONTROLLER_ERROR;
+    Status     = EFI_OUT_OF_RESOURCES;
+    StatusCode = EFI_PERIPHERAL_KEYBOARD | EFI_P_EC_CONTROLLER_ERROR;
     goto ErrorExit;
   }
 
   Status = gBS->SetTimer (
-                  ConsoleIn->TimerEvent,
-                  TimerPeriodic,
-                  KEYBOARD_TIMER_INTERVAL
-                  );
+                          ConsoleIn->TimerEvent,
+                          TimerPeriodic,
+                          KEYBOARD_TIMER_INTERVAL
+                          );
   if (EFI_ERROR (Status)) {
-    Status      = EFI_OUT_OF_RESOURCES;
-    StatusCode  = EFI_PERIPHERAL_KEYBOARD | EFI_P_EC_CONTROLLER_ERROR;
+    Status     = EFI_OUT_OF_RESOURCES;
+    StatusCode = EFI_PERIPHERAL_KEYBOARD | EFI_P_EC_CONTROLLER_ERROR;
     goto ErrorExit;
   }
 
   Status = gBS->CreateEvent (
-                  EVT_NOTIFY_SIGNAL,
-                  TPL_CALLBACK,
-                  KeyNotifyProcessHandler,
-                  ConsoleIn,
-                  &ConsoleIn->KeyNotifyProcessEvent
-                  );
+                             EVT_NOTIFY_SIGNAL,
+                             TPL_CALLBACK,
+                             KeyNotifyProcessHandler,
+                             ConsoleIn,
+                             &ConsoleIn->KeyNotifyProcessEvent
+                             );
   if (EFI_ERROR (Status)) {
-    Status      = EFI_OUT_OF_RESOURCES;
-    StatusCode  = EFI_PERIPHERAL_KEYBOARD | EFI_P_EC_CONTROLLER_ERROR;
+    Status     = EFI_OUT_OF_RESOURCES;
+    StatusCode = EFI_PERIPHERAL_KEYBOARD | EFI_P_EC_CONTROLLER_ERROR;
     goto ErrorExit;
   }
 
   REPORT_STATUS_CODE_WITH_DEVICE_PATH (
-    EFI_PROGRESS_CODE,
-    EFI_PERIPHERAL_KEYBOARD | EFI_P_PC_PRESENCE_DETECT,
-    DevicePath
-    );
+                                       EFI_PROGRESS_CODE,
+                                       EFI_PERIPHERAL_KEYBOARD | EFI_P_PC_PRESENCE_DETECT,
+                                       DevicePath
+                                       );
 
   //
   // Reset the keyboard device
   //
   Status = ConsoleIn->ConInEx.Reset (&ConsoleIn->ConInEx, FeaturePcdGet (PcdPs2KbdExtendedVerification));
   if (EFI_ERROR (Status)) {
-    Status      = EFI_DEVICE_ERROR;
-    StatusCode  = EFI_PERIPHERAL_KEYBOARD | EFI_P_EC_NOT_DETECTED;
+    Status     = EFI_DEVICE_ERROR;
+    StatusCode = EFI_PERIPHERAL_KEYBOARD | EFI_P_EC_NOT_DETECTED;
     goto ErrorExit;
   }
 
   REPORT_STATUS_CODE_WITH_DEVICE_PATH (
-    EFI_PROGRESS_CODE,
-    EFI_PERIPHERAL_KEYBOARD | EFI_P_PC_DETECTED,
-    DevicePath
-    );
+                                       EFI_PROGRESS_CODE,
+                                       EFI_PERIPHERAL_KEYBOARD | EFI_P_PC_DETECTED,
+                                       DevicePath
+                                       );
 
   ConsoleIn->ControllerNameTable = NULL;
   AddUnicodeString2 (
-    "eng",
-    gPs2KeyboardComponentName.SupportedLanguages,
-    &ConsoleIn->ControllerNameTable,
-    L"PS/2 Keyboard Device",
-    TRUE
-    );
+                     "eng",
+                     gPs2KeyboardComponentName.SupportedLanguages,
+                     &ConsoleIn->ControllerNameTable,
+                     L"PS/2 Keyboard Device",
+                     TRUE
+                     );
   AddUnicodeString2 (
-    "en",
-    gPs2KeyboardComponentName2.SupportedLanguages,
-    &ConsoleIn->ControllerNameTable,
-    L"PS/2 Keyboard Device",
-    FALSE
-    );
-
+                     "en",
+                     gPs2KeyboardComponentName2.SupportedLanguages,
+                     &ConsoleIn->ControllerNameTable,
+                     L"PS/2 Keyboard Device",
+                     FALSE
+                     );
 
   //
   // Install protocol interfaces for the keyboard device.
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &Controller,
-                  &gEfiSimpleTextInProtocolGuid,
-                  &ConsoleIn->ConIn,
-                  &gEfiSimpleTextInputExProtocolGuid,
-                  &ConsoleIn->ConInEx,
-                  NULL
-                  );
+                                                   &Controller,
+                                                   &gEfiSimpleTextInProtocolGuid,
+                                                   &ConsoleIn->ConIn,
+                                                   &gEfiSimpleTextInputExProtocolGuid,
+                                                   &ConsoleIn->ConInEx,
+                                                   NULL
+                                                   );
   if (EFI_ERROR (Status)) {
     StatusCode = EFI_PERIPHERAL_KEYBOARD | EFI_P_EC_CONTROLLER_ERROR;
     goto ErrorExit;
@@ -421,29 +426,33 @@ ErrorExit:
   //
   if (StatusCode != 0) {
     REPORT_STATUS_CODE_WITH_DEVICE_PATH (
-      EFI_ERROR_CODE | EFI_ERROR_MINOR,
-      StatusCode,
-      DevicePath
-      );
+                                         EFI_ERROR_CODE | EFI_ERROR_MINOR,
+                                         StatusCode,
+                                         DevicePath
+                                         );
   }
 
   if ((ConsoleIn != NULL) && (ConsoleIn->ConIn.WaitForKey != NULL)) {
-    gBS->CloseEvent (ConsoleIn->ConIn.WaitForKey);
+  gBS->CloseEvent (ConsoleIn->ConIn.WaitForKey);
   }
 
   if ((ConsoleIn != NULL) && (ConsoleIn->TimerEvent != NULL)) {
-    gBS->CloseEvent (ConsoleIn->TimerEvent);
+  gBS->CloseEvent (ConsoleIn->TimerEvent);
   }
+
   if ((ConsoleIn != NULL) && (ConsoleIn->ConInEx.WaitForKeyEx != NULL)) {
-    gBS->CloseEvent (ConsoleIn->ConInEx.WaitForKeyEx);
+  gBS->CloseEvent (ConsoleIn->ConInEx.WaitForKeyEx);
   }
+
   if ((ConsoleIn != NULL) && (ConsoleIn->KeyNotifyProcessEvent != NULL)) {
-    gBS->CloseEvent (ConsoleIn->KeyNotifyProcessEvent);
+  gBS->CloseEvent (ConsoleIn->KeyNotifyProcessEvent);
   }
+
   KbdFreeNotifyList (&ConsoleIn->NotifyList);
   if ((ConsoleIn != NULL) && (ConsoleIn->ControllerNameTable != NULL)) {
     FreeUnicodeStringTable (ConsoleIn->ControllerNameTable);
   }
+
   //
   // Since there will be no timer handler for keyboard input any more,
   // exhaust input data just in case there is still keyboard data left
@@ -451,20 +460,20 @@ ErrorExit:
   if (ConsoleIn != NULL) {
     Status1 = EFI_SUCCESS;
     while (!EFI_ERROR (Status1) && (Status != EFI_DEVICE_ERROR)) {
-      Status1 = KeyboardRead (ConsoleIn, &Data);;
+      Status1 = KeyboardRead (ConsoleIn, &Data);
     }
   }
 
   if (ConsoleIn != NULL) {
-    gBS->FreePool (ConsoleIn);
+  gBS->FreePool (ConsoleIn);
   }
 
   gBS->CloseProtocol (
-         Controller,
-         &gEfiSioProtocolGuid,
-         This->DriverBindingHandle,
-         Controller
-         );
+                      Controller,
+                      &gEfiSioProtocolGuid,
+                      This->DriverBindingHandle,
+                      Controller
+                      );
 
   return Status;
 }
@@ -492,33 +501,34 @@ KbdControllerDriverStop (
   IN  EFI_HANDLE                     *ChildHandleBuffer
   )
 {
-  EFI_STATUS                     Status;
-  EFI_SIMPLE_TEXT_INPUT_PROTOCOL *ConIn;
-  KEYBOARD_CONSOLE_IN_DEV        *ConsoleIn;
-  UINT8                          Data;
+  EFI_STATUS                      Status;
+  EFI_SIMPLE_TEXT_INPUT_PROTOCOL  *ConIn;
+  KEYBOARD_CONSOLE_IN_DEV         *ConsoleIn;
+  UINT8                           Data;
 
   //
   // Disable Keyboard
   //
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiSimpleTextInProtocolGuid,
-                  (VOID **) &ConIn,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              Controller,
+                              &gEfiSimpleTextInProtocolGuid,
+                              (VOID **) &ConIn,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiSimpleTextInputExProtocolGuid,
-                  NULL,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              Controller,
+                              &gEfiSimpleTextInputExProtocolGuid,
+                              NULL,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -529,13 +539,13 @@ KbdControllerDriverStop (
   // Report that the keyboard is being disabled
   //
   REPORT_STATUS_CODE_WITH_DEVICE_PATH (
-    EFI_PROGRESS_CODE,
-    EFI_PERIPHERAL_KEYBOARD | EFI_P_PC_DISABLE,
-    ConsoleIn->DevicePath
-    );
+                                       EFI_PROGRESS_CODE,
+                                       EFI_PERIPHERAL_KEYBOARD | EFI_P_PC_DISABLE,
+                                       ConsoleIn->DevicePath
+                                       );
 
   if (ConsoleIn->TimerEvent != NULL) {
-    gBS->CloseEvent (ConsoleIn->TimerEvent);
+  gBS->CloseEvent (ConsoleIn->TimerEvent);
     ConsoleIn->TimerEvent = NULL;
   }
 
@@ -545,45 +555,49 @@ KbdControllerDriverStop (
   //
   Status = EFI_SUCCESS;
   while (!EFI_ERROR (Status)) {
-    Status = KeyboardRead (ConsoleIn, &Data);;
+    Status = KeyboardRead (ConsoleIn, &Data);
   }
+
   //
   // Uninstall the SimpleTextIn and SimpleTextInEx protocols
   //
   Status = gBS->UninstallMultipleProtocolInterfaces (
-                  Controller,
-                  &gEfiSimpleTextInProtocolGuid,
-                  &ConsoleIn->ConIn,
-                  &gEfiSimpleTextInputExProtocolGuid,
-                  &ConsoleIn->ConInEx,
-                  NULL
-                  );
+                                                     Controller,
+                                                     &gEfiSimpleTextInProtocolGuid,
+                                                     &ConsoleIn->ConIn,
+                                                     &gEfiSimpleTextInputExProtocolGuid,
+                                                     &ConsoleIn->ConInEx,
+                                                     NULL
+                                                     );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   gBS->CloseProtocol (
-         Controller,
-         &gEfiSioProtocolGuid,
-         This->DriverBindingHandle,
-         Controller
-         );
+                      Controller,
+                      &gEfiSioProtocolGuid,
+                      This->DriverBindingHandle,
+                      Controller
+                      );
 
   //
   // Free other resources
   //
   if ((ConsoleIn->ConIn).WaitForKey != NULL) {
-    gBS->CloseEvent ((ConsoleIn->ConIn).WaitForKey);
+  gBS->CloseEvent ((ConsoleIn->ConIn).WaitForKey);
     (ConsoleIn->ConIn).WaitForKey = NULL;
   }
+
   if (ConsoleIn->ConInEx.WaitForKeyEx != NULL) {
-    gBS->CloseEvent (ConsoleIn->ConInEx.WaitForKeyEx);
+  gBS->CloseEvent (ConsoleIn->ConInEx.WaitForKeyEx);
     ConsoleIn->ConInEx.WaitForKeyEx = NULL;
   }
+
   if (ConsoleIn->KeyNotifyProcessEvent != NULL) {
-    gBS->CloseEvent (ConsoleIn->KeyNotifyProcessEvent);
+  gBS->CloseEvent (ConsoleIn->KeyNotifyProcessEvent);
     ConsoleIn->KeyNotifyProcessEvent = NULL;
   }
+
   KbdFreeNotifyList (&ConsoleIn->NotifyList);
   FreeUnicodeStringTable (ConsoleIn->ControllerNameTable);
   gBS->FreePool (ConsoleIn);
@@ -604,18 +618,19 @@ KbdFreeNotifyList (
   IN OUT LIST_ENTRY           *ListHead
   )
 {
-  KEYBOARD_CONSOLE_IN_EX_NOTIFY *NotifyNode;
+  KEYBOARD_CONSOLE_IN_EX_NOTIFY  *NotifyNode;
 
   if (ListHead == NULL) {
     return EFI_INVALID_PARAMETER;
   }
+
   while (!IsListEmpty (ListHead)) {
     NotifyNode = CR (
-                   ListHead->ForwardLink,
-                   KEYBOARD_CONSOLE_IN_EX_NOTIFY,
-                   NotifyEntry,
-                   KEYBOARD_CONSOLE_IN_EX_NOTIFY_SIGNATURE
-                   );
+                     ListHead->ForwardLink,
+                     KEYBOARD_CONSOLE_IN_EX_NOTIFY,
+                     NotifyEntry,
+                     KEYBOARD_CONSOLE_IN_EX_NOTIFY_SIGNATURE
+                     );
     RemoveEntryList (ListHead->ForwardLink);
     gBS->FreePool (NotifyNode);
   }
@@ -635,27 +650,25 @@ KbdFreeNotifyList (
 **/
 EFI_STATUS
 EFIAPI
-InitializePs2Keyboard(
+InitializePs2Keyboard (
   IN EFI_HANDLE           ImageHandle,
   IN EFI_SYSTEM_TABLE     *SystemTable
   )
 {
-  EFI_STATUS              Status;
+  EFI_STATUS  Status;
 
   //
   // Install driver model protocol(s).
   //
   Status = EfiLibInstallDriverBindingComponentName2 (
-             ImageHandle,
-             SystemTable,
-             &gKeyboardControllerDriver,
-             ImageHandle,
-             &gPs2KeyboardComponentName,
-             &gPs2KeyboardComponentName2
-             );
+                                                     ImageHandle,
+                                                     SystemTable,
+                                                     &gKeyboardControllerDriver,
+                                                     ImageHandle,
+                                                     &gPs2KeyboardComponentName,
+                                                     &gPs2KeyboardComponentName2
+                                                     );
   ASSERT_EFI_ERROR (Status);
-
 
   return Status;
 }
-

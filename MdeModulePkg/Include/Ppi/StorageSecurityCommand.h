@@ -21,15 +21,14 @@
 //
 // Forward declaration for the EDKII_PEI_STORAGE_SECURITY_CMD_PPI.
 //
-typedef struct _EDKII_PEI_STORAGE_SECURITY_CMD_PPI  EDKII_PEI_STORAGE_SECURITY_CMD_PPI;
+typedef struct _EDKII_PEI_STORAGE_SECURITY_CMD_PPI EDKII_PEI_STORAGE_SECURITY_CMD_PPI;
 
 //
 // Revision The revision to which the Storage Security Command interface adheres.
-//          All future revisions must be backwards compatible.
-//          If a future version is not back wards compatible it is not the same GUID.
+// All future revisions must be backwards compatible.
+// If a future version is not back wards compatible it is not the same GUID.
 //
 #define EDKII_STORAGE_SECURITY_PPI_REVISION  0x00010000
-
 
 /**
   Gets the count of storage security devices that one specific driver detects.
@@ -42,11 +41,11 @@ typedef struct _EDKII_PEI_STORAGE_SECURITY_CMD_PPI  EDKII_PEI_STORAGE_SECURITY_C
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EDKII_PEI_STORAGE_SECURITY_GET_NUMBER_DEVICES) (
-  IN  EDKII_PEI_STORAGE_SECURITY_CMD_PPI    *This,
-  OUT UINTN                                 *NumberofDevices
-  );
+  EFI_STATUS
+(EFIAPI *EDKII_PEI_STORAGE_SECURITY_GET_NUMBER_DEVICES)(
+                                                        IN  EDKII_PEI_STORAGE_SECURITY_CMD_PPI    *This,
+                                                        OUT UINTN                                 *NumberofDevices
+                                                        );
 
 /**
   Gets the device path of a specific storage security device.
@@ -74,13 +73,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EDKII_PEI_STORAGE_SECURITY_GET_DEVICE_PATH) (
-  IN  EDKII_PEI_STORAGE_SECURITY_CMD_PPI    *This,
-  IN  UINTN                                 DeviceIndex,
-  OUT UINTN                                 *DevicePathLength,
-  OUT EFI_DEVICE_PATH_PROTOCOL              **DevicePath
-  );
+  EFI_STATUS
+(EFIAPI *EDKII_PEI_STORAGE_SECURITY_GET_DEVICE_PATH)(
+                                                     IN  EDKII_PEI_STORAGE_SECURITY_CMD_PPI    *This,
+                                                     IN  UINTN                                 DeviceIndex,
+                                                     OUT UINTN                                 *DevicePathLength,
+                                                     OUT EFI_DEVICE_PATH_PROTOCOL              **DevicePath
+                                                     );
 
 /**
   Send a security protocol command to a device that receives data and/or the result
@@ -169,17 +168,17 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EDKII_PEI_STORAGE_SECURITY_RECEIVE_DATA) (
-  IN  EDKII_PEI_STORAGE_SECURITY_CMD_PPI    *This,
-  IN  UINTN                                 DeviceIndex,
-  IN  UINT64                                Timeout,
-  IN  UINT8                                 SecurityProtocolId,
-  IN  UINT16                                SecurityProtocolSpecificData,
-  IN  UINTN                                 PayloadBufferSize,
-  OUT VOID                                  *PayloadBuffer,
-  OUT UINTN                                 *PayloadTransferSize
-  );
+  EFI_STATUS
+(EFIAPI *EDKII_PEI_STORAGE_SECURITY_RECEIVE_DATA)(
+                                                  IN  EDKII_PEI_STORAGE_SECURITY_CMD_PPI    *This,
+                                                  IN  UINTN                                 DeviceIndex,
+                                                  IN  UINT64                                Timeout,
+                                                  IN  UINT8                                 SecurityProtocolId,
+                                                  IN  UINT16                                SecurityProtocolSpecificData,
+                                                  IN  UINTN                                 PayloadBufferSize,
+                                                  OUT VOID                                  *PayloadBuffer,
+                                                  OUT UINTN                                 *PayloadTransferSize
+                                                  );
 
 /**
   Send a security protocol command to a device.
@@ -246,16 +245,16 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EDKII_PEI_STORAGE_SECURITY_SEND_DATA) (
-  IN EDKII_PEI_STORAGE_SECURITY_CMD_PPI    *This,
-  IN UINTN                                 DeviceIndex,
-  IN UINT64                                Timeout,
-  IN UINT8                                 SecurityProtocolId,
-  IN UINT16                                SecurityProtocolSpecificData,
-  IN UINTN                                 PayloadBufferSize,
-  IN VOID                                  *PayloadBuffer
-  );
+  EFI_STATUS
+(EFIAPI *EDKII_PEI_STORAGE_SECURITY_SEND_DATA)(
+                                               IN EDKII_PEI_STORAGE_SECURITY_CMD_PPI    *This,
+                                               IN UINTN                                 DeviceIndex,
+                                               IN UINT64                                Timeout,
+                                               IN UINT8                                 SecurityProtocolId,
+                                               IN UINT16                                SecurityProtocolSpecificData,
+                                               IN UINTN                                 PayloadBufferSize,
+                                               IN VOID                                  *PayloadBuffer
+                                               );
 
 //
 // EDKII_PEI_STORAGE_SECURITY_CMD_PPI contains a set of services to send security
@@ -272,6 +271,6 @@ struct _EDKII_PEI_STORAGE_SECURITY_CMD_PPI {
   EDKII_PEI_STORAGE_SECURITY_SEND_DATA             SendData;
 };
 
-extern EFI_GUID gEdkiiPeiStorageSecurityCommandPpiGuid;
+extern EFI_GUID  gEdkiiPeiStorageSecurityCommandPpiGuid;
 
 #endif

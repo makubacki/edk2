@@ -20,10 +20,10 @@
 #include <Library/UefiRuntimeServicesTableLib.h>
 #include <Library/MemoryAllocationLib.h>
 
-extern EFI_SYSTEM_RESOURCE_TABLE *mEsrtTable;
-extern BOOLEAN                   mIsVirtualAddrConverted;
-EFI_EVENT                 mDxeRuntimeCapsuleLibVirtualAddressChangeEvent  = NULL;
-EFI_EVENT                 mDxeRuntimeCapsuleLibReadyToBootEvent  = NULL;
+extern EFI_SYSTEM_RESOURCE_TABLE  *mEsrtTable;
+extern BOOLEAN                    mIsVirtualAddrConverted;
+EFI_EVENT                         mDxeRuntimeCapsuleLibVirtualAddressChangeEvent = NULL;
+EFI_EVENT                         mDxeRuntimeCapsuleLibReadyToBootEvent = NULL;
 
 /**
   Convert EsrtTable physical address to virtual address.
@@ -39,7 +39,7 @@ DxeCapsuleLibVirtualAddressChangeEvent (
   IN  VOID        *Context
   )
 {
-  gRT->ConvertPointer (EFI_OPTIONAL_PTR, (VOID **)&mEsrtTable);
+  gRT->ConvertPointer (EFI_OPTIONAL_PTR, (VOID **) &mEsrtTable);
   mIsVirtualAddrConverted = TRUE;
 }
 
@@ -58,18 +58,19 @@ DxeCapsuleLibReadyToBootEventNotify (
   IN VOID             *Context
   )
 {
-  UINTN                       Index;
-  EFI_CONFIGURATION_TABLE     *ConfigEntry;
-  EFI_SYSTEM_RESOURCE_TABLE   *EsrtTable;
+  UINTN                      Index;
+  EFI_CONFIGURATION_TABLE    *ConfigEntry;
+  EFI_SYSTEM_RESOURCE_TABLE  *EsrtTable;
 
   //
   // Get Esrt table first
   //
   ConfigEntry = gST->ConfigurationTable;
   for (Index = 0; Index < gST->NumberOfTableEntries; Index++) {
-    if (CompareGuid(&gEfiSystemResourceTableGuid, &ConfigEntry->VendorGuid)) {
+    if (CompareGuid (&gEfiSystemResourceTableGuid, &ConfigEntry->VendorGuid)) {
       break;
     }
+
     ConfigEntry++;
   }
 
@@ -83,9 +84,10 @@ DxeCapsuleLibReadyToBootEventNotify (
     EsrtTable = (EFI_SYSTEM_RESOURCE_TABLE *) ConfigEntry->VendorTable;
 
     mEsrtTable = AllocateRuntimeCopyPool (
-                   sizeof (EFI_SYSTEM_RESOURCE_TABLE) +
-                   EsrtTable->FwResourceCount * sizeof (EFI_SYSTEM_RESOURCE_ENTRY),
-                   EsrtTable);
+                                          sizeof (EFI_SYSTEM_RESOURCE_TABLE) +
+                                          EsrtTable->FwResourceCount * sizeof (EFI_SYSTEM_RESOURCE_ENTRY),
+                                          EsrtTable
+                                          );
     ASSERT (mEsrtTable != NULL);
 
     //
@@ -110,32 +112,32 @@ DxeRuntimeCapsuleLibConstructor (
   IN EFI_SYSTEM_TABLE   *SystemTable
   )
 {
-  EFI_STATUS     Status;
+  EFI_STATUS  Status;
 
   //
   // Make sure we can handle virtual address changes.
   //
   Status = gBS->CreateEventEx (
-                  EVT_NOTIFY_SIGNAL,
-                  TPL_NOTIFY,
-                  DxeCapsuleLibVirtualAddressChangeEvent,
-                  NULL,
-                  &gEfiEventVirtualAddressChangeGuid,
-                  &mDxeRuntimeCapsuleLibVirtualAddressChangeEvent
-                  );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_NOTIFY,
+                               DxeCapsuleLibVirtualAddressChangeEvent,
+                               NULL,
+                               &gEfiEventVirtualAddressChangeGuid,
+                               &mDxeRuntimeCapsuleLibVirtualAddressChangeEvent
+                               );
   ASSERT_EFI_ERROR (Status);
 
   //
   // Register notify function to cache the FMP capsule GUIDs at ReadyToBoot.
   //
   Status = gBS->CreateEventEx (
-                  EVT_NOTIFY_SIGNAL,
-                  TPL_CALLBACK,
-                  DxeCapsuleLibReadyToBootEventNotify,
-                  NULL,
-                  &gEfiEventReadyToBootGuid,
-                  &mDxeRuntimeCapsuleLibReadyToBootEvent
-                  );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_CALLBACK,
+                               DxeCapsuleLibReadyToBootEventNotify,
+                               NULL,
+                               &gEfiEventReadyToBootGuid,
+                               &mDxeRuntimeCapsuleLibReadyToBootEvent
+                               );
   ASSERT_EFI_ERROR (Status);
 
   return EFI_SUCCESS;
@@ -156,7 +158,7 @@ DxeRuntimeCapsuleLibDestructor (
   IN EFI_SYSTEM_TABLE   *SystemTable
   )
 {
-  EFI_STATUS    Status;
+  EFI_STATUS  Status;
 
   //
   // Close the VirtualAddressChange event.

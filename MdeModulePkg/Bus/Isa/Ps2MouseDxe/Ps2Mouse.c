@@ -13,7 +13,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 ///
 /// DriverBinding Protocol Instance
 ///
-EFI_DRIVER_BINDING_PROTOCOL gPS2MouseDriver = {
+EFI_DRIVER_BINDING_PROTOCOL  gPS2MouseDriver = {
   PS2MouseDriverSupported,
   PS2MouseDriverStart,
   PS2MouseDriverStop,
@@ -44,22 +44,22 @@ PS2MouseDriverSupported (
   IN EFI_DEVICE_PATH_PROTOCOL       *RemainingDevicePath
   )
 {
-  EFI_STATUS                        Status;
-  EFI_SIO_PROTOCOL                  *Sio;
-  EFI_DEVICE_PATH_PROTOCOL          *DevicePath;
-  ACPI_HID_DEVICE_PATH              *Acpi;
+  EFI_STATUS                Status;
+  EFI_SIO_PROTOCOL          *Sio;
+  EFI_DEVICE_PATH_PROTOCOL  *DevicePath;
+  ACPI_HID_DEVICE_PATH      *Acpi;
 
   //
   // Check whether the controller is keyboard.
   //
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiDevicePathProtocolGuid,
-                  (VOID **) &DevicePath,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              Controller,
+                              &gEfiDevicePathProtocolGuid,
+                              (VOID **) &DevicePath,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -75,40 +75,40 @@ PS2MouseDriverSupported (
   }
 
   switch (Acpi->HID) {
-  case EISA_PNP_ID (0xF03):
+    case EISA_PNP_ID (0xF03):
     //
     // Microsoft PS/2 style mouse
     //
-  case EISA_PNP_ID (0xF13):
-    //
-    // PS/2 Port for PS/2-style Mice
-    //
-    break;
-
-  case EISA_PNP_ID (0x303):
-    //
-    // IBM Enhanced (101/102-key, PS/2 mouse support)
-    //
-    if (Acpi->UID == 1) {
+    case EISA_PNP_ID (0xF13):
+      //
+      // PS/2 Port for PS/2-style Mice
+      //
       break;
-    }
 
-  default:
-    return EFI_UNSUPPORTED;
-    break;
+    case EISA_PNP_ID (0x303):
+      //
+      // IBM Enhanced (101/102-key, PS/2 mouse support)
+      //
+      if (Acpi->UID == 1) {
+        break;
+      }
+
+    default:
+      return EFI_UNSUPPORTED;
+      break;
   }
 
   //
   // Open the IO Abstraction(s) needed to perform the supported test
   //
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiSioProtocolGuid,
-                  (VOID **) &Sio,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              Controller,
+                              &gEfiSioProtocolGuid,
+                              (VOID **) &Sio,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -117,11 +117,11 @@ PS2MouseDriverSupported (
   // Close the I/O Abstraction(s) used to perform the supported test
   //
   gBS->CloseProtocol (
-         Controller,
-         &gEfiSioProtocolGuid,
-         This->DriverBindingHandle,
-         Controller
-         );
+                      Controller,
+                      &gEfiSioProtocolGuid,
+                      This->DriverBindingHandle,
+                      Controller
+                      );
 
   return Status;
 }
@@ -148,54 +148,56 @@ PS2MouseDriverStart (
   IN EFI_DEVICE_PATH_PROTOCOL       *RemainingDevicePath
   )
 {
-  EFI_STATUS                          Status;
-  EFI_STATUS                          EmptyStatus;
-  EFI_SIO_PROTOCOL                    *Sio;
-  PS2_MOUSE_DEV                       *MouseDev;
-  UINT8                               Data;
-  EFI_TPL                             OldTpl;
-  EFI_STATUS_CODE_VALUE               StatusCode;
-  EFI_DEVICE_PATH_PROTOCOL            *DevicePath;
+  EFI_STATUS                Status;
+  EFI_STATUS                EmptyStatus;
+  EFI_SIO_PROTOCOL          *Sio;
+  PS2_MOUSE_DEV             *MouseDev;
+  UINT8                     Data;
+  EFI_TPL                   OldTpl;
+  EFI_STATUS_CODE_VALUE     StatusCode;
+  EFI_DEVICE_PATH_PROTOCOL  *DevicePath;
 
-  StatusCode  = 0;
+  StatusCode = 0;
 
   //
   // Open the device path protocol
   //
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiDevicePathProtocolGuid,
-                  (VOID **) &DevicePath,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              Controller,
+                              &gEfiDevicePathProtocolGuid,
+                              (VOID **) &DevicePath,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   //
   // Report that the keyboard is being enabled
   //
   REPORT_STATUS_CODE_WITH_DEVICE_PATH (
-    EFI_PROGRESS_CODE,
-    EFI_PERIPHERAL_MOUSE | EFI_P_PC_ENABLE,
-    DevicePath
-    );
+                                       EFI_PROGRESS_CODE,
+                                       EFI_PERIPHERAL_MOUSE | EFI_P_PC_ENABLE,
+                                       DevicePath
+                                       );
 
   //
   // Get the ISA I/O Protocol on Controller's handle
   //
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiSioProtocolGuid,
-                  (VOID **) &Sio,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              Controller,
+                              &gEfiSioProtocolGuid,
+                              (VOID **) &Sio,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   //
   // Raise TPL to avoid keyboard operation impact
   //
@@ -209,37 +211,38 @@ PS2MouseDriverStart (
     Status = EFI_OUT_OF_RESOURCES;
     goto ErrorExit;
   }
+
   //
   // Setup the device instance
   //
-  MouseDev->Signature       = PS2_MOUSE_DEV_SIGNATURE;
-  MouseDev->Handle          = Controller;
-  MouseDev->SampleRate      = SampleRate20;
-  MouseDev->Resolution      = MouseResolution4;
-  MouseDev->Scaling         = Scaling1;
+  MouseDev->Signature  = PS2_MOUSE_DEV_SIGNATURE;
+  MouseDev->Handle     = Controller;
+  MouseDev->SampleRate = SampleRate20;
+  MouseDev->Resolution = MouseResolution4;
+  MouseDev->Scaling    = Scaling1;
   MouseDev->DataPackageSize = 3;
-  MouseDev->DevicePath      = DevicePath;
+  MouseDev->DevicePath = DevicePath;
 
   //
   // Resolution = 4 counts/mm
   //
-  MouseDev->Mode.ResolutionX                = 4;
-  MouseDev->Mode.ResolutionY                = 4;
-  MouseDev->Mode.LeftButton                 = TRUE;
-  MouseDev->Mode.RightButton                = TRUE;
+  MouseDev->Mode.ResolutionX = 4;
+  MouseDev->Mode.ResolutionY = 4;
+  MouseDev->Mode.LeftButton  = TRUE;
+  MouseDev->Mode.RightButton = TRUE;
 
-  MouseDev->SimplePointerProtocol.Reset     = MouseReset;
-  MouseDev->SimplePointerProtocol.GetState  = MouseGetState;
-  MouseDev->SimplePointerProtocol.Mode      = &(MouseDev->Mode);
+  MouseDev->SimplePointerProtocol.Reset    = MouseReset;
+  MouseDev->SimplePointerProtocol.GetState = MouseGetState;
+  MouseDev->SimplePointerProtocol.Mode     = &(MouseDev->Mode);
 
   //
   // Initialize keyboard controller if necessary
   //
   REPORT_STATUS_CODE_WITH_DEVICE_PATH (
-    EFI_PROGRESS_CODE,
-    EFI_PERIPHERAL_MOUSE | EFI_P_MOUSE_PC_SELF_TEST,
-    DevicePath
-    );
+                                       EFI_PROGRESS_CODE,
+                                       EFI_PERIPHERAL_MOUSE | EFI_P_MOUSE_PC_SELF_TEST,
+                                       DevicePath
+                                       );
 
   Data = IoRead8 (KBC_CMD_STS_PORT);
   //
@@ -266,61 +269,63 @@ PS2MouseDriverStart (
   KbcEnableAux ();
 
   REPORT_STATUS_CODE_WITH_DEVICE_PATH (
-    EFI_PROGRESS_CODE,
-    EFI_PERIPHERAL_MOUSE | EFI_P_PC_PRESENCE_DETECT,
-    DevicePath
-    );
+                                       EFI_PROGRESS_CODE,
+                                       EFI_PERIPHERAL_MOUSE | EFI_P_PC_PRESENCE_DETECT,
+                                       DevicePath
+                                       );
 
   //
   // Reset the mouse
   //
   Status = MouseDev->SimplePointerProtocol.Reset (
-                     &MouseDev->SimplePointerProtocol,
-                     FeaturePcdGet (PcdPs2MouseExtendedVerification)
-                     );
+                                                  &MouseDev->SimplePointerProtocol,
+                                                  FeaturePcdGet (PcdPs2MouseExtendedVerification)
+                                                  );
   if (EFI_ERROR (Status)) {
     //
     // mouse not connected
     //
-    Status      = EFI_SUCCESS;
-    StatusCode  = EFI_PERIPHERAL_MOUSE | EFI_P_EC_NOT_DETECTED;
+    Status     = EFI_SUCCESS;
+    StatusCode = EFI_PERIPHERAL_MOUSE | EFI_P_EC_NOT_DETECTED;
     goto ErrorExit;
   }
 
   REPORT_STATUS_CODE_WITH_DEVICE_PATH (
-    EFI_PROGRESS_CODE,
-    EFI_PERIPHERAL_MOUSE | EFI_P_PC_DETECTED,
-    DevicePath
-    );
+                                       EFI_PROGRESS_CODE,
+                                       EFI_PERIPHERAL_MOUSE | EFI_P_PC_DETECTED,
+                                       DevicePath
+                                       );
 
   //
   // Setup the WaitForKey event
   //
   Status = gBS->CreateEvent (
-                  EVT_NOTIFY_WAIT,
-                  TPL_NOTIFY,
-                  MouseWaitForInput,
-                  MouseDev,
-                  &((MouseDev->SimplePointerProtocol).WaitForInput)
-                  );
+                             EVT_NOTIFY_WAIT,
+                             TPL_NOTIFY,
+                             MouseWaitForInput,
+                             MouseDev,
+                             &((MouseDev->SimplePointerProtocol).WaitForInput)
+                             );
   if (EFI_ERROR (Status)) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ErrorExit;
   }
+
   //
   // Setup a periodic timer, used to poll mouse state
   //
   Status = gBS->CreateEvent (
-                  EVT_TIMER | EVT_NOTIFY_SIGNAL,
-                  TPL_NOTIFY,
-                  PollMouse,
-                  MouseDev,
-                  &MouseDev->TimerEvent
-                  );
+                             EVT_TIMER | EVT_NOTIFY_SIGNAL,
+                             TPL_NOTIFY,
+                             PollMouse,
+                             MouseDev,
+                             &MouseDev->TimerEvent
+                             );
   if (EFI_ERROR (Status)) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ErrorExit;
   }
+
   //
   // Start timer to poll mouse (100 samples per second)
   //
@@ -332,30 +337,29 @@ PS2MouseDriverStart (
 
   MouseDev->ControllerNameTable = NULL;
   AddUnicodeString2 (
-    "eng",
-    gPs2MouseComponentName.SupportedLanguages,
-    &MouseDev->ControllerNameTable,
-    L"PS/2 Mouse Device",
-    TRUE
-    );
+                     "eng",
+                     gPs2MouseComponentName.SupportedLanguages,
+                     &MouseDev->ControllerNameTable,
+                     L"PS/2 Mouse Device",
+                     TRUE
+                     );
   AddUnicodeString2 (
-    "en",
-    gPs2MouseComponentName2.SupportedLanguages,
-    &MouseDev->ControllerNameTable,
-    L"PS/2 Mouse Device",
-    FALSE
-    );
-
+                     "en",
+                     gPs2MouseComponentName2.SupportedLanguages,
+                     &MouseDev->ControllerNameTable,
+                     L"PS/2 Mouse Device",
+                     FALSE
+                     );
 
   //
   // Install protocol interfaces for the mouse device.
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &Controller,
-                  &gEfiSimplePointerProtocolGuid,
-                  &MouseDev->SimplePointerProtocol,
-                  NULL
-                  );
+                                                   &Controller,
+                                                   &gEfiSimplePointerProtocolGuid,
+                                                   &MouseDev->SimplePointerProtocol,
+                                                   NULL
+                                                   );
   if (EFI_ERROR (Status)) {
     goto ErrorExit;
   }
@@ -372,18 +376,18 @@ ErrorExit:
 
   if (StatusCode != 0) {
     REPORT_STATUS_CODE_WITH_DEVICE_PATH (
-      EFI_ERROR_CODE | EFI_ERROR_MINOR,
-      StatusCode,
-      DevicePath
-      );
+                                         EFI_ERROR_CODE | EFI_ERROR_MINOR,
+                                         StatusCode,
+                                         DevicePath
+                                         );
   }
 
   if ((MouseDev != NULL) && (MouseDev->SimplePointerProtocol.WaitForInput != NULL)) {
-    gBS->CloseEvent (MouseDev->SimplePointerProtocol.WaitForInput);
+  gBS->CloseEvent (MouseDev->SimplePointerProtocol.WaitForInput);
   }
 
   if ((MouseDev != NULL) && (MouseDev->TimerEvent != NULL)) {
-    gBS->CloseEvent (MouseDev->TimerEvent);
+  gBS->CloseEvent (MouseDev->TimerEvent);
   }
 
   if ((MouseDev != NULL) && (MouseDev->ControllerNameTable != NULL)) {
@@ -406,18 +410,18 @@ ErrorExit:
   }
 
   gBS->CloseProtocol (
-         Controller,
-         &gEfiDevicePathProtocolGuid,
-         This->DriverBindingHandle,
-         Controller
-         );
+                      Controller,
+                      &gEfiDevicePathProtocolGuid,
+                      This->DriverBindingHandle,
+                      Controller
+                      );
 
   gBS->CloseProtocol (
-         Controller,
-         &gEfiSioProtocolGuid,
-         This->DriverBindingHandle,
-         Controller
-         );
+                      Controller,
+                      &gEfiSioProtocolGuid,
+                      This->DriverBindingHandle,
+                      Controller
+                      );
 
   gBS->RestoreTPL (OldTpl);
 
@@ -447,19 +451,19 @@ PS2MouseDriverStop (
   IN EFI_HANDLE                     *ChildHandleBuffer
   )
 {
-  EFI_STATUS                  Status;
-  EFI_SIMPLE_POINTER_PROTOCOL *SimplePointerProtocol;
-  PS2_MOUSE_DEV               *MouseDev;
-  UINT8                       Data;
+  EFI_STATUS                   Status;
+  EFI_SIMPLE_POINTER_PROTOCOL  *SimplePointerProtocol;
+  PS2_MOUSE_DEV                *MouseDev;
+  UINT8                        Data;
 
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiSimplePointerProtocolGuid,
-                  (VOID **) &SimplePointerProtocol,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              Controller,
+                              &gEfiSimplePointerProtocolGuid,
+                              (VOID **) &SimplePointerProtocol,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return EFI_SUCCESS;
   }
@@ -470,16 +474,16 @@ PS2MouseDriverStop (
   // Report that the keyboard is being disabled
   //
   REPORT_STATUS_CODE_WITH_DEVICE_PATH (
-    EFI_PROGRESS_CODE,
-    EFI_PERIPHERAL_MOUSE | EFI_P_PC_DISABLE,
-    MouseDev->DevicePath
-    );
+                                       EFI_PROGRESS_CODE,
+                                       EFI_PERIPHERAL_MOUSE | EFI_P_PC_DISABLE,
+                                       MouseDev->DevicePath
+                                       );
 
   Status = gBS->UninstallProtocolInterface (
-                  Controller,
-                  &gEfiSimplePointerProtocolGuid,
-                  &MouseDev->SimplePointerProtocol
-                  );
+                                            Controller,
+                                            &gEfiSimplePointerProtocolGuid,
+                                            &MouseDev->SimplePointerProtocol
+                                            );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -504,18 +508,18 @@ PS2MouseDriverStop (
   FreePool (MouseDev);
 
   gBS->CloseProtocol (
-         Controller,
-         &gEfiDevicePathProtocolGuid,
-         This->DriverBindingHandle,
-         Controller
-         );
+                      Controller,
+                      &gEfiDevicePathProtocolGuid,
+                      This->DriverBindingHandle,
+                      Controller
+                      );
 
   gBS->CloseProtocol (
-         Controller,
-         &gEfiSioProtocolGuid,
-         This->DriverBindingHandle,
-         Controller
-         );
+                      Controller,
+                      &gEfiSioProtocolGuid,
+                      This->DriverBindingHandle,
+                      Controller
+                      );
 
   return EFI_SUCCESS;
 }
@@ -539,11 +543,11 @@ MouseReset (
   IN BOOLEAN                        ExtendedVerification
   )
 {
-  EFI_STATUS    Status;
-  PS2_MOUSE_DEV *MouseDev;
-  EFI_TPL       OldTpl;
-  BOOLEAN       KeyboardEnable;
-  UINT8         Data;
+  EFI_STATUS     Status;
+  PS2_MOUSE_DEV  *MouseDev;
+  EFI_TPL        OldTpl;
+  BOOLEAN        KeyboardEnable;
+  UINT8          Data;
 
   MouseDev = PS2_MOUSE_DEV_FROM_THIS (This);
 
@@ -551,10 +555,10 @@ MouseReset (
   // Report reset progress code
   //
   REPORT_STATUS_CODE_WITH_DEVICE_PATH (
-    EFI_PROGRESS_CODE,
-    EFI_PERIPHERAL_MOUSE | EFI_P_PC_RESET,
-    MouseDev->DevicePath
-    );
+                                       EFI_PROGRESS_CODE,
+                                       EFI_PERIPHERAL_MOUSE | EFI_P_PC_RESET,
+                                       MouseDev->DevicePath
+                                       );
 
   KeyboardEnable = FALSE;
 
@@ -587,9 +591,12 @@ MouseReset (
 
   Status = EFI_SUCCESS;
   //
-  // The PS2 mouse driver reset behavior is always successfully return no matter whether or not there is mouse connected to system.
-  // This behavior is needed by performance speed. The following mouse command only successfully finish when mouse device is
-  // connected to system, so if PS2 mouse device not connect to system or user not ask for, we skip the mouse configuration and enabling
+  // The PS2 mouse driver reset behavior is always successfully return no matter whether or not there is mouse connected
+  // to system.
+  // This behavior is needed by performance speed. The following mouse command only successfully finish when mouse
+  // device is
+  // connected to system, so if PS2 mouse device not connect to system or user not ask for, we skip the mouse
+  // configuration and enabling
   //
   if (ExtendedVerification && CheckMouseConnect (MouseDev)) {
     //
@@ -625,6 +632,7 @@ MouseReset (
       goto Exit;
     }
   }
+
 Exit:
   gBS->RestoreTPL (OldTpl);
 
@@ -650,7 +658,7 @@ CheckMouseConnect (
   )
 
 {
-  EFI_STATUS     Status;
+  EFI_STATUS  Status;
 
   Status = PS2MouseEnable ();
   if (!EFI_ERROR (Status)) {
@@ -677,8 +685,8 @@ MouseGetState (
   IN OUT EFI_SIMPLE_POINTER_STATE   *State
   )
 {
-  PS2_MOUSE_DEV *MouseDev;
-  EFI_TPL       OldTpl;
+  PS2_MOUSE_DEV  *MouseDev;
+  EFI_TPL        OldTpl;
 
   MouseDev = PS2_MOUSE_DEV_FROM_THIS (This);
 
@@ -699,7 +707,7 @@ MouseGetState (
   MouseDev->State.RelativeMovementX = 0;
   MouseDev->State.RelativeMovementY = 0;
   MouseDev->State.RelativeMovementZ = 0;
-  MouseDev->StateChanged            = FALSE;
+  MouseDev->StateChanged = FALSE;
   gBS->RestoreTPL (OldTpl);
 
   return EFI_SUCCESS;
@@ -721,7 +729,7 @@ MouseWaitForInput (
   IN  VOID                    *Context
   )
 {
-  PS2_MOUSE_DEV *MouseDev;
+  PS2_MOUSE_DEV  *MouseDev;
 
   MouseDev = (PS2_MOUSE_DEV *) Context;
 
@@ -730,9 +738,8 @@ MouseWaitForInput (
   // input from mouse, signal the event
   //
   if (MouseDev->StateChanged) {
-    gBS->SignalEvent (Event);
+  gBS->SignalEvent (Event);
   }
-
 }
 
 /**
@@ -751,7 +758,7 @@ PollMouse (
   )
 
 {
-  PS2_MOUSE_DEV *MouseDev;
+  PS2_MOUSE_DEV  *MouseDev;
 
   MouseDev = (PS2_MOUSE_DEV *) Context;
 
@@ -773,27 +780,25 @@ PollMouse (
 **/
 EFI_STATUS
 EFIAPI
-InitializePs2Mouse(
+InitializePs2Mouse (
   IN EFI_HANDLE           ImageHandle,
   IN EFI_SYSTEM_TABLE     *SystemTable
   )
 {
-  EFI_STATUS              Status;
+  EFI_STATUS  Status;
 
   //
   // Install driver model protocol(s).
   //
   Status = EfiLibInstallDriverBindingComponentName2 (
-             ImageHandle,
-             SystemTable,
-             &gPS2MouseDriver,
-             ImageHandle,
-             &gPs2MouseComponentName,
-             &gPs2MouseComponentName2
-             );
+                                                     ImageHandle,
+                                                     SystemTable,
+                                                     &gPS2MouseDriver,
+                                                     ImageHandle,
+                                                     &gPs2MouseComponentName,
+                                                     &gPs2MouseComponentName2
+                                                     );
   ASSERT_EFI_ERROR (Status);
-
 
   return Status;
 }
-

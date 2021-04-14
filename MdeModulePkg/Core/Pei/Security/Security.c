@@ -8,11 +8,10 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "PeiMain.h"
 
-
-EFI_PEI_NOTIFY_DESCRIPTOR mNotifyList = {
-   EFI_PEI_PPI_DESCRIPTOR_NOTIFY_DISPATCH | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST,
-   &gEfiPeiSecurity2PpiGuid,
-   SecurityPpiNotifyCallback
+EFI_PEI_NOTIFY_DESCRIPTOR  mNotifyList = {
+  EFI_PEI_PPI_DESCRIPTOR_NOTIFY_DISPATCH | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST,
+  &gEfiPeiSecurity2PpiGuid,
+  SecurityPpiNotifyCallback
 };
 
 /**
@@ -32,6 +31,7 @@ InitializeSecurityServices (
   if (OldCoreData == NULL) {
     PeiServicesNotifyPpi (&mNotifyList);
   }
+
   return;
 }
 
@@ -55,7 +55,7 @@ SecurityPpiNotifyCallback (
   IN VOID                       *Ppi
   )
 {
-  PEI_CORE_INSTANCE                       *PrivateData;
+  PEI_CORE_INSTANCE  *PrivateData;
 
   //
   // Get PEI Core private data
@@ -66,8 +66,9 @@ SecurityPpiNotifyCallback (
   // If there isn't a security PPI installed, use the one from notification
   //
   if (PrivateData->PrivateSecurityPpi == NULL) {
-    PrivateData->PrivateSecurityPpi = (EFI_PEI_SECURITY2_PPI *)Ppi;
+    PrivateData->PrivateSecurityPpi = (EFI_PEI_SECURITY2_PPI *) Ppi;
   }
+
   return EFI_SUCCESS;
 }
 
@@ -91,8 +92,8 @@ VerifyPeim (
   IN UINT32                 AuthenticationStatus
   )
 {
-  EFI_STATUS                      Status;
-  BOOLEAN                         DeferExecution;
+  EFI_STATUS  Status;
+  BOOLEAN     DeferExecution;
 
   Status = EFI_NOT_FOUND;
   if (PrivateData->PrivateSecurityPpi == NULL) {
@@ -109,20 +110,20 @@ VerifyPeim (
     // Check to see if the image is OK
     //
     Status = PrivateData->PrivateSecurityPpi->AuthenticationState (
-                                                (CONST EFI_PEI_SERVICES **) &PrivateData->Ps,
-                                                PrivateData->PrivateSecurityPpi,
-                                                AuthenticationStatus,
-                                                VolumeHandle,
-                                                FileHandle,
-                                                &DeferExecution
-                                                );
+                                                                   (CONST EFI_PEI_SERVICES **) &PrivateData->Ps,
+                                                                   PrivateData->PrivateSecurityPpi,
+                                                                   AuthenticationStatus,
+                                                                   VolumeHandle,
+                                                                   FileHandle,
+                                                                   &DeferExecution
+                                                                   );
     if (DeferExecution) {
       Status = EFI_SECURITY_VIOLATION;
     }
   }
+
   return Status;
 }
-
 
 /**
   Verify a Firmware volume.

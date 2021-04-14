@@ -46,15 +46,15 @@ typedef struct _EDKII_BOOT_LOGO2_PROTOCOL EDKII_BOOT_LOGO2_PROTOCOL;
                                  insufficient memory resources.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EDKII_SET_BOOT_LOGO2)(
-  IN EDKII_BOOT_LOGO2_PROTOCOL      *This,
-  IN EFI_GRAPHICS_OUTPUT_BLT_PIXEL  *BltBuffer       OPTIONAL,
-  IN UINTN                          DestinationX,
-  IN UINTN                          DestinationY,
-  IN UINTN                          Width,
-  IN UINTN                          Height
-  );
+                               IN EDKII_BOOT_LOGO2_PROTOCOL      *This,
+                               IN EFI_GRAPHICS_OUTPUT_BLT_PIXEL  *BltBuffer       OPTIONAL,
+                               IN UINTN                          DestinationX,
+                               IN UINTN                          DestinationY,
+                               IN UINTN                          Width,
+                               IN UINTN                          Height
+                               );
 
 /**
   Get the location of the boot logo on the screen.
@@ -81,19 +81,19 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER  Height is NULL.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EDKII_GET_BOOT_LOGO2)(
-  IN  EDKII_BOOT_LOGO2_PROTOCOL      *This,
-  OUT EFI_GRAPHICS_OUTPUT_BLT_PIXEL  **BltBuffer,
-  OUT UINTN                          *DestinationX,
-  OUT UINTN                          *DestinationY,
-  OUT UINTN                          *Width,
-  OUT UINTN                          *Height
-  );
+                               IN  EDKII_BOOT_LOGO2_PROTOCOL      *This,
+                               OUT EFI_GRAPHICS_OUTPUT_BLT_PIXEL  **BltBuffer,
+                               OUT UINTN                          *DestinationX,
+                               OUT UINTN                          *DestinationY,
+                               OUT UINTN                          *Width,
+                               OUT UINTN                          *Height
+                               );
 
 struct _EDKII_BOOT_LOGO2_PROTOCOL {
-  EDKII_SET_BOOT_LOGO2  SetBootLogo;
-  EDKII_GET_BOOT_LOGO2  GetBootLogo;
+  EDKII_SET_BOOT_LOGO2    SetBootLogo;
+  EDKII_GET_BOOT_LOGO2    GetBootLogo;
 };
 
 extern EFI_GUID  gEdkiiBootLogo2ProtocolGuid;

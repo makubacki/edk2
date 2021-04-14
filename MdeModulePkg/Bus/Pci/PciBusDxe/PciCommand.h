@@ -6,7 +6,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
-
 #ifndef _EFI_PCI_COMMAND_H_
 #define _EFI_PCI_COMMAND_H_
 
@@ -16,14 +15,14 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // They should be cleared at the beginning. The other registers
 // are owned by chipset, we should not touch them.
 //
-#define EFI_PCI_COMMAND_BITS_OWNED                          ( \
-                EFI_PCI_COMMAND_IO_SPACE                    | \
-                EFI_PCI_COMMAND_MEMORY_SPACE                | \
-                EFI_PCI_COMMAND_BUS_MASTER                  | \
-                EFI_PCI_COMMAND_MEMORY_WRITE_AND_INVALIDATE | \
-                EFI_PCI_COMMAND_VGA_PALETTE_SNOOP           | \
-                EFI_PCI_COMMAND_FAST_BACK_TO_BACK             \
-                )
+#define EFI_PCI_COMMAND_BITS_OWNED  ( \
+                                      EFI_PCI_COMMAND_IO_SPACE                    | \
+                                      EFI_PCI_COMMAND_MEMORY_SPACE                | \
+                                      EFI_PCI_COMMAND_BUS_MASTER                  | \
+                                      EFI_PCI_COMMAND_MEMORY_WRITE_AND_INVALIDATE | \
+                                      EFI_PCI_COMMAND_VGA_PALETTE_SNOOP           | \
+                                      EFI_PCI_COMMAND_FAST_BACK_TO_BACK             \
+                                      )
 
 //
 // The PCI Bridge Control register bits owned by PCI Bus driver.
@@ -31,12 +30,12 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // They should be cleared at the beginning. The other registers
 // are owned by chipset, we should not touch them.
 //
-#define EFI_PCI_BRIDGE_CONTROL_BITS_OWNED                   ( \
-                EFI_PCI_BRIDGE_CONTROL_ISA                  | \
-                EFI_PCI_BRIDGE_CONTROL_VGA                  | \
-                EFI_PCI_BRIDGE_CONTROL_VGA_16               | \
-                EFI_PCI_BRIDGE_CONTROL_FAST_BACK_TO_BACK      \
-                )
+#define EFI_PCI_BRIDGE_CONTROL_BITS_OWNED  ( \
+                                             EFI_PCI_BRIDGE_CONTROL_ISA                  | \
+                                             EFI_PCI_BRIDGE_CONTROL_VGA                  | \
+                                             EFI_PCI_BRIDGE_CONTROL_VGA_16               | \
+                                             EFI_PCI_BRIDGE_CONTROL_FAST_BACK_TO_BACK      \
+                                             )
 
 //
 // The PCCard Bridge Control register bits owned by PCI Bus driver.
@@ -44,12 +43,11 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // They should be cleared at the beginning. The other registers
 // are owned by chipset, we should not touch them.
 //
-#define EFI_PCCARD_BRIDGE_CONTROL_BITS_OWNED                ( \
-                EFI_PCI_BRIDGE_CONTROL_ISA                  | \
-                EFI_PCI_BRIDGE_CONTROL_VGA                  | \
-                EFI_PCI_BRIDGE_CONTROL_FAST_BACK_TO_BACK      \
-                )
-
+#define EFI_PCCARD_BRIDGE_CONTROL_BITS_OWNED  ( \
+                                                EFI_PCI_BRIDGE_CONTROL_ISA                  | \
+                                                EFI_PCI_BRIDGE_CONTROL_VGA                  | \
+                                                EFI_PCI_BRIDGE_CONTROL_FAST_BACK_TO_BACK      \
+                                                )
 
 #define EFI_GET_REGISTER      1
 #define EFI_SET_REGISTER      2
@@ -130,7 +128,7 @@ LocatePciExpressCapabilityRegBlock (
   IN     PCI_IO_DEVICE *PciIoDevice,
   IN     UINT16        CapId,
   IN OUT UINT32        *Offset,
-     OUT UINT32        *NextRegBlock OPTIONAL
+  OUT UINT32        *NextRegBlock OPTIONAL
   );
 
 /**
@@ -142,8 +140,8 @@ LocatePciExpressCapabilityRegBlock (
   @return status of PciIo operation
 
 **/
-#define PCI_READ_COMMAND_REGISTER(a,b) \
-        PciOperateRegister (a, 0, PCI_COMMAND_OFFSET, EFI_GET_REGISTER, b)
+#define PCI_READ_COMMAND_REGISTER(a, b) \
+  PciOperateRegister (a, 0, PCI_COMMAND_OFFSET, EFI_GET_REGISTER, b)
 
 /**
   Macro that writes command register.
@@ -154,8 +152,8 @@ LocatePciExpressCapabilityRegBlock (
   @return status of PciIo operation
 
 **/
-#define PCI_SET_COMMAND_REGISTER(a,b) \
-        PciOperateRegister (a, b, PCI_COMMAND_OFFSET, EFI_SET_REGISTER, NULL)
+#define PCI_SET_COMMAND_REGISTER(a, b) \
+  PciOperateRegister (a, b, PCI_COMMAND_OFFSET, EFI_SET_REGISTER, NULL)
 
 /**
   Macro that enables command register.
@@ -166,8 +164,8 @@ LocatePciExpressCapabilityRegBlock (
   @return status of PciIo operation
 
 **/
-#define PCI_ENABLE_COMMAND_REGISTER(a,b) \
-        PciOperateRegister (a, b, PCI_COMMAND_OFFSET, EFI_ENABLE_REGISTER, NULL)
+#define PCI_ENABLE_COMMAND_REGISTER(a, b) \
+  PciOperateRegister (a, b, PCI_COMMAND_OFFSET, EFI_ENABLE_REGISTER, NULL)
 
 /**
   Macro that disables command register.
@@ -178,8 +176,8 @@ LocatePciExpressCapabilityRegBlock (
   @return status of PciIo operation
 
 **/
-#define PCI_DISABLE_COMMAND_REGISTER(a,b) \
-        PciOperateRegister (a, b, PCI_COMMAND_OFFSET, EFI_DISABLE_REGISTER, NULL)
+#define PCI_DISABLE_COMMAND_REGISTER(a, b) \
+  PciOperateRegister (a, b, PCI_COMMAND_OFFSET, EFI_DISABLE_REGISTER, NULL)
 
 /**
   Macro that reads PCI bridge control register.
@@ -190,8 +188,8 @@ LocatePciExpressCapabilityRegBlock (
   @return status of PciIo operation
 
 **/
-#define PCI_READ_BRIDGE_CONTROL_REGISTER(a,b) \
-        PciOperateRegister (a, 0, PCI_BRIDGE_CONTROL_REGISTER_OFFSET, EFI_GET_REGISTER, b)
+#define PCI_READ_BRIDGE_CONTROL_REGISTER(a, b) \
+  PciOperateRegister (a, 0, PCI_BRIDGE_CONTROL_REGISTER_OFFSET, EFI_GET_REGISTER, b)
 
 /**
   Macro that writes PCI bridge control register.
@@ -202,8 +200,8 @@ LocatePciExpressCapabilityRegBlock (
   @return status of PciIo operation
 
 **/
-#define PCI_SET_BRIDGE_CONTROL_REGISTER(a,b) \
-        PciOperateRegister (a, b, PCI_BRIDGE_CONTROL_REGISTER_OFFSET, EFI_SET_REGISTER, NULL)
+#define PCI_SET_BRIDGE_CONTROL_REGISTER(a, b) \
+  PciOperateRegister (a, b, PCI_BRIDGE_CONTROL_REGISTER_OFFSET, EFI_SET_REGISTER, NULL)
 
 /**
   Macro that enables PCI bridge control register.
@@ -214,8 +212,8 @@ LocatePciExpressCapabilityRegBlock (
   @return status of PciIo operation
 
 **/
-#define PCI_ENABLE_BRIDGE_CONTROL_REGISTER(a,b) \
-        PciOperateRegister (a, b, PCI_BRIDGE_CONTROL_REGISTER_OFFSET, EFI_ENABLE_REGISTER, NULL)
+#define PCI_ENABLE_BRIDGE_CONTROL_REGISTER(a, b) \
+  PciOperateRegister (a, b, PCI_BRIDGE_CONTROL_REGISTER_OFFSET, EFI_ENABLE_REGISTER, NULL)
 
 /**
  Macro that disables PCI bridge control register.
@@ -226,7 +224,7 @@ LocatePciExpressCapabilityRegBlock (
   @return status of PciIo operation
 
 **/
-#define PCI_DISABLE_BRIDGE_CONTROL_REGISTER(a,b) \
-        PciOperateRegister (a, b, PCI_BRIDGE_CONTROL_REGISTER_OFFSET, EFI_DISABLE_REGISTER, NULL)
+#define PCI_DISABLE_BRIDGE_CONTROL_REGISTER(a, b) \
+  PciOperateRegister (a, b, PCI_BRIDGE_CONTROL_REGISTER_OFFSET, EFI_DISABLE_REGISTER, NULL)
 
 #endif

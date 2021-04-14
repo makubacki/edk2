@@ -17,7 +17,7 @@
 //
 #define EDKII_DEBUG_PPI_GUID \
   { \
-    0x999e699c, 0xb013, 0x475e, {0xb1, 0x7b, 0xf3, 0xa8, 0xae, 0x5c, 0x48, 0x75} \
+    0x999e699c, 0xb013, 0x475e, { 0xb1, 0x7b, 0xf3, 0xa8, 0xae, 0x5c, 0x48, 0x75 } \
   }
 
 ///
@@ -35,12 +35,12 @@ typedef struct _EDKII_DEBUG_PPI EDKII_DEBUG_PPI;
 
 **/
 typedef
-VOID
+  VOID
 (EFIAPI *EDKII_DEBUG_BPRINT)(
-  IN UINTN                          ErrorLevel,
-  IN CONST CHAR8                    *Format,
-  IN BASE_LIST                      Marker
-  );
+                             IN UINTN                          ErrorLevel,
+                             IN CONST CHAR8                    *Format,
+                             IN BASE_LIST                      Marker
+                             );
 
 /**
   Print an assert message containing a filename, line number, and description.
@@ -54,22 +54,21 @@ VOID
 
 **/
 typedef
-VOID
+  VOID
 (EFIAPI *EDKII_DEBUG_ASSERT)(
-  IN CONST CHAR8                    *FileName,
-  IN UINTN                          LineNumber,
-  IN CONST CHAR8                    *Description
-  );
+                             IN CONST CHAR8                    *FileName,
+                             IN UINTN                          LineNumber,
+                             IN CONST CHAR8                    *Description
+                             );
 
 ///
 /// This PPI contains a set of services to print message to debug output device
 ///
 struct _EDKII_DEBUG_PPI {
-  EDKII_DEBUG_BPRINT                DebugBPrint;
-  EDKII_DEBUG_ASSERT                DebugAssert;
+  EDKII_DEBUG_BPRINT    DebugBPrint;
+  EDKII_DEBUG_ASSERT    DebugAssert;
 };
 
-extern EFI_GUID gEdkiiDebugPpiGuid;
+extern EFI_GUID  gEdkiiDebugPpiGuid;
 
 #endif
-

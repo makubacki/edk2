@@ -12,7 +12,7 @@
 ///
 /// EFI_DRIVER_BINDING_PROTOCOL instance
 ///
-EFI_DRIVER_BINDING_PROTOCOL gSataControllerDriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  gSataControllerDriverBinding = {
   SataControllerSupported,
   SataControllerStart,
   SataControllerStop,
@@ -37,20 +37,20 @@ AhciReadReg (
   IN UINT32                 Offset
   )
 {
-  UINT32    Data;
+  UINT32  Data;
 
   ASSERT (PciIo != NULL);
 
   Data = 0;
 
   PciIo->Mem.Read (
-               PciIo,
-               EfiPciIoWidthUint32,
-               AHCI_BAR_INDEX,
-               (UINT64) Offset,
-               1,
-               &Data
-               );
+                   PciIo,
+                   EfiPciIoWidthUint32,
+                   AHCI_BAR_INDEX,
+                   (UINT64) Offset,
+                   1,
+                   &Data
+                   );
 
   return Data;
 }
@@ -73,11 +73,11 @@ CalculateBestPioMode (
   OUT UINT16            *SelectedMode
   )
 {
-  UINT16    PioMode;
-  UINT16    AdvancedPioMode;
-  UINT16    Temp;
-  UINT16    Index;
-  UINT16    MinimumPioCycleTime;
+  UINT16  PioMode;
+  UINT16  AdvancedPioMode;
+  UINT16  Temp;
+  UINT16  Index;
+  UINT16  MinimumPioCycleTime;
 
   Temp = 0xff;
 
@@ -87,7 +87,6 @@ CalculateBestPioMode (
   // See whether Identify Data word 64 - 70 are valid
   //
   if ((IdentifyData->AtaData.field_validity & 0x02) == 0x02) {
-
     AdvancedPioMode = IdentifyData->AtaData.advanced_pio_modes;
     DEBUG ((EFI_D_INFO, "CalculateBestPioMode: AdvancedPioMode = %x\n", AdvancedPioMode));
 
@@ -145,7 +144,6 @@ CalculateBestPioMode (
     } else {
       *SelectedMode = PioMode;  // ATA_PIO_MODE_2 to ATA_PIO_MODE_4;
     }
-
   } else {
     //
     // Identify Data word 64 - 70 are not valid
@@ -166,7 +164,6 @@ CalculateBestPioMode (
     } else {
       *SelectedMode = 2;        // ATA_PIO_MODE_2;
     }
-
   }
 
   return EFI_SUCCESS;
@@ -190,8 +187,8 @@ CalculateBestUdmaMode (
   OUT UINT16            *SelectedMode
   )
 {
-  UINT16    TempMode;
-  UINT16    DeviceUDmaMode;
+  UINT16  TempMode;
+  UINT16  DeviceUDmaMode;
 
   DeviceUDmaMode = 0;
 
@@ -250,19 +247,19 @@ InitializeSataControllerDriver (
   IN EFI_SYSTEM_TABLE   *SystemTable
   )
 {
-  EFI_STATUS    Status;
+  EFI_STATUS  Status;
 
   //
   // Install driver model protocol(s).
   //
   Status = EfiLibInstallDriverBindingComponentName2 (
-             ImageHandle,
-             SystemTable,
-             &gSataControllerDriverBinding,
-             ImageHandle,
-             &gSataControllerComponentName,
-             &gSataControllerComponentName2
-             );
+                                                     ImageHandle,
+                                                     SystemTable,
+                                                     &gSataControllerDriverBinding,
+                                                     ImageHandle,
+                                                     &gSataControllerComponentName,
+                                                     &gSataControllerComponentName2
+                                                     );
   ASSERT_EFI_ERROR (Status);
 
   return Status;
@@ -290,21 +287,21 @@ SataControllerSupported (
   IN EFI_DEVICE_PATH_PROTOCOL       *RemainingDevicePath
   )
 {
-  EFI_STATUS            Status;
-  EFI_PCI_IO_PROTOCOL   *PciIo;
-  PCI_TYPE00            PciData;
+  EFI_STATUS           Status;
+  EFI_PCI_IO_PROTOCOL  *PciIo;
+  PCI_TYPE00           PciData;
 
   //
   // Attempt to open PCI I/O Protocol
   //
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiPciIoProtocolGuid,
-                  (VOID **) &PciIo,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              Controller,
+                              &gEfiPciIoProtocolGuid,
+                              (VOID **) &PciIo,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -314,12 +311,12 @@ SataControllerSupported (
   // Sub Class (offset 0x0A). This controller should be an SATA controller
   //
   Status = PciIo->Pci.Read (
-                        PciIo,
-                        EfiPciIoWidthUint8,
-                        PCI_CLASSCODE_OFFSET,
-                        sizeof (PciData.Hdr.ClassCode),
-                        PciData.Hdr.ClassCode
-                        );
+                            PciIo,
+                            EfiPciIoWidthUint8,
+                            PCI_CLASSCODE_OFFSET,
+                            sizeof (PciData.Hdr.ClassCode),
+                            PciData.Hdr.ClassCode
+                            );
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
@@ -370,13 +367,13 @@ SataControllerStart (
   // Now test and open PCI I/O Protocol
   //
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiPciIoProtocolGuid,
-                  (VOID **) &PciIo,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              Controller,
+                              &gEfiPciIoProtocolGuid,
+                              (VOID **) &PciIo,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "SataControllerStart error. return status = %r\n", Status));
     return Status;
@@ -401,48 +398,50 @@ SataControllerStart (
   Private->IdeInit.SubmitData     = IdeInitSubmitData;
   Private->IdeInit.DisqualifyMode = IdeInitDisqualifyMode;
   Private->IdeInit.CalculateMode  = IdeInitCalculateMode;
-  Private->IdeInit.SetTiming      = IdeInitSetTiming;
-  Private->IdeInit.EnumAll        = SATA_ENUMER_ALL;
-  Private->PciAttributesChanged   = FALSE;
+  Private->IdeInit.SetTiming    = IdeInitSetTiming;
+  Private->IdeInit.EnumAll      = SATA_ENUMER_ALL;
+  Private->PciAttributesChanged = FALSE;
 
   //
   // Save original PCI attributes
   //
   Status = PciIo->Attributes (
-                    PciIo,
-                    EfiPciIoAttributeOperationGet,
-                    0,
-                    &Private->OriginalPciAttributes
-                    );
+                              PciIo,
+                              EfiPciIoAttributeOperationGet,
+                              0,
+                              &Private->OriginalPciAttributes
+                              );
   if (EFI_ERROR (Status)) {
-      goto Done;
+    goto Done;
   }
 
-  DEBUG ((
-    EFI_D_INFO,
-    "Original PCI Attributes = 0x%llx\n",
-    Private->OriginalPciAttributes
-    ));
+  DEBUG (
+         (
+          EFI_D_INFO,
+          "Original PCI Attributes = 0x%llx\n",
+          Private->OriginalPciAttributes
+         )
+         );
 
   Status = PciIo->Attributes (
-                    PciIo,
-                    EfiPciIoAttributeOperationSupported,
-                    0,
-                    &Supports
-                    );
+                              PciIo,
+                              EfiPciIoAttributeOperationSupported,
+                              0,
+                              &Supports
+                              );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
 
   DEBUG ((EFI_D_INFO, "Supported PCI Attributes = 0x%llx\n", Supports));
 
-  Supports &= (UINT64)EFI_PCI_DEVICE_ENABLE;
-  Status = PciIo->Attributes (
-                      PciIo,
-                      EfiPciIoAttributeOperationEnable,
-                      Supports,
-                      NULL
-                      );
+  Supports &= (UINT64) EFI_PCI_DEVICE_ENABLE;
+  Status    = PciIo->Attributes (
+                                 PciIo,
+                                 EfiPciIoAttributeOperationEnable,
+                                 Supports,
+                                 NULL
+                                 );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
@@ -451,12 +450,12 @@ SataControllerStart (
   Private->PciAttributesChanged = TRUE;
 
   Status = PciIo->Pci.Read (
-                        PciIo,
-                        EfiPciIoWidthUint8,
-                        PCI_CLASSCODE_OFFSET,
-                        sizeof (PciData.Hdr.ClassCode),
-                        PciData.Hdr.ClassCode
-                        );
+                            PciIo,
+                            EfiPciIoWidthUint8,
+                            PCI_CLASSCODE_OFFSET,
+                            sizeof (PciData.Hdr.ClassCode),
+                            PciData.Hdr.ClassCode
+                            );
   if (EFI_ERROR (Status)) {
     ASSERT (FALSE);
     goto Done;
@@ -464,7 +463,7 @@ SataControllerStart (
 
   if (IS_PCI_IDE (&PciData)) {
     Private->IdeInit.ChannelCount = IDE_MAX_CHANNEL;
-    Private->DeviceCount          = IDE_MAX_DEVICES;
+    Private->DeviceCount = IDE_MAX_DEVICES;
   } else if (IS_PCI_SATADPA (&PciData)) {
     //
     // Read Ports Implemented(PI) to calculate max port number (0 based).
@@ -475,13 +474,16 @@ SataControllerStart (
       Status = EFI_UNSUPPORTED;
       goto Done;
     }
+
     MaxPortNumber = 31;
     while (MaxPortNumber > 0) {
-      if ((Data32 & ((UINT32)1 << MaxPortNumber)) != 0) {
+      if ((Data32 & ((UINT32) 1 << MaxPortNumber)) != 0) {
         break;
       }
+
       MaxPortNumber--;
     }
+
     //
     // Make the ChannelCount equal to the max port number (0 based) plus 1.
     //
@@ -492,7 +494,7 @@ SataControllerStart (
     //
     Data32 = AhciReadReg (PciIo, R_AHCI_CAP);
     DEBUG ((DEBUG_INFO, "HBA Capabilities(CAP) = 0x%x\n", Data32));
-    Private->DeviceCount          = AHCI_MAX_DEVICES;
+    Private->DeviceCount = AHCI_MAX_DEVICES;
     if ((Data32 & B_AHCI_CAP_SPM) == B_AHCI_CAP_SPM) {
       Private->DeviceCount = AHCI_MULTI_MAX_DEVICES;
     }
@@ -521,42 +523,45 @@ SataControllerStart (
   // Install IDE Controller Init Protocol to this instance
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &Controller,
-                  &gEfiIdeControllerInitProtocolGuid,
-                  &(Private->IdeInit),
-                  NULL
-                  );
+                                                   &Controller,
+                                                   &gEfiIdeControllerInitProtocolGuid,
+                                                   &(Private->IdeInit),
+                                                   NULL
+                                                   );
 
 Done:
   if (EFI_ERROR (Status)) {
-
-    gBS->CloseProtocol (
-          Controller,
-          &gEfiPciIoProtocolGuid,
-          This->DriverBindingHandle,
-          Controller
-          );
+  gBS->CloseProtocol (
+                      Controller,
+                      &gEfiPciIoProtocolGuid,
+                      This->DriverBindingHandle,
+                      Controller
+                      );
     if (Private != NULL) {
       if (Private->DisqualifiedModes != NULL) {
         FreePool (Private->DisqualifiedModes);
       }
+
       if (Private->IdentifyData != NULL) {
         FreePool (Private->IdentifyData);
       }
+
       if (Private->IdentifyValid != NULL) {
         FreePool (Private->IdentifyValid);
       }
+
       if (Private->PciAttributesChanged) {
         //
         // Restore original PCI attributes
         //
         PciIo->Attributes (
-                 PciIo,
-                 EfiPciIoAttributeOperationSet,
-                 Private->OriginalPciAttributes,
-                 NULL
-                 );
+                           PciIo,
+                           EfiPciIoAttributeOperationSet,
+                           Private->OriginalPciAttributes,
+                           NULL
+                           );
       }
+
       FreePool (Private);
     }
   }
@@ -595,13 +600,13 @@ SataControllerStop (
   // Open the produced protocol
   //
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiIdeControllerInitProtocolGuid,
-                  (VOID **) &IdeInit,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              Controller,
+                              &gEfiIdeControllerInitProtocolGuid,
+                              (VOID **) &IdeInit,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
@@ -613,11 +618,11 @@ SataControllerStop (
   // Uninstall the IDE Controller Init Protocol from this instance
   //
   Status = gBS->UninstallMultipleProtocolInterfaces (
-                  Controller,
-                  &gEfiIdeControllerInitProtocolGuid,
-                  &(Private->IdeInit),
-                  NULL
-                  );
+                                                     Controller,
+                                                     &gEfiIdeControllerInitProtocolGuid,
+                                                     &(Private->IdeInit),
+                                                     NULL
+                                                     );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -626,23 +631,27 @@ SataControllerStop (
     if (Private->DisqualifiedModes != NULL) {
       FreePool (Private->DisqualifiedModes);
     }
+
     if (Private->IdentifyData != NULL) {
       FreePool (Private->IdentifyData);
     }
+
     if (Private->IdentifyValid != NULL) {
       FreePool (Private->IdentifyValid);
     }
+
     if (Private->PciAttributesChanged) {
       //
       // Restore original PCI attributes
       //
       Private->PciIo->Attributes (
-                        Private->PciIo,
-                        EfiPciIoAttributeOperationSet,
-                        Private->OriginalPciAttributes,
-                        NULL
-                        );
+                                  Private->PciIo,
+                                  EfiPciIoAttributeOperationSet,
+                                  Private->OriginalPciAttributes,
+                                  NULL
+                                  );
     }
+
     FreePool (Private);
   }
 
@@ -650,11 +659,11 @@ SataControllerStop (
   // Close protocols opened by Sata Controller driver
   //
   return gBS->CloseProtocol (
-                Controller,
-                &gEfiPciIoProtocolGuid,
-                This->DriverBindingHandle,
-                Controller
-                );
+                             Controller,
+                             &gEfiPciIoProtocolGuid,
+                             This->DriverBindingHandle,
+                             Controller
+                             );
 }
 
 /**
@@ -691,6 +700,7 @@ FlatDeviceIndex (
 //
 // Interface functions of IDE_CONTROLLER_INIT protocol
 //
+
 /**
   Returns the information about the specified IDE channel.
 
@@ -737,11 +747,12 @@ IdeInitGetChannelInfo (
   )
 {
   EFI_SATA_CONTROLLER_PRIVATE_DATA  *Private;
+
   Private = SATA_CONTROLLER_PRIVATE_DATA_FROM_THIS (This);
   ASSERT (Private != NULL);
 
   if (Channel < This->ChannelCount) {
-    *Enabled = TRUE;
+    *Enabled    = TRUE;
     *MaxDevices = Private->DeviceCount;
     return EFI_SUCCESS;
   }
@@ -851,10 +862,10 @@ IdeInitSubmitData (
   //
   if (IdentifyData != NULL) {
     CopyMem (
-      &(Private->IdentifyData[DeviceIndex]),
-      IdentifyData,
-      sizeof (EFI_IDENTIFY_DATA)
-      );
+             &(Private->IdentifyData[DeviceIndex]),
+             IdentifyData,
+             sizeof (EFI_IDENTIFY_DATA)
+             );
 
     Private->IdentifyValid[DeviceIndex] = TRUE;
   } else {
@@ -930,10 +941,10 @@ IdeInitDisqualifyMode (
   // if a mode is not supported, the modes higher than it is also not supported.
   //
   CopyMem (
-    &(Private->DisqualifiedModes[DeviceIndex]),
-    BadModes,
-    sizeof (EFI_ATA_COLLECTIVE_MODE)
-    );
+           &(Private->DisqualifiedModes[DeviceIndex]),
+           BadModes,
+           sizeof (EFI_ATA_COLLECTIVE_MODE)
+           );
 
   return EFI_SUCCESS;
 }
@@ -1024,8 +1035,8 @@ IdeInitCalculateMode (
 
   DeviceIndex = FlatDeviceIndex (Private, Channel, Device);
 
-  IdentifyData = &(Private->IdentifyData[DeviceIndex]);
-  IdentifyValid = Private->IdentifyValid[DeviceIndex];
+  IdentifyData      = &(Private->IdentifyData[DeviceIndex]);
+  IdentifyValid     = Private->IdentifyValid[DeviceIndex];
   DisqualifiedModes = &(Private->DisqualifiedModes[DeviceIndex]);
 
   //
@@ -1037,32 +1048,34 @@ IdeInitCalculateMode (
   }
 
   Status = CalculateBestPioMode (
-            IdentifyData,
-            (DisqualifiedModes->PioMode.Valid ? ((UINT16 *) &(DisqualifiedModes->PioMode.Mode)) : NULL),
-            &SelectedMode
-            );
+                                 IdentifyData,
+                                 (DisqualifiedModes->PioMode.Valid ? ((UINT16 *) &(DisqualifiedModes->PioMode.Mode)) :
+                                  NULL),
+                                 &SelectedMode
+                                 );
   if (!EFI_ERROR (Status)) {
     (*SupportedModes)->PioMode.Valid = TRUE;
-    (*SupportedModes)->PioMode.Mode = SelectedMode;
-
+    (*SupportedModes)->PioMode.Mode  = SelectedMode;
   } else {
     (*SupportedModes)->PioMode.Valid = FALSE;
   }
+
   DEBUG ((EFI_D_INFO, "IdeInitCalculateMode: PioMode = %x\n", (*SupportedModes)->PioMode.Mode));
 
   Status = CalculateBestUdmaMode (
-            IdentifyData,
-            (DisqualifiedModes->UdmaMode.Valid ? ((UINT16 *) &(DisqualifiedModes->UdmaMode.Mode)) : NULL),
-            &SelectedMode
-            );
+                                  IdentifyData,
+                                  (DisqualifiedModes->UdmaMode.Valid ? ((UINT16 *) &(DisqualifiedModes->UdmaMode.Mode))
+  : NULL),
+                                  &SelectedMode
+                                  );
 
   if (!EFI_ERROR (Status)) {
     (*SupportedModes)->UdmaMode.Valid = TRUE;
     (*SupportedModes)->UdmaMode.Mode  = SelectedMode;
-
   } else {
     (*SupportedModes)->UdmaMode.Valid = FALSE;
   }
+
   DEBUG ((EFI_D_INFO, "IdeInitCalculateMode: UdmaMode = %x\n", (*SupportedModes)->UdmaMode.Mode));
 
   //
@@ -1105,4 +1118,3 @@ IdeInitSetTiming (
 {
   return EFI_SUCCESS;
 }
-

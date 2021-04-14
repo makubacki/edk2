@@ -27,34 +27,35 @@ NvmeMmioRead (
   IN     UINTN Size
   )
 {
-  UINTN    Offset;
-  UINT8    Data;
-  UINT8    *Ptr;
+  UINTN  Offset;
+  UINT8  Data;
+  UINT8  *Ptr;
 
   // priority has adjusted
   switch (Size) {
     case 4:
-      *((UINT32 *)MemBuffer) = MmioRead32 (MmioAddr);
+      *((UINT32 *) MemBuffer) = MmioRead32 (MmioAddr);
       break;
 
     case 8:
-      *((UINT64 *)MemBuffer) = MmioRead64 (MmioAddr);
+      *((UINT64 *) MemBuffer) = MmioRead64 (MmioAddr);
       break;
 
     case 2:
-      *((UINT16 *)MemBuffer) = MmioRead16 (MmioAddr);
+      *((UINT16 *) MemBuffer) = MmioRead16 (MmioAddr);
       break;
 
     case 1:
-      *((UINT8 *)MemBuffer) = MmioRead8 (MmioAddr);
+      *((UINT8 *) MemBuffer) = MmioRead8 (MmioAddr);
       break;
 
     default:
-      Ptr = (UINT8 *)MemBuffer;
+      Ptr = (UINT8 *) MemBuffer;
       for (Offset = 0; Offset < Size; Offset += 1) {
         Data = MmioRead8 (MmioAddr + Offset);
         Ptr[Offset] = Data;
       }
+
       break;
   }
 
@@ -78,34 +79,35 @@ NvmeMmioWrite (
   IN     UINTN Size
   )
 {
-  UINTN    Offset;
-  UINT8    Data;
-  UINT8    *Ptr;
+  UINTN  Offset;
+  UINT8  Data;
+  UINT8  *Ptr;
 
   // priority has adjusted
   switch (Size) {
     case 4:
-      MmioWrite32 (MmioAddr, *((UINT32 *)MemBuffer));
+      MmioWrite32 (MmioAddr, *((UINT32 *) MemBuffer));
       break;
 
     case 8:
-      MmioWrite64 (MmioAddr, *((UINT64 *)MemBuffer));
+      MmioWrite64 (MmioAddr, *((UINT64 *) MemBuffer));
       break;
 
     case 2:
-      MmioWrite16 (MmioAddr, *((UINT16 *)MemBuffer));
+      MmioWrite16 (MmioAddr, *((UINT16 *) MemBuffer));
       break;
 
     case 1:
-      MmioWrite8 (MmioAddr, *((UINT8 *)MemBuffer));
+      MmioWrite8 (MmioAddr, *((UINT8 *) MemBuffer));
       break;
 
     default:
-      Ptr = (UINT8 *)MemBuffer;
+      Ptr = (UINT8 *) MemBuffer;
       for (Offset = 0; Offset < Size; Offset += 1) {
         Data = Ptr[Offset];
         MmioWrite8 (MmioAddr + Offset, Data);
       }
+
       break;
   }
 
@@ -125,15 +127,15 @@ NvmeBaseMemPageOffset (
   IN UINTN              BaseMemIndex
   )
 {
-  UINT32                Pages;
-  UINTN                 Index;
-  UINT32                PageSizeList[5];
+  UINT32  Pages;
+  UINTN   Index;
+  UINT32  PageSizeList[5];
 
-  PageSizeList[0] = 1;  /* ASQ */
-  PageSizeList[1] = 1;  /* ACQ */
-  PageSizeList[2] = 1;  /* SQs */
-  PageSizeList[3] = 1;  /* CQs */
-  PageSizeList[4] = NVME_PRP_SIZE;  /* PRPs */
+  PageSizeList[0] = 1;             /* ASQ */
+  PageSizeList[1] = 1;             /* ACQ */
+  PageSizeList[2] = 1;             /* SQs */
+  PageSizeList[3] = 1;             /* CQs */
+  PageSizeList[4] = NVME_PRP_SIZE; /* PRPs */
 
   if (BaseMemIndex > MAX_BASEMEM_COUNT) {
     DEBUG ((DEBUG_ERROR, "%a: The input BaseMem index is invalid.\n", __FUNCTION__));
@@ -165,10 +167,10 @@ NvmeWaitController (
   IN BOOLEAN                             WaitReady
   )
 {
-  NVME_CSTS              Csts;
-  EFI_STATUS             Status;
-  UINT32                 Index;
-  UINT8                  Timeout;
+  NVME_CSTS   Csts;
+  EFI_STATUS  Status;
+  UINT32      Index;
+  UINT8       Timeout;
 
   //
   // Cap.To specifies max delay time in 500ms increments for Csts.Rdy to set after
@@ -188,7 +190,7 @@ NvmeWaitController (
     // Check if the controller is initialized
     //
     Status = NVME_GET_CSTS (Private, &Csts);
-    if (EFI_ERROR(Status)) {
+    if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_ERROR, "%a: NVME_GET_CSTS fail, Status - %r\n", __FUNCTION__, Status));
       return Status;
     }
@@ -219,9 +221,9 @@ NvmeDisableController (
   IN PEI_NVME_CONTROLLER_PRIVATE_DATA    *Private
   )
 {
-  NVME_CC       Cc;
-  NVME_CSTS     Csts;
-  EFI_STATUS    Status;
+  NVME_CC     Cc;
+  NVME_CSTS   Csts;
+  EFI_STATUS  Status;
 
   Status = NVME_GET_CSTS (Private, &Csts);
 
@@ -274,8 +276,8 @@ NvmeEnableController (
   IN PEI_NVME_CONTROLLER_PRIVATE_DATA    *Private
   )
 {
-  NVME_CC       Cc;
-  EFI_STATUS    Status;
+  NVME_CC     Cc;
+  EFI_STATUS  Status;
 
   //
   // Enable the controller
@@ -320,28 +322,28 @@ NvmeIdentifyController (
   IN VOID                                *Buffer
   )
 {
-  EFI_NVM_EXPRESS_PASS_THRU_COMMAND_PACKET    CommandPacket;
-  EFI_NVM_EXPRESS_COMMAND                     Command;
-  EFI_NVM_EXPRESS_COMPLETION                  Completion;
-  EFI_STATUS                                  Status;
+  EFI_NVM_EXPRESS_PASS_THRU_COMMAND_PACKET  CommandPacket;
+  EFI_NVM_EXPRESS_COMMAND                   Command;
+  EFI_NVM_EXPRESS_COMPLETION                Completion;
+  EFI_STATUS                                Status;
 
-  ZeroMem (&CommandPacket, sizeof(EFI_NVM_EXPRESS_PASS_THRU_COMMAND_PACKET));
-  ZeroMem (&Command, sizeof(EFI_NVM_EXPRESS_COMMAND));
-  ZeroMem (&Completion, sizeof(EFI_NVM_EXPRESS_COMPLETION));
+  ZeroMem (&CommandPacket, sizeof (EFI_NVM_EXPRESS_PASS_THRU_COMMAND_PACKET));
+  ZeroMem (&Command, sizeof (EFI_NVM_EXPRESS_COMMAND));
+  ZeroMem (&Completion, sizeof (EFI_NVM_EXPRESS_COMPLETION));
 
   Command.Cdw0.Opcode = NVME_ADMIN_IDENTIFY_CMD;
   //
   // According to Nvm Express 1.1 spec Figure 38, When not used, the field shall be cleared to 0h.
   // For the Identify command, the Namespace Identifier is only used for the Namespace Data structure.
   //
-  Command.Nsid        = 0;
+  Command.Nsid = 0;
 
-  CommandPacket.NvmeCmd        = &Command;
+  CommandPacket.NvmeCmd = &Command;
   CommandPacket.NvmeCompletion = &Completion;
   CommandPacket.TransferBuffer = Buffer;
   CommandPacket.TransferLength = sizeof (NVME_ADMIN_CONTROLLER_DATA);
   CommandPacket.CommandTimeout = NVME_GENERIC_TIMEOUT;
-  CommandPacket.QueueType      = NVME_ADMIN_QUEUE;
+  CommandPacket.QueueType = NVME_ADMIN_QUEUE;
   //
   // Set bit 0 (Cns bit) to 1 to identify the controller
   //
@@ -349,10 +351,10 @@ NvmeIdentifyController (
   CommandPacket.NvmeCmd->Flags = CDW10_VALID;
 
   Status = NvmePassThruExecute (
-             Private,
-             NVME_CONTROLLER_NSID,
-             &CommandPacket
-             );
+                                Private,
+                                NVME_CONTROLLER_NSID,
+                                &CommandPacket
+                                );
   return Status;
 }
 
@@ -374,24 +376,24 @@ NvmeIdentifyNamespace (
   IN VOID                                *Buffer
   )
 {
-  EFI_NVM_EXPRESS_PASS_THRU_COMMAND_PACKET    CommandPacket;
-  EFI_NVM_EXPRESS_COMMAND                     Command;
-  EFI_NVM_EXPRESS_COMPLETION                  Completion;
-  EFI_STATUS                                  Status;
+  EFI_NVM_EXPRESS_PASS_THRU_COMMAND_PACKET  CommandPacket;
+  EFI_NVM_EXPRESS_COMMAND                   Command;
+  EFI_NVM_EXPRESS_COMPLETION                Completion;
+  EFI_STATUS                                Status;
 
-  ZeroMem (&CommandPacket, sizeof(EFI_NVM_EXPRESS_PASS_THRU_COMMAND_PACKET));
-  ZeroMem (&Command, sizeof(EFI_NVM_EXPRESS_COMMAND));
-  ZeroMem (&Completion, sizeof(EFI_NVM_EXPRESS_COMPLETION));
+  ZeroMem (&CommandPacket, sizeof (EFI_NVM_EXPRESS_PASS_THRU_COMMAND_PACKET));
+  ZeroMem (&Command, sizeof (EFI_NVM_EXPRESS_COMMAND));
+  ZeroMem (&Completion, sizeof (EFI_NVM_EXPRESS_COMPLETION));
 
   Command.Cdw0.Opcode = NVME_ADMIN_IDENTIFY_CMD;
-  Command.Nsid        = NamespaceId;
+  Command.Nsid = NamespaceId;
 
-  CommandPacket.NvmeCmd        = &Command;
+  CommandPacket.NvmeCmd = &Command;
   CommandPacket.NvmeCompletion = &Completion;
   CommandPacket.TransferBuffer = Buffer;
   CommandPacket.TransferLength = sizeof (NVME_ADMIN_NAMESPACE_DATA);
   CommandPacket.CommandTimeout = NVME_GENERIC_TIMEOUT;
-  CommandPacket.QueueType      = NVME_ADMIN_QUEUE;
+  CommandPacket.QueueType = NVME_ADMIN_QUEUE;
   //
   // Set bit 0 (Cns bit) to 1 to identify a namespace
   //
@@ -399,10 +401,10 @@ NvmeIdentifyNamespace (
   CommandPacket.NvmeCmd->Flags = CDW10_VALID;
 
   Status = NvmePassThruExecute (
-             Private,
-             NamespaceId,
-             &CommandPacket
-             );
+                                Private,
+                                NamespaceId,
+                                &CommandPacket
+                                );
   return Status;
 }
 
@@ -417,8 +419,8 @@ NvmeDumpControllerData (
   IN NVME_ADMIN_CONTROLLER_DATA    *ControllerData
   )
 {
-  UINT8    Sn[21];
-  UINT8    Mn[41];
+  UINT8  Sn[21];
+  UINT8  Mn[41];
 
   CopyMem (Sn, ControllerData->Sn, sizeof (ControllerData->Sn));
   Sn[20] = 0;
@@ -428,11 +430,11 @@ NvmeDumpControllerData (
   DEBUG ((DEBUG_INFO, " == NVME IDENTIFY CONTROLLER DATA ==\n"));
   DEBUG ((DEBUG_INFO, "    PCI VID   : 0x%x\n", ControllerData->Vid));
   DEBUG ((DEBUG_INFO, "    PCI SSVID : 0x%x\n", ControllerData->Ssvid));
-  DEBUG ((DEBUG_INFO, "    SN        : %a\n",   Sn));
-  DEBUG ((DEBUG_INFO, "    MN        : %a\n",   Mn));
-  DEBUG ((DEBUG_INFO, "    FR        : 0x%lx\n", *((UINT64*)ControllerData->Fr)));
+  DEBUG ((DEBUG_INFO, "    SN        : %a\n", Sn));
+  DEBUG ((DEBUG_INFO, "    MN        : %a\n", Mn));
+  DEBUG ((DEBUG_INFO, "    FR        : 0x%lx\n", *((UINT64 *) ControllerData->Fr)));
   DEBUG ((DEBUG_INFO, "    RAB       : 0x%x\n", ControllerData->Rab));
-  DEBUG ((DEBUG_INFO, "    IEEE      : 0x%x\n", *(UINT32*)ControllerData->Ieee_oui));
+  DEBUG ((DEBUG_INFO, "    IEEE      : 0x%x\n", *(UINT32 *) ControllerData->Ieee_oui));
   DEBUG ((DEBUG_INFO, "    AERL      : 0x%x\n", ControllerData->Aerl));
   DEBUG ((DEBUG_INFO, "    SQES      : 0x%x\n", ControllerData->Sqes));
   DEBUG ((DEBUG_INFO, "    CQES      : 0x%x\n", ControllerData->Cqes));
@@ -454,25 +456,25 @@ NvmeCreateIoCompletionQueue (
   IN PEI_NVME_CONTROLLER_PRIVATE_DATA    *Private
   )
 {
-  EFI_NVM_EXPRESS_PASS_THRU_COMMAND_PACKET    CommandPacket;
-  EFI_NVM_EXPRESS_COMMAND                     Command;
-  EFI_NVM_EXPRESS_COMPLETION                  Completion;
-  EFI_STATUS                                  Status;
-  NVME_ADMIN_CRIOCQ                           CrIoCq;
+  EFI_NVM_EXPRESS_PASS_THRU_COMMAND_PACKET  CommandPacket;
+  EFI_NVM_EXPRESS_COMMAND                   Command;
+  EFI_NVM_EXPRESS_COMPLETION                Completion;
+  EFI_STATUS                                Status;
+  NVME_ADMIN_CRIOCQ                         CrIoCq;
 
-  ZeroMem (&CommandPacket, sizeof(EFI_NVM_EXPRESS_PASS_THRU_COMMAND_PACKET));
-  ZeroMem (&Command, sizeof(EFI_NVM_EXPRESS_COMMAND));
-  ZeroMem (&Completion, sizeof(EFI_NVM_EXPRESS_COMPLETION));
-  ZeroMem (&CrIoCq, sizeof(NVME_ADMIN_CRIOCQ));
+  ZeroMem (&CommandPacket, sizeof (EFI_NVM_EXPRESS_PASS_THRU_COMMAND_PACKET));
+  ZeroMem (&Command, sizeof (EFI_NVM_EXPRESS_COMMAND));
+  ZeroMem (&Completion, sizeof (EFI_NVM_EXPRESS_COMPLETION));
+  ZeroMem (&CrIoCq, sizeof (NVME_ADMIN_CRIOCQ));
 
-  CommandPacket.NvmeCmd        = &Command;
+  CommandPacket.NvmeCmd = &Command;
   CommandPacket.NvmeCompletion = &Completion;
 
   Command.Cdw0.Opcode = NVME_ADMIN_CRIOCQ_CMD;
   CommandPacket.TransferBuffer = Private->CqBuffer[NVME_IO_QUEUE];
   CommandPacket.TransferLength = EFI_PAGE_SIZE;
   CommandPacket.CommandTimeout = NVME_GENERIC_TIMEOUT;
-  CommandPacket.QueueType      = NVME_ADMIN_QUEUE;
+  CommandPacket.QueueType = NVME_ADMIN_QUEUE;
 
   CrIoCq.Qid   = NVME_IO_QUEUE;
   CrIoCq.Qsize = NVME_CCQ_SIZE;
@@ -481,10 +483,10 @@ NvmeCreateIoCompletionQueue (
   CommandPacket.NvmeCmd->Flags = CDW10_VALID | CDW11_VALID;
 
   Status = NvmePassThruExecute (
-             Private,
-             NVME_CONTROLLER_NSID,
-             &CommandPacket
-             );
+                                Private,
+                                NVME_CONTROLLER_NSID,
+                                &CommandPacket
+                                );
   return Status;
 }
 
@@ -502,25 +504,25 @@ NvmeCreateIoSubmissionQueue (
   IN PEI_NVME_CONTROLLER_PRIVATE_DATA    *Private
   )
 {
-  EFI_NVM_EXPRESS_PASS_THRU_COMMAND_PACKET    CommandPacket;
-  EFI_NVM_EXPRESS_COMMAND                     Command;
-  EFI_NVM_EXPRESS_COMPLETION                  Completion;
-  EFI_STATUS                                  Status;
-  NVME_ADMIN_CRIOSQ                           CrIoSq;
+  EFI_NVM_EXPRESS_PASS_THRU_COMMAND_PACKET  CommandPacket;
+  EFI_NVM_EXPRESS_COMMAND                   Command;
+  EFI_NVM_EXPRESS_COMPLETION                Completion;
+  EFI_STATUS                                Status;
+  NVME_ADMIN_CRIOSQ                         CrIoSq;
 
-  ZeroMem (&CommandPacket, sizeof(EFI_NVM_EXPRESS_PASS_THRU_COMMAND_PACKET));
-  ZeroMem (&Command, sizeof(EFI_NVM_EXPRESS_COMMAND));
-  ZeroMem (&Completion, sizeof(EFI_NVM_EXPRESS_COMPLETION));
-  ZeroMem (&CrIoSq, sizeof(NVME_ADMIN_CRIOSQ));
+  ZeroMem (&CommandPacket, sizeof (EFI_NVM_EXPRESS_PASS_THRU_COMMAND_PACKET));
+  ZeroMem (&Command, sizeof (EFI_NVM_EXPRESS_COMMAND));
+  ZeroMem (&Completion, sizeof (EFI_NVM_EXPRESS_COMPLETION));
+  ZeroMem (&CrIoSq, sizeof (NVME_ADMIN_CRIOSQ));
 
-  CommandPacket.NvmeCmd        = &Command;
+  CommandPacket.NvmeCmd = &Command;
   CommandPacket.NvmeCompletion = &Completion;
 
   Command.Cdw0.Opcode = NVME_ADMIN_CRIOSQ_CMD;
   CommandPacket.TransferBuffer = Private->SqBuffer[NVME_IO_QUEUE];
   CommandPacket.TransferLength = EFI_PAGE_SIZE;
   CommandPacket.CommandTimeout = NVME_GENERIC_TIMEOUT;
-  CommandPacket.QueueType      = NVME_ADMIN_QUEUE;
+  CommandPacket.QueueType = NVME_ADMIN_QUEUE;
 
   CrIoSq.Qid   = NVME_IO_QUEUE;
   CrIoSq.Qsize = NVME_CSQ_SIZE;
@@ -531,10 +533,10 @@ NvmeCreateIoSubmissionQueue (
   CommandPacket.NvmeCmd->Flags = CDW10_VALID | CDW11_VALID;
 
   Status = NvmePassThruExecute (
-             Private,
-             NVME_CONTROLLER_NSID,
-             &CommandPacket
-             );
+                                Private,
+                                NVME_CONTROLLER_NSID,
+                                &CommandPacket
+                                );
   return Status;
 }
 
@@ -552,12 +554,12 @@ NvmeControllerInit (
   IN PEI_NVME_CONTROLLER_PRIVATE_DATA    *Private
   )
 {
-  EFI_STATUS    Status;
-  UINTN         Index;
-  NVME_AQA      Aqa;
-  NVME_ASQ      Asq;
-  NVME_ACQ      Acq;
-  NVME_VER      Ver;
+  EFI_STATUS  Status;
+  UINTN       Index;
+  NVME_AQA    Aqa;
+  NVME_ASQ    Asq;
+  NVME_ACQ    Acq;
+  NVME_VER    Ver;
 
   //
   // Dump the NVME controller implementation version
@@ -586,9 +588,10 @@ NvmeControllerInit (
   for (Index = 0; Index < NVME_MAX_QUEUES; Index++) {
     Private->Pt[Index]  = 0;
     Private->Cid[Index] = 0;
-    ZeroMem ((VOID *)(UINTN)(&Private->SqTdbl[Index]), sizeof (NVME_SQTDBL));
-    ZeroMem ((VOID *)(UINTN)(&Private->CqHdbl[Index]), sizeof (NVME_CQHDBL));
+    ZeroMem ((VOID *) (UINTN) (&Private->SqTdbl[Index]), sizeof (NVME_SQTDBL));
+    ZeroMem ((VOID *) (UINTN) (&Private->CqHdbl[Index]), sizeof (NVME_CQHDBL));
   }
+
   ZeroMem (Private->Buffer, EFI_PAGE_SIZE * NVME_MEM_MAX_PAGES);
 
   //
@@ -611,16 +614,16 @@ NvmeControllerInit (
   //
   // Address of admin submission & completion queues
   //
-  Asq = (UINT64)(UINTN)(NVME_ASQ_BASE (Private) & ~0xFFF);
-  Acq = (UINT64)(UINTN)(NVME_ACQ_BASE (Private) & ~0xFFF);
+  Asq = (UINT64) (UINTN) (NVME_ASQ_BASE (Private) & ~0xFFF);
+  Acq = (UINT64) (UINTN) (NVME_ACQ_BASE (Private) & ~0xFFF);
 
   //
   // Address of I/O submission & completion queues
   //
-  Private->SqBuffer[0] = (NVME_SQ *)(UINTN)NVME_ASQ_BASE (Private);    // NVME_ADMIN_QUEUE
-  Private->CqBuffer[0] = (NVME_CQ *)(UINTN)NVME_ACQ_BASE (Private);    // NVME_ADMIN_QUEUE
-  Private->SqBuffer[1] = (NVME_SQ *)(UINTN)NVME_SQ_BASE (Private, 0);  // NVME_IO_QUEUE
-  Private->CqBuffer[1] = (NVME_CQ *)(UINTN)NVME_CQ_BASE (Private, 0);  // NVME_IO_QUEUE
+  Private->SqBuffer[0] = (NVME_SQ *) (UINTN) NVME_ASQ_BASE (Private);    // NVME_ADMIN_QUEUE
+  Private->CqBuffer[0] = (NVME_CQ *) (UINTN) NVME_ACQ_BASE (Private);    // NVME_ADMIN_QUEUE
+  Private->SqBuffer[1] = (NVME_SQ *) (UINTN) NVME_SQ_BASE (Private, 0);  // NVME_IO_QUEUE
+  Private->CqBuffer[1] = (NVME_CQ *) (UINTN) NVME_CQ_BASE (Private, 0);  // NVME_IO_QUEUE
   DEBUG ((DEBUG_INFO, "Admin Submission Queue Size (Aqa.Asqs) = [%08X]\n", Aqa.Asqs));
   DEBUG ((DEBUG_INFO, "Admin Completion Queue Size (Aqa.Acqs) = [%08X]\n", Aqa.Acqs));
   DEBUG ((DEBUG_INFO, "Admin Submission Queue (SqBuffer[0]) =   [%08X]\n", Private->SqBuffer[0]));
@@ -652,27 +655,31 @@ NvmeControllerInit (
   // Get the Identify Controller data
   //
   if (Private->ControllerData == NULL) {
-    Private->ControllerData = (NVME_ADMIN_CONTROLLER_DATA *)AllocateZeroPool (sizeof (NVME_ADMIN_CONTROLLER_DATA));
+    Private->ControllerData = (NVME_ADMIN_CONTROLLER_DATA *) AllocateZeroPool (sizeof (NVME_ADMIN_CONTROLLER_DATA));
     if (Private->ControllerData == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
   }
+
   Status = NvmeIdentifyController (Private, Private->ControllerData);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a: NvmeIdentifyController fail, Status - %r\n", __FUNCTION__, Status));
     return Status;
   }
+
   NvmeDumpControllerData (Private->ControllerData);
 
   //
   // Check the namespace number for storing the namespaces information
   //
   if (Private->ControllerData->Nn > MAX_UINT32 / sizeof (PEI_NVME_NAMESPACE_INFO)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "%a: Number of Namespaces field in Identify Controller data not supported by the driver.\n",
-      __FUNCTION__
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "%a: Number of Namespaces field in Identify Controller data not supported by the driver.\n",
+            __FUNCTION__
+           )
+           );
     return EFI_UNSUPPORTED;
   }
 
@@ -684,6 +691,7 @@ NvmeControllerInit (
     DEBUG ((DEBUG_ERROR, "%a: Create IO completion queue fail, Status - %r\n", __FUNCTION__, Status));
     return Status;
   }
+
   Status = NvmeCreateIoSubmissionQueue (Private);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a: Create IO submission queue fail, Status - %r\n", __FUNCTION__, Status));
@@ -707,10 +715,10 @@ NvmeFreeDmaResource (
 
   if (Private->BufferMapping != NULL) {
     IoMmuFreeBuffer (
-       NVME_MEM_MAX_PAGES,
-       Private->Buffer,
-       Private->BufferMapping
-       );
+                     NVME_MEM_MAX_PAGES,
+                     Private->Buffer,
+                     Private->BufferMapping
+                     );
   }
 
   return;

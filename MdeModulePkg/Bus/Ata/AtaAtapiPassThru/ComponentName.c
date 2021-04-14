@@ -11,22 +11,22 @@
 //
 // Driver name table
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mAtaAtapiPassThruDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mAtaAtapiPassThruDriverNameTable[] = {
   { "eng;en", L"AtaAtapiPassThru Driver" },
-  { NULL , NULL }
+  { NULL,     NULL                       }
 };
 
 //
 // Controller name table
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mAtaAtapiPassThruIdeControllerNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mAtaAtapiPassThruIdeControllerNameTable[] = {
   { "eng;en", L"IDE Controller" },
-  { NULL , NULL }
+  { NULL,     NULL              }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mAtaAtapiPassThruAhciControllerNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mAtaAtapiPassThruAhciControllerNameTable[] = {
   { "eng;en", L"AHCI Controller" },
-  { NULL , NULL }
+  { NULL,     NULL               }
 };
 
 //
@@ -41,7 +41,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gAtaAtapiPassThruComp
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL gAtaAtapiPassThruComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gAtaAtapiPassThruComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) AtaAtapiPassThruComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) AtaAtapiPassThruComponentNameGetControllerName,
   "en"
@@ -95,14 +95,13 @@ AtaAtapiPassThruComponentNameGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mAtaAtapiPassThruDriverNameTable,
-           DriverName,
-           (BOOLEAN)(This == &gAtaAtapiPassThruComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mAtaAtapiPassThruDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gAtaAtapiPassThruComponentName)
+                               );
 }
-
 
 /**
   Retrieves a Unicode string that is the user readable name of the controller
@@ -202,10 +201,10 @@ AtaAtapiPassThruComponentNameGetControllerName (
   // Make sure this driver is currently managing Controller Handle
   //
   Status = EfiTestManagedDevice (
-             ControllerHandle,
-             gAtaAtapiPassThruDriverBinding.DriverBindingHandle,
-             &gEfiIdeControllerInitProtocolGuid
-             );
+                                 ControllerHandle,
+                                 gAtaAtapiPassThruDriverBinding.DriverBindingHandle,
+                                 &gEfiIdeControllerInitProtocolGuid
+                                 );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -214,13 +213,13 @@ AtaAtapiPassThruComponentNameGetControllerName (
   // AtaPassThru and ExtScsiPassThru should also be installed at the controller handle.
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiAtaPassThruProtocolGuid,
-                  &Interface,
-                  gAtaAtapiPassThruDriverBinding.DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiAtaPassThruProtocolGuid,
+                              &Interface,
+                              gAtaAtapiPassThruDriverBinding.DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
@@ -236,10 +235,10 @@ AtaAtapiPassThruComponentNameGetControllerName (
   }
 
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           ControllerNameTable,
-           ControllerName,
-           (BOOLEAN)(This == &gAtaAtapiPassThruComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               ControllerNameTable,
+                               ControllerName,
+                               (BOOLEAN) (This == &gAtaAtapiPassThruComponentName)
+                               );
 }

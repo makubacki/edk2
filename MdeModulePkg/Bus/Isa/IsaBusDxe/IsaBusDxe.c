@@ -48,24 +48,24 @@ IsaBusDriverBindingSupported (
   IN EFI_DEVICE_PATH_PROTOCOL       *RemainingDevicePath
   )
 {
-  EFI_STATUS                        Status;
-  VOID                              *Instance;
+  EFI_STATUS  Status;
+  VOID        *Instance;
 
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiIsaHcProtocolGuid,
-                  &Instance,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              Controller,
+                              &gEfiIsaHcProtocolGuid,
+                              &Instance,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (!EFI_ERROR (Status)) {
-    gBS->CloseProtocol (
-      Controller,
-      &gEfiIsaHcProtocolGuid,
-      This->DriverBindingHandle,
-      Controller
-      );
+  gBS->CloseProtocol (
+                      Controller,
+                      &gEfiIsaHcProtocolGuid,
+                      This->DriverBindingHandle,
+                      Controller
+                      );
   }
 
   if (EFI_ERROR (Status)) {
@@ -73,26 +73,26 @@ IsaBusDriverBindingSupported (
   }
 
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiDevicePathProtocolGuid,
-                  &Instance,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              Controller,
+                              &gEfiDevicePathProtocolGuid,
+                              &Instance,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (!EFI_ERROR (Status)) {
-    gBS->CloseProtocol (
-      Controller,
-      &gEfiDevicePathProtocolGuid,
-      This->DriverBindingHandle,
-      Controller
-      );
+  gBS->CloseProtocol (
+                      Controller,
+                      &gEfiDevicePathProtocolGuid,
+                      This->DriverBindingHandle,
+                      Controller
+                      );
   }
 
   return Status;
 }
 
-ISA_BUS_CHILD_PRIVATE_DATA mIsaBusChildPrivateTemplate = {
+ISA_BUS_CHILD_PRIVATE_DATA  mIsaBusChildPrivateTemplate = {
   ISA_BUS_CHILD_PRIVATE_DATA_SIGNATURE,
   FALSE
 };
@@ -123,10 +123,10 @@ IsaBusCreateChild (
   IN OUT EFI_HANDLE                    *ChildHandle
   )
 {
-  EFI_STATUS                           Status;
-  ISA_BUS_PRIVATE_DATA                 *Private;
-  EFI_ISA_HC_PROTOCOL                  *IsaHc;
-  ISA_BUS_CHILD_PRIVATE_DATA           *Child;
+  EFI_STATUS                  Status;
+  ISA_BUS_PRIVATE_DATA        *Private;
+  EFI_ISA_HC_PROTOCOL         *IsaHc;
+  ISA_BUS_CHILD_PRIVATE_DATA  *Child;
 
   Private = ISA_BUS_PRIVATE_DATA_FROM_THIS (This);
 
@@ -136,24 +136,26 @@ IsaBusCreateChild (
   }
 
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  ChildHandle,
-                  &gEfiIsaHcProtocolGuid, Private->IsaHc,
-                  &gEfiCallerIdGuid,      Child,
-                  NULL
-                  );
+                                                   ChildHandle,
+                                                   &gEfiIsaHcProtocolGuid,
+                                                   Private->IsaHc,
+                                                   &gEfiCallerIdGuid,
+                                                   Child,
+                                                   NULL
+                                                   );
   if (EFI_ERROR (Status)) {
     FreePool (Child);
     return Status;
   }
 
   return gBS->OpenProtocol (
-                Private->IsaHcHandle,
-                &gEfiIsaHcProtocolGuid,
-                (VOID **) &IsaHc,
-                gIsaBusDriverBinding.DriverBindingHandle,
-                *ChildHandle,
-                EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
-                );
+                            Private->IsaHcHandle,
+                            &gEfiIsaHcProtocolGuid,
+                            (VOID **) &IsaHc,
+                            gIsaBusDriverBinding.DriverBindingHandle,
+                            *ChildHandle,
+                            EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+                            );
 }
 
 /**
@@ -181,21 +183,21 @@ IsaBusDestroyChild (
   IN EFI_HANDLE                       ChildHandle
   )
 {
-  EFI_STATUS                           Status;
-  ISA_BUS_PRIVATE_DATA                 *Private;
-  EFI_ISA_HC_PROTOCOL                  *IsaHc;
-  ISA_BUS_CHILD_PRIVATE_DATA           *Child;
+  EFI_STATUS                  Status;
+  ISA_BUS_PRIVATE_DATA        *Private;
+  EFI_ISA_HC_PROTOCOL         *IsaHc;
+  ISA_BUS_CHILD_PRIVATE_DATA  *Child;
 
   Private = ISA_BUS_PRIVATE_DATA_FROM_THIS (This);
 
   Status = gBS->OpenProtocol (
-                  ChildHandle,
-                  &gEfiCallerIdGuid,
-                  (VOID **) &Child,
-                  gIsaBusDriverBinding.DriverBindingHandle,
-                  ChildHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ChildHandle,
+                              &gEfiCallerIdGuid,
+                              (VOID **) &Child,
+                              gIsaBusDriverBinding.DriverBindingHandle,
+                              ChildHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -208,28 +210,30 @@ IsaBusDestroyChild (
 
   Child->InDestroying = TRUE;
   Status = gBS->CloseProtocol (
-                  Private->IsaHcHandle,
-                  &gEfiIsaHcProtocolGuid,
-                  gIsaBusDriverBinding.DriverBindingHandle,
-                  ChildHandle
-                  );
+                               Private->IsaHcHandle,
+                               &gEfiIsaHcProtocolGuid,
+                               gIsaBusDriverBinding.DriverBindingHandle,
+                               ChildHandle
+                               );
   ASSERT_EFI_ERROR (Status);
   if (!EFI_ERROR (Status)) {
     Status = gBS->UninstallMultipleProtocolInterfaces (
-                    ChildHandle,
-                    &gEfiIsaHcProtocolGuid, Private->IsaHc,
-                    &gEfiCallerIdGuid,      Child,
-                    NULL
-                    );
+                                                       ChildHandle,
+                                                       &gEfiIsaHcProtocolGuid,
+                                                       Private->IsaHc,
+                                                       &gEfiCallerIdGuid,
+                                                       Child,
+                                                       NULL
+                                                       );
     if (EFI_ERROR (Status)) {
-      gBS->OpenProtocol (
-             Private->IsaHcHandle,
-             &gEfiIsaHcProtocolGuid,
-             (VOID **) &IsaHc,
-             gIsaBusDriverBinding.DriverBindingHandle,
-             ChildHandle,
-             EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
-             );
+  gBS->OpenProtocol (
+                     Private->IsaHcHandle,
+                     &gEfiIsaHcProtocolGuid,
+                     (VOID **) &IsaHc,
+                     gIsaBusDriverBinding.DriverBindingHandle,
+                     ChildHandle,
+                     EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+                     );
     }
   }
 
@@ -242,7 +246,7 @@ IsaBusDestroyChild (
   return Status;
 }
 
-ISA_BUS_PRIVATE_DATA   mIsaBusPrivateTemplate = {
+ISA_BUS_PRIVATE_DATA  mIsaBusPrivateTemplate = {
   ISA_BUS_PRIVATE_DATA_SIGNATURE,
   {
     IsaBusCreateChild,
@@ -283,37 +287,37 @@ IsaBusDriverBindingStart (
   IN EFI_DEVICE_PATH_PROTOCOL       *RemainingDevicePath
   )
 {
-  EFI_STATUS                        Status;
-  EFI_DEVICE_PATH_PROTOCOL          *DevicePath;
-  ISA_BUS_PRIVATE_DATA              *Private;
+  EFI_STATUS                Status;
+  EFI_DEVICE_PATH_PROTOCOL  *DevicePath;
+  ISA_BUS_PRIVATE_DATA      *Private;
 
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiIsaHcProtocolGuid,
-                  (VOID **) &mIsaBusPrivateTemplate.IsaHc,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              Controller,
+                              &gEfiIsaHcProtocolGuid,
+                              (VOID **) &mIsaBusPrivateTemplate.IsaHc,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiDevicePathProtocolGuid,
-                  (VOID **) &DevicePath,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              Controller,
+                              &gEfiDevicePathProtocolGuid,
+                              (VOID **) &DevicePath,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (EFI_ERROR (Status)) {
-    gBS->CloseProtocol (
-           Controller,
-           &gEfiIsaHcProtocolGuid,
-           This->DriverBindingHandle,
-           Controller
-           );
+  gBS->CloseProtocol (
+                      Controller,
+                      &gEfiIsaHcProtocolGuid,
+                      This->DriverBindingHandle,
+                      Controller
+                      );
     return Status;
   }
 
@@ -323,10 +327,11 @@ IsaBusDriverBindingStart (
   Private->IsaHcHandle = Controller;
 
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &Controller,
-                  &gEfiIsaHcServiceBindingProtocolGuid, &Private->ServiceBinding,
-                  NULL
-                  );
+                                                   &Controller,
+                                                   &gEfiIsaHcServiceBindingProtocolGuid,
+                                                   &Private->ServiceBinding,
+                                                   NULL
+                                                   );
   ASSERT_EFI_ERROR (Status);
 
   return Status;
@@ -356,20 +361,20 @@ IsaBusDriverBindingStop (
   IN  EFI_HANDLE                     *ChildHandleBuffer
   )
 {
-  EFI_STATUS                         Status;
-  EFI_SERVICE_BINDING_PROTOCOL       *ServiceBinding;
-  ISA_BUS_PRIVATE_DATA               *Private;
-  UINTN                              Index;
-  BOOLEAN                            AllChildrenStopped;
+  EFI_STATUS                    Status;
+  EFI_SERVICE_BINDING_PROTOCOL  *ServiceBinding;
+  ISA_BUS_PRIVATE_DATA          *Private;
+  UINTN                         Index;
+  BOOLEAN                       AllChildrenStopped;
 
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiIsaHcServiceBindingProtocolGuid,
-                  (VOID **) &ServiceBinding,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              Controller,
+                              &gEfiIsaHcServiceBindingProtocolGuid,
+                              (VOID **) &ServiceBinding,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -378,23 +383,24 @@ IsaBusDriverBindingStop (
 
   if (NumberOfChildren == 0) {
     Status = gBS->UninstallMultipleProtocolInterfaces (
-                    Controller,
-                    &gEfiIsaHcServiceBindingProtocolGuid, &Private->ServiceBinding,
-                    NULL
-                    );
+                                                       Controller,
+                                                       &gEfiIsaHcServiceBindingProtocolGuid,
+                                                       &Private->ServiceBinding,
+                                                       NULL
+                                                       );
     if (!EFI_ERROR (Status)) {
+  gBS->CloseProtocol (
+                      Controller,
+                      &gEfiDevicePathProtocolGuid,
+                      This->DriverBindingHandle,
+                      Controller
+                      );
       gBS->CloseProtocol (
-             Controller,
-             &gEfiDevicePathProtocolGuid,
-             This->DriverBindingHandle,
-             Controller
-             );
-      gBS->CloseProtocol (
-             Controller,
-             &gEfiIsaHcProtocolGuid,
-             This->DriverBindingHandle,
-             Controller
-             );
+                          Controller,
+                          &gEfiIsaHcProtocolGuid,
+                          This->DriverBindingHandle,
+                          Controller
+                          );
       FreePool (Private);
     }
 
@@ -415,7 +421,7 @@ IsaBusDriverBindingStop (
 //
 // ISA Bus Driver Binding Protocol Instance
 //
-EFI_DRIVER_BINDING_PROTOCOL gIsaBusDriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  gIsaBusDriverBinding = {
   IsaBusDriverBindingSupported,
   IsaBusDriverBindingStart,
   IsaBusDriverBindingStop,
@@ -440,16 +446,16 @@ InitializeIsaBus (
   IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  EFI_STATUS           Status;
+  EFI_STATUS  Status;
 
   Status = EfiLibInstallDriverBindingComponentName2 (
-             ImageHandle,
-             SystemTable,
-             &gIsaBusDriverBinding,
-             ImageHandle,
-             &gIsaBusComponentName,
-             &gIsaBusComponentName2
-             );
+                                                     ImageHandle,
+                                                     SystemTable,
+                                                     &gIsaBusDriverBinding,
+                                                     ImageHandle,
+                                                     &gIsaBusComponentName,
+                                                     &gIsaBusComponentName2
+                                                     );
   ASSERT_EFI_ERROR (Status);
   return Status;
 }

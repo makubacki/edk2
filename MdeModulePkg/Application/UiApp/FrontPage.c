@@ -10,29 +10,29 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include "FrontPage.h"
 #include "FrontPageCustomizedUi.h"
 
-#define MAX_STRING_LEN            200
+#define MAX_STRING_LEN  200
 
-EFI_GUID   mFrontPageGuid      = FRONT_PAGE_FORMSET_GUID;
+EFI_GUID  mFrontPageGuid = FRONT_PAGE_FORMSET_GUID;
 
-BOOLEAN   mResetRequired  = FALSE;
+BOOLEAN  mResetRequired = FALSE;
 
-EFI_FORM_BROWSER2_PROTOCOL      *gFormBrowser2;
-CHAR8     *mLanguageString;
-BOOLEAN   mModeInitialized = FALSE;
+EFI_FORM_BROWSER2_PROTOCOL  *gFormBrowser2;
+CHAR8                       *mLanguageString;
+BOOLEAN                     mModeInitialized = FALSE;
 //
 // Boot video resolution and text mode.
 //
-UINT32    mBootHorizontalResolution    = 0;
-UINT32    mBootVerticalResolution      = 0;
-UINT32    mBootTextModeColumn          = 0;
-UINT32    mBootTextModeRow             = 0;
+UINT32  mBootHorizontalResolution = 0;
+UINT32  mBootVerticalResolution   = 0;
+UINT32  mBootTextModeColumn = 0;
+UINT32  mBootTextModeRow    = 0;
 //
 // BIOS setup video resolution and text mode.
 //
-UINT32    mSetupTextModeColumn         = 0;
-UINT32    mSetupTextModeRow            = 0;
-UINT32    mSetupHorizontalResolution   = 0;
-UINT32    mSetupVerticalResolution     = 0;
+UINT32  mSetupTextModeColumn = 0;
+UINT32  mSetupTextModeRow    = 0;
+UINT32  mSetupHorizontalResolution = 0;
+UINT32  mSetupVerticalResolution   = 0;
 
 FRONT_PAGE_CALLBACK_DATA  gFrontPagePrivate = {
   FRONT_PAGE_CALLBACK_DATA_SIGNATURE,
@@ -114,6 +114,7 @@ FakeExtractConfig (
   if (Progress == NULL || Results == NULL) {
     return EFI_INVALID_PARAMETER;
   }
+
   *Progress = Request;
   return EFI_NOT_FOUND;
 }
@@ -193,10 +194,10 @@ UpdateFrontPageForm (
   VOID
   )
 {
-  VOID                        *StartOpCodeHandle;
-  VOID                        *EndOpCodeHandle;
-  EFI_IFR_GUID_LABEL          *StartGuidLabel;
-  EFI_IFR_GUID_LABEL          *EndGuidLabel;
+  VOID                *StartOpCodeHandle;
+  VOID                *EndOpCodeHandle;
+  EFI_IFR_GUID_LABEL  *StartGuidLabel;
+  EFI_IFR_GUID_LABEL  *EndGuidLabel;
 
   //
   // Allocate space for creation of UpdateData Buffer
@@ -209,31 +210,34 @@ UpdateFrontPageForm (
   //
   // Create Hii Extend Label OpCode as the start opcode
   //
-  StartGuidLabel = (EFI_IFR_GUID_LABEL *) HiiCreateGuidOpCode (StartOpCodeHandle, &gEfiIfrTianoGuid, NULL, sizeof (EFI_IFR_GUID_LABEL));
+  StartGuidLabel =
+    (EFI_IFR_GUID_LABEL *) HiiCreateGuidOpCode (StartOpCodeHandle, &gEfiIfrTianoGuid, NULL,
+                                                sizeof (EFI_IFR_GUID_LABEL));
   StartGuidLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
-  StartGuidLabel->Number       = LABEL_FRANTPAGE_INFORMATION;
+  StartGuidLabel->Number = LABEL_FRANTPAGE_INFORMATION;
   //
   // Create Hii Extend Label OpCode as the end opcode
   //
-  EndGuidLabel = (EFI_IFR_GUID_LABEL *) HiiCreateGuidOpCode (EndOpCodeHandle, &gEfiIfrTianoGuid, NULL, sizeof (EFI_IFR_GUID_LABEL));
+  EndGuidLabel =
+    (EFI_IFR_GUID_LABEL *) HiiCreateGuidOpCode (EndOpCodeHandle, &gEfiIfrTianoGuid, NULL, sizeof (EFI_IFR_GUID_LABEL));
   EndGuidLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
-  EndGuidLabel->Number       = LABEL_END;
+  EndGuidLabel->Number = LABEL_END;
 
   //
-  //Updata Front Page form
+  // Updata Front Page form
   //
   UiCustomizeFrontPage (
-    gFrontPagePrivate.HiiHandle,
-    StartOpCodeHandle
-    );
+                        gFrontPagePrivate.HiiHandle,
+                        StartOpCodeHandle
+                        );
 
   HiiUpdateForm (
-    gFrontPagePrivate.HiiHandle,
-    &mFrontPageGuid,
-    FRONT_PAGE_FORM_ID,
-    StartOpCodeHandle,
-    EndOpCodeHandle
-    );
+                 gFrontPagePrivate.HiiHandle,
+                 &mFrontPageGuid,
+                 FRONT_PAGE_FORM_ID,
+                 StartOpCodeHandle,
+                 EndOpCodeHandle
+                 );
 
   HiiFreeOpCodeHandle (StartOpCodeHandle);
   HiiFreeOpCodeHandle (EndOpCodeHandle);
@@ -252,7 +256,8 @@ InitializeFrontPage (
   VOID
   )
 {
-  EFI_STATUS                  Status;
+  EFI_STATUS  Status;
+
   //
   // Locate Hii relative protocols
   //
@@ -266,36 +271,36 @@ InitializeFrontPage (
   //
   gFrontPagePrivate.DriverHandle = NULL;
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &gFrontPagePrivate.DriverHandle,
-                  &gEfiDevicePathProtocolGuid,
-                  &mFrontPageHiiVendorDevicePath,
-                  &gEfiHiiConfigAccessProtocolGuid,
-                  &gFrontPagePrivate.ConfigAccess,
-                  NULL
-                  );
+                                                   &gFrontPagePrivate.DriverHandle,
+                                                   &gEfiDevicePathProtocolGuid,
+                                                   &mFrontPageHiiVendorDevicePath,
+                                                   &gEfiHiiConfigAccessProtocolGuid,
+                                                   &gFrontPagePrivate.ConfigAccess,
+                                                   NULL
+                                                   );
   ASSERT_EFI_ERROR (Status);
 
   //
   // Publish our HII data
   //
   gFrontPagePrivate.HiiHandle = HiiAddPackages (
-                                  &mFrontPageGuid,
-                                  gFrontPagePrivate.DriverHandle,
-                                  FrontPageVfrBin,
-                                  UiAppStrings,
-                                  NULL
-                                  );
+                                                &mFrontPageGuid,
+                                                gFrontPagePrivate.DriverHandle,
+                                                FrontPageVfrBin,
+                                                UiAppStrings,
+                                                NULL
+                                                );
   ASSERT (gFrontPagePrivate.HiiHandle != NULL);
 
   //
-  //Updata Front Page banner strings
+  // Updata Front Page banner strings
   //
   UpdateFrontPageBannerStrings ();
 
   //
   // Update front page menus.
   //
-  UpdateFrontPageForm();
+  UpdateFrontPageForm ();
 
   return Status;
 }
@@ -319,20 +324,20 @@ CallFrontPage (
   // Begin waiting for USER INPUT
   //
   REPORT_STATUS_CODE (
-    EFI_PROGRESS_CODE,
-    (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_PC_INPUT_WAIT)
-    );
+                      EFI_PROGRESS_CODE,
+                      (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_PC_INPUT_WAIT)
+                      );
 
   ActionRequest = EFI_BROWSER_ACTION_REQUEST_NONE;
   Status = gFormBrowser2->SendForm (
-                            gFormBrowser2,
-                            &gFrontPagePrivate.HiiHandle,
-                            1,
-                            &mFrontPageGuid,
-                            0,
-                            NULL,
-                            &ActionRequest
-                            );
+                                    gFormBrowser2,
+                                    &gFrontPagePrivate.HiiHandle,
+                                    1,
+                                    &mFrontPageGuid,
+                                    0,
+                                    NULL,
+                                    &ActionRequest
+                                    );
   //
   // Check whether user change any option setting which needs a reset to be effective
   //
@@ -348,19 +353,20 @@ CallFrontPage (
 
 **/
 VOID
-FreeFrontPage(
+FreeFrontPage (
   VOID
   )
 {
-  EFI_STATUS                  Status;
+  EFI_STATUS  Status;
+
   Status = gBS->UninstallMultipleProtocolInterfaces (
-                  gFrontPagePrivate.DriverHandle,
-                  &gEfiDevicePathProtocolGuid,
-                  &mFrontPageHiiVendorDevicePath,
-                  &gEfiHiiConfigAccessProtocolGuid,
-                  &gFrontPagePrivate.ConfigAccess,
-                  NULL
-                  );
+                                                     gFrontPagePrivate.DriverHandle,
+                                                     &gEfiDevicePathProtocolGuid,
+                                                     &mFrontPageHiiVendorDevicePath,
+                                                     &gEfiHiiConfigAccessProtocolGuid,
+                                                     &gFrontPagePrivate.ConfigAccess,
+                                                     NULL
+                                                     );
   ASSERT_EFI_ERROR (Status);
 
   //
@@ -401,6 +407,7 @@ ConvertProcessorToString (
   } else {
     FreqMhz = 0;
   }
+
   DestMax = 0x20 / sizeof (CHAR16);
   StringBuffer = AllocateZeroPool (0x20);
   ASSERT (StringBuffer != NULL);
@@ -408,17 +415,16 @@ ConvertProcessorToString (
   Index = StrnLenS (StringBuffer, DestMax);
   StrCatS (StringBuffer, DestMax, L".");
   UnicodeValueToStringS (
-    StringBuffer + Index + 1,
-    sizeof (CHAR16) * (DestMax - (Index + 1)),
-    PREFIX_ZERO,
-    (FreqMhz % 1000) / 10,
-    2
-    );
+                         StringBuffer + Index + 1,
+                         sizeof (CHAR16) * (DestMax - (Index + 1)),
+                         PREFIX_ZERO,
+                         (FreqMhz % 1000) / 10,
+                         2
+                         );
   StrCatS (StringBuffer, DestMax, L" GHz");
   *String = (CHAR16 *) StringBuffer;
-  return ;
+  return;
 }
-
 
 /**
   Convert Memory Size to a string.
@@ -442,7 +448,7 @@ ConvertMemorySizeToString (
 
   *String = (CHAR16 *) StringBuffer;
 
-  return ;
+  return;
 }
 
 /**
@@ -464,7 +470,7 @@ GetOptionalStringByIndex (
   OUT     CHAR16                  **String
   )
 {
-  UINTN          StrSize;
+  UINTN  StrSize;
 
   if (Index == 0) {
     *String = AllocateZeroPool (sizeof (CHAR16));
@@ -475,7 +481,7 @@ GetOptionalStringByIndex (
   do {
     Index--;
     OptionalStrStart += StrSize;
-    StrSize           = AsciiStrSize (OptionalStrStart);
+    StrSize = AsciiStrSize (OptionalStrStart);
   } while (OptionalStrStart[StrSize] != 0 && Index != 0);
 
   if ((Index != 0) || (StrSize == 1)) {
@@ -492,7 +498,6 @@ GetOptionalStringByIndex (
   return EFI_SUCCESS;
 }
 
-
 /**
 
   Update the banner information for the Front Page based on Smbios information.
@@ -503,19 +508,19 @@ UpdateFrontPageBannerStrings (
   VOID
   )
 {
-  UINT8                             StrIndex;
-  CHAR16                            *NewString;
-  CHAR16                            *FirmwareVersionString;
-  EFI_STATUS                        Status;
-  EFI_SMBIOS_HANDLE                 SmbiosHandle;
-  EFI_SMBIOS_PROTOCOL               *Smbios;
-  SMBIOS_TABLE_TYPE0                *Type0Record;
-  SMBIOS_TABLE_TYPE1                *Type1Record;
-  SMBIOS_TABLE_TYPE4                *Type4Record;
-  SMBIOS_TABLE_TYPE19               *Type19Record;
-  EFI_SMBIOS_TABLE_HEADER           *Record;
-  UINT64                            InstalledMemory;
-  BOOLEAN                           FoundCpu;
+  UINT8                    StrIndex;
+  CHAR16                   *NewString;
+  CHAR16                   *FirmwareVersionString;
+  EFI_STATUS               Status;
+  EFI_SMBIOS_HANDLE        SmbiosHandle;
+  EFI_SMBIOS_PROTOCOL      *Smbios;
+  SMBIOS_TABLE_TYPE0       *Type0Record;
+  SMBIOS_TABLE_TYPE1       *Type1Record;
+  SMBIOS_TABLE_TYPE4       *Type4Record;
+  SMBIOS_TABLE_TYPE19      *Type19Record;
+  EFI_SMBIOS_TABLE_HEADER  *Record;
+  UINT64                   InstalledMemory;
+  BOOLEAN                  FoundCpu;
 
   InstalledMemory = 0;
   FoundCpu = 0;
@@ -581,11 +586,11 @@ UpdateFrontPageBannerStrings (
 
   SmbiosHandle = SMBIOS_HANDLE_PI_RESERVED;
   Status = Smbios->GetNext (Smbios, &SmbiosHandle, NULL, &Record, NULL);
-  while (!EFI_ERROR(Status)) {
+  while (!EFI_ERROR (Status)) {
     if (Record->Type == SMBIOS_TYPE_BIOS_INFORMATION) {
       Type0Record = (SMBIOS_TABLE_TYPE0 *) Record;
-      StrIndex = Type0Record->BiosVersion;
-      GetOptionalStringByIndex ((CHAR8*)((UINT8*)Type0Record + Type0Record->Hdr.Length), StrIndex, &NewString);
+      StrIndex    = Type0Record->BiosVersion;
+      GetOptionalStringByIndex ((CHAR8 *) ((UINT8 *) Type0Record + Type0Record->Hdr.Length), StrIndex, &NewString);
 
       FirmwareVersionString = (CHAR16 *) PcdGetPtr (PcdFirmwareVersionString);
       if (*FirmwareVersionString != 0x0000 ) {
@@ -602,8 +607,8 @@ UpdateFrontPageBannerStrings (
 
     if (Record->Type == SMBIOS_TYPE_SYSTEM_INFORMATION) {
       Type1Record = (SMBIOS_TABLE_TYPE1 *) Record;
-      StrIndex = Type1Record->ProductName;
-      GetOptionalStringByIndex ((CHAR8*)((UINT8*)Type1Record + Type1Record->Hdr.Length), StrIndex, &NewString);
+      StrIndex    = Type1Record->ProductName;
+      GetOptionalStringByIndex ((CHAR8 *) ((UINT8 *) Type1Record + Type1Record->Hdr.Length), StrIndex, &NewString);
       UiCustomizeFrontPageBanner (1, TRUE, &NewString);
       HiiSetString (gFrontPagePrivate.HiiHandle, STRING_TOKEN (STR_FRONT_PAGE_COMPUTER_MODEL), NewString, NULL);
       FreePool (NewString);
@@ -616,12 +621,12 @@ UpdateFrontPageBannerStrings (
       //
       if ((Type4Record->Status & SMBIOS_TYPE4_CPU_SOCKET_POPULATED) == SMBIOS_TYPE4_CPU_SOCKET_POPULATED) {
         StrIndex = Type4Record->ProcessorVersion;
-        GetOptionalStringByIndex ((CHAR8*)((UINT8*)Type4Record + Type4Record->Hdr.Length), StrIndex, &NewString);
+        GetOptionalStringByIndex ((CHAR8 *) ((UINT8 *) Type4Record + Type4Record->Hdr.Length), StrIndex, &NewString);
         UiCustomizeFrontPageBanner (2, TRUE, &NewString);
         HiiSetString (gFrontPagePrivate.HiiHandle, STRING_TOKEN (STR_FRONT_PAGE_CPU_MODEL), NewString, NULL);
         FreePool (NewString);
 
-        ConvertProcessorToString(Type4Record->CurrentSpeed, 6, &NewString);
+        ConvertProcessorToString (Type4Record->CurrentSpeed, 6, &NewString);
         UiCustomizeFrontPageBanner (2, FALSE, &NewString);
         HiiSetString (gFrontPagePrivate.HiiHandle, STRING_TOKEN (STR_FRONT_PAGE_CPU_SPEED), NewString, NULL);
         FreePool (NewString);
@@ -633,11 +638,17 @@ UpdateFrontPageBannerStrings (
     if ( Record->Type == SMBIOS_TYPE_MEMORY_ARRAY_MAPPED_ADDRESS ) {
       Type19Record = (SMBIOS_TABLE_TYPE19 *) Record;
       if (Type19Record->StartingAddress != 0xFFFFFFFF ) {
-        InstalledMemory += RShiftU64(Type19Record->EndingAddress -
-                                     Type19Record->StartingAddress + 1, 10);
+        InstalledMemory += RShiftU64 (
+                                      Type19Record->EndingAddress -
+                                      Type19Record->StartingAddress + 1,
+                                      10
+                                      );
       } else {
-        InstalledMemory += RShiftU64(Type19Record->ExtendedEndingAddress -
-                                     Type19Record->ExtendedStartingAddress + 1, 20);
+        InstalledMemory += RShiftU64 (
+                                      Type19Record->ExtendedEndingAddress -
+                                      Type19Record->ExtendedStartingAddress + 1,
+                                      20
+                                      );
       }
     }
 
@@ -647,7 +658,7 @@ UpdateFrontPageBannerStrings (
   //
   // Now update the total installed RAM size
   //
-  ConvertMemorySizeToString ((UINT32)InstalledMemory, &NewString );
+  ConvertMemorySizeToString ((UINT32) InstalledMemory, &NewString);
   UiCustomizeFrontPageBanner (3, FALSE, &NewString);
   HiiSetString (gFrontPagePrivate.HiiHandle, STRING_TOKEN (STR_FRONT_PAGE_MEMORY_SIZE), NewString, NULL);
   FreePool (NewString);
@@ -693,19 +704,19 @@ UiSetConsoleMode (
   // Get current video resolution and text mode
   //
   Status = gBS->HandleProtocol (
-                  gST->ConsoleOutHandle,
-                  &gEfiGraphicsOutputProtocolGuid,
-                  (VOID**)&GraphicsOutput
-                  );
+                                gST->ConsoleOutHandle,
+                                &gEfiGraphicsOutputProtocolGuid,
+                                (VOID **) &GraphicsOutput
+                                );
   if (EFI_ERROR (Status)) {
     GraphicsOutput = NULL;
   }
 
   Status = gBS->HandleProtocol (
-                  gST->ConsoleOutHandle,
-                  &gEfiSimpleTextOutProtocolGuid,
-                  (VOID**)&SimpleTextOut
-                  );
+                                gST->ConsoleOutHandle,
+                                &gEfiSimpleTextOutProtocolGuid,
+                                (VOID **) &SimpleTextOut
+                                );
   if (EFI_ERROR (Status)) {
     SimpleTextOut = NULL;
   }
@@ -720,20 +731,20 @@ UiSetConsoleMode (
     //
     NewHorizontalResolution = mSetupHorizontalResolution;
     NewVerticalResolution   = mSetupVerticalResolution;
-    NewColumns              = mSetupTextModeColumn;
-    NewRows                 = mSetupTextModeRow;
+    NewColumns = mSetupTextModeColumn;
+    NewRows    = mSetupTextModeRow;
   } else {
     //
     // The required resolution and text mode is boot mode.
     //
     NewHorizontalResolution = mBootHorizontalResolution;
     NewVerticalResolution   = mBootVerticalResolution;
-    NewColumns              = mBootTextModeColumn;
-    NewRows                 = mBootTextModeRow;
+    NewColumns = mBootTextModeColumn;
+    NewRows    = mBootTextModeRow;
   }
 
   if (GraphicsOutput != NULL) {
-    MaxGopMode  = GraphicsOutput->Mode->MaxMode;
+    MaxGopMode = GraphicsOutput->Mode->MaxMode;
   }
 
   if (SimpleTextOut != NULL) {
@@ -742,18 +753,18 @@ UiSetConsoleMode (
 
   //
   // 1. If current video resolution is same with required video resolution,
-  //    video resolution need not be changed.
-  //    1.1. If current text mode is same with required text mode, text mode need not be changed.
-  //    1.2. If current text mode is different from required text mode, text mode need be changed.
+  // video resolution need not be changed.
+  // 1.1. If current text mode is same with required text mode, text mode need not be changed.
+  // 1.2. If current text mode is different from required text mode, text mode need be changed.
   // 2. If current video resolution is different from required video resolution, we need restart whole console drivers.
   //
   for (ModeNumber = 0; ModeNumber < MaxGopMode; ModeNumber++) {
     Status = GraphicsOutput->QueryMode (
-                       GraphicsOutput,
-                       ModeNumber,
-                       &SizeOfInfo,
-                       &Info
-                       );
+                                        GraphicsOutput,
+                                        ModeNumber,
+                                        &SizeOfInfo,
+                                        &Info
+                                        );
     if (!EFI_ERROR (Status)) {
       if ((Info->HorizontalResolution == NewHorizontalResolution) &&
           (Info->VerticalResolution == NewVerticalResolution)) {
@@ -776,7 +787,7 @@ UiSetConsoleMode (
             //
             for (Index = 0; Index < MaxTextMode; Index++) {
               Status = SimpleTextOut->QueryMode (SimpleTextOut, Index, &CurrentColumn, &CurrentRow);
-              if (!EFI_ERROR(Status)) {
+              if (!EFI_ERROR (Status)) {
                 if ((CurrentColumn == NewColumns) && (CurrentRow == NewRows)) {
                   //
                   // Required text mode is supported, set it.
@@ -795,6 +806,7 @@ UiSetConsoleMode (
                 }
               }
             }
+
             if (Index == MaxTextMode) {
               //
               // If required text mode is not supported, return error.
@@ -815,6 +827,7 @@ UiSetConsoleMode (
           }
         }
       }
+
       FreePool (Info);
     }
   }
@@ -845,19 +858,21 @@ UiSetConsoleMode (
   // Locate all the handles with GOP protocol and reconnect it.
   //
   Status = gBS->LocateHandleBuffer (
-                   ByProtocol,
-                   &gEfiSimpleTextOutProtocolGuid,
-                   NULL,
-                   &HandleCount,
-                   &HandleBuffer
-                   );
+                                    ByProtocol,
+                                    &gEfiSimpleTextOutProtocolGuid,
+                                    NULL,
+                                    &HandleCount,
+                                    &HandleBuffer
+                                    );
   if (!EFI_ERROR (Status)) {
     for (Index = 0; Index < HandleCount; Index++) {
-      gBS->DisconnectController (HandleBuffer[Index], NULL, NULL);
+  gBS->DisconnectController (HandleBuffer[Index], NULL, NULL);
     }
+
     for (Index = 0; Index < HandleCount; Index++) {
-      gBS->ConnectController (HandleBuffer[Index], NULL, NULL, TRUE);
+  gBS->ConnectController (HandleBuffer[Index], NULL, NULL, TRUE);
     }
+
     if (HandleBuffer != NULL) {
       FreePool (HandleBuffer);
     }
@@ -885,12 +900,12 @@ InitializeUserInterface (
   IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  EFI_HII_HANDLE                     HiiHandle;
-  EFI_STATUS                         Status;
-  EFI_GRAPHICS_OUTPUT_PROTOCOL       *GraphicsOutput;
-  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL    *SimpleTextOut;
-  UINTN                              BootTextColumn;
-  UINTN                              BootTextRow;
+  EFI_HII_HANDLE                   HiiHandle;
+  EFI_STATUS                       Status;
+  EFI_GRAPHICS_OUTPUT_PROTOCOL     *GraphicsOutput;
+  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL  *SimpleTextOut;
+  UINTN                            BootTextColumn;
+  UINTN                            BootTextRow;
 
   if (!mModeInitialized) {
     //
@@ -898,19 +913,19 @@ InitializeUserInterface (
     // and text mode before launching setup at first time.
     //
     Status = gBS->HandleProtocol (
-                    gST->ConsoleOutHandle,
-                    &gEfiGraphicsOutputProtocolGuid,
-                    (VOID**)&GraphicsOutput
-                    );
+                                  gST->ConsoleOutHandle,
+                                  &gEfiGraphicsOutputProtocolGuid,
+                                  (VOID **) &GraphicsOutput
+                                  );
     if (EFI_ERROR (Status)) {
       GraphicsOutput = NULL;
     }
 
     Status = gBS->HandleProtocol (
-                    gST->ConsoleOutHandle,
-                    &gEfiSimpleTextOutProtocolGuid,
-                    (VOID**)&SimpleTextOut
-                    );
+                                  gST->ConsoleOutHandle,
+                                  &gEfiSimpleTextOutProtocolGuid,
+                                  (VOID **) &SimpleTextOut
+                                  );
     if (EFI_ERROR (Status)) {
       SimpleTextOut = NULL;
     }
@@ -925,13 +940,13 @@ InitializeUserInterface (
 
     if (SimpleTextOut != NULL) {
       Status = SimpleTextOut->QueryMode (
-                                SimpleTextOut,
-                                SimpleTextOut->Mode->Mode,
-                                &BootTextColumn,
-                                &BootTextRow
-                                );
-      mBootTextModeColumn = (UINT32)BootTextColumn;
-      mBootTextModeRow    = (UINT32)BootTextRow;
+                                         SimpleTextOut,
+                                         SimpleTextOut->Mode->Mode,
+                                         &BootTextColumn,
+                                         &BootTextRow
+                                         );
+      mBootTextModeColumn = (UINT32) BootTextColumn;
+      mBootTextModeRow    = (UINT32) BootTextRow;
     }
 
     //
@@ -939,10 +954,10 @@ InitializeUserInterface (
     //
     mSetupHorizontalResolution = PcdGet32 (PcdSetupVideoHorizontalResolution);
     mSetupVerticalResolution   = PcdGet32 (PcdSetupVideoVerticalResolution);
-    mSetupTextModeColumn       = PcdGet32 (PcdSetupConOutColumn);
-    mSetupTextModeRow          = PcdGet32 (PcdSetupConOutRow);
+    mSetupTextModeColumn = PcdGet32 (PcdSetupConOutColumn);
+    mSetupTextModeRow    = PcdGet32 (PcdSetupConOutRow);
 
-    mModeInitialized           = TRUE;
+    mModeInitialized = TRUE;
   }
 
   gBS->SetWatchdogTimer (0x0000, 0x0000, 0x0000, NULL);
@@ -979,16 +994,16 @@ UiEntry (
   IN BOOLEAN                      ConnectAllHappened
   )
 {
-  EFI_STATUS                    Status;
-  EFI_BOOT_LOGO_PROTOCOL        *BootLogo;
+  EFI_STATUS              Status;
+  EFI_BOOT_LOGO_PROTOCOL  *BootLogo;
 
   //
   // Enter Setup page.
   //
   REPORT_STATUS_CODE (
-    EFI_PROGRESS_CODE,
-    (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_PC_USER_SETUP)
-    );
+                      EFI_PROGRESS_CODE,
+                      (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_PC_USER_SETUP)
+                      );
 
   //
   // Indicate if the connect all has been performed before.
@@ -1008,7 +1023,7 @@ UiEntry (
   //
   Status = gBS->LocateProtocol (&gEfiBootLogoProtocolGuid, NULL, (VOID **) &BootLogo);
   if (!EFI_ERROR (Status) && (BootLogo != NULL)) {
-    BootLogo->SetBootLogo (BootLogo, NULL, 0, 0, 0, 0);
+  BootLogo->SetBootLogo (BootLogo, NULL, 0, 0, 0, 0);
   }
 
   InitializeFrontPage ();
@@ -1023,20 +1038,17 @@ UiEntry (
   }
 
   //
-  //Will leave browser, check any reset required change is applied? if yes, reset system
+  // Will leave browser, check any reset required change is applied? if yes, reset system
   //
   SetupResetReminder ();
 }
 
 //
-//  Following are BDS Lib functions which contain all the code about setup browser reset reminder feature.
-//  Setup Browser reset reminder feature is that an reset reminder will be given before user leaves the setup browser  if
-//  user change any option setting which needs a reset to be effective, and  the reset will be applied according to  the user selection.
+// Following are BDS Lib functions which contain all the code about setup browser reset reminder feature.
+// Setup Browser reset reminder feature is that an reset reminder will be given before user leaves the setup browser  if
+// user change any option setting which needs a reset to be effective, and  the reset will be applied according to  the
+// user selection.
 //
-
-
-
-
 
 /**
   Record the info that  a reset is required.
@@ -1052,10 +1064,6 @@ EnableResetRequired (
   mResetRequired = TRUE;
 }
 
-
-
-
-
 /**
   Check if  user changed any option setting which needs a system reset to be effective.
 
@@ -1069,7 +1077,6 @@ IsResetRequired (
   return mResetRequired;
 }
 
-
 /**
   Check whether a reset is needed, and finish the reset reminder feature.
   If a reset is needed, Popup a menu to notice user, and finish the feature
@@ -1082,15 +1089,14 @@ SetupResetReminder (
   VOID
   )
 {
-  EFI_INPUT_KEY                 Key;
-  CHAR16                        *StringBuffer1;
-  CHAR16                        *StringBuffer2;
+  EFI_INPUT_KEY  Key;
+  CHAR16         *StringBuffer1;
+  CHAR16         *StringBuffer2;
 
   //
-  //check any reset required change is applied? if yes, reset system
+  // check any reset required change is applied? if yes, reset system
   //
   if (IsResetRequired ()) {
-
     StringBuffer1 = AllocateZeroPool (MAX_STRING_LEN * sizeof (CHAR16));
     ASSERT (StringBuffer1 != NULL);
     StringBuffer2 = AllocateZeroPool (MAX_STRING_LEN * sizeof (CHAR16));
@@ -1110,4 +1116,3 @@ SetupResetReminder (
     gRT->ResetSystem (EfiResetCold, EFI_SUCCESS, 0, NULL);
   }
 }
-

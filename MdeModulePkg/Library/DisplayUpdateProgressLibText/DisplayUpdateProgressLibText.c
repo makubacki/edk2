@@ -86,15 +86,19 @@ DisplayUpdateProgress (
       if (Color->Pixel.Blue >= 0x40) {
         mProgressBarForegroundColor |= EFI_BLUE;
       }
+
       if (Color->Pixel.Green >= 0x40) {
         mProgressBarForegroundColor |= EFI_GREEN;
       }
+
       if (Color->Pixel.Red >= 0x40) {
         mProgressBarForegroundColor |= EFI_RED;
       }
+
       if (Color->Pixel.Blue >= 0xC0 || Color->Pixel.Green >= 0xC0 || Color->Pixel.Red >= 0xC0) {
         mProgressBarForegroundColor |= EFI_BRIGHT;
       }
+
       if (mProgressBarForegroundColor == EFI_BLACK) {
         mProgressBarForegroundColor = EFI_WHITE;
       }
@@ -110,14 +114,17 @@ DisplayUpdateProgress (
   // Can not update progress bar if Completion is less than previous
   //
   if (Completion < mPreviousProgress) {
-    DEBUG ((DEBUG_WARN, "WARNING: Completion (%d) should not be lesss than Previous (%d)!!!\n", Completion, mPreviousProgress));
+    DEBUG (
+          (DEBUG_WARN, "WARNING: Completion (%d) should not be lesss than Previous (%d)!!!\n", Completion,
+           mPreviousProgress)
+          );
     return EFI_INVALID_PARAMETER;
   }
 
   //
   // Save current text color
   //
-  CurrentAttribute = (UINTN)gST->ConOut->Mode->Attribute;
+  CurrentAttribute = (UINTN) gST->ConOut->Mode->Attribute;
 
   //
   // Print progress percentage
@@ -128,9 +135,9 @@ DisplayUpdateProgress (
   // Set progress bar color
   //
   gST->ConOut->SetAttribute (
-                 gST->ConOut,
-                 EFI_TEXT_ATTR (mProgressBarForegroundColor, EFI_BLACK)
-                 );
+                             gST->ConOut,
+                             EFI_TEXT_ATTR (mProgressBarForegroundColor, EFI_BLACK)
+                             );
 
   //
   // Print completed portion of progress bar
@@ -147,7 +154,7 @@ DisplayUpdateProgress (
   //
   // Print remaining portion of progress bar
   //
-  for (; Index < 50; Index++) {
+  for ( ; Index < 50; Index++) {
     Print (L"%c", BLOCKELEMENT_LIGHT_SHADE);
   }
 

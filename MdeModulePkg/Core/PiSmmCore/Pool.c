@@ -13,7 +13,7 @@ LIST_ENTRY  mSmmPoolLists[SmmPoolTypeMax][MAX_POOL_INDEX];
 // To cache the SMRAM base since when Loading modules At fixed address feature is enabled,
 // all module is assigned an offset relative the SMRAM base in build time.
 //
-GLOBAL_REMOVE_IF_UNREFERENCED  EFI_PHYSICAL_ADDRESS       gLoadModuleAtFixAddressSmramBase = 0;
+GLOBAL_REMOVE_IF_UNREFERENCED  EFI_PHYSICAL_ADDRESS  gLoadModuleAtFixAddressSmramBase = 0;
 
 /**
   Convert a UEFI memory type to SMM pool type.
@@ -29,15 +29,14 @@ UefiMemoryTypeToSmmPoolType (
 {
   ASSERT ((MemoryType == EfiRuntimeServicesCode) || (MemoryType == EfiRuntimeServicesData));
   switch (MemoryType) {
-  case EfiRuntimeServicesCode:
-    return SmmPoolTypeCode;
-  case EfiRuntimeServicesData:
-    return SmmPoolTypeData;
-  default:
-    return SmmPoolTypeMax;
+    case EfiRuntimeServicesCode:
+      return SmmPoolTypeCode;
+    case EfiRuntimeServicesData:
+      return SmmPoolTypeData;
+    default:
+      return SmmPoolTypeMax;
   }
 }
-
 
 /**
   Called to initialize the memory service.
@@ -52,10 +51,10 @@ SmmInitializeMemoryServices (
   IN EFI_SMRAM_DESCRIPTOR  *SmramRanges
   )
 {
-  UINTN                  Index;
-  EFI_STATUS             Status;
-  UINTN                  SmmPoolTypeIndex;
-  EFI_LOAD_FIXED_ADDRESS_CONFIGURATION_TABLE *LMFAConfigurationTable;
+  UINTN                                       Index;
+  EFI_STATUS                                  Status;
+  UINTN                                       SmmPoolTypeIndex;
+  EFI_LOAD_FIXED_ADDRESS_CONFIGURATION_TABLE  *LMFAConfigurationTable;
 
   //
   // Initialize Pool list
@@ -67,9 +66,9 @@ SmmInitializeMemoryServices (
   }
 
   Status = EfiGetSystemConfigurationTable (
-            &gLoadFixedAddressConfigurationTableGuid,
-           (VOID **) &LMFAConfigurationTable
-           );
+                                           &gLoadFixedAddressConfigurationTableGuid,
+                                           (VOID **) &LMFAConfigurationTable
+                                           );
   if (!EFI_ERROR (Status) && LMFAConfigurationTable != NULL) {
     gLoadModuleAtFixAddressSmramBase = LMFAConfigurationTable->SmramBase;
   }
@@ -82,12 +81,13 @@ SmmInitializeMemoryServices (
     if ((SmramRanges[Index].RegionState & (EFI_ALLOCATED | EFI_NEEDS_TESTING | EFI_NEEDS_ECC_INITIALIZATION)) != 0) {
       continue;
     }
+
     SmmAddMemoryRegion (
-      SmramRanges[Index].CpuStart,
-      SmramRanges[Index].PhysicalSize,
-      EfiConventionalMemory,
-      SmramRanges[Index].RegionState
-      );
+                        SmramRanges[Index].CpuStart,
+                        SmramRanges[Index].PhysicalSize,
+                        EfiConventionalMemory,
+                        SmramRanges[Index].RegionState
+                        );
   }
 
   //
@@ -97,14 +97,14 @@ SmmInitializeMemoryServices (
     if ((SmramRanges[Index].RegionState & (EFI_ALLOCATED | EFI_NEEDS_TESTING | EFI_NEEDS_ECC_INITIALIZATION)) == 0) {
       continue;
     }
-    SmmAddMemoryRegion (
-      SmramRanges[Index].CpuStart,
-      SmramRanges[Index].PhysicalSize,
-      EfiConventionalMemory,
-      SmramRanges[Index].RegionState
-      );
-  }
 
+    SmmAddMemoryRegion (
+                        SmramRanges[Index].CpuStart,
+                        SmramRanges[Index].PhysicalSize,
+                        EfiConventionalMemory,
+                        SmramRanges[Index].RegionState
+                        );
+  }
 }
 
 /**
@@ -132,18 +132,23 @@ InternalAllocPoolByIndex (
   SMM_POOL_TYPE         SmmPoolType;
 
   Address     = 0;
-  SmmPoolType = UefiMemoryTypeToSmmPoolType(PoolType);
+  SmmPoolType = UefiMemoryTypeToSmmPoolType (PoolType);
 
   ASSERT (PoolIndex <= MAX_POOL_INDEX);
   Status = EFI_SUCCESS;
-  Hdr = NULL;
+  Hdr    = NULL;
   if (PoolIndex == MAX_POOL_INDEX) {
-    Status = SmmInternalAllocatePages (AllocateAnyPages, PoolType,
+    Status = SmmInternalAllocatePages (
+                                       AllocateAnyPages,
+                                       PoolType,
                                        EFI_SIZE_TO_PAGES (MAX_POOL_SIZE << 1),
-                                       &Address, FALSE);
+                                       &Address,
+                                       FALSE
+                                       );
     if (EFI_ERROR (Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
+
     Hdr = (FREE_POOL_HEADER *) (UINTN) Address;
   } else if (!IsListEmpty (&mSmmPoolLists[SmmPoolType][PoolIndex])) {
     Hdr = BASE_CR (GetFirstNode (&mSmmPoolLists[SmmPoolType][PoolIndex]), FREE_POOL_HEADER, Link);
@@ -155,11 +160,11 @@ InternalAllocPoolByIndex (
       Hdr->Header.Size >>= 1;
       Hdr->Header.Available = TRUE;
       Hdr->Header.Type = 0;
-      Tail = HEAD_TO_TAIL(&Hdr->Header);
+      Tail = HEAD_TO_TAIL (&Hdr->Header);
       Tail->Signature = 0;
       Tail->Size = 0;
       InsertHeadList (&mSmmPoolLists[SmmPoolType][PoolIndex], &Hdr->Link);
-      Hdr = (FREE_POOL_HEADER*)((UINT8*)Hdr + Hdr->Header.Size);
+      Hdr = (FREE_POOL_HEADER *) ((UINT8 *) Hdr + Hdr->Header.Size);
     }
   }
 
@@ -168,7 +173,7 @@ InternalAllocPoolByIndex (
     Hdr->Header.Size = MIN_POOL_SIZE << PoolIndex;
     Hdr->Header.Available = FALSE;
     Hdr->Header.Type = PoolType;
-    Tail = HEAD_TO_TAIL(&Hdr->Header);
+    Tail = HEAD_TO_TAIL (&Hdr->Header);
     Tail->Signature = POOL_TAIL_SIGNATURE;
     Tail->Size = Hdr->Header.Size;
   }
@@ -192,16 +197,16 @@ InternalFreePoolByIndex (
   IN POOL_TAIL         *PoolTail
   )
 {
-  UINTN                 PoolIndex;
-  SMM_POOL_TYPE         SmmPoolType;
+  UINTN          PoolIndex;
+  SMM_POOL_TYPE  SmmPoolType;
 
   ASSERT ((FreePoolHdr->Header.Size & (FreePoolHdr->Header.Size - 1)) == 0);
-  ASSERT (((UINTN)FreePoolHdr & (FreePoolHdr->Header.Size - 1)) == 0);
+  ASSERT (((UINTN) FreePoolHdr & (FreePoolHdr->Header.Size - 1)) == 0);
   ASSERT (FreePoolHdr->Header.Size >= MIN_POOL_SIZE);
 
-  SmmPoolType = UefiMemoryTypeToSmmPoolType(FreePoolHdr->Header.Type);
+  SmmPoolType = UefiMemoryTypeToSmmPoolType (FreePoolHdr->Header.Type);
 
-  PoolIndex = (UINTN) (HighBitSet32 ((UINT32)FreePoolHdr->Header.Size) - MIN_POOL_SHIFT);
+  PoolIndex = (UINTN) (HighBitSet32 ((UINT32) FreePoolHdr->Header.Size) - MIN_POOL_SHIFT);
   FreePoolHdr->Header.Signature = 0;
   FreePoolHdr->Header.Available = TRUE;
   FreePoolHdr->Header.Type = 0;
@@ -264,22 +269,27 @@ SmmInternalAllocatePool (
     }
 
     NoPages = EFI_SIZE_TO_PAGES (Size);
-    Status = SmmInternalAllocatePages (AllocateAnyPages, PoolType, NoPages,
-                                       &Address, NeedGuard);
+    Status  = SmmInternalAllocatePages (
+                                        AllocateAnyPages,
+                                        PoolType,
+                                        NoPages,
+                                        &Address,
+                                        NeedGuard
+                                        );
     if (EFI_ERROR (Status)) {
       return Status;
     }
 
     if (NeedGuard) {
       ASSERT (VerifyMemoryGuard (Address, NoPages) == TRUE);
-      Address = (EFI_PHYSICAL_ADDRESS)(UINTN)AdjustPoolHeadA (
-                                               Address,
-                                               NoPages,
-                                               Size
-                                               );
+      Address = (EFI_PHYSICAL_ADDRESS) (UINTN) AdjustPoolHeadA (
+                                                                Address,
+                                                                NoPages,
+                                                                Size
+                                                                );
     }
 
-    PoolHdr = (POOL_HEADER*)(UINTN)Address;
+    PoolHdr = (POOL_HEADER *) (UINTN) Address;
     PoolHdr->Signature = POOL_HEAD_SIGNATURE;
     PoolHdr->Size = EFI_PAGES_TO_SIZE (NoPages);
     PoolHdr->Available = FALSE;
@@ -296,15 +306,16 @@ SmmInternalAllocatePool (
   }
 
   Size = (Size + MIN_POOL_SIZE - 1) >> MIN_POOL_SHIFT;
-  PoolIndex = (UINTN) HighBitSet32 ((UINT32)Size);
+  PoolIndex = (UINTN) HighBitSet32 ((UINT32) Size);
   if ((Size & (Size - 1)) != 0) {
     PoolIndex++;
   }
 
   Status = InternalAllocPoolByIndex (PoolType, PoolIndex, &FreePoolHdr);
-  if (!EFI_ERROR(Status)) {
+  if (!EFI_ERROR (Status)) {
     *Buffer = &FreePoolHdr->Header + 1;
   }
+
   return Status;
 }
 
@@ -334,14 +345,15 @@ SmmAllocatePool (
   Status = SmmInternalAllocatePool (PoolType, Size, Buffer);
   if (!EFI_ERROR (Status)) {
     SmmCoreUpdateProfile (
-      (EFI_PHYSICAL_ADDRESS) (UINTN) RETURN_ADDRESS (0),
-      MemoryProfileActionAllocatePool,
-      PoolType,
-      Size,
-      *Buffer,
-      NULL
-      );
+                          (EFI_PHYSICAL_ADDRESS) (UINTN) RETURN_ADDRESS (0),
+                          MemoryProfileActionAllocatePool,
+                          PoolType,
+                          Size,
+                          *Buffer,
+                          NULL
+                          );
   }
+
   return Status;
 }
 
@@ -370,11 +382,11 @@ SmmInternalFreePool (
   }
 
   MemoryGuarded = IsHeapGuardEnabled () &&
-                  IsMemoryGuarded ((EFI_PHYSICAL_ADDRESS)(UINTN)Buffer);
-  HasPoolTail   = !(MemoryGuarded &&
-                    ((PcdGet8 (PcdHeapGuardPropertyMask) & BIT7) == 0));
+                  IsMemoryGuarded ((EFI_PHYSICAL_ADDRESS) (UINTN) Buffer);
+  HasPoolTail = !(MemoryGuarded &&
+                  ((PcdGet8 (PcdHeapGuardPropertyMask) & BIT7) == 0));
 
-  FreePoolHdr = (FREE_POOL_HEADER*)((POOL_HEADER*)Buffer - 1);
+  FreePoolHdr = (FREE_POOL_HEADER *) ((POOL_HEADER *) Buffer - 1);
   ASSERT (FreePoolHdr->Header.Signature == POOL_HEAD_SIGNATURE);
   ASSERT (!FreePoolHdr->Header.Available);
   if (FreePoolHdr->Header.Signature != POOL_HEAD_SIGNATURE) {
@@ -397,23 +409,24 @@ SmmInternalFreePool (
   }
 
   if (MemoryGuarded) {
-    Buffer = AdjustPoolHeadF ((EFI_PHYSICAL_ADDRESS)(UINTN)FreePoolHdr);
+    Buffer = AdjustPoolHeadF ((EFI_PHYSICAL_ADDRESS) (UINTN) FreePoolHdr);
     return SmmInternalFreePages (
-             (EFI_PHYSICAL_ADDRESS)(UINTN)Buffer,
-             EFI_SIZE_TO_PAGES (FreePoolHdr->Header.Size),
-             TRUE
-             );
+                                 (EFI_PHYSICAL_ADDRESS) (UINTN) Buffer,
+                                 EFI_SIZE_TO_PAGES (FreePoolHdr->Header.Size),
+                                 TRUE
+                                 );
   }
 
   if (FreePoolHdr->Header.Size > MAX_POOL_SIZE) {
-    ASSERT (((UINTN)FreePoolHdr & EFI_PAGE_MASK) == 0);
+    ASSERT (((UINTN) FreePoolHdr & EFI_PAGE_MASK) == 0);
     ASSERT ((FreePoolHdr->Header.Size & EFI_PAGE_MASK) == 0);
     return SmmInternalFreePages (
-             (EFI_PHYSICAL_ADDRESS)(UINTN)FreePoolHdr,
-             EFI_SIZE_TO_PAGES (FreePoolHdr->Header.Size),
-             FALSE
-             );
+                                 (EFI_PHYSICAL_ADDRESS) (UINTN) FreePoolHdr,
+                                 EFI_SIZE_TO_PAGES (FreePoolHdr->Header.Size),
+                                 FALSE
+                                 );
   }
+
   return InternalFreePoolByIndex (FreePoolHdr, PoolTail);
 }
 
@@ -437,13 +450,14 @@ SmmFreePool (
   Status = SmmInternalFreePool (Buffer);
   if (!EFI_ERROR (Status)) {
     SmmCoreUpdateProfile (
-      (EFI_PHYSICAL_ADDRESS) (UINTN) RETURN_ADDRESS (0),
-      MemoryProfileActionFreePool,
-      EfiMaxMemoryType,
-      0,
-      Buffer,
-      NULL
-      );
+                          (EFI_PHYSICAL_ADDRESS) (UINTN) RETURN_ADDRESS (0),
+                          MemoryProfileActionFreePool,
+                          EfiMaxMemoryType,
+                          0,
+                          Buffer,
+                          NULL
+                          );
   }
+
   return Status;
 }

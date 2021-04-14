@@ -6,7 +6,6 @@
 
 **/
 
-
 #ifndef _CAPSULE_APP_H_
 #define _CAPSULE_APP_H_
 
@@ -42,22 +41,22 @@
 #define CAPSULE_HEADER_SIZE  0x20
 
 #define NESTED_CAPSULE_HEADER_SIZE  SIZE_4KB
-#define SYSTEM_FIRMWARE_FLAG 0x50000
-#define DEVICE_FIRMWARE_FLAG 0x78010
+#define SYSTEM_FIRMWARE_FLAG        0x50000
+#define DEVICE_FIRMWARE_FLAG        0x78010
 
-#define MAJOR_VERSION   1
-#define MINOR_VERSION   0
+#define MAJOR_VERSION  1
+#define MINOR_VERSION  0
 
-#define MAX_CAPSULE_NUM 10
+#define MAX_CAPSULE_NUM  10
 
 //
 // (20 * (6+5+2))+1) unicode characters from EFI FAT spec (doubled for bytes)
 //
-#define MAX_FILE_NAME_SIZE   522
-#define MAX_FILE_NAME_LEN    (MAX_FILE_NAME_SIZE / sizeof(CHAR16))
+#define MAX_FILE_NAME_SIZE  522
+#define MAX_FILE_NAME_LEN   (MAX_FILE_NAME_SIZE / sizeof (CHAR16))
 
 extern UINTN  Argc;
-extern CHAR16 **Argv;
+extern CHAR16  **Argv;
 
 /**
 
@@ -66,9 +65,9 @@ extern CHAR16 **Argv;
   @return Status
 **/
 EFI_STATUS
-GetArg (
-  VOID
-  );
+  GetArg (
+          VOID
+          );
 
 /**
   Get shell protocol.
@@ -77,10 +76,9 @@ GetArg (
 
 **/
 EFI_SHELL_PROTOCOL *
-GetShellProtocol (
-  VOID
-  );
-
+  GetShellProtocol (
+                    VOID
+                    );
 
 /**
   Read a file.
@@ -118,7 +116,6 @@ WriteFileFromBuffer (
   IN  VOID                                 *Buffer
   );
 
-
 /**
   Dump capsule information
 
@@ -139,17 +136,17 @@ DumpCapsule (
   @retval EFI_UNSUPPORTED        Input parameter is not valid.
 **/
 EFI_STATUS
-DumpCapsuleStatusVariable (
-  VOID
-  );
+  DumpCapsuleStatusVariable (
+                             VOID
+                             );
 
 /**
   Dump FMP protocol info.
 **/
 VOID
-DumpFmpData (
-  VOID
-  );
+  DumpFmpData (
+               VOID
+               );
 
 /**
   Dump FMP image data.
@@ -171,9 +168,9 @@ DumpFmpImage (
   Dump ESRT info.
 **/
 VOID
-DumpEsrtData (
-  VOID
-  );
+  DumpEsrtData (
+                VOID
+                );
 
 /**
   Dump Provisioned Capsule.
@@ -189,10 +186,9 @@ DumpProvisionedCapsule (
   Dump all EFI System Partition.
 **/
 VOID
-DumpAllEfiSysPartition (
-  VOID
-  );
-
+  DumpAllEfiSysPartition (
+                          VOID
+                          );
 
 /**
   Get SimpleFileSystem from boot option file path.
@@ -212,7 +208,6 @@ GetEfiSysPartitionFromBootOptionFilePath (
   OUT EFI_DEVICE_PATH_PROTOCOL         **FullPath,
   OUT EFI_SIMPLE_FILE_SYSTEM_PROTOCOL  **Fs
   );
-
 
 /**
   Process Capsule On Disk.
@@ -237,4 +232,3 @@ ProcessCapsuleOnDisk (
   );
 
 #endif
-

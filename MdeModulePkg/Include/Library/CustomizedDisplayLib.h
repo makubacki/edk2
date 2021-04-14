@@ -55,8 +55,8 @@ DisplayPageFrame (
 VOID
 EFIAPI
 ClearDisplayPage (
-  VOID
-  );
+                  VOID
+                  );
 
 /**
   This function updates customized key panel's help information.
@@ -103,7 +103,7 @@ UpdateStatusBar (
 VOID
 EFIAPI
 CreateDialog (
-  OUT EFI_INPUT_KEY  *Key,        OPTIONAL
+  OUT EFI_INPUT_KEY  *Key, OPTIONAL
   ...
   );
 
@@ -115,8 +115,8 @@ CreateDialog (
 UINTN
 EFIAPI
 ConfirmDataChange (
-  VOID
-  );
+                   VOID
+                   );
 
 /**
   OEM specifies whether Setup exits Page by ESC key.
@@ -130,8 +130,8 @@ ConfirmDataChange (
 BOOLEAN
 EFIAPI
 FormExitPolicy (
-  VOID
-  );
+                VOID
+                );
 
 /**
   Set Timeout value for a ceratain Form to get user response.
@@ -153,6 +153,7 @@ FormExitTimeout (
 //
 // Print Functions
 //
+
 /**
   Prints a unicode string to the default console, at
   the supplied cursor position, using L"%s" format.
@@ -171,7 +172,6 @@ PrintStringAt (
   IN UINTN     Row,
   IN CHAR16    *String
   );
-
 
 /**
   Prints a unicode string with the specified width to the default console, at
@@ -237,6 +237,7 @@ ClearLines (
 //
 // Color Setting Functions
 //
+
 /**
   Get OEM/Vendor specific popup attribute colors.
 
@@ -245,8 +246,8 @@ ClearLines (
 UINT8
 EFIAPI
 GetPopupColor (
-  VOID
-  );
+               VOID
+               );
 
 /**
   Get OEM/Vendor specific popup attribute colors.
@@ -256,8 +257,8 @@ GetPopupColor (
 UINT8
 EFIAPI
 GetPopupInverseColor (
-  VOID
-  );
+                      VOID
+                      );
 
 /**
   Get OEM/Vendor specific PickList color attribute.
@@ -267,8 +268,8 @@ GetPopupInverseColor (
 UINT8
 EFIAPI
 GetPickListColor (
-  VOID
-  );
+                  VOID
+                  );
 
 /**
   Get OEM/Vendor specific arrow color attribute.
@@ -278,8 +279,8 @@ GetPickListColor (
 UINT8
 EFIAPI
 GetArrowColor (
-  VOID
-  );
+               VOID
+               );
 
 /**
   Get OEM/Vendor specific info text color attribute.
@@ -289,8 +290,8 @@ GetArrowColor (
 UINT8
 EFIAPI
 GetInfoTextColor (
-  VOID
-  );
+                  VOID
+                  );
 
 /**
   Get OEM/Vendor specific help text color attribute.
@@ -300,8 +301,8 @@ GetInfoTextColor (
 UINT8
 EFIAPI
 GetHelpTextColor (
-  VOID
-  );
+                  VOID
+                  );
 
 /**
   Get OEM/Vendor specific grayed out text color attribute.
@@ -311,8 +312,8 @@ GetHelpTextColor (
 UINT8
 EFIAPI
 GetGrayedTextColor (
-  VOID
-  );
+                    VOID
+                    );
 
 /**
   Get OEM/Vendor specific highlighted text color attribute.
@@ -322,8 +323,8 @@ GetGrayedTextColor (
 UINT8
 EFIAPI
 GetHighlightTextColor (
-  VOID
-  );
+                       VOID
+                       );
 
 /**
   Get OEM/Vendor specific field text color attribute.
@@ -333,8 +334,8 @@ GetHighlightTextColor (
 UINT8
 EFIAPI
 GetFieldTextColor (
-  VOID
-  );
+                   VOID
+                   );
 
 /**
   Get OEM/Vendor specific subtitle text color attribute.
@@ -344,7 +345,7 @@ GetFieldTextColor (
 UINT8
 EFIAPI
 GetSubTitleTextColor (
-  VOID
-  );
+                      VOID
+                      );
 
 #endif

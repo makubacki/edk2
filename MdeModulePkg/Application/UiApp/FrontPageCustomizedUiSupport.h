@@ -72,12 +72,12 @@ UiCreateResetMenu (
 
 **/
 typedef
-BOOLEAN
+  BOOLEAN
 (EFIAPI *DRIVER_SPECIAL_HANDLER)(
-  IN  CHAR16                   *DriverName,
-  OUT CHAR16                   **NewName,
-  OUT BOOLEAN                  *EmptyLineAfter
-);
+                                 IN  CHAR16                   *DriverName,
+                                 OUT CHAR16                   **NewName,
+                                 OUT BOOLEAN                  *EmptyLineAfter
+                                 );
 
 /**
   Search the drivers in the system which need to show in the front page

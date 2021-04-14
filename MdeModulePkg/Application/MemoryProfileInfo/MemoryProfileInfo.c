@@ -24,7 +24,7 @@
 #include <Guid/MemoryProfile.h>
 #include <Guid/PiSmmCommunicationRegionTable.h>
 
-CHAR8 *mActionString[] = {
+CHAR8  *mActionString[] = {
   "Unknown",
   "gBS->AllocatePages",
   "gBS->FreePages",
@@ -32,7 +32,7 @@ CHAR8 *mActionString[] = {
   "gBS->FreePool",
 };
 
-CHAR8 *mSmmActionString[] = {
+CHAR8  *mSmmActionString[] = {
   "SmmUnknown",
   "gSmst->SmmAllocatePages",
   "gSmst->SmmFreePages",
@@ -41,37 +41,58 @@ CHAR8 *mSmmActionString[] = {
 };
 
 typedef struct {
-  MEMORY_PROFILE_ACTION  Action;
-  CHAR8                 *String;
+  MEMORY_PROFILE_ACTION    Action;
+  CHAR8                    *String;
 } ACTION_STRING;
 
-ACTION_STRING mExtActionString[] = {
-  {MEMORY_PROFILE_ACTION_LIB_ALLOCATE_PAGES,                    "Lib:AllocatePages"},
-  {MEMORY_PROFILE_ACTION_LIB_ALLOCATE_RUNTIME_PAGES,            "Lib:AllocateRuntimePages"},
-  {MEMORY_PROFILE_ACTION_LIB_ALLOCATE_RESERVED_PAGES,           "Lib:AllocateReservedPages"},
-  {MEMORY_PROFILE_ACTION_LIB_FREE_PAGES,                        "Lib:FreePages"},
-  {MEMORY_PROFILE_ACTION_LIB_ALLOCATE_ALIGNED_PAGES,            "Lib:AllocateAlignedPages"},
-  {MEMORY_PROFILE_ACTION_LIB_ALLOCATE_ALIGNED_RUNTIME_PAGES,    "Lib:AllocateAlignedRuntimePages"},
-  {MEMORY_PROFILE_ACTION_LIB_ALLOCATE_ALIGNED_RESERVED_PAGES,   "Lib:AllocateAlignedReservedPages"},
-  {MEMORY_PROFILE_ACTION_LIB_FREE_ALIGNED_PAGES,                "Lib:FreeAlignedPages"},
-  {MEMORY_PROFILE_ACTION_LIB_ALLOCATE_POOL,                     "Lib:AllocatePool"},
-  {MEMORY_PROFILE_ACTION_LIB_ALLOCATE_RUNTIME_POOL,             "Lib:AllocateRuntimePool"},
-  {MEMORY_PROFILE_ACTION_LIB_ALLOCATE_RESERVED_POOL,            "Lib:AllocateReservedPool"},
-  {MEMORY_PROFILE_ACTION_LIB_FREE_POOL,                         "Lib:FreePool"},
-  {MEMORY_PROFILE_ACTION_LIB_ALLOCATE_ZERO_POOL,                "Lib:AllocateZeroPool"},
-  {MEMORY_PROFILE_ACTION_LIB_ALLOCATE_RUNTIME_ZERO_POOL,        "Lib:AllocateRuntimeZeroPool"},
-  {MEMORY_PROFILE_ACTION_LIB_ALLOCATE_RESERVED_ZERO_POOL,       "Lib:AllocateReservedZeroPool"},
-  {MEMORY_PROFILE_ACTION_LIB_ALLOCATE_COPY_POOL,                "Lib:AllocateCopyPool"},
-  {MEMORY_PROFILE_ACTION_LIB_ALLOCATE_RUNTIME_COPY_POOL,        "Lib:AllocateRuntimeCopyPool"},
-  {MEMORY_PROFILE_ACTION_LIB_ALLOCATE_RESERVED_COPY_POOL,       "Lib:AllocateReservedCopyPool"},
-  {MEMORY_PROFILE_ACTION_LIB_REALLOCATE_POOL,                   "Lib:ReallocatePool"},
-  {MEMORY_PROFILE_ACTION_LIB_REALLOCATE_RUNTIME_POOL,           "Lib:ReallocateRuntimePool"},
-  {MEMORY_PROFILE_ACTION_LIB_REALLOCATE_RESERVED_POOL,          "Lib:ReallocateReservedPool"},
+ACTION_STRING  mExtActionString[] = {
+  { MEMORY_PROFILE_ACTION_LIB_ALLOCATE_PAGES,
+    "Lib:AllocatePages"                                                            },
+  { MEMORY_PROFILE_ACTION_LIB_ALLOCATE_RUNTIME_PAGES,
+    "Lib:AllocateRuntimePages"                                                                            },
+  { MEMORY_PROFILE_ACTION_LIB_ALLOCATE_RESERVED_PAGES,
+    "Lib:AllocateReservedPages"                                                                                                 },
+  { MEMORY_PROFILE_ACTION_LIB_FREE_PAGES,
+    "Lib:FreePages"                                                                                                                                   },
+  { MEMORY_PROFILE_ACTION_LIB_ALLOCATE_ALIGNED_PAGES,
+    "Lib:AllocateAlignedPages"                                                                                                                                              },
+  { MEMORY_PROFILE_ACTION_LIB_ALLOCATE_ALIGNED_RUNTIME_PAGES,
+    "Lib:AllocateAlignedRuntimePages"                                                                                                                                                             },
+  { MEMORY_PROFILE_ACTION_LIB_ALLOCATE_ALIGNED_RESERVED_PAGES,
+    "Lib:AllocateAlignedReservedPages"                                                                                                                                                                                  },
+  { MEMORY_PROFILE_ACTION_LIB_FREE_ALIGNED_PAGES,
+    "Lib:FreeAlignedPages"                                                                                                                                                                                                                    },
+  { MEMORY_PROFILE_ACTION_LIB_ALLOCATE_POOL,
+    "Lib:AllocatePool"                                                                                                                                                                                                                                              },
+  { MEMORY_PROFILE_ACTION_LIB_ALLOCATE_RUNTIME_POOL,
+    "Lib:AllocateRuntimePool"                                                                                                                                                                                                                                                             },
+  { MEMORY_PROFILE_ACTION_LIB_ALLOCATE_RESERVED_POOL,
+    "Lib:AllocateReservedPool"                                                                                                                                                                                                                                                                                  },
+  { MEMORY_PROFILE_ACTION_LIB_FREE_POOL,
+    "Lib:FreePool"                                                                                                                                                                                                                                                                                                              },
+  { MEMORY_PROFILE_ACTION_LIB_ALLOCATE_ZERO_POOL,
+    "Lib:AllocateZeroPool"                                                                                                                                                                                                                                                                                                                      },
+  { MEMORY_PROFILE_ACTION_LIB_ALLOCATE_RUNTIME_ZERO_POOL,
+    "Lib:AllocateRuntimeZeroPool"                                                                                                                                                                                                                                                                                                                               },
+  { MEMORY_PROFILE_ACTION_LIB_ALLOCATE_RESERVED_ZERO_POOL,
+    "Lib:AllocateReservedZeroPool"                                                                                                                                                                                                                                                                                                                                              },
+  { MEMORY_PROFILE_ACTION_LIB_ALLOCATE_COPY_POOL,
+    "Lib:AllocateCopyPool"                                                                                                                                                                                                                                                                                                                                                                      },
+  { MEMORY_PROFILE_ACTION_LIB_ALLOCATE_RUNTIME_COPY_POOL,
+    "Lib:AllocateRuntimeCopyPool"                                                                                                                                                                                                                                                                                                                                                                               },
+  { MEMORY_PROFILE_ACTION_LIB_ALLOCATE_RESERVED_COPY_POOL,
+    "Lib:AllocateReservedCopyPool"                                                                                                                                                                                                                                                                                                                                                                                              },
+  { MEMORY_PROFILE_ACTION_LIB_REALLOCATE_POOL,
+    "Lib:ReallocatePool"                                                                                                                                                                                                                                                                                                                                                                                                                },
+  { MEMORY_PROFILE_ACTION_LIB_REALLOCATE_RUNTIME_POOL,
+    "Lib:ReallocateRuntimePool"                                                                                                                                                                                                                                                                                                                                                                                                                },
+  { MEMORY_PROFILE_ACTION_LIB_REALLOCATE_RESERVED_POOL,
+    "Lib:ReallocateReservedPool"                                                                                                                                                                                                                                                                                                                                                                                                               },
 };
 
-CHAR8 mUserDefinedActionString[] = {"UserDefined-0x80000000"};
+CHAR8  mUserDefinedActionString[] = { "UserDefined-0x80000000" };
 
-CHAR8 *mMemoryTypeString[] = {
+CHAR8  *mMemoryTypeString[] = {
   "EfiReservedMemoryType",
   "EfiLoaderCode",
   "EfiLoaderData",
@@ -91,7 +112,7 @@ CHAR8 *mMemoryTypeString[] = {
   "EfiOemReserved",
 };
 
-CHAR8 *mSubsystemString[] = {
+CHAR8  *mSubsystemString[] = {
   "Unknown",
   "NATIVE",
   "WINDOWS_GUI",
@@ -110,7 +131,7 @@ CHAR8 *mSubsystemString[] = {
   "Unknown",
 };
 
-CHAR8 *mFileTypeString[] = {
+CHAR8  *mFileTypeString[] = {
   "Unknown",
   "RAW",
   "FREEFORM",
@@ -128,27 +149,27 @@ CHAR8 *mFileTypeString[] = {
 };
 
 #define PROFILE_NAME_STRING_LENGTH  64
-CHAR8 mNameString[PROFILE_NAME_STRING_LENGTH + 1];
+CHAR8  mNameString[PROFILE_NAME_STRING_LENGTH + 1];
 
 //
 // Profile summary information
 //
-#define MEMORY_PROFILE_ALLOC_SUMMARY_INFO_SIGNATURE SIGNATURE_32 ('M','P','A','S')
-#define MEMORY_PROFILE_ALLOC_SUMMARY_INFO_REVISION 0x0001
+#define MEMORY_PROFILE_ALLOC_SUMMARY_INFO_SIGNATURE  SIGNATURE_32 ('M', 'P', 'A', 'S')
+#define MEMORY_PROFILE_ALLOC_SUMMARY_INFO_REVISION   0x0001
 
 typedef struct {
-  MEMORY_PROFILE_COMMON_HEADER  Header;
-  PHYSICAL_ADDRESS              CallerAddress;
-  MEMORY_PROFILE_ACTION         Action;
-  CHAR8                         *ActionString;
-  UINT32                        AllocateCount;
-  UINT64                        TotalSize;
+  MEMORY_PROFILE_COMMON_HEADER    Header;
+  PHYSICAL_ADDRESS                CallerAddress;
+  MEMORY_PROFILE_ACTION           Action;
+  CHAR8                           *ActionString;
+  UINT32                          AllocateCount;
+  UINT64                          TotalSize;
 } MEMORY_PROFILE_ALLOC_SUMMARY_INFO;
 
 typedef struct {
-  UINT32                            Signature;
-  MEMORY_PROFILE_ALLOC_SUMMARY_INFO AllocSummaryInfo;
-  LIST_ENTRY                        Link;
+  UINT32                               Signature;
+  MEMORY_PROFILE_ALLOC_SUMMARY_INFO    AllocSummaryInfo;
+  LIST_ENTRY                           Link;
 } MEMORY_PROFILE_ALLOC_SUMMARY_INFO_DATA;
 
 typedef struct {
@@ -159,13 +180,13 @@ typedef struct {
 } MEMORY_PROFILE_DRIVER_SUMMARY_INFO_DATA;
 
 typedef struct {
-  UINT32                        Signature;
-  MEMORY_PROFILE_CONTEXT        *Context;
-  LIST_ENTRY                    *DriverSummaryInfoList;
+  UINT32                    Signature;
+  MEMORY_PROFILE_CONTEXT    *Context;
+  LIST_ENTRY                *DriverSummaryInfoList;
 } MEMORY_PROFILE_CONTEXT_SUMMARY_DATA;
 
-LIST_ENTRY  mImageSummaryQueue = INITIALIZE_LIST_HEAD_VARIABLE (mImageSummaryQueue);
-MEMORY_PROFILE_CONTEXT_SUMMARY_DATA mMemoryProfileContextSummary;
+LIST_ENTRY                           mImageSummaryQueue = INITIALIZE_LIST_HEAD_VARIABLE (mImageSummaryQueue);
+MEMORY_PROFILE_CONTEXT_SUMMARY_DATA  mMemoryProfileContextSummary;
 
 /**
   Get the file name portion of the Pdb File Name.
@@ -185,10 +206,10 @@ GetShortPdbFileName (
   OUT CHAR8     *AsciiBuffer
   )
 {
-  UINTN IndexPdb;     // Current work location within a Pdb string.
-  UINTN IndexBuffer;  // Current work location within a Buffer string.
-  UINTN StartIndex;
-  UINTN EndIndex;
+  UINTN  IndexPdb;    // Current work location within a Pdb string.
+  UINTN  IndexBuffer; // Current work location within a Buffer string.
+  UINTN  StartIndex;
+  UINTN  EndIndex;
 
   ZeroMem (AsciiBuffer, PROFILE_NAME_STRING_LENGTH + 1);
 
@@ -196,7 +217,9 @@ GetShortPdbFileName (
     AsciiStrnCpyS (AsciiBuffer, PROFILE_NAME_STRING_LENGTH + 1, " ", 1);
   } else {
     StartIndex = 0;
-    for (EndIndex = 0; PdbFileName[EndIndex] != 0; EndIndex++);
+    for (EndIndex = 0; PdbFileName[EndIndex] != 0; EndIndex++) {
+    }
+
     for (IndexPdb = 0; PdbFileName[IndexPdb] != 0; IndexPdb++) {
       if ((PdbFileName[IndexPdb] == '\\') || (PdbFileName[IndexPdb] == '/')) {
         StartIndex = IndexPdb + 1;
@@ -233,12 +256,12 @@ GetShortPdbFileName (
 **/
 CHAR8 *
 GetDriverNameString (
- IN MEMORY_PROFILE_DRIVER_INFO  *DriverInfo
- )
+  IN MEMORY_PROFILE_DRIVER_INFO  *DriverInfo
+  )
 {
-  EFI_STATUS                  Status;
-  CHAR16                      *NameString;
-  UINTN                       StringSize;
+  EFI_STATUS  Status;
+  CHAR16      *NameString;
+  UINTN       StringSize;
 
   //
   // Method 1: Get the name string from image PDB
@@ -254,13 +277,13 @@ GetDriverNameString (
     //
     NameString = NULL;
     StringSize = 0;
-    Status = GetSectionFromAnyFv (
-              &DriverInfo->FileName,
-              EFI_SECTION_USER_INTERFACE,
-              0,
-              (VOID **) &NameString,
-              &StringSize
-              );
+    Status     = GetSectionFromAnyFv (
+                                      &DriverInfo->FileName,
+                                      EFI_SECTION_USER_INTERFACE,
+                                      0,
+                                      (VOID **) &NameString,
+                                      &StringSize
+                                      );
     if (!EFI_ERROR (Status)) {
       //
       // Method 2: Get the name string from FFS UI section
@@ -268,6 +291,7 @@ GetDriverNameString (
       if (StrLen (NameString) > PROFILE_NAME_STRING_LENGTH) {
         NameString[PROFILE_NAME_STRING_LENGTH] = 0;
       }
+
       UnicodeStrToAsciiStrS (NameString, mNameString, sizeof (mNameString));
       FreePool (NameString);
       return mNameString;
@@ -294,7 +318,7 @@ ProfileMemoryTypeToStr (
   IN EFI_MEMORY_TYPE    MemoryType
   )
 {
-  UINTN     Index;
+  UINTN  Index;
 
   if ((UINT32) MemoryType >= 0x80000000) {
     //
@@ -331,9 +355,9 @@ ProfileActionToStr (
   IN BOOLEAN                IsForSmm
   )
 {
-  UINTN     Index;
-  UINTN     ActionStringCount;
-  CHAR8     **ActionString;
+  UINTN  Index;
+  UINTN  ActionStringCount;
+  CHAR8  **ActionString;
 
   if (IsForSmm) {
     ActionString = mSmmActionString;
@@ -346,15 +370,18 @@ ProfileActionToStr (
   if ((UINTN) (UINT32) Action < ActionStringCount) {
     return ActionString[Action];
   }
+
   for (Index = 0; Index < ARRAY_SIZE (mExtActionString); Index++) {
     if (mExtActionString[Index].Action == Action) {
       return mExtActionString[Index].String;
     }
   }
+
   if ((Action & MEMORY_PROFILE_ACTION_USER_DEFINED_MASK) != 0) {
     if (UserDefinedActionString != NULL) {
       return UserDefinedActionString;
     }
+
     AsciiSPrint (mUserDefinedActionString, sizeof (mUserDefinedActionString), "UserDefined-0x%08x", Action);
     return mUserDefinedActionString;
   }
@@ -382,7 +409,7 @@ DumpMemoryProfileAllocInfo (
   IN BOOLEAN                    IsForSmm
   )
 {
-  CHAR8     *ActionString;
+  CHAR8  *ActionString;
 
   if (AllocInfo->Header.Signature != MEMORY_PROFILE_ALLOC_INFO_SIGNATURE) {
     return NULL;
@@ -398,9 +425,17 @@ DumpMemoryProfileAllocInfo (
   Print (L"      Signature     - 0x%08x\n", AllocInfo->Header.Signature);
   Print (L"      Length        - 0x%04x\n", AllocInfo->Header.Length);
   Print (L"      Revision      - 0x%04x\n", AllocInfo->Header.Revision);
-  Print (L"      CallerAddress - 0x%016lx (Offset: 0x%08x)\n", AllocInfo->CallerAddress, (UINTN) (AllocInfo->CallerAddress - DriverInfo->ImageBase));
+  Print (
+        L"      CallerAddress - 0x%016lx (Offset: 0x%08x)\n",
+        AllocInfo->CallerAddress,
+        (UINTN) (AllocInfo->CallerAddress - DriverInfo->ImageBase)
+        );
   Print (L"      SequenceId    - 0x%08x\n", AllocInfo->SequenceId);
-  Print (L"      Action        - 0x%08x (%a)\n", AllocInfo->Action, ProfileActionToStr (AllocInfo->Action, ActionString, IsForSmm));
+  Print (
+        L"      Action        - 0x%08x (%a)\n",
+        AllocInfo->Action,
+        ProfileActionToStr (AllocInfo->Action, ActionString, IsForSmm)
+        );
   Print (L"      MemoryType    - 0x%08x (%a)\n", AllocInfo->MemoryType, ProfileMemoryTypeToStr (AllocInfo->MemoryType));
   Print (L"      Buffer        - 0x%016lx\n", AllocInfo->Buffer);
   Print (L"      Size          - 0x%016lx\n", AllocInfo->Size);
@@ -426,14 +461,15 @@ DumpMemoryProfileDriverInfo (
   IN BOOLEAN                    IsForSmm
   )
 {
-  UINTN                         TypeIndex;
-  MEMORY_PROFILE_ALLOC_INFO     *AllocInfo;
-  UINTN                         AllocIndex;
-  CHAR8                         *NameString;
+  UINTN                      TypeIndex;
+  MEMORY_PROFILE_ALLOC_INFO  *AllocInfo;
+  UINTN                      AllocIndex;
+  CHAR8                      *NameString;
 
   if (DriverInfo->Header.Signature != MEMORY_PROFILE_DRIVER_INFO_SIGNATURE) {
     return NULL;
   }
+
   Print (L"  MEMORY_PROFILE_DRIVER_INFO (0x%x)\n", DriverIndex);
   Print (L"    Signature               - 0x%08x\n", DriverInfo->Header.Signature);
   Print (L"    Length                  - 0x%04x\n", DriverInfo->Header.Length);
@@ -443,20 +479,44 @@ DumpMemoryProfileDriverInfo (
   if (DriverInfo->PdbStringOffset != 0) {
     Print (L"    Pdb                     - %a\n", (CHAR8 *) ((UINTN) DriverInfo + DriverInfo->PdbStringOffset));
   }
+
   Print (L"    ImageBase               - 0x%016lx\n", DriverInfo->ImageBase);
   Print (L"    ImageSize               - 0x%016lx\n", DriverInfo->ImageSize);
   Print (L"    EntryPoint              - 0x%016lx\n", DriverInfo->EntryPoint);
-  Print (L"    ImageSubsystem          - 0x%04x (%a)\n", DriverInfo->ImageSubsystem, mSubsystemString[(DriverInfo->ImageSubsystem < sizeof(mSubsystemString)/sizeof(mSubsystemString[0])) ? DriverInfo->ImageSubsystem : 0]);
-  Print (L"    FileType                - 0x%02x (%a)\n", DriverInfo->FileType, mFileTypeString[(DriverInfo->FileType < sizeof(mFileTypeString)/sizeof(mFileTypeString[0])) ? DriverInfo->FileType : 0]);
+  Print (
+        L"    ImageSubsystem          - 0x%04x (%a)\n",
+        DriverInfo->ImageSubsystem,
+        mSubsystemString[(DriverInfo->ImageSubsystem <
+                          sizeof (mSubsystemString)/sizeof (mSubsystemString[0])) ? DriverInfo->ImageSubsystem : 0]
+        );
+  Print (
+        L"    FileType                - 0x%02x (%a)\n",
+        DriverInfo->FileType,
+        mFileTypeString[(DriverInfo->FileType <
+                         sizeof (mFileTypeString)/sizeof (mFileTypeString[0])) ? DriverInfo->FileType : 0]
+        );
   Print (L"    CurrentUsage            - 0x%016lx\n", DriverInfo->CurrentUsage);
   Print (L"    PeakUsage               - 0x%016lx\n", DriverInfo->PeakUsage);
-  for (TypeIndex = 0; TypeIndex < sizeof (DriverInfo->CurrentUsageByType) / sizeof (DriverInfo->CurrentUsageByType[0]); TypeIndex++) {
+  for (TypeIndex = 0;
+       TypeIndex < sizeof (DriverInfo->CurrentUsageByType) / sizeof (DriverInfo->CurrentUsageByType[0]);
+       TypeIndex++) {
     if ((DriverInfo->CurrentUsageByType[TypeIndex] != 0) ||
         (DriverInfo->PeakUsageByType[TypeIndex] != 0)) {
-      Print (L"    CurrentUsage[0x%02x]      - 0x%016lx (%a)\n", TypeIndex, DriverInfo->CurrentUsageByType[TypeIndex], mMemoryTypeString[TypeIndex]);
-      Print (L"    PeakUsage[0x%02x]         - 0x%016lx (%a)\n", TypeIndex, DriverInfo->PeakUsageByType[TypeIndex], mMemoryTypeString[TypeIndex]);
+      Print (
+            L"    CurrentUsage[0x%02x]      - 0x%016lx (%a)\n",
+            TypeIndex,
+            DriverInfo->CurrentUsageByType[TypeIndex],
+            mMemoryTypeString[TypeIndex]
+            );
+      Print (
+            L"    PeakUsage[0x%02x]         - 0x%016lx (%a)\n",
+            TypeIndex,
+            DriverInfo->PeakUsageByType[TypeIndex],
+            mMemoryTypeString[TypeIndex]
+            );
     }
   }
+
   Print (L"    AllocRecordCount        - 0x%08x\n", DriverInfo->AllocRecordCount);
 
   AllocInfo = (MEMORY_PROFILE_ALLOC_INFO *) ((UINTN) DriverInfo + DriverInfo->Header.Length);
@@ -466,6 +526,7 @@ DumpMemoryProfileDriverInfo (
       return NULL;
     }
   }
+
   return (MEMORY_PROFILE_DRIVER_INFO *) AllocInfo;
 }
 
@@ -485,26 +546,40 @@ DumpMemoryProfileContext (
   IN BOOLEAN                    IsForSmm
   )
 {
-  UINTN                         TypeIndex;
-  MEMORY_PROFILE_DRIVER_INFO    *DriverInfo;
-  UINTN                         DriverIndex;
+  UINTN                       TypeIndex;
+  MEMORY_PROFILE_DRIVER_INFO  *DriverInfo;
+  UINTN                       DriverIndex;
 
   if (Context->Header.Signature != MEMORY_PROFILE_CONTEXT_SIGNATURE) {
     return NULL;
   }
+
   Print (L"MEMORY_PROFILE_CONTEXT\n");
   Print (L"  Signature                     - 0x%08x\n", Context->Header.Signature);
   Print (L"  Length                        - 0x%04x\n", Context->Header.Length);
   Print (L"  Revision                      - 0x%04x\n", Context->Header.Revision);
   Print (L"  CurrentTotalUsage             - 0x%016lx\n", Context->CurrentTotalUsage);
   Print (L"  PeakTotalUsage                - 0x%016lx\n", Context->PeakTotalUsage);
-  for (TypeIndex = 0; TypeIndex < sizeof (Context->CurrentTotalUsageByType) / sizeof (Context->CurrentTotalUsageByType[0]); TypeIndex++) {
+  for (TypeIndex = 0;
+       TypeIndex < sizeof (Context->CurrentTotalUsageByType) / sizeof (Context->CurrentTotalUsageByType[0]);
+       TypeIndex++) {
     if ((Context->CurrentTotalUsageByType[TypeIndex] != 0) ||
         (Context->PeakTotalUsageByType[TypeIndex] != 0)) {
-      Print (L"  CurrentTotalUsage[0x%02x]       - 0x%016lx (%a)\n", TypeIndex, Context->CurrentTotalUsageByType[TypeIndex], mMemoryTypeString[TypeIndex]);
-      Print (L"  PeakTotalUsage[0x%02x]          - 0x%016lx (%a)\n", TypeIndex, Context->PeakTotalUsageByType[TypeIndex], mMemoryTypeString[TypeIndex]);
+      Print (
+            L"  CurrentTotalUsage[0x%02x]       - 0x%016lx (%a)\n",
+            TypeIndex,
+            Context->CurrentTotalUsageByType[TypeIndex],
+            mMemoryTypeString[TypeIndex]
+            );
+      Print (
+            L"  PeakTotalUsage[0x%02x]          - 0x%016lx (%a)\n",
+            TypeIndex,
+            Context->PeakTotalUsageByType[TypeIndex],
+            mMemoryTypeString[TypeIndex]
+            );
     }
   }
+
   Print (L"  TotalImageSize                - 0x%016lx\n", Context->TotalImageSize);
   Print (L"  ImageCount                    - 0x%08x\n", Context->ImageCount);
   Print (L"  SequenceCount                 - 0x%08x\n", Context->SequenceCount);
@@ -516,6 +591,7 @@ DumpMemoryProfileContext (
       return NULL;
     }
   }
+
   return (VOID *) DriverInfo;
 }
 
@@ -537,6 +613,7 @@ DumpMemoryProfileDescriptor (
   if (Descriptor->Header.Signature != MEMORY_PROFILE_DESCRIPTOR_SIGNATURE) {
     return NULL;
   }
+
   Print (L"  MEMORY_PROFILE_DESCRIPTOR (0x%x)\n", DescriptorIndex);
   Print (L"    Signature               - 0x%08x\n", Descriptor->Header.Signature);
   Print (L"    Length                  - 0x%04x\n", Descriptor->Header.Length);
@@ -560,12 +637,13 @@ DumpMemoryProfileFreeMemory (
   IN MEMORY_PROFILE_FREE_MEMORY *FreeMemory
   )
 {
-  MEMORY_PROFILE_DESCRIPTOR     *Descriptor;
-  UINTN                         DescriptorIndex;
+  MEMORY_PROFILE_DESCRIPTOR  *Descriptor;
+  UINTN                      DescriptorIndex;
 
   if (FreeMemory->Header.Signature != MEMORY_PROFILE_FREE_MEMORY_SIGNATURE) {
     return NULL;
   }
+
   Print (L"MEMORY_PROFILE_FREE_MEMORY\n");
   Print (L"  Signature                     - 0x%08x\n", FreeMemory->Header.Signature);
   Print (L"  Length                        - 0x%04x\n", FreeMemory->Header.Length);
@@ -597,12 +675,13 @@ DumpMemoryProfileMemoryRange (
   IN MEMORY_PROFILE_MEMORY_RANGE    *MemoryRange
   )
 {
-  MEMORY_PROFILE_DESCRIPTOR     *Descriptor;
-  UINTN                         DescriptorIndex;
+  MEMORY_PROFILE_DESCRIPTOR  *Descriptor;
+  UINTN                      DescriptorIndex;
 
   if (MemoryRange->Header.Signature != MEMORY_PROFILE_MEMORY_RANGE_SIGNATURE) {
     return NULL;
   }
+
   Print (L"MEMORY_PROFILE_MEMORY_RANGE\n");
   Print (L"  Signature                     - 0x%08x\n", MemoryRange->Header.Signature);
   Print (L"  Length                        - 0x%04x\n", MemoryRange->Header.Length);
@@ -638,9 +717,9 @@ ScanMemoryProfileBySignature (
   )
 {
   MEMORY_PROFILE_COMMON_HEADER  *CommonHeader;
-  UINTN                          ProfileEnd;
+  UINTN                         ProfileEnd;
 
-  ProfileEnd = (UINTN) (ProfileBuffer + ProfileSize);
+  ProfileEnd   = (UINTN) (ProfileBuffer + ProfileSize);
   CommonHeader = (MEMORY_PROFILE_COMMON_HEADER *) (UINTN) ProfileBuffer;
   while ((UINTN) CommonHeader < ProfileEnd) {
     if (CommonHeader->Signature == Signature) {
@@ -649,10 +728,12 @@ ScanMemoryProfileBySignature (
       //
       return (VOID *) CommonHeader;
     }
+
     if (CommonHeader->Length == 0) {
       ASSERT (FALSE);
       return NULL;
     }
+
     CommonHeader = (MEMORY_PROFILE_COMMON_HEADER *) ((UINTN) CommonHeader + CommonHeader->Length);
   }
 
@@ -675,21 +756,33 @@ DumpMemoryProfile (
   IN BOOLEAN                    IsForSmm
   )
 {
-  MEMORY_PROFILE_CONTEXT        *Context;
-  MEMORY_PROFILE_FREE_MEMORY    *FreeMemory;
-  MEMORY_PROFILE_MEMORY_RANGE   *MemoryRange;
+  MEMORY_PROFILE_CONTEXT       *Context;
+  MEMORY_PROFILE_FREE_MEMORY   *FreeMemory;
+  MEMORY_PROFILE_MEMORY_RANGE  *MemoryRange;
 
-  Context = (MEMORY_PROFILE_CONTEXT *) ScanMemoryProfileBySignature (ProfileBuffer, ProfileSize, MEMORY_PROFILE_CONTEXT_SIGNATURE);
+  Context = (MEMORY_PROFILE_CONTEXT *) ScanMemoryProfileBySignature (
+                                                                    ProfileBuffer,
+                                                                    ProfileSize,
+                                                                    MEMORY_PROFILE_CONTEXT_SIGNATURE
+                                                                    );
   if (Context != NULL) {
     DumpMemoryProfileContext (Context, IsForSmm);
   }
 
-  FreeMemory = (MEMORY_PROFILE_FREE_MEMORY *) ScanMemoryProfileBySignature (ProfileBuffer, ProfileSize, MEMORY_PROFILE_FREE_MEMORY_SIGNATURE);
+  FreeMemory = (MEMORY_PROFILE_FREE_MEMORY *) ScanMemoryProfileBySignature (
+                                                                           ProfileBuffer,
+                                                                           ProfileSize,
+                                                                           MEMORY_PROFILE_FREE_MEMORY_SIGNATURE
+                                                                           );
   if (FreeMemory != NULL) {
     DumpMemoryProfileFreeMemory (FreeMemory);
   }
 
-  MemoryRange = (MEMORY_PROFILE_MEMORY_RANGE *) ScanMemoryProfileBySignature (ProfileBuffer, ProfileSize, MEMORY_PROFILE_MEMORY_RANGE_SIGNATURE);
+  MemoryRange = (MEMORY_PROFILE_MEMORY_RANGE *) ScanMemoryProfileBySignature (
+                                                                             ProfileBuffer,
+                                                                             ProfileSize,
+                                                                             MEMORY_PROFILE_MEMORY_RANGE_SIGNATURE
+                                                                             );
   if (MemoryRange != NULL) {
     DumpMemoryProfileMemoryRange (MemoryRange);
   }
@@ -710,10 +803,10 @@ GetAllocSummaryInfoByCallerAddress (
   IN MEMORY_PROFILE_DRIVER_SUMMARY_INFO_DATA    *DriverSummaryInfoData
   )
 {
-  LIST_ENTRY                                    *AllocSummaryInfoList;
-  LIST_ENTRY                                    *AllocSummaryLink;
-  MEMORY_PROFILE_ALLOC_SUMMARY_INFO             *AllocSummaryInfo;
-  MEMORY_PROFILE_ALLOC_SUMMARY_INFO_DATA        *AllocSummaryInfoData;
+  LIST_ENTRY                              *AllocSummaryInfoList;
+  LIST_ENTRY                              *AllocSummaryLink;
+  MEMORY_PROFILE_ALLOC_SUMMARY_INFO       *AllocSummaryInfo;
+  MEMORY_PROFILE_ALLOC_SUMMARY_INFO_DATA  *AllocSummaryInfoData;
 
   AllocSummaryInfoList = DriverSummaryInfoData->AllocSummaryInfoList;
 
@@ -721,16 +814,17 @@ GetAllocSummaryInfoByCallerAddress (
        AllocSummaryLink != AllocSummaryInfoList;
        AllocSummaryLink = AllocSummaryLink->ForwardLink) {
     AllocSummaryInfoData = CR (
-                             AllocSummaryLink,
-                             MEMORY_PROFILE_ALLOC_SUMMARY_INFO_DATA,
-                             Link,
-                             MEMORY_PROFILE_ALLOC_SUMMARY_INFO_SIGNATURE
-                             );
+                               AllocSummaryLink,
+                               MEMORY_PROFILE_ALLOC_SUMMARY_INFO_DATA,
+                               Link,
+                               MEMORY_PROFILE_ALLOC_SUMMARY_INFO_SIGNATURE
+                               );
     AllocSummaryInfo = &AllocSummaryInfoData->AllocSummaryInfo;
     if (AllocSummaryInfo->CallerAddress == CallerAddress) {
       return AllocSummaryInfoData;
     }
   }
+
   return NULL;
 }
 
@@ -750,8 +844,8 @@ CreateAllocSummaryInfo (
   IN MEMORY_PROFILE_ALLOC_INFO                      *AllocInfo
   )
 {
-  MEMORY_PROFILE_ALLOC_SUMMARY_INFO_DATA            *AllocSummaryInfoData;
-  MEMORY_PROFILE_ALLOC_SUMMARY_INFO                 *AllocSummaryInfo;
+  MEMORY_PROFILE_ALLOC_SUMMARY_INFO_DATA  *AllocSummaryInfoData;
+  MEMORY_PROFILE_ALLOC_SUMMARY_INFO       *AllocSummaryInfo;
 
   if (AllocInfo->Header.Signature != MEMORY_PROFILE_ALLOC_INFO_SIGNATURE) {
     return NULL;
@@ -769,19 +863,21 @@ CreateAllocSummaryInfo (
     AllocSummaryInfo->Header.Signature = MEMORY_PROFILE_ALLOC_SUMMARY_INFO_SIGNATURE;
     AllocSummaryInfo->Header.Length    = sizeof (*AllocSummaryInfo);
     AllocSummaryInfo->Header.Revision  = MEMORY_PROFILE_ALLOC_SUMMARY_INFO_REVISION;
-    AllocSummaryInfo->CallerAddress = AllocInfo->CallerAddress;
-    AllocSummaryInfo->Action        = AllocInfo->Action;
+    AllocSummaryInfo->CallerAddress    = AllocInfo->CallerAddress;
+    AllocSummaryInfo->Action = AllocInfo->Action;
     if (AllocInfo->ActionStringOffset != 0) {
       AllocSummaryInfo->ActionString = (CHAR8 *) ((UINTN) AllocInfo + AllocInfo->ActionStringOffset);
     } else {
-      AllocSummaryInfo->ActionString  = NULL;
+      AllocSummaryInfo->ActionString = NULL;
     }
+
     AllocSummaryInfo->AllocateCount = 0;
     AllocSummaryInfo->TotalSize     = 0;
     InsertTailList (DriverSummaryInfoData->AllocSummaryInfoList, &AllocSummaryInfoData->Link);
   }
+
   AllocSummaryInfo = &AllocSummaryInfoData->AllocSummaryInfo;
-  AllocSummaryInfo->AllocateCount ++;
+  AllocSummaryInfo->AllocateCount++;
   AllocSummaryInfo->TotalSize += AllocInfo->Size;
 
   return (MEMORY_PROFILE_ALLOC_INFO *) ((UINTN) AllocInfo + AllocInfo->Header.Length);
@@ -803,9 +899,9 @@ CreateDriverSummaryInfo (
   IN MEMORY_PROFILE_DRIVER_INFO                 *DriverInfo
   )
 {
-  MEMORY_PROFILE_DRIVER_SUMMARY_INFO_DATA       *DriverSummaryInfoData;
-  MEMORY_PROFILE_ALLOC_INFO                     *AllocInfo;
-  UINTN                                         AllocIndex;
+  MEMORY_PROFILE_DRIVER_SUMMARY_INFO_DATA  *DriverSummaryInfoData;
+  MEMORY_PROFILE_ALLOC_INFO                *AllocInfo;
+  UINTN                                    AllocIndex;
 
   if (DriverInfo->Header.Signature != MEMORY_PROFILE_DRIVER_INFO_SIGNATURE) {
     return NULL;
@@ -815,7 +911,8 @@ CreateDriverSummaryInfo (
   if (DriverSummaryInfoData == NULL) {
     return NULL;
   }
-  DriverSummaryInfoData->Signature = MEMORY_PROFILE_DRIVER_INFO_SIGNATURE;
+
+  DriverSummaryInfoData->Signature  = MEMORY_PROFILE_DRIVER_INFO_SIGNATURE;
   DriverSummaryInfoData->DriverInfo = DriverInfo;
   DriverSummaryInfoData->AllocSummaryInfoList = (LIST_ENTRY *) (DriverSummaryInfoData + 1);
   InitializeListHead (DriverSummaryInfoData->AllocSummaryInfoList);
@@ -828,6 +925,7 @@ CreateDriverSummaryInfo (
       return NULL;
     }
   }
+
   return (MEMORY_PROFILE_DRIVER_INFO *) AllocInfo;
 }
 
@@ -846,17 +944,21 @@ CreateContextSummaryData (
   IN UINT64                     ProfileSize
   )
 {
-  MEMORY_PROFILE_CONTEXT        *Context;
-  MEMORY_PROFILE_DRIVER_INFO    *DriverInfo;
-  UINTN                         DriverIndex;
+  MEMORY_PROFILE_CONTEXT      *Context;
+  MEMORY_PROFILE_DRIVER_INFO  *DriverInfo;
+  UINTN                       DriverIndex;
 
-  Context = (MEMORY_PROFILE_CONTEXT *) ScanMemoryProfileBySignature (ProfileBuffer, ProfileSize, MEMORY_PROFILE_CONTEXT_SIGNATURE);
+  Context = (MEMORY_PROFILE_CONTEXT *) ScanMemoryProfileBySignature (
+                                                                    ProfileBuffer,
+                                                                    ProfileSize,
+                                                                    MEMORY_PROFILE_CONTEXT_SIGNATURE
+                                                                    );
   if (Context == NULL) {
     return NULL;
   }
 
   mMemoryProfileContextSummary.Signature = MEMORY_PROFILE_CONTEXT_SIGNATURE;
-  mMemoryProfileContextSummary.Context = Context;
+  mMemoryProfileContextSummary.Context   = Context;
   mMemoryProfileContextSummary.DriverSummaryInfoList = &mImageSummaryQueue;
 
   DriverInfo = (MEMORY_PROFILE_DRIVER_INFO *) ((UINTN) Context + Context->Header.Length);
@@ -884,18 +986,18 @@ DumpContextSummaryData (
   IN BOOLEAN                                IsForSmm
   )
 {
-  MEMORY_PROFILE_DRIVER_SUMMARY_INFO_DATA   *DriverSummaryInfoData;
-  MEMORY_PROFILE_ALLOC_SUMMARY_INFO_DATA    *AllocSummaryInfoData;
-  LIST_ENTRY                                *DriverSummaryInfoList;
-  LIST_ENTRY                                *DriverSummaryLink;
-  LIST_ENTRY                                *AllocSummaryInfoList;
-  LIST_ENTRY                                *AllocSummaryLink;
-  MEMORY_PROFILE_DRIVER_INFO                *DriverInfo;
-  MEMORY_PROFILE_ALLOC_SUMMARY_INFO         *AllocSummaryInfo;
-  CHAR8                                     *NameString;
+  MEMORY_PROFILE_DRIVER_SUMMARY_INFO_DATA  *DriverSummaryInfoData;
+  MEMORY_PROFILE_ALLOC_SUMMARY_INFO_DATA   *AllocSummaryInfoData;
+  LIST_ENTRY                               *DriverSummaryInfoList;
+  LIST_ENTRY                               *DriverSummaryLink;
+  LIST_ENTRY                               *AllocSummaryInfoList;
+  LIST_ENTRY                               *AllocSummaryLink;
+  MEMORY_PROFILE_DRIVER_INFO               *DriverInfo;
+  MEMORY_PROFILE_ALLOC_SUMMARY_INFO        *AllocSummaryInfo;
+  CHAR8                                    *NameString;
 
   if (ContextSummaryData == NULL) {
-    return ;
+    return;
   }
 
   Print (L"\nSummary Data:\n");
@@ -905,11 +1007,11 @@ DumpContextSummaryData (
        DriverSummaryLink != DriverSummaryInfoList;
        DriverSummaryLink = DriverSummaryLink->ForwardLink) {
     DriverSummaryInfoData = CR (
-                              DriverSummaryLink,
-                              MEMORY_PROFILE_DRIVER_SUMMARY_INFO_DATA,
-                              Link,
-                              MEMORY_PROFILE_DRIVER_INFO_SIGNATURE
-                              );
+                                DriverSummaryLink,
+                                MEMORY_PROFILE_DRIVER_SUMMARY_INFO_DATA,
+                                Link,
+                                MEMORY_PROFILE_DRIVER_INFO_SIGNATURE
+                                );
     DriverInfo = DriverSummaryInfoData->DriverInfo;
 
     NameString = GetDriverNameString (DriverInfo);
@@ -924,30 +1026,33 @@ DumpContextSummaryData (
     } else {
       Print (L"\n");
     }
+
     Print (L"Caller List:\n");
-    Print(L"  Count            Size                   RVA              Action\n");
-    Print(L"==========  ==================     ================== (================================)\n");
+    Print (L"  Count            Size                   RVA              Action\n");
+    Print (L"==========  ==================     ================== (================================)\n");
     AllocSummaryInfoList = DriverSummaryInfoData->AllocSummaryInfoList;
     for (AllocSummaryLink = AllocSummaryInfoList->ForwardLink;
          AllocSummaryLink != AllocSummaryInfoList;
          AllocSummaryLink = AllocSummaryLink->ForwardLink) {
       AllocSummaryInfoData = CR (
-                               AllocSummaryLink,
-                               MEMORY_PROFILE_ALLOC_SUMMARY_INFO_DATA,
-                               Link,
-                               MEMORY_PROFILE_ALLOC_SUMMARY_INFO_SIGNATURE
-                               );
+                                 AllocSummaryLink,
+                                 MEMORY_PROFILE_ALLOC_SUMMARY_INFO_DATA,
+                                 Link,
+                                 MEMORY_PROFILE_ALLOC_SUMMARY_INFO_SIGNATURE
+                                 );
       AllocSummaryInfo = &AllocSummaryInfoData->AllocSummaryInfo;
 
-      Print(L"0x%08x  0x%016lx <== 0x%016lx",
-        AllocSummaryInfo->AllocateCount,
-        AllocSummaryInfo->TotalSize,
-        AllocSummaryInfo->CallerAddress - DriverInfo->ImageBase
-        );
+      Print (
+             L"0x%08x  0x%016lx <== 0x%016lx",
+             AllocSummaryInfo->AllocateCount,
+             AllocSummaryInfo->TotalSize,
+             AllocSummaryInfo->CallerAddress - DriverInfo->ImageBase
+             );
       Print (L" (%a)\n", ProfileActionToStr (AllocSummaryInfo->Action, AllocSummaryInfo->ActionString, IsForSmm));
     }
   }
-  return ;
+
+  return;
 }
 
 /**
@@ -961,15 +1066,15 @@ DestroyContextSummaryData (
   IN OUT MEMORY_PROFILE_CONTEXT_SUMMARY_DATA    *ContextSummaryData
   )
 {
-  MEMORY_PROFILE_DRIVER_SUMMARY_INFO_DATA       *DriverSummaryInfoData;
-  MEMORY_PROFILE_ALLOC_SUMMARY_INFO_DATA        *AllocSummaryInfoData;
-  LIST_ENTRY                                    *DriverSummaryInfoList;
-  LIST_ENTRY                                    *DriverSummaryLink;
-  LIST_ENTRY                                    *AllocSummaryInfoList;
-  LIST_ENTRY                                    *AllocSummaryLink;
+  MEMORY_PROFILE_DRIVER_SUMMARY_INFO_DATA  *DriverSummaryInfoData;
+  MEMORY_PROFILE_ALLOC_SUMMARY_INFO_DATA   *AllocSummaryInfoData;
+  LIST_ENTRY                               *DriverSummaryInfoList;
+  LIST_ENTRY                               *DriverSummaryLink;
+  LIST_ENTRY                               *AllocSummaryInfoList;
+  LIST_ENTRY                               *AllocSummaryLink;
 
   if (ContextSummaryData == NULL) {
-    return ;
+    return;
   }
 
   DriverSummaryInfoList = ContextSummaryData->DriverSummaryInfoList;
@@ -977,11 +1082,11 @@ DestroyContextSummaryData (
        DriverSummaryLink != DriverSummaryInfoList;
        ) {
     DriverSummaryInfoData = CR (
-                              DriverSummaryLink,
-                              MEMORY_PROFILE_DRIVER_SUMMARY_INFO_DATA,
-                              Link,
-                              MEMORY_PROFILE_DRIVER_INFO_SIGNATURE
-                              );
+                                DriverSummaryLink,
+                                MEMORY_PROFILE_DRIVER_SUMMARY_INFO_DATA,
+                                Link,
+                                MEMORY_PROFILE_DRIVER_INFO_SIGNATURE
+                                );
     DriverSummaryLink = DriverSummaryLink->ForwardLink;
 
     AllocSummaryInfoList = DriverSummaryInfoData->AllocSummaryInfoList;
@@ -989,11 +1094,11 @@ DestroyContextSummaryData (
          AllocSummaryLink != AllocSummaryInfoList;
          ) {
       AllocSummaryInfoData = CR (
-                               AllocSummaryLink,
-                               MEMORY_PROFILE_ALLOC_SUMMARY_INFO_DATA,
-                               Link,
-                               MEMORY_PROFILE_ALLOC_SUMMARY_INFO_SIGNATURE
-                               );
+                                 AllocSummaryLink,
+                                 MEMORY_PROFILE_ALLOC_SUMMARY_INFO_DATA,
+                                 Link,
+                                 MEMORY_PROFILE_ALLOC_SUMMARY_INFO_SIGNATURE
+                                 );
       AllocSummaryLink = AllocSummaryLink->ForwardLink;
 
       RemoveEntryList (&AllocSummaryInfoData->Link);
@@ -1003,7 +1108,8 @@ DestroyContextSummaryData (
     RemoveEntryList (&DriverSummaryInfoData->Link);
     FreePool (DriverSummaryInfoData);
   }
-  return ;
+
+  return;
 }
 
 /**
@@ -1018,12 +1124,12 @@ GetUefiMemoryProfileData (
   VOID
   )
 {
-  EFI_STATUS                          Status;
-  EDKII_MEMORY_PROFILE_PROTOCOL       *ProfileProtocol;
-  VOID                                *Data;
-  UINT64                              Size;
-  MEMORY_PROFILE_CONTEXT_SUMMARY_DATA *MemoryProfileContextSummaryData;
-  BOOLEAN                             RecordingState;
+  EFI_STATUS                           Status;
+  EDKII_MEMORY_PROFILE_PROTOCOL        *ProfileProtocol;
+  VOID                                 *Data;
+  UINT64                               Size;
+  MEMORY_PROFILE_CONTEXT_SUMMARY_DATA  *MemoryProfileContextSummaryData;
+  BOOLEAN                              RecordingState;
 
   Status = gBS->LocateProtocol (&gEdkiiMemoryProfileGuid, NULL, (VOID **) &ProfileProtocol);
   if (EFI_ERROR (Status)) {
@@ -1037,16 +1143,16 @@ GetUefiMemoryProfileData (
   RecordingState = MEMORY_PROFILE_RECORDING_DISABLE;
   Status = ProfileProtocol->GetRecordingState (ProfileProtocol, &RecordingState);
   if (RecordingState == MEMORY_PROFILE_RECORDING_ENABLE) {
-    ProfileProtocol->SetRecordingState (ProfileProtocol, MEMORY_PROFILE_RECORDING_DISABLE);
+  ProfileProtocol->SetRecordingState (ProfileProtocol, MEMORY_PROFILE_RECORDING_DISABLE);
   }
 
-  Size = 0;
-  Data = NULL;
+  Size   = 0;
+  Data   = NULL;
   Status = ProfileProtocol->GetData (
-                              ProfileProtocol,
-                              &Size,
-                              Data
-                              );
+                                     ProfileProtocol,
+                                     &Size,
+                                     Data
+                                     );
   if (Status != EFI_BUFFER_TOO_SMALL) {
     Print (L"UefiMemoryProfile: GetData - %r\n", Status);
     goto Done;
@@ -1060,15 +1166,14 @@ GetUefiMemoryProfileData (
   }
 
   Status = ProfileProtocol->GetData (
-                              ProfileProtocol,
-                              &Size,
-                              Data
-                              );
+                                     ProfileProtocol,
+                                     &Size,
+                                     Data
+                                     );
   if (EFI_ERROR (Status)) {
     Print (L"UefiMemoryProfile: GetData - %r\n", Status);
     goto Done;
   }
-
 
   Print (L"UefiMemoryProfileSize - 0x%x\n", Size);
   Print (L"======= UefiMemoryProfile begin =======\n");
@@ -1094,7 +1199,7 @@ Done:
   // Restore recording state if needed.
   //
   if (RecordingState == MEMORY_PROFILE_RECORDING_ENABLE) {
-    ProfileProtocol->SetRecordingState (ProfileProtocol, MEMORY_PROFILE_RECORDING_ENABLE);
+  ProfileProtocol->SetRecordingState (ProfileProtocol, MEMORY_PROFILE_RECORDING_ENABLE);
   }
 
   return Status;
@@ -1112,25 +1217,25 @@ GetSmramProfileData (
   VOID
   )
 {
-  EFI_STATUS                                    Status;
-  UINTN                                         CommSize;
-  UINT8                                         *CommBuffer;
-  EFI_SMM_COMMUNICATE_HEADER                    *CommHeader;
-  SMRAM_PROFILE_PARAMETER_GET_PROFILE_INFO      *CommGetProfileInfo;
-  SMRAM_PROFILE_PARAMETER_GET_PROFILE_DATA_BY_OFFSET *CommGetProfileData;
-  SMRAM_PROFILE_PARAMETER_RECORDING_STATE       *CommRecordingState;
-  UINTN                                         ProfileSize;
-  VOID                                          *ProfileBuffer;
-  EFI_SMM_COMMUNICATION_PROTOCOL                *SmmCommunication;
-  UINTN                                         MinimalSizeNeeded;
-  EDKII_PI_SMM_COMMUNICATION_REGION_TABLE       *PiSmmCommunicationRegionTable;
-  UINT32                                        Index;
-  EFI_MEMORY_DESCRIPTOR                         *Entry;
-  VOID                                          *Buffer;
-  UINTN                                         Size;
-  UINTN                                         Offset;
-  MEMORY_PROFILE_CONTEXT_SUMMARY_DATA           *MemoryProfileContextSummaryData;
-  BOOLEAN                                       RecordingState;
+  EFI_STATUS                                          Status;
+  UINTN                                               CommSize;
+  UINT8                                               *CommBuffer;
+  EFI_SMM_COMMUNICATE_HEADER                          *CommHeader;
+  SMRAM_PROFILE_PARAMETER_GET_PROFILE_INFO            *CommGetProfileInfo;
+  SMRAM_PROFILE_PARAMETER_GET_PROFILE_DATA_BY_OFFSET  *CommGetProfileData;
+  SMRAM_PROFILE_PARAMETER_RECORDING_STATE             *CommRecordingState;
+  UINTN                                               ProfileSize;
+  VOID                                                *ProfileBuffer;
+  EFI_SMM_COMMUNICATION_PROTOCOL                      *SmmCommunication;
+  UINTN                                               MinimalSizeNeeded;
+  EDKII_PI_SMM_COMMUNICATION_REGION_TABLE             *PiSmmCommunicationRegionTable;
+  UINT32                                              Index;
+  EFI_MEMORY_DESCRIPTOR                               *Entry;
+  VOID                                                *Buffer;
+  UINTN                                               Size;
+  UINTN                                               Offset;
+  MEMORY_PROFILE_CONTEXT_SUMMARY_DATA                 *MemoryProfileContextSummaryData;
+  BOOLEAN                                             RecordingState;
 
   ProfileBuffer = NULL;
 
@@ -1142,27 +1247,42 @@ GetSmramProfileData (
 
   MinimalSizeNeeded = sizeof (EFI_GUID) +
                       sizeof (UINTN) +
-                      MAX (sizeof (SMRAM_PROFILE_PARAMETER_GET_PROFILE_INFO),
-                           MAX (sizeof (SMRAM_PROFILE_PARAMETER_GET_PROFILE_DATA_BY_OFFSET),
-                                sizeof (SMRAM_PROFILE_PARAMETER_RECORDING_STATE)));
-  MinimalSizeNeeded += MAX (sizeof (MEMORY_PROFILE_CONTEXT),
-                            MAX (sizeof (MEMORY_PROFILE_DRIVER_INFO),
-                                 MAX (sizeof (MEMORY_PROFILE_ALLOC_INFO),
-                                      MAX (sizeof (MEMORY_PROFILE_DESCRIPTOR),
-                                           MAX (sizeof (MEMORY_PROFILE_FREE_MEMORY),
-                                                sizeof (MEMORY_PROFILE_MEMORY_RANGE))))));
+                      MAX (
+                           sizeof (SMRAM_PROFILE_PARAMETER_GET_PROFILE_INFO),
+                           MAX (
+                                sizeof (SMRAM_PROFILE_PARAMETER_GET_PROFILE_DATA_BY_OFFSET),
+                                sizeof (SMRAM_PROFILE_PARAMETER_RECORDING_STATE)
+                                )
+                           );
+  MinimalSizeNeeded += MAX (
+                            sizeof (MEMORY_PROFILE_CONTEXT),
+                            MAX (
+                                 sizeof (MEMORY_PROFILE_DRIVER_INFO),
+                                 MAX (
+                                      sizeof (MEMORY_PROFILE_ALLOC_INFO),
+                                      MAX (
+                                           sizeof (MEMORY_PROFILE_DESCRIPTOR),
+                                           MAX (
+                                                sizeof (MEMORY_PROFILE_FREE_MEMORY),
+                                                sizeof (MEMORY_PROFILE_MEMORY_RANGE)
+                                                )
+                                           )
+                                      )
+                                 )
+                            );
 
   Status = EfiGetSystemConfigurationTable (
-             &gEdkiiPiSmmCommunicationRegionTableGuid,
-             (VOID **) &PiSmmCommunicationRegionTable
-             );
+                                           &gEdkiiPiSmmCommunicationRegionTableGuid,
+                                           (VOID **) &PiSmmCommunicationRegionTable
+                                           );
   if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "SmramProfile: Get PiSmmCommunicationRegionTable - %r\n", Status));
     return Status;
   }
+
   ASSERT (PiSmmCommunicationRegionTable != NULL);
   Entry = (EFI_MEMORY_DESCRIPTOR *) (PiSmmCommunicationRegionTable + 1);
-  Size = 0;
+  Size  = 0;
   for (Index = 0; Index < PiSmmCommunicationRegionTable->NumberOfEntries; Index++) {
     if (Entry->Type == EfiConventionalMemory) {
       Size = EFI_PAGES_TO_SIZE ((UINTN) Entry->NumberOfPages);
@@ -1170,8 +1290,10 @@ GetSmramProfileData (
         break;
       }
     }
+
     Entry = (EFI_MEMORY_DESCRIPTOR *) ((UINT8 *) Entry + PiSmmCommunicationRegionTable->DescriptorSize);
   }
+
   ASSERT (Index < PiSmmCommunicationRegionTable->NumberOfEntries);
   CommBuffer = (UINT8 *) (UINTN) Entry->PhysicalStart;
 
@@ -1184,14 +1306,15 @@ GetSmramProfileData (
   CopyMem (&CommHeader->HeaderGuid, &gEdkiiMemoryProfileGuid, sizeof (gEdkiiMemoryProfileGuid));
   CommHeader->MessageLength = sizeof (SMRAM_PROFILE_PARAMETER_RECORDING_STATE);
 
-  CommRecordingState = (SMRAM_PROFILE_PARAMETER_RECORDING_STATE *) &CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data)];
+  CommRecordingState =
+    (SMRAM_PROFILE_PARAMETER_RECORDING_STATE *) &CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data)];
   CommRecordingState->Header.Command      = SMRAM_PROFILE_COMMAND_GET_RECORDING_STATE;
   CommRecordingState->Header.DataLength   = sizeof (*CommRecordingState);
-  CommRecordingState->Header.ReturnStatus = (UINT64)-1;
+  CommRecordingState->Header.ReturnStatus = (UINT64) - 1;
   CommRecordingState->RecordingState      = MEMORY_PROFILE_RECORDING_DISABLE;
 
   CommSize = sizeof (EFI_GUID) + sizeof (UINTN) + CommHeader->MessageLength;
-  Status = SmmCommunication->Communicate (SmmCommunication, CommBuffer, &CommSize);
+  Status   = SmmCommunication->Communicate (SmmCommunication, CommBuffer, &CommSize);
   if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "SmramProfile: SmmCommunication - %r\n", Status));
     return Status;
@@ -1201,16 +1324,18 @@ GetSmramProfileData (
     Print (L"SmramProfile: GetRecordingState - 0x%0x\n", CommRecordingState->Header.ReturnStatus);
     return EFI_SUCCESS;
   }
+
   RecordingState = CommRecordingState->RecordingState;
   if (RecordingState == MEMORY_PROFILE_RECORDING_ENABLE) {
     CommHeader = (EFI_SMM_COMMUNICATE_HEADER *) &CommBuffer[0];
     CopyMem (&CommHeader->HeaderGuid, &gEdkiiMemoryProfileGuid, sizeof (gEdkiiMemoryProfileGuid));
     CommHeader->MessageLength = sizeof (SMRAM_PROFILE_PARAMETER_RECORDING_STATE);
 
-    CommRecordingState = (SMRAM_PROFILE_PARAMETER_RECORDING_STATE *) &CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data)];
+    CommRecordingState =
+      (SMRAM_PROFILE_PARAMETER_RECORDING_STATE *) &CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data)];
     CommRecordingState->Header.Command      = SMRAM_PROFILE_COMMAND_SET_RECORDING_STATE;
     CommRecordingState->Header.DataLength   = sizeof (*CommRecordingState);
-    CommRecordingState->Header.ReturnStatus = (UINT64)-1;
+    CommRecordingState->Header.ReturnStatus = (UINT64) - 1;
     CommRecordingState->RecordingState      = MEMORY_PROFILE_RECORDING_DISABLE;
 
     CommSize = sizeof (EFI_GUID) + sizeof (UINTN) + CommHeader->MessageLength;
@@ -1224,14 +1349,15 @@ GetSmramProfileData (
   CopyMem (&CommHeader->HeaderGuid, &gEdkiiMemoryProfileGuid, sizeof (gEdkiiMemoryProfileGuid));
   CommHeader->MessageLength = sizeof (SMRAM_PROFILE_PARAMETER_GET_PROFILE_INFO);
 
-  CommGetProfileInfo = (SMRAM_PROFILE_PARAMETER_GET_PROFILE_INFO *) &CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data)];
+  CommGetProfileInfo =
+    (SMRAM_PROFILE_PARAMETER_GET_PROFILE_INFO *) &CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data)];
   CommGetProfileInfo->Header.Command      = SMRAM_PROFILE_COMMAND_GET_PROFILE_INFO;
   CommGetProfileInfo->Header.DataLength   = sizeof (*CommGetProfileInfo);
-  CommGetProfileInfo->Header.ReturnStatus = (UINT64)-1;
-  CommGetProfileInfo->ProfileSize         = 0;
+  CommGetProfileInfo->Header.ReturnStatus = (UINT64) - 1;
+  CommGetProfileInfo->ProfileSize = 0;
 
   CommSize = sizeof (EFI_GUID) + sizeof (UINTN) + CommHeader->MessageLength;
-  Status = SmmCommunication->Communicate (SmmCommunication, CommBuffer, &CommSize);
+  Status   = SmmCommunication->Communicate (SmmCommunication, CommBuffer, &CommSize);
   ASSERT_EFI_ERROR (Status);
 
   if (CommGetProfileInfo->Header.ReturnStatus != 0) {
@@ -1253,20 +1379,21 @@ GetSmramProfileData (
   }
 
   CommHeader = (EFI_SMM_COMMUNICATE_HEADER *) &CommBuffer[0];
-  CopyMem (&CommHeader->HeaderGuid, &gEdkiiMemoryProfileGuid, sizeof(gEdkiiMemoryProfileGuid));
+  CopyMem (&CommHeader->HeaderGuid, &gEdkiiMemoryProfileGuid, sizeof (gEdkiiMemoryProfileGuid));
   CommHeader->MessageLength = sizeof (SMRAM_PROFILE_PARAMETER_GET_PROFILE_DATA_BY_OFFSET);
 
-  CommGetProfileData = (SMRAM_PROFILE_PARAMETER_GET_PROFILE_DATA_BY_OFFSET *) &CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data)];
+  CommGetProfileData =
+    (SMRAM_PROFILE_PARAMETER_GET_PROFILE_DATA_BY_OFFSET *) &CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data)];
   CommGetProfileData->Header.Command      = SMRAM_PROFILE_COMMAND_GET_PROFILE_DATA_BY_OFFSET;
   CommGetProfileData->Header.DataLength   = sizeof (*CommGetProfileData);
-  CommGetProfileData->Header.ReturnStatus = (UINT64)-1;
+  CommGetProfileData->Header.ReturnStatus = (UINT64) - 1;
 
   CommSize = sizeof (EFI_GUID) + sizeof (UINTN) + CommHeader->MessageLength;
-  Buffer = (UINT8 *) CommHeader + CommSize;
-  Size -= CommSize;
+  Buffer   = (UINT8 *) CommHeader + CommSize;
+  Size    -= CommSize;
 
-  CommGetProfileData->ProfileBuffer       = (PHYSICAL_ADDRESS) (UINTN) Buffer;
-  CommGetProfileData->ProfileOffset       = 0;
+  CommGetProfileData->ProfileBuffer = (PHYSICAL_ADDRESS) (UINTN) Buffer;
+  CommGetProfileData->ProfileOffset = 0;
   while (CommGetProfileData->ProfileOffset < ProfileSize) {
     Offset = (UINTN) CommGetProfileData->ProfileOffset;
     if (Size <= (ProfileSize - CommGetProfileData->ProfileOffset)) {
@@ -1274,6 +1401,7 @@ GetSmramProfileData (
     } else {
       CommGetProfileData->ProfileSize = (UINT64) (ProfileSize - CommGetProfileData->ProfileOffset);
     }
+
     Status = SmmCommunication->Communicate (SmmCommunication, CommBuffer, &CommSize);
     ASSERT_EFI_ERROR (Status);
 
@@ -1282,9 +1410,13 @@ GetSmramProfileData (
       Print (L"GetProfileData - 0x%x\n", CommGetProfileData->Header.ReturnStatus);
       goto Done;
     }
-    CopyMem ((UINT8 *) ProfileBuffer + Offset, (VOID *) (UINTN) CommGetProfileData->ProfileBuffer, (UINTN) CommGetProfileData->ProfileSize);
-  }
 
+    CopyMem (
+            (UINT8 *) ProfileBuffer + Offset,
+            (VOID *) (UINTN) CommGetProfileData->ProfileBuffer,
+            (UINTN) CommGetProfileData->ProfileSize
+            );
+  }
 
   Print (L"SmramProfileSize - 0x%x\n", ProfileSize);
   Print (L"======= SmramProfile begin =======\n");
@@ -1314,10 +1446,11 @@ Done:
     CopyMem (&CommHeader->HeaderGuid, &gEdkiiMemoryProfileGuid, sizeof (gEdkiiMemoryProfileGuid));
     CommHeader->MessageLength = sizeof (SMRAM_PROFILE_PARAMETER_RECORDING_STATE);
 
-    CommRecordingState = (SMRAM_PROFILE_PARAMETER_RECORDING_STATE *) &CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data)];
+    CommRecordingState =
+      (SMRAM_PROFILE_PARAMETER_RECORDING_STATE *) &CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data)];
     CommRecordingState->Header.Command      = SMRAM_PROFILE_COMMAND_SET_RECORDING_STATE;
     CommRecordingState->Header.DataLength   = sizeof (*CommRecordingState);
-    CommRecordingState->Header.ReturnStatus = (UINT64)-1;
+    CommRecordingState->Header.ReturnStatus = (UINT64) - 1;
     CommRecordingState->RecordingState      = MEMORY_PROFILE_RECORDING_ENABLE;
 
     CommSize = sizeof (EFI_GUID) + sizeof (UINTN) + CommHeader->MessageLength;
@@ -1345,7 +1478,7 @@ UefiMain (
   IN EFI_SYSTEM_TABLE   *SystemTable
   )
 {
-  EFI_STATUS                     Status;
+  EFI_STATUS  Status;
 
   Status = GetUefiMemoryProfileData ();
   if (EFI_ERROR (Status)) {

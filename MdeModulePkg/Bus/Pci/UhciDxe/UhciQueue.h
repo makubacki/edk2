@@ -21,52 +21,52 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // with hardware.
 //
 #define QH_HLINK(Pointer, Terminate)  \
-        (((UINT32) ((UINTN) (Pointer)) & 0xFFFFFFF0) | 0x02 | ((Terminate) ? 0x01 : 0))
+  (((UINT32) ((UINTN) (Pointer)) & 0xFFFFFFF0) | 0x02 | ((Terminate) ? 0x01 : 0))
 
 #define QH_VLINK(Pointer, Terminate)  \
-        (((UINT32) ((UINTN) (Pointer)) & 0xFFFFFFF0) | ((Terminate) ? 0x01 : 0))
+  (((UINT32) ((UINTN) (Pointer)) & 0xFFFFFFF0) | ((Terminate) ? 0x01 : 0))
 
 #define TD_LINK(Pointer, VertFirst, Terminate) \
-        (((UINT32) ((UINTN) (Pointer)) & 0xFFFFFFF0) | \
-         ((VertFirst) ? 0x04 : 0) | ((Terminate) ? 0x01 : 0))
+  (((UINT32) ((UINTN) (Pointer)) & 0xFFFFFFF0) | \
+   ((VertFirst) ? 0x04 : 0) | ((Terminate) ? 0x01 : 0))
 
-#define LINK_TERMINATED(Link) (((Link) & 0x01) != 0)
+#define LINK_TERMINATED(Link)  (((Link) & 0x01) != 0)
 
-#define UHCI_ADDR(QhOrTd)     ((VOID *) (UINTN) ((QhOrTd) & 0xFFFFFFF0))
+#define UHCI_ADDR(QhOrTd)  ((VOID *) (UINTN) ((QhOrTd) & 0xFFFFFFF0))
 
 #pragma pack(1)
 //
 // Both links in QH has this internal structure:
-//   Next pointer: 28, Reserved: 2, NextIsQh: 1, Terminate: 1
+// Next pointer: 28, Reserved: 2, NextIsQh: 1, Terminate: 1
 // This is the same as frame list entry.
 //
 typedef struct {
-  UINT32              HorizonLink;
-  UINT32              VerticalLink;
+  UINT32    HorizonLink;
+  UINT32    VerticalLink;
 } UHCI_QH_HW;
 
 //
 // Next link in TD has this internal structure:
-//   Next pointer: 28, Reserved: 1, Vertical First: 1, NextIsQh: 1, Terminate: 1
+// Next pointer: 28, Reserved: 1, Vertical First: 1, NextIsQh: 1, Terminate: 1
 //
 typedef struct {
-  UINT32              NextLink;
-  UINT32              ActualLen   : 11;
-  UINT32              Reserved1   : 5;
-  UINT32              Status      : 8;
-  UINT32              IntOnCpl    : 1;
-  UINT32              IsIsoch     : 1;
-  UINT32              LowSpeed    : 1;
-  UINT32              ErrorCount  : 2;
-  UINT32              ShortPacket : 1;
-  UINT32              Reserved2   : 2;
-  UINT32              PidCode     : 8;
-  UINT32              DeviceAddr  : 7;
-  UINT32              EndPoint    : 4;
-  UINT32              DataToggle  : 1;
-  UINT32              Reserved3   : 1;
-  UINT32              MaxPacketLen: 11;
-  UINT32              DataBuffer;
+  UINT32    NextLink;
+  UINT32    ActualLen    : 11;
+  UINT32    Reserved1    : 5;
+  UINT32    Status       : 8;
+  UINT32    IntOnCpl     : 1;
+  UINT32    IsIsoch      : 1;
+  UINT32    LowSpeed     : 1;
+  UINT32    ErrorCount   : 2;
+  UINT32    ShortPacket  : 1;
+  UINT32    Reserved2    : 2;
+  UINT32    PidCode      : 8;
+  UINT32    DeviceAddr   : 7;
+  UINT32    EndPoint     : 4;
+  UINT32    DataToggle   : 1;
+  UINT32    Reserved3    : 1;
+  UINT32    MaxPacketLen : 11;
+  UINT32    DataBuffer;
 } UHCI_TD_HW;
 #pragma pack()
 
@@ -74,19 +74,18 @@ typedef struct _UHCI_TD_SW  UHCI_TD_SW;
 typedef struct _UHCI_QH_SW  UHCI_QH_SW;
 
 struct _UHCI_QH_SW {
-  UHCI_QH_HW        QhHw;
-  UHCI_QH_SW        *NextQh;
-  UHCI_TD_SW        *TDs;
-  UINTN             Interval;
+  UHCI_QH_HW    QhHw;
+  UHCI_QH_SW    *NextQh;
+  UHCI_TD_SW    *TDs;
+  UINTN         Interval;
 };
 
 struct _UHCI_TD_SW {
-  UHCI_TD_HW        TdHw;
-  UHCI_TD_SW        *NextTd;
-  UINT8             *Data;
-  UINT16            DataLen;
+  UHCI_TD_HW    TdHw;
+  UHCI_TD_SW    *NextTd;
+  UINT8         *Data;
+  UINT16        DataLen;
 };
-
 
 /**
   Link the TD To QH.
@@ -103,7 +102,6 @@ UhciLinkTdToQh (
   IN UHCI_TD_SW           *Td
   );
 
-
 /**
   Unlink TD from the QH.
 
@@ -118,7 +116,6 @@ UhciUnlinkTdFromQh (
   IN UHCI_QH_SW           *Qh,
   IN UHCI_TD_SW           *Td
   );
-
 
 /**
   Map address of request structure buffer.
@@ -139,7 +136,6 @@ UhciMapUserRequest (
   OUT UINT8               **MappedAddr,
   OUT VOID                **Map
   );
-
 
 /**
   Map address of user data buffer.
@@ -167,7 +163,6 @@ UhciMapUserData (
   OUT VOID                    **Map
   );
 
-
 /**
   Delete a list of TDs.
 
@@ -183,7 +178,6 @@ UhciDestoryTds (
   IN UHCI_TD_SW           *FirstTd
   );
 
-
 /**
   Create an initialize a new queue head.
 
@@ -198,7 +192,6 @@ UhciCreateQh (
   IN  USB_HC_DEV        *Uhc,
   IN  UINTN             Interval
   );
-
 
 /**
   Create Tds list for Control Transfer.
@@ -230,7 +223,6 @@ UhciCreateCtrlTds (
   IN UINT8                MaxPacket,
   IN BOOLEAN              IsLow
   );
-
 
 /**
   Create Tds list for Bulk/Interrupt Transfer.

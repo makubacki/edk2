@@ -29,9 +29,9 @@ HandOffToDxeCore (
   IN EFI_PEI_HOB_POINTERS   HobList
   )
 {
-  VOID                *BaseOfStack;
-  VOID                *TopOfStack;
-  EFI_STATUS          Status;
+  VOID        *BaseOfStack;
+  VOID        *TopOfStack;
+  EFI_STATUS  Status;
 
   //
   // Allocate 128KB for the Stack
@@ -40,7 +40,7 @@ HandOffToDxeCore (
   ASSERT (BaseOfStack != NULL);
 
   if (PcdGetBool (PcdSetNxForStack)) {
-    Status = ArmSetMemoryRegionNoExec ((UINTN)BaseOfStack, STACK_SIZE);
+    Status = ArmSetMemoryRegionNoExec ((UINTN) BaseOfStack, STACK_SIZE);
     ASSERT_EFI_ERROR (Status);
   }
 
@@ -60,12 +60,12 @@ HandOffToDxeCore (
   //
   // Update the contents of BSP stack HOB to reflect the real stack info passed to DxeCore.
   //
-  UpdateStackHob ((EFI_PHYSICAL_ADDRESS)(UINTN) BaseOfStack, STACK_SIZE);
+  UpdateStackHob ((EFI_PHYSICAL_ADDRESS) (UINTN) BaseOfStack, STACK_SIZE);
 
   SwitchStack (
-    (SWITCH_STACK_ENTRY_POINT)(UINTN)DxeCoreEntryPoint,
-    HobList.Raw,
-    NULL,
-    TopOfStack
-    );
+               (SWITCH_STACK_ENTRY_POINT) (UINTN) DxeCoreEntryPoint,
+               HobList.Raw,
+               NULL,
+               TopOfStack
+               );
 }

@@ -9,10 +9,10 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include "DxeMain.h"
 #include "Handle.h"
 
-
 //
 // Driver Support Functions
 //
+
 /**
   Connects one or more drivers to a controller.
 
@@ -48,22 +48,22 @@ CoreConnectController (
   IN  BOOLEAN                   Recursive
   )
 {
-  EFI_STATUS                           Status;
-  EFI_STATUS                           ReturnStatus;
-  IHANDLE                              *Handle;
-  PROTOCOL_INTERFACE                   *Prot;
-  LIST_ENTRY                           *Link;
-  LIST_ENTRY                           *ProtLink;
-  OPEN_PROTOCOL_DATA                   *OpenData;
-  EFI_DEVICE_PATH_PROTOCOL             *AlignedRemainingDevicePath;
-  EFI_HANDLE                           *ChildHandleBuffer;
-  UINTN                                ChildHandleCount;
-  UINTN                                Index;
-  UINTN                                HandleFilePathSize;
-  UINTN                                RemainingDevicePathSize;
-  EFI_DEVICE_PATH_PROTOCOL             *HandleFilePath;
-  EFI_DEVICE_PATH_PROTOCOL             *FilePath;
-  EFI_DEVICE_PATH_PROTOCOL             *TempFilePath;
+  EFI_STATUS                Status;
+  EFI_STATUS                ReturnStatus;
+  IHANDLE                   *Handle;
+  PROTOCOL_INTERFACE        *Prot;
+  LIST_ENTRY                *Link;
+  LIST_ENTRY                *ProtLink;
+  OPEN_PROTOCOL_DATA        *OpenData;
+  EFI_DEVICE_PATH_PROTOCOL  *AlignedRemainingDevicePath;
+  EFI_HANDLE                *ChildHandleBuffer;
+  UINTN                     ChildHandleCount;
+  UINTN                     Index;
+  UINTN                     HandleFilePathSize;
+  UINTN                     RemainingDevicePathSize;
+  EFI_DEVICE_PATH_PROTOCOL  *HandleFilePath;
+  EFI_DEVICE_PATH_PROTOCOL  *FilePath;
+  EFI_DEVICE_PATH_PROTOCOL  *TempFilePath;
 
   //
   // Make sure ControllerHandle is valid
@@ -77,13 +77,13 @@ CoreConnectController (
     //
     // Check whether the user has permission to start UEFI device drivers.
     //
-    Status = CoreHandleProtocol (ControllerHandle, &gEfiDevicePathProtocolGuid, (VOID **)&HandleFilePath);
+    Status = CoreHandleProtocol (ControllerHandle, &gEfiDevicePathProtocolGuid, (VOID **) &HandleFilePath);
     if (!EFI_ERROR (Status)) {
       ASSERT (HandleFilePath != NULL);
       FilePath     = HandleFilePath;
       TempFilePath = NULL;
       if (RemainingDevicePath != NULL && !Recursive) {
-        HandleFilePathSize      = GetDevicePathSize (HandleFilePath) - sizeof (EFI_DEVICE_PATH_PROTOCOL);
+        HandleFilePathSize = GetDevicePathSize (HandleFilePath) - sizeof (EFI_DEVICE_PATH_PROTOCOL);
         RemainingDevicePathSize = GetDevicePathSize (RemainingDevicePath);
         TempFilePath = AllocateZeroPool (HandleFilePathSize + RemainingDevicePathSize);
         ASSERT (TempFilePath != NULL);
@@ -91,16 +91,18 @@ CoreConnectController (
         CopyMem ((UINT8 *) TempFilePath + HandleFilePathSize, RemainingDevicePath, RemainingDevicePathSize);
         FilePath = TempFilePath;
       }
+
       Status = gSecurity2->FileAuthentication (
-                            gSecurity2,
-                            FilePath,
-                            NULL,
-                            0,
-                            FALSE
-                            );
+                                               gSecurity2,
+                                               FilePath,
+                                               NULL,
+                                               0,
+                                               FALSE
+                                               );
       if (TempFilePath != NULL) {
         FreePool (TempFilePath);
       }
+
       if (EFI_ERROR (Status)) {
         return Status;
       }
@@ -129,10 +131,10 @@ CoreConnectController (
   //
   do {
     ReturnStatus = CoreConnectSingleController (
-                     ControllerHandle,
-                     DriverImageHandle,
-                     AlignedRemainingDevicePath
-                     );
+                                                ControllerHandle,
+                                                DriverImageHandle,
+                                                AlignedRemainingDevicePath
+                                                );
   } while (ReturnStatus == EFI_NOT_READY);
 
   //
@@ -164,15 +166,16 @@ CoreConnectController (
       return ReturnStatus;
     }
 
-
     //
     // Count ControllerHandle's children
     //
-    for (Link = Handle->Protocols.ForwardLink, ChildHandleCount = 0; Link != &Handle->Protocols; Link = Link->ForwardLink) {
-      Prot = CR(Link, PROTOCOL_INTERFACE, Link, PROTOCOL_INTERFACE_SIGNATURE);
+    for (Link = Handle->Protocols.ForwardLink, ChildHandleCount = 0;
+         Link != &Handle->Protocols;
+         Link = Link->ForwardLink) {
+      Prot = CR (Link, PROTOCOL_INTERFACE, Link, PROTOCOL_INTERFACE_SIGNATURE);
       for (ProtLink = Prot->OpenList.ForwardLink;
-          ProtLink != &Prot->OpenList;
-          ProtLink = ProtLink->ForwardLink) {
+           ProtLink != &Prot->OpenList;
+           ProtLink = ProtLink->ForwardLink) {
         OpenData = CR (ProtLink, OPEN_PROTOCOL_DATA, Link, OPEN_PROTOCOL_DATA_SIGNATURE);
         if ((OpenData->Attributes & EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER) != 0) {
           ChildHandleCount++;
@@ -183,7 +186,7 @@ CoreConnectController (
     //
     // Allocate a handle buffer for ControllerHandle's children
     //
-    ChildHandleBuffer = AllocatePool (ChildHandleCount * sizeof(EFI_HANDLE));
+    ChildHandleBuffer = AllocatePool (ChildHandleCount * sizeof (EFI_HANDLE));
     if (ChildHandleBuffer == NULL) {
       CoreReleaseProtocolLock ();
       return EFI_OUT_OF_RESOURCES;
@@ -192,11 +195,13 @@ CoreConnectController (
     //
     // Fill in a handle buffer with ControllerHandle's children
     //
-    for (Link = Handle->Protocols.ForwardLink, ChildHandleCount = 0; Link != &Handle->Protocols; Link = Link->ForwardLink) {
-      Prot = CR(Link, PROTOCOL_INTERFACE, Link, PROTOCOL_INTERFACE_SIGNATURE);
+    for (Link = Handle->Protocols.ForwardLink, ChildHandleCount = 0;
+         Link != &Handle->Protocols;
+         Link = Link->ForwardLink) {
+      Prot = CR (Link, PROTOCOL_INTERFACE, Link, PROTOCOL_INTERFACE_SIGNATURE);
       for (ProtLink = Prot->OpenList.ForwardLink;
-          ProtLink != &Prot->OpenList;
-          ProtLink = ProtLink->ForwardLink) {
+           ProtLink != &Prot->OpenList;
+           ProtLink = ProtLink->ForwardLink) {
         OpenData = CR (ProtLink, OPEN_PROTOCOL_DATA, Link, OPEN_PROTOCOL_DATA_SIGNATURE);
         if ((OpenData->Attributes & EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER) != 0) {
           ChildHandleBuffer[ChildHandleCount] = OpenData->ControllerHandle;
@@ -215,11 +220,11 @@ CoreConnectController (
     //
     for (Index = 0; Index < ChildHandleCount; Index++) {
       CoreConnectController (
-        ChildHandleBuffer[Index],
-        NULL,
-        NULL,
-        TRUE
-        );
+                             ChildHandleBuffer[Index],
+                             NULL,
+                             NULL,
+                             TRUE
+                             );
     }
 
     //
@@ -230,7 +235,6 @@ CoreConnectController (
 
   return ReturnStatus;
 }
-
 
 /**
   Add Driver Binding Protocols from Context Driver Image Handles to sorted
@@ -286,10 +290,10 @@ AddSortedDriverBindingProtocol (
       // Retrieve the Driver Binding Protocol associated with each Driver Binding Handle
       //
       Status = CoreHandleProtocol (
-                DriverBindingHandleBuffer[Index],
-                &gEfiDriverBindingProtocolGuid,
-                (VOID **) &DriverBinding
-                );
+                                   DriverBindingHandleBuffer[Index],
+                                   &gEfiDriverBindingProtocolGuid,
+                                   (VOID **) &DriverBinding
+                                   );
       if (EFI_ERROR (Status) || DriverBinding == NULL) {
         continue;
       }
@@ -300,26 +304,27 @@ AddSortedDriverBindingProtocol (
       //
       if (DriverBinding->ImageHandle == DriverBindingHandle) {
         AddSortedDriverBindingProtocol (
-          DriverBindingHandleBuffer[Index],
-          NumberOfSortedDriverBindingProtocols,
-          SortedDriverBindingProtocols,
-          DriverBindingHandleCount,
-          DriverBindingHandleBuffer,
-          FALSE
-          );
+                                        DriverBindingHandleBuffer[Index],
+                                        NumberOfSortedDriverBindingProtocols,
+                                        SortedDriverBindingProtocols,
+                                        DriverBindingHandleCount,
+                                        DriverBindingHandleBuffer,
+                                        FALSE
+                                        );
       }
     }
+
     return;
   }
 
   //
   // Retrieve the Driver Binding Protocol from DriverBindingHandle
   //
-  Status = CoreHandleProtocol(
-             DriverBindingHandle,
-             &gEfiDriverBindingProtocolGuid,
-             (VOID **) &DriverBinding
-             );
+  Status = CoreHandleProtocol (
+                               DriverBindingHandle,
+                               &gEfiDriverBindingProtocolGuid,
+                               (VOID **) &DriverBinding
+                               );
   //
   // If DriverBindingHandle does not support the Driver Binding Protocol then return
   //
@@ -342,6 +347,7 @@ AddSortedDriverBindingProtocol (
   if (*NumberOfSortedDriverBindingProtocols < DriverBindingHandleCount) {
     SortedDriverBindingProtocols[*NumberOfSortedDriverBindingProtocols] = DriverBinding;
   }
+
   *NumberOfSortedDriverBindingProtocols = *NumberOfSortedDriverBindingProtocols + 1;
 
   //
@@ -353,7 +359,6 @@ AddSortedDriverBindingProtocol (
     }
   }
 }
-
 
 /**
   Connects a controller to a driver.
@@ -406,23 +411,23 @@ CoreConnectSingleController (
   //
   // Initialize local variables
   //
-  DriverBindingHandleCount              = 0;
-  DriverBindingHandleBuffer             = NULL;
-  NumberOfSortedDriverBindingProtocols  = 0;
-  SortedDriverBindingProtocols          = NULL;
-  PlatformDriverOverride                = NULL;
-  NewDriverBindingHandleBuffer          = NULL;
+  DriverBindingHandleCount  = 0;
+  DriverBindingHandleBuffer = NULL;
+  NumberOfSortedDriverBindingProtocols = 0;
+  SortedDriverBindingProtocols = NULL;
+  PlatformDriverOverride = NULL;
+  NewDriverBindingHandleBuffer = NULL;
 
   //
   // Get list of all Driver Binding Protocol Instances
   //
   Status = CoreLocateHandleBuffer (
-             ByProtocol,
-             &gEfiDriverBindingProtocolGuid,
-             NULL,
-             &DriverBindingHandleCount,
-             &DriverBindingHandleBuffer
-             );
+                                   ByProtocol,
+                                   &gEfiDriverBindingProtocolGuid,
+                                   NULL,
+                                   &DriverBindingHandleCount,
+                                   &DriverBindingHandleBuffer
+                                   );
   if (EFI_ERROR (Status) || (DriverBindingHandleCount == 0)) {
     return EFI_NOT_FOUND;
   }
@@ -442,13 +447,13 @@ CoreConnectSingleController (
   if (ContextDriverImageHandles != NULL) {
     for (Index = 0; ContextDriverImageHandles[Index] != NULL; Index++) {
       AddSortedDriverBindingProtocol (
-        ContextDriverImageHandles[Index],
-        &NumberOfSortedDriverBindingProtocols,
-        SortedDriverBindingProtocols,
-        DriverBindingHandleCount,
-        DriverBindingHandleBuffer,
-        FALSE
-        );
+                                      ContextDriverImageHandles[Index],
+                                      &NumberOfSortedDriverBindingProtocols,
+                                      SortedDriverBindingProtocols,
+                                      DriverBindingHandleCount,
+                                      DriverBindingHandleBuffer,
+                                      FALSE
+                                      );
     }
   }
 
@@ -456,27 +461,27 @@ CoreConnectSingleController (
   // Add the Platform Driver Override Protocol drivers for ControllerHandle next
   //
   Status = CoreLocateProtocol (
-             &gEfiPlatformDriverOverrideProtocolGuid,
-             NULL,
-             (VOID **) &PlatformDriverOverride
-             );
+                               &gEfiPlatformDriverOverrideProtocolGuid,
+                               NULL,
+                               (VOID **) &PlatformDriverOverride
+                               );
   if (!EFI_ERROR (Status) && (PlatformDriverOverride != NULL)) {
     DriverImageHandle = NULL;
     do {
       Status = PlatformDriverOverride->GetDriver (
-                                         PlatformDriverOverride,
-                                         ControllerHandle,
-                                         &DriverImageHandle
-                                         );
+                                                  PlatformDriverOverride,
+                                                  ControllerHandle,
+                                                  &DriverImageHandle
+                                                  );
       if (!EFI_ERROR (Status)) {
         AddSortedDriverBindingProtocol (
-          DriverImageHandle,
-          &NumberOfSortedDriverBindingProtocols,
-          SortedDriverBindingProtocols,
-          DriverBindingHandleCount,
-          DriverBindingHandleBuffer,
-          TRUE
-          );
+                                        DriverImageHandle,
+                                        &NumberOfSortedDriverBindingProtocols,
+                                        SortedDriverBindingProtocols,
+                                        DriverBindingHandleCount,
+                                        DriverBindingHandleBuffer,
+                                        TRUE
+                                        );
       }
     } while (!EFI_ERROR (Status));
   }
@@ -489,10 +494,10 @@ CoreConnectSingleController (
     HighestVersion = 0;
     for (Index = 0; Index < DriverBindingHandleCount; Index++) {
       Status = CoreHandleProtocol (
-                 DriverBindingHandleBuffer[Index],
-                 &gEfiDriverFamilyOverrideProtocolGuid,
-                 (VOID **) &DriverFamilyOverride
-                 );
+                                   DriverBindingHandleBuffer[Index],
+                                   &gEfiDriverFamilyOverrideProtocolGuid,
+                                   (VOID **) &DriverFamilyOverride
+                                   );
       if (!EFI_ERROR (Status) && (DriverFamilyOverride != NULL)) {
         DriverFamilyOverrideVersion = DriverFamilyOverride->GetVersion (DriverFamilyOverride);
         if ((HighestIndex == DriverBindingHandleCount) || (DriverFamilyOverrideVersion > HighestVersion)) {
@@ -507,39 +512,39 @@ CoreConnectSingleController (
     }
 
     AddSortedDriverBindingProtocol (
-      DriverBindingHandleBuffer[HighestIndex],
-      &NumberOfSortedDriverBindingProtocols,
-      SortedDriverBindingProtocols,
-      DriverBindingHandleCount,
-      DriverBindingHandleBuffer,
-      FALSE
-      );
+                                    DriverBindingHandleBuffer[HighestIndex],
+                                    &NumberOfSortedDriverBindingProtocols,
+                                    SortedDriverBindingProtocols,
+                                    DriverBindingHandleCount,
+                                    DriverBindingHandleBuffer,
+                                    FALSE
+                                    );
   }
 
   //
   // Get the Bus Specific Driver Override Protocol instance on the Controller Handle
   //
   Status = CoreHandleProtocol (
-             ControllerHandle,
-             &gEfiBusSpecificDriverOverrideProtocolGuid,
-             (VOID **) &BusSpecificDriverOverride
-             );
+                               ControllerHandle,
+                               &gEfiBusSpecificDriverOverrideProtocolGuid,
+                               (VOID **) &BusSpecificDriverOverride
+                               );
   if (!EFI_ERROR (Status) && (BusSpecificDriverOverride != NULL)) {
     DriverImageHandle = NULL;
     do {
       Status = BusSpecificDriverOverride->GetDriver (
-                                            BusSpecificDriverOverride,
-                                            &DriverImageHandle
-                                            );
+                                                     BusSpecificDriverOverride,
+                                                     &DriverImageHandle
+                                                     );
       if (!EFI_ERROR (Status)) {
         AddSortedDriverBindingProtocol (
-          DriverImageHandle,
-          &NumberOfSortedDriverBindingProtocols,
-          SortedDriverBindingProtocols,
-          DriverBindingHandleCount,
-          DriverBindingHandleBuffer,
-          TRUE
-          );
+                                        DriverImageHandle,
+                                        &NumberOfSortedDriverBindingProtocols,
+                                        SortedDriverBindingProtocols,
+                                        DriverBindingHandleCount,
+                                        DriverBindingHandleBuffer,
+                                        TRUE
+                                        );
       }
     } while (!EFI_ERROR (Status));
   }
@@ -550,13 +555,13 @@ CoreConnectSingleController (
   SortIndex = NumberOfSortedDriverBindingProtocols;
   for (Index = 0; Index < DriverBindingHandleCount; Index++) {
     AddSortedDriverBindingProtocol (
-      DriverBindingHandleBuffer[Index],
-      &NumberOfSortedDriverBindingProtocols,
-      SortedDriverBindingProtocols,
-      DriverBindingHandleCount,
-      DriverBindingHandleBuffer,
-      FALSE
-      );
+                                    DriverBindingHandleBuffer[Index],
+                                    &NumberOfSortedDriverBindingProtocols,
+                                    SortedDriverBindingProtocols,
+                                    DriverBindingHandleCount,
+                                    DriverBindingHandleBuffer,
+                                    FALSE
+                                    );
   }
 
   //
@@ -569,12 +574,12 @@ CoreConnectSingleController (
   // EFI_NOT_READY, so it will be restarted
   //
   Status = CoreLocateHandleBuffer (
-             ByProtocol,
-             &gEfiDriverBindingProtocolGuid,
-             NULL,
-             &NewDriverBindingHandleCount,
-             &NewDriverBindingHandleBuffer
-             );
+                                   ByProtocol,
+                                   &gEfiDriverBindingProtocolGuid,
+                                   NULL,
+                                   &NewDriverBindingHandleCount,
+                                   &NewDriverBindingHandleBuffer
+                                   );
   CoreFreePool (NewDriverBindingHandleBuffer);
   if (NewDriverBindingHandleCount > DriverBindingHandleCount) {
     //
@@ -598,9 +603,10 @@ CoreConnectSingleController (
         HighestIndex   = Index;
       }
     }
+
     if (SortIndex != HighestIndex) {
       DriverBinding = SortedDriverBindingProtocols[SortIndex];
-      SortedDriverBindingProtocols[SortIndex] = SortedDriverBindingProtocols[HighestIndex];
+      SortedDriverBindingProtocols[SortIndex]    = SortedDriverBindingProtocols[HighestIndex];
       SortedDriverBindingProtocols[HighestIndex] = DriverBinding;
     }
   }
@@ -610,23 +616,22 @@ CoreConnectSingleController (
   //
   OneStarted = FALSE;
   do {
-
     //
     // Loop through the sorted Driver Binding Protocol Instances in order, and see if
     // any of the Driver Binding Protocols support the controller specified by
     // ControllerHandle.
     //
     DriverBinding = NULL;
-    DriverFound = FALSE;
+    DriverFound   = FALSE;
     for (Index = 0; (Index < NumberOfSortedDriverBindingProtocols) && !DriverFound; Index++) {
       if (SortedDriverBindingProtocols[Index] != NULL) {
         DriverBinding = SortedDriverBindingProtocols[Index];
         PERF_DRIVER_BINDING_SUPPORT_BEGIN (DriverBinding->DriverBindingHandle, ControllerHandle);
-        Status = DriverBinding->Supported(
-                                  DriverBinding,
-                                  ControllerHandle,
-                                  RemainingDevicePath
-                                  );
+        Status = DriverBinding->Supported (
+                                           DriverBinding,
+                                           ControllerHandle,
+                                           RemainingDevicePath
+                                           );
         PERF_DRIVER_BINDING_SUPPORT_END (DriverBinding->DriverBindingHandle, ControllerHandle);
         if (!EFI_ERROR (Status)) {
           SortedDriverBindingProtocols[Index] = NULL;
@@ -638,10 +643,10 @@ CoreConnectSingleController (
           //
           PERF_DRIVER_BINDING_START_BEGIN (DriverBinding->DriverBindingHandle, ControllerHandle);
           Status = DriverBinding->Start (
-                                    DriverBinding,
-                                    ControllerHandle,
-                                    RemainingDevicePath
-                                    );
+                                         DriverBinding,
+                                         ControllerHandle,
+                                         RemainingDevicePath
+                                         );
           PERF_DRIVER_BINDING_START_END (DriverBinding->DriverBindingHandle, ControllerHandle);
 
           if (!EFI_ERROR (Status)) {
@@ -681,8 +686,6 @@ CoreConnectSingleController (
   //
   return EFI_NOT_FOUND;
 }
-
-
 
 /**
   Disonnects a controller from a driver
@@ -724,24 +727,24 @@ CoreDisconnectController (
   IN  EFI_HANDLE  ChildHandle        OPTIONAL
   )
 {
-  EFI_STATUS                          Status;
-  IHANDLE                             *Handle;
-  EFI_HANDLE                          *DriverImageHandleBuffer;
-  EFI_HANDLE                          *ChildBuffer;
-  UINTN                               Index;
-  UINTN                               HandleIndex;
-  UINTN                               DriverImageHandleCount;
-  UINTN                               ChildrenToStop;
-  UINTN                               ChildBufferCount;
-  UINTN                               StopCount;
-  BOOLEAN                             Duplicate;
-  BOOLEAN                             ChildHandleValid;
-  BOOLEAN                             DriverImageHandleValid;
-  LIST_ENTRY                          *Link;
-  LIST_ENTRY                          *ProtLink;
-  OPEN_PROTOCOL_DATA                  *OpenData;
-  PROTOCOL_INTERFACE                  *Prot;
-  EFI_DRIVER_BINDING_PROTOCOL         *DriverBinding;
+  EFI_STATUS                   Status;
+  IHANDLE                      *Handle;
+  EFI_HANDLE                   *DriverImageHandleBuffer;
+  EFI_HANDLE                   *ChildBuffer;
+  UINTN                        Index;
+  UINTN                        HandleIndex;
+  UINTN                        DriverImageHandleCount;
+  UINTN                        ChildrenToStop;
+  UINTN                        ChildBufferCount;
+  UINTN                        StopCount;
+  BOOLEAN                      Duplicate;
+  BOOLEAN                      ChildHandleValid;
+  BOOLEAN                      DriverImageHandleValid;
+  LIST_ENTRY                   *Link;
+  LIST_ENTRY                   *ProtLink;
+  OPEN_PROTOCOL_DATA           *OpenData;
+  PROTOCOL_INTERFACE           *Prot;
+  EFI_DRIVER_BINDING_PROTOCOL  *DriverBinding;
 
   //
   // Make sure ControllerHandle is valid
@@ -777,7 +780,7 @@ CoreDisconnectController (
 
     CoreAcquireProtocolLock ();
     for (Link = Handle->Protocols.ForwardLink; Link != &Handle->Protocols; Link = Link->ForwardLink) {
-      Prot = CR(Link, PROTOCOL_INTERFACE, Link, PROTOCOL_INTERFACE_SIGNATURE);
+      Prot = CR (Link, PROTOCOL_INTERFACE, Link, PROTOCOL_INTERFACE_SIGNATURE);
       for (ProtLink = Prot->OpenList.ForwardLink;
            ProtLink != &Prot->OpenList;
            ProtLink = ProtLink->ForwardLink) {
@@ -787,6 +790,7 @@ CoreDisconnectController (
         }
       }
     }
+
     CoreReleaseProtocolLock ();
 
     //
@@ -807,19 +811,20 @@ CoreDisconnectController (
 
     CoreAcquireProtocolLock ();
     for (Link = Handle->Protocols.ForwardLink; Link != &Handle->Protocols; Link = Link->ForwardLink) {
-      Prot = CR(Link, PROTOCOL_INTERFACE, Link, PROTOCOL_INTERFACE_SIGNATURE);
+      Prot = CR (Link, PROTOCOL_INTERFACE, Link, PROTOCOL_INTERFACE_SIGNATURE);
       for (ProtLink = Prot->OpenList.ForwardLink;
            ProtLink != &Prot->OpenList;
            ProtLink = ProtLink->ForwardLink) {
         OpenData = CR (ProtLink, OPEN_PROTOCOL_DATA, Link, OPEN_PROTOCOL_DATA_SIGNATURE);
         if ((OpenData->Attributes & EFI_OPEN_PROTOCOL_BY_DRIVER) != 0) {
           Duplicate = FALSE;
-          for (Index = 0; Index< DriverImageHandleCount; Index++) {
+          for (Index = 0; Index < DriverImageHandleCount; Index++) {
             if (DriverImageHandleBuffer[Index] == OpenData->AgentHandle) {
               Duplicate = TRUE;
               break;
             }
           }
+
           if (!Duplicate) {
             DriverImageHandleBuffer[DriverImageHandleCount] = OpenData->AgentHandle;
             DriverImageHandleCount++;
@@ -827,12 +832,12 @@ CoreDisconnectController (
         }
       }
     }
+
     CoreReleaseProtocolLock ();
   }
 
   StopCount = 0;
   for (HandleIndex = 0; HandleIndex < DriverImageHandleCount; HandleIndex++) {
-
     if (DriverImageHandleBuffer != NULL) {
       DriverImageHandle = DriverImageHandleBuffer[HandleIndex];
     }
@@ -841,10 +846,10 @@ CoreDisconnectController (
     // Get the Driver Binding Protocol of the driver that is managing this controller
     //
     Status = CoreHandleProtocol (
-               DriverImageHandle,
-               &gEfiDriverBindingProtocolGuid,
-               (VOID **)&DriverBinding
-               );
+                                 DriverImageHandle,
+                                 &gEfiDriverBindingProtocolGuid,
+                                 (VOID **) &DriverBinding
+                                 );
     if (EFI_ERROR (Status) || DriverBinding == NULL) {
       Status = EFI_INVALID_PARAMETER;
       goto Done;
@@ -858,7 +863,7 @@ CoreDisconnectController (
 
     CoreAcquireProtocolLock ();
     for (Link = Handle->Protocols.ForwardLink; Link != &Handle->Protocols; Link = Link->ForwardLink) {
-      Prot = CR(Link, PROTOCOL_INTERFACE, Link, PROTOCOL_INTERFACE_SIGNATURE);
+      Prot = CR (Link, PROTOCOL_INTERFACE, Link, PROTOCOL_INTERFACE_SIGNATURE);
       for (ProtLink = Prot->OpenList.ForwardLink;
            ProtLink != &Prot->OpenList;
            ProtLink = ProtLink->ForwardLink) {
@@ -867,12 +872,14 @@ CoreDisconnectController (
           if ((OpenData->Attributes & EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER) != 0) {
             ChildBufferCount++;
           }
+
           if ((OpenData->Attributes & EFI_OPEN_PROTOCOL_BY_DRIVER) != 0) {
             DriverImageHandleValid = TRUE;
           }
         }
       }
     }
+
     CoreReleaseProtocolLock ();
 
     if (DriverImageHandleValid) {
@@ -889,7 +896,7 @@ CoreDisconnectController (
 
         CoreAcquireProtocolLock ();
         for (Link = Handle->Protocols.ForwardLink; Link != &Handle->Protocols; Link = Link->ForwardLink) {
-          Prot = CR(Link, PROTOCOL_INTERFACE, Link, PROTOCOL_INTERFACE_SIGNATURE);
+          Prot = CR (Link, PROTOCOL_INTERFACE, Link, PROTOCOL_INTERFACE_SIGNATURE);
           for (ProtLink = Prot->OpenList.ForwardLink;
                ProtLink != &Prot->OpenList;
                ProtLink = ProtLink->ForwardLink) {
@@ -903,16 +910,19 @@ CoreDisconnectController (
                   break;
                 }
               }
+
               if (!Duplicate) {
                 ChildBuffer[ChildBufferCount] = OpenData->ControllerHandle;
                 if (ChildHandle == ChildBuffer[ChildBufferCount]) {
                   ChildHandleValid = TRUE;
                 }
+
                 ChildBufferCount++;
               }
             }
           }
         }
+
         CoreReleaseProtocolLock ();
       }
 
@@ -928,9 +938,11 @@ CoreDisconnectController (
             Status = DriverBinding->Stop (DriverBinding, ControllerHandle, ChildrenToStop, ChildBuffer);
           }
         }
+
         if (!EFI_ERROR (Status) && ((ChildHandle == NULL) || (ChildBufferCount == ChildrenToStop))) {
           Status = DriverBinding->Stop (DriverBinding, ControllerHandle, 0, NULL);
         }
+
         if (!EFI_ERROR (Status)) {
           StopCount++;
         }

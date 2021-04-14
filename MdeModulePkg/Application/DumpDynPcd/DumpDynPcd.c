@@ -14,7 +14,6 @@
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiLib.h>
 
-
 #include <Protocol/UnicodeCollation.h>
 #include <Protocol/PiPcd.h>
 #include <Protocol/Pcd.h>
@@ -22,7 +21,6 @@
 #include <Protocol/PcdInfo.h>
 #include <Protocol/ShellParameters.h>
 #include <Protocol/Shell.h>
-
 
 //
 // String token ID of help message text.
@@ -32,24 +30,24 @@
 // the resource section. Thus the application can use '-?' option to show help message in
 // Shell.
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_STRING_ID mStrDumpDynPcdHelpTokenId = STRING_TOKEN (STR_DUMP_DYN_PCD_HELP_INFORMATION);
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_STRING_ID  mStrDumpDynPcdHelpTokenId =
+  STRING_TOKEN (STR_DUMP_DYN_PCD_HELP_INFORMATION);
 
-#define MAJOR_VERSION   1
-#define MINOR_VERSION   0
+#define MAJOR_VERSION  1
+#define MINOR_VERSION  0
 
-static EFI_UNICODE_COLLATION_PROTOCOL  *mUnicodeCollation  = NULL;
-static EFI_PCD_PROTOCOL                *mPiPcd             = NULL;
-static PCD_PROTOCOL                    *mPcd               = NULL;
-static EFI_GET_PCD_INFO_PROTOCOL       *mPiPcdInfo         = NULL;
-static GET_PCD_INFO_PROTOCOL           *mPcdInfo           = NULL;
-static CHAR16                   *mTempPcdNameBuffer = NULL;
-static UINTN                     mTempPcdNameBufferSize = 0;
+static EFI_UNICODE_COLLATION_PROTOCOL  *mUnicodeCollation = NULL;
+static EFI_PCD_PROTOCOL                *mPiPcd     = NULL;
+static PCD_PROTOCOL                    *mPcd       = NULL;
+static EFI_GET_PCD_INFO_PROTOCOL       *mPiPcdInfo = NULL;
+static GET_PCD_INFO_PROTOCOL           *mPcdInfo   = NULL;
+static CHAR16                          *mTempPcdNameBuffer    = NULL;
+static UINTN                           mTempPcdNameBufferSize = 0;
 
-static CONST CHAR8 mHex[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+static CONST CHAR8  mHex[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
-static UINTN  Argc;
-static CHAR16 **Argv;
-
+static UINTN   Argc;
+static CHAR16  **Argv;
 
 /**
 
@@ -63,15 +61,15 @@ GetArg (
   VOID
   )
 {
-  EFI_STATUS                    Status;
-  EFI_SHELL_PARAMETERS_PROTOCOL *ShellParameters;
+  EFI_STATUS                     Status;
+  EFI_SHELL_PARAMETERS_PROTOCOL  *ShellParameters;
 
   Status = gBS->HandleProtocol (
-                  gImageHandle,
-                  &gEfiShellParametersProtocolGuid,
-                  (VOID**)&ShellParameters
-                  );
-  if (EFI_ERROR(Status)) {
+                                gImageHandle,
+                                &gEfiShellParametersProtocolGuid,
+                                (VOID **) &ShellParameters
+                                );
+  if (EFI_ERROR (Status)) {
     return Status;
   }
 
@@ -127,15 +125,15 @@ DumpHex (
   IN VOID         *UserData
   )
 {
-  UINT8 *Data;
+  UINT8  *Data;
 
-  CHAR8 Val[50];
+  CHAR8  Val[50];
 
-  CHAR8 Str[20];
+  CHAR8  Str[20];
 
-  UINT8 TempByte;
-  UINTN Size;
-  UINTN Index;
+  UINT8  TempByte;
+  UINTN  Size;
+  UINTN  Index;
 
   Data = UserData;
   while (DataSize != 0) {
@@ -145,23 +143,22 @@ DumpHex (
     }
 
     for (Index = 0; Index < Size; Index += 1) {
-      TempByte            = Data[Index];
-      Val[Index * 3 + 0]  = mHex[TempByte >> 4];
-      Val[Index * 3 + 1]  = mHex[TempByte & 0xF];
-      Val[Index * 3 + 2]  = (CHAR8) ((Index == 7) ? '-' : ' ');
-      Str[Index]          = (CHAR8) ((TempByte < ' ' || TempByte > 'z') ? '.' : TempByte);
+      TempByte = Data[Index];
+      Val[Index * 3 + 0] = mHex[TempByte >> 4];
+      Val[Index * 3 + 1] = mHex[TempByte & 0xF];
+      Val[Index * 3 + 2] = (CHAR8) ((Index == 7) ? '-' : ' ');
+      Str[Index] = (CHAR8) ((TempByte < ' ' || TempByte > 'z') ? '.' : TempByte);
     }
 
-    Val[Index * 3]  = 0;
-    Str[Index]      = 0;
+    Val[Index * 3] = 0;
+    Str[Index]     = 0;
     Print (L"%*a%08X: %-48a *%a*\r\n", Indent, "", Offset, Val, Str);
 
-    Data += Size;
-    Offset += Size;
+    Data     += Size;
+    Offset   += Size;
     DataSize -= Size;
   }
 }
-
 
 /**
   Safely append with automatic string resizing given length of Destination and
@@ -194,23 +191,23 @@ DumpHex (
   @return Destination           return the resultant string.
 **/
 static
-CHAR16*
+CHAR16 *
 InternalStrnCatGrow (
   IN OUT CHAR16           **Destination,
   IN OUT UINTN            *CurrentSize,
   IN     CONST CHAR16     *Source
   )
 {
-  UINTN DestinationStartSize;
-  UINTN NewSize;
-  UINTN SourceLen;
+  UINTN  DestinationStartSize;
+  UINTN  NewSize;
+  UINTN  SourceLen;
 
-  SourceLen = StrLen(Source);
+  SourceLen = StrLen (Source);
 
   //
   // ASSERTs
   //
-  ASSERT(Destination != NULL);
+  ASSERT (Destination != NULL);
 
   //
   // If there's nothing to do then just return Destination
@@ -230,9 +227,9 @@ InternalStrnCatGrow (
   // allow for NULL pointers address as Destination
   //
   if (*Destination != NULL) {
-    ASSERT(CurrentSize != 0);
-    DestinationStartSize = StrSize(*Destination);
-    ASSERT(DestinationStartSize <= *CurrentSize);
+    ASSERT (CurrentSize != 0);
+    DestinationStartSize = StrSize (*Destination);
+    ASSERT (DestinationStartSize <= *CurrentSize);
   } else {
     DestinationStartSize = 0;
   }
@@ -242,16 +239,17 @@ InternalStrnCatGrow (
   //
   if (CurrentSize != NULL) {
     NewSize = *CurrentSize;
-    if (NewSize < DestinationStartSize + (SourceLen * sizeof(CHAR16))) {
-      while (NewSize < (DestinationStartSize + (SourceLen*sizeof(CHAR16)))) {
-        NewSize += 2 * SourceLen * sizeof(CHAR16);
+    if (NewSize < DestinationStartSize + (SourceLen * sizeof (CHAR16))) {
+      while (NewSize < (DestinationStartSize + (SourceLen*sizeof (CHAR16)))) {
+        NewSize += 2 * SourceLen * sizeof (CHAR16);
       }
-      *Destination = ReallocatePool(*CurrentSize, NewSize, *Destination);
+
+      *Destination = ReallocatePool (*CurrentSize, NewSize, *Destination);
       *CurrentSize = NewSize;
     }
   } else {
-    NewSize = (SourceLen + 1)*sizeof(CHAR16);
-    *Destination = AllocateZeroPool(NewSize);
+    NewSize = (SourceLen + 1)*sizeof (CHAR16);
+    *Destination = AllocateZeroPool (NewSize);
   }
 
   //
@@ -261,7 +259,7 @@ InternalStrnCatGrow (
     return (NULL);
   }
 
-  StrnCatS(*Destination, NewSize/sizeof(CHAR16), Source, SourceLen);
+  StrnCatS (*Destination, NewSize/sizeof (CHAR16), Source, SourceLen);
   return *Destination;
 }
 
@@ -280,11 +278,11 @@ GetPcdTypeString (
   IN EFI_PCD_TYPE       PcdType
   )
 {
-  UINTN  BufLen;
-  CHAR16 *RetString;
+  UINTN   BufLen;
+  CHAR16  *RetString;
 
-  BufLen      = 0;
-  RetString   = NULL;
+  BufLen    = 0;
+  RetString = NULL;
 
   switch (PcdType) {
     case EFI_PCD_TYPE_8:
@@ -334,13 +332,13 @@ DumpPcdInfo (
   IN EFI_PCD_INFO       *PcdInfo
   )
 {
-  CHAR16                *RetString;
-  UINT8                 Uint8;
-  UINT16                Uint16;
-  UINT32                Uint32;
-  UINT64                Uint64;
-  BOOLEAN               Boolean;
-  VOID                  *PcdData;
+  CHAR16   *RetString;
+  UINT8    Uint8;
+  UINT16   Uint16;
+  UINT32   Uint32;
+  UINT64   Uint64;
+  BOOLEAN  Boolean;
+  VOID     *PcdData;
 
   RetString = NULL;
 
@@ -363,7 +361,14 @@ DumpPcdInfo (
       } else {
         Uint8 = mPiPcd->Get8 (TokenSpace, TokenNumber);
       }
-      Print (L"  Token = 0x%08x - Type = %H%-17s%N - Size = 0x%x - Value = 0x%x\n", TokenNumber, RetString, PcdInfo->PcdSize, Uint8);
+
+      Print (
+            L"  Token = 0x%08x - Type = %H%-17s%N - Size = 0x%x - Value = 0x%x\n",
+            TokenNumber,
+            RetString,
+            PcdInfo->PcdSize,
+            Uint8
+            );
       break;
     case EFI_PCD_TYPE_16:
       if (TokenSpace == NULL) {
@@ -371,7 +376,14 @@ DumpPcdInfo (
       } else {
         Uint16 = mPiPcd->Get16 (TokenSpace, TokenNumber);
       }
-      Print (L"  Token = 0x%08x - Type = %H%-17s%N - Size = 0x%x - Value = 0x%x\n", TokenNumber, RetString, PcdInfo->PcdSize, Uint16);
+
+      Print (
+            L"  Token = 0x%08x - Type = %H%-17s%N - Size = 0x%x - Value = 0x%x\n",
+            TokenNumber,
+            RetString,
+            PcdInfo->PcdSize,
+            Uint16
+            );
       break;
     case EFI_PCD_TYPE_32:
       if (TokenSpace == NULL) {
@@ -379,7 +391,14 @@ DumpPcdInfo (
       } else {
         Uint32 = mPiPcd->Get32 (TokenSpace, TokenNumber);
       }
-      Print (L"  Token = 0x%08x - Type = %H%-17s%N - Size = 0x%x - Value = 0x%x\n", TokenNumber, RetString, PcdInfo->PcdSize, Uint32);
+
+      Print (
+            L"  Token = 0x%08x - Type = %H%-17s%N - Size = 0x%x - Value = 0x%x\n",
+            TokenNumber,
+            RetString,
+            PcdInfo->PcdSize,
+            Uint32
+            );
       break;
     case EFI_PCD_TYPE_64:
       if (TokenSpace == NULL) {
@@ -387,7 +406,14 @@ DumpPcdInfo (
       } else {
         Uint64 = mPiPcd->Get64 (TokenSpace, TokenNumber);
       }
-      Print (L"  Token = 0x%08x - Type = %H%-17s%N - Size = 0x%x - Value = 0x%lx\n", TokenNumber, RetString, PcdInfo->PcdSize, Uint64);
+
+      Print (
+            L"  Token = 0x%08x - Type = %H%-17s%N - Size = 0x%x - Value = 0x%lx\n",
+            TokenNumber,
+            RetString,
+            PcdInfo->PcdSize,
+            Uint64
+            );
       break;
     case EFI_PCD_TYPE_BOOL:
       if (TokenSpace == NULL) {
@@ -395,7 +421,14 @@ DumpPcdInfo (
       } else {
         Boolean = mPiPcd->GetBool (TokenSpace, TokenNumber);
       }
-      Print (L"  Token = 0x%08x - Type = %H%-17s%N - Size = 0x%x - Value = %a\n", TokenNumber, RetString, PcdInfo->PcdSize, Boolean ? "TRUE" : "FALSE");
+
+      Print (
+            L"  Token = 0x%08x - Type = %H%-17s%N - Size = 0x%x - Value = %a\n",
+            TokenNumber,
+            RetString,
+            PcdInfo->PcdSize,
+            Boolean ? "TRUE" : "FALSE"
+            );
       break;
     case EFI_PCD_TYPE_PTR:
       if (TokenSpace == NULL) {
@@ -403,6 +436,7 @@ DumpPcdInfo (
       } else {
         PcdData = mPiPcd->GetPtr (TokenSpace, TokenNumber);
       }
+
       Print (L"  Token = 0x%08x - Type = %H%-17s%N - Size = 0x%x\n", TokenNumber, RetString, PcdInfo->PcdSize);
       DumpHex (2, 0, PcdInfo->PcdSize, PcdData);
       break;
@@ -413,6 +447,7 @@ DumpPcdInfo (
   if (RetString != NULL) {
     FreePool (RetString);
   }
+
   Print (L"\n");
 }
 
@@ -432,12 +467,12 @@ ProcessPcd (
   IN CHAR16     *InputPcdName
   )
 {
-  EFI_STATUS            Status;
-  EFI_GUID              *TokenSpace;
-  UINTN                 TokenNumber;
-  EFI_PCD_INFO          PcdInfo;
-  BOOLEAN               Found;
-  UINTN                 PcdNameSize;
+  EFI_STATUS    Status;
+  EFI_GUID      *TokenSpace;
+  UINTN         TokenNumber;
+  EFI_PCD_INFO  PcdInfo;
+  BOOLEAN       Found;
+  UINTN         PcdNameSize;
 
   PcdInfo.PcdName = NULL;
   PcdInfo.PcdSize = 0;
@@ -458,29 +493,34 @@ ProcessPcd (
           //
           mPcdInfo->GetInfo (TokenNumber, &PcdInfo);
         } else {
-          mPiPcdInfo->GetInfo (TokenSpace, TokenNumber, &PcdInfo);
+  mPiPcdInfo->GetInfo (TokenSpace, TokenNumber, &PcdInfo);
         }
+
         if (InputPcdName != NULL) {
           if (PcdInfo.PcdName == NULL) {
             continue;
           }
+
           PcdNameSize = AsciiStrSize (PcdInfo.PcdName) * sizeof (CHAR16);
           if (mTempPcdNameBuffer == NULL) {
             mTempPcdNameBufferSize = PcdNameSize;
-            mTempPcdNameBuffer = AllocatePool (mTempPcdNameBufferSize);
+            mTempPcdNameBuffer     = AllocatePool (mTempPcdNameBufferSize);
           } else if (mTempPcdNameBufferSize < PcdNameSize) {
-            mTempPcdNameBuffer = ReallocatePool (mTempPcdNameBufferSize, PcdNameSize, mTempPcdNameBuffer);
+            mTempPcdNameBuffer     = ReallocatePool (mTempPcdNameBufferSize, PcdNameSize, mTempPcdNameBuffer);
             mTempPcdNameBufferSize = PcdNameSize;
           }
+
           if (mTempPcdNameBuffer == NULL) {
             return EFI_OUT_OF_RESOURCES;
           }
+
           AsciiStrToUnicodeStrS (PcdInfo.PcdName, mTempPcdNameBuffer, mTempPcdNameBufferSize / sizeof (CHAR16));
           //
           // Compare the input PCD name with the PCD name in PCD database.
           //
           if ((StrStr (mTempPcdNameBuffer, InputPcdName) != NULL) ||
-              (mUnicodeCollation != NULL && mUnicodeCollation->MetaiMatch (mUnicodeCollation, mTempPcdNameBuffer, InputPcdName))) {
+              (mUnicodeCollation != NULL &&
+               mUnicodeCollation->MetaiMatch (mUnicodeCollation, mTempPcdNameBuffer, InputPcdName))) {
             //
             // Found matched PCD.
             //
@@ -503,6 +543,7 @@ ProcessPcd (
     Print (L"%EError. %NNo matching PCD found: %s.\n", InputPcdName);
     return EFI_NOT_FOUND;
   }
+
   return EFI_SUCCESS;
 }
 
@@ -526,12 +567,12 @@ DumpDynPcdMain (
   IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  EFI_STATUS    Status;
-  CHAR16        *InputPcdName;
+  EFI_STATUS  Status;
+  CHAR16      *InputPcdName;
 
-  InputPcdName  = NULL;
+  InputPcdName = NULL;
 
-  Status = gBS->LocateProtocol(&gEfiUnicodeCollation2ProtocolGuid, NULL, (VOID **) &mUnicodeCollation);
+  Status = gBS->LocateProtocol (&gEfiUnicodeCollation2ProtocolGuid, NULL, (VOID **) &mUnicodeCollation);
   if (EFI_ERROR (Status)) {
     mUnicodeCollation = NULL;
   }
@@ -563,33 +604,33 @@ DumpDynPcdMain (
   //
   // get the command line arguments
   //
-  Status = GetArg();
-  if (EFI_ERROR(Status)){
+  Status = GetArg ();
+  if (EFI_ERROR (Status)) {
     Print (L"DumpDynPcd: %EError. %NThe input parameters are not recognized.\n");
     Status = EFI_INVALID_PARAMETER;
     return Status;
   }
 
-  if (Argc > 2){
+  if (Argc > 2) {
     Print (L"DumpDynPcd: %EError. %NToo many arguments specified.\n");
     Status = EFI_INVALID_PARAMETER;
     return Status;
   }
 
-  if (Argc == 1){
+  if (Argc == 1) {
     Status = ProcessPcd (InputPcdName);
     goto Done;
   }
 
-  if ((StrCmp(Argv[1], L"-?") == 0)||(StrCmp(Argv[1], L"-h") == 0)||(StrCmp(Argv[1], L"-H") == 0)){
+  if ((StrCmp (Argv[1], L"-?") == 0) || (StrCmp (Argv[1], L"-h") == 0) || (StrCmp (Argv[1], L"-H") == 0)) {
     ShowHelp ();
     goto Done;
   } else {
-    if ((StrCmp(Argv[1], L"-v") == 0)||(StrCmp(Argv[1], L"-V") == 0)){
+    if ((StrCmp (Argv[1], L"-v") == 0) || (StrCmp (Argv[1], L"-V") == 0)) {
       ShowVersion ();
       goto Done;
     } else {
-      if (StrStr(Argv[1], L"-") != NULL){
+      if (StrStr (Argv[1], L"-") != NULL) {
         Print (L"DumpDynPcd: %EError. %NThe argument '%B%s%N' is invalid.\n", Argv[1]);
         goto Done;
       }
@@ -599,7 +640,7 @@ DumpDynPcdMain (
   InputPcdName = Argv[1];
   Status = ProcessPcd (InputPcdName);
 
-  Done:
+Done:
 
   if (mTempPcdNameBuffer != NULL) {
     FreePool (mTempPcdNameBuffer);
@@ -607,4 +648,3 @@ DumpDynPcdMain (
 
   return Status;
 }
-

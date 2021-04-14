@@ -18,7 +18,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // Forward reference for pure ANSI compatability
 //
-typedef struct _EFI_PRINT2_PROTOCOL  EFI_PRINT2_PROTOCOL;
+typedef struct _EFI_PRINT2_PROTOCOL EFI_PRINT2_PROTOCOL;
 
 /**
   Produces a Null-terminated Unicode string in an output buffer based on
@@ -59,13 +59,13 @@ typedef struct _EFI_PRINT2_PROTOCOL  EFI_PRINT2_PROTOCOL;
 
 **/
 typedef
-UINTN
+  UINTN
 (EFIAPI *UNICODE_BS_PRINT)(
-  OUT CHAR16        *StartOfBuffer,
-  IN  UINTN         BufferSize,
-  IN  CONST CHAR16  *FormatString,
-  IN  BASE_LIST     Marker
-  );
+                           OUT CHAR16        *StartOfBuffer,
+                           IN  UINTN         BufferSize,
+                           IN  CONST CHAR16  *FormatString,
+                           IN  BASE_LIST     Marker
+                           );
 
 /**
   Produces a Null-terminated Unicode string in an output buffer based on a Null-terminated
@@ -108,13 +108,13 @@ UINTN
 
 **/
 typedef
-UINTN
+  UINTN
 (EFIAPI *UNICODE_S_PRINT)(
-  OUT CHAR16        *StartOfBuffer,
-  IN  UINTN         BufferSize,
-  IN  CONST CHAR16  *FormatString,
-  ...
-  );
+                          OUT CHAR16        *StartOfBuffer,
+                          IN  UINTN         BufferSize,
+                          IN  CONST CHAR16  *FormatString,
+                          ...
+                          );
 
 /**
   Produces a Null-terminated Unicode string in an output buffer based on a Null-terminated
@@ -154,13 +154,13 @@ UINTN
 
 **/
 typedef
-UINTN
+  UINTN
 (EFIAPI *UNICODE_BS_PRINT_ASCII_FORMAT)(
-  OUT CHAR16       *StartOfBuffer,
-  IN  UINTN        BufferSize,
-  IN  CONST CHAR8  *FormatString,
-  IN  BASE_LIST    Marker
-  );
+                                        OUT CHAR16       *StartOfBuffer,
+                                        IN  UINTN        BufferSize,
+                                        IN  CONST CHAR8  *FormatString,
+                                        IN  BASE_LIST    Marker
+                                        );
 
 /**
   Produces a Null-terminated Unicode string in an output buffer based on a Null-terminated
@@ -203,13 +203,13 @@ UINTN
 
 **/
 typedef
-UINTN
+  UINTN
 (EFIAPI *UNICODE_S_PRINT_ASCII_FORMAT)(
-  OUT CHAR16       *StartOfBuffer,
-  IN  UINTN        BufferSize,
-  IN  CONST CHAR8  *FormatString,
-  ...
-  );
+                                       OUT CHAR16       *StartOfBuffer,
+                                       IN  UINTN        BufferSize,
+                                       IN  CONST CHAR8  *FormatString,
+                                       ...
+                                       );
 
 /**
   Converts a decimal value to a Null-terminated Unicode string.
@@ -253,13 +253,13 @@ UINTN
 
 **/
 typedef
-UINTN
+  UINTN
 (EFIAPI *UNICODE_VALUE_TO_STRING)(
-  IN OUT CHAR16  *Buffer,
-  IN UINTN       Flags,
-  IN INT64       Value,
-  IN UINTN       Width
-  );
+                                  IN OUT CHAR16  *Buffer,
+                                  IN UINTN       Flags,
+                                  IN INT64       Value,
+                                  IN UINTN       Width
+                                  );
 
 /**
   Produces a Null-terminated ASCII string in an output buffer based on a Null-terminated
@@ -297,13 +297,13 @@ UINTN
 
 **/
 typedef
-UINTN
+  UINTN
 (EFIAPI *ASCII_BS_PRINT)(
-  OUT CHAR8         *StartOfBuffer,
-  IN  UINTN         BufferSize,
-  IN  CONST CHAR8   *FormatString,
-  IN  BASE_LIST     Marker
-  );
+                         OUT CHAR8         *StartOfBuffer,
+                         IN  UINTN         BufferSize,
+                         IN  CONST CHAR8   *FormatString,
+                         IN  BASE_LIST     Marker
+                         );
 
 /**
   Produces a Null-terminated ASCII string in an output buffer based on a Null-terminated
@@ -344,13 +344,13 @@ UINTN
 
 **/
 typedef
-UINTN
+  UINTN
 (EFIAPI *ASCII_S_PRINT)(
-  OUT CHAR8        *StartOfBuffer,
-  IN  UINTN        BufferSize,
-  IN  CONST CHAR8  *FormatString,
-  ...
-  );
+                        OUT CHAR8        *StartOfBuffer,
+                        IN  UINTN        BufferSize,
+                        IN  CONST CHAR8  *FormatString,
+                        ...
+                        );
 
 /**
   Produces a Null-terminated ASCII string in an output buffer based on a Null-terminated
@@ -390,13 +390,13 @@ UINTN
 
 **/
 typedef
-UINTN
+  UINTN
 (EFIAPI *ASCII_BS_PRINT_UNICODE_FORMAT)(
-  OUT CHAR8         *StartOfBuffer,
-  IN  UINTN         BufferSize,
-  IN  CONST CHAR16  *FormatString,
-  IN  BASE_LIST     Marker
-  );
+                                        OUT CHAR8         *StartOfBuffer,
+                                        IN  UINTN         BufferSize,
+                                        IN  CONST CHAR16  *FormatString,
+                                        IN  BASE_LIST     Marker
+                                        );
 
 /**
   Produces a Null-terminated ASCII string in an output buffer based on a Null-terminated
@@ -439,13 +439,13 @@ UINTN
 
 **/
 typedef
-UINTN
+  UINTN
 (EFIAPI *ASCII_S_PRINT_UNICODE_FORMAT)(
-  OUT CHAR8         *StartOfBuffer,
-  IN  UINTN         BufferSize,
-  IN  CONST CHAR16  *FormatString,
-  ...
-  );
+                                       OUT CHAR8         *StartOfBuffer,
+                                       IN  UINTN         BufferSize,
+                                       IN  CONST CHAR16  *FormatString,
+                                       ...
+                                       );
 
 /**
   Converts a decimal value to a Null-terminated ASCII string.
@@ -487,29 +487,28 @@ UINTN
 
 **/
 typedef
-UINTN
+  UINTN
 (EFIAPI *ASCII_VALUE_TO_STRING)(
-  OUT CHAR8      *Buffer,
-  IN  UINTN      Flags,
-  IN  INT64      Value,
-  IN  UINTN      Width
-  );
+                                OUT CHAR8      *Buffer,
+                                IN  UINTN      Flags,
+                                IN  INT64      Value,
+                                IN  UINTN      Width
+                                );
 
 struct _EFI_PRINT2_PROTOCOL {
-  UNICODE_BS_PRINT                     UnicodeBSPrint;
-  UNICODE_S_PRINT                      UnicodeSPrint;
-  UNICODE_BS_PRINT_ASCII_FORMAT        UnicodeBSPrintAsciiFormat;
-  UNICODE_S_PRINT_ASCII_FORMAT         UnicodeSPrintAsciiFormat;
-  UNICODE_VALUE_TO_STRING              UnicodeValueToString;
-  ASCII_BS_PRINT                       AsciiBSPrint;
-  ASCII_S_PRINT                        AsciiSPrint;
-  ASCII_BS_PRINT_UNICODE_FORMAT        AsciiBSPrintUnicodeFormat;
-  ASCII_S_PRINT_UNICODE_FORMAT         AsciiSPrintUnicodeFormat;
-  ASCII_VALUE_TO_STRING                AsciiValueToString;
+  UNICODE_BS_PRINT                 UnicodeBSPrint;
+  UNICODE_S_PRINT                  UnicodeSPrint;
+  UNICODE_BS_PRINT_ASCII_FORMAT    UnicodeBSPrintAsciiFormat;
+  UNICODE_S_PRINT_ASCII_FORMAT     UnicodeSPrintAsciiFormat;
+  UNICODE_VALUE_TO_STRING          UnicodeValueToString;
+  ASCII_BS_PRINT                   AsciiBSPrint;
+  ASCII_S_PRINT                    AsciiSPrint;
+  ASCII_BS_PRINT_UNICODE_FORMAT    AsciiBSPrintUnicodeFormat;
+  ASCII_S_PRINT_UNICODE_FORMAT     AsciiSPrintUnicodeFormat;
+  ASCII_VALUE_TO_STRING            AsciiValueToString;
 };
 
-extern EFI_GUID gEfiPrint2ProtocolGuid;
-
+extern EFI_GUID  gEfiPrint2ProtocolGuid;
 
 #define EFI_PRINT2S_PROTOCOL_GUID  \
   { 0xcc252d2, 0xc106, 0x4661, { 0xb5, 0xbd, 0x31, 0x47, 0xa4, 0xf8, 0x1f, 0x92 } }
@@ -517,7 +516,7 @@ extern EFI_GUID gEfiPrint2ProtocolGuid;
 //
 // Forward reference for pure ANSI compatability
 //
-typedef struct _EFI_PRINT2S_PROTOCOL  EFI_PRINT2S_PROTOCOL;
+typedef struct _EFI_PRINT2S_PROTOCOL EFI_PRINT2S_PROTOCOL;
 
 /**
   Converts a decimal value to a Null-terminated Unicode string.
@@ -571,14 +570,14 @@ typedef struct _EFI_PRINT2S_PROTOCOL  EFI_PRINT2S_PROTOCOL;
 
 **/
 typedef
-RETURN_STATUS
+  RETURN_STATUS
 (EFIAPI *UNICODE_VALUE_TO_STRING_S)(
-  IN OUT CHAR16  *Buffer,
-  IN UINTN       BufferSize,
-  IN UINTN       Flags,
-  IN INT64       Value,
-  IN UINTN       Width
-  );
+                                    IN OUT CHAR16  *Buffer,
+                                    IN UINTN       BufferSize,
+                                    IN UINTN       Flags,
+                                    IN INT64       Value,
+                                    IN UINTN       Width
+                                    );
 
 /**
   Converts a decimal value to a Null-terminated Ascii string.
@@ -630,28 +629,28 @@ RETURN_STATUS
 
 **/
 typedef
-RETURN_STATUS
+  RETURN_STATUS
 (EFIAPI *ASCII_VALUE_TO_STRING_S)(
-  IN OUT CHAR8   *Buffer,
-  IN  UINTN      BufferSize,
-  IN  UINTN      Flags,
-  IN  INT64      Value,
-  IN  UINTN      Width
-  );
+                                  IN OUT CHAR8   *Buffer,
+                                  IN  UINTN      BufferSize,
+                                  IN  UINTN      Flags,
+                                  IN  INT64      Value,
+                                  IN  UINTN      Width
+                                  );
 
 struct _EFI_PRINT2S_PROTOCOL {
-  UNICODE_BS_PRINT                     UnicodeBSPrint;
-  UNICODE_S_PRINT                      UnicodeSPrint;
-  UNICODE_BS_PRINT_ASCII_FORMAT        UnicodeBSPrintAsciiFormat;
-  UNICODE_S_PRINT_ASCII_FORMAT         UnicodeSPrintAsciiFormat;
-  UNICODE_VALUE_TO_STRING_S            UnicodeValueToStringS;
-  ASCII_BS_PRINT                       AsciiBSPrint;
-  ASCII_S_PRINT                        AsciiSPrint;
-  ASCII_BS_PRINT_UNICODE_FORMAT        AsciiBSPrintUnicodeFormat;
-  ASCII_S_PRINT_UNICODE_FORMAT         AsciiSPrintUnicodeFormat;
-  ASCII_VALUE_TO_STRING_S              AsciiValueToStringS;
+  UNICODE_BS_PRINT                 UnicodeBSPrint;
+  UNICODE_S_PRINT                  UnicodeSPrint;
+  UNICODE_BS_PRINT_ASCII_FORMAT    UnicodeBSPrintAsciiFormat;
+  UNICODE_S_PRINT_ASCII_FORMAT     UnicodeSPrintAsciiFormat;
+  UNICODE_VALUE_TO_STRING_S        UnicodeValueToStringS;
+  ASCII_BS_PRINT                   AsciiBSPrint;
+  ASCII_S_PRINT                    AsciiSPrint;
+  ASCII_BS_PRINT_UNICODE_FORMAT    AsciiBSPrintUnicodeFormat;
+  ASCII_S_PRINT_UNICODE_FORMAT     AsciiSPrintUnicodeFormat;
+  ASCII_VALUE_TO_STRING_S          AsciiValueToStringS;
 };
 
-extern EFI_GUID gEfiPrint2SProtocolGuid;
+extern EFI_GUID  gEfiPrint2SProtocolGuid;
 
 #endif

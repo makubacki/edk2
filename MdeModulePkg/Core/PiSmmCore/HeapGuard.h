@@ -19,18 +19,18 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // table is constructed in the similar way as page table structure but in
 // reverse direction, i.e. from bottom growing up to top.
 //
-//    - 1-bit tracks 1 page (4KB)
-//    - 1-UINT64 map entry tracks 256KB memory
-//    - 1K-UINT64 map table tracks 256MB memory
-//    - Five levels of tables can track any address of memory of 64-bit
-//      system, like below.
+// - 1-bit tracks 1 page (4KB)
+// - 1-UINT64 map entry tracks 256KB memory
+// - 1K-UINT64 map table tracks 256MB memory
+// - Five levels of tables can track any address of memory of 64-bit
+// system, like below.
 //
-//       512   *   512   *   512   *   512    *    1K   *  64b *     4K
-//    111111111 111111111 111111111 111111111 1111111111 111111 111111111111
-//    63        54        45        36        27         17     11         0
-//       9b        9b        9b        9b         10b      6b       12b
-//       L0   ->   L1   ->   L2   ->   L3   ->    L4   -> bits  ->  page
-//      1FF       1FF       1FF       1FF         3FF      3F       FFF
+// 512   *   512   *   512   *   512    *    1K   *  64b *     4K
+// 111111111 111111111 111111111 111111111 1111111111 111111 111111111111
+// 63        54        45        36        27         17     11         0
+// 9b        9b        9b        9b         10b      6b       12b
+// L0   ->   L1   ->   L2   ->   L3   ->    L4   -> bits  ->  page
+// 1FF       1FF       1FF       1FF         3FF      3F       FFF
 //
 // L4 table has 1K * sizeof(UINT64) = 8K (2-page), which can track 256MB
 // memory. Each table of L0-L3 will be allocated when its memory address
@@ -43,7 +43,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // less than 128M memory would be consumed during boot. That means we just
 // need
 //
-//          1-page (L3) + 2-page (L4)
+// 1-page (L3) + 2-page (L4)
 //
 // memory (3 pages) to track the memory allocation works. In this case,
 // there's no need to setup L0-L2 tables.
@@ -53,77 +53,80 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // Each entry occupies 8B/64b. 1-page can hold 512 entries, which spans 9
 // bits in address. (512 = 1 << 9)
 //
-#define BYTE_LENGTH_SHIFT                   3             // (8 = 1 << 3)
+#define BYTE_LENGTH_SHIFT  3                              // (8 = 1 << 3)
 
 #define GUARDED_HEAP_MAP_TABLE_ENTRY_SHIFT  \
-        (EFI_PAGE_SHIFT - BYTE_LENGTH_SHIFT)
+  (EFI_PAGE_SHIFT - BYTE_LENGTH_SHIFT)
 
-#define GUARDED_HEAP_MAP_TABLE_DEPTH        5
+#define GUARDED_HEAP_MAP_TABLE_DEPTH  5
 
 // Use UINT64_index + bit_index_of_UINT64 to locate the bit in may
-#define GUARDED_HEAP_MAP_ENTRY_BIT_SHIFT    6             // (64 = 1 << 6)
+#define GUARDED_HEAP_MAP_ENTRY_BIT_SHIFT  6               // (64 = 1 << 6)
 
 #define GUARDED_HEAP_MAP_ENTRY_BITS         \
-        (1 << GUARDED_HEAP_MAP_ENTRY_BIT_SHIFT)
+  (1 << GUARDED_HEAP_MAP_ENTRY_BIT_SHIFT)
 
 #define GUARDED_HEAP_MAP_ENTRY_BYTES        \
-        (GUARDED_HEAP_MAP_ENTRY_BITS / 8)
+  (GUARDED_HEAP_MAP_ENTRY_BITS / 8)
 
 // L4 table address width: 64 - 9 * 4 - 6 - 12 = 10b
 #define GUARDED_HEAP_MAP_ENTRY_SHIFT              \
-        (GUARDED_HEAP_MAP_ENTRY_BITS              \
-         - GUARDED_HEAP_MAP_TABLE_ENTRY_SHIFT * 4 \
-         - GUARDED_HEAP_MAP_ENTRY_BIT_SHIFT       \
-         - EFI_PAGE_SHIFT)
+  (GUARDED_HEAP_MAP_ENTRY_BITS              \
+   - GUARDED_HEAP_MAP_TABLE_ENTRY_SHIFT * 4 \
+   - GUARDED_HEAP_MAP_ENTRY_BIT_SHIFT       \
+   - EFI_PAGE_SHIFT)
 
 // L4 table address mask: (1 << 10 - 1) = 0x3FF
 #define GUARDED_HEAP_MAP_ENTRY_MASK               \
-        ((1 << GUARDED_HEAP_MAP_ENTRY_SHIFT) - 1)
+  ((1 << GUARDED_HEAP_MAP_ENTRY_SHIFT) - 1)
 
 // Size of each L4 table: (1 << 10) * 8 = 8KB = 2-page
 #define GUARDED_HEAP_MAP_SIZE                     \
-        ((1 << GUARDED_HEAP_MAP_ENTRY_SHIFT) * GUARDED_HEAP_MAP_ENTRY_BYTES)
+  ((1 << GUARDED_HEAP_MAP_ENTRY_SHIFT) * GUARDED_HEAP_MAP_ENTRY_BYTES)
 
 // Memory size tracked by one L4 table: 8KB * 8 * 4KB = 256MB
 #define GUARDED_HEAP_MAP_UNIT_SIZE                \
-        (GUARDED_HEAP_MAP_SIZE * 8 * EFI_PAGE_SIZE)
+  (GUARDED_HEAP_MAP_SIZE * 8 * EFI_PAGE_SIZE)
 
 // L4 table entry number: 8KB / 8 = 1024
 #define GUARDED_HEAP_MAP_ENTRIES_PER_UNIT         \
-        (GUARDED_HEAP_MAP_SIZE / GUARDED_HEAP_MAP_ENTRY_BYTES)
+  (GUARDED_HEAP_MAP_SIZE / GUARDED_HEAP_MAP_ENTRY_BYTES)
 
 // L4 table entry indexing
 #define GUARDED_HEAP_MAP_ENTRY_INDEX(Address)                       \
-        (RShiftU64 (Address, EFI_PAGE_SHIFT                         \
-                             + GUARDED_HEAP_MAP_ENTRY_BIT_SHIFT)    \
-         & GUARDED_HEAP_MAP_ENTRY_MASK)
+  (RShiftU64 ( \
+               Address, \
+               EFI_PAGE_SHIFT                         \
+               + GUARDED_HEAP_MAP_ENTRY_BIT_SHIFT \
+               )    \
+   & GUARDED_HEAP_MAP_ENTRY_MASK)
 
 // L4 table entry bit indexing
 #define GUARDED_HEAP_MAP_ENTRY_BIT_INDEX(Address)       \
-        (RShiftU64 (Address, EFI_PAGE_SHIFT)            \
-         & ((1 << GUARDED_HEAP_MAP_ENTRY_BIT_SHIFT) - 1))
+  (RShiftU64 (Address, EFI_PAGE_SHIFT)            \
+   & ((1 << GUARDED_HEAP_MAP_ENTRY_BIT_SHIFT) - 1))
 
 //
 // Total bits (pages) tracked by one L4 table (65536-bit)
 //
 #define GUARDED_HEAP_MAP_BITS                               \
-        (1 << (GUARDED_HEAP_MAP_ENTRY_SHIFT                 \
-               + GUARDED_HEAP_MAP_ENTRY_BIT_SHIFT))
+  (1 << (GUARDED_HEAP_MAP_ENTRY_SHIFT                 \
+         + GUARDED_HEAP_MAP_ENTRY_BIT_SHIFT))
 
 //
 // Bit indexing inside the whole L4 table (0 - 65535)
 //
 #define GUARDED_HEAP_MAP_BIT_INDEX(Address)                     \
-        (RShiftU64 (Address, EFI_PAGE_SHIFT)                    \
-         & ((1 << (GUARDED_HEAP_MAP_ENTRY_SHIFT                 \
-                   + GUARDED_HEAP_MAP_ENTRY_BIT_SHIFT)) - 1))
+  (RShiftU64 (Address, EFI_PAGE_SHIFT)                    \
+   & ((1 << (GUARDED_HEAP_MAP_ENTRY_SHIFT                 \
+             + GUARDED_HEAP_MAP_ENTRY_BIT_SHIFT)) - 1))
 
 //
 // Memory address bit width tracked by L4 table: 10 + 6 + 12 = 28
 //
 #define GUARDED_HEAP_MAP_TABLE_SHIFT                                      \
-        (GUARDED_HEAP_MAP_ENTRY_SHIFT + GUARDED_HEAP_MAP_ENTRY_BIT_SHIFT  \
-         + EFI_PAGE_SHIFT)
+  (GUARDED_HEAP_MAP_ENTRY_SHIFT + GUARDED_HEAP_MAP_ENTRY_BIT_SHIFT  \
+   + EFI_PAGE_SHIFT)
 
 //
 // Macro used to initialize the local array variable for map table traversing
@@ -154,8 +157,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // Memory type to guard (matching the related PCD definition)
 //
-#define GUARD_HEAP_TYPE_PAGE        BIT2
-#define GUARD_HEAP_TYPE_POOL        BIT3
+#define GUARD_HEAP_TYPE_PAGE  BIT2
+#define GUARD_HEAP_TYPE_POOL  BIT3
 
 //
 // Debug message level
@@ -163,10 +166,10 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define HEAP_GUARD_DEBUG_LEVEL  (DEBUG_POOL|DEBUG_PAGE)
 
 typedef struct {
-  UINT32                TailMark;
-  UINT32                HeadMark;
-  EFI_PHYSICAL_ADDRESS  Address;
-  LIST_ENTRY            Link;
+  UINT32                  TailMark;
+  UINT32                  HeadMark;
+  EFI_PHYSICAL_ADDRESS    Address;
+  LIST_ENTRY              Link;
 } HEAP_GUARD_NODE;
 
 /**
@@ -292,8 +295,8 @@ IsGuardPage (
 VOID
 EFIAPI
 DumpGuardedMemoryBitmap (
-  VOID
-  );
+                         VOID
+                         );
 
 /**
   Adjust the pool head position to make sure the Guard page is adjavent to
@@ -368,9 +371,9 @@ SmmInternalFreePagesExWithGuard (
   @return TRUE/FALSE.
 **/
 BOOLEAN
-IsHeapGuardEnabled (
-  VOID
-  );
+  IsHeapGuardEnabled (
+                      VOID
+                      );
 
 /**
   Debug function used to verify if the Guard page is well set or not.
@@ -387,6 +390,6 @@ VerifyMemoryGuard (
   IN  UINTN                     NumberOfPages
   );
 
-extern BOOLEAN mOnGuarding;
+extern BOOLEAN  mOnGuarding;
 
 #endif

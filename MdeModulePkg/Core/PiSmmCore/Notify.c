@@ -24,8 +24,8 @@ SmmNotifyProtocol (
   LIST_ENTRY       *Link;
 
   ProtEntry = Prot->Protocol;
-  for (Link=ProtEntry->Notify.ForwardLink; Link != &ProtEntry->Notify; Link=Link->ForwardLink) {
-    ProtNotify = CR(Link, PROTOCOL_NOTIFY, Link, PROTOCOL_NOTIFY_SIGNATURE);
+  for (Link = ProtEntry->Notify.ForwardLink; Link != &ProtEntry->Notify; Link = Link->ForwardLink) {
+    ProtNotify = CR (Link, PROTOCOL_NOTIFY, Link, PROTOCOL_NOTIFY_SIGNATURE);
     ProtNotify->Function (&ProtEntry->ProtocolID, Prot->Interface, Prot->Handle);
   }
 }
@@ -54,14 +54,13 @@ SmmRemoveInterfaceFromProtocol (
 
   Prot = SmmFindProtocolInterface (Handle, Protocol, Interface);
   if (Prot != NULL) {
-
     ProtEntry = Prot->Protocol;
 
     //
     // If there's a protocol notify location pointing to this entry, back it up one
     //
-    for(Link = ProtEntry->Notify.ForwardLink; Link != &ProtEntry->Notify; Link=Link->ForwardLink) {
-      ProtNotify = CR(Link, PROTOCOL_NOTIFY, Link, PROTOCOL_NOTIFY_SIGNATURE);
+    for(Link = ProtEntry->Notify.ForwardLink; Link != &ProtEntry->Notify; Link = Link->ForwardLink) {
+      ProtNotify = CR (Link, PROTOCOL_NOTIFY, Link, PROTOCOL_NOTIFY_SIGNATURE);
 
       if (ProtNotify->Position == &Prot->ByProtocol) {
         ProtNotify->Position = Prot->ByProtocol.BackLink;
@@ -115,14 +114,14 @@ SmmRegisterProtocolNotify (
     //
     ProtEntry = SmmFindProtocolEntry ((EFI_GUID *) Protocol, FALSE);
     if (ProtEntry != NULL) {
-      ProtNotify = (PROTOCOL_NOTIFY * )*Registration;
+      ProtNotify = (PROTOCOL_NOTIFY *) *Registration;
       for (Link = ProtEntry->Notify.ForwardLink;
            Link != &ProtEntry->Notify;
            Link = Link->ForwardLink) {
         //
         // Compare the notification record
         //
-        if (ProtNotify == (CR(Link, PROTOCOL_NOTIFY, Link, PROTOCOL_NOTIFY_SIGNATURE))){
+        if (ProtNotify == (CR (Link, PROTOCOL_NOTIFY, Link, PROTOCOL_NOTIFY_SIGNATURE))) {
           //
           // If Registration is an existing registration, then unhook it
           //
@@ -133,6 +132,7 @@ SmmRegisterProtocolNotify (
         }
       }
     }
+
     //
     // If the registration is not found
     //
@@ -152,11 +152,9 @@ SmmRegisterProtocolNotify (
     for (Link = ProtEntry->Notify.ForwardLink;
          Link != &ProtEntry->Notify;
          Link = Link->ForwardLink) {
-
-      ProtNotify = CR(Link, PROTOCOL_NOTIFY, Link, PROTOCOL_NOTIFY_SIGNATURE);
+      ProtNotify = CR (Link, PROTOCOL_NOTIFY, Link, PROTOCOL_NOTIFY_SIGNATURE);
       if (CompareGuid (&ProtNotify->Protocol->ProtocolID, Protocol) &&
           (ProtNotify->Function == Function)) {
-
         //
         // Notification already exist
         //
@@ -169,11 +167,11 @@ SmmRegisterProtocolNotify (
     //
     // Allocate a new notification record
     //
-    ProtNotify = AllocatePool (sizeof(PROTOCOL_NOTIFY));
+    ProtNotify = AllocatePool (sizeof (PROTOCOL_NOTIFY));
     if (ProtNotify != NULL) {
       ProtNotify->Signature = PROTOCOL_NOTIFY_SIGNATURE;
-      ProtNotify->Protocol = ProtEntry;
-      ProtNotify->Function = Function;
+      ProtNotify->Protocol  = ProtEntry;
+      ProtNotify->Function  = Function;
       //
       // Start at the ending
       //
@@ -192,5 +190,6 @@ SmmRegisterProtocolNotify (
     *Registration = ProtNotify;
     Status = EFI_SUCCESS;
   }
+
   return Status;
 }

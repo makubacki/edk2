@@ -8,9 +8,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "DxeMain.h"
 
-#define CONFIG_TABLE_SIZE_INCREASED 0x10
+#define CONFIG_TABLE_SIZE_INCREASED  0x10
 
-UINTN mSystemTableAllocateSize = 0;
+UINTN  mSystemTableAllocateSize = 0;
 
 /**
   Boot Service called to add, modify, or remove a system configuration table from
@@ -34,9 +34,9 @@ CoreInstallConfigurationTable (
   IN VOID     *Table
   )
 {
-  UINTN                   Index;
-  EFI_CONFIGURATION_TABLE *EfiConfigurationTable;
-  EFI_CONFIGURATION_TABLE *OldTable;
+  UINTN                    Index;
+  EFI_CONFIGURATION_TABLE  *EfiConfigurationTable;
+  EFI_CONFIGURATION_TABLE  *OldTable;
 
   //
   // If Guid is NULL, then this operation cannot be performed
@@ -84,13 +84,11 @@ CoreInstallConfigurationTable (
     // Copy over deleted entry
     //
     CopyMem (
-      &(EfiConfigurationTable[Index]),
-      &(gDxeCoreST->ConfigurationTable[Index + 1]),
-      (gDxeCoreST->NumberOfTableEntries - Index) * sizeof (EFI_CONFIGURATION_TABLE)
-      );
-
+             &(EfiConfigurationTable[Index]),
+             &(gDxeCoreST->ConfigurationTable[Index + 1]),
+             (gDxeCoreST->NumberOfTableEntries - Index) * sizeof (EFI_CONFIGURATION_TABLE)
+             );
   } else {
-
     //
     // No matching GUIDs were found, so this is an add operation.
     //
@@ -110,7 +108,7 @@ CoreInstallConfigurationTable (
       // Allocate a table with one additional entry.
       //
       mSystemTableAllocateSize += (CONFIG_TABLE_SIZE_INCREASED * sizeof (EFI_CONFIGURATION_TABLE));
-      EfiConfigurationTable = AllocateRuntimePool (mSystemTableAllocateSize);
+      EfiConfigurationTable     = AllocateRuntimePool (mSystemTableAllocateSize);
       if (EfiConfigurationTable == NULL) {
         //
         // If a new table could not be allocated, then return an error.
@@ -123,10 +121,10 @@ CoreInstallConfigurationTable (
         // Copy the old table to the new table.
         //
         CopyMem (
-          EfiConfigurationTable,
-          gDxeCoreST->ConfigurationTable,
-          Index * sizeof (EFI_CONFIGURATION_TABLE)
-          );
+                 EfiConfigurationTable,
+                 gDxeCoreST->ConfigurationTable,
+                 Index * sizeof (EFI_CONFIGURATION_TABLE)
+                 );
 
         //
         // Record the old table pointer.
@@ -158,8 +156,8 @@ CoreInstallConfigurationTable (
     //
     // Fill in the new entry
     //
-    CopyGuid ((VOID *)&EfiConfigurationTable[Index].VendorGuid, Guid);
-    EfiConfigurationTable[Index].VendorTable  = Table;
+    CopyGuid ((VOID *) &EfiConfigurationTable[Index].VendorGuid, Guid);
+    EfiConfigurationTable[Index].VendorTable = Table;
 
     //
     // This is an add operation, so increment the number of table entries

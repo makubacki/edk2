@@ -11,19 +11,19 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include <Protocol/UfsHostController.h>
 
-#define EDKII_UFS_HC_PLATFORM_PROTOCOL_VERSION 1
+#define EDKII_UFS_HC_PLATFORM_PROTOCOL_VERSION  1
 
 extern EFI_GUID  gEdkiiUfsHcPlatformProtocolGuid;
 
-typedef struct _EDKII_UFS_HC_PLATFORM_PROTOCOL  EDKII_UFS_HC_PLATFORM_PROTOCOL;
+typedef struct _EDKII_UFS_HC_PLATFORM_PROTOCOL EDKII_UFS_HC_PLATFORM_PROTOCOL;
 
-typedef struct _EDKII_UFS_HC_DRIVER_INTERFACE  EDKII_UFS_HC_DRIVER_INTERFACE;
+typedef struct _EDKII_UFS_HC_DRIVER_INTERFACE EDKII_UFS_HC_DRIVER_INTERFACE;
 
 typedef struct {
-  UINT32 Opcode;
-  UINT32 Arg1;
-  UINT32 Arg2;
-  UINT32 Arg3;
+  UINT32    Opcode;
+  UINT32    Arg1;
+  UINT32    Arg2;
+  UINT32    Arg3;
 } EDKII_UIC_COMMAND;
 
 /**
@@ -37,26 +37,26 @@ typedef struct {
   @retval Others                 Command failed to execute.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EDKII_UFS_EXEC_UIC_COMMAND) (
-  IN      EDKII_UFS_HC_DRIVER_INTERFACE  *This,
-  IN OUT  EDKII_UIC_COMMAND              *UicCommand
-);
+  EFI_STATUS
+(EFIAPI *EDKII_UFS_EXEC_UIC_COMMAND)(
+                                     IN      EDKII_UFS_HC_DRIVER_INTERFACE  *This,
+                                     IN OUT  EDKII_UIC_COMMAND              *UicCommand
+                                     );
 
 struct _EDKII_UFS_HC_DRIVER_INTERFACE {
   ///
   /// Protocol to accesss host controller MMIO and PCI registers.
   ///
-  EDKII_UFS_HOST_CONTROLLER_PROTOCOL  *UfsHcProtocol;
+  EDKII_UFS_HOST_CONTROLLER_PROTOCOL    *UfsHcProtocol;
   ///
   /// Function implementing UIC command execution.
   ///
-  EDKII_UFS_EXEC_UIC_COMMAND          UfsExecUicCommand;
+  EDKII_UFS_EXEC_UIC_COMMAND            UfsExecUicCommand;
 };
 
 typedef struct {
-  UINT32 Capabilities;
-  UINT32 Version;
+  UINT32    Capabilities;
+  UINT32    Version;
 } EDKII_UFS_HC_INFO;
 
 /**
@@ -70,11 +70,11 @@ typedef struct {
   @retval Others                 Function failed to complete.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EDKII_UFS_HC_PLATFORM_OVERRIDE_HC_INFO) (
-  IN     EFI_HANDLE         ControllerHandle,
-  IN OUT EDKII_UFS_HC_INFO  *HcInfo
-);
+  EFI_STATUS
+(EFIAPI *EDKII_UFS_HC_PLATFORM_OVERRIDE_HC_INFO)(
+                                                 IN     EFI_HANDLE         ControllerHandle,
+                                                 IN OUT EDKII_UFS_HC_INFO  *HcInfo
+                                                 );
 
 typedef enum {
   EdkiiUfsHcPreHce,
@@ -97,28 +97,27 @@ typedef enum {
   @retval Others                 Function failed to complete.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EDKII_UFS_HC_PLATFORM_CALLBACK) (
-  IN     EFI_HANDLE                            ControllerHandle,
-  IN     EDKII_UFS_HC_PLATFORM_CALLBACK_PHASE  CallbackPhase,
-  IN OUT VOID                                  *CallbackData
-);
+  EFI_STATUS
+(EFIAPI *EDKII_UFS_HC_PLATFORM_CALLBACK)(
+                                         IN     EFI_HANDLE                            ControllerHandle,
+                                         IN     EDKII_UFS_HC_PLATFORM_CALLBACK_PHASE  CallbackPhase,
+                                         IN OUT VOID                                  *CallbackData
+                                         );
 
 struct _EDKII_UFS_HC_PLATFORM_PROTOCOL {
   ///
   /// Version of the protocol.
   ///
-  UINT32                                  Version;
+  UINT32                                    Version;
   ///
   /// Allows platform driver to override host controller information.
   ///
-  EDKII_UFS_HC_PLATFORM_OVERRIDE_HC_INFO  OverrideHcInfo;
+  EDKII_UFS_HC_PLATFORM_OVERRIDE_HC_INFO    OverrideHcInfo;
   ///
   /// Allows platform driver to implement platform specific flows
   /// for host controller.
   ///
-  EDKII_UFS_HC_PLATFORM_CALLBACK          Callback;
+  EDKII_UFS_HC_PLATFORM_CALLBACK            Callback;
 };
 
 #endif
-

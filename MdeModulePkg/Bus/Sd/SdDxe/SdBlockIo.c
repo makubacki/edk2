@@ -23,16 +23,18 @@ AsyncIoCallback (
   IN VOID                     *Context
   )
 {
-  SD_REQUEST                  *Request;
+  SD_REQUEST  *Request;
 
   gBS->CloseEvent (Event);
 
   Request = (SD_REQUEST *) Context;
 
   DEBUG_CODE_BEGIN ();
-    DEBUG ((EFI_D_INFO, "Sd Async Request: CmdIndex[%d] Arg[%08x] %r\n",
-            Request->SdMmcCmdBlk.CommandIndex, Request->SdMmcCmdBlk.CommandArgument,
-            Request->Packet.TransactionStatus));
+  DEBUG (
+         (EFI_D_INFO, "Sd Async Request: CmdIndex[%d] Arg[%08x] %r\n",
+          Request->SdMmcCmdBlk.CommandIndex, Request->SdMmcCmdBlk.CommandArgument,
+          Request->Packet.TransactionStatus)
+         );
   DEBUG_CODE_END ();
 
   if (EFI_ERROR (Request->Packet.TransactionStatus)) {
@@ -42,7 +44,7 @@ AsyncIoCallback (
   RemoveEntryList (&Request->Link);
 
   if (Request->IsEnd) {
-    gBS->SignalEvent (Request->Token->Event);
+  gBS->SignalEvent (Request->Token->Event);
   }
 
   FreePool (Request);
@@ -62,7 +64,7 @@ AsyncIoCallback (
 EFI_STATUS
 SdSetRca (
   IN     SD_DEVICE              *Device,
-     OUT UINT16                 *Rca
+  OUT UINT16                 *Rca
   )
 {
   EFI_STATUS                           Status;
@@ -78,7 +80,7 @@ SdSetRca (
   ZeroMem (&Packet, sizeof (Packet));
   Packet.SdMmcCmdBlk    = &SdMmcCmdBlk;
   Packet.SdMmcStatusBlk = &SdMmcStatusBlk;
-  Packet.Timeout        = SD_GENERIC_TIMEOUT;
+  Packet.Timeout = SD_GENERIC_TIMEOUT;
 
   SdMmcCmdBlk.CommandIndex = SD_SET_RELATIVE_ADDR;
   SdMmcCmdBlk.CommandType  = SdMmcCommandTypeBcr;
@@ -87,7 +89,7 @@ SdSetRca (
   Status = PassThru->PassThru (PassThru, Device->Slot, &Packet, NULL);
   if (!EFI_ERROR (Status)) {
     DEBUG ((EFI_D_INFO, "Set RCA succeeds with Resp0 = 0x%x\n", SdMmcStatusBlk.Resp0));
-    *Rca = (UINT16)(SdMmcStatusBlk.Resp0 >> 16);
+    *Rca = (UINT16) (SdMmcStatusBlk.Resp0 >> 16);
   }
 
   return Status;
@@ -123,14 +125,15 @@ SdSelect (
   ZeroMem (&Packet, sizeof (Packet));
   Packet.SdMmcCmdBlk    = &SdMmcCmdBlk;
   Packet.SdMmcStatusBlk = &SdMmcStatusBlk;
-  Packet.Timeout        = SD_GENERIC_TIMEOUT;
+  Packet.Timeout = SD_GENERIC_TIMEOUT;
 
   SdMmcCmdBlk.CommandIndex = SD_SELECT_DESELECT_CARD;
   SdMmcCmdBlk.CommandType  = SdMmcCommandTypeAc;
   if (Rca != 0) {
     SdMmcCmdBlk.ResponseType = SdMmcResponseTypeR1b;
   }
-  SdMmcCmdBlk.CommandArgument = (UINT32)Rca << 16;
+
+  SdMmcCmdBlk.CommandArgument = (UINT32) Rca << 16;
 
   Status = PassThru->PassThru (PassThru, Device->Slot, &Packet, NULL);
 
@@ -153,7 +156,7 @@ EFI_STATUS
 SdSendStatus (
   IN     SD_DEVICE              *Device,
   IN     UINT16                 Rca,
-     OUT UINT32                 *DevStatus
+  OUT UINT32                 *DevStatus
   )
 {
   EFI_STATUS                           Status;
@@ -169,17 +172,18 @@ SdSendStatus (
   ZeroMem (&Packet, sizeof (Packet));
   Packet.SdMmcCmdBlk    = &SdMmcCmdBlk;
   Packet.SdMmcStatusBlk = &SdMmcStatusBlk;
-  Packet.Timeout        = SD_GENERIC_TIMEOUT;
+  Packet.Timeout = SD_GENERIC_TIMEOUT;
 
-  SdMmcCmdBlk.CommandIndex = SD_SEND_STATUS;
-  SdMmcCmdBlk.CommandType  = SdMmcCommandTypeAc;
-  SdMmcCmdBlk.ResponseType = SdMmcResponseTypeR1;
-  SdMmcCmdBlk.CommandArgument = (UINT32)Rca << 16;
+  SdMmcCmdBlk.CommandIndex    = SD_SEND_STATUS;
+  SdMmcCmdBlk.CommandType     = SdMmcCommandTypeAc;
+  SdMmcCmdBlk.ResponseType    = SdMmcResponseTypeR1;
+  SdMmcCmdBlk.CommandArgument = (UINT32) Rca << 16;
 
   Status = PassThru->PassThru (PassThru, Device->Slot, &Packet, NULL);
   if (!EFI_ERROR (Status)) {
     CopyMem (DevStatus, &SdMmcStatusBlk.Resp0, sizeof (UINT32));
   }
+
   return Status;
 }
 
@@ -199,7 +203,7 @@ EFI_STATUS
 SdGetCsd (
   IN     SD_DEVICE              *Device,
   IN     UINT16                 Rca,
-     OUT SD_CSD                 *Csd
+  OUT SD_CSD                 *Csd
   )
 {
   EFI_STATUS                           Status;
@@ -217,12 +221,12 @@ SdGetCsd (
 
   Packet.SdMmcCmdBlk    = &SdMmcCmdBlk;
   Packet.SdMmcStatusBlk = &SdMmcStatusBlk;
-  Packet.Timeout        = SD_GENERIC_TIMEOUT;
+  Packet.Timeout = SD_GENERIC_TIMEOUT;
 
-  SdMmcCmdBlk.CommandIndex = SD_SEND_CSD;
-  SdMmcCmdBlk.CommandType  = SdMmcCommandTypeAc;
-  SdMmcCmdBlk.ResponseType = SdMmcResponseTypeR2;
-  SdMmcCmdBlk.CommandArgument = (UINT32)Rca << 16;
+  SdMmcCmdBlk.CommandIndex    = SD_SEND_CSD;
+  SdMmcCmdBlk.CommandType     = SdMmcCommandTypeAc;
+  SdMmcCmdBlk.ResponseType    = SdMmcResponseTypeR2;
+  SdMmcCmdBlk.CommandArgument = (UINT32) Rca << 16;
 
   Status = PassThru->PassThru (PassThru, Device->Slot, &Packet, NULL);
 
@@ -230,7 +234,7 @@ SdGetCsd (
     //
     // For details, refer to SD Host Controller Simplified Spec 3.0 Table 2-12.
     //
-    CopyMem (((UINT8*)Csd) + 1, &SdMmcStatusBlk.Resp0, sizeof (SD_CSD) - 1);
+    CopyMem (((UINT8 *) Csd) + 1, &SdMmcStatusBlk.Resp0, sizeof (SD_CSD) - 1);
   }
 
   return Status;
@@ -252,7 +256,7 @@ EFI_STATUS
 SdGetCid (
   IN     SD_DEVICE              *Device,
   IN     UINT16                 Rca,
-     OUT SD_CID                 *Cid
+  OUT SD_CID                 *Cid
   )
 {
   EFI_STATUS                           Status;
@@ -270,12 +274,12 @@ SdGetCid (
 
   Packet.SdMmcCmdBlk    = &SdMmcCmdBlk;
   Packet.SdMmcStatusBlk = &SdMmcStatusBlk;
-  Packet.Timeout        = SD_GENERIC_TIMEOUT;
+  Packet.Timeout = SD_GENERIC_TIMEOUT;
 
-  SdMmcCmdBlk.CommandIndex = SD_SEND_CID;
-  SdMmcCmdBlk.CommandType  = SdMmcCommandTypeAc;
-  SdMmcCmdBlk.ResponseType = SdMmcResponseTypeR2;
-  SdMmcCmdBlk.CommandArgument = (UINT32)Rca << 16;
+  SdMmcCmdBlk.CommandIndex    = SD_SEND_CID;
+  SdMmcCmdBlk.CommandType     = SdMmcCommandTypeAc;
+  SdMmcCmdBlk.ResponseType    = SdMmcResponseTypeR2;
+  SdMmcCmdBlk.CommandArgument = (UINT32) Rca << 16;
 
   Status = PassThru->PassThru (PassThru, Device->Slot, &Packet, NULL);
 
@@ -283,7 +287,7 @@ SdGetCid (
     //
     // For details, refer to SD Host Controller Simplified Spec 3.0 Table 2-12.
     //
-    CopyMem (((UINT8*)Cid) + 1, &SdMmcStatusBlk.Resp0, sizeof (SD_CID) - 1);
+    CopyMem (((UINT8 *) Cid) + 1, &SdMmcStatusBlk.Resp0, sizeof (SD_CID) - 1);
   }
 
   return Status;
@@ -319,13 +323,13 @@ SdRwSingleBlock (
   IN  BOOLEAN                   IsEnd
   )
 {
-  EFI_STATUS                           Status;
-  EFI_SD_MMC_PASS_THRU_PROTOCOL        *PassThru;
-  SD_REQUEST                           *RwSingleBlkReq;
-  EFI_TPL                              OldTpl;
+  EFI_STATUS                     Status;
+  EFI_SD_MMC_PASS_THRU_PROTOCOL  *PassThru;
+  SD_REQUEST                     *RwSingleBlkReq;
+  EFI_TPL                        OldTpl;
 
   RwSingleBlkReq = NULL;
-  PassThru       = Device->Private->PassThru;
+  PassThru = Device->Private->PassThru;
 
   RwSingleBlkReq = AllocateZeroPool (sizeof (SD_REQUEST));
   if (RwSingleBlkReq == NULL) {
@@ -350,14 +354,14 @@ SdRwSingleBlock (
 
   if (IsRead) {
     RwSingleBlkReq->Packet.InDataBuffer     = Buffer;
-    RwSingleBlkReq->Packet.InTransferLength = (UINT32)BufferSize;
+    RwSingleBlkReq->Packet.InTransferLength = (UINT32) BufferSize;
 
     RwSingleBlkReq->SdMmcCmdBlk.CommandIndex = SD_READ_SINGLE_BLOCK;
     RwSingleBlkReq->SdMmcCmdBlk.CommandType  = SdMmcCommandTypeAdtc;
     RwSingleBlkReq->SdMmcCmdBlk.ResponseType = SdMmcResponseTypeR1;
   } else {
     RwSingleBlkReq->Packet.OutDataBuffer     = Buffer;
-    RwSingleBlkReq->Packet.OutTransferLength = (UINT32)BufferSize;
+    RwSingleBlkReq->Packet.OutTransferLength = (UINT32) BufferSize;
 
     RwSingleBlkReq->SdMmcCmdBlk.CommandIndex = SD_WRITE_SINGLE_BLOCK;
     RwSingleBlkReq->SdMmcCmdBlk.CommandType  = SdMmcCommandTypeAdtc;
@@ -365,9 +369,9 @@ SdRwSingleBlock (
   }
 
   if (Device->SectorAddressing) {
-    RwSingleBlkReq->SdMmcCmdBlk.CommandArgument = (UINT32)Lba;
+    RwSingleBlkReq->SdMmcCmdBlk.CommandArgument = (UINT32) Lba;
   } else {
-    RwSingleBlkReq->SdMmcCmdBlk.CommandArgument = (UINT32)MultU64x32 (Lba, Device->BlockMedia.BlockSize);
+    RwSingleBlkReq->SdMmcCmdBlk.CommandArgument = (UINT32) MultU64x32 (Lba, Device->BlockMedia.BlockSize);
   }
 
   RwSingleBlkReq->IsEnd = IsEnd;
@@ -375,12 +379,12 @@ SdRwSingleBlock (
 
   if ((Token != NULL) && (Token->Event != NULL)) {
     Status = gBS->CreateEvent (
-                    EVT_NOTIFY_SIGNAL,
-                    TPL_NOTIFY,
-                    AsyncIoCallback,
-                    RwSingleBlkReq,
-                    &RwSingleBlkReq->Event
-                    );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_NOTIFY,
+                               AsyncIoCallback,
+                               RwSingleBlkReq,
+                               &RwSingleBlkReq->Event
+                               );
     if (EFI_ERROR (Status)) {
       goto Error;
     }
@@ -401,8 +405,9 @@ Error:
       RemoveEntryList (&RwSingleBlkReq->Link);
       gBS->RestoreTPL (OldTpl);
       if (RwSingleBlkReq->Event != NULL) {
-        gBS->CloseEvent (RwSingleBlkReq->Event);
+  gBS->CloseEvent (RwSingleBlkReq->Event);
       }
+
       FreePool (RwSingleBlkReq);
     }
   } else {
@@ -450,10 +455,10 @@ SdRwMultiBlocks (
   IN  BOOLEAN                   IsEnd
   )
 {
-  EFI_STATUS                    Status;
-  SD_REQUEST                    *RwMultiBlkReq;
-  EFI_SD_MMC_PASS_THRU_PROTOCOL *PassThru;
-  EFI_TPL                       OldTpl;
+  EFI_STATUS                     Status;
+  SD_REQUEST                     *RwMultiBlkReq;
+  EFI_SD_MMC_PASS_THRU_PROTOCOL  *PassThru;
+  EFI_TPL                        OldTpl;
 
   RwMultiBlkReq = NULL;
 
@@ -482,14 +487,14 @@ SdRwMultiBlocks (
 
   if (IsRead) {
     RwMultiBlkReq->Packet.InDataBuffer     = Buffer;
-    RwMultiBlkReq->Packet.InTransferLength = (UINT32)BufferSize;
+    RwMultiBlkReq->Packet.InTransferLength = (UINT32) BufferSize;
 
     RwMultiBlkReq->SdMmcCmdBlk.CommandIndex = SD_READ_MULTIPLE_BLOCK;
     RwMultiBlkReq->SdMmcCmdBlk.CommandType  = SdMmcCommandTypeAdtc;
     RwMultiBlkReq->SdMmcCmdBlk.ResponseType = SdMmcResponseTypeR1;
   } else {
     RwMultiBlkReq->Packet.OutDataBuffer     = Buffer;
-    RwMultiBlkReq->Packet.OutTransferLength = (UINT32)BufferSize;
+    RwMultiBlkReq->Packet.OutTransferLength = (UINT32) BufferSize;
 
     RwMultiBlkReq->SdMmcCmdBlk.CommandIndex = SD_WRITE_MULTIPLE_BLOCK;
     RwMultiBlkReq->SdMmcCmdBlk.CommandType  = SdMmcCommandTypeAdtc;
@@ -497,9 +502,9 @@ SdRwMultiBlocks (
   }
 
   if (Device->SectorAddressing) {
-    RwMultiBlkReq->SdMmcCmdBlk.CommandArgument = (UINT32)Lba;
+    RwMultiBlkReq->SdMmcCmdBlk.CommandArgument = (UINT32) Lba;
   } else {
-    RwMultiBlkReq->SdMmcCmdBlk.CommandArgument = (UINT32)MultU64x32 (Lba, Device->BlockMedia.BlockSize);
+    RwMultiBlkReq->SdMmcCmdBlk.CommandArgument = (UINT32) MultU64x32 (Lba, Device->BlockMedia.BlockSize);
   }
 
   RwMultiBlkReq->IsEnd = IsEnd;
@@ -507,12 +512,12 @@ SdRwMultiBlocks (
 
   if ((Token != NULL) && (Token->Event != NULL)) {
     Status = gBS->CreateEvent (
-                    EVT_NOTIFY_SIGNAL,
-                    TPL_NOTIFY,
-                    AsyncIoCallback,
-                    RwMultiBlkReq,
-                    &RwMultiBlkReq->Event
-                    );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_NOTIFY,
+                               AsyncIoCallback,
+                               RwMultiBlkReq,
+                               &RwMultiBlkReq->Event
+                               );
     if (EFI_ERROR (Status)) {
       goto Error;
     }
@@ -533,8 +538,9 @@ Error:
       RemoveEntryList (&RwMultiBlkReq->Link);
       gBS->RestoreTPL (OldTpl);
       if (RwMultiBlkReq->Event != NULL) {
-        gBS->CloseEvent (RwMultiBlkReq->Event);
+  gBS->CloseEvent (RwMultiBlkReq->Event);
       }
+
       FreePool (RwMultiBlkReq);
     }
   } else {
@@ -586,14 +592,14 @@ SdReadWrite (
   IN OUT EFI_BLOCK_IO2_TOKEN            *Token
   )
 {
-  EFI_STATUS                            Status;
-  EFI_BLOCK_IO_MEDIA                    *Media;
-  UINTN                                 BlockSize;
-  UINTN                                 BlockNum;
-  UINTN                                 IoAlign;
-  UINTN                                 Remaining;
-  UINT32                                MaxBlock;
-  BOOLEAN                               LastRw;
+  EFI_STATUS          Status;
+  EFI_BLOCK_IO_MEDIA  *Media;
+  UINTN               BlockSize;
+  UINTN               BlockNum;
+  UINTN               IoAlign;
+  UINTN               Remaining;
+  UINT32              MaxBlock;
+  BOOLEAN             LastRw;
 
   Status = EFI_SUCCESS;
   Media  = &Device->BlockMedia;
@@ -619,6 +625,7 @@ SdReadWrite (
       Token->TransactionStatus = EFI_SUCCESS;
       gBS->SignalEvent (Token->Event);
     }
+
     return EFI_SUCCESS;
   }
 
@@ -627,7 +634,7 @@ SdReadWrite (
     return EFI_BAD_BUFFER_SIZE;
   }
 
-  BlockNum  = BufferSize / BlockSize;
+  BlockNum = BufferSize / BlockSize;
   if ((Lba + BlockNum - 1) > Media->LastBlock) {
     return EFI_INVALID_PARAMETER;
   }
@@ -661,14 +668,18 @@ SdReadWrite (
     } else {
       Status = SdRwMultiBlocks (Device, Lba, Buffer, BufferSize, IsRead, Token, LastRw);
     }
+
     if (EFI_ERROR (Status)) {
       return Status;
     }
-    DEBUG ((DEBUG_BLKIO, "Sd%a(): Lba 0x%x BlkNo 0x%x Event %p with %r\n",
-      IsRead ? "Read" : "Write", Lba, BlockNum,
-      (Token != NULL) ? Token->Event : NULL, Status));
-    Lba   += BlockNum;
-    Buffer = (UINT8*)Buffer + BufferSize;
+
+    DEBUG (
+           (DEBUG_BLKIO, "Sd%a(): Lba 0x%x BlkNo 0x%x Event %p with %r\n",
+            IsRead ? "Read" : "Write", Lba, BlockNum,
+            (Token != NULL) ? Token->Event : NULL, Status)
+           );
+    Lba       += BlockNum;
+    Buffer     = (UINT8 *) Buffer + BufferSize;
     Remaining -= BlockNum;
   }
 
@@ -693,9 +704,9 @@ SdReset (
   IN  BOOLEAN                   ExtendedVerification
   )
 {
-  EFI_STATUS                    Status;
-  SD_DEVICE                     *Device;
-  EFI_SD_MMC_PASS_THRU_PROTOCOL *PassThru;
+  EFI_STATUS                     Status;
+  SD_DEVICE                      *Device;
+  EFI_SD_MMC_PASS_THRU_PROTOCOL  *PassThru;
 
   Device = SD_DEVICE_DATA_FROM_BLKIO (This);
 
@@ -734,11 +745,11 @@ SdReadBlocks (
   IN     UINT32                 MediaId,
   IN     EFI_LBA                Lba,
   IN     UINTN                  BufferSize,
-     OUT VOID                   *Buffer
+  OUT VOID                   *Buffer
   )
 {
-  EFI_STATUS             Status;
-  SD_DEVICE              *Device;
+  EFI_STATUS  Status;
+  SD_DEVICE   *Device;
 
   Device = SD_DEVICE_DATA_FROM_BLKIO (This);
 
@@ -776,8 +787,8 @@ SdWriteBlocks (
   IN  VOID                    *Buffer
   )
 {
-  EFI_STATUS             Status;
-  SD_DEVICE              *Device;
+  EFI_STATUS  Status;
+  SD_DEVICE   *Device;
 
   Device = SD_DEVICE_DATA_FROM_BLKIO (This);
 
@@ -825,11 +836,11 @@ SdResetEx (
   IN  BOOLEAN                 ExtendedVerification
   )
 {
-  SD_DEVICE                   *Device;
-  LIST_ENTRY                  *Link;
-  LIST_ENTRY                  *NextLink;
-  SD_REQUEST                  *Request;
-  EFI_TPL                     OldTpl;
+  SD_DEVICE   *Device;
+  LIST_ENTRY  *Link;
+  LIST_ENTRY  *NextLink;
+  SD_REQUEST  *Request;
+  EFI_TPL     OldTpl;
 
   Device = SD_DEVICE_DATA_FROM_BLKIO2 (This);
 
@@ -846,11 +857,12 @@ SdResetEx (
     Request->Token->TransactionStatus = EFI_ABORTED;
 
     if (Request->IsEnd) {
-      gBS->SignalEvent (Request->Token->Event);
+  gBS->SignalEvent (Request->Token->Event);
     }
 
     FreePool (Request);
   }
+
   gBS->RestoreTPL (OldTpl);
 
   return EFI_SUCCESS;
@@ -890,11 +902,11 @@ SdReadBlocksEx (
   IN     EFI_LBA                Lba,
   IN OUT EFI_BLOCK_IO2_TOKEN    *Token,
   IN     UINTN                  BufferSize,
-     OUT VOID                   *Buffer
+  OUT VOID                   *Buffer
   )
 {
-  EFI_STATUS             Status;
-  SD_DEVICE              *Device;
+  EFI_STATUS  Status;
+  SD_DEVICE   *Device;
 
   Device = SD_DEVICE_DATA_FROM_BLKIO2 (This);
 
@@ -935,8 +947,8 @@ SdWriteBlocksEx (
   IN     VOID                   *Buffer
   )
 {
-  EFI_STATUS             Status;
-  SD_DEVICE              *Device;
+  EFI_STATUS  Status;
+  SD_DEVICE   *Device;
 
   Device = SD_DEVICE_DATA_FROM_BLKIO2 (This);
 
@@ -995,13 +1007,13 @@ SdEraseBlockStart (
   IN  BOOLEAN                   IsEnd
   )
 {
-  EFI_STATUS                           Status;
-  EFI_SD_MMC_PASS_THRU_PROTOCOL        *PassThru;
-  SD_REQUEST                           *EraseBlockStart;
-  EFI_TPL                              OldTpl;
+  EFI_STATUS                     Status;
+  EFI_SD_MMC_PASS_THRU_PROTOCOL  *PassThru;
+  SD_REQUEST                     *EraseBlockStart;
+  EFI_TPL                        OldTpl;
 
   EraseBlockStart = NULL;
-  PassThru        = Device->Private->PassThru;
+  PassThru = Device->Private->PassThru;
 
   EraseBlockStart = AllocateZeroPool (sizeof (SD_REQUEST));
   if (EraseBlockStart == NULL) {
@@ -1015,16 +1027,16 @@ SdEraseBlockStart (
   gBS->RestoreTPL (OldTpl);
   EraseBlockStart->Packet.SdMmcCmdBlk    = &EraseBlockStart->SdMmcCmdBlk;
   EraseBlockStart->Packet.SdMmcStatusBlk = &EraseBlockStart->SdMmcStatusBlk;
-  EraseBlockStart->Packet.Timeout        = SD_GENERIC_TIMEOUT;
+  EraseBlockStart->Packet.Timeout = SD_GENERIC_TIMEOUT;
 
   EraseBlockStart->SdMmcCmdBlk.CommandIndex = SD_ERASE_WR_BLK_START;
   EraseBlockStart->SdMmcCmdBlk.CommandType  = SdMmcCommandTypeAc;
   EraseBlockStart->SdMmcCmdBlk.ResponseType = SdMmcResponseTypeR1;
 
   if (Device->SectorAddressing) {
-    EraseBlockStart->SdMmcCmdBlk.CommandArgument = (UINT32)StartLba;
+    EraseBlockStart->SdMmcCmdBlk.CommandArgument = (UINT32) StartLba;
   } else {
-    EraseBlockStart->SdMmcCmdBlk.CommandArgument = (UINT32)MultU64x32 (StartLba, Device->BlockMedia.BlockSize);
+    EraseBlockStart->SdMmcCmdBlk.CommandArgument = (UINT32) MultU64x32 (StartLba, Device->BlockMedia.BlockSize);
   }
 
   EraseBlockStart->IsEnd = IsEnd;
@@ -1032,12 +1044,12 @@ SdEraseBlockStart (
 
   if ((Token != NULL) && (Token->Event != NULL)) {
     Status = gBS->CreateEvent (
-                    EVT_NOTIFY_SIGNAL,
-                    TPL_NOTIFY,
-                    AsyncIoCallback,
-                    EraseBlockStart,
-                    &EraseBlockStart->Event
-                    );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_NOTIFY,
+                               AsyncIoCallback,
+                               EraseBlockStart,
+                               &EraseBlockStart->Event
+                               );
     if (EFI_ERROR (Status)) {
       goto Error;
     }
@@ -1058,8 +1070,9 @@ Error:
       RemoveEntryList (&EraseBlockStart->Link);
       gBS->RestoreTPL (OldTpl);
       if (EraseBlockStart->Event != NULL) {
-        gBS->CloseEvent (EraseBlockStart->Event);
+  gBS->CloseEvent (EraseBlockStart->Event);
       }
+
       FreePool (EraseBlockStart);
     }
   } else {
@@ -1099,13 +1112,13 @@ SdEraseBlockEnd (
   IN  BOOLEAN                   IsEnd
   )
 {
-  EFI_STATUS                           Status;
-  EFI_SD_MMC_PASS_THRU_PROTOCOL        *PassThru;
-  SD_REQUEST                           *EraseBlockEnd;
-  EFI_TPL                              OldTpl;
+  EFI_STATUS                     Status;
+  EFI_SD_MMC_PASS_THRU_PROTOCOL  *PassThru;
+  SD_REQUEST                     *EraseBlockEnd;
+  EFI_TPL                        OldTpl;
 
   EraseBlockEnd = NULL;
-  PassThru      = Device->Private->PassThru;
+  PassThru = Device->Private->PassThru;
 
   EraseBlockEnd = AllocateZeroPool (sizeof (SD_REQUEST));
   if (EraseBlockEnd == NULL) {
@@ -1119,16 +1132,16 @@ SdEraseBlockEnd (
   gBS->RestoreTPL (OldTpl);
   EraseBlockEnd->Packet.SdMmcCmdBlk    = &EraseBlockEnd->SdMmcCmdBlk;
   EraseBlockEnd->Packet.SdMmcStatusBlk = &EraseBlockEnd->SdMmcStatusBlk;
-  EraseBlockEnd->Packet.Timeout        = SD_GENERIC_TIMEOUT;
+  EraseBlockEnd->Packet.Timeout = SD_GENERIC_TIMEOUT;
 
   EraseBlockEnd->SdMmcCmdBlk.CommandIndex = SD_ERASE_WR_BLK_END;
   EraseBlockEnd->SdMmcCmdBlk.CommandType  = SdMmcCommandTypeAc;
   EraseBlockEnd->SdMmcCmdBlk.ResponseType = SdMmcResponseTypeR1;
 
   if (Device->SectorAddressing) {
-    EraseBlockEnd->SdMmcCmdBlk.CommandArgument = (UINT32)EndLba;
+    EraseBlockEnd->SdMmcCmdBlk.CommandArgument = (UINT32) EndLba;
   } else {
-    EraseBlockEnd->SdMmcCmdBlk.CommandArgument = (UINT32)MultU64x32 (EndLba, Device->BlockMedia.BlockSize);
+    EraseBlockEnd->SdMmcCmdBlk.CommandArgument = (UINT32) MultU64x32 (EndLba, Device->BlockMedia.BlockSize);
   }
 
   EraseBlockEnd->IsEnd = IsEnd;
@@ -1136,12 +1149,12 @@ SdEraseBlockEnd (
 
   if ((Token != NULL) && (Token->Event != NULL)) {
     Status = gBS->CreateEvent (
-                    EVT_NOTIFY_SIGNAL,
-                    TPL_NOTIFY,
-                    AsyncIoCallback,
-                    EraseBlockEnd,
-                    &EraseBlockEnd->Event
-                    );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_NOTIFY,
+                               AsyncIoCallback,
+                               EraseBlockEnd,
+                               &EraseBlockEnd->Event
+                               );
     if (EFI_ERROR (Status)) {
       goto Error;
     }
@@ -1162,8 +1175,9 @@ Error:
       RemoveEntryList (&EraseBlockEnd->Link);
       gBS->RestoreTPL (OldTpl);
       if (EraseBlockEnd->Event != NULL) {
-        gBS->CloseEvent (EraseBlockEnd->Event);
+  gBS->CloseEvent (EraseBlockEnd->Event);
       }
+
       FreePool (EraseBlockEnd);
     }
   } else {
@@ -1201,10 +1215,10 @@ SdEraseBlock (
   IN  BOOLEAN                   IsEnd
   )
 {
-  EFI_STATUS                           Status;
-  EFI_SD_MMC_PASS_THRU_PROTOCOL        *PassThru;
-  SD_REQUEST                           *EraseBlock;
-  EFI_TPL                              OldTpl;
+  EFI_STATUS                     Status;
+  EFI_SD_MMC_PASS_THRU_PROTOCOL  *PassThru;
+  SD_REQUEST                     *EraseBlock;
+  EFI_TPL                        OldTpl;
 
   EraseBlock = NULL;
   PassThru   = Device->Private->PassThru;
@@ -1221,7 +1235,7 @@ SdEraseBlock (
   gBS->RestoreTPL (OldTpl);
   EraseBlock->Packet.SdMmcCmdBlk    = &EraseBlock->SdMmcCmdBlk;
   EraseBlock->Packet.SdMmcStatusBlk = &EraseBlock->SdMmcStatusBlk;
-  EraseBlock->Packet.Timeout        = SD_GENERIC_TIMEOUT;
+  EraseBlock->Packet.Timeout = SD_GENERIC_TIMEOUT;
 
   EraseBlock->SdMmcCmdBlk.CommandIndex = SD_ERASE;
   EraseBlock->SdMmcCmdBlk.CommandType  = SdMmcCommandTypeAc;
@@ -1232,12 +1246,12 @@ SdEraseBlock (
 
   if ((Token != NULL) && (Token->Event != NULL)) {
     Status = gBS->CreateEvent (
-                    EVT_NOTIFY_SIGNAL,
-                    TPL_NOTIFY,
-                    AsyncIoCallback,
-                    EraseBlock,
-                    &EraseBlock->Event
-                    );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_NOTIFY,
+                               AsyncIoCallback,
+                               EraseBlock,
+                               &EraseBlock->Event
+                               );
     if (EFI_ERROR (Status)) {
       goto Error;
     }
@@ -1258,8 +1272,9 @@ Error:
       RemoveEntryList (&EraseBlock->Link);
       gBS->RestoreTPL (OldTpl);
       if (EraseBlock->Event != NULL) {
-        gBS->CloseEvent (EraseBlock->Event);
+  gBS->CloseEvent (EraseBlock->Event);
       }
+
       FreePool (EraseBlock);
     }
   } else {
@@ -1314,12 +1329,12 @@ SdEraseBlocks (
   IN     UINTN                         Size
   )
 {
-  EFI_STATUS                            Status;
-  EFI_BLOCK_IO_MEDIA                    *Media;
-  UINTN                                 BlockSize;
-  UINTN                                 BlockNum;
-  EFI_LBA                               LastLba;
-  SD_DEVICE                             *Device;
+  EFI_STATUS          Status;
+  EFI_BLOCK_IO_MEDIA  *Media;
+  UINTN               BlockSize;
+  UINTN               BlockNum;
+  EFI_LBA             LastLba;
+  SD_DEVICE           *Device;
 
   Status = EFI_SUCCESS;
   Device = SD_DEVICE_DATA_FROM_ERASEBLK (This);
@@ -1341,7 +1356,7 @@ SdEraseBlocks (
     return EFI_INVALID_PARAMETER;
   }
 
-  BlockNum  = Size / BlockSize;
+  BlockNum = Size / BlockSize;
   if ((Lba + BlockNum - 1) > Media->LastBlock) {
     return EFI_INVALID_PARAMETER;
   }
@@ -1352,30 +1367,31 @@ SdEraseBlocks (
 
   LastLba = Lba + BlockNum - 1;
 
-  Status = SdEraseBlockStart (Device, Lba, (EFI_BLOCK_IO2_TOKEN*)Token, FALSE);
+  Status = SdEraseBlockStart (Device, Lba, (EFI_BLOCK_IO2_TOKEN *) Token, FALSE);
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  Status = SdEraseBlockEnd (Device, LastLba, (EFI_BLOCK_IO2_TOKEN*)Token, FALSE);
+  Status = SdEraseBlockEnd (Device, LastLba, (EFI_BLOCK_IO2_TOKEN *) Token, FALSE);
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  Status = SdEraseBlock (Device, (EFI_BLOCK_IO2_TOKEN*)Token, TRUE);
+  Status = SdEraseBlock (Device, (EFI_BLOCK_IO2_TOKEN *) Token, TRUE);
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  DEBUG ((
-    DEBUG_INFO,
-    "SdEraseBlocks(): Lba 0x%x BlkNo 0x%x Event %p with %r\n",
-    Lba,
-    BlockNum,
-    (Token != NULL) ? Token->Event : NULL,
-    Status
-    ));
+  DEBUG (
+         (
+          DEBUG_INFO,
+          "SdEraseBlocks(): Lba 0x%x BlkNo 0x%x Event %p with %r\n",
+          Lba,
+          BlockNum,
+          (Token != NULL) ? Token->Event : NULL,
+          Status
+         )
+         );
 
   return Status;
 }
-

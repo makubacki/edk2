@@ -19,7 +19,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // Forward reference for pure ANSI compatability
 //
-typedef struct _EFI_BOOT_LOGO_PROTOCOL  EFI_BOOT_LOGO_PROTOCOL;
+typedef struct _EFI_BOOT_LOGO_PROTOCOL EFI_BOOT_LOGO_PROTOCOL;
 
 /**
   Update information of logo image drawn on screen.
@@ -40,20 +40,20 @@ typedef struct _EFI_BOOT_LOGO_PROTOCOL  EFI_BOOT_LOGO_PROTOCOL;
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_SET_BOOT_LOGO)(
-  IN EFI_BOOT_LOGO_PROTOCOL            *This,
-  IN EFI_GRAPHICS_OUTPUT_BLT_PIXEL     *BltBuffer       OPTIONAL,
-  IN UINTN                             DestinationX,
-  IN UINTN                             DestinationY,
-  IN UINTN                             Width,
-  IN UINTN                             Height
-  );
+                            IN EFI_BOOT_LOGO_PROTOCOL            *This,
+                            IN EFI_GRAPHICS_OUTPUT_BLT_PIXEL     *BltBuffer       OPTIONAL,
+                            IN UINTN                             DestinationX,
+                            IN UINTN                             DestinationY,
+                            IN UINTN                             Width,
+                            IN UINTN                             Height
+                            );
 
 struct _EFI_BOOT_LOGO_PROTOCOL {
-  EFI_SET_BOOT_LOGO        SetBootLogo;
+  EFI_SET_BOOT_LOGO    SetBootLogo;
 };
 
-extern EFI_GUID gEfiBootLogoProtocolGuid;
+extern EFI_GUID  gEfiBootLogoProtocolGuid;
 
 #endif

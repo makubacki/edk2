@@ -10,9 +10,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define __GENERIC_MEMORY_TEST_H__
 
 #define EFI_GENERIC_MEMORY_TEST_PROTOCOL_GUID  \
-  { 0x309de7f1, 0x7f5e, 0x4ace, {0xb4, 0x9c, 0x53, 0x1b, 0xe5, 0xaa, 0x95, 0xef} }
+  { 0x309de7f1, 0x7f5e, 0x4ace, { 0xb4, 0x9c, 0x53, 0x1b, 0xe5, 0xaa, 0x95, 0xef } }
 
-typedef struct _EFI_GENERIC_MEMORY_TEST_PROTOCOL  EFI_GENERIC_MEMORY_TEST_PROTOCOL;
+typedef struct _EFI_GENERIC_MEMORY_TEST_PROTOCOL EFI_GENERIC_MEMORY_TEST_PROTOCOL;
 
 ///
 /// Memory test coverage level.
@@ -26,7 +26,6 @@ typedef enum {
   MAXLEVEL
 } EXTENDMEM_COVERAGE_LEVEL;
 
-
 /**
   Initialize the generic memory test.
 
@@ -39,13 +38,12 @@ typedef enum {
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MEMORY_TEST_INIT)(
-  IN EFI_GENERIC_MEMORY_TEST_PROTOCOL          *This,
-  IN  EXTENDMEM_COVERAGE_LEVEL                 Level,
-  OUT BOOLEAN                                  *RequireSoftECCInit
-  );
-
+                               IN EFI_GENERIC_MEMORY_TEST_PROTOCOL          *This,
+                               IN  EXTENDMEM_COVERAGE_LEVEL                 Level,
+                               OUT BOOLEAN                                  *RequireSoftECCInit
+                               );
 
 /**
   Perform the memory test.
@@ -63,15 +61,14 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PERFORM_MEMORY_TEST)(
-  IN EFI_GENERIC_MEMORY_TEST_PROTOCOL          *This,
-  OUT UINT64                                   *TestedMemorySize,
-  OUT UINT64                                   *TotalMemorySize,
-  OUT BOOLEAN                                  *ErrorOut,
-  IN BOOLEAN                                   IfTestAbort
-  );
-
+                                  IN EFI_GENERIC_MEMORY_TEST_PROTOCOL          *This,
+                                  OUT UINT64                                   *TestedMemorySize,
+                                  OUT UINT64                                   *TotalMemorySize,
+                                  OUT BOOLEAN                                  *ErrorOut,
+                                  IN BOOLEAN                                   IfTestAbort
+                                  );
 
 /**
   Finish the memory test.
@@ -82,10 +79,10 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MEMORY_TEST_FINISHED)(
-  IN EFI_GENERIC_MEMORY_TEST_PROTOCOL *This
-  );
+                                   IN EFI_GENERIC_MEMORY_TEST_PROTOCOL *This
+                                   );
 
 /**
   Provides the capability to test the compatible range used by some special drivers.
@@ -100,21 +97,20 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MEMORY_TEST_COMPATIBLE_RANGE)(
-  IN EFI_GENERIC_MEMORY_TEST_PROTOCOL          *This,
-  IN  EFI_PHYSICAL_ADDRESS                     StartAddress,
-  IN  UINT64                                   Length
-  );
+                                           IN EFI_GENERIC_MEMORY_TEST_PROTOCOL          *This,
+                                           IN  EFI_PHYSICAL_ADDRESS                     StartAddress,
+                                           IN  UINT64                                   Length
+                                           );
 
 struct _EFI_GENERIC_MEMORY_TEST_PROTOCOL {
-  EFI_MEMORY_TEST_INIT              MemoryTestInit;
-  EFI_PERFORM_MEMORY_TEST           PerformMemoryTest;
-  EFI_MEMORY_TEST_FINISHED          Finished;
-  EFI_MEMORY_TEST_COMPATIBLE_RANGE  CompatibleRangeTest;
+  EFI_MEMORY_TEST_INIT                MemoryTestInit;
+  EFI_PERFORM_MEMORY_TEST             PerformMemoryTest;
+  EFI_MEMORY_TEST_FINISHED            Finished;
+  EFI_MEMORY_TEST_COMPATIBLE_RANGE    CompatibleRangeTest;
 };
 
-extern EFI_GUID gEfiGenericMemTestProtocolGuid;
+extern EFI_GUID  gEfiGenericMemTestProtocolGuid;
 
 #endif
-

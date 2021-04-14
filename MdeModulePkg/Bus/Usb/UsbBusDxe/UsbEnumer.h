@@ -14,14 +14,13 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // Advance the byte and bit to the next bit, adjust byte accordingly.
 //
 #define USB_NEXT_BIT(Byte, Bit)   \
-          do {                \
-            (Bit)++;          \
-            if ((Bit) > 7) {  \
-              (Byte)++;       \
-              (Bit) = 0;      \
-            }                 \
-          } while (0)
-
+  do {                \
+    (Bit)++;          \
+    if ((Bit) > 7) {  \
+      (Byte)++;       \
+      (Bit) = 0;      \
+    }                 \
+  } while (0)
 
 //
 // Common interface used by usb bus enumeration process.
@@ -30,7 +29,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // can be shared by both root hub and normal hub
 //
 typedef
-EFI_STATUS
+  EFI_STATUS
 (*USB_HUB_INIT) (
   IN USB_INTERFACE        *UsbIf
   );
@@ -42,7 +41,7 @@ EFI_STATUS
 // doesn't need to ACK the port change bits.
 //
 typedef
-EFI_STATUS
+  EFI_STATUS
 (*USB_HUB_GET_PORT_STATUS) (
   IN  USB_INTERFACE       *UsbIf,
   IN  UINT8               Port,
@@ -50,14 +49,14 @@ EFI_STATUS
   );
 
 typedef
-VOID
+  VOID
 (*USB_HUB_CLEAR_PORT_CHANGE) (
   IN USB_INTERFACE        *HubIf,
   IN UINT8                Port
   );
 
 typedef
-EFI_STATUS
+  EFI_STATUS
 (*USB_HUB_SET_PORT_FEATURE) (
   IN USB_INTERFACE        *UsbIf,
   IN UINT8                Port,
@@ -65,7 +64,7 @@ EFI_STATUS
   );
 
 typedef
-EFI_STATUS
+  EFI_STATUS
 (*USB_HUB_CLEAR_PORT_FEATURE) (
   IN USB_INTERFACE        *UsbIf,
   IN UINT8                Port,
@@ -73,14 +72,14 @@ EFI_STATUS
   );
 
 typedef
-EFI_STATUS
+  EFI_STATUS
 (*USB_HUB_RESET_PORT) (
   IN USB_INTERFACE        *UsbIf,
   IN UINT8                Port
   );
 
 typedef
-EFI_STATUS
+  EFI_STATUS
 (*USB_HUB_RELEASE) (
   IN USB_INTERFACE        *UsbIf
   );
@@ -94,7 +93,7 @@ EFI_STATUS
   @return The endpoint descriptor or NULL.
 
 **/
-USB_ENDPOINT_DESC*
+USB_ENDPOINT_DESC *
 UsbGetEndpointDesc (
   IN USB_INTERFACE        *UsbIf,
   IN UINT8                EpAddr
@@ -194,4 +193,5 @@ UsbRootHubEnumeration (
   IN EFI_EVENT            Event,
   IN VOID                 *Context
   );
+
 #endif

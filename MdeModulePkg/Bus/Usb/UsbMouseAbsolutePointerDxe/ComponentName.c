@@ -6,7 +6,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
-
 #include "UsbMouseAbsolutePointer.h"
 
 //
@@ -21,16 +20,15 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gUsbMouseAbsolutePoin
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL gUsbMouseAbsolutePointerComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gUsbMouseAbsolutePointerComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) UsbMouseAbsolutePointerComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) UsbMouseAbsolutePointerComponentNameGetControllerName,
   "en"
 };
 
-
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mUsbMouseAbsolutePointerDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mUsbMouseAbsolutePointerDriverNameTable[] = {
   { "eng;en", L"Usb Mouse Absolute Pointer Driver" },
-  { NULL , NULL }
+  { NULL,     NULL                                 }
 };
 
 /**
@@ -76,12 +74,12 @@ UsbMouseAbsolutePointerComponentNameGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mUsbMouseAbsolutePointerDriverNameTable,
-           DriverName,
-           (BOOLEAN)(This == &gUsbMouseAbsolutePointerComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mUsbMouseAbsolutePointerDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gUsbMouseAbsolutePointerComponentName)
+                               );
 }
 
 /**
@@ -152,10 +150,10 @@ UsbMouseAbsolutePointerComponentNameGetControllerName (
   OUT CHAR16                                          **ControllerName
   )
 {
-  EFI_STATUS                       Status;
-  USB_MOUSE_ABSOLUTE_POINTER_DEV   *UsbMouseAbsolutePointerDev;
-  EFI_ABSOLUTE_POINTER_PROTOCOL    *AbsolutePointerProtocol;
-  EFI_USB_IO_PROTOCOL              *UsbIoProtocol;
+  EFI_STATUS                      Status;
+  USB_MOUSE_ABSOLUTE_POINTER_DEV  *UsbMouseAbsolutePointerDev;
+  EFI_ABSOLUTE_POINTER_PROTOCOL   *AbsolutePointerProtocol;
+  EFI_USB_IO_PROTOCOL             *UsbIoProtocol;
 
   //
   // This is a device driver, so ChildHandle must be NULL.
@@ -168,20 +166,20 @@ UsbMouseAbsolutePointerComponentNameGetControllerName (
   // Check Controller's handle
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiUsbIoProtocolGuid,
-                  (VOID **) &UsbIoProtocol,
-                  gUsbMouseAbsolutePointerDriverBinding.DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              ControllerHandle,
+                              &gEfiUsbIoProtocolGuid,
+                              (VOID **) &UsbIoProtocol,
+                              gUsbMouseAbsolutePointerDriverBinding.DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (!EFI_ERROR (Status)) {
-    gBS->CloseProtocol (
-           ControllerHandle,
-           &gEfiUsbIoProtocolGuid,
-           gUsbMouseAbsolutePointerDriverBinding.DriverBindingHandle,
-           ControllerHandle
-           );
+  gBS->CloseProtocol (
+                      ControllerHandle,
+                      &gEfiUsbIoProtocolGuid,
+                      gUsbMouseAbsolutePointerDriverBinding.DriverBindingHandle,
+                      ControllerHandle
+                      );
 
     return EFI_UNSUPPORTED;
   }
@@ -189,17 +187,18 @@ UsbMouseAbsolutePointerComponentNameGetControllerName (
   if (Status != EFI_ALREADY_STARTED) {
     return EFI_UNSUPPORTED;
   }
+
   //
   // Get the device context
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                 &gEfiAbsolutePointerProtocolGuid,
-                  (VOID **) &AbsolutePointerProtocol,
-                  gUsbMouseAbsolutePointerDriverBinding.DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiAbsolutePointerProtocolGuid,
+                              (VOID **) &AbsolutePointerProtocol,
+                              gUsbMouseAbsolutePointerDriverBinding.DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
 
   if (EFI_ERROR (Status)) {
     return Status;
@@ -208,11 +207,10 @@ UsbMouseAbsolutePointerComponentNameGetControllerName (
   UsbMouseAbsolutePointerDev = USB_MOUSE_ABSOLUTE_POINTER_DEV_FROM_MOUSE_PROTOCOL (AbsolutePointerProtocol);
 
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           UsbMouseAbsolutePointerDev->ControllerNameTable,
-           ControllerName,
-           (BOOLEAN)(This == &gUsbMouseAbsolutePointerComponentName)
-           );
-
+                               Language,
+                               This->SupportedLanguages,
+                               UsbMouseAbsolutePointerDev->ControllerNameTable,
+                               ControllerName,
+                               (BOOLEAN) (This == &gUsbMouseAbsolutePointerComponentName)
+                               );
 }

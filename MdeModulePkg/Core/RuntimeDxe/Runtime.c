@@ -45,20 +45,20 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // Global Variables
 //
-EFI_MEMORY_DESCRIPTOR         *mVirtualMap                = NULL;
-UINTN                         mVirtualMapDescriptorSize;
-UINTN                         mVirtualMapMaxIndex;
-VOID                          *mMyImageBase;
+EFI_MEMORY_DESCRIPTOR  *mVirtualMap = NULL;
+UINTN                  mVirtualMapDescriptorSize;
+UINTN                  mVirtualMapMaxIndex;
+VOID                   *mMyImageBase;
 
 //
 // The handle onto which the Runtime Architectural Protocol instance is installed
 //
-EFI_HANDLE                    mRuntimeHandle = NULL;
+EFI_HANDLE  mRuntimeHandle = NULL;
 
 //
 // The Runtime Architectural Protocol instance produced by this driver
 //
-EFI_RUNTIME_ARCH_PROTOCOL     mRuntime = {
+EFI_RUNTIME_ARCH_PROTOCOL  mRuntime = {
   INITIALIZE_LIST_HEAD_VARIABLE (mRuntime.ImageHead),
   INITIALIZE_LIST_HEAD_VARIABLE (mRuntime.EventHead),
 
@@ -79,6 +79,7 @@ EFI_RUNTIME_ARCH_PROTOCOL     mRuntime = {
 //
 // Worker Functions
 //
+
 /**
 
   Calculate the 32-bit CRC in a EFI table using the Runtime Drivers
@@ -97,9 +98,9 @@ RuntimeDriverCalculateEfiHdrCrc (
 {
   UINT32  Crc;
 
-  Hdr->CRC32  = 0;
+  Hdr->CRC32 = 0;
 
-  Crc         = 0;
+  Crc = 0;
   RuntimeDriverCalculateCrc32 ((UINT8 *) Hdr, Hdr->HeaderSize, &Crc);
   Hdr->CRC32 = Crc;
 }
@@ -126,10 +127,10 @@ RuntimeDriverConvertPointer (
   IN OUT VOID   **ConvertAddress
   )
 {
-  UINTN                 Address;
-  UINT64                VirtEndOfRange;
-  EFI_MEMORY_DESCRIPTOR *VirtEntry;
-  UINTN                 Index;
+  UINTN                  Address;
+  UINT64                 VirtEndOfRange;
+  EFI_MEMORY_DESCRIPTOR  *VirtEntry;
+  UINTN                  Index;
 
   //
   // Make sure ConvertAddress is a valid pointer
@@ -137,6 +138,7 @@ RuntimeDriverConvertPointer (
   if (ConvertAddress == NULL) {
     return EFI_INVALID_PARAMETER;
   }
+
   //
   // Get the address to convert
   //
@@ -156,10 +158,10 @@ RuntimeDriverConvertPointer (
   VirtEntry = mVirtualMap;
   for (Index = 0; Index < mVirtualMapMaxIndex; Index++) {
     //
-    //  To prevent the inclusion of 64-bit math functions a UINTN was placed in
-    //  front of VirtEntry->NumberOfPages to cast it to a 32-bit thing on IA-32
-    //  platforms. If you get this ASSERT remove the UINTN and do a 64-bit
-    //  multiply.
+    // To prevent the inclusion of 64-bit math functions a UINTN was placed in
+    // front of VirtEntry->NumberOfPages to cast it to a 32-bit thing on IA-32
+    // platforms. If you get this ASSERT remove the UINTN and do a 64-bit
+    // multiply.
     //
     ASSERT (((UINTN) VirtEntry->NumberOfPages < 0xffffffff) || (sizeof (UINTN) > 4));
 
@@ -236,11 +238,11 @@ RuntimeDriverSetVirtualAddressMap (
   IN EFI_MEMORY_DESCRIPTOR  *VirtualMap
   )
 {
-  EFI_STATUS                    Status;
-  EFI_RUNTIME_EVENT_ENTRY       *RuntimeEvent;
-  EFI_RUNTIME_IMAGE_ENTRY       *RuntimeImage;
-  LIST_ENTRY                    *Link;
-  EFI_PHYSICAL_ADDRESS          VirtImageBase;
+  EFI_STATUS               Status;
+  EFI_RUNTIME_EVENT_ENTRY  *RuntimeEvent;
+  EFI_RUNTIME_IMAGE_ENTRY  *RuntimeImage;
+  LIST_ENTRY               *Link;
+  EFI_PHYSICAL_ADDRESS     VirtImageBase;
 
   //
   // Can only switch to virtual addresses once the memory map is locked down,
@@ -249,12 +251,14 @@ RuntimeDriverSetVirtualAddressMap (
   if (!mRuntime.AtRuntime || mRuntime.VirtualMode) {
     return EFI_UNSUPPORTED;
   }
+
   //
   // Only understand the original descriptor format
   //
   if (DescriptorVersion != EFI_MEMORY_DESCRIPTOR_VERSION || DescriptorSize < sizeof (EFI_MEMORY_DESCRIPTOR)) {
     return EFI_INVALID_PARAMETER;
   }
+
   //
   // We are now committed to go to virtual mode, so lets get to it!
   //
@@ -265,8 +269,8 @@ RuntimeDriverSetVirtualAddressMap (
   // globals we need to parse the virtual address map.
   //
   mVirtualMapDescriptorSize = DescriptorSize;
-  mVirtualMapMaxIndex       = MemoryMapSize / DescriptorSize;
-  mVirtualMap               = VirtualMap;
+  mVirtualMapMaxIndex = MemoryMapSize / DescriptorSize;
+  mVirtualMap = VirtualMap;
 
   //
   // ReporstStatusCodeLib will check and make sure this service can be called in runtime mode.
@@ -294,9 +298,9 @@ RuntimeDriverSetVirtualAddressMap (
       // we need an explicit cast here.
       //
       RuntimeEvent->NotifyFunction (
-                      (EFI_EVENT) RuntimeEvent->Event,
-                      RuntimeEvent->NotifyContext
-                      );
+                                    (EFI_EVENT) RuntimeEvent->Event,
+                                    RuntimeEvent->NotifyContext
+                                    );
     }
   }
 
@@ -309,17 +313,16 @@ RuntimeDriverSetVirtualAddressMap (
     // We don't want to relocate our selves, as we only run in physical mode.
     //
     if (mMyImageBase != RuntimeImage->ImageBase) {
-
       VirtImageBase = (EFI_PHYSICAL_ADDRESS) (UINTN) RuntimeImage->ImageBase;
-      Status  = RuntimeDriverConvertPointer (0, (VOID **) &VirtImageBase);
+      Status = RuntimeDriverConvertPointer (0, (VOID **) &VirtImageBase);
       ASSERT_EFI_ERROR (Status);
 
       PeCoffLoaderRelocateImageForRuntime (
-        (EFI_PHYSICAL_ADDRESS) (UINTN) RuntimeImage->ImageBase,
-        VirtImageBase,
-        (UINTN) RuntimeImage->ImageSize,
-        RuntimeImage->RelocationData
-        );
+                                           (EFI_PHYSICAL_ADDRESS) (UINTN) RuntimeImage->ImageBase,
+                                           VirtImageBase,
+                                           (UINTN) RuntimeImage->ImageSize,
+                                           RuntimeImage->RelocationData
+                                           );
 
       InvalidateInstructionCacheRange (RuntimeImage->ImageBase, (UINTN) RuntimeImage->ImageSize);
     }
@@ -387,37 +390,37 @@ RuntimeDriverInitialize (
   IN EFI_SYSTEM_TABLE                      *SystemTable
   )
 {
-  EFI_STATUS                Status;
-  EFI_LOADED_IMAGE_PROTOCOL *MyLoadedImage;
+  EFI_STATUS                 Status;
+  EFI_LOADED_IMAGE_PROTOCOL  *MyLoadedImage;
 
   //
   // This image needs to be excluded from relocation for virtual mode, so cache
   // a copy of the Loaded Image protocol to test later.
   //
   Status = gBS->HandleProtocol (
-                  ImageHandle,
-                  &gEfiLoadedImageProtocolGuid,
-                  (VOID**)&MyLoadedImage
-                  );
+                                ImageHandle,
+                                &gEfiLoadedImageProtocolGuid,
+                                (VOID **) &MyLoadedImage
+                                );
   ASSERT_EFI_ERROR (Status);
   mMyImageBase = MyLoadedImage->ImageBase;
 
   //
   // Fill in the entries of the EFI Boot Services and EFI Runtime Services Tables
   //
-  gBS->CalculateCrc32       = RuntimeDriverCalculateCrc32;
+  gBS->CalculateCrc32 = RuntimeDriverCalculateCrc32;
   gRT->SetVirtualAddressMap = RuntimeDriverSetVirtualAddressMap;
-  gRT->ConvertPointer       = RuntimeDriverConvertPointer;
+  gRT->ConvertPointer = RuntimeDriverConvertPointer;
 
   //
   // Install the Runtime Architectural Protocol onto a new handle
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &mRuntimeHandle,
-                  &gEfiRuntimeArchProtocolGuid,
-                  &mRuntime,
-                  NULL
-                  );
+                                                   &mRuntimeHandle,
+                                                   &gEfiRuntimeArchProtocolGuid,
+                                                   &mRuntime,
+                                                   NULL
+                                                   );
   ASSERT_EFI_ERROR (Status);
 
   return Status;

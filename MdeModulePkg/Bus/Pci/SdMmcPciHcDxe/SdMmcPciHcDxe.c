@@ -14,12 +14,12 @@
 
 #include "SdMmcPciHcDxe.h"
 
-EDKII_SD_MMC_OVERRIDE           *mOverride;
+EDKII_SD_MMC_OVERRIDE  *mOverride;
 
 //
 // Driver Global Variables
 //
-EFI_DRIVER_BINDING_PROTOCOL gSdMmcPciHcDriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  gSdMmcPciHcDriverBinding = {
   SdMmcPciHcDriverBindingSupported,
   SdMmcPciHcDriverBindingStart,
   SdMmcPciHcDriverBindingStop,
@@ -28,15 +28,17 @@ EFI_DRIVER_BINDING_PROTOCOL gSdMmcPciHcDriverBinding = {
   NULL
 };
 
-#define SLOT_INIT_TEMPLATE {0, UnknownSlot, 0, 0, 0, 0, \
-                               {EDKII_SD_MMC_BUS_WIDTH_IGNORE,\
-                               EDKII_SD_MMC_CLOCK_FREQ_IGNORE,\
-                               {EDKII_SD_MMC_DRIVER_STRENGTH_IGNORE}}}
+#define SLOT_INIT_TEMPLATE  { 0, UnknownSlot, 0, 0, 0, 0, \
+                              { EDKII_SD_MMC_BUS_WIDTH_IGNORE, \
+                                EDKII_SD_MMC_CLOCK_FREQ_IGNORE, \
+                                { EDKII_SD_MMC_DRIVER_STRENGTH_IGNORE } \
+                              } \
+}
 
 //
 // Template for SD/MMC host controller private data.
 //
-SD_MMC_HC_PRIVATE_DATA gSdMmcPciHcTemplate = {
+SD_MMC_HC_PRIVATE_DATA  gSdMmcPciHcTemplate = {
   SD_MMC_HC_PRIVATE_SIGNATURE,      // Signature
   NULL,                             // ControllerHandle
   NULL,                             // PciIo
@@ -63,7 +65,7 @@ SD_MMC_HC_PRIVATE_DATA gSdMmcPciHcTemplate = {
     SLOT_INIT_TEMPLATE
   },
   {                                 // Capability
-    {0},
+    { 0 },
   },
   {                                 // MaxCurrent
     0,
@@ -73,7 +75,7 @@ SD_MMC_HC_PRIVATE_DATA gSdMmcPciHcTemplate = {
   }
 };
 
-SD_DEVICE_PATH    mSdDpTemplate = {
+SD_DEVICE_PATH  mSdDpTemplate = {
   {
     MESSAGING_DEVICE_PATH,
     MSG_SD_DP,
@@ -85,7 +87,7 @@ SD_DEVICE_PATH    mSdDpTemplate = {
   0
 };
 
-EMMC_DEVICE_PATH    mEmmcDpTemplate = {
+EMMC_DEVICE_PATH  mEmmcDpTemplate = {
   {
     MESSAGING_DEVICE_PATH,
     MSG_EMMC_DP,
@@ -101,7 +103,7 @@ EMMC_DEVICE_PATH    mEmmcDpTemplate = {
 // Prioritized function list to detect card type.
 // User could add other card detection logic here.
 //
-CARD_TYPE_DETECT_ROUTINE mCardTypeDetectRoutineTable[] = {
+CARD_TYPE_DETECT_ROUTINE  mCardTypeDetectRoutineTable[] = {
   EmmcIdentification,
   SdCardIdentification,
   NULL
@@ -124,16 +126,16 @@ InitializeSdMmcPciHcDxe (
   IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  EFI_STATUS           Status;
+  EFI_STATUS  Status;
 
   Status = EfiLibInstallDriverBindingComponentName2 (
-             ImageHandle,
-             SystemTable,
-             &gSdMmcPciHcDriverBinding,
-             ImageHandle,
-             &gSdMmcPciHcComponentName,
-             &gSdMmcPciHcComponentName2
-             );
+                                                     ImageHandle,
+                                                     SystemTable,
+                                                     &gSdMmcPciHcDriverBinding,
+                                                     ImageHandle,
+                                                     &gSdMmcPciHcComponentName,
+                                                     &gSdMmcPciHcComponentName2
+                                                     );
   ASSERT_EFI_ERROR (Status);
 
   return Status;
@@ -151,18 +153,18 @@ VOID
 EFIAPI
 ProcessAsyncTaskList (
   IN EFI_EVENT          Event,
-  IN VOID*              Context
+  IN VOID *Context
   )
 {
-  SD_MMC_HC_PRIVATE_DATA              *Private;
-  LIST_ENTRY                          *Link;
-  SD_MMC_HC_TRB                       *Trb;
-  EFI_STATUS                          Status;
-  EFI_SD_MMC_PASS_THRU_COMMAND_PACKET *Packet;
-  BOOLEAN                             InfiniteWait;
-  EFI_EVENT                           TrbEvent;
+  SD_MMC_HC_PRIVATE_DATA               *Private;
+  LIST_ENTRY                           *Link;
+  SD_MMC_HC_TRB                        *Trb;
+  EFI_STATUS                           Status;
+  EFI_SD_MMC_PASS_THRU_COMMAND_PACKET  *Packet;
+  BOOLEAN                              InfiniteWait;
+  EFI_EVENT                            TrbEvent;
 
-  Private = (SD_MMC_HC_PRIVATE_DATA*)Context;
+  Private = (SD_MMC_HC_PRIVATE_DATA *) Context;
 
   //
   // Check if the first entry in the async I/O queue is done or not.
@@ -176,6 +178,7 @@ ProcessAsyncTaskList (
       Status = EFI_NO_MEDIA;
       goto Done;
     }
+
     if (!Trb->Started) {
       //
       // Check whether the cmd/data line is ready for transfer.
@@ -191,6 +194,7 @@ ProcessAsyncTaskList (
         goto Done;
       }
     }
+
     Status = SdMmcCheckTrbResult (Private, Trb);
   }
 
@@ -202,6 +206,7 @@ Done:
     } else {
       InfiniteWait = FALSE;
     }
+
     if ((!InfiniteWait) && (Trb->Timeout-- == 0)) {
       RemoveEntryList (Link);
       Trb->Packet->TransactionStatus = EFI_TIMEOUT;
@@ -222,6 +227,7 @@ Done:
     DEBUG ((DEBUG_VERBOSE, "ProcessAsyncTaskList(): Signal Event %p with %r\n", TrbEvent, Status));
     gBS->SignalEvent (TrbEvent);
   }
+
   return;
 }
 
@@ -237,28 +243,31 @@ VOID
 EFIAPI
 SdMmcPciHcEnumerateDevice (
   IN EFI_EVENT          Event,
-  IN VOID*              Context
+  IN VOID *Context
   )
 {
-  SD_MMC_HC_PRIVATE_DATA              *Private;
-  EFI_STATUS                          Status;
-  UINT8                               Slot;
-  BOOLEAN                             MediaPresent;
-  UINT32                              RoutineNum;
-  CARD_TYPE_DETECT_ROUTINE            *Routine;
-  UINTN                               Index;
-  LIST_ENTRY                          *Link;
-  LIST_ENTRY                          *NextLink;
-  SD_MMC_HC_TRB                       *Trb;
-  EFI_TPL                             OldTpl;
+  SD_MMC_HC_PRIVATE_DATA    *Private;
+  EFI_STATUS                Status;
+  UINT8                     Slot;
+  BOOLEAN                   MediaPresent;
+  UINT32                    RoutineNum;
+  CARD_TYPE_DETECT_ROUTINE  *Routine;
+  UINTN                     Index;
+  LIST_ENTRY                *Link;
+  LIST_ENTRY                *NextLink;
+  SD_MMC_HC_TRB             *Trb;
+  EFI_TPL                   OldTpl;
 
-  Private = (SD_MMC_HC_PRIVATE_DATA*)Context;
+  Private = (SD_MMC_HC_PRIVATE_DATA *) Context;
 
   for (Slot = 0; Slot < SD_MMC_HC_MAX_SLOT; Slot++) {
     if ((Private->Slot[Slot].Enable) && (Private->Slot[Slot].SlotType == RemovableSlot)) {
       Status = SdMmcHcCardDetect (Private->PciIo, Slot, &MediaPresent);
       if ((Status == EFI_MEDIA_CHANGED) && !MediaPresent) {
-        DEBUG ((DEBUG_INFO, "SdMmcPciHcEnumerateDevice: device disconnected at slot %d of pci %p\n", Slot, Private->PciIo));
+        DEBUG (
+              (DEBUG_INFO, "SdMmcPciHcEnumerateDevice: device disconnected at slot %d of pci %p\n", Slot,
+               Private->PciIo)
+              );
         Private->Slot[Slot].MediaPresent = FALSE;
         Private->Slot[Slot].Initialized  = FALSE;
         //
@@ -277,19 +286,24 @@ SdMmcPciHcEnumerateDevice (
             SdMmcFreeTrb (Trb);
           }
         }
+
         gBS->RestoreTPL (OldTpl);
         //
         // Notify the upper layer the connect state change through ReinstallProtocolInterface.
         //
         gBS->ReinstallProtocolInterface (
-              Private->ControllerHandle,
-              &gEfiSdMmcPassThruProtocolGuid,
-              &Private->PassThru,
-              &Private->PassThru
-              );
+                                         Private->ControllerHandle,
+                                         &gEfiSdMmcPassThruProtocolGuid,
+                                         &Private->PassThru,
+                                         &Private->PassThru
+                                         );
       }
+
       if ((Status == EFI_MEDIA_CHANGED) && MediaPresent) {
-        DEBUG ((DEBUG_INFO, "SdMmcPciHcEnumerateDevice: device connected at slot %d of pci %p\n", Slot, Private->PciIo));
+        DEBUG (
+              (DEBUG_INFO, "SdMmcPciHcEnumerateDevice: device connected at slot %d of pci %p\n", Slot,
+               Private->PciIo)
+              );
         //
         // Reset the specified slot of the SD/MMC Pci Host Controller
         //
@@ -297,6 +311,7 @@ SdMmcPciHcEnumerateDevice (
         if (EFI_ERROR (Status)) {
           continue;
         }
+
         //
         // Reinitialize slot and restart identification process for the new attached device
         //
@@ -311,12 +326,13 @@ SdMmcPciHcEnumerateDevice (
         for (Index = 0; Index < RoutineNum; Index++) {
           Routine = &mCardTypeDetectRoutineTable[Index];
           if (*Routine != NULL) {
-            Status = (*Routine) (Private, Slot);
+            Status = (*Routine)(Private, Slot);
             if (!EFI_ERROR (Status)) {
               break;
             }
           }
         }
+
         //
         // This card doesn't get initialized correctly.
         //
@@ -328,11 +344,11 @@ SdMmcPciHcEnumerateDevice (
         // Notify the upper layer the connect state change through ReinstallProtocolInterface.
         //
         gBS->ReinstallProtocolInterface (
-               Private->ControllerHandle,
-               &gEfiSdMmcPassThruProtocolGuid,
-               &Private->PassThru,
-               &Private->PassThru
-               );
+                                         Private->ControllerHandle,
+                                         &gEfiSdMmcPassThruProtocolGuid,
+                                         &Private->PassThru,
+                                         &Private->PassThru
+                                         );
       }
     }
   }
@@ -395,7 +411,7 @@ SdMmcPciHcDriverBindingSupported (
   EFI_PCI_IO_PROTOCOL       *PciIo;
   PCI_TYPE00                PciData;
 
-  PciIo            = NULL;
+  PciIo = NULL;
   ParentDevicePath = NULL;
 
   //
@@ -403,40 +419,41 @@ SdMmcPciHcDriverBindingSupported (
   // "RemainingDevicePath" according to EFI spec.
   //
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiDevicePathProtocolGuid,
-                  (VOID *) &ParentDevicePath,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              Controller,
+                              &gEfiDevicePathProtocolGuid,
+                              (VOID *) &ParentDevicePath,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (EFI_ERROR (Status)) {
     //
     // EFI_ALREADY_STARTED is also an error.
     //
     return Status;
   }
+
   //
   // Close the protocol because we don't use it here.
   //
   gBS->CloseProtocol (
-        Controller,
-        &gEfiDevicePathProtocolGuid,
-        This->DriverBindingHandle,
-        Controller
-        );
+                      Controller,
+                      &gEfiDevicePathProtocolGuid,
+                      This->DriverBindingHandle,
+                      Controller
+                      );
 
   //
   // Now test the EfiPciIoProtocol.
   //
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiPciIoProtocolGuid,
-                  (VOID **) &PciIo,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              Controller,
+                              &gEfiPciIoProtocolGuid,
+                              (VOID **) &PciIo,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -447,31 +464,32 @@ SdMmcPciHcDriverBindingSupported (
   // Host Controller.
   //
   Status = PciIo->Pci.Read (
-                        PciIo,
-                        EfiPciIoWidthUint8,
-                        0,
-                        sizeof (PciData),
-                        &PciData
-                        );
+                            PciIo,
+                            EfiPciIoWidthUint8,
+                            0,
+                            sizeof (PciData),
+                            &PciData
+                            );
   if (EFI_ERROR (Status)) {
-    gBS->CloseProtocol (
-          Controller,
-          &gEfiPciIoProtocolGuid,
-          This->DriverBindingHandle,
-          Controller
-          );
+  gBS->CloseProtocol (
+                      Controller,
+                      &gEfiPciIoProtocolGuid,
+                      This->DriverBindingHandle,
+                      Controller
+                      );
     return EFI_UNSUPPORTED;
   }
+
   //
   // Since we already got the PciData, we can close protocol to avoid to carry it
   // on for multiple exit points.
   //
   gBS->CloseProtocol (
-        Controller,
-        &gEfiPciIoProtocolGuid,
-        This->DriverBindingHandle,
-        Controller
-        );
+                      Controller,
+                      &gEfiPciIoProtocolGuid,
+                      This->DriverBindingHandle,
+                      Controller
+                      );
 
   //
   // Examine SD PCI Host Controller PCI Configuration table fields.
@@ -528,19 +546,19 @@ SdMmcPciHcDriverBindingStart (
   IN EFI_DEVICE_PATH_PROTOCOL        *RemainingDevicePath
   )
 {
-  EFI_STATUS                      Status;
-  SD_MMC_HC_PRIVATE_DATA          *Private;
-  EFI_PCI_IO_PROTOCOL             *PciIo;
-  UINT64                          Supports;
-  UINT64                          PciAttributes;
-  UINT8                           SlotNum;
-  UINT8                           FirstBar;
-  UINT8                           Slot;
-  UINT8                           Index;
-  CARD_TYPE_DETECT_ROUTINE        *Routine;
-  UINT32                          RoutineNum;
-  BOOLEAN                         MediaPresent;
-  BOOLEAN                         Support64BitDma;
+  EFI_STATUS                Status;
+  SD_MMC_HC_PRIVATE_DATA    *Private;
+  EFI_PCI_IO_PROTOCOL       *PciIo;
+  UINT64                    Supports;
+  UINT64                    PciAttributes;
+  UINT8                     SlotNum;
+  UINT8                     FirstBar;
+  UINT8                     Slot;
+  UINT8                     Index;
+  CARD_TYPE_DETECT_ROUTINE  *Routine;
+  UINT32                    RoutineNum;
+  BOOLEAN                   MediaPresent;
+  BOOLEAN                   Support64BitDma;
 
   DEBUG ((DEBUG_INFO, "SdMmcPciHcDriverBindingStart: Start\n"));
 
@@ -550,13 +568,13 @@ SdMmcPciHcDriverBindingStart (
   //
   PciIo  = NULL;
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiPciIoProtocolGuid,
-                  (VOID **) &PciIo,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              Controller,
+                              &gEfiPciIoProtocolGuid,
+                              (VOID **) &PciIo,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -566,31 +584,31 @@ SdMmcPciHcDriverBindingStart (
   //
   Private = NULL;
   Status  = PciIo->Attributes (
-                     PciIo,
-                     EfiPciIoAttributeOperationGet,
-                     0,
-                     &PciAttributes
-                     );
+                               PciIo,
+                               EfiPciIoAttributeOperationGet,
+                               0,
+                               &PciAttributes
+                               );
 
   if (EFI_ERROR (Status)) {
     goto Done;
   }
 
   Status = PciIo->Attributes (
-                    PciIo,
-                    EfiPciIoAttributeOperationSupported,
-                    0,
-                    &Supports
-                    );
+                              PciIo,
+                              EfiPciIoAttributeOperationSupported,
+                              0,
+                              &Supports
+                              );
 
   if (!EFI_ERROR (Status)) {
-    Supports &= (UINT64)EFI_PCI_DEVICE_ENABLE;
+    Supports &= (UINT64) EFI_PCI_DEVICE_ENABLE;
     Status    = PciIo->Attributes (
-                         PciIo,
-                         EfiPciIoAttributeOperationEnable,
-                         Supports,
-                         NULL
-                         );
+                                   PciIo,
+                                   EfiPciIoAttributeOperationEnable,
+                                   Supports,
+                                   NULL
+                                   );
   } else {
     goto Done;
   }
@@ -602,8 +620,8 @@ SdMmcPciHcDriverBindingStart (
   }
 
   Private->ControllerHandle = Controller;
-  Private->PciIo            = PciIo;
-  Private->PciAttributes    = PciAttributes;
+  Private->PciIo = PciIo;
+  Private->PciAttributes = PciAttributes;
   InitializeListHead (&Private->Queue);
 
   //
@@ -620,11 +638,16 @@ SdMmcPciHcDriverBindingStart (
   // implementations.
   //
   if (mOverride == NULL) {
-    Status = gBS->LocateProtocol (&gEdkiiSdMmcOverrideProtocolGuid, NULL,
-                    (VOID **)&mOverride);
+    Status = gBS->LocateProtocol (
+                                  &gEdkiiSdMmcOverrideProtocolGuid,
+                                  NULL,
+                                  (VOID **) &mOverride
+                                  );
     if (!EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_INFO, "%a: found SD/MMC override protocol\n",
-        __FUNCTION__));
+      DEBUG (
+             (DEBUG_INFO, "%a: found SD/MMC override protocol\n",
+              __FUNCTION__)
+             );
     }
   }
 
@@ -649,25 +672,27 @@ SdMmcPciHcDriverBindingStart (
     if (mOverride != NULL) {
       if (mOverride->Capability != NULL) {
         Status = mOverride->Capability (
-                              Controller,
-                              Slot,
-                              &Private->Capability[Slot],
-                              &Private->BaseClkFreq[Slot]
-                              );
+                                        Controller,
+                                        Slot,
+                                        &Private->Capability[Slot],
+                                        &Private->BaseClkFreq[Slot]
+                                        );
         if (EFI_ERROR (Status)) {
-          DEBUG ((DEBUG_WARN, "%a: Failed to override capability - %r\n",
-            __FUNCTION__, Status));
+          DEBUG (
+                 (DEBUG_WARN, "%a: Failed to override capability - %r\n",
+                  __FUNCTION__, Status)
+                 );
           continue;
         }
       }
 
       if (mOverride->NotifyPhase != NULL) {
         Status = mOverride->NotifyPhase (
-                              Controller,
-                              Slot,
-                              EdkiiSdMmcGetOperatingParam,
-                              (VOID*)&Private->Slot[Slot].OperatingParameters
-                              );
+                                         Controller,
+                                         Slot,
+                                         EdkiiSdMmcGetOperatingParam,
+                                         (VOID *) &Private->Slot[Slot].OperatingParameters
+                                         );
         if (EFI_ERROR (Status)) {
           DEBUG ((DEBUG_WARN, "%a: Failed to get operating parameters, using defaults\n", __FUNCTION__));
         }
@@ -675,12 +700,14 @@ SdMmcPciHcDriverBindingStart (
     }
 
     DumpCapabilityReg (Slot, &Private->Capability[Slot]);
-    DEBUG ((
-      DEBUG_INFO,
-      "Slot[%d] Base Clock Frequency: %dMHz\n",
-      Slot,
-      Private->BaseClkFreq[Slot]
-      ));
+    DEBUG (
+           (
+            DEBUG_INFO,
+            "Slot[%d] Base Clock Frequency: %dMHz\n",
+            Slot,
+            Private->BaseClkFreq[Slot]
+           )
+           );
 
     //
     // If any of the slots does not support 64b system bus
@@ -713,6 +740,7 @@ SdMmcPciHcDriverBindingStart (
     if (EFI_ERROR (Status)) {
       continue;
     }
+
     //
     // Check whether there is a SD/MMC card attached
     //
@@ -721,11 +749,13 @@ SdMmcPciHcDriverBindingStart (
       if (EFI_ERROR (Status) && (Status != EFI_MEDIA_CHANGED)) {
         continue;
       } else if (!MediaPresent) {
-        DEBUG ((
-          DEBUG_INFO,
-          "SdMmcHcCardDetect: No device attached in Slot[%d]!!!\n",
-          Slot
-          ));
+        DEBUG (
+               (
+                DEBUG_INFO,
+                "SdMmcHcCardDetect: No device attached in Slot[%d]!!!\n",
+                Slot
+               )
+               );
         continue;
       }
     }
@@ -741,12 +771,13 @@ SdMmcPciHcDriverBindingStart (
     for (Index = 0; Index < RoutineNum; Index++) {
       Routine = &mCardTypeDetectRoutineTable[Index];
       if (*Routine != NULL) {
-        Status = (*Routine) (Private, Slot);
+        Status = (*Routine)(Private, Slot);
         if (!EFI_ERROR (Status)) {
           break;
         }
       }
     }
+
     //
     // This card doesn't get initialized correctly.
     //
@@ -761,11 +792,11 @@ SdMmcPciHcDriverBindingStart (
   //
   if (Support64BitDma) {
     Status = PciIo->Attributes (
-                      PciIo,
-                      EfiPciIoAttributeOperationEnable,
-                      EFI_PCI_IO_ATTRIBUTE_DUAL_ADDRESS_CYCLE,
-                      NULL
-                      );
+                                PciIo,
+                                EfiPciIoAttributeOperationEnable,
+                                EFI_PCI_IO_ATTRIBUTE_DUAL_ADDRESS_CYCLE,
+                                NULL
+                                );
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_WARN, "SdMmcPciHcDriverBindingStart: failed to enable 64-bit DMA (%r)\n", Status));
     }
@@ -775,12 +806,12 @@ SdMmcPciHcDriverBindingStart (
   // Start the asynchronous I/O monitor
   //
   Status = gBS->CreateEvent (
-                  EVT_TIMER | EVT_NOTIFY_SIGNAL,
-                  TPL_NOTIFY,
-                  ProcessAsyncTaskList,
-                  Private,
-                  &Private->TimerEvent
-                  );
+                             EVT_TIMER | EVT_NOTIFY_SIGNAL,
+                             TPL_NOTIFY,
+                             ProcessAsyncTaskList,
+                             Private,
+                             &Private->TimerEvent
+                             );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
@@ -794,12 +825,12 @@ SdMmcPciHcDriverBindingStart (
   // Start the Sd removable device connection enumeration
   //
   Status = gBS->CreateEvent (
-                  EVT_TIMER | EVT_NOTIFY_SIGNAL,
-                  TPL_CALLBACK,
-                  SdMmcPciHcEnumerateDevice,
-                  Private,
-                  &Private->ConnectEvent
-                  );
+                             EVT_TIMER | EVT_NOTIFY_SIGNAL,
+                             TPL_CALLBACK,
+                             SdMmcPciHcEnumerateDevice,
+                             Private,
+                             &Private->ConnectEvent
+                             );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
@@ -810,11 +841,11 @@ SdMmcPciHcDriverBindingStart (
   }
 
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &Controller,
-                  &gEfiSdMmcPassThruProtocolGuid,
-                  &(Private->PassThru),
-                  NULL
-                  );
+                                                   &Controller,
+                                                   &gEfiSdMmcPassThruProtocolGuid,
+                                                   &(Private->PassThru),
+                                                   NULL
+                                                   );
 
   DEBUG ((DEBUG_INFO, "SdMmcPciHcDriverBindingStart: %r End on %x\n", Status, Controller));
 
@@ -825,25 +856,26 @@ Done:
       // Restore original PCI attributes
       //
       PciIo->Attributes (
-               PciIo,
-               EfiPciIoAttributeOperationSet,
-               Private->PciAttributes,
-               NULL
-               );
+                         PciIo,
+                         EfiPciIoAttributeOperationSet,
+                         Private->PciAttributes,
+                         NULL
+                         );
     }
+
     gBS->CloseProtocol (
-          Controller,
-          &gEfiPciIoProtocolGuid,
-          This->DriverBindingHandle,
-          Controller
-          );
+                        Controller,
+                        &gEfiPciIoProtocolGuid,
+                        This->DriverBindingHandle,
+                        Controller
+                        );
 
     if ((Private != NULL) && (Private->TimerEvent != NULL)) {
-      gBS->CloseEvent (Private->TimerEvent);
+  gBS->CloseEvent (Private->TimerEvent);
     }
 
     if ((Private != NULL) && (Private->ConnectEvent != NULL)) {
-      gBS->CloseEvent (Private->ConnectEvent);
+  gBS->CloseEvent (Private->ConnectEvent);
     }
 
     if (Private != NULL) {
@@ -889,24 +921,24 @@ SdMmcPciHcDriverBindingStop (
   IN  EFI_HANDLE                      *ChildHandleBuffer
   )
 {
-  EFI_STATUS                          Status;
-  EFI_SD_MMC_PASS_THRU_PROTOCOL       *PassThru;
-  SD_MMC_HC_PRIVATE_DATA              *Private;
-  EFI_PCI_IO_PROTOCOL                 *PciIo;
-  LIST_ENTRY                          *Link;
-  LIST_ENTRY                          *NextLink;
-  SD_MMC_HC_TRB                       *Trb;
+  EFI_STATUS                     Status;
+  EFI_SD_MMC_PASS_THRU_PROTOCOL  *PassThru;
+  SD_MMC_HC_PRIVATE_DATA         *Private;
+  EFI_PCI_IO_PROTOCOL            *PciIo;
+  LIST_ENTRY                     *Link;
+  LIST_ENTRY                     *NextLink;
+  SD_MMC_HC_TRB                  *Trb;
 
   DEBUG ((DEBUG_INFO, "SdMmcPciHcDriverBindingStop: Start\n"));
 
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiSdMmcPassThruProtocolGuid,
-                  (VOID**) &PassThru,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              Controller,
+                              &gEfiSdMmcPassThruProtocolGuid,
+                              (VOID **) &PassThru,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -916,13 +948,15 @@ SdMmcPciHcDriverBindingStop (
   // Close Non-Blocking timer and free Task list.
   //
   if (Private->TimerEvent != NULL) {
-    gBS->CloseEvent (Private->TimerEvent);
+  gBS->CloseEvent (Private->TimerEvent);
     Private->TimerEvent = NULL;
   }
+
   if (Private->ConnectEvent != NULL) {
-    gBS->CloseEvent (Private->ConnectEvent);
+  gBS->CloseEvent (Private->ConnectEvent);
     Private->ConnectEvent = NULL;
   }
+
   //
   // As the timer is closed, there is no needs to use TPL lock to
   // protect the critical region "queue".
@@ -942,31 +976,31 @@ SdMmcPciHcDriverBindingStop (
   // Uninstall Block I/O protocol from the device handle
   //
   Status = gBS->UninstallProtocolInterface (
-                  Controller,
-                  &gEfiSdMmcPassThruProtocolGuid,
-                  &(Private->PassThru)
-                  );
+                                            Controller,
+                                            &gEfiSdMmcPassThruProtocolGuid,
+                                            &(Private->PassThru)
+                                            );
 
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   gBS->CloseProtocol (
-         Controller,
-         &gEfiPciIoProtocolGuid,
-         This->DriverBindingHandle,
-         Controller
-         );
+                      Controller,
+                      &gEfiPciIoProtocolGuid,
+                      This->DriverBindingHandle,
+                      Controller
+                      );
   //
   // Restore original PCI attributes
   //
   PciIo  = Private->PciIo;
   Status = PciIo->Attributes (
-                    PciIo,
-                    EfiPciIoAttributeOperationSet,
-                    Private->PciAttributes,
-                    NULL
-                    );
+                              PciIo,
+                              EfiPciIoAttributeOperationSet,
+                              Private->PciAttributes,
+                              NULL
+                              );
   ASSERT_EFI_ERROR (Status);
 
   FreePool (Private);
@@ -1000,9 +1034,10 @@ SdMmcPassThruExecSyncTrb (
   while (TRUE) {
     OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
     if (IsListEmpty (&Private->Queue)) {
-      gBS->RestoreTPL (OldTpl);
+  gBS->RestoreTPL (OldTpl);
       break;
     }
+
     gBS->RestoreTPL (OldTpl);
   }
 
@@ -1074,9 +1109,9 @@ SdMmcPassThruPassThru (
   IN     EFI_EVENT                             Event    OPTIONAL
   )
 {
-  EFI_STATUS                      Status;
-  SD_MMC_HC_PRIVATE_DATA          *Private;
-  SD_MMC_HC_TRB                   *Trb;
+  EFI_STATUS              Status;
+  SD_MMC_HC_PRIVATE_DATA  *Private;
+  SD_MMC_HC_TRB           *Trb;
 
   if ((This == NULL) || (Packet == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -1112,6 +1147,7 @@ SdMmcPassThruPassThru (
   if (Trb == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
+
   //
   // Immediately return for async I/O.
   //
@@ -1162,8 +1198,8 @@ SdMmcPassThruGetNextSlot (
   IN OUT UINT8                                *Slot
   )
 {
-  SD_MMC_HC_PRIVATE_DATA          *Private;
-  UINT8                           Index;
+  SD_MMC_HC_PRIVATE_DATA  *Private;
+  UINT8                   Index;
 
   if ((This == NULL) || (Slot == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -1179,6 +1215,7 @@ SdMmcPassThruGetNextSlot (
         return EFI_SUCCESS;
       }
     }
+
     return EFI_NOT_FOUND;
   } else if (*Slot == Private->PreviousSlot) {
     for (Index = *Slot + 1; Index < SD_MMC_HC_MAX_SLOT; Index++) {
@@ -1188,6 +1225,7 @@ SdMmcPassThruGetNextSlot (
         return EFI_SUCCESS;
       }
     }
+
     return EFI_NOT_FOUND;
   } else {
     return EFI_INVALID_PARAMETER;
@@ -1236,9 +1274,9 @@ SdMmcPassThruBuildDevicePath (
   IN OUT EFI_DEVICE_PATH_PROTOCOL            **DevicePath
   )
 {
-  SD_MMC_HC_PRIVATE_DATA          *Private;
-  SD_DEVICE_PATH                  *SdNode;
-  EMMC_DEVICE_PATH                *EmmcNode;
+  SD_MMC_HC_PRIVATE_DATA  *Private;
+  SD_DEVICE_PATH          *SdNode;
+  EMMC_DEVICE_PATH        *EmmcNode;
 
   if ((This == NULL) || (DevicePath == NULL) || (Slot >= SD_MMC_HC_MAX_SLOT)) {
     return EFI_INVALID_PARAMETER;
@@ -1255,6 +1293,7 @@ SdMmcPassThruBuildDevicePath (
     if (SdNode == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
+
     SdNode->SlotNumber = Slot;
 
     *DevicePath = (EFI_DEVICE_PATH_PROTOCOL *) SdNode;
@@ -1263,6 +1302,7 @@ SdMmcPassThruBuildDevicePath (
     if (EmmcNode == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
+
     EmmcNode->SlotNumber = Slot;
 
     *DevicePath = (EFI_DEVICE_PATH_PROTOCOL *) EmmcNode;
@@ -1305,10 +1345,10 @@ SdMmcPassThruGetSlotNumber (
   OUT UINT8                                  *Slot
   )
 {
-  SD_MMC_HC_PRIVATE_DATA          *Private;
-  SD_DEVICE_PATH                  *SdNode;
-  EMMC_DEVICE_PATH                *EmmcNode;
-  UINT8                           SlotNumber;
+  SD_MMC_HC_PRIVATE_DATA  *Private;
+  SD_DEVICE_PATH          *SdNode;
+  EMMC_DEVICE_PATH        *EmmcNode;
+  UINT8                   SlotNumber;
 
   if ((This == NULL) || (DevicePath == NULL) || (Slot == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -1322,16 +1362,16 @@ SdMmcPassThruGetSlotNumber (
   if ((DevicePath->Type != MESSAGING_DEVICE_PATH) ||
       ((DevicePath->SubType != MSG_SD_DP) &&
        (DevicePath->SubType != MSG_EMMC_DP)) ||
-      (DevicePathNodeLength(DevicePath) != sizeof(SD_DEVICE_PATH)) ||
-      (DevicePathNodeLength(DevicePath) != sizeof(EMMC_DEVICE_PATH))) {
+      (DevicePathNodeLength (DevicePath) != sizeof (SD_DEVICE_PATH)) ||
+      (DevicePathNodeLength (DevicePath) != sizeof (EMMC_DEVICE_PATH))) {
     return EFI_UNSUPPORTED;
   }
 
   if (DevicePath->SubType == MSG_SD_DP) {
-    SdNode = (SD_DEVICE_PATH *) DevicePath;
+    SdNode     = (SD_DEVICE_PATH *) DevicePath;
     SlotNumber = SdNode->SlotNumber;
   } else {
-    EmmcNode = (EMMC_DEVICE_PATH *) DevicePath;
+    EmmcNode   = (EMMC_DEVICE_PATH *) DevicePath;
     SlotNumber = EmmcNode->SlotNumber;
   }
 
@@ -1377,11 +1417,11 @@ SdMmcPassThruResetDevice (
   IN UINT8                                   Slot
   )
 {
-  SD_MMC_HC_PRIVATE_DATA          *Private;
-  LIST_ENTRY                      *Link;
-  LIST_ENTRY                      *NextLink;
-  SD_MMC_HC_TRB                   *Trb;
-  EFI_TPL                         OldTpl;
+  SD_MMC_HC_PRIVATE_DATA  *Private;
+  LIST_ENTRY              *Link;
+  LIST_ENTRY              *NextLink;
+  SD_MMC_HC_TRB           *Trb;
+  EFI_TPL                 OldTpl;
 
   if (This == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -1400,6 +1440,7 @@ SdMmcPassThruResetDevice (
   if (!Private->Slot[Slot].Initialized) {
     return EFI_DEVICE_ERROR;
   }
+
   //
   // Free all async I/O requests in the queue
   //
@@ -1420,4 +1461,3 @@ SdMmcPassThruResetDevice (
 
   return EFI_SUCCESS;
 }
-

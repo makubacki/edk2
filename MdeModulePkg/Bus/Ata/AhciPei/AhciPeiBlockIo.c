@@ -27,8 +27,8 @@ SearchDeviceByIndex (
   IN UINTN                               DeviceIndex
   )
 {
-  PEI_AHCI_ATA_DEVICE_DATA    *DeviceData;
-  LIST_ENTRY                  *Node;
+  PEI_AHCI_ATA_DEVICE_DATA  *DeviceData;
+  LIST_ENTRY                *Node;
 
   if ((DeviceIndex == 0) || (DeviceIndex > Private->ActiveDevices)) {
     return NULL;
@@ -72,10 +72,10 @@ AccessAtaDevice (
   IN     UINTN                       NumberOfBlocks
   )
 {
-  EFI_STATUS    Status;
-  UINTN         MaxTransferBlockNumber;
-  UINTN         TransferBlockNumber;
-  UINTN         BlockSize;
+  EFI_STATUS  Status;
+  UINTN       MaxTransferBlockNumber;
+  UINTN       TransferBlockNumber;
+  UINTN       BlockSize;
 
   //
   // Ensure Lba48Bit is a valid boolean value
@@ -87,28 +87,31 @@ AccessAtaDevice (
 
   Status = EFI_SUCCESS;
   MaxTransferBlockNumber = mMaxTransferBlockNumber[DeviceData->Lba48Bit];
-  BlockSize              = DeviceData->Media.BlockSize;
+  BlockSize = DeviceData->Media.BlockSize;
 
   do {
     if (NumberOfBlocks > MaxTransferBlockNumber) {
       TransferBlockNumber = MaxTransferBlockNumber;
-      NumberOfBlocks     -= MaxTransferBlockNumber;
-    } else  {
+      NumberOfBlocks -= MaxTransferBlockNumber;
+    } else {
       TransferBlockNumber = NumberOfBlocks;
-      NumberOfBlocks      = 0;
+      NumberOfBlocks = 0;
     }
-    DEBUG ((
-      DEBUG_BLKIO, "%a: Blocking AccessAtaDevice, TransferBlockNumber = %x; StartLba = %x\n",
-      __FUNCTION__, TransferBlockNumber, StartLba
-      ));
+
+    DEBUG (
+           (
+            DEBUG_BLKIO, "%a: Blocking AccessAtaDevice, TransferBlockNumber = %x; StartLba = %x\n",
+            __FUNCTION__, TransferBlockNumber, StartLba
+           )
+           );
 
     Status = TransferAtaDevice (
-               DeviceData,
-               Buffer,
-               StartLba,
-               (UINT32) TransferBlockNumber,
-               FALSE  // Read
-               );
+                                DeviceData,
+                                Buffer,
+                                StartLba,
+                                (UINT32) TransferBlockNumber,
+                                FALSE // Read
+                                );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -140,9 +143,9 @@ AhciRead (
   IN  UINTN                       BufferSize
   )
 {
-  EFI_STATUS    Status;
-  UINTN         BlockSize;
-  UINTN         NumberOfBlocks;
+  EFI_STATUS  Status;
+  UINTN       BlockSize;
+  UINTN       NumberOfBlocks;
 
   //
   // Check parameters.
@@ -163,7 +166,8 @@ AhciRead (
   if (StartLba > DeviceData->Media.LastBlock) {
     return EFI_INVALID_PARAMETER;
   }
-  NumberOfBlocks  = BufferSize / BlockSize;
+
+  NumberOfBlocks = BufferSize / BlockSize;
   if (NumberOfBlocks - 1 > DeviceData->Media.LastBlock - StartLba) {
     return EFI_INVALID_PARAMETER;
   }
@@ -175,7 +179,6 @@ AhciRead (
 
   return Status;
 }
-
 
 /**
   Gets the count of block I/O devices that one specific block driver detects.
@@ -201,7 +204,7 @@ AhciBlockIoGetDeviceNo (
   OUT UINTN                          *NumberBlockDevices
   )
 {
-  PEI_AHCI_CONTROLLER_PRIVATE_DATA    *Private;
+  PEI_AHCI_CONTROLLER_PRIVATE_DATA  *Private;
 
   if (This == NULL || NumberBlockDevices == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -263,8 +266,8 @@ AhciBlockIoGetMediaInfo (
   OUT EFI_PEI_BLOCK_IO_MEDIA         *MediaInfo
   )
 {
-  PEI_AHCI_CONTROLLER_PRIVATE_DATA    *Private;
-  PEI_AHCI_ATA_DEVICE_DATA            *DeviceData;
+  PEI_AHCI_CONTROLLER_PRIVATE_DATA  *Private;
+  PEI_AHCI_ATA_DEVICE_DATA          *DeviceData;
 
   if (This == NULL || MediaInfo == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -329,8 +332,8 @@ AhciBlockIoReadBlocks (
   OUT VOID                           *Buffer
   )
 {
-  PEI_AHCI_CONTROLLER_PRIVATE_DATA    *Private;
-  PEI_AHCI_ATA_DEVICE_DATA            *DeviceData;
+  PEI_AHCI_CONTROLLER_PRIVATE_DATA  *Private;
+  PEI_AHCI_ATA_DEVICE_DATA          *DeviceData;
 
   if (This == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -369,7 +372,7 @@ AhciBlockIoGetDeviceNo2 (
   OUT UINTN                           *NumberBlockDevices
   )
 {
-  PEI_AHCI_CONTROLLER_PRIVATE_DATA    *Private;
+  PEI_AHCI_CONTROLLER_PRIVATE_DATA  *Private;
 
   if (This == NULL || NumberBlockDevices == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -431,8 +434,8 @@ AhciBlockIoGetMediaInfo2 (
   OUT EFI_PEI_BLOCK_IO2_MEDIA         *MediaInfo
   )
 {
-  PEI_AHCI_CONTROLLER_PRIVATE_DATA    *Private;
-  PEI_AHCI_ATA_DEVICE_DATA            *DeviceData;
+  PEI_AHCI_CONTROLLER_PRIVATE_DATA  *Private;
+  PEI_AHCI_ATA_DEVICE_DATA          *DeviceData;
 
   if (This == NULL || MediaInfo == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -445,10 +448,10 @@ AhciBlockIoGetMediaInfo2 (
   }
 
   CopyMem (
-    MediaInfo,
-    &DeviceData->Media,
-    sizeof (EFI_PEI_BLOCK_IO2_MEDIA)
-    );
+           MediaInfo,
+           &DeviceData->Media,
+           sizeof (EFI_PEI_BLOCK_IO2_MEDIA)
+           );
 
   return EFI_SUCCESS;
 }
@@ -498,7 +501,7 @@ AhciBlockIoReadBlocks2 (
   OUT VOID                            *Buffer
   )
 {
-  PEI_AHCI_CONTROLLER_PRIVATE_DATA    *Private;
+  PEI_AHCI_CONTROLLER_PRIVATE_DATA  *Private;
 
   if (This == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -506,11 +509,11 @@ AhciBlockIoReadBlocks2 (
 
   Private = GET_AHCI_PEIM_HC_PRIVATE_DATA_FROM_THIS_BLKIO2 (This);
   return AhciBlockIoReadBlocks (
-           PeiServices,
-           &Private->BlkIoPpi,
-           DeviceIndex,
-           StartLBA,
-           BufferSize,
-           Buffer
-           );
+                                PeiServices,
+                                &Private->BlkIoPpi,
+                                DeviceIndex,
+                                StartLBA,
+                                BufferSize,
+                                Buffer
+                                );
 }

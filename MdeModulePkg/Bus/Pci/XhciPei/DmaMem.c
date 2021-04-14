@@ -44,46 +44,49 @@ IoMmuMap (
 
   if (mIoMmu != NULL) {
     Status = mIoMmu->Map (
-                       mIoMmu,
-                       Operation,
-                       HostAddress,
-                       NumberOfBytes,
-                       DeviceAddress,
-                       Mapping
-                       );
+                          mIoMmu,
+                          Operation,
+                          HostAddress,
+                          NumberOfBytes,
+                          DeviceAddress,
+                          Mapping
+                          );
     if (EFI_ERROR (Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
+
     switch (Operation) {
-    case EdkiiIoMmuOperationBusMasterRead:
-    case EdkiiIoMmuOperationBusMasterRead64:
-      Attribute = EDKII_IOMMU_ACCESS_READ;
-      break;
-    case EdkiiIoMmuOperationBusMasterWrite:
-    case EdkiiIoMmuOperationBusMasterWrite64:
-      Attribute = EDKII_IOMMU_ACCESS_WRITE;
-      break;
-    case EdkiiIoMmuOperationBusMasterCommonBuffer:
-    case EdkiiIoMmuOperationBusMasterCommonBuffer64:
-      Attribute = EDKII_IOMMU_ACCESS_READ | EDKII_IOMMU_ACCESS_WRITE;
-      break;
-    default:
-      ASSERT(FALSE);
-      return EFI_INVALID_PARAMETER;
+      case EdkiiIoMmuOperationBusMasterRead:
+      case EdkiiIoMmuOperationBusMasterRead64:
+        Attribute = EDKII_IOMMU_ACCESS_READ;
+        break;
+      case EdkiiIoMmuOperationBusMasterWrite:
+      case EdkiiIoMmuOperationBusMasterWrite64:
+        Attribute = EDKII_IOMMU_ACCESS_WRITE;
+        break;
+      case EdkiiIoMmuOperationBusMasterCommonBuffer:
+      case EdkiiIoMmuOperationBusMasterCommonBuffer64:
+        Attribute = EDKII_IOMMU_ACCESS_READ | EDKII_IOMMU_ACCESS_WRITE;
+        break;
+      default:
+        ASSERT (FALSE);
+        return EFI_INVALID_PARAMETER;
     }
+
     Status = mIoMmu->SetAttribute (
-                       mIoMmu,
-                       *Mapping,
-                       Attribute
-                       );
+                                   mIoMmu,
+                                   *Mapping,
+                                   Attribute
+                                   );
     if (EFI_ERROR (Status)) {
       return Status;
     }
   } else {
-    *DeviceAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)HostAddress;
+    *DeviceAddress = (EFI_PHYSICAL_ADDRESS) (UINTN) HostAddress;
     *Mapping = NULL;
-    Status = EFI_SUCCESS;
+    Status   = EFI_SUCCESS;
   }
+
   return Status;
 }
 
@@ -109,6 +112,7 @@ IoMmuUnmap (
   } else {
     Status = EFI_SUCCESS;
   }
+
   return Status;
 }
 
@@ -142,54 +146,57 @@ IoMmuAllocateBuffer (
   UINTN                 NumberOfBytes;
   EFI_PHYSICAL_ADDRESS  HostPhyAddress;
 
-  *HostAddress = NULL;
+  *HostAddress   = NULL;
   *DeviceAddress = 0;
 
   if (mIoMmu != NULL) {
     Status = mIoMmu->AllocateBuffer (
-                       mIoMmu,
-                       EfiBootServicesData,
-                       Pages,
-                       HostAddress,
-                       0
-                       );
+                                     mIoMmu,
+                                     EfiBootServicesData,
+                                     Pages,
+                                     HostAddress,
+                                     0
+                                     );
     if (EFI_ERROR (Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
 
-    NumberOfBytes = EFI_PAGES_TO_SIZE(Pages);
+    NumberOfBytes = EFI_PAGES_TO_SIZE (Pages);
     Status = mIoMmu->Map (
-                       mIoMmu,
-                       EdkiiIoMmuOperationBusMasterCommonBuffer,
-                       *HostAddress,
-                       &NumberOfBytes,
-                       DeviceAddress,
-                       Mapping
-                       );
+                          mIoMmu,
+                          EdkiiIoMmuOperationBusMasterCommonBuffer,
+                          *HostAddress,
+                          &NumberOfBytes,
+                          DeviceAddress,
+                          Mapping
+                          );
     if (EFI_ERROR (Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
+
     Status = mIoMmu->SetAttribute (
-                       mIoMmu,
-                       *Mapping,
-                       EDKII_IOMMU_ACCESS_READ | EDKII_IOMMU_ACCESS_WRITE
-                       );
+                                   mIoMmu,
+                                   *Mapping,
+                                   EDKII_IOMMU_ACCESS_READ | EDKII_IOMMU_ACCESS_WRITE
+                                   );
     if (EFI_ERROR (Status)) {
       return Status;
     }
   } else {
     Status = PeiServicesAllocatePages (
-               EfiBootServicesData,
-               Pages,
-               &HostPhyAddress
-               );
+                                       EfiBootServicesData,
+                                       Pages,
+                                       &HostPhyAddress
+                                       );
     if (EFI_ERROR (Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
-    *HostAddress = (VOID *)(UINTN)HostPhyAddress;
+
+    *HostAddress   = (VOID *) (UINTN) HostPhyAddress;
     *DeviceAddress = HostPhyAddress;
     *Mapping = NULL;
   }
+
   return Status;
 }
 
@@ -221,6 +228,7 @@ IoMmuFreeBuffer (
   } else {
     Status = EFI_SUCCESS;
   }
+
   return Status;
 }
 
@@ -277,16 +285,17 @@ IoMmuAllocateAlignedBuffer (
 
   if (mIoMmu != NULL) {
     Status = mIoMmu->AllocateBuffer (
-                       mIoMmu,
-                       EfiBootServicesData,
-                       RealPages,
-                       HostAddress,
-                       0
-                       );
+                                     mIoMmu,
+                                     EfiBootServicesData,
+                                     RealPages,
+                                     HostAddress,
+                                     0
+                                     );
     if (EFI_ERROR (Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
-    Memory         = *HostAddress;
+
+    Memory = *HostAddress;
     AlignedMemory  = ((UINTN) Memory + AlignmentMask) & ~AlignmentMask;
     UnalignedPages = EFI_SIZE_TO_PAGES (AlignedMemory - (UINTN) Memory);
     if (UnalignedPages > 0) {
@@ -294,61 +303,68 @@ IoMmuAllocateAlignedBuffer (
       // Free first unaligned page(s).
       //
       Status = mIoMmu->FreeBuffer (
-                         mIoMmu,
-                         UnalignedPages,
-                         Memory);
+                                   mIoMmu,
+                                   UnalignedPages,
+                                   Memory
+                                   );
       if (EFI_ERROR (Status)) {
         return Status;
       }
     }
-    Memory         = (VOID *)(UINTN)(AlignedMemory + EFI_PAGES_TO_SIZE (Pages));
+
+    Memory = (VOID *) (UINTN) (AlignedMemory + EFI_PAGES_TO_SIZE (Pages));
     UnalignedPages = RealPages - Pages - UnalignedPages;
     if (UnalignedPages > 0) {
       //
       // Free last unaligned page(s).
       //
       Status = mIoMmu->FreeBuffer (
-                         mIoMmu,
-                         UnalignedPages,
-                         Memory);
+                                   mIoMmu,
+                                   UnalignedPages,
+                                   Memory
+                                   );
       if (EFI_ERROR (Status)) {
         return Status;
       }
     }
+
     *HostAddress  = (VOID *) AlignedMemory;
-    NumberOfBytes = EFI_PAGES_TO_SIZE(Pages);
+    NumberOfBytes = EFI_PAGES_TO_SIZE (Pages);
     Status = mIoMmu->Map (
-                       mIoMmu,
-                       EdkiiIoMmuOperationBusMasterCommonBuffer,
-                       *HostAddress,
-                       &NumberOfBytes,
-                       DeviceAddress,
-                       Mapping
-                       );
+                          mIoMmu,
+                          EdkiiIoMmuOperationBusMasterCommonBuffer,
+                          *HostAddress,
+                          &NumberOfBytes,
+                          DeviceAddress,
+                          Mapping
+                          );
     if (EFI_ERROR (Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
+
     Status = mIoMmu->SetAttribute (
-                       mIoMmu,
-                       *Mapping,
-                       EDKII_IOMMU_ACCESS_READ | EDKII_IOMMU_ACCESS_WRITE
-                       );
+                                   mIoMmu,
+                                   *Mapping,
+                                   EDKII_IOMMU_ACCESS_READ | EDKII_IOMMU_ACCESS_WRITE
+                                   );
     if (EFI_ERROR (Status)) {
       return Status;
     }
   } else {
     Status = PeiServicesAllocatePages (
-               EfiBootServicesData,
-               RealPages,
-               &HostPhyAddress
-               );
+                                       EfiBootServicesData,
+                                       RealPages,
+                                       &HostPhyAddress
+                                       );
     if (EFI_ERROR (Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
-    *HostAddress = (VOID *)(((UINTN) HostPhyAddress + AlignmentMask) & ~AlignmentMask);
+
+    *HostAddress   = (VOID *) (((UINTN) HostPhyAddress + AlignmentMask) & ~AlignmentMask);
     *DeviceAddress = ((UINTN) HostPhyAddress + AlignmentMask) & ~AlignmentMask;
     *Mapping = NULL;
   }
+
   return Status;
 }
 
@@ -361,10 +377,9 @@ IoMmuInit (
   )
 {
   PeiServicesLocatePpi (
-    &gEdkiiIoMmuPpiGuid,
-    0,
-    NULL,
-    (VOID **)&mIoMmu
-    );
+                        &gEdkiiIoMmuPpiGuid,
+                        0,
+                        NULL,
+                        (VOID **) &mIoMmu
+                        );
 }
-

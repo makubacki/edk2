@@ -5,6 +5,7 @@
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
+
 #ifndef __SORT_LIB_H__
 #define __SORT_LIB_H__
 
@@ -19,11 +20,11 @@
   @return >0                          Buffer1 is greater than Buffer2.
 **/
 typedef
-INTN
+  INTN
 (EFIAPI *SORT_COMPARE)(
-  IN CONST VOID                 *Buffer1,
-  IN CONST VOID                 *Buffer2
-  );
+                       IN CONST VOID                 *Buffer1,
+                       IN CONST VOID                 *Buffer2
+                       );
 
 /**
   Function to perform a Quick Sort on a buffer of comparable elements.
@@ -51,7 +52,6 @@ PerformQuickSort (
   IN CONST UINTN                ElementSize,
   IN       SORT_COMPARE         CompareFunction
   );
-
 
 /**
   Function to compare 2 device paths for use as CompareFunction.

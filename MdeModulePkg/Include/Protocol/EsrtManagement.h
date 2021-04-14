@@ -22,7 +22,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 ///
 /// Forward declaration for the _ESRT_MANAGEMENT_PROTOCOL.
 ///
-typedef struct _ESRT_MANAGEMENT_PROTOCOL  ESRT_MANAGEMENT_PROTOCOL;
+typedef struct _ESRT_MANAGEMENT_PROTOCOL ESRT_MANAGEMENT_PROTOCOL;
 
 /**
   Get Variable name and data by Esrt Entry FwClass
@@ -35,12 +35,11 @@ typedef struct _ESRT_MANAGEMENT_PROTOCOL  ESRT_MANAGEMENT_PROTOCOL;
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *GET_ESRT_ENTRY)(
-  IN     EFI_GUID                  *FwClass,
-  IN OUT EFI_SYSTEM_RESOURCE_ENTRY *Entry
-  );
-
+                         IN     EFI_GUID                  *FwClass,
+                         IN OUT EFI_SYSTEM_RESOURCE_ENTRY *Entry
+                         );
 
 /**
   Update one ESRT entry in ESRT Cache.
@@ -53,11 +52,10 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *UPDATE_ESRT_ENTRY)(
-  IN EFI_SYSTEM_RESOURCE_ENTRY *Entry
-  );
-
+                            IN EFI_SYSTEM_RESOURCE_ENTRY *Entry
+                            );
 
 /**
   Non-FMP instance to unregister Esrt Entry from ESRT Cache.
@@ -69,11 +67,10 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *UNREGISTER_ESRT_ENTRY)(
-  IN  EFI_GUID        *FwClass
-  );
-
+                                IN  EFI_GUID        *FwClass
+                                );
 
 /**
   Non-FMP instance to register one ESRT entry into ESRT Cache.
@@ -86,11 +83,10 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *REGISTER_ESRT_ENTRY)(
-  IN EFI_SYSTEM_RESOURCE_ENTRY *Entry
-  );
-
+                              IN EFI_SYSTEM_RESOURCE_ENTRY *Entry
+                              );
 
 /**
   This function syn up Cached ESRT with data from FMP instances
@@ -103,11 +99,10 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *SYNC_ESRT_FMP)(
-  VOID
-  );
-
+                        VOID
+                        );
 
 /**
   This function locks up Esrt repository to be readonly. It should be called
@@ -117,22 +112,20 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *LOCK_ESRT_REPOSITORY)(
-  VOID
-  );
-
+                               VOID
+                               );
 
 struct _ESRT_MANAGEMENT_PROTOCOL {
-  GET_ESRT_ENTRY        GetEsrtEntry;
-  UPDATE_ESRT_ENTRY     UpdateEsrtEntry;
-  REGISTER_ESRT_ENTRY   RegisterEsrtEntry;
-  UNREGISTER_ESRT_ENTRY UnRegisterEsrtEntry;
-  SYNC_ESRT_FMP         SyncEsrtFmp;
-  LOCK_ESRT_REPOSITORY  LockEsrtRepository;
+  GET_ESRT_ENTRY           GetEsrtEntry;
+  UPDATE_ESRT_ENTRY        UpdateEsrtEntry;
+  REGISTER_ESRT_ENTRY      RegisterEsrtEntry;
+  UNREGISTER_ESRT_ENTRY    UnRegisterEsrtEntry;
+  SYNC_ESRT_FMP            SyncEsrtFmp;
+  LOCK_ESRT_REPOSITORY     LockEsrtRepository;
 };
 
-extern EFI_GUID gEsrtManagementProtocolGuid;
+extern EFI_GUID  gEsrtManagementProtocolGuid;
 
 #endif // #ifndef _ESRT_MANAGEMENT_H_
-

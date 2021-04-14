@@ -46,22 +46,20 @@ typedef enum {
   @retval EFI_NOT_FOUND    The specified image could not be found.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EDKII_PLATFORM_LOGO_GET_IMAGE)(
-  IN     EDKII_PLATFORM_LOGO_PROTOCOL          *This,
-  IN OUT UINT32                                *Instance,
-     OUT EFI_IMAGE_INPUT                       *Image,
-     OUT EDKII_PLATFORM_LOGO_DISPLAY_ATTRIBUTE *Attribute,
-     OUT INTN                                  *OffsetX,
-     OUT INTN                                  *OffsetY
-  );
-
+                                        IN     EDKII_PLATFORM_LOGO_PROTOCOL          *This,
+                                        IN OUT UINT32                                *Instance,
+                                        OUT EFI_IMAGE_INPUT                       *Image,
+                                        OUT EDKII_PLATFORM_LOGO_DISPLAY_ATTRIBUTE *Attribute,
+                                        OUT INTN                                  *OffsetX,
+                                        OUT INTN                                  *OffsetY
+                                        );
 
 struct _EDKII_PLATFORM_LOGO_PROTOCOL {
-  EDKII_PLATFORM_LOGO_GET_IMAGE GetImage;
+  EDKII_PLATFORM_LOGO_GET_IMAGE    GetImage;
 };
 
-
-extern EFI_GUID gEdkiiPlatformLogoProtocolGuid;
+extern EFI_GUID  gEdkiiPlatformLogoProtocolGuid;
 
 #endif

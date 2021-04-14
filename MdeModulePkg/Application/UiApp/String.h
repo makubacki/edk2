@@ -9,7 +9,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #ifndef _STRING_H_
 #define _STRING_H_
 
-extern EFI_HII_HANDLE gStringPackHandle;
+extern EFI_HII_HANDLE  gStringPackHandle;
 
 //
 // This is the VFR compiler generated header file which defines the
@@ -46,26 +46,26 @@ GetStringById (
 
 **/
 VOID
-InitializeStringSupport (
-  VOID
-  );
+  InitializeStringSupport (
+                           VOID
+                           );
 
 /**
   Remove the string package.
 
 **/
 VOID
-UninitializeStringSupport (
-  VOID
-  );
+  UninitializeStringSupport (
+                             VOID
+                             );
 
 /**
   Routine to export glyphs to the HII database.  This is in addition to whatever is defined in the Graphics Console driver.
 
 **/
 EFI_HII_HANDLE
-ExportFonts (
-  VOID
-  );
+  ExportFonts (
+               VOID
+               );
 
 #endif // _STRING_H_

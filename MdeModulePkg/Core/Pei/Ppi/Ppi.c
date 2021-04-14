@@ -29,7 +29,7 @@ ConvertPointer (
   )
 {
   if (((UINTN) *Pointer < TempTop) &&
-    ((UINTN) *Pointer >= TempBottom)) {
+      ((UINTN) *Pointer >= TempBottom)) {
     if (OffsetPositive) {
       *Pointer = (VOID *) ((UINTN) *Pointer + Offset);
     } else {
@@ -55,7 +55,7 @@ ConvertPointerInRanges (
   IN OUT VOID                    **Pointer
   )
 {
-  UINT8                 IndexHole;
+  UINT8  IndexHole;
 
   if (PrivateData->MemoryPages.Size != 0) {
     //
@@ -63,51 +63,51 @@ ConvertPointerInRanges (
     // It needs to be done before Convert PPI pointer in old Heap
     //
     ConvertPointer (
-      Pointer,
-      (UINTN)PrivateData->MemoryPages.Base,
-      (UINTN)PrivateData->MemoryPages.Base + PrivateData->MemoryPages.Size,
-      PrivateData->MemoryPages.Offset,
-      PrivateData->MemoryPages.OffsetPositive
-      );
+                    Pointer,
+                    (UINTN) PrivateData->MemoryPages.Base,
+                    (UINTN) PrivateData->MemoryPages.Base + PrivateData->MemoryPages.Size,
+                    PrivateData->MemoryPages.Offset,
+                    PrivateData->MemoryPages.OffsetPositive
+                    );
   }
 
   //
   // Convert PPI pointer in old Heap
   //
   ConvertPointer (
-    Pointer,
-    (UINTN)SecCoreData->PeiTemporaryRamBase,
-    (UINTN)SecCoreData->PeiTemporaryRamBase + SecCoreData->PeiTemporaryRamSize,
-    PrivateData->HeapOffset,
-    PrivateData->HeapOffsetPositive
-    );
+                  Pointer,
+                  (UINTN) SecCoreData->PeiTemporaryRamBase,
+                  (UINTN) SecCoreData->PeiTemporaryRamBase + SecCoreData->PeiTemporaryRamSize,
+                  PrivateData->HeapOffset,
+                  PrivateData->HeapOffsetPositive
+                  );
 
   //
   // Convert PPI pointer in old Stack
   //
   ConvertPointer (
-    Pointer,
-    (UINTN)SecCoreData->StackBase,
-    (UINTN)SecCoreData->StackBase + SecCoreData->StackSize,
-    PrivateData->StackOffset,
-    PrivateData->StackOffsetPositive
-    );
+                  Pointer,
+                  (UINTN) SecCoreData->StackBase,
+                  (UINTN) SecCoreData->StackBase + SecCoreData->StackSize,
+                  PrivateData->StackOffset,
+                  PrivateData->StackOffsetPositive
+                  );
 
   //
   // Convert PPI pointer in old TempRam Hole
   //
-  for (IndexHole = 0; IndexHole < HOLE_MAX_NUMBER; IndexHole ++) {
+  for (IndexHole = 0; IndexHole < HOLE_MAX_NUMBER; IndexHole++) {
     if (PrivateData->HoleData[IndexHole].Size == 0) {
       continue;
     }
 
     ConvertPointer (
-      Pointer,
-      (UINTN)PrivateData->HoleData[IndexHole].Base,
-      (UINTN)PrivateData->HoleData[IndexHole].Base + PrivateData->HoleData[IndexHole].Size,
-      PrivateData->HoleData[IndexHole].Offset,
-      PrivateData->HoleData[IndexHole].OffsetPositive
-      );
+                    Pointer,
+                    (UINTN) PrivateData->HoleData[IndexHole].Base,
+                    (UINTN) PrivateData->HoleData[IndexHole].Base + PrivateData->HoleData[IndexHole].Size,
+                    PrivateData->HoleData[IndexHole].Offset,
+                    PrivateData->HoleData[IndexHole].OffsetPositive
+                    );
   }
 }
 
@@ -130,19 +130,19 @@ ConvertSinglePpiPointer (
 {
   //
   // 1. Convert the pointer to the PPI descriptor from the old TempRam
-  //    to the relocated physical memory.
+  // to the relocated physical memory.
   // It (for the pointer to the PPI descriptor) needs to be done before 2 (for
   // the pointer to the GUID) and 3 (for the pointer to the PPI interface structure).
   //
   ConvertPointerInRanges (SecCoreData, PrivateData, &PpiPointer->Raw);
   //
   // 2. Convert the pointer to the GUID in the PPI or NOTIFY descriptor
-  //    from the old TempRam to the relocated physical memory.
+  // from the old TempRam to the relocated physical memory.
   //
   ConvertPointerInRanges (SecCoreData, PrivateData, (VOID **) &PpiPointer->Ppi->Guid);
   //
   // 3. Convert the pointer to the PPI interface structure in the PPI descriptor
-  //    from the old TempRam to the relocated physical memory.
+  // from the old TempRam to the relocated physical memory.
   //
   ConvertPointerInRanges (SecCoreData, PrivateData, (VOID **) &PpiPointer->Ppi->Ppi);
 }
@@ -162,17 +162,17 @@ ConvertPpiPointers (
   IN PEI_CORE_INSTANCE           *PrivateData
   )
 {
-  UINT8                 Index;
+  UINT8  Index;
 
   //
   // Convert normal PPIs.
   //
   for (Index = 0; Index < PrivateData->PpiData.PpiList.CurrentCount; Index++) {
     ConvertSinglePpiPointer (
-      SecCoreData,
-      PrivateData,
-      &PrivateData->PpiData.PpiList.PpiPtrs[Index]
-      );
+                             SecCoreData,
+                             PrivateData,
+                             &PrivateData->PpiData.PpiList.PpiPtrs[Index]
+                             );
   }
 
   //
@@ -180,10 +180,10 @@ ConvertPpiPointers (
   //
   for (Index = 0; Index < PrivateData->PpiData.CallbackNotifyList.CurrentCount; Index++) {
     ConvertSinglePpiPointer (
-      SecCoreData,
-      PrivateData,
-      &PrivateData->PpiData.CallbackNotifyList.NotifyPtrs[Index]
-      );
+                             SecCoreData,
+                             PrivateData,
+                             &PrivateData->PpiData.CallbackNotifyList.NotifyPtrs[Index]
+                             );
   }
 
   //
@@ -191,10 +191,10 @@ ConvertPpiPointers (
   //
   for (Index = 0; Index < PrivateData->PpiData.DispatchNotifyList.CurrentCount; Index++) {
     ConvertSinglePpiPointer (
-      SecCoreData,
-      PrivateData,
-      &PrivateData->PpiData.DispatchNotifyList.NotifyPtrs[Index]
-      );
+                             SecCoreData,
+                             PrivateData,
+                             &PrivateData->PpiData.DispatchNotifyList.NotifyPtrs[Index]
+                             );
   }
 }
 
@@ -236,90 +236,94 @@ ConvertPpiPointersFv (
   }
 
   DEBUG ((DEBUG_VERBOSE, "Converting PPI pointers in FV.\n"));
-  DEBUG ((
-    DEBUG_VERBOSE,
-    "  OrgFvHandle at 0x%08x. FvHandle at 0x%08x. FvSize = 0x%x\n",
-    (UINTN) OrgFvHandle,
-    (UINTN) FvHandle,
-    FvSize
-    ));
-  DEBUG ((
-    DEBUG_VERBOSE,
-    "    OrgFvHandle range: 0x%08x - 0x%08x\n",
-    OrgFvHandle,
-    OrgFvHandle + FvSize
-    ));
+  DEBUG (
+         (
+          DEBUG_VERBOSE,
+          "  OrgFvHandle at 0x%08x. FvHandle at 0x%08x. FvSize = 0x%x\n",
+          (UINTN) OrgFvHandle,
+          (UINTN) FvHandle,
+          FvSize
+         )
+         );
+  DEBUG (
+         (
+          DEBUG_VERBOSE,
+          "    OrgFvHandle range: 0x%08x - 0x%08x\n",
+          OrgFvHandle,
+          OrgFvHandle + FvSize
+         )
+         );
 
   for (Index = 0; Index < PrivateData->PpiData.CallbackNotifyList.CurrentCount; Index++) {
-      ConvertPointer (
-        (VOID **) &PrivateData->PpiData.CallbackNotifyList.NotifyPtrs[Index].Raw,
-        OrgFvHandle,
-        OrgFvHandle + FvSize,
-        Offset,
-        OffsetPositive
-        );
-      ConvertPointer (
-        (VOID **) &PrivateData->PpiData.CallbackNotifyList.NotifyPtrs[Index].Notify->Guid,
-        OrgFvHandle,
-        OrgFvHandle + FvSize,
-        Offset,
-        OffsetPositive
-        );
-      ConvertPointer (
-        (VOID **) &PrivateData->PpiData.CallbackNotifyList.NotifyPtrs[Index].Notify->Notify,
-        OrgFvHandle,
-        OrgFvHandle + FvSize,
-        Offset,
-        OffsetPositive
-        );
+    ConvertPointer (
+                    (VOID **) &PrivateData->PpiData.CallbackNotifyList.NotifyPtrs[Index].Raw,
+                    OrgFvHandle,
+                    OrgFvHandle + FvSize,
+                    Offset,
+                    OffsetPositive
+                    );
+    ConvertPointer (
+                    (VOID **) &PrivateData->PpiData.CallbackNotifyList.NotifyPtrs[Index].Notify->Guid,
+                    OrgFvHandle,
+                    OrgFvHandle + FvSize,
+                    Offset,
+                    OffsetPositive
+                    );
+    ConvertPointer (
+                    (VOID **) &PrivateData->PpiData.CallbackNotifyList.NotifyPtrs[Index].Notify->Notify,
+                    OrgFvHandle,
+                    OrgFvHandle + FvSize,
+                    Offset,
+                    OffsetPositive
+                    );
   }
 
   for (Index = 0; Index < PrivateData->PpiData.DispatchNotifyList.CurrentCount; Index++) {
     ConvertPointer (
-      (VOID **) &PrivateData->PpiData.DispatchNotifyList.NotifyPtrs[Index].Raw,
-      OrgFvHandle,
-      OrgFvHandle + FvSize,
-      Offset,
-      OffsetPositive
-      );
+                    (VOID **) &PrivateData->PpiData.DispatchNotifyList.NotifyPtrs[Index].Raw,
+                    OrgFvHandle,
+                    OrgFvHandle + FvSize,
+                    Offset,
+                    OffsetPositive
+                    );
     ConvertPointer (
-      (VOID **) &PrivateData->PpiData.DispatchNotifyList.NotifyPtrs[Index].Notify->Guid,
-      OrgFvHandle,
-      OrgFvHandle + FvSize,
-      Offset,
-      OffsetPositive
-      );
+                    (VOID **) &PrivateData->PpiData.DispatchNotifyList.NotifyPtrs[Index].Notify->Guid,
+                    OrgFvHandle,
+                    OrgFvHandle + FvSize,
+                    Offset,
+                    OffsetPositive
+                    );
     ConvertPointer (
-      (VOID **) &PrivateData->PpiData.DispatchNotifyList.NotifyPtrs[Index].Notify->Notify,
-      OrgFvHandle,
-      OrgFvHandle + FvSize,
-      Offset,
-      OffsetPositive
-      );
+                    (VOID **) &PrivateData->PpiData.DispatchNotifyList.NotifyPtrs[Index].Notify->Notify,
+                    OrgFvHandle,
+                    OrgFvHandle + FvSize,
+                    Offset,
+                    OffsetPositive
+                    );
   }
 
   for (Index = 0; Index < PrivateData->PpiData.PpiList.CurrentCount; Index++) {
     ConvertPointer (
-      (VOID **) &PrivateData->PpiData.PpiList.PpiPtrs[Index].Raw,
-      OrgFvHandle,
-      OrgFvHandle + FvSize,
-      Offset,
-      OffsetPositive
-      );
+                    (VOID **) &PrivateData->PpiData.PpiList.PpiPtrs[Index].Raw,
+                    OrgFvHandle,
+                    OrgFvHandle + FvSize,
+                    Offset,
+                    OffsetPositive
+                    );
     ConvertPointer (
-      (VOID **) &PrivateData->PpiData.PpiList.PpiPtrs[Index].Ppi->Guid,
-      OrgFvHandle,
-      OrgFvHandle + FvSize,
-      Offset,
-      OffsetPositive
-      );
+                    (VOID **) &PrivateData->PpiData.PpiList.PpiPtrs[Index].Ppi->Guid,
+                    OrgFvHandle,
+                    OrgFvHandle + FvSize,
+                    Offset,
+                    OffsetPositive
+                    );
     ConvertPointer (
-      (VOID **) &PrivateData->PpiData.PpiList.PpiPtrs[Index].Ppi->Ppi,
-      OrgFvHandle,
-      OrgFvHandle + FvSize,
-      Offset,
-      OffsetPositive
-      );
+                    (VOID **) &PrivateData->PpiData.PpiList.PpiPtrs[Index].Ppi->Ppi,
+                    OrgFvHandle,
+                    OrgFvHandle + FvSize,
+                    Offset,
+                    OffsetPositive
+                    );
 
     Guid = PrivateData->PpiData.PpiList.PpiPtrs[Index].Ppi->Guid;
     for (GuidIndex = 0; GuidIndex < ARRAY_SIZE (GuidCheckList); ++GuidIndex) {
@@ -328,22 +332,23 @@ ConvertPpiPointersFv (
       // Instead we compare the GUID as INT32 at a time and branch
       // on the first failed comparison.
       //
-      if ((((INT32 *)Guid)[0] == ((INT32 *)GuidCheckList[GuidIndex])[0]) &&
-          (((INT32 *)Guid)[1] == ((INT32 *)GuidCheckList[GuidIndex])[1]) &&
-          (((INT32 *)Guid)[2] == ((INT32 *)GuidCheckList[GuidIndex])[2]) &&
-          (((INT32 *)Guid)[3] == ((INT32 *)GuidCheckList[GuidIndex])[3])) {
+      if ((((INT32 *) Guid)[0] == ((INT32 *) GuidCheckList[GuidIndex])[0]) &&
+          (((INT32 *) Guid)[1] == ((INT32 *) GuidCheckList[GuidIndex])[1]) &&
+          (((INT32 *) Guid)[2] == ((INT32 *) GuidCheckList[GuidIndex])[2]) &&
+          (((INT32 *) Guid)[3] == ((INT32 *) GuidCheckList[GuidIndex])[3])) {
         FvInfoPpi = PrivateData->PpiData.PpiList.PpiPtrs[Index].Ppi->Ppi;
         DEBUG ((DEBUG_VERBOSE, "      FvInfo: %p -> ", FvInfoPpi->FvInfo));
-        if ((UINTN)FvInfoPpi->FvInfo == OrgFvHandle) {
+        if ((UINTN) FvInfoPpi->FvInfo == OrgFvHandle) {
           ConvertPointer (
-            (VOID **)&FvInfoPpi->FvInfo,
-            OrgFvHandle,
-            OrgFvHandle + FvSize,
-            Offset,
-            OffsetPositive
-            );
+                          (VOID **) &FvInfoPpi->FvInfo,
+                          OrgFvHandle,
+                          OrgFvHandle + FvSize,
+                          Offset,
+                          OffsetPositive
+                          );
           DEBUG ((DEBUG_VERBOSE, "%p", FvInfoPpi->FvInfo));
         }
+
         DEBUG ((DEBUG_VERBOSE, "\n"));
         break;
       }
@@ -364,58 +369,73 @@ DumpPpiList (
   )
 {
   DEBUG_CODE_BEGIN ();
-  UINTN   Index;
+  UINTN  Index;
 
   if (PrivateData == NULL) {
     return;
   }
 
   for (Index = 0; Index < PrivateData->PpiData.CallbackNotifyList.CurrentCount; Index++) {
-    DEBUG ((
-      DEBUG_VERBOSE,
-      "CallbackNotify[%2d] {%g} at 0x%x (%a)\n",
-      Index,
-      PrivateData->PpiData.CallbackNotifyList.NotifyPtrs[Index].Notify->Guid,
-      (UINTN) PrivateData->PpiData.CallbackNotifyList.NotifyPtrs[Index].Raw,
-      (
-        !(
-          ((EFI_PHYSICAL_ADDRESS) (UINTN) PrivateData->PpiData.CallbackNotifyList.NotifyPtrs[Index].Raw >= PrivateData->PhysicalMemoryBegin) &&
-          (((EFI_PHYSICAL_ADDRESS) ((UINTN) PrivateData->PpiData.CallbackNotifyList.NotifyPtrs[Index].Raw) + sizeof (EFI_PEI_NOTIFY_DESCRIPTOR)) < PrivateData->FreePhysicalMemoryTop)
-          )
+    DEBUG (
+           (
+            DEBUG_VERBOSE,
+            "CallbackNotify[%2d] {%g} at 0x%x (%a)\n",
+            Index,
+            PrivateData->PpiData.CallbackNotifyList.NotifyPtrs[Index].Notify->Guid,
+            (UINTN) PrivateData->PpiData.CallbackNotifyList.NotifyPtrs[Index].Raw,
+            (
+             !(
+               ((EFI_PHYSICAL_ADDRESS) (UINTN) PrivateData->PpiData.CallbackNotifyList.NotifyPtrs[Index].Raw >=
+                PrivateData->PhysicalMemoryBegin) &&
+               (((EFI_PHYSICAL_ADDRESS) ((UINTN) PrivateData->PpiData.CallbackNotifyList.NotifyPtrs[Index].Raw) +
+                 sizeof (EFI_PEI_NOTIFY_DESCRIPTOR)) < PrivateData->FreePhysicalMemoryTop)
+               )
         ? "CAR" : "Post-Memory"
-        )
-      ));
+            )
+           )
+           );
   }
+
   for (Index = 0; Index < PrivateData->PpiData.DispatchNotifyList.CurrentCount; Index++) {
-    DEBUG ((DEBUG_VERBOSE,
-    "DispatchNotify[%2d] {%g} at 0x%x (%a)\n",
-    Index,
-    PrivateData->PpiData.DispatchNotifyList.NotifyPtrs[Index].Notify->Guid,
-    (UINTN) PrivateData->PpiData.DispatchNotifyList.NotifyPtrs[Index].Raw,
-    (
-      !(
-        ((EFI_PHYSICAL_ADDRESS) (UINTN) PrivateData->PpiData.DispatchNotifyList.NotifyPtrs[Index].Raw >=PrivateData->PhysicalMemoryBegin) &&
-        (((EFI_PHYSICAL_ADDRESS) ((UINTN) PrivateData->PpiData.DispatchNotifyList.NotifyPtrs[Index].Raw) + sizeof (EFI_PEI_NOTIFY_DESCRIPTOR)) < PrivateData->FreePhysicalMemoryTop)
-        )
+    DEBUG (
+           (DEBUG_VERBOSE,
+            "DispatchNotify[%2d] {%g} at 0x%x (%a)\n",
+            Index,
+            PrivateData->PpiData.DispatchNotifyList.NotifyPtrs[Index].Notify->Guid,
+            (UINTN) PrivateData->PpiData.DispatchNotifyList.NotifyPtrs[Index].Raw,
+            (
+             !(
+               ((EFI_PHYSICAL_ADDRESS) (UINTN) PrivateData->PpiData.DispatchNotifyList.NotifyPtrs[Index].Raw >=
+                PrivateData->PhysicalMemoryBegin) &&
+               (((EFI_PHYSICAL_ADDRESS) ((UINTN) PrivateData->PpiData.DispatchNotifyList.NotifyPtrs[Index].Raw) +
+                 sizeof (EFI_PEI_NOTIFY_DESCRIPTOR)) < PrivateData->FreePhysicalMemoryTop)
+               )
       ? "CAR" : "Post-Memory"
-      )
-    ));
+            )
+           )
+           );
   }
+
   for (Index = 0; Index < PrivateData->PpiData.PpiList.CurrentCount; Index++) {
-    DEBUG ((DEBUG_VERBOSE,
-    "PPI[%2d] {%g} at 0x%x (%a)\n",
-    Index,
-    PrivateData->PpiData.PpiList.PpiPtrs[Index].Ppi->Guid,
-    (UINTN) PrivateData->PpiData.PpiList.PpiPtrs[Index].Raw,
-    (
-      !(
-        ((EFI_PHYSICAL_ADDRESS) (UINTN) PrivateData->PpiData.PpiList.PpiPtrs[Index].Raw >= PrivateData->PhysicalMemoryBegin) &&
-        (((EFI_PHYSICAL_ADDRESS) ((UINTN) PrivateData->PpiData.PpiList.PpiPtrs[Index].Raw) + sizeof (EFI_PEI_PPI_DESCRIPTOR)) < PrivateData->FreePhysicalMemoryTop)
-        )
+    DEBUG (
+           (DEBUG_VERBOSE,
+            "PPI[%2d] {%g} at 0x%x (%a)\n",
+            Index,
+            PrivateData->PpiData.PpiList.PpiPtrs[Index].Ppi->Guid,
+            (UINTN) PrivateData->PpiData.PpiList.PpiPtrs[Index].Raw,
+            (
+             !(
+               ((EFI_PHYSICAL_ADDRESS) (UINTN) PrivateData->PpiData.PpiList.PpiPtrs[Index].Raw >=
+                PrivateData->PhysicalMemoryBegin) &&
+               (((EFI_PHYSICAL_ADDRESS) ((UINTN) PrivateData->PpiData.PpiList.PpiPtrs[Index].Raw) +
+                 sizeof (EFI_PEI_PPI_DESCRIPTOR)) < PrivateData->FreePhysicalMemoryTop)
+               )
       ? "CAR" : "Post-Memory"
-      )
-    ));
+            )
+           )
+           );
   }
+
   DEBUG_CODE_END ();
 }
 
@@ -444,20 +464,20 @@ InternalPeiInstallPpi (
   IN BOOLEAN                       Single
   )
 {
-  PEI_CORE_INSTANCE     *PrivateData;
-  PEI_PPI_LIST          *PpiListPointer;
-  UINTN                 Index;
-  UINTN                 LastCount;
-  VOID                  *TempPtr;
+  PEI_CORE_INSTANCE  *PrivateData;
+  PEI_PPI_LIST       *PpiListPointer;
+  UINTN              Index;
+  UINTN              LastCount;
+  VOID               *TempPtr;
 
   if (PpiList == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
-  PrivateData = PEI_CORE_INSTANCE_FROM_PS_THIS(PeiServices);
+  PrivateData = PEI_CORE_INSTANCE_FROM_PS_THIS (PeiServices);
 
   PpiListPointer = &PrivateData->PpiData.PpiList;
-  Index = PpiListPointer->CurrentCount;
+  Index     = PpiListPointer->CurrentCount;
   LastCount = Index;
 
   //
@@ -466,7 +486,7 @@ InternalPeiInstallPpi (
   // EFI_PEI_PPI_DESCRIPTOR in the list.
   //
 
-  for (;;) {
+  for ( ; ;) {
     //
     // Check if it is a valid PPI.
     // If not, rollback list to exclude all in this list.
@@ -474,8 +494,8 @@ InternalPeiInstallPpi (
     //
     if ((PpiList->Flags & EFI_PEI_PPI_DESCRIPTOR_PPI) == 0) {
       PpiListPointer->CurrentCount = LastCount;
-      DEBUG((EFI_D_ERROR, "ERROR -> InstallPpi: %g %p\n", PpiList->Guid, PpiList->Ppi));
-      return  EFI_INVALID_PARAMETER;
+      DEBUG ((EFI_D_ERROR, "ERROR -> InstallPpi: %g %p\n", PpiList->Guid, PpiList->Ppi));
+      return EFI_INVALID_PARAMETER;
     }
 
     if (Index >= PpiListPointer->MaxCount) {
@@ -483,19 +503,19 @@ InternalPeiInstallPpi (
       // Run out of room, grow the buffer.
       //
       TempPtr = AllocateZeroPool (
-                  sizeof (PEI_PPI_LIST_POINTERS) * (PpiListPointer->MaxCount + PPI_GROWTH_STEP)
-                  );
+                                  sizeof (PEI_PPI_LIST_POINTERS) * (PpiListPointer->MaxCount + PPI_GROWTH_STEP)
+                                  );
       ASSERT (TempPtr != NULL);
       CopyMem (
-        TempPtr,
-        PpiListPointer->PpiPtrs,
-        sizeof (PEI_PPI_LIST_POINTERS) * PpiListPointer->MaxCount
-        );
-      PpiListPointer->PpiPtrs = TempPtr;
+               TempPtr,
+               PpiListPointer->PpiPtrs,
+               sizeof (PEI_PPI_LIST_POINTERS) * PpiListPointer->MaxCount
+               );
+      PpiListPointer->PpiPtrs  = TempPtr;
       PpiListPointer->MaxCount = PpiListPointer->MaxCount + PPI_GROWTH_STEP;
     }
 
-    DEBUG((EFI_D_INFO, "Install PPI: %g\n", PpiList->Guid));
+    DEBUG ((EFI_D_INFO, "Install PPI: %g\n", PpiList->Guid));
     PpiListPointer->PpiPtrs[Index].Ppi = (EFI_PEI_PPI_DESCRIPTOR *) PpiList;
     Index++;
     PpiListPointer->CurrentCount++;
@@ -512,6 +532,7 @@ InternalPeiInstallPpi (
       //
       break;
     }
+
     //
     // Go to the next descriptor.
     //
@@ -522,13 +543,13 @@ InternalPeiInstallPpi (
   // Process any callback level notifies for newly installed PPIs.
   //
   ProcessNotify (
-    PrivateData,
-    EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK,
-    LastCount,
-    PpiListPointer->CurrentCount,
-    0,
-    PrivateData->PpiData.CallbackNotifyList.CurrentCount
-    );
+                 PrivateData,
+                 EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK,
+                 LastCount,
+                 PpiListPointer->CurrentCount,
+                 0,
+                 PrivateData->PpiData.CallbackNotifyList.CurrentCount
+                 );
 
   return EFI_SUCCESS;
 }
@@ -583,19 +604,18 @@ PeiReInstallPpi (
   IN CONST EFI_PEI_PPI_DESCRIPTOR  *NewPpi
   )
 {
-  PEI_CORE_INSTANCE   *PrivateData;
-  UINTN               Index;
-
+  PEI_CORE_INSTANCE  *PrivateData;
+  UINTN              Index;
 
   if ((OldPpi == NULL) || (NewPpi == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
 
   if ((NewPpi->Flags & EFI_PEI_PPI_DESCRIPTOR_PPI) == 0) {
-    return  EFI_INVALID_PARAMETER;
+    return EFI_INVALID_PARAMETER;
   }
 
-  PrivateData = PEI_CORE_INSTANCE_FROM_PS_THIS(PeiServices);
+  PrivateData = PEI_CORE_INSTANCE_FROM_PS_THIS (PeiServices);
 
   //
   // Find the old PPI instance in the database.  If we can not find it,
@@ -606,6 +626,7 @@ PeiReInstallPpi (
       break;
     }
   }
+
   if (Index == PrivateData->PpiData.PpiList.CurrentCount) {
     return EFI_NOT_FOUND;
   }
@@ -613,20 +634,20 @@ PeiReInstallPpi (
   //
   // Replace the old PPI with the new one.
   //
-  DEBUG((EFI_D_INFO, "Reinstall PPI: %g\n", NewPpi->Guid));
+  DEBUG ((EFI_D_INFO, "Reinstall PPI: %g\n", NewPpi->Guid));
   PrivateData->PpiData.PpiList.PpiPtrs[Index].Ppi = (EFI_PEI_PPI_DESCRIPTOR *) NewPpi;
 
   //
   // Process any callback level notifies for the newly installed PPI.
   //
   ProcessNotify (
-    PrivateData,
-    EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK,
-    Index,
-    Index+1,
-    0,
-    PrivateData->PpiData.CallbackNotifyList.CurrentCount
-    );
+                 PrivateData,
+                 EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK,
+                 Index,
+                 Index+1,
+                 0,
+                 PrivateData->PpiData.CallbackNotifyList.CurrentCount
+                 );
 
   return EFI_SUCCESS;
 }
@@ -657,19 +678,18 @@ PeiLocatePpi (
   IN OUT VOID                      **Ppi
   )
 {
-  PEI_CORE_INSTANCE         *PrivateData;
-  UINTN                     Index;
-  EFI_GUID                  *CheckGuid;
-  EFI_PEI_PPI_DESCRIPTOR    *TempPtr;
+  PEI_CORE_INSTANCE       *PrivateData;
+  UINTN                   Index;
+  EFI_GUID                *CheckGuid;
+  EFI_PEI_PPI_DESCRIPTOR  *TempPtr;
 
-
-  PrivateData = PEI_CORE_INSTANCE_FROM_PS_THIS(PeiServices);
+  PrivateData = PEI_CORE_INSTANCE_FROM_PS_THIS (PeiServices);
 
   //
   // Search the data base for the matching instance of the GUIDed PPI.
   //
   for (Index = 0; Index < PrivateData->PpiData.PpiList.CurrentCount; Index++) {
-    TempPtr = PrivateData->PpiData.PpiList.PpiPtrs[Index].Ppi;
+    TempPtr   = PrivateData->PpiData.PpiList.PpiPtrs[Index].Ppi;
     CheckGuid = TempPtr->Guid;
 
     //
@@ -677,12 +697,11 @@ PeiLocatePpi (
     // Instead we compare the GUID as INT32 at a time and branch
     // on the first failed comparison.
     //
-    if ((((INT32 *)Guid)[0] == ((INT32 *)CheckGuid)[0]) &&
-        (((INT32 *)Guid)[1] == ((INT32 *)CheckGuid)[1]) &&
-        (((INT32 *)Guid)[2] == ((INT32 *)CheckGuid)[2]) &&
-        (((INT32 *)Guid)[3] == ((INT32 *)CheckGuid)[3])) {
+    if ((((INT32 *) Guid)[0] == ((INT32 *) CheckGuid)[0]) &&
+        (((INT32 *) Guid)[1] == ((INT32 *) CheckGuid)[1]) &&
+        (((INT32 *) Guid)[2] == ((INT32 *) CheckGuid)[2]) &&
+        (((INT32 *) Guid)[3] == ((INT32 *) CheckGuid)[3])) {
       if (Instance == 0) {
-
         if (PpiDescriptor != NULL) {
           *PpiDescriptor = TempPtr;
         }
@@ -691,9 +710,9 @@ PeiLocatePpi (
           *Ppi = TempPtr->Ppi;
         }
 
-
         return EFI_SUCCESS;
       }
+
       Instance--;
     }
   }
@@ -738,14 +757,14 @@ InternalPeiNotifyPpi (
     return EFI_INVALID_PARAMETER;
   }
 
-  PrivateData = PEI_CORE_INSTANCE_FROM_PS_THIS(PeiServices);
+  PrivateData = PEI_CORE_INSTANCE_FROM_PS_THIS (PeiServices);
 
   CallbackNotifyListPointer = &PrivateData->PpiData.CallbackNotifyList;
-  CallbackNotifyIndex = CallbackNotifyListPointer->CurrentCount;
+  CallbackNotifyIndex     = CallbackNotifyListPointer->CurrentCount;
   LastCallbackNotifyCount = CallbackNotifyIndex;
 
   DispatchNotifyListPointer = &PrivateData->PpiData.DispatchNotifyList;
-  DispatchNotifyIndex = DispatchNotifyListPointer->CurrentCount;
+  DispatchNotifyIndex     = DispatchNotifyListPointer->CurrentCount;
   LastDispatchNotifyCount = DispatchNotifyIndex;
 
   //
@@ -754,15 +773,15 @@ InternalPeiNotifyPpi (
   // EFI_PEI_NOTIFY_DESCRIPTOR in the list.
   //
 
-  for (;;) {
+  for ( ; ;) {
     //
     // If some of the PPI data is invalid restore original Notify PPI database value
     //
     if ((NotifyList->Flags & EFI_PEI_PPI_DESCRIPTOR_NOTIFY_TYPES) == 0) {
-        CallbackNotifyListPointer->CurrentCount = LastCallbackNotifyCount;
-        DispatchNotifyListPointer->CurrentCount = LastDispatchNotifyCount;
-        DEBUG((DEBUG_ERROR, "ERROR -> NotifyPpi: %g %p\n", NotifyList->Guid, NotifyList->Notify));
-      return  EFI_INVALID_PARAMETER;
+      CallbackNotifyListPointer->CurrentCount = LastCallbackNotifyCount;
+      DispatchNotifyListPointer->CurrentCount = LastDispatchNotifyCount;
+      DEBUG ((DEBUG_ERROR, "ERROR -> NotifyPpi: %g %p\n", NotifyList->Guid, NotifyList->Notify));
+      return EFI_INVALID_PARAMETER;
     }
 
     if ((NotifyList->Flags & EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK) != 0) {
@@ -771,17 +790,19 @@ InternalPeiNotifyPpi (
         // Run out of room, grow the buffer.
         //
         TempPtr = AllocateZeroPool (
-                    sizeof (PEI_PPI_LIST_POINTERS) * (CallbackNotifyListPointer->MaxCount + CALLBACK_NOTIFY_GROWTH_STEP)
-                    );
+                                    sizeof (PEI_PPI_LIST_POINTERS) *
+                                    (CallbackNotifyListPointer->MaxCount + CALLBACK_NOTIFY_GROWTH_STEP)
+                                    );
         ASSERT (TempPtr != NULL);
         CopyMem (
-          TempPtr,
-          CallbackNotifyListPointer->NotifyPtrs,
-          sizeof (PEI_PPI_LIST_POINTERS) * CallbackNotifyListPointer->MaxCount
-          );
+                 TempPtr,
+                 CallbackNotifyListPointer->NotifyPtrs,
+                 sizeof (PEI_PPI_LIST_POINTERS) * CallbackNotifyListPointer->MaxCount
+                 );
         CallbackNotifyListPointer->NotifyPtrs = TempPtr;
-        CallbackNotifyListPointer->MaxCount = CallbackNotifyListPointer->MaxCount + CALLBACK_NOTIFY_GROWTH_STEP;
+        CallbackNotifyListPointer->MaxCount   = CallbackNotifyListPointer->MaxCount + CALLBACK_NOTIFY_GROWTH_STEP;
       }
+
       CallbackNotifyListPointer->NotifyPtrs[CallbackNotifyIndex].Notify = (EFI_PEI_NOTIFY_DESCRIPTOR *) NotifyList;
       CallbackNotifyIndex++;
       CallbackNotifyListPointer->CurrentCount++;
@@ -791,23 +812,25 @@ InternalPeiNotifyPpi (
         // Run out of room, grow the buffer.
         //
         TempPtr = AllocateZeroPool (
-                    sizeof (PEI_PPI_LIST_POINTERS) * (DispatchNotifyListPointer->MaxCount + DISPATCH_NOTIFY_GROWTH_STEP)
-                    );
+                                    sizeof (PEI_PPI_LIST_POINTERS) *
+                                    (DispatchNotifyListPointer->MaxCount + DISPATCH_NOTIFY_GROWTH_STEP)
+                                    );
         ASSERT (TempPtr != NULL);
         CopyMem (
-          TempPtr,
-          DispatchNotifyListPointer->NotifyPtrs,
-          sizeof (PEI_PPI_LIST_POINTERS) * DispatchNotifyListPointer->MaxCount
-          );
+                 TempPtr,
+                 DispatchNotifyListPointer->NotifyPtrs,
+                 sizeof (PEI_PPI_LIST_POINTERS) * DispatchNotifyListPointer->MaxCount
+                 );
         DispatchNotifyListPointer->NotifyPtrs = TempPtr;
-        DispatchNotifyListPointer->MaxCount = DispatchNotifyListPointer->MaxCount + DISPATCH_NOTIFY_GROWTH_STEP;
+        DispatchNotifyListPointer->MaxCount   = DispatchNotifyListPointer->MaxCount + DISPATCH_NOTIFY_GROWTH_STEP;
       }
+
       DispatchNotifyListPointer->NotifyPtrs[DispatchNotifyIndex].Notify = (EFI_PEI_NOTIFY_DESCRIPTOR *) NotifyList;
       DispatchNotifyIndex++;
       DispatchNotifyListPointer->CurrentCount++;
     }
 
-    DEBUG((EFI_D_INFO, "Register PPI Notify: %g\n", NotifyList->Guid));
+    DEBUG ((EFI_D_INFO, "Register PPI Notify: %g\n", NotifyList->Guid));
 
     if (Single) {
       //
@@ -821,6 +844,7 @@ InternalPeiNotifyPpi (
       //
       break;
     }
+
     //
     // Go to the next descriptor.
     //
@@ -831,15 +855,15 @@ InternalPeiNotifyPpi (
   // Process any callback level notifies for all previously installed PPIs.
   //
   ProcessNotify (
-    PrivateData,
-    EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK,
-    0,
-    PrivateData->PpiData.PpiList.CurrentCount,
-    LastCallbackNotifyCount,
-    CallbackNotifyListPointer->CurrentCount
-    );
+                 PrivateData,
+                 EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK,
+                 0,
+                 PrivateData->PpiData.PpiList.CurrentCount,
+                 LastCallbackNotifyCount,
+                 CallbackNotifyListPointer->CurrentCount
+                 );
 
-  return  EFI_SUCCESS;
+  return EFI_SUCCESS;
 }
 
 /**
@@ -878,7 +902,7 @@ ProcessDispatchNotifyList (
   IN PEI_CORE_INSTANCE  *PrivateData
   )
 {
-  UINTN                 TempValue;
+  UINTN  TempValue;
 
   while (TRUE) {
     //
@@ -889,16 +913,17 @@ ProcessDispatchNotifyList (
     // DispatchNotifyList.CurrentCount (with NotifyPpi) so we have
     // to iterate until the same.
     //
-    while (PrivateData->PpiData.DispatchNotifyList.LastDispatchedCount != PrivateData->PpiData.DispatchNotifyList.CurrentCount) {
+    while (PrivateData->PpiData.DispatchNotifyList.LastDispatchedCount !=
+           PrivateData->PpiData.DispatchNotifyList.CurrentCount) {
       TempValue = PrivateData->PpiData.DispatchNotifyList.CurrentCount;
       ProcessNotify (
-        PrivateData,
-        EFI_PEI_PPI_DESCRIPTOR_NOTIFY_DISPATCH,
-        0,
-        PrivateData->PpiData.PpiList.LastDispatchedCount,
-        PrivateData->PpiData.DispatchNotifyList.LastDispatchedCount,
-        PrivateData->PpiData.DispatchNotifyList.CurrentCount
-        );
+                     PrivateData,
+                     EFI_PEI_PPI_DESCRIPTOR_NOTIFY_DISPATCH,
+                     0,
+                     PrivateData->PpiData.PpiList.LastDispatchedCount,
+                     PrivateData->PpiData.DispatchNotifyList.LastDispatchedCount,
+                     PrivateData->PpiData.DispatchNotifyList.CurrentCount
+                     );
       PrivateData->PpiData.DispatchNotifyList.LastDispatchedCount = TempValue;
     }
 
@@ -913,20 +938,22 @@ ProcessDispatchNotifyList (
     while (PrivateData->PpiData.PpiList.LastDispatchedCount != PrivateData->PpiData.PpiList.CurrentCount) {
       TempValue = PrivateData->PpiData.PpiList.CurrentCount;
       ProcessNotify (
-        PrivateData,
-        EFI_PEI_PPI_DESCRIPTOR_NOTIFY_DISPATCH,
-        PrivateData->PpiData.PpiList.LastDispatchedCount,
-        PrivateData->PpiData.PpiList.CurrentCount,
-        0,
-        PrivateData->PpiData.DispatchNotifyList.LastDispatchedCount
-        );
+                     PrivateData,
+                     EFI_PEI_PPI_DESCRIPTOR_NOTIFY_DISPATCH,
+                     PrivateData->PpiData.PpiList.LastDispatchedCount,
+                     PrivateData->PpiData.PpiList.CurrentCount,
+                     0,
+                     PrivateData->PpiData.DispatchNotifyList.LastDispatchedCount
+                     );
       PrivateData->PpiData.PpiList.LastDispatchedCount = TempValue;
     }
 
-    if (PrivateData->PpiData.DispatchNotifyList.LastDispatchedCount == PrivateData->PpiData.DispatchNotifyList.CurrentCount) {
+    if (PrivateData->PpiData.DispatchNotifyList.LastDispatchedCount ==
+        PrivateData->PpiData.DispatchNotifyList.CurrentCount) {
       break;
     }
   }
+
   return;
 }
 
@@ -952,11 +979,11 @@ ProcessNotify (
   IN INTN                NotifyStopIndex
   )
 {
-  INTN                          Index1;
-  INTN                          Index2;
-  EFI_GUID                      *SearchGuid;
-  EFI_GUID                      *CheckGuid;
-  EFI_PEI_NOTIFY_DESCRIPTOR     *NotifyDescriptor;
+  INTN                       Index1;
+  INTN                       Index2;
+  EFI_GUID                   *SearchGuid;
+  EFI_GUID                   *CheckGuid;
+  EFI_PEI_NOTIFY_DESCRIPTOR  *NotifyDescriptor;
 
   for (Index1 = NotifyStartIndex; Index1 < NotifyStopIndex; Index1++) {
     if (NotifyType == EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK) {
@@ -974,19 +1001,21 @@ ProcessNotify (
       // Instead we compare the GUID as INT32 at a time and branch
       // on the first failed comparison.
       //
-      if ((((INT32 *)SearchGuid)[0] == ((INT32 *)CheckGuid)[0]) &&
-          (((INT32 *)SearchGuid)[1] == ((INT32 *)CheckGuid)[1]) &&
-          (((INT32 *)SearchGuid)[2] == ((INT32 *)CheckGuid)[2]) &&
-          (((INT32 *)SearchGuid)[3] == ((INT32 *)CheckGuid)[3])) {
-        DEBUG ((EFI_D_INFO, "Notify: PPI Guid: %g, Peim notify entry point: %p\n",
-          SearchGuid,
-          NotifyDescriptor->Notify
-          ));
+      if ((((INT32 *) SearchGuid)[0] == ((INT32 *) CheckGuid)[0]) &&
+          (((INT32 *) SearchGuid)[1] == ((INT32 *) CheckGuid)[1]) &&
+          (((INT32 *) SearchGuid)[2] == ((INT32 *) CheckGuid)[2]) &&
+          (((INT32 *) SearchGuid)[3] == ((INT32 *) CheckGuid)[3])) {
+        DEBUG (
+               (EFI_D_INFO, "Notify: PPI Guid: %g, Peim notify entry point: %p\n",
+                SearchGuid,
+                NotifyDescriptor->Notify
+               )
+               );
         NotifyDescriptor->Notify (
-                            (EFI_PEI_SERVICES **) GetPeiServicesTablePointer (),
-                            NotifyDescriptor,
-                            (PrivateData->PpiData.PpiList.PpiPtrs[Index2].Ppi)->Ppi
-                            );
+                                  (EFI_PEI_SERVICES **) GetPeiServicesTablePointer (),
+                                  NotifyDescriptor,
+                                  (PrivateData->PpiData.PpiList.PpiPtrs[Index2].Ppi)->Ppi
+                                  );
       }
     }
   }
@@ -1006,11 +1035,11 @@ ProcessPpiListFromSec (
   IN CONST EFI_PEI_PPI_DESCRIPTOR   *PpiList
   )
 {
-  EFI_STATUS                Status;
-  EFI_SEC_HOB_DATA_PPI      *SecHobDataPpi;
-  EFI_HOB_GENERIC_HEADER    *SecHobList;
+  EFI_STATUS              Status;
+  EFI_SEC_HOB_DATA_PPI    *SecHobDataPpi;
+  EFI_HOB_GENERIC_HEADER  *SecHobList;
 
-  for (;;) {
+  for ( ; ;) {
     if ((PpiList->Flags & EFI_PEI_PPI_DESCRIPTOR_NOTIFY_TYPES) != 0) {
       //
       // It is a notification PPI.
@@ -1080,11 +1109,11 @@ ConvertPeiCorePpiPointers (
   // Find the PEI Core in the BFV in temporary memory.
   //
   Status =  CoreFvHandle->FvPpi->FindFileByType (
-                                  CoreFvHandle->FvPpi,
-                                  EFI_FV_FILETYPE_PEI_CORE,
-                                  CoreFvHandle->FvHandle,
-                                  &PeiCoreFileHandle
-                                  );
+                                                 CoreFvHandle->FvPpi,
+                                                 EFI_FV_FILETYPE_PEI_CORE,
+                                                 CoreFvHandle->FvHandle,
+                                                 &PeiCoreFileHandle
+                                                 );
   ASSERT_EFI_ERROR (Status);
 
   if (!EFI_ERROR (Status)) {
@@ -1097,7 +1126,7 @@ ConvertPeiCorePpiPointers (
     //
     // Find PEI Core EntryPoint in the BFV in temporary memory.
     //
-    Status = PeCoffLoaderGetEntryPoint ((VOID *) (UINTN) PeiCoreImageBase,  &PeiCoreEntryPoint);
+    Status = PeCoffLoaderGetEntryPoint ((VOID *) (UINTN) PeiCoreImageBase, &PeiCoreEntryPoint);
     ASSERT_EFI_ERROR (Status);
 
     OrgImageBase = (UINTN) PeiCoreImageBase;
@@ -1106,7 +1135,7 @@ ConvertPeiCorePpiPointers (
     //
     // Size of loaded PEI_CORE in permanent memory.
     //
-    PeiCoreModuleSize = (UINTN)FileInfo.BufferSize - ((UINTN) OrgImageBase - (UINTN) FileInfo.Buffer);
+    PeiCoreModuleSize = (UINTN) FileInfo.BufferSize - ((UINTN) OrgImageBase - (UINTN) FileInfo.Buffer);
 
     //
     // Migrate PEI_CORE PPI pointers from temporary memory to newly
@@ -1115,4 +1144,3 @@ ConvertPeiCorePpiPointers (
     ConvertPpiPointersFv (PrivateData, (UINTN) OrgImageBase, (UINTN) MigratedImageBase, PeiCoreModuleSize);
   }
 }
-

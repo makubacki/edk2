@@ -27,10 +27,11 @@ CoreInternalWaitForTick (
   )
 {
   while (RShiftU64 (Counter, 32) > 0) {
-    gMetronome->WaitForTick (gMetronome, 0xffffffff);
+  gMetronome->WaitForTick (gMetronome, 0xffffffff);
     Counter -= 0xffffffff;
   }
-  gMetronome->WaitForTick (gMetronome, (UINT32)Counter);
+
+  gMetronome->WaitForTick (gMetronome, (UINT32) Counter);
 }
 
 /**
@@ -67,10 +68,10 @@ CoreStall (
     // operation first and loop 10 times to avoid 64-bit math overflow.
     //
     Counter = DivU64x32Remainder (
-                Microseconds,
-                gMetronome->TickPeriod,
-                &Remainder
-                );
+                                  Microseconds,
+                                  gMetronome->TickPeriod,
+                                  &Remainder
+                                  );
     for (Index = 0; Index < 10; Index++) {
       CoreInternalWaitForTick (Counter);
     }
@@ -90,16 +91,17 @@ CoreStall (
     // the TickPeriod.  Calculation is based on 100ns unit.
     //
     Counter = DivU64x32Remainder (
-                MultU64x32 (Microseconds, 10),
-                gMetronome->TickPeriod,
-                &Remainder
-                );
+                                  MultU64x32 (Microseconds, 10),
+                                  gMetronome->TickPeriod,
+                                  &Remainder
+                                  );
     if (Remainder != 0) {
       //
       // If Remainder is not zero, then round Counter up by one tick.
       //
       Counter++;
     }
+
     CoreInternalWaitForTick (Counter);
   }
 

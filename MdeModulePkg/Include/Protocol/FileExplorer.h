@@ -17,7 +17,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // Forward reference for pure ANSI compatability
 //
-typedef struct _EFI_FILE_EXPLORER_PROTOCOL  EFI_FILE_EXPLORER_PROTOCOL;
+typedef struct _EFI_FILE_EXPLORER_PROTOCOL EFI_FILE_EXPLORER_PROTOCOL;
 
 /**
   Prototype for the next process after user chosed one file.
@@ -29,10 +29,10 @@ typedef struct _EFI_FILE_EXPLORER_PROTOCOL  EFI_FILE_EXPLORER_PROTOCOL;
 
 **/
 typedef
-BOOLEAN
+  BOOLEAN
 (EFIAPI *CHOOSE_HANDLER)(
-  IN EFI_DEVICE_PATH_PROTOCOL  *FilePath
-  );
+                         IN EFI_DEVICE_PATH_PROTOCOL  *FilePath
+                         );
 
 /**
   Choose a file in the specified directory.
@@ -52,18 +52,20 @@ BOOLEAN
   @retval Other errors     Choose the file failed.
 **/
 typedef
-EFI_STATUS
-(EFIAPI   *CHOOSE_FILE) (
-  IN  EFI_DEVICE_PATH_PROTOCOL  *RootDirectory,
-  IN  CHAR16                    *FileType,  OPTIONAL
-  IN  CHOOSE_HANDLER            ChooseHandler,  OPTIONAL
-  OUT EFI_DEVICE_PATH_PROTOCOL  **File  OPTIONAL
-  );
+  EFI_STATUS
+(EFIAPI   *CHOOSE_FILE)(
+                        IN  EFI_DEVICE_PATH_PROTOCOL  *RootDirectory,
+                        IN  CHAR16                    *FileType,
+                        OPTIONAL
+                        IN  CHOOSE_HANDLER            ChooseHandler,
+                        OPTIONAL
+                        OUT EFI_DEVICE_PATH_PROTOCOL  **File  OPTIONAL
+                        );
 
 struct _EFI_FILE_EXPLORER_PROTOCOL {
-  CHOOSE_FILE                          ChooseFile;
+  CHOOSE_FILE    ChooseFile;
 };
 
-extern EFI_GUID gEfiFileExplorerProtocolGuid;
+extern EFI_GUID  gEfiFileExplorerProtocolGuid;
 
 #endif

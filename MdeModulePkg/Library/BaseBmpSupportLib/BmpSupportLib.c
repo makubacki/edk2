@@ -31,22 +31,22 @@
 // BMP Image header for an uncompressed 24-bit per pixel BMP image.
 //
 const BMP_IMAGE_HEADER  mBmpImageHeaderTemplate = {
-  'B',    // CharB
-  'M',    // CharM
-  0,      // Size will be updated at runtime
-  {0, 0}, // Reserved
-  sizeof (BMP_IMAGE_HEADER), // ImageOffset
+  'B',                                                                  // CharB
+  'M',                                                                  // CharM
+  0,                                                                    // Size will be updated at runtime
+  { 0, 0 },                                                             // Reserved
+  sizeof (BMP_IMAGE_HEADER),                                            // ImageOffset
   sizeof (BMP_IMAGE_HEADER) - OFFSET_OF (BMP_IMAGE_HEADER, HeaderSize), // HeaderSize
-  0,      // PixelWidth will be updated at runtime
-  0,      // PixelHeight will be updated at runtime
-  1,      // Planes
-  24,     // BitPerPixel
-  0,      // CompressionType
-  0,      // ImageSize will be updated at runtime
-  0,      // XPixelsPerMeter
-  0,      // YPixelsPerMeter
-  0,      // NumberOfColors
-  0       // ImportantColors
+  0,                                                                    // PixelWidth will be updated at runtime
+  0,                                                                    // PixelHeight will be updated at runtime
+  1,                                                                    // Planes
+  24,                                                                   // BitPerPixel
+  0,                                                                    // CompressionType
+  0,                                                                    // ImageSize will be updated at runtime
+  0,                                                                    // XPixelsPerMeter
+  0,                                                                    // YPixelsPerMeter
+  0,                                                                    // NumberOfColors
+  0                                                                     // ImportantColors
 };
 
 /**
@@ -107,6 +107,7 @@ TranslateBmpToGopBlt (
   if (BmpImage == NULL || GopBlt == NULL || GopBltSize == NULL) {
     return RETURN_INVALID_PARAMETER;
   }
+
   if (PixelHeight == NULL || PixelWidth == NULL) {
     return RETURN_INVALID_PARAMETER;
   }
@@ -116,7 +117,7 @@ TranslateBmpToGopBlt (
     return RETURN_UNSUPPORTED;
   }
 
-  BmpHeader = (BMP_IMAGE_HEADER *)BmpImage;
+  BmpHeader = (BMP_IMAGE_HEADER *) BmpImage;
 
   if (BmpHeader->CharB != 'B' || BmpHeader->CharM != 'M') {
     DEBUG ((DEBUG_ERROR, "TranslateBmpToGopBlt: BmpHeader->Char fields incorrect\n"));
@@ -141,11 +142,13 @@ TranslateBmpToGopBlt (
   // BITMAPFILEHEADER + BITMAPINFOHEADER = BMP_IMAGE_HEADER
   //
   if (BmpHeader->HeaderSize != sizeof (BMP_IMAGE_HEADER) - OFFSET_OF (BMP_IMAGE_HEADER, HeaderSize)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "TranslateBmpToGopBlt: BmpHeader->Headership is not as expected.  Headersize is 0x%x\n",
-      BmpHeader->HeaderSize
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "TranslateBmpToGopBlt: BmpHeader->Headership is not as expected.  Headersize is 0x%x\n",
+            BmpHeader->HeaderSize
+           )
+           );
     return RETURN_UNSUPPORTED;
   }
 
@@ -153,60 +156,68 @@ TranslateBmpToGopBlt (
   // The data size in each line must be 4 byte alignment.
   //
   Status = SafeUint32Mult (
-             BmpHeader->PixelWidth,
-             BmpHeader->BitPerPixel,
-             &DataSizePerLine
-             );
+                           BmpHeader->PixelWidth,
+                           BmpHeader->BitPerPixel,
+                           &DataSizePerLine
+                           );
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "TranslateBmpToGopBlt: invalid BmpImage... PixelWidth:0x%x BitPerPixel:0x%x\n",
-      BmpHeader->PixelWidth,
-      BmpHeader->BitPerPixel
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "TranslateBmpToGopBlt: invalid BmpImage... PixelWidth:0x%x BitPerPixel:0x%x\n",
+            BmpHeader->PixelWidth,
+            BmpHeader->BitPerPixel
+           )
+           );
     return RETURN_UNSUPPORTED;
   }
 
   Status = SafeUint32Add (DataSizePerLine, 31, &DataSizePerLine);
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "TranslateBmpToGopBlt: invalid BmpImage... DataSizePerLine:0x%x\n",
-      DataSizePerLine
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "TranslateBmpToGopBlt: invalid BmpImage... DataSizePerLine:0x%x\n",
+            DataSizePerLine
+           )
+           );
 
     return RETURN_UNSUPPORTED;
   }
 
   DataSizePerLine = (DataSizePerLine >> 3) &(~0x3);
   Status = SafeUint32Mult (
-             DataSizePerLine,
-             BmpHeader->PixelHeight,
-             &BltBufferSize
-             );
+                           DataSizePerLine,
+                           BmpHeader->PixelHeight,
+                           &BltBufferSize
+                           );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "TranslateBmpToGopBlt: invalid BmpImage... DataSizePerLine:0x%x PixelHeight:0x%x\n",
-      DataSizePerLine, BmpHeader->PixelHeight
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "TranslateBmpToGopBlt: invalid BmpImage... DataSizePerLine:0x%x PixelHeight:0x%x\n",
+            DataSizePerLine, BmpHeader->PixelHeight
+           )
+           );
 
     return RETURN_UNSUPPORTED;
   }
 
   Status = SafeUint32Mult (
-             BmpHeader->PixelHeight,
-             DataSizePerLine,
-             &DataSize
-             );
+                           BmpHeader->PixelHeight,
+                           DataSizePerLine,
+                           &DataSize
+                           );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "TranslateBmpToGopBlt: invalid BmpImage... PixelHeight:0x%x DataSizePerLine:0x%x\n",
-      BmpHeader->PixelHeight, DataSizePerLine
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "TranslateBmpToGopBlt: invalid BmpImage... PixelHeight:0x%x DataSizePerLine:0x%x\n",
+            BmpHeader->PixelHeight, DataSizePerLine
+           )
+           );
 
     return RETURN_UNSUPPORTED;
   }
@@ -214,12 +225,11 @@ TranslateBmpToGopBlt (
   if ((BmpHeader->Size != BmpImageSize) ||
       (BmpHeader->Size < BmpHeader->ImageOffset) ||
       (BmpHeader->Size - BmpHeader->ImageOffset != DataSize)) {
-
     DEBUG ((DEBUG_ERROR, "TranslateBmpToGopBlt: invalid BmpImage... \n"));
     DEBUG ((DEBUG_ERROR, "   BmpHeader->Size: 0x%x\n", BmpHeader->Size));
     DEBUG ((DEBUG_ERROR, "   BmpHeader->ImageOffset: 0x%x\n", BmpHeader->ImageOffset));
-    DEBUG ((DEBUG_ERROR, "   BmpImageSize: 0x%lx\n", (UINTN)BmpImageSize));
-    DEBUG ((DEBUG_ERROR, "   DataSize: 0x%lx\n", (UINTN)DataSize));
+    DEBUG ((DEBUG_ERROR, "   BmpImageSize: 0x%lx\n", (UINTN) BmpImageSize));
+    DEBUG ((DEBUG_ERROR, "   DataSize: 0x%lx\n", (UINTN) DataSize));
 
     return RETURN_UNSUPPORTED;
   }
@@ -228,26 +238,27 @@ TranslateBmpToGopBlt (
   // Calculate Color Map offset in the image.
   //
   Image = BmpImage;
-  BmpColorMap = (BMP_COLOR_MAP *)(Image + sizeof (BMP_IMAGE_HEADER));
+  BmpColorMap = (BMP_COLOR_MAP *) (Image + sizeof (BMP_IMAGE_HEADER));
   if (BmpHeader->ImageOffset < sizeof (BMP_IMAGE_HEADER)) {
     return RETURN_UNSUPPORTED;
   }
 
   if (BmpHeader->ImageOffset > sizeof (BMP_IMAGE_HEADER)) {
     switch (BmpHeader->BitPerPixel) {
-    case 1:
-      ColorMapNum = 2;
-      break;
-    case 4:
-      ColorMapNum = 16;
-      break;
-    case 8:
-      ColorMapNum = 256;
-      break;
-    default:
-      ColorMapNum = 0;
-      break;
+      case 1:
+        ColorMapNum = 2;
+        break;
+      case 4:
+        ColorMapNum = 16;
+        break;
+      case 8:
+        ColorMapNum = 256;
+        break;
+      default:
+        ColorMapNum = 0;
+        break;
     }
+
     //
     // BMP file may has padding data between the bmp header section and the
     // bmp data section.
@@ -260,41 +271,45 @@ TranslateBmpToGopBlt (
   //
   // Calculate graphics image data address in the image
   //
-  Image = ((UINT8 *)BmpImage) + BmpHeader->ImageOffset;
+  Image = ((UINT8 *) BmpImage) + BmpHeader->ImageOffset;
   ImageHeader = Image;
 
   //
   // Calculate the BltBuffer needed size.
   //
   Status = SafeUint32Mult (
-             BmpHeader->PixelWidth,
-             BmpHeader->PixelHeight,
-             &BltBufferSize
-             );
+                           BmpHeader->PixelWidth,
+                           BmpHeader->PixelHeight,
+                           &BltBufferSize
+                           );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "TranslateBmpToGopBlt: invalid BltBuffer needed size... PixelWidth:0x%x PixelHeight:0x%x\n",
-      BmpHeader->PixelWidth, BmpHeader->PixelHeight
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "TranslateBmpToGopBlt: invalid BltBuffer needed size... PixelWidth:0x%x PixelHeight:0x%x\n",
+            BmpHeader->PixelWidth, BmpHeader->PixelHeight
+           )
+           );
 
     return RETURN_UNSUPPORTED;
   }
 
-  Temp = BltBufferSize;
+  Temp   = BltBufferSize;
   Status = SafeUint32Mult (
-             BltBufferSize,
-             sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL),
-             &BltBufferSize
-             );
+                           BltBufferSize,
+                           sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL),
+                           &BltBufferSize
+                           );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "TranslateBmpToGopBlt: invalid BltBuffer needed size... PixelWidth x PixelHeight:0x%x struct size:0x%x\n",
-      Temp, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "TranslateBmpToGopBlt: invalid BltBuffer needed size... PixelWidth x PixelHeight:0x%x struct size:0x%x\n",
+            Temp, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)
+           )
+           );
 
     return RETURN_UNSUPPORTED;
   }
@@ -305,8 +320,8 @@ TranslateBmpToGopBlt (
     // GopBlt is not allocated by caller.
     //
     DEBUG ((DEBUG_INFO, "Bmp Support: Allocating 0x%X bytes of memory\n", BltBufferSize));
-    *GopBltSize = (UINTN)BltBufferSize;
-    *GopBlt = AllocatePool (*GopBltSize);
+    *GopBltSize = (UINTN) BltBufferSize;
+    *GopBlt     = AllocatePool (*GopBltSize);
     IsAllocated = TRUE;
     if (*GopBlt == NULL) {
       return RETURN_OUT_OF_RESOURCES;
@@ -315,8 +330,8 @@ TranslateBmpToGopBlt (
     //
     // GopBlt has been allocated by caller.
     //
-    if (*GopBltSize < (UINTN)BltBufferSize) {
-      *GopBltSize = (UINTN)BltBufferSize;
+    if (*GopBltSize < (UINTN) BltBufferSize) {
+      *GopBltSize = (UINTN) BltBufferSize;
       return RETURN_BUFFER_TOO_SMALL;
     }
   }
@@ -336,85 +351,86 @@ TranslateBmpToGopBlt (
   //
   BltBuffer = *GopBlt;
   for (Height = 0; Height < BmpHeader->PixelHeight; Height++) {
-    Blt = &BltBuffer[ (BmpHeader->PixelHeight - Height - 1) * BmpHeader->PixelWidth];
+    Blt = &BltBuffer[(BmpHeader->PixelHeight - Height - 1) * BmpHeader->PixelWidth];
     for (Width = 0; Width < BmpHeader->PixelWidth; Width++, Image++, Blt++) {
       switch (BmpHeader->BitPerPixel) {
-      case 1:
-        //
-        // Translate 1-bit (2 colors) BMP to 24-bit color
-        //
-        for (Index = 0; Index < 8 && Width < BmpHeader->PixelWidth; Index++) {
-          Blt->Red   = BmpColorMap[ ((*Image) >> (7 - Index)) & 0x1].Red;
-          Blt->Green = BmpColorMap[ ((*Image) >> (7 - Index)) & 0x1].Green;
-          Blt->Blue  = BmpColorMap[ ((*Image) >> (7 - Index)) & 0x1].Blue;
-          Blt++;
-          Width++;
-        }
+        case 1:
+          //
+          // Translate 1-bit (2 colors) BMP to 24-bit color
+          //
+          for (Index = 0; Index < 8 && Width < BmpHeader->PixelWidth; Index++) {
+            Blt->Red   = BmpColorMap[((*Image) >> (7 - Index)) & 0x1].Red;
+            Blt->Green = BmpColorMap[((*Image) >> (7 - Index)) & 0x1].Green;
+            Blt->Blue  = BmpColorMap[((*Image) >> (7 - Index)) & 0x1].Blue;
+            Blt++;
+            Width++;
+          }
 
-        Blt--;
-        Width--;
-        break;
+          Blt--;
+          Width--;
+          break;
 
-      case 4:
-        //
-        // Translate 4-bit (16 colors) BMP Palette to 24-bit color
-        //
-        Index = (*Image) >> 4;
-        Blt->Red   = BmpColorMap[Index].Red;
-        Blt->Green = BmpColorMap[Index].Green;
-        Blt->Blue  = BmpColorMap[Index].Blue;
-        if (Width < (BmpHeader->PixelWidth - 1)) {
-          Blt++;
-          Width++;
-          Index = (*Image) & 0x0f;
+        case 4:
+          //
+          // Translate 4-bit (16 colors) BMP Palette to 24-bit color
+          //
+          Index      = (*Image) >> 4;
           Blt->Red   = BmpColorMap[Index].Red;
           Blt->Green = BmpColorMap[Index].Green;
           Blt->Blue  = BmpColorMap[Index].Blue;
-        }
-        break;
+          if (Width < (BmpHeader->PixelWidth - 1)) {
+            Blt++;
+            Width++;
+            Index      = (*Image) & 0x0f;
+            Blt->Red   = BmpColorMap[Index].Red;
+            Blt->Green = BmpColorMap[Index].Green;
+            Blt->Blue  = BmpColorMap[Index].Blue;
+          }
 
-      case 8:
-        //
-        // Translate 8-bit (256 colors) BMP Palette to 24-bit color
-        //
-        Blt->Red   = BmpColorMap[*Image].Red;
-        Blt->Green = BmpColorMap[*Image].Green;
-        Blt->Blue  = BmpColorMap[*Image].Blue;
-        break;
+          break;
 
-      case 24:
-        //
-        // It is 24-bit BMP.
-        //
-        Blt->Blue  = *Image++;
-        Blt->Green = *Image++;
-        Blt->Red   = *Image;
-        break;
+        case 8:
+          //
+          // Translate 8-bit (256 colors) BMP Palette to 24-bit color
+          //
+          Blt->Red   = BmpColorMap[*Image].Red;
+          Blt->Green = BmpColorMap[*Image].Green;
+          Blt->Blue  = BmpColorMap[*Image].Blue;
+          break;
 
-      case 32:
-        //
-        //Conver 32 bit to 24bit bmp - just ignore the final byte of each pixel
-        Blt->Blue  = *Image++;
-        Blt->Green = *Image++;
-        Blt->Red   = *Image++;
-        break;
+        case 24:
+          //
+          // It is 24-bit BMP.
+          //
+          Blt->Blue  = *Image++;
+          Blt->Green = *Image++;
+          Blt->Red   = *Image;
+          break;
 
-      default:
-        //
-        // Other bit format BMP is not supported.
-        //
-        if (IsAllocated) {
-          FreePool (*GopBlt);
-          *GopBlt = NULL;
-        }
-        DEBUG ((DEBUG_ERROR, "Bmp Bit format not supported.  0x%X\n", BmpHeader->BitPerPixel));
-        return RETURN_UNSUPPORTED;
-        break;
-      };
+        case 32:
+          //
+          // Conver 32 bit to 24bit bmp - just ignore the final byte of each pixel
+          Blt->Blue  = *Image++;
+          Blt->Green = *Image++;
+          Blt->Red   = *Image++;
+          break;
 
+        default:
+          //
+          // Other bit format BMP is not supported.
+          //
+          if (IsAllocated) {
+            FreePool (*GopBlt);
+            *GopBlt = NULL;
+          }
+
+          DEBUG ((DEBUG_ERROR, "Bmp Bit format not supported.  0x%X\n", BmpHeader->BitPerPixel));
+          return RETURN_UNSUPPORTED;
+          break;
+      }
     }
 
-    ImageIndex = (UINTN)Image - (UINTN)ImageHeader;
+    ImageIndex = (UINTN) Image - (UINTN) ImageHeader;
     if ((ImageIndex % 4) != 0) {
       //
       // Bmp Image starts each row on a 32-bit boundary!
@@ -486,22 +502,27 @@ TranslateGopBltToBmp (
   //
   Status = SafeUint32Mult (PixelWidth, 3, &BmpSize);
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "TranslateGopBltToBmp: GopBlt is too large. PixelHeight:0x%x PixelWidth:0x%x\n",
-      PixelHeight,
-      PixelWidth
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "TranslateGopBltToBmp: GopBlt is too large. PixelHeight:0x%x PixelWidth:0x%x\n",
+            PixelHeight,
+            PixelWidth
+           )
+           );
     return RETURN_UNSUPPORTED;
   }
+
   Status = SafeUint32Add (BmpSize, PaddingSize, &BmpSize);
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "TranslateGopBltToBmp: GopBlt is too large. PixelHeight:0x%x PixelWidth:0x%x\n",
-      PixelHeight,
-      PixelWidth
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "TranslateGopBltToBmp: GopBlt is too large. PixelHeight:0x%x PixelWidth:0x%x\n",
+            PixelHeight,
+            PixelWidth
+           )
+           );
     return RETURN_UNSUPPORTED;
   }
 
@@ -510,22 +531,27 @@ TranslateGopBltToBmp (
   //
   Status = SafeUint32Mult (BmpSize, PixelHeight, &BmpSize);
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "TranslateGopBltToBmp: GopBlt is too large. PixelHeight:0x%x PixelWidth:0x%x\n",
-      PixelHeight,
-      PixelWidth
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "TranslateGopBltToBmp: GopBlt is too large. PixelHeight:0x%x PixelWidth:0x%x\n",
+            PixelHeight,
+            PixelWidth
+           )
+           );
     return RETURN_UNSUPPORTED;
   }
+
   Status = SafeUint32Add (BmpSize, sizeof (BMP_IMAGE_HEADER), &BmpSize);
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "TranslateGopBltToBmp: GopBlt is too large. PixelHeight:0x%x PixelWidth:0x%x\n",
-      PixelHeight,
-      PixelWidth
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "TranslateGopBltToBmp: GopBlt is too large. PixelHeight:0x%x PixelWidth:0x%x\n",
+            PixelHeight,
+            PixelWidth
+           )
+           );
     return RETURN_UNSUPPORTED;
   }
 
@@ -538,15 +564,16 @@ TranslateGopBltToBmp (
     if (*BmpImage == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
+
     *BmpImageSize = BmpSize;
   } else if (*BmpImageSize < BmpSize) {
     *BmpImageSize = BmpSize;
     return RETURN_BUFFER_TOO_SMALL;
   }
 
-  BmpImageHeader = (BMP_IMAGE_HEADER *)*BmpImage;
+  BmpImageHeader = (BMP_IMAGE_HEADER *) *BmpImage;
   CopyMem (BmpImageHeader, &mBmpImageHeaderTemplate, sizeof (BMP_IMAGE_HEADER));
-  BmpImageHeader->Size        = *BmpImageSize;
+  BmpImageHeader->Size = *BmpImageSize;
   BmpImageHeader->ImageSize   = *BmpImageSize - sizeof (BMP_IMAGE_HEADER);
   BmpImageHeader->PixelWidth  = PixelWidth;
   BmpImageHeader->PixelHeight = PixelHeight;
@@ -554,7 +581,7 @@ TranslateGopBltToBmp (
   //
   // Convert BLT buffer to BMP file.
   //
-  Image = (UINT8 *)BmpImageHeader + sizeof (BMP_IMAGE_HEADER);
+  Image = (UINT8 *) BmpImageHeader + sizeof (BMP_IMAGE_HEADER);
   for (Row = 0; Row < PixelHeight; Row++) {
     BltPixel = &GopBlt[(PixelHeight - Row - 1) * PixelWidth];
 
