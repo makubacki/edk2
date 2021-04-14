@@ -11,7 +11,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "IScsiImpl.h"
 
-EFI_DRIVER_BINDING_PROTOCOL gIScsiIp4DriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  gIScsiIp4DriverBinding = {
   IScsiIp4DriverBindingSupported,
   IScsiIp4DriverBindingStart,
   IScsiIp4DriverBindingStop,
@@ -20,7 +20,7 @@ EFI_DRIVER_BINDING_PROTOCOL gIScsiIp4DriverBinding = {
   NULL
 };
 
-EFI_DRIVER_BINDING_PROTOCOL gIScsiIp6DriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  gIScsiIp6DriverBinding = {
   IScsiIp6DriverBindingSupported,
   IScsiIp6DriverBindingStart,
   IScsiIp6DriverBindingStop,
@@ -29,9 +29,9 @@ EFI_DRIVER_BINDING_PROTOCOL gIScsiIp6DriverBinding = {
   NULL
 };
 
-EFI_GUID                    gIScsiV4PrivateGuid = ISCSI_V4_PRIVATE_GUID;
-EFI_GUID                    gIScsiV6PrivateGuid = ISCSI_V6_PRIVATE_GUID;
-ISCSI_PRIVATE_DATA          *mPrivate           = NULL;
+EFI_GUID            gIScsiV4PrivateGuid = ISCSI_V4_PRIVATE_GUID;
+EFI_GUID            gIScsiV6PrivateGuid = ISCSI_V6_PRIVATE_GUID;
+ISCSI_PRIVATE_DATA  *mPrivate = NULL;
 
 /**
   Tests to see if this driver supports the RemainingDevicePath.
@@ -85,20 +85,20 @@ IScsiCheckAip (
   VOID
   )
 {
-  UINTN                            AipHandleCount;
-  EFI_HANDLE                       *AipHandleBuffer;
-  UINTN                            AipIndex;
-  EFI_ADAPTER_INFORMATION_PROTOCOL *Aip;
-  EFI_EXT_SCSI_PASS_THRU_PROTOCOL  *ExtScsiPassThru;
-  EFI_GUID                         *InfoTypesBuffer;
-  UINTN                            InfoTypeBufferCount;
-  UINTN                            TypeIndex;
-  VOID                             *InfoBlock;
-  UINTN                            InfoBlockSize;
-  BOOLEAN                          Supported;
-  EFI_ADAPTER_INFO_NETWORK_BOOT    *NetworkBoot;
-  EFI_STATUS                       Status;
-  UINT8                            NetworkBootPolicy;
+  UINTN                             AipHandleCount;
+  EFI_HANDLE                        *AipHandleBuffer;
+  UINTN                             AipIndex;
+  EFI_ADAPTER_INFORMATION_PROTOCOL  *Aip;
+  EFI_EXT_SCSI_PASS_THRU_PROTOCOL   *ExtScsiPassThru;
+  EFI_GUID                          *InfoTypesBuffer;
+  UINTN                             InfoTypeBufferCount;
+  UINTN                             TypeIndex;
+  VOID                              *InfoBlock;
+  UINTN                             InfoBlockSize;
+  BOOLEAN                           Supported;
+  EFI_ADAPTER_INFO_NETWORK_BOOT     *NetworkBoot;
+  EFI_STATUS                        Status;
+  UINT8                             NetworkBootPolicy;
 
   //
   // Check any AIP instances exist in system.
@@ -106,12 +106,12 @@ IScsiCheckAip (
   AipHandleCount  = 0;
   AipHandleBuffer = NULL;
   Status = gBS->LocateHandleBuffer (
-                  ByProtocol,
-                  &gEfiAdapterInformationProtocolGuid,
-                  NULL,
-                  &AipHandleCount,
-                  &AipHandleBuffer
-                  );
+                                    ByProtocol,
+                                    &gEfiAdapterInformationProtocolGuid,
+                                    NULL,
+                                    &AipHandleCount,
+                                    &AipHandleBuffer
+                                    );
   if (EFI_ERROR (Status) || AipHandleCount == 0) {
     return EFI_NOT_FOUND;
   }
@@ -122,18 +122,18 @@ IScsiCheckAip (
 
   for (AipIndex = 0; AipIndex < AipHandleCount; AipIndex++) {
     Status = gBS->HandleProtocol (
-                    AipHandleBuffer[AipIndex],
-                    &gEfiAdapterInformationProtocolGuid,
-                    (VOID *) &Aip
-                    );
+                                  AipHandleBuffer[AipIndex],
+                                  &gEfiAdapterInformationProtocolGuid,
+                                  (VOID *) &Aip
+                                  );
     ASSERT_EFI_ERROR (Status);
     ASSERT (Aip != NULL);
 
     Status = gBS->HandleProtocol (
-                    AipHandleBuffer[AipIndex],
-                    &gEfiExtScsiPassThruProtocolGuid,
-                    (VOID *) &ExtScsiPassThru
-                    );
+                                  AipHandleBuffer[AipIndex],
+                                  &gEfiExtScsiPassThruProtocolGuid,
+                                  (VOID *) &ExtScsiPassThru
+                                  );
     if (EFI_ERROR (Status) || ExtScsiPassThru == NULL) {
       continue;
     }
@@ -144,6 +144,7 @@ IScsiCheckAip (
     if (EFI_ERROR (Status) || InfoTypesBuffer == NULL) {
       continue;
     }
+
     //
     // Check whether the AIP instance has Network boot information block.
     //
@@ -180,17 +181,18 @@ IScsiCheckAip (
       Status = EFI_SUCCESS;
       goto Exit;
     }
+
     if (((NetworkBootPolicy & STOP_UEFI_ISCSI_IF_AIP_SUPPORT_IP4) != 0 &&
          !NetworkBoot->iScsiIpv4BootCapablity) ||
-         ((NetworkBootPolicy & STOP_UEFI_ISCSI_IF_AIP_SUPPORT_IP6) != 0 &&
+        ((NetworkBootPolicy & STOP_UEFI_ISCSI_IF_AIP_SUPPORT_IP6) != 0 &&
          !NetworkBoot->iScsiIpv6BootCapablity) ||
-         ((NetworkBootPolicy & STOP_UEFI_ISCSI_IF_AIP_SUPPORT_OFFLOAD) != 0 &&
+        ((NetworkBootPolicy & STOP_UEFI_ISCSI_IF_AIP_SUPPORT_OFFLOAD) != 0 &&
          !NetworkBoot->OffloadCapability) ||
-         ((NetworkBootPolicy & STOP_UEFI_ISCSI_IF_AIP_SUPPORT_MPIO) != 0 &&
+        ((NetworkBootPolicy & STOP_UEFI_ISCSI_IF_AIP_SUPPORT_MPIO) != 0 &&
          !NetworkBoot->iScsiMpioCapability) ||
-         ((NetworkBootPolicy & STOP_UEFI_ISCSI_IF_AIP_CONFIGURED_IP4) != 0 &&
+        ((NetworkBootPolicy & STOP_UEFI_ISCSI_IF_AIP_CONFIGURED_IP4) != 0 &&
          !NetworkBoot->iScsiIpv4Boot) ||
-         ((NetworkBootPolicy & STOP_UEFI_ISCSI_IF_AIP_CONFIGURED_IP6) != 0 &&
+        ((NetworkBootPolicy & STOP_UEFI_ISCSI_IF_AIP_CONFIGURED_IP6) != 0 &&
          !NetworkBoot->iScsiIpv6Boot)) {
       FreePool (InfoBlock);
       continue;
@@ -206,9 +208,11 @@ Exit:
   if (InfoBlock != NULL) {
     FreePool (InfoBlock);
   }
+
   if (AipHandleBuffer != NULL) {
     FreePool (AipHandleBuffer);
   }
+
   return Status;
 }
 
@@ -246,45 +250,44 @@ IScsiSupported (
   IN UINT8                        IpVersion
   )
 {
-  EFI_STATUS                Status;
-  EFI_GUID                  *IScsiServiceBindingGuid;
-  EFI_GUID                  *TcpServiceBindingGuid;
-  EFI_GUID                  *DhcpServiceBindingGuid;
-  EFI_GUID                  *DnsServiceBindingGuid;
+  EFI_STATUS  Status;
+  EFI_GUID    *IScsiServiceBindingGuid;
+  EFI_GUID    *TcpServiceBindingGuid;
+  EFI_GUID    *DhcpServiceBindingGuid;
+  EFI_GUID    *DnsServiceBindingGuid;
 
   if (IpVersion == IP_VERSION_4) {
-    IScsiServiceBindingGuid  = &gIScsiV4PrivateGuid;
-    TcpServiceBindingGuid    = &gEfiTcp4ServiceBindingProtocolGuid;
-    DhcpServiceBindingGuid   = &gEfiDhcp4ServiceBindingProtocolGuid;
-    DnsServiceBindingGuid    = &gEfiDns4ServiceBindingProtocolGuid;
-
+    IScsiServiceBindingGuid = &gIScsiV4PrivateGuid;
+    TcpServiceBindingGuid   = &gEfiTcp4ServiceBindingProtocolGuid;
+    DhcpServiceBindingGuid  = &gEfiDhcp4ServiceBindingProtocolGuid;
+    DnsServiceBindingGuid   = &gEfiDns4ServiceBindingProtocolGuid;
   } else {
-    IScsiServiceBindingGuid  = &gIScsiV6PrivateGuid;
-    TcpServiceBindingGuid    = &gEfiTcp6ServiceBindingProtocolGuid;
-    DhcpServiceBindingGuid   = &gEfiDhcp6ServiceBindingProtocolGuid;
-    DnsServiceBindingGuid    = &gEfiDns6ServiceBindingProtocolGuid;
+    IScsiServiceBindingGuid = &gIScsiV6PrivateGuid;
+    TcpServiceBindingGuid   = &gEfiTcp6ServiceBindingProtocolGuid;
+    DhcpServiceBindingGuid  = &gEfiDhcp6ServiceBindingProtocolGuid;
+    DnsServiceBindingGuid   = &gEfiDns6ServiceBindingProtocolGuid;
   }
 
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  IScsiServiceBindingGuid,
-                  NULL,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              ControllerHandle,
+                              IScsiServiceBindingGuid,
+                              NULL,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
   if (!EFI_ERROR (Status)) {
     return EFI_ALREADY_STARTED;
   }
 
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  TcpServiceBindingGuid,
-                  NULL,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              ControllerHandle,
+                              TcpServiceBindingGuid,
+                              NULL,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
@@ -296,13 +299,13 @@ IScsiSupported (
 
   if (IScsiDhcpIsConfigured (ControllerHandle, IpVersion)) {
     Status = gBS->OpenProtocol (
-                    ControllerHandle,
-                    DhcpServiceBindingGuid,
-                    NULL,
-                    This->DriverBindingHandle,
-                    ControllerHandle,
-                    EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                    );
+                                ControllerHandle,
+                                DhcpServiceBindingGuid,
+                                NULL,
+                                This->DriverBindingHandle,
+                                ControllerHandle,
+                                EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                                );
     if (EFI_ERROR (Status)) {
       return EFI_UNSUPPORTED;
     }
@@ -310,13 +313,13 @@ IScsiSupported (
 
   if (IScsiDnsIsConfigured (ControllerHandle)) {
     Status = gBS->OpenProtocol (
-                    ControllerHandle,
-                    DnsServiceBindingGuid,
-                    NULL,
-                    This->DriverBindingHandle,
-                    ControllerHandle,
-                    EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                    );
+                                ControllerHandle,
+                                DnsServiceBindingGuid,
+                                NULL,
+                                This->DriverBindingHandle,
+                                ControllerHandle,
+                                EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                                );
     if (EFI_ERROR (Status)) {
       return EFI_UNSUPPORTED;
     }
@@ -324,7 +327,6 @@ IScsiSupported (
 
   return EFI_SUCCESS;
 }
-
 
 /**
   Start to manage the controller. This is the worker function for
@@ -352,65 +354,65 @@ IScsiStart (
   IN UINT8                        IpVersion
   )
 {
-  EFI_STATUS                      Status;
-  ISCSI_DRIVER_DATA               *Private;
-  LIST_ENTRY                      *Entry;
-  LIST_ENTRY                      *NextEntry;
-  ISCSI_ATTEMPT_CONFIG_NVDATA     *AttemptConfigData;
-  ISCSI_SESSION                   *Session;
-  UINT8                           Index;
-  EFI_EXT_SCSI_PASS_THRU_PROTOCOL *ExistIScsiExtScsiPassThru;
-  ISCSI_DRIVER_DATA               *ExistPrivate;
-  UINT8                           *AttemptConfigOrder;
-  UINTN                           AttemptConfigOrderSize;
-  UINT8                           BootSelected;
-  EFI_HANDLE                      *HandleBuffer;
-  UINTN                           NumberOfHandles;
-  EFI_DEVICE_PATH_PROTOCOL        *DevicePath;
-  EFI_GUID                        *IScsiPrivateGuid;
-  EFI_GUID                        *TcpServiceBindingGuid;
-  BOOLEAN                         NeedUpdate;
-  VOID                            *Interface;
-  EFI_GUID                        *ProtocolGuid;
-  UINT8                           NetworkBootPolicy;
-  ISCSI_SESSION_CONFIG_NVDATA     *NvData;
+  EFI_STATUS                       Status;
+  ISCSI_DRIVER_DATA                *Private;
+  LIST_ENTRY                       *Entry;
+  LIST_ENTRY                       *NextEntry;
+  ISCSI_ATTEMPT_CONFIG_NVDATA      *AttemptConfigData;
+  ISCSI_SESSION                    *Session;
+  UINT8                            Index;
+  EFI_EXT_SCSI_PASS_THRU_PROTOCOL  *ExistIScsiExtScsiPassThru;
+  ISCSI_DRIVER_DATA                *ExistPrivate;
+  UINT8                            *AttemptConfigOrder;
+  UINTN                            AttemptConfigOrderSize;
+  UINT8                            BootSelected;
+  EFI_HANDLE                       *HandleBuffer;
+  UINTN                            NumberOfHandles;
+  EFI_DEVICE_PATH_PROTOCOL         *DevicePath;
+  EFI_GUID                         *IScsiPrivateGuid;
+  EFI_GUID                         *TcpServiceBindingGuid;
+  BOOLEAN                          NeedUpdate;
+  VOID                             *Interface;
+  EFI_GUID                         *ProtocolGuid;
+  UINT8                            NetworkBootPolicy;
+  ISCSI_SESSION_CONFIG_NVDATA      *NvData;
 
   //
   // Test to see if iSCSI driver supports the given controller.
   //
 
   if (IpVersion == IP_VERSION_4) {
-    IScsiPrivateGuid      = &gIScsiV4PrivateGuid;
+    IScsiPrivateGuid = &gIScsiV4PrivateGuid;
     TcpServiceBindingGuid = &gEfiTcp4ServiceBindingProtocolGuid;
-    ProtocolGuid          = &gEfiTcp4ProtocolGuid;
+    ProtocolGuid = &gEfiTcp4ProtocolGuid;
   } else if (IpVersion == IP_VERSION_6) {
-    IScsiPrivateGuid      = &gIScsiV6PrivateGuid;
+    IScsiPrivateGuid = &gIScsiV6PrivateGuid;
     TcpServiceBindingGuid = &gEfiTcp6ServiceBindingProtocolGuid;
-    ProtocolGuid          = &gEfiTcp6ProtocolGuid;
+    ProtocolGuid = &gEfiTcp6ProtocolGuid;
   } else {
     return EFI_INVALID_PARAMETER;
   }
 
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  IScsiPrivateGuid,
-                  NULL,
-                  Image,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              ControllerHandle,
+                              IScsiPrivateGuid,
+                              NULL,
+                              Image,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
   if (!EFI_ERROR (Status)) {
     return EFI_ALREADY_STARTED;
   }
 
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  TcpServiceBindingGuid,
-                  NULL,
-                  Image,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              ControllerHandle,
+                              TcpServiceBindingGuid,
+                              NULL,
+                              Image,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
@@ -456,24 +458,24 @@ IScsiStart (
   // IScsiDriverBindingStop() will be called.
   //
   Status = NetLibCreateServiceChild (
-             ControllerHandle,
-             Image,
-             TcpServiceBindingGuid,
-             &Private->ChildHandle
-             );
+                                     ControllerHandle,
+                                     Image,
+                                     TcpServiceBindingGuid,
+                                     &Private->ChildHandle
+                                     );
 
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
 
   Status = gBS->OpenProtocol (
-                  Private->ChildHandle, /// Default Tcp child
-                  ProtocolGuid,
-                  &Interface,
-                  Image,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              Private->ChildHandle, /// Default Tcp child
+                              ProtocolGuid,
+                              &Interface,
+                              Image,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
 
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
@@ -484,11 +486,11 @@ IScsiStart (
   // keep the relationship between ControllerHandle and ChildHandle.
   //
   Status = gBS->InstallProtocolInterface (
-                  &ControllerHandle,
-                  IScsiPrivateGuid,
-                  EFI_NATIVE_INTERFACE,
-                  &Private->IScsiIdentifier
-                  );
+                                          &ControllerHandle,
+                                          IScsiPrivateGuid,
+                                          EFI_NATIVE_INTERFACE,
+                                          &Private->IScsiIdentifier
+                                          );
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
@@ -513,12 +515,12 @@ IScsiStart (
   // In single path mode, try all attempts.
   //
   ExistPrivate = NULL;
-  Status       = EFI_NOT_FOUND;
+  Status = EFI_NOT_FOUND;
 
   if (mPrivate->OneSessionEstablished && mPrivate->EnableMpio) {
     AttemptConfigData = NULL;
     NET_LIST_FOR_EACH (Entry, &mPrivate->AttemptConfigs) {
-     AttemptConfigData = NET_LIST_USER_STRUCT (Entry, ISCSI_ATTEMPT_CONFIG_NVDATA, Link);
+      AttemptConfigData = NET_LIST_USER_STRUCT (Entry, ISCSI_ATTEMPT_CONFIG_NVDATA, Link);
       if (AttemptConfigData->SessionConfigData.Enabled == ISCSI_ENABLED_FOR_MPIO) {
         break;
       }
@@ -540,12 +542,12 @@ IScsiStart (
     // Locate all ExtScsiPassThru protocol instances.
     //
     Status = gBS->LocateHandleBuffer (
-                    ByProtocol,
-                    &gEfiExtScsiPassThruProtocolGuid,
-                    NULL,
-                    &NumberOfHandles,
-                    &HandleBuffer
-                    );
+                                      ByProtocol,
+                                      &gEfiExtScsiPassThruProtocolGuid,
+                                      NULL,
+                                      &NumberOfHandles,
+                                      &HandleBuffer
+                                      );
     if (EFI_ERROR (Status)) {
       goto ON_ERROR;
     }
@@ -556,10 +558,10 @@ IScsiStart (
     ExistIScsiExtScsiPassThru = NULL;
     for (Index = 0; Index < NumberOfHandles && ExistIScsiExtScsiPassThru == NULL; Index++) {
       Status = gBS->HandleProtocol (
-                      HandleBuffer[Index],
-                      &gEfiDevicePathProtocolGuid,
-                      (VOID **) &DevicePath
-                      );
+                                    HandleBuffer[Index],
+                                    &gEfiDevicePathProtocolGuid,
+                                    (VOID **) &DevicePath
+                                    );
       if (EFI_ERROR (Status)) {
         continue;
       }
@@ -570,10 +572,10 @@ IScsiStart (
           // Get the ExtScsiPassThru protocol instance.
           //
           Status = gBS->HandleProtocol (
-                          HandleBuffer[Index],
-                          &gEfiExtScsiPassThruProtocolGuid,
-                          (VOID **) &ExistIScsiExtScsiPassThru
-                          );
+                                        HandleBuffer[Index],
+                                        &gEfiExtScsiPassThruProtocolGuid,
+                                        (VOID **) &ExistIScsiExtScsiPassThru
+                                        );
           ASSERT_EFI_ERROR (Status);
           break;
         }
@@ -592,10 +594,10 @@ IScsiStart (
     ExistPrivate = ISCSI_DRIVER_DATA_FROM_EXT_SCSI_PASS_THRU (ExistIScsiExtScsiPassThru);
 
     Status = gBS->UninstallProtocolInterface (
-                    ExistPrivate->ExtScsiPassThruHandle,
-                    &gEfiExtScsiPassThruProtocolGuid,
-                    &ExistPrivate->IScsiExtScsiPassThru
-                    );
+                                              ExistPrivate->ExtScsiPassThruHandle,
+                                              &gEfiExtScsiPassThruProtocolGuid,
+                                              &ExistPrivate->IScsiExtScsiPassThru
+                                              );
     if (EFI_ERROR (Status)) {
       goto ON_ERROR;
     }
@@ -605,11 +607,11 @@ IScsiStart (
   // Install the Ext SCSI PASS THRU protocol.
   //
   Status = gBS->InstallProtocolInterface (
-                  &Private->ExtScsiPassThruHandle,
-                  &gEfiExtScsiPassThruProtocolGuid,
-                  EFI_NATIVE_INTERFACE,
-                  &Private->IScsiExtScsiPassThru
-                  );
+                                          &Private->ExtScsiPassThruHandle,
+                                          &gEfiExtScsiPassThruProtocolGuid,
+                                          EFI_NATIVE_INTERFACE,
+                                          &Private->IScsiExtScsiPassThru
+                                          );
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
@@ -647,6 +649,7 @@ IScsiStart (
       if (!mPrivate->EnableMpio && mPrivate->ValidSinglePathCount > 0) {
         mPrivate->ValidSinglePathCount--;
       }
+
       continue;
     }
 
@@ -665,6 +668,7 @@ IScsiStart (
       if (AttemptConfigData->SessionConfigData.IpMode == IP_MODE_IP6) {
         continue;
       }
+
       if (AttemptConfigData->SessionConfigData.IpMode == IP_MODE_AUTOCONFIG &&
           AttemptConfigData->AutoConfigureMode == IP_MODE_AUTOCONFIG_IP6) {
         continue;
@@ -673,6 +677,7 @@ IScsiStart (
       if (AttemptConfigData->SessionConfigData.IpMode == IP_MODE_IP4) {
         continue;
       }
+
       if (AttemptConfigData->SessionConfigData.IpMode == IP_MODE_AUTOCONFIG &&
           AttemptConfigData->AutoConfigureMode == IP_MODE_AUTOCONFIG_IP4) {
         continue;
@@ -693,11 +698,11 @@ IScsiStart (
     Session->AuthType   = AttemptConfigData->AuthenticationType;
 
     UnicodeSPrint (
-      mPrivate->PortString,
-      (UINTN) ISCSI_NAME_IFR_MAX_SIZE,
-      L"Attempt %d",
-      (UINTN) AttemptConfigData->AttemptConfigIndex
-      );
+                   mPrivate->PortString,
+                   (UINTN) ISCSI_NAME_IFR_MAX_SIZE,
+                   L"Attempt %d",
+                   (UINTN) AttemptConfigData->AttemptConfigIndex
+                   );
 
     if (Session->AuthType == ISCSI_AUTH_TYPE_CHAP) {
       Session->AuthData.CHAP.AuthConfig = &AttemptConfigData->AuthConfigData.CHAP;
@@ -729,12 +734,12 @@ IScsiStart (
       NvData->RedirectFlag = FALSE;
 
       gRT->SetVariable (
-             mPrivate->PortString,
-             &gEfiIScsiInitiatorNameProtocolGuid,
-             ISCSI_CONFIG_VAR_ATTR,
-             sizeof (ISCSI_ATTEMPT_CONFIG_NVDATA),
-             AttemptConfigData
-             );
+                        mPrivate->PortString,
+                        &gEfiIScsiInitiatorNameProtocolGuid,
+                        ISCSI_CONFIG_VAR_ATTR,
+                        sizeof (ISCSI_ATTEMPT_CONFIG_NVDATA),
+                        AttemptConfigData
+                        );
     }
 
     if (EFI_ERROR (Status)) {
@@ -747,7 +752,6 @@ IScsiStart (
       }
 
       FreePool (Session);
-
     } else {
       AttemptConfigData->ValidPath = TRUE;
 
@@ -773,12 +777,12 @@ IScsiStart (
       }
 
       gRT->SetVariable (
-             mPrivate->PortString,
-             &gEfiIScsiInitiatorNameProtocolGuid,
-             ISCSI_CONFIG_VAR_ATTR,
-             sizeof (ISCSI_ATTEMPT_CONFIG_NVDATA),
-             AttemptConfigData
-             );
+                        mPrivate->PortString,
+                        &gEfiIScsiInitiatorNameProtocolGuid,
+                        ISCSI_CONFIG_VAR_ATTR,
+                        sizeof (ISCSI_ATTEMPT_CONFIG_NVDATA),
+                        AttemptConfigData
+                        );
 
       //
       // Select the first login session. Abort others.
@@ -804,10 +808,10 @@ IScsiStart (
   //
   if (Private->Session == NULL) {
     Status = gBS->UninstallProtocolInterface (
-                    Private->ExtScsiPassThruHandle,
-                    &gEfiExtScsiPassThruProtocolGuid,
-                    &Private->IScsiExtScsiPassThru
-                    );
+                                              Private->ExtScsiPassThruHandle,
+                                              &gEfiExtScsiPassThruProtocolGuid,
+                                              &Private->IScsiExtScsiPassThru
+                                              );
     ASSERT_EFI_ERROR (Status);
     Private->ExtScsiPassThruHandle = NULL;
 
@@ -816,11 +820,11 @@ IScsiStart (
     //
     if (mPrivate->OneSessionEstablished && ExistPrivate != NULL) {
       Status = gBS->InstallProtocolInterface (
-                      &ExistPrivate->ExtScsiPassThruHandle,
-                      &gEfiExtScsiPassThruProtocolGuid,
-                      EFI_NATIVE_INTERFACE,
-                      &ExistPrivate->IScsiExtScsiPassThru
-                      );
+                                              &ExistPrivate->ExtScsiPassThruHandle,
+                                              &gEfiExtScsiPassThruProtocolGuid,
+                                              EFI_NATIVE_INTERFACE,
+                                              &ExistPrivate->IScsiExtScsiPassThru
+                                              );
       if (EFI_ERROR (Status)) {
         goto ON_ERROR;
       }
@@ -838,15 +842,15 @@ IScsiStart (
   // More than one attempt successes.
   //
   if (Private->Session != NULL && mPrivate->OneSessionEstablished) {
-
     AttemptConfigOrder = IScsiGetVariableAndSize (
-                           L"AttemptOrder",
-                           &gIScsiConfigGuid,
-                           &AttemptConfigOrderSize
-                           );
+                                                  L"AttemptOrder",
+                                                  &gIScsiConfigGuid,
+                                                  &AttemptConfigOrderSize
+                                                  );
     if (AttemptConfigOrder == NULL) {
       goto ON_ERROR;
     }
+
     for (Index = 0; Index < AttemptConfigOrderSize / sizeof (UINT8); Index++) {
       if (AttemptConfigOrder[Index] == mPrivate->BootSelectedIndex ||
           AttemptConfigOrder[Index] == BootSelected) {
@@ -863,21 +867,21 @@ IScsiStart (
         FreePool (Private->Session);
         Private->Session = NULL;
         gBS->UninstallProtocolInterface (
-               Private->ExtScsiPassThruHandle,
-               &gEfiExtScsiPassThruProtocolGuid,
-               &Private->IScsiExtScsiPassThru
-               );
+                                         Private->ExtScsiPassThruHandle,
+                                         &gEfiExtScsiPassThruProtocolGuid,
+                                         &Private->IScsiExtScsiPassThru
+                                         );
         Private->ExtScsiPassThruHandle = NULL;
 
         //
         // Reinstall the original ExtScsiPassThru back.
         //
         Status = gBS->InstallProtocolInterface (
-                        &ExistPrivate->ExtScsiPassThruHandle,
-                        &gEfiExtScsiPassThruProtocolGuid,
-                        EFI_NATIVE_INTERFACE,
-                        &ExistPrivate->IScsiExtScsiPassThru
-                        );
+                                                &ExistPrivate->ExtScsiPassThruHandle,
+                                                &gEfiExtScsiPassThruProtocolGuid,
+                                                EFI_NATIVE_INTERFACE,
+                                                &ExistPrivate->IScsiExtScsiPassThru
+                                                );
         if (EFI_ERROR (Status)) {
           goto ON_ERROR;
         }
@@ -887,15 +891,16 @@ IScsiStart (
         if (AttemptConfigOrder[Index] != BootSelected) {
           goto ON_ERROR;
         }
+
         mPrivate->BootSelectedIndex = BootSelected;
         //
         // Clear the resource in ExistPrivate.
         //
         gBS->UninstallProtocolInterface (
-               ExistPrivate->Controller,
-               IScsiPrivateGuid,
-               &ExistPrivate->IScsiIdentifier
-               );
+                                         ExistPrivate->Controller,
+                                         IScsiPrivateGuid,
+                                         &ExistPrivate->IScsiIdentifier
+                                         );
 
         IScsiRemoveNic (ExistPrivate->Controller);
         if (ExistPrivate->Session != NULL) {
@@ -904,10 +909,10 @@ IScsiStart (
 
         if (ExistPrivate->DevicePath != NULL) {
           Status = gBS->UninstallProtocolInterface (
-                          ExistPrivate->ExtScsiPassThruHandle,
-                          &gEfiDevicePathProtocolGuid,
-                          ExistPrivate->DevicePath
-                          );
+                                                    ExistPrivate->ExtScsiPassThruHandle,
+                                                    &gEfiDevicePathProtocolGuid,
+                                                    ExistPrivate->DevicePath
+                                                    );
           if (EFI_ERROR (Status)) {
             goto ON_ERROR;
           }
@@ -917,7 +922,6 @@ IScsiStart (
 
         gBS->CloseEvent (ExistPrivate->ExitBootServiceEvent);
         FreePool (ExistPrivate);
-
       }
     } else {
       //
@@ -927,7 +931,6 @@ IScsiStart (
         NeedUpdate = FALSE;
       }
     }
-
   }
 
   if (NeedUpdate) {
@@ -945,15 +948,16 @@ IScsiStart (
     Status = EFI_DEVICE_ERROR;
     goto ON_ERROR;
   }
+
   //
   // Install the updated device path onto the ExtScsiPassThruHandle.
   //
   Status = gBS->InstallProtocolInterface (
-                  &Private->ExtScsiPassThruHandle,
-                  &gEfiDevicePathProtocolGuid,
-                  EFI_NATIVE_INTERFACE,
-                  Private->DevicePath
-                  );
+                                          &Private->ExtScsiPassThruHandle,
+                                          &gEfiDevicePathProtocolGuid,
+                                          EFI_NATIVE_INTERFACE,
+                                          Private->DevicePath
+                                          );
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
@@ -962,22 +966,22 @@ IScsiStart (
   // ISCSI children should share the default Tcp child, just open the default Tcp child via BY_CHILD_CONTROLLER.
   //
   Status = gBS->OpenProtocol (
-                  Private->ChildHandle, /// Default Tcp child
-                  ProtocolGuid,
-                  &Interface,
-                  Image,
-                  Private->ExtScsiPassThruHandle,
-                  EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
-                  );
+                              Private->ChildHandle, /// Default Tcp child
+                              ProtocolGuid,
+                              &Interface,
+                              Image,
+                              Private->ExtScsiPassThruHandle,
+                              EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+                              );
   if (EFI_ERROR (Status)) {
-    gBS->UninstallMultipleProtocolInterfaces (
-           Private->ExtScsiPassThruHandle,
-           &gEfiExtScsiPassThruProtocolGuid,
-           &Private->IScsiExtScsiPassThru,
-           &gEfiDevicePathProtocolGuid,
-           Private->DevicePath,
-           NULL
-           );
+  gBS->UninstallMultipleProtocolInterfaces (
+                                            Private->ExtScsiPassThruHandle,
+                                            &gEfiExtScsiPassThruProtocolGuid,
+                                            &Private->IScsiExtScsiPassThru,
+                                            &gEfiDevicePathProtocolGuid,
+                                            Private->DevicePath,
+                                            NULL
+                                            );
 
     goto ON_ERROR;
   }
@@ -1032,29 +1036,28 @@ IScsiStop (
   IN UINT8                        IpVersion
   )
 {
-  EFI_HANDLE                      IScsiController;
-  EFI_STATUS                      Status;
-  ISCSI_PRIVATE_PROTOCOL          *IScsiIdentifier;
-  ISCSI_DRIVER_DATA               *Private;
-  EFI_EXT_SCSI_PASS_THRU_PROTOCOL *PassThru;
-  ISCSI_CONNECTION                *Conn;
-  EFI_GUID                        *ProtocolGuid;
-  EFI_GUID                        *TcpServiceBindingGuid;
-  EFI_GUID                        *TcpProtocolGuid;
-
+  EFI_HANDLE                       IScsiController;
+  EFI_STATUS                       Status;
+  ISCSI_PRIVATE_PROTOCOL           *IScsiIdentifier;
+  ISCSI_DRIVER_DATA                *Private;
+  EFI_EXT_SCSI_PASS_THRU_PROTOCOL  *PassThru;
+  ISCSI_CONNECTION                 *Conn;
+  EFI_GUID                         *ProtocolGuid;
+  EFI_GUID                         *TcpServiceBindingGuid;
+  EFI_GUID                         *TcpProtocolGuid;
 
   if (NumberOfChildren != 0) {
     //
     // We should have only one child.
     //
     Status = gBS->OpenProtocol (
-                    ChildHandleBuffer[0],
-                    &gEfiExtScsiPassThruProtocolGuid,
-                    (VOID **) &PassThru,
-                    This->DriverBindingHandle,
-                    ControllerHandle,
-                    EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                    );
+                                ChildHandleBuffer[0],
+                                &gEfiExtScsiPassThruProtocolGuid,
+                                (VOID **) &PassThru,
+                                This->DriverBindingHandle,
+                                ControllerHandle,
+                                EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                                );
     if (EFI_ERROR (Status)) {
       return EFI_DEVICE_ERROR;
     }
@@ -1074,18 +1077,18 @@ IScsiStop (
     }
 
     gBS->CloseProtocol (
-           Private->ChildHandle,
-           ProtocolGuid,
-           Private->Image,
-           Private->ExtScsiPassThruHandle
-           );
+                        Private->ChildHandle,
+                        ProtocolGuid,
+                        Private->Image,
+                        Private->ExtScsiPassThruHandle
+                        );
 
     gBS->CloseProtocol (
-           Conn->TcpIo.Handle,
-           ProtocolGuid,
-           Private->Image,
-           Private->ExtScsiPassThruHandle
-           );
+                        Conn->TcpIo.Handle,
+                        ProtocolGuid,
+                        Private->Image,
+                        Private->ExtScsiPassThruHandle
+                        );
 
     return EFI_SUCCESS;
   }
@@ -1094,27 +1097,28 @@ IScsiStop (
   // Get the handle of the controller we are controlling.
   //
   if (IpVersion == IP_VERSION_4) {
-    ProtocolGuid            = &gIScsiV4PrivateGuid;
-    TcpProtocolGuid         = &gEfiTcp4ProtocolGuid;
-    TcpServiceBindingGuid   = &gEfiTcp4ServiceBindingProtocolGuid;
+    ProtocolGuid    = &gIScsiV4PrivateGuid;
+    TcpProtocolGuid = &gEfiTcp4ProtocolGuid;
+    TcpServiceBindingGuid = &gEfiTcp4ServiceBindingProtocolGuid;
   } else {
-    ProtocolGuid            = &gIScsiV6PrivateGuid;
-    TcpProtocolGuid         = &gEfiTcp6ProtocolGuid;
-    TcpServiceBindingGuid   = &gEfiTcp6ServiceBindingProtocolGuid;
+    ProtocolGuid    = &gIScsiV6PrivateGuid;
+    TcpProtocolGuid = &gEfiTcp6ProtocolGuid;
+    TcpServiceBindingGuid = &gEfiTcp6ServiceBindingProtocolGuid;
   }
+
   IScsiController = NetLibGetNicHandle (ControllerHandle, TcpProtocolGuid);
   if (IScsiController == NULL) {
     return EFI_SUCCESS;
   }
 
   Status = gBS->OpenProtocol (
-                  IScsiController,
-                  ProtocolGuid,
-                  (VOID **) &IScsiIdentifier,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              IScsiController,
+                              ProtocolGuid,
+                              (VOID **) &IScsiIdentifier,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
   }
@@ -1124,29 +1128,29 @@ IScsiStop (
 
   if (Private->ChildHandle != NULL) {
     Status = gBS->CloseProtocol (
-                    Private->ChildHandle,
-                    TcpProtocolGuid,
-                    This->DriverBindingHandle,
-                    IScsiController
-                    );
+                                 Private->ChildHandle,
+                                 TcpProtocolGuid,
+                                 This->DriverBindingHandle,
+                                 IScsiController
+                                 );
 
     ASSERT (!EFI_ERROR (Status));
 
     Status = NetLibDestroyServiceChild (
-               IScsiController,
-               This->DriverBindingHandle,
-               TcpServiceBindingGuid,
-               Private->ChildHandle
-               );
+                                        IScsiController,
+                                        This->DriverBindingHandle,
+                                        TcpServiceBindingGuid,
+                                        Private->ChildHandle
+                                        );
 
     ASSERT (!EFI_ERROR (Status));
   }
 
   gBS->UninstallProtocolInterface (
-         IScsiController,
-         ProtocolGuid,
-         &Private->IScsiIdentifier
-         );
+                                   IScsiController,
+                                   ProtocolGuid,
+                                   &Private->IScsiIdentifier
+                                   );
 
   //
   // Remove this NIC.
@@ -1222,11 +1226,11 @@ IScsiIp4DriverBindingSupported (
   )
 {
   return IScsiSupported (
-           This,
-           ControllerHandle,
-           RemainingDevicePath,
-           IP_VERSION_4
-           );
+                         This,
+                         ControllerHandle,
+                         RemainingDevicePath,
+                         IP_VERSION_4
+                         );
 }
 
 /**
@@ -1272,7 +1276,7 @@ IScsiIp4DriverBindingStart (
   IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
   )
 {
-  EFI_STATUS        Status;
+  EFI_STATUS  Status;
 
   Status = IScsiStart (This->DriverBindingHandle, ControllerHandle, IP_VERSION_4);
   if (Status == EFI_ALREADY_STARTED) {
@@ -1318,12 +1322,12 @@ IScsiIp4DriverBindingStop (
   )
 {
   return IScsiStop (
-           This,
-           ControllerHandle,
-           NumberOfChildren,
-           ChildHandleBuffer,
-           IP_VERSION_4
-           );
+                    This,
+                    ControllerHandle,
+                    NumberOfChildren,
+                    ChildHandleBuffer,
+                    IP_VERSION_4
+                    );
 }
 
 /**
@@ -1377,11 +1381,11 @@ IScsiIp6DriverBindingSupported (
   )
 {
   return IScsiSupported (
-           This,
-           ControllerHandle,
-           RemainingDevicePath,
-           IP_VERSION_6
-           );
+                         This,
+                         ControllerHandle,
+                         RemainingDevicePath,
+                         IP_VERSION_6
+                         );
 }
 
 /**
@@ -1427,7 +1431,7 @@ IScsiIp6DriverBindingStart (
   IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
   )
 {
-  EFI_STATUS        Status;
+  EFI_STATUS  Status;
 
   Status = IScsiStart (This->DriverBindingHandle, ControllerHandle, IP_VERSION_6);
   if (Status == EFI_ALREADY_STARTED) {
@@ -1473,12 +1477,12 @@ IScsiIp6DriverBindingStop (
   )
 {
   return IScsiStop (
-           This,
-           ControllerHandle,
-           NumberOfChildren,
-           ChildHandleBuffer,
-           IP_VERSION_6
-           );
+                    This,
+                    ControllerHandle,
+                    NumberOfChildren,
+                    ChildHandleBuffer,
+                    IP_VERSION_6
+                    );
 }
 
 /**
@@ -1496,23 +1500,23 @@ IScsiUnload (
   IN EFI_HANDLE  ImageHandle
   )
 {
-  EFI_STATUS                        Status;
-  UINTN                             DeviceHandleCount;
-  EFI_HANDLE                        *DeviceHandleBuffer;
-  UINTN                             Index;
-  EFI_COMPONENT_NAME_PROTOCOL       *ComponentName;
-  EFI_COMPONENT_NAME2_PROTOCOL      *ComponentName2;
+  EFI_STATUS                    Status;
+  UINTN                         DeviceHandleCount;
+  EFI_HANDLE                    *DeviceHandleBuffer;
+  UINTN                         Index;
+  EFI_COMPONENT_NAME_PROTOCOL   *ComponentName;
+  EFI_COMPONENT_NAME2_PROTOCOL  *ComponentName2;
 
   //
   // Try to disconnect the driver from the devices it's controlling.
   //
   Status = gBS->LocateHandleBuffer (
-                  AllHandles,
-                  NULL,
-                  NULL,
-                  &DeviceHandleCount,
-                  &DeviceHandleBuffer
-                  );
+                                    AllHandles,
+                                    NULL,
+                                    NULL,
+                                    &DeviceHandleCount,
+                                    &DeviceHandleBuffer
+                                    );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -1522,18 +1526,20 @@ IScsiUnload (
   //
   for (Index = 0; Index < DeviceHandleCount; Index++) {
     Status = IScsiTestManagedDevice (
-               DeviceHandleBuffer[Index],
-               gIScsiIp4DriverBinding.DriverBindingHandle,
-               &gEfiTcp4ProtocolGuid)
-               ;
+                                     DeviceHandleBuffer[Index],
+                                     gIScsiIp4DriverBinding.DriverBindingHandle,
+                                     &gEfiTcp4ProtocolGuid
+                                     )
+    ;
     if (EFI_ERROR (Status)) {
       continue;
     }
+
     Status = gBS->DisconnectController (
-                    DeviceHandleBuffer[Index],
-                    gIScsiIp4DriverBinding.DriverBindingHandle,
-                    NULL
-                    );
+                                        DeviceHandleBuffer[Index],
+                                        gIScsiIp4DriverBinding.DriverBindingHandle,
+                                        NULL
+                                        );
     if (EFI_ERROR (Status)) {
       goto ON_EXIT;
     }
@@ -1544,18 +1550,19 @@ IScsiUnload (
   //
   for (Index = 0; Index < DeviceHandleCount; Index++) {
     Status = IScsiTestManagedDevice (
-               DeviceHandleBuffer[Index],
-               gIScsiIp6DriverBinding.DriverBindingHandle,
-               &gEfiTcp6ProtocolGuid
-               );
+                                     DeviceHandleBuffer[Index],
+                                     gIScsiIp6DriverBinding.DriverBindingHandle,
+                                     &gEfiTcp6ProtocolGuid
+                                     );
     if (EFI_ERROR (Status)) {
       continue;
     }
+
     Status = gBS->DisconnectController (
-                    DeviceHandleBuffer[Index],
-                    gIScsiIp6DriverBinding.DriverBindingHandle,
-                    NULL
-                    );
+                                        DeviceHandleBuffer[Index],
+                                        gIScsiIp6DriverBinding.DriverBindingHandle,
+                                        NULL
+                                        );
     if (EFI_ERROR (Status)) {
       goto ON_EXIT;
     }
@@ -1573,20 +1580,21 @@ IScsiUnload (
   // Uninstall the protocols installed by iSCSI driver.
   //
   Status = gBS->UninstallMultipleProtocolInterfaces (
-                  ImageHandle,
-                  &gEfiAuthenticationInfoProtocolGuid,
-                  &gIScsiAuthenticationInfo,
-                  NULL
-                  );
+                                                     ImageHandle,
+                                                     &gEfiAuthenticationInfoProtocolGuid,
+                                                     &gIScsiAuthenticationInfo,
+                                                     NULL
+                                                     );
   if (EFI_ERROR (Status)) {
     goto ON_EXIT;
   }
 
-  if (gIScsiControllerNameTable!= NULL) {
+  if (gIScsiControllerNameTable != NULL) {
     Status = FreeUnicodeStringTable (gIScsiControllerNameTable);
     if (EFI_ERROR (Status)) {
       goto ON_EXIT;
     }
+
     gIScsiControllerNameTable = NULL;
   }
 
@@ -1595,34 +1603,34 @@ IScsiUnload (
   // if it has been installed.
   //
   Status = gBS->HandleProtocol (
-                  gIScsiIp4DriverBinding.DriverBindingHandle,
-                  &gEfiComponentNameProtocolGuid,
-                  (VOID **) &ComponentName
-                  );
+                                gIScsiIp4DriverBinding.DriverBindingHandle,
+                                &gEfiComponentNameProtocolGuid,
+                                (VOID **) &ComponentName
+                                );
   if (!EFI_ERROR (Status)) {
     Status = gBS->UninstallMultipleProtocolInterfaces (
-           gIScsiIp4DriverBinding.DriverBindingHandle,
-           &gEfiComponentNameProtocolGuid,
-           ComponentName,
-           NULL
-           );
+                                                       gIScsiIp4DriverBinding.DriverBindingHandle,
+                                                       &gEfiComponentNameProtocolGuid,
+                                                       ComponentName,
+                                                       NULL
+                                                       );
     if (EFI_ERROR (Status)) {
       goto ON_EXIT;
     }
   }
 
   Status = gBS->HandleProtocol (
-                  gIScsiIp4DriverBinding.DriverBindingHandle,
-                  &gEfiComponentName2ProtocolGuid,
-                  (VOID **) &ComponentName2
-                  );
+                                gIScsiIp4DriverBinding.DriverBindingHandle,
+                                &gEfiComponentName2ProtocolGuid,
+                                (VOID **) &ComponentName2
+                                );
   if (!EFI_ERROR (Status)) {
-    gBS->UninstallMultipleProtocolInterfaces (
-           gIScsiIp4DriverBinding.DriverBindingHandle,
-           &gEfiComponentName2ProtocolGuid,
-           ComponentName2,
-           NULL
-           );
+  gBS->UninstallMultipleProtocolInterfaces (
+                                            gIScsiIp4DriverBinding.DriverBindingHandle,
+                                            &gEfiComponentName2ProtocolGuid,
+                                            ComponentName2,
+                                            NULL
+                                            );
     if (EFI_ERROR (Status)) {
       goto ON_EXIT;
     }
@@ -1633,34 +1641,34 @@ IScsiUnload (
   // if it has been installed.
   //
   Status = gBS->HandleProtocol (
-                  gIScsiIp6DriverBinding.DriverBindingHandle,
-                  &gEfiComponentNameProtocolGuid,
-                  (VOID **) &ComponentName
-                  );
+                                gIScsiIp6DriverBinding.DriverBindingHandle,
+                                &gEfiComponentNameProtocolGuid,
+                                (VOID **) &ComponentName
+                                );
   if (!EFI_ERROR (Status)) {
     Status = gBS->UninstallMultipleProtocolInterfaces (
-           gIScsiIp6DriverBinding.DriverBindingHandle,
-           &gEfiComponentNameProtocolGuid,
-           ComponentName,
-           NULL
-           );
+                                                       gIScsiIp6DriverBinding.DriverBindingHandle,
+                                                       &gEfiComponentNameProtocolGuid,
+                                                       ComponentName,
+                                                       NULL
+                                                       );
     if (EFI_ERROR (Status)) {
       goto ON_EXIT;
     }
   }
 
   Status = gBS->HandleProtocol (
-                  gIScsiIp6DriverBinding.DriverBindingHandle,
-                  &gEfiComponentName2ProtocolGuid,
-                  (VOID **) &ComponentName2
-                  );
+                                gIScsiIp6DriverBinding.DriverBindingHandle,
+                                &gEfiComponentName2ProtocolGuid,
+                                (VOID **) &ComponentName2
+                                );
   if (!EFI_ERROR (Status)) {
-    gBS->UninstallMultipleProtocolInterfaces (
-           gIScsiIp6DriverBinding.DriverBindingHandle,
-           &gEfiComponentName2ProtocolGuid,
-           ComponentName2,
-           NULL
-           );
+  gBS->UninstallMultipleProtocolInterfaces (
+                                            gIScsiIp6DriverBinding.DriverBindingHandle,
+                                            &gEfiComponentName2ProtocolGuid,
+                                            ComponentName2,
+                                            NULL
+                                            );
     if (EFI_ERROR (Status)) {
       goto ON_EXIT;
     }
@@ -1670,23 +1678,23 @@ IScsiUnload (
   // Uninstall the IScsiInitiatorNameProtocol and all the driver binding protocols.
   //
   Status = gBS->UninstallMultipleProtocolInterfaces (
-                  gIScsiIp4DriverBinding.DriverBindingHandle,
-                  &gEfiDriverBindingProtocolGuid,
-                  &gIScsiIp4DriverBinding,
-                  &gEfiIScsiInitiatorNameProtocolGuid,
-                  &gIScsiInitiatorName,
-                  NULL
-                  );
+                                                     gIScsiIp4DriverBinding.DriverBindingHandle,
+                                                     &gEfiDriverBindingProtocolGuid,
+                                                     &gIScsiIp4DriverBinding,
+                                                     &gEfiIScsiInitiatorNameProtocolGuid,
+                                                     &gIScsiInitiatorName,
+                                                     NULL
+                                                     );
   if (EFI_ERROR (Status)) {
     goto ON_EXIT;
   }
 
   Status = gBS->UninstallMultipleProtocolInterfaces (
-                  gIScsiIp6DriverBinding.DriverBindingHandle,
-                  &gEfiDriverBindingProtocolGuid,
-                  &gIScsiIp6DriverBinding,
-                  NULL
-                  );
+                                                     gIScsiIp6DriverBinding.DriverBindingHandle,
+                                                     &gEfiDriverBindingProtocolGuid,
+                                                     &gIScsiIp6DriverBinding,
+                                                     NULL
+                                                     );
 
 ON_EXIT:
 
@@ -1728,10 +1736,10 @@ IScsiDriverEntryPoint (
   // There should be only one EFI_ISCSI_INITIATOR_NAME_PROTOCOL.
   //
   Status = gBS->LocateProtocol (
-                  &gEfiIScsiInitiatorNameProtocolGuid,
-                  NULL,
-                  (VOID **) &IScsiInitiatorName
-                  );
+                                &gEfiIScsiInitiatorNameProtocolGuid,
+                                NULL,
+                                (VOID **) &IScsiInitiatorName
+                                );
   if (!EFI_ERROR (Status)) {
     return EFI_ACCESS_DENIED;
   }
@@ -1740,25 +1748,25 @@ IScsiDriverEntryPoint (
   // Initialize the EFI Driver Library.
   //
   Status = EfiLibInstallDriverBindingComponentName2 (
-             ImageHandle,
-             SystemTable,
-             &gIScsiIp4DriverBinding,
-             ImageHandle,
-             &gIScsiComponentName,
-             &gIScsiComponentName2
-             );
+                                                     ImageHandle,
+                                                     SystemTable,
+                                                     &gIScsiIp4DriverBinding,
+                                                     ImageHandle,
+                                                     &gIScsiComponentName,
+                                                     &gIScsiComponentName2
+                                                     );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   Status = EfiLibInstallDriverBindingComponentName2 (
-             ImageHandle,
-             SystemTable,
-             &gIScsiIp6DriverBinding,
-             NULL,
-             &gIScsiComponentName,
-             &gIScsiComponentName2
-             );
+                                                     ImageHandle,
+                                                     SystemTable,
+                                                     &gIScsiIp6DriverBinding,
+                                                     NULL,
+                                                     &gIScsiComponentName,
+                                                     &gIScsiComponentName2
+                                                     );
   if (EFI_ERROR (Status)) {
     goto Error1;
   }
@@ -1767,11 +1775,11 @@ IScsiDriverEntryPoint (
   // Install the iSCSI Initiator Name Protocol.
   //
   Status = gBS->InstallProtocolInterface (
-                  &ImageHandle,
-                  &gEfiIScsiInitiatorNameProtocolGuid,
-                  EFI_NATIVE_INTERFACE,
-                  &gIScsiInitiatorName
-                  );
+                                          &ImageHandle,
+                                          &gEfiIScsiInitiatorNameProtocolGuid,
+                                          EFI_NATIVE_INTERFACE,
+                                          &gIScsiInitiatorName
+                                          );
   if (EFI_ERROR (Status)) {
     goto Error2;
   }
@@ -1817,17 +1825,17 @@ IScsiDriverEntryPoint (
   // do not produce the protocol instance.
   //
   Status = gBS->LocateProtocol (
-                  &gEfiAuthenticationInfoProtocolGuid,
-                  NULL,
-                  (VOID **) &AuthenticationInfo
-                  );
+                                &gEfiAuthenticationInfoProtocolGuid,
+                                NULL,
+                                (VOID **) &AuthenticationInfo
+                                );
   if (Status == EFI_NOT_FOUND) {
     Status = gBS->InstallProtocolInterface (
-                    &ImageHandle,
-                    &gEfiAuthenticationInfoProtocolGuid,
-                    EFI_NATIVE_INTERFACE,
-                    &gIScsiAuthenticationInfo
-                    );
+                                            &ImageHandle,
+                                            &gEfiAuthenticationInfoProtocolGuid,
+                                            EFI_NATIVE_INTERFACE,
+                                            &gIScsiAuthenticationInfo
+                                            );
     if (EFI_ERROR (Status)) {
       goto Error6;
     }
@@ -1849,26 +1857,25 @@ Error4:
 
 Error3:
   gBS->UninstallMultipleProtocolInterfaces (
-         ImageHandle,
-         &gEfiIScsiInitiatorNameProtocolGuid,
-         &gIScsiInitiatorName,
-         NULL
-         );
+                                            ImageHandle,
+                                            &gEfiIScsiInitiatorNameProtocolGuid,
+                                            &gIScsiInitiatorName,
+                                            NULL
+                                            );
 
 Error2:
   EfiLibUninstallDriverBindingComponentName2 (
-    &gIScsiIp6DriverBinding,
-    &gIScsiComponentName,
-    &gIScsiComponentName2
-    );
+                                              &gIScsiIp6DriverBinding,
+                                              &gIScsiComponentName,
+                                              &gIScsiComponentName2
+                                              );
 
 Error1:
   EfiLibUninstallDriverBindingComponentName2 (
-    &gIScsiIp4DriverBinding,
-    &gIScsiComponentName,
-    &gIScsiComponentName2
-    );
+                                              &gIScsiIp4DriverBinding,
+                                              &gIScsiComponentName,
+                                              &gIScsiComponentName2
+                                              );
 
   return Status;
 }
-

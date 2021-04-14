@@ -9,7 +9,6 @@
 
 #include "HttpUtilitiesDxe.h"
 
-
 /**
   Unloads an image.
 
@@ -25,25 +24,24 @@ HttpUtilitiesDxeUnload (
   IN EFI_HANDLE  ImageHandle
   )
 {
-  EFI_STATUS                      Status;
-  UINTN                           HandleNum;
-  EFI_HANDLE                      *HandleBuffer;
-  UINT32                          Index;
-  EFI_HTTP_UTILITIES_PROTOCOL     *HttpUtilitiesProtocol;
+  EFI_STATUS                   Status;
+  UINTN                        HandleNum;
+  EFI_HANDLE                   *HandleBuffer;
+  UINT32                       Index;
+  EFI_HTTP_UTILITIES_PROTOCOL  *HttpUtilitiesProtocol;
 
-
-  HandleBuffer   = NULL;
+  HandleBuffer = NULL;
 
   //
   // Locate all the handles with HttpUtilities protocol.
   //
   Status = gBS->LocateHandleBuffer (
-                  ByProtocol,
-                  &gEfiHttpUtilitiesProtocolGuid,
-                  NULL,
-                  &HandleNum,
-                  &HandleBuffer
-                  );
+                                    ByProtocol,
+                                    &gEfiHttpUtilitiesProtocolGuid,
+                                    NULL,
+                                    &HandleNum,
+                                    &HandleBuffer
+                                    );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -53,13 +51,13 @@ HttpUtilitiesDxeUnload (
     // Firstly, find HttpUtilitiesProtocol interface
     //
     Status = gBS->OpenProtocol (
-                    HandleBuffer[Index],
-                    &gEfiHttpUtilitiesProtocolGuid,
-                    (VOID **) &HttpUtilitiesProtocol,
-                    ImageHandle,
-                    NULL,
-                    EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL
-                    );
+                                HandleBuffer[Index],
+                                &gEfiHttpUtilitiesProtocolGuid,
+                                (VOID **) &HttpUtilitiesProtocol,
+                                ImageHandle,
+                                NULL,
+                                EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL
+                                );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -68,10 +66,11 @@ HttpUtilitiesDxeUnload (
     // Then, uninstall HttpUtilities interface
     //
     Status = gBS->UninstallMultipleProtocolInterfaces (
-                    HandleBuffer[Index],
-                    &gEfiHttpUtilitiesProtocolGuid, HttpUtilitiesProtocol,
-                    NULL
-                    );
+                                                       HandleBuffer[Index],
+                                                       &gEfiHttpUtilitiesProtocolGuid,
+                                                       HttpUtilitiesProtocol,
+                                                       NULL
+                                                       );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -79,7 +78,6 @@ HttpUtilitiesDxeUnload (
 
   return EFI_SUCCESS;
 }
-
 
 /**
   This is the declaration of an EFI image entry point. This entry point is
@@ -99,9 +97,9 @@ HttpUtilitiesDxeDriverEntryPoint (
   IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  EFI_STATUS             Status;
+  EFI_STATUS  Status;
 
-  EFI_HANDLE             Handle;
+  EFI_HANDLE  Handle;
 
   Handle = NULL;
 
@@ -109,12 +107,11 @@ HttpUtilitiesDxeDriverEntryPoint (
   // Install the HttpUtilities Protocol onto Handle
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &Handle,
-                  &gEfiHttpUtilitiesProtocolGuid,
-                  &mHttpUtilitiesProtocol,
-                  NULL
-                  );
+                                                   &Handle,
+                                                   &gEfiHttpUtilitiesProtocolGuid,
+                                                   &mHttpUtilitiesProtocol,
+                                                   NULL
+                                                   );
 
   return Status;
 }
-

@@ -10,9 +10,9 @@
 
 #include "Ip6Impl.h"
 
-EFI_IPSEC2_PROTOCOL    *mIpSec = NULL;
+EFI_IPSEC2_PROTOCOL  *mIpSec = NULL;
 
-EFI_IP6_PROTOCOL mEfiIp6ProtocolTemplete = {
+EFI_IP6_PROTOCOL  mEfiIp6ProtocolTemplete = {
   EfiIp6GetModeData,
   EfiIp6Configure,
   EfiIp6Groups,
@@ -50,12 +50,12 @@ EfiIp6GetModeData (
   OUT EFI_SIMPLE_NETWORK_MODE         *SnpModeData     OPTIONAL
   )
 {
-  IP6_PROTOCOL              *IpInstance;
-  IP6_SERVICE               *IpSb;
-  IP6_INTERFACE             *IpIf;
-  EFI_IP6_CONFIG_DATA       *Config;
-  EFI_STATUS                Status;
-  EFI_TPL                   OldTpl;
+  IP6_PROTOCOL         *IpInstance;
+  IP6_SERVICE          *IpSb;
+  IP6_INTERFACE        *IpIf;
+  EFI_IP6_CONFIG_DATA  *Config;
+  EFI_STATUS           Status;
+  EFI_TPL              OldTpl;
 
   if (This == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -63,8 +63,8 @@ EfiIp6GetModeData (
 
   OldTpl     = gBS->RaiseTPL (TPL_CALLBACK);
   IpInstance = IP6_INSTANCE_FROM_PROTOCOL (This);
-  IpSb       = IpInstance->Service;
-  IpIf       = IpInstance->Interface;
+  IpSb = IpInstance->Service;
+  IpIf = IpInstance->Interface;
 
   if (IpSb->LinkLocalDadFail) {
     return EFI_INVALID_PARAMETER;
@@ -78,28 +78,28 @@ EfiIp6GetModeData (
     Ip6ModeData->IsStarted     = (BOOLEAN) (IpInstance->State == IP6_STATE_CONFIGED);
     Ip6ModeData->MaxPacketSize = IpSb->MaxPacketSize;
     CopyMem (&Ip6ModeData->ConfigData, &IpInstance->ConfigData, sizeof (EFI_IP6_CONFIG_DATA));
-    Ip6ModeData->IsConfigured  = FALSE;
+    Ip6ModeData->IsConfigured = FALSE;
 
-    Ip6ModeData->AddressCount  = 0;
-    Ip6ModeData->AddressList   = NULL;
+    Ip6ModeData->AddressCount = 0;
+    Ip6ModeData->AddressList  = NULL;
 
-    Ip6ModeData->GroupCount    = IpInstance->GroupCount;
-    Ip6ModeData->GroupTable    = NULL;
+    Ip6ModeData->GroupCount = IpInstance->GroupCount;
+    Ip6ModeData->GroupTable = NULL;
 
-    Ip6ModeData->RouteCount    = 0;
-    Ip6ModeData->RouteTable    = NULL;
+    Ip6ModeData->RouteCount = 0;
+    Ip6ModeData->RouteTable = NULL;
 
     Ip6ModeData->NeighborCount = 0;
     Ip6ModeData->NeighborCache = NULL;
 
-    Ip6ModeData->PrefixCount   = 0;
-    Ip6ModeData->PrefixTable   = NULL;
+    Ip6ModeData->PrefixCount = 0;
+    Ip6ModeData->PrefixTable = NULL;
 
     Ip6ModeData->IcmpTypeCount = 23;
     Ip6ModeData->IcmpTypeList  = AllocateCopyPool (
-                                   Ip6ModeData->IcmpTypeCount * sizeof (EFI_IP6_ICMP_TYPE),
-                                   mIp6SupportedIcmp
-                                   );
+                                                   Ip6ModeData->IcmpTypeCount * sizeof (EFI_IP6_ICMP_TYPE),
+                                                   mIp6SupportedIcmp
+                                                   );
     if (Ip6ModeData->IcmpTypeList == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
       goto Error;
@@ -109,10 +109,10 @@ EfiIp6GetModeData (
     // Return the currently configured IPv6 addresses and corresponding prefix lengths.
     //
     Status = Ip6BuildEfiAddressList (
-               IpSb,
-               &Ip6ModeData->AddressCount,
-               &Ip6ModeData->AddressList
-               );
+                                     IpSb,
+                                     &Ip6ModeData->AddressCount,
+                                     &Ip6ModeData->AddressList
+                                     );
     if (EFI_ERROR (Status)) {
       goto Error;
     }
@@ -136,10 +136,10 @@ EfiIp6GetModeData (
       // Build a EFI route table for user from the internal route table.
       //
       Status = Ip6BuildEfiRouteTable (
-                 IpSb->RouteTable,
-                 &Ip6ModeData->RouteCount,
-                 &Ip6ModeData->RouteTable
-                 );
+                                      IpSb->RouteTable,
+                                      &Ip6ModeData->RouteCount,
+                                      &Ip6ModeData->RouteTable
+                                      );
 
       if (EFI_ERROR (Status)) {
         goto Error;
@@ -152,22 +152,23 @@ EfiIp6GetModeData (
       //
       if (IpInstance->GroupCount != 0) {
         Ip6ModeData->GroupTable = AllocateCopyPool (
-                                    IpInstance->GroupCount * sizeof (EFI_IPv6_ADDRESS),
-                                    IpInstance->GroupList
-                                    );
+                                                    IpInstance->GroupCount * sizeof (EFI_IPv6_ADDRESS),
+                                                    IpInstance->GroupList
+                                                    );
         if (Ip6ModeData->GroupTable == NULL) {
           Status = EFI_OUT_OF_RESOURCES;
           goto Error;
         }
       }
+
       //
       // Return the neighbor cache entries
       //
       Status = Ip6BuildEfiNeighborCache (
-                 IpInstance,
-                 &Ip6ModeData->NeighborCount,
-                 &Ip6ModeData->NeighborCache
-                 );
+                                         IpInstance,
+                                         &Ip6ModeData->NeighborCount,
+                                         &Ip6ModeData->NeighborCache
+                                         );
       if (EFI_ERROR (Status)) {
         goto Error;
       }
@@ -176,14 +177,13 @@ EfiIp6GetModeData (
       // Return the prefix table entries
       //
       Status = Ip6BuildPrefixTable (
-                 IpInstance,
-                 &Ip6ModeData->PrefixCount,
-                 &Ip6ModeData->PrefixTable
-                 );
+                                    IpInstance,
+                                    &Ip6ModeData->PrefixCount,
+                                    &Ip6ModeData->PrefixTable
+                                    );
       if (EFI_ERROR (Status)) {
         goto Error;
       }
-
     }
   }
 
@@ -248,9 +248,10 @@ Ip6IsValidAddress (
   )
 {
   if (!NetIp6IsUnspecifiedAddr (Ip)) {
-    if (!NetIp6IsValidUnicast(Ip)) {
+    if (!NetIp6IsValidUnicast (Ip)) {
       return FALSE;
     }
+
     if (Ip6IsOneOfSetAddress (IpSb, Ip, NULL, NULL)) {
       return Flag;
     }
@@ -310,8 +311,8 @@ Ip6InitProtocol (
   IpInstance->GroupList = NULL;
   CopyMem (&IpInstance->Ip6Proto, &mEfiIp6ProtocolTemplete, sizeof (EFI_IP6_PROTOCOL));
 
-  NetMapInit  (&IpInstance->RxTokens);
-  NetMapInit  (&IpInstance->TxTokens);
+  NetMapInit (&IpInstance->RxTokens);
+  NetMapInit (&IpInstance->TxTokens);
   InitializeListHead (&IpInstance->Received);
   InitializeListHead (&IpInstance->Delivered);
 
@@ -344,15 +345,15 @@ Ip6ConfigProtocol (
   IN     EFI_IP6_CONFIG_DATA *Config
   )
 {
-  IP6_SERVICE               *IpSb;
-  IP6_INTERFACE             *IpIf;
-  EFI_STATUS                Status;
-  EFI_IP6_CONFIG_DATA       *Current;
-  IP6_ADDRESS_INFO          *AddressInfo;
-  BOOLEAN                   StationZero;
-  BOOLEAN                   DestZero;
-  EFI_IPv6_ADDRESS          Source;
-  BOOLEAN                   AddrOk;
+  IP6_SERVICE          *IpSb;
+  IP6_INTERFACE        *IpIf;
+  EFI_STATUS           Status;
+  EFI_IP6_CONFIG_DATA  *Current;
+  IP6_ADDRESS_INFO     *AddressInfo;
+  BOOLEAN              StationZero;
+  BOOLEAN              DestZero;
+  EFI_IPv6_ADDRESS     Source;
+  BOOLEAN              AddrOk;
 
   IpSb    = IpInstance->Service;
   Current = &IpInstance->ConfigData;
@@ -419,7 +420,6 @@ Ip6ConfigProtocol (
     return EFI_INVALID_PARAMETER;
   }
 
-
   NET_GET_REF (IpIf);
   IpInstance->Interface = IpIf;
   InsertTailList (&IpIf->IpInstances, &IpInstance->AddrLink);
@@ -459,7 +459,6 @@ Ip6CleanProtocol (
   // hasn't been called. Just leave it alone.
   //
   if (!IsListEmpty (&IpInstance->Delivered)) {
-    ;
   }
 
   if (IpInstance->Interface != NULL) {
@@ -470,8 +469,8 @@ Ip6CleanProtocol (
 
   if (IpInstance->GroupList != NULL) {
     FreePool (IpInstance->GroupList);
-    IpInstance->GroupList   = NULL;
-    IpInstance->GroupCount  = 0;
+    IpInstance->GroupList  = NULL;
+    IpInstance->GroupCount = 0;
   }
 
   NetMapClean (&IpInstance->TxTokens);
@@ -505,15 +504,15 @@ Ip6ServiceConfigMnp (
   IN BOOLEAN                Force
   )
 {
-  LIST_ENTRY                *Entry;
-  LIST_ENTRY                *ProtoEntry;
-  IP6_INTERFACE             *IpIf;
-  IP6_PROTOCOL              *IpInstance;
-  BOOLEAN                   Reconfig;
-  BOOLEAN                   PromiscReceive;
-  EFI_STATUS                Status;
+  LIST_ENTRY     *Entry;
+  LIST_ENTRY     *ProtoEntry;
+  IP6_INTERFACE  *IpIf;
+  IP6_PROTOCOL   *IpInstance;
+  BOOLEAN        Reconfig;
+  BOOLEAN        PromiscReceive;
+  EFI_STATUS     Status;
 
-  Reconfig       = FALSE;
+  Reconfig = FALSE;
   PromiscReceive = FALSE;
 
   if (!Force) {
@@ -523,8 +522,7 @@ Ip6ServiceConfigMnp (
     // filter also.
     //
     NET_LIST_FOR_EACH (Entry, &IpSb->Interfaces) {
-
-      IpIf              = NET_LIST_USER_STRUCT (Entry, IP6_INTERFACE, Link);
+      IpIf = NET_LIST_USER_STRUCT (Entry, IP6_INTERFACE, Link);
       IpIf->PromiscRecv = FALSE;
 
       NET_LIST_FOR_EACH (ProtoEntry, &IpIf->IpInstances) {
@@ -544,7 +542,7 @@ Ip6ServiceConfigMnp (
       return EFI_SUCCESS;
     }
 
-    Reconfig  = TRUE;
+    Reconfig = TRUE;
     IpSb->MnpConfigData.EnablePromiscuousReceive = PromiscReceive;
   }
 
@@ -614,11 +612,11 @@ EfiIp6Configure (
   IN EFI_IP6_CONFIG_DATA       *Ip6ConfigData OPTIONAL
   )
 {
-  IP6_PROTOCOL              *IpInstance;
-  EFI_IP6_CONFIG_DATA       *Current;
-  EFI_TPL                   OldTpl;
-  EFI_STATUS                Status;
-  IP6_SERVICE               *IpSb;
+  IP6_PROTOCOL         *IpInstance;
+  EFI_IP6_CONFIG_DATA  *Current;
+  EFI_TPL              OldTpl;
+  EFI_STATUS           Status;
+  IP6_SERVICE          *IpSb;
 
   //
   // First, validate the parameters
@@ -628,15 +626,15 @@ EfiIp6Configure (
   }
 
   IpInstance = IP6_INSTANCE_FROM_PROTOCOL (This);
-  IpSb       = IpInstance->Service;
+  IpSb = IpInstance->Service;
 
   if (IpSb->LinkLocalDadFail && Ip6ConfigData != NULL) {
     return EFI_DEVICE_ERROR;
   }
 
-  OldTpl     = gBS->RaiseTPL (TPL_CALLBACK);
+  OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
 
-  Status     = EFI_INVALID_PARAMETER;
+  Status = EFI_INVALID_PARAMETER;
 
   //
   // Validate the configuration first.
@@ -646,8 +644,9 @@ EfiIp6Configure (
     // Check whether the station address is valid.
     //
     if (!Ip6IsValidAddress (IpSb, &Ip6ConfigData->StationAddress, TRUE)) {
-       goto Exit;
+      goto Exit;
     }
+
     //
     // Check whether the default protocol is valid.
     //
@@ -744,10 +743,10 @@ EfiIp6Groups (
   IN EFI_IPv6_ADDRESS  *GroupAddress  OPTIONAL
   )
 {
-  EFI_TPL                   OldTpl;
-  EFI_STATUS                Status;
-  IP6_PROTOCOL              *IpInstance;
-  IP6_SERVICE               *IpSb;
+  EFI_TPL       OldTpl;
+  EFI_STATUS    Status;
+  IP6_PROTOCOL  *IpInstance;
+  IP6_SERVICE   *IpSb;
 
   if ((This == NULL) || (JoinFlag && GroupAddress == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -758,13 +757,13 @@ EfiIp6Groups (
   }
 
   IpInstance = IP6_INSTANCE_FROM_PROTOCOL (This);
-  IpSb       = IpInstance->Service;
+  IpSb = IpInstance->Service;
 
   if (IpSb->LinkLocalDadFail) {
     return EFI_DEVICE_ERROR;
   }
 
-  OldTpl     = gBS->RaiseTPL (TPL_CALLBACK);
+  OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
 
   if (IpInstance->State != IP6_STATE_CONFIGED) {
     Status = EFI_NOT_STARTED;
@@ -831,17 +830,17 @@ EfiIp6Routes (
   IN EFI_IPv6_ADDRESS    *GatewayAddress OPTIONAL
   )
 {
-  IP6_PROTOCOL              *IpInstance;
-  EFI_STATUS                Status;
-  EFI_TPL                   OldTpl;
-  IP6_SERVICE               *IpSb;
+  IP6_PROTOCOL  *IpInstance;
+  EFI_STATUS    Status;
+  EFI_TPL       OldTpl;
+  IP6_SERVICE   *IpSb;
 
   if ((This == NULL) || (PrefixLength > IP6_PREFIX_MAX)) {
     return EFI_INVALID_PARAMETER;
   }
 
   IpInstance = IP6_INSTANCE_FROM_PROTOCOL (This);
-  IpSb       = IpInstance->Service;
+  IpSb = IpInstance->Service;
 
   if (IpSb->LinkLocalDadFail) {
     return EFI_DEVICE_ERROR;
@@ -866,7 +865,7 @@ EfiIp6Routes (
 
     if (!NetIp6IsUnspecifiedAddr (GatewayAddress) &&
         !NetIp6IsNetEqual (GatewayAddress, &IpInstance->ConfigData.StationAddress, PrefixLength)
-          ) {
+        ) {
       return EFI_INVALID_PARAMETER;
     }
   }
@@ -943,10 +942,10 @@ EfiIp6Neighbors (
   IN BOOLEAN                   Override
   )
 {
-  EFI_TPL                   OldTpl;
-  EFI_STATUS                Status;
-  IP6_PROTOCOL              *IpInstance;
-  IP6_SERVICE               *IpSb;
+  EFI_TPL       OldTpl;
+  EFI_STATUS    Status;
+  IP6_PROTOCOL  *IpInstance;
+  IP6_SERVICE   *IpSb;
 
   if (This == NULL || TargetIp6Address == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -957,7 +956,7 @@ EfiIp6Neighbors (
   }
 
   IpInstance = IP6_INSTANCE_FROM_PROTOCOL (This);
-  IpSb       = IpInstance->Service;
+  IpSb = IpInstance->Service;
 
   if (IpSb->LinkLocalDadFail) {
     return EFI_DEVICE_ERROR;
@@ -1019,7 +1018,7 @@ Ip6TokenExist (
   EFI_IP6_COMPLETION_TOKEN  *Token;
   EFI_IP6_COMPLETION_TOKEN  *TokenInItem;
 
-  Token       = (EFI_IP6_COMPLETION_TOKEN *) Context;
+  Token = (EFI_IP6_COMPLETION_TOKEN *) Context;
   TokenInItem = (EFI_IP6_COMPLETION_TOKEN *) Item->Key;
 
   if (Token == TokenInItem || Token->Event == TokenInItem->Event) {
@@ -1044,9 +1043,9 @@ Ip6TxTokenValid (
   IN EFI_IP6_COMPLETION_TOKEN   *Token
   )
 {
-  EFI_IP6_TRANSMIT_DATA     *TxData;
-  UINT32                    Index;
-  UINT32                    DataLength;
+  EFI_IP6_TRANSMIT_DATA  *TxData;
+  UINT32                 Index;
+  UINT32                 DataLength;
 
   if (Token == NULL || Token->Event == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -1118,8 +1117,8 @@ Ip6FreeTxToken (
   IN VOID                   *Context
   )
 {
-  IP6_TXTOKEN_WRAP          *Wrap;
-  NET_MAP_ITEM              *Item;
+  IP6_TXTOKEN_WRAP  *Wrap;
+  NET_MAP_ITEM      *Item;
 
   Wrap = (IP6_TXTOKEN_WRAP *) Context;
 
@@ -1127,7 +1126,7 @@ Ip6FreeTxToken (
   // Signal IpSecRecycleEvent to inform IPsec free the memory
   //
   if (Wrap->IpSecRecycleSignal != NULL) {
-    gBS->SignalEvent (Wrap->IpSecRecycleSignal);
+  gBS->SignalEvent (Wrap->IpSecRecycleSignal);
   }
 
   //
@@ -1141,7 +1140,7 @@ Ip6FreeTxToken (
   }
 
   if (Wrap->Sent) {
-    gBS->SignalEvent (Wrap->Token->Event);
+  gBS->SignalEvent (Wrap->Token->Event);
 
     //
     // Dispatch the DPC queued by the NotifyFunction of Token->Event.
@@ -1151,7 +1150,6 @@ Ip6FreeTxToken (
 
   FreePool (Wrap);
 }
-
 
 /**
   The callback function to Ip6Output to update the transmit status.
@@ -1170,13 +1168,13 @@ Ip6OnPacketSent (
   IN VOID                      *Context
   )
 {
-  IP6_TXTOKEN_WRAP             *Wrap;
+  IP6_TXTOKEN_WRAP  *Wrap;
 
   //
   // This is the transmission request from upper layer,
   // not the IP6 driver itself.
   //
-  Wrap                = (IP6_TXTOKEN_WRAP *) Context;
+  Wrap = (IP6_TXTOKEN_WRAP *) Context;
   Wrap->Token->Status = IoStatus;
 
   NetbufFree (Wrap->Packet);
@@ -1241,16 +1239,16 @@ EfiIp6Transmit (
   IN EFI_IP6_COMPLETION_TOKEN  *Token
   )
 {
-  IP6_SERVICE               *IpSb;
-  IP6_PROTOCOL              *IpInstance;
-  EFI_IP6_CONFIG_DATA       *Config;
-  EFI_STATUS                Status;
-  EFI_TPL                   OldTpl;
-  EFI_IP6_HEADER            Head;
-  EFI_IP6_TRANSMIT_DATA     *TxData;
-  EFI_IP6_OVERRIDE_DATA     *Override;
-  IP6_TXTOKEN_WRAP          *Wrap;
-  UINT8                     *ExtHdrs;
+  IP6_SERVICE            *IpSb;
+  IP6_PROTOCOL           *IpInstance;
+  EFI_IP6_CONFIG_DATA    *Config;
+  EFI_STATUS             Status;
+  EFI_TPL                OldTpl;
+  EFI_IP6_HEADER         Head;
+  EFI_IP6_TRANSMIT_DATA  *TxData;
+  EFI_IP6_OVERRIDE_DATA  *Override;
+  IP6_TXTOKEN_WRAP       *Wrap;
+  UINT8                  *ExtHdrs;
 
   //
   // Check input parameters.
@@ -1267,13 +1265,13 @@ EfiIp6Transmit (
   }
 
   IpInstance = IP6_INSTANCE_FROM_PROTOCOL (This);
-  IpSb       = IpInstance->Service;
+  IpSb = IpInstance->Service;
 
   if (IpSb->LinkLocalDadFail) {
     return EFI_DEVICE_ERROR;
   }
 
-  OldTpl     = gBS->RaiseTPL (TPL_CALLBACK);
+  OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
 
   if (IpInstance->State != IP6_STATE_CONFIGED) {
     Status = EFI_NOT_STARTED;
@@ -1293,7 +1291,7 @@ EfiIp6Transmit (
   //
   // Build the IP header, fill in the information from ConfigData or OverrideData
   //
-  ZeroMem (&Head, sizeof(EFI_IP6_HEADER));
+  ZeroMem (&Head, sizeof (EFI_IP6_HEADER));
   TxData = Token->Packet.TxData;
   IP6_COPY_ADDRESS (&Head.SourceAddress, &Config->StationAddress);
   IP6_COPY_ADDRESS (&Head.DestinationAddress, &Config->DestinationAddress);
@@ -1306,7 +1304,6 @@ EfiIp6Transmit (
     }
 
     ASSERT (!NetIp6IsUnspecifiedAddr (&Config->StationAddress));
-
   } else {
     //
     // StationAddress is unspecified only when ConfigData.Dest is unspecified.
@@ -1318,10 +1315,10 @@ EfiIp6Transmit (
 
     if (NetIp6IsUnspecifiedAddr (&Config->StationAddress)) {
       Status = Ip6SelectSourceAddress (
-                 IpSb,
-                 &TxData->DestinationAddress,
-                 &Head.SourceAddress
-                 );
+                                       IpSb,
+                                       &TxData->DestinationAddress,
+                                       &Head.SourceAddress
+                                       );
       if (EFI_ERROR (Status)) {
         goto Exit;
       }
@@ -1339,7 +1336,7 @@ EfiIp6Transmit (
   }
 
   if (TxData->OverrideData != NULL) {
-    Override        = TxData->OverrideData;
+    Override = TxData->OverrideData;
     Head.NextHeader = Override->Protocol;
     Head.HopLimit   = Override->HopLimit;
     Head.FlowLabelL = HTONS ((UINT16) Override->FlowLabel);
@@ -1362,18 +1359,18 @@ EfiIp6Transmit (
     goto Exit;
   }
 
-  Wrap->IpInstance  = IpInstance;
-  Wrap->Token       = Token;
-  Wrap->Sent        = FALSE;
-  Wrap->Life        = IP6_US_TO_SEC (Config->TransmitTimeout);
-  Wrap->Packet      = NetbufFromExt (
-                        (NET_FRAGMENT *) TxData->FragmentTable,
-                        TxData->FragmentCount,
-                        IP6_MAX_HEADLEN,
-                        0,
-                        Ip6FreeTxToken,
-                        Wrap
-                        );
+  Wrap->IpInstance = IpInstance;
+  Wrap->Token  = Token;
+  Wrap->Sent   = FALSE;
+  Wrap->Life   = IP6_US_TO_SEC (Config->TransmitTimeout);
+  Wrap->Packet = NetbufFromExt (
+                                (NET_FRAGMENT *) TxData->FragmentTable,
+                                TxData->FragmentCount,
+                                IP6_MAX_HEADLEN,
+                                0,
+                                Ip6FreeTxToken,
+                                Wrap
+                                );
 
   if (Wrap->Packet == NULL) {
     FreePool (Wrap);
@@ -1412,16 +1409,16 @@ EfiIp6Transmit (
   Wrap->Sent = TRUE;
 
   Status = Ip6Output (
-             IpSb,
-             NULL,
-             IpInstance,
-             Wrap->Packet,
-             &Head,
-             ExtHdrs,
-             TxData->ExtHdrsLength,
-             Ip6OnPacketSent,
-             Wrap
-             );
+                      IpSb,
+                      NULL,
+                      IpInstance,
+                      Wrap->Packet,
+                      &Head,
+                      ExtHdrs,
+                      TxData->ExtHdrsLength,
+                      Ip6OnPacketSent,
+                      Wrap
+                      );
   if (EFI_ERROR (Status)) {
     Wrap->Sent = FALSE;
     NetbufFree (Wrap->Packet);
@@ -1485,17 +1482,17 @@ EfiIp6Receive (
   IN EFI_IP6_COMPLETION_TOKEN  *Token
   )
 {
-  IP6_PROTOCOL              *IpInstance;
-  EFI_STATUS                Status;
-  EFI_TPL                   OldTpl;
-  IP6_SERVICE               *IpSb;
+  IP6_PROTOCOL  *IpInstance;
+  EFI_STATUS    Status;
+  EFI_TPL       OldTpl;
+  IP6_SERVICE   *IpSb;
 
   if (This == NULL || Token == NULL || Token->Event == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
   IpInstance = IP6_INSTANCE_FROM_PROTOCOL (This);
-  IpSb       = IpInstance->Service;
+  IpSb = IpInstance->Service;
 
   if (IpSb->LinkLocalDadFail) {
     return EFI_DEVICE_ERROR;
@@ -1539,7 +1536,6 @@ Exit:
   gBS->RestoreTPL (OldTpl);
   return Status;
 }
-
 
 /**
   Cancel the transmitted but not recycled packet. If a matching
@@ -1599,7 +1595,6 @@ Ip6CancelTxTokens (
   return EFI_SUCCESS;
 }
 
-
 /**
   Cancel the receive request. This is simple, because
   it is only enqueued in our local receive map.
@@ -1635,7 +1630,7 @@ Ip6CancelRxTokens (
 
   NetMapRemoveItem (Map, Item, NULL);
 
-  This->Status        = EFI_ABORTED;
+  This->Status = EFI_ABORTED;
   This->Packet.RxData = NULL;
   gBS->SignalEvent (This->Event);
 
@@ -1666,7 +1661,7 @@ Ip6Cancel (
   IN EFI_IP6_COMPLETION_TOKEN *Token          OPTIONAL
   )
 {
-  EFI_STATUS                Status;
+  EFI_STATUS  Status;
 
   //
   // First check the transmitted packet. Ip6CancelTxTokens returns
@@ -1713,7 +1708,6 @@ Ip6Cancel (
   // all of them are cancelled.
   //
   if (!NetMapIsEmpty (&IpInstance->TxTokens) || !NetMapIsEmpty (&IpInstance->RxTokens)) {
-
     return EFI_DEVICE_ERROR;
   }
 
@@ -1755,9 +1749,9 @@ EfiIp6Cancel (
   IN EFI_IP6_COMPLETION_TOKEN  *Token    OPTIONAL
   )
 {
-  IP6_PROTOCOL              *IpInstance;
-  EFI_STATUS                Status;
-  EFI_TPL                   OldTpl;
+  IP6_PROTOCOL  *IpInstance;
+  EFI_STATUS    Status;
+  EFI_TPL       OldTpl;
 
   if (This == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -1819,7 +1813,7 @@ EfiIp6Poll (
   }
 
   IpInstance = IP6_INSTANCE_FROM_PROTOCOL (This);
-  IpSb       = IpInstance->Service;
+  IpSb = IpInstance->Service;
 
   if (IpSb->LinkLocalDadFail) {
     return EFI_DEVICE_ERROR;
@@ -1836,6 +1830,4 @@ EfiIp6Poll (
   // the packet polled up.
   //
   return Mnp->Poll (Mnp);
-
 }
-

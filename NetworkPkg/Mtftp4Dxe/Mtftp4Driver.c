@@ -8,7 +8,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "Mtftp4Impl.h"
 
-EFI_DRIVER_BINDING_PROTOCOL   gMtftp4DriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  gMtftp4DriverBinding = {
   Mtftp4DriverBindingSupported,
   Mtftp4DriverBindingStart,
   Mtftp4DriverBindingStop,
@@ -21,7 +21,6 @@ EFI_SERVICE_BINDING_PROTOCOL  gMtftp4ServiceBindingTemplete = {
   Mtftp4ServiceBindingCreateChild,
   Mtftp4ServiceBindingDestroyChild
 };
-
 
 /**
   The driver entry point which installs multiple protocols to the ImageHandle.
@@ -41,15 +40,14 @@ Mtftp4DriverEntryPoint (
   )
 {
   return EfiLibInstallDriverBindingComponentName2 (
-           ImageHandle,
-           SystemTable,
-           &gMtftp4DriverBinding,
-           ImageHandle,
-           &gMtftp4ComponentName,
-           &gMtftp4ComponentName2
-           );
+                                                   ImageHandle,
+                                                   SystemTable,
+                                                   &gMtftp4DriverBinding,
+                                                   ImageHandle,
+                                                   &gMtftp4ComponentName,
+                                                   &gMtftp4ComponentName2
+                                                   );
 }
-
 
 /**
   Test whether MTFTP driver support this controller.
@@ -83,17 +81,16 @@ Mtftp4DriverBindingSupported (
   EFI_STATUS  Status;
 
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiUdp4ServiceBindingProtocolGuid,
-                  NULL,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              Controller,
+                              &gEfiUdp4ServiceBindingProtocolGuid,
+                              NULL,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
 
   return Status;
 }
-
 
 /**
   Config a NULL UDP that is used to keep the connection between UDP and MTFTP.
@@ -117,7 +114,6 @@ Mtftp4ConfigNullUdp (
   return EFI_SUCCESS;
 }
 
-
 /**
   Create then initialize a MTFTP service binding instance.
 
@@ -138,55 +134,55 @@ EFI_STATUS
 Mtftp4CreateService (
   IN     EFI_HANDLE            Controller,
   IN     EFI_HANDLE            Image,
-     OUT MTFTP4_SERVICE        **Service
+  OUT MTFTP4_SERVICE        **Service
   )
 {
-  MTFTP4_SERVICE            *MtftpSb;
-  EFI_STATUS                Status;
+  MTFTP4_SERVICE  *MtftpSb;
+  EFI_STATUS      Status;
 
-  *Service  = NULL;
-  MtftpSb   = AllocatePool (sizeof (MTFTP4_SERVICE));
+  *Service = NULL;
+  MtftpSb  = AllocatePool (sizeof (MTFTP4_SERVICE));
 
   if (MtftpSb == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
-  MtftpSb->Signature      = MTFTP4_SERVICE_SIGNATURE;
+  MtftpSb->Signature = MTFTP4_SERVICE_SIGNATURE;
   MtftpSb->ServiceBinding = gMtftp4ServiceBindingTemplete;
   MtftpSb->ChildrenNum    = 0;
   InitializeListHead (&MtftpSb->Children);
 
-  MtftpSb->Timer            = NULL;
+  MtftpSb->Timer = NULL;
   MtftpSb->TimerNotifyLevel = NULL;
   MtftpSb->TimerToGetMap    = NULL;
-  MtftpSb->Controller       = Controller;
-  MtftpSb->Image            = Image;
-  MtftpSb->ConnectUdp       = NULL;
+  MtftpSb->Controller = Controller;
+  MtftpSb->Image = Image;
+  MtftpSb->ConnectUdp = NULL;
 
   //
   // Create the timer and a udp to be notified when UDP is uninstalled
   //
   Status = gBS->CreateEvent (
-                  EVT_NOTIFY_SIGNAL | EVT_TIMER,
-                  TPL_CALLBACK,
-                  Mtftp4OnTimerTick,
-                  MtftpSb,
-                  &MtftpSb->Timer
-                  );
+                             EVT_NOTIFY_SIGNAL | EVT_TIMER,
+                             TPL_CALLBACK,
+                             Mtftp4OnTimerTick,
+                             MtftpSb,
+                             &MtftpSb->Timer
+                             );
   if (EFI_ERROR (Status)) {
     FreePool (MtftpSb);
     return Status;
   }
 
   Status = gBS->CreateEvent (
-                  EVT_NOTIFY_SIGNAL | EVT_TIMER,
-                  TPL_NOTIFY,
-                  Mtftp4OnTimerTickNotifyLevel,
-                  MtftpSb,
-                  &MtftpSb->TimerNotifyLevel
-                  );
+                             EVT_NOTIFY_SIGNAL | EVT_TIMER,
+                             TPL_NOTIFY,
+                             Mtftp4OnTimerTickNotifyLevel,
+                             MtftpSb,
+                             &MtftpSb->TimerNotifyLevel
+                             );
   if (EFI_ERROR (Status)) {
-    gBS->CloseEvent (MtftpSb->Timer);
+  gBS->CloseEvent (MtftpSb->Timer);
     FreePool (MtftpSb);
     return Status;
   }
@@ -196,31 +192,31 @@ Mtftp4CreateService (
   // get the default IP address.
   //
   Status = gBS->CreateEvent (
-                  EVT_TIMER,
-                  TPL_CALLBACK,
-                  NULL,
-                  NULL,
-                  &MtftpSb->TimerToGetMap
-                  );
+                             EVT_TIMER,
+                             TPL_CALLBACK,
+                             NULL,
+                             NULL,
+                             &MtftpSb->TimerToGetMap
+                             );
   if (EFI_ERROR (Status)) {
-    gBS->CloseEvent (MtftpSb->TimerNotifyLevel);
-    gBS->CloseEvent (MtftpSb->Timer);
+  gBS->CloseEvent (MtftpSb->TimerNotifyLevel);
+  gBS->CloseEvent (MtftpSb->Timer);
     FreePool (MtftpSb);
     return Status;
   }
 
   MtftpSb->ConnectUdp = UdpIoCreateIo (
-                          Controller,
-                          Image,
-                          Mtftp4ConfigNullUdp,
-                          UDP_IO_UDP4_VERSION,
-                          NULL
-                          );
+                                       Controller,
+                                       Image,
+                                       Mtftp4ConfigNullUdp,
+                                       UDP_IO_UDP4_VERSION,
+                                       NULL
+                                       );
 
   if (MtftpSb->ConnectUdp == NULL) {
-    gBS->CloseEvent (MtftpSb->TimerToGetMap);
-    gBS->CloseEvent (MtftpSb->TimerNotifyLevel);
-    gBS->CloseEvent (MtftpSb->Timer);
+  gBS->CloseEvent (MtftpSb->TimerToGetMap);
+  gBS->CloseEvent (MtftpSb->TimerNotifyLevel);
+  gBS->CloseEvent (MtftpSb->Timer);
     FreePool (MtftpSb);
     return EFI_DEVICE_ERROR;
   }
@@ -228,7 +224,6 @@ Mtftp4CreateService (
   *Service = MtftpSb;
   return EFI_SUCCESS;
 }
-
 
 /**
   Release all the resource used the MTFTP service binding instance.
@@ -246,7 +241,6 @@ Mtftp4CleanService (
   gBS->CloseEvent (MtftpSb->TimerNotifyLevel);
   gBS->CloseEvent (MtftpSb->Timer);
 }
-
 
 /**
   Start the MTFTP driver on this controller.
@@ -272,20 +266,20 @@ Mtftp4DriverBindingStart (
   IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath
   )
 {
-  MTFTP4_SERVICE            *MtftpSb;
-  EFI_STATUS                Status;
+  MTFTP4_SERVICE  *MtftpSb;
+  EFI_STATUS      Status;
 
   //
   // Directly return if driver is already running.
   //
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiMtftp4ServiceBindingProtocolGuid,
-                  NULL,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              Controller,
+                              &gEfiMtftp4ServiceBindingProtocolGuid,
+                              NULL,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
 
   if (Status == EFI_SUCCESS) {
     return EFI_ALREADY_STARTED;
@@ -296,6 +290,7 @@ Mtftp4DriverBindingStart (
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   ASSERT (MtftpSb != NULL);
 
   Status = gBS->SetTimer (MtftpSb->Timer, TimerPeriodic, TICKS_PER_SECOND);
@@ -314,11 +309,11 @@ Mtftp4DriverBindingStart (
   // Install the Mtftp4ServiceBinding Protocol onto Controller
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &Controller,
-                  &gEfiMtftp4ServiceBindingProtocolGuid,
-                  &MtftpSb->ServiceBinding,
-                  NULL
-                  );
+                                                   &Controller,
+                                                   &gEfiMtftp4ServiceBindingProtocolGuid,
+                                                   &MtftpSb->ServiceBinding,
+                                                   NULL
+                                                   );
 
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
@@ -393,12 +388,12 @@ Mtftp4DriverBindingStop (
   IN EFI_HANDLE                  *ChildHandleBuffer
   )
 {
-  EFI_SERVICE_BINDING_PROTOCOL               *ServiceBinding;
-  MTFTP4_SERVICE                             *MtftpSb;
-  EFI_HANDLE                                 NicHandle;
-  EFI_STATUS                                 Status;
-  LIST_ENTRY                                 *List;
-  MTFTP4_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT Context;
+  EFI_SERVICE_BINDING_PROTOCOL                *ServiceBinding;
+  MTFTP4_SERVICE                              *MtftpSb;
+  EFI_HANDLE                                  NicHandle;
+  EFI_STATUS                                  Status;
+  LIST_ENTRY                                  *List;
+  MTFTP4_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT  Context;
 
   //
   // MTFTP driver opens UDP child, So, Controller is a UDP
@@ -412,13 +407,13 @@ Mtftp4DriverBindingStop (
   }
 
   Status = gBS->OpenProtocol (
-                  NicHandle,
-                  &gEfiMtftp4ServiceBindingProtocolGuid,
-                  (VOID **) &ServiceBinding,
-                  This->DriverBindingHandle,
-                  NicHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              NicHandle,
+                              &gEfiMtftp4ServiceBindingProtocolGuid,
+                              (VOID **) &ServiceBinding,
+                              This->DriverBindingHandle,
+                              NicHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
 
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
@@ -435,25 +430,26 @@ Mtftp4DriverBindingStop (
     Context.NumberOfChildren  = NumberOfChildren;
     Context.ChildHandleBuffer = ChildHandleBuffer;
     Status = NetDestroyLinkList (
-               List,
-               Mtftp4DestroyChildEntryInHandleBuffer,
-               &Context,
-               NULL
-               );
+                                 List,
+                                 Mtftp4DestroyChildEntryInHandleBuffer,
+                                 &Context,
+                                 NULL
+                                 );
   }
 
   if (NumberOfChildren == 0 && IsListEmpty (&MtftpSb->Children)) {
-    gBS->UninstallProtocolInterface (
-           NicHandle,
-           &gEfiMtftp4ServiceBindingProtocolGuid,
-           ServiceBinding
-           );
+  gBS->UninstallProtocolInterface (
+                                   NicHandle,
+                                   &gEfiMtftp4ServiceBindingProtocolGuid,
+                                   ServiceBinding
+                                   );
 
     Mtftp4CleanService (MtftpSb);
     if (gMtftp4ControllerNameTable != NULL) {
       FreeUnicodeStringTable (gMtftp4ControllerNameTable);
       gMtftp4ControllerNameTable = NULL;
     }
+
     FreePool (MtftpSb);
 
     Status = EFI_SUCCESS;
@@ -461,7 +457,6 @@ Mtftp4DriverBindingStop (
 
   return Status;
 }
-
 
 /**
   Initialize a MTFTP protocol instance which is the child of MtftpSb.
@@ -473,7 +468,7 @@ Mtftp4DriverBindingStop (
 VOID
 Mtftp4InitProtocol (
   IN     MTFTP4_SERVICE         *MtftpSb,
-     OUT MTFTP4_PROTOCOL        *Instance
+  OUT MTFTP4_PROTOCOL        *Instance
   )
 {
   ZeroMem (Instance, sizeof (MTFTP4_PROTOCOL));
@@ -481,12 +476,11 @@ Mtftp4InitProtocol (
   Instance->Signature = MTFTP4_PROTOCOL_SIGNATURE;
   InitializeListHead (&Instance->Link);
   CopyMem (&Instance->Mtftp4, &gMtftp4ProtocolTemplate, sizeof (Instance->Mtftp4));
-  Instance->State     = MTFTP4_STATE_UNCONFIGED;
-  Instance->Service   = MtftpSb;
+  Instance->State   = MTFTP4_STATE_UNCONFIGED;
+  Instance->Service = MtftpSb;
 
   InitializeListHead (&Instance->Blocks);
 }
-
 
 /**
   Create a MTFTP child for the service binding instance, then
@@ -507,11 +501,11 @@ Mtftp4ServiceBindingCreateChild (
   IN EFI_HANDLE                *ChildHandle
   )
 {
-  MTFTP4_SERVICE            *MtftpSb;
-  MTFTP4_PROTOCOL           *Instance;
-  EFI_STATUS                Status;
-  EFI_TPL                   OldTpl;
-  VOID                      *Udp4;
+  MTFTP4_SERVICE   *MtftpSb;
+  MTFTP4_PROTOCOL  *Instance;
+  EFI_STATUS       Status;
+  EFI_TPL          OldTpl;
+  VOID             *Udp4;
 
   if ((This == NULL) || (ChildHandle == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -528,12 +522,12 @@ Mtftp4ServiceBindingCreateChild (
   Mtftp4InitProtocol (MtftpSb, Instance);
 
   Instance->UnicastPort = UdpIoCreateIo (
-                            MtftpSb->Controller,
-                            MtftpSb->Image,
-                            Mtftp4ConfigNullUdp,
-                            UDP_IO_UDP4_VERSION,
-                            Instance
-                            );
+                                         MtftpSb->Controller,
+                                         MtftpSb->Image,
+                                         Mtftp4ConfigNullUdp,
+                                         UDP_IO_UDP4_VERSION,
+                                         Instance
+                                         );
 
   if (Instance->UnicastPort == NULL) {
     FreePool (Instance);
@@ -544,11 +538,11 @@ Mtftp4ServiceBindingCreateChild (
   // Install the MTFTP protocol onto ChildHandle
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  ChildHandle,
-                  &gEfiMtftp4ProtocolGuid,
-                  &Instance->Mtftp4,
-                  NULL
-                  );
+                                                   ChildHandle,
+                                                   &gEfiMtftp4ProtocolGuid,
+                                                   &Instance->Mtftp4,
+                                                   NULL
+                                                   );
 
   if (EFI_ERROR (Status)) {
     UdpIoFreeIo (Instance->UnicastPort);
@@ -556,19 +550,19 @@ Mtftp4ServiceBindingCreateChild (
     return Status;
   }
 
-  Instance->Handle  = *ChildHandle;
+  Instance->Handle = *ChildHandle;
 
   //
   // Open the Udp4 protocol BY_CHILD.
   //
   Status = gBS->OpenProtocol (
-                  MtftpSb->ConnectUdp->UdpHandle,
-                  &gEfiUdp4ProtocolGuid,
-                  (VOID **) &Udp4,
-                  gMtftp4DriverBinding.DriverBindingHandle,
-                  Instance->Handle,
-                  EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
-                  );
+                              MtftpSb->ConnectUdp->UdpHandle,
+                              &gEfiUdp4ProtocolGuid,
+                              (VOID **) &Udp4,
+                              gMtftp4DriverBinding.DriverBindingHandle,
+                              Instance->Handle,
+                              EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+                              );
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
@@ -577,23 +571,23 @@ Mtftp4ServiceBindingCreateChild (
   // Open the Udp4 protocol by child.
   //
   Status = gBS->OpenProtocol (
-                  Instance->UnicastPort->UdpHandle,
-                  &gEfiUdp4ProtocolGuid,
-                  (VOID **) &Udp4,
-                  gMtftp4DriverBinding.DriverBindingHandle,
-                  Instance->Handle,
-                  EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
-                  );
+                              Instance->UnicastPort->UdpHandle,
+                              &gEfiUdp4ProtocolGuid,
+                              (VOID **) &Udp4,
+                              gMtftp4DriverBinding.DriverBindingHandle,
+                              Instance->Handle,
+                              EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+                              );
   if (EFI_ERROR (Status)) {
     //
     // Close the Udp4 protocol.
     //
     gBS->CloseProtocol (
-           MtftpSb->ConnectUdp->UdpHandle,
-           &gEfiUdp4ProtocolGuid,
-           gMtftp4DriverBinding.DriverBindingHandle,
-           *ChildHandle
-           );
+                        MtftpSb->ConnectUdp->UdpHandle,
+                        &gEfiUdp4ProtocolGuid,
+                        gMtftp4DriverBinding.DriverBindingHandle,
+                        *ChildHandle
+                        );
     goto ON_ERROR;
   }
 
@@ -611,12 +605,12 @@ Mtftp4ServiceBindingCreateChild (
 
 ON_ERROR:
   if (Instance->Handle != NULL) {
-    gBS->UninstallMultipleProtocolInterfaces (
-           Instance->Handle,
-           &gEfiMtftp4ProtocolGuid,
-           &Instance->Mtftp4,
-           NULL
-           );
+  gBS->UninstallMultipleProtocolInterfaces (
+                                            Instance->Handle,
+                                            &gEfiMtftp4ProtocolGuid,
+                                            &Instance->Mtftp4,
+                                            NULL
+                                            );
   }
 
   UdpIoFreeIo (Instance->UnicastPort);
@@ -624,7 +618,6 @@ ON_ERROR:
 
   return Status;
 }
-
 
 /**
   Destroy one of the service binding's child.
@@ -645,11 +638,11 @@ Mtftp4ServiceBindingDestroyChild (
   IN EFI_HANDLE                   ChildHandle
   )
 {
-  MTFTP4_SERVICE            *MtftpSb;
-  MTFTP4_PROTOCOL           *Instance;
-  EFI_MTFTP4_PROTOCOL       *Mtftp4;
-  EFI_STATUS                Status;
-  EFI_TPL                   OldTpl;
+  MTFTP4_SERVICE       *MtftpSb;
+  MTFTP4_PROTOCOL      *Instance;
+  EFI_MTFTP4_PROTOCOL  *Mtftp4;
+  EFI_STATUS           Status;
+  EFI_TPL              OldTpl;
 
   if ((This == NULL) || (ChildHandle == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -659,20 +652,20 @@ Mtftp4ServiceBindingDestroyChild (
   // Retrieve the private context data structures
   //
   Status = gBS->OpenProtocol (
-                  ChildHandle,
-                  &gEfiMtftp4ProtocolGuid,
-                  (VOID **) &Mtftp4,
-                  gMtftp4DriverBinding.DriverBindingHandle,
-                  ChildHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ChildHandle,
+                              &gEfiMtftp4ProtocolGuid,
+                              (VOID **) &Mtftp4,
+                              gMtftp4DriverBinding.DriverBindingHandle,
+                              ChildHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
 
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
 
-  Instance  = MTFTP4_PROTOCOL_FROM_THIS (Mtftp4);
-  MtftpSb   = MTFTP4_SERVICE_FROM_THIS (This);
+  Instance = MTFTP4_PROTOCOL_FROM_THIS (Mtftp4);
+  MtftpSb  = MTFTP4_SERVICE_FROM_THIS (This);
 
   if (Instance->Service != MtftpSb) {
     return EFI_INVALID_PARAMETER;
@@ -688,36 +681,36 @@ Mtftp4ServiceBindingDestroyChild (
   // Close the Udp4 protocol.
   //
   gBS->CloseProtocol (
-         MtftpSb->ConnectUdp->UdpHandle,
-         &gEfiUdp4ProtocolGuid,
-         gMtftp4DriverBinding.DriverBindingHandle,
-         ChildHandle
-         );
+                      MtftpSb->ConnectUdp->UdpHandle,
+                      &gEfiUdp4ProtocolGuid,
+                      gMtftp4DriverBinding.DriverBindingHandle,
+                      ChildHandle
+                      );
 
   gBS->CloseProtocol (
-         Instance->UnicastPort->UdpHandle,
-         &gEfiUdp4ProtocolGuid,
-         gMtftp4DriverBinding.DriverBindingHandle,
-         ChildHandle
-         );
+                      Instance->UnicastPort->UdpHandle,
+                      &gEfiUdp4ProtocolGuid,
+                      gMtftp4DriverBinding.DriverBindingHandle,
+                      ChildHandle
+                      );
 
   if (Instance->McastUdpPort != NULL) {
-    gBS->CloseProtocol (
-           Instance->McastUdpPort->UdpHandle,
-           &gEfiUdp4ProtocolGuid,
-           gMtftp4DriverBinding.DriverBindingHandle,
-           ChildHandle
-           );
+  gBS->CloseProtocol (
+                      Instance->McastUdpPort->UdpHandle,
+                      &gEfiUdp4ProtocolGuid,
+                      gMtftp4DriverBinding.DriverBindingHandle,
+                      ChildHandle
+                      );
   }
 
   //
   // Uninstall the MTFTP4 protocol first to enable a top down destruction.
   //
   Status = gBS->UninstallProtocolInterface (
-                  ChildHandle,
-                  &gEfiMtftp4ProtocolGuid,
-                  Mtftp4
-                  );
+                                            ChildHandle,
+                                            &gEfiMtftp4ProtocolGuid,
+                                            Mtftp4
+                                            );
 
   if (EFI_ERROR (Status)) {
     Instance->InDestroy = FALSE;

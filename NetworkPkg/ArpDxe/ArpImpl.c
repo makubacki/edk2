@@ -21,7 +21,6 @@ EFI_ARP_PROTOCOL  mEfiArpProtocolTemplate = {
   ArpCancel
 };
 
-
 /**
   Initialize the instance context data.
 
@@ -50,7 +49,6 @@ ArpInitInstance (
 
   InitializeListHead (&Instance->List);
 }
-
 
 /**
   Process the Arp packets received from Mnp, the procedure conforms to RFC826.
@@ -82,7 +80,7 @@ ArpOnFrameRcvdDpc (
   BOOLEAN                               IsTarget;
   BOOLEAN                               MergeFlag;
 
-  ArpService = (ARP_SERVICE_DATA *)Context;
+  ArpService = (ARP_SERVICE_DATA *) Context;
   NET_CHECK_SIGNATURE (ArpService, ARP_SERVICE_DATA_SIGNATURE);
 
   RxToken = &ArpService->RxToken;
@@ -119,7 +117,7 @@ ArpOnFrameRcvdDpc (
   //
   // Convert the byte order of the multi-byte fields.
   //
-  Head   = (ARP_HEAD *) RxData->PacketData;
+  Head = (ARP_HEAD *) RxData->PacketData;
   Head->HwType    = NTOHS (Head->HwType);
   Head->ProtoType = NTOHS (Head->ProtoType);
   Head->OpCode    = NTOHS (Head->OpCode);
@@ -129,8 +127,8 @@ ArpOnFrameRcvdDpc (
   }
 
   if ((Head->HwType != ArpService->SnpMode.IfType) ||
-    (Head->HwAddrLen != ArpService->SnpMode.HwAddressSize) ||
-    (RxData->ProtocolType != ARP_ETHER_PROTO_TYPE)) {
+      (Head->HwAddrLen != ArpService->SnpMode.HwAddressSize) ||
+      (RxData->ProtocolType != ARP_ETHER_PROTO_TYPE)) {
     //
     // The hardware type or the hardware address length doesn't match.
     // There is a sanity check for the protocol type too.
@@ -141,7 +139,7 @@ ArpOnFrameRcvdDpc (
   //
   // Set the pointers to the addresses contained in the arp packet.
   //
-  ArpAddress.SenderHwAddr    = (UINT8 *)(Head + 1);
+  ArpAddress.SenderHwAddr    = (UINT8 *) (Head + 1);
   ArpAddress.SenderProtoAddr = ArpAddress.SenderHwAddr + Head->HwAddrLen;
   ArpAddress.TargetHwAddr    = ArpAddress.SenderProtoAddr + Head->ProtoAddrLen;
   ArpAddress.TargetProtoAddr = ArpAddress.TargetHwAddr + Head->HwAddrLen;
@@ -158,10 +156,10 @@ ArpOnFrameRcvdDpc (
   // First, check the denied cache table.
   //
   CacheEntry = ArpFindDeniedCacheEntry (
-                 ArpService,
-                 &SenderAddress[Protocol],
-                 &SenderAddress[Hardware]
-                 );
+                                        ArpService,
+                                        &SenderAddress[Protocol],
+                                        &SenderAddress[Hardware]
+                                        );
   if (CacheEntry != NULL) {
     //
     // This address (either hardware or protocol address, or both) is configured to
@@ -182,17 +180,17 @@ ArpOnFrameRcvdDpc (
     ConfigData = &Instance->ConfigData;
 
     if ((Instance->Configured) &&
-      (Head->ProtoType == ConfigData->SwAddressType) &&
-      (Head->ProtoAddrLen == ConfigData->SwAddressLength)) {
+        (Head->ProtoType == ConfigData->SwAddressType) &&
+        (Head->ProtoAddrLen == ConfigData->SwAddressLength)) {
       //
       // The protocol type is matched for the received arp packet.
       //
       ProtoMatched = TRUE;
       if (0 == CompareMem (
-                 (VOID *)ArpAddress.TargetProtoAddr,
-                 ConfigData->StationAddress,
-                 ConfigData->SwAddressLength
-                 )) {
+                           (VOID *) ArpAddress.TargetProtoAddr,
+                           ConfigData->StationAddress,
+                           ConfigData->SwAddressLength
+                           )) {
         //
         // The arp driver has the target address required by the received arp packet.
         //
@@ -214,12 +212,12 @@ ArpOnFrameRcvdDpc (
   //
   MergeFlag  = FALSE;
   CacheEntry = ArpFindNextCacheEntryInTable (
-                 &ArpService->ResolvedCacheTable,
-                 NULL,
-                 ByProtoAddress,
-                 &SenderAddress[Protocol],
-                 NULL
-                 );
+                                             &ArpService->ResolvedCacheTable,
+                                             NULL,
+                                             ByProtoAddress,
+                                             &SenderAddress[Protocol],
+                                             NULL
+                                             );
   if (CacheEntry != NULL) {
     //
     // Update the entry with the new information.
@@ -242,12 +240,12 @@ ArpOnFrameRcvdDpc (
     // to the translation table.
     //
     CacheEntry = ArpFindNextCacheEntryInTable (
-                   &ArpService->PendingRequestTable,
-                   NULL,
-                   ByProtoAddress,
-                   &SenderAddress[Protocol],
-                   NULL
-                   );
+                                               &ArpService->PendingRequestTable,
+                                               NULL,
+                                               ByProtoAddress,
+                                               &SenderAddress[Protocol],
+                                               NULL
+                                               );
     if (CacheEntry == NULL) {
       //
       // Allocate a new CacheEntry.
@@ -266,10 +264,10 @@ ArpOnFrameRcvdDpc (
     // Fill the addresses into the CacheEntry.
     //
     ArpFillAddressInCacheEntry (
-      CacheEntry,
-      &SenderAddress[Hardware],
-      &SenderAddress[Protocol]
-      );
+                                CacheEntry,
+                                &SenderAddress[Hardware],
+                                &SenderAddress[Protocol]
+                                );
 
     //
     // Inform the user.
@@ -305,11 +303,14 @@ RESTART_RECEIVE:
   Status = ArpService->Mnp->Receive (ArpService->Mnp, RxToken);
 
   DEBUG_CODE (
-    if (EFI_ERROR (Status)) {
-      DEBUG ((EFI_D_ERROR, "ArpOnFrameRcvd: ArpService->Mnp->Receive "
-        "failed, %r\n.", Status));
-    }
-  );
+              if (EFI_ERROR (Status)) {
+    DEBUG (
+           (EFI_D_ERROR, "ArpOnFrameRcvd: ArpService->Mnp->Receive "
+                         "failed, %r\n.", Status)
+           );
+  }
+
+              );
 }
 
 /**
@@ -355,14 +356,15 @@ ArpOnFrameSentDpc (
 
   ASSERT (Context != NULL);
 
-  TxToken = (EFI_MANAGED_NETWORK_COMPLETION_TOKEN *)Context;
+  TxToken = (EFI_MANAGED_NETWORK_COMPLETION_TOKEN *) Context;
   TxData  = TxToken->Packet.TxData;
 
   DEBUG_CODE (
-    if (EFI_ERROR (TxToken->Status)) {
-      DEBUG ((EFI_D_ERROR, "ArpOnFrameSent: TxToken->Status, %r.\n", TxToken->Status));
-    }
-  );
+              if (EFI_ERROR (TxToken->Status)) {
+    DEBUG ((EFI_D_ERROR, "ArpOnFrameSent: TxToken->Status, %r.\n", TxToken->Status));
+  }
+
+              );
 
   //
   // Free the allocated memory and close the event.
@@ -396,7 +398,6 @@ ArpOnFrameSent (
   QueueDpc (TPL_CALLBACK, ArpOnFrameSentDpc, Context);
 }
 
-
 /**
   Process the arp cache olding and drive the retrying arp requests.
 
@@ -422,7 +423,7 @@ ArpTimerHandler (
   USER_REQUEST_CONTEXT  *RequestContext;
 
   ASSERT (Context != NULL);
-  ArpService = (ARP_SERVICE_DATA *)Context;
+  ArpService = (ARP_SERVICE_DATA *) Context;
 
   //
   // Iterate all the pending requests to see whether a retry is needed to send out
@@ -449,7 +450,7 @@ ArpTimerHandler (
         //
         // resend the ARP request.
         //
-        ASSERT (!IsListEmpty(&CacheEntry->UserRequestList));
+        ASSERT (!IsListEmpty (&CacheEntry->UserRequestList));
 
         ContextEntry   = CacheEntry->UserRequestList.ForwardLink;
         RequestContext = NET_LIST_USER_STRUCT (ContextEntry, USER_REQUEST_CONTEXT, List);
@@ -524,7 +525,6 @@ ArpTimerHandler (
   }
 }
 
-
 /**
   Match the two NET_ARP_ADDRESSes.
 
@@ -543,7 +543,7 @@ ArpMatchAddress (
   ASSERT (AddressOne != NULL && AddressTwo != NULL);
 
   if ((AddressOne->Type != AddressTwo->Type) ||
-    (AddressOne->Length != AddressTwo->Length)) {
+      (AddressOne->Length != AddressTwo->Length)) {
     //
     // Either Type or Length doesn't match.
     //
@@ -551,11 +551,11 @@ ArpMatchAddress (
   }
 
   if ((AddressOne->AddressPtr != NULL) &&
-    (CompareMem (
-      AddressOne->AddressPtr,
-      AddressTwo->AddressPtr,
-      AddressOne->Length
-      ) != 0)) {
+      (CompareMem (
+                   AddressOne->AddressPtr,
+                   AddressTwo->AddressPtr,
+                   AddressOne->Length
+                   ) != 0)) {
     //
     // The address is not the same.
     //
@@ -564,7 +564,6 @@ ArpMatchAddress (
 
   return TRUE;
 }
-
 
 /**
   Find the CacheEntry which matches the requirements in the specified CacheTable.
@@ -637,7 +636,6 @@ ArpFindNextCacheEntryInTable (
   return NULL;
 }
 
-
 /**
   Find the CacheEntry, using ProtocolAddress or HardwareAddress or both, as the keyword,
   in the DeniedCacheTable.
@@ -668,12 +666,12 @@ ArpFindDeniedCacheEntry (
     // Find the cache entry in the DeniedCacheTable by the protocol address.
     //
     CacheEntry = ArpFindNextCacheEntryInTable (
-                   &ArpService->DeniedCacheTable,
-                   NULL,
-                   ByProtoAddress,
-                   ProtocolAddress,
-                   NULL
-                   );
+                                               &ArpService->DeniedCacheTable,
+                                               NULL,
+                                               ByProtoAddress,
+                                               ProtocolAddress,
+                                               NULL
+                                               );
     if (CacheEntry != NULL) {
       //
       // There is a match.
@@ -687,17 +685,16 @@ ArpFindDeniedCacheEntry (
     // Find the cache entry in the DeniedCacheTable by the hardware address.
     //
     CacheEntry = ArpFindNextCacheEntryInTable (
-                   &ArpService->DeniedCacheTable,
-                   NULL,
-                   ByHwAddress,
-                   NULL,
-                   HardwareAddress
-                   );
+                                               &ArpService->DeniedCacheTable,
+                                               NULL,
+                                               ByHwAddress,
+                                               NULL,
+                                               HardwareAddress
+                                               );
   }
 
   return CacheEntry;
 }
-
 
 /**
   Allocate a cache entry and initialize it.
@@ -750,7 +747,7 @@ ArpAllocCacheEntry (
     CacheEntry->RetryCount       = Instance->ConfigData.RetryCount;
     CacheEntry->NextRetryTime    = Instance->ConfigData.RetryTimeOut;
     CacheEntry->DefaultDecayTime = Instance->ConfigData.EntryTimeOut;
-    CacheEntry->DecayTime        = Instance->ConfigData.EntryTimeOut;
+    CacheEntry->DecayTime = Instance->ConfigData.EntryTimeOut;
   } else {
     //
     // Use the default parameters if this cache entry isn't allocate in a
@@ -759,12 +756,11 @@ ArpAllocCacheEntry (
     CacheEntry->RetryCount       = ARP_DEFAULT_RETRY_COUNT;
     CacheEntry->NextRetryTime    = ARP_DEFAULT_RETRY_INTERVAL;
     CacheEntry->DefaultDecayTime = ARP_DEFAULT_TIMEOUT_VALUE;
-    CacheEntry->DecayTime        = ARP_DEFAULT_TIMEOUT_VALUE;
+    CacheEntry->DecayTime = ARP_DEFAULT_TIMEOUT_VALUE;
   }
 
   return CacheEntry;
 }
-
 
 /**
   Turn the CacheEntry into the resolved status.
@@ -797,15 +793,15 @@ ArpAddressResolved (
     Context = NET_LIST_USER_STRUCT (Entry, USER_REQUEST_CONTEXT, List);
 
     if (((Instance == NULL) || (Context->Instance == Instance)) &&
-      ((UserEvent == NULL) || (Context->UserRequestEvent == UserEvent))) {
+        ((UserEvent == NULL) || (Context->UserRequestEvent == UserEvent))) {
       //
       // Copy the address to the user-provided buffer and notify the user.
       //
       CopyMem (
-        Context->UserHwAddrBuffer,
-        CacheEntry->Addresses[Hardware].AddressPtr,
-        CacheEntry->Addresses[Hardware].Length
-        );
+               Context->UserHwAddrBuffer,
+               CacheEntry->Addresses[Hardware].AddressPtr,
+               CacheEntry->Addresses[Hardware].Length
+               );
       gBS->SignalEvent (Context->UserRequestEvent);
 
       //
@@ -825,7 +821,6 @@ ArpAddressResolved (
 
   return Count;
 }
-
 
 /**
   Fill the addresses in the CacheEntry using the information passed in by
@@ -867,10 +862,10 @@ ArpFillAddressInCacheEntry (
         // Copy it if the AddressPtr points to some buffer.
         //
         CopyMem (
-          CacheAddress->AddressPtr,
-          Address[Index]->AddressPtr,
-          CacheAddress->Length
-          );
+                 CacheAddress->AddressPtr,
+                 Address[Index]->AddressPtr,
+                 CacheAddress->Length
+                 );
       } else {
         //
         // Zero the corresponding address buffer in the CacheEntry.
@@ -880,7 +875,6 @@ ArpFillAddressInCacheEntry (
     }
   }
 }
-
 
 /**
   Configure the instance using the ConfigData. ConfigData is already validated.
@@ -912,18 +906,17 @@ ArpConfigureInstance (
   OldConfigData = &Instance->ConfigData;
 
   if (ConfigData != NULL) {
-
     if (Instance->Configured) {
       //
       // The instance is configured, check the unchangeable fields.
       //
       if ((OldConfigData->SwAddressType != ConfigData->SwAddressType) ||
-        (OldConfigData->SwAddressLength != ConfigData->SwAddressLength) ||
-        (CompareMem (
-           OldConfigData->StationAddress,
-           ConfigData->StationAddress,
-           OldConfigData->SwAddressLength
-           ) != 0)) {
+          (OldConfigData->SwAddressLength != ConfigData->SwAddressLength) ||
+          (CompareMem (
+                       OldConfigData->StationAddress,
+                       ConfigData->StationAddress,
+                       OldConfigData->SwAddressLength
+                       ) != 0)) {
         //
         // Deny the unallowed changes.
         //
@@ -952,8 +945,10 @@ ArpConfigureInstance (
 
       OldConfigData->StationAddress = AllocatePool (OldConfigData->SwAddressLength);
       if (OldConfigData->StationAddress == NULL) {
-        DEBUG ((EFI_D_ERROR, "ArpConfigInstance: AllocatePool for the StationAddress "
-          "failed.\n"));
+        DEBUG (
+               (EFI_D_ERROR, "ArpConfigInstance: AllocatePool for the StationAddress "
+                             "failed.\n")
+               );
         return EFI_OUT_OF_RESOURCES;
       }
 
@@ -961,10 +956,10 @@ ArpConfigureInstance (
       // Save the StationAddress.
       //
       CopyMem (
-        OldConfigData->StationAddress,
-        ConfigData->StationAddress,
-        OldConfigData->SwAddressLength
-        );
+               OldConfigData->StationAddress,
+               ConfigData->StationAddress,
+               OldConfigData->SwAddressLength
+               );
 
       //
       // Set the state to configured.
@@ -976,13 +971,13 @@ ArpConfigureInstance (
     // Use the implementation specific values if the following field is zero.
     //
     OldConfigData->EntryTimeOut = (ConfigData->EntryTimeOut == 0) ?
-      ARP_DEFAULT_TIMEOUT_VALUE : ConfigData->EntryTimeOut;
+                                  ARP_DEFAULT_TIMEOUT_VALUE : ConfigData->EntryTimeOut;
 
-    OldConfigData->RetryCount   = (ConfigData->RetryCount == 0) ?
-      ARP_DEFAULT_RETRY_COUNT : ConfigData->RetryCount;
+    OldConfigData->RetryCount = (ConfigData->RetryCount == 0) ?
+                                ARP_DEFAULT_RETRY_COUNT : ConfigData->RetryCount;
 
     OldConfigData->RetryTimeOut = (ConfigData->RetryTimeOut == 0) ?
-      ARP_DEFAULT_RETRY_INTERVAL : ConfigData->RetryTimeOut;
+                                  ARP_DEFAULT_RETRY_INTERVAL : ConfigData->RetryTimeOut;
   } else {
     //
     // Reset the configuration.
@@ -1005,7 +1000,6 @@ ArpConfigureInstance (
 
   return EFI_SUCCESS;
 }
-
 
 /**
   Send out an arp frame using the CacheEntry and the ArpOpCode.
@@ -1042,26 +1036,26 @@ ArpSendFrame (
   //
   // Allocate memory for the TxToken.
   //
-  TxToken = AllocatePool (sizeof(EFI_MANAGED_NETWORK_COMPLETION_TOKEN));
+  TxToken = AllocatePool (sizeof (EFI_MANAGED_NETWORK_COMPLETION_TOKEN));
   if (TxToken == NULL) {
     DEBUG ((EFI_D_ERROR, "ArpSendFrame: Allocate memory for TxToken failed.\n"));
     return;
   }
 
   TxToken->Event = NULL;
-  TxData         = NULL;
-  Packet         = NULL;
+  TxData = NULL;
+  Packet = NULL;
 
   //
   // Create the event for this TxToken.
   //
   Status = gBS->CreateEvent (
-                  EVT_NOTIFY_SIGNAL,
-                  TPL_NOTIFY,
-                  ArpOnFrameSent,
-                  (VOID *)TxToken,
-                  &TxToken->Event
-                  );
+                             EVT_NOTIFY_SIGNAL,
+                             TPL_NOTIFY,
+                             ArpOnFrameSent,
+                             (VOID *) TxToken,
+                             &TxToken->Event
+                             );
   if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "ArpSendFrame: CreateEvent failed for TxToken->Event.\n"));
     goto CLEAN_EXIT;
@@ -1070,7 +1064,7 @@ ArpSendFrame (
   //
   // Allocate memory for the TxData used in the TxToken.
   //
-  TxData = AllocatePool (sizeof(EFI_MANAGED_NETWORK_TRANSMIT_DATA));
+  TxData = AllocatePool (sizeof (EFI_MANAGED_NETWORK_TRANSMIT_DATA));
   if (TxData == NULL) {
     DEBUG ((EFI_D_ERROR, "ArpSendFrame: Allocate memory for TxData failed.\n"));
     goto CLEAN_EXIT;
@@ -1104,11 +1098,12 @@ ArpSendFrame (
     CopyMem (TmpPtr, &SnpMode->BroadcastAddress, SnpMode->HwAddressSize);
   } else {
     CopyMem (
-      TmpPtr,
-      CacheEntry->Addresses[Hardware].AddressPtr,
-      SnpMode->HwAddressSize
-      );
+             TmpPtr,
+             CacheEntry->Addresses[Hardware].AddressPtr,
+             SnpMode->HwAddressSize
+             );
   }
+
   TmpPtr += SnpMode->HwAddressSize;
 
   //
@@ -1120,19 +1115,19 @@ ArpSendFrame (
   //
   // The ethernet protocol type.
   //
-  *(UINT16 *)TmpPtr = HTONS (ARP_ETHER_PROTO_TYPE);
-  TmpPtr            += 2;
+  *(UINT16 *) TmpPtr = HTONS (ARP_ETHER_PROTO_TYPE);
+  TmpPtr += 2;
 
   //
   // The ARP Head.
   //
-  ArpHead               = (ARP_HEAD *) TmpPtr;
-  ArpHead->HwType       = HTONS ((UINT16)SnpMode->IfType);
+  ArpHead = (ARP_HEAD *) TmpPtr;
+  ArpHead->HwType       = HTONS ((UINT16) SnpMode->IfType);
   ArpHead->ProtoType    = HTONS (ConfigData->SwAddressType);
-  ArpHead->HwAddrLen    = (UINT8)SnpMode->HwAddressSize;
+  ArpHead->HwAddrLen    = (UINT8) SnpMode->HwAddressSize;
   ArpHead->ProtoAddrLen = ConfigData->SwAddressLength;
   ArpHead->OpCode       = HTONS (ArpOpCode);
-  TmpPtr                += sizeof (ARP_HEAD);
+  TmpPtr += sizeof (ARP_HEAD);
 
   //
   // The sender hardware address.
@@ -1150,30 +1145,30 @@ ArpSendFrame (
   // The target hardware address.
   //
   CopyMem (
-    TmpPtr,
-    CacheEntry->Addresses[Hardware].AddressPtr,
-    SnpMode->HwAddressSize
-    );
+           TmpPtr,
+           CacheEntry->Addresses[Hardware].AddressPtr,
+           SnpMode->HwAddressSize
+           );
   TmpPtr += SnpMode->HwAddressSize;
 
   //
   // The target protocol address.
   //
   CopyMem (
-    TmpPtr,
-    CacheEntry->Addresses[Protocol].AddressPtr,
-    ConfigData->SwAddressLength
-    );
+           TmpPtr,
+           CacheEntry->Addresses[Protocol].AddressPtr,
+           ConfigData->SwAddressLength
+           );
 
   //
   // Set all the fields of the TxData.
   //
   TxData->DestinationAddress = NULL;
-  TxData->SourceAddress      = NULL;
-  TxData->ProtocolType       = 0;
-  TxData->DataLength         = TotalLength - SnpMode->MediaHeaderSize;
-  TxData->HeaderLength       = (UINT16) SnpMode->MediaHeaderSize;
-  TxData->FragmentCount      = 1;
+  TxData->SourceAddress = NULL;
+  TxData->ProtocolType  = 0;
+  TxData->DataLength    = TotalLength - SnpMode->MediaHeaderSize;
+  TxData->HeaderLength  = (UINT16) SnpMode->MediaHeaderSize;
+  TxData->FragmentCount = 1;
 
   TxData->FragmentTable[0].FragmentBuffer = Packet;
   TxData->FragmentTable[0].FragmentLength = TotalLength;
@@ -1182,7 +1177,7 @@ ArpSendFrame (
   // Associate the TxData with the TxToken.
   //
   TxToken->Packet.TxData = TxData;
-  TxToken->Status        = EFI_NOT_READY;
+  TxToken->Status = EFI_NOT_READY;
 
   //
   // Send out this arp packet by Mnp.
@@ -1206,12 +1201,11 @@ CLEAN_EXIT:
   }
 
   if (TxToken->Event != NULL) {
-    gBS->CloseEvent (TxToken->Event);
+  gBS->CloseEvent (TxToken->Event);
   }
 
   FreePool (TxToken);
 }
-
 
 /**
   Delete the cache entries in the specified CacheTable, using the BySwAddress,
@@ -1261,11 +1255,11 @@ ArpDeleteCacheEntryInTable (
         // Protocol address type matched. Check the address.
         //
         if ((AddressBuffer == NULL) ||
-          (CompareMem (
-             AddressBuffer,
-             CacheEntry->Addresses[Protocol].AddressPtr,
-             CacheEntry->Addresses[Protocol].Length
-             ) == 0)) {
+            (CompareMem (
+                         AddressBuffer,
+                         CacheEntry->Addresses[Protocol].AddressPtr,
+                         CacheEntry->Addresses[Protocol].Length
+                         ) == 0)) {
           //
           // Address matched.
           //
@@ -1274,11 +1268,11 @@ ArpDeleteCacheEntryInTable (
       }
     } else {
       if ((AddressBuffer == NULL) ||
-        (CompareMem (
-           AddressBuffer,
-           CacheEntry->Addresses[Hardware].AddressPtr,
-           CacheEntry->Addresses[Hardware].Length
-           ) == 0)) {
+          (CompareMem (
+                       AddressBuffer,
+                       CacheEntry->Addresses[Hardware].AddressPtr,
+                       CacheEntry->Addresses[Hardware].Length
+                       ) == 0)) {
         //
         // Address matched.
         //
@@ -1302,7 +1296,6 @@ MATCHED:
 
   return Count;
 }
-
 
 /**
   Delete cache entries in all the cache tables.
@@ -1336,27 +1329,26 @@ ArpDeleteCacheEntry (
   // Delete the cache entries in the DeniedCacheTable.
   //
   Count = ArpDeleteCacheEntryInTable (
-            &ArpService->DeniedCacheTable,
-            BySwAddress,
-            Instance->ConfigData.SwAddressType,
-            AddressBuffer,
-            Force
-            );
+                                      &ArpService->DeniedCacheTable,
+                                      BySwAddress,
+                                      Instance->ConfigData.SwAddressType,
+                                      AddressBuffer,
+                                      Force
+                                      );
 
   //
   // Delete the cache entries in the ResolvedCacheTable.
   //
   Count += ArpDeleteCacheEntryInTable (
-             &ArpService->ResolvedCacheTable,
-             BySwAddress,
-             Instance->ConfigData.SwAddressType,
-             AddressBuffer,
-             Force
-             );
+                                       &ArpService->ResolvedCacheTable,
+                                       BySwAddress,
+                                       Instance->ConfigData.SwAddressType,
+                                       AddressBuffer,
+                                       Force
+                                       );
 
   return Count;
 }
-
 
 /**
   Cancel the arp request.
@@ -1392,11 +1384,11 @@ ArpCancelRequest (
     CacheEntry = NET_LIST_USER_STRUCT (Entry, ARP_CACHE_ENTRY, List);
 
     if ((TargetSwAddress == NULL) ||
-      (CompareMem (
-         TargetSwAddress,
-         CacheEntry->Addresses[Protocol].AddressPtr,
-         CacheEntry->Addresses[Protocol].Length
-         ) == 0)) {
+        (CompareMem (
+                     TargetSwAddress,
+                     CacheEntry->Addresses[Protocol].AddressPtr,
+                     CacheEntry->Addresses[Protocol].Length
+                     ) == 0)) {
       //
       // This request entry matches the TargetSwAddress or all requests are to be
       // cancelled as TargetSwAddress is NULL.
@@ -1415,7 +1407,6 @@ ArpCancelRequest (
 
   return Count;
 }
-
 
 /**
   Find the cache entry in the cache table.
@@ -1476,11 +1467,11 @@ ArpFindCacheEntry (
   if (BySwAddress) {
     MatchAddress.Type   = Instance->ConfigData.SwAddressType;
     MatchAddress.Length = Instance->ConfigData.SwAddressLength;
-    FindOpType          = ByProtoAddress;
+    FindOpType = ByProtoAddress;
   } else {
     MatchAddress.Type   = ArpService->SnpMode.IfType;
-    MatchAddress.Length = (UINT8)ArpService->SnpMode.HwAddressSize;
-    FindOpType          = ByHwAddress;
+    MatchAddress.Length = (UINT8) ArpService->SnpMode.HwAddressSize;
+    FindOpType = ByHwAddress;
   }
 
   MatchAddress.AddressPtr = AddressBuffer;
@@ -1494,12 +1485,12 @@ ArpFindCacheEntry (
     // Try to find the matched entries in the DeniedCacheTable.
     //
     CacheEntry = ArpFindNextCacheEntryInTable (
-                   &ArpService->DeniedCacheTable,
-                   StartEntry,
-                   FindOpType,
-                   &MatchAddress,
-                   &MatchAddress
-                   );
+                                               &ArpService->DeniedCacheTable,
+                                               StartEntry,
+                                               FindOpType,
+                                               &MatchAddress,
+                                               &MatchAddress
+                                               );
     if (CacheEntry == NULL) {
       //
       // Once the CacheEntry is NULL, there are no more matches.
@@ -1511,10 +1502,10 @@ ArpFindCacheEntry (
     // Insert the found entry into the map.
     //
     NetMapInsertTail (
-      &FoundEntries,
-      (VOID *)CacheEntry,
-      (VOID *)&ArpService->DeniedCacheTable
-      );
+                      &FoundEntries,
+                      (VOID *) CacheEntry,
+                      (VOID *) &ArpService->DeniedCacheTable
+                      );
 
     //
     // Let the next search start from this cache entry.
@@ -1535,12 +1526,12 @@ ArpFindCacheEntry (
   StartEntry = NULL;
   while (TRUE) {
     CacheEntry = ArpFindNextCacheEntryInTable (
-                   &ArpService->ResolvedCacheTable,
-                   StartEntry,
-                   FindOpType,
-                   &MatchAddress,
-                   &MatchAddress
-                   );
+                                               &ArpService->ResolvedCacheTable,
+                                               StartEntry,
+                                               FindOpType,
+                                               &MatchAddress,
+                                               &MatchAddress
+                                               );
     if (CacheEntry == NULL) {
       //
       // Once the CacheEntry is NULL, there are no more matches.
@@ -1552,10 +1543,10 @@ ArpFindCacheEntry (
     // Insert the found entry into the map.
     //
     NetMapInsertTail (
-      &FoundEntries,
-      (VOID *)CacheEntry,
-      (VOID *)&ArpService->ResolvedCacheTable
-      );
+                      &FoundEntries,
+                      (VOID *) CacheEntry,
+                      (VOID *) &ArpService->ResolvedCacheTable
+                      );
 
     //
     // Let the next search start from this cache entry.
@@ -1582,7 +1573,7 @@ ArpFindCacheEntry (
   // Found the entry length, make sure its 8 bytes alignment.
   //
   FoundEntryLength = (((sizeof (EFI_ARP_FIND_DATA) + Instance->ConfigData.SwAddressLength +
-                       ArpService->SnpMode.HwAddressSize) + 3) & ~(0x3));
+                        ArpService->SnpMode.HwAddressSize) + 3) & ~(0x3));
 
   if (EntryLength != NULL) {
     *EntryLength = FoundEntryLength;
@@ -1621,41 +1612,41 @@ ArpFindCacheEntry (
     //
     // Get a cache entry from the map.
     //
-    CacheEntry = NetMapRemoveHead (&FoundEntries, (VOID **)&CacheTable);
+    CacheEntry = NetMapRemoveHead (&FoundEntries, (VOID **) &CacheTable);
 
     //
     // Set the fields in FindData.
     //
     FindData->Size            = FoundEntryLength;
-    FindData->DenyFlag        = (BOOLEAN)(CacheTable == &ArpService->DeniedCacheTable);
-    FindData->StaticFlag      = (BOOLEAN)(CacheEntry->DefaultDecayTime == 0);
+    FindData->DenyFlag        = (BOOLEAN) (CacheTable == &ArpService->DeniedCacheTable);
+    FindData->StaticFlag      = (BOOLEAN) (CacheEntry->DefaultDecayTime == 0);
     FindData->HwAddressType   = ArpService->SnpMode.IfType;
     FindData->SwAddressType   = Instance->ConfigData.SwAddressType;
-    FindData->HwAddressLength = (UINT8)ArpService->SnpMode.HwAddressSize;
+    FindData->HwAddressLength = (UINT8) ArpService->SnpMode.HwAddressSize;
     FindData->SwAddressLength = Instance->ConfigData.SwAddressLength;
 
     //
     // Copy the software address.
     //
     CopyMem (
-      FindData + 1,
-      CacheEntry->Addresses[Protocol].AddressPtr,
-      FindData->SwAddressLength
-      );
+             FindData + 1,
+             CacheEntry->Addresses[Protocol].AddressPtr,
+             FindData->SwAddressLength
+             );
 
     //
     // Copy the hardware address.
     //
     CopyMem (
-      (UINT8 *)(FindData + 1) + FindData->SwAddressLength,
-      CacheEntry->Addresses[Hardware].AddressPtr,
-      FindData->HwAddressLength
-      );
+             (UINT8 *) (FindData + 1) + FindData->SwAddressLength,
+             CacheEntry->Addresses[Hardware].AddressPtr,
+             FindData->HwAddressLength
+             );
 
     //
     // Slip to the next FindData.
     //
-    FindData = (EFI_ARP_FIND_DATA *)((UINT8 *)FindData + FoundEntryLength);
+    FindData = (EFI_ARP_FIND_DATA *) ((UINT8 *) FindData + FoundEntryLength);
   }
 
 CLEAN_EXIT:
@@ -1664,4 +1655,3 @@ CLEAN_EXIT:
 
   return Status;
 }
-

@@ -19,7 +19,6 @@ EFI_UDP4_PROTOCOL  mUdp4Protocol = {
   Udp4Poll
 };
 
-
 /**
   Reads the current operational settings.
 
@@ -86,7 +85,6 @@ Udp4GetModeData (
   return Status;
 }
 
-
 /**
   Initializes, changes, or resets the operational parameters for this instance of the EFI UDPv4
   Protocol.
@@ -149,12 +147,11 @@ Udp4Configure (
   }
 
   Udp4Service = Instance->Udp4Service;
-  Status      = EFI_SUCCESS;
+  Status = EFI_SUCCESS;
 
   OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
 
   if (UdpConfigData != NULL) {
-
     CopyMem (&StationAddress, &UdpConfigData->StationAddress, sizeof (IP4_ADDR));
     CopyMem (&SubnetMask, &UdpConfigData->SubnetMask, sizeof (IP4_ADDR));
     CopyMem (&RemoteAddress, &UdpConfigData->RemoteAddress, sizeof (IP4_ADDR));
@@ -162,7 +159,6 @@ Udp4Configure (
     StationAddress = NTOHL (StationAddress);
     SubnetMask     = NTOHL (SubnetMask);
     RemoteAddress  = NTOHL (RemoteAddress);
-
 
     if (!UdpConfigData->UseDefaultAddress &&
         (!IP4_IS_VALID_NETMASK (SubnetMask) ||
@@ -243,11 +239,11 @@ Udp4Configure (
       CopyMem (&LocalAddr, &Instance->ConfigData.StationAddress, sizeof (IP4_ADDR));
       CopyMem (&RemoteAddr, &Instance->ConfigData.RemoteAddress, sizeof (IP4_ADDR));
       Instance->HeadSum = NetPseudoHeadChecksum (
-                            LocalAddr,
-                            RemoteAddr,
-                            EFI_IP_PROTO_UDP,
-                            0
-                            );
+                                                 LocalAddr,
+                                                 RemoteAddr,
+                                                 EFI_IP_PROTO_UDP,
+                                                 0
+                                                 );
 
       Instance->Configured = TRUE;
     }
@@ -282,7 +278,6 @@ ON_EXIT:
 
   return Status;
 }
-
 
 /**
   Joins and leaves multicast groups.
@@ -370,10 +365,8 @@ Udp4Groups (
   // the multicast datagrams destined to multicast IPs the other instances configured.
   //
   if (JoinFlag) {
-
     NetMapInsertTail (&Instance->McastIps, (VOID *) (UINTN) McastIp, NULL);
   } else {
-
     NetMapIterate (&Instance->McastIps, Udp4LeaveGroup, MulticastAddress);
   }
 
@@ -383,7 +376,6 @@ ON_EXIT:
 
   return Status;
 }
-
 
 /**
   Adds and deletes routing table entries.
@@ -458,7 +450,6 @@ Udp4Routes (
   return Ip->Routes (Ip, DeleteRoute, SubnetAddress, SubnetMask, GatewayAddress);
 }
 
-
 /**
   Queues outgoing data packets into the transmit queue.
 
@@ -500,7 +491,7 @@ Udp4Transmit (
   UDP4_INSTANCE_DATA      *Instance;
   EFI_TPL                 OldTpl;
   NET_BUF                 *Packet;
-  EFI_UDP_HEADER         *Udp4Header;
+  EFI_UDP_HEADER          *Udp4Header;
   EFI_UDP4_CONFIG_DATA    *ConfigData;
   IP4_ADDR                Source;
   IP4_ADDR                Destination;
@@ -536,7 +527,7 @@ Udp4Transmit (
   }
 
   if (EFI_ERROR (NetMapIterate (&Instance->TxTokens, Udp4TokenExist, Token)) ||
-    EFI_ERROR (NetMapIterate (&Instance->RxTokens, Udp4TokenExist, Token))) {
+      EFI_ERROR (NetMapIterate (&Instance->RxTokens, Udp4TokenExist, Token))) {
     //
     // Try to find a duplicate token in the two token maps, if found, return
     // EFI_ACCESS_DENIED.
@@ -551,13 +542,13 @@ Udp4Transmit (
   // Create a net buffer to hold the user buffer and the udp header.
   //
   Packet = NetbufFromExt (
-             (NET_FRAGMENT *)TxData->FragmentTable,
-             TxData->FragmentCount,
-             UDP4_HEADER_SIZE,
-             0,
-             Udp4NetVectorExtFree,
-             NULL
-             );
+                          (NET_FRAGMENT *) TxData->FragmentTable,
+                          TxData->FragmentCount,
+                          UDP4_HEADER_SIZE,
+                          0,
+                          Udp4NetVectorExtFree,
+                          NULL
+                          );
   if (Packet == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ON_EXIT;
@@ -577,10 +568,10 @@ Udp4Transmit (
   //
   // Fill the udp header.
   //
-  Udp4Header->SrcPort      = HTONS (ConfigData->StationPort);
-  Udp4Header->DstPort      = HTONS (ConfigData->RemotePort);
-  Udp4Header->Length       = HTONS ((UINT16) Packet->TotalSize);
-  Udp4Header->Checksum     = 0;
+  Udp4Header->SrcPort  = HTONS (ConfigData->StationPort);
+  Udp4Header->DstPort  = HTONS (ConfigData->RemotePort);
+  Udp4Header->Length   = HTONS ((UINT16) Packet->TotalSize);
+  Udp4Header->Checksum = 0;
 
   UdpSessionData = TxData->UdpSessionData;
   IP4_COPY_ADDRESS (&Override.Ip4OverrideData.SourceAddress, &ConfigData->StationAddress);
@@ -609,11 +600,11 @@ Udp4Transmit (
     // calculate the pseudo head checksum using the overridden parameters.
     //
     HeadSum = NetPseudoHeadChecksum (
-                Source,
-                Destination,
-                EFI_IP_PROTO_UDP,
-                0
-                );
+                                     Source,
+                                     Destination,
+                                     EFI_IP_PROTO_UDP,
+                                     0
+                                     );
   } else {
     //
     // UdpSessionData is NULL, use the address and port information previously configured.
@@ -643,10 +634,10 @@ Udp4Transmit (
     ZeroMem (&Override.Ip4OverrideData.GatewayAddress, sizeof (EFI_IPv4_ADDRESS));
   }
 
-  Override.Ip4OverrideData.Protocol                 = EFI_IP_PROTO_UDP;
-  Override.Ip4OverrideData.TypeOfService            = ConfigData->TypeOfService;
-  Override.Ip4OverrideData.TimeToLive               = ConfigData->TimeToLive;
-  Override.Ip4OverrideData.DoNotFragment            = ConfigData->DoNotFragment;
+  Override.Ip4OverrideData.Protocol = EFI_IP_PROTO_UDP;
+  Override.Ip4OverrideData.TypeOfService = ConfigData->TypeOfService;
+  Override.Ip4OverrideData.TimeToLive    = ConfigData->TimeToLive;
+  Override.Ip4OverrideData.DoNotFragment = ConfigData->DoNotFragment;
 
   //
   // Save the token into the TxToken map.
@@ -661,14 +652,14 @@ Udp4Transmit (
   //
   IpDestAddr.Addr[0] = Destination;
   Status = IpIoSend (
-             Udp4Service->IpIo,
-             Packet,
-             Instance->IpInfo,
-             Instance,
-             Token,
-             &IpDestAddr,
-             &Override
-             );
+                     Udp4Service->IpIo,
+                     Packet,
+                     Instance->IpInfo,
+                     Instance,
+                     Token,
+                     &IpDestAddr,
+                     &Override
+                     );
   if (EFI_ERROR (Status)) {
     //
     // Remove this token from the TxTokens.
@@ -686,7 +677,6 @@ ON_EXIT:
 
   return Status;
 }
-
 
 /**
   Places an asynchronous receive request into the receiving queue.
@@ -744,8 +734,8 @@ Udp4Receive (
 
   OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
 
-  if (EFI_ERROR (NetMapIterate (&Instance->RxTokens, Udp4TokenExist, Token))||
-    EFI_ERROR (NetMapIterate (&Instance->TxTokens, Udp4TokenExist, Token))) {
+  if (EFI_ERROR (NetMapIterate (&Instance->RxTokens, Udp4TokenExist, Token)) ||
+      EFI_ERROR (NetMapIterate (&Instance->TxTokens, Udp4TokenExist, Token))) {
     //
     // Return EFI_ACCESS_DENIED if the specified token is already in the TxTokens or
     // RxTokens map.
@@ -786,7 +776,6 @@ ON_EXIT:
 
   return Status;
 }
-
 
 /**
   Aborts an asynchronous transmit or receive request.
@@ -858,7 +847,6 @@ Udp4Cancel (
   return Status;
 }
 
-
 /**
   Polls for incoming data packets and processes outgoing data packets.
 
@@ -893,7 +881,7 @@ Udp4Poll (
   }
 
   Instance = UDP4_INSTANCE_DATA_FROM_THIS (This);
-  Ip       = Instance->IpInfo->Ip.Ip4;
+  Ip = Instance->IpInfo->Ip.Ip4;
 
   //
   // Invode the Ip instance consumed by the udp instance to do the poll operation.

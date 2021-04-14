@@ -8,8 +8,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "Mtftp4Impl.h"
 
-
-
 /**
   Build then send a MTFTP data packet for the MTFTP upload session.
 
@@ -28,13 +26,13 @@ Mtftp4WrqSendBlock (
   IN     UINT16                 BlockNum
   )
 {
-  EFI_MTFTP4_PACKET         *Packet;
-  EFI_MTFTP4_TOKEN          *Token;
-  NET_BUF                   *UdpPacket;
-  EFI_STATUS                Status;
-  UINT16                    DataLen;
-  UINT8                     *DataBuf;
-  UINT64                    Start;
+  EFI_MTFTP4_PACKET  *Packet;
+  EFI_MTFTP4_TOKEN   *Token;
+  NET_BUF            *UdpPacket;
+  EFI_STATUS         Status;
+  UINT16             DataLen;
+  UINT8              *DataBuf;
+  UINT64             Start;
 
   //
   // Allocate a buffer to hold the user data
@@ -61,7 +59,7 @@ Mtftp4WrqSendBlock (
     Start = MultU64x32 (BlockNum - 1, Instance->BlkSize);
 
     if (Token->BufferSize < Start + Instance->BlkSize) {
-      DataLen             = (UINT16) (Token->BufferSize - Start);
+      DataLen = (UINT16) (Token->BufferSize - Start);
       Instance->LastBlock = BlockNum;
       Mtftp4SetLastBlockNum (&Instance->Blocks, BlockNum);
     }
@@ -70,18 +68,17 @@ Mtftp4WrqSendBlock (
       NetbufAllocSpace (UdpPacket, DataLen, FALSE);
       CopyMem (Packet->Data.Data, (UINT8 *) Token->Buffer + Start, DataLen);
     }
-
   } else {
     //
     // Get data from PacketNeeded
     //
     DataBuf = NULL;
     Status  = Token->PacketNeeded (
-                       &Instance->Mtftp4,
-                       Token,
-                       &DataLen,
-                       (VOID **) &DataBuf
-                       );
+                                   &Instance->Mtftp4,
+                                   Token,
+                                   &DataLen,
+                                   (VOID **) &DataBuf
+                                   );
 
     if (EFI_ERROR (Status) || (DataLen > Instance->BlkSize)) {
       if (DataBuf != NULL) {
@@ -93,10 +90,10 @@ Mtftp4WrqSendBlock (
       }
 
       Mtftp4SendError (
-        Instance,
-        EFI_MTFTP4_ERRORCODE_REQUEST_DENIED,
-        (UINT8 *) "User aborted the transfer"
-        );
+                       Instance,
+                       EFI_MTFTP4_ERRORCODE_REQUEST_DENIED,
+                       (UINT8 *) "User aborted the transfer"
+                       );
 
       return EFI_ABORTED;
     }
@@ -115,7 +112,6 @@ Mtftp4WrqSendBlock (
 
   return Mtftp4SendPacket (Instance, UdpPacket);
 }
-
 
 /**
   Function to handle received ACK packet.
@@ -138,16 +134,16 @@ Mtftp4WrqHandleAck (
   IN     MTFTP4_PROTOCOL       *Instance,
   IN     EFI_MTFTP4_PACKET     *Packet,
   IN     UINT32                Len,
-     OUT BOOLEAN               *Completed
+  OUT BOOLEAN               *Completed
   )
 {
-  UINT16                    AckNum;
-  INTN                      Expected;
-  UINT64                    BlockCounter;
+  UINT16  AckNum;
+  INTN    Expected;
+  UINT64  BlockCounter;
 
-  *Completed  = FALSE;
-  AckNum      = NTOHS (Packet->Ack.Block[0]);
-  Expected    = Mtftp4GetNextBlockNum (&Instance->Blocks);
+  *Completed = FALSE;
+  AckNum     = NTOHS (Packet->Ack.Block[0]);
+  Expected   = Mtftp4GetNextBlockNum (&Instance->Blocks);
 
   ASSERT (Expected >= 0);
 
@@ -169,7 +165,6 @@ Mtftp4WrqHandleAck (
   Expected = Mtftp4GetNextBlockNum (&Instance->Blocks);
 
   if (Expected < 0) {
-
     //
     // The block range is empty. It may either because the last
     // block has been ACKed, or the sequence number just looped back,
@@ -179,13 +174,12 @@ Mtftp4WrqHandleAck (
       ASSERT (Instance->LastBlock >= 1);
       *Completed = TRUE;
       return EFI_SUCCESS;
-
     } else {
       Mtftp4SendError (
-        Instance,
-        EFI_MTFTP4_ERRORCODE_REQUEST_DENIED,
-        (UINT8 *) "Block number rolls back, not supported, try blksize option"
-        );
+                       Instance,
+                       EFI_MTFTP4_ERRORCODE_REQUEST_DENIED,
+                       (UINT8 *) "Block number rolls back, not supported, try blksize option"
+                       );
 
       return EFI_TFTP_ERROR;
     }
@@ -193,7 +187,6 @@ Mtftp4WrqHandleAck (
 
   return Mtftp4WrqSendBlock (Instance, (UINT16) Expected);
 }
-
 
 /**
   Check whether the received OACK is valid.
@@ -236,7 +229,6 @@ Mtftp4WrqOackValid (
   return TRUE;
 }
 
-
 /**
   Function to handle the MTFTP OACK packet.
 
@@ -257,13 +249,13 @@ Mtftp4WrqHandleOack (
   IN OUT MTFTP4_PROTOCOL       *Instance,
   IN     EFI_MTFTP4_PACKET     *Packet,
   IN     UINT32                Len,
-     OUT BOOLEAN               *Completed
+  OUT BOOLEAN               *Completed
   )
 {
-  MTFTP4_OPTION             Reply;
-  EFI_MTFTP4_PACKET         Bogus;
-  EFI_STATUS                Status;
-  INTN                      Expected;
+  MTFTP4_OPTION      Reply;
+  EFI_MTFTP4_PACKET  Bogus;
+  EFI_STATUS         Status;
+  INTN               Expected;
 
   *Completed = FALSE;
 
@@ -289,10 +281,10 @@ Mtftp4WrqHandleOack (
     //
     if (Status != EFI_OUT_OF_RESOURCES) {
       Mtftp4SendError (
-        Instance,
-        EFI_MTFTP4_ERRORCODE_ILLEGAL_OPERATION,
-        (UINT8 *) "Malformatted OACK packet"
-        );
+                       Instance,
+                       EFI_MTFTP4_ERRORCODE_ILLEGAL_OPERATION,
+                       (UINT8 *) "Malformatted OACK packet"
+                       );
     }
 
     return EFI_TFTP_ERROR;
@@ -310,19 +302,18 @@ Mtftp4WrqHandleOack (
   // Build a bogus ACK0 packet then pass it to the Mtftp4WrqHandleAck,
   // which will start the transmission of the first data block.
   //
-  Bogus.Ack.OpCode    = HTONS (EFI_MTFTP4_OPCODE_ACK);
-  Bogus.Ack.Block[0]  = 0;
+  Bogus.Ack.OpCode   = HTONS (EFI_MTFTP4_OPCODE_ACK);
+  Bogus.Ack.Block[0] = 0;
 
   Status = Mtftp4WrqHandleAck (
-             Instance,
-             &Bogus,
-             sizeof (EFI_MTFTP4_ACK_HEADER),
-             Completed
-             );
+                               Instance,
+                               &Bogus,
+                               sizeof (EFI_MTFTP4_ACK_HEADER),
+                               Completed
+                               );
 
   return Status;
 }
-
 
 /**
   The input process routine for MTFTP upload.
@@ -342,12 +333,12 @@ Mtftp4WrqInput (
   IN VOID                   *Context
   )
 {
-  MTFTP4_PROTOCOL           *Instance;
-  EFI_MTFTP4_PACKET         *Packet;
-  BOOLEAN                   Completed;
-  EFI_STATUS                Status;
-  UINT32                    Len;
-  UINT16                    Opcode;
+  MTFTP4_PROTOCOL    *Instance;
+  EFI_MTFTP4_PACKET  *Packet;
+  BOOLEAN            Completed;
+  EFI_STATUS         Status;
+  UINT32             Len;
+  UINT16             Opcode;
 
   Instance = (MTFTP4_PROTOCOL *) Context;
   NET_CHECK_SIGNATURE (Instance, MTFTP4_PROTOCOL_SIGNATURE);
@@ -393,7 +384,6 @@ Mtftp4WrqInput (
     }
 
     NetbufCopy (UdpPacket, 0, Len, (UINT8 *) Packet);
-
   } else {
     Packet = (EFI_MTFTP4_PACKET *) NetbufGetByte (UdpPacket, 0, NULL);
     ASSERT (Packet != NULL);
@@ -407,13 +397,12 @@ Mtftp4WrqInput (
   //
   if ((Instance->Token->CheckPacket != NULL) &&
       ((Opcode == EFI_MTFTP4_OPCODE_OACK) || (Opcode == EFI_MTFTP4_OPCODE_ERROR))) {
-
     Status = Instance->Token->CheckPacket (
-                                &Instance->Mtftp4,
-                                Instance->Token,
-                                (UINT16) Len,
-                                Packet
-                                );
+                                           &Instance->Mtftp4,
+                                           Instance->Token,
+                                           (UINT16) Len,
+                                           Packet
+                                           );
 
     if (EFI_ERROR (Status)) {
       //
@@ -421,10 +410,10 @@ Mtftp4WrqInput (
       //
       if (Opcode != EFI_MTFTP4_OPCODE_ERROR) {
         Mtftp4SendError (
-          Instance,
-          EFI_MTFTP4_ERRORCODE_REQUEST_DENIED,
-          (UINT8 *) "User aborted the transfer"
-          );
+                         Instance,
+                         EFI_MTFTP4_ERRORCODE_REQUEST_DENIED,
+                         (UINT8 *) "User aborted the transfer"
+                         );
       }
 
       Status = EFI_ABORTED;
@@ -433,28 +422,28 @@ Mtftp4WrqInput (
   }
 
   switch (Opcode) {
-  case EFI_MTFTP4_OPCODE_ACK:
-    if (Len != MTFTP4_OPCODE_LEN + MTFTP4_BLKNO_LEN) {
-      goto ON_EXIT;
-    }
+    case EFI_MTFTP4_OPCODE_ACK:
+      if (Len != MTFTP4_OPCODE_LEN + MTFTP4_BLKNO_LEN) {
+        goto ON_EXIT;
+      }
 
-    Status = Mtftp4WrqHandleAck (Instance, Packet, Len, &Completed);
-    break;
+      Status = Mtftp4WrqHandleAck (Instance, Packet, Len, &Completed);
+      break;
 
-  case EFI_MTFTP4_OPCODE_OACK:
-    if (Len <= MTFTP4_OPCODE_LEN) {
-      goto ON_EXIT;
-    }
+    case EFI_MTFTP4_OPCODE_OACK:
+      if (Len <= MTFTP4_OPCODE_LEN) {
+        goto ON_EXIT;
+      }
 
-    Status = Mtftp4WrqHandleOack (Instance, Packet, Len, &Completed);
-    break;
+      Status = Mtftp4WrqHandleOack (Instance, Packet, Len, &Completed);
+      break;
 
-  case EFI_MTFTP4_OPCODE_ERROR:
-    Status = EFI_TFTP_ERROR;
-    break;
+    case EFI_MTFTP4_OPCODE_ERROR:
+      Status = EFI_TFTP_ERROR;
+      break;
 
-  default:
-    break;
+    default:
+      break;
   }
 
 ON_EXIT:
@@ -482,8 +471,6 @@ ON_EXIT:
   }
 }
 
-
-
 /**
   Start the MTFTP session for upload.
 
@@ -504,7 +491,7 @@ Mtftp4WrqStart (
   IN UINT16                 Operation
   )
 {
-  EFI_STATUS                Status;
+  EFI_STATUS  Status;
 
   //
   // The valid block number range are [0, 0xffff]. For example:
@@ -526,4 +513,3 @@ Mtftp4WrqStart (
 
   return UdpIoRecvDatagram (Instance->UnicastPort, Mtftp4WrqInput, Instance, 0);
 }
-

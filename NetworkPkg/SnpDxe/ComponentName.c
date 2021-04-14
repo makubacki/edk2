@@ -6,12 +6,12 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
-
 #include "Snp.h"
 
 //
 // EFI Component Name Functions
 //
+
 /**
   Retrieves a Unicode string that is the user readable name of the driver.
 
@@ -58,7 +58,6 @@ SimpleNetworkComponentNameGetDriverName (
   IN  CHAR8                        *Language,
   OUT CHAR16                       **DriverName
   );
-
 
 /**
   Retrieves a Unicode string that is the user readable name of the controller
@@ -138,7 +137,6 @@ SimpleNetworkComponentNameGetControllerName (
   OUT CHAR16                                          **ControllerName
   );
 
-
 //
 // EFI Component Name Protocol
 //
@@ -151,14 +149,13 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gSimpleNetworkCompone
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL gSimpleNetworkComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gSimpleNetworkComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) SimpleNetworkComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) SimpleNetworkComponentNameGetControllerName,
   "en"
 };
 
-
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mSimpleNetworkDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mSimpleNetworkDriverNameTable[] = {
   {
     "eng;en",
     L"Simple Network Protocol Driver"
@@ -169,7 +166,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mSimpleNetworkDriverNameT
   }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE *gSimpleNetworkControllerNameTable = NULL;
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  *gSimpleNetworkControllerNameTable = NULL;
 
 /**
   Retrieves a Unicode string that is the user readable name of the driver.
@@ -219,12 +216,12 @@ SimpleNetworkComponentNameGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mSimpleNetworkDriverNameTable,
-           DriverName,
-           (BOOLEAN)(This == &gSimpleNetworkComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mSimpleNetworkDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gSimpleNetworkComponentName)
+                               );
 }
 
 /**
@@ -242,62 +239,63 @@ UpdateName (
   IN  EFI_SIMPLE_NETWORK_PROTOCOL   *Snp
   )
 {
-  EFI_STATUS                       Status;
-  CHAR16                           HandleName[80];
-  UINTN                            OffSet;
-  UINTN                            Index;
+  EFI_STATUS  Status;
+  CHAR16      HandleName[80];
+  UINTN       OffSet;
+  UINTN       Index;
 
   if (Snp == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
-  OffSet = 0;
+  OffSet  = 0;
   OffSet += UnicodeSPrint (
-              HandleName,
-              sizeof (HandleName),
-              L"SNP (MAC="
-              );
+                           HandleName,
+                           sizeof (HandleName),
+                           L"SNP (MAC="
+                           );
   for (Index = 0; Index < Snp->Mode->HwAddressSize; Index++) {
     OffSet += UnicodeSPrint (
-                HandleName + OffSet,
-                sizeof (HandleName) - OffSet * sizeof (CHAR16),
-                L"%02X-",
-                Snp->Mode->CurrentAddress.Addr[Index]
-                );
+                             HandleName + OffSet,
+                             sizeof (HandleName) - OffSet * sizeof (CHAR16),
+                             L"%02X-",
+                             Snp->Mode->CurrentAddress.Addr[Index]
+                             );
   }
+
   ASSERT (OffSet > 0);
   //
   // Remove the last '-'
   //
   OffSet--;
   OffSet += UnicodeSPrint (
-              HandleName + OffSet,
-              sizeof (HandleName) - OffSet * sizeof (CHAR16),
-              L")"
-              );
+                           HandleName + OffSet,
+                           sizeof (HandleName) - OffSet * sizeof (CHAR16),
+                           L")"
+                           );
   if (gSimpleNetworkControllerNameTable != NULL) {
     FreeUnicodeStringTable (gSimpleNetworkControllerNameTable);
     gSimpleNetworkControllerNameTable = NULL;
   }
 
   Status = AddUnicodeString2 (
-             "eng",
-             gSimpleNetworkComponentName.SupportedLanguages,
-             &gSimpleNetworkControllerNameTable,
-             HandleName,
-             TRUE
-             );
+                              "eng",
+                              gSimpleNetworkComponentName.SupportedLanguages,
+                              &gSimpleNetworkControllerNameTable,
+                              HandleName,
+                              TRUE
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   return AddUnicodeString2 (
-           "en",
-           gSimpleNetworkComponentName2.SupportedLanguages,
-           &gSimpleNetworkControllerNameTable,
-           HandleName,
-           FALSE
-           );
+                            "en",
+                            gSimpleNetworkComponentName2.SupportedLanguages,
+                            &gSimpleNetworkControllerNameTable,
+                            HandleName,
+                            FALSE
+                            );
 }
 
 /**
@@ -379,8 +377,8 @@ SimpleNetworkComponentNameGetControllerName (
   OUT CHAR16                                          **ControllerName
   )
 {
-  EFI_STATUS                    Status;
-  EFI_SIMPLE_NETWORK_PROTOCOL   *Snp;
+  EFI_STATUS                   Status;
+  EFI_SIMPLE_NETWORK_PROTOCOL  *Snp;
 
   if (ChildHandle != NULL) {
     return EFI_UNSUPPORTED;
@@ -390,10 +388,10 @@ SimpleNetworkComponentNameGetControllerName (
   // Make sure this driver is currently managing ControllHandle
   //
   Status = EfiTestManagedDevice (
-             ControllerHandle,
-             gSimpleNetworkDriverBinding.DriverBindingHandle,
-             &gEfiSimpleNetworkProtocolGuid
-             );
+                                 ControllerHandle,
+                                 gSimpleNetworkDriverBinding.DriverBindingHandle,
+                                 &gEfiSimpleNetworkProtocolGuid
+                                 );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -402,16 +400,17 @@ SimpleNetworkComponentNameGetControllerName (
   // Retrieve an instance of a produced protocol from ControllerHandle
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiSimpleNetworkProtocolGuid,
-                  (VOID **)&Snp,
-                  NULL,
-                  NULL,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiSimpleNetworkProtocolGuid,
+                              (VOID **) &Snp,
+                              NULL,
+                              NULL,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   //
   // Update the component name for this child handle.
   //
@@ -421,10 +420,10 @@ SimpleNetworkComponentNameGetControllerName (
   }
 
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           gSimpleNetworkControllerNameTable,
-           ControllerName,
-           (BOOLEAN)(This == &gSimpleNetworkComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               gSimpleNetworkControllerNameTable,
+                               ControllerName,
+                               (BOOLEAN) (This == &gSimpleNetworkComponentName)
+                               );
 }

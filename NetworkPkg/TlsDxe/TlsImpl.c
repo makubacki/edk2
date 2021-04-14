@@ -32,22 +32,22 @@ TlsEncryptPacket (
   IN     UINT32                        *FragmentCount
   )
 {
-  EFI_STATUS          Status;
-  UINTN               Index;
-  UINT32              BytesCopied;
-  UINT32              BufferInSize;
-  UINT8               *BufferIn;
-  UINT8               *BufferInPtr;
-  TLS_RECORD_HEADER   *RecordHeaderIn;
-  UINT16              ThisPlainMessageSize;
-  TLS_RECORD_HEADER   *TempRecordHeader;
-  UINT16              ThisMessageSize;
-  UINT32              BufferOutSize;
-  UINT8               *BufferOut;
-  UINT32              RecordCount;
-  INTN                Ret;
+  EFI_STATUS         Status;
+  UINTN              Index;
+  UINT32             BytesCopied;
+  UINT32             BufferInSize;
+  UINT8              *BufferIn;
+  UINT8              *BufferInPtr;
+  TLS_RECORD_HEADER  *RecordHeaderIn;
+  UINT16             ThisPlainMessageSize;
+  TLS_RECORD_HEADER  *TempRecordHeader;
+  UINT16             ThisMessageSize;
+  UINT32             BufferOutSize;
+  UINT8              *BufferOut;
+  UINT32             RecordCount;
+  INTN               Ret;
 
-  Status           = EFI_SUCCESS;
+  Status = EFI_SUCCESS;
   BytesCopied      = 0;
   BufferInSize     = 0;
   BufferIn         = NULL;
@@ -57,7 +57,7 @@ TlsEncryptPacket (
   BufferOutSize    = 0;
   BufferOut        = NULL;
   RecordCount      = 0;
-  Ret              = 0;
+  Ret = 0;
 
   //
   // Calculate the size according to the fragment table.
@@ -80,10 +80,10 @@ TlsEncryptPacket (
   //
   for (Index = 0; Index < *FragmentCount; Index++) {
     CopyMem (
-      (BufferIn + BytesCopied),
-      (*FragmentTable)[Index].FragmentBuffer,
-      (*FragmentTable)[Index].FragmentLength
-      );
+             (BufferIn + BytesCopied),
+             (*FragmentTable)[Index].FragmentBuffer,
+             (*FragmentTable)[Index].FragmentLength
+             );
     BytesCopied += (*FragmentTable)[Index].FragmentLength;
   }
 
@@ -93,12 +93,14 @@ TlsEncryptPacket (
   BufferInPtr = BufferIn;
   while ((UINTN) BufferInPtr < (UINTN) BufferIn + BufferInSize) {
     RecordHeaderIn = (TLS_RECORD_HEADER *) BufferInPtr;
-    if (RecordHeaderIn->ContentType != TlsContentTypeApplicationData || RecordHeaderIn->Length > TLS_PLAINTEXT_RECORD_MAX_PAYLOAD_LENGTH) {
+    if (RecordHeaderIn->ContentType != TlsContentTypeApplicationData ||
+        RecordHeaderIn->Length > TLS_PLAINTEXT_RECORD_MAX_PAYLOAD_LENGTH) {
       Status = EFI_INVALID_PARAMETER;
       goto ERROR;
     }
+
     BufferInPtr += TLS_RECORD_HEADER_LENGTH + RecordHeaderIn->Length;
-    RecordCount ++;
+    RecordCount++;
   }
 
   //
@@ -122,7 +124,11 @@ TlsEncryptPacket (
 
     TlsWrite (TlsInstance->TlsConn, (UINT8 *) (RecordHeaderIn + 1), ThisPlainMessageSize);
 
-    Ret = TlsCtrlTrafficOut (TlsInstance->TlsConn, (UINT8 *)(TempRecordHeader), TLS_RECORD_HEADER_LENGTH + TLS_CIPHERTEXT_RECORD_MAX_PAYLOAD_LENGTH);
+    Ret = TlsCtrlTrafficOut (
+                            TlsInstance->TlsConn,
+                            (UINT8 *) (TempRecordHeader),
+                            TLS_RECORD_HEADER_LENGTH + TLS_CIPHERTEXT_RECORD_MAX_PAYLOAD_LENGTH
+                            );
 
     if (Ret > 0) {
       ThisMessageSize = (UINT16) Ret;
@@ -138,7 +144,7 @@ TlsEncryptPacket (
     BufferOutSize += ThisMessageSize;
 
     BufferInPtr += TLS_RECORD_HEADER_LENGTH + ThisPlainMessageSize;
-    TempRecordHeader = (TLS_RECORD_HEADER *)((UINT8 *)TempRecordHeader + ThisMessageSize);
+    TempRecordHeader = (TLS_RECORD_HEADER *) ((UINT8 *) TempRecordHeader + ThisMessageSize);
   }
 
   FreePool (BufferIn);
@@ -153,9 +159,9 @@ TlsEncryptPacket (
     goto ERROR;
   }
 
-  (*FragmentTable)[0].FragmentBuffer  = BufferOut;
-  (*FragmentTable)[0].FragmentLength  = BufferOutSize;
-  *FragmentCount                      = 1;
+  (*FragmentTable)[0].FragmentBuffer = BufferOut;
+  (*FragmentTable)[0].FragmentLength = BufferOutSize;
+  *FragmentCount = 1;
 
   return Status;
 
@@ -197,22 +203,22 @@ TlsDecryptPacket (
   IN     UINT32                        *FragmentCount
   )
 {
-  EFI_STATUS          Status;
-  UINTN               Index;
-  UINT32              BytesCopied;
-  UINT8               *BufferIn;
-  UINT32              BufferInSize;
-  UINT8               *BufferInPtr;
-  TLS_RECORD_HEADER   *RecordHeaderIn;
-  UINT16              ThisCipherMessageSize;
-  TLS_RECORD_HEADER   *TempRecordHeader;
-  UINT16              ThisPlainMessageSize;
-  UINT8               *BufferOut;
-  UINT32              BufferOutSize;
-  UINT32              RecordCount;
-  INTN                Ret;
+  EFI_STATUS         Status;
+  UINTN              Index;
+  UINT32             BytesCopied;
+  UINT8              *BufferIn;
+  UINT32             BufferInSize;
+  UINT8              *BufferInPtr;
+  TLS_RECORD_HEADER  *RecordHeaderIn;
+  UINT16             ThisCipherMessageSize;
+  TLS_RECORD_HEADER  *TempRecordHeader;
+  UINT16             ThisPlainMessageSize;
+  UINT8              *BufferOut;
+  UINT32             BufferOutSize;
+  UINT32             RecordCount;
+  INTN               Ret;
 
-  Status           = EFI_SUCCESS;
+  Status = EFI_SUCCESS;
   BytesCopied      = 0;
   BufferIn         = NULL;
   BufferInSize     = 0;
@@ -222,7 +228,7 @@ TlsDecryptPacket (
   BufferOut        = NULL;
   BufferOutSize    = 0;
   RecordCount      = 0;
-  Ret              = 0;
+  Ret = 0;
 
   //
   // Calculate the size according to the fragment table.
@@ -245,10 +251,10 @@ TlsDecryptPacket (
   //
   for (Index = 0; Index < *FragmentCount; Index++) {
     CopyMem (
-      (BufferIn + BytesCopied),
-      (*FragmentTable)[Index].FragmentBuffer,
-      (*FragmentTable)[Index].FragmentLength
-      );
+             (BufferIn + BytesCopied),
+             (*FragmentTable)[Index].FragmentBuffer,
+             (*FragmentTable)[Index].FragmentLength
+             );
     BytesCopied += (*FragmentTable)[Index].FragmentLength;
   }
 
@@ -258,12 +264,14 @@ TlsDecryptPacket (
   BufferInPtr = BufferIn;
   while ((UINTN) BufferInPtr < (UINTN) BufferIn + BufferInSize) {
     RecordHeaderIn = (TLS_RECORD_HEADER *) BufferInPtr;
-    if (RecordHeaderIn->ContentType != TlsContentTypeApplicationData || NTOHS (RecordHeaderIn->Length) > TLS_CIPHERTEXT_RECORD_MAX_PAYLOAD_LENGTH) {
+    if (RecordHeaderIn->ContentType != TlsContentTypeApplicationData ||
+        NTOHS (RecordHeaderIn->Length) > TLS_CIPHERTEXT_RECORD_MAX_PAYLOAD_LENGTH) {
       Status = EFI_INVALID_PARAMETER;
       goto ERROR;
     }
+
     BufferInPtr += TLS_RECORD_HEADER_LENGTH + NTOHS (RecordHeaderIn->Length);
-    RecordCount ++;
+    RecordCount++;
   }
 
   //
@@ -285,7 +293,11 @@ TlsDecryptPacket (
 
     ThisCipherMessageSize = NTOHS (RecordHeaderIn->Length);
 
-    Ret = TlsCtrlTrafficIn (TlsInstance->TlsConn, (UINT8 *) (RecordHeaderIn), TLS_RECORD_HEADER_LENGTH + ThisCipherMessageSize);
+    Ret = TlsCtrlTrafficIn (
+                           TlsInstance->TlsConn,
+                           (UINT8 *) (RecordHeaderIn),
+                           TLS_RECORD_HEADER_LENGTH + ThisCipherMessageSize
+                           );
     if (Ret != TLS_RECORD_HEADER_LENGTH + ThisCipherMessageSize) {
       TlsInstance->TlsSessionState = EfiTlsSessionError;
       Status = EFI_ABORTED;
@@ -311,7 +323,8 @@ TlsDecryptPacket (
     BufferOutSize += TLS_RECORD_HEADER_LENGTH + ThisPlainMessageSize;
 
     BufferInPtr += TLS_RECORD_HEADER_LENGTH + ThisCipherMessageSize;
-    TempRecordHeader = (TLS_RECORD_HEADER *)((UINT8 *)TempRecordHeader + TLS_RECORD_HEADER_LENGTH + ThisPlainMessageSize);
+    TempRecordHeader =
+      (TLS_RECORD_HEADER *) ((UINT8 *) TempRecordHeader + TLS_RECORD_HEADER_LENGTH + ThisPlainMessageSize);
   }
 
   FreePool (BufferIn);
@@ -326,9 +339,9 @@ TlsDecryptPacket (
     goto ERROR;
   }
 
-  (*FragmentTable)[0].FragmentBuffer  = BufferOut;
-  (*FragmentTable)[0].FragmentLength  = BufferOutSize;
-  *FragmentCount                      = 1;
+  (*FragmentTable)[0].FragmentBuffer = BufferOut;
+  (*FragmentTable)[0].FragmentLength = BufferOutSize;
+  *FragmentCount = 1;
 
   return Status;
 
@@ -346,4 +359,3 @@ ERROR:
 
   return Status;
 }
-

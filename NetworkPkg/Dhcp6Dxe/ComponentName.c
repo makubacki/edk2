@@ -9,7 +9,6 @@
 
 #include "Dhcp6Impl.h"
 
-
 /**
   Retrieves a Unicode string that is the user-readable name of the driver.
 
@@ -56,7 +55,6 @@ Dhcp6ComponentNameGetDriverName (
   IN  CHAR8                        *Language,
   OUT CHAR16                       **DriverName
   );
-
 
 /**
   Retrieves a Unicode string that is the user-readable name of the controller
@@ -136,11 +134,10 @@ Dhcp6ComponentNameGetControllerName (
   OUT CHAR16                                          **ControllerName
   );
 
-
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL    gDhcp6ComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gDhcp6ComponentName = {
   Dhcp6ComponentNameGetDriverName,
   Dhcp6ComponentNameGetControllerName,
   "eng"
@@ -149,13 +146,13 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL    gDhcp6ComponentName
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL   gDhcp6ComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gDhcp6ComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) Dhcp6ComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) Dhcp6ComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE       mDhcp6DriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mDhcp6DriverNameTable[] = {
   {
     "eng;en",
     L"DHCP6 Protocol Driver"
@@ -166,9 +163,9 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE       mDhcp6DriverNameTab
   }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE   *gDhcp6ControllerNameTable = NULL;
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  *gDhcp6ControllerNameTable = NULL;
 
-CHAR16 *mDhcp6ControllerName[] = {
+CHAR16  *mDhcp6ControllerName[] = {
   L"DHCPv6 (State=0, Init)",
   L"DHCPv6 (State=1, Selecting)",
   L"DHCPv6 (State=2, Requesting)",
@@ -228,12 +225,12 @@ Dhcp6ComponentNameGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mDhcp6DriverNameTable,
-           DriverName,
-           (BOOLEAN)(This == &gDhcp6ComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mDhcp6DriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gDhcp6ComponentName)
+                               );
 }
 
 /**
@@ -251,9 +248,9 @@ UpdateName (
   IN   EFI_DHCP6_PROTOCOL             *Dhcp6
   )
 {
-  EFI_STATUS                       Status;
-  EFI_DHCP6_MODE_DATA              Dhcp6ModeData;
-  CHAR16                           *HandleName;
+  EFI_STATUS           Status;
+  EFI_DHCP6_MODE_DATA  Dhcp6ModeData;
+  CHAR16               *HandleName;
 
   if (Dhcp6 == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -278,34 +275,36 @@ UpdateName (
     if (Dhcp6ModeData.Ia->State > Dhcp6Rebinding) {
       return EFI_DEVICE_ERROR;
     }
+
     HandleName = mDhcp6ControllerName[Dhcp6ModeData.Ia->State];
   }
 
   if (Dhcp6ModeData.Ia != NULL) {
     FreePool (Dhcp6ModeData.Ia);
   }
+
   if (Dhcp6ModeData.ClientId != NULL) {
     FreePool (Dhcp6ModeData.ClientId);
   }
 
   Status = AddUnicodeString2 (
-             "eng",
-             gDhcp6ComponentName.SupportedLanguages,
-             &gDhcp6ControllerNameTable,
-             HandleName,
-             TRUE
-             );
+                              "eng",
+                              gDhcp6ComponentName.SupportedLanguages,
+                              &gDhcp6ControllerNameTable,
+                              HandleName,
+                              TRUE
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   return AddUnicodeString2 (
-           "en",
-           gDhcp6ComponentName2.SupportedLanguages,
-           &gDhcp6ControllerNameTable,
-           HandleName,
-           FALSE
-           );
+                            "en",
+                            gDhcp6ComponentName2.SupportedLanguages,
+                            &gDhcp6ControllerNameTable,
+                            HandleName,
+                            FALSE
+                            );
 }
 
 /**
@@ -386,8 +385,8 @@ Dhcp6ComponentNameGetControllerName (
   OUT CHAR16                                          **ControllerName
   )
 {
-  EFI_STATUS                    Status;
-  EFI_DHCP6_PROTOCOL            *Dhcp6;
+  EFI_STATUS          Status;
+  EFI_DHCP6_PROTOCOL  *Dhcp6;
 
   //
   // Only provide names for child handles.
@@ -400,10 +399,10 @@ Dhcp6ComponentNameGetControllerName (
   // Make sure this driver produced ChildHandle
   //
   Status = EfiTestChildHandle (
-             ControllerHandle,
-             ChildHandle,
-             &gEfiUdp6ProtocolGuid
-             );
+                               ControllerHandle,
+                               ChildHandle,
+                               &gEfiUdp6ProtocolGuid
+                               );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -412,13 +411,13 @@ Dhcp6ComponentNameGetControllerName (
   // Retrieve an instance of a produced protocol from ChildHandle
   //
   Status = gBS->OpenProtocol (
-                  ChildHandle,
-                  &gEfiDhcp6ProtocolGuid,
-                  (VOID **)&Dhcp6,
-                  NULL,
-                  NULL,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ChildHandle,
+                              &gEfiDhcp6ProtocolGuid,
+                              (VOID **) &Dhcp6,
+                              NULL,
+                              NULL,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -432,11 +431,10 @@ Dhcp6ComponentNameGetControllerName (
   }
 
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           gDhcp6ControllerNameTable,
-           ControllerName,
-           (BOOLEAN)(This == &gDhcp6ComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               gDhcp6ControllerNameTable,
+                               ControllerName,
+                               (BOOLEAN) (This == &gDhcp6ComponentName)
+                               );
 }
-

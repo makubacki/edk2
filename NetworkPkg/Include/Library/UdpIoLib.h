@@ -32,10 +32,10 @@ typedef struct _UDP_IO UDP_IO;
 /// The UDP address pair.
 ///
 typedef struct {
-  EFI_IP_ADDRESS            LocalAddr;
-  UINT16                    LocalPort;
-  EFI_IP_ADDRESS            RemoteAddr;
-  UINT16                    RemotePort;
+  EFI_IP_ADDRESS    LocalAddr;
+  UINT16            LocalPort;
+  EFI_IP_ADDRESS    RemoteAddr;
+  UINT16            RemotePort;
 } UDP_END_POINT;
 
 /**
@@ -53,13 +53,13 @@ typedef struct {
                           UdpIoSendDatagram().
 **/
 typedef
-VOID
-(EFIAPI *UDP_IO_CALLBACK) (
-  IN NET_BUF                *Packet,
-  IN UDP_END_POINT          *EndPoint,
-  IN EFI_STATUS             IoStatus,
-  IN VOID                   *Context
-  );
+  VOID
+(EFIAPI *UDP_IO_CALLBACK)(
+                          IN NET_BUF                *Packet,
+                          IN UDP_END_POINT          *EndPoint,
+                          IN EFI_STATUS             IoStatus,
+                          IN VOID                   *Context
+                          );
 
 ///
 /// This structure is used internally by the UdpIo Library.
@@ -70,22 +70,20 @@ VOID
 /// make the application's header continuous before delivering up.
 ///
 typedef union {
-  EFI_UDP4_COMPLETION_TOKEN   Udp4;
-  EFI_UDP6_COMPLETION_TOKEN   Udp6;
+  EFI_UDP4_COMPLETION_TOKEN    Udp4;
+  EFI_UDP6_COMPLETION_TOKEN    Udp6;
 } UDP_COMPLETION_TOKEN;
 
 typedef struct {
-  UINT32                      Signature;
-  UDP_IO                      *UdpIo;
+  UINT32                  Signature;
+  UDP_IO                  *UdpIo;
 
-  UDP_IO_CALLBACK             CallBack;
-  VOID                        *Context;
-  UINT32                      HeadLen;
+  UDP_IO_CALLBACK         CallBack;
+  VOID                    *Context;
+  UINT32                  HeadLen;
 
-  UDP_COMPLETION_TOKEN        Token;
+  UDP_COMPLETION_TOKEN    Token;
 } UDP_RX_TOKEN;
-
-
 
 ///
 /// This structure is used internally by UdpIo Library.
@@ -96,26 +94,26 @@ typedef struct {
 ///
 
 typedef union {
-  EFI_UDP4_SESSION_DATA       Udp4;
-  EFI_UDP6_SESSION_DATA       Udp6;
+  EFI_UDP4_SESSION_DATA    Udp4;
+  EFI_UDP6_SESSION_DATA    Udp6;
 } UDP_SESSION_DATA;
 
 typedef union {
-  EFI_UDP4_TRANSMIT_DATA      Udp4;
-  EFI_UDP6_TRANSMIT_DATA      Udp6;
+  EFI_UDP4_TRANSMIT_DATA    Udp4;
+  EFI_UDP6_TRANSMIT_DATA    Udp6;
 } UDP_TRANSMIT_DATA;
 
 typedef struct {
-  UINT32                      Signature;
-  LIST_ENTRY                  Link;
-  UDP_IO                      *UdpIo;
-  UDP_IO_CALLBACK             CallBack;
-  NET_BUF                     *Packet;
-  VOID                        *Context;
-  EFI_IPv4_ADDRESS            Gateway;
-  UDP_SESSION_DATA            Session;
-  UDP_COMPLETION_TOKEN        Token;
-  UDP_TRANSMIT_DATA           Data;
+  UINT32                  Signature;
+  LIST_ENTRY              Link;
+  UDP_IO                  *UdpIo;
+  UDP_IO_CALLBACK         CallBack;
+  NET_BUF                 *Packet;
+  VOID                    *Context;
+  EFI_IPv4_ADDRESS        Gateway;
+  UDP_SESSION_DATA        Session;
+  UDP_COMPLETION_TOKEN    Token;
+  UDP_TRANSMIT_DATA       Data;
 } UDP_TX_TOKEN;
 
 ///
@@ -125,32 +123,36 @@ typedef struct {
 /// UdpIo Library uses this structure for all Udp4 or Udp6 operations.
 ///
 struct _UDP_IO {
-  UINT32                    Signature;
-  LIST_ENTRY                Link;
-  INTN                      RefCnt;
-  UINT8                     UdpVersion;
+  UINT32                     Signature;
+  LIST_ENTRY                 Link;
+  INTN                       RefCnt;
+  UINT8                      UdpVersion;
 
   //
   // Handle used to create/destroy UDP child
   //
-  EFI_HANDLE                Controller;
-  EFI_HANDLE                Image;
-  EFI_HANDLE                UdpHandle;
+  EFI_HANDLE                 Controller;
+  EFI_HANDLE                 Image;
+  EFI_HANDLE                 UdpHandle;
 
-  EFI_SIMPLE_NETWORK_MODE   SnpMode;
+  EFI_SIMPLE_NETWORK_MODE    SnpMode;
 
-  LIST_ENTRY                SentDatagram;   ///< A list of UDP_TX_TOKEN.
-  UDP_RX_TOKEN              *RecvRequest;
-
-  union {
-    EFI_UDP4_PROTOCOL       *Udp4;
-    EFI_UDP6_PROTOCOL       *Udp6;
-  } Protocol;
+  LIST_ENTRY                 SentDatagram;  ///< A list of UDP_TX_TOKEN.
+  UDP_RX_TOKEN               *RecvRequest;
 
   union {
-    EFI_UDP4_CONFIG_DATA    Udp4;
-    EFI_UDP6_CONFIG_DATA    Udp6;
-  } Config;
+  EFI_UDP4_PROTOCOL    *Udp4;
+  EFI_UDP6_PROTOCOL    *Udp6;
+  }
+
+  Protocol;
+
+  union {
+  EFI_UDP4_CONFIG_DATA    Udp4;
+  EFI_UDP6_CONFIG_DATA    Udp6;
+  }
+
+  Config;
 };
 
 /**
@@ -166,11 +168,11 @@ struct _UDP_IO {
                        UdpIoCreatePort() should fail.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *UDP_IO_CONFIG) (
-  IN UDP_IO                 *UdpIo,
-  IN VOID                   *Context
-  );
+  EFI_STATUS
+(EFIAPI *UDP_IO_CONFIG)(
+                        IN UDP_IO                 *UdpIo,
+                        IN VOID                   *Context
+                        );
 
 /**
   The select function to decide whether to cancel the UDP_TX_TOKEN.
@@ -183,11 +185,11 @@ EFI_STATUS
 
 **/
 typedef
-BOOLEAN
-(EFIAPI *UDP_IO_TO_CANCEL) (
-  IN UDP_TX_TOKEN           *Token,
-  IN VOID                   *Context
-  );
+  BOOLEAN
+(EFIAPI *UDP_IO_TO_CANCEL)(
+                           IN UDP_TX_TOKEN           *Token,
+                           IN VOID                   *Context
+                           );
 
 /**
   Cancel all the sent datagram that pass the selection criteria of ToCancel.
@@ -207,7 +209,7 @@ EFIAPI
 UdpIoCancelDgrams (
   IN UDP_IO                 *UdpIo,
   IN EFI_STATUS             IoStatus,
-  IN UDP_IO_TO_CANCEL       ToCancel,        OPTIONAL
+  IN UDP_IO_TO_CANCEL       ToCancel, OPTIONAL
   IN VOID                   *Context         OPTIONAL
   );
 
@@ -360,4 +362,3 @@ UdpIoRecvDatagram (
   );
 
 #endif
-

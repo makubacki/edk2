@@ -13,8 +13,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
 EFI_COMPONENT_NAME_PROTOCOL  gHttpBootDxeComponentName = {
-  (EFI_COMPONENT_NAME_GET_DRIVER_NAME)    HttpBootDxeComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME_GET_CONTROLLER_NAME)HttpBootDxeComponentNameGetControllerName,
+  (EFI_COMPONENT_NAME_GET_DRIVER_NAME) HttpBootDxeComponentNameGetDriverName,
+  (EFI_COMPONENT_NAME_GET_CONTROLLER_NAME) HttpBootDxeComponentNameGetControllerName,
   "eng"
 };
 
@@ -32,18 +32,18 @@ EFI_COMPONENT_NAME2_PROTOCOL  gHttpBootDxeComponentName2 = {
 /// Table of driver names
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
-EFI_UNICODE_STRING_TABLE mHttpBootDxeDriverNameTable[] = {
-  { "eng;en", (CHAR16 *)L"UEFI HTTP Boot Driver" },
-  { NULL, NULL }
+EFI_UNICODE_STRING_TABLE  mHttpBootDxeDriverNameTable[] = {
+  { "eng;en", (CHAR16 *) L"UEFI HTTP Boot Driver" },
+  { NULL,     NULL                                }
 };
 
 ///
 /// Table of controller names
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
-EFI_UNICODE_STRING_TABLE mHttpBootDxeControllerNameTable[] = {
-  { "eng;en", (CHAR16 *)L"UEFI Http Boot Controller" },
-  { NULL, NULL }
+EFI_UNICODE_STRING_TABLE  mHttpBootDxeControllerNameTable[] = {
+  { "eng;en", (CHAR16 *) L"UEFI Http Boot Controller" },
+  { NULL,     NULL                                    }
 };
 
 /**
@@ -77,12 +77,12 @@ HttpBootDxeComponentNameGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mHttpBootDxeDriverNameTable,
-           DriverName,
-           (BOOLEAN) (This != &gHttpBootDxeComponentName2)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mHttpBootDxeDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This != &gHttpBootDxeComponentName2)
+                               );
 }
 
 /**
@@ -135,9 +135,9 @@ HttpBootDxeComponentNameGetControllerName (
   OUT CHAR16                        **ControllerName
   )
 {
-  EFI_STATUS                      Status;
-  EFI_HANDLE                      NicHandle;
-  UINT32                          *Id;
+  EFI_STATUS  Status;
+  EFI_HANDLE  NicHandle;
+  UINT32      *Id;
 
   if (ControllerHandle == NULL || ChildHandle != NULL) {
     return EFI_UNSUPPORTED;
@@ -145,7 +145,7 @@ HttpBootDxeComponentNameGetControllerName (
 
   NicHandle = HttpBootGetNicByIp4Children (ControllerHandle);
   if (NicHandle == NULL) {
-    NicHandle = HttpBootGetNicByIp6Children(ControllerHandle);
+    NicHandle = HttpBootGetNicByIp6Children (ControllerHandle);
     if (NicHandle == NULL) {
       return EFI_UNSUPPORTED;
     }
@@ -155,23 +155,22 @@ HttpBootDxeComponentNameGetControllerName (
   // Try to retrieve the private data by caller ID GUID.
   //
   Status = gBS->OpenProtocol (
-                  NicHandle,
-                  &gEfiCallerIdGuid,
-                  (VOID **) &Id,
-                  NULL,
-                  NULL,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              NicHandle,
+                              &gEfiCallerIdGuid,
+                              (VOID **) &Id,
+                              NULL,
+                              NULL,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mHttpBootDxeControllerNameTable,
-           ControllerName,
-           (BOOLEAN)(This != &gHttpBootDxeComponentName2)
-           );
-
+                               Language,
+                               This->SupportedLanguages,
+                               mHttpBootDxeControllerNameTable,
+                               ControllerName,
+                               (BOOLEAN) (This != &gHttpBootDxeComponentName2)
+                               );
 }

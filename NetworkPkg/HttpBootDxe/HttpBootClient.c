@@ -24,12 +24,12 @@ HttpBootUpdateDevicePath (
   IN   HTTP_BOOT_PRIVATE_DATA   *Private
   )
 {
-  EFI_DEV_PATH               *Node;
-  EFI_DEVICE_PATH_PROTOCOL   *TmpIpDevicePath;
-  EFI_DEVICE_PATH_PROTOCOL   *TmpDnsDevicePath;
-  EFI_DEVICE_PATH_PROTOCOL   *NewDevicePath;
-  UINTN                      Length;
-  EFI_STATUS                 Status;
+  EFI_DEV_PATH              *Node;
+  EFI_DEVICE_PATH_PROTOCOL  *TmpIpDevicePath;
+  EFI_DEVICE_PATH_PROTOCOL  *TmpDnsDevicePath;
+  EFI_DEVICE_PATH_PROTOCOL  *NewDevicePath;
+  UINTN                     Length;
+  EFI_STATUS                Status;
 
   TmpIpDevicePath  = NULL;
   TmpDnsDevicePath = NULL;
@@ -42,12 +42,13 @@ HttpBootUpdateDevicePath (
     if (Node == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
+
     Node->Ipv4.Header.Type    = MESSAGING_DEVICE_PATH;
     Node->Ipv4.Header.SubType = MSG_IPv4_DP;
     SetDevicePathNodeLength (Node, sizeof (IPv4_DEVICE_PATH));
     CopyMem (&Node->Ipv4.LocalIpAddress, &Private->StationIp, sizeof (EFI_IPv4_ADDRESS));
-    Node->Ipv4.RemotePort      = Private->Port;
-    Node->Ipv4.Protocol        = EFI_IP_PROTO_TCP;
+    Node->Ipv4.RemotePort = Private->Port;
+    Node->Ipv4.Protocol   = EFI_IP_PROTO_TCP;
     Node->Ipv4.StaticIpAddress = FALSE;
     CopyMem (&Node->Ipv4.GatewayIpAddress, &Private->GatewayIp, sizeof (EFI_IPv4_ADDRESS));
     CopyMem (&Node->Ipv4.SubnetMask, &Private->SubnetMask, sizeof (EFI_IPv4_ADDRESS));
@@ -56,8 +57,9 @@ HttpBootUpdateDevicePath (
     if (Node == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
-    Node->Ipv6.Header.Type     = MESSAGING_DEVICE_PATH;
-    Node->Ipv6.Header.SubType  = MSG_IPv6_DP;
+
+    Node->Ipv6.Header.Type    = MESSAGING_DEVICE_PATH;
+    Node->Ipv6.Header.SubType = MSG_IPv6_DP;
     SetDevicePathNodeLength (Node, sizeof (IPv6_DEVICE_PATH));
     Node->Ipv6.PrefixLength    = IP6_PREFIX_LENGTH;
     Node->Ipv6.RemotePort      = Private->Port;
@@ -68,7 +70,7 @@ HttpBootUpdateDevicePath (
     CopyMem (&Node->Ipv6.GatewayIpAddress, &Private->GatewayIp.v6, sizeof (EFI_IPv6_ADDRESS));
   }
 
-  TmpIpDevicePath = AppendDevicePathNode (Private->ParentDevicePath, (EFI_DEVICE_PATH_PROTOCOL*) Node);
+  TmpIpDevicePath = AppendDevicePathNode (Private->ParentDevicePath, (EFI_DEVICE_PATH_PROTOCOL *) Node);
   FreePool (Node);
   if (TmpIpDevicePath == NULL) {
     return EFI_OUT_OF_RESOURCES;
@@ -78,19 +80,25 @@ HttpBootUpdateDevicePath (
   // Update the DNS node with DNS server IP list if existed.
   //
   if (Private->DnsServerIp != NULL) {
-    Length = sizeof (EFI_DEVICE_PATH_PROTOCOL) + sizeof (Node->Dns.IsIPv6) + Private->DnsServerCount * sizeof (EFI_IP_ADDRESS);
+    Length = sizeof (EFI_DEVICE_PATH_PROTOCOL) + sizeof (Node->Dns.IsIPv6) + Private->DnsServerCount *
+             sizeof (EFI_IP_ADDRESS);
     Node = AllocatePool (Length);
     if (Node == NULL) {
       FreePool (TmpIpDevicePath);
       return EFI_OUT_OF_RESOURCES;
     }
+
     Node->DevPath.Type    = MESSAGING_DEVICE_PATH;
     Node->DevPath.SubType = MSG_DNS_DP;
     SetDevicePathNodeLength (Node, Length);
     Node->Dns.IsIPv6 = Private->UsingIpv6 ? 0x01 : 0x00;
-    CopyMem ((UINT8*) Node + sizeof (EFI_DEVICE_PATH_PROTOCOL) + sizeof (Node->Dns.IsIPv6), Private->DnsServerIp, Private->DnsServerCount * sizeof (EFI_IP_ADDRESS));
+    CopyMem (
+            (UINT8 *) Node + sizeof (EFI_DEVICE_PATH_PROTOCOL) + sizeof (Node->Dns.IsIPv6),
+            Private->DnsServerIp,
+            Private->DnsServerCount * sizeof (EFI_IP_ADDRESS)
+            );
 
-    TmpDnsDevicePath = AppendDevicePathNode (TmpIpDevicePath, (EFI_DEVICE_PATH_PROTOCOL*) Node);
+    TmpDnsDevicePath = AppendDevicePathNode (TmpIpDevicePath, (EFI_DEVICE_PATH_PROTOCOL *) Node);
     FreePool (Node);
     FreePool (TmpIpDevicePath);
     TmpIpDevicePath = NULL;
@@ -103,29 +111,37 @@ HttpBootUpdateDevicePath (
   // Update the URI node with the boot file URI.
   //
   Length = sizeof (EFI_DEVICE_PATH_PROTOCOL) + AsciiStrSize (Private->BootFileUri);
-  Node = AllocatePool (Length);
+  Node   = AllocatePool (Length);
   if (Node == NULL) {
     if (TmpIpDevicePath != NULL) {
       FreePool (TmpIpDevicePath);
     }
+
     if (TmpDnsDevicePath != NULL) {
       FreePool (TmpDnsDevicePath);
     }
+
     return EFI_OUT_OF_RESOURCES;
   }
+
   Node->DevPath.Type    = MESSAGING_DEVICE_PATH;
   Node->DevPath.SubType = MSG_URI_DP;
   SetDevicePathNodeLength (Node, Length);
-  CopyMem ((UINT8*) Node + sizeof (EFI_DEVICE_PATH_PROTOCOL), Private->BootFileUri, AsciiStrSize (Private->BootFileUri));
+  CopyMem (
+          (UINT8 *) Node + sizeof (EFI_DEVICE_PATH_PROTOCOL),
+          Private->BootFileUri,
+          AsciiStrSize (Private->BootFileUri)
+          );
 
   if (TmpDnsDevicePath != NULL) {
-    NewDevicePath = AppendDevicePathNode (TmpDnsDevicePath, (EFI_DEVICE_PATH_PROTOCOL*) Node);
+    NewDevicePath = AppendDevicePathNode (TmpDnsDevicePath, (EFI_DEVICE_PATH_PROTOCOL *) Node);
     FreePool (TmpDnsDevicePath);
   } else {
     ASSERT (TmpIpDevicePath != NULL);
-    NewDevicePath = AppendDevicePathNode (TmpIpDevicePath, (EFI_DEVICE_PATH_PROTOCOL*) Node);
+    NewDevicePath = AppendDevicePathNode (TmpIpDevicePath, (EFI_DEVICE_PATH_PROTOCOL *) Node);
     FreePool (TmpIpDevicePath);
   }
+
   FreePool (Node);
   if (NewDevicePath == NULL) {
     return EFI_OUT_OF_RESOURCES;
@@ -136,11 +152,11 @@ HttpBootUpdateDevicePath (
     // Reinstall the device path protocol of the child handle.
     //
     Status = gBS->ReinstallProtocolInterface (
-                    Private->Ip4Nic->Controller,
-                    &gEfiDevicePathProtocolGuid,
-                    Private->Ip4Nic->DevicePath,
-                    NewDevicePath
-                    );
+                                              Private->Ip4Nic->Controller,
+                                              &gEfiDevicePathProtocolGuid,
+                                              Private->Ip4Nic->DevicePath,
+                                              NewDevicePath
+                                              );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -152,14 +168,15 @@ HttpBootUpdateDevicePath (
     // Reinstall the device path protocol of the child handle.
     //
     Status = gBS->ReinstallProtocolInterface (
-                    Private->Ip6Nic->Controller,
-                    &gEfiDevicePathProtocolGuid,
-                    Private->Ip6Nic->DevicePath,
-                    NewDevicePath
-                    );
+                                              Private->Ip6Nic->Controller,
+                                              &gEfiDevicePathProtocolGuid,
+                                              Private->Ip6Nic->DevicePath,
+                                              NewDevicePath
+                                              );
     if (EFI_ERROR (Status)) {
       return Status;
     }
+
     FreePool (Private->Ip6Nic->DevicePath);
     Private->Ip6Nic->DevicePath = NewDevicePath;
   }
@@ -181,13 +198,13 @@ HttpBootDhcp4ExtractUriInfo (
   IN     HTTP_BOOT_PRIVATE_DATA   *Private
   )
 {
-  HTTP_BOOT_DHCP4_PACKET_CACHE    *SelectOffer;
-  HTTP_BOOT_DHCP4_PACKET_CACHE    *HttpOffer;
-  UINT32                          SelectIndex;
-  UINT32                          ProxyIndex;
-  UINT32                          DnsServerIndex;
-  EFI_DHCP4_PACKET_OPTION         *Option;
-  EFI_STATUS                      Status;
+  HTTP_BOOT_DHCP4_PACKET_CACHE  *SelectOffer;
+  HTTP_BOOT_DHCP4_PACKET_CACHE  *HttpOffer;
+  UINT32                        SelectIndex;
+  UINT32                        ProxyIndex;
+  UINT32                        DnsServerIndex;
+  EFI_DHCP4_PACKET_OPTION       *Option;
+  EFI_STATUS                    Status;
 
   ASSERT (Private != NULL);
   ASSERT (Private->SelectIndex != 0);
@@ -214,10 +231,11 @@ HttpBootDhcp4ExtractUriInfo (
     } else {
       ASSERT (Private->SelectProxyType != HttpOfferTypeMax);
       ProxyIndex = Private->OfferIndex[Private->SelectProxyType][0];
-      HttpOffer = &Private->OfferBuffer[ProxyIndex].Dhcp4;
+      HttpOffer  = &Private->OfferBuffer[ProxyIndex].Dhcp4;
     }
+
     Private->BootFileUriParser = HttpOffer->UriParser;
-    Private->BootFileUri = (CHAR8*) HttpOffer->OptList[HTTP_BOOT_DHCP4_TAG_INDEX_BOOTFILE]->Data;
+    Private->BootFileUri = (CHAR8 *) HttpOffer->OptList[HTTP_BOOT_DHCP4_TAG_INDEX_BOOTFILE]->Data;
   } else {
     //
     // In Home environment the BootFileUri comes from the FilePath.
@@ -237,6 +255,7 @@ HttpBootDhcp4ExtractUriInfo (
     } else if (Status == EFI_ACCESS_DENIED) {
       AsciiPrint ("\n  Error: Access forbidden, only HTTPS connection is allowed.\n");
     }
+
     return Status;
   }
 
@@ -257,17 +276,21 @@ HttpBootDhcp4ExtractUriInfo (
     }
 
     for (DnsServerIndex = 0; DnsServerIndex < Private->DnsServerCount; DnsServerIndex++) {
-      CopyMem (&(Private->DnsServerIp[DnsServerIndex].v4), &(((EFI_IPv4_ADDRESS *) Option->Data)[DnsServerIndex]), sizeof (EFI_IPv4_ADDRESS));
+      CopyMem (
+              &(Private->DnsServerIp[DnsServerIndex].v4),
+              &(((EFI_IPv4_ADDRESS *) Option->Data)[DnsServerIndex]),
+              sizeof (EFI_IPv4_ADDRESS)
+              );
     }
 
     //
     // Configure the default DNS server if server assigned.
     //
     Status = HttpBootRegisterIp4Dns (
-               Private,
-               Option->Length,
-               Option->Data
-               );
+                                     Private,
+                                     Option->Length,
+                                     Option->Data
+                                     );
     if (EFI_ERROR (Status)) {
       FreePool (Private->DnsServerIp);
       Private->DnsServerIp = NULL;
@@ -279,10 +302,10 @@ HttpBootDhcp4ExtractUriInfo (
   // Extract the port from URL, and use default HTTP port 80 if not provided.
   //
   Status = HttpUrlGetPort (
-             Private->BootFileUri,
-             Private->BootFileUriParser,
-             &Private->Port
-             );
+                           Private->BootFileUri,
+                           Private->BootFileUriParser,
+                           &Private->Port
+                           );
   if (EFI_ERROR (Status) || Private->Port == 0) {
     Private->Port = 80;
   }
@@ -317,17 +340,17 @@ HttpBootDhcp6ExtractUriInfo (
   IN     HTTP_BOOT_PRIVATE_DATA   *Private
   )
 {
-  HTTP_BOOT_DHCP6_PACKET_CACHE    *SelectOffer;
-  HTTP_BOOT_DHCP6_PACKET_CACHE    *HttpOffer;
-  UINT32                          SelectIndex;
-  UINT32                          ProxyIndex;
-  UINT32                          DnsServerIndex;
-  EFI_DHCP6_PACKET_OPTION         *Option;
-  EFI_IPv6_ADDRESS                IpAddr;
-  CHAR8                           *HostName;
-  UINTN                           HostNameSize;
-  CHAR16                          *HostNameStr;
-  EFI_STATUS                      Status;
+  HTTP_BOOT_DHCP6_PACKET_CACHE  *SelectOffer;
+  HTTP_BOOT_DHCP6_PACKET_CACHE  *HttpOffer;
+  UINT32                        SelectIndex;
+  UINT32                        ProxyIndex;
+  UINT32                        DnsServerIndex;
+  EFI_DHCP6_PACKET_OPTION       *Option;
+  EFI_IPv6_ADDRESS              IpAddr;
+  CHAR8                         *HostName;
+  UINTN                         HostNameSize;
+  CHAR16                        *HostNameStr;
+  EFI_STATUS                    Status;
 
   ASSERT (Private != NULL);
   ASSERT (Private->SelectIndex != 0);
@@ -354,10 +377,11 @@ HttpBootDhcp6ExtractUriInfo (
     } else {
       ASSERT (Private->SelectProxyType != HttpOfferTypeMax);
       ProxyIndex = Private->OfferIndex[Private->SelectProxyType][0];
-      HttpOffer = &Private->OfferBuffer[ProxyIndex].Dhcp6;
+      HttpOffer  = &Private->OfferBuffer[ProxyIndex].Dhcp6;
     }
+
     Private->BootFileUriParser = HttpOffer->UriParser;
-    Private->BootFileUri = (CHAR8*) HttpOffer->OptList[HTTP_BOOT_DHCP6_IDX_BOOT_FILE_URL]->Data;
+    Private->BootFileUri = (CHAR8 *) HttpOffer->OptList[HTTP_BOOT_DHCP6_IDX_BOOT_FILE_URL]->Data;
   } else {
     //
     // In Home environment the BootFileUri comes from the FilePath.
@@ -377,11 +401,12 @@ HttpBootDhcp6ExtractUriInfo (
     } else if (Status == EFI_ACCESS_DENIED) {
       AsciiPrint ("\n  Error: Access forbidden, only HTTPS connection is allowed.\n");
     }
+
     return Status;
   }
 
   //
-  //  Set the Local station address to IP layer.
+  // Set the Local station address to IP layer.
   //
   Status = HttpBootSetIp6Address (Private);
   if (EFI_ERROR (Status)) {
@@ -413,17 +438,21 @@ HttpBootDhcp6ExtractUriInfo (
     }
 
     for (DnsServerIndex = 0; DnsServerIndex < Private->DnsServerCount; DnsServerIndex++) {
-      CopyMem (&(Private->DnsServerIp[DnsServerIndex].v6), &(((EFI_IPv6_ADDRESS *) Option->Data)[DnsServerIndex]), sizeof (EFI_IPv6_ADDRESS));
+      CopyMem (
+              &(Private->DnsServerIp[DnsServerIndex].v6),
+              &(((EFI_IPv6_ADDRESS *) Option->Data)[DnsServerIndex]),
+              sizeof (EFI_IPv6_ADDRESS)
+              );
     }
 
     //
     // Configure the default DNS server if server assigned.
     //
     Status = HttpBootSetIp6Dns (
-               Private,
-               HTONS (Option->OpLen),
-               Option->Data
-               );
+                                Private,
+                                HTONS (Option->OpLen),
+                                Option->Data
+                                );
     if (EFI_ERROR (Status)) {
       goto Error;
     }
@@ -434,26 +463,26 @@ HttpBootDhcp6ExtractUriInfo (
   // whether can send message to HTTP Server Ip through the GateWay.
   //
   Status = HttpUrlGetIp6 (
-             Private->BootFileUri,
-             Private->BootFileUriParser,
-             &IpAddr
-             );
+                          Private->BootFileUri,
+                          Private->BootFileUriParser,
+                          &IpAddr
+                          );
 
   if (EFI_ERROR (Status)) {
     //
     // The Http server address is expressed by Name Ip, so perform DNS resolution
     //
     Status = HttpUrlGetHostName (
-               Private->BootFileUri,
-               Private->BootFileUriParser,
-               &HostName
-               );
+                                 Private->BootFileUri,
+                                 Private->BootFileUriParser,
+                                 &HostName
+                                 );
     if (EFI_ERROR (Status)) {
       goto Error;
     }
 
     HostNameSize = AsciiStrSize (HostName);
-    HostNameStr = AllocateZeroPool (HostNameSize * sizeof (CHAR16));
+    HostNameStr  = AllocateZeroPool (HostNameSize * sizeof (CHAR16));
     if (HostNameStr == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
       goto Error;
@@ -479,10 +508,10 @@ HttpBootDhcp6ExtractUriInfo (
   // Extract the port from URL, and use default HTTP port 80 if not provided.
   //
   Status = HttpUrlGetPort (
-             Private->BootFileUri,
-             Private->BootFileUriParser,
-             &Private->Port
-             );
+                           Private->BootFileUri,
+                           Private->BootFileUriParser,
+                           &Private->Port
+                           );
   if (EFI_ERROR (Status) || Private->Port == 0) {
     Private->Port = 80;
   }
@@ -510,7 +539,6 @@ Error:
   return Status;
 }
 
-
 /**
   Discover all the boot information for boot file.
 
@@ -525,7 +553,7 @@ HttpBootDiscoverBootInfo (
   IN OUT HTTP_BOOT_PRIVATE_DATA   *Private
   )
 {
-  EFI_STATUS              Status;
+  EFI_STATUS  Status;
 
   //
   // Start D.O.R.A/S.A.R.R exchange to acquire station ip address and
@@ -563,19 +591,21 @@ HttpBootHttpIoCallback (
   IN  VOID                      *Context
   )
 {
-  HTTP_BOOT_PRIVATE_DATA       *Private;
-  EFI_STATUS                   Status;
+  HTTP_BOOT_PRIVATE_DATA  *Private;
+  EFI_STATUS              Status;
+
   Private = (HTTP_BOOT_PRIVATE_DATA *) Context;
   if (Private->HttpBootCallback != NULL) {
     Status = Private->HttpBootCallback->Callback (
-               Private->HttpBootCallback,
-               EventType == HttpIoRequest ? HttpBootHttpRequest : HttpBootHttpResponse,
-               EventType == HttpIoRequest ? FALSE : TRUE,
-               sizeof (EFI_HTTP_MESSAGE),
-               (VOID *) Message
-               );
+                                                  Private->HttpBootCallback,
+                                                  EventType == HttpIoRequest ? HttpBootHttpRequest : HttpBootHttpResponse,
+                                                  EventType == HttpIoRequest ? FALSE : TRUE,
+                                                  sizeof (EFI_HTTP_MESSAGE),
+                                                  (VOID *) Message
+                                                  );
     return Status;
   }
+
   return EFI_SUCCESS;
 }
 
@@ -593,9 +623,9 @@ HttpBootCreateHttpIo (
   IN     HTTP_BOOT_PRIVATE_DATA       *Private
   )
 {
-  HTTP_IO_CONFIG_DATA          ConfigData;
-  EFI_STATUS                   Status;
-  EFI_HANDLE                   ImageHandle;
+  HTTP_IO_CONFIG_DATA  ConfigData;
+  EFI_STATUS           Status;
+  EFI_HANDLE           ImageHandle;
 
   ASSERT (Private != NULL);
 
@@ -614,14 +644,14 @@ HttpBootCreateHttpIo (
   }
 
   Status = HttpIoCreateIo (
-             ImageHandle,
-             Private->Controller,
-             Private->UsingIpv6 ? IP_VERSION_6 : IP_VERSION_4,
-             &ConfigData,
-             HttpBootHttpIoCallback,
-             (VOID *) Private,
-             &Private->HttpIo
-             );
+                           ImageHandle,
+                           Private->Controller,
+                           Private->UsingIpv6 ? IP_VERSION_6 : IP_VERSION_4,
+                           &ConfigData,
+                           HttpBootHttpIoCallback,
+                           (VOID *) Private,
+                           &Private->HttpIo
+                           );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -641,10 +671,10 @@ HttpBootFreeCache (
   IN  HTTP_BOOT_CACHE_CONTENT    *Cache
   )
 {
-  UINTN                       Index;
-  LIST_ENTRY                  *Entry;
-  LIST_ENTRY                  *NextEntry;
-  HTTP_BOOT_ENTITY_DATA       *EntityData;
+  UINTN                  Index;
+  LIST_ENTRY             *Entry;
+  LIST_ENTRY             *NextEntry;
+  HTTP_BOOT_ENTITY_DATA  *EntityData;
 
   if (Cache != NULL) {
     //
@@ -654,6 +684,7 @@ HttpBootFreeCache (
       if (Cache->RequestData->Url != NULL) {
         FreePool (Cache->RequestData->Url);
       }
+
       FreePool (Cache->RequestData);
     }
 
@@ -666,6 +697,7 @@ HttpBootFreeCache (
           FreePool (Cache->ResponseData->Headers[Index].FieldName);
           FreePool (Cache->ResponseData->Headers[Index].FieldValue);
         }
+
         FreePool (Cache->ResponseData->Headers);
       }
     }
@@ -678,6 +710,7 @@ HttpBootFreeCache (
       if (EntityData->Block != NULL) {
         FreePool (EntityData->Block);
       }
+
       RemoveEntryList (&EntityData->Link);
       FreePool (EntityData);
     }
@@ -697,9 +730,9 @@ HttpBootFreeCacheList (
   IN     HTTP_BOOT_PRIVATE_DATA   *Private
   )
 {
-  LIST_ENTRY                  *Entry;
-  LIST_ENTRY                  *NextEntry;
-  HTTP_BOOT_CACHE_CONTENT     *Cache;
+  LIST_ENTRY               *Entry;
+  LIST_ENTRY               *NextEntry;
+  HTTP_BOOT_CACHE_CONTENT  *Cache;
 
   NET_LIST_FOR_EACH_SAFE (Entry, NextEntry, &Private->CacheList) {
     Cache = NET_LIST_USER_STRUCT (Entry, HTTP_BOOT_CACHE_CONTENT, Link);
@@ -731,15 +764,15 @@ HttpBootGetFileFromCache (
   IN     HTTP_BOOT_PRIVATE_DATA   *Private,
   IN     CHAR16                   *Uri,
   IN OUT UINTN                    *BufferSize,
-     OUT UINT8                    *Buffer,
-     OUT HTTP_BOOT_IMAGE_TYPE     *ImageType
+  OUT UINT8                    *Buffer,
+  OUT HTTP_BOOT_IMAGE_TYPE     *ImageType
   )
 {
-  LIST_ENTRY                  *Entry;
-  LIST_ENTRY                  *Entry2;
-  HTTP_BOOT_CACHE_CONTENT     *Cache;
-  HTTP_BOOT_ENTITY_DATA       *EntityData;
-  UINTN                       CopyedSize;
+  LIST_ENTRY               *Entry;
+  LIST_ENTRY               *Entry2;
+  HTTP_BOOT_CACHE_CONTENT  *Cache;
+  HTTP_BOOT_ENTITY_DATA    *EntityData;
+  UINTN                    CopyedSize;
 
   if (Uri == NULL || BufferSize == NULL || Buffer == NULL || ImageType == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -756,7 +789,7 @@ HttpBootGetFileFromCache (
       //
       // Hit in cache, record image type.
       //
-      *ImageType  = Cache->ImageType;
+      *ImageType = Cache->ImageType;
 
       //
       // Check buffer size.
@@ -774,10 +807,10 @@ HttpBootGetFileFromCache (
         EntityData = NET_LIST_USER_STRUCT (Entry2, HTTP_BOOT_ENTITY_DATA, Link);
         if (*BufferSize > CopyedSize) {
           CopyMem (
-            Buffer + CopyedSize,
-            EntityData->DataStart,
-            MIN (EntityData->DataLength, *BufferSize - CopyedSize)
-            );
+                   Buffer + CopyedSize,
+                   EntityData->DataStart,
+                   MIN (EntityData->DataLength, *BufferSize - CopyedSize)
+                   );
           CopyedSize += MIN (EntityData->DataLength, *BufferSize - CopyedSize);
         }
       }
@@ -813,10 +846,10 @@ HttpBootGetBootFileCallback (
   IN VOID                       *Context
   )
 {
-  HTTP_BOOT_CALLBACK_DATA      *CallbackData;
-  HTTP_BOOT_ENTITY_DATA        *NewEntityData;
-  EFI_STATUS                   Status;
-  EFI_HTTP_BOOT_CALLBACK_PROTOCOL   *HttpBootCallback;
+  HTTP_BOOT_CALLBACK_DATA          *CallbackData;
+  HTTP_BOOT_ENTITY_DATA            *NewEntityData;
+  EFI_STATUS                       Status;
+  EFI_HTTP_BOOT_CALLBACK_PROTOCOL  *HttpBootCallback;
 
   //
   // We only care about the entity data.
@@ -825,29 +858,30 @@ HttpBootGetBootFileCallback (
     return EFI_SUCCESS;
   }
 
-  CallbackData = (HTTP_BOOT_CALLBACK_DATA *) Context;
+  CallbackData     = (HTTP_BOOT_CALLBACK_DATA *) Context;
   HttpBootCallback = CallbackData->Private->HttpBootCallback;
   if (HttpBootCallback != NULL) {
     Status = HttpBootCallback->Callback (
-               HttpBootCallback,
-               HttpBootHttpEntityBody,
-               TRUE,
-               (UINT32)Length,
-               Data
-               );
+                                         HttpBootCallback,
+                                         HttpBootHttpEntityBody,
+                                         TRUE,
+                                         (UINT32) Length,
+                                         Data
+                                         );
     if (EFI_ERROR (Status)) {
       return Status;
     }
   }
+
   //
   // Copy data if caller has provided a buffer.
   //
   if (CallbackData->BufferSize > CallbackData->CopyedSize) {
     CopyMem (
-      CallbackData->Buffer + CallbackData->CopyedSize,
-      Data,
-      MIN (Length, CallbackData->BufferSize - CallbackData->CopyedSize)
-      );
+             CallbackData->Buffer + CallbackData->CopyedSize,
+             Data,
+             MIN (Length, CallbackData->BufferSize - CallbackData->CopyedSize)
+             );
     CallbackData->CopyedSize += MIN (Length, CallbackData->BufferSize - CallbackData->CopyedSize);
   }
 
@@ -859,14 +893,17 @@ HttpBootGetBootFileCallback (
     if (NewEntityData == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
+
     if (CallbackData->NewBlock) {
       NewEntityData->Block = CallbackData->Block;
-      CallbackData->Block = NULL;
+      CallbackData->Block  = NULL;
     }
+
     NewEntityData->DataLength = Length;
-    NewEntityData->DataStart  = (UINT8*) Data;
+    NewEntityData->DataStart  = (UINT8 *) Data;
     InsertTailList (&CallbackData->Cache->EntityDataList, &NewEntityData->Link);
   }
+
   return EFI_SUCCESS;
 }
 
@@ -899,27 +936,27 @@ HttpBootGetBootFile (
   IN     HTTP_BOOT_PRIVATE_DATA   *Private,
   IN     BOOLEAN                  HeaderOnly,
   IN OUT UINTN                    *BufferSize,
-     OUT UINT8                    *Buffer,
-     OUT HTTP_BOOT_IMAGE_TYPE     *ImageType
+  OUT UINT8                    *Buffer,
+  OUT HTTP_BOOT_IMAGE_TYPE     *ImageType
   )
 {
-  EFI_STATUS                 Status;
-  EFI_HTTP_STATUS_CODE       StatusCode;
-  CHAR8                      *HostName;
-  EFI_HTTP_REQUEST_DATA      *RequestData;
-  HTTP_IO_RESPONSE_DATA      *ResponseData;
-  HTTP_IO_RESPONSE_DATA      ResponseBody;
-  HTTP_IO                    *HttpIo;
-  HTTP_IO_HEADER             *HttpIoHeader;
-  VOID                       *Parser;
-  HTTP_BOOT_CALLBACK_DATA    Context;
-  UINTN                      ContentLength;
-  HTTP_BOOT_CACHE_CONTENT    *Cache;
-  UINT8                      *Block;
-  UINTN                      UrlSize;
-  CHAR16                     *Url;
-  BOOLEAN                    IdentityMode;
-  UINTN                      ReceivedSize;
+  EFI_STATUS               Status;
+  EFI_HTTP_STATUS_CODE     StatusCode;
+  CHAR8                    *HostName;
+  EFI_HTTP_REQUEST_DATA    *RequestData;
+  HTTP_IO_RESPONSE_DATA    *ResponseData;
+  HTTP_IO_RESPONSE_DATA    ResponseBody;
+  HTTP_IO                  *HttpIo;
+  HTTP_IO_HEADER           *HttpIoHeader;
+  VOID                     *Parser;
+  HTTP_BOOT_CALLBACK_DATA  Context;
+  UINTN                    ContentLength;
+  HTTP_BOOT_CACHE_CONTENT  *Cache;
+  UINT8                    *Block;
+  UINTN                    UrlSize;
+  CHAR16                   *Url;
+  BOOLEAN                  IdentityMode;
+  UINTN                    ReceivedSize;
 
   ASSERT (Private != NULL);
   ASSERT (Private->HttpCreated);
@@ -936,10 +973,11 @@ HttpBootGetBootFile (
   // First, check whether we already cached the requested Uri.
   //
   UrlSize = AsciiStrSize (Private->BootFileUri);
-  Url = AllocatePool (UrlSize * sizeof (CHAR16));
+  Url     = AllocatePool (UrlSize * sizeof (CHAR16));
   if (Url == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
+
   AsciiStrToUnicodeStrS (Private->BootFileUri, Url, UrlSize);
   if (!HeaderOnly && Buffer != NULL) {
     Status = HttpBootGetFileFromCache (Private, Url, BufferSize, Buffer, ImageType);
@@ -963,6 +1001,7 @@ HttpBootGetBootFile (
       Status = EFI_OUT_OF_RESOURCES;
       goto ERROR_1;
     }
+
     Cache->ImageType = ImageTypeMax;
     InitializeListHead (&Cache->EntityDataList);
   }
@@ -973,9 +1012,9 @@ HttpBootGetBootFile (
 
   //
   // 2.1 Build HTTP header for the request, 3 header is needed to download a boot file:
-  //       Host
-  //       Accept
-  //       User-Agent
+  // Host
+  // Accept
+  // User-Agent
   //
   HttpIoHeader = HttpIoCreateHeader (3);
   if (HttpIoHeader == NULL) {
@@ -987,19 +1026,20 @@ HttpBootGetBootFile (
   // Add HTTP header field 1: Host
   //
   HostName = NULL;
-  Status = HttpUrlGetHostName (
-             Private->BootFileUri,
-             Private->BootFileUriParser,
-             &HostName
-             );
+  Status   = HttpUrlGetHostName (
+                                 Private->BootFileUri,
+                                 Private->BootFileUriParser,
+                                 &HostName
+                                 );
   if (EFI_ERROR (Status)) {
     goto ERROR_3;
   }
+
   Status = HttpIoSetHeader (
-             HttpIoHeader,
-             HTTP_HEADER_HOST,
-             HostName
-             );
+                            HttpIoHeader,
+                            HTTP_HEADER_HOST,
+                            HostName
+                            );
   FreePool (HostName);
   if (EFI_ERROR (Status)) {
     goto ERROR_3;
@@ -1009,10 +1049,10 @@ HttpBootGetBootFile (
   // Add HTTP header field 2: Accept
   //
   Status = HttpIoSetHeader (
-             HttpIoHeader,
-             HTTP_HEADER_ACCEPT,
-             "*/*"
-             );
+                            HttpIoHeader,
+                            HTTP_HEADER_ACCEPT,
+                            "*/*"
+                            );
   if (EFI_ERROR (Status)) {
     goto ERROR_3;
   }
@@ -1021,10 +1061,10 @@ HttpBootGetBootFile (
   // Add HTTP header field 3: User-Agent
   //
   Status = HttpIoSetHeader (
-             HttpIoHeader,
-             HTTP_HEADER_USER_AGENT,
-             HTTP_USER_AGENT_EFI_HTTP_BOOT
-             );
+                            HttpIoHeader,
+                            HTTP_HEADER_USER_AGENT,
+                            HTTP_USER_AGENT_EFI_HTTP_BOOT
+                            );
   if (EFI_ERROR (Status)) {
     goto ERROR_3;
   }
@@ -1037,8 +1077,9 @@ HttpBootGetBootFile (
     Status = EFI_OUT_OF_RESOURCES;
     goto ERROR_3;
   }
+
   RequestData->Method = HeaderOnly ? HttpMethodHead : HttpMethodGet;
-  RequestData->Url = Url;
+  RequestData->Url    = Url;
 
   //
   // 2.3 Record the request info in a temp cache item.
@@ -1052,13 +1093,13 @@ HttpBootGetBootFile (
   //
   HttpIo = &Private->HttpIo;
   Status = HttpIoSendRequest (
-             HttpIo,
-             RequestData,
-             HttpIoHeader->HeaderCount,
-             HttpIoHeader->Headers,
-             0,
-             NULL
-            );
+                              HttpIo,
+                              RequestData,
+                              HttpIoHeader->HeaderCount,
+                              HttpIoHeader->Headers,
+                              0,
+                              NULL
+                              );
   if (EFI_ERROR (Status)) {
     goto ERROR_4;
   }
@@ -1070,22 +1111,24 @@ HttpBootGetBootFile (
   //
   // 3.1 First step, use zero BodyLength to only receive the response headers.
   //
-  ResponseData = AllocateZeroPool (sizeof(HTTP_IO_RESPONSE_DATA));
+  ResponseData = AllocateZeroPool (sizeof (HTTP_IO_RESPONSE_DATA));
   if (ResponseData == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ERROR_4;
   }
+
   Status = HttpIoRecvResponse (
-             &Private->HttpIo,
-             TRUE,
-             ResponseData
-             );
+                               &Private->HttpIo,
+                               TRUE,
+                               ResponseData
+                               );
   if (EFI_ERROR (Status) || EFI_ERROR (ResponseData->Status)) {
     if (EFI_ERROR (ResponseData->Status)) {
       StatusCode = HttpIo->RspToken.Message->Data.Response->StatusCode;
       HttpBootPrintErrorMessage (StatusCode);
       Status = ResponseData->Status;
     }
+
     goto ERROR_5;
   }
 
@@ -1093,12 +1136,12 @@ HttpBootGetBootFile (
   // Check the image type according to server's response.
   //
   Status = HttpBootCheckImageType (
-             Private->BootFileUri,
-             Private->BootFileUriParser,
-             ResponseData->HeaderCount,
-             ResponseData->Headers,
-             ImageType
-             );
+                                   Private->BootFileUri,
+                                   Private->BootFileUriParser,
+                                   ResponseData->HeaderCount,
+                                   ResponseData->Headers,
+                                   ImageType
+                                   );
   if (EFI_ERROR (Status)) {
     goto ERROR_5;
   }
@@ -1108,7 +1151,7 @@ HttpBootGetBootFile (
   //
   if (Cache != NULL) {
     Cache->ResponseData = ResponseData;
-    Cache->ImageType = *ImageType;
+    Cache->ImageType    = *ImageType;
   }
 
   //
@@ -1123,14 +1166,14 @@ HttpBootGetBootFile (
   Context.Cache      = Cache;
   Context.Private    = Private;
   Status = HttpInitMsgParser (
-             HeaderOnly ? HttpMethodHead : HttpMethodGet,
-             ResponseData->Response.StatusCode,
-             ResponseData->HeaderCount,
-             ResponseData->Headers,
-             HttpBootGetBootFileCallback,
-             (VOID*) &Context,
-             &Parser
-             );
+                              HeaderOnly ? HttpMethodHead : HttpMethodGet,
+                              ResponseData->Response.StatusCode,
+                              ResponseData->HeaderCount,
+                              ResponseData->Headers,
+                              HttpBootGetBootFileCallback,
+                              (VOID *) &Context,
+                              &Parser
+                              );
   if (EFI_ERROR (Status)) {
     goto ERROR_6;
   }
@@ -1163,28 +1206,30 @@ HttpBootGetBootFile (
       //
       ReceivedSize = 0;
       while (ReceivedSize < ContentLength) {
-        ResponseBody.Body       = (CHAR8*) Buffer + ReceivedSize;
+        ResponseBody.Body = (CHAR8 *) Buffer + ReceivedSize;
         ResponseBody.BodyLength = *BufferSize - ReceivedSize;
         Status = HttpIoRecvResponse (
-                   &Private->HttpIo,
-                   FALSE,
-                   &ResponseBody
-                   );
+                                     &Private->HttpIo,
+                                     FALSE,
+                                     &ResponseBody
+                                     );
         if (EFI_ERROR (Status) || EFI_ERROR (ResponseBody.Status)) {
           if (EFI_ERROR (ResponseBody.Status)) {
             Status = ResponseBody.Status;
           }
+
           goto ERROR_6;
         }
+
         ReceivedSize += ResponseBody.BodyLength;
         if (Private->HttpBootCallback != NULL) {
           Status = Private->HttpBootCallback->Callback (
-                     Private->HttpBootCallback,
-                     HttpBootHttpEntityBody,
-                     TRUE,
-                     (UINT32)ResponseBody.BodyLength,
-                     ResponseBody.Body
-                     );
+                                                        Private->HttpBootCallback,
+                                                        HttpBootHttpEntityBody,
+                                                        TRUE,
+                                                        (UINT32) ResponseBody.BodyLength,
+                                                        ResponseBody.Body
+                                                        );
           if (EFI_ERROR (Status)) {
             goto ERROR_6;
           }
@@ -1209,23 +1254,25 @@ HttpBootGetBootFile (
             Status = EFI_OUT_OF_RESOURCES;
             goto ERROR_6;
           }
+
           Context.NewBlock = TRUE;
-          Context.Block = Block;
+          Context.Block    = Block;
         } else {
           Context.NewBlock = FALSE;
         }
 
-        ResponseBody.Body       = (CHAR8*) Block;
+        ResponseBody.Body = (CHAR8 *) Block;
         ResponseBody.BodyLength = HTTP_BOOT_BLOCK_SIZE;
         Status = HttpIoRecvResponse (
-                   &Private->HttpIo,
-                   FALSE,
-                   &ResponseBody
-                   );
+                                     &Private->HttpIo,
+                                     FALSE,
+                                     &ResponseBody
+                                     );
         if (EFI_ERROR (Status) || EFI_ERROR (ResponseBody.Status)) {
           if (EFI_ERROR (ResponseBody.Status)) {
             Status = ResponseBody.Status;
           }
+
           goto ERROR_6;
         }
 
@@ -1233,10 +1280,10 @@ HttpBootGetBootFile (
         // Parse the new received block of the message-body, the block will be saved in cache.
         //
         Status = HttpParseMessageBody (
-                   Parser,
-                   ResponseBody.BodyLength,
-                   ResponseBody.Body
-                   );
+                                       Parser,
+                                       ResponseBody.BodyLength,
+                                       ResponseBody.Body
+                                       );
         if (EFI_ERROR (Status)) {
           goto ERROR_6;
         }
@@ -1257,6 +1304,7 @@ HttpBootGetBootFile (
   } else {
     Status = EFI_SUCCESS;
   }
+
   *BufferSize = ContentLength;
 
   //
@@ -1277,25 +1325,30 @@ ERROR_6:
   if (Parser != NULL) {
     HttpFreeMsgParser (Parser);
   }
+
   if (Context.Block != NULL) {
     FreePool (Context.Block);
   }
+
   HttpBootFreeCache (Cache);
 
 ERROR_5:
   if (ResponseData != NULL) {
     FreePool (ResponseData);
   }
+
 ERROR_4:
   if (RequestData != NULL) {
     FreePool (RequestData);
   }
+
 ERROR_3:
   HttpIoFreeHeader (HttpIoHeader);
 ERROR_2:
   if (Cache != NULL) {
     FreePool (Cache);
   }
+
 ERROR_1:
   if (Url != NULL) {
     FreePool (Url);
@@ -1303,4 +1356,3 @@ ERROR_1:
 
   return Status;
 }
-

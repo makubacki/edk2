@@ -10,7 +10,7 @@
 
 #include "Ip6Impl.h"
 
-LIST_ENTRY  mIp6ConfigInstanceList = {&mIp6ConfigInstanceList, &mIp6ConfigInstanceList};
+LIST_ENTRY  mIp6ConfigInstanceList = { &mIp6ConfigInstanceList, &mIp6ConfigInstanceList };
 
 /**
   The event process routine when the DHCPv6 service binding protocol is installed
@@ -42,15 +42,15 @@ Ip6ConfigOnPolicyChanged (
   IN EFI_IP6_CONFIG_POLICY  NewPolicy
   )
 {
-  LIST_ENTRY          *Entry;
-  LIST_ENTRY          *Entry2;
-  LIST_ENTRY          *Next;
-  IP6_INTERFACE       *IpIf;
-  IP6_DAD_ENTRY       *DadEntry;
-  IP6_DELAY_JOIN_LIST *DelayNode;
-  IP6_ADDRESS_INFO    *AddrInfo;
-  IP6_PROTOCOL        *Instance;
-  BOOLEAN             Recovery;
+  LIST_ENTRY           *Entry;
+  LIST_ENTRY           *Entry2;
+  LIST_ENTRY           *Next;
+  IP6_INTERFACE        *IpIf;
+  IP6_DAD_ENTRY        *DadEntry;
+  IP6_DELAY_JOIN_LIST  *DelayNode;
+  IP6_ADDRESS_INFO     *AddrInfo;
+  IP6_PROTOCOL         *Instance;
+  BOOLEAN              Recovery;
 
   Recovery = FALSE;
 
@@ -71,13 +71,13 @@ Ip6ConfigOnPolicyChanged (
   //
   if (IpSb->LinkLocalOk) {
     Ip6CreatePrefixListEntry (
-      IpSb,
-      TRUE,
-      (UINT32) IP6_INFINIT_LIFETIME,
-      (UINT32) IP6_INFINIT_LIFETIME,
-      IP6_LINK_LOCAL_PREFIX_LENGTH,
-      &IpSb->LinkLocalAddr
-      );
+                              IpSb,
+                              TRUE,
+                              (UINT32) IP6_INFINIT_LIFETIME,
+                              (UINT32) IP6_INFINIT_LIFETIME,
+                              IP6_LINK_LOCAL_PREFIX_LENGTH,
+                              &IpSb->LinkLocalAddr
+                              );
   }
 
   if (!IsListEmpty (&IpSb->DefaultInterface->AddressList) && IpSb->DefaultInterface->AddressCount > 0) {
@@ -93,7 +93,8 @@ Ip6ConfigOnPolicyChanged (
       if (!IsListEmpty (&IpSb->Children)) {
         NET_LIST_FOR_EACH (Entry2, &IpSb->Children) {
           Instance = NET_LIST_USER_STRUCT_S (Entry2, IP6_PROTOCOL, Link, IP6_PROTOCOL_SIGNATURE);
-          if ((Instance->State == IP6_STATE_CONFIGED) && EFI_IP6_EQUAL (&Instance->ConfigData.StationAddress, &AddrInfo->Address)) {
+          if ((Instance->State == IP6_STATE_CONFIGED) &&
+              EFI_IP6_EQUAL (&Instance->ConfigData.StationAddress, &AddrInfo->Address)) {
             Recovery = TRUE;
             break;
           }
@@ -107,12 +108,12 @@ Ip6ConfigOnPolicyChanged (
     // or the unspecified address as the source address.
     // TODO: Conduct a check here.
     Ip6RemoveAddr (
-      IpSb,
-      &IpSb->DefaultInterface->AddressList,
-      &IpSb->DefaultInterface->AddressCount,
-      NULL,
-      0
-      );
+                   IpSb,
+                   &IpSb->DefaultInterface->AddressList,
+                   &IpSb->DefaultInterface->AddressCount,
+                   NULL,
+                   0
+                   );
 
     if (IpSb->Controller != NULL && Recovery) {
       //
@@ -121,7 +122,6 @@ Ip6ConfigOnPolicyChanged (
       gBS->ConnectController (IpSb->Controller, NULL, NULL, TRUE);
     }
   }
-
 
   NET_LIST_FOR_EACH (Entry, &IpSb->Interfaces) {
     //
@@ -154,11 +154,11 @@ Ip6ConfigOnPolicyChanged (
     // Set parameters to trigger router solicitation sending in timer handler.
     //
     IpSb->RouterAdvertiseReceived = FALSE;
-    IpSb->SolicitTimer            = IP6_MAX_RTR_SOLICITATIONS;
+    IpSb->SolicitTimer = IP6_MAX_RTR_SOLICITATIONS;
     //
     // delay 1 second
     //
-    IpSb->Ticks                   = (UINT32) IP6_GET_TICKS (IP6_ONE_SECOND_IN_MS);
+    IpSb->Ticks = (UINT32) IP6_GET_TICKS (IP6_ONE_SECOND_IN_MS);
   }
 }
 
@@ -201,11 +201,11 @@ Ip6ConfigStartStatefulAutoConfig (
   Instance->OtherInfoOnly = OtherInfoOnly;
 
   Status = NetLibCreateServiceChild (
-             IpSb->Controller,
-             IpSb->Image,
-             &gEfiDhcp6ServiceBindingProtocolGuid,
-             &Instance->Dhcp6Handle
-             );
+                                     IpSb->Controller,
+                                     IpSb->Image,
+                                     &gEfiDhcp6ServiceBindingProtocolGuid,
+                                     &Instance->Dhcp6Handle
+                                     );
 
   if (Status == EFI_UNSUPPORTED) {
     //
@@ -213,12 +213,12 @@ Ip6ConfigStartStatefulAutoConfig (
     //
     if (Instance->Dhcp6SbNotifyEvent == NULL) {
       Instance->Dhcp6SbNotifyEvent = EfiCreateProtocolNotifyEvent (
-                                       &gEfiDhcp6ServiceBindingProtocolGuid,
-                                       TPL_CALLBACK,
-                                       Ip6ConfigOnDhcp6SbInstalled,
-                                       (VOID *) Instance,
-                                       &Instance->Registration
-                                       );
+                                                                   &gEfiDhcp6ServiceBindingProtocolGuid,
+                                                                   TPL_CALLBACK,
+                                                                   Ip6ConfigOnDhcp6SbInstalled,
+                                                                   (VOID *) Instance,
+                                                                   &Instance->Registration
+                                                                   );
     }
   }
 
@@ -227,17 +227,17 @@ Ip6ConfigStartStatefulAutoConfig (
   }
 
   if (Instance->Dhcp6SbNotifyEvent != NULL) {
-    gBS->CloseEvent (Instance->Dhcp6SbNotifyEvent);
+  gBS->CloseEvent (Instance->Dhcp6SbNotifyEvent);
   }
 
   Status = gBS->OpenProtocol (
-                  Instance->Dhcp6Handle,
-                  &gEfiDhcp6ProtocolGuid,
-                  (VOID **) &Instance->Dhcp6,
-                  IpSb->Image,
-                  IpSb->Controller,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              Instance->Dhcp6Handle,
+                              &gEfiDhcp6ProtocolGuid,
+                              (VOID **) &Instance->Dhcp6,
+                              IpSb->Image,
+                              IpSb->Controller,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   ASSERT_EFI_ERROR (Status);
 
   Dhcp6 = Instance->Dhcp6;
@@ -247,39 +247,37 @@ Ip6ConfigStartStatefulAutoConfig (
   // Set the exta options to send. Here we only want the option request option
   // with DNS SERVERS.
   //
-  Oro                         = (EFI_DHCP6_PACKET_OPTION *) OptBuf;
-  Oro->OpCode                 = HTONS (DHCP6_OPT_ORO);
-  Oro->OpLen                  = HTONS (2);
+  Oro = (EFI_DHCP6_PACKET_OPTION *) OptBuf;
+  Oro->OpCode = HTONS (DHCP6_OPT_ORO);
+  Oro->OpLen  = HTONS (2);
   *((UINT16 *) &Oro->Data[0]) = HTONS (DHCP6_OPT_DNS_SERVERS);
-  OptList[0]                  = Oro;
+  OptList[0] = Oro;
 
-  Status                      = EFI_SUCCESS;
+  Status = EFI_SUCCESS;
 
   if (!OtherInfoOnly) {
     //
     // Get stateful address and other information via DHCPv6.
     //
-    Dhcp6CfgData.Dhcp6Callback         = NULL;
-    Dhcp6CfgData.CallbackContext       = NULL;
-    Dhcp6CfgData.OptionCount           = 1;
-    Dhcp6CfgData.OptionList            = &OptList[0];
-    Dhcp6CfgData.IaDescriptor.Type     = EFI_DHCP6_IA_TYPE_NA;
-    Dhcp6CfgData.IaDescriptor.IaId     = Instance->IaId;
-    Dhcp6CfgData.IaInfoEvent           = Instance->Dhcp6Event;
-    Dhcp6CfgData.ReconfigureAccept     = FALSE;
-    Dhcp6CfgData.RapidCommit           = FALSE;
+    Dhcp6CfgData.Dhcp6Callback   = NULL;
+    Dhcp6CfgData.CallbackContext = NULL;
+    Dhcp6CfgData.OptionCount     = 1;
+    Dhcp6CfgData.OptionList = &OptList[0];
+    Dhcp6CfgData.IaDescriptor.Type = EFI_DHCP6_IA_TYPE_NA;
+    Dhcp6CfgData.IaDescriptor.IaId = Instance->IaId;
+    Dhcp6CfgData.IaInfoEvent = Instance->Dhcp6Event;
+    Dhcp6CfgData.ReconfigureAccept = FALSE;
+    Dhcp6CfgData.RapidCommit = FALSE;
     Dhcp6CfgData.SolicitRetransmission = NULL;
 
     Status = Dhcp6->Configure (Dhcp6, &Dhcp6CfgData);
 
     if (!EFI_ERROR (Status)) {
-
       if (IpSb->LinkLocalOk) {
         Status = Dhcp6->Start (Dhcp6);
       } else {
         IpSb->Dhcp6NeedStart = TRUE;
       }
-
     }
   } else {
     //
@@ -293,20 +291,19 @@ Ip6ConfigStartStatefulAutoConfig (
 
     if (IpSb->LinkLocalOk) {
       Status = Dhcp6->InfoRequest (
-                        Dhcp6,
-                        TRUE,
-                        Oro,
-                        0,
-                        NULL,
-                        &InfoReqReXmit,
-                        Instance->Dhcp6Event,
-                        Ip6ConfigOnDhcp6Reply,
-                        Instance
-                        );
+                                   Dhcp6,
+                                   TRUE,
+                                   Oro,
+                                   0,
+                                   NULL,
+                                   &InfoReqReXmit,
+                                   Instance->Dhcp6Event,
+                                   Ip6ConfigOnDhcp6Reply,
+                                   Instance
+                                   );
     } else {
       IpSb->Dhcp6NeedInfoRequest = TRUE;
     }
-
   }
 
   return Status;
@@ -366,12 +363,12 @@ Ip6ConfigReadConfigData (
   //
   VarSize = 0;
   Status  = gRT->GetVariable (
-                   VarName,
-                   &gEfiIp6ConfigProtocolGuid,
-                   NULL,
-                   &VarSize,
-                   NULL
-                   );
+                              VarName,
+                              &gEfiIp6ConfigProtocolGuid,
+                              NULL,
+                              &VarSize,
+                              NULL
+                              );
 
   if (Status == EFI_BUFFER_TOO_SMALL) {
     //
@@ -383,12 +380,12 @@ Ip6ConfigReadConfigData (
     }
 
     Status = gRT->GetVariable (
-                    VarName,
-                    &gEfiIp6ConfigProtocolGuid,
-                    NULL,
-                    &VarSize,
-                    Variable
-                    );
+                               VarName,
+                               &gEfiIp6ConfigProtocolGuid,
+                               NULL,
+                               &VarSize,
+                               Variable
+                               );
     if (EFI_ERROR (Status) || (UINT16) (~NetblockChecksum ((UINT8 *) Variable, (UINT32) VarSize)) != 0) {
       //
       // GetVariable error or the variable is corrupted.
@@ -402,7 +399,6 @@ Ip6ConfigReadConfigData (
     Instance->IaId = Variable->IaId;
 
     for (Index = 0; Index < Variable->DataRecordCount; Index++) {
-
       CopyMem (&DataRecord, &Variable->DataRecord[Index], sizeof (DataRecord));
 
       DataItem = &Instance->DataItem[DataRecord.DataType];
@@ -459,12 +455,12 @@ Error:
   // variable will be set again.
   //
   gRT->SetVariable (
-         VarName,
-         &gEfiIp6ConfigProtocolGuid,
-         IP6_CONFIG_VARIABLE_ATTRIBUTE,
-         0,
-         NULL
-         );
+                    VarName,
+                    &gEfiIp6ConfigProtocolGuid,
+                    IP6_CONFIG_VARIABLE_ATTRIBUTE,
+                    0,
+                    NULL
+                    );
 
   return EFI_NOT_FOUND;
 }
@@ -496,10 +492,8 @@ Ip6ConfigWriteConfigData (
   VarSize = sizeof (IP6_CONFIG_VARIABLE) - sizeof (IP6_CONFIG_DATA_RECORD);
 
   for (Index = 0; Index < Ip6ConfigDataTypeMaximum; Index++) {
-
     DataItem = &Instance->DataItem[Index];
     if (!DATA_ATTRIB_SET (DataItem->Attribute, DATA_ATTRIB_VOLATILE) && !EFI_ERROR (DataItem->Status)) {
-
       VarSize += sizeof (IP6_CONFIG_DATA_RECORD) + DataItem->DataSize;
     }
   }
@@ -509,19 +503,17 @@ Ip6ConfigWriteConfigData (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Variable->IaId            = Instance->IaId;
-  Heap                      = (CHAR8 *) Variable + VarSize;
+  Variable->IaId = Instance->IaId;
+  Heap = (CHAR8 *) Variable + VarSize;
   Variable->DataRecordCount = 0;
 
   for (Index = 0; Index < Ip6ConfigDataTypeMaximum; Index++) {
-
     DataItem = &Instance->DataItem[Index];
     if (!DATA_ATTRIB_SET (DataItem->Attribute, DATA_ATTRIB_VOLATILE) && !EFI_ERROR (DataItem->Status)) {
-
       Heap -= DataItem->DataSize;
       CopyMem (Heap, DataItem->Data.Ptr, DataItem->DataSize);
 
-      DataRecord           = &Variable->DataRecord[Variable->DataRecordCount];
+      DataRecord = &Variable->DataRecord[Variable->DataRecordCount];
       DataRecord->DataType = (EFI_IP6_CONFIG_DATA_TYPE) Index;
       DataRecord->DataSize = (UINT32) DataItem->DataSize;
       DataRecord->Offset   = (UINT16) (Heap - (CHAR8 *) Variable);
@@ -534,12 +526,12 @@ Ip6ConfigWriteConfigData (
   Variable->Checksum = (UINT16) ~NetblockChecksum ((UINT8 *) Variable, (UINT32) VarSize);
 
   Status = gRT->SetVariable (
-                  VarName,
-                  &gEfiIp6ConfigProtocolGuid,
-                  IP6_CONFIG_VARIABLE_ATTRIBUTE,
-                  VarSize,
-                  Variable
-                  );
+                             VarName,
+                             &gEfiIp6ConfigProtocolGuid,
+                             IP6_CONFIG_VARIABLE_ATTRIBUTE,
+                             VarSize,
+                             Variable
+                             );
 
   FreePool (Variable);
 
@@ -597,7 +589,7 @@ Ip6ConfigGetIfInfo (
   //
   // Copy the fixed size part of the interface info.
   //
-  Item = &Instance->DataItem[Ip6ConfigDataTypeInterfaceInfo];
+  Item   = &Instance->DataItem[Ip6ConfigDataTypeInterfaceInfo];
   IfInfo = (EFI_IP6_CONFIG_INTERFACE_INFO *) Data;
   CopyMem (IfInfo, Item->Data.Ptr, sizeof (EFI_IP6_CONFIG_INTERFACE_INFO));
 
@@ -703,32 +695,33 @@ Ip6ConfigSetPolicy (
   }
 
   if (NewPolicy == Instance->Policy) {
-
     return EFI_ABORTED;
   } else {
     //
     // Clean the ManualAddress, Gateway and DnsServers, shrink the variable
     // data size, and fire up all the related events.
     //
-    DataItem           = &Instance->DataItem[Ip6ConfigDataTypeManualAddress];
+    DataItem = &Instance->DataItem[Ip6ConfigDataTypeManualAddress];
     if (DataItem->Data.Ptr != NULL) {
       FreePool (DataItem->Data.Ptr);
     }
+
     DataItem->Data.Ptr = NULL;
     DataItem->DataSize = 0;
     DataItem->Status   = EFI_NOT_FOUND;
     NetMapIterate (&DataItem->EventMap, Ip6ConfigSignalEvent, NULL);
 
-    DataItem           = &Instance->DataItem[Ip6ConfigDataTypeGateway];
+    DataItem = &Instance->DataItem[Ip6ConfigDataTypeGateway];
     if (DataItem->Data.Ptr != NULL) {
       FreePool (DataItem->Data.Ptr);
     }
+
     DataItem->Data.Ptr = NULL;
     DataItem->DataSize = 0;
     DataItem->Status   = EFI_NOT_FOUND;
     NetMapIterate (&DataItem->EventMap, Ip6ConfigSignalEvent, NULL);
 
-    DataItem           = &Instance->DataItem[Ip6ConfigDataTypeDnsServer];
+    DataItem = &Instance->DataItem[Ip6ConfigDataTypeDnsServer];
     DataItem->Data.Ptr = NULL;
     DataItem->DataSize = 0;
     DataItem->Status   = EFI_NOT_FOUND;
@@ -785,10 +778,8 @@ Ip6ConfigSetDadXmits (
   OldDadXmits = Instance->DataItem[Ip6ConfigDataTypeDupAddrDetectTransmits].Data.DadXmits;
 
   if ((*(UINT32 *) Data) == OldDadXmits->DupAddrDetectTransmits) {
-
     return EFI_ABORTED;
   } else {
-
     OldDadXmits->DupAddrDetectTransmits = *((UINT32 *) Data);
     return EFI_SUCCESS;
   }
@@ -820,9 +811,9 @@ Ip6ManualAddrDadCallback (
   UINTN                          DadFailCount;
   IP6_SERVICE                    *IpSb;
 
-  Instance   = (IP6_CONFIG_INSTANCE *) Context;
+  Instance = (IP6_CONFIG_INSTANCE *) Context;
   NET_CHECK_SIGNATURE (Instance, IP6_CONFIG_INSTANCE_SIGNATURE);
-  Item       = &Instance->DataItem[Ip6ConfigDataTypeManualAddress];
+  Item = &Instance->DataItem[Ip6ConfigDataTypeManualAddress];
   ManualAddr = NULL;
 
   if (Item->DataSize == 0) {
@@ -964,18 +955,18 @@ Ip6ConfigSetManualAddress (
   IP6_DAD_ENTRY                  *DadEntry;
   IP6_DELAY_JOIN_LIST            *DelayNode;
 
-  NewAddress      = NULL;
-  TmpAddress      = NULL;
+  NewAddress = NULL;
+  TmpAddress = NULL;
   CurrentAddrInfo = NULL;
-  Copy            = NULL;
-  Entry           = NULL;
-  Entry2          = NULL;
-  IpIf            = NULL;
-  PrefixEntry     = NULL;
-  Next            = NULL;
-  DadEntry        = NULL;
-  DelayNode       = NULL;
-  Status          = EFI_SUCCESS;
+  Copy   = NULL;
+  Entry  = NULL;
+  Entry2 = NULL;
+  IpIf   = NULL;
+  PrefixEntry = NULL;
+  Next      = NULL;
+  DadEntry  = NULL;
+  DelayNode = NULL;
+  Status    = EFI_SUCCESS;
 
   ASSERT (Instance->DataItem[Ip6ConfigDataTypeManualAddress].Status != EFI_NOT_READY);
 
@@ -993,10 +984,9 @@ Ip6ConfigSetManualAddress (
 
   if (Data != NULL && DataSize != 0) {
     NewAddressCount = DataSize / sizeof (EFI_IP6_CONFIG_MANUAL_ADDRESS);
-    NewAddress      = (EFI_IP6_CONFIG_MANUAL_ADDRESS *) Data;
+    NewAddress = (EFI_IP6_CONFIG_MANUAL_ADDRESS *) Data;
 
     for (Index1 = 0; Index1 < NewAddressCount; Index1++, NewAddress++) {
-
       if (NetIp6IsLinkLocalAddr (&NewAddress->Address)    ||
           !NetIp6IsValidUnicast (&NewAddress->Address)    ||
           (NewAddress->PrefixLength > 128)
@@ -1014,7 +1004,6 @@ Ip6ConfigSetManualAddress (
         // Any two addresses in the array can't be equal.
         //
         if (EFI_IP6_EQUAL (&TmpAddress->Address, &NewAddress->Address)) {
-
           return EFI_INVALID_PARAMETER;
         }
       }
@@ -1032,7 +1021,7 @@ Ip6ConfigSetManualAddress (
       NET_LIST_FOR_EACH (Entry2, &IpIf->AddressList) {
         CurrentAddrInfo = NET_LIST_USER_STRUCT_S (Entry2, IP6_ADDRESS_INFO, Link, IP6_ADDR_INFO_SIGNATURE);
 
-        Copy            = AllocateCopyPool (sizeof (IP6_ADDRESS_INFO), CurrentAddrInfo);
+        Copy = AllocateCopyPool (sizeof (IP6_ADDRESS_INFO), CurrentAddrInfo);
         if (Copy == NULL) {
           break;
         }
@@ -1059,6 +1048,7 @@ Ip6ConfigSetManualAddress (
     if (DataItem->Data.Ptr != NULL) {
       FreePool (DataItem->Data.Ptr);
     }
+
     DataItem->Data.Ptr = NewAddress;
     DataItem->DataSize = DataSize;
     DataItem->Status   = EFI_NOT_READY;
@@ -1066,7 +1056,7 @@ Ip6ConfigSetManualAddress (
     //
     // Trigger DAD, it's an asynchronous process.
     //
-    IsUpdated  = FALSE;
+    IsUpdated = FALSE;
 
     for (Index1 = 0; Index1 < NewAddressCount; Index1++, NewAddress++) {
       if (Ip6IsOneOfSetAddress (IpSb, &NewAddress->Address, NULL, &CurrentAddrInfo)) {
@@ -1076,12 +1066,12 @@ Ip6ConfigSetManualAddress (
         // built before.
         //
         Ip6RemoveAddr (
-          NULL,
-          &CurrentSourceList,
-          &CurrentSourceCount,
-          &CurrentAddrInfo->Address,
-          128
-          );
+                       NULL,
+                       &CurrentSourceList,
+                       &CurrentSourceCount,
+                       &CurrentAddrInfo->Address,
+                       128
+                       );
 
         //
         // If the new address's prefix length is not specified, just use the previous configured
@@ -1100,11 +1090,11 @@ Ip6ConfigSetManualAddress (
           // implicitly.
           //
           PrefixEntry = Ip6FindPrefixListEntry (
-                          IpSb,
-                          TRUE,
-                          CurrentAddrInfo->PrefixLength,
-                          &CurrentAddrInfo->Address
-                          );
+                                                IpSb,
+                                                TRUE,
+                                                CurrentAddrInfo->PrefixLength,
+                                                &CurrentAddrInfo->Address
+                                                );
           if (PrefixEntry != NULL) {
             Ip6DestroyPrefixListEntry (IpSb, PrefixEntry, TRUE, FALSE);
           }
@@ -1120,20 +1110,20 @@ Ip6ConfigSetManualAddress (
         // create a new on-link prefix entry.
         //
         PrefixEntry = Ip6FindPrefixListEntry (
-                        IpSb,
-                        TRUE,
-                        NewAddress->PrefixLength,
-                        &NewAddress->Address
-                        );
+                                              IpSb,
+                                              TRUE,
+                                              NewAddress->PrefixLength,
+                                              &NewAddress->Address
+                                              );
         if (PrefixEntry == NULL) {
           Ip6CreatePrefixListEntry (
-            IpSb,
-            TRUE,
-            (UINT32) IP6_INFINIT_LIFETIME,
-            (UINT32) IP6_INFINIT_LIFETIME,
-            NewAddress->PrefixLength,
-            &NewAddress->Address
-            );
+                                    IpSb,
+                                    TRUE,
+                                    (UINT32) IP6_INFINIT_LIFETIME,
+                                    (UINT32) IP6_INFINIT_LIFETIME,
+                                    NewAddress->PrefixLength,
+                                    &NewAddress->Address
+                                    );
         }
 
         CurrentAddrInfo->IsAnycast = NewAddress->IsAnycast;
@@ -1152,15 +1142,15 @@ Ip6ConfigSetManualAddress (
         // DAD succeeds.
         //
         Ip6SetAddress (
-          IpSb->DefaultInterface,
-          &NewAddress->Address,
-          NewAddress->IsAnycast,
-          NewAddress->PrefixLength,
-          (UINT32) IP6_INFINIT_LIFETIME,
-          (UINT32) IP6_INFINIT_LIFETIME,
-          Ip6ManualAddrDadCallback,
-          Instance
-          );
+                       IpSb->DefaultInterface,
+                       &NewAddress->Address,
+                       NewAddress->IsAnycast,
+                       NewAddress->PrefixLength,
+                       (UINT32) IP6_INFINIT_LIFETIME,
+                       (UINT32) IP6_INFINIT_LIFETIME,
+                       Ip6ManualAddrDadCallback,
+                       Instance
+                       );
       }
     }
 
@@ -1180,23 +1170,23 @@ Ip6ConfigSetManualAddress (
       // currently using it will be destroyed.
       //
       Ip6RemoveAddr (
-        IpSb,
-        &IpIf->AddressList,
-        &IpIf->AddressCount,
-        &CurrentAddrInfo->Address,
-        128
-        );
+                     IpSb,
+                     &IpIf->AddressList,
+                     &IpIf->AddressCount,
+                     &CurrentAddrInfo->Address,
+                     128
+                     );
 
       //
       // Remove the on-link prefix table, the route entry will be removed
       // implicitly.
       //
       PrefixEntry = Ip6FindPrefixListEntry (
-                      IpSb,
-                      TRUE,
-                      CurrentAddrInfo->PrefixLength,
-                      &CurrentAddrInfo->Address
-                      );
+                                            IpSb,
+                                            TRUE,
+                                            CurrentAddrInfo->PrefixLength,
+                                            &CurrentAddrInfo->Address
+                                            );
       if (PrefixEntry != NULL) {
         Ip6DestroyPrefixListEntry (IpSb, PrefixEntry, TRUE, FALSE);
       }
@@ -1221,7 +1211,7 @@ Ip6ConfigSetManualAddress (
       // No update is taken, reset the status to success and return EFI_ABORTED.
       //
       DataItem->Status = EFI_SUCCESS;
-      Status           = EFI_ABORTED;
+      Status = EFI_ABORTED;
     }
   } else {
     //
@@ -1230,6 +1220,7 @@ Ip6ConfigSetManualAddress (
     if (DataItem->Data.Ptr != NULL) {
       FreePool (DataItem->Data.Ptr);
     }
+
     DataItem->Data.Ptr = NULL;
     DataItem->DataSize = 0;
     DataItem->Status   = EFI_NOT_FOUND;
@@ -1241,22 +1232,22 @@ Ip6ConfigSetManualAddress (
 
     if (IpSb->LinkLocalOk) {
       Ip6CreatePrefixListEntry (
-        IpSb,
-        TRUE,
-        (UINT32) IP6_INFINIT_LIFETIME,
-        (UINT32) IP6_INFINIT_LIFETIME,
-        IP6_LINK_LOCAL_PREFIX_LENGTH,
-        &IpSb->LinkLocalAddr
-        );
+                                IpSb,
+                                TRUE,
+                                (UINT32) IP6_INFINIT_LIFETIME,
+                                (UINT32) IP6_INFINIT_LIFETIME,
+                                IP6_LINK_LOCAL_PREFIX_LENGTH,
+                                &IpSb->LinkLocalAddr
+                                );
     }
 
     Ip6RemoveAddr (
-      IpSb,
-      &IpSb->DefaultInterface->AddressList,
-      &IpSb->DefaultInterface->AddressCount,
-      NULL,
-      0
-      );
+                   IpSb,
+                   &IpSb->DefaultInterface->AddressList,
+                   &IpSb->DefaultInterface->AddressCount,
+                   NULL,
+                   0
+                   );
 
     NET_LIST_FOR_EACH (Entry, &IpSb->Interfaces) {
       //
@@ -1330,13 +1321,13 @@ Ip6ConfigSetGateway (
   IP6_DEFAULT_ROUTER    *DefaultRouter;
   VOID                  *Tmp;
 
-  OldGateway      = NULL;
-  NewGateway      = NULL;
-  Item            = NULL;
-  DefaultRouter   = NULL;
-  Tmp             = NULL;
-  OneRemoved      = FALSE;
-  OneAdded        = FALSE;
+  OldGateway = NULL;
+  NewGateway = NULL;
+  Item = NULL;
+  DefaultRouter = NULL;
+  Tmp = NULL;
+  OneRemoved = FALSE;
+  OneAdded   = FALSE;
 
   if ((DataSize != 0) && (DataSize % sizeof (EFI_IPv6_ADDRESS) != 0)) {
     return EFI_BAD_BUFFER_SIZE;
@@ -1346,9 +1337,9 @@ Ip6ConfigSetGateway (
     return EFI_WRITE_PROTECTED;
   }
 
-  IpSb            = IP6_SERVICE_FROM_IP6_CONFIG_INSTANCE (Instance);
-  Item            = &Instance->DataItem[Ip6ConfigDataTypeGateway];
-  OldGateway      = Item->Data.Gateway;
+  IpSb = IP6_SERVICE_FROM_IP6_CONFIG_INSTANCE (Instance);
+  Item = &Instance->DataItem[Ip6ConfigDataTypeGateway];
+  OldGateway = Item->Data.Gateway;
   OldGatewayCount = Item->DataSize / sizeof (EFI_IPv6_ADDRESS);
 
   for (Index1 = 0; Index1 < OldGatewayCount; Index1++) {
@@ -1363,12 +1354,10 @@ Ip6ConfigSetGateway (
   }
 
   if (Data != NULL && DataSize != 0) {
-    NewGateway      = (EFI_IPv6_ADDRESS *) Data;
+    NewGateway = (EFI_IPv6_ADDRESS *) Data;
     NewGatewayCount = DataSize / sizeof (EFI_IPv6_ADDRESS);
     for (Index1 = 0; Index1 < NewGatewayCount; Index1++) {
-
       if (!NetIp6IsValidUnicast (NewGateway + Index1)) {
-
         return EFI_INVALID_PARAMETER;
       }
 
@@ -1389,7 +1378,6 @@ Ip6ConfigSetGateway (
     }
 
     for (Index1 = 0; Index1 < NewGatewayCount; Index1++) {
-
       DefaultRouter = Ip6FindDefaultRouter (IpSb, NewGateway + Index1);
       if (DefaultRouter == NULL) {
         Ip6CreateDefaultRouter (IpSb, NewGateway + Index1, IP6_INF_ROUTER_LIFETIME);
@@ -1401,11 +1389,11 @@ Ip6ConfigSetGateway (
       Item->Status = EFI_SUCCESS;
       return EFI_ABORTED;
     } else {
-
       if (Tmp != NULL) {
         if (Item->Data.Ptr != NULL) {
           FreePool (Item->Data.Ptr);
         }
+
         Item->Data.Ptr = Tmp;
       }
 
@@ -1421,6 +1409,7 @@ Ip6ConfigSetGateway (
     if (Item->Data.Ptr != NULL) {
       FreePool (Item->Data.Ptr);
     }
+
     Item->Data.Ptr = NULL;
     Item->DataSize = 0;
     Item->Status   = EFI_NOT_FOUND;
@@ -1484,8 +1473,8 @@ Ip6ConfigSetDnsServer (
   Item = &Instance->DataItem[Ip6ConfigDataTypeDnsServer];
 
   if (Data != NULL && DataSize != 0) {
-    NewDns      = (EFI_IPv6_ADDRESS *) Data;
-    OldDns      = Item->Data.DnsServers;
+    NewDns = (EFI_IPv6_ADDRESS *) Data;
+    OldDns = Item->Data.DnsServers;
     NewDnsCount = DataSize / sizeof (EFI_IPv6_ADDRESS);
     OldDnsCount = Item->DataSize / sizeof (EFI_IPv6_ADDRESS);
     OneAdded    = FALSE;
@@ -1500,7 +1489,6 @@ Ip6ConfigSetDnsServer (
     }
 
     for (NewIndex = 0; NewIndex < NewDnsCount; NewIndex++) {
-
       if (!NetIp6IsValidUnicast (NewDns + NewIndex)) {
         //
         // The dns server address must be unicast.
@@ -1508,6 +1496,7 @@ Ip6ConfigSetDnsServer (
         if (Tmp != NULL) {
           FreePool (Tmp);
         }
+
         return EFI_INVALID_PARAMETER;
       }
 
@@ -1544,6 +1533,7 @@ Ip6ConfigSetDnsServer (
         if (Item->Data.Ptr != NULL) {
           FreePool (Item->Data.Ptr);
         }
+
         Item->Data.Ptr = Tmp;
       }
 
@@ -1551,13 +1541,14 @@ Ip6ConfigSetDnsServer (
       Item->DataSize = DataSize;
       Item->Status   = EFI_SUCCESS;
     }
-  } else  {
+  } else {
     //
     // DataSize is 0 and Data is NULL, clean up the DnsServer address.
     //
     if (Item->Data.Ptr != NULL) {
       FreePool (Item->Data.Ptr);
     }
+
     Item->Data.Ptr = NULL;
     Item->DataSize = 0;
     Item->Status   = EFI_NOT_FOUND;
@@ -1581,13 +1572,13 @@ Ip6ConfigInitIfInfo (
   )
 {
   UnicodeSPrint (
-    IfInfo->Name,
-    sizeof (IfInfo->Name),
-    L"eth%d",
-    IpSb->Ip6ConfigInstance.IfIndex
-  );
+                 IfInfo->Name,
+                 sizeof (IfInfo->Name),
+                 L"eth%d",
+                 IpSb->Ip6ConfigInstance.IfIndex
+                 );
 
-  IfInfo->IfType        = IpSb->SnpMode.IfType;
+  IfInfo->IfType = IpSb->SnpMode.IfType;
   IfInfo->HwAddressSize = IpSb->SnpMode.HwAddressSize;
   CopyMem (&IfInfo->HwAddress, &IpSb->SnpMode.CurrentAddress, IfInfo->HwAddressSize);
 }
@@ -1758,18 +1749,19 @@ Ip6ConfigSetStatefulAddrCallback (
       // Decline those duplicates.
       //
       if (Instance->Dhcp6 != NULL) {
-        Instance->Dhcp6->Decline (
-                           Instance->Dhcp6,
-                           Instance->DeclineAddressCount,
-                           Instance->DeclineAddress
-                           );
+  Instance->Dhcp6->Decline (
+                            Instance->Dhcp6,
+                            Instance->DeclineAddressCount,
+                            Instance->DeclineAddress
+                            );
       }
     }
 
     if (Instance->DeclineAddress != NULL) {
       FreePool (Instance->DeclineAddress);
     }
-    Instance->DeclineAddress      = NULL;
+
+    Instance->DeclineAddress = NULL;
     Instance->DeclineAddressCount = 0;
   }
 }
@@ -1788,16 +1780,16 @@ Ip6ConfigOnDhcp6Event (
   IN VOID       *Context
   )
 {
-  IP6_CONFIG_INSTANCE      *Instance;
-  EFI_DHCP6_PROTOCOL       *Dhcp6;
-  EFI_STATUS               Status;
-  EFI_DHCP6_MODE_DATA      Dhcp6ModeData;
-  EFI_DHCP6_IA             *Ia;
-  EFI_DHCP6_IA_ADDRESS     *IaAddr;
-  UINT32                   Index;
-  IP6_SERVICE              *IpSb;
-  IP6_ADDRESS_INFO         *AddrInfo;
-  IP6_INTERFACE            *IpIf;
+  IP6_CONFIG_INSTANCE   *Instance;
+  EFI_DHCP6_PROTOCOL    *Dhcp6;
+  EFI_STATUS            Status;
+  EFI_DHCP6_MODE_DATA   Dhcp6ModeData;
+  EFI_DHCP6_IA          *Ia;
+  EFI_DHCP6_IA_ADDRESS  *IaAddr;
+  UINT32                Index;
+  IP6_SERVICE           *IpSb;
+  IP6_ADDRESS_INFO      *AddrInfo;
+  IP6_INTERFACE         *IpIf;
 
   Instance = (IP6_CONFIG_INSTANCE *) Context;
 
@@ -1806,7 +1798,7 @@ Ip6ConfigOnDhcp6Event (
     // IPv6 is not operating in the automatic policy now or
     // the DHCPv6 information request message exchange is aborted.
     //
-    return ;
+    return;
   }
 
   //
@@ -1816,7 +1808,7 @@ Ip6ConfigOnDhcp6Event (
 
   Status = Dhcp6->GetModeData (Dhcp6, &Dhcp6ModeData, NULL);
   if (EFI_ERROR (Status)) {
-    return ;
+    return;
   }
 
   IpSb   = IP6_SERVICE_FROM_IP6_CONFIG_INSTANCE (Instance);
@@ -1834,7 +1826,7 @@ Ip6ConfigOnDhcp6Event (
   }
 
   Instance->FailedIaAddressCount = Ia->IaAddressCount;
-  Instance->DeclineAddressCount   = 0;
+  Instance->DeclineAddressCount  = 0;
 
   for (Index = 0; Index < Ia->IaAddressCount; Index++, IaAddr++) {
     if (Ia->IaAddress[Index].ValidLifetime != 0 && Ia->State == Dhcp6Bound) {
@@ -1843,15 +1835,15 @@ Ip6ConfigOnDhcp6Event (
       // An appropriate prefix length will be set.
       //
       Ip6SetAddress (
-        IpIf,
-        &IaAddr->IpAddress,
-        FALSE,
-        0,
-        IaAddr->ValidLifetime,
-        IaAddr->PreferredLifetime,
-        Ip6ConfigSetStatefulAddrCallback,
-        Instance
-        );
+                     IpIf,
+                     &IaAddr->IpAddress,
+                     FALSE,
+                     0,
+                     IaAddr->ValidLifetime,
+                     IaAddr->PreferredLifetime,
+                     Ip6ConfigSetStatefulAddrCallback,
+                     Instance
+                     );
     } else {
       //
       // discard this address, artificially decrease the count as if this address
@@ -1860,12 +1852,12 @@ Ip6ConfigOnDhcp6Event (
       if (Ip6IsOneOfSetAddress (IpSb, &IaAddr->IpAddress, NULL, &AddrInfo)) {
         ASSERT (AddrInfo != NULL);
         Ip6RemoveAddr (
-          IpSb,
-          &IpIf->AddressList,
-          &IpIf->AddressCount,
-          &AddrInfo->Address,
-          AddrInfo->PrefixLength
-          );
+                       IpSb,
+                       &IpIf->AddressList,
+                       &IpIf->AddressCount,
+                       &AddrInfo->Address,
+                       AddrInfo->PrefixLength
+                       );
       }
 
       if (Instance->FailedIaAddressCount > 0) {
@@ -1934,7 +1926,7 @@ Ip6ConfigOnDhcp6SbInstalled (
     //
     // The DHCP6 child is already created or the policy is no longer AUTOMATIC.
     //
-    return ;
+    return;
   }
 
   Ip6ConfigStartStatefulAutoConfig (Instance, Instance->OtherInfoOnly);
@@ -2021,14 +2013,12 @@ EfiIp6ConfigSetData (
 
   Status = Instance->DataItem[DataType].Status;
   if (Status != EFI_NOT_READY) {
-
     if (Instance->DataItem[DataType].SetData == NULL) {
       //
       // This type of data is readonly.
       //
       Status = EFI_WRITE_PROTECTED;
     } else {
-
       Status = Instance->DataItem[DataType].SetData (Instance, DataSize, Data);
       if (!EFI_ERROR (Status)) {
         //
@@ -2122,11 +2112,9 @@ EfiIp6ConfigGetData (
   Instance = IP6_CONFIG_INSTANCE_FROM_PROTOCOL (This);
   DataItem = &Instance->DataItem[DataType];
 
-  Status   = Instance->DataItem[DataType].Status;
+  Status = Instance->DataItem[DataType].Status;
   if (!EFI_ERROR (Status)) {
-
     if (DataItem->GetData != NULL) {
-
       Status = DataItem->GetData (Instance, DataSize, Data);
     } else if (*DataSize < Instance->DataItem[DataType].DataSize) {
       //
@@ -2135,7 +2123,6 @@ EfiIp6ConfigGetData (
       *DataSize = Instance->DataItem[DataType].DataSize;
       Status    = EFI_BUFFER_TOO_SMALL;
     } else {
-
       *DataSize = Instance->DataItem[DataType].DataSize;
       CopyMem (Data, Instance->DataItem[DataType].Data.Ptr, *DataSize);
     }
@@ -2190,26 +2177,22 @@ EfiIp6ConfigRegisterDataNotify (
     return EFI_UNSUPPORTED;
   }
 
-  OldTpl    = gBS->RaiseTPL (TPL_CALLBACK);
+  OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
 
-  Instance  = IP6_CONFIG_INSTANCE_FROM_PROTOCOL (This);
-  EventMap  = &Instance->DataItem[DataType].EventMap;
+  Instance = IP6_CONFIG_INSTANCE_FROM_PROTOCOL (This);
+  EventMap = &Instance->DataItem[DataType].EventMap;
 
   //
   // Check whether this event is already registered for this DataType.
   //
   Item = NetMapFindKey (EventMap, Event);
   if (Item == NULL) {
-
     Status = NetMapInsertTail (EventMap, Event, NULL);
 
     if (EFI_ERROR (Status)) {
-
       Status = EFI_OUT_OF_RESOURCES;
     }
-
   } else {
-
     Status = EFI_ACCESS_DENIED;
   }
 
@@ -2260,11 +2243,9 @@ EfiIp6ConfigUnregisterDataNotify (
 
   Item = NetMapFindKey (&Instance->DataItem[DataType].EventMap, Event);
   if (Item != NULL) {
-
     NetMapRemoveItem (&Instance->DataItem[DataType].EventMap, Item, NULL);
     Status = EFI_SUCCESS;
   } else {
-
     Status = EFI_NOT_FOUND;
   }
 
@@ -2336,59 +2317,59 @@ Ip6ConfigInitInstance (
   // Initialize each data type: associate storage and set data size for the
   // fixed size data types, hook the SetData function, set the data attribute.
   //
-  DataItem           = &Instance->DataItem[Ip6ConfigDataTypeInterfaceInfo];
+  DataItem = &Instance->DataItem[Ip6ConfigDataTypeInterfaceInfo];
   DataItem->GetData  = Ip6ConfigGetIfInfo;
   DataItem->Data.Ptr = &Instance->InterfaceInfo;
   DataItem->DataSize = sizeof (Instance->InterfaceInfo);
   SET_DATA_ATTRIB (DataItem->Attribute, DATA_ATTRIB_SIZE_FIXED | DATA_ATTRIB_VOLATILE);
   Ip6ConfigInitIfInfo (IpSb, &Instance->InterfaceInfo);
 
-  DataItem           = &Instance->DataItem[Ip6ConfigDataTypeAltInterfaceId];
+  DataItem = &Instance->DataItem[Ip6ConfigDataTypeAltInterfaceId];
   DataItem->SetData  = Ip6ConfigSetAltIfId;
   DataItem->Data.Ptr = &Instance->AltIfId;
   DataItem->DataSize = sizeof (Instance->AltIfId);
   DataItem->Status   = EFI_NOT_FOUND;
   SET_DATA_ATTRIB (DataItem->Attribute, DATA_ATTRIB_SIZE_FIXED);
 
-  DataItem           = &Instance->DataItem[Ip6ConfigDataTypePolicy];
+  DataItem = &Instance->DataItem[Ip6ConfigDataTypePolicy];
   DataItem->SetData  = Ip6ConfigSetPolicy;
   DataItem->Data.Ptr = &Instance->Policy;
   DataItem->DataSize = sizeof (Instance->Policy);
   Instance->Policy   = Ip6ConfigPolicyManual;
   SET_DATA_ATTRIB (DataItem->Attribute, DATA_ATTRIB_SIZE_FIXED);
 
-  DataItem           = &Instance->DataItem[Ip6ConfigDataTypeDupAddrDetectTransmits];
+  DataItem = &Instance->DataItem[Ip6ConfigDataTypeDupAddrDetectTransmits];
   DataItem->SetData  = Ip6ConfigSetDadXmits;
   DataItem->Data.Ptr = &Instance->DadXmits;
   DataItem->DataSize = sizeof (Instance->DadXmits);
   Instance->DadXmits.DupAddrDetectTransmits = IP6_CONFIG_DEFAULT_DAD_XMITS;
   SET_DATA_ATTRIB (DataItem->Attribute, DATA_ATTRIB_SIZE_FIXED);
 
-  DataItem           = &Instance->DataItem[Ip6ConfigDataTypeManualAddress];
-  DataItem->SetData  = Ip6ConfigSetManualAddress;
-  DataItem->Status   = EFI_NOT_FOUND;
+  DataItem = &Instance->DataItem[Ip6ConfigDataTypeManualAddress];
+  DataItem->SetData = Ip6ConfigSetManualAddress;
+  DataItem->Status  = EFI_NOT_FOUND;
 
-  DataItem           = &Instance->DataItem[Ip6ConfigDataTypeGateway];
-  DataItem->SetData  = Ip6ConfigSetGateway;
-  DataItem->Status   = EFI_NOT_FOUND;
+  DataItem = &Instance->DataItem[Ip6ConfigDataTypeGateway];
+  DataItem->SetData = Ip6ConfigSetGateway;
+  DataItem->Status  = EFI_NOT_FOUND;
 
-  DataItem           = &Instance->DataItem[Ip6ConfigDataTypeDnsServer];
-  DataItem->SetData  = Ip6ConfigSetDnsServer;
-  DataItem->Status   = EFI_NOT_FOUND;
+  DataItem = &Instance->DataItem[Ip6ConfigDataTypeDnsServer];
+  DataItem->SetData = Ip6ConfigSetDnsServer;
+  DataItem->Status  = EFI_NOT_FOUND;
 
   //
   // Create the event used for DHCP.
   //
   Status = gBS->CreateEvent (
-                  EVT_NOTIFY_SIGNAL,
-                  TPL_CALLBACK,
-                  Ip6ConfigOnDhcp6Event,
-                  Instance,
-                  &Instance->Dhcp6Event
-                  );
+                             EVT_NOTIFY_SIGNAL,
+                             TPL_CALLBACK,
+                             Ip6ConfigOnDhcp6Event,
+                             Instance,
+                             &Instance->Dhcp6Event
+                             );
   ASSERT_EFI_ERROR (Status);
 
-  Instance->Configured  = TRUE;
+  Instance->Configured = TRUE;
 
   //
   // Try to read the config data from NV variable.
@@ -2410,11 +2391,10 @@ Ip6ConfigInitInstance (
     return Status;
   }
 
-  Instance->Ip6Config.SetData              = EfiIp6ConfigSetData;
-  Instance->Ip6Config.GetData              = EfiIp6ConfigGetData;
+  Instance->Ip6Config.SetData = EfiIp6ConfigSetData;
+  Instance->Ip6Config.GetData = EfiIp6ConfigGetData;
   Instance->Ip6Config.RegisterDataNotify   = EfiIp6ConfigRegisterDataNotify;
   Instance->Ip6Config.UnregisterDataNotify = EfiIp6ConfigUnregisterDataNotify;
-
 
   //
   // Publish the IP6 configuration form
@@ -2441,11 +2421,10 @@ Ip6ConfigCleanInstance (
   }
 
   if (!Instance->Configured) {
-    return ;
+    return;
   }
 
   if (Instance->Dhcp6Handle != NULL) {
-
     Ip6ConfigDestroyDhcp6 (Instance);
   }
 
@@ -2453,20 +2432,20 @@ Ip6ConfigCleanInstance (
   // Close the event.
   //
   if (Instance->Dhcp6Event != NULL) {
-    gBS->CloseEvent (Instance->Dhcp6Event);
+  gBS->CloseEvent (Instance->Dhcp6Event);
   }
 
   NetMapClean (&Instance->DadPassedMap);
   NetMapClean (&Instance->DadFailedMap);
 
   for (Index = 0; Index < Ip6ConfigDataTypeMaximum; Index++) {
-
     DataItem = &Instance->DataItem[Index];
 
     if (!DATA_ATTRIB_SET (DataItem->Attribute, DATA_ATTRIB_SIZE_FIXED)) {
       if (DataItem->Data.Ptr != NULL) {
         FreePool (DataItem->Data.Ptr);
       }
+
       DataItem->Data.Ptr = NULL;
       DataItem->DataSize = 0;
     }
@@ -2493,9 +2472,9 @@ Ip6ConfigDestroyDhcp6 (
   IN OUT IP6_CONFIG_INSTANCE  *Instance
   )
 {
-  IP6_SERVICE                 *IpSb;
-  EFI_STATUS                  Status;
-  EFI_DHCP6_PROTOCOL          *Dhcp6;
+  IP6_SERVICE         *IpSb;
+  EFI_STATUS          Status;
+  EFI_DHCP6_PROTOCOL  *Dhcp6;
 
   Dhcp6 = Instance->Dhcp6;
   ASSERT (Dhcp6 != NULL);
@@ -2510,24 +2489,23 @@ Ip6ConfigDestroyDhcp6 (
   // Close DHCPv6 protocol and destroy the child.
   //
   Status = gBS->CloseProtocol (
-                  Instance->Dhcp6Handle,
-                  &gEfiDhcp6ProtocolGuid,
-                  IpSb->Image,
-                  IpSb->Controller
-                  );
+                               Instance->Dhcp6Handle,
+                               &gEfiDhcp6ProtocolGuid,
+                               IpSb->Image,
+                               IpSb->Controller
+                               );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   Status = NetLibDestroyServiceChild (
-             IpSb->Controller,
-             IpSb->Image,
-             &gEfiDhcp6ServiceBindingProtocolGuid,
-             Instance->Dhcp6Handle
-             );
+                                      IpSb->Controller,
+                                      IpSb->Image,
+                                      &gEfiDhcp6ServiceBindingProtocolGuid,
+                                      Instance->Dhcp6Handle
+                                      );
 
   Instance->Dhcp6Handle = NULL;
 
   return Status;
 }
-

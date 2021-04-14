@@ -8,7 +8,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "VlanConfigImpl.h"
 
-EFI_DRIVER_BINDING_PROTOCOL gVlanConfigDriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  gVlanConfigDriverBinding = {
   VlanConfigDriverBindingSupported,
   VlanConfigDriverBindingStart,
   VlanConfigDriverBindingStop,
@@ -36,15 +36,14 @@ VlanConfigDriverEntryPoint (
   )
 {
   return EfiLibInstallDriverBindingComponentName2 (
-           ImageHandle,
-           SystemTable,
-           &gVlanConfigDriverBinding,
-           ImageHandle,
-           &gVlanConfigComponentName,
-           &gVlanConfigComponentName2
-           );
+                                                   ImageHandle,
+                                                   SystemTable,
+                                                   &gVlanConfigDriverBinding,
+                                                   ImageHandle,
+                                                   &gVlanConfigComponentName,
+                                                   &gVlanConfigComponentName2
+                                                   );
 }
-
 
 /**
   Test to see if this driver supports ControllerHandle.
@@ -71,13 +70,13 @@ VlanConfigDriverBindingSupported (
   EFI_VLAN_CONFIG_PROTOCOL  *VlanConfig;
 
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiVlanConfigProtocolGuid,
-                  (VOID **) &VlanConfig,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              ControllerHandle,
+                              &gEfiVlanConfigProtocolGuid,
+                              (VOID **) &VlanConfig,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -86,15 +85,14 @@ VlanConfigDriverBindingSupported (
   // Close the VlanConfig protocol opened for supported test
   //
   gBS->CloseProtocol (
-         ControllerHandle,
-         &gEfiVlanConfigProtocolGuid,
-         This->DriverBindingHandle,
-         ControllerHandle
-         );
+                      ControllerHandle,
+                      &gEfiVlanConfigProtocolGuid,
+                      This->DriverBindingHandle,
+                      ControllerHandle
+                      );
 
   return Status;
 }
-
 
 /**
   Start this driver on ControllerHandle.
@@ -126,13 +124,13 @@ VlanConfigDriverBindingStart (
   // Check for multiple start
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiCallerIdGuid,
-                  (VOID **) &PrivateData,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiCallerIdGuid,
+                              (VOID **) &PrivateData,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (!EFI_ERROR (Status)) {
     return EFI_ALREADY_STARTED;
   }
@@ -141,13 +139,13 @@ VlanConfigDriverBindingStart (
   // Open VlanConfig protocol by driver
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiVlanConfigProtocolGuid,
-                  (VOID **) &VlanConfig,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              ControllerHandle,
+                              &gEfiVlanConfigProtocolGuid,
+                              (VOID **) &VlanConfig,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -156,13 +154,13 @@ VlanConfigDriverBindingStart (
   // Get parent device path
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiDevicePathProtocolGuid,
-                  (VOID **) &DevicePath,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiDevicePathProtocolGuid,
+                              (VOID **) &DevicePath,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     goto ErrorExit;
   }
@@ -193,30 +191,31 @@ VlanConfigDriverBindingStart (
   // Install private GUID
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &ControllerHandle,
-                  &gEfiCallerIdGuid,
-                  PrivateData,
-                  NULL
-                  );
+                                                   &ControllerHandle,
+                                                   &gEfiCallerIdGuid,
+                                                   PrivateData,
+                                                   NULL
+                                                   );
   if (EFI_ERROR (Status)) {
     goto ErrorExit;
   }
+
   return Status;
 
 ErrorExit:
   gBS->CloseProtocol (
-         ControllerHandle,
-         &gEfiVlanConfigProtocolGuid,
-         This->DriverBindingHandle,
-         ControllerHandle
-         );
+                      ControllerHandle,
+                      &gEfiVlanConfigProtocolGuid,
+                      This->DriverBindingHandle,
+                      ControllerHandle
+                      );
 
   gBS->CloseProtocol (
-         ControllerHandle,
-         &gEfiDevicePathProtocolGuid,
-         This->DriverBindingHandle,
-         ControllerHandle
-         );
+                      ControllerHandle,
+                      &gEfiDevicePathProtocolGuid,
+                      This->DriverBindingHandle,
+                      ControllerHandle
+                      );
 
   if (PrivateData != NULL) {
     UninstallVlanConfigForm (PrivateData);
@@ -225,7 +224,6 @@ ErrorExit:
 
   return Status;
 }
-
 
 /**
   Stop this driver on ControllerHandle.
@@ -256,16 +254,17 @@ VlanConfigDriverBindingStop (
   // Retrieve the PrivateData from ControllerHandle
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiCallerIdGuid,
-                  (VOID **) &PrivateData,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiCallerIdGuid,
+                              (VOID **) &PrivateData,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   ASSERT (PrivateData->Signature == VLAN_CONFIG_PRIVATE_DATA_SIGNATURE);
 
   if (NumberOfChildren != 0) {
@@ -280,20 +279,20 @@ VlanConfigDriverBindingStop (
   // Uninstall the private GUID
   //
   Status = gBS->UninstallMultipleProtocolInterfaces (
-                  ControllerHandle,
-                  &gEfiCallerIdGuid,
-                  PrivateData,
-                  NULL
-                  );
+                                                     ControllerHandle,
+                                                     &gEfiCallerIdGuid,
+                                                     PrivateData,
+                                                     NULL
+                                                     );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   Status = gBS->CloseProtocol (
-                  ControllerHandle,
-                  &gEfiVlanConfigProtocolGuid,
-                  This->DriverBindingHandle,
-                  ControllerHandle
-                  );
+                               ControllerHandle,
+                               &gEfiVlanConfigProtocolGuid,
+                               This->DriverBindingHandle,
+                               ControllerHandle
+                               );
   return Status;
 }

@@ -5,12 +5,12 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
-
 #include "Dhcp4Impl.h"
 
 //
 // EFI Component Name Functions
 //
+
 /**
   Retrieves a Unicode string that is the user readable name of the driver.
 
@@ -57,7 +57,6 @@ DhcpComponentNameGetDriverName (
   IN  CHAR8                        *Language,
   OUT CHAR16                       **DriverName
   );
-
 
 /**
   Retrieves a Unicode string that is the user readable name of the controller
@@ -137,7 +136,6 @@ DhcpComponentNameGetControllerName (
   OUT CHAR16                                          **ControllerName
   );
 
-
 //
 // EFI Component Name Protocol
 //
@@ -150,14 +148,13 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gDhcp4ComponentName =
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL gDhcp4ComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gDhcp4ComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) DhcpComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) DhcpComponentNameGetControllerName,
   "en"
 };
 
-
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mDhcpDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mDhcpDriverNameTable[] = {
   {
     "eng;en",
     L"DHCP Protocol Driver"
@@ -168,9 +165,9 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mDhcpDriverNameTable[] = 
   }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE    *gDhcpControllerNameTable = NULL;
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  *gDhcpControllerNameTable = NULL;
 
-CHAR16 *mDhcp4ControllerName[] = {
+CHAR16  *mDhcp4ControllerName[] = {
   L"DHCPv4 (State=0, Stopped)",
   L"DHCPv4 (State=1, Init)",
   L"DHCPv4 (State=2, Selecting)",
@@ -230,12 +227,12 @@ DhcpComponentNameGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mDhcpDriverNameTable,
-           DriverName,
-           (BOOLEAN)(This == &gDhcp4ComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mDhcpDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gDhcp4ComponentName)
+                               );
 }
 
 /**
@@ -254,8 +251,8 @@ UpdateName (
   IN     EFI_DHCP4_PROTOCOL             *Dhcp4
   )
 {
-  EFI_STATUS                       Status;
-  EFI_DHCP4_MODE_DATA              Dhcp4ModeData;
+  EFI_STATUS           Status;
+  EFI_DHCP4_MODE_DATA  Dhcp4ModeData;
 
   if (Dhcp4 == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -279,23 +276,23 @@ UpdateName (
   }
 
   Status = AddUnicodeString2 (
-             "eng",
-             gDhcp4ComponentName.SupportedLanguages,
-             &gDhcpControllerNameTable,
-             mDhcp4ControllerName[Dhcp4ModeData.State],
-             TRUE
-             );
+                              "eng",
+                              gDhcp4ComponentName.SupportedLanguages,
+                              &gDhcpControllerNameTable,
+                              mDhcp4ControllerName[Dhcp4ModeData.State],
+                              TRUE
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   return AddUnicodeString2 (
-           "en",
-           gDhcp4ComponentName2.SupportedLanguages,
-           &gDhcpControllerNameTable,
-           mDhcp4ControllerName[Dhcp4ModeData.State],
-           FALSE
-           );
+                            "en",
+                            gDhcp4ComponentName2.SupportedLanguages,
+                            &gDhcpControllerNameTable,
+                            mDhcp4ControllerName[Dhcp4ModeData.State],
+                            FALSE
+                            );
 }
 
 /**
@@ -376,8 +373,8 @@ DhcpComponentNameGetControllerName (
   OUT CHAR16                                          **ControllerName
   )
 {
-  EFI_STATUS                    Status;
-  EFI_DHCP4_PROTOCOL            *Dhcp4;
+  EFI_STATUS          Status;
+  EFI_DHCP4_PROTOCOL  *Dhcp4;
 
   //
   // Only provide names for child handles.
@@ -390,10 +387,10 @@ DhcpComponentNameGetControllerName (
   // Make sure this driver produced ChildHandle
   //
   Status = EfiTestChildHandle (
-             ControllerHandle,
-             ChildHandle,
-             &gEfiUdp4ProtocolGuid
-             );
+                               ControllerHandle,
+                               ChildHandle,
+                               &gEfiUdp4ProtocolGuid
+                               );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -402,13 +399,13 @@ DhcpComponentNameGetControllerName (
   // Retrieve an instance of a produced protocol from ChildHandle
   //
   Status = gBS->OpenProtocol (
-                  ChildHandle,
-                  &gEfiDhcp4ProtocolGuid,
-                  (VOID **)&Dhcp4,
-                  NULL,
-                  NULL,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ChildHandle,
+                              &gEfiDhcp4ProtocolGuid,
+                              (VOID **) &Dhcp4,
+                              NULL,
+                              NULL,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -422,10 +419,10 @@ DhcpComponentNameGetControllerName (
   }
 
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           gDhcpControllerNameTable,
-           ControllerName,
-           (BOOLEAN)(This == &gDhcp4ComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               gDhcpControllerNameTable,
+                               ControllerName,
+                               (BOOLEAN) (This == &gDhcp4ComponentName)
+                               );
 }

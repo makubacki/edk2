@@ -24,7 +24,7 @@ HttpCommonNotify (
   )
 {
   if ((Event == NULL) || (Context == NULL)) {
-    return ;
+    return;
   }
 
   *((BOOLEAN *) Context) = TRUE;
@@ -42,31 +42,30 @@ HttpTcpTransmitNotifyDpc (
   IN VOID       *Context
   )
 {
-  HTTP_TOKEN_WRAP          *Wrap;
-  HTTP_PROTOCOL            *HttpInstance;
+  HTTP_TOKEN_WRAP  *Wrap;
+  HTTP_PROTOCOL    *HttpInstance;
 
   if (Context == NULL) {
-    return ;
+    return;
   }
 
-  Wrap         = (HTTP_TOKEN_WRAP *) Context;
+  Wrap = (HTTP_TOKEN_WRAP *) Context;
   HttpInstance = Wrap->HttpInstance;
 
   if (!HttpInstance->LocalAddressIsIPv6) {
-      Wrap->HttpToken->Status = Wrap->TcpWrap.Tx4Token.CompletionToken.Status;
-      gBS->SignalEvent (Wrap->HttpToken->Event);
+    Wrap->HttpToken->Status = Wrap->TcpWrap.Tx4Token.CompletionToken.Status;
+    gBS->SignalEvent (Wrap->HttpToken->Event);
 
-      //
-      // Free resources.
-      //
-      if (Wrap->TcpWrap.Tx4Token.Packet.TxData->FragmentTable[0].FragmentBuffer != NULL) {
-        FreePool (Wrap->TcpWrap.Tx4Token.Packet.TxData->FragmentTable[0].FragmentBuffer);
-      }
+    //
+    // Free resources.
+    //
+    if (Wrap->TcpWrap.Tx4Token.Packet.TxData->FragmentTable[0].FragmentBuffer != NULL) {
+      FreePool (Wrap->TcpWrap.Tx4Token.Packet.TxData->FragmentTable[0].FragmentBuffer);
+    }
 
-      if (Wrap->TcpWrap.Tx4Token.CompletionToken.Event != NULL) {
-        gBS->CloseEvent (Wrap->TcpWrap.Tx4Token.CompletionToken.Event);
-      }
-
+    if (Wrap->TcpWrap.Tx4Token.CompletionToken.Event != NULL) {
+  gBS->CloseEvent (Wrap->TcpWrap.Tx4Token.CompletionToken.Event);
+    }
   } else {
     Wrap->HttpToken->Status = Wrap->TcpWrap.Tx6Token.CompletionToken.Status;
     gBS->SignalEvent (Wrap->HttpToken->Event);
@@ -79,10 +78,9 @@ HttpTcpTransmitNotifyDpc (
     }
 
     if (Wrap->TcpWrap.Tx6Token.CompletionToken.Event != NULL) {
-      gBS->CloseEvent (Wrap->TcpWrap.Tx6Token.CompletionToken.Event);
+  gBS->CloseEvent (Wrap->TcpWrap.Tx6Token.CompletionToken.Event);
     }
   }
-
 
   Wrap->TcpWrap.IsTxDone = TRUE;
 
@@ -90,7 +88,6 @@ HttpTcpTransmitNotifyDpc (
   // Check pending TxTokens and sent out.
   //
   NetMapIterate (&Wrap->HttpInstance->TxTokens, HttpTcpTransmit, NULL);
-
 }
 
 /**
@@ -125,15 +122,15 @@ HttpTcpReceiveNotifyDpc (
   IN VOID       *Context
   )
 {
-  HTTP_TOKEN_WRAP          *Wrap;
-  NET_MAP_ITEM             *Item;
-  UINTN                    Length;
-  EFI_STATUS               Status;
-  HTTP_PROTOCOL            *HttpInstance;
-  BOOLEAN                  UsingIpv6;
+  HTTP_TOKEN_WRAP  *Wrap;
+  NET_MAP_ITEM     *Item;
+  UINTN            Length;
+  EFI_STATUS       Status;
+  HTTP_PROTOCOL    *HttpInstance;
+  BOOLEAN          UsingIpv6;
 
   if (Context == NULL) {
-    return ;
+    return;
   }
 
   Wrap = (HTTP_TOKEN_WRAP *) Context;
@@ -141,7 +138,7 @@ HttpTcpReceiveNotifyDpc (
   UsingIpv6    = HttpInstance->LocalAddressIsIPv6;
 
   if (UsingIpv6) {
-    gBS->CloseEvent (Wrap->TcpWrap.Rx6Token.CompletionToken.Event);
+  gBS->CloseEvent (Wrap->TcpWrap.Rx6Token.CompletionToken.Event);
     Wrap->TcpWrap.Rx6Token.CompletionToken.Event = NULL;
 
     if (EFI_ERROR (Wrap->TcpWrap.Rx6Token.CompletionToken.Status)) {
@@ -157,11 +154,10 @@ HttpTcpReceiveNotifyDpc (
       FreePool (Wrap);
       Wrap = NULL;
 
-      return ;
+      return;
     }
-
   } else {
-    gBS->CloseEvent (Wrap->TcpWrap.Rx4Token.CompletionToken.Event);
+  gBS->CloseEvent (Wrap->TcpWrap.Rx4Token.CompletionToken.Event);
     Wrap->TcpWrap.Rx4Token.CompletionToken.Event = NULL;
 
     if (EFI_ERROR (Wrap->TcpWrap.Rx4Token.CompletionToken.Status)) {
@@ -177,7 +173,7 @@ HttpTcpReceiveNotifyDpc (
       FreePool (Wrap);
       Wrap = NULL;
 
-      return ;
+      return;
     }
   }
 
@@ -202,12 +198,12 @@ HttpTcpReceiveNotifyDpc (
   // Parse Body with CallbackData data.
   //
   Status = HttpParseMessageBody (
-             HttpInstance->MsgParser,
-             Length,
-             Wrap->HttpToken->Message->Body
-             );
+                                 HttpInstance->MsgParser,
+                                 Length,
+                                 Wrap->HttpToken->Message->Body
+                                 );
   if (EFI_ERROR (Status)) {
-    return ;
+    return;
   }
 
   if (HttpIsMessageComplete (HttpInstance->MsgParser)) {
@@ -230,10 +226,11 @@ HttpTcpReceiveNotifyDpc (
     if (HttpInstance->CacheLen != 0) {
       HttpInstance->CacheBody = AllocateZeroPool (HttpInstance->CacheLen);
       if (HttpInstance->CacheBody == NULL) {
-        return ;
+        return;
       }
+
       CopyMem (HttpInstance->CacheBody, HttpInstance->NextMsg, HttpInstance->CacheLen);
-      HttpInstance->NextMsg = HttpInstance->CacheBody;
+      HttpInstance->NextMsg     = HttpInstance->CacheBody;
       HttpInstance->CacheOffset = 0;
     }
   }
@@ -243,14 +240,12 @@ HttpTcpReceiveNotifyDpc (
     NetMapRemoveItem (&Wrap->HttpInstance->RxTokens, Item, NULL);
   }
 
-
   Wrap->TcpWrap.IsRxDone = TRUE;
   if (UsingIpv6) {
     Wrap->HttpToken->Status = Wrap->TcpWrap.Rx6Token.CompletionToken.Status;
   } else {
     Wrap->HttpToken->Status = Wrap->TcpWrap.Rx4Token.CompletionToken.Status;
   }
-
 
   gBS->SignalEvent (Wrap->HttpToken->Event);
 
@@ -297,19 +292,19 @@ HttpCreateTcpConnCloseEvent (
   IN  HTTP_PROTOCOL        *HttpInstance
   )
 {
-  EFI_STATUS               Status;
+  EFI_STATUS  Status;
 
   if (!HttpInstance->LocalAddressIsIPv6) {
     //
     // Create events for various asynchronous operations.
     //
     Status = gBS->CreateEvent (
-                    EVT_NOTIFY_SIGNAL,
-                    TPL_NOTIFY,
-                    HttpCommonNotify,
-                    &HttpInstance->IsTcp4ConnDone,
-                    &HttpInstance->Tcp4ConnToken.CompletionToken.Event
-                    );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_NOTIFY,
+                               HttpCommonNotify,
+                               &HttpInstance->IsTcp4ConnDone,
+                               &HttpInstance->Tcp4ConnToken.CompletionToken.Event
+                               );
     if (EFI_ERROR (Status)) {
       goto ERROR;
     }
@@ -318,27 +313,26 @@ HttpCreateTcpConnCloseEvent (
     // Initialize Tcp4CloseToken
     //
     Status = gBS->CreateEvent (
-                    EVT_NOTIFY_SIGNAL,
-                    TPL_NOTIFY,
-                    HttpCommonNotify,
-                    &HttpInstance->IsTcp4CloseDone,
-                    &HttpInstance->Tcp4CloseToken.CompletionToken.Event
-                    );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_NOTIFY,
+                               HttpCommonNotify,
+                               &HttpInstance->IsTcp4CloseDone,
+                               &HttpInstance->Tcp4CloseToken.CompletionToken.Event
+                               );
     if (EFI_ERROR (Status)) {
       goto ERROR;
     }
-
   } else {
     //
     // Create events for various asynchronous operations.
     //
     Status = gBS->CreateEvent (
-                    EVT_NOTIFY_SIGNAL,
-                    TPL_NOTIFY,
-                    HttpCommonNotify,
-                    &HttpInstance->IsTcp6ConnDone,
-                    &HttpInstance->Tcp6ConnToken.CompletionToken.Event
-                    );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_NOTIFY,
+                               HttpCommonNotify,
+                               &HttpInstance->IsTcp6ConnDone,
+                               &HttpInstance->Tcp6ConnToken.CompletionToken.Event
+                               );
     if (EFI_ERROR (Status)) {
       goto ERROR;
     }
@@ -347,12 +341,12 @@ HttpCreateTcpConnCloseEvent (
     // Initialize Tcp6CloseToken
     //
     Status = gBS->CreateEvent (
-                    EVT_NOTIFY_SIGNAL,
-                    TPL_NOTIFY,
-                    HttpCommonNotify,
-                    &HttpInstance->IsTcp6CloseDone,
-                    &HttpInstance->Tcp6CloseToken.CompletionToken.Event
-                    );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_NOTIFY,
+                               HttpCommonNotify,
+                               &HttpInstance->IsTcp6CloseDone,
+                               &HttpInstance->Tcp6CloseToken.CompletionToken.Event
+                               );
     if (EFI_ERROR (Status)) {
       goto ERROR;
     }
@@ -369,7 +363,6 @@ ERROR:
   return Status;
 }
 
-
 /**
   Close events in the TCP connection token and TCP close token.
 
@@ -385,27 +378,25 @@ HttpCloseTcpConnCloseEvent (
 
   if (HttpInstance->LocalAddressIsIPv6) {
     if (NULL != HttpInstance->Tcp6ConnToken.CompletionToken.Event) {
-      gBS->CloseEvent (HttpInstance->Tcp6ConnToken.CompletionToken.Event);
+  gBS->CloseEvent (HttpInstance->Tcp6ConnToken.CompletionToken.Event);
       HttpInstance->Tcp6ConnToken.CompletionToken.Event = NULL;
     }
 
     if (NULL != HttpInstance->Tcp6CloseToken.CompletionToken.Event) {
-      gBS->CloseEvent(HttpInstance->Tcp6CloseToken.CompletionToken.Event);
+  gBS->CloseEvent (HttpInstance->Tcp6CloseToken.CompletionToken.Event);
       HttpInstance->Tcp6CloseToken.CompletionToken.Event = NULL;
     }
-
   } else {
     if (NULL != HttpInstance->Tcp4ConnToken.CompletionToken.Event) {
-      gBS->CloseEvent (HttpInstance->Tcp4ConnToken.CompletionToken.Event);
+  gBS->CloseEvent (HttpInstance->Tcp4ConnToken.CompletionToken.Event);
       HttpInstance->Tcp4ConnToken.CompletionToken.Event = NULL;
     }
 
     if (NULL != HttpInstance->Tcp4CloseToken.CompletionToken.Event) {
-      gBS->CloseEvent(HttpInstance->Tcp4CloseToken.CompletionToken.Event);
+  gBS->CloseEvent (HttpInstance->Tcp4CloseToken.CompletionToken.Event);
       HttpInstance->Tcp4CloseToken.CompletionToken.Event = NULL;
     }
   }
-
 }
 
 /**
@@ -422,39 +413,38 @@ HttpCreateTcpTxEvent (
   IN  HTTP_TOKEN_WRAP      *Wrap
   )
 {
-  EFI_STATUS               Status;
-  HTTP_PROTOCOL            *HttpInstance;
-  HTTP_TCP_TOKEN_WRAP      *TcpWrap;
+  EFI_STATUS           Status;
+  HTTP_PROTOCOL        *HttpInstance;
+  HTTP_TCP_TOKEN_WRAP  *TcpWrap;
 
   HttpInstance = Wrap->HttpInstance;
-  TcpWrap      = &Wrap->TcpWrap;
+  TcpWrap = &Wrap->TcpWrap;
 
   if (!HttpInstance->LocalAddressIsIPv6) {
     Status = gBS->CreateEvent (
-                    EVT_NOTIFY_SIGNAL,
-                    TPL_NOTIFY,
-                    HttpTcpTransmitNotify,
-                    Wrap,
-                    &TcpWrap->Tx4Token.CompletionToken.Event
-                    );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_NOTIFY,
+                               HttpTcpTransmitNotify,
+                               Wrap,
+                               &TcpWrap->Tx4Token.CompletionToken.Event
+                               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
 
-    TcpWrap->Tx4Data.Push = TRUE;
+    TcpWrap->Tx4Data.Push   = TRUE;
     TcpWrap->Tx4Data.Urgent = FALSE;
-    TcpWrap->Tx4Data.FragmentCount = 1;
+    TcpWrap->Tx4Data.FragmentCount  = 1;
     TcpWrap->Tx4Token.Packet.TxData = &Wrap->TcpWrap.Tx4Data;
     TcpWrap->Tx4Token.CompletionToken.Status = EFI_NOT_READY;
-
   } else {
     Status = gBS->CreateEvent (
-                    EVT_NOTIFY_SIGNAL,
-                    TPL_NOTIFY,
-                    HttpTcpTransmitNotify,
-                    Wrap,
-                    &TcpWrap->Tx6Token.CompletionToken.Event
-                    );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_NOTIFY,
+                               HttpTcpTransmitNotify,
+                               Wrap,
+                               &TcpWrap->Tx6Token.CompletionToken.Event
+                               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -463,8 +453,7 @@ HttpCreateTcpTxEvent (
     TcpWrap->Tx6Data.Urgent = FALSE;
     TcpWrap->Tx6Data.FragmentCount  = 1;
     TcpWrap->Tx6Token.Packet.TxData = &Wrap->TcpWrap.Tx6Data;
-    TcpWrap->Tx6Token.CompletionToken.Status =EFI_NOT_READY;
-
+    TcpWrap->Tx6Token.CompletionToken.Status = EFI_NOT_READY;
   }
 
   return EFI_SUCCESS;
@@ -484,42 +473,39 @@ HttpCreateTcpRxEventForHeader (
   IN  HTTP_PROTOCOL        *HttpInstance
   )
 {
-  EFI_STATUS               Status;
+  EFI_STATUS  Status;
 
   if (!HttpInstance->LocalAddressIsIPv6) {
     Status = gBS->CreateEvent (
-                    EVT_NOTIFY_SIGNAL,
-                    TPL_NOTIFY,
-                    HttpCommonNotify,
-                    &HttpInstance->IsRxDone,
-                    &HttpInstance->Rx4Token.CompletionToken.Event
-                    );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_NOTIFY,
+                               HttpCommonNotify,
+                               &HttpInstance->IsRxDone,
+                               &HttpInstance->Rx4Token.CompletionToken.Event
+                               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
 
-    HttpInstance->Rx4Data.FragmentCount = 1;
+    HttpInstance->Rx4Data.FragmentCount  = 1;
     HttpInstance->Rx4Token.Packet.RxData = &HttpInstance->Rx4Data;
     HttpInstance->Rx4Token.CompletionToken.Status = EFI_NOT_READY;
-
   } else {
     Status = gBS->CreateEvent (
-                    EVT_NOTIFY_SIGNAL,
-                    TPL_NOTIFY,
-                    HttpCommonNotify,
-                    &HttpInstance->IsRxDone,
-                    &HttpInstance->Rx6Token.CompletionToken.Event
-                    );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_NOTIFY,
+                               HttpCommonNotify,
+                               &HttpInstance->IsRxDone,
+                               &HttpInstance->Rx6Token.CompletionToken.Event
+                               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
 
-    HttpInstance->Rx6Data.FragmentCount  =1;
+    HttpInstance->Rx6Data.FragmentCount  = 1;
     HttpInstance->Rx6Token.Packet.RxData = &HttpInstance->Rx6Data;
     HttpInstance->Rx6Token.CompletionToken.Status = EFI_NOT_READY;
-
   }
-
 
   return EFI_SUCCESS;
 }
@@ -538,41 +524,40 @@ HttpCreateTcpRxEvent (
   IN  HTTP_TOKEN_WRAP      *Wrap
   )
 {
-  EFI_STATUS               Status;
-  HTTP_PROTOCOL            *HttpInstance;
-  HTTP_TCP_TOKEN_WRAP      *TcpWrap;
+  EFI_STATUS           Status;
+  HTTP_PROTOCOL        *HttpInstance;
+  HTTP_TCP_TOKEN_WRAP  *TcpWrap;
 
   HttpInstance = Wrap->HttpInstance;
-  TcpWrap      = &Wrap->TcpWrap;
+  TcpWrap = &Wrap->TcpWrap;
   if (!HttpInstance->LocalAddressIsIPv6) {
     Status = gBS->CreateEvent (
-                    EVT_NOTIFY_SIGNAL,
-                    TPL_NOTIFY,
-                    HttpTcpReceiveNotify,
-                    Wrap,
-                    &TcpWrap->Rx4Token.CompletionToken.Event
-                    );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_NOTIFY,
+                               HttpTcpReceiveNotify,
+                               Wrap,
+                               &TcpWrap->Rx4Token.CompletionToken.Event
+                               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
 
-    TcpWrap->Rx4Data.FragmentCount = 1;
+    TcpWrap->Rx4Data.FragmentCount  = 1;
     TcpWrap->Rx4Token.Packet.RxData = &Wrap->TcpWrap.Rx4Data;
     TcpWrap->Rx4Token.CompletionToken.Status = EFI_NOT_READY;
-
   } else {
     Status = gBS->CreateEvent (
-                    EVT_NOTIFY_SIGNAL,
-                    TPL_NOTIFY,
-                    HttpTcpReceiveNotify,
-                    Wrap,
-                    &TcpWrap->Rx6Token.CompletionToken.Event
-                    );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_NOTIFY,
+                               HttpTcpReceiveNotify,
+                               Wrap,
+                               &TcpWrap->Rx6Token.CompletionToken.Event
+                               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
 
-    TcpWrap->Rx6Data.FragmentCount = 1;
+    TcpWrap->Rx6Data.FragmentCount  = 1;
     TcpWrap->Rx6Token.Packet.RxData = &Wrap->TcpWrap.Rx6Data;
     TcpWrap->Rx6Token.CompletionToken.Status = EFI_NOT_READY;
   }
@@ -591,27 +576,27 @@ HttpCloseTcpRxEvent (
   IN  HTTP_TOKEN_WRAP      *Wrap
   )
 {
-  HTTP_PROTOCOL            *HttpInstance;
+  HTTP_PROTOCOL  *HttpInstance;
 
   ASSERT (Wrap != NULL);
-  HttpInstance   = Wrap->HttpInstance;
+  HttpInstance = Wrap->HttpInstance;
 
   if (HttpInstance->LocalAddressIsIPv6) {
     if (Wrap->TcpWrap.Rx6Token.CompletionToken.Event != NULL) {
-      gBS->CloseEvent (Wrap->TcpWrap.Rx6Token.CompletionToken.Event);
+  gBS->CloseEvent (Wrap->TcpWrap.Rx6Token.CompletionToken.Event);
     }
 
     if (HttpInstance->Rx6Token.CompletionToken.Event != NULL) {
-      gBS->CloseEvent (HttpInstance->Rx6Token.CompletionToken.Event);
+  gBS->CloseEvent (HttpInstance->Rx6Token.CompletionToken.Event);
       HttpInstance->Rx6Token.CompletionToken.Event = NULL;
     }
   } else {
     if (Wrap->TcpWrap.Rx4Token.CompletionToken.Event != NULL) {
-      gBS->CloseEvent (Wrap->TcpWrap.Rx4Token.CompletionToken.Event);
+  gBS->CloseEvent (Wrap->TcpWrap.Rx4Token.CompletionToken.Event);
     }
 
     if (HttpInstance->Rx4Token.CompletionToken.Event != NULL) {
-      gBS->CloseEvent (HttpInstance->Rx4Token.CompletionToken.Event);
+  gBS->CloseEvent (HttpInstance->Rx4Token.CompletionToken.Event);
       HttpInstance->Rx4Token.CompletionToken.Event = NULL;
     }
   }
@@ -633,9 +618,9 @@ HttpInitProtocol (
   IN     BOOLEAN                 IpVersion
   )
 {
-  EFI_STATUS                     Status;
-  VOID                           *Interface;
-  BOOLEAN                        UsingIpv6;
+  EFI_STATUS  Status;
+  VOID        *Interface;
+  BOOLEAN     UsingIpv6;
 
   ASSERT (HttpInstance != NULL);
   UsingIpv6 = IpVersion;
@@ -645,50 +630,50 @@ HttpInitProtocol (
     // Create TCP4 child.
     //
     Status = NetLibCreateServiceChild (
-               HttpInstance->Service->ControllerHandle,
-               HttpInstance->Service->Ip4DriverBindingHandle,
-               &gEfiTcp4ServiceBindingProtocolGuid,
-               &HttpInstance->Tcp4ChildHandle
-               );
+                                       HttpInstance->Service->ControllerHandle,
+                                       HttpInstance->Service->Ip4DriverBindingHandle,
+                                       &gEfiTcp4ServiceBindingProtocolGuid,
+                                       &HttpInstance->Tcp4ChildHandle
+                                       );
 
     if (EFI_ERROR (Status)) {
       goto ON_ERROR;
     }
 
     Status = gBS->OpenProtocol (
-                    HttpInstance->Tcp4ChildHandle,
-                    &gEfiTcp4ProtocolGuid,
-                    (VOID **) &Interface,
-                    HttpInstance->Service->Ip4DriverBindingHandle,
-                    HttpInstance->Service->ControllerHandle,
-                    EFI_OPEN_PROTOCOL_BY_DRIVER
-                    );
+                                HttpInstance->Tcp4ChildHandle,
+                                &gEfiTcp4ProtocolGuid,
+                                (VOID **) &Interface,
+                                HttpInstance->Service->Ip4DriverBindingHandle,
+                                HttpInstance->Service->ControllerHandle,
+                                EFI_OPEN_PROTOCOL_BY_DRIVER
+                                );
 
     if (EFI_ERROR (Status)) {
       goto ON_ERROR;
     }
 
     Status = gBS->OpenProtocol (
-                    HttpInstance->Tcp4ChildHandle,
-                    &gEfiTcp4ProtocolGuid,
-                    (VOID **) &HttpInstance->Tcp4,
-                    HttpInstance->Service->Ip4DriverBindingHandle,
-                    HttpInstance->Handle,
-                    EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
-                    );
-    if (EFI_ERROR(Status)) {
+                                HttpInstance->Tcp4ChildHandle,
+                                &gEfiTcp4ProtocolGuid,
+                                (VOID **) &HttpInstance->Tcp4,
+                                HttpInstance->Service->Ip4DriverBindingHandle,
+                                HttpInstance->Handle,
+                                EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+                                );
+    if (EFI_ERROR (Status)) {
       goto ON_ERROR;
     }
 
     Status = gBS->OpenProtocol (
-                    HttpInstance->Service->Tcp4ChildHandle,
-                    &gEfiTcp4ProtocolGuid,
-                    (VOID **) &Interface,
-                    HttpInstance->Service->Ip4DriverBindingHandle,
-                    HttpInstance->Handle,
-                    EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
-                    );
-    if (EFI_ERROR(Status)) {
+                                HttpInstance->Service->Tcp4ChildHandle,
+                                &gEfiTcp4ProtocolGuid,
+                                (VOID **) &Interface,
+                                HttpInstance->Service->Ip4DriverBindingHandle,
+                                HttpInstance->Handle,
+                                EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+                                );
+    if (EFI_ERROR (Status)) {
       goto ON_ERROR;
     }
   } else {
@@ -696,52 +681,52 @@ HttpInitProtocol (
     // Create TCP6 Child.
     //
     Status = NetLibCreateServiceChild (
-               HttpInstance->Service->ControllerHandle,
-               HttpInstance->Service->Ip6DriverBindingHandle,
-               &gEfiTcp6ServiceBindingProtocolGuid,
-               &HttpInstance->Tcp6ChildHandle
-               );
+                                       HttpInstance->Service->ControllerHandle,
+                                       HttpInstance->Service->Ip6DriverBindingHandle,
+                                       &gEfiTcp6ServiceBindingProtocolGuid,
+                                       &HttpInstance->Tcp6ChildHandle
+                                       );
 
     if (EFI_ERROR (Status)) {
       goto ON_ERROR;
     }
 
     Status = gBS->OpenProtocol (
-                    HttpInstance->Tcp6ChildHandle,
-                    &gEfiTcp6ProtocolGuid,
-                    (VOID **) &Interface,
-                    HttpInstance->Service->Ip6DriverBindingHandle,
-                    HttpInstance->Service->ControllerHandle,
-                    EFI_OPEN_PROTOCOL_BY_DRIVER
-                    );
+                                HttpInstance->Tcp6ChildHandle,
+                                &gEfiTcp6ProtocolGuid,
+                                (VOID **) &Interface,
+                                HttpInstance->Service->Ip6DriverBindingHandle,
+                                HttpInstance->Service->ControllerHandle,
+                                EFI_OPEN_PROTOCOL_BY_DRIVER
+                                );
 
     if (EFI_ERROR (Status)) {
       goto ON_ERROR;
     }
 
     Status = gBS->OpenProtocol (
-                    HttpInstance->Tcp6ChildHandle,
-                    &gEfiTcp6ProtocolGuid,
-                    (VOID **) &HttpInstance->Tcp6,
-                    HttpInstance->Service->Ip6DriverBindingHandle,
-                    HttpInstance->Handle,
-                    EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
-                    );
+                                HttpInstance->Tcp6ChildHandle,
+                                &gEfiTcp6ProtocolGuid,
+                                (VOID **) &HttpInstance->Tcp6,
+                                HttpInstance->Service->Ip6DriverBindingHandle,
+                                HttpInstance->Handle,
+                                EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+                                );
 
-    if (EFI_ERROR(Status)) {
+    if (EFI_ERROR (Status)) {
       goto ON_ERROR;
     }
 
     Status = gBS->OpenProtocol (
-                    HttpInstance->Service->Tcp6ChildHandle,
-                    &gEfiTcp6ProtocolGuid,
-                    (VOID **) &Interface,
-                    HttpInstance->Service->Ip6DriverBindingHandle,
-                    HttpInstance->Handle,
-                    EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
-                    );
+                                HttpInstance->Service->Tcp6ChildHandle,
+                                &gEfiTcp6ProtocolGuid,
+                                (VOID **) &Interface,
+                                HttpInstance->Service->Ip6DriverBindingHandle,
+                                HttpInstance->Handle,
+                                EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+                                );
 
-    if (EFI_ERROR(Status)) {
+    if (EFI_ERROR (Status)) {
       goto ON_ERROR;
     }
   }
@@ -757,71 +742,70 @@ HttpInitProtocol (
 ON_ERROR:
 
   if (HttpInstance->Tcp4ChildHandle != NULL) {
-    gBS->CloseProtocol (
-           HttpInstance->Tcp4ChildHandle,
-           &gEfiTcp4ProtocolGuid,
-           HttpInstance->Service->Ip4DriverBindingHandle,
-           HttpInstance->Service->ControllerHandle
-           );
+  gBS->CloseProtocol (
+                      HttpInstance->Tcp4ChildHandle,
+                      &gEfiTcp4ProtocolGuid,
+                      HttpInstance->Service->Ip4DriverBindingHandle,
+                      HttpInstance->Service->ControllerHandle
+                      );
 
     gBS->CloseProtocol (
-           HttpInstance->Tcp4ChildHandle,
-           &gEfiTcp4ProtocolGuid,
-           HttpInstance->Service->Ip4DriverBindingHandle,
-           HttpInstance->Handle
-           );
+                        HttpInstance->Tcp4ChildHandle,
+                        &gEfiTcp4ProtocolGuid,
+                        HttpInstance->Service->Ip4DriverBindingHandle,
+                        HttpInstance->Handle
+                        );
 
     NetLibDestroyServiceChild (
-      HttpInstance->Service->ControllerHandle,
-      HttpInstance->Service->Ip4DriverBindingHandle,
-      &gEfiTcp4ServiceBindingProtocolGuid,
-      HttpInstance->Tcp4ChildHandle
-      );
+                               HttpInstance->Service->ControllerHandle,
+                               HttpInstance->Service->Ip4DriverBindingHandle,
+                               &gEfiTcp4ServiceBindingProtocolGuid,
+                               HttpInstance->Tcp4ChildHandle
+                               );
   }
 
   if (HttpInstance->Service->Tcp4ChildHandle != NULL) {
-    gBS->CloseProtocol (
-           HttpInstance->Service->Tcp4ChildHandle,
-           &gEfiTcp4ProtocolGuid,
-           HttpInstance->Service->Ip4DriverBindingHandle,
-           HttpInstance->Handle
-           );
+  gBS->CloseProtocol (
+                      HttpInstance->Service->Tcp4ChildHandle,
+                      &gEfiTcp4ProtocolGuid,
+                      HttpInstance->Service->Ip4DriverBindingHandle,
+                      HttpInstance->Handle
+                      );
   }
 
   if (HttpInstance->Tcp6ChildHandle != NULL) {
-    gBS->CloseProtocol (
-           HttpInstance->Tcp6ChildHandle,
-           &gEfiTcp6ProtocolGuid,
-           HttpInstance->Service->Ip6DriverBindingHandle,
-           HttpInstance->Service->ControllerHandle
-           );
+  gBS->CloseProtocol (
+                      HttpInstance->Tcp6ChildHandle,
+                      &gEfiTcp6ProtocolGuid,
+                      HttpInstance->Service->Ip6DriverBindingHandle,
+                      HttpInstance->Service->ControllerHandle
+                      );
 
     gBS->CloseProtocol (
-           HttpInstance->Tcp6ChildHandle,
-           &gEfiTcp6ProtocolGuid,
-           HttpInstance->Service->Ip6DriverBindingHandle,
-           HttpInstance->Handle
-           );
+                        HttpInstance->Tcp6ChildHandle,
+                        &gEfiTcp6ProtocolGuid,
+                        HttpInstance->Service->Ip6DriverBindingHandle,
+                        HttpInstance->Handle
+                        );
 
     NetLibDestroyServiceChild (
-      HttpInstance->Service->ControllerHandle,
-      HttpInstance->Service->Ip6DriverBindingHandle,
-      &gEfiTcp6ServiceBindingProtocolGuid,
-      HttpInstance->Tcp6ChildHandle
-      );
+                               HttpInstance->Service->ControllerHandle,
+                               HttpInstance->Service->Ip6DriverBindingHandle,
+                               &gEfiTcp6ServiceBindingProtocolGuid,
+                               HttpInstance->Tcp6ChildHandle
+                               );
   }
 
   if (HttpInstance->Service->Tcp6ChildHandle != NULL) {
-    gBS->CloseProtocol (
-           HttpInstance->Service->Tcp6ChildHandle,
-           &gEfiTcp6ProtocolGuid,
-           HttpInstance->Service->Ip6DriverBindingHandle,
-           HttpInstance->Handle
-           );
+  gBS->CloseProtocol (
+                      HttpInstance->Service->Tcp6ChildHandle,
+                      &gEfiTcp6ProtocolGuid,
+                      HttpInstance->Service->Ip6DriverBindingHandle,
+                      HttpInstance->Handle
+                      );
   }
 
   return EFI_UNSUPPORTED;
-
 }
 
 /**
@@ -840,7 +824,7 @@ HttpCleanProtocol (
   HttpCloseTcpConnCloseEvent (HttpInstance);
 
   if (HttpInstance->TimeoutEvent != NULL) {
-    gBS->CloseEvent (HttpInstance->TimeoutEvent);
+  gBS->CloseEvent (HttpInstance->TimeoutEvent);
     HttpInstance->TimeoutEvent = NULL;
   }
 
@@ -877,67 +861,67 @@ HttpCleanProtocol (
   }
 
   if (HttpInstance->Tcp4ChildHandle != NULL) {
-    gBS->CloseProtocol (
-           HttpInstance->Tcp4ChildHandle,
-           &gEfiTcp4ProtocolGuid,
-           HttpInstance->Service->Ip4DriverBindingHandle,
-           HttpInstance->Service->ControllerHandle
-           );
+  gBS->CloseProtocol (
+                      HttpInstance->Tcp4ChildHandle,
+                      &gEfiTcp4ProtocolGuid,
+                      HttpInstance->Service->Ip4DriverBindingHandle,
+                      HttpInstance->Service->ControllerHandle
+                      );
 
     gBS->CloseProtocol (
-           HttpInstance->Tcp4ChildHandle,
-           &gEfiTcp4ProtocolGuid,
-           HttpInstance->Service->Ip4DriverBindingHandle,
-           HttpInstance->Handle
-           );
+                        HttpInstance->Tcp4ChildHandle,
+                        &gEfiTcp4ProtocolGuid,
+                        HttpInstance->Service->Ip4DriverBindingHandle,
+                        HttpInstance->Handle
+                        );
 
     NetLibDestroyServiceChild (
-      HttpInstance->Service->ControllerHandle,
-      HttpInstance->Service->Ip4DriverBindingHandle,
-      &gEfiTcp4ServiceBindingProtocolGuid,
-      HttpInstance->Tcp4ChildHandle
-      );
+                               HttpInstance->Service->ControllerHandle,
+                               HttpInstance->Service->Ip4DriverBindingHandle,
+                               &gEfiTcp4ServiceBindingProtocolGuid,
+                               HttpInstance->Tcp4ChildHandle
+                               );
   }
 
   if (HttpInstance->Service->Tcp4ChildHandle != NULL) {
-    gBS->CloseProtocol (
-           HttpInstance->Service->Tcp4ChildHandle,
-           &gEfiTcp4ProtocolGuid,
-           HttpInstance->Service->Ip4DriverBindingHandle,
-           HttpInstance->Handle
-           );
+  gBS->CloseProtocol (
+                      HttpInstance->Service->Tcp4ChildHandle,
+                      &gEfiTcp4ProtocolGuid,
+                      HttpInstance->Service->Ip4DriverBindingHandle,
+                      HttpInstance->Handle
+                      );
   }
 
   if (HttpInstance->Tcp6ChildHandle != NULL) {
-    gBS->CloseProtocol (
-           HttpInstance->Tcp6ChildHandle,
-           &gEfiTcp6ProtocolGuid,
-           HttpInstance->Service->Ip6DriverBindingHandle,
-           HttpInstance->Service->ControllerHandle
-           );
+  gBS->CloseProtocol (
+                      HttpInstance->Tcp6ChildHandle,
+                      &gEfiTcp6ProtocolGuid,
+                      HttpInstance->Service->Ip6DriverBindingHandle,
+                      HttpInstance->Service->ControllerHandle
+                      );
 
     gBS->CloseProtocol (
-           HttpInstance->Tcp6ChildHandle,
-           &gEfiTcp6ProtocolGuid,
-           HttpInstance->Service->Ip6DriverBindingHandle,
-           HttpInstance->Handle
-           );
+                        HttpInstance->Tcp6ChildHandle,
+                        &gEfiTcp6ProtocolGuid,
+                        HttpInstance->Service->Ip6DriverBindingHandle,
+                        HttpInstance->Handle
+                        );
 
     NetLibDestroyServiceChild (
-      HttpInstance->Service->ControllerHandle,
-      HttpInstance->Service->Ip6DriverBindingHandle,
-      &gEfiTcp6ServiceBindingProtocolGuid,
-      HttpInstance->Tcp6ChildHandle
-      );
+                               HttpInstance->Service->ControllerHandle,
+                               HttpInstance->Service->Ip6DriverBindingHandle,
+                               &gEfiTcp6ServiceBindingProtocolGuid,
+                               HttpInstance->Tcp6ChildHandle
+                               );
   }
 
   if (HttpInstance->Service->Tcp6ChildHandle != NULL) {
-    gBS->CloseProtocol (
-           HttpInstance->Service->Tcp6ChildHandle,
-           &gEfiTcp6ProtocolGuid,
-           HttpInstance->Service->Ip6DriverBindingHandle,
-           HttpInstance->Handle
-           );
+  gBS->CloseProtocol (
+                      HttpInstance->Service->Tcp6ChildHandle,
+                      &gEfiTcp6ProtocolGuid,
+                      HttpInstance->Service->Ip6DriverBindingHandle,
+                      HttpInstance->Handle
+                      );
   }
 
   TlsCloseTxRxEvent (HttpInstance);
@@ -957,7 +941,7 @@ HttpCreateConnection (
   IN  HTTP_PROTOCOL        *HttpInstance
   )
 {
-  EFI_STATUS                    Status;
+  EFI_STATUS  Status;
 
   //
   // Connect to Http server
@@ -972,11 +956,10 @@ HttpCreateConnection (
     }
 
     while (!HttpInstance->IsTcp4ConnDone) {
-      HttpInstance->Tcp4->Poll (HttpInstance->Tcp4);
+  HttpInstance->Tcp4->Poll (HttpInstance->Tcp4);
     }
 
     Status = HttpInstance->Tcp4ConnToken.CompletionToken.Status;
-
   } else {
     HttpInstance->IsTcp6ConnDone = FALSE;
     HttpInstance->Tcp6ConnToken.CompletionToken.Status = EFI_NOT_READY;
@@ -987,7 +970,7 @@ HttpCreateConnection (
     }
 
     while(!HttpInstance->IsTcp6ConnDone) {
-      HttpInstance->Tcp6->Poll (HttpInstance->Tcp6);
+  HttpInstance->Tcp6->Poll (HttpInstance->Tcp6);
     }
 
     Status = HttpInstance->Tcp6ConnToken.CompletionToken.Status;
@@ -1014,35 +997,32 @@ HttpCloseConnection (
   IN  HTTP_PROTOCOL        *HttpInstance
   )
 {
-  EFI_STATUS                Status;
+  EFI_STATUS  Status;
 
   if (HttpInstance->State == HTTP_STATE_TCP_CONNECTED) {
-
     if (HttpInstance->LocalAddressIsIPv6) {
       HttpInstance->Tcp6CloseToken.AbortOnClose = TRUE;
-      HttpInstance->IsTcp6CloseDone             = FALSE;
+      HttpInstance->IsTcp6CloseDone = FALSE;
       Status = HttpInstance->Tcp6->Close (HttpInstance->Tcp6, &HttpInstance->Tcp6CloseToken);
       if (EFI_ERROR (Status)) {
         return Status;
       }
 
       while (!HttpInstance->IsTcp6CloseDone) {
-        HttpInstance->Tcp6->Poll (HttpInstance->Tcp6);
+  HttpInstance->Tcp6->Poll (HttpInstance->Tcp6);
       }
-
     } else {
       HttpInstance->Tcp4CloseToken.AbortOnClose = TRUE;
-      HttpInstance->IsTcp4CloseDone             = FALSE;
+      HttpInstance->IsTcp4CloseDone = FALSE;
       Status = HttpInstance->Tcp4->Close (HttpInstance->Tcp4, &HttpInstance->Tcp4CloseToken);
       if (EFI_ERROR (Status)) {
         return Status;
       }
 
       while (!HttpInstance->IsTcp4CloseDone) {
-        HttpInstance->Tcp4->Poll (HttpInstance->Tcp4);
+  HttpInstance->Tcp4->Poll (HttpInstance->Tcp4);
       }
     }
-
   }
 
   HttpInstance->State = HTTP_STATE_TCP_CLOSED;
@@ -1065,13 +1045,12 @@ HttpConfigureTcp4 (
   IN  HTTP_TOKEN_WRAP      *Wrap
   )
 {
-  EFI_STATUS                 Status;
-  EFI_TCP4_CONFIG_DATA       *Tcp4CfgData;
-  EFI_TCP4_ACCESS_POINT      *Tcp4AP;
-  EFI_TCP4_OPTION            *Tcp4Option;
+  EFI_STATUS             Status;
+  EFI_TCP4_CONFIG_DATA   *Tcp4CfgData;
+  EFI_TCP4_ACCESS_POINT  *Tcp4AP;
+  EFI_TCP4_OPTION        *Tcp4Option;
 
   ASSERT (HttpInstance != NULL);
-
 
   Tcp4CfgData = &HttpInstance->Tcp4CfgData;
   ZeroMem (Tcp4CfgData, sizeof (EFI_TCP4_CONFIG_DATA));
@@ -1093,17 +1072,17 @@ HttpConfigureTcp4 (
   IP4_COPY_ADDRESS (&Tcp4AP->RemoteAddress, &HttpInstance->RemoteAddr);
 
   Tcp4Option = Tcp4CfgData->ControlOption;
-  Tcp4Option->ReceiveBufferSize      = HTTP_BUFFER_SIZE_DEAULT;
-  Tcp4Option->SendBufferSize         = HTTP_BUFFER_SIZE_DEAULT;
-  Tcp4Option->MaxSynBackLog          = HTTP_MAX_SYN_BACK_LOG;
-  Tcp4Option->ConnectionTimeout      = HTTP_CONNECTION_TIMEOUT;
-  Tcp4Option->DataRetries            = HTTP_DATA_RETRIES;
-  Tcp4Option->FinTimeout             = HTTP_FIN_TIMEOUT;
-  Tcp4Option->KeepAliveProbes        = HTTP_KEEP_ALIVE_PROBES;
-  Tcp4Option->KeepAliveTime          = HTTP_KEEP_ALIVE_TIME;
-  Tcp4Option->KeepAliveInterval      = HTTP_KEEP_ALIVE_INTERVAL;
-  Tcp4Option->EnableNagle            = TRUE;
-  Tcp4CfgData->ControlOption         = Tcp4Option;
+  Tcp4Option->ReceiveBufferSize = HTTP_BUFFER_SIZE_DEAULT;
+  Tcp4Option->SendBufferSize    = HTTP_BUFFER_SIZE_DEAULT;
+  Tcp4Option->MaxSynBackLog     = HTTP_MAX_SYN_BACK_LOG;
+  Tcp4Option->ConnectionTimeout = HTTP_CONNECTION_TIMEOUT;
+  Tcp4Option->DataRetries       = HTTP_DATA_RETRIES;
+  Tcp4Option->FinTimeout        = HTTP_FIN_TIMEOUT;
+  Tcp4Option->KeepAliveProbes   = HTTP_KEEP_ALIVE_PROBES;
+  Tcp4Option->KeepAliveTime     = HTTP_KEEP_ALIVE_TIME;
+  Tcp4Option->KeepAliveInterval = HTTP_KEEP_ALIVE_INTERVAL;
+  Tcp4Option->EnableNagle       = TRUE;
+  Tcp4CfgData->ControlOption    = Tcp4Option;
 
   Status = HttpInstance->Tcp4->Configure (HttpInstance->Tcp4, Tcp4CfgData);
   if (EFI_ERROR (Status)) {
@@ -1142,10 +1121,10 @@ HttpConfigureTcp6 (
   IN  HTTP_TOKEN_WRAP      *Wrap
   )
 {
-  EFI_STATUS               Status;
-  EFI_TCP6_CONFIG_DATA     *Tcp6CfgData;
-  EFI_TCP6_ACCESS_POINT    *Tcp6Ap;
-  EFI_TCP6_OPTION          *Tcp6Option;
+  EFI_STATUS             Status;
+  EFI_TCP6_CONFIG_DATA   *Tcp6CfgData;
+  EFI_TCP6_ACCESS_POINT  *Tcp6Ap;
+  EFI_TCP6_OPTION        *Tcp6Option;
 
   ASSERT (HttpInstance != NULL);
 
@@ -1156,24 +1135,24 @@ HttpConfigureTcp6 (
   Tcp6CfgData->HopLimit      = 255;
   Tcp6CfgData->ControlOption = &HttpInstance->Tcp6Option;
 
-  Tcp6Ap  = &Tcp6CfgData->AccessPoint;
+  Tcp6Ap = &Tcp6CfgData->AccessPoint;
   Tcp6Ap->ActiveFlag  = TRUE;
   Tcp6Ap->StationPort = HttpInstance->Ipv6Node.LocalPort;
   Tcp6Ap->RemotePort  = HttpInstance->RemotePort;
   IP6_COPY_ADDRESS (&Tcp6Ap->StationAddress, &HttpInstance->Ipv6Node.LocalAddress);
-  IP6_COPY_ADDRESS (&Tcp6Ap->RemoteAddress , &HttpInstance->RemoteIpv6Addr);
+  IP6_COPY_ADDRESS (&Tcp6Ap->RemoteAddress, &HttpInstance->RemoteIpv6Addr);
 
   Tcp6Option = Tcp6CfgData->ControlOption;
-  Tcp6Option->ReceiveBufferSize  = HTTP_BUFFER_SIZE_DEAULT;
-  Tcp6Option->SendBufferSize     = HTTP_BUFFER_SIZE_DEAULT;
-  Tcp6Option->MaxSynBackLog      = HTTP_MAX_SYN_BACK_LOG;
-  Tcp6Option->ConnectionTimeout  = HTTP_CONNECTION_TIMEOUT;
-  Tcp6Option->DataRetries        = HTTP_DATA_RETRIES;
-  Tcp6Option->FinTimeout         = HTTP_FIN_TIMEOUT;
-  Tcp6Option->KeepAliveProbes    = HTTP_KEEP_ALIVE_PROBES;
-  Tcp6Option->KeepAliveTime      = HTTP_KEEP_ALIVE_TIME;
-  Tcp6Option->KeepAliveInterval  = HTTP_KEEP_ALIVE_INTERVAL;
-  Tcp6Option->EnableNagle        = TRUE;
+  Tcp6Option->ReceiveBufferSize = HTTP_BUFFER_SIZE_DEAULT;
+  Tcp6Option->SendBufferSize    = HTTP_BUFFER_SIZE_DEAULT;
+  Tcp6Option->MaxSynBackLog     = HTTP_MAX_SYN_BACK_LOG;
+  Tcp6Option->ConnectionTimeout = HTTP_CONNECTION_TIMEOUT;
+  Tcp6Option->DataRetries       = HTTP_DATA_RETRIES;
+  Tcp6Option->FinTimeout        = HTTP_FIN_TIMEOUT;
+  Tcp6Option->KeepAliveProbes   = HTTP_KEEP_ALIVE_PROBES;
+  Tcp6Option->KeepAliveTime     = HTTP_KEEP_ALIVE_TIME;
+  Tcp6Option->KeepAliveInterval = HTTP_KEEP_ALIVE_INTERVAL;
+  Tcp6Option->EnableNagle       = TRUE;
 
   Status = HttpInstance->Tcp6->Configure (HttpInstance->Tcp6, Tcp6CfgData);
   if (EFI_ERROR (Status)) {
@@ -1194,7 +1173,6 @@ HttpConfigureTcp6 (
   HttpInstance->State = HTTP_STATE_TCP_CONFIGED;
 
   return EFI_SUCCESS;
-
 }
 
 /**
@@ -1213,23 +1191,22 @@ HttpConnectTcp4 (
   IN  HTTP_PROTOCOL        *HttpInstance
   )
 {
-  EFI_STATUS                Status;
-  EFI_TCP4_CONNECTION_STATE Tcp4State;
-
+  EFI_STATUS                 Status;
+  EFI_TCP4_CONNECTION_STATE  Tcp4State;
 
   if (HttpInstance->State < HTTP_STATE_TCP_CONFIGED || HttpInstance->Tcp4 == NULL) {
     return EFI_NOT_READY;
   }
 
-  Status = HttpInstance->Tcp4->GetModeData(
-                                 HttpInstance->Tcp4,
-                                 &Tcp4State,
-                                 NULL,
-                                 NULL,
-                                 NULL,
-                                 NULL
-                                 );
-  if (EFI_ERROR(Status)){
+  Status = HttpInstance->Tcp4->GetModeData (
+                                            HttpInstance->Tcp4,
+                                            &Tcp4State,
+                                            NULL,
+                                            NULL,
+                                            NULL,
+                                            NULL
+                                            );
+  if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "Tcp4 GetModeData fail - %x\n", Status));
     return Status;
   }
@@ -1237,11 +1214,11 @@ HttpConnectTcp4 (
   if (Tcp4State == Tcp4StateEstablished) {
     return EFI_SUCCESS;
   } else if (Tcp4State > Tcp4StateEstablished ) {
-    HttpCloseConnection(HttpInstance);
+    HttpCloseConnection (HttpInstance);
   }
 
   Status = HttpCreateConnection (HttpInstance);
-  if (EFI_ERROR(Status)){
+  if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "Tcp4 Connection fail - %x\n", Status));
     return Status;
   }
@@ -1255,12 +1232,12 @@ HttpConnectTcp4 (
       // Create TimeoutEvent for TLS connection.
       //
       Status = gBS->CreateEvent (
-                      EVT_TIMER,
-                      TPL_CALLBACK,
-                      NULL,
-                      NULL,
-                      &HttpInstance->TimeoutEvent
-                      );
+                                 EVT_TIMER,
+                                 TPL_CALLBACK,
+                                 NULL,
+                                 NULL,
+                                 &HttpInstance->TimeoutEvent
+                                 );
       if (EFI_ERROR (Status)) {
         TlsCloseTxRxEvent (HttpInstance);
         return Status;
@@ -1305,35 +1282,35 @@ HttpConnectTcp6 (
   IN  HTTP_PROTOCOL        *HttpInstance
   )
 {
-  EFI_STATUS                Status;
-  EFI_TCP6_CONNECTION_STATE Tcp6State;
+  EFI_STATUS                 Status;
+  EFI_TCP6_CONNECTION_STATE  Tcp6State;
 
   if (HttpInstance->State < HTTP_STATE_TCP_CONFIGED || HttpInstance->Tcp6 == NULL) {
     return EFI_NOT_READY;
   }
 
   Status = HttpInstance->Tcp6->GetModeData (
-                                 HttpInstance->Tcp6,
-                                 &Tcp6State,
-                                 NULL,
-                                 NULL,
-                                 NULL,
-                                 NULL
-                                 );
+                                            HttpInstance->Tcp6,
+                                            &Tcp6State,
+                                            NULL,
+                                            NULL,
+                                            NULL,
+                                            NULL
+                                            );
 
-  if (EFI_ERROR(Status)){
-     DEBUG ((EFI_D_ERROR, "Tcp6 GetModeData fail - %x\n", Status));
-     return Status;
+  if (EFI_ERROR (Status)) {
+    DEBUG ((EFI_D_ERROR, "Tcp6 GetModeData fail - %x\n", Status));
+    return Status;
   }
 
   if (Tcp6State == Tcp6StateEstablished) {
     return EFI_SUCCESS;
   } else if (Tcp6State > Tcp6StateEstablished ) {
-    HttpCloseConnection(HttpInstance);
+    HttpCloseConnection (HttpInstance);
   }
 
   Status = HttpCreateConnection (HttpInstance);
-  if (EFI_ERROR(Status)){
+  if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "Tcp6 Connection fail - %x\n", Status));
     return Status;
   }
@@ -1347,12 +1324,12 @@ HttpConnectTcp6 (
       // Create TimeoutEvent for TLS connection.
       //
       Status = gBS->CreateEvent (
-                      EVT_TIMER,
-                      TPL_CALLBACK,
-                      NULL,
-                      NULL,
-                      &HttpInstance->TimeoutEvent
-                      );
+                                 EVT_TIMER,
+                                 TPL_CALLBACK,
+                                 NULL,
+                                 NULL,
+                                 &HttpInstance->TimeoutEvent
+                                 );
       if (EFI_ERROR (Status)) {
         TlsCloseTxRxEvent (HttpInstance);
         return Status;
@@ -1401,7 +1378,8 @@ HttpInitSession (
   IN  BOOLEAN          TlsConfigure
   )
 {
-  EFI_STATUS           Status;
+  EFI_STATUS  Status;
+
   ASSERT (HttpInstance != NULL);
 
   //
@@ -1453,7 +1431,6 @@ HttpInitSession (
   }
 
   return EFI_SUCCESS;
-
 }
 
 /**
@@ -1476,27 +1453,27 @@ HttpTransmitTcp (
   IN  UINTN            TxStringLen
   )
 {
-  EFI_STATUS                    Status;
-  EFI_TCP4_IO_TOKEN             *Tx4Token;
-  EFI_TCP4_PROTOCOL             *Tcp4;
-  EFI_TCP6_IO_TOKEN             *Tx6Token;
-  EFI_TCP6_PROTOCOL             *Tcp6;
-  UINT8                         *TlsRecord;
-  UINT16                        PayloadSize;
-  NET_FRAGMENT                  TempFragment;
-  NET_FRAGMENT                  Fragment;
-  UINTN                         RecordCount;
-  UINTN                         RemainingLen;
+  EFI_STATUS         Status;
+  EFI_TCP4_IO_TOKEN  *Tx4Token;
+  EFI_TCP4_PROTOCOL  *Tcp4;
+  EFI_TCP6_IO_TOKEN  *Tx6Token;
+  EFI_TCP6_PROTOCOL  *Tcp6;
+  UINT8              *TlsRecord;
+  UINT16             PayloadSize;
+  NET_FRAGMENT       TempFragment;
+  NET_FRAGMENT       Fragment;
+  UINTN              RecordCount;
+  UINTN              RemainingLen;
 
-  Status                = EFI_SUCCESS;
-  TlsRecord             = NULL;
-  PayloadSize           = 0;
-  TempFragment.Len      = 0;
-  TempFragment.Bulk     = NULL;
-  Fragment.Len          = 0;
-  Fragment.Bulk         = NULL;
-  RecordCount           = 0;
-  RemainingLen          = 0;
+  Status      = EFI_SUCCESS;
+  TlsRecord   = NULL;
+  PayloadSize = 0;
+  TempFragment.Len  = 0;
+  TempFragment.Bulk = NULL;
+  Fragment.Len  = 0;
+  Fragment.Bulk = NULL;
+  RecordCount   = 0;
+  RemainingLen  = 0;
 
   //
   // Need to encrypt data.
@@ -1514,8 +1491,10 @@ HttpTransmitTcp (
     //
     // Allocate enough buffer for all TLS ciphertext records.
     //
-    RecordCount = TxStringLen / TLS_PLAINTEXT_RECORD_MAX_PAYLOAD_LENGTH + 1;
-    Fragment.Bulk = AllocateZeroPool (RecordCount * (TLS_RECORD_HEADER_LENGTH + TLS_CIPHERTEXT_RECORD_MAX_PAYLOAD_LENGTH));
+    RecordCount   = TxStringLen / TLS_PLAINTEXT_RECORD_MAX_PAYLOAD_LENGTH + 1;
+    Fragment.Bulk = AllocateZeroPool (
+                                     RecordCount * (TLS_RECORD_HEADER_LENGTH + TLS_CIPHERTEXT_RECORD_MAX_PAYLOAD_LENGTH)
+                                     );
     if (Fragment.Bulk == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
       goto ON_ERROR;
@@ -1528,7 +1507,7 @@ HttpTransmitTcp (
     while (RemainingLen != 0) {
       PayloadSize = (UINT16) MIN (TLS_PLAINTEXT_RECORD_MAX_PAYLOAD_LENGTH, RemainingLen);
 
-      ((TLS_RECORD_HEADER *) TlsRecord)->ContentType = TlsContentTypeApplicationData;
+      ((TLS_RECORD_HEADER *) TlsRecord)->ContentType   = TlsContentTypeApplicationData;
       ((TLS_RECORD_HEADER *) TlsRecord)->Version.Major = HttpInstance->TlsConfigData.Version.Major;
       ((TLS_RECORD_HEADER *) TlsRecord)->Version.Minor = HttpInstance->TlsConfigData.Version.Minor;
       ((TLS_RECORD_HEADER *) TlsRecord)->Length = PayloadSize;
@@ -1536,12 +1515,12 @@ HttpTransmitTcp (
       CopyMem (TlsRecord + TLS_RECORD_HEADER_LENGTH, TxString + (TxStringLen - RemainingLen), PayloadSize);
 
       Status = TlsProcessMessage (
-                 HttpInstance,
-                 TlsRecord,
-                 TLS_RECORD_HEADER_LENGTH + PayloadSize,
-                 EfiTlsEncrypt,
-                 &TempFragment
-                 );
+                                  HttpInstance,
+                                  TlsRecord,
+                                  TLS_RECORD_HEADER_LENGTH + PayloadSize,
+                                  EfiTlsEncrypt,
+                                  &TempFragment
+                                  );
       if (EFI_ERROR (Status)) {
         goto ON_ERROR;
       }
@@ -1565,7 +1544,7 @@ HttpTransmitTcp (
   }
 
   if (!HttpInstance->LocalAddressIsIPv6) {
-    Tcp4 = HttpInstance->Tcp4;
+    Tcp4     = HttpInstance->Tcp4;
     Tx4Token = &Wrap->TcpWrap.Tx4Token;
 
     if (HttpInstance->UseHttps) {
@@ -1581,14 +1560,13 @@ HttpTransmitTcp (
     Tx4Token->CompletionToken.Status = EFI_NOT_READY;
 
     Wrap->TcpWrap.IsTxDone = FALSE;
-    Status  = Tcp4->Transmit (Tcp4, Tx4Token);
+    Status = Tcp4->Transmit (Tcp4, Tx4Token);
     if (EFI_ERROR (Status)) {
       DEBUG ((EFI_D_ERROR, "Transmit failed: %r\n", Status));
       goto ON_ERROR;
     }
-
   } else {
-    Tcp6 = HttpInstance->Tcp6;
+    Tcp6     = HttpInstance->Tcp6;
     Tx6Token = &Wrap->TcpWrap.Tx6Token;
 
     if (HttpInstance->UseHttps) {
@@ -1652,10 +1630,10 @@ HttpTokenExist (
   IN VOID                   *Context
   )
 {
-  EFI_HTTP_TOKEN            *Token;
-  EFI_HTTP_TOKEN            *TokenInItem;
+  EFI_HTTP_TOKEN  *Token;
+  EFI_HTTP_TOKEN  *TokenInItem;
 
-  Token       = (EFI_HTTP_TOKEN *) Context;
+  Token = (EFI_HTTP_TOKEN *) Context;
   TokenInItem = (EFI_HTTP_TOKEN *) Item->Key;
 
   if (Token == TokenInItem || Token->Event == TokenInItem->Event) {
@@ -1684,7 +1662,7 @@ HttpTcpNotReady (
   IN VOID                   *Context
   )
 {
-  HTTP_TOKEN_WRAP           *ValueInItem;
+  HTTP_TOKEN_WRAP  *ValueInItem;
 
   ValueInItem = (HTTP_TOKEN_WRAP *) Item->Value;
 
@@ -1715,12 +1693,12 @@ HttpTcpTransmit (
   IN VOID                   *Context
   )
 {
-  HTTP_TOKEN_WRAP           *ValueInItem;
-  EFI_STATUS                Status;
-  CHAR8                     *RequestMsg;
-  CHAR8                     *Url;
-  UINTN                     UrlSize;
-  UINTN                     RequestMsgSize;
+  HTTP_TOKEN_WRAP  *ValueInItem;
+  EFI_STATUS       Status;
+  CHAR8            *RequestMsg;
+  CHAR8            *Url;
+  UINTN            UrlSize;
+  UINTN            RequestMsgSize;
 
   RequestMsg = NULL;
 
@@ -1733,7 +1711,7 @@ HttpTcpTransmit (
   // Parse the URI of the remote host.
   //
   UrlSize = StrLen (ValueInItem->HttpToken->Message->Data.Request->Url) + 1;
-  Url = AllocatePool (UrlSize);
+  Url     = AllocatePool (UrlSize);
   if (Url == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -1744,14 +1722,14 @@ HttpTcpTransmit (
   // Create request message.
   //
   Status = HttpGenRequestMessage (
-                 ValueInItem->HttpToken->Message,
-                 Url,
-                 &RequestMsg,
-                 &RequestMsgSize
-                 );
+                                  ValueInItem->HttpToken->Message,
+                                  Url,
+                                  &RequestMsg,
+                                  &RequestMsgSize
+                                  );
   FreePool (Url);
 
-  if (EFI_ERROR (Status) || NULL == RequestMsg){
+  if (EFI_ERROR (Status) || NULL == RequestMsg) {
     return Status;
   }
 
@@ -1761,11 +1739,11 @@ HttpTcpTransmit (
   // Transmit the request message.
   //
   Status = HttpTransmitTcp (
-             ValueInItem->HttpInstance,
-             ValueInItem,
-             (UINT8*) RequestMsg,
-             RequestMsgSize
-             );
+                            ValueInItem->HttpInstance,
+                            ValueInItem,
+                            (UINT8 *) RequestMsg,
+                            RequestMsgSize
+                            );
   FreePool (RequestMsg);
   return Status;
 }
@@ -1816,25 +1794,25 @@ HttpTcpReceiveHeader (
   IN  EFI_EVENT             Timeout
   )
 {
-  EFI_STATUS                    Status;
-  EFI_TCP4_IO_TOKEN             *Rx4Token;
-  EFI_TCP4_PROTOCOL             *Tcp4;
-  EFI_TCP6_IO_TOKEN             *Rx6Token;
-  EFI_TCP6_PROTOCOL             *Tcp6;
-  CHAR8                         **EndofHeader;
-  CHAR8                         **HttpHeaders;
-  CHAR8                         *Buffer;
-  NET_FRAGMENT                  Fragment;
+  EFI_STATUS         Status;
+  EFI_TCP4_IO_TOKEN  *Rx4Token;
+  EFI_TCP4_PROTOCOL  *Tcp4;
+  EFI_TCP6_IO_TOKEN  *Rx6Token;
+  EFI_TCP6_PROTOCOL  *Tcp6;
+  CHAR8              **EndofHeader;
+  CHAR8              **HttpHeaders;
+  CHAR8              *Buffer;
+  NET_FRAGMENT       Fragment;
 
   ASSERT (HttpInstance != NULL);
 
   EndofHeader = HttpInstance->EndofHeader;
   HttpHeaders = HttpInstance->HttpHeaders;
-  Tcp4 = HttpInstance->Tcp4;
-  Tcp6 = HttpInstance->Tcp6;
-  Buffer      = NULL;
-  Rx4Token    = NULL;
-  Rx6Token    = NULL;
+  Tcp4          = HttpInstance->Tcp4;
+  Tcp6          = HttpInstance->Tcp6;
+  Buffer        = NULL;
+  Rx4Token      = NULL;
+  Rx6Token      = NULL;
   Fragment.Len  = 0;
   Fragment.Bulk = NULL;
 
@@ -1876,7 +1854,7 @@ HttpTcpReceiveHeader (
         }
 
         while (!HttpInstance->IsRxDone && ((Timeout == NULL) || EFI_ERROR (gBS->CheckEvent (Timeout)))) {
-          Tcp4->Poll (Tcp4);
+  Tcp4->Poll (Tcp4);
         }
 
         if (!HttpInstance->IsRxDone) {
@@ -1912,7 +1890,7 @@ HttpTcpReceiveHeader (
       // Append the response string along with a Null-terminator.
       //
       *BufferSize = *SizeofHeaders + Fragment.Len;
-      Buffer      = AllocatePool (*BufferSize + 1);
+      Buffer = AllocatePool (*BufferSize + 1);
       if (Buffer == NULL) {
         Status = EFI_OUT_OF_RESOURCES;
         return Status;
@@ -1924,10 +1902,10 @@ HttpTcpReceiveHeader (
       }
 
       CopyMem (
-        Buffer + *SizeofHeaders,
-        Fragment.Bulk,
-        Fragment.Len
-        );
+               Buffer + *SizeofHeaders,
+               Fragment.Bulk,
+               Fragment.Len
+               );
       *(Buffer + *BufferSize) = '\0';
       *HttpHeaders   = Buffer;
       *SizeofHeaders = *BufferSize;
@@ -1936,12 +1914,13 @@ HttpTcpReceiveHeader (
       // Check whether we received end of HTTP headers.
       //
       *EndofHeader = AsciiStrStr (*HttpHeaders, HTTP_END_OF_HDR_STR);
-    };
+    }
 
     //
     // Free the buffer.
     //
-    if (Rx4Token != NULL && Rx4Token->Packet.RxData != NULL && Rx4Token->Packet.RxData->FragmentTable[0].FragmentBuffer != NULL) {
+    if (Rx4Token != NULL && Rx4Token->Packet.RxData != NULL &&
+        Rx4Token->Packet.RxData->FragmentTable[0].FragmentBuffer != NULL) {
       FreePool (Rx4Token->Packet.RxData->FragmentTable[0].FragmentBuffer);
       Rx4Token->Packet.RxData->FragmentTable[0].FragmentBuffer = NULL;
       Fragment.Bulk = NULL;
@@ -1976,7 +1955,7 @@ HttpTcpReceiveHeader (
         }
 
         while (!HttpInstance->IsRxDone && ((Timeout == NULL) || EFI_ERROR (gBS->CheckEvent (Timeout)))) {
-          Tcp6->Poll (Tcp6);
+  Tcp6->Poll (Tcp6);
         }
 
         if (!HttpInstance->IsRxDone) {
@@ -2012,7 +1991,7 @@ HttpTcpReceiveHeader (
       // Append the response string along with a Null-terminator.
       //
       *BufferSize = *SizeofHeaders + Fragment.Len;
-      Buffer      = AllocatePool (*BufferSize + 1);
+      Buffer = AllocatePool (*BufferSize + 1);
       if (Buffer == NULL) {
         Status = EFI_OUT_OF_RESOURCES;
         return Status;
@@ -2024,10 +2003,10 @@ HttpTcpReceiveHeader (
       }
 
       CopyMem (
-        Buffer + *SizeofHeaders,
-        Fragment.Bulk,
-        Fragment.Len
-        );
+               Buffer + *SizeofHeaders,
+               Fragment.Bulk,
+               Fragment.Len
+               );
       *(Buffer + *BufferSize) = '\0';
       *HttpHeaders   = Buffer;
       *SizeofHeaders = *BufferSize;
@@ -2036,12 +2015,13 @@ HttpTcpReceiveHeader (
       // Check whether we received end of HTTP headers.
       //
       *EndofHeader = AsciiStrStr (*HttpHeaders, HTTP_END_OF_HDR_STR);
-    };
+    }
 
     //
     // Free the buffer.
     //
-    if (Rx6Token != NULL && Rx6Token->Packet.RxData != NULL && Rx6Token->Packet.RxData->FragmentTable[0].FragmentBuffer != NULL) {
+    if (Rx6Token != NULL && Rx6Token->Packet.RxData != NULL &&
+        Rx6Token->Packet.RxData->FragmentTable[0].FragmentBuffer != NULL) {
       FreePool (Rx6Token->Packet.RxData->FragmentTable[0].FragmentBuffer);
       Rx6Token->Packet.RxData->FragmentTable[0].FragmentBuffer = NULL;
       Fragment.Bulk = NULL;
@@ -2079,18 +2059,18 @@ HttpTcpReceiveBody (
   IN  EFI_HTTP_MESSAGE      *HttpMsg
   )
 {
-  EFI_STATUS                Status;
-  HTTP_PROTOCOL             *HttpInstance;
-  EFI_TCP6_PROTOCOL         *Tcp6;
-  EFI_TCP6_IO_TOKEN         *Rx6Token;
-  EFI_TCP4_PROTOCOL         *Tcp4;
-  EFI_TCP4_IO_TOKEN         *Rx4Token;
+  EFI_STATUS         Status;
+  HTTP_PROTOCOL      *HttpInstance;
+  EFI_TCP6_PROTOCOL  *Tcp6;
+  EFI_TCP6_IO_TOKEN  *Rx6Token;
+  EFI_TCP4_PROTOCOL  *Tcp4;
+  EFI_TCP4_IO_TOKEN  *Rx4Token;
 
-  HttpInstance   = Wrap->HttpInstance;
-  Tcp4 = HttpInstance->Tcp4;
-  Tcp6 = HttpInstance->Tcp6;
-  Rx4Token       = NULL;
-  Rx6Token       = NULL;
+  HttpInstance = Wrap->HttpInstance;
+  Tcp4     = HttpInstance->Tcp4;
+  Tcp6     = HttpInstance->Tcp6;
+  Rx4Token = NULL;
+  Rx6Token = NULL;
 
   if (HttpInstance->LocalAddressIsIPv6) {
     ASSERT (Tcp6 != NULL);
@@ -2100,9 +2080,9 @@ HttpTcpReceiveBody (
 
   if (HttpInstance->LocalAddressIsIPv6) {
     Rx6Token = &Wrap->TcpWrap.Rx6Token;
-    Rx6Token ->Packet.RxData->DataLength = (UINT32) MIN (MAX_UINT32, HttpMsg->BodyLength);
-    Rx6Token ->Packet.RxData->FragmentTable[0].FragmentLength = (UINT32) MIN (MAX_UINT32, HttpMsg->BodyLength);
-    Rx6Token ->Packet.RxData->FragmentTable[0].FragmentBuffer = (VOID *) HttpMsg->Body;
+    Rx6Token->Packet.RxData->DataLength = (UINT32) MIN (MAX_UINT32, HttpMsg->BodyLength);
+    Rx6Token->Packet.RxData->FragmentTable[0].FragmentLength = (UINT32) MIN (MAX_UINT32, HttpMsg->BodyLength);
+    Rx6Token->Packet.RxData->FragmentTable[0].FragmentBuffer = (VOID *) HttpMsg->Body;
     Rx6Token->CompletionToken.Status = EFI_NOT_READY;
 
     Status = Tcp6->Receive (Tcp6, Rx6Token);
@@ -2125,7 +2105,6 @@ HttpTcpReceiveBody (
   }
 
   return EFI_SUCCESS;
-
 }
 
 /**
@@ -2139,20 +2118,20 @@ HttpTcpTokenCleanup (
   IN  HTTP_TOKEN_WRAP      *Wrap
   )
 {
-  HTTP_PROTOCOL            *HttpInstance;
-  EFI_TCP4_IO_TOKEN        *Rx4Token;
-  EFI_TCP6_IO_TOKEN        *Rx6Token;
+  HTTP_PROTOCOL      *HttpInstance;
+  EFI_TCP4_IO_TOKEN  *Rx4Token;
+  EFI_TCP6_IO_TOKEN  *Rx6Token;
 
   ASSERT (Wrap != NULL);
-  HttpInstance   = Wrap->HttpInstance;
-  Rx4Token       = NULL;
-  Rx6Token       = NULL;
+  HttpInstance = Wrap->HttpInstance;
+  Rx4Token     = NULL;
+  Rx6Token     = NULL;
 
   if (HttpInstance->LocalAddressIsIPv6) {
     Rx6Token = &Wrap->TcpWrap.Rx6Token;
 
     if (Rx6Token->CompletionToken.Event != NULL) {
-      gBS->CloseEvent (Rx6Token->CompletionToken.Event);
+  gBS->CloseEvent (Rx6Token->CompletionToken.Event);
       Rx6Token->CompletionToken.Event = NULL;
     }
 
@@ -2161,7 +2140,7 @@ HttpTcpTokenCleanup (
     Rx6Token = &HttpInstance->Rx6Token;
 
     if (Rx6Token->CompletionToken.Event != NULL) {
-      gBS->CloseEvent (Rx6Token->CompletionToken.Event);
+  gBS->CloseEvent (Rx6Token->CompletionToken.Event);
       Rx6Token->CompletionToken.Event = NULL;
     }
 
@@ -2169,12 +2148,11 @@ HttpTcpTokenCleanup (
       FreePool (Rx6Token->Packet.RxData->FragmentTable[0].FragmentBuffer);
       Rx6Token->Packet.RxData->FragmentTable[0].FragmentBuffer = NULL;
     }
-
   } else {
     Rx4Token = &Wrap->TcpWrap.Rx4Token;
 
     if (Rx4Token->CompletionToken.Event != NULL) {
-      gBS->CloseEvent (Rx4Token->CompletionToken.Event);
+  gBS->CloseEvent (Rx4Token->CompletionToken.Event);
       Rx4Token->CompletionToken.Event = NULL;
     }
 
@@ -2183,15 +2161,13 @@ HttpTcpTokenCleanup (
     Rx4Token = &HttpInstance->Rx4Token;
 
     if (Rx4Token->CompletionToken.Event != NULL) {
-      gBS->CloseEvent (Rx4Token->CompletionToken.Event);
+  gBS->CloseEvent (Rx4Token->CompletionToken.Event);
       Rx4Token->CompletionToken.Event = NULL;
     }
-
 
     if (Rx4Token->Packet.RxData->FragmentTable[0].FragmentBuffer != NULL) {
       FreePool (Rx4Token->Packet.RxData->FragmentTable[0].FragmentBuffer);
       Rx4Token->Packet.RxData->FragmentTable[0].FragmentBuffer = NULL;
     }
   }
-
 }

@@ -19,7 +19,6 @@ EFI_UDP6_PROTOCOL  mUdp6Protocol = {
   Udp6Poll
 };
 
-
 /**
   This function copies the current operational settings of this EFI UDPv6 Protocol
   instance into user-supplied buffers. This function is used optionally to retrieve
@@ -91,7 +90,6 @@ Udp6GetModeData (
   return Status;
 }
 
-
 /**
   This function is used to do the following:
   Initialize and start this instance of the EFI UDPv6 Protocol.
@@ -156,19 +154,18 @@ Udp6Configure (
   }
 
   Udp6Service = Instance->Udp6Service;
-  Status      = EFI_SUCCESS;
+  Status = EFI_SUCCESS;
   ASSERT (Udp6Service != NULL);
 
-  OldTpl      = gBS->RaiseTPL (TPL_CALLBACK);
+  OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
 
   if (UdpConfigData != NULL) {
-
     IP6_COPY_ADDRESS (&StationAddress, &UdpConfigData->StationAddress);
     IP6_COPY_ADDRESS (&RemoteAddress, &UdpConfigData->RemoteAddress);
 
     if ((!NetIp6IsUnspecifiedAddr (&StationAddress) && !NetIp6IsValidUnicast (&StationAddress)) ||
         (!NetIp6IsUnspecifiedAddr (&RemoteAddress) && !NetIp6IsValidUnicast (&RemoteAddress))
-        ){
+        ) {
       //
       // If not use default address, and StationAddress is not a valid unicast
       // if it is not IPv6 address or RemoteAddress is not a valid unicast IPv6
@@ -222,10 +219,10 @@ Udp6Configure (
       // Save the configuration data.
       //
       CopyMem (
-        &Instance->ConfigData,
-        UdpConfigData,
-        sizeof (EFI_UDP6_CONFIG_DATA)
-        );
+               &Instance->ConfigData,
+               UdpConfigData,
+               sizeof (EFI_UDP6_CONFIG_DATA)
+               );
       IP6_COPY_ADDRESS (&Instance->ConfigData.StationAddress, &Ip6ConfigData.StationAddress);
       //
       // Try to allocate the required port resource.
@@ -246,11 +243,11 @@ Udp6Configure (
       IP6_COPY_ADDRESS (&RemoteAddr, &Instance->ConfigData.RemoteAddress);
 
       Instance->HeadSum = NetIp6PseudoHeadChecksum (
-                            &LocalAddr,
-                            &RemoteAddr,
-                            EFI_IP_PROTO_UDP,
-                            0
-                            );
+                                                    &LocalAddr,
+                                                    &RemoteAddr,
+                                                    EFI_IP_PROTO_UDP,
+                                                    0
+                                                    );
 
       Instance->Configured = TRUE;
     }
@@ -285,7 +282,6 @@ ON_EXIT:
 
   return Status;
 }
-
 
 /**
   This function is used to enable and disable the multicast group filtering.
@@ -348,12 +344,13 @@ Udp6Groups (
     if (McastIp != NULL) {
       FreePool (McastIp);
     }
+
     return EFI_NOT_STARTED;
   }
 
-  Ip      = Instance->IpInfo->Ip.Ip6;
+  Ip = Instance->IpInfo->Ip.Ip6;
 
-  OldTpl  = gBS->RaiseTPL (TPL_CALLBACK);
+  OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
 
   //
   // Invoke the Ip instance the Udp6 instance consumes to do the group operation.
@@ -371,10 +368,8 @@ Udp6Groups (
   // the multicast datagrams destinated to multicast IPs the other instances configured.
   //
   if (JoinFlag) {
-
     Status = NetMapInsertTail (&Instance->McastIps, (VOID *) McastIp, NULL);
   } else {
-
     Status = NetMapIterate (&Instance->McastIps, Udp6LeaveGroup, MulticastAddress);
     if ((MulticastAddress != NULL) && (Status == EFI_ABORTED)) {
       Status = EFI_SUCCESS;
@@ -393,8 +388,6 @@ ON_EXIT:
 
   return Status;
 }
-
-
 
 /**
   This function places a sending request to this instance of the EFI UDPv6 Protocol,
@@ -490,7 +483,7 @@ Udp6Transmit (
 
   if (EFI_ERROR (NetMapIterate (&Instance->TxTokens, Udp6TokenExist, Token)) ||
       EFI_ERROR (NetMapIterate (&Instance->RxTokens, Udp6TokenExist, Token))
-      ){
+      ) {
     //
     // Try to find a duplicate token in the two token maps, if found, return
     // EFI_ACCESS_DENIED.
@@ -505,13 +498,13 @@ Udp6Transmit (
   // Create a net buffer to hold the user buffer and the udp header.
   //
   Packet = NetbufFromExt (
-             (NET_FRAGMENT *) TxData->FragmentTable,
-             TxData->FragmentCount,
-             UDP6_HEADER_SIZE,
-             0,
-             Udp6NetVectorExtFree,
-             NULL
-             );
+                          (NET_FRAGMENT *) TxData->FragmentTable,
+                          TxData->FragmentCount,
+                          UDP6_HEADER_SIZE,
+                          0,
+                          Udp6NetVectorExtFree,
+                          NULL
+                          );
   if (Packet == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ON_EXIT;
@@ -520,7 +513,7 @@ Udp6Transmit (
   //
   // Store the IpIo in ProtoData.
   //
-  Udp6Service                        = Instance->Udp6Service;
+  Udp6Service = Instance->Udp6Service;
   *((UINTN *) &Packet->ProtoData[0]) = (UINTN) (Udp6Service->IpIo);
 
   Udp6Header = (EFI_UDP_HEADER *) NetbufAllocSpace (Packet, UDP6_HEADER_SIZE, TRUE);
@@ -535,10 +528,10 @@ Udp6Transmit (
   //
   // Fill the udp header.
   //
-  Udp6Header->SrcPort      = HTONS (ConfigData->StationPort);
-  Udp6Header->DstPort      = HTONS (ConfigData->RemotePort);
-  Udp6Header->Length       = HTONS ((UINT16) Packet->TotalSize);
-  Udp6Header->Checksum     = 0;
+  Udp6Header->SrcPort  = HTONS (ConfigData->StationPort);
+  Udp6Header->DstPort  = HTONS (ConfigData->RemotePort);
+  Udp6Header->Length   = HTONS ((UINT16) Packet->TotalSize);
+  Udp6Header->Checksum = 0;
   //
   // Set the UDP Header in NET_BUF, this UDP header is for IP6 can fast get the
   // Udp header for pseudoHeadCheckSum.
@@ -564,15 +557,15 @@ Udp6Transmit (
     }
 
     //
-    //Calculate the pseudo head checksum using the overridden parameters.
+    // Calculate the pseudo head checksum using the overridden parameters.
     //
     if (!NetIp6IsUnspecifiedAddr (&ConfigData->StationAddress)) {
       HeadSum = NetIp6PseudoHeadChecksum (
-                  &Source,
-                  &Destination,
-                  EFI_IP_PROTO_UDP,
-                  0
-                  );
+                                          &Source,
+                                          &Destination,
+                                          EFI_IP_PROTO_UDP,
+                                          0
+                                          );
 
       //
       // calculate the checksum.
@@ -590,7 +583,6 @@ Udp6Transmit (
       // and the Ipv6 will fill the correct value of this checksum.
       //
       Udp6Header->Checksum = 0;
-
     }
   } else {
     //
@@ -611,8 +603,6 @@ Udp6Transmit (
     }
   }
 
-
-
   //
   // Fill the IpIo Override data.
   //
@@ -631,21 +621,21 @@ Udp6Transmit (
   //
   // Send out this datagram through IpIo.
   //
-  if (UdpSessionData != NULL){
+  if (UdpSessionData != NULL) {
     IP6_COPY_ADDRESS (&(IpDestAddr.v6), &Destination);
   } else {
     ZeroMem (&IpDestAddr.v6, sizeof (EFI_IPv6_ADDRESS));
   }
 
   Status = IpIoSend (
-             Udp6Service->IpIo,
-             Packet,
-             Instance->IpInfo,
-             Instance,
-             Token,
-             &IpDestAddr,
-             &Override
-             );
+                     Udp6Service->IpIo,
+                     Packet,
+                     Instance->IpInfo,
+                     Instance,
+                     Token,
+                     &IpDestAddr,
+                     &Override
+                     );
   if (EFI_ERROR (Status)) {
     //
     // Remove this token from the TxTokens.
@@ -663,7 +653,6 @@ ON_EXIT:
 
   return Status;
 }
-
 
 /**
   This function places a completion token into the receive packet queue. This function
@@ -717,7 +706,7 @@ Udp6Receive (
 
   if (EFI_ERROR (NetMapIterate (&Instance->RxTokens, Udp6TokenExist, Token)) ||
       EFI_ERROR (NetMapIterate (&Instance->TxTokens, Udp6TokenExist, Token))
-      ){
+      ) {
     //
     // Return EFI_ACCESS_DENIED if the specified token is already in the TxTokens or
     // RxTokens map.
@@ -758,7 +747,6 @@ ON_EXIT:
 
   return Status;
 }
-
 
 /**
   This function is used to abort a pending transmit or receive request.
@@ -821,7 +809,6 @@ Udp6Cancel (
   return Status;
 }
 
-
 /**
   This function can be used by network drivers and applications to increase the rate that
   data packets are moved between the communications device and the transmit/receive queues.
@@ -849,7 +836,7 @@ Udp6Poll (
   }
 
   Instance = UDP6_INSTANCE_DATA_FROM_THIS (This);
-  Ip       = Instance->IpInfo->Ip.Ip6;
+  Ip = Instance->IpInfo->Ip.Ip6;
 
   //
   // Invode the Ip instance consumed by the udp instance to do the poll operation.

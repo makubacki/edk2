@@ -24,14 +24,14 @@ TlsAuthConfigDxeUnload (
   IN EFI_HANDLE  ImageHandle
   )
 {
-  EFI_STATUS                     Status;
-  TLS_AUTH_CONFIG_PRIVATE_DATA   *PrivateData;
+  EFI_STATUS                    Status;
+  TLS_AUTH_CONFIG_PRIVATE_DATA  *PrivateData;
 
   Status = gBS->HandleProtocol (
-                  ImageHandle,
-                  &gEfiCallerIdGuid,
-                  (VOID **) &PrivateData
-                  );
+                                ImageHandle,
+                                &gEfiCallerIdGuid,
+                                (VOID **) &PrivateData
+                                );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -39,11 +39,11 @@ TlsAuthConfigDxeUnload (
   ASSERT (PrivateData->Signature == TLS_AUTH_CONFIG_PRIVATE_DATA_SIGNATURE);
 
   gBS->UninstallMultipleProtocolInterfaces (
-         ImageHandle,
-         &gEfiCallerIdGuid,
-         PrivateData,
-         NULL
-         );
+                                            ImageHandle,
+                                            &gEfiCallerIdGuid,
+                                            PrivateData,
+                                            NULL
+                                            );
 
   TlsAuthConfigFormUnload (PrivateData);
 
@@ -70,7 +70,7 @@ TlsAuthConfigDxeDriverEntryPoint (
 {
   EFI_STATUS  Status;
 
-  TLS_AUTH_CONFIG_PRIVATE_DATA   *PrivateData;
+  TLS_AUTH_CONFIG_PRIVATE_DATA  *PrivateData;
 
   PrivateData = NULL;
 
@@ -78,13 +78,13 @@ TlsAuthConfigDxeDriverEntryPoint (
   // If already started, return.
   //
   Status = gBS->OpenProtocol (
-                  ImageHandle,
-                  &gEfiCallerIdGuid,
-                  NULL,
-                  ImageHandle,
-                  ImageHandle,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              ImageHandle,
+                              &gEfiCallerIdGuid,
+                              NULL,
+                              ImageHandle,
+                              ImageHandle,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
   if (!EFI_ERROR (Status)) {
     return EFI_ALREADY_STARTED;
   }
@@ -109,11 +109,11 @@ TlsAuthConfigDxeDriverEntryPoint (
   // Install private GUID.
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &ImageHandle,
-                  &gEfiCallerIdGuid,
-                  PrivateData,
-                  NULL
-                  );
+                                                   &ImageHandle,
+                                                   &gEfiCallerIdGuid,
+                                                   PrivateData,
+                                                   NULL
+                                                   );
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
@@ -125,4 +125,3 @@ ON_ERROR:
 
   return Status;
 }
-

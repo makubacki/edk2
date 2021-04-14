@@ -9,7 +9,6 @@
 
 #include "Mtftp6Impl.h"
 
-
 /**
   Allocate a MTFTP block range, then init it to the range of [Start, End].
 
@@ -25,7 +24,7 @@ Mtftp6AllocateRange (
   IN UINT16                 End
   )
 {
-  MTFTP6_BLOCK_RANGE        *Range;
+  MTFTP6_BLOCK_RANGE  *Range;
 
   Range = AllocateZeroPool (sizeof (MTFTP6_BLOCK_RANGE));
 
@@ -34,13 +33,12 @@ Mtftp6AllocateRange (
   }
 
   InitializeListHead (&Range->Link);
-  Range->Start  = Start;
-  Range->End    = End;
-  Range->Bound  = End;
+  Range->Start = Start;
+  Range->End   = End;
+  Range->Bound = End;
 
   return Range;
 }
-
 
 /**
   Initialize the block range for either RRQ or WRQ. RRQ and WRQ have
@@ -69,7 +67,7 @@ Mtftp6InitBlockRange (
   IN UINT16                 End
   )
 {
-  MTFTP6_BLOCK_RANGE        *Range;
+  MTFTP6_BLOCK_RANGE  *Range;
 
   Range = Mtftp6AllocateRange (Start, End);
 
@@ -80,7 +78,6 @@ Mtftp6InitBlockRange (
   InsertTailList (Head, &Range->Link);
   return EFI_SUCCESS;
 }
-
 
 /**
   Get the first valid block number on the range list.
@@ -99,13 +96,12 @@ Mtftp6GetNextBlockNum (
   MTFTP6_BLOCK_RANGE  *Range;
 
   if (IsListEmpty (Head)) {
-    return -1;
+    return - 1;
   }
 
   Range = NET_LIST_HEAD (Head, MTFTP6_BLOCK_RANGE, Link);
   return Range->Start;
 }
-
 
 /**
   Set the last block number of the block range list. It
@@ -124,7 +120,7 @@ Mtftp6SetLastBlockNum (
   IN UINT16                 Last
   )
 {
-  MTFTP6_BLOCK_RANGE        *Range;
+  MTFTP6_BLOCK_RANGE  *Range;
 
   //
   // Iterate from the tail to head to remove the block number
@@ -142,10 +138,10 @@ Mtftp6SetLastBlockNum (
     if (Range->End > Last) {
       Range->End = Last;
     }
-    return ;
+
+    return;
   }
 }
-
 
 /**
   Remove the block number from the block range list.
@@ -168,12 +164,11 @@ Mtftp6RemoveBlockNum (
   OUT UINT64                *BlockCounter
   )
 {
-  MTFTP6_BLOCK_RANGE        *Range;
-  MTFTP6_BLOCK_RANGE        *NewRange;
-  LIST_ENTRY                *Entry;
+  MTFTP6_BLOCK_RANGE  *Range;
+  MTFTP6_BLOCK_RANGE  *NewRange;
+  LIST_ENTRY          *Entry;
 
   NET_LIST_FOR_EACH (Entry, Head) {
-
     //
     // Each block represents a hole [Start, End] in the file,
     // skip to the first range with End >= Num
@@ -187,22 +182,21 @@ Mtftp6RemoveBlockNum (
     //
     // There are three different cases for Start
     // 1. (Start > Num) && (End >= Num):
-    //    because all the holes before this one has the condition of
-    //    End < Num, so this block number has been removed.
+    // because all the holes before this one has the condition of
+    // End < Num, so this block number has been removed.
     //
     // 2. (Start == Num) && (End >= Num):
-    //    Need to increase the Start by one, and if End == Num, this
-    //    hole has been removed completely, remove it.
+    // Need to increase the Start by one, and if End == Num, this
+    // hole has been removed completely, remove it.
     //
     // 3. (Start < Num) && (End >= Num):
-    //    if End == Num, only need to decrease the End by one because
-    //    we have (Start < Num) && (Num == End), so (Start <= End - 1).
-    //    if (End > Num), the hold is split into two holes, with
-    //    [Start, Num - 1] and [Num + 1, End].
+    // if End == Num, only need to decrease the End by one because
+    // we have (Start < Num) && (Num == End), so (Start <= End - 1).
+    // if (End > Num), the hold is split into two holes, with
+    // [Start, Num - 1] and [Num + 1, End].
     //
     if (Range->Start > Num) {
       return EFI_NOT_FOUND;
-
     } else if (Range->Start == Num) {
       Range->Start++;
 
@@ -214,15 +208,15 @@ Mtftp6RemoveBlockNum (
       // wrap to zero, because this is the simplest to implement. Here we choose
       // this solution.
       //
-      *BlockCounter  = Num;
+      *BlockCounter = Num;
 
       if (Range->Round > 0) {
-        *BlockCounter += Range->Bound +  MultU64x32 (Range->Round - 1, (UINT32)(Range->Bound + 1)) + 1;
+        *BlockCounter += Range->Bound +  MultU64x32 (Range->Round - 1, (UINT32) (Range->Bound + 1)) + 1;
       }
 
       if (Range->Start > Range->Bound) {
         Range->Start = 0;
-        Range->Round ++;
+        Range->Round++;
       }
 
       if ((Range->Start > Range->End) || Completed) {
@@ -231,7 +225,6 @@ Mtftp6RemoveBlockNum (
       }
 
       return EFI_SUCCESS;
-
     } else {
       if (Range->End == Num) {
         Range->End--;
@@ -253,7 +246,6 @@ Mtftp6RemoveBlockNum (
   return EFI_NOT_FOUND;
 }
 
-
 /**
   Configure the opened Udp6 instance until the corresponding Ip6 instance
   has been configured.
@@ -272,33 +264,33 @@ Mtftp6GetMapping (
   IN EFI_UDP6_CONFIG_DATA   *UdpCfgData
   )
 {
-  EFI_IP6_MODE_DATA         Ip6Mode;
-  EFI_UDP6_PROTOCOL         *Udp6;
-  EFI_STATUS                Status;
-  EFI_EVENT                 Event;
+  EFI_IP6_MODE_DATA  Ip6Mode;
+  EFI_UDP6_PROTOCOL  *Udp6;
+  EFI_STATUS         Status;
+  EFI_EVENT          Event;
 
-  Event  = NULL;
-  Udp6   = UdpIo->Protocol.Udp6;
+  Event = NULL;
+  Udp6  = UdpIo->Protocol.Udp6;
 
   //
   // Create a timer to check whether the Ip6 instance configured or not.
   //
   Status = gBS->CreateEvent (
-                  EVT_TIMER,
-                  TPL_CALLBACK,
-                  NULL,
-                  NULL,
-                  &Event
-                  );
+                             EVT_TIMER,
+                             TPL_CALLBACK,
+                             NULL,
+                             NULL,
+                             &Event
+                             );
   if (EFI_ERROR (Status)) {
     goto ON_EXIT;
   }
 
   Status = gBS->SetTimer (
-                  Event,
-                  TimerRelative,
-                  MTFTP6_GET_MAPPING_TIMEOUT * MTFTP6_TICK_PER_SECOND
-                  );
+                          Event,
+                          TimerRelative,
+                          MTFTP6_GET_MAPPING_TIMEOUT * MTFTP6_TICK_PER_SECOND
+                          );
   if (EFI_ERROR (Status)) {
     goto ON_EXIT;
   }
@@ -307,8 +299,7 @@ Mtftp6GetMapping (
   // Check the Ip6 mode data till timeout.
   //
   while (EFI_ERROR (gBS->CheckEvent (Event))) {
-
-    Udp6->Poll (Udp6);
+  Udp6->Poll (Udp6);
 
     Status = Udp6->GetModeData (Udp6, NULL, &Ip6Mode, NULL, NULL);
 
@@ -351,12 +342,11 @@ Mtftp6GetMapping (
 ON_EXIT:
 
   if (Event != NULL) {
-    gBS->CloseEvent (Event);
+  gBS->CloseEvent (Event);
   }
 
   return Status;
 }
-
 
 /**
   The dummy configure routine for create a new Udp6 Io.
@@ -376,7 +366,6 @@ Mtftp6ConfigDummyUdpIo (
 {
   return EFI_SUCCESS;
 }
-
 
 /**
   The configure routine for Mtftp6 instance to transmit/receive.
@@ -401,9 +390,9 @@ Mtftp6ConfigUdpIo (
   IN UINT16                 LocalPort
   )
 {
-  EFI_STATUS                Status;
-  EFI_UDP6_PROTOCOL         *Udp6;
-  EFI_UDP6_CONFIG_DATA      *Udp6Cfg;
+  EFI_STATUS            Status;
+  EFI_UDP6_PROTOCOL     *Udp6;
+  EFI_UDP6_CONFIG_DATA  *Udp6Cfg;
 
   Udp6    = UdpIo->Protocol.Udp6;
   Udp6Cfg = &(UdpIo->Config.Udp6);
@@ -416,24 +405,24 @@ Mtftp6ConfigUdpIo (
   Udp6Cfg->AcceptPromiscuous  = FALSE;
   Udp6Cfg->AcceptAnyPort      = FALSE;
   Udp6Cfg->AllowDuplicatePort = FALSE;
-  Udp6Cfg->TrafficClass       = 0;
-  Udp6Cfg->HopLimit           = 128;
-  Udp6Cfg->ReceiveTimeout     = 0;
-  Udp6Cfg->TransmitTimeout    = 0;
-  Udp6Cfg->StationPort        = LocalPort;
-  Udp6Cfg->RemotePort         = ServerPort;
+  Udp6Cfg->TrafficClass    = 0;
+  Udp6Cfg->HopLimit        = 128;
+  Udp6Cfg->ReceiveTimeout  = 0;
+  Udp6Cfg->TransmitTimeout = 0;
+  Udp6Cfg->StationPort     = LocalPort;
+  Udp6Cfg->RemotePort      = ServerPort;
 
   CopyMem (
-    &Udp6Cfg->StationAddress,
-    LocalIp,
-    sizeof (EFI_IPv6_ADDRESS)
-    );
+           &Udp6Cfg->StationAddress,
+           LocalIp,
+           sizeof (EFI_IPv6_ADDRESS)
+           );
 
   CopyMem (
-    &Udp6Cfg->RemoteAddress,
-    ServerIp,
-    sizeof (EFI_IPv6_ADDRESS)
-    );
+           &Udp6Cfg->RemoteAddress,
+           ServerIp,
+           sizeof (EFI_IPv6_ADDRESS)
+           );
 
   //
   // Configure the Udp6 instance with current configure data.
@@ -441,13 +430,11 @@ Mtftp6ConfigUdpIo (
   Status = Udp6->Configure (Udp6, Udp6Cfg);
 
   if (Status == EFI_NO_MAPPING) {
-
     return Mtftp6GetMapping (UdpIo, Udp6Cfg);
   }
 
   return Status;
 }
-
 
 /**
   Build and transmit the request packet for the Mtftp6 instance.
@@ -466,19 +453,19 @@ Mtftp6SendRequest (
   IN UINT16                 Operation
   )
 {
-  EFI_MTFTP6_PACKET         *Packet;
-  EFI_MTFTP6_OPTION         *Options;
-  EFI_MTFTP6_TOKEN          *Token;
-  RETURN_STATUS             Status;
-  NET_BUF                   *Nbuf;
-  UINT8                     *Mode;
-  UINT8                     *Cur;
-  UINTN                     Index;
-  UINT32                    BufferLength;
-  UINTN                     FileNameLength;
-  UINTN                     ModeLength;
-  UINTN                     OptionStrLength;
-  UINTN                     ValueStrLength;
+  EFI_MTFTP6_PACKET  *Packet;
+  EFI_MTFTP6_OPTION  *Options;
+  EFI_MTFTP6_TOKEN   *Token;
+  RETURN_STATUS      Status;
+  NET_BUF            *Nbuf;
+  UINT8              *Mode;
+  UINT8              *Cur;
+  UINTN              Index;
+  UINT32             BufferLength;
+  UINTN              FileNameLength;
+  UINTN              ModeLength;
+  UINTN              OptionStrLength;
+  UINTN              ValueStrLength;
 
   Token   = Instance->Token;
   Options = Token->OptionList;
@@ -491,17 +478,17 @@ Mtftp6SendRequest (
   //
   // The header format of RRQ/WRQ packet is:
   //
-  //   2 bytes     string    1 byte     string   1 byte
-  //   ------------------------------------------------
-  //  | Opcode |  Filename  |   0  |    Mode    |   0  |
-  //   ------------------------------------------------
+  // 2 bytes     string    1 byte     string   1 byte
+  // ------------------------------------------------
+  // | Opcode |  Filename  |   0  |    Mode    |   0  |
+  // ------------------------------------------------
   //
   // The common option format is:
   //
-  //    string     1 byte     string   1 byte
-  //   ---------------------------------------
-  //  | OptionStr |   0  |  ValueStr  |   0   |
-  //   ---------------------------------------
+  // string     1 byte     string   1 byte
+  // ---------------------------------------
+  // | OptionStr |   0  |  ValueStr  |   0   |
+  // ---------------------------------------
   //
 
   //
@@ -527,21 +514,21 @@ Mtftp6SendRequest (
   //
   // Copy the opcode, filename and mode into packet.
   //
-  Packet         = (EFI_MTFTP6_PACKET *) NetbufAllocSpace (Nbuf, BufferLength, FALSE);
+  Packet = (EFI_MTFTP6_PACKET *) NetbufAllocSpace (Nbuf, BufferLength, FALSE);
   ASSERT (Packet != NULL);
 
   Packet->OpCode = HTONS (Operation);
   BufferLength  -= sizeof (Packet->OpCode);
 
-  Cur            = Packet->Rrq.Filename;
-  Status         = AsciiStrCpyS ((CHAR8 *) Cur, BufferLength, (CHAR8 *) Token->Filename);
+  Cur    = Packet->Rrq.Filename;
+  Status = AsciiStrCpyS ((CHAR8 *) Cur, BufferLength, (CHAR8 *) Token->Filename);
   ASSERT_EFI_ERROR (Status);
-  BufferLength  -= (UINT32) (FileNameLength + 1);
-  Cur           += FileNameLength + 1;
-  Status         = AsciiStrCpyS ((CHAR8 *) Cur, BufferLength, (CHAR8 *) Mode);
+  BufferLength -= (UINT32) (FileNameLength + 1);
+  Cur   += FileNameLength + 1;
+  Status = AsciiStrCpyS ((CHAR8 *) Cur, BufferLength, (CHAR8 *) Mode);
   ASSERT_EFI_ERROR (Status);
-  BufferLength  -= (UINT32) (ModeLength + 1);
-  Cur           += ModeLength + 1;
+  BufferLength -= (UINT32) (ModeLength + 1);
+  Cur += ModeLength + 1;
 
   //
   // Copy all the extension options into the packet.
@@ -550,16 +537,15 @@ Mtftp6SendRequest (
     OptionStrLength = AsciiStrLen ((CHAR8 *) Options[Index].OptionStr);
     ValueStrLength  = AsciiStrLen ((CHAR8 *) Options[Index].ValueStr);
 
-    Status          = AsciiStrCpyS ((CHAR8 *) Cur, BufferLength, (CHAR8 *) Options[Index].OptionStr);
+    Status = AsciiStrCpyS ((CHAR8 *) Cur, BufferLength, (CHAR8 *) Options[Index].OptionStr);
     ASSERT_EFI_ERROR (Status);
-    BufferLength   -= (UINT32) (OptionStrLength + 1);
-    Cur            += OptionStrLength + 1;
+    BufferLength -= (UINT32) (OptionStrLength + 1);
+    Cur += OptionStrLength + 1;
 
-    Status          = AsciiStrCpyS ((CHAR8 *) Cur, BufferLength, (CHAR8 *) Options[Index].ValueStr);
+    Status = AsciiStrCpyS ((CHAR8 *) Cur, BufferLength, (CHAR8 *) Options[Index].ValueStr);
     ASSERT_EFI_ERROR (Status);
-    BufferLength   -= (UINT32) (ValueStrLength + 1);
-    Cur            += ValueStrLength + 1;
-
+    BufferLength -= (UINT32) (ValueStrLength + 1);
+    Cur += ValueStrLength + 1;
   }
 
   //
@@ -574,7 +560,6 @@ Mtftp6SendRequest (
 
   return Mtftp6TransmitPacket (Instance, Nbuf);
 }
-
 
 /**
   Build and send an error packet.
@@ -592,12 +577,12 @@ EFI_STATUS
 Mtftp6SendError (
   IN MTFTP6_INSTANCE        *Instance,
   IN UINT16                 ErrCode,
-  IN UINT8*                 ErrInfo
+  IN UINT8 *ErrInfo
   )
 {
-  NET_BUF                   *Nbuf;
-  EFI_MTFTP6_PACKET         *TftpError;
-  UINT32                    Len;
+  NET_BUF            *Nbuf;
+  EFI_MTFTP6_PACKET  *TftpError;
+  UINT32             Len;
 
   //
   // Allocate a packet then copy the data.
@@ -616,10 +601,10 @@ Mtftp6SendError (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  TftpError->OpCode          = HTONS (EFI_MTFTP6_OPCODE_ERROR);
+  TftpError->OpCode = HTONS (EFI_MTFTP6_OPCODE_ERROR);
   TftpError->Error.ErrorCode = HTONS (ErrCode);
 
-  AsciiStrCpyS ((CHAR8 *) TftpError->Error.ErrorMessage, AsciiStrLen ((CHAR8 *) ErrInfo) + 1 , (CHAR8 *) ErrInfo);
+  AsciiStrCpyS ((CHAR8 *) TftpError->Error.ErrorMessage, AsciiStrLen ((CHAR8 *) ErrInfo) + 1, (CHAR8 *) ErrInfo);
 
   //
   // Save the packet buf for retransmit
@@ -633,7 +618,6 @@ Mtftp6SendError (
 
   return Mtftp6TransmitPacket (Instance, Nbuf);
 }
-
 
 /**
   The callback function called when the packet is transmitted.
@@ -657,7 +641,6 @@ Mtftp6OnPacketSent (
   *(BOOLEAN *) Context = TRUE;
 }
 
-
 /**
   Send the packet for the Mtftp6 instance.
 
@@ -674,14 +657,14 @@ Mtftp6TransmitPacket (
   IN NET_BUF                *Packet
   )
 {
-  EFI_UDP6_PROTOCOL         *Udp6;
-  EFI_UDP6_CONFIG_DATA      Udp6CfgData;
-  EFI_STATUS                Status;
-  UINT16                    *Temp;
-  UINT16                    Value;
-  UINT16                    OpCode;
+  EFI_UDP6_PROTOCOL     *Udp6;
+  EFI_UDP6_CONFIG_DATA  Udp6CfgData;
+  EFI_STATUS            Status;
+  UINT16                *Temp;
+  UINT16                Value;
+  UINT16                OpCode;
 
-  ZeroMem (&Udp6CfgData, sizeof(EFI_UDP6_CONFIG_DATA));
+  ZeroMem (&Udp6CfgData, sizeof (EFI_UDP6_CONFIG_DATA));
   Udp6 = Instance->UdpIo->Protocol.Udp6;
 
   //
@@ -689,7 +672,7 @@ Mtftp6TransmitPacket (
   //
   Instance->PacketToLive = Instance->IsMaster ? Instance->Timeout : (Instance->Timeout * 2);
 
-  Temp   = (UINT16 *) NetbufGetByte (Packet, 0, NULL);
+  Temp = (UINT16 *) NetbufGetByte (Packet, 0, NULL);
   ASSERT (Temp != NULL);
 
   Value  = *Temp;
@@ -708,12 +691,12 @@ Mtftp6TransmitPacket (
     }
 
     Status = Mtftp6ConfigUdpIo (
-               Instance->UdpIo,
-               &Instance->ServerIp,
-               Instance->ServerCmdPort,
-               &Instance->Config->StationIp,
-               Instance->Config->LocalPort
-               );
+                                Instance->UdpIo,
+                                &Instance->ServerIp,
+                                Instance->ServerCmdPort,
+                                &Instance->Config->StationIp,
+                                Instance->Config->LocalPort
+                                );
 
     if (EFI_ERROR (Status)) {
       return Status;
@@ -732,13 +715,13 @@ Mtftp6TransmitPacket (
     Instance->IsTransmitted = FALSE;
 
     Status = UdpIoSendDatagram (
-               Instance->UdpIo,
-               Packet,
-               NULL,
-               NULL,
-               Mtftp6OnPacketSent,
-               &Instance->IsTransmitted
-               );
+                                Instance->UdpIo,
+                                Packet,
+                                NULL,
+                                NULL,
+                                Mtftp6OnPacketSent,
+                                &Instance->IsTransmitted
+                                );
 
     if (EFI_ERROR (Status)) {
       NET_PUT_REF (Packet);
@@ -751,7 +734,7 @@ Mtftp6TransmitPacket (
     gBS->RestoreTPL (Instance->OldTpl);
 
     while (!Instance->IsTransmitted) {
-      Udp6->Poll (Udp6);
+  Udp6->Poll (Udp6);
     }
 
     Instance->OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
@@ -768,12 +751,12 @@ Mtftp6TransmitPacket (
     }
 
     Status = Mtftp6ConfigUdpIo (
-               Instance->UdpIo,
-               &Instance->ServerIp,
-               Instance->ServerDataPort,
-               &Udp6CfgData.StationAddress,
-               Udp6CfgData.StationPort
-               );
+                                Instance->UdpIo,
+                                &Instance->ServerIp,
+                                Instance->ServerDataPort,
+                                &Udp6CfgData.StationAddress,
+                                Udp6CfgData.StationPort
+                                );
   } else {
     //
     // For the data exchange, configure the Udp6Io as (serverip, dataport,
@@ -786,7 +769,6 @@ Mtftp6TransmitPacket (
     }
 
     if (Udp6CfgData.RemotePort != Instance->ServerDataPort) {
-
       Status = Udp6->Configure (Udp6, NULL);
 
       if (EFI_ERROR (Status)) {
@@ -794,12 +776,12 @@ Mtftp6TransmitPacket (
       }
 
       Status = Mtftp6ConfigUdpIo (
-                 Instance->UdpIo,
-                 &Instance->ServerIp,
-                 Instance->ServerDataPort,
-                 &Udp6CfgData.StationAddress,
-                 Udp6CfgData.StationPort
-                 );
+                                  Instance->UdpIo,
+                                  &Instance->ServerIp,
+                                  Instance->ServerDataPort,
+                                  &Udp6CfgData.StationAddress,
+                                  Udp6CfgData.StationPort
+                                  );
 
       if (EFI_ERROR (Status)) {
         return Status;
@@ -811,13 +793,13 @@ Mtftp6TransmitPacket (
     Instance->IsTransmitted = FALSE;
 
     Status = UdpIoSendDatagram (
-               Instance->UdpIo,
-               Packet,
-               NULL,
-               NULL,
-               Mtftp6OnPacketSent,
-               &Instance->IsTransmitted
-               );
+                                Instance->UdpIo,
+                                Packet,
+                                NULL,
+                                NULL,
+                                Mtftp6OnPacketSent,
+                                &Instance->IsTransmitted
+                                );
 
     if (EFI_ERROR (Status)) {
       NET_PUT_REF (Packet);
@@ -829,7 +811,7 @@ Mtftp6TransmitPacket (
     gBS->RestoreTPL (Instance->OldTpl);
 
     while (!Instance->IsTransmitted) {
-      Udp6->Poll (Udp6);
+  Udp6->Poll (Udp6);
     }
 
     Instance->OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
@@ -837,7 +819,6 @@ Mtftp6TransmitPacket (
 
   return Status;
 }
-
 
 /**
   Check packet for GetInfo callback routine.
@@ -862,8 +843,8 @@ Mtftp6CheckPacket (
   IN EFI_MTFTP6_PACKET      *Packet
   )
 {
-  MTFTP6_GETINFO_CONTEXT    *Context;
-  UINT16                    OpCode;
+  MTFTP6_GETINFO_CONTEXT  *Context;
+  UINT16                  OpCode;
 
   Context = (MTFTP6_GETINFO_CONTEXT *) Token->Context;
   OpCode  = NTOHS (Packet->OpCode);
@@ -872,16 +853,16 @@ Mtftp6CheckPacket (
   // Set the GetInfo's return status according to the OpCode.
   //
   switch (OpCode) {
-  case EFI_MTFTP6_OPCODE_ERROR:
-    Context->Status = EFI_TFTP_ERROR;
-    break;
+    case EFI_MTFTP6_OPCODE_ERROR:
+      Context->Status = EFI_TFTP_ERROR;
+      break;
 
-  case EFI_MTFTP6_OPCODE_OACK:
-    Context->Status = EFI_SUCCESS;
-    break;
+    case EFI_MTFTP6_OPCODE_OACK:
+      Context->Status = EFI_SUCCESS;
+      break;
 
-  default:
-    Context->Status = EFI_PROTOCOL_ERROR;
+    default:
+      Context->Status = EFI_PROTOCOL_ERROR;
   }
 
   //
@@ -901,7 +882,6 @@ Mtftp6CheckPacket (
   return EFI_ABORTED;
 }
 
-
 /**
   Clean up the current Mtftp6 operation.
 
@@ -915,9 +895,9 @@ Mtftp6OperationClean (
   IN EFI_STATUS             Result
   )
 {
-  LIST_ENTRY                *Entry;
-  LIST_ENTRY                *Next;
-  MTFTP6_BLOCK_RANGE        *Block;
+  LIST_ENTRY          *Entry;
+  LIST_ENTRY          *Next;
+  MTFTP6_BLOCK_RANGE  *Block;
 
   //
   // Clean up the current token and event.
@@ -925,8 +905,9 @@ Mtftp6OperationClean (
   if (Instance->Token != NULL) {
     Instance->Token->Status = Result;
     if (Instance->Token->Event != NULL) {
-      gBS->SignalEvent (Instance->Token->Event);
+  gBS->SignalEvent (Instance->Token->Event);
     }
+
     Instance->Token = NULL;
   }
 
@@ -938,12 +919,12 @@ Mtftp6OperationClean (
   }
 
   if (Instance->McastUdpIo != NULL) {
-    gBS->CloseProtocol (
-           Instance->McastUdpIo->UdpHandle,
-           &gEfiUdp6ProtocolGuid,
-           Instance->McastUdpIo->Image,
-           Instance->Handle
-           );
+  gBS->CloseProtocol (
+                      Instance->McastUdpIo->UdpHandle,
+                      &gEfiUdp6ProtocolGuid,
+                      Instance->McastUdpIo->Image,
+                      Instance->Handle
+                      );
     UdpIoFreeIo (Instance->McastUdpIo);
     Instance->McastUdpIo = NULL;
   }
@@ -971,20 +952,19 @@ Mtftp6OperationClean (
 
   Instance->ServerCmdPort  = 0;
   Instance->ServerDataPort = 0;
-  Instance->McastPort      = 0;
-  Instance->BlkSize        = 0;
-  Instance->Operation      = 0;
-  Instance->WindowSize     = 1;
-  Instance->TotalBlock     = 0;
-  Instance->AckedBlock     = 0;
-  Instance->LastBlk        = 0;
-  Instance->PacketToLive   = 0;
-  Instance->MaxRetry       = 0;
-  Instance->CurRetry       = 0;
-  Instance->Timeout        = 0;
-  Instance->IsMaster       = TRUE;
+  Instance->McastPort    = 0;
+  Instance->BlkSize      = 0;
+  Instance->Operation    = 0;
+  Instance->WindowSize   = 1;
+  Instance->TotalBlock   = 0;
+  Instance->AckedBlock   = 0;
+  Instance->LastBlk      = 0;
+  Instance->PacketToLive = 0;
+  Instance->MaxRetry     = 0;
+  Instance->CurRetry     = 0;
+  Instance->Timeout      = 0;
+  Instance->IsMaster     = TRUE;
 }
-
 
 /**
   Start the Mtftp6 instance to perform the operation, such as read file,
@@ -1007,8 +987,8 @@ Mtftp6OperationStart (
   IN UINT16                 OpCode
   )
 {
-  MTFTP6_INSTANCE           *Instance;
-  EFI_STATUS                Status;
+  MTFTP6_INSTANCE  *Instance;
+  EFI_STATUS       Status;
 
   if (This == NULL ||
       Token == NULL ||
@@ -1046,7 +1026,7 @@ Mtftp6OperationStart (
     return EFI_ACCESS_DENIED;
   }
 
-  Status           = EFI_SUCCESS;
+  Status = EFI_SUCCESS;
   Instance->OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
 
   Instance->Operation = OpCode;
@@ -1055,14 +1035,13 @@ Mtftp6OperationStart (
   // Parse the extension options in the request packet.
   //
   if (Token->OptionCount != 0) {
-
     Status = Mtftp6ParseExtensionOption (
-               Token->OptionList,
-               Token->OptionCount,
-               TRUE,
-               Instance->Operation,
-               &Instance->ExtInfo
-               );
+                                         Token->OptionList,
+                                         Token->OptionCount,
+                                         TRUE,
+                                         Instance->Operation,
+                                         &Instance->ExtInfo
+                                         );
 
     if (EFI_ERROR (Status)) {
       goto ON_ERROR;
@@ -1072,29 +1051,29 @@ Mtftp6OperationStart (
   //
   // Initialize runtime data from config data or override data.
   //
-  Instance->Token           = Token;
-  Instance->ServerCmdPort   = Instance->Config->InitialServerPort;
-  Instance->ServerDataPort  = 0;
-  Instance->MaxRetry        = Instance->Config->TryCount;
-  Instance->Timeout         = Instance->Config->TimeoutValue;
-  Instance->IsMaster        = TRUE;
+  Instance->Token = Token;
+  Instance->ServerCmdPort  = Instance->Config->InitialServerPort;
+  Instance->ServerDataPort = 0;
+  Instance->MaxRetry = Instance->Config->TryCount;
+  Instance->Timeout  = Instance->Config->TimeoutValue;
+  Instance->IsMaster = TRUE;
 
   CopyMem (
-    &Instance->ServerIp,
-    &Instance->Config->ServerIp,
-    sizeof (EFI_IPv6_ADDRESS)
-    );
+           &Instance->ServerIp,
+           &Instance->Config->ServerIp,
+           sizeof (EFI_IPv6_ADDRESS)
+           );
 
   if (Token->OverrideData != NULL) {
     Instance->ServerCmdPort = Token->OverrideData->ServerPort;
-    Instance->MaxRetry      = Token->OverrideData->TryCount;
-    Instance->Timeout       = Token->OverrideData->TimeoutValue;
+    Instance->MaxRetry = Token->OverrideData->TryCount;
+    Instance->Timeout  = Token->OverrideData->TimeoutValue;
 
     CopyMem (
-      &Instance->ServerIp,
-      &Token->OverrideData->ServerIp,
-      sizeof (EFI_IPv6_ADDRESS)
-      );
+             &Instance->ServerIp,
+             &Token->OverrideData->ServerIp,
+             sizeof (EFI_IPv6_ADDRESS)
+             );
   }
 
   //
@@ -1103,15 +1082,19 @@ Mtftp6OperationStart (
   if (Instance->ServerCmdPort == 0) {
     Instance->ServerCmdPort = MTFTP6_DEFAULT_SERVER_CMD_PORT;
   }
+
   if (Instance->BlkSize == 0) {
     Instance->BlkSize = MTFTP6_DEFAULT_BLK_SIZE;
   }
+
   if (Instance->WindowSize == 0) {
     Instance->WindowSize = MTFTP6_DEFAULT_WINDOWSIZE;
   }
+
   if (Instance->MaxRetry == 0) {
     Instance->MaxRetry = MTFTP6_DEFAULT_MAX_RETRY;
   }
+
   if (Instance->Timeout == 0) {
     Instance->Timeout = MTFTP6_DEFAULT_TIMEOUT;
   }
@@ -1122,21 +1105,21 @@ Mtftp6OperationStart (
   // Switch the routines by the operation code.
   //
   switch (OpCode) {
-  case EFI_MTFTP6_OPCODE_RRQ:
-    Status = Mtftp6RrqStart (Instance, OpCode);
-    break;
+    case EFI_MTFTP6_OPCODE_RRQ:
+      Status = Mtftp6RrqStart (Instance, OpCode);
+      break;
 
-  case EFI_MTFTP6_OPCODE_DIR:
-    Status = Mtftp6RrqStart (Instance, OpCode);
-    break;
+    case EFI_MTFTP6_OPCODE_DIR:
+      Status = Mtftp6RrqStart (Instance, OpCode);
+      break;
 
-  case EFI_MTFTP6_OPCODE_WRQ:
-    Status = Mtftp6WrqStart (Instance, OpCode);
-    break;
+    case EFI_MTFTP6_OPCODE_WRQ:
+      Status = Mtftp6WrqStart (Instance, OpCode);
+      break;
 
-  default:
-    Status = EFI_DEVICE_ERROR;
-    goto ON_ERROR;
+    default:
+      Status = EFI_DEVICE_ERROR;
+      goto ON_ERROR;
   }
 
   if (EFI_ERROR (Status)) {
@@ -1150,8 +1133,9 @@ Mtftp6OperationStart (
 
   if (Token->Event == NULL) {
     while (Token->Status == EFI_NOT_READY) {
-      This->Poll (This);
+  This->Poll (This);
     }
+
     return Token->Status;
   }
 
@@ -1164,7 +1148,6 @@ ON_ERROR:
 
   return Status;
 }
-
 
 /**
   The timer ticking routine for the Mtftp6 instance.
@@ -1180,12 +1163,12 @@ Mtftp6OnTimerTick (
   IN VOID                   *Context
   )
 {
-  MTFTP6_SERVICE            *Service;
-  MTFTP6_INSTANCE           *Instance;
-  LIST_ENTRY                *Entry;
-  LIST_ENTRY                *Next;
-  EFI_MTFTP6_TOKEN          *Token;
-  EFI_STATUS                Status;
+  MTFTP6_SERVICE    *Service;
+  MTFTP6_INSTANCE   *Instance;
+  LIST_ENTRY        *Entry;
+  LIST_ENTRY        *Next;
+  EFI_MTFTP6_TOKEN  *Token;
+  EFI_STATUS        Status;
 
   Service = (MTFTP6_SERVICE *) Context;
 
@@ -1194,7 +1177,6 @@ Mtftp6OnTimerTick (
   // out the packet. If maximum retries reached, clean the session up.
   //
   NET_LIST_FOR_EACH_SAFE (Entry, Next, &Service->Children) {
-
     Instance = NET_LIST_USER_STRUCT (Entry, MTFTP6_INSTANCE, Link);
 
     if (Instance->Token == NULL) {
@@ -1217,10 +1199,10 @@ Mtftp6OnTimerTick (
 
       if (EFI_ERROR (Status)) {
         Mtftp6SendError (
-           Instance,
-           EFI_MTFTP6_ERRORCODE_REQUEST_DENIED,
-           (UINT8 *) "User aborted the transfer in time out"
-           );
+                         Instance,
+                         EFI_MTFTP6_ERRORCODE_REQUEST_DENIED,
+                         (UINT8 *) "User aborted the transfer in time out"
+                         );
         Mtftp6OperationClean (Instance, EFI_ABORTED);
         continue;
       }

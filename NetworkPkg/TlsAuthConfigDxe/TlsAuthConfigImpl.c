@@ -9,15 +9,14 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "TlsAuthConfigImpl.h"
 
-VOID                    *mStartOpCodeHandle = NULL;
-VOID                    *mEndOpCodeHandle   = NULL;
-EFI_IFR_GUID_LABEL      *mStartLabel        = NULL;
-EFI_IFR_GUID_LABEL      *mEndLabel          = NULL;
+VOID                *mStartOpCodeHandle = NULL;
+VOID                *mEndOpCodeHandle   = NULL;
+EFI_IFR_GUID_LABEL  *mStartLabel = NULL;
+EFI_IFR_GUID_LABEL  *mEndLabel   = NULL;
 
+CHAR16  mTlsAuthConfigStorageName[] = L"TLS_AUTH_CONFIG_IFR_NVDATA";
 
-CHAR16                  mTlsAuthConfigStorageName[] = L"TLS_AUTH_CONFIG_IFR_NVDATA";
-
-TLS_AUTH_CONFIG_PRIVATE_DATA      *mTlsAuthPrivateData = NULL;
+TLS_AUTH_CONFIG_PRIVATE_DATA  *mTlsAuthPrivateData = NULL;
 
 HII_VENDOR_DEVICE_PATH  mTlsAuthConfigHiiVendorDevicePath = {
   {
@@ -44,7 +43,7 @@ HII_VENDOR_DEVICE_PATH  mTlsAuthConfigHiiVendorDevicePath = {
 //
 // Possible DER-encoded certificate file suffixes, end with NULL pointer.
 //
-CHAR16* mDerPemEncodedSuffix[] = {
+CHAR16  *mDerPemEncodedSuffix[] = {
   L".cer",
   L".der",
   L".crt",
@@ -64,14 +63,16 @@ CHAR16* mDerPemEncodedSuffix[] = {
 BOOLEAN
 IsDerPemEncodeCertificate (
   IN CONST CHAR16         *FileSuffix
-)
+  )
 {
-  UINTN     Index;
+  UINTN  Index;
+
   for (Index = 0; mDerPemEncodedSuffix[Index] != NULL; Index++) {
     if (StrCmp (FileSuffix, mDerPemEncodedSuffix[Index]) == 0) {
       return TRUE;
     }
   }
+
   return FALSE;
 }
 
@@ -93,11 +94,11 @@ GuidToString (
   )
 {
   return UnicodeSPrint (
-           Buffer,
-           BufferSize,
-           L"%g",
-           Guid
-           );
+                        Buffer,
+                        BufferSize,
+                        L"%g",
+                        Guid
+                        );
 }
 
 /**
@@ -125,22 +126,22 @@ UpdateDeletePage (
   IN EFI_QUESTION_ID                  QuestionIdBase
   )
 {
-  EFI_STATUS                  Status;
-  UINT32                      Index;
-  UINTN                       CertCount;
-  UINTN                       GuidIndex;
-  VOID                        *StartOpCodeHandle;
-  VOID                        *EndOpCodeHandle;
-  EFI_IFR_GUID_LABEL          *StartLabel;
-  EFI_IFR_GUID_LABEL          *EndLabel;
-  UINTN                       DataSize;
-  UINT8                       *Data;
-  EFI_SIGNATURE_LIST          *CertList;
-  EFI_SIGNATURE_DATA          *Cert;
-  UINT32                      ItemDataSize;
-  CHAR16                      *GuidStr;
-  EFI_STRING_ID               GuidID;
-  EFI_STRING_ID               Help;
+  EFI_STATUS          Status;
+  UINT32              Index;
+  UINTN               CertCount;
+  UINTN               GuidIndex;
+  VOID                *StartOpCodeHandle;
+  VOID                *EndOpCodeHandle;
+  EFI_IFR_GUID_LABEL  *StartLabel;
+  EFI_IFR_GUID_LABEL  *EndLabel;
+  UINTN               DataSize;
+  UINT8               *Data;
+  EFI_SIGNATURE_LIST  *CertList;
+  EFI_SIGNATURE_DATA  *Cert;
+  UINT32              ItemDataSize;
+  CHAR16              *GuidStr;
+  EFI_STRING_ID       GuidID;
+  EFI_STRING_ID       Help;
 
   Data     = NULL;
   CertList = NULL;
@@ -168,28 +169,28 @@ UpdateDeletePage (
   // Create Hii Extend Label OpCode.
   //
   StartLabel = (EFI_IFR_GUID_LABEL *) HiiCreateGuidOpCode (
-                                        StartOpCodeHandle,
-                                        &gEfiIfrTianoGuid,
-                                        NULL,
-                                        sizeof (EFI_IFR_GUID_LABEL)
-                                        );
-  StartLabel->ExtendOpCode  = EFI_IFR_EXTEND_OP_LABEL;
-  StartLabel->Number        = LabelNumber;
+                                                           StartOpCodeHandle,
+                                                           &gEfiIfrTianoGuid,
+                                                           NULL,
+                                                           sizeof (EFI_IFR_GUID_LABEL)
+                                                           );
+  StartLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
+  StartLabel->Number = LabelNumber;
 
   EndLabel = (EFI_IFR_GUID_LABEL *) HiiCreateGuidOpCode (
-                                      EndOpCodeHandle,
-                                      &gEfiIfrTianoGuid,
-                                      NULL,
-                                      sizeof (EFI_IFR_GUID_LABEL)
-                                      );
-  EndLabel->ExtendOpCode  = EFI_IFR_EXTEND_OP_LABEL;
-  EndLabel->Number        = LABEL_END;
+                                                         EndOpCodeHandle,
+                                                         &gEfiIfrTianoGuid,
+                                                         NULL,
+                                                         sizeof (EFI_IFR_GUID_LABEL)
+                                                         );
+  EndLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
+  EndLabel->Number = LABEL_END;
 
   //
   // Read Variable.
   //
   DataSize = 0;
-  Status = gRT->GetVariable (VariableName, VendorGuid, NULL, &DataSize, Data);
+  Status   = gRT->GetVariable (VariableName, VendorGuid, NULL, &DataSize, Data);
   if (EFI_ERROR (Status) && Status != EFI_BUFFER_TOO_SMALL) {
     goto ON_EXIT;
   }
@@ -215,11 +216,10 @@ UpdateDeletePage (
   // Enumerate all data.
   //
   ItemDataSize = (UINT32) DataSize;
-  CertList = (EFI_SIGNATURE_LIST *) Data;
-  GuidIndex = 0;
+  CertList     = (EFI_SIGNATURE_LIST *) Data;
+  GuidIndex    = 0;
 
   while ((ItemDataSize > 0) && (ItemDataSize >= CertList->SignatureListSize)) {
-
     if (CompareGuid (&CertList->SignatureType, &gEfiCertX509Guid)) {
       Help = STRING_TOKEN (STR_CERT_TYPE_PCKS_GUID);
     } else {
@@ -227,46 +227,47 @@ UpdateDeletePage (
       // The signature type is not supported in current implementation.
       //
       ItemDataSize -= CertList->SignatureListSize;
-      CertList = (EFI_SIGNATURE_LIST *) ((UINT8 *) CertList + CertList->SignatureListSize);
+      CertList      = (EFI_SIGNATURE_LIST *) ((UINT8 *) CertList + CertList->SignatureListSize);
       continue;
     }
 
-    CertCount  = (CertList->SignatureListSize - sizeof (EFI_SIGNATURE_LIST) - CertList->SignatureHeaderSize) / CertList->SignatureSize;
+    CertCount = (CertList->SignatureListSize - sizeof (EFI_SIGNATURE_LIST) - CertList->SignatureHeaderSize) /
+                CertList->SignatureSize;
     for (Index = 0; Index < CertCount; Index++) {
       Cert = (EFI_SIGNATURE_DATA *) ((UINT8 *) CertList
-                                              + sizeof (EFI_SIGNATURE_LIST)
-                                              + CertList->SignatureHeaderSize
-                                              + Index * CertList->SignatureSize);
+                                     + sizeof (EFI_SIGNATURE_LIST)
+                                     + CertList->SignatureHeaderSize
+                                     + Index * CertList->SignatureSize);
       //
       // Display GUID and help
       //
       GuidToString (&Cert->SignatureOwner, GuidStr, 100);
-      GuidID  = HiiSetString (Private->RegisteredHandle, 0, GuidStr, NULL);
+      GuidID = HiiSetString (Private->RegisteredHandle, 0, GuidStr, NULL);
       HiiCreateCheckBoxOpCode (
-        StartOpCodeHandle,
-        (EFI_QUESTION_ID) (QuestionIdBase + GuidIndex++),
-        0,
-        0,
-        GuidID,
-        Help,
-        EFI_IFR_FLAG_CALLBACK,
-        0,
-        NULL
-        );
+                               StartOpCodeHandle,
+                               (EFI_QUESTION_ID) (QuestionIdBase + GuidIndex++),
+                               0,
+                               0,
+                               GuidID,
+                               Help,
+                               EFI_IFR_FLAG_CALLBACK,
+                               0,
+                               NULL
+                               );
     }
 
     ItemDataSize -= CertList->SignatureListSize;
-    CertList = (EFI_SIGNATURE_LIST *) ((UINT8 *) CertList + CertList->SignatureListSize);
+    CertList      = (EFI_SIGNATURE_LIST *) ((UINT8 *) CertList + CertList->SignatureListSize);
   }
 
 ON_EXIT:
   HiiUpdateForm (
-    Private->RegisteredHandle,
-    &gTlsAuthConfigGuid,
-    FormId,
-    StartOpCodeHandle,
-    EndOpCodeHandle
-    );
+                 Private->RegisteredHandle,
+                 &gTlsAuthConfigGuid,
+                 FormId,
+                 StartOpCodeHandle,
+                 EndOpCodeHandle
+                 );
 
   if (StartOpCodeHandle != NULL) {
     HiiFreeOpCodeHandle (StartOpCodeHandle);
@@ -313,32 +314,32 @@ DeleteCert (
   IN UINTN                            DeleteIndex
   )
 {
-  EFI_STATUS                  Status;
-  UINTN                       DataSize;
-  UINT8                       *Data;
-  UINT8                       *OldData;
-  UINT32                      Attr;
-  UINT32                      Index;
-  EFI_SIGNATURE_LIST          *CertList;
-  EFI_SIGNATURE_LIST          *NewCertList;
-  EFI_SIGNATURE_DATA          *Cert;
-  UINTN                       CertCount;
-  UINT32                      Offset;
-  BOOLEAN                     IsItemFound;
-  UINT32                      ItemDataSize;
-  UINTN                       GuidIndex;
+  EFI_STATUS          Status;
+  UINTN               DataSize;
+  UINT8               *Data;
+  UINT8               *OldData;
+  UINT32              Attr;
+  UINT32              Index;
+  EFI_SIGNATURE_LIST  *CertList;
+  EFI_SIGNATURE_LIST  *NewCertList;
+  EFI_SIGNATURE_DATA  *Cert;
+  UINTN               CertCount;
+  UINT32              Offset;
+  BOOLEAN             IsItemFound;
+  UINT32              ItemDataSize;
+  UINTN               GuidIndex;
 
-  Data            = NULL;
-  OldData         = NULL;
-  CertList        = NULL;
-  Cert            = NULL;
-  Attr            = 0;
+  Data     = NULL;
+  OldData  = NULL;
+  CertList = NULL;
+  Cert     = NULL;
+  Attr     = 0;
 
   //
   // Get original signature list data.
   //
   DataSize = 0;
-  Status = gRT->GetVariable (VariableName, VendorGuid, NULL, &DataSize, NULL);
+  Status   = gRT->GetVariable (VariableName, VendorGuid, NULL, &DataSize, NULL);
   if (EFI_ERROR (Status) && Status != EFI_BUFFER_TOO_SMALL) {
     goto ON_EXIT;
   }
@@ -350,37 +351,39 @@ DeleteCert (
   }
 
   Status = gRT->GetVariable (VariableName, VendorGuid, &Attr, &DataSize, OldData);
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     goto ON_EXIT;
   }
 
   //
   // Allocate space for new variable.
   //
-  Data = (UINT8*) AllocateZeroPool (DataSize);
+  Data = (UINT8 *) AllocateZeroPool (DataSize);
   if (Data == NULL) {
-    Status  =  EFI_OUT_OF_RESOURCES;
+    Status =  EFI_OUT_OF_RESOURCES;
     goto ON_EXIT;
   }
 
   //
   // Enumerate all data and erasing the target item.
   //
-  IsItemFound = FALSE;
+  IsItemFound  = FALSE;
   ItemDataSize = (UINT32) DataSize;
-  CertList = (EFI_SIGNATURE_LIST *) OldData;
-  Offset = 0;
+  CertList     = (EFI_SIGNATURE_LIST *) OldData;
+  Offset    = 0;
   GuidIndex = 0;
   while ((ItemDataSize > 0) && (ItemDataSize >= CertList->SignatureListSize)) {
     if (CompareGuid (&CertList->SignatureType, &gEfiCertX509Guid)) {
       //
       // Copy EFI_SIGNATURE_LIST header then calculate the signature count in this list.
       //
-      CopyMem (Data + Offset, CertList, (sizeof(EFI_SIGNATURE_LIST) + CertList->SignatureHeaderSize));
-      NewCertList = (EFI_SIGNATURE_LIST*) (Data + Offset);
-      Offset += (sizeof(EFI_SIGNATURE_LIST) + CertList->SignatureHeaderSize);
-      Cert      = (EFI_SIGNATURE_DATA *) ((UINT8 *) CertList + sizeof (EFI_SIGNATURE_LIST) + CertList->SignatureHeaderSize);
-      CertCount  = (CertList->SignatureListSize - sizeof (EFI_SIGNATURE_LIST) - CertList->SignatureHeaderSize) / CertList->SignatureSize;
+      CopyMem (Data + Offset, CertList, (sizeof (EFI_SIGNATURE_LIST) + CertList->SignatureHeaderSize));
+      NewCertList = (EFI_SIGNATURE_LIST *) (Data + Offset);
+      Offset += (sizeof (EFI_SIGNATURE_LIST) + CertList->SignatureHeaderSize);
+      Cert    =
+        (EFI_SIGNATURE_DATA *) ((UINT8 *) CertList + sizeof (EFI_SIGNATURE_LIST) + CertList->SignatureHeaderSize);
+      CertCount = (CertList->SignatureListSize - sizeof (EFI_SIGNATURE_LIST) - CertList->SignatureHeaderSize) /
+                  CertList->SignatureSize;
       for (Index = 0; Index < CertCount; Index++) {
         if (GuidIndex == DeleteIndex) {
           //
@@ -392,9 +395,10 @@ DeleteCert (
           //
           // This item doesn't match. Copy it to the Data buffer.
           //
-          CopyMem (Data + Offset, (UINT8*)(Cert), CertList->SignatureSize);
+          CopyMem (Data + Offset, (UINT8 *) (Cert), CertList->SignatureSize);
           Offset += CertList->SignatureSize;
         }
+
         GuidIndex++;
         Cert = (EFI_SIGNATURE_DATA *) ((UINT8 *) Cert + CertList->SignatureSize);
       }
@@ -402,12 +406,12 @@ DeleteCert (
       //
       // This List doesn't match. Just copy it to the Data buffer.
       //
-      CopyMem (Data + Offset, (UINT8*)(CertList), CertList->SignatureListSize);
+      CopyMem (Data + Offset, (UINT8 *) (CertList), CertList->SignatureListSize);
       Offset += CertList->SignatureListSize;
     }
 
     ItemDataSize -= CertList->SignatureListSize;
-    CertList = (EFI_SIGNATURE_LIST *) ((UINT8 *) CertList + CertList->SignatureListSize);
+    CertList      = (EFI_SIGNATURE_LIST *) ((UINT8 *) CertList + CertList->SignatureListSize);
   }
 
   if (!IsItemFound) {
@@ -422,29 +426,31 @@ DeleteCert (
   // Delete the EFI_SIGNATURE_LIST header if there is no signature in the list.
   //
   ItemDataSize = Offset;
-  CertList = (EFI_SIGNATURE_LIST *) Data;
+  CertList     = (EFI_SIGNATURE_LIST *) Data;
   Offset = 0;
   ZeroMem (OldData, ItemDataSize);
   while ((ItemDataSize > 0) && (ItemDataSize >= CertList->SignatureListSize)) {
-    CertCount  = (CertList->SignatureListSize - sizeof (EFI_SIGNATURE_LIST) - CertList->SignatureHeaderSize) / CertList->SignatureSize;
+    CertCount = (CertList->SignatureListSize - sizeof (EFI_SIGNATURE_LIST) - CertList->SignatureHeaderSize) /
+                CertList->SignatureSize;
     DEBUG ((DEBUG_INFO, "       CertCount = %x\n", CertCount));
     if (CertCount != 0) {
-      CopyMem (OldData + Offset, (UINT8*)(CertList), CertList->SignatureListSize);
+      CopyMem (OldData + Offset, (UINT8 *) (CertList), CertList->SignatureListSize);
       Offset += CertList->SignatureListSize;
     }
+
     ItemDataSize -= CertList->SignatureListSize;
-    CertList = (EFI_SIGNATURE_LIST *) ((UINT8 *) CertList + CertList->SignatureListSize);
+    CertList      = (EFI_SIGNATURE_LIST *) ((UINT8 *) CertList + CertList->SignatureListSize);
   }
 
   DataSize = Offset;
 
-  Status = gRT->SetVariable(
-                  VariableName,
-                  VendorGuid,
-                  Attr,
-                  DataSize,
-                  OldData
-                  );
+  Status = gRT->SetVariable (
+                             VariableName,
+                             VendorGuid,
+                             Attr,
+                             DataSize,
+                             OldData
+                             );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Failed to set variable, Status = %r\n", Status));
     goto ON_EXIT;
@@ -452,23 +458,22 @@ DeleteCert (
 
 ON_EXIT:
   if (Data != NULL) {
-    FreePool(Data);
+    FreePool (Data);
   }
 
   if (OldData != NULL) {
-    FreePool(OldData);
+    FreePool (OldData);
   }
 
   return UpdateDeletePage (
-           Private,
-           VariableName,
-           VendorGuid,
-           LabelNumber,
-           FormId,
-           QuestionIdBase
-           );
+                           Private,
+                           VariableName,
+                           VendorGuid,
+                           LabelNumber,
+                           FormId,
+                           QuestionIdBase
+                           );
 }
-
 
 /**
   Clean the file related resource.
@@ -482,10 +487,10 @@ CleanFileContext (
   )
 {
   if (Private->FileContext->FHandle != NULL) {
-    Private->FileContext->FHandle->Close (Private->FileContext->FHandle);
+  Private->FileContext->FHandle->Close (Private->FileContext->FHandle);
     Private->FileContext->FHandle = NULL;
-    if (Private->FileContext->FileName!= NULL){
-      FreePool(Private->FileContext->FileName);
+    if (Private->FileContext->FileName != NULL) {
+      FreePool (Private->FileContext->FileName);
       Private->FileContext->FileName = NULL;
     }
   }
@@ -511,15 +516,15 @@ EFI_STATUS
 ReadFileContent (
   IN      EFI_FILE_HANDLE           FileHandle,
   IN OUT  VOID                      **BufferPtr,
-     OUT  UINTN                     *FileSize,
+  OUT  UINTN                     *FileSize,
   IN      UINTN                     AddtionAllocateSize
   )
 
 {
-  UINTN      BufferSize;
-  UINT64     SourceFileSize;
-  VOID       *Buffer;
-  EFI_STATUS Status;
+  UINTN       BufferSize;
+  UINT64      SourceFileSize;
+  VOID        *Buffer;
+  EFI_STATUS  Status;
 
   if ((FileHandle == NULL) || (FileSize == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -530,7 +535,7 @@ ReadFileContent (
   //
   // Get the file size
   //
-  Status = FileHandle->SetPosition (FileHandle, (UINT64) -1);
+  Status = FileHandle->SetPosition (FileHandle, (UINT64) - 1);
   if (EFI_ERROR (Status)) {
     goto ON_EXIT;
   }
@@ -546,7 +551,7 @@ ReadFileContent (
   }
 
   BufferSize = (UINTN) SourceFileSize + AddtionAllocateSize;
-  Buffer =  AllocateZeroPool(BufferSize);
+  Buffer     =  AllocateZeroPool (BufferSize);
   if (Buffer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -558,7 +563,7 @@ ReadFileContent (
   if (EFI_ERROR (Status) || BufferSize != *FileSize) {
     FreePool (Buffer);
     Buffer = NULL;
-    Status  = EFI_BAD_BUFFER_SIZE;
+    Status = EFI_BAD_BUFFER_SIZE;
     goto ON_EXIT;
   }
 
@@ -583,12 +588,11 @@ DevicePathToStr (
   )
 {
   return ConvertDevicePathToText (
-           DevPath,
-           FALSE,
-           TRUE
-           );
+                                  DevPath,
+                                  FALSE,
+                                  TRUE
+                                  );
 }
-
 
 /**
   Extract filename from device path. The returned buffer is allocated using AllocateCopyPool.
@@ -606,31 +610,31 @@ ExtractFileNameFromDevicePath (
   IN   EFI_DEVICE_PATH_PROTOCOL *DevicePath
   )
 {
-  CHAR16          *String;
-  CHAR16          *MatchString;
-  CHAR16          *LastMatch;
-  CHAR16          *FileName;
-  UINTN           Length;
+  CHAR16  *String;
+  CHAR16  *MatchString;
+  CHAR16  *LastMatch;
+  CHAR16  *FileName;
+  UINTN   Length;
 
-  ASSERT(DevicePath != NULL);
+  ASSERT (DevicePath != NULL);
 
-  String = DevicePathToStr(DevicePath);
+  String = DevicePathToStr (DevicePath);
   MatchString = String;
   LastMatch   = String;
   FileName    = NULL;
 
-  while(MatchString != NULL){
+  while(MatchString != NULL) {
     LastMatch   = MatchString + 1;
-    MatchString = StrStr(LastMatch,L"\\");
+    MatchString = StrStr (LastMatch, L"\\");
   }
 
-  Length = StrLen(LastMatch);
-  FileName = AllocateCopyPool ((Length + 1) * sizeof(CHAR16), LastMatch);
+  Length   = StrLen (LastMatch);
+  FileName = AllocateCopyPool ((Length + 1) * sizeof (CHAR16), LastMatch);
   if (FileName != NULL) {
     *(FileName + Length) = 0;
   }
 
-  FreePool(String);
+  FreePool (String);
 
   return FileName;
 }
@@ -651,37 +655,38 @@ EnrollX509toVariable (
   IN CHAR16                         *VariableName
   )
 {
-  EFI_STATUS                        Status;
-  UINTN                             X509DataSize;
-  VOID                              *X509Data;
-  EFI_SIGNATURE_LIST                *CACert;
-  EFI_SIGNATURE_DATA                *CACertData;
-  VOID                              *Data;
-  UINTN                             DataSize;
-  UINTN                             SigDataSize;
-  UINT32                            Attr;
+  EFI_STATUS          Status;
+  UINTN               X509DataSize;
+  VOID                *X509Data;
+  EFI_SIGNATURE_LIST  *CACert;
+  EFI_SIGNATURE_DATA  *CACertData;
+  VOID                *Data;
+  UINTN               DataSize;
+  UINTN               SigDataSize;
+  UINT32              Attr;
 
-  X509DataSize  = 0;
-  SigDataSize   = 0;
-  DataSize      = 0;
-  X509Data      = NULL;
-  CACert        = NULL;
-  CACertData    = NULL;
-  Data          = NULL;
-  Attr          = 0;
+  X509DataSize = 0;
+  SigDataSize  = 0;
+  DataSize     = 0;
+  X509Data     = NULL;
+  CACert     = NULL;
+  CACertData = NULL;
+  Data = NULL;
+  Attr = 0;
 
   Status = ReadFileContent (
-             Private->FileContext->FHandle,
-             &X509Data,
-             &X509DataSize,
-             0
-             );
+                            Private->FileContext->FHandle,
+                            &X509Data,
+                            &X509DataSize,
+                            0
+                            );
   if (EFI_ERROR (Status)) {
     goto ON_EXIT;
   }
+
   ASSERT (X509Data != NULL);
 
-  SigDataSize = sizeof(EFI_SIGNATURE_LIST) + sizeof(EFI_SIGNATURE_DATA) - 1 + X509DataSize;
+  SigDataSize = sizeof (EFI_SIGNATURE_LIST) + sizeof (EFI_SIGNATURE_DATA) - 1 + X509DataSize;
 
   Data = AllocateZeroPool (SigDataSize);
   if (Data == NULL) {
@@ -692,28 +697,28 @@ EnrollX509toVariable (
   //
   // Fill Certificate Database parameters.
   //
-  CACert = (EFI_SIGNATURE_LIST*) Data;
+  CACert = (EFI_SIGNATURE_LIST *) Data;
   CACert->SignatureListSize   = (UINT32) SigDataSize;
   CACert->SignatureHeaderSize = 0;
-  CACert->SignatureSize = (UINT32) (sizeof(EFI_SIGNATURE_DATA) - 1 + X509DataSize);
+  CACert->SignatureSize = (UINT32) (sizeof (EFI_SIGNATURE_DATA) - 1 + X509DataSize);
   CopyGuid (&CACert->SignatureType, &gEfiCertX509Guid);
 
-  CACertData = (EFI_SIGNATURE_DATA*) ((UINT8* ) CACert + sizeof (EFI_SIGNATURE_LIST));
+  CACertData = (EFI_SIGNATURE_DATA *) ((UINT8 *) CACert + sizeof (EFI_SIGNATURE_LIST));
   CopyGuid (&CACertData->SignatureOwner, Private->CertGuid);
-  CopyMem ((UINT8* ) (CACertData->SignatureData), X509Data, X509DataSize);
+  CopyMem ((UINT8 *) (CACertData->SignatureData), X509Data, X509DataSize);
 
   //
   // Check if the signature database entry already exists. If it does, use the
   // EFI_VARIABLE_APPEND_WRITE attribute to append the new signature data to
   // the original variable, plus preserve the original variable attributes.
   //
-  Status = gRT->GetVariable(
-                  VariableName,
-                  &gEfiTlsCaCertificateGuid,
-                  &Attr,
-                  &DataSize,
-                  NULL
-                  );
+  Status = gRT->GetVariable (
+                             VariableName,
+                             &gEfiTlsCaCertificateGuid,
+                             &Attr,
+                             &DataSize,
+                             NULL
+                             );
   if (Status == EFI_BUFFER_TOO_SMALL) {
     Attr |= EFI_VARIABLE_APPEND_WRITE;
   } else if (Status == EFI_NOT_FOUND) {
@@ -722,13 +727,13 @@ EnrollX509toVariable (
     goto ON_EXIT;
   }
 
-  Status = gRT->SetVariable(
-                  VariableName,
-                  &gEfiTlsCaCertificateGuid,
-                  Attr,
-                  SigDataSize,
-                  Data
-                  );
+  Status = gRT->SetVariable (
+                             VariableName,
+                             &gEfiTlsCaCertificateGuid,
+                             Attr,
+                             SigDataSize,
+                             Data
+                             );
   if (EFI_ERROR (Status)) {
     goto ON_EXIT;
   }
@@ -770,10 +775,11 @@ EnrollCertDatabase (
   IN CHAR16                        *VariableName
   )
 {
-  UINT16*      FilePostFix;
-  UINTN        NameLength;
+  UINT16  *FilePostFix;
+  UINTN   NameLength;
 
-  if ((Private->FileContext->FileName == NULL) || (Private->FileContext->FHandle == NULL) || (Private->CertGuid == NULL)) {
+  if ((Private->FileContext->FileName == NULL) || (Private->FileContext->FHandle == NULL) ||
+      (Private->CertGuid == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -784,6 +790,7 @@ EnrollCertDatabase (
   if (NameLength <= 4) {
     return EFI_INVALID_PARAMETER;
   }
+
   FilePostFix = Private->FileContext->FileName + NameLength - 4;
 
   if (IsDerPemEncodeCertificate (FilePostFix)) {
@@ -821,11 +828,11 @@ RefreshUpdateData (
   // Create Hii Extend Label OpCode as the start opcode
   //
   mStartLabel = (EFI_IFR_GUID_LABEL *) HiiCreateGuidOpCode (
-                                         mStartOpCodeHandle,
-                                         &gEfiIfrTianoGuid,
-                                         NULL,
-                                         sizeof (EFI_IFR_GUID_LABEL)
-                                         );
+                                                            mStartOpCodeHandle,
+                                                            &gEfiIfrTianoGuid,
+                                                            NULL,
+                                                            sizeof (EFI_IFR_GUID_LABEL)
+                                                            );
   mStartLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
 }
 
@@ -849,12 +856,12 @@ CleanUpPage (
   //
   mStartLabel->Number = LabelId;
   HiiUpdateForm (
-    PrivateData->RegisteredHandle,
-    &gTlsAuthConfigGuid,
-    LabelId,
-    mStartOpCodeHandle, // Label LabelId
-    mEndOpCodeHandle    // LABEL_END
-    );
+                 PrivateData->RegisteredHandle,
+                 &gTlsAuthConfigGuid,
+                 LabelId,
+                 mStartOpCodeHandle, // Label LabelId
+                 mEndOpCodeHandle    // LABEL_END
+                 );
 }
 
 /**
@@ -868,19 +875,20 @@ CleanUpPage (
 
 **/
 BOOLEAN
-UpdatePage(
+UpdatePage (
   IN  EFI_DEVICE_PATH_PROTOCOL  *FilePath,
   IN  EFI_FORM_ID               FormId
   )
 {
-  CHAR16                *FileName;
-  EFI_STRING_ID         StringToken;
+  CHAR16         *FileName;
+  EFI_STRING_ID  StringToken;
 
   FileName = NULL;
 
   if (FilePath != NULL) {
-    FileName = ExtractFileNameFromDevicePath(FilePath);
+    FileName = ExtractFileNameFromDevicePath (FilePath);
   }
+
   if (FileName == NULL) {
     //
     // FileName = NULL has two case:
@@ -890,16 +898,17 @@ UpdatePage(
     //
     return TRUE;
   }
+
   StringToken =  HiiSetString (mTlsAuthPrivateData->RegisteredHandle, 0, FileName, NULL);
 
   mTlsAuthPrivateData->FileContext->FileName = FileName;
 
   EfiOpenFileByDevicePath (
-    &FilePath,
-    &mTlsAuthPrivateData->FileContext->FHandle,
-    EFI_FILE_MODE_READ,
-    0
-    );
+                           &FilePath,
+                           &mTlsAuthPrivateData->FileContext->FHandle,
+                           EFI_FILE_MODE_READ,
+                           0
+                           );
   //
   // Create Subtitle op-code for the display string of the option.
   //
@@ -907,20 +916,20 @@ UpdatePage(
   mStartLabel->Number = FormId;
 
   HiiCreateSubTitleOpCode (
-    mStartOpCodeHandle,
-    StringToken,
-    0,
-    0,
-    0
-   );
+                           mStartOpCodeHandle,
+                           StringToken,
+                           0,
+                           0,
+                           0
+                           );
 
   HiiUpdateForm (
-    mTlsAuthPrivateData->RegisteredHandle,
-    &gTlsAuthConfigGuid,
-    FormId,
-    mStartOpCodeHandle, /// Label FormId
-    mEndOpCodeHandle    /// LABEL_END
-    );
+                 mTlsAuthPrivateData->RegisteredHandle,
+                 &gTlsAuthConfigGuid,
+                 FormId,
+                 mStartOpCodeHandle, /// Label FormId
+                 mEndOpCodeHandle    /// LABEL_END
+                 );
 
   return TRUE;
 }
@@ -939,7 +948,7 @@ UpdateCAFromFile (
   IN EFI_DEVICE_PATH_PROTOCOL    *FilePath
   )
 {
-  return UpdatePage(FilePath, TLS_AUTH_CONFIG_FORMID4_FORM);
+  return UpdatePage (FilePath, TLS_AUTH_CONFIG_FORMID4_FORM);
 }
 
 /**
@@ -962,13 +971,13 @@ TlsAuthConfigFormUnload (
     // Uninstall EFI_HII_CONFIG_ACCESS_PROTOCOL
     //
     gBS->UninstallMultipleProtocolInterfaces (
-           Private->DriverHandle,
-           &gEfiDevicePathProtocolGuid,
-           &mTlsAuthConfigHiiVendorDevicePath,
-           &gEfiHiiConfigAccessProtocolGuid,
-           &Private->ConfigAccess,
-           NULL
-           );
+                                              Private->DriverHandle,
+                                              &gEfiDevicePathProtocolGuid,
+                                              &mTlsAuthConfigHiiVendorDevicePath,
+                                              &gEfiHiiConfigAccessProtocolGuid,
+                                              &Private->ConfigAccess,
+                                              NULL
+                                              );
     Private->DriverHandle = NULL;
   }
 
@@ -1001,7 +1010,6 @@ TlsAuthConfigFormUnload (
   return EFI_SUCCESS;
 }
 
-
 /**
   Initialize the configuration form.
 
@@ -1016,25 +1024,25 @@ TlsAuthConfigFormInit (
   IN TLS_AUTH_CONFIG_PRIVATE_DATA     *Private
   )
 {
-  EFI_STATUS                        Status;
+  EFI_STATUS  Status;
 
   Private->Signature = TLS_AUTH_CONFIG_PRIVATE_DATA_SIGNATURE;
 
   Private->ConfigAccess.ExtractConfig = TlsAuthConfigAccessExtractConfig;
   Private->ConfigAccess.RouteConfig   = TlsAuthConfigAccessRouteConfig;
-  Private->ConfigAccess.Callback      = TlsAuthConfigAccessCallback;
+  Private->ConfigAccess.Callback = TlsAuthConfigAccessCallback;
 
   //
   // Install Device Path Protocol and Config Access protocol to driver handle.
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &Private->DriverHandle,
-                  &gEfiDevicePathProtocolGuid,
-                  &mTlsAuthConfigHiiVendorDevicePath,
-                  &gEfiHiiConfigAccessProtocolGuid,
-                  &Private->ConfigAccess,
-                  NULL
-                  );
+                                                   &Private->DriverHandle,
+                                                   &gEfiDevicePathProtocolGuid,
+                                                   &mTlsAuthConfigHiiVendorDevicePath,
+                                                   &gEfiHiiConfigAccessProtocolGuid,
+                                                   &Private->ConfigAccess,
+                                                   NULL
+                                                   );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -1043,12 +1051,12 @@ TlsAuthConfigFormInit (
   // Publish our HII data.
   //
   Private->RegisteredHandle = HiiAddPackages (
-                                &gTlsAuthConfigGuid,
-                                Private->DriverHandle,
-                                TlsAuthConfigDxeStrings,
-                                TlsAuthConfigVfrBin,
-                                NULL
-                                );
+                                              &gTlsAuthConfigGuid,
+                                              Private->DriverHandle,
+                                              TlsAuthConfigDxeStrings,
+                                              TlsAuthConfigVfrBin,
+                                              NULL
+                                              );
   if (Private->RegisteredHandle == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Error;
@@ -1079,24 +1087,24 @@ TlsAuthConfigFormInit (
   // Create Hii Extend Label OpCode as the start opcode
   //
   mStartLabel = (EFI_IFR_GUID_LABEL *) HiiCreateGuidOpCode (
-                                         mStartOpCodeHandle,
-                                         &gEfiIfrTianoGuid,
-                                         NULL,
-                                         sizeof (EFI_IFR_GUID_LABEL)
-                                         );
+                                                            mStartOpCodeHandle,
+                                                            &gEfiIfrTianoGuid,
+                                                            NULL,
+                                                            sizeof (EFI_IFR_GUID_LABEL)
+                                                            );
   mStartLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
 
   //
   // Create Hii Extend Label OpCode as the end opcode
   //
   mEndLabel = (EFI_IFR_GUID_LABEL *) HiiCreateGuidOpCode (
-                                       mEndOpCodeHandle,
-                                       &gEfiIfrTianoGuid,
-                                       NULL,
-                                       sizeof (EFI_IFR_GUID_LABEL)
-                                       );
+                                                          mEndOpCodeHandle,
+                                                          &gEfiIfrTianoGuid,
+                                                          NULL,
+                                                          sizeof (EFI_IFR_GUID_LABEL)
+                                                          );
   mEndLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
-  mEndLabel->Number       = LABEL_END;
+  mEndLabel->Number = LABEL_END;
 
   return EFI_SUCCESS;
 
@@ -1185,13 +1193,13 @@ TlsAuthConfigAccessExtractConfig (
   OUT       EFI_STRING                      *Results
   )
 {
-  EFI_STATUS                        Status;
-  UINTN                             BufferSize;
-  UINTN                             Size;
-  EFI_STRING                        ConfigRequest;
-  EFI_STRING                        ConfigRequestHdr;
-  TLS_AUTH_CONFIG_PRIVATE_DATA      *Private;
-  BOOLEAN                           AllocatedRequest;
+  EFI_STATUS                    Status;
+  UINTN                         BufferSize;
+  UINTN                         Size;
+  EFI_STRING                    ConfigRequest;
+  EFI_STRING                    ConfigRequestHdr;
+  TLS_AUTH_CONFIG_PRIVATE_DATA  *Private;
+  BOOLEAN                       AllocatedRequest;
 
   if (Progress == NULL || Results == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -1200,14 +1208,14 @@ TlsAuthConfigAccessExtractConfig (
   AllocatedRequest = FALSE;
   ConfigRequestHdr = NULL;
   ConfigRequest    = NULL;
-  Size             = 0;
+  Size = 0;
 
-  Private          = TLS_AUTH_CONFIG_PRIVATE_FROM_THIS (This);
+  Private = TLS_AUTH_CONFIG_PRIVATE_FROM_THIS (This);
 
-  BufferSize       = sizeof (TLS_AUTH_CONFIG_IFR_NVDATA);
+  BufferSize = sizeof (TLS_AUTH_CONFIG_IFR_NVDATA);
   ZeroMem (&Private->TlsAuthConfigNvData, BufferSize);
 
-  *Progress        = Request;
+  *Progress = Request;
 
   if ((Request != NULL) && !HiiIsConfigHdrMatch (Request, &gTlsAuthConfigGuid, mTlsAuthConfigStorageName)) {
     return EFI_NOT_FOUND;
@@ -1226,19 +1234,19 @@ TlsAuthConfigAccessExtractConfig (
     ConfigRequest = AllocateZeroPool (Size);
     ASSERT (ConfigRequest != NULL);
     AllocatedRequest = TRUE;
-    UnicodeSPrint (ConfigRequest, Size, L"%s&OFFSET=0&WIDTH=%016LX", ConfigRequestHdr, (UINT64)BufferSize);
+    UnicodeSPrint (ConfigRequest, Size, L"%s&OFFSET=0&WIDTH=%016LX", ConfigRequestHdr, (UINT64) BufferSize);
     FreePool (ConfigRequestHdr);
     ConfigRequestHdr = NULL;
   }
 
   Status = gHiiConfigRouting->BlockToConfig (
-                                gHiiConfigRouting,
-                                ConfigRequest,
-                                (UINT8 *) &Private->TlsAuthConfigNvData,
-                                BufferSize,
-                                Results,
-                                Progress
-                                );
+                                             gHiiConfigRouting,
+                                             ConfigRequest,
+                                             (UINT8 *) &Private->TlsAuthConfigNvData,
+                                             BufferSize,
+                                             Results,
+                                             Progress
+                                             );
 
   //
   // Free the allocated config request string.
@@ -1307,13 +1315,14 @@ TlsAuthConfigAccessRouteConfig (
   OUT       EFI_STRING                      *Progress
   )
 {
-  EFI_STATUS                       Status;
-  UINTN                            BufferSize;
-  TLS_AUTH_CONFIG_PRIVATE_DATA     *Private;
+  EFI_STATUS                    Status;
+  UINTN                         BufferSize;
+  TLS_AUTH_CONFIG_PRIVATE_DATA  *Private;
 
   if (Progress == NULL) {
     return EFI_INVALID_PARAMETER;
   }
+
   *Progress = Configuration;
 
   if (Configuration == NULL) {
@@ -1334,12 +1343,12 @@ TlsAuthConfigAccessRouteConfig (
   ZeroMem (&Private->TlsAuthConfigNvData, BufferSize);
 
   Status = gHiiConfigRouting->ConfigToBlock (
-                                gHiiConfigRouting,
-                                Configuration,
-                                (UINT8 *) &Private->TlsAuthConfigNvData,
-                                &BufferSize,
-                                Progress
-                                );
+                                             gHiiConfigRouting,
+                                             Configuration,
+                                             (UINT8 *) &Private->TlsAuthConfigNvData,
+                                             &BufferSize,
+                                             Progress
+                                             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -1383,18 +1392,18 @@ TlsAuthConfigAccessCallback (
   OUT    EFI_BROWSER_ACTION_REQUEST             *ActionRequest
   )
 {
-  EFI_STATUS                      Status;
-  RETURN_STATUS                   RStatus;
-  TLS_AUTH_CONFIG_PRIVATE_DATA    *Private;
-  UINTN                           BufferSize;
-  TLS_AUTH_CONFIG_IFR_NVDATA      *IfrNvData;
-  UINT16                          LabelId;
-  EFI_DEVICE_PATH_PROTOCOL        *File;
-  EFI_HII_POPUP_PROTOCOL          *HiiPopUp;
-  EFI_HII_POPUP_SELECTION         PopUpSelect;
+  EFI_STATUS                    Status;
+  RETURN_STATUS                 RStatus;
+  TLS_AUTH_CONFIG_PRIVATE_DATA  *Private;
+  UINTN                         BufferSize;
+  TLS_AUTH_CONFIG_IFR_NVDATA    *IfrNvData;
+  UINT16                        LabelId;
+  EFI_DEVICE_PATH_PROTOCOL      *File;
+  EFI_HII_POPUP_PROTOCOL        *HiiPopUp;
+  EFI_HII_POPUP_SELECTION       PopUpSelect;
 
-  Status           = EFI_SUCCESS;
-  File             = NULL;
+  Status = EFI_SUCCESS;
+  File   = NULL;
 
   if ((This == NULL) || (Value == NULL) || (ActionRequest == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -1403,7 +1412,7 @@ TlsAuthConfigAccessCallback (
   Private = TLS_AUTH_CONFIG_PRIVATE_FROM_THIS (This);
 
   mTlsAuthPrivateData = Private;
-  Status = gBS->LocateProtocol (&gEfiHiiPopupProtocolGuid, NULL, (VOID**) &HiiPopUp);
+  Status = gBS->LocateProtocol (&gEfiHiiPopupProtocolGuid, NULL, (VOID **) &HiiPopUp);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Can't find Form PopUp protocol. Exit (%r)\n", Status));
     return Status;
@@ -1413,7 +1422,7 @@ TlsAuthConfigAccessCallback (
   // Retrieve uncommitted data from Browser
   //
   BufferSize = sizeof (TLS_AUTH_CONFIG_IFR_NVDATA);
-  IfrNvData = AllocateZeroPool (BufferSize);
+  IfrNvData  = AllocateZeroPool (BufferSize);
   if (IfrNvData == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -1429,106 +1438,110 @@ TlsAuthConfigAccessCallback (
 
   if (Action == EFI_BROWSER_ACTION_CHANGING) {
     switch (QuestionId) {
-    case KEY_TLS_AUTH_CONFIG_CLIENT_CERT:
-    case KEY_TLS_AUTH_CONFIG_SERVER_CA:
-      //
-      // Clear Cert GUID.
-      //
-      ZeroMem (IfrNvData->CertGuid, sizeof (IfrNvData->CertGuid));
-      if (Private->CertGuid == NULL) {
-        Private->CertGuid = (EFI_GUID *) AllocateZeroPool (sizeof (EFI_GUID));
+      case KEY_TLS_AUTH_CONFIG_CLIENT_CERT:
+      case KEY_TLS_AUTH_CONFIG_SERVER_CA:
+        //
+        // Clear Cert GUID.
+        //
+        ZeroMem (IfrNvData->CertGuid, sizeof (IfrNvData->CertGuid));
         if (Private->CertGuid == NULL) {
-          return EFI_OUT_OF_RESOURCES;
+          Private->CertGuid = (EFI_GUID *) AllocateZeroPool (sizeof (EFI_GUID));
+          if (Private->CertGuid == NULL) {
+            return EFI_OUT_OF_RESOURCES;
+          }
         }
-      }
-      if (QuestionId == KEY_TLS_AUTH_CONFIG_CLIENT_CERT) {
-        LabelId = TLS_AUTH_CONFIG_FORMID3_FORM;
-      } else {
-        LabelId = TLS_AUTH_CONFIG_FORMID4_FORM;
-      }
 
-      //
-      // Refresh selected file.
-      //
-      CleanUpPage (LabelId, Private);
-      break;
-    case KEY_TLS_AUTH_CONFIG_ENROLL_CERT_FROM_FILE:
-      //
-      // If the file is already opened, clean the file related resource first.
-      //
-      CleanFileContext (Private);
+        if (QuestionId == KEY_TLS_AUTH_CONFIG_CLIENT_CERT) {
+          LabelId = TLS_AUTH_CONFIG_FORMID3_FORM;
+        } else {
+          LabelId = TLS_AUTH_CONFIG_FORMID4_FORM;
+        }
 
-      ChooseFile( NULL, NULL, UpdateCAFromFile, &File);
-      break;
-
-    case KEY_TLS_AUTH_CONFIG_VALUE_SAVE_AND_EXIT:
-      Status = EnrollCertDatabase (Private, EFI_TLS_CA_CERTIFICATE_VARIABLE);
-      if (EFI_ERROR (Status)) {
+        //
+        // Refresh selected file.
+        //
+        CleanUpPage (LabelId, Private);
+        break;
+      case KEY_TLS_AUTH_CONFIG_ENROLL_CERT_FROM_FILE:
+        //
+        // If the file is already opened, clean the file related resource first.
+        //
         CleanFileContext (Private);
 
-        HiiPopUp->CreatePopup (
-          HiiPopUp,
-          EfiHiiPopupStyleError,
-          EfiHiiPopupTypeOk,
-          Private->RegisteredHandle,
-          STRING_TOKEN (STR_TLS_AUTH_ENROLL_CERT_FAILURE),
-          &PopUpSelect
-          );
-      }
-      break;
+        ChooseFile (NULL, NULL, UpdateCAFromFile, &File);
+        break;
 
-    case KEY_TLS_AUTH_CONFIG_VALUE_NO_SAVE_AND_EXIT:
-      CleanFileContext (Private);
+      case KEY_TLS_AUTH_CONFIG_VALUE_SAVE_AND_EXIT:
+        Status = EnrollCertDatabase (Private, EFI_TLS_CA_CERTIFICATE_VARIABLE);
+        if (EFI_ERROR (Status)) {
+          CleanFileContext (Private);
 
-      if (Private->CertGuid!= NULL) {
-        FreePool (Private->CertGuid);
-        Private->CertGuid = NULL;
-      }
-      break;
+          HiiPopUp->CreatePopup (
+                                 HiiPopUp,
+                                 EfiHiiPopupStyleError,
+                                 EfiHiiPopupTypeOk,
+                                 Private->RegisteredHandle,
+                                 STRING_TOKEN (STR_TLS_AUTH_ENROLL_CERT_FAILURE),
+                                 &PopUpSelect
+                                 );
+        }
 
-    case KEY_TLS_AUTH_CONFIG_DELETE_CERT:
-      UpdateDeletePage (
-        Private,
-        EFI_TLS_CA_CERTIFICATE_VARIABLE,
-        &gEfiTlsCaCertificateGuid,
-        LABEL_CA_DELETE,
-        TLS_AUTH_CONFIG_FORMID5_FORM,
-        OPTION_DEL_CA_ESTION_ID
-        );
-       break;
+        break;
 
-    default:
-      if ((QuestionId >= OPTION_DEL_CA_ESTION_ID) &&
-                 (QuestionId < (OPTION_DEL_CA_ESTION_ID + OPTION_CONFIG_RANGE)))  {
-        DeleteCert (
-          Private,
-          EFI_TLS_CA_CERTIFICATE_VARIABLE,
-          &gEfiTlsCaCertificateGuid,
-          LABEL_CA_DELETE,
-          TLS_AUTH_CONFIG_FORMID5_FORM,
-          OPTION_DEL_CA_ESTION_ID,
-          QuestionId - OPTION_DEL_CA_ESTION_ID
-          );
-      }
-      break;
+      case KEY_TLS_AUTH_CONFIG_VALUE_NO_SAVE_AND_EXIT:
+        CleanFileContext (Private);
+
+        if (Private->CertGuid != NULL) {
+          FreePool (Private->CertGuid);
+          Private->CertGuid = NULL;
+        }
+
+        break;
+
+      case KEY_TLS_AUTH_CONFIG_DELETE_CERT:
+        UpdateDeletePage (
+                          Private,
+                          EFI_TLS_CA_CERTIFICATE_VARIABLE,
+                          &gEfiTlsCaCertificateGuid,
+                          LABEL_CA_DELETE,
+                          TLS_AUTH_CONFIG_FORMID5_FORM,
+                          OPTION_DEL_CA_ESTION_ID
+                          );
+        break;
+
+      default:
+        if ((QuestionId >= OPTION_DEL_CA_ESTION_ID) &&
+            (QuestionId < (OPTION_DEL_CA_ESTION_ID + OPTION_CONFIG_RANGE))) {
+          DeleteCert (
+                      Private,
+                      EFI_TLS_CA_CERTIFICATE_VARIABLE,
+                      &gEfiTlsCaCertificateGuid,
+                      LABEL_CA_DELETE,
+                      TLS_AUTH_CONFIG_FORMID5_FORM,
+                      OPTION_DEL_CA_ESTION_ID,
+                      QuestionId - OPTION_DEL_CA_ESTION_ID
+                      );
+        }
+
+        break;
     }
   } else if (Action == EFI_BROWSER_ACTION_CHANGED) {
     switch (QuestionId) {
-    case KEY_TLS_AUTH_CONFIG_CERT_GUID:
-      ASSERT (Private->CertGuid != NULL);
-      RStatus = StrToGuid (
-                  IfrNvData->CertGuid,
-                  Private->CertGuid
-                  );
-      if (RETURN_ERROR (RStatus) || (IfrNvData->CertGuid[GUID_STRING_LENGTH] != L'\0')) {
-        Status = EFI_INVALID_PARAMETER;
-        break;
-      }
+      case KEY_TLS_AUTH_CONFIG_CERT_GUID:
+        ASSERT (Private->CertGuid != NULL);
+        RStatus = StrToGuid (
+                             IfrNvData->CertGuid,
+                             Private->CertGuid
+                             );
+        if (RETURN_ERROR (RStatus) || (IfrNvData->CertGuid[GUID_STRING_LENGTH] != L'\0')) {
+          Status = EFI_INVALID_PARAMETER;
+          break;
+        }
 
-      *ActionRequest = EFI_BROWSER_ACTION_REQUEST_FORM_APPLY;
-      break;
-    default:
-      break;
+        *ActionRequest = EFI_BROWSER_ACTION_REQUEST_FORM_APPLY;
+        break;
+      default:
+        break;
     }
   } else if (Action == EFI_BROWSER_ACTION_FORM_CLOSE) {
     CleanFileContext (Private);
@@ -1538,17 +1551,15 @@ EXIT:
 
   if (!EFI_ERROR (Status)) {
     BufferSize = sizeof (TLS_AUTH_CONFIG_IFR_NVDATA);
-    HiiSetBrowserData (&gTlsAuthConfigGuid, mTlsAuthConfigStorageName, BufferSize, (UINT8*) IfrNvData, NULL);
+    HiiSetBrowserData (&gTlsAuthConfigGuid, mTlsAuthConfigStorageName, BufferSize, (UINT8 *) IfrNvData, NULL);
   }
 
   FreePool (IfrNvData);
 
-  if (File != NULL){
-    FreePool(File);
+  if (File != NULL) {
+    FreePool (File);
     File = NULL;
   }
 
   return EFI_SUCCESS;
-
 }
-

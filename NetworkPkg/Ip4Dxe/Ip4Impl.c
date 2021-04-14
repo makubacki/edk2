@@ -7,7 +7,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "Ip4Impl.h"
 
-EFI_IPSEC2_PROTOCOL    *mIpSec = NULL;
+EFI_IPSEC2_PROTOCOL  *mIpSec = NULL;
 
 /**
   Gets the current operational settings for this instance of the EFI IPv4 Protocol driver.
@@ -329,7 +329,7 @@ EfiIp4Poll (
   );
 
 EFI_IP4_PROTOCOL
-mEfiIp4ProtocolTemplete = {
+  mEfiIp4ProtocolTemplete = {
   EfiIp4GetModeData,
   EfiIp4Configure,
   EfiIp4Groups,
@@ -367,12 +367,12 @@ EfiIp4GetModeData (
   OUT       EFI_SIMPLE_NETWORK_MODE         *SnpModeData     OPTIONAL
   )
 {
-  IP4_PROTOCOL              *IpInstance;
-  IP4_SERVICE               *IpSb;
-  EFI_IP4_CONFIG_DATA       *Config;
-  EFI_STATUS                Status;
-  EFI_TPL                   OldTpl;
-  IP4_ADDR                  Ip;
+  IP4_PROTOCOL         *IpInstance;
+  IP4_SERVICE          *IpSb;
+  EFI_IP4_CONFIG_DATA  *Config;
+  EFI_STATUS           Status;
+  EFI_TPL              OldTpl;
+  IP4_ADDR             Ip;
 
   if (This == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -380,25 +380,25 @@ EfiIp4GetModeData (
 
   OldTpl     = gBS->RaiseTPL (TPL_CALLBACK);
   IpInstance = IP4_INSTANCE_FROM_PROTOCOL (This);
-  IpSb       = IpInstance->Service;
+  IpSb = IpInstance->Service;
 
   if (Ip4ModeData != NULL) {
     //
     // IsStarted is "whether the EfiIp4Configure has been called".
     // IsConfigured is "whether the station address has been configured"
     //
-    Ip4ModeData->IsStarted     = (BOOLEAN)(IpInstance->State == IP4_STATE_CONFIGED);
+    Ip4ModeData->IsStarted = (BOOLEAN) (IpInstance->State == IP4_STATE_CONFIGED);
     CopyMem (&Ip4ModeData->ConfigData, &IpInstance->ConfigData, sizeof (Ip4ModeData->ConfigData));
-    Ip4ModeData->IsConfigured  = FALSE;
+    Ip4ModeData->IsConfigured = FALSE;
 
-    Ip4ModeData->GroupCount    = IpInstance->GroupCount;
-    Ip4ModeData->GroupTable    = (EFI_IPv4_ADDRESS *) IpInstance->Groups;
+    Ip4ModeData->GroupCount = IpInstance->GroupCount;
+    Ip4ModeData->GroupTable = (EFI_IPv4_ADDRESS *) IpInstance->Groups;
 
     Ip4ModeData->IcmpTypeCount = 23;
     Ip4ModeData->IcmpTypeList  = mIp4SupportedIcmp;
 
-    Ip4ModeData->RouteTable    = NULL;
-    Ip4ModeData->RouteCount    = 0;
+    Ip4ModeData->RouteTable = NULL;
+    Ip4ModeData->RouteCount = 0;
 
     Ip4ModeData->MaxPacketSize = IpSb->MaxPacketSize;
 
@@ -409,7 +409,7 @@ EfiIp4GetModeData (
     // using the default one, such as a ftp server.
     //
     if (Ip4ModeData->IsStarted) {
-      Config  = &Ip4ModeData->ConfigData;
+      Config = &Ip4ModeData->ConfigData;
 
       Ip = HTONL (IpInstance->Interface->Ip);
       CopyMem (&Config->StationAddress, &Ip, sizeof (EFI_IPv4_ADDRESS));
@@ -425,7 +425,7 @@ EfiIp4GetModeData (
       Status = Ip4BuildEfiRouteTable (IpInstance);
 
       if (EFI_ERROR (Status)) {
-        gBS->RestoreTPL (OldTpl);
+  gBS->RestoreTPL (OldTpl);
         return Status;
       }
 
@@ -442,7 +442,6 @@ EfiIp4GetModeData (
   gBS->RestoreTPL (OldTpl);
   return Status;
 }
-
 
 /**
   Config the MNP parameter used by IP. The IP driver use one MNP
@@ -468,15 +467,15 @@ Ip4ServiceConfigMnp (
   IN BOOLEAN                Force
   )
 {
-  LIST_ENTRY                *Entry;
-  LIST_ENTRY                *ProtoEntry;
-  IP4_INTERFACE             *IpIf;
-  IP4_PROTOCOL              *IpInstance;
-  BOOLEAN                   Reconfig;
-  BOOLEAN                   PromiscReceive;
-  EFI_STATUS                Status;
+  LIST_ENTRY     *Entry;
+  LIST_ENTRY     *ProtoEntry;
+  IP4_INTERFACE  *IpIf;
+  IP4_PROTOCOL   *IpInstance;
+  BOOLEAN        Reconfig;
+  BOOLEAN        PromiscReceive;
+  EFI_STATUS     Status;
 
-  Reconfig       = FALSE;
+  Reconfig = FALSE;
   PromiscReceive = FALSE;
 
   if (!Force) {
@@ -486,8 +485,7 @@ Ip4ServiceConfigMnp (
     // filter also.
     //
     NET_LIST_FOR_EACH (Entry, &IpSb->Interfaces) {
-
-      IpIf              = NET_LIST_USER_STRUCT (Entry, IP4_INTERFACE, Link);
+      IpIf = NET_LIST_USER_STRUCT (Entry, IP4_INTERFACE, Link);
       IpIf->PromiscRecv = FALSE;
 
       NET_LIST_FOR_EACH (ProtoEntry, &IpIf->IpInstances) {
@@ -507,7 +505,7 @@ Ip4ServiceConfigMnp (
       return EFI_SUCCESS;
     }
 
-    Reconfig  = TRUE;
+    Reconfig = TRUE;
     IpSb->MnpConfigData.EnablePromiscuousReceive = PromiscReceive;
   }
 
@@ -522,7 +520,6 @@ Ip4ServiceConfigMnp (
 
   return Status;
 }
-
 
 /**
   Initialize the IP4_PROTOCOL structure to the unconfigured states.
@@ -544,19 +541,18 @@ Ip4InitProtocol (
   IpInstance->Signature = IP4_PROTOCOL_SIGNATURE;
   CopyMem (&IpInstance->Ip4Proto, &mEfiIp4ProtocolTemplete, sizeof (IpInstance->Ip4Proto));
   IpInstance->State     = IP4_STATE_UNCONFIGED;
-  IpInstance->InDestroy   = FALSE;
+  IpInstance->InDestroy = FALSE;
   IpInstance->Service   = IpSb;
 
   InitializeListHead (&IpInstance->Link);
-  NetMapInit  (&IpInstance->RxTokens);
-  NetMapInit  (&IpInstance->TxTokens);
+  NetMapInit (&IpInstance->RxTokens);
+  NetMapInit (&IpInstance->TxTokens);
   InitializeListHead (&IpInstance->Received);
   InitializeListHead (&IpInstance->Delivered);
   InitializeListHead (&IpInstance->AddrLink);
 
   EfiInitializeLock (&IpInstance->RecycleLock, TPL_NOTIFY);
 }
-
 
 /**
   Configure the IP4 child. If the child is already configured,
@@ -595,7 +591,7 @@ Ip4ConfigProtocol (
 
   IpSb = IpInstance->Service;
 
-  Ip4Config2  = NULL;
+  Ip4Config2 = NULL;
 
   //
   // User is changing packet filters. It must be stopped
@@ -620,7 +616,7 @@ Ip4ConfigProtocol (
   // Each IP child has its own route table, which may point to the
   // default table if it is using default address.
   //
-  Status                 = EFI_OUT_OF_RESOURCES;
+  Status = EFI_OUT_OF_RESOURCES;
   IpInstance->RouteTable = Ip4CreateRouteTable ();
 
   if (IpInstance->RouteTable == NULL) {
@@ -633,7 +629,7 @@ Ip4ConfigProtocol (
   CopyMem (&Ip, &Config->StationAddress, sizeof (IP4_ADDR));
   CopyMem (&Netmask, &Config->SubnetMask, sizeof (IP4_ADDR));
 
-  Ip      = NTOHL (Ip);
+  Ip = NTOHL (Ip);
   Netmask = NTOHL (Netmask);
 
   if (!Config->UseDefaultAddress) {
@@ -646,7 +642,6 @@ Ip4ConfigProtocol (
 
     if (IpIf != NULL) {
       NET_GET_REF (IpIf);
-
     } else {
       IpIf = Ip4CreateInterface (IpSb->Mnp, IpSb->Controller, IpSb->Image);
 
@@ -669,11 +664,11 @@ Ip4ConfigProtocol (
     // Add a route to this connected network in the instance route table.
     //
     Ip4AddRoute (
-      IpInstance->RouteTable,
-      Ip & Netmask,
-      Netmask,
-      IP4_ALLZERO_ADDRESS
-      );
+                 IpInstance->RouteTable,
+                 Ip & Netmask,
+                 Netmask,
+                 IP4_ALLZERO_ADDRESS
+                 );
   } else {
     //
     // Use the default address. Check the state.
@@ -686,13 +681,13 @@ Ip4ConfigProtocol (
       Policy = IpSb->Ip4Config2Instance.Policy;
       if (Policy != Ip4Config2PolicyDhcp) {
         Ip4Config2 = &IpSb->Ip4Config2Instance.Ip4Config2;
-        Policy = Ip4Config2PolicyDhcp;
-        Status= Ip4Config2->SetData (
-                              Ip4Config2,
-                              Ip4Config2DataTypePolicy,
-                              sizeof (EFI_IP4_CONFIG2_POLICY),
-                              &Policy
-                              );
+        Policy     = Ip4Config2PolicyDhcp;
+        Status     = Ip4Config2->SetData (
+                                          Ip4Config2,
+                                          Ip4Config2DataTypePolicy,
+                                          sizeof (EFI_IP4_CONFIG2_POLICY),
+                                          &Policy
+                                          );
         if (EFI_ERROR (Status)) {
           goto ON_ERROR;
         }
@@ -715,24 +710,25 @@ Ip4ConfigProtocol (
 
   IpInstance->Interface = IpIf;
   if (IpIf->Arp != NULL) {
-    Arp = NULL;
+    Arp    = NULL;
     Status = gBS->OpenProtocol (
-                    IpIf->ArpHandle,
-                    &gEfiArpProtocolGuid,
-                    (VOID **) &Arp,
-                    gIp4DriverBinding.DriverBindingHandle,
-                    IpInstance->Handle,
-                    EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
-                    );
+                                IpIf->ArpHandle,
+                                &gEfiArpProtocolGuid,
+                                (VOID **) &Arp,
+                                gIp4DriverBinding.DriverBindingHandle,
+                                IpInstance->Handle,
+                                EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+                                );
     if (EFI_ERROR (Status)) {
       Ip4FreeInterface (IpIf, IpInstance);
       goto ON_ERROR;
     }
   }
+
   InsertTailList (&IpIf->IpInstances, &IpInstance->AddrLink);
 
   CopyMem (&IpInstance->ConfigData, Config, sizeof (IpInstance->ConfigData));
-  IpInstance->State       = IP4_STATE_CONFIGED;
+  IpInstance->State = IP4_STATE_CONFIGED;
 
   //
   // Although EFI_NO_MAPPING is an error code, the IP child has been
@@ -750,7 +746,6 @@ ON_ERROR:
   IpInstance->RouteTable = NULL;
   return Status;
 }
-
 
 /**
   Clean up the IP4 child, release all the resources used by it.
@@ -780,19 +775,19 @@ Ip4CleanProtocol (
   // hasn't been called. Just leave it alone.
   //
   if (!IsListEmpty (&IpInstance->Delivered)) {
-    ;
   }
 
   if (IpInstance->Interface != NULL) {
     RemoveEntryList (&IpInstance->AddrLink);
     if (IpInstance->Interface->Arp != NULL) {
-      gBS->CloseProtocol (
-             IpInstance->Interface->ArpHandle,
-             &gEfiArpProtocolGuid,
-             gIp4DriverBinding.DriverBindingHandle,
-             IpInstance->Handle
-             );
+  gBS->CloseProtocol (
+                      IpInstance->Interface->ArpHandle,
+                      &gEfiArpProtocolGuid,
+                      gIp4DriverBinding.DriverBindingHandle,
+                      IpInstance->Handle
+                      );
     }
+
     Ip4FreeInterface (IpInstance->Interface, IpInstance);
     IpInstance->Interface = NULL;
   }
@@ -814,8 +809,8 @@ Ip4CleanProtocol (
 
   if (IpInstance->Groups != NULL) {
     FreePool (IpInstance->Groups);
-    IpInstance->Groups      = NULL;
-    IpInstance->GroupCount  = 0;
+    IpInstance->Groups     = NULL;
+    IpInstance->GroupCount = 0;
   }
 
   NetMapClean (&IpInstance->TxTokens);
@@ -824,7 +819,6 @@ Ip4CleanProtocol (
 
   return EFI_SUCCESS;
 }
-
 
 /**
   Assigns an IPv4 address and subnet mask to this EFI IPv4 Protocol driver instance.
@@ -876,13 +870,13 @@ EfiIp4Configure (
   IN EFI_IP4_CONFIG_DATA    *IpConfigData       OPTIONAL
   )
 {
-  IP4_PROTOCOL              *IpInstance;
-  EFI_IP4_CONFIG_DATA       *Current;
-  EFI_TPL                   OldTpl;
-  EFI_STATUS                Status;
-  BOOLEAN                   AddrOk;
-  IP4_ADDR                  IpAddress;
-  IP4_ADDR                  SubnetMask;
+  IP4_PROTOCOL         *IpInstance;
+  EFI_IP4_CONFIG_DATA  *Current;
+  EFI_TPL              OldTpl;
+  EFI_STATUS           Status;
+  BOOLEAN              AddrOk;
+  IP4_ADDR             IpAddress;
+  IP4_ADDR             SubnetMask;
 
   //
   // First, validate the parameters
@@ -898,7 +892,6 @@ EfiIp4Configure (
   // Validate the configuration first.
   //
   if (IpConfigData != NULL) {
-
     CopyMem (&IpAddress, &IpConfigData->StationAddress, sizeof (IP4_ADDR));
     CopyMem (&SubnetMask, &IpConfigData->SubnetMask, sizeof (IP4_ADDR));
 
@@ -931,8 +924,8 @@ EfiIp4Configure (
       }
 
       if (!Current->UseDefaultAddress &&
-         (!EFI_IP4_EQUAL (&Current->StationAddress, &IpConfigData->StationAddress) ||
-          !EFI_IP4_EQUAL (&Current->SubnetMask, &IpConfigData->SubnetMask))) {
+          (!EFI_IP4_EQUAL (&Current->StationAddress, &IpConfigData->StationAddress) ||
+           !EFI_IP4_EQUAL (&Current->SubnetMask, &IpConfigData->SubnetMask))) {
         Status = EFI_ALREADY_STARTED;
         goto ON_EXIT;
       }
@@ -971,9 +964,7 @@ EfiIp4Configure (
 ON_EXIT:
   gBS->RestoreTPL (OldTpl);
   return Status;
-
 }
-
 
 /**
   Change the IP4 child's multicast setting. The caller
@@ -997,9 +988,9 @@ Ip4Groups (
   IN EFI_IPv4_ADDRESS       *GroupAddress       OPTIONAL
   )
 {
-  IP4_ADDR                  *Members;
-  IP4_ADDR                  Group;
-  UINT32                    Index;
+  IP4_ADDR  *Members;
+  IP4_ADDR  Group;
+  UINT32    Index;
 
   //
   // Add it to the instance's Groups, and join the group by IGMP.
@@ -1045,7 +1036,7 @@ Ip4Groups (
   // Must iterate from the end to the beginning because the GroupCount
   // is decremented each time an address is removed..
   //
-  for (Index = IpInstance->GroupCount; Index > 0 ; Index--) {
+  for (Index = IpInstance->GroupCount; Index > 0; Index--) {
     ASSERT (IpInstance->Groups != NULL);
     Group = IpInstance->Groups[Index - 1];
     if ((GroupAddress == NULL) || EFI_IP4_EQUAL (&Group, GroupAddress)) {
@@ -1071,7 +1062,6 @@ Ip4Groups (
 
   return ((GroupAddress != NULL) ? EFI_NOT_FOUND : EFI_SUCCESS);
 }
-
 
 /**
   Joins and leaves multicast groups.
@@ -1111,10 +1101,10 @@ EfiIp4Groups (
   IN EFI_IPv4_ADDRESS       *GroupAddress     OPTIONAL
   )
 {
-  IP4_PROTOCOL              *IpInstance;
-  EFI_STATUS                Status;
-  EFI_TPL                   OldTpl;
-  IP4_ADDR                  McastIp;
+  IP4_PROTOCOL  *IpInstance;
+  EFI_STATUS    Status;
+  EFI_TPL       OldTpl;
+  IP4_ADDR      McastIp;
 
   if ((This == NULL) || (JoinFlag && (GroupAddress == NULL))) {
     return EFI_INVALID_PARAMETER;
@@ -1147,7 +1137,6 @@ ON_EXIT:
   gBS->RestoreTPL (OldTpl);
   return Status;
 }
-
 
 /**
   Adds and deletes routing table entries.
@@ -1209,13 +1198,13 @@ EfiIp4Routes (
   IN EFI_IPv4_ADDRESS       *GatewayAddress
   )
 {
-  IP4_PROTOCOL              *IpInstance;
-  IP4_INTERFACE             *IpIf;
-  IP4_ADDR                  Dest;
-  IP4_ADDR                  Netmask;
-  IP4_ADDR                  Nexthop;
-  EFI_STATUS                Status;
-  EFI_TPL                   OldTpl;
+  IP4_PROTOCOL   *IpInstance;
+  IP4_INTERFACE  *IpIf;
+  IP4_ADDR       Dest;
+  IP4_ADDR       Netmask;
+  IP4_ADDR       Nexthop;
+  EFI_STATUS     Status;
+  EFI_TPL        OldTpl;
 
   //
   // First, validate the parameters
@@ -1246,7 +1235,7 @@ EfiIp4Routes (
   Netmask = NTOHL (Netmask);
   Nexthop = NTOHL (Nexthop);
 
-  IpIf    = IpInstance->Interface;
+  IpIf = IpInstance->Interface;
 
   if (!IP4_IS_VALID_NETMASK (Netmask)) {
     Status = EFI_INVALID_PARAMETER;
@@ -1258,8 +1247,7 @@ EfiIp4Routes (
   //
   if ((Nexthop != IP4_ALLZERO_ADDRESS) &&
       ((IpIf->SubnetMask != IP4_ALLONE_ADDRESS && !IP4_NET_EQUAL (Nexthop, IpIf->Ip, IpIf->SubnetMask)) ||
-        IP4_IS_BROADCAST (Ip4GetNetCast (Nexthop, IpIf)))) {
-
+       IP4_IS_BROADCAST (Ip4GetNetCast (Nexthop, IpIf)))) {
     Status = EFI_INVALID_PARAMETER;
     goto ON_EXIT;
   }
@@ -1274,7 +1262,6 @@ ON_EXIT:
   gBS->RestoreTPL (OldTpl);
   return Status;
 }
-
 
 /**
   Check whether the user's token or event has already
@@ -1301,7 +1288,7 @@ Ip4TokenExist (
   EFI_IP4_COMPLETION_TOKEN  *Token;
   EFI_IP4_COMPLETION_TOKEN  *TokenInItem;
 
-  Token       = (EFI_IP4_COMPLETION_TOKEN *) Context;
+  Token = (EFI_IP4_COMPLETION_TOKEN *) Context;
   TokenInItem = (EFI_IP4_COMPLETION_TOKEN *) Item->Key;
 
   if ((Token == TokenInItem) || (Token->Event == TokenInItem->Event)) {
@@ -1330,13 +1317,13 @@ Ip4TxTokenValid (
   IN BOOLEAN                    RawData
   )
 {
-  EFI_IP4_TRANSMIT_DATA     *TxData;
-  EFI_IP4_OVERRIDE_DATA     *Override;
-  IP4_ADDR                  Src;
-  IP4_ADDR                  Gateway;
-  UINT32                    Offset;
-  UINT32                    Index;
-  UINT32                    HeadLen;
+  EFI_IP4_TRANSMIT_DATA  *TxData;
+  EFI_IP4_OVERRIDE_DATA  *Override;
+  IP4_ADDR               Src;
+  IP4_ADDR               Gateway;
+  UINT32                 Offset;
+  UINT32                 Index;
+  UINT32                 HeadLen;
 
   if ((Token == NULL) || (Token->Event == NULL) || (Token->Packet.TxData == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -1360,7 +1347,6 @@ Ip4TxTokenValid (
   for (Index = 0; Index < TxData->FragmentCount; Index++) {
     if ((TxData->FragmentTable[Index].FragmentBuffer == NULL) ||
         (TxData->FragmentTable[Index].FragmentLength == 0)) {
-
       return EFI_INVALID_PARAMETER;
     }
 
@@ -1408,7 +1394,6 @@ Ip4TxTokenValid (
     if ((NetGetIpClass (Src) > IP4_ADDR_CLASSC) ||
         (Src == IP4_ALLONE_ADDRESS) ||
         IP4_IS_BROADCAST (Ip4GetNetCast (Src, IpIf))) {
-
       return EFI_INVALID_PARAMETER;
     }
 
@@ -1420,7 +1405,6 @@ Ip4TxTokenValid (
         ((NetGetIpClass (Gateway) > IP4_ADDR_CLASSC) ||
          !IP4_NET_EQUAL (Gateway, IpIf->Ip, IpIf->SubnetMask) ||
          IP4_IS_BROADCAST (Ip4GetNetCast (Gateway, IpIf)))) {
-
       return EFI_INVALID_PARAMETER;
     }
   }
@@ -1432,13 +1416,11 @@ Ip4TxTokenValid (
 
   if ((HeadLen > IP4_MAX_HEADLEN) ||
       (TxData->TotalDataLength + HeadLen > IP4_MAX_PACKET_SIZE)) {
-
     return EFI_BAD_BUFFER_SIZE;
   }
 
   return EFI_SUCCESS;
 }
-
 
 /**
   The callback function for the net buffer which wraps the user's
@@ -1467,8 +1449,8 @@ Ip4FreeTxToken (
   IN VOID                   *Context
   )
 {
-  IP4_TXTOKEN_WRAP          *Wrap;
-  NET_MAP_ITEM              *Item;
+  IP4_TXTOKEN_WRAP  *Wrap;
+  NET_MAP_ITEM      *Item;
 
   Wrap = (IP4_TXTOKEN_WRAP *) Context;
 
@@ -1476,7 +1458,7 @@ Ip4FreeTxToken (
   // Signal IpSecRecycleEvent to inform IPsec free the memory
   //
   if (Wrap->IpSecRecycleSignal != NULL) {
-    gBS->SignalEvent (Wrap->IpSecRecycleSignal);
+  gBS->SignalEvent (Wrap->IpSecRecycleSignal);
   }
 
   //
@@ -1490,7 +1472,7 @@ Ip4FreeTxToken (
   }
 
   if (Wrap->Sent) {
-    gBS->SignalEvent (Wrap->Token->Event);
+  gBS->SignalEvent (Wrap->Token->Event);
 
     //
     // Dispatch the DPC queued by the NotifyFunction of Token->Event.
@@ -1500,7 +1482,6 @@ Ip4FreeTxToken (
 
   FreePool (Wrap);
 }
-
 
 /**
   The callback function to Ip4Output to update the transmit status.
@@ -1521,7 +1502,7 @@ Ip4OnPacketSent (
   VOID                      *Context
   )
 {
-  IP4_TXTOKEN_WRAP          *Wrap;
+  IP4_TXTOKEN_WRAP  *Wrap;
 
   //
   // This is the transmission request from upper layer,
@@ -1536,12 +1517,11 @@ Ip4OnPacketSent (
   // release when all the fragments are release. Check the comments
   // in Ip4FreeTxToken and Ip4Output for information.
   //
-  Wrap                = (IP4_TXTOKEN_WRAP *) Context;
+  Wrap = (IP4_TXTOKEN_WRAP *) Context;
   Wrap->Token->Status = IoStatus;
 
   NetbufFree (Wrap->Packet);
 }
-
 
 /**
   Places outgoing data packets into the transmit queue.
@@ -1579,23 +1559,23 @@ EfiIp4Transmit (
   IN EFI_IP4_COMPLETION_TOKEN *Token
   )
 {
-  IP4_SERVICE               *IpSb;
-  IP4_PROTOCOL              *IpInstance;
-  IP4_INTERFACE             *IpIf;
-  IP4_TXTOKEN_WRAP          *Wrap;
-  EFI_IP4_TRANSMIT_DATA     *TxData;
-  EFI_IP4_CONFIG_DATA       *Config;
-  EFI_IP4_OVERRIDE_DATA     *Override;
-  IP4_HEAD                  Head;
-  IP4_ADDR                  GateWay;
-  EFI_STATUS                Status;
-  EFI_TPL                   OldTpl;
-  BOOLEAN                   DontFragment;
-  UINT32                    HeadLen;
-  UINT8                     RawHdrLen;
-  UINT32                    OptionsLength;
-  UINT8                     *OptionsBuffer;
-  VOID                      *FirstFragment;
+  IP4_SERVICE            *IpSb;
+  IP4_PROTOCOL           *IpInstance;
+  IP4_INTERFACE          *IpIf;
+  IP4_TXTOKEN_WRAP       *Wrap;
+  EFI_IP4_TRANSMIT_DATA  *TxData;
+  EFI_IP4_CONFIG_DATA    *Config;
+  EFI_IP4_OVERRIDE_DATA  *Override;
+  IP4_HEAD               Head;
+  IP4_ADDR               GateWay;
+  EFI_STATUS             Status;
+  EFI_TPL                OldTpl;
+  BOOLEAN                DontFragment;
+  UINT32                 HeadLen;
+  UINT8                  RawHdrLen;
+  UINT32                 OptionsLength;
+  UINT8                  *OptionsBuffer;
+  VOID                   *FirstFragment;
 
   if (This == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -1607,11 +1587,11 @@ EfiIp4Transmit (
     return EFI_NOT_STARTED;
   }
 
-  OldTpl  = gBS->RaiseTPL (TPL_CALLBACK);
+  OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
 
-  IpSb    = IpInstance->Service;
-  IpIf    = IpInstance->Interface;
-  Config  = &IpInstance->ConfigData;
+  IpSb   = IpInstance->Service;
+  IpIf   = IpInstance->Interface;
+  Config = &IpInstance->ConfigData;
 
   if (Config->UseDefaultAddress && IP4_NO_MAPPING (IpInstance)) {
     Status = EFI_NO_MAPPING;
@@ -1662,7 +1642,7 @@ EfiIp4Transmit (
     CopyMem (&Head, FirstFragment, IP4_MIN_HEADLEN);
 
     Ip4NtohHead (&Head);
-    HeadLen      = 0;
+    HeadLen = 0;
     DontFragment = IP4_DO_NOT_FRAGMENT (Head.Fragment);
 
     if (!DontFragment) {
@@ -1693,11 +1673,11 @@ EfiIp4Transmit (
     Head.Dst = NTOHL (Head.Dst);
 
     if (TxData->OverrideData != NULL) {
-      Override      = TxData->OverrideData;
+      Override = TxData->OverrideData;
       Head.Protocol = Override->Protocol;
-      Head.Tos      = Override->TypeOfService;
-      Head.Ttl      = Override->TimeToLive;
-      DontFragment  = Override->DoNotFragment;
+      Head.Tos     = Override->TypeOfService;
+      Head.Ttl     = Override->TimeToLive;
+      DontFragment = Override->DoNotFragment;
 
       CopyMem (&Head.Src, &Override->SourceAddress, sizeof (IP4_ADDR));
       CopyMem (&GateWay, &Override->GatewayAddress, sizeof (IP4_ADDR));
@@ -1705,16 +1685,16 @@ EfiIp4Transmit (
       Head.Src = NTOHL (Head.Src);
       GateWay  = NTOHL (GateWay);
     } else {
-      Head.Src      = IpIf->Ip;
-      GateWay       = IP4_ALLZERO_ADDRESS;
+      Head.Src = IpIf->Ip;
+      GateWay  = IP4_ALLZERO_ADDRESS;
       Head.Protocol = Config->DefaultProtocol;
-      Head.Tos      = Config->TypeOfService;
-      Head.Ttl      = Config->TimeToLive;
-      DontFragment  = Config->DoNotFragment;
+      Head.Tos     = Config->TypeOfService;
+      Head.Ttl     = Config->TimeToLive;
+      DontFragment = Config->DoNotFragment;
     }
 
     Head.Fragment = IP4_HEAD_FRAGMENT_FIELD (DontFragment, FALSE, 0);
-    HeadLen       = (TxData->OptionsLength + 3) & (~0x03);
+    HeadLen = (TxData->OptionsLength + 3) & (~0x03);
 
     OptionsLength = TxData->OptionsLength;
     OptionsBuffer = (UINT8 *) (TxData->OptionsBuffer);
@@ -1738,18 +1718,18 @@ EfiIp4Transmit (
     goto ON_EXIT;
   }
 
-  Wrap->IpInstance  = IpInstance;
-  Wrap->Token       = Token;
-  Wrap->Sent        = FALSE;
-  Wrap->Life        = IP4_US_TO_SEC (Config->TransmitTimeout);
-  Wrap->Packet      = NetbufFromExt (
-                        (NET_FRAGMENT *) TxData->FragmentTable,
-                        TxData->FragmentCount,
-                        IP4_MAX_HEADLEN,
-                        0,
-                        Ip4FreeTxToken,
-                        Wrap
-                        );
+  Wrap->IpInstance = IpInstance;
+  Wrap->Token  = Token;
+  Wrap->Sent   = FALSE;
+  Wrap->Life   = IP4_US_TO_SEC (Config->TransmitTimeout);
+  Wrap->Packet = NetbufFromExt (
+                                (NET_FRAGMENT *) TxData->FragmentTable,
+                                TxData->FragmentCount,
+                                IP4_MAX_HEADLEN,
+                                0,
+                                Ip4FreeTxToken,
+                                Wrap
+                                );
 
   if (Wrap->Packet == NULL) {
     FreePool (Wrap);
@@ -1782,16 +1762,16 @@ EfiIp4Transmit (
   Wrap->Sent = TRUE;
 
   Status = Ip4Output (
-             IpSb,
-             IpInstance,
-             Wrap->Packet,
-             &Head,
-             OptionsBuffer,
-             OptionsLength,
-             GateWay,
-             Ip4OnPacketSent,
-             Wrap
-             );
+                      IpSb,
+                      IpInstance,
+                      Wrap->Packet,
+                      &Head,
+                      OptionsBuffer,
+                      OptionsLength,
+                      GateWay,
+                      Ip4OnPacketSent,
+                      Wrap
+                      );
 
   if (EFI_ERROR (Status)) {
     Wrap->Sent = FALSE;
@@ -1817,7 +1797,6 @@ ON_EXIT:
   gBS->RestoreTPL (OldTpl);
   return Status;
 }
-
 
 /**
   Places a receiving request into the receiving queue.
@@ -1858,9 +1837,9 @@ EfiIp4Receive (
   IN EFI_IP4_COMPLETION_TOKEN *Token
   )
 {
-  IP4_PROTOCOL              *IpInstance;
-  EFI_STATUS                Status;
-  EFI_TPL                   OldTpl;
+  IP4_PROTOCOL  *IpInstance;
+  EFI_STATUS    Status;
+  EFI_TPL       OldTpl;
 
   //
   // First validate the parameters
@@ -1909,7 +1888,6 @@ ON_EXIT:
   gBS->RestoreTPL (OldTpl);
   return Status;
 }
-
 
 /**
   Cancel the transmitted but not recycled packet. If a matching
@@ -1969,7 +1947,6 @@ Ip4CancelTxTokens (
   return EFI_SUCCESS;
 }
 
-
 /**
   Cancel the receive request. This is quiet simple, because
   it is only enqueued in our local receive map.
@@ -2004,7 +1981,7 @@ Ip4CancelRxTokens (
 
   NetMapRemoveItem (Map, Item, NULL);
 
-  This->Status        = EFI_ABORTED;
+  This->Status = EFI_ABORTED;
   This->Packet.RxData = NULL;
   gBS->SignalEvent (This->Event);
 
@@ -2014,7 +1991,6 @@ Ip4CancelRxTokens (
 
   return EFI_SUCCESS;
 }
-
 
 /**
   Cancel the user's receive/transmit request.
@@ -2035,7 +2011,7 @@ Ip4Cancel (
   IN EFI_IP4_COMPLETION_TOKEN *Token          OPTIONAL
   )
 {
-  EFI_STATUS                Status;
+  EFI_STATUS  Status;
 
   //
   // First check the transmitted packet. Ip4CancelTxTokens returns
@@ -2084,13 +2060,11 @@ Ip4Cancel (
   //
   if (!NetMapIsEmpty (&IpInstance->TxTokens) ||
       !NetMapIsEmpty (&IpInstance->RxTokens)) {
-
     return EFI_DEVICE_ERROR;
   }
 
   return EFI_SUCCESS;
 }
-
 
 /**
   Abort an asynchronous transmit or receive request.
@@ -2128,9 +2102,9 @@ EfiIp4Cancel (
   IN EFI_IP4_COMPLETION_TOKEN *Token    OPTIONAL
   )
 {
-  IP4_PROTOCOL              *IpInstance;
-  EFI_STATUS                Status;
-  EFI_TPL                   OldTpl;
+  IP4_PROTOCOL  *IpInstance;
+  EFI_STATUS    Status;
+  EFI_TPL       OldTpl;
 
   if (This == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -2156,7 +2130,6 @@ ON_EXIT:
   gBS->RestoreTPL (OldTpl);
   return Status;
 }
-
 
 /**
   Polls for incoming data packets and processes outgoing data packets.
@@ -2235,7 +2208,7 @@ Ip4SentPacketTicking (
   IN VOID                   *Context
   )
 {
-  IP4_TXTOKEN_WRAP          *Wrap;
+  IP4_TXTOKEN_WRAP  *Wrap;
 
   Wrap = (IP4_TXTOKEN_WRAP *) Item->Value;
   ASSERT (Wrap != NULL);
@@ -2263,7 +2236,7 @@ Ip4TimerTicking (
   IN VOID                   *Context
   )
 {
-  IP4_SERVICE               *IpSb;
+  IP4_SERVICE  *IpSb;
 
   IpSb = (IP4_SERVICE *) Context;
   NET_CHECK_SIGNATURE (IpSb, IP4_SERVICE_SIGNATURE);
@@ -2291,10 +2264,10 @@ Ip4TimerReconfigChecking (
   IN VOID                   *Context
   )
 {
-  IP4_SERVICE               *IpSb;
-  BOOLEAN                   OldMediaPresent;
-  EFI_STATUS                Status;
-  EFI_SIMPLE_NETWORK_MODE   SnpModeData;
+  IP4_SERVICE              *IpSb;
+  BOOLEAN                  OldMediaPresent;
+  EFI_STATUS               Status;
+  EFI_SIMPLE_NETWORK_MODE  SnpModeData;
 
   IpSb = (IP4_SERVICE *) Context;
   NET_CHECK_SIGNATURE (IpSb, IP4_SERVICE_SIGNATURE);

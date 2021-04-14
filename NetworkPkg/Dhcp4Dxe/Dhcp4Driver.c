@@ -8,7 +8,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include "Dhcp4Impl.h"
 #include "Dhcp4Driver.h"
 
-EFI_DRIVER_BINDING_PROTOCOL gDhcp4DriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  gDhcp4DriverBinding = {
   Dhcp4DriverBindingSupported,
   Dhcp4DriverBindingStart,
   Dhcp4DriverBindingStop,
@@ -17,7 +17,7 @@ EFI_DRIVER_BINDING_PROTOCOL gDhcp4DriverBinding = {
   NULL
 };
 
-EFI_SERVICE_BINDING_PROTOCOL mDhcp4ServiceBindingTemplate = {
+EFI_SERVICE_BINDING_PROTOCOL  mDhcp4ServiceBindingTemplate = {
   Dhcp4ServiceBindingCreateChild,
   Dhcp4ServiceBindingDestroyChild
 };
@@ -44,15 +44,14 @@ Dhcp4DriverEntryPoint (
   )
 {
   return EfiLibInstallDriverBindingComponentName2 (
-           ImageHandle,
-           SystemTable,
-           &gDhcp4DriverBinding,
-           ImageHandle,
-           &gDhcp4ComponentName,
-           &gDhcp4ComponentName2
-           );
+                                                   ImageHandle,
+                                                   SystemTable,
+                                                   &gDhcp4DriverBinding,
+                                                   ImageHandle,
+                                                   &gDhcp4ComponentName,
+                                                   &gDhcp4ComponentName2
+                                                   );
 }
-
 
 /**
   Test to see if this driver supports ControllerHandle. This service
@@ -83,18 +82,16 @@ Dhcp4DriverBindingSupported (
   EFI_STATUS  Status;
 
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiUdp4ServiceBindingProtocolGuid,
-                  NULL,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiUdp4ServiceBindingProtocolGuid,
+                              NULL,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
 
   return Status;
 }
-
-
 
 /**
   Configure the default UDP child to receive all the DHCP traffics
@@ -114,30 +111,28 @@ DhcpConfigUdpIo (
   IN VOID                   *Context
   )
 {
-  EFI_UDP4_CONFIG_DATA      UdpConfigData;
+  EFI_UDP4_CONFIG_DATA  UdpConfigData;
 
-  UdpConfigData.AcceptBroadcast           = TRUE;
-  UdpConfigData.AcceptPromiscuous         = FALSE;
-  UdpConfigData.AcceptAnyPort             = FALSE;
-  UdpConfigData.AllowDuplicatePort        = TRUE;
-  UdpConfigData.TypeOfService             = 0;
-  UdpConfigData.TimeToLive                = 64;
-  UdpConfigData.DoNotFragment             = FALSE;
-  UdpConfigData.ReceiveTimeout            = 0;
-  UdpConfigData.TransmitTimeout           = 0;
+  UdpConfigData.AcceptBroadcast    = TRUE;
+  UdpConfigData.AcceptPromiscuous  = FALSE;
+  UdpConfigData.AcceptAnyPort      = FALSE;
+  UdpConfigData.AllowDuplicatePort = TRUE;
+  UdpConfigData.TypeOfService      = 0;
+  UdpConfigData.TimeToLive      = 64;
+  UdpConfigData.DoNotFragment   = FALSE;
+  UdpConfigData.ReceiveTimeout  = 0;
+  UdpConfigData.TransmitTimeout = 0;
 
-  UdpConfigData.UseDefaultAddress         = FALSE;
-  UdpConfigData.StationPort               = DHCP_CLIENT_PORT;
-  UdpConfigData.RemotePort                = DHCP_SERVER_PORT;
+  UdpConfigData.UseDefaultAddress = FALSE;
+  UdpConfigData.StationPort = DHCP_CLIENT_PORT;
+  UdpConfigData.RemotePort  = DHCP_SERVER_PORT;
 
   ZeroMem (&UdpConfigData.StationAddress, sizeof (EFI_IPv4_ADDRESS));
   ZeroMem (&UdpConfigData.SubnetMask, sizeof (EFI_IPv4_ADDRESS));
   ZeroMem (&UdpConfigData.RemoteAddress, sizeof (EFI_IPv4_ADDRESS));
 
-  return UdpIo->Protocol.Udp4->Configure (UdpIo->Protocol.Udp4, &UdpConfigData);;
+  return UdpIo->Protocol.Udp4->Configure (UdpIo->Protocol.Udp4, &UdpConfigData);
 }
-
-
 
 /**
   Destroy the DHCP service. The Dhcp4 service may be partly initialized,
@@ -162,16 +157,14 @@ Dhcp4CloseService (
   }
 
   if (DhcpSb->Timer != NULL) {
-    gBS->SetTimer (DhcpSb->Timer, TimerCancel, 0);
-    gBS->CloseEvent (DhcpSb->Timer);
+  gBS->SetTimer (DhcpSb->Timer, TimerCancel, 0);
+  gBS->CloseEvent (DhcpSb->Timer);
 
     DhcpSb->Timer = NULL;
   }
 
   return EFI_SUCCESS;
 }
-
-
 
 /**
   Create a new DHCP service binding instance for the controller.
@@ -194,50 +187,50 @@ Dhcp4CreateService (
   OUT DHCP_SERVICE          **Service
   )
 {
-  DHCP_SERVICE              *DhcpSb;
-  EFI_STATUS                Status;
+  DHCP_SERVICE  *DhcpSb;
+  EFI_STATUS    Status;
 
-  *Service  = NULL;
-  DhcpSb    = AllocateZeroPool (sizeof (DHCP_SERVICE));
+  *Service = NULL;
+  DhcpSb   = AllocateZeroPool (sizeof (DHCP_SERVICE));
 
   if (DhcpSb == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
-  DhcpSb->Signature       = DHCP_SERVICE_SIGNATURE;
-  DhcpSb->ServiceState    = DHCP_UNCONFIGED;
-  DhcpSb->Controller      = Controller;
-  DhcpSb->Image           = ImageHandle;
+  DhcpSb->Signature    = DHCP_SERVICE_SIGNATURE;
+  DhcpSb->ServiceState = DHCP_UNCONFIGED;
+  DhcpSb->Controller   = Controller;
+  DhcpSb->Image = ImageHandle;
   InitializeListHead (&DhcpSb->Children);
-  DhcpSb->DhcpState       = Dhcp4Stopped;
-  DhcpSb->Xid             = NET_RANDOM (NetRandomInitSeed ());
+  DhcpSb->DhcpState = Dhcp4Stopped;
+  DhcpSb->Xid = NET_RANDOM (NetRandomInitSeed ());
   CopyMem (
-    &DhcpSb->ServiceBinding,
-    &mDhcp4ServiceBindingTemplate,
-    sizeof (EFI_SERVICE_BINDING_PROTOCOL)
-    );
+           &DhcpSb->ServiceBinding,
+           &mDhcp4ServiceBindingTemplate,
+           sizeof (EFI_SERVICE_BINDING_PROTOCOL)
+           );
   //
   // Create various resources, UdpIo, Timer, and get Mac address
   //
   Status = gBS->CreateEvent (
-                  EVT_NOTIFY_SIGNAL | EVT_TIMER,
-                  TPL_CALLBACK,
-                  DhcpOnTimerTick,
-                  DhcpSb,
-                  &DhcpSb->Timer
-                  );
+                             EVT_NOTIFY_SIGNAL | EVT_TIMER,
+                             TPL_CALLBACK,
+                             DhcpOnTimerTick,
+                             DhcpSb,
+                             &DhcpSb->Timer
+                             );
 
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
 
   DhcpSb->UdpIo = UdpIoCreateIo (
-                    Controller,
-                    ImageHandle,
-                    DhcpConfigUdpIo,
-                    UDP_IO_UDP4_VERSION,
-                    NULL
-                    );
+                                 Controller,
+                                 ImageHandle,
+                                 DhcpConfigUdpIo,
+                                 UDP_IO_UDP4_VERSION,
+                                 NULL
+                                 );
 
   if (DhcpSb->UdpIo == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
@@ -248,7 +241,7 @@ Dhcp4CreateService (
   DhcpSb->HwType = DhcpSb->UdpIo->SnpMode.IfType;
   CopyMem (&DhcpSb->Mac, &DhcpSb->UdpIo->SnpMode.CurrentAddress, sizeof (DhcpSb->Mac));
 
-  *Service       = DhcpSb;
+  *Service = DhcpSb;
   return EFI_SUCCESS;
 
 ON_ERROR:
@@ -257,7 +250,6 @@ ON_ERROR:
 
   return Status;
 }
-
 
 /**
   Start this driver on ControllerHandle. This service is called by the
@@ -285,20 +277,20 @@ Dhcp4DriverBindingStart (
   IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
   )
 {
-  DHCP_SERVICE              *DhcpSb;
-  EFI_STATUS                Status;
+  DHCP_SERVICE  *DhcpSb;
+  EFI_STATUS    Status;
 
   //
   // First: test for the DHCP4 Protocol
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiDhcp4ServiceBindingProtocolGuid,
-                  NULL,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiDhcp4ServiceBindingProtocolGuid,
+                              NULL,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
 
   if (Status == EFI_SUCCESS) {
     return EFI_ALREADY_STARTED;
@@ -309,6 +301,7 @@ Dhcp4DriverBindingStart (
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   ASSERT (DhcpSb != NULL);
 
   //
@@ -319,6 +312,7 @@ Dhcp4DriverBindingStart (
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
+
   Status = gBS->SetTimer (DhcpSb->Timer, TimerPeriodic, TICKS_PER_SECOND);
 
   if (EFI_ERROR (Status)) {
@@ -329,11 +323,11 @@ Dhcp4DriverBindingStart (
   // Install the Dhcp4ServiceBinding Protocol onto ControllerHandle
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &ControllerHandle,
-                  &gEfiDhcp4ServiceBindingProtocolGuid,
-                  &DhcpSb->ServiceBinding,
-                  NULL
-                  );
+                                                   &ControllerHandle,
+                                                   &gEfiDhcp4ServiceBindingProtocolGuid,
+                                                   &DhcpSb->ServiceBinding,
+                                                   NULL
+                                                   );
 
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
@@ -364,8 +358,8 @@ Dhcp4DestroyChildEntry (
   IN VOID               *Context
   )
 {
-  DHCP_PROTOCOL                    *Instance;
-  EFI_SERVICE_BINDING_PROTOCOL     *ServiceBinding;
+  DHCP_PROTOCOL                 *Instance;
+  EFI_SERVICE_BINDING_PROTOCOL  *ServiceBinding;
 
   if (Entry == NULL || Context == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -376,7 +370,6 @@ Dhcp4DestroyChildEntry (
 
   return ServiceBinding->DestroyChild (ServiceBinding, Instance->Handle);
 }
-
 
 /**
   Stop this driver on ControllerHandle. This service is called by the
@@ -422,14 +415,14 @@ Dhcp4DriverBindingStop (
     return EFI_SUCCESS;
   }
 
-   Status = gBS->OpenProtocol (
-                  NicHandle,
-                  &gEfiDhcp4ServiceBindingProtocolGuid,
-                  (VOID **) &ServiceBinding,
-                  This->DriverBindingHandle,
-                  NicHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+  Status = gBS->OpenProtocol (
+                              NicHandle,
+                              &gEfiDhcp4ServiceBindingProtocolGuid,
+                              (VOID **) &ServiceBinding,
+                              This->DriverBindingHandle,
+                              NicHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
 
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
@@ -440,13 +433,13 @@ Dhcp4DriverBindingStop (
     //
     // Destroy all the children instances before destroy the service.
     //
-    List = &DhcpSb->Children;
+    List   = &DhcpSb->Children;
     Status = NetDestroyLinkList (
-               List,
-               Dhcp4DestroyChildEntry,
-               ServiceBinding,
-               &ListLength
-               );
+                                 List,
+                                 Dhcp4DestroyChildEntry,
+                                 ServiceBinding,
+                                 &ListLength
+                                 );
     if (EFI_ERROR (Status) || ListLength != 0) {
       Status = EFI_DEVICE_ERROR;
     }
@@ -463,10 +456,10 @@ Dhcp4DriverBindingStop (
     DhcpSb->ServiceState = DHCP_DESTROY;
 
     gBS->UninstallProtocolInterface (
-           NicHandle,
-           &gEfiDhcp4ServiceBindingProtocolGuid,
-           ServiceBinding
-           );
+                                     NicHandle,
+                                     &gEfiDhcp4ServiceBindingProtocolGuid,
+                                     ServiceBinding
+                                     );
 
     Dhcp4CloseService (DhcpSb);
 
@@ -474,6 +467,7 @@ Dhcp4DriverBindingStop (
       FreeUnicodeStringTable (gDhcpControllerNameTable);
       gDhcpControllerNameTable = NULL;
     }
+
     FreePool (DhcpSb);
 
     Status = EFI_SUCCESS;
@@ -481,7 +475,6 @@ Dhcp4DriverBindingStop (
 
   return Status;
 }
-
 
 /**
   Initialize a new DHCP instance.
@@ -496,20 +489,19 @@ DhcpInitProtocol (
   IN OUT DHCP_PROTOCOL          *Instance
   )
 {
-  Instance->Signature         = DHCP_PROTOCOL_SIGNATURE;
+  Instance->Signature = DHCP_PROTOCOL_SIGNATURE;
   CopyMem (&Instance->Dhcp4Protocol, &mDhcp4ProtocolTemplate, sizeof (Instance->Dhcp4Protocol));
   InitializeListHead (&Instance->Link);
-  Instance->Handle            = NULL;
-  Instance->Service           = DhcpSb;
-  Instance->InDestroy         = FALSE;
-  Instance->CompletionEvent   = NULL;
-  Instance->RenewRebindEvent  = NULL;
-  Instance->Token             = NULL;
-  Instance->UdpIo             = NULL;
-  Instance->ElaspedTime       = 0;
+  Instance->Handle    = NULL;
+  Instance->Service   = DhcpSb;
+  Instance->InDestroy = FALSE;
+  Instance->CompletionEvent  = NULL;
+  Instance->RenewRebindEvent = NULL;
+  Instance->Token = NULL;
+  Instance->UdpIo = NULL;
+  Instance->ElaspedTime = 0;
   NetbufQueInit (&Instance->ResponseQueue);
 }
-
 
 /**
   Creates a child handle and installs a protocol.
@@ -537,11 +529,11 @@ Dhcp4ServiceBindingCreateChild (
   IN EFI_HANDLE                    *ChildHandle
   )
 {
-  DHCP_SERVICE              *DhcpSb;
-  DHCP_PROTOCOL             *Instance;
-  EFI_STATUS                Status;
-  EFI_TPL                   OldTpl;
-  VOID                      *Udp4;
+  DHCP_SERVICE   *DhcpSb;
+  DHCP_PROTOCOL  *Instance;
+  EFI_STATUS     Status;
+  EFI_TPL        OldTpl;
+  VOID           *Udp4;
 
   if ((This == NULL) || (ChildHandle == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -560,37 +552,37 @@ Dhcp4ServiceBindingCreateChild (
   // Install DHCP4 onto ChildHandle
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  ChildHandle,
-                  &gEfiDhcp4ProtocolGuid,
-                  &Instance->Dhcp4Protocol,
-                  NULL
-                  );
+                                                   ChildHandle,
+                                                   &gEfiDhcp4ProtocolGuid,
+                                                   &Instance->Dhcp4Protocol,
+                                                   NULL
+                                                   );
 
   if (EFI_ERROR (Status)) {
     FreePool (Instance);
     return Status;
   }
 
-  Instance->Handle  = *ChildHandle;
+  Instance->Handle = *ChildHandle;
 
   //
   // Open the Udp4 protocol BY_CHILD.
   //
   Status = gBS->OpenProtocol (
-                  DhcpSb->UdpIo->UdpHandle,
-                  &gEfiUdp4ProtocolGuid,
-                  (VOID **) &Udp4,
-                  gDhcp4DriverBinding.DriverBindingHandle,
-                  Instance->Handle,
-                  EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
-                  );
+                              DhcpSb->UdpIo->UdpHandle,
+                              &gEfiUdp4ProtocolGuid,
+                              (VOID **) &Udp4,
+                              gDhcp4DriverBinding.DriverBindingHandle,
+                              Instance->Handle,
+                              EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+                              );
   if (EFI_ERROR (Status)) {
-    gBS->UninstallMultipleProtocolInterfaces (
-           Instance->Handle,
-           &gEfiDhcp4ProtocolGuid,
-           &Instance->Dhcp4Protocol,
-           NULL
-           );
+  gBS->UninstallMultipleProtocolInterfaces (
+                                            Instance->Handle,
+                                            &gEfiDhcp4ProtocolGuid,
+                                            &Instance->Dhcp4Protocol,
+                                            NULL
+                                            );
 
     FreePool (Instance);
     return Status;
@@ -605,7 +597,6 @@ Dhcp4ServiceBindingCreateChild (
 
   return EFI_SUCCESS;
 }
-
 
 /**
   Destroys a child handle with a protocol installed on it.
@@ -632,11 +623,11 @@ Dhcp4ServiceBindingDestroyChild (
   IN EFI_HANDLE                    ChildHandle
   )
 {
-  DHCP_SERVICE              *DhcpSb;
-  DHCP_PROTOCOL             *Instance;
-  EFI_DHCP4_PROTOCOL        *Dhcp;
-  EFI_TPL                   OldTpl;
-  EFI_STATUS                Status;
+  DHCP_SERVICE        *DhcpSb;
+  DHCP_PROTOCOL       *Instance;
+  EFI_DHCP4_PROTOCOL  *Dhcp;
+  EFI_TPL             OldTpl;
+  EFI_STATUS          Status;
 
   if ((This == NULL) || (ChildHandle == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -646,20 +637,20 @@ Dhcp4ServiceBindingDestroyChild (
   // Retrieve the private context data structures
   //
   Status = gBS->OpenProtocol (
-                  ChildHandle,
-                  &gEfiDhcp4ProtocolGuid,
-                  (VOID **) &Dhcp,
-                  gDhcp4DriverBinding.DriverBindingHandle,
-                  ChildHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ChildHandle,
+                              &gEfiDhcp4ProtocolGuid,
+                              (VOID **) &Dhcp,
+                              gDhcp4DriverBinding.DriverBindingHandle,
+                              ChildHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
 
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
 
-  Instance  = DHCP_INSTANCE_FROM_THIS (Dhcp);
-  DhcpSb    = DHCP_SERVICE_FROM_THIS (This);
+  Instance = DHCP_INSTANCE_FROM_THIS (Dhcp);
+  DhcpSb   = DHCP_SERVICE_FROM_THIS (This);
 
   if (Instance->Service != DhcpSb) {
     return EFI_INVALID_PARAMETER;
@@ -682,21 +673,21 @@ Dhcp4ServiceBindingDestroyChild (
   // Close the Udp4 protocol.
   //
   gBS->CloseProtocol (
-         DhcpSb->UdpIo->UdpHandle,
-         &gEfiUdp4ProtocolGuid,
-         gDhcp4DriverBinding.DriverBindingHandle,
-         ChildHandle
-         );
+                      DhcpSb->UdpIo->UdpHandle,
+                      &gEfiUdp4ProtocolGuid,
+                      gDhcp4DriverBinding.DriverBindingHandle,
+                      ChildHandle
+                      );
 
   //
   // Uninstall the DHCP4 protocol first to enable a top down destruction.
   //
   gBS->RestoreTPL (OldTpl);
   Status = gBS->UninstallProtocolInterface (
-                  ChildHandle,
-                  &gEfiDhcp4ProtocolGuid,
-                  Dhcp
-                  );
+                                            ChildHandle,
+                                            &gEfiDhcp4ProtocolGuid,
+                                            Dhcp
+                                            );
   OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
   if (EFI_ERROR (Status)) {
     Instance->InDestroy = FALSE;
@@ -715,11 +706,11 @@ Dhcp4ServiceBindingDestroyChild (
   if (Instance->UdpIo != NULL) {
     UdpIoCleanIo (Instance->UdpIo);
     gBS->CloseProtocol (
-           Instance->UdpIo->UdpHandle,
-           &gEfiUdp4ProtocolGuid,
-           Instance->Service->Image,
-           Instance->Handle
-           );
+                        Instance->UdpIo->UdpHandle,
+                        &gEfiUdp4ProtocolGuid,
+                        Instance->Service->Image,
+                        Instance->Handle
+                        );
     UdpIoFreeIo (Instance->UdpIo);
     Instance->UdpIo = NULL;
     Instance->Token = NULL;

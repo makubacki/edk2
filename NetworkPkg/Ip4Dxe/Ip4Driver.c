@@ -10,7 +10,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "Ip4Impl.h"
 
-EFI_DRIVER_BINDING_PROTOCOL gIp4DriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  gIp4DriverBinding = {
   Ip4DriverBindingSupported,
   Ip4DriverBindingStart,
   Ip4DriverBindingStop,
@@ -35,12 +35,13 @@ IpSec2InstalledCallback (
   IN VOID       *Context
   )
 {
-  EFI_STATUS    Status;
+  EFI_STATUS  Status;
+
   //
   // Test if protocol was even found.
   // Notification function will be called at least once.
   //
-  Status = gBS->LocateProtocol (&gEfiIpSec2ProtocolGuid, NULL, (VOID **)&mIpSec);
+  Status = gBS->LocateProtocol (&gEfiIpSec2ProtocolGuid, NULL, (VOID **) &mIpSec);
   if (Status == EFI_SUCCESS && mIpSec != NULL) {
     //
     // Close the event so it does not get called again.
@@ -73,24 +74,24 @@ Ip4DriverEntryPoint (
   IN EFI_SYSTEM_TABLE       *SystemTable
   )
 {
-  VOID            *Registration;
+  VOID  *Registration;
 
   EfiCreateProtocolNotifyEvent (
-    &gEfiIpSec2ProtocolGuid,
-    TPL_CALLBACK,
-    IpSec2InstalledCallback,
-    NULL,
-    &Registration
-    );
+                                &gEfiIpSec2ProtocolGuid,
+                                TPL_CALLBACK,
+                                IpSec2InstalledCallback,
+                                NULL,
+                                &Registration
+                                );
 
   return EfiLibInstallDriverBindingComponentName2 (
-           ImageHandle,
-           SystemTable,
-           &gIp4DriverBinding,
-           ImageHandle,
-           &gIp4ComponentName,
-           &gIp4ComponentName2
-           );
+                                                   ImageHandle,
+                                                   SystemTable,
+                                                   &gIp4DriverBinding,
+                                                   ImageHandle,
+                                                   &gIp4ComponentName,
+                                                   &gIp4ComponentName2
+                                                   );
 }
 
 /**
@@ -114,24 +115,24 @@ Ip4DriverEntryPoint (
 EFI_STATUS
 EFIAPI
 Ip4DriverBindingSupported (
-  IN EFI_DRIVER_BINDING_PROTOCOL  * This,
+  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
   IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     * RemainingDevicePath OPTIONAL
+  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
   )
 {
-  EFI_STATUS                Status;
+  EFI_STATUS  Status;
 
   //
   // Test for the MNP service binding Protocol
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiManagedNetworkServiceBindingProtocolGuid,
-                  NULL,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiManagedNetworkServiceBindingProtocolGuid,
+                              NULL,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
 
   if (EFI_ERROR (Status)) {
     return Status;
@@ -141,13 +142,13 @@ Ip4DriverBindingSupported (
   // Test for the Arp service binding Protocol
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiArpServiceBindingProtocolGuid,
-                  NULL,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiArpServiceBindingProtocolGuid,
+                              NULL,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
 
   return Status;
 }
@@ -170,7 +171,6 @@ Ip4CleanService (
   IN IP4_SERVICE            *IpSb
   );
 
-
 /**
   Create a new IP4 driver service binding private instance.
 
@@ -192,8 +192,8 @@ Ip4CreateService (
   OUT IP4_SERVICE           **Service
   )
 {
-  IP4_SERVICE               *IpSb;
-  EFI_STATUS                Status;
+  IP4_SERVICE  *IpSb;
+  EFI_STATUS   Status;
 
   ASSERT (Service != NULL);
 
@@ -210,39 +210,39 @@ Ip4CreateService (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  IpSb->Signature                   = IP4_SERVICE_SIGNATURE;
+  IpSb->Signature = IP4_SERVICE_SIGNATURE;
   IpSb->ServiceBinding.CreateChild  = Ip4ServiceBindingCreateChild;
   IpSb->ServiceBinding.DestroyChild = Ip4ServiceBindingDestroyChild;
-  IpSb->State                       = IP4_SERVICE_UNSTARTED;
+  IpSb->State = IP4_SERVICE_UNSTARTED;
 
-  IpSb->NumChildren                 = 0;
+  IpSb->NumChildren = 0;
   InitializeListHead (&IpSb->Children);
 
   InitializeListHead (&IpSb->Interfaces);
-  IpSb->DefaultInterface            = NULL;
-  IpSb->DefaultRouteTable           = NULL;
+  IpSb->DefaultInterface  = NULL;
+  IpSb->DefaultRouteTable = NULL;
 
   Ip4InitAssembleTable (&IpSb->Assemble);
 
-  IpSb->IgmpCtrl.Igmpv1QuerySeen    = 0;
+  IpSb->IgmpCtrl.Igmpv1QuerySeen = 0;
   InitializeListHead (&IpSb->IgmpCtrl.Groups);
 
-  IpSb->Image                       = ImageHandle;
-  IpSb->Controller                  = Controller;
+  IpSb->Image = ImageHandle;
+  IpSb->Controller = Controller;
 
-  IpSb->MnpChildHandle              = NULL;
-  IpSb->Mnp                         = NULL;
+  IpSb->MnpChildHandle = NULL;
+  IpSb->Mnp = NULL;
 
   IpSb->MnpConfigData.ReceivedQueueTimeoutValue = 0;
   IpSb->MnpConfigData.TransmitQueueTimeoutValue = 0;
-  IpSb->MnpConfigData.ProtocolTypeFilter        = IP4_ETHER_PROTO;
-  IpSb->MnpConfigData.EnableUnicastReceive      = TRUE;
-  IpSb->MnpConfigData.EnableMulticastReceive    = TRUE;
-  IpSb->MnpConfigData.EnableBroadcastReceive    = TRUE;
-  IpSb->MnpConfigData.EnablePromiscuousReceive  = FALSE;
-  IpSb->MnpConfigData.FlushQueuesOnReset        = TRUE;
-  IpSb->MnpConfigData.EnableReceiveTimestamps   = FALSE;
-  IpSb->MnpConfigData.DisableBackgroundPolling  = FALSE;
+  IpSb->MnpConfigData.ProtocolTypeFilter       = IP4_ETHER_PROTO;
+  IpSb->MnpConfigData.EnableUnicastReceive     = TRUE;
+  IpSb->MnpConfigData.EnableMulticastReceive   = TRUE;
+  IpSb->MnpConfigData.EnableBroadcastReceive   = TRUE;
+  IpSb->MnpConfigData.EnablePromiscuousReceive = FALSE;
+  IpSb->MnpConfigData.FlushQueuesOnReset       = TRUE;
+  IpSb->MnpConfigData.EnableReceiveTimestamps  = FALSE;
+  IpSb->MnpConfigData.DisableBackgroundPolling = FALSE;
 
   ZeroMem (&IpSb->SnpMode, sizeof (EFI_SIMPLE_NETWORK_MODE));
 
@@ -268,59 +268,59 @@ Ip4CreateService (
   }
 
   Status = gBS->CreateEvent (
-                  EVT_NOTIFY_SIGNAL | EVT_TIMER,
-                  TPL_CALLBACK,
-                  Ip4TimerTicking,
-                  IpSb,
-                  &IpSb->Timer
-                  );
+                             EVT_NOTIFY_SIGNAL | EVT_TIMER,
+                             TPL_CALLBACK,
+                             Ip4TimerTicking,
+                             IpSb,
+                             &IpSb->Timer
+                             );
 
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
 
   Status = gBS->CreateEvent (
-                  EVT_NOTIFY_SIGNAL | EVT_TIMER,
-                  TPL_CALLBACK,
-                  Ip4TimerReconfigChecking,
-                  IpSb,
-                  &IpSb->ReconfigCheckTimer
-                  );
+                             EVT_NOTIFY_SIGNAL | EVT_TIMER,
+                             TPL_CALLBACK,
+                             Ip4TimerReconfigChecking,
+                             IpSb,
+                             &IpSb->ReconfigCheckTimer
+                             );
 
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
 
   Status = gBS->CreateEvent (
-                  EVT_NOTIFY_SIGNAL,
-                  TPL_NOTIFY,
-                  Ip4AutoReconfigCallBack,
-                  IpSb,
-                  &IpSb->ReconfigEvent
-                  );
+                             EVT_NOTIFY_SIGNAL,
+                             TPL_NOTIFY,
+                             Ip4AutoReconfigCallBack,
+                             IpSb,
+                             &IpSb->ReconfigEvent
+                             );
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
 
   Status = NetLibCreateServiceChild (
-             Controller,
-             ImageHandle,
-             &gEfiManagedNetworkServiceBindingProtocolGuid,
-             &IpSb->MnpChildHandle
-             );
+                                     Controller,
+                                     ImageHandle,
+                                     &gEfiManagedNetworkServiceBindingProtocolGuid,
+                                     &IpSb->MnpChildHandle
+                                     );
 
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
 
   Status = gBS->OpenProtocol (
-                  IpSb->MnpChildHandle,
-                  &gEfiManagedNetworkProtocolGuid,
-                  (VOID **) &IpSb->Mnp,
-                  ImageHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              IpSb->MnpChildHandle,
+                              &gEfiManagedNetworkProtocolGuid,
+                              (VOID **) &IpSb->Mnp,
+                              ImageHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
 
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
@@ -375,6 +375,7 @@ Ip4CreateService (
     //
     IpSb->MaxPacketSize -= NET_VLAN_TAG_LEN;
   }
+
   IpSb->OldMaxPacketSize = IpSb->MaxPacketSize;
   *Service = IpSb;
 
@@ -386,7 +387,6 @@ ON_ERROR:
 
   return Status;
 }
-
 
 /**
   Clean up a IP4 service binding instance. It will release all
@@ -406,20 +406,20 @@ Ip4CleanService (
   IN IP4_SERVICE            *IpSb
   )
 {
-  EFI_STATUS                Status;
+  EFI_STATUS  Status;
 
-  IpSb->State     = IP4_SERVICE_DESTROY;
+  IpSb->State = IP4_SERVICE_DESTROY;
 
   if (IpSb->Timer != NULL) {
-    gBS->SetTimer (IpSb->Timer, TimerCancel, 0);
-    gBS->CloseEvent (IpSb->Timer);
+  gBS->SetTimer (IpSb->Timer, TimerCancel, 0);
+  gBS->CloseEvent (IpSb->Timer);
 
     IpSb->Timer = NULL;
   }
 
   if (IpSb->ReconfigCheckTimer != NULL) {
-    gBS->SetTimer (IpSb->ReconfigCheckTimer, TimerCancel, 0);
-    gBS->CloseEvent (IpSb->ReconfigCheckTimer);
+  gBS->SetTimer (IpSb->ReconfigCheckTimer, TimerCancel, 0);
+  gBS->CloseEvent (IpSb->ReconfigCheckTimer);
 
     IpSb->ReconfigCheckTimer = NULL;
   }
@@ -443,28 +443,28 @@ Ip4CleanService (
 
   if (IpSb->MnpChildHandle != NULL) {
     if (IpSb->Mnp != NULL) {
-      gBS->CloseProtocol (
-             IpSb->MnpChildHandle,
-             &gEfiManagedNetworkProtocolGuid,
-             IpSb->Image,
-             IpSb->Controller
-             );
+  gBS->CloseProtocol (
+                      IpSb->MnpChildHandle,
+                      &gEfiManagedNetworkProtocolGuid,
+                      IpSb->Image,
+                      IpSb->Controller
+                      );
 
       IpSb->Mnp = NULL;
     }
 
     NetLibDestroyServiceChild (
-      IpSb->Controller,
-      IpSb->Image,
-      &gEfiManagedNetworkServiceBindingProtocolGuid,
-      IpSb->MnpChildHandle
-      );
+                               IpSb->Controller,
+                               IpSb->Image,
+                               &gEfiManagedNetworkServiceBindingProtocolGuid,
+                               IpSb->MnpChildHandle
+                               );
 
     IpSb->MnpChildHandle = NULL;
   }
 
   if (IpSb->ReconfigEvent != NULL) {
-    gBS->CloseEvent (IpSb->ReconfigEvent);
+  gBS->CloseEvent (IpSb->ReconfigEvent);
 
     IpSb->ReconfigEvent = NULL;
   }
@@ -506,7 +506,7 @@ Ip4DestroyChildEntryInHandleBuffer (
     return EFI_INVALID_PARAMETER;
   }
 
-  IpInstance = NET_LIST_USER_STRUCT_S (Entry, IP4_PROTOCOL, Link, IP4_PROTOCOL_SIGNATURE);
+  IpInstance        = NET_LIST_USER_STRUCT_S (Entry, IP4_PROTOCOL, Link, IP4_PROTOCOL_SIGNATURE);
   ServiceBinding    = ((IP4_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *) Context)->ServiceBinding;
   NumberOfChildren  = ((IP4_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *) Context)->NumberOfChildren;
   ChildHandleBuffer = ((IP4_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *) Context)->ChildHandleBuffer;
@@ -544,11 +544,11 @@ Ip4DriverBindingStart (
   IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
   )
 {
-  EFI_STATUS                    Status;
-  IP4_SERVICE                   *IpSb;
-  EFI_IP4_CONFIG2_PROTOCOL      *Ip4Cfg2;
-  UINTN                         Index;
-  IP4_CONFIG2_DATA_ITEM         *DataItem;
+  EFI_STATUS                Status;
+  IP4_SERVICE               *IpSb;
+  EFI_IP4_CONFIG2_PROTOCOL  *Ip4Cfg2;
+  UINTN                     Index;
+  IP4_CONFIG2_DATA_ITEM     *DataItem;
 
   IpSb     = NULL;
   Ip4Cfg2  = NULL;
@@ -558,13 +558,13 @@ Ip4DriverBindingStart (
   // Test for the Ip4 service binding protocol
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiIp4ServiceBindingProtocolGuid,
-                  NULL,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiIp4ServiceBindingProtocolGuid,
+                              NULL,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
 
   if (Status == EFI_SUCCESS) {
     return EFI_ALREADY_STARTED;
@@ -578,19 +578,19 @@ Ip4DriverBindingStart (
 
   ASSERT (IpSb != NULL);
 
-  Ip4Cfg2  = &IpSb->Ip4Config2Instance.Ip4Config2;
+  Ip4Cfg2 = &IpSb->Ip4Config2Instance.Ip4Config2;
 
   //
   // Install the Ip4ServiceBinding Protocol onto ControllerHandle
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &ControllerHandle,
-                  &gEfiIp4ServiceBindingProtocolGuid,
-                  &IpSb->ServiceBinding,
-                  &gEfiIp4Config2ProtocolGuid,
-                  Ip4Cfg2,
-                  NULL
-                  );
+                                                   &ControllerHandle,
+                                                   &gEfiIp4ServiceBindingProtocolGuid,
+                                                   &IpSb->ServiceBinding,
+                                                   &gEfiIp4Config2ProtocolGuid,
+                                                   Ip4Cfg2,
+                                                   NULL
+                                                   );
 
   if (EFI_ERROR (Status)) {
     goto FREE_SERVICE;
@@ -612,12 +612,12 @@ Ip4DriverBindingStart (
     DataItem = &IpSb->Ip4Config2Instance.DataItem[Index];
     if (DataItem->Data.Ptr != NULL) {
       Status = Ip4Cfg2->SetData (
-                          Ip4Cfg2,
-                          Index,
-                          DataItem->DataSize,
-                          DataItem->Data.Ptr
-                          );
-      if (EFI_ERROR(Status)) {
+                                 Ip4Cfg2,
+                                 Index,
+                                 DataItem->DataSize,
+                                 DataItem->Data.Ptr
+                                 );
+      if (EFI_ERROR (Status)) {
         goto UNINSTALL_PROTOCOL;
       }
 
@@ -653,26 +653,25 @@ Ip4DriverBindingStart (
   //
   // Initialize the IP4 ID
   //
-  mIp4Id = (UINT16)NET_RANDOM (NetRandomInitSeed ());
+  mIp4Id = (UINT16) NET_RANDOM (NetRandomInitSeed ());
 
   return Status;
 
 UNINSTALL_PROTOCOL:
   gBS->UninstallMultipleProtocolInterfaces (
-         ControllerHandle,
-         &gEfiIp4ServiceBindingProtocolGuid,
-         &IpSb->ServiceBinding,
-         &gEfiIp4Config2ProtocolGuid,
-         Ip4Cfg2,
-         NULL
-         );
+                                            ControllerHandle,
+                                            &gEfiIp4ServiceBindingProtocolGuid,
+                                            &IpSb->ServiceBinding,
+                                            &gEfiIp4Config2ProtocolGuid,
+                                            Ip4Cfg2,
+                                            NULL
+                                            );
 
 FREE_SERVICE:
   Ip4CleanService (IpSb);
   FreePool (IpSb);
   return Status;
 }
-
 
 /**
   Stop this driver on ControllerHandle. This service is called by the
@@ -711,9 +710,9 @@ Ip4DriverBindingStop (
   IP4_INTERFACE                            *IpIf;
   IP4_ROUTE_TABLE                          *RouteTable;
 
-  BOOLEAN                                  IsDhcp4;
+  BOOLEAN  IsDhcp4;
 
-  IsDhcp4   = FALSE;
+  IsDhcp4 = FALSE;
 
   NicHandle = NetLibGetNicHandle (ControllerHandle, &gEfiManagedNetworkProtocolGuid);
   if (NicHandle == NULL) {
@@ -729,13 +728,13 @@ Ip4DriverBindingStop (
   }
 
   Status = gBS->OpenProtocol (
-                  NicHandle,
-                  &gEfiIp4ServiceBindingProtocolGuid,
-                  (VOID **) &ServiceBinding,
-                  This->DriverBindingHandle,
-                  NicHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              NicHandle,
+                              &gEfiIp4ServiceBindingProtocolGuid,
+                              (VOID **) &ServiceBinding,
+                              This->DriverBindingHandle,
+                              NicHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
   }
@@ -752,13 +751,12 @@ Ip4DriverBindingStop (
     Context.NumberOfChildren  = NumberOfChildren;
     Context.ChildHandleBuffer = ChildHandleBuffer;
     Status = NetDestroyLinkList (
-               List,
-               Ip4DestroyChildEntryInHandleBuffer,
-               &Context,
-               NULL
-               );
+                                 List,
+                                 Ip4DestroyChildEntryInHandleBuffer,
+                                 &Context,
+                                 NULL
+                                 );
   } else if (IpSb->DefaultInterface->ArpHandle == ControllerHandle) {
-
     //
     // The ARP protocol for the default interface is being uninstalled and all
     // its IP child handles should have been destroyed before. So, release the
@@ -772,21 +770,21 @@ Ip4DriverBindingStop (
     if (IpIf == NULL) {
       goto ON_ERROR;
     }
+
     RouteTable = Ip4CreateRouteTable ();
     if (RouteTable == NULL) {
       Ip4FreeInterface (IpIf, NULL);
-      goto ON_ERROR;;
+      goto ON_ERROR;
     }
 
-    IpSb->DefaultInterface  = IpIf;
+    IpSb->DefaultInterface = IpIf;
     InsertHeadList (&IpSb->Interfaces, &IpIf->Link);
     IpSb->DefaultRouteTable = RouteTable;
     Ip4ReceiveFrame (IpIf, NULL, Ip4AccpetFrame, IpSb);
 
     IpSb->State = IP4_SERVICE_UNSTARTED;
-
   } else if (IsListEmpty (&IpSb->Children)) {
-    State           = IpSb->State;
+    State = IpSb->State;
     //
     // OK, clean other resources then uninstall the service binding protocol.
     //
@@ -797,25 +795,25 @@ Ip4DriverBindingStop (
     }
 
     gBS->UninstallMultipleProtocolInterfaces (
-           NicHandle,
-           &gEfiIp4ServiceBindingProtocolGuid,
-           ServiceBinding,
-           &gEfiIp4Config2ProtocolGuid,
-           &IpSb->Ip4Config2Instance.Ip4Config2,
-           NULL
-           );
+                                              NicHandle,
+                                              &gEfiIp4ServiceBindingProtocolGuid,
+                                              ServiceBinding,
+                                              &gEfiIp4Config2ProtocolGuid,
+                                              &IpSb->Ip4Config2Instance.Ip4Config2,
+                                              NULL
+                                              );
 
     if (gIp4ControllerNameTable != NULL) {
       FreeUnicodeStringTable (gIp4ControllerNameTable);
       gIp4ControllerNameTable = NULL;
     }
+
     FreePool (IpSb);
   }
 
 ON_ERROR:
   return Status;
 }
-
 
 /**
   Creates a child handle and installs a protocol.
@@ -843,17 +841,17 @@ Ip4ServiceBindingCreateChild (
   IN OUT EFI_HANDLE                *ChildHandle
   )
 {
-  IP4_SERVICE               *IpSb;
-  IP4_PROTOCOL              *IpInstance;
-  EFI_TPL                   OldTpl;
-  EFI_STATUS                Status;
-  VOID                      *Mnp;
+  IP4_SERVICE   *IpSb;
+  IP4_PROTOCOL  *IpInstance;
+  EFI_TPL       OldTpl;
+  EFI_STATUS    Status;
+  VOID          *Mnp;
 
   if ((This == NULL) || (ChildHandle == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
 
-  IpSb       = IP4_SERVICE_FROM_PROTOCOL (This);
+  IpSb = IP4_SERVICE_FROM_PROTOCOL (This);
   IpInstance = AllocatePool (sizeof (IP4_PROTOCOL));
 
   if (IpInstance == NULL) {
@@ -866,11 +864,11 @@ Ip4ServiceBindingCreateChild (
   // Install Ip4 onto ChildHandle
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  ChildHandle,
-                  &gEfiIp4ProtocolGuid,
-                  &IpInstance->Ip4Proto,
-                  NULL
-                  );
+                                                   ChildHandle,
+                                                   &gEfiIp4ProtocolGuid,
+                                                   &IpInstance->Ip4Proto,
+                                                   NULL
+                                                   );
 
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
@@ -882,20 +880,20 @@ Ip4ServiceBindingCreateChild (
   // Open the Managed Network protocol BY_CHILD.
   //
   Status = gBS->OpenProtocol (
-                  IpSb->MnpChildHandle,
-                  &gEfiManagedNetworkProtocolGuid,
-                  (VOID **) &Mnp,
-                  gIp4DriverBinding.DriverBindingHandle,
-                  IpInstance->Handle,
-                  EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
-                  );
+                              IpSb->MnpChildHandle,
+                              &gEfiManagedNetworkProtocolGuid,
+                              (VOID **) &Mnp,
+                              gIp4DriverBinding.DriverBindingHandle,
+                              IpInstance->Handle,
+                              EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+                              );
   if (EFI_ERROR (Status)) {
-    gBS->UninstallMultipleProtocolInterfaces (
-           *ChildHandle,
-           &gEfiIp4ProtocolGuid,
-           &IpInstance->Ip4Proto,
-           NULL
-           );
+  gBS->UninstallMultipleProtocolInterfaces (
+                                            *ChildHandle,
+                                            &gEfiIp4ProtocolGuid,
+                                            &IpInstance->Ip4Proto,
+                                            NULL
+                                            );
 
     goto ON_ERROR;
   }
@@ -913,7 +911,6 @@ Ip4ServiceBindingCreateChild (
 ON_ERROR:
 
   if (EFI_ERROR (Status)) {
-
     Ip4CleanProtocol (IpInstance);
 
     FreePool (IpInstance);
@@ -921,7 +918,6 @@ ON_ERROR:
 
   return Status;
 }
-
 
 /**
   Destroys a child handle with a protocol installed on it.
@@ -948,11 +944,11 @@ Ip4ServiceBindingDestroyChild (
   IN EFI_HANDLE                    ChildHandle
   )
 {
-  EFI_STATUS                Status;
-  IP4_SERVICE               *IpSb;
-  IP4_PROTOCOL              *IpInstance;
-  EFI_IP4_PROTOCOL          *Ip4;
-  EFI_TPL                   OldTpl;
+  EFI_STATUS        Status;
+  IP4_SERVICE       *IpSb;
+  IP4_PROTOCOL      *IpInstance;
+  EFI_IP4_PROTOCOL  *Ip4;
+  EFI_TPL           OldTpl;
 
   if ((This == NULL) || (ChildHandle == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -961,16 +957,16 @@ Ip4ServiceBindingDestroyChild (
   //
   // Retrieve the private context data structures
   //
-  IpSb   = IP4_SERVICE_FROM_PROTOCOL (This);
+  IpSb = IP4_SERVICE_FROM_PROTOCOL (This);
 
   Status = gBS->OpenProtocol (
-                  ChildHandle,
-                  &gEfiIp4ProtocolGuid,
-                  (VOID **) &Ip4,
-                  gIp4DriverBinding.DriverBindingHandle,
-                  ChildHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ChildHandle,
+                              &gEfiIp4ProtocolGuid,
+                              (VOID **) &Ip4,
+                              gIp4DriverBinding.DriverBindingHandle,
+                              ChildHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
 
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
@@ -991,7 +987,7 @@ Ip4ServiceBindingDestroyChild (
   // the IP child it opens.
   //
   if (IpInstance->InDestroy) {
-    gBS->RestoreTPL (OldTpl);
+  gBS->RestoreTPL (OldTpl);
     return EFI_SUCCESS;
   }
 
@@ -1001,19 +997,19 @@ Ip4ServiceBindingDestroyChild (
   // Close the Managed Network protocol.
   //
   gBS->CloseProtocol (
-         IpSb->MnpChildHandle,
-         &gEfiManagedNetworkProtocolGuid,
-         gIp4DriverBinding.DriverBindingHandle,
-         ChildHandle
-         );
+                      IpSb->MnpChildHandle,
+                      &gEfiManagedNetworkProtocolGuid,
+                      gIp4DriverBinding.DriverBindingHandle,
+                      ChildHandle
+                      );
 
   if (IpInstance->Interface != NULL && IpInstance->Interface->Arp != NULL) {
-    gBS->CloseProtocol (
-           IpInstance->Interface->ArpHandle,
-           &gEfiArpProtocolGuid,
-           gIp4DriverBinding.DriverBindingHandle,
-           ChildHandle
-           );
+  gBS->CloseProtocol (
+                      IpInstance->Interface->ArpHandle,
+                      &gEfiArpProtocolGuid,
+                      gIp4DriverBinding.DriverBindingHandle,
+                      ChildHandle
+                      );
   }
 
   //
@@ -1032,10 +1028,10 @@ Ip4ServiceBindingDestroyChild (
   //
   gBS->RestoreTPL (OldTpl);
   Status = gBS->UninstallProtocolInterface (
-                  ChildHandle,
-                  &gEfiIp4ProtocolGuid,
-                  &IpInstance->Ip4Proto
-                  );
+                                            ChildHandle,
+                                            &gEfiIp4ProtocolGuid,
+                                            &IpInstance->Ip4Proto
+                                            );
   OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
   if (EFI_ERROR (Status)) {
     IpInstance->InDestroy = FALSE;
@@ -1044,12 +1040,12 @@ Ip4ServiceBindingDestroyChild (
 
   Status = Ip4CleanProtocol (IpInstance);
   if (EFI_ERROR (Status)) {
-    gBS->InstallMultipleProtocolInterfaces (
-           &ChildHandle,
-           &gEfiIp4ProtocolGuid,
-           Ip4,
-           NULL
-           );
+  gBS->InstallMultipleProtocolInterfaces (
+                                          &ChildHandle,
+                                          &gEfiIp4ProtocolGuid,
+                                          Ip4,
+                                          NULL
+                                          );
 
     goto ON_ERROR;
   }

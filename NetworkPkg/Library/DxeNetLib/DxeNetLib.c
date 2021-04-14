@@ -32,8 +32,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/PrintLib.h>
 #include <Library/UefiLib.h>
 
-#define NIC_ITEM_CONFIG_SIZE   (sizeof (NIC_IP4_CONFIG_INFO) + sizeof (EFI_IP4_ROUTE_TABLE) * MAX_IP4_CONFIG_IN_VARIABLE)
-#define DEFAULT_ZERO_START     ((UINTN) ~0)
+#define NIC_ITEM_CONFIG_SIZE  (sizeof (NIC_IP4_CONFIG_INFO) + sizeof (EFI_IP4_ROUTE_TABLE) * MAX_IP4_CONFIG_IN_VARIABLE)
+#define DEFAULT_ZERO_START    ((UINTN) ~0)
 
 //
 // All the supported IP4 masks in host byte order.
@@ -77,25 +77,25 @@ GLOBAL_REMOVE_IF_UNREFERENCED IP4_ADDR  gIp4AllMasks[IP4_MASK_NUM] = {
   0xFFFFFFFF,
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_IPv4_ADDRESS  mZeroIp4Addr = {{0, 0, 0, 0}};
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_IPv4_ADDRESS  mZeroIp4Addr = { { 0, 0, 0, 0 } };
 
 //
 // Any error level digitally larger than mNetDebugLevelMax
 // will be silently discarded.
 //
-GLOBAL_REMOVE_IF_UNREFERENCED UINTN  mNetDebugLevelMax = NETDEBUG_LEVEL_ERROR;
-GLOBAL_REMOVE_IF_UNREFERENCED UINT32 mSyslogPacketSeq  = 0xDEADBEEF;
+GLOBAL_REMOVE_IF_UNREFERENCED UINTN   mNetDebugLevelMax = NETDEBUG_LEVEL_ERROR;
+GLOBAL_REMOVE_IF_UNREFERENCED UINT32  mSyslogPacketSeq  = 0xDEADBEEF;
 
 //
 // You can change mSyslogDstMac mSyslogDstIp and mSyslogSrcIp
 // here to direct the syslog packets to the syslog deamon. The
 // default is broadcast to both the ethernet and IP.
 //
-GLOBAL_REMOVE_IF_UNREFERENCED UINT8  mSyslogDstMac[NET_ETHER_ADDR_LEN] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-GLOBAL_REMOVE_IF_UNREFERENCED UINT32 mSyslogDstIp                      = 0xffffffff;
-GLOBAL_REMOVE_IF_UNREFERENCED UINT32 mSyslogSrcIp                      = 0;
+GLOBAL_REMOVE_IF_UNREFERENCED UINT8   mSyslogDstMac[NET_ETHER_ADDR_LEN] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+GLOBAL_REMOVE_IF_UNREFERENCED UINT32  mSyslogDstIp = 0xffffffff;
+GLOBAL_REMOVE_IF_UNREFERENCED UINT32  mSyslogSrcIp = 0;
 
-GLOBAL_REMOVE_IF_UNREFERENCED CHAR8 *mMonthName[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED CHAR8  *mMonthName[] = {
   "Jan",
   "Feb",
   "Mar",
@@ -113,7 +113,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED CHAR8 *mMonthName[] = {
 //
 // VLAN device path node template
 //
-GLOBAL_REMOVE_IF_UNREFERENCED VLAN_DEVICE_PATH mNetVlanDevicePathTemplate = {
+GLOBAL_REMOVE_IF_UNREFERENCED VLAN_DEVICE_PATH  mNetVlanDevicePathTemplate = {
   {
     MESSAGING_DEVICE_PATH,
     MSG_VLAN_DP,
@@ -138,23 +138,23 @@ SyslogLocateSnp (
   VOID
   )
 {
-  EFI_SIMPLE_NETWORK_PROTOCOL *Snp;
-  EFI_STATUS                  Status;
-  EFI_HANDLE                  *Handles;
-  UINTN                       HandleCount;
-  UINTN                       Index;
+  EFI_SIMPLE_NETWORK_PROTOCOL  *Snp;
+  EFI_STATUS                   Status;
+  EFI_HANDLE                   *Handles;
+  UINTN                        HandleCount;
+  UINTN                        Index;
 
   //
   // Locate the handles which has SNP installed.
   //
   Handles = NULL;
   Status  = gBS->LocateHandleBuffer (
-                   ByProtocol,
-                   &gEfiSimpleNetworkProtocolGuid,
-                   NULL,
-                   &HandleCount,
-                   &Handles
-                   );
+                                     ByProtocol,
+                                     &gEfiSimpleNetworkProtocolGuid,
+                                     NULL,
+                                     &HandleCount,
+                                     &Handles
+                                     );
 
   if (EFI_ERROR (Status) || (HandleCount == 0)) {
     return NULL;
@@ -167,15 +167,14 @@ SyslogLocateSnp (
 
   for (Index = 0; Index < HandleCount; Index++) {
     Status = gBS->HandleProtocol (
-                    Handles[Index],
-                    &gEfiSimpleNetworkProtocolGuid,
-                    (VOID **) &Snp
-                    );
+                                  Handles[Index],
+                                  &gEfiSimpleNetworkProtocolGuid,
+                                  (VOID **) &Snp
+                                  );
 
     if ((Status == EFI_SUCCESS) && (Snp != NULL) &&
         (Snp->Mode->IfType == NET_IFTYPE_ETHERNET) &&
         (Snp->Mode->MaxPacketSize >= NET_SYSLOG_PACKET_LEN)) {
-
       break;
     }
 
@@ -208,11 +207,11 @@ SyslogSendPacket (
   IN UINT32                   Length
   )
 {
-  EFI_SIMPLE_NETWORK_PROTOCOL *Snp;
-  ETHER_HEAD                  *Ether;
-  EFI_STATUS                  Status;
-  EFI_EVENT                   TimeoutEvent;
-  UINT8                       *TxBuf;
+  EFI_SIMPLE_NETWORK_PROTOCOL  *Snp;
+  ETHER_HEAD                   *Ether;
+  EFI_STATUS                   Status;
+  EFI_EVENT                    TimeoutEvent;
+  UINT8                        *TxBuf;
 
   ASSERT (Packet != NULL);
 
@@ -229,12 +228,12 @@ SyslogSendPacket (
   // Start the timeout event.
   //
   Status = gBS->CreateEvent (
-                  EVT_TIMER,
-                  TPL_NOTIFY,
-                  NULL,
-                  NULL,
-                  &TimeoutEvent
-                  );
+                             EVT_TIMER,
+                             TPL_NOTIFY,
+                             NULL,
+                             NULL,
+                             &TimeoutEvent
+                             );
 
   if (EFI_ERROR (Status)) {
     return Status;
@@ -246,7 +245,7 @@ SyslogSendPacket (
     goto ON_EXIT;
   }
 
-  for (;;) {
+  for ( ; ;) {
     //
     // Transmit the packet through SNP.
     //
@@ -274,7 +273,6 @@ SyslogSendPacket (
         Status = EFI_TIMEOUT;
         break;
       }
-
     } while (TxBuf == NULL);
 
     if ((Status == EFI_SUCCESS) || (Status == EFI_TIMEOUT)) {
@@ -321,13 +319,13 @@ SyslogBuildPacket (
   OUT CHAR8                 *Buf
   )
 {
-  EFI_STATUS                Status;
-  ETHER_HEAD                *Ether;
-  IP4_HEAD                  *Ip4;
-  EFI_UDP_HEADER            *Udp4;
-  EFI_TIME                  Time;
-  UINT32                    Pri;
-  UINT32                    Len;
+  EFI_STATUS      Status;
+  ETHER_HEAD      *Ether;
+  IP4_HEAD        *Ip4;
+  EFI_UDP_HEADER  *Udp4;
+  EFI_TIME        Time;
+  UINT32          Pri;
+  UINT32          Len;
 
   //
   // Fill in the Ethernet header. Leave alone the source MAC.
@@ -339,44 +337,44 @@ SyslogBuildPacket (
 
   Ether->EtherType = HTONS (0x0800);    // IPv4 protocol
 
-  Buf             += sizeof (ETHER_HEAD);
-  BufLen          -= sizeof (ETHER_HEAD);
+  Buf    += sizeof (ETHER_HEAD);
+  BufLen -= sizeof (ETHER_HEAD);
 
   //
   // Fill in the IP header
   //
-  Ip4              = (IP4_HEAD *) Buf;
-  Ip4->HeadLen     = 5;
-  Ip4->Ver         = 4;
-  Ip4->Tos         = 0;
-  Ip4->TotalLen    = 0;
-  Ip4->Id          = (UINT16) mSyslogPacketSeq;
-  Ip4->Fragment    = 0;
-  Ip4->Ttl         = 16;
-  Ip4->Protocol    = 0x11;
-  Ip4->Checksum    = 0;
-  Ip4->Src         = mSyslogSrcIp;
-  Ip4->Dst         = mSyslogDstIp;
+  Ip4 = (IP4_HEAD *) Buf;
+  Ip4->HeadLen  = 5;
+  Ip4->Ver      = 4;
+  Ip4->Tos      = 0;
+  Ip4->TotalLen = 0;
+  Ip4->Id = (UINT16) mSyslogPacketSeq;
+  Ip4->Fragment = 0;
+  Ip4->Ttl = 16;
+  Ip4->Protocol = 0x11;
+  Ip4->Checksum = 0;
+  Ip4->Src = mSyslogSrcIp;
+  Ip4->Dst = mSyslogDstIp;
 
-  Buf             += sizeof (IP4_HEAD);
-  BufLen          -= sizeof (IP4_HEAD);
+  Buf    += sizeof (IP4_HEAD);
+  BufLen -= sizeof (IP4_HEAD);
 
   //
   // Fill in the UDP header, Udp checksum is optional. Leave it zero.
   //
-  Udp4             = (EFI_UDP_HEADER *) Buf;
-  Udp4->SrcPort    = HTONS (514);
-  Udp4->DstPort    = HTONS (514);
-  Udp4->Length     = 0;
-  Udp4->Checksum   = 0;
+  Udp4 = (EFI_UDP_HEADER *) Buf;
+  Udp4->SrcPort  = HTONS (514);
+  Udp4->DstPort  = HTONS (514);
+  Udp4->Length   = 0;
+  Udp4->Checksum = 0;
 
-  Buf             += sizeof (EFI_UDP_HEADER);
-  BufLen          -= sizeof (EFI_UDP_HEADER);
+  Buf    += sizeof (EFI_UDP_HEADER);
+  BufLen -= sizeof (EFI_UDP_HEADER);
 
   //
   // Build the syslog message body with <PRI> Timestamp  machine module Message
   //
-  Pri = ((NET_SYSLOG_FACILITY & 31) << 3) | (Level & 7);
+  Pri    = ((NET_SYSLOG_FACILITY & 31) << 3) | (Level & 7);
   Status = gRT->GetTime (&Time, NULL);
   if (EFI_ERROR (Status)) {
     return 0;
@@ -387,37 +385,37 @@ SyslogBuildPacket (
   //
   Len  = 0;
   Len += (UINT32) AsciiSPrint (
-                    Buf,
-                    BufLen,
-                    "<%d> %a %d %d:%d:%d ",
-                    Pri,
-                    mMonthName [Time.Month-1],
-                    Time.Day,
-                    Time.Hour,
-                    Time.Minute,
-                    Time.Second
-                    );
+                               Buf,
+                               BufLen,
+                               "<%d> %a %d %d:%d:%d ",
+                               Pri,
+                               mMonthName[Time.Month-1],
+                               Time.Day,
+                               Time.Hour,
+                               Time.Minute,
+                               Time.Second
+                               );
 
   Len += (UINT32) AsciiSPrint (
-                    Buf + Len,
-                    BufLen - Len,
-                    "Tiano %a: %a (Line: %d File: %a)",
-                    Module,
-                    Message,
-                    Line,
-                    File
-                    );
-  Len ++;
+                               Buf + Len,
+                               BufLen - Len,
+                               "Tiano %a: %a (Line: %d File: %a)",
+                               Module,
+                               Message,
+                               Line,
+                               File
+                               );
+  Len++;
 
   //
   // OK, patch the IP length/checksum and UDP length fields.
   //
-  Len           += sizeof (EFI_UDP_HEADER);
-  Udp4->Length   = HTONS ((UINT16) Len);
+  Len += sizeof (EFI_UDP_HEADER);
+  Udp4->Length = HTONS ((UINT16) Len);
 
-  Len           += sizeof (IP4_HEAD);
-  Ip4->TotalLen  = HTONS ((UINT16) Len);
-  Ip4->Checksum  = (UINT16) (~NetblockChecksum ((UINT8 *) Ip4, sizeof (IP4_HEAD)));
+  Len += sizeof (IP4_HEAD);
+  Ip4->TotalLen = HTONS ((UINT16) Len);
+  Ip4->Checksum = (UINT16) (~NetblockChecksum ((UINT8 *) Ip4, sizeof (IP4_HEAD)));
 
   return Len + sizeof (ETHER_HEAD);
 }
@@ -455,8 +453,8 @@ NetDebugASPrint (
   ...
   )
 {
-  VA_LIST                   Marker;
-  CHAR8                     *Buf;
+  VA_LIST  Marker;
+  CHAR8    *Buf;
 
   ASSERT (Format != NULL);
 
@@ -501,9 +499,9 @@ NetDebugOutput (
   IN UINT8                     *Message
   )
 {
-  CHAR8                        *Packet;
-  UINT32                       Len;
-  EFI_STATUS                   Status;
+  CHAR8       *Packet;
+  UINT32      Len;
+  EFI_STATUS  Status;
 
   //
   // Check whether the message should be sent out
@@ -533,14 +531,14 @@ NetDebugOutput (
   // Build the message: Ethernet header + IP header + Udp Header + user data
   //
   Len = SyslogBuildPacket (
-          Level,
-          Module,
-          File,
-          Line,
-          Message,
-          NET_SYSLOG_PACKET_LEN,
-          Packet
-          );
+                           Level,
+                           Module,
+                           File,
+                           Line,
+                           Message,
+                           NET_SYSLOG_PACKET_LEN,
+                           Packet
+                           );
   if (Len == 0) {
     Status = EFI_DEVICE_ERROR;
   } else {
@@ -554,6 +552,7 @@ ON_EXIT:
   FreePool (Message);
   return Status;
 }
+
 /**
   Return the length of the mask.
 
@@ -572,7 +571,7 @@ NetGetMaskLength (
   IN IP4_ADDR               NetMask
   )
 {
-  INTN                      Index;
+  INTN  Index;
 
   for (Index = 0; Index <= IP4_MASK_MAX; Index++) {
     if (NetMask == gIp4AllMasks[Index]) {
@@ -582,8 +581,6 @@ NetGetMaskLength (
 
   return Index;
 }
-
-
 
 /**
   Return the class of the IP address, such as class A, B, C.
@@ -617,28 +614,22 @@ NetGetIpClass (
   IN IP4_ADDR               Addr
   )
 {
-  UINT8                     ByteOne;
+  UINT8  ByteOne;
 
   ByteOne = (UINT8) (Addr >> 24);
 
   if ((ByteOne & 0x80) == 0) {
     return IP4_ADDR_CLASSA;
-
   } else if ((ByteOne & 0xC0) == 0x80) {
     return IP4_ADDR_CLASSB;
-
   } else if ((ByteOne & 0xE0) == 0xC0) {
     return IP4_ADDR_CLASSC;
-
   } else if ((ByteOne & 0xF0) == 0xE0) {
     return IP4_ADDR_CLASSD;
-
   } else {
     return IP4_ADDR_CLASSE;
-
   }
 }
-
 
 /**
   Check whether the IP is a valid unicast address according to
@@ -664,7 +655,7 @@ NetIp4IsUnicast (
   IN IP4_ADDR               NetMask
   )
 {
-  INTN   MaskLength;
+  INTN  MaskLength;
 
   ASSERT (NetMask != 0);
 
@@ -705,8 +696,8 @@ NetIp6IsValidUnicast (
   IN EFI_IPv6_ADDRESS       *Ip6
   )
 {
-  UINT8 Byte;
-  UINT8 Index;
+  UINT8  Byte;
+  UINT8  Index;
 
   ASSERT (Ip6 != NULL);
 
@@ -746,7 +737,7 @@ NetIp6IsUnspecifiedAddr (
   IN EFI_IPv6_ADDRESS       *Ip6
   )
 {
-  UINT8 Index;
+  UINT8  Index;
 
   ASSERT (Ip6 != NULL);
 
@@ -776,7 +767,7 @@ NetIp6IsLinkLocalAddr (
   IN EFI_IPv6_ADDRESS *Ip6
   )
 {
-  UINT8 Index;
+  UINT8  Index;
 
   ASSERT (Ip6 != NULL);
 
@@ -819,9 +810,9 @@ NetIp6IsNetEqual (
   UINT8            PrefixLength
   )
 {
-  UINT8 Byte;
-  UINT8 Bit;
-  UINT8 Mask;
+  UINT8  Byte;
+  UINT8  Bit;
+  UINT8  Mask;
 
   ASSERT ((Ip1 != NULL) && (Ip2 != NULL) && (PrefixLength < IP6_PREFIX_MAX));
 
@@ -843,6 +834,7 @@ NetIp6IsNetEqual (
     if (Byte >= 16) {
       return FALSE;
     }
+
     if ((Ip1->Addr[Byte] & Mask) != (Ip2->Addr[Byte] & Mask)) {
       return FALSE;
     }
@@ -850,7 +842,6 @@ NetIp6IsNetEqual (
 
   return TRUE;
 }
-
 
 /**
   Switches the endianess of an IPv6 address
@@ -872,8 +863,8 @@ Ip6Swap128 (
   EFI_IPv6_ADDRESS *Ip6
   )
 {
-  UINT64 High;
-  UINT64 Low;
+  UINT64  High;
+  UINT64  Low;
 
   ASSERT (Ip6 != NULL);
 
@@ -905,12 +896,12 @@ NetRandomInitSeed (
   VOID
   )
 {
-  EFI_TIME                  Time;
-  UINT32                    Seed;
-  UINT64                    MonotonicCount;
+  EFI_TIME  Time;
+  UINT32    Seed;
+  UINT64    MonotonicCount;
 
   gRT->GetTime (&Time, NULL);
-  Seed = (Time.Hour << 24 | Time.Day << 16 | Time.Minute << 8 | Time.Second);
+  Seed  = (Time.Hour << 24 | Time.Day << 16 | Time.Minute << 8 | Time.Second);
   Seed ^= Time.Nanosecond;
   Seed ^= Time.Year << 7;
 
@@ -919,7 +910,6 @@ NetRandomInitSeed (
 
   return Seed;
 }
-
 
 /**
   Extract a UINT32 from a byte stream.
@@ -940,14 +930,13 @@ NetGetUint32 (
   IN UINT8                  *Buf
   )
 {
-  UINT32                    Value;
+  UINT32  Value;
 
   ASSERT (Buf != NULL);
 
   CopyMem (&Value, Buf, sizeof (UINT32));
   return NTOHL (Value);
 }
-
 
 /**
   Put a UINT32 to the byte stream in network byte order.
@@ -974,7 +963,6 @@ NetPutUint32 (
   CopyMem (Buf, &Data, sizeof (UINT32));
 }
 
-
 /**
   Remove the first node entry on the list, and return the removed node entry.
 
@@ -999,7 +987,7 @@ NetListRemoveHead (
   IN OUT LIST_ENTRY            *Head
   )
 {
-  LIST_ENTRY            *First;
+  LIST_ENTRY  *First;
 
   ASSERT (Head != NULL);
 
@@ -1007,18 +995,17 @@ NetListRemoveHead (
     return NULL;
   }
 
-  First                         = Head->ForwardLink;
-  Head->ForwardLink             = First->ForwardLink;
-  First->ForwardLink->BackLink  = Head;
+  First = Head->ForwardLink;
+  Head->ForwardLink = First->ForwardLink;
+  First->ForwardLink->BackLink = Head;
 
   DEBUG_CODE (
-    First->ForwardLink  = (LIST_ENTRY *) NULL;
-    First->BackLink     = (LIST_ENTRY *) NULL;
-  );
+              First->ForwardLink = (LIST_ENTRY *) NULL;
+              First->BackLink    = (LIST_ENTRY *) NULL;
+              );
 
   return First;
 }
-
 
 /**
   Remove the last node entry on the list and and return the removed node entry.
@@ -1044,7 +1031,7 @@ NetListRemoveTail (
   IN OUT LIST_ENTRY            *Head
   )
 {
-  LIST_ENTRY            *Last;
+  LIST_ENTRY  *Last;
 
   ASSERT (Head != NULL);
 
@@ -1052,18 +1039,17 @@ NetListRemoveTail (
     return NULL;
   }
 
-  Last                        = Head->BackLink;
-  Head->BackLink              = Last->BackLink;
+  Last = Head->BackLink;
+  Head->BackLink = Last->BackLink;
   Last->BackLink->ForwardLink = Head;
 
   DEBUG_CODE (
-    Last->ForwardLink = (LIST_ENTRY *) NULL;
-    Last->BackLink    = (LIST_ENTRY *) NULL;
-  );
+              Last->ForwardLink = (LIST_ENTRY *) NULL;
+              Last->BackLink    = (LIST_ENTRY *) NULL;
+              );
 
   return Last;
 }
-
 
 /**
   Insert a new node entry after a designated node entry of a doubly linked list.
@@ -1086,12 +1072,11 @@ NetListInsertAfter (
 {
   ASSERT (PrevEntry != NULL && NewEntry != NULL);
 
-  NewEntry->BackLink                = PrevEntry;
-  NewEntry->ForwardLink             = PrevEntry->ForwardLink;
-  PrevEntry->ForwardLink->BackLink  = NewEntry;
-  PrevEntry->ForwardLink            = NewEntry;
+  NewEntry->BackLink    = PrevEntry;
+  NewEntry->ForwardLink = PrevEntry->ForwardLink;
+  PrevEntry->ForwardLink->BackLink = NewEntry;
+  PrevEntry->ForwardLink = NewEntry;
 }
-
 
 /**
   Insert a new node entry before a designated node entry of a doubly linked list.
@@ -1114,10 +1099,10 @@ NetListInsertBefore (
 {
   ASSERT (PostEntry != NULL && NewEntry != NULL);
 
-  NewEntry->ForwardLink             = PostEntry;
-  NewEntry->BackLink                = PostEntry->BackLink;
-  PostEntry->BackLink->ForwardLink  = NewEntry;
-  PostEntry->BackLink               = NewEntry;
+  NewEntry->ForwardLink = PostEntry;
+  NewEntry->BackLink    = PostEntry->BackLink;
+  PostEntry->BackLink->ForwardLink = NewEntry;
+  PostEntry->BackLink = NewEntry;
 }
 
 /**
@@ -1147,15 +1132,15 @@ EFIAPI
 NetDestroyLinkList (
   IN   LIST_ENTRY                       *List,
   IN   NET_DESTROY_LINK_LIST_CALLBACK   CallBack,
-  IN   VOID                             *Context,    OPTIONAL
+  IN   VOID                             *Context, OPTIONAL
   OUT  UINTN                            *ListLength  OPTIONAL
   )
 {
-  UINTN                         PreviousLength;
-  LIST_ENTRY                    *Entry;
-  LIST_ENTRY                    *Ptr;
-  UINTN                         Length;
-  EFI_STATUS                    Status;
+  UINTN       PreviousLength;
+  LIST_ENTRY  *Entry;
+  LIST_ENTRY  *Ptr;
+  UINTN       Length;
+  EFI_STATUS  Status;
 
   if (List == NULL || CallBack == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -1170,6 +1155,7 @@ NetDestroyLinkList (
       if (EFI_ERROR (Status)) {
         return Status;
       }
+
       //
       // Walk through the list to see whether the Entry has been removed or not.
       // If the Entry still exists, just try to destroy the next one.
@@ -1180,18 +1166,22 @@ NetDestroyLinkList (
           break;
         }
       }
+
       if (Ptr == Entry) {
         Entry = GetNextNode (List, Entry);
       } else {
         Entry = GetFirstNode (List);
       }
     }
-    for (Length = 0, Ptr = List->ForwardLink; Ptr != List; Length++, Ptr = Ptr->ForwardLink);
+
+    for (Length = 0, Ptr = List->ForwardLink; Ptr != List; Length++, Ptr = Ptr->ForwardLink) {
+    }
   } while (Length != PreviousLength);
 
   if (ListLength != NULL) {
     *ListLength = Length;
   }
+
   return EFI_SUCCESS;
 }
 
@@ -1215,7 +1205,7 @@ NetIsInHandleBuffer (
   IN  EFI_HANDLE          *ChildHandleBuffer OPTIONAL
   )
 {
-  UINTN     Index;
+  UINTN  Index;
 
   if (NumberOfChildren == 0 || ChildHandleBuffer == NULL) {
     return FALSE;
@@ -1229,7 +1219,6 @@ NetIsInHandleBuffer (
 
   return FALSE;
 }
-
 
 /**
   Initialize the netmap. Netmap is a reposity to keep the <Key, Value> pairs.
@@ -1258,7 +1247,6 @@ NetMapInit (
   Map->Count = 0;
 }
 
-
 /**
   To clean up the netmap, that is, release allocated memories.
 
@@ -1277,9 +1265,9 @@ NetMapClean (
   IN OUT NET_MAP            *Map
   )
 {
-  NET_MAP_ITEM              *Item;
-  LIST_ENTRY                *Entry;
-  LIST_ENTRY                *Next;
+  NET_MAP_ITEM  *Item;
+  LIST_ENTRY    *Entry;
+  LIST_ENTRY    *Next;
 
   ASSERT (Map != NULL);
 
@@ -1304,7 +1292,6 @@ NetMapClean (
   ASSERT (IsListEmpty (&Map->Recycled));
 }
 
-
 /**
   Test whether the netmap is empty and return true if it is.
 
@@ -1327,7 +1314,6 @@ NetMapIsEmpty (
   return (BOOLEAN) (Map->Count == 0);
 }
 
-
 /**
   Return the number of the <Key, Value> pairs in the netmap.
 
@@ -1347,7 +1333,6 @@ NetMapGetCount (
   ASSERT (Map != NULL);
   return Map->Count;
 }
-
 
 /**
   Return one allocated item.
@@ -1370,9 +1355,9 @@ NetMapAllocItem (
   IN OUT NET_MAP            *Map
   )
 {
-  NET_MAP_ITEM              *Item;
-  LIST_ENTRY                *Head;
-  UINTN                     Index;
+  NET_MAP_ITEM  *Item;
+  LIST_ENTRY    *Head;
+  UINTN         Index;
 
   ASSERT (Map != NULL);
 
@@ -1400,7 +1385,6 @@ NetMapAllocItem (
   return Item;
 }
 
-
 /**
   Allocate an item to save the <Key, Value> pair to the head of the netmap.
 
@@ -1427,7 +1411,7 @@ NetMapInsertHead (
   IN VOID                   *Value    OPTIONAL
   )
 {
-  NET_MAP_ITEM              *Item;
+  NET_MAP_ITEM  *Item;
 
   ASSERT (Map != NULL && Key != NULL);
 
@@ -1444,7 +1428,6 @@ NetMapInsertHead (
   Map->Count++;
   return EFI_SUCCESS;
 }
-
 
 /**
   Allocate an item to save the <Key, Value> pair to the tail of the netmap.
@@ -1472,7 +1455,7 @@ NetMapInsertTail (
   IN VOID                   *Value    OPTIONAL
   )
 {
-  NET_MAP_ITEM              *Item;
+  NET_MAP_ITEM  *Item;
 
   ASSERT (Map != NULL && Key != NULL);
 
@@ -1490,7 +1473,6 @@ NetMapInsertTail (
 
   return EFI_SUCCESS;
 }
-
 
 /**
   Check whether the item is in the Map and return TRUE if it is.
@@ -1510,7 +1492,7 @@ NetItemInMap (
   IN NET_MAP_ITEM           *Item
   )
 {
-  LIST_ENTRY            *ListEntry;
+  LIST_ENTRY  *ListEntry;
 
   ASSERT (Map != NULL && Item != NULL);
 
@@ -1522,7 +1504,6 @@ NetItemInMap (
 
   return FALSE;
 }
-
 
 /**
   Find the key in the netmap and returns the point to the item contains the Key.
@@ -1546,8 +1527,8 @@ NetMapFindKey (
   IN  VOID                  *Key
   )
 {
-  LIST_ENTRY              *Entry;
-  NET_MAP_ITEM            *Item;
+  LIST_ENTRY    *Entry;
+  NET_MAP_ITEM  *Item;
 
   ASSERT (Map != NULL && Key != NULL);
 
@@ -1561,7 +1542,6 @@ NetMapFindKey (
 
   return NULL;
 }
-
 
 /**
   Remove the node entry of the item from the netmap and return the key of the removed item.
@@ -1603,7 +1583,6 @@ NetMapRemoveItem (
 
   return Item->Key;
 }
-
 
 /**
   Remove the first node entry on the netmap and return the key of the removed item.
@@ -1649,7 +1628,6 @@ NetMapRemoveHead (
   return Item->Key;
 }
 
-
 /**
   Remove the last node entry on the netmap and return the key of the removed item.
 
@@ -1674,7 +1652,7 @@ NetMapRemoveTail (
   OUT VOID                  **Value       OPTIONAL
   )
 {
-  NET_MAP_ITEM              *Item;
+  NET_MAP_ITEM  *Item;
 
   //
   // Often, it indicates a programming error to remove
@@ -1693,7 +1671,6 @@ NetMapRemoveTail (
 
   return Item->Key;
 }
-
 
 /**
   Iterate through the netmap and call CallBack for each item.
@@ -1722,12 +1699,11 @@ NetMapIterate (
   IN VOID                   *Arg      OPTIONAL
   )
 {
-
-  LIST_ENTRY            *Entry;
-  LIST_ENTRY            *Next;
-  LIST_ENTRY            *Head;
-  NET_MAP_ITEM          *Item;
-  EFI_STATUS            Result;
+  LIST_ENTRY    *Entry;
+  LIST_ENTRY    *Next;
+  LIST_ENTRY    *Head;
+  NET_MAP_ITEM  *Item;
+  EFI_STATUS    Result;
 
   ASSERT ((Map != NULL) && (CallBack != NULL));
 
@@ -1749,7 +1725,6 @@ NetMapIterate (
   return EFI_SUCCESS;
 }
 
-
 /**
   This is the default unload handle for all the network drivers.
 
@@ -1768,14 +1743,14 @@ NetLibDefaultUnload (
   IN EFI_HANDLE             ImageHandle
   )
 {
-  EFI_STATUS                        Status;
-  EFI_HANDLE                        *DeviceHandleBuffer;
-  UINTN                             DeviceHandleCount;
-  UINTN                             Index;
-  UINTN                             Index2;
-  EFI_DRIVER_BINDING_PROTOCOL       *DriverBinding;
-  EFI_COMPONENT_NAME_PROTOCOL       *ComponentName;
-  EFI_COMPONENT_NAME2_PROTOCOL      *ComponentName2;
+  EFI_STATUS                    Status;
+  EFI_HANDLE                    *DeviceHandleBuffer;
+  UINTN                         DeviceHandleCount;
+  UINTN                         Index;
+  UINTN                         Index2;
+  EFI_DRIVER_BINDING_PROTOCOL   *DriverBinding;
+  EFI_COMPONENT_NAME_PROTOCOL   *ComponentName;
+  EFI_COMPONENT_NAME2_PROTOCOL  *ComponentName2;
 
   //
   // Get the list of all the handles in the handle database.
@@ -1783,12 +1758,12 @@ NetLibDefaultUnload (
   // operation fails.
   //
   Status = gBS->LocateHandleBuffer (
-                  AllHandles,
-                  NULL,
-                  NULL,
-                  &DeviceHandleCount,
-                  &DeviceHandleBuffer
-                  );
+                                    AllHandles,
+                                    NULL,
+                                    NULL,
+                                    &DeviceHandleCount,
+                                    &DeviceHandleBuffer
+                                    );
 
   if (EFI_ERROR (Status)) {
     return Status;
@@ -1796,10 +1771,10 @@ NetLibDefaultUnload (
 
   for (Index = 0; Index < DeviceHandleCount; Index++) {
     Status = gBS->HandleProtocol (
-                    DeviceHandleBuffer[Index],
-                    &gEfiDriverBindingProtocolGuid,
-                    (VOID **) &DriverBinding
-                    );
+                                  DeviceHandleBuffer[Index],
+                                  &gEfiDriverBindingProtocolGuid,
+                                  (VOID **) &DriverBinding
+                                  );
     if (EFI_ERROR (Status)) {
       continue;
     }
@@ -1814,45 +1789,45 @@ NetLibDefaultUnload (
     //
     for (Index2 = 0; Index2 < DeviceHandleCount; Index2++) {
       Status = gBS->DisconnectController (
-                      DeviceHandleBuffer[Index2],
-                      DriverBinding->DriverBindingHandle,
-                      NULL
-                      );
+                                          DeviceHandleBuffer[Index2],
+                                          DriverBinding->DriverBindingHandle,
+                                          NULL
+                                          );
     }
 
     //
     // Uninstall all the protocols installed in the driver entry point
     //
     gBS->UninstallProtocolInterface (
-          DriverBinding->DriverBindingHandle,
-          &gEfiDriverBindingProtocolGuid,
-          DriverBinding
-          );
+                                     DriverBinding->DriverBindingHandle,
+                                     &gEfiDriverBindingProtocolGuid,
+                                     DriverBinding
+                                     );
 
     Status = gBS->HandleProtocol (
-                    DeviceHandleBuffer[Index],
-                    &gEfiComponentNameProtocolGuid,
-                    (VOID **) &ComponentName
-                    );
+                                  DeviceHandleBuffer[Index],
+                                  &gEfiComponentNameProtocolGuid,
+                                  (VOID **) &ComponentName
+                                  );
     if (!EFI_ERROR (Status)) {
-      gBS->UninstallProtocolInterface (
-             DriverBinding->DriverBindingHandle,
-             &gEfiComponentNameProtocolGuid,
-             ComponentName
-             );
+  gBS->UninstallProtocolInterface (
+                                   DriverBinding->DriverBindingHandle,
+                                   &gEfiComponentNameProtocolGuid,
+                                   ComponentName
+                                   );
     }
 
     Status = gBS->HandleProtocol (
-                    DeviceHandleBuffer[Index],
-                    &gEfiComponentName2ProtocolGuid,
-                    (VOID **) &ComponentName2
-                    );
+                                  DeviceHandleBuffer[Index],
+                                  &gEfiComponentName2ProtocolGuid,
+                                  (VOID **) &ComponentName2
+                                  );
     if (!EFI_ERROR (Status)) {
-      gBS->UninstallProtocolInterface (
-             DriverBinding->DriverBindingHandle,
-             &gEfiComponentName2ProtocolGuid,
-             ComponentName2
-             );
+  gBS->UninstallProtocolInterface (
+                                   DriverBinding->DriverBindingHandle,
+                                   &gEfiComponentName2ProtocolGuid,
+                                   ComponentName2
+                                   );
     }
   }
 
@@ -1860,13 +1835,11 @@ NetLibDefaultUnload (
   // Free the buffer containing the list of handles from the handle database
   //
   if (DeviceHandleBuffer != NULL) {
-    gBS->FreePool (DeviceHandleBuffer);
+  gBS->FreePool (DeviceHandleBuffer);
   }
 
   return EFI_SUCCESS;
 }
-
-
 
 /**
   Create a child of the service that is identified by ServiceBindingGuid.
@@ -1897,20 +1870,19 @@ NetLibCreateServiceChild (
   EFI_STATUS                    Status;
   EFI_SERVICE_BINDING_PROTOCOL  *Service;
 
-
   ASSERT ((ServiceBindingGuid != NULL) && (ChildHandle != NULL));
 
   //
   // Get the ServiceBinding Protocol
   //
   Status = gBS->OpenProtocol (
-                  Controller,
-                  ServiceBindingGuid,
-                  (VOID **) &Service,
-                  Image,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              Controller,
+                              ServiceBindingGuid,
+                              (VOID **) &Service,
+                              Image,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
 
   if (EFI_ERROR (Status)) {
     return Status;
@@ -1922,7 +1894,6 @@ NetLibCreateServiceChild (
   Status = Service->CreateChild (Service, ChildHandle);
   return Status;
 }
-
 
 /**
   Destroy a child of the service that is identified by ServiceBindingGuid.
@@ -1958,13 +1929,13 @@ NetLibDestroyServiceChild (
   // Get the ServiceBinding Protocol
   //
   Status = gBS->OpenProtocol (
-                  Controller,
-                  ServiceBindingGuid,
-                  (VOID **) &Service,
-                  Image,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              Controller,
+                              ServiceBindingGuid,
+                              (VOID **) &Service,
+                              Image,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
 
   if (EFI_ERROR (Status)) {
     return Status;
@@ -2014,6 +1985,7 @@ NetLibGetSnpHandle (
     if (Snp != NULL) {
       *Snp = SnpInstance;
     }
+
     return ServiceHandle;
   }
 
@@ -2026,7 +1998,7 @@ NetLibGetSnpHandle (
   }
 
   SnpHandle = NULL;
-  Status = gBS->LocateDevicePath (&gEfiSimpleNetworkProtocolGuid, &DevicePath, &SnpHandle);
+  Status    = gBS->LocateDevicePath (&gEfiSimpleNetworkProtocolGuid, &DevicePath, &SnpHandle);
   if (EFI_ERROR (Status)) {
     //
     // Failed to find SNP handle
@@ -2039,6 +2011,7 @@ NetLibGetSnpHandle (
     if (Snp != NULL) {
       *Snp = SnpInstance;
     }
+
     return SnpHandle;
   }
 
@@ -2077,6 +2050,7 @@ NetLibGetVlanId (
     if (Node->Type == MESSAGING_DEVICE_PATH && Node->SubType == MSG_VLAN_DP) {
       return ((VLAN_DEVICE_PATH *) Node)->VlanId;
     }
+
     Node = NextDevicePathNode (Node);
   }
 
@@ -2120,10 +2094,10 @@ NetLibGetVlanHandle (
   //
   CopyMem (&VlanNode, &mNetVlanDevicePathTemplate, sizeof (VLAN_DEVICE_PATH));
   VlanNode.VlanId = VlanId;
-  VlanDevicePath = AppendDevicePathNode (
-                     ParentDevicePath,
-                     (EFI_DEVICE_PATH_PROTOCOL *) &VlanNode
-                     );
+  VlanDevicePath  = AppendDevicePathNode (
+                                          ParentDevicePath,
+                                          (EFI_DEVICE_PATH_PROTOCOL *) &VlanNode
+                                          );
   if (VlanDevicePath == NULL) {
     return NULL;
   }
@@ -2131,13 +2105,13 @@ NetLibGetVlanHandle (
   //
   // Find VLAN device handle
   //
-  Handle = NULL;
+  Handle     = NULL;
   DevicePath = VlanDevicePath;
   gBS->LocateDevicePath (
-         &gEfiDevicePathProtocolGuid,
-         &DevicePath,
-         &Handle
-         );
+                         &gEfiDevicePathProtocolGuid,
+                         &DevicePath,
+                         &Handle
+                         );
   if (!IsDevicePathEnd (DevicePath)) {
     //
     // Device path is not exactly match
@@ -2176,14 +2150,14 @@ NetLibGetMacAddress (
   OUT UINTN                 *AddressSize
   )
 {
-  EFI_STATUS                   Status;
-  EFI_SIMPLE_NETWORK_PROTOCOL  *Snp;
-  EFI_SIMPLE_NETWORK_MODE      *SnpMode;
-  EFI_SIMPLE_NETWORK_MODE      SnpModeData;
-  EFI_MANAGED_NETWORK_PROTOCOL *Mnp;
-  EFI_SERVICE_BINDING_PROTOCOL *MnpSb;
-  EFI_HANDLE                   SnpHandle;
-  EFI_HANDLE                   MnpChildHandle;
+  EFI_STATUS                    Status;
+  EFI_SIMPLE_NETWORK_PROTOCOL   *Snp;
+  EFI_SIMPLE_NETWORK_MODE       *SnpMode;
+  EFI_SIMPLE_NETWORK_MODE       SnpModeData;
+  EFI_MANAGED_NETWORK_PROTOCOL  *Mnp;
+  EFI_SERVICE_BINDING_PROTOCOL  *MnpSb;
+  EFI_HANDLE                    SnpHandle;
+  EFI_HANDLE                    MnpChildHandle;
 
   ASSERT (MacAddress != NULL);
   ASSERT (AddressSize != NULL);
@@ -2204,10 +2178,10 @@ NetLibGetMacAddress (
     //
     MnpChildHandle = NULL;
     Status = gBS->HandleProtocol (
-                    ServiceHandle,
-                    &gEfiManagedNetworkServiceBindingProtocolGuid,
-                    (VOID **) &MnpSb
-                    );
+                                  ServiceHandle,
+                                  &gEfiManagedNetworkServiceBindingProtocolGuid,
+                                  (VOID **) &MnpSb
+                                  );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -2224,12 +2198,12 @@ NetLibGetMacAddress (
     // Open MNP protocol
     //
     Status = gBS->HandleProtocol (
-                    MnpChildHandle,
-                    &gEfiManagedNetworkProtocolGuid,
-                    (VOID **) &Mnp
-                    );
+                                  MnpChildHandle,
+                                  &gEfiManagedNetworkProtocolGuid,
+                                  (VOID **) &Mnp
+                                  );
     if (EFI_ERROR (Status)) {
-      MnpSb->DestroyChild (MnpSb, MnpChildHandle);
+  MnpSb->DestroyChild (MnpSb, MnpChildHandle);
       return Status;
     }
 
@@ -2238,9 +2212,10 @@ NetLibGetMacAddress (
     //
     Status = Mnp->GetModeData (Mnp, NULL, &SnpModeData);
     if (EFI_ERROR (Status) && (Status != EFI_NOT_STARTED)) {
-      MnpSb->DestroyChild (MnpSb, MnpChildHandle);
+  MnpSb->DestroyChild (MnpSb, MnpChildHandle);
       return Status;
     }
+
     SnpMode = &SnpModeData;
 
     //
@@ -2287,14 +2262,14 @@ NetLibGetMacString (
   OUT CHAR16                **MacString
   )
 {
-  EFI_STATUS                   Status;
-  EFI_MAC_ADDRESS              MacAddress;
-  UINT8                        *HwAddress;
-  UINTN                        HwAddressSize;
-  UINT16                       VlanId;
-  CHAR16                       *String;
-  UINTN                        Index;
-  UINTN                        BufferSize;
+  EFI_STATUS       Status;
+  EFI_MAC_ADDRESS  MacAddress;
+  UINT8            *HwAddress;
+  UINTN            HwAddressSize;
+  UINT16           VlanId;
+  CHAR16           *String;
+  UINTN            Index;
+  UINTN            BufferSize;
 
   ASSERT (MacString != NULL);
 
@@ -2312,10 +2287,11 @@ NetLibGetMacString (
   // Plus one unicode character for the null-terminator.
   //
   BufferSize = (2 * HwAddressSize + 5 + 1) * sizeof (CHAR16);
-  String = AllocateZeroPool (BufferSize);
+  String     = AllocateZeroPool (BufferSize);
   if (String == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
+
   *MacString = String;
 
   //
@@ -2324,13 +2300,13 @@ NetLibGetMacString (
   HwAddress = &MacAddress.Addr[0];
   for (Index = 0; Index < HwAddressSize; Index++) {
     UnicodeValueToStringS (
-      String,
-      BufferSize - ((UINTN)String - (UINTN)*MacString),
-      PREFIX_ZERO | RADIX_HEX,
-      *(HwAddress++),
-      2
-      );
-    String += StrnLenS (String, (BufferSize - ((UINTN)String - (UINTN)*MacString)) / sizeof (CHAR16));
+                           String,
+                           BufferSize - ((UINTN) String - (UINTN) *MacString),
+                           PREFIX_ZERO | RADIX_HEX,
+                           *(HwAddress++),
+                           2
+                           );
+    String += StrnLenS (String, (BufferSize - ((UINTN) String - (UINTN) *MacString)) / sizeof (CHAR16));
   }
 
   //
@@ -2340,13 +2316,13 @@ NetLibGetMacString (
   if (VlanId != 0) {
     *String++ = L'\\';
     UnicodeValueToStringS (
-      String,
-      BufferSize - ((UINTN)String - (UINTN)*MacString),
-      PREFIX_ZERO | RADIX_HEX,
-      VlanId,
-      4
-      );
-    String += StrnLenS (String, (BufferSize - ((UINTN)String - (UINTN)*MacString)) / sizeof (CHAR16));
+                           String,
+                           BufferSize - ((UINTN) String - (UINTN) *MacString),
+                           PREFIX_ZERO | RADIX_HEX,
+                           VlanId,
+                           4
+                           );
+    String += StrnLenS (String, (BufferSize - ((UINTN) String - (UINTN) *MacString)) / sizeof (CHAR16));
   }
 
   //
@@ -2466,9 +2442,9 @@ NetLibDetectMedia (
     MCastFilterCount  = Snp->Mode->MCastFilterCount;
     if (MCastFilterCount != 0) {
       MCastFilter = AllocateCopyPool (
-                      MCastFilterCount * sizeof (EFI_MAC_ADDRESS),
-                      Snp->Mode->MCastFilter
-                      );
+                                      MCastFilterCount * sizeof (EFI_MAC_ADDRESS),
+                                      Snp->Mode->MCastFilter
+                                      );
       ASSERT (MCastFilter != NULL);
       if (MCastFilter == NULL) {
         Status = EFI_OUT_OF_RESOURCES;
@@ -2485,6 +2461,7 @@ NetLibDetectMedia (
     if (!EFI_ERROR (Status)) {
       Status = Snp->Stop (Snp);
     }
+
     if (EFI_ERROR (Status)) {
       goto Exit;
     }
@@ -2496,6 +2473,7 @@ NetLibDetectMedia (
     if (!EFI_ERROR (Status)) {
       Status = Snp->Initialize (Snp, 0, 0);
     }
+
     if (EFI_ERROR (Status)) {
       goto Exit;
     }
@@ -2509,13 +2487,13 @@ NetLibDetectMedia (
     // Restore SNP receive filter settings
     //
     Status = Snp->ReceiveFilters (
-                    Snp,
-                    EnableFilterBits,
-                    DisableFilterBits,
-                    ResetMCastFilters,
-                    MCastFilterCount,
-                    MCastFilter
-                    );
+                                  Snp,
+                                  EnableFilterBits,
+                                  DisableFilterBits,
+                                  ResetMCastFilters,
+                                  MCastFilterCount,
+                                  MCastFilter
+                                  );
 
     if (MCastFilter != NULL) {
       FreePool (MCastFilter);
@@ -2618,6 +2596,7 @@ NetLibDetectMediaWaitTimeout (
   if (MediaState == NULL) {
     return EFI_INVALID_PARAMETER;
   }
+
   *MediaState = EFI_SUCCESS;
   MediaInfo   = NULL;
 
@@ -2631,12 +2610,11 @@ NetLibDetectMediaWaitTimeout (
   }
 
   Status = gBS->HandleProtocol (
-                  SnpHandle,
-                  &gEfiAdapterInformationProtocolGuid,
-                  (VOID *) &Aip
-                  );
+                                SnpHandle,
+                                &gEfiAdapterInformationProtocolGuid,
+                                (VOID *) &Aip
+                                );
   if (EFI_ERROR (Status)) {
-
     MediaPresent = TRUE;
     Status = NetLibDetectMedia (ServiceHandle, &MediaPresent);
     if (!EFI_ERROR (Status)) {
@@ -2654,27 +2632,23 @@ NetLibDetectMediaWaitTimeout (
   }
 
   Status = Aip->GetInformation (
-                  Aip,
-                  &gEfiAdapterInfoMediaStateGuid,
-                  (VOID **) &MediaInfo,
-                  &DataSize
-                  );
+                                Aip,
+                                &gEfiAdapterInfoMediaStateGuid,
+                                (VOID **) &MediaInfo,
+                                &DataSize
+                                );
   if (!EFI_ERROR (Status)) {
-
     *MediaState = MediaInfo->MediaState;
     FreePool (MediaInfo);
     if (*MediaState != EFI_NOT_READY || Timeout < MEDIA_STATE_DETECT_TIME_INTERVAL) {
-
       return EFI_SUCCESS;
     }
   } else {
-
     if (MediaInfo != NULL) {
       FreePool (MediaInfo);
     }
 
     if (Status == EFI_UNSUPPORTED) {
-
       //
       // If gEfiAdapterInfoMediaStateGuid is not supported, call NetLibDetectMedia to get media state!
       //
@@ -2687,6 +2661,7 @@ NetLibDetectMediaWaitTimeout (
           *MediaState = EFI_NO_MEDIA;
         }
       }
+
       return Status;
     }
 
@@ -2697,7 +2672,7 @@ NetLibDetectMediaWaitTimeout (
   // Loop to check media state
   //
 
-  Timer        = NULL;
+  Timer = NULL;
   TimeRemained = Timeout;
   Status = gBS->CreateEvent (EVT_TIMER, TPL_CALLBACK, NULL, NULL, &Timer);
   if (EFI_ERROR (Status)) {
@@ -2706,43 +2681,41 @@ NetLibDetectMediaWaitTimeout (
 
   do {
     Status = gBS->SetTimer (
-                    Timer,
-                    TimerRelative,
-                    MEDIA_STATE_DETECT_TIME_INTERVAL
-                    );
+                            Timer,
+                            TimerRelative,
+                            MEDIA_STATE_DETECT_TIME_INTERVAL
+                            );
     if (EFI_ERROR (Status)) {
-      gBS->CloseEvent(Timer);
+  gBS->CloseEvent (Timer);
       return EFI_DEVICE_ERROR;
     }
 
     do {
       TimerStatus = gBS->CheckEvent (Timer);
       if (!EFI_ERROR (TimerStatus)) {
-
         TimeRemained -= MEDIA_STATE_DETECT_TIME_INTERVAL;
         Status = Aip->GetInformation (
-                        Aip,
-                        &gEfiAdapterInfoMediaStateGuid,
-                        (VOID **) &MediaInfo,
-                        &DataSize
-                        );
+                                      Aip,
+                                      &gEfiAdapterInfoMediaStateGuid,
+                                      (VOID **) &MediaInfo,
+                                      &DataSize
+                                      );
         if (!EFI_ERROR (Status)) {
-
           *MediaState = MediaInfo->MediaState;
           FreePool (MediaInfo);
         } else {
-
           if (MediaInfo != NULL) {
             FreePool (MediaInfo);
           }
-          gBS->CloseEvent(Timer);
+
+          gBS->CloseEvent (Timer);
           return Status;
         }
       }
     } while (TimerStatus == EFI_NOT_READY);
   } while (*MediaState == EFI_NOT_READY && TimeRemained >= MEDIA_STATE_DETECT_TIME_INTERVAL);
 
-  gBS->CloseEvent(Timer);
+  gBS->CloseEvent (Timer);
   if (*MediaState == EFI_NOT_READY && TimeRemained < MEDIA_STATE_DETECT_TIME_INTERVAL) {
     return EFI_TIMEOUT;
   } else {
@@ -2770,17 +2743,17 @@ NetLibDefaultAddressIsStatic (
   IN EFI_HANDLE  Controller
   )
 {
-  EFI_STATUS                       Status;
-  EFI_IP4_CONFIG2_PROTOCOL         *Ip4Config2;
-  UINTN                            DataSize;
-  EFI_IP4_CONFIG2_POLICY           Policy;
-  BOOLEAN                          IsStatic;
+  EFI_STATUS                Status;
+  EFI_IP4_CONFIG2_PROTOCOL  *Ip4Config2;
+  UINTN                     DataSize;
+  EFI_IP4_CONFIG2_POLICY    Policy;
+  BOOLEAN                   IsStatic;
 
   Ip4Config2 = NULL;
 
   DataSize = sizeof (EFI_IP4_CONFIG2_POLICY);
 
-  IsStatic   = TRUE;
+  IsStatic = TRUE;
 
   //
   // Get Ip4Config2 policy.
@@ -2907,7 +2880,7 @@ NetLibCreateIPv6DPathNode (
   Node->LocalPort  = LocalPort;
   Node->RemotePort = RemotePort;
 
-  Node->Protocol        = Protocol;
+  Node->Protocol = Protocol;
 
   //
   // Set default value to IPAddressOrigin, PrefixLength.
@@ -2944,20 +2917,20 @@ NetLibGetNicHandle (
   IN EFI_GUID               *ProtocolGuid
   )
 {
-  EFI_OPEN_PROTOCOL_INFORMATION_ENTRY *OpenBuffer;
-  EFI_HANDLE                          Handle;
-  EFI_STATUS                          Status;
-  UINTN                               OpenCount;
-  UINTN                               Index;
+  EFI_OPEN_PROTOCOL_INFORMATION_ENTRY  *OpenBuffer;
+  EFI_HANDLE                           Handle;
+  EFI_STATUS                           Status;
+  UINTN                                OpenCount;
+  UINTN                                Index;
 
   ASSERT (ProtocolGuid != NULL);
 
   Status = gBS->OpenProtocolInformation (
-                  Controller,
-                  ProtocolGuid,
-                  &OpenBuffer,
-                  &OpenCount
-                  );
+                                         Controller,
+                                         ProtocolGuid,
+                                         &OpenBuffer,
+                                         &OpenCount
+                                         );
 
   if (EFI_ERROR (Status)) {
     return NULL;
@@ -2993,8 +2966,8 @@ NetLibAsciiStrToIp4 (
   OUT      EFI_IPv4_ADDRESS      *Ip4Address
   )
 {
-  RETURN_STATUS                  Status;
-  CHAR8                          *EndPointer;
+  RETURN_STATUS  Status;
+  CHAR8          *EndPointer;
 
   Status = AsciiStrToIpv4Address (String, &EndPointer, Ip4Address, NULL);
   if (RETURN_ERROR (Status) || (*EndPointer != '\0')) {
@@ -3003,7 +2976,6 @@ NetLibAsciiStrToIp4 (
     return EFI_SUCCESS;
   }
 }
-
 
 /**
   Convert one Null-terminated ASCII string to EFI_IPv6_ADDRESS. The format of the
@@ -3023,8 +2995,8 @@ NetLibAsciiStrToIp6 (
   OUT      EFI_IPv6_ADDRESS      *Ip6Address
   )
 {
-  RETURN_STATUS                  Status;
-  CHAR8                          *EndPointer;
+  RETURN_STATUS  Status;
+  CHAR8          *EndPointer;
 
   Status = AsciiStrToIpv6Address (String, &EndPointer, Ip6Address, NULL);
   if (RETURN_ERROR (Status) || (*EndPointer != '\0')) {
@@ -3033,7 +3005,6 @@ NetLibAsciiStrToIp6 (
     return EFI_SUCCESS;
   }
 }
-
 
 /**
   Convert one Null-terminated Unicode string (decimal dotted) to EFI_IPv4_ADDRESS.
@@ -3052,8 +3023,8 @@ NetLibStrToIp4 (
   OUT      EFI_IPv4_ADDRESS      *Ip4Address
   )
 {
-  RETURN_STATUS                  Status;
-  CHAR16                         *EndPointer;
+  RETURN_STATUS  Status;
+  CHAR16         *EndPointer;
 
   Status = StrToIpv4Address (String, &EndPointer, Ip4Address, NULL);
   if (RETURN_ERROR (Status) || (*EndPointer != L'\0')) {
@@ -3062,7 +3033,6 @@ NetLibStrToIp4 (
     return EFI_SUCCESS;
   }
 }
-
 
 /**
   Convert one Null-terminated Unicode string to EFI_IPv6_ADDRESS.  The format of
@@ -3082,8 +3052,8 @@ NetLibStrToIp6 (
   OUT      EFI_IPv6_ADDRESS      *Ip6Address
   )
 {
-  RETURN_STATUS                  Status;
-  CHAR16                         *EndPointer;
+  RETURN_STATUS  Status;
+  CHAR16         *EndPointer;
 
   Status = StrToIpv6Address (String, &EndPointer, Ip6Address, NULL);
   if (RETURN_ERROR (Status) || (*EndPointer != L'\0')) {
@@ -3114,8 +3084,8 @@ NetLibStrToIp6andPrefix (
   OUT      UINT8                 *PrefixLength
   )
 {
-  RETURN_STATUS                  Status;
-  CHAR16                         *EndPointer;
+  RETURN_STATUS  Status;
+  CHAR16         *EndPointer;
 
   Status = StrToIpv6Address (String, &EndPointer, Ip6Address, PrefixLength);
   if (RETURN_ERROR (Status) || (*EndPointer != L'\0')) {
@@ -3147,14 +3117,14 @@ NetLibIp6ToStr (
   IN         UINTN                 StringSize
   )
 {
-  UINT16     Ip6Addr[8];
-  UINTN      Index;
-  UINTN      LongestZerosStart;
-  UINTN      LongestZerosLength;
-  UINTN      CurrentZerosStart;
-  UINTN      CurrentZerosLength;
-  CHAR16     Buffer[sizeof"ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"];
-  CHAR16     *Ptr;
+  UINT16  Ip6Addr[8];
+  UINTN   Index;
+  UINTN   LongestZerosStart;
+  UINTN   LongestZerosLength;
+  UINTN   CurrentZerosStart;
+  UINTN   CurrentZerosLength;
+  CHAR16  Buffer[sizeof "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"];
+  CHAR16  *Ptr;
 
   if (Ip6Address == NULL || String == NULL || StringSize == 0) {
     return EFI_INVALID_PARAMETER;
@@ -3178,17 +3148,19 @@ NetLibIp6ToStr (
   for (Index = 0; Index < 8; Index++) {
     if (Ip6Addr[Index] == 0) {
       if (CurrentZerosStart == DEFAULT_ZERO_START) {
-        CurrentZerosStart = Index;
+        CurrentZerosStart  = Index;
         CurrentZerosLength = 1;
       } else {
         CurrentZerosLength++;
       }
     } else {
       if (CurrentZerosStart != DEFAULT_ZERO_START) {
-        if (CurrentZerosLength > 2 && (LongestZerosStart == (DEFAULT_ZERO_START) || CurrentZerosLength > LongestZerosLength)) {
+        if (CurrentZerosLength > 2 &&
+            (LongestZerosStart == (DEFAULT_ZERO_START) || CurrentZerosLength > LongestZerosLength)) {
           LongestZerosStart  = CurrentZerosStart;
           LongestZerosLength = CurrentZerosLength;
         }
+
         CurrentZerosStart  = DEFAULT_ZERO_START;
         CurrentZerosLength = 0;
       }
@@ -3204,24 +3176,29 @@ NetLibIp6ToStr (
 
   Ptr = Buffer;
   for (Index = 0; Index < 8; Index++) {
-    if (LongestZerosStart != DEFAULT_ZERO_START && Index >= LongestZerosStart && Index < LongestZerosStart + LongestZerosLength) {
+    if (LongestZerosStart != DEFAULT_ZERO_START && Index >= LongestZerosStart &&
+        Index < LongestZerosStart + LongestZerosLength) {
       if (Index == LongestZerosStart) {
         *Ptr++ = L':';
       }
+
       continue;
     }
+
     if (Index != 0) {
       *Ptr++ = L':';
     }
-    Ptr += UnicodeSPrint(Ptr, 10, L"%x", Ip6Addr[Index]);
+
+    Ptr += UnicodeSPrint (Ptr, 10, L"%x", Ip6Addr[Index]);
   }
 
   if (LongestZerosStart != DEFAULT_ZERO_START && LongestZerosStart + LongestZerosLength == 8) {
     *Ptr++ = L':';
   }
+
   *Ptr = L'\0';
 
-  if ((UINTN)Ptr - (UINTN)Buffer > StringSize) {
+  if ((UINTN) Ptr - (UINTN) Buffer > StringSize) {
     return EFI_BUFFER_TOO_SMALL;
   }
 
@@ -3259,13 +3236,14 @@ NetLibGetSystemGuid (
   SmbiosTable = NULL;
   Status = EfiGetSystemConfigurationTable (&gEfiSmbios3TableGuid, (VOID **) &Smbios30Table);
   if (!(EFI_ERROR (Status) || Smbios30Table == NULL)) {
-    Smbios.Hdr = (SMBIOS_STRUCTURE *) (UINTN) Smbios30Table->TableAddress;
+    Smbios.Hdr    = (SMBIOS_STRUCTURE *) (UINTN) Smbios30Table->TableAddress;
     SmbiosEnd.Raw = (UINT8 *) (UINTN) (Smbios30Table->TableAddress + Smbios30Table->TableMaximumSize);
   } else {
     Status = EfiGetSystemConfigurationTable (&gEfiSmbiosTableGuid, (VOID **) &SmbiosTable);
     if (EFI_ERROR (Status) || SmbiosTable == NULL) {
       return EFI_NOT_FOUND;
     }
+
     Smbios.Hdr    = (SMBIOS_STRUCTURE *) (UINTN) SmbiosTable->TableAddress;
     SmbiosEnd.Raw = (UINT8 *) ((UINTN) SmbiosTable->TableAddress + SmbiosTable->TableLength);
   }
@@ -3309,15 +3287,16 @@ NetLibGetSystemGuid (
       for ( ; *String != 0; String++) {
       }
 
-      if (*(UINT8*)++String == 0) {
+      if (*(UINT8 *) ++String == 0) {
         //
         // Pointer to the next SMBIOS structure.
         //
-        Smbios.Raw = (UINT8 *)++String;
+        Smbios.Raw = (UINT8 *) ++String;
         break;
       }
     } while (TRUE);
   } while (Smbios.Raw < SmbiosEnd.Raw);
+
   return EFI_NOT_FOUND;
 }
 
@@ -3344,19 +3323,19 @@ NetLibCreateDnsQName (
   IN  CHAR16              *DomainName
   )
 {
-  CHAR8                 *QueryName;
-  UINTN                 QueryNameSize;
-  CHAR8                 *Header;
-  CHAR8                 *Tail;
-  UINTN                 Len;
-  UINTN                 Index;
+  CHAR8  *QueryName;
+  UINTN  QueryNameSize;
+  CHAR8  *Header;
+  CHAR8  *Tail;
+  UINTN  Len;
+  UINTN  Index;
 
   ASSERT (DomainName != NULL);
 
   QueryName     = NULL;
   QueryNameSize = 0;
-  Header        = NULL;
-  Tail          = NULL;
+  Header = NULL;
+  Tail   = NULL;
 
   //
   // One byte for first label length, one byte for terminated length zero.
@@ -3373,22 +3352,23 @@ NetLibCreateDnsQName (
   }
 
   Header = QueryName;
-  Tail = Header + 1;
-  Len = 0;
+  Tail   = Header + 1;
+  Len    = 0;
   for (Index = 0; DomainName[Index] != 0; Index++) {
     *Tail = (CHAR8) DomainName[Index];
     if (*Tail == '.') {
       *Header = (CHAR8) Len;
-      Header = Tail;
-      Tail ++;
+      Header  = Tail;
+      Tail++;
       Len = 0;
     } else {
       Tail++;
       Len++;
     }
   }
+
   *Header = (CHAR8) Len;
-  *Tail = 0;
+  *Tail   = 0;
 
   return QueryName;
 }

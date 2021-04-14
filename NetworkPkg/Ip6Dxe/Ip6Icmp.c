@@ -10,8 +10,7 @@
 
 #include "Ip6Impl.h"
 
-EFI_IP6_ICMP_TYPE mIp6SupportedIcmp[23] = {
-
+EFI_IP6_ICMP_TYPE  mIp6SupportedIcmp[23] = {
   {
     ICMP_V6_DEST_UNREACHABLE,
     ICMP_V6_NO_ROUTE_TO_DEST
@@ -132,10 +131,10 @@ Ip6IcmpReplyEcho (
   IN NET_BUF                *Packet
   )
 {
-  IP6_ICMP_INFORMATION_HEAD *Icmp;
-  NET_BUF                   *Data;
-  EFI_STATUS                Status;
-  EFI_IP6_HEADER            ReplyHead;
+  IP6_ICMP_INFORMATION_HEAD  *Icmp;
+  NET_BUF                    *Data;
+  EFI_STATUS                 Status;
+  EFI_IP6_HEADER             ReplyHead;
 
   Status = EFI_OUT_OF_RESOURCES;
   //
@@ -169,9 +168,9 @@ Ip6IcmpReplyEcho (
   //
   ZeroMem (&ReplyHead, sizeof (EFI_IP6_HEADER));
 
-  ReplyHead.PayloadLength  = HTONS ((UINT16) (Packet->TotalSize));
-  ReplyHead.NextHeader     = IP6_ICMP;
-  ReplyHead.HopLimit       = IpSb->CurHopLimit;
+  ReplyHead.PayloadLength = HTONS ((UINT16) (Packet->TotalSize));
+  ReplyHead.NextHeader    = IP6_ICMP;
+  ReplyHead.HopLimit = IpSb->CurHopLimit;
   IP6_COPY_ADDRESS (&ReplyHead.DestinationAddress, &Head->SourceAddress);
 
   if (Ip6IsOneOfSetAddress (IpSb, &Head->DestinationAddress, NULL, NULL)) {
@@ -182,16 +181,16 @@ Ip6IcmpReplyEcho (
   // If source is unspecified, Ip6Output will select a source for us
   //
   Status = Ip6Output (
-             IpSb,
-             NULL,
-             NULL,
-             Data,
-             &ReplyHead,
-             NULL,
-             0,
-             Ip6SysPacketSent,
-             NULL
-             );
+                      IpSb,
+                      NULL,
+                      NULL,
+                      Data,
+                      &ReplyHead,
+                      NULL,
+                      0,
+                      Ip6SysPacketSent,
+                      NULL
+                      );
 
 Exit:
   NetbufFree (Packet);
@@ -223,13 +222,13 @@ Ip6ProcessPacketTooBig (
   IN NET_BUF                *Packet
   )
 {
-  IP6_ICMP_ERROR_HEAD       Icmp;
-  UINT32                    Mtu;
-  IP6_ROUTE_ENTRY           *RouteEntry;
-  EFI_IPv6_ADDRESS          *DestAddress;
+  IP6_ICMP_ERROR_HEAD  Icmp;
+  UINT32               Mtu;
+  IP6_ROUTE_ENTRY      *RouteEntry;
+  EFI_IPv6_ADDRESS     *DestAddress;
 
   NetbufCopy (Packet, 0, sizeof (Icmp), (UINT8 *) &Icmp);
-  Mtu         = NTOHL (Icmp.Fourth);
+  Mtu = NTOHL (Icmp.Fourth);
   DestAddress = &Icmp.IpHead.DestinationAddress;
 
   if (Mtu < IP6_MIN_LINK_MTU) {
@@ -285,7 +284,7 @@ Ip6ProcessIcmpError (
   IN NET_BUF                *Packet
   )
 {
-  IP6_ICMP_ERROR_HEAD       Icmp;
+  IP6_ICMP_ERROR_HEAD  Icmp;
 
   //
   // Check the validity of the packet
@@ -334,8 +333,8 @@ Ip6ProcessIcmpInformation (
   IN NET_BUF                *Packet
   )
 {
-  IP6_ICMP_INFORMATION_HEAD Icmp;
-  EFI_STATUS                Status;
+  IP6_ICMP_INFORMATION_HEAD  Icmp;
+  EFI_STATUS                 Status;
 
   NET_CHECK_SIGNATURE (IpSb, IP6_SERVICE_SIGNATURE);
   NET_CHECK_SIGNATURE (Packet, NET_BUF_SIGNATURE);
@@ -345,39 +344,40 @@ Ip6ProcessIcmpInformation (
   Status = EFI_INVALID_PARAMETER;
 
   switch (Icmp.Head.Type) {
-  case ICMP_V6_ECHO_REQUEST:
-    //
-    // If ICMPv6 echo, reply it
-    //
-    if (Icmp.Head.Code == 0) {
-      Status = Ip6IcmpReplyEcho (IpSb, Head, Packet);
-    }
-    break;
-  case ICMP_V6_LISTENER_QUERY:
-    Status = Ip6ProcessMldQuery (IpSb, Head, Packet);
-    break;
-  case ICMP_V6_LISTENER_REPORT:
-  case ICMP_V6_LISTENER_REPORT_2:
-    Status = Ip6ProcessMldReport (IpSb, Head, Packet);
-    break;
-  case ICMP_V6_NEIGHBOR_SOLICIT:
-    Status = Ip6ProcessNeighborSolicit (IpSb, Head, Packet);
-    break;
-  case ICMP_V6_NEIGHBOR_ADVERTISE:
-    Status = Ip6ProcessNeighborAdvertise (IpSb, Head, Packet);
-    break;
-  case ICMP_V6_ROUTER_ADVERTISE:
-    Status = Ip6ProcessRouterAdvertise (IpSb, Head, Packet);
-    break;
-  case ICMP_V6_REDIRECT:
-    Status = Ip6ProcessRedirect (IpSb, Head, Packet);
-    break;
-  case ICMP_V6_ECHO_REPLY:
-    Status = Ip6Demultiplex (IpSb, Head, Packet);
-    break;
-  default:
-    Status = EFI_INVALID_PARAMETER;
-    break;
+    case ICMP_V6_ECHO_REQUEST:
+      //
+      // If ICMPv6 echo, reply it
+      //
+      if (Icmp.Head.Code == 0) {
+        Status = Ip6IcmpReplyEcho (IpSb, Head, Packet);
+      }
+
+      break;
+    case ICMP_V6_LISTENER_QUERY:
+      Status = Ip6ProcessMldQuery (IpSb, Head, Packet);
+      break;
+    case ICMP_V6_LISTENER_REPORT:
+    case ICMP_V6_LISTENER_REPORT_2:
+      Status = Ip6ProcessMldReport (IpSb, Head, Packet);
+      break;
+    case ICMP_V6_NEIGHBOR_SOLICIT:
+      Status = Ip6ProcessNeighborSolicit (IpSb, Head, Packet);
+      break;
+    case ICMP_V6_NEIGHBOR_ADVERTISE:
+      Status = Ip6ProcessNeighborAdvertise (IpSb, Head, Packet);
+      break;
+    case ICMP_V6_ROUTER_ADVERTISE:
+      Status = Ip6ProcessRouterAdvertise (IpSb, Head, Packet);
+      break;
+    case ICMP_V6_REDIRECT:
+      Status = Ip6ProcessRedirect (IpSb, Head, Packet);
+      break;
+    case ICMP_V6_ECHO_REPLY:
+      Status = Ip6Demultiplex (IpSb, Head, Packet);
+      break;
+    default:
+      Status = EFI_INVALID_PARAMETER;
+      break;
   }
 
   return Status;
@@ -405,9 +405,9 @@ Ip6IcmpHandle (
   IN NET_BUF                *Packet
   )
 {
-  IP6_ICMP_HEAD             Icmp;
-  UINT16                    PseudoCheckSum;
-  UINT16                    CheckSum;
+  IP6_ICMP_HEAD  Icmp;
+  UINT16         PseudoCheckSum;
+  UINT16         CheckSum;
 
   //
   // Check the validity of the incoming packet.
@@ -422,11 +422,11 @@ Ip6IcmpHandle (
   // Make sure checksum is valid.
   //
   PseudoCheckSum = NetIp6PseudoHeadChecksum (
-                     &Head->SourceAddress,
-                     &Head->DestinationAddress,
-                     IP6_ICMP,
-                     Packet->TotalSize
-                     );
+                                             &Head->SourceAddress,
+                                             &Head->DestinationAddress,
+                                             IP6_ICMP,
+                                             Packet->TotalSize
+                                             );
   CheckSum = (UINT16) ~NetAddChecksum (PseudoCheckSum, NetbufChecksum (Packet));
   if (CheckSum != 0) {
     goto DROP;
@@ -462,20 +462,20 @@ Ip6GetPrefix (
   IN OUT EFI_IPv6_ADDRESS   *Prefix
   )
 {
-  UINT8                     Byte;
-  UINT8                     Bit;
-  UINT8                     Mask;
-  UINT8                     Value;
+  UINT8  Byte;
+  UINT8  Bit;
+  UINT8  Mask;
+  UINT8  Value;
 
   ASSERT ((Prefix != NULL) && (PrefixLength < IP6_PREFIX_MAX));
 
   if (PrefixLength == 0) {
     ZeroMem (Prefix, sizeof (EFI_IPv6_ADDRESS));
-    return ;
+    return;
   }
 
   if (PrefixLength >= IP6_PREFIX_MAX) {
-    return ;
+    return;
   }
 
   Byte  = (UINT8) (PrefixLength / 8);
@@ -490,7 +490,6 @@ Ip6GetPrefix (
     Mask = (UINT8) (0xFF << (8 - Bit));
     Prefix->Addr[Byte] = (UINT8) (Value & Mask);
   }
-
 }
 
 /**
@@ -509,9 +508,9 @@ Ip6IsAnycast (
   IN EFI_IPv6_ADDRESS       *DestinationAddress
   )
 {
-  IP6_PREFIX_LIST_ENTRY     *PrefixEntry;
-  EFI_IPv6_ADDRESS          Prefix;
-  BOOLEAN                   Flag;
+  IP6_PREFIX_LIST_ENTRY  *PrefixEntry;
+  EFI_IPv6_ADDRESS       Prefix;
+  BOOLEAN                Flag;
 
   ZeroMem (&Prefix, sizeof (EFI_IPv6_ADDRESS));
 
@@ -572,12 +571,12 @@ Ip6SendIcmpError (
   IN UINT32                 *Pointer             OPTIONAL
   )
 {
-  UINT32                    PacketLen;
-  NET_BUF                   *ErrorMsg;
-  UINT16                    PayloadLen;
-  EFI_IP6_HEADER            Head;
-  IP6_ICMP_INFORMATION_HEAD *IcmpHead;
-  UINT8                     *ErrorBody;
+  UINT32                     PacketLen;
+  NET_BUF                    *ErrorMsg;
+  UINT16                     PayloadLen;
+  EFI_IP6_HEADER             Head;
+  IP6_ICMP_INFORMATION_HEAD  *IcmpHead;
+  UINT8                      *ErrorBody;
 
   if (DestinationAddress == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -597,19 +596,19 @@ Ip6SendIcmpError (
   }
 
   switch (Type) {
-  case ICMP_V6_DEST_UNREACHABLE:
-  case ICMP_V6_TIME_EXCEEDED:
-    break;
+    case ICMP_V6_DEST_UNREACHABLE:
+    case ICMP_V6_TIME_EXCEEDED:
+      break;
 
-  case ICMP_V6_PARAMETER_PROBLEM:
-    if (Pointer == NULL) {
+    case ICMP_V6_PARAMETER_PROBLEM:
+      if (Pointer == NULL) {
+        return EFI_INVALID_PARAMETER;
+      }
+
+      break;
+
+    default:
       return EFI_INVALID_PARAMETER;
-    }
-
-    break;
-
-  default:
-    return EFI_INVALID_PARAMETER;
   }
 
   PacketLen = sizeof (IP6_ICMP_ERROR_HEAD) + Packet->TotalSize;
@@ -630,9 +629,9 @@ Ip6SendIcmpError (
   //
   ZeroMem (&Head, sizeof (EFI_IP6_HEADER));
 
-  Head.PayloadLength  = HTONS (PayloadLen);
-  Head.NextHeader     = IP6_ICMP;
-  Head.HopLimit       = IpSb->CurHopLimit;
+  Head.PayloadLength = HTONS (PayloadLen);
+  Head.NextHeader    = IP6_ICMP;
+  Head.HopLimit = IpSb->CurHopLimit;
 
   if (SourceAddress != NULL) {
     IP6_COPY_ADDRESS (&Head.SourceAddress, SourceAddress);
@@ -665,7 +664,7 @@ Ip6SendIcmpError (
   // Fill in the ICMP error message body
   //
   PayloadLen -= sizeof (IP6_ICMP_INFORMATION_HEAD);
-  ErrorBody =  NetbufAllocSpace (ErrorMsg, PayloadLen, FALSE);
+  ErrorBody   =  NetbufAllocSpace (ErrorMsg, PayloadLen, FALSE);
   if (ErrorBody != NULL) {
     ZeroMem (ErrorBody, PayloadLen);
     NetbufCopy (Packet, 0, PayloadLen, ErrorBody);
@@ -676,4 +675,3 @@ Ip6SendIcmpError (
   //
   return Ip6Output (IpSb, NULL, NULL, ErrorMsg, &Head, NULL, 0, Ip6SysPacketSent, NULL);
 }
-

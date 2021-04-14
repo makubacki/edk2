@@ -47,7 +47,7 @@ QueueDpc (
 EFI_STATUS
 EFIAPI
 DispatchDpc (
-  VOID
-  );
+             VOID
+             );
 
 #endif

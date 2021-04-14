@@ -9,7 +9,7 @@
 
 #include "TlsImpl.h"
 
-EFI_SERVICE_BINDING_PROTOCOL mTlsServiceBinding = {
+EFI_SERVICE_BINDING_PROTOCOL  mTlsServiceBinding = {
   TlsServiceBindingCreateChild,
   TlsServiceBindingDestroyChild
 };
@@ -50,7 +50,7 @@ TlsCreateInstance (
   OUT TLS_INSTANCE        **Instance
   )
 {
-  TLS_INSTANCE            *TlsInstance;
+  TLS_INSTANCE  *TlsInstance;
 
   *Instance = NULL;
 
@@ -110,7 +110,7 @@ TlsCreateService (
   OUT TLS_SERVICE           **Service
   )
 {
-  TLS_SERVICE            *TlsService;
+  TLS_SERVICE  *TlsService;
 
   ASSERT (Service != NULL);
 
@@ -127,11 +127,11 @@ TlsCreateService (
   //
   // Initialize TLS Service Data
   //
-  TlsService->Signature        = TLS_SERVICE_SIGNATURE;
+  TlsService->Signature = TLS_SERVICE_SIGNATURE;
   CopyMem (&TlsService->ServiceBinding, &mTlsServiceBinding, sizeof (TlsService->ServiceBinding));
-  TlsService->TlsChildrenNum   = 0;
+  TlsService->TlsChildrenNum = 0;
   InitializeListHead (&TlsService->TlsChildrenList);
-  TlsService->ImageHandle      = Image;
+  TlsService->ImageHandle = Image;
 
   *Service = TlsService;
 
@@ -153,12 +153,12 @@ TlsUnload (
   IN EFI_HANDLE  ImageHandle
   )
 {
-  EFI_STATUS                      Status;
-  UINTN                           HandleNum;
-  EFI_HANDLE                      *HandleBuffer;
-  UINT32                          Index;
-  EFI_SERVICE_BINDING_PROTOCOL    *ServiceBinding;
-  TLS_SERVICE                     *TlsService;
+  EFI_STATUS                    Status;
+  UINTN                         HandleNum;
+  EFI_HANDLE                    *HandleBuffer;
+  UINT32                        Index;
+  EFI_SERVICE_BINDING_PROTOCOL  *ServiceBinding;
+  TLS_SERVICE                   *TlsService;
 
   HandleBuffer   = NULL;
   ServiceBinding = NULL;
@@ -168,12 +168,12 @@ TlsUnload (
   // Locate all the handles with Tls service binding protocol.
   //
   Status = gBS->LocateHandleBuffer (
-                  ByProtocol,
-                  &gEfiTlsServiceBindingProtocolGuid,
-                  NULL,
-                  &HandleNum,
-                  &HandleBuffer
-                  );
+                                    ByProtocol,
+                                    &gEfiTlsServiceBindingProtocolGuid,
+                                    NULL,
+                                    &HandleNum,
+                                    &HandleBuffer
+                                    );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -183,13 +183,13 @@ TlsUnload (
     // Firstly, find ServiceBinding interface
     //
     Status = gBS->OpenProtocol (
-                    HandleBuffer[Index],
-                    &gEfiTlsServiceBindingProtocolGuid,
-                    (VOID **) &ServiceBinding,
-                    ImageHandle,
-                    NULL,
-                    EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL
-                    );
+                                HandleBuffer[Index],
+                                &gEfiTlsServiceBindingProtocolGuid,
+                                (VOID **) &ServiceBinding,
+                                ImageHandle,
+                                NULL,
+                                EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL
+                                );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -200,10 +200,11 @@ TlsUnload (
     // Then, uninstall ServiceBinding interface
     //
     Status = gBS->UninstallMultipleProtocolInterfaces (
-                    HandleBuffer[Index],
-                    &gEfiTlsServiceBindingProtocolGuid, ServiceBinding,
-                    NULL
-                    );
+                                                       HandleBuffer[Index],
+                                                       &gEfiTlsServiceBindingProtocolGuid,
+                                                       ServiceBinding,
+                                                       NULL
+                                                       );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -236,9 +237,9 @@ TlsDriverEntryPoint (
   IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  EFI_STATUS             Status;
+  EFI_STATUS  Status;
 
-  TLS_SERVICE            *TlsService;
+  TLS_SERVICE  *TlsService;
 
   //
   // Create TLS Service
@@ -269,11 +270,11 @@ TlsDriverEntryPoint (
   // Install the TlsServiceBinding Protocol onto Handle
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &TlsService->Handle,
-                  &gEfiTlsServiceBindingProtocolGuid,
-                  &TlsService->ServiceBinding,
-                  NULL
-                  );
+                                                   &TlsService->Handle,
+                                                   &gEfiTlsServiceBindingProtocolGuid,
+                                                   &TlsService->ServiceBinding,
+                                                   NULL
+                                                   );
   if (EFI_ERROR (Status)) {
     goto ON_CLEAN_SERVICE;
   }
@@ -312,10 +313,10 @@ TlsServiceBindingCreateChild (
   IN EFI_HANDLE                    *ChildHandle
   )
 {
-  TLS_SERVICE         *TlsService;
-  TLS_INSTANCE        *TlsInstance;
-  EFI_STATUS           Status;
-  EFI_TPL              OldTpl;
+  TLS_SERVICE   *TlsService;
+  TLS_INSTANCE  *TlsInstance;
+  EFI_STATUS    Status;
+  EFI_TPL       OldTpl;
 
   if ((This == NULL) || (ChildHandle == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -351,13 +352,13 @@ TlsServiceBindingCreateChild (
   // Install TLS protocol and configuration protocol onto ChildHandle
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  ChildHandle,
-                  &gEfiTlsProtocolGuid,
-                  &TlsInstance->Tls,
-                  &gEfiTlsConfigurationProtocolGuid,
-                  &TlsInstance->TlsConfig,
-                  NULL
-                  );
+                                                   ChildHandle,
+                                                   &gEfiTlsProtocolGuid,
+                                                   &TlsInstance->Tls,
+                                                   &gEfiTlsConfigurationProtocolGuid,
+                                                   &TlsInstance->TlsConfig,
+                                                   NULL
+                                                   );
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
@@ -406,13 +407,13 @@ TlsServiceBindingDestroyChild (
   IN EFI_HANDLE                    ChildHandle
   )
 {
-  TLS_SERVICE                    *TlsService;
-  TLS_INSTANCE                   *TlsInstance;
+  TLS_SERVICE   *TlsService;
+  TLS_INSTANCE  *TlsInstance;
 
-  EFI_TLS_PROTOCOL               *Tls;
-  EFI_TLS_CONFIGURATION_PROTOCOL *TlsConfig;
-  EFI_STATUS                     Status;
-  EFI_TPL                        OldTpl;
+  EFI_TLS_PROTOCOL                *Tls;
+  EFI_TLS_CONFIGURATION_PROTOCOL  *TlsConfig;
+  EFI_STATUS                      Status;
+  EFI_TPL                         OldTpl;
 
   if ((This == NULL) || (ChildHandle == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -424,13 +425,13 @@ TlsServiceBindingDestroyChild (
   // Find TLS protocol interface installed in ChildHandle
   //
   Status = gBS->OpenProtocol (
-                  ChildHandle,
-                  &gEfiTlsProtocolGuid,
-                  (VOID **) &Tls,
-                  TlsService->ImageHandle,
-                  NULL,
-                  EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL
-                  );
+                              ChildHandle,
+                              &gEfiTlsProtocolGuid,
+                              (VOID **) &Tls,
+                              TlsService->ImageHandle,
+                              NULL,
+                              EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -439,18 +440,18 @@ TlsServiceBindingDestroyChild (
   // Find TLS configuration protocol interface installed in ChildHandle
   //
   Status = gBS->OpenProtocol (
-                  ChildHandle,
-                  &gEfiTlsConfigurationProtocolGuid,
-                  (VOID **) &TlsConfig,
-                  TlsService->ImageHandle,
-                  NULL,
-                  EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL
-                  );
+                              ChildHandle,
+                              &gEfiTlsConfigurationProtocolGuid,
+                              (VOID **) &TlsConfig,
+                              TlsService->ImageHandle,
+                              NULL,
+                              EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  TlsInstance  = TLS_INSTANCE_FROM_PROTOCOL (Tls);
+  TlsInstance = TLS_INSTANCE_FROM_PROTOCOL (Tls);
 
   if (TlsInstance->Service != TlsService) {
     return EFI_INVALID_PARAMETER;
@@ -468,13 +469,13 @@ TlsServiceBindingDestroyChild (
   // Uninstall the TLS protocol and TLS Configuration Protocol interface installed in ChildHandle.
   //
   Status = gBS->UninstallMultipleProtocolInterfaces (
-                  ChildHandle,
-                  &gEfiTlsProtocolGuid,
-                  Tls,
-                  &gEfiTlsConfigurationProtocolGuid,
-                  TlsConfig,
-                  NULL
-                  );
+                                                     ChildHandle,
+                                                     &gEfiTlsProtocolGuid,
+                                                     Tls,
+                                                     &gEfiTlsConfigurationProtocolGuid,
+                                                     TlsConfig,
+                                                     NULL
+                                                     );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -488,4 +489,3 @@ TlsServiceBindingDestroyChild (
 
   return EFI_SUCCESS;
 }
-

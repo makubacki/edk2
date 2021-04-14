@@ -23,10 +23,10 @@
 #define SIGNAL_TOKEN(Token, TokenStatus) \
   do { \
     (Token)->Status = (TokenStatus); \
-    gBS->SignalEvent ((Token)->Event); \
+  gBS->SignalEvent ((Token)->Event); \
   } while (0)
 
-#define SOCK_HEADER_SPACE (60 + 60 + 72)
+#define SOCK_HEADER_SPACE  (60 + 60 + 72)
 
 /**
   Process the TCP send data, buffer the tcp txdata and append

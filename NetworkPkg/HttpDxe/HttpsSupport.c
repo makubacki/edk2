@@ -35,11 +35,11 @@ AsciiStrCaseStr (
   IN      CONST CHAR8               *SearchString
   )
 {
-  CONST CHAR8 *FirstMatch;
-  CONST CHAR8 *SearchStringTmp;
+  CONST CHAR8  *FirstMatch;
+  CONST CHAR8  *SearchStringTmp;
 
-  CHAR8 Src;
-  CHAR8 Dst;
+  CHAR8  Src;
+  CHAR8  Dst;
 
   //
   // ASSERT both strings are less long than PcdMaximumAsciiStringLength
@@ -55,8 +55,8 @@ AsciiStrCaseStr (
     SearchStringTmp = SearchString;
     FirstMatch = String;
 
-    while ((*SearchStringTmp != '\0')
-            && (*String != '\0')) {
+    while (  (*SearchStringTmp != '\0')
+          && (*String != '\0')) {
       Src = *String;
       Dst = *SearchStringTmp;
 
@@ -150,8 +150,8 @@ TlsCreateChild (
   OUT EFI_TLS_CONFIGURATION_PROTOCOL **TlsConfiguration
   )
 {
-  EFI_STATUS                    Status;
-  EFI_HANDLE                    TlsChildHandle;
+  EFI_STATUS  Status;
+  EFI_HANDLE  TlsChildHandle;
 
   TlsChildHandle = 0;
 
@@ -159,10 +159,10 @@ TlsCreateChild (
   // Locate TlsServiceBinding protocol.
   //
   gBS->LocateProtocol (
-     &gEfiTlsServiceBindingProtocolGuid,
-     NULL,
-     (VOID **) TlsSb
-     );
+                       &gEfiTlsServiceBindingProtocolGuid,
+                       NULL,
+                       (VOID **) TlsSb
+                       );
   if (*TlsSb == NULL) {
     return NULL;
   }
@@ -173,26 +173,26 @@ TlsCreateChild (
   }
 
   Status = gBS->OpenProtocol (
-                  TlsChildHandle,
-                  &gEfiTlsProtocolGuid,
-                  (VOID **) TlsProto,
-                  ImageHandle,
-                  TlsChildHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              TlsChildHandle,
+                              &gEfiTlsProtocolGuid,
+                              (VOID **) TlsProto,
+                              ImageHandle,
+                              TlsChildHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     (*TlsSb)->DestroyChild (*TlsSb, TlsChildHandle);
     return NULL;
   }
 
   Status = gBS->OpenProtocol (
-                  TlsChildHandle,
-                  &gEfiTlsConfigurationProtocolGuid,
-                  (VOID **) TlsConfiguration,
-                  ImageHandle,
-                  TlsChildHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              TlsChildHandle,
+                              &gEfiTlsConfigurationProtocolGuid,
+                              (VOID **) TlsConfiguration,
+                              ImageHandle,
+                              TlsChildHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     (*TlsSb)->DestroyChild (*TlsSb, TlsChildHandle);
     return NULL;
@@ -217,26 +217,26 @@ TlsCreateTxRxEvent (
   IN OUT HTTP_PROTOCOL      *HttpInstance
   )
 {
-  EFI_STATUS                Status;
+  EFI_STATUS  Status;
 
   if (!HttpInstance->LocalAddressIsIPv6) {
     //
     // For Tcp4TlsTxToken.
     //
     Status = gBS->CreateEvent (
-                    EVT_NOTIFY_SIGNAL,
-                    TPL_NOTIFY,
-                    HttpCommonNotify,
-                    &HttpInstance->TlsIsTxDone,
-                    &HttpInstance->Tcp4TlsTxToken.CompletionToken.Event
-                    );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_NOTIFY,
+                               HttpCommonNotify,
+                               &HttpInstance->TlsIsTxDone,
+                               &HttpInstance->Tcp4TlsTxToken.CompletionToken.Event
+                               );
     if (EFI_ERROR (Status)) {
       goto ERROR;
     }
 
-    HttpInstance->Tcp4TlsTxData.Push = TRUE;
-    HttpInstance->Tcp4TlsTxData.Urgent = FALSE;
-    HttpInstance->Tcp4TlsTxData.DataLength = 0;
+    HttpInstance->Tcp4TlsTxData.Push          = TRUE;
+    HttpInstance->Tcp4TlsTxData.Urgent        = FALSE;
+    HttpInstance->Tcp4TlsTxData.DataLength    = 0;
     HttpInstance->Tcp4TlsTxData.FragmentCount = 1;
     HttpInstance->Tcp4TlsTxData.FragmentTable[0].FragmentLength = HttpInstance->Tcp4TlsTxData.DataLength;
     HttpInstance->Tcp4TlsTxData.FragmentTable[0].FragmentBuffer = NULL;
@@ -247,40 +247,40 @@ TlsCreateTxRxEvent (
     // For Tcp4TlsRxToken.
     //
     Status = gBS->CreateEvent (
-                    EVT_NOTIFY_SIGNAL,
-                    TPL_NOTIFY,
-                    HttpCommonNotify,
-                    &HttpInstance->TlsIsRxDone,
-                    &HttpInstance->Tcp4TlsRxToken.CompletionToken.Event
-                    );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_NOTIFY,
+                               HttpCommonNotify,
+                               &HttpInstance->TlsIsRxDone,
+                               &HttpInstance->Tcp4TlsRxToken.CompletionToken.Event
+                               );
     if (EFI_ERROR (Status)) {
       goto ERROR;
     }
 
-    HttpInstance->Tcp4TlsRxData.DataLength                       = 0;
-    HttpInstance->Tcp4TlsRxData.FragmentCount                    = 1;
-    HttpInstance->Tcp4TlsRxData.FragmentTable[0].FragmentLength  = HttpInstance->Tcp4TlsRxData.DataLength ;
-    HttpInstance->Tcp4TlsRxData.FragmentTable[0].FragmentBuffer  = NULL;
-    HttpInstance->Tcp4TlsRxToken.Packet.RxData          = &HttpInstance->Tcp4TlsRxData;
+    HttpInstance->Tcp4TlsRxData.DataLength    = 0;
+    HttpInstance->Tcp4TlsRxData.FragmentCount = 1;
+    HttpInstance->Tcp4TlsRxData.FragmentTable[0].FragmentLength = HttpInstance->Tcp4TlsRxData.DataLength;
+    HttpInstance->Tcp4TlsRxData.FragmentTable[0].FragmentBuffer = NULL;
+    HttpInstance->Tcp4TlsRxToken.Packet.RxData = &HttpInstance->Tcp4TlsRxData;
     HttpInstance->Tcp4TlsRxToken.CompletionToken.Status = EFI_NOT_READY;
   } else {
     //
     // For Tcp6TlsTxToken.
     //
     Status = gBS->CreateEvent (
-                    EVT_NOTIFY_SIGNAL,
-                    TPL_NOTIFY,
-                    HttpCommonNotify,
-                    &HttpInstance->TlsIsTxDone,
-                    &HttpInstance->Tcp6TlsTxToken.CompletionToken.Event
-                    );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_NOTIFY,
+                               HttpCommonNotify,
+                               &HttpInstance->TlsIsTxDone,
+                               &HttpInstance->Tcp6TlsTxToken.CompletionToken.Event
+                               );
     if (EFI_ERROR (Status)) {
       goto ERROR;
     }
 
-    HttpInstance->Tcp6TlsTxData.Push = TRUE;
-    HttpInstance->Tcp6TlsTxData.Urgent = FALSE;
-    HttpInstance->Tcp6TlsTxData.DataLength = 0;
+    HttpInstance->Tcp6TlsTxData.Push          = TRUE;
+    HttpInstance->Tcp6TlsTxData.Urgent        = FALSE;
+    HttpInstance->Tcp6TlsTxData.DataLength    = 0;
     HttpInstance->Tcp6TlsTxData.FragmentCount = 1;
     HttpInstance->Tcp6TlsTxData.FragmentTable[0].FragmentLength = HttpInstance->Tcp6TlsTxData.DataLength;
     HttpInstance->Tcp6TlsTxData.FragmentTable[0].FragmentBuffer = NULL;
@@ -291,21 +291,21 @@ TlsCreateTxRxEvent (
     // For Tcp6TlsRxToken.
     //
     Status = gBS->CreateEvent (
-                    EVT_NOTIFY_SIGNAL,
-                    TPL_NOTIFY,
-                    HttpCommonNotify,
-                    &HttpInstance->TlsIsRxDone,
-                    &HttpInstance->Tcp6TlsRxToken.CompletionToken.Event
-                    );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_NOTIFY,
+                               HttpCommonNotify,
+                               &HttpInstance->TlsIsRxDone,
+                               &HttpInstance->Tcp6TlsRxToken.CompletionToken.Event
+                               );
     if (EFI_ERROR (Status)) {
       goto ERROR;
     }
 
-    HttpInstance->Tcp6TlsRxData.DataLength                       = 0;
-    HttpInstance->Tcp6TlsRxData.FragmentCount                    = 1;
-    HttpInstance->Tcp6TlsRxData.FragmentTable[0].FragmentLength  = HttpInstance->Tcp6TlsRxData.DataLength ;
-    HttpInstance->Tcp6TlsRxData.FragmentTable[0].FragmentBuffer  = NULL;
-    HttpInstance->Tcp6TlsRxToken.Packet.RxData          = &HttpInstance->Tcp6TlsRxData;
+    HttpInstance->Tcp6TlsRxData.DataLength    = 0;
+    HttpInstance->Tcp6TlsRxData.FragmentCount = 1;
+    HttpInstance->Tcp6TlsRxData.FragmentTable[0].FragmentLength = HttpInstance->Tcp6TlsRxData.DataLength;
+    HttpInstance->Tcp6TlsRxData.FragmentTable[0].FragmentBuffer = NULL;
+    HttpInstance->Tcp6TlsRxToken.Packet.RxData = &HttpInstance->Tcp6TlsRxData;
     HttpInstance->Tcp6TlsRxToken.CompletionToken.Status = EFI_NOT_READY;
   }
 
@@ -335,22 +335,22 @@ TlsCloseTxRxEvent (
   ASSERT (HttpInstance != NULL);
   if (!HttpInstance->LocalAddressIsIPv6) {
     if (NULL != HttpInstance->Tcp4TlsTxToken.CompletionToken.Event) {
-      gBS->CloseEvent(HttpInstance->Tcp4TlsTxToken.CompletionToken.Event);
+  gBS->CloseEvent (HttpInstance->Tcp4TlsTxToken.CompletionToken.Event);
       HttpInstance->Tcp4TlsTxToken.CompletionToken.Event = NULL;
     }
 
     if (NULL != HttpInstance->Tcp4TlsRxToken.CompletionToken.Event) {
-      gBS->CloseEvent (HttpInstance->Tcp4TlsRxToken.CompletionToken.Event);
+  gBS->CloseEvent (HttpInstance->Tcp4TlsRxToken.CompletionToken.Event);
       HttpInstance->Tcp4TlsRxToken.CompletionToken.Event = NULL;
     }
   } else {
     if (NULL != HttpInstance->Tcp6TlsTxToken.CompletionToken.Event) {
-      gBS->CloseEvent(HttpInstance->Tcp6TlsTxToken.CompletionToken.Event);
+  gBS->CloseEvent (HttpInstance->Tcp6TlsTxToken.CompletionToken.Event);
       HttpInstance->Tcp6TlsTxToken.CompletionToken.Event = NULL;
     }
 
     if (NULL != HttpInstance->Tcp6TlsRxToken.CompletionToken.Event) {
-      gBS->CloseEvent (HttpInstance->Tcp6TlsRxToken.CompletionToken.Event);
+  gBS->CloseEvent (HttpInstance->Tcp6TlsRxToken.CompletionToken.Event);
       HttpInstance->Tcp6TlsRxToken.CompletionToken.Event = NULL;
     }
   }
@@ -388,13 +388,13 @@ TlsConfigCertificate (
   //
   // Try to read the TlsCaCertificate variable.
   //
-  Status  = gRT->GetVariable (
-                   EFI_TLS_CA_CERTIFICATE_VARIABLE,
-                   &gEfiTlsCaCertificateGuid,
-                   NULL,
-                   &CACertSize,
-                   NULL
-                   );
+  Status = gRT->GetVariable (
+                             EFI_TLS_CA_CERTIFICATE_VARIABLE,
+                             &gEfiTlsCaCertificateGuid,
+                             NULL,
+                             &CACertSize,
+                             NULL
+                             );
 
   if (EFI_ERROR (Status) && Status != EFI_BUFFER_TOO_SMALL) {
     return Status;
@@ -409,12 +409,12 @@ TlsConfigCertificate (
   }
 
   Status = gRT->GetVariable (
-                  EFI_TLS_CA_CERTIFICATE_VARIABLE,
-                  &gEfiTlsCaCertificateGuid,
-                  NULL,
-                  &CACertSize,
-                  CACert
-                  );
+                             EFI_TLS_CA_CERTIFICATE_VARIABLE,
+                             &gEfiTlsCaCertificateGuid,
+                             NULL,
+                             &CACertSize,
+                             CACert
+                             );
   if (EFI_ERROR (Status)) {
     //
     // GetVariable still error or the variable is corrupted.
@@ -427,62 +427,77 @@ TlsConfigCertificate (
   //
   // Sanity check
   //
-  Status = EFI_INVALID_PARAMETER;
-  CertCount = 0;
+  Status       = EFI_INVALID_PARAMETER;
+  CertCount    = 0;
   ItemDataSize = (UINT32) CACertSize;
   while (ItemDataSize > 0) {
     if (ItemDataSize < sizeof (EFI_SIGNATURE_LIST)) {
-      DEBUG ((DEBUG_ERROR, "%a: truncated EFI_SIGNATURE_LIST header\n",
-        __FUNCTION__));
+      DEBUG (
+             (DEBUG_ERROR, "%a: truncated EFI_SIGNATURE_LIST header\n",
+              __FUNCTION__)
+             );
       goto FreeCACert;
     }
 
     CertList = (EFI_SIGNATURE_LIST *) (CACert + (CACertSize - ItemDataSize));
 
     if (CertList->SignatureListSize < sizeof (EFI_SIGNATURE_LIST)) {
-      DEBUG ((DEBUG_ERROR,
-        "%a: SignatureListSize too small for EFI_SIGNATURE_LIST\n",
-        __FUNCTION__));
+      DEBUG (
+             (DEBUG_ERROR,
+              "%a: SignatureListSize too small for EFI_SIGNATURE_LIST\n",
+              __FUNCTION__)
+             );
       goto FreeCACert;
     }
 
     if (CertList->SignatureListSize > ItemDataSize) {
-      DEBUG ((DEBUG_ERROR, "%a: truncated EFI_SIGNATURE_LIST body\n",
-        __FUNCTION__));
+      DEBUG (
+             (DEBUG_ERROR, "%a: truncated EFI_SIGNATURE_LIST body\n",
+              __FUNCTION__)
+             );
       goto FreeCACert;
     }
 
     if (!CompareGuid (&CertList->SignatureType, &gEfiCertX509Guid)) {
-      DEBUG ((DEBUG_ERROR, "%a: only X509 certificates are supported\n",
-        __FUNCTION__));
+      DEBUG (
+             (DEBUG_ERROR, "%a: only X509 certificates are supported\n",
+              __FUNCTION__)
+             );
       Status = EFI_UNSUPPORTED;
       goto FreeCACert;
     }
 
     if (CertList->SignatureHeaderSize != 0) {
-      DEBUG ((DEBUG_ERROR, "%a: SignatureHeaderSize must be 0 for X509\n",
-        __FUNCTION__));
+      DEBUG (
+             (DEBUG_ERROR, "%a: SignatureHeaderSize must be 0 for X509\n",
+              __FUNCTION__)
+             );
       goto FreeCACert;
     }
 
     if (CertList->SignatureSize < sizeof (EFI_SIGNATURE_DATA)) {
-      DEBUG ((DEBUG_ERROR,
-        "%a: SignatureSize too small for EFI_SIGNATURE_DATA\n", __FUNCTION__));
+      DEBUG (
+             (DEBUG_ERROR,
+              "%a: SignatureSize too small for EFI_SIGNATURE_DATA\n", __FUNCTION__)
+             );
       goto FreeCACert;
     }
 
     CertArraySizeInBytes = (CertList->SignatureListSize -
                             sizeof (EFI_SIGNATURE_LIST));
     if (CertArraySizeInBytes % CertList->SignatureSize != 0) {
-      DEBUG ((DEBUG_ERROR,
-        "%a: EFI_SIGNATURE_DATA array not a multiple of SignatureSize\n",
-        __FUNCTION__));
+      DEBUG (
+             (DEBUG_ERROR,
+              "%a: EFI_SIGNATURE_DATA array not a multiple of SignatureSize\n",
+              __FUNCTION__)
+             );
       goto FreeCACert;
     }
 
-    CertCount += CertArraySizeInBytes / CertList->SignatureSize;
+    CertCount    += CertArraySizeInBytes / CertList->SignatureSize;
     ItemDataSize -= CertList->SignatureListSize;
   }
+
   if (CertCount == 0) {
     DEBUG ((DEBUG_ERROR, "%a: no X509 certificates provided\n", __FUNCTION__));
     goto FreeCACert;
@@ -492,20 +507,21 @@ TlsConfigCertificate (
   // Enumerate all data and erasing the target item.
   //
   ItemDataSize = (UINT32) CACertSize;
-  CertList = (EFI_SIGNATURE_LIST *) CACert;
+  CertList     = (EFI_SIGNATURE_LIST *) CACert;
   while ((ItemDataSize > 0) && (ItemDataSize >= CertList->SignatureListSize)) {
     Cert = (EFI_SIGNATURE_DATA *) ((UINT8 *) CertList + sizeof (EFI_SIGNATURE_LIST) + CertList->SignatureHeaderSize);
-    CertCount  = (CertList->SignatureListSize - sizeof (EFI_SIGNATURE_LIST) - CertList->SignatureHeaderSize) / CertList->SignatureSize;
+    CertCount = (CertList->SignatureListSize - sizeof (EFI_SIGNATURE_LIST) - CertList->SignatureHeaderSize) /
+                CertList->SignatureSize;
     for (Index = 0; Index < CertCount; Index++) {
       //
       // EfiTlsConfigDataTypeCACertificate
       //
       Status = HttpInstance->TlsConfiguration->SetData (
-                                                 HttpInstance->TlsConfiguration,
-                                                 EfiTlsConfigDataTypeCACertificate,
-                                                 Cert->SignatureData,
-                                                 CertList->SignatureSize - sizeof (Cert->SignatureOwner)
-                                                 );
+                                                        HttpInstance->TlsConfiguration,
+                                                        EfiTlsConfigDataTypeCACertificate,
+                                                        Cert->SignatureData,
+                                                        CertList->SignatureSize - sizeof (Cert->SignatureOwner)
+                                                        );
       if (EFI_ERROR (Status)) {
         goto FreeCACert;
       }
@@ -514,7 +530,7 @@ TlsConfigCertificate (
     }
 
     ItemDataSize -= CertList->SignatureListSize;
-    CertList = (EFI_SIGNATURE_LIST *) ((UINT8 *) CertList + CertList->SignatureListSize);
+    CertList      = (EFI_SIGNATURE_LIST *) ((UINT8 *) CertList + CertList->SignatureListSize);
   }
 
 FreeCACert:
@@ -540,9 +556,9 @@ TlsConfigCipherList (
   IN OUT HTTP_PROTOCOL      *HttpInstance
   )
 {
-  EFI_STATUS          Status;
-  UINT8               *CipherList;
-  UINTN               CipherListSize;
+  EFI_STATUS  Status;
+  UINT8       *CipherList;
+  UINTN       CipherListSize;
 
   CipherList     = NULL;
   CipherListSize = 0;
@@ -550,13 +566,13 @@ TlsConfigCipherList (
   //
   // Try to read the HttpTlsCipherList variable.
   //
-  Status  = gRT->GetVariable (
-                   EDKII_HTTP_TLS_CIPHER_LIST_VARIABLE,
-                   &gEdkiiHttpTlsCipherListGuid,
-                   NULL,
-                   &CipherListSize,
-                   NULL
-                   );
+  Status = gRT->GetVariable (
+                             EDKII_HTTP_TLS_CIPHER_LIST_VARIABLE,
+                             &gEdkiiHttpTlsCipherListGuid,
+                             NULL,
+                             &CipherListSize,
+                             NULL
+                             );
   ASSERT (EFI_ERROR (Status));
   if (Status != EFI_BUFFER_TOO_SMALL) {
     return Status;
@@ -575,12 +591,12 @@ TlsConfigCipherList (
   }
 
   Status = gRT->GetVariable (
-                  EDKII_HTTP_TLS_CIPHER_LIST_VARIABLE,
-                  &gEdkiiHttpTlsCipherListGuid,
-                  NULL,
-                  &CipherListSize,
-                  CipherList
-                  );
+                             EDKII_HTTP_TLS_CIPHER_LIST_VARIABLE,
+                             &gEdkiiHttpTlsCipherListGuid,
+                             NULL,
+                             &CipherListSize,
+                             CipherList
+                             );
   if (EFI_ERROR (Status)) {
     //
     // GetVariable still error or the variable is corrupted.
@@ -591,11 +607,11 @@ TlsConfigCipherList (
   ASSERT (CipherList != NULL);
 
   Status = HttpInstance->Tls->SetSessionData (
-                                HttpInstance->Tls,
-                                EfiTlsCipherList,
-                                CipherList,
-                                CipherListSize
-                                );
+                                              HttpInstance->Tls,
+                                              EfiTlsCipherList,
+                                              CipherList,
+                                              CipherListSize
+                                              );
 
 ON_EXIT:
   FreePool (CipherList);
@@ -618,7 +634,7 @@ TlsConfigureSession (
   IN OUT HTTP_PROTOCOL      *HttpInstance
   )
 {
-  EFI_STATUS                 Status;
+  EFI_STATUS  Status;
 
   //
   // TlsConfigData initialization
@@ -636,41 +652,41 @@ TlsConfigureSession (
   // EfiTlsSessionState
   //
   Status = HttpInstance->Tls->SetSessionData (
-                                HttpInstance->Tls,
-                                EfiTlsConnectionEnd,
-                                &(HttpInstance->TlsConfigData.ConnectionEnd),
-                                sizeof (EFI_TLS_CONNECTION_END)
-                                );
+                                              HttpInstance->Tls,
+                                              EfiTlsConnectionEnd,
+                                              &(HttpInstance->TlsConfigData.ConnectionEnd),
+                                              sizeof (EFI_TLS_CONNECTION_END)
+                                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   Status = HttpInstance->Tls->SetSessionData (
-                                HttpInstance->Tls,
-                                EfiTlsVerifyMethod,
-                                &HttpInstance->TlsConfigData.VerifyMethod,
-                                sizeof (EFI_TLS_VERIFY)
-                                );
+                                              HttpInstance->Tls,
+                                              EfiTlsVerifyMethod,
+                                              &HttpInstance->TlsConfigData.VerifyMethod,
+                                              sizeof (EFI_TLS_VERIFY)
+                                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   Status = HttpInstance->Tls->SetSessionData (
-                                HttpInstance->Tls,
-                                EfiTlsVerifyHost,
-                                &HttpInstance->TlsConfigData.VerifyHost,
-                                sizeof (EFI_TLS_VERIFY_HOST)
-                                );
+                                              HttpInstance->Tls,
+                                              EfiTlsVerifyHost,
+                                              &HttpInstance->TlsConfigData.VerifyHost,
+                                              sizeof (EFI_TLS_VERIFY_HOST)
+                                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   Status = HttpInstance->Tls->SetSessionData (
-                                HttpInstance->Tls,
-                                EfiTlsSessionState,
-                                &(HttpInstance->TlsConfigData.SessionState),
-                                sizeof (EFI_TLS_SESSION_STATE)
-                                );
+                                              HttpInstance->Tls,
+                                              EfiTlsSessionState,
+                                              &(HttpInstance->TlsConfigData.SessionState),
+                                              sizeof (EFI_TLS_SESSION_STATE)
+                                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -729,9 +745,9 @@ TlsCommonTransmit (
   IN     NET_BUF            *Packet
   )
 {
-  EFI_STATUS                Status;
-  VOID                      *Data;
-  UINTN                     Size;
+  EFI_STATUS  Status;
+  VOID        *Data;
+  UINTN       Size;
 
   if ((HttpInstance == NULL) || (Packet == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -751,9 +767,9 @@ TlsCommonTransmit (
   }
 
   if (!HttpInstance->LocalAddressIsIPv6) {
-    ((EFI_TCP4_TRANSMIT_DATA *) Data)->Push        = TRUE;
-    ((EFI_TCP4_TRANSMIT_DATA *) Data)->Urgent      = FALSE;
-    ((EFI_TCP4_TRANSMIT_DATA *) Data)->DataLength  = Packet->TotalSize;
+    ((EFI_TCP4_TRANSMIT_DATA *) Data)->Push       = TRUE;
+    ((EFI_TCP4_TRANSMIT_DATA *) Data)->Urgent     = FALSE;
+    ((EFI_TCP4_TRANSMIT_DATA *) Data)->DataLength = Packet->TotalSize;
 
     //
     // Build the fragment table.
@@ -761,10 +777,10 @@ TlsCommonTransmit (
     ((EFI_TCP4_TRANSMIT_DATA *) Data)->FragmentCount = Packet->BlockOpNum;
 
     NetbufBuildExt (
-      Packet,
-      (NET_FRAGMENT *) &((EFI_TCP4_TRANSMIT_DATA *) Data)->FragmentTable[0],
-      &((EFI_TCP4_TRANSMIT_DATA *) Data)->FragmentCount
-      );
+                    Packet,
+                    (NET_FRAGMENT *) &((EFI_TCP4_TRANSMIT_DATA *) Data)->FragmentTable[0],
+                    &((EFI_TCP4_TRANSMIT_DATA *) Data)->FragmentCount
+                    );
 
     HttpInstance->Tcp4TlsTxToken.Packet.TxData = (EFI_TCP4_TRANSMIT_DATA *) Data;
 
@@ -773,21 +789,21 @@ TlsCommonTransmit (
     //
     // Transmit the packet.
     //
-    Status  = HttpInstance->Tcp4->Transmit (HttpInstance->Tcp4, &HttpInstance->Tcp4TlsTxToken);
+    Status = HttpInstance->Tcp4->Transmit (HttpInstance->Tcp4, &HttpInstance->Tcp4TlsTxToken);
     if (EFI_ERROR (Status)) {
       goto ON_EXIT;
     }
 
     while (!HttpInstance->TlsIsTxDone) {
-      HttpInstance->Tcp4->Poll (HttpInstance->Tcp4);
+  HttpInstance->Tcp4->Poll (HttpInstance->Tcp4);
     }
 
     HttpInstance->TlsIsTxDone = FALSE;
     Status = HttpInstance->Tcp4TlsTxToken.CompletionToken.Status;
   } else {
-    ((EFI_TCP6_TRANSMIT_DATA *) Data)->Push        = TRUE;
-    ((EFI_TCP6_TRANSMIT_DATA *) Data)->Urgent      = FALSE;
-    ((EFI_TCP6_TRANSMIT_DATA *) Data)->DataLength  = Packet->TotalSize;
+    ((EFI_TCP6_TRANSMIT_DATA *) Data)->Push       = TRUE;
+    ((EFI_TCP6_TRANSMIT_DATA *) Data)->Urgent     = FALSE;
+    ((EFI_TCP6_TRANSMIT_DATA *) Data)->DataLength = Packet->TotalSize;
 
     //
     // Build the fragment table.
@@ -795,10 +811,10 @@ TlsCommonTransmit (
     ((EFI_TCP6_TRANSMIT_DATA *) Data)->FragmentCount = Packet->BlockOpNum;
 
     NetbufBuildExt (
-      Packet,
-      (NET_FRAGMENT *) &((EFI_TCP6_TRANSMIT_DATA *) Data)->FragmentTable[0],
-      &((EFI_TCP6_TRANSMIT_DATA *) Data)->FragmentCount
-      );
+                    Packet,
+                    (NET_FRAGMENT *) &((EFI_TCP6_TRANSMIT_DATA *) Data)->FragmentTable[0],
+                    &((EFI_TCP6_TRANSMIT_DATA *) Data)->FragmentCount
+                    );
 
     HttpInstance->Tcp6TlsTxToken.Packet.TxData = (EFI_TCP6_TRANSMIT_DATA *) Data;
 
@@ -807,13 +823,13 @@ TlsCommonTransmit (
     //
     // Transmit the packet.
     //
-    Status  = HttpInstance->Tcp6->Transmit (HttpInstance->Tcp6, &HttpInstance->Tcp6TlsTxToken);
+    Status = HttpInstance->Tcp6->Transmit (HttpInstance->Tcp6, &HttpInstance->Tcp6TlsTxToken);
     if (EFI_ERROR (Status)) {
       goto ON_EXIT;
     }
 
     while (!HttpInstance->TlsIsTxDone) {
-      HttpInstance->Tcp6->Poll (HttpInstance->Tcp6);
+  HttpInstance->Tcp6->Poll (HttpInstance->Tcp6);
     }
 
     HttpInstance->TlsIsTxDone = FALSE;
@@ -848,12 +864,12 @@ TlsCommonReceive (
   IN     EFI_EVENT          Timeout
   )
 {
-  EFI_TCP4_RECEIVE_DATA     *Tcp4RxData;
-  EFI_TCP6_RECEIVE_DATA     *Tcp6RxData;
-  EFI_STATUS                Status;
-  NET_FRAGMENT              *Fragment;
-  UINT32                    FragmentCount;
-  UINT32                    CurrentFragment;
+  EFI_TCP4_RECEIVE_DATA  *Tcp4RxData;
+  EFI_TCP6_RECEIVE_DATA  *Tcp6RxData;
+  EFI_STATUS             Status;
+  NET_FRAGMENT           *Fragment;
+  UINT32                 FragmentCount;
+  UINT32                 CurrentFragment;
 
   Tcp4RxData = NULL;
   Tcp6RxData = NULL;
@@ -863,7 +879,7 @@ TlsCommonReceive (
   }
 
   FragmentCount = Packet->BlockOpNum;
-  Fragment      = AllocatePool (FragmentCount * sizeof (NET_FRAGMENT));
+  Fragment = AllocatePool (FragmentCount * sizeof (NET_FRAGMENT));
   if (Fragment == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ON_EXIT;
@@ -879,30 +895,33 @@ TlsCommonReceive (
     if (Tcp4RxData == NULL) {
       return EFI_INVALID_PARAMETER;
     }
-    Tcp4RxData->FragmentCount         = 1;
+
+    Tcp4RxData->FragmentCount = 1;
   } else {
     Tcp6RxData = HttpInstance->Tcp6TlsRxToken.Packet.RxData;
     if (Tcp6RxData == NULL) {
       return EFI_INVALID_PARAMETER;
     }
-    Tcp6RxData->FragmentCount         = 1;
+
+    Tcp6RxData->FragmentCount = 1;
   }
 
-  CurrentFragment               = 0;
-  Status                        = EFI_SUCCESS;
+  CurrentFragment = 0;
+  Status = EFI_SUCCESS;
 
   while (CurrentFragment < FragmentCount) {
     if (!HttpInstance->LocalAddressIsIPv6) {
-      Tcp4RxData->DataLength                       = Fragment[CurrentFragment].Len;
-      Tcp4RxData->FragmentTable[0].FragmentLength  = Fragment[CurrentFragment].Len;
-      Tcp4RxData->FragmentTable[0].FragmentBuffer  = Fragment[CurrentFragment].Bulk;
+      Tcp4RxData->DataLength = Fragment[CurrentFragment].Len;
+      Tcp4RxData->FragmentTable[0].FragmentLength = Fragment[CurrentFragment].Len;
+      Tcp4RxData->FragmentTable[0].FragmentBuffer = Fragment[CurrentFragment].Bulk;
       Status = HttpInstance->Tcp4->Receive (HttpInstance->Tcp4, &HttpInstance->Tcp4TlsRxToken);
     } else {
-      Tcp6RxData->DataLength                       = Fragment[CurrentFragment].Len;
-      Tcp6RxData->FragmentTable[0].FragmentLength  = Fragment[CurrentFragment].Len;
-      Tcp6RxData->FragmentTable[0].FragmentBuffer  = Fragment[CurrentFragment].Bulk;
+      Tcp6RxData->DataLength = Fragment[CurrentFragment].Len;
+      Tcp6RxData->FragmentTable[0].FragmentLength = Fragment[CurrentFragment].Len;
+      Tcp6RxData->FragmentTable[0].FragmentBuffer = Fragment[CurrentFragment].Bulk;
       Status = HttpInstance->Tcp6->Receive (HttpInstance->Tcp6, &HttpInstance->Tcp6TlsRxToken);
     }
+
     if (EFI_ERROR (Status)) {
       goto ON_EXIT;
     }
@@ -912,9 +931,9 @@ TlsCommonReceive (
       // Poll until some data is received or an error occurs.
       //
       if (!HttpInstance->LocalAddressIsIPv6) {
-        HttpInstance->Tcp4->Poll (HttpInstance->Tcp4);
+  HttpInstance->Tcp4->Poll (HttpInstance->Tcp4);
       } else {
-        HttpInstance->Tcp6->Poll (HttpInstance->Tcp6);
+  HttpInstance->Tcp6->Poll (HttpInstance->Tcp6);
       }
     }
 
@@ -923,9 +942,9 @@ TlsCommonReceive (
       // Timeout occurs, cancel the receive request.
       //
       if (!HttpInstance->LocalAddressIsIPv6) {
-        HttpInstance->Tcp4->Cancel (HttpInstance->Tcp4, &HttpInstance->Tcp4TlsRxToken.CompletionToken);
+  HttpInstance->Tcp4->Cancel (HttpInstance->Tcp4, &HttpInstance->Tcp4TlsRxToken.CompletionToken);
       } else {
-        HttpInstance->Tcp6->Cancel (HttpInstance->Tcp6, &HttpInstance->Tcp6TlsRxToken.CompletionToken);
+  HttpInstance->Tcp6->Cancel (HttpInstance->Tcp6, &HttpInstance->Tcp6TlsRxToken.CompletionToken);
       }
 
       Status = EFI_TIMEOUT;
@@ -989,21 +1008,21 @@ EFI_STATUS
 EFIAPI
 TlsReceiveOnePdu (
   IN OUT HTTP_PROTOCOL      *HttpInstance,
-     OUT NET_BUF            **Pdu,
+  OUT NET_BUF            **Pdu,
   IN     EFI_EVENT          Timeout
   )
 {
-  EFI_STATUS      Status;
+  EFI_STATUS  Status;
 
-  LIST_ENTRY      *NbufList;
+  LIST_ENTRY  *NbufList;
 
-  UINT32          Len;
+  UINT32  Len;
 
-  NET_BUF           *PduHdr;
-  UINT8             *Header;
-  TLS_RECORD_HEADER RecordHeader;
+  NET_BUF            *PduHdr;
+  UINT8              *Header;
+  TLS_RECORD_HEADER  RecordHeader;
 
-  NET_BUF           *DataSeg;
+  NET_BUF  *DataSeg;
 
   NbufList = NULL;
   PduHdr   = NULL;
@@ -1020,8 +1039,8 @@ TlsReceiveOnePdu (
   //
   // Allocate buffer to receive one TLS header.
   //
-  Len     = TLS_RECORD_HEADER_LENGTH;
-  PduHdr  = NetbufAlloc (Len);
+  Len    = TLS_RECORD_HEADER_LENGTH;
+  PduHdr = NetbufAlloc (Len);
   if (PduHdr == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ON_EXIT;
@@ -1043,21 +1062,21 @@ TlsReceiveOnePdu (
 
   RecordHeader = *(TLS_RECORD_HEADER *) Header;
   if ((RecordHeader.ContentType == TlsContentTypeHandshake ||
-    RecordHeader.ContentType == TlsContentTypeAlert ||
-    RecordHeader.ContentType == TlsContentTypeChangeCipherSpec ||
-    RecordHeader.ContentType == TlsContentTypeApplicationData) &&
-    (RecordHeader.Version.Major == 0x03) && /// Major versions are same.
-    (RecordHeader.Version.Minor == TLS10_PROTOCOL_VERSION_MINOR ||
-    RecordHeader.Version.Minor ==TLS11_PROTOCOL_VERSION_MINOR ||
-    RecordHeader.Version.Minor == TLS12_PROTOCOL_VERSION_MINOR)
-   ) {
+       RecordHeader.ContentType == TlsContentTypeAlert ||
+       RecordHeader.ContentType == TlsContentTypeChangeCipherSpec ||
+       RecordHeader.ContentType == TlsContentTypeApplicationData) &&
+      (RecordHeader.Version.Major == 0x03) && /// Major versions are same.
+      (RecordHeader.Version.Minor == TLS10_PROTOCOL_VERSION_MINOR ||
+       RecordHeader.Version.Minor == TLS11_PROTOCOL_VERSION_MINOR ||
+       RecordHeader.Version.Minor == TLS12_PROTOCOL_VERSION_MINOR)
+      ) {
     InsertTailList (NbufList, &PduHdr->List);
   } else {
     Status = EFI_PROTOCOL_ERROR;
     goto ON_EXIT;
   }
 
-  Len = SwapBytes16(RecordHeader.Length);
+  Len = SwapBytes16 (RecordHeader.Length);
   if (Len == 0) {
     //
     // No TLS payload.
@@ -1126,33 +1145,33 @@ TlsConnectSession (
   IN  EFI_EVENT                Timeout
   )
 {
-  EFI_STATUS              Status;
-  UINT8                   *BufferOut;
-  UINTN                   BufferOutSize;
-  NET_BUF                 *PacketOut;
-  UINT8                   *DataOut;
-  NET_BUF                 *Pdu;
-  UINT8                   *BufferIn;
-  UINTN                   BufferInSize;
-  UINT8                   *GetSessionDataBuffer;
-  UINTN                   GetSessionDataBufferSize;
+  EFI_STATUS  Status;
+  UINT8       *BufferOut;
+  UINTN       BufferOutSize;
+  NET_BUF     *PacketOut;
+  UINT8       *DataOut;
+  NET_BUF     *Pdu;
+  UINT8       *BufferIn;
+  UINTN       BufferInSize;
+  UINT8       *GetSessionDataBuffer;
+  UINTN       GetSessionDataBufferSize;
 
-  BufferOut    = NULL;
-  PacketOut    = NULL;
-  DataOut      = NULL;
-  Pdu          = NULL;
-  BufferIn     = NULL;
+  BufferOut = NULL;
+  PacketOut = NULL;
+  DataOut   = NULL;
+  Pdu = NULL;
+  BufferIn = NULL;
 
   //
   // Initialize TLS state.
   //
   HttpInstance->TlsSessionState = EfiTlsSessionNotStarted;
   Status = HttpInstance->Tls->SetSessionData (
-                                HttpInstance->Tls,
-                                EfiTlsSessionState,
-                                &(HttpInstance->TlsSessionState),
-                                sizeof (EFI_TLS_SESSION_STATE)
-                                );
+                                              HttpInstance->Tls,
+                                              EfiTlsSessionState,
+                                              &(HttpInstance->TlsSessionState),
+                                              sizeof (EFI_TLS_SESSION_STATE)
+                                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -1161,19 +1180,19 @@ TlsConnectSession (
   // Create ClientHello
   //
   BufferOutSize = DEF_BUF_LEN;
-  BufferOut = AllocateZeroPool (BufferOutSize);
+  BufferOut     = AllocateZeroPool (BufferOutSize);
   if (BufferOut == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     return Status;
   }
 
   Status = HttpInstance->Tls->BuildResponsePacket (
-                                HttpInstance->Tls,
-                                NULL,
-                                0,
-                                BufferOut,
-                                &BufferOutSize
-                                );
+                                                   HttpInstance->Tls,
+                                                   NULL,
+                                                   0,
+                                                   BufferOut,
+                                                   &BufferOutSize
+                                                   );
   if (Status == EFI_BUFFER_TOO_SMALL) {
     FreePool (BufferOut);
     BufferOut = AllocateZeroPool (BufferOutSize);
@@ -1183,13 +1202,14 @@ TlsConnectSession (
     }
 
     Status = HttpInstance->Tls->BuildResponsePacket (
-                                  HttpInstance->Tls,
-                                  NULL,
-                                  0,
-                                  BufferOut,
-                                  &BufferOutSize
-                                  );
+                                                     HttpInstance->Tls,
+                                                     NULL,
+                                                     0,
+                                                     BufferOut,
+                                                     &BufferOutSize
+                                                     );
   }
+
   if (EFI_ERROR (Status)) {
     FreePool (BufferOut);
     return Status;
@@ -1199,7 +1219,7 @@ TlsConnectSession (
   // Transmit ClientHello
   //
   PacketOut = NetbufAlloc ((UINT32) BufferOutSize);
-  DataOut = NetbufAllocSpace (PacketOut, (UINT32) BufferOutSize, NET_BUF_TAIL);
+  DataOut   = NetbufAllocSpace (PacketOut, (UINT32) BufferOutSize, NET_BUF_TAIL);
   if (DataOut == NULL) {
     FreePool (BufferOut);
     return EFI_OUT_OF_RESOURCES;
@@ -1216,7 +1236,7 @@ TlsConnectSession (
   }
 
   while(HttpInstance->TlsSessionState != EfiTlsSessionDataTransferring && \
-    ((Timeout == NULL) || EFI_ERROR (gBS->CheckEvent (Timeout)))) {
+        ((Timeout == NULL) || EFI_ERROR (gBS->CheckEvent (Timeout)))) {
     //
     // Receive one TLS record.
     //
@@ -1226,14 +1246,14 @@ TlsConnectSession (
     }
 
     BufferInSize = Pdu->TotalSize;
-    BufferIn = AllocateZeroPool (BufferInSize);
+    BufferIn     = AllocateZeroPool (BufferInSize);
     if (BufferIn == NULL) {
       NetbufFree (Pdu);
       Status = EFI_OUT_OF_RESOURCES;
       return Status;
     }
 
-    NetbufCopy (Pdu, 0, (UINT32)BufferInSize, BufferIn);
+    NetbufCopy (Pdu, 0, (UINT32) BufferInSize, BufferIn);
 
     NetbufFree (Pdu);
 
@@ -1241,35 +1261,35 @@ TlsConnectSession (
     // Handle Receive data.
     //
     BufferOutSize = DEF_BUF_LEN;
-    BufferOut = AllocateZeroPool (BufferOutSize);
+    BufferOut     = AllocateZeroPool (BufferOutSize);
     if (BufferOut == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
       return Status;
     }
 
     Status = HttpInstance->Tls->BuildResponsePacket (
-                                  HttpInstance->Tls,
-                                  BufferIn,
-                                  BufferInSize,
-                                  BufferOut,
-                                  &BufferOutSize
-                                  );
+                                                     HttpInstance->Tls,
+                                                     BufferIn,
+                                                     BufferInSize,
+                                                     BufferOut,
+                                                     &BufferOutSize
+                                                     );
     if (Status == EFI_BUFFER_TOO_SMALL) {
-       FreePool (BufferOut);
-       BufferOut = AllocateZeroPool (BufferOutSize);
-       if (BufferOut == NULL) {
-         FreePool (BufferIn);
-         Status = EFI_OUT_OF_RESOURCES;
-         return Status;
-       }
+      FreePool (BufferOut);
+      BufferOut = AllocateZeroPool (BufferOutSize);
+      if (BufferOut == NULL) {
+        FreePool (BufferIn);
+        Status = EFI_OUT_OF_RESOURCES;
+        return Status;
+      }
 
-       Status = HttpInstance->Tls->BuildResponsePacket (
-                                     HttpInstance->Tls,
-                                     BufferIn,
-                                     BufferInSize,
-                                     BufferOut,
-                                     &BufferOutSize
-                                     );
+      Status = HttpInstance->Tls->BuildResponsePacket (
+                                                       HttpInstance->Tls,
+                                                       BufferIn,
+                                                       BufferInSize,
+                                                       BufferOut,
+                                                       &BufferOutSize
+                                                       );
     }
 
     FreePool (BufferIn);
@@ -1284,7 +1304,7 @@ TlsConnectSession (
       // Transmit the response packet.
       //
       PacketOut = NetbufAlloc ((UINT32) BufferOutSize);
-      DataOut = NetbufAllocSpace (PacketOut, (UINT32) BufferOutSize, NET_BUF_TAIL);
+      DataOut   = NetbufAllocSpace (PacketOut, (UINT32) BufferOutSize, NET_BUF_TAIL);
       if (DataOut == NULL) {
         FreePool (BufferOut);
         return EFI_OUT_OF_RESOURCES;
@@ -1308,39 +1328,40 @@ TlsConnectSession (
     // Get the session state, then decide whether need to continue handle received packet.
     //
     GetSessionDataBufferSize = DEF_BUF_LEN;
-    GetSessionDataBuffer = AllocateZeroPool (GetSessionDataBufferSize);
+    GetSessionDataBuffer     = AllocateZeroPool (GetSessionDataBufferSize);
     if (GetSessionDataBuffer == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
       return Status;
     }
 
     Status = HttpInstance->Tls->GetSessionData (
-                                  HttpInstance->Tls,
-                                  EfiTlsSessionState,
-                                  GetSessionDataBuffer,
-                                  &GetSessionDataBufferSize
-                                  );
+                                                HttpInstance->Tls,
+                                                EfiTlsSessionState,
+                                                GetSessionDataBuffer,
+                                                &GetSessionDataBufferSize
+                                                );
     if (Status == EFI_BUFFER_TOO_SMALL) {
-       FreePool (GetSessionDataBuffer);
-       GetSessionDataBuffer = AllocateZeroPool (GetSessionDataBufferSize);
-       if (GetSessionDataBuffer == NULL) {
-         Status = EFI_OUT_OF_RESOURCES;
-         return Status;
-       }
+      FreePool (GetSessionDataBuffer);
+      GetSessionDataBuffer = AllocateZeroPool (GetSessionDataBufferSize);
+      if (GetSessionDataBuffer == NULL) {
+        Status = EFI_OUT_OF_RESOURCES;
+        return Status;
+      }
 
-       Status = HttpInstance->Tls->GetSessionData (
-                                     HttpInstance->Tls,
-                                     EfiTlsSessionState,
-                                     GetSessionDataBuffer,
-                                     &GetSessionDataBufferSize
-                                     );
+      Status = HttpInstance->Tls->GetSessionData (
+                                                  HttpInstance->Tls,
+                                                  EfiTlsSessionState,
+                                                  GetSessionDataBuffer,
+                                                  &GetSessionDataBufferSize
+                                                  );
     }
+
     if (EFI_ERROR (Status)) {
-      FreePool(GetSessionDataBuffer);
+      FreePool (GetSessionDataBuffer);
       return Status;
     }
 
-    ASSERT(GetSessionDataBufferSize == sizeof (EFI_TLS_SESSION_STATE));
+    ASSERT (GetSessionDataBufferSize == sizeof (EFI_TLS_SESSION_STATE));
     HttpInstance->TlsSessionState = *(EFI_TLS_SESSION_STATE *) GetSessionDataBuffer;
 
     FreePool (GetSessionDataBuffer);
@@ -1374,13 +1395,13 @@ TlsCloseSession (
   IN  HTTP_PROTOCOL            *HttpInstance
   )
 {
-  EFI_STATUS      Status;
+  EFI_STATUS  Status;
 
-  UINT8           *BufferOut;
-  UINTN           BufferOutSize;
+  UINT8  *BufferOut;
+  UINTN  BufferOutSize;
 
-  NET_BUF         *PacketOut;
-  UINT8           *DataOut;
+  NET_BUF  *PacketOut;
+  UINT8    *DataOut;
 
   Status    = EFI_SUCCESS;
   BufferOut = NULL;
@@ -1394,29 +1415,29 @@ TlsCloseSession (
   HttpInstance->TlsSessionState = EfiTlsSessionClosing;
 
   Status = HttpInstance->Tls->SetSessionData (
-                                HttpInstance->Tls,
-                                EfiTlsSessionState,
-                                &(HttpInstance->TlsSessionState),
-                                sizeof (EFI_TLS_SESSION_STATE)
-                                );
+                                              HttpInstance->Tls,
+                                              EfiTlsSessionState,
+                                              &(HttpInstance->TlsSessionState),
+                                              sizeof (EFI_TLS_SESSION_STATE)
+                                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   BufferOutSize = DEF_BUF_LEN;
-  BufferOut = AllocateZeroPool (BufferOutSize);
+  BufferOut     = AllocateZeroPool (BufferOutSize);
   if (BufferOut == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     return Status;
   }
 
   Status = HttpInstance->Tls->BuildResponsePacket (
-                                HttpInstance->Tls,
-                                NULL,
-                                0,
-                                BufferOut,
-                                &BufferOutSize
-                                );
+                                                   HttpInstance->Tls,
+                                                   NULL,
+                                                   0,
+                                                   BufferOut,
+                                                   &BufferOutSize
+                                                   );
   if (Status == EFI_BUFFER_TOO_SMALL) {
     FreePool (BufferOut);
     BufferOut = AllocateZeroPool (BufferOutSize);
@@ -1426,12 +1447,12 @@ TlsCloseSession (
     }
 
     Status = HttpInstance->Tls->BuildResponsePacket (
-                                  HttpInstance->Tls,
-                                  NULL,
-                                  0,
-                                  BufferOut,
-                                  &BufferOutSize
-                                  );
+                                                     HttpInstance->Tls,
+                                                     NULL,
+                                                     0,
+                                                     BufferOut,
+                                                     &BufferOutSize
+                                                     );
   }
 
   if (EFI_ERROR (Status)) {
@@ -1440,7 +1461,7 @@ TlsCloseSession (
   }
 
   PacketOut = NetbufAlloc ((UINT32) BufferOutSize);
-  DataOut = NetbufAllocSpace (PacketOut, (UINT32) BufferOutSize, NET_BUF_TAIL);
+  DataOut   = NetbufAllocSpace (PacketOut, (UINT32) BufferOutSize, NET_BUF_TAIL);
   if (DataOut == NULL) {
     FreePool (BufferOut);
     return EFI_OUT_OF_RESOURCES;
@@ -1489,21 +1510,21 @@ TlsProcessMessage (
   IN OUT NET_FRAGMENT             *Fragment
   )
 {
-  EFI_STATUS                      Status;
-  UINT8                           *Buffer;
-  UINT32                          BufferSize;
-  UINT32                          BytesCopied;
-  EFI_TLS_FRAGMENT_DATA           *FragmentTable;
-  UINT32                          FragmentCount;
-  EFI_TLS_FRAGMENT_DATA           *OriginalFragmentTable;
-  UINTN                           Index;
+  EFI_STATUS             Status;
+  UINT8                  *Buffer;
+  UINT32                 BufferSize;
+  UINT32                 BytesCopied;
+  EFI_TLS_FRAGMENT_DATA  *FragmentTable;
+  UINT32                 FragmentCount;
+  EFI_TLS_FRAGMENT_DATA  *OriginalFragmentTable;
+  UINTN                  Index;
 
-  Status                   = EFI_SUCCESS;
-  Buffer                   = NULL;
-  BufferSize               = 0;
-  BytesCopied              = 0;
-  FragmentTable            = NULL;
-  OriginalFragmentTable    = NULL;
+  Status        = EFI_SUCCESS;
+  Buffer        = NULL;
+  BufferSize    = 0;
+  BytesCopied   = 0;
+  FragmentTable = NULL;
+  OriginalFragmentTable = NULL;
 
   //
   // Rebuild fragment table from BufferIn.
@@ -1527,11 +1548,11 @@ TlsProcessMessage (
   // Process the Message.
   //
   Status = HttpInstance->Tls->ProcessPacket (
-                                HttpInstance->Tls,
-                                &FragmentTable,
-                                &FragmentCount,
-                                ProcessMode
-                                );
+                                             HttpInstance->Tls,
+                                             &FragmentTable,
+                                             &FragmentCount,
+                                             ProcessMode
+                                             );
   if (EFI_ERROR (Status)) {
     goto ON_EXIT;
   }
@@ -1557,10 +1578,10 @@ TlsProcessMessage (
   //
   for (Index = 0; Index < FragmentCount; Index++) {
     CopyMem (
-      (Buffer + BytesCopied),
-      FragmentTable[Index].FragmentBuffer,
-      FragmentTable[Index].FragmentLength
-      );
+             (Buffer + BytesCopied),
+             FragmentTable[Index].FragmentBuffer,
+             FragmentTable[Index].FragmentLength
+             );
     BytesCopied += FragmentTable[Index].FragmentLength;
 
     //
@@ -1578,6 +1599,7 @@ ON_EXIT:
     if( FragmentTable == OriginalFragmentTable) {
       FragmentTable = NULL;
     }
+
     FreePool (OriginalFragmentTable);
     OriginalFragmentTable = NULL;
   }
@@ -1614,27 +1636,27 @@ HttpsReceive (
   IN     EFI_EVENT             Timeout
   )
 {
-  EFI_STATUS                      Status;
-  NET_BUF                         *Pdu;
-  TLS_RECORD_HEADER               RecordHeader;
-  UINT8                           *BufferIn;
-  UINTN                           BufferInSize;
-  NET_FRAGMENT                    TempFragment;
-  UINT8                           *BufferOut;
-  UINTN                           BufferOutSize;
-  NET_BUF                         *PacketOut;
-  UINT8                           *DataOut;
-  UINT8                           *GetSessionDataBuffer;
-  UINTN                           GetSessionDataBufferSize;
+  EFI_STATUS         Status;
+  NET_BUF            *Pdu;
+  TLS_RECORD_HEADER  RecordHeader;
+  UINT8              *BufferIn;
+  UINTN              BufferInSize;
+  NET_FRAGMENT       TempFragment;
+  UINT8              *BufferOut;
+  UINTN              BufferOutSize;
+  NET_BUF            *PacketOut;
+  UINT8              *DataOut;
+  UINT8              *GetSessionDataBuffer;
+  UINTN              GetSessionDataBufferSize;
 
-  Status                   = EFI_SUCCESS;
-  Pdu                      = NULL;
-  BufferIn                 = NULL;
-  BufferInSize             = 0;
-  BufferOut                = NULL;
-  BufferOutSize            = 0;
-  PacketOut                = NULL;
-  DataOut                  = NULL;
+  Status        = EFI_SUCCESS;
+  Pdu           = NULL;
+  BufferIn      = NULL;
+  BufferInSize  = 0;
+  BufferOut     = NULL;
+  BufferOutSize = 0;
+  PacketOut     = NULL;
+  DataOut       = NULL;
   GetSessionDataBuffer     = NULL;
   GetSessionDataBufferSize = 0;
 
@@ -1647,7 +1669,7 @@ HttpsReceive (
   }
 
   BufferInSize = Pdu->TotalSize;
-  BufferIn = AllocateZeroPool (BufferInSize);
+  BufferIn     = AllocateZeroPool (BufferInSize);
   if (BufferIn == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     NetbufFree (Pdu);
@@ -1664,21 +1686,21 @@ HttpsReceive (
   RecordHeader = *(TLS_RECORD_HEADER *) BufferIn;
 
   if ((RecordHeader.ContentType == TlsContentTypeApplicationData) &&
-    (RecordHeader.Version.Major == 0x03) &&
-    (RecordHeader.Version.Minor == TLS10_PROTOCOL_VERSION_MINOR ||
-    RecordHeader.Version.Minor == TLS11_PROTOCOL_VERSION_MINOR ||
-    RecordHeader.Version.Minor == TLS12_PROTOCOL_VERSION_MINOR)
-  ) {
+      (RecordHeader.Version.Major == 0x03) &&
+      (RecordHeader.Version.Minor == TLS10_PROTOCOL_VERSION_MINOR ||
+       RecordHeader.Version.Minor == TLS11_PROTOCOL_VERSION_MINOR ||
+       RecordHeader.Version.Minor == TLS12_PROTOCOL_VERSION_MINOR)
+      ) {
     //
     // Decrypt Packet.
     //
     Status = TlsProcessMessage (
-               HttpInstance,
-               BufferIn,
-               BufferInSize,
-               EfiTlsDecrypt,
-               &TempFragment
-               );
+                                HttpInstance,
+                                BufferIn,
+                                BufferInSize,
+                                EfiTlsDecrypt,
+                                &TempFragment
+                                );
 
     FreePool (BufferIn);
 
@@ -1689,19 +1711,19 @@ HttpsReceive (
         // BuildResponsePacket() will be called to generate Error Alert message and send it out.
         //
         BufferOutSize = DEF_BUF_LEN;
-        BufferOut = AllocateZeroPool (BufferOutSize);
+        BufferOut     = AllocateZeroPool (BufferOutSize);
         if (BufferOut == NULL) {
           Status = EFI_OUT_OF_RESOURCES;
           return Status;
         }
 
         Status = HttpInstance->Tls->BuildResponsePacket (
-                                      HttpInstance->Tls,
-                                      NULL,
-                                      0,
-                                      BufferOut,
-                                      &BufferOutSize
-                                      );
+                                                         HttpInstance->Tls,
+                                                         NULL,
+                                                         0,
+                                                         BufferOut,
+                                                         &BufferOutSize
+                                                         );
         if (Status == EFI_BUFFER_TOO_SMALL) {
           FreePool (BufferOut);
           BufferOut = AllocateZeroPool (BufferOutSize);
@@ -1711,21 +1733,22 @@ HttpsReceive (
           }
 
           Status = HttpInstance->Tls->BuildResponsePacket (
-                                        HttpInstance->Tls,
-                                        NULL,
-                                        0,
-                                        BufferOut,
-                                        &BufferOutSize
-                                        );
+                                                           HttpInstance->Tls,
+                                                           NULL,
+                                                           0,
+                                                           BufferOut,
+                                                           &BufferOutSize
+                                                           );
         }
+
         if (EFI_ERROR (Status)) {
-          FreePool(BufferOut);
+          FreePool (BufferOut);
           return Status;
         }
 
         if (BufferOutSize != 0) {
-          PacketOut = NetbufAlloc ((UINT32)BufferOutSize);
-          DataOut = NetbufAllocSpace (PacketOut, (UINT32) BufferOutSize, NET_BUF_TAIL);
+          PacketOut = NetbufAlloc ((UINT32) BufferOutSize);
+          DataOut   = NetbufAllocSpace (PacketOut, (UINT32) BufferOutSize, NET_BUF_TAIL);
           if (DataOut == NULL) {
             FreePool (BufferOut);
             return EFI_OUT_OF_RESOURCES;
@@ -1738,7 +1761,7 @@ HttpsReceive (
           NetbufFree (PacketOut);
         }
 
-        FreePool(BufferOut);
+        FreePool (BufferOut);
 
         if (EFI_ERROR (Status)) {
           return Status;
@@ -1756,7 +1779,7 @@ HttpsReceive (
     ASSERT (((TLS_RECORD_HEADER *) (TempFragment.Bulk))->ContentType == TlsContentTypeApplicationData);
 
     BufferInSize = ((TLS_RECORD_HEADER *) (TempFragment.Bulk))->Length;
-    BufferIn = AllocateZeroPool (BufferInSize);
+    BufferIn     = AllocateZeroPool (BufferInSize);
     if (BufferIn == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
       return Status;
@@ -1768,15 +1791,14 @@ HttpsReceive (
     // Free the buffer in TempFragment.
     //
     FreePool (TempFragment.Bulk);
-
   } else if ((RecordHeader.ContentType == TlsContentTypeAlert) &&
-    (RecordHeader.Version.Major == 0x03) &&
-    (RecordHeader.Version.Minor == TLS10_PROTOCOL_VERSION_MINOR ||
-    RecordHeader.Version.Minor == TLS11_PROTOCOL_VERSION_MINOR ||
-    RecordHeader.Version.Minor == TLS12_PROTOCOL_VERSION_MINOR)
-    ) {
+             (RecordHeader.Version.Major == 0x03) &&
+             (RecordHeader.Version.Minor == TLS10_PROTOCOL_VERSION_MINOR ||
+              RecordHeader.Version.Minor == TLS11_PROTOCOL_VERSION_MINOR ||
+              RecordHeader.Version.Minor == TLS12_PROTOCOL_VERSION_MINOR)
+             ) {
     BufferOutSize = DEF_BUF_LEN;
-    BufferOut = AllocateZeroPool (BufferOutSize);
+    BufferOut     = AllocateZeroPool (BufferOutSize);
     if (BufferOut == NULL) {
       FreePool (BufferIn);
       Status = EFI_OUT_OF_RESOURCES;
@@ -1784,12 +1806,12 @@ HttpsReceive (
     }
 
     Status = HttpInstance->Tls->BuildResponsePacket (
-                                  HttpInstance->Tls,
-                                  BufferIn,
-                                  BufferInSize,
-                                  BufferOut,
-                                  &BufferOutSize
-                                  );
+                                                     HttpInstance->Tls,
+                                                     BufferIn,
+                                                     BufferInSize,
+                                                     BufferOut,
+                                                     &BufferOutSize
+                                                     );
     if (Status == EFI_BUFFER_TOO_SMALL) {
       FreePool (BufferOut);
       BufferOut = AllocateZeroPool (BufferOutSize);
@@ -1800,12 +1822,12 @@ HttpsReceive (
       }
 
       Status = HttpInstance->Tls->BuildResponsePacket (
-                                    HttpInstance->Tls,
-                                    BufferIn,
-                                    BufferInSize,
-                                    BufferOut,
-                                    &BufferOutSize
-                                    );
+                                                       HttpInstance->Tls,
+                                                       BufferIn,
+                                                       BufferInSize,
+                                                       BufferOut,
+                                                       &BufferOutSize
+                                                       );
     }
 
     FreePool (BufferIn);
@@ -1817,7 +1839,7 @@ HttpsReceive (
 
     if (BufferOutSize != 0) {
       PacketOut = NetbufAlloc ((UINT32) BufferOutSize);
-      DataOut = NetbufAllocSpace (PacketOut, (UINT32) BufferOutSize, NET_BUF_TAIL);
+      DataOut   = NetbufAllocSpace (PacketOut, (UINT32) BufferOutSize, NET_BUF_TAIL);
       if (DataOut == NULL) {
         FreePool (BufferOut);
         return EFI_OUT_OF_RESOURCES;
@@ -1836,39 +1858,40 @@ HttpsReceive (
     // Get the session state.
     //
     GetSessionDataBufferSize = DEF_BUF_LEN;
-    GetSessionDataBuffer = AllocateZeroPool (GetSessionDataBufferSize);
+    GetSessionDataBuffer     = AllocateZeroPool (GetSessionDataBufferSize);
     if (GetSessionDataBuffer == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
       return Status;
     }
 
     Status = HttpInstance->Tls->GetSessionData (
-                                  HttpInstance->Tls,
-                                  EfiTlsSessionState,
-                                  GetSessionDataBuffer,
-                                  &GetSessionDataBufferSize
-                                  );
+                                                HttpInstance->Tls,
+                                                EfiTlsSessionState,
+                                                GetSessionDataBuffer,
+                                                &GetSessionDataBufferSize
+                                                );
     if (Status == EFI_BUFFER_TOO_SMALL) {
-       FreePool (GetSessionDataBuffer);
-       GetSessionDataBuffer = AllocateZeroPool (GetSessionDataBufferSize);
-       if (GetSessionDataBuffer == NULL) {
-         Status = EFI_OUT_OF_RESOURCES;
-         return Status;
-       }
+      FreePool (GetSessionDataBuffer);
+      GetSessionDataBuffer = AllocateZeroPool (GetSessionDataBufferSize);
+      if (GetSessionDataBuffer == NULL) {
+        Status = EFI_OUT_OF_RESOURCES;
+        return Status;
+      }
 
-       Status = HttpInstance->Tls->GetSessionData (
-                                     HttpInstance->Tls,
-                                     EfiTlsSessionState,
-                                     GetSessionDataBuffer,
-                                     &GetSessionDataBufferSize
-                                     );
+      Status = HttpInstance->Tls->GetSessionData (
+                                                  HttpInstance->Tls,
+                                                  EfiTlsSessionState,
+                                                  GetSessionDataBuffer,
+                                                  &GetSessionDataBufferSize
+                                                  );
     }
+
     if (EFI_ERROR (Status)) {
       FreePool (GetSessionDataBuffer);
       return Status;
     }
 
-    ASSERT(GetSessionDataBufferSize == sizeof (EFI_TLS_SESSION_STATE));
+    ASSERT (GetSessionDataBufferSize == sizeof (EFI_TLS_SESSION_STATE));
     HttpInstance->TlsSessionState = *(EFI_TLS_SESSION_STATE *) GetSessionDataBuffer;
 
     FreePool (GetSessionDataBuffer);
@@ -1878,13 +1901,12 @@ HttpsReceive (
       return EFI_ABORTED;
     }
 
-    BufferIn = NULL;
+    BufferIn     = NULL;
     BufferInSize = 0;
   }
 
   Fragment->Bulk = BufferIn;
-  Fragment->Len = (UINT32) BufferInSize;
+  Fragment->Len  = (UINT32) BufferInSize;
 
   return Status;
 }
-

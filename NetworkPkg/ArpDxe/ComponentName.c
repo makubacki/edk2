@@ -8,7 +8,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "ArpDriver.h"
 
-
 //
 // EFI Component Name Protocol
 //
@@ -21,21 +20,20 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gArpComponentName = {
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL gArpComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gArpComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) ArpComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) ArpComponentNameGetControllerName,
   "en"
 };
 
-
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mArpDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mArpDriverNameTable[] = {
   { "eng;en", L"ARP Network Service Driver" },
-  { NULL, NULL }
+  { NULL,     NULL                          }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mArpControllerNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mArpControllerNameTable[] = {
   { "eng;en", L"ARP Controller" },
-  { NULL, NULL }
+  { NULL,     NULL              }
 };
 
 /**
@@ -86,12 +84,12 @@ ArpComponentNameGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mArpDriverNameTable,
-           DriverName,
-           (BOOLEAN)(This == &gArpComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mArpDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gArpComponentName)
+                               );
 }
 
 /**
@@ -172,8 +170,8 @@ ArpComponentNameGetControllerName (
   OUT CHAR16                                          **ControllerName
   )
 {
-  EFI_STATUS                    Status;
-  EFI_ARP_PROTOCOL              *Arp;
+  EFI_STATUS        Status;
+  EFI_ARP_PROTOCOL  *Arp;
 
   //
   // Only provide names for child handles.
@@ -186,10 +184,10 @@ ArpComponentNameGetControllerName (
   // Make sure this driver produced ChildHandle
   //
   Status = EfiTestChildHandle (
-             ControllerHandle,
-             ChildHandle,
-             &gEfiManagedNetworkProtocolGuid
-             );
+                               ControllerHandle,
+                               ChildHandle,
+                               &gEfiManagedNetworkProtocolGuid
+                               );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -198,22 +196,22 @@ ArpComponentNameGetControllerName (
   // Retrieve an instance of a produced protocol from ChildHandle
   //
   Status = gBS->OpenProtocol (
-                  ChildHandle,
-                  &gEfiArpProtocolGuid,
-                 (VOID **)&Arp,
-                  NULL,
-                  NULL,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ChildHandle,
+                              &gEfiArpProtocolGuid,
+                              (VOID **) &Arp,
+                              NULL,
+                              NULL,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mArpControllerNameTable,
-           ControllerName,
-           (BOOLEAN)(This == &gArpComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mArpControllerNameTable,
+                               ControllerName,
+                               (BOOLEAN) (This == &gArpComponentName)
+                               );
 }

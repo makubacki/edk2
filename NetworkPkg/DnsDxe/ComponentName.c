@@ -11,6 +11,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // EFI Component Name Functions
 //
+
 /**
   Retrieves a Unicode string that is the user-readable name of the EFI Driver.
 
@@ -91,7 +92,6 @@ DnsComponentNameGetControllerName (
   OUT CHAR16                        **ControllerName
   );
 
-
 ///
 /// Component Name Protocol instance
 ///
@@ -107,7 +107,7 @@ EFI_COMPONENT_NAME_PROTOCOL  gDnsComponentName = {
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
 EFI_COMPONENT_NAME2_PROTOCOL  gDnsComponentName2 = {
-  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)     DnsComponentNameGetDriverName,
+  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) DnsComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) DnsComponentNameGetControllerName,
   "en"
 };
@@ -116,12 +116,12 @@ EFI_COMPONENT_NAME2_PROTOCOL  gDnsComponentName2 = {
 /// Table of driver names
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
-EFI_UNICODE_STRING_TABLE mDnsDriverNameTable[] = {
-  { "eng;en", (CHAR16 *)L"DNS Network Service Driver" },
-  { NULL, NULL }
+EFI_UNICODE_STRING_TABLE  mDnsDriverNameTable[] = {
+  { "eng;en", (CHAR16 *) L"DNS Network Service Driver" },
+  { NULL,     NULL                                     }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE *gDnsControllerNameTable = NULL;
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  *gDnsControllerNameTable = NULL;
 
 /**
   Retrieves a Unicode string that is the user-readable name of the EFI Driver.
@@ -154,12 +154,12 @@ DnsComponentNameGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mDnsDriverNameTable,
-           DriverName,
-           (BOOLEAN)(This == &gDnsComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mDnsDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gDnsComponentName)
+                               );
 }
 
 /**
@@ -177,9 +177,9 @@ UpdateDns4Name (
   EFI_DNS4_PROTOCOL             *Dns4
   )
 {
-  EFI_STATUS                       Status;
-  CHAR16                           HandleName[80];
-  EFI_DNS4_MODE_DATA               ModeData;
+  EFI_STATUS          Status;
+  CHAR16              HandleName[80];
+  EFI_DNS4_MODE_DATA  ModeData;
 
   if (Dns4 == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -195,19 +195,20 @@ UpdateDns4Name (
   }
 
   UnicodeSPrint (
-    HandleName,
-    sizeof (HandleName),
-    L"DNSv4 (StationIp=%d.%d.%d.%d, LocalPort=%d)",
-    ModeData.DnsConfigData.StationIp.Addr[0],
-    ModeData.DnsConfigData.StationIp.Addr[1],
-    ModeData.DnsConfigData.StationIp.Addr[2],
-    ModeData.DnsConfigData.StationIp.Addr[3],
-    ModeData.DnsConfigData.LocalPort
-    );
+                 HandleName,
+                 sizeof (HandleName),
+                 L"DNSv4 (StationIp=%d.%d.%d.%d, LocalPort=%d)",
+                 ModeData.DnsConfigData.StationIp.Addr[0],
+                 ModeData.DnsConfigData.StationIp.Addr[1],
+                 ModeData.DnsConfigData.StationIp.Addr[2],
+                 ModeData.DnsConfigData.StationIp.Addr[3],
+                 ModeData.DnsConfigData.LocalPort
+                 );
 
   if (ModeData.DnsCacheList != NULL) {
     FreePool (ModeData.DnsCacheList);
   }
+
   if (ModeData.DnsServerList != NULL) {
     FreePool (ModeData.DnsServerList);
   }
@@ -218,23 +219,23 @@ UpdateDns4Name (
   }
 
   Status = AddUnicodeString2 (
-             "eng",
-             gDnsComponentName.SupportedLanguages,
-             &gDnsControllerNameTable,
-             HandleName,
-             TRUE
-             );
+                              "eng",
+                              gDnsComponentName.SupportedLanguages,
+                              &gDnsControllerNameTable,
+                              HandleName,
+                              TRUE
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   return AddUnicodeString2 (
-           "en",
-           gDnsComponentName2.SupportedLanguages,
-           &gDnsControllerNameTable,
-           HandleName,
-           FALSE
-           );
+                            "en",
+                            gDnsComponentName2.SupportedLanguages,
+                            &gDnsControllerNameTable,
+                            HandleName,
+                            FALSE
+                            );
 }
 
 /**
@@ -252,10 +253,10 @@ UpdateDns6Name (
   EFI_DNS6_PROTOCOL             *Dns6
   )
 {
-  EFI_STATUS                       Status;
-  CHAR16                           HandleName[128];
-  EFI_DNS6_MODE_DATA               ModeData;
-  CHAR16                           Address[sizeof"ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"];
+  EFI_STATUS          Status;
+  CHAR16              HandleName[128];
+  EFI_DNS6_MODE_DATA  ModeData;
+  CHAR16              Address[sizeof "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"];
 
   if (Dns6 == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -274,17 +275,19 @@ UpdateDns6Name (
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   UnicodeSPrint (
-    HandleName,
-    sizeof (HandleName),
-    L"DNSv6 (StationIp=%s, LocalPort=%d)",
-    Address,
-    ModeData.DnsConfigData.LocalPort
-    );
+                 HandleName,
+                 sizeof (HandleName),
+                 L"DNSv6 (StationIp=%s, LocalPort=%d)",
+                 Address,
+                 ModeData.DnsConfigData.LocalPort
+                 );
 
   if (ModeData.DnsCacheList != NULL) {
     FreePool (ModeData.DnsCacheList);
   }
+
   if (ModeData.DnsServerList != NULL) {
     FreePool (ModeData.DnsServerList);
   }
@@ -295,23 +298,23 @@ UpdateDns6Name (
   }
 
   Status = AddUnicodeString2 (
-             "eng",
-             gDnsComponentName.SupportedLanguages,
-             &gDnsControllerNameTable,
-             HandleName,
-             TRUE
-             );
+                              "eng",
+                              gDnsComponentName.SupportedLanguages,
+                              &gDnsControllerNameTable,
+                              HandleName,
+                              TRUE
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   return AddUnicodeString2 (
-           "en",
-           gDnsComponentName2.SupportedLanguages,
-           &gDnsControllerNameTable,
-           HandleName,
-           FALSE
-           );
+                            "en",
+                            gDnsComponentName2.SupportedLanguages,
+                            &gDnsControllerNameTable,
+                            HandleName,
+                            FALSE
+                            );
 }
 
 /**
@@ -364,9 +367,9 @@ DnsComponentNameGetControllerName (
   OUT CHAR16                        **ControllerName
   )
 {
-  EFI_STATUS                    Status;
-  EFI_DNS4_PROTOCOL             *Dns4;
-  EFI_DNS6_PROTOCOL             *Dns6;
+  EFI_STATUS         Status;
+  EFI_DNS4_PROTOCOL  *Dns4;
+  EFI_DNS6_PROTOCOL  *Dns6;
 
   //
   // ChildHandle must be NULL for a Device Driver
@@ -379,22 +382,22 @@ DnsComponentNameGetControllerName (
   // Make sure this driver produced ChildHandle
   //
   Status = EfiTestChildHandle (
-             ControllerHandle,
-             ChildHandle,
-             &gEfiUdp6ProtocolGuid
-             );
+                               ControllerHandle,
+                               ChildHandle,
+                               &gEfiUdp6ProtocolGuid
+                               );
   if (!EFI_ERROR (Status)) {
     //
     // Retrieve an instance of a produced protocol from ChildHandle
     //
     Status = gBS->OpenProtocol (
-                    ChildHandle,
-                    &gEfiDns6ProtocolGuid,
-                    (VOID **)&Dns6,
-                    NULL,
-                    NULL,
-                    EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                    );
+                                ChildHandle,
+                                &gEfiDns6ProtocolGuid,
+                                (VOID **) &Dns6,
+                                NULL,
+                                NULL,
+                                EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                                );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -412,22 +415,22 @@ DnsComponentNameGetControllerName (
   // Make sure this driver produced ChildHandle
   //
   Status = EfiTestChildHandle (
-             ControllerHandle,
-             ChildHandle,
-             &gEfiUdp4ProtocolGuid
-             );
+                               ControllerHandle,
+                               ChildHandle,
+                               &gEfiUdp4ProtocolGuid
+                               );
   if (!EFI_ERROR (Status)) {
     //
     // Retrieve an instance of a produced protocol from ChildHandle
     //
     Status = gBS->OpenProtocol (
-                    ChildHandle,
-                    &gEfiDns4ProtocolGuid,
-                    (VOID **)&Dns4,
-                    NULL,
-                    NULL,
-                    EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                    );
+                                ChildHandle,
+                                &gEfiDns4ProtocolGuid,
+                                (VOID **) &Dns4,
+                                NULL,
+                                NULL,
+                                EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                                );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -442,10 +445,10 @@ DnsComponentNameGetControllerName (
   }
 
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           gDnsControllerNameTable,
-           ControllerName,
-           (BOOLEAN)(This == &gDnsComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               gDnsControllerNameTable,
+                               ControllerName,
+                               (BOOLEAN) (This == &gDnsComponentName)
+                               );
 }

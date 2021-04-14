@@ -23,18 +23,18 @@ DnsInitSeedPacket (
   IN  EFI_IP4_CONFIG2_INTERFACE_INFO *InterfaceInfo
   )
 {
-  EFI_DHCP4_HEADER           *Header;
+  EFI_DHCP4_HEADER  *Header;
 
   //
   // Get IfType and HwAddressSize from SNP mode data.
   //
-  Seed->Size            = sizeof (EFI_DHCP4_PACKET);
-  Seed->Length          = sizeof (Seed->Dhcp4);
-  Header                = &Seed->Dhcp4.Header;
+  Seed->Size   = sizeof (EFI_DHCP4_PACKET);
+  Seed->Length = sizeof (Seed->Dhcp4);
+  Header = &Seed->Dhcp4.Header;
   ZeroMem (Header, sizeof (EFI_DHCP4_HEADER));
-  Header->OpCode        = DHCP4_OPCODE_REQUEST;
-  Header->HwType        = InterfaceInfo->IfType;
-  Header->HwAddrLen     = (UINT8) InterfaceInfo->HwAddressSize;
+  Header->OpCode    = DHCP4_OPCODE_REQUEST;
+  Header->HwType    = InterfaceInfo->IfType;
+  Header->HwAddrLen = (UINT8) InterfaceInfo->HwAddressSize;
   CopyMem (Header->ClientHwAddr, &(InterfaceInfo->HwAddress), Header->HwAddrLen);
 
   Seed->Dhcp4.Magik     = DHCP4_MAGIC;
@@ -56,7 +56,7 @@ DhcpCommonNotify (
   )
 {
   if ((Event == NULL) || (Context == NULL)) {
-    return ;
+    return;
   }
 
   *((BOOLEAN *) Context) = TRUE;
@@ -82,21 +82,21 @@ ParseDhcp4Ack (
   IN DNS4_SERVER_INFOR          *DnsServerInfor
   )
 {
-  EFI_STATUS              Status;
-  UINT32                  OptionCount;
-  EFI_DHCP4_PACKET_OPTION **OptionList;
-  UINT32                  ServerCount;
-  EFI_IPv4_ADDRESS        *ServerList;
-  UINT32                  Index;
-  UINT32                  Count;
+  EFI_STATUS               Status;
+  UINT32                   OptionCount;
+  EFI_DHCP4_PACKET_OPTION  **OptionList;
+  UINT32                   ServerCount;
+  EFI_IPv4_ADDRESS         *ServerList;
+  UINT32                   Index;
+  UINT32                   Count;
 
   ServerCount = 0;
-  ServerList = NULL;
+  ServerList  = NULL;
 
   OptionCount = 0;
   OptionList  = NULL;
 
-  Status      = Dhcp4->Parse (Dhcp4, Packet, &OptionCount, OptionList);
+  Status = Dhcp4->Parse (Dhcp4, Packet, &OptionCount, OptionList);
   if (Status != EFI_BUFFER_TOO_SMALL) {
     return EFI_DEVICE_ERROR;
   }
@@ -108,7 +108,7 @@ ParseDhcp4Ack (
 
   Status = Dhcp4->Parse (Dhcp4, Packet, &OptionCount, OptionList);
   if (EFI_ERROR (Status)) {
-    gBS->FreePool (OptionList);
+  gBS->FreePool (OptionList);
     return EFI_DEVICE_ERROR;
   }
 
@@ -119,19 +119,18 @@ ParseDhcp4Ack (
     // Get DNS server addresses
     //
     if (OptionList[Index]->OpCode == DHCP4_TAG_DNS_SERVER) {
-
       if (((OptionList[Index]->Length & 0x3) != 0) || (OptionList[Index]->Length == 0)) {
         Status = EFI_DEVICE_ERROR;
         break;
       }
 
       ServerCount = OptionList[Index]->Length/4;
-      ServerList = AllocatePool (ServerCount * sizeof (EFI_IPv4_ADDRESS));
+      ServerList  = AllocatePool (ServerCount * sizeof (EFI_IPv4_ADDRESS));
       if (ServerList == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }
 
-      for (Count=0; Count < ServerCount; Count++) {
+      for (Count = 0; Count < ServerCount; Count++) {
         CopyMem (ServerList + Count, &OptionList[Index]->Data[4 * Count], sizeof (EFI_IPv4_ADDRESS));
       }
 
@@ -172,20 +171,20 @@ ParseDhcp6Ack (
   IN EFI_DHCP6_PACKET            *Packet
   )
 {
-  EFI_STATUS                  Status;
-  UINT32                      OptionCount;
-  EFI_DHCP6_PACKET_OPTION     **OptionList;
-  DNS6_SERVER_INFOR           *DnsServerInfor;
-  UINT32                      ServerCount;
-  EFI_IPv6_ADDRESS            *ServerList;
-  UINT32                      Index;
-  UINT32                      Count;
+  EFI_STATUS               Status;
+  UINT32                   OptionCount;
+  EFI_DHCP6_PACKET_OPTION  **OptionList;
+  DNS6_SERVER_INFOR        *DnsServerInfor;
+  UINT32                   ServerCount;
+  EFI_IPv6_ADDRESS         *ServerList;
+  UINT32                   Index;
+  UINT32                   Count;
 
   OptionCount = 0;
   ServerCount = 0;
   ServerList  = NULL;
 
-  Status      = This->Parse (This, Packet, &OptionCount, NULL);
+  Status = This->Parse (This, Packet, &OptionCount, NULL);
   if (Status != EFI_BUFFER_TOO_SMALL) {
     return EFI_DEVICE_ERROR;
   }
@@ -197,7 +196,7 @@ ParseDhcp6Ack (
 
   Status = This->Parse (This, Packet, &OptionCount, OptionList);
   if (EFI_ERROR (Status)) {
-    gBS->FreePool (OptionList);
+  gBS->FreePool (OptionList);
     return EFI_DEVICE_ERROR;
   }
 
@@ -211,7 +210,6 @@ ParseDhcp6Ack (
     // Get DNS server addresses from this reply packet.
     //
     if (OptionList[Index]->OpCode == DHCP6_TAG_DNS_SERVER) {
-
       if (((OptionList[Index]->OpLen & 0xf) != 0) || (OptionList[Index]->OpLen == 0)) {
         Status = EFI_DEVICE_ERROR;
         gBS->FreePool (OptionList);
@@ -219,13 +217,13 @@ ParseDhcp6Ack (
       }
 
       ServerCount = OptionList[Index]->OpLen/16;
-      ServerList = AllocatePool (ServerCount * sizeof (EFI_IPv6_ADDRESS));
+      ServerList  = AllocatePool (ServerCount * sizeof (EFI_IPv6_ADDRESS));
       if (ServerList == NULL) {
-        gBS->FreePool (OptionList);
+  gBS->FreePool (OptionList);
         return EFI_OUT_OF_RESOURCES;
       }
 
-      for (Count=0; Count < ServerCount; Count++) {
+      for (Count = 0; Count < ServerCount; Count++) {
         CopyMem (ServerList + Count, &OptionList[Index]->Data[16 * Count], sizeof (EFI_IPv6_ADDRESS));
       }
 
@@ -237,7 +235,6 @@ ParseDhcp6Ack (
   gBS->FreePool (OptionList);
 
   return Status;
-
 }
 
 /**
@@ -260,40 +257,40 @@ GetDns4ServerFromDhcp4 (
   OUT EFI_IPv4_ADDRESS           **DnsServerList
   )
 {
-  EFI_STATUS                          Status;
-  EFI_HANDLE                          Image;
-  EFI_HANDLE                          Controller;
-  EFI_STATUS                          MediaStatus;
-  EFI_HANDLE                          MnpChildHandle;
-  EFI_MANAGED_NETWORK_PROTOCOL        *Mnp;
-  EFI_MANAGED_NETWORK_CONFIG_DATA     MnpConfigData;
-  EFI_HANDLE                          Dhcp4Handle;
-  EFI_DHCP4_PROTOCOL                  *Dhcp4;
-  EFI_IP4_CONFIG2_PROTOCOL            *Ip4Config2;
-  UINTN                               DataSize;
-  VOID                                *Data;
-  EFI_IP4_CONFIG2_INTERFACE_INFO      *InterfaceInfo;
-  EFI_DHCP4_PACKET                    SeedPacket;
-  EFI_DHCP4_PACKET_OPTION             *ParaList[2];
-  DNS4_SERVER_INFOR                   DnsServerInfor;
+  EFI_STATUS                       Status;
+  EFI_HANDLE                       Image;
+  EFI_HANDLE                       Controller;
+  EFI_STATUS                       MediaStatus;
+  EFI_HANDLE                       MnpChildHandle;
+  EFI_MANAGED_NETWORK_PROTOCOL     *Mnp;
+  EFI_MANAGED_NETWORK_CONFIG_DATA  MnpConfigData;
+  EFI_HANDLE                       Dhcp4Handle;
+  EFI_DHCP4_PROTOCOL               *Dhcp4;
+  EFI_IP4_CONFIG2_PROTOCOL         *Ip4Config2;
+  UINTN                            DataSize;
+  VOID                             *Data;
+  EFI_IP4_CONFIG2_INTERFACE_INFO   *InterfaceInfo;
+  EFI_DHCP4_PACKET                 SeedPacket;
+  EFI_DHCP4_PACKET_OPTION          *ParaList[2];
+  DNS4_SERVER_INFOR                DnsServerInfor;
 
-  EFI_DHCP4_TRANSMIT_RECEIVE_TOKEN    Token;
-  BOOLEAN                             IsDone;
-  UINTN                               Index;
+  EFI_DHCP4_TRANSMIT_RECEIVE_TOKEN  Token;
+  BOOLEAN                           IsDone;
+  UINTN                             Index;
 
-  Image                      = Instance->Service->ImageHandle;
-  Controller                 = Instance->Service->ControllerHandle;
+  Image = Instance->Service->ImageHandle;
+  Controller = Instance->Service->ControllerHandle;
 
-  MnpChildHandle             = NULL;
-  Mnp                        = NULL;
+  MnpChildHandle = NULL;
+  Mnp = NULL;
 
-  Dhcp4Handle                = NULL;
-  Dhcp4                      = NULL;
+  Dhcp4Handle = NULL;
+  Dhcp4 = NULL;
 
-  Ip4Config2                 = NULL;
-  DataSize                   = 0;
-  Data                       = NULL;
-  InterfaceInfo              = NULL;
+  Ip4Config2 = NULL;
+  DataSize   = 0;
+  Data = NULL;
+  InterfaceInfo = NULL;
 
   ZeroMem ((UINT8 *) ParaList, sizeof (ParaList));
 
@@ -320,39 +317,39 @@ GetDns4ServerFromDhcp4 (
   // Create a Mnp child instance, get the protocol and config for it.
   //
   Status = NetLibCreateServiceChild (
-             Controller,
-             Image,
-             &gEfiManagedNetworkServiceBindingProtocolGuid,
-             &MnpChildHandle
-             );
+                                     Controller,
+                                     Image,
+                                     &gEfiManagedNetworkServiceBindingProtocolGuid,
+                                     &MnpChildHandle
+                                     );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   Status = gBS->OpenProtocol (
-                  MnpChildHandle,
-                  &gEfiManagedNetworkProtocolGuid,
-                  (VOID **) &Mnp,
-                  Image,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              MnpChildHandle,
+                              &gEfiManagedNetworkProtocolGuid,
+                              (VOID **) &Mnp,
+                              Image,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (EFI_ERROR (Status)) {
     goto ON_EXIT;
   }
 
   MnpConfigData.ReceivedQueueTimeoutValue = 0;
   MnpConfigData.TransmitQueueTimeoutValue = 0;
-  MnpConfigData.ProtocolTypeFilter        = IP4_ETHER_PROTO;
-  MnpConfigData.EnableUnicastReceive      = TRUE;
-  MnpConfigData.EnableMulticastReceive    = TRUE;
-  MnpConfigData.EnableBroadcastReceive    = TRUE;
-  MnpConfigData.EnablePromiscuousReceive  = FALSE;
-  MnpConfigData.FlushQueuesOnReset        = TRUE;
-  MnpConfigData.EnableReceiveTimestamps   = FALSE;
-  MnpConfigData.DisableBackgroundPolling  = FALSE;
+  MnpConfigData.ProtocolTypeFilter       = IP4_ETHER_PROTO;
+  MnpConfigData.EnableUnicastReceive     = TRUE;
+  MnpConfigData.EnableMulticastReceive   = TRUE;
+  MnpConfigData.EnableBroadcastReceive   = TRUE;
+  MnpConfigData.EnablePromiscuousReceive = FALSE;
+  MnpConfigData.FlushQueuesOnReset       = TRUE;
+  MnpConfigData.EnableReceiveTimestamps  = FALSE;
+  MnpConfigData.DisableBackgroundPolling = FALSE;
 
-  Status = Mnp->Configure(Mnp, &MnpConfigData);
+  Status = Mnp->Configure (Mnp, &MnpConfigData);
   if (EFI_ERROR (Status)) {
     goto ON_EXIT;
   }
@@ -361,23 +358,23 @@ GetDns4ServerFromDhcp4 (
   // Create a DHCP4 child instance and get the protocol.
   //
   Status = NetLibCreateServiceChild (
-             Controller,
-             Image,
-             &gEfiDhcp4ServiceBindingProtocolGuid,
-             &Dhcp4Handle
-             );
+                                     Controller,
+                                     Image,
+                                     &gEfiDhcp4ServiceBindingProtocolGuid,
+                                     &Dhcp4Handle
+                                     );
   if (EFI_ERROR (Status)) {
     goto ON_EXIT;
   }
 
   Status = gBS->OpenProtocol (
-                  Dhcp4Handle,
-                  &gEfiDhcp4ProtocolGuid,
-                  (VOID **) &Dhcp4,
-                  Image,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              Dhcp4Handle,
+                              &gEfiDhcp4ProtocolGuid,
+                              (VOID **) &Dhcp4,
+                              Image,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (EFI_ERROR (Status)) {
     goto ON_EXIT;
   }
@@ -406,18 +403,18 @@ GetDns4ServerFromDhcp4 (
     goto ON_EXIT;
   }
 
-  InterfaceInfo = (EFI_IP4_CONFIG2_INTERFACE_INFO *)Data;
+  InterfaceInfo = (EFI_IP4_CONFIG2_INTERFACE_INFO *) Data;
 
   //
   // Build required Token.
   //
   Status = gBS->CreateEvent (
-                  EVT_NOTIFY_SIGNAL,
-                  TPL_NOTIFY,
-                  DhcpCommonNotify,
-                  &IsDone,
-                  &Token.CompletionEvent
-                  );
+                             EVT_NOTIFY_SIGNAL,
+                             TPL_NOTIFY,
+                             DhcpCommonNotify,
+                             &IsDone,
+                             &Token.CompletionEvent
+                             );
   if (EFI_ERROR (Status)) {
     goto ON_EXIT;
   }
@@ -470,9 +467,9 @@ GetDns4ServerFromDhcp4 (
 
   Status = Dhcp4->Build (Dhcp4, &SeedPacket, 0, NULL, 2, ParaList, &Token.Packet);
 
-  Token.Packet->Dhcp4.Header.Xid      = HTONL(NET_RANDOM (NetRandomInitSeed ()));
+  Token.Packet->Dhcp4.Header.Xid = HTONL (NET_RANDOM (NetRandomInitSeed ()));
 
-  Token.Packet->Dhcp4.Header.Reserved = HTONS ((UINT16)0x8000);
+  Token.Packet->Dhcp4.Header.Reserved = HTONS ((UINT16) 0x8000);
 
   if (Instance->Dns4CfgData.UseDefaultSetting) {
     CopyMem (&(Token.Packet->Dhcp4.Header.ClientAddr), &(InterfaceInfo->StationAddress), sizeof (EFI_IPv4_ADDRESS));
@@ -482,7 +479,7 @@ GetDns4ServerFromDhcp4 (
 
   CopyMem (Token.Packet->Dhcp4.Header.ClientHwAddr, &(InterfaceInfo->HwAddress), InterfaceInfo->HwAddressSize);
 
-  Token.Packet->Dhcp4.Header.HwAddrLen = (UINT8)(InterfaceInfo->HwAddressSize);
+  Token.Packet->Dhcp4.Header.HwAddrLen = (UINT8) (InterfaceInfo->HwAddressSize);
 
   //
   // TransmitReceive Token
@@ -540,47 +537,47 @@ ON_EXIT:
   }
 
   if (Token.CompletionEvent != NULL) {
-    gBS->CloseEvent (Token.CompletionEvent);
+  gBS->CloseEvent (Token.CompletionEvent);
   }
 
   if (Dhcp4 != NULL) {
-    Dhcp4->Stop (Dhcp4);
-    Dhcp4->Configure (Dhcp4, NULL);
+  Dhcp4->Stop (Dhcp4);
+  Dhcp4->Configure (Dhcp4, NULL);
 
-    gBS->CloseProtocol (
-           Dhcp4Handle,
-           &gEfiDhcp4ProtocolGuid,
-           Image,
-           Controller
-           );
+  gBS->CloseProtocol (
+                      Dhcp4Handle,
+                      &gEfiDhcp4ProtocolGuid,
+                      Image,
+                      Controller
+                      );
   }
 
   if (Dhcp4Handle != NULL) {
     NetLibDestroyServiceChild (
-      Controller,
-      Image,
-      &gEfiDhcp4ServiceBindingProtocolGuid,
-      Dhcp4Handle
-      );
+                               Controller,
+                               Image,
+                               &gEfiDhcp4ServiceBindingProtocolGuid,
+                               Dhcp4Handle
+                               );
   }
 
   if (Mnp != NULL) {
-    Mnp->Configure (Mnp, NULL);
+  Mnp->Configure (Mnp, NULL);
 
-    gBS->CloseProtocol (
-           MnpChildHandle,
-           &gEfiManagedNetworkProtocolGuid,
-           Image,
-           Controller
-           );
+  gBS->CloseProtocol (
+                      MnpChildHandle,
+                      &gEfiManagedNetworkProtocolGuid,
+                      Image,
+                      Controller
+                      );
   }
 
   NetLibDestroyServiceChild (
-    Controller,
-    Image,
-    &gEfiManagedNetworkServiceBindingProtocolGuid,
-    MnpChildHandle
-    );
+                             Controller,
+                             Image,
+                             &gEfiManagedNetworkServiceBindingProtocolGuid,
+                             MnpChildHandle
+                             );
 
   return Status;
 }
@@ -618,9 +615,9 @@ GetDns6ServerFromDhcp6 (
   DNS6_SERVER_INFOR         DnsServerInfor;
 
   Dhcp6Handle = NULL;
-  Dhcp6       = NULL;
-  Oro         = NULL;
-  Timer       = NULL;
+  Dhcp6 = NULL;
+  Oro   = NULL;
+  Timer = NULL;
 
   ZeroMem (&DnsServerInfor, sizeof (DNS6_SERVER_INFOR));
 
@@ -639,23 +636,23 @@ GetDns6ServerFromDhcp6 (
   // Create a DHCP6 child instance and get the protocol.
   //
   Status = NetLibCreateServiceChild (
-             Controller,
-             Image,
-             &gEfiDhcp6ServiceBindingProtocolGuid,
-             &Dhcp6Handle
-             );
+                                     Controller,
+                                     Image,
+                                     &gEfiDhcp6ServiceBindingProtocolGuid,
+                                     &Dhcp6Handle
+                                     );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   Status = gBS->OpenProtocol (
-                  Dhcp6Handle,
-                  &gEfiDhcp6ProtocolGuid,
-                  (VOID **) &Dhcp6,
-                  Image,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              Dhcp6Handle,
+                              &gEfiDhcp6ProtocolGuid,
+                              (VOID **) &Dhcp6,
+                              Image,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (EFI_ERROR (Status)) {
     goto ON_EXIT;
   }
@@ -680,16 +677,16 @@ GetDns6ServerFromDhcp6 (
   InfoReqReXmit.Mrd = 30;
 
   Status = Dhcp6->InfoRequest (
-                    Dhcp6,
-                    TRUE,
-                    Oro,
-                    0,
-                    NULL,
-                    &InfoReqReXmit,
-                    NULL,
-                    ParseDhcp6Ack,
-                    &DnsServerInfor
-                    );
+                               Dhcp6,
+                               TRUE,
+                               Oro,
+                               0,
+                               NULL,
+                               &InfoReqReXmit,
+                               NULL,
+                               ParseDhcp6Ack,
+                               &DnsServerInfor
+                               );
   if (Status == EFI_NO_MAPPING) {
     Status = gBS->CreateEvent (EVT_TIMER, TPL_CALLBACK, NULL, NULL, &Timer);
     if (EFI_ERROR (Status)) {
@@ -697,10 +694,10 @@ GetDns6ServerFromDhcp6 (
     }
 
     Status = gBS->SetTimer (
-                    Timer,
-                    TimerRelative,
-                    DNS_TIME_TO_GETMAP * TICKS_PER_SECOND
-                    );
+                            Timer,
+                            TimerRelative,
+                            DNS_TIME_TO_GETMAP * TICKS_PER_SECOND
+                            );
 
     if (EFI_ERROR (Status)) {
       goto ON_EXIT;
@@ -710,21 +707,21 @@ GetDns6ServerFromDhcp6 (
       TimerStatus = gBS->CheckEvent (Timer);
       if (!EFI_ERROR (TimerStatus)) {
         Status = Dhcp6->InfoRequest (
-                          Dhcp6,
-                          TRUE,
-                          Oro,
-                          0,
-                          NULL,
-                          &InfoReqReXmit,
-                          NULL,
-                          ParseDhcp6Ack,
-                          &DnsServerInfor
-                          );
+                                     Dhcp6,
+                                     TRUE,
+                                     Oro,
+                                     0,
+                                     NULL,
+                                     &InfoReqReXmit,
+                                     NULL,
+                                     ParseDhcp6Ack,
+                                     &DnsServerInfor
+                                     );
       }
     } while (TimerStatus == EFI_NOT_READY);
   }
 
-  *DnsServerList  = DnsServerInfor.ServerList;
+  *DnsServerList = DnsServerInfor.ServerList;
 
 ON_EXIT:
 
@@ -733,26 +730,24 @@ ON_EXIT:
   }
 
   if (Timer != NULL) {
-    gBS->CloseEvent (Timer);
+  gBS->CloseEvent (Timer);
   }
 
   if (Dhcp6 != NULL) {
-    gBS->CloseProtocol (
-           Dhcp6Handle,
-           &gEfiDhcp6ProtocolGuid,
-           Image,
-           Controller
-           );
+  gBS->CloseProtocol (
+                      Dhcp6Handle,
+                      &gEfiDhcp6ProtocolGuid,
+                      Image,
+                      Controller
+                      );
   }
 
   NetLibDestroyServiceChild (
-    Controller,
-    Image,
-    &gEfiDhcp6ServiceBindingProtocolGuid,
-    Dhcp6Handle
-    );
+                             Controller,
+                             Image,
+                             &gEfiDhcp6ServiceBindingProtocolGuid,
+                             Dhcp6Handle
+                             );
 
   return Status;
-
 }
-

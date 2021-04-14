@@ -8,11 +8,10 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "IScsiImpl.h"
 
-EFI_ISCSI_INITIATOR_NAME_PROTOCOL gIScsiInitiatorName = {
+EFI_ISCSI_INITIATOR_NAME_PROTOCOL  gIScsiInitiatorName = {
   IScsiGetInitiatorName,
   IScsiSetInitiatorName
 };
-
 
 /**
   Retrieves the current set value of iSCSI Initiator Name.
@@ -54,16 +53,15 @@ IScsiGetInitiatorName (
   }
 
   Status = gRT->GetVariable (
-                  ISCSI_INITIATOR_NAME_VAR_NAME,
-                  &gEfiIScsiInitiatorNameProtocolGuid,
-                  NULL,
-                  BufferSize,
-                  Buffer
-                  );
+                             ISCSI_INITIATOR_NAME_VAR_NAME,
+                             &gEfiIScsiInitiatorNameProtocolGuid,
+                             NULL,
+                             BufferSize,
+                             Buffer
+                             );
 
   return Status;
 }
-
 
 /**
   Sets the iSSI Initiator Name.
@@ -110,6 +108,7 @@ IScsiSetInitiatorName (
     *BufferSize = ISCSI_NAME_MAX_SIZE;
     return EFI_INVALID_PARAMETER;
   }
+
   //
   // Only support iqn iSCSI names.
   //
@@ -119,12 +118,12 @@ IScsiSetInitiatorName (
   }
 
   Status = gRT->SetVariable (
-                  ISCSI_INITIATOR_NAME_VAR_NAME,
-                  &gEfiIScsiInitiatorNameProtocolGuid,
-                  EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS,
-                  *BufferSize,
-                  Buffer
-                  );
+                             ISCSI_INITIATOR_NAME_VAR_NAME,
+                             &gEfiIScsiInitiatorNameProtocolGuid,
+                             EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS,
+                             *BufferSize,
+                             Buffer
+                             );
 
   return Status;
 }

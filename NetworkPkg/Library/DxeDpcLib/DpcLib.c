@@ -36,7 +36,7 @@ DpcLibConstructor (
   //
   // Locate the EFI_DPC_PROTOCOL in the handle database
   //
-  Status = gBS->LocateProtocol (&gEfiDpcProtocolGuid, NULL, (VOID **)&mDpc);
+  Status = gBS->LocateProtocol (&gEfiDpcProtocolGuid, NULL, (VOID **) &mDpc);
   ASSERT_EFI_ERROR (Status);
 
   return Status;

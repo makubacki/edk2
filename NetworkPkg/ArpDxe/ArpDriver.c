@@ -9,7 +9,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include "ArpDriver.h"
 #include "ArpImpl.h"
 
-EFI_DRIVER_BINDING_PROTOCOL gArpDriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  gArpDriverBinding = {
   ArpDriverBindingSupported,
   ArpDriverBindingStart,
   ArpDriverBindingStop,
@@ -17,7 +17,6 @@ EFI_DRIVER_BINDING_PROTOCOL gArpDriverBinding = {
   NULL,
   NULL
 };
-
 
 /**
   Create and initialize the arp service context data.
@@ -65,18 +64,18 @@ ArpCreateService (
   //
   // Save the handles.
   //
-  ArpService->ImageHandle      = ImageHandle;
+  ArpService->ImageHandle = ImageHandle;
   ArpService->ControllerHandle = ControllerHandle;
 
   //
   // Create a MNP child instance.
   //
   Status = NetLibCreateServiceChild (
-             ControllerHandle,
-             ImageHandle,
-             &gEfiManagedNetworkServiceBindingProtocolGuid,
-             &ArpService->MnpChildHandle
-             );
+                                     ControllerHandle,
+                                     ImageHandle,
+                                     &gEfiManagedNetworkServiceBindingProtocolGuid,
+                                     &ArpService->MnpChildHandle
+                                     );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -85,13 +84,13 @@ ArpCreateService (
   // Open the MNP protocol.
   //
   Status = gBS->OpenProtocol (
-                  ArpService->MnpChildHandle,
-                  &gEfiManagedNetworkProtocolGuid,
-                  (VOID **)&ArpService->Mnp,
-                  ImageHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              ArpService->MnpChildHandle,
+                              &gEfiManagedNetworkProtocolGuid,
+                              (VOID **) &ArpService->Mnp,
+                              ImageHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (EFI_ERROR (Status)) {
     goto ERROR_EXIT;
   }
@@ -117,14 +116,14 @@ ArpCreateService (
   //
   ArpService->MnpConfigData.ReceivedQueueTimeoutValue = 0;
   ArpService->MnpConfigData.TransmitQueueTimeoutValue = 0;
-  ArpService->MnpConfigData.ProtocolTypeFilter        = ARP_ETHER_PROTO_TYPE;
-  ArpService->MnpConfigData.EnableUnicastReceive      = TRUE;
-  ArpService->MnpConfigData.EnableMulticastReceive    = FALSE;
-  ArpService->MnpConfigData.EnableBroadcastReceive    = TRUE;
-  ArpService->MnpConfigData.EnablePromiscuousReceive  = FALSE;
-  ArpService->MnpConfigData.FlushQueuesOnReset        = TRUE;
-  ArpService->MnpConfigData.EnableReceiveTimestamps   = FALSE;
-  ArpService->MnpConfigData.DisableBackgroundPolling  = FALSE;
+  ArpService->MnpConfigData.ProtocolTypeFilter       = ARP_ETHER_PROTO_TYPE;
+  ArpService->MnpConfigData.EnableUnicastReceive     = TRUE;
+  ArpService->MnpConfigData.EnableMulticastReceive   = FALSE;
+  ArpService->MnpConfigData.EnableBroadcastReceive   = TRUE;
+  ArpService->MnpConfigData.EnablePromiscuousReceive = FALSE;
+  ArpService->MnpConfigData.FlushQueuesOnReset       = TRUE;
+  ArpService->MnpConfigData.EnableReceiveTimestamps  = FALSE;
+  ArpService->MnpConfigData.DisableBackgroundPolling = FALSE;
 
   //
   // Configure the Mnp child.
@@ -138,12 +137,12 @@ ArpCreateService (
   // Create the event used in the RxToken.
   //
   Status = gBS->CreateEvent (
-                  EVT_NOTIFY_SIGNAL,
-                  TPL_NOTIFY,
-                  ArpOnFrameRcvd,
-                  ArpService,
-                  &ArpService->RxToken.Event
-                  );
+                             EVT_NOTIFY_SIGNAL,
+                             TPL_NOTIFY,
+                             ArpOnFrameRcvd,
+                             ArpService,
+                             &ArpService->RxToken.Event
+                             );
   if (EFI_ERROR (Status)) {
     goto ERROR_EXIT;
   }
@@ -152,12 +151,12 @@ ArpCreateService (
   // Create the Arp heartbeat timer.
   //
   Status = gBS->CreateEvent (
-                  EVT_NOTIFY_SIGNAL | EVT_TIMER,
-                  TPL_CALLBACK,
-                  ArpTimerHandler,
-                  ArpService,
-                  &ArpService->PeriodicTimer
-                  );
+                             EVT_NOTIFY_SIGNAL | EVT_TIMER,
+                             TPL_CALLBACK,
+                             ArpTimerHandler,
+                             ArpService,
+                             &ArpService->PeriodicTimer
+                             );
   if (EFI_ERROR (Status)) {
     goto ERROR_EXIT;
   }
@@ -166,16 +165,15 @@ ArpCreateService (
   // Start the heartbeat timer.
   //
   Status = gBS->SetTimer (
-                  ArpService->PeriodicTimer,
-                  TimerPeriodic,
-                  ARP_PERIODIC_TIMER_INTERVAL
-                  );
+                          ArpService->PeriodicTimer,
+                          TimerPeriodic,
+                          ARP_PERIODIC_TIMER_INTERVAL
+                          );
 
 ERROR_EXIT:
 
   return Status;
 }
-
 
 /**
   Clean the arp service context data.
@@ -215,23 +213,23 @@ ArpCleanService (
     //
     ArpService->Mnp->Configure (ArpService->Mnp, NULL);
     gBS->CloseProtocol (
-           ArpService->MnpChildHandle,
-           &gEfiManagedNetworkProtocolGuid,
-           ArpService->ImageHandle,
-           ArpService->ControllerHandle
-           );
+                        ArpService->MnpChildHandle,
+                        &gEfiManagedNetworkProtocolGuid,
+                        ArpService->ImageHandle,
+                        ArpService->ControllerHandle
+                        );
   }
 
   if (ArpService->MnpChildHandle != NULL) {
     //
     // Destroy the mnp child.
     //
-    NetLibDestroyServiceChild(
-      ArpService->ControllerHandle,
-      ArpService->ImageHandle,
-      &gEfiManagedNetworkServiceBindingProtocolGuid,
-      ArpService->MnpChildHandle
-      );
+    NetLibDestroyServiceChild (
+                               ArpService->ControllerHandle,
+                               ArpService->ImageHandle,
+                               &gEfiManagedNetworkServiceBindingProtocolGuid,
+                               ArpService->MnpChildHandle
+                               );
   }
 }
 
@@ -260,7 +258,7 @@ ArpDestroyChildEntryInHandleBuffer (
   }
 
   Instance = NET_LIST_USER_STRUCT_S (Entry, ARP_INSTANCE_DATA, List, ARP_INSTANCE_DATA_SIGNATURE);
-  ServiceBinding    = (EFI_SERVICE_BINDING_PROTOCOL *) Context;
+  ServiceBinding = (EFI_SERVICE_BINDING_PROTOCOL *) Context;
 
   return ServiceBinding->DestroyChild (ServiceBinding, Instance->Handle);
 }
@@ -308,13 +306,13 @@ ArpDriverBindingSupported (
   // Test to see if Arp SB is already installed.
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiArpServiceBindingProtocolGuid,
-                  NULL,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiArpServiceBindingProtocolGuid,
+                              NULL,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
   if (Status == EFI_SUCCESS) {
     return EFI_ALREADY_STARTED;
   }
@@ -323,17 +321,16 @@ ArpDriverBindingSupported (
   // Test to see if MNP SB is installed.
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiManagedNetworkServiceBindingProtocolGuid,
-                  NULL,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiManagedNetworkServiceBindingProtocolGuid,
+                              NULL,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
 
   return Status;
 }
-
 
 /**
   Start this driver on ControllerHandle.
@@ -380,7 +377,7 @@ ArpDriverBindingStart (
   //
   // Allocate a zero pool for ArpService.
   //
-  ArpService = AllocateZeroPool (sizeof(ARP_SERVICE_DATA));
+  ArpService = AllocateZeroPool (sizeof (ARP_SERVICE_DATA));
   if (ArpService == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -397,11 +394,11 @@ ArpDriverBindingStart (
   // Install the ARP service binding protocol.
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &ControllerHandle,
-                  &gEfiArpServiceBindingProtocolGuid,
-                  &ArpService->ServiceBinding,
-                  NULL
-                  );
+                                                   &ControllerHandle,
+                                                   &gEfiArpServiceBindingProtocolGuid,
+                                                   &ArpService->ServiceBinding,
+                                                   NULL
+                                                   );
   if (EFI_ERROR (Status)) {
     goto ERROR;
   }
@@ -426,7 +423,6 @@ ERROR:
 
   return Status;
 }
-
 
 /**
   Stop this driver on ControllerHandle.
@@ -484,13 +480,13 @@ ArpDriverBindingStop (
   // Try to get the arp servicebinding protocol on the NicHandle.
   //
   Status = gBS->OpenProtocol (
-                  NicHandle,
-                  &gEfiArpServiceBindingProtocolGuid,
-                  (VOID **)&ServiceBinding,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              NicHandle,
+                              &gEfiArpServiceBindingProtocolGuid,
+                              (VOID **) &ServiceBinding,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "ArpDriverBindingStop: Open ArpSb failed, %r.\n", Status));
     return EFI_DEVICE_ERROR;
@@ -502,13 +498,13 @@ ArpDriverBindingStop (
     //
     // NumberOfChildren is not zero, destroy all the ARP children instances.
     //
-    List = &ArpService->ChildrenList;
+    List   = &ArpService->ChildrenList;
     Status = NetDestroyLinkList (
-               List,
-               ArpDestroyChildEntryInHandleBuffer,
-               ServiceBinding,
-               NULL
-               );
+                                 List,
+                                 ArpDestroyChildEntryInHandleBuffer,
+                                 ServiceBinding,
+                                 NULL
+                                 );
     ASSERT (IsListEmpty (&ArpService->PendingRequestTable));
     ASSERT (IsListEmpty (&ArpService->DeniedCacheTable));
     ASSERT (IsListEmpty (&ArpService->ResolvedCacheTable));
@@ -517,11 +513,11 @@ ArpDriverBindingStop (
     // Uninstall the ARP ServiceBinding protocol.
     //
     gBS->UninstallMultipleProtocolInterfaces (
-           NicHandle,
-           &gEfiArpServiceBindingProtocolGuid,
-           &ArpService->ServiceBinding,
-           NULL
-           );
+                                              NicHandle,
+                                              &gEfiArpServiceBindingProtocolGuid,
+                                              &ArpService->ServiceBinding,
+                                              NULL
+                                              );
 
     //
     // Clean the arp servicebinding context data and free the memory allocated.
@@ -576,7 +572,7 @@ ArpServiceBindingCreateChild (
   //
   // Allocate memory for the instance context data.
   //
-  Instance = AllocateZeroPool (sizeof(ARP_INSTANCE_DATA));
+  Instance = AllocateZeroPool (sizeof (ARP_INSTANCE_DATA));
   if (Instance == NULL) {
     DEBUG ((EFI_D_ERROR, "ArpSBCreateChild: Failed to allocate memory for Instance.\n"));
 
@@ -592,11 +588,11 @@ ArpServiceBindingCreateChild (
   // Install the ARP protocol onto the ChildHandle.
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  ChildHandle,
-                  &gEfiArpProtocolGuid,
-                  (VOID *)&Instance->ArpProto,
-                  NULL
-                  );
+                                                   ChildHandle,
+                                                   &gEfiArpProtocolGuid,
+                                                   (VOID *) &Instance->ArpProto,
+                                                   NULL
+                                                   );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "ArpSBCreateChild: failed to install ARP protocol, %r.\n", Status));
 
@@ -613,13 +609,13 @@ ArpServiceBindingCreateChild (
   // Open the Managed Network protocol BY_CHILD.
   //
   Status = gBS->OpenProtocol (
-                  ArpService->MnpChildHandle,
-                  &gEfiManagedNetworkProtocolGuid,
-                  (VOID **) &Mnp,
-                  gArpDriverBinding.DriverBindingHandle,
-                  Instance->Handle,
-                  EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
-                  );
+                              ArpService->MnpChildHandle,
+                              &gEfiManagedNetworkProtocolGuid,
+                              (VOID **) &Mnp,
+                              gArpDriverBinding.DriverBindingHandle,
+                              Instance->Handle,
+                              EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+                              );
   if (EFI_ERROR (Status)) {
     goto ERROR;
   }
@@ -637,20 +633,19 @@ ArpServiceBindingCreateChild (
 ERROR:
 
   if (EFI_ERROR (Status)) {
-
-    gBS->CloseProtocol (
-           ArpService->MnpChildHandle,
-           &gEfiManagedNetworkProtocolGuid,
-           gArpDriverBinding.DriverBindingHandle,
-           Instance->Handle
-           );
+  gBS->CloseProtocol (
+                      ArpService->MnpChildHandle,
+                      &gEfiManagedNetworkProtocolGuid,
+                      gArpDriverBinding.DriverBindingHandle,
+                      Instance->Handle
+                      );
 
     gBS->UninstallMultipleProtocolInterfaces (
-           Instance->Handle,
-           &gEfiArpProtocolGuid,
-           &Instance->ArpProto,
-           NULL
-           );
+                                              Instance->Handle,
+                                              &gEfiArpProtocolGuid,
+                                              &Instance->ArpProto,
+                                              NULL
+                                              );
 
     //
     // Free the allocated memory.
@@ -660,7 +655,6 @@ ERROR:
 
   return Status;
 }
-
 
 /**
   Destroys a child handle with a protocol installed on it.
@@ -704,13 +698,13 @@ ArpServiceBindingDestroyChild (
   // Get the arp protocol.
   //
   Status = gBS->OpenProtocol (
-                  ChildHandle,
-                  &gEfiArpProtocolGuid,
-                  (VOID **)&Arp,
-                  ArpService->ImageHandle,
-                  ChildHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ChildHandle,
+                              &gEfiArpProtocolGuid,
+                              (VOID **) &Arp,
+                              ArpService->ImageHandle,
+                              ChildHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
@@ -730,24 +724,26 @@ ArpServiceBindingDestroyChild (
   // Close the Managed Network protocol.
   //
   gBS->CloseProtocol (
-         ArpService->MnpChildHandle,
-         &gEfiManagedNetworkProtocolGuid,
-         gArpDriverBinding.DriverBindingHandle,
-         ChildHandle
-         );
+                      ArpService->MnpChildHandle,
+                      &gEfiManagedNetworkProtocolGuid,
+                      gArpDriverBinding.DriverBindingHandle,
+                      ChildHandle
+                      );
 
   //
   // Uninstall the ARP protocol.
   //
   Status = gBS->UninstallMultipleProtocolInterfaces (
-                  ChildHandle,
-                  &gEfiArpProtocolGuid,
-                  &Instance->ArpProto,
-                  NULL
-                  );
+                                                     ChildHandle,
+                                                     &gEfiArpProtocolGuid,
+                                                     &Instance->ArpProto,
+                                                     NULL
+                                                     );
   if (EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_ERROR, "ArpSBDestroyChild: Failed to uninstall the arp protocol, %r.\n",
-      Status));
+    DEBUG (
+           (EFI_D_ERROR, "ArpSBDestroyChild: Failed to uninstall the arp protocol, %r.\n",
+            Status)
+           );
 
     Instance->InDestroy = FALSE;
     return Status;
@@ -800,12 +796,11 @@ ArpDriverEntryPoint (
   )
 {
   return EfiLibInstallDriverBindingComponentName2 (
-           ImageHandle,
-           SystemTable,
-           &gArpDriverBinding,
-           ImageHandle,
-           &gArpComponentName,
-           &gArpComponentName2
-           );
+                                                   ImageHandle,
+                                                   SystemTable,
+                                                   &gArpDriverBinding,
+                                                   ImageHandle,
+                                                   &gArpComponentName,
+                                                   &gArpComponentName2
+                                                   );
 }
-

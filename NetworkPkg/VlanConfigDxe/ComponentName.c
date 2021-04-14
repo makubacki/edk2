@@ -11,7 +11,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL   gVlanConfigComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gVlanConfigComponentName = {
   VlanConfigComponentNameGetDriverName,
   VlanConfigComponentNameGetControllerName,
   "eng"
@@ -26,7 +26,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gVlanConfigComponent
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE      mVlanConfigDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mVlanConfigDriverNameTable[] = {
   {
     "eng;en",
     L"VLAN Configuration Driver"
@@ -80,16 +80,16 @@ EFIAPI
 VlanConfigComponentNameGetDriverName (
   IN     EFI_COMPONENT_NAME_PROTOCOL   *This,
   IN     CHAR8                         *Language,
-     OUT CHAR16                        **DriverName
+  OUT CHAR16                        **DriverName
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mVlanConfigDriverNameTable,
-           DriverName,
-           (BOOLEAN)(This == &gVlanConfigComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mVlanConfigDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gVlanConfigComponentName)
+                               );
 }
 
 /**
@@ -157,7 +157,7 @@ VlanConfigComponentNameGetControllerName (
   IN     EFI_HANDLE                    ControllerHandle,
   IN     EFI_HANDLE                    ChildHandle OPTIONAL,
   IN     CHAR8                         *Language,
-     OUT CHAR16                        **ControllerName
+  OUT CHAR16                        **ControllerName
   )
 {
   return EFI_UNSUPPORTED;

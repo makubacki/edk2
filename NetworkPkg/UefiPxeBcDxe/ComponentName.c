@@ -56,7 +56,6 @@ PxeBcComponentNameGetDriverName (
   OUT CHAR16                       **DriverName
   );
 
-
 /**
   Retrieves a Unicode string that is the user-readable name of the controller
   that is being managed by a driver.
@@ -135,11 +134,10 @@ PxeBcComponentNameGetControllerName (
   OUT CHAR16                       **ControllerName
   );
 
-
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL    gPxeBcComponentName  = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gPxeBcComponentName = {
   PxeBcComponentNameGetDriverName,
   PxeBcComponentNameGetControllerName,
   "eng"
@@ -148,13 +146,13 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL    gPxeBcComponentName
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL   gPxeBcComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gPxeBcComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) PxeBcComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) PxeBcComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE       mPxeBcDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mPxeBcDriverNameTable[] = {
   {
     "eng;en",
     L"UEFI PXE Base Code Driver"
@@ -165,7 +163,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE       mPxeBcDriverNameTab
   }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE       mPxeBcControllerNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mPxeBcControllerNameTable[] = {
   {
     "eng;en",
     L"PXE Controller"
@@ -223,15 +221,14 @@ PxeBcComponentNameGetDriverName (
   OUT CHAR16                       **DriverName
   )
 {
-  return LookupUnicodeString2(
-           Language,
-           This->SupportedLanguages,
-           mPxeBcDriverNameTable,
-           DriverName,
-           (BOOLEAN)(This == &gPxeBcComponentName)
-           );
+  return LookupUnicodeString2 (
+                               Language,
+                               This->SupportedLanguages,
+                               mPxeBcDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gPxeBcComponentName)
+                               );
 }
-
 
 /**
   Retrieves a Unicode string that is the user-readable name of the controller
@@ -311,9 +308,9 @@ PxeBcComponentNameGetControllerName (
   OUT CHAR16                       **ControllerName
   )
 {
-  EFI_STATUS                      Status;
-  EFI_HANDLE                      NicHandle;
-  PXEBC_PRIVATE_PROTOCOL          *Id;
+  EFI_STATUS              Status;
+  EFI_HANDLE              NicHandle;
+  PXEBC_PRIVATE_PROTOCOL  *Id;
 
   if (ControllerHandle == NULL || ChildHandle != NULL) {
     return EFI_UNSUPPORTED;
@@ -331,22 +328,22 @@ PxeBcComponentNameGetControllerName (
   // Try to retrieve the private data by PxeBcPrivate protocol.
   //
   Status = gBS->OpenProtocol (
-                  NicHandle,
-                  &gEfiCallerIdGuid,
-                  (VOID **) &Id,
-                  NULL,
-                  NULL,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              NicHandle,
+                              &gEfiCallerIdGuid,
+                              (VOID **) &Id,
+                              NULL,
+                              NULL,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mPxeBcControllerNameTable,
-           ControllerName,
-           (BOOLEAN)(This == &gPxeBcComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mPxeBcControllerNameTable,
+                               ControllerName,
+                               (BOOLEAN) (This == &gPxeBcComponentName)
+                               );
 }

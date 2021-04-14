@@ -10,8 +10,7 @@
 
 #include "Dhcp6Impl.h"
 
-
-EFI_DRIVER_BINDING_PROTOCOL gDhcp6DriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  gDhcp6DriverBinding = {
   Dhcp6DriverBindingSupported,
   Dhcp6DriverBindingStart,
   Dhcp6DriverBindingStop,
@@ -20,7 +19,7 @@ EFI_DRIVER_BINDING_PROTOCOL gDhcp6DriverBinding = {
   NULL
 };
 
-EFI_SERVICE_BINDING_PROTOCOL gDhcp6ServiceBindingTemplate = {
+EFI_SERVICE_BINDING_PROTOCOL  gDhcp6ServiceBindingTemplate = {
   Dhcp6ServiceBindingCreateChild,
   Dhcp6ServiceBindingDestroyChild
 };
@@ -43,8 +42,8 @@ Dhcp6ConfigureUdpIo (
   IN VOID                   *Context
   )
 {
-  EFI_UDP6_PROTOCOL         *Udp6;
-  EFI_UDP6_CONFIG_DATA      *Config;
+  EFI_UDP6_PROTOCOL     *Udp6;
+  EFI_UDP6_CONFIG_DATA  *Config;
 
   Udp6   = UdpIo->Protocol.Udp6;
   Config = &(UdpIo->Config.Udp6);
@@ -57,22 +56,21 @@ Dhcp6ConfigureUdpIo (
   Config->AcceptPromiscuous  = FALSE;
   Config->AcceptAnyPort      = FALSE;
   Config->AllowDuplicatePort = FALSE;
-  Config->TrafficClass       = 0;
-  Config->HopLimit           = 128;
-  Config->ReceiveTimeout     = 0;
-  Config->TransmitTimeout    = 0;
+  Config->TrafficClass    = 0;
+  Config->HopLimit        = 128;
+  Config->ReceiveTimeout  = 0;
+  Config->TransmitTimeout = 0;
 
   //
   // Configure an endpoint of client(0, 546), server(0, 0), the addresses
   // will be overridden later. Note that we MUST not limit RemotePort.
   // More details, refer to RFC 3315 section 5.2.
   //
-  Config->StationPort        = DHCP6_PORT_CLIENT;
-  Config->RemotePort         = 0;
+  Config->StationPort = DHCP6_PORT_CLIENT;
+  Config->RemotePort  = 0;
 
-  return Udp6->Configure (Udp6, Config);;
+  return Udp6->Configure (Udp6, Config);
 }
-
 
 /**
   Destroy the Dhcp6 service. The Dhcp6 service may be partly initialized,
@@ -103,7 +101,6 @@ Dhcp6DestroyService (
   FreePool (Service);
 }
 
-
 /**
   Create a new Dhcp6 service for the Nic controller.
 
@@ -124,8 +121,8 @@ Dhcp6CreateService (
   OUT DHCP6_SERVICE         **Service
   )
 {
-  DHCP6_SERVICE             *Dhcp6Srv;
-  EFI_STATUS                Status;
+  DHCP6_SERVICE  *Dhcp6Srv;
+  EFI_STATUS     Status;
 
   *Service = NULL;
   Dhcp6Srv = AllocateZeroPool (sizeof (DHCP6_SERVICE));
@@ -147,25 +144,25 @@ Dhcp6CreateService (
   //
   // Initialize the fields of the new Dhcp6 service.
   //
-  Dhcp6Srv->Signature       = DHCP6_SERVICE_SIGNATURE;
-  Dhcp6Srv->Controller      = Controller;
-  Dhcp6Srv->Image           = ImageHandle;
-  Dhcp6Srv->Xid             = (0xffffff & NET_RANDOM (NetRandomInitSeed ()));
+  Dhcp6Srv->Signature  = DHCP6_SERVICE_SIGNATURE;
+  Dhcp6Srv->Controller = Controller;
+  Dhcp6Srv->Image = ImageHandle;
+  Dhcp6Srv->Xid   = (0xffffff & NET_RANDOM (NetRandomInitSeed ()));
 
   CopyMem (
-    &Dhcp6Srv->ServiceBinding,
-    &gDhcp6ServiceBindingTemplate,
-    sizeof (EFI_SERVICE_BINDING_PROTOCOL)
-    );
+           &Dhcp6Srv->ServiceBinding,
+           &gDhcp6ServiceBindingTemplate,
+           sizeof (EFI_SERVICE_BINDING_PROTOCOL)
+           );
 
   //
   // Locate Ip6->Ip6Config and store it for get IP6 Duplicate Address Detection transmits.
   //
   Status = gBS->HandleProtocol (
-                  Controller,
-                  &gEfiIp6ConfigProtocolGuid,
-                  (VOID **) &Dhcp6Srv->Ip6Cfg
-                  );
+                                Controller,
+                                &gEfiIp6ConfigProtocolGuid,
+                                (VOID **) &Dhcp6Srv->Ip6Cfg
+                                );
   if (EFI_ERROR (Status)) {
     FreePool (Dhcp6Srv);
     return Status;
@@ -175,7 +172,7 @@ Dhcp6CreateService (
   // Generate client Duid: If SMBIOS system UUID is located, generate DUID in DUID-UUID format.
   // Otherwise, in DUID-LLT format.
   //
-  Dhcp6Srv->ClientId        = Dhcp6GenerateClientId (Dhcp6Srv->Snp->Mode);
+  Dhcp6Srv->ClientId = Dhcp6GenerateClientId (Dhcp6Srv->Snp->Mode);
 
   if (Dhcp6Srv->ClientId == NULL) {
     FreePool (Dhcp6Srv);
@@ -186,12 +183,12 @@ Dhcp6CreateService (
   // Create an Udp6Io for stateful transmit/receive of each Dhcp6 instance.
   //
   Dhcp6Srv->UdpIo = UdpIoCreateIo (
-                      Controller,
-                      ImageHandle,
-                      Dhcp6ConfigureUdpIo,
-                      UDP_IO_UDP6_VERSION,
-                      NULL
-                      );
+                                   Controller,
+                                   ImageHandle,
+                                   Dhcp6ConfigureUdpIo,
+                                   UDP_IO_UDP6_VERSION,
+                                   NULL
+                                   );
 
   if (Dhcp6Srv->UdpIo == NULL) {
     FreePool (Dhcp6Srv->ClientId);
@@ -205,7 +202,6 @@ Dhcp6CreateService (
 
   return EFI_SUCCESS;
 }
-
 
 /**
   Destroy the Dhcp6 instance and recycle the resources.
@@ -239,6 +235,7 @@ Dhcp6DestroyInstance (
     if (Instance->IaCb.Ia->ReplyPacket != NULL) {
       FreePool (Instance->IaCb.Ia->ReplyPacket);
     }
+
     FreePool (Instance->IaCb.Ia);
   }
 
@@ -252,7 +249,6 @@ Dhcp6DestroyInstance (
 
   FreePool (Instance);
 }
-
 
 /**
   Create the Dhcp6 instance and initialize it.
@@ -270,8 +266,8 @@ Dhcp6CreateInstance (
   OUT DHCP6_INSTANCE        **Instance
   )
 {
-  EFI_STATUS                Status;
-  DHCP6_INSTANCE            *Dhcp6Ins;
+  EFI_STATUS      Status;
+  DHCP6_INSTANCE  *Dhcp6Ins;
 
   *Instance = NULL;
   Dhcp6Ins  = AllocateZeroPool (sizeof (DHCP6_INSTANCE));
@@ -283,17 +279,17 @@ Dhcp6CreateInstance (
   //
   // Initialize the fields of the new Dhcp6 instance.
   //
-  Dhcp6Ins->Signature       = DHCP6_INSTANCE_SIGNATURE;
-  Dhcp6Ins->UdpSts          = EFI_ALREADY_STARTED;
-  Dhcp6Ins->Service         = Service;
-  Dhcp6Ins->InDestroy       = FALSE;
-  Dhcp6Ins->MediaPresent    = TRUE;
+  Dhcp6Ins->Signature    = DHCP6_INSTANCE_SIGNATURE;
+  Dhcp6Ins->UdpSts       = EFI_ALREADY_STARTED;
+  Dhcp6Ins->Service      = Service;
+  Dhcp6Ins->InDestroy    = FALSE;
+  Dhcp6Ins->MediaPresent = TRUE;
 
   CopyMem (
-    &Dhcp6Ins->Dhcp6,
-    &gDhcp6ProtocolTemplate,
-    sizeof (EFI_DHCP6_PROTOCOL)
-    );
+           &Dhcp6Ins->Dhcp6,
+           &gDhcp6ProtocolTemplate,
+           sizeof (EFI_DHCP6_PROTOCOL)
+           );
 
   InitializeListHead (&Dhcp6Ins->TxList);
   InitializeListHead (&Dhcp6Ins->InfList);
@@ -303,12 +299,12 @@ Dhcp6CreateInstance (
   // lease time of Ia and the retransmission time of all sent packets.
   //
   Status = gBS->CreateEvent (
-                  EVT_NOTIFY_SIGNAL | EVT_TIMER,
-                  TPL_CALLBACK,
-                  Dhcp6OnTimerTick,
-                  Dhcp6Ins,
-                  &Dhcp6Ins->Timer
-                  );
+                             EVT_NOTIFY_SIGNAL | EVT_TIMER,
+                             TPL_CALLBACK,
+                             Dhcp6OnTimerTick,
+                             Dhcp6Ins,
+                             &Dhcp6Ins->Timer
+                             );
 
   if (EFI_ERROR (Status)) {
     FreePool (Dhcp6Ins);
@@ -337,8 +333,8 @@ Dhcp6DestroyChildEntry (
   IN VOID               *Context
   )
 {
-  DHCP6_INSTANCE                   *Instance;
-  EFI_SERVICE_BINDING_PROTOCOL     *ServiceBinding;
+  DHCP6_INSTANCE                *Instance;
+  EFI_SERVICE_BINDING_PROTOCOL  *ServiceBinding;
 
   if (Entry == NULL || Context == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -349,7 +345,6 @@ Dhcp6DestroyChildEntry (
 
   return ServiceBinding->DestroyChild (ServiceBinding, Instance->Handle);
 }
-
 
 /**
   Entry point of the DHCP6 driver to install various protocols.
@@ -369,15 +364,14 @@ Dhcp6DriverEntryPoint (
   )
 {
   return EfiLibInstallDriverBindingComponentName2 (
-           ImageHandle,
-           SystemTable,
-           &gDhcp6DriverBinding,
-           ImageHandle,
-           &gDhcp6ComponentName,
-           &gDhcp6ComponentName2
-           );
+                                                   ImageHandle,
+                                                   SystemTable,
+                                                   &gDhcp6DriverBinding,
+                                                   ImageHandle,
+                                                   &gDhcp6ComponentName,
+                                                   &gDhcp6ComponentName2
+                                                   );
 }
-
 
 /**
   Test to see if this driver supports ControllerHandle. This service
@@ -405,15 +399,14 @@ Dhcp6DriverBindingSupported (
   )
 {
   return gBS->OpenProtocol (
-                ControllerHandle,
-                &gEfiUdp6ServiceBindingProtocolGuid,
-                NULL,
-                This->DriverBindingHandle,
-                ControllerHandle,
-                EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                );
+                            ControllerHandle,
+                            &gEfiUdp6ServiceBindingProtocolGuid,
+                            NULL,
+                            This->DriverBindingHandle,
+                            ControllerHandle,
+                            EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                            );
 }
-
 
 /**
   Start this driver on ControllerHandle. This service is called by the
@@ -441,20 +434,20 @@ Dhcp6DriverBindingStart (
   IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
   )
 {
-  EFI_STATUS                      Status;
-  DHCP6_SERVICE                   *Service;
+  EFI_STATUS     Status;
+  DHCP6_SERVICE  *Service;
 
   //
   // Check the Dhcp6 service whether already started.
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiDhcp6ServiceBindingProtocolGuid,
-                  NULL,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiDhcp6ServiceBindingProtocolGuid,
+                              NULL,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
 
   if (!EFI_ERROR (Status)) {
     return EFI_ALREADY_STARTED;
@@ -464,10 +457,10 @@ Dhcp6DriverBindingStart (
   // Create and initialize the Dhcp6 service.
   //
   Status = Dhcp6CreateService (
-             ControllerHandle,
-             This->DriverBindingHandle,
-             &Service
-             );
+                               ControllerHandle,
+                               This->DriverBindingHandle,
+                               &Service
+                               );
 
   if (EFI_ERROR (Status)) {
     return Status;
@@ -476,11 +469,11 @@ Dhcp6DriverBindingStart (
   ASSERT (Service != NULL);
 
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &ControllerHandle,
-                  &gEfiDhcp6ServiceBindingProtocolGuid,
-                  &Service->ServiceBinding,
-                  NULL
-                  );
+                                                   &ControllerHandle,
+                                                   &gEfiDhcp6ServiceBindingProtocolGuid,
+                                                   &Service->ServiceBinding,
+                                                   NULL
+                                                   );
 
   if (EFI_ERROR (Status)) {
     Dhcp6DestroyService (Service);
@@ -489,7 +482,6 @@ Dhcp6DriverBindingStart (
 
   return EFI_SUCCESS;
 }
-
 
 /**
   Stop this driver on ControllerHandle. This service is called by the
@@ -519,12 +511,12 @@ Dhcp6DriverBindingStop (
   IN  EFI_HANDLE                   *ChildHandleBuffer   OPTIONAL
   )
 {
-  EFI_STATUS                       Status;
-  EFI_HANDLE                       NicHandle;
-  EFI_SERVICE_BINDING_PROTOCOL     *ServiceBinding;
-  DHCP6_SERVICE                    *Service;
-  LIST_ENTRY                       *List;
-  UINTN                            ListLength;
+  EFI_STATUS                    Status;
+  EFI_HANDLE                    NicHandle;
+  EFI_SERVICE_BINDING_PROTOCOL  *ServiceBinding;
+  DHCP6_SERVICE                 *Service;
+  LIST_ENTRY                    *List;
+  UINTN                         ListLength;
 
   //
   // Find and check the Nic handle by the controller handle.
@@ -536,13 +528,13 @@ Dhcp6DriverBindingStop (
   }
 
   Status = gBS->OpenProtocol (
-                  NicHandle,
-                  &gEfiDhcp6ServiceBindingProtocolGuid,
-                  (VOID **) &ServiceBinding,
-                  This->DriverBindingHandle,
-                  NicHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              NicHandle,
+                              &gEfiDhcp6ServiceBindingProtocolGuid,
+                              (VOID **) &ServiceBinding,
+                              This->DriverBindingHandle,
+                              NicHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
 
   if (EFI_ERROR (Status)) {
     return Status;
@@ -553,13 +545,13 @@ Dhcp6DriverBindingStop (
     //
     // Destroy all the children instances before destroy the service.
     //
-    List = &Service->Child;
+    List   = &Service->Child;
     Status = NetDestroyLinkList (
-               List,
-               Dhcp6DestroyChildEntry,
-               ServiceBinding,
-               &ListLength
-               );
+                                 List,
+                                 Dhcp6DestroyChildEntry,
+                                 ServiceBinding,
+                                 &ListLength
+                                 );
     if (EFI_ERROR (Status) || ListLength != 0) {
       Status = EFI_DEVICE_ERROR;
     }
@@ -574,10 +566,10 @@ Dhcp6DriverBindingStop (
     // Destroy the service itself if no child instance left.
     //
     Status = gBS->UninstallProtocolInterface (
-                    NicHandle,
-                    &gEfiDhcp6ServiceBindingProtocolGuid,
-                    ServiceBinding
-                    );
+                                              NicHandle,
+                                              &gEfiDhcp6ServiceBindingProtocolGuid,
+                                              ServiceBinding
+                                              );
     if (EFI_ERROR (Status)) {
       goto ON_EXIT;
     }
@@ -589,7 +581,6 @@ Dhcp6DriverBindingStop (
 ON_EXIT:
   return Status;
 }
-
 
 /**
   Creates a child handle and installs a protocol.
@@ -615,11 +606,11 @@ Dhcp6ServiceBindingCreateChild (
   IN OUT EFI_HANDLE                    *ChildHandle
   )
 {
-  EFI_STATUS                       Status;
-  EFI_TPL                          OldTpl;
-  DHCP6_SERVICE                    *Service;
-  DHCP6_INSTANCE                   *Instance;
-  VOID                             *Udp6;
+  EFI_STATUS      Status;
+  EFI_TPL         OldTpl;
+  DHCP6_SERVICE   *Service;
+  DHCP6_INSTANCE  *Instance;
+  VOID            *Udp6;
 
   if (This == NULL || ChildHandle == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -627,7 +618,7 @@ Dhcp6ServiceBindingCreateChild (
 
   Service = DHCP6_SERVICE_FROM_THIS (This);
 
-  Status  = Dhcp6CreateInstance (Service, &Instance);
+  Status = Dhcp6CreateInstance (Service, &Instance);
 
   if (EFI_ERROR (Status)) {
     return Status;
@@ -639,10 +630,10 @@ Dhcp6ServiceBindingCreateChild (
   // Start the timer when the instance is ready to use.
   //
   Status = gBS->SetTimer (
-                  Instance->Timer,
-                  TimerPeriodic,
-                  TICKS_PER_SECOND
-                  );
+                          Instance->Timer,
+                          TimerPeriodic,
+                          TICKS_PER_SECOND
+                          );
 
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
@@ -652,11 +643,11 @@ Dhcp6ServiceBindingCreateChild (
   // Install the DHCP6 protocol onto ChildHandle.
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  ChildHandle,
-                  &gEfiDhcp6ProtocolGuid,
-                  &Instance->Dhcp6,
-                  NULL
-                  );
+                                                   ChildHandle,
+                                                   &gEfiDhcp6ProtocolGuid,
+                                                   &Instance->Dhcp6,
+                                                   NULL
+                                                   );
 
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
@@ -668,22 +659,21 @@ Dhcp6ServiceBindingCreateChild (
   // Open the UDP6 protocol BY_CHILD.
   //
   Status = gBS->OpenProtocol (
-                  Service->UdpIo->UdpHandle,
-                  &gEfiUdp6ProtocolGuid,
-                  (VOID **) &Udp6,
-                  gDhcp6DriverBinding.DriverBindingHandle,
-                  Instance->Handle,
-                  EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
-                  );
+                              Service->UdpIo->UdpHandle,
+                              &gEfiUdp6ProtocolGuid,
+                              (VOID **) &Udp6,
+                              gDhcp6DriverBinding.DriverBindingHandle,
+                              Instance->Handle,
+                              EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+                              );
 
   if (EFI_ERROR (Status)) {
-
-    gBS->UninstallMultipleProtocolInterfaces (
-           Instance->Handle,
-           &gEfiDhcp6ProtocolGuid,
-           &Instance->Dhcp6,
-           NULL
-           );
+  gBS->UninstallMultipleProtocolInterfaces (
+                                            Instance->Handle,
+                                            &gEfiDhcp6ProtocolGuid,
+                                            &Instance->Dhcp6,
+                                            NULL
+                                            );
     goto ON_ERROR;
   }
 
@@ -703,7 +693,6 @@ ON_ERROR:
   Dhcp6DestroyInstance (Instance);
   return Status;
 }
-
 
 /**
   Destroys a child handle with a protocol installed on it.
@@ -730,11 +719,11 @@ Dhcp6ServiceBindingDestroyChild (
   IN EFI_HANDLE                    ChildHandle
   )
 {
-  EFI_STATUS                       Status;
-  EFI_TPL                          OldTpl;
-  EFI_DHCP6_PROTOCOL               *Dhcp6;
-  DHCP6_SERVICE                    *Service;
-  DHCP6_INSTANCE                   *Instance;
+  EFI_STATUS          Status;
+  EFI_TPL             OldTpl;
+  EFI_DHCP6_PROTOCOL  *Dhcp6;
+  DHCP6_SERVICE       *Service;
+  DHCP6_INSTANCE      *Instance;
 
   if (This == NULL || ChildHandle == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -744,13 +733,13 @@ Dhcp6ServiceBindingDestroyChild (
   // Retrieve the private context data structures
   //
   Status = gBS->OpenProtocol (
-                  ChildHandle,
-                  &gEfiDhcp6ProtocolGuid,
-                  (VOID **) &Dhcp6,
-                  gDhcp6DriverBinding.DriverBindingHandle,
-                  ChildHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ChildHandle,
+                              &gEfiDhcp6ProtocolGuid,
+                              (VOID **) &Dhcp6,
+                              gDhcp6DriverBinding.DriverBindingHandle,
+                              ChildHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
 
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
@@ -772,11 +761,11 @@ Dhcp6ServiceBindingDestroyChild (
   Instance->InDestroy = TRUE;
 
   Status = gBS->CloseProtocol (
-                  Service->UdpIo->UdpHandle,
-                  &gEfiUdp6ProtocolGuid,
-                  gDhcp6DriverBinding.DriverBindingHandle,
-                  ChildHandle
-                  );
+                               Service->UdpIo->UdpHandle,
+                               &gEfiUdp6ProtocolGuid,
+                               gDhcp6DriverBinding.DriverBindingHandle,
+                               ChildHandle
+                               );
 
   if (EFI_ERROR (Status)) {
     Instance->InDestroy = FALSE;
@@ -789,10 +778,10 @@ Dhcp6ServiceBindingDestroyChild (
   //
   gBS->RestoreTPL (OldTpl);
   Status = gBS->UninstallProtocolInterface (
-                  ChildHandle,
-                  &gEfiDhcp6ProtocolGuid,
-                  Dhcp6
-                  );
+                                            ChildHandle,
+                                            &gEfiDhcp6ProtocolGuid,
+                                            Dhcp6
+                                            );
   OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
   if (EFI_ERROR (Status)) {
     Instance->InDestroy = FALSE;

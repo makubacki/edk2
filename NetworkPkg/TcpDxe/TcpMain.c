@@ -29,14 +29,15 @@ TcpChkDataBuf (
   IN EFI_TCP4_FRAGMENT_DATA *FragmentTable
   )
 {
-  UINT32 Index;
+  UINT32  Index;
 
-  UINT32 Len;
+  UINT32  Len;
 
   for (Index = 0, Len = 0; Index < FragmentCount; Index++) {
     if (FragmentTable[Index].FragmentBuffer == NULL) {
       return EFI_INVALID_PARAMETER;
     }
+
     Len = Len + FragmentTable[Index].FragmentLength;
   }
 
@@ -88,13 +89,13 @@ Tcp4GetModeData (
     return EFI_INVALID_PARAMETER;
   }
 
-  Sock                    = SOCK_FROM_THIS (This);
+  Sock = SOCK_FROM_THIS (This);
 
-  TcpMode.Tcp4State       = Tcp4State;
-  TcpMode.Tcp4ConfigData  = Tcp4ConfigData;
-  TcpMode.Ip4ModeData     = Ip4ModeData;
-  TcpMode.MnpConfigData   = MnpConfigData;
-  TcpMode.SnpModeData     = SnpModeData;
+  TcpMode.Tcp4State = Tcp4State;
+  TcpMode.Tcp4ConfigData = Tcp4ConfigData;
+  TcpMode.Ip4ModeData    = Ip4ModeData;
+  TcpMode.MnpConfigData  = MnpConfigData;
+  TcpMode.SnpModeData    = SnpModeData;
 
   return SockGetMode (Sock, &TcpMode);
 }
@@ -124,8 +125,8 @@ Tcp4GetModeData (
 EFI_STATUS
 EFIAPI
 Tcp4Configure (
-  IN EFI_TCP4_PROTOCOL        * This,
-  IN EFI_TCP4_CONFIG_DATA     * TcpConfigData OPTIONAL
+  IN EFI_TCP4_PROTOCOL        *This,
+  IN EFI_TCP4_CONFIG_DATA     *TcpConfigData OPTIONAL
   )
 {
   EFI_TCP4_OPTION  *Option;
@@ -142,7 +143,6 @@ Tcp4Configure (
   // Tcp protocol related parameter check will be conducted here
   //
   if (NULL != TcpConfigData) {
-
     CopyMem (&Ip, &TcpConfigData->AccessPoint.RemoteAddress, sizeof (IP4_ADDR));
     if (IP4_IS_LOCAL_BROADCAST (NTOHL (Ip))) {
       return EFI_INVALID_PARAMETER;
@@ -153,7 +153,6 @@ Tcp4Configure (
     }
 
     if (!TcpConfigData->AccessPoint.UseDefaultAddress) {
-
       CopyMem (&Ip, &TcpConfigData->AccessPoint.StationAddress, sizeof (IP4_ADDR));
       CopyMem (&SubnetMask, &TcpConfigData->AccessPoint.SubnetMask, sizeof (IP4_ADDR));
       if (!IP4_IS_VALID_NETMASK (NTOHL (SubnetMask)) ||
@@ -218,19 +217,19 @@ Tcp4Routes (
   IN EFI_IPv4_ADDRESS            *GatewayAddress
   )
 {
-  SOCKET          *Sock;
-  TCP4_ROUTE_INFO RouteInfo;
+  SOCKET           *Sock;
+  TCP4_ROUTE_INFO  RouteInfo;
 
   if (NULL == This) {
     return EFI_INVALID_PARAMETER;
   }
 
-  Sock                      = SOCK_FROM_THIS (This);
+  Sock = SOCK_FROM_THIS (This);
 
-  RouteInfo.DeleteRoute     = DeleteRoute;
-  RouteInfo.SubnetAddress   = SubnetAddress;
-  RouteInfo.SubnetMask      = SubnetMask;
-  RouteInfo.GatewayAddress  = GatewayAddress;
+  RouteInfo.DeleteRoute    = DeleteRoute;
+  RouteInfo.SubnetAddress  = SubnetAddress;
+  RouteInfo.SubnetMask     = SubnetMask;
+  RouteInfo.GatewayAddress = GatewayAddress;
 
   return SockRoute (Sock, &RouteInfo);
 }
@@ -360,10 +359,10 @@ Tcp4Transmit (
   }
 
   Status = TcpChkDataBuf (
-            Token->Packet.TxData->DataLength,
-            Token->Packet.TxData->FragmentCount,
-            Token->Packet.TxData->FragmentTable
-            );
+                          Token->Packet.TxData->DataLength,
+                          Token->Packet.TxData->FragmentCount,
+                          Token->Packet.TxData->FragmentTable
+                          );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -425,10 +424,10 @@ Tcp4Receive (
   }
 
   Status = TcpChkDataBuf (
-            Token->Packet.RxData->DataLength,
-            Token->Packet.RxData->FragmentCount,
-            Token->Packet.RxData->FragmentTable
-            );
+                          Token->Packet.RxData->DataLength,
+                          Token->Packet.RxData->FragmentCount,
+                          Token->Packet.RxData->FragmentTable
+                          );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -436,7 +435,6 @@ Tcp4Receive (
   Sock = SOCK_FROM_THIS (This);
 
   return SockRcv (Sock, Token);
-
 }
 
 /**
@@ -548,7 +546,7 @@ Tcp4Poll (
     return EFI_INVALID_PARAMETER;
   }
 
-  Sock   = SOCK_FROM_THIS (This);
+  Sock = SOCK_FROM_THIS (This);
 
   Status = Sock->ProtoHandler (Sock, SOCK_POLL, NULL);
 
@@ -601,9 +599,9 @@ Tcp6GetModeData (
     return EFI_INVALID_PARAMETER;
   }
 
-  Sock                   = SOCK_FROM_THIS (This);
+  Sock = SOCK_FROM_THIS (This);
 
-  TcpMode.Tcp6State      = Tcp6State;
+  TcpMode.Tcp6State = Tcp6State;
   TcpMode.Tcp6ConfigData = Tcp6ConfigData;
   TcpMode.Ip6ModeData    = Ip6ModeData;
   TcpMode.MnpConfigData  = MnpConfigData;
@@ -679,7 +677,6 @@ Tcp6Configure (
   // Tcp protocol related parameter check will be conducted here
   //
   if (NULL != Tcp6ConfigData) {
-
     Ip = &Tcp6ConfigData->AccessPoint.RemoteAddress;
     if (!NetIp6IsUnspecifiedAddr (Ip) && !NetIp6IsValidUnicast (Ip)) {
       return EFI_INVALID_PARAMETER;
@@ -876,10 +873,10 @@ Tcp6Transmit (
   }
 
   Status = TcpChkDataBuf (
-            Token->Packet.TxData->DataLength,
-            Token->Packet.TxData->FragmentCount,
-            (EFI_TCP4_FRAGMENT_DATA *) Token->Packet.TxData->FragmentTable
-            );
+                          Token->Packet.TxData->DataLength,
+                          Token->Packet.TxData->FragmentCount,
+                          (EFI_TCP4_FRAGMENT_DATA *) Token->Packet.TxData->FragmentTable
+                          );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -956,10 +953,10 @@ Tcp6Receive (
   }
 
   Status = TcpChkDataBuf (
-            Token->Packet.RxData->DataLength,
-            Token->Packet.RxData->FragmentCount,
-            (EFI_TCP4_FRAGMENT_DATA *) Token->Packet.RxData->FragmentTable
-            );
+                          Token->Packet.RxData->DataLength,
+                          Token->Packet.RxData->FragmentCount,
+                          (EFI_TCP4_FRAGMENT_DATA *) Token->Packet.RxData->FragmentTable
+                          );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -1097,10 +1094,9 @@ Tcp6Poll (
     return EFI_INVALID_PARAMETER;
   }
 
-  Sock   = SOCK_FROM_THIS (This);
+  Sock = SOCK_FROM_THIS (This);
 
   Status = Sock->ProtoHandler (Sock, SOCK_POLL, NULL);
 
   return Status;
 }
-

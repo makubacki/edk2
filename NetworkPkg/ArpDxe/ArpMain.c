@@ -8,7 +8,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "ArpImpl.h"
 
-
 /**
   This function is used to assign a station address to the ARP cache for this instance
   of the ARP driver.
@@ -53,9 +52,9 @@ ArpConfigure (
   }
 
   if ((ConfigData != NULL) &&
-    ((ConfigData->SwAddressLength == 0) ||
-    (ConfigData->StationAddress == NULL) ||
-    (ConfigData->SwAddressType <= 1500))) {
+      ((ConfigData->SwAddressLength == 0) ||
+       (ConfigData->StationAddress == NULL) ||
+       (ConfigData->SwAddressType <= 1500))) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -72,7 +71,6 @@ ArpConfigure (
 
   return Status;
 }
-
 
 /**
   This function is used to insert entries into the ARP cache.
@@ -143,8 +141,8 @@ ArpAdd (
   }
 
   if (((!DenyFlag) && ((TargetHwAddress == NULL) || (TargetSwAddress == NULL))) ||
-    (DenyFlag && (TargetHwAddress != NULL) && (TargetSwAddress != NULL)) ||
-    ((TargetHwAddress == NULL) && (TargetSwAddress == NULL))) {
+      (DenyFlag && (TargetHwAddress != NULL) && (TargetSwAddress != NULL)) ||
+      ((TargetHwAddress == NULL) && (TargetSwAddress == NULL))) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -178,22 +176,22 @@ ArpAdd (
   // See whether the entry to add exists. Check the DeniedCacheTable first.
   //
   CacheEntry = ArpFindDeniedCacheEntry (
-                 ArpService,
-                 &MatchAddress[Protocol],
-                 &MatchAddress[Hardware]
-                 );
+                                        ArpService,
+                                        &MatchAddress[Protocol],
+                                        &MatchAddress[Hardware]
+                                        );
 
   if (CacheEntry == NULL) {
     //
     // Check the ResolvedCacheTable
     //
     CacheEntry = ArpFindNextCacheEntryInTable (
-                   &ArpService->ResolvedCacheTable,
-                   NULL,
-                   ByBoth,
-                   &MatchAddress[Protocol],
-                   &MatchAddress[Hardware]
-                   );
+                                               &ArpService->ResolvedCacheTable,
+                                               NULL,
+                                               ByBoth,
+                                               &MatchAddress[Protocol],
+                                               &MatchAddress[Hardware]
+                                               );
   }
 
   if ((CacheEntry != NULL) && !Overwrite) {
@@ -209,12 +207,12 @@ ArpAdd (
     // Check whether there are pending requests matching the entry to be added.
     //
     CacheEntry = ArpFindNextCacheEntryInTable (
-                   &ArpService->PendingRequestTable,
-                   NULL,
-                   ByProtoAddress,
-                   &MatchAddress[Protocol],
-                   NULL
-                   );
+                                               &ArpService->PendingRequestTable,
+                                               NULL,
+                                               ByProtoAddress,
+                                               &MatchAddress[Protocol],
+                                               NULL
+                                               );
   }
 
   if (CacheEntry != NULL) {
@@ -239,16 +237,16 @@ ArpAdd (
   // Overwrite these parameters.
   //
   CacheEntry->DefaultDecayTime = TimeoutValue;
-  CacheEntry->DecayTime        = TimeoutValue;
+  CacheEntry->DecayTime = TimeoutValue;
 
   //
   // Fill in the addresses.
   //
   ArpFillAddressInCacheEntry (
-    CacheEntry,
-    &MatchAddress[Hardware],
-    &MatchAddress[Protocol]
-    );
+                              CacheEntry,
+                              &MatchAddress[Hardware],
+                              &MatchAddress[Protocol]
+                              );
 
   //
   // Inform the user if there is any.
@@ -270,7 +268,6 @@ UNLOCK_EXIT:
 
   return Status;
 }
-
 
 /**
   This function searches the ARP cache for matching entries and allocates a buffer into
@@ -323,12 +320,12 @@ ArpFind (
   EFI_TPL            OldTpl;
 
   if ((This == NULL) ||
-    (!Refresh && (EntryCount == NULL) && (EntryLength == NULL)) ||
-    ((Entries != NULL) && ((EntryLength == NULL) || (EntryCount == NULL)))) {
+      (!Refresh && (EntryCount == NULL) && (EntryLength == NULL)) ||
+      ((Entries != NULL) && ((EntryLength == NULL) || (EntryCount == NULL)))) {
     return EFI_INVALID_PARAMETER;
   }
 
-  Instance   = ARP_INSTANCE_DATA_FROM_THIS (This);
+  Instance = ARP_INSTANCE_DATA_FROM_THIS (This);
 
   if (!Instance->Configured) {
     return EFI_NOT_STARTED;
@@ -340,20 +337,19 @@ ArpFind (
   // All the check passed, find the cache entries now.
   //
   Status = ArpFindCacheEntry (
-             Instance,
-             BySwAddress,
-             AddressBuffer,
-             EntryLength,
-             EntryCount,
-             Entries,
-             Refresh
-             );
+                              Instance,
+                              BySwAddress,
+                              AddressBuffer,
+                              EntryLength,
+                              EntryCount,
+                              Entries,
+                              Refresh
+                              );
 
   gBS->RestoreTPL (OldTpl);
 
   return Status;
 }
-
 
 /**
   This function removes specified ARP cache entries.
@@ -406,7 +402,6 @@ ArpDelete (
   return (Count == 0) ? EFI_NOT_FOUND : EFI_SUCCESS;
 }
 
-
 /**
   This function delete all dynamic entries from the ARP cache that match the specified
   software protocol type.
@@ -450,7 +445,6 @@ ArpFlush (
 
   return (Count == 0) ? EFI_NOT_FOUND : EFI_SUCCESS;
 }
-
 
 /**
   This function tries to resolve the TargetSwAddress and optionally returns a
@@ -508,8 +502,8 @@ ArpRequest (
   SnpMode    = &ArpService->SnpMode;
 
   if ((TargetSwAddress == NULL) ||
-    ((Instance->ConfigData.SwAddressType == IPV4_ETHER_PROTO_TYPE) &&
-    IP4_IS_LOCAL_BROADCAST (*((UINT32 *)TargetSwAddress)))) {
+      ((Instance->ConfigData.SwAddressType == IPV4_ETHER_PROTO_TYPE) &&
+       IP4_IS_LOCAL_BROADCAST (*((UINT32 *) TargetSwAddress)))) {
     //
     // Return the hardware broadcast address.
     //
@@ -519,22 +513,22 @@ ArpRequest (
   }
 
   if ((Instance->ConfigData.SwAddressType == IPV4_ETHER_PROTO_TYPE) &&
-    IP4_IS_MULTICAST (NTOHL (*((UINT32 *)TargetSwAddress)))) {
+      IP4_IS_MULTICAST (NTOHL (*((UINT32 *) TargetSwAddress)))) {
     //
     // If the software address is an IPv4 multicast address, invoke Mnp to
     // resolve the address.
     //
     Status = ArpService->Mnp->McastIpToMac (
-                                ArpService->Mnp,
-                                FALSE,
-                                TargetSwAddress,
-                                TargetHwAddress
-                                );
+                                            ArpService->Mnp,
+                                            FALSE,
+                                            TargetSwAddress,
+                                            TargetHwAddress
+                                            );
     goto SIGNAL_USER;
   }
 
   HardwareAddress.Type       = SnpMode->IfType;
-  HardwareAddress.Length     = (UINT8)SnpMode->HwAddressSize;
+  HardwareAddress.Length     = (UINT8) SnpMode->HwAddressSize;
   HardwareAddress.AddressPtr = NULL;
 
   ProtocolAddress.Type       = Instance->ConfigData.SwAddressType;
@@ -561,21 +555,21 @@ ArpRequest (
   // Check whether the software address is already resolved.
   //
   CacheEntry = ArpFindNextCacheEntryInTable (
-                 &ArpService->ResolvedCacheTable,
-                 NULL,
-                 ByProtoAddress,
-                 &ProtocolAddress,
-                 NULL
-                 );
+                                             &ArpService->ResolvedCacheTable,
+                                             NULL,
+                                             ByProtoAddress,
+                                             &ProtocolAddress,
+                                             NULL
+                                             );
   if (CacheEntry != NULL) {
     //
     // Resolved, copy the address into the user buffer.
     //
     CopyMem (
-      TargetHwAddress,
-      CacheEntry->Addresses[Hardware].AddressPtr,
-      CacheEntry->Addresses[Hardware].Length
-      );
+             TargetHwAddress,
+             CacheEntry->Addresses[Hardware].AddressPtr,
+             CacheEntry->Addresses[Hardware].Length
+             );
 
     goto UNLOCK_EXIT;
   }
@@ -588,7 +582,7 @@ ArpRequest (
   //
   // Create a request context for this arp request.
   //
-  RequestContext = AllocatePool (sizeof(USER_REQUEST_CONTEXT));
+  RequestContext = AllocatePool (sizeof (USER_REQUEST_CONTEXT));
   if (RequestContext == NULL) {
     DEBUG ((EFI_D_ERROR, "ArpRequest: Allocate memory for RequestContext failed.\n"));
 
@@ -596,7 +590,7 @@ ArpRequest (
     goto UNLOCK_EXIT;
   }
 
-  RequestContext->Instance         = Instance;
+  RequestContext->Instance = Instance;
   RequestContext->UserRequestEvent = ResolvedEvent;
   RequestContext->UserHwAddrBuffer = TargetHwAddress;
   InitializeListHead (&RequestContext->List);
@@ -605,14 +599,13 @@ ArpRequest (
   // Check whether there is a same request.
   //
   CacheEntry = ArpFindNextCacheEntryInTable (
-                 &ArpService->PendingRequestTable,
-                 NULL,
-                 ByProtoAddress,
-                 &ProtocolAddress,
-                 NULL
-                 );
+                                             &ArpService->PendingRequestTable,
+                                             NULL,
+                                             ByProtoAddress,
+                                             &ProtocolAddress,
+                                             NULL
+                                             );
   if (CacheEntry != NULL) {
-
     CacheEntry->NextRetryTime = Instance->ConfigData.RetryTimeOut;
     CacheEntry->RetryCount    = Instance->ConfigData.RetryCount;
   } else {
@@ -657,7 +650,7 @@ UNLOCK_EXIT:
 SIGNAL_USER:
 
   if ((ResolvedEvent != NULL) && (Status == EFI_SUCCESS)) {
-    gBS->SignalEvent (ResolvedEvent);
+  gBS->SignalEvent (ResolvedEvent);
 
     //
     // Dispatch the DPC queued by the NotifyFunction of ResolvedEvent.
@@ -667,7 +660,6 @@ SIGNAL_USER:
 
   return Status;
 }
-
 
 /**
   This function aborts the previous ARP request (identified by This,  TargetSwAddress
@@ -709,8 +701,8 @@ ArpCancel (
   EFI_TPL            OldTpl;
 
   if ((This == NULL) ||
-    ((TargetSwAddress != NULL) && (ResolvedEvent == NULL)) ||
-    ((TargetSwAddress == NULL) && (ResolvedEvent != NULL))) {
+      ((TargetSwAddress != NULL) && (ResolvedEvent == NULL)) ||
+      ((TargetSwAddress == NULL) && (ResolvedEvent != NULL))) {
     return EFI_INVALID_PARAMETER;
   }
 

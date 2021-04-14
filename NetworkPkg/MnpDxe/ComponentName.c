@@ -11,7 +11,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL   gMnpComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gMnpComponentName = {
   MnpComponentNameGetDriverName,
   MnpComponentNameGetControllerName,
   "eng"
@@ -26,7 +26,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gMnpComponentName2 =
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE      mMnpDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mMnpDriverNameTable[] = {
   {
     "eng;en",
     L"MNP Network Service Driver"
@@ -37,7 +37,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE      mMnpDriverNameTable[
   }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE    *gMnpControllerNameTable = NULL;
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  *gMnpControllerNameTable = NULL;
 
 /**
   Retrieves a Unicode string that is the user readable name of the driver.
@@ -83,16 +83,16 @@ EFIAPI
 MnpComponentNameGetDriverName (
   IN     EFI_COMPONENT_NAME_PROTOCOL   *This,
   IN     CHAR8                         *Language,
-     OUT CHAR16                        **DriverName
+  OUT CHAR16                        **DriverName
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mMnpDriverNameTable,
-           DriverName,
-           (BOOLEAN) (This == &gMnpComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mMnpDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gMnpComponentName)
+                               );
 }
 
 /**
@@ -134,18 +134,19 @@ UpdateName (
     // Print the MAC address.
     //
     OffSet += UnicodeSPrint (
-                HandleName,
-                sizeof (HandleName),
-                L"MNP (MAC="
-                );
+                             HandleName,
+                             sizeof (HandleName),
+                             L"MNP (MAC="
+                             );
     for (Index = 0; Index < SnpModeData.HwAddressSize; Index++) {
       OffSet += UnicodeSPrint (
-                  HandleName + OffSet,
-                  sizeof (HandleName) - OffSet * sizeof (CHAR16),
-                  L"%02X-",
-                  SnpModeData.CurrentAddress.Addr[Index]
-                  );
+                               HandleName + OffSet,
+                               sizeof (HandleName) - OffSet * sizeof (CHAR16),
+                               L"%02X-",
+                               SnpModeData.CurrentAddress.Addr[Index]
+                               );
     }
+
     ASSERT (OffSet > 0);
     //
     // Remove the last '-'
@@ -155,18 +156,18 @@ UpdateName (
     // Print the ProtocolType and VLAN ID for this instance.
     //
     OffSet += UnicodeSPrint (
-                HandleName + OffSet,
-                sizeof (HandleName) - OffSet * sizeof (CHAR16),
-                L", ProtocolType=0x%X, VlanId=%d)",
-                MnpConfigData.ProtocolTypeFilter,
-                Instance->MnpServiceData->VlanId
-                );
+                             HandleName + OffSet,
+                             sizeof (HandleName) - OffSet * sizeof (CHAR16),
+                             L", ProtocolType=0x%X, VlanId=%d)",
+                             MnpConfigData.ProtocolTypeFilter,
+                             Instance->MnpServiceData->VlanId
+                             );
   } else if (Status == EFI_NOT_STARTED) {
     UnicodeSPrint (
-      HandleName,
-      sizeof (HandleName),
-      L"MNP (Not started)"
-      );
+                   HandleName,
+                   sizeof (HandleName),
+                   L"MNP (Not started)"
+                   );
   } else {
     return Status;
   }
@@ -177,23 +178,23 @@ UpdateName (
   }
 
   Status = AddUnicodeString2 (
-             "eng",
-             gMnpComponentName.SupportedLanguages,
-             &gMnpControllerNameTable,
-             HandleName,
-             TRUE
-             );
+                              "eng",
+                              gMnpComponentName.SupportedLanguages,
+                              &gMnpControllerNameTable,
+                              HandleName,
+                              TRUE
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   return AddUnicodeString2 (
-           "en",
-           gMnpComponentName2.SupportedLanguages,
-           &gMnpControllerNameTable,
-           HandleName,
-           FALSE
-           );
+                            "en",
+                            gMnpComponentName2.SupportedLanguages,
+                            &gMnpControllerNameTable,
+                            HandleName,
+                            FALSE
+                            );
 }
 
 /**
@@ -271,7 +272,7 @@ MnpComponentNameGetControllerName (
   IN     EFI_HANDLE                    ControllerHandle,
   IN     EFI_HANDLE                    ChildHandle        OPTIONAL,
   IN     CHAR8                         *Language,
-     OUT CHAR16                        **ControllerName
+  OUT CHAR16                        **ControllerName
   )
 {
   EFI_STATUS                    Status;
@@ -288,10 +289,10 @@ MnpComponentNameGetControllerName (
   // Make sure this driver is currently managing ControllerHandle
   //
   Status = EfiTestManagedDevice (
-             ControllerHandle,
-             gMnpDriverBinding.DriverBindingHandle,
-             &gEfiSimpleNetworkProtocolGuid
-             );
+                                 ControllerHandle,
+                                 gMnpDriverBinding.DriverBindingHandle,
+                                 &gEfiSimpleNetworkProtocolGuid
+                                 );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -300,10 +301,10 @@ MnpComponentNameGetControllerName (
   // Make sure this driver produced ChildHandle
   //
   Status = EfiTestChildHandle (
-             ControllerHandle,
-             ChildHandle,
-             &gEfiManagedNetworkServiceBindingProtocolGuid
-             );
+                               ControllerHandle,
+                               ChildHandle,
+                               &gEfiManagedNetworkServiceBindingProtocolGuid
+                               );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -312,13 +313,13 @@ MnpComponentNameGetControllerName (
   // Retrieve an instance of a produced protocol from ChildHandle
   //
   Status = gBS->OpenProtocol (
-                  ChildHandle,
-                  &gEfiManagedNetworkProtocolGuid,
-                  (VOID **)&Mnp,
-                  NULL,
-                  NULL,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ChildHandle,
+                              &gEfiManagedNetworkProtocolGuid,
+                              (VOID **) &Mnp,
+                              NULL,
+                              NULL,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -332,10 +333,10 @@ MnpComponentNameGetControllerName (
   }
 
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           gMnpControllerNameTable,
-           ControllerName,
-           (BOOLEAN)(This == &gMnpComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               gMnpControllerNameTable,
+                               ControllerName,
+                               (BOOLEAN) (This == &gMnpComponentName)
+                               );
 }

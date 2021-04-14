@@ -5,10 +5,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
-
 #include "Udp4Impl.h"
 
-EFI_DRIVER_BINDING_PROTOCOL gUdp4DriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  gUdp4DriverBinding = {
   Udp4DriverBindingSupported,
   Udp4DriverBindingStart,
   Udp4DriverBindingStop,
@@ -17,7 +16,7 @@ EFI_DRIVER_BINDING_PROTOCOL gUdp4DriverBinding = {
   NULL
 };
 
-EFI_SERVICE_BINDING_PROTOCOL mUdp4ServiceBinding = {
+EFI_SERVICE_BINDING_PROTOCOL  mUdp4ServiceBinding = {
   Udp4ServiceBindingCreateChild,
   Udp4ServiceBindingDestroyChild
 };
@@ -60,7 +59,6 @@ Udp4DestroyChildEntryInHandleBuffer (
   return ServiceBinding->DestroyChild (ServiceBinding, Instance->ChildHandle);
 }
 
-
 /**
   Test to see if this driver supports ControllerHandle. This service
   is called by the EFI boot service ConnectController(). In
@@ -93,13 +91,13 @@ Udp4DriverBindingSupported (
   // Test for the Udp4ServiceBinding Protocol
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiUdp4ServiceBindingProtocolGuid,
-                  NULL,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiUdp4ServiceBindingProtocolGuid,
+                              NULL,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
   if (!EFI_ERROR (Status)) {
     return EFI_ALREADY_STARTED;
   }
@@ -108,17 +106,16 @@ Udp4DriverBindingSupported (
   // Test for the Ip4 Protocol
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiIp4ServiceBindingProtocolGuid,
-                  NULL,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiIp4ServiceBindingProtocolGuid,
+                              NULL,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
 
   return Status;
 }
-
 
 /**
   Start this driver on ControllerHandle. This service is called by the
@@ -167,11 +164,11 @@ Udp4DriverBindingStart (
   // Install the Udp4ServiceBindingProtocol on the ControllerHandle.
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &ControllerHandle,
-                  &gEfiUdp4ServiceBindingProtocolGuid,
-                  &Udp4Service->ServiceBinding,
-                  NULL
-                  );
+                                                   &ControllerHandle,
+                                                   &gEfiUdp4ServiceBindingProtocolGuid,
+                                                   &Udp4Service->ServiceBinding,
+                                                   NULL
+                                                   );
   if (EFI_ERROR (Status)) {
     Udp4CleanService (Udp4Service);
     FreePool (Udp4Service);
@@ -179,7 +176,6 @@ Udp4DriverBindingStart (
 
   return Status;
 }
-
 
 /**
   Stop this driver on ControllerHandle. This service is called by the
@@ -227,13 +223,13 @@ Udp4DriverBindingStop (
   // Retrieve the UDP4 ServiceBinding Protocol.
   //
   Status = gBS->OpenProtocol (
-                  NicHandle,
-                  &gEfiUdp4ServiceBindingProtocolGuid,
-                  (VOID **) &ServiceBinding,
-                  This->DriverBindingHandle,
-                  NicHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              NicHandle,
+                              &gEfiUdp4ServiceBindingProtocolGuid,
+                              (VOID **) &ServiceBinding,
+                              This->DriverBindingHandle,
+                              NicHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
   }
@@ -248,18 +244,18 @@ Udp4DriverBindingStop (
     Context.NumberOfChildren  = NumberOfChildren;
     Context.ChildHandleBuffer = ChildHandleBuffer;
     Status = NetDestroyLinkList (
-               List,
-               Udp4DestroyChildEntryInHandleBuffer,
-               &Context,
-               NULL
-               );
+                                 List,
+                                 Udp4DestroyChildEntryInHandleBuffer,
+                                 &Context,
+                                 NULL
+                                 );
   } else {
-    gBS->UninstallMultipleProtocolInterfaces (
-           NicHandle,
-           &gEfiUdp4ServiceBindingProtocolGuid,
-           &Udp4Service->ServiceBinding,
-           NULL
-           );
+  gBS->UninstallMultipleProtocolInterfaces (
+                                            NicHandle,
+                                            &gEfiUdp4ServiceBindingProtocolGuid,
+                                            &Udp4Service->ServiceBinding,
+                                            NULL
+                                            );
 
     Udp4CleanService (Udp4Service);
 
@@ -267,12 +263,12 @@ Udp4DriverBindingStop (
       FreeUnicodeStringTable (gUdpControllerNameTable);
       gUdpControllerNameTable = NULL;
     }
+
     FreePool (Udp4Service);
   }
 
   return Status;
 }
-
 
 /**
   Creates a child handle and installs a protocol.
@@ -335,11 +331,11 @@ Udp4ServiceBindingCreateChild (
   // Install the Udp4Protocol for this instance.
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  ChildHandle,
-                  &gEfiUdp4ProtocolGuid,
-                  &Instance->Udp4Proto,
-                  NULL
-                  );
+                                                   ChildHandle,
+                                                   &gEfiUdp4ProtocolGuid,
+                                                   &Instance->Udp4Proto,
+                                                   NULL
+                                                   );
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
@@ -350,13 +346,13 @@ Udp4ServiceBindingCreateChild (
   // Open the default Ip4 protocol in the IP_IO BY_CHILD.
   //
   Status = gBS->OpenProtocol (
-                  Udp4Service->IpIo->ChildHandle,
-                  &gEfiIp4ProtocolGuid,
-                  (VOID **) &Ip4,
-                  gUdp4DriverBinding.DriverBindingHandle,
-                  Instance->ChildHandle,
-                  EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
-                  );
+                              Udp4Service->IpIo->ChildHandle,
+                              &gEfiIp4ProtocolGuid,
+                              (VOID **) &Ip4,
+                              gUdp4DriverBinding.DriverBindingHandle,
+                              Instance->ChildHandle,
+                              EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+                              );
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
@@ -365,13 +361,13 @@ Udp4ServiceBindingCreateChild (
   // Open this instance's Ip4 protocol in the IpInfo BY_CHILD.
   //
   Status = gBS->OpenProtocol (
-                  Instance->IpInfo->ChildHandle,
-                  &gEfiIp4ProtocolGuid,
-                  (VOID **) &Ip4,
-                  gUdp4DriverBinding.DriverBindingHandle,
-                  Instance->ChildHandle,
-                  EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
-                  );
+                              Instance->IpInfo->ChildHandle,
+                              &gEfiIp4ProtocolGuid,
+                              (VOID **) &Ip4,
+                              gUdp4DriverBinding.DriverBindingHandle,
+                              Instance->ChildHandle,
+                              EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+                              );
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
@@ -391,12 +387,12 @@ Udp4ServiceBindingCreateChild (
 ON_ERROR:
 
   if (Instance->ChildHandle != NULL) {
-    gBS->UninstallMultipleProtocolInterfaces (
-           Instance->ChildHandle,
-           &gEfiUdp4ProtocolGuid,
-           &Instance->Udp4Proto,
-           NULL
-           );
+  gBS->UninstallMultipleProtocolInterfaces (
+                                            Instance->ChildHandle,
+                                            &gEfiUdp4ProtocolGuid,
+                                            &Instance->Udp4Proto,
+                                            NULL
+                                            );
   }
 
   if (Instance->IpInfo != NULL) {
@@ -409,7 +405,6 @@ ON_ERROR:
 
   return Status;
 }
-
 
 /**
   Destroys a child handle with a protocol installed on it.
@@ -452,13 +447,13 @@ Udp4ServiceBindingDestroyChild (
   // Try to get the Udp4 protocol from the ChildHandle.
   //
   Status = gBS->OpenProtocol (
-                  ChildHandle,
-                  &gEfiUdp4ProtocolGuid,
-                  (VOID **) &Udp4Proto,
-                  gUdp4DriverBinding.DriverBindingHandle,
-                  ChildHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ChildHandle,
+                              &gEfiUdp4ProtocolGuid,
+                              (VOID **) &Udp4Proto,
+                              gUdp4DriverBinding.DriverBindingHandle,
+                              ChildHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
@@ -478,30 +473,30 @@ Udp4ServiceBindingDestroyChild (
   // Close the Ip4 protocol.
   //
   gBS->CloseProtocol (
-         Udp4Service->IpIo->ChildHandle,
-         &gEfiIp4ProtocolGuid,
-         gUdp4DriverBinding.DriverBindingHandle,
-         Instance->ChildHandle
-         );
+                      Udp4Service->IpIo->ChildHandle,
+                      &gEfiIp4ProtocolGuid,
+                      gUdp4DriverBinding.DriverBindingHandle,
+                      Instance->ChildHandle
+                      );
   //
   // Close the Ip4 protocol on this instance's IpInfo.
   //
   gBS->CloseProtocol (
-         Instance->IpInfo->ChildHandle,
-         &gEfiIp4ProtocolGuid,
-         gUdp4DriverBinding.DriverBindingHandle,
-         Instance->ChildHandle
-         );
+                      Instance->IpInfo->ChildHandle,
+                      &gEfiIp4ProtocolGuid,
+                      gUdp4DriverBinding.DriverBindingHandle,
+                      Instance->ChildHandle
+                      );
 
   //
   // Uninstall the Udp4Protocol previously installed on the ChildHandle.
   //
   Status = gBS->UninstallMultipleProtocolInterfaces (
-                  ChildHandle,
-                  &gEfiUdp4ProtocolGuid,
-                  (VOID *) &Instance->Udp4Proto,
-                  NULL
-                  );
+                                                     ChildHandle,
+                                                     &gEfiUdp4ProtocolGuid,
+                                                     (VOID *) &Instance->Udp4Proto,
+                                                     NULL
+                                                     );
   if (EFI_ERROR (Status)) {
     Instance->InDestroy = FALSE;
     return Status;
@@ -565,13 +560,13 @@ Udp4DriverEntryPoint (
   // Install the Udp4DriverBinding and Udp4ComponentName protocols.
   //
   Status = EfiLibInstallDriverBindingComponentName2 (
-             ImageHandle,
-             SystemTable,
-             &gUdp4DriverBinding,
-             ImageHandle,
-             &gUdp4ComponentName,
-             &gUdp4ComponentName2
-             );
+                                                     ImageHandle,
+                                                     SystemTable,
+                                                     &gUdp4DriverBinding,
+                                                     ImageHandle,
+                                                     &gUdp4ComponentName,
+                                                     &gUdp4ComponentName2
+                                                     );
   if (!EFI_ERROR (Status)) {
     //
     // Initialize the UDP random port.
@@ -581,4 +576,3 @@ Udp4DriverEntryPoint (
 
   return Status;
 }
-

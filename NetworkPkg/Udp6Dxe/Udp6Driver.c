@@ -9,7 +9,7 @@
 
 #include "Udp6Impl.h"
 
-EFI_DRIVER_BINDING_PROTOCOL gUdp6DriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  gUdp6DriverBinding = {
   Udp6DriverBindingSupported,
   Udp6DriverBindingStart,
   Udp6DriverBindingStop,
@@ -18,7 +18,7 @@ EFI_DRIVER_BINDING_PROTOCOL gUdp6DriverBinding = {
   NULL
 };
 
-EFI_SERVICE_BINDING_PROTOCOL mUdp6ServiceBinding = {
+EFI_SERVICE_BINDING_PROTOCOL  mUdp6ServiceBinding = {
   Udp6ServiceBindingCreateChild,
   Udp6ServiceBindingDestroyChild
 };
@@ -74,31 +74,33 @@ Udp6DriverBindingSupported (
   )
 {
   EFI_STATUS  Status;
+
   //
   // Test for the Udp6ServiceBinding Protocol
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiUdp6ServiceBindingProtocolGuid,
-                  NULL,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiUdp6ServiceBindingProtocolGuid,
+                              NULL,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
   if (!EFI_ERROR (Status)) {
     return EFI_ALREADY_STARTED;
   }
+
   //
   // Test for the Ip6ServiceBinding Protocol
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiIp6ServiceBindingProtocolGuid,
-                  NULL,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiIp6ServiceBindingProtocolGuid,
+                              NULL,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
 
   return Status;
 }
@@ -151,11 +153,11 @@ Udp6DriverBindingStart (
   // Install the Udp6ServiceBindingProtocol on the ControllerHandle.
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &ControllerHandle,
-                  &gEfiUdp6ServiceBindingProtocolGuid,
-                  &Udp6Service->ServiceBinding,
-                  NULL
-                  );
+                                                   &ControllerHandle,
+                                                   &gEfiUdp6ServiceBindingProtocolGuid,
+                                                   &Udp6Service->ServiceBinding,
+                                                   NULL
+                                                   );
   if (EFI_ERROR (Status)) {
     Udp6CleanService (Udp6Service);
   }
@@ -166,6 +168,7 @@ EXIT:
       FreePool (Udp6Service);
     }
   }
+
   return Status;
 }
 
@@ -256,13 +259,13 @@ Udp6DriverBindingStop (
   // Retrieve the UDP6 ServiceBinding Protocol.
   //
   Status = gBS->OpenProtocol (
-                  NicHandle,
-                  &gEfiUdp6ServiceBindingProtocolGuid,
-                  (VOID **) &ServiceBinding,
-                  This->DriverBindingHandle,
-                  NicHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              NicHandle,
+                              &gEfiUdp6ServiceBindingProtocolGuid,
+                              (VOID **) &ServiceBinding,
+                              This->DriverBindingHandle,
+                              NicHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
   }
@@ -278,18 +281,18 @@ Udp6DriverBindingStop (
     Context.NumberOfChildren  = NumberOfChildren;
     Context.ChildHandleBuffer = ChildHandleBuffer;
     Status = NetDestroyLinkList (
-               List,
-               Udp6DestroyChildEntryInHandleBuffer,
-               &Context,
-               NULL
-               );
+                                 List,
+                                 Udp6DestroyChildEntryInHandleBuffer,
+                                 &Context,
+                                 NULL
+                                 );
   } else if (IsListEmpty (&Udp6Service->ChildrenList)) {
     Status = gBS->UninstallMultipleProtocolInterfaces (
-               NicHandle,
-               &gEfiUdp6ServiceBindingProtocolGuid,
-               &Udp6Service->ServiceBinding,
-               NULL
-               );
+                                                       NicHandle,
+                                                       &gEfiUdp6ServiceBindingProtocolGuid,
+                                                       &Udp6Service->ServiceBinding,
+                                                       NULL
+                                                       );
 
     Udp6CleanService (Udp6Service);
     FreePool (Udp6Service);
@@ -359,11 +362,11 @@ Udp6ServiceBindingCreateChild (
   // Install the Udp6Protocol for this instance.
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  ChildHandle,
-                  &gEfiUdp6ProtocolGuid,
-                  &Instance->Udp6Proto,
-                  NULL
-                  );
+                                                   ChildHandle,
+                                                   &gEfiUdp6ProtocolGuid,
+                                                   &Instance->Udp6Proto,
+                                                   NULL
+                                                   );
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
@@ -374,13 +377,13 @@ Udp6ServiceBindingCreateChild (
   // Open the default Ip6 protocol in the IP_IO BY_CHILD.
   //
   Status = gBS->OpenProtocol (
-                  Udp6Service->IpIo->ChildHandle,
-                  &gEfiIp6ProtocolGuid,
-                  (VOID **) &Ip6,
-                  gUdp6DriverBinding.DriverBindingHandle,
-                  Instance->ChildHandle,
-                  EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
-                  );
+                              Udp6Service->IpIo->ChildHandle,
+                              &gEfiIp6ProtocolGuid,
+                              (VOID **) &Ip6,
+                              gUdp6DriverBinding.DriverBindingHandle,
+                              Instance->ChildHandle,
+                              EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+                              );
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
@@ -389,13 +392,13 @@ Udp6ServiceBindingCreateChild (
   // Open this instance's Ip6 protocol in the IpInfo BY_CHILD.
   //
   Status = gBS->OpenProtocol (
-                  Instance->IpInfo->ChildHandle,
-                  &gEfiIp6ProtocolGuid,
-                  (VOID **) &Ip6,
-                  gUdp6DriverBinding.DriverBindingHandle,
-                  Instance->ChildHandle,
-                  EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
-                  );
+                              Instance->IpInfo->ChildHandle,
+                              &gEfiIp6ProtocolGuid,
+                              (VOID **) &Ip6,
+                              gUdp6DriverBinding.DriverBindingHandle,
+                              Instance->ChildHandle,
+                              EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+                              );
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
@@ -415,12 +418,12 @@ Udp6ServiceBindingCreateChild (
 ON_ERROR:
 
   if (Instance->ChildHandle != NULL) {
-    gBS->UninstallMultipleProtocolInterfaces (
-           Instance->ChildHandle,
-           &gEfiUdp6ProtocolGuid,
-           &Instance->Udp6Proto,
-           NULL
-           );
+  gBS->UninstallMultipleProtocolInterfaces (
+                                            Instance->ChildHandle,
+                                            &gEfiUdp6ProtocolGuid,
+                                            &Instance->Udp6Proto,
+                                            NULL
+                                            );
   }
 
   if (Instance->IpInfo != NULL) {
@@ -476,13 +479,13 @@ Udp6ServiceBindingDestroyChild (
   // Try to get the Udp6 protocol from the ChildHandle.
   //
   Status = gBS->OpenProtocol (
-                  ChildHandle,
-                  &gEfiUdp6ProtocolGuid,
-                  (VOID **) &Udp6Proto,
-                  gUdp6DriverBinding.DriverBindingHandle,
-                  ChildHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ChildHandle,
+                              &gEfiUdp6ProtocolGuid,
+                              (VOID **) &Udp6Proto,
+                              gUdp6DriverBinding.DriverBindingHandle,
+                              ChildHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
@@ -502,11 +505,11 @@ Udp6ServiceBindingDestroyChild (
   // Close the Ip6 protocol on the default IpIo.
   //
   Status = gBS->CloseProtocol (
-             Udp6Service->IpIo->ChildHandle,
-             &gEfiIp6ProtocolGuid,
-             gUdp6DriverBinding.DriverBindingHandle,
-             Instance->ChildHandle
-             );
+                               Udp6Service->IpIo->ChildHandle,
+                               &gEfiIp6ProtocolGuid,
+                               gUdp6DriverBinding.DriverBindingHandle,
+                               Instance->ChildHandle
+                               );
   if (EFI_ERROR (Status)) {
     Instance->InDestroy = FALSE;
     return Status;
@@ -516,11 +519,11 @@ Udp6ServiceBindingDestroyChild (
   // Close the Ip6 protocol on this instance's IpInfo.
   //
   Status = gBS->CloseProtocol (
-             Instance->IpInfo->ChildHandle,
-             &gEfiIp6ProtocolGuid,
-             gUdp6DriverBinding.DriverBindingHandle,
-             Instance->ChildHandle
-             );
+                               Instance->IpInfo->ChildHandle,
+                               &gEfiIp6ProtocolGuid,
+                               gUdp6DriverBinding.DriverBindingHandle,
+                               Instance->ChildHandle
+                               );
   if (EFI_ERROR (Status)) {
     Instance->InDestroy = FALSE;
     return Status;
@@ -530,11 +533,11 @@ Udp6ServiceBindingDestroyChild (
   // Uninstall the Udp6Protocol previously installed on the ChildHandle.
   //
   Status = gBS->UninstallMultipleProtocolInterfaces (
-                  ChildHandle,
-                  &gEfiUdp6ProtocolGuid,
-                  (VOID *) &Instance->Udp6Proto,
-                  NULL
-                  );
+                                                     ChildHandle,
+                                                     &gEfiUdp6ProtocolGuid,
+                                                     (VOID *) &Instance->Udp6Proto,
+                                                     NULL
+                                                     );
   if (EFI_ERROR (Status)) {
     Instance->InDestroy = FALSE;
     return Status;
@@ -599,25 +602,23 @@ Udp6DriverEntryPoint (
   //
 
   Status = EfiLibInstallDriverBindingComponentName2 (
-             ImageHandle,
-             SystemTable,
-             &gUdp6DriverBinding,
-             ImageHandle,
-             &gUdp6ComponentName,
-             &gUdp6ComponentName2
-             );
+                                                     ImageHandle,
+                                                     SystemTable,
+                                                     &gUdp6DriverBinding,
+                                                     ImageHandle,
+                                                     &gUdp6ComponentName,
+                                                     &gUdp6ComponentName2
+                                                     );
   if (!EFI_ERROR (Status)) {
     //
     // Initialize the UDP random port.
     //
-    mUdp6RandomPort = (UINT16)(
-                        ((UINT16) NetRandomInitSeed ()) %
-                         UDP6_PORT_KNOWN +
-                         UDP6_PORT_KNOWN
-                         );
+    mUdp6RandomPort = (UINT16) (
+                                ((UINT16) NetRandomInitSeed ()) %
+                                UDP6_PORT_KNOWN +
+                                UDP6_PORT_KNOWN
+                                );
   }
 
   return Status;
 }
-
-

@@ -7,7 +7,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
-
 #ifndef __DPC_H__
 #define __DPC_H__
 
@@ -15,15 +14,14 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // DPC Protocol GUID value
 //
 #define EFI_DPC_PROTOCOL_GUID \
-    { \
-      0x480f8ae9, 0xc46, 0x4aa9, { 0xbc, 0x89, 0xdb, 0x9f, 0xba, 0x61, 0x98, 0x6 } \
-    }
+  { \
+    0x480f8ae9, 0xc46, 0x4aa9, { 0xbc, 0x89, 0xdb, 0x9f, 0xba, 0x61, 0x98, 0x6 } \
+  }
 
 //
 // Forward reference for pure ANSI compatibility
 //
-typedef struct _EFI_DPC_PROTOCOL  EFI_DPC_PROTOCOL;
-
+typedef struct _EFI_DPC_PROTOCOL EFI_DPC_PROTOCOL;
 
 /**
   Invoke a Deferred Procedure Call.
@@ -33,10 +31,10 @@ typedef struct _EFI_DPC_PROTOCOL  EFI_DPC_PROTOCOL;
 
 **/
 typedef
-VOID
+  VOID
 (EFIAPI *EFI_DPC_PROCEDURE)(
-  IN VOID  *DpcContext
-  );
+                            IN VOID  *DpcContext
+                            );
 
 /**
   Add a Deferred Procedure Call to the end of the DPC queue.
@@ -55,13 +53,13 @@ VOID
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_DPC_QUEUE_DPC)(
-  IN EFI_DPC_PROTOCOL   *This,
-  IN EFI_TPL            DpcTpl,
-  IN EFI_DPC_PROCEDURE  DpcProcedure,
-  IN VOID               *DpcContext    OPTIONAL
-  );
+                            IN EFI_DPC_PROTOCOL   *This,
+                            IN EFI_TPL            DpcTpl,
+                            IN EFI_DPC_PROCEDURE  DpcProcedure,
+                            IN VOID               *DpcContext    OPTIONAL
+                            );
 
 /**
   Dispatch the queue of DPCs.
@@ -77,22 +75,22 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_DPC_DISPATCH_DPC)(
-  IN EFI_DPC_PROTOCOL  *This
-  );
+                               IN EFI_DPC_PROTOCOL  *This
+                               );
 
 ///
 /// DPC Protocol structure.
 ///
 struct _EFI_DPC_PROTOCOL {
-  EFI_DPC_QUEUE_DPC     QueueDpc;
-  EFI_DPC_DISPATCH_DPC  DispatchDpc;
+  EFI_DPC_QUEUE_DPC       QueueDpc;
+  EFI_DPC_DISPATCH_DPC    DispatchDpc;
 };
 
 ///
 /// DPC Protocol GUID variable.
 ///
-extern EFI_GUID gEfiDpcProtocolGuid;
+extern EFI_GUID  gEfiDpcProtocolGuid;
 
 #endif

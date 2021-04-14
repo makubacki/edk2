@@ -9,7 +9,6 @@
 
 #include "Mtftp6Impl.h"
 
-
 /**
   Retrieves a Unicode string that is the user-readable name of the driver.
 
@@ -138,7 +137,7 @@ Mtftp6ComponentNameGetControllerName (
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL     gMtftp6ComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gMtftp6ComponentName = {
   Mtftp6ComponentNameGetDriverName,
   Mtftp6ComponentNameGetControllerName,
   "eng"
@@ -147,13 +146,13 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL     gMtftp6ComponentNa
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL    gMtftp6ComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gMtftp6ComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) Mtftp6ComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) Mtftp6ComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE        mMtftp6DriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mMtftp6DriverNameTable[] = {
   {
     "eng;en",
     L"MTFTP6 Network Service Driver"
@@ -164,7 +163,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE        mMtftp6DriverNameT
   }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE   *gMtftp6ControllerNameTable = NULL;
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  *gMtftp6ControllerNameTable = NULL;
 
 /**
   Retrieves a Unicode string that is the user-readable name of the driver.
@@ -214,12 +213,12 @@ Mtftp6ComponentNameGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-          Language,
-          This->SupportedLanguages,
-          mMtftp6DriverNameTable,
-          DriverName,
-          (BOOLEAN)(This == &gMtftp6ComponentName)
-          );
+                               Language,
+                               This->SupportedLanguages,
+                               mMtftp6DriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gMtftp6ComponentName)
+                               );
 }
 
 /**
@@ -237,10 +236,10 @@ UpdateName (
   IN    EFI_MTFTP6_PROTOCOL             *Mtftp6
   )
 {
-  EFI_STATUS                       Status;
-  CHAR16                           HandleName[128];
-  EFI_MTFTP6_MODE_DATA             Mtftp6ModeData;
-  CHAR16                           Address[sizeof"ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"];
+  EFI_STATUS            Status;
+  CHAR16                HandleName[128];
+  EFI_MTFTP6_MODE_DATA  Mtftp6ModeData;
+  CHAR16                Address[sizeof "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"];
 
   if (Mtftp6 == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -251,15 +250,18 @@ UpdateName (
   //
   Status = Mtftp6->GetModeData (Mtftp6, &Mtftp6ModeData);
   if (!EFI_ERROR (Status)) {
-    Status = NetLibIp6ToStr (&Mtftp6ModeData.ConfigData.ServerIp, Address, sizeof(Address));
+    Status = NetLibIp6ToStr (&Mtftp6ModeData.ConfigData.ServerIp, Address, sizeof (Address));
     if (EFI_ERROR (Status)) {
       return Status;
     }
-    UnicodeSPrint (HandleName, sizeof (HandleName),
-      L"MTFTPv6(ServerIp=%s, InitialServerPort=%d)",
-      Address,
-      Mtftp6ModeData.ConfigData.InitialServerPort
-      );
+
+    UnicodeSPrint (
+                   HandleName,
+                   sizeof (HandleName),
+                   L"MTFTPv6(ServerIp=%s, InitialServerPort=%d)",
+                   Address,
+                   Mtftp6ModeData.ConfigData.InitialServerPort
+                   );
   } else {
     UnicodeSPrint (HandleName, 0x100, L"MTFTPv6(%r)", Status);
   }
@@ -270,25 +272,24 @@ UpdateName (
   }
 
   Status = AddUnicodeString2 (
-             "eng",
-             gMtftp6ComponentName.SupportedLanguages,
-             &gMtftp6ControllerNameTable,
-             HandleName,
-             TRUE
-             );
+                              "eng",
+                              gMtftp6ComponentName.SupportedLanguages,
+                              &gMtftp6ControllerNameTable,
+                              HandleName,
+                              TRUE
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   return AddUnicodeString2 (
-           "en",
-           gMtftp6ComponentName2.SupportedLanguages,
-           &gMtftp6ControllerNameTable,
-           HandleName,
-           FALSE
-           );
+                            "en",
+                            gMtftp6ComponentName2.SupportedLanguages,
+                            &gMtftp6ControllerNameTable,
+                            HandleName,
+                            FALSE
+                            );
 }
-
 
 /**
   Retrieves a Unicode string that is the user-readable name of the controller
@@ -368,8 +369,8 @@ Mtftp6ComponentNameGetControllerName (
   OUT CHAR16                                          **ControllerName
   )
 {
-  EFI_STATUS                    Status;
-  EFI_MTFTP6_PROTOCOL           *Mtftp6;
+  EFI_STATUS           Status;
+  EFI_MTFTP6_PROTOCOL  *Mtftp6;
 
   //
   // Only provide names for child handles.
@@ -382,10 +383,10 @@ Mtftp6ComponentNameGetControllerName (
   // Make sure this driver produced ChildHandle
   //
   Status = EfiTestChildHandle (
-             ControllerHandle,
-             ChildHandle,
-             &gEfiUdp6ProtocolGuid
-             );
+                               ControllerHandle,
+                               ChildHandle,
+                               &gEfiUdp6ProtocolGuid
+                               );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -394,13 +395,13 @@ Mtftp6ComponentNameGetControllerName (
   // Retrieve an instance of a produced protocol from ChildHandle
   //
   Status = gBS->OpenProtocol (
-                  ChildHandle,
-                  &gEfiMtftp6ProtocolGuid,
-                  (VOID **)&Mtftp6,
-                  NULL,
-                  NULL,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ChildHandle,
+                              &gEfiMtftp6ProtocolGuid,
+                              (VOID **) &Mtftp6,
+                              NULL,
+                              NULL,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -414,11 +415,10 @@ Mtftp6ComponentNameGetControllerName (
   }
 
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           gMtftp6ControllerNameTable,
-           ControllerName,
-           (BOOLEAN)(This == &gMtftp6ComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               gMtftp6ControllerNameTable,
+                               ControllerName,
+                               (BOOLEAN) (This == &gMtftp6ComponentName)
+                               );
 }
-

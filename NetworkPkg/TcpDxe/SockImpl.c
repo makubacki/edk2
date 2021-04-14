@@ -57,7 +57,6 @@ SockBufNext (
       (SockEntry->List.BackLink == &SockEntry->List) ||
       (SockEntry->List.ForwardLink == &SockEntry->List)
       ) {
-
     return NULL;
   }
 
@@ -112,16 +111,15 @@ SockTcpDataToRcv (
   RcvBufEntry = SockBufFirst (SockBuffer);
   ASSERT (RcvBufEntry != NULL);
 
-  TcpRsvData  = (TCP_RSV_DATA *) RcvBufEntry->ProtoData;
+  TcpRsvData = (TCP_RSV_DATA *) RcvBufEntry->ProtoData;
 
   //
   // Check whether the receive data is out of bound. If yes, calculate the maximum
   // allowed length of the urgent data and output it.
   //
-  *IsUrg      = (BOOLEAN) ((TcpRsvData->UrgLen > 0) ? TRUE : FALSE);
+  *IsUrg = (BOOLEAN) ((TcpRsvData->UrgLen > 0) ? TRUE : FALSE);
 
   if (*IsUrg && (TcpRsvData->UrgLen < RcvBufEntry->TotalSize)) {
-
     DataLen = MIN (TcpRsvData->UrgLen, BufLen);
 
     if (DataLen < TcpRsvData->UrgLen) {
@@ -131,29 +129,26 @@ SockTcpDataToRcv (
     }
 
     return DataLen;
-
   }
 
   //
   // Process the next socket receive buffer to get the maximum allowed length
   // of the received data.
   //
-  DataLen     = RcvBufEntry->TotalSize;
+  DataLen = RcvBufEntry->TotalSize;
 
   RcvBufEntry = SockBufNext (SockBuffer, RcvBufEntry);
 
   while ((BufLen > DataLen) && (RcvBufEntry != NULL)) {
+    TcpRsvData = (TCP_RSV_DATA *) RcvBufEntry->ProtoData;
 
-    TcpRsvData  = (TCP_RSV_DATA *) RcvBufEntry->ProtoData;
-
-    Urg         = (BOOLEAN) ((TcpRsvData->UrgLen > 0) ? TRUE : FALSE);
+    Urg = (BOOLEAN) ((TcpRsvData->UrgLen > 0) ? TRUE : FALSE);
 
     if (*IsUrg != Urg) {
       break;
     }
 
     if (*IsUrg && TcpRsvData->UrgLen < RcvBufEntry->TotalSize) {
-
       if (TcpRsvData->UrgLen + DataLen < BufLen) {
         TcpRsvData->UrgLen = 0;
       } else {
@@ -161,7 +156,6 @@ SockTcpDataToRcv (
       }
 
       return MIN (TcpRsvData->UrgLen + DataLen, BufLen);
-
     }
 
     DataLen += RcvBufEntry->TotalSize;
@@ -196,33 +190,32 @@ SockSetTcpRxData (
   EFI_TCP4_RECEIVE_DATA   *RxData;
   EFI_TCP4_FRAGMENT_DATA  *Fragment;
 
-  RxData  = (EFI_TCP4_RECEIVE_DATA *) TcpRxData;
+  RxData = (EFI_TCP4_RECEIVE_DATA *) TcpRxData;
 
-  OffSet  = 0;
+  OffSet = 0;
 
   ASSERT (RxData->DataLength >= RcvdBytes);
 
-  RxData->DataLength  = RcvdBytes;
-  RxData->UrgentFlag  = IsUrg;
+  RxData->DataLength = RcvdBytes;
+  RxData->UrgentFlag = IsUrg;
 
   //
   // Copy the CopyBytes data from socket receive buffer to RxData.
   //
   for (Index = 0; (Index < RxData->FragmentCount) && (RcvdBytes > 0); Index++) {
-
     Fragment  = &RxData->FragmentTable[Index];
     CopyBytes = MIN ((UINT32) (Fragment->FragmentLength), RcvdBytes);
 
     NetbufQueCopy (
-      Sock->RcvBuffer.DataQueue,
-      OffSet,
-      CopyBytes,
-      Fragment->FragmentBuffer
-      );
+                   Sock->RcvBuffer.DataQueue,
+                   OffSet,
+                   CopyBytes,
+                   Fragment->FragmentBuffer
+                   );
 
     Fragment->FragmentLength = CopyBytes;
     RcvdBytes -= CopyBytes;
-    OffSet += CopyBytes;
+    OffSet    += CopyBytes;
   }
 }
 
@@ -253,30 +246,29 @@ SockProcessSndToken (
   // socket layer flow control policy
   //
   while ((FreeSpace >= Sock->SndBuffer.LowWater) && !IsListEmpty (&Sock->SndTokenList)) {
-
     SockToken = NET_LIST_HEAD (
-                  &(Sock->SndTokenList),
-                  SOCK_TOKEN,
-                  TokenList
-                  );
+                               &(Sock->SndTokenList),
+                               SOCK_TOKEN,
+                               TokenList
+                               );
 
     //
     // process this token
     //
     RemoveEntryList (&(SockToken->TokenList));
     InsertTailList (
-      &(Sock->ProcessingSndTokenList),
-      &(SockToken->TokenList)
-      );
+                    &(Sock->ProcessingSndTokenList),
+                    &(SockToken->TokenList)
+                    );
 
     //
     // Process it in the light of SockType
     //
-    SndToken  = (SOCK_IO_TOKEN *) SockToken->Token;
-    TxData    = SndToken->Packet.TxData;
+    SndToken = (SOCK_IO_TOKEN *) SockToken->Token;
+    TxData   = SndToken->Packet.TxData;
 
-    DataLen   = TxData->DataLength;
-    Status    = SockProcessTcpSndData (Sock, TxData);
+    DataLen = TxData->DataLength;
+    Status  = SockProcessTcpSndData (Sock, TxData);
 
     if (EFI_ERROR (Status)) {
       goto OnError;
@@ -284,10 +276,8 @@ SockProcessSndToken (
 
     if (DataLen >= FreeSpace) {
       FreeSpace = 0;
-
     } else {
       FreeSpace -= DataLen;
-
     }
   }
 
@@ -315,9 +305,9 @@ SockProcessRcvToken (
   IN OUT SOCK_IO_TOKEN *RcvToken
   )
 {
-  UINT32                TokenRcvdBytes;
-  EFI_TCP4_RECEIVE_DATA *RxData;
-  BOOLEAN               IsUrg;
+  UINT32                 TokenRcvdBytes;
+  EFI_TCP4_RECEIVE_DATA  *RxData;
+  BOOLEAN                IsUrg;
 
   ASSERT (Sock != NULL);
 
@@ -326,10 +316,10 @@ SockProcessRcvToken (
   RxData = RcvToken->Packet.RxData;
 
   TokenRcvdBytes = SockTcpDataToRcv (
-                     &Sock->RcvBuffer,
-                     &IsUrg,
-                     RxData->DataLength
-                     );
+                                     &Sock->RcvBuffer,
+                                     &IsUrg,
+                                     RxData->DataLength
+                                     );
 
   //
   // Copy data from RcvBuffer of socket to user
@@ -371,19 +361,19 @@ SockProcessTcpSndData (
   // and insert it into Sock->SndBuffer
   //
   SndData = NetbufFromExt (
-              (NET_FRAGMENT *) TxData->FragmentTable,
-              TxData->FragmentCount,
-              0,
-              0,
-              SockFreeFoo,
-              NULL
-              );
+                           (NET_FRAGMENT *) TxData->FragmentTable,
+                           TxData->FragmentCount,
+                           0,
+                           0,
+                           SockFreeFoo,
+                           NULL
+                           );
 
   if (NULL == SndData) {
     DEBUG (
-      (EFI_D_ERROR,
-      "SockKProcessSndData: Failed to call NetBufferFromExt\n")
-      );
+           (EFI_D_ERROR,
+            "SockKProcessSndData: Failed to call NetBufferFromExt\n")
+           );
 
     return EFI_OUT_OF_RESOURCES;
   }
@@ -435,17 +425,17 @@ SockFlushPendingToken (
   IN OUT LIST_ENTRY     *PendingTokenList
   )
 {
-  SOCK_TOKEN            *SockToken;
-  SOCK_COMPLETION_TOKEN *Token;
+  SOCK_TOKEN             *SockToken;
+  SOCK_COMPLETION_TOKEN  *Token;
 
   ASSERT ((Sock != NULL) && (PendingTokenList != NULL));
 
   while (!IsListEmpty (PendingTokenList)) {
     SockToken = NET_LIST_HEAD (
-                  PendingTokenList,
-                  SOCK_TOKEN,
-                  TokenList
-                  );
+                               PendingTokenList,
+                               SOCK_TOKEN,
+                               TokenList
+                               );
 
     Token = SockToken->Token;
     SIGNAL_TOKEN (Token, Sock->SockError);
@@ -489,9 +479,9 @@ SockWakeListenToken (
   IN OUT SOCKET *Sock
   )
 {
-  SOCKET                *Parent;
-  SOCK_TOKEN            *SockToken;
-  EFI_TCP4_LISTEN_TOKEN *ListenToken;
+  SOCKET                 *Parent;
+  SOCK_TOKEN             *SockToken;
+  EFI_TCP4_LISTEN_TOKEN  *ListenToken;
 
   Parent = Sock->Parent;
 
@@ -499,12 +489,12 @@ SockWakeListenToken (
 
   if (!IsListEmpty (&Parent->ListenTokenList)) {
     SockToken = NET_LIST_HEAD (
-                  &Parent->ListenTokenList,
-                  SOCK_TOKEN,
-                  TokenList
-                  );
+                               &Parent->ListenTokenList,
+                               SOCK_TOKEN,
+                               TokenList
+                               );
 
-    ListenToken                 = (EFI_TCP4_LISTEN_TOKEN *) SockToken->Token;
+    ListenToken = (EFI_TCP4_LISTEN_TOKEN *) SockToken->Token;
     ListenToken->NewChildHandle = Sock->SockHandle;
 
     SIGNAL_TOKEN (&(ListenToken->CompletionToken), EFI_SUCCESS);
@@ -516,10 +506,10 @@ SockWakeListenToken (
 
     Parent->ConnCnt--;
     DEBUG (
-      (EFI_D_NET,
-      "SockWakeListenToken: accept a socket, now conncnt is %d",
-      Parent->ConnCnt)
-      );
+           (EFI_D_NET,
+            "SockWakeListenToken: accept a socket, now conncnt is %d",
+            Parent->ConnCnt)
+           );
 
     Sock->Parent = NULL;
   }
@@ -536,10 +526,10 @@ SockWakeRcvToken (
   IN OUT SOCKET *Sock
   )
 {
-  UINT32        RcvdBytes;
-  UINT32        TokenRcvdBytes;
-  SOCK_TOKEN    *SockToken;
-  SOCK_IO_TOKEN *RcvToken;
+  UINT32         RcvdBytes;
+  UINT32         TokenRcvdBytes;
+  SOCK_TOKEN     *SockToken;
+  SOCK_IO_TOKEN  *RcvToken;
 
   ASSERT (Sock->RcvBuffer.DataQueue != NULL);
 
@@ -548,18 +538,17 @@ SockWakeRcvToken (
   ASSERT (RcvdBytes > 0);
 
   while (RcvdBytes > 0 && !IsListEmpty (&Sock->RcvTokenList)) {
-
     SockToken = NET_LIST_HEAD (
-                  &Sock->RcvTokenList,
-                  SOCK_TOKEN,
-                  TokenList
-                  );
+                               &Sock->RcvTokenList,
+                               SOCK_TOKEN,
+                               TokenList
+                               );
 
-    RcvToken        = (SOCK_IO_TOKEN *) SockToken->Token;
-    TokenRcvdBytes  = SockProcessRcvToken (Sock, RcvToken);
+    RcvToken = (SOCK_IO_TOKEN *) SockToken->Token;
+    TokenRcvdBytes = SockProcessRcvToken (Sock, RcvToken);
 
     if (0 == TokenRcvdBytes) {
-      return ;
+      return;
     }
 
     RemoveEntryList (&(SockToken->TokenList));
@@ -585,9 +574,9 @@ SockCancelToken (
   IN OUT LIST_ENTRY             *SpecifiedTokenList
   )
 {
-  EFI_STATUS     Status;
-  LIST_ENTRY     *Entry;
-  SOCK_TOKEN     *SockToken;
+  EFI_STATUS  Status;
+  LIST_ENTRY  *Entry;
+  SOCK_TOKEN  *SockToken;
 
   Status    = EFI_SUCCESS;
   Entry     = NULL;
@@ -609,7 +598,7 @@ SockCancelToken (
       RemoveEntryList (&SockToken->TokenList);
       FreePool (SockToken);
 
-      Entry = SpecifiedTokenList->ForwardLink;
+      Entry  = SpecifiedTokenList->ForwardLink;
       Status = EFI_SUCCESS;
     } else {
       if (Token == (VOID *) SockToken->Token) {
@@ -662,23 +651,21 @@ SockCreate (
     ProtocolLength  = sizeof (EFI_TCP6_PROTOCOL);
   }
 
-
   Parent = SockInitData->Parent;
 
   if ((Parent != NULL) && (Parent->ConnCnt == Parent->BackLog)) {
     DEBUG (
-      (EFI_D_ERROR,
-      "SockCreate: Socket parent has reached its connection limit with %d ConnCnt and %d BackLog\n",
-      Parent->ConnCnt,
-      Parent->BackLog)
-      );
+           (EFI_D_ERROR,
+            "SockCreate: Socket parent has reached its connection limit with %d ConnCnt and %d BackLog\n",
+            Parent->ConnCnt,
+            Parent->BackLog)
+           );
 
     return NULL;
   }
 
   Sock = AllocateZeroPool (sizeof (SOCKET));
   if (NULL == Sock) {
-
     DEBUG ((EFI_D_ERROR, "SockCreate: No resource to create a new socket\n"));
     return NULL;
   }
@@ -695,9 +682,9 @@ SockCreate (
   Sock->SndBuffer.DataQueue = NetbufQueAlloc ();
   if (NULL == Sock->SndBuffer.DataQueue) {
     DEBUG (
-      (EFI_D_ERROR,
-      "SockCreate: No resource to allocate SndBuffer for new socket\n")
-      );
+           (EFI_D_ERROR,
+            "SockCreate: No resource to allocate SndBuffer for new socket\n")
+           );
 
     goto OnError;
   }
@@ -705,32 +692,32 @@ SockCreate (
   Sock->RcvBuffer.DataQueue = NetbufQueAlloc ();
   if (NULL == Sock->RcvBuffer.DataQueue) {
     DEBUG (
-      (EFI_D_ERROR,
-      "SockCreate: No resource to allocate RcvBuffer for new socket\n")
-      );
+           (EFI_D_ERROR,
+            "SockCreate: No resource to allocate RcvBuffer for new socket\n")
+           );
 
     goto OnError;
   }
 
-  Sock->Signature           = SOCK_SIGNATURE;
+  Sock->Signature = SOCK_SIGNATURE;
 
-  Sock->Parent              = Parent;
-  Sock->BackLog             = SockInitData->BackLog;
-  Sock->ProtoHandler        = SockInitData->ProtoHandler;
+  Sock->Parent  = Parent;
+  Sock->BackLog = SockInitData->BackLog;
+  Sock->ProtoHandler = SockInitData->ProtoHandler;
   Sock->SndBuffer.HighWater = SockInitData->SndBufferSize;
   Sock->RcvBuffer.HighWater = SockInitData->RcvBufferSize;
-  Sock->Type                = SockInitData->Type;
-  Sock->DriverBinding       = SockInitData->DriverBinding;
-  Sock->State               = SockInitData->State;
-  Sock->CreateCallback      = SockInitData->CreateCallback;
-  Sock->DestroyCallback     = SockInitData->DestroyCallback;
-  Sock->Context             = SockInitData->Context;
+  Sock->Type = SockInitData->Type;
+  Sock->DriverBinding = SockInitData->DriverBinding;
+  Sock->State = SockInitData->State;
+  Sock->CreateCallback  = SockInitData->CreateCallback;
+  Sock->DestroyCallback = SockInitData->DestroyCallback;
+  Sock->Context = SockInitData->Context;
 
-  Sock->SockError           = EFI_ABORTED;
-  Sock->SndBuffer.LowWater  = SOCK_BUFF_LOW_WATER;
-  Sock->RcvBuffer.LowWater  = SOCK_BUFF_LOW_WATER;
+  Sock->SockError = EFI_ABORTED;
+  Sock->SndBuffer.LowWater = SOCK_BUFF_LOW_WATER;
+  Sock->RcvBuffer.LowWater = SOCK_BUFF_LOW_WATER;
 
-  Sock->IpVersion           = SockInitData->IpVersion;
+  Sock->IpVersion = SockInitData->IpVersion;
 
   //
   // Install protocol on Sock->SockHandle
@@ -743,18 +730,18 @@ SockCreate (
   CopyMem (Sock->ProtoReserved, SockInitData->ProtoData, SockInitData->DataSize);
 
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &Sock->SockHandle,
-                  TcpProtocolGuid,
-                  &Sock->NetProtocol,
-                  NULL
-                  );
+                                                   &Sock->SockHandle,
+                                                   TcpProtocolGuid,
+                                                   &Sock->NetProtocol,
+                                                   NULL
+                                                   );
 
   if (EFI_ERROR (Status)) {
     DEBUG (
-      (EFI_D_ERROR,
-      "SockCreate: Install TCP protocol in socket failed with %r\n",
-      Status)
-      );
+           (EFI_D_ERROR,
+            "SockCreate: Install TCP protocol in socket failed with %r\n",
+            Status)
+           );
 
     goto OnError;
   }
@@ -770,10 +757,10 @@ SockCreate (
     Parent->ConnCnt++;
 
     DEBUG (
-      (EFI_D_NET,
-      "SockCreate: Create a new socket and add to parent, now conncnt is %d\n",
-      Parent->ConnCnt)
-      );
+           (EFI_D_NET,
+            "SockCreate: Create a new socket and add to parent, now conncnt is %d\n",
+            Parent->ConnCnt)
+           );
 
     InsertTailList (&Parent->ConnectionList, &Sock->ConnectionList);
   }
@@ -790,12 +777,12 @@ SockCreate (
 OnError:
 
   if (Sock->SockHandle != NULL) {
-    gBS->UninstallMultipleProtocolInterfaces (
-           Sock->SockHandle,
-           TcpProtocolGuid,
-           &Sock->NetProtocol,
-           NULL
-           );
+  gBS->UninstallMultipleProtocolInterfaces (
+                                            Sock->SockHandle,
+                                            TcpProtocolGuid,
+                                            &Sock->NetProtocol,
+                                            NULL
+                                            );
   }
 
   if (NULL != Sock->SndBuffer.DataQueue) {
@@ -829,12 +816,11 @@ SockDestroy (
   // by sock and rcv, snd buffer
   //
   if (!SOCK_IS_UNCONFIGURED (Sock)) {
-
     SockConnFlush (Sock);
     SockSetState (Sock, SO_CLOSED);
     Sock->ConfigureState = SO_UNCONFIGURED;
-
   }
+
   //
   // Destroy the RcvBuffer Queue and SendBuffer Queue
   //
@@ -845,15 +831,14 @@ SockDestroy (
   // Remove it from parent connection list if needed
   //
   if (Sock->Parent != NULL) {
-
     RemoveEntryList (&(Sock->ConnectionList));
     (Sock->Parent->ConnCnt)--;
 
     DEBUG (
-      (EFI_D_WARN,
-      "SockDestroy: Delete a unaccepted socket from parent now conncnt is %d\n",
-      Sock->Parent->ConnCnt)
-      );
+           (EFI_D_WARN,
+            "SockDestroy: Delete a unaccepted socket from parent now conncnt is %d\n",
+            Sock->Parent->ConnCnt)
+           );
 
     Sock->Parent = NULL;
   }
@@ -911,17 +896,16 @@ SockConnFlush (
   if (SOCK_IS_LISTENING (Sock)) {
     while (!IsListEmpty (&Sock->ConnectionList)) {
       Child = NET_LIST_HEAD (
-                &Sock->ConnectionList,
-                SOCKET,
-                ConnectionList
-                );
+                             &Sock->ConnectionList,
+                             SOCKET,
+                             ConnectionList
+                             );
 
       SockDestroyChild (Child);
     }
 
     Sock->ConnCnt = 0;
   }
-
 }
 
 /**
@@ -956,23 +940,23 @@ SockClone (
   SOCKET          *ClonedSock;
   SOCK_INIT_DATA  InitData;
 
-  InitData.BackLog         = Sock->BackLog;
-  InitData.Parent          = Sock;
-  InitData.State           = Sock->State;
-  InitData.ProtoHandler    = Sock->ProtoHandler;
-  InitData.Type            = Sock->Type;
-  InitData.RcvBufferSize   = Sock->RcvBuffer.HighWater;
-  InitData.SndBufferSize   = Sock->SndBuffer.HighWater;
-  InitData.DriverBinding   = Sock->DriverBinding;
-  InitData.IpVersion       = Sock->IpVersion;
-  InitData.Protocol        = &(Sock->NetProtocol);
+  InitData.BackLog = Sock->BackLog;
+  InitData.Parent  = Sock;
+  InitData.State   = Sock->State;
+  InitData.ProtoHandler = Sock->ProtoHandler;
+  InitData.Type = Sock->Type;
+  InitData.RcvBufferSize = Sock->RcvBuffer.HighWater;
+  InitData.SndBufferSize = Sock->SndBuffer.HighWater;
+  InitData.DriverBinding = Sock->DriverBinding;
+  InitData.IpVersion     = Sock->IpVersion;
+  InitData.Protocol = &(Sock->NetProtocol);
   InitData.CreateCallback  = Sock->CreateCallback;
   InitData.DestroyCallback = Sock->DestroyCallback;
-  InitData.Context         = Sock->Context;
-  InitData.ProtoData       = Sock->ProtoReserved;
-  InitData.DataSize        = sizeof (Sock->ProtoReserved);
+  InitData.Context   = Sock->Context;
+  InitData.ProtoData = Sock->ProtoReserved;
+  InitData.DataSize  = sizeof (Sock->ProtoReserved);
 
-  ClonedSock               = SockCreate (&InitData);
+  ClonedSock = SockCreate (&InitData);
 
   if (NULL == ClonedSock) {
     DEBUG ((EFI_D_ERROR, "SockClone: no resource to create a cloned sock\n"));
@@ -1001,7 +985,6 @@ SockConnEstablished (
   IN OUT SOCKET *Sock
   )
 {
-
   ASSERT (SO_CONNECTING == Sock->State);
 
   SockSetState (Sock, SO_CONNECTED);
@@ -1011,7 +994,6 @@ SockConnEstablished (
   } else {
     SockWakeListenToken (Sock);
   }
-
 }
 
 /**
@@ -1040,7 +1022,6 @@ SockConnClosed (
   if (Sock->Parent != NULL) {
     SockDestroyChild (Sock);
   }
-
 }
 
 /**
@@ -1059,8 +1040,8 @@ SockDataSent (
   IN     UINT32     Count
   )
 {
-  SOCK_TOKEN            *SockToken;
-  SOCK_COMPLETION_TOKEN *SndToken;
+  SOCK_TOKEN             *SockToken;
+  SOCK_COMPLETION_TOKEN  *SndToken;
 
   ASSERT (!IsListEmpty (&Sock->ProcessingSndTokenList));
   ASSERT (Count <= (Sock->SndBuffer.DataQueue)->BufSize);
@@ -1072,21 +1053,19 @@ SockDataSent (
   //
   while (Count > 0) {
     SockToken = NET_LIST_HEAD (
-                  &(Sock->ProcessingSndTokenList),
-                  SOCK_TOKEN,
-                  TokenList
-                  );
+                               &(Sock->ProcessingSndTokenList),
+                               SOCK_TOKEN,
+                               TokenList
+                               );
 
     SndToken = SockToken->Token;
 
     if (SockToken->RemainDataLen <= Count) {
-
       RemoveEntryList (&(SockToken->TokenList));
       SIGNAL_TOKEN (SndToken, EFI_SUCCESS);
       Count -= SockToken->RemainDataLen;
       FreePool (SockToken);
     } else {
-
       SockToken->RemainDataLen -= Count;
       Count = 0;
     }
@@ -1123,11 +1102,11 @@ SockGetDataToSend (
   ASSERT ((Sock != NULL) && SockStream == Sock->Type);
 
   return NetbufQueCopy (
-          Sock->SndBuffer.DataQueue,
-          Offset,
-          Len,
-          Dest
-          );
+                        Sock->SndBuffer.DataQueue,
+                        Offset,
+                        Len,
+                        Dest
+                        );
 }
 
 /**
@@ -1148,8 +1127,10 @@ SockDataRcvd (
   IN     UINT32    UrgLen
   )
 {
-  ASSERT ((Sock != NULL) && (Sock->RcvBuffer.DataQueue != NULL) &&
-    UrgLen <= NetBuffer->TotalSize);
+  ASSERT (
+          (Sock != NULL) && (Sock->RcvBuffer.DataQueue != NULL) &&
+          UrgLen <= NetBuffer->TotalSize
+          );
 
   NET_GET_REF (NetBuffer);
 
@@ -1176,8 +1157,8 @@ SockGetFreeSpace (
   IN UINT32  Which
   )
 {
-  UINT32      BufferCC;
-  SOCK_BUFFER *SockBuffer;
+  UINT32       BufferCC;
+  SOCK_BUFFER  *SockBuffer;
 
   ASSERT (Sock != NULL && ((SOCK_SND_BUF == Which) || (SOCK_RCV_BUF == Which)));
 
@@ -1190,7 +1171,6 @@ SockGetFreeSpace (
   BufferCC = (SockBuffer->DataQueue)->BufSize;
 
   if (BufferCC >= SockBuffer->HighWater) {
-
     return 0;
   }
 
@@ -1217,7 +1197,6 @@ SockNoMoreData (
   SOCK_NO_MORE_DATA (Sock);
 
   if (!IsListEmpty (&Sock->RcvTokenList)) {
-
     ASSERT (0 == GET_RCV_DATASIZE (Sock));
 
     Err = Sock->SockError;
@@ -1227,7 +1206,5 @@ SockNoMoreData (
     SockFlushPendingToken (Sock, &Sock->RcvTokenList);
 
     SOCK_ERROR (Sock, Err);
-
   }
 }
-

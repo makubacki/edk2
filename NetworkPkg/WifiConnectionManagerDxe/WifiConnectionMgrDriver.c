@@ -12,7 +12,7 @@
 ///
 /// Driver Binding Protocol instance
 ///
-EFI_DRIVER_BINDING_PROTOCOL gWifiMgrDxeDriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  gWifiMgrDxeDriverBinding = {
   WifiMgrDxeDriverBindingSupported,
   WifiMgrDxeDriverBindingStart,
   WifiMgrDxeDriverBindingStop,
@@ -22,22 +22,22 @@ EFI_DRIVER_BINDING_PROTOCOL gWifiMgrDxeDriverBinding = {
 };
 
 //
-//The private global data for WiFi Connection Manager
+// The private global data for WiFi Connection Manager
 //
-WIFI_MGR_PRIVATE_DATA    *mPrivate = NULL;
+WIFI_MGR_PRIVATE_DATA  *mPrivate = NULL;
 
 //
-//The private guid to identify WiFi Connection Manager
+// The private guid to identify WiFi Connection Manager
 //
-EFI_GUID mEfiWifiMgrPrivateGuid            = EFI_WIFIMGR_PRIVATE_GUID;
+EFI_GUID  mEfiWifiMgrPrivateGuid = EFI_WIFIMGR_PRIVATE_GUID;
 
 //
-//The Hii config guids
+// The Hii config guids
 //
-EFI_GUID gWifiConfigFormSetGuid            = WIFI_CONNECTION_MANAGER_CONFIG_GUID;
-EFI_GUID mWifiConfigNetworkListRefreshGuid = WIFI_CONFIG_NETWORK_LIST_REFRESH_GUID;
-EFI_GUID mWifiConfigConnectFormRefreshGuid = WIFI_CONFIG_CONNECT_FORM_REFRESH_GUID;
-EFI_GUID mWifiConfigMainFormRefreshGuid    = WIFI_CONFIG_MAIN_FORM_REFRESH_GUID;
+EFI_GUID  gWifiConfigFormSetGuid = WIFI_CONNECTION_MANAGER_CONFIG_GUID;
+EFI_GUID  mWifiConfigNetworkListRefreshGuid = WIFI_CONFIG_NETWORK_LIST_REFRESH_GUID;
+EFI_GUID  mWifiConfigConnectFormRefreshGuid = WIFI_CONFIG_CONNECT_FORM_REFRESH_GUID;
+EFI_GUID  mWifiConfigMainFormRefreshGuid    = WIFI_CONFIG_MAIN_FORM_REFRESH_GUID;
 
 /**
   Tests to see if this driver supports a given controller. If a child device is provided,
@@ -90,16 +90,16 @@ WifiMgrDxeDriverBindingSupported (
   IN EFI_DEVICE_PATH_PROTOCOL       *RemainingDevicePath OPTIONAL
   )
 {
-  EFI_STATUS    Status;
+  EFI_STATUS  Status;
 
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &mEfiWifiMgrPrivateGuid,
-                  NULL,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &mEfiWifiMgrPrivateGuid,
+                              NULL,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
   if (!EFI_ERROR (Status)) {
     return EFI_ALREADY_STARTED;
   }
@@ -108,13 +108,13 @@ WifiMgrDxeDriverBindingSupported (
   // Test for the wireless MAC connection 2 protocol
   //
   return gBS->OpenProtocol (
-                ControllerHandle,
-                &gEfiWiFi2ProtocolGuid,
-                NULL,
-                This->DriverBindingHandle,
-                ControllerHandle,
-                EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                );
+                            ControllerHandle,
+                            &gEfiWiFi2ProtocolGuid,
+                            NULL,
+                            This->DriverBindingHandle,
+                            ControllerHandle,
+                            EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                            );
 }
 
 /**
@@ -160,76 +160,77 @@ WifiMgrDxeDriverBindingStart (
   IN EFI_DEVICE_PATH_PROTOCOL       *RemainingDevicePath OPTIONAL
   )
 {
-  EFI_STATUS                                 Status;
-  EFI_TPL                                    OldTpl;
-  UINTN                                      AddressSize;
-  WIFI_MGR_DEVICE_DATA                       *Nic;
-  EFI_WIRELESS_MAC_CONNECTION_II_PROTOCOL    *Wmp;
-  EFI_SUPPLICANT_PROTOCOL                    *Supplicant;
-  EFI_EAP_CONFIGURATION_PROTOCOL             *EapConfig;
+  EFI_STATUS                               Status;
+  EFI_TPL                                  OldTpl;
+  UINTN                                    AddressSize;
+  WIFI_MGR_DEVICE_DATA                     *Nic;
+  EFI_WIRELESS_MAC_CONNECTION_II_PROTOCOL  *Wmp;
+  EFI_SUPPLICANT_PROTOCOL                  *Supplicant;
+  EFI_EAP_CONFIGURATION_PROTOCOL           *EapConfig;
 
   Nic = NULL;
 
   //
-  //Open Protocols
+  // Open Protocols
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiWiFi2ProtocolGuid,
-                  (VOID**) &Wmp,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              ControllerHandle,
+                              &gEfiWiFi2ProtocolGuid,
+                              (VOID **) &Wmp,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiSupplicantProtocolGuid,
-                  (VOID**) &Supplicant,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              ControllerHandle,
+                              &gEfiSupplicantProtocolGuid,
+                              (VOID **) &Supplicant,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (EFI_ERROR (Status)) {
     Supplicant = NULL;
   }
 
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiEapConfigurationProtocolGuid,
-                  (VOID**) &EapConfig,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              ControllerHandle,
+                              &gEfiEapConfigurationProtocolGuid,
+                              (VOID **) &EapConfig,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (EFI_ERROR (Status)) {
     EapConfig = NULL;
   }
 
   //
-  //Initialize Nic device data
+  // Initialize Nic device data
   //
   Nic = AllocateZeroPool (sizeof (WIFI_MGR_DEVICE_DATA));
   if (Nic == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ERROR1;
   }
-  Nic->Signature            = WIFI_MGR_DEVICE_DATA_SIGNATURE;
-  Nic->DriverHandle         = This->DriverBindingHandle;
-  Nic->ControllerHandle     = ControllerHandle;
-  Nic->Private              = mPrivate;
-  Nic->Wmp                  = Wmp;
-  Nic->Supplicant           = Supplicant;
-  Nic->EapConfig            = EapConfig;
-  Nic->UserSelectedProfile  = NULL;
-  Nic->OneTimeScanRequest   = FALSE;
-  Nic->ScanTickTime         = WIFI_SCAN_FREQUENCY;  //Initialize the first scan
+
+  Nic->Signature        = WIFI_MGR_DEVICE_DATA_SIGNATURE;
+  Nic->DriverHandle     = This->DriverBindingHandle;
+  Nic->ControllerHandle = ControllerHandle;
+  Nic->Private    = mPrivate;
+  Nic->Wmp        = Wmp;
+  Nic->Supplicant = Supplicant;
+  Nic->EapConfig  = EapConfig;
+  Nic->UserSelectedProfile = NULL;
+  Nic->OneTimeScanRequest  = FALSE;
+  Nic->ScanTickTime = WIFI_SCAN_FREQUENCY;          // Initialize the first scan
 
   if (Nic->Supplicant != NULL) {
-    WifiMgrGetSupportedSuites(Nic);
+    WifiMgrGetSupportedSuites (Nic);
   }
 
   InitializeListHead (&Nic->ProfileList);
@@ -238,10 +239,10 @@ WifiMgrDxeDriverBindingStart (
   // Record the MAC address of the incoming NIC.
   //
   Status = NetLibGetMacAddress (
-             ControllerHandle,
-             (EFI_MAC_ADDRESS*) &Nic->MacAddress,
-             &AddressSize
-             );
+                                ControllerHandle,
+                                (EFI_MAC_ADDRESS *) &Nic->MacAddress,
+                                &AddressSize
+                                );
   if (EFI_ERROR (Status)) {
     goto ERROR2;
   }
@@ -250,17 +251,17 @@ WifiMgrDxeDriverBindingStart (
   // Create and start the timer for the status check
   //
   Status = gBS->CreateEvent (
-                  EVT_NOTIFY_SIGNAL | EVT_TIMER,
-                  TPL_CALLBACK,
-                  WifiMgrOnTimerTick,
-                  Nic,
-                  &Nic->TickTimer
-                  );
+                             EVT_NOTIFY_SIGNAL | EVT_TIMER,
+                             TPL_CALLBACK,
+                             WifiMgrOnTimerTick,
+                             Nic,
+                             &Nic->TickTimer
+                             );
   if (EFI_ERROR (Status)) {
     goto ERROR2;
   }
 
-  Status = gBS->SetTimer (Nic->TickTimer, TimerPeriodic, EFI_TIMER_PERIOD_MILLISECONDS(500));
+  Status = gBS->SetTimer (Nic->TickTimer, TimerPeriodic, EFI_TIMER_PERIOD_MILLISECONDS (500));
   if (EFI_ERROR (Status)) {
     goto ERROR3;
   }
@@ -270,18 +271,19 @@ WifiMgrDxeDriverBindingStart (
 
   OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
   InsertTailList (&mPrivate->NicList, &Nic->Link);
-  Nic->NicIndex = mPrivate->NicCount ++;
+  Nic->NicIndex = mPrivate->NicCount++;
   if (mPrivate->CurrentNic == NULL) {
     mPrivate->CurrentNic = Nic;
   }
+
   gBS->RestoreTPL (OldTpl);
 
   Status = gBS->InstallProtocolInterface (
-                  &ControllerHandle,
-                  &mEfiWifiMgrPrivateGuid,
-                  EFI_NATIVE_INTERFACE,
-                  &Nic->WifiMgrIdentifier
-                  );
+                                          &ControllerHandle,
+                                          &mEfiWifiMgrPrivateGuid,
+                                          EFI_NATIVE_INTERFACE,
+                                          &Nic->WifiMgrIdentifier
+                                          );
   if (EFI_ERROR (Status)) {
     goto ERROR4;
   }
@@ -306,41 +308,44 @@ ERROR2:
     if (Nic->SupportedSuites.SupportedAKMSuites != NULL) {
       FreePool (Nic->SupportedSuites.SupportedAKMSuites);
     }
+
     if (Nic->SupportedSuites.SupportedSwCipherSuites != NULL) {
       FreePool (Nic->SupportedSuites.SupportedSwCipherSuites);
     }
+
     if (Nic->SupportedSuites.SupportedHwCipherSuites != NULL) {
       FreePool (Nic->SupportedSuites.SupportedHwCipherSuites);
     }
   }
+
   FreePool (Nic);
 
 ERROR1:
 
   if (Supplicant != NULL) {
-    gBS->CloseProtocol (
-           ControllerHandle,
-           &gEfiSupplicantProtocolGuid,
-           This->DriverBindingHandle,
-           ControllerHandle
-           );
+  gBS->CloseProtocol (
+                      ControllerHandle,
+                      &gEfiSupplicantProtocolGuid,
+                      This->DriverBindingHandle,
+                      ControllerHandle
+                      );
   }
 
   if (EapConfig != NULL) {
-    gBS->CloseProtocol (
-           ControllerHandle,
-           &gEfiEapConfigurationProtocolGuid,
-           This->DriverBindingHandle,
-           ControllerHandle
-           );
+  gBS->CloseProtocol (
+                      ControllerHandle,
+                      &gEfiEapConfigurationProtocolGuid,
+                      This->DriverBindingHandle,
+                      ControllerHandle
+                      );
   }
 
   gBS->CloseProtocol (
-         ControllerHandle,
-         &gEfiWiFi2ProtocolGuid,
-         This->DriverBindingHandle,
-         ControllerHandle
-         );
+                      ControllerHandle,
+                      &gEfiWiFi2ProtocolGuid,
+                      This->DriverBindingHandle,
+                      ControllerHandle
+                      );
 
   return Status;
 }
@@ -380,19 +385,19 @@ WifiMgrDxeDriverBindingStop (
   IN EFI_HANDLE                     *ChildHandleBuffer OPTIONAL
   )
 {
-  EFI_STATUS                   Status;
-  EFI_TPL                      OldTpl;
-  WIFI_MGR_PRIVATE_PROTOCOL    *WifiMgrIdentifier;
-  WIFI_MGR_DEVICE_DATA         *Nic;
+  EFI_STATUS                 Status;
+  EFI_TPL                    OldTpl;
+  WIFI_MGR_PRIVATE_PROTOCOL  *WifiMgrIdentifier;
+  WIFI_MGR_DEVICE_DATA       *Nic;
 
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &mEfiWifiMgrPrivateGuid,
-                  (VOID **) &WifiMgrIdentifier,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &mEfiWifiMgrPrivateGuid,
+                              (VOID **) &WifiMgrIdentifier,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
   }
@@ -415,9 +420,11 @@ WifiMgrDxeDriverBindingStop (
     if (Nic->SupportedSuites.SupportedAKMSuites != NULL) {
       FreePool (Nic->SupportedSuites.SupportedAKMSuites);
     }
+
     if (Nic->SupportedSuites.SupportedSwCipherSuites != NULL) {
       FreePool (Nic->SupportedSuites.SupportedSwCipherSuites);
     }
+
     if (Nic->SupportedSuites.SupportedHwCipherSuites != NULL) {
       FreePool (Nic->SupportedSuites.SupportedHwCipherSuites);
     }
@@ -427,31 +434,31 @@ WifiMgrDxeDriverBindingStop (
   // Close Protocols
   //
   Status = gBS->UninstallProtocolInterface (
-             ControllerHandle,
-             &mEfiWifiMgrPrivateGuid,
-             &Nic->WifiMgrIdentifier
-             );
+                                            ControllerHandle,
+                                            &mEfiWifiMgrPrivateGuid,
+                                            &Nic->WifiMgrIdentifier
+                                            );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   Status = gBS->CloseProtocol (
-             ControllerHandle,
-             &gEfiWiFi2ProtocolGuid,
-             Nic->DriverHandle,
-             Nic->ControllerHandle
-             );
+                               ControllerHandle,
+                               &gEfiWiFi2ProtocolGuid,
+                               Nic->DriverHandle,
+                               Nic->ControllerHandle
+                               );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   if (Nic->Supplicant != NULL) {
     Status = gBS->CloseProtocol (
-               ControllerHandle,
-               &gEfiSupplicantProtocolGuid,
-               Nic->DriverHandle,
-               Nic->ControllerHandle
-               );
+                                 ControllerHandle,
+                                 &gEfiSupplicantProtocolGuid,
+                                 Nic->DriverHandle,
+                                 Nic->ControllerHandle
+                                 );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -459,11 +466,11 @@ WifiMgrDxeDriverBindingStop (
 
   if (Nic->EapConfig != NULL) {
     Status = gBS->CloseProtocol (
-               ControllerHandle,
-               &gEfiEapConfigurationProtocolGuid,
-               Nic->DriverHandle,
-               Nic->ControllerHandle
-               );
+                                 ControllerHandle,
+                                 &gEfiEapConfigurationProtocolGuid,
+                                 Nic->DriverHandle,
+                                 Nic->ControllerHandle
+                                 );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -509,16 +516,16 @@ WifiMgrDxeDriverEntryPoint (
   IN EFI_SYSTEM_TABLE    *SystemTable
   )
 {
-  EFI_STATUS                       Status;
+  EFI_STATUS  Status;
 
   Status = EfiLibInstallDriverBindingComponentName2 (
-             ImageHandle,
-             SystemTable,
-             &gWifiMgrDxeDriverBinding,
-             ImageHandle,
-             &gWifiMgrDxeComponentName,
-             &gWifiMgrDxeComponentName2
-             );
+                                                     ImageHandle,
+                                                     SystemTable,
+                                                     &gWifiMgrDxeDriverBinding,
+                                                     ImageHandle,
+                                                     &gWifiMgrDxeComponentName,
+                                                     &gWifiMgrDxeComponentName2
+                                                     );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -531,49 +538,50 @@ WifiMgrDxeDriverEntryPoint (
     Status = EFI_OUT_OF_RESOURCES;
     goto ERROR1;
   }
+
   mPrivate->Signature    = WIFI_MGR_PRIVATE_DATA_SIGNATURE;
   mPrivate->DriverHandle = ImageHandle;
   InitializeListHead (&mPrivate->NicList);
-  mPrivate->NicCount = 0;
+  mPrivate->NicCount   = 0;
   mPrivate->CurrentNic = NULL;
   InitializeListHead (&mPrivate->HiddenNetworkList);
   mPrivate->HiddenNetworkCount = 0;
 
   //
-  //Create events for page refresh
+  // Create events for page refresh
   //
   Status = gBS->CreateEventEx (
-                  EVT_NOTIFY_SIGNAL,
-                  TPL_CALLBACK,
-                  WifiMgrInternalEmptyFunction,
-                  NULL,
-                  &mWifiConfigNetworkListRefreshGuid,
-                  &mPrivate->NetworkListRefreshEvent
-                  );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_CALLBACK,
+                               WifiMgrInternalEmptyFunction,
+                               NULL,
+                               &mWifiConfigNetworkListRefreshGuid,
+                               &mPrivate->NetworkListRefreshEvent
+                               );
   if (EFI_ERROR (Status)) {
     goto ERROR2;
   }
 
   Status = gBS->CreateEventEx (
-                  EVT_NOTIFY_SIGNAL,
-                  TPL_CALLBACK,
-                  WifiMgrInternalEmptyFunction,
-                  NULL,
-                  &mWifiConfigConnectFormRefreshGuid,
-                  &mPrivate->ConnectFormRefreshEvent
-                  );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_CALLBACK,
+                               WifiMgrInternalEmptyFunction,
+                               NULL,
+                               &mWifiConfigConnectFormRefreshGuid,
+                               &mPrivate->ConnectFormRefreshEvent
+                               );
   if (EFI_ERROR (Status)) {
     goto ERROR3;
   }
 
   Status = gBS->CreateEventEx (
-                  EVT_NOTIFY_SIGNAL,
-                  TPL_CALLBACK,
-                  WifiMgrInternalEmptyFunction,
-                  NULL,
-                  &mWifiConfigMainFormRefreshGuid,
-                  &mPrivate->MainPageRefreshEvent
-                  );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_CALLBACK,
+                               WifiMgrInternalEmptyFunction,
+                               NULL,
+                               &mWifiConfigMainFormRefreshGuid,
+                               &mPrivate->MainPageRefreshEvent
+                               );
   if (EFI_ERROR (Status)) {
     goto ERROR4;
   }
@@ -602,15 +610,15 @@ ERROR2:
 
 ERROR1:
   gBS->UninstallMultipleProtocolInterfaces (
-         ImageHandle,
-         &gEfiDriverBindingProtocolGuid,
-         &gWifiMgrDxeDriverBinding,
-         &gEfiComponentNameProtocolGuid,
-         &gWifiMgrDxeComponentName,
-         &gEfiComponentName2ProtocolGuid,
-         &gWifiMgrDxeComponentName2,
-         NULL
-         );
+                                            ImageHandle,
+                                            &gEfiDriverBindingProtocolGuid,
+                                            &gWifiMgrDxeDriverBinding,
+                                            &gEfiComponentNameProtocolGuid,
+                                            &gWifiMgrDxeComponentName,
+                                            &gEfiComponentName2ProtocolGuid,
+                                            &gWifiMgrDxeComponentName2,
+                                            NULL
+                                            );
 
   return Status;
 }

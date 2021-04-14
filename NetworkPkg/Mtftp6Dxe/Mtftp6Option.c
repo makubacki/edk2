@@ -9,14 +9,13 @@
 
 #include "Mtftp6Impl.h"
 
-CHAR8 *mMtftp6SupportedOptions[MTFTP6_SUPPORTED_OPTIONS_NUM] = {
+CHAR8  *mMtftp6SupportedOptions[MTFTP6_SUPPORTED_OPTIONS_NUM] = {
   "blksize",
   "windowsize",
   "timeout",
   "tsize",
   "multicast"
 };
-
 
 /**
   Parse the NULL terminated ASCII string of multicast option.
@@ -36,20 +35,18 @@ Mtftp6ParseMcastOption (
   IN MTFTP6_EXT_OPTION_INFO *ExtInfo
   )
 {
-  EFI_STATUS                Status;
-  UINT32                    Num;
-  CHAR8                     *Ip6Str;
-  CHAR8                     *TempStr;
+  EFI_STATUS  Status;
+  UINT32      Num;
+  CHAR8       *Ip6Str;
+  CHAR8       *TempStr;
 
   //
   // The multicast option is formatted like "addr,port,mc"
   // The server can also omit the ip and port, use ",,1"
   //
   if (*Str == ',') {
-
     ZeroMem (&ExtInfo->McastIp, sizeof (EFI_IPv6_ADDRESS));
   } else {
-
     Ip6Str = (CHAR8 *) AllocateCopyPool (AsciiStrSize ((CHAR8 *) Str), Str);
     if (Ip6Str == NULL) {
       return EFI_OUT_OF_RESOURCES;
@@ -88,10 +85,8 @@ Mtftp6ParseMcastOption (
   // empty string. such as the port in ",,1"
   //
   if (*Str == ',') {
-
     ExtInfo->McastPort = 0;
   } else {
-
     Num = (UINT32) AsciiStrDecimalToUintn ((CHAR8 *) Str);
 
     if (Num > 65535) {
@@ -133,7 +128,6 @@ Mtftp6ParseMcastOption (
   return EFI_SUCCESS;
 }
 
-
 /**
   Parse the MTFTP6 extension options.
 
@@ -158,15 +152,14 @@ Mtftp6ParseExtensionOption (
   IN MTFTP6_EXT_OPTION_INFO   *ExtInfo
   )
 {
-  EFI_STATUS                  Status;
-  EFI_MTFTP6_OPTION           *Opt;
-  UINT32                      Index;
-  UINT32                      Value;
+  EFI_STATUS         Status;
+  EFI_MTFTP6_OPTION  *Opt;
+  UINT32             Index;
+  UINT32             Value;
 
   ExtInfo->BitMap = 0;
 
   for (Index = 0; Index < Count; Index++) {
-
     Opt = Options + Index;
 
     if (Opt->OptionStr == NULL || Opt->ValueStr == NULL) {
@@ -185,7 +178,6 @@ Mtftp6ParseExtensionOption (
 
       ExtInfo->BlkSize = (UINT16) Value;
       ExtInfo->BitMap |= MTFTP6_OPT_BLKSIZE_BIT;
-
     } else if (AsciiStriCmp ((CHAR8 *) Opt->OptionStr, "timeout") == 0) {
       //
       // timeout option, valid value is between [1, 255]
@@ -198,33 +190,28 @@ Mtftp6ParseExtensionOption (
 
       ExtInfo->Timeout = (UINT8) Value;
       ExtInfo->BitMap |= MTFTP6_OPT_TIMEOUT_BIT;
-
     } else if (AsciiStriCmp ((CHAR8 *) Opt->OptionStr, "tsize") == 0) {
       //
       // tsize option, the biggest transfer supported is 4GB with block size option
       //
       ExtInfo->Tsize   = (UINT32) AsciiStrDecimalToUintn ((CHAR8 *) Opt->ValueStr);
       ExtInfo->BitMap |= MTFTP6_OPT_TSIZE_BIT;
-
     } else if (AsciiStriCmp ((CHAR8 *) Opt->OptionStr, "multicast") == 0) {
       //
       // Multicast option, if it is a request, the value must be a zero string,
       // otherwise, it must be like "addr,port,mc" string, mc indicates master.
       //
       if (!IsRequest) {
-
         Status = Mtftp6ParseMcastOption (Opt->ValueStr, ExtInfo);
 
         if (EFI_ERROR (Status)) {
           return Status;
         }
       } else if (*(Opt->ValueStr) != '\0') {
-
         return EFI_INVALID_PARAMETER;
       }
 
       ExtInfo->BitMap |= MTFTP6_OPT_MCAST_BIT;
-
     } else if (AsciiStriCmp ((CHAR8 *) Opt->OptionStr, "windowsize") == 0) {
       if (Operation == EFI_MTFTP6_OPCODE_WRQ) {
         //
@@ -240,8 +227,7 @@ Mtftp6ParseExtensionOption (
       }
 
       ExtInfo->WindowSize = (UINT16) Value;
-      ExtInfo->BitMap |= MTFTP6_OPT_WINDOWSIZE_BIT;
-
+      ExtInfo->BitMap    |= MTFTP6_OPT_WINDOWSIZE_BIT;
     } else if (IsRequest) {
       //
       // If it's a request, unsupported; else if it's a reply, ignore.
@@ -252,7 +238,6 @@ Mtftp6ParseExtensionOption (
 
   return EFI_SUCCESS;
 }
-
 
 /**
   Go through the packet to fill the options array with the start
@@ -279,15 +264,15 @@ Mtftp6ParsePacketOption (
   IN     EFI_MTFTP6_OPTION     *Options          OPTIONAL
   )
 {
-  UINT8                        *Cur;
-  UINT8                        *Last;
-  UINT8                        Num;
-  UINT8                        *Name;
-  UINT8                        *Value;
+  UINT8  *Cur;
+  UINT8  *Last;
+  UINT8  Num;
+  UINT8  *Name;
+  UINT8  *Value;
 
-  Num   = 0;
-  Cur   = (UINT8 *) Packet + MTFTP6_OPCODE_LEN;
-  Last  = (UINT8 *) Packet + PacketLen - 1;
+  Num  = 0;
+  Cur  = (UINT8 *) Packet + MTFTP6_OPCODE_LEN;
+  Last = (UINT8 *) Packet + PacketLen - 1;
 
   //
   // process option name and value pairs.
@@ -313,8 +298,8 @@ Mtftp6ParsePacketOption (
     Num++;
 
     if (Options != NULL && Num <= *Count) {
-      Options[Num - 1].OptionStr  = Name;
-      Options[Num - 1].ValueStr   = Value;
+      Options[Num - 1].OptionStr = Name;
+      Options[Num - 1].ValueStr  = Value;
     }
 
     Cur++;
@@ -331,7 +316,6 @@ Mtftp6ParsePacketOption (
   *Count = Num;
   return EFI_SUCCESS;
 }
-
 
 /**
   Go through the packet, generate option list array and fill it
@@ -357,10 +341,10 @@ Mtftp6ParseStart (
   IN     EFI_MTFTP6_PACKET      *Packet,
   IN     UINT32                 PacketLen,
   IN OUT UINT32                 *OptionCount,
-     OUT EFI_MTFTP6_OPTION      **OptionList          OPTIONAL
+  OUT EFI_MTFTP6_OPTION      **OptionList          OPTIONAL
   )
 {
-  EFI_STATUS                    Status;
+  EFI_STATUS  Status;
 
   if (PacketLen == 0 || Packet == NULL || OptionCount == NULL) {
     return EFI_INVALID_PARAMETER;

@@ -10,6 +10,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // EFI Component Name Functions
 //
+
 /**
   Retrieves a Unicode string that is the user readable name of the driver.
 
@@ -56,7 +57,6 @@ Ip4ComponentNameGetDriverName (
   IN  CHAR8                        *Language,
   OUT CHAR16                       **DriverName
   );
-
 
 /**
   Retrieves a Unicode string that is the user readable name of the controller
@@ -136,7 +136,6 @@ Ip4ComponentNameGetControllerName (
   OUT CHAR16                                          **ControllerName
   );
 
-
 //
 // EFI Component Name Protocol
 //
@@ -149,14 +148,13 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gIp4ComponentName = {
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL gIp4ComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gIp4ComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) Ip4ComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) Ip4ComponentNameGetControllerName,
   "en"
 };
 
-
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mIp4DriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mIp4DriverNameTable[] = {
   {
     "eng;en",
     L"IP4 Network Service Driver"
@@ -217,13 +215,12 @@ Ip4ComponentNameGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mIp4DriverNameTable,
-           DriverName,
-           (BOOLEAN)(This == &gIp4ComponentName)
-           );
-
+                               Language,
+                               This->SupportedLanguages,
+                               mIp4DriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gIp4ComponentName)
+                               );
 }
 
 /**
@@ -241,9 +238,9 @@ UpdateName (
   IN     EFI_IP4_PROTOCOL         *Ip4
   )
 {
-  EFI_STATUS                       Status;
-  CHAR16                           HandleName[80];
-  EFI_IP4_MODE_DATA                Ip4ModeData;
+  EFI_STATUS         Status;
+  CHAR16             HandleName[80];
+  EFI_IP4_MODE_DATA  Ip4ModeData;
 
   if (Ip4 == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -261,37 +258,40 @@ UpdateName (
   if (!Ip4ModeData.IsStarted || !Ip4ModeData.IsConfigured) {
     UnicodeSPrint (HandleName, sizeof (HandleName), L"IPv4 (Not started)");
   } else {
-    UnicodeSPrint (HandleName, sizeof (HandleName),
-      L"IPv4 (SrcIP=%d.%d.%d.%d)",
-      Ip4ModeData.ConfigData.StationAddress.Addr[0],
-      Ip4ModeData.ConfigData.StationAddress.Addr[1],
-      Ip4ModeData.ConfigData.StationAddress.Addr[2],
-      Ip4ModeData.ConfigData.StationAddress.Addr[3]
-      );
+    UnicodeSPrint (
+                   HandleName,
+                   sizeof (HandleName),
+                   L"IPv4 (SrcIP=%d.%d.%d.%d)",
+                   Ip4ModeData.ConfigData.StationAddress.Addr[0],
+                   Ip4ModeData.ConfigData.StationAddress.Addr[1],
+                   Ip4ModeData.ConfigData.StationAddress.Addr[2],
+                   Ip4ModeData.ConfigData.StationAddress.Addr[3]
+                   );
   }
 
   if (gIp4ControllerNameTable != NULL) {
     FreeUnicodeStringTable (gIp4ControllerNameTable);
     gIp4ControllerNameTable = NULL;
   }
+
   Status = AddUnicodeString2 (
-             "eng",
-             gIp4ComponentName.SupportedLanguages,
-             &gIp4ControllerNameTable,
-             HandleName,
-             TRUE
-             );
+                              "eng",
+                              gIp4ComponentName.SupportedLanguages,
+                              &gIp4ControllerNameTable,
+                              HandleName,
+                              TRUE
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   return AddUnicodeString2 (
-           "en",
-           gIp4ComponentName2.SupportedLanguages,
-           &gIp4ControllerNameTable,
-           HandleName,
-           FALSE
-           );
+                            "en",
+                            gIp4ComponentName2.SupportedLanguages,
+                            &gIp4ControllerNameTable,
+                            HandleName,
+                            FALSE
+                            );
 }
 
 /**
@@ -372,8 +372,8 @@ Ip4ComponentNameGetControllerName (
   OUT CHAR16                                          **ControllerName
   )
 {
-  EFI_STATUS                    Status;
-  EFI_IP4_PROTOCOL              *Ip4;
+  EFI_STATUS        Status;
+  EFI_IP4_PROTOCOL  *Ip4;
 
   //
   // Only provide names for child handles.
@@ -386,10 +386,10 @@ Ip4ComponentNameGetControllerName (
   // Make sure this driver produced ChildHandle
   //
   Status = EfiTestChildHandle (
-             ControllerHandle,
-             ChildHandle,
-             &gEfiManagedNetworkProtocolGuid
-             );
+                               ControllerHandle,
+                               ChildHandle,
+                               &gEfiManagedNetworkProtocolGuid
+                               );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -398,13 +398,13 @@ Ip4ComponentNameGetControllerName (
   // Retrieve an instance of a produced protocol from ChildHandle
   //
   Status = gBS->OpenProtocol (
-                  ChildHandle,
-                  &gEfiIp4ProtocolGuid,
-                  (VOID **)&Ip4,
-                  NULL,
-                  NULL,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ChildHandle,
+                              &gEfiIp4ProtocolGuid,
+                              (VOID **) &Ip4,
+                              NULL,
+                              NULL,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -418,11 +418,10 @@ Ip4ComponentNameGetControllerName (
   }
 
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           gIp4ControllerNameTable,
-           ControllerName,
-           (BOOLEAN)(This == &gIp4ComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               gIp4ControllerNameTable,
+                               ControllerName,
+                               (BOOLEAN) (This == &gIp4ComponentName)
+                               );
 }
-

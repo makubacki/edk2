@@ -31,7 +31,7 @@ TcpIoCommonNotify (
   )
 {
   if ((Event == NULL) || (Context == NULL)) {
-    return ;
+    return;
   }
 
   *((BOOLEAN *) Context) = TRUE;
@@ -55,8 +55,8 @@ TcpIoGetMapping (
   IN EFI_TCP6_CONFIG_DATA *Tcp6ConfigData
   )
 {
-  EFI_STATUS              Status;
-  EFI_EVENT               Event;
+  EFI_STATUS  Status;
+  EFI_EVENT   Event;
 
   if ((Tcp6 == NULL) || (Tcp6ConfigData == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -64,29 +64,28 @@ TcpIoGetMapping (
 
   Event  = NULL;
   Status = gBS->CreateEvent (
-                  EVT_TIMER,
-                  TPL_CALLBACK,
-                  NULL,
-                  NULL,
-                  &Event
-                  );
+                             EVT_TIMER,
+                             TPL_CALLBACK,
+                             NULL,
+                             NULL,
+                             &Event
+                             );
   if (EFI_ERROR (Status)) {
     goto ON_EXIT;
   }
 
   Status = gBS->SetTimer (
-                  Event,
-                  TimerRelative,
-                  TCP_GET_MAPPING_TIMEOUT
-                  );
+                          Event,
+                          TimerRelative,
+                          TCP_GET_MAPPING_TIMEOUT
+                          );
 
   if (EFI_ERROR (Status)) {
     goto ON_EXIT;
   }
 
   while (EFI_ERROR (gBS->CheckEvent (Event))) {
-
-    Tcp6->Poll (Tcp6);
+  Tcp6->Poll (Tcp6);
 
     Status = Tcp6->Configure (Tcp6, Tcp6ConfigData);
 
@@ -98,7 +97,7 @@ TcpIoGetMapping (
 ON_EXIT:
 
   if (Event != NULL) {
-    gBS->CloseEvent (Event);
+  gBS->CloseEvent (Event);
   }
 
   return Status;
@@ -131,19 +130,19 @@ TcpIoCreateSocket (
   OUT TCP_IO                *TcpIo
   )
 {
-  EFI_STATUS                Status;
-  EFI_EVENT                 Event;
-  EFI_GUID                  *ServiceBindingGuid;
-  EFI_GUID                  *ProtocolGuid;
-  VOID                      **Interface;
-  EFI_TCP4_OPTION           ControlOption;
-  EFI_TCP4_CONFIG_DATA      Tcp4ConfigData;
-  EFI_TCP4_ACCESS_POINT     *AccessPoint4;
-  EFI_TCP4_PROTOCOL         *Tcp4;
-  EFI_TCP6_CONFIG_DATA      Tcp6ConfigData;
-  EFI_TCP6_ACCESS_POINT     *AccessPoint6;
-  EFI_TCP6_PROTOCOL         *Tcp6;
-  EFI_TCP4_RECEIVE_DATA     *RxData;
+  EFI_STATUS             Status;
+  EFI_EVENT              Event;
+  EFI_GUID               *ServiceBindingGuid;
+  EFI_GUID               *ProtocolGuid;
+  VOID                   **Interface;
+  EFI_TCP4_OPTION        ControlOption;
+  EFI_TCP4_CONFIG_DATA   Tcp4ConfigData;
+  EFI_TCP4_ACCESS_POINT  *AccessPoint4;
+  EFI_TCP4_PROTOCOL      *Tcp4;
+  EFI_TCP6_CONFIG_DATA   Tcp6ConfigData;
+  EFI_TCP6_ACCESS_POINT  *AccessPoint6;
+  EFI_TCP6_PROTOCOL      *Tcp6;
+  EFI_TCP4_RECEIVE_DATA  *RxData;
 
   if ((Image == NULL) || (Controller == NULL) || (ConfigData == NULL) || (TcpIo == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -156,12 +155,12 @@ TcpIoCreateSocket (
 
   if (TcpVersion == TCP_VERSION_4) {
     ServiceBindingGuid = &gEfiTcp4ServiceBindingProtocolGuid;
-    ProtocolGuid       = &gEfiTcp4ProtocolGuid;
-    Interface          = (VOID **) (&TcpIo->Tcp.Tcp4);
+    ProtocolGuid = &gEfiTcp4ProtocolGuid;
+    Interface    = (VOID **) (&TcpIo->Tcp.Tcp4);
   } else if (TcpVersion == TCP_VERSION_6) {
     ServiceBindingGuid = &gEfiTcp6ServiceBindingProtocolGuid;
-    ProtocolGuid       = &gEfiTcp6ProtocolGuid;
-    Interface          = (VOID **) (&TcpIo->Tcp.Tcp6);
+    ProtocolGuid = &gEfiTcp6ProtocolGuid;
+    Interface    = (VOID **) (&TcpIo->Tcp.Tcp6);
   } else {
     return EFI_UNSUPPORTED;
   }
@@ -172,82 +171,82 @@ TcpIoCreateSocket (
   // Create the TCP child instance and get the TCP protocol.
   //
   Status = NetLibCreateServiceChild (
-             Controller,
-             Image,
-             ServiceBindingGuid,
-             &TcpIo->Handle
-             );
+                                     Controller,
+                                     Image,
+                                     ServiceBindingGuid,
+                                     &TcpIo->Handle
+                                     );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   Status = gBS->OpenProtocol (
-                  TcpIo->Handle,
-                  ProtocolGuid,
-                  Interface,
-                  Image,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              TcpIo->Handle,
+                              ProtocolGuid,
+                              Interface,
+                              Image,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (EFI_ERROR (Status) || (*Interface == NULL)) {
     goto ON_ERROR;
   }
 
   if (TcpVersion == TCP_VERSION_4) {
-    Tcp4             = TcpIo->Tcp.Tcp4;
+    Tcp4 = TcpIo->Tcp.Tcp4;
   } else {
-    Tcp6             = TcpIo->Tcp.Tcp6;
+    Tcp6 = TcpIo->Tcp.Tcp6;
   }
 
-  TcpIo->Image       = Image;
-  TcpIo->Controller  = Controller;
+  TcpIo->Image = Image;
+  TcpIo->Controller = Controller;
 
   //
   // Set the configuration parameters.
   //
-  ControlOption.ReceiveBufferSize       = 0x200000;
-  ControlOption.SendBufferSize          = 0x200000;
-  ControlOption.MaxSynBackLog           = 0;
-  ControlOption.ConnectionTimeout       = 0;
-  ControlOption.DataRetries             = 6;
-  ControlOption.FinTimeout              = 0;
-  ControlOption.TimeWaitTimeout         = 0;
-  ControlOption.KeepAliveProbes         = 4;
-  ControlOption.KeepAliveTime           = 0;
-  ControlOption.KeepAliveInterval       = 0;
-  ControlOption.EnableNagle             = FALSE;
-  ControlOption.EnableTimeStamp         = FALSE;
-  ControlOption.EnableWindowScaling     = TRUE;
-  ControlOption.EnableSelectiveAck      = FALSE;
-  ControlOption.EnablePathMtuDiscovery  = FALSE;
+  ControlOption.ReceiveBufferSize = 0x200000;
+  ControlOption.SendBufferSize    = 0x200000;
+  ControlOption.MaxSynBackLog     = 0;
+  ControlOption.ConnectionTimeout = 0;
+  ControlOption.DataRetries            = 6;
+  ControlOption.FinTimeout             = 0;
+  ControlOption.TimeWaitTimeout        = 0;
+  ControlOption.KeepAliveProbes        = 4;
+  ControlOption.KeepAliveTime          = 0;
+  ControlOption.KeepAliveInterval      = 0;
+  ControlOption.EnableNagle            = FALSE;
+  ControlOption.EnableTimeStamp        = FALSE;
+  ControlOption.EnableWindowScaling    = TRUE;
+  ControlOption.EnableSelectiveAck     = FALSE;
+  ControlOption.EnablePathMtuDiscovery = FALSE;
 
   if (TcpVersion == TCP_VERSION_4) {
-    Tcp4ConfigData.TypeOfService        = 8;
-    Tcp4ConfigData.TimeToLive           = 255;
-    Tcp4ConfigData.ControlOption        = &ControlOption;
+    Tcp4ConfigData.TypeOfService = 8;
+    Tcp4ConfigData.TimeToLive    = 255;
+    Tcp4ConfigData.ControlOption = &ControlOption;
 
-    AccessPoint4                        = &Tcp4ConfigData.AccessPoint;
+    AccessPoint4 = &Tcp4ConfigData.AccessPoint;
 
     ZeroMem (AccessPoint4, sizeof (EFI_TCP4_ACCESS_POINT));
-    AccessPoint4->StationPort           = ConfigData->Tcp4IoConfigData.StationPort;
-    AccessPoint4->RemotePort            = ConfigData->Tcp4IoConfigData.RemotePort;
-    AccessPoint4->ActiveFlag            = ConfigData->Tcp4IoConfigData.ActiveFlag;
+    AccessPoint4->StationPort = ConfigData->Tcp4IoConfigData.StationPort;
+    AccessPoint4->RemotePort  = ConfigData->Tcp4IoConfigData.RemotePort;
+    AccessPoint4->ActiveFlag  = ConfigData->Tcp4IoConfigData.ActiveFlag;
 
     CopyMem (
-      &AccessPoint4->StationAddress,
-      &ConfigData->Tcp4IoConfigData.LocalIp,
-      sizeof (EFI_IPv4_ADDRESS)
-      );
+             &AccessPoint4->StationAddress,
+             &ConfigData->Tcp4IoConfigData.LocalIp,
+             sizeof (EFI_IPv4_ADDRESS)
+             );
     CopyMem (
-      &AccessPoint4->SubnetMask,
-      &ConfigData->Tcp4IoConfigData.SubnetMask,
-      sizeof (EFI_IPv4_ADDRESS)
-      );
+             &AccessPoint4->SubnetMask,
+             &ConfigData->Tcp4IoConfigData.SubnetMask,
+             sizeof (EFI_IPv4_ADDRESS)
+             );
     CopyMem (
-      &AccessPoint4->RemoteAddress,
-      &ConfigData->Tcp4IoConfigData.RemoteIp,
-      sizeof (EFI_IPv4_ADDRESS)
-      );
+             &AccessPoint4->RemoteAddress,
+             &ConfigData->Tcp4IoConfigData.RemoteIp,
+             sizeof (EFI_IPv4_ADDRESS)
+             );
 
     ASSERT (Tcp4 != NULL);
 
@@ -264,30 +263,29 @@ TcpIoCreateSocket (
       // The gateway is not zero. Add the default route manually.
       //
       Status = Tcp4->Routes (
-                       Tcp4,
-                       FALSE,
-                       &mZeroIp4Addr,
-                       &mZeroIp4Addr,
-                       &ConfigData->Tcp4IoConfigData.Gateway
-                       );
+                             Tcp4,
+                             FALSE,
+                             &mZeroIp4Addr,
+                             &mZeroIp4Addr,
+                             &ConfigData->Tcp4IoConfigData.Gateway
+                             );
       if (EFI_ERROR (Status)) {
         goto ON_ERROR;
       }
     }
   } else {
-    Tcp6ConfigData.TrafficClass         = 0;
-    Tcp6ConfigData.HopLimit             = 255;
-    Tcp6ConfigData.ControlOption        = (EFI_TCP6_OPTION *) &ControlOption;
+    Tcp6ConfigData.TrafficClass  = 0;
+    Tcp6ConfigData.HopLimit      = 255;
+    Tcp6ConfigData.ControlOption = (EFI_TCP6_OPTION *) &ControlOption;
 
-    AccessPoint6                        = &Tcp6ConfigData.AccessPoint;
+    AccessPoint6 = &Tcp6ConfigData.AccessPoint;
 
     ZeroMem (AccessPoint6, sizeof (EFI_TCP6_ACCESS_POINT));
-    AccessPoint6->StationPort           = ConfigData->Tcp6IoConfigData.StationPort;
-    AccessPoint6->RemotePort            = ConfigData->Tcp6IoConfigData.RemotePort;
-    AccessPoint6->ActiveFlag            = ConfigData->Tcp6IoConfigData.ActiveFlag;
+    AccessPoint6->StationPort = ConfigData->Tcp6IoConfigData.StationPort;
+    AccessPoint6->RemotePort  = ConfigData->Tcp6IoConfigData.RemotePort;
+    AccessPoint6->ActiveFlag  = ConfigData->Tcp6IoConfigData.ActiveFlag;
 
     IP6_COPY_ADDRESS (&AccessPoint6->RemoteAddress, &ConfigData->Tcp6IoConfigData.RemoteIp);
-
 
     ASSERT (Tcp6 != NULL);
     //
@@ -307,12 +305,12 @@ TcpIoCreateSocket (
   // Create events for various asynchronous operations.
   //
   Status = gBS->CreateEvent (
-                  EVT_NOTIFY_SIGNAL,
-                  TPL_NOTIFY,
-                  TcpIoCommonNotify,
-                  &TcpIo->IsConnDone,
-                  &Event
-                  );
+                             EVT_NOTIFY_SIGNAL,
+                             TPL_NOTIFY,
+                             TcpIoCommonNotify,
+                             &TcpIo->IsConnDone,
+                             &Event
+                             );
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
@@ -320,12 +318,12 @@ TcpIoCreateSocket (
   TcpIo->ConnToken.Tcp4Token.CompletionToken.Event = Event;
 
   Status = gBS->CreateEvent (
-                  EVT_NOTIFY_SIGNAL,
-                  TPL_NOTIFY,
-                  TcpIoCommonNotify,
-                  &TcpIo->IsListenDone,
-                  &Event
-                  );
+                             EVT_NOTIFY_SIGNAL,
+                             TPL_NOTIFY,
+                             TcpIoCommonNotify,
+                             &TcpIo->IsListenDone,
+                             &Event
+                             );
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
@@ -333,26 +331,25 @@ TcpIoCreateSocket (
   TcpIo->ListenToken.Tcp4Token.CompletionToken.Event = Event;
 
   Status = gBS->CreateEvent (
-                  EVT_NOTIFY_SIGNAL,
-                  TPL_NOTIFY,
-                  TcpIoCommonNotify,
-                  &TcpIo->IsTxDone,
-                  &Event
-                  );
+                             EVT_NOTIFY_SIGNAL,
+                             TPL_NOTIFY,
+                             TcpIoCommonNotify,
+                             &TcpIo->IsTxDone,
+                             &Event
+                             );
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
 
   TcpIo->TxToken.Tcp4Token.CompletionToken.Event = Event;
 
-
   Status = gBS->CreateEvent (
-                  EVT_NOTIFY_SIGNAL,
-                  TPL_NOTIFY,
-                  TcpIoCommonNotify,
-                  &TcpIo->IsRxDone,
-                  &Event
-                  );
+                             EVT_NOTIFY_SIGNAL,
+                             TPL_NOTIFY,
+                             TcpIoCommonNotify,
+                             &TcpIo->IsRxDone,
+                             &Event
+                             );
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
@@ -368,18 +365,17 @@ TcpIoCreateSocket (
   TcpIo->RxToken.Tcp4Token.Packet.RxData = RxData;
 
   Status = gBS->CreateEvent (
-                  EVT_NOTIFY_SIGNAL,
-                  TPL_NOTIFY,
-                  TcpIoCommonNotify,
-                  &TcpIo->IsCloseDone,
-                  &Event
-                  );
+                             EVT_NOTIFY_SIGNAL,
+                             TPL_NOTIFY,
+                             TcpIoCommonNotify,
+                             &TcpIo->IsCloseDone,
+                             &Event
+                             );
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
 
   TcpIo->CloseToken.Tcp4Token.CompletionToken.Event = Event;
-
 
   return EFI_SUCCESS;
 
@@ -402,52 +398,52 @@ TcpIoDestroySocket (
   IN TCP_IO                 *TcpIo
   )
 {
-  EFI_EVENT                 Event;
-  EFI_TCP4_PROTOCOL         *Tcp4;
-  EFI_TCP6_PROTOCOL         *Tcp6;
-  UINT8                     TcpVersion;
-  EFI_GUID                  *ServiceBindingGuid;
-  EFI_GUID                  *ProtocolGuid;
-  EFI_HANDLE                ChildHandle;
+  EFI_EVENT          Event;
+  EFI_TCP4_PROTOCOL  *Tcp4;
+  EFI_TCP6_PROTOCOL  *Tcp6;
+  UINT8              TcpVersion;
+  EFI_GUID           *ServiceBindingGuid;
+  EFI_GUID           *ProtocolGuid;
+  EFI_HANDLE         ChildHandle;
 
   if (TcpIo == NULL) {
-    return ;
+    return;
   }
 
   TcpVersion = TcpIo->TcpVersion;
 
   if ((TcpVersion != TCP_VERSION_4) && (TcpVersion != TCP_VERSION_6)) {
-    return ;
+    return;
   }
 
   Event = TcpIo->ConnToken.Tcp4Token.CompletionToken.Event;
 
   if (Event != NULL) {
-    gBS->CloseEvent (Event);
+  gBS->CloseEvent (Event);
   }
 
   Event = TcpIo->ListenToken.Tcp4Token.CompletionToken.Event;
 
   if (Event != NULL) {
-    gBS->CloseEvent (Event);
+  gBS->CloseEvent (Event);
   }
 
   Event = TcpIo->TxToken.Tcp4Token.CompletionToken.Event;
 
   if (Event != NULL) {
-    gBS->CloseEvent (Event);
+  gBS->CloseEvent (Event);
   }
 
   Event = TcpIo->RxToken.Tcp4Token.CompletionToken.Event;
 
   if (Event != NULL) {
-    gBS->CloseEvent (Event);
+  gBS->CloseEvent (Event);
   }
 
   Event = TcpIo->CloseToken.Tcp4Token.CompletionToken.Event;
 
   if (Event != NULL) {
-    gBS->CloseEvent (Event);
+  gBS->CloseEvent (Event);
   }
 
   if (TcpIo->RxToken.Tcp4Token.Packet.RxData != NULL) {
@@ -457,31 +453,29 @@ TcpIoDestroySocket (
   Tcp4 = NULL;
   Tcp6 = NULL;
 
-
   if (TcpVersion == TCP_VERSION_4) {
     ServiceBindingGuid = &gEfiTcp4ServiceBindingProtocolGuid;
-    ProtocolGuid       = &gEfiTcp4ProtocolGuid;
+    ProtocolGuid = &gEfiTcp4ProtocolGuid;
     Tcp4 = TcpIo->Tcp.Tcp4;
     if (Tcp4 != NULL) {
-      Tcp4->Configure (Tcp4, NULL);
+  Tcp4->Configure (Tcp4, NULL);
     }
   } else {
     ServiceBindingGuid = &gEfiTcp6ServiceBindingProtocolGuid;
-    ProtocolGuid       = &gEfiTcp6ProtocolGuid;
+    ProtocolGuid = &gEfiTcp6ProtocolGuid;
     Tcp6 = TcpIo->Tcp.Tcp6;
     if (Tcp6 != NULL) {
-      Tcp6->Configure (Tcp6, NULL);
+  Tcp6->Configure (Tcp6, NULL);
     }
   }
 
   if ((Tcp4 != NULL) || (Tcp6 != NULL)) {
-
-    gBS->CloseProtocol (
-           TcpIo->Handle,
-           ProtocolGuid,
-           TcpIo->Image,
-           TcpIo->Controller
-           );
+  gBS->CloseProtocol (
+                      TcpIo->Handle,
+                      ProtocolGuid,
+                      TcpIo->Image,
+                      TcpIo->Controller
+                      );
   }
 
   ChildHandle = NULL;
@@ -490,34 +484,33 @@ TcpIoDestroySocket (
     if (TcpVersion == TCP_VERSION_4) {
       Tcp4 = TcpIo->NewTcp.Tcp4;
       if (Tcp4 != NULL) {
-        Tcp4->Configure (Tcp4, NULL);
+  Tcp4->Configure (Tcp4, NULL);
         ChildHandle = TcpIo->ListenToken.Tcp4Token.NewChildHandle;
       }
     } else {
       Tcp6 = TcpIo->NewTcp.Tcp6;
       if (Tcp6 != NULL) {
-        Tcp6->Configure (Tcp6, NULL);
+  Tcp6->Configure (Tcp6, NULL);
         ChildHandle = TcpIo->ListenToken.Tcp6Token.NewChildHandle;
       }
     }
 
     if (ChildHandle != NULL) {
-
-      gBS->CloseProtocol (
-             ChildHandle,
-             ProtocolGuid,
-             TcpIo->Image,
-             TcpIo->Controller
-             );
+  gBS->CloseProtocol (
+                      ChildHandle,
+                      ProtocolGuid,
+                      TcpIo->Image,
+                      TcpIo->Controller
+                      );
     }
   }
 
   NetLibDestroyServiceChild (
-    TcpIo->Controller,
-    TcpIo->Image,
-    ServiceBindingGuid,
-    TcpIo->Handle
-    );
+                             TcpIo->Controller,
+                             TcpIo->Image,
+                             ServiceBindingGuid,
+                             TcpIo->Handle
+                             );
 }
 
 /**
@@ -543,9 +536,9 @@ TcpIoConnect (
   IN     EFI_EVENT          Timeout        OPTIONAL
   )
 {
-  EFI_TCP4_PROTOCOL         *Tcp4;
-  EFI_TCP6_PROTOCOL         *Tcp6;
-  EFI_STATUS                Status;
+  EFI_TCP4_PROTOCOL  *Tcp4;
+  EFI_TCP6_PROTOCOL  *Tcp6;
+  EFI_STATUS         Status;
 
   if ((TcpIo == NULL) || (TcpIo->Tcp.Tcp4 == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -572,18 +565,19 @@ TcpIoConnect (
 
   while (!TcpIo->IsConnDone && ((Timeout == NULL) || EFI_ERROR (gBS->CheckEvent (Timeout)))) {
     if (TcpIo->TcpVersion == TCP_VERSION_4) {
-      Tcp4->Poll (Tcp4);
+  Tcp4->Poll (Tcp4);
     } else {
-      Tcp6->Poll (Tcp6);
+  Tcp6->Poll (Tcp6);
     }
   }
 
   if (!TcpIo->IsConnDone) {
     if (TcpIo->TcpVersion == TCP_VERSION_4) {
-      Tcp4->Cancel (Tcp4, &TcpIo->ConnToken.Tcp4Token.CompletionToken);
+  Tcp4->Cancel (Tcp4, &TcpIo->ConnToken.Tcp4Token.CompletionToken);
     } else {
-      Tcp6->Cancel (Tcp6, &TcpIo->ConnToken.Tcp6Token.CompletionToken);
+  Tcp6->Cancel (Tcp6, &TcpIo->ConnToken.Tcp6Token.CompletionToken);
     }
+
     Status = EFI_TIMEOUT;
   } else {
     Status = TcpIo->ConnToken.Tcp4Token.CompletionToken.Status;
@@ -617,10 +611,10 @@ TcpIoAccept (
   IN     EFI_EVENT          Timeout        OPTIONAL
   )
 {
-  EFI_STATUS                Status;
-  EFI_GUID                  *ProtocolGuid;
-  EFI_TCP4_PROTOCOL         *Tcp4;
-  EFI_TCP6_PROTOCOL         *Tcp6;
+  EFI_STATUS         Status;
+  EFI_GUID           *ProtocolGuid;
+  EFI_TCP4_PROTOCOL  *Tcp4;
+  EFI_TCP6_PROTOCOL  *Tcp6;
 
   if ((TcpIo == NULL) || (TcpIo->Tcp.Tcp4 == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -647,18 +641,19 @@ TcpIoAccept (
 
   while (!TcpIo->IsListenDone && ((Timeout == NULL) || EFI_ERROR (gBS->CheckEvent (Timeout)))) {
     if (TcpIo->TcpVersion == TCP_VERSION_4) {
-      Tcp4->Poll (Tcp4);
+  Tcp4->Poll (Tcp4);
     } else {
-      Tcp6->Poll (Tcp6);
+  Tcp6->Poll (Tcp6);
     }
   }
 
   if (!TcpIo->IsListenDone) {
     if (TcpIo->TcpVersion == TCP_VERSION_4) {
-      Tcp4->Cancel (Tcp4, &TcpIo->ListenToken.Tcp4Token.CompletionToken);
+  Tcp4->Cancel (Tcp4, &TcpIo->ListenToken.Tcp4Token.CompletionToken);
     } else {
-      Tcp6->Cancel (Tcp6, &TcpIo->ListenToken.Tcp6Token.CompletionToken);
+  Tcp6->Cancel (Tcp6, &TcpIo->ListenToken.Tcp6Token.CompletionToken);
     }
+
     Status = EFI_TIMEOUT;
   } else {
     Status = TcpIo->ListenToken.Tcp4Token.CompletionToken.Status;
@@ -676,14 +671,13 @@ TcpIoAccept (
     }
 
     Status = gBS->OpenProtocol (
-                    TcpIo->ListenToken.Tcp4Token.NewChildHandle,
-                    ProtocolGuid,
-                    (VOID **) (&TcpIo->NewTcp.Tcp4),
-                    TcpIo->Image,
-                    TcpIo->Controller,
-                    EFI_OPEN_PROTOCOL_BY_DRIVER
-                    );
-
+                                TcpIo->ListenToken.Tcp4Token.NewChildHandle,
+                                ProtocolGuid,
+                                (VOID **) (&TcpIo->NewTcp.Tcp4),
+                                TcpIo->Image,
+                                TcpIo->Controller,
+                                EFI_OPEN_PROTOCOL_BY_DRIVER
+                                );
   }
 
   return Status;
@@ -701,43 +695,42 @@ TcpIoReset (
   IN OUT TCP_IO             *TcpIo
   )
 {
-  EFI_TCP4_PROTOCOL         *Tcp4;
-  EFI_TCP6_PROTOCOL         *Tcp6;
-  EFI_STATUS                Status;
+  EFI_TCP4_PROTOCOL  *Tcp4;
+  EFI_TCP6_PROTOCOL  *Tcp6;
+  EFI_STATUS         Status;
 
   if ((TcpIo == NULL) || (TcpIo->Tcp.Tcp4 == NULL)) {
-    return ;
+    return;
   }
 
   TcpIo->IsCloseDone = FALSE;
-  Tcp4               = NULL;
-  Tcp6               = NULL;
+  Tcp4 = NULL;
+  Tcp6 = NULL;
 
   if (TcpIo->TcpVersion == TCP_VERSION_4) {
     TcpIo->CloseToken.Tcp4Token.AbortOnClose = TRUE;
-    Tcp4 = TcpIo->Tcp.Tcp4;
+    Tcp4   = TcpIo->Tcp.Tcp4;
     Status = Tcp4->Close (Tcp4, &TcpIo->CloseToken.Tcp4Token);
   } else if (TcpIo->TcpVersion == TCP_VERSION_6) {
     TcpIo->CloseToken.Tcp6Token.AbortOnClose = TRUE;
-    Tcp6 = TcpIo->Tcp.Tcp6;
+    Tcp6   = TcpIo->Tcp.Tcp6;
     Status = Tcp6->Close (Tcp6, &TcpIo->CloseToken.Tcp6Token);
   } else {
-    return ;
+    return;
   }
 
   if (EFI_ERROR (Status)) {
-    return ;
+    return;
   }
 
   while (!TcpIo->IsCloseDone) {
     if (TcpIo->TcpVersion == TCP_VERSION_4) {
-      Tcp4->Poll (Tcp4);
+  Tcp4->Poll (Tcp4);
     } else {
-      Tcp6->Poll (Tcp6);
+  Tcp6->Poll (Tcp6);
     }
   }
 }
-
 
 /**
   Transmit the Packet to the other endpoint of the socket.
@@ -761,18 +754,17 @@ TcpIoTransmit (
   IN NET_BUF                *Packet
   )
 {
-  EFI_STATUS                Status;
-  VOID                      *Data;
-  EFI_TCP4_PROTOCOL         *Tcp4;
-  EFI_TCP6_PROTOCOL         *Tcp6;
-  UINTN                     Size;
+  EFI_STATUS         Status;
+  VOID               *Data;
+  EFI_TCP4_PROTOCOL  *Tcp4;
+  EFI_TCP6_PROTOCOL  *Tcp6;
+  UINTN              Size;
 
-  if ((TcpIo == NULL) || (TcpIo->Tcp.Tcp4 == NULL)|| (Packet == NULL)) {
+  if ((TcpIo == NULL) || (TcpIo->Tcp.Tcp4 == NULL) || (Packet == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
 
   if (TcpIo->TcpVersion == TCP_VERSION_4) {
-
     Size = sizeof (EFI_TCP4_TRANSMIT_DATA) +
            (Packet->BlockOpNum - 1) * sizeof (EFI_TCP4_FRAGMENT_DATA);
   } else if (TcpIo->TcpVersion == TCP_VERSION_6) {
@@ -787,9 +779,9 @@ TcpIoTransmit (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  ((EFI_TCP4_TRANSMIT_DATA *) Data)->Push        = TRUE;
-  ((EFI_TCP4_TRANSMIT_DATA *) Data)->Urgent      = FALSE;
-  ((EFI_TCP4_TRANSMIT_DATA *) Data)->DataLength  = Packet->TotalSize;
+  ((EFI_TCP4_TRANSMIT_DATA *) Data)->Push       = TRUE;
+  ((EFI_TCP4_TRANSMIT_DATA *) Data)->Urgent     = FALSE;
+  ((EFI_TCP4_TRANSMIT_DATA *) Data)->DataLength = Packet->TotalSize;
 
   //
   // Build the fragment table.
@@ -797,10 +789,10 @@ TcpIoTransmit (
   ((EFI_TCP4_TRANSMIT_DATA *) Data)->FragmentCount = Packet->BlockOpNum;
 
   NetbufBuildExt (
-    Packet,
-    (NET_FRAGMENT *) &((EFI_TCP4_TRANSMIT_DATA *) Data)->FragmentTable[0],
-    &((EFI_TCP4_TRANSMIT_DATA *) Data)->FragmentCount
-    );
+                  Packet,
+                  (NET_FRAGMENT *) &((EFI_TCP4_TRANSMIT_DATA *) Data)->FragmentTable[0],
+                  &((EFI_TCP4_TRANSMIT_DATA *) Data)->FragmentCount
+                  );
 
   Tcp4   = NULL;
   Tcp6   = NULL;
@@ -811,7 +803,7 @@ TcpIoTransmit (
   //
   if (TcpIo->TcpVersion == TCP_VERSION_4) {
     TcpIo->TxToken.Tcp4Token.Packet.TxData = (EFI_TCP4_TRANSMIT_DATA *) Data;
-    Tcp4    = TcpIo->Tcp.Tcp4;
+    Tcp4 = TcpIo->Tcp.Tcp4;
     if (TcpIo->IsListenDone) {
       Tcp4 = TcpIo->NewTcp.Tcp4;
     }
@@ -820,10 +812,10 @@ TcpIoTransmit (
       goto ON_EXIT;
     }
 
-    Status  = Tcp4->Transmit (Tcp4, &TcpIo->TxToken.Tcp4Token);
+    Status = Tcp4->Transmit (Tcp4, &TcpIo->TxToken.Tcp4Token);
   } else {
     TcpIo->TxToken.Tcp6Token.Packet.TxData = (EFI_TCP6_TRANSMIT_DATA *) Data;
-    Tcp6    = TcpIo->Tcp.Tcp6;
+    Tcp6 = TcpIo->Tcp.Tcp6;
     if (TcpIo->IsListenDone) {
       Tcp6 = TcpIo->NewTcp.Tcp6;
     }
@@ -832,7 +824,7 @@ TcpIoTransmit (
       goto ON_EXIT;
     }
 
-    Status  = Tcp6->Transmit (Tcp6, &TcpIo->TxToken.Tcp6Token);
+    Status = Tcp6->Transmit (Tcp6, &TcpIo->TxToken.Tcp6Token);
   }
 
   if (EFI_ERROR (Status)) {
@@ -841,14 +833,14 @@ TcpIoTransmit (
 
   while (!TcpIo->IsTxDone) {
     if (TcpIo->TcpVersion == TCP_VERSION_4) {
-      Tcp4->Poll (Tcp4);
+  Tcp4->Poll (Tcp4);
     } else {
-      Tcp6->Poll (Tcp6);
+  Tcp6->Poll (Tcp6);
     }
   }
 
-  TcpIo->IsTxDone  = FALSE;
-  Status           = TcpIo->TxToken.Tcp4Token.CompletionToken.Status;
+  TcpIo->IsTxDone = FALSE;
+  Status = TcpIo->TxToken.Tcp4Token.CompletionToken.Status;
 
 ON_EXIT:
 
@@ -884,15 +876,15 @@ TcpIoReceive (
   IN     EFI_EVENT          Timeout       OPTIONAL
   )
 {
-  EFI_TCP4_PROTOCOL         *Tcp4;
-  EFI_TCP6_PROTOCOL         *Tcp6;
-  EFI_TCP4_RECEIVE_DATA     *RxData;
-  EFI_STATUS                Status;
-  NET_FRAGMENT              *Fragment;
-  UINT32                    FragmentCount;
-  UINT32                    CurrentFragment;
+  EFI_TCP4_PROTOCOL      *Tcp4;
+  EFI_TCP6_PROTOCOL      *Tcp6;
+  EFI_TCP4_RECEIVE_DATA  *RxData;
+  EFI_STATUS             Status;
+  NET_FRAGMENT           *Fragment;
+  UINT32                 FragmentCount;
+  UINT32                 CurrentFragment;
 
-  if ((TcpIo == NULL) || (TcpIo->Tcp.Tcp4 == NULL)|| (Packet == NULL)) {
+  if ((TcpIo == NULL) || (TcpIo->Tcp.Tcp4 == NULL) || (Packet == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -914,7 +906,6 @@ TcpIoReceive (
     if (Tcp4 == NULL) {
       return EFI_DEVICE_ERROR;
     }
-
   } else if (TcpIo->TcpVersion == TCP_VERSION_6) {
     Tcp6 = TcpIo->Tcp.Tcp6;
 
@@ -925,30 +916,30 @@ TcpIoReceive (
     if (Tcp6 == NULL) {
       return EFI_DEVICE_ERROR;
     }
-
   } else {
     return EFI_UNSUPPORTED;
   }
 
   FragmentCount = Packet->BlockOpNum;
-  Fragment      = AllocatePool (FragmentCount * sizeof (NET_FRAGMENT));
+  Fragment = AllocatePool (FragmentCount * sizeof (NET_FRAGMENT));
   if (Fragment == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ON_EXIT;
   }
+
   //
   // Build the fragment table.
   //
   NetbufBuildExt (Packet, Fragment, &FragmentCount);
 
-  RxData->FragmentCount         = 1;
-  CurrentFragment               = 0;
-  Status                        = EFI_SUCCESS;
+  RxData->FragmentCount = 1;
+  CurrentFragment = 0;
+  Status = EFI_SUCCESS;
 
   while (CurrentFragment < FragmentCount) {
-    RxData->DataLength                       = Fragment[CurrentFragment].Len;
-    RxData->FragmentTable[0].FragmentLength  = Fragment[CurrentFragment].Len;
-    RxData->FragmentTable[0].FragmentBuffer  = Fragment[CurrentFragment].Bulk;
+    RxData->DataLength = Fragment[CurrentFragment].Len;
+    RxData->FragmentTable[0].FragmentLength = Fragment[CurrentFragment].Len;
+    RxData->FragmentTable[0].FragmentBuffer = Fragment[CurrentFragment].Bulk;
 
     if (TcpIo->TcpVersion == TCP_VERSION_4) {
       Status = Tcp4->Receive (Tcp4, &TcpIo->RxToken.Tcp4Token);
@@ -965,9 +956,9 @@ TcpIoReceive (
       // Poll until some data is received or an error occurs.
       //
       if (TcpIo->TcpVersion == TCP_VERSION_4) {
-        Tcp4->Poll (Tcp4);
+  Tcp4->Poll (Tcp4);
       } else {
-        Tcp6->Poll (Tcp6);
+  Tcp6->Poll (Tcp6);
       }
     }
 
@@ -976,9 +967,9 @@ TcpIoReceive (
       // Timeout occurs, cancel the receive request.
       //
       if (TcpIo->TcpVersion == TCP_VERSION_4) {
-        Tcp4->Cancel (Tcp4, &TcpIo->RxToken.Tcp4Token.CompletionToken);
+  Tcp4->Cancel (Tcp4, &TcpIo->RxToken.Tcp4Token.CompletionToken);
       } else {
-        Tcp6->Cancel (Tcp6, &TcpIo->RxToken.Tcp6Token.CompletionToken);
+  Tcp6->Cancel (Tcp6, &TcpIo->RxToken.Tcp6Token.CompletionToken);
       }
 
       Status = EFI_TIMEOUT;

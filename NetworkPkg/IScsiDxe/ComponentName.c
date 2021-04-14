@@ -11,7 +11,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL gIScsiComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gIScsiComponentName = {
   IScsiComponentNameGetDriverName,
   IScsiComponentNameGetControllerName,
   "eng"
@@ -20,13 +20,13 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL gIScsiComponentName = 
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL gIScsiComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gIScsiComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) IScsiComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) IScsiComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE     mIScsiDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mIScsiDriverNameTable[] = {
   {
     "eng;en",
     L"iSCSI Driver"
@@ -87,12 +87,12 @@ IScsiComponentNameGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mIScsiDriverNameTable,
-           DriverName,
-           (BOOLEAN) (This == &gIScsiComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mIScsiDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gIScsiComponentName)
+                               );
 }
 
 /**
@@ -112,10 +112,10 @@ UpdateName (
   IN   BOOLEAN     Ipv6Flag
   )
 {
-  EFI_STATUS                       Status;
-  CHAR16                           HandleName[80];
-  ISCSI_DRIVER_DATA                *Private;
-  UINT8                            NicIndex;
+  EFI_STATUS         Status;
+  CHAR16             HandleName[80];
+  ISCSI_DRIVER_DATA  *Private;
+  UINT8              NicIndex;
 
   if (IScsiExtScsiPassThru == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -125,12 +125,12 @@ UpdateName (
   NicIndex = Private->Session->ConfigData->NicIndex;
 
   UnicodeSPrint (
-    HandleName,
-    sizeof (HandleName),
-    L"iSCSI (%s, NicIndex=%d)",
-    Ipv6Flag ? L"IPv6" : L"IPv4",
-    NicIndex
-  );
+                 HandleName,
+                 sizeof (HandleName),
+                 L"iSCSI (%s, NicIndex=%d)",
+                 Ipv6Flag ? L"IPv6" : L"IPv4",
+                 NicIndex
+                 );
 
   if (gIScsiControllerNameTable != NULL) {
     FreeUnicodeStringTable (gIScsiControllerNameTable);
@@ -138,23 +138,23 @@ UpdateName (
   }
 
   Status = AddUnicodeString2 (
-             "eng",
-             gIScsiComponentName.SupportedLanguages,
-             &gIScsiControllerNameTable,
-             HandleName,
-             TRUE
-             );
+                              "eng",
+                              gIScsiComponentName.SupportedLanguages,
+                              &gIScsiControllerNameTable,
+                              HandleName,
+                              TRUE
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   return AddUnicodeString2 (
-           "en",
-           gIScsiComponentName2.SupportedLanguages,
-           &gIScsiControllerNameTable,
-           HandleName,
-           FALSE
-           );
+                            "en",
+                            gIScsiComponentName2.SupportedLanguages,
+                            &gIScsiControllerNameTable,
+                            HandleName,
+                            FALSE
+                            );
 }
 
 /**
@@ -235,14 +235,14 @@ IScsiComponentNameGetControllerName (
   OUT CHAR16                        **ControllerName
   )
 {
-  EFI_STATUS                      Status;
+  EFI_STATUS  Status;
 
-  EFI_HANDLE                      IScsiController;
-  BOOLEAN                         Ipv6Flag;
-  EFI_GUID                        *IScsiPrivateGuid;
-  ISCSI_PRIVATE_PROTOCOL          *IScsiIdentifier;
+  EFI_HANDLE              IScsiController;
+  BOOLEAN                 Ipv6Flag;
+  EFI_GUID                *IScsiPrivateGuid;
+  ISCSI_PRIVATE_PROTOCOL  *IScsiIdentifier;
 
-  EFI_EXT_SCSI_PASS_THRU_PROTOCOL *IScsiExtScsiPassThru;
+  EFI_EXT_SCSI_PASS_THRU_PROTOCOL  *IScsiExtScsiPassThru;
 
   if (ControllerHandle == NULL) {
     return EFI_UNSUPPORTED;
@@ -266,13 +266,13 @@ IScsiComponentNameGetControllerName (
   }
 
   Status = gBS->OpenProtocol (
-                  IScsiController,
-                  IScsiPrivateGuid,
-                  (VOID **) &IScsiIdentifier,
-                  NULL,
-                  NULL,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              IScsiController,
+                              IScsiPrivateGuid,
+                              (VOID **) &IScsiIdentifier,
+                              NULL,
+                              NULL,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -283,10 +283,10 @@ IScsiComponentNameGetControllerName (
       // Make sure this driver produced ChildHandle
       //
       Status = EfiTestChildHandle (
-                 ControllerHandle,
-                 ChildHandle,
-                 &gEfiTcp4ProtocolGuid
-                 );
+                                   ControllerHandle,
+                                   ChildHandle,
+                                   &gEfiTcp4ProtocolGuid
+                                   );
       if (EFI_ERROR (Status)) {
         return Status;
       }
@@ -295,10 +295,10 @@ IScsiComponentNameGetControllerName (
       // Make sure this driver produced ChildHandle
       //
       Status = EfiTestChildHandle (
-                 ControllerHandle,
-                 ChildHandle,
-                 &gEfiTcp6ProtocolGuid
-                 );
+                                   ControllerHandle,
+                                   ChildHandle,
+                                   &gEfiTcp6ProtocolGuid
+                                   );
       if (EFI_ERROR (Status)) {
         return Status;
       }
@@ -308,13 +308,13 @@ IScsiComponentNameGetControllerName (
     // Retrieve an instance of a produced protocol from ChildHandle
     //
     Status = gBS->OpenProtocol (
-                    ChildHandle,
-                    &gEfiExtScsiPassThruProtocolGuid,
-                   (VOID **)&IScsiExtScsiPassThru,
-                    NULL,
-                    NULL,
-                    EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                    );
+                                ChildHandle,
+                                &gEfiExtScsiPassThruProtocolGuid,
+                                (VOID **) &IScsiExtScsiPassThru,
+                                NULL,
+                                NULL,
+                                EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                                );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -329,10 +329,10 @@ IScsiComponentNameGetControllerName (
   }
 
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           gIScsiControllerNameTable,
-           ControllerName,
-           (BOOLEAN)(This == &gIScsiComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               gIScsiControllerNameTable,
+                               ControllerName,
+                               (BOOLEAN) (This == &gIScsiComponentName)
+                               );
 }

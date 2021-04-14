@@ -9,15 +9,15 @@
 
 #include "TcpMain.h"
 
-UINT16                        mTcp4RandomPort;
-UINT16                        mTcp6RandomPort;
+UINT16  mTcp4RandomPort;
+UINT16  mTcp6RandomPort;
 
-TCP_HEARTBEAT_TIMER           mTcpTimer = {
+TCP_HEARTBEAT_TIMER  mTcpTimer = {
   NULL,
   0
 };
 
-EFI_TCP4_PROTOCOL             gTcp4ProtocolTemplate = {
+EFI_TCP4_PROTOCOL  gTcp4ProtocolTemplate = {
   Tcp4GetModeData,
   Tcp4Configure,
   Tcp4Routes,
@@ -30,7 +30,7 @@ EFI_TCP4_PROTOCOL             gTcp4ProtocolTemplate = {
   Tcp4Poll
 };
 
-EFI_TCP6_PROTOCOL             gTcp6ProtocolTemplate = {
+EFI_TCP6_PROTOCOL  gTcp6ProtocolTemplate = {
   Tcp6GetModeData,
   Tcp6Configure,
   Tcp6Connect,
@@ -42,7 +42,7 @@ EFI_TCP6_PROTOCOL             gTcp6ProtocolTemplate = {
   Tcp6Poll
 };
 
-SOCK_INIT_DATA                mTcpDefaultSockData = {
+SOCK_INIT_DATA  mTcpDefaultSockData = {
   SockStream,
   SO_CLOSED,
   NULL,
@@ -60,7 +60,7 @@ SOCK_INIT_DATA                mTcpDefaultSockData = {
   NULL,
 };
 
-EFI_DRIVER_BINDING_PROTOCOL   gTcp4DriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  gTcp4DriverBinding = {
   Tcp4DriverBindingSupported,
   Tcp4DriverBindingStart,
   Tcp4DriverBindingStop,
@@ -69,7 +69,7 @@ EFI_DRIVER_BINDING_PROTOCOL   gTcp4DriverBinding = {
   NULL
 };
 
-EFI_DRIVER_BINDING_PROTOCOL   gTcp6DriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  gTcp6DriverBinding = {
   Tcp6DriverBindingSupported,
   Tcp6DriverBindingStart,
   Tcp6DriverBindingStop,
@@ -82,7 +82,6 @@ EFI_SERVICE_BINDING_PROTOCOL  gTcpServiceBinding = {
   TcpServiceBindingCreateChild,
   TcpServiceBindingDestroyChild
 };
-
 
 /**
   Create and start the heartbeat timer for the TCP driver.
@@ -101,26 +100,23 @@ TcpCreateTimer (
   Status = EFI_SUCCESS;
 
   if (mTcpTimer.RefCnt == 0) {
-
     Status = gBS->CreateEvent (
-                    EVT_TIMER | EVT_NOTIFY_SIGNAL,
-                    TPL_NOTIFY,
-                    TcpTicking,
-                    NULL,
-                    &mTcpTimer.TimerEvent
-                    );
+                               EVT_TIMER | EVT_NOTIFY_SIGNAL,
+                               TPL_NOTIFY,
+                               TcpTicking,
+                               NULL,
+                               &mTcpTimer.TimerEvent
+                               );
     if (!EFI_ERROR (Status)) {
-
       Status = gBS->SetTimer (
-                      mTcpTimer.TimerEvent,
-                      TimerPeriodic,
-                      (UINT64) (TICKS_PER_SECOND / TCP_TICK_HZ)
-                      );
+                              mTcpTimer.TimerEvent,
+                              TimerPeriodic,
+                              (UINT64) (TICKS_PER_SECOND / TCP_TICK_HZ)
+                              );
     }
   }
 
   if (!EFI_ERROR (Status)) {
-
     mTcpTimer.RefCnt++;
   }
 
@@ -173,13 +169,13 @@ TcpDriverEntryPoint (
   // Install the TCP Driver Binding Protocol
   //
   Status = EfiLibInstallDriverBindingComponentName2 (
-             ImageHandle,
-             SystemTable,
-             &gTcp4DriverBinding,
-             ImageHandle,
-             &gTcpComponentName,
-             &gTcpComponentName2
-             );
+                                                     ImageHandle,
+                                                     SystemTable,
+                                                     &gTcp4DriverBinding,
+                                                     ImageHandle,
+                                                     &gTcpComponentName,
+                                                     &gTcpComponentName2
+                                                     );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -188,26 +184,26 @@ TcpDriverEntryPoint (
   // Install the TCP Driver Binding Protocol
   //
   Status = EfiLibInstallDriverBindingComponentName2 (
-             ImageHandle,
-             SystemTable,
-             &gTcp6DriverBinding,
-             NULL,
-             &gTcpComponentName,
-             &gTcpComponentName2
-             );
+                                                     ImageHandle,
+                                                     SystemTable,
+                                                     &gTcp6DriverBinding,
+                                                     NULL,
+                                                     &gTcpComponentName,
+                                                     &gTcpComponentName2
+                                                     );
   if (EFI_ERROR (Status)) {
     EfiLibUninstallDriverBindingComponentName2 (
-      &gTcp4DriverBinding,
-      &gTcpComponentName,
-      &gTcpComponentName2
-      );
+                                                &gTcp4DriverBinding,
+                                                &gTcpComponentName,
+                                                &gTcpComponentName2
+                                                );
     return Status;
   }
 
   //
   // Initialize ISS and random port.
   //
-  Seed            = NetRandomInitSeed ();
+  Seed = NetRandomInitSeed ();
   mTcpGlobalIss   = NET_RANDOM (Seed) % mTcpGlobalIss;
   mTcp4RandomPort = (UINT16) (TCP_PORT_KNOWN + (NET_RANDOM (Seed) % TCP_PORT_KNOWN));
   mTcp6RandomPort = mTcp4RandomPort;
@@ -233,11 +229,11 @@ TcpCreateService (
   IN UINT8       IpVersion
   )
 {
-  EFI_STATUS         Status;
-  EFI_GUID           *IpServiceBindingGuid;
-  EFI_GUID           *TcpServiceBindingGuid;
-  TCP_SERVICE_DATA   *TcpServiceData;
-  IP_IO_OPEN_DATA    OpenData;
+  EFI_STATUS        Status;
+  EFI_GUID          *IpServiceBindingGuid;
+  EFI_GUID          *TcpServiceBindingGuid;
+  TCP_SERVICE_DATA  *TcpServiceData;
+  IP_IO_OPEN_DATA   OpenData;
 
   if (IpVersion == IP_VERSION_4) {
     IpServiceBindingGuid  = &gEfiIp4ServiceBindingProtocolGuid;
@@ -248,25 +244,25 @@ TcpCreateService (
   }
 
   Status = gBS->OpenProtocol (
-                  Controller,
-                  TcpServiceBindingGuid,
-                  NULL,
-                  Image,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              Controller,
+                              TcpServiceBindingGuid,
+                              NULL,
+                              Image,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
   if (!EFI_ERROR (Status)) {
     return EFI_ALREADY_STARTED;
   }
 
   Status = gBS->OpenProtocol (
-                  Controller,
-                  IpServiceBindingGuid,
-                  NULL,
-                  Image,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              Controller,
+                              IpServiceBindingGuid,
+                              NULL,
+                              Image,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
@@ -279,15 +275,15 @@ TcpCreateService (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  TcpServiceData->Signature            = TCP_DRIVER_SIGNATURE;
-  TcpServiceData->ControllerHandle     = Controller;
-  TcpServiceData->DriverBindingHandle  = Image;
-  TcpServiceData->IpVersion            = IpVersion;
+  TcpServiceData->Signature = TCP_DRIVER_SIGNATURE;
+  TcpServiceData->ControllerHandle    = Controller;
+  TcpServiceData->DriverBindingHandle = Image;
+  TcpServiceData->IpVersion = IpVersion;
   CopyMem (
-    &TcpServiceData->ServiceBinding,
-    &gTcpServiceBinding,
-    sizeof (EFI_SERVICE_BINDING_PROTOCOL)
-    );
+           &TcpServiceData->ServiceBinding,
+           &gTcpServiceBinding,
+           sizeof (EFI_SERVICE_BINDING_PROTOCOL)
+           );
 
   TcpServiceData->IpIo = IpIoCreate (Image, Controller, IpVersion);
   if (TcpServiceData->IpIo == NULL) {
@@ -295,28 +291,27 @@ TcpCreateService (
     goto ON_ERROR;
   }
 
-
   InitializeListHead (&TcpServiceData->SocketList);
   ZeroMem (&OpenData, sizeof (IP_IO_OPEN_DATA));
 
   if (IpVersion == IP_VERSION_4) {
     CopyMem (
-      &OpenData.IpConfigData.Ip4CfgData,
-      &mIp4IoDefaultIpConfigData,
-      sizeof (EFI_IP4_CONFIG_DATA)
-      );
+             &OpenData.IpConfigData.Ip4CfgData,
+             &mIp4IoDefaultIpConfigData,
+             sizeof (EFI_IP4_CONFIG_DATA)
+             );
     OpenData.IpConfigData.Ip4CfgData.DefaultProtocol = EFI_IP_PROTO_TCP;
   } else {
     CopyMem (
-      &OpenData.IpConfigData.Ip6CfgData,
-      &mIp6IoDefaultIpConfigData,
-      sizeof (EFI_IP6_CONFIG_DATA)
-      );
+             &OpenData.IpConfigData.Ip6CfgData,
+             &mIp6IoDefaultIpConfigData,
+             sizeof (EFI_IP6_CONFIG_DATA)
+             );
     OpenData.IpConfigData.Ip6CfgData.DefaultProtocol = EFI_IP_PROTO_TCP;
   }
 
-  OpenData.PktRcvdNotify  = TcpRxCallback;
-  Status                  = IpIoOpen (TcpServiceData->IpIo, &OpenData);
+  OpenData.PktRcvdNotify = TcpRxCallback;
+  Status = IpIoOpen (TcpServiceData->IpIo, &OpenData);
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
@@ -327,11 +322,11 @@ TcpCreateService (
   }
 
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &Controller,
-                  TcpServiceBindingGuid,
-                  &TcpServiceData->ServiceBinding,
-                  NULL
-                  );
+                                                   &Controller,
+                                                   TcpServiceBindingGuid,
+                                                   &TcpServiceData->ServiceBinding,
+                                                   NULL
+                                                   );
   if (EFI_ERROR (Status)) {
     TcpDestroyTimer ();
 
@@ -415,13 +410,13 @@ TcpDestroyService (
   IN UINT8       IpVersion
   )
 {
-  EFI_HANDLE                    NicHandle;
-  EFI_GUID                      *IpProtocolGuid;
-  EFI_GUID                      *ServiceBindingGuid;
-  EFI_SERVICE_BINDING_PROTOCOL  *ServiceBinding;
-  TCP_SERVICE_DATA              *TcpServiceData;
-  EFI_STATUS                    Status;
-  LIST_ENTRY                    *List;
+  EFI_HANDLE                               NicHandle;
+  EFI_GUID                                 *IpProtocolGuid;
+  EFI_GUID                                 *ServiceBindingGuid;
+  EFI_SERVICE_BINDING_PROTOCOL             *ServiceBinding;
+  TCP_SERVICE_DATA                         *TcpServiceData;
+  EFI_STATUS                               Status;
+  LIST_ENTRY                               *List;
   TCP_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT  Context;
 
   ASSERT ((IpVersion == IP_VERSION_4) || (IpVersion == IP_VERSION_6));
@@ -440,13 +435,13 @@ TcpDestroyService (
   }
 
   Status = gBS->OpenProtocol (
-                  NicHandle,
-                  ServiceBindingGuid,
-                  (VOID **) &ServiceBinding,
-                  ImageHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              NicHandle,
+                              ServiceBindingGuid,
+                              (VOID **) &ServiceBinding,
+                              ImageHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
   }
@@ -455,25 +450,25 @@ TcpDestroyService (
 
   if (NumberOfChildren != 0) {
     List = &TcpServiceData->SocketList;
-    Context.ServiceBinding = ServiceBinding;
-    Context.NumberOfChildren = NumberOfChildren;
+    Context.ServiceBinding    = ServiceBinding;
+    Context.NumberOfChildren  = NumberOfChildren;
     Context.ChildHandleBuffer = ChildHandleBuffer;
     Status = NetDestroyLinkList (
-               List,
-               TcpDestroyChildEntryInHandleBuffer,
-               &Context,
-               NULL
-               );
+                                 List,
+                                 TcpDestroyChildEntryInHandleBuffer,
+                                 &Context,
+                                 NULL
+                                 );
   } else if (IsListEmpty (&TcpServiceData->SocketList)) {
     //
     // Uninstall TCP servicebinding protocol
     //
     gBS->UninstallMultipleProtocolInterfaces (
-           NicHandle,
-           ServiceBindingGuid,
-           ServiceBinding,
-           NULL
-           );
+                                              NicHandle,
+                                              ServiceBindingGuid,
+                                              ServiceBinding,
+                                              NULL
+                                              );
 
     //
     // Destroy the IpIO consumed by TCP driver
@@ -524,13 +519,13 @@ Tcp4DriverBindingSupported (
   // Test for the Tcp4ServiceBinding Protocol
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiTcp4ServiceBindingProtocolGuid,
-                  NULL,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiTcp4ServiceBindingProtocolGuid,
+                              NULL,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
   if (!EFI_ERROR (Status)) {
     return EFI_ALREADY_STARTED;
   }
@@ -539,13 +534,13 @@ Tcp4DriverBindingSupported (
   // Test for the Ip4ServiceBinding Protocol
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiIp4ServiceBindingProtocolGuid,
-                  NULL,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiIp4ServiceBindingProtocolGuid,
+                              NULL,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
   return Status;
 }
 
@@ -606,12 +601,12 @@ Tcp4DriverBindingStop (
   )
 {
   return TcpDestroyService (
-           ControllerHandle,
-           This->DriverBindingHandle,
-           NumberOfChildren,
-           ChildHandleBuffer,
-           IP_VERSION_4
-           );
+                            ControllerHandle,
+                            This->DriverBindingHandle,
+                            NumberOfChildren,
+                            ChildHandleBuffer,
+                            IP_VERSION_4
+                            );
 }
 
 /**
@@ -641,13 +636,13 @@ Tcp6DriverBindingSupported (
   // Test for the Tcp6ServiceBinding Protocol
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiTcp6ServiceBindingProtocolGuid,
-                  NULL,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiTcp6ServiceBindingProtocolGuid,
+                              NULL,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
   if (!EFI_ERROR (Status)) {
     return EFI_ALREADY_STARTED;
   }
@@ -656,13 +651,13 @@ Tcp6DriverBindingSupported (
   // Test for the Ip6ServiceBinding Protocol
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiIp6ServiceBindingProtocolGuid,
-                  NULL,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiIp6ServiceBindingProtocolGuid,
+                              NULL,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
   return Status;
 }
 
@@ -723,12 +718,12 @@ Tcp6DriverBindingStop (
   )
 {
   return TcpDestroyService (
-           ControllerHandle,
-           This->DriverBindingHandle,
-           NumberOfChildren,
-           ChildHandleBuffer,
-           IP_VERSION_6
-           );
+                            ControllerHandle,
+                            This->DriverBindingHandle,
+                            NumberOfChildren,
+                            ChildHandleBuffer,
+                            IP_VERSION_6
+                            );
 }
 
 /**
@@ -764,13 +759,13 @@ TcpCreateSocketCallback (
   // Open the default IP protocol of IP_IO BY_DRIVER.
   //
   Status = gBS->OpenProtocol (
-                  TcpServiceData->IpIo->ChildHandle,
-                  IpProtocolGuid,
-                  &Ip,
-                  TcpServiceData->DriverBindingHandle,
-                  This->SockHandle,
-                  EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
-                  );
+                              TcpServiceData->IpIo->ChildHandle,
+                              IpProtocolGuid,
+                              &Ip,
+                              TcpServiceData->DriverBindingHandle,
+                              This->SockHandle,
+                              EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -779,20 +774,20 @@ TcpCreateSocketCallback (
   // Open the device path on the handle where service binding resides on.
   //
   Status = gBS->OpenProtocol (
-                  TcpServiceData->ControllerHandle,
-                  &gEfiDevicePathProtocolGuid,
-                  (VOID **) &This->ParentDevicePath,
-                  TcpServiceData->DriverBindingHandle,
-                  This->SockHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              TcpServiceData->ControllerHandle,
+                              &gEfiDevicePathProtocolGuid,
+                              (VOID **) &This->ParentDevicePath,
+                              TcpServiceData->DriverBindingHandle,
+                              This->SockHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
-    gBS->CloseProtocol (
-           TcpServiceData->IpIo->ChildHandle,
-           IpProtocolGuid,
-           TcpServiceData->DriverBindingHandle,
-           This->SockHandle
-           );
+  gBS->CloseProtocol (
+                      TcpServiceData->IpIo->ChildHandle,
+                      IpProtocolGuid,
+                      TcpServiceData->DriverBindingHandle,
+                      This->SockHandle
+                      );
   } else {
     //
     // Insert this socket into the SocketList.
@@ -836,11 +831,11 @@ TcpDestroySocketCallback (
   // Close the IP protocol.
   //
   gBS->CloseProtocol (
-         TcpServiceData->IpIo->ChildHandle,
-         IpProtocolGuid,
-         TcpServiceData->DriverBindingHandle,
-         This->SockHandle
-         );
+                      TcpServiceData->IpIo->ChildHandle,
+                      IpProtocolGuid,
+                      TcpServiceData->DriverBindingHandle,
+                      This->SockHandle
+                      );
 }
 
 /**
@@ -882,8 +877,8 @@ TcpServiceBindingCreateChild (
 
   OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
 
-  Status              = EFI_SUCCESS;
-  TcpServiceData      = TCP_SERVICE_FROM_THIS (This);
+  Status = EFI_SUCCESS;
+  TcpServiceData = TCP_SERVICE_FROM_THIS (This);
   TcpProto.TcpService = TcpServiceData;
   TcpProto.TcpPcb     = NULL;
 
@@ -905,16 +900,16 @@ TcpServiceBindingCreateChild (
   Sock = SockCreateChild (&mTcpDefaultSockData);
   if (NULL == Sock) {
     DEBUG (
-      (EFI_D_ERROR,
-      "TcpDriverBindingCreateChild: No resource to create a Tcp Child\n")
-      );
+           (EFI_D_ERROR,
+            "TcpDriverBindingCreateChild: No resource to create a Tcp Child\n")
+           );
 
     Status = EFI_OUT_OF_RESOURCES;
   } else {
     *ChildHandle = Sock->SockHandle;
   }
 
-  mTcpDefaultSockData.ProtoData  = NULL;
+  mTcpDefaultSockData.ProtoData = NULL;
 
   gBS->RestoreTPL (OldTpl);
   return Status;
@@ -957,25 +952,25 @@ TcpServiceBindingDestroyChild (
   // retrieve the Tcp4 protocol from ChildHandle
   //
   Status = gBS->OpenProtocol (
-                  ChildHandle,
-                  &gEfiTcp4ProtocolGuid,
-                  &Tcp,
-                  gTcp4DriverBinding.DriverBindingHandle,
-                  ChildHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ChildHandle,
+                              &gEfiTcp4ProtocolGuid,
+                              &Tcp,
+                              gTcp4DriverBinding.DriverBindingHandle,
+                              ChildHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     //
     // No Tcp4, try the Tcp6 protocol
     //
     Status = gBS->OpenProtocol (
-                    ChildHandle,
-                    &gEfiTcp6ProtocolGuid,
-                    &Tcp,
-                    gTcp6DriverBinding.DriverBindingHandle,
-                    ChildHandle,
-                    EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                    );
+                                ChildHandle,
+                                &gEfiTcp6ProtocolGuid,
+                                &Tcp,
+                                gTcp6DriverBinding.DriverBindingHandle,
+                                ChildHandle,
+                                EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                                );
     if (EFI_ERROR (Status)) {
       Status = EFI_UNSUPPORTED;
     }

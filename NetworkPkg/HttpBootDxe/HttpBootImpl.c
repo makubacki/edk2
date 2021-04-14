@@ -23,8 +23,8 @@ HttpBootInstallCallback (
   IN HTTP_BOOT_PRIVATE_DATA           *Private
   )
 {
-  EFI_STATUS                  Status;
-  EFI_HANDLE                  ControllerHandle;
+  EFI_STATUS  Status;
+  EFI_HANDLE  ControllerHandle;
 
   if (!Private->UsingIpv6) {
     ControllerHandle = Private->Ip4Nic->Controller;
@@ -36,30 +36,30 @@ HttpBootInstallCallback (
   // Check whether gEfiHttpBootCallbackProtocolGuid already installed.
   //
   Status = gBS->HandleProtocol (
-                  ControllerHandle,
-                  &gEfiHttpBootCallbackProtocolGuid,
-                  (VOID **) &Private->HttpBootCallback
-                  );
+                                ControllerHandle,
+                                &gEfiHttpBootCallbackProtocolGuid,
+                                (VOID **) &Private->HttpBootCallback
+                                );
   if (Status == EFI_UNSUPPORTED) {
-
     CopyMem (
-      &Private->LoadFileCallback,
-      &gHttpBootDxeHttpBootCallback,
-      sizeof (EFI_HTTP_BOOT_CALLBACK_PROTOCOL)
-      );
+             &Private->LoadFileCallback,
+             &gHttpBootDxeHttpBootCallback,
+             sizeof (EFI_HTTP_BOOT_CALLBACK_PROTOCOL)
+             );
 
     //
     // Install a default callback if user didn't offer one.
     //
     Status = gBS->InstallProtocolInterface (
-                    &ControllerHandle,
-                    &gEfiHttpBootCallbackProtocolGuid,
-                    EFI_NATIVE_INTERFACE,
-                    &Private->LoadFileCallback
-                    );
+                                            &ControllerHandle,
+                                            &gEfiHttpBootCallbackProtocolGuid,
+                                            EFI_NATIVE_INTERFACE,
+                                            &Private->LoadFileCallback
+                                            );
     if (EFI_ERROR (Status)) {
       return Status;
     }
+
     Private->HttpBootCallback = &Private->LoadFileCallback;
   }
 
@@ -78,11 +78,11 @@ HttpBootUninstallCallback (
   )
 {
   if (Private->HttpBootCallback == &Private->LoadFileCallback) {
-    gBS->UninstallProtocolInterface (
-          Private->Controller,
-          &gEfiHttpBootCallbackProtocolGuid,
-          &Private->HttpBootCallback
-          );
+  gBS->UninstallProtocolInterface (
+                                   Private->Controller,
+                                   &gEfiHttpBootCallbackProtocolGuid,
+                                   &Private->HttpBootCallback
+                                   );
     Private->HttpBootCallback = NULL;
   }
 }
@@ -113,9 +113,9 @@ HttpBootStart (
   IN EFI_DEVICE_PATH_PROTOCOL         *FilePath
   )
 {
-  UINTN                Index;
-  EFI_STATUS           Status;
-  CHAR8                *Uri;
+  UINTN       Index;
+  EFI_STATUS  Status;
+  CHAR8       *Uri;
 
   Uri = NULL;
 
@@ -152,6 +152,7 @@ HttpBootStart (
         if (Uri != NULL) {
           FreePool (Uri);
         }
+
         return Status;
       }
     } else {
@@ -161,6 +162,7 @@ HttpBootStart (
       if (Uri != NULL) {
         FreePool (Uri);
       }
+
       return EFI_ALREADY_STARTED;
     }
   }
@@ -176,6 +178,7 @@ HttpBootStart (
     if (Uri != NULL) {
       FreePool (Uri);
     }
+
     return EFI_UNSUPPORTED;
   }
 
@@ -185,11 +188,11 @@ HttpBootStart (
   Private->FilePathUri = Uri;
   if (Private->FilePathUri != NULL) {
     Status = HttpParseUrl (
-               Private->FilePathUri,
-               (UINT32) AsciiStrLen (Private->FilePathUri),
-               FALSE,
-               &Private->FilePathUriParser
-               );
+                           Private->FilePathUri,
+                           (UINT32) AsciiStrLen (Private->FilePathUri),
+                           FALSE,
+                           &Private->FilePathUriParser
+                           );
     if (EFI_ERROR (Status)) {
       FreePool (Private->FilePathUri);
       return Status;
@@ -219,7 +222,8 @@ HttpBootStart (
       return Status;
     }
   }
-  Private->Started   = TRUE;
+
+  Private->Started = TRUE;
   Print (L"\n>>Start HTTP Boot over IPv%d", Private->UsingIpv6 ? 6 : 4);
 
   return EFI_SUCCESS;
@@ -242,7 +246,7 @@ HttpBootDhcp (
   IN HTTP_BOOT_PRIVATE_DATA           *Private
   )
 {
-  EFI_STATUS                Status;
+  EFI_STATUS  Status;
 
   if (Private == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -260,7 +264,7 @@ HttpBootDhcp (
     //
     Status = HttpBootDhcp4Dora (Private);
   } else {
-     //
+    //
     // Start S.A.R.R process to get a IPv6 address and other boot information.
     //
     Status = HttpBootDhcp6Sarr (Private);
@@ -296,11 +300,11 @@ EFI_STATUS
 HttpBootLoadFile (
   IN     HTTP_BOOT_PRIVATE_DATA       *Private,
   IN OUT UINTN                        *BufferSize,
-  IN     VOID                         *Buffer,       OPTIONAL
-     OUT HTTP_BOOT_IMAGE_TYPE         *ImageType
+  IN     VOID                         *Buffer, OPTIONAL
+  OUT HTTP_BOOT_IMAGE_TYPE         *ImageType
   )
 {
-  EFI_STATUS             Status;
+  EFI_STATUS  Status;
 
   if (Private == NULL || ImageType == NULL || BufferSize == NULL ) {
     return EFI_INVALID_PARAMETER;
@@ -315,7 +319,7 @@ HttpBootLoadFile (
   }
 
   Status = HttpBootInstallCallback (Private);
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     goto ON_EXIT;
   }
 
@@ -349,24 +353,24 @@ HttpBootLoadFile (
     // Try to use HTTP HEAD method.
     //
     Status = HttpBootGetBootFile (
-               Private,
-               TRUE,
-               &Private->BootFileSize,
-               NULL,
-               &Private->ImageType
-               );
+                                  Private,
+                                  TRUE,
+                                  &Private->BootFileSize,
+                                  NULL,
+                                  &Private->ImageType
+                                  );
     if (EFI_ERROR (Status) && Status != EFI_BUFFER_TOO_SMALL) {
       //
       // Failed to get file size by HEAD method, may be trunked encoding, try HTTP GET method.
       //
       ASSERT (Private->BootFileSize == 0);
       Status = HttpBootGetBootFile (
-                 Private,
-                 FALSE,
-                 &Private->BootFileSize,
-                 NULL,
-                 &Private->ImageType
-                 );
+                                    Private,
+                                    FALSE,
+                                    &Private->BootFileSize,
+                                    NULL,
+                                    &Private->ImageType
+                                    );
       if (EFI_ERROR (Status) && Status != EFI_BUFFER_TOO_SMALL) {
         AsciiPrint ("\n  Error: Could not retrieve NBP file size from HTTP server.\n");
         goto ON_EXIT;
@@ -376,7 +380,7 @@ HttpBootLoadFile (
 
   if (*BufferSize < Private->BootFileSize) {
     *BufferSize = Private->BootFileSize;
-    *ImageType = Private->ImageType;
+    *ImageType  = Private->ImageType;
     Status = EFI_BUFFER_TOO_SMALL;
     goto ON_EXIT;
   }
@@ -385,12 +389,12 @@ HttpBootLoadFile (
   // Load the boot file into Buffer
   //
   Status = HttpBootGetBootFile (
-             Private,
-             FALSE,
-             BufferSize,
-             Buffer,
-             ImageType
-             );
+                                Private,
+                                FALSE,
+                                BufferSize,
+                                Buffer,
+                                ImageType
+                                );
 
 ON_EXIT:
   HttpBootUninstallCallback (Private);
@@ -432,7 +436,7 @@ HttpBootStop (
   IN HTTP_BOOT_PRIVATE_DATA           *Private
   )
 {
-  UINTN            Index;
+  UINTN  Index;
 
   if (Private == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -454,8 +458,8 @@ HttpBootStop (
   Private->Port = 0;
   Private->BootFileUri = NULL;
   Private->BootFileUriParser = NULL;
-  Private->BootFileSize = 0;
-  Private->SelectIndex = 0;
+  Private->BootFileSize    = 0;
+  Private->SelectIndex     = 0;
   Private->SelectProxyType = HttpOfferTypeMax;
 
   if (!Private->UsingIpv6) {
@@ -489,7 +493,7 @@ HttpBootStop (
     Private->DnsServerIp = NULL;
   }
 
-  if (Private->FilePathUri!= NULL) {
+  if (Private->FilePathUri != NULL) {
     FreePool (Private->FilePathUri);
     HttpUrlFreeParser (Private->FilePathUriParser);
     Private->FilePathUri = NULL;
@@ -547,12 +551,12 @@ HttpBootDxeLoadFile (
   IN VOID                             *Buffer OPTIONAL
   )
 {
-  HTTP_BOOT_PRIVATE_DATA        *Private;
-  HTTP_BOOT_VIRTUAL_NIC         *VirtualNic;
-  EFI_STATUS                    MediaStatus;
-  BOOLEAN                       UsingIpv6;
-  EFI_STATUS                    Status;
-  HTTP_BOOT_IMAGE_TYPE          ImageType;
+  HTTP_BOOT_PRIVATE_DATA  *Private;
+  HTTP_BOOT_VIRTUAL_NIC   *VirtualNic;
+  EFI_STATUS              MediaStatus;
+  BOOLEAN                 UsingIpv6;
+  EFI_STATUS              Status;
+  HTTP_BOOT_IMAGE_TYPE    ImageType;
 
   if (This == NULL || BufferSize == NULL || FilePath == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -566,7 +570,7 @@ HttpBootDxeLoadFile (
   }
 
   VirtualNic = HTTP_BOOT_VIRTUAL_NIC_FROM_LOADFILE (This);
-  Private = VirtualNic->Private;
+  Private    = VirtualNic->Private;
 
   //
   // Check media status before HTTP boot start
@@ -598,13 +602,14 @@ HttpBootDxeLoadFile (
   // Load the boot file.
   //
   ImageType = ImageTypeMax;
-  Status = HttpBootLoadFile (Private, BufferSize, Buffer, &ImageType);
+  Status    = HttpBootLoadFile (Private, BufferSize, Buffer, &ImageType);
   if (EFI_ERROR (Status)) {
     if (Status == EFI_BUFFER_TOO_SMALL && (ImageType == ImageTypeVirtualCd || ImageType == ImageTypeVirtualDisk)) {
       Status = EFI_WARN_FILE_SYSTEM;
     } else if (Status != EFI_BUFFER_TOO_SMALL) {
       HttpBootStop (Private);
     }
+
     return Status;
   }
 
@@ -671,89 +676,94 @@ HttpBootCallback (
   HTTP_BOOT_PRIVATE_DATA  *Private;
   UINT32                  Percentage;
 
-  Private = HTTP_BOOT_PRIVATE_DATA_FROM_CALLBACK_PROTOCOL(This);
+  Private = HTTP_BOOT_PRIVATE_DATA_FROM_CALLBACK_PROTOCOL (This);
 
   switch (DataType) {
-  case HttpBootDhcp4:
-  case HttpBootDhcp6:
-    Print (L".");
-    break;
+    case HttpBootDhcp4:
+    case HttpBootDhcp6:
+      Print (L".");
+      break;
 
-  case HttpBootHttpRequest:
-    if (Data != NULL) {
-      HttpMessage = (EFI_HTTP_MESSAGE *) Data;
-      if (HttpMessage->Data.Request->Method == HttpMethodGet &&
-          HttpMessage->Data.Request->Url != NULL) {
-        Print (L"\n  URI: %s\n", HttpMessage->Data.Request->Url);
+    case HttpBootHttpRequest:
+      if (Data != NULL) {
+        HttpMessage = (EFI_HTTP_MESSAGE *) Data;
+        if (HttpMessage->Data.Request->Method == HttpMethodGet &&
+            HttpMessage->Data.Request->Url != NULL) {
+          Print (L"\n  URI: %s\n", HttpMessage->Data.Request->Url);
+        }
       }
-    }
-    break;
 
-  case HttpBootHttpResponse:
-    if (Data != NULL) {
-      HttpMessage = (EFI_HTTP_MESSAGE *) Data;
+      break;
 
-      if (HttpMessage->Data.Response != NULL) {
-        if (HttpBootIsHttpRedirectStatusCode (HttpMessage->Data.Response->StatusCode)) {
-          //
-          // Server indicates the resource has been redirected to a different URL
-          // according to the section 6.4 of RFC7231 and the RFC 7538.
-          // Display the redirect information on the screen.
-          //
-          HttpHeader = HttpFindHeader (
-                 HttpMessage->HeaderCount,
-                 HttpMessage->Headers,
-                 HTTP_HEADER_LOCATION
-                 );
-          if (HttpHeader != NULL) {
-            Print (L"\n  HTTP ERROR: Resource Redirected.\n  New Location: %a\n", HttpHeader->FieldValue);
+    case HttpBootHttpResponse:
+      if (Data != NULL) {
+        HttpMessage = (EFI_HTTP_MESSAGE *) Data;
+
+        if (HttpMessage->Data.Response != NULL) {
+          if (HttpBootIsHttpRedirectStatusCode (HttpMessage->Data.Response->StatusCode)) {
+            //
+            // Server indicates the resource has been redirected to a different URL
+            // according to the section 6.4 of RFC7231 and the RFC 7538.
+            // Display the redirect information on the screen.
+            //
+            HttpHeader = HttpFindHeader (
+                                         HttpMessage->HeaderCount,
+                                         HttpMessage->Headers,
+                                         HTTP_HEADER_LOCATION
+                                         );
+            if (HttpHeader != NULL) {
+              Print (L"\n  HTTP ERROR: Resource Redirected.\n  New Location: %a\n", HttpHeader->FieldValue);
+            }
+
+            break;
           }
-          break;
+        }
+
+        HttpHeader = HttpFindHeader (
+                                     HttpMessage->HeaderCount,
+                                     HttpMessage->Headers,
+                                     HTTP_HEADER_CONTENT_LENGTH
+                                     );
+        if (HttpHeader != NULL) {
+          Private->FileSize     = AsciiStrDecimalToUintn (HttpHeader->FieldValue);
+          Private->ReceivedSize = 0;
+          Private->Percentage   = 0;
         }
       }
 
-      HttpHeader = HttpFindHeader (
-                     HttpMessage->HeaderCount,
-                     HttpMessage->Headers,
-                     HTTP_HEADER_CONTENT_LENGTH
-                     );
-      if (HttpHeader != NULL) {
-        Private->FileSize = AsciiStrDecimalToUintn (HttpHeader->FieldValue);
-        Private->ReceivedSize = 0;
-        Private->Percentage   = 0;
-      }
-    }
-    break;
+      break;
 
-  case HttpBootHttpEntityBody:
-    if (DataLength != 0) {
-      if (Private->FileSize != 0) {
-        //
-        // We already know the file size, print in percentage format.
-        //
-        if (Private->ReceivedSize == 0) {
-          Print (L"  File Size: %lu Bytes\n", Private->FileSize);
-        }
-        Private->ReceivedSize += DataLength;
-        Percentage = (UINT32) DivU64x64Remainder (MultU64x32 (Private->ReceivedSize, 100), Private->FileSize, NULL);
-        if (Private->Percentage != Percentage) {
-          Private->Percentage = Percentage;
-          Print (L"\r  Downloading...%d%%", Percentage);
-        }
-      } else {
-        //
-        // In some case we couldn't get the file size from the HTTP header, so we
-        // just print the downloaded file size.
-        //
-        Private->ReceivedSize += DataLength;
-        Print (L"\r  Downloading...%lu Bytes", Private->ReceivedSize);
-      }
-    }
-    break;
+    case HttpBootHttpEntityBody:
+      if (DataLength != 0) {
+        if (Private->FileSize != 0) {
+          //
+          // We already know the file size, print in percentage format.
+          //
+          if (Private->ReceivedSize == 0) {
+            Print (L"  File Size: %lu Bytes\n", Private->FileSize);
+          }
 
-  default:
-    break;
-  };
+          Private->ReceivedSize += DataLength;
+          Percentage = (UINT32) DivU64x64Remainder (MultU64x32 (Private->ReceivedSize, 100), Private->FileSize, NULL);
+          if (Private->Percentage != Percentage) {
+            Private->Percentage = Percentage;
+            Print (L"\r  Downloading...%d%%", Percentage);
+          }
+        } else {
+          //
+          // In some case we couldn't get the file size from the HTTP header, so we
+          // just print the downloaded file size.
+          //
+          Private->ReceivedSize += DataLength;
+          Print (L"\r  Downloading...%lu Bytes", Private->ReceivedSize);
+        }
+      }
+
+      break;
+
+    default:
+      break;
+  }
 
   return EFI_SUCCESS;
 }

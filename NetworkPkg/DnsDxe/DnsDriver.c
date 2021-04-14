@@ -8,7 +8,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "DnsImpl.h"
 
-EFI_DRIVER_BINDING_PROTOCOL gDns4DriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  gDns4DriverBinding = {
   Dns4DriverBindingSupported,
   Dns4DriverBindingStart,
   Dns4DriverBindingStop,
@@ -17,7 +17,7 @@ EFI_DRIVER_BINDING_PROTOCOL gDns4DriverBinding = {
   NULL
 };
 
-EFI_DRIVER_BINDING_PROTOCOL gDns6DriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  gDns6DriverBinding = {
   Dns6DriverBindingSupported,
   Dns6DriverBindingStart,
   Dns6DriverBindingStop,
@@ -26,17 +26,17 @@ EFI_DRIVER_BINDING_PROTOCOL gDns6DriverBinding = {
   NULL
 };
 
-EFI_SERVICE_BINDING_PROTOCOL mDns4ServiceBinding = {
+EFI_SERVICE_BINDING_PROTOCOL  mDns4ServiceBinding = {
   Dns4ServiceBindingCreateChild,
   Dns4ServiceBindingDestroyChild
 };
 
-EFI_SERVICE_BINDING_PROTOCOL mDns6ServiceBinding = {
+EFI_SERVICE_BINDING_PROTOCOL  mDns6ServiceBinding = {
   Dns6ServiceBindingCreateChild,
   Dns6ServiceBindingDestroyChild
 };
 
-DNS_DRIVER_DATA          *mDriverData = NULL;
+DNS_DRIVER_DATA  *mDriverData = NULL;
 
 /**
   Destroy the DNS instance and recycle the resources.
@@ -61,7 +61,7 @@ DnsDestroyInstance (
     Dns6InstanceCancelToken (Instance, NULL);
   }
 
-  if (Instance->UdpIo!= NULL) {
+  if (Instance->UdpIo != NULL) {
     UdpIoFreeIo (Instance->UdpIo);
   }
 
@@ -84,7 +84,7 @@ DnsCreateInstance (
   OUT DNS_INSTANCE        **Instance
   )
 {
-  DNS_INSTANCE            *DnsIns;
+  DNS_INSTANCE  *DnsIns;
 
   *Instance = NULL;
 
@@ -108,12 +108,12 @@ DnsCreateInstance (
   }
 
   DnsIns->UdpIo = UdpIoCreateIo (
-                    Service->ControllerHandle, /// NicHandle
-                    Service->ImageHandle,
-                    DnsConfigNullUdp,
-                    Service->IpVersion,
-                    DnsIns
-                    );
+                                 Service->ControllerHandle, /// NicHandle
+                                 Service->ImageHandle,
+                                 DnsConfigNullUdp,
+                                 Service->IpVersion,
+                                 DnsIns
+                                 );
   if (DnsIns->UdpIo == NULL) {
     FreePool (DnsIns);
     return EFI_OUT_OF_RESOURCES;
@@ -198,11 +198,11 @@ DnsDestroyService (
   UdpIoFreeIo (DnsSb->ConnectUdp);
 
   if (DnsSb->TimerToGetMap != NULL) {
-    gBS->CloseEvent (DnsSb->TimerToGetMap);
+  gBS->CloseEvent (DnsSb->TimerToGetMap);
   }
 
   if (DnsSb->Timer != NULL) {
-    gBS->CloseEvent (DnsSb->Timer);
+  gBS->CloseEvent (DnsSb->Timer);
   }
 
   FreePool (DnsSb);
@@ -230,16 +230,16 @@ DnsCreateService (
   IN     EFI_HANDLE            Controller,
   IN     EFI_HANDLE            Image,
   IN     UINT8                 IpVersion,
-     OUT DNS_SERVICE           **Service
+  OUT DNS_SERVICE           **Service
   )
 {
-  EFI_STATUS             Status;
-  DNS_SERVICE            *DnsSb;
+  EFI_STATUS   Status;
+  DNS_SERVICE  *DnsSb;
 
-  Status    = EFI_SUCCESS;
-  DnsSb     = NULL;
+  Status = EFI_SUCCESS;
+  DnsSb  = NULL;
 
-  *Service  = NULL;
+  *Service = NULL;
 
   DnsSb = AllocateZeroPool (sizeof (DNS_SERVICE));
   if (DnsSb == NULL) {
@@ -261,25 +261,25 @@ DnsCreateService (
   InitializeListHead (&DnsSb->Dns6ChildrenList);
 
   DnsSb->ControllerHandle = Controller;
-  DnsSb->ImageHandle      = Image;
+  DnsSb->ImageHandle = Image;
 
-  DnsSb->TimerToGetMap    = NULL;
+  DnsSb->TimerToGetMap = NULL;
 
-  DnsSb->Timer            = NULL;
+  DnsSb->Timer = NULL;
 
-  DnsSb->IpVersion        = IpVersion;
+  DnsSb->IpVersion = IpVersion;
 
   //
   // Create the timer used to time out the procedure which is used to
   // get the default IP address.
   //
   Status = gBS->CreateEvent (
-                  EVT_TIMER,
-                  TPL_CALLBACK,
-                  NULL,
-                  NULL,
-                  &DnsSb->TimerToGetMap
-                  );
+                             EVT_TIMER,
+                             TPL_CALLBACK,
+                             NULL,
+                             NULL,
+                             &DnsSb->TimerToGetMap
+                             );
   if (EFI_ERROR (Status)) {
     FreePool (DnsSb);
     return Status;
@@ -289,32 +289,34 @@ DnsCreateService (
   // Create the timer to retransmit packets.
   //
   Status = gBS->CreateEvent (
-                  EVT_NOTIFY_SIGNAL | EVT_TIMER,
-                  TPL_CALLBACK,
-                  DnsOnTimerRetransmit,
-                  DnsSb,
-                  &DnsSb->Timer
-                  );
+                             EVT_NOTIFY_SIGNAL | EVT_TIMER,
+                             TPL_CALLBACK,
+                             DnsOnTimerRetransmit,
+                             DnsSb,
+                             &DnsSb->Timer
+                             );
   if (EFI_ERROR (Status)) {
     if (DnsSb->TimerToGetMap != NULL) {
-      gBS->CloseEvent (DnsSb->TimerToGetMap);
+  gBS->CloseEvent (DnsSb->TimerToGetMap);
     }
+
     FreePool (DnsSb);
     return Status;
   }
 
   DnsSb->ConnectUdp = NULL;
   DnsSb->ConnectUdp = UdpIoCreateIo (
-                        Controller,
-                        Image,
-                        DnsConfigNullUdp,
-                        DnsSb->IpVersion,
-                        NULL
-                        );
+                                     Controller,
+                                     Image,
+                                     DnsConfigNullUdp,
+                                     DnsSb->IpVersion,
+                                     NULL
+                                     );
   if (DnsSb->ConnectUdp == NULL) {
     if (DnsSb->TimerToGetMap != NULL) {
-      gBS->CloseEvent (DnsSb->TimerToGetMap);
+  gBS->CloseEvent (DnsSb->TimerToGetMap);
     }
+
     gBS->CloseEvent (DnsSb->Timer);
     FreePool (DnsSb);
     return EFI_DEVICE_ERROR;
@@ -341,11 +343,11 @@ DnsUnload (
 {
   EFI_STATUS  Status;
 
-  LIST_ENTRY                      *Entry;
-  DNS4_CACHE                      *ItemCache4;
-  DNS4_SERVER_IP                  *ItemServerIp4;
-  DNS6_CACHE                      *ItemCache6;
-  DNS6_SERVER_IP                  *ItemServerIp6;
+  LIST_ENTRY      *Entry;
+  DNS4_CACHE      *ItemCache4;
+  DNS4_SERVER_IP  *ItemServerIp4;
+  DNS6_CACHE      *ItemCache6;
+  DNS6_SERVER_IP  *ItemServerIp6;
 
   ItemCache4    = NULL;
   ItemServerIp4 = NULL;
@@ -355,7 +357,7 @@ DnsUnload (
   //
   // Disconnect the driver specified by ImageHandle
   //
-  Status = NetLibDefaultUnload(ImageHandle);
+  Status = NetLibDefaultUnload (ImageHandle);
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -365,7 +367,7 @@ DnsUnload (
   //
   if (mDriverData != NULL) {
     if (mDriverData->Timer != NULL) {
-      gBS->CloseEvent (mDriverData->Timer);
+  gBS->CloseEvent (mDriverData->Timer);
     }
 
     while (!IsListEmpty (&mDriverData->Dns4CacheList)) {
@@ -432,13 +434,13 @@ DnsDriverEntryPoint (
   // Install the Dns4 Driver Binding Protocol.
   //
   Status = EfiLibInstallDriverBindingComponentName2 (
-             ImageHandle,
-             SystemTable,
-             &gDns4DriverBinding,
-             ImageHandle,
-             &gDnsComponentName,
-             &gDnsComponentName2
-             );
+                                                     ImageHandle,
+                                                     SystemTable,
+                                                     &gDns4DriverBinding,
+                                                     ImageHandle,
+                                                     &gDnsComponentName,
+                                                     &gDnsComponentName2
+                                                     );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -447,13 +449,13 @@ DnsDriverEntryPoint (
   // Install the Dns6 Driver Binding Protocol.
   //
   Status = EfiLibInstallDriverBindingComponentName2 (
-             ImageHandle,
-             SystemTable,
-             &gDns6DriverBinding,
-             NULL,
-             &gDnsComponentName,
-             &gDnsComponentName2
-             );
+                                                     ImageHandle,
+                                                     SystemTable,
+                                                     &gDns6DriverBinding,
+                                                     NULL,
+                                                     &gDnsComponentName,
+                                                     &gDnsComponentName2
+                                                     );
   if (EFI_ERROR (Status)) {
     goto Error1;
   }
@@ -471,12 +473,12 @@ DnsDriverEntryPoint (
   // Create the timer event to update DNS cache list.
   //
   Status = gBS->CreateEvent (
-                  EVT_NOTIFY_SIGNAL | EVT_TIMER,
-                  TPL_CALLBACK,
-                  DnsOnTimerUpdate,
-                  NULL,
-                  &mDriverData->Timer
-                  );
+                             EVT_NOTIFY_SIGNAL | EVT_TIMER,
+                             TPL_CALLBACK,
+                             DnsOnTimerUpdate,
+                             NULL,
+                             &mDriverData->Timer
+                             );
   if (EFI_ERROR (Status)) {
     goto Error3;
   }
@@ -493,25 +495,25 @@ DnsDriverEntryPoint (
 
   return Status;
 
-  Error4:
-    gBS->CloseEvent (mDriverData->Timer);
+Error4:
+  gBS->CloseEvent (mDriverData->Timer);
 
-  Error3:
-    FreePool (mDriverData);
+Error3:
+  FreePool (mDriverData);
 
-  Error2:
-     EfiLibUninstallDriverBindingComponentName2 (
-       &gDns6DriverBinding,
-       &gDnsComponentName,
-       &gDnsComponentName2
-       );
+Error2:
+  EfiLibUninstallDriverBindingComponentName2 (
+                                              &gDns6DriverBinding,
+                                              &gDnsComponentName,
+                                              &gDnsComponentName2
+                                              );
 
-  Error1:
-    EfiLibUninstallDriverBindingComponentName2 (
-      &gDns4DriverBinding,
-      &gDnsComponentName,
-      &gDnsComponentName2
-      );
+Error1:
+  EfiLibUninstallDriverBindingComponentName2 (
+                                              &gDns4DriverBinding,
+                                              &gDnsComponentName,
+                                              &gDnsComponentName2
+                                              );
 
   return Status;
 }
@@ -572,13 +574,13 @@ Dns4DriverBindingSupported (
   // Test for the Dns4ServiceBinding Protocol.
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiDns4ServiceBindingProtocolGuid,
-                  NULL,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiDns4ServiceBindingProtocolGuid,
+                              NULL,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
   if (!EFI_ERROR (Status)) {
     return EFI_ALREADY_STARTED;
   }
@@ -587,13 +589,13 @@ Dns4DriverBindingSupported (
   // Test for the Udp4ServiceBinding Protocol.
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiUdp4ServiceBindingProtocolGuid,
-                  NULL,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiUdp4ServiceBindingProtocolGuid,
+                              NULL,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
 
   return Status;
 }
@@ -641,8 +643,8 @@ Dns4DriverBindingStart (
   IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
   )
 {
-  DNS_SERVICE            *DnsSb;
-  EFI_STATUS             Status;
+  DNS_SERVICE  *DnsSb;
+  EFI_STATUS   Status;
 
   Status = DnsCreateService (ControllerHandle, This->DriverBindingHandle, IP_VERSION_4, &DnsSb);
   if (EFI_ERROR (Status)) {
@@ -660,11 +662,11 @@ Dns4DriverBindingStart (
   // Install the Dns4ServiceBinding Protocol onto ControllerHandle.
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &ControllerHandle,
-                  &gEfiDns4ServiceBindingProtocolGuid,
-                  &DnsSb->ServiceBinding,
-                  NULL
-                  );
+                                                   &ControllerHandle,
+                                                   &gEfiDns4ServiceBindingProtocolGuid,
+                                                   &DnsSb->ServiceBinding,
+                                                   NULL
+                                                   );
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
@@ -712,12 +714,12 @@ Dns4DriverBindingStop (
   IN EFI_HANDLE                   *ChildHandleBuffer OPTIONAL
   )
 {
-  EFI_SERVICE_BINDING_PROTOCOL               *ServiceBinding;
-  DNS_SERVICE                                *DnsSb;
-  EFI_HANDLE                                 NicHandle;
-  EFI_STATUS                                 Status;
-  LIST_ENTRY                                 *List;
-  DNS_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT    Context;
+  EFI_SERVICE_BINDING_PROTOCOL             *ServiceBinding;
+  DNS_SERVICE                              *DnsSb;
+  EFI_HANDLE                               NicHandle;
+  EFI_STATUS                               Status;
+  LIST_ENTRY                               *List;
+  DNS_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT  Context;
 
   //
   // DNS driver opens UDP child, So, Controller is a UDP
@@ -731,13 +733,13 @@ Dns4DriverBindingStop (
   }
 
   Status = gBS->OpenProtocol (
-                  NicHandle,
-                  &gEfiDns4ServiceBindingProtocolGuid,
-                  (VOID **) &ServiceBinding,
-                  This->DriverBindingHandle,
-                  NicHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              NicHandle,
+                              &gEfiDns4ServiceBindingProtocolGuid,
+                              (VOID **) &ServiceBinding,
+                              This->DriverBindingHandle,
+                              NicHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
   }
@@ -753,19 +755,19 @@ Dns4DriverBindingStop (
     Context.NumberOfChildren  = NumberOfChildren;
     Context.ChildHandleBuffer = ChildHandleBuffer;
     Status = NetDestroyLinkList (
-               List,
-               DnsDestroyChildEntryInHandleBuffer,
-               &Context,
-               NULL
-               );
+                                 List,
+                                 DnsDestroyChildEntryInHandleBuffer,
+                                 &Context,
+                                 NULL
+                                 );
   }
 
   if (NumberOfChildren == 0 && IsListEmpty (&DnsSb->Dns4ChildrenList)) {
-    gBS->UninstallProtocolInterface (
-           NicHandle,
-           &gEfiDns4ServiceBindingProtocolGuid,
-           ServiceBinding
-           );
+  gBS->UninstallProtocolInterface (
+                                   NicHandle,
+                                   &gEfiDns4ServiceBindingProtocolGuid,
+                                   ServiceBinding
+                                   );
 
     DnsDestroyService (DnsSb);
 
@@ -836,13 +838,13 @@ Dns6DriverBindingSupported (
   // Test for the Dns6ServiceBinding Protocol
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiDns6ServiceBindingProtocolGuid,
-                  NULL,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiDns6ServiceBindingProtocolGuid,
+                              NULL,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
   if (!EFI_ERROR (Status)) {
     return EFI_ALREADY_STARTED;
   }
@@ -851,13 +853,13 @@ Dns6DriverBindingSupported (
   // Test for the Udp6ServiceBinding Protocol
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiUdp6ServiceBindingProtocolGuid,
-                  NULL,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiUdp6ServiceBindingProtocolGuid,
+                              NULL,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
 
   return Status;
 }
@@ -905,8 +907,8 @@ Dns6DriverBindingStart (
   IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
   )
 {
-  DNS_SERVICE            *DnsSb;
-  EFI_STATUS             Status;
+  DNS_SERVICE  *DnsSb;
+  EFI_STATUS   Status;
 
   Status = DnsCreateService (ControllerHandle, This->DriverBindingHandle, IP_VERSION_6, &DnsSb);
   if (EFI_ERROR (Status)) {
@@ -924,11 +926,11 @@ Dns6DriverBindingStart (
   // Install the Dns6ServiceBinding Protocol onto ControllerHandle
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &ControllerHandle,
-                  &gEfiDns6ServiceBindingProtocolGuid,
-                  &DnsSb->ServiceBinding,
-                  NULL
-                  );
+                                                   &ControllerHandle,
+                                                   &gEfiDns6ServiceBindingProtocolGuid,
+                                                   &DnsSb->ServiceBinding,
+                                                   NULL
+                                                   );
 
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
@@ -977,12 +979,12 @@ Dns6DriverBindingStop (
   IN EFI_HANDLE                   *ChildHandleBuffer OPTIONAL
   )
 {
-  EFI_SERVICE_BINDING_PROTOCOL               *ServiceBinding;
-  DNS_SERVICE                                *DnsSb;
-  EFI_HANDLE                                 NicHandle;
-  EFI_STATUS                                 Status;
-  LIST_ENTRY                                 *List;
-  DNS_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT    Context;
+  EFI_SERVICE_BINDING_PROTOCOL             *ServiceBinding;
+  DNS_SERVICE                              *DnsSb;
+  EFI_HANDLE                               NicHandle;
+  EFI_STATUS                               Status;
+  LIST_ENTRY                               *List;
+  DNS_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT  Context;
 
   //
   // DNS driver opens UDP child, So, Controller is a UDP
@@ -996,13 +998,13 @@ Dns6DriverBindingStop (
   }
 
   Status = gBS->OpenProtocol (
-                  NicHandle,
-                  &gEfiDns6ServiceBindingProtocolGuid,
-                  (VOID **) &ServiceBinding,
-                  This->DriverBindingHandle,
-                  NicHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              NicHandle,
+                              &gEfiDns6ServiceBindingProtocolGuid,
+                              (VOID **) &ServiceBinding,
+                              This->DriverBindingHandle,
+                              NicHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
   }
@@ -1018,19 +1020,19 @@ Dns6DriverBindingStop (
     Context.NumberOfChildren  = NumberOfChildren;
     Context.ChildHandleBuffer = ChildHandleBuffer;
     Status = NetDestroyLinkList (
-               List,
-               DnsDestroyChildEntryInHandleBuffer,
-               &Context,
-               NULL
-               );
+                                 List,
+                                 DnsDestroyChildEntryInHandleBuffer,
+                                 &Context,
+                                 NULL
+                                 );
   }
 
   if (NumberOfChildren == 0 && IsListEmpty (&DnsSb->Dns6ChildrenList)) {
-    gBS->UninstallProtocolInterface (
-           NicHandle,
-           &gEfiDns6ServiceBindingProtocolGuid,
-           ServiceBinding
-           );
+  gBS->UninstallProtocolInterface (
+                                   NicHandle,
+                                   &gEfiDns6ServiceBindingProtocolGuid,
+                                   ServiceBinding
+                                   );
 
     DnsDestroyService (DnsSb);
 
@@ -1071,11 +1073,11 @@ Dns4ServiceBindingCreateChild (
   IN EFI_HANDLE                    *ChildHandle
   )
 {
-  DNS_SERVICE               *DnsSb;
-  DNS_INSTANCE              *Instance;
-  EFI_STATUS                Status;
-  EFI_TPL                   OldTpl;
-  VOID                      *Udp4;
+  DNS_SERVICE   *DnsSb;
+  DNS_INSTANCE  *Instance;
+  EFI_STATUS    Status;
+  EFI_TPL       OldTpl;
+  VOID          *Udp4;
 
   if ((This == NULL) || (ChildHandle == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -1087,17 +1089,18 @@ Dns4ServiceBindingCreateChild (
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   ASSERT (Instance != NULL);
 
   //
   // Install the DNS protocol onto ChildHandle
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  ChildHandle,
-                  &gEfiDns4ProtocolGuid,
-                  &Instance->Dns4,
-                  NULL
-                  );
+                                                   ChildHandle,
+                                                   &gEfiDns4ProtocolGuid,
+                                                   &Instance->Dns4,
+                                                   NULL
+                                                   );
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
@@ -1108,20 +1111,20 @@ Dns4ServiceBindingCreateChild (
   // Open the Udp4 protocol BY_CHILD.
   //
   Status = gBS->OpenProtocol (
-                  DnsSb->ConnectUdp->UdpHandle,
-                  &gEfiUdp4ProtocolGuid,
-                  (VOID **) &Udp4,
-                  gDns4DriverBinding.DriverBindingHandle,
-                  Instance->ChildHandle,
-                  EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
-                  );
+                              DnsSb->ConnectUdp->UdpHandle,
+                              &gEfiUdp4ProtocolGuid,
+                              (VOID **) &Udp4,
+                              gDns4DriverBinding.DriverBindingHandle,
+                              Instance->ChildHandle,
+                              EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+                              );
   if (EFI_ERROR (Status)) {
-    gBS->UninstallMultipleProtocolInterfaces (
-           Instance->ChildHandle,
-           &gEfiDns4ProtocolGuid,
-           &Instance->Dns4,
-           NULL
-           );
+  gBS->UninstallMultipleProtocolInterfaces (
+                                            Instance->ChildHandle,
+                                            &gEfiDns4ProtocolGuid,
+                                            &Instance->Dns4,
+                                            NULL
+                                            );
 
     goto ON_ERROR;
   }
@@ -1130,30 +1133,30 @@ Dns4ServiceBindingCreateChild (
   // Open the Udp4 protocol by child.
   //
   Status = gBS->OpenProtocol (
-                  Instance->UdpIo->UdpHandle,
-                  &gEfiUdp4ProtocolGuid,
-                  (VOID **) &Udp4,
-                  gDns4DriverBinding.DriverBindingHandle,
-                  Instance->ChildHandle,
-                  EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
-                  );
+                              Instance->UdpIo->UdpHandle,
+                              &gEfiUdp4ProtocolGuid,
+                              (VOID **) &Udp4,
+                              gDns4DriverBinding.DriverBindingHandle,
+                              Instance->ChildHandle,
+                              EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+                              );
   if (EFI_ERROR (Status)) {
     //
     // Close the Udp4 protocol.
     //
     gBS->CloseProtocol (
-           DnsSb->ConnectUdp->UdpHandle,
-           &gEfiUdp4ProtocolGuid,
-           gDns4DriverBinding.DriverBindingHandle,
-           *ChildHandle
-           );
+                        DnsSb->ConnectUdp->UdpHandle,
+                        &gEfiUdp4ProtocolGuid,
+                        gDns4DriverBinding.DriverBindingHandle,
+                        *ChildHandle
+                        );
 
-     gBS->UninstallMultipleProtocolInterfaces (
-            Instance->ChildHandle,
-            &gEfiDns4ProtocolGuid,
-            &Instance->Dns4,
-            NULL
-            );
+    gBS->UninstallMultipleProtocolInterfaces (
+                                              Instance->ChildHandle,
+                                              &gEfiDns4ProtocolGuid,
+                                              &Instance->Dns4,
+                                              NULL
+                                              );
 
     goto ON_ERROR;
   }
@@ -1201,12 +1204,12 @@ Dns4ServiceBindingDestroyChild (
   IN EFI_HANDLE                    ChildHandle
   )
 {
-  DNS_SERVICE               *DnsSb;
-  DNS_INSTANCE              *Instance;
+  DNS_SERVICE   *DnsSb;
+  DNS_INSTANCE  *Instance;
 
-  EFI_DNS4_PROTOCOL         *Dns4;
-  EFI_STATUS                Status;
-  EFI_TPL                   OldTpl;
+  EFI_DNS4_PROTOCOL  *Dns4;
+  EFI_STATUS         Status;
+  EFI_TPL            OldTpl;
 
   if ((This == NULL) || (ChildHandle == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -1216,20 +1219,20 @@ Dns4ServiceBindingDestroyChild (
   // Retrieve the private context data structures
   //
   Status = gBS->OpenProtocol (
-                  ChildHandle,
-                  &gEfiDns4ProtocolGuid,
-                  (VOID **) &Dns4,
-                  gDns4DriverBinding.DriverBindingHandle,
-                  ChildHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ChildHandle,
+                              &gEfiDns4ProtocolGuid,
+                              (VOID **) &Dns4,
+                              gDns4DriverBinding.DriverBindingHandle,
+                              ChildHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
 
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
 
-  Instance  = DNS_INSTANCE_FROM_THIS_PROTOCOL4 (Dns4);
-  DnsSb     = DNS_SERVICE_FROM_THIS (This);
+  Instance = DNS_INSTANCE_FROM_THIS_PROTOCOL4 (Dns4);
+  DnsSb    = DNS_SERVICE_FROM_THIS (This);
 
   if (Instance->Service != DnsSb) {
     return EFI_INVALID_PARAMETER;
@@ -1247,18 +1250,18 @@ Dns4ServiceBindingDestroyChild (
   // Close the Udp4 protocol.
   //
   gBS->CloseProtocol (
-         DnsSb->ConnectUdp->UdpHandle,
-         &gEfiUdp4ProtocolGuid,
-         gDns4DriverBinding.DriverBindingHandle,
-         ChildHandle
-         );
+                      DnsSb->ConnectUdp->UdpHandle,
+                      &gEfiUdp4ProtocolGuid,
+                      gDns4DriverBinding.DriverBindingHandle,
+                      ChildHandle
+                      );
 
   gBS->CloseProtocol (
-         Instance->UdpIo->UdpHandle,
-         &gEfiUdp4ProtocolGuid,
-         gDns4DriverBinding.DriverBindingHandle,
-         ChildHandle
-         );
+                      Instance->UdpIo->UdpHandle,
+                      &gEfiUdp4ProtocolGuid,
+                      gDns4DriverBinding.DriverBindingHandle,
+                      ChildHandle
+                      );
 
   gBS->RestoreTPL (OldTpl);
 
@@ -1266,10 +1269,10 @@ Dns4ServiceBindingDestroyChild (
   // Uninstall the DNS protocol first to enable a top down destruction.
   //
   Status = gBS->UninstallProtocolInterface (
-                  ChildHandle,
-                  &gEfiDns4ProtocolGuid,
-                  Dns4
-                  );
+                                            ChildHandle,
+                                            &gEfiDns4ProtocolGuid,
+                                            Dns4
+                                            );
 
   OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
 
@@ -1314,11 +1317,11 @@ Dns6ServiceBindingCreateChild (
   IN EFI_HANDLE                    *ChildHandle
   )
 {
-  DNS_SERVICE               *DnsSb;
-  DNS_INSTANCE              *Instance;
-  EFI_STATUS                Status;
-  EFI_TPL                   OldTpl;
-  VOID                      *Udp6;
+  DNS_SERVICE   *DnsSb;
+  DNS_INSTANCE  *Instance;
+  EFI_STATUS    Status;
+  EFI_TPL       OldTpl;
+  VOID          *Udp6;
 
   if ((This == NULL) || (ChildHandle == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -1330,17 +1333,18 @@ Dns6ServiceBindingCreateChild (
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   ASSERT (Instance != NULL);
 
   //
   // Install the DNS protocol onto ChildHandle
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  ChildHandle,
-                  &gEfiDns6ProtocolGuid,
-                  &Instance->Dns6,
-                  NULL
-                  );
+                                                   ChildHandle,
+                                                   &gEfiDns6ProtocolGuid,
+                                                   &Instance->Dns6,
+                                                   NULL
+                                                   );
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
@@ -1351,20 +1355,20 @@ Dns6ServiceBindingCreateChild (
   // Open the Udp6 protocol BY_CHILD.
   //
   Status = gBS->OpenProtocol (
-                  DnsSb->ConnectUdp->UdpHandle,
-                  &gEfiUdp6ProtocolGuid,
-                  (VOID **) &Udp6,
-                  gDns6DriverBinding.DriverBindingHandle,
-                  Instance->ChildHandle,
-                  EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
-                  );
+                              DnsSb->ConnectUdp->UdpHandle,
+                              &gEfiUdp6ProtocolGuid,
+                              (VOID **) &Udp6,
+                              gDns6DriverBinding.DriverBindingHandle,
+                              Instance->ChildHandle,
+                              EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+                              );
   if (EFI_ERROR (Status)) {
-    gBS->UninstallMultipleProtocolInterfaces (
-           Instance->ChildHandle,
-           &gEfiDns6ProtocolGuid,
-           &Instance->Dns6,
-           NULL
-           );
+  gBS->UninstallMultipleProtocolInterfaces (
+                                            Instance->ChildHandle,
+                                            &gEfiDns6ProtocolGuid,
+                                            &Instance->Dns6,
+                                            NULL
+                                            );
 
     goto ON_ERROR;
   }
@@ -1373,30 +1377,30 @@ Dns6ServiceBindingCreateChild (
   // Open the Udp6 protocol by child.
   //
   Status = gBS->OpenProtocol (
-                  Instance->UdpIo->UdpHandle,
-                  &gEfiUdp6ProtocolGuid,
-                  (VOID **) &Udp6,
-                  gDns6DriverBinding.DriverBindingHandle,
-                  Instance->ChildHandle,
-                  EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
-                  );
+                              Instance->UdpIo->UdpHandle,
+                              &gEfiUdp6ProtocolGuid,
+                              (VOID **) &Udp6,
+                              gDns6DriverBinding.DriverBindingHandle,
+                              Instance->ChildHandle,
+                              EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+                              );
   if (EFI_ERROR (Status)) {
     //
     // Close the Udp6 protocol.
     //
     gBS->CloseProtocol (
-           DnsSb->ConnectUdp->UdpHandle,
-           &gEfiUdp6ProtocolGuid,
-           gDns6DriverBinding.DriverBindingHandle,
-           *ChildHandle
-           );
+                        DnsSb->ConnectUdp->UdpHandle,
+                        &gEfiUdp6ProtocolGuid,
+                        gDns6DriverBinding.DriverBindingHandle,
+                        *ChildHandle
+                        );
 
-     gBS->UninstallMultipleProtocolInterfaces (
-            Instance->ChildHandle,
-            &gEfiDns6ProtocolGuid,
-            &Instance->Dns6,
-            NULL
-            );
+    gBS->UninstallMultipleProtocolInterfaces (
+                                              Instance->ChildHandle,
+                                              &gEfiDns6ProtocolGuid,
+                                              &Instance->Dns6,
+                                              NULL
+                                              );
 
     goto ON_ERROR;
   }
@@ -1444,12 +1448,12 @@ Dns6ServiceBindingDestroyChild (
   IN EFI_HANDLE                    ChildHandle
   )
 {
-  DNS_SERVICE               *DnsSb;
-  DNS_INSTANCE              *Instance;
+  DNS_SERVICE   *DnsSb;
+  DNS_INSTANCE  *Instance;
 
-  EFI_DNS6_PROTOCOL         *Dns6;
-  EFI_STATUS                Status;
-  EFI_TPL                   OldTpl;
+  EFI_DNS6_PROTOCOL  *Dns6;
+  EFI_STATUS         Status;
+  EFI_TPL            OldTpl;
 
   if ((This == NULL) || (ChildHandle == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -1459,20 +1463,20 @@ Dns6ServiceBindingDestroyChild (
   // Retrieve the private context data structures
   //
   Status = gBS->OpenProtocol (
-                  ChildHandle,
-                  &gEfiDns6ProtocolGuid,
-                  (VOID **) &Dns6,
-                  gDns6DriverBinding.DriverBindingHandle,
-                  ChildHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ChildHandle,
+                              &gEfiDns6ProtocolGuid,
+                              (VOID **) &Dns6,
+                              gDns6DriverBinding.DriverBindingHandle,
+                              ChildHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
 
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
 
-  Instance  = DNS_INSTANCE_FROM_THIS_PROTOCOL6 (Dns6);
-  DnsSb     = DNS_SERVICE_FROM_THIS (This);
+  Instance = DNS_INSTANCE_FROM_THIS_PROTOCOL6 (Dns6);
+  DnsSb    = DNS_SERVICE_FROM_THIS (This);
 
   if (Instance->Service != DnsSb) {
     return EFI_INVALID_PARAMETER;
@@ -1490,18 +1494,18 @@ Dns6ServiceBindingDestroyChild (
   // Close the Udp6 protocol.
   //
   gBS->CloseProtocol (
-         DnsSb->ConnectUdp->UdpHandle,
-         &gEfiUdp6ProtocolGuid,
-         gDns6DriverBinding.DriverBindingHandle,
-         ChildHandle
-         );
+                      DnsSb->ConnectUdp->UdpHandle,
+                      &gEfiUdp6ProtocolGuid,
+                      gDns6DriverBinding.DriverBindingHandle,
+                      ChildHandle
+                      );
 
   gBS->CloseProtocol (
-         Instance->UdpIo->UdpHandle,
-         &gEfiUdp6ProtocolGuid,
-         gDns6DriverBinding.DriverBindingHandle,
-         ChildHandle
-         );
+                      Instance->UdpIo->UdpHandle,
+                      &gEfiUdp6ProtocolGuid,
+                      gDns6DriverBinding.DriverBindingHandle,
+                      ChildHandle
+                      );
 
   gBS->RestoreTPL (OldTpl);
 
@@ -1509,10 +1513,10 @@ Dns6ServiceBindingDestroyChild (
   // Uninstall the DNS protocol first to enable a top down destruction.
   //
   Status = gBS->UninstallProtocolInterface (
-                  ChildHandle,
-                  &gEfiDns6ProtocolGuid,
-                  Dns6
-                  );
+                                            ChildHandle,
+                                            &gEfiDns6ProtocolGuid,
+                                            Dns6
+                                            );
 
   OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
 
