@@ -11,6 +11,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // EFI Component Name Functions
 //
+
 /**
   Retrieves a Unicode string that is the user readable name of the driver.
 
@@ -57,7 +58,6 @@ FatComponentNameGetDriverName (
   IN  CHAR8                        *Language,
   OUT CHAR16                       **DriverName
   );
-
 
 /**
   Retrieves a Unicode string that is the user readable name of the controller
@@ -149,13 +149,13 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gFatComponentName = {
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL gFatComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gFatComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) FatComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) FatComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mFatDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mFatDriverNameTable[] = {
   {
     "eng;en",
     L"FAT File System Driver"
@@ -166,7 +166,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mFatDriverNameTable[] = {
   }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mFatControllerNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mFatControllerNameTable[] = {
   {
     "eng;en",
     L"FAT File System"
@@ -176,7 +176,6 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mFatControllerNameTable[]
     NULL
   }
 };
-
 
 /**
   Retrieves a Unicode string that is the user readable name of the driver.
@@ -226,12 +225,12 @@ FatComponentNameGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mFatDriverNameTable,
-           DriverName,
-           (BOOLEAN)(This == &gFatComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mFatDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gFatComponentName)
+                               );
 }
 
 /**
@@ -325,19 +324,19 @@ FatComponentNameGetControllerName (
   // Make sure this driver is currently managing ControllHandle
   //
   Status = EfiTestManagedDevice (
-             ControllerHandle,
-             gFatDriverBinding.DriverBindingHandle,
-             &gEfiDiskIoProtocolGuid
-             );
+                                 ControllerHandle,
+                                 gFatDriverBinding.DriverBindingHandle,
+                                 &gEfiDiskIoProtocolGuid
+                                 );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mFatControllerNameTable,
-           ControllerName,
-           (BOOLEAN)(This == &gFatComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mFatControllerNameTable,
+                               ControllerName,
+                               (BOOLEAN) (This == &gFatComponentName)
+                               );
 }

@@ -113,7 +113,7 @@ FatDriverBindingStop (
 //
 // DriverBinding protocol instance
 //
-EFI_DRIVER_BINDING_PROTOCOL gFatDriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  gFatDriverBinding = {
   FatDriverBindingSupported,
   FatDriverBindingStart,
   FatDriverBindingStop,
@@ -140,19 +140,19 @@ FatEntryPoint (
   IN EFI_SYSTEM_TABLE   *SystemTable
   )
 {
-  EFI_STATUS                Status;
+  EFI_STATUS  Status;
 
   //
   // Initialize the EFI Driver Library
   //
   Status = EfiLibInstallDriverBindingComponentName2 (
-             ImageHandle,
-             SystemTable,
-             &gFatDriverBinding,
-             ImageHandle,
-             &gFatComponentName,
-             &gFatComponentName2
-             );
+                                                     ImageHandle,
+                                                     SystemTable,
+                                                     &gFatDriverBinding,
+                                                     ImageHandle,
+                                                     &gFatComponentName,
+                                                     &gFatComponentName2
+                                                     );
   ASSERT_EFI_ERROR (Status);
 
   return Status;
@@ -182,12 +182,12 @@ FatUnload (
   VOID        *ComponentName2;
 
   Status = gBS->LocateHandleBuffer (
-                  AllHandles,
-                  NULL,
-                  NULL,
-                  &DeviceHandleCount,
-                  &DeviceHandleBuffer
-                  );
+                                    AllHandles,
+                                    NULL,
+                                    NULL,
+                                    &DeviceHandleCount,
+                                    &DeviceHandleBuffer
+                                    );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -196,10 +196,10 @@ FatUnload (
     Status = EfiTestManagedDevice (DeviceHandleBuffer[Index], ImageHandle, &gEfiDiskIoProtocolGuid);
     if (!EFI_ERROR (Status)) {
       Status = gBS->DisconnectController (
-                      DeviceHandleBuffer[Index],
-                      ImageHandle,
-                      NULL
-                      );
+                                          DeviceHandleBuffer[Index],
+                                          ImageHandle,
+                                          NULL
+                                          );
       if (EFI_ERROR (Status)) {
         break;
       }
@@ -223,34 +223,42 @@ FatUnload (
     if (ComponentName == NULL) {
       if (ComponentName2 == NULL) {
         Status = gBS->UninstallMultipleProtocolInterfaces (
-                        ImageHandle,
-                        &gEfiDriverBindingProtocolGuid,  &gFatDriverBinding,
-                        NULL
-                        );
+                                                           ImageHandle,
+                                                           &gEfiDriverBindingProtocolGuid,
+                                                           &gFatDriverBinding,
+                                                           NULL
+                                                           );
       } else {
         Status = gBS->UninstallMultipleProtocolInterfaces (
-                        ImageHandle,
-                        &gEfiDriverBindingProtocolGuid,  &gFatDriverBinding,
-                        &gEfiComponentName2ProtocolGuid, ComponentName2,
-                        NULL
-                        );
+                                                           ImageHandle,
+                                                           &gEfiDriverBindingProtocolGuid,
+                                                           &gFatDriverBinding,
+                                                           &gEfiComponentName2ProtocolGuid,
+                                                           ComponentName2,
+                                                           NULL
+                                                           );
       }
     } else {
       if (ComponentName2 == NULL) {
         Status = gBS->UninstallMultipleProtocolInterfaces (
-                        ImageHandle,
-                        &gEfiDriverBindingProtocolGuid,  &gFatDriverBinding,
-                        &gEfiComponentNameProtocolGuid,  ComponentName,
-                        NULL
-                        );
+                                                           ImageHandle,
+                                                           &gEfiDriverBindingProtocolGuid,
+                                                           &gFatDriverBinding,
+                                                           &gEfiComponentNameProtocolGuid,
+                                                           ComponentName,
+                                                           NULL
+                                                           );
       } else {
         Status = gBS->UninstallMultipleProtocolInterfaces (
-                        ImageHandle,
-                        &gEfiDriverBindingProtocolGuid,  &gFatDriverBinding,
-                        &gEfiComponentNameProtocolGuid,  ComponentName,
-                        &gEfiComponentName2ProtocolGuid, ComponentName2,
-                        NULL
-                        );
+                                                           ImageHandle,
+                                                           &gEfiDriverBindingProtocolGuid,
+                                                           &gFatDriverBinding,
+                                                           &gEfiComponentNameProtocolGuid,
+                                                           ComponentName,
+                                                           &gEfiComponentName2ProtocolGuid,
+                                                           ComponentName2,
+                                                           NULL
+                                                           );
       }
     }
   }
@@ -291,38 +299,39 @@ FatDriverBindingSupported (
   // Open the IO Abstraction(s) needed to perform the supported test
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiDiskIoProtocolGuid,
-                  (VOID **) &DiskIo,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              ControllerHandle,
+                              &gEfiDiskIoProtocolGuid,
+                              (VOID **) &DiskIo,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
 
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   //
   // Close the I/O Abstraction(s) used to perform the supported test
   //
   gBS->CloseProtocol (
-         ControllerHandle,
-         &gEfiDiskIoProtocolGuid,
-         This->DriverBindingHandle,
-         ControllerHandle
-         );
+                      ControllerHandle,
+                      &gEfiDiskIoProtocolGuid,
+                      This->DriverBindingHandle,
+                      ControllerHandle
+                      );
 
   //
   // Open the IO Abstraction(s) needed to perform the supported test
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiBlockIoProtocolGuid,
-                  NULL,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiBlockIoProtocolGuid,
+                              NULL,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
 
   return Status;
 }
@@ -351,11 +360,11 @@ FatDriverBindingStart (
   IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath
   )
 {
-  EFI_STATUS            Status;
-  EFI_BLOCK_IO_PROTOCOL *BlockIo;
-  EFI_DISK_IO_PROTOCOL  *DiskIo;
-  EFI_DISK_IO2_PROTOCOL *DiskIo2;
-  BOOLEAN               LockedByMe;
+  EFI_STATUS             Status;
+  EFI_BLOCK_IO_PROTOCOL  *BlockIo;
+  EFI_DISK_IO_PROTOCOL   *DiskIo;
+  EFI_DISK_IO2_PROTOCOL  *DiskIo2;
+  BOOLEAN                LockedByMe;
 
   LockedByMe = FALSE;
   //
@@ -371,41 +380,42 @@ FatDriverBindingStart (
   if (EFI_ERROR (Status)) {
     goto Exit;
   }
+
   //
   // Open our required BlockIo and DiskIo
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiBlockIoProtocolGuid,
-                  (VOID **) &BlockIo,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiBlockIoProtocolGuid,
+                              (VOID **) &BlockIo,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     goto Exit;
   }
 
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiDiskIoProtocolGuid,
-                  (VOID **) &DiskIo,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              ControllerHandle,
+                              &gEfiDiskIoProtocolGuid,
+                              (VOID **) &DiskIo,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (EFI_ERROR (Status)) {
     goto Exit;
   }
 
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiDiskIo2ProtocolGuid,
-                  (VOID **) &DiskIo2,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              ControllerHandle,
+                              &gEfiDiskIo2ProtocolGuid,
+                              (VOID **) &DiskIo2,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (EFI_ERROR (Status)) {
     DiskIo2 = NULL;
   }
@@ -423,26 +433,26 @@ FatDriverBindingStart (
   //
   if (EFI_ERROR (Status)) {
     Status = gBS->OpenProtocol (
-                    ControllerHandle,
-                    &gEfiSimpleFileSystemProtocolGuid,
-                    NULL,
-                    This->DriverBindingHandle,
-                    ControllerHandle,
-                    EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                    );
+                                ControllerHandle,
+                                &gEfiSimpleFileSystemProtocolGuid,
+                                NULL,
+                                This->DriverBindingHandle,
+                                ControllerHandle,
+                                EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                                );
     if (EFI_ERROR (Status)) {
+  gBS->CloseProtocol (
+                      ControllerHandle,
+                      &gEfiDiskIoProtocolGuid,
+                      This->DriverBindingHandle,
+                      ControllerHandle
+                      );
       gBS->CloseProtocol (
-             ControllerHandle,
-             &gEfiDiskIoProtocolGuid,
-             This->DriverBindingHandle,
-             ControllerHandle
-             );
-      gBS->CloseProtocol (
-             ControllerHandle,
-             &gEfiDiskIo2ProtocolGuid,
-             This->DriverBindingHandle,
-             ControllerHandle
-             );
+                          ControllerHandle,
+                          &gEfiDiskIo2ProtocolGuid,
+                          This->DriverBindingHandle,
+                          ControllerHandle
+                          );
     }
   }
 
@@ -453,6 +463,7 @@ Exit:
   if (LockedByMe) {
     FatReleaseLock ();
   }
+
   return Status;
 }
 
@@ -478,23 +489,23 @@ FatDriverBindingStop (
   IN  EFI_HANDLE                    *ChildHandleBuffer
   )
 {
-  EFI_STATUS                      Status;
-  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *FileSystem;
-  FAT_VOLUME                      *Volume;
-  EFI_DISK_IO2_PROTOCOL           *DiskIo2;
+  EFI_STATUS                       Status;
+  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL  *FileSystem;
+  FAT_VOLUME                       *Volume;
+  EFI_DISK_IO2_PROTOCOL            *DiskIo2;
 
   DiskIo2 = NULL;
   //
   // Get our context back
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiSimpleFileSystemProtocolGuid,
-                  (VOID **) &FileSystem,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiSimpleFileSystemProtocolGuid,
+                              (VOID **) &FileSystem,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
 
   if (!EFI_ERROR (Status)) {
     Volume  = VOLUME_FROM_VOL_INTERFACE (FileSystem);
@@ -505,19 +516,20 @@ FatDriverBindingStop (
   if (!EFI_ERROR (Status)) {
     if (DiskIo2 != NULL) {
       Status = gBS->CloseProtocol (
-        ControllerHandle,
-        &gEfiDiskIo2ProtocolGuid,
-        This->DriverBindingHandle,
-        ControllerHandle
-        );
+                                   ControllerHandle,
+                                   &gEfiDiskIo2ProtocolGuid,
+                                   This->DriverBindingHandle,
+                                   ControllerHandle
+                                   );
       ASSERT_EFI_ERROR (Status);
     }
+
     Status = gBS->CloseProtocol (
-      ControllerHandle,
-      &gEfiDiskIoProtocolGuid,
-      This->DriverBindingHandle,
-      ControllerHandle
-      );
+                                 ControllerHandle,
+                                 &gEfiDiskIoProtocolGuid,
+                                 This->DriverBindingHandle,
+                                 ControllerHandle
+                                 );
     ASSERT_EFI_ERROR (Status);
   }
 

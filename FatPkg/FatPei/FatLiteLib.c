@@ -9,9 +9,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "FatLitePeim.h"
 
-
 #define CHAR_FAT_VALID  0x01
-
 
 /**
   Converts a union code character to upper case.
@@ -35,7 +33,6 @@ ToUpper (
 
   return Letter;
 }
-
 
 /**
   Reads a block of data from the block device by calling
@@ -69,8 +66,8 @@ FatReadBlock (
     return EFI_DEVICE_ERROR;
   }
 
-  Status    = EFI_SUCCESS;
-  BlockDev  = &(PrivateData->BlockDevice[BlockDeviceNo]);
+  Status   = EFI_SUCCESS;
+  BlockDev = &(PrivateData->BlockDevice[BlockDeviceNo]);
 
   if (BufferSize > MultU64x32 (BlockDev->LastBlock - Lba + 1, BlockDev->BlockSize)) {
     return EFI_DEVICE_ERROR;
@@ -79,41 +76,39 @@ FatReadBlock (
   if (!BlockDev->Logical) {
     //
     // Status = BlockDev->ReadFunc
-    //  (PrivateData->PeiServices, BlockDev->PhysicalDevNo, Lba, BufferSize, Buffer);
+    // (PrivateData->PeiServices, BlockDev->PhysicalDevNo, Lba, BufferSize, Buffer);
     //
     if (BlockDev->BlockIo2 != NULL) {
       Status = BlockDev->BlockIo2->ReadBlocks (
-                                    (EFI_PEI_SERVICES **) GetPeiServicesTablePointer (),
-                                    BlockDev->BlockIo2,
-                                    BlockDev->PhysicalDevNo,
-                                    Lba,
-                                    BufferSize,
-                                    Buffer
-                                    );
+                                               (EFI_PEI_SERVICES **) GetPeiServicesTablePointer (),
+                                               BlockDev->BlockIo2,
+                                               BlockDev->PhysicalDevNo,
+                                               Lba,
+                                               BufferSize,
+                                               Buffer
+                                               );
     } else {
       Status = BlockDev->BlockIo->ReadBlocks (
-                                  (EFI_PEI_SERVICES **) GetPeiServicesTablePointer (),
-                                  BlockDev->BlockIo,
-                                  BlockDev->PhysicalDevNo,
-                                  Lba,
-                                  BufferSize,
-                                  Buffer
-                                  );
+                                              (EFI_PEI_SERVICES **) GetPeiServicesTablePointer (),
+                                              BlockDev->BlockIo,
+                                              BlockDev->PhysicalDevNo,
+                                              Lba,
+                                              BufferSize,
+                                              Buffer
+                                              );
     }
-
   } else {
     Status = FatReadDisk (
-              PrivateData,
-              BlockDev->ParentDevNo,
-              BlockDev->StartingPos + MultU64x32 (Lba, BlockDev->BlockSize),
-              BufferSize,
-              Buffer
-              );
+                          PrivateData,
+                          BlockDev->ParentDevNo,
+                          BlockDev->StartingPos + MultU64x32 (Lba, BlockDev->BlockSize),
+                          BufferSize,
+                          Buffer
+                          );
   }
 
   return Status;
 }
-
 
 /**
   Find a cache block designated to specific Block device and Lba.
@@ -142,7 +137,7 @@ FatGetCacheBlock (
   INTN                  Index;
   STATIC UINT8          Seed;
 
-  Status      = EFI_SUCCESS;
+  Status = EFI_SUCCESS;
   CacheBuffer = NULL;
 
   //
@@ -159,6 +154,7 @@ FatGetCacheBlock (
     *CachePtr = (CHAR8 *) CacheBuffer->Buffer;
     return EFI_SUCCESS;
   }
+
   //
   // We have to find an invalid cache buffer
   //
@@ -167,6 +163,7 @@ FatGetCacheBlock (
       break;
     }
   }
+
   //
   // Use the cache buffer
   //
@@ -181,32 +178,31 @@ FatGetCacheBlock (
     return EFI_DEVICE_ERROR;
   }
 
-  CacheBuffer                 = &(PrivateData->CacheBuffer[Index]);
+  CacheBuffer = &(PrivateData->CacheBuffer[Index]);
 
-  CacheBuffer->BlockDeviceNo  = BlockDeviceNo;
-  CacheBuffer->Lba            = Lba;
-  CacheBuffer->Size           = PrivateData->BlockDevice[BlockDeviceNo].BlockSize;
+  CacheBuffer->BlockDeviceNo = BlockDeviceNo;
+  CacheBuffer->Lba  = Lba;
+  CacheBuffer->Size = PrivateData->BlockDevice[BlockDeviceNo].BlockSize;
 
   //
   // Read in the data
   //
   Status = FatReadBlock (
-            PrivateData,
-            BlockDeviceNo,
-            Lba,
-            CacheBuffer->Size,
-            CacheBuffer->Buffer
-            );
+                         PrivateData,
+                         BlockDeviceNo,
+                         Lba,
+                         CacheBuffer->Size,
+                         CacheBuffer->Buffer
+                         );
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
   }
 
-  CacheBuffer->Valid  = TRUE;
-  *CachePtr           = (CHAR8 *) CacheBuffer->Buffer;
+  CacheBuffer->Valid = TRUE;
+  *CachePtr = (CHAR8 *) CacheBuffer->Buffer;
 
   return Status;
 }
-
 
 /**
   Disk reading.
@@ -246,8 +242,8 @@ FatReadDisk (
   //
   // Read underrun
   //
-  Lba     = DivU64x32Remainder (StartingAddress, BlockSize, &Offset);
-  Status  = FatGetCacheBlock (PrivateData, BlockDeviceNo, Lba, &CachePtr);
+  Lba    = DivU64x32Remainder (StartingAddress, BlockSize, &Offset);
+  Status = FatGetCacheBlock (PrivateData, BlockDeviceNo, Lba, &CachePtr);
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
   }
@@ -269,7 +265,7 @@ FatReadDisk (
   //
   OverRunLba = Lba + DivU64x32Remainder (Size, BlockSize, &Offset);
 
-  Size -= Offset;
+  Size  -= Offset;
   Status = FatReadBlock (PrivateData, BlockDeviceNo, Lba, Size, BufferPtr);
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
@@ -291,7 +287,6 @@ FatReadDisk (
 
   return Status;
 }
-
 
 /**
   This version is different from the version in Unicode collation
@@ -325,15 +320,15 @@ EngFatToStr (
     if (*Fat == ' ') {
       break;
     }
-    *String = *Fat;
-    String += 1;
-    Fat += 1;
+
+    *String  = *Fat;
+    String  += 1;
+    Fat     += 1;
     FatSize -= 1;
   }
 
   *String = 0;
 }
-
 
 /**
   Performs a case-insensitive comparison of two Null-terminated Unicode strings.

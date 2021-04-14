@@ -26,7 +26,7 @@ FatCreateTask (
   EFI_FILE_IO_TOKEN   *Token
   )
 {
-  FAT_TASK            *Task;
+  FAT_TASK  *Task;
 
   Task = AllocateZeroPool (sizeof (*Task));
   if (Task != NULL) {
@@ -36,6 +36,7 @@ FatCreateTask (
     InitializeListHead (&Task->Subtasks);
     InitializeListHead (&Task->Link);
   }
+
   return Task;
 }
 
@@ -51,14 +52,15 @@ FatDestroyTask (
   FAT_TASK            *Task
   )
 {
-  LIST_ENTRY          *Link;
-  FAT_SUBTASK         *Subtask;
+  LIST_ENTRY   *Link;
+  FAT_SUBTASK  *Subtask;
 
   Link = GetFirstNode (&Task->Subtasks);
   while (!IsNull (&Task->Subtasks, Link)) {
     Subtask = CR (Link, FAT_SUBTASK, Link, FAT_SUBTASK_SIGNATURE);
-    Link = FatDestroySubtask (Subtask);
+    Link    = FatDestroySubtask (Subtask);
   }
+
   FreePool (Task);
 }
 
@@ -74,7 +76,7 @@ FatWaitNonblockingTask (
   FAT_IFILE           *IFile
   )
 {
-  BOOLEAN             TaskQueueEmpty;
+  BOOLEAN  TaskQueueEmpty;
 
   do {
     EfiAcquireLock (&FatTaskLock);
@@ -97,7 +99,7 @@ FatDestroySubtask (
   FAT_SUBTASK         *Subtask
   )
 {
-  LIST_ENTRY          *Link;
+  LIST_ENTRY  *Link;
 
   gBS->CloseEvent (Subtask->DiskIo2Token.Event);
 
@@ -124,10 +126,10 @@ FatQueueTask (
   IN FAT_TASK         *Task
   )
 {
-  EFI_STATUS          Status;
-  LIST_ENTRY          *Link;
-  LIST_ENTRY          *NextLink;
-  FAT_SUBTASK         *Subtask;
+  EFI_STATUS   Status;
+  LIST_ENTRY   *Link;
+  LIST_ENTRY   *NextLink;
+  FAT_SUBTASK  *Subtask;
 
   //
   // Sometimes the Task doesn't contain any subtasks, signal the event directly.
@@ -153,30 +155,30 @@ FatQueueTask (
   // handle list elements being removed during the traverse.
   //
   for ( Link = GetFirstNode (&Task->Subtasks), NextLink = GetNextNode (&Task->Subtasks, Link)
-      ; Link != &Task->Subtasks
-      ; Link = NextLink, NextLink = Link->ForwardLink
-      ) {
+        ; Link != &Task->Subtasks
+        ; Link = NextLink, NextLink = Link->ForwardLink
+        ) {
     Subtask = CR (Link, FAT_SUBTASK, Link, FAT_SUBTASK_SIGNATURE);
     if (Subtask->Write) {
-
       Status = IFile->OFile->Volume->DiskIo2->WriteDiskEx (
-                                                IFile->OFile->Volume->DiskIo2,
-                                                IFile->OFile->Volume->MediaId,
-                                                Subtask->Offset,
-                                                &Subtask->DiskIo2Token,
-                                                Subtask->BufferSize,
-                                                Subtask->Buffer
-                                                );
+                                                           IFile->OFile->Volume->DiskIo2,
+                                                           IFile->OFile->Volume->MediaId,
+                                                           Subtask->Offset,
+                                                           &Subtask->DiskIo2Token,
+                                                           Subtask->BufferSize,
+                                                           Subtask->Buffer
+                                                           );
     } else {
       Status = IFile->OFile->Volume->DiskIo2->ReadDiskEx (
-                                                IFile->OFile->Volume->DiskIo2,
-                                                IFile->OFile->Volume->MediaId,
-                                                Subtask->Offset,
-                                                &Subtask->DiskIo2Token,
-                                                Subtask->BufferSize,
-                                                Subtask->Buffer
-                                                );
+                                                          IFile->OFile->Volume->DiskIo2,
+                                                          IFile->OFile->Volume->MediaId,
+                                                          Subtask->Offset,
+                                                          &Subtask->DiskIo2Token,
+                                                          Subtask->BufferSize,
+                                                          Subtask->Buffer
+                                                          );
     }
+
     if (EFI_ERROR (Status)) {
       break;
     }
@@ -191,7 +193,7 @@ FatQueueTask (
     //
     while (!IsNull (&Task->Subtasks, Link)) {
       Subtask = CR (Link, FAT_SUBTASK, Link, FAT_SUBTASK_SIGNATURE);
-      Link = FatDestroySubtask (Subtask);
+      Link    = FatDestroySubtask (Subtask);
     }
 
     if (IsListEmpty (&Task->Subtasks)) {
@@ -230,7 +232,7 @@ FatAccessVolumeDirty (
   IN VOID             *DirtyValue
   )
 {
-  UINTN WriteCount;
+  UINTN  WriteCount;
 
   WriteCount = Volume->FatEntrySize;
   return FatDiskIo (Volume, IoMode, Volume->FatPos + WriteCount, WriteCount, DirtyValue, NULL);
@@ -251,9 +253,9 @@ FatOnAccessComplete (
   IN  VOID                     *Context
   )
 {
-  EFI_STATUS             Status;
-  FAT_SUBTASK            *Subtask;
-  FAT_TASK               *Task;
+  EFI_STATUS   Status;
+  FAT_SUBTASK  *Subtask;
+  FAT_TASK     *Task;
 
   //
   // Avoid someone in future breaks the below assumption.
@@ -341,30 +343,30 @@ FatDiskIo (
         //
         // Blocking access
         //
-        DiskIo      = Volume->DiskIo;
-        IoFunction  = (IoMode == ReadDisk) ? DiskIo->ReadDisk : DiskIo->WriteDisk;
-        Status      = IoFunction (DiskIo, Volume->MediaId, Offset, BufferSize, Buffer);
+        DiskIo     = Volume->DiskIo;
+        IoFunction = (IoMode == ReadDisk) ? DiskIo->ReadDisk : DiskIo->WriteDisk;
+        Status     = IoFunction (DiskIo, Volume->MediaId, Offset, BufferSize, Buffer);
       } else {
         //
         // Non-blocking access
         //
         Subtask = AllocateZeroPool (sizeof (*Subtask));
         if (Subtask == NULL) {
-          Status        = EFI_OUT_OF_RESOURCES;
+          Status = EFI_OUT_OF_RESOURCES;
         } else {
-          Subtask->Signature  = FAT_SUBTASK_SIGNATURE;
+          Subtask->Signature = FAT_SUBTASK_SIGNATURE;
           Subtask->Task       = Task;
           Subtask->Write      = (BOOLEAN) (IoMode == WriteDisk);
           Subtask->Offset     = Offset;
           Subtask->Buffer     = Buffer;
           Subtask->BufferSize = BufferSize;
           Status = gBS->CreateEvent (
-                          EVT_NOTIFY_SIGNAL,
-                          TPL_NOTIFY,
-                          FatOnAccessComplete,
-                          Subtask,
-                          &Subtask->DiskIo2Token.Event
-                          );
+                                     EVT_NOTIFY_SIGNAL,
+                                     TPL_NOTIFY,
+                                     FatOnAccessComplete,
+                                     Subtask,
+                                     &Subtask->DiskIo2Token.Event
+                                     );
           if (!EFI_ERROR (Status)) {
             InsertTailList (&Task->Subtasks, &Subtask->Link);
           } else {
@@ -464,6 +466,7 @@ FatFreeVolume (
   if (Volume->CacheBuffer != NULL) {
     FreePool (Volume->CacheBuffer);
   }
+
   //
   // Free directory cache
   //
@@ -496,11 +499,11 @@ FatEfiTimeToFatTime (
     FTime->Date.Year = FAT_MAX_YEAR_FROM_1980;
   }
 
-  FTime->Date.Month         = ETime->Month;
-  FTime->Date.Day           = ETime->Day;
-  FTime->Time.Hour          = ETime->Hour;
-  FTime->Time.Minute        = ETime->Minute;
-  FTime->Time.DoubleSecond  = (UINT16) (ETime->Second / 2);
+  FTime->Date.Month  = ETime->Month;
+  FTime->Date.Day    = ETime->Day;
+  FTime->Time.Hour   = ETime->Hour;
+  FTime->Time.Minute = ETime->Minute;
+  FTime->Time.DoubleSecond = (UINT16) (ETime->Second / 2);
 }
 
 /**
@@ -540,17 +543,17 @@ FatGetCurrentFatTime (
   OUT FAT_DATE_TIME   *FatNow
   )
 {
-  EFI_STATUS Status;
-  EFI_TIME   Now;
+  EFI_STATUS  Status;
+  EFI_TIME    Now;
 
   Status = gRT->GetTime (&Now, NULL);
   if (!EFI_ERROR (Status)) {
     FatEfiTimeToFatTime (&Now, FatNow);
   } else {
     ZeroMem (&Now, sizeof (EFI_TIME));
-    Now.Year = 1980;
+    Now.Year  = 1980;
     Now.Month = 1;
-    Now.Day = 1;
+    Now.Day   = 1;
     FatEfiTimeToFatTime (&Now, FatNow);
   }
 }
@@ -570,8 +573,8 @@ FatIsValidTime (
   IN EFI_TIME         *Time
   )
 {
-  UINTN         Day;
-  BOOLEAN       ValidTime;
+  UINTN    Day;
+  BOOLEAN  ValidTime;
 
   ValidTime = TRUE;
 
@@ -589,9 +592,7 @@ FatIsValidTime (
       Time->Second > 59 ||
       Time->Nanosecond > 999999999
       ) {
-
     ValidTime = FALSE;
-
   } else {
     //
     // Perform a more specific check of the day of the month
@@ -603,6 +604,7 @@ FatIsValidTime (
       // 1 extra day this month
       //
     }
+
     if (Time->Day > Day) {
       ValidTime = FALSE;
     }

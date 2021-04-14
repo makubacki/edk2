@@ -30,8 +30,8 @@ FatAccessEntry (
   IN OUT VOID                 *Entry
   )
 {
-  UINTN Position;
-  UINTN BufferSize;
+  UINTN  Position;
+  UINTN  BufferSize;
 
   Position = EntryPos * sizeof (FAT_DIRECTORY_ENTRY);
   if (Position >= Parent->FileSize) {
@@ -65,13 +65,13 @@ FatStoreDirEnt (
   IN FAT_DIRENT           *DirEnt
   )
 {
-  EFI_STATUS        Status;
-  FAT_DIRECTORY_LFN LfnEntry;
-  UINTN             EntryPos;
-  CHAR16            *LfnBufferPointer;
-  CHAR16            LfnBuffer[MAX_LFN_ENTRIES * LFN_CHAR_TOTAL + 1];
-  UINT8             EntryCount;
-  UINT8             LfnOrdinal;
+  EFI_STATUS         Status;
+  FAT_DIRECTORY_LFN  LfnEntry;
+  UINTN              EntryPos;
+  CHAR16             *LfnBufferPointer;
+  CHAR16             LfnBuffer[MAX_LFN_ENTRIES * LFN_CHAR_TOTAL + 1];
+  UINT8              EntryCount;
+  UINT8              LfnOrdinal;
 
   EntryPos   = DirEnt->EntryPos;
   EntryCount = DirEnt->EntryCount;
@@ -89,17 +89,17 @@ FatStoreDirEnt (
     //
     SetMem (LfnBuffer, sizeof (CHAR16) * LFN_CHAR_TOTAL * EntryCount, 0xff);
     Status = StrCpyS (
-               LfnBuffer,
-               ARRAY_SIZE (LfnBuffer),
-               DirEnt->FileString
-               );
+                      LfnBuffer,
+                      ARRAY_SIZE (LfnBuffer),
+                      DirEnt->FileString
+                      );
     if (EFI_ERROR (Status)) {
       return Status;
     }
 
     LfnBufferPointer    = LfnBuffer;
     LfnEntry.Attributes = FAT_ATTRIBUTE_LFN;
-    LfnEntry.Type       = 0;
+    LfnEntry.Type = 0;
     LfnEntry.MustBeZero = 0;
     LfnEntry.Checksum   = FatCheckSum (DirEnt->Entry.FileName);
     for (LfnOrdinal = 1; LfnOrdinal <= EntryCount; LfnOrdinal++) {
@@ -145,6 +145,7 @@ FatIsDotDirEnt (
   )
 {
   CHAR16  *FileString;
+
   FileString = DirEnt->FileString;
   if (StrCmp (FileString, L".") == 0 || StrCmp (FileString, L"..") == 0) {
     return TRUE;
@@ -169,8 +170,8 @@ FatSetDirEntCluster (
   UINTN       Cluster;
   FAT_DIRENT  *DirEnt;
 
-  DirEnt                        = OFile->DirEnt;
-  Cluster                       = OFile->FileCluster;
+  DirEnt  = OFile->DirEnt;
+  Cluster = OFile->FileCluster;
   DirEnt->Entry.FileClusterHigh = (UINT16) (Cluster >> 16);
   DirEnt->Entry.FileCluster     = (UINT16) Cluster;
 }
@@ -206,15 +207,16 @@ FatCloneDirEnt (
   IN  FAT_DIRENT          *DirEnt2
   )
 {
-  UINT8 *Entry1;
-  UINT8 *Entry2;
-  Entry1  = (UINT8 *) &DirEnt1->Entry;
-  Entry2  = (UINT8 *) &DirEnt2->Entry;
+  UINT8  *Entry1;
+  UINT8  *Entry2;
+
+  Entry1 = (UINT8 *) &DirEnt1->Entry;
+  Entry2 = (UINT8 *) &DirEnt2->Entry;
   CopyMem (
-    Entry1 + FAT_ENTRY_INFO_OFFSET,
-    Entry2 + FAT_ENTRY_INFO_OFFSET,
-    sizeof (FAT_DIRECTORY_ENTRY) - FAT_ENTRY_INFO_OFFSET
-    );
+           Entry1 + FAT_ENTRY_INFO_OFFSET,
+           Entry2 + FAT_ENTRY_INFO_OFFSET,
+           sizeof (FAT_DIRECTORY_ENTRY) - FAT_ENTRY_INFO_OFFSET
+           );
 }
 
 /**
@@ -232,18 +234,18 @@ FatLoadLongNameEntry (
   IN FAT_DIRENT          *DirEnt
   )
 {
-  CHAR16            LfnBuffer[MAX_LFN_ENTRIES * LFN_CHAR_TOTAL + 1];
-  CHAR16            *LfnBufferPointer;
-  CHAR8             *File8Dot3Name;
-  UINTN             EntryPos;
-  UINT8             LfnOrdinal;
-  UINT8             LfnChecksum;
-  FAT_DIRECTORY_LFN LfnEntry;
-  EFI_STATUS        Status;
+  CHAR16             LfnBuffer[MAX_LFN_ENTRIES * LFN_CHAR_TOTAL + 1];
+  CHAR16             *LfnBufferPointer;
+  CHAR8              *File8Dot3Name;
+  UINTN              EntryPos;
+  UINT8              LfnOrdinal;
+  UINT8              LfnChecksum;
+  FAT_DIRECTORY_LFN  LfnEntry;
+  EFI_STATUS         Status;
 
-  EntryPos          = DirEnt->EntryPos;
-  File8Dot3Name     = DirEnt->Entry.FileName;
-  LfnBufferPointer  = LfnBuffer;
+  EntryPos = DirEnt->EntryPos;
+  File8Dot3Name    = DirEnt->Entry.FileName;
+  LfnBufferPointer = LfnBuffer;
   //
   // Computes checksum for LFN
   //
@@ -281,6 +283,7 @@ FatLoadLongNameEntry (
     LfnBufferPointer += LFN_CHAR3_LEN;
     LfnOrdinal++;
   } while ((LfnEntry.Ordinal & FAT_LFN_LAST) == 0);
+
   DirEnt->EntryCount = LfnOrdinal;
   //
   // Terminate current Lfnbuffer
@@ -292,10 +295,10 @@ FatLoadLongNameEntry (
     // get the file name from short name
     //
     FatGetFileNameViaCaseFlag (
-      DirEnt,
-      LfnBuffer,
-      ARRAY_SIZE (LfnBuffer)
-      );
+                               DirEnt,
+                               LfnBuffer,
+                               ARRAY_SIZE (LfnBuffer)
+                               );
   }
 
   DirEnt->FileString = AllocateCopyPool (StrSize (LfnBuffer), LfnBuffer);
@@ -319,6 +322,7 @@ FatAddDirEnt (
   if (DirEnt->Link.BackLink == NULL) {
     DirEnt->Link.BackLink = &ODir->ChildList;
   }
+
   InsertTailList (DirEnt->Link.BackLink, &DirEnt->Link);
   FatInsertToHashTable (ODir, DirEnt);
 }
@@ -342,10 +346,10 @@ FatLoadNextDirEnt (
   OUT FAT_DIRENT          **PtrDirEnt
   )
 {
-  EFI_STATUS          Status;
-  FAT_DIRENT          *DirEnt;
-  FAT_ODIR            *ODir;
-  FAT_DIRECTORY_ENTRY Entry;
+  EFI_STATUS           Status;
+  FAT_DIRENT           *DirEnt;
+  FAT_ODIR             *ODir;
+  FAT_DIRECTORY_ENTRY  Entry;
 
   ODir = OFile->ODir;
   //
@@ -358,7 +362,7 @@ FatLoadNextDirEnt (
   ASSERT (!ODir->EndOfDir);
   DirEnt = NULL;
 
-  for (;;) {
+  for ( ; ;) {
     //
     // Read the next directory entry until we find a valid directory entry (excluding lfn entry)
     //
@@ -405,6 +409,7 @@ FatLoadNextDirEnt (
       Status = EFI_OUT_OF_RESOURCES;
       goto Done;
     }
+
     //
     // Add this directory entry to directory
     //
@@ -443,37 +448,37 @@ FatGetDirEntInfo (
   IN     FAT_VOLUME         *Volume,
   IN     FAT_DIRENT         *DirEnt,
   IN OUT UINTN              *BufferSize,
-     OUT VOID               *Buffer
+  OUT VOID               *Buffer
   )
 {
-  UINTN               Size;
-  UINTN               NameSize;
-  UINTN               ResultSize;
-  UINTN               Cluster;
-  EFI_STATUS          Status;
-  EFI_FILE_INFO       *Info;
-  FAT_DIRECTORY_ENTRY *Entry;
-  FAT_DATE_TIME       FatLastAccess;
+  UINTN                Size;
+  UINTN                NameSize;
+  UINTN                ResultSize;
+  UINTN                Cluster;
+  EFI_STATUS           Status;
+  EFI_FILE_INFO        *Info;
+  FAT_DIRECTORY_ENTRY  *Entry;
+  FAT_DATE_TIME        FatLastAccess;
 
   ASSERT_VOLUME_LOCKED (Volume);
 
-  Size        = SIZE_OF_EFI_FILE_INFO;
-  NameSize    = StrSize (DirEnt->FileString);
-  ResultSize  = Size + NameSize;
+  Size       = SIZE_OF_EFI_FILE_INFO;
+  NameSize   = StrSize (DirEnt->FileString);
+  ResultSize = Size + NameSize;
 
-  Status      = EFI_BUFFER_TOO_SMALL;
+  Status = EFI_BUFFER_TOO_SMALL;
   if (*BufferSize >= ResultSize) {
-    Status      = EFI_SUCCESS;
-    Entry       = &DirEnt->Entry;
-    Info        = Buffer;
-    Info->Size  = ResultSize;
+    Status     = EFI_SUCCESS;
+    Entry      = &DirEnt->Entry;
+    Info       = Buffer;
+    Info->Size = ResultSize;
     if ((Entry->Attributes & FAT_ATTRIBUTE_DIRECTORY) != 0) {
-      Cluster             = (Entry->FileClusterHigh << 16) | Entry->FileCluster;
-      Info->PhysicalSize  = FatPhysicalDirSize (Volume, Cluster);
-      Info->FileSize      = Info->PhysicalSize;
+      Cluster = (Entry->FileClusterHigh << 16) | Entry->FileCluster;
+      Info->PhysicalSize = FatPhysicalDirSize (Volume, Cluster);
+      Info->FileSize     = Info->PhysicalSize;
     } else {
-      Info->FileSize      = Entry->FileSize;
-      Info->PhysicalSize  = FatPhysicalFileSize (Volume, Entry->FileSize);
+      Info->FileSize     = Entry->FileSize;
+      Info->PhysicalSize = FatPhysicalFileSize (Volume, Entry->FileSize);
     }
 
     ZeroMem (&FatLastAccess.Time, sizeof (FatLastAccess.Time));
@@ -526,8 +531,9 @@ FatSearchODir (
   //
   DirEnt = *FatLongNameHashSearch (ODir, FileNameString);
   if (DirEnt == NULL && PossibleShortName) {
-      DirEnt = *FatShortNameHashSearch (ODir, File8Dot3Name);
+    DirEnt = *FatShortNameHashSearch (ODir, File8Dot3Name);
   }
+
   if (DirEnt == NULL) {
     //
     // We fail to get the directory entry from hash table; we then
@@ -617,12 +623,12 @@ FatGetNextDirEnt (
     //
     // End of directory, return NULL
     //
-    DirEnt              = NULL;
-    ODir->CurrentPos    = ODir->CurrentEndPos;
+    DirEnt = NULL;
+    ODir->CurrentPos = ODir->CurrentEndPos;
   } else {
     ODir->CurrentCursor = ODir->CurrentCursor->ForwardLink;
-    DirEnt              = DIRENT_FROM_LINK (ODir->CurrentCursor);
-    ODir->CurrentPos    = DirEnt->EntryPos + 1;
+    DirEnt = DIRENT_FROM_LINK (ODir->CurrentCursor);
+    ODir->CurrentPos = DirEnt->EntryPos + 1;
   }
 
   *PtrDirEnt = DirEnt;
@@ -650,9 +656,9 @@ FatSetEntryCount (
   //
   // Get new entry count and set the 8.3 name
   //
-  DirEnt->EntryCount  = 1;
-  FileString          = DirEnt->FileString;
-  File8Dot3Name       = DirEnt->Entry.FileName;
+  DirEnt->EntryCount = 1;
+  FileString    = DirEnt->FileString;
+  File8Dot3Name = DirEnt->Entry.FileName;
   SetMem (File8Dot3Name, FAT_NAME_LEN, ' ');
   if (StrCmp (FileString, L".") == 0) {
     //
@@ -664,8 +670,8 @@ FatSetEntryCount (
     //
     // ".." entry
     //
-    File8Dot3Name[0]  = '.';
-    File8Dot3Name[1]  = '.';
+    File8Dot3Name[0] = '.';
+    File8Dot3Name[1] = '.';
     FatCloneDirEnt (DirEnt, OFile->Parent->DirEnt);
   } else {
     //
@@ -681,7 +687,7 @@ FatSetEntryCount (
       // The file name is not a valid 8.3 name we need to generate an 8.3 name for it
       //
       FatCreate8Dot3Name (OFile, DirEnt);
-      DirEnt->EntryCount = (UINT8)(LFN_ENTRY_NUMBER (StrLen (FileString)) + DirEnt->EntryCount);
+      DirEnt->EntryCount = (UINT8) (LFN_ENTRY_NUMBER (StrLen (FileString)) + DirEnt->EntryCount);
     }
   }
 }
@@ -723,12 +729,12 @@ FatSeekVolumeId (
   OUT FAT_DIRENT           *DirEnt
   )
 {
-  EFI_STATUS          Status;
-  UINTN               EntryPos;
-  FAT_DIRECTORY_ENTRY *Entry;
+  EFI_STATUS           Status;
+  UINTN                EntryPos;
+  FAT_DIRECTORY_ENTRY  *Entry;
 
-  EntryPos        = 0;
-  Entry           = &DirEnt->Entry;
+  EntryPos = 0;
+  Entry    = &DirEnt->Entry;
   DirEnt->Invalid = TRUE;
   do {
     Status = FatAccessEntry (Root, ReadData, EntryPos, Entry);
@@ -736,7 +742,8 @@ FatSeekVolumeId (
       return Status;
     }
 
-    if (((UINT8) Entry->FileName[0] != DELETE_ENTRY_MARK) && (((Entry->Attributes) & (~FAT_ATTRIBUTE_ARCHIVE)) == FAT_ATTRIBUTE_VOLUME_ID)) {
+    if (((UINT8) Entry->FileName[0] != DELETE_ENTRY_MARK) &&
+        (((Entry->Attributes) & (~FAT_ATTRIBUTE_ARCHIVE)) == FAT_ATTRIBUTE_VOLUME_ID)) {
       DirEnt->EntryPos   = (UINT16) EntryPos;
       DirEnt->EntryCount = 1;
       DirEnt->Invalid    = FALSE;
@@ -745,6 +752,7 @@ FatSeekVolumeId (
 
     EntryPos++;
   } while (Entry->FileName[0] != EMPTY_ENTRY_MARK);
+
   return EFI_SUCCESS;
 }
 
@@ -770,15 +778,15 @@ FatFirstFitInsertDirEnt (
   IN FAT_DIRENT   *DirEnt
   )
 {
-  EFI_STATUS      Status;
-  FAT_ODIR        *ODir;
-  LIST_ENTRY      *CurrentEntry;
-  FAT_DIRENT      *CurrentDirEnt;
-  UINT32          CurrentPos;
-  UINT32          LabelPos;
-  UINT32          NewEntryPos;
-  UINT16          EntryCount;
-  FAT_DIRENT      LabelDirEnt;
+  EFI_STATUS  Status;
+  FAT_ODIR    *ODir;
+  LIST_ENTRY  *CurrentEntry;
+  FAT_DIRENT  *CurrentDirEnt;
+  UINT32      CurrentPos;
+  UINT32      LabelPos;
+  UINT32      NewEntryPos;
+  UINT16      EntryCount;
+  FAT_DIRENT  LabelDirEnt;
 
   LabelPos = 0;
   if (OFile->Parent == NULL) {
@@ -795,11 +803,11 @@ FatFirstFitInsertDirEnt (
   EntryCount  = DirEnt->EntryCount;
   NewEntryPos = EntryCount;
   CurrentPos  = 0;
-  ODir        = OFile->ODir;
+  ODir = OFile->ODir;
   for (CurrentEntry = ODir->ChildList.ForwardLink;
        CurrentEntry != &ODir->ChildList;
        CurrentEntry = CurrentEntry->ForwardLink
-      ) {
+       ) {
     CurrentDirEnt = DIRENT_FROM_LINK (CurrentEntry);
     if (NewEntryPos + CurrentDirEnt->EntryCount <= CurrentDirEnt->EntryPos) {
       if (LabelPos > NewEntryPos || LabelPos <= CurrentPos) {
@@ -819,7 +827,7 @@ FatFirstFitInsertDirEnt (
   }
 
 Done:
-  DirEnt->EntryPos   = (UINT16) NewEntryPos;
+  DirEnt->EntryPos = (UINT16) NewEntryPos;
   DirEnt->Link.BackLink = CurrentEntry;
   return EFI_SUCCESS;
 }
@@ -859,6 +867,7 @@ FatNewEntryPos (
       return Status;
     }
   }
+
   //
   // We will append this entry to the end of directory
   //
@@ -873,6 +882,7 @@ FatNewEntryPos (
       //
       return FatFirstFitInsertDirEnt (OFile, DirEnt);
     }
+
     //
     // We should allocate a new cluster for this directory
     //
@@ -881,11 +891,12 @@ FatNewEntryPos (
       return Status;
     }
   }
+
   //
   // We append our directory entry at the end of directory file
   //
   ODir->CurrentEndPos = NewEndPos;
-  DirEnt->EntryPos = (UINT16) (ODir->CurrentEndPos - 1);
+  DirEnt->EntryPos    = (UINT16) (ODir->CurrentEndPos - 1);
   return EFI_SUCCESS;
 }
 
@@ -909,8 +920,8 @@ FatGetVolumeEntry (
   EFI_STATUS  Status;
   FAT_DIRENT  LabelDirEnt;
 
-  *Name   = 0;
-  Status  = FatSeekVolumeId (Volume->Root, &LabelDirEnt);
+  *Name  = 0;
+  Status = FatSeekVolumeId (Volume->Root, &LabelDirEnt);
   if (!EFI_ERROR (Status)) {
     if (!LabelDirEnt.Invalid) {
       FatNameToStr (LabelDirEnt.Entry.FileName, FAT_NAME_LEN, FALSE, Name);
@@ -942,8 +953,8 @@ FatSetVolumeEntry (
   FAT_DIRENT  LabelDirEnt;
   FAT_OFILE   *Root;
 
-  Root    = Volume->Root;
-  Status  = FatSeekVolumeId (Volume->Root, &LabelDirEnt);
+  Root   = Volume->Root;
+  Status = FatSeekVolumeId (Volume->Root, &LabelDirEnt);
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -954,7 +965,7 @@ FatSetVolumeEntry (
     //
     ZeroMem (&LabelDirEnt, sizeof (FAT_DIRENT));
     LabelDirEnt.EntryCount = 1;
-    Status                 = FatNewEntryPos (Root, &LabelDirEnt);
+    Status = FatNewEntryPos (Root, &LabelDirEnt);
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -1002,6 +1013,7 @@ FatCreateDotDirEnts (
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   //
   // Create ".."
   //
@@ -1043,12 +1055,13 @@ FatCreateDirEnt (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  DirEnt->Signature   = FAT_DIRENT_SIGNATURE;
-  DirEnt->FileString  = AllocateCopyPool (StrSize (FileName), FileName);
+  DirEnt->Signature  = FAT_DIRENT_SIGNATURE;
+  DirEnt->FileString = AllocateCopyPool (StrSize (FileName), FileName);
   if (DirEnt->FileString == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;
   }
+
   //
   // Determine how many directory entries we need
   //
@@ -1063,7 +1076,7 @@ FatCreateDirEnt (
 
   FatAddDirEnt (ODir, DirEnt);
   DirEnt->Entry.Attributes = Attributes;
-  *PtrDirEnt               = DirEnt;
+  *PtrDirEnt = DirEnt;
   DEBUG ((EFI_D_INFO, "FSOpen: Created new directory entry '%S'\n", DirEnt->FileString));
   return FatStoreDirEnt (OFile, DirEnt);
 
@@ -1098,6 +1111,7 @@ FatRemoveDirEnt (
     //
     ODir->CurrentCursor = ODir->CurrentCursor->BackLink;
   }
+
   //
   // Remove from directory entry list
   //
@@ -1107,7 +1121,7 @@ FatRemoveDirEnt (
   //
   FatDeleteFromHashTable (ODir, DirEnt);
   DirEnt->Entry.FileName[0] = DELETE_ENTRY_MARK;
-  DirEnt->Invalid           = TRUE;
+  DirEnt->Invalid = TRUE;
   return FatStoreDirEnt (OFile, DirEnt);
 }
 
@@ -1150,7 +1164,7 @@ FatOpenDirEnt (
       //
       // The newly created OFile is not root
       //
-      Volume             = Parent->Volume;
+      Volume = Parent->Volume;
       OFile->FullPathLen = Parent->FullPathLen + 1 + StrLen (DirEnt->FileString);
       OFile->FileCluster = ((DirEnt->Entry.FileClusterHigh) << 16) | (DirEnt->Entry.FileCluster);
       InsertTailList (&Parent->ChildHead, &OFile->ChildLink);
@@ -1158,16 +1172,16 @@ FatOpenDirEnt (
       //
       // The newly created OFile is root
       //
-      Volume                = VOLUME_FROM_ROOT_DIRENT (DirEnt);
-      Volume->Root          = OFile;
-      OFile->FileCluster    = Volume->RootCluster;
+      Volume = VOLUME_FROM_ROOT_DIRENT (DirEnt);
+      Volume->Root = OFile;
+      OFile->FileCluster = Volume->RootCluster;
       if (Volume->FatType  != Fat32) {
-        OFile->IsFixedRootDir  = TRUE;
+        OFile->IsFixedRootDir = TRUE;
       }
     }
 
-    OFile->FileCurrentCluster  = OFile->FileCluster;
-    OFile->Volume              = Volume;
+    OFile->FileCurrentCluster = OFile->FileCluster;
+    OFile->Volume = Volume;
     InsertHeadList (&Volume->CheckRef, &OFile->CheckLink);
 
     OFile->FileSize = DirEnt->Entry.FileSize;
@@ -1205,9 +1219,9 @@ FatCloseDirEnt (
   FAT_OFILE   *OFile;
   FAT_VOLUME  *Volume;
 
-  OFile   = DirEnt->OFile;
+  OFile = DirEnt->OFile;
   ASSERT (OFile != NULL);
-  Volume  = OFile->Volume;
+  Volume = OFile->Volume;
 
   if (OFile->ODir != NULL) {
     FatDiscardODir (OFile);
@@ -1254,7 +1268,7 @@ FatLocateOFile (
   IN OUT FAT_OFILE        **PtrOFile,
   IN     CHAR16           *FileName,
   IN     UINT8            Attributes,
-     OUT CHAR16           *NewFileName
+  OUT CHAR16           *NewFileName
   )
 {
   EFI_STATUS  Status;
@@ -1273,13 +1287,14 @@ FatLocateOFile (
     return EFI_INVALID_PARAMETER;
   }
 
-  OFile       = *PtrOFile;
-  Volume      = OFile->Volume;
+  OFile  = *PtrOFile;
+  Volume = OFile->Volume;
 
   DirIntended = FALSE;
   if (FileName[FileNameLen - 1] == PATH_NAME_SEPARATOR) {
     DirIntended = TRUE;
   }
+
   //
   // If name starts with path name separator, then move to root OFile
   //
@@ -1288,10 +1303,11 @@ FatLocateOFile (
     FileName++;
     FileNameLen--;
   }
+
   //
   // Per FAT Spec the file name should meet the following criteria:
-  //   C1. Length (FileLongName) <= 255
-  //   C2. Length (X:FileFullPath<NUL>) <= 260
+  // C1. Length (FileLongName) <= 255
+  // C2. Length (X:FileFullPath<NUL>) <= 260
   // Here we check C2 first.
   //
   if (2 + OFile->FullPathLen + 1 + FileNameLen + 1 > EFI_PATH_STRING_LENGTH) {
@@ -1300,11 +1316,12 @@ FatLocateOFile (
     //
     return EFI_INVALID_PARAMETER;
   }
+
   //
   // Start at current location
   //
   Next = FileName;
-  for (;;) {
+  for ( ; ;) {
     //
     // Get the next component name
     //
@@ -1322,12 +1339,14 @@ FatLocateOFile (
       NewFileName[0] = 0;
       break;
     }
+
     //
     // If "dot", then current
     //
     if (StrCmp (ComponentName, L".") == 0) {
       continue;
     }
+
     //
     // If "dot dot", then parent
     //
@@ -1335,6 +1354,7 @@ FatLocateOFile (
       if (OFile->Parent == NULL) {
         return EFI_INVALID_PARAMETER;
       }
+
       OFile = OFile->Parent;
       continue;
     }
@@ -1342,6 +1362,7 @@ FatLocateOFile (
     if (!FatFileNameIsValid (ComponentName, NewFileName)) {
       return EFI_INVALID_PARAMETER;
     }
+
     //
     // We have a component name, try to open it
     //
@@ -1351,6 +1372,7 @@ FatLocateOFile (
       //
       return EFI_NOT_FOUND;
     }
+
     //
     // Search the compName in the directory
     //
@@ -1370,6 +1392,7 @@ FatLocateOFile (
       if (DirIntended && (Attributes & FAT_ATTRIBUTE_DIRECTORY) == 0) {
         return EFI_INVALID_PARAMETER;
       }
+
       //
       // It's the last component name - return with the open
       // path and the remaining name
@@ -1388,4 +1411,3 @@ FatLocateOFile (
   *PtrOFile = OFile;
   return EFI_SUCCESS;
 }
-

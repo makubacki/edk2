@@ -45,18 +45,18 @@ InitializeUnicodeCollationSupportWorker (
   CHAR8                           *BestLanguage;
 
   Status = gBS->LocateHandleBuffer (
-                  ByProtocol,
-                  ProtocolGuid,
-                  NULL,
-                  &NumHandles,
-                  &Handles
-                  );
+                                    ByProtocol,
+                                    ProtocolGuid,
+                                    NULL,
+                                    &NumHandles,
+                                    &Handles
+                                    );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   Iso639Language = (BOOLEAN) (ProtocolGuid == &gEfiUnicodeCollationProtocolGuid);
-  GetEfiGlobalVariable2 (VariableName, (VOID**) &Language, NULL);
+  GetEfiGlobalVariable2 (VariableName, (VOID **) &Language, NULL);
 
   ReturnStatus = EFI_UNSUPPORTED;
   for (Index = 0; Index < NumHandles; Index++) {
@@ -64,13 +64,13 @@ InitializeUnicodeCollationSupportWorker (
     // Open Unicode Collation Protocol
     //
     Status = gBS->OpenProtocol (
-                    Handles[Index],
-                    ProtocolGuid,
-                    (VOID **) &Uci,
-                    AgentHandle,
-                    NULL,
-                    EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                    );
+                                Handles[Index],
+                                ProtocolGuid,
+                                (VOID **) &Uci,
+                                AgentHandle,
+                                NULL,
+                                EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                                );
     if (EFI_ERROR (Status)) {
       continue;
     }
@@ -80,12 +80,12 @@ InitializeUnicodeCollationSupportWorker (
     // of Unicode Collation (2) protocol.
     //
     BestLanguage = GetBestLanguage (
-                     Uci->SupportedLanguages,
-                     Iso639Language,
-                     (Language == NULL) ? "" : Language,
-                     DefaultLanguage,
-                     NULL
-                     );
+                                    Uci->SupportedLanguages,
+                                    Iso639Language,
+                                    (Language == NULL) ? "" : Language,
+                                    DefaultLanguage,
+                                    NULL
+                                    );
     if (BestLanguage != NULL) {
       FreePool (BestLanguage);
       mUnicodeCollationInterface = Uci;
@@ -121,8 +121,7 @@ InitializeUnicodeCollationSupport (
   IN EFI_HANDLE    AgentHandle
   )
 {
-
-  EFI_STATUS       Status;
+  EFI_STATUS  Status;
 
   Status = EFI_UNSUPPORTED;
 
@@ -130,27 +129,26 @@ InitializeUnicodeCollationSupport (
   // First try to use RFC 4646 Unicode Collation 2 Protocol.
   //
   Status = InitializeUnicodeCollationSupportWorker (
-             AgentHandle,
-             &gEfiUnicodeCollation2ProtocolGuid,
-             L"PlatformLang",
-             (CONST CHAR8 *) PcdGetPtr (PcdUefiVariableDefaultPlatformLang)
-             );
+                                                    AgentHandle,
+                                                    &gEfiUnicodeCollation2ProtocolGuid,
+                                                    L"PlatformLang",
+                                                    (CONST CHAR8 *) PcdGetPtr (PcdUefiVariableDefaultPlatformLang)
+                                                    );
   //
   // If the attempt to use Unicode Collation 2 Protocol fails, then we fall back
   // on the ISO 639-2 Unicode Collation Protocol.
   //
   if (EFI_ERROR (Status)) {
     Status = InitializeUnicodeCollationSupportWorker (
-               AgentHandle,
-               &gEfiUnicodeCollationProtocolGuid,
-               L"Lang",
-               (CONST CHAR8 *) PcdGetPtr (PcdUefiVariableDefaultLang)
-               );
+                                                      AgentHandle,
+                                                      &gEfiUnicodeCollationProtocolGuid,
+                                                      L"Lang",
+                                                      (CONST CHAR8 *) PcdGetPtr (PcdUefiVariableDefaultLang)
+                                                      );
   }
 
   return Status;
 }
-
 
 /**
   Performs a case-insensitive comparison of two Null-terminated Unicode strings.
@@ -173,12 +171,11 @@ FatStriCmp (
   ASSERT (mUnicodeCollationInterface != NULL);
 
   return mUnicodeCollationInterface->StriColl (
-                                       mUnicodeCollationInterface,
-                                       S1,
-                                       S2
-                                       );
+                                               mUnicodeCollationInterface,
+                                               S1,
+                                               S2
+                                               );
 }
-
 
 /**
   Uppercase a string.
@@ -198,7 +195,6 @@ FatStrUpr (
   mUnicodeCollationInterface->StrUpr (mUnicodeCollationInterface, String);
 }
 
-
 /**
   Lowercase a string
 
@@ -216,7 +212,6 @@ FatStrLwr (
 
   mUnicodeCollationInterface->StrLwr (mUnicodeCollationInterface, String);
 }
-
 
 /**
   Convert FAT string to unicode string.
@@ -243,7 +238,6 @@ FatFatToStr (
   mUnicodeCollationInterface->FatToStr (mUnicodeCollationInterface, FatSize, Fat, String);
 }
 
-
 /**
   Convert unicode string to Fat string.
 
@@ -267,9 +261,9 @@ FatStrToFat (
   ASSERT (mUnicodeCollationInterface != NULL);
 
   return mUnicodeCollationInterface->StrToFat (
-                                       mUnicodeCollationInterface,
-                                       String,
-                                       FatSize,
-                                       Fat
-                                       );
+                                               mUnicodeCollationInterface,
+                                               String,
+                                               FatSize,
+                                               Fat
+                                               );
 }

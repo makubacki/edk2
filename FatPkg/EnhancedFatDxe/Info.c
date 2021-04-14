@@ -111,7 +111,7 @@ EFI_STATUS
 FatGetVolumeInfo (
   IN     FAT_VOLUME     *Volume,
   IN OUT UINTN          *BufferSize,
-     OUT VOID           *Buffer
+  OUT VOID           *Buffer
   )
 {
   UINTN                 Size;
@@ -122,11 +122,11 @@ FatGetVolumeInfo (
   EFI_FILE_SYSTEM_INFO  *Info;
   UINT8                 ClusterAlignment;
 
-  Size              = SIZE_OF_EFI_FILE_SYSTEM_INFO;
-  Status            = FatGetVolumeEntry (Volume, Name);
-  NameSize          = StrSize (Name);
-  ResultSize        = Size + NameSize;
-  ClusterAlignment  = Volume->ClusterAlignment;
+  Size       = SIZE_OF_EFI_FILE_SYSTEM_INFO;
+  Status     = FatGetVolumeEntry (Volume, Name);
+  NameSize   = StrSize (Name);
+  ResultSize = Size + NameSize;
+  ClusterAlignment = Volume->ClusterAlignment;
 
   //
   // If we don't have valid info, compute it now
@@ -135,19 +135,19 @@ FatGetVolumeInfo (
 
   Status = EFI_BUFFER_TOO_SMALL;
   if (*BufferSize >= ResultSize) {
-    Status  = EFI_SUCCESS;
+    Status = EFI_SUCCESS;
 
-    Info    = Buffer;
+    Info = Buffer;
     ZeroMem (Info, SIZE_OF_EFI_FILE_SYSTEM_INFO);
 
-    Info->Size        = ResultSize;
-    Info->ReadOnly    = Volume->ReadOnly;
-    Info->BlockSize   = (UINT32) Volume->ClusterSize;
-    Info->VolumeSize  = LShiftU64 (Volume->MaxCluster, ClusterAlignment);
-    Info->FreeSpace   = LShiftU64 (
-                          Volume->FatInfoSector.FreeInfo.ClusterCount,
-                          ClusterAlignment
-                          );
+    Info->Size       = ResultSize;
+    Info->ReadOnly   = Volume->ReadOnly;
+    Info->BlockSize  = (UINT32) Volume->ClusterSize;
+    Info->VolumeSize = LShiftU64 (Volume->MaxCluster, ClusterAlignment);
+    Info->FreeSpace  = LShiftU64 (
+                                  Volume->FatInfoSector.FreeInfo.ClusterCount,
+                                  ClusterAlignment
+                                  );
     CopyMem ((CHAR8 *) Buffer + Size, Name, NameSize);
   }
 
@@ -174,20 +174,20 @@ FatGetVolumeLabelInfo (
   OUT VOID            *Buffer
   )
 {
-  UINTN                             Size;
-  UINTN                             NameSize;
-  UINTN                             ResultSize;
-  CHAR16                            Name[FAT_NAME_LEN + 1];
-  EFI_STATUS                        Status;
+  UINTN       Size;
+  UINTN       NameSize;
+  UINTN       ResultSize;
+  CHAR16      Name[FAT_NAME_LEN + 1];
+  EFI_STATUS  Status;
 
-  Size        = SIZE_OF_EFI_FILE_SYSTEM_VOLUME_LABEL;
-  Status      = FatGetVolumeEntry (Volume, Name);
-  NameSize    = StrSize (Name);
-  ResultSize  = Size + NameSize;
+  Size       = SIZE_OF_EFI_FILE_SYSTEM_VOLUME_LABEL;
+  Status     = FatGetVolumeEntry (Volume, Name);
+  NameSize   = StrSize (Name);
+  ResultSize = Size + NameSize;
 
-  Status      = EFI_BUFFER_TOO_SMALL;
+  Status = EFI_BUFFER_TOO_SMALL;
   if (*BufferSize >= ResultSize) {
-    Status  = EFI_SUCCESS;
+    Status = EFI_SUCCESS;
     CopyMem ((CHAR8 *) Buffer + Size, Name, NameSize);
   }
 
@@ -248,7 +248,7 @@ FatSetVolumeLabelInfo (
   IN VOID             *Buffer
   )
 {
-  EFI_FILE_SYSTEM_VOLUME_LABEL *Info;
+  EFI_FILE_SYSTEM_VOLUME_LABEL  *Info;
 
   Info = (EFI_FILE_SYSTEM_VOLUME_LABEL *) Buffer;
 
@@ -292,26 +292,27 @@ FatSetFileInfo (
   IN VOID             *Buffer
   )
 {
-  EFI_STATUS    Status;
-  EFI_FILE_INFO *NewInfo;
-  FAT_OFILE     *DotOFile;
-  FAT_OFILE     *Parent;
-  CHAR16        NewFileName[EFI_PATH_STRING_LENGTH];
-  EFI_TIME      ZeroTime;
-  FAT_DIRENT    *DirEnt;
-  FAT_DIRENT    *TempDirEnt;
-  UINT8         NewAttribute;
-  BOOLEAN       ReadOnly;
+  EFI_STATUS     Status;
+  EFI_FILE_INFO  *NewInfo;
+  FAT_OFILE      *DotOFile;
+  FAT_OFILE      *Parent;
+  CHAR16         NewFileName[EFI_PATH_STRING_LENGTH];
+  EFI_TIME       ZeroTime;
+  FAT_DIRENT     *DirEnt;
+  FAT_DIRENT     *TempDirEnt;
+  UINT8          NewAttribute;
+  BOOLEAN        ReadOnly;
 
   ZeroMem (&ZeroTime, sizeof (EFI_TIME));
-  Parent  = OFile->Parent;
-  DirEnt  = OFile->DirEnt;
+  Parent = OFile->Parent;
+  DirEnt = OFile->DirEnt;
   //
   // If this is the root directory, we can't make any updates
   //
   if (Parent == NULL) {
     return EFI_ACCESS_DENIED;
   }
+
   //
   // Make sure there's a valid input buffer
   //
@@ -320,7 +321,7 @@ FatSetFileInfo (
     return EFI_BAD_BUFFER_SIZE;
   }
 
-  ReadOnly = (BOOLEAN)(IFile->ReadOnly || (DirEnt->Entry.Attributes & EFI_FILE_READ_ONLY));
+  ReadOnly = (BOOLEAN) (IFile->ReadOnly || (DirEnt->Entry.Attributes & EFI_FILE_READ_ONLY));
   //
   // if a zero time is specified, then the original time is preserved
   //
@@ -357,6 +358,7 @@ FatSetFileInfo (
   if ((NewAttribute ^ DirEnt->Entry.Attributes) & EFI_FILE_DIRECTORY) {
     return EFI_ACCESS_DENIED;
   }
+
   //
   // Set the current attributes even if the IFile->ReadOnly is TRUE
   //
@@ -386,6 +388,7 @@ FatSetFileInfo (
     if (EFI_ERROR (Status)) {
       return Status;
     }
+
     //
     // Create new dirent
     //
@@ -396,7 +399,7 @@ FatSetFileInfo (
 
     FatCloneDirEnt (TempDirEnt, DirEnt);
     FatFreeDirEnt (DirEnt);
-    DirEnt        = TempDirEnt;
+    DirEnt = TempDirEnt;
     DirEnt->OFile = OFile;
     OFile->DirEnt = DirEnt;
     OFile->Parent = Parent;
@@ -424,6 +427,7 @@ FatSetFileInfo (
         }
       }
     }
+
     //
     // If the file is renamed, we should append the ARCHIVE attribute
     //
@@ -434,6 +438,7 @@ FatSetFileInfo (
     //
     return EFI_ACCESS_DENIED;
   }
+
   //
   // If the file size has changed, apply it
   //
@@ -490,11 +495,11 @@ FatSetOrGetInfo (
   FAT_VOLUME  *Volume;
   EFI_STATUS  Status;
 
-  IFile   = IFILE_FROM_FHAND (FHand);
-  OFile   = IFile->OFile;
-  Volume  = OFile->Volume;
+  IFile  = IFILE_FROM_FHAND (FHand);
+  OFile  = IFile->OFile;
+  Volume = OFile->Volume;
 
-  Status  = OFile->Error;
+  Status = OFile->Error;
   if (Status == EFI_NOT_FOUND) {
     return EFI_DEVICE_ERROR;
   }
@@ -563,7 +568,7 @@ FatGetInfo (
   IN     EFI_FILE_PROTOCOL   *FHand,
   IN     EFI_GUID            *Type,
   IN OUT UINTN               *BufferSize,
-     OUT VOID                *Buffer
+  OUT VOID                *Buffer
   )
 {
   return FatSetOrGetInfo (FALSE, FHand, Type, BufferSize, Buffer);
