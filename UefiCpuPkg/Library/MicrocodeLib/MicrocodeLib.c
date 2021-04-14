@@ -25,7 +25,7 @@ GetProcessorMicrocodeSignature (
   VOID
   )
 {
-  MSR_IA32_BIOS_SIGN_ID_REGISTER   BiosSignIdMsr;
+  MSR_IA32_BIOS_SIGN_ID_REGISTER  BiosSignIdMsr;
 
   AsmWriteMsr64 (MSR_IA32_BIOS_SIGN_ID, 0);
   AsmCpuid (CPUID_VERSION_INFO, NULL, NULL, NULL, NULL);
@@ -44,7 +44,7 @@ GetProcessorMicrocodeCpuId (
   EDKII_PEI_MICROCODE_CPU_ID  *MicrocodeCpuId
   )
 {
-  MSR_IA32_PLATFORM_ID_REGISTER PlatformIdMsr;
+  MSR_IA32_PLATFORM_ID_REGISTER  PlatformIdMsr;
 
   ASSERT (MicrocodeCpuId != NULL);
 
@@ -74,7 +74,7 @@ GetMicrocodeLength (
   IN CPU_MICROCODE_HEADER *Microcode
   )
 {
-  UINT32   TotalSize;
+  UINT32  TotalSize;
 
   ASSERT (Microcode != NULL);
 
@@ -82,6 +82,7 @@ GetMicrocodeLength (
   if (Microcode->DataSize != 0) {
     TotalSize = Microcode->TotalSize;
   }
+
   return TotalSize;
 }
 
@@ -125,7 +126,7 @@ IsProcessorMatchedMicrocode (
   IN UINTN                            MicrocodeCpuIdCount
   )
 {
-  UINTN          Index;
+  UINTN  Index;
 
   if (MicrocodeCpuIdCount == 0) {
     return TRUE;
@@ -190,21 +191,21 @@ IsValidMicrocode (
   IN BOOLEAN                    VerifyChecksum
   )
 {
-  UINTN                                   Index;
-  UINT32                                  DataSize;
-  UINT32                                  TotalSize;
-  CPU_MICROCODE_EXTENDED_TABLE            *ExtendedTable;
-  CPU_MICROCODE_EXTENDED_TABLE_HEADER     *ExtendedTableHeader;
-  UINT32                                  ExtendedTableLength;
-  UINT32                                  Sum32;
-  BOOLEAN                                 Match;
+  UINTN                                Index;
+  UINT32                               DataSize;
+  UINT32                               TotalSize;
+  CPU_MICROCODE_EXTENDED_TABLE         *ExtendedTable;
+  CPU_MICROCODE_EXTENDED_TABLE_HEADER  *ExtendedTableHeader;
+  UINT32                               ExtendedTableLength;
+  UINT32                               Sum32;
+  BOOLEAN                              Match;
 
   ASSERT (Microcode != NULL);
 
   //
   // It's invalid when:
-  //   the input microcode buffer is so small that even cannot contain the header.
-  //   the input microcode buffer is so large that exceeds MAX_ADDRESS.
+  // the input microcode buffer is so small that even cannot contain the header.
+  // the input microcode buffer is so large that exceeds MAX_ADDRESS.
   //
   if ((MicrocodeLength < sizeof (CPU_MICROCODE_HEADER)) || (MicrocodeLength > (MAX_ADDRESS - (UINTN) Microcode))) {
     return FALSE;
@@ -259,11 +260,11 @@ IsValidMicrocode (
   // Check the processor signature and platform ID in the primary header.
   //
   Match = IsProcessorMatchedMicrocode (
-            Microcode->ProcessorSignature.Uint32,
-            Microcode->ProcessorFlags,
-            MicrocodeCpuIds,
-            MicrocodeCpuIdCount
-            );
+                                       Microcode->ProcessorSignature.Uint32,
+                                       Microcode->ProcessorFlags,
+                                       MicrocodeCpuIds,
+                                       MicrocodeCpuIdCount
+                                       );
   if (Match) {
     return TRUE;
   }
@@ -272,6 +273,7 @@ IsValidMicrocode (
   if ((ExtendedTableLength < sizeof (CPU_MICROCODE_EXTENDED_TABLE_HEADER)) || ((ExtendedTableLength % 4) != 0)) {
     return FALSE;
   }
+
   //
   // Extended Table exist, check if the CPU in support list
   //
@@ -279,10 +281,12 @@ IsValidMicrocode (
   if (ExtendedTableHeader->ExtendedSignatureCount > MAX_UINT32 / sizeof (CPU_MICROCODE_EXTENDED_TABLE)) {
     return FALSE;
   }
+
   if (ExtendedTableHeader->ExtendedSignatureCount * sizeof (CPU_MICROCODE_EXTENDED_TABLE)
       > ExtendedTableLength - sizeof (CPU_MICROCODE_EXTENDED_TABLE_HEADER)) {
     return FALSE;
   }
+
   //
   // Check the extended table checksum
   //
@@ -291,32 +295,34 @@ IsValidMicrocode (
   }
 
   ExtendedTable = (CPU_MICROCODE_EXTENDED_TABLE *) (ExtendedTableHeader + 1);
-  for (Index = 0; Index < ExtendedTableHeader->ExtendedSignatureCount; Index ++) {
+  for (Index = 0; Index < ExtendedTableHeader->ExtendedSignatureCount; Index++) {
     if (VerifyChecksum &&
         (ExtendedTable[Index].ProcessorSignature.Uint32 + ExtendedTable[Index].ProcessorFlag
-        + ExtendedTable[Index].Checksum != Sum32)) {
+         + ExtendedTable[Index].Checksum != Sum32)) {
       //
       // The extended table entry is valid when the summation of Processor Signature, Processor Flags
       // and Checksum equal to the coresponding summation from primary header. Because:
-      //    CalculateSum32 (Header + Update Binary) == 0
-      //    CalculateSum32 (Header + Update Binary)
-      //        - (Header.ProcessorSignature + Header.ProcessorFlag + Header.Checksum)
-      //        + (Extended.ProcessorSignature + Extended.ProcessorFlag + Extended.Checksum) == 0
+      // CalculateSum32 (Header + Update Binary) == 0
+      // CalculateSum32 (Header + Update Binary)
+      // - (Header.ProcessorSignature + Header.ProcessorFlag + Header.Checksum)
+      // + (Extended.ProcessorSignature + Extended.ProcessorFlag + Extended.Checksum) == 0
       // So,
-      //    (Header.ProcessorSignature + Header.ProcessorFlag + Header.Checksum)
-      //     == (Extended.ProcessorSignature + Extended.ProcessorFlag + Extended.Checksum)
+      // (Header.ProcessorSignature + Header.ProcessorFlag + Header.Checksum)
+      // == (Extended.ProcessorSignature + Extended.ProcessorFlag + Extended.Checksum)
       //
       continue;
     }
+
     Match = IsProcessorMatchedMicrocode (
-              ExtendedTable[Index].ProcessorSignature.Uint32,
-              ExtendedTable[Index].ProcessorFlag,
-              MicrocodeCpuIds,
-              MicrocodeCpuIdCount
-              );
+                                         ExtendedTable[Index].ProcessorSignature.Uint32,
+                                         ExtendedTable[Index].ProcessorFlag,
+                                         MicrocodeCpuIds,
+                                         MicrocodeCpuIdCount
+                                         );
     if (Match) {
       return TRUE;
     }
   }
+
   return FALSE;
 }

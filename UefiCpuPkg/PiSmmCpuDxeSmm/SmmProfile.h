@@ -42,9 +42,9 @@ InitSmmProfile (
 
 **/
 VOID
-SmmProfileRecordSmiNum (
-  VOID
-  );
+  SmmProfileRecordSmiNum (
+                          VOID
+                          );
 
 /**
   The Page fault handler to save SMM profile data.
@@ -66,9 +66,9 @@ SmmProfilePFHandler (
 
 **/
 VOID
-SmmProfileStart (
-  VOID
-  );
+  SmmProfileStart (
+                   VOID
+                   );
 
 /**
   Page fault IDT handler for SMM Profile.
@@ -77,36 +77,35 @@ SmmProfileStart (
 VOID
 EFIAPI
 PageFaultIdtHandlerSmmProfile (
-  VOID
-  );
-
+                               VOID
+                               );
 
 /**
   Check if feature is supported by a processor.
 
 **/
 VOID
-CheckFeatureSupported (
-  VOID
-  );
+  CheckFeatureSupported (
+                         VOID
+                         );
 
 /**
   Update page table according to protected memory ranges and the 4KB-page mapped memory ranges.
 
 **/
 VOID
-InitPaging (
-  VOID
-  );
+  InitPaging (
+              VOID
+              );
 
 /**
   Get CPU Index from APIC ID.
 
 **/
 UINTN
-GetCpuIndex (
-  VOID
-  );
+  GetCpuIndex (
+               VOID
+               );
 
 /**
   Handler for Page Fault triggered by Guard page.
@@ -122,14 +121,14 @@ GuardPagePFHandler (
 //
 // The flag indicates if execute-disable is supported by processor.
 //
-extern BOOLEAN    mXdSupported;
+extern BOOLEAN  mXdSupported;
 //
 // The flag indicates if execute-disable is enabled on processor.
 //
-extern BOOLEAN    mXdEnabled;
+extern BOOLEAN  mXdEnabled;
 //
 // The flag indicates if #DB will be setup in #PF handler.
 //
-extern BOOLEAN    mSetupDebugTrap;
+extern BOOLEAN  mSetupDebugTrap;
 
 #endif // _SMM_PROFILE_H_

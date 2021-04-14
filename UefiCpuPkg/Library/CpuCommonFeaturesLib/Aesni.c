@@ -23,7 +23,7 @@ AesniGetConfigData (
   IN UINTN  NumberOfProcessors
   )
 {
-  UINT64                            *ConfigData;
+  UINT64  *ConfigData;
 
   ConfigData = AllocateZeroPool (sizeof (UINT64) * NumberOfProcessors);
   ASSERT (ConfigData != NULL);
@@ -54,7 +54,7 @@ AesniSupport (
   IN VOID                              *ConfigData  OPTIONAL
   )
 {
-  MSR_SANDY_BRIDGE_FEATURE_CONFIG_REGISTER   *MsrFeatureConfig;
+  MSR_SANDY_BRIDGE_FEATURE_CONFIG_REGISTER  *MsrFeatureConfig;
 
   if (CpuInfo->CpuIdVersionInfoEcx.Bits.AESNI == 1) {
     MsrFeatureConfig = (MSR_SANDY_BRIDGE_FEATURE_CONFIG_REGISTER *) ConfigData;
@@ -62,6 +62,7 @@ AesniSupport (
     MsrFeatureConfig[ProcessorNumber].Uint64 = AsmReadMsr64 (MSR_SANDY_BRIDGE_FEATURE_CONFIG);
     return TRUE;
   }
+
   return FALSE;
 }
 
@@ -87,11 +88,11 @@ EFIAPI
 AesniInitialize (
   IN UINTN                             ProcessorNumber,
   IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN VOID                              *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   )
 {
-  MSR_SANDY_BRIDGE_FEATURE_CONFIG_REGISTER   *MsrFeatureConfig;
+  MSR_SANDY_BRIDGE_FEATURE_CONFIG_REGISTER  *MsrFeatureConfig;
 
   //
   // SANDY_BRIDGE, SILVERMONT, XEON_5600, XEON_7, and XEON_PHI have the same MSR index,
@@ -106,14 +107,15 @@ AesniInitialize (
     ASSERT (MsrFeatureConfig != NULL);
     if ((MsrFeatureConfig[ProcessorNumber].Bits.AESConfiguration & BIT0) == 0) {
       CPU_REGISTER_TABLE_WRITE_FIELD (
-        ProcessorNumber,
-        Msr,
-        MSR_SANDY_BRIDGE_FEATURE_CONFIG,
-        MSR_SANDY_BRIDGE_FEATURE_CONFIG_REGISTER,
-        Bits.AESConfiguration,
-        BIT0 | ((State) ? 0 : BIT1)
-        );
+                                      ProcessorNumber,
+                                      Msr,
+                                      MSR_SANDY_BRIDGE_FEATURE_CONFIG,
+                                      MSR_SANDY_BRIDGE_FEATURE_CONFIG_REGISTER,
+                                      Bits.AESConfiguration,
+                                      BIT0 | ((State) ? 0 : BIT1)
+                                      );
     }
   }
+
   return RETURN_SUCCESS;
 }

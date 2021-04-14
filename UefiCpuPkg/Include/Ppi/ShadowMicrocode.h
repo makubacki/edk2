@@ -14,11 +14,11 @@
     0x430f6965, 0x9a69, 0x41c5, { 0x93, 0xed, 0x8b, 0xf0, 0x64, 0x35, 0xc1, 0xc6 } \
   }
 
-typedef struct _EDKII_PEI_SHADOW_MICROCODE_PPI  EDKII_PEI_SHADOW_MICROCODE_PPI;
+typedef struct _EDKII_PEI_SHADOW_MICROCODE_PPI EDKII_PEI_SHADOW_MICROCODE_PPI;
 
 typedef struct {
-  UINT32         ProcessorSignature;
-  UINT8          PlatformId;
+  UINT32    ProcessorSignature;
+  UINT8     PlatformId;
 } EDKII_PEI_MICROCODE_CPU_ID;
 
 /**
@@ -43,24 +43,23 @@ typedef struct {
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EDKII_PEI_SHADOW_MICROCODE) (
-  IN  EDKII_PEI_SHADOW_MICROCODE_PPI        *This,
-  IN  UINTN                                 CpuIdCount,
-  IN  EDKII_PEI_MICROCODE_CPU_ID            *MicrocodeCpuId,
-  OUT UINTN                                 *BufferSize,
-  OUT VOID                                  **Buffer
-  );
+  EFI_STATUS
+(EFIAPI *EDKII_PEI_SHADOW_MICROCODE)(
+                                     IN  EDKII_PEI_SHADOW_MICROCODE_PPI        *This,
+                                     IN  UINTN                                 CpuIdCount,
+                                     IN  EDKII_PEI_MICROCODE_CPU_ID            *MicrocodeCpuId,
+                                     OUT UINTN                                 *BufferSize,
+                                     OUT VOID                                  **Buffer
+                                     );
 
 ///
 /// This PPI is installed by some platform or chipset-specific PEIM that
 /// abstracts handling microcode shadow support.
 ///
 struct _EDKII_PEI_SHADOW_MICROCODE_PPI {
-  EDKII_PEI_SHADOW_MICROCODE          ShadowMicrocode;
+  EDKII_PEI_SHADOW_MICROCODE    ShadowMicrocode;
 };
 
-extern EFI_GUID gEdkiiPeiShadowMicrocodePpiGuid;
+extern EFI_GUID  gEdkiiPeiShadowMicrocodePpiGuid;
 
 #endif
-

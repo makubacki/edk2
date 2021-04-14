@@ -53,9 +53,9 @@ EdkiiPeiGetNumberOfProcessors (
   }
 
   return MpInitLibGetNumberOfProcessors (
-           NumberOfProcessors,
-           NumberOfEnabledProcessors
-           );
+                                         NumberOfProcessors,
+                                         NumberOfEnabledProcessors
+                                         );
 }
 
 /**
@@ -165,13 +165,13 @@ EdkiiPeiStartupAllAPs (
   )
 {
   return MpInitLibStartupAllAPs (
-           Procedure,
-           SingleThread,
-           NULL,
-           TimeoutInMicroSeconds,
-           ProcedureArgument,
-           NULL
-           );
+                                 Procedure,
+                                 SingleThread,
+                                 NULL,
+                                 TimeoutInMicroSeconds,
+                                 ProcedureArgument,
+                                 NULL
+                                 );
 }
 
 /**
@@ -229,13 +229,13 @@ EdkiiPeiStartupThisAP (
   )
 {
   return MpInitLibStartupThisAP (
-           Procedure,
-           ProcessorNumber,
-           NULL,
-           TimeoutInMicroseconds,
-           ProcedureArgument,
-           NULL
-           );
+                                 Procedure,
+                                 ProcessorNumber,
+                                 NULL,
+                                 TimeoutInMicroseconds,
+                                 ProcedureArgument,
+                                 NULL
+                                 );
 }
 
 /**
@@ -395,16 +395,16 @@ EdkiiPeiStartupAllCPUs (
   )
 {
   return MpInitLibStartupAllCPUs (
-           Procedure,
-           TimeoutInMicroSeconds,
-           ProcedureArgument
-           );
+                                  Procedure,
+                                  TimeoutInMicroSeconds,
+                                  ProcedureArgument
+                                  );
 }
 
 //
 // CPU MP2 PPI to be installed
 //
-EDKII_PEI_MP_SERVICES2_PPI            mMpServices2Ppi = {
+EDKII_PEI_MP_SERVICES2_PPI  mMpServices2Ppi = {
   EdkiiPeiGetNumberOfProcessors,
   EdkiiPeiGetProcessorInfo,
   EdkiiPeiStartupAllAPs,
@@ -414,4 +414,3 @@ EDKII_PEI_MP_SERVICES2_PPI            mMpServices2Ppi = {
   EdkiiPeiWhoAmI,
   EdkiiPeiStartupAllCPUs
 };
-

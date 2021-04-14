@@ -154,13 +154,13 @@ SmmAddProcessor (
     if (mCpuHotPlugData.ApicId[Index] == ProcessorId &&
         gSmmCpuPrivate->ProcessorInfo[Index].ProcessorId == INVALID_APIC_ID) {
       gSmmCpuPrivate->ProcessorInfo[Index].ProcessorId = ProcessorId;
-      gSmmCpuPrivate->ProcessorInfo[Index].StatusFlag = 0;
+      gSmmCpuPrivate->ProcessorInfo[Index].StatusFlag  = 0;
       GetProcessorLocationByApicId (
-        (UINT32)ProcessorId,
-        &gSmmCpuPrivate->ProcessorInfo[Index].Location.Package,
-        &gSmmCpuPrivate->ProcessorInfo[Index].Location.Core,
-        &gSmmCpuPrivate->ProcessorInfo[Index].Location.Thread
-        );
+                                    (UINT32) ProcessorId,
+                                    &gSmmCpuPrivate->ProcessorInfo[Index].Location.Package,
+                                    &gSmmCpuPrivate->ProcessorInfo[Index].Location.Core,
+                                    &gSmmCpuPrivate->ProcessorInfo[Index].Location.Thread
+                                    );
 
       *ProcessorNumber = Index;
       gSmmCpuPrivate->Operation[Index] = SmmCpuAdd;
@@ -241,8 +241,8 @@ SmmWhoAmI (
   OUT      UINTN                        *ProcessorNumber
   )
 {
-  UINTN  Index;
-  UINT64 ApicId;
+  UINTN   Index;
+  UINT64  ApicId;
 
   //
   // Check parameter
@@ -259,6 +259,7 @@ SmmWhoAmI (
       return EFI_SUCCESS;
     }
   }
+
   //
   // This should not happen
   //
@@ -276,7 +277,7 @@ SmmCpuUpdate (
   VOID
   )
 {
-  UINTN   Index;
+  UINTN  Index;
 
   //
   // Handle pending BSP switch operations
@@ -330,10 +331,10 @@ SmmCpuUpdate (
 EFI_STATUS
 EFIAPI
 SmmRegisterExceptionHandler (
-    IN EFI_SMM_CPU_SERVICE_PROTOCOL  *This,
-    IN EFI_EXCEPTION_TYPE            ExceptionType,
-    IN EFI_CPU_INTERRUPT_HANDLER     InterruptHandler
-    )
+  IN EFI_SMM_CPU_SERVICE_PROTOCOL  *This,
+  IN EFI_EXCEPTION_TYPE            ExceptionType,
+  IN EFI_CPU_INTERRUPT_HANDLER     InterruptHandler
+  )
 {
   return RegisterCpuInterruptHandler (ExceptionType, InterruptHandler);
 }
@@ -352,15 +353,14 @@ InitializeSmmCpuServices (
   IN EFI_HANDLE  Handle
   )
 {
-  EFI_STATUS Status;
+  EFI_STATUS  Status;
 
   Status = gSmst->SmmInstallProtocolInterface (
-                    &Handle,
-                    &gEfiSmmCpuServiceProtocolGuid,
-                    EFI_NATIVE_INTERFACE,
-                    &mSmmCpuService
-                    );
+                                               &Handle,
+                                               &gEfiSmmCpuServiceProtocolGuid,
+                                               EFI_NATIVE_INTERFACE,
+                                               &mSmmCpuService
+                                               );
   ASSERT_EFI_ERROR (Status);
   return Status;
 }
-

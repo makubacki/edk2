@@ -26,9 +26,9 @@ CpuCacheInfoGetMpServices (
   OUT MP_SERVICES           *MpServices
   )
 {
-  EFI_STATUS                Status;
+  EFI_STATUS  Status;
 
-  Status = gBS->LocateProtocol (&gEfiMpServiceProtocolGuid, NULL, (VOID **)&MpServices->Protocol);
+  Status = gBS->LocateProtocol (&gEfiMpServiceProtocolGuid, NULL, (VOID **) &MpServices->Protocol);
   ASSERT_EFI_ERROR (Status);
 
   return Status;
@@ -48,7 +48,7 @@ CpuCacheInfoStartupAllCPUs (
   IN VOID                   *ProcedureArgument
   )
 {
-  EFI_STATUS                Status;
+  EFI_STATUS  Status;
 
   Status = MpServices.Protocol->StartupAllAPs (MpServices.Protocol, Procedure, FALSE, NULL, 0, ProcedureArgument, NULL);
   if (Status == EFI_NOT_STARTED) {
@@ -58,6 +58,7 @@ CpuCacheInfoStartupAllCPUs (
     //
     Status = EFI_SUCCESS;
   }
+
   ASSERT_EFI_ERROR (Status);
 
   Procedure (ProcedureArgument);
@@ -77,7 +78,7 @@ CpuCacheInfoGetProcessorInfo (
   OUT EFI_PROCESSOR_INFORMATION *ProcessorInfo
   )
 {
-  EFI_STATUS                Status;
+  EFI_STATUS  Status;
 
   Status = MpServices.Protocol->GetProcessorInfo (MpServices.Protocol, ProcessorNum, ProcessorInfo);
   ASSERT_EFI_ERROR (Status);
@@ -95,13 +96,13 @@ CpuCacheInfoWhoAmI (
   IN MP_SERVICES            MpServices
   )
 {
-  EFI_STATUS                Status;
-  UINTN                     ProcessorNum;
+  EFI_STATUS  Status;
+  UINTN       ProcessorNum;
 
   Status = MpServices.Protocol->WhoAmI (MpServices.Protocol, &ProcessorNum);
   ASSERT_EFI_ERROR (Status);
 
-  return (UINT32)ProcessorNum;
+  return (UINT32) ProcessorNum;
 }
 
 /**
@@ -116,12 +117,16 @@ CpuCacheInfoGetNumberOfProcessors (
   IN MP_SERVICES            MpServices
   )
 {
-  EFI_STATUS                Status;
-  UINTN                     NumberOfProcessor;
-  UINTN                     NumberOfEnabledProcessor;
+  EFI_STATUS  Status;
+  UINTN       NumberOfProcessor;
+  UINTN       NumberOfEnabledProcessor;
 
-  Status = MpServices.Protocol->GetNumberOfProcessors (MpServices.Protocol, &NumberOfProcessor, &NumberOfEnabledProcessor);
+  Status = MpServices.Protocol->GetNumberOfProcessors (
+                                                      MpServices.Protocol,
+                                                      &NumberOfProcessor,
+                                                      &NumberOfEnabledProcessor
+                                                      );
   ASSERT_EFI_ERROR (Status);
 
-  return (UINT32)NumberOfProcessor;
+  return (UINT32) NumberOfProcessor;
 }

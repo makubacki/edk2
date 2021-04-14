@@ -8,12 +8,12 @@
 
 #include "CpuMpPei.h"
 
-extern EDKII_PEI_MP_SERVICES2_PPI            mMpServices2Ppi;
+extern EDKII_PEI_MP_SERVICES2_PPI  mMpServices2Ppi;
 
 //
 // CPU MP PPI to be installed
 //
-EFI_PEI_MP_SERVICES_PPI                mMpServicesPpi = {
+EFI_PEI_MP_SERVICES_PPI  mMpServicesPpi = {
   PeiGetNumberOfProcessors,
   PeiGetProcessorInfo,
   PeiStartupAllAPs,
@@ -23,7 +23,7 @@ EFI_PEI_MP_SERVICES_PPI                mMpServicesPpi = {
   PeiWhoAmI,
 };
 
-EFI_PEI_PPI_DESCRIPTOR           mPeiCpuMpPpiList[] = {
+EFI_PEI_PPI_DESCRIPTOR  mPeiCpuMpPpiList[] = {
   {
     EFI_PEI_PPI_DESCRIPTOR_PPI,
     &gEdkiiPeiMpServices2PpiGuid,
@@ -84,9 +84,9 @@ PeiGetNumberOfProcessors (
   }
 
   return MpInitLibGetNumberOfProcessors (
-           NumberOfProcessors,
-           NumberOfEnabledProcessors
-           );
+                                         NumberOfProcessors,
+                                         NumberOfEnabledProcessors
+                                         );
 }
 
 /**
@@ -202,13 +202,13 @@ PeiStartupAllAPs (
   )
 {
   return MpInitLibStartupAllAPs (
-           Procedure,
-           SingleThread,
-           NULL,
-           TimeoutInMicroSeconds,
-           ProcedureArgument,
-           NULL
-           );
+                                 Procedure,
+                                 SingleThread,
+                                 NULL,
+                                 TimeoutInMicroSeconds,
+                                 ProcedureArgument,
+                                 NULL
+                                 );
 }
 
 /**
@@ -269,13 +269,13 @@ PeiStartupThisAP (
   )
 {
   return MpInitLibStartupThisAP (
-           Procedure,
-           ProcessorNumber,
-           NULL,
-           TimeoutInMicroseconds,
-           ProcedureArgument,
-           NULL
-           );
+                                 Procedure,
+                                 ProcessorNumber,
+                                 NULL,
+                                 TimeoutInMicroseconds,
+                                 ProcedureArgument,
+                                 NULL
+                                 );
 }
 
 /**
@@ -426,7 +426,7 @@ GetGdtr (
   IN OUT VOID *Buffer
   )
 {
-  AsmReadGdtr ((IA32_DESCRIPTOR *)Buffer);
+  AsmReadGdtr ((IA32_DESCRIPTOR *) Buffer);
 }
 
 /**
@@ -444,9 +444,9 @@ InitializeExceptionStackSwitchHandlers (
   IN OUT VOID *Buffer
   )
 {
-  CPU_EXCEPTION_INIT_DATA           *EssData;
-  IA32_DESCRIPTOR                   Idtr;
-  EFI_STATUS                        Status;
+  CPU_EXCEPTION_INIT_DATA  *EssData;
+  IA32_DESCRIPTOR          Idtr;
+  EFI_STATUS               Status;
 
   EssData = Buffer;
   //
@@ -454,7 +454,7 @@ InitializeExceptionStackSwitchHandlers (
   // the AP's IDT is the same as BSP's IDT either.
   //
   AsmReadIdtr (&Idtr);
-  EssData->Ia32.IdtTable = (VOID *)Idtr.Base;
+  EssData->Ia32.IdtTable     = (VOID *) Idtr.Base;
   EssData->Ia32.IdtTableSize = Idtr.Limit + 1;
   Status = InitializeCpuExceptionHandlersEx (NULL, EssData);
   ASSERT_EFI_ERROR (Status);
@@ -472,34 +472,35 @@ InitializeMpExceptionStackSwitchHandlers (
   VOID
   )
 {
-  EFI_STATUS                      Status;
-  UINTN                           Index;
-  UINTN                           Bsp;
-  UINTN                           ExceptionNumber;
-  UINTN                           OldGdtSize;
-  UINTN                           NewGdtSize;
-  UINTN                           NewStackSize;
-  IA32_DESCRIPTOR                 Gdtr;
-  CPU_EXCEPTION_INIT_DATA         EssData;
-  UINT8                           *GdtBuffer;
-  UINT8                           *StackTop;
-  UINTN                           NumberOfProcessors;
+  EFI_STATUS               Status;
+  UINTN                    Index;
+  UINTN                    Bsp;
+  UINTN                    ExceptionNumber;
+  UINTN                    OldGdtSize;
+  UINTN                    NewGdtSize;
+  UINTN                    NewStackSize;
+  IA32_DESCRIPTOR          Gdtr;
+  CPU_EXCEPTION_INIT_DATA  EssData;
+  UINT8                    *GdtBuffer;
+  UINT8                    *StackTop;
+  UINTN                    NumberOfProcessors;
 
   if (!PcdGetBool (PcdCpuStackGuard)) {
     return;
   }
 
-  MpInitLibGetNumberOfProcessors(&NumberOfProcessors, NULL);
+  MpInitLibGetNumberOfProcessors (&NumberOfProcessors, NULL);
   MpInitLibWhoAmI (&Bsp);
 
   ExceptionNumber = FixedPcdGetSize (PcdCpuStackSwitchExceptionList);
-  NewStackSize = FixedPcdGet32 (PcdCpuKnownGoodStackSize) * ExceptionNumber;
+  NewStackSize    = FixedPcdGet32 (PcdCpuKnownGoodStackSize) * ExceptionNumber;
 
   StackTop = AllocatePages (EFI_SIZE_TO_PAGES (NewStackSize * NumberOfProcessors));
-  ASSERT(StackTop != NULL);
+  ASSERT (StackTop != NULL);
   if (StackTop == NULL) {
     return;
   }
+
   StackTop += NewStackSize  * NumberOfProcessors;
 
   //
@@ -509,26 +510,26 @@ InitializeMpExceptionStackSwitchHandlers (
   EssData.Ia32.Revision = CPU_EXCEPTION_INIT_DATA_REV;
   EssData.Ia32.InitDefaultHandlers = FALSE;
 
-  EssData.Ia32.StackSwitchExceptions = FixedPcdGetPtr(PcdCpuStackSwitchExceptionList);
+  EssData.Ia32.StackSwitchExceptions = FixedPcdGetPtr (PcdCpuStackSwitchExceptionList);
   EssData.Ia32.StackSwitchExceptionNumber = ExceptionNumber;
-  EssData.Ia32.KnownGoodStackSize = FixedPcdGet32(PcdCpuKnownGoodStackSize);
+  EssData.Ia32.KnownGoodStackSize = FixedPcdGet32 (PcdCpuKnownGoodStackSize);
 
   //
   // Initialize Gdtr to suppress incorrect compiler/analyzer warnings.
   //
-  Gdtr.Base = 0;
+  Gdtr.Base  = 0;
   Gdtr.Limit = 0;
   for (Index = 0; Index < NumberOfProcessors; ++Index) {
     //
     // To support stack switch, we need to re-construct GDT but not IDT.
     //
     if (Index == Bsp) {
-      GetGdtr(&Gdtr);
+      GetGdtr (&Gdtr);
     } else {
       //
       // AP might have different size of GDT from BSP.
       //
-      MpInitLibStartupThisAP (GetGdtr, Index, NULL, 0, (VOID *)&Gdtr, NULL);
+      MpInitLibStartupThisAP (GetGdtr, Index, NULL, 0, (VOID *) &Gdtr, NULL);
     }
 
     //
@@ -540,25 +541,25 @@ InitializeMpExceptionStackSwitchHandlers (
     // switch.
     //
     // Layout of memory to allocate for each processor:
-    //    --------------------------------
-    //    |            Alignment         |  (just in case)
-    //    --------------------------------
-    //    |                              |
-    //    |        Original GDT          |
-    //    |                              |
-    //    --------------------------------
-    //    |    Current task descriptor   |
-    //    --------------------------------
-    //    |                              |
-    //    |  Exception task descriptors  |  X ExceptionNumber
-    //    |                              |
-    //    --------------------------------
-    //    |  Current task-state segment  |
-    //    --------------------------------
-    //    |                              |
-    //    | Exception task-state segment |  X ExceptionNumber
-    //    |                              |
-    //    --------------------------------
+    // --------------------------------
+    // |            Alignment         |  (just in case)
+    // --------------------------------
+    // |                              |
+    // |        Original GDT          |
+    // |                              |
+    // --------------------------------
+    // |    Current task descriptor   |
+    // --------------------------------
+    // |                              |
+    // |  Exception task descriptors  |  X ExceptionNumber
+    // |                              |
+    // --------------------------------
+    // |  Current task-state segment  |
+    // --------------------------------
+    // |                              |
+    // | Exception task-state segment |  X ExceptionNumber
+    // |                              |
+    // --------------------------------
     //
     OldGdtSize = Gdtr.Limit + 1;
     EssData.Ia32.ExceptionTssDescSize = sizeof (IA32_TSS_DESCRIPTOR) *
@@ -571,9 +572,9 @@ InitializeMpExceptionStackSwitchHandlers (
                  EssData.Ia32.ExceptionTssSize;
 
     Status = PeiServicesAllocatePool (
-               NewGdtSize,
-               (VOID **)&GdtBuffer
-               );
+                                      NewGdtSize,
+                                      (VOID **) &GdtBuffer
+                                      );
     ASSERT (GdtBuffer != NULL);
     if (EFI_ERROR (Status)) {
       ASSERT_EFI_ERROR (Status);
@@ -583,34 +584,36 @@ InitializeMpExceptionStackSwitchHandlers (
     //
     // Make sure GDT table alignment
     //
-    EssData.Ia32.GdtTable = ALIGN_POINTER(GdtBuffer, sizeof (IA32_TSS_DESCRIPTOR));
-    NewGdtSize -= ((UINT8 *)EssData.Ia32.GdtTable - GdtBuffer);
+    EssData.Ia32.GdtTable = ALIGN_POINTER (GdtBuffer, sizeof (IA32_TSS_DESCRIPTOR));
+    NewGdtSize -= ((UINT8 *) EssData.Ia32.GdtTable - GdtBuffer);
     EssData.Ia32.GdtTableSize = NewGdtSize;
 
-    EssData.Ia32.ExceptionTssDesc = ((UINT8 *)EssData.Ia32.GdtTable + OldGdtSize);
-    EssData.Ia32.ExceptionTss = ((UINT8 *)EssData.Ia32.GdtTable + OldGdtSize +
-                                 EssData.Ia32.ExceptionTssDescSize);
+    EssData.Ia32.ExceptionTssDesc = ((UINT8 *) EssData.Ia32.GdtTable + OldGdtSize);
+    EssData.Ia32.ExceptionTss     = ((UINT8 *) EssData.Ia32.GdtTable + OldGdtSize +
+                                     EssData.Ia32.ExceptionTssDescSize);
 
-    EssData.Ia32.KnownGoodStackTop = (UINTN)StackTop;
-    DEBUG ((DEBUG_INFO,
+    EssData.Ia32.KnownGoodStackTop = (UINTN) StackTop;
+    DEBUG (
+           (DEBUG_INFO,
             "Exception stack top[cpu%lu]: 0x%lX\n",
-            (UINT64)(UINTN)Index,
-            (UINT64)(UINTN)StackTop));
+            (UINT64) (UINTN) Index,
+            (UINT64) (UINTN) StackTop)
+           );
 
     if (Index == Bsp) {
       InitializeExceptionStackSwitchHandlers (&EssData);
     } else {
       MpInitLibStartupThisAP (
-        InitializeExceptionStackSwitchHandlers,
-        Index,
-        NULL,
-        0,
-        (VOID *)&EssData,
-        NULL
-        );
+                              InitializeExceptionStackSwitchHandlers,
+                              Index,
+                              NULL,
+                              0,
+                              (VOID *) &EssData,
+                              NULL
+                              );
     }
 
-    StackTop  -= NewStackSize;
+    StackTop -= NewStackSize;
   }
 }
 
@@ -628,20 +631,20 @@ InitializeCpuMpWorker (
   IN CONST EFI_PEI_SERVICES     **PeiServices
   )
 {
-  EFI_STATUS                      Status;
-  EFI_VECTOR_HANDOFF_INFO         *VectorInfo;
-  EFI_PEI_VECTOR_HANDOFF_INFO_PPI *VectorHandoffInfoPpi;
+  EFI_STATUS                       Status;
+  EFI_VECTOR_HANDOFF_INFO          *VectorInfo;
+  EFI_PEI_VECTOR_HANDOFF_INFO_PPI  *VectorHandoffInfoPpi;
 
   //
   // Get Vector Hand-off Info PPI
   //
   VectorInfo = NULL;
-  Status = PeiServicesLocatePpi (
-             &gEfiVectorHandoffInfoPpiGuid,
-             0,
-             NULL,
-             (VOID **)&VectorHandoffInfoPpi
-             );
+  Status     = PeiServicesLocatePpi (
+                                     &gEfiVectorHandoffInfoPpiGuid,
+                                     0,
+                                     NULL,
+                                     (VOID **) &VectorHandoffInfoPpi
+                                     );
   if (Status == EFI_SUCCESS) {
     VectorInfo = VectorHandoffInfoPpi->Info;
   }
@@ -672,7 +675,7 @@ InitializeCpuMpWorker (
   //
   // Install CPU MP PPI
   //
-  Status = PeiServicesInstallPpi(mPeiCpuMpPpiList);
+  Status = PeiServicesInstallPpi (mPeiCpuMpPpiList);
   ASSERT_EFI_ERROR (Status);
 
   return Status;
@@ -697,7 +700,7 @@ CpuMpPeimInit (
   IN CONST EFI_PEI_SERVICES     **PeiServices
   )
 {
-  EFI_STATUS           Status;
+  EFI_STATUS  Status;
 
   //
   // For the sake of special initialization needing to be done right after

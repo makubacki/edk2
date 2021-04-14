@@ -43,7 +43,7 @@ EFI_PEI_CPU_IO_PPI  gCpuIoPpi = {
 //
 // PPI Descriptor used to install the CPU I/O PPI
 //
-EFI_PEI_PPI_DESCRIPTOR gPpiList = {
+EFI_PEI_PPI_DESCRIPTOR  gPpiList = {
   (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
   &gEfiPeiCpuIoPpiInstalledGuid,
   NULL
@@ -52,7 +52,7 @@ EFI_PEI_PPI_DESCRIPTOR gPpiList = {
 //
 // Lookup table for increment values based on transfer widths
 //
-UINT8 mInStride[] = {
+UINT8  mInStride[] = {
   1, // EfiPeiCpuIoWidthUint8
   2, // EfiPeiCpuIoWidthUint16
   4, // EfiPeiCpuIoWidthUint32
@@ -70,7 +70,7 @@ UINT8 mInStride[] = {
 //
 // Lookup table for increment values based on transfer widths
 //
-UINT8 mOutStride[] = {
+UINT8  mOutStride[] = {
   1, // EfiPeiCpuIoWidthUint8
   2, // EfiPeiCpuIoWidthUint16
   4, // EfiPeiCpuIoWidthUint32
@@ -123,7 +123,7 @@ CpuIoCheckParameter (
   //
   // Check to see if Width is in the valid range
   //
-  if ((UINT32)Width >= EfiPeiCpuIoWidthMaximum) {
+  if ((UINT32) Width >= EfiPeiCpuIoWidthMaximum) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -149,7 +149,7 @@ CpuIoCheckParameter (
   // Address + Size * Count.  If the following condition is met, then the transfer
   // is not supported.
   //
-  //    Address + Size * Count > (MmioOperation ? MAX_ADDRESS : MAX_IO_PORT_ADDRESS) + 1
+  // Address + Size * Count > (MmioOperation ? MAX_ADDRESS : MAX_IO_PORT_ADDRESS) + 1
   //
   // Since MAX_ADDRESS can be the maximum integer value supported by the CPU and Count
   // can also be the maximum integer value supported by the CPU, this range
@@ -168,6 +168,7 @@ CpuIoCheckParameter (
     if (MaxCount < (Count - 1)) {
       return EFI_UNSUPPORTED;
     }
+
     if (Address > LShiftU64 (MaxCount - Count + 1, Width)) {
       return EFI_UNSUPPORTED;
     }
@@ -220,33 +221,34 @@ CpuMemoryServiceRead (
   //
   // Select loop based on the width of the transfer
   //
-  InStride = mInStride[Width];
+  InStride  = mInStride[Width];
   OutStride = mOutStride[Width];
   OperationWidth = (EFI_PEI_CPU_IO_PPI_WIDTH) (Width & 0x03);
-  Aligned = (BOOLEAN)(((UINTN)Buffer & (mInStride[OperationWidth] - 1)) == 0x00);
+  Aligned = (BOOLEAN) (((UINTN) Buffer & (mInStride[OperationWidth] - 1)) == 0x00);
   for (Uint8Buffer = Buffer; Count > 0; Address += InStride, Uint8Buffer += OutStride, Count--) {
     if (OperationWidth == EfiPeiCpuIoWidthUint8) {
-      *Uint8Buffer = MmioRead8 ((UINTN)Address);
+      *Uint8Buffer = MmioRead8 ((UINTN) Address);
     } else if (OperationWidth == EfiPeiCpuIoWidthUint16) {
       if (Aligned) {
-        *((UINT16 *)Uint8Buffer) = MmioRead16 ((UINTN)Address);
+        *((UINT16 *) Uint8Buffer) = MmioRead16 ((UINTN) Address);
       } else {
-        WriteUnaligned16 ((UINT16 *)Uint8Buffer, MmioRead16 ((UINTN)Address));
+        WriteUnaligned16 ((UINT16 *) Uint8Buffer, MmioRead16 ((UINTN) Address));
       }
     } else if (OperationWidth == EfiPeiCpuIoWidthUint32) {
       if (Aligned) {
-        *((UINT32 *)Uint8Buffer) = MmioRead32 ((UINTN)Address);
+        *((UINT32 *) Uint8Buffer) = MmioRead32 ((UINTN) Address);
       } else {
-        WriteUnaligned32 ((UINT32 *)Uint8Buffer, MmioRead32 ((UINTN)Address));
+        WriteUnaligned32 ((UINT32 *) Uint8Buffer, MmioRead32 ((UINTN) Address));
       }
     } else if (OperationWidth == EfiPeiCpuIoWidthUint64) {
       if (Aligned) {
-        *((UINT64 *)Uint8Buffer) = MmioRead64 ((UINTN)Address);
+        *((UINT64 *) Uint8Buffer) = MmioRead64 ((UINTN) Address);
       } else {
-        WriteUnaligned64 ((UINT64 *)Uint8Buffer, MmioRead64 ((UINTN)Address));
+        WriteUnaligned64 ((UINT64 *) Uint8Buffer, MmioRead64 ((UINTN) Address));
       }
     }
   }
+
   return EFI_SUCCESS;
 }
 
@@ -294,33 +296,34 @@ CpuMemoryServiceWrite (
   //
   // Select loop based on the width of the transfer
   //
-  InStride = mInStride[Width];
+  InStride  = mInStride[Width];
   OutStride = mOutStride[Width];
   OperationWidth = (EFI_PEI_CPU_IO_PPI_WIDTH) (Width & 0x03);
-  Aligned = (BOOLEAN)(((UINTN)Buffer & (mInStride[OperationWidth] - 1)) == 0x00);
+  Aligned = (BOOLEAN) (((UINTN) Buffer & (mInStride[OperationWidth] - 1)) == 0x00);
   for (Uint8Buffer = Buffer; Count > 0; Address += InStride, Uint8Buffer += OutStride, Count--) {
     if (OperationWidth == EfiPeiCpuIoWidthUint8) {
-      MmioWrite8 ((UINTN)Address, *Uint8Buffer);
+      MmioWrite8 ((UINTN) Address, *Uint8Buffer);
     } else if (OperationWidth == EfiPeiCpuIoWidthUint16) {
       if (Aligned) {
-        MmioWrite16 ((UINTN)Address, *((UINT16 *)Uint8Buffer));
+        MmioWrite16 ((UINTN) Address, *((UINT16 *) Uint8Buffer));
       } else {
-        MmioWrite16 ((UINTN)Address, ReadUnaligned16 ((UINT16 *)Uint8Buffer));
+        MmioWrite16 ((UINTN) Address, ReadUnaligned16 ((UINT16 *) Uint8Buffer));
       }
     } else if (OperationWidth == EfiPeiCpuIoWidthUint32) {
       if (Aligned) {
-        MmioWrite32 ((UINTN)Address, *((UINT32 *)Uint8Buffer));
+        MmioWrite32 ((UINTN) Address, *((UINT32 *) Uint8Buffer));
       } else {
-        MmioWrite32 ((UINTN)Address, ReadUnaligned32 ((UINT32 *)Uint8Buffer));
+        MmioWrite32 ((UINTN) Address, ReadUnaligned32 ((UINT32 *) Uint8Buffer));
       }
     } else if (OperationWidth == EfiPeiCpuIoWidthUint64) {
       if (Aligned) {
-        MmioWrite64 ((UINTN)Address, *((UINT64 *)Uint8Buffer));
+        MmioWrite64 ((UINTN) Address, *((UINT64 *) Uint8Buffer));
       } else {
-        MmioWrite64 ((UINTN)Address, ReadUnaligned64 ((UINT64 *)Uint8Buffer));
+        MmioWrite64 ((UINTN) Address, ReadUnaligned64 ((UINT64 *) Uint8Buffer));
       }
     }
   }
+
   return EFI_SUCCESS;
 }
 
@@ -368,7 +371,7 @@ CpuIoServiceRead (
   //
   // Select loop based on the width of the transfer
   //
-  InStride = mInStride[Width];
+  InStride  = mInStride[Width];
   OutStride = mOutStride[Width];
   OperationWidth = (EFI_PEI_CPU_IO_PPI_WIDTH) (Width & 0x03);
 
@@ -377,40 +380,40 @@ CpuIoServiceRead (
   //
   if (InStride == 0) {
     switch (OperationWidth) {
-    case EfiPeiCpuIoWidthUint8:
-      IoReadFifo8 ((UINTN)Address, Count, Buffer);
-      return EFI_SUCCESS;
-    case EfiPeiCpuIoWidthUint16:
-      IoReadFifo16 ((UINTN)Address, Count, Buffer);
-      return EFI_SUCCESS;
-    case EfiPeiCpuIoWidthUint32:
-      IoReadFifo32 ((UINTN)Address, Count, Buffer);
-      return EFI_SUCCESS;
-    default:
-      //
-      // The CpuIoCheckParameter call above will ensure that this
-      // path is not taken.
-      //
-      ASSERT (FALSE);
-      break;
+      case EfiPeiCpuIoWidthUint8:
+        IoReadFifo8 ((UINTN) Address, Count, Buffer);
+        return EFI_SUCCESS;
+      case EfiPeiCpuIoWidthUint16:
+        IoReadFifo16 ((UINTN) Address, Count, Buffer);
+        return EFI_SUCCESS;
+      case EfiPeiCpuIoWidthUint32:
+        IoReadFifo32 ((UINTN) Address, Count, Buffer);
+        return EFI_SUCCESS;
+      default:
+        //
+        // The CpuIoCheckParameter call above will ensure that this
+        // path is not taken.
+        //
+        ASSERT (FALSE);
+        break;
     }
   }
 
-  Aligned = (BOOLEAN)(((UINTN)Buffer & (mInStride[OperationWidth] - 1)) == 0x00);
+  Aligned = (BOOLEAN) (((UINTN) Buffer & (mInStride[OperationWidth] - 1)) == 0x00);
   for (Uint8Buffer = Buffer; Count > 0; Address += InStride, Uint8Buffer += OutStride, Count--) {
     if (OperationWidth == EfiPeiCpuIoWidthUint8) {
-      *Uint8Buffer = IoRead8 ((UINTN)Address);
+      *Uint8Buffer = IoRead8 ((UINTN) Address);
     } else if (OperationWidth == EfiPeiCpuIoWidthUint16) {
       if (Aligned) {
-        *((UINT16 *)Uint8Buffer) = IoRead16 ((UINTN)Address);
+        *((UINT16 *) Uint8Buffer) = IoRead16 ((UINTN) Address);
       } else {
-        WriteUnaligned16 ((UINT16 *)Uint8Buffer, IoRead16 ((UINTN)Address));
+        WriteUnaligned16 ((UINT16 *) Uint8Buffer, IoRead16 ((UINTN) Address));
       }
     } else if (OperationWidth == EfiPeiCpuIoWidthUint32) {
       if (Aligned) {
-        *((UINT32 *)Uint8Buffer) = IoRead32 ((UINTN)Address);
+        *((UINT32 *) Uint8Buffer) = IoRead32 ((UINTN) Address);
       } else {
-        WriteUnaligned32 ((UINT32 *)Uint8Buffer, IoRead32 ((UINTN)Address));
+        WriteUnaligned32 ((UINT32 *) Uint8Buffer, IoRead32 ((UINTN) Address));
       }
     }
   }
@@ -465,7 +468,7 @@ CpuIoServiceWrite (
   //
   // Select loop based on the width of the transfer
   //
-  InStride = mInStride[Width];
+  InStride  = mInStride[Width];
   OutStride = mOutStride[Width];
   OperationWidth = (EFI_PEI_CPU_IO_PPI_WIDTH) (Width & 0x03);
 
@@ -474,40 +477,40 @@ CpuIoServiceWrite (
   //
   if (InStride == 0) {
     switch (OperationWidth) {
-    case EfiPeiCpuIoWidthUint8:
-      IoWriteFifo8 ((UINTN)Address, Count, Buffer);
-      return EFI_SUCCESS;
-    case EfiPeiCpuIoWidthUint16:
-      IoWriteFifo16 ((UINTN)Address, Count, Buffer);
-      return EFI_SUCCESS;
-    case EfiPeiCpuIoWidthUint32:
-      IoWriteFifo32 ((UINTN)Address, Count, Buffer);
-      return EFI_SUCCESS;
-    default:
-      //
-      // The CpuIoCheckParameter call above will ensure that this
-      // path is not taken.
-      //
-      ASSERT (FALSE);
-      break;
+      case EfiPeiCpuIoWidthUint8:
+        IoWriteFifo8 ((UINTN) Address, Count, Buffer);
+        return EFI_SUCCESS;
+      case EfiPeiCpuIoWidthUint16:
+        IoWriteFifo16 ((UINTN) Address, Count, Buffer);
+        return EFI_SUCCESS;
+      case EfiPeiCpuIoWidthUint32:
+        IoWriteFifo32 ((UINTN) Address, Count, Buffer);
+        return EFI_SUCCESS;
+      default:
+        //
+        // The CpuIoCheckParameter call above will ensure that this
+        // path is not taken.
+        //
+        ASSERT (FALSE);
+        break;
     }
   }
 
-  Aligned = (BOOLEAN)(((UINTN)Buffer & (mInStride[OperationWidth] - 1)) == 0x00);
-  for (Uint8Buffer = (UINT8 *)Buffer; Count > 0; Address += InStride, Uint8Buffer += OutStride, Count--) {
+  Aligned = (BOOLEAN) (((UINTN) Buffer & (mInStride[OperationWidth] - 1)) == 0x00);
+  for (Uint8Buffer = (UINT8 *) Buffer; Count > 0; Address += InStride, Uint8Buffer += OutStride, Count--) {
     if (OperationWidth == EfiPeiCpuIoWidthUint8) {
-      IoWrite8 ((UINTN)Address, *Uint8Buffer);
+      IoWrite8 ((UINTN) Address, *Uint8Buffer);
     } else if (OperationWidth == EfiPeiCpuIoWidthUint16) {
       if (Aligned) {
-        IoWrite16 ((UINTN)Address, *((UINT16 *)Uint8Buffer));
+        IoWrite16 ((UINTN) Address, *((UINT16 *) Uint8Buffer));
       } else {
-        IoWrite16 ((UINTN)Address, ReadUnaligned16 ((UINT16 *)Uint8Buffer));
+        IoWrite16 ((UINTN) Address, ReadUnaligned16 ((UINT16 *) Uint8Buffer));
       }
     } else if (OperationWidth == EfiPeiCpuIoWidthUint32) {
       if (Aligned) {
-        IoWrite32 ((UINTN)Address, *((UINT32 *)Uint8Buffer));
+        IoWrite32 ((UINTN) Address, *((UINT32 *) Uint8Buffer));
       } else {
-        IoWrite32 ((UINTN)Address, ReadUnaligned32 ((UINT32 *)Uint8Buffer));
+        IoWrite32 ((UINTN) Address, ReadUnaligned32 ((UINT32 *) Uint8Buffer));
       }
     }
   }
@@ -533,7 +536,7 @@ CpuIoRead8 (
   IN UINT64                    Address
   )
 {
-  return IoRead8 ((UINTN)Address);
+  return IoRead8 ((UINTN) Address);
 }
 
 /**
@@ -555,7 +558,7 @@ CpuIoRead16 (
   IN UINT64                    Address
   )
 {
-  return IoRead16 ((UINTN)Address);
+  return IoRead16 ((UINTN) Address);
 }
 
 /**
@@ -577,7 +580,7 @@ CpuIoRead32 (
   IN UINT64                     Address
   )
 {
-  return IoRead32 ((UINTN)Address);
+  return IoRead32 ((UINTN) Address);
 }
 
 /**
@@ -599,7 +602,7 @@ CpuIoRead64 (
   IN UINT64                    Address
   )
 {
-  return IoRead64 ((UINTN)Address);
+  return IoRead64 ((UINTN) Address);
 }
 
 /**
@@ -621,7 +624,7 @@ CpuIoWrite8 (
   IN UINT8                     Data
   )
 {
-  IoWrite8 ((UINTN)Address, Data);
+  IoWrite8 ((UINTN) Address, Data);
 }
 
 /**
@@ -643,7 +646,7 @@ CpuIoWrite16 (
   IN UINT16                    Data
   )
 {
-  IoWrite16 ((UINTN)Address, Data);
+  IoWrite16 ((UINTN) Address, Data);
 }
 
 /**
@@ -665,7 +668,7 @@ CpuIoWrite32 (
   IN UINT32                    Data
   )
 {
-  IoWrite32 ((UINTN)Address, Data);
+  IoWrite32 ((UINTN) Address, Data);
 }
 
 /**
@@ -687,7 +690,7 @@ CpuIoWrite64 (
   IN UINT64                    Data
   )
 {
-  IoWrite64 ((UINTN)Address, Data);
+  IoWrite64 ((UINTN) Address, Data);
 }
 
 /**
@@ -709,7 +712,7 @@ CpuMemRead8 (
   IN UINT64                    Address
   )
 {
-  return MmioRead8 ((UINTN)Address);
+  return MmioRead8 ((UINTN) Address);
 }
 
 /**
@@ -731,7 +734,7 @@ CpuMemRead16 (
   IN UINT64                    Address
   )
 {
-  return MmioRead16 ((UINTN)Address);
+  return MmioRead16 ((UINTN) Address);
 }
 
 /**
@@ -753,7 +756,7 @@ CpuMemRead32 (
   IN UINT64                    Address
   )
 {
-  return MmioRead32 ((UINTN)Address);
+  return MmioRead32 ((UINTN) Address);
 }
 
 /**
@@ -775,7 +778,7 @@ CpuMemRead64 (
   IN UINT64                    Address
   )
 {
-  return MmioRead64 ((UINTN)Address);
+  return MmioRead64 ((UINTN) Address);
 }
 
 /**
@@ -797,7 +800,7 @@ CpuMemWrite8 (
   IN  UINT8                    Data
   )
 {
-  MmioWrite8 ((UINTN)Address, Data);
+  MmioWrite8 ((UINTN) Address, Data);
 }
 
 /**
@@ -819,7 +822,7 @@ CpuMemWrite16 (
   IN UINT16                    Data
   )
 {
-  MmioWrite16 ((UINTN)Address, Data);
+  MmioWrite16 ((UINTN) Address, Data);
 }
 
 /**
@@ -841,7 +844,7 @@ CpuMemWrite32 (
   IN UINT32                    Data
   )
 {
-  MmioWrite32 ((UINTN)Address, Data);
+  MmioWrite32 ((UINTN) Address, Data);
 }
 
 /**
@@ -863,7 +866,7 @@ CpuMemWrite64 (
   IN UINT64                    Data
   )
 {
-  MmioWrite64 ((UINTN)Address, Data);
+  MmioWrite64 ((UINTN) Address, Data);
 }
 
 /**
@@ -894,7 +897,7 @@ CpuIoInitialize (
   //
   // Make CpuIo pointer in PeiService table point to gCpuIoPpi
   //
-  (*((EFI_PEI_SERVICES **)PeiServices))->CpuIo = &gCpuIoPpi;
+  (*((EFI_PEI_SERVICES **) PeiServices))->CpuIo = &gCpuIoPpi;
 
   if (Status == EFI_ALREADY_STARTED) {
     //

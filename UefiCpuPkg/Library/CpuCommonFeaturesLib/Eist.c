@@ -59,7 +59,7 @@ EFIAPI
 EistInitialize (
   IN UINTN                             ProcessorNumber,
   IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN VOID                              *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   )
 {
@@ -76,12 +76,12 @@ EistInitialize (
   }
 
   CPU_REGISTER_TABLE_WRITE_FIELD (
-    ProcessorNumber,
-    Msr,
-    MSR_IA32_MISC_ENABLE,
-    MSR_IA32_MISC_ENABLE_REGISTER,
-    Bits.EIST,
-    (State) ? 1 : 0
-    );
+                                  ProcessorNumber,
+                                  Msr,
+                                  MSR_IA32_MISC_ENABLE,
+                                  MSR_IA32_MISC_ENABLE_REGISTER,
+                                  Bits.EIST,
+                                  (State) ? 1 : 0
+                                  );
   return RETURN_SUCCESS;
 }

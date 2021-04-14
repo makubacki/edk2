@@ -14,15 +14,15 @@
 //
 // 1 means an error code will be pushed, otherwise 0
 //
-CONST UINT32 mErrorCodeFlag = 0x20227d00;
+CONST UINT32  mErrorCodeFlag = 0x20227d00;
 
 //
 // Define the maximum message length
 //
 #define MAX_DEBUG_MESSAGE_LENGTH  0x100
 
-CONST CHAR8 mExceptionReservedStr[] = "Reserved";
-CONST CHAR8 *mExceptionNameStr[] = {
+CONST CHAR8  mExceptionReservedStr[] = "Reserved";
+CONST CHAR8  *mExceptionNameStr[]    = {
   "#DE - Divide Error",
   "#DB - Debug",
   "NMI Interrupt",
@@ -104,7 +104,7 @@ InternalPrintMessage (
   //
   // Send the print string to a Serial Port
   //
-  SerialPortWrite ((UINT8 *)Buffer, AsciiStrLen (Buffer));
+  SerialPortWrite ((UINT8 *) Buffer, AsciiStrLen (Buffer));
 }
 
 /**
@@ -118,10 +118,10 @@ DumpModuleImageInfo (
   IN  UINTN              CurrentEip
   )
 {
-  EFI_STATUS                           Status;
-  UINTN                                Pe32Data;
-  VOID                                 *PdbPointer;
-  VOID                                 *EntryPoint;
+  EFI_STATUS  Status;
+  UINTN       Pe32Data;
+  VOID        *PdbPointer;
+  VOID        *EntryPoint;
 
   Pe32Data = PeCoffSearchImageBase (CurrentEip);
   if (Pe32Data == 0) {
@@ -134,18 +134,20 @@ DumpModuleImageInfo (
     if (EFI_ERROR (Status)) {
       EntryPoint = NULL;
     }
+
     InternalPrintMessage ("!!!! Find image based on IP(0x%x) ", CurrentEip);
     PdbPointer = PeCoffLoaderGetPdbPointer ((VOID *) Pe32Data);
     if (PdbPointer != NULL) {
       InternalPrintMessage ("%a", PdbPointer);
     } else {
-      InternalPrintMessage ("(No PDB) " );
+      InternalPrintMessage ("(No PDB) ");
     }
+
     InternalPrintMessage (
-      " (ImageBase=%016lp, EntryPoint=%016p) !!!!\n",
-      (VOID *) Pe32Data,
-      EntryPoint
-      );
+                          " (ImageBase=%016lp, EntryPoint=%016p) !!!!\n",
+                          (VOID *) Pe32Data,
+                          EntryPoint
+                          );
   }
 }
 
@@ -174,10 +176,13 @@ ReadAndVerifyVectorInfo (
       //
       return EFI_INVALID_PARAMETER;
     }
+
     if (VectorInfo->VectorNumber < VectorCount) {
       ReservedVector[VectorInfo->VectorNumber].Attribute = VectorInfo->Attribute;
     }
-    VectorInfo ++;
+
+    VectorInfo++;
   }
+
   return EFI_SUCCESS;
 }

@@ -18,7 +18,6 @@
 #include <Protocol/SmmConfiguration.h>
 #include <Guid/CpuFeaturesInitDone.h>
 
-
 /**
   Worker function to perform CPU feature initialization.
 
@@ -28,8 +27,8 @@ CpuFeaturesInitializeWorker (
   VOID
   )
 {
-  EFI_STATUS             Status;
-  EFI_HANDLE             Handle;
+  EFI_STATUS  Status;
+  EFI_HANDLE  Handle;
 
   CpuFeaturesDetect ();
 
@@ -40,11 +39,11 @@ CpuFeaturesInitializeWorker (
   //
   Handle = NULL;
   Status = gBS->InstallProtocolInterface (
-                  &Handle,
-                  &gEdkiiCpuFeaturesInitDoneGuid,
-                  EFI_NATIVE_INTERFACE,
-                  NULL
-                  );
+                                          &Handle,
+                                          &gEdkiiCpuFeaturesInitDoneGuid,
+                                          EFI_NATIVE_INTERFACE,
+                                          NULL
+                                          );
   ASSERT_EFI_ERROR (Status);
 }
 
@@ -61,13 +60,13 @@ SmmConfigurationEventNotify (
   IN VOID                              *Context
   )
 {
-  EFI_STATUS                           Status;
-  EFI_SMM_CONFIGURATION_PROTOCOL       *SmmConfiguration;
+  EFI_STATUS                      Status;
+  EFI_SMM_CONFIGURATION_PROTOCOL  *SmmConfiguration;
 
   //
   // Make sure this notification is for this handler
   //
-  Status = gBS->LocateProtocol (&gEfiSmmConfigurationProtocolGuid, NULL, (VOID **)&SmmConfiguration);
+  Status = gBS->LocateProtocol (&gEfiSmmConfigurationProtocolGuid, NULL, (VOID **) &SmmConfiguration);
   if (EFI_ERROR (Status)) {
     return;
   }
@@ -107,11 +106,11 @@ CpuFeaturesDxeInitialize (
     //
     Handle = NULL;
     Status = gBS->InstallProtocolInterface (
-                    &Handle,
-                    &gEdkiiCpuFeaturesInitDoneGuid,
-                    EFI_NATIVE_INTERFACE,
-                    NULL
-                    );
+                                            &Handle,
+                                            &gEdkiiCpuFeaturesInitDoneGuid,
+                                            EFI_NATIVE_INTERFACE,
+                                            NULL
+                                            );
     ASSERT_EFI_ERROR (Status);
     return Status;
   }
@@ -121,16 +120,15 @@ CpuFeaturesDxeInitialize (
     // Install notification callback on SMM Configuration Protocol
     //
     EfiCreateProtocolNotifyEvent (
-      &gEfiSmmConfigurationProtocolGuid,
-      TPL_CALLBACK,
-      SmmConfigurationEventNotify,
-      NULL,
-      &Registration
-      );
+                                  &gEfiSmmConfigurationProtocolGuid,
+                                  TPL_CALLBACK,
+                                  SmmConfigurationEventNotify,
+                                  NULL,
+                                  &Registration
+                                  );
   } else {
     CpuFeaturesInitializeWorker ();
   }
 
   return EFI_SUCCESS;
 }
-

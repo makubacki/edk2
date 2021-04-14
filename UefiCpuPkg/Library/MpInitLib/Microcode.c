@@ -22,13 +22,13 @@ MicrocodeDetect (
   IN UINTN                   ProcessorNumber
   )
 {
-  CPU_MICROCODE_HEADER                    *Microcode;
-  UINTN                                   MicrocodeEnd;
-  CPU_AP_DATA                             *BspData;
-  UINT32                                  LatestRevision;
-  CPU_MICROCODE_HEADER                    *LatestMicrocode;
-  UINT32                                  ThreadId;
-  EDKII_PEI_MICROCODE_CPU_ID              MicrocodeCpuId;
+  CPU_MICROCODE_HEADER        *Microcode;
+  UINTN                       MicrocodeEnd;
+  CPU_AP_DATA                 *BspData;
+  UINT32                      LatestRevision;
+  CPU_MICROCODE_HEADER        *LatestMicrocode;
+  UINT32                      ThreadId;
+  EDKII_PEI_MICROCODE_CPU_ID  MicrocodeCpuId;
 
   if (CpuMpData->MicrocodePatchRegionSize == 0) {
     //
@@ -56,7 +56,7 @@ MicrocodeDetect (
     if ((BspData->ProcessorSignature == MicrocodeCpuId.ProcessorSignature) &&
         (BspData->PlatformId == MicrocodeCpuId.PlatformId) &&
         (BspData->MicrocodeEntryAddr != 0)) {
-      LatestMicrocode = (CPU_MICROCODE_HEADER *)(UINTN) BspData->MicrocodeEntryAddr;
+      LatestMicrocode = (CPU_MICROCODE_HEADER *) (UINTN) BspData->MicrocodeEntryAddr;
       LatestRevision  = LatestMicrocode->UpdateRevision;
       goto LoadMicrocode;
     }
@@ -69,8 +69,8 @@ MicrocodeDetect (
   //
   LatestRevision  = 0;
   LatestMicrocode = NULL;
-  Microcode       = (CPU_MICROCODE_HEADER *) (UINTN) CpuMpData->MicrocodePatchAddress;
-  MicrocodeEnd    = (UINTN) Microcode + (UINTN) CpuMpData->MicrocodePatchRegionSize;
+  Microcode    = (CPU_MICROCODE_HEADER *) (UINTN) CpuMpData->MicrocodePatchAddress;
+  MicrocodeEnd = (UINTN) Microcode + (UINTN) CpuMpData->MicrocodePatchRegionSize;
 
   do {
     if (!IsValidMicrocode (Microcode, MicrocodeEnd - (UINTN) Microcode, LatestRevision, &MicrocodeCpuId, 1, TRUE)) {
@@ -84,6 +84,7 @@ MicrocodeDetect (
       Microcode = (CPU_MICROCODE_HEADER *) ((UINTN) Microcode + SIZE_1KB);
       continue;
     }
+
     LatestMicrocode = Microcode;
     LatestRevision  = LatestMicrocode->UpdateRevision;
 
@@ -109,6 +110,7 @@ LoadMicrocode:
     //
     LoadMicrocode (LatestMicrocode);
   }
+
   //
   // It's possible that the microcode fails to load. Just capture the CPU microcode revision after loading.
   //
@@ -135,9 +137,9 @@ ShadowMicrocodePatchWorker (
   IN     UINTN                   TotalLoadSize
   )
 {
-  UINTN    Index;
-  VOID     *MicrocodePatchInRam;
-  UINT8    *Walker;
+  UINTN  Index;
+  VOID   *MicrocodePatchInRam;
+  UINT8  *Walker;
 
   ASSERT ((Patches != NULL) && (PatchCount != 0));
 
@@ -151,10 +153,10 @@ ShadowMicrocodePatchWorker (
   //
   for (Walker = MicrocodePatchInRam, Index = 0; Index < PatchCount; Index++) {
     CopyMem (
-      Walker,
-      (VOID *) Patches[Index].Address,
-      Patches[Index].Size
-      );
+             Walker,
+             (VOID *) Patches[Index].Address,
+             Patches[Index].Size
+             );
     Walker += Patches[Index].Size;
   }
 
@@ -164,11 +166,13 @@ ShadowMicrocodePatchWorker (
   CpuMpData->MicrocodePatchAddress    = (UINTN) MicrocodePatchInRam;
   CpuMpData->MicrocodePatchRegionSize = TotalLoadSize;
 
-  DEBUG ((
-    DEBUG_INFO,
-    "%a: Required microcode patches have been loaded at 0x%lx, with size 0x%lx.\n",
-    __FUNCTION__, CpuMpData->MicrocodePatchAddress, CpuMpData->MicrocodePatchRegionSize
-    ));
+  DEBUG (
+         (
+          DEBUG_INFO,
+          "%a: Required microcode patches have been loaded at 0x%lx, with size 0x%lx.\n",
+          __FUNCTION__, CpuMpData->MicrocodePatchAddress, CpuMpData->MicrocodePatchRegionSize
+         )
+         );
 
   return;
 }
@@ -184,16 +188,16 @@ ShadowMicrocodePatchByPcd (
   IN OUT CPU_MP_DATA             *CpuMpData
   )
 {
-  UINTN                                  Index;
-  CPU_MICROCODE_HEADER                   *MicrocodeEntryPoint;
-  UINTN                                  MicrocodeEnd;
-  UINTN                                  TotalSize;
-  MICROCODE_PATCH_INFO                   *PatchInfoBuffer;
-  UINTN                                  MaxPatchNumber;
-  UINTN                                  PatchCount;
-  UINTN                                  TotalLoadSize;
-  EDKII_PEI_MICROCODE_CPU_ID             *MicrocodeCpuIds;
-  BOOLEAN                                Valid;
+  UINTN                       Index;
+  CPU_MICROCODE_HEADER        *MicrocodeEntryPoint;
+  UINTN                       MicrocodeEnd;
+  UINTN                       TotalSize;
+  MICROCODE_PATCH_INFO        *PatchInfoBuffer;
+  UINTN                       MaxPatchNumber;
+  UINTN                       PatchCount;
+  UINTN                       TotalLoadSize;
+  EDKII_PEI_MICROCODE_CPU_ID  *MicrocodeCpuIds;
+  BOOLEAN                     Valid;
 
   //
   // Initialize the microcode patch related fields in CpuMpData as the values
@@ -203,9 +207,9 @@ ShadowMicrocodePatchByPcd (
   CpuMpData->MicrocodePatchAddress    = PcdGet64 (PcdCpuMicrocodePatchAddress);
   CpuMpData->MicrocodePatchRegionSize = PcdGet64 (PcdCpuMicrocodePatchRegionSize);
 
-  MicrocodeEntryPoint    = (CPU_MICROCODE_HEADER *) (UINTN) CpuMpData->MicrocodePatchAddress;
-  MicrocodeEnd           = (UINTN) MicrocodeEntryPoint +
-                           (UINTN) CpuMpData->MicrocodePatchRegionSize;
+  MicrocodeEntryPoint = (CPU_MICROCODE_HEADER *) (UINTN) CpuMpData->MicrocodePatchAddress;
+  MicrocodeEnd = (UINTN) MicrocodeEntryPoint +
+                 (UINTN) CpuMpData->MicrocodePatchRegionSize;
   if ((MicrocodeEntryPoint == NULL) || ((UINTN) MicrocodeEntryPoint == MicrocodeEnd)) {
     //
     // There is no microcode patches
@@ -222,15 +226,15 @@ ShadowMicrocodePatchByPcd (
   }
 
   MicrocodeCpuIds = AllocatePages (
-                      EFI_SIZE_TO_PAGES (CpuMpData->CpuCount * sizeof (EDKII_PEI_MICROCODE_CPU_ID))
-                      );
+                                   EFI_SIZE_TO_PAGES (CpuMpData->CpuCount * sizeof (EDKII_PEI_MICROCODE_CPU_ID))
+                                   );
   if (MicrocodeCpuIds == NULL) {
     FreePool (PatchInfoBuffer);
     return;
   }
 
   for (Index = 0; Index < CpuMpData->CpuCount; Index++) {
-    MicrocodeCpuIds[Index].PlatformId         = CpuMpData->CpuData[Index].PlatformId;
+    MicrocodeCpuIds[Index].PlatformId = CpuMpData->CpuData[Index].PlatformId;
     MicrocodeCpuIds[Index].ProcessorSignature = CpuMpData->CpuData[Index].ProcessorSignature;
   }
 
@@ -241,13 +245,13 @@ ShadowMicrocodePatchByPcd (
   //
   do {
     Valid = IsValidMicrocode (
-              MicrocodeEntryPoint,
-              MicrocodeEnd - (UINTN) MicrocodeEntryPoint,
-              0,
-              MicrocodeCpuIds,
-              CpuMpData->CpuCount,
-              FALSE
-              );
+                              MicrocodeEntryPoint,
+                              MicrocodeEnd - (UINTN) MicrocodeEntryPoint,
+                              0,
+                              MicrocodeCpuIds,
+                              CpuMpData->CpuCount,
+                              FALSE
+                              );
     if (!Valid) {
       //
       // Padding data between the microcode patches, skip 1KB to check next entry.
@@ -270,13 +274,14 @@ ShadowMicrocodePatchByPcd (
       }
 
       PatchInfoBuffer = ReallocatePool (
-                          MaxPatchNumber * sizeof (MICROCODE_PATCH_INFO),
-                          2 * MaxPatchNumber * sizeof (MICROCODE_PATCH_INFO),
-                          PatchInfoBuffer
-                          );
+                                        MaxPatchNumber * sizeof (MICROCODE_PATCH_INFO),
+                                        2 * MaxPatchNumber * sizeof (MICROCODE_PATCH_INFO),
+                                        PatchInfoBuffer
+                                        );
       if (PatchInfoBuffer == NULL) {
         goto OnExit;
       }
+
       MaxPatchNumber = MaxPatchNumber * 2;
     }
 
@@ -296,11 +301,13 @@ ShadowMicrocodePatchByPcd (
   } while ((UINTN) MicrocodeEntryPoint < MicrocodeEnd);
 
   if (PatchCount != 0) {
-    DEBUG ((
-      DEBUG_INFO,
-      "%a: 0x%x microcode patches will be loaded into memory, with size 0x%x.\n",
-      __FUNCTION__, PatchCount, TotalLoadSize
-      ));
+    DEBUG (
+           (
+            DEBUG_INFO,
+            "%a: 0x%x microcode patches will be loaded into memory, with size 0x%x.\n",
+            __FUNCTION__, PatchCount, TotalLoadSize
+           )
+           );
 
     ShadowMicrocodePatchWorker (CpuMpData, PatchInfoBuffer, PatchCount, TotalLoadSize);
   }
@@ -309,6 +316,7 @@ OnExit:
   if (PatchInfoBuffer != NULL) {
     FreePool (PatchInfoBuffer);
   }
+
   FreePages (MicrocodeCpuIds, EFI_SIZE_TO_PAGES (CpuMpData->CpuCount * sizeof (EDKII_PEI_MICROCODE_CPU_ID)));
 }
 
@@ -322,7 +330,7 @@ ShadowMicrocodeUpdatePatch (
   IN OUT CPU_MP_DATA             *CpuMpData
   )
 {
-  EFI_STATUS     Status;
+  EFI_STATUS  Status;
 
   Status = PlatformShadowMicrocode (CpuMpData);
   if (EFI_ERROR (Status)) {
@@ -351,12 +359,12 @@ GetMicrocodePatchInfoFromHob (
   UINT64                         *RegionSize
   )
 {
-  EFI_HOB_GUID_TYPE            *GuidHob;
-  EDKII_MICROCODE_PATCH_HOB    *MicrocodePathHob;
+  EFI_HOB_GUID_TYPE          *GuidHob;
+  EDKII_MICROCODE_PATCH_HOB  *MicrocodePathHob;
 
   GuidHob = GetFirstGuidHob (&gEdkiiMicrocodePatchHobGuid);
   if (GuidHob == NULL) {
-    DEBUG((DEBUG_INFO, "%a: Microcode patch cache HOB is not found.\n", __FUNCTION__));
+    DEBUG ((DEBUG_INFO, "%a: Microcode patch cache HOB is not found.\n", __FUNCTION__));
     return FALSE;
   }
 
@@ -365,10 +373,12 @@ GetMicrocodePatchInfoFromHob (
   *Address    = MicrocodePathHob->MicrocodePatchAddress;
   *RegionSize = MicrocodePathHob->MicrocodePatchRegionSize;
 
-  DEBUG((
-    DEBUG_INFO, "%a: MicrocodeBase = 0x%lx, MicrocodeSize = 0x%lx\n",
-    __FUNCTION__, *Address, *RegionSize
-    ));
+  DEBUG (
+         (
+          DEBUG_INFO, "%a: MicrocodeBase = 0x%lx, MicrocodeSize = 0x%lx\n",
+          __FUNCTION__, *Address, *RegionSize
+         )
+         );
 
   return TRUE;
 }

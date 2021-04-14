@@ -11,80 +11,80 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include "PiSmmCpuDxeSmm.h"
 #include "SmmProfileInternal.h"
 
-UINT32                    mSmmProfileCr3;
+UINT32  mSmmProfileCr3;
 
-SMM_PROFILE_HEADER        *mSmmProfileBase;
-MSR_DS_AREA_STRUCT        *mMsrDsAreaBase;
+SMM_PROFILE_HEADER  *mSmmProfileBase;
+MSR_DS_AREA_STRUCT  *mMsrDsAreaBase;
 //
 // The buffer to store SMM profile data.
 //
-UINTN                     mSmmProfileSize;
+UINTN  mSmmProfileSize;
 
 //
 // The buffer to enable branch trace store.
 //
-UINTN                     mMsrDsAreaSize   = SMM_PROFILE_DTS_SIZE;
+UINTN  mMsrDsAreaSize = SMM_PROFILE_DTS_SIZE;
 
 //
 // The flag indicates if execute-disable is supported by processor.
 //
-BOOLEAN                   mXdSupported     = TRUE;
+BOOLEAN  mXdSupported = TRUE;
 
 //
 // The flag indicates if execute-disable is enabled on processor.
 //
-BOOLEAN                   mXdEnabled       = FALSE;
+BOOLEAN  mXdEnabled = FALSE;
 
 //
 // The flag indicates if BTS is supported by processor.
 //
-BOOLEAN                   mBtsSupported     = TRUE;
+BOOLEAN  mBtsSupported = TRUE;
 
 //
 // The flag indicates if SMM profile starts to record data.
 //
-BOOLEAN                   mSmmProfileStart = FALSE;
+BOOLEAN  mSmmProfileStart = FALSE;
 
 //
 // The flag indicates if #DB will be setup in #PF handler.
 //
-BOOLEAN                   mSetupDebugTrap = FALSE;
+BOOLEAN  mSetupDebugTrap = FALSE;
 
 //
 // Record the page fault exception count for one instruction execution.
 //
-UINTN                     *mPFEntryCount;
+UINTN  *mPFEntryCount;
 
-UINT64                    (*mLastPFEntryValue)[MAX_PF_ENTRY_COUNT];
+UINT64 (*mLastPFEntryValue)[MAX_PF_ENTRY_COUNT];
 UINT64                    *(*mLastPFEntryPointer)[MAX_PF_ENTRY_COUNT];
 
-MSR_DS_AREA_STRUCT        **mMsrDsArea;
-BRANCH_TRACE_RECORD       **mMsrBTSRecord;
-UINTN                     mBTSRecordNumber;
-PEBS_RECORD               **mMsrPEBSRecord;
+MSR_DS_AREA_STRUCT   **mMsrDsArea;
+BRANCH_TRACE_RECORD  **mMsrBTSRecord;
+UINTN                mBTSRecordNumber;
+PEBS_RECORD          **mMsrPEBSRecord;
 
 //
 // These memory ranges are always present, they does not generate the access type of page fault exception,
 // but they possibly generate instruction fetch type of page fault exception.
 //
-MEMORY_PROTECTION_RANGE   *mProtectionMemRange     = NULL;
-UINTN                     mProtectionMemRangeCount = 0;
+MEMORY_PROTECTION_RANGE  *mProtectionMemRange     = NULL;
+UINTN                    mProtectionMemRangeCount = 0;
 
 //
 // Some predefined memory ranges.
 //
-MEMORY_PROTECTION_RANGE mProtectionMemRangeTemplate[] = {
+MEMORY_PROTECTION_RANGE  mProtectionMemRangeTemplate[] = {
   //
   // SMRAM range (to be fixed in runtime).
   // It is always present and instruction fetches are allowed.
   //
-  {{0x00000000, 0x00000000},TRUE,FALSE},
+  { { 0x00000000, 0x00000000 }, TRUE, FALSE },
 
   //
   // SMM profile data range( to be fixed in runtime).
   // It is always present and instruction fetches are not allowed.
   //
-  {{0x00000000, 0x00000000},TRUE,TRUE},
+  { { 0x00000000, 0x00000000 }, TRUE, TRUE  },
 
   //
   // SMRAM ranges not covered by mCpuHotPlugData.SmrrBase/mCpuHotPlugData.SmrrSiz (to be fixed in runtime).
@@ -105,13 +105,13 @@ MEMORY_PROTECTION_RANGE mProtectionMemRangeTemplate[] = {
 //
 // These memory ranges are mapped by 4KB-page instead of 2MB-page.
 //
-MEMORY_RANGE              *mSplitMemRange          = NULL;
-UINTN                     mSplitMemRangeCount      = 0;
+MEMORY_RANGE  *mSplitMemRange     = NULL;
+UINTN         mSplitMemRangeCount = 0;
 
 //
 // SMI command port.
 //
-UINT32                    mSmiCommandPort;
+UINT32  mSmiCommandPort;
 
 /**
   Disable branch trace store.
@@ -122,7 +122,7 @@ DisableBTS (
   VOID
   )
 {
-  AsmMsrAnd64 (MSR_DEBUG_CTL, ~((UINT64)(MSR_DEBUG_CTL_BTS | MSR_DEBUG_CTL_TR)));
+  AsmMsrAnd64 (MSR_DEBUG_CTL, ~((UINT64) (MSR_DEBUG_CTL_BTS | MSR_DEBUG_CTL_TR)));
 }
 
 /**
@@ -146,8 +146,8 @@ GetCpuIndex (
   VOID
   )
 {
-  UINTN     Index;
-  UINT32    ApicId;
+  UINTN   Index;
+  UINT32  ApicId;
 
   ApicId = GetApicId ();
 
@@ -156,6 +156,7 @@ GetCpuIndex (
       return Index;
     }
   }
+
   ASSERT (FALSE);
   return 0;
 }
@@ -179,15 +180,16 @@ GetSourceFromDestinationOnBts (
 
   FirstMatch = FALSE;
 
-  CurrentBTSRecord = (BRANCH_TRACE_RECORD *)mMsrDsArea[CpuIndex]->BTSIndex;
+  CurrentBTSRecord = (BRANCH_TRACE_RECORD *) mMsrDsArea[CpuIndex]->BTSIndex;
   for (Index = 0; Index < mBTSRecordNumber; Index++) {
-    if ((UINTN)CurrentBTSRecord < (UINTN)mMsrBTSRecord[CpuIndex]) {
+    if ((UINTN) CurrentBTSRecord < (UINTN) mMsrBTSRecord[CpuIndex]) {
       //
       // Underflow
       //
-      CurrentBTSRecord = (BRANCH_TRACE_RECORD *)((UINTN)mMsrDsArea[CpuIndex]->BTSAbsoluteMaximum - 1);
-      CurrentBTSRecord --;
+      CurrentBTSRecord = (BRANCH_TRACE_RECORD *) ((UINTN) mMsrDsArea[CpuIndex]->BTSAbsoluteMaximum - 1);
+      CurrentBTSRecord--;
     }
+
     if (CurrentBTSRecord->LastBranchTo == DestinationIP) {
       //
       // Good! find 1st one, then find 2nd one.
@@ -204,6 +206,7 @@ GetSourceFromDestinationOnBts (
         return CurrentBTSRecord->LastBranchFrom;
       }
     }
+
     CurrentBTSRecord--;
   }
 
@@ -221,8 +224,8 @@ GetSourceFromDestinationOnBts (
 VOID
 EFIAPI
 DebugExceptionHandler (
-    IN EFI_EXCEPTION_TYPE   InterruptType,
-    IN EFI_SYSTEM_CONTEXT   SystemContext
+  IN EFI_EXCEPTION_TYPE   InterruptType,
+  IN EFI_SYSTEM_CONTEXT   SystemContext
   )
 {
   UINTN  CpuIndex;
@@ -233,6 +236,7 @@ DebugExceptionHandler (
       !NULL_DETECTION_NONSTOP_MODE) {
     return;
   }
+
   CpuIndex = GetCpuIndex ();
 
   //
@@ -276,12 +280,14 @@ IsInSmmRanges (
   if ((Address >= mCpuHotPlugData.SmrrBase) && (Address < mCpuHotPlugData.SmrrBase + mCpuHotPlugData.SmrrSize)) {
     return TRUE;
   }
+
   for (Index = 0; Index < mSmmCpuSmramRangeCount; Index++) {
     if (Address >= mSmmCpuSmramRanges[Index].CpuStart &&
         Address < mSmmCpuSmramRanges[Index].CpuStart + mSmmCpuSmramRanges[Index].PhysicalSize) {
       return TRUE;
     }
   }
+
   return FALSE;
 }
 
@@ -310,14 +316,15 @@ IsAddressValid (
         return mProtectionMemRange[Index].Present;
       }
     }
+
     *Nx = TRUE;
     return FALSE;
-
   } else {
     *Nx = TRUE;
     if (IsInSmmRanges (Address)) {
       *Nx = FALSE;
     }
+
     return TRUE;
   }
 }
@@ -349,12 +356,13 @@ IsAddressSplit (
       if ((mCpuHotPlugData.SmrrBase - Address) < BASE_2MB) {
         return TRUE;
       }
-    } else if (Address > (mCpuHotPlugData.SmrrBase + mCpuHotPlugData.SmrrSize - BASE_2MB))  {
+    } else if (Address > (mCpuHotPlugData.SmrrBase + mCpuHotPlugData.SmrrSize - BASE_2MB)) {
       if ((Address - (mCpuHotPlugData.SmrrBase + mCpuHotPlugData.SmrrSize - BASE_2MB)) < BASE_2MB) {
         return TRUE;
       }
     }
   }
+
   //
   // Return default
   //
@@ -384,18 +392,18 @@ InitProtectedMemRange (
   UINT64                           High4KBPageSize;
   UINT64                           Low4KBPageSize;
 
-  NumberOfDescriptors      = 0;
+  NumberOfDescriptors = 0;
   NumberOfAddedDescriptors = mSmmCpuSmramRangeCount;
-  NumberOfSpliteRange      = 0;
-  MemorySpaceMap           = NULL;
+  NumberOfSpliteRange = 0;
+  MemorySpaceMap = NULL;
 
   //
   // Get MMIO ranges from GCD and add them into protected memory ranges.
   //
   gDS->GetMemorySpaceMap (
-       &NumberOfDescriptors,
-       &MemorySpaceMap
-       );
+                          &NumberOfDescriptors,
+                          &MemorySpaceMap
+                          );
   for (Index = 0; Index < NumberOfDescriptors; Index++) {
     if (MemorySpaceMap[Index].GcdMemoryType == EfiGcdMemoryTypeMemoryMappedIo) {
       NumberOfAddedDescriptors++;
@@ -426,16 +434,19 @@ InitProtectedMemRange (
     NumberOfProtectRange = sizeof (mProtectionMemRangeTemplate) / sizeof (MEMORY_PROTECTION_RANGE);
     for (Index = 0; Index < mSmmCpuSmramRangeCount; Index++) {
       if (mSmmCpuSmramRanges[Index].CpuStart >= mProtectionMemRange[0].Range.Base &&
-          mSmmCpuSmramRanges[Index].CpuStart + mSmmCpuSmramRanges[Index].PhysicalSize < mProtectionMemRange[0].Range.Top) {
+          mSmmCpuSmramRanges[Index].CpuStart + mSmmCpuSmramRanges[Index].PhysicalSize <
+          mProtectionMemRange[0].Range.Top) {
         //
         // If the address have been already covered by mCpuHotPlugData.SmrrBase/mCpuHotPlugData.SmrrSiz
         //
         break;
       }
+
       mProtectionMemRange[NumberOfProtectRange].Range.Base = mSmmCpuSmramRanges[Index].CpuStart;
-      mProtectionMemRange[NumberOfProtectRange].Range.Top  = mSmmCpuSmramRanges[Index].CpuStart + mSmmCpuSmramRanges[Index].PhysicalSize;
-      mProtectionMemRange[NumberOfProtectRange].Present    = TRUE;
-      mProtectionMemRange[NumberOfProtectRange].Nx         = FALSE;
+      mProtectionMemRange[NumberOfProtectRange].Range.Top  = mSmmCpuSmramRanges[Index].CpuStart +
+                                                             mSmmCpuSmramRanges[Index].PhysicalSize;
+      mProtectionMemRange[NumberOfProtectRange].Present = TRUE;
+      mProtectionMemRange[NumberOfProtectRange].Nx = FALSE;
       NumberOfProtectRange++;
     }
 
@@ -446,10 +457,12 @@ InitProtectedMemRange (
       if (MemorySpaceMap[Index].GcdMemoryType != EfiGcdMemoryTypeMemoryMappedIo) {
         continue;
       }
+
       mProtectionMemRange[NumberOfProtectRange].Range.Base = MemorySpaceMap[Index].BaseAddress;
-      mProtectionMemRange[NumberOfProtectRange].Range.Top  = MemorySpaceMap[Index].BaseAddress + MemorySpaceMap[Index].Length;
-      mProtectionMemRange[NumberOfProtectRange].Present    = TRUE;
-      mProtectionMemRange[NumberOfProtectRange].Nx         = TRUE;
+      mProtectionMemRange[NumberOfProtectRange].Range.Top  = MemorySpaceMap[Index].BaseAddress +
+                                                             MemorySpaceMap[Index].Length;
+      mProtectionMemRange[NumberOfProtectRange].Present = TRUE;
+      mProtectionMemRange[NumberOfProtectRange].Nx = TRUE;
       NumberOfProtectRange++;
     }
 
@@ -473,7 +486,8 @@ InitProtectedMemRange (
     ProtectEndAddress  = mProtectionMemRange[Index].Range.Top;
     if (((ProtectBaseAddress & (SIZE_2MB - 1)) != 0) || ((ProtectEndAddress  & (SIZE_2MB - 1)) != 0)) {
       //
-      // Check if it is possible to create 4KB-page for not 2MB-aligned range and to create 2MB-page for 2MB-aligned range.
+      // Check if it is possible to create 4KB-page for not 2MB-aligned range and to create 2MB-page for 2MB-aligned
+      // range.
       // A mix of 4KB and 2MB page could save SMRAM space.
       //
       Top2MBAlignedAddress  = ProtectEndAddress & ~(SIZE_2MB - 1);
@@ -483,8 +497,10 @@ InitProtectedMemRange (
         //
         // There is an range which could be mapped by 2MB-page.
         //
-        High4KBPageSize = ((ProtectEndAddress + SIZE_2MB - 1) & ~(SIZE_2MB - 1)) - (ProtectEndAddress & ~(SIZE_2MB - 1));
-        Low4KBPageSize  = ((ProtectBaseAddress + SIZE_2MB - 1) & ~(SIZE_2MB - 1)) - (ProtectBaseAddress & ~(SIZE_2MB - 1));
+        High4KBPageSize = ((ProtectEndAddress + SIZE_2MB - 1) & ~(SIZE_2MB - 1)) -
+                          (ProtectEndAddress & ~(SIZE_2MB - 1));
+        Low4KBPageSize = ((ProtectBaseAddress + SIZE_2MB - 1) & ~(SIZE_2MB - 1)) -
+                         (ProtectBaseAddress & ~(SIZE_2MB - 1));
         if (High4KBPageSize != 0) {
           //
           // Add not 2MB-aligned range to be mapped by 4KB-page.
@@ -493,6 +509,7 @@ InitProtectedMemRange (
           mSplitMemRange[NumberOfSpliteRange].Top  = (ProtectEndAddress + SIZE_2MB - 1) & ~(SIZE_2MB - 1);
           NumberOfSpliteRange++;
         }
+
         if (Low4KBPageSize != 0) {
           //
           // Add not 2MB-aligned range to be mapped by 4KB-page.
@@ -519,6 +536,7 @@ InitProtectedMemRange (
     DEBUG ((EFI_D_INFO, "mProtectionMemRange[%d].Base = %lx\n", Index, mProtectionMemRange[Index].Range.Base));
     DEBUG ((EFI_D_INFO, "mProtectionMemRange[%d].Top  = %lx\n", Index, mProtectionMemRange[Index].Range.Top));
   }
+
   for (Index = 0; Index < mSplitMemRangeCount; Index++) {
     DEBUG ((EFI_D_INFO, "mSplitMemRange[%d].Base = %lx\n", Index, mSplitMemRange[Index].Base));
     DEBUG ((EFI_D_INFO, "mSplitMemRange[%d].Top  = %lx\n", Index, mSplitMemRange[Index].Top));
@@ -534,26 +552,26 @@ InitPaging (
   VOID
   )
 {
-  UINT64                            Pml5Entry;
-  UINT64                            Pml4Entry;
-  UINT64                            *Pml5;
-  UINT64                            *Pml4;
-  UINT64                            *Pdpt;
-  UINT64                            *Pd;
-  UINT64                            *Pt;
-  UINTN                             Address;
-  UINTN                             Pml5Index;
-  UINTN                             Pml4Index;
-  UINTN                             PdptIndex;
-  UINTN                             PdIndex;
-  UINTN                             PtIndex;
-  UINTN                             NumberOfPdptEntries;
-  UINTN                             NumberOfPml4Entries;
-  UINTN                             NumberOfPml5Entries;
-  UINTN                             SizeOfMemorySpace;
-  BOOLEAN                           Nx;
-  IA32_CR4                          Cr4;
-  BOOLEAN                           Enable5LevelPaging;
+  UINT64    Pml5Entry;
+  UINT64    Pml4Entry;
+  UINT64    *Pml5;
+  UINT64    *Pml4;
+  UINT64    *Pdpt;
+  UINT64    *Pd;
+  UINT64    *Pt;
+  UINTN     Address;
+  UINTN     Pml5Index;
+  UINTN     Pml4Index;
+  UINTN     PdptIndex;
+  UINTN     PdIndex;
+  UINTN     PtIndex;
+  UINTN     NumberOfPdptEntries;
+  UINTN     NumberOfPml4Entries;
+  UINTN     NumberOfPml5Entries;
+  UINTN     SizeOfMemorySpace;
+  BOOLEAN   Nx;
+  IA32_CR4  Cr4;
+  BOOLEAN   Enable5LevelPaging;
 
   Cr4.UintN = AsmReadCr4 ();
   Enable5LevelPaging = (BOOLEAN) (Cr4.Bits.LA57 == 1);
@@ -563,8 +581,9 @@ InitPaging (
       Pml5Entry = (UINTN) mSmmProfileCr3 | IA32_PG_P;
       Pml5 = &Pml5Entry;
     } else {
-      Pml5 = (UINT64*) (UINTN) mSmmProfileCr3;
+      Pml5 = (UINT64 *) (UINTN) mSmmProfileCr3;
     }
+
     SizeOfMemorySpace = HighBitSet64 (gPhyMask) + 1;
     //
     // Calculate the table entries of PML4E and PDPTE.
@@ -572,13 +591,13 @@ InitPaging (
     NumberOfPml5Entries = 1;
     if (SizeOfMemorySpace > 48) {
       NumberOfPml5Entries = (UINTN) LShiftU64 (1, SizeOfMemorySpace - 48);
-      SizeOfMemorySpace = 48;
+      SizeOfMemorySpace   = 48;
     }
 
     NumberOfPml4Entries = 1;
     if (SizeOfMemorySpace > 39) {
       NumberOfPml4Entries = (UINTN) LShiftU64 (1, SizeOfMemorySpace - 39);
-      SizeOfMemorySpace = 39;
+      SizeOfMemorySpace   = 39;
     }
 
     NumberOfPdptEntries = 1;
@@ -589,9 +608,9 @@ InitPaging (
     Pml4 = &Pml4Entry;
     Pml5Entry = (UINTN) Pml4 | IA32_PG_P;
     Pml5 = &Pml5Entry;
-    NumberOfPml5Entries  = 1;
-    NumberOfPml4Entries  = 1;
-    NumberOfPdptEntries  = 4;
+    NumberOfPml5Entries = 1;
+    NumberOfPml4Entries = 1;
+    NumberOfPdptEntries = 4;
   }
 
   //
@@ -604,6 +623,7 @@ InitPaging (
       //
       continue;
     }
+
     Pml4 = (UINT64 *) (UINTN) (Pml5[Pml5Index] & PHYSICAL_ADDRESS_MASK);
     for (Pml4Index = 0; Pml4Index < NumberOfPml4Entries; Pml4Index++) {
       if ((Pml4[Pml4Index] & IA32_PG_P) == 0) {
@@ -612,7 +632,8 @@ InitPaging (
         //
         continue;
       }
-      Pdpt = (UINT64 *)(UINTN)(Pml4[Pml4Index] & ~mAddressEncMask & PHYSICAL_ADDRESS_MASK);
+
+      Pdpt = (UINT64 *) (UINTN) (Pml4[Pml4Index] & ~mAddressEncMask & PHYSICAL_ADDRESS_MASK);
       for (PdptIndex = 0; PdptIndex < NumberOfPdptEntries; PdptIndex++, Pdpt++) {
         if ((*Pdpt & IA32_PG_P) == 0) {
           //
@@ -620,16 +641,19 @@ InitPaging (
           //
           continue;
         }
+
         if ((*Pdpt & IA32_PG_PS) != 0) {
           //
           // This is 1G entry, skip it
           //
           continue;
         }
-        Pd = (UINT64 *)(UINTN)(*Pdpt & ~mAddressEncMask & PHYSICAL_ADDRESS_MASK);
+
+        Pd = (UINT64 *) (UINTN) (*Pdpt & ~mAddressEncMask & PHYSICAL_ADDRESS_MASK);
         if (Pd == 0) {
           continue;
         }
+
         for (PdIndex = 0; PdIndex < SIZE_4KB / sizeof (*Pd); PdIndex++, Pd++) {
           if ((*Pd & IA32_PG_P) == 0) {
             //
@@ -637,13 +661,14 @@ InitPaging (
             //
             continue;
           }
+
           Address = (UINTN) LShiftU64 (
-                              LShiftU64 (
-                                LShiftU64 ((Pml5Index << 9) + Pml4Index, 9) + PdptIndex,
-                                9
-                                ) + PdIndex,
-                                21
-                              );
+                                       LShiftU64 (
+                                                  LShiftU64 ((Pml5Index << 9) + Pml4Index, 9) + PdptIndex,
+                                                  9
+                                                  ) + PdIndex,
+                                       21
+                                       );
 
           //
           // If it is 2M page, check IsAddressSplit()
@@ -658,10 +683,11 @@ InitPaging (
             ASSERT (Pt != NULL);
 
             // Split it
-            for (PtIndex = 0; PtIndex < SIZE_4KB / sizeof(*Pt); PtIndex++) {
+            for (PtIndex = 0; PtIndex < SIZE_4KB / sizeof (*Pt); PtIndex++) {
               Pt[PtIndex] = Address + ((PtIndex << 12) | mAddressEncMask | PAGE_ATTRIBUTE_BITS);
             } // end for PT
-            *Pd = (UINT64)(UINTN)Pt | mAddressEncMask | PAGE_ATTRIBUTE_BITS;
+
+            *Pd = (UINT64) (UINTN) Pt | mAddressEncMask | PAGE_ATTRIBUTE_BITS;
           } // end if IsAddressSplit
         } // end for PD
       } // end for PDPT
@@ -679,6 +705,7 @@ InitPaging (
       //
       continue;
     }
+
     Pml4 = (UINT64 *) (UINTN) (Pml5[Pml5Index] & PHYSICAL_ADDRESS_MASK);
     for (Pml4Index = 0; Pml4Index < NumberOfPml4Entries; Pml4Index++) {
       if ((Pml4[Pml4Index] & IA32_PG_P) == 0) {
@@ -687,7 +714,8 @@ InitPaging (
         //
         continue;
       }
-      Pdpt = (UINT64 *)(UINTN)(Pml4[Pml4Index] & ~mAddressEncMask & PHYSICAL_ADDRESS_MASK);
+
+      Pdpt = (UINT64 *) (UINTN) (Pml4[Pml4Index] & ~mAddressEncMask & PHYSICAL_ADDRESS_MASK);
       for (PdptIndex = 0; PdptIndex < NumberOfPdptEntries; PdptIndex++, Pdpt++) {
         if ((*Pdpt & IA32_PG_P) == 0) {
           //
@@ -695,6 +723,7 @@ InitPaging (
           //
           continue;
         }
+
         if ((*Pdpt & IA32_PG_PS) != 0) {
           //
           // This is 1G entry, set NX bit and skip it
@@ -702,12 +731,15 @@ InitPaging (
           if (mXdSupported) {
             *Pdpt = *Pdpt | IA32_PG_NX;
           }
+
           continue;
         }
-        Pd = (UINT64 *)(UINTN)(*Pdpt & ~mAddressEncMask & PHYSICAL_ADDRESS_MASK);
+
+        Pd = (UINT64 *) (UINTN) (*Pdpt & ~mAddressEncMask & PHYSICAL_ADDRESS_MASK);
         if (Pd == 0) {
           continue;
         }
+
         for (PdIndex = 0; PdIndex < SIZE_4KB / sizeof (*Pd); PdIndex++, Pd++) {
           if ((*Pd & IA32_PG_P) == 0) {
             //
@@ -715,13 +747,14 @@ InitPaging (
             //
             continue;
           }
+
           Address = (UINTN) LShiftU64 (
-                              LShiftU64 (
-                                LShiftU64 ((Pml5Index << 9) + Pml4Index, 9) + PdptIndex,
-                                9
-                                ) + PdIndex,
-                                21
-                              );
+                                       LShiftU64 (
+                                                  LShiftU64 ((Pml5Index << 9) + Pml4Index, 9) + PdptIndex,
+                                                  9
+                                                  ) + PdIndex,
+                                       21
+                                       );
 
           if ((*Pd & IA32_PG_PS) != 0) {
             // 2MB page
@@ -730,24 +763,28 @@ InitPaging (
               //
               // Patch to remove Present flag and RW flag
               //
-              *Pd = *Pd & (INTN)(INT32)(~PAGE_ATTRIBUTE_BITS);
+              *Pd = *Pd & (INTN) (INT32) (~PAGE_ATTRIBUTE_BITS);
             }
+
             if (Nx && mXdSupported) {
               *Pd = *Pd | IA32_PG_NX;
             }
           } else {
             // 4KB page
-            Pt = (UINT64 *)(UINTN)(*Pd & ~mAddressEncMask & PHYSICAL_ADDRESS_MASK);
+            Pt = (UINT64 *) (UINTN) (*Pd & ~mAddressEncMask & PHYSICAL_ADDRESS_MASK);
             if (Pt == 0) {
               continue;
             }
-            for (PtIndex = 0; PtIndex < SIZE_4KB / sizeof(*Pt); PtIndex++, Pt++) {
+
+            for (PtIndex = 0; PtIndex < SIZE_4KB / sizeof (*Pt); PtIndex++, Pt++) {
               if (!IsAddressValid (Address, &Nx)) {
-                *Pt = *Pt & (INTN)(INT32)(~PAGE_ATTRIBUTE_BITS);
+                *Pt = *Pt & (INTN) (INT32) (~PAGE_ATTRIBUTE_BITS);
               }
+
               if (Nx && mXdSupported) {
                 *Pt = *Pt | IA32_PG_NX;
               }
+
               Address += SIZE_4KB;
             } // end for PT
           } // end if PS
@@ -766,7 +803,7 @@ InitPaging (
   //
   mXdEnabled = TRUE;
 
-  return ;
+  return;
 }
 
 /**
@@ -778,11 +815,11 @@ GetSmiCommandPort (
   VOID
   )
 {
-  EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *Fadt;
+  EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE  *Fadt;
 
   Fadt = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *) EfiLocateFirstAcpiTable (
-                                                         EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE
-                                                         );
+                                                                                EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE
+                                                                                );
   ASSERT (Fadt != NULL);
 
   mSmiCommandPort = Fadt->SmiCmd;
@@ -827,12 +864,12 @@ InitSmmProfileCallBack (
   // Save to variable so that SMM profile data can be found.
   //
   gRT->SetVariable (
-         SMM_PROFILE_NAME,
-         &gEfiCallerIdGuid,
-         EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-         sizeof(mSmmProfileBase),
-         &mSmmProfileBase
-         );
+                    SMM_PROFILE_NAME,
+                    &gEfiCallerIdGuid,
+                    EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                    sizeof (mSmmProfileBase),
+                    &mSmmProfileBase
+                    );
 
   //
   // Get Software SMI from FADT
@@ -856,20 +893,22 @@ InitSmmProfileInternal (
   VOID
   )
 {
-  EFI_STATUS                 Status;
-  EFI_PHYSICAL_ADDRESS       Base;
-  VOID                       *Registration;
-  UINTN                      Index;
-  UINTN                      MsrDsAreaSizePerCpu;
-  UINTN                      TotalSize;
+  EFI_STATUS            Status;
+  EFI_PHYSICAL_ADDRESS  Base;
+  VOID                  *Registration;
+  UINTN                 Index;
+  UINTN                 MsrDsAreaSizePerCpu;
+  UINTN                 TotalSize;
 
-  mPFEntryCount = (UINTN *)AllocateZeroPool (sizeof (UINTN) * mMaxNumberOfCpus);
+  mPFEntryCount = (UINTN *) AllocateZeroPool (sizeof (UINTN) * mMaxNumberOfCpus);
   ASSERT (mPFEntryCount != NULL);
-  mLastPFEntryValue = (UINT64  (*)[MAX_PF_ENTRY_COUNT])AllocateZeroPool (
-                                                         sizeof (mLastPFEntryValue[0]) * mMaxNumberOfCpus);
+  mLastPFEntryValue = (UINT64 (*)[MAX_PF_ENTRY_COUNT])AllocateZeroPool (
+                                                                        sizeof (mLastPFEntryValue[0]) * mMaxNumberOfCpus
+                                                                        );
   ASSERT (mLastPFEntryValue != NULL);
   mLastPFEntryPointer = (UINT64 *(*)[MAX_PF_ENTRY_COUNT])AllocateZeroPool (
-                                                           sizeof (mLastPFEntryPointer[0]) * mMaxNumberOfCpus);
+                                                                           sizeof (mLastPFEntryPointer[0]) * mMaxNumberOfCpus
+                                                                           );
   ASSERT (mLastPFEntryPointer != NULL);
 
   //
@@ -885,59 +924,65 @@ InitSmmProfileInternal (
     TotalSize = mSmmProfileSize;
   }
 
-  Base = 0xFFFFFFFF;
+  Base   = 0xFFFFFFFF;
   Status = gBS->AllocatePages (
-                  AllocateMaxAddress,
-                  EfiReservedMemoryType,
-                  EFI_SIZE_TO_PAGES (TotalSize),
-                  &Base
-                  );
+                               AllocateMaxAddress,
+                               EfiReservedMemoryType,
+                               EFI_SIZE_TO_PAGES (TotalSize),
+                               &Base
+                               );
   ASSERT_EFI_ERROR (Status);
-  ZeroMem ((VOID *)(UINTN)Base, TotalSize);
-  mSmmProfileBase = (SMM_PROFILE_HEADER *)(UINTN)Base;
+  ZeroMem ((VOID *) (UINTN) Base, TotalSize);
+  mSmmProfileBase = (SMM_PROFILE_HEADER *) (UINTN) Base;
 
   //
   // Initialize SMM profile data header.
   //
   mSmmProfileBase->HeaderSize     = sizeof (SMM_PROFILE_HEADER);
-  mSmmProfileBase->MaxDataEntries = (UINT64)((mSmmProfileSize - sizeof(SMM_PROFILE_HEADER)) / sizeof (SMM_PROFILE_ENTRY));
-  mSmmProfileBase->MaxDataSize    = MultU64x64 (mSmmProfileBase->MaxDataEntries, sizeof(SMM_PROFILE_ENTRY));
+  mSmmProfileBase->MaxDataEntries =
+    (UINT64) ((mSmmProfileSize - sizeof (SMM_PROFILE_HEADER)) / sizeof (SMM_PROFILE_ENTRY));
+  mSmmProfileBase->MaxDataSize    = MultU64x64 (mSmmProfileBase->MaxDataEntries, sizeof (SMM_PROFILE_ENTRY));
   mSmmProfileBase->CurDataEntries = 0;
   mSmmProfileBase->CurDataSize    = 0;
-  mSmmProfileBase->TsegStart      = mCpuHotPlugData.SmrrBase;
-  mSmmProfileBase->TsegSize       = mCpuHotPlugData.SmrrSize;
-  mSmmProfileBase->NumSmis        = 0;
-  mSmmProfileBase->NumCpus        = gSmmCpuPrivate->SmmCoreEntryContext.NumberOfCpus;
+  mSmmProfileBase->TsegStart = mCpuHotPlugData.SmrrBase;
+  mSmmProfileBase->TsegSize  = mCpuHotPlugData.SmrrSize;
+  mSmmProfileBase->NumSmis   = 0;
+  mSmmProfileBase->NumCpus   = gSmmCpuPrivate->SmmCoreEntryContext.NumberOfCpus;
 
   if (mBtsSupported) {
-    mMsrDsArea = (MSR_DS_AREA_STRUCT **)AllocateZeroPool (sizeof (MSR_DS_AREA_STRUCT *) * mMaxNumberOfCpus);
+    mMsrDsArea = (MSR_DS_AREA_STRUCT **) AllocateZeroPool (sizeof (MSR_DS_AREA_STRUCT *) * mMaxNumberOfCpus);
     ASSERT (mMsrDsArea != NULL);
-    mMsrBTSRecord = (BRANCH_TRACE_RECORD **)AllocateZeroPool (sizeof (BRANCH_TRACE_RECORD *) * mMaxNumberOfCpus);
+    mMsrBTSRecord = (BRANCH_TRACE_RECORD **) AllocateZeroPool (sizeof (BRANCH_TRACE_RECORD *) * mMaxNumberOfCpus);
     ASSERT (mMsrBTSRecord != NULL);
-    mMsrPEBSRecord = (PEBS_RECORD **)AllocateZeroPool (sizeof (PEBS_RECORD *) * mMaxNumberOfCpus);
+    mMsrPEBSRecord = (PEBS_RECORD **) AllocateZeroPool (sizeof (PEBS_RECORD *) * mMaxNumberOfCpus);
     ASSERT (mMsrPEBSRecord != NULL);
 
-    mMsrDsAreaBase  = (MSR_DS_AREA_STRUCT *)((UINTN)Base + mSmmProfileSize);
+    mMsrDsAreaBase = (MSR_DS_AREA_STRUCT *) ((UINTN) Base + mSmmProfileSize);
     MsrDsAreaSizePerCpu = mMsrDsAreaSize / mMaxNumberOfCpus;
-    mBTSRecordNumber    = (MsrDsAreaSizePerCpu - sizeof(PEBS_RECORD) * PEBS_RECORD_NUMBER - sizeof(MSR_DS_AREA_STRUCT)) / sizeof(BRANCH_TRACE_RECORD);
+    mBTSRecordNumber    =
+      (MsrDsAreaSizePerCpu - sizeof (PEBS_RECORD) * PEBS_RECORD_NUMBER - sizeof (MSR_DS_AREA_STRUCT)) /
+      sizeof (BRANCH_TRACE_RECORD);
     for (Index = 0; Index < mMaxNumberOfCpus; Index++) {
-      mMsrDsArea[Index]     = (MSR_DS_AREA_STRUCT *)((UINTN)mMsrDsAreaBase + MsrDsAreaSizePerCpu * Index);
-      mMsrBTSRecord[Index]  = (BRANCH_TRACE_RECORD *)((UINTN)mMsrDsArea[Index] + sizeof(MSR_DS_AREA_STRUCT));
-      mMsrPEBSRecord[Index] = (PEBS_RECORD *)((UINTN)mMsrDsArea[Index] + MsrDsAreaSizePerCpu - sizeof(PEBS_RECORD) * PEBS_RECORD_NUMBER);
+      mMsrDsArea[Index]     = (MSR_DS_AREA_STRUCT *) ((UINTN) mMsrDsAreaBase + MsrDsAreaSizePerCpu * Index);
+      mMsrBTSRecord[Index]  = (BRANCH_TRACE_RECORD *) ((UINTN) mMsrDsArea[Index] + sizeof (MSR_DS_AREA_STRUCT));
+      mMsrPEBSRecord[Index] =
+        (PEBS_RECORD *) ((UINTN) mMsrDsArea[Index] + MsrDsAreaSizePerCpu - sizeof (PEBS_RECORD) * PEBS_RECORD_NUMBER);
 
-      mMsrDsArea[Index]->BTSBufferBase          = (UINTN)mMsrBTSRecord[Index];
-      mMsrDsArea[Index]->BTSIndex               = mMsrDsArea[Index]->BTSBufferBase;
-      mMsrDsArea[Index]->BTSAbsoluteMaximum     = mMsrDsArea[Index]->BTSBufferBase + mBTSRecordNumber * sizeof(BRANCH_TRACE_RECORD) + 1;
-      mMsrDsArea[Index]->BTSInterruptThreshold  = mMsrDsArea[Index]->BTSAbsoluteMaximum + 1;
+      mMsrDsArea[Index]->BTSBufferBase = (UINTN) mMsrBTSRecord[Index];
+      mMsrDsArea[Index]->BTSIndex = mMsrDsArea[Index]->BTSBufferBase;
+      mMsrDsArea[Index]->BTSAbsoluteMaximum = mMsrDsArea[Index]->BTSBufferBase + mBTSRecordNumber *
+                                              sizeof (BRANCH_TRACE_RECORD) + 1;
+      mMsrDsArea[Index]->BTSInterruptThreshold = mMsrDsArea[Index]->BTSAbsoluteMaximum + 1;
 
-      mMsrDsArea[Index]->PEBSBufferBase         = (UINTN)mMsrPEBSRecord[Index];
-      mMsrDsArea[Index]->PEBSIndex              = mMsrDsArea[Index]->PEBSBufferBase;
-      mMsrDsArea[Index]->PEBSAbsoluteMaximum    = mMsrDsArea[Index]->PEBSBufferBase + PEBS_RECORD_NUMBER * sizeof(PEBS_RECORD) + 1;
+      mMsrDsArea[Index]->PEBSBufferBase = (UINTN) mMsrPEBSRecord[Index];
+      mMsrDsArea[Index]->PEBSIndex = mMsrDsArea[Index]->PEBSBufferBase;
+      mMsrDsArea[Index]->PEBSAbsoluteMaximum = mMsrDsArea[Index]->PEBSBufferBase + PEBS_RECORD_NUMBER *
+                                               sizeof (PEBS_RECORD) + 1;
       mMsrDsArea[Index]->PEBSInterruptThreshold = mMsrDsArea[Index]->PEBSAbsoluteMaximum + 1;
     }
   }
 
-  mProtectionMemRange      = mProtectionMemRangeTemplate;
+  mProtectionMemRange = mProtectionMemRangeTemplate;
   mProtectionMemRangeCount = sizeof (mProtectionMemRangeTemplate) / sizeof (MEMORY_PROTECTION_RANGE);
 
   //
@@ -949,8 +994,8 @@ InitSmmProfileInternal (
   //
   // Update SMM profile entry.
   //
-  mProtectionMemRange[1].Range.Base = (EFI_PHYSICAL_ADDRESS)(UINTN)mSmmProfileBase;
-  mProtectionMemRange[1].Range.Top  = (EFI_PHYSICAL_ADDRESS)(UINTN)mSmmProfileBase + TotalSize;
+  mProtectionMemRange[1].Range.Base = (EFI_PHYSICAL_ADDRESS) (UINTN) mSmmProfileBase;
+  mProtectionMemRange[1].Range.Top  = (EFI_PHYSICAL_ADDRESS) (UINTN) mSmmProfileBase + TotalSize;
 
   //
   // Allocate memory reserved for creating 4KB pages.
@@ -961,13 +1006,13 @@ InitSmmProfileInternal (
   // Start SMM profile when SmmReadyToLock protocol is installed.
   //
   Status = gSmst->SmmRegisterProtocolNotify (
-                    &gEfiSmmReadyToLockProtocolGuid,
-                    InitSmmProfileCallBack,
-                    &Registration
-                    );
+                                             &gEfiSmmReadyToLockProtocolGuid,
+                                             InitSmmProfileCallBack,
+                                             &Registration
+                                             );
   ASSERT_EFI_ERROR (Status);
 
-  return ;
+  return;
 }
 
 /**
@@ -990,7 +1035,15 @@ CheckFeatureSupported (
       mCetSupported = FALSE;
       PatchInstructionX86 (mPatchCetSupported, mCetSupported, 1);
     }
-    AsmCpuidEx (CPUID_STRUCTURED_EXTENDED_FEATURE_FLAGS, CPUID_STRUCTURED_EXTENDED_FEATURE_FLAGS_SUB_LEAF_INFO, NULL, NULL, &RegEcx, NULL);
+
+    AsmCpuidEx (
+               CPUID_STRUCTURED_EXTENDED_FEATURE_FLAGS,
+               CPUID_STRUCTURED_EXTENDED_FEATURE_FLAGS_SUB_LEAF_INFO,
+               NULL,
+               NULL,
+               &RegEcx,
+               NULL
+               );
     if ((RegEcx & CPUID_CET_SS) == 0) {
       mCetSupported = FALSE;
       PatchInstructionX86 (mPatchCetSupported, mCetSupported, 1);
@@ -1031,8 +1084,8 @@ CheckFeatureSupported (
       // Per IA32 manuals:
       // When CPUID.1:EDX[21] is set, the following BTS facilities are available:
       // 1. The BTS_UNAVAILABLE flag in the IA32_MISC_ENABLE MSR indicates the
-      //    availability of the BTS facilities, including the ability to set the BTS and
-      //    BTINT bits in the MSR_DEBUGCTLA MSR.
+      // availability of the BTS facilities, including the ability to set the BTS and
+      // BTINT bits in the MSR_DEBUGCTLA MSR.
       // 2. The IA32_DS_AREA MSR can be programmed to point to the DS save area.
       //
       MiscEnableMsr.Uint64 = AsmReadMsr64 (MSR_IA32_MISC_ENABLE);
@@ -1055,12 +1108,13 @@ ActivateSingleStepDB (
   VOID
   )
 {
-  UINTN    Dr6;
+  UINTN  Dr6;
 
   Dr6 = AsmReadDr6 ();
   if ((Dr6 & DR6_SINGLE_STEP) != 0) {
     return;
   }
+
   Dr6 |= DR6_SINGLE_STEP;
   AsmWriteDr6 (Dr6);
 }
@@ -1078,8 +1132,9 @@ ActivateLBR (
 
   DebugCtl = AsmReadMsr64 (MSR_DEBUG_CTL);
   if ((DebugCtl & MSR_DEBUG_CTL_LBR) != 0) {
-    return ;
+    return;
   }
+
   DebugCtl |= MSR_DEBUG_CTL_LBR;
   AsmWriteMsr64 (MSR_DEBUG_CTL, DebugCtl);
 }
@@ -1099,12 +1154,12 @@ ActivateBTS (
 
   DebugCtl = AsmReadMsr64 (MSR_DEBUG_CTL);
   if ((DebugCtl & MSR_DEBUG_CTL_BTS) != 0) {
-    return ;
+    return;
   }
 
-  AsmWriteMsr64 (MSR_DS_AREA, (UINT64)(UINTN)mMsrDsArea[CpuIndex]);
-  DebugCtl |= (UINT64)(MSR_DEBUG_CTL_BTS | MSR_DEBUG_CTL_TR);
-  DebugCtl &= ~((UINT64)MSR_DEBUG_CTL_BTINT);
+  AsmWriteMsr64 (MSR_DS_AREA, (UINT64) (UINTN) mMsrDsArea[CpuIndex]);
+  DebugCtl |= (UINT64) (MSR_DEBUG_CTL_BTS | MSR_DEBUG_CTL_TR);
+  DebugCtl &= ~((UINT64) MSR_DEBUG_CTL_BTINT);
   AsmWriteMsr64 (MSR_DEBUG_CTL, DebugCtl);
 }
 
@@ -1211,10 +1266,10 @@ RestorePageTableBelow4G (
   UINTN         ErrorCode
   )
 {
-  UINTN         PTIndex;
-  UINTN         PFIndex;
-  IA32_CR4      Cr4;
-  BOOLEAN       Enable5LevelPaging;
+  UINTN     PTIndex;
+  UINTN     PFIndex;
+  IA32_CR4  Cr4;
+  BOOLEAN   Enable5LevelPaging;
 
   Cr4.UintN = AsmReadCr4 ();
   Enable5LevelPaging = (BOOLEAN) (Cr4.Bits.LA57 == 1);
@@ -1223,31 +1278,31 @@ RestorePageTableBelow4G (
   // PML5
   //
   if (Enable5LevelPaging) {
-    PTIndex = (UINTN)BitFieldRead64 (PFAddress, 48, 56);
+    PTIndex = (UINTN) BitFieldRead64 (PFAddress, 48, 56);
     ASSERT (PageTable[PTIndex] != 0);
-    PageTable = (UINT64*)(UINTN)(PageTable[PTIndex] & PHYSICAL_ADDRESS_MASK);
+    PageTable = (UINT64 *) (UINTN) (PageTable[PTIndex] & PHYSICAL_ADDRESS_MASK);
   }
 
   //
   // PML4
   //
-  if (sizeof(UINT64) == sizeof(UINTN)) {
-    PTIndex = (UINTN)BitFieldRead64 (PFAddress, 39, 47);
+  if (sizeof (UINT64) == sizeof (UINTN)) {
+    PTIndex = (UINTN) BitFieldRead64 (PFAddress, 39, 47);
     ASSERT (PageTable[PTIndex] != 0);
-    PageTable = (UINT64*)(UINTN)(PageTable[PTIndex] & PHYSICAL_ADDRESS_MASK);
+    PageTable = (UINT64 *) (UINTN) (PageTable[PTIndex] & PHYSICAL_ADDRESS_MASK);
   }
 
   //
   // PDPTE
   //
-  PTIndex = (UINTN)BitFieldRead64 (PFAddress, 30, 38);
+  PTIndex = (UINTN) BitFieldRead64 (PFAddress, 30, 38);
   ASSERT (PageTable[PTIndex] != 0);
-  PageTable = (UINT64*)(UINTN)(PageTable[PTIndex] & PHYSICAL_ADDRESS_MASK);
+  PageTable = (UINT64 *) (UINTN) (PageTable[PTIndex] & PHYSICAL_ADDRESS_MASK);
 
   //
   // PD
   //
-  PTIndex = (UINTN)BitFieldRead64 (PFAddress, 21, 29);
+  PTIndex = (UINTN) BitFieldRead64 (PFAddress, 21, 29);
   if ((PageTable[PTIndex] & IA32_PG_PS) != 0) {
     //
     // Large page
@@ -1269,9 +1324,9 @@ RestorePageTableBelow4G (
     //
     // Set new entry
     //
-    PageTable[PTIndex] = (PFAddress & ~((1ull << 21) - 1));
-    PageTable[PTIndex] |= (UINT64)IA32_PG_PS;
-    PageTable[PTIndex] |= (UINT64)PAGE_ATTRIBUTE_BITS;
+    PageTable[PTIndex]  = (PFAddress & ~((1ull << 21) - 1));
+    PageTable[PTIndex] |= (UINT64) IA32_PG_PS;
+    PageTable[PTIndex] |= (UINT64) PAGE_ATTRIBUTE_BITS;
     if ((ErrorCode & IA32_PF_EC_ID) != 0) {
       PageTable[PTIndex] &= ~IA32_PG_NX;
     }
@@ -1280,12 +1335,12 @@ RestorePageTableBelow4G (
     // Small page
     //
     ASSERT (PageTable[PTIndex] != 0);
-    PageTable = (UINT64*)(UINTN)(PageTable[PTIndex] & PHYSICAL_ADDRESS_MASK);
+    PageTable = (UINT64 *) (UINTN) (PageTable[PTIndex] & PHYSICAL_ADDRESS_MASK);
 
     //
     // 4K PTE
     //
-    PTIndex = (UINTN)BitFieldRead64 (PFAddress, 12, 20);
+    PTIndex = (UINTN) BitFieldRead64 (PFAddress, 12, 20);
 
     //
     // Record old entries with non-present status
@@ -1303,8 +1358,8 @@ RestorePageTableBelow4G (
     //
     // Set new entry
     //
-    PageTable[PTIndex] = (PFAddress & ~((1ull << 12) - 1));
-    PageTable[PTIndex] |= (UINT64)PAGE_ATTRIBUTE_BITS;
+    PageTable[PTIndex]  = (PFAddress & ~((1ull << 12) - 1));
+    PageTable[PTIndex] |= (UINT64) PAGE_ATTRIBUTE_BITS;
     if ((ErrorCode & IA32_PF_EC_ID) != 0) {
       PageTable[PTIndex] &= ~IA32_PG_NX;
     }
@@ -1322,15 +1377,15 @@ GuardPagePFHandler (
   UINTN ErrorCode
   )
 {
-  UINT64                *PageTable;
-  UINT64                PFAddress;
-  UINT64                RestoreAddress;
-  UINTN                 RestorePageNumber;
-  UINTN                 CpuIndex;
+  UINT64  *PageTable;
+  UINT64  PFAddress;
+  UINT64  RestoreAddress;
+  UINTN   RestorePageNumber;
+  UINTN   CpuIndex;
 
-  PageTable         = (UINT64 *)AsmReadCr3 ();
-  PFAddress         = AsmReadCr2 ();
-  CpuIndex          = GetCpuIndex ();
+  PageTable = (UINT64 *) AsmReadCr3 ();
+  PFAddress = AsmReadCr2 ();
+  CpuIndex  = GetCpuIndex ();
 
   //
   // Memory operation cross pages, like "rep mov" instruction, will cause
@@ -1338,7 +1393,7 @@ GuardPagePFHandler (
   // that current page and the page followed are both in PRESENT state.
   //
   RestorePageNumber = 2;
-  RestoreAddress = PFAddress;
+  RestoreAddress    = PFAddress;
   while (RestorePageNumber > 0) {
     RestorePageTableBelow4G (PageTable, RestoreAddress, CpuIndex, ErrorCode);
     RestoreAddress += EFI_PAGE_SIZE;
@@ -1364,21 +1419,21 @@ SmmProfilePFHandler (
   UINTN ErrorCode
   )
 {
-  UINT64                *PageTable;
-  UINT64                PFAddress;
-  UINT64                RestoreAddress;
-  UINTN                 RestorePageNumber;
-  UINTN                 CpuIndex;
-  UINTN                 Index;
-  UINT64                InstructionAddress;
-  UINTN                 MaxEntryNumber;
-  UINTN                 CurrentEntryNumber;
-  BOOLEAN               IsValidPFAddress;
-  SMM_PROFILE_ENTRY     *SmmProfileEntry;
-  UINT64                SmiCommand;
-  EFI_STATUS            Status;
-  UINT8                 SoftSmiValue;
-  EFI_SMM_SAVE_STATE_IO_INFO    IoInfo;
+  UINT64                      *PageTable;
+  UINT64                      PFAddress;
+  UINT64                      RestoreAddress;
+  UINTN                       RestorePageNumber;
+  UINTN                       CpuIndex;
+  UINTN                       Index;
+  UINT64                      InstructionAddress;
+  UINTN                       MaxEntryNumber;
+  UINTN                       CurrentEntryNumber;
+  BOOLEAN                     IsValidPFAddress;
+  SMM_PROFILE_ENTRY           *SmmProfileEntry;
+  UINT64                      SmiCommand;
+  EFI_STATUS                  Status;
+  UINT8                       SoftSmiValue;
+  EFI_SMM_SAVE_STATE_IO_INFO  IoInfo;
 
   if (!mSmmProfileStart) {
     //
@@ -1392,10 +1447,10 @@ SmmProfilePFHandler (
     DisableBTS ();
   }
 
-  IsValidPFAddress  = FALSE;
-  PageTable         = (UINT64 *)AsmReadCr3 ();
-  PFAddress         = AsmReadCr2 ();
-  CpuIndex          = GetCpuIndex ();
+  IsValidPFAddress = FALSE;
+  PageTable = (UINT64 *) AsmReadCr3 ();
+  PFAddress = AsmReadCr2 ();
+  CpuIndex  = GetCpuIndex ();
 
   //
   // Memory operation cross pages, like "rep mov" instruction, will cause
@@ -1403,13 +1458,14 @@ SmmProfilePFHandler (
   // that current page and the page followed are both in PRESENT state.
   //
   RestorePageNumber = 2;
-  RestoreAddress = PFAddress;
+  RestoreAddress    = PFAddress;
   while (RestorePageNumber > 0) {
     if (RestoreAddress <= 0xFFFFFFFF) {
       RestorePageTableBelow4G (PageTable, RestoreAddress, CpuIndex, ErrorCode);
     } else {
       RestorePageTableAbove4G (PageTable, RestoreAddress, CpuIndex, ErrorCode, &IsValidPFAddress);
     }
+
     RestoreAddress += EFI_PAGE_SIZE;
     RestorePageNumber--;
   }
@@ -1433,30 +1489,31 @@ SmmProfilePFHandler (
     //
     // Indicate it is not software SMI
     //
-    SmiCommand    = 0xFFFFFFFFFFFFFFFFULL;
+    SmiCommand = 0xFFFFFFFFFFFFFFFFULL;
     for (Index = 0; Index < gSmst->NumberOfCpus; Index++) {
-      Status = SmmReadSaveState(&mSmmCpu, sizeof(IoInfo), EFI_SMM_SAVE_STATE_REGISTER_IO, Index, &IoInfo);
+      Status = SmmReadSaveState (&mSmmCpu, sizeof (IoInfo), EFI_SMM_SAVE_STATE_REGISTER_IO, Index, &IoInfo);
       if (EFI_ERROR (Status)) {
         continue;
       }
+
       if (IoInfo.IoPort == mSmiCommandPort) {
         //
         // A software SMI triggered by SMI command port has been found, get SmiCommand from SMI command port.
         //
         SoftSmiValue = IoRead8 (mSmiCommandPort);
-        SmiCommand = (UINT64)SoftSmiValue;
+        SmiCommand   = (UINT64) SoftSmiValue;
         break;
       }
     }
 
-    SmmProfileEntry = (SMM_PROFILE_ENTRY *)(UINTN)(mSmmProfileBase + 1);
+    SmmProfileEntry = (SMM_PROFILE_ENTRY *) (UINTN) (mSmmProfileBase + 1);
     //
     // Check if there is already a same entry in profile data.
     //
     for (Index = 0; Index < (UINTN) mSmmProfileBase->CurDataEntries; Index++) {
-      if ((SmmProfileEntry[Index].ErrorCode   == (UINT64)ErrorCode) &&
+      if ((SmmProfileEntry[Index].ErrorCode   == (UINT64) ErrorCode) &&
           (SmmProfileEntry[Index].Address     == PFAddress) &&
-          (SmmProfileEntry[Index].CpuNum      == (UINT64)CpuIndex) &&
+          (SmmProfileEntry[Index].CpuNum      == (UINT64) CpuIndex) &&
           (SmmProfileEntry[Index].Instruction == InstructionAddress) &&
           (SmmProfileEntry[Index].SmiCmd      == SmiCommand)) {
         //
@@ -1465,20 +1522,22 @@ SmmProfilePFHandler (
         break;
       }
     }
+
     if (Index == mSmmProfileBase->CurDataEntries) {
       CurrentEntryNumber = (UINTN) mSmmProfileBase->CurDataEntries;
       MaxEntryNumber     = (UINTN) mSmmProfileBase->MaxDataEntries;
       if (FeaturePcdGet (PcdCpuSmmProfileRingBuffer)) {
         CurrentEntryNumber = CurrentEntryNumber % MaxEntryNumber;
       }
+
       if (CurrentEntryNumber < MaxEntryNumber) {
         //
         // Log the new entry
         //
         SmmProfileEntry[CurrentEntryNumber].SmiNum      = mSmmProfileBase->NumSmis;
-        SmmProfileEntry[CurrentEntryNumber].ErrorCode   = (UINT64)ErrorCode;
-        SmmProfileEntry[CurrentEntryNumber].ApicId      = (UINT64)GetApicId ();
-        SmmProfileEntry[CurrentEntryNumber].CpuNum      = (UINT64)CpuIndex;
+        SmmProfileEntry[CurrentEntryNumber].ErrorCode   = (UINT64) ErrorCode;
+        SmmProfileEntry[CurrentEntryNumber].ApicId      = (UINT64) GetApicId ();
+        SmmProfileEntry[CurrentEntryNumber].CpuNum      = (UINT64) CpuIndex;
         SmmProfileEntry[CurrentEntryNumber].Address     = PFAddress;
         SmmProfileEntry[CurrentEntryNumber].Instruction = InstructionAddress;
         SmmProfileEntry[CurrentEntryNumber].SmiCmd      = SmiCommand;
@@ -1490,6 +1549,7 @@ SmmProfilePFHandler (
       }
     }
   }
+
   //
   // Flush TLB
   //
@@ -1510,7 +1570,7 @@ InitIdtr (
   VOID
   )
 {
-  EFI_STATUS                        Status;
+  EFI_STATUS  Status;
 
   Status = SmmRegisterExceptionHandler (&mSmmCpuService, EXCEPT_IA32_DEBUG, DebugExceptionHandler);
   ASSERT_EFI_ERROR (Status);

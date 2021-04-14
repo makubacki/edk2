@@ -57,7 +57,7 @@ EFIAPI
 C1eInitialize (
   IN UINTN                             ProcessorNumber,
   IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN VOID                              *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   )
 {
@@ -66,16 +66,16 @@ C1eInitialize (
   // MSR_FEATURE_CONFIG for thread 0 core 0 in each package.
   //
   if ((CpuInfo->ProcessorInfo.Location.Thread != 0) || (CpuInfo->ProcessorInfo.Location.Core != 0)) {
-  return RETURN_SUCCESS;
+    return RETURN_SUCCESS;
   }
 
   CPU_REGISTER_TABLE_WRITE_FIELD (
-    ProcessorNumber,
-    Msr,
-    MSR_NEHALEM_POWER_CTL,
-    MSR_NEHALEM_POWER_CTL_REGISTER,
-    Bits.C1EEnable,
-    (State) ? 1 : 0
-    );
+                                  ProcessorNumber,
+                                  Msr,
+                                  MSR_NEHALEM_POWER_CTL,
+                                  MSR_NEHALEM_POWER_CTL_REGISTER,
+                                  Bits.C1EEnable,
+                                  (State) ? 1 : 0
+                                  );
   return RETURN_SUCCESS;
 }

@@ -57,7 +57,7 @@ EFIAPI
 MceInitialize (
   IN UINTN                             ProcessorNumber,
   IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN VOID                              *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   )
 {
@@ -65,13 +65,13 @@ MceInitialize (
   // Set MCE bit in CR4
   //
   CPU_REGISTER_TABLE_WRITE_FIELD (
-    ProcessorNumber,
-    ControlRegister,
-    4,
-    IA32_CR4,
-    Bits.MCE,
-    (State) ? 1 : 0
-    );
+                                  ProcessorNumber,
+                                  ControlRegister,
+                                  4,
+                                  IA32_CR4,
+                                  Bits.MCE,
+                                  (State) ? 1 : 0
+                                  );
   return RETURN_SUCCESS;
 }
 
@@ -102,6 +102,7 @@ McaSupport (
   if (!MceSupport (ProcessorNumber, CpuInfo, ConfigData)) {
     return FALSE;
   }
+
   return (CpuInfo->CpuIdVersionInfoEdx.Bits.MCA == 1);
 }
 
@@ -127,7 +128,7 @@ EFIAPI
 McaInitialize (
   IN UINTN                             ProcessorNumber,
   IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN VOID                              *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   )
 {
@@ -164,21 +165,21 @@ McaInitialize (
     McgCap.Uint64 = AsmReadMsr64 (MSR_IA32_MCG_CAP);
     for (BankIndex = 0; BankIndex < (UINT32) McgCap.Bits.Count; BankIndex++) {
       CPU_REGISTER_TABLE_WRITE64 (
-        ProcessorNumber,
-        Msr,
-        MSR_IA32_MC0_CTL + BankIndex * 4,
-        MAX_UINT64
-        );
+                                  ProcessorNumber,
+                                  Msr,
+                                  MSR_IA32_MC0_CTL + BankIndex * 4,
+                                  MAX_UINT64
+                                  );
     }
 
     if (PcdGetBool (PcdIsPowerOnReset)) {
       for (BankIndex = 0; BankIndex < (UINTN) McgCap.Bits.Count; BankIndex++) {
         CPU_REGISTER_TABLE_WRITE64 (
-          ProcessorNumber,
-          Msr,
-          MSR_IA32_MC0_STATUS + BankIndex * 4,
-          0
-          );
+                                    ProcessorNumber,
+                                    Msr,
+                                    MSR_IA32_MC0_STATUS + BankIndex * 4,
+                                    0
+                                    );
       }
     }
   }
@@ -215,6 +216,7 @@ McgCtlSupport (
   if (!McaSupport (ProcessorNumber, CpuInfo, ConfigData)) {
     return FALSE;
   }
+
   McgCap.Uint64 = AsmReadMsr64 (MSR_IA32_MCG_CAP);
   return (McgCap.Bits.MCG_CTL_P == 1);
 }
@@ -241,16 +243,16 @@ EFIAPI
 McgCtlInitialize (
   IN UINTN                             ProcessorNumber,
   IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN VOID                              *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   )
 {
   CPU_REGISTER_TABLE_WRITE64 (
-    ProcessorNumber,
-    Msr,
-    MSR_IA32_MCG_CTL,
-    (State)? MAX_UINT64 : 0
-    );
+                              ProcessorNumber,
+                              Msr,
+                              MSR_IA32_MCG_CTL,
+                              (State) ? MAX_UINT64 : 0
+                              );
   return RETURN_SUCCESS;
 }
 
@@ -279,7 +281,7 @@ LmceSupport (
   IN VOID                              *ConfigData  OPTIONAL
   )
 {
-  MSR_IA32_MCG_CAP_REGISTER    McgCap;
+  MSR_IA32_MCG_CAP_REGISTER  McgCap;
 
   if (!McaSupport (ProcessorNumber, CpuInfo, ConfigData)) {
     return FALSE;
@@ -289,6 +291,7 @@ LmceSupport (
   if (ProcessorNumber == 0) {
     DEBUG ((DEBUG_INFO, "LMCE enable = %x\n", (BOOLEAN) (McgCap.Bits.MCG_LMCE_P != 0)));
   }
+
   return (BOOLEAN) (McgCap.Bits.MCG_LMCE_P != 0);
 }
 
@@ -315,7 +318,7 @@ EFIAPI
 LmceInitialize (
   IN UINTN                             ProcessorNumber,
   IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN VOID                              *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   )
 {
@@ -332,13 +335,13 @@ LmceInitialize (
   }
 
   CPU_REGISTER_TABLE_TEST_THEN_WRITE_FIELD (
-    ProcessorNumber,
-    Msr,
-    MSR_IA32_FEATURE_CONTROL,
-    MSR_IA32_FEATURE_CONTROL_REGISTER,
-    Bits.LmceOn,
-    (State) ? 1 : 0
-    );
+                                            ProcessorNumber,
+                                            Msr,
+                                            MSR_IA32_FEATURE_CONTROL,
+                                            MSR_IA32_FEATURE_CONTROL_REGISTER,
+                                            Bits.LmceOn,
+                                            (State) ? 1 : 0
+                                            );
 
   return RETURN_SUCCESS;
 }

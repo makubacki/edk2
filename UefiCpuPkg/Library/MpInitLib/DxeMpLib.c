@@ -18,16 +18,16 @@
 
 #include <Protocol/Timer.h>
 
-#define  AP_SAFE_STACK_SIZE    128
+#define  AP_SAFE_STACK_SIZE  128
 
-CPU_MP_DATA      *mCpuMpData = NULL;
-EFI_EVENT        mCheckAllApsEvent = NULL;
-EFI_EVENT        mMpInitExitBootServicesEvent = NULL;
-EFI_EVENT        mLegacyBootEvent = NULL;
-volatile BOOLEAN mStopCheckAllApsStatus = TRUE;
-VOID             *mReservedApLoopFunc = NULL;
-UINTN            mReservedTopOfApStack;
-volatile UINT32  mNumberToFinish = 0;
+CPU_MP_DATA       *mCpuMpData = NULL;
+EFI_EVENT         mCheckAllApsEvent = NULL;
+EFI_EVENT         mMpInitExitBootServicesEvent = NULL;
+EFI_EVENT         mLegacyBootEvent = NULL;
+volatile BOOLEAN  mStopCheckAllApsStatus = TRUE;
+VOID              *mReservedApLoopFunc   = NULL;
+UINTN             mReservedTopOfApStack;
+volatile UINT32   mNumberToFinish = 0;
 
 /**
   Enable Debug Agent to support source debugging on AP function.
@@ -84,9 +84,9 @@ GetWakeupBuffer (
   IN UINTN                WakeupBufferSize
   )
 {
-  EFI_STATUS              Status;
-  EFI_PHYSICAL_ADDRESS    StartAddress;
-  EFI_MEMORY_TYPE         MemoryType;
+  EFI_STATUS            Status;
+  EFI_PHYSICAL_ADDRESS  StartAddress;
+  EFI_MEMORY_TYPE       MemoryType;
 
   if (PcdGetBool (PcdSevEsIsEnabled)) {
     MemoryType = EfiReservedMemoryType;
@@ -104,18 +104,20 @@ GetWakeupBuffer (
   //
   StartAddress = 0x88000;
   Status = gBS->AllocatePages (
-                  AllocateMaxAddress,
-                  MemoryType,
-                  EFI_SIZE_TO_PAGES (WakeupBufferSize),
-                  &StartAddress
-                  );
+                               AllocateMaxAddress,
+                               MemoryType,
+                               EFI_SIZE_TO_PAGES (WakeupBufferSize),
+                               &StartAddress
+                               );
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
-    StartAddress = (EFI_PHYSICAL_ADDRESS) -1;
+    StartAddress = (EFI_PHYSICAL_ADDRESS) - 1;
   }
 
-  DEBUG ((DEBUG_INFO, "WakeupBufferStart = %x, WakeupBufferSize = %x\n",
-                      (UINTN) StartAddress, WakeupBufferSize));
+  DEBUG (
+         (DEBUG_INFO, "WakeupBufferStart = %x, WakeupBufferSize = %x\n",
+          (UINTN) StartAddress, WakeupBufferSize)
+         );
 
   return (UINTN) StartAddress;
 }
@@ -137,21 +139,21 @@ GetModeTransitionBuffer (
   IN UINTN                BufferSize
   )
 {
-  EFI_STATUS              Status;
-  EFI_PHYSICAL_ADDRESS    StartAddress;
+  EFI_STATUS            Status;
+  EFI_PHYSICAL_ADDRESS  StartAddress;
 
   StartAddress = BASE_4GB - 1;
   Status = gBS->AllocatePages (
-                  AllocateMaxAddress,
-                  EfiBootServicesCode,
-                  EFI_SIZE_TO_PAGES (BufferSize),
-                  &StartAddress
-                  );
+                               AllocateMaxAddress,
+                               EfiBootServicesCode,
+                               EFI_SIZE_TO_PAGES (BufferSize),
+                               &StartAddress
+                               );
   if (EFI_ERROR (Status)) {
     StartAddress = 0;
   }
 
-  return (UINTN)StartAddress;
+  return (UINTN) StartAddress;
 }
 
 /**
@@ -178,11 +180,11 @@ GetSevEsAPMemory (
   //
   StartAddress = BASE_4GB - 1;
   Status = gBS->AllocatePages (
-                  AllocateMaxAddress,
-                  EfiReservedMemoryType,
-                  1,
-                  &StartAddress
-                  );
+                               AllocateMaxAddress,
+                               EfiReservedMemoryType,
+                               1,
+                               &StartAddress
+                               );
   ASSERT_EFI_ERROR (Status);
 
   DEBUG ((DEBUG_INFO, "Dxe: SevEsAPMemory = %lx\n", (UINTN) StartAddress));
@@ -209,9 +211,9 @@ CheckAndUpdateApsStatus (
   VOID
   )
 {
-  UINTN                   ProcessorNumber;
-  EFI_STATUS              Status;
-  CPU_MP_DATA             *CpuMpData;
+  UINTN        ProcessorNumber;
+  EFI_STATUS   Status;
+  CPU_MP_DATA  *CpuMpData;
 
   CpuMpData = GetCpuMpData ();
 
@@ -219,7 +221,6 @@ CheckAndUpdateApsStatus (
   // First, check whether pending StartupAllAPs() exists.
   //
   if (CpuMpData->WaitEvent != NULL) {
-
     Status = CheckAllAPs ();
     //
     // If all APs finish for StartupAllAPs(), signal the WaitEvent for it.
@@ -234,7 +235,6 @@ CheckAndUpdateApsStatus (
   // Second, check whether pending StartupThisAPs() callings exist.
   //
   for (ProcessorNumber = 0; ProcessorNumber < CpuMpData->CpuCount; ProcessorNumber++) {
-
     if (CpuMpData->CpuData[ProcessorNumber].WaitEvent == NULL) {
       continue;
     }
@@ -242,8 +242,8 @@ CheckAndUpdateApsStatus (
     Status = CheckThisAP (ProcessorNumber);
 
     if (Status != EFI_NOT_READY) {
-      gBS->SignalEvent (CpuMpData->CpuData[ProcessorNumber].WaitEvent);
-     CpuMpData->CpuData[ProcessorNumber].WaitEvent = NULL;
+  gBS->SignalEvent (CpuMpData->CpuData[ProcessorNumber].WaitEvent);
+      CpuMpData->CpuData[ProcessorNumber].WaitEvent = NULL;
     }
   }
 }
@@ -290,7 +290,7 @@ GetProtectedMode16CS (
   UINTN                    GdtEntryCount;
   UINT16                   Index;
 
-  Index = (UINT16) -1;
+  Index = (UINT16) - 1;
   AsmReadGdtr (&GdtrDesc);
   GdtEntryCount = (GdtrDesc.Limit + 1) / sizeof (IA32_SEGMENT_DESCRIPTOR);
   GdtEntry = (IA32_SEGMENT_DESCRIPTOR *) GdtrDesc.Base;
@@ -300,8 +300,10 @@ GetProtectedMode16CS (
         break;
       }
     }
+
     GdtEntry++;
   }
+
   ASSERT (Index != GdtEntryCount);
   return Index * 8;
 }
@@ -330,8 +332,10 @@ GetProtectedModeCS (
         break;
       }
     }
+
     GdtEntry++;
   }
+
   ASSERT (Index != GdtEntryCount);
   return Index * 8;
 }
@@ -347,11 +351,11 @@ RelocateApLoop (
   IN OUT VOID  *Buffer
   )
 {
-  CPU_MP_DATA            *CpuMpData;
-  BOOLEAN                MwaitSupport;
-  ASM_RELOCATE_AP_LOOP   AsmRelocateApLoopFunc;
-  UINTN                  ProcessorNumber;
-  UINTN                  StackStart;
+  CPU_MP_DATA           *CpuMpData;
+  BOOLEAN               MwaitSupport;
+  ASM_RELOCATE_AP_LOOP  AsmRelocateApLoopFunc;
+  UINTN                 ProcessorNumber;
+  UINTN                 StackStart;
 
   MpInitLibWhoAmI (&ProcessorNumber);
   CpuMpData    = GetCpuMpData ();
@@ -361,17 +365,18 @@ RelocateApLoop (
   } else {
     StackStart = mReservedTopOfApStack;
   }
+
   AsmRelocateApLoopFunc = (ASM_RELOCATE_AP_LOOP) (UINTN) mReservedApLoopFunc;
   AsmRelocateApLoopFunc (
-    MwaitSupport,
-    CpuMpData->ApTargetCState,
-    CpuMpData->PmCodeSegment,
-    StackStart - ProcessorNumber * AP_SAFE_STACK_SIZE,
-    (UINTN) &mNumberToFinish,
-    CpuMpData->Pm16CodeSegment,
-    CpuMpData->SevEsAPBuffer,
-    CpuMpData->WakeupBuffer
-    );
+                         MwaitSupport,
+                         CpuMpData->ApTargetCState,
+                         CpuMpData->PmCodeSegment,
+                         StackStart - ProcessorNumber * AP_SAFE_STACK_SIZE,
+                         (UINTN) &mNumberToFinish,
+                         CpuMpData->Pm16CodeSegment,
+                         CpuMpData->SevEsAPBuffer,
+                         CpuMpData->WakeupBuffer
+                         );
   //
   // It should never reach here
   //
@@ -393,10 +398,10 @@ MpInitChangeApLoopCallback (
   IN VOID                     *Context
   )
 {
-  CPU_MP_DATA               *CpuMpData;
+  CPU_MP_DATA  *CpuMpData;
 
   CpuMpData = GetCpuMpData ();
-  CpuMpData->PmCodeSegment = GetProtectedModeCS ();
+  CpuMpData->PmCodeSegment   = GetProtectedModeCS ();
   CpuMpData->Pm16CodeSegment = GetProtectedMode16CS ();
   CpuMpData->ApLoopMode = PcdGet8 (PcdCpuApLoopMode);
   mNumberToFinish = CpuMpData->CpuCount - 1;
@@ -405,18 +410,18 @@ MpInitChangeApLoopCallback (
     CpuPause ();
   }
 
-  if (CpuMpData->SevEsIsEnabled && (CpuMpData->WakeupBuffer != (UINTN) -1)) {
+  if (CpuMpData->SevEsIsEnabled && (CpuMpData->WakeupBuffer != (UINTN) - 1)) {
     //
     // There are APs present. Re-use reserved memory area below 1MB from
     // WakeupBuffer as the area to be used for transitioning to 16-bit mode
     // in support of booting of the AP by an OS.
     //
     CopyMem (
-      (VOID *) CpuMpData->WakeupBuffer,
-      (VOID *) (CpuMpData->AddressMap.RendezvousFunnelAddress +
-                  CpuMpData->AddressMap.SwitchToRealPM16ModeOffset),
-      CpuMpData->AddressMap.SwitchToRealPM16ModeSize
-      );
+             (VOID *) CpuMpData->WakeupBuffer,
+             (VOID *) (CpuMpData->AddressMap.RendezvousFunnelAddress +
+                       CpuMpData->AddressMap.SwitchToRealPM16ModeOffset),
+             CpuMpData->AddressMap.SwitchToRealPM16ModeSize
+             );
   }
 
   DEBUG ((DEBUG_INFO, "%a() done!\n", __FUNCTION__));
@@ -432,13 +437,13 @@ InitMpGlobalData (
   IN CPU_MP_DATA               *CpuMpData
   )
 {
-  EFI_STATUS                          Status;
-  EFI_PHYSICAL_ADDRESS                Address;
-  UINTN                               ApSafeBufferSize;
-  UINTN                               Index;
-  EFI_GCD_MEMORY_SPACE_DESCRIPTOR     MemDesc;
-  UINTN                               StackBase;
-  CPU_INFO_IN_HOB                     *CpuInfoInHob;
+  EFI_STATUS                       Status;
+  EFI_PHYSICAL_ADDRESS             Address;
+  UINTN                            ApSafeBufferSize;
+  UINTN                            Index;
+  EFI_GCD_MEMORY_SPACE_DESCRIPTOR  MemDesc;
+  UINTN                            StackBase;
+  CPU_INFO_IN_HOB                  *CpuInfoInHob;
 
   SaveCpuMpData (CpuMpData);
 
@@ -466,10 +471,10 @@ InitMpGlobalData (
     // BSP/AP exchange, stack guard for ApTopOfStack of cpu 0 will still be
     // set here.
     //
-    CpuInfoInHob = (CPU_INFO_IN_HOB *)(UINTN)CpuMpData->CpuInfoInHob;
+    CpuInfoInHob = (CPU_INFO_IN_HOB *) (UINTN) CpuMpData->CpuInfoInHob;
     for (Index = 0; Index < CpuMpData->CpuCount; ++Index) {
       if (CpuInfoInHob != NULL && CpuInfoInHob[Index].ApTopOfStack != 0) {
-        StackBase = (UINTN)CpuInfoInHob[Index].ApTopOfStack - CpuMpData->CpuApStackSize;
+        StackBase = (UINTN) CpuInfoInHob[Index].ApTopOfStack - CpuMpData->CpuApStackSize;
       } else {
         StackBase = CpuMpData->Buffer + Index * CpuMpData->CpuApStackSize;
       }
@@ -478,14 +483,16 @@ InitMpGlobalData (
       ASSERT_EFI_ERROR (Status);
 
       Status = gDS->SetMemorySpaceAttributes (
-                      StackBase,
-                      EFI_PAGES_TO_SIZE (1),
-                      MemDesc.Attributes | EFI_MEMORY_RP
-                      );
+                                              StackBase,
+                                              EFI_PAGES_TO_SIZE (1),
+                                              MemDesc.Attributes | EFI_MEMORY_RP
+                                              );
       ASSERT_EFI_ERROR (Status);
 
-      DEBUG ((DEBUG_INFO, "Stack Guard set at %lx [cpu%lu]!\n",
-              (UINT64)StackBase, (UINT64)Index));
+      DEBUG (
+             (DEBUG_INFO, "Stack Guard set at %lx [cpu%lu]!\n",
+              (UINT64) StackBase, (UINT64) Index)
+             );
     }
   }
 
@@ -497,16 +504,18 @@ InitMpGlobalData (
   // Allocating it in advance since memory services are not available in
   // Exit Boot Services callback function.
   //
-  ApSafeBufferSize  = EFI_PAGES_TO_SIZE (EFI_SIZE_TO_PAGES (
-                        CpuMpData->AddressMap.RelocateApLoopFuncSize
-                        ));
+  ApSafeBufferSize = EFI_PAGES_TO_SIZE (
+                                        EFI_SIZE_TO_PAGES (
+                                                           CpuMpData->AddressMap.RelocateApLoopFuncSize
+                                                           )
+                                        );
   Address = BASE_4GB - 1;
   Status  = gBS->AllocatePages (
-                   AllocateMaxAddress,
-                   EfiReservedMemoryType,
-                   EFI_SIZE_TO_PAGES (ApSafeBufferSize),
-                   &Address
-                   );
+                                AllocateMaxAddress,
+                                EfiReservedMemoryType,
+                                EFI_SIZE_TO_PAGES (ApSafeBufferSize),
+                                &Address
+                                );
   ASSERT_EFI_ERROR (Status);
 
   mReservedApLoopFunc = (VOID *) (UINTN) Address;
@@ -517,75 +526,77 @@ InitMpGlobalData (
   // for EfiReservedMemoryType.
   //
   // TODO: Check EFI_MEMORY_XP bit set or not once it's available in DXE GCD
-  //       service.
+  // service.
   //
   Status = gDS->GetMemorySpaceDescriptor (Address, &MemDesc);
   if (!EFI_ERROR (Status)) {
-    gDS->SetMemorySpaceAttributes (
-           Address,
-           ApSafeBufferSize,
-           MemDesc.Attributes & (~EFI_MEMORY_XP)
-           );
+  gDS->SetMemorySpaceAttributes (
+                                 Address,
+                                 ApSafeBufferSize,
+                                 MemDesc.Attributes & (~EFI_MEMORY_XP)
+                                 );
   }
 
-  ApSafeBufferSize = EFI_PAGES_TO_SIZE (EFI_SIZE_TO_PAGES (
-                       CpuMpData->CpuCount * AP_SAFE_STACK_SIZE
-                       ));
+  ApSafeBufferSize = EFI_PAGES_TO_SIZE (
+                                        EFI_SIZE_TO_PAGES (
+                                                           CpuMpData->CpuCount * AP_SAFE_STACK_SIZE
+                                                           )
+                                        );
   Address = BASE_4GB - 1;
   Status  = gBS->AllocatePages (
-                   AllocateMaxAddress,
-                   EfiReservedMemoryType,
-                   EFI_SIZE_TO_PAGES (ApSafeBufferSize),
-                   &Address
-                   );
+                                AllocateMaxAddress,
+                                EfiReservedMemoryType,
+                                EFI_SIZE_TO_PAGES (ApSafeBufferSize),
+                                &Address
+                                );
   ASSERT_EFI_ERROR (Status);
 
   mReservedTopOfApStack = (UINTN) Address + ApSafeBufferSize;
-  ASSERT ((mReservedTopOfApStack & (UINTN)(CPU_STACK_ALIGNMENT - 1)) == 0);
+  ASSERT ((mReservedTopOfApStack & (UINTN) (CPU_STACK_ALIGNMENT - 1)) == 0);
   CopyMem (
-    mReservedApLoopFunc,
-    CpuMpData->AddressMap.RelocateApLoopFuncAddress,
-    CpuMpData->AddressMap.RelocateApLoopFuncSize
-    );
+           mReservedApLoopFunc,
+           CpuMpData->AddressMap.RelocateApLoopFuncAddress,
+           CpuMpData->AddressMap.RelocateApLoopFuncSize
+           );
 
   Status = gBS->CreateEvent (
-                  EVT_TIMER | EVT_NOTIFY_SIGNAL,
-                  TPL_NOTIFY,
-                  CheckApsStatus,
-                  NULL,
-                  &mCheckAllApsEvent
-                  );
+                             EVT_TIMER | EVT_NOTIFY_SIGNAL,
+                             TPL_NOTIFY,
+                             CheckApsStatus,
+                             NULL,
+                             &mCheckAllApsEvent
+                             );
   ASSERT_EFI_ERROR (Status);
 
   //
   // Set timer to check all APs status.
   //
   Status = gBS->SetTimer (
-                  mCheckAllApsEvent,
-                  TimerPeriodic,
-                  EFI_TIMER_PERIOD_MICROSECONDS (
-                    PcdGet32 (PcdCpuApStatusCheckIntervalInMicroSeconds)
-                    )
-                  );
+                          mCheckAllApsEvent,
+                          TimerPeriodic,
+                          EFI_TIMER_PERIOD_MICROSECONDS (
+                                                         PcdGet32 (PcdCpuApStatusCheckIntervalInMicroSeconds)
+                                                         )
+                          );
   ASSERT_EFI_ERROR (Status);
 
   Status = gBS->CreateEvent (
-                  EVT_SIGNAL_EXIT_BOOT_SERVICES,
-                  TPL_CALLBACK,
-                  MpInitChangeApLoopCallback,
-                  NULL,
-                  &mMpInitExitBootServicesEvent
-                  );
+                             EVT_SIGNAL_EXIT_BOOT_SERVICES,
+                             TPL_CALLBACK,
+                             MpInitChangeApLoopCallback,
+                             NULL,
+                             &mMpInitExitBootServicesEvent
+                             );
   ASSERT_EFI_ERROR (Status);
 
   Status = gBS->CreateEventEx (
-                  EVT_NOTIFY_SIGNAL,
-                  TPL_CALLBACK,
-                  MpInitChangeApLoopCallback,
-                  NULL,
-                  &gEfiEventLegacyBootGuid,
-                  &mLegacyBootEvent
-                  );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_CALLBACK,
+                               MpInitChangeApLoopCallback,
+                               NULL,
+                               &gEfiEventLegacyBootGuid,
+                               &mLegacyBootEvent
+                               );
   ASSERT_EFI_ERROR (Status);
 }
 
@@ -675,7 +686,7 @@ MpInitLibStartupAllAPs (
   OUT UINTN                     **FailedCpuList         OPTIONAL
   )
 {
-  EFI_STATUS              Status;
+  EFI_STATUS  Status;
 
   //
   // Temporarily stop checkAllApsStatus for avoid resource dead-lock.
@@ -683,14 +694,14 @@ MpInitLibStartupAllAPs (
   mStopCheckAllApsStatus = TRUE;
 
   Status = StartupAllCPUsWorker (
-             Procedure,
-             SingleThread,
-             TRUE,
-             WaitEvent,
-             TimeoutInMicroseconds,
-             ProcedureArgument,
-             FailedCpuList
-             );
+                                 Procedure,
+                                 SingleThread,
+                                 TRUE,
+                                 WaitEvent,
+                                 TimeoutInMicroseconds,
+                                 ProcedureArgument,
+                                 FailedCpuList
+                                 );
 
   //
   // Start checkAllApsStatus
@@ -782,7 +793,7 @@ MpInitLibStartupThisAP (
   OUT BOOLEAN                   *Finished               OPTIONAL
   )
 {
-  EFI_STATUS              Status;
+  EFI_STATUS  Status;
 
   //
   // temporarily stop checkAllApsStatus for avoid resource dead-lock.
@@ -790,13 +801,13 @@ MpInitLibStartupThisAP (
   mStopCheckAllApsStatus = TRUE;
 
   Status = StartupThisAPWorker (
-             Procedure,
-             ProcessorNumber,
-             WaitEvent,
-             TimeoutInMicroseconds,
-             ProcedureArgument,
-             Finished
-             );
+                                Procedure,
+                                ProcessorNumber,
+                                WaitEvent,
+                                TimeoutInMicroseconds,
+                                ProcedureArgument,
+                                Finished
+                                );
 
   mStopCheckAllApsStatus = FALSE;
 
@@ -836,9 +847,9 @@ MpInitLibSwitchBSP (
   IN BOOLEAN                   EnableOldBSP
   )
 {
-  EFI_STATUS                   Status;
-  EFI_TIMER_ARCH_PROTOCOL      *Timer;
-  UINT64                       TimerPeriod;
+  EFI_STATUS               Status;
+  EFI_TIMER_ARCH_PROTOCOL  *Timer;
+  UINT64                   TimerPeriod;
 
   TimerPeriod = 0;
   //
@@ -910,8 +921,8 @@ MpInitLibEnableDisableAP (
   IN  UINT32                    *HealthFlag OPTIONAL
   )
 {
-  EFI_STATUS     Status;
-  BOOLEAN        TempStopCheckState;
+  EFI_STATUS  Status;
+  BOOLEAN     TempStopCheckState;
 
   TempStopCheckState = FALSE;
   //

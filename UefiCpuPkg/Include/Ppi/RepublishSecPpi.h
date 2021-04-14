@@ -37,18 +37,18 @@ typedef struct _REPUBLISH_SEC_PPI_PPI REPUBLISH_SEC_PPI_PPI;
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *REPUBLISH_SEC_PPI_REPUBLISH_SEC_PPIS)(
-  VOID
-  );
+                                               VOID
+                                               );
 
 ///
 /// Republish SEC PPIs
 ///
 struct _REPUBLISH_SEC_PPI_PPI {
-  REPUBLISH_SEC_PPI_REPUBLISH_SEC_PPIS  RepublishSecPpis;
+  REPUBLISH_SEC_PPI_REPUBLISH_SEC_PPIS    RepublishSecPpis;
 };
 
-extern EFI_GUID gRepublishSecPpiPpiGuid;
+extern EFI_GUID  gRepublishSecPpiPpiGuid;
 
 #endif

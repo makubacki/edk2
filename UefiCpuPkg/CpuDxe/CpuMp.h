@@ -14,9 +14,9 @@
 
 **/
 VOID
-InitializeMpSupport (
-  VOID
-  );
+  InitializeMpSupport (
+                       VOID
+                       );
 
 /**
   This service retrieves the number of logical processor in the platform
@@ -467,4 +467,3 @@ WhoAmI (
   );
 
 #endif // _CPU_MP_H_
-

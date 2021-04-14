@@ -17,8 +17,7 @@
 /// be terminated by an entry with the END bit set to 1, so 2
 /// entries are required to use a single valid entry.
 ///
-#define MAX_TOPA_ENTRY_COUNT         2
-
+#define MAX_TOPA_ENTRY_COUNT  2
 
 ///
 /// Processor trace output scheme selection.
@@ -29,25 +28,25 @@ typedef enum {
 } RTIT_OUTPUT_SCHEME;
 
 typedef struct  {
-  BOOLEAN                                   TopaSupported;
-  BOOLEAN                                   SingleRangeSupported;
-  MSR_IA32_RTIT_CTL_REGISTER                RtitCtrl;
-  MSR_IA32_RTIT_OUTPUT_BASE_REGISTER        RtitOutputBase;
-  MSR_IA32_RTIT_OUTPUT_MASK_PTRS_REGISTER   RtitOutputMaskPtrs;
+  BOOLEAN                                    TopaSupported;
+  BOOLEAN                                    SingleRangeSupported;
+  MSR_IA32_RTIT_CTL_REGISTER                 RtitCtrl;
+  MSR_IA32_RTIT_OUTPUT_BASE_REGISTER         RtitOutputBase;
+  MSR_IA32_RTIT_OUTPUT_MASK_PTRS_REGISTER    RtitOutputMaskPtrs;
 } PROC_TRACE_PROCESSOR_DATA;
 
 typedef struct  {
-  UINT32                      NumberOfProcessors;
+  UINT32                       NumberOfProcessors;
 
-  UINT8                       ProcTraceOutputScheme;
-  UINT32                      ProcTraceMemSize;
+  UINT8                        ProcTraceOutputScheme;
+  UINT32                       ProcTraceMemSize;
 
-  UINTN                       *ThreadMemRegionTable;
-  UINTN                       AllocatedThreads;
+  UINTN                        *ThreadMemRegionTable;
+  UINTN                        AllocatedThreads;
 
-  UINTN                       *TopaMemArray;
+  UINTN                        *TopaMemArray;
 
-  PROC_TRACE_PROCESSOR_DATA   *ProcessorData;
+  PROC_TRACE_PROCESSOR_DATA    *ProcessorData;
 } PROC_TRACE_DATA;
 
 typedef struct {
@@ -73,10 +72,10 @@ ProcTraceGetConfigData (
 
   ConfigData = AllocateZeroPool (sizeof (PROC_TRACE_DATA) + sizeof (PROC_TRACE_PROCESSOR_DATA) * NumberOfProcessors);
   ASSERT (ConfigData != NULL);
-  ConfigData->ProcessorData = (PROC_TRACE_PROCESSOR_DATA *) ((UINT8*) ConfigData + sizeof (PROC_TRACE_DATA));
+  ConfigData->ProcessorData = (PROC_TRACE_PROCESSOR_DATA *) ((UINT8 *) ConfigData + sizeof (PROC_TRACE_DATA));
 
-  ConfigData->NumberOfProcessors = (UINT32) NumberOfProcessors;
-  ConfigData->ProcTraceMemSize = PcdGet32 (PcdCpuProcTraceMemSize);
+  ConfigData->NumberOfProcessors    = (UINT32) NumberOfProcessors;
+  ConfigData->ProcTraceMemSize      = PcdGet32 (PcdCpuProcTraceMemSize);
   ConfigData->ProcTraceOutputScheme = PcdGet8 (PcdCpuProcTraceOutputScheme);
 
   return ConfigData;
@@ -107,9 +106,9 @@ ProcTraceSupport (
   IN VOID                              *ConfigData  OPTIONAL
   )
 {
-  PROC_TRACE_DATA                             *ProcTraceData;
-  CPUID_STRUCTURED_EXTENDED_FEATURE_FLAGS_EBX Ebx;
-  CPUID_INTEL_PROCESSOR_TRACE_MAIN_LEAF_ECX   Ecx;
+  PROC_TRACE_DATA                              *ProcTraceData;
+  CPUID_STRUCTURED_EXTENDED_FEATURE_FLAGS_EBX  Ebx;
+  CPUID_INTEL_PROCESSOR_TRACE_MAIN_LEAF_ECX    Ecx;
 
   //
   // Check if ProcTraceMemorySize option is enabled (0xFF means disable by user)
@@ -132,11 +131,15 @@ ProcTraceSupport (
   AsmCpuidEx (CPUID_INTEL_PROCESSOR_TRACE, CPUID_INTEL_PROCESSOR_TRACE_MAIN_LEAF, NULL, NULL, &Ecx.Uint32, NULL);
   ProcTraceData->ProcessorData[ProcessorNumber].TopaSupported = (BOOLEAN) (Ecx.Bits.RTIT == 1);
   ProcTraceData->ProcessorData[ProcessorNumber].SingleRangeSupported = (BOOLEAN) (Ecx.Bits.SingleRangeOutput == 1);
-  if ((ProcTraceData->ProcessorData[ProcessorNumber].TopaSupported && (ProcTraceData->ProcTraceOutputScheme == RtitOutputSchemeToPA)) ||
-      (ProcTraceData->ProcessorData[ProcessorNumber].SingleRangeSupported && (ProcTraceData->ProcTraceOutputScheme == RtitOutputSchemeSingleRange))) {
+  if ((ProcTraceData->ProcessorData[ProcessorNumber].TopaSupported &&
+       (ProcTraceData->ProcTraceOutputScheme == RtitOutputSchemeToPA)) ||
+      (ProcTraceData->ProcessorData[ProcessorNumber].SingleRangeSupported &&
+       (ProcTraceData->ProcTraceOutputScheme == RtitOutputSchemeSingleRange))) {
     ProcTraceData->ProcessorData[ProcessorNumber].RtitCtrl.Uint64 = AsmReadMsr64 (MSR_IA32_RTIT_CTL);
-    ProcTraceData->ProcessorData[ProcessorNumber].RtitOutputBase.Uint64 = AsmReadMsr64 (MSR_IA32_RTIT_OUTPUT_BASE);
-    ProcTraceData->ProcessorData[ProcessorNumber].RtitOutputMaskPtrs.Uint64 = AsmReadMsr64 (MSR_IA32_RTIT_OUTPUT_MASK_PTRS);
+    ProcTraceData->ProcessorData[ProcessorNumber].RtitOutputBase.Uint64     = AsmReadMsr64 (MSR_IA32_RTIT_OUTPUT_BASE);
+    ProcTraceData->ProcessorData[ProcessorNumber].RtitOutputMaskPtrs.Uint64 = AsmReadMsr64 (
+                                                                                           MSR_IA32_RTIT_OUTPUT_MASK_PTRS
+                                                                                           );
     return TRUE;
   }
 
@@ -166,27 +169,27 @@ EFIAPI
 ProcTraceInitialize (
   IN UINTN                             ProcessorNumber,
   IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN VOID                              *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   )
 {
-  UINT32                               MemRegionSize;
-  UINTN                                Pages;
-  UINTN                                Alignment;
-  UINTN                                MemRegionBaseAddr;
-  UINTN                                *ThreadMemRegionTable;
-  UINTN                                Index;
-  UINTN                                TopaTableBaseAddr;
-  UINTN                                AlignedAddress;
-  UINTN                                *TopaMemArray;
-  PROC_TRACE_TOPA_TABLE                *TopaTable;
-  PROC_TRACE_DATA                      *ProcTraceData;
-  BOOLEAN                              FirstIn;
-  MSR_IA32_RTIT_CTL_REGISTER           CtrlReg;
-  MSR_IA32_RTIT_STATUS_REGISTER        StatusReg;
-  MSR_IA32_RTIT_OUTPUT_BASE_REGISTER   OutputBaseReg;
+  UINT32                                   MemRegionSize;
+  UINTN                                    Pages;
+  UINTN                                    Alignment;
+  UINTN                                    MemRegionBaseAddr;
+  UINTN                                    *ThreadMemRegionTable;
+  UINTN                                    Index;
+  UINTN                                    TopaTableBaseAddr;
+  UINTN                                    AlignedAddress;
+  UINTN                                    *TopaMemArray;
+  PROC_TRACE_TOPA_TABLE                    *TopaTable;
+  PROC_TRACE_DATA                          *ProcTraceData;
+  BOOLEAN                                  FirstIn;
+  MSR_IA32_RTIT_CTL_REGISTER               CtrlReg;
+  MSR_IA32_RTIT_STATUS_REGISTER            StatusReg;
+  MSR_IA32_RTIT_OUTPUT_BASE_REGISTER       OutputBaseReg;
   MSR_IA32_RTIT_OUTPUT_MASK_PTRS_REGISTER  OutputMaskPtrsReg;
-  RTIT_TOPA_TABLE_ENTRY                *TopaEntryPtr;
+  RTIT_TOPA_TABLE_ENTRY                    *TopaEntryPtr;
 
   //
   // The scope of the MSR_IA32_RTIT_* is core for below processor type, only program
@@ -212,22 +215,22 @@ ProcTraceInitialize (
     ///
     CtrlReg.Bits.TraceEn = 0;
     CPU_REGISTER_TABLE_WRITE64 (
-      ProcessorNumber,
-      Msr,
-      MSR_IA32_RTIT_CTL,
-      CtrlReg.Uint64
-      );
+                                ProcessorNumber,
+                                Msr,
+                                MSR_IA32_RTIT_CTL,
+                                CtrlReg.Uint64
+                                );
 
     ///
     /// Clear MSR IA32_RTIT_STS (571h) to all zeros
     ///
     StatusReg.Uint64 = 0x0;
     CPU_REGISTER_TABLE_WRITE64 (
-      ProcessorNumber,
-      Msr,
-      MSR_IA32_RTIT_STATUS,
-      StatusReg.Uint64
-      );
+                                ProcessorNumber,
+                                Msr,
+                                MSR_IA32_RTIT_STATUS,
+                                StatusReg.Uint64
+                                );
   }
 
   if (!State) {
@@ -252,25 +255,29 @@ ProcTraceInitialize (
 
   if (FirstIn) {
     //
-    //   Let BSP allocate and create the necessary memory region (Aligned to the size of
-    //   the memory region from setup option(ProcTraceMemSize) which is an integral multiple of 4kB)
-    //   for all the enabled threads to store Processor Trace debug data. Then Configure the trace
-    //   address base in MSR, IA32_RTIT_OUTPUT_BASE (560h) bits 47:12. Note that all regions must be
-    //   aligned based on their size, not just 4K. Thus a 2M region must have bits 20:12 cleared.
+    // Let BSP allocate and create the necessary memory region (Aligned to the size of
+    // the memory region from setup option(ProcTraceMemSize) which is an integral multiple of 4kB)
+    // for all the enabled threads to store Processor Trace debug data. Then Configure the trace
+    // address base in MSR, IA32_RTIT_OUTPUT_BASE (560h) bits 47:12. Note that all regions must be
+    // aligned based on their size, not just 4K. Thus a 2M region must have bits 20:12 cleared.
     //
     ThreadMemRegionTable = (UINTN *) AllocatePool (ProcTraceData->NumberOfProcessors * sizeof (UINTN *));
     if (ThreadMemRegionTable == NULL) {
       DEBUG ((DEBUG_ERROR, "Allocate ProcTrace ThreadMemRegionTable Failed\n"));
       return RETURN_OUT_OF_RESOURCES;
     }
+
     ProcTraceData->ThreadMemRegionTable = ThreadMemRegionTable;
 
     for (Index = 0; Index < ProcTraceData->NumberOfProcessors; Index++, ProcTraceData->AllocatedThreads++) {
-      Pages = EFI_SIZE_TO_PAGES (MemRegionSize);
+      Pages     = EFI_SIZE_TO_PAGES (MemRegionSize);
       Alignment = MemRegionSize;
       AlignedAddress = (UINTN) AllocateAlignedReservedPages (Pages, Alignment);
       if (AlignedAddress == 0) {
-        DEBUG ((DEBUG_ERROR, "ProcTrace: Out of mem, allocated only for %d threads\n", ProcTraceData->AllocatedThreads));
+        DEBUG (
+              (DEBUG_ERROR, "ProcTrace: Out of mem, allocated only for %d threads\n",
+               ProcTraceData->AllocatedThreads)
+              );
         if (Index == 0) {
           //
           // Could not allocate for BSP even
@@ -279,11 +286,15 @@ ProcTraceInitialize (
           ThreadMemRegionTable = NULL;
           return RETURN_OUT_OF_RESOURCES;
         }
+
         break;
       }
 
       ThreadMemRegionTable[Index] = AlignedAddress;
-      DEBUG ((DEBUG_INFO, "ProcTrace: PT MemRegionBaseAddr(aligned) for thread %d: 0x%llX \n", Index, (UINT64) ThreadMemRegionTable[Index]));
+      DEBUG (
+            (DEBUG_INFO, "ProcTrace: PT MemRegionBaseAddr(aligned) for thread %d: 0x%llX \n", Index,
+             (UINT64) ThreadMemRegionTable[Index])
+            );
     }
 
     DEBUG ((DEBUG_INFO, "ProcTrace: Allocated PT mem for %d thread \n", ProcTraceData->AllocatedThreads));
@@ -300,7 +311,7 @@ ProcTraceInitialize (
   ///
 
   //
-  //  Single Range output scheme
+  // Single Range output scheme
   //
   if (ProcTraceData->ProcessorData[ProcessorNumber].SingleRangeSupported &&
       (ProcTraceData->ProcTraceOutputScheme == RtitOutputSchemeSingleRange)) {
@@ -313,24 +324,24 @@ ProcTraceInitialize (
     //
     CtrlReg.Bits.ToPA = 0;
     CPU_REGISTER_TABLE_WRITE64 (
-      ProcessorNumber,
-      Msr,
-      MSR_IA32_RTIT_CTL,
-      CtrlReg.Uint64
-      );
+                                ProcessorNumber,
+                                Msr,
+                                MSR_IA32_RTIT_CTL,
+                                CtrlReg.Uint64
+                                );
 
     //
     // Program MSR IA32_RTIT_OUTPUT_BASE (0x560) bits[63:7] with the allocated Memory Region
     //
-    OutputBaseReg.Uint64 = ProcTraceData->ProcessorData[ProcessorNumber].RtitOutputBase.Uint64;
-    OutputBaseReg.Bits.Base = (MemRegionBaseAddr >> 7) & 0x01FFFFFF;
+    OutputBaseReg.Uint64      = ProcTraceData->ProcessorData[ProcessorNumber].RtitOutputBase.Uint64;
+    OutputBaseReg.Bits.Base   = (MemRegionBaseAddr >> 7) & 0x01FFFFFF;
     OutputBaseReg.Bits.BaseHi = RShiftU64 ((UINT64) MemRegionBaseAddr, 32) & 0xFFFFFFFF;
     CPU_REGISTER_TABLE_WRITE64 (
-      ProcessorNumber,
-      Msr,
-      MSR_IA32_RTIT_OUTPUT_BASE,
-      OutputBaseReg.Uint64
-      );
+                                ProcessorNumber,
+                                Msr,
+                                MSR_IA32_RTIT_OUTPUT_BASE,
+                                OutputBaseReg.Uint64
+                                );
 
     //
     // Program the Mask bits for the Memory Region to MSR IA32_RTIT_OUTPUT_MASK_PTRS (561h)
@@ -339,25 +350,25 @@ ProcTraceInitialize (
     OutputMaskPtrsReg.Bits.MaskOrTableOffset = ((MemRegionSize - 1) >> 7) & 0x01FFFFFF;
     OutputMaskPtrsReg.Bits.OutputOffset = RShiftU64 (MemRegionSize - 1, 32) & 0xFFFFFFFF;
     CPU_REGISTER_TABLE_WRITE64 (
-      ProcessorNumber,
-      Msr,
-      MSR_IA32_RTIT_OUTPUT_MASK_PTRS,
-      OutputMaskPtrsReg.Uint64
-      );
+                                ProcessorNumber,
+                                Msr,
+                                MSR_IA32_RTIT_OUTPUT_MASK_PTRS,
+                                OutputMaskPtrsReg.Uint64
+                                );
   }
 
   //
-  //  ToPA(Table of physical address) scheme
+  // ToPA(Table of physical address) scheme
   //
   if (ProcTraceData->ProcessorData[ProcessorNumber].TopaSupported &&
       (ProcTraceData->ProcTraceOutputScheme == RtitOutputSchemeToPA)) {
     //
-    //  Create ToPA structure aligned at 4KB for each logical thread
-    //  with at least 2 entries by 8 bytes size each. The first entry
-    //  should have the trace output base address in bits 47:12, 6:9
-    //  for Size, bits 4,2 and 0 must be cleared. The second entry
-    //  should have the base address of the table location in bits
-    //  47:12, bits 4 and 2 must be cleared and bit 0 must be set.
+    // Create ToPA structure aligned at 4KB for each logical thread
+    // with at least 2 entries by 8 bytes size each. The first entry
+    // should have the trace output base address in bits 47:12, 6:9
+    // for Size, bits 4,2 and 0 must be cleared. The second entry
+    // should have the base address of the table location in bits
+    // 47:12, bits 4 and 2 must be cleared and bit 0 must be set.
     //
     if (FirstIn) {
       DEBUG ((DEBUG_INFO, "ProcTrace: Enabling ToPA scheme \n"));
@@ -369,17 +380,22 @@ ProcTraceInitialize (
         DEBUG ((DEBUG_ERROR, "ProcTrace: Allocate mem for ToPA Failed\n"));
         return RETURN_OUT_OF_RESOURCES;
       }
+
       ProcTraceData->TopaMemArray = TopaMemArray;
 
       for (Index = 0; Index < ProcTraceData->AllocatedThreads; Index++) {
-        Pages = EFI_SIZE_TO_PAGES (sizeof (PROC_TRACE_TOPA_TABLE));
+        Pages     = EFI_SIZE_TO_PAGES (sizeof (PROC_TRACE_TOPA_TABLE));
         Alignment = 0x1000;
         AlignedAddress = (UINTN) AllocateAlignedReservedPages (Pages, Alignment);
         if (AlignedAddress == 0) {
           if (Index < ProcTraceData->AllocatedThreads) {
             ProcTraceData->AllocatedThreads = Index;
           }
-          DEBUG ((DEBUG_ERROR, "ProcTrace:  Out of mem, allocated ToPA mem only for %d threads\n", ProcTraceData->AllocatedThreads));
+
+          DEBUG (
+                (DEBUG_ERROR, "ProcTrace:  Out of mem, allocated ToPA mem only for %d threads\n",
+                 ProcTraceData->AllocatedThreads)
+                );
           if (Index == 0) {
             //
             // Could not allocate for BSP even
@@ -388,11 +404,15 @@ ProcTraceInitialize (
             TopaMemArray = NULL;
             return RETURN_OUT_OF_RESOURCES;
           }
+
           break;
         }
 
         TopaMemArray[Index] = AlignedAddress;
-        DEBUG ((DEBUG_INFO, "ProcTrace: Topa table address(aligned) for thread %d is 0x%llX \n", Index,  (UINT64) TopaMemArray[Index]));
+        DEBUG (
+              (DEBUG_INFO, "ProcTrace: Topa table address(aligned) for thread %d is 0x%llX \n", Index,
+               (UINT64) TopaMemArray[Index])
+              );
       }
 
       DEBUG ((DEBUG_INFO, "ProcTrace: Allocated ToPA mem for %d thread \n", ProcTraceData->AllocatedThreads));
@@ -404,32 +424,32 @@ ProcTraceInitialize (
       return RETURN_SUCCESS;
     }
 
-    TopaTable = (PROC_TRACE_TOPA_TABLE *) TopaTableBaseAddr;
+    TopaTable    = (PROC_TRACE_TOPA_TABLE *) TopaTableBaseAddr;
     TopaEntryPtr = &TopaTable->TopaEntry[0];
-    TopaEntryPtr->Uint64 = 0;
-    TopaEntryPtr->Bits.Base = (MemRegionBaseAddr >> 12) & 0x000FFFFF;
+    TopaEntryPtr->Uint64      = 0;
+    TopaEntryPtr->Bits.Base   = (MemRegionBaseAddr >> 12) & 0x000FFFFF;
     TopaEntryPtr->Bits.BaseHi = RShiftU64 ((UINT64) MemRegionBaseAddr, 32) & 0xFFFFFFFF;
-    TopaEntryPtr->Bits.Size = ProcTraceData->ProcTraceMemSize;
-    TopaEntryPtr->Bits.END = 0;
+    TopaEntryPtr->Bits.Size   = ProcTraceData->ProcTraceMemSize;
+    TopaEntryPtr->Bits.END    = 0;
 
     TopaEntryPtr = &TopaTable->TopaEntry[1];
-    TopaEntryPtr->Uint64 = 0;
-    TopaEntryPtr->Bits.Base = (TopaTableBaseAddr >> 12) & 0x000FFFFF;
+    TopaEntryPtr->Uint64      = 0;
+    TopaEntryPtr->Bits.Base   = (TopaTableBaseAddr >> 12) & 0x000FFFFF;
     TopaEntryPtr->Bits.BaseHi = RShiftU64 ((UINT64) TopaTableBaseAddr, 32) & 0xFFFFFFFF;
-    TopaEntryPtr->Bits.END = 1;
+    TopaEntryPtr->Bits.END    = 1;
 
     //
     // Program the MSR IA32_RTIT_OUTPUT_BASE (0x560) bits[63:7] with ToPA base
     //
-    OutputBaseReg.Uint64 = ProcTraceData->ProcessorData[ProcessorNumber].RtitOutputBase.Uint64;
-    OutputBaseReg.Bits.Base = (TopaTableBaseAddr >> 7) & 0x01FFFFFF;
+    OutputBaseReg.Uint64      = ProcTraceData->ProcessorData[ProcessorNumber].RtitOutputBase.Uint64;
+    OutputBaseReg.Bits.Base   = (TopaTableBaseAddr >> 7) & 0x01FFFFFF;
     OutputBaseReg.Bits.BaseHi = RShiftU64 ((UINT64) TopaTableBaseAddr, 32) & 0xFFFFFFFF;
     CPU_REGISTER_TABLE_WRITE64 (
-      ProcessorNumber,
-      Msr,
-      MSR_IA32_RTIT_OUTPUT_BASE,
-      OutputBaseReg.Uint64
-      );
+                                ProcessorNumber,
+                                Msr,
+                                MSR_IA32_RTIT_OUTPUT_BASE,
+                                OutputBaseReg.Uint64
+                                );
 
     //
     // Set the MSR IA32_RTIT_OUTPUT_MASK (0x561) bits[63:7] to 0
@@ -438,36 +458,36 @@ ProcTraceInitialize (
     OutputMaskPtrsReg.Bits.MaskOrTableOffset = 0;
     OutputMaskPtrsReg.Bits.OutputOffset = 0;
     CPU_REGISTER_TABLE_WRITE64 (
-      ProcessorNumber,
-      Msr,
-      MSR_IA32_RTIT_OUTPUT_MASK_PTRS,
-      OutputMaskPtrsReg.Uint64
-      );
+                                ProcessorNumber,
+                                Msr,
+                                MSR_IA32_RTIT_OUTPUT_MASK_PTRS,
+                                OutputMaskPtrsReg.Uint64
+                                );
     //
     // Enable ToPA output scheme by enabling MSR IA32_RTIT_CTL (0x570) ToPA (Bit 8)
     //
     CtrlReg.Bits.ToPA = 1;
     CPU_REGISTER_TABLE_WRITE64 (
-      ProcessorNumber,
-      Msr,
-      MSR_IA32_RTIT_CTL,
-      CtrlReg.Uint64
-      );
+                                ProcessorNumber,
+                                Msr,
+                                MSR_IA32_RTIT_CTL,
+                                CtrlReg.Uint64
+                                );
   }
 
   ///
   /// Enable the Processor Trace feature from MSR IA32_RTIT_CTL (570h)
   ///
-  CtrlReg.Bits.OS = 1;
-  CtrlReg.Bits.User = 1;
+  CtrlReg.Bits.OS       = 1;
+  CtrlReg.Bits.User     = 1;
   CtrlReg.Bits.BranchEn = 1;
-  CtrlReg.Bits.TraceEn = 1;
+  CtrlReg.Bits.TraceEn  = 1;
   CPU_REGISTER_TABLE_WRITE64 (
-    ProcessorNumber,
-    Msr,
-    MSR_IA32_RTIT_CTL,
-    CtrlReg.Uint64
-    );
+                              ProcessorNumber,
+                              Msr,
+                              MSR_IA32_RTIT_CTL,
+                              CtrlReg.Uint64
+                              );
 
   return RETURN_SUCCESS;
 }

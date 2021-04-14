@@ -45,7 +45,6 @@ SmmStmExceptionHandler (
   IN OUT STM_PROTECTION_EXCEPTION_STACK_FRAME Context
   );
 
-
 /**
 
   Get STM state.
@@ -56,8 +55,8 @@ SmmStmExceptionHandler (
 EFI_SM_MONITOR_STATE
 EFIAPI
 GetMonitorState (
-  VOID
-  );
+                 VOID
+                 );
 
 /**
 
@@ -141,9 +140,9 @@ GetPiResource (
   This function initialize STM configuration table.
 **/
 VOID
-StmSmmConfigurationTableInit (
-  VOID
-  );
+  StmSmmConfigurationTableInit (
+                                VOID
+                                );
 
 /**
   This function notify STM resource change.
@@ -163,9 +162,9 @@ NotifyStmResourceChange (
 
 **/
 VOID *
-GetStmResource (
-  VOID
-  );
+  GetStmResource (
+                  VOID
+                  );
 
 /**
   This function fixes up the address of the global variable or function
@@ -174,6 +173,6 @@ GetStmResource (
 VOID
 EFIAPI
 SmmCpuFeaturesLibStmSmiEntryFixupAddress (
- );
+  );
 
 #endif

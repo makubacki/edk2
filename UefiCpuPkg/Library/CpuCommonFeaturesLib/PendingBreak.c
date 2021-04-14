@@ -39,6 +39,7 @@ PendingBreakSupport (
       IS_PENTIUM_M_PROCESSOR (CpuInfo->DisplayFamily, CpuInfo->DisplayModel)) {
     return (CpuInfo->CpuIdVersionInfoEdx.Bits.PBE == 1);
   }
+
   return FALSE;
 }
 
@@ -64,7 +65,7 @@ EFIAPI
 PendingBreakInitialize (
   IN UINTN                             ProcessorNumber,
   IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN VOID                              *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   )
 {
@@ -84,12 +85,12 @@ PendingBreakInitialize (
   // Simply use MSR_ATOM_IA32_MISC_ENABLE here
   //
   CPU_REGISTER_TABLE_WRITE_FIELD (
-    ProcessorNumber,
-    Msr,
-    MSR_ATOM_IA32_MISC_ENABLE,
-    MSR_ATOM_IA32_MISC_ENABLE_REGISTER,
-    Bits.FERR,
-    (State) ? 1 : 0
-    );
+                                  ProcessorNumber,
+                                  Msr,
+                                  MSR_ATOM_IA32_MISC_ENABLE,
+                                  MSR_ATOM_IA32_MISC_ENABLE_REGISTER,
+                                  Bits.FERR,
+                                  (State) ? 1 : 0
+                                  );
   return RETURN_SUCCESS;
 }

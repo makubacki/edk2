@@ -57,7 +57,7 @@ EFIAPI
 VmxInitialize (
   IN UINTN                             ProcessorNumber,
   IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN VOID                              *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   )
 {
@@ -75,13 +75,13 @@ VmxInitialize (
   }
 
   CPU_REGISTER_TABLE_TEST_THEN_WRITE_FIELD (
-    ProcessorNumber,
-    Msr,
-    MSR_IA32_FEATURE_CONTROL,
-    MSR_IA32_FEATURE_CONTROL_REGISTER,
-    Bits.EnableVmxOutsideSmx,
-    (State) ? 1 : 0
-    );
+                                            ProcessorNumber,
+                                            Msr,
+                                            MSR_IA32_FEATURE_CONTROL,
+                                            MSR_IA32_FEATURE_CONTROL_REGISTER,
+                                            Bits.EnableVmxOutsideSmx,
+                                            (State) ? 1 : 0
+                                            );
 
   return RETURN_SUCCESS;
 }
@@ -135,7 +135,7 @@ EFIAPI
 LockFeatureControlRegisterInitialize (
   IN UINTN                             ProcessorNumber,
   IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN VOID                              *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   )
 {
@@ -153,13 +153,13 @@ LockFeatureControlRegisterInitialize (
   }
 
   CPU_REGISTER_TABLE_TEST_THEN_WRITE_FIELD (
-    ProcessorNumber,
-    Msr,
-    MSR_IA32_FEATURE_CONTROL,
-    MSR_IA32_FEATURE_CONTROL_REGISTER,
-    Bits.Lock,
-    1
-    );
+                                            ProcessorNumber,
+                                            Msr,
+                                            MSR_IA32_FEATURE_CONTROL,
+                                            MSR_IA32_FEATURE_CONTROL_REGISTER,
+                                            Bits.Lock,
+                                            1
+                                            );
 
   return RETURN_SUCCESS;
 }
@@ -214,11 +214,11 @@ EFIAPI
 SmxInitialize (
   IN UINTN                             ProcessorNumber,
   IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN VOID                              *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   )
 {
-  RETURN_STATUS                        Status;
+  RETURN_STATUS  Status;
 
   //
   // The scope of Lock bit in the MSR_IA32_FEATURE_CONTROL is core for
@@ -236,45 +236,45 @@ SmxInitialize (
 
   if (State && (!IsCpuFeatureInSetting (CPU_FEATURE_VMX))) {
     DEBUG ((DEBUG_WARN, "Warning :: Can't enable SMX feature when VMX feature not enabled, disable it.\n"));
-    State = FALSE;
+    State  = FALSE;
     Status = RETURN_UNSUPPORTED;
   }
 
   CPU_REGISTER_TABLE_WRITE_FIELD (
-    ProcessorNumber,
-    ControlRegister,
-    4,
-    IA32_CR4,
-    Bits.SMXE,
-    (State) ? 1 : 0
-  )
+                                  ProcessorNumber,
+                                  ControlRegister,
+                                  4,
+                                  IA32_CR4,
+                                  Bits.SMXE,
+                                  (State) ? 1 : 0
+                                  )
 
   CPU_REGISTER_TABLE_TEST_THEN_WRITE_FIELD (
-    ProcessorNumber,
-    Msr,
-    MSR_IA32_FEATURE_CONTROL,
-    MSR_IA32_FEATURE_CONTROL_REGISTER,
-    Bits.SenterLocalFunctionEnables,
-    (State) ? 0x7F : 0
-    );
+                                            ProcessorNumber,
+                                            Msr,
+                                            MSR_IA32_FEATURE_CONTROL,
+                                            MSR_IA32_FEATURE_CONTROL_REGISTER,
+                                            Bits.SenterLocalFunctionEnables,
+                                            (State) ? 0x7F : 0
+                                            );
 
   CPU_REGISTER_TABLE_TEST_THEN_WRITE_FIELD (
-    ProcessorNumber,
-    Msr,
-    MSR_IA32_FEATURE_CONTROL,
-    MSR_IA32_FEATURE_CONTROL_REGISTER,
-    Bits.SenterGlobalEnable,
-    (State) ? 1 : 0
-    );
+                                            ProcessorNumber,
+                                            Msr,
+                                            MSR_IA32_FEATURE_CONTROL,
+                                            MSR_IA32_FEATURE_CONTROL_REGISTER,
+                                            Bits.SenterGlobalEnable,
+                                            (State) ? 1 : 0
+                                            );
 
   CPU_REGISTER_TABLE_TEST_THEN_WRITE_FIELD (
-    ProcessorNumber,
-    Msr,
-    MSR_IA32_FEATURE_CONTROL,
-    MSR_IA32_FEATURE_CONTROL_REGISTER,
-    Bits.EnableVmxInsideSmx,
-    (State) ? 1 : 0
-    );
+                                            ProcessorNumber,
+                                            Msr,
+                                            MSR_IA32_FEATURE_CONTROL,
+                                            MSR_IA32_FEATURE_CONTROL_REGISTER,
+                                            Bits.EnableVmxInsideSmx,
+                                            (State) ? 1 : 0
+                                            );
 
   return Status;
 }

@@ -24,8 +24,8 @@
 UINTN
 EFIAPI
 GetLocalApicBaseAddress (
-  VOID
-  );
+                         VOID
+                         );
 
 /**
   Set the base address of local APIC.
@@ -52,8 +52,8 @@ SetLocalApicBaseAddress (
 UINTN
 EFIAPI
 GetApicMode (
-  VOID
-  );
+             VOID
+             );
 
 /**
   Set the current local APIC mode.
@@ -84,8 +84,8 @@ SetApicMode (
 UINT32
 EFIAPI
 GetInitialApicId (
-  VOID
-  );
+                  VOID
+                  );
 
 /**
   Get the local APIC ID of the executing processor.
@@ -95,8 +95,8 @@ GetInitialApicId (
 UINT32
 EFIAPI
 GetApicId (
-  VOID
-  );
+           VOID
+           );
 
 /**
   Get the value of the local APIC version register.
@@ -106,8 +106,8 @@ GetApicId (
 UINT32
 EFIAPI
 GetApicVersion (
-  VOID
-  );
+                VOID
+                );
 
 /**
   Send a Fixed IPI to a specified target processor.
@@ -158,8 +158,8 @@ SendSmiIpi (
 VOID
 EFIAPI
 SendSmiIpiAllExcludingSelf (
-  VOID
-  );
+                            VOID
+                            );
 
 /**
   Send an INIT IPI to a specified target processor.
@@ -182,8 +182,8 @@ SendInitIpi (
 VOID
 EFIAPI
 SendInitIpiAllExcludingSelf (
-  VOID
-  );
+                             VOID
+                             );
 
 /**
   Send an INIT-Start-up-Start-up IPI sequence to a specified target processor.
@@ -246,8 +246,8 @@ InitializeLocalApicSoftwareEnable (
 VOID
 EFIAPI
 ProgramVirtualWireMode (
-  VOID
-  );
+                        VOID
+                        );
 
 /**
   Disable LINT0 & LINT1 interrupts.
@@ -257,8 +257,8 @@ ProgramVirtualWireMode (
 VOID
 EFIAPI
 DisableLvtInterrupts (
-  VOID
-  );
+                      VOID
+                      );
 
 /**
   Read the initial count value from the init-count register.
@@ -268,8 +268,8 @@ DisableLvtInterrupts (
 UINT32
 EFIAPI
 GetApicTimerInitCount (
-  VOID
-  );
+                       VOID
+                       );
 
 /**
   Read the current count value from the current-count register.
@@ -279,8 +279,8 @@ GetApicTimerInitCount (
 UINT32
 EFIAPI
 GetApicTimerCurrentCount (
-  VOID
-  );
+                          VOID
+                          );
 
 /**
   Initialize the local APIC timer.
@@ -323,8 +323,8 @@ GetApicTimerState (
 VOID
 EFIAPI
 EnableApicTimerInterrupt (
-  VOID
-  );
+                          VOID
+                          );
 
 /**
   Disable the local APIC timer interrupt.
@@ -332,8 +332,8 @@ EnableApicTimerInterrupt (
 VOID
 EFIAPI
 DisableApicTimerInterrupt (
-  VOID
-  );
+                           VOID
+                           );
 
 /**
   Get the local APIC timer interrupt state.
@@ -344,8 +344,8 @@ DisableApicTimerInterrupt (
 BOOLEAN
 EFIAPI
 GetApicTimerInterruptState (
-  VOID
-  );
+                            VOID
+                            );
 
 /**
   Send EOI to the local APIC.
@@ -353,8 +353,8 @@ GetApicTimerInterruptState (
 VOID
 EFIAPI
 SendApicEoi (
-  VOID
-  );
+             VOID
+             );
 
 /**
   Get the 32-bit address that a device should use to send a Message Signaled
@@ -365,8 +365,8 @@ SendApicEoi (
 UINT32
 EFIAPI
 GetApicMsiAddress (
-  VOID
-  );
+                   VOID
+                   );
 
 /**
   Get the 64-bit data value that a device should use to send a Message Signaled
@@ -453,5 +453,5 @@ GetProcessorLocation2ByApicId (
   OUT UINT32  *Core     OPTIONAL,
   OUT UINT32  *Thread   OPTIONAL
   );
-#endif
 
+#endif

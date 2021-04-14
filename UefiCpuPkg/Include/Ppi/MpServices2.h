@@ -13,10 +13,10 @@
 
 #define EDKII_PEI_MP_SERVICES2_PPI_GUID \
   { \
-    0x5cb9cb3d, 0x31a4, 0x480c, { 0x94, 0x98, 0x29, 0xd2, 0x69, 0xba, 0xcf, 0xba} \
+    0x5cb9cb3d, 0x31a4, 0x480c, { 0x94, 0x98, 0x29, 0xd2, 0x69, 0xba, 0xcf, 0xba } \
   }
 
-typedef struct _EDKII_PEI_MP_SERVICES2_PPI  EDKII_PEI_MP_SERVICES2_PPI;
+typedef struct _EDKII_PEI_MP_SERVICES2_PPI EDKII_PEI_MP_SERVICES2_PPI;
 
 /**
   Get the number of CPU's.
@@ -34,12 +34,12 @@ typedef struct _EDKII_PEI_MP_SERVICES2_PPI  EDKII_PEI_MP_SERVICES2_PPI;
                                   NumberOfEnabledProcessors is NULL.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EDKII_PEI_MP_SERVICES_GET_NUMBER_OF_PROCESSORS) (
-  IN  EDKII_PEI_MP_SERVICES2_PPI     *This,
-  OUT UINTN                          *NumberOfProcessors,
-  OUT UINTN                          *NumberOfEnabledProcessors
-  );
+  EFI_STATUS
+(EFIAPI *EDKII_PEI_MP_SERVICES_GET_NUMBER_OF_PROCESSORS)(
+                                                         IN  EDKII_PEI_MP_SERVICES2_PPI     *This,
+                                                         OUT UINTN                          *NumberOfProcessors,
+                                                         OUT UINTN                          *NumberOfEnabledProcessors
+                                                         );
 
 /**
   Get information on a specific CPU.
@@ -56,12 +56,12 @@ EFI_STATUS
                                   ProcessorNumber does not exist in the platform.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EDKII_PEI_MP_SERVICES_GET_PROCESSOR_INFO) (
-  IN  EDKII_PEI_MP_SERVICES2_PPI     *This,
-  IN  UINTN                          ProcessorNumber,
-  OUT EFI_PROCESSOR_INFORMATION     *ProcessorInfoBuffer
-  );
+  EFI_STATUS
+(EFIAPI *EDKII_PEI_MP_SERVICES_GET_PROCESSOR_INFO)(
+                                                   IN  EDKII_PEI_MP_SERVICES2_PPI     *This,
+                                                   IN  UINTN                          ProcessorNumber,
+                                                   OUT EFI_PROCESSOR_INFORMATION     *ProcessorInfoBuffer
+                                                   );
 
 /**
   Activate all of the application proessors.
@@ -96,14 +96,14 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER   Procedure is NULL.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EDKII_PEI_MP_SERVICES_STARTUP_ALL_APS) (
-  IN  EDKII_PEI_MP_SERVICES2_PPI     *This,
-  IN  EFI_AP_PROCEDURE               Procedure,
-  IN  BOOLEAN                        SingleThread,
-  IN  UINTN                          TimeoutInMicroSeconds,
-  IN  VOID                           *ProcedureArgument      OPTIONAL
-  );
+  EFI_STATUS
+(EFIAPI *EDKII_PEI_MP_SERVICES_STARTUP_ALL_APS)(
+                                                IN  EDKII_PEI_MP_SERVICES2_PPI     *This,
+                                                IN  EFI_AP_PROCEDURE               Procedure,
+                                                IN  BOOLEAN                        SingleThread,
+                                                IN  UINTN                          TimeoutInMicroSeconds,
+                                                IN  VOID                           *ProcedureArgument      OPTIONAL
+                                                );
 
 /**
   Activate a specific application processor.
@@ -138,14 +138,14 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER   Procedure is NULL.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EDKII_PEI_MP_SERVICES_STARTUP_THIS_AP) (
-  IN  EDKII_PEI_MP_SERVICES2_PPI     *This,
-  IN  EFI_AP_PROCEDURE               Procedure,
-  IN  UINTN                          ProcessorNumber,
-  IN  UINTN                          TimeoutInMicroseconds,
-  IN  VOID                           *ProcedureArgument      OPTIONAL
-  );
+  EFI_STATUS
+(EFIAPI *EDKII_PEI_MP_SERVICES_STARTUP_THIS_AP)(
+                                                IN  EDKII_PEI_MP_SERVICES2_PPI     *This,
+                                                IN  EFI_AP_PROCEDURE               Procedure,
+                                                IN  UINTN                          ProcessorNumber,
+                                                IN  UINTN                          TimeoutInMicroseconds,
+                                                IN  VOID                           *ProcedureArgument      OPTIONAL
+                                                );
 
 /**
   Switch the boot strap processor.
@@ -170,12 +170,12 @@ EFI_STATUS
   @retval EFI_NOT_READY           The specified AP is busy.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EDKII_PEI_MP_SERVICES_SWITCH_BSP) (
-  IN  EDKII_PEI_MP_SERVICES2_PPI     *This,
-  IN  UINTN                          ProcessorNumber,
-  IN  BOOLEAN                        EnableOldBSP
-  );
+  EFI_STATUS
+(EFIAPI *EDKII_PEI_MP_SERVICES_SWITCH_BSP)(
+                                           IN  EDKII_PEI_MP_SERVICES2_PPI     *This,
+                                           IN  UINTN                          ProcessorNumber,
+                                           IN  BOOLEAN                        EnableOldBSP
+                                           );
 
 /**
   Enable or disable an application processor.
@@ -204,13 +204,13 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER   ProcessorNumber specifies the BSP.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EDKII_PEI_MP_SERVICES_ENABLEDISABLEAP) (
-  IN  EDKII_PEI_MP_SERVICES2_PPI     *This,
-  IN  UINTN                          ProcessorNumber,
-  IN  BOOLEAN                        EnableAP,
-  IN  UINT32                         *HealthFlag      OPTIONAL
-  );
+  EFI_STATUS
+(EFIAPI *EDKII_PEI_MP_SERVICES_ENABLEDISABLEAP)(
+                                                IN  EDKII_PEI_MP_SERVICES2_PPI     *This,
+                                                IN  UINTN                          ProcessorNumber,
+                                                IN  BOOLEAN                        EnableAP,
+                                                IN  UINT32                         *HealthFlag      OPTIONAL
+                                                );
 
 /**
   Identify the currently executing processor.
@@ -226,12 +226,11 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER   ProcessorNumber is NULL.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EDKII_PEI_MP_SERVICES_WHOAMI) (
-  IN  EDKII_PEI_MP_SERVICES2_PPI     *This,
-  OUT UINTN                          *ProcessorNumber
-  );
-
+  EFI_STATUS
+(EFIAPI *EDKII_PEI_MP_SERVICES_WHOAMI)(
+                                       IN  EDKII_PEI_MP_SERVICES2_PPI     *This,
+                                       OUT UINTN                          *ProcessorNumber
+                                       );
 
 /**
   Activate all of the application proessors.
@@ -255,25 +254,25 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER   Procedure is NULL.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EDKII_PEI_MP_SERVICES_STARTUP_ALL_CPUS) (
-  IN  EDKII_PEI_MP_SERVICES2_PPI     *This,
-  IN  EFI_AP_PROCEDURE               Procedure,
-  IN  UINTN                          TimeoutInMicroSeconds,
-  IN  VOID                           *ProcedureArgument      OPTIONAL
-  );
+  EFI_STATUS
+(EFIAPI *EDKII_PEI_MP_SERVICES_STARTUP_ALL_CPUS)(
+                                                 IN  EDKII_PEI_MP_SERVICES2_PPI     *This,
+                                                 IN  EFI_AP_PROCEDURE               Procedure,
+                                                 IN  UINTN                          TimeoutInMicroSeconds,
+                                                 IN  VOID                           *ProcedureArgument      OPTIONAL
+                                                 );
 
 struct _EDKII_PEI_MP_SERVICES2_PPI {
-  EDKII_PEI_MP_SERVICES_GET_NUMBER_OF_PROCESSORS  GetNumberOfProcessors;
-  EDKII_PEI_MP_SERVICES_GET_PROCESSOR_INFO        GetProcessorInfo;
-  EDKII_PEI_MP_SERVICES_STARTUP_ALL_APS           StartupAllAPs;
-  EDKII_PEI_MP_SERVICES_STARTUP_THIS_AP           StartupThisAP;
-  EDKII_PEI_MP_SERVICES_SWITCH_BSP                SwitchBSP;
-  EDKII_PEI_MP_SERVICES_ENABLEDISABLEAP           EnableDisableAP;
-  EDKII_PEI_MP_SERVICES_WHOAMI                    WhoAmI;
-  EDKII_PEI_MP_SERVICES_STARTUP_ALL_CPUS          StartupAllCPUs;
+  EDKII_PEI_MP_SERVICES_GET_NUMBER_OF_PROCESSORS    GetNumberOfProcessors;
+  EDKII_PEI_MP_SERVICES_GET_PROCESSOR_INFO          GetProcessorInfo;
+  EDKII_PEI_MP_SERVICES_STARTUP_ALL_APS             StartupAllAPs;
+  EDKII_PEI_MP_SERVICES_STARTUP_THIS_AP             StartupThisAP;
+  EDKII_PEI_MP_SERVICES_SWITCH_BSP                  SwitchBSP;
+  EDKII_PEI_MP_SERVICES_ENABLEDISABLEAP             EnableDisableAP;
+  EDKII_PEI_MP_SERVICES_WHOAMI                      WhoAmI;
+  EDKII_PEI_MP_SERVICES_STARTUP_ALL_CPUS            StartupAllCPUs;
 };
 
-extern EFI_GUID gEdkiiPeiMpServices2PpiGuid;
+extern EFI_GUID  gEdkiiPeiMpServices2PpiGuid;
 
 #endif

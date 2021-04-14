@@ -154,9 +154,9 @@ SmmRegisterExceptionHandler (
   This function is called after return from SMI handlers.
 **/
 VOID
-SmmCpuUpdate (
-  VOID
-  );
+  SmmCpuUpdate (
+                VOID
+                );
 
 /**
   Initialize SMM CPU Services.

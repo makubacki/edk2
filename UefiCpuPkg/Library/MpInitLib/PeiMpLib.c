@@ -29,11 +29,10 @@ NotifyOnS3SmmInitDonePpi (
   IN  VOID                                          *InvokePpi
   );
 
-
 //
 // Global function
 //
-EFI_PEI_NOTIFY_DESCRIPTOR        mS3SmmInitDoneNotifyDesc = {
+EFI_PEI_NOTIFY_DESCRIPTOR  mS3SmmInitDoneNotifyDesc = {
   EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST,
   &gEdkiiS3SmmInitDoneGuid,
   NotifyOnS3SmmInitDonePpi
@@ -57,7 +56,7 @@ NotifyOnS3SmmInitDonePpi (
   IN  VOID                                          *InvokePpi
   )
 {
-  CPU_MP_DATA     *CpuMpData;
+  CPU_MP_DATA  *CpuMpData;
 
   CpuMpData = GetCpuMpData ();
 
@@ -73,7 +72,6 @@ NotifyOnS3SmmInitDonePpi (
 
   return EFI_SUCCESS;
 }
-
 
 /**
   Enable Debug Agent to support source debugging on AP function.
@@ -110,6 +108,7 @@ GetCpuMpData (
     AsmReadIdtr (&Idtr);
     CpuMpData = (CPU_MP_DATA *) (Idtr.Base + Idtr.Limit + 1);
   }
+
   return CpuMpData;
 }
 
@@ -123,16 +122,17 @@ SaveCpuMpData (
   IN CPU_MP_DATA   *CpuMpData
   )
 {
-  UINT64           Data64;
+  UINT64  Data64;
+
   //
   // Build location of CPU MP DATA buffer in HOB
   //
   Data64 = (UINT64) (UINTN) CpuMpData;
   BuildGuidDataHob (
-    &mCpuInitMpLibHobGuid,
-    (VOID *) &Data64,
-    sizeof (UINT64)
-    );
+                    &mCpuInitMpLibHobGuid,
+                    (VOID *) &Data64,
+                    sizeof (UINT64)
+                    );
 }
 
 /**
@@ -150,11 +150,11 @@ CheckOverlapWithAllocatedBuffer (
   IN UINT64               WakeupBufferEnd
   )
 {
-  EFI_PEI_HOB_POINTERS      Hob;
-  EFI_HOB_MEMORY_ALLOCATION *MemoryHob;
-  BOOLEAN                   Overlapped;
-  UINT64                    MemoryStart;
-  UINT64                    MemoryEnd;
+  EFI_PEI_HOB_POINTERS       Hob;
+  EFI_HOB_MEMORY_ALLOCATION  *MemoryHob;
+  BOOLEAN                    Overlapped;
+  UINT64                     MemoryStart;
+  UINT64                     MemoryEnd;
 
   Overlapped = FALSE;
   //
@@ -174,8 +174,10 @@ CheckOverlapWithAllocatedBuffer (
         break;
       }
     }
+
     Hob.Raw = GET_NEXT_HOB (Hob);
   }
+
   return Overlapped;
 }
 
@@ -192,9 +194,9 @@ GetWakeupBuffer (
   IN UINTN                WakeupBufferSize
   )
 {
-  EFI_PEI_HOB_POINTERS    Hob;
-  UINT64                  WakeupBufferStart;
-  UINT64                  WakeupBufferEnd;
+  EFI_PEI_HOB_POINTERS  Hob;
+  UINT64                WakeupBufferStart;
+  UINT64                WakeupBufferEnd;
 
   WakeupBufferSize = (WakeupBufferSize + SIZE_4KB - 1) & ~(SIZE_4KB - 1);
 
@@ -214,8 +216,8 @@ GetWakeupBuffer (
             (EFI_RESOURCE_ATTRIBUTE_READ_PROTECTED |
              EFI_RESOURCE_ATTRIBUTE_WRITE_PROTECTED |
              EFI_RESOURCE_ATTRIBUTE_EXECUTION_PROTECTED
-             )) == 0)
-           ) {
+            )) == 0)
+          ) {
         //
         // Need memory under 1MB to be collected here
         //
@@ -226,6 +228,7 @@ GetWakeupBuffer (
           //
           WakeupBufferEnd = BASE_1MB;
         }
+
         while (WakeupBufferEnd > WakeupBufferSize) {
           //
           // Wakeup buffer should be aligned on 4KB
@@ -234,6 +237,7 @@ GetWakeupBuffer (
           if (WakeupBufferStart < Hob.ResourceDescriptor->PhysicalStart) {
             break;
           }
+
           if (CheckOverlapWithAllocatedBuffer (WakeupBufferStart, WakeupBufferEnd)) {
             //
             // If this range is overlapped with existing allocated buffer, skip it
@@ -242,19 +246,23 @@ GetWakeupBuffer (
             WakeupBufferEnd -= WakeupBufferSize;
             continue;
           }
-          DEBUG ((DEBUG_INFO, "WakeupBufferStart = %x, WakeupBufferSize = %x\n",
-                               WakeupBufferStart, WakeupBufferSize));
-          return (UINTN)WakeupBufferStart;
+
+          DEBUG (
+                 (DEBUG_INFO, "WakeupBufferStart = %x, WakeupBufferSize = %x\n",
+                  WakeupBufferStart, WakeupBufferSize)
+                 );
+          return (UINTN) WakeupBufferStart;
         }
       }
     }
+
     //
     // Find the next HOB
     //
     Hob.Raw = GET_NEXT_HOB (Hob);
   }
 
-  return (UINTN) -1;
+  return (UINTN) - 1;
 }
 
 /**
@@ -322,14 +330,14 @@ BuildMicrocodeCacheHob (
   IN CPU_MP_DATA    *CpuMpData
   )
 {
-  EDKII_MICROCODE_PATCH_HOB    *MicrocodeHob;
-  UINTN                        HobDataLength;
-  UINT32                       Index;
+  EDKII_MICROCODE_PATCH_HOB  *MicrocodeHob;
+  UINTN                      HobDataLength;
+  UINT32                     Index;
 
   HobDataLength = sizeof (EDKII_MICROCODE_PATCH_HOB) +
                   sizeof (UINT64) * CpuMpData->CpuCount;
 
-  MicrocodeHob  = AllocatePool (HobDataLength);
+  MicrocodeHob = AllocatePool (HobDataLength);
   if (MicrocodeHob == NULL) {
     ASSERT (FALSE);
     return;
@@ -355,10 +363,10 @@ BuildMicrocodeCacheHob (
   }
 
   BuildGuidDataHob (
-    &gEdkiiMicrocodePatchHobGuid,
-    MicrocodeHob,
-    HobDataLength
-    );
+                    &gEdkiiMicrocodePatchHobGuid,
+                    MicrocodeHob,
+                    HobDataLength
+                    );
 
   return;
 }
@@ -476,14 +484,14 @@ MpInitLibStartupAllAPs (
   }
 
   return StartupAllCPUsWorker (
-           Procedure,
-           SingleThread,
-           TRUE,
-           NULL,
-           TimeoutInMicroseconds,
-           ProcedureArgument,
-           FailedCpuList
-           );
+                               Procedure,
+                               SingleThread,
+                               TRUE,
+                               NULL,
+                               TimeoutInMicroseconds,
+                               ProcedureArgument,
+                               FailedCpuList
+                               );
 }
 
 /**
@@ -573,13 +581,13 @@ MpInitLibStartupThisAP (
   }
 
   return StartupThisAPWorker (
-           Procedure,
-           ProcessorNumber,
-           NULL,
-           TimeoutInMicroseconds,
-           ProcedureArgument,
-           Finished
-           );
+                              Procedure,
+                              ProcessorNumber,
+                              NULL,
+                              TimeoutInMicroseconds,
+                              ProcedureArgument,
+                              Finished
+                              );
 }
 
 /**
@@ -675,20 +683,20 @@ PlatformShadowMicrocode (
   IN OUT CPU_MP_DATA             *CpuMpData
   )
 {
-  EFI_STATUS                         Status;
-  EDKII_PEI_SHADOW_MICROCODE_PPI     *ShadowMicrocodePpi;
-  UINTN                              CpuCount;
-  EDKII_PEI_MICROCODE_CPU_ID         *MicrocodeCpuId;
-  UINTN                              Index;
-  UINTN                              BufferSize;
-  VOID                               *Buffer;
+  EFI_STATUS                      Status;
+  EDKII_PEI_SHADOW_MICROCODE_PPI  *ShadowMicrocodePpi;
+  UINTN                           CpuCount;
+  EDKII_PEI_MICROCODE_CPU_ID      *MicrocodeCpuId;
+  UINTN                           Index;
+  UINTN                           BufferSize;
+  VOID                            *Buffer;
 
   Status = PeiServicesLocatePpi (
-             &gEdkiiPeiShadowMicrocodePpiGuid,
-             0,
-             NULL,
-             (VOID **) &ShadowMicrocodePpi
-             );
+                                 &gEdkiiPeiShadowMicrocodePpiGuid,
+                                 0,
+                                 NULL,
+                                 (VOID **) &ShadowMicrocodePpi
+                                 );
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
@@ -701,16 +709,16 @@ PlatformShadowMicrocode (
 
   for (Index = 0; Index < CpuMpData->CpuCount; Index++) {
     MicrocodeCpuId[Index].ProcessorSignature = CpuMpData->CpuData[Index].ProcessorSignature;
-    MicrocodeCpuId[Index].PlatformId         = CpuMpData->CpuData[Index].PlatformId;
+    MicrocodeCpuId[Index].PlatformId = CpuMpData->CpuData[Index].PlatformId;
   }
 
   Status = ShadowMicrocodePpi->ShadowMicrocode (
-             ShadowMicrocodePpi,
-             CpuCount,
-             MicrocodeCpuId,
-             &BufferSize,
-             &Buffer
-             );
+                                                ShadowMicrocodePpi,
+                                                CpuCount,
+                                                MicrocodeCpuId,
+                                                &BufferSize,
+                                                &Buffer
+                                                );
   FreePool (MicrocodeCpuId);
   if (EFI_ERROR (Status)) {
     return EFI_NOT_FOUND;
@@ -719,11 +727,13 @@ PlatformShadowMicrocode (
   CpuMpData->MicrocodePatchAddress    = (UINTN) Buffer;
   CpuMpData->MicrocodePatchRegionSize = BufferSize;
 
-  DEBUG ((
-    DEBUG_INFO,
-    "%a: Required microcode patches have been loaded at 0x%lx, with size 0x%lx.\n",
-    __FUNCTION__, CpuMpData->MicrocodePatchAddress, CpuMpData->MicrocodePatchRegionSize
-    ));
+  DEBUG (
+         (
+          DEBUG_INFO,
+          "%a: Required microcode patches have been loaded at 0x%lx, with size 0x%lx.\n",
+          __FUNCTION__, CpuMpData->MicrocodePatchAddress, CpuMpData->MicrocodePatchRegionSize
+         )
+         );
 
   return EFI_SUCCESS;
 }

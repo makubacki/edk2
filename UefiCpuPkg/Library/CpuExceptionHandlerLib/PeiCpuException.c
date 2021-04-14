@@ -13,11 +13,11 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/MemoryAllocationLib.h>
 #include <Library/PcdLib.h>
 
-CONST UINTN    mDoFarReturnFlag  = 0;
+CONST UINTN  mDoFarReturnFlag = 0;
 
 typedef struct {
-  UINT8                   ExceptionStubHeader[HOOKAFTER_STUB_SIZE];
-  EXCEPTION_HANDLER_DATA  *ExceptionHandlerData;
+  UINT8                     ExceptionStubHeader[HOOKAFTER_STUB_SIZE];
+  EXCEPTION_HANDLER_DATA    *ExceptionHandlerData;
 } EXCEPTION0_STUB_HEADER;
 
 /**
@@ -34,14 +34,14 @@ GetExceptionHandlerData (
   VOID
   )
 {
-  IA32_DESCRIPTOR                  IdtDescriptor;
-  IA32_IDT_GATE_DESCRIPTOR         *IdtTable;
-  EXCEPTION0_STUB_HEADER           *Exception0StubHeader;
+  IA32_DESCRIPTOR           IdtDescriptor;
+  IA32_IDT_GATE_DESCRIPTOR  *IdtTable;
+  EXCEPTION0_STUB_HEADER    *Exception0StubHeader;
 
   AsmReadIdtr (&IdtDescriptor);
-  IdtTable = (IA32_IDT_GATE_DESCRIPTOR *)IdtDescriptor.Base;
+  IdtTable = (IA32_IDT_GATE_DESCRIPTOR *) IdtDescriptor.Base;
 
-  Exception0StubHeader = (EXCEPTION0_STUB_HEADER *)ArchGetIdtHandler (&IdtTable[0]);
+  Exception0StubHeader = (EXCEPTION0_STUB_HEADER *) ArchGetIdtHandler (&IdtTable[0]);
   return Exception0StubHeader->ExceptionHandlerData;
 }
 
@@ -59,25 +59,26 @@ SetExceptionHandlerData (
   IN EXCEPTION_HANDLER_DATA        *ExceptionHandlerData
   )
 {
-  EXCEPTION0_STUB_HEADER           *Exception0StubHeader;
-  IA32_DESCRIPTOR                  IdtDescriptor;
-  IA32_IDT_GATE_DESCRIPTOR         *IdtTable;
+  EXCEPTION0_STUB_HEADER    *Exception0StubHeader;
+  IA32_DESCRIPTOR           IdtDescriptor;
+  IA32_IDT_GATE_DESCRIPTOR  *IdtTable;
+
   //
   // Duplicate the exception #0 stub header in pool and cache the ExceptionHandlerData just after the stub header.
   // So AP can get the ExceptionHandlerData by reading the IDT[0].
   //
   AsmReadIdtr (&IdtDescriptor);
-  IdtTable = (IA32_IDT_GATE_DESCRIPTOR *)IdtDescriptor.Base;
+  IdtTable = (IA32_IDT_GATE_DESCRIPTOR *) IdtDescriptor.Base;
 
   Exception0StubHeader = AllocatePool (sizeof (*Exception0StubHeader));
   ASSERT (Exception0StubHeader != NULL);
   CopyMem (
-    Exception0StubHeader->ExceptionStubHeader,
-    (VOID *)ArchGetIdtHandler (&IdtTable[0]),
-    sizeof (Exception0StubHeader->ExceptionStubHeader)
-    );
+           Exception0StubHeader->ExceptionStubHeader,
+           (VOID *) ArchGetIdtHandler (&IdtTable[0]),
+           sizeof (Exception0StubHeader->ExceptionStubHeader)
+           );
   Exception0StubHeader->ExceptionHandlerData = ExceptionHandlerData;
-  ArchUpdateIdtEntry (&IdtTable[0], (UINTN)Exception0StubHeader->ExceptionStubHeader);
+  ArchUpdateIdtEntry (&IdtTable[0], (UINTN) Exception0StubHeader->ExceptionStubHeader);
 }
 
 /**
@@ -123,16 +124,16 @@ InitializeCpuExceptionHandlers (
   IN EFI_VECTOR_HANDOFF_INFO       *VectorInfo OPTIONAL
   )
 {
-  EFI_STATUS                       Status;
-  EXCEPTION_HANDLER_DATA           *ExceptionHandlerData;
-  RESERVED_VECTORS_DATA            *ReservedVectors;
+  EFI_STATUS              Status;
+  EXCEPTION_HANDLER_DATA  *ExceptionHandlerData;
+  RESERVED_VECTORS_DATA   *ReservedVectors;
 
   ReservedVectors = AllocatePool (sizeof (RESERVED_VECTORS_DATA) * CPU_EXCEPTION_NUM);
   ASSERT (ReservedVectors != NULL);
 
   ExceptionHandlerData = AllocatePool (sizeof (EXCEPTION_HANDLER_DATA));
   ASSERT (ExceptionHandlerData != NULL);
-  ExceptionHandlerData->ReservedVectors          = ReservedVectors;
+  ExceptionHandlerData->ReservedVectors = ReservedVectors;
   ExceptionHandlerData->ExternalInterruptHandler = NULL;
   InitializeSpinLock (&ExceptionHandlerData->DisplayMessageSpinLock);
 
@@ -234,7 +235,7 @@ InitializeCpuExceptionHandlersEx (
   IN CPU_EXCEPTION_INIT_DATA            *InitData OPTIONAL
   )
 {
-  EFI_STATUS                        Status;
+  EFI_STATUS  Status;
 
   //
   // To avoid repeat initialization of default handlers, the caller should pass
@@ -258,5 +259,5 @@ InitializeCpuExceptionHandlersEx (
     }
   }
 
-  return  Status;
+  return Status;
 }

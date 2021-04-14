@@ -18,7 +18,7 @@ EFI_HANDLE  mHandle = NULL;
 //
 // CPU I/O 2 Protocol instance
 //
-EFI_CPU_IO2_PROTOCOL mCpuIo2 = {
+EFI_CPU_IO2_PROTOCOL  mCpuIo2 = {
   {
     CpuMemoryServiceRead,
     CpuMemoryServiceWrite
@@ -32,7 +32,7 @@ EFI_CPU_IO2_PROTOCOL mCpuIo2 = {
 //
 // Lookup table for increment values based on transfer widths
 //
-UINT8 mInStride[] = {
+UINT8  mInStride[] = {
   1, // EfiCpuIoWidthUint8
   2, // EfiCpuIoWidthUint16
   4, // EfiCpuIoWidthUint32
@@ -50,7 +50,7 @@ UINT8 mInStride[] = {
 //
 // Lookup table for increment values based on transfer widths
 //
-UINT8 mOutStride[] = {
+UINT8  mOutStride[] = {
   1, // EfiCpuIoWidthUint8
   2, // EfiCpuIoWidthUint16
   4, // EfiCpuIoWidthUint32
@@ -112,7 +112,7 @@ CpuIoCheckParameter (
   //
   // Check to see if Width is in the valid range
   //
-  if ((UINT32)Width >= EfiCpuIoWidthMaximum) {
+  if ((UINT32) Width >= EfiCpuIoWidthMaximum) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -135,7 +135,7 @@ CpuIoCheckParameter (
   //
   // Check to see if Address is aligned
   //
-  if ((Address & ((UINT64)mInStride[Width] - 1)) != 0) {
+  if ((Address & ((UINT64) mInStride[Width] - 1)) != 0) {
     return EFI_UNSUPPORTED;
   }
 
@@ -145,7 +145,7 @@ CpuIoCheckParameter (
   // Address + Size * Count.  If the following condition is met, then the transfer
   // is not supported.
   //
-  //    Address + Size * Count > (MmioOperation ? MAX_ADDRESS : MAX_IO_PORT_ADDRESS) + 1
+  // Address + Size * Count > (MmioOperation ? MAX_ADDRESS : MAX_IO_PORT_ADDRESS) + 1
   //
   // Since MAX_ADDRESS can be the maximum integer value supported by the CPU and Count
   // can also be the maximum integer value supported by the CPU, this range
@@ -164,6 +164,7 @@ CpuIoCheckParameter (
     if (MaxCount < (Count - 1)) {
       return EFI_UNSUPPORTED;
     }
+
     if (Address > LShiftU64 (MaxCount - Count + 1, Width)) {
       return EFI_UNSUPPORTED;
     }
@@ -173,7 +174,7 @@ CpuIoCheckParameter (
   // Check to see if Buffer is aligned
   // (IA-32 allows UINT64 and INT64 data types to be 32-bit aligned.)
   //
-  if (((UINTN)Buffer & ((MIN (sizeof (UINTN), mInStride[Width])  - 1))) != 0) {
+  if (((UINTN) Buffer & ((MIN (sizeof (UINTN), mInStride[Width])  - 1))) != 0) {
     return EFI_UNSUPPORTED;
   }
 
@@ -243,20 +244,21 @@ CpuMemoryServiceRead (
   //
   // Select loop based on the width of the transfer
   //
-  InStride = mInStride[Width];
+  InStride  = mInStride[Width];
   OutStride = mOutStride[Width];
   OperationWidth = (EFI_CPU_IO_PROTOCOL_WIDTH) (Width & 0x03);
   for (Uint8Buffer = Buffer; Count > 0; Address += InStride, Uint8Buffer += OutStride, Count--) {
     if (OperationWidth == EfiCpuIoWidthUint8) {
-      *Uint8Buffer = MmioRead8 ((UINTN)Address);
+      *Uint8Buffer = MmioRead8 ((UINTN) Address);
     } else if (OperationWidth == EfiCpuIoWidthUint16) {
-      *((UINT16 *)Uint8Buffer) = MmioRead16 ((UINTN)Address);
+      *((UINT16 *) Uint8Buffer) = MmioRead16 ((UINTN) Address);
     } else if (OperationWidth == EfiCpuIoWidthUint32) {
-      *((UINT32 *)Uint8Buffer) = MmioRead32 ((UINTN)Address);
+      *((UINT32 *) Uint8Buffer) = MmioRead32 ((UINTN) Address);
     } else if (OperationWidth == EfiCpuIoWidthUint64) {
-      *((UINT64 *)Uint8Buffer) = MmioRead64 ((UINTN)Address);
+      *((UINT64 *) Uint8Buffer) = MmioRead64 ((UINTN) Address);
     }
   }
+
   return EFI_SUCCESS;
 }
 
@@ -323,20 +325,21 @@ CpuMemoryServiceWrite (
   //
   // Select loop based on the width of the transfer
   //
-  InStride = mInStride[Width];
+  InStride  = mInStride[Width];
   OutStride = mOutStride[Width];
   OperationWidth = (EFI_CPU_IO_PROTOCOL_WIDTH) (Width & 0x03);
   for (Uint8Buffer = Buffer; Count > 0; Address += InStride, Uint8Buffer += OutStride, Count--) {
     if (OperationWidth == EfiCpuIoWidthUint8) {
-      MmioWrite8 ((UINTN)Address, *Uint8Buffer);
+      MmioWrite8 ((UINTN) Address, *Uint8Buffer);
     } else if (OperationWidth == EfiCpuIoWidthUint16) {
-      MmioWrite16 ((UINTN)Address, *((UINT16 *)Uint8Buffer));
+      MmioWrite16 ((UINTN) Address, *((UINT16 *) Uint8Buffer));
     } else if (OperationWidth == EfiCpuIoWidthUint32) {
-      MmioWrite32 ((UINTN)Address, *((UINT32 *)Uint8Buffer));
+      MmioWrite32 ((UINTN) Address, *((UINT32 *) Uint8Buffer));
     } else if (OperationWidth == EfiCpuIoWidthUint64) {
-      MmioWrite64 ((UINTN)Address, *((UINT64 *)Uint8Buffer));
+      MmioWrite64 ((UINTN) Address, *((UINT64 *) Uint8Buffer));
     }
   }
+
   return EFI_SUCCESS;
 }
 
@@ -403,7 +406,7 @@ CpuIoServiceRead (
   //
   // Select loop based on the width of the transfer
   //
-  InStride = mInStride[Width];
+  InStride  = mInStride[Width];
   OutStride = mOutStride[Width];
   OperationWidth = (EFI_CPU_IO_PROTOCOL_WIDTH) (Width & 0x03);
 
@@ -412,32 +415,32 @@ CpuIoServiceRead (
   //
   if (InStride == 0) {
     switch (OperationWidth) {
-    case EfiCpuIoWidthUint8:
-      IoReadFifo8 ((UINTN)Address, Count, Buffer);
-      return EFI_SUCCESS;
-    case EfiCpuIoWidthUint16:
-      IoReadFifo16 ((UINTN)Address, Count, Buffer);
-      return EFI_SUCCESS;
-    case EfiCpuIoWidthUint32:
-      IoReadFifo32 ((UINTN)Address, Count, Buffer);
-      return EFI_SUCCESS;
-    default:
-      //
-      // The CpuIoCheckParameter call above will ensure that this
-      // path is not taken.
-      //
-      ASSERT (FALSE);
-      break;
+      case EfiCpuIoWidthUint8:
+        IoReadFifo8 ((UINTN) Address, Count, Buffer);
+        return EFI_SUCCESS;
+      case EfiCpuIoWidthUint16:
+        IoReadFifo16 ((UINTN) Address, Count, Buffer);
+        return EFI_SUCCESS;
+      case EfiCpuIoWidthUint32:
+        IoReadFifo32 ((UINTN) Address, Count, Buffer);
+        return EFI_SUCCESS;
+      default:
+        //
+        // The CpuIoCheckParameter call above will ensure that this
+        // path is not taken.
+        //
+        ASSERT (FALSE);
+        break;
     }
   }
 
   for (Uint8Buffer = Buffer; Count > 0; Address += InStride, Uint8Buffer += OutStride, Count--) {
     if (OperationWidth == EfiCpuIoWidthUint8) {
-      *Uint8Buffer = IoRead8 ((UINTN)Address);
+      *Uint8Buffer = IoRead8 ((UINTN) Address);
     } else if (OperationWidth == EfiCpuIoWidthUint16) {
-      *((UINT16 *)Uint8Buffer) = IoRead16 ((UINTN)Address);
+      *((UINT16 *) Uint8Buffer) = IoRead16 ((UINTN) Address);
     } else if (OperationWidth == EfiCpuIoWidthUint32) {
-      *((UINT32 *)Uint8Buffer) = IoRead32 ((UINTN)Address);
+      *((UINT32 *) Uint8Buffer) = IoRead32 ((UINTN) Address);
     }
   }
 
@@ -510,7 +513,7 @@ CpuIoServiceWrite (
   //
   // Select loop based on the width of the transfer
   //
-  InStride = mInStride[Width];
+  InStride  = mInStride[Width];
   OutStride = mOutStride[Width];
   OperationWidth = (EFI_CPU_IO_PROTOCOL_WIDTH) (Width & 0x03);
 
@@ -519,32 +522,32 @@ CpuIoServiceWrite (
   //
   if (InStride == 0) {
     switch (OperationWidth) {
-    case EfiCpuIoWidthUint8:
-      IoWriteFifo8 ((UINTN)Address, Count, Buffer);
-      return EFI_SUCCESS;
-    case EfiCpuIoWidthUint16:
-      IoWriteFifo16 ((UINTN)Address, Count, Buffer);
-      return EFI_SUCCESS;
-    case EfiCpuIoWidthUint32:
-      IoWriteFifo32 ((UINTN)Address, Count, Buffer);
-      return EFI_SUCCESS;
-    default:
-      //
-      // The CpuIoCheckParameter call above will ensure that this
-      // path is not taken.
-      //
-      ASSERT (FALSE);
-      break;
+      case EfiCpuIoWidthUint8:
+        IoWriteFifo8 ((UINTN) Address, Count, Buffer);
+        return EFI_SUCCESS;
+      case EfiCpuIoWidthUint16:
+        IoWriteFifo16 ((UINTN) Address, Count, Buffer);
+        return EFI_SUCCESS;
+      case EfiCpuIoWidthUint32:
+        IoWriteFifo32 ((UINTN) Address, Count, Buffer);
+        return EFI_SUCCESS;
+      default:
+        //
+        // The CpuIoCheckParameter call above will ensure that this
+        // path is not taken.
+        //
+        ASSERT (FALSE);
+        break;
     }
   }
 
-  for (Uint8Buffer = (UINT8 *)Buffer; Count > 0; Address += InStride, Uint8Buffer += OutStride, Count--) {
+  for (Uint8Buffer = (UINT8 *) Buffer; Count > 0; Address += InStride, Uint8Buffer += OutStride, Count--) {
     if (OperationWidth == EfiCpuIoWidthUint8) {
-      IoWrite8 ((UINTN)Address, *Uint8Buffer);
+      IoWrite8 ((UINTN) Address, *Uint8Buffer);
     } else if (OperationWidth == EfiCpuIoWidthUint16) {
-      IoWrite16 ((UINTN)Address, *((UINT16 *)Uint8Buffer));
+      IoWrite16 ((UINTN) Address, *((UINT16 *) Uint8Buffer));
     } else if (OperationWidth == EfiCpuIoWidthUint32) {
-      IoWrite32 ((UINTN)Address, *((UINT32 *)Uint8Buffer));
+      IoWrite32 ((UINTN) Address, *((UINT32 *) Uint8Buffer));
     }
   }
 
@@ -568,14 +571,15 @@ CpuIo2Initialize (
   IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  EFI_STATUS Status;
+  EFI_STATUS  Status;
 
   ASSERT_PROTOCOL_ALREADY_INSTALLED (NULL, &gEfiCpuIo2ProtocolGuid);
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &mHandle,
-                  &gEfiCpuIo2ProtocolGuid, &mCpuIo2,
-                  NULL
-                  );
+                                                   &mHandle,
+                                                   &gEfiCpuIo2ProtocolGuid,
+                                                   &mCpuIo2,
+                                                   NULL
+                                                   );
   ASSERT_EFI_ERROR (Status);
 
   return Status;

@@ -13,7 +13,7 @@
 //
 // Global descriptor table (GDT) Template
 //
-STATIC GDT_ENTRIES mGdtTemplate = {
+STATIC GDT_ENTRIES  mGdtTemplate = {
   //
   // NULL_SEL
   //
@@ -136,11 +136,11 @@ InitGlobalDescriptorTable (
   //
   Memory = SIZE_4GB - 1;
   Status = gBS->AllocatePages (
-                  AllocateMaxAddress,
-                  EfiRuntimeServicesData,
-                  EFI_SIZE_TO_PAGES (sizeof (mGdtTemplate)),
-                  &Memory
-                  );
+                               AllocateMaxAddress,
+                               EfiRuntimeServicesData,
+                               EFI_SIZE_TO_PAGES (sizeof (mGdtTemplate)),
+                               &Memory
+                               );
   ASSERT_EFI_ERROR (Status);
   ASSERT ((Memory != 0) && (Memory < SIZE_4GB));
   Gdt = (GDT_ENTRIES *) (UINTN) Memory;
@@ -160,6 +160,6 @@ InitGlobalDescriptorTable (
   //
   // Update selector (segment) registers base on new GDT
   //
-  SetCodeSelector ((UINT16)CPU_CODE_SEL);
-  SetDataSelectors ((UINT16)CPU_DATA_SEL);
+  SetCodeSelector ((UINT16) CPU_CODE_SEL);
+  SetDataSelectors ((UINT16) CPU_DATA_SEL);
 }

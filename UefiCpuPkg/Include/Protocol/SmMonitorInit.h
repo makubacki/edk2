@@ -13,7 +13,7 @@
 #include <Register/Intel/StmApi.h>
 
 #define EFI_SM_MONITOR_INIT_PROTOCOL_GUID \
-    { 0x228f344d, 0xb3de, 0x43bb, 0xa4, 0xd7, 0xea, 0x20, 0xb, 0x1b, 0x14, 0x82}
+  { 0x228f344d, 0xb3de, 0x43bb, 0xa4, 0xd7, 0xea, 0x20, 0xb, 0x1b, 0x14, 0x82 }
 
 //
 // STM service
@@ -33,11 +33,11 @@
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_SM_MONITOR_LOAD_MONITOR) (
-  IN EFI_PHYSICAL_ADDRESS StmImage,
-  IN UINTN                StmImageSize
-  );
+  EFI_STATUS
+(EFIAPI *EFI_SM_MONITOR_LOAD_MONITOR)(
+                                      IN EFI_PHYSICAL_ADDRESS StmImage,
+                                      IN UINTN                StmImageSize
+                                      );
 
 /**
 
@@ -53,11 +53,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_SM_MONITOR_ADD_PI_RESOURCE) (
-  IN STM_RSC *ResourceList,
-  IN UINT32   NumEntries OPTIONAL
-  );
+  EFI_STATUS
+(EFIAPI *EFI_SM_MONITOR_ADD_PI_RESOURCE)(
+                                         IN STM_RSC *ResourceList,
+                                         IN UINT32   NumEntries OPTIONAL
+                                         );
 
 /**
 
@@ -73,11 +73,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_SM_MONITOR_DELETE_PI_RESOURCE) (
-  IN STM_RSC *ResourceList OPTIONAL,
-  IN UINT32   NumEntries OPTIONAL
-  );
+  EFI_STATUS
+(EFIAPI *EFI_SM_MONITOR_DELETE_PI_RESOURCE)(
+                                            IN STM_RSC *ResourceList OPTIONAL,
+                                            IN UINT32   NumEntries OPTIONAL
+                                            );
 
 /**
 
@@ -93,15 +93,15 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_SM_MONITOR_GET_PI_RESOURCE) (
-  OUT    STM_RSC *ResourceList,
-  IN OUT UINT32  *ResourceSize
-  );
+  EFI_STATUS
+(EFIAPI *EFI_SM_MONITOR_GET_PI_RESOURCE)(
+                                         OUT    STM_RSC *ResourceList,
+                                         IN OUT UINT32  *ResourceSize
+                                         );
 
 typedef UINT32 EFI_SM_MONITOR_STATE;
-#define EFI_SM_MONITOR_STATE_ENABLED     0x1
-#define EFI_SM_MONITOR_STATE_ACTIVATED   0x2
+#define EFI_SM_MONITOR_STATE_ENABLED    0x1
+#define EFI_SM_MONITOR_STATE_ACTIVATED  0x2
 
 /**
 
@@ -111,25 +111,25 @@ typedef UINT32 EFI_SM_MONITOR_STATE;
 
 **/
 typedef
-EFI_SM_MONITOR_STATE
-(EFIAPI *EFI_SM_MONITOR_GET_MONITOR_STATE) (
-  VOID
-  );
+  EFI_SM_MONITOR_STATE
+(EFIAPI *EFI_SM_MONITOR_GET_MONITOR_STATE)(
+                                           VOID
+                                           );
 
 typedef struct _EFI_SM_MONITOR_INIT_PROTOCOL {
   //
   // Valid at boot-time only
   //
-  EFI_SM_MONITOR_LOAD_MONITOR                      LoadMonitor;
-  EFI_SM_MONITOR_ADD_PI_RESOURCE                   AddPiResource;
-  EFI_SM_MONITOR_DELETE_PI_RESOURCE                DeletePiResource;
-  EFI_SM_MONITOR_GET_PI_RESOURCE                   GetPiResource;
+  EFI_SM_MONITOR_LOAD_MONITOR          LoadMonitor;
+  EFI_SM_MONITOR_ADD_PI_RESOURCE       AddPiResource;
+  EFI_SM_MONITOR_DELETE_PI_RESOURCE    DeletePiResource;
+  EFI_SM_MONITOR_GET_PI_RESOURCE       GetPiResource;
   //
   // Valid at runtime
   //
-  EFI_SM_MONITOR_GET_MONITOR_STATE                 GetMonitorState;
+  EFI_SM_MONITOR_GET_MONITOR_STATE     GetMonitorState;
 } EFI_SM_MONITOR_INIT_PROTOCOL;
 
-extern EFI_GUID gEfiSmMonitorInitProtocolGuid;
+extern EFI_GUID  gEfiSmMonitorInitProtocolGuid;
 
 #endif

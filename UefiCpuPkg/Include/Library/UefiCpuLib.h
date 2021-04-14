@@ -13,8 +13,6 @@
 #ifndef __UEFI_CPU_LIB_H__
 #define __UEFI_CPU_LIB_H__
 
-
-
 /**
   Initializes floating point units for requirement of UEFI specification.
 
@@ -27,8 +25,8 @@
 VOID
 EFIAPI
 InitializeFloatingPointUnits (
-  VOID
-  );
+                              VOID
+                              );
 
 /**
   Determine if the standard CPU signature is "AuthenticAMD".
@@ -40,7 +38,7 @@ InitializeFloatingPointUnits (
 BOOLEAN
 EFIAPI
 StandardSignatureIsAuthenticAMD (
-  VOID
-  );
+                                 VOID
+                                 );
 
 #endif

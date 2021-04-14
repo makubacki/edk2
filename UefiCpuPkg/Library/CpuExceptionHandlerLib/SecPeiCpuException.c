@@ -10,7 +10,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/VmgExitLib.h>
 #include "CpuExceptionCommon.h"
 
-CONST UINTN    mDoFarReturnFlag  = 0;
+CONST UINTN  mDoFarReturnFlag = 0;
 
 /**
   Common exception handler.
@@ -26,16 +26,16 @@ CommonExceptionHandler (
   )
 {
   if (ExceptionType == VC_EXCEPTION) {
-    EFI_STATUS  Status;
+  EFI_STATUS  Status;
     //
     // #VC needs to be handled immediately upon enabling exception handling
     // and therefore can't use the RegisterCpuInterruptHandler() interface
     // (which isn't supported under Sec and Pei anyway).
     //
     // Handle the #VC:
-    //   On EFI_SUCCESS - Exception has been handled, return
-    //   On other       - ExceptionType contains (possibly new) exception
-    //                    value
+    // On EFI_SUCCESS - Exception has been handled, return
+    // On other       - ExceptionType contains (possibly new) exception
+    // value
     //
     Status = VmgExitHandleVc (&ExceptionType, SystemContext);
     if (!EFI_ERROR (Status)) {
@@ -82,15 +82,15 @@ InitializeCpuExceptionHandlers (
   IN EFI_VECTOR_HANDOFF_INFO       *VectorInfo OPTIONAL
   )
 {
-  EFI_STATUS                       Status;
-  RESERVED_VECTORS_DATA            ReservedVectorData[CPU_EXCEPTION_NUM];
-  IA32_DESCRIPTOR                  IdtDescriptor;
-  UINTN                            IdtEntryCount;
-  UINT16                           CodeSegment;
-  EXCEPTION_HANDLER_TEMPLATE_MAP   TemplateMap;
-  IA32_IDT_GATE_DESCRIPTOR         *IdtTable;
-  UINTN                            Index;
-  UINTN                            InterruptHandler;
+  EFI_STATUS                      Status;
+  RESERVED_VECTORS_DATA           ReservedVectorData[CPU_EXCEPTION_NUM];
+  IA32_DESCRIPTOR                 IdtDescriptor;
+  UINTN                           IdtEntryCount;
+  UINT16                          CodeSegment;
+  EXCEPTION_HANDLER_TEMPLATE_MAP  TemplateMap;
+  IA32_IDT_GATE_DESCRIPTOR        *IdtTable;
+  UINTN                           Index;
+  UINTN                           InterruptHandler;
 
   if (VectorInfo != NULL) {
     SetMem ((VOID *) ReservedVectorData, sizeof (RESERVED_VECTORS_DATA) * CPU_EXCEPTION_NUM, 0xff);
@@ -99,6 +99,7 @@ InitializeCpuExceptionHandlers (
       return EFI_INVALID_PARAMETER;
     }
   }
+
   //
   // Read IDT descriptor and calculate IDT size
   //
@@ -110,14 +111,15 @@ InitializeCpuExceptionHandlers (
     //
     IdtEntryCount = CPU_EXCEPTION_NUM;
   }
+
   //
   // Use current CS as the segment selector of interrupt gate in IDT
   //
   CodeSegment = AsmReadCs ();
 
   AsmGetTemplateAddressMap (&TemplateMap);
-  IdtTable = (IA32_IDT_GATE_DESCRIPTOR *)IdtDescriptor.Base;
-  for (Index = 0; Index < IdtEntryCount; Index ++) {
+  IdtTable = (IA32_IDT_GATE_DESCRIPTOR *) IdtDescriptor.Base;
+  for (Index = 0; Index < IdtEntryCount; Index++) {
     IdtTable[Index].Bits.Selector = CodeSegment;
     //
     // Check reserved vectors attributes if has, only EFI_VECTOR_HANDOFF_DO_NOT_HOOK
@@ -128,12 +130,14 @@ InitializeCpuExceptionHandlers (
         continue;
       }
     }
+
     //
     // Update IDT entry
     //
     InterruptHandler = TemplateMap.ExceptionStart + Index * TemplateMap.ExceptionStubHeaderSize;
     ArchUpdateIdtEntry (&IdtTable[Index], InterruptHandler);
   }
+
   return EFI_SUCCESS;
 }
 

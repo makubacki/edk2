@@ -34,8 +34,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // MSRs required for configuration of SMM Code Access Check
 //
-#define SMM_FEATURES_LIB_IA32_MCA_CAP              0x17D
-#define   SMM_CODE_ACCESS_CHK_BIT                  BIT58
+#define SMM_FEATURES_LIB_IA32_MCA_CAP  0x17D
+#define   SMM_CODE_ACCESS_CHK_BIT      BIT58
 
 //
 // Set default value to assume SMRR is not supported
@@ -132,11 +132,11 @@ CpuFeaturesLibInitialization (
   //
   // Intel(R) 64 and IA-32 Architectures Software Developer's Manual
   // Volume 3C, Section 34.4.2 SMRAM Caching
-  //   An IA-32 processor does not automatically write back and invalidate its
-  //   caches before entering SMM or before exiting SMM. Because of this behavior,
-  //   care must be taken in the placement of the SMRAM in system memory and in
-  //   the caching of the SMRAM to prevent cache incoherence when switching back
-  //   and forth between SMM and protected mode operation.
+  // An IA-32 processor does not automatically write back and invalidate its
+  // caches before entering SMM or before exiting SMM. Because of this behavior,
+  // care must be taken in the placement of the SMRAM in system memory and in
+  // the caching of the SMRAM to prevent cache incoherence when switching back
+  // and forth between SMM and protected mode operation.
   //
   // An IA-32 processor is a processor that does not support the Intel 64
   // Architecture.  Support for the Intel 64 Architecture can be detected from
@@ -157,7 +157,7 @@ CpuFeaturesLibInitialization (
   //
   // Allocate array for state of SMRR enable on all CPUs
   //
-  mSmrrEnabled = (BOOLEAN *)AllocatePool (sizeof (BOOLEAN) * GetCpuMaxLogicalProcessorNumber ());
+  mSmrrEnabled = (BOOLEAN *) AllocatePool (sizeof (BOOLEAN) * GetCpuMaxLogicalProcessorNumber ());
   ASSERT (mSmrrEnabled != NULL);
 }
 
@@ -204,8 +204,8 @@ SmmCpuFeaturesInitializeProcessor (
   //
   // Configure SMBASE.
   //
-  CpuState = (SMRAM_SAVE_STATE_MAP *)(UINTN)(SMM_DEFAULT_SMBASE + SMRAM_SAVE_STATE_MAP_OFFSET);
-  CpuState->x86.SMBASE = (UINT32)CpuHotPlugData->SmBase[CpuIndex];
+  CpuState = (SMRAM_SAVE_STATE_MAP *) (UINTN) (SMM_DEFAULT_SMBASE + SMRAM_SAVE_STATE_MAP_OFFSET);
+  CpuState->x86.SMBASE = (UINT32) CpuHotPlugData->SmBase[CpuIndex];
 
   //
   // Intel(R) 64 and IA-32 Architectures Software Developer's Manual
@@ -291,7 +291,7 @@ SmmCpuFeaturesInitializeProcessor (
   }
 
   //
-  //  Call internal worker function that completes the CPU initialization
+  // Call internal worker function that completes the CPU initialization
   //
   FinishSmmCpuFeaturesInitializeProcessor ();
 }
@@ -382,7 +382,7 @@ SmmCpuFeaturesDisableSmrr (
   )
 {
   if (mSmrrSupported && mNeedConfigureMtrrs) {
-    AsmWriteMsr64 (mSmrrPhysMaskMsr, AsmReadMsr64(mSmrrPhysMaskMsr) & ~EFI_MSR_SMRR_PHYS_MASK_VALID);
+    AsmWriteMsr64 (mSmrrPhysMaskMsr, AsmReadMsr64 (mSmrrPhysMaskMsr) & ~EFI_MSR_SMRR_PHYS_MASK_VALID);
   }
 }
 
@@ -397,7 +397,7 @@ SmmCpuFeaturesReenableSmrr (
   )
 {
   if (mSmrrSupported && mNeedConfigureMtrrs) {
-    AsmWriteMsr64 (mSmrrPhysMaskMsr, AsmReadMsr64(mSmrrPhysMaskMsr) | EFI_MSR_SMRR_PHYS_MASK_VALID);
+    AsmWriteMsr64 (mSmrrPhysMaskMsr, AsmReadMsr64 (mSmrrPhysMaskMsr) | EFI_MSR_SMRR_PHYS_MASK_VALID);
   }
 }
 
@@ -461,6 +461,7 @@ SmmCpuFeaturesIsSmmRegisterSupported (
   if (mSmmFeatureControlSupported && RegName == SmmRegFeatureControl) {
     return TRUE;
   }
+
   return FALSE;
 }
 
@@ -486,6 +487,7 @@ SmmCpuFeaturesGetSmmRegister (
   if (mSmmFeatureControlSupported && RegName == SmmRegFeatureControl) {
     return AsmReadMsr64 (SMM_FEATURES_LIB_SMM_FEATURE_CONTROL);
   }
+
   return 0;
 }
 
@@ -610,4 +612,3 @@ SmmCpuFeaturesAllocatePageTableMemory (
 {
   return NULL;
 }
-

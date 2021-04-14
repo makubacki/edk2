@@ -16,7 +16,7 @@ EFI_HANDLE  mHandle = NULL;
 //
 // SMM CPU I/O Protocol instance
 //
-EFI_SMM_CPU_IO2_PROTOCOL mSmmCpuIo2 = {
+EFI_SMM_CPU_IO2_PROTOCOL  mSmmCpuIo2 = {
   {
     CpuMemoryServiceRead,
     CpuMemoryServiceWrite
@@ -30,7 +30,7 @@ EFI_SMM_CPU_IO2_PROTOCOL mSmmCpuIo2 = {
 //
 // Lookup table for increment values based on transfer widths
 //
-UINT8 mStride[] = {
+UINT8  mStride[] = {
   1, // SMM_IO_UINT8
   2, // SMM_IO_UINT16
   4, // SMM_IO_UINT32
@@ -76,7 +76,7 @@ CpuIoCheckParameter (
   //
   // Check to see if Width is in the valid range
   //
-  if ((UINT32)Width > SMM_IO_UINT64) {
+  if ((UINT32) Width > SMM_IO_UINT64) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -93,7 +93,7 @@ CpuIoCheckParameter (
   // Address + Size * Count.  If the following condition is met, then the transfer
   // is not supported.
   //
-  //    Address + Size * Count > (MmioOperation ? MAX_ADDRESS : MAX_IO_PORT_ADDRESS) + 1
+  // Address + Size * Count > (MmioOperation ? MAX_ADDRESS : MAX_IO_PORT_ADDRESS) + 1
   //
   // Since MAX_ADDRESS can be the maximum integer value supported by the CPU and Count
   // can also be the maximum integer value supported by the CPU, this range
@@ -112,6 +112,7 @@ CpuIoCheckParameter (
     if (MaxCount < (Count - 1)) {
       return EFI_UNSUPPORTED;
     }
+
     if (Address > LShiftU64 (MaxCount - Count + 1, Width)) {
       return EFI_UNSUPPORTED;
     }
@@ -120,7 +121,7 @@ CpuIoCheckParameter (
   //
   // Check to see if Address is aligned
   //
-  if ((Address & ((UINT64)mStride[Width] - 1)) != 0) {
+  if ((Address & ((UINT64) mStride[Width] - 1)) != 0) {
     return EFI_UNSUPPORTED;
   }
 
@@ -175,15 +176,16 @@ CpuMemoryServiceRead (
   Stride = mStride[Width];
   for (Uint8Buffer = Buffer; Count > 0; Address += Stride, Uint8Buffer += Stride, Count--) {
     if (Width == SMM_IO_UINT8) {
-      *Uint8Buffer = MmioRead8 ((UINTN)Address);
+      *Uint8Buffer = MmioRead8 ((UINTN) Address);
     } else if (Width == SMM_IO_UINT16) {
-      *((UINT16 *)Uint8Buffer) = MmioRead16 ((UINTN)Address);
+      *((UINT16 *) Uint8Buffer) = MmioRead16 ((UINTN) Address);
     } else if (Width == SMM_IO_UINT32) {
-      *((UINT32 *)Uint8Buffer) = MmioRead32 ((UINTN)Address);
+      *((UINT32 *) Uint8Buffer) = MmioRead32 ((UINTN) Address);
     } else if (Width == SMM_IO_UINT64) {
-      *((UINT64 *)Uint8Buffer) = MmioRead64 ((UINTN)Address);
+      *((UINT64 *) Uint8Buffer) = MmioRead64 ((UINTN) Address);
     }
   }
+
   return EFI_SUCCESS;
 }
 
@@ -235,15 +237,16 @@ CpuMemoryServiceWrite (
   Stride = mStride[Width];
   for (Uint8Buffer = Buffer; Count > 0; Address += Stride, Uint8Buffer += Stride, Count--) {
     if (Width == SMM_IO_UINT8) {
-      MmioWrite8 ((UINTN)Address, *Uint8Buffer);
+      MmioWrite8 ((UINTN) Address, *Uint8Buffer);
     } else if (Width == SMM_IO_UINT16) {
-      MmioWrite16 ((UINTN)Address, *((UINT16 *)Uint8Buffer));
+      MmioWrite16 ((UINTN) Address, *((UINT16 *) Uint8Buffer));
     } else if (Width == SMM_IO_UINT32) {
-      MmioWrite32 ((UINTN)Address, *((UINT32 *)Uint8Buffer));
+      MmioWrite32 ((UINTN) Address, *((UINT32 *) Uint8Buffer));
     } else if (Width == SMM_IO_UINT64) {
-      MmioWrite64 ((UINTN)Address, *((UINT64 *)Uint8Buffer));
+      MmioWrite64 ((UINTN) Address, *((UINT64 *) Uint8Buffer));
     }
   }
+
   return EFI_SUCCESS;
 }
 
@@ -295,11 +298,11 @@ CpuIoServiceRead (
   Stride = mStride[Width];
   for (Uint8Buffer = Buffer; Count > 0; Address += Stride, Uint8Buffer += Stride, Count--) {
     if (Width == SMM_IO_UINT8) {
-      *Uint8Buffer = IoRead8 ((UINTN)Address);
+      *Uint8Buffer = IoRead8 ((UINTN) Address);
     } else if (Width == SMM_IO_UINT16) {
-      *((UINT16 *)Uint8Buffer) = IoRead16 ((UINTN)Address);
+      *((UINT16 *) Uint8Buffer) = IoRead16 ((UINTN) Address);
     } else if (Width == SMM_IO_UINT32) {
-      *((UINT32 *)Uint8Buffer) = IoRead32 ((UINTN)Address);
+      *((UINT32 *) Uint8Buffer) = IoRead32 ((UINTN) Address);
     }
   }
 
@@ -355,13 +358,13 @@ CpuIoServiceWrite (
   // Select loop based on the width of the transfer
   //
   Stride = mStride[Width];
-  for (Uint8Buffer = (UINT8 *)Buffer; Count > 0; Address += Stride, Uint8Buffer += Stride, Count--) {
+  for (Uint8Buffer = (UINT8 *) Buffer; Count > 0; Address += Stride, Uint8Buffer += Stride, Count--) {
     if (Width == SMM_IO_UINT8) {
-      IoWrite8 ((UINTN)Address, *Uint8Buffer);
+      IoWrite8 ((UINTN) Address, *Uint8Buffer);
     } else if (Width == SMM_IO_UINT16) {
-      IoWrite16 ((UINTN)Address, *((UINT16 *)Uint8Buffer));
+      IoWrite16 ((UINTN) Address, *((UINT16 *) Uint8Buffer));
     } else if (Width == SMM_IO_UINT32) {
-      IoWrite32 ((UINTN)Address, *((UINT32 *)Uint8Buffer));
+      IoWrite32 ((UINTN) Address, *((UINT32 *) Uint8Buffer));
     }
   }
 
@@ -391,11 +394,11 @@ CommonCpuIo2Initialize (
   // Install the SMM CPU I/O Protocol into the MM protocol database
   //
   Status = gMmst->MmInstallProtocolInterface (
-                    &mHandle,
-                    &gEfiSmmCpuIo2ProtocolGuid,
-                    EFI_NATIVE_INTERFACE,
-                    &mSmmCpuIo2
-                    );
+                                              &mHandle,
+                                              &gEfiSmmCpuIo2ProtocolGuid,
+                                              EFI_NATIVE_INTERFACE,
+                                              &mSmmCpuIo2
+                                              );
   ASSERT_EFI_ERROR (Status);
 
   return Status;
