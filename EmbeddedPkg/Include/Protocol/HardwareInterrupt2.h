@@ -25,7 +25,7 @@ typedef enum {
 } EFI_HARDWARE_INTERRUPT2_TRIGGER_TYPE;
 
 typedef struct _EFI_HARDWARE_INTERRUPT2_PROTOCOL \
-                 EFI_HARDWARE_INTERRUPT2_PROTOCOL;
+  EFI_HARDWARE_INTERRUPT2_PROTOCOL;
 
 /**
   Register Handler for the specified interrupt source.
@@ -39,13 +39,12 @@ typedef struct _EFI_HARDWARE_INTERRUPT2_PROTOCOL \
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *HARDWARE_INTERRUPT2_REGISTER) (
-  IN EFI_HARDWARE_INTERRUPT2_PROTOCOL *This,
-  IN HARDWARE_INTERRUPT_SOURCE Source,
-  IN HARDWARE_INTERRUPT_HANDLER Handler
-  );
-
+  EFI_STATUS
+(EFIAPI *HARDWARE_INTERRUPT2_REGISTER)(
+                                       IN EFI_HARDWARE_INTERRUPT2_PROTOCOL *This,
+                                       IN HARDWARE_INTERRUPT_SOURCE Source,
+                                       IN HARDWARE_INTERRUPT_HANDLER Handler
+                                       );
 
 /**
   Enable interrupt source Source.
@@ -58,12 +57,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *HARDWARE_INTERRUPT2_ENABLE) (
-  IN EFI_HARDWARE_INTERRUPT2_PROTOCOL *This,
-  IN HARDWARE_INTERRUPT_SOURCE Source
-  );
-
+  EFI_STATUS
+(EFIAPI *HARDWARE_INTERRUPT2_ENABLE)(
+                                     IN EFI_HARDWARE_INTERRUPT2_PROTOCOL *This,
+                                     IN HARDWARE_INTERRUPT_SOURCE Source
+                                     );
 
 /**
   Disable interrupt source Source.
@@ -76,12 +74,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *HARDWARE_INTERRUPT2_DISABLE) (
-  IN EFI_HARDWARE_INTERRUPT2_PROTOCOL *This,
-  IN HARDWARE_INTERRUPT_SOURCE Source
-  );
-
+  EFI_STATUS
+(EFIAPI *HARDWARE_INTERRUPT2_DISABLE)(
+                                      IN EFI_HARDWARE_INTERRUPT2_PROTOCOL *This,
+                                      IN HARDWARE_INTERRUPT_SOURCE Source
+                                      );
 
 /**
   Return current state of interrupt source Source.
@@ -95,12 +92,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *HARDWARE_INTERRUPT2_INTERRUPT_STATE) (
-  IN EFI_HARDWARE_INTERRUPT2_PROTOCOL *This,
-  IN HARDWARE_INTERRUPT_SOURCE Source,
-  IN BOOLEAN *InterruptState
-  );
+  EFI_STATUS
+(EFIAPI *HARDWARE_INTERRUPT2_INTERRUPT_STATE)(
+                                              IN EFI_HARDWARE_INTERRUPT2_PROTOCOL *This,
+                                              IN HARDWARE_INTERRUPT_SOURCE Source,
+                                              IN BOOLEAN *InterruptState
+                                              );
 
 /**
   Signal to the hardware that the End Of Interrupt state
@@ -114,11 +111,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *HARDWARE_INTERRUPT2_END_OF_INTERRUPT) (
-  IN EFI_HARDWARE_INTERRUPT2_PROTOCOL *This,
-  IN HARDWARE_INTERRUPT_SOURCE Source
-  );
+  EFI_STATUS
+(EFIAPI *HARDWARE_INTERRUPT2_END_OF_INTERRUPT)(
+                                               IN EFI_HARDWARE_INTERRUPT2_PROTOCOL *This,
+                                               IN HARDWARE_INTERRUPT_SOURCE Source
+                                               );
 
 /**
   Return the configured trigger type for an interrupt source
@@ -132,13 +129,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *HARDWARE_INTERRUPT2_GET_TRIGGER_TYPE) (
-  IN  EFI_HARDWARE_INTERRUPT2_PROTOCOL *This,
-  IN  HARDWARE_INTERRUPT_SOURCE Source,
-  OUT EFI_HARDWARE_INTERRUPT2_TRIGGER_TYPE *TriggerType
-  );
-
+  EFI_STATUS
+(EFIAPI *HARDWARE_INTERRUPT2_GET_TRIGGER_TYPE)(
+                                               IN  EFI_HARDWARE_INTERRUPT2_PROTOCOL *This,
+                                               IN  HARDWARE_INTERRUPT_SOURCE Source,
+                                               OUT EFI_HARDWARE_INTERRUPT2_TRIGGER_TYPE *TriggerType
+                                               );
 
 /**
  Configure the trigger type for an interrupt source
@@ -152,12 +148,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *HARDWARE_INTERRUPT2_SET_TRIGGER_TYPE) (
-  IN  EFI_HARDWARE_INTERRUPT2_PROTOCOL *This,
-  IN  HARDWARE_INTERRUPT_SOURCE Source,
-  IN  EFI_HARDWARE_INTERRUPT2_TRIGGER_TYPE TriggerType
-  );
+  EFI_STATUS
+(EFIAPI *HARDWARE_INTERRUPT2_SET_TRIGGER_TYPE)(
+                                               IN  EFI_HARDWARE_INTERRUPT2_PROTOCOL *This,
+                                               IN  HARDWARE_INTERRUPT_SOURCE Source,
+                                               IN  EFI_HARDWARE_INTERRUPT2_TRIGGER_TYPE TriggerType
+                                               );
 
 struct _EFI_HARDWARE_INTERRUPT2_PROTOCOL {
   HARDWARE_INTERRUPT2_REGISTER            RegisterInterruptSource;
@@ -171,6 +167,6 @@ struct _EFI_HARDWARE_INTERRUPT2_PROTOCOL {
   HARDWARE_INTERRUPT2_SET_TRIGGER_TYPE    SetTriggerType;
 };
 
-extern EFI_GUID gHardwareInterrupt2ProtocolGuid;
+extern EFI_GUID  gHardwareInterrupt2ProtocolGuid;
 
 #endif

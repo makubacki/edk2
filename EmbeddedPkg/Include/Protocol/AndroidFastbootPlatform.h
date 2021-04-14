@@ -9,7 +9,7 @@
 #ifndef __ANDROID_FASTBOOT_PLATFORM_H__
 #define __ANDROID_FASTBOOT_PLATFORM_H__
 
-extern EFI_GUID gAndroidFastbootPlatformProtocolGuid;
+extern EFI_GUID  gAndroidFastbootPlatformProtocolGuid;
 
 /*
   Protocol for platform-specific operations initiated by Android Fastboot.
@@ -29,7 +29,7 @@ extern EFI_GUID gAndroidFastbootPlatformProtocolGuid;
   @retval !EFI_SUCCESS  Error in initialisation.
 */
 typedef
-EFI_STATUS
+  EFI_STATUS
 (*FASTBOOT_PLATFORM_INIT) (
   VOID
   );
@@ -39,7 +39,7 @@ EFI_STATUS
   image. Undo initialisation, free resources.
 */
 typedef
-VOID
+  VOID
 (*FASTBOOT_PLATFORM_UN_INIT) (
   VOID
   );
@@ -56,7 +56,7 @@ VOID
   @retval EFI_DEVICE_ERROR  Flashing failed.
 */
 typedef
-EFI_STATUS
+  EFI_STATUS
 (*FASTBOOT_PLATFORM_FLASH) (
   IN CHAR8   *PartitionName,
   IN UINTN    BufferSize,
@@ -72,7 +72,7 @@ EFI_STATUS
   @retval EFI_DEVICE_ERROR  Erasing failed.
 */
 typedef
-EFI_STATUS
+  EFI_STATUS
 (*FASTBOOT_PLATFORM_ERASE) (
   IN CHAR8   *PartitionName
   );
@@ -96,7 +96,7 @@ EFI_STATUS
                             does _not_ include the variable not existing.
 */
 typedef
-EFI_STATUS
+  EFI_STATUS
 (*FASTBOOT_PLATFORM_GETVAR) (
   IN  CHAR8   *Name,
   OUT CHAR8   *Value
@@ -122,18 +122,18 @@ EFI_STATUS
   @retval EFI_DEVICE_ERROR  There was an error executing the command.
 */
 typedef
-EFI_STATUS
+  EFI_STATUS
 (*FASTBOOT_PLATFORM_OEM_COMMAND) (
   IN  CHAR8   *Command
   );
 
 typedef struct _FASTBOOT_PLATFORM_PROTOCOL {
-  FASTBOOT_PLATFORM_INIT          Init;
-  FASTBOOT_PLATFORM_UN_INIT       UnInit;
-  FASTBOOT_PLATFORM_FLASH         FlashPartition;
-  FASTBOOT_PLATFORM_ERASE         ErasePartition;
-  FASTBOOT_PLATFORM_GETVAR        GetVar;
-  FASTBOOT_PLATFORM_OEM_COMMAND   DoOemCommand;
+  FASTBOOT_PLATFORM_INIT           Init;
+  FASTBOOT_PLATFORM_UN_INIT        UnInit;
+  FASTBOOT_PLATFORM_FLASH          FlashPartition;
+  FASTBOOT_PLATFORM_ERASE          ErasePartition;
+  FASTBOOT_PLATFORM_GETVAR         GetVar;
+  FASTBOOT_PLATFORM_OEM_COMMAND    DoOemCommand;
 } FASTBOOT_PLATFORM_PROTOCOL;
 
 #endif

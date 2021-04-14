@@ -20,7 +20,6 @@
 
 #include <Protocol/DebugSupport.h>
 
-
 //
 // Protocol GUID
 //
@@ -29,12 +28,9 @@
 #define EFI_HARDWARE_INTERRUPT_PROTOCOL_GGUID \
   { 0x2890B3EA, 0x053D, 0x1643, { 0xAD, 0x0C, 0xD6, 0x48, 0x08, 0xDA, 0x3F, 0xF1 } }
 
-
 typedef struct _EFI_HARDWARE_INTERRUPT_PROTOCOL EFI_HARDWARE_INTERRUPT_PROTOCOL;
 
-
 typedef UINTN HARDWARE_INTERRUPT_SOURCE;
-
 
 /**
   C Interrupt Handler calledin the interrupt context when Source interrupt is active.
@@ -47,12 +43,11 @@ typedef UINTN HARDWARE_INTERRUPT_SOURCE;
 
 **/
 typedef
-VOID
-(EFIAPI *HARDWARE_INTERRUPT_HANDLER) (
-  IN  HARDWARE_INTERRUPT_SOURCE   Source,
-  IN  EFI_SYSTEM_CONTEXT          SystemContext
-  );
-
+  VOID
+(EFIAPI *HARDWARE_INTERRUPT_HANDLER)(
+                                     IN  HARDWARE_INTERRUPT_SOURCE   Source,
+                                     IN  EFI_SYSTEM_CONTEXT          SystemContext
+                                     );
 
 /**
   Register Handler for the specified interrupt source.
@@ -66,13 +61,12 @@ VOID
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *HARDWARE_INTERRUPT_REGISTER) (
-  IN EFI_HARDWARE_INTERRUPT_PROTOCOL    *This,
-  IN HARDWARE_INTERRUPT_SOURCE          Source,
-  IN HARDWARE_INTERRUPT_HANDLER         Handler
-  );
-
+  EFI_STATUS
+(EFIAPI *HARDWARE_INTERRUPT_REGISTER)(
+                                      IN EFI_HARDWARE_INTERRUPT_PROTOCOL    *This,
+                                      IN HARDWARE_INTERRUPT_SOURCE          Source,
+                                      IN HARDWARE_INTERRUPT_HANDLER         Handler
+                                      );
 
 /**
   Enable interrupt source Source.
@@ -85,13 +79,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *HARDWARE_INTERRUPT_ENABLE) (
-  IN EFI_HARDWARE_INTERRUPT_PROTOCOL    *This,
-  IN HARDWARE_INTERRUPT_SOURCE          Source
-  );
-
-
+  EFI_STATUS
+(EFIAPI *HARDWARE_INTERRUPT_ENABLE)(
+                                    IN EFI_HARDWARE_INTERRUPT_PROTOCOL    *This,
+                                    IN HARDWARE_INTERRUPT_SOURCE          Source
+                                    );
 
 /**
   Disable interrupt source Source.
@@ -104,12 +96,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *HARDWARE_INTERRUPT_DISABLE) (
-  IN EFI_HARDWARE_INTERRUPT_PROTOCOL    *This,
-  IN HARDWARE_INTERRUPT_SOURCE          Source
-  );
-
+  EFI_STATUS
+(EFIAPI *HARDWARE_INTERRUPT_DISABLE)(
+                                     IN EFI_HARDWARE_INTERRUPT_PROTOCOL    *This,
+                                     IN HARDWARE_INTERRUPT_SOURCE          Source
+                                     );
 
 /**
   Return current state of interrupt source Source.
@@ -123,12 +114,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *HARDWARE_INTERRUPT_INTERRUPT_STATE) (
-  IN EFI_HARDWARE_INTERRUPT_PROTOCOL    *This,
-  IN HARDWARE_INTERRUPT_SOURCE          Source,
-  IN BOOLEAN                            *InterruptState
-  );
+  EFI_STATUS
+(EFIAPI *HARDWARE_INTERRUPT_INTERRUPT_STATE)(
+                                             IN EFI_HARDWARE_INTERRUPT_PROTOCOL    *This,
+                                             IN HARDWARE_INTERRUPT_SOURCE          Source,
+                                             IN BOOLEAN                            *InterruptState
+                                             );
 
 /**
   Signal to the hardware that the End Of Interrupt state
@@ -142,23 +133,20 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *HARDWARE_INTERRUPT_END_OF_INTERRUPT) (
-  IN EFI_HARDWARE_INTERRUPT_PROTOCOL    *This,
-  IN HARDWARE_INTERRUPT_SOURCE          Source
-  );
-
+  EFI_STATUS
+(EFIAPI *HARDWARE_INTERRUPT_END_OF_INTERRUPT)(
+                                              IN EFI_HARDWARE_INTERRUPT_PROTOCOL    *This,
+                                              IN HARDWARE_INTERRUPT_SOURCE          Source
+                                              );
 
 struct _EFI_HARDWARE_INTERRUPT_PROTOCOL {
-  HARDWARE_INTERRUPT_REGISTER         RegisterInterruptSource;
-  HARDWARE_INTERRUPT_ENABLE           EnableInterruptSource;
-  HARDWARE_INTERRUPT_DISABLE          DisableInterruptSource;
-  HARDWARE_INTERRUPT_INTERRUPT_STATE  GetInterruptSourceState;
-  HARDWARE_INTERRUPT_END_OF_INTERRUPT EndOfInterrupt;
+  HARDWARE_INTERRUPT_REGISTER            RegisterInterruptSource;
+  HARDWARE_INTERRUPT_ENABLE              EnableInterruptSource;
+  HARDWARE_INTERRUPT_DISABLE             DisableInterruptSource;
+  HARDWARE_INTERRUPT_INTERRUPT_STATE     GetInterruptSourceState;
+  HARDWARE_INTERRUPT_END_OF_INTERRUPT    EndOfInterrupt;
 };
 
-extern EFI_GUID gHardwareInterruptProtocolGuid;
+extern EFI_GUID  gHardwareInterruptProtocolGuid;
 
 #endif
-
-

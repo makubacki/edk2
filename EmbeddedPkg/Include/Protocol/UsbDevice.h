@@ -11,7 +11,7 @@
 
 #include <IndustryStandard/Usb.h>
 
-extern EFI_GUID gUsbDeviceProtocolGuid;
+extern EFI_GUID  gUsbDeviceProtocolGuid;
 
 /*
  * Note: This Protocol is just  the bare minimum for Android Fastboot. It
@@ -28,7 +28,7 @@ extern EFI_GUID gUsbDeviceProtocolGuid;
   @param[in] Buffer      Pointer to data.
 */
 typedef
-VOID
+  VOID
 (*USB_DEVICE_RX_CALLBACK) (
   IN UINTN    Size,
   IN VOID    *Buffer
@@ -44,7 +44,7 @@ VOID
                         the endpoint the IN token was sent to.
 */
 typedef
-VOID
+  VOID
 (*USB_DEVICE_TX_CALLBACK) (
   IN UINT8    EndpointIndex
   );
@@ -62,7 +62,7 @@ VOID
   @retval EFI_INVALID_PARAMETER There was an error sending the data.
 */
 typedef
-EFI_STATUS
+  EFI_STATUS
 (*USB_DEVICE_SEND) (
   IN       UINT8    EndpointIndex,
   IN       UINTN    Size,
@@ -94,7 +94,7 @@ EFI_STATUS
   @param[in]TxCallback          See USB_DEVICE_TX_CALLBACK
 */
 typedef
-EFI_STATUS
+  EFI_STATUS
 (*USB_DEVICE_START) (
   IN USB_DEVICE_DESCRIPTOR     *DeviceDescriptor,
   IN VOID                     **Descriptors,
@@ -103,8 +103,8 @@ EFI_STATUS
   );
 
 struct _USB_DEVICE_PROTOCOL {
-  USB_DEVICE_START Start;
-  USB_DEVICE_SEND  Send;
+  USB_DEVICE_START    Start;
+  USB_DEVICE_SEND     Send;
 };
 
 typedef struct _USB_DEVICE_PROTOCOL USB_DEVICE_PROTOCOL;

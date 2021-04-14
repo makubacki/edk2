@@ -23,7 +23,7 @@ ValidateAndroidMediaDevicePath (
   IN EFI_DEVICE_PATH                  *DevicePath
   )
 {
-  EFI_DEVICE_PATH_PROTOCOL            *Node, *NextNode;
+  EFI_DEVICE_PATH_PROTOCOL  *Node, *NextNode;
 
   NextNode = DevicePath;
   while (NextNode != NULL) {
@@ -32,11 +32,36 @@ ValidateAndroidMediaDevicePath (
         Node->SubType == MEDIA_HARDDRIVE_DP) {
       return EFI_SUCCESS;
     }
+
     NextNode = NextDevicePathNode (Node);
   }
+
   return EFI_INVALID_PARAMETER;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 AndroidBootAppEntryPoint (
@@ -54,12 +79,15 @@ AndroidBootAppEntryPoint (
   EFI_HANDLE                          Handle;
   UINTN                               BootImgSize;
 
-  BootPathStr = (CHAR16 *)PcdGetPtr (PcdAndroidBootDevicePath);
+  BootPathStr = (CHAR16 *) PcdGetPtr (PcdAndroidBootDevicePath);
   ASSERT (BootPathStr != NULL);
-  Status = gBS->LocateProtocol (&gEfiDevicePathFromTextProtocolGuid, NULL,
-                                (VOID **)&EfiDevicePathFromTextProtocol);
-  ASSERT_EFI_ERROR(Status);
-  DevicePath = (EFI_DEVICE_PATH *)EfiDevicePathFromTextProtocol->ConvertTextToDevicePath (BootPathStr);
+  Status = gBS->LocateProtocol (
+                                &gEfiDevicePathFromTextProtocolGuid,
+                                NULL,
+                                (VOID **) &EfiDevicePathFromTextProtocol
+                                );
+  ASSERT_EFI_ERROR (Status);
+  DevicePath = (EFI_DEVICE_PATH *) EfiDevicePathFromTextProtocol->ConvertTextToDevicePath (BootPathStr);
   ASSERT (DevicePath != NULL);
 
   Status = ValidateAndroidMediaDevicePath (DevicePath);
@@ -67,46 +95,51 @@ AndroidBootAppEntryPoint (
     return Status;
   }
 
-  Status = gBS->LocateDevicePath (&gEfiDevicePathProtocolGuid,
-                                  &DevicePath, &Handle);
+  Status = gBS->LocateDevicePath (
+                                  &gEfiDevicePathProtocolGuid,
+                                  &DevicePath,
+                                  &Handle
+                                  );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   Status = gBS->OpenProtocol (
-                  Handle,
-                  &gEfiBlockIoProtocolGuid,
-                  (VOID **) &BlockIo,
-                  gImageHandle,
-                  NULL,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              Handle,
+                              &gEfiBlockIoProtocolGuid,
+                              (VOID **) &BlockIo,
+                              gImageHandle,
+                              NULL,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Failed to get BlockIo: %r\n", Status));
     return Status;
   }
 
-  MediaId = BlockIo->Media->MediaId;
+  MediaId   = BlockIo->Media->MediaId;
   BlockSize = BlockIo->Media->BlockSize;
-  Buffer = AllocatePages (EFI_SIZE_TO_PAGES (sizeof(ANDROID_BOOTIMG_HEADER)));
+  Buffer    = AllocatePages (EFI_SIZE_TO_PAGES (sizeof (ANDROID_BOOTIMG_HEADER)));
   if (Buffer == NULL) {
     return EFI_BUFFER_TOO_SMALL;
   }
+
   /* Load header of boot.img */
   Status = BlockIo->ReadBlocks (
-                      BlockIo,
-                      MediaId,
-                      0,
-                      BlockSize,
-                      Buffer
-                      );
+                                BlockIo,
+                                MediaId,
+                                0,
+                                BlockSize,
+                                Buffer
+                                );
   Status = AndroidBootImgGetImgSize (Buffer, &BootImgSize);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Failed to get AndroidBootImg Size: %r\n", Status));
     return Status;
   }
+
   BootImgSize = ALIGN_VALUE (BootImgSize, BlockSize);
-  FreePages (Buffer, EFI_SIZE_TO_PAGES (sizeof(ANDROID_BOOTIMG_HEADER)));
+  FreePages (Buffer, EFI_SIZE_TO_PAGES (sizeof (ANDROID_BOOTIMG_HEADER)));
 
   /* Both PartitionStart and PartitionSize are counted as block size. */
   Buffer = AllocatePages (EFI_SIZE_TO_PAGES (BootImgSize));
@@ -116,12 +149,12 @@ AndroidBootAppEntryPoint (
 
   /* Load header of boot.img */
   Status = BlockIo->ReadBlocks (
-                      BlockIo,
-                      MediaId,
-                      0,
-                      BootImgSize,
-                      Buffer
-                      );
+                                BlockIo,
+                                MediaId,
+                                0,
+                                BootImgSize,
+                                Buffer
+                                );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Failed to read blocks: %r\n", Status));
     goto EXIT;

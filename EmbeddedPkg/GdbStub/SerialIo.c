@@ -18,14 +18,14 @@
 // Set TRUE if F Reply package signals a ctrl-c. We can not process the Ctrl-c
 // here we need to wait for the periodic callback to do this.
 //
-BOOLEAN gCtrlCBreakFlag = FALSE;
+BOOLEAN  gCtrlCBreakFlag = FALSE;
 
 //
 // If the periodic callback is called while we are processing an F packet we need
 // to let the callback know to not read from the serial stream as it could steal
 // characters from the F response packet
 //
-BOOLEAN gProcessingFPacket = FALSE;
+BOOLEAN  gProcessingFPacket = FALSE;
 
 /**
   Process a control-C break message.
@@ -35,7 +35,6 @@ BOOLEAN gProcessingFPacket = FALSE;
   @param  ErrNo   Error information from the F reply packet or other source
 
 **/
-
 VOID
 GdbCtrlCBreakMessage (
   IN  UINTN ErrNo
@@ -45,10 +44,9 @@ GdbCtrlCBreakMessage (
   // This should look like a break message. Should look like SIGINT
 
   /* TODO: Make sure if we should do anything with ErrNo */
-  //Turn on the global Ctrl-C flag.
+  // Turn on the global Ctrl-C flag.
   gCtrlCBreakFlag = TRUE;
 }
-
 
 /**
   Parse the F reply packet and extract the return value and an ErrNo if it exists.
@@ -66,17 +64,19 @@ GdbParseFReplyPacket (
   OUT UINTN   *ErrNo
   )
 {
-  INTN   RetCode;
+  INTN  RetCode;
 
   if (Packet[0] != 'F') {
     // A valid response would be an F packet
-    return -1;
+    return - 1;
   }
 
   RetCode = AsciiStrHexToUintn (&Packet[1]);
 
   // Find 1st comma
-  for (;*Packet != '\0' && *Packet != ',';  Packet++);
+  for ( ; *Packet != '\0' && *Packet != ','; Packet++) {
+  }
+
   if (*Packet == '\0') {
     *ErrNo = 0;
     return RetCode;
@@ -85,7 +85,9 @@ GdbParseFReplyPacket (
   *ErrNo = AsciiStrHexToUintn (++Packet);
 
   // Find 2nd comma
-  for (;*Packet != '\0' && *Packet != ',';  Packet++);
+  for ( ; *Packet != '\0' && *Packet != ','; Packet++) {
+  }
+
   if (*Packet == '\0') {
     return RetCode;
   }
@@ -96,7 +98,6 @@ GdbParseFReplyPacket (
 
   return RetCode;
 }
-
 
 /**
   Read data from a FileDescriptor. On success number of bytes read is returned. Zero indicates
@@ -117,11 +118,11 @@ GdbRead (
   IN  UINTN   Count
   )
 {
-  CHAR8   Packet[128];
-  UINTN   Size;
-  INTN    RetCode;
-  UINTN   ErrNo;
-  BOOLEAN ReceiveDone = FALSE;
+  CHAR8    Packet[128];
+  UINTN    Size;
+  INTN     RetCode;
+  UINTN    ErrNo;
+  BOOLEAN  ReceiveDone = FALSE;
 
   // Send:
   // "Fread,XX,YYYYYYYY,XX
@@ -137,49 +138,48 @@ GdbRead (
 
   gProcessingFPacket = TRUE;
   SendPacket (Packet);
-  Print ((CHAR16 *)L"Packet sent..\n");
+  Print ((CHAR16 *) L"Packet sent..\n");
 
   do {
     // Reply:
     ReceivePacket (Packet, sizeof (Packet));
-    Print ((CHAR16 *)L"Command received..%c\n", Packet[0]);
+    Print ((CHAR16 *) L"Command received..%c\n", Packet[0]);
 
     // Process GDB commands
     switch (Packet[0]) {
-      //Write memory command.
-      //M addr,length:XX...
+      // Write memory command.
+      // M addr,length:XX...
       case    'M':
         WriteToMemory (Packet);
         break;
 
-      //Fretcode, errno, Ctrl-C flag
-      //retcode - Count read
+      // Fretcode, errno, Ctrl-C flag
+      // retcode - Count read
       case    'F':
-        //Once target receives F reply packet that means the previous
-        //transactions are finished.
+        // Once target receives F reply packet that means the previous
+        // transactions are finished.
         ReceiveDone = TRUE;
         break;
 
-      //Send empty buffer
-      default    :
-        SendNotSupported();
+      // Send empty buffer
+      default:
+        SendNotSupported ();
         break;
     }
   } while (ReceiveDone == FALSE);
 
   RetCode = GdbParseFReplyPacket (Packet, &ErrNo);
-  Print ((CHAR16 *)L"RetCode: %x..ErrNo: %x..\n", RetCode, ErrNo);
+  Print ((CHAR16 *) L"RetCode: %x..ErrNo: %x..\n", RetCode, ErrNo);
 
   if (ErrNo > 0) {
-    //Send error to the host if there is any.
-    SendError ((UINT8)ErrNo);
+    // Send error to the host if there is any.
+    SendError ((UINT8) ErrNo);
   }
 
   gProcessingFPacket = FALSE;
 
   return RetCode;
 }
-
 
 /**
   Write data to a FileDescriptor. On success number of bytes written is returned. Zero indicates
@@ -200,11 +200,11 @@ GdbWrite (
   IN  UINTN         Count
   )
 {
-  CHAR8   Packet[128];
-  UINTN   Size;
-  INTN    RetCode;
-  UINTN   ErrNo;
-  BOOLEAN ReceiveDone = FALSE;
+  CHAR8    Packet[128];
+  UINTN    Size;
+  INTN     RetCode;
+  UINTN    ErrNo;
+  BOOLEAN  ReceiveDone = FALSE;
 
   // Send:
   // #Fwrite,XX,YYYYYYYY,XX$SS
@@ -219,47 +219,46 @@ GdbWrite (
   ASSERT (Size < sizeof (Packet));
 
   SendPacket (Packet);
-  Print ((CHAR16 *)L"Packet sent..\n");
+  Print ((CHAR16 *) L"Packet sent..\n");
 
   do {
     // Reply:
     ReceivePacket (Packet, sizeof (Packet));
-    Print ((CHAR16 *)L"Command received..%c\n", Packet[0]);
+    Print ((CHAR16 *) L"Command received..%c\n", Packet[0]);
 
     // Process GDB commands
     switch (Packet[0]) {
-      //Read memory command.
-      //m addr,length.
+      // Read memory command.
+      // m addr,length.
       case    'm':
         ReadFromMemory (Packet);
         break;
 
-      //Fretcode, errno, Ctrl-C flag
-      //retcode - Count read
+      // Fretcode, errno, Ctrl-C flag
+      // retcode - Count read
       case    'F':
-        //Once target receives F reply packet that means the previous
-        //transactions are finished.
+        // Once target receives F reply packet that means the previous
+        // transactions are finished.
         ReceiveDone = TRUE;
         break;
 
-      //Send empty buffer
-      default    :
-        SendNotSupported();
+      // Send empty buffer
+      default:
+        SendNotSupported ();
         break;
     }
   } while (ReceiveDone == FALSE);
 
   RetCode = GdbParseFReplyPacket (Packet, &ErrNo);
-  Print ((CHAR16 *)L"RetCode: %x..ErrNo: %x..\n", RetCode, ErrNo);
+  Print ((CHAR16 *) L"RetCode: %x..ErrNo: %x..\n", RetCode, ErrNo);
 
-  //Send error to the host if there is any.
+  // Send error to the host if there is any.
   if (ErrNo > 0) {
-    SendError((UINT8)ErrNo);
+    SendError ((UINT8) ErrNo);
   }
 
   return RetCode;
 }
-
 
 /**
   Reset the serial device.
@@ -278,7 +277,6 @@ GdbSerialReset (
 {
   return EFI_SUCCESS;
 }
-
 
 /**
   Sets the baud rate, receive FIFO depth, transmit/receive time out, parity,
@@ -321,7 +319,6 @@ GdbSerialSetAttributes (
   return EFI_UNSUPPORTED;
 }
 
-
 /**
   Set the control bits on a serial device
 
@@ -343,7 +340,6 @@ GdbSerialSetControl (
   return EFI_UNSUPPORTED;
 }
 
-
 /**
   Retrieves the status of the control bits on a serial device
 
@@ -363,7 +359,6 @@ GdbSerialGetControl (
 {
   return EFI_UNSUPPORTED;
 }
-
 
 /**
   Writes data to a serial device.
@@ -387,12 +382,12 @@ GdbSerialWrite (
   )
 {
   GDB_SERIAL_DEV  *SerialDev;
-  UINTN            Return;
+  UINTN           Return;
 
   SerialDev = GDB_SERIAL_DEV_FROM_THIS (This);
 
   Return = GdbWrite (SerialDev->OutFileDescriptor, Buffer, *BufferSize);
-  if (Return == (UINTN)-1) {
+  if (Return == (UINTN) - 1) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -416,7 +411,6 @@ GdbSerialWrite (
   @retval EFI_TIMEOUT       The data write was stopped due to a timeout.
 
 **/
-
 EFI_STATUS
 EFIAPI
 GdbSerialRead (
@@ -426,12 +420,12 @@ GdbSerialRead (
   )
 {
   GDB_SERIAL_DEV  *SerialDev;
-  UINTN            Return;
+  UINTN           Return;
 
   SerialDev = GDB_SERIAL_DEV_FROM_THIS (This);
 
   Return = GdbRead (SerialDev->InFileDescriptor, Buffer, *BufferSize);
-  if (Return == (UINTN)-1) {
+  if (Return == (UINTN) - 1) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -442,11 +436,10 @@ GdbSerialRead (
   return EFI_SUCCESS;
 }
 
-
 //
 // Template used to initialize the GDB Serial IO protocols
 //
-GDB_SERIAL_DEV gdbSerialDevTemplate = {
+GDB_SERIAL_DEV  gdbSerialDevTemplate = {
   GDB_SERIAL_DEV_SIGNATURE,
   NULL,
 
@@ -460,14 +453,14 @@ GDB_SERIAL_DEV gdbSerialDevTemplate = {
     GdbSerialRead,
     NULL
   },
-  { // SerialMode
-    0,      // ControlMask
-    0,      // Timeout
-    0,      // BaudRate
-    1,      // RceiveFifoDepth
-    0,      // DataBits
-    0,      // Parity
-    0       // StopBits
+  {    // SerialMode
+    0, // ControlMask
+    0, // Timeout
+    0, // BaudRate
+    1, // RceiveFifoDepth
+    0, // DataBits
+    0, // Parity
+    0  // StopBits
   },
   {
     {
@@ -495,7 +488,6 @@ GDB_SERIAL_DEV gdbSerialDevTemplate = {
   GDB_STDOUT
 };
 
-
 /**
   Make two serial consoles: 1) StdIn and StdOut via GDB. 2) StdErr via GDB.
 
@@ -512,36 +504,39 @@ GdbInitializeSerialConsole (
   GDB_SERIAL_DEV  *StdErrSerialDev;
 
   // Use the template to make a copy of the Serial Console private data structure.
-  StdOutSerialDev = AllocateCopyPool (sizeof (GDB_SERIAL_DEV),  &gdbSerialDevTemplate);
+  StdOutSerialDev = AllocateCopyPool (sizeof (GDB_SERIAL_DEV), &gdbSerialDevTemplate);
   ASSERT (StdOutSerialDev != NULL);
 
   // Fixup pointer after the copy
   StdOutSerialDev->SerialIo.Mode = &StdOutSerialDev->SerialMode;
 
-  StdErrSerialDev = AllocateCopyPool (sizeof (GDB_SERIAL_DEV),  &gdbSerialDevTemplate);
+  StdErrSerialDev = AllocateCopyPool (sizeof (GDB_SERIAL_DEV), &gdbSerialDevTemplate);
   ASSERT (StdErrSerialDev != NULL);
 
   // Fixup pointer and modify stuff that is different for StdError
-  StdErrSerialDev->SerialIo.Mode = &StdErrSerialDev->SerialMode;
-  StdErrSerialDev->DevicePath.Index = 1;
+  StdErrSerialDev->SerialIo.Mode     = &StdErrSerialDev->SerialMode;
+  StdErrSerialDev->DevicePath.Index  = 1;
   StdErrSerialDev->OutFileDescriptor = GDB_STDERR;
 
   // Make a new handle with Serial IO protocol and its device path on it.
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &StdOutSerialDev->Handle,
-                  &gEfiSerialIoProtocolGuid,   &StdOutSerialDev->SerialIo,
-                  &gEfiDevicePathProtocolGuid, &StdOutSerialDev->DevicePath,
-                  NULL
-                  );
+                                                   &StdOutSerialDev->Handle,
+                                                   &gEfiSerialIoProtocolGuid,
+                                                   &StdOutSerialDev->SerialIo,
+                                                   &gEfiDevicePathProtocolGuid,
+                                                   &StdOutSerialDev->DevicePath,
+                                                   NULL
+                                                   );
   ASSERT_EFI_ERROR (Status);
 
   // Make a new handle with Serial IO protocol and its device path on it.
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &StdErrSerialDev->Handle,
-                  &gEfiSerialIoProtocolGuid,   &StdErrSerialDev->SerialIo,
-                  &gEfiDevicePathProtocolGuid, &StdErrSerialDev->DevicePath,
-                  NULL
-                  );
+                                                   &StdErrSerialDev->Handle,
+                                                   &gEfiSerialIoProtocolGuid,
+                                                   &StdErrSerialDev->SerialIo,
+                                                   &gEfiDevicePathProtocolGuid,
+                                                   &StdErrSerialDev->DevicePath,
+                                                   NULL
+                                                   );
   ASSERT_EFI_ERROR (Status);
 }
-

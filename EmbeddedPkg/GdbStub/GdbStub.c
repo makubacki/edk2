@@ -14,33 +14,56 @@
 #include <GdbStubInternal.h>
 #include <Protocol/DebugPort.h>
 
-
-UINTN     gMaxProcessorIndex = 0;
+UINTN  gMaxProcessorIndex = 0;
 
 //
 // Buffers for basic gdb communication
 //
-CHAR8 gInBuffer[MAX_BUF_SIZE];
-CHAR8 gOutBuffer[MAX_BUF_SIZE];
+CHAR8  gInBuffer[MAX_BUF_SIZE];
+CHAR8  gOutBuffer[MAX_BUF_SIZE];
 
 // Assume gdb does a "qXfer:libraries:read::offset,length" when it connects so we can default
 // this value to FALSE. Since gdb can reconnect its self a global default is not good enough
-BOOLEAN   gSymbolTableUpdate = FALSE;
-EFI_EVENT gEvent;
-VOID      *gGdbSymbolEventHandlerRegistration = NULL;
+BOOLEAN    gSymbolTableUpdate = FALSE;
+EFI_EVENT  gEvent;
+VOID       *gGdbSymbolEventHandlerRegistration = NULL;
 
 //
 // Globals for returning XML from qXfer:libraries:read packet
 //
-UINTN                             gPacketqXferLibraryOffset = 0;
-UINTN                             gEfiDebugImageTableEntry = 0;
-EFI_DEBUG_IMAGE_INFO_TABLE_HEADER *gDebugImageTableHeader = NULL;
-EFI_DEBUG_IMAGE_INFO              *gDebugTable = NULL;
-CHAR8                             gXferLibraryBuffer[2000];
+UINTN                              gPacketqXferLibraryOffset = 0;
+UINTN                              gEfiDebugImageTableEntry  = 0;
+EFI_DEBUG_IMAGE_INFO_TABLE_HEADER  *gDebugImageTableHeader   = NULL;
+EFI_DEBUG_IMAGE_INFO               *gDebugTable = NULL;
+CHAR8                              gXferLibraryBuffer[2000];
 
-GLOBAL_REMOVE_IF_UNREFERENCED CONST CHAR8 mHexToStr[] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+GLOBAL_REMOVE_IF_UNREFERENCED CONST CHAR8  mHexToStr[] = {
+  '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+};
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 EFIAPI
 GdbSymbolEventHandler (
@@ -49,7 +72,6 @@ GdbSymbolEventHandler (
   )
 {
 }
-
 
 /**
   The user Entry Point for Application. The user code starts with this function
@@ -78,18 +100,18 @@ GdbStubEntry (
   UINTN                       Processor;
   BOOLEAN                     IsaSupported;
 
-  Status = EfiGetSystemConfigurationTable (&gEfiDebugImageInfoTableGuid, (VOID **)&gDebugImageTableHeader);
+  Status = EfiGetSystemConfigurationTable (&gEfiDebugImageInfoTableGuid, (VOID **) &gDebugImageTableHeader);
   if (EFI_ERROR (Status)) {
     gDebugImageTableHeader = NULL;
   }
 
   Status = gBS->LocateHandleBuffer (
-                  ByProtocol,
-                  &gEfiDebugSupportProtocolGuid,
-                  NULL,
-                  &HandleCount,
-                  &Handles
-                  );
+                                    ByProtocol,
+                                    &gEfiDebugSupportProtocolGuid,
+                                    NULL,
+                                    &HandleCount,
+                                    &Handles
+                                    );
   if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "Debug Support Protocol not found\n"));
 
@@ -101,10 +123,10 @@ GdbStubEntry (
   do {
     HandleCount--;
     Status = gBS->HandleProtocol (
-                    Handles[HandleCount],
-                    &gEfiDebugSupportProtocolGuid,
-                    (VOID **) &DebugSupport
-                    );
+                                  Handles[HandleCount],
+                                  &gEfiDebugSupportProtocolGuid,
+                                  (VOID **) &DebugSupport
+                                  );
     if (!EFI_ERROR (Status)) {
       if (CheckIsa (DebugSupport->Isa)) {
         // We found what we are looking for so break out of the loop
@@ -113,6 +135,7 @@ GdbStubEntry (
       }
     }
   } while (HandleCount > 0);
+
   FreePool (Handles);
 
   if (!IsaSupported) {
@@ -132,9 +155,14 @@ GdbStubEntry (
 
   for (Processor = 0; Processor <= gMaxProcessorIndex; Processor++) {
     for (Index = 0; Index < MaxEfiException (); Index++) {
-      Status = DebugSupport->RegisterExceptionCallback (DebugSupport, Processor,  GdbExceptionHandler, gExceptionType[Index].Exception);
+      Status =
+        DebugSupport->RegisterExceptionCallback (DebugSupport,
+                                                 Processor,
+                                                 GdbExceptionHandler,
+                                                 gExceptionType[Index].Exception);
       ASSERT_EFI_ERROR (Status);
     }
+
     //
     // Current edk2 DebugPort is not interrupt context safe so we can not use it
     //
@@ -147,28 +175,27 @@ GdbStubEntry (
   // to update the symbol table.
   //
   Status = gBS->CreateEvent (
-                  EVT_NOTIFY_SIGNAL,
-                  TPL_CALLBACK,
-                  GdbSymbolEventHandler,
-                  NULL,
-                  &gEvent
-                  );
+                             EVT_NOTIFY_SIGNAL,
+                             TPL_CALLBACK,
+                             GdbSymbolEventHandler,
+                             NULL,
+                             &gEvent
+                             );
   ASSERT_EFI_ERROR (Status);
 
   //
   // Register for protocol notifications on this event
   //
   Status = gBS->RegisterProtocolNotify (
-                  &gEfiLoadedImageProtocolGuid,
-                  gEvent,
-                  &gGdbSymbolEventHandlerRegistration
-                  );
+                                        &gEfiLoadedImageProtocolGuid,
+                                        gEvent,
+                                        &gGdbSymbolEventHandlerRegistration
+                                        );
   ASSERT_EFI_ERROR (Status);
 
-
- if (PcdGetBool (PcdGdbSerial)) {
-   GdbInitializeSerialConsole ();
- }
+  if (PcdGetBool (PcdGdbSerial)) {
+    GdbInitializeSerialConsole ();
+  }
 
   return EFI_SUCCESS;
 }
@@ -180,7 +207,6 @@ GdbStubEntry (
  @param     *address                the start address of the transferring/writing the memory
  @param     *new_data               the new data to be written to memory
  **/
-
 VOID
 TransferFromInBufToMem (
   IN    UINTN                       Length,
@@ -188,24 +214,24 @@ TransferFromInBufToMem (
   IN    CHAR8                       *NewData
   )
 {
-  CHAR8 c1;
-  CHAR8 c2;
+  CHAR8  c1;
+  CHAR8  c2;
 
   while (Length-- > 0) {
-    c1 = (CHAR8)HexCharToInt (*NewData++);
-    c2 = (CHAR8)HexCharToInt (*NewData++);
+    c1 = (CHAR8) HexCharToInt (*NewData++);
+    c2 = (CHAR8) HexCharToInt (*NewData++);
 
     if ((c1 < 0) || (c2 < 0)) {
-      Print ((CHAR16 *)L"Bad message from write to memory..\n");
+      Print ((CHAR16 *) L"Bad message from write to memory..\n");
       SendError (GDB_EBADMEMDATA);
       return;
     }
-    *Address++ = (UINT8)((c1 << 4) + c2);
+
+    *Address++ = (UINT8) ((c1 << 4) + c2);
   }
 
-  SendSuccess();
+  SendSuccess ();
 }
-
 
 /**
  Transfer Length bytes of memory starting at Address to an output buffer, OutBuffer. This function will finally send the buffer
@@ -214,7 +240,6 @@ TransferFromInBufToMem (
  @param     Length                  the number of the bytes to be transferred/read
  @param     *address                pointer to the start address of the transferring/reading the memory
  **/
-
 VOID
 TransferFromMemToOutBufAndSend (
   IN    UINTN                       Length,
@@ -222,39 +247,38 @@ TransferFromMemToOutBufAndSend (
   )
 {
   // there are Length bytes and every byte is represented as 2 hex chars
-  CHAR8   OutBuffer[MAX_BUF_SIZE];
-  CHAR8   *OutBufPtr;             // pointer to the output buffer
-  CHAR8   Char;
+  CHAR8  OutBuffer[MAX_BUF_SIZE];
+  CHAR8  *OutBufPtr;              // pointer to the output buffer
+  CHAR8  Char;
 
-  if (ValidateAddress(Address) == FALSE) {
-    SendError(14);
+  if (ValidateAddress (Address) == FALSE) {
+    SendError (14);
     return;
   }
 
   OutBufPtr = OutBuffer;
   while (Length > 0) {
-
     Char = mHexToStr[*Address >> 4];
     if ((Char >= 'A') && (Char <= 'F')) {
       Char = Char - 'A' + 'a';
     }
+
     *OutBufPtr++ = Char;
 
     Char = mHexToStr[*Address & 0x0f];
     if ((Char >= 'A') && (Char <= 'F')) {
       Char = Char - 'A' + 'a';
     }
+
     *OutBufPtr++ = Char;
 
     Address++;
     Length--;
   }
 
-  *OutBufPtr = '\0' ;  // the end of the buffer
+  *OutBufPtr = '\0';   // the end of the buffer
   SendPacket (OutBuffer);
 }
-
-
 
 /**
   Send a GDB Remote Serial Protocol Packet
@@ -276,17 +300,16 @@ SendPacket (
   IN  CHAR8 *PacketData
   )
 {
-  UINT8 CheckSum;
-  UINTN Timeout;
-  CHAR8 *Ptr;
-  CHAR8 TestChar;
-  UINTN Count;
+  UINT8  CheckSum;
+  UINTN  Timeout;
+  CHAR8  *Ptr;
+  CHAR8  TestChar;
+  UINTN  Count;
 
   Timeout = PcdGet32 (PcdGdbMaxPacketRetryCount);
 
   Count = 0;
   do {
-
     Ptr = PacketData;
 
     if (Timeout-- == 0) {
@@ -297,7 +320,7 @@ SendPacket (
     // Packet prefix
     GdbPutChar ('$');
 
-    for (CheckSum = 0, Count =0 ; *Ptr != '\0'; Ptr++, Count++) {
+    for (CheckSum = 0, Count = 0; *Ptr != '\0'; Ptr++, Count++) {
       GdbPutChar (*Ptr);
       CheckSum = CheckSum + *Ptr;
     }
@@ -333,29 +356,30 @@ UINTN
 ReceivePacket (
   OUT  CHAR8 *PacketData,
   IN   UINTN PacketDataSize
- )
+  )
 {
-  UINT8 CheckSum;
-  UINTN Index;
-  CHAR8 Char;
-  CHAR8 SumString[3];
-  CHAR8 TestChar;
+  UINT8  CheckSum;
+  UINTN  Index;
+  CHAR8  Char;
+  CHAR8  SumString[3];
+  CHAR8  TestChar;
 
   ZeroMem (PacketData, PacketDataSize);
 
-  for (;;) {
-      // wait for the start of a packet
+  for ( ; ;) {
+    // wait for the start of a packet
     TestChar = GdbGetChar ();
     while (TestChar != '$') {
       TestChar = GdbGetChar ();
-    };
+    }
 
-  retry:
+retry:
     for (Index = 0, CheckSum = 0; Index < (PacketDataSize - 1); Index++) {
       Char = GdbGetChar ();
       if (Char == '$') {
         goto retry;
       }
+
       if (Char == '#') {
         break;
       }
@@ -363,6 +387,7 @@ ReceivePacket (
       PacketData[Index] = Char;
       CheckSum = CheckSum + Char;
     }
+
     PacketData[Index] = '\0';
 
     if (Index == PacketDataSize) {
@@ -386,9 +411,8 @@ ReceivePacket (
     }
   }
 
-  //return 0;
+  // return 0;
 }
-
 
 /**
  Empties the given buffer
@@ -401,7 +425,6 @@ EmptyBuffer (
 {
   *Buf = '\0';
 }
-
 
 /**
  Converts an 8-bit Hex Char into a INTN.
@@ -421,13 +444,14 @@ HexCharToInt (
     return Char - 'a' + 10;
   } else if ((Char >= '0') && (Char <= '9')) {
     return Char - '0';
-  } else { // if not a hex value, return a negative value
-    return -1;
+  } else {
+    // if not a hex value, return a negative value
+    return - 1;
   }
 }
 
-  // 'E' + the biggest error number is 255, so its 2 hex digits + buffer end
-CHAR8 *gError = "E__";
+// 'E' + the biggest error number is 255, so its 2 hex digits + buffer end
+CHAR8  *gError = "E__";
 
 /** 'E NN'
  Send an error with the given error number after converting to hex.
@@ -445,13 +469,11 @@ SendError (
   //
   // Replace _, or old data, with current errno
   //
-  gError[1] = mHexToStr [ErrorNum >> 4];
-  gError[2] = mHexToStr [ErrorNum & 0x0f];
+  gError[1] = mHexToStr[ErrorNum >> 4];
+  gError[2] = mHexToStr[ErrorNum & 0x0f];
 
   SendPacket (gError); // send buffer
 }
-
-
 
 /**
  Send 'OK' when the function is done executing successfully.
@@ -465,7 +487,6 @@ SendSuccess (
   SendPacket ("OK"); // send buffer
 }
 
-
 /**
  Send empty packet to specify that particular command/functionality is not supported.
  **/
@@ -477,7 +498,6 @@ SendNotSupported (
 {
   SendPacket ("");
 }
-
 
 /**
  Send the T signal with the given exception type (in gdb order) and possibly with n:r pairs related to the watchpoints
@@ -491,24 +511,24 @@ GdbSendTSignal (
   IN  UINT8               GdbExceptionType
   )
 {
-  CHAR8 TSignalBuffer[128];
-  CHAR8 *TSignalPtr;
-  UINTN BreakpointDetected;
-  BREAK_TYPE BreakType;
-  UINTN DataAddress;
-  CHAR8 *WatchStrPtr = NULL;
-  UINTN RegSize;
+  CHAR8       TSignalBuffer[128];
+  CHAR8       *TSignalPtr;
+  UINTN       BreakpointDetected;
+  BREAK_TYPE  BreakType;
+  UINTN       DataAddress;
+  CHAR8       *WatchStrPtr = NULL;
+  UINTN       RegSize;
 
   TSignalPtr = &TSignalBuffer[0];
 
-  //Construct TSignal packet
+  // Construct TSignal packet
   *TSignalPtr++ = 'T';
 
   //
   // replace _, or previous value, with Exception type
   //
-  *TSignalPtr++ = mHexToStr [GdbExceptionType >> 4];
-  *TSignalPtr++ = mHexToStr [GdbExceptionType & 0x0f];
+  *TSignalPtr++ = mHexToStr[GdbExceptionType >> 4];
+  *TSignalPtr++ = mHexToStr[GdbExceptionType & 0x0f];
 
   if (GdbExceptionType == GDB_SIGTRAP) {
     if (gSymbolTableUpdate) {
@@ -519,27 +539,25 @@ GdbSendTSignal (
       while (*WatchStrPtr != '\0') {
         *TSignalPtr++ = *WatchStrPtr++;
       }
+
       gSymbolTableUpdate = FALSE;
     } else {
-
-
       //
       // possible n:r pairs
       //
 
-      //Retrieve the breakpoint number
+      // Retrieve the breakpoint number
       BreakpointDetected = GetBreakpointDetected (SystemContext);
 
-      //Figure out if the exception is happend due to watch, rwatch or awatch.
+      // Figure out if the exception is happend due to watch, rwatch or awatch.
       BreakType = GetBreakpointType (SystemContext, BreakpointDetected);
 
-      //INFO: rwatch is not supported due to the way IA32 debug registers work
+      // INFO: rwatch is not supported due to the way IA32 debug registers work
       if ((BreakType == DataWrite) || (BreakType == DataRead) || (BreakType == DataReadWrite)) {
-
-        //Construct n:r pair
+        // Construct n:r pair
         DataAddress = GetBreakpointDataAddress (SystemContext, BreakpointDetected);
 
-        //Assign appropriate buffer to print particular watchpoint type
+        // Assign appropriate buffer to print particular watchpoint type
         if (BreakType == DataWrite) {
           WatchStrPtr = "watch";
         } else if (BreakType == DataRead) {
@@ -554,14 +572,14 @@ GdbSendTSignal (
 
         *TSignalPtr++ = ':';
 
-        //Set up series of bytes in big-endian byte order. "awatch" won't work with little-endian byte order.
+        // Set up series of bytes in big-endian byte order. "awatch" won't work with little-endian byte order.
         RegSize = REG_SIZE;
         while (RegSize > 0) {
           RegSize = RegSize-4;
-          *TSignalPtr++ = mHexToStr[(UINT8)(DataAddress >> RegSize) & 0xf];
+          *TSignalPtr++ = mHexToStr[(UINT8) (DataAddress >> RegSize) & 0xf];
         }
 
-        //Always end n:r pair with ';'
+        // Always end n:r pair with ';'
         *TSignalPtr++ = ';';
       }
     }
@@ -571,7 +589,6 @@ GdbSendTSignal (
 
   SendPacket (TSignalBuffer);
 }
-
 
 /**
  Translates the EFI mapping to GDB mapping
@@ -584,64 +601,63 @@ ConvertEFItoGDBtype (
   IN  EFI_EXCEPTION_TYPE      EFIExceptionType
   )
 {
-  UINTN Index;
+  UINTN  Index;
 
-  for (Index = 0; Index < MaxEfiException () ; Index++) {
+  for (Index = 0; Index < MaxEfiException (); Index++) {
     if (gExceptionType[Index].Exception == EFIExceptionType) {
       return gExceptionType[Index].SignalNo;
     }
   }
+
   return GDB_SIGTRAP; // this is a GDB trap
 }
-
 
 /** "m addr,length"
  Find the Length of the area to read and the start address. Finally, pass them to
  another function, TransferFromMemToOutBufAndSend, that will read from that memory space and
  send it as a packet.
  **/
-
 VOID
 EFIAPI
 ReadFromMemory (
   CHAR8 *PacketData
   )
 {
-  UINTN Address;
-  UINTN Length;
-  CHAR8 AddressBuffer[MAX_ADDR_SIZE]; // the buffer that will hold the address in hex chars
-  CHAR8 *AddrBufPtr; // pointer to the address buffer
-  CHAR8 *InBufPtr; /// pointer to the input buffer
+  UINTN  Address;
+  UINTN  Length;
+  CHAR8  AddressBuffer[MAX_ADDR_SIZE]; // the buffer that will hold the address in hex chars
+  CHAR8  *AddrBufPtr;                  // pointer to the address buffer
+  CHAR8  *InBufPtr;                    /// pointer to the input buffer
 
   AddrBufPtr = AddressBuffer;
-  InBufPtr = &PacketData[1];
+  InBufPtr   = &PacketData[1];
   while (*InBufPtr != ',') {
     *AddrBufPtr++ = *InBufPtr++;
   }
+
   *AddrBufPtr = '\0';
 
   InBufPtr++; // this skips ',' in the buffer
 
   /* Error checking */
   if (AsciiStrLen (AddressBuffer) >= MAX_ADDR_SIZE) {
-    Print((CHAR16 *)L"Address is too long\n");
+    Print ((CHAR16 *) L"Address is too long\n");
     SendError (GDB_EBADMEMADDRBUFSIZE);
     return;
   }
 
   // 2 = 'm' + ','
   if (AsciiStrLen (PacketData) - AsciiStrLen (AddressBuffer) - 2 >= MAX_LENGTH_SIZE) {
-    Print((CHAR16 *)L"Length is too long\n");
+    Print ((CHAR16 *) L"Length is too long\n");
     SendError (GDB_EBADMEMLENGTH);
     return;
   }
 
   Address = AsciiStrHexToUintn (AddressBuffer);
-  Length = AsciiStrHexToUintn (InBufPtr);
+  Length  = AsciiStrHexToUintn (InBufPtr);
 
-  TransferFromMemToOutBufAndSend (Length, (unsigned char *)Address);
+  TransferFromMemToOutBufAndSend (Length, (unsigned char *) Address);
 }
-
 
 /** "M addr,length :XX..."
  Find the Length of the area in bytes to write and the start address. Finally, pass them to
@@ -654,22 +670,23 @@ WriteToMemory (
   IN CHAR8 *PacketData
   )
 {
-  UINTN Address;
-  UINTN Length;
-  UINTN MessageLength;
-  CHAR8 AddressBuffer[MAX_ADDR_SIZE]; // the buffer that will hold the Address in hex chars
-  CHAR8 LengthBuffer[MAX_LENGTH_SIZE]; // the buffer that will hold the Length in hex chars
-  CHAR8 *AddrBufPtr; // pointer to the Address buffer
-  CHAR8 *LengthBufPtr; // pointer to the Length buffer
-  CHAR8 *InBufPtr; /// pointer to the input buffer
+  UINTN  Address;
+  UINTN  Length;
+  UINTN  MessageLength;
+  CHAR8  AddressBuffer[MAX_ADDR_SIZE];  // the buffer that will hold the Address in hex chars
+  CHAR8  LengthBuffer[MAX_LENGTH_SIZE]; // the buffer that will hold the Length in hex chars
+  CHAR8  *AddrBufPtr;                   // pointer to the Address buffer
+  CHAR8  *LengthBufPtr;                 // pointer to the Length buffer
+  CHAR8  *InBufPtr;                     /// pointer to the input buffer
 
-  AddrBufPtr = AddressBuffer;
+  AddrBufPtr   = AddressBuffer;
   LengthBufPtr = LengthBuffer;
-  InBufPtr = &PacketData[1];
+  InBufPtr     = &PacketData[1];
 
   while (*InBufPtr != ',') {
     *AddrBufPtr++ = *InBufPtr++;
   }
+
   *AddrBufPtr = '\0';
 
   InBufPtr++; // this skips ',' in the buffer
@@ -677,25 +694,26 @@ WriteToMemory (
   while (*InBufPtr != ':') {
     *LengthBufPtr++ = *InBufPtr++;
   }
+
   *LengthBufPtr = '\0';
 
   InBufPtr++; // this skips ':' in the buffer
 
   Address = AsciiStrHexToUintn (AddressBuffer);
-  Length = AsciiStrHexToUintn (LengthBuffer);
+  Length  = AsciiStrHexToUintn (LengthBuffer);
 
   /* Error checking */
 
-  //Check if Address is not too long.
+  // Check if Address is not too long.
   if (AsciiStrLen (AddressBuffer) >= MAX_ADDR_SIZE) {
-    Print ((CHAR16 *)L"Address too long..\n");
+    Print ((CHAR16 *) L"Address too long..\n");
     SendError (GDB_EBADMEMADDRBUFSIZE);
     return;
   }
 
-  //Check if message length is not too long
+  // Check if message length is not too long
   if (AsciiStrLen (LengthBuffer) >= MAX_LENGTH_SIZE) {
-    Print ((CHAR16 *)L"Length too long..\n");
+    Print ((CHAR16 *) L"Length too long..\n");
     SendError (GDB_EBADMEMLENGBUFSIZE);
     return;
   }
@@ -704,11 +722,12 @@ WriteToMemory (
   // 3 = 'M' + ',' + ':'
   MessageLength = (AsciiStrLen (PacketData) - AsciiStrLen (AddressBuffer) - AsciiStrLen (LengthBuffer) - 3);
   if (MessageLength != (2*Length)) {
-    //Message too long/short. New data is not the right size.
+    // Message too long/short. New data is not the right size.
     SendError (GDB_EBADMEMDATASIZE);
     return;
   }
-  TransferFromInBufToMem (Length, (unsigned char *)Address, InBufPtr);
+
+  TransferFromInBufToMem (Length, (unsigned char *) Address, InBufPtr);
 }
 
 /**
@@ -733,64 +752,89 @@ ParseBreakpointPacket (
   OUT UINTN *Length
   )
 {
-  CHAR8 AddressBuffer[MAX_ADDR_SIZE];
-  CHAR8 *AddressBufferPtr;
-  CHAR8 *PacketDataPtr;
+  CHAR8  AddressBuffer[MAX_ADDR_SIZE];
+  CHAR8  *AddressBufferPtr;
+  CHAR8  *PacketDataPtr;
 
-  PacketDataPtr = &PacketData[1];
+  PacketDataPtr    = &PacketData[1];
   AddressBufferPtr = AddressBuffer;
 
   *Type = AsciiStrHexToUintn (PacketDataPtr);
 
-  //Breakpoint/watchpoint type should be between 0 to 4
+  // Breakpoint/watchpoint type should be between 0 to 4
   if (*Type > 4) {
-    Print ((CHAR16 *)L"Type is invalid\n");
-    return 22; //EINVAL: Invalid argument.
+    Print ((CHAR16 *) L"Type is invalid\n");
+    return 22; // EINVAL: Invalid argument.
   }
 
-  //Skip ',' in the buffer.
-  while (*PacketDataPtr++ != ',');
+  // Skip ',' in the buffer.
+  while (*PacketDataPtr++ != ',') {
+  }
 
-  //Parse Address information
+  // Parse Address information
   while (*PacketDataPtr != ',') {
     *AddressBufferPtr++ = *PacketDataPtr++;
   }
+
   *AddressBufferPtr = '\0';
 
-  //Check if Address is not too long.
+  // Check if Address is not too long.
   if (AsciiStrLen (AddressBuffer) >= MAX_ADDR_SIZE) {
-    Print ((CHAR16 *)L"Address too long..\n");
-    return 40; //EMSGSIZE: Message size too long.
+    Print ((CHAR16 *) L"Address too long..\n");
+    return 40; // EMSGSIZE: Message size too long.
   }
 
   *Address = AsciiStrHexToUintn (AddressBuffer);
 
-  PacketDataPtr++; //This skips , in the buffer
+  PacketDataPtr++; // This skips , in the buffer
 
-  //Parse Length information
+  // Parse Length information
   *Length = AsciiStrHexToUintn (PacketDataPtr);
 
-  //Length should be 1, 2 or 4 bytes
+  // Length should be 1, 2 or 4 bytes
   if (*Length > 4) {
-    Print ((CHAR16 *)L"Length is invalid\n");
-    return 22; //EINVAL: Invalid argument
+    Print ((CHAR16 *) L"Length is invalid\n");
+    return 22; // EINVAL: Invalid argument
   }
 
-  return 0; //0 = No error
+  return 0; // 0 = No error
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 UINTN
 gXferObjectReadResponse (
   IN  CHAR8         Type,
   IN  CHAR8         *Str
   )
 {
-  CHAR8   *OutBufPtr;             // pointer to the output buffer
-  CHAR8   Char;
-  UINTN   Count;
+  CHAR8  *OutBufPtr;              // pointer to the output buffer
+  CHAR8  Char;
+  UINTN  Count;
 
   // Response starts with 'm' or 'l' if it is the end
-  OutBufPtr = gOutBuffer;
+  OutBufPtr    = gOutBuffer;
   *OutBufPtr++ = Type;
   Count = 1;
 
@@ -804,16 +848,16 @@ gXferObjectReadResponse (
 
       Char ^= 0x20;
     }
+
     *OutBufPtr++ = Char;
     Count++;
   }
 
-  *OutBufPtr = '\0' ;  // the end of the buffer
+  *OutBufPtr = '\0';   // the end of the buffer
   SendPacket (gOutBuffer);
 
   return Count;
 }
-
 
 /**
   Note: This should be a library function.  In the Apple case you have to add
@@ -848,79 +892,79 @@ PeCoffLoaderGetDebuggerInfo (
   OUT VOID    **DebugBase
   )
 {
-  EFI_IMAGE_DOS_HEADER                  *DosHdr;
-  EFI_IMAGE_OPTIONAL_HEADER_PTR_UNION   Hdr;
-  EFI_IMAGE_DATA_DIRECTORY              *DirectoryEntry;
-  EFI_IMAGE_DEBUG_DIRECTORY_ENTRY       *DebugEntry;
-  UINTN                                 DirCount;
-  VOID                                  *CodeViewEntryPointer;
-  INTN                                  TEImageAdjust;
-  UINT32                                NumberOfRvaAndSizes;
-  UINT16                                Magic;
-  UINTN                                 SizeOfHeaders;
+  EFI_IMAGE_DOS_HEADER                 *DosHdr;
+  EFI_IMAGE_OPTIONAL_HEADER_PTR_UNION  Hdr;
+  EFI_IMAGE_DATA_DIRECTORY             *DirectoryEntry;
+  EFI_IMAGE_DEBUG_DIRECTORY_ENTRY      *DebugEntry;
+  UINTN                                DirCount;
+  VOID                                 *CodeViewEntryPointer;
+  INTN                                 TEImageAdjust;
+  UINT32                               NumberOfRvaAndSizes;
+  UINT16                               Magic;
+  UINTN                                SizeOfHeaders;
 
   ASSERT (Pe32Data   != NULL);
 
-  TEImageAdjust       = 0;
-  DirectoryEntry      = NULL;
-  DebugEntry          = NULL;
+  TEImageAdjust  = 0;
+  DirectoryEntry = NULL;
+  DebugEntry     = NULL;
   NumberOfRvaAndSizes = 0;
-  SizeOfHeaders       = 0;
+  SizeOfHeaders = 0;
 
-  DosHdr = (EFI_IMAGE_DOS_HEADER *)Pe32Data;
+  DosHdr = (EFI_IMAGE_DOS_HEADER *) Pe32Data;
   if (DosHdr->e_magic == EFI_IMAGE_DOS_SIGNATURE) {
     //
     // DOS image header is present, so read the PE header after the DOS image header.
     //
-    Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)((UINTN) Pe32Data + (UINTN) ((DosHdr->e_lfanew) & 0x0ffff));
+    Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *) ((UINTN) Pe32Data + (UINTN) ((DosHdr->e_lfanew) & 0x0ffff));
   } else {
     //
     // DOS image header is not present, so PE header is at the image base.
     //
-    Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)Pe32Data;
+    Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *) Pe32Data;
   }
 
   if (Hdr.Te->Signature == EFI_TE_IMAGE_HEADER_SIGNATURE) {
     if (Hdr.Te->DataDirectory[EFI_TE_IMAGE_DIRECTORY_ENTRY_DEBUG].VirtualAddress != 0) {
-      DirectoryEntry  = &Hdr.Te->DataDirectory[EFI_TE_IMAGE_DIRECTORY_ENTRY_DEBUG];
-      TEImageAdjust   = sizeof (EFI_TE_IMAGE_HEADER) - Hdr.Te->StrippedSize;
-      DebugEntry = (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY *)((UINTN) Hdr.Te +
-                    Hdr.Te->DataDirectory[EFI_TE_IMAGE_DIRECTORY_ENTRY_DEBUG].VirtualAddress +
-                    TEImageAdjust);
+      DirectoryEntry = &Hdr.Te->DataDirectory[EFI_TE_IMAGE_DIRECTORY_ENTRY_DEBUG];
+      TEImageAdjust  = sizeof (EFI_TE_IMAGE_HEADER) - Hdr.Te->StrippedSize;
+      DebugEntry     = (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY *) ((UINTN) Hdr.Te +
+                                                            Hdr.Te->DataDirectory[EFI_TE_IMAGE_DIRECTORY_ENTRY_DEBUG].
+                                                              VirtualAddress +
+                                                            TEImageAdjust);
     }
-    SizeOfHeaders = sizeof (EFI_TE_IMAGE_HEADER) + (UINTN)Hdr.Te->BaseOfCode - (UINTN)Hdr.Te->StrippedSize;
+
+    SizeOfHeaders = sizeof (EFI_TE_IMAGE_HEADER) + (UINTN) Hdr.Te->BaseOfCode - (UINTN) Hdr.Te->StrippedSize;
 
     // __APPLE__ check this math...
-    *DebugBase = ((CHAR8 *)Pe32Data) -  TEImageAdjust;
+    *DebugBase = ((CHAR8 *) Pe32Data) -  TEImageAdjust;
   } else if (Hdr.Pe32->Signature == EFI_IMAGE_NT_SIGNATURE) {
-
     *DebugBase = Pe32Data;
-
 
     //
     // NOTE: We use Machine field to identify PE32/PE32+, instead of Magic.
-    //       It is due to backward-compatibility, for some system might
-    //       generate PE32+ image with PE32 Magic.
+    // It is due to backward-compatibility, for some system might
+    // generate PE32+ image with PE32 Magic.
     //
     switch (Hdr.Pe32->FileHeader.Machine) {
-    case EFI_IMAGE_MACHINE_IA32:
-      //
-      // Assume PE32 image with IA32 Machine field.
-      //
-      Magic = EFI_IMAGE_NT_OPTIONAL_HDR32_MAGIC;
-      break;
-    case EFI_IMAGE_MACHINE_X64:
-    case EFI_IMAGE_MACHINE_IA64:
-      //
-      // Assume PE32+ image with X64 or IPF Machine field
-      //
-      Magic = EFI_IMAGE_NT_OPTIONAL_HDR64_MAGIC;
-      break;
-    default:
-      //
-      // For unknown Machine field, use Magic in optional Header
-      //
-      Magic = Hdr.Pe32->OptionalHeader.Magic;
+      case EFI_IMAGE_MACHINE_IA32:
+        //
+        // Assume PE32 image with IA32 Machine field.
+        //
+        Magic = EFI_IMAGE_NT_OPTIONAL_HDR32_MAGIC;
+        break;
+      case EFI_IMAGE_MACHINE_X64:
+      case EFI_IMAGE_MACHINE_IA64:
+        //
+        // Assume PE32+ image with X64 or IPF Machine field
+        //
+        Magic = EFI_IMAGE_NT_OPTIONAL_HDR64_MAGIC;
+        break;
+      default:
+        //
+        // For unknown Machine field, use Magic in optional Header
+        //
+        Magic = Hdr.Pe32->OptionalHeader.Magic;
     }
 
     if (Magic == EFI_IMAGE_NT_OPTIONAL_HDR32_MAGIC) {
@@ -929,21 +973,23 @@ PeCoffLoaderGetDebuggerInfo (
       //
       SizeOfHeaders = Hdr.Pe32->OptionalHeader.SizeOfHeaders;
       NumberOfRvaAndSizes = Hdr.Pe32->OptionalHeader.NumberOfRvaAndSizes;
-      DirectoryEntry = (EFI_IMAGE_DATA_DIRECTORY *)&(Hdr.Pe32->OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_DEBUG]);
-      DebugEntry     = (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY *) ((UINTN) Pe32Data + DirectoryEntry->VirtualAddress);
+      DirectoryEntry =
+        (EFI_IMAGE_DATA_DIRECTORY *) &(Hdr.Pe32->OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_DEBUG]);
+      DebugEntry = (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY *) ((UINTN) Pe32Data + DirectoryEntry->VirtualAddress);
     } else if (Hdr.Pe32->OptionalHeader.Magic == EFI_IMAGE_NT_OPTIONAL_HDR64_MAGIC) {
       //
       // Use PE32+ offset get Debug Directory Entry
       //
       SizeOfHeaders = Hdr.Pe32Plus->OptionalHeader.SizeOfHeaders;
       NumberOfRvaAndSizes = Hdr.Pe32Plus->OptionalHeader.NumberOfRvaAndSizes;
-      DirectoryEntry = (EFI_IMAGE_DATA_DIRECTORY *)&(Hdr.Pe32Plus->OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_DEBUG]);
-      DebugEntry     = (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY *) ((UINTN) Pe32Data + DirectoryEntry->VirtualAddress);
+      DirectoryEntry =
+        (EFI_IMAGE_DATA_DIRECTORY *) &(Hdr.Pe32Plus->OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_DEBUG]);
+      DebugEntry = (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY *) ((UINTN) Pe32Data + DirectoryEntry->VirtualAddress);
     }
 
     if (NumberOfRvaAndSizes <= EFI_IMAGE_DIRECTORY_ENTRY_DEBUG) {
       DirectoryEntry = NULL;
-      DebugEntry = NULL;
+      DebugEntry     = NULL;
     }
   } else {
     return NULL;
@@ -953,29 +999,30 @@ PeCoffLoaderGetDebuggerInfo (
     return NULL;
   }
 
-  for (DirCount = 0; DirCount < DirectoryEntry->Size; DirCount += sizeof (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY), DebugEntry++) {
+  for (DirCount = 0;
+       DirCount < DirectoryEntry->Size;
+       DirCount += sizeof (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY), DebugEntry++) {
     if (DebugEntry->Type == EFI_IMAGE_DEBUG_TYPE_CODEVIEW) {
       if (DebugEntry->SizeOfData > 0) {
-        CodeViewEntryPointer = (VOID *) ((UINTN) DebugEntry->RVA + ((UINTN)Pe32Data) + (UINTN)TEImageAdjust);
-        switch (* (UINT32 *) CodeViewEntryPointer) {
-        case CODEVIEW_SIGNATURE_NB10:
-          return (VOID *) ((CHAR8 *)CodeViewEntryPointer + sizeof (EFI_IMAGE_DEBUG_CODEVIEW_NB10_ENTRY));
-        case CODEVIEW_SIGNATURE_RSDS:
-          return (VOID *) ((CHAR8 *)CodeViewEntryPointer + sizeof (EFI_IMAGE_DEBUG_CODEVIEW_RSDS_ENTRY));
-        case CODEVIEW_SIGNATURE_MTOC:
-          *DebugBase = (VOID *)(UINTN)((UINTN)DebugBase - SizeOfHeaders);
-          return (VOID *) ((CHAR8 *)CodeViewEntryPointer + sizeof (EFI_IMAGE_DEBUG_CODEVIEW_MTOC_ENTRY));
-        default:
-          break;
+        CodeViewEntryPointer = (VOID *) ((UINTN) DebugEntry->RVA + ((UINTN) Pe32Data) + (UINTN) TEImageAdjust);
+        switch (*(UINT32 *) CodeViewEntryPointer) {
+          case CODEVIEW_SIGNATURE_NB10:
+            return (VOID *) ((CHAR8 *) CodeViewEntryPointer + sizeof (EFI_IMAGE_DEBUG_CODEVIEW_NB10_ENTRY));
+          case CODEVIEW_SIGNATURE_RSDS:
+            return (VOID *) ((CHAR8 *) CodeViewEntryPointer + sizeof (EFI_IMAGE_DEBUG_CODEVIEW_RSDS_ENTRY));
+          case CODEVIEW_SIGNATURE_MTOC:
+            *DebugBase = (VOID *) (UINTN) ((UINTN) DebugBase - SizeOfHeaders);
+            return (VOID *) ((CHAR8 *) CodeViewEntryPointer + sizeof (EFI_IMAGE_DEBUG_CODEVIEW_MTOC_ENTRY));
+          default:
+            break;
         }
       }
     }
   }
 
-  (void)SizeOfHeaders;
+  (void) SizeOfHeaders;
   return NULL;
 }
-
 
 /**
   Process "qXfer:object:read:annex:offset,length" request.
@@ -1016,9 +1063,9 @@ QxferLibrary (
   IN  UINTN   Length
   )
 {
-  VOID                              *LoadAddress;
-  CHAR8                             *Pdb;
-  UINTN                             Size;
+  VOID   *LoadAddress;
+  CHAR8  *Pdb;
+  UINTN  Size;
 
   if (Offset != gPacketqXferLibraryOffset) {
     SendError (GDB_EINVALIDARG);
@@ -1042,22 +1089,22 @@ QxferLibrary (
   }
 
   if (gDebugTable != NULL) {
-    for (; gEfiDebugImageTableEntry < gDebugImageTableHeader->TableSize; gEfiDebugImageTableEntry++, gDebugTable++) {
+    for ( ; gEfiDebugImageTableEntry < gDebugImageTableHeader->TableSize; gEfiDebugImageTableEntry++, gDebugTable++) {
       if (gDebugTable->NormalImage != NULL) {
         if ((gDebugTable->NormalImage->ImageInfoType == EFI_DEBUG_IMAGE_INFO_TYPE_NORMAL) &&
             (gDebugTable->NormalImage->LoadedImageProtocolInstance != NULL)) {
           Pdb = PeCoffLoaderGetDebuggerInfo (
-                 gDebugTable->NormalImage->LoadedImageProtocolInstance->ImageBase,
-                 &LoadAddress
-                 );
+                                             gDebugTable->NormalImage->LoadedImageProtocolInstance->ImageBase,
+                                             &LoadAddress
+                                             );
           if (Pdb != NULL) {
             Size = AsciiSPrint (
-                    gXferLibraryBuffer,
-                    sizeof (gXferLibraryBuffer),
-                    "  <library name=\"%a\"><segment address=\"0x%p\"/></library>\n",
-                    Pdb,
-                    LoadAddress
-                    );
+                                gXferLibraryBuffer,
+                                sizeof (gXferLibraryBuffer),
+                                "  <library name=\"%a\"><segment address=\"0x%p\"/></library>\n",
+                                Pdb,
+                                LoadAddress
+                                );
             if ((Size != 0) && (Size != (sizeof (gXferLibraryBuffer) - 1))) {
               gPacketqXferLibraryOffset += gXferObjectReadResponse ('m', gXferLibraryBuffer);
 
@@ -1080,12 +1127,10 @@ QxferLibrary (
     }
   }
 
-
   gXferObjectReadResponse ('l', "</library-list>\n");
   gPacketqXferLibraryOffset = 0;
   return;
 }
-
 
 /**
  Exception Handler for GDB. It will be called for all exceptions
@@ -1101,9 +1146,8 @@ GdbExceptionHandler (
   IN OUT EFI_SYSTEM_CONTEXT     SystemContext
   )
 {
-  UINT8   GdbExceptionType;
-  CHAR8   *Ptr;
-
+  UINT8  GdbExceptionType;
+  CHAR8  *Ptr;
 
   if (ValidateException (ExceptionType, SystemContext) == FALSE) {
     return;
@@ -1135,7 +1179,7 @@ GdbExceptionHandler (
         break;
 
       case 'H':
-        //Return "OK" packet since we don't have more than one thread.
+        // Return "OK" packet since we don't have more than one thread.
         SendSuccess ();
         break;
 
@@ -1163,17 +1207,21 @@ GdbExceptionHandler (
         } else if (AsciiStrnCmp (gInBuffer, "qXfer:libraries:read::", 22) == 0) {
           // ‘qXfer:libraries:read::offset,length
           // gInBuffer[22] is offset string, ++Ptr is length string’
-          for (Ptr = &gInBuffer[22]; *Ptr != ','; Ptr++);
+          for (Ptr = &gInBuffer[22]; *Ptr != ','; Ptr++) {
+          }
 
           // Not sure if multi-radix support is required. Currently only support decimal
           QxferLibrary (AsciiStrHexToUintn (&gInBuffer[22]), AsciiStrHexToUintn (++Ptr));
-        } if (AsciiStrnCmp (gInBuffer, "qOffsets", 10) == 0) {
+        }
+
+        if (AsciiStrnCmp (gInBuffer, "qOffsets", 10) == 0) {
           AsciiSPrint (gOutBuffer, MAX_BUF_SIZE, "Text=1000;Data=f000;Bss=f000");
           SendPacket (gOutBuffer);
         } else {
-          //Send empty packet
+          // Send empty packet
           SendNotSupported ();
         }
+
         break;
 
       case 's':
@@ -1189,13 +1237,12 @@ GdbExceptionHandler (
         break;
 
       default:
-        //Send empty packet
+        // Send empty packet
         SendNotSupported ();
         break;
     }
   }
 }
-
 
 /**
  Periodic callback for GDB. This function is used to catch a ctrl-c or other

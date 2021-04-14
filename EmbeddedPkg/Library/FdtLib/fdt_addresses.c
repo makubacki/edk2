@@ -55,42 +55,100 @@
 
 #include "libfdt_internal.h"
 
-int fdt_address_cells(const void *fdt, int nodeoffset)
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
+int
+fdt_address_cells (
+  const void *fdt, int nodeoffset
+  )
 {
-	const fdt32_t *ac;
-	int val;
-	int len;
+  const fdt32_t  *ac;
+  int            val;
+  int            len;
 
-	ac = fdt_getprop(fdt, nodeoffset, "#address-cells", &len);
-	if (!ac)
-		return 2;
+  ac = fdt_getprop (fdt, nodeoffset, "#address-cells", &len);
+  if (!ac) {
+    return 2;
+  }
 
-	if (len != sizeof(*ac))
-		return -FDT_ERR_BADNCELLS;
+  if (len != sizeof (*ac)) {
+    return - FDT_ERR_BADNCELLS;
+  }
 
-	val = fdt32_to_cpu(*ac);
-	if ((val <= 0) || (val > FDT_MAX_NCELLS))
-		return -FDT_ERR_BADNCELLS;
+  val = fdt32_to_cpu (*ac);
+  if ((val <= 0) || (val > FDT_MAX_NCELLS)) {
+    return - FDT_ERR_BADNCELLS;
+  }
 
-	return val;
+  return val;
 }
 
-int fdt_size_cells(const void *fdt, int nodeoffset)
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
+int
+fdt_size_cells (
+  const void *fdt, int nodeoffset
+  )
 {
-	const fdt32_t *sc;
-	int val;
-	int len;
+  const fdt32_t  *sc;
+  int            val;
+  int            len;
 
-	sc = fdt_getprop(fdt, nodeoffset, "#size-cells", &len);
-	if (!sc)
-		return 2;
+  sc = fdt_getprop (fdt, nodeoffset, "#size-cells", &len);
+  if (!sc) {
+    return 2;
+  }
 
-	if (len != sizeof(*sc))
-		return -FDT_ERR_BADNCELLS;
+  if (len != sizeof (*sc)) {
+    return - FDT_ERR_BADNCELLS;
+  }
 
-	val = fdt32_to_cpu(*sc);
-	if ((val < 0) || (val > FDT_MAX_NCELLS))
-		return -FDT_ERR_BADNCELLS;
+  val = fdt32_to_cpu (*sc);
+  if ((val < 0) || (val > FDT_MAX_NCELLS)) {
+    return - FDT_ERR_BADNCELLS;
+  }
 
-	return val;
+  return val;
 }
