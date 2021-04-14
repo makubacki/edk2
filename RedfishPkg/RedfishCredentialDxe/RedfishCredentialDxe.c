@@ -10,7 +10,7 @@
 
 #include <RedfishCredentialDxe.h>
 
-EDKII_REDFISH_CREDENTIAL_PROTOCOL mRedfishCredentialProtocol = {
+EDKII_REDFISH_CREDENTIAL_PROTOCOL  mRedfishCredentialProtocol = {
   RedfishCredentialGetAuthInfo,
   RedfishCredentialStopService
 };
@@ -28,7 +28,7 @@ RedfishCredentialExitBootServicesEventNotify (
   OUT VOID       *Context
   )
 {
-  LibCredentialExitBootServicesNotify ((EDKII_REDFISH_CREDENTIAL_PROTOCOL *)Context);
+  LibCredentialExitBootServicesNotify ((EDKII_REDFISH_CREDENTIAL_PROTOCOL *) Context);
 }
 
 /**
@@ -44,7 +44,7 @@ RedfishCredentialEndOfDxeEventNotify (
   OUT VOID       *Context
   )
 {
-  LibCredentialEndOfDxeNotify ((EDKII_REDFISH_CREDENTIAL_PROTOCOL *)Context);
+  LibCredentialEndOfDxeNotify ((EDKII_REDFISH_CREDENTIAL_PROTOCOL *) Context);
 
   //
   // Close event, so it will not be invoked again.
@@ -89,7 +89,7 @@ RedfishCredentialGetAuthInfo (
     return EFI_INVALID_PARAMETER;
   }
 
-  return LibCredentialGetAuthInfo (This, AuthMethod, UserId,Password);
+  return LibCredentialGetAuthInfo (This, AuthMethod, UserId, Password);
 }
 
 /**
@@ -150,11 +150,11 @@ RedfishCredentialDxeDriverEntryPoint (
   // Install the RedfishCredentialProtocol onto Handle.
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &Handle,
-                  &gEdkIIRedfishCredentialProtocolGuid,
-                  &mRedfishCredentialProtocol,
-                  NULL
-                  );
+                                                   &Handle,
+                                                   &gEdkIIRedfishCredentialProtocolGuid,
+                                                   &mRedfishCredentialProtocol,
+                                                   NULL
+                                                   );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -166,13 +166,13 @@ RedfishCredentialDxeDriverEntryPoint (
   // status.
   //
   Status = gBS->CreateEventEx (
-                  EVT_NOTIFY_SIGNAL,
-                  TPL_CALLBACK,
-                  RedfishCredentialEndOfDxeEventNotify,
-                  (VOID *)&mRedfishCredentialProtocol,
-                  &gEfiEndOfDxeEventGroupGuid,
-                  &EndOfDxeEvent
-                  );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_CALLBACK,
+                               RedfishCredentialEndOfDxeEventNotify,
+                               (VOID *) &mRedfishCredentialProtocol,
+                               &gEfiEndOfDxeEventGroupGuid,
+                               &EndOfDxeEvent
+                               );
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
@@ -182,15 +182,15 @@ RedfishCredentialDxeDriverEntryPoint (
   // So, here, we create ExitBootService Event to stop service.
   //
   Status = gBS->CreateEventEx (
-                  EVT_NOTIFY_SIGNAL,
-                  TPL_CALLBACK,
-                  RedfishCredentialExitBootServicesEventNotify,
-                  (VOID *)&mRedfishCredentialProtocol,
-                  &gEfiEventExitBootServicesGuid,
-                  &ExitBootServiceEvent
-                  );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_CALLBACK,
+                               RedfishCredentialExitBootServicesEventNotify,
+                               (VOID *) &mRedfishCredentialProtocol,
+                               &gEfiEventExitBootServicesGuid,
+                               &ExitBootServiceEvent
+                               );
   if (EFI_ERROR (Status)) {
-    gBS->CloseEvent (EndOfDxeEvent);
+  gBS->CloseEvent (EndOfDxeEvent);
     goto ON_ERROR;
   }
 
@@ -199,11 +199,11 @@ RedfishCredentialDxeDriverEntryPoint (
 ON_ERROR:
 
   gBS->UninstallMultipleProtocolInterfaces (
-         Handle,
-         &gEdkIIRedfishCredentialProtocolGuid,
-         &mRedfishCredentialProtocol,
-         NULL
-         );
+                                            Handle,
+                                            &gEdkIIRedfishCredentialProtocolGuid,
+                                            &mRedfishCredentialProtocol,
+                                            NULL
+                                            );
 
   return Status;
 }

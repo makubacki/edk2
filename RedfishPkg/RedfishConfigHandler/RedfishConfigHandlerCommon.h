@@ -37,14 +37,15 @@
 #define REDFISH_CONFIG_VERSION  0x00000001
 
 ///
-///  Internal structure used by Redfish Config DXE driver.
+/// Internal structure used by Redfish Config DXE driver.
 ///
 typedef struct {
-  UINT32        CallerId;  ///< Caller ID used to indicate Redfish Config Handler
-                           ///< has been initiated
-  EFI_HANDLE    Image;     ///< Image handle of Redfish Config Driver
-  EFI_EVENT     Event;     ///< Event for the notification of EFI_REDFISH_CONFIG_HANDLER_PROTOCOL
-  REDFISH_CONFIG_SERVICE_INFORMATION RedfishServiceInfo; /// Redfish Service information discovered
+  UINT32                                CallerId;           ///< Caller ID used to indicate Redfish Config Handler
+                                                            ///< has been initiated
+  EFI_HANDLE                            Image;              ///< Image handle of Redfish Config Driver
+  EFI_EVENT                             Event;              ///< Event for the notification of
+                                                            ///< EFI_REDFISH_CONFIG_HANDLER_PROTOCOL
+  REDFISH_CONFIG_SERVICE_INFORMATION    RedfishServiceInfo; /// Redfish Service information discovered
 } REDFISH_CONFIG_DRIVER_DATA;
 
 /**
@@ -84,9 +85,9 @@ RedfishConfigCommonInit (
   @retval Others         An unexpected error occurred.
 **/
 EFI_STATUS
-RedfishConfigCommonStop (
-  VOID
-);
+  RedfishConfigCommonStop (
+                           VOID
+                           );
 
 /**
   Callback function executed when a Redfish Config Handler Protocol is installed
@@ -94,8 +95,8 @@ RedfishConfigCommonStop (
 
 **/
 VOID
-RedfishConfigHandlerInitialization (
-  VOID
-  );
+  RedfishConfigHandlerInitialization (
+                                      VOID
+                                      );
 
 #endif

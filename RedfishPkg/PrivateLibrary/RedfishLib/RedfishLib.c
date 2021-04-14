@@ -37,8 +37,8 @@ RedfishCreateService (
   EFI_STATUS                 Status;
 
   RedfishService = NULL;
-  UserId         = NULL;
-  Password       = NULL;
+  UserId   = NULL;
+  Password = NULL;
 
   //
   // Check Input Parameters.
@@ -59,17 +59,18 @@ RedfishCreateService (
   // Create a redfish service node based on Redfish network host interface.
   //
   RedfishService = RedfishCreateLibredfishService (
-                     RedfishConfigServiceInfo,
-                     AuthMethod,
-                     UserId,
-                     Password
-                     );
+                                                   RedfishConfigServiceInfo,
+                                                   AuthMethod,
+                                                   UserId,
+                                                   Password
+                                                   );
 
 ON_EXIT:
   if (UserId != NULL) {
     FreePool (UserId);
   }
-  if (Password!= NULL) {
+
+  if (Password != NULL) {
     FreePool (Password);
   }
 
@@ -94,6 +95,7 @@ RedfishCleanupService (
 
   cleanupServiceEnumerator (RedfishService);
 }
+
 /**
   Create REDFISH_PAYLOAD instance in local with JSON represented resource value and
   the Redfish Service.
@@ -116,7 +118,7 @@ RedfishCreatePayload (
   IN REDFISH_SERVICE            RedfishService
   )
 {
-  EDKII_JSON_VALUE    CopyValue;
+  EDKII_JSON_VALUE  CopyValue;
 
   CopyValue = JsonValueClone (Value);
   return createRedfishPayload (CopyValue, RedfishService);
@@ -162,7 +164,7 @@ RedfishJsonInPayload (
     return NULL;
   }
 
-  return ((redfishPayload*)Payload)->json;
+  return ((redfishPayload *) Payload)->json;
 }
 
 /**
@@ -192,10 +194,10 @@ RedfishBuildPathWithSystemUuid (
   IN CHAR8          *IdString OPTIONAL
   )
 {
-  UINTN          BufSize;
-  CHAR8*         RetRedPath;
-  EFI_GUID       SystemUuid;
-  EFI_STATUS     Status;
+  UINTN       BufSize;
+  CHAR8       *RetRedPath;
+  EFI_GUID    SystemUuid;
+  EFI_STATUS  Status;
 
   if (RedPath == NULL) {
     return NULL;
@@ -205,10 +207,11 @@ RedfishBuildPathWithSystemUuid (
   // Find system UUID from SMBIOS table.
   //
   if (FromSmbios) {
-    Status = NetLibGetSystemGuid(&SystemUuid);
+    Status = NetLibGetSystemGuid (&SystemUuid);
     if (EFI_ERROR (Status)) {
       return NULL;
     }
+
     // AsciiStrLen ("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx") = 36
     BufSize = AsciiStrSize (RedPath) + AsciiStrLen ("XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX");
   } else {
@@ -219,13 +222,16 @@ RedfishBuildPathWithSystemUuid (
   if (RetRedPath == NULL) {
     return NULL;
   }
+
   if (FromSmbios) {
     AsciiSPrint (RetRedPath, BufSize, RedPath, &SystemUuid);
   } else {
     AsciiSPrint (RetRedPath, BufSize, RedPath, IdString);
   }
+
   return RetRedPath;
 }
+
 /**
   Get a redfish response addressed by a RedPath string, including HTTP StatusCode, Headers
   and Payload which record any HTTP response messages.
@@ -275,8 +281,8 @@ RedfishGetByService (
 
   //
   // 3. If the returned StatusCode is not 2XX, indicates any error happen.
-  //    NOTE: If there is any error message returned from server, it will be returned in
-  //          Payload within RedResponse.
+  // NOTE: If there is any error message returned from server, it will be returned in
+  // Payload within RedResponse.
   //
   if (*(RedResponse->StatusCode) < HTTP_STATUS_200_OK || \
       *(RedResponse->StatusCode) > HTTP_STATUS_206_PARTIAL_CONTENT) {
@@ -285,6 +291,7 @@ RedfishGetByService (
 
   return EFI_SUCCESS;
 }
+
 /**
   Get a redfish response addressed by URI, including HTTP StatusCode, Headers
   and Payload which record any HTTP response messages.
@@ -315,7 +322,7 @@ RedfishGetByUri (
   OUT    REDFISH_RESPONSE     *RedResponse
   )
 {
-  EDKII_JSON_VALUE JsonValue;
+  EDKII_JSON_VALUE  JsonValue;
 
   if (RedfishService == NULL || Uri == NULL || RedResponse == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -324,7 +331,7 @@ RedfishGetByUri (
   ZeroMem (RedResponse, sizeof (REDFISH_RESPONSE));
 
   JsonValue = getUriFromService (RedfishService, Uri, &RedResponse->StatusCode);
-  RedResponse->Payload = createRedfishPayload(JsonValue, RedfishService);
+  RedResponse->Payload = createRedfishPayload (JsonValue, RedfishService);
 
   //
   // 1. If the returned Payload is NULL, indicates any error happen.
@@ -336,15 +343,17 @@ RedfishGetByUri (
 
   //
   // 3. If the returned StatusCode is not 2XX, indicates any error happen.
-  //    NOTE: If there is any error message returned from server, it will be returned in
-  //          Payload within RedResponse.
+  // NOTE: If there is any error message returned from server, it will be returned in
+  // Payload within RedResponse.
   //
   if (*(RedResponse->StatusCode) < HTTP_STATUS_200_OK || \
       *(RedResponse->StatusCode) > HTTP_STATUS_206_PARTIAL_CONTENT) {
     return EFI_DEVICE_ERROR;
   }
+
   return EFI_SUCCESS;
 }
+
 /**
   Get a redfish response addressed by the input Payload and relative RedPath string,
   including HTTP StatusCode, Headers and Payload which record any HTTP response messages.
@@ -396,9 +405,9 @@ RedfishGetByPayload (
 
   //
   // 2. If StatusCode is not NULL and the returned value of StatusCode is not 2XX, indicates any
-  //    error happen.
-  //    NOTE: If there is any error message returned from server, it will be returned in
-  //          Payload within RedResponse.
+  // error happen.
+  // NOTE: If there is any error message returned from server, it will be returned in
+  // Payload within RedResponse.
   //
   if (RedResponse->StatusCode != NULL && \
       (*(RedResponse->StatusCode) < HTTP_STATUS_200_OK || \
@@ -409,6 +418,7 @@ RedfishGetByPayload (
 
   return EFI_SUCCESS;
 }
+
 /**
   Use HTTP PATCH to perform updates on pre-existing Redfish resource.
 
@@ -448,8 +458,8 @@ RedfishPatchToUri (
   OUT    REDFISH_RESPONSE           *RedResponse
   )
 {
-  EFI_STATUS               Status;
-  EDKII_JSON_VALUE         JsonValue;
+  EFI_STATUS        Status;
+  EDKII_JSON_VALUE  JsonValue;
 
   Status    = EFI_SUCCESS;
   JsonValue = NULL;
@@ -461,11 +471,11 @@ RedfishPatchToUri (
   ZeroMem (RedResponse, sizeof (REDFISH_RESPONSE));
 
   JsonValue = (EDKII_JSON_VALUE) patchUriFromService (
-                                   RedfishService,
-                                   Uri,
-                                   Content,
-                                   &(RedResponse->StatusCode)
-                                   );
+                                                      RedfishService,
+                                                      Uri,
+                                                      Content,
+                                                      &(RedResponse->StatusCode)
+                                                      );
 
   //
   // 1. If the returned StatusCode is NULL, indicates any error happen.
@@ -477,8 +487,8 @@ RedfishPatchToUri (
 
   //
   // 2. If the returned StatusCode is not NULL and the value is not 2XX, indicates any error happen.
-  //    NOTE: If there is any error message returned from server, it will be returned in
-  //          Payload within RedResponse.
+  // NOTE: If there is any error message returned from server, it will be returned in
+  // Payload within RedResponse.
   //
   if (*(RedResponse->StatusCode) < HTTP_STATUS_200_OK || \
       *(RedResponse->StatusCode) > HTTP_STATUS_206_PARTIAL_CONTENT) {
@@ -499,6 +509,7 @@ ON_EXIT:
 
   return Status;
 }
+
 /**
   Use HTTP PATCH to perform updates on target payload. Patch to odata.id in Payload directly.
 
@@ -542,10 +553,10 @@ RedfishPatchToPayload (
   ZeroMem (RedResponse, sizeof (REDFISH_RESPONSE));
 
   RedResponse->Payload = (REDFISH_PAYLOAD) patchPayload (
-                                             Target,
-                                             Payload,
-                                             &(RedResponse->StatusCode)
-                                             );
+                                                         Target,
+                                                         Payload,
+                                                         &(RedResponse->StatusCode)
+                                                         );
 
   //
   // 1. If the returned StatusCode is NULL, indicates any error happen.
@@ -556,8 +567,8 @@ RedfishPatchToPayload (
 
   //
   // 2. If the returned StatusCode is not NULL and the value is not 2XX, indicates any error happen.
-  //    NOTE: If there is any error message returned from server, it will be returned in
-  //          Payload within RedResponse.
+  // NOTE: If there is any error message returned from server, it will be returned in
+  // Payload within RedResponse.
   //
   if (*(RedResponse->StatusCode) < HTTP_STATUS_200_OK || \
       *(RedResponse->StatusCode) > HTTP_STATUS_206_PARTIAL_CONTENT) {
@@ -566,6 +577,7 @@ RedfishPatchToPayload (
 
   return EFI_SUCCESS;
 }
+
 /**
   Use HTTP POST to create a new resource in target payload.
 
@@ -608,10 +620,10 @@ RedfishPostToPayload (
   ZeroMem (RedResponse, sizeof (REDFISH_RESPONSE));
 
   RedResponse->Payload = (REDFISH_PAYLOAD) postPayload (
-                                             Target,
-                                             Payload,
-                                             &(RedResponse->StatusCode)
-                                             );
+                                                        Target,
+                                                        Payload,
+                                                        &(RedResponse->StatusCode)
+                                                        );
 
   //
   // 1. If the returned StatusCode is NULL, indicates any error happen.
@@ -622,8 +634,8 @@ RedfishPostToPayload (
 
   //
   // 2. If the returned StatusCode is not NULL and the value is not 2XX, indicates any error happen.
-  //    NOTE: If there is any error message returned from server, it will be returned in
-  //          Payload within RedResponse.
+  // NOTE: If there is any error message returned from server, it will be returned in
+  // Payload within RedResponse.
   //
   if (*(RedResponse->StatusCode) < HTTP_STATUS_200_OK || \
       *(RedResponse->StatusCode) > HTTP_STATUS_206_PARTIAL_CONTENT) {
@@ -632,6 +644,7 @@ RedfishPostToPayload (
 
   return EFI_SUCCESS;
 }
+
 /**
   Use HTTP DELETE to remove a resource.
 
@@ -667,8 +680,8 @@ RedfishDeleteByUri (
   OUT    REDFISH_RESPONSE           *RedResponse
   )
 {
-  EFI_STATUS               Status;
-  EDKII_JSON_VALUE         JsonValue;
+  EFI_STATUS        Status;
+  EDKII_JSON_VALUE  JsonValue;
 
   Status    = EFI_SUCCESS;
   JsonValue = NULL;
@@ -680,10 +693,10 @@ RedfishDeleteByUri (
   ZeroMem (RedResponse, sizeof (REDFISH_RESPONSE));
 
   JsonValue = (EDKII_JSON_VALUE) deleteUriFromService (
-                                   RedfishService,
-                                   Uri,
-                                   &(RedResponse->StatusCode)
-                                   );
+                                                       RedfishService,
+                                                       Uri,
+                                                       &(RedResponse->StatusCode)
+                                                       );
 
   //
   // 1. If the returned StatusCode is NULL, indicates any error happen.
@@ -695,8 +708,8 @@ RedfishDeleteByUri (
 
   //
   // 2. If the returned StatusCode is not NULL and the value is not 2XX, indicates any error happen.
-  //    NOTE: If there is any error message returned from server, it will be returned in
-  //          Payload within RedResponse.
+  // NOTE: If there is any error message returned from server, it will be returned in
+  // Payload within RedResponse.
   //
   if (*(RedResponse->StatusCode) < HTTP_STATUS_200_OK || \
       *(RedResponse->StatusCode) > HTTP_STATUS_206_PARTIAL_CONTENT) {
@@ -717,6 +730,7 @@ ON_EXIT:
 
   return Status;
 }
+
 /**
   Dump text in fractions.
 
@@ -728,34 +742,37 @@ RedfishDumpJsonStringFractions (
   IN CHAR8 *String
   )
 {
-  CHAR8 *NextFraction;
-  UINTN StringFractionSize;
-  UINTN StrLen;
-  UINTN Count;
-  CHAR8 BackupChar;
+  CHAR8  *NextFraction;
+  UINTN  StringFractionSize;
+  UINTN  StrLen;
+  UINTN  Count;
+  CHAR8  BackupChar;
 
   StringFractionSize = 200;
   if (String == NULL) {
-    return ;
+    return;
   }
 
-  DEBUG((DEBUG_INFO, "JSON text:\n"));
+  DEBUG ((DEBUG_INFO, "JSON text:\n"));
   NextFraction = String;
   StrLen = AsciiStrLen (String);
   if (StrLen == 0) {
     return;
   }
+
   for (Count = 0; Count < (StrLen / StringFractionSize); Count++) {
     BackupChar = *(NextFraction + StringFractionSize);
     *(NextFraction + StringFractionSize) = 0;
-    DEBUG((DEBUG_INFO, "%a", NextFraction));
+    DEBUG ((DEBUG_INFO, "%a", NextFraction));
     *(NextFraction + StringFractionSize) = BackupChar;
     NextFraction += StringFractionSize;
   }
+
   if ((StrLen % StringFractionSize) != 0) {
-    DEBUG((DEBUG_INFO, "%a\n\n", NextFraction));
+    DEBUG ((DEBUG_INFO, "%a\n\n", NextFraction));
   }
 }
+
 /**
   Dump text in JSON value.
 
@@ -767,15 +784,17 @@ RedfishDumpJson (
   IN EDKII_JSON_VALUE  JsonValue
   )
 {
-  CHAR8 *String;
+  CHAR8  *String;
 
   String = JsonDumpString (JsonValue, 0);
   if (String == NULL) {
     return;
   }
+
   RedfishDumpJsonStringFractions (String);
-  FreePool(String);
+  FreePool (String);
 }
+
 /**
   Extract the JSON text content from REDFISH_PAYLOAD and dump to debug console.
 
@@ -787,11 +806,11 @@ RedfishDumpPayload (
   IN REDFISH_PAYLOAD       Payload
   )
 {
-  EDKII_JSON_VALUE JsonValue;
-  CHAR8 *String;
+  EDKII_JSON_VALUE  JsonValue;
+  CHAR8             *String;
 
   JsonValue = NULL;
-  String = NULL;
+  String    = NULL;
 
   if (Payload == NULL) {
     return;
@@ -808,8 +827,9 @@ RedfishDumpPayload (
   }
 
   RedfishDumpJsonStringFractions (String);
-  FreePool(String);
+  FreePool (String);
 }
+
 /**
   This function will cleanup the HTTP header and Redfish payload resources.
 
@@ -833,7 +853,7 @@ RedfishFreeResponse (
   }
 
   if (HeaderCount != 0 && Headers != NULL) {
-    HttpFreeHeaderFields(Headers, HeaderCount);
+    HttpFreeHeaderFields (Headers, HeaderCount);
     Headers = NULL;
   }
 
@@ -842,6 +862,7 @@ RedfishFreeResponse (
     Payload = NULL;
   }
 }
+
 /**
   Check if the "@odata.type" in Payload is valid or not.
 
@@ -861,9 +882,9 @@ RedfishIsValidOdataType (
   IN UINTN                        OdataTypeMappingListSize
   )
 {
-  UINTN               Index;
-  EDKII_JSON_VALUE    OdataType;
-  EDKII_JSON_VALUE    JsonValue;
+  UINTN             Index;
+  EDKII_JSON_VALUE  OdataType;
+  EDKII_JSON_VALUE  JsonValue;
 
   if (Payload == NULL || OdataTypeName == NULL) {
     return FALSE;
@@ -879,15 +900,17 @@ RedfishIsValidOdataType (
     return FALSE;
   }
 
-  for (Index = 0; Index < OdataTypeMappingListSize; Index ++) {
+  for (Index = 0; Index < OdataTypeMappingListSize; Index++) {
     if (AsciiStrCmp (OdataTypeMappingList[Index].OdataTypeName, OdataTypeName) == 0 &&
         AsciiStrCmp (OdataTypeMappingList[Index].OdataType, JsonValueGetAsciiString (OdataType)) == 0) {
       return TRUE;
     }
   }
+
   DEBUG ((DEBUG_INFO, "%a: This Odata type is not in the list.\n", __FUNCTION__));
   return FALSE;
 }
+
 /**
   Check if the payload is collection
 
@@ -899,10 +922,11 @@ RedfishIsValidOdataType (
 BOOLEAN
 RedfishIsPayloadCollection (
   IN REDFISH_PAYLOAD Payload
-)
+  )
 {
   return isPayloadCollection (Payload);
 }
+
 /**
   Get collection size.
 
@@ -913,7 +937,7 @@ RedfishIsPayloadCollection (
   @return EFI_INVALID_PARAMETER    The payload is not a collection.
 **/
 EFI_STATUS
-RedfishGetCollectionSize(
+RedfishGetCollectionSize (
   IN REDFISH_PAYLOAD Payload,
   IN UINTN *CollectionSize
   )
@@ -921,13 +945,15 @@ RedfishGetCollectionSize(
   if (Payload == NULL || CollectionSize == NULL) {
     return EFI_INVALID_PARAMETER;
   }
-  if (!RedfishIsPayloadCollection(Payload)) {
+
+  if (!RedfishIsPayloadCollection (Payload)) {
     return EFI_INVALID_PARAMETER;
   }
 
-  *CollectionSize = (UINTN)getCollectionSize(Payload);
+  *CollectionSize = (UINTN) getCollectionSize (Payload);
   return EFI_SUCCESS;
 }
+
 /**
   Get Redfish payload of collection member
 
@@ -941,18 +967,21 @@ REDFISH_PAYLOAD
 RedfishGetPayloadByIndex (
   IN REDFISH_PAYLOAD Payload,
   IN UINTN  Index
-)
+  )
 {
-  REDFISH_RESPONSE RedfishResponse;
-  REDFISH_PAYLOAD PayloadReturn;
+  REDFISH_RESPONSE  RedfishResponse;
+  REDFISH_PAYLOAD   PayloadReturn;
 
-  PayloadReturn = (VOID *)getPayloadByIndex (Payload, Index, &RedfishResponse.StatusCode);
+  PayloadReturn = (VOID *) getPayloadByIndex (Payload, Index, &RedfishResponse.StatusCode);
   if(PayloadReturn == NULL ||
-     (*(RedfishResponse.StatusCode) < HTTP_STATUS_200_OK && *(RedfishResponse.StatusCode) > HTTP_STATUS_206_PARTIAL_CONTENT)){
+     (*(RedfishResponse.StatusCode) < HTTP_STATUS_200_OK &&
+      *(RedfishResponse.StatusCode) > HTTP_STATUS_206_PARTIAL_CONTENT)) {
     return NULL;
   }
+
   return PayloadReturn;
 }
+
 /**
   Check and return Redfish resource of the given Redpath.
 
@@ -969,25 +998,28 @@ RedfishCheckIfRedpathExist (
   IN REDFISH_RESPONSE *Response OPTIONAL
   )
 {
-  EFI_STATUS Status;
-  REDFISH_RESPONSE TempResponse;
+  EFI_STATUS        Status;
+  REDFISH_RESPONSE  TempResponse;
 
   if (Redpath == NULL) {
     return EFI_INVALID_PARAMETER;
   }
+
   Status = RedfishGetByService (RedfishService, Redpath, &TempResponse);
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   if (Response == NULL) {
-    RedfishFreeResponse(
-      TempResponse.StatusCode,
-      TempResponse.HeaderCount,
-      TempResponse.Headers,
-      TempResponse.Payload
-    );
+    RedfishFreeResponse (
+                         TempResponse.StatusCode,
+                         TempResponse.HeaderCount,
+                         TempResponse.Headers,
+                         TempResponse.Payload
+                         );
   } else {
-    CopyMem ((VOID *)Response, (VOID *)&TempResponse, sizeof (REDFISH_RESPONSE));
+    CopyMem ((VOID *) Response, (VOID *) &TempResponse, sizeof (REDFISH_RESPONSE));
   }
+
   return EFI_SUCCESS;
 }

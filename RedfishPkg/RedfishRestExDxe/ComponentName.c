@@ -18,6 +18,7 @@
 //
 // EFI Component Name Functions
 //
+
 /**
   Retrieves a Unicode string that is the user-readable name of the EFI Driver.
 
@@ -113,7 +114,7 @@ EFI_COMPONENT_NAME_PROTOCOL  gRedfishRestExComponentName = {
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
 EFI_COMPONENT_NAME2_PROTOCOL  gRedfishRestExComponentName2 = {
-  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)     RedfishRestExComponentNameGetDriverName,
+  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) RedfishRestExComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) RedfishRestExComponentNameGetControllerName,
   "en"
 };
@@ -122,12 +123,12 @@ EFI_COMPONENT_NAME2_PROTOCOL  gRedfishRestExComponentName2 = {
 /// Table of driver names
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
-EFI_UNICODE_STRING_TABLE mRedfishRestExDriverNameTable[] = {
-  { "eng;en", (CHAR16 *)L"Redfish RestEx Network Service Driver" },
-  { NULL, NULL }
+EFI_UNICODE_STRING_TABLE  mRedfishRestExDriverNameTable[] = {
+  { "eng;en", (CHAR16 *) L"Redfish RestEx Network Service Driver" },
+  { NULL,     NULL                                                }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE *gRedfishRestExControllerNameTable = NULL;
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  *gRedfishRestExControllerNameTable = NULL;
 
 /**
   Retrieves a Unicode string that is the user-readable name of the EFI Driver.
@@ -160,12 +161,12 @@ RedfishRestExComponentNameGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mRedfishRestExDriverNameTable,
-           DriverName,
-           (BOOLEAN)(This == &gRedfishRestExComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mRedfishRestExDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gRedfishRestExComponentName)
+                               );
 }
 
 /**

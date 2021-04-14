@@ -14,9 +14,9 @@
 typedef struct _EDKII_REDFISH_CREDENTIAL_PROTOCOL EDKII_REDFISH_CREDENTIAL_PROTOCOL;
 
 #define EDKII_REDFISH_CREDENTIAL_PROTOCOL_GUID \
-    {  \
-      0x8804377, 0xaf7a, 0x4496, { 0x8a, 0x7b, 0x17, 0x59, 0x0, 0xe9, 0xab, 0x46 }  \
-    }
+  {  \
+    0x8804377, 0xaf7a, 0x4496, { 0x8a, 0x7b, 0x17, 0x59, 0x0, 0xe9, 0xab, 0x46 }  \
+  }
 
 typedef enum {
   AuthMethodNone,            ///< No authentication is required.
@@ -33,7 +33,6 @@ typedef enum {
                                       ///< Boot Service.
   ServiceStopTypeMax
 } EDKII_REDFISH_CREDENTIAL_STOP_SERVICE_TYPE;
-
 
 /**
   Retrieve platform's Redfish authentication information.
@@ -60,13 +59,13 @@ typedef enum {
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EDKII_REDFISH_CREDENTIAL_PROTOCOL_GET_AUTH_INFO) (
-  IN  EDKII_REDFISH_CREDENTIAL_PROTOCOL    *This,
-  OUT EDKII_REDFISH_AUTH_METHOD            *AuthMethod,
-  OUT CHAR8                                **UserId,
-  OUT CHAR8                                **Password
-  );
+  EFI_STATUS
+(EFIAPI *EDKII_REDFISH_CREDENTIAL_PROTOCOL_GET_AUTH_INFO)(
+                                                          IN  EDKII_REDFISH_CREDENTIAL_PROTOCOL    *This,
+                                                          OUT EDKII_REDFISH_AUTH_METHOD            *AuthMethod,
+                                                          OUT CHAR8                                **UserId,
+                                                          OUT CHAR8                                **Password
+                                                          );
 
 /**
   Notify the Redfish service provide to stop provide configuration service to this platform.
@@ -85,17 +84,18 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EDKII_REDFISH_CREDENTIAL_PROTOCOL_STOP_SERVICE) (
-  IN     EDKII_REDFISH_CREDENTIAL_PROTOCOL            *This,
-  IN     EDKII_REDFISH_CREDENTIAL_STOP_SERVICE_TYPE   ServiceStopType
-  );
+  EFI_STATUS
+(EFIAPI *EDKII_REDFISH_CREDENTIAL_PROTOCOL_STOP_SERVICE)(
+                                                         IN     EDKII_REDFISH_CREDENTIAL_PROTOCOL            *This,
+                                                         IN     EDKII_REDFISH_CREDENTIAL_STOP_SERVICE_TYPE
+                                                         ServiceStopType
+                                                         );
 
 struct _EDKII_REDFISH_CREDENTIAL_PROTOCOL {
-  EDKII_REDFISH_CREDENTIAL_PROTOCOL_GET_AUTH_INFO      GetAuthInfo;
-  EDKII_REDFISH_CREDENTIAL_PROTOCOL_STOP_SERVICE       StopService;
+  EDKII_REDFISH_CREDENTIAL_PROTOCOL_GET_AUTH_INFO    GetAuthInfo;
+  EDKII_REDFISH_CREDENTIAL_PROTOCOL_STOP_SERVICE     StopService;
 };
 
-extern EFI_GUID gEdkIIRedfishCredentialProtocolGuid;
+extern EFI_GUID  gEdkIIRedfishCredentialProtocolGuid;
 
 #endif

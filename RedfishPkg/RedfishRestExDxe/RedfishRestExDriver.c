@@ -11,7 +11,7 @@
 #include <Uefi.h>
 #include "RedfishRestExDriver.h"
 
-EFI_DRIVER_BINDING_PROTOCOL gRedfishRestExDriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  gRedfishRestExDriverBinding = {
   RedfishRestExDriverBindingSupported,
   RedfishRestExDriverBindingStart,
   RedfishRestExDriverBindingStop,
@@ -20,7 +20,7 @@ EFI_DRIVER_BINDING_PROTOCOL gRedfishRestExDriverBinding = {
   NULL
 };
 
-EFI_SERVICE_BINDING_PROTOCOL mRedfishRestExServiceBinding = {
+EFI_SERVICE_BINDING_PROTOCOL  mRedfishRestExServiceBinding = {
   RedfishRestExServiceBindingCreateChild,
   RedfishRestExServiceBindingDestroyChild
 };
@@ -95,8 +95,8 @@ RestExCreateInstance (
   OUT RESTEX_INSTANCE        **Instance
   )
 {
-  RESTEX_INSTANCE            *RestExIns;
-  EFI_STATUS                 Status;
+  RESTEX_INSTANCE  *RestExIns;
+  EFI_STATUS       Status;
 
   *Instance = NULL;
   Status    = EFI_SUCCESS;
@@ -117,14 +117,14 @@ RestExCreateInstance (
   // Create a HTTP_IO to access the HTTP service.
   //
   Status = HttpIoCreateIo (
-             RestExIns->Service->ImageHandle,
-             RestExIns->Service->ControllerHandle,
-             IP_VERSION_4,
-             NULL,
-             NULL,
-             NULL,
-             &(RestExIns->HttpIo)
-             );
+                           RestExIns->Service->ImageHandle,
+                           RestExIns->Service->ControllerHandle,
+                           IP_VERSION_4,
+                           NULL,
+                           NULL,
+                           NULL,
+                           &(RestExIns->HttpIo)
+                           );
   if (EFI_ERROR (Status)) {
     FreePool (RestExIns);
     return Status;
@@ -147,28 +147,28 @@ RestExDestroyService (
   )
 {
   if (RestExSb->HttpChildHandle != NULL) {
-    gBS->CloseProtocol (
-           RestExSb->HttpChildHandle,
-           &gEfiHttpProtocolGuid,
-           RestExSb->ImageHandle,
-           RestExSb->ControllerHandle
-           );
+  gBS->CloseProtocol (
+                      RestExSb->HttpChildHandle,
+                      &gEfiHttpProtocolGuid,
+                      RestExSb->ImageHandle,
+                      RestExSb->ControllerHandle
+                      );
 
     NetLibDestroyServiceChild (
-      RestExSb->ControllerHandle,
-      RestExSb->ImageHandle,
-      &gEfiHttpServiceBindingProtocolGuid,
-      RestExSb->HttpChildHandle
-      );
+                               RestExSb->ControllerHandle,
+                               RestExSb->ImageHandle,
+                               &gEfiHttpServiceBindingProtocolGuid,
+                               RestExSb->HttpChildHandle
+                               );
 
     RestExSb->HttpChildHandle = NULL;
   }
 
   gBS->UninstallProtocolInterface (
-         RestExSb->ControllerHandle,
-         &gEfiCallerIdGuid,
-         &RestExSb->Id
-         );
+                                   RestExSb->ControllerHandle,
+                                   &gEfiCallerIdGuid,
+                                   &RestExSb->Id
+                                   );
 
   FreePool (RestExSb);
 }
@@ -218,13 +218,13 @@ RestExCreateService (
   OUT    RESTEX_SERVICE        **Service
   )
 {
-  EFI_STATUS                Status;
-  RESTEX_SERVICE            *RestExSb;
+  EFI_STATUS      Status;
+  RESTEX_SERVICE  *RestExSb;
 
-  Status       = EFI_SUCCESS;
-  RestExSb     = NULL;
+  Status   = EFI_SUCCESS;
+  RestExSb = NULL;
 
-  *Service  = NULL;
+  *Service = NULL;
 
   RestExSb = AllocateZeroPool (sizeof (RESTEX_SERVICE));
   if (RestExSb == NULL) {
@@ -239,9 +239,10 @@ RestExCreateService (
   InitializeListHead (&RestExSb->RestExChildrenList);
 
   RestExSb->ControllerHandle = Controller;
-  RestExSb->ImageHandle      = Image;
+  RestExSb->ImageHandle = Image;
 
-  RestExSb->RestExServiceInfo.EfiRestExServiceInfoV10.EfiRestExServiceInfoHeader.Length = sizeof (EFI_REST_EX_SERVICE_INFO);
+  RestExSb->RestExServiceInfo.EfiRestExServiceInfoV10.EfiRestExServiceInfoHeader.Length =
+    sizeof (EFI_REST_EX_SERVICE_INFO);
   RestExSb->RestExServiceInfo.EfiRestExServiceInfoV10.EfiRestExServiceInfoHeader.RestServiceInfoVer.Major = 1;
   RestExSb->RestExServiceInfo.EfiRestExServiceInfoV10.EfiRestExServiceInfoHeader.RestServiceInfoVer.Minor = 0;
   RestExSb->RestExServiceInfo.EfiRestExServiceInfoV10.RestServiceType = EfiRestExServiceRedfish;
@@ -250,11 +251,11 @@ RestExCreateService (
   RestExSb->RestExServiceInfo.EfiRestExServiceInfoV10.RestExConfigDataLength = sizeof (EFI_REST_EX_HTTP_CONFIG_DATA);
 
   Status = gBS->InstallProtocolInterface (
-                  &Controller,
-                  &gEfiCallerIdGuid,
-                  EFI_NATIVE_INTERFACE,
-                  &RestExSb->Id
-                  );
+                                          &Controller,
+                                          &gEfiCallerIdGuid,
+                                          EFI_NATIVE_INTERFACE,
+                                          &RestExSb->Id
+                                          );
   if (EFI_ERROR (Status)) {
     FreePool (RestExSb);
     RestExSb = NULL;
@@ -290,13 +291,13 @@ RedfishRestExDriverEntryPoint (
   // Install the RestEx Driver Binding Protocol.
   //
   Status = EfiLibInstallDriverBindingComponentName2 (
-             ImageHandle,
-             SystemTable,
-             &gRedfishRestExDriverBinding,
-             ImageHandle,
-             &gRedfishRestExComponentName,
-             &gRedfishRestExComponentName2
-             );
+                                                     ImageHandle,
+                                                     SystemTable,
+                                                     &gRedfishRestExDriverBinding,
+                                                     ImageHandle,
+                                                     &gRedfishRestExComponentName,
+                                                     &gRedfishRestExComponentName2
+                                                     );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -354,19 +355,17 @@ RedfishRestExDriverBindingSupported (
   IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
   )
 {
-
   //
   // Test for the HttpServiceBinding Protocol.
   //
   return gBS->OpenProtocol (
-                ControllerHandle,
-                &gEfiHttpServiceBindingProtocolGuid,
-                NULL,
-                This->DriverBindingHandle,
-                ControllerHandle,
-                EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                );
-
+                            ControllerHandle,
+                            &gEfiHttpServiceBindingProtocolGuid,
+                            NULL,
+                            This->DriverBindingHandle,
+                            ControllerHandle,
+                            EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                            );
 }
 
 /**
@@ -412,19 +411,19 @@ RedfishRestExDriverBindingStart (
   IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
   )
 {
-  RESTEX_SERVICE         *RestExSb;
-  EFI_STATUS             Status;
-  UINT32                 *Id;
-  VOID                   *Interface;
+  RESTEX_SERVICE  *RestExSb;
+  EFI_STATUS      Status;
+  UINT32          *Id;
+  VOID            *Interface;
 
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiCallerIdGuid,
-                  (VOID **) &Id,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiCallerIdGuid,
+                              (VOID **) &Id,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (!EFI_ERROR (Status)) {
     return EFI_ALREADY_STARTED;
   }
@@ -441,23 +440,23 @@ RedfishRestExDriverBindingStart (
   // This will establish the parent-child relationship.
   //
   Status = NetLibCreateServiceChild (
-             ControllerHandle,
-             This->DriverBindingHandle,
-             &gEfiHttpServiceBindingProtocolGuid,
-             &RestExSb->HttpChildHandle
-             );
+                                     ControllerHandle,
+                                     This->DriverBindingHandle,
+                                     &gEfiHttpServiceBindingProtocolGuid,
+                                     &RestExSb->HttpChildHandle
+                                     );
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
 
   Status = gBS->OpenProtocol (
-                  RestExSb->HttpChildHandle,
-                  &gEfiHttpProtocolGuid,
-                  &Interface,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              RestExSb->HttpChildHandle,
+                              &gEfiHttpProtocolGuid,
+                              &Interface,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
@@ -466,11 +465,11 @@ RedfishRestExDriverBindingStart (
   // Install the RestEx ServiceBinding Protocol onto ControllerHandle.
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &ControllerHandle,
-                  &gEfiRestExServiceBindingProtocolGuid,
-                  &RestExSb->ServiceBinding,
-                  NULL
-                  );
+                                                   &ControllerHandle,
+                                                   &gEfiRestExServiceBindingProtocolGuid,
+                                                   &RestExSb->ServiceBinding,
+                                                   NULL
+                                                   );
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
@@ -518,12 +517,12 @@ RedfishRestExDriverBindingStop (
   IN EFI_HANDLE                   *ChildHandleBuffer OPTIONAL
   )
 {
-  EFI_SERVICE_BINDING_PROTOCOL               *ServiceBinding;
-  RESTEX_SERVICE                             *RestExSb;
-  EFI_HANDLE                                 NicHandle;
-  EFI_STATUS                                 Status;
-  LIST_ENTRY                                 *List;
-  RESTEX_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT Context;
+  EFI_SERVICE_BINDING_PROTOCOL                *ServiceBinding;
+  RESTEX_SERVICE                              *RestExSb;
+  EFI_HANDLE                                  NicHandle;
+  EFI_STATUS                                  Status;
+  LIST_ENTRY                                  *List;
+  RESTEX_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT  Context;
 
   //
   // RestEx driver opens HTTP child, So, Controller is a HTTP
@@ -536,13 +535,13 @@ RedfishRestExDriverBindingStop (
   }
 
   Status = gBS->OpenProtocol (
-                  NicHandle,
-                  &gEfiRestExServiceBindingProtocolGuid,
-                  (VOID **) &ServiceBinding,
-                  This->DriverBindingHandle,
-                  NicHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              NicHandle,
+                              &gEfiRestExServiceBindingProtocolGuid,
+                              (VOID **) &ServiceBinding,
+                              This->DriverBindingHandle,
+                              NicHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
   }
@@ -558,19 +557,19 @@ RedfishRestExDriverBindingStop (
     Context.NumberOfChildren  = NumberOfChildren;
     Context.ChildHandleBuffer = ChildHandleBuffer;
     Status = NetDestroyLinkList (
-               List,
-               RestExDestroyChildEntryInHandleBuffer,
-               &Context,
-               NULL
-               );
+                                 List,
+                                 RestExDestroyChildEntryInHandleBuffer,
+                                 &Context,
+                                 NULL
+                                 );
   }
 
   if (NumberOfChildren == 0 && IsListEmpty (&RestExSb->RestExChildrenList)) {
-    gBS->UninstallProtocolInterface (
-           NicHandle,
-           &gEfiRestExServiceBindingProtocolGuid,
-           ServiceBinding
-           );
+  gBS->UninstallProtocolInterface (
+                                   NicHandle,
+                                   &gEfiRestExServiceBindingProtocolGuid,
+                                   ServiceBinding
+                                   );
 
     RestExDestroyService (RestExSb);
 
@@ -611,11 +610,11 @@ RedfishRestExServiceBindingCreateChild (
   IN EFI_HANDLE                    *ChildHandle
   )
 {
-  RESTEX_SERVICE               *RestExSb;
-  RESTEX_INSTANCE              *Instance;
-  EFI_STATUS                   Status;
-  EFI_TPL                      OldTpl;
-  VOID                         *Http;
+  RESTEX_SERVICE   *RestExSb;
+  RESTEX_INSTANCE  *Instance;
+  EFI_STATUS       Status;
+  EFI_TPL          OldTpl;
+  VOID             *Http;
 
   if ((This == NULL) || (ChildHandle == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -627,17 +626,18 @@ RedfishRestExServiceBindingCreateChild (
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   ASSERT (Instance != NULL);
 
   //
   // Install the RestEx protocol onto ChildHandle
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  ChildHandle,
-                  &gEfiRestExProtocolGuid,
-                  &Instance->RestEx,
-                  NULL
-                  );
+                                                   ChildHandle,
+                                                   &gEfiRestExProtocolGuid,
+                                                   &Instance->RestEx,
+                                                   NULL
+                                                   );
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
@@ -648,20 +648,20 @@ RedfishRestExServiceBindingCreateChild (
   // Open the Http protocol BY_CHILD.
   //
   Status = gBS->OpenProtocol (
-                  RestExSb->HttpChildHandle,
-                  &gEfiHttpProtocolGuid,
-                  (VOID **) &Http,
-                  gRedfishRestExDriverBinding.DriverBindingHandle,
-                  Instance->ChildHandle,
-                  EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
-                  );
+                              RestExSb->HttpChildHandle,
+                              &gEfiHttpProtocolGuid,
+                              (VOID **) &Http,
+                              gRedfishRestExDriverBinding.DriverBindingHandle,
+                              Instance->ChildHandle,
+                              EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+                              );
   if (EFI_ERROR (Status)) {
-    gBS->UninstallMultipleProtocolInterfaces (
-           Instance->ChildHandle,
-           &gEfiRestExProtocolGuid,
-           &Instance->RestEx,
-           NULL
-           );
+  gBS->UninstallMultipleProtocolInterfaces (
+                                            Instance->ChildHandle,
+                                            &gEfiRestExProtocolGuid,
+                                            &Instance->RestEx,
+                                            NULL
+                                            );
 
     goto ON_ERROR;
   }
@@ -670,30 +670,30 @@ RedfishRestExServiceBindingCreateChild (
   // Open the Http protocol by child.
   //
   Status = gBS->OpenProtocol (
-                  Instance->HttpIo.Handle,
-                  &gEfiHttpProtocolGuid,
-                  (VOID **) &Http,
-                  gRedfishRestExDriverBinding.DriverBindingHandle,
-                  Instance->ChildHandle,
-                  EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
-                  );
+                              Instance->HttpIo.Handle,
+                              &gEfiHttpProtocolGuid,
+                              (VOID **) &Http,
+                              gRedfishRestExDriverBinding.DriverBindingHandle,
+                              Instance->ChildHandle,
+                              EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+                              );
   if (EFI_ERROR (Status)) {
     //
     // Close the Http protocol.
     //
     gBS->CloseProtocol (
-           RestExSb->HttpChildHandle,
-           &gEfiHttpProtocolGuid,
-           gRedfishRestExDriverBinding.DriverBindingHandle,
-           ChildHandle
-           );
+                        RestExSb->HttpChildHandle,
+                        &gEfiHttpProtocolGuid,
+                        gRedfishRestExDriverBinding.DriverBindingHandle,
+                        ChildHandle
+                        );
 
-     gBS->UninstallMultipleProtocolInterfaces (
-            Instance->ChildHandle,
-            &gEfiRestExProtocolGuid,
-            &Instance->RestEx,
-            NULL
-            );
+    gBS->UninstallMultipleProtocolInterfaces (
+                                              Instance->ChildHandle,
+                                              &gEfiRestExProtocolGuid,
+                                              &Instance->RestEx,
+                                              NULL
+                                              );
 
     goto ON_ERROR;
   }
@@ -741,12 +741,12 @@ RedfishRestExServiceBindingDestroyChild (
   IN EFI_HANDLE                    ChildHandle
   )
 {
-  RESTEX_SERVICE               *RestExSb;
-  RESTEX_INSTANCE              *Instance;
+  RESTEX_SERVICE   *RestExSb;
+  RESTEX_INSTANCE  *Instance;
 
-  EFI_REST_EX_PROTOCOL         *RestEx;
-  EFI_STATUS                   Status;
-  EFI_TPL                      OldTpl;
+  EFI_REST_EX_PROTOCOL  *RestEx;
+  EFI_STATUS            Status;
+  EFI_TPL               OldTpl;
 
   if ((This == NULL) || (ChildHandle == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -756,20 +756,20 @@ RedfishRestExServiceBindingDestroyChild (
   // Retrieve the private context data structures
   //
   Status = gBS->OpenProtocol (
-                  ChildHandle,
-                  &gEfiRestExProtocolGuid,
-                  (VOID **) &RestEx,
-                  NULL,
-                  NULL,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ChildHandle,
+                              &gEfiRestExProtocolGuid,
+                              (VOID **) &RestEx,
+                              NULL,
+                              NULL,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
 
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
 
-  Instance  = RESTEX_INSTANCE_FROM_THIS (RestEx);
-  RestExSb  = RESTEX_SERVICE_FROM_THIS (This);
+  Instance = RESTEX_INSTANCE_FROM_THIS (RestEx);
+  RestExSb = RESTEX_SERVICE_FROM_THIS (This);
 
   if (Instance->Service != RestExSb) {
     return EFI_INVALID_PARAMETER;
@@ -787,19 +787,18 @@ RedfishRestExServiceBindingDestroyChild (
   // Close the Http protocol.
   //
   gBS->CloseProtocol (
-         RestExSb->HttpChildHandle,
-         &gEfiHttpProtocolGuid,
-         gRedfishRestExDriverBinding.DriverBindingHandle,
-         ChildHandle
-         );
+                      RestExSb->HttpChildHandle,
+                      &gEfiHttpProtocolGuid,
+                      gRedfishRestExDriverBinding.DriverBindingHandle,
+                      ChildHandle
+                      );
 
   gBS->CloseProtocol (
-         Instance->HttpIo.Handle,
-         &gEfiHttpProtocolGuid,
-         gRedfishRestExDriverBinding.DriverBindingHandle,
-         ChildHandle
-         );
-
+                      Instance->HttpIo.Handle,
+                      &gEfiHttpProtocolGuid,
+                      gRedfishRestExDriverBinding.DriverBindingHandle,
+                      ChildHandle
+                      );
 
   gBS->RestoreTPL (OldTpl);
 
@@ -807,10 +806,10 @@ RedfishRestExServiceBindingDestroyChild (
   // Uninstall the RestEx protocol first to enable a top down destruction.
   //
   Status = gBS->UninstallProtocolInterface (
-                  ChildHandle,
-                  &gEfiRestExProtocolGuid,
-                  RestEx
-                  );
+                                            ChildHandle,
+                                            &gEfiRestExProtocolGuid,
+                                            RestEx
+                                            );
 
   OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
 
@@ -828,4 +827,3 @@ RedfishRestExServiceBindingDestroyChild (
   RestExDestroyInstance (Instance);
   return EFI_SUCCESS;
 }
-

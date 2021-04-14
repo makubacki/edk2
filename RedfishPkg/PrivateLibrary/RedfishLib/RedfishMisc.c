@@ -10,7 +10,7 @@
 
 #include "RedfishMisc.h"
 
-EDKII_REDFISH_CREDENTIAL_PROTOCOL    *mCredentialProtocol = NULL;
+EDKII_REDFISH_CREDENTIAL_PROTOCOL  *mCredentialProtocol = NULL;
 
 /**
   This function returns the string of Redfish service version.
@@ -27,21 +27,24 @@ RedfishGetServiceVersion (
   OUT CHAR8 **ServiceVersionStr
   )
 {
-  redfishService *Redfish;
-  CHAR8 **KeysArray;
-  UINTN KeysNum;
+  redfishService  *Redfish;
+  CHAR8           **KeysArray;
+  UINTN           KeysNum;
 
   if (RedfishService == NULL || ServiceVersionStr == NULL) {
     return EFI_INVALID_PARAMETER;
   }
-  Redfish = (redfishService *)RedfishService;
+
+  Redfish = (redfishService *) RedfishService;
   if (Redfish->versions == NULL) {
     return EFI_INVALID_PARAMETER;
   }
+
   KeysArray = JsonObjectGetKeys (Redfish->versions, &KeysNum);
   if (KeysNum == 0 || KeysArray  == NULL) {
     return EFI_NOT_FOUND;
   }
+
   *ServiceVersionStr = *KeysArray;
   return EFI_SUCCESS;
 }
@@ -71,12 +74,11 @@ RedfishCreateLibredfishService (
   IN  CHAR8                         *Password
   )
 {
+  UINTN                     Flags;
+  enumeratorAuthentication  Auth;
+  redfishService            *Redfish;
 
-  UINTN                    Flags;
-  enumeratorAuthentication Auth;
-  redfishService*          Redfish;
-
-  Redfish   = NULL;
+  Redfish = NULL;
 
   ZeroMem (&Auth, sizeof (Auth));
   if (AuthMethod == AuthMethodHttpBasic) {
@@ -84,22 +86,23 @@ RedfishCreateLibredfishService (
   } else if (AuthMethod == AuthMethodRedfishSession) {
     Auth.authType = REDFISH_AUTH_SESSION;
   }
+
   Auth.authCodes.userPass.username = UserId;
   Auth.authCodes.userPass.password = Password;
 
   Flags = REDFISH_FLAG_SERVICE_NO_VERSION_DOC;
 
   if (AuthMethod != AuthMethodNone) {
-    Redfish = createServiceEnumerator(RedfishConfigServiceInfo, NULL, &Auth, (unsigned int ) Flags);
+    Redfish = createServiceEnumerator (RedfishConfigServiceInfo, NULL, &Auth, (unsigned int) Flags);
   } else {
-    Redfish = createServiceEnumerator(RedfishConfigServiceInfo, NULL, NULL, (unsigned int) Flags);
+    Redfish = createServiceEnumerator (RedfishConfigServiceInfo, NULL, NULL, (unsigned int) Flags);
   }
 
   //
   // Zero the Password after use.
   //
   if (Password != NULL) {
-    ZeroMem (Password, AsciiStrLen(Password));
+    ZeroMem (Password, AsciiStrLen (Password));
   }
 
   return (REDFISH_SERVICE) Redfish;
@@ -135,7 +138,7 @@ RedfishGetAuthInfo (
   OUT  CHAR8                              **Password
   )
 {
-  EFI_STATUS                         Status;
+  EFI_STATUS  Status;
 
   if (AuthMethod == NULL || UserId == NULL || Password == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -145,7 +148,7 @@ RedfishGetAuthInfo (
   // Locate Redfish Credential Protocol.
   //
   if (mCredentialProtocol == NULL) {
-    Status = gBS->LocateProtocol (&gEdkIIRedfishCredentialProtocolGuid, NULL, (VOID **)&mCredentialProtocol);
+    Status = gBS->LocateProtocol (&gEdkIIRedfishCredentialProtocolGuid, NULL, (VOID **) &mCredentialProtocol);
     if (EFI_ERROR (Status)) {
       return EFI_UNSUPPORTED;
     }
@@ -161,6 +164,7 @@ RedfishGetAuthInfo (
 
   return Status;
 }
+
 /**
   This function returns the string of Redfish service version.
 
@@ -181,7 +185,7 @@ RedfishBuildRedpathUseId (
   OUT CHAR8 **Redpath
   )
 {
-  UINTN RedpathSize;
+  UINTN  RedpathSize;
 
   if (Redpath == NULL || ServiceVerisonStr == NULL || Url == NULL || Id == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -192,10 +196,11 @@ RedfishBuildRedpathUseId (
                 AsciiStrLen (Url) +
                 AsciiStrLen ("[Id=]") +
                 AsciiStrLen (Id) + 1;
-  *Redpath = AllocatePool(RedpathSize);
+  *Redpath = AllocatePool (RedpathSize);
   if (*Redpath == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
+
   AsciiSPrint (*Redpath, RedpathSize, "/%a%a[Id=%a]", ServiceVerisonStr, Url, Id);
   return EFI_SUCCESS;
 }
