@@ -36,16 +36,21 @@ SetCaCerts (
   VOID
   )
 {
-  EFI_STATUS           Status;
-  FIRMWARE_CONFIG_ITEM HttpsCaCertsItem;
-  UINTN                HttpsCaCertsSize;
-  VOID                 *HttpsCaCerts;
+  EFI_STATUS            Status;
+  FIRMWARE_CONFIG_ITEM  HttpsCaCertsItem;
+  UINTN                 HttpsCaCertsSize;
+  VOID                  *HttpsCaCerts;
 
-  Status = QemuFwCfgFindFile ("etc/edk2/https/cacerts", &HttpsCaCertsItem,
-             &HttpsCaCertsSize);
+  Status = QemuFwCfgFindFile (
+                              "etc/edk2/https/cacerts",
+                              &HttpsCaCertsItem,
+                              &HttpsCaCertsSize
+                              );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_VERBOSE, "%a:%a: not touching CA cert list\n",
-      gEfiCallerBaseName, __FUNCTION__));
+    DEBUG (
+           (DEBUG_VERBOSE, "%a:%a: not touching CA cert list\n",
+            gEfiCallerBaseName, __FUNCTION__)
+           );
     return;
   }
 
@@ -54,41 +59,47 @@ SetCaCerts (
   // serves two purposes:
   //
   // (a) If the variable exists with EFI_VARIABLE_NON_VOLATILE attribute, we
-  //     cannot make it volatile without deleting it first.
+  // cannot make it volatile without deleting it first.
   //
   // (b) If we fail to recreate the variable later, deleting the current one is
-  //     still justified if the fw_cfg file exists. Emptying the set of trusted
-  //     CA certificates will fail HTTPS boot, which is better than trusting
-  //     any certificate that's possibly missing from the fw_cfg file.
+  // still justified if the fw_cfg file exists. Emptying the set of trusted
+  // CA certificates will fail HTTPS boot, which is better than trusting
+  // any certificate that's possibly missing from the fw_cfg file.
   //
   Status = gRT->SetVariable (
-                  EFI_TLS_CA_CERTIFICATE_VARIABLE, // VariableName
-                  &gEfiTlsCaCertificateGuid,       // VendorGuid
-                  0,                               // Attributes
-                  0,                               // DataSize
-                  NULL                             // Data
-                  );
+                             EFI_TLS_CA_CERTIFICATE_VARIABLE, // VariableName
+                             &gEfiTlsCaCertificateGuid,       // VendorGuid
+                             0,                               // Attributes
+                             0,                               // DataSize
+                             NULL                             // Data
+                             );
   if (EFI_ERROR (Status) && (Status != EFI_NOT_FOUND)) {
     //
     // This is fatal.
     //
-    DEBUG ((DEBUG_ERROR, "%a:%a: failed to delete %g:\"%s\"\n",
-      gEfiCallerBaseName, __FUNCTION__, &gEfiTlsCaCertificateGuid,
-      EFI_TLS_CA_CERTIFICATE_VARIABLE));
+    DEBUG (
+           (DEBUG_ERROR, "%a:%a: failed to delete %g:\"%s\"\n",
+            gEfiCallerBaseName, __FUNCTION__, &gEfiTlsCaCertificateGuid,
+            EFI_TLS_CA_CERTIFICATE_VARIABLE)
+           );
     ASSERT_EFI_ERROR (Status);
     CpuDeadLoop ();
   }
 
   if (HttpsCaCertsSize == 0) {
-    DEBUG ((DEBUG_VERBOSE, "%a:%a: applied empty CA cert list\n",
-      gEfiCallerBaseName, __FUNCTION__));
+    DEBUG (
+           (DEBUG_VERBOSE, "%a:%a: applied empty CA cert list\n",
+            gEfiCallerBaseName, __FUNCTION__)
+           );
     return;
   }
 
   HttpsCaCerts = AllocatePool (HttpsCaCertsSize);
   if (HttpsCaCerts == NULL) {
-    DEBUG ((DEBUG_ERROR, "%a:%a: failed to allocate HttpsCaCerts\n",
-      gEfiCallerBaseName, __FUNCTION__));
+    DEBUG (
+           (DEBUG_ERROR, "%a:%a: failed to allocate HttpsCaCerts\n",
+            gEfiCallerBaseName, __FUNCTION__)
+           );
     return;
   }
 
@@ -96,21 +107,25 @@ SetCaCerts (
   QemuFwCfgReadBytes (HttpsCaCertsSize, HttpsCaCerts);
 
   Status = gRT->SetVariable (
-                  EFI_TLS_CA_CERTIFICATE_VARIABLE, // VariableName
-                  &gEfiTlsCaCertificateGuid,       // VendorGuid
-                  EFI_VARIABLE_BOOTSERVICE_ACCESS, // Attributes
-                  HttpsCaCertsSize,                // DataSize
-                  HttpsCaCerts                     // Data
-                  );
+                             EFI_TLS_CA_CERTIFICATE_VARIABLE, // VariableName
+                             &gEfiTlsCaCertificateGuid,       // VendorGuid
+                             EFI_VARIABLE_BOOTSERVICE_ACCESS, // Attributes
+                             HttpsCaCertsSize,                // DataSize
+                             HttpsCaCerts                     // Data
+                             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a:%a: failed to set %g:\"%s\": %r\n",
-      gEfiCallerBaseName, __FUNCTION__, &gEfiTlsCaCertificateGuid,
-      EFI_TLS_CA_CERTIFICATE_VARIABLE, Status));
+    DEBUG (
+           (DEBUG_ERROR, "%a:%a: failed to set %g:\"%s\": %r\n",
+            gEfiCallerBaseName, __FUNCTION__, &gEfiTlsCaCertificateGuid,
+            EFI_TLS_CA_CERTIFICATE_VARIABLE, Status)
+           );
     goto FreeHttpsCaCerts;
   }
 
-  DEBUG ((DEBUG_VERBOSE, "%a:%a: stored CA cert list (%Lu byte(s))\n",
-    gEfiCallerBaseName, __FUNCTION__, (UINT64)HttpsCaCertsSize));
+  DEBUG (
+         (DEBUG_VERBOSE, "%a:%a: stored CA cert list (%Lu byte(s))\n",
+          gEfiCallerBaseName, __FUNCTION__, (UINT64) HttpsCaCertsSize)
+         );
 
 FreeHttpsCaCerts:
   FreePool (HttpsCaCerts);
@@ -130,18 +145,24 @@ SetCipherSuites (
   VOID
   )
 {
-  EFI_STATUS           Status;
-  FIRMWARE_CONFIG_ITEM HttpsCiphersItem;
-  UINTN                HttpsCiphersSize;
-  VOID                 *HttpsCiphers;
+  EFI_STATUS            Status;
+  FIRMWARE_CONFIG_ITEM  HttpsCiphersItem;
+  UINTN                 HttpsCiphersSize;
+  VOID                  *HttpsCiphers;
 
-  Status = QemuFwCfgFindFile ("etc/edk2/https/ciphers", &HttpsCiphersItem,
-             &HttpsCiphersSize);
+  Status = QemuFwCfgFindFile (
+                              "etc/edk2/https/ciphers",
+                              &HttpsCiphersItem,
+                              &HttpsCiphersSize
+                              );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_VERBOSE, "%a:%a: not touching cipher suites\n",
-      gEfiCallerBaseName, __FUNCTION__));
+    DEBUG (
+           (DEBUG_VERBOSE, "%a:%a: not touching cipher suites\n",
+            gEfiCallerBaseName, __FUNCTION__)
+           );
     return;
   }
+
   //
   // From this point on, any failure is fatal. An ordered cipher preference
   // list is available from QEMU, thus we cannot let the firmware attempt HTTPS
@@ -154,30 +175,36 @@ SetCipherSuites (
   // make it volatile without deleting it first.
   //
   Status = gRT->SetVariable (
-                  EDKII_HTTP_TLS_CIPHER_LIST_VARIABLE, // VariableName
-                  &gEdkiiHttpTlsCipherListGuid,        // VendorGuid
-                  0,                                   // Attributes
-                  0,                                   // DataSize
-                  NULL                                 // Data
-                  );
+                             EDKII_HTTP_TLS_CIPHER_LIST_VARIABLE, // VariableName
+                             &gEdkiiHttpTlsCipherListGuid,        // VendorGuid
+                             0,                                   // Attributes
+                             0,                                   // DataSize
+                             NULL                                 // Data
+                             );
   if (EFI_ERROR (Status) && (Status != EFI_NOT_FOUND)) {
-    DEBUG ((DEBUG_ERROR, "%a:%a: failed to delete %g:\"%s\"\n",
-      gEfiCallerBaseName, __FUNCTION__, &gEdkiiHttpTlsCipherListGuid,
-      EDKII_HTTP_TLS_CIPHER_LIST_VARIABLE));
+    DEBUG (
+           (DEBUG_ERROR, "%a:%a: failed to delete %g:\"%s\"\n",
+            gEfiCallerBaseName, __FUNCTION__, &gEdkiiHttpTlsCipherListGuid,
+            EDKII_HTTP_TLS_CIPHER_LIST_VARIABLE)
+           );
     goto Done;
   }
 
   if (HttpsCiphersSize == 0) {
-    DEBUG ((DEBUG_ERROR, "%a:%a: list of cipher suites must not be empty\n",
-      gEfiCallerBaseName, __FUNCTION__));
+    DEBUG (
+           (DEBUG_ERROR, "%a:%a: list of cipher suites must not be empty\n",
+            gEfiCallerBaseName, __FUNCTION__)
+           );
     Status = EFI_INVALID_PARAMETER;
     goto Done;
   }
 
   HttpsCiphers = AllocatePool (HttpsCiphersSize);
   if (HttpsCiphers == NULL) {
-    DEBUG ((DEBUG_ERROR, "%a:%a: failed to allocate HttpsCiphers\n",
-      gEfiCallerBaseName, __FUNCTION__));
+    DEBUG (
+           (DEBUG_ERROR, "%a:%a: failed to allocate HttpsCiphers\n",
+            gEfiCallerBaseName, __FUNCTION__)
+           );
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;
   }
@@ -186,21 +213,25 @@ SetCipherSuites (
   QemuFwCfgReadBytes (HttpsCiphersSize, HttpsCiphers);
 
   Status = gRT->SetVariable (
-                  EDKII_HTTP_TLS_CIPHER_LIST_VARIABLE, // VariableName
-                  &gEdkiiHttpTlsCipherListGuid,        // VendorGuid
-                  EFI_VARIABLE_BOOTSERVICE_ACCESS,     // Attributes
-                  HttpsCiphersSize,                    // DataSize
-                  HttpsCiphers                         // Data
-                  );
+                             EDKII_HTTP_TLS_CIPHER_LIST_VARIABLE, // VariableName
+                             &gEdkiiHttpTlsCipherListGuid,        // VendorGuid
+                             EFI_VARIABLE_BOOTSERVICE_ACCESS,     // Attributes
+                             HttpsCiphersSize,                    // DataSize
+                             HttpsCiphers                         // Data
+                             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a:%a: failed to set %g:\"%s\"\n",
-      gEfiCallerBaseName, __FUNCTION__, &gEdkiiHttpTlsCipherListGuid,
-      EDKII_HTTP_TLS_CIPHER_LIST_VARIABLE));
+    DEBUG (
+           (DEBUG_ERROR, "%a:%a: failed to set %g:\"%s\"\n",
+            gEfiCallerBaseName, __FUNCTION__, &gEdkiiHttpTlsCipherListGuid,
+            EDKII_HTTP_TLS_CIPHER_LIST_VARIABLE)
+           );
     goto FreeHttpsCiphers;
   }
 
-  DEBUG ((DEBUG_VERBOSE, "%a:%a: stored list of cipher suites (%Lu byte(s))\n",
-    gEfiCallerBaseName, __FUNCTION__, (UINT64)HttpsCiphersSize));
+  DEBUG (
+         (DEBUG_VERBOSE, "%a:%a: stored list of cipher suites (%Lu byte(s))\n",
+          gEfiCallerBaseName, __FUNCTION__, (UINT64) HttpsCiphersSize)
+         );
 
 FreeHttpsCiphers:
   FreePool (HttpsCiphers);
@@ -212,6 +243,29 @@ Done:
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 RETURN_STATUS
 EFIAPI
 TlsAuthConfigInit (

@@ -19,13 +19,36 @@
 
 #pragma pack (1)
 typedef struct {
-  UINT8   Type;
-  UINT8   Size;
-  UINT16  MachineType;
-  UINT32  EntryPoint;
+  UINT8     Type;
+  UINT8     Size;
+  UINT16    MachineType;
+  UINT32    EntryPoint;
 } PE_COMPAT_TYPE1;
 #pragma pack ()
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 BOOLEAN
 EFIAPI
@@ -38,6 +61,29 @@ IsImageSupported (
   return ImageType == EFI_IMAGE_SUBSYSTEM_EFI_APPLICATION;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_IMAGE_ENTRY_POINT
 EFIAPI
@@ -45,50 +91,75 @@ GetCompatEntryPoint (
   IN  EFI_PHYSICAL_ADDRESS              ImageBase
   )
 {
-  EFI_IMAGE_DOS_HEADER                  *DosHdr;
-  UINTN                                 PeCoffHeaderOffset;
-  EFI_IMAGE_NT_HEADERS32                *Pe32;
-  EFI_IMAGE_SECTION_HEADER              *Section;
-  UINTN                                 NumberOfSections;
-  PE_COMPAT_TYPE1                       *PeCompat;
-  UINTN                                 PeCompatEnd;
+  EFI_IMAGE_DOS_HEADER      *DosHdr;
+  UINTN                     PeCoffHeaderOffset;
+  EFI_IMAGE_NT_HEADERS32    *Pe32;
+  EFI_IMAGE_SECTION_HEADER  *Section;
+  UINTN                     NumberOfSections;
+  PE_COMPAT_TYPE1           *PeCompat;
+  UINTN                     PeCompatEnd;
 
-  DosHdr = (EFI_IMAGE_DOS_HEADER *)(UINTN)ImageBase;
+  DosHdr = (EFI_IMAGE_DOS_HEADER *) (UINTN) ImageBase;
   if (DosHdr->e_magic != EFI_IMAGE_DOS_SIGNATURE) {
     return NULL;
   }
 
   PeCoffHeaderOffset = DosHdr->e_lfanew;
-  Pe32 = (EFI_IMAGE_NT_HEADERS32 *)((UINTN)ImageBase + PeCoffHeaderOffset);
+  Pe32 = (EFI_IMAGE_NT_HEADERS32 *) ((UINTN) ImageBase + PeCoffHeaderOffset);
 
-  Section = (EFI_IMAGE_SECTION_HEADER *)((UINTN)&Pe32->OptionalHeader +
-                                         Pe32->FileHeader.SizeOfOptionalHeader);
-  NumberOfSections = (UINTN)Pe32->FileHeader.NumberOfSections;
+  Section = (EFI_IMAGE_SECTION_HEADER *) ((UINTN) &Pe32->OptionalHeader +
+                                          Pe32->FileHeader.SizeOfOptionalHeader);
+  NumberOfSections = (UINTN) Pe32->FileHeader.NumberOfSections;
 
   while (NumberOfSections--) {
     if (!CompareMem (Section->Name, ".compat", sizeof (Section->Name))) {
       //
       // Dereference the section contents to find the mixed mode entry point
       //
-      PeCompat = (PE_COMPAT_TYPE1 *)((UINTN)ImageBase + Section->VirtualAddress);
-      PeCompatEnd = (UINTN)(VOID *)PeCompat + Section->Misc.VirtualSize;
+      PeCompat    = (PE_COMPAT_TYPE1 *) ((UINTN) ImageBase + Section->VirtualAddress);
+      PeCompatEnd = (UINTN) (VOID *) PeCompat + Section->Misc.VirtualSize;
 
-      while (PeCompat->Type != 0 && (UINTN)(VOID *)PeCompat < PeCompatEnd) {
+      while (PeCompat->Type != 0 && (UINTN) (VOID *) PeCompat < PeCompatEnd) {
         if (PeCompat->Type == 1 &&
             PeCompat->Size >= sizeof (PE_COMPAT_TYPE1) &&
             EFI_IMAGE_MACHINE_TYPE_SUPPORTED (PeCompat->MachineType)) {
-
-          return (EFI_IMAGE_ENTRY_POINT)((UINTN)ImageBase + PeCompat->EntryPoint);
+          return (EFI_IMAGE_ENTRY_POINT) ((UINTN) ImageBase + PeCompat->EntryPoint);
         }
-        PeCompat = (PE_COMPAT_TYPE1 *)((UINTN)PeCompat + PeCompat->Size);
-        ASSERT ((UINTN)(VOID *)PeCompat < PeCompatEnd);
+
+        PeCompat = (PE_COMPAT_TYPE1 *) ((UINTN) PeCompat + PeCompat->Size);
+        ASSERT ((UINTN) (VOID *) PeCompat < PeCompatEnd);
       }
     }
+
     Section++;
   }
+
   return NULL;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -99,7 +170,7 @@ RegisterImage (
   IN  OUT EFI_IMAGE_ENTRY_POINT                   *EntryPoint
   )
 {
-  EFI_IMAGE_ENTRY_POINT                           CompatEntryPoint;
+  EFI_IMAGE_ENTRY_POINT  CompatEntryPoint;
 
   CompatEntryPoint = GetCompatEntryPoint (ImageBase);
   if (CompatEntryPoint == NULL) {
@@ -110,6 +181,29 @@ RegisterImage (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -121,7 +215,7 @@ UnregisterImage (
   return EFI_SUCCESS;
 }
 
-STATIC EDKII_PECOFF_IMAGE_EMULATOR_PROTOCOL mCompatLoaderPeCoffEmuProtocol = {
+STATIC EDKII_PECOFF_IMAGE_EMULATOR_PROTOCOL  mCompatLoaderPeCoffEmuProtocol = {
   IsImageSupported,
   RegisterImage,
   UnregisterImage,
@@ -129,6 +223,29 @@ STATIC EDKII_PECOFF_IMAGE_EMULATOR_PROTOCOL mCompatLoaderPeCoffEmuProtocol = {
   EFI_IMAGE_MACHINE_X64
 };
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 CompatImageLoaderDxeEntryPoint (
@@ -136,8 +253,10 @@ CompatImageLoaderDxeEntryPoint (
   IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  return gBS->InstallProtocolInterface (&ImageHandle,
-                &gEdkiiPeCoffImageEmulatorProtocolGuid,
-                EFI_NATIVE_INTERFACE,
-                &mCompatLoaderPeCoffEmuProtocol);
+  return gBS->InstallProtocolInterface (
+                                        &ImageHandle,
+                                        &gEdkiiPeCoffImageEmulatorProtocolGuid,
+                                        EFI_NATIVE_INTERFACE,
+                                        &mCompatLoaderPeCoffEmuProtocol
+                                        );
 }

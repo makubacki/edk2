@@ -14,10 +14,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #ifndef _EFI_LEGACY_8259_H_
 #define _EFI_LEGACY_8259_H_
 
-
 #define EFI_LEGACY_8259_PROTOCOL_GUID \
   { \
-    0x38321dba, 0x4fe0, 0x4e17, {0x8a, 0xec, 0x41, 0x30, 0x55, 0xea, 0xed, 0xc1 } \
+    0x38321dba, 0x4fe0, 0x4e17, { 0x8a, 0xec, 0x41, 0x30, 0x55, 0xea, 0xed, 0xc1 } \
   }
 
 typedef struct _EFI_LEGACY_8259_PROTOCOL EFI_LEGACY_8259_PROTOCOL;
@@ -62,12 +61,12 @@ typedef enum {
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_LEGACY_8259_SET_VECTOR_BASE)(
-  IN EFI_LEGACY_8259_PROTOCOL           *This,
-  IN  UINT8                             MasterBase,
-  IN  UINT8                             SlaveBase
-  );
+                                          IN EFI_LEGACY_8259_PROTOCOL           *This,
+                                          IN  UINT8                             MasterBase,
+                                          IN  UINT8                             SlaveBase
+                                          );
 
 /**
   Get the 8259 interrupt masks for Irq0 - Irq15. A different mask exists for
@@ -85,14 +84,17 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_LEGACY_8259_GET_MASK)(
-  IN EFI_LEGACY_8259_PROTOCOL           *This,
-  OUT UINT16                            *LegacyMask, OPTIONAL
-  OUT UINT16                            *LegacyEdgeLevel, OPTIONAL
-  OUT UINT16                            *ProtectedMask, OPTIONAL
-  OUT UINT16                            *ProtectedEdgeLevel OPTIONAL
-  );
+                                   IN EFI_LEGACY_8259_PROTOCOL           *This,
+                                   OUT UINT16                            *LegacyMask,
+                                   OPTIONAL
+                                   OUT UINT16                            *LegacyEdgeLevel,
+                                   OPTIONAL
+                                   OUT UINT16                            *ProtectedMask,
+                                   OPTIONAL
+                                   OUT UINT16                            *ProtectedEdgeLevel OPTIONAL
+                                   );
 
 /**
   Set the 8259 interrupt masks for Irq0 - Irq15. A different mask exists for
@@ -111,14 +113,17 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_LEGACY_8259_SET_MASK)(
-  IN EFI_LEGACY_8259_PROTOCOL           *This,
-  IN  UINT16                            *LegacyMask, OPTIONAL
-  IN  UINT16                            *LegacyEdgeLevel, OPTIONAL
-  IN  UINT16                            *ProtectedMask, OPTIONAL
-  IN  UINT16                            *ProtectedEdgeLevel OPTIONAL
-  );
+                                   IN EFI_LEGACY_8259_PROTOCOL           *This,
+                                   IN  UINT16                            *LegacyMask,
+                                   OPTIONAL
+                                   IN  UINT16                            *LegacyEdgeLevel,
+                                   OPTIONAL
+                                   IN  UINT16                            *ProtectedMask,
+                                   OPTIONAL
+                                   IN  UINT16                            *ProtectedEdgeLevel OPTIONAL
+                                   );
 
 /**
   Set the 8259 mode of operation. The base address for the 8259 is different for
@@ -139,13 +144,14 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_LEGACY_8259_SET_MODE)(
-  IN EFI_LEGACY_8259_PROTOCOL         *This,
-  IN  EFI_8259_MODE                   Mode,
-  IN  UINT16                          *Mask, OPTIONAL
-  IN  UINT16                          *EdgeLevel OPTIONAL
-  );
+                                   IN EFI_LEGACY_8259_PROTOCOL         *This,
+                                   IN  EFI_8259_MODE                   Mode,
+                                   IN  UINT16                          *Mask,
+                                   OPTIONAL
+                                   IN  UINT16                          *EdgeLevel OPTIONAL
+                                   );
 
 /**
   Convert from IRQ to processor interrupt vector number.
@@ -159,12 +165,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_LEGACY_8259_GET_VECTOR)(
-  IN EFI_LEGACY_8259_PROTOCOL           *This,
-  IN  EFI_8259_IRQ                      Irq,
-  OUT UINT8                             *Vector
-  );
+                                     IN EFI_LEGACY_8259_PROTOCOL           *This,
+                                     IN  EFI_8259_IRQ                      Irq,
+                                     OUT UINT8                             *Vector
+                                     );
 
 /**
   Enable Irq by unmasking interrupt in 8259
@@ -178,12 +184,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_LEGACY_8259_ENABLE_IRQ)(
-  IN EFI_LEGACY_8259_PROTOCOL           *This,
-  IN  EFI_8259_IRQ                      Irq,
-  IN  BOOLEAN                           LevelTriggered
-  );
+                                     IN EFI_LEGACY_8259_PROTOCOL           *This,
+                                     IN  EFI_8259_IRQ                      Irq,
+                                     IN  BOOLEAN                           LevelTriggered
+                                     );
 
 /**
   Disable Irq by masking interrupt in 8259
@@ -196,11 +202,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_LEGACY_8259_DISABLE_IRQ)(
-  IN EFI_LEGACY_8259_PROTOCOL           *This,
-  IN  EFI_8259_IRQ                      Irq
-  );
+                                      IN EFI_LEGACY_8259_PROTOCOL           *This,
+                                      IN  EFI_8259_IRQ                      Irq
+                                      );
 
 /**
   PciHandle represents a PCI config space of a PCI function. Vector
@@ -217,12 +223,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_LEGACY_8259_GET_INTERRUPT_LINE)(
-  IN EFI_LEGACY_8259_PROTOCOL           *This,
-  IN  EFI_HANDLE                        PciHandle,
-  OUT UINT8                             *Vector
-  );
+                                             IN EFI_LEGACY_8259_PROTOCOL           *This,
+                                             IN  EFI_HANDLE                        PciHandle,
+                                             OUT UINT8                             *Vector
+                                             );
 
 /**
   Send an EOI to 8259
@@ -235,11 +241,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_LEGACY_8259_END_OF_INTERRUPT)(
-  IN EFI_LEGACY_8259_PROTOCOL           *This,
-  IN  EFI_8259_IRQ                      Irq
-  );
+                                           IN EFI_LEGACY_8259_PROTOCOL           *This,
+                                           IN  EFI_8259_IRQ                      Irq
+                                           );
 
 /**
   @par Protocol Description:
@@ -275,17 +281,17 @@ EFI_STATUS
 
 **/
 struct _EFI_LEGACY_8259_PROTOCOL {
-  EFI_LEGACY_8259_SET_VECTOR_BASE     SetVectorBase;
-  EFI_LEGACY_8259_GET_MASK            GetMask;
-  EFI_LEGACY_8259_SET_MASK            SetMask;
-  EFI_LEGACY_8259_SET_MODE            SetMode;
-  EFI_LEGACY_8259_GET_VECTOR          GetVector;
-  EFI_LEGACY_8259_ENABLE_IRQ          EnableIrq;
-  EFI_LEGACY_8259_DISABLE_IRQ         DisableIrq;
-  EFI_LEGACY_8259_GET_INTERRUPT_LINE  GetInterruptLine;
-  EFI_LEGACY_8259_END_OF_INTERRUPT    EndOfInterrupt;
+  EFI_LEGACY_8259_SET_VECTOR_BASE       SetVectorBase;
+  EFI_LEGACY_8259_GET_MASK              GetMask;
+  EFI_LEGACY_8259_SET_MASK              SetMask;
+  EFI_LEGACY_8259_SET_MODE              SetMode;
+  EFI_LEGACY_8259_GET_VECTOR            GetVector;
+  EFI_LEGACY_8259_ENABLE_IRQ            EnableIrq;
+  EFI_LEGACY_8259_DISABLE_IRQ           DisableIrq;
+  EFI_LEGACY_8259_GET_INTERRUPT_LINE    GetInterruptLine;
+  EFI_LEGACY_8259_END_OF_INTERRUPT      EndOfInterrupt;
 };
 
-extern EFI_GUID gEfiLegacy8259ProtocolGuid;
+extern EFI_GUID  gEfiLegacy8259ProtocolGuid;
 
 #endif

@@ -8,7 +8,6 @@
 
 #include "LoadLinuxLib.h"
 
-
 /**
   A simple check of the kernel setup image
 
@@ -29,10 +28,32 @@ BasicKernelSetupCheck (
   IN VOID        *KernelSetup
   )
 {
-  return LoadLinuxCheckKernelSetup(KernelSetup, sizeof (struct boot_params));
+  return LoadLinuxCheckKernelSetup (KernelSetup, sizeof (struct boot_params));
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 LoadLinuxCheckKernelSetup (
@@ -40,7 +61,7 @@ LoadLinuxCheckKernelSetup (
   IN UINTN       KernelSetupSize
   )
 {
-  struct boot_params        *Bp;
+  struct boot_params  *Bp;
 
   if (KernelSetup == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -50,20 +71,42 @@ LoadLinuxCheckKernelSetup (
     return EFI_UNSUPPORTED;
   }
 
-  Bp = (struct boot_params*) KernelSetup;
+  Bp = (struct boot_params *) KernelSetup;
 
   if ((Bp->hdr.signature != 0xAA55) || // Check boot sector signature
       (Bp->hdr.header != SETUP_HDR) ||
       (Bp->hdr.version < 0x205) || // We only support relocatable kernels
       (!Bp->hdr.relocatable_kernel)
-     ) {
+      ) {
     return EFI_UNSUPPORTED;
   } else {
     return EFI_SUCCESS;
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 UINTN
 EFIAPI
 LoadLinuxGetKernelSize (
@@ -71,13 +114,13 @@ LoadLinuxGetKernelSize (
   IN UINTN       KernelSize
   )
 {
-  struct boot_params        *Bp;
+  struct boot_params  *Bp;
 
   if (EFI_ERROR (BasicKernelSetupCheck (KernelSetup))) {
     return 0;
   }
 
-  Bp = (struct boot_params*) KernelSetup;
+  Bp = (struct boot_params *) KernelSetup;
 
   if (Bp->hdr.version > 0x20a) {
     return Bp->hdr.init_size;
@@ -89,46 +132,91 @@ LoadLinuxGetKernelSize (
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
-VOID*
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
+VOID *
 EFIAPI
 LoadLinuxAllocateKernelSetupPages (
   IN UINTN                  Pages
   )
 {
-  EFI_STATUS                Status;
-  EFI_PHYSICAL_ADDRESS      Address;
+  EFI_STATUS            Status;
+  EFI_PHYSICAL_ADDRESS  Address;
 
   Address = BASE_1GB;
-  Status = gBS->AllocatePages (
-                  AllocateMaxAddress,
-                  EfiLoaderData,
-                  Pages,
-                  &Address
-                  );
+  Status  = gBS->AllocatePages (
+                                AllocateMaxAddress,
+                                EfiLoaderData,
+                                Pages,
+                                &Address
+                                );
   if (!EFI_ERROR (Status)) {
-    return (VOID*)(UINTN) Address;
+    return (VOID *) (UINTN) Address;
   } else {
     return NULL;
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 LoadLinuxInitializeKernelSetup (
   IN VOID        *KernelSetup
   )
 {
-  EFI_STATUS                Status;
-  UINTN                     SetupEnd;
-  struct boot_params        *Bp;
+  EFI_STATUS          Status;
+  UINTN               SetupEnd;
+  struct boot_params  *Bp;
 
   Status = BasicKernelSetupCheck (KernelSetup);
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  Bp = (struct boot_params*) KernelSetup;
+  Bp = (struct boot_params *) KernelSetup;
 
   SetupEnd = 0x202 + (Bp->hdr.jump & 0xff);
 
@@ -136,228 +224,322 @@ LoadLinuxInitializeKernelSetup (
   // Clear all but the setup_header
   //
   ZeroMem (KernelSetup, 0x1f1);
-  ZeroMem (((UINT8 *)KernelSetup) + SetupEnd, 4096 - SetupEnd);
-  DEBUG ((DEBUG_INFO, "Cleared kernel setup 0-0x1f1, 0x%Lx-0x1000\n",
-    (UINT64)SetupEnd));
+  ZeroMem (((UINT8 *) KernelSetup) + SetupEnd, 4096 - SetupEnd);
+  DEBUG (
+         (DEBUG_INFO, "Cleared kernel setup 0-0x1f1, 0x%Lx-0x1000\n",
+          (UINT64) SetupEnd)
+         );
 
   return EFI_SUCCESS;
 }
 
-VOID*
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
+VOID *
 EFIAPI
 LoadLinuxAllocateKernelPages (
   IN VOID                   *KernelSetup,
   IN UINTN                  Pages
   )
 {
-  EFI_STATUS                Status;
-  EFI_PHYSICAL_ADDRESS      KernelAddress;
-  UINT32                    Loop;
-  struct boot_params        *Bp;
+  EFI_STATUS            Status;
+  EFI_PHYSICAL_ADDRESS  KernelAddress;
+  UINT32                Loop;
+  struct boot_params    *Bp;
 
   if (EFI_ERROR (BasicKernelSetupCheck (KernelSetup))) {
     return NULL;
   }
 
-  Bp = (struct boot_params*) KernelSetup;
+  Bp = (struct boot_params *) KernelSetup;
 
   for (Loop = 1; Loop < 512; Loop++) {
     KernelAddress = MultU64x32 (
-                      2 * Bp->hdr.kernel_alignment,
-                      Loop
-                      );
+                                2 * Bp->hdr.kernel_alignment,
+                                Loop
+                                );
     Status = gBS->AllocatePages (
-                    AllocateAddress,
-                    EfiLoaderData,
-                    Pages,
-                    &KernelAddress
-                    );
+                                 AllocateAddress,
+                                 EfiLoaderData,
+                                 Pages,
+                                 &KernelAddress
+                                 );
     if (!EFI_ERROR (Status)) {
-      return (VOID*)(UINTN) KernelAddress;
+      return (VOID *) (UINTN) KernelAddress;
     }
   }
 
   return NULL;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
-VOID*
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
+VOID *
 EFIAPI
 LoadLinuxAllocateCommandLinePages (
   IN UINTN                  Pages
   )
 {
-  EFI_STATUS                Status;
-  EFI_PHYSICAL_ADDRESS      Address;
+  EFI_STATUS            Status;
+  EFI_PHYSICAL_ADDRESS  Address;
 
   Address = 0xa0000;
-  Status = gBS->AllocatePages (
-                  AllocateMaxAddress,
-                  EfiLoaderData,
-                  Pages,
-                  &Address
-                  );
+  Status  = gBS->AllocatePages (
+                                AllocateMaxAddress,
+                                EfiLoaderData,
+                                Pages,
+                                &Address
+                                );
   if (!EFI_ERROR (Status)) {
-    return (VOID*)(UINTN) Address;
+    return (VOID *) (UINTN) Address;
   } else {
     return NULL;
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
-VOID*
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
+VOID *
 EFIAPI
 LoadLinuxAllocateInitrdPages (
   IN VOID                   *KernelSetup,
   IN UINTN                  Pages
   )
 {
-  EFI_STATUS                Status;
-  EFI_PHYSICAL_ADDRESS      Address;
+  EFI_STATUS            Status;
+  EFI_PHYSICAL_ADDRESS  Address;
 
-  struct boot_params        *Bp;
+  struct boot_params  *Bp;
 
   if (EFI_ERROR (BasicKernelSetupCheck (KernelSetup))) {
     return NULL;
   }
 
-  Bp = (struct boot_params*) KernelSetup;
+  Bp = (struct boot_params *) KernelSetup;
 
-  Address = (EFI_PHYSICAL_ADDRESS)(UINTN) Bp->hdr.ramdisk_max;
-  Status = gBS->AllocatePages (
-                  AllocateMaxAddress,
-                  EfiLoaderData,
-                  Pages,
-                  &Address
-                  );
+  Address = (EFI_PHYSICAL_ADDRESS) (UINTN) Bp->hdr.ramdisk_max;
+  Status  = gBS->AllocatePages (
+                                AllocateMaxAddress,
+                                EfiLoaderData,
+                                Pages,
+                                &Address
+                                );
   if (!EFI_ERROR (Status)) {
-    return (VOID*)(UINTN) Address;
+    return (VOID *) (UINTN) Address;
   } else {
     return NULL;
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 VOID
 SetupLinuxMemmap (
   IN OUT struct boot_params        *Bp
   )
 {
-  EFI_STATUS                           Status;
-  UINT8                                TmpMemoryMap[1];
-  UINTN                                MapKey;
-  UINTN                                DescriptorSize;
-  UINT32                               DescriptorVersion;
-  UINTN                                MemoryMapSize;
-  EFI_MEMORY_DESCRIPTOR                *MemoryMap;
-  EFI_MEMORY_DESCRIPTOR                *MemoryMapPtr;
-  UINTN                                Index;
-  struct efi_info                      *Efi;
-  struct e820_entry                    *LastE820;
-  struct e820_entry                    *E820;
-  UINTN                                E820EntryCount;
-  EFI_PHYSICAL_ADDRESS                 LastEndAddr;
+  EFI_STATUS             Status;
+  UINT8                  TmpMemoryMap[1];
+  UINTN                  MapKey;
+  UINTN                  DescriptorSize;
+  UINT32                 DescriptorVersion;
+  UINTN                  MemoryMapSize;
+  EFI_MEMORY_DESCRIPTOR  *MemoryMap;
+  EFI_MEMORY_DESCRIPTOR  *MemoryMapPtr;
+  UINTN                  Index;
+  struct efi_info        *Efi;
+  struct e820_entry      *LastE820;
+  struct e820_entry      *E820;
+  UINTN                  E820EntryCount;
+  EFI_PHYSICAL_ADDRESS   LastEndAddr;
 
   //
   // Get System MemoryMapSize
   //
   MemoryMapSize = sizeof (TmpMemoryMap);
   Status = gBS->GetMemoryMap (
-                  &MemoryMapSize,
-                  (EFI_MEMORY_DESCRIPTOR *)TmpMemoryMap,
-                  &MapKey,
-                  &DescriptorSize,
-                  &DescriptorVersion
-                  );
+                              &MemoryMapSize,
+                              (EFI_MEMORY_DESCRIPTOR *) TmpMemoryMap,
+                              &MapKey,
+                              &DescriptorSize,
+                              &DescriptorVersion
+                              );
   ASSERT (Status == EFI_BUFFER_TOO_SMALL);
   //
   // Enlarge space here, because we will allocate pool now.
   //
   MemoryMapSize += EFI_PAGE_SIZE;
   Status = gBS->AllocatePool (
-                  EfiLoaderData,
-                  MemoryMapSize,
-                  (VOID **) &MemoryMap
-                  );
+                              EfiLoaderData,
+                              MemoryMapSize,
+                              (VOID **) &MemoryMap
+                              );
   ASSERT_EFI_ERROR (Status);
 
   //
   // Get System MemoryMap
   //
   Status = gBS->GetMemoryMap (
-                  &MemoryMapSize,
-                  MemoryMap,
-                  &MapKey,
-                  &DescriptorSize,
-                  &DescriptorVersion
-                  );
+                              &MemoryMapSize,
+                              MemoryMap,
+                              &MapKey,
+                              &DescriptorSize,
+                              &DescriptorVersion
+                              );
   ASSERT_EFI_ERROR (Status);
 
   LastE820 = NULL;
-  E820 = &Bp->e820_map[0];
+  E820     = &Bp->e820_map[0];
   E820EntryCount = 0;
-  LastEndAddr = 0;
-  MemoryMapPtr = MemoryMap;
+  LastEndAddr    = 0;
+  MemoryMapPtr   = MemoryMap;
   for (Index = 0; Index < (MemoryMapSize / DescriptorSize); Index++) {
-    UINTN E820Type = 0;
+  UINTN  E820Type = 0;
 
     if (MemoryMap->NumberOfPages == 0) {
       continue;
     }
 
     switch(MemoryMap->Type) {
-    case EfiReservedMemoryType:
-    case EfiRuntimeServicesCode:
-    case EfiRuntimeServicesData:
-    case EfiMemoryMappedIO:
-    case EfiMemoryMappedIOPortSpace:
-    case EfiPalCode:
-      E820Type = E820_RESERVED;
-      break;
+      case EfiReservedMemoryType:
+      case EfiRuntimeServicesCode:
+      case EfiRuntimeServicesData:
+      case EfiMemoryMappedIO:
+      case EfiMemoryMappedIOPortSpace:
+      case EfiPalCode:
+        E820Type = E820_RESERVED;
+        break;
 
-    case EfiUnusableMemory:
-      E820Type = E820_UNUSABLE;
-      break;
+      case EfiUnusableMemory:
+        E820Type = E820_UNUSABLE;
+        break;
 
-    case EfiACPIReclaimMemory:
-      E820Type = E820_ACPI;
-      break;
+      case EfiACPIReclaimMemory:
+        E820Type = E820_ACPI;
+        break;
 
-    case EfiLoaderCode:
-    case EfiLoaderData:
-    case EfiBootServicesCode:
-    case EfiBootServicesData:
-    case EfiConventionalMemory:
-      E820Type = E820_RAM;
-      break;
+      case EfiLoaderCode:
+      case EfiLoaderData:
+      case EfiBootServicesCode:
+      case EfiBootServicesData:
+      case EfiConventionalMemory:
+        E820Type = E820_RAM;
+        break;
 
-    case EfiACPIMemoryNVS:
-      E820Type = E820_NVS;
-      break;
+      case EfiACPIMemoryNVS:
+        E820Type = E820_NVS;
+        break;
 
-    default:
-      DEBUG ((
-        DEBUG_ERROR,
-        "Invalid EFI memory descriptor type (0x%x)!\n",
-        MemoryMap->Type
-        ));
-      continue;
+      default:
+        DEBUG (
+               (
+                DEBUG_ERROR,
+                "Invalid EFI memory descriptor type (0x%x)!\n",
+                MemoryMap->Type
+               )
+               );
+        continue;
     }
 
     if ((LastE820 != NULL) &&
         (LastE820->type == (UINT32) E820Type) &&
         (MemoryMap->PhysicalStart == LastEndAddr)) {
       LastE820->size += EFI_PAGES_TO_SIZE ((UINTN) MemoryMap->NumberOfPages);
-      LastEndAddr += EFI_PAGES_TO_SIZE ((UINTN) MemoryMap->NumberOfPages);
+      LastEndAddr    += EFI_PAGES_TO_SIZE ((UINTN) MemoryMap->NumberOfPages);
     } else {
       if (E820EntryCount >= ARRAY_SIZE (Bp->e820_map)) {
         break;
       }
-      E820->type = (UINT32) E820Type;
-      E820->addr = MemoryMap->PhysicalStart;
-      E820->size = EFI_PAGES_TO_SIZE ((UINTN) MemoryMap->NumberOfPages);
-      LastE820 = E820;
+
+      E820->type  = (UINT32) E820Type;
+      E820->addr  = MemoryMap->PhysicalStart;
+      E820->size  = EFI_PAGES_TO_SIZE ((UINTN) MemoryMap->NumberOfPages);
+      LastE820    = E820;
       LastEndAddr = E820->addr + E820->size;
       E820++;
       E820EntryCount++;
@@ -366,28 +548,51 @@ SetupLinuxMemmap (
     //
     // Get next item
     //
-    MemoryMap = (EFI_MEMORY_DESCRIPTOR *)((UINTN)MemoryMap + DescriptorSize);
+    MemoryMap = (EFI_MEMORY_DESCRIPTOR *) ((UINTN) MemoryMap + DescriptorSize);
   }
+
   Bp->e820_entries = (UINT8) E820EntryCount;
 
   Efi = &Bp->efi_info;
-  Efi->efi_systab = (UINT32)(UINTN) gST;
-  Efi->efi_memdesc_size = (UINT32) DescriptorSize;
+  Efi->efi_systab = (UINT32) (UINTN) gST;
+  Efi->efi_memdesc_size    = (UINT32) DescriptorSize;
   Efi->efi_memdesc_version = DescriptorVersion;
-  Efi->efi_memmap = (UINT32)(UINTN) MemoryMapPtr;
+  Efi->efi_memmap = (UINT32) (UINTN) MemoryMapPtr;
   Efi->efi_memmap_size = (UINT32) MemoryMapSize;
-#ifdef MDE_CPU_IA32
-  Efi->efi_loader_signature = SIGNATURE_32 ('E', 'L', '3', '2');
-#else
-  Efi->efi_systab_hi = (UINT32) (((UINT64)(UINTN) gST) >> 32);
-  Efi->efi_memmap_hi = (UINT32) (((UINT64)(UINTN) MemoryMapPtr) >> 32);
-  Efi->efi_loader_signature = SIGNATURE_32 ('E', 'L', '6', '4');
-#endif
+ #ifdef MDE_CPU_IA32
+    Efi->efi_loader_signature = SIGNATURE_32 ('E', 'L', '3', '2');
+ #else
+    Efi->efi_systab_hi = (UINT32) (((UINT64) (UINTN) gST) >> 32);
+    Efi->efi_memmap_hi = (UINT32) (((UINT64) (UINTN) MemoryMapPtr) >> 32);
+    Efi->efi_loader_signature = SIGNATURE_32 ('E', 'L', '6', '4');
+ #endif
 
   gBS->ExitBootServices (gImageHandle, MapKey);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 LoadLinuxSetCommandLine (
@@ -395,22 +600,44 @@ LoadLinuxSetCommandLine (
   IN CHAR8       *CommandLine
   )
 {
-  EFI_STATUS             Status;
-  struct boot_params     *Bp;
+  EFI_STATUS          Status;
+  struct boot_params  *Bp;
 
   Status = BasicKernelSetupCheck (KernelSetup);
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  Bp = (struct boot_params*) KernelSetup;
+  Bp = (struct boot_params *) KernelSetup;
 
-  Bp->hdr.cmd_line_ptr = (UINT32)(UINTN) CommandLine;
+  Bp->hdr.cmd_line_ptr = (UINT32) (UINTN) CommandLine;
 
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 LoadLinuxSetInitrd (
@@ -419,23 +646,45 @@ LoadLinuxSetInitrd (
   IN UINTN       InitrdSize
   )
 {
-  EFI_STATUS             Status;
-  struct boot_params     *Bp;
+  EFI_STATUS          Status;
+  struct boot_params  *Bp;
 
   Status = BasicKernelSetupCheck (KernelSetup);
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  Bp = (struct boot_params*) KernelSetup;
+  Bp = (struct boot_params *) KernelSetup;
 
-  Bp->hdr.ramdisk_start = (UINT32)(UINTN) Initrd;
-  Bp->hdr.ramdisk_len = (UINT32) InitrdSize;
+  Bp->hdr.ramdisk_start = (UINT32) (UINTN) Initrd;
+  Bp->hdr.ramdisk_len   = (UINT32) InitrdSize;
 
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC VOID
 FindBits (
   unsigned long Mask,
@@ -443,10 +692,10 @@ FindBits (
   UINT8 *Size
   )
 {
-  UINT8 First, Len;
+  UINT8  First, Len;
 
   First = 0;
-  Len = 0;
+  Len   = 0;
 
   if (Mask) {
     while (!(Mask & 0x1)) {
@@ -459,11 +708,34 @@ FindBits (
       Len++;
     }
   }
-  *Pos = First;
+
+  *Pos  = First;
   *Size = Len;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 SetupGraphicsFromGop (
@@ -471,11 +743,11 @@ SetupGraphicsFromGop (
   EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop
   )
 {
-  EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *Info;
-  EFI_STATUS                           Status;
-  UINTN                                Size;
+  EFI_GRAPHICS_OUTPUT_MODE_INFORMATION  *Info;
+  EFI_STATUS                            Status;
+  UINTN                                 Size;
 
-  Status = Gop->QueryMode(Gop, Gop->Mode->Mode, &Size, &Info);
+  Status = Gop->QueryMode (Gop, Gop->Mode->Mode, &Size, &Info);
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -487,101 +759,134 @@ SetupGraphicsFromGop (
 
   Si->orig_x = 0;
   Si->orig_y = 0;
-  Si->orig_video_page = 0;
-  Si->orig_video_mode = 0;
-  Si->orig_video_cols = 0;
-  Si->orig_video_lines = 0;
+  Si->orig_video_page   = 0;
+  Si->orig_video_mode   = 0;
+  Si->orig_video_cols   = 0;
+  Si->orig_video_lines  = 0;
   Si->orig_video_ega_bx = 0;
   Si->orig_video_points = 0;
 
-  Si->lfb_base = (UINT32) Gop->Mode->FrameBufferBase;
-  Si->lfb_size = (UINT32) Gop->Mode->FrameBufferSize;
-  Si->lfb_width = (UINT16) Info->HorizontalResolution;
+  Si->lfb_base   = (UINT32) Gop->Mode->FrameBufferBase;
+  Si->lfb_size   = (UINT32) Gop->Mode->FrameBufferSize;
+  Si->lfb_width  = (UINT16) Info->HorizontalResolution;
   Si->lfb_height = (UINT16) Info->VerticalResolution;
   Si->pages = 1;
   Si->vesapm_seg = 0;
   Si->vesapm_off = 0;
 
   if (Info->PixelFormat == PixelRedGreenBlueReserved8BitPerColor) {
-    Si->lfb_depth = 32;
-    Si->red_size = 8;
-    Si->red_pos = 0;
-    Si->green_size = 8;
-    Si->green_pos = 8;
-    Si->blue_size = 8;
-    Si->blue_pos = 16;
-    Si->rsvd_size = 8;
-    Si->rsvd_pos = 24;
+    Si->lfb_depth      = 32;
+    Si->red_size       = 8;
+    Si->red_pos        = 0;
+    Si->green_size     = 8;
+    Si->green_pos      = 8;
+    Si->blue_size      = 8;
+    Si->blue_pos       = 16;
+    Si->rsvd_size      = 8;
+    Si->rsvd_pos       = 24;
     Si->lfb_linelength = (UINT16) (Info->PixelsPerScanLine * 4);
-
   } else if (Info->PixelFormat == PixelBlueGreenRedReserved8BitPerColor) {
-    Si->lfb_depth = 32;
-    Si->red_size = 8;
-    Si->red_pos = 16;
-    Si->green_size = 8;
-    Si->green_pos = 8;
-    Si->blue_size = 8;
-    Si->blue_pos = 0;
-    Si->rsvd_size = 8;
-    Si->rsvd_pos = 24;
+    Si->lfb_depth      = 32;
+    Si->red_size       = 8;
+    Si->red_pos        = 16;
+    Si->green_size     = 8;
+    Si->green_pos      = 8;
+    Si->blue_size      = 8;
+    Si->blue_pos       = 0;
+    Si->rsvd_size      = 8;
+    Si->rsvd_pos       = 24;
     Si->lfb_linelength = (UINT16) (Info->PixelsPerScanLine * 4);
   } else if (Info->PixelFormat == PixelBitMask) {
-    FindBits(Info->PixelInformation.RedMask,
-        &Si->red_pos, &Si->red_size);
-    FindBits(Info->PixelInformation.GreenMask,
-        &Si->green_pos, &Si->green_size);
-    FindBits(Info->PixelInformation.BlueMask,
-        &Si->blue_pos, &Si->blue_size);
-    FindBits(Info->PixelInformation.ReservedMask,
-        &Si->rsvd_pos, &Si->rsvd_size);
+    FindBits (
+              Info->PixelInformation.RedMask,
+              &Si->red_pos,
+              &Si->red_size
+              );
+    FindBits (
+              Info->PixelInformation.GreenMask,
+              &Si->green_pos,
+              &Si->green_size
+              );
+    FindBits (
+              Info->PixelInformation.BlueMask,
+              &Si->blue_pos,
+              &Si->blue_size
+              );
+    FindBits (
+              Info->PixelInformation.ReservedMask,
+              &Si->rsvd_pos,
+              &Si->rsvd_size
+              );
     Si->lfb_depth = Si->red_size + Si->green_size +
-      Si->blue_size + Si->rsvd_size;
+                    Si->blue_size + Si->rsvd_size;
     Si->lfb_linelength = (UINT16) ((Info->PixelsPerScanLine * Si->lfb_depth) / 8);
   } else {
-    Si->lfb_depth = 4;
-    Si->red_size = 0;
-    Si->red_pos = 0;
-    Si->green_size = 0;
-    Si->green_pos = 0;
-    Si->blue_size = 0;
-    Si->blue_pos = 0;
-    Si->rsvd_size = 0;
-    Si->rsvd_pos = 0;
+    Si->lfb_depth      = 4;
+    Si->red_size       = 0;
+    Si->red_pos        = 0;
+    Si->green_size     = 0;
+    Si->green_pos      = 0;
+    Si->blue_size      = 0;
+    Si->blue_pos       = 0;
+    Si->rsvd_size      = 0;
+    Si->rsvd_pos       = 0;
     Si->lfb_linelength = Si->lfb_width / 2;
   }
 
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 SetupGraphics (
   IN OUT struct boot_params *Bp
   )
 {
-  EFI_STATUS                      Status;
-  EFI_HANDLE                      *HandleBuffer;
-  UINTN                           HandleCount;
-  UINTN                           Index;
-  EFI_GRAPHICS_OUTPUT_PROTOCOL    *Gop;
+  EFI_STATUS                    Status;
+  EFI_HANDLE                    *HandleBuffer;
+  UINTN                         HandleCount;
+  UINTN                         Index;
+  EFI_GRAPHICS_OUTPUT_PROTOCOL  *Gop;
 
-  ZeroMem ((VOID*)&Bp->screen_info, sizeof(Bp->screen_info));
+  ZeroMem ((VOID *) &Bp->screen_info, sizeof (Bp->screen_info));
 
   Status = gBS->LocateHandleBuffer (
-                  ByProtocol,
-                  &gEfiGraphicsOutputProtocolGuid,
-                  NULL,
-                  &HandleCount,
-                  &HandleBuffer
-                  );
+                                    ByProtocol,
+                                    &gEfiGraphicsOutputProtocolGuid,
+                                    NULL,
+                                    &HandleCount,
+                                    &HandleBuffer
+                                    );
   if (!EFI_ERROR (Status)) {
     for (Index = 0; Index < HandleCount; Index++) {
       Status = gBS->HandleProtocol (
-                      HandleBuffer[Index],
-                      &gEfiGraphicsOutputProtocolGuid,
-                      (VOID*) &Gop
-                      );
+                                    HandleBuffer[Index],
+                                    &gEfiGraphicsOutputProtocolGuid,
+                                    (VOID *) &Gop
+                                    );
       if (EFI_ERROR (Status)) {
         continue;
       }
@@ -599,7 +904,29 @@ SetupGraphics (
   return EFI_NOT_FOUND;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 SetupLinuxBootParams (
@@ -613,7 +940,29 @@ SetupLinuxBootParams (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 LoadLinux (
@@ -621,7 +970,7 @@ LoadLinux (
   IN OUT VOID  *KernelSetup
   )
 {
-  EFI_STATUS             Status;
+  EFI_STATUS          Status;
   struct boot_params  *Bp;
 
   Status = BasicKernelSetupCheck (KernelSetup);
@@ -640,13 +989,13 @@ LoadLinux (
 
   InitLinuxDescriptorTables ();
 
-  Bp->hdr.code32_start = (UINT32)(UINTN) Kernel;
+  Bp->hdr.code32_start = (UINT32) (UINTN) Kernel;
   if (Bp->hdr.version >= 0x20c && Bp->hdr.handover_offset &&
       (Bp->hdr.xloadflags & (sizeof (UINTN) == 4 ? BIT2 : BIT3))) {
     DEBUG ((DEBUG_INFO, "Jumping to kernel EFI handover point at ofs %x\n", Bp->hdr.handover_offset));
 
     DisableInterrupts ();
-    JumpToUefiKernel ((VOID*) gImageHandle, (VOID*) gST, KernelSetup, Kernel);
+    JumpToUefiKernel ((VOID *) gImageHandle, (VOID *) gST, KernelSetup, Kernel);
   }
 
   //
@@ -657,8 +1006,7 @@ LoadLinux (
   DEBUG ((DEBUG_INFO, "Jumping to kernel\n"));
   DisableInterrupts ();
   SetLinuxDescriptorTables ();
-  JumpToKernel (Kernel, (VOID*) KernelSetup);
+  JumpToKernel (Kernel, (VOID *) KernelSetup);
 
   return EFI_SUCCESS;
 }
-

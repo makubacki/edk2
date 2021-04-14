@@ -39,7 +39,6 @@
                            VirtioRingMap().
   @retval EFI_SUCCESS      Ring initialized.
 */
-
 STATIC
 EFI_STATUS
 EFIAPI
@@ -50,10 +49,10 @@ VirtioNetInitRing (
   OUT    VOID     **Mapping
   )
 {
-  EFI_STATUS Status;
-  UINT16     QueueSize;
-  UINT64     RingBaseShift;
-  VOID       *MapInfo;
+  EFI_STATUS  Status;
+  UINT16      QueueSize;
+  UINT64      RingBaseShift;
+  VOID        *MapInfo;
 
   //
   // step 4b -- allocate selected queue
@@ -62,6 +61,7 @@ VirtioNetInitRing (
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   Status = Dev->VirtIo->GetQueueNumMax (Dev->VirtIo, &QueueSize);
   if (EFI_ERROR (Status)) {
     return Status;
@@ -74,6 +74,7 @@ VirtioNetInitRing (
   if (QueueSize < 2) {
     return EFI_UNSUPPORTED;
   }
+
   Status = VirtioRingInit (Dev->VirtIo, QueueSize, Ring);
   if (EFI_ERROR (Status)) {
     return Status;
@@ -122,7 +123,6 @@ ReleaseQueue:
   return Status;
 }
 
-
 /**
   Set up static scaffolding for the VirtioNetTransmit() and
   VirtioNetGetStatus() SNP methods.
@@ -148,7 +148,6 @@ ReleaseQueue:
                                 VirtioMapAllBytesInSharedBuffer()
   @retval EFI_SUCCESS           TX setup successful.
 */
-
 STATIC
 EFI_STATUS
 EFIAPI
@@ -162,19 +161,23 @@ VirtioNetInitTx (
   EFI_PHYSICAL_ADDRESS  DeviceAddress;
   VOID                  *TxSharedReqBuffer;
 
-  Dev->TxMaxPending = (UINT16) MIN (Dev->TxRing.QueueSize / 2,
-                                 VNET_MAX_PENDING);
+  Dev->TxMaxPending = (UINT16) MIN (
+                                    Dev->TxRing.QueueSize / 2,
+                                    VNET_MAX_PENDING
+                                    );
   Dev->TxCurPending = 0;
-  Dev->TxFreeStack  = AllocatePool (Dev->TxMaxPending *
-                        sizeof *Dev->TxFreeStack);
+  Dev->TxFreeStack  = AllocatePool (
+                                    Dev->TxMaxPending *
+                                    sizeof *Dev->TxFreeStack
+                                    );
   if (Dev->TxFreeStack == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
   Dev->TxBufCollection = OrderedCollectionInit (
-                           VirtioNetTxBufMapInfoCompare,
-                           VirtioNetTxBufDeviceAddressCompare
-                           );
+                                                VirtioNetTxBufMapInfoCompare,
+                                                VirtioNetTxBufDeviceAddressCompare
+                                                );
   if (Dev->TxBufCollection == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto FreeTxFreeStack;
@@ -185,10 +188,10 @@ VirtioNetInitTx (
   // can be accessed equally by both processor and device.
   //
   Status = Dev->VirtIo->AllocateSharedPages (
-                          Dev->VirtIo,
-                          EFI_SIZE_TO_PAGES (sizeof *Dev->TxSharedReq),
-                          &TxSharedReqBuffer
-                          );
+                                             Dev->VirtIo,
+                                             EFI_SIZE_TO_PAGES (sizeof *Dev->TxSharedReq),
+                                             &TxSharedReqBuffer
+                                             );
   if (EFI_ERROR (Status)) {
     goto UninitTxBufCollection;
   }
@@ -196,19 +199,18 @@ VirtioNetInitTx (
   ZeroMem (TxSharedReqBuffer, sizeof *Dev->TxSharedReq);
 
   Status = VirtioMapAllBytesInSharedBuffer (
-             Dev->VirtIo,
-             VirtioOperationBusMasterCommonBuffer,
-             TxSharedReqBuffer,
-             sizeof *(Dev->TxSharedReq),
-             &DeviceAddress,
-             &Dev->TxSharedReqMap
-             );
+                                            Dev->VirtIo,
+                                            VirtioOperationBusMasterCommonBuffer,
+                                            TxSharedReqBuffer,
+                                            sizeof *(Dev->TxSharedReq),
+                                            &DeviceAddress,
+                                            &Dev->TxSharedReqMap
+                                            );
   if (EFI_ERROR (Status)) {
     goto FreeTxSharedReqBuffer;
   }
 
   Dev->TxSharedReq = TxSharedReqBuffer;
-
 
   //
   // In VirtIo 1.0, the NumBuffers field is mandatory. In 0.9.5, it depends on
@@ -219,7 +221,7 @@ VirtioNetInitTx (
                     sizeof *Dev->TxSharedReq;
 
   for (PktIdx = 0; PktIdx < Dev->TxMaxPending; ++PktIdx) {
-    UINT16 DescIdx;
+  UINT16  DescIdx;
 
     DescIdx = (UINT16) (2 * PktIdx);
     Dev->TxFreeStack[PktIdx] = DescIdx;
@@ -267,10 +269,10 @@ VirtioNetInitTx (
 
 FreeTxSharedReqBuffer:
   Dev->VirtIo->FreeSharedPages (
-                 Dev->VirtIo,
-                 EFI_SIZE_TO_PAGES (sizeof *(Dev->TxSharedReq)),
-                 TxSharedReqBuffer
-                 );
+                                Dev->VirtIo,
+                                EFI_SIZE_TO_PAGES (sizeof *(Dev->TxSharedReq)),
+                                TxSharedReqBuffer
+                                );
 
 UninitTxBufCollection:
   OrderedCollectionUninit (Dev->TxBufCollection);
@@ -280,7 +282,6 @@ FreeTxFreeStack:
 
   return Status;
 }
-
 
 /**
   Set up static scaffolding for the VirtioNetReceive() SNP method and enable
@@ -304,7 +305,6 @@ FreeTxFreeStack:
   @retval EFI_SUCCESS           RX setup successful. The device is live and may
                                 already be writing to the receive area.
 */
-
 STATIC
 EFI_STATUS
 EFIAPI
@@ -334,7 +334,7 @@ VirtioNetInitRx (
   // For each incoming packet we must supply two descriptors:
   // - the recipient for the virtio-net request header, plus
   // - the recipient for the network data (which consists of Ethernet header
-  //   and Ethernet payload).
+  // and Ethernet payload).
   //
   RxBufSize = VirtioNetReqSize +
               (Dev->Snm.MediaHeaderSize + Dev->Snm.MaxPacketSize);
@@ -354,10 +354,10 @@ VirtioNetInitRx (
   NumBytes = RxAlwaysPending * RxBufSize;
   Dev->RxBufNrPages = EFI_SIZE_TO_PAGES (NumBytes);
   Status = Dev->VirtIo->AllocateSharedPages (
-                          Dev->VirtIo,
-                          Dev->RxBufNrPages,
-                          &RxBuffer
-                          );
+                                             Dev->VirtIo,
+                                             Dev->RxBufNrPages,
+                                             &RxBuffer
+                                             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -365,13 +365,13 @@ VirtioNetInitRx (
   ZeroMem (RxBuffer, NumBytes);
 
   Status = VirtioMapAllBytesInSharedBuffer (
-             Dev->VirtIo,
-             VirtioOperationBusMasterCommonBuffer,
-             RxBuffer,
-             NumBytes,
-             &Dev->RxBufDeviceBase,
-             &Dev->RxBufMap
-             );
+                                            Dev->VirtIo,
+                                            VirtioOperationBusMasterCommonBuffer,
+                                            RxBuffer,
+                                            NumBytes,
+                                            &Dev->RxBufDeviceBase,
+                                            &Dev->RxBufMap
+                                            );
   if (EFI_ERROR (Status)) {
     goto FreeSharedBuffer;
   }
@@ -437,7 +437,7 @@ VirtioNetInitRx (
   MemoryFence ();
   Status = Dev->VirtIo->SetQueueNotify (Dev->VirtIo, VIRTIO_NET_Q_RX);
   if (EFI_ERROR (Status)) {
-    Dev->VirtIo->SetDeviceStatus (Dev->VirtIo, 0);
+  Dev->VirtIo->SetDeviceStatus (Dev->VirtIo, 0);
     goto UnmapSharedBuffer;
   }
 
@@ -448,13 +448,12 @@ UnmapSharedBuffer:
 
 FreeSharedBuffer:
   Dev->VirtIo->FreeSharedPages (
-                 Dev->VirtIo,
-                 Dev->RxBufNrPages,
-                 RxBuffer
-                 );
+                                Dev->VirtIo,
+                                Dev->RxBufNrPages,
+                                RxBuffer
+                                );
   return Status;
 }
-
 
 /**
   Resets a network adapter and allocates the transmit and receive buffers
@@ -485,7 +484,6 @@ FreeSharedBuffer:
                                 interface.
 
 **/
-
 EFI_STATUS
 EFIAPI
 VirtioNetInitialize (
@@ -494,20 +492,21 @@ VirtioNetInitialize (
   IN UINTN                       ExtraTxBufferSize  OPTIONAL
   )
 {
-  VNET_DEV   *Dev;
-  EFI_TPL    OldTpl;
-  EFI_STATUS Status;
-  UINT8      NextDevStat;
-  UINT64     Features;
+  VNET_DEV    *Dev;
+  EFI_TPL     OldTpl;
+  EFI_STATUS  Status;
+  UINT8       NextDevStat;
+  UINT64      Features;
 
   if (This == NULL) {
     return EFI_INVALID_PARAMETER;
   }
+
   if (ExtraRxBufferSize > 0 || ExtraTxBufferSize > 0) {
     return EFI_UNSUPPORTED;
   }
 
-  Dev = VIRTIO_NET_FROM_SNP (This);
+  Dev    = VIRTIO_NET_FROM_SNP (This);
   OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
   if (Dev->Snm.State != EfiSimpleNetworkStarted) {
     Status = EFI_NOT_STARTED;
@@ -553,8 +552,10 @@ VirtioNetInitialize (
   }
 
   ASSERT (Features & VIRTIO_NET_F_MAC);
-  ASSERT (Dev->Snm.MediaPresentSupported ==
-    !!(Features & VIRTIO_NET_F_STATUS));
+  ASSERT (
+          Dev->Snm.MediaPresentSupported ==
+          !!(Features & VIRTIO_NET_F_STATUS)
+          );
 
   Features &= VIRTIO_NET_F_MAC | VIRTIO_NET_F_STATUS | VIRTIO_F_VERSION_1 |
               VIRTIO_F_IOMMU_PLATFORM;
@@ -574,21 +575,21 @@ VirtioNetInitialize (
   // step 4b, 4c -- allocate and report virtqueues
   //
   Status = VirtioNetInitRing (
-             Dev,
-             VIRTIO_NET_Q_RX,
-             &Dev->RxRing,
-             &Dev->RxRingMap
-             );
+                              Dev,
+                              VIRTIO_NET_Q_RX,
+                              &Dev->RxRing,
+                              &Dev->RxRingMap
+                              );
   if (EFI_ERROR (Status)) {
     goto DeviceFailed;
   }
 
   Status = VirtioNetInitRing (
-             Dev,
-             VIRTIO_NET_Q_TX,
-             &Dev->TxRing,
-             &Dev->TxRingMap
-             );
+                              Dev,
+                              VIRTIO_NET_Q_TX,
+                              &Dev->TxRing,
+                              &Dev->TxRingMap
+                              );
   if (EFI_ERROR (Status)) {
     goto ReleaseRxRing;
   }
@@ -597,8 +598,8 @@ VirtioNetInitialize (
   // step 5 -- keep only the features we want
   //
   if (Dev->VirtIo->Revision < VIRTIO_SPEC_REVISION (1, 0, 0)) {
-    Features &= ~(UINT64)(VIRTIO_F_VERSION_1 | VIRTIO_F_IOMMU_PLATFORM);
-    Status = Dev->VirtIo->SetGuestFeatures (Dev->VirtIo, Features);
+    Features &= ~(UINT64) (VIRTIO_F_VERSION_1 | VIRTIO_F_IOMMU_PLATFORM);
+    Status    = Dev->VirtIo->SetGuestFeatures (Dev->VirtIo, Features);
     if (EFI_ERROR (Status)) {
       goto ReleaseTxRing;
     }

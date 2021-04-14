@@ -22,14 +22,37 @@
 #include "FwBlockService.h"
 #include "QemuFlash.h"
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 InstallProtocolInterfaces (
   IN EFI_FW_VOL_BLOCK_DEVICE *FvbDevice
   )
 {
-  EFI_STATUS                         Status;
-  EFI_HANDLE                         FwbHandle;
-  EFI_FIRMWARE_VOLUME_BLOCK_PROTOCOL *OldFwbInterface;
+  EFI_STATUS                          Status;
+  EFI_HANDLE                          FwbHandle;
+  EFI_FIRMWARE_VOLUME_BLOCK_PROTOCOL  *OldFwbInterface;
 
   ASSERT (!FeaturePcdGet (PcdSmmSmramRequire));
 
@@ -37,8 +60,11 @@ InstallProtocolInterfaces (
   // Find a handle with a matching device path that has supports FW Block
   // protocol
   //
-  Status = gBS->LocateDevicePath (&gEfiFirmwareVolumeBlockProtocolGuid,
-                  &FvbDevice->DevicePath, &FwbHandle);
+  Status = gBS->LocateDevicePath (
+                                  &gEfiFirmwareVolumeBlockProtocolGuid,
+                                  &FvbDevice->DevicePath,
+                                  &FwbHandle
+                                  );
   if (EFI_ERROR (Status)) {
     //
     // LocateDevicePath fails so install a new interface and device path
@@ -46,32 +72,32 @@ InstallProtocolInterfaces (
     FwbHandle = NULL;
     DEBUG ((DEBUG_INFO, "Installing QEMU flash FVB\n"));
     Status = gBS->InstallMultipleProtocolInterfaces (
-                    &FwbHandle,
-                    &gEfiFirmwareVolumeBlockProtocolGuid,
-                    &FvbDevice->FwVolBlockInstance,
-                    &gEfiDevicePathProtocolGuid,
-                    FvbDevice->DevicePath,
-                    NULL
-                    );
+                                                     &FwbHandle,
+                                                     &gEfiFirmwareVolumeBlockProtocolGuid,
+                                                     &FvbDevice->FwVolBlockInstance,
+                                                     &gEfiDevicePathProtocolGuid,
+                                                     FvbDevice->DevicePath,
+                                                     NULL
+                                                     );
     ASSERT_EFI_ERROR (Status);
   } else if (IsDevicePathEnd (FvbDevice->DevicePath)) {
     //
     // Device already exists, so reinstall the FVB protocol
     //
     Status = gBS->HandleProtocol (
-                    FwbHandle,
-                    &gEfiFirmwareVolumeBlockProtocolGuid,
-                    (VOID**)&OldFwbInterface
-                    );
+                                  FwbHandle,
+                                  &gEfiFirmwareVolumeBlockProtocolGuid,
+                                  (VOID **) &OldFwbInterface
+                                  );
     ASSERT_EFI_ERROR (Status);
 
     DEBUG ((DEBUG_INFO, "Reinstalling FVB for QEMU flash region\n"));
     Status = gBS->ReinstallProtocolInterface (
-                    FwbHandle,
-                    &gEfiFirmwareVolumeBlockProtocolGuid,
-                    OldFwbInterface,
-                    &FvbDevice->FwVolBlockInstance
-                    );
+                                              FwbHandle,
+                                              &gEfiFirmwareVolumeBlockProtocolGuid,
+                                              OldFwbInterface,
+                                              &FvbDevice->FwVolBlockInstance
+                                              );
     ASSERT_EFI_ERROR (Status);
   } else {
     //
@@ -81,7 +107,29 @@ InstallProtocolInterfaces (
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 VOID
 EFIAPI
@@ -89,6 +137,7 @@ FvbVirtualAddressChangeEvent (
   IN EFI_EVENT        Event,
   IN VOID             *Context
   )
+
 /*++
 
   Routine Description:
@@ -107,8 +156,8 @@ FvbVirtualAddressChangeEvent (
 
 --*/
 {
-  EFI_FW_VOL_INSTANCE *FwhInstance;
-  UINTN               Index;
+  EFI_FW_VOL_INSTANCE  *FwhInstance;
+  UINTN                Index;
 
   FwhInstance = mFvbModuleGlobal->FvInstance;
   EfiConvertPointer (0x0, (VOID **) &mFvbModuleGlobal->FvInstance);
@@ -116,15 +165,15 @@ FvbVirtualAddressChangeEvent (
   //
   // Convert the base address of all the instances
   //
-  Index       = 0;
+  Index = 0;
   while (Index < mFvbModuleGlobal->NumFv) {
     EfiConvertPointer (0x0, (VOID **) &FwhInstance->FvBase);
     FwhInstance = (EFI_FW_VOL_INSTANCE *)
-      (
-        (UINTN) ((UINT8 *) FwhInstance) +
-        FwhInstance->VolumeHeader.HeaderLength +
-        (sizeof (EFI_FW_VOL_INSTANCE) - sizeof (EFI_FIRMWARE_VOLUME_HEADER))
-      );
+                  (
+                   (UINTN) ((UINT8 *) FwhInstance) +
+                   FwhInstance->VolumeHeader.HeaderLength +
+                   (sizeof (EFI_FW_VOL_INSTANCE) - sizeof (EFI_FIRMWARE_VOLUME_HEADER))
+                  );
     Index++;
   }
 
@@ -132,70 +181,115 @@ FvbVirtualAddressChangeEvent (
   QemuFlashConvertPointers ();
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 InstallVirtualAddressChangeHandler (
   VOID
   )
 {
-  EFI_STATUS Status;
-  EFI_EVENT  VirtualAddressChangeEvent;
+  EFI_STATUS  Status;
+  EFI_EVENT   VirtualAddressChangeEvent;
 
   Status = gBS->CreateEventEx (
-                  EVT_NOTIFY_SIGNAL,
-                  TPL_NOTIFY,
-                  FvbVirtualAddressChangeEvent,
-                  NULL,
-                  &gEfiEventVirtualAddressChangeGuid,
-                  &VirtualAddressChangeEvent
-                  );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_NOTIFY,
+                               FvbVirtualAddressChangeEvent,
+                               NULL,
+                               &gEfiEventVirtualAddressChangeGuid,
+                               &VirtualAddressChangeEvent
+                               );
   ASSERT_EFI_ERROR (Status);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 MarkIoMemoryRangeForRuntimeAccess (
   IN EFI_PHYSICAL_ADDRESS                BaseAddress,
   IN UINTN                               Length
   )
 {
-  EFI_STATUS                          Status;
-  EFI_GCD_MEMORY_SPACE_DESCRIPTOR     GcdDescriptor;
+  EFI_STATUS                       Status;
+  EFI_GCD_MEMORY_SPACE_DESCRIPTOR  GcdDescriptor;
 
   //
   // Mark flash region as runtime memory
   //
   Status = gDS->RemoveMemorySpace (
-                  BaseAddress,
-                  Length
-                  );
+                                   BaseAddress,
+                                   Length
+                                   );
 
   Status = gDS->AddMemorySpace (
-                  EfiGcdMemoryTypeMemoryMappedIo,
-                  BaseAddress,
-                  Length,
-                  EFI_MEMORY_UC | EFI_MEMORY_RUNTIME
-                  );
+                                EfiGcdMemoryTypeMemoryMappedIo,
+                                BaseAddress,
+                                Length,
+                                EFI_MEMORY_UC | EFI_MEMORY_RUNTIME
+                                );
   ASSERT_EFI_ERROR (Status);
 
   Status = gDS->AllocateMemorySpace (
-                  EfiGcdAllocateAddress,
-                  EfiGcdMemoryTypeMemoryMappedIo,
-                  0,
-                  Length,
-                  &BaseAddress,
-                  gImageHandle,
-                  NULL
-                  );
+                                     EfiGcdAllocateAddress,
+                                     EfiGcdMemoryTypeMemoryMappedIo,
+                                     0,
+                                     Length,
+                                     &BaseAddress,
+                                     gImageHandle,
+                                     NULL
+                                     );
   ASSERT_EFI_ERROR (Status);
 
   Status = gDS->GetMemorySpaceDescriptor (BaseAddress, &GcdDescriptor);
   ASSERT_EFI_ERROR (Status);
 
   Status = gDS->SetMemorySpaceAttributes (
-                  BaseAddress,
-                  Length,
-                  GcdDescriptor.Attributes | EFI_MEMORY_RUNTIME
-                  );
+                                          BaseAddress,
+                                          Length,
+                                          GcdDescriptor.Attributes | EFI_MEMORY_RUNTIME
+                                          );
   ASSERT_EFI_ERROR (Status);
 
   //
@@ -206,40 +300,63 @@ MarkIoMemoryRangeForRuntimeAccess (
   //
   if (MemEncryptSevIsEnabled ()) {
     Status = MemEncryptSevClearPageEncMask (
-               0,
-               BaseAddress,
-               EFI_SIZE_TO_PAGES (Length),
-               FALSE
-               );
+                                            0,
+                                            BaseAddress,
+                                            EFI_SIZE_TO_PAGES (Length),
+                                            FALSE
+                                            );
     ASSERT_EFI_ERROR (Status);
   }
 
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 SetPcdFlashNvStorageBaseAddresses (
   VOID
   )
 {
-  RETURN_STATUS PcdStatus;
+  RETURN_STATUS  PcdStatus;
 
   //
   // Set several PCD values to point to flash
   //
   PcdStatus = PcdSet64S (
-    PcdFlashNvStorageVariableBase64,
-    (UINTN) PcdGet32 (PcdOvmfFlashNvStorageVariableBase)
-    );
+                         PcdFlashNvStorageVariableBase64,
+                         (UINTN) PcdGet32 (PcdOvmfFlashNvStorageVariableBase)
+                         );
   ASSERT_RETURN_ERROR (PcdStatus);
   PcdStatus = PcdSet32S (
-    PcdFlashNvStorageFtwWorkingBase,
-    PcdGet32 (PcdOvmfFlashNvStorageFtwWorkingBase)
-    );
+                         PcdFlashNvStorageFtwWorkingBase,
+                         PcdGet32 (PcdOvmfFlashNvStorageFtwWorkingBase)
+                         );
   ASSERT_RETURN_ERROR (PcdStatus);
   PcdStatus = PcdSet32S (
-    PcdFlashNvStorageFtwSpareBase,
-    PcdGet32 (PcdOvmfFlashNvStorageFtwSpareBase)
-    );
+                         PcdFlashNvStorageFtwSpareBase,
+                         PcdGet32 (PcdOvmfFlashNvStorageFtwSpareBase)
+                         );
   ASSERT_RETURN_ERROR (PcdStatus);
 }

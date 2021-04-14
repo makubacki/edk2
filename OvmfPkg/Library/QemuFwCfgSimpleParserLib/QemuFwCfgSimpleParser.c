@@ -20,20 +20,20 @@
 // Size of the longest valid BOOL string (see the "mTrueString" and
 // "mFalseString" arrays below), including the terminating NUL.
 //
-#define BOOL_STRING_MAX_SIZE (sizeof "disabled")
+#define BOOL_STRING_MAX_SIZE  (sizeof "disabled")
 
 //
 // Length of "\r\n", not including the terminating NUL.
 //
-#define CRLF_LENGTH (sizeof "\r\n" - 1)
+#define CRLF_LENGTH  (sizeof "\r\n" - 1)
 
 //
 // Words recognized as representing TRUE or FALSE.
 //
-STATIC CONST CHAR8 * CONST mTrueString[] = {
+STATIC CONST CHAR8 *CONST  mTrueString[] = {
   "true", "yes", "y", "enable", "enabled", "1"
 };
-STATIC CONST CHAR8 * CONST mFalseString[] = {
+STATIC CONST CHAR8 *CONST  mFalseString[] = {
   "false", "no", "n", "disable", "disabled", "0"
 };
 
@@ -90,9 +90,9 @@ QemuFwCfgGetAsString (
   OUT    CHAR8       *Buffer
   )
 {
-  RETURN_STATUS        Status;
-  FIRMWARE_CONFIG_ITEM FwCfgItem;
-  UINTN                FwCfgSize;
+  RETURN_STATUS         Status;
+  FIRMWARE_CONFIG_ITEM  FwCfgItem;
+  UINTN                 FwCfgSize;
 
   if (!QemuFwCfgIsAvailable ()) {
     return RETURN_UNSUPPORTED;
@@ -102,6 +102,7 @@ QemuFwCfgGetAsString (
   if (RETURN_ERROR (Status)) {
     return Status;
   }
+
   if (FwCfgSize > *BufferSize) {
     return RETURN_PROTOCOL_ERROR;
   }
@@ -116,12 +117,14 @@ QemuFwCfgGetAsString (
     *BufferSize = FwCfgSize;
     return RETURN_SUCCESS;
   }
+
   //
   // Otherwise, append a NUL byte to Buffer (if we have room for it).
   //
   if (FwCfgSize == *BufferSize) {
     return RETURN_PROTOCOL_ERROR;
   }
+
   Buffer[FwCfgSize] = '\0';
   *BufferSize = FwCfgSize + 1;
   return RETURN_SUCCESS;
@@ -146,9 +149,9 @@ StripNewline (
   IN OUT CHAR8 *Buffer
   )
 {
-  UINTN InSize, OutSize;
+  UINTN  InSize, OutSize;
 
-  InSize = *BufferSize;
+  InSize  = *BufferSize;
   OutSize = InSize;
 
   if (InSize >= 3 &&
@@ -209,11 +212,11 @@ QemuFwCfgParseUint64WithLimit (
   OUT UINT64      *Value
   )
 {
-  UINTN         Uint64StringSize;
-  CHAR8         Uint64String[UINT64_STRING_MAX_SIZE + CRLF_LENGTH];
-  RETURN_STATUS Status;
-  CHAR8         *EndPointer;
-  UINT64        Uint64;
+  UINTN          Uint64StringSize;
+  CHAR8          Uint64String[UINT64_STRING_MAX_SIZE + CRLF_LENGTH];
+  RETURN_STATUS  Status;
+  CHAR8          *EndPointer;
+  UINT64         Uint64;
 
   Uint64StringSize = sizeof Uint64String;
   Status = QemuFwCfgGetAsString (FileName, &Uint64StringSize, Uint64String);
@@ -228,6 +231,7 @@ QemuFwCfgParseUint64WithLimit (
   } else {
     Status = AsciiStrDecimalToUint64S (Uint64String, &EndPointer, &Uint64);
   }
+
   if (RETURN_ERROR (Status)) {
     return Status;
   }
@@ -260,6 +264,29 @@ QemuFwCfgSimpleParserInit (
   return RETURN_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 RETURN_STATUS
 EFIAPI
 QemuFwCfgParseBool (
@@ -267,10 +294,10 @@ QemuFwCfgParseBool (
   OUT BOOLEAN     *Value
   )
 {
-  UINTN         BoolStringSize;
-  CHAR8         BoolString[BOOL_STRING_MAX_SIZE + CRLF_LENGTH];
-  RETURN_STATUS Status;
-  UINTN         Idx;
+  UINTN          BoolStringSize;
+  CHAR8          BoolString[BOOL_STRING_MAX_SIZE + CRLF_LENGTH];
+  RETURN_STATUS  Status;
+  UINTN          Idx;
 
   BoolStringSize = sizeof BoolString;
   Status = QemuFwCfgGetAsString (FileName, &BoolStringSize, BoolString);
@@ -297,6 +324,29 @@ QemuFwCfgParseBool (
   return RETURN_PROTOCOL_ERROR;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 RETURN_STATUS
 EFIAPI
 QemuFwCfgParseUint8 (
@@ -305,18 +355,46 @@ QemuFwCfgParseUint8 (
   OUT UINT8       *Value
   )
 {
-  RETURN_STATUS Status;
-  UINT64        Uint64;
+  RETURN_STATUS  Status;
+  UINT64         Uint64;
 
-  Status = QemuFwCfgParseUint64WithLimit (FileName, ParseAsHex, MAX_UINT8,
-             &Uint64);
+  Status = QemuFwCfgParseUint64WithLimit (
+                                          FileName,
+                                          ParseAsHex,
+                                          MAX_UINT8,
+                                          &Uint64
+                                          );
   if (RETURN_ERROR (Status)) {
     return Status;
   }
-  *Value = (UINT8)Uint64;
+
+  *Value = (UINT8) Uint64;
   return RETURN_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 RETURN_STATUS
 EFIAPI
 QemuFwCfgParseUint16 (
@@ -325,18 +403,46 @@ QemuFwCfgParseUint16 (
   OUT UINT16      *Value
   )
 {
-  RETURN_STATUS Status;
-  UINT64        Uint64;
+  RETURN_STATUS  Status;
+  UINT64         Uint64;
 
-  Status = QemuFwCfgParseUint64WithLimit (FileName, ParseAsHex, MAX_UINT16,
-             &Uint64);
+  Status = QemuFwCfgParseUint64WithLimit (
+                                          FileName,
+                                          ParseAsHex,
+                                          MAX_UINT16,
+                                          &Uint64
+                                          );
   if (RETURN_ERROR (Status)) {
     return Status;
   }
-  *Value = (UINT16)Uint64;
+
+  *Value = (UINT16) Uint64;
   return RETURN_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 RETURN_STATUS
 EFIAPI
 QemuFwCfgParseUint32 (
@@ -345,18 +451,46 @@ QemuFwCfgParseUint32 (
   OUT UINT32      *Value
   )
 {
-  RETURN_STATUS Status;
-  UINT64        Uint64;
+  RETURN_STATUS  Status;
+  UINT64         Uint64;
 
-  Status = QemuFwCfgParseUint64WithLimit (FileName, ParseAsHex, MAX_UINT32,
-             &Uint64);
+  Status = QemuFwCfgParseUint64WithLimit (
+                                          FileName,
+                                          ParseAsHex,
+                                          MAX_UINT32,
+                                          &Uint64
+                                          );
   if (RETURN_ERROR (Status)) {
     return Status;
   }
-  *Value = (UINT32)Uint64;
+
+  *Value = (UINT32) Uint64;
   return RETURN_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 RETURN_STATUS
 EFIAPI
 QemuFwCfgParseUint64 (
@@ -365,18 +499,46 @@ QemuFwCfgParseUint64 (
   OUT UINT64      *Value
   )
 {
-  RETURN_STATUS Status;
-  UINT64        Uint64;
+  RETURN_STATUS  Status;
+  UINT64         Uint64;
 
-  Status = QemuFwCfgParseUint64WithLimit (FileName, ParseAsHex, MAX_UINT64,
-             &Uint64);
+  Status = QemuFwCfgParseUint64WithLimit (
+                                          FileName,
+                                          ParseAsHex,
+                                          MAX_UINT64,
+                                          &Uint64
+                                          );
   if (RETURN_ERROR (Status)) {
     return Status;
   }
+
   *Value = Uint64;
   return RETURN_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 RETURN_STATUS
 EFIAPI
 QemuFwCfgParseUintn (
@@ -385,14 +547,19 @@ QemuFwCfgParseUintn (
   OUT UINTN       *Value
   )
 {
-  RETURN_STATUS Status;
-  UINT64        Uint64;
+  RETURN_STATUS  Status;
+  UINT64         Uint64;
 
-  Status = QemuFwCfgParseUint64WithLimit (FileName, ParseAsHex, MAX_UINTN,
-             &Uint64);
+  Status = QemuFwCfgParseUint64WithLimit (
+                                          FileName,
+                                          ParseAsHex,
+                                          MAX_UINTN,
+                                          &Uint64
+                                          );
   if (RETURN_ERROR (Status)) {
     return Status;
   }
-  *Value = (UINTN)Uint64;
+
+  *Value = (UINTN) Uint64;
   return RETURN_SUCCESS;
 }

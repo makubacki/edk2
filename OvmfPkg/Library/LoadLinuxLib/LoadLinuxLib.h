@@ -40,14 +40,13 @@ JumpToUefiKernel (
   );
 
 VOID
-InitLinuxDescriptorTables (
-  VOID
-  );
+  InitLinuxDescriptorTables (
+                             VOID
+                             );
 
 VOID
-SetLinuxDescriptorTables (
-  VOID
-  );
+  SetLinuxDescriptorTables (
+                            VOID
+                            );
 
 #endif
-

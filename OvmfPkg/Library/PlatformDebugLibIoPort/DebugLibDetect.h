@@ -24,8 +24,8 @@
 BOOLEAN
 EFIAPI
 PlatformDebugLibIoPortDetect (
-  VOID
-  );
+                              VOID
+                              );
 
 /**
   Return whether the virtual machine has a debug I/O port.  DebugLib.c
@@ -39,7 +39,7 @@ PlatformDebugLibIoPortDetect (
 BOOLEAN
 EFIAPI
 PlatformDebugLibIoPortFound (
-  VOID
-  );
+                             VOID
+                             );
 
 #endif

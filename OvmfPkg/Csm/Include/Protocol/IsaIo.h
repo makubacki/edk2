@@ -48,21 +48,27 @@ typedef enum {
 /// Attributes for the EFI_ISA_IO_PROTOCOL common DMA buffer allocations.
 ///
 #define EFI_ISA_IO_ATTRIBUTE_MEMORY_WRITE_COMBINE  0x080    ///< Map a memory range so write are combined.
-#define EFI_ISA_IO_ATTRIBUTE_MEMORY_CACHED         0x800    ///< Map a memory range so all read and write accesses are cached.
+#define EFI_ISA_IO_ATTRIBUTE_MEMORY_CACHED         0x800    ///< Map a memory range so all read and write accesses are
+                                                            ///< cached.
 #define EFI_ISA_IO_ATTRIBUTE_MEMORY_DISABLE        0x1000   ///< Disable a memory range.
 
 ///
 /// Channel attribute for EFI_ISA_IO_PROTOCOL slave DMA requests
 ///
-#define EFI_ISA_IO_SLAVE_DMA_ATTRIBUTE_SPEED_COMPATIBLE  0x001   ///< Set the speed of the DMA transfer in compatible mode.
+#define EFI_ISA_IO_SLAVE_DMA_ATTRIBUTE_SPEED_COMPATIBLE  0x001   ///< Set the speed of the DMA transfer in compatible
+                                                                 ///< mode.
 #define EFI_ISA_IO_SLAVE_DMA_ATTRIBUTE_SPEED_A           0x002   ///< Not supported.
 #define EFI_ISA_IO_SLAVE_DMA_ATTRIBUTE_SPEED_B           0x004   ///< Not supported.
 #define EFI_ISA_IO_SLAVE_DMA_ATTRIBUTE_SPEED_C           0x008   ///< Not supported.
-#define EFI_ISA_IO_SLAVE_DMA_ATTRIBUTE_WIDTH_8           0x010   ///< Request 8-bit DMA transfers.  Only available on channels 0..3.
-#define EFI_ISA_IO_SLAVE_DMA_ATTRIBUTE_WIDTH_16          0x020   ///< Request 16-bit DMA transfers.  Only available on channels 4..7.
+#define EFI_ISA_IO_SLAVE_DMA_ATTRIBUTE_WIDTH_8           0x010   ///< Request 8-bit DMA transfers.  Only available on
+                                                                 ///< channels 0..3.
+#define EFI_ISA_IO_SLAVE_DMA_ATTRIBUTE_WIDTH_16          0x020   ///< Request 16-bit DMA transfers.  Only available on
+                                                                 ///< channels 4..7.
 #define EFI_ISA_IO_SLAVE_DMA_ATTRIBUTE_SINGLE_MODE       0x040   ///< Request a single DMA transfer.
-#define EFI_ISA_IO_SLAVE_DMA_ATTRIBUTE_DEMAND_MODE       0x080   ///< Request multiple DMA transfers until TC (Terminal Count) or EOP (End of Process).
-#define EFI_ISA_IO_SLAVE_DMA_ATTRIBUTE_AUTO_INITIALIZE   0x100   ///< Automatically reload base and count at the end of the DMA transfer.
+#define EFI_ISA_IO_SLAVE_DMA_ATTRIBUTE_DEMAND_MODE       0x080   ///< Request multiple DMA transfers until TC (Terminal
+                                                                 ///< Count) or EOP (End of Process).
+#define EFI_ISA_IO_SLAVE_DMA_ATTRIBUTE_AUTO_INITIALIZE   0x100   ///< Automatically reload base and count at the end of
+                                                                 ///< the DMA transfer.
 
 ///
 /// The DMA opreration type for EFI_ISA_IO_PROTOCOL DMA requests.
@@ -112,14 +118,14 @@ typedef enum {
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_ISA_IO_PROTOCOL_IO_MEM)(
-  IN     EFI_ISA_IO_PROTOCOL        *This,
-  IN     EFI_ISA_IO_PROTOCOL_WIDTH  Width,
-  IN     UINT32                     Offset,
-  IN     UINTN                      Count,
-  IN OUT VOID                       *Buffer
-  );
+                                     IN     EFI_ISA_IO_PROTOCOL        *This,
+                                     IN     EFI_ISA_IO_PROTOCOL_WIDTH  Width,
+                                     IN     UINT32                     Offset,
+                                     IN     UINTN                      Count,
+                                     IN OUT VOID                       *Buffer
+                                     );
 
 ///
 /// Structure of functions for accessing ISA I/O and MMIO space.
@@ -128,11 +134,11 @@ typedef struct {
   ///
   /// Read from ISA I/O or MMIO space.
   ///
-  EFI_ISA_IO_PROTOCOL_IO_MEM  Read;
+  EFI_ISA_IO_PROTOCOL_IO_MEM    Read;
   ///
   /// Write to ISA I/O or MMIO space.
   ///
-  EFI_ISA_IO_PROTOCOL_IO_MEM  Write;
+  EFI_ISA_IO_PROTOCOL_IO_MEM    Write;
 } EFI_ISA_IO_PROTOCOL_ACCESS;
 
 /**
@@ -152,14 +158,14 @@ typedef struct {
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_ISA_IO_PROTOCOL_COPY_MEM)(
-  IN EFI_ISA_IO_PROTOCOL         *This,
-  IN EFI_ISA_IO_PROTOCOL_WIDTH   Width,
-  IN UINT32                      DestOffset,
-  IN UINT32                      SrcOffset,
-  IN UINTN                       Count
-  );
+                                       IN EFI_ISA_IO_PROTOCOL         *This,
+                                       IN EFI_ISA_IO_PROTOCOL_WIDTH   Width,
+                                       IN UINT32                      DestOffset,
+                                       IN UINT32                      SrcOffset,
+                                       IN UINTN                       Count
+                                       );
 
 /**
   Maps a memory region for DMA.
@@ -218,17 +224,17 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_ISA_IO_PROTOCOL_MAP)(
-  IN     EFI_ISA_IO_PROTOCOL            *This,
-  IN     EFI_ISA_IO_PROTOCOL_OPERATION  Operation,
-  IN     UINT8                          ChannelNumber      OPTIONAL,
-  IN     UINT32                         ChannelAttributes,
-  IN     VOID                           *HostAddress,
-  IN OUT UINTN                          *NumberOfBytes,
-  OUT    EFI_PHYSICAL_ADDRESS           *DeviceAddress,
-  OUT    VOID                           **Mapping
-  );
+                                  IN     EFI_ISA_IO_PROTOCOL            *This,
+                                  IN     EFI_ISA_IO_PROTOCOL_OPERATION  Operation,
+                                  IN     UINT8                          ChannelNumber      OPTIONAL,
+                                  IN     UINT32                         ChannelAttributes,
+                                  IN     VOID                           *HostAddress,
+                                  IN OUT UINTN                          *NumberOfBytes,
+                                  OUT    EFI_PHYSICAL_ADDRESS           *DeviceAddress,
+                                  OUT    VOID                           **Mapping
+                                  );
 
 /**
   Unmaps a memory region that was previously mapped with EFI_ISA_IO_PROTOCOL.Map().
@@ -245,11 +251,11 @@ EFI_STATUS
   @retval EFI_DEVICE_ERROR  The data was not committed to the target system memory.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_ISA_IO_PROTOCOL_UNMAP)(
-  IN  EFI_ISA_IO_PROTOCOL  *This,
-  IN  VOID                 *Mapping
-  );
+                                    IN  EFI_ISA_IO_PROTOCOL  *This,
+                                    IN  VOID                 *Mapping
+                                    );
 
 /**
   Allocates pages that are suitable for an EfiIsaIoOperationBusMasterCommonBuffer
@@ -273,15 +279,15 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_ISA_IO_PROTOCOL_ALLOCATE_BUFFER)(
-  IN  EFI_ISA_IO_PROTOCOL  *This,
-  IN  EFI_ALLOCATE_TYPE    Type,
-  IN  EFI_MEMORY_TYPE      MemoryType,
-  IN  UINTN                Pages,
-  OUT VOID                 **HostAddress,
-  IN  UINT64               Attributes
-  );
+                                              IN  EFI_ISA_IO_PROTOCOL  *This,
+                                              IN  EFI_ALLOCATE_TYPE    Type,
+                                              IN  EFI_MEMORY_TYPE      MemoryType,
+                                              IN  UINTN                Pages,
+                                              OUT VOID                 **HostAddress,
+                                              IN  UINT64               Attributes
+                                              );
 
 /**
   Frees a common buffer that was allocated with EFI_ISA_IO_PROTOCOL.AllocateBuffer().
@@ -296,12 +302,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_ISA_IO_PROTOCOL_FREE_BUFFER)(
-  IN  EFI_ISA_IO_PROTOCOL  *This,
-  IN  UINTN                Pages,
-  IN  VOID                 *HostAddress
-  );
+                                          IN  EFI_ISA_IO_PROTOCOL  *This,
+                                          IN  UINTN                Pages,
+                                          IN  VOID                 *HostAddress
+                                          );
 
 /**
   Flushes a DMA buffer, which forces all DMA posted write transactions to complete.
@@ -313,10 +319,10 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_ISA_IO_PROTOCOL_FLUSH)(
-  IN EFI_ISA_IO_PROTOCOL  *This
-  );
+                                    IN EFI_ISA_IO_PROTOCOL  *This
+                                    );
 
 ///
 /// The EFI_ISA_IO_PROTOCOL provides the basic Memory, I/O, and DMA interfaces
@@ -326,31 +332,31 @@ EFI_STATUS
 /// ISA_PCI_IO_PROTOCOL instance associated with the ISA controller.
 ///
 struct _EFI_ISA_IO_PROTOCOL {
-  EFI_ISA_IO_PROTOCOL_ACCESS           Mem;
-  EFI_ISA_IO_PROTOCOL_ACCESS           Io;
-  EFI_ISA_IO_PROTOCOL_COPY_MEM         CopyMem;
-  EFI_ISA_IO_PROTOCOL_MAP              Map;
-  EFI_ISA_IO_PROTOCOL_UNMAP            Unmap;
-  EFI_ISA_IO_PROTOCOL_ALLOCATE_BUFFER  AllocateBuffer;
-  EFI_ISA_IO_PROTOCOL_FREE_BUFFER      FreeBuffer;
-  EFI_ISA_IO_PROTOCOL_FLUSH            Flush;
+  EFI_ISA_IO_PROTOCOL_ACCESS             Mem;
+  EFI_ISA_IO_PROTOCOL_ACCESS             Io;
+  EFI_ISA_IO_PROTOCOL_COPY_MEM           CopyMem;
+  EFI_ISA_IO_PROTOCOL_MAP                Map;
+  EFI_ISA_IO_PROTOCOL_UNMAP              Unmap;
+  EFI_ISA_IO_PROTOCOL_ALLOCATE_BUFFER    AllocateBuffer;
+  EFI_ISA_IO_PROTOCOL_FREE_BUFFER        FreeBuffer;
+  EFI_ISA_IO_PROTOCOL_FLUSH              Flush;
   ///
   /// The list of I/O , MMIO, DMA, and Interrupt resources associated with the
   /// ISA controller abstracted by this instance of the EFI_ISA_IO_PROTOCOL.
   ///
-  EFI_ISA_ACPI_RESOURCE_LIST           *ResourceList;
+  EFI_ISA_ACPI_RESOURCE_LIST             *ResourceList;
   ///
   /// The size, in bytes, of the ROM image.
   ///
-  UINT32                               RomSize;
+  UINT32                                 RomSize;
   ///
   /// A pointer to the in memory copy of the ROM image. The ISA Bus Driver is responsible
   /// for allocating memory for the ROM image, and copying the contents of the ROM to memory
   /// during ISA Bus initialization.
   ///
-  VOID                                 *RomImage;
+  VOID                                   *RomImage;
 };
 
-extern EFI_GUID gEfiIsaIoProtocolGuid;
+extern EFI_GUID  gEfiIsaIoProtocolGuid;
 
 #endif

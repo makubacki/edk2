@@ -12,6 +12,29 @@
 
 #include "VirtioMmioDevice.h"
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 VirtioMmioGetDeviceFeatures (
@@ -19,7 +42,7 @@ VirtioMmioGetDeviceFeatures (
   OUT UINT64                *DeviceFeatures
   )
 {
-  VIRTIO_MMIO_DEVICE *Device;
+  VIRTIO_MMIO_DEVICE  *Device;
 
   if (DeviceFeatures == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -32,6 +55,29 @@ VirtioMmioGetDeviceFeatures (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 VirtioMmioGetQueueSize (
@@ -39,7 +85,7 @@ VirtioMmioGetQueueSize (
   OUT UINT16                  *QueueNumMax
   )
 {
-  VIRTIO_MMIO_DEVICE *Device;
+  VIRTIO_MMIO_DEVICE  *Device;
 
   if (QueueNumMax == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -52,6 +98,29 @@ VirtioMmioGetQueueSize (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 VirtioMmioGetDeviceStatus (
@@ -59,7 +128,7 @@ VirtioMmioGetDeviceStatus (
   OUT UINT8                   *DeviceStatus
   )
 {
-  VIRTIO_MMIO_DEVICE *Device;
+  VIRTIO_MMIO_DEVICE  *Device;
 
   if (DeviceStatus == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -72,6 +141,29 @@ VirtioMmioGetDeviceStatus (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 VirtioMmioSetQueueSize (
@@ -79,7 +171,7 @@ VirtioMmioSetQueueSize (
   IN UINT16                  QueueSize
   )
 {
-  VIRTIO_MMIO_DEVICE *Device;
+  VIRTIO_MMIO_DEVICE  *Device;
 
   Device = VIRTIO_MMIO_DEVICE_FROM_VIRTIO_DEVICE (This);
 
@@ -88,6 +180,29 @@ VirtioMmioSetQueueSize (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 VirtioMmioSetDeviceStatus (
@@ -95,7 +210,7 @@ VirtioMmioSetDeviceStatus (
   IN UINT8                   DeviceStatus
   )
 {
-  VIRTIO_MMIO_DEVICE *Device;
+  VIRTIO_MMIO_DEVICE  *Device;
 
   Device = VIRTIO_MMIO_DEVICE_FROM_VIRTIO_DEVICE (This);
 
@@ -104,6 +219,29 @@ VirtioMmioSetDeviceStatus (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 VirtioMmioSetQueueNotify (
@@ -111,7 +249,7 @@ VirtioMmioSetQueueNotify (
   IN UINT16                  QueueNotify
   )
 {
-  VIRTIO_MMIO_DEVICE *Device;
+  VIRTIO_MMIO_DEVICE  *Device;
 
   Device = VIRTIO_MMIO_DEVICE_FROM_VIRTIO_DEVICE (This);
 
@@ -120,6 +258,29 @@ VirtioMmioSetQueueNotify (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 VirtioMmioSetQueueAlignment (
@@ -127,7 +288,7 @@ VirtioMmioSetQueueAlignment (
   IN UINT32                  Alignment
   )
 {
-  VIRTIO_MMIO_DEVICE *Device;
+  VIRTIO_MMIO_DEVICE  *Device;
 
   Device = VIRTIO_MMIO_DEVICE_FROM_VIRTIO_DEVICE (This);
 
@@ -136,6 +297,29 @@ VirtioMmioSetQueueAlignment (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 VirtioMmioSetPageSize (
@@ -143,7 +327,7 @@ VirtioMmioSetPageSize (
   IN UINT32                  PageSize
   )
 {
-  VIRTIO_MMIO_DEVICE *Device;
+  VIRTIO_MMIO_DEVICE  *Device;
 
   if (PageSize != EFI_PAGE_SIZE) {
     return EFI_UNSUPPORTED;
@@ -156,6 +340,29 @@ VirtioMmioSetPageSize (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 VirtioMmioSetQueueSel (
@@ -163,7 +370,7 @@ VirtioMmioSetQueueSel (
   IN UINT16                  Sel
   )
 {
-  VIRTIO_MMIO_DEVICE *Device;
+  VIRTIO_MMIO_DEVICE  *Device;
 
   Device = VIRTIO_MMIO_DEVICE_FROM_VIRTIO_DEVICE (This);
 
@@ -172,6 +379,29 @@ VirtioMmioSetQueueSel (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 VirtioMmioSetQueueAddress (
   IN VIRTIO_DEVICE_PROTOCOL  *This,
@@ -179,18 +409,44 @@ VirtioMmioSetQueueAddress (
   IN UINT64                  RingBaseShift
   )
 {
-  VIRTIO_MMIO_DEVICE *Device;
+  VIRTIO_MMIO_DEVICE  *Device;
 
   ASSERT (RingBaseShift == 0);
 
   Device = VIRTIO_MMIO_DEVICE_FROM_VIRTIO_DEVICE (This);
 
-  VIRTIO_CFG_WRITE (Device, VIRTIO_MMIO_OFFSET_QUEUE_PFN,
-    (UINT32)((UINTN)Ring->Base >> EFI_PAGE_SHIFT));
+  VIRTIO_CFG_WRITE (
+                    Device,
+                    VIRTIO_MMIO_OFFSET_QUEUE_PFN,
+                    (UINT32) ((UINTN) Ring->Base >> EFI_PAGE_SHIFT)
+                    );
 
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 VirtioMmioSetGuestFeatures (
@@ -198,19 +454,46 @@ VirtioMmioSetGuestFeatures (
   IN UINT64                  Features
   )
 {
-  VIRTIO_MMIO_DEVICE *Device;
+  VIRTIO_MMIO_DEVICE  *Device;
 
   Device = VIRTIO_MMIO_DEVICE_FROM_VIRTIO_DEVICE (This);
 
   if (Features > MAX_UINT32) {
     return EFI_UNSUPPORTED;
   }
-  VIRTIO_CFG_WRITE (Device, VIRTIO_MMIO_OFFSET_GUEST_FEATURES,
-    (UINT32)Features);
+
+  VIRTIO_CFG_WRITE (
+                    Device,
+                    VIRTIO_MMIO_OFFSET_GUEST_FEATURES,
+                    (UINT32) Features
+                    );
 
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 VirtioMmioDeviceWrite (
@@ -220,8 +503,8 @@ VirtioMmioDeviceWrite (
   IN UINT64                 Value
   )
 {
-  UINTN                     DstBaseAddress;
-  VIRTIO_MMIO_DEVICE       *Device;
+  UINTN               DstBaseAddress;
+  VIRTIO_MMIO_DEVICE  *Device;
 
   Device = VIRTIO_MMIO_DEVICE_FROM_VIRTIO_DEVICE (This);
 
@@ -237,17 +520,40 @@ VirtioMmioDeviceWrite (
   // Compute base address
   //
   DstBaseAddress = Device->BaseAddress +
-      VIRTIO_DEVICE_SPECIFIC_CONFIGURATION_OFFSET_MMIO + FieldOffset;
+                   VIRTIO_DEVICE_SPECIFIC_CONFIGURATION_OFFSET_MMIO + FieldOffset;
 
   //
   // The device-specific memory area of Virtio-MMIO can only be written in
   // byte accesses. This is not currently in the Virtio spec.
   //
-  MmioWriteBuffer8 (DstBaseAddress, FieldSize, (UINT8*)&Value);
+  MmioWriteBuffer8 (DstBaseAddress, FieldSize, (UINT8 *) &Value);
 
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 VirtioMmioDeviceRead (
@@ -258,8 +564,8 @@ VirtioMmioDeviceRead (
   OUT VOID                      *Buffer
   )
 {
-  UINTN                     SrcBaseAddress;
-  VIRTIO_MMIO_DEVICE       *Device;
+  UINTN               SrcBaseAddress;
+  VIRTIO_MMIO_DEVICE  *Device;
 
   Device = VIRTIO_MMIO_DEVICE_FROM_VIRTIO_DEVICE (This);
 
@@ -280,7 +586,7 @@ VirtioMmioDeviceRead (
   // Compute base address
   //
   SrcBaseAddress = Device->BaseAddress +
-      VIRTIO_DEVICE_SPECIFIC_CONFIGURATION_OFFSET_MMIO + FieldOffset;
+                   VIRTIO_DEVICE_SPECIFIC_CONFIGURATION_OFFSET_MMIO + FieldOffset;
 
   //
   // The device-specific memory area of Virtio-MMIO can only be read in
@@ -291,6 +597,29 @@ VirtioMmioDeviceRead (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 VirtioMmioAllocateSharedPages (
@@ -299,7 +628,7 @@ VirtioMmioAllocateSharedPages (
   OUT VOID                    **HostAddress
   )
 {
-  VOID        *Buffer;
+  VOID  *Buffer;
 
   Buffer = AllocatePages (NumPages);
   if (Buffer == NULL) {
@@ -310,6 +639,29 @@ VirtioMmioAllocateSharedPages (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 EFIAPI
 VirtioMmioFreeSharedPages (
@@ -321,6 +673,29 @@ VirtioMmioFreeSharedPages (
   FreePages (HostAddress, NumPages);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 VirtioMmioMapSharedBuffer (
@@ -338,6 +713,29 @@ VirtioMmioMapSharedBuffer (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 VirtioMmioUnmapSharedBuffer (

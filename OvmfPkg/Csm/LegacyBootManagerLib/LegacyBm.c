@@ -27,12 +27,12 @@ EFIAPI
 LegacyBootManagerLibConstructor (
   IN EFI_HANDLE                            ImageHandle,
   IN EFI_SYSTEM_TABLE                      *SystemTable
-)
+  )
 {
   EfiBootManagerRegisterLegacyBootSupport (
-    LegacyBmRefreshAllBootOption,
-    LegacyBmBoot
-    );
+                                           LegacyBmRefreshAllBootOption,
+                                           LegacyBmBoot
+                                           );
   return EFI_SUCCESS;
 }
 
@@ -48,8 +48,10 @@ LegacyBmDeviceType (
   EFI_DEVICE_PATH_PROTOCOL *DevicePath
   )
 {
-  ASSERT ((DevicePathType (DevicePath) == BBS_DEVICE_PATH) &&
-          (DevicePathSubType (DevicePath) == BBS_BBS_DP));
+  ASSERT (
+          (DevicePathType (DevicePath) == BBS_DEVICE_PATH) &&
+          (DevicePathSubType (DevicePath) == BBS_BBS_DP)
+          );
   return ((BBS_BBS_DEVICE_PATH *) DevicePath)->DeviceType;
 }
 
@@ -100,73 +102,74 @@ LegacyBmBuildLegacyDevNameString (
   CHAR16  StringBufferU[LEGACY_BM_BOOT_DESCRIPTION_LENGTH + 1];
 
   switch (Index) {
-  //
-  // Primary Master
-  //
-  case 1:
-    Fmt = L"Primary Master %s";
-    break;
+    //
+    // Primary Master
+    //
+    case 1:
+      Fmt = L"Primary Master %s";
+      break;
 
- //
- // Primary Slave
- //
-  case 2:
-    Fmt = L"Primary Slave %s";
-    break;
+    //
+    // Primary Slave
+    //
+    case 2:
+      Fmt = L"Primary Slave %s";
+      break;
 
-  //
-  // Secondary Master
-  //
-  case 3:
-    Fmt = L"Secondary Master %s";
-    break;
+    //
+    // Secondary Master
+    //
+    case 3:
+      Fmt = L"Secondary Master %s";
+      break;
 
-  //
-  // Secondary Slave
-  //
-  case 4:
-    Fmt = L"Secondary Slave %s";
-    break;
+    //
+    // Secondary Slave
+    //
+    case 4:
+      Fmt = L"Secondary Slave %s";
+      break;
 
-  default:
-    Fmt = L"%s";
-    break;
+    default:
+      Fmt = L"%s";
+      break;
   }
 
   switch (CurBBSEntry->DeviceType) {
-  case BBS_FLOPPY:
-    Type = L"Floppy";
-    break;
+    case BBS_FLOPPY:
+      Type = L"Floppy";
+      break;
 
-  case BBS_HARDDISK:
-    Type = L"Harddisk";
-    break;
+    case BBS_HARDDISK:
+      Type = L"Harddisk";
+      break;
 
-  case BBS_CDROM:
-    Type = L"CDROM";
-    break;
+    case BBS_CDROM:
+      Type = L"CDROM";
+      break;
 
-  case BBS_PCMCIA:
-    Type = L"PCMCIAe";
-    break;
+    case BBS_PCMCIA:
+      Type = L"PCMCIAe";
+      break;
 
-  case BBS_USB:
-    Type = L"USB";
-    break;
+    case BBS_USB:
+      Type = L"USB";
+      break;
 
-  case BBS_EMBED_NETWORK:
-    Type = L"Network";
-    break;
+    case BBS_EMBED_NETWORK:
+      Type = L"Network";
+      break;
 
-  case BBS_BEV_DEVICE:
-    Type = L"BEVe";
-    break;
+    case BBS_BEV_DEVICE:
+      Type = L"BEVe";
+      break;
 
-  case BBS_UNKNOWN:
-  default:
-    Type = L"Unknown";
-    break;
+    case BBS_UNKNOWN:
+    default:
+      Type = L"Unknown";
+      break;
   }
+
   //
   // If current BBS entry has its description then use it.
   //
@@ -178,8 +181,8 @@ LegacyBmBuildLegacyDevNameString (
     CopyMem (StringBufferA, StringDesc, LEGACY_BM_BOOT_DESCRIPTION_LENGTH);
     StringBufferA[LEGACY_BM_BOOT_DESCRIPTION_LENGTH] = 0;
     AsciiStrToUnicodeStrS (StringBufferA, StringBufferU, ARRAY_SIZE (StringBufferU));
-    Fmt   = L"%s";
-    Type  = StringBufferU;
+    Fmt  = L"%s";
+    Type = StringBufferU;
   }
 
   //
@@ -212,9 +215,9 @@ LegacyBmFuzzyMatch (
   BOOLEAN                        *BbsIndexUsed
   )
 {
-  UINT16                         Index;
-  LEGACY_BM_BOOT_OPTION_BBS_DATA *BbsData;
-  CHAR16                         Description[LEGACY_BM_BOOT_DESCRIPTION_LENGTH + 1];
+  UINT16                          Index;
+  LEGACY_BM_BOOT_OPTION_BBS_DATA  *BbsData;
+  CHAR16                          Description[LEGACY_BM_BOOT_DESCRIPTION_LENGTH + 1];
 
   BbsData = (LEGACY_BM_BOOT_OPTION_BBS_DATA *) BootOption->OptionalData;
 
@@ -224,11 +227,11 @@ LegacyBmFuzzyMatch (
   if ((BbsData->BbsIndex < BbsCount) &&
       (LegacyBmDeviceType (BootOption->FilePath) == BbsTable[BbsData->BbsIndex].DeviceType)) {
     LegacyBmBuildLegacyDevNameString (
-      &BbsTable[BbsData->BbsIndex],
-      BbsData->BbsIndex,
-      sizeof (Description),
-      Description
-      );
+                                      &BbsTable[BbsData->BbsIndex],
+                                      BbsData->BbsIndex,
+                                      sizeof (Description),
+                                      Description
+                                      );
     if ((StrCmp (Description, BootOption->Description) == 0) && !BbsIndexUsed[BbsData->BbsIndex]) {
       //
       // If devices with the same description string are connected,
@@ -251,11 +254,11 @@ LegacyBmFuzzyMatch (
     }
 
     LegacyBmBuildLegacyDevNameString (
-      &BbsTable[Index],
-      Index,
-      sizeof (Description),
-      Description
-      );
+                                      &BbsTable[Index],
+                                      Index,
+                                      sizeof (Description),
+                                      Description
+                                      );
     if ((StrCmp (Description, BootOption->Description) == 0) && !BbsIndexUsed[Index]) {
       //
       // If devices with the same description string are connected,
@@ -296,12 +299,13 @@ LegacyBmUpdateBbsIndex (
   UINT16                   NewBbsIndex // Delete entry if -1
   )
 {
-  LEGACY_DEV_ORDER_ENTRY   *Entry;
-  UINTN                    Index;
+  LEGACY_DEV_ORDER_ENTRY  *Entry;
+  UINTN                   Index;
 
-  ASSERT (((LegacyDevOrder == NULL) && (*LegacyDevOrderSize == 0)) ||
+  ASSERT (
+          ((LegacyDevOrder == NULL) && (*LegacyDevOrderSize == 0)) ||
           ((LegacyDevOrder != NULL) && (*LegacyDevOrderSize != 0))
-         );
+          );
 
   for (Entry = LegacyDevOrder;
        Entry < (LEGACY_DEV_ORDER_ENTRY *) ((UINT8 *) LegacyDevOrder + *LegacyDevOrderSize);
@@ -310,23 +314,25 @@ LegacyBmUpdateBbsIndex (
     if (Entry->BbsType == DeviceType) {
       for (Index = 0; Index < Entry->Length / sizeof (UINT16) - 1; Index++) {
         if (Entry->Data[Index] == OldBbsIndex) {
-          if (NewBbsIndex == (UINT16) -1) {
+          if (NewBbsIndex == (UINT16) - 1) {
             //
             // Delete the old entry
             //
             CopyMem (
-              &Entry->Data[Index],
-              &Entry->Data[Index + 1],
-              (UINT8 *) LegacyDevOrder + *LegacyDevOrderSize - (UINT8 *) &Entry->Data[Index + 1]
-              );
-            Entry->Length       -= sizeof (UINT16);
-            *LegacyDevOrderSize -= sizeof(UINT16);
+                     &Entry->Data[Index],
+                     &Entry->Data[Index + 1],
+                     (UINT8 *) LegacyDevOrder + *LegacyDevOrderSize - (UINT8 *) &Entry->Data[Index + 1]
+                     );
+            Entry->Length -= sizeof (UINT16);
+            *LegacyDevOrderSize -= sizeof (UINT16);
           } else {
-            Entry->Data[Index]   = NewBbsIndex;
+            Entry->Data[Index] = NewBbsIndex;
           }
+
           break;
         }
       }
+
       break;
     }
   }
@@ -360,12 +366,12 @@ LegacyBmDeleteAllBootOptions (
   }
 
   Status = gRT->SetVariable (
-                  VAR_LEGACY_DEV_ORDER,
-                  &gEfiLegacyDevOrderVariableGuid,
-                  0,
-                  0,
-                  NULL
-                  );
+                             VAR_LEGACY_DEV_ORDER,
+                             &gEfiLegacyDevOrderVariableGuid,
+                             0,
+                             0,
+                             NULL
+                             );
   //
   // Deleting variable with current variable implementation shouldn't fail.
   //
@@ -373,7 +379,6 @@ LegacyBmDeleteAllBootOptions (
 
   return EFI_SUCCESS;
 }
-
 
 /**
   Delete all the invalid legacy boot options.
@@ -401,23 +406,23 @@ LegacyBmDeleteAllInvalidBootOptions (
   UINTN                         LegacyDevOrderSize;
   BOOLEAN                       *BbsIndexUsed;
 
-  HddCount      = 0;
-  BbsCount      = 0;
-  HddInfo       = NULL;
-  BbsTable      = NULL;
+  HddCount = 0;
+  BbsCount = 0;
+  HddInfo  = NULL;
+  BbsTable = NULL;
 
-  Status        = gBS->LocateProtocol (&gEfiLegacyBiosProtocolGuid, NULL, (VOID **) &LegacyBios);
+  Status = gBS->LocateProtocol (&gEfiLegacyBiosProtocolGuid, NULL, (VOID **) &LegacyBios);
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   Status = LegacyBios->GetBbsInfo (
-                         LegacyBios,
-                         &HddCount,
-                         &HddInfo,
-                         &BbsCount,
-                         &BbsTable
-                         );
+                                   LegacyBios,
+                                   &HddCount,
+                                   &HddInfo,
+                                   &BbsCount,
+                                   &BbsTable
+                                   );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -440,32 +445,38 @@ LegacyBmDeleteAllInvalidBootOptions (
 
     BbsIndex = LegacyBmFuzzyMatch (&BootOption[Index], BbsTable, BbsCount, BbsIndexUsed);
     if (BbsIndex == BbsCount) {
-      DEBUG ((DEBUG_INFO, "[LegacyBds] Delete Boot Option Boot%04x: %s\n", (UINTN) BootOption[Index].OptionNumber, BootOption[Index].Description));
+      DEBUG (
+            (DEBUG_INFO, "[LegacyBds] Delete Boot Option Boot%04x: %s\n", (UINTN) BootOption[Index].OptionNumber,
+             BootOption[Index].Description)
+            );
       //
       // Delete entry from LegacyDevOrder
       //
       LegacyBmUpdateBbsIndex (
-        LegacyDevOrder,
-        &LegacyDevOrderSize,
-        LegacyBmDeviceType (BootOption[Index].FilePath),
-        ((LEGACY_BM_BOOT_OPTION_BBS_DATA *) BootOption[Index].OptionalData)->BbsIndex,
-        (UINT16) -1
-        );
+                              LegacyDevOrder,
+                              &LegacyDevOrderSize,
+                              LegacyBmDeviceType (BootOption[Index].FilePath),
+                              ((LEGACY_BM_BOOT_OPTION_BBS_DATA *) BootOption[Index].OptionalData)->BbsIndex,
+                              (UINT16) - 1
+                              );
       EfiBootManagerDeleteLoadOptionVariable (BootOption[Index].OptionNumber, BootOption[Index].OptionType);
     } else {
       if (((LEGACY_BM_BOOT_OPTION_BBS_DATA *) BootOption[Index].OptionalData)->BbsIndex != BbsIndex) {
-        DEBUG ((DEBUG_INFO, "[LegacyBds] Update Boot Option Boot%04x: %s Bbs0x%04x->Bbs0x%04x\n", (UINTN) BootOption[Index].OptionNumber, BootOption[Index].Description,
-                (UINTN) ((LEGACY_BM_BOOT_OPTION_BBS_DATA *) BootOption[Index].OptionalData)->BbsIndex, (UINTN) BbsIndex));
+        DEBUG (
+               (DEBUG_INFO, "[LegacyBds] Update Boot Option Boot%04x: %s Bbs0x%04x->Bbs0x%04x\n",
+                (UINTN) BootOption[Index].OptionNumber, BootOption[Index].Description,
+                (UINTN) ((LEGACY_BM_BOOT_OPTION_BBS_DATA *) BootOption[Index].OptionalData)->BbsIndex, (UINTN) BbsIndex)
+               );
         //
         // Update the BBS index in LegacyDevOrder
         //
         LegacyBmUpdateBbsIndex (
-          LegacyDevOrder,
-          &LegacyDevOrderSize,
-          LegacyBmDeviceType (BootOption[Index].FilePath),
-          ((LEGACY_BM_BOOT_OPTION_BBS_DATA *) BootOption[Index].OptionalData)->BbsIndex,
-          BbsIndex
-          );
+                                LegacyDevOrder,
+                                &LegacyDevOrderSize,
+                                LegacyBmDeviceType (BootOption[Index].FilePath),
+                                ((LEGACY_BM_BOOT_OPTION_BBS_DATA *) BootOption[Index].OptionalData)->BbsIndex,
+                                BbsIndex
+                                );
 
         //
         // Update the OptionalData in the Boot#### variable
@@ -475,16 +486,17 @@ LegacyBmDeleteAllInvalidBootOptions (
       }
     }
   }
+
   EfiBootManagerFreeLoadOptions (BootOption, BootOptionCount);
 
   if (LegacyDevOrder != NULL) {
     Status = gRT->SetVariable (
-                    VAR_LEGACY_DEV_ORDER,
-                    &gEfiLegacyDevOrderVariableGuid,
-                    EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_NON_VOLATILE,
-                    LegacyDevOrderSize,
-                    LegacyDevOrder
-                    );
+                               VAR_LEGACY_DEV_ORDER,
+                               &gEfiLegacyDevOrderVariableGuid,
+                               EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_NON_VOLATILE,
+                               LegacyDevOrderSize,
+                               LegacyDevOrder
+                               );
     //
     // Shrink variable with current variable implementation shouldn't fail.
     //
@@ -492,7 +504,8 @@ LegacyBmDeleteAllInvalidBootOptions (
 
     FreePool (LegacyDevOrder);
   }
-  FreePool(BbsIndexUsed);
+
+  FreePool (BbsIndexUsed);
   return Status;
 }
 
@@ -514,13 +527,13 @@ LegacyBmCreateLegacyBootOption (
   IN UINT16                            BbsIndex
   )
 {
-  EFI_STATUS                   Status;
-  EFI_DEVICE_PATH_PROTOCOL     *DevicePath;
-  CHAR16                       Description[LEGACY_BM_BOOT_DESCRIPTION_LENGTH + 1];
-  CHAR8                        HelpString[LEGACY_BM_BOOT_DESCRIPTION_LENGTH + 1];
-  UINTN                        StringLen;
+  EFI_STATUS                      Status;
+  EFI_DEVICE_PATH_PROTOCOL        *DevicePath;
+  CHAR16                          Description[LEGACY_BM_BOOT_DESCRIPTION_LENGTH + 1];
+  CHAR8                           HelpString[LEGACY_BM_BOOT_DESCRIPTION_LENGTH + 1];
+  UINTN                           StringLen;
   LEGACY_BM_BOOT_OPTION_BBS_DATA  *OptionalData;
-  BBS_BBS_DEVICE_PATH          *BbsNode;
+  BBS_BBS_DEVICE_PATH             *BbsNode;
 
   if ((BootOption == NULL) || (BbsEntry == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -532,7 +545,7 @@ LegacyBmCreateLegacyBootOption (
   // Create the BBS device path with description string
   //
   UnicodeStrToAsciiStrS (Description, HelpString, sizeof (HelpString));
-  StringLen = AsciiStrLen (HelpString);
+  StringLen  = AsciiStrLen (HelpString);
   DevicePath = AllocatePool (sizeof (BBS_BBS_DEVICE_PATH) + StringLen + END_DEVICE_PATH_LENGTH);
   ASSERT (DevicePath != NULL);
 
@@ -557,15 +570,15 @@ LegacyBmCreateLegacyBootOption (
   // Create the BootOption
   //
   Status = EfiBootManagerInitializeLoadOption (
-             BootOption,
-             LoadOptionNumberUnassigned,
-             LoadOptionTypeBoot,
-             LOAD_OPTION_ACTIVE,
-             Description,
-             DevicePath,
-             (UINT8 *) OptionalData,
-             sizeof (LEGACY_BM_BOOT_OPTION_BBS_DATA)
-             );
+                                               BootOption,
+                                               LoadOptionNumberUnassigned,
+                                               LoadOptionTypeBoot,
+                                               LOAD_OPTION_ACTIVE,
+                                               Description,
+                                               DevicePath,
+                                               (UINT8 *) OptionalData,
+                                               sizeof (LEGACY_BM_BOOT_OPTION_BBS_DATA)
+                                               );
   FreePool (DevicePath);
   FreePool (OptionalData);
 
@@ -591,7 +604,7 @@ LegacyBmFillDevOrderBuf (
   OUT UINT16                      *Buf
   )
 {
-  UINTN Index;
+  UINTN  Index;
 
   for (Index = 0; Index < BbsCount; Index++) {
     if (!LegacyBmValidBbsEntry (&BbsTable[Index])) {
@@ -628,27 +641,27 @@ LegacyBmCreateDevOrder (
   IN UINT16                     BbsCount
   )
 {
-  UINTN                       Index;
-  UINTN                       FDCount;
-  UINTN                       HDCount;
-  UINTN                       CDCount;
-  UINTN                       NETCount;
-  UINTN                       BEVCount;
-  UINTN                       TotalSize;
-  UINTN                       HeaderSize;
-  LEGACY_DEV_ORDER_ENTRY      *DevOrder;
-  LEGACY_DEV_ORDER_ENTRY      *DevOrderPtr;
-  EFI_STATUS                  Status;
+  UINTN                   Index;
+  UINTN                   FDCount;
+  UINTN                   HDCount;
+  UINTN                   CDCount;
+  UINTN                   NETCount;
+  UINTN                   BEVCount;
+  UINTN                   TotalSize;
+  UINTN                   HeaderSize;
+  LEGACY_DEV_ORDER_ENTRY  *DevOrder;
+  LEGACY_DEV_ORDER_ENTRY  *DevOrderPtr;
+  EFI_STATUS              Status;
 
-  FDCount     = 0;
-  HDCount     = 0;
-  CDCount     = 0;
-  NETCount    = 0;
-  BEVCount    = 0;
-  TotalSize   = 0;
-  HeaderSize  = sizeof (BBS_TYPE) + sizeof (UINT16);
-  DevOrder    = NULL;
-  Status      = EFI_SUCCESS;
+  FDCount    = 0;
+  HDCount    = 0;
+  CDCount    = 0;
+  NETCount   = 0;
+  BEVCount   = 0;
+  TotalSize  = 0;
+  HeaderSize = sizeof (BBS_TYPE) + sizeof (UINT16);
+  DevOrder   = NULL;
+  Status     = EFI_SUCCESS;
 
   //
   // Count all boot devices
@@ -659,28 +672,28 @@ LegacyBmCreateDevOrder (
     }
 
     switch (BbsTable[Index].DeviceType) {
-    case BBS_FLOPPY:
-      FDCount++;
-      break;
+      case BBS_FLOPPY:
+        FDCount++;
+        break;
 
-    case BBS_HARDDISK:
-      HDCount++;
-      break;
+      case BBS_HARDDISK:
+        HDCount++;
+        break;
 
-    case BBS_CDROM:
-      CDCount++;
-      break;
+      case BBS_CDROM:
+        CDCount++;
+        break;
 
-    case BBS_EMBED_NETWORK:
-      NETCount++;
-      break;
+      case BBS_EMBED_NETWORK:
+        NETCount++;
+        break;
 
-    case BBS_BEV_DEVICE:
-      BEVCount++;
-      break;
+      case BBS_BEV_DEVICE:
+        BEVCount++;
+        break;
 
-    default:
-      break;
+      default:
+        break;
     }
   }
 
@@ -697,27 +710,39 @@ LegacyBmCreateDevOrder (
   if (NULL == DevOrder) {
     return EFI_OUT_OF_RESOURCES;
   }
-  DevOrderPtr          = DevOrder;
+
+  DevOrderPtr = DevOrder;
 
   DevOrderPtr->BbsType = BBS_FLOPPY;
   DevOrderPtr->Length  = (UINT16) (sizeof (DevOrderPtr->Length) + FDCount * sizeof (UINT16));
-  DevOrderPtr          = (LEGACY_DEV_ORDER_ENTRY *) LegacyBmFillDevOrderBuf (BbsTable, BBS_FLOPPY, BbsCount, DevOrderPtr->Data);
+  DevOrderPtr = (LEGACY_DEV_ORDER_ENTRY *) LegacyBmFillDevOrderBuf (BbsTable, BBS_FLOPPY, BbsCount, DevOrderPtr->Data);
 
   DevOrderPtr->BbsType = BBS_HARDDISK;
   DevOrderPtr->Length  = (UINT16) (sizeof (UINT16) + HDCount * sizeof (UINT16));
-  DevOrderPtr          = (LEGACY_DEV_ORDER_ENTRY *) LegacyBmFillDevOrderBuf (BbsTable, BBS_HARDDISK, BbsCount, DevOrderPtr->Data);
+  DevOrderPtr =
+    (LEGACY_DEV_ORDER_ENTRY *) LegacyBmFillDevOrderBuf (BbsTable, BBS_HARDDISK, BbsCount, DevOrderPtr->Data);
 
   DevOrderPtr->BbsType = BBS_CDROM;
   DevOrderPtr->Length  = (UINT16) (sizeof (UINT16) + CDCount * sizeof (UINT16));
-  DevOrderPtr          = (LEGACY_DEV_ORDER_ENTRY *) LegacyBmFillDevOrderBuf (BbsTable, BBS_CDROM, BbsCount, DevOrderPtr->Data);
+  DevOrderPtr = (LEGACY_DEV_ORDER_ENTRY *) LegacyBmFillDevOrderBuf (BbsTable, BBS_CDROM, BbsCount, DevOrderPtr->Data);
 
   DevOrderPtr->BbsType = BBS_EMBED_NETWORK;
   DevOrderPtr->Length  = (UINT16) (sizeof (UINT16) + NETCount * sizeof (UINT16));
-  DevOrderPtr          = (LEGACY_DEV_ORDER_ENTRY *) LegacyBmFillDevOrderBuf (BbsTable, BBS_EMBED_NETWORK, BbsCount, DevOrderPtr->Data);
+  DevOrderPtr = (LEGACY_DEV_ORDER_ENTRY *) LegacyBmFillDevOrderBuf (
+                                                                            BbsTable,
+                                                                            BBS_EMBED_NETWORK,
+                                                                            BbsCount,
+                                                                            DevOrderPtr->Data
+                                                                            );
 
   DevOrderPtr->BbsType = BBS_BEV_DEVICE;
   DevOrderPtr->Length  = (UINT16) (sizeof (UINT16) + BEVCount * sizeof (UINT16));
-  DevOrderPtr          = (LEGACY_DEV_ORDER_ENTRY *) LegacyBmFillDevOrderBuf (BbsTable, BBS_BEV_DEVICE, BbsCount, DevOrderPtr->Data);
+  DevOrderPtr = (LEGACY_DEV_ORDER_ENTRY *) LegacyBmFillDevOrderBuf (
+                                                                            BbsTable,
+                                                                            BBS_BEV_DEVICE,
+                                                                            BbsCount,
+                                                                            DevOrderPtr->Data
+                                                                            );
 
   ASSERT (TotalSize == ((UINTN) DevOrderPtr - (UINTN) DevOrder));
 
@@ -725,12 +750,12 @@ LegacyBmCreateDevOrder (
   // Save device order for legacy boot device to variable.
   //
   Status = gRT->SetVariable (
-                  VAR_LEGACY_DEV_ORDER,
-                  &gEfiLegacyDevOrderVariableGuid,
-                  EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_NON_VOLATILE,
-                  TotalSize,
-                  DevOrder
-                  );
+                             VAR_LEGACY_DEV_ORDER,
+                             &gEfiLegacyDevOrderVariableGuid,
+                             EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_NON_VOLATILE,
+                             TotalSize,
+                             DevOrder
+                             );
   FreePool (DevOrder);
 
   return Status;
@@ -751,65 +776,65 @@ LegacyBmUpdateDevOrder (
   VOID
   )
 {
-  LEGACY_DEV_ORDER_ENTRY      *DevOrder;
-  LEGACY_DEV_ORDER_ENTRY      *NewDevOrder;
-  LEGACY_DEV_ORDER_ENTRY      *Ptr;
-  LEGACY_DEV_ORDER_ENTRY      *NewPtr;
-  EFI_LEGACY_BIOS_PROTOCOL    *LegacyBios;
-  EFI_STATUS                  Status;
-  UINT16                      HddCount;
-  UINT16                      BbsCount;
-  HDD_INFO                    *LocalHddInfo;
-  BBS_TABLE                   *LocalBbsTable;
-  UINTN                       Index;
-  UINTN                       Index2;
-  UINTN                       *Idx;
-  UINTN                       FDCount;
-  UINTN                       HDCount;
-  UINTN                       CDCount;
-  UINTN                       NETCount;
-  UINTN                       BEVCount;
-  UINTN                       TotalSize;
-  UINTN                       HeaderSize;
-  UINT16                      *NewFDPtr;
-  UINT16                      *NewHDPtr;
-  UINT16                      *NewCDPtr;
-  UINT16                      *NewNETPtr;
-  UINT16                      *NewBEVPtr;
-  UINT16                      *NewDevPtr;
-  UINTN                       FDIndex;
-  UINTN                       HDIndex;
-  UINTN                       CDIndex;
-  UINTN                       NETIndex;
-  UINTN                       BEVIndex;
+  LEGACY_DEV_ORDER_ENTRY    *DevOrder;
+  LEGACY_DEV_ORDER_ENTRY    *NewDevOrder;
+  LEGACY_DEV_ORDER_ENTRY    *Ptr;
+  LEGACY_DEV_ORDER_ENTRY    *NewPtr;
+  EFI_LEGACY_BIOS_PROTOCOL  *LegacyBios;
+  EFI_STATUS                Status;
+  UINT16                    HddCount;
+  UINT16                    BbsCount;
+  HDD_INFO                  *LocalHddInfo;
+  BBS_TABLE                 *LocalBbsTable;
+  UINTN                     Index;
+  UINTN                     Index2;
+  UINTN                     *Idx;
+  UINTN                     FDCount;
+  UINTN                     HDCount;
+  UINTN                     CDCount;
+  UINTN                     NETCount;
+  UINTN                     BEVCount;
+  UINTN                     TotalSize;
+  UINTN                     HeaderSize;
+  UINT16                    *NewFDPtr;
+  UINT16                    *NewHDPtr;
+  UINT16                    *NewCDPtr;
+  UINT16                    *NewNETPtr;
+  UINT16                    *NewBEVPtr;
+  UINT16                    *NewDevPtr;
+  UINTN                     FDIndex;
+  UINTN                     HDIndex;
+  UINTN                     CDIndex;
+  UINTN                     NETIndex;
+  UINTN                     BEVIndex;
 
-  Idx           = NULL;
-  FDCount       = 0;
-  HDCount       = 0;
-  CDCount       = 0;
-  NETCount      = 0;
-  BEVCount      = 0;
-  TotalSize     = 0;
-  HeaderSize    = sizeof (BBS_TYPE) + sizeof (UINT16);
-  FDIndex       = 0;
-  HDIndex       = 0;
-  CDIndex       = 0;
-  NETIndex      = 0;
-  BEVIndex      = 0;
-  NewDevPtr     = NULL;
+  Idx        = NULL;
+  FDCount    = 0;
+  HDCount    = 0;
+  CDCount    = 0;
+  NETCount   = 0;
+  BEVCount   = 0;
+  TotalSize  = 0;
+  HeaderSize = sizeof (BBS_TYPE) + sizeof (UINT16);
+  FDIndex    = 0;
+  HDIndex    = 0;
+  CDIndex    = 0;
+  NETIndex   = 0;
+  BEVIndex   = 0;
+  NewDevPtr  = NULL;
 
-  Status        = gBS->LocateProtocol (&gEfiLegacyBiosProtocolGuid, NULL, (VOID **) &LegacyBios);
+  Status = gBS->LocateProtocol (&gEfiLegacyBiosProtocolGuid, NULL, (VOID **) &LegacyBios);
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   Status = LegacyBios->GetBbsInfo (
-                         LegacyBios,
-                         &HddCount,
-                         &LocalHddInfo,
-                         &BbsCount,
-                         &LocalBbsTable
-                         );
+                                   LegacyBios,
+                                   &HddCount,
+                                   &LocalHddInfo,
+                                   &BbsCount,
+                                   &LocalBbsTable
+                                   );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -818,6 +843,7 @@ LegacyBmUpdateDevOrder (
   if (NULL == DevOrder) {
     return LegacyBmCreateDevOrder (LocalBbsTable, BbsCount);
   }
+
   //
   // First we figure out how many boot devices with same device type respectively
   //
@@ -827,28 +853,28 @@ LegacyBmUpdateDevOrder (
     }
 
     switch (LocalBbsTable[Index].DeviceType) {
-    case BBS_FLOPPY:
-      FDCount++;
-      break;
+      case BBS_FLOPPY:
+        FDCount++;
+        break;
 
-    case BBS_HARDDISK:
-      HDCount++;
-      break;
+      case BBS_HARDDISK:
+        HDCount++;
+        break;
 
-    case BBS_CDROM:
-      CDCount++;
-      break;
+      case BBS_CDROM:
+        CDCount++;
+        break;
 
-    case BBS_EMBED_NETWORK:
-      NETCount++;
-      break;
+      case BBS_EMBED_NETWORK:
+        NETCount++;
+        break;
 
-    case BBS_BEV_DEVICE:
-      BEVCount++;
-      break;
+      case BBS_BEV_DEVICE:
+        BEVCount++;
+        break;
 
-    default:
-      break;
+      default:
+        break;
     }
   }
 
@@ -866,8 +892,8 @@ LegacyBmUpdateDevOrder (
   //
   // copy FD
   //
-  Ptr             = DevOrder;
-  NewPtr          = NewDevOrder;
+  Ptr    = DevOrder;
+  NewPtr = NewDevOrder;
   NewPtr->BbsType = Ptr->BbsType;
   NewPtr->Length  = (UINT16) (sizeof (UINT16) + FDCount * sizeof (UINT16));
   for (Index = 0; Index < Ptr->Length / sizeof (UINT16) - 1; Index++) {
@@ -880,13 +906,14 @@ LegacyBmUpdateDevOrder (
     NewPtr->Data[FDIndex] = Ptr->Data[Index];
     FDIndex++;
   }
+
   NewFDPtr = NewPtr->Data;
 
   //
   // copy HD
   //
-  Ptr             = (LEGACY_DEV_ORDER_ENTRY *) (&Ptr->Data[Ptr->Length / sizeof (UINT16) - 1]);
-  NewPtr          = (LEGACY_DEV_ORDER_ENTRY *) (&NewPtr->Data[NewPtr->Length / sizeof (UINT16) -1]);
+  Ptr    = (LEGACY_DEV_ORDER_ENTRY *) (&Ptr->Data[Ptr->Length / sizeof (UINT16) - 1]);
+  NewPtr = (LEGACY_DEV_ORDER_ENTRY *) (&NewPtr->Data[NewPtr->Length / sizeof (UINT16) -1]);
   NewPtr->BbsType = Ptr->BbsType;
   NewPtr->Length  = (UINT16) (sizeof (UINT16) + HDCount * sizeof (UINT16));
   for (Index = 0; Index < Ptr->Length / sizeof (UINT16) - 1; Index++) {
@@ -899,6 +926,7 @@ LegacyBmUpdateDevOrder (
     NewPtr->Data[HDIndex] = Ptr->Data[Index];
     HDIndex++;
   }
+
   NewHDPtr = NewPtr->Data;
 
   //
@@ -918,6 +946,7 @@ LegacyBmUpdateDevOrder (
     NewPtr->Data[CDIndex] = Ptr->Data[Index];
     CDIndex++;
   }
+
   NewCDPtr = NewPtr->Data;
 
   //
@@ -937,6 +966,7 @@ LegacyBmUpdateDevOrder (
     NewPtr->Data[NETIndex] = Ptr->Data[Index];
     NETIndex++;
   }
+
   NewNETPtr = NewPtr->Data;
 
   //
@@ -956,6 +986,7 @@ LegacyBmUpdateDevOrder (
     NewPtr->Data[BEVIndex] = Ptr->Data[Index];
     BEVIndex++;
   }
+
   NewBEVPtr = NewPtr->Data;
 
   for (Index = 0; Index < BbsCount; Index++) {
@@ -964,35 +995,36 @@ LegacyBmUpdateDevOrder (
     }
 
     switch (LocalBbsTable[Index].DeviceType) {
-    case BBS_FLOPPY:
-      Idx       = &FDIndex;
-      NewDevPtr = NewFDPtr;
-      break;
+      case BBS_FLOPPY:
+        Idx = &FDIndex;
+        NewDevPtr = NewFDPtr;
+        break;
 
-    case BBS_HARDDISK:
-      Idx       = &HDIndex;
-      NewDevPtr = NewHDPtr;
-      break;
+      case BBS_HARDDISK:
+        Idx = &HDIndex;
+        NewDevPtr = NewHDPtr;
+        break;
 
-    case BBS_CDROM:
-      Idx       = &CDIndex;
-      NewDevPtr = NewCDPtr;
-      break;
+      case BBS_CDROM:
+        Idx = &CDIndex;
+        NewDevPtr = NewCDPtr;
+        break;
 
-    case BBS_EMBED_NETWORK:
-      Idx       = &NETIndex;
-      NewDevPtr = NewNETPtr;
-      break;
+      case BBS_EMBED_NETWORK:
+        Idx = &NETIndex;
+        NewDevPtr = NewNETPtr;
+        break;
 
-    case BBS_BEV_DEVICE:
-      Idx       = &BEVIndex;
-      NewDevPtr = NewBEVPtr;
-      break;
+      case BBS_BEV_DEVICE:
+        Idx = &BEVIndex;
+        NewDevPtr = NewBEVPtr;
+        break;
 
-    default:
-      Idx = NULL;
-      break;
+      default:
+        Idx = NULL;
+        break;
     }
+
     //
     // at this point we have copied those valid indexes to new buffer
     // and we should check if there is any new appeared boot device
@@ -1015,6 +1047,7 @@ LegacyBmUpdateDevOrder (
             break;
           }
         }
+
         CopyMem (&NewDevPtr[Index2 + 1], &NewDevPtr[Index2], (*Idx - Index2) * sizeof (UINT16));
         NewDevPtr[Index2] = (UINT16) (Index & 0xFF);
         (*Idx)++;
@@ -1025,12 +1058,12 @@ LegacyBmUpdateDevOrder (
   FreePool (DevOrder);
 
   Status = gRT->SetVariable (
-                  VAR_LEGACY_DEV_ORDER,
-                  &gEfiLegacyDevOrderVariableGuid,
-                  EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_NON_VOLATILE,
-                  TotalSize,
-                  NewDevOrder
-                  );
+                             VAR_LEGACY_DEV_ORDER,
+                             &gEfiLegacyDevOrderVariableGuid,
+                             EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_NON_VOLATILE,
+                             TotalSize,
+                             NewDevOrder
+                             );
   FreePool (NewDevOrder);
 
   return Status;
@@ -1057,10 +1090,10 @@ LegacyBmSetPriorityForSameTypeDev (
   IN OUT UINT16                                          *Priority
   )
 {
-  LEGACY_DEV_ORDER_ENTRY      *DevOrder;
-  LEGACY_DEV_ORDER_ENTRY      *DevOrderPtr;
-  UINTN                       DevOrderSize;
-  UINTN                       Index;
+  LEGACY_DEV_ORDER_ENTRY  *DevOrder;
+  LEGACY_DEV_ORDER_ENTRY  *DevOrderPtr;
+  UINTN                   DevOrderSize;
+  UINTN                   Index;
 
   GetVariable2 (VAR_LEGACY_DEV_ORDER, &gEfiLegacyDevOrderVariableGuid, (VOID **) &DevOrder, &DevOrderSize);
   if (NULL == DevOrder) {
@@ -1081,7 +1114,7 @@ LegacyBmSetPriorityForSameTypeDev (
     return EFI_NOT_FOUND;
   }
 
-  if (BbsIndex != (UINTN) -1) {
+  if (BbsIndex != (UINTN) - 1) {
     //
     // In case the BBS entry isn't valid because devices were plugged or removed.
     //
@@ -1089,9 +1122,11 @@ LegacyBmSetPriorityForSameTypeDev (
       FreePool (DevOrder);
       return EFI_NOT_FOUND;
     }
+
     LocalBbsTable[BbsIndex].BootPriority = *Priority;
     (*Priority)++;
   }
+
   //
   // If the high byte of the DevIndex is 0xFF, it indicates that this device has been disabled.
   //
@@ -1133,22 +1168,22 @@ LegacyBmPrintBbsTable (
     }
 
     DEBUG (
-      (DEBUG_INFO,
-      " %02x: %04x %02x/%02x/%02x %02x/%02x %04x %04x %04x:%04x\n",
-      (UINTN) Index,
-      (UINTN) LocalBbsTable[Index].BootPriority,
-      (UINTN) LocalBbsTable[Index].Bus,
-      (UINTN) LocalBbsTable[Index].Device,
-      (UINTN) LocalBbsTable[Index].Function,
-      (UINTN) LocalBbsTable[Index].Class,
-      (UINTN) LocalBbsTable[Index].SubClass,
-      (UINTN) LocalBbsTable[Index].DeviceType,
-      (UINTN) * (UINT16 *) &LocalBbsTable[Index].StatusFlags,
-      (UINTN) LocalBbsTable[Index].BootHandlerSegment,
-      (UINTN) LocalBbsTable[Index].BootHandlerOffset,
-      (UINTN) ((LocalBbsTable[Index].MfgStringSegment << 4) + LocalBbsTable[Index].MfgStringOffset),
-      (UINTN) ((LocalBbsTable[Index].DescStringSegment << 4) + LocalBbsTable[Index].DescStringOffset))
-      );
+           (DEBUG_INFO,
+            " %02x: %04x %02x/%02x/%02x %02x/%02x %04x %04x %04x:%04x\n",
+            (UINTN) Index,
+            (UINTN) LocalBbsTable[Index].BootPriority,
+            (UINTN) LocalBbsTable[Index].Bus,
+            (UINTN) LocalBbsTable[Index].Device,
+            (UINTN) LocalBbsTable[Index].Function,
+            (UINTN) LocalBbsTable[Index].Class,
+            (UINTN) LocalBbsTable[Index].SubClass,
+            (UINTN) LocalBbsTable[Index].DeviceType,
+            (UINTN) *(UINT16 *) &LocalBbsTable[Index].StatusFlags,
+            (UINTN) LocalBbsTable[Index].BootHandlerSegment,
+            (UINTN) LocalBbsTable[Index].BootHandlerOffset,
+            (UINTN) ((LocalBbsTable[Index].MfgStringSegment << 4) + LocalBbsTable[Index].MfgStringOffset),
+            (UINTN) ((LocalBbsTable[Index].DescStringSegment << 4) + LocalBbsTable[Index].DescStringOffset))
+           );
   }
 
   DEBUG ((DEBUG_INFO, "\n"));
@@ -1188,20 +1223,20 @@ LegacyBmRefreshBbsTableForBoot (
   BbsCount      = 0;
   LocalHddInfo  = NULL;
   LocalBbsTable = NULL;
-  DevType       = BBS_UNKNOWN;
+  DevType = BBS_UNKNOWN;
 
-  Status        = gBS->LocateProtocol (&gEfiLegacyBiosProtocolGuid, NULL, (VOID **) &LegacyBios);
+  Status = gBS->LocateProtocol (&gEfiLegacyBiosProtocolGuid, NULL, (VOID **) &LegacyBios);
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   Status = LegacyBios->GetBbsInfo (
-                         LegacyBios,
-                         &HddCount,
-                         &LocalHddInfo,
-                         &BbsCount,
-                         &LocalBbsTable
-                         );
+                                   LegacyBios,
+                                   &HddCount,
+                                   &LocalHddInfo,
+                                   &BbsCount,
+                                   &LocalBbsTable
+                                   );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -1215,6 +1250,7 @@ LegacyBmRefreshBbsTableForBoot (
       LocalBbsTable[Index].BootPriority = BBS_UNPRIORITIZED_ENTRY;
     }
   }
+
   //
   // boot priority always starts at 0
   //
@@ -1226,21 +1262,22 @@ LegacyBmRefreshBbsTableForBoot (
     //
     DevType  = LegacyBmDeviceType (BootOption->FilePath);
     BbsIndex = ((LEGACY_BM_BOOT_OPTION_BBS_DATA *) BootOption->OptionalData)->BbsIndex;
-    Status = LegacyBmSetPriorityForSameTypeDev (
-               DevType,
-               BbsIndex,
-               LocalBbsTable,
-               &Priority
-               );
+    Status   = LegacyBmSetPriorityForSameTypeDev (
+                                                  DevType,
+                                                  BbsIndex,
+                                                  LocalBbsTable,
+                                                  &Priority
+                                                  );
     if (EFI_ERROR (Status)) {
       return Status;
     }
   }
+
   //
   // we have to set the boot priority for other BBS entries with different device types
   //
-  Option          = EfiBootManagerGetLoadOptions (&OptionCount, LoadOptionTypeBoot);
-  DeviceType      = AllocatePool (sizeof (UINT16) * OptionCount);
+  Option     = EfiBootManagerGetLoadOptions (&OptionCount, LoadOptionTypeBoot);
+  DeviceType = AllocatePool (sizeof (UINT16) * OptionCount);
   ASSERT (DeviceType != NULL);
   DeviceType[0]   = DevType;
   DeviceTypeCount = 1;
@@ -1256,6 +1293,7 @@ LegacyBmRefreshBbsTableForBoot (
         break;
       }
     }
+
     if (DeviceTypeIndex < DeviceTypeCount) {
       //
       // We don't want to process twice for a device type
@@ -1267,21 +1305,21 @@ LegacyBmRefreshBbsTableForBoot (
     DeviceTypeCount++;
 
     Status = LegacyBmSetPriorityForSameTypeDev (
-               DevType,
-               (UINTN) -1,
-               LocalBbsTable,
-               &Priority
-               );
+                                                DevType,
+                                                (UINTN) - 1,
+                                                LocalBbsTable,
+                                                &Priority
+                                                );
   }
+
   EfiBootManagerFreeLoadOptions (Option, OptionCount);
 
-  DEBUG_CODE_BEGIN();
-    LegacyBmPrintBbsTable (LocalBbsTable, BbsCount);
-  DEBUG_CODE_END();
+  DEBUG_CODE_BEGIN ();
+  LegacyBmPrintBbsTable (LocalBbsTable, BbsCount);
+  DEBUG_CODE_END ();
 
   return Status;
 }
-
 
 /**
   Boot the legacy system with the boot option.
@@ -1309,6 +1347,7 @@ LegacyBmBoot (
     BootOption->Status = EFI_UNSUPPORTED;
     return;
   }
+
   //
   // Notes: if we separate the int 19, then we don't need to refresh BBS
   //
@@ -1319,11 +1358,11 @@ LegacyBmBoot (
   }
 
   BootOption->Status = LegacyBios->LegacyBoot (
-                                     LegacyBios,
-                                     (BBS_BBS_DEVICE_PATH *) BootOption->FilePath,
-                                     BootOption->OptionalDataSize,
-                                     BootOption->OptionalData
-                                     );
+                                               LegacyBios,
+                                               (BBS_BBS_DEVICE_PATH *) BootOption->FilePath,
+                                               BootOption->OptionalDataSize,
+                                               BootOption->OptionalData
+                                               );
 }
 
 /**
@@ -1349,22 +1388,22 @@ LegacyBmEnumerateAllBootOptions (
 
   ASSERT (BootOptionCount != NULL);
 
-  BootOptions      = NULL;
+  BootOptions = NULL;
   *BootOptionCount = 0;
-  BbsCount         = 0;
+  BbsCount = 0;
 
-  Status        = gBS->LocateProtocol (&gEfiLegacyBiosProtocolGuid, NULL, (VOID **) &LegacyBios);
+  Status = gBS->LocateProtocol (&gEfiLegacyBiosProtocolGuid, NULL, (VOID **) &LegacyBios);
   if (EFI_ERROR (Status)) {
     return NULL;
   }
 
   Status = LegacyBios->GetBbsInfo (
-                         LegacyBios,
-                         &HddCount,
-                         &HddInfo,
-                         &BbsCount,
-                         &BbsTable
-                         );
+                                   LegacyBios,
+                                   &HddCount,
+                                   &HddInfo,
+                                   &BbsCount,
+                                   &BbsTable
+                                   );
   if (EFI_ERROR (Status)) {
     return NULL;
   }
@@ -1375,10 +1414,10 @@ LegacyBmEnumerateAllBootOptions (
     }
 
     BootOptions = ReallocatePool (
-                    sizeof (EFI_BOOT_MANAGER_LOAD_OPTION) * (*BootOptionCount),
-                    sizeof (EFI_BOOT_MANAGER_LOAD_OPTION) * (*BootOptionCount + 1),
-                    BootOptions
-                    );
+                                  sizeof (EFI_BOOT_MANAGER_LOAD_OPTION) * (*BootOptionCount),
+                                  sizeof (EFI_BOOT_MANAGER_LOAD_OPTION) * (*BootOptionCount + 1),
+                                  BootOptions
+                                  );
     ASSERT (BootOptions != NULL);
 
     Status = LegacyBmCreateLegacyBootOption (&BootOptions[(*BootOptionCount)++], &BbsTable[Index], Index);
@@ -1407,7 +1446,7 @@ LegacyBmFindBootOption (
   IN UINTN                              Count
   )
 {
-  UINTN                             Index;
+  UINTN  Index;
 
   for (Index = 0; Index < Count; Index++) {
     if ((StrCmp (Key->Description, Array[Index].Description) == 0) &&
@@ -1418,7 +1457,7 @@ LegacyBmFindBootOption (
     }
   }
 
-  return -1;
+  return - 1;
 }
 
 /**
@@ -1431,25 +1470,26 @@ LegacyBmRefreshAllBootOption (
   VOID
   )
 {
-  EFI_STATUS                                 Status;
-  EFI_LEGACY_BIOS_PROTOCOL                   *LegacyBios;
-  UINTN                                      RootBridgeHandleCount;
-  EFI_HANDLE                                 *RootBridgeHandleBuffer;
-  UINTN                                      HandleCount;
-  EFI_HANDLE                                 *HandleBuffer;
-  UINTN                                      RootBridgeIndex;
-  UINTN                                      Index;
-  UINTN                                      Flags;
-  EFI_BOOT_MANAGER_LOAD_OPTION               *BootOptions;
-  UINTN                                      BootOptionCount;
-  EFI_BOOT_MANAGER_LOAD_OPTION               *ExistingBootOptions;
-  UINTN                                      ExistingBootOptionCount;
+  EFI_STATUS                    Status;
+  EFI_LEGACY_BIOS_PROTOCOL      *LegacyBios;
+  UINTN                         RootBridgeHandleCount;
+  EFI_HANDLE                    *RootBridgeHandleBuffer;
+  UINTN                         HandleCount;
+  EFI_HANDLE                    *HandleBuffer;
+  UINTN                         RootBridgeIndex;
+  UINTN                         Index;
+  UINTN                         Flags;
+  EFI_BOOT_MANAGER_LOAD_OPTION  *BootOptions;
+  UINTN                         BootOptionCount;
+  EFI_BOOT_MANAGER_LOAD_OPTION  *ExistingBootOptions;
+  UINTN                         ExistingBootOptionCount;
 
   Status = gBS->LocateProtocol (&gEfiLegacyBiosProtocolGuid, NULL, (VOID **) &LegacyBios);
   if (EFI_ERROR (Status)) {
     LegacyBmDeleteAllBootOptions ();
     return;
   }
+
   PERF_START (NULL, "LegacyBootOptionEnum", "BDS", 0);
 
   //
@@ -1457,21 +1497,21 @@ LegacyBmRefreshAllBootOption (
   // to ensure the GetBbsInfo() counts all the legacy devices.
   //
   gBS->LocateHandleBuffer (
-         ByProtocol,
-         &gEfiPciRootBridgeIoProtocolGuid,
-         NULL,
-         &RootBridgeHandleCount,
-         &RootBridgeHandleBuffer
-         );
+                           ByProtocol,
+                           &gEfiPciRootBridgeIoProtocolGuid,
+                           NULL,
+                           &RootBridgeHandleCount,
+                           &RootBridgeHandleBuffer
+                           );
   for (RootBridgeIndex = 0; RootBridgeIndex < RootBridgeHandleCount; RootBridgeIndex++) {
-    gBS->ConnectController (RootBridgeHandleBuffer[RootBridgeIndex], NULL, NULL, FALSE);
-    gBS->LocateHandleBuffer (
-           ByProtocol,
-           &gEfiPciIoProtocolGuid,
-           NULL,
-           &HandleCount,
-           &HandleBuffer
-           );
+  gBS->ConnectController (RootBridgeHandleBuffer[RootBridgeIndex], NULL, NULL, FALSE);
+  gBS->LocateHandleBuffer (
+                           ByProtocol,
+                           &gEfiPciIoProtocolGuid,
+                           NULL,
+                           &HandleCount,
+                           &HandleBuffer
+                           );
     for (Index = 0; Index < HandleCount; Index++) {
       //
       // Start the thunk driver so that the legacy option rom gets dispatched.
@@ -1479,14 +1519,14 @@ LegacyBmRefreshAllBootOption (
       // (e.g. BlockIo thunk driver) depend on the immediate result after dispatching
       //
       Status = LegacyBios->CheckPciRom (
-                             LegacyBios,
-                             HandleBuffer[Index],
-                             NULL,
-                             NULL,
-                             &Flags
-                             );
+                                        LegacyBios,
+                                        HandleBuffer[Index],
+                                        NULL,
+                                        NULL,
+                                        &Flags
+                                        );
       if (!EFI_ERROR (Status)) {
-        gBS->ConnectController (HandleBuffer[Index], NULL, NULL, FALSE);
+  gBS->ConnectController (HandleBuffer[Index], NULL, NULL, FALSE);
       }
     }
   }
@@ -1500,18 +1540,20 @@ LegacyBmRefreshAllBootOption (
   LegacyBmDeleteAllInvalidBootOptions ();
 
   ExistingBootOptions = EfiBootManagerGetLoadOptions (&ExistingBootOptionCount, LoadOptionTypeBoot);
-  BootOptions         = LegacyBmEnumerateAllBootOptions   (&BootOptionCount);
+  BootOptions = LegacyBmEnumerateAllBootOptions (&BootOptionCount);
 
   for (Index = 0; Index < BootOptionCount; Index++) {
-    if (LegacyBmFindBootOption (&BootOptions[Index], ExistingBootOptions, ExistingBootOptionCount) == -1) {
-      Status = EfiBootManagerAddLoadOptionVariable (&BootOptions[Index], (UINTN) -1);
-      DEBUG ((
-        DEBUG_INFO, "[LegacyBds] New Boot Option: Boot%04x Bbs0x%04x %s %r\n",
-        (UINTN) BootOptions[Index].OptionNumber,
-        (UINTN) ((LEGACY_BM_BOOT_OPTION_BBS_DATA *) BootOptions[Index].OptionalData)->BbsIndex,
-        BootOptions[Index].Description,
-        Status
-        ));
+    if (LegacyBmFindBootOption (&BootOptions[Index], ExistingBootOptions, ExistingBootOptionCount) == - 1) {
+      Status = EfiBootManagerAddLoadOptionVariable (&BootOptions[Index], (UINTN) - 1);
+      DEBUG (
+             (
+              DEBUG_INFO, "[LegacyBds] New Boot Option: Boot%04x Bbs0x%04x %s %r\n",
+              (UINTN) BootOptions[Index].OptionNumber,
+              (UINTN) ((LEGACY_BM_BOOT_OPTION_BBS_DATA *) BootOptions[Index].OptionalData)->BbsIndex,
+              BootOptions[Index].Description,
+              Status
+             )
+             );
       //
       // Continue upon failure to add boot option.
       //
@@ -1519,12 +1561,12 @@ LegacyBmRefreshAllBootOption (
   }
 
   EfiBootManagerFreeLoadOptions (ExistingBootOptions, ExistingBootOptionCount);
-  EfiBootManagerFreeLoadOptions (BootOptions,         BootOptionCount);
+  EfiBootManagerFreeLoadOptions (BootOptions, BootOptionCount);
 
   //
   // Failure to create LegacyDevOrder variable only impacts the boot order.
   //
   LegacyBmUpdateDevOrder ();
 
-  PERF_END   (NULL, "LegacyBootOptionEnum", "BDS", 0);
+  PERF_END (NULL, "LegacyBootOptionEnum", "BDS", 0);
 }

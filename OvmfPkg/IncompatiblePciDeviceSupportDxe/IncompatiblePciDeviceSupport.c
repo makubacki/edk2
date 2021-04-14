@@ -23,13 +23,13 @@
 //
 // The Legacy BIOS protocol has been located.
 //
-STATIC BOOLEAN mLegacyBiosInstalled;
+STATIC BOOLEAN  mLegacyBiosInstalled;
 
 //
 // The protocol interface this driver produces.
 //
 STATIC EFI_INCOMPATIBLE_PCI_DEVICE_SUPPORT_PROTOCOL
-                                                 mIncompatiblePciDeviceSupport;
+  mIncompatiblePciDeviceSupport;
 
 //
 // Configuration template for the CheckDevice() protocol member function.
@@ -42,39 +42,39 @@ STATIC EFI_INCOMPATIBLE_PCI_DEVICE_SUPPORT_PROTOCOL
 //
 #pragma pack (1)
 typedef struct {
-  EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR AddressSpaceDesc;
-  EFI_ACPI_END_TAG_DESCRIPTOR       EndDesc;
+  EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR    AddressSpaceDesc;
+  EFI_ACPI_END_TAG_DESCRIPTOR          EndDesc;
 } MMIO64_PREFERENCE;
 #pragma pack ()
 
-STATIC CONST MMIO64_PREFERENCE mConfiguration = {
+STATIC CONST MMIO64_PREFERENCE  mConfiguration = {
   //
   // AddressSpaceDesc
   //
   {
     ACPI_ADDRESS_SPACE_DESCRIPTOR,                 // Desc
-    (UINT16)(                                      // Len
-      sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) -
-      OFFSET_OF (
-        EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR,
-        ResType
-        )
-      ),
+    (UINT16) (                                     // Len
+                                                    sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) -
+                                                    OFFSET_OF (
+                                                               EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR,
+                                                               ResType
+                                                               )
+                                                    ),
     ACPI_ADDRESS_SPACE_TYPE_MEM,                   // ResType
     0,                                             // GenFlag
     0,                                             // SpecificFlag
     64,                                            // AddrSpaceGranularity:
-                                                   //   aperture selection hint
-                                                   //   for BAR allocation
+                                                   // aperture selection hint
+                                                   // for BAR allocation
     0,                                             // AddrRangeMin
     0,                                             // AddrRangeMax:
-                                                   //   no special alignment
-                                                   //   for affected BARs
+                                                   // no special alignment
+                                                   // for affected BARs
     MAX_UINT64,                                    // AddrTranslationOffset:
-                                                   //   hint covers all
-                                                   //   eligible BARs
+                                                   // hint covers all
+                                                   // eligible BARs
     0                                              // AddrLen:
-                                                   //   use probed BAR size
+                                                   // use probed BAR size
   },
   //
   // EndDesc
@@ -88,8 +88,7 @@ STATIC CONST MMIO64_PREFERENCE mConfiguration = {
 //
 // The CheckDevice() member function has been called.
 //
-STATIC BOOLEAN mCheckDeviceCalled;
-
+STATIC BOOLEAN  mCheckDeviceCalled;
 
 /**
   Notification callback for Legacy BIOS protocol installation.
@@ -107,13 +106,16 @@ LegacyBiosInstalled (
   IN VOID      *Context
   )
 {
-  EFI_STATUS               Status;
-  EFI_LEGACY_BIOS_PROTOCOL *LegacyBios;
+  EFI_STATUS                Status;
+  EFI_LEGACY_BIOS_PROTOCOL  *LegacyBios;
 
   ASSERT (!mCheckDeviceCalled);
 
-  Status = gBS->LocateProtocol (&gEfiLegacyBiosProtocolGuid,
-                  NULL /* Registration */, (VOID **)&LegacyBios);
+  Status = gBS->LocateProtocol (
+                                &gEfiLegacyBiosProtocolGuid,
+                                NULL /* Registration */,
+                                (VOID **) &LegacyBios
+                                );
   if (EFI_ERROR (Status)) {
     return;
   }
@@ -126,7 +128,6 @@ LegacyBiosInstalled (
   Status = gBS->CloseEvent (Event);
   ASSERT_EFI_ERROR (Status);
 }
-
 
 /**
   Returns a list of ACPI resource descriptors that detail the special resource
@@ -233,14 +234,16 @@ CheckDevice (
   //
   *Configuration = AllocateCopyPool (sizeof mConfiguration, &mConfiguration);
   if (*Configuration == NULL) {
-    DEBUG ((DEBUG_WARN,
-      "%a: 64-bit MMIO BARs may be degraded for PCI 0x%04x:0x%04x (rev %d)\n",
-      __FUNCTION__, (UINT32)VendorId, (UINT32)DeviceId, (UINT8)RevisionId));
+    DEBUG (
+           (DEBUG_WARN,
+            "%a: 64-bit MMIO BARs may be degraded for PCI 0x%04x:0x%04x (rev %d)\n",
+            __FUNCTION__, (UINT32) VendorId, (UINT32) DeviceId, (UINT8) RevisionId)
+           );
     return EFI_OUT_OF_RESOURCES;
   }
+
   return EFI_SUCCESS;
 }
-
 
 /**
   Entry point for this driver.
@@ -261,9 +264,9 @@ DriverInitialize (
   IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  EFI_STATUS Status;
-  EFI_EVENT  Event;
-  VOID       *Registration;
+  EFI_STATUS  Status;
+  EFI_EVENT   Event;
+  VOID        *Registration;
 
   //
   // If the PCI Bus driver is not supposed to allocate resources, then it makes
@@ -292,33 +295,41 @@ DriverInitialize (
   // PCI Bus driver, then it never will:
   //
   // 1. The following drivers are dispatched in some unspecified order:
-  //    - PCI Host Bridge DXE_DRIVER,
-  //    - PCI Bus UEFI_DRIVER,
-  //    - this DXE_DRIVER,
-  //    - Legacy BIOS DXE_DRIVER.
+  // - PCI Host Bridge DXE_DRIVER,
+  // - PCI Bus UEFI_DRIVER,
+  // - this DXE_DRIVER,
+  // - Legacy BIOS DXE_DRIVER.
   //
   // 2. The DXE_CORE enters BDS.
   //
   // 3. The platform BDS connects the PCI Root Bridge IO instances (produced by
-  //    the PCI Host Bridge DXE_DRIVER).
+  // the PCI Host Bridge DXE_DRIVER).
   //
   // 4. The PCI Bus UEFI_DRIVER enumerates resources and calls into this
-  //    DXE_DRIVER (CheckDevice()).
+  // DXE_DRIVER (CheckDevice()).
   //
   // 5. This driver remembers if EFI_LEGACY_BIOS_PROTOCOL has been installed
-  //    sometime during step 1 (produced by the Legacy BIOS DXE_DRIVER).
+  // sometime during step 1 (produced by the Legacy BIOS DXE_DRIVER).
   //
   // For breaking this order, the Legacy BIOS DXE_DRIVER would have to install
   // its protocol after the firmware enters BDS, which cannot happen.
   //
-  Status = gBS->CreateEvent (EVT_NOTIFY_SIGNAL, TPL_CALLBACK,
-                  LegacyBiosInstalled, NULL /* Context */, &Event);
+  Status = gBS->CreateEvent (
+                             EVT_NOTIFY_SIGNAL,
+                             TPL_CALLBACK,
+                             LegacyBiosInstalled,
+                             NULL /* Context */,
+                             &Event
+                             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  Status = gBS->RegisterProtocolNotify (&gEfiLegacyBiosProtocolGuid, Event,
-                  &Registration);
+  Status = gBS->RegisterProtocolNotify (
+                                        &gEfiLegacyBiosProtocolGuid,
+                                        Event,
+                                        &Registration
+                                        );
   if (EFI_ERROR (Status)) {
     goto CloseEvent;
   }
@@ -327,9 +338,12 @@ DriverInitialize (
   ASSERT_EFI_ERROR (Status);
 
   mIncompatiblePciDeviceSupport.CheckDevice = CheckDevice;
-  Status = gBS->InstallMultipleProtocolInterfaces (&ImageHandle,
-                  &gEfiIncompatiblePciDeviceSupportProtocolGuid,
-                  &mIncompatiblePciDeviceSupport, NULL);
+  Status = gBS->InstallMultipleProtocolInterfaces (
+                                                   &ImageHandle,
+                                                   &gEfiIncompatiblePciDeviceSupportProtocolGuid,
+                                                   &mIncompatiblePciDeviceSupport,
+                                                   NULL
+                                                   );
   if (EFI_ERROR (Status)) {
     goto CloseEvent;
   }
@@ -338,7 +352,7 @@ DriverInitialize (
 
 CloseEvent:
   if (!mLegacyBiosInstalled) {
-    EFI_STATUS CloseStatus;
+  EFI_STATUS  CloseStatus;
 
     CloseStatus = gBS->CloseEvent (Event);
     ASSERT_EFI_ERROR (CloseStatus);

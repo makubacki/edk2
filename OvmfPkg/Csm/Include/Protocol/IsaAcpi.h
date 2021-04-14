@@ -35,12 +35,15 @@ typedef struct _EFI_ISA_ACPI_PROTOCOL EFI_ISA_ACPI_PROTOCOL;
 /// ISA ACPI Protocol DMA resource attributes.
 ///
 #define EFI_ISA_ACPI_DMA_SPEED_TYPE_MASK                 0x03   ///< Bit mask of supported DMA speed attributes.
-#define EFI_ISA_ACPI_DMA_SPEED_TYPE_COMPATIBILITY        0x00   ///< ISA controller supports compatibility mode DMA transfers.
+#define EFI_ISA_ACPI_DMA_SPEED_TYPE_COMPATIBILITY        0x00   ///< ISA controller supports compatibility mode DMA
+                                                                ///< transfers.
 #define EFI_ISA_ACPI_DMA_SPEED_TYPE_A                    0x01   ///< ISA controller supports type A DMA transfers.
 #define EFI_ISA_ACPI_DMA_SPEED_TYPE_B                    0x02   ///< ISA controller supports type B DMA transfers.
 #define EFI_ISA_ACPI_DMA_SPEED_TYPE_F                    0x03   ///< ISA controller supports type F DMA transfers.
-#define EFI_ISA_ACPI_DMA_COUNT_BY_BYTE                   0x04   ///< ISA controller increments DMA address by bytes (8-bit).
-#define EFI_ISA_ACPI_DMA_COUNT_BY_WORD                   0x08   ///< ISA controller increments DMA address by words (16-bit).
+#define EFI_ISA_ACPI_DMA_COUNT_BY_BYTE                   0x04   ///< ISA controller increments DMA address by bytes
+                                                                ///< (8-bit).
+#define EFI_ISA_ACPI_DMA_COUNT_BY_WORD                   0x08   ///< ISA controller increments DMA address by words
+                                                                ///< (16-bit).
 #define EFI_ISA_ACPI_DMA_BUS_MASTER                      0x10   ///< ISA controller is a DMA bus master.
 #define EFI_ISA_ACPI_DMA_TRANSFER_TYPE_8_BIT             0x20   ///< ISA controller only supports 8-bit DMA transfers.
 #define EFI_ISA_ACPI_DMA_TRANSFER_TYPE_8_BIT_AND_16_BIT  0x40   ///< ISA controller both 8-bit and 16-bit DMA transfers.
@@ -49,20 +52,23 @@ typedef struct _EFI_ISA_ACPI_PROTOCOL EFI_ISA_ACPI_PROTOCOL;
 ///
 /// ISA ACPI Protocol MMIO resource attributes
 ///
-#define EFI_ISA_ACPI_MEMORY_WIDTH_MASK                   0x03   ///< Bit mask of supported ISA memory width attributes.
-#define EFI_ISA_ACPI_MEMORY_WIDTH_8_BIT                  0x00   ///< ISA MMIO region only supports 8-bit access.
-#define EFI_ISA_ACPI_MEMORY_WIDTH_16_BIT                 0x01   ///< ISA MMIO region only supports 16-bit access.
-#define EFI_ISA_ACPI_MEMORY_WIDTH_8_BIT_AND_16_BIT       0x02   ///< ISA MMIO region supports both 8-bit and 16-bit access.
-#define EFI_ISA_ACPI_MEMORY_WRITEABLE                    0x04   ///< ISA MMIO region supports write transactions.
-#define EFI_ISA_ACPI_MEMORY_CACHEABLE                    0x08   ///< ISA MMIO region supports being cached.
-#define EFI_ISA_ACPI_MEMORY_SHADOWABLE                   0x10   ///< ISA MMIO region may be shadowed.
-#define EFI_ISA_ACPI_MEMORY_EXPANSION_ROM                0x20   ///< ISA MMIO region is an expansion ROM.
+#define EFI_ISA_ACPI_MEMORY_WIDTH_MASK              0x03        ///< Bit mask of supported ISA memory width attributes.
+#define EFI_ISA_ACPI_MEMORY_WIDTH_8_BIT             0x00        ///< ISA MMIO region only supports 8-bit access.
+#define EFI_ISA_ACPI_MEMORY_WIDTH_16_BIT            0x01        ///< ISA MMIO region only supports 16-bit access.
+#define EFI_ISA_ACPI_MEMORY_WIDTH_8_BIT_AND_16_BIT  0x02        ///< ISA MMIO region supports both 8-bit and 16-bit
+                                                                ///< access.
+#define EFI_ISA_ACPI_MEMORY_WRITEABLE               0x04        ///< ISA MMIO region supports write transactions.
+#define EFI_ISA_ACPI_MEMORY_CACHEABLE               0x08        ///< ISA MMIO region supports being cached.
+#define EFI_ISA_ACPI_MEMORY_SHADOWABLE              0x10        ///< ISA MMIO region may be shadowed.
+#define EFI_ISA_ACPI_MEMORY_EXPANSION_ROM           0x20        ///< ISA MMIO region is an expansion ROM.
 
 ///
 /// ISA ACPI Protocol I/O resource attributes
 ///
-#define EFI_ISA_ACPI_IO_DECODE_10_BITS                   0x01    ///< ISA controllers uses a 10-bit address decoder for I/O cycles.
-#define EFI_ISA_ACPI_IO_DECODE_16_BITS                   0x02    ///< ISA controllers uses a 16-bit address decoder for I/O cycles.
+#define EFI_ISA_ACPI_IO_DECODE_10_BITS  0x01                     ///< ISA controllers uses a 10-bit address decoder for
+                                                                 ///< I/O cycles.
+#define EFI_ISA_ACPI_IO_DECODE_16_BITS  0x02                     ///< ISA controllers uses a 16-bit address decoder for
+                                                                 ///< I/O cycles.
 
 ///
 /// EFI ISA ACPI resource type
@@ -79,26 +85,27 @@ typedef enum {
 /// EFI ISA ACPI generic resource structure
 ///
 typedef struct {
-  EFI_ISA_ACPI_RESOURCE_TYPE  Type;         ///< The type of resource (I/O, MMIO, DMA, Interrupt).
-  UINT32                      Attribute;    ///< Bit mask of attributes associated with this resource.  See EFI_ISA_ACPI_xxx macros for valid combinations.
-  UINT32                      StartRange;   ///< The start of the resource range.
-  UINT32                      EndRange;     ///< The end of the resource range.
+  EFI_ISA_ACPI_RESOURCE_TYPE    Type;       ///< The type of resource (I/O, MMIO, DMA, Interrupt).
+  UINT32                        Attribute;  ///< Bit mask of attributes associated with this resource.  See
+                                            ///< EFI_ISA_ACPI_xxx macros for valid combinations.
+  UINT32                        StartRange; ///< The start of the resource range.
+  UINT32                        EndRange;   ///< The end of the resource range.
 } EFI_ISA_ACPI_RESOURCE;
 
 ///
 /// EFI ISA ACPI resource device identifier
 ///
 typedef struct {
-  UINT32  HID;   ///< The ACPI Hardware Identifier value associated with an ISA controller.  Matchs ACPI DSDT contents.
-  UINT32  UID;   ///< The ACPI Unique Identifier value associated with an ISA controller.  Matches ACPI DSDT contents.
+  UINT32    HID; ///< The ACPI Hardware Identifier value associated with an ISA controller.  Matchs ACPI DSDT contents.
+  UINT32    UID; ///< The ACPI Unique Identifier value associated with an ISA controller.  Matches ACPI DSDT contents.
 } EFI_ISA_ACPI_DEVICE_ID;
 
 ///
 /// EFI ISA ACPI resource list
 ///
 typedef struct {
-  EFI_ISA_ACPI_DEVICE_ID  Device;          ///< The ACPI HID/UID associated with an ISA controller.
-  EFI_ISA_ACPI_RESOURCE   *ResourceItem;   ///< A pointer to the list of resources associated with an ISA controller.
+  EFI_ISA_ACPI_DEVICE_ID    Device;        ///< The ACPI HID/UID associated with an ISA controller.
+  EFI_ISA_ACPI_RESOURCE     *ResourceItem; ///< A pointer to the list of resources associated with an ISA controller.
 } EFI_ISA_ACPI_RESOURCE_LIST;
 
 /**
@@ -120,11 +127,11 @@ typedef struct {
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_ISA_ACPI_DEVICE_ENUMERATE)(
-  IN  EFI_ISA_ACPI_PROTOCOL   *This,
-  OUT EFI_ISA_ACPI_DEVICE_ID  **Device
-  );
+                                        IN  EFI_ISA_ACPI_PROTOCOL   *This,
+                                        OUT EFI_ISA_ACPI_DEVICE_ID  **Device
+                                        );
 
 /**
   Sets the power state of an ISA controller.
@@ -143,12 +150,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_ISA_ACPI_SET_DEVICE_POWER)(
-  IN EFI_ISA_ACPI_PROTOCOL   *This,
-  IN EFI_ISA_ACPI_DEVICE_ID  *Device,
-  IN BOOLEAN                 OnOff
-  );
+                                        IN EFI_ISA_ACPI_PROTOCOL   *This,
+                                        IN EFI_ISA_ACPI_DEVICE_ID  *Device,
+                                        IN BOOLEAN                 OnOff
+                                        );
 
 /**
   Retrieves the current set of resources associated with an ISA controller.
@@ -166,12 +173,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_ISA_ACPI_GET_CUR_RESOURCE)(
-  IN  EFI_ISA_ACPI_PROTOCOL       *This,
-  IN  EFI_ISA_ACPI_DEVICE_ID      *Device,
-  OUT EFI_ISA_ACPI_RESOURCE_LIST  **ResourceList
-  );
+                                        IN  EFI_ISA_ACPI_PROTOCOL       *This,
+                                        IN  EFI_ISA_ACPI_DEVICE_ID      *Device,
+                                        OUT EFI_ISA_ACPI_RESOURCE_LIST  **ResourceList
+                                        );
 
 /**
   Retrieves the set of possible resources that may be assigned to an ISA controller
@@ -188,12 +195,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_ISA_ACPI_GET_POS_RESOURCE)(
-  IN EFI_ISA_ACPI_PROTOCOL        *This,
-  IN EFI_ISA_ACPI_DEVICE_ID       *Device,
-  OUT EFI_ISA_ACPI_RESOURCE_LIST  **ResourceList
-  );
+                                        IN EFI_ISA_ACPI_PROTOCOL        *This,
+                                        IN EFI_ISA_ACPI_DEVICE_ID       *Device,
+                                        OUT EFI_ISA_ACPI_RESOURCE_LIST  **ResourceList
+                                        );
 
 /**
   Assigns resources to an ISA controller.
@@ -212,12 +219,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_ISA_ACPI_SET_RESOURCE)(
-  IN EFI_ISA_ACPI_PROTOCOL       *This,
-  IN EFI_ISA_ACPI_DEVICE_ID      *Device,
-  IN EFI_ISA_ACPI_RESOURCE_LIST  *ResourceList
-  );
+                                    IN EFI_ISA_ACPI_PROTOCOL       *This,
+                                    IN EFI_ISA_ACPI_DEVICE_ID      *Device,
+                                    IN EFI_ISA_ACPI_RESOURCE_LIST  *ResourceList
+                                    );
 
 /**
   Enables or disables an ISA controller.
@@ -232,12 +239,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_ISA_ACPI_ENABLE_DEVICE)(
-  IN EFI_ISA_ACPI_PROTOCOL   *This,
-  IN EFI_ISA_ACPI_DEVICE_ID  *Device,
-  IN BOOLEAN                 Enable
-  );
+                                     IN EFI_ISA_ACPI_PROTOCOL   *This,
+                                     IN EFI_ISA_ACPI_DEVICE_ID  *Device,
+                                     IN BOOLEAN                 Enable
+                                     );
 
 /**
   Initializes an ISA controller, so that it can be used.  This service must be called
@@ -251,11 +258,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_ISA_ACPI_INIT_DEVICE)(
-  IN EFI_ISA_ACPI_PROTOCOL   *This,
-  IN EFI_ISA_ACPI_DEVICE_ID  *Device
-  );
+                                   IN EFI_ISA_ACPI_PROTOCOL   *This,
+                                   IN EFI_ISA_ACPI_DEVICE_ID  *Device
+                                   );
 
 /**
   Initializes all the HW states required for the ISA controllers on the ISA bus
@@ -270,10 +277,10 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_ISA_ACPI_INTERFACE_INIT)(
-  IN EFI_ISA_ACPI_PROTOCOL  *This
-  );
+                                      IN EFI_ISA_ACPI_PROTOCOL  *This
+                                      );
 
 ///
 /// The EFI_ISA_ACPI_PROTOCOL provides the services to enumerate and manage
@@ -283,16 +290,16 @@ EFI_STATUS
 /// and assign resources to an ISA controller.
 ///
 struct _EFI_ISA_ACPI_PROTOCOL {
-  EFI_ISA_ACPI_DEVICE_ENUMERATE  DeviceEnumerate;
-  EFI_ISA_ACPI_SET_DEVICE_POWER  SetPower;
-  EFI_ISA_ACPI_GET_CUR_RESOURCE  GetCurResource;
-  EFI_ISA_ACPI_GET_POS_RESOURCE  GetPosResource;
-  EFI_ISA_ACPI_SET_RESOURCE      SetResource;
-  EFI_ISA_ACPI_ENABLE_DEVICE     EnableDevice;
-  EFI_ISA_ACPI_INIT_DEVICE       InitDevice;
-  EFI_ISA_ACPI_INTERFACE_INIT    InterfaceInit;
+  EFI_ISA_ACPI_DEVICE_ENUMERATE    DeviceEnumerate;
+  EFI_ISA_ACPI_SET_DEVICE_POWER    SetPower;
+  EFI_ISA_ACPI_GET_CUR_RESOURCE    GetCurResource;
+  EFI_ISA_ACPI_GET_POS_RESOURCE    GetPosResource;
+  EFI_ISA_ACPI_SET_RESOURCE        SetResource;
+  EFI_ISA_ACPI_ENABLE_DEVICE       EnableDevice;
+  EFI_ISA_ACPI_INIT_DEVICE         InitDevice;
+  EFI_ISA_ACPI_INTERFACE_INIT      InterfaceInit;
 };
 
-extern EFI_GUID gEfiIsaAcpiProtocolGuid;
+extern EFI_GUID  gEfiIsaAcpiProtocolGuid;
 
 #endif

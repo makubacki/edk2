@@ -8,6 +8,29 @@
 
 #include "VirtioFsDxe.h"
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 VirtioFsSimpleFileWrite (
@@ -16,11 +39,11 @@ VirtioFsSimpleFileWrite (
   IN     VOID              *Buffer
   )
 {
-  VIRTIO_FS_FILE *VirtioFsFile;
-  VIRTIO_FS      *VirtioFs;
-  EFI_STATUS     Status;
-  UINTN          Transferred;
-  UINTN          Left;
+  VIRTIO_FS_FILE  *VirtioFsFile;
+  VIRTIO_FS       *VirtioFs;
+  EFI_STATUS      Status;
+  UINTN           Transferred;
+  UINTN           Left;
 
   VirtioFsFile = VIRTIO_FS_FILE_FROM_SIMPLE_FILE (This);
   VirtioFs     = VirtioFsFile->OwnerFs;
@@ -28,39 +51,42 @@ VirtioFsSimpleFileWrite (
   if (VirtioFsFile->IsDirectory) {
     return EFI_UNSUPPORTED;
   }
+
   if (!VirtioFsFile->IsOpenForWriting) {
     return EFI_ACCESS_DENIED;
   }
 
-  Status      = EFI_SUCCESS;
+  Status = EFI_SUCCESS;
   Transferred = 0;
-  Left        = *BufferSize;
+  Left = *BufferSize;
   while (Left > 0) {
-    UINT32 WriteSize;
+  UINT32  WriteSize;
 
     //
     // Honor the write buffer size limit.
     //
-    WriteSize = (UINT32)MIN ((UINTN)VirtioFs->MaxWrite, Left);
-    Status = VirtioFsFuseWrite (
-               VirtioFs,
-               VirtioFsFile->NodeId,
-               VirtioFsFile->FuseHandle,
-               VirtioFsFile->FilePosition + Transferred,
-               &WriteSize,
-               (UINT8 *)Buffer + Transferred
-               );
+    WriteSize = (UINT32) MIN ((UINTN) VirtioFs->MaxWrite, Left);
+    Status    = VirtioFsFuseWrite (
+                                   VirtioFs,
+                                   VirtioFsFile->NodeId,
+                                   VirtioFsFile->FuseHandle,
+                                   VirtioFsFile->FilePosition + Transferred,
+                                   &WriteSize,
+                                   (UINT8 *) Buffer + Transferred
+                                   );
     if (!EFI_ERROR (Status) && WriteSize == 0) {
       //
       // Progress should have been made.
       //
       Status = EFI_DEVICE_ERROR;
     }
+
     if (EFI_ERROR (Status)) {
       break;
     }
+
     Transferred += WriteSize;
-    Left        -= WriteSize;
+    Left -= WriteSize;
   }
 
   *BufferSize = Transferred;
@@ -69,7 +95,7 @@ VirtioFsSimpleFileWrite (
   // According to the UEFI spec,
   //
   // - 'Partial writes only occur when there has been a data error during the
-  //    write attempt (such as "file space full")', and
+  // write attempt (such as "file space full")', and
   //
   // - (as an example) EFI_VOLUME_FULL is returned when 'The volume is full'.
   //

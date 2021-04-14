@@ -127,15 +127,15 @@ VirtioRngGetRNG (
   OUT UINT8                      *RNGValue
   )
 {
-  VIRTIO_RNG_DEV            *Dev;
-  DESC_INDICES              Indices;
-  volatile UINT8            *Buffer;
-  UINTN                     Index;
-  UINT32                    Len;
-  UINT32                    BufferSize;
-  EFI_STATUS                Status;
-  EFI_PHYSICAL_ADDRESS      DeviceAddress;
-  VOID                      *Mapping;
+  VIRTIO_RNG_DEV        *Dev;
+  DESC_INDICES          Indices;
+  volatile UINT8        *Buffer;
+  UINTN                 Index;
+  UINT32                Len;
+  UINT32                BufferSize;
+  EFI_STATUS            Status;
+  EFI_PHYSICAL_ADDRESS  DeviceAddress;
+  VOID                  *Mapping;
 
   if (This == NULL || RNGValueLength == 0 || RNGValue == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -149,7 +149,7 @@ VirtioRngGetRNG (
     return EFI_UNSUPPORTED;
   }
 
-  Buffer = (volatile UINT8 *)AllocatePool (RNGValueLength);
+  Buffer = (volatile UINT8 *) AllocatePool (RNGValueLength);
   if (Buffer == NULL) {
     return EFI_DEVICE_ERROR;
   }
@@ -159,13 +159,13 @@ VirtioRngGetRNG (
   // Map Buffer's system physical address to device address
   //
   Status = VirtioMapAllBytesInSharedBuffer (
-             Dev->VirtIo,
-             VirtioOperationBusMasterWrite,
-             (VOID *)Buffer,
-             RNGValueLength,
-             &DeviceAddress,
-             &Mapping
-             );
+                                            Dev->VirtIo,
+                                            VirtioOperationBusMasterWrite,
+                                            (VOID *) Buffer,
+                                            RNGValueLength,
+                                            &DeviceAddress,
+                                            &Mapping
+                                            );
   if (EFI_ERROR (Status)) {
     Status = EFI_DEVICE_ERROR;
     goto FreeBuffer;
@@ -177,20 +177,23 @@ VirtioRngGetRNG (
   // get all the entropy we were asked for.
   //
   for (Index = 0; Index < RNGValueLength; Index += Len) {
-    BufferSize = (UINT32)MIN (RNGValueLength - Index, (UINTN)MAX_UINT32);
+    BufferSize = (UINT32) MIN (RNGValueLength - Index, (UINTN) MAX_UINT32);
 
     VirtioPrepare (&Dev->Ring, &Indices);
-    VirtioAppendDesc (&Dev->Ring,
-      DeviceAddress + Index,
-      BufferSize,
-      VRING_DESC_F_WRITE,
-      &Indices);
+    VirtioAppendDesc (
+                      &Dev->Ring,
+                      DeviceAddress + Index,
+                      BufferSize,
+                      VRING_DESC_F_WRITE,
+                      &Indices
+                      );
 
     if (VirtioFlush (Dev->VirtIo, 0, &Dev->Ring, &Indices, &Len) !=
         EFI_SUCCESS) {
       Status = EFI_DEVICE_ERROR;
       goto UnmapBuffer;
     }
+
     ASSERT (Len > 0);
     ASSERT (Len <= BufferSize);
   }
@@ -207,6 +210,7 @@ VirtioRngGetRNG (
   for (Index = 0; Index < RNGValueLength; Index++) {
     RNGValue[Index] = Buffer[Index];
   }
+
   Status = EFI_SUCCESS;
 
 UnmapBuffer:
@@ -215,14 +219,37 @@ UnmapBuffer:
   // the buffer is already unmapped after VirtioFlush().
   //
   if (EFI_ERROR (Status)) {
-    Dev->VirtIo->UnmapSharedBuffer (Dev->VirtIo, Mapping);
+  Dev->VirtIo->UnmapSharedBuffer (Dev->VirtIo, Mapping);
   }
 
 FreeBuffer:
-  FreePool ((VOID *)Buffer);
+  FreePool ((VOID *) Buffer);
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -230,11 +257,11 @@ VirtioRngInit (
   IN OUT VIRTIO_RNG_DEV *Dev
   )
 {
-  UINT8      NextDevStat;
-  EFI_STATUS Status;
-  UINT16     QueueSize;
-  UINT64     Features;
-  UINT64     RingBaseShift;
+  UINT8       NextDevStat;
+  EFI_STATUS  Status;
+  UINT16      QueueSize;
+  UINT64      Features;
+  UINT64      RingBaseShift;
 
   //
   // Execute virtio-0.9.5, 2.2.1 Device Initialization Sequence.
@@ -293,6 +320,7 @@ VirtioRngInit (
   if (EFI_ERROR (Status)) {
     goto Failed;
   }
+
   Status = Dev->VirtIo->GetQueueNumMax (Dev->VirtIo, &QueueSize);
   if (EFI_ERROR (Status)) {
     goto Failed;
@@ -315,11 +343,11 @@ VirtioRngInit (
   // If anything fails from here on, we must release the ring resources.
   //
   Status = VirtioRingMap (
-             Dev->VirtIo,
-             &Dev->Ring,
-             &RingBaseShift,
-             &Dev->RingMap
-             );
+                          Dev->VirtIo,
+                          &Dev->Ring,
+                          &RingBaseShift,
+                          &Dev->RingMap
+                          );
   if (EFI_ERROR (Status)) {
     goto ReleaseQueue;
   }
@@ -342,10 +370,10 @@ VirtioRngInit (
   // step 4c -- Report GPFN (guest-physical frame number) of queue.
   //
   Status = Dev->VirtIo->SetQueueAddress (
-                          Dev->VirtIo,
-                          &Dev->Ring,
-                          RingBaseShift
-                          );
+                                         Dev->VirtIo,
+                                         &Dev->Ring,
+                                         RingBaseShift
+                                         );
   if (EFI_ERROR (Status)) {
     goto UnmapQueue;
   }
@@ -354,8 +382,8 @@ VirtioRngInit (
   // step 5 -- Report understood features and guest-tuneables.
   //
   if (Dev->VirtIo->Revision < VIRTIO_SPEC_REVISION (1, 0, 0)) {
-    Features &= ~(UINT64)(VIRTIO_F_VERSION_1 | VIRTIO_F_IOMMU_PLATFORM);
-    Status = Dev->VirtIo->SetGuestFeatures (Dev->VirtIo, Features);
+    Features &= ~(UINT64) (VIRTIO_F_VERSION_1 | VIRTIO_F_IOMMU_PLATFORM);
+    Status    = Dev->VirtIo->SetGuestFeatures (Dev->VirtIo, Features);
     if (EFI_ERROR (Status)) {
       goto UnmapQueue;
     }
@@ -373,8 +401,8 @@ VirtioRngInit (
   //
   // populate the exported interface's attributes
   //
-  Dev->Rng.GetInfo    = VirtioRngGetInfo;
-  Dev->Rng.GetRNG     = VirtioRngGetRNG;
+  Dev->Rng.GetInfo = VirtioRngGetInfo;
+  Dev->Rng.GetRNG  = VirtioRngGetRNG;
 
   return EFI_SUCCESS;
 
@@ -395,7 +423,29 @@ Failed:
   return Status; // reached only via Failed above
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 VOID
 EFIAPI
@@ -427,7 +477,7 @@ VirtioRngExitBoot (
   IN  VOID      *Context
   )
 {
-  VIRTIO_RNG_DEV *Dev;
+  VIRTIO_RNG_DEV  *Dev;
 
   DEBUG ((DEBUG_VERBOSE, "%a: Context=0x%p\n", __FUNCTION__, Context));
   //
@@ -441,7 +491,6 @@ VirtioRngExitBoot (
   Dev->VirtIo->SetDeviceStatus (Dev->VirtIo, 0);
 }
 
-
 //
 // Probe, start and stop functions of this driver, called by the DXE core for
 // specific devices.
@@ -452,9 +501,9 @@ VirtioRngExitBoot (
 //
 // The implementation follows:
 // - Driver Writer's Guide for UEFI 2.3.1 v1.01
-//   - 5.1.3.4 OpenProtocol() and CloseProtocol()
+// - 5.1.3.4 OpenProtocol() and CloseProtocol()
 // - UEFI Spec 2.3.1 + Errata C
-//   -  6.3 Protocol Handler Services
+// -  6.3 Protocol Handler Services
 //
 
 STATIC
@@ -466,8 +515,8 @@ VirtioRngDriverBindingSupported (
   IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath
   )
 {
-  EFI_STATUS             Status;
-  VIRTIO_DEVICE_PROTOCOL *VirtIo;
+  EFI_STATUS              Status;
+  VIRTIO_DEVICE_PROTOCOL  *VirtIo;
 
   //
   // Attempt to open the device with the VirtIo set of interfaces. On success,
@@ -475,15 +524,15 @@ VirtioRngDriverBindingSupported (
   // open attempts (EFI_ALREADY_STARTED).
   //
   Status = gBS->OpenProtocol (
-                  DeviceHandle,               // candidate device
-                  &gVirtioDeviceProtocolGuid, // for generic VirtIo access
-                  (VOID **)&VirtIo,           // handle to instantiate
-                  This->DriverBindingHandle,  // requestor driver identity
-                  DeviceHandle,               // ControllerHandle, according to
-                                              // the UEFI Driver Model
-                  EFI_OPEN_PROTOCOL_BY_DRIVER // get exclusive VirtIo access to
-                                              // the device; to be released
-                  );
+                              DeviceHandle,               // candidate device
+                              &gVirtioDeviceProtocolGuid, // for generic VirtIo access
+                              (VOID **) &VirtIo,          // handle to instantiate
+                              This->DriverBindingHandle,  // requestor driver identity
+                              DeviceHandle,               // ControllerHandle, according to
+                                                          // the UEFI Driver Model
+                              EFI_OPEN_PROTOCOL_BY_DRIVER // get exclusive VirtIo access to
+                                                          // the device; to be released
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -496,11 +545,38 @@ VirtioRngDriverBindingSupported (
   // We needed VirtIo access only transitorily, to see whether we support the
   // device or not.
   //
-  gBS->CloseProtocol (DeviceHandle, &gVirtioDeviceProtocolGuid,
-         This->DriverBindingHandle, DeviceHandle);
+  gBS->CloseProtocol (
+                      DeviceHandle,
+                      &gVirtioDeviceProtocolGuid,
+                      This->DriverBindingHandle,
+                      DeviceHandle
+                      );
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -511,16 +587,21 @@ VirtioRngDriverBindingStart (
   )
 {
   VIRTIO_RNG_DEV  *Dev;
-  EFI_STATUS Status;
+  EFI_STATUS      Status;
 
   Dev = (VIRTIO_RNG_DEV *) AllocateZeroPool (sizeof *Dev);
   if (Dev == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Status = gBS->OpenProtocol (DeviceHandle, &gVirtioDeviceProtocolGuid,
-                  (VOID **)&Dev->VirtIo, This->DriverBindingHandle,
-                  DeviceHandle, EFI_OPEN_PROTOCOL_BY_DRIVER);
+  Status = gBS->OpenProtocol (
+                              DeviceHandle,
+                              &gVirtioDeviceProtocolGuid,
+                              (VOID **) &Dev->VirtIo,
+                              This->DriverBindingHandle,
+                              DeviceHandle,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (EFI_ERROR (Status)) {
     goto FreeVirtioRng;
   }
@@ -533,8 +614,13 @@ VirtioRngDriverBindingStart (
     goto CloseVirtIo;
   }
 
-  Status = gBS->CreateEvent (EVT_SIGNAL_EXIT_BOOT_SERVICES, TPL_CALLBACK,
-                  &VirtioRngExitBoot, Dev, &Dev->ExitBoot);
+  Status = gBS->CreateEvent (
+                             EVT_SIGNAL_EXIT_BOOT_SERVICES,
+                             TPL_CALLBACK,
+                             &VirtioRngExitBoot,
+                             Dev,
+                             &Dev->ExitBoot
+                             );
   if (EFI_ERROR (Status)) {
     goto UninitDev;
   }
@@ -544,9 +630,12 @@ VirtioRngDriverBindingStart (
   // interface.
   //
   Dev->Signature = VIRTIO_RNG_SIG;
-  Status = gBS->InstallProtocolInterface (&DeviceHandle,
-                  &gEfiRngProtocolGuid, EFI_NATIVE_INTERFACE,
-                  &Dev->Rng);
+  Status = gBS->InstallProtocolInterface (
+                                          &DeviceHandle,
+                                          &gEfiRngProtocolGuid,
+                                          EFI_NATIVE_INTERFACE,
+                                          &Dev->Rng
+                                          );
   if (EFI_ERROR (Status)) {
     goto CloseExitBoot;
   }
@@ -560,8 +649,12 @@ UninitDev:
   VirtioRngUninit (Dev);
 
 CloseVirtIo:
-  gBS->CloseProtocol (DeviceHandle, &gVirtioDeviceProtocolGuid,
-         This->DriverBindingHandle, DeviceHandle);
+  gBS->CloseProtocol (
+                      DeviceHandle,
+                      &gVirtioDeviceProtocolGuid,
+                      This->DriverBindingHandle,
+                      DeviceHandle
+                      );
 
 FreeVirtioRng:
   FreePool (Dev);
@@ -569,7 +662,29 @@ FreeVirtioRng:
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -580,18 +695,18 @@ VirtioRngDriverBindingStop (
   IN EFI_HANDLE                  *ChildHandleBuffer
   )
 {
-  EFI_STATUS                      Status;
-  EFI_RNG_PROTOCOL                *Rng;
-  VIRTIO_RNG_DEV                  *Dev;
+  EFI_STATUS        Status;
+  EFI_RNG_PROTOCOL  *Rng;
+  VIRTIO_RNG_DEV    *Dev;
 
   Status = gBS->OpenProtocol (
-                  DeviceHandle,                     // candidate device
-                  &gEfiRngProtocolGuid,             // retrieve the RNG iface
-                  (VOID **)&Rng,                    // target pointer
-                  This->DriverBindingHandle,        // requestor driver ident.
-                  DeviceHandle,                     // lookup req. for dev.
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL    // lookup only, no new ref.
-                  );
+                              DeviceHandle,                  // candidate device
+                              &gEfiRngProtocolGuid,          // retrieve the RNG iface
+                              (VOID **) &Rng,                // target pointer
+                              This->DriverBindingHandle,     // requestor driver ident.
+                              DeviceHandle,                  // lookup req. for dev.
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL // lookup only, no new ref.
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -601,8 +716,11 @@ VirtioRngDriverBindingStop (
   //
   // Handle Stop() requests for in-use driver instances gracefully.
   //
-  Status = gBS->UninstallProtocolInterface (DeviceHandle,
-                  &gEfiRngProtocolGuid, &Dev->Rng);
+  Status = gBS->UninstallProtocolInterface (
+                                            DeviceHandle,
+                                            &gEfiRngProtocolGuid,
+                                            &Dev->Rng
+                                            );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -611,21 +729,24 @@ VirtioRngDriverBindingStop (
 
   VirtioRngUninit (Dev);
 
-  gBS->CloseProtocol (DeviceHandle, &gVirtioDeviceProtocolGuid,
-         This->DriverBindingHandle, DeviceHandle);
+  gBS->CloseProtocol (
+                      DeviceHandle,
+                      &gVirtioDeviceProtocolGuid,
+                      This->DriverBindingHandle,
+                      DeviceHandle
+                      );
 
   FreePool (Dev);
 
   return EFI_SUCCESS;
 }
 
-
 //
 // The static object that groups the Supported() (ie. probe), Start() and
 // Stop() functions of the driver together. Refer to UEFI Spec 2.3.1 + Errata
 // C, 10.1 EFI Driver Binding Protocol.
 //
-STATIC EFI_DRIVER_BINDING_PROTOCOL gDriverBinding = {
+STATIC EFI_DRIVER_BINDING_PROTOCOL  gDriverBinding = {
   &VirtioRngDriverBindingSupported,
   &VirtioRngDriverBindingStart,
   &VirtioRngDriverBindingStop,
@@ -634,7 +755,6 @@ STATIC EFI_DRIVER_BINDING_PROTOCOL gDriverBinding = {
         // EfiLibInstallDriverBindingComponentName2() in VirtioRngEntryPoint()
   NULL  // DriverBindingHandle, ditto
 };
-
 
 //
 // The purpose of the following scaffolding (EFI_COMPONENT_NAME_PROTOCOL and
@@ -645,14 +765,37 @@ STATIC EFI_DRIVER_BINDING_PROTOCOL gDriverBinding = {
 //
 
 STATIC
-EFI_UNICODE_STRING_TABLE mDriverNameTable[] = {
+EFI_UNICODE_STRING_TABLE  mDriverNameTable[] = {
   { "eng;en", L"Virtio Random Number Generator Driver" },
-  { NULL,     NULL                   }
+  { NULL,     NULL                                     }
 };
 
 STATIC
-EFI_COMPONENT_NAME_PROTOCOL gComponentName;
+EFI_COMPONENT_NAME_PROTOCOL  gComponentName;
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -663,14 +806,37 @@ VirtioRngGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mDriverNameTable,
-           DriverName,
-           (BOOLEAN)(This == &gComponentName) // Iso639Language
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gComponentName) // Iso639Language
+                               );
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -686,19 +852,18 @@ VirtioRngGetDeviceName (
 }
 
 STATIC
-EFI_COMPONENT_NAME_PROTOCOL gComponentName = {
+EFI_COMPONENT_NAME_PROTOCOL  gComponentName = {
   &VirtioRngGetDriverName,
   &VirtioRngGetDeviceName,
   "eng" // SupportedLanguages, ISO 639-2 language codes
 };
 
 STATIC
-EFI_COMPONENT_NAME2_PROTOCOL gComponentName2 = {
-  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)     &VirtioRngGetDriverName,
+EFI_COMPONENT_NAME2_PROTOCOL  gComponentName2 = {
+  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) &VirtioRngGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) &VirtioRngGetDeviceName,
   "en" // SupportedLanguages, RFC 4646 language codes
 };
-
 
 //
 // Entry point of this driver.
@@ -711,11 +876,11 @@ VirtioRngEntryPoint (
   )
 {
   return EfiLibInstallDriverBindingComponentName2 (
-           ImageHandle,
-           SystemTable,
-           &gDriverBinding,
-           ImageHandle,
-           &gComponentName,
-           &gComponentName2
-           );
+                                                   ImageHandle,
+                                                   SystemTable,
+                                                   &gDriverBinding,
+                                                   ImageHandle,
+                                                   &gComponentName,
+                                                   &gComponentName2
+                                                   );
 }

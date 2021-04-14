@@ -10,4 +10,4 @@
 PCI_ROOT_BRIDGE *
 ScanForRootBridges (
   UINTN      *NumberOfRootBridges
-);
+  );

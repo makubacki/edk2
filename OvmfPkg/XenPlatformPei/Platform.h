@@ -52,74 +52,74 @@ AddReservedMemoryRangeHob (
   );
 
 VOID
-AddressWidthInitialization (
-  VOID
-  );
+  AddressWidthInitialization (
+                              VOID
+                              );
 
 VOID
-Q35TsegMbytesInitialization (
-  VOID
-  );
+  Q35TsegMbytesInitialization (
+                               VOID
+                               );
 
 EFI_STATUS
-PublishPeiMemory (
-  VOID
-  );
+  PublishPeiMemory (
+                    VOID
+                    );
 
 UINT32
-GetSystemMemorySizeBelow4gb (
-  VOID
-  );
+  GetSystemMemorySizeBelow4gb (
+                               VOID
+                               );
 
 VOID
-InitializeRamRegions (
-  VOID
-  );
+  InitializeRamRegions (
+                        VOID
+                        );
 
 EFI_STATUS
-PeiFvInitialization (
-  VOID
-  );
+  PeiFvInitialization (
+                       VOID
+                       );
 
 VOID
-InstallClearCacheCallback (
-  VOID
-  );
+  InstallClearCacheCallback (
+                             VOID
+                             );
 
 EFI_STATUS
-XenConnect (
-  VOID
-  );
+  XenConnect (
+              VOID
+              );
 
 EFI_STATUS
-InitializeXen (
-  VOID
-  );
+  InitializeXen (
+                 VOID
+                 );
 
 BOOLEAN
-XenDetect (
-  VOID
-  );
+  XenDetect (
+             VOID
+             );
 
 BOOLEAN
-XenHvmloaderDetected (
-  VOID
-  );
+  XenHvmloaderDetected (
+                        VOID
+                        );
 
 BOOLEAN
-XenPvhDetected (
-  VOID
-  );
+  XenPvhDetected (
+                  VOID
+                  );
 
 VOID
-AmdSevInitialize (
-  VOID
-  );
+  AmdSevInitialize (
+                    VOID
+                    );
 
 VOID
-XenPublishRamRegions (
-  VOID
-  );
+  XenPublishRamRegions (
+                        VOID
+                        );
 
 EFI_STATUS
 XenGetE820Map (
@@ -133,14 +133,14 @@ PhysicalAddressIdentityMapping (
   );
 
 VOID
-CalibrateLapicTimer (
-  VOID
-  );
+  CalibrateLapicTimer (
+                       VOID
+                       );
 
-extern EFI_BOOT_MODE mBootMode;
+extern EFI_BOOT_MODE  mBootMode;
 
-extern UINT8 mPhysMemAddressWidth;
+extern UINT8  mPhysMemAddressWidth;
 
-extern UINT16 mHostBridgeDevId;
+extern UINT16  mHostBridgeDevId;
 
 #endif // _PLATFORM_PEI_H_INCLUDED_

@@ -32,7 +32,7 @@
 ///
 /// Driver Binding Protocol instance
 ///
-EFI_DRIVER_BINDING_PROTOCOL gXenBusDxeDriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  gXenBusDxeDriverBinding = {
   XenBusDxeDriverBindingSupported,
   XenBusDxeDriverBindingStart,
   XenBusDxeDriverBindingStop,
@@ -41,9 +41,8 @@ EFI_DRIVER_BINDING_PROTOCOL gXenBusDxeDriverBinding = {
   NULL
 };
 
-
 STATIC EFI_LOCK       mMyDeviceLock = EFI_INITIALIZE_LOCK_VARIABLE (TPL_CALLBACK);
-STATIC XENBUS_DEVICE *mMyDevice = NULL;
+STATIC XENBUS_DEVICE  *mMyDevice    = NULL;
 
 /**
   Map the shared_info_t page into memory.
@@ -61,13 +60,13 @@ XenGetSharedInfoPage (
   IN OUT XENBUS_DEVICE *Dev
   )
 {
-  xen_add_to_physmap_t Parameter;
+  xen_add_to_physmap_t  Parameter;
 
   ASSERT (Dev->SharedInfo == NULL);
 
   Parameter.domid = DOMID_SELF;
   Parameter.space = XENMAPSPACE_shared_info;
-  Parameter.idx = 0;
+  Parameter.idx   = 0;
 
   //
   // using reserved page because the page is not released when Linux is
@@ -75,7 +74,7 @@ XenGetSharedInfoPage (
   // page, and fail because it have no right to do so (segv).
   //
   Dev->SharedInfo = AllocateReservedPages (1);
-  Parameter.gpfn = (UINTN) Dev->SharedInfo >> EFI_PAGE_SHIFT;
+  Parameter.gpfn  = (UINTN) Dev->SharedInfo >> EFI_PAGE_SHIFT;
   if (XenHypercallMemoryOp (XENMEM_add_to_physmap, &Parameter) != 0) {
     FreePages (Dev->SharedInfo, 1);
     Dev->SharedInfo = NULL;
@@ -110,12 +109,12 @@ XenBusDxeUnload (
   // Retrieve array of all handles in the handle database
   //
   Status = gBS->LocateHandleBuffer (
-                  AllHandles,
-                  NULL,
-                  NULL,
-                  &HandleCount,
-                  &HandleBuffer
-                  );
+                                    AllHandles,
+                                    NULL,
+                                    NULL,
+                                    &HandleCount,
+                                    &HandleBuffer
+                                    );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -124,7 +123,7 @@ XenBusDxeUnload (
   // Disconnect the current driver from handles in the handle database
   //
   for (Index = 0; Index < HandleCount; Index++) {
-    gBS->DisconnectController (HandleBuffer[Index], gImageHandle, NULL);
+  gBS->DisconnectController (HandleBuffer[Index], gImageHandle, NULL);
   }
 
   //
@@ -132,17 +131,19 @@ XenBusDxeUnload (
   //
   FreePool (HandleBuffer);
 
-
   //
   // Uninstall protocols installed in the driver entry point
   //
   Status = gBS->UninstallMultipleProtocolInterfaces (
-                  ImageHandle,
-                  &gEfiDriverBindingProtocolGuid, &gXenBusDxeDriverBinding,
-                  &gEfiComponentNameProtocolGuid,  &gXenBusDxeComponentName,
-                  &gEfiComponentName2ProtocolGuid, &gXenBusDxeComponentName2,
-                  NULL
-                  );
+                                                     ImageHandle,
+                                                     &gEfiDriverBindingProtocolGuid,
+                                                     &gXenBusDxeDriverBinding,
+                                                     &gEfiComponentNameProtocolGuid,
+                                                     &gXenBusDxeComponentName,
+                                                     &gEfiComponentName2ProtocolGuid,
+                                                     &gXenBusDxeComponentName2,
+                                                     NULL
+                                                     );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -171,7 +172,7 @@ XenBusDxeDriverEntryPoint (
 {
   EFI_STATUS  Status;
 
-  if (! XenHypercallIsAvailable ()) {
+  if (!XenHypercallIsAvailable ()) {
     return EFI_ABORTED;
   }
 
@@ -179,19 +180,17 @@ XenBusDxeDriverEntryPoint (
   // Install UEFI Driver Model protocol(s).
   //
   Status = EfiLibInstallDriverBindingComponentName2 (
-             ImageHandle,
-             SystemTable,
-             &gXenBusDxeDriverBinding,
-             ImageHandle,
-             &gXenBusDxeComponentName,
-             &gXenBusDxeComponentName2
-             );
+                                                     ImageHandle,
+                                                     SystemTable,
+                                                     &gXenBusDxeDriverBinding,
+                                                     ImageHandle,
+                                                     &gXenBusDxeComponentName,
+                                                     &gXenBusDxeComponentName2
+                                                     );
   ASSERT_EFI_ERROR (Status);
-
 
   return Status;
 }
-
 
 /**
   Tests to see if this driver supports a given controller. If a child device is provided,
@@ -229,28 +228,55 @@ XenBusDxeDriverBindingSupported (
   IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
   )
 {
-  EFI_STATUS          Status;
-  XENIO_PROTOCOL      *XenIo;
+  EFI_STATUS      Status;
+  XENIO_PROTOCOL  *XenIo;
 
   Status = gBS->OpenProtocol (
-                     ControllerHandle,
-                     &gXenIoProtocolGuid,
-                     (VOID **)&XenIo,
-                     This->DriverBindingHandle,
-                     ControllerHandle,
-                     EFI_OPEN_PROTOCOL_BY_DRIVER
-                     );
+                              ControllerHandle,
+                              &gXenIoProtocolGuid,
+                              (VOID **) &XenIo,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
 
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  gBS->CloseProtocol (ControllerHandle, &gXenIoProtocolGuid,
-         This->DriverBindingHandle, ControllerHandle);
+  gBS->CloseProtocol (
+                      ControllerHandle,
+                      &gXenIoProtocolGuid,
+                      This->DriverBindingHandle,
+                      ControllerHandle
+                      );
 
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 EFIAPI
 NotifyExitBoot (
@@ -258,10 +284,13 @@ NotifyExitBoot (
   IN VOID *Context
   )
 {
-  XENBUS_DEVICE *Dev = Context;
+  XENBUS_DEVICE  *Dev = Context;
 
-  gBS->DisconnectController(Dev->ControllerHandle,
-                            Dev->This->DriverBindingHandle, NULL);
+  gBS->DisconnectController (
+                             Dev->ControllerHandle,
+                             Dev->This->DriverBindingHandle,
+                             NULL
+                             );
 }
 
 /**
@@ -309,32 +338,32 @@ XenBusDxeDriverBindingStart (
   IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
   )
 {
-  EFI_STATUS Status;
-  XENBUS_DEVICE *Dev;
-  XENIO_PROTOCOL *XenIo;
-  EFI_DEVICE_PATH_PROTOCOL *DevicePath;
+  EFI_STATUS                Status;
+  XENBUS_DEVICE             *Dev;
+  XENIO_PROTOCOL            *XenIo;
+  EFI_DEVICE_PATH_PROTOCOL  *DevicePath;
 
   Status = gBS->OpenProtocol (
-                     ControllerHandle,
-                     &gXenIoProtocolGuid,
-                     (VOID**)&XenIo,
-                     This->DriverBindingHandle,
-                     ControllerHandle,
-                     EFI_OPEN_PROTOCOL_BY_DRIVER
-                     );
+                              ControllerHandle,
+                              &gXenIoProtocolGuid,
+                              (VOID **) &XenIo,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
 
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiDevicePathProtocolGuid,
-                  (VOID **) &DevicePath,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              ControllerHandle,
+                              &gEfiDevicePathProtocolGuid,
+                              (VOID **) &DevicePath,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
 
   if (EFI_ERROR (Status)) {
     goto ErrorOpenningProtocol;
@@ -357,6 +386,7 @@ XenBusDxeDriverBindingStart (
     Status = EFI_ALREADY_STARTED;
     goto ErrorAllocated;
   }
+
   mMyDevice = Dev;
   EfiReleaseLock (&mMyDeviceLock);
 
@@ -374,21 +404,32 @@ XenBusDxeDriverBindingStart (
 
   XenBusEnumerateBus (Dev);
 
-  Status = gBS->CreateEvent (EVT_SIGNAL_EXIT_BOOT_SERVICES, TPL_CALLBACK,
+  Status = gBS->CreateEvent (
+                             EVT_SIGNAL_EXIT_BOOT_SERVICES,
+                             TPL_CALLBACK,
                              NotifyExitBoot,
-                             (VOID*) Dev,
-                             &Dev->ExitBootEvent);
+                             (VOID *) Dev,
+                             &Dev->ExitBootEvent
+                             );
   ASSERT_EFI_ERROR (Status);
 
   return EFI_SUCCESS;
 
 ErrorAllocated:
   FreePool (Dev);
-  gBS->CloseProtocol (ControllerHandle, &gEfiDevicePathProtocolGuid,
-                      This->DriverBindingHandle, ControllerHandle);
+  gBS->CloseProtocol (
+                      ControllerHandle,
+                      &gEfiDevicePathProtocolGuid,
+                      This->DriverBindingHandle,
+                      ControllerHandle
+                      );
 ErrorOpenningProtocol:
-  gBS->CloseProtocol (ControllerHandle, &gXenIoProtocolGuid,
-                      This->DriverBindingHandle, ControllerHandle);
+  gBS->CloseProtocol (
+                      ControllerHandle,
+                      &gXenIoProtocolGuid,
+                      This->DriverBindingHandle,
+                      ControllerHandle
+                      );
   return Status;
 }
 
@@ -427,44 +468,54 @@ XenBusDxeDriverBindingStop (
   IN EFI_HANDLE                   *ChildHandleBuffer OPTIONAL
   )
 {
-  UINTN Index;
-  XENBUS_PROTOCOL *XenBusIo;
-  XENBUS_PRIVATE_DATA *ChildData;
-  EFI_STATUS Status;
-  XENBUS_DEVICE *Dev = mMyDevice;
+  UINTN                Index;
+  XENBUS_PROTOCOL      *XenBusIo;
+  XENBUS_PRIVATE_DATA  *ChildData;
+  EFI_STATUS           Status;
+  XENBUS_DEVICE        *Dev = mMyDevice;
 
   for (Index = 0; Index < NumberOfChildren; Index++) {
     Status = gBS->OpenProtocol (
-               ChildHandleBuffer[Index],
-               &gXenBusProtocolGuid,
-               (VOID **) &XenBusIo,
-               This->DriverBindingHandle,
-               ControllerHandle,
-               EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+                                ChildHandleBuffer[Index],
+                                &gXenBusProtocolGuid,
+                                (VOID **) &XenBusIo,
+                                This->DriverBindingHandle,
+                                ControllerHandle,
+                                EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                                );
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_ERROR, "XenBusDxe: get children protocol failed: %r\n", Status));
       continue;
     }
+
     ChildData = XENBUS_PRIVATE_DATA_FROM_THIS (XenBusIo);
 
-    Status = gBS->CloseProtocol (Dev->ControllerHandle, &gXenIoProtocolGuid,
-                    Dev->This->DriverBindingHandle, ChildData->Handle);
+    Status = gBS->CloseProtocol (
+                                 Dev->ControllerHandle,
+                                 &gXenIoProtocolGuid,
+                                 Dev->This->DriverBindingHandle,
+                                 ChildData->Handle
+                                 );
     ASSERT_EFI_ERROR (Status);
 
     Status = gBS->UninstallMultipleProtocolInterfaces (
-               ChildData->Handle,
-               &gEfiDevicePathProtocolGuid, ChildData->DevicePath,
-               &gXenBusProtocolGuid, &ChildData->XenBusIo,
-               NULL);
+                                                       ChildData->Handle,
+                                                       &gEfiDevicePathProtocolGuid,
+                                                       ChildData->DevicePath,
+                                                       &gXenBusProtocolGuid,
+                                                       &ChildData->XenBusIo,
+                                                       NULL
+                                                       );
     ASSERT_EFI_ERROR (Status);
 
-    FreePool ((VOID*)ChildData->XenBusIo.Type);
-    FreePool ((VOID*)ChildData->XenBusIo.Node);
-    FreePool ((VOID*)ChildData->XenBusIo.Backend);
+    FreePool ((VOID *) ChildData->XenBusIo.Type);
+    FreePool ((VOID *) ChildData->XenBusIo.Node);
+    FreePool ((VOID *) ChildData->XenBusIo.Backend);
     FreePool (ChildData->DevicePath);
     RemoveEntryList (&ChildData->Link);
     FreePool (ChildData);
   }
+
   if (NumberOfChildren > 0) {
     return EFI_SUCCESS;
   }
@@ -473,10 +524,18 @@ XenBusDxeDriverBindingStop (
   XenStoreDeinit (Dev);
   XenGrantTableDeinit (Dev);
 
-  gBS->CloseProtocol (ControllerHandle, &gEfiDevicePathProtocolGuid,
-         This->DriverBindingHandle, ControllerHandle);
-  gBS->CloseProtocol (ControllerHandle, &gXenIoProtocolGuid,
-         This->DriverBindingHandle, ControllerHandle);
+  gBS->CloseProtocol (
+                      ControllerHandle,
+                      &gEfiDevicePathProtocolGuid,
+                      This->DriverBindingHandle,
+                      ControllerHandle
+                      );
+  gBS->CloseProtocol (
+                      ControllerHandle,
+                      &gXenIoProtocolGuid,
+                      This->DriverBindingHandle,
+                      ControllerHandle
+                      );
 
   mMyDevice = NULL;
   FreePool (Dev);

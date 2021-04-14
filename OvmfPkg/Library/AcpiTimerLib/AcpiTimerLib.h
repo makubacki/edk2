@@ -16,8 +16,8 @@
 
 **/
 UINT32
-InternalAcpiGetTimerTick (
-  VOID
-  );
+  InternalAcpiGetTimerTick (
+                            VOID
+                            );
 
 #endif // _ACPI_TIMER_LIB_INTERNAL_H_

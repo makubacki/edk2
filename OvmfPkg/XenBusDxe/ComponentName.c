@@ -14,8 +14,8 @@
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
 EFI_COMPONENT_NAME_PROTOCOL  gXenBusDxeComponentName = {
-  (EFI_COMPONENT_NAME_GET_DRIVER_NAME)    XenBusDxeComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME_GET_CONTROLLER_NAME)XenBusDxeComponentNameGetControllerName,
+  (EFI_COMPONENT_NAME_GET_DRIVER_NAME) XenBusDxeComponentNameGetDriverName,
+  (EFI_COMPONENT_NAME_GET_CONTROLLER_NAME) XenBusDxeComponentNameGetControllerName,
   "eng"
 };
 
@@ -33,18 +33,18 @@ EFI_COMPONENT_NAME2_PROTOCOL  gXenBusDxeComponentName2 = {
 /// Table of driver names
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
-EFI_UNICODE_STRING_TABLE mXenBusDxeDriverNameTable[] = {
-  { "eng;en", (CHAR16 *)L"XenBus Bus Driver" },
-  { NULL, NULL }
+EFI_UNICODE_STRING_TABLE  mXenBusDxeDriverNameTable[] = {
+  { "eng;en", (CHAR16 *) L"XenBus Bus Driver" },
+  { NULL,     NULL                            }
 };
 
 ///
 /// Table of controller names
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
-EFI_UNICODE_STRING_TABLE mXenBusDxeControllerNameTable[] = {
-  { "eng;en", (CHAR16 *)L"XenBus Controller" },
-  { NULL, NULL }
+EFI_UNICODE_STRING_TABLE  mXenBusDxeControllerNameTable[] = {
+  { "eng;en", (CHAR16 *) L"XenBus Controller" },
+  { NULL,     NULL                            }
 };
 
 /**
@@ -78,12 +78,12 @@ XenBusDxeComponentNameGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mXenBusDxeDriverNameTable,
-           DriverName,
-           (BOOLEAN)(This != &gXenBusDxeComponentName2)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mXenBusDxeDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This != &gXenBusDxeComponentName2)
+                               );
 }
 
 /**
@@ -147,10 +147,10 @@ XenBusDxeComponentNameGetControllerName (
   // Make sure this driver is currently managing ControllerHandle
   //
   Status = EfiTestManagedDevice (
-             ControllerHandle,
-             gXenBusDxeDriverBinding.DriverBindingHandle,
-             &gXenIoProtocolGuid
-             );
+                                 ControllerHandle,
+                                 gXenBusDxeDriverBinding.DriverBindingHandle,
+                                 &gXenIoProtocolGuid
+                                 );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -159,10 +159,10 @@ XenBusDxeComponentNameGetControllerName (
   // Lookup name of controller specified by ControllerHandle
   //
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mXenBusDxeControllerNameTable,
-           ControllerName,
-           (BOOLEAN)(This != &gXenBusDxeComponentName2)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mXenBusDxeControllerNameTable,
+                               ControllerName,
+                               (BOOLEAN) (This != &gXenBusDxeComponentName2)
+                               );
 }

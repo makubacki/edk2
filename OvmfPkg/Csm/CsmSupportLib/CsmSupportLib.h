@@ -19,9 +19,9 @@
 
 **/
 EFI_STATUS
-LegacyRegionInit (
-  VOID
-  );
+  LegacyRegionInit (
+                    VOID
+                    );
 
 /**
   Initialize Legacy Interrupt support
@@ -30,9 +30,9 @@ LegacyRegionInit (
 
 **/
 EFI_STATUS
-LegacyInterruptInstall (
-  VOID
-  );
+  LegacyInterruptInstall (
+                          VOID
+                          );
 
 /**
   Initialize Legacy Platform support
@@ -41,9 +41,8 @@ LegacyInterruptInstall (
 
 **/
 EFI_STATUS
-LegacyBiosPlatformInstall (
-  VOID
-  );
+  LegacyBiosPlatformInstall (
+                             VOID
+                             );
 
 #endif
-

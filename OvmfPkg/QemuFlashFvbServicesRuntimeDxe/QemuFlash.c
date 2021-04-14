@@ -24,22 +24,43 @@
 
 #define CLEARED_ARRAY_STATUS  0x00
 
+UINT8  *mFlashBase;
 
-UINT8 *mFlashBase;
+STATIC UINTN  mFdBlockSize  = 0;
+STATIC UINTN  mFdBlockCount = 0;
 
-STATIC UINTN       mFdBlockSize = 0;
-STATIC UINTN       mFdBlockCount = 0;
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
-volatile UINT8*
+volatile UINT8 *
 QemuFlashPtr (
   IN        EFI_LBA                             Lba,
   IN        UINTN                               Offset
   )
 {
-  return mFlashBase + ((UINTN)Lba * mFdBlockSize) + Offset;
+  return mFlashBase + ((UINTN) Lba * mFdBlockSize) + Offset;
 }
-
 
 /**
   Determines if the QEMU flash memory device is present.
@@ -54,12 +75,12 @@ QemuFlashDetected (
   VOID
   )
 {
-  BOOLEAN  FlashDetected;
+  BOOLEAN         FlashDetected;
   volatile UINT8  *Ptr;
 
-  UINTN Offset;
-  UINT8 OriginalUint8;
-  UINT8 ProbeUint8;
+  UINTN  Offset;
+  UINT8  OriginalUint8;
+  UINT8  ProbeUint8;
 
   FlashDetected = FALSE;
   Ptr = QemuFlashPtr (0, 0);
@@ -91,8 +112,10 @@ QemuFlashDetected (
     // the FD appears as ROM and not as FLASH, but report FLASH anyway because
     // FLASH behavior can be simulated using VMGEXIT.
     //
-    DEBUG ((DEBUG_INFO,
-      "QEMU Flash: SEV-ES enabled, assuming FD behaves as FLASH\n"));
+    DEBUG (
+           (DEBUG_INFO,
+            "QEMU Flash: SEV-ES enabled, assuming FD behaves as FLASH\n")
+           );
     return TRUE;
   }
 
@@ -118,11 +141,12 @@ QemuFlashDetected (
     }
   }
 
-  DEBUG ((DEBUG_INFO, "QemuFlashDetected => %a\n",
-                      FlashDetected ? "Yes" : "No"));
+  DEBUG (
+         (DEBUG_INFO, "QemuFlashDetected => %a\n",
+          FlashDetected ? "Yes" : "No")
+         );
   return FlashDetected;
 }
-
 
 /**
   Read from QEMU Flash
@@ -155,13 +179,12 @@ QemuFlashRead (
   //
   // Get flash address
   //
-  Ptr = (UINT8*) QemuFlashPtr (Lba, Offset);
+  Ptr = (UINT8 *) QemuFlashPtr (Lba, Offset);
 
   CopyMem (Buffer, Ptr, *NumBytes);
 
   return EFI_SUCCESS;
 }
-
 
 /**
   Write to QEMU Flash
@@ -213,7 +236,6 @@ QemuFlashWrite (
   return EFI_SUCCESS;
 }
 
-
 /**
   Erase a QEMU Flash block
 
@@ -237,7 +259,6 @@ QemuFlashEraseBlock (
   return EFI_SUCCESS;
 }
 
-
 /**
   Initializes QEMU flash memory support
 
@@ -250,19 +271,19 @@ QemuFlashInitialize (
   VOID
   )
 {
-  mFlashBase = (UINT8*)(UINTN) PcdGet32 (PcdOvmfFdBaseAddress);
+  mFlashBase   = (UINT8 *) (UINTN) PcdGet32 (PcdOvmfFdBaseAddress);
   mFdBlockSize = PcdGet32 (PcdOvmfFirmwareBlockSize);
-  ASSERT(PcdGet32 (PcdOvmfFirmwareFdSize) % mFdBlockSize == 0);
+  ASSERT (PcdGet32 (PcdOvmfFirmwareFdSize) % mFdBlockSize == 0);
   mFdBlockCount = PcdGet32 (PcdOvmfFirmwareFdSize) / mFdBlockSize;
 
   //
   // execute module specific hooks before probing the flash
   //
   QemuFlashBeforeProbe (
-    (EFI_PHYSICAL_ADDRESS)(UINTN) mFlashBase,
-    mFdBlockSize,
-    mFdBlockCount
-    );
+                        (EFI_PHYSICAL_ADDRESS) (UINTN) mFlashBase,
+                        mFdBlockSize,
+                        mFdBlockCount
+                        );
 
   if (!QemuFlashDetected ()) {
     ASSERT (!FeaturePcdGet (PcdSmmSmramRequire));
@@ -271,4 +292,3 @@ QemuFlashInitialize (
 
   return EFI_SUCCESS;
 }
-

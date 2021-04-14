@@ -15,8 +15,31 @@
 #include <Library/ResetSystemLib.h> // ResetShutdown()
 #include <OvmfPlatforms.h>          // PIIX4_PMBA_VALUE
 
-STATIC UINT16 mAcpiPmBaseAddress;
+STATIC UINT16  mAcpiPmBaseAddress;
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 DxeResetInit (
@@ -24,20 +47,20 @@ DxeResetInit (
   IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  UINT16 HostBridgeDevId;
+  UINT16  HostBridgeDevId;
 
   HostBridgeDevId = PcdGet16 (PcdOvmfHostBridgePciDevId);
   switch (HostBridgeDevId) {
-  case INTEL_82441_DEVICE_ID:
-    mAcpiPmBaseAddress = PIIX4_PMBA_VALUE;
-    break;
-  case INTEL_Q35_MCH_DEVICE_ID:
-    mAcpiPmBaseAddress = ICH9_PMBASE_VALUE;
-    break;
-  default:
-    ASSERT (FALSE);
-    CpuDeadLoop ();
-    return EFI_UNSUPPORTED;
+    case INTEL_82441_DEVICE_ID:
+      mAcpiPmBaseAddress = PIIX4_PMBA_VALUE;
+      break;
+    case INTEL_Q35_MCH_DEVICE_ID:
+      mAcpiPmBaseAddress = ICH9_PMBASE_VALUE;
+      break;
+    default:
+      ASSERT (FALSE);
+      CpuDeadLoop ();
+      return EFI_UNSUPPORTED;
   }
 
   return EFI_SUCCESS;

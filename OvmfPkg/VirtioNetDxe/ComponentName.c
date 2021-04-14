@@ -14,13 +14,13 @@
 #include "VirtioNet.h"
 
 STATIC
-EFI_UNICODE_STRING_TABLE mVirtioNetDriverNameTable[] = {
+EFI_UNICODE_STRING_TABLE  mVirtioNetDriverNameTable[] = {
   { "eng;en", L"Virtio Network Driver" },
   { NULL,     NULL                     }
 };
 
 STATIC
-EFI_UNICODE_STRING_TABLE mVirtioNetControllerNameTable[] = {
+EFI_UNICODE_STRING_TABLE  mVirtioNetControllerNameTable[] = {
   { "eng;en", L"Virtio Network Device" },
   { NULL,     NULL                     }
 };
@@ -48,7 +48,6 @@ EFI_UNICODE_STRING_TABLE mVirtioNetControllerNameTable[] = {
                                 the language specified by Language.
 
 **/
-
 STATIC
 EFI_STATUS
 EFIAPI
@@ -61,14 +60,13 @@ VirtioNetGetDriverName (
   return (Language == NULL || DriverName == NULL) ?
          EFI_INVALID_PARAMETER :
          LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mVirtioNetDriverNameTable,
-           DriverName,
-           (BOOLEAN) (This == &gVirtioNetComponentName) // Iso639Language
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mVirtioNetDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gVirtioNetComponentName) // Iso639Language
+                               );
 }
-
 
 /**
   Retrieves a Unicode string that is the user readable name of the controller
@@ -114,7 +112,6 @@ VirtioNetGetDriverName (
                                 the language specified by Language.
 
 **/
-
 STATIC
 EFI_STATUS
 EFIAPI
@@ -126,7 +123,7 @@ VirtioNetGetControllerName (
   OUT CHAR16                      **ControllerName
   )
 {
-  EFI_STATUS Status;
+  EFI_STATUS  Status;
 
   if (ControllerHandle == NULL || Language == NULL || ControllerName == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -137,10 +134,10 @@ VirtioNetGetControllerName (
   // Protocol
   //
   Status = EfiTestManagedDevice (
-             ControllerHandle,
-             gVirtioNetDriverBinding.DriverBindingHandle,
-             &gVirtioDeviceProtocolGuid
-             );
+                                 ControllerHandle,
+                                 gVirtioNetDriverBinding.DriverBindingHandle,
+                                 &gVirtioDeviceProtocolGuid
+                                 );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -150,22 +147,22 @@ VirtioNetGetControllerName (
   // child (= MAC) handle
   //
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mVirtioNetControllerNameTable,
-           ControllerName,
-           (BOOLEAN) (This == &gVirtioNetComponentName) // Iso639Language
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mVirtioNetControllerNameTable,
+                               ControllerName,
+                               (BOOLEAN) (This == &gVirtioNetComponentName) // Iso639Language
+                               );
 }
 
-EFI_COMPONENT_NAME_PROTOCOL gVirtioNetComponentName = {
+EFI_COMPONENT_NAME_PROTOCOL  gVirtioNetComponentName = {
   &VirtioNetGetDriverName,
   &VirtioNetGetControllerName,
   "eng" // SupportedLanguages, ISO 639-2 language codes
 };
 
-EFI_COMPONENT_NAME2_PROTOCOL gVirtioNetComponentName2 = {
-  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)     &VirtioNetGetDriverName,
+EFI_COMPONENT_NAME2_PROTOCOL  gVirtioNetComponentName2 = {
+  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) &VirtioNetGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) &VirtioNetGetControllerName,
   "en" // SupportedLanguages, RFC 4646 language codes
 };

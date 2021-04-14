@@ -23,6 +23,29 @@
 #include <Library/PciLib.h>
 #include "PciHostBridge.h"
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 VOID
 PcatPciRootBridgeBarExisted (
@@ -51,22 +74,69 @@ PcatPciRootBridgeBarExisted (
   EnableInterrupts ();
 }
 
-#define PCI_COMMAND_DECODE ((UINT16)(EFI_PCI_COMMAND_IO_SPACE | \
-                                     EFI_PCI_COMMAND_MEMORY_SPACE))
+#define PCI_COMMAND_DECODE  ((UINT16) (EFI_PCI_COMMAND_IO_SPACE | \
+                                       EFI_PCI_COMMAND_MEMORY_SPACE))
+
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 VOID
 PcatPciRootBridgeDecodingDisable (
   IN  UINTN                          Address
   )
 {
-  UINT16                             Value;
+  UINT16  Value;
 
   Value = PciRead16 (Address);
   if (Value & PCI_COMMAND_DECODE) {
-    PciWrite16 (Address, Value & ~(UINT32)PCI_COMMAND_DECODE);
+    PciWrite16 (Address, Value & ~(UINT32) PCI_COMMAND_DECODE);
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 VOID
 PcatPciRootBridgeParseBars (
@@ -80,49 +150,53 @@ PcatPciRootBridgeParseBars (
   IN PCI_ROOT_BRIDGE_APERTURE       *Mem,
   IN PCI_ROOT_BRIDGE_APERTURE       *MemAbove4G
 
-)
+  )
 {
-  UINT32                            OriginalValue;
-  UINT32                            Value;
-  UINT32                            OriginalUpperValue;
-  UINT32                            UpperValue;
-  UINT64                            Mask;
-  UINTN                             Offset;
-  UINT64                            Base;
-  UINT64                            Length;
-  UINT64                            Limit;
-  PCI_ROOT_BRIDGE_APERTURE          *MemAperture;
+  UINT32                    OriginalValue;
+  UINT32                    Value;
+  UINT32                    OriginalUpperValue;
+  UINT32                    UpperValue;
+  UINT64                    Mask;
+  UINTN                     Offset;
+  UINT64                    Base;
+  UINT64                    Length;
+  UINT64                    Limit;
+  PCI_ROOT_BRIDGE_APERTURE  *MemAperture;
 
   // Disable address decoding for every device before OVMF starts sizing it
   PcatPciRootBridgeDecodingDisable (
-    PCI_LIB_ADDRESS (Bus, Device, Function, PCI_COMMAND_OFFSET)
-  );
+                                    PCI_LIB_ADDRESS (Bus, Device, Function, PCI_COMMAND_OFFSET)
+                                    );
 
   for (Offset = BarOffsetBase; Offset < BarOffsetEnd; Offset += sizeof (UINT32)) {
     PcatPciRootBridgeBarExisted (
-      PCI_LIB_ADDRESS (Bus, Device, Function, Offset),
-      &OriginalValue, &Value
-    );
+                                 PCI_LIB_ADDRESS (Bus, Device, Function, Offset),
+                                 &OriginalValue,
+                                 &Value
+                                 );
     if (Value == 0) {
       continue;
     }
+
     if ((Value & BIT0) == BIT0) {
       //
       // IO Bar
       //
       if (Command & EFI_PCI_COMMAND_IO_SPACE) {
-        Mask = 0xfffffffc;
-        Base = OriginalValue & Mask;
+        Mask   = 0xfffffffc;
+        Base   = OriginalValue & Mask;
         Length = ((~(Value & Mask)) & Mask) + 0x04;
         if (!(Value & 0xFFFF0000)) {
           Length &= 0x0000FFFF;
         }
+
         Limit = Base + Length - 1;
 
         if (Base < Limit) {
           if (Io->Base > Base) {
             Io->Base = Base;
           }
+
           if (Io->Limit < Limit) {
             Io->Limit = Limit;
           }
@@ -133,9 +207,8 @@ PcatPciRootBridgeParseBars (
       // Mem Bar
       //
       if (Command & EFI_PCI_COMMAND_MEMORY_SPACE) {
-
-        Mask = 0xfffffff0;
-        Base = OriginalValue & Mask;
+        Mask   = 0xfffffff0;
+        Base   = OriginalValue & Mask;
         Length = Value & Mask;
 
         if ((Value & (BIT1 | BIT2)) == 0) {
@@ -151,12 +224,12 @@ PcatPciRootBridgeParseBars (
           //
           Offset += 4;
           PcatPciRootBridgeBarExisted (
-            PCI_LIB_ADDRESS (Bus, Device, Function, Offset),
-            &OriginalUpperValue,
-            &UpperValue
-          );
+                                       PCI_LIB_ADDRESS (Bus, Device, Function, Offset),
+                                       &OriginalUpperValue,
+                                       &UpperValue
+                                       );
 
-          Base = Base | LShiftU64 ((UINT64) OriginalUpperValue, 32);
+          Base   = Base | LShiftU64 ((UINT64) OriginalUpperValue, 32);
           Length = Length | LShiftU64 ((UINT64) UpperValue, 32);
           Length = (~Length) + 1;
 
@@ -172,6 +245,7 @@ PcatPciRootBridgeParseBars (
           if (MemAperture->Base > Base) {
             MemAperture->Base = Base;
           }
+
           if (MemAperture->Limit < Limit) {
             MemAperture->Limit = Limit;
           }
@@ -181,28 +255,50 @@ PcatPciRootBridgeParseBars (
   }
 }
 
-STATIC PCI_ROOT_BRIDGE_APERTURE mNonExistAperture = { MAX_UINT64, 0 };
+STATIC PCI_ROOT_BRIDGE_APERTURE  mNonExistAperture = { MAX_UINT64, 0 };
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 PCI_ROOT_BRIDGE *
 ScanForRootBridges (
   UINTN      *NumberOfRootBridges
   )
 {
-  UINTN      PrimaryBus;
-  UINTN      SubBus;
-  UINT8      Device;
-  UINT8      Function;
-  UINTN      NumberOfDevices;
-  UINTN      Address;
-  PCI_TYPE01 Pci;
-  UINT64     Attributes;
-  UINT64     Base;
-  UINT64     Limit;
-  UINT64     Value;
-  PCI_ROOT_BRIDGE_APERTURE Io, Mem, MemAbove4G, *MemAperture;
-  PCI_ROOT_BRIDGE *RootBridges;
-  UINTN      BarOffsetEnd;
-
+  UINTN                     PrimaryBus;
+  UINTN                     SubBus;
+  UINT8                     Device;
+  UINT8                     Function;
+  UINTN                     NumberOfDevices;
+  UINTN                     Address;
+  PCI_TYPE01                Pci;
+  UINT64                    Attributes;
+  UINT64                    Base;
+  UINT64                    Limit;
+  UINT64                    Value;
+  PCI_ROOT_BRIDGE_APERTURE  Io, Mem, MemAbove4G, *MemAperture;
+  PCI_ROOT_BRIDGE           *RootBridges;
+  UINTN                     BarOffsetEnd;
 
   *NumberOfRootBridges = 0;
   RootBridges = NULL;
@@ -213,7 +309,7 @@ ScanForRootBridges (
   // root bridge's subordinate bus number + 1.
   //
   for (PrimaryBus = 0; PrimaryBus <= PCI_MAX_BUS; PrimaryBus = SubBus + 1) {
-    SubBus = PrimaryBus;
+    SubBus     = PrimaryBus;
     Attributes = 0;
 
     ZeroMem (&Io, sizeof (Io));
@@ -224,9 +320,7 @@ ScanForRootBridges (
     // Scan all the PCI devices on the primary bus of the PCI root bridge
     //
     for (Device = 0, NumberOfDevices = 0; Device <= PCI_MAX_DEVICE; Device++) {
-
       for (Function = 0; Function <= PCI_MAX_FUNC; Function++) {
-
         //
         // Compute the PCI configuration address of the PCI device to probe
         //
@@ -293,16 +387,18 @@ ScanForRootBridges (
           // Get the I/O range that the PPB is decoding
           //
           Value = Pci.Bridge.IoBase & 0x0f;
-          Base = ((UINT32) Pci.Bridge.IoBase & 0xf0) << 8;
+          Base  = ((UINT32) Pci.Bridge.IoBase & 0xf0) << 8;
           Limit = (((UINT32) Pci.Bridge.IoLimit & 0xf0) << 8) | 0x0fff;
           if (Value == BIT0) {
-            Base |= ((UINT32) Pci.Bridge.IoBaseUpper16 << 16);
+            Base  |= ((UINT32) Pci.Bridge.IoBaseUpper16 << 16);
             Limit |= ((UINT32) Pci.Bridge.IoLimitUpper16 << 16);
           }
+
           if (Base < Limit) {
             if (Io.Base > Base) {
               Io.Base = Base;
             }
+
             if (Io.Limit < Limit) {
               Io.Limit = Limit;
             }
@@ -311,12 +407,13 @@ ScanForRootBridges (
           //
           // Get the Memory range that the PPB is decoding
           //
-          Base = ((UINT32) Pci.Bridge.MemoryBase & 0xfff0) << 16;
+          Base  = ((UINT32) Pci.Bridge.MemoryBase & 0xfff0) << 16;
           Limit = (((UINT32) Pci.Bridge.MemoryLimit & 0xfff0) << 16) | 0xfffff;
           if (Base < Limit) {
             if (Mem.Base > Base) {
               Mem.Base = Base;
             }
+
             if (Mem.Limit < Limit) {
               Mem.Limit = Limit;
             }
@@ -327,19 +424,21 @@ ScanForRootBridges (
           // and merge it into Memory range
           //
           Value = Pci.Bridge.PrefetchableMemoryBase & 0x0f;
-          Base = ((UINT32) Pci.Bridge.PrefetchableMemoryBase & 0xfff0) << 16;
+          Base  = ((UINT32) Pci.Bridge.PrefetchableMemoryBase & 0xfff0) << 16;
           Limit = (((UINT32) Pci.Bridge.PrefetchableMemoryLimit & 0xfff0)
                    << 16) | 0xfffff;
           MemAperture = &Mem;
           if (Value == BIT0) {
-            Base |= LShiftU64 (Pci.Bridge.PrefetchableBaseUpper32, 32);
+            Base  |= LShiftU64 (Pci.Bridge.PrefetchableBaseUpper32, 32);
             Limit |= LShiftU64 (Pci.Bridge.PrefetchableLimitUpper32, 32);
             MemAperture = &MemAbove4G;
           }
+
           if (Base < Limit) {
             if (MemAperture->Base > Base) {
               MemAperture->Base = Base;
             }
+
             if (MemAperture->Limit < Limit) {
               MemAperture->Limit = Limit;
             }
@@ -354,6 +453,7 @@ ScanForRootBridges (
             Attributes |= EFI_PCI_ATTRIBUTE_ISA_IO_16;
             Attributes |= EFI_PCI_ATTRIBUTE_ISA_MOTHERBOARD_IO;
           }
+
           if ((Pci.Bridge.BridgeControl & EFI_PCI_BRIDGE_CONTROL_VGA)
               == EFI_PCI_BRIDGE_CONTROL_VGA) {
             Attributes |= EFI_PCI_ATTRIBUTE_VGA_PALETTE_IO;
@@ -378,28 +478,34 @@ ScanForRootBridges (
         }
 
         PcatPciRootBridgeParseBars (
-          Pci.Hdr.Command,
-          PrimaryBus,
-          Device,
-          Function,
-          OFFSET_OF (PCI_TYPE00, Device.Bar),
-          BarOffsetEnd,
-          &Io,
-          &Mem, &MemAbove4G
-        );
+                                    Pci.Hdr.Command,
+                                    PrimaryBus,
+                                    Device,
+                                    Function,
+                                    OFFSET_OF (PCI_TYPE00, Device.Bar),
+                                    BarOffsetEnd,
+                                    &Io,
+                                    &Mem,
+                                    &MemAbove4G
+                                    );
 
         //
         // See if the PCI device is an IDE controller
         //
-        if (IS_CLASS2 (&Pci, PCI_CLASS_MASS_STORAGE,
-                       PCI_CLASS_MASS_STORAGE_IDE)) {
+        if (IS_CLASS2 (
+                       &Pci,
+                       PCI_CLASS_MASS_STORAGE,
+                       PCI_CLASS_MASS_STORAGE_IDE
+                       )) {
           if (Pci.Hdr.ClassCode[0] & 0x80) {
             Attributes |= EFI_PCI_ATTRIBUTE_IDE_PRIMARY_IO;
             Attributes |= EFI_PCI_ATTRIBUTE_IDE_SECONDARY_IO;
           }
+
           if (Pci.Hdr.ClassCode[0] & 0x01) {
             Attributes |= EFI_PCI_ATTRIBUTE_IDE_PRIMARY_IO;
           }
+
           if (Pci.Hdr.ClassCode[0] & 0x04) {
             Attributes |= EFI_PCI_ATTRIBUTE_IDE_SECONDARY_IO;
           }
@@ -449,18 +555,26 @@ ScanForRootBridges (
     //
     if (NumberOfDevices > 0) {
       RootBridges = ReallocatePool (
-        (*NumberOfRootBridges) * sizeof (PCI_ROOT_BRIDGE),
-        (*NumberOfRootBridges + 1) * sizeof (PCI_ROOT_BRIDGE),
-        RootBridges
-      );
+                                    (*NumberOfRootBridges) * sizeof (PCI_ROOT_BRIDGE),
+                                    (*NumberOfRootBridges + 1) * sizeof (PCI_ROOT_BRIDGE),
+                                    RootBridges
+                                    );
       ASSERT (RootBridges != NULL);
       PciHostBridgeUtilityInitRootBridge (
-        Attributes, Attributes, 0,
-        FALSE, PcdGet16 (PcdOvmfHostBridgePciDevId) != INTEL_Q35_MCH_DEVICE_ID,
-        (UINT8) PrimaryBus, (UINT8) SubBus,
-        &Io, &Mem, &MemAbove4G, &mNonExistAperture, &mNonExistAperture,
-        &RootBridges[*NumberOfRootBridges]
-      );
+                                          Attributes,
+                                          Attributes,
+                                          0,
+                                          FALSE,
+                                          PcdGet16 (PcdOvmfHostBridgePciDevId) != INTEL_Q35_MCH_DEVICE_ID,
+                                          (UINT8) PrimaryBus,
+                                          (UINT8) SubBus,
+                                          &Io,
+                                          &Mem,
+                                          &MemAbove4G,
+                                          &mNonExistAperture,
+                                          &mNonExistAperture,
+                                          &RootBridges[*NumberOfRootBridges]
+                                          );
       RootBridges[*NumberOfRootBridges].ResourceAssigned = TRUE;
       //
       // Increment the index for the next PCI Root Bridge

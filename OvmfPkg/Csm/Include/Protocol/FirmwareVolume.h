@@ -19,58 +19,57 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #ifndef _FIRMWARE_VOLUME_H_
 #define _FIRMWARE_VOLUME_H_
 
-
 //
 // Firmware Volume Protocol GUID definition
 //
 #define EFI_FIRMWARE_VOLUME_PROTOCOL_GUID \
   { \
-    0x389F751F, 0x1838, 0x4388, {0x83, 0x90, 0xCD, 0x81, 0x54, 0xBD, 0x27, 0xF8 } \
+    0x389F751F, 0x1838, 0x4388, { 0x83, 0x90, 0xCD, 0x81, 0x54, 0xBD, 0x27, 0xF8 } \
   }
 
-#define FV_DEVICE_SIGNATURE SIGNATURE_32 ('_', 'F', 'V', '_')
+#define FV_DEVICE_SIGNATURE  SIGNATURE_32 ('_', 'F', 'V', '_')
 
-typedef struct _EFI_FIRMWARE_VOLUME_PROTOCOL  EFI_FIRMWARE_VOLUME_PROTOCOL;
+typedef struct _EFI_FIRMWARE_VOLUME_PROTOCOL EFI_FIRMWARE_VOLUME_PROTOCOL;
 
 //
 // FRAMEWORK_EFI_FV_ATTRIBUTES bit definitions
 //
-typedef UINT64  FRAMEWORK_EFI_FV_ATTRIBUTES;
+typedef UINT64 FRAMEWORK_EFI_FV_ATTRIBUTES;
 
 //
 // ************************************************************
 // FRAMEWORK_EFI_FV_ATTRIBUTES bit definitions
 // ************************************************************
 //
-#define EFI_FV_READ_DISABLE_CAP       0x0000000000000001ULL
-#define EFI_FV_READ_ENABLE_CAP        0x0000000000000002ULL
-#define EFI_FV_READ_STATUS            0x0000000000000004ULL
+#define EFI_FV_READ_DISABLE_CAP  0x0000000000000001ULL
+#define EFI_FV_READ_ENABLE_CAP   0x0000000000000002ULL
+#define EFI_FV_READ_STATUS       0x0000000000000004ULL
 
-#define EFI_FV_WRITE_DISABLE_CAP      0x0000000000000008ULL
-#define EFI_FV_WRITE_ENABLE_CAP       0x0000000000000010ULL
-#define EFI_FV_WRITE_STATUS           0x0000000000000020ULL
+#define EFI_FV_WRITE_DISABLE_CAP  0x0000000000000008ULL
+#define EFI_FV_WRITE_ENABLE_CAP   0x0000000000000010ULL
+#define EFI_FV_WRITE_STATUS       0x0000000000000020ULL
 
 #define EFI_FV_LOCK_CAP               0x0000000000000040ULL
 #define EFI_FV_LOCK_STATUS            0x0000000000000080ULL
 #define EFI_FV_WRITE_POLICY_RELIABLE  0x0000000000000100ULL
 
-#define EFI_FV_ALIGNMENT_CAP          0x0000000000008000ULL
-#define EFI_FV_ALIGNMENT_2            0x0000000000010000ULL
-#define EFI_FV_ALIGNMENT_4            0x0000000000020000ULL
-#define EFI_FV_ALIGNMENT_8            0x0000000000040000ULL
-#define EFI_FV_ALIGNMENT_16           0x0000000000080000ULL
-#define EFI_FV_ALIGNMENT_32           0x0000000000100000ULL
-#define EFI_FV_ALIGNMENT_64           0x0000000000200000ULL
-#define EFI_FV_ALIGNMENT_128          0x0000000000400000ULL
-#define EFI_FV_ALIGNMENT_256          0x0000000000800000ULL
-#define EFI_FV_ALIGNMENT_512          0x0000000001000000ULL
-#define EFI_FV_ALIGNMENT_1K           0x0000000002000000ULL
-#define EFI_FV_ALIGNMENT_2K           0x0000000004000000ULL
-#define EFI_FV_ALIGNMENT_4K           0x0000000008000000ULL
-#define EFI_FV_ALIGNMENT_8K           0x0000000010000000ULL
-#define EFI_FV_ALIGNMENT_16K          0x0000000020000000ULL
-#define EFI_FV_ALIGNMENT_32K          0x0000000040000000ULL
-#define EFI_FV_ALIGNMENT_64K          0x0000000080000000ULL
+#define EFI_FV_ALIGNMENT_CAP  0x0000000000008000ULL
+#define EFI_FV_ALIGNMENT_2    0x0000000000010000ULL
+#define EFI_FV_ALIGNMENT_4    0x0000000000020000ULL
+#define EFI_FV_ALIGNMENT_8    0x0000000000040000ULL
+#define EFI_FV_ALIGNMENT_16   0x0000000000080000ULL
+#define EFI_FV_ALIGNMENT_32   0x0000000000100000ULL
+#define EFI_FV_ALIGNMENT_64   0x0000000000200000ULL
+#define EFI_FV_ALIGNMENT_128  0x0000000000400000ULL
+#define EFI_FV_ALIGNMENT_256  0x0000000000800000ULL
+#define EFI_FV_ALIGNMENT_512  0x0000000001000000ULL
+#define EFI_FV_ALIGNMENT_1K   0x0000000002000000ULL
+#define EFI_FV_ALIGNMENT_2K   0x0000000004000000ULL
+#define EFI_FV_ALIGNMENT_4K   0x0000000008000000ULL
+#define EFI_FV_ALIGNMENT_8K   0x0000000010000000ULL
+#define EFI_FV_ALIGNMENT_16K  0x0000000020000000ULL
+#define EFI_FV_ALIGNMENT_32K  0x0000000040000000ULL
+#define EFI_FV_ALIGNMENT_64K  0x0000000080000000ULL
 
 //
 // Protocol API definitions
@@ -86,11 +85,11 @@ typedef UINT64  FRAMEWORK_EFI_FV_ATTRIBUTES;
   @retval EFI_SUCCESS           The firmware volume attributes were returned.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *FRAMEWORK_EFI_FV_GET_ATTRIBUTES)(
-  IN  EFI_FIRMWARE_VOLUME_PROTOCOL            *This,
-  OUT FRAMEWORK_EFI_FV_ATTRIBUTES             *Attributes
-  );
+                                          IN  EFI_FIRMWARE_VOLUME_PROTOCOL            *This,
+                                          OUT FRAMEWORK_EFI_FV_ATTRIBUTES             *Attributes
+                                          );
 
 /**
   Sets volume attributes
@@ -111,11 +110,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *FRAMEWORK_EFI_FV_SET_ATTRIBUTES)(
-  IN EFI_FIRMWARE_VOLUME_PROTOCOL       *This,
-  IN OUT FRAMEWORK_EFI_FV_ATTRIBUTES    *Attributes
-  );
+                                          IN EFI_FIRMWARE_VOLUME_PROTOCOL       *This,
+                                          IN OUT FRAMEWORK_EFI_FV_ATTRIBUTES    *Attributes
+                                          );
 
 /**
   Read the requested file (NameGuid) or file information from the firmware volume
@@ -154,16 +153,16 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *FRAMEWORK_EFI_FV_READ_FILE)(
-  IN EFI_FIRMWARE_VOLUME_PROTOCOL   *This,
-  IN EFI_GUID                       *NameGuid,
-  IN OUT VOID                       **Buffer,
-  IN OUT UINTN                      *BufferSize,
-  OUT EFI_FV_FILETYPE               *FoundType,
-  OUT EFI_FV_FILE_ATTRIBUTES        *FileAttributes,
-  OUT UINT32                        *AuthenticationStatus
-  );
+                                     IN EFI_FIRMWARE_VOLUME_PROTOCOL   *This,
+                                     IN EFI_GUID                       *NameGuid,
+                                     IN OUT VOID                       **Buffer,
+                                     IN OUT UINTN                      *BufferSize,
+                                     OUT EFI_FV_FILETYPE               *FoundType,
+                                     OUT EFI_FV_FILE_ATTRIBUTES        *FileAttributes,
+                                     OUT UINT32                        *AuthenticationStatus
+                                     );
 
 /**
   Read the requested section from the specified file and returns data in Buffer.
@@ -199,28 +198,28 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *FRAMEWORK_EFI_FV_READ_SECTION)(
-  IN EFI_FIRMWARE_VOLUME_PROTOCOL   *This,
-  IN EFI_GUID                       *NameGuid,
-  IN EFI_SECTION_TYPE               SectionType,
-  IN UINTN                          SectionInstance,
-  IN OUT VOID                       **Buffer,
-  IN OUT UINTN                      *BufferSize,
-  OUT UINT32                        *AuthenticationStatus
-  );
+                                        IN EFI_FIRMWARE_VOLUME_PROTOCOL   *This,
+                                        IN EFI_GUID                       *NameGuid,
+                                        IN EFI_SECTION_TYPE               SectionType,
+                                        IN UINTN                          SectionInstance,
+                                        IN OUT VOID                       **Buffer,
+                                        IN OUT UINTN                      *BufferSize,
+                                        OUT UINT32                        *AuthenticationStatus
+                                        );
 
-typedef UINT32  FRAMEWORK_EFI_FV_WRITE_POLICY;
+typedef UINT32 FRAMEWORK_EFI_FV_WRITE_POLICY;
 
-#define FRAMEWORK_EFI_FV_UNRELIABLE_WRITE 0x00000000
-#define FRAMEWORK_EFI_FV_RELIABLE_WRITE   0x00000001
+#define FRAMEWORK_EFI_FV_UNRELIABLE_WRITE  0x00000000
+#define FRAMEWORK_EFI_FV_RELIABLE_WRITE    0x00000001
 
 typedef struct {
-  EFI_GUID                *NameGuid;
-  EFI_FV_FILETYPE         Type;
-  EFI_FV_FILE_ATTRIBUTES  FileAttributes;
-  VOID                    *Buffer;
-  UINT32                  BufferSize;
+  EFI_GUID                  *NameGuid;
+  EFI_FV_FILETYPE           Type;
+  EFI_FV_FILE_ATTRIBUTES    FileAttributes;
+  VOID                      *Buffer;
+  UINT32                    BufferSize;
 } FRAMEWORK_EFI_FV_WRITE_FILE_DATA;
 
 /**
@@ -250,13 +249,13 @@ typedef struct {
                                 A file system specific error has occurred.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *FRAMEWORK_EFI_FV_WRITE_FILE)(
-  IN EFI_FIRMWARE_VOLUME_PROTOCOL             *This,
-  IN UINT32                                   NumberOfFiles,
-  IN FRAMEWORK_EFI_FV_WRITE_POLICY            WritePolicy,
-  IN FRAMEWORK_EFI_FV_WRITE_FILE_DATA         *FileData
-  );
+                                      IN EFI_FIRMWARE_VOLUME_PROTOCOL             *This,
+                                      IN UINT32                                   NumberOfFiles,
+                                      IN FRAMEWORK_EFI_FV_WRITE_POLICY            WritePolicy,
+                                      IN FRAMEWORK_EFI_FV_WRITE_FILE_DATA         *FileData
+                                      );
 
 /**
   Given the input key, search for the next matching file in the volume.
@@ -279,15 +278,15 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *FRAMEWORK_EFI_FV_GET_NEXT_FILE)(
-  IN EFI_FIRMWARE_VOLUME_PROTOCOL   *This,
-  IN OUT VOID                       *Key,
-  IN OUT EFI_FV_FILETYPE            *FileType,
-  OUT EFI_GUID                      *NameGuid,
-  OUT EFI_FV_FILE_ATTRIBUTES        *Attributes,
-  OUT UINTN                         *Size
-  );
+                                         IN EFI_FIRMWARE_VOLUME_PROTOCOL   *This,
+                                         IN OUT VOID                       *Key,
+                                         IN OUT EFI_FV_FILETYPE            *FileType,
+                                         OUT EFI_GUID                      *NameGuid,
+                                         OUT EFI_FV_FILE_ATTRIBUTES        *Attributes,
+                                         OUT UINTN                         *Size
+                                         );
 
 //
 // Protocol interface structure
@@ -296,45 +295,45 @@ struct _EFI_FIRMWARE_VOLUME_PROTOCOL {
   ///
   /// Retrieves volume capabilities and current settings.
   ///
-  FRAMEWORK_EFI_FV_GET_ATTRIBUTES GetVolumeAttributes;
+  FRAMEWORK_EFI_FV_GET_ATTRIBUTES    GetVolumeAttributes;
 
   ///
   /// Modifies the current settings of the firmware volume.
   ///
-  FRAMEWORK_EFI_FV_SET_ATTRIBUTES SetVolumeAttributes;
+  FRAMEWORK_EFI_FV_SET_ATTRIBUTES    SetVolumeAttributes;
 
   ///
   /// Reads an entire file from the firmware volume.
   ///
-  FRAMEWORK_EFI_FV_READ_FILE      ReadFile;
+  FRAMEWORK_EFI_FV_READ_FILE         ReadFile;
 
   ///
   /// Reads a single section from a file into a buffer.
   ///
-  FRAMEWORK_EFI_FV_READ_SECTION   ReadSection;
+  FRAMEWORK_EFI_FV_READ_SECTION      ReadSection;
 
   ///
   /// Writes an entire file into the firmware volume.
   ///
-  FRAMEWORK_EFI_FV_WRITE_FILE     WriteFile;
+  FRAMEWORK_EFI_FV_WRITE_FILE        WriteFile;
 
   ///
   /// Provides service to allow searching the firmware volume.
   ///
-  FRAMEWORK_EFI_FV_GET_NEXT_FILE  GetNextFile;
+  FRAMEWORK_EFI_FV_GET_NEXT_FILE     GetNextFile;
 
   ///
-  ///  Data field that indicates the size in bytes of the Key input buffer for
-  ///  the GetNextFile() API.
+  /// Data field that indicates the size in bytes of the Key input buffer for
+  /// the GetNextFile() API.
   ///
-  UINT32                KeySize;
+  UINT32                             KeySize;
 
   ///
-  ///  Handle of the parent firmware volume.
+  /// Handle of the parent firmware volume.
   ///
-  EFI_HANDLE            ParentHandle;
+  EFI_HANDLE                         ParentHandle;
 };
 
-extern EFI_GUID gEfiFirmwareVolumeProtocolGuid;
+extern EFI_GUID  gEfiFirmwareVolumeProtocolGuid;
 
 #endif

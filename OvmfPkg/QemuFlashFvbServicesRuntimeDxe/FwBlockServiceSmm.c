@@ -16,13 +16,36 @@
 
 #include "FwBlockService.h"
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 InstallProtocolInterfaces (
   IN EFI_FW_VOL_BLOCK_DEVICE *FvbDevice
   )
 {
-  EFI_HANDLE FvbHandle;
-  EFI_STATUS Status;
+  EFI_HANDLE  FvbHandle;
+  EFI_STATUS  Status;
 
   ASSERT (FeaturePcdGet (PcdSmmSmramRequire));
 
@@ -36,22 +59,45 @@ InstallProtocolInterfaces (
   FvbHandle = NULL;
   DEBUG ((DEBUG_INFO, "Installing QEMU flash SMM FVB\n"));
   Status = gSmst->SmmInstallProtocolInterface (
-                    &FvbHandle,
-                    &gEfiSmmFirmwareVolumeBlockProtocolGuid,
-                    EFI_NATIVE_INTERFACE,
-                    &FvbDevice->FwVolBlockInstance
-                    );
+                                               &FvbHandle,
+                                               &gEfiSmmFirmwareVolumeBlockProtocolGuid,
+                                               EFI_NATIVE_INTERFACE,
+                                               &FvbDevice->FwVolBlockInstance
+                                               );
   ASSERT_EFI_ERROR (Status);
 
   Status = gSmst->SmmInstallProtocolInterface (
-                    &FvbHandle,
-                    &gEfiDevicePathProtocolGuid,
-                    EFI_NATIVE_INTERFACE,
-                    FvbDevice->DevicePath
-                    );
+                                               &FvbHandle,
+                                               &gEfiDevicePathProtocolGuid,
+                                               EFI_NATIVE_INTERFACE,
+                                               FvbDevice->DevicePath
+                                               );
   ASSERT_EFI_ERROR (Status);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 InstallVirtualAddressChangeHandler (
   VOID
@@ -62,6 +108,29 @@ InstallVirtualAddressChangeHandler (
   //
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 MarkIoMemoryRangeForRuntimeAccess (
   IN EFI_PHYSICAL_ADDRESS                BaseAddress,
@@ -75,6 +144,29 @@ MarkIoMemoryRangeForRuntimeAccess (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 SetPcdFlashNvStorageBaseAddresses (
   VOID

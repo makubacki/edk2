@@ -22,43 +22,43 @@
 #include <Protocol/SimpleNetwork.h>
 #include <Library/OrderedCollectionLib.h>
 
-#define VNET_SIG SIGNATURE_32 ('V', 'N', 'E', 'T')
+#define VNET_SIG  SIGNATURE_32 ('V', 'N', 'E', 'T')
 
 //
 // maximum number of pending packets, separately for each direction
 //
-#define VNET_MAX_PENDING 64
+#define VNET_MAX_PENDING  64
 
 //
 // State diagram:
 //
-//                  |     ^
-//                  |     |
-//        BindingStart  BindingStop
-//        +SnpPopulate    |
-//        ++GetFeatures   |
-//                  |     |
-//                  v     |
-//                +---------+    virtio-net device is reset, no resources are
-//                | stopped |    allocated for traffic, but MAC address has
-//                +---------+    been retrieved
-//                  |     ^
-//                  |     |
-//            SNP.Start SNP.Stop
-//                  |     |
-//                  v     |
-//                +---------+
-//                | started |    functionally identical to stopped
-//                +---------+
-//                  |     ^
-//                  |     |
-//       SNP.Initialize SNP.Shutdown
-//                  |     |
-//                  v     |
-//              +-------------+  Virtio-net setup complete, including DRIVER_OK
-//              | initialized |  bit. The receive queue is populated with
-//              +-------------+  requests; McastIpToMac, GetStatus, Transmit,
-//                               Receive are callable.
+// |     ^
+// |     |
+// BindingStart  BindingStop
+// +SnpPopulate    |
+// ++GetFeatures   |
+// |     |
+// v     |
+// +---------+    virtio-net device is reset, no resources are
+// | stopped |    allocated for traffic, but MAC address has
+// +---------+    been retrieved
+// |     ^
+// |     |
+// SNP.Start SNP.Stop
+// |     |
+// v     |
+// +---------+
+// | started |    functionally identical to stopped
+// +---------+
+// |     ^
+// |     |
+// SNP.Initialize SNP.Shutdown
+// |     |
+// v     |
+// +-------------+  Virtio-net setup complete, including DRIVER_OK
+// | initialized |  bit. The receive queue is populated with
+// +-------------+  requests; McastIpToMac, GetStatus, Transmit,
+// Receive are callable.
 //
 
 typedef struct {
@@ -67,37 +67,36 @@ typedef struct {
   // at various call depths. The table to the right should make it easier to
   // track them.
   //
-  //                          field              init function
-  //                          ------------------ ------------------------------
-  UINT32                      Signature;         // VirtioNetDriverBindingStart
-  VIRTIO_DEVICE_PROTOCOL      *VirtIo;           // VirtioNetDriverBindingStart
-  EFI_SIMPLE_NETWORK_PROTOCOL Snp;               // VirtioNetSnpPopulate
-  EFI_SIMPLE_NETWORK_MODE     Snm;               // VirtioNetSnpPopulate
-  EFI_EVENT                   ExitBoot;          // VirtioNetSnpPopulate
-  EFI_DEVICE_PATH_PROTOCOL    *MacDevicePath;    // VirtioNetDriverBindingStart
-  EFI_HANDLE                  MacHandle;         // VirtioNetDriverBindingStart
+  // field              init function
+  // ------------------ ------------------------------
+  UINT32                         Signature;      // VirtioNetDriverBindingStart
+  VIRTIO_DEVICE_PROTOCOL         *VirtIo;        // VirtioNetDriverBindingStart
+  EFI_SIMPLE_NETWORK_PROTOCOL    Snp;            // VirtioNetSnpPopulate
+  EFI_SIMPLE_NETWORK_MODE        Snm;            // VirtioNetSnpPopulate
+  EFI_EVENT                      ExitBoot;       // VirtioNetSnpPopulate
+  EFI_DEVICE_PATH_PROTOCOL       *MacDevicePath; // VirtioNetDriverBindingStart
+  EFI_HANDLE                     MacHandle;      // VirtioNetDriverBindingStart
 
-  VRING                       RxRing;            // VirtioNetInitRing
-  VOID                        *RxRingMap;        // VirtioRingMap and
-                                                 // VirtioNetInitRing
-  UINT8                       *RxBuf;            // VirtioNetInitRx
-  UINT16                      RxLastUsed;        // VirtioNetInitRx
-  UINTN                       RxBufNrPages;      // VirtioNetInitRx
-  EFI_PHYSICAL_ADDRESS        RxBufDeviceBase;   // VirtioNetInitRx
-  VOID                        *RxBufMap;         // VirtioNetInitRx
+  VRING                          RxRing;          // VirtioNetInitRing
+  VOID                           *RxRingMap;      // VirtioRingMap and
+                                                  // VirtioNetInitRing
+  UINT8                          *RxBuf;          // VirtioNetInitRx
+  UINT16                         RxLastUsed;      // VirtioNetInitRx
+  UINTN                          RxBufNrPages;    // VirtioNetInitRx
+  EFI_PHYSICAL_ADDRESS           RxBufDeviceBase; // VirtioNetInitRx
+  VOID                           *RxBufMap;       // VirtioNetInitRx
 
-  VRING                       TxRing;            // VirtioNetInitRing
-  VOID                        *TxRingMap;        // VirtioRingMap and
-                                                 // VirtioNetInitRing
-  UINT16                      TxMaxPending;      // VirtioNetInitTx
-  UINT16                      TxCurPending;      // VirtioNetInitTx
-  UINT16                      *TxFreeStack;      // VirtioNetInitTx
-  VIRTIO_1_0_NET_REQ          *TxSharedReq;      // VirtioNetInitTx
-  VOID                        *TxSharedReqMap;   // VirtioNetInitTx
-  UINT16                      TxLastUsed;        // VirtioNetInitTx
-  ORDERED_COLLECTION          *TxBufCollection;  // VirtioNetInitTx
+  VRING                          TxRing;           // VirtioNetInitRing
+  VOID                           *TxRingMap;       // VirtioRingMap and
+                                                   // VirtioNetInitRing
+  UINT16                         TxMaxPending;     // VirtioNetInitTx
+  UINT16                         TxCurPending;     // VirtioNetInitTx
+  UINT16                         *TxFreeStack;     // VirtioNetInitTx
+  VIRTIO_1_0_NET_REQ             *TxSharedReq;     // VirtioNetInitTx
+  VOID                           *TxSharedReqMap;  // VirtioNetInitTx
+  UINT16                         TxLastUsed;       // VirtioNetInitTx
+  ORDERED_COLLECTION             *TxBufCollection; // VirtioNetInitTx
 } VNET_DEV;
-
 
 //
 // In order to avoid duplication of interface documentation, please find all
@@ -110,33 +109,33 @@ typedef struct {
 // utility macros
 //
 #define VIRTIO_NET_FROM_SNP(SnpPointer) \
-        CR (SnpPointer, VNET_DEV, Snp, VNET_SIG)
+  CR (SnpPointer, VNET_DEV, Snp, VNET_SIG)
 
 #define VIRTIO_CFG_WRITE(Dev, Field, Value)  ((Dev)->VirtIo->WriteDevice (  \
-                                                (Dev)->VirtIo,              \
-                                                OFFSET_OF_VNET (Field),     \
-                                                SIZE_OF_VNET (Field),       \
-                                                (Value)                     \
-                                                ))
+                                                                            (Dev)->VirtIo,              \
+                                                                            OFFSET_OF_VNET (Field),     \
+                                                                            SIZE_OF_VNET (Field),       \
+                                                                            (Value)                     \
+                                                                            ))
 
-#define VIRTIO_CFG_READ(Dev, Field, Pointer) ((Dev)->VirtIo->ReadDevice (   \
-                                                (Dev)->VirtIo,              \
-                                                OFFSET_OF_VNET (Field),     \
-                                                SIZE_OF_VNET (Field),       \
-                                                sizeof *(Pointer),          \
-                                                (Pointer)                   \
-                                                ))
+#define VIRTIO_CFG_READ(Dev, Field, Pointer)  ((Dev)->VirtIo->ReadDevice (   \
+                                                                             (Dev)->VirtIo,              \
+                                                                             OFFSET_OF_VNET (Field),     \
+                                                                             SIZE_OF_VNET (Field),       \
+                                                                             sizeof *(Pointer),          \
+                                                                             (Pointer)                   \
+                                                                             ))
 
 //
 // component naming
 //
-extern EFI_COMPONENT_NAME_PROTOCOL gVirtioNetComponentName;
-extern EFI_COMPONENT_NAME2_PROTOCOL gVirtioNetComponentName2;
+extern EFI_COMPONENT_NAME_PROTOCOL   gVirtioNetComponentName;
+extern EFI_COMPONENT_NAME2_PROTOCOL  gVirtioNetComponentName2;
 
 //
 // driver binding
 //
-extern EFI_DRIVER_BINDING_PROTOCOL gVirtioNetDriverBinding;
+extern EFI_DRIVER_BINDING_PROTOCOL  gVirtioNetDriverBinding;
 
 //
 // member functions implementing the Simple Network Protocol
@@ -310,7 +309,6 @@ VirtioNetTxBufDeviceAddressCompare (
   IN CONST VOID *StandaloneKey,
   IN CONST VOID *UserStruct
   );
-
 
 //
 // event callbacks

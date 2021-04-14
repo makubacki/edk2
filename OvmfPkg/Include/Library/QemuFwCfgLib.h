@@ -26,9 +26,8 @@
 BOOLEAN
 EFIAPI
 QemuFwCfgIsAvailable (
-  VOID
-  );
-
+                      VOID
+                      );
 
 /**
   Selects a firmware configuration item for reading.
@@ -44,7 +43,6 @@ EFIAPI
 QemuFwCfgSelectItem (
   IN FIRMWARE_CONFIG_ITEM   QemuFwCfgItem
   );
-
 
 /**
   Reads firmware configuration bytes into a buffer
@@ -64,7 +62,6 @@ QemuFwCfgReadBytes (
   IN VOID                   *Buffer  OPTIONAL
   );
 
-
 /**
   Writes firmware configuration bytes from a buffer
 
@@ -83,7 +80,6 @@ QemuFwCfgWriteBytes (
   IN VOID                   *Buffer
   );
 
-
 /**
   Skip bytes in the firmware configuration item.
 
@@ -99,7 +95,6 @@ QemuFwCfgSkipBytes (
   IN UINTN                  Size
   );
 
-
 /**
   Reads a UINT8 firmware configuration value
 
@@ -109,9 +104,8 @@ QemuFwCfgSkipBytes (
 UINT8
 EFIAPI
 QemuFwCfgRead8 (
-  VOID
-  );
-
+                VOID
+                );
 
 /**
   Reads a UINT16 firmware configuration value
@@ -122,9 +116,8 @@ QemuFwCfgRead8 (
 UINT16
 EFIAPI
 QemuFwCfgRead16 (
-  VOID
-  );
-
+                 VOID
+                 );
 
 /**
   Reads a UINT32 firmware configuration value
@@ -135,9 +128,8 @@ QemuFwCfgRead16 (
 UINT32
 EFIAPI
 QemuFwCfgRead32 (
-  VOID
-  );
-
+                 VOID
+                 );
 
 /**
   Reads a UINT64 firmware configuration value
@@ -148,9 +140,8 @@ QemuFwCfgRead32 (
 UINT64
 EFIAPI
 QemuFwCfgRead64 (
-  VOID
-  );
-
+                 VOID
+                 );
 
 /**
   Find the configuration item corresponding to the firmware configuration file.
@@ -174,4 +165,3 @@ QemuFwCfgFindFile (
   );
 
 #endif
-

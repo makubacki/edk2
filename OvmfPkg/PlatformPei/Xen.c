@@ -28,11 +28,11 @@
 #include "Platform.h"
 #include "Xen.h"
 
-BOOLEAN mXen = FALSE;
+BOOLEAN  mXen = FALSE;
 
-STATIC UINT32 mXenLeaf = 0;
+STATIC UINT32  mXenLeaf = 0;
 
-EFI_XEN_INFO mXenInfo;
+EFI_XEN_INFO  mXenInfo;
 
 /**
   Returns E820 map provided by Xen
@@ -48,16 +48,16 @@ XenGetE820Map (
   UINT32 *Count
   )
 {
-  EFI_XEN_OVMF_INFO *Info =
-    (EFI_XEN_OVMF_INFO *)(UINTN) OVMF_INFO_PHYSICAL_ADDRESS;
+  EFI_XEN_OVMF_INFO  *Info =
+    (EFI_XEN_OVMF_INFO *) (UINTN) OVMF_INFO_PHYSICAL_ADDRESS;
 
   if (AsciiStrCmp ((CHAR8 *) Info->Signature, "XenHVMOVMF")) {
     return EFI_NOT_FOUND;
   }
 
   ASSERT (Info->E820 < MAX_ADDRESS);
-  *Entries = (EFI_E820_ENTRY64 *)(UINTN) Info->E820;
-  *Count = Info->E820EntriesCount;
+  *Entries = (EFI_E820_ENTRY64 *) (UINTN) Info->E820;
+  *Count   = Info->E820EntriesCount;
 
   return EFI_SUCCESS;
 }
@@ -75,10 +75,10 @@ XenConnect (
   UINT32 XenLeaf
   )
 {
-  UINT32 Index;
-  UINT32 TransferReg;
-  UINT32 TransferPages;
-  UINT32 XenVersion;
+  UINT32  Index;
+  UINT32  TransferReg;
+  UINT32  TransferPages;
+  UINT32  XenVersion;
 
   AsmCpuid (XenLeaf + 2, &TransferPages, &TransferReg, NULL, NULL);
   mXenInfo.HyperPages = AllocatePages (TransferPages);
@@ -87,22 +87,26 @@ XenConnect (
   }
 
   for (Index = 0; Index < TransferPages; Index++) {
-    AsmWriteMsr64 (TransferReg,
+    AsmWriteMsr64 (
+                   TransferReg,
                    (UINTN) mXenInfo.HyperPages +
-                   (Index << EFI_PAGE_SHIFT) + Index);
+                   (Index << EFI_PAGE_SHIFT) + Index
+                   );
   }
 
   AsmCpuid (XenLeaf + 1, &XenVersion, NULL, NULL, NULL);
-  DEBUG ((DEBUG_ERROR, "Detected Xen version %d.%d\n",
-          XenVersion >> 16, XenVersion & 0xFFFF));
-  mXenInfo.VersionMajor = (UINT16)(XenVersion >> 16);
-  mXenInfo.VersionMinor = (UINT16)(XenVersion & 0xFFFF);
+  DEBUG (
+         (DEBUG_ERROR, "Detected Xen version %d.%d\n",
+          XenVersion >> 16, XenVersion & 0xFFFF)
+         );
+  mXenInfo.VersionMajor = (UINT16) (XenVersion >> 16);
+  mXenInfo.VersionMinor = (UINT16) (XenVersion & 0xFFFF);
 
   BuildGuidDataHob (
-    &gEfiXenInfoGuid,
-    &mXenInfo,
-    sizeof(mXenInfo)
-    );
+                    &gEfiXenInfoGuid,
+                    &mXenInfo,
+                    sizeof (mXenInfo)
+                    );
 
   return EFI_SUCCESS;
 }
@@ -119,7 +123,7 @@ XenDetect (
   VOID
   )
 {
-  UINT8 Signature[13];
+  UINT8  Signature[13];
 
   if (mXenLeaf != 0) {
     return TRUE;
@@ -127,11 +131,13 @@ XenDetect (
 
   Signature[12] = '\0';
   for (mXenLeaf = 0x40000000; mXenLeaf < 0x40010000; mXenLeaf += 0x100) {
-    AsmCpuid (mXenLeaf,
+    AsmCpuid (
+              mXenLeaf,
               NULL,
               (UINT32 *) &Signature[0],
               (UINT32 *) &Signature[4],
-              (UINT32 *) &Signature[8]);
+              (UINT32 *) &Signature[8]
+              );
 
     if (!AsciiStrCmp ((CHAR8 *) Signature, "XenVMMXenVMM")) {
       mXen = TRUE;
@@ -143,7 +149,29 @@ XenDetect (
   return FALSE;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 XenPublishRamRegions (
   VOID
@@ -168,8 +196,8 @@ XenPublishRamRegions (
   ASSERT_EFI_ERROR (Status);
 
   if (E820EntriesCount > 0) {
-    EFI_E820_ENTRY64 *Entry;
-    UINT32 Loop;
+  EFI_E820_ENTRY64  *Entry;
+  UINT32            Loop;
 
     for (Loop = 0; Loop < E820EntriesCount; Loop++) {
       Entry = E820Map + Loop;
@@ -188,7 +216,6 @@ XenPublishRamRegions (
   }
 }
 
-
 /**
   Perform Xen PEI initialization.
 
@@ -201,7 +228,7 @@ InitializeXen (
   VOID
   )
 {
-  RETURN_STATUS PcdStatus;
+  RETURN_STATUS  PcdStatus;
 
   if (mXenLeaf == 0) {
     return EFI_NOT_FOUND;

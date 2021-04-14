@@ -34,10 +34,10 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // Data structure used to allocate ACPI_CPU_DATA and its supporting structures
 //
 typedef struct {
-  ACPI_CPU_DATA             AcpiCpuData;
-  MTRR_SETTINGS             MtrrTable;
-  IA32_DESCRIPTOR           GdtrProfile;
-  IA32_DESCRIPTOR           IdtrProfile;
+  ACPI_CPU_DATA      AcpiCpuData;
+  MTRR_SETTINGS      MtrrTable;
+  IA32_DESCRIPTOR    GdtrProfile;
+  IA32_DESCRIPTOR    IdtrProfile;
 } ACPI_CPU_DATA_EX;
 
 /**
@@ -57,17 +57,17 @@ AllocateAcpiNvsMemory (
   EFI_STATUS            Status;
   VOID                  *Buffer;
 
-  Status  = gBS->AllocatePages (
-                   AllocateAnyPages,
-                   EfiACPIMemoryNVS,
-                   EFI_SIZE_TO_PAGES (Size),
-                   &Address
-                   );
+  Status = gBS->AllocatePages (
+                               AllocateAnyPages,
+                               EfiACPIMemoryNVS,
+                               EFI_SIZE_TO_PAGES (Size),
+                               &Address
+                               );
   if (EFI_ERROR (Status)) {
     return NULL;
   }
 
-  Buffer = (VOID *)(UINTN)Address;
+  Buffer = (VOID *) (UINTN) Address;
   ZeroMem (Buffer, Size);
 
   return Buffer;
@@ -86,7 +86,7 @@ AllocateZeroPages (
   IN UINTN  Size
   )
 {
-  VOID                  *Buffer;
+  VOID  *Buffer;
 
   Buffer = AllocatePages (EFI_SIZE_TO_PAGES (Size));
   if (Buffer != NULL) {
@@ -95,6 +95,7 @@ AllocateZeroPages (
 
   return Buffer;
 }
+
 /**
   Callback function executed when the EndOfDxe event group is signaled.
 
@@ -110,8 +111,8 @@ CpuS3DataOnEndOfDxe (
   OUT VOID       *Context
   )
 {
-  EFI_STATUS         Status;
-  ACPI_CPU_DATA_EX   *AcpiCpuDataEx;
+  EFI_STATUS        Status;
+  ACPI_CPU_DATA_EX  *AcpiCpuDataEx;
 
   AcpiCpuDataEx = (ACPI_CPU_DATA_EX *) Context;
   //
@@ -119,11 +120,11 @@ CpuS3DataOnEndOfDxe (
   //
   AcpiCpuDataEx->AcpiCpuData.StartupVector = BASE_1MB - 1;
   Status = gBS->AllocatePages (
-                  AllocateMaxAddress,
-                  EfiReservedMemoryType,
-                  1,
-                  &AcpiCpuDataEx->AcpiCpuData.StartupVector
-                  );
+                               AllocateMaxAddress,
+                               EfiReservedMemoryType,
+                               1,
+                               &AcpiCpuDataEx->AcpiCpuData.StartupVector
+                               );
   ASSERT_EFI_ERROR (Status);
 
   DEBUG ((DEBUG_VERBOSE, "%a\n", __FUNCTION__));
@@ -158,18 +159,18 @@ CpuS3DataInitialize (
   IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  EFI_STATUS                 Status;
-  ACPI_CPU_DATA_EX           *AcpiCpuDataEx;
-  ACPI_CPU_DATA              *AcpiCpuData;
-  EFI_MP_SERVICES_PROTOCOL   *MpServices;
-  UINTN                      NumberOfCpus;
-  VOID                       *Stack;
-  UINTN                      GdtSize;
-  UINTN                      IdtSize;
-  VOID                       *Gdt;
-  VOID                       *Idt;
-  EFI_EVENT                  Event;
-  ACPI_CPU_DATA              *OldAcpiCpuData;
+  EFI_STATUS                Status;
+  ACPI_CPU_DATA_EX          *AcpiCpuDataEx;
+  ACPI_CPU_DATA             *AcpiCpuData;
+  EFI_MP_SERVICES_PROTOCOL  *MpServices;
+  UINTN                     NumberOfCpus;
+  VOID                      *Stack;
+  UINTN                     GdtSize;
+  UINTN                     IdtSize;
+  VOID                      *Gdt;
+  VOID                      *Idt;
+  EFI_EVENT                 Event;
+  ACPI_CPU_DATA             *OldAcpiCpuData;
 
   if (!PcdGetBool (PcdAcpiS3Enable)) {
     return EFI_UNSUPPORTED;
@@ -187,39 +188,40 @@ CpuS3DataInitialize (
   if (PcdGetBool (PcdQ35SmramAtDefaultSmbase)) {
     NumberOfCpus = PcdGet32 (PcdCpuMaxLogicalProcessorNumber);
   } else {
-    UINTN NumberOfEnabledProcessors;
+  UINTN  NumberOfEnabledProcessors;
 
     //
     // Get MP Services Protocol
     //
     Status = gBS->LocateProtocol (
-                    &gEfiMpServiceProtocolGuid,
-                    NULL,
-                    (VOID **)&MpServices
-                    );
+                                  &gEfiMpServiceProtocolGuid,
+                                  NULL,
+                                  (VOID **) &MpServices
+                                  );
     ASSERT_EFI_ERROR (Status);
 
     //
     // Get the number of CPUs
     //
     Status = MpServices->GetNumberOfProcessors (
-                           MpServices,
-                           &NumberOfCpus,
-                           &NumberOfEnabledProcessors
-                           );
+                                                MpServices,
+                                                &NumberOfCpus,
+                                                &NumberOfEnabledProcessors
+                                                );
     ASSERT_EFI_ERROR (Status);
   }
-  AcpiCpuData->NumberOfCpus = (UINT32)NumberOfCpus;
+
+  AcpiCpuData->NumberOfCpus = (UINT32) NumberOfCpus;
 
   //
   // Initialize ACPI_CPU_DATA fields
   //
-  AcpiCpuData->StackSize                 = PcdGet32 (PcdCpuApStackSize);
+  AcpiCpuData->StackSize = PcdGet32 (PcdCpuApStackSize);
   AcpiCpuData->ApMachineCheckHandlerBase = 0;
   AcpiCpuData->ApMachineCheckHandlerSize = 0;
-  AcpiCpuData->GdtrProfile  = (EFI_PHYSICAL_ADDRESS)(UINTN)&AcpiCpuDataEx->GdtrProfile;
-  AcpiCpuData->IdtrProfile  = (EFI_PHYSICAL_ADDRESS)(UINTN)&AcpiCpuDataEx->IdtrProfile;
-  AcpiCpuData->MtrrTable    = (EFI_PHYSICAL_ADDRESS)(UINTN)&AcpiCpuDataEx->MtrrTable;
+  AcpiCpuData->GdtrProfile = (EFI_PHYSICAL_ADDRESS) (UINTN) &AcpiCpuDataEx->GdtrProfile;
+  AcpiCpuData->IdtrProfile = (EFI_PHYSICAL_ADDRESS) (UINTN) &AcpiCpuDataEx->IdtrProfile;
+  AcpiCpuData->MtrrTable   = (EFI_PHYSICAL_ADDRESS) (UINTN) &AcpiCpuDataEx->MtrrTable;
 
   //
   // Allocate stack space for all CPUs.
@@ -230,7 +232,7 @@ CpuS3DataInitialize (
   //
   Stack = AllocateAcpiNvsMemory (NumberOfCpus * AcpiCpuData->StackSize);
   ASSERT (Stack != NULL);
-  AcpiCpuData->StackAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)Stack;
+  AcpiCpuData->StackAddress = (EFI_PHYSICAL_ADDRESS) (UINTN) Stack;
 
   //
   // Get the boot processor's GDT and IDT
@@ -243,25 +245,25 @@ CpuS3DataInitialize (
   //
   GdtSize = AcpiCpuDataEx->GdtrProfile.Limit + 1;
   IdtSize = AcpiCpuDataEx->IdtrProfile.Limit + 1;
-  Gdt = AllocateZeroPages (GdtSize + IdtSize);
+  Gdt     = AllocateZeroPages (GdtSize + IdtSize);
   ASSERT (Gdt != NULL);
-  Idt = (VOID *)((UINTN)Gdt + GdtSize);
-  CopyMem (Gdt, (VOID *)AcpiCpuDataEx->GdtrProfile.Base, GdtSize);
-  CopyMem (Idt, (VOID *)AcpiCpuDataEx->IdtrProfile.Base, IdtSize);
-  AcpiCpuDataEx->GdtrProfile.Base = (UINTN)Gdt;
-  AcpiCpuDataEx->IdtrProfile.Base = (UINTN)Idt;
+  Idt = (VOID *) ((UINTN) Gdt + GdtSize);
+  CopyMem (Gdt, (VOID *) AcpiCpuDataEx->GdtrProfile.Base, GdtSize);
+  CopyMem (Idt, (VOID *) AcpiCpuDataEx->IdtrProfile.Base, IdtSize);
+  AcpiCpuDataEx->GdtrProfile.Base = (UINTN) Gdt;
+  AcpiCpuDataEx->IdtrProfile.Base = (UINTN) Idt;
 
   if (OldAcpiCpuData != NULL) {
-    AcpiCpuData->RegisterTable           = OldAcpiCpuData->RegisterTable;
+    AcpiCpuData->RegisterTable = OldAcpiCpuData->RegisterTable;
     AcpiCpuData->PreSmmInitRegisterTable = OldAcpiCpuData->PreSmmInitRegisterTable;
-    AcpiCpuData->ApLocation              = OldAcpiCpuData->ApLocation;
+    AcpiCpuData->ApLocation = OldAcpiCpuData->ApLocation;
     CopyMem (&AcpiCpuData->CpuStatus, &OldAcpiCpuData->CpuStatus, sizeof (CPU_STATUS_INFORMATION));
   }
 
   //
   // Set PcdCpuS3DataAddress to the base address of the ACPI_CPU_DATA structure
   //
-  Status = PcdSet64S (PcdCpuS3DataAddress, (UINT64)(UINTN)AcpiCpuData);
+  Status = PcdSet64S (PcdCpuS3DataAddress, (UINT64) (UINTN) AcpiCpuData);
   ASSERT_EFI_ERROR (Status);
 
   //
@@ -269,13 +271,13 @@ CpuS3DataInitialize (
   // The notification function allocates StartupVector and saves MTRRs for ACPI_CPU_DATA
   //
   Status = gBS->CreateEventEx (
-                  EVT_NOTIFY_SIGNAL,
-                  TPL_CALLBACK,
-                  CpuS3DataOnEndOfDxe,
-                  AcpiCpuData,
-                  &gEfiEndOfDxeEventGroupGuid,
-                  &Event
-                  );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_CALLBACK,
+                               CpuS3DataOnEndOfDxe,
+                               AcpiCpuData,
+                               &gEfiEndOfDxeEventGroupGuid,
+                               &Event
+                               );
   ASSERT_EFI_ERROR (Status);
 
   return EFI_SUCCESS;

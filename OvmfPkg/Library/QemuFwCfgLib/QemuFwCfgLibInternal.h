@@ -21,10 +21,9 @@
   @retval    FALSE  The interface is not available internally.
 **/
 BOOLEAN
-InternalQemuFwCfgIsAvailable (
-  VOID
-  );
-
+  InternalQemuFwCfgIsAvailable (
+                                VOID
+                                );
 
 /**
   Returns a boolean indicating whether QEMU provides the DMA-like access method
@@ -34,9 +33,9 @@ InternalQemuFwCfgIsAvailable (
   @retval    FALSE  The DMA-like access method is unavailable.
 **/
 BOOLEAN
-InternalQemuFwCfgDmaIsAvailable (
-  VOID
-  );
+  InternalQemuFwCfgDmaIsAvailable (
+                                   VOID
+                                   );
 
 /**
   Transfer an array of bytes, or skip a number of bytes, using the DMA

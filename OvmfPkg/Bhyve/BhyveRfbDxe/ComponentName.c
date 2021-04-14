@@ -40,7 +40,7 @@ EmuGopComponentNameGetControllerName (
 //
 // EFI Component Name Protocol
 //
-EFI_COMPONENT_NAME_PROTOCOL     gEmuGopComponentName = {
+EFI_COMPONENT_NAME_PROTOCOL  gEmuGopComponentName = {
   EmuGopComponentNameGetDriverName,
   EmuGopComponentNameGetControllerName,
   "eng"
@@ -49,18 +49,16 @@ EFI_COMPONENT_NAME_PROTOCOL     gEmuGopComponentName = {
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL gEmuGopComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gEmuGopComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) EmuGopComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) EmuGopComponentNameGetControllerName,
   "en"
 };
 
-
-EFI_UNICODE_STRING_TABLE mEmuGopDriverNameTable[] = {
+EFI_UNICODE_STRING_TABLE  mEmuGopDriverNameTable[] = {
   { "eng", L"Emulator GOP Driver" },
-  { NULL , NULL }
+  { NULL,  NULL                   }
 };
-
 
 /**
   Retrieves a Unicode string that is the user readable name of the driver.
@@ -110,14 +108,13 @@ EmuGopComponentNameGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mEmuGopDriverNameTable,
-           DriverName,
-           (BOOLEAN)(This == &gEmuGopComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mEmuGopDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gEmuGopComponentName)
+                               );
 }
-
 
 /**
   Retrieves a Unicode string that is the user readable name of the controller

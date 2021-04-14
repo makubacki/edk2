@@ -17,7 +17,6 @@
 
 #include <Library/VirtioLib.h>
 
-
 /**
 
   Configure a virtio ring.
@@ -53,64 +52,69 @@ VirtioRingInit (
   OUT VRING                  *Ring
   )
 {
-  EFI_STATUS     Status;
-  UINTN          RingSize;
-  volatile UINT8 *RingPagesPtr;
+  EFI_STATUS      Status;
+  UINTN           RingSize;
+  volatile UINT8  *RingPagesPtr;
 
   RingSize = ALIGN_VALUE (
-               sizeof *Ring->Desc            * QueueSize +
-               sizeof *Ring->Avail.Flags                 +
-               sizeof *Ring->Avail.Idx                   +
-               sizeof *Ring->Avail.Ring      * QueueSize +
-               sizeof *Ring->Avail.UsedEvent,
-               EFI_PAGE_SIZE);
+                          sizeof *Ring->Desc            * QueueSize +
+                          sizeof *Ring->Avail.Flags                 +
+                          sizeof *Ring->Avail.Idx                   +
+                          sizeof *Ring->Avail.Ring      * QueueSize +
+                          sizeof *Ring->Avail.UsedEvent,
+                          EFI_PAGE_SIZE
+                          );
 
   RingSize += ALIGN_VALUE (
-                sizeof *Ring->Used.Flags                  +
-                sizeof *Ring->Used.Idx                    +
-                sizeof *Ring->Used.UsedElem   * QueueSize +
-                sizeof *Ring->Used.AvailEvent,
-                EFI_PAGE_SIZE);
+                           sizeof *Ring->Used.Flags                  +
+                           sizeof *Ring->Used.Idx                    +
+                           sizeof *Ring->Used.UsedElem   * QueueSize +
+                           sizeof *Ring->Used.AvailEvent,
+                           EFI_PAGE_SIZE
+                           );
 
   //
   // Allocate a shared ring buffer
   //
   Ring->NumPages = EFI_SIZE_TO_PAGES (RingSize);
   Status = VirtIo->AllocateSharedPages (
-                     VirtIo,
-                     Ring->NumPages,
-                     &Ring->Base
-                     );
+                                        VirtIo,
+                                        Ring->NumPages,
+                                        &Ring->Base
+                                        );
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   SetMem (Ring->Base, RingSize, 0x00);
   RingPagesPtr = Ring->Base;
 
-  Ring->Desc = (volatile VOID *) RingPagesPtr;
+  Ring->Desc    = (volatile VOID *) RingPagesPtr;
   RingPagesPtr += sizeof *Ring->Desc * QueueSize;
 
   Ring->Avail.Flags = (volatile VOID *) RingPagesPtr;
   RingPagesPtr += sizeof *Ring->Avail.Flags;
 
   Ring->Avail.Idx = (volatile VOID *) RingPagesPtr;
-  RingPagesPtr += sizeof *Ring->Avail.Idx;
+  RingPagesPtr   += sizeof *Ring->Avail.Idx;
 
   Ring->Avail.Ring = (volatile VOID *) RingPagesPtr;
-  RingPagesPtr += sizeof *Ring->Avail.Ring * QueueSize;
+  RingPagesPtr    += sizeof *Ring->Avail.Ring * QueueSize;
 
   Ring->Avail.UsedEvent = (volatile VOID *) RingPagesPtr;
   RingPagesPtr += sizeof *Ring->Avail.UsedEvent;
 
   RingPagesPtr = (volatile UINT8 *) Ring->Base +
-                 ALIGN_VALUE (RingPagesPtr - (volatile UINT8 *) Ring->Base,
-                   EFI_PAGE_SIZE);
+                 ALIGN_VALUE (
+                              RingPagesPtr - (volatile UINT8 *) Ring->Base,
+                              EFI_PAGE_SIZE
+                              );
 
   Ring->Used.Flags = (volatile VOID *) RingPagesPtr;
-  RingPagesPtr += sizeof *Ring->Used.Flags;
+  RingPagesPtr    += sizeof *Ring->Used.Flags;
 
   Ring->Used.Idx = (volatile VOID *) RingPagesPtr;
-  RingPagesPtr += sizeof *Ring->Used.Idx;
+  RingPagesPtr  += sizeof *Ring->Used.Idx;
 
   Ring->Used.UsedElem = (volatile VOID *) RingPagesPtr;
   RingPagesPtr += sizeof *Ring->Used.UsedElem * QueueSize;
@@ -121,7 +125,6 @@ VirtioRingInit (
   Ring->QueueSize = QueueSize;
   return EFI_SUCCESS;
 }
-
 
 /**
 
@@ -146,7 +149,6 @@ VirtioRingUninit (
   VirtIo->FreeSharedPages (VirtIo, Ring->NumPages, Ring->Base);
   SetMem (Ring, sizeof *Ring, 0x00);
 }
-
 
 /**
 
@@ -231,15 +233,14 @@ VirtioAppendDesc (
   IN OUT DESC_INDICES *Indices
   )
 {
-  volatile VRING_DESC *Desc;
+  volatile VRING_DESC  *Desc;
 
-  Desc        = &Ring->Desc[Indices->NextDescIdx++ % Ring->QueueSize];
+  Desc = &Ring->Desc[Indices->NextDescIdx++ % Ring->QueueSize];
   Desc->Addr  = BufferDeviceAddress;
   Desc->Len   = BufferSize;
   Desc->Flags = Flags;
   Desc->Next  = Indices->NextDescIdx % Ring->QueueSize;
 }
-
 
 /**
 
@@ -278,10 +279,10 @@ VirtioFlush (
   OUT    UINT32                 *UsedLen    OPTIONAL
   )
 {
-  UINT16     NextAvailIdx;
-  UINT16     LastUsedIdx;
-  EFI_STATUS Status;
-  UINTN      PollPeriodUsecs;
+  UINT16      NextAvailIdx;
+  UINT16      LastUsedIdx;
+  EFI_STATUS  Status;
+  UINTN       PollPeriodUsecs;
 
   //
   // virtio-0.9.5, 2.4.1.2 Updating the Available Ring
@@ -302,14 +303,14 @@ VirtioFlush (
   //
   // virtio-0.9.5, 2.4.1.3 Updating the Index Field
   //
-  MemoryFence();
+  MemoryFence ();
   *Ring->Avail.Idx = NextAvailIdx;
 
   //
   // virtio-0.9.5, 2.4.1.4 Notifying the Device -- gratuitous notifications are
   // OK.
   //
-  MemoryFence();
+  MemoryFence ();
   Status = VirtIo->SetQueueNotify (VirtIo, VirtQueueId);
   if (EFI_ERROR (Status)) {
     return Status;
@@ -324,20 +325,21 @@ VirtioFlush (
   // Keep slowing down until we reach a poll period of slightly above 1 ms.
   //
   PollPeriodUsecs = 1;
-  MemoryFence();
+  MemoryFence ();
   while (*Ring->Used.Idx != NextAvailIdx) {
-    gBS->Stall (PollPeriodUsecs); // calls AcpiTimerLib::MicroSecondDelay
+  gBS->Stall (PollPeriodUsecs);   // calls AcpiTimerLib::MicroSecondDelay
 
     if (PollPeriodUsecs < 1024) {
       PollPeriodUsecs *= 2;
     }
-    MemoryFence();
+
+    MemoryFence ();
   }
 
-  MemoryFence();
+  MemoryFence ();
 
   if (UsedLen != NULL) {
-    volatile CONST VRING_USED_ELEM *UsedElem;
+  volatile CONST VRING_USED_ELEM  *UsedElem;
 
     UsedElem = &Ring->Used.UsedElem[LastUsedIdx % Ring->QueueSize];
     ASSERT (UsedElem->Id == Indices->HeadDescIdx);
@@ -346,7 +348,6 @@ VirtioFlush (
 
   return EFI_SUCCESS;
 }
-
 
 /**
 
@@ -393,7 +394,7 @@ Virtio10WriteFeatures (
   IN OUT UINT8                  *DeviceStatus
   )
 {
-  EFI_STATUS Status;
+  EFI_STATUS  Status;
 
   if (VirtIo->Revision < VIRTIO_SPEC_REVISION (1, 0, 0)) {
     return EFI_UNSUPPORTED;
@@ -479,15 +480,15 @@ VirtioMapAllBytesInSharedBuffer (
   UINTN                 Size;
   EFI_PHYSICAL_ADDRESS  PhysicalAddress;
 
-  Size = NumberOfBytes;
+  Size   = NumberOfBytes;
   Status = VirtIo->MapSharedBuffer (
-                     VirtIo,
-                     Operation,
-                     HostAddress,
-                     &Size,
-                     &PhysicalAddress,
-                     &MapInfo
-                     );
+                                    VirtIo,
+                                    Operation,
+                                    HostAddress,
+                                    &Size,
+                                    &PhysicalAddress,
+                                    &MapInfo
+                                    );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -536,17 +537,17 @@ VirtioRingMap (
   EFI_PHYSICAL_ADDRESS  DeviceAddress;
 
   Status = VirtioMapAllBytesInSharedBuffer (
-             VirtIo,
-             VirtioOperationBusMasterCommonBuffer,
-             Ring->Base,
-             EFI_PAGES_TO_SIZE (Ring->NumPages),
-             &DeviceAddress,
-             Mapping
-             );
+                                            VirtIo,
+                                            VirtioOperationBusMasterCommonBuffer,
+                                            Ring->Base,
+                                            EFI_PAGES_TO_SIZE (Ring->NumPages),
+                                            &DeviceAddress,
+                                            Mapping
+                                            );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  *RingBaseShift = DeviceAddress - (UINT64)(UINTN)Ring->Base;
+  *RingBaseShift = DeviceAddress - (UINT64) (UINTN) Ring->Base;
   return EFI_SUCCESS;
 }

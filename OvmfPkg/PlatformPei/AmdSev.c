@@ -54,14 +54,14 @@ AmdSevEsInitialize (
 
   //
   // Allocate GHCB and per-CPU variable pages.
-  //   Since the pages must survive across the UEFI to OS transition
-  //   make them reserved.
+  // Since the pages must survive across the UEFI to OS transition
+  // make them reserved.
   //
   GhcbPageCount = mMaxCpuCount * 2;
   GhcbBase = AllocateReservedPages (GhcbPageCount);
   ASSERT (GhcbBase != NULL);
 
-  GhcbBasePa = (PHYSICAL_ADDRESS)(UINTN) GhcbBase;
+  GhcbBasePa = (PHYSICAL_ADDRESS) (UINTN) GhcbBase;
 
   //
   // Each vCPU gets two consecutive pages, the first is the GHCB and the
@@ -70,11 +70,11 @@ AmdSevEsInitialize (
   //
   for (PageCount = 0; PageCount < GhcbPageCount; PageCount += 2) {
     DecryptStatus = MemEncryptSevClearPageEncMask (
-      0,
-      GhcbBasePa + EFI_PAGES_TO_SIZE (PageCount),
-      1,
-      TRUE
-      );
+                                                   0,
+                                                   GhcbBasePa + EFI_PAGES_TO_SIZE (PageCount),
+                                                   1,
+                                                   TRUE
+                                                   );
     ASSERT_RETURN_ERROR (DecryptStatus);
   }
 
@@ -85,9 +85,11 @@ AmdSevEsInitialize (
   PcdStatus = PcdSet64S (PcdGhcbSize, EFI_PAGES_TO_SIZE (GhcbPageCount));
   ASSERT_RETURN_ERROR (PcdStatus);
 
-  DEBUG ((DEBUG_INFO,
-    "SEV-ES is enabled, %lu GHCB pages allocated starting at 0x%p\n",
-    (UINT64)GhcbPageCount, GhcbBase));
+  DEBUG (
+         (DEBUG_INFO,
+          "SEV-ES is enabled, %lu GHCB pages allocated starting at 0x%p\n",
+          (UINT64) GhcbPageCount, GhcbBase)
+         );
 
   //
   // Allocate #VC recursion backup pages. The number of backup pages needed is
@@ -100,15 +102,17 @@ AmdSevEsInitialize (
   GhcbBackupPages = GhcbBackupBase;
   for (PageCount = 1; PageCount < GhcbPageCount; PageCount += 2) {
     SevEsData =
-      (SEV_ES_PER_CPU_DATA *)(GhcbBase + EFI_PAGES_TO_SIZE (PageCount));
+      (SEV_ES_PER_CPU_DATA *) (GhcbBase + EFI_PAGES_TO_SIZE (PageCount));
     SevEsData->GhcbBackupPages = GhcbBackupPages;
 
     GhcbBackupPages += EFI_PAGE_SIZE * (VMGEXIT_MAXIMUM_VC_COUNT - 1);
   }
 
-  DEBUG ((DEBUG_INFO,
-    "SEV-ES is enabled, %lu GHCB backup pages allocated starting at 0x%p\n",
-    (UINT64)GhcbBackupPageCount, GhcbBackupBase));
+  DEBUG (
+         (DEBUG_INFO,
+          "SEV-ES is enabled, %lu GHCB backup pages allocated starting at 0x%p\n",
+          (UINT64) GhcbBackupPageCount, GhcbBackupBase)
+         );
 
   AsmWriteMsr64 (MSR_SEV_ES_GHCB, GhcbBasePa);
 
@@ -140,8 +144,8 @@ AmdSevInitialize (
   VOID
   )
 {
-  UINT64                            EncryptionMask;
-  RETURN_STATUS                     PcdStatus;
+  UINT64         EncryptionMask;
+  RETURN_STATUS  PcdStatus;
 
   //
   // Check if SEV is enabled
@@ -177,14 +181,14 @@ AmdSevInitialize (
   // hypervisor.
   //
   if (FeaturePcdGet (PcdSmmSmramRequire) && (mBootMode != BOOT_ON_S3_RESUME)) {
-    RETURN_STATUS LocateMapStatus;
-    UINTN         MapPagesBase;
-    UINTN         MapPagesCount;
+  RETURN_STATUS  LocateMapStatus;
+  UINTN          MapPagesBase;
+  UINTN          MapPagesCount;
 
     LocateMapStatus = MemEncryptSevLocateInitialSmramSaveStateMapPages (
-                        &MapPagesBase,
-                        &MapPagesCount
-                        );
+                                                                        &MapPagesBase,
+                                                                        &MapPagesCount
+                                                                        );
     ASSERT_RETURN_ERROR (LocateMapStatus);
 
     if (mQ35SmramAtDefaultSmbase) {
@@ -194,15 +198,15 @@ AmdSevInitialize (
       //
       ASSERT (SMM_DEFAULT_SMBASE <= MapPagesBase);
       ASSERT (
-        (MapPagesBase + EFI_PAGES_TO_SIZE (MapPagesCount) <=
-         SMM_DEFAULT_SMBASE + MCH_DEFAULT_SMBASE_SIZE)
-        );
+              (MapPagesBase + EFI_PAGES_TO_SIZE (MapPagesCount) <=
+               SMM_DEFAULT_SMBASE + MCH_DEFAULT_SMBASE_SIZE)
+              );
     } else {
       BuildMemoryAllocationHob (
-        MapPagesBase,                      // BaseAddress
-        EFI_PAGES_TO_SIZE (MapPagesCount), // Length
-        EfiBootServicesData                // MemoryType
-        );
+                                MapPagesBase,                      // BaseAddress
+                                EFI_PAGES_TO_SIZE (MapPagesCount), // Length
+                                EfiBootServicesData                // MemoryType
+                                );
     }
   }
 

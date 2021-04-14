@@ -14,13 +14,13 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // FLOPPY_NOT_PRESENT = No floppy controller present
 // FLOPPY_PRESENT_NO_MEDIA = Floppy controller present but no media inserted
 //
-#define FLOPPY_NOT_PRESENT           0
-#define FLOPPY_PRESENT_WITH_MEDIA    1
-#define FLOPPY_PRESENT_NO_MEDIA      2
+#define FLOPPY_NOT_PRESENT         0
+#define FLOPPY_PRESENT_WITH_MEDIA  1
+#define FLOPPY_PRESENT_NO_MEDIA    2
 
-BBS_TABLE           *mBbsTable;
-BOOLEAN             mBbsTableDoneFlag   = FALSE;
-BOOLEAN             IsHaveMediaInFloppy = TRUE;
+BBS_TABLE  *mBbsTable;
+BOOLEAN    mBbsTableDoneFlag   = FALSE;
+BOOLEAN    IsHaveMediaInFloppy = TRUE;
 
 /**
   Checks the state of the floppy and if media is inserted.
@@ -44,23 +44,23 @@ HasMediaInFloppy (
   VOID
   )
 {
-  EFI_STATUS                            Status;
-  UINTN                                 HandleCount;
-  EFI_HANDLE                            *HandleBuffer;
-  UINTN                                 Index;
-  EFI_ISA_IO_PROTOCOL                   *IsaIo;
-  EFI_BLOCK_IO_PROTOCOL                 *BlkIo;
+  EFI_STATUS             Status;
+  UINTN                  HandleCount;
+  EFI_HANDLE             *HandleBuffer;
+  UINTN                  Index;
+  EFI_ISA_IO_PROTOCOL    *IsaIo;
+  EFI_BLOCK_IO_PROTOCOL  *BlkIo;
 
-  HandleBuffer  = NULL;
-  HandleCount   = 0;
+  HandleBuffer = NULL;
+  HandleCount  = 0;
 
   gBS->LocateHandleBuffer (
-        ByProtocol,
-        &gEfiIsaIoProtocolGuid,
-        NULL,
-        &HandleCount,
-        &HandleBuffer
-        );
+                           ByProtocol,
+                           &gEfiIsaIoProtocolGuid,
+                           NULL,
+                           &HandleCount,
+                           &HandleBuffer
+                           );
 
   //
   // If don't find any ISA/IO protocol assume no floppy. Need for floppy
@@ -74,10 +74,10 @@ HasMediaInFloppy (
 
   for (Index = 0; Index < HandleCount; Index++) {
     Status = gBS->HandleProtocol (
-                    HandleBuffer[Index],
-                    &gEfiIsaIoProtocolGuid,
-                    (VOID **) &IsaIo
-                    );
+                                  HandleBuffer[Index],
+                                  &gEfiIsaIoProtocolGuid,
+                                  (VOID **) &IsaIo
+                                  );
     if (EFI_ERROR (Status)) {
       continue;
     }
@@ -85,6 +85,7 @@ HasMediaInFloppy (
     if (IsaIo->ResourceList->Device.HID != EISA_PNP_ID (0x604)) {
       continue;
     }
+
     //
     // Update blockio in case the floppy is inserted in during BdsTimeout
     //
@@ -101,10 +102,10 @@ HasMediaInFloppy (
     }
 
     Status = gBS->HandleProtocol (
-                    HandleBuffer[Index],
-                    &gEfiBlockIoProtocolGuid,
-                    (VOID **) &BlkIo
-                    );
+                                  HandleBuffer[Index],
+                                  &gEfiBlockIoProtocolGuid,
+                                  (VOID **) &BlkIo
+                                  );
     if (EFI_ERROR (Status)) {
       continue;
     }
@@ -121,9 +122,7 @@ HasMediaInFloppy (
   FreePool (HandleBuffer);
 
   return FLOPPY_NOT_PRESENT;
-
 }
-
 
 /**
   Complete build of BBS TABLE.
@@ -153,10 +152,10 @@ LegacyBiosBuildBbs (
   // First entry is floppy.
   // Next 2*MAX_IDE_CONTROLLER entries are for onboard IDE.
   // Next n entries are filled in after each ROM is dispatched.
-  //   Entry filled in if follow BBS spec. See LegacyPci.c
+  // Entry filled in if follow BBS spec. See LegacyPci.c
   // Next entries are for non-BBS compliant ROMS. They are filled in by
-  //   16-bit code during Legacy16UpdateBbs invocation. Final BootPriority
-  //   occurs after that invocation.
+  // 16-bit code during Legacy16UpdateBbs invocation. Final BootPriority
+  // occurs after that invocation.
   //
   // Floppy
   // Set default state.
@@ -172,22 +171,22 @@ LegacyBiosBuildBbs (
     }
   }
 
-  BbsTable[0].Bus                       = 0xff;
-  BbsTable[0].Device                    = 0xff;
-  BbsTable[0].Function                  = 0xff;
-  BbsTable[0].DeviceType                = BBS_FLOPPY;
-  BbsTable[0].Class                     = 01;
-  BbsTable[0].SubClass                  = 02;
-  BbsTable[0].StatusFlags.OldPosition   = 0;
-  BbsTable[0].StatusFlags.Reserved1     = 0;
-  BbsTable[0].StatusFlags.Enabled       = 0;
-  BbsTable[0].StatusFlags.Failed        = 0;
-  BbsTable[0].StatusFlags.MediaPresent  = 0;
-  BbsTable[0].StatusFlags.Reserved2     = 0;
+  BbsTable[0].Bus        = 0xff;
+  BbsTable[0].Device     = 0xff;
+  BbsTable[0].Function   = 0xff;
+  BbsTable[0].DeviceType = BBS_FLOPPY;
+  BbsTable[0].Class      = 01;
+  BbsTable[0].SubClass   = 02;
+  BbsTable[0].StatusFlags.OldPosition = 0;
+  BbsTable[0].StatusFlags.Reserved1   = 0;
+  BbsTable[0].StatusFlags.Enabled     = 0;
+  BbsTable[0].StatusFlags.Failed = 0;
+  BbsTable[0].StatusFlags.MediaPresent = 0;
+  BbsTable[0].StatusFlags.Reserved2    = 0;
 
   //
   // Onboard HDD - Note Each HDD controller controls 2 drives
-  //               Master & Slave
+  // Master & Slave
   //
   HddInfo = &Private->IntThunk->EfiToLegacy16BootTable.HddInfo[0];
   //
@@ -196,19 +195,17 @@ LegacyBiosBuildBbs (
   LegacyBiosBuildIdeData (Private, &HddInfo, 0);
 
   for (HddIndex = 0; HddIndex < MAX_IDE_CONTROLLER; HddIndex++) {
-
     BbsIndex = HddIndex * 2 + 1;
     for (Index = 0; Index < 2; ++Index) {
-
-      BbsTable[BbsIndex + Index].Bus                      = HddInfo[HddIndex].Bus;
-      BbsTable[BbsIndex + Index].Device                   = HddInfo[HddIndex].Device;
-      BbsTable[BbsIndex + Index].Function                 = HddInfo[HddIndex].Function;
-      BbsTable[BbsIndex + Index].Class                    = 01;
-      BbsTable[BbsIndex + Index].SubClass                 = 01;
-      BbsTable[BbsIndex + Index].StatusFlags.OldPosition  = 0;
-      BbsTable[BbsIndex + Index].StatusFlags.Reserved1    = 0;
-      BbsTable[BbsIndex + Index].StatusFlags.Enabled      = 0;
-      BbsTable[BbsIndex + Index].StatusFlags.Failed       = 0;
+      BbsTable[BbsIndex + Index].Bus      = HddInfo[HddIndex].Bus;
+      BbsTable[BbsIndex + Index].Device   = HddInfo[HddIndex].Device;
+      BbsTable[BbsIndex + Index].Function = HddInfo[HddIndex].Function;
+      BbsTable[BbsIndex + Index].Class    = 01;
+      BbsTable[BbsIndex + Index].SubClass = 01;
+      BbsTable[BbsIndex + Index].StatusFlags.OldPosition = 0;
+      BbsTable[BbsIndex + Index].StatusFlags.Reserved1   = 0;
+      BbsTable[BbsIndex + Index].StatusFlags.Enabled     = 0;
+      BbsTable[BbsIndex + Index].StatusFlags.Failed = 0;
       BbsTable[BbsIndex + Index].StatusFlags.MediaPresent = 0;
       BbsTable[BbsIndex + Index].StatusFlags.Reserved2    = 0;
 
@@ -262,32 +259,32 @@ LegacyBiosBuildBbs (
   BbsIndex = HddIndex * 2 + 1;
 
   Status = gBS->LocateHandleBuffer (
-                  ByProtocol,
-                  &gEfiBlockIoProtocolGuid,
-                  NULL,
-                  &NumberBlockIoHandles,
-                  &BlockIoHandles
-                  );
+                                    ByProtocol,
+                                    &gEfiBlockIoProtocolGuid,
+                                    NULL,
+                                    &NumberBlockIoHandles,
+                                    &BlockIoHandles
+                                    );
 
   if (!EFI_ERROR (Status)) {
-    UINTN                     Removable;
-    EFI_BLOCK_IO_PROTOCOL     *BlkIo;
-    EFI_PCI_IO_PROTOCOL       *PciIo;
-    EFI_DEVICE_PATH_PROTOCOL  *DevicePath;
-    EFI_DEVICE_PATH_PROTOCOL  *DevicePathNode;
-    EFI_HANDLE                PciHandle;
-    UINTN                     SegNum;
-    UINTN                     BusNum;
-    UINTN                     DevNum;
-    UINTN                     FuncNum;
+  UINTN                     Removable;
+  EFI_BLOCK_IO_PROTOCOL     *BlkIo;
+  EFI_PCI_IO_PROTOCOL       *PciIo;
+  EFI_DEVICE_PATH_PROTOCOL  *DevicePath;
+  EFI_DEVICE_PATH_PROTOCOL  *DevicePathNode;
+  EFI_HANDLE                PciHandle;
+  UINTN                     SegNum;
+  UINTN                     BusNum;
+  UINTN                     DevNum;
+  UINTN                     FuncNum;
 
     for (Removable = 0; Removable < 2; Removable++) {
       for (BlockIndex = 0; BlockIndex < NumberBlockIoHandles; BlockIndex++) {
         Status = gBS->HandleProtocol (
-                        BlockIoHandles[BlockIndex],
-                        &gEfiBlockIoProtocolGuid,
-                        (VOID **) &BlkIo
-                        );
+                                      BlockIoHandles[BlockIndex],
+                                      &gEfiBlockIoProtocolGuid,
+                                      (VOID **) &BlkIo
+                                      );
 
         if (EFI_ERROR (Status)) {
           continue;
@@ -311,10 +308,10 @@ LegacyBiosBuildBbs (
         // Get Device Path
         //
         Status = gBS->HandleProtocol (
-                        BlockIoHandles[BlockIndex],
-                        &gEfiDevicePathProtocolGuid,
-                        (VOID **) &DevicePath
-                        );
+                                      BlockIoHandles[BlockIndex],
+                                      &gEfiDevicePathProtocolGuid,
+                                      (VOID **) &DevicePath
+                                      );
         if (EFI_ERROR (Status)) {
           continue;
         }
@@ -328,66 +325,72 @@ LegacyBiosBuildBbs (
               DevicePathSubType (DevicePathNode) == MSG_ATAPI_DP) {
             break;
           }
+
           DevicePathNode = NextDevicePathNode (DevicePathNode);
         }
+
         if (!IsDevicePathEnd (DevicePathNode)) {
-            continue;
+          continue;
         }
 
         //
-        //  Locate which PCI device
+        // Locate which PCI device
         //
         Status = gBS->LocateDevicePath (
-                        &gEfiPciIoProtocolGuid,
-                        &DevicePath,
-                        &PciHandle
-                        );
+                                        &gEfiPciIoProtocolGuid,
+                                        &DevicePath,
+                                        &PciHandle
+                                        );
         if (EFI_ERROR (Status)) {
           continue;
         }
 
         Status = gBS->HandleProtocol (
-                        PciHandle,
-                        &gEfiPciIoProtocolGuid,
-                        (VOID **) &PciIo
-                        );
+                                      PciHandle,
+                                      &gEfiPciIoProtocolGuid,
+                                      (VOID **) &PciIo
+                                      );
         if (EFI_ERROR (Status)) {
           continue;
         }
 
         Status = PciIo->GetLocation (
-                          PciIo,
-                          &SegNum,
-                          &BusNum,
-                          &DevNum,
-                          &FuncNum
-                          );
+                                     PciIo,
+                                     &SegNum,
+                                     &BusNum,
+                                     &DevNum,
+                                     &FuncNum
+                                     );
         if (EFI_ERROR (Status)) {
           continue;
         }
 
         if (SegNum != 0) {
-          DEBUG ((DEBUG_WARN, "CSM cannot use PCI devices in segment %Lu\n",
-            (UINT64) SegNum));
+          DEBUG (
+                 (DEBUG_WARN, "CSM cannot use PCI devices in segment %Lu\n",
+                  (UINT64) SegNum)
+                 );
           continue;
         }
 
-        DEBUG ((DEBUG_INFO, "Add Legacy Bbs entry for PCI %d/%d/%d\n",
-          BusNum, DevNum, FuncNum));
+        DEBUG (
+               (DEBUG_INFO, "Add Legacy Bbs entry for PCI %d/%d/%d\n",
+                BusNum, DevNum, FuncNum)
+               );
 
-        BbsTable[BbsIndex].Bus                      = BusNum;
-        BbsTable[BbsIndex].Device                   = DevNum;
-        BbsTable[BbsIndex].Function                 = FuncNum;
-        BbsTable[BbsIndex].Class                    = 1;
-        BbsTable[BbsIndex].SubClass                 = 0x80;
-        BbsTable[BbsIndex].StatusFlags.OldPosition  = 0;
-        BbsTable[BbsIndex].StatusFlags.Reserved1    = 0;
-        BbsTable[BbsIndex].StatusFlags.Enabled      = 0;
-        BbsTable[BbsIndex].StatusFlags.Failed       = 0;
+        BbsTable[BbsIndex].Bus      = BusNum;
+        BbsTable[BbsIndex].Device   = DevNum;
+        BbsTable[BbsIndex].Function = FuncNum;
+        BbsTable[BbsIndex].Class    = 1;
+        BbsTable[BbsIndex].SubClass = 0x80;
+        BbsTable[BbsIndex].StatusFlags.OldPosition = 0;
+        BbsTable[BbsIndex].StatusFlags.Reserved1   = 0;
+        BbsTable[BbsIndex].StatusFlags.Enabled     = 0;
+        BbsTable[BbsIndex].StatusFlags.Failed = 0;
         BbsTable[BbsIndex].StatusFlags.MediaPresent = 0;
         BbsTable[BbsIndex].StatusFlags.Reserved2    = 0;
-        BbsTable[BbsIndex].DeviceType               = BBS_HARDDISK;
-        BbsTable[BbsIndex].BootPriority             = BBS_UNPRIORITIZED_ENTRY;
+        BbsTable[BbsIndex].DeviceType   = BBS_HARDDISK;
+        BbsTable[BbsIndex].BootPriority = BBS_UNPRIORITIZED_ENTRY;
         BbsIndex++;
 
         if (BbsIndex == MAX_BBS_ENTRIES) {
@@ -402,7 +405,6 @@ LegacyBiosBuildBbs (
 
   return EFI_SUCCESS;
 }
-
 
 /**
   Get all BBS info
@@ -428,23 +430,23 @@ LegacyBiosGetBbsInfo (
   OUT BBS_TABLE                       **BbsTable
   )
 {
-  LEGACY_BIOS_INSTANCE              *Private;
-  EFI_IA32_REGISTER_SET             Regs;
-  EFI_TO_COMPATIBILITY16_BOOT_TABLE *EfiToLegacy16BootTable;
-//  HDD_INFO                          *LocalHddInfo;
-//  IN BBS_TABLE                      *LocalBbsTable;
-  UINTN                             NumHandles;
-  EFI_HANDLE                        *HandleBuffer;
-  UINTN                             Index;
-  UINTN                             TempData;
-  UINT32                            Granularity;
+  LEGACY_BIOS_INSTANCE               *Private;
+  EFI_IA32_REGISTER_SET              Regs;
+  EFI_TO_COMPATIBILITY16_BOOT_TABLE  *EfiToLegacy16BootTable;
+  // HDD_INFO                          *LocalHddInfo;
+  // IN BBS_TABLE                      *LocalBbsTable;
+  UINTN       NumHandles;
+  EFI_HANDLE  *HandleBuffer;
+  UINTN       Index;
+  UINTN       TempData;
+  UINT32      Granularity;
 
-  HandleBuffer            = NULL;
+  HandleBuffer = NULL;
 
-  Private                 = LEGACY_BIOS_INSTANCE_FROM_THIS (This);
-  EfiToLegacy16BootTable  = &Private->IntThunk->EfiToLegacy16BootTable;
-//  LocalHddInfo            = EfiToLegacy16BootTable->HddInfo;
-//  LocalBbsTable           = (BBS_TABLE*)(UINTN)EfiToLegacy16BootTable->BbsTable;
+  Private = LEGACY_BIOS_INSTANCE_FROM_THIS (This);
+  EfiToLegacy16BootTable = &Private->IntThunk->EfiToLegacy16BootTable;
+  // LocalHddInfo            = EfiToLegacy16BootTable->HddInfo;
+  // LocalBbsTable           = (BBS_TABLE*)(UINTN)EfiToLegacy16BootTable->BbsTable;
 
   if (!mBbsTableDoneFlag) {
     mBbsTable = Private->BbsTablePtr;
@@ -457,12 +459,12 @@ LegacyBiosGetBbsInfo (
     // Get PciRootBridgeIO protocol
     //
     gBS->LocateHandleBuffer (
-          ByProtocol,
-          &gEfiPciRootBridgeIoProtocolGuid,
-          NULL,
-          &NumHandles,
-          &HandleBuffer
-          );
+                             ByProtocol,
+                             &gEfiPciRootBridgeIoProtocolGuid,
+                             NULL,
+                             &NumHandles,
+                             &HandleBuffer
+                             );
 
     if (NumHandles == 0) {
       return EFI_NOT_FOUND;
@@ -475,7 +477,6 @@ LegacyBiosGetBbsInfo (
       // PCI bus driver enumerate all subsequent handles
       //
       gBS->ConnectController (HandleBuffer[Index], NULL, NULL, FALSE);
-
     }
 
     LegacyBiosBuildBbs (Private, mBbsTable);
@@ -496,13 +497,13 @@ LegacyBiosGetBbsInfo (
     Regs.X.BX = NORMALIZE_EFI_OFFSET ((UINT32) TempData);
 
     Private->LegacyBios.FarCall86 (
-      This,
-      Private->Legacy16CallSegment,
-      Private->Legacy16CallOffset,
-      &Regs,
-      NULL,
-      0
-      );
+                                   This,
+                                   Private->Legacy16CallSegment,
+                                   Private->Legacy16CallOffset,
+                                   &Regs,
+                                   NULL,
+                                   0
+                                   );
 
     Private->Cpu->FlushDataCache (Private->Cpu, 0xE0000, 0x20000, EfiCpuFlushTypeWriteBackInvalidate);
     Private->LegacyRegion->Lock (Private->LegacyRegion, 0xe0000, 0x20000, &Granularity);
@@ -518,7 +519,7 @@ LegacyBiosGetBbsInfo (
 
   *HddCount = MAX_IDE_CONTROLLER;
   *HddInfo  = EfiToLegacy16BootTable->HddInfo;
-  *BbsTable = (BBS_TABLE*)(UINTN)EfiToLegacy16BootTable->BbsTable;
+  *BbsTable = (BBS_TABLE *) (UINTN) EfiToLegacy16BootTable->BbsTable;
   *BbsCount = (UINT16) (sizeof (Private->IntThunk->BbsTable) / sizeof (BBS_TABLE));
   return EFI_SUCCESS;
 }

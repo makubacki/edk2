@@ -11,14 +11,37 @@
 
 #include "VirtioFsDxe.h"
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 VirtioFsSimpleFileClose (
   IN EFI_FILE_PROTOCOL *This
   )
 {
-  VIRTIO_FS_FILE *VirtioFsFile;
-  VIRTIO_FS      *VirtioFs;
+  VIRTIO_FS_FILE  *VirtioFsFile;
+  VIRTIO_FS       *VirtioFs;
 
   VirtioFsFile = VIRTIO_FS_FILE_FROM_SIMPLE_FILE (This);
   VirtioFs     = VirtioFsFile->OwnerFs;
@@ -34,16 +57,27 @@ VirtioFsSimpleFileClose (
   //
   if (VirtioFsFile->IsOpenForWriting) {
     if (!VirtioFsFile->IsDirectory) {
-      VirtioFsFuseFlush (VirtioFs, VirtioFsFile->NodeId,
-        VirtioFsFile->FuseHandle);
+      VirtioFsFuseFlush (
+                         VirtioFs,
+                         VirtioFsFile->NodeId,
+                         VirtioFsFile->FuseHandle
+                         );
     }
 
-    VirtioFsFuseFsyncFileOrDir (VirtioFs, VirtioFsFile->NodeId,
-      VirtioFsFile->FuseHandle, VirtioFsFile->IsDirectory);
+    VirtioFsFuseFsyncFileOrDir (
+                                VirtioFs,
+                                VirtioFsFile->NodeId,
+                                VirtioFsFile->FuseHandle,
+                                VirtioFsFile->IsDirectory
+                                );
   }
 
-  VirtioFsFuseReleaseFileOrDir (VirtioFs, VirtioFsFile->NodeId,
-    VirtioFsFile->FuseHandle, VirtioFsFile->IsDirectory);
+  VirtioFsFuseReleaseFileOrDir (
+                                VirtioFs,
+                                VirtioFsFile->NodeId,
+                                VirtioFsFile->FuseHandle,
+                                VirtioFsFile->IsDirectory
+                                );
 
   //
   // VirtioFsFile->FuseHandle is gone at this point, but VirtioFsFile->NodeId
@@ -63,6 +97,7 @@ VirtioFsSimpleFileClose (
   if (VirtioFsFile->FileInfoArray != NULL) {
     FreePool (VirtioFsFile->FileInfoArray);
   }
+
   FreePool (VirtioFsFile);
   return EFI_SUCCESS;
 }

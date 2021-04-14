@@ -30,8 +30,8 @@ AmdSevInitialize (
   VOID
   )
 {
-  UINT64                            EncryptionMask;
-  RETURN_STATUS                     PcdStatus;
+  UINT64         EncryptionMask;
+  RETURN_STATUS  PcdStatus;
 
   //
   // Check if SEV is enabled
@@ -67,14 +67,14 @@ AmdSevInitialize (
   // hypervisor.
   //
   if (FeaturePcdGet (PcdSmmSmramRequire) && (mBootMode != BOOT_ON_S3_RESUME)) {
-    RETURN_STATUS LocateMapStatus;
-    UINTN         MapPagesBase;
-    UINTN         MapPagesCount;
+  RETURN_STATUS  LocateMapStatus;
+  UINTN          MapPagesBase;
+  UINTN          MapPagesCount;
 
     LocateMapStatus = MemEncryptSevLocateInitialSmramSaveStateMapPages (
-                        &MapPagesBase,
-                        &MapPagesCount
-                        );
+                                                                        &MapPagesBase,
+                                                                        &MapPagesCount
+                                                                        );
     ASSERT_RETURN_ERROR (LocateMapStatus);
 
     if (mQ35SmramAtDefaultSmbase) {
@@ -84,15 +84,15 @@ AmdSevInitialize (
       //
       ASSERT (SMM_DEFAULT_SMBASE <= MapPagesBase);
       ASSERT (
-        (MapPagesBase + EFI_PAGES_TO_SIZE (MapPagesCount) <=
-         SMM_DEFAULT_SMBASE + MCH_DEFAULT_SMBASE_SIZE)
-        );
+              (MapPagesBase + EFI_PAGES_TO_SIZE (MapPagesCount) <=
+               SMM_DEFAULT_SMBASE + MCH_DEFAULT_SMBASE_SIZE)
+              );
     } else {
       BuildMemoryAllocationHob (
-        MapPagesBase,                      // BaseAddress
-        EFI_PAGES_TO_SIZE (MapPagesCount), // Length
-        EfiBootServicesData                // MemoryType
-        );
+                                MapPagesBase,                      // BaseAddress
+                                EFI_PAGES_TO_SIZE (MapPagesCount), // Length
+                                EfiBootServicesData                // MemoryType
+                                );
     }
   }
 }

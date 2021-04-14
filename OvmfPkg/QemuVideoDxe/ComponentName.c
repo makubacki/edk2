@@ -21,21 +21,20 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gQemuVideoComponentNa
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL gQemuVideoComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gQemuVideoComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) QemuVideoComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) QemuVideoComponentNameGetControllerName,
   "en"
 };
 
-
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mQemuVideoDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mQemuVideoDriverNameTable[] = {
   { "eng;en", L"QEMU Video Driver" },
-  { NULL , NULL }
+  { NULL,     NULL                 }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mQemuVideoControllerNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mQemuVideoControllerNameTable[] = {
   { "eng;en", L"QEMU Video PCI Adapter" },
-  { NULL , NULL }
+  { NULL,     NULL                      }
 };
 
 /**
@@ -86,12 +85,12 @@ QemuVideoComponentNameGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mQemuVideoDriverNameTable,
-           DriverName,
-           (BOOLEAN)(This == &gQemuVideoComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mQemuVideoDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gQemuVideoComponentName)
+                               );
 }
 
 /**
@@ -172,7 +171,7 @@ QemuVideoComponentNameGetControllerName (
   OUT CHAR16                                          **ControllerName
   )
 {
-  EFI_STATUS                      Status;
+  EFI_STATUS  Status;
 
   //
   // This is a device driver, so ChildHandle must be NULL.
@@ -185,10 +184,10 @@ QemuVideoComponentNameGetControllerName (
   // Make sure this driver is currently managing ControllHandle
   //
   Status = EfiTestManagedDevice (
-             ControllerHandle,
-             gQemuVideoDriverBinding.DriverBindingHandle,
-             &gEfiPciIoProtocolGuid
-             );
+                                 ControllerHandle,
+                                 gQemuVideoDriverBinding.DriverBindingHandle,
+                                 &gEfiPciIoProtocolGuid
+                                 );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -197,10 +196,10 @@ QemuVideoComponentNameGetControllerName (
   // Get the QEMU Video's Device structure
   //
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mQemuVideoControllerNameTable,
-           ControllerName,
-           (BOOLEAN)(This == &gQemuVideoComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mQemuVideoControllerNameTable,
+                               ControllerName,
+                               (BOOLEAN) (This == &gQemuVideoComponentName)
+                               );
 }

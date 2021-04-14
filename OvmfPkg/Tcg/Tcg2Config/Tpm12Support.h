@@ -27,8 +27,8 @@
                            Tpm12SubmitCommand().
 **/
 EFI_STATUS
-InternalTpm12Detect (
-  VOID
-  );
+  InternalTpm12Detect (
+                       VOID
+                       );
 
 #endif // TPM12_SUPPORT_H_

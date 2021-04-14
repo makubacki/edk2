@@ -11,7 +11,7 @@
 #include "Qemu.h"
 #include <IndustryStandard/Acpi.h>
 
-EFI_DRIVER_BINDING_PROTOCOL gQemuVideoDriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  gQemuVideoDriverBinding = {
   QemuVideoControllerDriverSupported,
   QemuVideoControllerDriverStart,
   QemuVideoControllerDriverStop,
@@ -20,68 +20,91 @@ EFI_DRIVER_BINDING_PROTOCOL gQemuVideoDriverBinding = {
   NULL
 };
 
-QEMU_VIDEO_CARD gQemuVideoCardList[] = {
-    {
-        PCI_CLASS_DISPLAY_VGA,
-        CIRRUS_LOGIC_VENDOR_ID,
-        CIRRUS_LOGIC_5430_DEVICE_ID,
-        QEMU_VIDEO_CIRRUS_5430,
-        L"Cirrus 5430"
-    },{
-        PCI_CLASS_DISPLAY_VGA,
-        CIRRUS_LOGIC_VENDOR_ID,
-        CIRRUS_LOGIC_5430_ALTERNATE_DEVICE_ID,
-        QEMU_VIDEO_CIRRUS_5430,
-        L"Cirrus 5430"
-    },{
-        PCI_CLASS_DISPLAY_VGA,
-        CIRRUS_LOGIC_VENDOR_ID,
-        CIRRUS_LOGIC_5446_DEVICE_ID,
-        QEMU_VIDEO_CIRRUS_5446,
-        L"Cirrus 5446"
-    },{
-        PCI_CLASS_DISPLAY_VGA,
-        0x1234,
-        0x1111,
-        QEMU_VIDEO_BOCHS_MMIO,
-        L"QEMU Standard VGA"
-    },{
-        PCI_CLASS_DISPLAY_OTHER,
-        0x1234,
-        0x1111,
-        QEMU_VIDEO_BOCHS_MMIO,
-        L"QEMU Standard VGA (secondary)"
-    },{
-        PCI_CLASS_DISPLAY_VGA,
-        0x1b36,
-        0x0100,
-        QEMU_VIDEO_BOCHS,
-        L"QEMU QXL VGA"
-    },{
-        PCI_CLASS_DISPLAY_VGA,
-        0x1af4,
-        0x1050,
-        QEMU_VIDEO_BOCHS_MMIO,
-        L"QEMU VirtIO VGA"
-    },{
-        PCI_CLASS_DISPLAY_VGA,
-        0x15ad,
-        0x0405,
-        QEMU_VIDEO_VMWARE_SVGA,
-        L"QEMU VMWare SVGA"
-    },{
-        0 /* end of list */
-    }
+QEMU_VIDEO_CARD  gQemuVideoCardList[] = {
+  {
+    PCI_CLASS_DISPLAY_VGA,
+    CIRRUS_LOGIC_VENDOR_ID,
+    CIRRUS_LOGIC_5430_DEVICE_ID,
+    QEMU_VIDEO_CIRRUS_5430,
+    L"Cirrus 5430"
+  },{
+    PCI_CLASS_DISPLAY_VGA,
+    CIRRUS_LOGIC_VENDOR_ID,
+    CIRRUS_LOGIC_5430_ALTERNATE_DEVICE_ID,
+    QEMU_VIDEO_CIRRUS_5430,
+    L"Cirrus 5430"
+  },{
+    PCI_CLASS_DISPLAY_VGA,
+    CIRRUS_LOGIC_VENDOR_ID,
+    CIRRUS_LOGIC_5446_DEVICE_ID,
+    QEMU_VIDEO_CIRRUS_5446,
+    L"Cirrus 5446"
+  },{
+    PCI_CLASS_DISPLAY_VGA,
+    0x1234,
+    0x1111,
+    QEMU_VIDEO_BOCHS_MMIO,
+    L"QEMU Standard VGA"
+  },{
+    PCI_CLASS_DISPLAY_OTHER,
+    0x1234,
+    0x1111,
+    QEMU_VIDEO_BOCHS_MMIO,
+    L"QEMU Standard VGA (secondary)"
+  },{
+    PCI_CLASS_DISPLAY_VGA,
+    0x1b36,
+    0x0100,
+    QEMU_VIDEO_BOCHS,
+    L"QEMU QXL VGA"
+  },{
+    PCI_CLASS_DISPLAY_VGA,
+    0x1af4,
+    0x1050,
+    QEMU_VIDEO_BOCHS_MMIO,
+    L"QEMU VirtIO VGA"
+  },{
+    PCI_CLASS_DISPLAY_VGA,
+    0x15ad,
+    0x0405,
+    QEMU_VIDEO_VMWARE_SVGA,
+    L"QEMU VMWare SVGA"
+  },{
+    0     /* end of list */
+  }
 };
 
-static QEMU_VIDEO_CARD*
-QemuVideoDetect(
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
+static QEMU_VIDEO_CARD *
+QemuVideoDetect (
   IN UINT8 SubClass,
   IN UINT16 VendorId,
   IN UINT16 DeviceId
   )
 {
-  UINTN Index = 0;
+  UINTN  Index = 0;
 
   while (gQemuVideoCardList[Index].VendorId != 0) {
     if (gQemuVideoCardList[Index].SubClass == SubClass &&
@@ -89,8 +112,10 @@ QemuVideoDetect(
         gQemuVideoCardList[Index].DeviceId == DeviceId) {
       return gQemuVideoCardList + Index;
     }
+
     Index++;
   }
+
   return NULL;
 }
 
@@ -113,22 +138,22 @@ QemuVideoControllerDriverSupported (
   IN EFI_DEVICE_PATH_PROTOCOL       *RemainingDevicePath
   )
 {
-  EFI_STATUS          Status;
-  EFI_PCI_IO_PROTOCOL *PciIo;
-  PCI_TYPE00          Pci;
-  QEMU_VIDEO_CARD     *Card;
+  EFI_STATUS           Status;
+  EFI_PCI_IO_PROTOCOL  *PciIo;
+  PCI_TYPE00           Pci;
+  QEMU_VIDEO_CARD      *Card;
 
   //
   // Open the PCI I/O Protocol
   //
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiPciIoProtocolGuid,
-                  (VOID **) &PciIo,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              Controller,
+                              &gEfiPciIoProtocolGuid,
+                              (VOID **) &PciIo,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -137,12 +162,12 @@ QemuVideoControllerDriverSupported (
   // Read the PCI Configuration Header from the PCI Device
   //
   Status = PciIo->Pci.Read (
-                        PciIo,
-                        EfiPciIoWidthUint32,
-                        0,
-                        sizeof (Pci) / sizeof (UINT32),
-                        &Pci
-                        );
+                            PciIo,
+                            EfiPciIoWidthUint32,
+                            0,
+                            sizeof (Pci) / sizeof (UINT32),
+                            &Pci
+                            );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
@@ -151,7 +176,8 @@ QemuVideoControllerDriverSupported (
   if (!IS_PCI_DISPLAY (&Pci)) {
     goto Done;
   }
-  Card = QemuVideoDetect(Pci.Hdr.ClassCode[1], Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
+
+  Card = QemuVideoDetect (Pci.Hdr.ClassCode[1], Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
   if (Card != NULL) {
     DEBUG ((DEBUG_INFO, "QemuVideo: %s detected\n", Card->Name));
     Status = EFI_SUCCESS;
@@ -162,11 +188,11 @@ Done:
   // Close the PCI I/O Protocol
   //
   gBS->CloseProtocol (
-        Controller,
-        &gEfiPciIoProtocolGuid,
-        This->DriverBindingHandle,
-        Controller
-        );
+                      Controller,
+                      &gEfiPciIoProtocolGuid,
+                      This->DriverBindingHandle,
+                      Controller
+                      );
 
   return Status;
 }
@@ -192,16 +218,16 @@ QemuVideoControllerDriverStart (
   IN EFI_DEVICE_PATH_PROTOCOL       *RemainingDevicePath
   )
 {
-  EFI_TPL                           OldTpl;
-  EFI_STATUS                        Status;
-  QEMU_VIDEO_PRIVATE_DATA           *Private;
-  BOOLEAN                           IsQxl;
-  EFI_DEVICE_PATH_PROTOCOL          *ParentDevicePath;
-  ACPI_ADR_DEVICE_PATH              AcpiDeviceNode;
-  PCI_TYPE00                        Pci;
-  QEMU_VIDEO_CARD                   *Card;
-  EFI_PCI_IO_PROTOCOL               *ChildPciIo;
-  UINT64                            SupportedVgaIo;
+  EFI_TPL                   OldTpl;
+  EFI_STATUS                Status;
+  QEMU_VIDEO_PRIVATE_DATA   *Private;
+  BOOLEAN                   IsQxl;
+  EFI_DEVICE_PATH_PROTOCOL  *ParentDevicePath;
+  ACPI_ADR_DEVICE_PATH      AcpiDeviceNode;
+  PCI_TYPE00                Pci;
+  QEMU_VIDEO_CARD           *Card;
+  EFI_PCI_IO_PROTOCOL       *ChildPciIo;
+  UINT64                    SupportedVgaIo;
 
   OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
 
@@ -217,19 +243,19 @@ QemuVideoControllerDriverStart (
   //
   // Set up context record
   //
-  Private->Signature  = QEMU_VIDEO_PRIVATE_DATA_SIGNATURE;
+  Private->Signature = QEMU_VIDEO_PRIVATE_DATA_SIGNATURE;
 
   //
   // Open PCI I/O Protocol
   //
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiPciIoProtocolGuid,
-                  (VOID **) &Private->PciIo,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              Controller,
+                              &gEfiPciIoProtocolGuid,
+                              (VOID **) &Private->PciIo,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (EFI_ERROR (Status)) {
     goto FreePrivate;
   }
@@ -238,12 +264,12 @@ QemuVideoControllerDriverStart (
   // Read the PCI Configuration Header from the PCI Device
   //
   Status = Private->PciIo->Pci.Read (
-                        Private->PciIo,
-                        EfiPciIoWidthUint32,
-                        0,
-                        sizeof (Pci) / sizeof (UINT32),
-                        &Pci
-                        );
+                                     Private->PciIo,
+                                     EfiPciIoWidthUint32,
+                                     0,
+                                     sizeof (Pci) / sizeof (UINT32),
+                                     &Pci
+                                     );
   if (EFI_ERROR (Status)) {
     goto ClosePciIo;
   }
@@ -251,28 +277,29 @@ QemuVideoControllerDriverStart (
   //
   // Determine card variant.
   //
-  Card = QemuVideoDetect(Pci.Hdr.ClassCode[1], Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
+  Card = QemuVideoDetect (Pci.Hdr.ClassCode[1], Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
   if (Card == NULL) {
     Status = EFI_DEVICE_ERROR;
     goto ClosePciIo;
   }
+
   Private->Variant = Card->Variant;
 
   //
   // IsQxl is based on the detected Card->Variant, which at a later point might
   // not match Private->Variant.
   //
-  IsQxl = (BOOLEAN)(Card->Variant == QEMU_VIDEO_BOCHS);
+  IsQxl = (BOOLEAN) (Card->Variant == QEMU_VIDEO_BOCHS);
 
   //
   // Save original PCI attributes
   //
   Status = Private->PciIo->Attributes (
-                    Private->PciIo,
-                    EfiPciIoAttributeOperationGet,
-                    0,
-                    &Private->OriginalPciAttributes
-                    );
+                                       Private->PciIo,
+                                       EfiPciIoAttributeOperationGet,
+                                       0,
+                                       &Private->OriginalPciAttributes
+                                       );
 
   if (EFI_ERROR (Status)) {
     goto ClosePciIo;
@@ -282,16 +309,16 @@ QemuVideoControllerDriverStart (
   // Get supported PCI attributes
   //
   Status = Private->PciIo->Attributes (
-                             Private->PciIo,
-                             EfiPciIoAttributeOperationSupported,
-                             0,
-                             &SupportedVgaIo
-                             );
+                                       Private->PciIo,
+                                       EfiPciIoAttributeOperationSupported,
+                                       0,
+                                       &SupportedVgaIo
+                                       );
   if (EFI_ERROR (Status)) {
     goto ClosePciIo;
   }
 
-  SupportedVgaIo &= (UINT64)(EFI_PCI_IO_ATTRIBUTE_VGA_IO | EFI_PCI_IO_ATTRIBUTE_VGA_IO_16);
+  SupportedVgaIo &= (UINT64) (EFI_PCI_IO_ATTRIBUTE_VGA_IO | EFI_PCI_IO_ATTRIBUTE_VGA_IO_16);
   if (SupportedVgaIo == 0 && IS_PCI_VGA (&Pci)) {
     Status = EFI_UNSUPPORTED;
     goto ClosePciIo;
@@ -301,11 +328,11 @@ QemuVideoControllerDriverStart (
   // Set new PCI attributes
   //
   Status = Private->PciIo->Attributes (
-                            Private->PciIo,
-                            EfiPciIoAttributeOperationEnable,
-                            EFI_PCI_DEVICE_ENABLE | EFI_PCI_IO_ATTRIBUTE_VGA_MEMORY | SupportedVgaIo,
-                            NULL
-                            );
+                                       Private->PciIo,
+                                       EfiPciIoAttributeOperationEnable,
+                                       EFI_PCI_DEVICE_ENABLE | EFI_PCI_IO_ATTRIBUTE_VGA_MEMORY | SupportedVgaIo,
+                                       NULL
+                                       );
   if (EFI_ERROR (Status)) {
     goto ClosePciIo;
   }
@@ -314,21 +341,23 @@ QemuVideoControllerDriverStart (
   // Check whenever the qemu stdvga mmio bar is present (qemu 1.3+).
   //
   if (Private->Variant == QEMU_VIDEO_BOCHS_MMIO) {
-    EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *MmioDesc;
+  EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR  *MmioDesc;
 
     Status = Private->PciIo->GetBarAttributes (
-                        Private->PciIo,
-                        PCI_BAR_IDX2,
-                        NULL,
-                        (VOID**) &MmioDesc
-                        );
+                                               Private->PciIo,
+                                               PCI_BAR_IDX2,
+                                               NULL,
+                                               (VOID **) &MmioDesc
+                                               );
     if (EFI_ERROR (Status) ||
         MmioDesc->ResType != ACPI_ADDRESS_SPACE_TYPE_MEM) {
       DEBUG ((DEBUG_INFO, "QemuVideo: No mmio bar, fallback to port io\n"));
       Private->Variant = QEMU_VIDEO_BOCHS;
     } else {
-      DEBUG ((DEBUG_INFO, "QemuVideo: Using mmio bar @ 0x%lx\n",
-              MmioDesc->AddrRangeMin));
+      DEBUG (
+             (DEBUG_INFO, "QemuVideo: Using mmio bar @ 0x%lx\n",
+              MmioDesc->AddrRangeMin)
+             );
     }
 
     if (!EFI_ERROR (Status)) {
@@ -349,8 +378,8 @@ QemuVideoControllerDriverStart (
   //
   if (Private->Variant == QEMU_VIDEO_BOCHS_MMIO ||
       Private->Variant == QEMU_VIDEO_BOCHS) {
-    UINT16 BochsId;
-    BochsId = BochsRead(Private, VBE_DISPI_INDEX_ID);
+  UINT16  BochsId;
+    BochsId = BochsRead (Private, VBE_DISPI_INDEX_ID);
     if ((BochsId & 0xFFF0) != VBE_DISPI_ID0) {
       DEBUG ((DEBUG_INFO, "QemuVideo: BochsID mismatch (got 0x%x)\n", BochsId));
       Status = EFI_DEVICE_ERROR;
@@ -362,10 +391,10 @@ QemuVideoControllerDriverStart (
   // Get ParentDevicePath
   //
   Status = gBS->HandleProtocol (
-                  Controller,
-                  &gEfiDevicePathProtocolGuid,
-                  (VOID **) &ParentDevicePath
-                  );
+                                Controller,
+                                &gEfiDevicePathProtocolGuid,
+                                (VOID **) &ParentDevicePath
+                                );
   if (EFI_ERROR (Status)) {
     goto RestoreAttributes;
   }
@@ -374,15 +403,15 @@ QemuVideoControllerDriverStart (
   // Set Gop Device Path
   //
   ZeroMem (&AcpiDeviceNode, sizeof (ACPI_ADR_DEVICE_PATH));
-  AcpiDeviceNode.Header.Type = ACPI_DEVICE_PATH;
+  AcpiDeviceNode.Header.Type    = ACPI_DEVICE_PATH;
   AcpiDeviceNode.Header.SubType = ACPI_ADR_DP;
   AcpiDeviceNode.ADR = ACPI_DISPLAY_ADR (1, 0, 0, 1, 0, ACPI_ADR_DISPLAY_TYPE_VGA, 0, 0);
   SetDevicePathNodeLength (&AcpiDeviceNode.Header, sizeof (ACPI_ADR_DEVICE_PATH));
 
   Private->GopDevicePath = AppendDevicePathNode (
-                                      ParentDevicePath,
-                                      (EFI_DEVICE_PATH_PROTOCOL *) &AcpiDeviceNode
-                                      );
+                                                 ParentDevicePath,
+                                                 (EFI_DEVICE_PATH_PROTOCOL *) &AcpiDeviceNode
+                                                 );
   if (Private->GopDevicePath == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto RestoreAttributes;
@@ -392,11 +421,11 @@ QemuVideoControllerDriverStart (
   // Create new child handle and install the device path protocol on it.
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &Private->Handle,
-                  &gEfiDevicePathProtocolGuid,
-                  Private->GopDevicePath,
-                  NULL
-                  );
+                                                   &Private->Handle,
+                                                   &gEfiDevicePathProtocolGuid,
+                                                   Private->GopDevicePath,
+                                                   NULL
+                                                   );
   if (EFI_ERROR (Status)) {
     goto FreeGopDevicePath;
   }
@@ -405,19 +434,20 @@ QemuVideoControllerDriverStart (
   // Construct video mode buffer
   //
   switch (Private->Variant) {
-  case QEMU_VIDEO_CIRRUS_5430:
-  case QEMU_VIDEO_CIRRUS_5446:
-    Status = QemuVideoCirrusModeSetup (Private);
-    break;
-  case QEMU_VIDEO_BOCHS_MMIO:
-  case QEMU_VIDEO_BOCHS:
-    Status = QemuVideoBochsModeSetup (Private, IsQxl);
-    break;
-  default:
-    ASSERT (FALSE);
-    Status = EFI_DEVICE_ERROR;
-    break;
+    case QEMU_VIDEO_CIRRUS_5430:
+    case QEMU_VIDEO_CIRRUS_5446:
+      Status = QemuVideoCirrusModeSetup (Private);
+      break;
+    case QEMU_VIDEO_BOCHS_MMIO:
+    case QEMU_VIDEO_BOCHS:
+      Status = QemuVideoBochsModeSetup (Private, IsQxl);
+      break;
+    default:
+      ASSERT (FALSE);
+      Status = EFI_DEVICE_ERROR;
+      break;
   }
+
   if (EFI_ERROR (Status)) {
     goto UninstallGopDevicePath;
   }
@@ -431,11 +461,11 @@ QemuVideoControllerDriverStart (
   }
 
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &Private->Handle,
-                  &gEfiGraphicsOutputProtocolGuid,
-                  &Private->GraphicsOutput,
-                  NULL
-                  );
+                                                   &Private->Handle,
+                                                   &gEfiGraphicsOutputProtocolGuid,
+                                                   &Private->GraphicsOutput,
+                                                   NULL
+                                                   );
   if (EFI_ERROR (Status)) {
     goto DestructQemuVideoGraphics;
   }
@@ -444,30 +474,34 @@ QemuVideoControllerDriverStart (
   // Reference parent handle from child handle.
   //
   Status = gBS->OpenProtocol (
-                Controller,
-                &gEfiPciIoProtocolGuid,
-                (VOID **) &ChildPciIo,
-                This->DriverBindingHandle,
-                Private->Handle,
-                EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
-                );
+                              Controller,
+                              &gEfiPciIoProtocolGuid,
+                              (VOID **) &ChildPciIo,
+                              This->DriverBindingHandle,
+                              Private->Handle,
+                              EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+                              );
   if (EFI_ERROR (Status)) {
     goto UninstallGop;
   }
 
-#if defined MDE_CPU_IA32 || defined MDE_CPU_X64
-  if (Private->Variant == QEMU_VIDEO_BOCHS_MMIO ||
-      Private->Variant == QEMU_VIDEO_BOCHS) {
-    InstallVbeShim (Card->Name, Private->GraphicsOutput.Mode->FrameBufferBase);
-  }
-#endif
+ #if defined MDE_CPU_IA32 || defined MDE_CPU_X64
+    if (Private->Variant == QEMU_VIDEO_BOCHS_MMIO ||
+        Private->Variant == QEMU_VIDEO_BOCHS) {
+      InstallVbeShim (Card->Name, Private->GraphicsOutput.Mode->FrameBufferBase);
+    }
+
+ #endif
 
   gBS->RestoreTPL (OldTpl);
   return EFI_SUCCESS;
 
 UninstallGop:
-  gBS->UninstallProtocolInterface (Private->Handle,
-         &gEfiGraphicsOutputProtocolGuid, &Private->GraphicsOutput);
+  gBS->UninstallProtocolInterface (
+                                   Private->Handle,
+                                   &gEfiGraphicsOutputProtocolGuid,
+                                   &Private->GraphicsOutput
+                                   );
 
 DestructQemuVideoGraphics:
   QemuVideoGraphicsOutputDestructor (Private);
@@ -476,19 +510,30 @@ FreeModeData:
   FreePool (Private->ModeData);
 
 UninstallGopDevicePath:
-  gBS->UninstallProtocolInterface (Private->Handle,
-         &gEfiDevicePathProtocolGuid, Private->GopDevicePath);
+  gBS->UninstallProtocolInterface (
+                                   Private->Handle,
+                                   &gEfiDevicePathProtocolGuid,
+                                   Private->GopDevicePath
+                                   );
 
 FreeGopDevicePath:
   FreePool (Private->GopDevicePath);
 
 RestoreAttributes:
-  Private->PciIo->Attributes (Private->PciIo, EfiPciIoAttributeOperationSet,
-                    Private->OriginalPciAttributes, NULL);
+  Private->PciIo->Attributes (
+                              Private->PciIo,
+                              EfiPciIoAttributeOperationSet,
+                              Private->OriginalPciAttributes,
+                              NULL
+                              );
 
 ClosePciIo:
-  gBS->CloseProtocol (Controller, &gEfiPciIoProtocolGuid,
-         This->DriverBindingHandle, Controller);
+  gBS->CloseProtocol (
+                      Controller,
+                      &gEfiPciIoProtocolGuid,
+                      This->DriverBindingHandle,
+                      Controller
+                      );
 
 FreePrivate:
   FreePool (Private);
@@ -521,9 +566,9 @@ QemuVideoControllerDriverStop (
   IN EFI_HANDLE                     *ChildHandleBuffer
   )
 {
-  EFI_GRAPHICS_OUTPUT_PROTOCOL    *GraphicsOutput;
+  EFI_GRAPHICS_OUTPUT_PROTOCOL  *GraphicsOutput;
 
-  EFI_STATUS                      Status;
+  EFI_STATUS               Status;
   QEMU_VIDEO_PRIVATE_DATA  *Private;
 
   if (NumberOfChildren == 0) {
@@ -531,11 +576,11 @@ QemuVideoControllerDriverStop (
     // Close the PCI I/O Protocol
     //
     gBS->CloseProtocol (
-          Controller,
-          &gEfiPciIoProtocolGuid,
-          This->DriverBindingHandle,
-          Controller
-          );
+                        Controller,
+                        &gEfiPciIoProtocolGuid,
+                        This->DriverBindingHandle,
+                        Controller
+                        );
     return EFI_SUCCESS;
   }
 
@@ -545,13 +590,13 @@ QemuVideoControllerDriverStop (
   //
   ASSERT (NumberOfChildren == 1);
   Status = gBS->OpenProtocol (
-                  ChildHandleBuffer[0],
-                  &gEfiGraphicsOutputProtocolGuid,
-                  (VOID **) &GraphicsOutput,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ChildHandleBuffer[0],
+                              &gEfiGraphicsOutputProtocolGuid,
+                              (VOID **) &GraphicsOutput,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -567,11 +612,11 @@ QemuVideoControllerDriverStop (
   // Remove the GOP protocol interface from the system
   //
   Status = gBS->UninstallMultipleProtocolInterfaces (
-                  Private->Handle,
-                  &gEfiGraphicsOutputProtocolGuid,
-                  &Private->GraphicsOutput,
-                  NULL
-                  );
+                                                     Private->Handle,
+                                                     &gEfiGraphicsOutputProtocolGuid,
+                                                     &Private->GraphicsOutput,
+                                                     NULL
+                                                     );
 
   if (EFI_ERROR (Status)) {
     return Status;
@@ -581,22 +626,25 @@ QemuVideoControllerDriverStop (
   // Restore original PCI attributes
   //
   Private->PciIo->Attributes (
-                  Private->PciIo,
-                  EfiPciIoAttributeOperationSet,
-                  Private->OriginalPciAttributes,
-                  NULL
-                  );
+                              Private->PciIo,
+                              EfiPciIoAttributeOperationSet,
+                              Private->OriginalPciAttributes,
+                              NULL
+                              );
 
   gBS->CloseProtocol (
-        Controller,
-        &gEfiPciIoProtocolGuid,
-        This->DriverBindingHandle,
-        Private->Handle
-        );
+                      Controller,
+                      &gEfiPciIoProtocolGuid,
+                      This->DriverBindingHandle,
+                      Private->Handle
+                      );
 
   FreePool (Private->ModeData);
-  gBS->UninstallProtocolInterface (Private->Handle,
-         &gEfiDevicePathProtocolGuid, Private->GopDevicePath);
+  gBS->UninstallProtocolInterface (
+                                   Private->Handle,
+                                   &gEfiDevicePathProtocolGuid,
+                                   Private->GopDevicePath
+                                   );
   FreePool (Private->GopDevicePath);
 
   //
@@ -625,13 +673,13 @@ outb (
   )
 {
   Private->PciIo->Io.Write (
-                      Private->PciIo,
-                      EfiPciIoWidthUint8,
-                      EFI_PCI_IO_PASS_THROUGH_BAR,
-                      Address,
-                      1,
-                      &Data
-                      );
+                            Private->PciIo,
+                            EfiPciIoWidthUint8,
+                            EFI_PCI_IO_PASS_THROUGH_BAR,
+                            Address,
+                            1,
+                            &Data
+                            );
 }
 
 /**
@@ -652,13 +700,13 @@ outw (
   )
 {
   Private->PciIo->Io.Write (
-                      Private->PciIo,
-                      EfiPciIoWidthUint16,
-                      EFI_PCI_IO_PASS_THROUGH_BAR,
-                      Address,
-                      1,
-                      &Data
-                      );
+                            Private->PciIo,
+                            EfiPciIoWidthUint16,
+                            EFI_PCI_IO_PASS_THROUGH_BAR,
+                            Address,
+                            1,
+                            &Data
+                            );
 }
 
 /**
@@ -676,16 +724,16 @@ inb (
   UINTN                           Address
   )
 {
-  UINT8 Data;
+  UINT8  Data;
 
   Private->PciIo->Io.Read (
-                      Private->PciIo,
-                      EfiPciIoWidthUint8,
-                      EFI_PCI_IO_PASS_THROUGH_BAR,
-                      Address,
-                      1,
-                      &Data
-                      );
+                           Private->PciIo,
+                           EfiPciIoWidthUint8,
+                           EFI_PCI_IO_PASS_THROUGH_BAR,
+                           Address,
+                           1,
+                           &Data
+                           );
   return Data;
 }
 
@@ -707,13 +755,13 @@ inw (
   UINT16  Data;
 
   Private->PciIo->Io.Read (
-                      Private->PciIo,
-                      EfiPciIoWidthUint16,
-                      EFI_PCI_IO_PASS_THROUGH_BAR,
-                      Address,
-                      1,
-                      &Data
-                      );
+                           Private->PciIo,
+                           EfiPciIoWidthUint16,
+                           EFI_PCI_IO_PASS_THROUGH_BAR,
+                           Address,
+                           1,
+                           &Data
+                           );
   return Data;
 }
 
@@ -757,10 +805,10 @@ SetDefaultPalette (
   QEMU_VIDEO_PRIVATE_DATA  *Private
   )
 {
-  UINTN Index;
-  UINTN RedIndex;
-  UINTN GreenIndex;
-  UINTN BlueIndex;
+  UINTN  Index;
+  UINTN  RedIndex;
+  UINTN  GreenIndex;
+  UINTN  BlueIndex;
 
   Index = 0;
   for (RedIndex = 0; RedIndex < 8; RedIndex++) {
@@ -790,13 +838,13 @@ ClearScreen (
 
   Color = 0;
   Private->PciIo->Mem.Write (
-                        Private->PciIo,
-                        EfiPciIoWidthFillUint32,
-                        Private->FrameBufferVramBarIndex,
-                        0,
-                        0x400000 >> 2,
-                        &Color
-                        );
+                             Private->PciIo,
+                             EfiPciIoWidthFillUint32,
+                             Private->FrameBufferVramBarIndex,
+                             0,
+                             0x400000 >> 2,
+                             &Color
+                             );
 }
 
 /**
@@ -831,8 +879,8 @@ InitializeCirrusGraphicsMode (
   QEMU_VIDEO_CIRRUS_MODES  *ModeData
   )
 {
-  UINT8 Byte;
-  UINTN Index;
+  UINT8  Byte;
+  UINTN  Index;
 
   outw (Private, SEQ_ADDRESS_REGISTER, 0x1206);
   outw (Private, SEQ_ADDRESS_REGISTER, 0x0012);
@@ -878,6 +926,29 @@ InitializeCirrusGraphicsMode (
   ClearScreen (Private);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 BochsWrite (
   QEMU_VIDEO_PRIVATE_DATA  *Private,
@@ -885,50 +956,97 @@ BochsWrite (
   UINT16                   Data
   )
 {
-  EFI_STATUS   Status;
+  EFI_STATUS  Status;
 
   if (Private->Variant == QEMU_VIDEO_BOCHS_MMIO) {
     Status = Private->PciIo->Mem.Write (
-        Private->PciIo,
-        EfiPciIoWidthUint16,
-        PCI_BAR_IDX2,
-        0x500 + (Reg << 1),
-        1,
-        &Data
-        );
+                                        Private->PciIo,
+                                        EfiPciIoWidthUint16,
+                                        PCI_BAR_IDX2,
+                                        0x500 + (Reg << 1),
+                                        1,
+                                        &Data
+                                        );
     ASSERT_EFI_ERROR (Status);
   } else {
     outw (Private, VBE_DISPI_IOPORT_INDEX, Reg);
-    outw (Private, VBE_DISPI_IOPORT_DATA,  Data);
+    outw (Private, VBE_DISPI_IOPORT_DATA, Data);
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 UINT16
 BochsRead (
   QEMU_VIDEO_PRIVATE_DATA  *Private,
   UINT16                   Reg
   )
 {
-  EFI_STATUS   Status;
-  UINT16       Data;
+  EFI_STATUS  Status;
+  UINT16      Data;
 
   if (Private->Variant == QEMU_VIDEO_BOCHS_MMIO) {
     Status = Private->PciIo->Mem.Read (
-        Private->PciIo,
-        EfiPciIoWidthUint16,
-        PCI_BAR_IDX2,
-        0x500 + (Reg << 1),
-        1,
-        &Data
-        );
+                                       Private->PciIo,
+                                       EfiPciIoWidthUint16,
+                                       PCI_BAR_IDX2,
+                                       0x500 + (Reg << 1),
+                                       1,
+                                       &Data
+                                       );
     ASSERT_EFI_ERROR (Status);
   } else {
     outw (Private, VBE_DISPI_IOPORT_INDEX, Reg);
     Data = inw (Private, VBE_DISPI_IOPORT_DATA);
   }
+
   return Data;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 VgaOutb (
   QEMU_VIDEO_PRIVATE_DATA  *Private,
@@ -936,53 +1054,104 @@ VgaOutb (
   UINT8                    Data
   )
 {
-  EFI_STATUS   Status;
+  EFI_STATUS  Status;
 
   if (Private->Variant == QEMU_VIDEO_BOCHS_MMIO) {
     Status = Private->PciIo->Mem.Write (
-        Private->PciIo,
-        EfiPciIoWidthUint8,
-        PCI_BAR_IDX2,
-        0x400 - 0x3c0 + Reg,
-        1,
-        &Data
-        );
+                                        Private->PciIo,
+                                        EfiPciIoWidthUint8,
+                                        PCI_BAR_IDX2,
+                                        0x400 - 0x3c0 + Reg,
+                                        1,
+                                        &Data
+                                        );
     ASSERT_EFI_ERROR (Status);
   } else {
     outb (Private, Reg, Data);
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 InitializeBochsGraphicsMode (
   QEMU_VIDEO_PRIVATE_DATA  *Private,
   QEMU_VIDEO_BOCHS_MODES  *ModeData
   )
 {
-  DEBUG ((DEBUG_INFO, "InitializeBochsGraphicsMode: %dx%d @ %d\n",
-          ModeData->Width, ModeData->Height, ModeData->ColorDepth));
+  DEBUG (
+         (DEBUG_INFO, "InitializeBochsGraphicsMode: %dx%d @ %d\n",
+          ModeData->Width, ModeData->Height, ModeData->ColorDepth)
+         );
 
   /* unblank */
   VgaOutb (Private, ATT_ADDRESS_REGISTER, 0x20);
 
-  BochsWrite (Private, VBE_DISPI_INDEX_ENABLE,      0);
-  BochsWrite (Private, VBE_DISPI_INDEX_BANK,        0);
-  BochsWrite (Private, VBE_DISPI_INDEX_X_OFFSET,    0);
-  BochsWrite (Private, VBE_DISPI_INDEX_Y_OFFSET,    0);
+  BochsWrite (Private, VBE_DISPI_INDEX_ENABLE, 0);
+  BochsWrite (Private, VBE_DISPI_INDEX_BANK, 0);
+  BochsWrite (Private, VBE_DISPI_INDEX_X_OFFSET, 0);
+  BochsWrite (Private, VBE_DISPI_INDEX_Y_OFFSET, 0);
 
-  BochsWrite (Private, VBE_DISPI_INDEX_BPP,         (UINT16) ModeData->ColorDepth);
-  BochsWrite (Private, VBE_DISPI_INDEX_XRES,        (UINT16) ModeData->Width);
-  BochsWrite (Private, VBE_DISPI_INDEX_VIRT_WIDTH,  (UINT16) ModeData->Width);
-  BochsWrite (Private, VBE_DISPI_INDEX_YRES,        (UINT16) ModeData->Height);
+  BochsWrite (Private, VBE_DISPI_INDEX_BPP, (UINT16) ModeData->ColorDepth);
+  BochsWrite (Private, VBE_DISPI_INDEX_XRES, (UINT16) ModeData->Width);
+  BochsWrite (Private, VBE_DISPI_INDEX_VIRT_WIDTH, (UINT16) ModeData->Width);
+  BochsWrite (Private, VBE_DISPI_INDEX_YRES, (UINT16) ModeData->Height);
   BochsWrite (Private, VBE_DISPI_INDEX_VIRT_HEIGHT, (UINT16) ModeData->Height);
 
-  BochsWrite (Private, VBE_DISPI_INDEX_ENABLE,
-              VBE_DISPI_ENABLED | VBE_DISPI_LFB_ENABLED);
+  BochsWrite (
+              Private,
+              VBE_DISPI_INDEX_ENABLE,
+              VBE_DISPI_ENABLED | VBE_DISPI_LFB_ENABLED
+              );
 
   SetDefaultPalette (Private);
   ClearScreen (Private);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 InitializeQemuVideo (
@@ -990,16 +1159,16 @@ InitializeQemuVideo (
   IN EFI_SYSTEM_TABLE     *SystemTable
   )
 {
-  EFI_STATUS              Status;
+  EFI_STATUS  Status;
 
   Status = EfiLibInstallDriverBindingComponentName2 (
-             ImageHandle,
-             SystemTable,
-             &gQemuVideoDriverBinding,
-             ImageHandle,
-             &gQemuVideoComponentName,
-             &gQemuVideoComponentName2
-             );
+                                                     ImageHandle,
+                                                     SystemTable,
+                                                     &gQemuVideoDriverBinding,
+                                                     ImageHandle,
+                                                     &gQemuVideoComponentName,
+                                                     &gQemuVideoComponentName2
+                                                     );
   ASSERT_EFI_ERROR (Status);
 
   return Status;

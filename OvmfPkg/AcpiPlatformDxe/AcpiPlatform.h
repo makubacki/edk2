@@ -24,8 +24,8 @@
 #include <IndustryStandard/Acpi.h>
 
 typedef struct {
-  EFI_PCI_IO_PROTOCOL *PciIo;
-  UINT64              PciAttributes;
+  EFI_PCI_IO_PROTOCOL    *PciIo;
+  UINT64                 PciAttributes;
 } ORIGINAL_ATTRIBUTES;
 
 typedef struct S3_CONTEXT S3_CONTEXT;
@@ -40,9 +40,9 @@ InstallAcpiTable (
   );
 
 BOOLEAN
-QemuDetected (
-  VOID
-  );
+  QemuDetected (
+                VOID
+                );
 
 EFI_STATUS
 EFIAPI
@@ -109,4 +109,3 @@ TransferS3ContextToBootScript (
   );
 
 #endif
-

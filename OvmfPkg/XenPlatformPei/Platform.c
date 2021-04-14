@@ -35,7 +35,7 @@
 #include "Platform.h"
 #include "Cmos.h"
 
-EFI_MEMORY_TYPE_INFORMATION mDefaultMemoryTypeInformation[] = {
+EFI_MEMORY_TYPE_INFORMATION  mDefaultMemoryTypeInformation[] = {
   { EfiACPIMemoryNVS,       0x004 },
   { EfiACPIReclaimMemory,   0x008 },
   { EfiReservedMemoryType,  0x004 },
@@ -46,8 +46,7 @@ EFI_MEMORY_TYPE_INFORMATION mDefaultMemoryTypeInformation[] = {
   { EfiMaxMemoryType,       0x000 }
 };
 
-
-EFI_PEI_PPI_DESCRIPTOR   mPpiBootMode[] = {
+EFI_PEI_PPI_DESCRIPTOR  mPpiBootMode[] = {
   {
     EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST,
     &gEfiPeiMasterBootModePpiGuid,
@@ -55,12 +54,33 @@ EFI_PEI_PPI_DESCRIPTOR   mPpiBootMode[] = {
   }
 };
 
+UINT16  mHostBridgeDevId;
 
-UINT16 mHostBridgeDevId;
+EFI_BOOT_MODE  mBootMode = BOOT_WITH_FULL_CONFIGURATION;
 
-EFI_BOOT_MODE mBootMode = BOOT_WITH_FULL_CONFIGURATION;
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
 
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 AddIoMemoryBaseSizeHob (
   EFI_PHYSICAL_ADDRESS        MemoryBase,
@@ -68,16 +88,39 @@ AddIoMemoryBaseSizeHob (
   )
 {
   BuildResourceDescriptorHob (
-    EFI_RESOURCE_MEMORY_MAPPED_IO,
-      EFI_RESOURCE_ATTRIBUTE_PRESENT     |
-      EFI_RESOURCE_ATTRIBUTE_INITIALIZED |
-      EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE |
-      EFI_RESOURCE_ATTRIBUTE_TESTED,
-    MemoryBase,
-    MemorySize
-    );
+                              EFI_RESOURCE_MEMORY_MAPPED_IO,
+                              EFI_RESOURCE_ATTRIBUTE_PRESENT     |
+                              EFI_RESOURCE_ATTRIBUTE_INITIALIZED |
+                              EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE |
+                              EFI_RESOURCE_ATTRIBUTE_TESTED,
+                              MemoryBase,
+                              MemorySize
+                              );
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 AddReservedMemoryBaseSizeHob (
   EFI_PHYSICAL_ADDRESS        MemoryBase,
@@ -86,22 +129,45 @@ AddReservedMemoryBaseSizeHob (
   )
 {
   BuildResourceDescriptorHob (
-    EFI_RESOURCE_MEMORY_RESERVED,
-      EFI_RESOURCE_ATTRIBUTE_PRESENT     |
-      EFI_RESOURCE_ATTRIBUTE_INITIALIZED |
-      EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE |
-      (Cacheable ?
-       EFI_RESOURCE_ATTRIBUTE_WRITE_COMBINEABLE |
-       EFI_RESOURCE_ATTRIBUTE_WRITE_THROUGH_CACHEABLE |
-       EFI_RESOURCE_ATTRIBUTE_WRITE_BACK_CACHEABLE :
-       0
-       ) |
-      EFI_RESOURCE_ATTRIBUTE_TESTED,
-    MemoryBase,
-    MemorySize
-    );
+                              EFI_RESOURCE_MEMORY_RESERVED,
+                              EFI_RESOURCE_ATTRIBUTE_PRESENT     |
+                              EFI_RESOURCE_ATTRIBUTE_INITIALIZED |
+                              EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE |
+                              (Cacheable ?
+                               EFI_RESOURCE_ATTRIBUTE_WRITE_COMBINEABLE |
+                               EFI_RESOURCE_ATTRIBUTE_WRITE_THROUGH_CACHEABLE |
+                               EFI_RESOURCE_ATTRIBUTE_WRITE_BACK_CACHEABLE :
+                               0
+                              ) |
+                              EFI_RESOURCE_ATTRIBUTE_TESTED,
+                              MemoryBase,
+                              MemorySize
+                              );
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 AddReservedMemoryRangeHob (
   EFI_PHYSICAL_ADDRESS        MemoryBase,
@@ -109,20 +175,68 @@ AddReservedMemoryRangeHob (
   BOOLEAN                     Cacheable
   )
 {
-  AddReservedMemoryBaseSizeHob (MemoryBase,
-    (UINT64)(MemoryLimit - MemoryBase), Cacheable);
+  AddReservedMemoryBaseSizeHob (
+                                MemoryBase,
+                                (UINT64) (MemoryLimit - MemoryBase),
+                                Cacheable
+                                );
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 AddIoMemoryRangeHob (
   EFI_PHYSICAL_ADDRESS        MemoryBase,
   EFI_PHYSICAL_ADDRESS        MemoryLimit
   )
 {
-  AddIoMemoryBaseSizeHob (MemoryBase, (UINT64)(MemoryLimit - MemoryBase));
+  AddIoMemoryBaseSizeHob (MemoryBase, (UINT64) (MemoryLimit - MemoryBase));
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 AddMemoryBaseSizeHob (
   EFI_PHYSICAL_ADDRESS        MemoryBase,
@@ -130,38 +244,82 @@ AddMemoryBaseSizeHob (
   )
 {
   BuildResourceDescriptorHob (
-    EFI_RESOURCE_SYSTEM_MEMORY,
-      EFI_RESOURCE_ATTRIBUTE_PRESENT |
-      EFI_RESOURCE_ATTRIBUTE_INITIALIZED |
-      EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE |
-      EFI_RESOURCE_ATTRIBUTE_WRITE_COMBINEABLE |
-      EFI_RESOURCE_ATTRIBUTE_WRITE_THROUGH_CACHEABLE |
-      EFI_RESOURCE_ATTRIBUTE_WRITE_BACK_CACHEABLE |
-      EFI_RESOURCE_ATTRIBUTE_TESTED,
-    MemoryBase,
-    MemorySize
-    );
+                              EFI_RESOURCE_SYSTEM_MEMORY,
+                              EFI_RESOURCE_ATTRIBUTE_PRESENT |
+                              EFI_RESOURCE_ATTRIBUTE_INITIALIZED |
+                              EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE |
+                              EFI_RESOURCE_ATTRIBUTE_WRITE_COMBINEABLE |
+                              EFI_RESOURCE_ATTRIBUTE_WRITE_THROUGH_CACHEABLE |
+                              EFI_RESOURCE_ATTRIBUTE_WRITE_BACK_CACHEABLE |
+                              EFI_RESOURCE_ATTRIBUTE_TESTED,
+                              MemoryBase,
+                              MemorySize
+                              );
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 AddMemoryRangeHob (
   EFI_PHYSICAL_ADDRESS        MemoryBase,
   EFI_PHYSICAL_ADDRESS        MemoryLimit
   )
 {
-  AddMemoryBaseSizeHob (MemoryBase, (UINT64)(MemoryLimit - MemoryBase));
+  AddMemoryBaseSizeHob (MemoryBase, (UINT64) (MemoryLimit - MemoryBase));
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 MemMapInitialization (
   VOID
   )
 {
-  UINT64        PciIoBase;
-  UINT64        PciIoSize;
-  RETURN_STATUS PcdStatus;
+  UINT64         PciIoBase;
+  UINT64         PciIoSize;
+  RETURN_STATUS  PcdStatus;
 
   PciIoBase = 0xC000;
   PciIoSize = 0x4000;
@@ -170,10 +328,10 @@ MemMapInitialization (
   // Create Memory Type Information HOB
   //
   BuildGuidDataHob (
-    &gEfiMemoryTypeInformationGuid,
-    mDefaultMemoryTypeInformation,
-    sizeof(mDefaultMemoryTypeInformation)
-    );
+                    &gEfiMemoryTypeInformationGuid,
+                    mDefaultMemoryTypeInformation,
+                    sizeof (mDefaultMemoryTypeInformation)
+                    );
 
   //
   // Video memory + Legacy BIOS region
@@ -184,27 +342,51 @@ MemMapInitialization (
   // Add PCI IO Port space available for PCI resource allocations.
   //
   BuildResourceDescriptorHob (
-    EFI_RESOURCE_IO,
-    EFI_RESOURCE_ATTRIBUTE_PRESENT     |
-    EFI_RESOURCE_ATTRIBUTE_INITIALIZED,
-    PciIoBase,
-    PciIoSize
-    );
+                              EFI_RESOURCE_IO,
+                              EFI_RESOURCE_ATTRIBUTE_PRESENT     |
+                              EFI_RESOURCE_ATTRIBUTE_INITIALIZED,
+                              PciIoBase,
+                              PciIoSize
+                              );
   PcdStatus = PcdSet64S (PcdPciIoBase, PciIoBase);
   ASSERT_RETURN_ERROR (PcdStatus);
   PcdStatus = PcdSet64S (PcdPciIoSize, PciIoSize);
   ASSERT_RETURN_ERROR (PcdStatus);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 PciExBarInitialization (
   VOID
   )
 {
   union {
-    UINT64 Uint64;
-    UINT32 Uint32[2];
-  } PciExBarBase;
+  UINT64    Uint64;
+  UINT32    Uint32[2];
+  }
+  PciExBarBase;
 
   //
   // We only support the 256MB size for the MMCONFIG area:
@@ -232,23 +414,46 @@ PciExBarInitialization (
   //
   PciWrite32 (DRAMC_REGISTER_Q35 (MCH_PCIEXBAR_HIGH), PciExBarBase.Uint32[1]);
   PciWrite32 (
-    DRAMC_REGISTER_Q35 (MCH_PCIEXBAR_LOW),
-    PciExBarBase.Uint32[0] | MCH_PCIEXBAR_BUS_FF | MCH_PCIEXBAR_EN
-    );
+              DRAMC_REGISTER_Q35 (MCH_PCIEXBAR_LOW),
+              PciExBarBase.Uint32[0] | MCH_PCIEXBAR_BUS_FF | MCH_PCIEXBAR_EN
+              );
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 MiscInitialization (
   VOID
   )
 {
-  UINTN         PmCmd;
-  UINTN         Pmba;
-  UINT32        PmbaAndVal;
-  UINT32        PmbaOrVal;
-  UINTN         AcpiCtlReg;
-  UINT8         AcpiEnBit;
-  RETURN_STATUS PcdStatus;
+  UINTN          PmCmd;
+  UINTN          Pmba;
+  UINT32         PmbaAndVal;
+  UINT32         PmbaOrVal;
+  UINTN          AcpiCtlReg;
+  UINT8          AcpiEnBit;
+  RETURN_STATUS  PcdStatus;
 
   //
   // Disable A20 Mask
@@ -267,17 +472,17 @@ MiscInitialization (
   //
   switch (mHostBridgeDevId) {
     case INTEL_82441_DEVICE_ID:
-      PmCmd      = POWER_MGMT_REGISTER_PIIX4 (PCI_COMMAND_OFFSET);
-      Pmba       = POWER_MGMT_REGISTER_PIIX4 (PIIX4_PMBA);
-      PmbaAndVal = ~(UINT32)PIIX4_PMBA_MASK;
+      PmCmd = POWER_MGMT_REGISTER_PIIX4 (PCI_COMMAND_OFFSET);
+      Pmba  = POWER_MGMT_REGISTER_PIIX4 (PIIX4_PMBA);
+      PmbaAndVal = ~(UINT32) PIIX4_PMBA_MASK;
       PmbaOrVal  = PIIX4_PMBA_VALUE;
       AcpiCtlReg = POWER_MGMT_REGISTER_PIIX4 (PIIX4_PMREGMISC);
       AcpiEnBit  = PIIX4_PMREGMISC_PMIOSE;
       break;
     case INTEL_Q35_MCH_DEVICE_ID:
-      PmCmd      = POWER_MGMT_REGISTER_Q35 (PCI_COMMAND_OFFSET);
-      Pmba       = POWER_MGMT_REGISTER_Q35 (ICH9_PMBASE);
-      PmbaAndVal = ~(UINT32)ICH9_PMBASE_MASK;
+      PmCmd = POWER_MGMT_REGISTER_Q35 (PCI_COMMAND_OFFSET);
+      Pmba  = POWER_MGMT_REGISTER_Q35 (ICH9_PMBASE);
+      PmbaAndVal = ~(UINT32) ICH9_PMBASE_MASK;
       PmbaOrVal  = ICH9_PMBASE_VALUE;
       AcpiCtlReg = POWER_MGMT_REGISTER_Q35 (ICH9_ACPI_CNTL);
       AcpiEnBit  = ICH9_ACPI_CNTL_ACPI_EN;
@@ -289,11 +494,15 @@ MiscInitialization (
         //
         return;
       }
-      DEBUG ((DEBUG_ERROR, "%a: Unknown Host Bridge Device ID: 0x%04x\n",
-        __FUNCTION__, mHostBridgeDevId));
+
+      DEBUG (
+             (DEBUG_ERROR, "%a: Unknown Host Bridge Device ID: 0x%04x\n",
+              __FUNCTION__, mHostBridgeDevId)
+             );
       ASSERT (FALSE);
       return;
   }
+
   PcdStatus = PcdSet16S (PcdOvmfHostBridgePciDevId, mHostBridgeDevId);
   ASSERT_RETURN_ERROR (PcdStatus);
 
@@ -325,9 +534,9 @@ MiscInitialization (
     // Set Root Complex Register Block BAR
     //
     PciWrite32 (
-      POWER_MGMT_REGISTER_Q35 (ICH9_RCBA),
-      ICH9_ROOT_COMPLEX_BASE | ICH9_RCBA_EN
-      );
+                POWER_MGMT_REGISTER_Q35 (ICH9_RCBA),
+                ICH9_ROOT_COMPLEX_BASE | ICH9_RCBA_EN
+                );
 
     //
     // Set PCI Express Register Range Base Address
@@ -336,17 +545,40 @@ MiscInitialization (
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 BootModeInitialization (
   VOID
   )
 {
-  EFI_STATUS    Status;
+  EFI_STATUS  Status;
 
   if (CmosRead8 (0xF) == 0xFE) {
     mBootMode = BOOT_ON_S3_RESUME;
   }
+
   CmosWrite8 (0xF, 0x00);
 
   Status = PeiServicesSetBootMode (mBootMode);
@@ -356,13 +588,35 @@ BootModeInitialization (
   ASSERT_EFI_ERROR (Status);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 ReserveEmuVariableNvStore (
   )
 {
-  EFI_PHYSICAL_ADDRESS VariableStore;
-  RETURN_STATUS        PcdStatus;
+  EFI_PHYSICAL_ADDRESS  VariableStore;
+  RETURN_STATUS         PcdStatus;
 
   //
   // Allocate storage for NV variables early on so it will be
@@ -371,26 +625,50 @@ ReserveEmuVariableNvStore (
   // a VM reboot.
   //
   VariableStore =
-    (EFI_PHYSICAL_ADDRESS)(UINTN)
-      AllocateRuntimePages (
-        EFI_SIZE_TO_PAGES (2 * PcdGet32 (PcdFlashNvStorageFtwSpareSize))
-        );
-  DEBUG ((DEBUG_INFO,
+    (EFI_PHYSICAL_ADDRESS) (UINTN)
+    AllocateRuntimePages (
+                          EFI_SIZE_TO_PAGES (2 * PcdGet32 (PcdFlashNvStorageFtwSpareSize))
+                          );
+  DEBUG (
+         (DEBUG_INFO,
           "Reserved variable store memory: 0x%lX; size: %dkb\n",
           VariableStore,
           (2 * PcdGet32 (PcdFlashNvStorageFtwSpareSize)) / 1024
-        ));
+         )
+         );
   PcdStatus = PcdSet64S (PcdEmuVariableNvStoreReserved, VariableStore);
   ASSERT_RETURN_ERROR (PcdStatus);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 DebugDumpCmos (
   VOID
   )
 {
-  UINT32 Loop;
+  UINT32  Loop;
 
   DEBUG ((DEBUG_INFO, "CMOS:\n"));
 
@@ -398,14 +676,13 @@ DebugDumpCmos (
     if ((Loop % 0x10) == 0) {
       DEBUG ((DEBUG_INFO, "%02x:", Loop));
     }
+
     DEBUG ((DEBUG_INFO, " %02x", CmosRead8 (Loop)));
     if ((Loop % 0x10) == 0xf) {
       DEBUG ((DEBUG_INFO, "\n"));
     }
   }
 }
-
-
 
 /**
   Perform Platform PEI initialization.

@@ -22,17 +22,20 @@ GetQemuSmbiosTables (
   VOID
   )
 {
-  EFI_STATUS               Status;
-  FIRMWARE_CONFIG_ITEM     Tables;
-  UINTN                    TablesSize;
-  UINT8                    *QemuTables;
+  EFI_STATUS            Status;
+  FIRMWARE_CONFIG_ITEM  Tables;
+  UINTN                 TablesSize;
+  UINT8                 *QemuTables;
 
   if (!PcdGetBool (PcdQemuSmbiosValidated)) {
     return NULL;
   }
 
-  Status = QemuFwCfgFindFile ("etc/smbios/smbios-tables", &Tables,
-             &TablesSize);
+  Status = QemuFwCfgFindFile (
+                              "etc/smbios/smbios-tables",
+                              &Tables,
+                              &TablesSize
+                              );
   ASSERT_EFI_ERROR (Status);
   ASSERT (TablesSize > 0);
 

@@ -20,7 +20,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gSataControllerCompon
 //
 /// EFI Component Name 2 Protocol
 ///
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL gSataControllerComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gSataControllerComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) SataControllerComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) SataControllerComponentNameGetControllerName,
   "en"
@@ -29,10 +29,10 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL gSataControllerCompon
 //
 /// Driver Name Strings
 ///
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mSataControllerDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mSataControllerDriverNameTable[] = {
   {
     "eng;en",
-    (CHAR16 *)L"Sata Controller Init Driver"
+    (CHAR16 *) L"Sata Controller Init Driver"
   },
   {
     NULL,
@@ -43,10 +43,10 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mSataControllerDriverName
 ///
 /// Controller Name Strings
 ///
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mSataControllerControllerNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mSataControllerControllerNameTable[] = {
   {
     "eng;en",
-    (CHAR16 *)L"Sata Controller"
+    (CHAR16 *) L"Sata Controller"
   },
   {
     NULL,
@@ -84,12 +84,12 @@ SataControllerComponentNameGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mSataControllerDriverNameTable,
-           DriverName,
-           (BOOLEAN)(This == &gSataControllerComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mSataControllerDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gSataControllerComponentName)
+                               );
 }
 
 /**
@@ -142,16 +142,16 @@ SataControllerComponentNameGetControllerName (
   OUT CHAR16                        **ControllerName
   )
 {
-  EFI_STATUS    Status;
+  EFI_STATUS  Status;
 
   //
   // Make sure this driver is currently managing ControllHandle
   //
   Status = EfiTestManagedDevice (
-             ControllerHandle,
-             gSataControllerDriverBinding.DriverBindingHandle,
-             &gEfiPciIoProtocolGuid
-             );
+                                 ControllerHandle,
+                                 gSataControllerDriverBinding.DriverBindingHandle,
+                                 &gEfiPciIoProtocolGuid
+                                 );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -161,10 +161,10 @@ SataControllerComponentNameGetControllerName (
   }
 
   return LookupUnicodeString2 (
-          Language,
-          This->SupportedLanguages,
-          mSataControllerControllerNameTable,
-          ControllerName,
-          (BOOLEAN)(This == &gSataControllerComponentName)
-          );
+                               Language,
+                               This->SupportedLanguages,
+                               mSataControllerControllerNameTable,
+                               ControllerName,
+                               (BOOLEAN) (This == &gSataControllerComponentName)
+                               );
 }

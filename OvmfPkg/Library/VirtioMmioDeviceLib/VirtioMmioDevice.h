@@ -25,18 +25,18 @@
 #define VIRTIO_MMIO_DEVICE_SIGNATURE  SIGNATURE_32 ('V', 'M', 'I', 'O')
 
 typedef struct {
-  UINT32                 Signature;
-  VIRTIO_DEVICE_PROTOCOL VirtioDevice;
-  PHYSICAL_ADDRESS       BaseAddress;
+  UINT32                    Signature;
+  VIRTIO_DEVICE_PROTOCOL    VirtioDevice;
+  PHYSICAL_ADDRESS          BaseAddress;
 } VIRTIO_MMIO_DEVICE;
 
 #define VIRTIO_MMIO_DEVICE_FROM_VIRTIO_DEVICE(Device) \
-    CR (Device, VIRTIO_MMIO_DEVICE, VirtioDevice, VIRTIO_MMIO_DEVICE_SIGNATURE)
+  CR (Device, VIRTIO_MMIO_DEVICE, VirtioDevice, VIRTIO_MMIO_DEVICE_SIGNATURE)
 
 #define VIRTIO_CFG_WRITE(Device, Offset, Val) \
-    (MmioWrite32 (Device->BaseAddress + (Offset), Val))
+  (MmioWrite32 (Device->BaseAddress + (Offset), Val))
 #define VIRTIO_CFG_READ(Device, Offset)       \
-    (MmioRead32  (Device->BaseAddress + (Offset)))
+  (MmioRead32 (Device->BaseAddress + (Offset)))
 
 EFI_STATUS
 EFIAPI
@@ -45,7 +45,7 @@ VirtioMmioDeviceRead (
   IN  UINTN                     FieldOFfset,
   IN  UINTN                     FieldSize,
   IN  UINTN                     BufferSize,
-  OUT VOID*                     Buffer
+  OUT VOID *Buffer
   );
 
 EFI_STATUS

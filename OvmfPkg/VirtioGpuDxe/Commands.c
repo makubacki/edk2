@@ -34,11 +34,11 @@ VirtioGpuInit (
   IN OUT VGPU_DEV *VgpuDev
   )
 {
-  UINT8      NextDevStat;
-  EFI_STATUS Status;
-  UINT64     Features;
-  UINT16     QueueSize;
-  UINT64     RingBaseShift;
+  UINT8       NextDevStat;
+  EFI_STATUS  Status;
+  UINT64      Features;
+  UINT16      QueueSize;
+  UINT64      RingBaseShift;
 
   //
   // Execute virtio-v1.0-cs04, 3.1.1 Driver Requirements: Device
@@ -77,10 +77,12 @@ VirtioGpuInit (
   if (EFI_ERROR (Status)) {
     goto Failed;
   }
+
   if ((Features & VIRTIO_F_VERSION_1) == 0) {
     Status = EFI_UNSUPPORTED;
     goto Failed;
   }
+
   //
   // We only want the most basic 2D features.
   //
@@ -101,11 +103,14 @@ VirtioGpuInit (
   // 7. Perform device-specific setup, including discovery of virtqueues for
   // the device [...]
   //
-  Status = VgpuDev->VirtIo->SetQueueSel (VgpuDev->VirtIo,
-                              VIRTIO_GPU_CONTROL_QUEUE);
+  Status = VgpuDev->VirtIo->SetQueueSel (
+                                         VgpuDev->VirtIo,
+                                         VIRTIO_GPU_CONTROL_QUEUE
+                                         );
   if (EFI_ERROR (Status)) {
     goto Failed;
   }
+
   Status = VgpuDev->VirtIo->GetQueueNumMax (VgpuDev->VirtIo, &QueueSize);
   if (EFI_ERROR (Status)) {
     goto Failed;
@@ -127,26 +132,28 @@ VirtioGpuInit (
   if (EFI_ERROR (Status)) {
     goto Failed;
   }
+
   //
   // If anything fails from here on, we have to release the ring.
   //
   Status = VirtioRingMap (
-             VgpuDev->VirtIo,
-             &VgpuDev->Ring,
-             &RingBaseShift,
-             &VgpuDev->RingMap
-             );
+                          VgpuDev->VirtIo,
+                          &VgpuDev->Ring,
+                          &RingBaseShift,
+                          &VgpuDev->RingMap
+                          );
   if (EFI_ERROR (Status)) {
     goto ReleaseQueue;
   }
+
   //
   // If anything fails from here on, we have to unmap the ring.
   //
   Status = VgpuDev->VirtIo->SetQueueAddress (
-                              VgpuDev->VirtIo,
-                              &VgpuDev->Ring,
-                              RingBaseShift
-                              );
+                                             VgpuDev->VirtIo,
+                                             &VgpuDev->Ring,
+                                             RingBaseShift
+                                             );
   if (EFI_ERROR (Status)) {
     goto UnmapQueue;
   }
@@ -242,14 +249,14 @@ VirtioGpuAllocateZeroAndMapBackingStore (
   OUT VOID                 **Mapping
   )
 {
-  EFI_STATUS Status;
-  VOID       *NewHostAddress;
+  EFI_STATUS  Status;
+  VOID        *NewHostAddress;
 
   Status = VgpuDev->VirtIo->AllocateSharedPages (
-                              VgpuDev->VirtIo,
-                              NumberOfPages,
-                              &NewHostAddress
-                              );
+                                                 VgpuDev->VirtIo,
+                                                 NumberOfPages,
+                                                 &NewHostAddress
+                                                 );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -261,13 +268,13 @@ VirtioGpuAllocateZeroAndMapBackingStore (
   ZeroMem (NewHostAddress, EFI_PAGES_TO_SIZE (NumberOfPages));
 
   Status = VirtioMapAllBytesInSharedBuffer (
-             VgpuDev->VirtIo,                      // VirtIo
-             VirtioOperationBusMasterCommonBuffer, // Operation
-             NewHostAddress,                       // HostAddress
-             EFI_PAGES_TO_SIZE (NumberOfPages),    // NumberOfBytes
-             DeviceAddress,                        // DeviceAddress
-             Mapping                               // Mapping
-             );
+                                            VgpuDev->VirtIo,                      // VirtIo
+                                            VirtioOperationBusMasterCommonBuffer, // Operation
+                                            NewHostAddress,                       // HostAddress
+                                            EFI_PAGES_TO_SIZE (NumberOfPages),    // NumberOfBytes
+                                            DeviceAddress,                        // DeviceAddress
+                                            Mapping                               // Mapping
+                                            );
   if (EFI_ERROR (Status)) {
     goto FreeSharedPages;
   }
@@ -277,10 +284,10 @@ VirtioGpuAllocateZeroAndMapBackingStore (
 
 FreeSharedPages:
   VgpuDev->VirtIo->FreeSharedPages (
-                     VgpuDev->VirtIo,
-                     NumberOfPages,
-                     NewHostAddress
-                     );
+                                    VgpuDev->VirtIo,
+                                    NumberOfPages,
+                                    NewHostAddress
+                                    );
   return Status;
 }
 
@@ -315,14 +322,14 @@ VirtioGpuUnmapAndFreeBackingStore (
   )
 {
   VgpuDev->VirtIo->UnmapSharedBuffer (
-                     VgpuDev->VirtIo,
-                     Mapping
-                     );
+                                      VgpuDev->VirtIo,
+                                      Mapping
+                                      );
   VgpuDev->VirtIo->FreeSharedPages (
-                     VgpuDev->VirtIo,
-                     NumberOfPages,
-                     HostAddress
-                     );
+                                    VgpuDev->VirtIo,
+                                    NumberOfPages,
+                                    HostAddress
+                                    );
 }
 
 /**
@@ -345,7 +352,7 @@ VirtioGpuExitBoot (
   IN VOID      *Context
   )
 {
-  VGPU_DEV *VgpuDev;
+  VGPU_DEV  *VgpuDev;
 
   DEBUG ((DEBUG_VERBOSE, "%a: Context=0x%p\n", __FUNCTION__, Context));
   VgpuDev = Context;
@@ -405,19 +412,19 @@ VirtioGpuSendCommand (
   IN     UINTN                              RequestSize
   )
 {
-  DESC_INDICES                       Indices;
-  volatile VIRTIO_GPU_CONTROL_HEADER Response;
-  EFI_STATUS                         Status;
-  UINT32                             ResponseSize;
-  EFI_PHYSICAL_ADDRESS               RequestDeviceAddress;
-  VOID                               *RequestMap;
-  EFI_PHYSICAL_ADDRESS               ResponseDeviceAddress;
-  VOID                               *ResponseMap;
+  DESC_INDICES                        Indices;
+  volatile VIRTIO_GPU_CONTROL_HEADER  Response;
+  EFI_STATUS                          Status;
+  UINT32                              ResponseSize;
+  EFI_PHYSICAL_ADDRESS                RequestDeviceAddress;
+  VOID                                *RequestMap;
+  EFI_PHYSICAL_ADDRESS                ResponseDeviceAddress;
+  VOID                                *ResponseMap;
 
   //
   // Initialize Header.
   //
-  Header->Type      = RequestType;
+  Header->Type = RequestType;
   if (Fence) {
     Header->Flags   = VIRTIO_GPU_FLAG_FENCE;
     Header->FenceId = VgpuDev->FenceId++;
@@ -425,8 +432,9 @@ VirtioGpuSendCommand (
     Header->Flags   = 0;
     Header->FenceId = 0;
   }
-  Header->CtxId     = 0;
-  Header->Padding   = 0;
+
+  Header->CtxId   = 0;
+  Header->Padding = 0;
 
   ASSERT (RequestSize >= sizeof *Header);
   ASSERT (RequestSize <= MAX_UINT32);
@@ -435,24 +443,25 @@ VirtioGpuSendCommand (
   // Map request and response to bus master device addresses.
   //
   Status = VirtioMapAllBytesInSharedBuffer (
-             VgpuDev->VirtIo,
-             VirtioOperationBusMasterRead,
-             (VOID *)Header,
-             RequestSize,
-             &RequestDeviceAddress,
-             &RequestMap
-             );
+                                            VgpuDev->VirtIo,
+                                            VirtioOperationBusMasterRead,
+                                            (VOID *) Header,
+                                            RequestSize,
+                                            &RequestDeviceAddress,
+                                            &RequestMap
+                                            );
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   Status = VirtioMapAllBytesInSharedBuffer (
-             VgpuDev->VirtIo,
-             VirtioOperationBusMasterWrite,
-             (VOID *)&Response,
-             sizeof Response,
-             &ResponseDeviceAddress,
-             &ResponseMap
-             );
+                                            VgpuDev->VirtIo,
+                                            VirtioOperationBusMasterWrite,
+                                            (VOID *) &Response,
+                                            sizeof Response,
+                                            &ResponseDeviceAddress,
+                                            &ResponseMap
+                                            );
   if (EFI_ERROR (Status)) {
     goto UnmapRequest;
   }
@@ -462,25 +471,30 @@ VirtioGpuSendCommand (
   //
   VirtioPrepare (&VgpuDev->Ring, &Indices);
   VirtioAppendDesc (
-    &VgpuDev->Ring,
-    RequestDeviceAddress,
-    (UINT32)RequestSize,
-    VRING_DESC_F_NEXT,
-    &Indices
-    );
+                    &VgpuDev->Ring,
+                    RequestDeviceAddress,
+                    (UINT32) RequestSize,
+                    VRING_DESC_F_NEXT,
+                    &Indices
+                    );
   VirtioAppendDesc (
-    &VgpuDev->Ring,
-    ResponseDeviceAddress,
-    (UINT32)sizeof Response,
-    VRING_DESC_F_WRITE,
-    &Indices
-    );
+                    &VgpuDev->Ring,
+                    ResponseDeviceAddress,
+                    (UINT32) sizeof Response,
+                    VRING_DESC_F_WRITE,
+                    &Indices
+                    );
 
   //
   // Send the command.
   //
-  Status = VirtioFlush (VgpuDev->VirtIo, VIRTIO_GPU_CONTROL_QUEUE,
-             &VgpuDev->Ring, &Indices, &ResponseSize);
+  Status = VirtioFlush (
+                        VgpuDev->VirtIo,
+                        VIRTIO_GPU_CONTROL_QUEUE,
+                        &VgpuDev->Ring,
+                        &Indices,
+                        &ResponseSize
+                        );
   if (EFI_ERROR (Status)) {
     goto UnmapResponse;
   }
@@ -489,8 +503,10 @@ VirtioGpuSendCommand (
   // Verify response size.
   //
   if (ResponseSize != sizeof Response) {
-    DEBUG ((DEBUG_ERROR, "%a: malformed response to Request=0x%x\n",
-      __FUNCTION__, (UINT32)RequestType));
+    DEBUG (
+           (DEBUG_ERROR, "%a: malformed response to Request=0x%x\n",
+            __FUNCTION__, (UINT32) RequestType)
+           );
     Status = EFI_PROTOCOL_ERROR;
     goto UnmapResponse;
   }
@@ -504,6 +520,7 @@ VirtioGpuSendCommand (
   if (EFI_ERROR (Status)) {
     goto UnmapRequest;
   }
+
   Status = VgpuDev->VirtIo->UnmapSharedBuffer (VgpuDev->VirtIo, RequestMap);
   if (EFI_ERROR (Status)) {
     return Status;
@@ -516,8 +533,10 @@ VirtioGpuSendCommand (
     return EFI_SUCCESS;
   }
 
-  DEBUG ((DEBUG_ERROR, "%a: Request=0x%x Response=0x%x\n", __FUNCTION__,
-    (UINT32)RequestType, Response.Type));
+  DEBUG (
+         (DEBUG_ERROR, "%a: Request=0x%x Response=0x%x\n", __FUNCTION__,
+          (UINT32) RequestType, Response.Type)
+         );
   return EFI_DEVICE_ERROR;
 
 UnmapResponse:
@@ -564,33 +583,56 @@ VirtioGpuResourceCreate2d (
   IN     UINT32             Height
   )
 {
-  volatile VIRTIO_GPU_RESOURCE_CREATE_2D Request;
+  volatile VIRTIO_GPU_RESOURCE_CREATE_2D  Request;
 
   if (ResourceId == 0) {
     return EFI_INVALID_PARAMETER;
   }
 
   Request.ResourceId = ResourceId;
-  Request.Format     = (UINT32)Format;
-  Request.Width      = Width;
-  Request.Height     = Height;
+  Request.Format     = (UINT32) Format;
+  Request.Width  = Width;
+  Request.Height = Height;
 
   return VirtioGpuSendCommand (
-           VgpuDev,
-           VirtioGpuCmdResourceCreate2d,
-           FALSE,                        // Fence
-           &Request.Header,
-           sizeof Request
-           );
+                               VgpuDev,
+                               VirtioGpuCmdResourceCreate2d,
+                               FALSE,    // Fence
+                               &Request.Header,
+                               sizeof Request
+                               );
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 VirtioGpuResourceUnref (
   IN OUT VGPU_DEV *VgpuDev,
   IN     UINT32   ResourceId
   )
 {
-  volatile VIRTIO_GPU_RESOURCE_UNREF Request;
+  volatile VIRTIO_GPU_RESOURCE_UNREF  Request;
 
   if (ResourceId == 0) {
     return EFI_INVALID_PARAMETER;
@@ -600,14 +642,37 @@ VirtioGpuResourceUnref (
   Request.Padding    = 0;
 
   return VirtioGpuSendCommand (
-           VgpuDev,
-           VirtioGpuCmdResourceUnref,
-           FALSE,                     // Fence
-           &Request.Header,
-           sizeof Request
-           );
+                               VgpuDev,
+                               VirtioGpuCmdResourceUnref,
+                               FALSE, // Fence
+                               &Request.Header,
+                               sizeof Request
+                               );
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 VirtioGpuResourceAttachBacking (
   IN OUT VGPU_DEV             *VgpuDev,
@@ -616,7 +681,7 @@ VirtioGpuResourceAttachBacking (
   IN     UINTN                NumberOfPages
   )
 {
-  volatile VIRTIO_GPU_RESOURCE_ATTACH_BACKING Request;
+  volatile VIRTIO_GPU_RESOURCE_ATTACH_BACKING  Request;
 
   if (ResourceId == 0) {
     return EFI_INVALID_PARAMETER;
@@ -625,25 +690,48 @@ VirtioGpuResourceAttachBacking (
   Request.ResourceId    = ResourceId;
   Request.NrEntries     = 1;
   Request.Entry.Addr    = BackingStoreDeviceAddress;
-  Request.Entry.Length  = (UINT32)EFI_PAGES_TO_SIZE (NumberOfPages);
+  Request.Entry.Length  = (UINT32) EFI_PAGES_TO_SIZE (NumberOfPages);
   Request.Entry.Padding = 0;
 
   return VirtioGpuSendCommand (
-           VgpuDev,
-           VirtioGpuCmdResourceAttachBacking,
-           FALSE,                             // Fence
-           &Request.Header,
-           sizeof Request
-           );
+                               VgpuDev,
+                               VirtioGpuCmdResourceAttachBacking,
+                               FALSE,         // Fence
+                               &Request.Header,
+                               sizeof Request
+                               );
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 VirtioGpuResourceDetachBacking (
   IN OUT VGPU_DEV *VgpuDev,
   IN     UINT32   ResourceId
   )
 {
-  volatile VIRTIO_GPU_RESOURCE_DETACH_BACKING Request;
+  volatile VIRTIO_GPU_RESOURCE_DETACH_BACKING  Request;
 
   if (ResourceId == 0) {
     return EFI_INVALID_PARAMETER;
@@ -659,14 +747,37 @@ VirtioGpuResourceDetachBacking (
   // to the backing pages before we return.
   //
   return VirtioGpuSendCommand (
-           VgpuDev,
-           VirtioGpuCmdResourceDetachBacking,
-           TRUE,                              // Fence
-           &Request.Header,
-           sizeof Request
-           );
+                               VgpuDev,
+                               VirtioGpuCmdResourceDetachBacking,
+                               TRUE,          // Fence
+                               &Request.Header,
+                               sizeof Request
+                               );
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 VirtioGpuSetScanout (
   IN OUT VGPU_DEV *VgpuDev,
@@ -678,7 +789,7 @@ VirtioGpuSetScanout (
   IN     UINT32   ResourceId
   )
 {
-  volatile VIRTIO_GPU_SET_SCANOUT Request;
+  volatile VIRTIO_GPU_SET_SCANOUT  Request;
 
   //
   // Unlike for most other commands, ResourceId=0 is valid; it
@@ -688,18 +799,41 @@ VirtioGpuSetScanout (
   Request.Rectangle.Y      = Y;
   Request.Rectangle.Width  = Width;
   Request.Rectangle.Height = Height;
-  Request.ScanoutId        = ScanoutId;
-  Request.ResourceId       = ResourceId;
+  Request.ScanoutId  = ScanoutId;
+  Request.ResourceId = ResourceId;
 
   return VirtioGpuSendCommand (
-           VgpuDev,
-           VirtioGpuCmdSetScanout,
-           FALSE,                  // Fence
-           &Request.Header,
-           sizeof Request
-           );
+                               VgpuDev,
+                               VirtioGpuCmdSetScanout,
+                               FALSE, // Fence
+                               &Request.Header,
+                               sizeof Request
+                               );
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 VirtioGpuTransferToHost2d (
   IN OUT VGPU_DEV *VgpuDev,
@@ -711,7 +845,7 @@ VirtioGpuTransferToHost2d (
   IN     UINT32   ResourceId
   )
 {
-  volatile VIRTIO_GPU_CMD_TRANSFER_TO_HOST_2D Request;
+  volatile VIRTIO_GPU_CMD_TRANSFER_TO_HOST_2D  Request;
 
   if (ResourceId == 0) {
     return EFI_INVALID_PARAMETER;
@@ -721,19 +855,42 @@ VirtioGpuTransferToHost2d (
   Request.Rectangle.Y      = Y;
   Request.Rectangle.Width  = Width;
   Request.Rectangle.Height = Height;
-  Request.Offset           = Offset;
-  Request.ResourceId       = ResourceId;
-  Request.Padding          = 0;
+  Request.Offset     = Offset;
+  Request.ResourceId = ResourceId;
+  Request.Padding    = 0;
 
   return VirtioGpuSendCommand (
-           VgpuDev,
-           VirtioGpuCmdTransferToHost2d,
-           FALSE,                        // Fence
-           &Request.Header,
-           sizeof Request
-           );
+                               VgpuDev,
+                               VirtioGpuCmdTransferToHost2d,
+                               FALSE,    // Fence
+                               &Request.Header,
+                               sizeof Request
+                               );
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 VirtioGpuResourceFlush (
   IN OUT VGPU_DEV *VgpuDev,
@@ -744,7 +901,7 @@ VirtioGpuResourceFlush (
   IN     UINT32   ResourceId
   )
 {
-  volatile VIRTIO_GPU_RESOURCE_FLUSH Request;
+  volatile VIRTIO_GPU_RESOURCE_FLUSH  Request;
 
   if (ResourceId == 0) {
     return EFI_INVALID_PARAMETER;
@@ -754,14 +911,14 @@ VirtioGpuResourceFlush (
   Request.Rectangle.Y      = Y;
   Request.Rectangle.Width  = Width;
   Request.Rectangle.Height = Height;
-  Request.ResourceId       = ResourceId;
-  Request.Padding          = 0;
+  Request.ResourceId = ResourceId;
+  Request.Padding    = 0;
 
   return VirtioGpuSendCommand (
-           VgpuDev,
-           VirtioGpuCmdResourceFlush,
-           FALSE,                     // Fence
-           &Request.Header,
-           sizeof Request
-           );
+                               VgpuDev,
+                               VirtioGpuCmdResourceFlush,
+                               FALSE, // Fence
+                               &Request.Header,
+                               sizeof Request
+                               );
 }

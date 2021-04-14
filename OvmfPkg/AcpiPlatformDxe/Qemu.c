@@ -18,6 +18,29 @@
 #include <Library/OrderedCollectionLib.h>
 #include <IndustryStandard/Acpi.h>
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 BOOLEAN
 QemuDetected (
   VOID
@@ -30,7 +53,29 @@ QemuDetected (
   return TRUE;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 UINTN
 CountBits16 (
@@ -51,7 +96,29 @@ CountBits16 (
   return Mask;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -62,17 +129,17 @@ QemuInstallAcpiMadtTable (
   OUT  UINTN                         *TableKey
   )
 {
-  UINTN                                               CpuCount;
-  UINTN                                               PciLinkIsoCount;
-  UINTN                                               NewBufferSize;
-  EFI_ACPI_1_0_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER *Madt;
-  EFI_ACPI_1_0_PROCESSOR_LOCAL_APIC_STRUCTURE         *LocalApic;
-  EFI_ACPI_1_0_IO_APIC_STRUCTURE                      *IoApic;
-  EFI_ACPI_1_0_INTERRUPT_SOURCE_OVERRIDE_STRUCTURE    *Iso;
-  EFI_ACPI_1_0_LOCAL_APIC_NMI_STRUCTURE               *LocalApicNmi;
-  VOID                                                *Ptr;
-  UINTN                                               Loop;
-  EFI_STATUS                                          Status;
+  UINTN                                                CpuCount;
+  UINTN                                                PciLinkIsoCount;
+  UINTN                                                NewBufferSize;
+  EFI_ACPI_1_0_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER  *Madt;
+  EFI_ACPI_1_0_PROCESSOR_LOCAL_APIC_STRUCTURE          *LocalApic;
+  EFI_ACPI_1_0_IO_APIC_STRUCTURE                       *IoApic;
+  EFI_ACPI_1_0_INTERRUPT_SOURCE_OVERRIDE_STRUCTURE     *Iso;
+  EFI_ACPI_1_0_LOCAL_APIC_NMI_STRUCTURE                *LocalApicNmi;
+  VOID                                                 *Ptr;
+  UINTN                                                Loop;
+  EFI_STATUS                                           Status;
 
   ASSERT (AcpiTableBufferSize >= sizeof (EFI_ACPI_DESCRIPTION_HEADER));
 
@@ -101,25 +168,26 @@ QemuInstallAcpiMadtTable (
   CopyMem (&(Madt->Header), AcpiTableBuffer, sizeof (EFI_ACPI_DESCRIPTION_HEADER));
   Madt->Header.Length    = (UINT32) NewBufferSize;
   Madt->LocalApicAddress = PcdGet32 (PcdCpuLocalApicBaseAddress);
-  Madt->Flags            = EFI_ACPI_1_0_PCAT_COMPAT;
+  Madt->Flags = EFI_ACPI_1_0_PCAT_COMPAT;
   Ptr = Madt + 1;
 
   LocalApic = Ptr;
   for (Loop = 0; Loop < CpuCount; ++Loop) {
-    LocalApic->Type            = EFI_ACPI_1_0_PROCESSOR_LOCAL_APIC;
-    LocalApic->Length          = sizeof (*LocalApic);
+    LocalApic->Type   = EFI_ACPI_1_0_PROCESSOR_LOCAL_APIC;
+    LocalApic->Length = sizeof (*LocalApic);
     LocalApic->AcpiProcessorId = (UINT8) Loop;
-    LocalApic->ApicId          = (UINT8) Loop;
-    LocalApic->Flags           = 1; // enabled
+    LocalApic->ApicId = (UINT8) Loop;
+    LocalApic->Flags  = 1;          // enabled
     ++LocalApic;
   }
+
   Ptr = LocalApic;
 
   IoApic = Ptr;
-  IoApic->Type             = EFI_ACPI_1_0_IO_APIC;
-  IoApic->Length           = sizeof (*IoApic);
-  IoApic->IoApicId         = (UINT8) CpuCount;
-  IoApic->Reserved         = EFI_ACPI_RESERVED_BYTE;
+  IoApic->Type     = EFI_ACPI_1_0_IO_APIC;
+  IoApic->Length   = sizeof (*IoApic);
+  IoApic->IoApicId = (UINT8) CpuCount;
+  IoApic->Reserved = EFI_ACPI_RESERVED_BYTE;
   IoApic->IoApicAddress    = 0xFEC00000;
   IoApic->SystemVectorBase = 0x00000000;
   Ptr = IoApic + 1;
@@ -128,12 +196,12 @@ QemuInstallAcpiMadtTable (
   // IRQ0 (8254 Timer) => IRQ2 (PIC) Interrupt Source Override Structure
   //
   Iso = Ptr;
-  Iso->Type                        = EFI_ACPI_1_0_INTERRUPT_SOURCE_OVERRIDE;
-  Iso->Length                      = sizeof (*Iso);
-  Iso->Bus                         = 0x00; // ISA
-  Iso->Source                      = 0x00; // IRQ0
+  Iso->Type   = EFI_ACPI_1_0_INTERRUPT_SOURCE_OVERRIDE;
+  Iso->Length = sizeof (*Iso);
+  Iso->Bus    = 0x00;                      // ISA
+  Iso->Source = 0x00;                      // IRQ0
   Iso->GlobalSystemInterruptVector = 0x00000002;
-  Iso->Flags                       = 0x0000; // Conforms to specs of the bus
+  Iso->Flags = 0x0000;                       // Conforms to specs of the bus
   ++Iso;
 
   //
@@ -143,36 +211,38 @@ QemuInstallAcpiMadtTable (
     if ((PcdGet16 (Pcd8259LegacyModeEdgeLevel) & (1 << Loop)) == 0) {
       continue;
     }
-    Iso->Type                        = EFI_ACPI_1_0_INTERRUPT_SOURCE_OVERRIDE;
-    Iso->Length                      = sizeof (*Iso);
-    Iso->Bus                         = 0x00; // ISA
-    Iso->Source                      = (UINT8) Loop;
+
+    Iso->Type   = EFI_ACPI_1_0_INTERRUPT_SOURCE_OVERRIDE;
+    Iso->Length = sizeof (*Iso);
+    Iso->Bus    = 0x00;                      // ISA
+    Iso->Source = (UINT8) Loop;
     Iso->GlobalSystemInterruptVector = (UINT32) Loop;
-    Iso->Flags                       = 0x000D; // Level-triggered, Active High
+    Iso->Flags = 0x000D;                       // Level-triggered, Active High
     ++Iso;
   }
+
   ASSERT (
-    (UINTN) (Iso - (EFI_ACPI_1_0_INTERRUPT_SOURCE_OVERRIDE_STRUCTURE *)Ptr) ==
-      1 + PciLinkIsoCount
-    );
+          (UINTN) (Iso - (EFI_ACPI_1_0_INTERRUPT_SOURCE_OVERRIDE_STRUCTURE *) Ptr) ==
+          1 + PciLinkIsoCount
+          );
   Ptr = Iso;
 
   LocalApicNmi = Ptr;
-  LocalApicNmi->Type            = EFI_ACPI_1_0_LOCAL_APIC_NMI;
-  LocalApicNmi->Length          = sizeof (*LocalApicNmi);
+  LocalApicNmi->Type   = EFI_ACPI_1_0_LOCAL_APIC_NMI;
+  LocalApicNmi->Length = sizeof (*LocalApicNmi);
   LocalApicNmi->AcpiProcessorId = 0xFF; // applies to all processors
   //
   // polarity and trigger mode of the APIC I/O input signals conform to the
   // specifications of the bus
   //
-  LocalApicNmi->Flags           = 0x0000;
+  LocalApicNmi->Flags = 0x0000;
   //
   // Local APIC interrupt input LINTn to which NMI is connected.
   //
-  LocalApicNmi->LocalApicInti   = 0x01;
+  LocalApicNmi->LocalApicInti = 0x01;
   Ptr = LocalApicNmi + 1;
 
-  ASSERT ((UINTN) ((UINT8 *)Ptr - (UINT8 *)Madt) == NewBufferSize);
+  ASSERT ((UINTN) ((UINT8 *) Ptr - (UINT8 *) Madt) == NewBufferSize);
   Status = InstallAcpiTable (AcpiProtocol, Madt, NewBufferSize, TableKey);
 
   FreePool (Madt);
@@ -180,69 +250,90 @@ QemuInstallAcpiMadtTable (
   return Status;
 }
 
-
 #pragma pack(1)
 
 typedef struct {
-  UINT64 Base;
-  UINT64 End;
-  UINT64 Length;
+  UINT64    Base;
+  UINT64    End;
+  UINT64    Length;
 } PCI_WINDOW;
 
 typedef struct {
-  PCI_WINDOW PciWindow32;
-  PCI_WINDOW PciWindow64;
+  PCI_WINDOW    PciWindow32;
+  PCI_WINDOW    PciWindow64;
 } FIRMWARE_DATA;
 
 typedef struct {
-  UINT8 BytePrefix;
-  UINT8 ByteValue;
+  UINT8    BytePrefix;
+  UINT8    ByteValue;
 } AML_BYTE;
 
 typedef struct {
-  UINT8    NameOp;
-  UINT8    RootChar;
-  UINT8    NameChar[4];
-  UINT8    PackageOp;
-  UINT8    PkgLength;
-  UINT8    NumElements;
-  AML_BYTE Pm1aCntSlpTyp;
-  AML_BYTE Pm1bCntSlpTyp;
-  AML_BYTE Reserved[2];
+  UINT8       NameOp;
+  UINT8       RootChar;
+  UINT8       NameChar[4];
+  UINT8       PackageOp;
+  UINT8       PkgLength;
+  UINT8       NumElements;
+  AML_BYTE    Pm1aCntSlpTyp;
+  AML_BYTE    Pm1bCntSlpTyp;
+  AML_BYTE    Reserved[2];
 } SYSTEM_STATE_PACKAGE;
 
 #pragma pack()
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
-PopulateFwData(
+PopulateFwData (
   OUT  FIRMWARE_DATA *FwData
   )
 {
-  EFI_STATUS                      Status;
-  UINTN                           NumDesc;
-  EFI_GCD_MEMORY_SPACE_DESCRIPTOR *AllDesc;
+  EFI_STATUS                       Status;
+  UINTN                            NumDesc;
+  EFI_GCD_MEMORY_SPACE_DESCRIPTOR  *AllDesc;
 
   Status = gDS->GetMemorySpaceMap (&NumDesc, &AllDesc);
   if (Status == EFI_SUCCESS) {
-    UINT64 NonMmio32MaxExclTop;
-    UINT64 Mmio32MinBase;
-    UINT64 Mmio32MaxExclTop;
-    UINTN CurDesc;
+  UINT64  NonMmio32MaxExclTop;
+  UINT64  Mmio32MinBase;
+  UINT64  Mmio32MaxExclTop;
+  UINTN   CurDesc;
 
     Status = EFI_UNSUPPORTED;
 
     NonMmio32MaxExclTop = 0;
-    Mmio32MinBase = BASE_4GB;
+    Mmio32MinBase    = BASE_4GB;
     Mmio32MaxExclTop = 0;
 
     for (CurDesc = 0; CurDesc < NumDesc; ++CurDesc) {
-      CONST EFI_GCD_MEMORY_SPACE_DESCRIPTOR *Desc;
-      UINT64 ExclTop;
+  CONST EFI_GCD_MEMORY_SPACE_DESCRIPTOR  *Desc;
+  UINT64                                 ExclTop;
 
-      Desc = &AllDesc[CurDesc];
+      Desc    = &AllDesc[CurDesc];
       ExclTop = Desc->BaseAddress + Desc->Length;
 
       if (ExclTop <= (UINT64) PcdGet32 (PcdOvmfFdBaseAddress)) {
@@ -255,19 +346,22 @@ PopulateFwData(
             if (NonMmio32MaxExclTop < ExclTop) {
               NonMmio32MaxExclTop = ExclTop;
             }
+
             break;
 
           case EfiGcdMemoryTypeMemoryMappedIo:
             if (Mmio32MinBase > Desc->BaseAddress) {
               Mmio32MinBase = Desc->BaseAddress;
             }
+
             if (Mmio32MaxExclTop < ExclTop) {
               Mmio32MaxExclTop = ExclTop;
             }
+
             break;
 
           default:
-            ASSERT(0);
+            ASSERT (0);
         }
       }
     }
@@ -291,25 +385,51 @@ PopulateFwData(
     FreePool (AllDesc);
   }
 
-  DEBUG ((
-    DEBUG_INFO,
-    "ACPI PciWindow32: Base=0x%08lx End=0x%08lx Length=0x%08lx\n",
-    FwData->PciWindow32.Base,
-    FwData->PciWindow32.End,
-    FwData->PciWindow32.Length
-    ));
-  DEBUG ((
-    DEBUG_INFO,
-    "ACPI PciWindow64: Base=0x%08lx End=0x%08lx Length=0x%08lx\n",
-    FwData->PciWindow64.Base,
-    FwData->PciWindow64.End,
-    FwData->PciWindow64.Length
-    ));
+  DEBUG (
+         (
+          DEBUG_INFO,
+          "ACPI PciWindow32: Base=0x%08lx End=0x%08lx Length=0x%08lx\n",
+          FwData->PciWindow32.Base,
+          FwData->PciWindow32.End,
+          FwData->PciWindow32.Length
+         )
+         );
+  DEBUG (
+         (
+          DEBUG_INFO,
+          "ACPI PciWindow64: Base=0x%08lx End=0x%08lx Length=0x%08lx\n",
+          FwData->PciWindow64.Base,
+          FwData->PciWindow64.End,
+          FwData->PciWindow64.Length
+         )
+         );
 
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 VOID
 EFIAPI
@@ -320,36 +440,36 @@ GetSuspendStates (
   SYSTEM_STATE_PACKAGE *SuspendToDisk
   )
 {
-  STATIC CONST SYSTEM_STATE_PACKAGE Template = {
-    0x08,                   // NameOp
-    '\\',                   // RootChar
-    { '_', 'S', 'x', '_' }, // NameChar[4]
-    0x12,                   // PackageOp
-    0x0A,                   // PkgLength
-    0x04,                   // NumElements
-    { 0x0A, 0x00 },         // Pm1aCntSlpTyp
-    { 0x0A, 0x00 },         // Pm1bCntSlpTyp -- we don't support it
+  STATIC CONST SYSTEM_STATE_PACKAGE  Template = {
+    0x08,                    // NameOp
+    '\\',                    // RootChar
+    { '_',  'S', 'x', '_' }, // NameChar[4]
+    0x12,                    // PackageOp
+    0x0A,                    // PkgLength
+    0x04,                    // NumElements
+    { 0x0A, 0x00 },          // Pm1aCntSlpTyp
+    { 0x0A, 0x00 },          // Pm1bCntSlpTyp -- we don't support it
     {                       // Reserved[2]
       { 0x0A, 0x00 },
       { 0x0A, 0x00 }
     }
   };
-  RETURN_STATUS                     Status;
-  FIRMWARE_CONFIG_ITEM              FwCfgItem;
-  UINTN                             FwCfgSize;
-  UINT8                             SystemStates[6];
+  RETURN_STATUS                      Status;
+  FIRMWARE_CONFIG_ITEM               FwCfgItem;
+  UINTN                              FwCfgSize;
+  UINT8                              SystemStates[6];
 
   //
   // configure defaults
   //
   *SuspendToRamSize = sizeof Template;
   CopyMem (SuspendToRam, &Template, sizeof Template);
-  SuspendToRam->NameChar[2]             = '3'; // S3
+  SuspendToRam->NameChar[2] = '3';             // S3
   SuspendToRam->Pm1aCntSlpTyp.ByteValue = 1;   // PIIX4: STR
 
   *SuspendToDiskSize = sizeof Template;
   CopyMem (SuspendToDisk, &Template, sizeof Template);
-  SuspendToDisk->NameChar[2]             = '4'; // S4
+  SuspendToDisk->NameChar[2] = '4';             // S4
   SuspendToDisk->Pm1aCntSlpTyp.ByteValue = 2;   // PIIX4: POSCL
 
   //
@@ -360,6 +480,7 @@ GetSuspendStates (
     DEBUG ((DEBUG_INFO, "ACPI using S3/S4 defaults\n"));
     return;
   }
+
   QemuFwCfgSelectItem (FwCfgItem);
   QemuFwCfgReadBytes (sizeof SystemStates, SystemStates);
 
@@ -370,9 +491,11 @@ GetSuspendStates (
   //
   if (SystemStates[3] & BIT7) {
     SuspendToRam->Pm1aCntSlpTyp.ByteValue =
-        SystemStates[3] & (BIT2 | BIT1 | BIT0);
-    DEBUG ((DEBUG_INFO, "ACPI S3 value: %d\n",
-            SuspendToRam->Pm1aCntSlpTyp.ByteValue));
+      SystemStates[3] & (BIT2 | BIT1 | BIT0);
+    DEBUG (
+           (DEBUG_INFO, "ACPI S3 value: %d\n",
+            SuspendToRam->Pm1aCntSlpTyp.ByteValue)
+           );
   } else {
     *SuspendToRamSize = 0;
     DEBUG ((DEBUG_INFO, "ACPI S3 disabled\n"));
@@ -380,16 +503,40 @@ GetSuspendStates (
 
   if (SystemStates[4] & BIT7) {
     SuspendToDisk->Pm1aCntSlpTyp.ByteValue =
-        SystemStates[4] & (BIT2 | BIT1 | BIT0);
-    DEBUG ((DEBUG_INFO, "ACPI S4 value: %d\n",
-            SuspendToDisk->Pm1aCntSlpTyp.ByteValue));
+      SystemStates[4] & (BIT2 | BIT1 | BIT0);
+    DEBUG (
+           (DEBUG_INFO, "ACPI S4 value: %d\n",
+            SuspendToDisk->Pm1aCntSlpTyp.ByteValue)
+           );
   } else {
     *SuspendToDiskSize = 0;
     DEBUG ((DEBUG_INFO, "ACPI S4 disabled\n"));
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -400,30 +547,34 @@ QemuInstallAcpiSsdtTable (
   OUT  UINTN                         *TableKey
   )
 {
-  EFI_STATUS    Status;
-  FIRMWARE_DATA *FwData;
+  EFI_STATUS     Status;
+  FIRMWARE_DATA  *FwData;
 
   Status = EFI_OUT_OF_RESOURCES;
 
   FwData = AllocateReservedPool (sizeof (*FwData));
   if (FwData != NULL) {
-    UINTN                SuspendToRamSize;
-    SYSTEM_STATE_PACKAGE SuspendToRam;
-    UINTN                SuspendToDiskSize;
-    SYSTEM_STATE_PACKAGE SuspendToDisk;
-    UINTN                SsdtSize;
-    UINT8                *Ssdt;
+  UINTN                 SuspendToRamSize;
+  SYSTEM_STATE_PACKAGE  SuspendToRam;
+  UINTN                 SuspendToDiskSize;
+  SYSTEM_STATE_PACKAGE  SuspendToDisk;
+  UINTN                 SsdtSize;
+  UINT8                 *Ssdt;
 
-    GetSuspendStates (&SuspendToRamSize,  &SuspendToRam,
-                      &SuspendToDiskSize, &SuspendToDisk);
+    GetSuspendStates (
+                      &SuspendToRamSize,
+                      &SuspendToRam,
+                      &SuspendToDiskSize,
+                      &SuspendToDisk
+                      );
     SsdtSize = AcpiTableBufferSize + 17 + SuspendToRamSize + SuspendToDiskSize;
-    Ssdt = AllocatePool (SsdtSize);
+    Ssdt     = AllocatePool (SsdtSize);
 
     if (Ssdt != NULL) {
       Status = PopulateFwData (FwData);
 
       if (Status == EFI_SUCCESS) {
-        UINT8 *SsdtPtr;
+  UINT8  *SsdtPtr;
 
         SsdtPtr = Ssdt;
 
@@ -445,12 +596,12 @@ QemuInstallAcpiSsdtTable (
         //
         // no virtual addressing yet, take the four least significant bytes
         //
-        CopyMem(SsdtPtr, &FwData, 4);
+        CopyMem (SsdtPtr, &FwData, 4);
         SsdtPtr += 4;
 
         *(SsdtPtr++) = 0x0C; // DWordPrefix
 
-        *(UINT32*) SsdtPtr = sizeof (*FwData);
+        *(UINT32 *) SsdtPtr = sizeof (*FwData);
         SsdtPtr += 4;
 
         //
@@ -461,23 +612,45 @@ QemuInstallAcpiSsdtTable (
         CopyMem (SsdtPtr, &SuspendToDisk, SuspendToDiskSize);
         SsdtPtr += SuspendToDiskSize;
 
-        ASSERT((UINTN) (SsdtPtr - Ssdt) == SsdtSize);
+        ASSERT ((UINTN) (SsdtPtr - Ssdt) == SsdtSize);
         ((EFI_ACPI_DESCRIPTION_HEADER *) Ssdt)->Length = (UINT32) SsdtSize;
         Status = InstallAcpiTable (AcpiProtocol, Ssdt, SsdtSize, TableKey);
       }
 
-      FreePool(Ssdt);
+      FreePool (Ssdt);
     }
 
     if (Status != EFI_SUCCESS) {
-      FreePool(FwData);
+      FreePool (FwData);
     }
   }
 
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 QemuInstallAcpiTable (
@@ -490,22 +663,22 @@ QemuInstallAcpiTable (
   EFI_ACPI_DESCRIPTION_HEADER        *Hdr;
   EFI_ACPI_TABLE_INSTALL_ACPI_TABLE  TableInstallFunction;
 
-  Hdr = (EFI_ACPI_DESCRIPTION_HEADER*) AcpiTableBuffer;
+  Hdr = (EFI_ACPI_DESCRIPTION_HEADER *) AcpiTableBuffer;
   switch (Hdr->Signature) {
-  case EFI_ACPI_1_0_APIC_SIGNATURE:
-    TableInstallFunction = QemuInstallAcpiMadtTable;
-    break;
-  case EFI_ACPI_1_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE:
-    TableInstallFunction = QemuInstallAcpiSsdtTable;
-    break;
-  default:
-    TableInstallFunction = InstallAcpiTable;
+    case EFI_ACPI_1_0_APIC_SIGNATURE:
+      TableInstallFunction = QemuInstallAcpiMadtTable;
+      break;
+    case EFI_ACPI_1_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE:
+      TableInstallFunction = QemuInstallAcpiSsdtTable;
+      break;
+    default:
+      TableInstallFunction = InstallAcpiTable;
   }
 
   return TableInstallFunction (
-           AcpiProtocol,
-           AcpiTableBuffer,
-           AcpiTableBufferSize,
-           TableKey
-           );
+                               AcpiProtocol,
+                               AcpiTableBuffer,
+                               AcpiTableBufferSize,
+                               TableKey
+                               );
 }

@@ -26,22 +26,22 @@
 
 #pragma pack (1)
 typedef struct RAMFB_CONFIG {
-  UINT64 Address;
-  UINT32 FourCC;
-  UINT32 Flags;
-  UINT32 Width;
-  UINT32 Height;
-  UINT32 Stride;
+  UINT64    Address;
+  UINT32    FourCC;
+  UINT32    Flags;
+  UINT32    Width;
+  UINT32    Height;
+  UINT32    Stride;
 } RAMFB_CONFIG;
 #pragma pack ()
 
-STATIC EFI_HANDLE                    mRamfbHandle;
-STATIC EFI_HANDLE                    mGopHandle;
-STATIC FRAME_BUFFER_CONFIGURE        *mQemuRamfbFrameBufferBltConfigure;
-STATIC UINTN                         mQemuRamfbFrameBufferBltConfigureSize;
-STATIC FIRMWARE_CONFIG_ITEM          mRamfbFwCfgItem;
+STATIC EFI_HANDLE              mRamfbHandle;
+STATIC EFI_HANDLE              mGopHandle;
+STATIC FRAME_BUFFER_CONFIGURE  *mQemuRamfbFrameBufferBltConfigure;
+STATIC UINTN                   mQemuRamfbFrameBufferBltConfigureSize;
+STATIC FIRMWARE_CONFIG_ITEM    mRamfbFwCfgItem;
 
-STATIC EFI_GRAPHICS_OUTPUT_MODE_INFORMATION mQemuRamfbModeInfo[] = {
+STATIC EFI_GRAPHICS_OUTPUT_MODE_INFORMATION  mQemuRamfbModeInfo[] = {
   {
     0,    // Version
     640,  // HorizontalResolution
@@ -57,13 +57,36 @@ STATIC EFI_GRAPHICS_OUTPUT_MODE_INFORMATION mQemuRamfbModeInfo[] = {
   }
 };
 
-STATIC EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE mQemuRamfbMode = {
+STATIC EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE  mQemuRamfbMode = {
   ARRAY_SIZE (mQemuRamfbModeInfo),                // MaxMode
   0,                                              // Mode
   mQemuRamfbModeInfo,                             // Info
   sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION),  // SizeOfInfo
 };
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -80,18 +103,45 @@ QemuRamfbGraphicsOutputQueryMode (
       ModeNumber >= mQemuRamfbMode.MaxMode) {
     return EFI_INVALID_PARAMETER;
   }
+
   ModeInfo = &mQemuRamfbModeInfo[ModeNumber];
 
-  *Info = AllocateCopyPool (sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION),
-            ModeInfo);
+  *Info = AllocateCopyPool (
+                            sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION),
+                            ModeInfo
+                            );
   if (*Info == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
+
   *SizeOfInfo = sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
 
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -108,10 +158,13 @@ QemuRamfbGraphicsOutputSetMode (
   if (ModeNumber >= mQemuRamfbMode.MaxMode) {
     return EFI_UNSUPPORTED;
   }
+
   ModeInfo = &mQemuRamfbModeInfo[ModeNumber];
 
-  DEBUG ((DEBUG_INFO, "Ramfb: SetMode %u (%ux%u)\n", ModeNumber,
-    ModeInfo->HorizontalResolution, ModeInfo->VerticalResolution));
+  DEBUG (
+         (DEBUG_INFO, "Ramfb: SetMode %u (%ux%u)\n", ModeNumber,
+          ModeInfo->HorizontalResolution, ModeInfo->VerticalResolution)
+         );
 
   Config.Address = SwapBytes64 (mQemuRamfbMode.FrameBufferBase);
   Config.FourCC  = SwapBytes32 (RAMFB_FORMAT);
@@ -121,16 +174,17 @@ QemuRamfbGraphicsOutputSetMode (
   Config.Stride  = SwapBytes32 (ModeInfo->HorizontalResolution * RAMFB_BPP);
 
   Status = FrameBufferBltConfigure (
-             (VOID*)(UINTN)mQemuRamfbMode.FrameBufferBase,
-             ModeInfo,
-             mQemuRamfbFrameBufferBltConfigure,
-             &mQemuRamfbFrameBufferBltConfigureSize
-             );
+                                    (VOID *) (UINTN) mQemuRamfbMode.FrameBufferBase,
+                                    ModeInfo,
+                                    mQemuRamfbFrameBufferBltConfigure,
+                                    &mQemuRamfbFrameBufferBltConfigureSize
+                                    );
 
   if (Status == RETURN_BUFFER_TOO_SMALL) {
     if (mQemuRamfbFrameBufferBltConfigure != NULL) {
       FreePool (mQemuRamfbFrameBufferBltConfigure);
     }
+
     mQemuRamfbFrameBufferBltConfigure =
       AllocatePool (mQemuRamfbFrameBufferBltConfigureSize);
     if (mQemuRamfbFrameBufferBltConfigure == NULL) {
@@ -139,12 +193,13 @@ QemuRamfbGraphicsOutputSetMode (
     }
 
     Status = FrameBufferBltConfigure (
-               (VOID*)(UINTN)mQemuRamfbMode.FrameBufferBase,
-               ModeInfo,
-               mQemuRamfbFrameBufferBltConfigure,
-               &mQemuRamfbFrameBufferBltConfigureSize
-               );
+                                      (VOID *) (UINTN) mQemuRamfbMode.FrameBufferBase,
+                                      ModeInfo,
+                                      mQemuRamfbFrameBufferBltConfigure,
+                                      &mQemuRamfbFrameBufferBltConfigureSize
+                                      );
   }
+
   if (RETURN_ERROR (Status)) {
     ASSERT (Status == RETURN_UNSUPPORTED);
     return Status;
@@ -161,25 +216,50 @@ QemuRamfbGraphicsOutputSetMode (
   //
   ZeroMem (&Black, sizeof (Black));
   Status = FrameBufferBlt (
-             mQemuRamfbFrameBufferBltConfigure,
-             &Black,
-             EfiBltVideoFill,
-             0,                               // SourceX -- ignored
-             0,                               // SourceY -- ignored
-             0,                               // DestinationX
-             0,                               // DestinationY
-             ModeInfo->HorizontalResolution,  // Width
-             ModeInfo->VerticalResolution,    // Height
-             0                                // Delta -- ignored
-             );
+                           mQemuRamfbFrameBufferBltConfigure,
+                           &Black,
+                           EfiBltVideoFill,
+                           0,                              // SourceX -- ignored
+                           0,                              // SourceY -- ignored
+                           0,                              // DestinationX
+                           0,                              // DestinationY
+                           ModeInfo->HorizontalResolution, // Width
+                           ModeInfo->VerticalResolution,   // Height
+                           0                               // Delta -- ignored
+                           );
   if (RETURN_ERROR (Status)) {
-    DEBUG ((DEBUG_WARN, "%a: clearing the screen failed: %r\n",
-      __FUNCTION__, Status));
+    DEBUG (
+           (DEBUG_WARN, "%a: clearing the screen failed: %r\n",
+            __FUNCTION__, Status)
+           );
   }
 
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -197,26 +277,49 @@ QemuRamfbGraphicsOutputBlt (
   )
 {
   return FrameBufferBlt (
-           mQemuRamfbFrameBufferBltConfigure,
-           BltBuffer,
-           BltOperation,
-           SourceX,
-           SourceY,
-           DestinationX,
-           DestinationY,
-           Width,
-           Height,
-           Delta
-           );
+                         mQemuRamfbFrameBufferBltConfigure,
+                         BltBuffer,
+                         BltOperation,
+                         SourceX,
+                         SourceY,
+                         DestinationX,
+                         DestinationY,
+                         Width,
+                         Height,
+                         Delta
+                         );
 }
 
-STATIC EFI_GRAPHICS_OUTPUT_PROTOCOL mQemuRamfbGraphicsOutput = {
+STATIC EFI_GRAPHICS_OUTPUT_PROTOCOL  mQemuRamfbGraphicsOutput = {
   QemuRamfbGraphicsOutputQueryMode,
   QemuRamfbGraphicsOutputSetMode,
   QemuRamfbGraphicsOutputBlt,
   &mQemuRamfbMode,
 };
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 InitializeQemuRamfb (
@@ -244,9 +347,12 @@ InitializeQemuRamfb (
   if (EFI_ERROR (Status)) {
     return EFI_NOT_FOUND;
   }
+
   if (FwCfgSize != sizeof (RAMFB_CONFIG)) {
-    DEBUG ((DEBUG_ERROR, "Ramfb: FwCfg size mismatch (expected %lu, got %lu)\n",
-      (UINT64)sizeof (RAMFB_CONFIG), (UINT64)FwCfgSize));
+    DEBUG (
+           (DEBUG_ERROR, "Ramfb: FwCfg size mismatch (expected %lu, got %lu)\n",
+            (UINT64) sizeof (RAMFB_CONFIG), (UINT64) FwCfgSize)
+           );
     return EFI_PROTOCOL_ERROR;
   }
 
@@ -257,26 +363,32 @@ InitializeQemuRamfb (
     mQemuRamfbModeInfo[Index].PixelFormat =
       PixelBlueGreenRedReserved8BitPerColor;
     FbSize = RAMFB_BPP *
-      mQemuRamfbModeInfo[Index].HorizontalResolution *
-      mQemuRamfbModeInfo[Index].VerticalResolution;
+             mQemuRamfbModeInfo[Index].HorizontalResolution *
+             mQemuRamfbModeInfo[Index].VerticalResolution;
     if (MaxFbSize < FbSize) {
       MaxFbSize = FbSize;
     }
-    DEBUG ((DEBUG_INFO, "Ramfb: Mode %lu: %ux%u, %lu kB\n", (UINT64)Index,
-      mQemuRamfbModeInfo[Index].HorizontalResolution,
-      mQemuRamfbModeInfo[Index].VerticalResolution,
-      (UINT64)(FbSize / 1024)));
+
+    DEBUG (
+           (DEBUG_INFO, "Ramfb: Mode %lu: %ux%u, %lu kB\n", (UINT64) Index,
+            mQemuRamfbModeInfo[Index].HorizontalResolution,
+            mQemuRamfbModeInfo[Index].VerticalResolution,
+            (UINT64) (FbSize / 1024))
+           );
   }
 
-  Pages = EFI_SIZE_TO_PAGES (MaxFbSize);
+  Pages     = EFI_SIZE_TO_PAGES (MaxFbSize);
   MaxFbSize = EFI_PAGES_TO_SIZE (Pages);
-  FbBase = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocateReservedPages (Pages);
+  FbBase    = (EFI_PHYSICAL_ADDRESS) (UINTN) AllocateReservedPages (Pages);
   if (FbBase == 0) {
     DEBUG ((DEBUG_ERROR, "Ramfb: memory allocation failed\n"));
     return EFI_OUT_OF_RESOURCES;
   }
-  DEBUG ((DEBUG_INFO, "Ramfb: Framebuffer at 0x%lx, %lu kB, %lu pages\n",
-    (UINT64)FbBase, (UINT64)(MaxFbSize / 1024), (UINT64)Pages));
+
+  DEBUG (
+         (DEBUG_INFO, "Ramfb: Framebuffer at 0x%lx, %lu kB, %lu pages\n",
+          (UINT64) FbBase, (UINT64) (MaxFbSize / 1024), (UINT64) Pages)
+         );
   mQemuRamfbMode.FrameBufferSize = MaxFbSize;
   mQemuRamfbMode.FrameBufferBase = FbBase;
 
@@ -288,78 +400,90 @@ InitializeQemuRamfb (
   //
   // ramfb vendor devpath
   //
-  VendorDeviceNode.Header.Type = HARDWARE_DEVICE_PATH;
+  VendorDeviceNode.Header.Type    = HARDWARE_DEVICE_PATH;
   VendorDeviceNode.Header.SubType = HW_VENDOR_DP;
   CopyGuid (&VendorDeviceNode.Guid, &gQemuRamfbGuid);
-  SetDevicePathNodeLength (&VendorDeviceNode.Header,
-    sizeof (VENDOR_DEVICE_PATH));
+  SetDevicePathNodeLength (
+                           &VendorDeviceNode.Header,
+                           sizeof (VENDOR_DEVICE_PATH)
+                           );
 
-  RamfbDevicePath = AppendDevicePathNode (NULL,
-    (EFI_DEVICE_PATH_PROTOCOL *) &VendorDeviceNode);
+  RamfbDevicePath = AppendDevicePathNode (
+                                          NULL,
+                                          (EFI_DEVICE_PATH_PROTOCOL *) &VendorDeviceNode
+                                          );
   if (RamfbDevicePath == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto FreeFramebuffer;
   }
 
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &mRamfbHandle,
-                  &gEfiDevicePathProtocolGuid,
-                  RamfbDevicePath,
-                  NULL
-                  );
+                                                   &mRamfbHandle,
+                                                   &gEfiDevicePathProtocolGuid,
+                                                   RamfbDevicePath,
+                                                   NULL
+                                                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Ramfb: install Ramfb Vendor DevicePath failed: %r\n",
-      Status));
+    DEBUG (
+           (DEBUG_ERROR, "Ramfb: install Ramfb Vendor DevicePath failed: %r\n",
+            Status)
+           );
     goto FreeRamfbDevicePath;
   }
 
   //
   // gop devpath + protocol
   //
-  AcpiDeviceNode.Header.Type = ACPI_DEVICE_PATH;
+  AcpiDeviceNode.Header.Type    = ACPI_DEVICE_PATH;
   AcpiDeviceNode.Header.SubType = ACPI_ADR_DP;
   AcpiDeviceNode.ADR = ACPI_DISPLAY_ADR (
-    1,                                       // DeviceIdScheme
-    0,                                       // HeadId
-    0,                                       // NonVgaOutput
-    1,                                       // BiosCanDetect
-    0,                                       // VendorInfo
-    ACPI_ADR_DISPLAY_TYPE_EXTERNAL_DIGITAL,  // Type
-    0,                                       // Port
-    0                                        // Index
-    );
-  SetDevicePathNodeLength (&AcpiDeviceNode.Header,
-    sizeof (ACPI_ADR_DEVICE_PATH));
+                                         1,                                      // DeviceIdScheme
+                                         0,                                      // HeadId
+                                         0,                                      // NonVgaOutput
+                                         1,                                      // BiosCanDetect
+                                         0,                                      // VendorInfo
+                                         ACPI_ADR_DISPLAY_TYPE_EXTERNAL_DIGITAL, // Type
+                                         0,                                      // Port
+                                         0                                       // Index
+                                         );
+  SetDevicePathNodeLength (
+                           &AcpiDeviceNode.Header,
+                           sizeof (ACPI_ADR_DEVICE_PATH)
+                           );
 
-  GopDevicePath = AppendDevicePathNode (RamfbDevicePath,
-    (EFI_DEVICE_PATH_PROTOCOL *) &AcpiDeviceNode);
+  GopDevicePath = AppendDevicePathNode (
+                                        RamfbDevicePath,
+                                        (EFI_DEVICE_PATH_PROTOCOL *) &AcpiDeviceNode
+                                        );
   if (GopDevicePath == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto FreeRamfbHandle;
   }
 
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &mGopHandle,
-                  &gEfiDevicePathProtocolGuid,
-                  GopDevicePath,
-                  &gEfiGraphicsOutputProtocolGuid,
-                  &mQemuRamfbGraphicsOutput,
-                  NULL
-                  );
+                                                   &mGopHandle,
+                                                   &gEfiDevicePathProtocolGuid,
+                                                   GopDevicePath,
+                                                   &gEfiGraphicsOutputProtocolGuid,
+                                                   &mQemuRamfbGraphicsOutput,
+                                                   NULL
+                                                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Ramfb: install GOP DevicePath failed: %r\n",
-      Status));
+    DEBUG (
+           (DEBUG_ERROR, "Ramfb: install GOP DevicePath failed: %r\n",
+            Status)
+           );
     goto FreeGopDevicePath;
   }
 
   Status = gBS->OpenProtocol (
-                  mRamfbHandle,
-                  &gEfiDevicePathProtocolGuid,
-                  &DevicePath,
-                  gImageHandle,
-                  mGopHandle,
-                  EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
-                  );
+                              mRamfbHandle,
+                              &gEfiDevicePathProtocolGuid,
+                              &DevicePath,
+                              gImageHandle,
+                              mGopHandle,
+                              EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+                              );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Ramfb: OpenProtocol failed: %r\n", Status));
     goto FreeGopHandle;
@@ -369,25 +493,25 @@ InitializeQemuRamfb (
 
 FreeGopHandle:
   gBS->UninstallMultipleProtocolInterfaces (
-         mGopHandle,
-         &gEfiDevicePathProtocolGuid,
-         GopDevicePath,
-         &gEfiGraphicsOutputProtocolGuid,
-         &mQemuRamfbGraphicsOutput,
-         NULL
-         );
+                                            mGopHandle,
+                                            &gEfiDevicePathProtocolGuid,
+                                            GopDevicePath,
+                                            &gEfiGraphicsOutputProtocolGuid,
+                                            &mQemuRamfbGraphicsOutput,
+                                            NULL
+                                            );
 FreeGopDevicePath:
   FreePool (GopDevicePath);
 FreeRamfbHandle:
   gBS->UninstallMultipleProtocolInterfaces (
-         mRamfbHandle,
-         &gEfiDevicePathProtocolGuid,
-         RamfbDevicePath,
-         NULL
-         );
+                                            mRamfbHandle,
+                                            &gEfiDevicePathProtocolGuid,
+                                            RamfbDevicePath,
+                                            NULL
+                                            );
 FreeRamfbDevicePath:
   FreePool (RamfbDevicePath);
 FreeFramebuffer:
-  FreePages ((VOID*)(UINTN)mQemuRamfbMode.FrameBufferBase, Pages);
+  FreePages ((VOID *) (UINTN) mQemuRamfbMode.FrameBufferBase, Pages);
   return Status;
 }

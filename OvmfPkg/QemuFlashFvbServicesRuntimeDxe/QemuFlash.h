@@ -12,7 +12,7 @@
 
 #include <Protocol/FirmwareVolumeBlock.h>
 
-extern UINT8 *mFlashBase;
+extern UINT8  *mFlashBase;
 
 /**
   Read from QEMU Flash
@@ -32,7 +32,6 @@ QemuFlashRead (
   IN        UINT8                                *Buffer
   );
 
-
 /**
   Write to QEMU Flash
 
@@ -51,7 +50,6 @@ QemuFlashWrite (
   IN        UINT8                                *Buffer
   );
 
-
 /**
   Erase a QEMU Flash block
 
@@ -63,7 +61,6 @@ QemuFlashEraseBlock (
   IN   EFI_LBA      Lba
   );
 
-
 /**
   Initializes QEMU flash memory support
 
@@ -72,15 +69,14 @@ QemuFlashEraseBlock (
 
 **/
 EFI_STATUS
-QemuFlashInitialize (
-  VOID
-  );
-
+  QemuFlashInitialize (
+                       VOID
+                       );
 
 VOID
-QemuFlashConvertPointers (
-  VOID
-  );
+  QemuFlashConvertPointers (
+                            VOID
+                            );
 
 VOID
 QemuFlashBeforeProbe (
@@ -103,4 +99,3 @@ QemuFlashPtrWrite (
   );
 
 #endif
-

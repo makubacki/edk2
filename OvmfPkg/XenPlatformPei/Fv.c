@@ -15,7 +15,6 @@
 #include <Library/PeiServicesLib.h>
 #include <Library/PcdLib.h>
 
-
 /**
   Publish PEI & DXE (Decompressed) Memory based FVs to let PEI
   and DXE know about them.
@@ -36,10 +35,10 @@ PeiFvInitialization (
   // Allocate as ACPI NVS is S3 is supported
   //
   BuildMemoryAllocationHob (
-    PcdGet32 (PcdOvmfPeiMemFvBase),
-    PcdGet32 (PcdOvmfPeiMemFvSize),
-    EfiBootServicesData
-    );
+                            PcdGet32 (PcdOvmfPeiMemFvBase),
+                            PcdGet32 (PcdOvmfPeiMemFvSize),
+                            EfiBootServicesData
+                            );
 
   //
   // Let DXE know about the DXE FV
@@ -55,22 +54,21 @@ PeiFvInitialization (
   // DXEFV area.
   //
   BuildMemoryAllocationHob (
-    PcdGet32 (PcdOvmfDxeMemFvBase),
-    PcdGet32 (PcdOvmfDxeMemFvSize),
-    EfiBootServicesData
-    );
+                            PcdGet32 (PcdOvmfDxeMemFvBase),
+                            PcdGet32 (PcdOvmfDxeMemFvSize),
+                            EfiBootServicesData
+                            );
 
   //
   // Let PEI know about the DXE FV so it can find the DXE Core
   //
   PeiServicesInstallFvInfoPpi (
-    NULL,
-    (VOID *)(UINTN) PcdGet32 (PcdOvmfDxeMemFvBase),
-    PcdGet32 (PcdOvmfDxeMemFvSize),
-    NULL,
-    NULL
-    );
+                               NULL,
+                               (VOID *) (UINTN) PcdGet32 (PcdOvmfDxeMemFvBase),
+                               PcdGet32 (PcdOvmfDxeMemFvSize),
+                               NULL,
+                               NULL
+                               );
 
   return EFI_SUCCESS;
 }
-

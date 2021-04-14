@@ -14,26 +14,26 @@
 
 #include "VirtioMmioDevice.h"
 
-STATIC CONST VIRTIO_DEVICE_PROTOCOL mMmioDeviceProtocolTemplate = {
-    0,                                     // Revision
-    0,                                     // SubSystemDeviceId
-    VirtioMmioGetDeviceFeatures,           // GetDeviceFeatures
-    VirtioMmioSetGuestFeatures,            // SetGuestFeatures
-    VirtioMmioSetQueueAddress,             // SetQueueAddress
-    VirtioMmioSetQueueSel,                 // SetQueueSel
-    VirtioMmioSetQueueNotify,              // SetQueueNotify
-    VirtioMmioSetQueueAlignment,           // SetQueueAlign
-    VirtioMmioSetPageSize,                 // SetPageSize
-    VirtioMmioGetQueueSize,                // GetQueueNumMax
-    VirtioMmioSetQueueSize,                // SetQueueNum
-    VirtioMmioGetDeviceStatus,             // GetDeviceStatus
-    VirtioMmioSetDeviceStatus,             // SetDeviceStatus
-    VirtioMmioDeviceWrite,                 // WriteDevice
-    VirtioMmioDeviceRead,                  // ReadDevice
-    VirtioMmioAllocateSharedPages,         // AllocateSharedPages
-    VirtioMmioFreeSharedPages,             // FreeSharedPages
-    VirtioMmioMapSharedBuffer,             // MapSharedBuffer
-    VirtioMmioUnmapSharedBuffer            // UnmapSharedBuffer
+STATIC CONST VIRTIO_DEVICE_PROTOCOL  mMmioDeviceProtocolTemplate = {
+  0,                                       // Revision
+  0,                                       // SubSystemDeviceId
+  VirtioMmioGetDeviceFeatures,             // GetDeviceFeatures
+  VirtioMmioSetGuestFeatures,              // SetGuestFeatures
+  VirtioMmioSetQueueAddress,               // SetQueueAddress
+  VirtioMmioSetQueueSel,                   // SetQueueSel
+  VirtioMmioSetQueueNotify,                // SetQueueNotify
+  VirtioMmioSetQueueAlignment,             // SetQueueAlign
+  VirtioMmioSetPageSize,                   // SetPageSize
+  VirtioMmioGetQueueSize,                  // GetQueueNumMax
+  VirtioMmioSetQueueSize,                  // SetQueueNum
+  VirtioMmioGetDeviceStatus,               // GetDeviceStatus
+  VirtioMmioSetDeviceStatus,               // SetDeviceStatus
+  VirtioMmioDeviceWrite,                   // WriteDevice
+  VirtioMmioDeviceRead,                    // ReadDevice
+  VirtioMmioAllocateSharedPages,           // AllocateSharedPages
+  VirtioMmioFreeSharedPages,               // FreeSharedPages
+  VirtioMmioMapSharedBuffer,               // MapSharedBuffer
+  VirtioMmioUnmapSharedBuffer              // UnmapSharedBuffer
 };
 
 /**
@@ -57,18 +57,21 @@ VirtioMmioInit (
   IN OUT VIRTIO_MMIO_DEVICE *Device
   )
 {
-  UINT32     MagicValue;
-  UINT32     Version;
+  UINT32  MagicValue;
+  UINT32  Version;
 
   //
   // Initialize VirtIo Mmio Device
   //
-  CopyMem (&Device->VirtioDevice, &mMmioDeviceProtocolTemplate,
-        sizeof (VIRTIO_DEVICE_PROTOCOL));
+  CopyMem (
+           &Device->VirtioDevice,
+           &mMmioDeviceProtocolTemplate,
+           sizeof (VIRTIO_DEVICE_PROTOCOL)
+           );
   Device->BaseAddress = BaseAddress;
   Device->VirtioDevice.Revision = VIRTIO_SPEC_REVISION (0, 9, 5);
   Device->VirtioDevice.SubSystemDeviceId =
-          MmioRead32 (BaseAddress + VIRTIO_MMIO_OFFSET_DEVICE_ID);
+    MmioRead32 (BaseAddress + VIRTIO_MMIO_OFFSET_DEVICE_ID);
 
   //
   // Double-check MMIO-specific values
@@ -86,7 +89,6 @@ VirtioMmioInit (
   return EFI_SUCCESS;
 }
 
-
 /**
 
   Uninitialize the internals of a virtio-mmio device that has been successfully
@@ -95,7 +97,6 @@ VirtioMmioInit (
   @param[in, out]  Device  The device to clean up.
 
 **/
-
 STATIC
 VOID
 EFIAPI
@@ -105,10 +106,33 @@ VirtioMmioUninit (
 {
   //
   // Note: This function mirrors VirtioMmioInit() that does not allocate any
-  //       resources - there's nothing to free here.
+  // resources - there's nothing to free here.
   //
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 VirtioMmioInstallDevice (
   IN PHYSICAL_ADDRESS       BaseAddress,
@@ -116,11 +140,12 @@ VirtioMmioInstallDevice (
   )
 {
   EFI_STATUS          Status;
-  VIRTIO_MMIO_DEVICE *VirtIo;
+  VIRTIO_MMIO_DEVICE  *VirtIo;
 
   if (!BaseAddress) {
     return EFI_INVALID_PARAMETER;
   }
+
   if (Handle == NULL) {
     return EFI_INVALID_PARAMETER;
   }
@@ -143,9 +168,12 @@ VirtioMmioInstallDevice (
   //
   // Install VIRTIO_DEVICE_PROTOCOL to Handle
   //
-  Status = gBS->InstallProtocolInterface (&Handle,
-                  &gVirtioDeviceProtocolGuid, EFI_NATIVE_INTERFACE,
-                  &VirtIo->VirtioDevice);
+  Status = gBS->InstallProtocolInterface (
+                                          &Handle,
+                                          &gVirtioDeviceProtocolGuid,
+                                          EFI_NATIVE_INTERFACE,
+                                          &VirtIo->VirtioDevice
+                                          );
   if (EFI_ERROR (Status)) {
     goto UninitVirtio;
   }
@@ -160,6 +188,29 @@ FreeVirtioMem:
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 VirtioMmioUninstallDevice (
   IN EFI_HANDLE             DeviceHandle
@@ -170,13 +221,13 @@ VirtioMmioUninstallDevice (
   EFI_STATUS              Status;
 
   Status = gBS->OpenProtocol (
-                  DeviceHandle,                  // candidate device
-                  &gVirtioDeviceProtocolGuid,    // retrieve the VirtIo iface
-                  (VOID **)&VirtioDevice,        // target pointer
-                  DeviceHandle,                  // requestor driver identity
-                  DeviceHandle,                  // requesting lookup for dev.
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL // lookup only, no ref. added
-                  );
+                              DeviceHandle,                  // candidate device
+                              &gVirtioDeviceProtocolGuid,    // retrieve the VirtIo iface
+                              (VOID **) &VirtioDevice,       // target pointer
+                              DeviceHandle,                  // requestor driver identity
+                              DeviceHandle,                  // requesting lookup for dev.
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL // lookup only, no ref. added
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -189,9 +240,11 @@ VirtioMmioUninstallDevice (
   //
   // Uninstall the protocol interface
   //
-  Status = gBS->UninstallProtocolInterface (DeviceHandle,
-      &gVirtioDeviceProtocolGuid, &MmioDevice->VirtioDevice
-      );
+  Status = gBS->UninstallProtocolInterface (
+                                            DeviceHandle,
+                                            &gVirtioDeviceProtocolGuid,
+                                            &MmioDevice->VirtioDevice
+                                            );
   if (EFI_ERROR (Status)) {
     return Status;
   }

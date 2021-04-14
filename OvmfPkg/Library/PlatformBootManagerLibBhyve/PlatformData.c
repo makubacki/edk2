@@ -16,10 +16,10 @@
 //
 #pragma pack(1)
 typedef struct {
-  VENDOR_DEVICE_PATH        VendorHardware;
-  UART_DEVICE_PATH          Uart;
-  VENDOR_DEVICE_PATH        TerminalType;
-  EFI_DEVICE_PATH_PROTOCOL  End;
+  VENDOR_DEVICE_PATH          VendorHardware;
+  UART_DEVICE_PATH            Uart;
+  VENDOR_DEVICE_PATH          TerminalType;
+  EFI_DEVICE_PATH_PROTOCOL    End;
 } VENDOR_UART_DEVICE_PATH;
 #pragma pack()
 
@@ -28,8 +28,8 @@ typedef struct {
 //
 #pragma pack (1)
 typedef struct {
-  USB_CLASS_DEVICE_PATH    Keyboard;
-  EFI_DEVICE_PATH_PROTOCOL End;
+  USB_CLASS_DEVICE_PATH       Keyboard;
+  EFI_DEVICE_PATH_PROTOCOL    End;
 } USB_KEYBOARD_DEVICE_PATH;
 #pragma pack ()
 
@@ -38,26 +38,25 @@ typedef struct {
 //
 #pragma pack (1)
 typedef struct {
-  VENDOR_DEVICE_PATH        Vendor;
-  ACPI_ADR_DEVICE_PATH      AcpiAdr;
-  EFI_DEVICE_PATH_PROTOCOL  End;
+  VENDOR_DEVICE_PATH          Vendor;
+  ACPI_ADR_DEVICE_PATH        AcpiAdr;
+  EFI_DEVICE_PATH_PROTOCOL    End;
 } VENDOR_RAMFB_DEVICE_PATH;
 #pragma pack ()
 
-ACPI_HID_DEVICE_PATH       gPnpPs2KeyboardDeviceNode  = gPnpPs2Keyboard;
-ACPI_HID_DEVICE_PATH       gPnp16550ComPortDeviceNode = gPnp16550ComPort;
-UART_DEVICE_PATH           gUartDeviceNode            = gUart;
-VENDOR_DEVICE_PATH         gTerminalTypeDeviceNode    = gPcAnsiTerminal;
+ACPI_HID_DEVICE_PATH  gPnpPs2KeyboardDeviceNode  = gPnpPs2Keyboard;
+ACPI_HID_DEVICE_PATH  gPnp16550ComPortDeviceNode = gPnp16550ComPort;
+UART_DEVICE_PATH      gUartDeviceNode = gUart;
+VENDOR_DEVICE_PATH    gTerminalTypeDeviceNode = gPcAnsiTerminal;
 
 //
 // Platform specific keyboard device path
 //
 
-
 //
 // Debug Agent UART Device Path
 //
-VENDOR_UART_DEVICE_PATH gDebugAgentUartDevicePath = {
+VENDOR_UART_DEVICE_PATH  gDebugAgentUartDevicePath = {
   {
     {
       HARDWARE_DEVICE_PATH,
@@ -88,14 +87,14 @@ VENDOR_UART_DEVICE_PATH gDebugAgentUartDevicePath = {
   gEndEntire
 };
 
-STATIC USB_KEYBOARD_DEVICE_PATH gUsbKeyboardDevicePath = {
+STATIC USB_KEYBOARD_DEVICE_PATH  gUsbKeyboardDevicePath = {
   {
     {
       MESSAGING_DEVICE_PATH,
       MSG_USB_CLASS_DP,
       {
-        (UINT8)sizeof (USB_CLASS_DEVICE_PATH),
-        (UINT8)(sizeof (USB_CLASS_DEVICE_PATH) >> 8)
+        (UINT8) sizeof (USB_CLASS_DEVICE_PATH),
+        (UINT8) (sizeof (USB_CLASS_DEVICE_PATH) >> 8)
       }
     },
     0xFFFF, // VendorId: any
@@ -107,7 +106,7 @@ STATIC USB_KEYBOARD_DEVICE_PATH gUsbKeyboardDevicePath = {
   gEndEntire
 };
 
-STATIC VENDOR_RAMFB_DEVICE_PATH gQemuRamfbDevicePath = {
+STATIC VENDOR_RAMFB_DEVICE_PATH  gQemuRamfbDevicePath = {
   {
     {
       HARDWARE_DEVICE_PATH,
@@ -129,15 +128,15 @@ STATIC VENDOR_RAMFB_DEVICE_PATH gQemuRamfbDevicePath = {
       }
     },
     ACPI_DISPLAY_ADR (
-      1,                                       // DeviceIdScheme
-      0,                                       // HeadId
-      0,                                       // NonVgaOutput
-      1,                                       // BiosCanDetect
-      0,                                       // VendorInfo
-      ACPI_ADR_DISPLAY_TYPE_EXTERNAL_DIGITAL,  // Type
-      0,                                       // Port
-      0                                        // Index
-      ),
+                      1,                                      // DeviceIdScheme
+                      0,                                      // HeadId
+                      0,                                      // NonVgaOutput
+                      1,                                      // BiosCanDetect
+                      0,                                      // VendorInfo
+                      ACPI_ADR_DISPLAY_TYPE_EXTERNAL_DIGITAL, // Type
+                      0,                                      // Port
+                      0                                       // Index
+                      ),
   },
   gEndEntire
 };
@@ -145,17 +144,17 @@ STATIC VENDOR_RAMFB_DEVICE_PATH gQemuRamfbDevicePath = {
 //
 // Predefined platform default console device path
 //
-PLATFORM_CONSOLE_CONNECT_ENTRY   gPlatformConsole[] = {
+PLATFORM_CONSOLE_CONNECT_ENTRY  gPlatformConsole[] = {
   {
     (EFI_DEVICE_PATH_PROTOCOL *) &gDebugAgentUartDevicePath,
     (CONSOLE_OUT | CONSOLE_IN | STD_ERROR)
   },
   {
-    (EFI_DEVICE_PATH_PROTOCOL *)&gUsbKeyboardDevicePath,
+    (EFI_DEVICE_PATH_PROTOCOL *) &gUsbKeyboardDevicePath,
     CONSOLE_IN
   },
   {
-    (EFI_DEVICE_PATH_PROTOCOL *)&gQemuRamfbDevicePath,
+    (EFI_DEVICE_PATH_PROTOCOL *) &gQemuRamfbDevicePath,
     CONSOLE_OUT
   },
   {
@@ -167,5 +166,4 @@ PLATFORM_CONSOLE_CONNECT_ENTRY   gPlatformConsole[] = {
 //
 // Predefined platform connect sequence
 //
-EFI_DEVICE_PATH_PROTOCOL    *gPlatformConnectSequence[] = { NULL };
-
+EFI_DEVICE_PATH_PROTOCOL  *gPlatformConnectSequence[] = { NULL };

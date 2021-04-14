@@ -13,7 +13,6 @@
 #include <Library/PeiServicesLib.h>
 #include <Library/PcdLib.h>
 
-
 /**
   Publish PEI & DXE (Decompressed) Memory based FVs to let PEI
   and DXE know about them.
@@ -26,7 +25,7 @@ PeiFvInitialization (
   VOID
   )
 {
-  BOOLEAN SecureS3Needed;
+  BOOLEAN  SecureS3Needed;
 
   DEBUG ((DEBUG_INFO, "Platform PEI Firmware Volume Initialization\n"));
 
@@ -36,10 +35,10 @@ PeiFvInitialization (
   // Allocate as ACPI NVS is S3 is supported
   //
   BuildMemoryAllocationHob (
-    PcdGet32 (PcdOvmfPeiMemFvBase),
-    PcdGet32 (PcdOvmfPeiMemFvSize),
-    mS3Supported ? EfiACPIMemoryNVS : EfiBootServicesData
-    );
+                            PcdGet32 (PcdOvmfPeiMemFvBase),
+                            PcdGet32 (PcdOvmfPeiMemFvSize),
+                            mS3Supported ? EfiACPIMemoryNVS : EfiBootServicesData
+                            );
 
   //
   // Let DXE know about the DXE FV
@@ -57,38 +56,37 @@ PeiFvInitialization (
   // DXEFV area.
   //
   BuildMemoryAllocationHob (
-    PcdGet32 (PcdOvmfDxeMemFvBase),
-    PcdGet32 (PcdOvmfDxeMemFvSize),
-    SecureS3Needed ? EfiACPIMemoryNVS : EfiBootServicesData
-    );
+                            PcdGet32 (PcdOvmfDxeMemFvBase),
+                            PcdGet32 (PcdOvmfDxeMemFvSize),
+                            SecureS3Needed ? EfiACPIMemoryNVS : EfiBootServicesData
+                            );
 
   //
   // Additionally, said decompression will use temporary memory above the end
   // of DXEFV, so let's keep away the OS from there too.
   //
   if (SecureS3Needed) {
-    UINT32 DxeMemFvEnd;
+  UINT32  DxeMemFvEnd;
 
     DxeMemFvEnd = PcdGet32 (PcdOvmfDxeMemFvBase) +
                   PcdGet32 (PcdOvmfDxeMemFvSize);
     BuildMemoryAllocationHob (
-      DxeMemFvEnd,
-      PcdGet32 (PcdOvmfDecompressionScratchEnd) - DxeMemFvEnd,
-      EfiACPIMemoryNVS
-      );
+                              DxeMemFvEnd,
+                              PcdGet32 (PcdOvmfDecompressionScratchEnd) - DxeMemFvEnd,
+                              EfiACPIMemoryNVS
+                              );
   }
 
   //
   // Let PEI know about the DXE FV so it can find the DXE Core
   //
   PeiServicesInstallFvInfoPpi (
-    NULL,
-    (VOID *)(UINTN) PcdGet32 (PcdOvmfDxeMemFvBase),
-    PcdGet32 (PcdOvmfDxeMemFvSize),
-    NULL,
-    NULL
-    );
+                               NULL,
+                               (VOID *) (UINTN) PcdGet32 (PcdOvmfDxeMemFvBase),
+                               PcdGet32 (PcdOvmfDxeMemFvSize),
+                               NULL,
+                               NULL
+                               );
 
   return EFI_SUCCESS;
 }
-

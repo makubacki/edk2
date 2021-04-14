@@ -22,7 +22,6 @@
 
 #include "Virtio10.h"
 
-
 //
 // Utility functions
 //
@@ -74,10 +73,10 @@ Virtio10Transfer (
   IN OUT VOID                *Buffer
   )
 {
-  UINTN                      Count;
-  EFI_PCI_IO_PROTOCOL_WIDTH  Width;
-  EFI_PCI_IO_PROTOCOL_ACCESS *BarType;
-  EFI_PCI_IO_PROTOCOL_IO_MEM Access;
+  UINTN                       Count;
+  EFI_PCI_IO_PROTOCOL_WIDTH   Width;
+  EFI_PCI_IO_PROTOCOL_ACCESS  *BarType;
+  EFI_PCI_IO_PROTOCOL_IO_MEM  Access;
 
   if (!Config->Exists ||
       FieldSize > Config->Length ||
@@ -97,9 +96,9 @@ Virtio10Transfer (
 
     case 8:
       Count = 2;
-      //
-      // fall through
-      //
+    //
+    // fall through
+    //
 
     case 4:
       Width = EfiPciIoWidthUint32;
@@ -110,12 +109,17 @@ Virtio10Transfer (
   }
 
   BarType = (Config->BarType == Virtio10BarTypeMem) ? &PciIo->Mem : &PciIo->Io;
-  Access = Write ? BarType->Write : BarType->Read;
+  Access  = Write ? BarType->Write : BarType->Read;
 
-  return Access (PciIo, Width, Config->Bar, Config->Offset + FieldOffset,
-           Count, Buffer);
+  return Access (
+                 PciIo,
+                 Width,
+                 Config->Bar,
+                 Config->Offset + FieldOffset,
+                 Count,
+                 Buffer
+                 );
 }
-
 
 /**
   Determine if a PCI BAR is IO or MMIO.
@@ -145,8 +149,8 @@ GetBarType (
   OUT VIRTIO_1_0_BAR_TYPE *BarType
   )
 {
-  EFI_STATUS Status;
-  VOID       *Resources;
+  EFI_STATUS  Status;
+  VOID        *Resources;
 
   Status = PciIo->GetBarAttributes (PciIo, BarIndex, NULL, &Resources);
   if (EFI_ERROR (Status)) {
@@ -155,30 +159,29 @@ GetBarType (
 
   Status = EFI_UNSUPPORTED;
 
-  if (*(UINT8 *)Resources == ACPI_QWORD_ADDRESS_SPACE_DESCRIPTOR) {
-    EFI_ACPI_QWORD_ADDRESS_SPACE_DESCRIPTOR *Descriptor;
+  if (*(UINT8 *) Resources == ACPI_QWORD_ADDRESS_SPACE_DESCRIPTOR) {
+  EFI_ACPI_QWORD_ADDRESS_SPACE_DESCRIPTOR  *Descriptor;
 
     Descriptor = Resources;
     switch (Descriptor->ResType) {
-    case ACPI_ADDRESS_SPACE_TYPE_MEM:
-      *BarType = Virtio10BarTypeMem;
-      Status = EFI_SUCCESS;
-      break;
+      case ACPI_ADDRESS_SPACE_TYPE_MEM:
+        *BarType = Virtio10BarTypeMem;
+        Status   = EFI_SUCCESS;
+        break;
 
-    case ACPI_ADDRESS_SPACE_TYPE_IO:
-      *BarType = Virtio10BarTypeIo;
-      Status = EFI_SUCCESS;
-      break;
+      case ACPI_ADDRESS_SPACE_TYPE_IO:
+        *BarType = Virtio10BarTypeIo;
+        Status   = EFI_SUCCESS;
+        break;
 
-    default:
-      break;
+      default:
+        break;
     }
   }
 
   FreePool (Resources);
   return Status;
 }
-
 
 /*
   Traverse the PCI capabilities list of a virtio-1.0 device, and capture the
@@ -204,39 +207,51 @@ ParseCapabilities (
   IN OUT VIRTIO_1_0_DEV *Device
   )
 {
-  EFI_STATUS   Status;
-  PCI_CAP_DEV  *PciDevice;
-  PCI_CAP_LIST *CapList;
-  UINT16       VendorInstance;
-  PCI_CAP      *VendorCap;
+  EFI_STATUS    Status;
+  PCI_CAP_DEV   *PciDevice;
+  PCI_CAP_LIST  *CapList;
+  UINT16        VendorInstance;
+  PCI_CAP       *VendorCap;
 
   Status = PciCapPciIoDeviceInit (Device->PciIo, &PciDevice);
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   Status = PciCapListInit (PciDevice, &CapList);
   if (EFI_ERROR (Status)) {
     goto UninitPciDevice;
   }
 
   for (VendorInstance = 0;
-       !EFI_ERROR (PciCapListFindCap (CapList, PciCapNormal,
-                     EFI_PCI_CAPABILITY_ID_VENDOR, VendorInstance,
-                     &VendorCap));
+       !EFI_ERROR (
+                   PciCapListFindCap (
+                                      CapList,
+                                      PciCapNormal,
+                                      EFI_PCI_CAPABILITY_ID_VENDOR,
+                                      VendorInstance,
+                                      &VendorCap
+                                      )
+                   );
        VendorInstance++) {
-    UINT8             CapLen;
-    VIRTIO_PCI_CAP    VirtIoCap;
-    VIRTIO_1_0_CONFIG *ParsedConfig;
+  UINT8              CapLen;
+  VIRTIO_PCI_CAP     VirtIoCap;
+  VIRTIO_1_0_CONFIG  *ParsedConfig;
 
     //
     // Big enough to accommodate a VIRTIO_PCI_CAP structure?
     //
-    Status = PciCapRead (PciDevice, VendorCap,
-               OFFSET_OF (EFI_PCI_CAPABILITY_VENDOR_HDR, Length), &CapLen,
-               sizeof CapLen);
+    Status = PciCapRead (
+                         PciDevice,
+                         VendorCap,
+                         OFFSET_OF (EFI_PCI_CAPABILITY_VENDOR_HDR, Length),
+                         &CapLen,
+                         sizeof CapLen
+                         );
     if (EFI_ERROR (Status)) {
       goto UninitCapList;
     }
+
     if (CapLen < sizeof VirtIoCap) {
       //
       // Too small, move to next.
@@ -253,20 +268,20 @@ ParseCapabilities (
     }
 
     switch (VirtIoCap.ConfigType) {
-    case VIRTIO_PCI_CAP_COMMON_CFG:
-      ParsedConfig = &Device->CommonConfig;
-      break;
-    case VIRTIO_PCI_CAP_NOTIFY_CFG:
-      ParsedConfig = &Device->NotifyConfig;
-      break;
-    case VIRTIO_PCI_CAP_DEVICE_CFG:
-      ParsedConfig = &Device->SpecificConfig;
-      break;
-    default:
-      //
-      // Capability is not interesting.
-      //
-      continue;
+      case VIRTIO_PCI_CAP_COMMON_CFG:
+        ParsedConfig = &Device->CommonConfig;
+        break;
+      case VIRTIO_PCI_CAP_NOTIFY_CFG:
+        ParsedConfig = &Device->NotifyConfig;
+        break;
+      case VIRTIO_PCI_CAP_DEVICE_CFG:
+        ParsedConfig = &Device->SpecificConfig;
+        break;
+      default:
+        //
+        // Capability is not interesting.
+        //
+        continue;
     }
 
     //
@@ -276,6 +291,7 @@ ParseCapabilities (
     if (EFI_ERROR (Status)) {
       goto UninitCapList;
     }
+
     ParsedConfig->Bar    = VirtIoCap.Bar;
     ParsedConfig->Offset = VirtIoCap.Offset;
     ParsedConfig->Length = VirtIoCap.Length;
@@ -292,9 +308,13 @@ ParseCapabilities (
         continue;
       }
 
-      Status = PciCapRead (PciDevice, VendorCap, sizeof VirtIoCap,
-                 &Device->NotifyOffsetMultiplier,
-                 sizeof Device->NotifyOffsetMultiplier);
+      Status = PciCapRead (
+                           PciDevice,
+                           VendorCap,
+                           sizeof VirtIoCap,
+                           &Device->NotifyOffsetMultiplier,
+                           sizeof Device->NotifyOffsetMultiplier
+                           );
       if (EFI_ERROR (Status)) {
         goto UninitCapList;
       }
@@ -316,7 +336,6 @@ UninitPciDevice:
 
   return Status;
 }
-
 
 /**
   Accumulate the BAR type of a virtio-1.0 register block into a UINT64
@@ -341,11 +360,10 @@ UpdateAttributes (
 {
   if (Config->Exists) {
     *Attributes |= (Config->BarType == Virtio10BarTypeMem) ?
-                     EFI_PCI_IO_ATTRIBUTE_MEMORY:
-                     EFI_PCI_IO_ATTRIBUTE_IO;
+                   EFI_PCI_IO_ATTRIBUTE_MEMORY :
+                   EFI_PCI_IO_ATTRIBUTE_IO;
   }
 }
-
 
 //
 // VIRTIO_DEVICE_PROTOCOL member functions
@@ -359,21 +377,26 @@ Virtio10GetDeviceFeatures (
   OUT UINT64                *DeviceFeatures
   )
 {
-  VIRTIO_1_0_DEV *Dev;
-  UINT32         Selector;
-  UINT32         Features32[2];
+  VIRTIO_1_0_DEV  *Dev;
+  UINT32          Selector;
+  UINT32          Features32[2];
 
   Dev = VIRTIO_1_0_FROM_VIRTIO_DEVICE (This);
 
   for (Selector = 0; Selector < 2; ++Selector) {
-    EFI_STATUS Status;
+  EFI_STATUS  Status;
 
     //
     // Select the low or high half of the features.
     //
-    Status = Virtio10Transfer (Dev->PciIo, &Dev->CommonConfig, TRUE,
-               OFFSET_OF (VIRTIO_PCI_COMMON_CFG, DeviceFeatureSelect),
-               sizeof Selector, &Selector);
+    Status = Virtio10Transfer (
+                               Dev->PciIo,
+                               &Dev->CommonConfig,
+                               TRUE,
+                               OFFSET_OF (VIRTIO_PCI_COMMON_CFG, DeviceFeatureSelect),
+                               sizeof Selector,
+                               &Selector
+                               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -381,9 +404,14 @@ Virtio10GetDeviceFeatures (
     //
     // Fetch that half.
     //
-    Status = Virtio10Transfer (Dev->PciIo, &Dev->CommonConfig, FALSE,
-               OFFSET_OF (VIRTIO_PCI_COMMON_CFG, DeviceFeature),
-               sizeof Features32[Selector], &Features32[Selector]);
+    Status = Virtio10Transfer (
+                               Dev->PciIo,
+                               &Dev->CommonConfig,
+                               FALSE,
+                               OFFSET_OF (VIRTIO_PCI_COMMON_CFG, DeviceFeature),
+                               sizeof Features32[Selector],
+                               &Features32[Selector]
+                               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -393,7 +421,29 @@ Virtio10GetDeviceFeatures (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -402,24 +452,29 @@ Virtio10SetGuestFeatures (
   IN UINT64                   Features
   )
 {
-  VIRTIO_1_0_DEV *Dev;
-  UINT32         Selector;
-  UINT32         Features32[2];
+  VIRTIO_1_0_DEV  *Dev;
+  UINT32          Selector;
+  UINT32          Features32[2];
 
   Dev = VIRTIO_1_0_FROM_VIRTIO_DEVICE (This);
 
-  Features32[0] = (UINT32)Features;
-  Features32[1] = (UINT32)RShiftU64 (Features, 32);
+  Features32[0] = (UINT32) Features;
+  Features32[1] = (UINT32) RShiftU64 (Features, 32);
 
   for (Selector = 0; Selector < 2; ++Selector) {
-    EFI_STATUS Status;
+  EFI_STATUS  Status;
 
     //
     // Select the low or high half of the features.
     //
-    Status = Virtio10Transfer (Dev->PciIo, &Dev->CommonConfig, TRUE,
-               OFFSET_OF (VIRTIO_PCI_COMMON_CFG, DriverFeatureSelect),
-               sizeof Selector, &Selector);
+    Status = Virtio10Transfer (
+                               Dev->PciIo,
+                               &Dev->CommonConfig,
+                               TRUE,
+                               OFFSET_OF (VIRTIO_PCI_COMMON_CFG, DriverFeatureSelect),
+                               sizeof Selector,
+                               &Selector
+                               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -427,9 +482,14 @@ Virtio10SetGuestFeatures (
     //
     // Write that half.
     //
-    Status = Virtio10Transfer (Dev->PciIo, &Dev->CommonConfig, TRUE,
-               OFFSET_OF (VIRTIO_PCI_COMMON_CFG, DriverFeature),
-               sizeof Features32[Selector], &Features32[Selector]);
+    Status = Virtio10Transfer (
+                               Dev->PciIo,
+                               &Dev->CommonConfig,
+                               TRUE,
+                               OFFSET_OF (VIRTIO_PCI_COMMON_CFG, DriverFeature),
+                               sizeof Features32[Selector],
+                               &Features32[Selector]
+                               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -438,7 +498,29 @@ Virtio10SetGuestFeatures (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -448,48 +530,90 @@ Virtio10SetQueueAddress (
   IN UINT64                  RingBaseShift
   )
 {
-  VIRTIO_1_0_DEV *Dev;
-  EFI_STATUS     Status;
-  UINT64         Address;
-  UINT16         Enable;
+  VIRTIO_1_0_DEV  *Dev;
+  EFI_STATUS      Status;
+  UINT64          Address;
+  UINT16          Enable;
 
   Dev = VIRTIO_1_0_FROM_VIRTIO_DEVICE (This);
 
-  Address = (UINTN)Ring->Desc;
+  Address  = (UINTN) Ring->Desc;
   Address += RingBaseShift;
-  Status = Virtio10Transfer (Dev->PciIo, &Dev->CommonConfig, TRUE,
-             OFFSET_OF (VIRTIO_PCI_COMMON_CFG, QueueDesc),
-             sizeof Address, &Address);
+  Status   = Virtio10Transfer (
+                               Dev->PciIo,
+                               &Dev->CommonConfig,
+                               TRUE,
+                               OFFSET_OF (VIRTIO_PCI_COMMON_CFG, QueueDesc),
+                               sizeof Address,
+                               &Address
+                               );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  Address = (UINTN)Ring->Avail.Flags;
+  Address  = (UINTN) Ring->Avail.Flags;
   Address += RingBaseShift;
-  Status = Virtio10Transfer (Dev->PciIo, &Dev->CommonConfig, TRUE,
-             OFFSET_OF (VIRTIO_PCI_COMMON_CFG, QueueAvail),
-             sizeof Address, &Address);
+  Status   = Virtio10Transfer (
+                               Dev->PciIo,
+                               &Dev->CommonConfig,
+                               TRUE,
+                               OFFSET_OF (VIRTIO_PCI_COMMON_CFG, QueueAvail),
+                               sizeof Address,
+                               &Address
+                               );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  Address = (UINTN)Ring->Used.Flags;
+  Address  = (UINTN) Ring->Used.Flags;
   Address += RingBaseShift;
-  Status = Virtio10Transfer (Dev->PciIo, &Dev->CommonConfig, TRUE,
-             OFFSET_OF (VIRTIO_PCI_COMMON_CFG, QueueUsed),
-             sizeof Address, &Address);
+  Status   = Virtio10Transfer (
+                               Dev->PciIo,
+                               &Dev->CommonConfig,
+                               TRUE,
+                               OFFSET_OF (VIRTIO_PCI_COMMON_CFG, QueueUsed),
+                               sizeof Address,
+                               &Address
+                               );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   Enable = 1;
-  Status = Virtio10Transfer (Dev->PciIo, &Dev->CommonConfig, TRUE,
-             OFFSET_OF (VIRTIO_PCI_COMMON_CFG, QueueEnable),
-             sizeof Enable, &Enable);
+  Status = Virtio10Transfer (
+                             Dev->PciIo,
+                             &Dev->CommonConfig,
+                             TRUE,
+                             OFFSET_OF (VIRTIO_PCI_COMMON_CFG, QueueEnable),
+                             sizeof Enable,
+                             &Enable
+                             );
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -498,18 +622,45 @@ Virtio10SetQueueSel (
   IN UINT16                   Index
   )
 {
-  VIRTIO_1_0_DEV *Dev;
-  EFI_STATUS     Status;
+  VIRTIO_1_0_DEV  *Dev;
+  EFI_STATUS      Status;
 
   Dev = VIRTIO_1_0_FROM_VIRTIO_DEVICE (This);
 
-  Status = Virtio10Transfer (Dev->PciIo, &Dev->CommonConfig, TRUE,
-             OFFSET_OF (VIRTIO_PCI_COMMON_CFG, QueueSelect),
-             sizeof Index, &Index);
+  Status = Virtio10Transfer (
+                             Dev->PciIo,
+                             &Dev->CommonConfig,
+                             TRUE,
+                             OFFSET_OF (VIRTIO_PCI_COMMON_CFG, QueueSelect),
+                             sizeof Index,
+                             &Index
+                             );
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -518,10 +669,10 @@ Virtio10SetQueueNotify (
   IN UINT16                   Index
   )
 {
-  VIRTIO_1_0_DEV *Dev;
-  EFI_STATUS     Status;
-  UINT16         SavedQueueSelect;
-  UINT16         NotifyOffset;
+  VIRTIO_1_0_DEV  *Dev;
+  EFI_STATUS      Status;
+  UINT16          SavedQueueSelect;
+  UINT16          NotifyOffset;
 
   Dev = VIRTIO_1_0_FROM_VIRTIO_DEVICE (This);
 
@@ -531,9 +682,14 @@ Virtio10SetQueueNotify (
   //
   // So, start with saving the current queue selector.
   //
-  Status = Virtio10Transfer (Dev->PciIo, &Dev->CommonConfig, FALSE,
-             OFFSET_OF (VIRTIO_PCI_COMMON_CFG, QueueSelect),
-             sizeof SavedQueueSelect, &SavedQueueSelect);
+  Status = Virtio10Transfer (
+                             Dev->PciIo,
+                             &Dev->CommonConfig,
+                             FALSE,
+                             OFFSET_OF (VIRTIO_PCI_COMMON_CFG, QueueSelect),
+                             sizeof SavedQueueSelect,
+                             &SavedQueueSelect
+                             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -541,9 +697,14 @@ Virtio10SetQueueNotify (
   //
   // Select the requested queue.
   //
-  Status = Virtio10Transfer (Dev->PciIo, &Dev->CommonConfig, TRUE,
-             OFFSET_OF (VIRTIO_PCI_COMMON_CFG, QueueSelect),
-             sizeof Index, &Index);
+  Status = Virtio10Transfer (
+                             Dev->PciIo,
+                             &Dev->CommonConfig,
+                             TRUE,
+                             OFFSET_OF (VIRTIO_PCI_COMMON_CFG, QueueSelect),
+                             sizeof Index,
+                             &Index
+                             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -551,9 +712,14 @@ Virtio10SetQueueNotify (
   //
   // Read the QueueNotifyOff field.
   //
-  Status = Virtio10Transfer (Dev->PciIo, &Dev->CommonConfig, FALSE,
-             OFFSET_OF (VIRTIO_PCI_COMMON_CFG, QueueNotifyOff),
-             sizeof NotifyOffset, &NotifyOffset);
+  Status = Virtio10Transfer (
+                             Dev->PciIo,
+                             &Dev->CommonConfig,
+                             FALSE,
+                             OFFSET_OF (VIRTIO_PCI_COMMON_CFG, QueueNotifyOff),
+                             sizeof NotifyOffset,
+                             &NotifyOffset
+                             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -561,9 +727,14 @@ Virtio10SetQueueNotify (
   //
   // Re-select the original queue.
   //
-  Status = Virtio10Transfer (Dev->PciIo, &Dev->CommonConfig, TRUE,
-             OFFSET_OF (VIRTIO_PCI_COMMON_CFG, QueueSelect),
-             sizeof SavedQueueSelect, &SavedQueueSelect);
+  Status = Virtio10Transfer (
+                             Dev->PciIo,
+                             &Dev->CommonConfig,
+                             TRUE,
+                             OFFSET_OF (VIRTIO_PCI_COMMON_CFG, QueueSelect),
+                             sizeof SavedQueueSelect,
+                             &SavedQueueSelect
+                             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -571,13 +742,40 @@ Virtio10SetQueueNotify (
   //
   // We can now kick the queue.
   //
-  Status = Virtio10Transfer (Dev->PciIo, &Dev->NotifyConfig, TRUE,
-             NotifyOffset * Dev->NotifyOffsetMultiplier,
-             sizeof Index, &Index);
+  Status = Virtio10Transfer (
+                             Dev->PciIo,
+                             &Dev->NotifyConfig,
+                             TRUE,
+                             NotifyOffset * Dev->NotifyOffsetMultiplier,
+                             sizeof Index,
+                             &Index
+                             );
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -589,7 +787,29 @@ Virtio10SetQueueAlign (
   return (Alignment == EFI_PAGE_SIZE) ? EFI_SUCCESS : EFI_UNSUPPORTED;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -601,7 +821,29 @@ Virtio10SetPageSize (
   return (PageSize == EFI_PAGE_SIZE) ? EFI_SUCCESS : EFI_UNSUPPORTED;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -610,18 +852,45 @@ Virtio10GetQueueNumMax (
   OUT UINT16                  *QueueNumMax
   )
 {
-  VIRTIO_1_0_DEV *Dev;
-  EFI_STATUS     Status;
+  VIRTIO_1_0_DEV  *Dev;
+  EFI_STATUS      Status;
 
   Dev = VIRTIO_1_0_FROM_VIRTIO_DEVICE (This);
 
-  Status = Virtio10Transfer (Dev->PciIo, &Dev->CommonConfig, FALSE,
-             OFFSET_OF (VIRTIO_PCI_COMMON_CFG, QueueSize),
-             sizeof *QueueNumMax, QueueNumMax);
+  Status = Virtio10Transfer (
+                             Dev->PciIo,
+                             &Dev->CommonConfig,
+                             FALSE,
+                             OFFSET_OF (VIRTIO_PCI_COMMON_CFG, QueueSize),
+                             sizeof *QueueNumMax,
+                             QueueNumMax
+                             );
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -630,8 +899,8 @@ Virtio10SetQueueNum (
   IN UINT16                   QueueSize
   )
 {
-  EFI_STATUS     Status;
-  UINT16         CurrentSize;
+  EFI_STATUS  Status;
+  UINT16      CurrentSize;
 
   //
   // This member function is required for VirtIo MMIO, and a no-op in
@@ -643,10 +912,33 @@ Virtio10SetQueueNum (
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   return (CurrentSize == QueueSize) ? EFI_SUCCESS : EFI_UNSUPPORTED;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -655,18 +947,45 @@ Virtio10GetDeviceStatus (
   OUT UINT8                   *DeviceStatus
   )
 {
-  VIRTIO_1_0_DEV *Dev;
-  EFI_STATUS     Status;
+  VIRTIO_1_0_DEV  *Dev;
+  EFI_STATUS      Status;
 
   Dev = VIRTIO_1_0_FROM_VIRTIO_DEVICE (This);
 
-  Status = Virtio10Transfer (Dev->PciIo, &Dev->CommonConfig, FALSE,
-             OFFSET_OF (VIRTIO_PCI_COMMON_CFG, DeviceStatus),
-             sizeof *DeviceStatus, DeviceStatus);
+  Status = Virtio10Transfer (
+                             Dev->PciIo,
+                             &Dev->CommonConfig,
+                             FALSE,
+                             OFFSET_OF (VIRTIO_PCI_COMMON_CFG, DeviceStatus),
+                             sizeof *DeviceStatus,
+                             DeviceStatus
+                             );
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -675,18 +994,45 @@ Virtio10SetDeviceStatus (
   IN UINT8                   DeviceStatus
   )
 {
-  VIRTIO_1_0_DEV *Dev;
-  EFI_STATUS     Status;
+  VIRTIO_1_0_DEV  *Dev;
+  EFI_STATUS      Status;
 
   Dev = VIRTIO_1_0_FROM_VIRTIO_DEVICE (This);
 
-  Status = Virtio10Transfer (Dev->PciIo, &Dev->CommonConfig, TRUE,
-             OFFSET_OF (VIRTIO_PCI_COMMON_CFG, DeviceStatus),
-             sizeof DeviceStatus, &DeviceStatus);
+  Status = Virtio10Transfer (
+                             Dev->PciIo,
+                             &Dev->CommonConfig,
+                             TRUE,
+                             OFFSET_OF (VIRTIO_PCI_COMMON_CFG, DeviceStatus),
+                             sizeof DeviceStatus,
+                             &DeviceStatus
+                             );
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -697,17 +1043,45 @@ Virtio10WriteDevice (
   IN UINT64                 Value
   )
 {
-  VIRTIO_1_0_DEV *Dev;
-  EFI_STATUS     Status;
+  VIRTIO_1_0_DEV  *Dev;
+  EFI_STATUS      Status;
 
   Dev = VIRTIO_1_0_FROM_VIRTIO_DEVICE (This);
 
-  Status = Virtio10Transfer (Dev->PciIo, &Dev->SpecificConfig, TRUE,
-             FieldOffset, FieldSize, &Value);
+  Status = Virtio10Transfer (
+                             Dev->PciIo,
+                             &Dev->SpecificConfig,
+                             TRUE,
+                             FieldOffset,
+                             FieldSize,
+                             &Value
+                             );
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -719,8 +1093,8 @@ Virtio10ReadDevice (
   OUT VOID                   *Buffer
   )
 {
-  VIRTIO_1_0_DEV *Dev;
-  EFI_STATUS     Status;
+  VIRTIO_1_0_DEV  *Dev;
+  EFI_STATUS      Status;
 
   if (FieldSize != BufferSize) {
     return EFI_INVALID_PARAMETER;
@@ -728,11 +1102,40 @@ Virtio10ReadDevice (
 
   Dev = VIRTIO_1_0_FROM_VIRTIO_DEVICE (This);
 
-  Status = Virtio10Transfer (Dev->PciIo, &Dev->SpecificConfig, FALSE,
-             FieldOffset, FieldSize, Buffer);
+  Status = Virtio10Transfer (
+                             Dev->PciIo,
+                             &Dev->SpecificConfig,
+                             FALSE,
+                             FieldOffset,
+                             FieldSize,
+                             Buffer
+                             );
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -742,22 +1145,45 @@ Virtio10AllocateSharedPages (
   IN OUT VOID                    **HostAddress
   )
 {
-  VIRTIO_1_0_DEV *Dev;
-  EFI_STATUS     Status;
+  VIRTIO_1_0_DEV  *Dev;
+  EFI_STATUS      Status;
 
   Dev = VIRTIO_1_0_FROM_VIRTIO_DEVICE (This);
 
   Status = Dev->PciIo->AllocateBuffer (
-                         Dev->PciIo,
-                         AllocateAnyPages,
-                         EfiBootServicesData,
-                         Pages,
-                         HostAddress,
-                         EFI_PCI_ATTRIBUTE_MEMORY_CACHED
-                         );
+                                       Dev->PciIo,
+                                       AllocateAnyPages,
+                                       EfiBootServicesData,
+                                       Pages,
+                                       HostAddress,
+                                       EFI_PCI_ATTRIBUTE_MEMORY_CACHED
+                                       );
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 VOID
 EFIAPI
@@ -767,17 +1193,40 @@ Virtio10FreeSharedPages (
   IN  VOID                    *HostAddress
   )
 {
-  VIRTIO_1_0_DEV *Dev;
+  VIRTIO_1_0_DEV  *Dev;
 
   Dev = VIRTIO_1_0_FROM_VIRTIO_DEVICE (This);
 
   Dev->PciIo->FreeBuffer (
-                Dev->PciIo,
-                Pages,
-                HostAddress
-                );
+                          Dev->PciIo,
+                          Pages,
+                          HostAddress
+                          );
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -790,9 +1239,9 @@ Virtio10MapSharedBuffer (
   OUT    VOID                    **Mapping
   )
 {
-  EFI_STATUS                    Status;
-  VIRTIO_1_0_DEV                *Dev;
-  EFI_PCI_IO_PROTOCOL_OPERATION PciIoOperation;
+  EFI_STATUS                     Status;
+  VIRTIO_1_0_DEV                 *Dev;
+  EFI_PCI_IO_PROTOCOL_OPERATION  PciIoOperation;
 
   Dev = VIRTIO_1_0_FROM_VIRTIO_DEVICE (This);
 
@@ -800,30 +1249,53 @@ Virtio10MapSharedBuffer (
   // Map VIRTIO_MAP_OPERATION to EFI_PCI_IO_PROTOCOL_OPERATION
   //
   switch (Operation) {
-  case VirtioOperationBusMasterRead:
-    PciIoOperation = EfiPciIoOperationBusMasterRead;
-    break;
-  case VirtioOperationBusMasterWrite:
-    PciIoOperation = EfiPciIoOperationBusMasterWrite;
-    break;
-  case VirtioOperationBusMasterCommonBuffer:
-    PciIoOperation = EfiPciIoOperationBusMasterCommonBuffer;
-    break;
-  default:
-    return EFI_INVALID_PARAMETER;
+    case VirtioOperationBusMasterRead:
+      PciIoOperation = EfiPciIoOperationBusMasterRead;
+      break;
+    case VirtioOperationBusMasterWrite:
+      PciIoOperation = EfiPciIoOperationBusMasterWrite;
+      break;
+    case VirtioOperationBusMasterCommonBuffer:
+      PciIoOperation = EfiPciIoOperationBusMasterCommonBuffer;
+      break;
+    default:
+      return EFI_INVALID_PARAMETER;
   }
 
   Status = Dev->PciIo->Map (
-                         Dev->PciIo,
-                         PciIoOperation,
-                         HostAddress,
-                         NumberOfBytes,
-                         DeviceAddress,
-                         Mapping
-                         );
+                            Dev->PciIo,
+                            PciIoOperation,
+                            HostAddress,
+                            NumberOfBytes,
+                            DeviceAddress,
+                            Mapping
+                            );
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -838,16 +1310,16 @@ Virtio10UnmapSharedBuffer (
   Dev = VIRTIO_1_0_FROM_VIRTIO_DEVICE (This);
 
   Status = Dev->PciIo->Unmap (
-                         Dev->PciIo,
-                         Mapping
-                         );
+                              Dev->PciIo,
+                              Mapping
+                              );
 
   return Status;
 }
 
-STATIC CONST VIRTIO_DEVICE_PROTOCOL mVirtIoTemplate = {
-  VIRTIO_SPEC_REVISION (1, 0, 0),
-  0,                              // SubSystemDeviceId, filled in dynamically
+STATIC CONST VIRTIO_DEVICE_PROTOCOL  mVirtIoTemplate = {
+  VIRTIO_SPEC_REVISION (1,     0, 0),
+  0,                           // SubSystemDeviceId, filled in dynamically
   Virtio10GetDeviceFeatures,
   Virtio10SetGuestFeatures,
   Virtio10SetQueueAddress,
@@ -867,7 +1339,6 @@ STATIC CONST VIRTIO_DEVICE_PROTOCOL mVirtIoTemplate = {
   Virtio10UnmapSharedBuffer
 };
 
-
 //
 // EFI_DRIVER_BINDING_PROTOCOL member functions
 //
@@ -881,19 +1352,29 @@ Virtio10BindingSupported (
   IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath
   )
 {
-  EFI_STATUS          Status;
-  EFI_PCI_IO_PROTOCOL *PciIo;
-  PCI_TYPE00          Pci;
+  EFI_STATUS           Status;
+  EFI_PCI_IO_PROTOCOL  *PciIo;
+  PCI_TYPE00           Pci;
 
-  Status = gBS->OpenProtocol (DeviceHandle, &gEfiPciIoProtocolGuid,
-                  (VOID **)&PciIo, This->DriverBindingHandle,
-                  DeviceHandle, EFI_OPEN_PROTOCOL_BY_DRIVER);
+  Status = gBS->OpenProtocol (
+                              DeviceHandle,
+                              &gEfiPciIoProtocolGuid,
+                              (VOID **) &PciIo,
+                              This->DriverBindingHandle,
+                              DeviceHandle,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, 0,
-                        sizeof Pci / sizeof (UINT32), &Pci);
+  Status = PciIo->Pci.Read (
+                            PciIo,
+                            EfiPciIoWidthUint32,
+                            0,
+                            sizeof Pci / sizeof (UINT32),
+                            &Pci
+                            );
   if (EFI_ERROR (Status)) {
     goto CloseProtocol;
   }
@@ -926,13 +1407,39 @@ Virtio10BindingSupported (
   }
 
 CloseProtocol:
-  gBS->CloseProtocol (DeviceHandle, &gEfiPciIoProtocolGuid,
-         This->DriverBindingHandle, DeviceHandle);
+  gBS->CloseProtocol (
+                      DeviceHandle,
+                      &gEfiPciIoProtocolGuid,
+                      This->DriverBindingHandle,
+                      DeviceHandle
+                      );
 
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -942,10 +1449,10 @@ Virtio10BindingStart (
   IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath
   )
 {
-  VIRTIO_1_0_DEV *Device;
-  EFI_STATUS     Status;
-  PCI_TYPE00     Pci;
-  UINT64         SetAttributes;
+  VIRTIO_1_0_DEV  *Device;
+  EFI_STATUS      Status;
+  PCI_TYPE00      Pci;
+  UINT64          SetAttributes;
 
   Device = AllocateZeroPool (sizeof *Device);
   if (Device == NULL) {
@@ -955,15 +1462,25 @@ Virtio10BindingStart (
   Device->Signature = VIRTIO_1_0_SIGNATURE;
   CopyMem (&Device->VirtIo, &mVirtIoTemplate, sizeof mVirtIoTemplate);
 
-  Status = gBS->OpenProtocol (DeviceHandle, &gEfiPciIoProtocolGuid,
-                  (VOID **)&Device->PciIo, This->DriverBindingHandle,
-                  DeviceHandle, EFI_OPEN_PROTOCOL_BY_DRIVER);
+  Status = gBS->OpenProtocol (
+                              DeviceHandle,
+                              &gEfiPciIoProtocolGuid,
+                              (VOID **) &Device->PciIo,
+                              This->DriverBindingHandle,
+                              DeviceHandle,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (EFI_ERROR (Status)) {
     goto FreeDevice;
   }
 
-  Status = Device->PciIo->Pci.Read (Device->PciIo, EfiPciIoWidthUint32, 0,
-                                sizeof Pci / sizeof (UINT32), &Pci);
+  Status = Device->PciIo->Pci.Read (
+                                    Device->PciIo,
+                                    EfiPciIoWidthUint32,
+                                    0,
+                                    sizeof Pci / sizeof (UINT32),
+                                    &Pci
+                                    );
   if (EFI_ERROR (Status)) {
     goto ClosePciIo;
   }
@@ -975,9 +1492,12 @@ Virtio10BindingStart (
     goto ClosePciIo;
   }
 
-  Status = Device->PciIo->Attributes (Device->PciIo,
-                            EfiPciIoAttributeOperationGet, 0,
-                            &Device->OriginalPciAttributes);
+  Status = Device->PciIo->Attributes (
+                                      Device->PciIo,
+                                      EfiPciIoAttributeOperationGet,
+                                      0,
+                                      &Device->OriginalPciAttributes
+                                      );
   if (EFI_ERROR (Status)) {
     goto ClosePciIo;
   }
@@ -987,16 +1507,22 @@ Virtio10BindingStart (
   UpdateAttributes (&Device->CommonConfig, &SetAttributes);
   UpdateAttributes (&Device->NotifyConfig, &SetAttributes);
   UpdateAttributes (&Device->SpecificConfig, &SetAttributes);
-  Status = Device->PciIo->Attributes (Device->PciIo,
-                            EfiPciIoAttributeOperationEnable, SetAttributes,
-                            NULL);
+  Status = Device->PciIo->Attributes (
+                                      Device->PciIo,
+                                      EfiPciIoAttributeOperationEnable,
+                                      SetAttributes,
+                                      NULL
+                                      );
   if (EFI_ERROR (Status)) {
     goto ClosePciIo;
   }
 
-  Status = gBS->InstallProtocolInterface (&DeviceHandle,
-                  &gVirtioDeviceProtocolGuid, EFI_NATIVE_INTERFACE,
-                  &Device->VirtIo);
+  Status = gBS->InstallProtocolInterface (
+                                          &DeviceHandle,
+                                          &gVirtioDeviceProtocolGuid,
+                                          EFI_NATIVE_INTERFACE,
+                                          &Device->VirtIo
+                                          );
   if (EFI_ERROR (Status)) {
     goto RestorePciAttributes;
   }
@@ -1004,12 +1530,20 @@ Virtio10BindingStart (
   return EFI_SUCCESS;
 
 RestorePciAttributes:
-  Device->PciIo->Attributes (Device->PciIo, EfiPciIoAttributeOperationSet,
-                   Device->OriginalPciAttributes, NULL);
+  Device->PciIo->Attributes (
+                             Device->PciIo,
+                             EfiPciIoAttributeOperationSet,
+                             Device->OriginalPciAttributes,
+                             NULL
+                             );
 
 ClosePciIo:
-  gBS->CloseProtocol (DeviceHandle, &gEfiPciIoProtocolGuid,
-         This->DriverBindingHandle, DeviceHandle);
+  gBS->CloseProtocol (
+                      DeviceHandle,
+                      &gEfiPciIoProtocolGuid,
+                      This->DriverBindingHandle,
+                      DeviceHandle
+                      );
 
 FreeDevice:
   FreePool (Device);
@@ -1017,7 +1551,29 @@ FreeDevice:
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -1028,36 +1584,51 @@ Virtio10BindingStop (
   IN EFI_HANDLE                  *ChildHandleBuffer
   )
 {
-  EFI_STATUS             Status;
-  VIRTIO_DEVICE_PROTOCOL *VirtIo;
-  VIRTIO_1_0_DEV         *Device;
+  EFI_STATUS              Status;
+  VIRTIO_DEVICE_PROTOCOL  *VirtIo;
+  VIRTIO_1_0_DEV          *Device;
 
-  Status = gBS->OpenProtocol (DeviceHandle, &gVirtioDeviceProtocolGuid,
-                  (VOID **)&VirtIo, This->DriverBindingHandle,
-                  DeviceHandle, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+  Status = gBS->OpenProtocol (
+                              DeviceHandle,
+                              &gVirtioDeviceProtocolGuid,
+                              (VOID **) &VirtIo,
+                              This->DriverBindingHandle,
+                              DeviceHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   Device = VIRTIO_1_0_FROM_VIRTIO_DEVICE (VirtIo);
 
-  Status = gBS->UninstallProtocolInterface (DeviceHandle,
-                  &gVirtioDeviceProtocolGuid, &Device->VirtIo);
+  Status = gBS->UninstallProtocolInterface (
+                                            DeviceHandle,
+                                            &gVirtioDeviceProtocolGuid,
+                                            &Device->VirtIo
+                                            );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  Device->PciIo->Attributes (Device->PciIo, EfiPciIoAttributeOperationSet,
-                   Device->OriginalPciAttributes, NULL);
-  gBS->CloseProtocol (DeviceHandle, &gEfiPciIoProtocolGuid,
-         This->DriverBindingHandle, DeviceHandle);
+  Device->PciIo->Attributes (
+                             Device->PciIo,
+                             EfiPciIoAttributeOperationSet,
+                             Device->OriginalPciAttributes,
+                             NULL
+                             );
+  gBS->CloseProtocol (
+                      DeviceHandle,
+                      &gEfiPciIoProtocolGuid,
+                      This->DriverBindingHandle,
+                      DeviceHandle
+                      );
   FreePool (Device);
 
   return EFI_SUCCESS;
 }
 
-
-STATIC EFI_DRIVER_BINDING_PROTOCOL mDriverBinding = {
+STATIC EFI_DRIVER_BINDING_PROTOCOL  mDriverBinding = {
   &Virtio10BindingSupported,
   &Virtio10BindingStart,
   &Virtio10BindingStop,
@@ -1066,21 +1637,43 @@ STATIC EFI_DRIVER_BINDING_PROTOCOL mDriverBinding = {
   NULL  // DriverBindingHandle, to be overwritten
 };
 
-
 //
 // EFI_COMPONENT_NAME_PROTOCOL and EFI_COMPONENT_NAME2_PROTOCOL
 // implementations
 //
 
 STATIC
-EFI_UNICODE_STRING_TABLE mDriverNameTable[] = {
+EFI_UNICODE_STRING_TABLE  mDriverNameTable[] = {
   { "eng;en", L"Virtio 1.0 PCI Driver" },
   { NULL,     NULL                     }
 };
 
 STATIC
-EFI_COMPONENT_NAME_PROTOCOL mComponentName;
+EFI_COMPONENT_NAME_PROTOCOL  mComponentName;
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -1091,14 +1684,37 @@ Virtio10GetDriverName (
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mDriverNameTable,
-           DriverName,
-           (BOOLEAN)(This == &mComponentName) // Iso639Language
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &mComponentName) // Iso639Language
+                               );
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -1114,19 +1730,18 @@ Virtio10GetDeviceName (
 }
 
 STATIC
-EFI_COMPONENT_NAME_PROTOCOL mComponentName = {
+EFI_COMPONENT_NAME_PROTOCOL  mComponentName = {
   &Virtio10GetDriverName,
   &Virtio10GetDeviceName,
   "eng"
 };
 
 STATIC
-EFI_COMPONENT_NAME2_PROTOCOL mComponentName2 = {
-  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)     &Virtio10GetDriverName,
+EFI_COMPONENT_NAME2_PROTOCOL  mComponentName2 = {
+  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) &Virtio10GetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) &Virtio10GetDeviceName,
   "en"
 };
-
 
 //
 // Entry point of this driver
@@ -1140,11 +1755,11 @@ Virtio10EntryPoint (
   )
 {
   return EfiLibInstallDriverBindingComponentName2 (
-           ImageHandle,
-           SystemTable,
-           &mDriverBinding,
-           ImageHandle,
-           &mComponentName,
-           &mComponentName2
-           );
+                                                   ImageHandle,
+                                                   SystemTable,
+                                                   &mDriverBinding,
+                                                   ImageHandle,
+                                                   &mComponentName,
+                                                   &mComponentName2
+                                                   );
 }

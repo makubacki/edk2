@@ -38,10 +38,10 @@ AllocateMemoryBelow4G (
   UINTN                 Pages;
   EFI_PHYSICAL_ADDRESS  Address;
   EFI_STATUS            Status;
-  VOID*                 Buffer;
+  VOID                  *Buffer;
   UINTN                 AllocRemaining;
 
-  Pages = EFI_SIZE_TO_PAGES (Size);
+  Pages   = EFI_SIZE_TO_PAGES (Size);
   Address = 0xffffffff;
 
   //
@@ -52,18 +52,18 @@ AllocateMemoryBelow4G (
   //
   ASSERT (mLockBoxGlobal->Signature == LOCK_BOX_GLOBAL_SIGNATURE);
   if ((UINTN) mLockBoxGlobal->SubPageRemaining >= Size) {
-    Buffer = (VOID*)(UINTN) mLockBoxGlobal->SubPageBuffer;
-    mLockBoxGlobal->SubPageBuffer += (UINT32) Size;
+    Buffer = (VOID *) (UINTN) mLockBoxGlobal->SubPageBuffer;
+    mLockBoxGlobal->SubPageBuffer    += (UINT32) Size;
     mLockBoxGlobal->SubPageRemaining -= (UINT32) Size;
     return Buffer;
   }
 
-  Status  = gBS->AllocatePages (
-                   AllocateMaxAddress,
-                   MemoryType,
-                   Pages,
-                   &Address
-                   );
+  Status = gBS->AllocatePages (
+                               AllocateMaxAddress,
+                               MemoryType,
+                               Pages,
+                               &Address
+                               );
   if (EFI_ERROR (Status)) {
     return NULL;
   }
@@ -73,13 +73,12 @@ AllocateMemoryBelow4G (
 
   AllocRemaining = EFI_PAGES_TO_SIZE (Pages) - Size;
   if (AllocRemaining > (UINTN) mLockBoxGlobal->SubPageRemaining) {
-    mLockBoxGlobal->SubPageBuffer = (UINT32) (Address + Size);
+    mLockBoxGlobal->SubPageBuffer    = (UINT32) (Address + Size);
     mLockBoxGlobal->SubPageRemaining = (UINT32) AllocRemaining;
   }
 
   return Buffer;
 }
-
 
 /**
   Allocates a buffer of type EfiACPIMemoryNVS.
@@ -104,7 +103,29 @@ AllocateAcpiNvsPool (
   return AllocateMemoryBelow4G (EfiACPIMemoryNVS, AllocationSize);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 LockBoxDxeLibInitialize (
@@ -112,8 +133,8 @@ LockBoxDxeLibInitialize (
   IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  EFI_STATUS    Status;
-  VOID          *Interface;
+  EFI_STATUS  Status;
+  VOID        *Interface;
 
   Status = LockBoxLibInitialize ();
   if (!EFI_ERROR (Status)) {
@@ -127,11 +148,11 @@ LockBoxDxeLibInitialize (
       Status = gBS->LocateProtocol (&gEfiLockBoxProtocolGuid, NULL, &Interface);
       if (EFI_ERROR (Status)) {
         Status = gBS->InstallProtocolInterface (
-                        &ImageHandle,
-                        &gEfiLockBoxProtocolGuid,
-                        EFI_NATIVE_INTERFACE,
-                        NULL
-                        );
+                                                &ImageHandle,
+                                                &gEfiLockBoxProtocolGuid,
+                                                EFI_NATIVE_INTERFACE,
+                                                NULL
+                                                );
         ASSERT_EFI_ERROR (Status);
       }
     }

@@ -19,6 +19,29 @@
 #include <Library/MemoryAllocationLib.h>
 #include <Library/PcdLib.h>
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 AmdSevDxeEntryPoint (
@@ -48,17 +71,17 @@ AmdSevDxeEntryPoint (
   Status = gDS->GetMemorySpaceMap (&NumEntries, &AllDescMap);
   if (!EFI_ERROR (Status)) {
     for (Index = 0; Index < NumEntries; Index++) {
-      CONST EFI_GCD_MEMORY_SPACE_DESCRIPTOR *Desc;
+  CONST EFI_GCD_MEMORY_SPACE_DESCRIPTOR  *Desc;
 
       Desc = &AllDescMap[Index];
       if (Desc->GcdMemoryType == EfiGcdMemoryTypeMemoryMappedIo ||
           Desc->GcdMemoryType == EfiGcdMemoryTypeNonExistent) {
         Status = MemEncryptSevClearPageEncMask (
-                   0,
-                   Desc->BaseAddress,
-                   EFI_SIZE_TO_PAGES (Desc->Length),
-                   FALSE
-                   );
+                                                0,
+                                                Desc->BaseAddress,
+                                                EFI_SIZE_TO_PAGES (Desc->Length),
+                                                FALSE
+                                                );
         ASSERT_EFI_ERROR (Status);
       }
     }
@@ -74,11 +97,11 @@ AmdSevDxeEntryPoint (
   //
   if (PcdGet16 (PcdOvmfHostBridgePciDevId) == INTEL_Q35_MCH_DEVICE_ID) {
     Status = MemEncryptSevClearPageEncMask (
-               0,
-               FixedPcdGet64 (PcdPciExpressBaseAddress),
-               EFI_SIZE_TO_PAGES (SIZE_256MB),
-               FALSE
-               );
+                                            0,
+                                            FixedPcdGet64 (PcdPciExpressBaseAddress),
+                                            EFI_SIZE_TO_PAGES (SIZE_256MB),
+                                            FALSE
+                                            );
 
     ASSERT_EFI_ERROR (Status);
   }
@@ -103,13 +126,13 @@ AmdSevDxeEntryPoint (
   // is completed (See OvmfPkg/Library/SmmCpuFeaturesLib/SmmCpuFeaturesLib.c).
   //
   if (FeaturePcdGet (PcdSmmSmramRequire)) {
-    UINTN MapPagesBase;
-    UINTN MapPagesCount;
+  UINTN  MapPagesBase;
+  UINTN  MapPagesCount;
 
     Status = MemEncryptSevLocateInitialSmramSaveStateMapPages (
-               &MapPagesBase,
-               &MapPagesCount
-               );
+                                                               &MapPagesBase,
+                                                               &MapPagesCount
+                                                               );
     ASSERT_EFI_ERROR (Status);
 
     //
@@ -117,17 +140,19 @@ AmdSevDxeEntryPoint (
     // could be after a warm reboot from the OS. Don't leak any stale OS data
     // to the hypervisor.
     //
-    ZeroMem ((VOID *)MapPagesBase, EFI_PAGES_TO_SIZE (MapPagesCount));
+    ZeroMem ((VOID *) MapPagesBase, EFI_PAGES_TO_SIZE (MapPagesCount));
 
     Status = MemEncryptSevClearPageEncMask (
-               0,             // Cr3BaseAddress -- use current CR3
-               MapPagesBase,  // BaseAddress
-               MapPagesCount, // NumPages
-               TRUE           // Flush
-               );
+                                            0,             // Cr3BaseAddress -- use current CR3
+                                            MapPagesBase,  // BaseAddress
+                                            MapPagesCount, // NumPages
+                                            TRUE           // Flush
+                                            );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "%a: MemEncryptSevClearPageEncMask(): %r\n",
-        __FUNCTION__, Status));
+      DEBUG (
+             (DEBUG_ERROR, "%a: MemEncryptSevClearPageEncMask(): %r\n",
+              __FUNCTION__, Status)
+             );
       ASSERT (FALSE);
       CpuDeadLoop ();
     }

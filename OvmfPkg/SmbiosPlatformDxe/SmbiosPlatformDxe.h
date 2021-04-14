@@ -21,7 +21,6 @@
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/MemoryAllocationLib.h>
 
-
 /**
   Locates the Xen SMBIOS data if it exists
 
@@ -29,10 +28,9 @@
 
 **/
 SMBIOS_TABLE_ENTRY_POINT *
-GetXenSmbiosTables (
-  VOID
-  );
-
+  GetXenSmbiosTables (
+                      VOID
+                      );
 
 /**
   Locates and extracts the QEMU SMBIOS table data if present in fw_cfg
@@ -41,8 +39,8 @@ GetXenSmbiosTables (
 
 **/
 UINT8 *
-GetQemuSmbiosTables (
-  VOID
-  );
+  GetQemuSmbiosTables (
+                       VOID
+                       );
 
 #endif

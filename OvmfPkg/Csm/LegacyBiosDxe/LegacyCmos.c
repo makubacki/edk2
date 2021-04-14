@@ -64,13 +64,13 @@ LegacyCalculateWriteStandardCmosChecksum (
   UINT16  Checksum;
 
   for (Checksum = 0, Register = 0x10; Register < 0x2e; Register++) {
-    Checksum = (UINT16)(Checksum + LegacyReadStandardCmos (Register));
+    Checksum = (UINT16) (Checksum + LegacyReadStandardCmos (Register));
   }
-  LegacyWriteStandardCmos (CMOS_2E, (UINT8)(Checksum >> 8));
-  LegacyWriteStandardCmos (CMOS_2F, (UINT8)(Checksum & 0xff));
+
+  LegacyWriteStandardCmos (CMOS_2E, (UINT8) (Checksum >> 8));
+  LegacyWriteStandardCmos (CMOS_2F, (UINT8) (Checksum & 0xff));
   return EFI_SUCCESS;
 }
-
 
 /**
   Fill in the standard CMOS stuff before Legacy16 load
@@ -88,9 +88,9 @@ LegacyBiosInitCmos (
   UINT32  Size;
 
   //
-  //  Clear all errors except RTC lost power
+  // Clear all errors except RTC lost power
   //
-  LegacyWriteStandardCmos (CMOS_0E, (UINT8)(LegacyReadStandardCmos (CMOS_0E) & BIT7));
+  LegacyWriteStandardCmos (CMOS_0E, (UINT8) (LegacyReadStandardCmos (CMOS_0E) & BIT7));
 
   //
   // Update CMOS locations 15,16,17,18,30,31 and 32
@@ -103,13 +103,13 @@ LegacyBiosInitCmos (
 
   Size = 15 * SIZE_1MB;
   if (Private->IntThunk->EfiToLegacy16InitTable.OsMemoryAbove1Mb < (15 * SIZE_1MB)) {
-    Size  = Private->IntThunk->EfiToLegacy16InitTable.OsMemoryAbove1Mb >> 10;
+    Size = Private->IntThunk->EfiToLegacy16InitTable.OsMemoryAbove1Mb >> 10;
   }
 
-  LegacyWriteStandardCmos (CMOS_17, (UINT8)(Size & 0xFF));
-  LegacyWriteStandardCmos (CMOS_30, (UINT8)(Size & 0xFF));
-  LegacyWriteStandardCmos (CMOS_18, (UINT8)(Size >> 8));
-  LegacyWriteStandardCmos (CMOS_31, (UINT8)(Size >> 8));
+  LegacyWriteStandardCmos (CMOS_17, (UINT8) (Size & 0xFF));
+  LegacyWriteStandardCmos (CMOS_30, (UINT8) (Size & 0xFF));
+  LegacyWriteStandardCmos (CMOS_18, (UINT8) (Size >> 8));
+  LegacyWriteStandardCmos (CMOS_31, (UINT8) (Size >> 8));
 
   LegacyCalculateWriteStandardCmosChecksum ();
 

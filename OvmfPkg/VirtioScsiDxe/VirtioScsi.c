@@ -70,20 +70,19 @@
 **/
 
 #define VIRTIO_CFG_WRITE(Dev, Field, Value)  ((Dev)->VirtIo->WriteDevice (  \
-                                                (Dev)->VirtIo,              \
-                                                OFFSET_OF_VSCSI (Field),    \
-                                                SIZE_OF_VSCSI (Field),      \
-                                                (Value)                     \
-                                                ))
+                                                                            (Dev)->VirtIo,              \
+                                                                            OFFSET_OF_VSCSI (Field),    \
+                                                                            SIZE_OF_VSCSI (Field),      \
+                                                                            (Value)                     \
+                                                                            ))
 
-#define VIRTIO_CFG_READ(Dev, Field, Pointer) ((Dev)->VirtIo->ReadDevice (   \
-                                                (Dev)->VirtIo,              \
-                                                OFFSET_OF_VSCSI (Field),    \
-                                                SIZE_OF_VSCSI (Field),      \
-                                                sizeof *(Pointer),          \
-                                                (Pointer)                   \
-                                                ))
-
+#define VIRTIO_CFG_READ(Dev, Field, Pointer)  ((Dev)->VirtIo->ReadDevice (   \
+                                                                             (Dev)->VirtIo,              \
+                                                                             OFFSET_OF_VSCSI (Field),    \
+                                                                             SIZE_OF_VSCSI (Field),      \
+                                                                             sizeof *(Pointer),          \
+                                                                             (Pointer)                   \
+                                                                             ))
 
 //
 // UEFI Spec 2.3.1 + Errata C, 14.7 Extended SCSI Pass Thru Protocol specifies
@@ -153,7 +152,7 @@ PopulateRequest (
   OUT    volatile VIRTIO_SCSI_REQ                             *Request
   )
 {
-  UINTN Idx;
+  UINTN  Idx;
 
   if (
       //
@@ -178,7 +177,6 @@ PopulateRequest (
       //
       (UINT64) Packet->InTransferLength + Packet->OutTransferLength > SIZE_1GB
       ) {
-
     //
     // this error code doesn't require updates to the Packet output fields
     //
@@ -204,8 +202,8 @@ PopulateRequest (
       (Packet->InTransferLength > 0 &&
        (Packet->InDataBuffer == NULL ||
         Packet->DataDirection == EFI_EXT_SCSI_DATA_DIRECTION_WRITE
-        )
-       ) ||
+       )
+      ) ||
 
       //
       // trying to send, but source pointer is NULL, or contradicting transfer
@@ -214,10 +212,9 @@ PopulateRequest (
       (Packet->OutTransferLength > 0 &&
        (Packet->OutDataBuffer == NULL ||
         Packet->DataDirection == EFI_EXT_SCSI_DATA_DIRECTION_READ
-        )
        )
+      )
       ) {
-
     //
     // this error code doesn't require updates to the Packet output fields
     //
@@ -230,15 +227,15 @@ PopulateRequest (
   // virtio-scsi device's transfer limit either.
   //
   if (ALIGN_VALUE (Packet->OutTransferLength, 512) / 512
-        > Dev->MaxSectors / 2 ||
-      ALIGN_VALUE (Packet->InTransferLength,  512) / 512
-        > Dev->MaxSectors / 2) {
+      > Dev->MaxSectors / 2 ||
+      ALIGN_VALUE (Packet->InTransferLength, 512) / 512
+      > Dev->MaxSectors / 2) {
     Packet->InTransferLength  = (Dev->MaxSectors / 2) * 512;
     Packet->OutTransferLength = (Dev->MaxSectors / 2) * 512;
     Packet->HostAdapterStatus =
-                        EFI_EXT_SCSI_STATUS_HOST_ADAPTER_DATA_OVERRUN_UNDERRUN;
-    Packet->TargetStatus      = EFI_EXT_SCSI_STATUS_TARGET_GOOD;
-    Packet->SenseDataLength   = 0;
+      EFI_EXT_SCSI_STATUS_HOST_ADAPTER_DATA_OVERRUN_UNDERRUN;
+    Packet->TargetStatus    = EFI_EXT_SCSI_STATUS_TARGET_GOOD;
+    Packet->SenseDataLength = 0;
     return EFI_BAD_BUFFER_SIZE;
   }
 
@@ -248,7 +245,7 @@ PopulateRequest (
   //
   Request->Lun[0] = 1;
   Request->Lun[1] = (UINT8) Target;
-  Request->Lun[2] = (UINT8) (((UINT32)Lun >> 8) | 0x40);
+  Request->Lun[2] = (UINT8) (((UINT32) Lun >> 8) | 0x40);
   Request->Lun[3] = (UINT8) Lun;
 
   //
@@ -261,7 +258,6 @@ PopulateRequest (
 
   return EFI_SUCCESS;
 }
-
 
 /**
 
@@ -292,8 +288,8 @@ ParseResponse (
   IN     CONST volatile VIRTIO_SCSI_RESP                           *Response
   )
 {
-  UINTN ResponseSenseLen;
-  UINTN Idx;
+  UINTN  ResponseSenseLen;
+  UINTN  Idx;
 
   //
   // return sense data (length and contents) in all cases, truncated if needed
@@ -302,6 +298,7 @@ ParseResponse (
   if (Packet->SenseDataLength > ResponseSenseLen) {
     Packet->SenseDataLength = (UINT8) ResponseSenseLen;
   }
+
   for (Idx = 0; Idx < Packet->SenseDataLength; ++Idx) {
     ((UINT8 *) Packet->SenseData)[Idx] = Response->Sense[Idx];
   }
@@ -311,19 +308,18 @@ ParseResponse (
   // DataDirections (read, write, bidirectional).
   //
   // -+- @ 0
-  //  |
-  //  | write                                       ^  @ Residual (unprocessed)
-  //  |                                             |
+  // |
+  // | write                                       ^  @ Residual (unprocessed)
+  // |                                             |
   // -+- @ OutTransferLength                       -+- @ InTransferLength
-  //  |                                             |
-  //  | read                                        |
-  //  |                                             |
-  //  V  @ OutTransferLength + InTransferLength    -+- @ 0
+  // |                                             |
+  // | read                                        |
+  // |                                             |
+  // V  @ OutTransferLength + InTransferLength    -+- @ 0
   //
   if (Response->Residual <= Packet->InTransferLength) {
-    Packet->InTransferLength  -= Response->Residual;
-  }
-  else {
+    Packet->InTransferLength -= Response->Residual;
+  } else {
     Packet->OutTransferLength -= Response->Residual - Packet->InTransferLength;
     Packet->InTransferLength   = 0;
   }
@@ -338,49 +334,48 @@ ParseResponse (
   // response code
   //
   switch (Response->Response) {
-  case VIRTIO_SCSI_S_OK:
-    Packet->HostAdapterStatus = EFI_EXT_SCSI_STATUS_HOST_ADAPTER_OK;
-    return EFI_SUCCESS;
+    case VIRTIO_SCSI_S_OK:
+      Packet->HostAdapterStatus = EFI_EXT_SCSI_STATUS_HOST_ADAPTER_OK;
+      return EFI_SUCCESS;
 
-  case VIRTIO_SCSI_S_OVERRUN:
-    Packet->HostAdapterStatus =
-                        EFI_EXT_SCSI_STATUS_HOST_ADAPTER_DATA_OVERRUN_UNDERRUN;
-    break;
+    case VIRTIO_SCSI_S_OVERRUN:
+      Packet->HostAdapterStatus =
+        EFI_EXT_SCSI_STATUS_HOST_ADAPTER_DATA_OVERRUN_UNDERRUN;
+      break;
 
-  case VIRTIO_SCSI_S_BAD_TARGET:
+    case VIRTIO_SCSI_S_BAD_TARGET:
+      //
+      // This is non-intuitive but explicitly required by the
+      // EFI_EXT_SCSI_PASS_THRU_PROTOCOL.PassThru() specification for
+      // disconnected (but otherwise valid) target / LUN addresses.
+      //
+      Packet->HostAdapterStatus =
+        EFI_EXT_SCSI_STATUS_HOST_ADAPTER_TIMEOUT_COMMAND;
+      return EFI_TIMEOUT;
+
+    case VIRTIO_SCSI_S_RESET:
+      Packet->HostAdapterStatus = EFI_EXT_SCSI_STATUS_HOST_ADAPTER_BUS_RESET;
+      break;
+
+    case VIRTIO_SCSI_S_BUSY:
+      Packet->HostAdapterStatus = EFI_EXT_SCSI_STATUS_HOST_ADAPTER_OK;
+      return EFI_NOT_READY;
+
     //
-    // This is non-intuitive but explicitly required by the
-    // EFI_EXT_SCSI_PASS_THRU_PROTOCOL.PassThru() specification for
-    // disconnected (but otherwise valid) target / LUN addresses.
+    // Lump together the rest. The mapping for VIRTIO_SCSI_S_ABORTED is
+    // intentional as well, not an oversight.
     //
-    Packet->HostAdapterStatus =
-                              EFI_EXT_SCSI_STATUS_HOST_ADAPTER_TIMEOUT_COMMAND;
-    return EFI_TIMEOUT;
-
-  case VIRTIO_SCSI_S_RESET:
-    Packet->HostAdapterStatus = EFI_EXT_SCSI_STATUS_HOST_ADAPTER_BUS_RESET;
-    break;
-
-  case VIRTIO_SCSI_S_BUSY:
-    Packet->HostAdapterStatus = EFI_EXT_SCSI_STATUS_HOST_ADAPTER_OK;
-    return EFI_NOT_READY;
-
-  //
-  // Lump together the rest. The mapping for VIRTIO_SCSI_S_ABORTED is
-  // intentional as well, not an oversight.
-  //
-  case VIRTIO_SCSI_S_ABORTED:
-  case VIRTIO_SCSI_S_TRANSPORT_FAILURE:
-  case VIRTIO_SCSI_S_TARGET_FAILURE:
-  case VIRTIO_SCSI_S_NEXUS_FAILURE:
-  case VIRTIO_SCSI_S_FAILURE:
-  default:
-    Packet->HostAdapterStatus = EFI_EXT_SCSI_STATUS_HOST_ADAPTER_OTHER;
+    case VIRTIO_SCSI_S_ABORTED:
+    case VIRTIO_SCSI_S_TRANSPORT_FAILURE:
+    case VIRTIO_SCSI_S_TARGET_FAILURE:
+    case VIRTIO_SCSI_S_NEXUS_FAILURE:
+    case VIRTIO_SCSI_S_FAILURE:
+    default:
+      Packet->HostAdapterStatus = EFI_EXT_SCSI_STATUS_HOST_ADAPTER_OTHER;
   }
 
   return EFI_DEVICE_ERROR;
 }
-
 
 /**
 
@@ -407,11 +402,10 @@ ReportHostAdapterError (
   Packet->InTransferLength  = 0;
   Packet->OutTransferLength = 0;
   Packet->HostAdapterStatus = EFI_EXT_SCSI_STATUS_HOST_ADAPTER_OTHER;
-  Packet->TargetStatus      = EFI_EXT_SCSI_STATUS_TARGET_GOOD;
-  Packet->SenseDataLength   = 0;
+  Packet->TargetStatus    = EFI_EXT_SCSI_STATUS_TARGET_GOOD;
+  Packet->SenseDataLength = 0;
   return EFI_DEVICE_ERROR;
 }
-
 
 //
 // The next seven functions implement EFI_EXT_SCSI_PASS_THRU_PROTOCOL
@@ -430,35 +424,35 @@ VirtioScsiPassThru (
   IN     EFI_EVENT                                  Event   OPTIONAL
   )
 {
-  VSCSI_DEV                 *Dev;
-  UINT16                    TargetValue;
-  EFI_STATUS                Status;
-  volatile VIRTIO_SCSI_REQ  Request;
-  volatile VIRTIO_SCSI_RESP *Response;
-  VOID                      *ResponseBuffer;
-  DESC_INDICES              Indices;
-  VOID                      *RequestMapping;
-  VOID                      *ResponseMapping;
-  VOID                      *InDataMapping;
-  VOID                      *OutDataMapping;
-  EFI_PHYSICAL_ADDRESS      RequestDeviceAddress;
-  EFI_PHYSICAL_ADDRESS      ResponseDeviceAddress;
-  EFI_PHYSICAL_ADDRESS      InDataDeviceAddress;
-  EFI_PHYSICAL_ADDRESS      OutDataDeviceAddress;
-  VOID                      *InDataBuffer;
-  UINTN                     InDataNumPages;
-  BOOLEAN                   OutDataBufferIsMapped;
+  VSCSI_DEV                  *Dev;
+  UINT16                     TargetValue;
+  EFI_STATUS                 Status;
+  volatile VIRTIO_SCSI_REQ   Request;
+  volatile VIRTIO_SCSI_RESP  *Response;
+  VOID                       *ResponseBuffer;
+  DESC_INDICES               Indices;
+  VOID                       *RequestMapping;
+  VOID                       *ResponseMapping;
+  VOID                       *InDataMapping;
+  VOID                       *OutDataMapping;
+  EFI_PHYSICAL_ADDRESS       RequestDeviceAddress;
+  EFI_PHYSICAL_ADDRESS       ResponseDeviceAddress;
+  EFI_PHYSICAL_ADDRESS       InDataDeviceAddress;
+  EFI_PHYSICAL_ADDRESS       OutDataDeviceAddress;
+  VOID                       *InDataBuffer;
+  UINTN                      InDataNumPages;
+  BOOLEAN                    OutDataBufferIsMapped;
 
   //
   // Set InDataMapping,OutDataMapping,InDataDeviceAddress and OutDataDeviceAddress to
   // suppress incorrect compiler/analyzer warnings.
   //
-  InDataMapping        = NULL;
-  OutDataMapping       = NULL;
+  InDataMapping  = NULL;
+  OutDataMapping = NULL;
   InDataDeviceAddress  = 0;
   OutDataDeviceAddress = 0;
 
-  ZeroMem ((VOID*) &Request, sizeof (Request));
+  ZeroMem ((VOID *) &Request, sizeof (Request));
 
   Dev = VIRTIO_SCSI_FROM_PASS_THRU (This);
   CopyMem (&TargetValue, Target, sizeof TargetValue);
@@ -476,12 +470,13 @@ VirtioScsiPassThru (
   // Map the virtio-scsi Request header buffer
   //
   Status = VirtioMapAllBytesInSharedBuffer (
-             Dev->VirtIo,
-             VirtioOperationBusMasterRead,
-             (VOID *) &Request,
-             sizeof Request,
-             &RequestDeviceAddress,
-             &RequestMapping);
+                                            Dev->VirtIo,
+                                            VirtioOperationBusMasterRead,
+                                            (VOID *) &Request,
+                                            sizeof Request,
+                                            &RequestDeviceAddress,
+                                            &RequestMapping
+                                            );
   if (EFI_ERROR (Status)) {
     return ReportHostAdapterError (Packet);
   }
@@ -493,9 +488,9 @@ VirtioScsiPassThru (
     //
     // Allocate a intermediate input buffer. This is mainly to handle the
     // following case:
-    //  * caller submits a bi-directional request
-    //  * we perform the request fine
-    //  * but we fail to unmap the "InDataMapping"
+    // * caller submits a bi-directional request
+    // * we perform the request fine
+    // * but we fail to unmap the "InDataMapping"
     //
     // In that case simply returning the EFI_DEVICE_ERROR is not sufficient. In
     // addition to the error code we also need to update Packet fields
@@ -505,12 +500,12 @@ VirtioScsiPassThru (
     // the Virtio request is successful then we copy the data from temporary
     // buffer into Packet->InDataBuffer.
     //
-    InDataNumPages = EFI_SIZE_TO_PAGES ((UINTN)Packet->InTransferLength);
+    InDataNumPages = EFI_SIZE_TO_PAGES ((UINTN) Packet->InTransferLength);
     Status = Dev->VirtIo->AllocateSharedPages (
-                            Dev->VirtIo,
-                            InDataNumPages,
-                            &InDataBuffer
-                            );
+                                               Dev->VirtIo,
+                                               InDataNumPages,
+                                               &InDataBuffer
+                                               );
     if (EFI_ERROR (Status)) {
       Status = ReportHostAdapterError (Packet);
       goto UnmapRequestBuffer;
@@ -519,13 +514,13 @@ VirtioScsiPassThru (
     ZeroMem (InDataBuffer, Packet->InTransferLength);
 
     Status = VirtioMapAllBytesInSharedBuffer (
-               Dev->VirtIo,
-               VirtioOperationBusMasterCommonBuffer,
-               InDataBuffer,
-               Packet->InTransferLength,
-               &InDataDeviceAddress,
-               &InDataMapping
-               );
+                                              Dev->VirtIo,
+                                              VirtioOperationBusMasterCommonBuffer,
+                                              InDataBuffer,
+                                              Packet->InTransferLength,
+                                              &InDataDeviceAddress,
+                                              &InDataMapping
+                                              );
     if (EFI_ERROR (Status)) {
       Status = ReportHostAdapterError (Packet);
       goto FreeInDataBuffer;
@@ -537,13 +532,13 @@ VirtioScsiPassThru (
   //
   if (Packet->OutTransferLength > 0) {
     Status = VirtioMapAllBytesInSharedBuffer (
-               Dev->VirtIo,
-               VirtioOperationBusMasterRead,
-               Packet->OutDataBuffer,
-               Packet->OutTransferLength,
-               &OutDataDeviceAddress,
-               &OutDataMapping
-               );
+                                              Dev->VirtIo,
+                                              VirtioOperationBusMasterRead,
+                                              Packet->OutDataBuffer,
+                                              Packet->OutTransferLength,
+                                              &OutDataDeviceAddress,
+                                              &OutDataMapping
+                                              );
     if (EFI_ERROR (Status)) {
       Status = ReportHostAdapterError (Packet);
       goto UnmapInDataBuffer;
@@ -558,10 +553,10 @@ VirtioScsiPassThru (
   // to access equally by both processor and device.
   //
   Status = Dev->VirtIo->AllocateSharedPages (
-                          Dev->VirtIo,
-                          EFI_SIZE_TO_PAGES (sizeof *Response),
-                          &ResponseBuffer
-                          );
+                                             Dev->VirtIo,
+                                             EFI_SIZE_TO_PAGES (sizeof *Response),
+                                             &ResponseBuffer
+                                             );
   if (EFI_ERROR (Status)) {
     Status = ReportHostAdapterError (Packet);
     goto UnmapOutDataBuffer;
@@ -569,7 +564,7 @@ VirtioScsiPassThru (
 
   Response = ResponseBuffer;
 
-  ZeroMem ((VOID *)Response, sizeof (*Response));
+  ZeroMem ((VOID *) Response, sizeof (*Response));
 
   //
   // preset a host status for ourselves that we do not accept as success
@@ -581,13 +576,13 @@ VirtioScsiPassThru (
   // buffer can be accessed by both host and device.
   //
   Status = VirtioMapAllBytesInSharedBuffer (
-             Dev->VirtIo,
-             VirtioOperationBusMasterCommonBuffer,
-             ResponseBuffer,
-             sizeof (*Response),
-             &ResponseDeviceAddress,
-             &ResponseMapping
-             );
+                                            Dev->VirtIo,
+                                            VirtioOperationBusMasterCommonBuffer,
+                                            ResponseBuffer,
+                                            sizeof (*Response),
+                                            &ResponseDeviceAddress,
+                                            &ResponseMapping
+                                            );
   if (EFI_ERROR (Status)) {
     Status = ReportHostAdapterError (Packet);
     goto FreeResponseBuffer;
@@ -605,56 +600,61 @@ VirtioScsiPassThru (
   // enqueue Request
   //
   VirtioAppendDesc (
-    &Dev->Ring,
-    RequestDeviceAddress,
-    sizeof Request,
-    VRING_DESC_F_NEXT,
-    &Indices
-    );
+                    &Dev->Ring,
+                    RequestDeviceAddress,
+                    sizeof Request,
+                    VRING_DESC_F_NEXT,
+                    &Indices
+                    );
 
   //
   // enqueue "dataout" if any
   //
   if (Packet->OutTransferLength > 0) {
     VirtioAppendDesc (
-      &Dev->Ring,
-      OutDataDeviceAddress,
-      Packet->OutTransferLength,
-      VRING_DESC_F_NEXT,
-      &Indices
-      );
+                      &Dev->Ring,
+                      OutDataDeviceAddress,
+                      Packet->OutTransferLength,
+                      VRING_DESC_F_NEXT,
+                      &Indices
+                      );
   }
 
   //
   // enqueue Response, to be written by the host
   //
   VirtioAppendDesc (
-    &Dev->Ring,
-    ResponseDeviceAddress,
-    sizeof *Response,
-    VRING_DESC_F_WRITE | (Packet->InTransferLength > 0 ? VRING_DESC_F_NEXT : 0),
-    &Indices
-    );
+                    &Dev->Ring,
+                    ResponseDeviceAddress,
+                    sizeof *Response,
+                    VRING_DESC_F_WRITE | (Packet->InTransferLength > 0 ? VRING_DESC_F_NEXT : 0),
+                    &Indices
+                    );
 
   //
   // enqueue "datain" if any, to be written by the host
   //
   if (Packet->InTransferLength > 0) {
     VirtioAppendDesc (
-      &Dev->Ring,
-      InDataDeviceAddress,
-      Packet->InTransferLength,
-      VRING_DESC_F_WRITE,
-      &Indices
-      );
+                      &Dev->Ring,
+                      InDataDeviceAddress,
+                      Packet->InTransferLength,
+                      VRING_DESC_F_WRITE,
+                      &Indices
+                      );
   }
 
   // If kicking the host fails, we must fake a host adapter error.
   // EFI_NOT_READY would save us the effort, but it would also suggest that the
   // caller retry.
   //
-  if (VirtioFlush (Dev->VirtIo, VIRTIO_SCSI_REQUEST_QUEUE, &Dev->Ring,
-        &Indices, NULL) != EFI_SUCCESS) {
+  if (VirtioFlush (
+                   Dev->VirtIo,
+                   VIRTIO_SCSI_REQUEST_QUEUE,
+                   &Dev->Ring,
+                   &Indices,
+                   NULL
+                   ) != EFI_SUCCESS) {
     Status = ReportHostAdapterError (Packet);
     goto UnmapResponseBuffer;
   }
@@ -675,24 +675,24 @@ UnmapResponseBuffer:
 
 FreeResponseBuffer:
   Dev->VirtIo->FreeSharedPages (
-                 Dev->VirtIo,
-                 EFI_SIZE_TO_PAGES (sizeof *Response),
-                 ResponseBuffer
-                 );
+                                Dev->VirtIo,
+                                EFI_SIZE_TO_PAGES (sizeof *Response),
+                                ResponseBuffer
+                                );
 
 UnmapOutDataBuffer:
   if (OutDataBufferIsMapped) {
-    Dev->VirtIo->UnmapSharedBuffer (Dev->VirtIo, OutDataMapping);
+  Dev->VirtIo->UnmapSharedBuffer (Dev->VirtIo, OutDataMapping);
   }
 
 UnmapInDataBuffer:
   if (InDataBuffer != NULL) {
-    Dev->VirtIo->UnmapSharedBuffer (Dev->VirtIo, InDataMapping);
+  Dev->VirtIo->UnmapSharedBuffer (Dev->VirtIo, InDataMapping);
   }
 
 FreeInDataBuffer:
   if (InDataBuffer != NULL) {
-    Dev->VirtIo->FreeSharedPages (Dev->VirtIo, InDataNumPages, InDataBuffer);
+  Dev->VirtIo->FreeSharedPages (Dev->VirtIo, InDataNumPages, InDataBuffer);
   }
 
 UnmapRequestBuffer:
@@ -701,7 +701,29 @@ UnmapRequestBuffer:
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 VirtioScsiGetNextTargetLun (
@@ -710,10 +732,10 @@ VirtioScsiGetNextTargetLun (
   IN OUT UINT64                          *Lun
   )
 {
-  UINT8     *Target;
-  UINTN     Idx;
-  UINT16    LastTarget;
-  VSCSI_DEV *Dev;
+  UINT8      *Target;
+  UINTN      Idx;
+  UINT16     LastTarget;
+  VSCSI_DEV  *Dev;
 
   //
   // the TargetPointer input parameter is unnecessarily a pointer-to-pointer
@@ -723,8 +745,9 @@ VirtioScsiGetNextTargetLun (
   //
   // Search for first non-0xFF byte. If not found, return first target & LUN.
   //
-  for (Idx = 0; Idx < TARGET_MAX_BYTES && Target[Idx] == 0xFF; ++Idx)
-    ;
+  for (Idx = 0; Idx < TARGET_MAX_BYTES && Target[Idx] == 0xFF; ++Idx) {
+  }
+
   if (Idx == TARGET_MAX_BYTES) {
     SetMem (Target, TARGET_MAX_BYTES, 0x00);
     *Lun = 0;
@@ -759,7 +782,29 @@ VirtioScsiGetNextTargetLun (
   return EFI_NOT_FOUND;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 VirtioScsiBuildDevicePath (
@@ -769,9 +814,9 @@ VirtioScsiBuildDevicePath (
   IN OUT EFI_DEVICE_PATH_PROTOCOL        **DevicePath
   )
 {
-  UINT16           TargetValue;
-  VSCSI_DEV        *Dev;
-  SCSI_DEVICE_PATH *ScsiDevicePath;
+  UINT16            TargetValue;
+  VSCSI_DEV         *Dev;
+  SCSI_DEVICE_PATH  *ScsiDevicePath;
 
   if (DevicePath == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -790,16 +835,38 @@ VirtioScsiBuildDevicePath (
 
   ScsiDevicePath->Header.Type      = MESSAGING_DEVICE_PATH;
   ScsiDevicePath->Header.SubType   = MSG_SCSI_DP;
-  ScsiDevicePath->Header.Length[0] = (UINT8)  sizeof *ScsiDevicePath;
+  ScsiDevicePath->Header.Length[0] = (UINT8) sizeof *ScsiDevicePath;
   ScsiDevicePath->Header.Length[1] = (UINT8) (sizeof *ScsiDevicePath >> 8);
-  ScsiDevicePath->Pun              = TargetValue;
-  ScsiDevicePath->Lun              = (UINT16) Lun;
+  ScsiDevicePath->Pun = TargetValue;
+  ScsiDevicePath->Lun = (UINT16) Lun;
 
   *DevicePath = &ScsiDevicePath->Header;
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 VirtioScsiGetTargetLun (
@@ -809,9 +876,9 @@ VirtioScsiGetTargetLun (
   OUT UINT64                          *Lun
   )
 {
-  SCSI_DEVICE_PATH *ScsiDevicePath;
-  VSCSI_DEV        *Dev;
-  UINT8            *Target;
+  SCSI_DEVICE_PATH  *ScsiDevicePath;
+  VSCSI_DEV         *Dev;
+  UINT8             *Target;
 
   if (DevicePath == NULL || TargetPointer == NULL || *TargetPointer == NULL ||
       Lun == NULL) {
@@ -843,7 +910,29 @@ VirtioScsiGetTargetLun (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 VirtioScsiResetChannel (
@@ -853,7 +942,29 @@ VirtioScsiResetChannel (
   return EFI_UNSUPPORTED;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 VirtioScsiResetTargetLun (
@@ -865,7 +976,29 @@ VirtioScsiResetTargetLun (
   return EFI_UNSUPPORTED;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 VirtioScsiGetNextTarget (
@@ -873,10 +1006,10 @@ VirtioScsiGetNextTarget (
   IN OUT UINT8                       **TargetPointer
   )
 {
-  UINT8     *Target;
-  UINTN     Idx;
-  UINT16    LastTarget;
-  VSCSI_DEV *Dev;
+  UINT8      *Target;
+  UINTN      Idx;
+  UINT16     LastTarget;
+  VSCSI_DEV  *Dev;
 
   //
   // the TargetPointer input parameter is unnecessarily a pointer-to-pointer
@@ -886,8 +1019,9 @@ VirtioScsiGetNextTarget (
   //
   // Search for first non-0xFF byte. If not found, return first target.
   //
-  for (Idx = 0; Idx < TARGET_MAX_BYTES && Target[Idx] == 0xFF; ++Idx)
-    ;
+  for (Idx = 0; Idx < TARGET_MAX_BYTES && Target[Idx] == 0xFF; ++Idx) {
+  }
+
   if (Idx == TARGET_MAX_BYTES) {
     SetMem (Target, TARGET_MAX_BYTES, 0x00);
     return EFI_SUCCESS;
@@ -915,7 +1049,29 @@ VirtioScsiGetNextTarget (
   return EFI_NOT_FOUND;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -923,13 +1079,13 @@ VirtioScsiInit (
   IN OUT VSCSI_DEV *Dev
   )
 {
-  UINT8      NextDevStat;
-  EFI_STATUS Status;
-  UINT64     RingBaseShift;
-  UINT64     Features;
-  UINT16     MaxChannel; // for validation only
-  UINT32     NumQueues;  // for validation only
-  UINT16     QueueSize;
+  UINT8       NextDevStat;
+  EFI_STATUS  Status;
+  UINT64      RingBaseShift;
+  UINT64      Features;
+  UINT16      MaxChannel; // for validation only
+  UINT32      NumQueues;  // for validation only
+  UINT16      QueueSize;
 
   //
   // Execute virtio-0.9.5, 2.2.1 Device Initialization Sequence.
@@ -967,12 +1123,14 @@ VirtioScsiInit (
   if (EFI_ERROR (Status)) {
     goto Failed;
   }
+
   Dev->InOutSupported = (BOOLEAN) ((Features & VIRTIO_SCSI_F_INOUT) != 0);
 
   Status = VIRTIO_CFG_READ (Dev, MaxChannel, &MaxChannel);
   if (EFI_ERROR (Status)) {
     goto Failed;
   }
+
   if (MaxChannel != 0) {
     //
     // this driver is for a single-channel virtio-scsi HBA
@@ -985,6 +1143,7 @@ VirtioScsiInit (
   if (EFI_ERROR (Status)) {
     goto Failed;
   }
+
   if (NumQueues < 1) {
     Status = EFI_UNSUPPORTED;
     goto Failed;
@@ -994,6 +1153,7 @@ VirtioScsiInit (
   if (EFI_ERROR (Status)) {
     goto Failed;
   }
+
   if (Dev->MaxTarget > PcdGet16 (PcdVirtioScsiMaxTargetLimit)) {
     Dev->MaxTarget = PcdGet16 (PcdVirtioScsiMaxTargetLimit);
   }
@@ -1002,6 +1162,7 @@ VirtioScsiInit (
   if (EFI_ERROR (Status)) {
     goto Failed;
   }
+
   if (Dev->MaxLun > PcdGet32 (PcdVirtioScsiMaxLunLimit)) {
     Dev->MaxLun = PcdGet32 (PcdVirtioScsiMaxLunLimit);
   }
@@ -1010,6 +1171,7 @@ VirtioScsiInit (
   if (EFI_ERROR (Status)) {
     goto Failed;
   }
+
   if (Dev->MaxSectors < 2) {
     //
     // We must be able to halve it for bidirectional transfers
@@ -1040,10 +1202,12 @@ VirtioScsiInit (
   if (EFI_ERROR (Status)) {
     goto Failed;
   }
+
   Status = Dev->VirtIo->GetQueueNumMax (Dev->VirtIo, &QueueSize);
   if (EFI_ERROR (Status)) {
     goto Failed;
   }
+
   //
   // VirtioScsiPassThru() uses at most four descriptors
   //
@@ -1061,11 +1225,11 @@ VirtioScsiInit (
   // If anything fails from here on, we must release the ring resources
   //
   Status = VirtioRingMap (
-             Dev->VirtIo,
-             &Dev->Ring,
-             &RingBaseShift,
-             &Dev->RingMap
-             );
+                          Dev->VirtIo,
+                          &Dev->Ring,
+                          &RingBaseShift,
+                          &Dev->RingMap
+                          );
   if (EFI_ERROR (Status)) {
     goto ReleaseQueue;
   }
@@ -1088,10 +1252,10 @@ VirtioScsiInit (
   // step 4c -- Report GPFN (guest-physical frame number) of queue.
   //
   Status = Dev->VirtIo->SetQueueAddress (
-                          Dev->VirtIo,
-                          &Dev->Ring,
-                          RingBaseShift
-                          );
+                                         Dev->VirtIo,
+                                         &Dev->Ring,
+                                         RingBaseShift
+                                         );
   if (EFI_ERROR (Status)) {
     goto UnmapQueue;
   }
@@ -1100,8 +1264,8 @@ VirtioScsiInit (
   // step 5 -- Report understood features and guest-tuneables.
   //
   if (Dev->VirtIo->Revision < VIRTIO_SPEC_REVISION (1, 0, 0)) {
-    Features &= ~(UINT64)(VIRTIO_F_VERSION_1 | VIRTIO_F_IOMMU_PLATFORM);
-    Status = Dev->VirtIo->SetGuestFeatures (Dev->VirtIo, Features);
+    Features &= ~(UINT64) (VIRTIO_F_VERSION_1 | VIRTIO_F_IOMMU_PLATFORM);
+    Status    = Dev->VirtIo->SetGuestFeatures (Dev->VirtIo, Features);
     if (EFI_ERROR (Status)) {
       goto UnmapQueue;
     }
@@ -1115,6 +1279,7 @@ VirtioScsiInit (
   if (EFI_ERROR (Status)) {
     goto UnmapQueue;
   }
+
   Status = VIRTIO_CFG_WRITE (Dev, SenseSize, VIRTIO_SCSI_SENSE_SIZE);
   if (EFI_ERROR (Status)) {
     goto UnmapQueue;
@@ -1132,8 +1297,8 @@ VirtioScsiInit (
   //
   // populate the exported interface's attributes
   //
-  Dev->PassThru.Mode             = &Dev->PassThruMode;
-  Dev->PassThru.PassThru         = &VirtioScsiPassThru;
+  Dev->PassThru.Mode     = &Dev->PassThruMode;
+  Dev->PassThru.PassThru = &VirtioScsiPassThru;
   Dev->PassThru.GetNextTargetLun = &VirtioScsiGetNextTargetLun;
   Dev->PassThru.BuildDevicePath  = &VirtioScsiBuildDevicePath;
   Dev->PassThru.GetTargetLun     = &VirtioScsiGetTargetLun;
@@ -1177,14 +1342,36 @@ Failed:
   Dev->VirtIo->SetDeviceStatus (Dev->VirtIo, NextDevStat);
 
   Dev->InOutSupported = FALSE;
-  Dev->MaxTarget      = 0;
-  Dev->MaxLun         = 0;
-  Dev->MaxSectors     = 0;
+  Dev->MaxTarget  = 0;
+  Dev->MaxLun     = 0;
+  Dev->MaxSectors = 0;
 
   return Status; // reached only via Failed above
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 VOID
 EFIAPI
@@ -1200,17 +1387,16 @@ VirtioScsiUninit (
   Dev->VirtIo->SetDeviceStatus (Dev->VirtIo, 0);
 
   Dev->InOutSupported = FALSE;
-  Dev->MaxTarget      = 0;
-  Dev->MaxLun         = 0;
-  Dev->MaxSectors     = 0;
+  Dev->MaxTarget  = 0;
+  Dev->MaxLun     = 0;
+  Dev->MaxSectors = 0;
 
   Dev->VirtIo->UnmapSharedBuffer (Dev->VirtIo, Dev->RingMap);
   VirtioRingUninit (Dev->VirtIo, &Dev->Ring);
 
-  SetMem (&Dev->PassThru,     sizeof Dev->PassThru,     0x00);
+  SetMem (&Dev->PassThru, sizeof Dev->PassThru, 0x00);
   SetMem (&Dev->PassThruMode, sizeof Dev->PassThruMode, 0x00);
 }
-
 
 //
 // Event notification function enqueued by ExitBootServices().
@@ -1224,7 +1410,7 @@ VirtioScsiExitBoot (
   IN  VOID      *Context
   )
 {
-  VSCSI_DEV *Dev;
+  VSCSI_DEV  *Dev;
 
   DEBUG ((DEBUG_VERBOSE, "%a: Context=0x%p\n", __FUNCTION__, Context));
   //
@@ -1238,7 +1424,6 @@ VirtioScsiExitBoot (
   Dev->VirtIo->SetDeviceStatus (Dev->VirtIo, 0);
 }
 
-
 //
 // Probe, start and stop functions of this driver, called by the DXE core for
 // specific devices.
@@ -1249,9 +1434,9 @@ VirtioScsiExitBoot (
 //
 // The implementation follows:
 // - Driver Writer's Guide for UEFI 2.3.1 v1.01
-//   - 5.1.3.4 OpenProtocol() and CloseProtocol()
+// - 5.1.3.4 OpenProtocol() and CloseProtocol()
 // - UEFI Spec 2.3.1 + Errata C
-//   -  6.3 Protocol Handler Services
+// -  6.3 Protocol Handler Services
 //
 
 EFI_STATUS
@@ -1262,8 +1447,8 @@ VirtioScsiDriverBindingSupported (
   IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath
   )
 {
-  EFI_STATUS             Status;
-  VIRTIO_DEVICE_PROTOCOL *VirtIo;
+  EFI_STATUS              Status;
+  VIRTIO_DEVICE_PROTOCOL  *VirtIo;
 
   //
   // Attempt to open the device with the VirtIo set of interfaces. On success,
@@ -1271,15 +1456,15 @@ VirtioScsiDriverBindingSupported (
   // attempts (EFI_ALREADY_STARTED).
   //
   Status = gBS->OpenProtocol (
-                  DeviceHandle,               // candidate device
-                  &gVirtioDeviceProtocolGuid, // for generic VirtIo access
-                  (VOID **)&VirtIo,           // handle to instantiate
-                  This->DriverBindingHandle,  // requestor driver identity
-                  DeviceHandle,               // ControllerHandle, according to
-                                              // the UEFI Driver Model
-                  EFI_OPEN_PROTOCOL_BY_DRIVER // get exclusive VirtIo access to
-                                              // the device; to be released
-                  );
+                              DeviceHandle,               // candidate device
+                              &gVirtioDeviceProtocolGuid, // for generic VirtIo access
+                              (VOID **) &VirtIo,          // handle to instantiate
+                              This->DriverBindingHandle,  // requestor driver identity
+                              DeviceHandle,               // ControllerHandle, according to
+                                                          // the UEFI Driver Model
+                              EFI_OPEN_PROTOCOL_BY_DRIVER // get exclusive VirtIo access to
+                                                          // the device; to be released
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -1292,12 +1477,38 @@ VirtioScsiDriverBindingSupported (
   // We needed VirtIo access only transitorily, to see whether we support the
   // device or not.
   //
-  gBS->CloseProtocol (DeviceHandle, &gVirtioDeviceProtocolGuid,
-         This->DriverBindingHandle, DeviceHandle);
+  gBS->CloseProtocol (
+                      DeviceHandle,
+                      &gVirtioDeviceProtocolGuid,
+                      This->DriverBindingHandle,
+                      DeviceHandle
+                      );
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 VirtioScsiDriverBindingStart (
@@ -1306,17 +1517,22 @@ VirtioScsiDriverBindingStart (
   IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath
   )
 {
-  VSCSI_DEV  *Dev;
-  EFI_STATUS Status;
+  VSCSI_DEV   *Dev;
+  EFI_STATUS  Status;
 
   Dev = (VSCSI_DEV *) AllocateZeroPool (sizeof *Dev);
   if (Dev == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Status = gBS->OpenProtocol (DeviceHandle, &gVirtioDeviceProtocolGuid,
-                  (VOID **)&Dev->VirtIo, This->DriverBindingHandle,
-                  DeviceHandle, EFI_OPEN_PROTOCOL_BY_DRIVER);
+  Status = gBS->OpenProtocol (
+                              DeviceHandle,
+                              &gVirtioDeviceProtocolGuid,
+                              (VOID **) &Dev->VirtIo,
+                              This->DriverBindingHandle,
+                              DeviceHandle,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (EFI_ERROR (Status)) {
     goto FreeVirtioScsi;
   }
@@ -1329,8 +1545,13 @@ VirtioScsiDriverBindingStart (
     goto CloseVirtIo;
   }
 
-  Status = gBS->CreateEvent (EVT_SIGNAL_EXIT_BOOT_SERVICES, TPL_CALLBACK,
-                  &VirtioScsiExitBoot, Dev, &Dev->ExitBoot);
+  Status = gBS->CreateEvent (
+                             EVT_SIGNAL_EXIT_BOOT_SERVICES,
+                             TPL_CALLBACK,
+                             &VirtioScsiExitBoot,
+                             Dev,
+                             &Dev->ExitBoot
+                             );
   if (EFI_ERROR (Status)) {
     goto UninitDev;
   }
@@ -1340,9 +1561,12 @@ VirtioScsiDriverBindingStart (
   // interface.
   //
   Dev->Signature = VSCSI_SIG;
-  Status = gBS->InstallProtocolInterface (&DeviceHandle,
-                  &gEfiExtScsiPassThruProtocolGuid, EFI_NATIVE_INTERFACE,
-                  &Dev->PassThru);
+  Status = gBS->InstallProtocolInterface (
+                                          &DeviceHandle,
+                                          &gEfiExtScsiPassThruProtocolGuid,
+                                          EFI_NATIVE_INTERFACE,
+                                          &Dev->PassThru
+                                          );
   if (EFI_ERROR (Status)) {
     goto CloseExitBoot;
   }
@@ -1356,8 +1580,12 @@ UninitDev:
   VirtioScsiUninit (Dev);
 
 CloseVirtIo:
-  gBS->CloseProtocol (DeviceHandle, &gVirtioDeviceProtocolGuid,
-         This->DriverBindingHandle, DeviceHandle);
+  gBS->CloseProtocol (
+                      DeviceHandle,
+                      &gVirtioDeviceProtocolGuid,
+                      This->DriverBindingHandle,
+                      DeviceHandle
+                      );
 
 FreeVirtioScsi:
   FreePool (Dev);
@@ -1365,7 +1593,29 @@ FreeVirtioScsi:
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 VirtioScsiDriverBindingStop (
@@ -1375,18 +1625,18 @@ VirtioScsiDriverBindingStop (
   IN EFI_HANDLE                  *ChildHandleBuffer
   )
 {
-  EFI_STATUS                      Status;
-  EFI_EXT_SCSI_PASS_THRU_PROTOCOL *PassThru;
-  VSCSI_DEV                       *Dev;
+  EFI_STATUS                       Status;
+  EFI_EXT_SCSI_PASS_THRU_PROTOCOL  *PassThru;
+  VSCSI_DEV                        *Dev;
 
   Status = gBS->OpenProtocol (
-                  DeviceHandle,                     // candidate device
-                  &gEfiExtScsiPassThruProtocolGuid, // retrieve the SCSI iface
-                  (VOID **)&PassThru,               // target pointer
-                  This->DriverBindingHandle,        // requestor driver ident.
-                  DeviceHandle,                     // lookup req. for dev.
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL    // lookup only, no new ref.
-                  );
+                              DeviceHandle,                     // candidate device
+                              &gEfiExtScsiPassThruProtocolGuid, // retrieve the SCSI iface
+                              (VOID **) &PassThru,              // target pointer
+                              This->DriverBindingHandle,        // requestor driver ident.
+                              DeviceHandle,                     // lookup req. for dev.
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL    // lookup only, no new ref.
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -1396,8 +1646,11 @@ VirtioScsiDriverBindingStop (
   //
   // Handle Stop() requests for in-use driver instances gracefully.
   //
-  Status = gBS->UninstallProtocolInterface (DeviceHandle,
-                  &gEfiExtScsiPassThruProtocolGuid, &Dev->PassThru);
+  Status = gBS->UninstallProtocolInterface (
+                                            DeviceHandle,
+                                            &gEfiExtScsiPassThruProtocolGuid,
+                                            &Dev->PassThru
+                                            );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -1406,21 +1659,24 @@ VirtioScsiDriverBindingStop (
 
   VirtioScsiUninit (Dev);
 
-  gBS->CloseProtocol (DeviceHandle, &gVirtioDeviceProtocolGuid,
-         This->DriverBindingHandle, DeviceHandle);
+  gBS->CloseProtocol (
+                      DeviceHandle,
+                      &gVirtioDeviceProtocolGuid,
+                      This->DriverBindingHandle,
+                      DeviceHandle
+                      );
 
   FreePool (Dev);
 
   return EFI_SUCCESS;
 }
 
-
 //
 // The static object that groups the Supported() (ie. probe), Start() and
 // Stop() functions of the driver together. Refer to UEFI Spec 2.3.1 + Errata
 // C, 10.1 EFI Driver Binding Protocol.
 //
-STATIC EFI_DRIVER_BINDING_PROTOCOL gDriverBinding = {
+STATIC EFI_DRIVER_BINDING_PROTOCOL  gDriverBinding = {
   &VirtioScsiDriverBindingSupported,
   &VirtioScsiDriverBindingStart,
   &VirtioScsiDriverBindingStop,
@@ -1429,7 +1685,6 @@ STATIC EFI_DRIVER_BINDING_PROTOCOL gDriverBinding = {
         // EfiLibInstallDriverBindingComponentName2() in VirtioScsiEntryPoint()
   NULL  // DriverBindingHandle, ditto
 };
-
 
 //
 // The purpose of the following scaffolding (EFI_COMPONENT_NAME_PROTOCOL and
@@ -1444,14 +1699,37 @@ STATIC EFI_DRIVER_BINDING_PROTOCOL gDriverBinding = {
 //
 
 STATIC
-EFI_UNICODE_STRING_TABLE mDriverNameTable[] = {
+EFI_UNICODE_STRING_TABLE  mDriverNameTable[] = {
   { "eng;en", L"Virtio SCSI Host Driver" },
-  { NULL,     NULL                   }
+  { NULL,     NULL                       }
 };
 
 STATIC
-EFI_COMPONENT_NAME_PROTOCOL gComponentName;
+EFI_COMPONENT_NAME_PROTOCOL  gComponentName;
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 VirtioScsiGetDriverName (
@@ -1461,14 +1739,37 @@ VirtioScsiGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mDriverNameTable,
-           DriverName,
-           (BOOLEAN)(This == &gComponentName) // Iso639Language
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gComponentName) // Iso639Language
+                               );
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 VirtioScsiGetDeviceName (
@@ -1483,19 +1784,18 @@ VirtioScsiGetDeviceName (
 }
 
 STATIC
-EFI_COMPONENT_NAME_PROTOCOL gComponentName = {
+EFI_COMPONENT_NAME_PROTOCOL  gComponentName = {
   &VirtioScsiGetDriverName,
   &VirtioScsiGetDeviceName,
   "eng" // SupportedLanguages, ISO 639-2 language codes
 };
 
 STATIC
-EFI_COMPONENT_NAME2_PROTOCOL gComponentName2 = {
-  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)     &VirtioScsiGetDriverName,
+EFI_COMPONENT_NAME2_PROTOCOL  gComponentName2 = {
+  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) &VirtioScsiGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) &VirtioScsiGetDeviceName,
   "en" // SupportedLanguages, RFC 4646 language codes
 };
-
 
 //
 // Entry point of this driver.
@@ -1508,11 +1808,11 @@ VirtioScsiEntryPoint (
   )
 {
   return EfiLibInstallDriverBindingComponentName2 (
-           ImageHandle,
-           SystemTable,
-           &gDriverBinding,
-           ImageHandle,
-           &gComponentName,
-           &gComponentName2
-           );
+                                                   ImageHandle,
+                                                   SystemTable,
+                                                   &gDriverBinding,
+                                                   ImageHandle,
+                                                   &gComponentName,
+                                                   &gComponentName2
+                                                   );
 }

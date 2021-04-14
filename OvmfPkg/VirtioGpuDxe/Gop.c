@@ -41,7 +41,7 @@ ReleaseGopResources (
   IN     BOOLEAN  DisableHead
   )
 {
-  EFI_STATUS Status;
+  EFI_STATUS  Status;
 
   ASSERT (VgpuGop->ResourceId != 0);
   ASSERT (VgpuGop->BackingStore != NULL);
@@ -57,11 +57,14 @@ ReleaseGopResources (
     // by setting ResourceId=0 for it.
     //
     Status = VirtioGpuSetScanout (
-               VgpuGop->ParentBus, // VgpuDev
-               0, 0, 0, 0,         // X, Y, Width, Height
-               0,                  // ScanoutId
-               0                   // ResourceId
-               );
+                                  VgpuGop->ParentBus, // VgpuDev
+                                  0,
+                                  0,
+                                  0,
+                                  0, // X, Y, Width, Height
+                                  0, // ScanoutId
+                                  0  // ResourceId
+                                  );
     //
     // HACK BEGINS HERE
     //
@@ -99,9 +102,9 @@ ReleaseGopResources (
   // Detach backing pages from the currently used 2D host resource.
   //
   Status = VirtioGpuResourceDetachBacking (
-             VgpuGop->ParentBus, // VgpuDev
-             VgpuGop->ResourceId // ResourceId
-             );
+                                           VgpuGop->ParentBus, // VgpuDev
+                                           VgpuGop->ResourceId // ResourceId
+                                           );
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
     CpuDeadLoop ();
@@ -111,26 +114,27 @@ ReleaseGopResources (
   // Unmap and release backing pages.
   //
   VirtioGpuUnmapAndFreeBackingStore (
-    VgpuGop->ParentBus,      // VgpuDev
-    VgpuGop->NumberOfPages,  // NumberOfPages
-    VgpuGop->BackingStore,   // HostAddress
-    VgpuGop->BackingStoreMap // Mapping
-    );
-  VgpuGop->BackingStore  = NULL;
-  VgpuGop->NumberOfPages = 0;
+                                     VgpuGop->ParentBus,      // VgpuDev
+                                     VgpuGop->NumberOfPages,  // NumberOfPages
+                                     VgpuGop->BackingStore,   // HostAddress
+                                     VgpuGop->BackingStoreMap // Mapping
+                                     );
+  VgpuGop->BackingStore    = NULL;
+  VgpuGop->NumberOfPages   = 0;
   VgpuGop->BackingStoreMap = NULL;
 
   //
   // Destroy the currently used 2D host resource.
   //
   Status = VirtioGpuResourceUnref (
-             VgpuGop->ParentBus, // VgpuDev
-             VgpuGop->ResourceId // ResourceId
-             );
+                                   VgpuGop->ParentBus, // VgpuDev
+                                   VgpuGop->ResourceId // ResourceId
+                                   );
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
     CpuDeadLoop ();
   }
+
   VgpuGop->ResourceId = 0;
 }
 
@@ -138,31 +142,31 @@ ReleaseGopResources (
 // The resolutions supported by this driver.
 //
 typedef struct {
-  UINT32 Width;
-  UINT32 Height;
+  UINT32    Width;
+  UINT32    Height;
 } GOP_RESOLUTION;
 
-STATIC CONST GOP_RESOLUTION mGopResolutions[] = {
-  {  640,  480 },
-  {  800,  480 },
-  {  800,  600 },
-  {  832,  624 },
-  {  960,  640 },
-  { 1024,  600 },
-  { 1024,  768 },
-  { 1152,  864 },
-  { 1152,  870 },
-  { 1280,  720 },
-  { 1280,  760 },
-  { 1280,  768 },
-  { 1280,  800 },
-  { 1280,  960 },
+STATIC CONST GOP_RESOLUTION  mGopResolutions[] = {
+  {  640, 480  },
+  {  800, 480  },
+  {  800, 600  },
+  {  832, 624  },
+  {  960, 640  },
+  { 1024, 600  },
+  { 1024, 768  },
+  { 1152, 864  },
+  { 1152, 870  },
+  { 1280, 720  },
+  { 1280, 760  },
+  { 1280, 768  },
+  { 1280, 800  },
+  { 1280, 960  },
   { 1280, 1024 },
-  { 1360,  768 },
-  { 1366,  768 },
+  { 1360, 768  },
+  { 1366, 768  },
   { 1400, 1050 },
-  { 1440,  900 },
-  { 1600,  900 },
+  { 1440, 900  },
+  { 1600, 900  },
   { 1600, 1200 },
   { 1680, 1050 },
   { 1920, 1080 },
@@ -186,7 +190,7 @@ STATIC CONST GOP_RESOLUTION mGopResolutions[] = {
 // Macro for casting VGPU_GOP.Gop to VGPU_GOP.
 //
 #define VGPU_GOP_FROM_GOP(GopPointer) \
-          CR (GopPointer, VGPU_GOP, Gop, VGPU_GOP_SIG)
+  CR (GopPointer, VGPU_GOP, Gop, VGPU_GOP_SIG)
 
 //
 // EFI_GRAPHICS_OUTPUT_PROTOCOL member functions.
@@ -201,7 +205,7 @@ GopQueryMode (
   OUT EFI_GRAPHICS_OUTPUT_MODE_INFORMATION **Info
   )
 {
-  EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *GopModeInfo;
+  EFI_GRAPHICS_OUTPUT_MODE_INFORMATION  *GopModeInfo;
 
   if (ModeNumber >= ARRAY_SIZE (mGopResolutions)) {
     return EFI_INVALID_PARAMETER;
@@ -214,14 +218,37 @@ GopQueryMode (
 
   GopModeInfo->HorizontalResolution = mGopResolutions[ModeNumber].Width;
   GopModeInfo->VerticalResolution   = mGopResolutions[ModeNumber].Height;
-  GopModeInfo->PixelFormat          = PixelBltOnly;
-  GopModeInfo->PixelsPerScanLine    = mGopResolutions[ModeNumber].Width;
+  GopModeInfo->PixelFormat = PixelBltOnly;
+  GopModeInfo->PixelsPerScanLine = mGopResolutions[ModeNumber].Width;
 
   *SizeOfInfo = sizeof *GopModeInfo;
   *Info = GopModeInfo;
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -230,16 +257,16 @@ GopSetMode (
   IN  UINT32                       ModeNumber
   )
 {
-  VGPU_GOP             *VgpuGop;
-  UINT32               NewResourceId;
-  UINTN                NewNumberOfBytes;
-  UINTN                NewNumberOfPages;
-  VOID                 *NewBackingStore;
-  EFI_PHYSICAL_ADDRESS NewBackingStoreDeviceAddress;
-  VOID                 *NewBackingStoreMap;
+  VGPU_GOP              *VgpuGop;
+  UINT32                NewResourceId;
+  UINTN                 NewNumberOfBytes;
+  UINTN                 NewNumberOfPages;
+  VOID                  *NewBackingStore;
+  EFI_PHYSICAL_ADDRESS  NewBackingStoreDeviceAddress;
+  VOID                  *NewBackingStoreMap;
 
-  EFI_STATUS Status;
-  EFI_STATUS Status2;
+  EFI_STATUS  Status;
+  EFI_STATUS  Status2;
 
   if (ModeNumber >= ARRAY_SIZE (mGopResolutions)) {
     return EFI_UNSUPPORTED;
@@ -260,9 +287,9 @@ GopSetMode (
     //
     VgpuGop->Gop.Mode = &VgpuGop->GopMode;
 
-    VgpuGop->GopMode.MaxMode         = (UINT32)(ARRAY_SIZE (mGopResolutions));
-    VgpuGop->GopMode.Info            = &VgpuGop->GopModeInfo;
-    VgpuGop->GopMode.SizeOfInfo      = sizeof VgpuGop->GopModeInfo;
+    VgpuGop->GopMode.MaxMode    = (UINT32) (ARRAY_SIZE (mGopResolutions));
+    VgpuGop->GopMode.Info       = &VgpuGop->GopModeInfo;
+    VgpuGop->GopMode.SizeOfInfo = sizeof VgpuGop->GopModeInfo;
 
     VgpuGop->GopModeInfo.PixelFormat = PixelBltOnly;
 
@@ -285,12 +312,12 @@ GopSetMode (
   // Create the 2D host resource.
   //
   Status = VirtioGpuResourceCreate2d (
-             VgpuGop->ParentBus,                // VgpuDev
-             NewResourceId,                     // ResourceId
-             VirtioGpuFormatB8G8R8X8Unorm,      // Format
-             mGopResolutions[ModeNumber].Width, // Width
-             mGopResolutions[ModeNumber].Height // Height
-             );
+                                      VgpuGop->ParentBus,                // VgpuDev
+                                      NewResourceId,                     // ResourceId
+                                      VirtioGpuFormatB8G8R8X8Unorm,      // Format
+                                      mGopResolutions[ModeNumber].Width, // Width
+                                      mGopResolutions[ModeNumber].Height // Height
+                                      );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -303,12 +330,12 @@ GopSetMode (
                      mGopResolutions[ModeNumber].Height * sizeof (UINT32);
   NewNumberOfPages = EFI_SIZE_TO_PAGES (NewNumberOfBytes);
   Status = VirtioGpuAllocateZeroAndMapBackingStore (
-             VgpuGop->ParentBus,            // VgpuDev
-             NewNumberOfPages,              // NumberOfPages
-             &NewBackingStore,              // HostAddress
-             &NewBackingStoreDeviceAddress, // DeviceAddress
-             &NewBackingStoreMap            // Mapping
-             );
+                                                    VgpuGop->ParentBus,            // VgpuDev
+                                                    NewNumberOfPages,              // NumberOfPages
+                                                    &NewBackingStore,              // HostAddress
+                                                    &NewBackingStoreDeviceAddress, // DeviceAddress
+                                                    &NewBackingStoreMap            // Mapping
+                                                    );
   if (EFI_ERROR (Status)) {
     goto DestroyHostResource;
   }
@@ -317,11 +344,11 @@ GopSetMode (
   // Attach backing store to the host resource.
   //
   Status = VirtioGpuResourceAttachBacking (
-             VgpuGop->ParentBus,           // VgpuDev
-             NewResourceId,                // ResourceId
-             NewBackingStoreDeviceAddress, // BackingStoreDeviceAddress
-             NewNumberOfPages              // NumberOfPages
-             );
+                                           VgpuGop->ParentBus,           // VgpuDev
+                                           NewResourceId,                // ResourceId
+                                           NewBackingStoreDeviceAddress, // BackingStoreDeviceAddress
+                                           NewNumberOfPages              // NumberOfPages
+                                           );
   if (EFI_ERROR (Status)) {
     goto UnmapAndFreeBackingStore;
   }
@@ -330,14 +357,14 @@ GopSetMode (
   // Point head (scanout) #0 to the host resource.
   //
   Status = VirtioGpuSetScanout (
-             VgpuGop->ParentBus,                 // VgpuDev
-             0,                                  // X
-             0,                                  // Y
-             mGopResolutions[ModeNumber].Width,  // Width
-             mGopResolutions[ModeNumber].Height, // Height
-             0,                                  // ScanoutId
-             NewResourceId                       // ResourceId
-             );
+                                VgpuGop->ParentBus,                 // VgpuDev
+                                0,                                  // X
+                                0,                                  // Y
+                                mGopResolutions[ModeNumber].Width,  // Width
+                                mGopResolutions[ModeNumber].Height, // Height
+                                0,                                  // ScanoutId
+                                NewResourceId                       // ResourceId
+                                );
   if (EFI_ERROR (Status)) {
     goto DetachBackingStore;
   }
@@ -349,13 +376,13 @@ GopSetMode (
   //
   if (VgpuGop->ResourceId != 0) {
     Status = VirtioGpuResourceFlush (
-               VgpuGop->ParentBus,                 // VgpuDev
-               0,                                  // X
-               0,                                  // Y
-               mGopResolutions[ModeNumber].Width,  // Width
-               mGopResolutions[ModeNumber].Height, // Height
-               NewResourceId                       // ResourceId
-               );
+                                     VgpuGop->ParentBus,                 // VgpuDev
+                                     0,                                  // X
+                                     0,                                  // Y
+                                     mGopResolutions[ModeNumber].Width,  // Width
+                                     mGopResolutions[ModeNumber].Height, // Height
+                                     NewResourceId                       // ResourceId
+                                     );
     if (EFI_ERROR (Status)) {
       //
       // Flip head (scanout) #0 back to the current resource. If this fails, we
@@ -363,18 +390,19 @@ GopSetMode (
       // therefore non-recoverable.
       //
       Status2 = VirtioGpuSetScanout (
-                  VgpuGop->ParentBus,                       // VgpuDev
-                  0,                                        // X
-                  0,                                        // Y
-                  mGopResolutions[This->Mode->Mode].Width,  // Width
-                  mGopResolutions[This->Mode->Mode].Height, // Height
-                  0,                                        // ScanoutId
-                  VgpuGop->ResourceId                       // ResourceId
-                  );
+                                     VgpuGop->ParentBus,                       // VgpuDev
+                                     0,                                        // X
+                                     0,                                        // Y
+                                     mGopResolutions[This->Mode->Mode].Width,  // Width
+                                     mGopResolutions[This->Mode->Mode].Height, // Height
+                                     0,                                        // ScanoutId
+                                     VgpuGop->ResourceId                       // ResourceId
+                                     );
       ASSERT_EFI_ERROR (Status2);
       if (EFI_ERROR (Status2)) {
         CpuDeadLoop ();
       }
+
       goto DetachBackingStore;
     }
 
@@ -393,9 +421,9 @@ GopSetMode (
   ASSERT (VgpuGop->ResourceId == 0);
   ASSERT (VgpuGop->BackingStore == NULL);
 
-  VgpuGop->ResourceId = NewResourceId;
-  VgpuGop->BackingStore = NewBackingStore;
-  VgpuGop->NumberOfPages = NewNumberOfPages;
+  VgpuGop->ResourceId      = NewResourceId;
+  VgpuGop->BackingStore    = NewBackingStore;
+  VgpuGop->NumberOfPages   = NewNumberOfPages;
   VgpuGop->BackingStoreMap = NewBackingStoreMap;
 
   //
@@ -403,9 +431,9 @@ GopSetMode (
   //
   VgpuGop->GopMode.Mode = ModeNumber;
   VgpuGop->GopModeInfo.HorizontalResolution =
-                                             mGopResolutions[ModeNumber].Width;
+    mGopResolutions[ModeNumber].Width;
   VgpuGop->GopModeInfo.VerticalResolution = mGopResolutions[ModeNumber].Height;
-  VgpuGop->GopModeInfo.PixelsPerScanLine = mGopResolutions[ModeNumber].Width;
+  VgpuGop->GopModeInfo.PixelsPerScanLine  = mGopResolutions[ModeNumber].Width;
   return EFI_SUCCESS;
 
 DetachBackingStore:
@@ -417,11 +445,11 @@ DetachBackingStore:
 
 UnmapAndFreeBackingStore:
   VirtioGpuUnmapAndFreeBackingStore (
-    VgpuGop->ParentBus, // VgpuDev
-    NewNumberOfPages,   // NumberOfPages
-    NewBackingStore,    // HostAddress
-    NewBackingStoreMap  // Mapping
-    );
+                                     VgpuGop->ParentBus, // VgpuDev
+                                     NewNumberOfPages,   // NumberOfPages
+                                     NewBackingStore,    // HostAddress
+                                     NewBackingStoreMap  // Mapping
+                                     );
 
 DestroyHostResource:
   Status2 = VirtioGpuResourceUnref (VgpuGop->ParentBus, NewResourceId);
@@ -433,12 +461,35 @@ DestroyHostResource:
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
 GopBlt (
   IN  EFI_GRAPHICS_OUTPUT_PROTOCOL      *This,
-  IN  EFI_GRAPHICS_OUTPUT_BLT_PIXEL     *BltBuffer,   OPTIONAL
+  IN  EFI_GRAPHICS_OUTPUT_BLT_PIXEL     *BltBuffer, OPTIONAL
   IN  EFI_GRAPHICS_OUTPUT_BLT_OPERATION BltOperation,
   IN  UINTN                             SourceX,
   IN  UINTN                             SourceY,
@@ -449,13 +500,13 @@ GopBlt (
   IN  UINTN                             Delta         OPTIONAL
   )
 {
-  VGPU_GOP   *VgpuGop;
-  UINT32     CurrentHorizontal;
-  UINT32     CurrentVertical;
-  UINTN      SegmentSize;
-  UINTN      Y;
-  UINTN      ResourceOffset;
-  EFI_STATUS Status;
+  VGPU_GOP    *VgpuGop;
+  UINT32      CurrentHorizontal;
+  UINT32      CurrentVertical;
+  UINTN       SegmentSize;
+  UINTN       Y;
+  UINTN       ResourceOffset;
+  EFI_STATUS  Status;
 
   VgpuGop = VGPU_GOP_FROM_GOP (This);
   CurrentHorizontal = VgpuGop->GopModeInfo.HorizontalResolution;
@@ -517,99 +568,103 @@ GopBlt (
   // won't be further steps.
   //
   switch (BltOperation) {
-  case EfiBltVideoFill:
-    //
-    // Write data from the BltBuffer pixel (0, 0) directly to every pixel of
-    // the video display rectangle (DestinationX, DestinationY) (DestinationX +
-    // Width, DestinationY + Height). Only one pixel will be used from the
-    // BltBuffer. Delta is NOT used.
-    //
-    for (Y = 0; Y < Height; ++Y) {
-      SetMem32 (
-        VgpuGop->BackingStore +
-          (DestinationY + Y) * CurrentHorizontal + DestinationX,
-        SegmentSize,
-        *(UINT32 *)BltBuffer
-        );
-    }
-    break;
-
-  case EfiBltVideoToBltBuffer:
-    //
-    // Read data from the video display rectangle (SourceX, SourceY) (SourceX +
-    // Width, SourceY + Height) and place it in the BltBuffer rectangle
-    // (DestinationX, DestinationY ) (DestinationX + Width, DestinationY +
-    // Height). If DestinationX or DestinationY is not zero then Delta must be
-    // set to the length in bytes of a row in the BltBuffer.
-    //
-    for (Y = 0; Y < Height; ++Y) {
-      CopyMem (
-        (UINT8 *)BltBuffer +
-          (DestinationY + Y) * Delta + DestinationX * sizeof *BltBuffer,
-        VgpuGop->BackingStore +
-          (SourceY + Y) * CurrentHorizontal + SourceX,
-        SegmentSize
-        );
-    }
-    return EFI_SUCCESS;
-
-  case EfiBltBufferToVideo:
-    //
-    // Write data from the BltBuffer rectangle (SourceX, SourceY) (SourceX +
-    // Width, SourceY + Height) directly to the video display rectangle
-    // (DestinationX, DestinationY) (DestinationX + Width, DestinationY +
-    // Height). If SourceX or SourceY is not zero then Delta must be set to the
-    // length in bytes of a row in the BltBuffer.
-    //
-    for (Y = 0; Y < Height; ++Y) {
-      CopyMem (
-        VgpuGop->BackingStore +
-          (DestinationY + Y) * CurrentHorizontal + DestinationX,
-        (UINT8 *)BltBuffer +
-          (SourceY + Y) * Delta + SourceX * sizeof *BltBuffer,
-        SegmentSize
-        );
-    }
-    break;
-
-  case EfiBltVideoToVideo:
-    //
-    // Copy from the video display rectangle (SourceX, SourceY) (SourceX +
-    // Width, SourceY + Height) to the video display rectangle (DestinationX,
-    // DestinationY) (DestinationX + Width, DestinationY + Height). The
-    // BltBuffer and Delta are not used in this mode.
-    //
-    // A single invocation of CopyMem() handles overlap between source and
-    // destination (that is, within a single line), but for multiple
-    // invocations, we must handle overlaps.
-    //
-    if (SourceY < DestinationY) {
-      Y = Height;
-      while (Y > 0) {
-        --Y;
-        CopyMem (
-          VgpuGop->BackingStore +
-            (DestinationY + Y) * CurrentHorizontal + DestinationX,
-          VgpuGop->BackingStore +
-            (SourceY + Y) * CurrentHorizontal + SourceX,
-          SegmentSize
-          );
+    case EfiBltVideoFill:
+      //
+      // Write data from the BltBuffer pixel (0, 0) directly to every pixel of
+      // the video display rectangle (DestinationX, DestinationY) (DestinationX +
+      // Width, DestinationY + Height). Only one pixel will be used from the
+      // BltBuffer. Delta is NOT used.
+      //
+      for (Y = 0; Y < Height; ++Y) {
+        SetMem32 (
+                  VgpuGop->BackingStore +
+                  (DestinationY + Y) * CurrentHorizontal + DestinationX,
+                  SegmentSize,
+                  *(UINT32 *) BltBuffer
+                  );
       }
-    } else {
+
+      break;
+
+    case EfiBltVideoToBltBuffer:
+      //
+      // Read data from the video display rectangle (SourceX, SourceY) (SourceX +
+      // Width, SourceY + Height) and place it in the BltBuffer rectangle
+      // (DestinationX, DestinationY ) (DestinationX + Width, DestinationY +
+      // Height). If DestinationX or DestinationY is not zero then Delta must be
+      // set to the length in bytes of a row in the BltBuffer.
+      //
       for (Y = 0; Y < Height; ++Y) {
         CopyMem (
-          VgpuGop->BackingStore +
-            (DestinationY + Y) * CurrentHorizontal + DestinationX,
-          VgpuGop->BackingStore +
-            (SourceY + Y) * CurrentHorizontal + SourceX,
-          SegmentSize
-          );
+                 (UINT8 *) BltBuffer +
+                 (DestinationY + Y) * Delta + DestinationX * sizeof *BltBuffer,
+                 VgpuGop->BackingStore +
+                 (SourceY + Y) * CurrentHorizontal + SourceX,
+                 SegmentSize
+                 );
       }
-    }
-    break;
 
-  default:
-    return EFI_INVALID_PARAMETER;
+      return EFI_SUCCESS;
+
+    case EfiBltBufferToVideo:
+      //
+      // Write data from the BltBuffer rectangle (SourceX, SourceY) (SourceX +
+      // Width, SourceY + Height) directly to the video display rectangle
+      // (DestinationX, DestinationY) (DestinationX + Width, DestinationY +
+      // Height). If SourceX or SourceY is not zero then Delta must be set to the
+      // length in bytes of a row in the BltBuffer.
+      //
+      for (Y = 0; Y < Height; ++Y) {
+        CopyMem (
+                 VgpuGop->BackingStore +
+                 (DestinationY + Y) * CurrentHorizontal + DestinationX,
+                 (UINT8 *) BltBuffer +
+                 (SourceY + Y) * Delta + SourceX * sizeof *BltBuffer,
+                 SegmentSize
+                 );
+      }
+
+      break;
+
+    case EfiBltVideoToVideo:
+      //
+      // Copy from the video display rectangle (SourceX, SourceY) (SourceX +
+      // Width, SourceY + Height) to the video display rectangle (DestinationX,
+      // DestinationY) (DestinationX + Width, DestinationY + Height). The
+      // BltBuffer and Delta are not used in this mode.
+      //
+      // A single invocation of CopyMem() handles overlap between source and
+      // destination (that is, within a single line), but for multiple
+      // invocations, we must handle overlaps.
+      //
+      if (SourceY < DestinationY) {
+        Y = Height;
+        while (Y > 0) {
+          --Y;
+          CopyMem (
+                   VgpuGop->BackingStore +
+                   (DestinationY + Y) * CurrentHorizontal + DestinationX,
+                   VgpuGop->BackingStore +
+                   (SourceY + Y) * CurrentHorizontal + SourceX,
+                   SegmentSize
+                   );
+        }
+      } else {
+        for (Y = 0; Y < Height; ++Y) {
+          CopyMem (
+                   VgpuGop->BackingStore +
+                   (DestinationY + Y) * CurrentHorizontal + DestinationX,
+                   VgpuGop->BackingStore +
+                   (SourceY + Y) * CurrentHorizontal + SourceX,
+                   SegmentSize
+                   );
+        }
+      }
+
+      break;
+
+    default:
+      return EFI_INVALID_PARAMETER;
   }
 
   //
@@ -619,14 +674,14 @@ GopBlt (
   ResourceOffset = sizeof (UINT32) * (DestinationY * CurrentHorizontal +
                                       DestinationX);
   Status = VirtioGpuTransferToHost2d (
-             VgpuGop->ParentBus,   // VgpuDev
-             (UINT32)DestinationX, // X
-             (UINT32)DestinationY, // Y
-             (UINT32)Width,        // Width
-             (UINT32)Height,       // Height
-             ResourceOffset,       // Offset
-             VgpuGop->ResourceId   // ResourceId
-             );
+                                      VgpuGop->ParentBus,    // VgpuDev
+                                      (UINT32) DestinationX, // X
+                                      (UINT32) DestinationY, // Y
+                                      (UINT32) Width,        // Width
+                                      (UINT32) Height,       // Height
+                                      ResourceOffset,        // Offset
+                                      VgpuGop->ResourceId    // ResourceId
+                                      );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -635,20 +690,20 @@ GopBlt (
   // Flush the updated resource to the display.
   //
   Status = VirtioGpuResourceFlush (
-             VgpuGop->ParentBus,   // VgpuDev
-             (UINT32)DestinationX, // X
-             (UINT32)DestinationY, // Y
-             (UINT32)Width,        // Width
-             (UINT32)Height,       // Height
-             VgpuGop->ResourceId   // ResourceId
-             );
+                                   VgpuGop->ParentBus,    // VgpuDev
+                                   (UINT32) DestinationX, // X
+                                   (UINT32) DestinationY, // Y
+                                   (UINT32) Width,        // Width
+                                   (UINT32) Height,       // Height
+                                   VgpuGop->ResourceId    // ResourceId
+                                   );
   return Status;
 }
 
 //
 // Template for initializing VGPU_GOP.Gop.
 //
-CONST EFI_GRAPHICS_OUTPUT_PROTOCOL mGopTemplate = {
+CONST EFI_GRAPHICS_OUTPUT_PROTOCOL  mGopTemplate = {
   GopQueryMode,
   GopSetMode,
   GopBlt,

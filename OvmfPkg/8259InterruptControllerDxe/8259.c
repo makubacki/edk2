@@ -26,15 +26,15 @@ EFI_LEGACY_8259_PROTOCOL  mInterrupt8259 = {
 //
 // Global for the handle that the Legacy 8259 Protocol is installed
 //
-EFI_HANDLE                m8259Handle             = NULL;
+EFI_HANDLE  m8259Handle = NULL;
 
-UINT8                     mMasterBase             = 0xff;
-UINT8                     mSlaveBase              = 0xff;
-EFI_8259_MODE             mMode                   = Efi8259ProtectedMode;
-UINT16                    mProtectedModeMask      = 0xffff;
-UINT16                    mLegacyModeMask;
-UINT16                    mProtectedModeEdgeLevel = 0x0000;
-UINT16                    mLegacyModeEdgeLevel;
+UINT8          mMasterBase = 0xff;
+UINT8          mSlaveBase  = 0xff;
+EFI_8259_MODE  mMode = Efi8259ProtectedMode;
+UINT16         mProtectedModeMask = 0xffff;
+UINT16         mLegacyModeMask;
+UINT16         mProtectedModeEdgeLevel = 0x0000;
+UINT16         mLegacyModeEdgeLevel;
 
 //
 // Worker Functions
@@ -117,8 +117,8 @@ Interrupt8259SetVectorBase (
   IN UINT8                     SlaveBase
   )
 {
-  UINT8   Mask;
-  EFI_TPL OriginalTpl;
+  UINT8    Mask;
+  EFI_TPL  OriginalTpl;
 
   OriginalTpl = gBS->RaiseTPL (TPL_HIGH_LEVEL);
   //
@@ -411,7 +411,7 @@ Interrupt8259GetVector (
   OUT UINT8                     *Vector
   )
 {
-  if ((UINT32)Irq > Efi8259Irq15) {
+  if ((UINT32) Irq > Efi8259Irq15) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -443,7 +443,7 @@ Interrupt8259EnableIrq (
   IN BOOLEAN                   LevelTriggered
   )
 {
-  if ((UINT32)Irq > Efi8259Irq15) {
+  if ((UINT32) Irq > Efi8259Irq15) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -476,7 +476,7 @@ Interrupt8259DisableIrq (
   IN EFI_8259_IRQ              Irq
   )
 {
-  if ((UINT32)Irq > Efi8259Irq15) {
+  if ((UINT32) Irq > Efi8259Irq15) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -507,26 +507,26 @@ Interrupt8259GetInterruptLine (
   OUT UINT8                     *Vector
   )
 {
-  EFI_PCI_IO_PROTOCOL *PciIo;
-  UINT8               InterruptLine;
-  EFI_STATUS          Status;
+  EFI_PCI_IO_PROTOCOL  *PciIo;
+  UINT8                InterruptLine;
+  EFI_STATUS           Status;
 
   Status = gBS->HandleProtocol (
-                  PciHandle,
-                  &gEfiPciIoProtocolGuid,
-                  (VOID **) &PciIo
-                  );
+                                PciHandle,
+                                &gEfiPciIoProtocolGuid,
+                                (VOID **) &PciIo
+                                );
   if (EFI_ERROR (Status)) {
     return EFI_INVALID_PARAMETER;
   }
 
   PciIo->Pci.Read (
-               PciIo,
-               EfiPciIoWidthUint8,
-               PCI_INT_LINE_OFFSET,
-               1,
-               &InterruptLine
-               );
+                   PciIo,
+                   EfiPciIoWidthUint8,
+                   PCI_INT_LINE_OFFSET,
+                   1,
+                   &InterruptLine
+                   );
   //
   // Interrupt line is same location for standard PCI cards, standard
   // bridge and CardBus bridge.
@@ -553,7 +553,7 @@ Interrupt8259EndOfInterrupt (
   IN EFI_8259_IRQ              Irq
   )
 {
-  if ((UINT32)Irq > Efi8259Irq15) {
+  if ((UINT32) Irq > Efi8259Irq15) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -583,13 +583,13 @@ Install8259 (
   IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  EFI_STATUS   Status;
-  EFI_8259_IRQ Irq;
+  EFI_STATUS    Status;
+  EFI_8259_IRQ  Irq;
 
   //
   // Initialze mask values from PCDs
   //
-  mLegacyModeMask      = PcdGet16 (Pcd8259LegacyModeMask);
+  mLegacyModeMask = PcdGet16 (Pcd8259LegacyModeMask);
   mLegacyModeEdgeLevel = PcdGet16 (Pcd8259LegacyModeEdgeLevel);
 
   //
@@ -602,7 +602,11 @@ Install8259 (
   //
   // Set the 8259 Master base to 0x68 and the 8259 Slave base to 0x70
   //
-  Status = Interrupt8259SetVectorBase (&mInterrupt8259, PROTECTED_MODE_BASE_VECTOR_MASTER, PROTECTED_MODE_BASE_VECTOR_SLAVE);
+  Status = Interrupt8259SetVectorBase (
+                                      &mInterrupt8259,
+                                      PROTECTED_MODE_BASE_VECTOR_MASTER,
+                                      PROTECTED_MODE_BASE_VECTOR_SLAVE
+                                      );
 
   //
   // Set all 8259 interrupts to edge triggered and disabled
@@ -613,10 +617,10 @@ Install8259 (
   // Install 8259 Protocol onto a new handle
   //
   Status = gBS->InstallProtocolInterface (
-                  &m8259Handle,
-                  &gEfiLegacy8259ProtocolGuid,
-                  EFI_NATIVE_INTERFACE,
-                  &mInterrupt8259
-                  );
+                                          &m8259Handle,
+                                          &gEfiLegacy8259ProtocolGuid,
+                                          EFI_NATIVE_INTERFACE,
+                                          &mInterrupt8259
+                                          );
   return Status;
 }

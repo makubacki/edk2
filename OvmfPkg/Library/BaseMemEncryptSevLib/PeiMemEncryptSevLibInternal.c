@@ -17,12 +17,12 @@
 #include <Register/Cpuid.h>
 #include <Uefi/UefiBaseType.h>
 
-STATIC BOOLEAN mSevStatus = FALSE;
-STATIC BOOLEAN mSevEsStatus = FALSE;
-STATIC BOOLEAN mSevStatusChecked = FALSE;
+STATIC BOOLEAN  mSevStatus   = FALSE;
+STATIC BOOLEAN  mSevEsStatus = FALSE;
+STATIC BOOLEAN  mSevStatusChecked = FALSE;
 
-STATIC UINT64  mSevEncryptionMask = 0;
-STATIC BOOLEAN mSevEncryptionMaskSaved = FALSE;
+STATIC UINT64   mSevEncryptionMask = 0;
+STATIC BOOLEAN  mSevEncryptionMaskSaved = FALSE;
 
 /**
   Reads and sets the status of SEV features.
@@ -137,13 +137,13 @@ MemEncryptSevGetEncryptionMask (
   )
 {
   if (!mSevEncryptionMaskSaved) {
-    SEC_SEV_ES_WORK_AREA  *SevEsWorkArea;
+  SEC_SEV_ES_WORK_AREA  *SevEsWorkArea;
 
     SevEsWorkArea = (SEC_SEV_ES_WORK_AREA *) FixedPcdGet32 (PcdSevEsWorkAreaBase);
     if (SevEsWorkArea != NULL) {
       mSevEncryptionMask = SevEsWorkArea->EncryptionMask;
     } else {
-      CPUID_MEMORY_ENCRYPTION_INFO_EBX  Ebx;
+  CPUID_MEMORY_ENCRYPTION_INFO_EBX  Ebx;
 
       //
       // CPUID Fn8000_001F[EBX] Bit 0:5 (memory encryption bit position)

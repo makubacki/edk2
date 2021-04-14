@@ -17,23 +17,23 @@
 // Define the maximum number of #VCs allowed (e.g. the level of nesting
 // that is allowed => 2 allows for 1 nested #VCs). I this value is changed,
 // be sure to increase the size of
-//   gUefiOvmfPkgTokenSpaceGuid.PcdOvmfSecGhcbBackupSize
+// gUefiOvmfPkgTokenSpaceGuid.PcdOvmfSecGhcbBackupSize
 // in any FDF file using this PCD.
 //
-#define VMGEXIT_MAXIMUM_VC_COUNT   2
+#define VMGEXIT_MAXIMUM_VC_COUNT  2
 
 //
 // Per-CPU data mapping structure
-//   Use UINT32 for cached indicators and compare to a specific value
-//   so that the hypervisor can't indicate a value is cached by just
-//   writing random data to that area.
+// Use UINT32 for cached indicators and compare to a specific value
+// so that the hypervisor can't indicate a value is cached by just
+// writing random data to that area.
 //
 typedef struct {
-  UINT32  Dr7Cached;
-  UINT64  Dr7;
+  UINT32    Dr7Cached;
+  UINT64    Dr7;
 
-  UINTN   VcCount;
-  VOID    *GhcbBackupPages;
+  UINTN     VcCount;
+  VOID      *GhcbBackupPages;
 } SEV_ES_PER_CPU_DATA;
 
 //
@@ -42,18 +42,18 @@ typedef struct {
 // initialization.
 //
 // This structure is also used by assembler files:
-//   OvmfPkg/ResetVector/ResetVector.nasmb
-//   OvmfPkg/ResetVector/Ia32/PageTables64.asm
-//   OvmfPkg/ResetVector/Ia32/Flat32ToFlat64.asm
+// OvmfPkg/ResetVector/ResetVector.nasmb
+// OvmfPkg/ResetVector/Ia32/PageTables64.asm
+// OvmfPkg/ResetVector/Ia32/Flat32ToFlat64.asm
 // any changes must stay in sync with its usage.
 //
 typedef struct _SEC_SEV_ES_WORK_AREA {
-  UINT8    SevEsEnabled;
-  UINT8    Reserved1[7];
+  UINT8     SevEsEnabled;
+  UINT8     Reserved1[7];
 
-  UINT64   RandomData;
+  UINT64    RandomData;
 
-  UINT64   EncryptionMask;
+  UINT64    EncryptionMask;
 } SEC_SEV_ES_WORK_AREA;
 
 //
@@ -75,8 +75,8 @@ typedef enum {
 BOOLEAN
 EFIAPI
 MemEncryptSevEsIsEnabled (
-  VOID
-  );
+                          VOID
+                          );
 
 /**
   Returns a boolean to indicate whether SEV is enabled
@@ -87,8 +87,8 @@ MemEncryptSevEsIsEnabled (
 BOOLEAN
 EFIAPI
 MemEncryptSevIsEnabled (
-  VOID
-  );
+                        VOID
+                        );
 
 /**
   This function clears memory encryption bit for the memory region specified by
@@ -146,7 +146,6 @@ MemEncryptSevSetPageEncMask (
   IN BOOLEAN                  Flush
   );
 
-
 /**
   Locate the page range that covers the initial (pre-SMBASE-relocation) SMRAM
   Save State Map.
@@ -177,8 +176,8 @@ MemEncryptSevLocateInitialSmramSaveStateMapPages (
 UINT64
 EFIAPI
 MemEncryptSevGetEncryptionMask (
-  VOID
-  );
+                                VOID
+                                );
 
 /**
   Returns the encryption state of the specified virtual address range.

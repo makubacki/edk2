@@ -11,7 +11,6 @@
   SPDX-License-Identifier: BSD-2-Clause-Patent
 **/
 
-
 #include <PiPei.h>
 
 #include <Guid/TpmInstance.h>
@@ -22,7 +21,7 @@
 
 #include "Tpm12Support.h"
 
-STATIC CONST EFI_PEI_PPI_DESCRIPTOR mTpmSelectedPpi = {
+STATIC CONST EFI_PEI_PPI_DESCRIPTOR  mTpmSelectedPpi = {
   (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
   &gEfiTpmDeviceSelectedGuid,
   NULL
@@ -47,31 +46,31 @@ Tcg2ConfigPeimEntryPoint (
   IN CONST EFI_PEI_SERVICES     **PeiServices
   )
 {
-  UINTN                           Size;
-  EFI_STATUS                      Status;
+  UINTN       Size;
+  EFI_STATUS  Status;
 
   DEBUG ((DEBUG_INFO, "%a\n", __FUNCTION__));
 
   Status = InternalTpm12Detect ();
   if (!EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INFO, "%a: TPM1.2 detected\n", __FUNCTION__));
-    Size = sizeof (gEfiTpmDeviceInstanceTpm12Guid);
+    Size   = sizeof (gEfiTpmDeviceInstanceTpm12Guid);
     Status = PcdSetPtrS (
-               PcdTpmInstanceGuid,
-               &Size,
-               &gEfiTpmDeviceInstanceTpm12Guid
-               );
+                         PcdTpmInstanceGuid,
+                         &Size,
+                         &gEfiTpmDeviceInstanceTpm12Guid
+                         );
     ASSERT_EFI_ERROR (Status);
   } else {
     Status = Tpm2RequestUseTpm ();
     if (!EFI_ERROR (Status)) {
       DEBUG ((DEBUG_INFO, "%a: TPM2 detected\n", __FUNCTION__));
-      Size = sizeof (gEfiTpmDeviceInstanceTpm20DtpmGuid);
+      Size   = sizeof (gEfiTpmDeviceInstanceTpm20DtpmGuid);
       Status = PcdSetPtrS (
-                 PcdTpmInstanceGuid,
-                 &Size,
-                 &gEfiTpmDeviceInstanceTpm20DtpmGuid
-                 );
+                           PcdTpmInstanceGuid,
+                           &Size,
+                           &gEfiTpmDeviceInstanceTpm20DtpmGuid
+                           );
       ASSERT_EFI_ERROR (Status);
     } else {
       DEBUG ((DEBUG_INFO, "%a: no TPM detected\n", __FUNCTION__));

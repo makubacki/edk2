@@ -36,16 +36,14 @@
 
 #include <Pi/PiStatusCode.h>
 
-
 //
 // Convenience variables for the status codes that are relevant for LoadImage()
 // and StartImage() preparations and return codes.
 //
-STATIC EFI_STATUS_CODE_VALUE mLoadPrep;
-STATIC EFI_STATUS_CODE_VALUE mLoadFail;
-STATIC EFI_STATUS_CODE_VALUE mStartPrep;
-STATIC EFI_STATUS_CODE_VALUE mStartFail;
-
+STATIC EFI_STATUS_CODE_VALUE  mLoadPrep;
+STATIC EFI_STATUS_CODE_VALUE  mLoadFail;
+STATIC EFI_STATUS_CODE_VALUE  mStartPrep;
+STATIC EFI_STATUS_CODE_VALUE  mStartFail;
 
 /**
   Handle status codes reported through ReportStatusCodeLib /
@@ -86,13 +84,13 @@ HandleStatusCode (
   IN EFI_STATUS_CODE_DATA  *Data
   )
 {
-  UINTN                        VariableSize;
-  UINT16                       BootCurrent;
-  EFI_STATUS                   Status;
-  CHAR16                       BootOptionName[ARRAY_SIZE (L"Boot####")];
-  EFI_BOOT_MANAGER_LOAD_OPTION BmBootOption;
-  BOOLEAN                      DevPathStringIsDynamic;
-  CHAR16                       *DevPathString;
+  UINTN                         VariableSize;
+  UINT16                        BootCurrent;
+  EFI_STATUS                    Status;
+  CHAR16                        BootOptionName[ARRAY_SIZE (L"Boot####")];
+  EFI_BOOT_MANAGER_LOAD_OPTION  BmBootOption;
+  BOOLEAN                       DevPathStringIsDynamic;
+  CHAR16                        *DevPathString;
 
   //
   // Ignore all status codes that are irrelevant for LoadImage() and
@@ -102,6 +100,7 @@ HandleStatusCode (
       Value != mStartPrep && Value != mStartFail) {
     return EFI_SUCCESS;
   }
+
   //
   // Ignore status codes that are not reported by the same containing module.
   //
@@ -117,8 +116,10 @@ HandleStatusCode (
        Data->HeaderSize != sizeof *Data ||
        Data->Size != sizeof (EFI_RETURN_STATUS_EXTENDED_DATA) - sizeof *Data ||
        !CompareGuid (&Data->Type, &gEfiStatusCodeSpecificDataGuid))) {
-    DEBUG ((DEBUG_ERROR, "%a:%a: malformed Data\n", gEfiCallerBaseName,
-      __FUNCTION__));
+    DEBUG (
+           (DEBUG_ERROR, "%a:%a: malformed Data\n", gEfiCallerBaseName,
+            __FUNCTION__)
+           );
     return EFI_INVALID_PARAMETER;
   }
 
@@ -126,33 +127,48 @@ HandleStatusCode (
   // Get the number of the Boot#### option that the status code applies to.
   //
   VariableSize = sizeof BootCurrent;
-  Status = gRT->GetVariable (EFI_BOOT_CURRENT_VARIABLE_NAME,
-                  &gEfiGlobalVariableGuid, NULL /* Attributes */,
-                  &VariableSize, &BootCurrent);
+  Status = gRT->GetVariable (
+                             EFI_BOOT_CURRENT_VARIABLE_NAME,
+                             &gEfiGlobalVariableGuid,
+                             NULL /* Attributes */,
+                             &VariableSize,
+                             &BootCurrent
+                             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a:%a: failed to get %g:\"%s\": %r\n",
-      gEfiCallerBaseName, __FUNCTION__, &gEfiGlobalVariableGuid,
-      EFI_BOOT_CURRENT_VARIABLE_NAME, Status));
+    DEBUG (
+           (DEBUG_ERROR, "%a:%a: failed to get %g:\"%s\": %r\n",
+            gEfiCallerBaseName, __FUNCTION__, &gEfiGlobalVariableGuid,
+            EFI_BOOT_CURRENT_VARIABLE_NAME, Status)
+           );
     return Status;
   }
+
   if (VariableSize != sizeof BootCurrent) {
-    DEBUG ((DEBUG_ERROR, "%a:%a: got %Lu bytes for %g:\"%s\", expected %Lu\n",
-      gEfiCallerBaseName, __FUNCTION__, (UINT64)VariableSize,
-      &gEfiGlobalVariableGuid, EFI_BOOT_CURRENT_VARIABLE_NAME,
-      (UINT64)sizeof BootCurrent));
+    DEBUG (
+           (DEBUG_ERROR, "%a:%a: got %Lu bytes for %g:\"%s\", expected %Lu\n",
+            gEfiCallerBaseName, __FUNCTION__, (UINT64) VariableSize,
+            &gEfiGlobalVariableGuid, EFI_BOOT_CURRENT_VARIABLE_NAME,
+            (UINT64) sizeof BootCurrent)
+           );
     return EFI_INCOMPATIBLE_VERSION;
   }
 
   //
   // Get the Boot#### option that the status code applies to.
   //
-  UnicodeSPrint (BootOptionName, sizeof BootOptionName, L"Boot%04x",
-    BootCurrent);
+  UnicodeSPrint (
+                 BootOptionName,
+                 sizeof BootOptionName,
+                 L"Boot%04x",
+                 BootCurrent
+                 );
   Status = EfiBootManagerVariableToLoadOption (BootOptionName, &BmBootOption);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR,
-      "%a:%a: EfiBootManagerVariableToLoadOption(\"%s\"): %r\n",
-      gEfiCallerBaseName, __FUNCTION__, BootOptionName, Status));
+    DEBUG (
+           (DEBUG_ERROR,
+            "%a:%a: EfiBootManagerVariableToLoadOption(\"%s\"): %r\n",
+            gEfiCallerBaseName, __FUNCTION__, BootOptionName, Status)
+           );
     return Status;
   }
 
@@ -161,10 +177,10 @@ HandleStatusCode (
   //
   DevPathStringIsDynamic = TRUE;
   DevPathString = ConvertDevicePathToText (
-                    BmBootOption.FilePath,
-                    FALSE,                 // DisplayOnly
-                    FALSE                  // AllowShortcuts
-                    );
+                                           BmBootOption.FilePath,
+                                           FALSE, // DisplayOnly
+                                           FALSE  // AllowShortcuts
+                                           );
   if (DevPathString == NULL) {
     DevPathStringIsDynamic = FALSE;
     DevPathString = L"<out of memory while formatting device path>";
@@ -175,23 +191,23 @@ HandleStatusCode (
   //
   if (Value == mLoadPrep || Value == mStartPrep) {
     Print (
-      L"%a: %a %s \"%s\" from %s\n",
-      gEfiCallerBaseName,
-      Value == mLoadPrep ? "loading" : "starting",
-      BootOptionName,
-      BmBootOption.Description,
-      DevPathString
-      );
+           L"%a: %a %s \"%s\" from %s\n",
+           gEfiCallerBaseName,
+           Value == mLoadPrep ? "loading" : "starting",
+           BootOptionName,
+           BmBootOption.Description,
+           DevPathString
+           );
   } else {
     Print (
-      L"%a: failed to %a %s \"%s\" from %s: %r\n",
-      gEfiCallerBaseName,
-      Value == mLoadFail ? "load" : "start",
-      BootOptionName,
-      BmBootOption.Description,
-      DevPathString,
-      ((EFI_RETURN_STATUS_EXTENDED_DATA *)Data)->ReturnStatus
-      );
+           L"%a: failed to %a %s \"%s\" from %s: %r\n",
+           gEfiCallerBaseName,
+           Value == mLoadFail ? "load" : "start",
+           BootOptionName,
+           BmBootOption.Description,
+           DevPathString,
+           ((EFI_RETURN_STATUS_EXTENDED_DATA *) Data)->ReturnStatus
+           );
   }
 
   //
@@ -200,10 +216,10 @@ HandleStatusCode (
   if (DevPathStringIsDynamic) {
     FreePool (DevPathString);
   }
+
   EfiBootManagerFreeLoadOption (&BmBootOption);
   return EFI_SUCCESS;
 }
-
 
 /**
   Unregister HandleStatusCode() at ExitBootServices().
@@ -223,12 +239,11 @@ UnregisterAtExitBootServices (
   IN VOID      *Context
   )
 {
-  EFI_RSC_HANDLER_PROTOCOL *StatusCodeRouter;
+  EFI_RSC_HANDLER_PROTOCOL  *StatusCodeRouter;
 
   StatusCodeRouter = Context;
   StatusCodeRouter->Unregister (HandleStatusCode);
 }
-
 
 /**
   Register a status code handler for printing the Boot Manager's LoadImage()
@@ -246,12 +261,15 @@ PlatformBmPrintScRegisterHandler (
   VOID
   )
 {
-  EFI_STATUS               Status;
-  EFI_RSC_HANDLER_PROTOCOL *StatusCodeRouter;
-  EFI_EVENT                ExitBootEvent;
+  EFI_STATUS                Status;
+  EFI_RSC_HANDLER_PROTOCOL  *StatusCodeRouter;
+  EFI_EVENT                 ExitBootEvent;
 
-  Status = gBS->LocateProtocol (&gEfiRscHandlerProtocolGuid,
-                  NULL /* Registration */, (VOID **)&StatusCodeRouter);
+  Status = gBS->LocateProtocol (
+                                &gEfiRscHandlerProtocolGuid,
+                                NULL /* Registration */,
+                                (VOID **) &StatusCodeRouter
+                                );
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
     return Status;
@@ -260,9 +278,9 @@ PlatformBmPrintScRegisterHandler (
   //
   // Set the EFI_STATUS_CODE_VALUE convenience variables.
   //
-  mLoadPrep  = PcdGet32 (PcdProgressCodeOsLoaderLoad);
-  mLoadFail  = (EFI_SOFTWARE_DXE_BS_DRIVER |
-                EFI_SW_DXE_BS_EC_BOOT_OPTION_LOAD_ERROR);
+  mLoadPrep = PcdGet32 (PcdProgressCodeOsLoaderLoad);
+  mLoadFail = (EFI_SOFTWARE_DXE_BS_DRIVER |
+               EFI_SW_DXE_BS_EC_BOOT_OPTION_LOAD_ERROR);
   mStartPrep = PcdGet32 (PcdProgressCodeOsLoaderStart);
   mStartFail = (EFI_SOFTWARE_DXE_BS_DRIVER |
                 EFI_SW_DXE_BS_EC_BOOT_OPTION_FAILED);
@@ -272,8 +290,10 @@ PlatformBmPrintScRegisterHandler (
   //
   Status = StatusCodeRouter->Register (HandleStatusCode, TPL_CALLBACK);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a:%a: failed to register status code handler: %r\n",
-      gEfiCallerBaseName, __FUNCTION__, Status));
+    DEBUG (
+           (DEBUG_ERROR, "%a:%a: failed to register status code handler: %r\n",
+            gEfiCallerBaseName, __FUNCTION__, Status)
+           );
     return Status;
   }
 
@@ -284,18 +304,20 @@ PlatformBmPrintScRegisterHandler (
   // Volume 3 of the Platform Init spec.)
   //
   Status = gBS->CreateEvent (
-                  EVT_SIGNAL_EXIT_BOOT_SERVICES, // Type
-                  TPL_CALLBACK,                  // NotifyTpl
-                  UnregisterAtExitBootServices,  // NotifyFunction
-                  StatusCodeRouter,              // NotifyContext
-                  &ExitBootEvent                 // Event
-                  );
+                             EVT_SIGNAL_EXIT_BOOT_SERVICES, // Type
+                             TPL_CALLBACK,                  // NotifyTpl
+                             UnregisterAtExitBootServices,  // NotifyFunction
+                             StatusCodeRouter,              // NotifyContext
+                             &ExitBootEvent                 // Event
+                             );
   if (EFI_ERROR (Status)) {
     //
     // We have to unregister the callback right now, and fail the function.
     //
-    DEBUG ((DEBUG_ERROR, "%a:%a: failed to create ExitBootServices() event: "
-      "%r\n", gEfiCallerBaseName, __FUNCTION__, Status));
+    DEBUG (
+           (DEBUG_ERROR, "%a:%a: failed to create ExitBootServices() event: "
+                         "%r\n", gEfiCallerBaseName, __FUNCTION__, Status)
+           );
     StatusCodeRouter->Unregister (HandleStatusCode);
     return Status;
   }

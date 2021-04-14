@@ -66,7 +66,7 @@ VmgExitHandleVc (
   if (SevEsData->VcCount > VMGEXIT_MAXIMUM_VC_COUNT) {
     VmgExitIssueAssert (SevEsData);
   } else if (SevEsData->VcCount > 1) {
-    UINTN  GhcbBackupSize;
+  UINTN  GhcbBackupSize;
 
     //
     // Be sure that the proper amount of pages are allocated
@@ -81,10 +81,10 @@ VmgExitHandleVc (
 
     //
     // Save the active GHCB to a backup page.
-    //   To access the correct backup page, increment the backup page pointer
-    //   based on the current VcCount.
+    // To access the correct backup page, increment the backup page pointer
+    // based on the current VcCount.
     //
-    GhcbBackup = (GHCB *) FixedPcdGet32 (PcdOvmfSecGhcbBackupBase);
+    GhcbBackup  = (GHCB *) FixedPcdGet32 (PcdOvmfSecGhcbBackupBase);
     GhcbBackup += (SevEsData->VcCount - 2);
 
     CopyMem (GhcbBackup, Ghcb, sizeof (*Ghcb));

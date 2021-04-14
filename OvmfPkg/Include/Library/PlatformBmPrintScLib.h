@@ -29,7 +29,7 @@
 EFI_STATUS
 EFIAPI
 PlatformBmPrintScRegisterHandler (
-  VOID
-  );
+                                  VOID
+                                  );
 
 #endif // __PLATFORM_BM_PRINT_SC_LIB__

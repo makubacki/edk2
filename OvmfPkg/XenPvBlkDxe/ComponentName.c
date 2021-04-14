@@ -14,8 +14,8 @@
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
 EFI_COMPONENT_NAME_PROTOCOL  gXenPvBlkDxeComponentName = {
-  (EFI_COMPONENT_NAME_GET_DRIVER_NAME)    XenPvBlkDxeComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME_GET_CONTROLLER_NAME)XenPvBlkDxeComponentNameGetControllerName,
+  (EFI_COMPONENT_NAME_GET_DRIVER_NAME) XenPvBlkDxeComponentNameGetDriverName,
+  (EFI_COMPONENT_NAME_GET_CONTROLLER_NAME) XenPvBlkDxeComponentNameGetControllerName,
   "eng"
 };
 
@@ -33,18 +33,18 @@ EFI_COMPONENT_NAME2_PROTOCOL  gXenPvBlkDxeComponentName2 = {
 /// Table of driver names
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
-EFI_UNICODE_STRING_TABLE mXenPvBlkDxeDriverNameTable[] = {
-  { "eng;en", (CHAR16 *)L"Xen PV Block Driver" },
-  { NULL, NULL }
+EFI_UNICODE_STRING_TABLE  mXenPvBlkDxeDriverNameTable[] = {
+  { "eng;en", (CHAR16 *) L"Xen PV Block Driver" },
+  { NULL,     NULL                              }
 };
 
 ///
 /// Table of controller names
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
-EFI_UNICODE_STRING_TABLE mXenPvBlkDxeControllerNameTable[] = {
-  { "eng;en", (CHAR16 *)L"Xen PV Block Device" },
-  { NULL, NULL }
+EFI_UNICODE_STRING_TABLE  mXenPvBlkDxeControllerNameTable[] = {
+  { "eng;en", (CHAR16 *) L"Xen PV Block Device" },
+  { NULL,     NULL                              }
 };
 
 /**
@@ -78,12 +78,12 @@ XenPvBlkDxeComponentNameGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mXenPvBlkDxeDriverNameTable,
-           DriverName,
-           (BOOLEAN)(This != &gXenPvBlkDxeComponentName2)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mXenPvBlkDxeDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This != &gXenPvBlkDxeComponentName2)
+                               );
 }
 
 /**
@@ -149,10 +149,10 @@ XenPvBlkDxeComponentNameGetControllerName (
   // Make sure this driver is currently managing ControllerHandle
   //
   Status = EfiTestManagedDevice (
-             ControllerHandle,
-             gXenPvBlkDxeDriverBinding.DriverBindingHandle,
-             &gXenBusProtocolGuid
-             );
+                                 ControllerHandle,
+                                 gXenPvBlkDxeDriverBinding.DriverBindingHandle,
+                                 &gXenBusProtocolGuid
+                                 );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -161,10 +161,10 @@ XenPvBlkDxeComponentNameGetControllerName (
   // Lookup name of controller specified by ControllerHandle
   //
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mXenPvBlkDxeControllerNameTable,
-           ControllerName,
-           (BOOLEAN)(This != &gXenPvBlkDxeComponentName2)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mXenPvBlkDxeControllerNameTable,
+                               ControllerName,
+                               (BOOLEAN) (This != &gXenPvBlkDxeComponentName2)
+                               );
 }

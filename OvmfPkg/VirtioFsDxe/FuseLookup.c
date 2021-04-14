@@ -55,18 +55,18 @@ VirtioFsFuseLookup (
   IN OUT VIRTIO_FS                          *VirtioFs,
   IN     UINT64                             DirNodeId,
   IN     CHAR8                              *Name,
-     OUT UINT64                             *NodeId,
-     OUT VIRTIO_FS_FUSE_ATTRIBUTES_RESPONSE *FuseAttr
+  OUT UINT64                             *NodeId,
+  OUT VIRTIO_FS_FUSE_ATTRIBUTES_RESPONSE *FuseAttr
   )
 {
-  VIRTIO_FS_FUSE_REQUEST        CommonReq;
-  VIRTIO_FS_IO_VECTOR           ReqIoVec[2];
-  VIRTIO_FS_SCATTER_GATHER_LIST ReqSgList;
-  VIRTIO_FS_FUSE_RESPONSE       CommonResp;
-  VIRTIO_FS_FUSE_NODE_RESPONSE  NodeResp;
-  VIRTIO_FS_IO_VECTOR           RespIoVec[3];
-  VIRTIO_FS_SCATTER_GATHER_LIST RespSgList;
-  EFI_STATUS                    Status;
+  VIRTIO_FS_FUSE_REQUEST         CommonReq;
+  VIRTIO_FS_IO_VECTOR            ReqIoVec[2];
+  VIRTIO_FS_SCATTER_GATHER_LIST  ReqSgList;
+  VIRTIO_FS_FUSE_RESPONSE        CommonResp;
+  VIRTIO_FS_FUSE_NODE_RESPONSE   NodeResp;
+  VIRTIO_FS_IO_VECTOR            RespIoVec[3];
+  VIRTIO_FS_SCATTER_GATHER_LIST  RespSgList;
+  EFI_STATUS                     Status;
 
   //
   // Set up the scatter-gather lists.
@@ -98,8 +98,13 @@ VirtioFsFuseLookup (
   //
   // Populate the common request header.
   //
-  Status = VirtioFsFuseNewRequest (VirtioFs, &CommonReq, ReqSgList.TotalSize,
-             VirtioFsFuseOpLookup, DirNodeId);
+  Status = VirtioFsFuseNewRequest (
+                                   VirtioFs,
+                                   &CommonReq,
+                                   ReqSgList.TotalSize,
+                                   VirtioFsFuseOpLookup,
+                                   DirNodeId
+                                   );
   if (EFI_ERROR (Status)) {
     goto Fail;
   }
@@ -118,22 +123,26 @@ VirtioFsFuseLookup (
   Status = VirtioFsFuseCheckResponse (&RespSgList, CommonReq.Unique, NULL);
   if (EFI_ERROR (Status)) {
     if (Status == EFI_DEVICE_ERROR) {
-      DEBUG ((
-        ((CommonResp.Error == VIRTIO_FS_FUSE_ERRNO_ENOENT) ?
-         DEBUG_VERBOSE :
-         DEBUG_ERROR),
-        "%a: Label=\"%s\" DirNodeId=%Lu Name=\"%a\" Errno=%d\n",
-        __FUNCTION__,
-        VirtioFs->Label,
-        DirNodeId,
-        Name,
-        CommonResp.Error
-        ));
+      DEBUG (
+             (
+              ((CommonResp.Error == VIRTIO_FS_FUSE_ERRNO_ENOENT) ?
+               DEBUG_VERBOSE :
+               DEBUG_ERROR),
+              "%a: Label=\"%s\" DirNodeId=%Lu Name=\"%a\" Errno=%d\n",
+              __FUNCTION__,
+              VirtioFs->Label,
+              DirNodeId,
+              Name,
+              CommonResp.Error
+             )
+             );
       if (CommonResp.Error == VIRTIO_FS_FUSE_ERRNO_ENOENT) {
         return EFI_NOT_FOUND;
       }
+
       Status = VirtioFsErrnoToEfiStatus (CommonResp.Error);
     }
+
     goto Fail;
   }
 

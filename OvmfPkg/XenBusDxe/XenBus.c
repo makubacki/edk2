@@ -26,9 +26,9 @@
 
 #include <IndustryStandard/Xen/io/xenbus.h>
 
-STATIC XENBUS_PRIVATE_DATA gXenBusPrivateData;
+STATIC XENBUS_PRIVATE_DATA  gXenBusPrivateData;
 
-STATIC XENBUS_DEVICE_PATH gXenBusDevicePathTemplate = {
+STATIC XENBUS_DEVICE_PATH  gXenBusDevicePathTemplate = {
   {                                                 // Vendor
     {                                               // Vendor.Header
       HARDWARE_DEVICE_PATH,                         // Vendor.Header.Type
@@ -43,7 +43,6 @@ STATIC XENBUS_DEVICE_PATH gXenBusDevicePathTemplate = {
   0,                                                // Type
   0                                                 // DeviceId
 };
-
 
 /**
   Search our internal record of configured devices (not the XenStore) to
@@ -61,9 +60,9 @@ XenBusDeviceInitialized (
   IN CONST CHAR8 *Node
   )
 {
-  LIST_ENTRY *Entry;
-  XENBUS_PRIVATE_DATA *Child;
-  XENBUS_PRIVATE_DATA *Result;
+  LIST_ENTRY           *Entry;
+  XENBUS_PRIVATE_DATA  *Child;
+  XENBUS_PRIVATE_DATA  *Result;
 
   if (IsListEmpty (&Dev->ChildList)) {
     return NULL;
@@ -83,17 +82,40 @@ XenBusDeviceInitialized (
   return (Result);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 XenbusState
 XenBusReadDriverState (
   IN CONST CHAR8 *Path
   )
 {
-  XenbusState State;
-  CHAR8 *Ptr = NULL;
-  XENSTORE_STATUS Status;
+  XenbusState      State;
+  CHAR8            *Ptr = NULL;
+  XENSTORE_STATUS  Status;
 
-  Status = XenStoreRead (XST_NIL, Path, "state", NULL, (VOID **)&Ptr);
+  Status = XenStoreRead (XST_NIL, Path, "state", NULL, (VOID **) &Ptr);
   if (Status != XENSTORE_STATUS_SUCCESS) {
     State = XenbusStateClosed;
   } else {
@@ -115,22 +137,28 @@ EFI_STATUS
 XenBusAddDevice (
   XENBUS_DEVICE *Dev,
   CONST CHAR8 *Type,
-  CONST CHAR8 *Id)
+  CONST CHAR8 *Id
+  )
 {
-  CHAR8 DevicePath[XENSTORE_ABS_PATH_MAX];
-  XENSTORE_STATUS StatusXenStore;
-  XENBUS_PRIVATE_DATA *Private;
-  EFI_STATUS Status;
-  XENBUS_DEVICE_PATH *TempXenBusPath;
-  VOID *ChildXenIo;
+  CHAR8                DevicePath[XENSTORE_ABS_PATH_MAX];
+  XENSTORE_STATUS      StatusXenStore;
+  XENBUS_PRIVATE_DATA  *Private;
+  EFI_STATUS           Status;
+  XENBUS_DEVICE_PATH   *TempXenBusPath;
+  VOID                 *ChildXenIo;
 
-  AsciiSPrint (DevicePath, sizeof (DevicePath),
-               "device/%a/%a", Type, Id);
+  AsciiSPrint (
+               DevicePath,
+               sizeof (DevicePath),
+               "device/%a/%a",
+               Type,
+               Id
+               );
 
   if (XenStorePathExists (XST_NIL, DevicePath, "")) {
-    XENBUS_PRIVATE_DATA *Child;
-    enum xenbus_state State;
-    CHAR8 *BackendPath;
+  XENBUS_PRIVATE_DATA  *Child;
+    enum xenbus_state  State;
+    CHAR8              *BackendPath;
 
     Child = XenBusDeviceInitialized (Dev, DevicePath);
     if (Child != NULL) {
@@ -148,14 +176,21 @@ XenBusAddDevice (
        * happen if a device is going away after
        * switching to Closed.
        */
-      DEBUG ((DEBUG_INFO, "XenBus: Device %a ignored. "
-              "State %d\n", DevicePath, State));
+      DEBUG (
+             (DEBUG_INFO, "XenBus: Device %a ignored. "
+                          "State %d\n", DevicePath, State)
+             );
       Status = EFI_SUCCESS;
       goto out;
     }
 
-    StatusXenStore = XenStoreRead (XST_NIL, DevicePath, "backend",
-                                   NULL, (VOID **) &BackendPath);
+    StatusXenStore = XenStoreRead (
+                                   XST_NIL,
+                                   DevicePath,
+                                   "backend",
+                                   NULL,
+                                   (VOID **) &BackendPath
+                                   );
     if (StatusXenStore != XENSTORE_STATUS_SUCCESS) {
       DEBUG ((DEBUG_ERROR, "xenbus: %a no backend path.\n", DevicePath));
       Status = EFI_NOT_FOUND;
@@ -163,42 +198,54 @@ XenBusAddDevice (
     }
 
     Private = AllocateCopyPool (sizeof (*Private), &gXenBusPrivateData);
-    Private->XenBusIo.Type = AsciiStrDup (Type);
-    Private->XenBusIo.Node = AsciiStrDup (DevicePath);
-    Private->XenBusIo.Backend = BackendPath;
-    Private->XenBusIo.DeviceId = (UINT16)AsciiStrDecimalToUintn (Id);
+    Private->XenBusIo.Type     = AsciiStrDup (Type);
+    Private->XenBusIo.Node     = AsciiStrDup (DevicePath);
+    Private->XenBusIo.Backend  = BackendPath;
+    Private->XenBusIo.DeviceId = (UINT16) AsciiStrDecimalToUintn (Id);
     Private->Dev = Dev;
 
-    TempXenBusPath = AllocateCopyPool (sizeof (XENBUS_DEVICE_PATH),
-                                       &gXenBusDevicePathTemplate);
+    TempXenBusPath = AllocateCopyPool (
+                                       sizeof (XENBUS_DEVICE_PATH),
+                                       &gXenBusDevicePathTemplate
+                                       );
     if (!AsciiStrCmp (Private->XenBusIo.Type, "vbd")) {
       TempXenBusPath->Type = XENBUS_DEVICE_PATH_TYPE_VBD;
     }
+
     TempXenBusPath->DeviceId = Private->XenBusIo.DeviceId;
-    Private->DevicePath = (XENBUS_DEVICE_PATH *)AppendDevicePathNode (
-                            Dev->DevicePath,
-                            &TempXenBusPath->Vendor.Header);
+    Private->DevicePath = (XENBUS_DEVICE_PATH *) AppendDevicePathNode (
+                                                                       Dev->DevicePath,
+                                                                       &TempXenBusPath->Vendor.Header
+                                                                       );
     FreePool (TempXenBusPath);
 
     InsertTailList (&Dev->ChildList, &Private->Link);
 
     Status = gBS->InstallMultipleProtocolInterfaces (
-               &Private->Handle,
-               &gEfiDevicePathProtocolGuid, Private->DevicePath,
-               &gXenBusProtocolGuid, &Private->XenBusIo,
-               NULL);
+                                                     &Private->Handle,
+                                                     &gEfiDevicePathProtocolGuid,
+                                                     Private->DevicePath,
+                                                     &gXenBusProtocolGuid,
+                                                     &Private->XenBusIo,
+                                                     NULL
+                                                     );
     if (EFI_ERROR (Status)) {
       goto ErrorInstallProtocol;
     }
 
-    Status = gBS->OpenProtocol (Dev->ControllerHandle,
-               &gXenIoProtocolGuid,
-               &ChildXenIo, Dev->This->DriverBindingHandle,
-               Private->Handle,
-               EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER);
+    Status = gBS->OpenProtocol (
+                                Dev->ControllerHandle,
+                                &gXenIoProtocolGuid,
+                                &ChildXenIo,
+                                Dev->This->DriverBindingHandle,
+                                Private->Handle,
+                                EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+                                );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "open by child controller fail (%r)\n",
-              Status));
+      DEBUG (
+             (DEBUG_ERROR, "open by child controller fail (%r)\n",
+              Status)
+             );
       goto ErrorOpenProtocolByChild;
     }
   } else {
@@ -210,10 +257,13 @@ XenBusAddDevice (
 
 ErrorOpenProtocolByChild:
   gBS->UninstallMultipleProtocolInterfaces (
-    Private->Handle,
-    &gEfiDevicePathProtocolGuid, Private->DevicePath,
-    &gXenBusProtocolGuid, &Private->XenBusIo,
-    NULL);
+                                            Private->Handle,
+                                            &gEfiDevicePathProtocolGuid,
+                                            Private->DevicePath,
+                                            &gXenBusProtocolGuid,
+                                            &Private->XenBusIo,
+                                            NULL
+                                            );
 ErrorInstallProtocol:
   RemoveEntryList (&Private->Link);
   FreePool (Private->DevicePath);
@@ -243,24 +293,28 @@ XenBusEnumerateDeviceType (
   CONST CHAR8 *Type
   )
 {
-  CONST CHAR8 **Directory;
-  UINTN Index;
-  UINT32 Count;
-  XENSTORE_STATUS Status;
+  CONST CHAR8      **Directory;
+  UINTN            Index;
+  UINT32           Count;
+  XENSTORE_STATUS  Status;
 
-  Status = XenStoreListDirectory (XST_NIL,
-                                  "device", Type,
-                                  &Count, &Directory);
+  Status = XenStoreListDirectory (
+                                  XST_NIL,
+                                  "device",
+                                  Type,
+                                  &Count,
+                                  &Directory
+                                  );
   if (Status != XENSTORE_STATUS_SUCCESS) {
     return;
   }
+
   for (Index = 0; Index < Count; Index++) {
     XenBusAddDevice (Dev, Type, Directory[Index]);
   }
 
-  FreePool ((VOID*)Directory);
+  FreePool ((VOID *) Directory);
 }
-
 
 /**
   Enumerate the devices on a XenBus bus and install a XenBus Protocol instance.
@@ -278,14 +332,18 @@ XenBusEnumerateBus (
   XENBUS_DEVICE *Dev
   )
 {
-  CONST CHAR8 **Types;
-  UINTN Index;
-  UINT32 Count;
-  XENSTORE_STATUS Status;
+  CONST CHAR8      **Types;
+  UINTN            Index;
+  UINT32           Count;
+  XENSTORE_STATUS  Status;
 
-  Status = XenStoreListDirectory (XST_NIL,
-                                  "device", "",
-                                  &Count, &Types);
+  Status = XenStoreListDirectory (
+                                  XST_NIL,
+                                  "device",
+                                  "",
+                                  &Count,
+                                  &Types
+                                  );
   if (Status != XENSTORE_STATUS_SUCCESS) {
     return Status;
   }
@@ -294,11 +352,34 @@ XenBusEnumerateBus (
     XenBusEnumerateDeviceType (Dev, Types[Index]);
   }
 
-  FreePool ((VOID*)Types);
+  FreePool ((VOID *) Types);
 
   return XENSTORE_STATUS_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 XENSTORE_STATUS
 EFIAPI
@@ -308,16 +389,17 @@ XenBusSetState (
   IN enum xenbus_state    NewState
   )
 {
-  enum xenbus_state CurrentState;
-  XENSTORE_STATUS Status;
-  CHAR8 *Temp;
+  enum xenbus_state  CurrentState;
+  XENSTORE_STATUS    Status;
+  CHAR8              *Temp;
 
   DEBUG ((DEBUG_INFO, "XenBus: Set state to %d\n", NewState));
 
-  Status = XenStoreRead (Transaction, This->Node, "state", NULL, (VOID **)&Temp);
+  Status = XenStoreRead (Transaction, This->Node, "state", NULL, (VOID **) &Temp);
   if (Status != XENSTORE_STATUS_SUCCESS) {
     goto Out;
   }
+
   CurrentState = AsciiStrDecimalToUintn (Temp);
   FreePool (Temp);
   if (CurrentState == NewState) {
@@ -327,17 +409,19 @@ XenBusSetState (
   do {
     Status = XenStoreSPrint (Transaction, This->Node, "state", "%d", NewState);
   } while (Status == XENSTORE_STATUS_EAGAIN);
+
   if (Status != XENSTORE_STATUS_SUCCESS) {
     DEBUG ((DEBUG_ERROR, "XenBus: failed to write new state\n"));
     goto Out;
   }
+
   DEBUG ((DEBUG_INFO, "XenBus: Set state to %d, done\n", NewState));
 
 Out:
   return Status;
 }
 
-STATIC XENBUS_PRIVATE_DATA gXenBusPrivateData = {
+STATIC XENBUS_PRIVATE_DATA  gXenBusPrivateData = {
   XENBUS_PRIVATE_DATA_SIGNATURE,    // Signature
   { NULL, NULL },                   // Link
   NULL,                             // Handle

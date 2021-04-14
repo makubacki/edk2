@@ -20,18 +20,41 @@
 
 #include "GrantTable.h"
 
-#define NR_RESERVED_ENTRIES 8
+#define NR_RESERVED_ENTRIES  8
 
-#define NR_GRANT_FRAMES (FixedPcdGet32 (PcdXenGrantFrames))
-#define NR_GRANT_ENTRIES (NR_GRANT_FRAMES * EFI_PAGE_SIZE / sizeof(grant_entry_v1_t))
+#define NR_GRANT_FRAMES   (FixedPcdGet32 (PcdXenGrantFrames))
+#define NR_GRANT_ENTRIES  (NR_GRANT_FRAMES * EFI_PAGE_SIZE / sizeof (grant_entry_v1_t))
 
-STATIC grant_entry_v1_t *GrantTable = NULL;
-STATIC grant_ref_t GrantList[NR_GRANT_ENTRIES];
-STATIC EFI_LOCK mGrantListLock;
+STATIC grant_entry_v1_t  *GrantTable = NULL;
+STATIC grant_ref_t       GrantList[NR_GRANT_ENTRIES];
+STATIC EFI_LOCK          mGrantListLock;
 #ifdef GNT_DEBUG
-STATIC BOOLEAN GrantInUseList[NR_GRANT_ENTRIES];
+  STATIC BOOLEAN  GrantInUseList[NR_GRANT_ENTRIES];
 #endif
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 VOID
 XenGrantTablePutFreeEntry (
@@ -39,35 +62,81 @@ XenGrantTablePutFreeEntry (
   )
 {
   EfiAcquireLock (&mGrantListLock);
-#ifdef GNT_DEBUG
-  ASSERT (GrantInUseList[Ref]);
-  GrantInUseList[Ref] = FALSE;
-#endif
+ #ifdef GNT_DEBUG
+    ASSERT (GrantInUseList[Ref]);
+    GrantInUseList[Ref] = FALSE;
+ #endif
   GrantList[Ref] = GrantList[0];
-  GrantList[0] = Ref;
+  GrantList[0]   = Ref;
   EfiReleaseLock (&mGrantListLock);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 grant_ref_t
 XenGrantTableGetFreeEntry (
   VOID
   )
 {
-  grant_ref_t Ref;
+  grant_ref_t  Ref;
 
   EfiAcquireLock (&mGrantListLock);
   Ref = GrantList[0];
   ASSERT (Ref >= NR_RESERVED_ENTRIES && Ref < NR_GRANT_ENTRIES);
   GrantList[0] = GrantList[Ref];
-#ifdef GNT_DEBUG
-  ASSERT (!GrantInUseList[Ref]);
-  GrantInUseList[Ref] = TRUE;
-#endif
+ #ifdef GNT_DEBUG
+    ASSERT (!GrantInUseList[Ref]);
+    GrantInUseList[Ref] = TRUE;
+ #endif
   EfiReleaseLock (&mGrantListLock);
   return Ref;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 grant_ref_t
 XenGrantTableGrantAccess (
@@ -76,30 +145,54 @@ XenGrantTableGrantAccess (
   IN BOOLEAN  ReadOnly
   )
 {
-  grant_ref_t Ref;
-  UINT16 Flags;
+  grant_ref_t  Ref;
+  UINT16       Flags;
 
   ASSERT (GrantTable != NULL);
   Ref = XenGrantTableGetFreeEntry ();
-  GrantTable[Ref].frame = (UINT32)Frame;
+  GrantTable[Ref].frame = (UINT32) Frame;
   GrantTable[Ref].domid = DomainId;
   MemoryFence ();
   Flags = GTF_permit_access;
   if (ReadOnly) {
     Flags |= GTF_readonly;
   }
+
   GrantTable[Ref].flags = Flags;
 
   return Ref;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 XenGrantTableEndAccess (
   grant_ref_t Ref
   )
 {
-  UINT16 Flags, OldFlags;
+  UINT16  Flags, OldFlags;
 
   ASSERT (GrantTable != NULL);
   ASSERT (Ref >= NR_RESERVED_ENTRIES && Ref < NR_GRANT_ENTRIES);
@@ -110,6 +203,7 @@ XenGrantTableEndAccess (
       DEBUG ((DEBUG_WARN, "WARNING: g.e. still in use! (%x)\n", Flags));
       return EFI_NOT_READY;
     }
+
     OldFlags = InterlockedCompareExchange16 (&GrantTable[Ref].flags, Flags, 0);
   } while (OldFlags != Flags);
 
@@ -117,45 +211,93 @@ XenGrantTableEndAccess (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 XenGrantTableInit (
   IN XENBUS_DEVICE  *Dev
   )
 {
-  xen_add_to_physmap_t Parameters;
-  INTN Index;
-  INTN ReturnCode;
+  xen_add_to_physmap_t  Parameters;
+  INTN                  Index;
+  INTN                  ReturnCode;
 
-#ifdef GNT_DEBUG
-  SetMem(GrantInUseList, sizeof (GrantInUseList), 1);
-#endif
+ #ifdef GNT_DEBUG
+    SetMem (GrantInUseList, sizeof (GrantInUseList), 1);
+ #endif
   EfiInitializeLock (&mGrantListLock, TPL_NOTIFY);
   for (Index = NR_RESERVED_ENTRIES; Index < NR_GRANT_ENTRIES; Index++) {
-    XenGrantTablePutFreeEntry ((grant_ref_t)Index);
+    XenGrantTablePutFreeEntry ((grant_ref_t) Index);
   }
 
-  GrantTable = (VOID*)(UINTN) Dev->XenIo->GrantTableAddress;
+  GrantTable = (VOID *) (UINTN) Dev->XenIo->GrantTableAddress;
   for (Index = 0; Index < NR_GRANT_FRAMES; Index++) {
     Parameters.domid = DOMID_SELF;
-    Parameters.idx = Index;
+    Parameters.idx   = Index;
     Parameters.space = XENMAPSPACE_grant_table;
-    Parameters.gpfn = (xen_pfn_t) ((UINTN) GrantTable >> EFI_PAGE_SHIFT) + Index;
+    Parameters.gpfn  = (xen_pfn_t) ((UINTN) GrantTable >> EFI_PAGE_SHIFT) + Index;
     ReturnCode = XenHypercallMemoryOp (XENMEM_add_to_physmap, &Parameters);
     if (ReturnCode != 0) {
-      DEBUG ((DEBUG_ERROR,
-        "Xen GrantTable, add_to_physmap hypercall error: %Ld\n",
-        (INT64)ReturnCode));
+      DEBUG (
+             (DEBUG_ERROR,
+              "Xen GrantTable, add_to_physmap hypercall error: %Ld\n",
+              (INT64) ReturnCode)
+             );
     }
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 XenGrantTableDeinit (
   XENBUS_DEVICE *Dev
   )
 {
-  INTN ReturnCode, Index;
-  xen_remove_from_physmap_t Parameters;
+  INTN                       ReturnCode, Index;
+  xen_remove_from_physmap_t  Parameters;
 
   if (GrantTable == NULL) {
     return;
@@ -163,19 +305,47 @@ XenGrantTableDeinit (
 
   for (Index = NR_GRANT_FRAMES - 1; Index >= 0; Index--) {
     Parameters.domid = DOMID_SELF;
-    Parameters.gpfn = (xen_pfn_t) ((UINTN) GrantTable >> EFI_PAGE_SHIFT) + Index;
-    DEBUG ((DEBUG_INFO, "Xen GrantTable, removing %Lx\n",
-      (UINT64)Parameters.gpfn));
+    Parameters.gpfn  = (xen_pfn_t) ((UINTN) GrantTable >> EFI_PAGE_SHIFT) + Index;
+    DEBUG (
+           (DEBUG_INFO, "Xen GrantTable, removing %Lx\n",
+            (UINT64) Parameters.gpfn)
+           );
     ReturnCode = XenHypercallMemoryOp (XENMEM_remove_from_physmap, &Parameters);
     if (ReturnCode != 0) {
-      DEBUG ((DEBUG_ERROR,
-        "Xen GrantTable, remove_from_physmap hypercall error: %Ld\n",
-        (INT64)ReturnCode));
+      DEBUG (
+             (DEBUG_ERROR,
+              "Xen GrantTable, remove_from_physmap hypercall error: %Ld\n",
+              (INT64) ReturnCode)
+             );
     }
   }
+
   GrantTable = NULL;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 XenBusGrantAccess (
@@ -190,6 +360,29 @@ XenBusGrantAccess (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 XenBusGrantEndAccess (

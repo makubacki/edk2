@@ -19,14 +19,14 @@
 //
 // VirtIo Specification Revision: Major[31:24].Minor[23:16].Revision[15:0]
 //
-#define VIRTIO_SPEC_REVISION(major,minor,revision) \
+#define VIRTIO_SPEC_REVISION(major, minor, revision) \
   ((((major) & 0xFF) << 24) | (((minor) & 0xFF) << 16) | ((revision) & 0xFFFF))
 
-#define VIRTIO_DEVICE_PROTOCOL_GUID { \
-  0xfa920010, 0x6785, 0x4941, {0xb6, 0xec, 0x49, 0x8c, 0x57, 0x9f, 0x16, 0x0a }\
-  }
+#define VIRTIO_DEVICE_PROTOCOL_GUID  { \
+    0xfa920010, 0x6785, 0x4941, { 0xb6, 0xec, 0x49, 0x8c, 0x57, 0x9f, 0x16, 0x0a } \
+}
 
-typedef struct _VIRTIO_DEVICE_PROTOCOL  VIRTIO_DEVICE_PROTOCOL;
+typedef struct _VIRTIO_DEVICE_PROTOCOL VIRTIO_DEVICE_PROTOCOL;
 
 //
 // VIRTIO Operation for VIRTIO_MAP_SHARED
@@ -71,14 +71,14 @@ typedef enum {
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *VIRTIO_DEVICE_READ) (
-  IN  VIRTIO_DEVICE_PROTOCOL *This,
-  IN  UINTN                  FieldOffset,
-  IN  UINTN                  FieldSize,
-  IN  UINTN                  BufferSize,
-  OUT VOID                   *Buffer
-  );
+  EFI_STATUS
+(EFIAPI *VIRTIO_DEVICE_READ)(
+                             IN  VIRTIO_DEVICE_PROTOCOL *This,
+                             IN  UINTN                  FieldOffset,
+                             IN  UINTN                  FieldSize,
+                             IN  UINTN                  BufferSize,
+                             OUT VOID                   *Buffer
+                             );
 
 /**
 
@@ -102,13 +102,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *VIRTIO_DEVICE_WRITE) (
-  IN VIRTIO_DEVICE_PROTOCOL *This,
-  IN UINTN                  FieldOffset,
-  IN UINTN                  FieldSize,
-  IN UINT64                 Value
-  );
+  EFI_STATUS
+(EFIAPI *VIRTIO_DEVICE_WRITE)(
+                              IN VIRTIO_DEVICE_PROTOCOL *This,
+                              IN UINTN                  FieldOffset,
+                              IN UINTN                  FieldSize,
+                              IN UINT64                 Value
+                              );
 
 /**
   Read the device features field from the Virtio Header.
@@ -123,11 +123,11 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER   DeviceFeatures is NULL
 **/
 typedef
-EFI_STATUS
-(EFIAPI *VIRTIO_GET_DEVICE_FEATURES) (
-  IN VIRTIO_DEVICE_PROTOCOL *This,
-  OUT UINT64                *DeviceFeatures
-  );
+  EFI_STATUS
+(EFIAPI *VIRTIO_GET_DEVICE_FEATURES)(
+                                     IN VIRTIO_DEVICE_PROTOCOL *This,
+                                     OUT UINT64                *DeviceFeatures
+                                     );
 
 /**
   Write the guest features field in the Virtio Header.
@@ -138,11 +138,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *VIRTIO_SET_GUEST_FEATURES) (
-  IN VIRTIO_DEVICE_PROTOCOL  *This,
-  IN UINT64                   Features
-  );
+  EFI_STATUS
+(EFIAPI *VIRTIO_SET_GUEST_FEATURES)(
+                                    IN VIRTIO_DEVICE_PROTOCOL  *This,
+                                    IN UINT64                   Features
+                                    );
 
 /**
   Write the queue address field(s) in the Virtio Header.
@@ -171,12 +171,12 @@ EFI_STATUS
                               provided address offset and write size.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *VIRTIO_SET_QUEUE_ADDRESS) (
-  IN VIRTIO_DEVICE_PROTOCOL  *This,
-  IN VRING                   *Ring,
-  IN UINT64                  RingBaseShift
-  );
+  EFI_STATUS
+(EFIAPI *VIRTIO_SET_QUEUE_ADDRESS)(
+                                   IN VIRTIO_DEVICE_PROTOCOL  *This,
+                                   IN VRING                   *Ring,
+                                   IN UINT64                  RingBaseShift
+                                   );
 
 /**
 
@@ -194,11 +194,11 @@ EFI_STATUS
                               provided address offset and write size.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *VIRTIO_SET_QUEUE_SEL) (
-  IN VIRTIO_DEVICE_PROTOCOL  *This,
-  IN UINT16                   Index
-  );
+  EFI_STATUS
+(EFIAPI *VIRTIO_SET_QUEUE_SEL)(
+                               IN VIRTIO_DEVICE_PROTOCOL  *This,
+                               IN UINT16                   Index
+                               );
 
 /**
 
@@ -213,11 +213,11 @@ EFI_STATUS
                               provided address offset and write size.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *VIRTIO_SET_QUEUE_NOTIFY) (
-  IN VIRTIO_DEVICE_PROTOCOL  *This,
-  IN UINT16                   Index
-  );
+  EFI_STATUS
+(EFIAPI *VIRTIO_SET_QUEUE_NOTIFY)(
+                                  IN VIRTIO_DEVICE_PROTOCOL  *This,
+                                  IN UINT16                   Index
+                                  );
 
 /**
   Write the queue alignment field in the Virtio Header.
@@ -238,11 +238,11 @@ EFI_STATUS
                               provided address offset and write size.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *VIRTIO_SET_QUEUE_ALIGN) (
-  IN VIRTIO_DEVICE_PROTOCOL  *This,
-  IN UINT32                   Alignment
-  );
+  EFI_STATUS
+(EFIAPI *VIRTIO_SET_QUEUE_ALIGN)(
+                                 IN VIRTIO_DEVICE_PROTOCOL  *This,
+                                 IN UINT32                   Alignment
+                                 );
 
 /**
   Write the guest page size.
@@ -260,11 +260,11 @@ EFI_STATUS
                               provided address offset and write size.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *VIRTIO_SET_PAGE_SIZE) (
-  IN VIRTIO_DEVICE_PROTOCOL  *This,
-  IN UINT32                   PageSize
-  );
+  EFI_STATUS
+(EFIAPI *VIRTIO_SET_PAGE_SIZE)(
+                               IN VIRTIO_DEVICE_PROTOCOL  *This,
+                               IN UINT32                   PageSize
+                               );
 
 /**
 
@@ -283,11 +283,11 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER   QueueNumMax is NULL
 **/
 typedef
-EFI_STATUS
-(EFIAPI *VIRTIO_GET_QUEUE_NUM_MAX) (
-  IN  VIRTIO_DEVICE_PROTOCOL  *This,
-  OUT UINT16                  *QueueNumMax
-  );
+  EFI_STATUS
+(EFIAPI *VIRTIO_GET_QUEUE_NUM_MAX)(
+                                   IN  VIRTIO_DEVICE_PROTOCOL  *This,
+                                   OUT UINT16                  *QueueNumMax
+                                   );
 
 /**
 
@@ -305,11 +305,11 @@ EFI_STATUS
                               provided address offset and write size.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *VIRTIO_SET_QUEUE_NUM) (
-  IN VIRTIO_DEVICE_PROTOCOL  *This,
-  IN UINT16                   QueueSize
-  );
+  EFI_STATUS
+(EFIAPI *VIRTIO_SET_QUEUE_NUM)(
+                               IN VIRTIO_DEVICE_PROTOCOL  *This,
+                               IN UINT16                   QueueSize
+                               );
 
 /**
 
@@ -325,11 +325,11 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER   DeviceStatus is NULL
 **/
 typedef
-EFI_STATUS
-(EFIAPI *VIRTIO_GET_DEVICE_STATUS) (
-  IN  VIRTIO_DEVICE_PROTOCOL  *This,
-  OUT UINT8                   *DeviceStatus
-  );
+  EFI_STATUS
+(EFIAPI *VIRTIO_GET_DEVICE_STATUS)(
+                                   IN  VIRTIO_DEVICE_PROTOCOL  *This,
+                                   OUT UINT8                   *DeviceStatus
+                                   );
 
 /**
 
@@ -344,11 +344,11 @@ EFI_STATUS
                               provided address offset and write size.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *VIRTIO_SET_DEVICE_STATUS) (
-  IN VIRTIO_DEVICE_PROTOCOL  *This,
-  IN UINT8                   DeviceStatus
-  );
+  EFI_STATUS
+(EFIAPI *VIRTIO_SET_DEVICE_STATUS)(
+                                   IN VIRTIO_DEVICE_PROTOCOL  *This,
+                                   IN UINT8                   DeviceStatus
+                                   );
 
 /**
 
@@ -370,12 +370,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *VIRTIO_ALLOCATE_SHARED)(
-  IN     VIRTIO_DEVICE_PROTOCOL                   *This,
-  IN     UINTN                                    Pages,
-  IN OUT VOID                                     **HostAddress
-  );
+                                 IN     VIRTIO_DEVICE_PROTOCOL                   *This,
+                                 IN     UINTN                                    Pages,
+                                 IN OUT VOID                                     **HostAddress
+                                 );
 
 /**
   Frees memory that was allocated with VIRTIO_ALLOCATE_SHARED.
@@ -389,12 +389,12 @@ EFI_STATUS
 
 **/
 typedef
-VOID
+  VOID
 (EFIAPI *VIRTIO_FREE_SHARED)(
-  IN  VIRTIO_DEVICE_PROTOCOL                   *This,
-  IN  UINTN                                    Pages,
-  IN  VOID                                     *HostAddress
-  );
+                             IN  VIRTIO_DEVICE_PROTOCOL                   *This,
+                             IN  UINTN                                    Pages,
+                             IN  VOID                                     *HostAddress
+                             );
 
 /**
   Provides the virtio device address required to access system memory from a
@@ -433,15 +433,15 @@ VOID
 **/
 
 typedef
-EFI_STATUS
-(EFIAPI *VIRTIO_MAP_SHARED) (
-  IN     VIRTIO_DEVICE_PROTOCOL       *This,
-  IN     VIRTIO_MAP_OPERATION         Operation,
-  IN     VOID                         *HostAddress,
-  IN OUT UINTN                        *NumberOfBytes,
-  OUT    EFI_PHYSICAL_ADDRESS         *DeviceAddress,
-  OUT    VOID                         **Mapping
-  );
+  EFI_STATUS
+(EFIAPI *VIRTIO_MAP_SHARED)(
+                            IN     VIRTIO_DEVICE_PROTOCOL       *This,
+                            IN     VIRTIO_MAP_OPERATION         Operation,
+                            IN     VOID                         *HostAddress,
+                            IN OUT UINTN                        *NumberOfBytes,
+                            OUT    EFI_PHYSICAL_ADDRESS         *DeviceAddress,
+                            OUT    VOID                         **Mapping
+                            );
 
 /**
   Completes the VIRTIO_MAP_SHARED operation and releases any corresponding
@@ -460,61 +460,61 @@ EFI_STATUS
                                  system memory.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *VIRTIO_UNMAP_SHARED)(
-  IN  VIRTIO_DEVICE_PROTOCOL    *This,
-  IN  VOID                      *Mapping
-  );
+                              IN  VIRTIO_DEVICE_PROTOCOL    *This,
+                              IN  VOID                      *Mapping
+                              );
 
 ///
-///  This protocol provides an abstraction over the VirtIo transport layer
+/// This protocol provides an abstraction over the VirtIo transport layer
 ///
-///  DISCLAIMER: this protocol is a work in progress, and should not be used
-///  outside of the EDK II tree.
+/// DISCLAIMER: this protocol is a work in progress, and should not be used
+/// outside of the EDK II tree.
 ///
 struct _VIRTIO_DEVICE_PROTOCOL {
   //
   // VirtIo Specification Revision encoded with VIRTIO_SPEC_REVISION()
   //
-  UINT32                      Revision;
+  UINT32                        Revision;
   //
   // From the Virtio Spec
   //
-  INT32                       SubSystemDeviceId;
+  INT32                         SubSystemDeviceId;
 
-  VIRTIO_GET_DEVICE_FEATURES  GetDeviceFeatures;
-  VIRTIO_SET_GUEST_FEATURES   SetGuestFeatures;
+  VIRTIO_GET_DEVICE_FEATURES    GetDeviceFeatures;
+  VIRTIO_SET_GUEST_FEATURES     SetGuestFeatures;
 
-  VIRTIO_SET_QUEUE_ADDRESS    SetQueueAddress;
+  VIRTIO_SET_QUEUE_ADDRESS      SetQueueAddress;
 
-  VIRTIO_SET_QUEUE_SEL        SetQueueSel;
+  VIRTIO_SET_QUEUE_SEL          SetQueueSel;
 
-  VIRTIO_SET_QUEUE_NOTIFY     SetQueueNotify;
+  VIRTIO_SET_QUEUE_NOTIFY       SetQueueNotify;
 
-  VIRTIO_SET_QUEUE_ALIGN      SetQueueAlign;
-  VIRTIO_SET_PAGE_SIZE        SetPageSize;
+  VIRTIO_SET_QUEUE_ALIGN        SetQueueAlign;
+  VIRTIO_SET_PAGE_SIZE          SetPageSize;
 
-  VIRTIO_GET_QUEUE_NUM_MAX    GetQueueNumMax;
-  VIRTIO_SET_QUEUE_NUM        SetQueueNum;
+  VIRTIO_GET_QUEUE_NUM_MAX      GetQueueNumMax;
+  VIRTIO_SET_QUEUE_NUM          SetQueueNum;
 
-  VIRTIO_GET_DEVICE_STATUS    GetDeviceStatus;
-  VIRTIO_SET_DEVICE_STATUS    SetDeviceStatus;
+  VIRTIO_GET_DEVICE_STATUS      GetDeviceStatus;
+  VIRTIO_SET_DEVICE_STATUS      SetDeviceStatus;
 
   //
   // Functions to read/write Device Specific headers
   //
-  VIRTIO_DEVICE_WRITE         WriteDevice;
-  VIRTIO_DEVICE_READ          ReadDevice;
+  VIRTIO_DEVICE_WRITE           WriteDevice;
+  VIRTIO_DEVICE_READ            ReadDevice;
 
   //
   // Functions to allocate, free, map and unmap shared buffer
   //
-  VIRTIO_ALLOCATE_SHARED      AllocateSharedPages;
-  VIRTIO_FREE_SHARED          FreeSharedPages;
-  VIRTIO_MAP_SHARED           MapSharedBuffer;
-  VIRTIO_UNMAP_SHARED         UnmapSharedBuffer;
+  VIRTIO_ALLOCATE_SHARED        AllocateSharedPages;
+  VIRTIO_FREE_SHARED            FreeSharedPages;
+  VIRTIO_MAP_SHARED             MapSharedBuffer;
+  VIRTIO_UNMAP_SHARED           UnmapSharedBuffer;
 };
 
-extern EFI_GUID gVirtioDeviceProtocolGuid;
+extern EFI_GUID  gVirtioDeviceProtocolGuid;
 
 #endif

@@ -13,19 +13,17 @@
 
 #include "AcpiPlatform.h"
 
-
 //
 // Condensed structure for capturing the fw_cfg operations -- select, skip,
 // write -- inherent in executing a QEMU_LOADER_WRITE_POINTER command.
 //
 typedef struct {
-  UINT16 PointerItem;   // resolved from QEMU_LOADER_WRITE_POINTER.PointerFile
-  UINT8  PointerSize;   // copied as-is from QEMU_LOADER_WRITE_POINTER
-  UINT32 PointerOffset; // copied as-is from QEMU_LOADER_WRITE_POINTER
-  UINT64 PointerValue;  // resolved from QEMU_LOADER_WRITE_POINTER.PointeeFile
-                        //   and QEMU_LOADER_WRITE_POINTER.PointeeOffset
+  UINT16    PointerItem;   // resolved from QEMU_LOADER_WRITE_POINTER.PointerFile
+  UINT8     PointerSize;   // copied as-is from QEMU_LOADER_WRITE_POINTER
+  UINT32    PointerOffset; // copied as-is from QEMU_LOADER_WRITE_POINTER
+  UINT64    PointerValue;  // resolved from QEMU_LOADER_WRITE_POINTER.PointeeFile
+                           // and QEMU_LOADER_WRITE_POINTER.PointeeOffset
 } CONDENSED_WRITE_POINTER;
-
 
 //
 // Context structure to accumulate CONDENSED_WRITE_POINTER objects from
@@ -35,15 +33,14 @@ typedef struct {
 // context structure is released, all pointed-to objects must be released too.
 //
 struct S3_CONTEXT {
-  CONDENSED_WRITE_POINTER *WritePointers; // one array element per processed
-                                          //   QEMU_LOADER_WRITE_POINTER
-                                          //   command
-  UINTN                   Allocated;      // number of elements allocated for
-                                          //   WritePointers
-  UINTN                   Used;           // number of elements populated in
-                                          //   WritePointers
+  CONDENSED_WRITE_POINTER    *WritePointers; // one array element per processed
+                                             // QEMU_LOADER_WRITE_POINTER
+                                             // command
+  UINTN                      Allocated;      // number of elements allocated for
+                                             // WritePointers
+  UINTN                      Used;           // number of elements populated in
+                                             // WritePointers
 };
-
 
 //
 // Scratch buffer, allocated in EfiReservedMemoryType type memory, for the ACPI
@@ -51,10 +48,9 @@ struct S3_CONTEXT {
 //
 #pragma pack (1)
 typedef union {
-  UINT64 PointerValue; // filled in from CONDENSED_WRITE_POINTER.PointerValue
+  UINT64    PointerValue; // filled in from CONDENSED_WRITE_POINTER.PointerValue
 } SCRATCH_BUFFER;
 #pragma pack ()
-
 
 /**
   Allocate an S3_CONTEXT object.
@@ -78,8 +74,8 @@ AllocateS3Context (
   IN  UINTN      WritePointerCount
   )
 {
-  EFI_STATUS Status;
-  S3_CONTEXT *Context;
+  EFI_STATUS  Status;
+  S3_CONTEXT  *Context;
 
   if (WritePointerCount == 0) {
     return EFI_INVALID_PARAMETER;
@@ -90,8 +86,10 @@ AllocateS3Context (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Context->WritePointers = AllocatePool (WritePointerCount *
-                             sizeof *Context->WritePointers);
+  Context->WritePointers = AllocatePool (
+                                         WritePointerCount *
+                                         sizeof *Context->WritePointers
+                                         );
   if (Context->WritePointers == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto FreeContext;
@@ -107,7 +105,6 @@ FreeContext:
   return Status;
 }
 
-
 /**
   Release an S3_CONTEXT object.
 
@@ -121,7 +118,6 @@ ReleaseS3Context (
   FreePool (S3Context->WritePointers);
   FreePool (S3Context);
 }
-
 
 /**
   Save the information necessary to replicate a QEMU_LOADER_WRITE_POINTER
@@ -164,23 +160,25 @@ SaveCondensedWritePointerToS3Context (
   IN     UINT64     PointerValue
   )
 {
-  CONDENSED_WRITE_POINTER *Condensed;
+  CONDENSED_WRITE_POINTER  *Condensed;
 
   if (S3Context->Used == S3Context->Allocated) {
     return EFI_OUT_OF_RESOURCES;
   }
+
   Condensed = S3Context->WritePointers + S3Context->Used;
   Condensed->PointerItem   = PointerItem;
   Condensed->PointerSize   = PointerSize;
   Condensed->PointerOffset = PointerOffset;
   Condensed->PointerValue  = PointerValue;
-  DEBUG ((DEBUG_VERBOSE, "%a: 0x%04x/[0x%08x+%d] := 0x%Lx (%Lu)\n",
-    __FUNCTION__, PointerItem, PointerOffset, PointerSize, PointerValue,
-    (UINT64)S3Context->Used));
+  DEBUG (
+         (DEBUG_VERBOSE, "%a: 0x%04x/[0x%08x+%d] := 0x%Lx (%Lu)\n",
+          __FUNCTION__, PointerItem, PointerOffset, PointerSize, PointerValue,
+          (UINT64) S3Context->Used)
+         );
   ++S3Context->Used;
   return EFI_SUCCESS;
 }
-
 
 /**
   FW_CFG_BOOT_SCRIPT_CALLBACK_FUNCTION provided to QemuFwCfgS3Lib.
@@ -189,31 +187,33 @@ STATIC
 VOID
 EFIAPI
 AppendFwCfgBootScript (
-  IN OUT VOID *Context,              OPTIONAL
+  IN OUT VOID *Context, OPTIONAL
   IN OUT VOID *ExternalScratchBuffer
   )
 {
-  S3_CONTEXT     *S3Context;
-  SCRATCH_BUFFER *ScratchBuffer;
-  UINTN          Index;
+  S3_CONTEXT      *S3Context;
+  SCRATCH_BUFFER  *ScratchBuffer;
+  UINTN           Index;
 
-  S3Context = Context;
+  S3Context     = Context;
   ScratchBuffer = ExternalScratchBuffer;
 
   for (Index = 0; Index < S3Context->Used; ++Index) {
-    CONST CONDENSED_WRITE_POINTER *Condensed;
-    RETURN_STATUS                 Status;
+  CONST CONDENSED_WRITE_POINTER  *Condensed;
+  RETURN_STATUS                  Status;
 
     Condensed = &S3Context->WritePointers[Index];
 
-    Status = QemuFwCfgS3ScriptSkipBytes (Condensed->PointerItem,
-               Condensed->PointerOffset);
+    Status = QemuFwCfgS3ScriptSkipBytes (
+                                         Condensed->PointerItem,
+                                         Condensed->PointerOffset
+                                         );
     if (RETURN_ERROR (Status)) {
       goto FatalError;
     }
 
     ScratchBuffer->PointerValue = Condensed->PointerValue;
-    Status = QemuFwCfgS3ScriptWriteBytes (-1, Condensed->PointerSize);
+    Status = QemuFwCfgS3ScriptWriteBytes (- 1, Condensed->PointerSize);
     if (RETURN_ERROR (Status)) {
       goto FatalError;
     }
@@ -228,7 +228,6 @@ FatalError:
   ASSERT (FALSE);
   CpuDeadLoop ();
 }
-
 
 /**
   Translate and append the information from an S3_CONTEXT object to the ACPI S3
@@ -255,14 +254,17 @@ TransferS3ContextToBootScript (
   IN S3_CONTEXT *S3Context
   )
 {
-  RETURN_STATUS Status;
+  RETURN_STATUS  Status;
 
   if (S3Context->Used == 0) {
     ReleaseS3Context (S3Context);
     return EFI_SUCCESS;
   }
 
-  Status = QemuFwCfgS3CallWhenBootScriptReady (AppendFwCfgBootScript,
-             S3Context, sizeof (SCRATCH_BUFFER));
-  return (EFI_STATUS)Status;
+  Status = QemuFwCfgS3CallWhenBootScriptReady (
+                                               AppendFwCfgBootScript,
+                                               S3Context,
+                                               sizeof (SCRATCH_BUFFER)
+                                               );
+  return (EFI_STATUS) Status;
 }

@@ -26,7 +26,6 @@
                                 context, which is implementation-dependent.
 
 **/
-
 VOID
 EFIAPI
 VirtioNetIsPacketAvailable (
@@ -42,8 +41,8 @@ VirtioNetIsPacketAvailable (
   // almost no documentation in either the UEFI-2.3.1+errC spec or the
   // DWG-2.3.1, but WaitForKey does have some.
   //
-  VNET_DEV *Dev;
-  UINT16   RxCurUsed;
+  VNET_DEV  *Dev;
+  UINT16    RxCurUsed;
 
   Dev = Context;
   if (Dev->Snm.State != EfiSimpleNetworkInitialized) {
@@ -58,10 +57,33 @@ VirtioNetIsPacketAvailable (
   MemoryFence ();
 
   if (Dev->RxLastUsed != RxCurUsed) {
-    gBS->SignalEvent (Dev->Snp.WaitForPacket);
+  gBS->SignalEvent (Dev->Snp.WaitForPacket);
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 EFIAPI
 VirtioNetExitBoot (
@@ -76,11 +98,11 @@ VirtioNetExitBoot (
   // Shut down pending transfers according to DWG-2.3.1, "25.5.1 Exit Boot
   // Services Event".
   //
-  VNET_DEV *Dev;
+  VNET_DEV  *Dev;
 
   DEBUG ((DEBUG_VERBOSE, "%a: Context=0x%p\n", __FUNCTION__, Context));
   Dev = Context;
   if (Dev->Snm.State == EfiSimpleNetworkInitialized) {
-    Dev->VirtIo->SetDeviceStatus (Dev->VirtIo, 0);
+  Dev->VirtIo->SetDeviceStatus (Dev->VirtIo, 0);
   }
 }

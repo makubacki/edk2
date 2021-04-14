@@ -19,13 +19,13 @@
 //
 // The value of PcdQ35TsegMbytes is saved into this variable at module startup.
 //
-UINT16 mQ35TsegMbytes;
+UINT16  mQ35TsegMbytes;
 
 //
 // The value of PcdQ35SmramAtDefaultSmbase is saved into this variable at
 // module startup.
 //
-STATIC BOOLEAN mQ35SmramAtDefaultSmbase;
+STATIC BOOLEAN  mQ35SmramAtDefaultSmbase;
 
 /**
   Save PcdQ35TsegMbytes into mQ35TsegMbytes.
@@ -67,9 +67,9 @@ VOID
 GetStates (
   OUT BOOLEAN *LockState,
   OUT BOOLEAN *OpenState
-)
+  )
 {
-  UINT8 SmramVal, EsmramcVal;
+  UINT8  SmramVal, EsmramcVal;
 
   SmramVal   = PciRead8 (DRAMC_REGISTER_Q35 (MCH_SMRAM));
   EsmramcVal = PciRead8 (DRAMC_REGISTER_Q35 (MCH_ESMRAMC));
@@ -98,16 +98,42 @@ SmramAccessOpen (
   //
   // Open TSEG by clearing T_EN.
   //
-  PciAnd8 (DRAMC_REGISTER_Q35 (MCH_ESMRAMC),
-    (UINT8)((~(UINT32)MCH_ESMRAMC_T_EN) & 0xff));
+  PciAnd8 (
+           DRAMC_REGISTER_Q35 (MCH_ESMRAMC),
+           (UINT8) ((~(UINT32) MCH_ESMRAMC_T_EN) & 0xff)
+           );
 
   GetStates (LockState, OpenState);
   if (!*OpenState) {
     return EFI_DEVICE_ERROR;
   }
+
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 SmramAccessClose (
   OUT BOOLEAN *LockState,
@@ -123,9 +149,33 @@ SmramAccessClose (
   if (*OpenState) {
     return EFI_DEVICE_ERROR;
   }
+
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 SmramAccessLock (
   OUT    BOOLEAN *LockState,
@@ -140,23 +190,49 @@ SmramAccessLock (
   // Close & lock TSEG by setting T_EN and D_LCK.
   //
   PciOr8 (DRAMC_REGISTER_Q35 (MCH_ESMRAMC), MCH_ESMRAMC_T_EN);
-  PciOr8 (DRAMC_REGISTER_Q35 (MCH_SMRAM),   MCH_SMRAM_D_LCK);
+  PciOr8 (DRAMC_REGISTER_Q35 (MCH_SMRAM), MCH_SMRAM_D_LCK);
 
   //
   // Close & lock the SMRAM at the default SMBASE, if it exists.
   //
   if (mQ35SmramAtDefaultSmbase) {
-    PciWrite8 (DRAMC_REGISTER_Q35 (MCH_DEFAULT_SMBASE_CTL),
-      MCH_DEFAULT_SMBASE_LCK);
+    PciWrite8 (
+               DRAMC_REGISTER_Q35 (MCH_DEFAULT_SMBASE_CTL),
+               MCH_DEFAULT_SMBASE_LCK
+               );
   }
 
   GetStates (LockState, OpenState);
   if (*OpenState || !*LockState) {
     return EFI_DEVICE_ERROR;
   }
+
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 SmramAccessGetCapabilities (
   IN BOOLEAN                  LockState,
@@ -165,10 +241,10 @@ SmramAccessGetCapabilities (
   IN OUT EFI_SMRAM_DESCRIPTOR *SmramMap
   )
 {
-  UINTN  OriginalSize;
-  UINT32 TsegMemoryBaseMb, TsegMemoryBase;
-  UINT64 CommonRegionState;
-  UINT8  TsegSizeBits;
+  UINTN   OriginalSize;
+  UINT32  TsegMemoryBaseMb, TsegMemoryBase;
+  UINT64  CommonRegionState;
+  UINT8   TsegSizeBits;
 
   OriginalSize  = *SmramMapSize;
   *SmramMapSize = DescIdxCount * sizeof *SmramMap;
@@ -180,7 +256,7 @@ SmramAccessGetCapabilities (
   // Read the TSEG Memory Base register.
   //
   TsegMemoryBaseMb = PciRead32 (DRAMC_REGISTER_Q35 (MCH_TSEGMB));
-  TsegMemoryBase = (TsegMemoryBaseMb >> MCH_TSEGMB_MB_SHIFT) << 20;
+  TsegMemoryBase   = (TsegMemoryBaseMb >> MCH_TSEGMB_MB_SHIFT) << 20;
 
   //
   // Precompute the region state bits that will be set for all regions.
@@ -195,10 +271,10 @@ SmramAccessGetCapabilities (
   // EFI_ALLOCATED, so that the SMM_CORE stays away from it.
   //
   SmramMap[DescIdxSmmS3ResumeState].PhysicalStart = TsegMemoryBase;
-  SmramMap[DescIdxSmmS3ResumeState].CpuStart      = TsegMemoryBase;
-  SmramMap[DescIdxSmmS3ResumeState].PhysicalSize  =
+  SmramMap[DescIdxSmmS3ResumeState].CpuStart     = TsegMemoryBase;
+  SmramMap[DescIdxSmmS3ResumeState].PhysicalSize =
     EFI_PAGES_TO_SIZE (EFI_SIZE_TO_PAGES (sizeof (SMM_S3_RESUME_STATE)));
-  SmramMap[DescIdxSmmS3ResumeState].RegionState   =
+  SmramMap[DescIdxSmmS3ResumeState].RegionState =
     CommonRegionState | EFI_ALLOCATED;
 
   //
@@ -213,7 +289,7 @@ SmramAccessGetCapabilities (
   SmramMap[DescIdxMain].PhysicalStart =
     SmramMap[DescIdxSmmS3ResumeState].PhysicalStart +
     SmramMap[DescIdxSmmS3ResumeState].PhysicalSize;
-  SmramMap[DescIdxMain].CpuStart = SmramMap[DescIdxMain].PhysicalStart;
+  SmramMap[DescIdxMain].CpuStart     = SmramMap[DescIdxMain].PhysicalStart;
   SmramMap[DescIdxMain].PhysicalSize =
     (TsegSizeBits == MCH_ESMRAMC_TSEG_8MB ? SIZE_8MB :
      TsegSizeBits == MCH_ESMRAMC_TSEG_2MB ? SIZE_2MB :

@@ -11,15 +11,38 @@
 
 #include "VirtioFsDxe.h"
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 VirtioFsSimpleFileDelete (
   IN EFI_FILE_PROTOCOL *This
   )
 {
-  VIRTIO_FS_FILE *VirtioFsFile;
-  VIRTIO_FS      *VirtioFs;
-  EFI_STATUS     Status;
+  VIRTIO_FS_FILE  *VirtioFsFile;
+  VIRTIO_FS       *VirtioFs;
+  EFI_STATUS      Status;
 
   VirtioFsFile = VIRTIO_FS_FILE_FROM_SIMPLE_FILE (This);
   VirtioFs     = VirtioFsFile->OwnerFs;
@@ -38,8 +61,12 @@ VirtioFsSimpleFileDelete (
   //
   // If any action fails below, we still try the others.
   //
-  VirtioFsFuseReleaseFileOrDir (VirtioFs, VirtioFsFile->NodeId,
-    VirtioFsFile->FuseHandle, VirtioFsFile->IsDirectory);
+  VirtioFsFuseReleaseFileOrDir (
+                                VirtioFs,
+                                VirtioFsFile->NodeId,
+                                VirtioFsFile->FuseHandle,
+                                VirtioFsFile->IsDirectory
+                                );
 
   //
   // VirtioFsFile->FuseHandle is gone at this point, but VirtioFsFile->NodeId
@@ -47,8 +74,8 @@ VirtioFsSimpleFileDelete (
   // of this operation determines the return status of the function.
   //
   if (VirtioFsFile->IsOpenForWriting) {
-    UINT64 ParentNodeId;
-    CHAR8  *LastComponent;
+  UINT64  ParentNodeId;
+  CHAR8   *LastComponent;
 
     //
     // Split our canonical pathname into most specific parent directory
@@ -57,11 +84,11 @@ VirtioFsSimpleFileDelete (
     // function call will gracefully fail.
     //
     Status = VirtioFsLookupMostSpecificParentDir (
-               VirtioFs,
-               VirtioFsFile->CanonicalPathname,
-               &ParentNodeId,
-               &LastComponent
-               );
+                                                  VirtioFs,
+                                                  VirtioFsFile->CanonicalPathname,
+                                                  &ParentNodeId,
+                                                  &LastComponent
+                                                  );
     if (!EFI_ERROR (Status)) {
       //
       // Attempt the actual removal. Regardless of the outcome, ParentNodeId
@@ -69,15 +96,16 @@ VirtioFsSimpleFileDelete (
       // directory).
       //
       Status = VirtioFsFuseRemoveFileOrDir (
-                 VirtioFs,
-                 ParentNodeId,
-                 LastComponent,
-                 VirtioFsFile->IsDirectory
-                 );
+                                            VirtioFs,
+                                            ParentNodeId,
+                                            LastComponent,
+                                            VirtioFsFile->IsDirectory
+                                            );
       if (ParentNodeId != VIRTIO_FS_FUSE_ROOT_DIR_NODE_ID) {
         VirtioFsFuseForget (VirtioFs, ParentNodeId);
       }
     }
+
     if (EFI_ERROR (Status)) {
       //
       // Map any failure to the spec-mandated warning code.
@@ -105,6 +133,7 @@ VirtioFsSimpleFileDelete (
   if (VirtioFsFile->FileInfoArray != NULL) {
     FreePool (VirtioFsFile->FileInfoArray);
   }
+
   FreePool (VirtioFsFile);
   return Status;
 }

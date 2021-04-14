@@ -24,8 +24,8 @@
 BOOLEAN
 EFIAPI
 XenDetected (
-  VOID
-  );
+             VOID
+             );
 
 /**
   This function detect if OVMF have started via the PVH entry point.
@@ -36,8 +36,8 @@ XenDetected (
 BOOLEAN
 EFIAPI
 XenPvhDetected (
-  VOID
-  );
+                VOID
+                );
 
 /**
   This function return a pointer to the XenInfo HOB.
@@ -47,7 +47,7 @@ XenPvhDetected (
 EFI_XEN_INFO *
 EFIAPI
 XenGetInfoHOB (
-  VOID
-  );
+               VOID
+               );
 
 #endif

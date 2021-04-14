@@ -27,43 +27,43 @@
 // Higher versions will be used before lower, 0x10-0xffffffef is the version
 // range for IVH (Indie Hardware Vendors)
 //
-#define MPT_SCSI_BINDING_VERSION 0x10
+#define MPT_SCSI_BINDING_VERSION  0x10
 
 //
 // Runtime Structures
 //
 
 typedef struct {
-  MPT_SCSI_REQUEST_ALIGNED        IoRequest;
-  MPT_SCSI_IO_REPLY_ALIGNED       IoReply;
+  MPT_SCSI_REQUEST_ALIGNED     IoRequest;
+  MPT_SCSI_IO_REPLY_ALIGNED    IoReply;
   //
   // As EFI_EXT_SCSI_PASS_THRU_SCSI_REQUEST_PACKET.SenseDataLength is defined
   // as UINT8, defining here SenseData size to MAX_UINT8 will guarantee it
   // cannot overflow when passed to device.
   //
-  UINT8                           Sense[MAX_UINT8];
+  UINT8                        Sense[MAX_UINT8];
   //
   // This size of the data is arbitrarily chosen.
   // It seems to be sufficient for all I/O requests sent through
   // EFI_SCSI_PASS_THRU_PROTOCOL.PassThru() for common boot scenarios.
   //
-  UINT8                           Data[0x2000];
+  UINT8                        Data[0x2000];
 } MPT_SCSI_DMA_BUFFER;
 
-#define MPT_SCSI_DEV_SIGNATURE SIGNATURE_32 ('M','P','T','S')
+#define MPT_SCSI_DEV_SIGNATURE  SIGNATURE_32 ('M', 'P', 'T', 'S')
 typedef struct {
-  UINT32                          Signature;
-  EFI_EXT_SCSI_PASS_THRU_PROTOCOL PassThru;
-  EFI_EXT_SCSI_PASS_THRU_MODE     PassThruMode;
-  UINT8                           MaxTarget;
-  UINT32                          StallPerPollUsec;
-  EFI_PCI_IO_PROTOCOL             *PciIo;
-  UINT64                          OriginalPciAttributes;
-  EFI_EVENT                       ExitBoot;
-  MPT_SCSI_DMA_BUFFER             *Dma;
-  EFI_PHYSICAL_ADDRESS            DmaPhysical;
-  VOID                            *DmaMapping;
-  BOOLEAN                         IoReplyEnqueued;
+  UINT32                             Signature;
+  EFI_EXT_SCSI_PASS_THRU_PROTOCOL    PassThru;
+  EFI_EXT_SCSI_PASS_THRU_MODE        PassThruMode;
+  UINT8                              MaxTarget;
+  UINT32                             StallPerPollUsec;
+  EFI_PCI_IO_PROTOCOL                *PciIo;
+  UINT64                             OriginalPciAttributes;
+  EFI_EVENT                          ExitBoot;
+  MPT_SCSI_DMA_BUFFER                *Dma;
+  EFI_PHYSICAL_ADDRESS               DmaPhysical;
+  VOID                               *DmaMapping;
+  BOOLEAN                            IoReplyEnqueued;
 } MPT_SCSI_DEV;
 
 #define MPT_SCSI_FROM_PASS_THRU(PassThruPtr) \
@@ -73,10 +73,10 @@ typedef struct {
   (Dev->DmaPhysical + OFFSET_OF (MPT_SCSI_DMA_BUFFER, MemberName))
 
 #define MPT_SCSI_DMA_ADDR_HIGH(Dev, MemberName) \
-  ((UINT32)RShiftU64 (MPT_SCSI_DMA_ADDR (Dev, MemberName), 32))
+  ((UINT32) RShiftU64 (MPT_SCSI_DMA_ADDR (Dev, MemberName), 32))
 
 #define MPT_SCSI_DMA_ADDR_LOW(Dev, MemberName) \
-  ((UINT32)MPT_SCSI_DMA_ADDR (Dev, MemberName))
+  ((UINT32) MPT_SCSI_DMA_ADDR (Dev, MemberName))
 
 //
 // Hardware functions
@@ -91,15 +91,38 @@ Out32 (
   )
 {
   return Dev->PciIo->Io.Write (
-                          Dev->PciIo,
-                          EfiPciIoWidthUint32,
-                          PCI_BAR_IDX0,
-                          Addr,
-                          1,
-                          &Data
-                          );
+                               Dev->PciIo,
+                               EfiPciIoWidthUint32,
+                               PCI_BAR_IDX0,
+                               Addr,
+                               1,
+                               &Data
+                               );
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 In32 (
@@ -109,15 +132,38 @@ In32 (
   )
 {
   return Dev->PciIo->Io.Read (
-                          Dev->PciIo,
-                          EfiPciIoWidthUint32,
-                          PCI_BAR_IDX0,
-                          Addr,
-                          1,
-                          Data
-                          );
+                              Dev->PciIo,
+                              EfiPciIoWidthUint32,
+                              PCI_BAR_IDX0,
+                              Addr,
+                              1,
+                              Data
+                              );
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 MptDoorbell (
@@ -127,19 +173,42 @@ MptDoorbell (
   )
 {
   return Out32 (
-           Dev,
-           MPT_REG_DOORBELL,
-           (((UINT32)DoorbellFunc) << 24) | (DoorbellArg << 16)
-           );
+                Dev,
+                MPT_REG_DOORBELL,
+                (((UINT32) DoorbellFunc) << 24) | (DoorbellArg << 16)
+                );
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 MptScsiReset (
   IN MPT_SCSI_DEV       *Dev
   )
 {
-  EFI_STATUS Status;
+  EFI_STATUS  Status;
 
   //
   // Reset hardware
@@ -148,6 +217,7 @@ MptScsiReset (
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   //
   // Mask interrupts
   //
@@ -155,6 +225,7 @@ MptScsiReset (
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   //
   // Clear interrupt status
   //
@@ -166,21 +237,47 @@ MptScsiReset (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 MptScsiInit (
   IN MPT_SCSI_DEV       *Dev
   )
 {
-  EFI_STATUS                       Status;
+  EFI_STATUS  Status;
+
   union {
-    MPT_IO_CONTROLLER_INIT_REQUEST Data;
-    UINT32                         Uint32;
-  } AlignedReq;
-  MPT_IO_CONTROLLER_INIT_REQUEST   *Req;
-  MPT_IO_CONTROLLER_INIT_REPLY     Reply;
-  UINT8                            *ReplyBytes;
-  UINT32                           ReplyWord;
+  MPT_IO_CONTROLLER_INIT_REQUEST    Data;
+  UINT32                            Uint32;
+  }
+
+  AlignedReq;
+  MPT_IO_CONTROLLER_INIT_REQUEST  *Req;
+  MPT_IO_CONTROLLER_INIT_REPLY    Reply;
+  UINT8                           *ReplyBytes;
+  UINT32                          ReplyWord;
 
   Req = &AlignedReq.Data;
 
@@ -191,45 +288,46 @@ MptScsiInit (
 
   ZeroMem (Req, sizeof (*Req));
   ZeroMem (&Reply, sizeof (Reply));
-  Req->WhoInit = MPT_IOC_WHOINIT_ROM_BIOS;
+  Req->WhoInit  = MPT_IOC_WHOINIT_ROM_BIOS;
   Req->Function = MPT_MESSAGE_HDR_FUNCTION_IOC_INIT;
   STATIC_ASSERT (
-    FixedPcdGet8 (PcdMptScsiMaxTargetLimit) < 255,
-    "Req supports 255 targets only (max target is 254)"
-    );
-  Req->MaxDevices = Dev->MaxTarget + 1;
-  Req->MaxBuses = 1;
-  Req->ReplyFrameSize = sizeof Dev->Dma->IoReply.Data;
-  Req->HostMfaHighAddr = MPT_SCSI_DMA_ADDR_HIGH (Dev, IoRequest);
+                 FixedPcdGet8 (PcdMptScsiMaxTargetLimit) < 255,
+                 "Req supports 255 targets only (max target is 254)"
+                 );
+  Req->MaxDevices          = Dev->MaxTarget + 1;
+  Req->MaxBuses            = 1;
+  Req->ReplyFrameSize      = sizeof Dev->Dma->IoReply.Data;
+  Req->HostMfaHighAddr     = MPT_SCSI_DMA_ADDR_HIGH (Dev, IoRequest);
   Req->SenseBufferHighAddr = MPT_SCSI_DMA_ADDR_HIGH (Dev, Sense);
 
   //
   // Send controller init through doorbell
   //
   STATIC_ASSERT (
-    sizeof (*Req) % sizeof (UINT32) == 0,
-    "Req must be multiple of UINT32"
-    );
+                 sizeof (*Req) % sizeof (UINT32) == 0,
+                 "Req must be multiple of UINT32"
+                 );
   STATIC_ASSERT (
-    sizeof (*Req) / sizeof (UINT32) <= MAX_UINT8,
-    "Req must fit in MAX_UINT8 Dwords"
-    );
+                 sizeof (*Req) / sizeof (UINT32) <= MAX_UINT8,
+                 "Req must fit in MAX_UINT8 Dwords"
+                 );
   Status = MptDoorbell (
-             Dev,
-             MPT_DOORBELL_HANDSHAKE,
-             (UINT8)(sizeof (*Req) / sizeof (UINT32))
-             );
+                        Dev,
+                        MPT_DOORBELL_HANDSHAKE,
+                        (UINT8) (sizeof (*Req) / sizeof (UINT32))
+                        );
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   Status = Dev->PciIo->Io.Write (
-                            Dev->PciIo,
-                            EfiPciIoWidthFifoUint32,
-                            PCI_BAR_IDX0,
-                            MPT_REG_DOORBELL,
-                            sizeof (*Req) / sizeof (UINT32),
-                            Req
-                            );
+                                 Dev->PciIo,
+                                 EfiPciIoWidthFifoUint32,
+                                 PCI_BAR_IDX0,
+                                 MPT_REG_DOORBELL,
+                                 sizeof (*Req) / sizeof (UINT32),
+                                 Req
+                                 );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -243,15 +341,16 @@ MptScsiInit (
   // codes.
   //
   STATIC_ASSERT (
-    sizeof (Reply) % sizeof (UINT16) == 0,
-    "Reply must be multiple of UINT16"
-    );
-  ReplyBytes = (UINT8 *)&Reply;
-  while (ReplyBytes != (UINT8 *)(&Reply + 1)) {
+                 sizeof (Reply) % sizeof (UINT16) == 0,
+                 "Reply must be multiple of UINT16"
+                 );
+  ReplyBytes = (UINT8 *) &Reply;
+  while (ReplyBytes != (UINT8 *) (&Reply + 1)) {
     Status = In32 (Dev, MPT_REG_DOORBELL, &ReplyWord);
     if (EFI_ERROR (Status)) {
       return Status;
     }
+
     CopyMem (ReplyBytes, &ReplyWord, sizeof (UINT16));
     ReplyBytes += sizeof (UINT16);
   }
@@ -267,6 +366,29 @@ MptScsiInit (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 ReportHostAdapterError (
@@ -278,23 +400,69 @@ ReportHostAdapterError (
   Packet->OutTransferLength = 0;
   Packet->SenseDataLength   = 0;
   Packet->HostAdapterStatus = EFI_EXT_SCSI_STATUS_HOST_ADAPTER_OTHER;
-  Packet->TargetStatus      = EFI_EXT_SCSI_STATUS_TARGET_TASK_ABORTED;
+  Packet->TargetStatus = EFI_EXT_SCSI_STATUS_TARGET_TASK_ABORTED;
   return EFI_DEVICE_ERROR;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 ReportHostAdapterOverrunError (
   OUT EFI_EXT_SCSI_PASS_THRU_SCSI_REQUEST_PACKET *Packet
   )
 {
-  Packet->SenseDataLength = 0;
+  Packet->SenseDataLength   = 0;
   Packet->HostAdapterStatus =
-            EFI_EXT_SCSI_STATUS_HOST_ADAPTER_DATA_OVERRUN_UNDERRUN;
+    EFI_EXT_SCSI_STATUS_HOST_ADAPTER_DATA_OVERRUN_UNDERRUN;
   Packet->TargetStatus = EFI_EXT_SCSI_STATUS_TARGET_GOOD;
   return EFI_BAD_BUFFER_SIZE;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 MptScsiPopulateRequest (
@@ -304,7 +472,7 @@ MptScsiPopulateRequest (
   IN OUT EFI_EXT_SCSI_PASS_THRU_SCSI_REQUEST_PACKET *Packet
   )
 {
-  MPT_SCSI_REQUEST_WITH_SG *Request;
+  MPT_SCSI_REQUEST_WITH_SG  *Request;
 
   Request = &Dev->Dma->IoRequest.Data;
 
@@ -323,8 +491,8 @@ MptScsiPopulateRequest (
       (Packet->InTransferLength > 0 &&
        (Packet->InDataBuffer == NULL ||
         Packet->DataDirection == EFI_EXT_SCSI_DATA_DIRECTION_WRITE
-         )
-        ) ||
+       )
+      ) ||
 
       //
       // Trying to send, but source pointer is NULL, or contradicting transfer
@@ -333,9 +501,9 @@ MptScsiPopulateRequest (
       (Packet->OutTransferLength > 0 &&
        (Packet->OutDataBuffer == NULL ||
         Packet->DataDirection == EFI_EXT_SCSI_DATA_DIRECTION_READ
-         )
-        )
-    ) {
+       )
+      )
+      ) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -343,6 +511,7 @@ MptScsiPopulateRequest (
     Packet->InTransferLength = sizeof (Dev->Dma->Data);
     return ReportHostAdapterOverrunError (Packet);
   }
+
   if (Packet->OutTransferLength > sizeof (Dev->Dma->Data)) {
     Packet->OutTransferLength = sizeof (Dev->Dma->Data);
     return ReportHostAdapterOverrunError (Packet);
@@ -353,7 +522,7 @@ MptScsiPopulateRequest (
   //
   // Only LUN 0 is currently supported, hence the cast is safe
   //
-  Request->Header.Lun[1] = (UINT8)Lun;
+  Request->Header.Lun[1]   = (UINT8) Lun;
   Request->Header.Function = MPT_MESSAGE_HDR_FUNCTION_SCSI_IO_REQUEST;
   Request->Header.MessageContext = 1; // We handle one request at a time
 
@@ -364,23 +533,23 @@ MptScsiPopulateRequest (
   // SenseDataLength is UINT8, Sense[] is MAX_UINT8, so we can't overflow
   //
   ZeroMem (Dev->Dma->Sense, Packet->SenseDataLength);
-  Request->Header.SenseBufferLength = Packet->SenseDataLength;
+  Request->Header.SenseBufferLength     = Packet->SenseDataLength;
   Request->Header.SenseBufferLowAddress = MPT_SCSI_DMA_ADDR_LOW (Dev, Sense);
 
-  Request->Sg.EndOfList = 1;
-  Request->Sg.EndOfBuffer = 1;
-  Request->Sg.LastElement = 1;
-  Request->Sg.ElementType = MPT_SG_ENTRY_TYPE_SIMPLE;
-  Request->Sg.Is64BitAddress = 1;
+  Request->Sg.EndOfList         = 1;
+  Request->Sg.EndOfBuffer       = 1;
+  Request->Sg.LastElement       = 1;
+  Request->Sg.ElementType       = MPT_SG_ENTRY_TYPE_SIMPLE;
+  Request->Sg.Is64BitAddress    = 1;
   Request->Sg.DataBufferAddress = MPT_SCSI_DMA_ADDR (Dev, Data);
 
   //
   // "MPT_SG_ENTRY_SIMPLE.Length" is a 24-bit quantity.
   //
   STATIC_ASSERT (
-    sizeof (Dev->Dma->Data) < SIZE_16MB,
-    "MPT_SCSI_DMA_BUFFER.Data must be smaller than 16MB"
-    );
+                 sizeof (Dev->Dma->Data) < SIZE_16MB,
+                 "MPT_SCSI_DMA_BUFFER.Data must be smaller than 16MB"
+                 );
 
   if (Packet->DataDirection == EFI_EXT_SCSI_DATA_DIRECTION_READ) {
     Request->Header.DataLength = Packet->InTransferLength;
@@ -402,6 +571,29 @@ MptScsiPopulateRequest (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 MptScsiSendRequest (
@@ -409,7 +601,7 @@ MptScsiSendRequest (
   IN OUT EFI_EXT_SCSI_PASS_THRU_SCSI_REQUEST_PACKET *Packet
   )
 {
-  EFI_STATUS Status;
+  EFI_STATUS  Status;
 
   if (!Dev->IoReplyEnqueued) {
     //
@@ -420,6 +612,7 @@ MptScsiSendRequest (
     if (EFI_ERROR (Status)) {
       return EFI_DEVICE_ERROR;
     }
+
     Dev->IoReplyEnqueued = TRUE;
   }
 
@@ -431,6 +624,29 @@ MptScsiSendRequest (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 MptScsiGetReply (
@@ -438,15 +654,15 @@ MptScsiGetReply (
   OUT UINT32                                        *Reply
   )
 {
-  EFI_STATUS Status;
-  UINT32     Istatus;
-  UINT32     EmptyReply;
+  EFI_STATUS  Status;
+  UINT32      Istatus;
+  UINT32      EmptyReply;
 
   //
   // Timeouts are not supported for
   // EFI_EXT_SCSI_PASS_THRU_PROTOCOL.PassThru() in this implementation.
   //
-  for (;;) {
+  for ( ; ;) {
     Status = In32 (Dev, MPT_REG_ISTATUS, &Istatus);
     if (EFI_ERROR (Status)) {
       return Status;
@@ -480,6 +696,29 @@ MptScsiGetReply (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 MptScsiHandleReply (
@@ -496,10 +735,9 @@ MptScsiHandleReply (
     //
     // This is a turbo reply, everything is good
     //
-    Packet->SenseDataLength = 0;
+    Packet->SenseDataLength   = 0;
     Packet->HostAdapterStatus = EFI_EXT_SCSI_STATUS_HOST_ADAPTER_OK;
     Packet->TargetStatus = EFI_EXT_SCSI_STATUS_TARGET_GOOD;
-
   } else if ((Reply & BIT31) != 0) {
     DEBUG ((DEBUG_INFO, "%a: Full reply returned\n", __FUNCTION__));
     //
@@ -514,7 +752,7 @@ MptScsiHandleReply (
     //
     ASSERT (Dev->Dma->IoReply.Data.SenseCount <= Packet->SenseDataLength);
     Packet->SenseDataLength =
-      (UINT8)MIN (Dev->Dma->IoReply.Data.SenseCount, Packet->SenseDataLength);
+      (UINT8) MIN (Dev->Dma->IoReply.Data.SenseCount, Packet->SenseDataLength);
     CopyMem (Packet->SenseData, Dev->Dma->Sense, Packet->SenseDataLength);
 
     if (Packet->DataDirection == EFI_EXT_SCSI_DATA_DIRECTION_READ) {
@@ -524,23 +762,22 @@ MptScsiHandleReply (
     }
 
     switch (Dev->Dma->IoReply.Data.IocStatus) {
-    case MPT_SCSI_IOCSTATUS_SUCCESS:
-      Packet->HostAdapterStatus = EFI_EXT_SCSI_STATUS_HOST_ADAPTER_OK;
-      break;
-    case MPT_SCSI_IOCSTATUS_DEVICE_NOT_THERE:
-      Packet->HostAdapterStatus =
-        EFI_EXT_SCSI_STATUS_HOST_ADAPTER_SELECTION_TIMEOUT;
-      return EFI_TIMEOUT;
-    case MPT_SCSI_IOCSTATUS_DATA_UNDERRUN:
-    case MPT_SCSI_IOCSTATUS_DATA_OVERRUN:
-      Packet->HostAdapterStatus =
-        EFI_EXT_SCSI_STATUS_HOST_ADAPTER_DATA_OVERRUN_UNDERRUN;
-      break;
-    default:
-      Packet->HostAdapterStatus = EFI_EXT_SCSI_STATUS_HOST_ADAPTER_OTHER;
-      return EFI_DEVICE_ERROR;
+      case MPT_SCSI_IOCSTATUS_SUCCESS:
+        Packet->HostAdapterStatus = EFI_EXT_SCSI_STATUS_HOST_ADAPTER_OK;
+        break;
+      case MPT_SCSI_IOCSTATUS_DEVICE_NOT_THERE:
+        Packet->HostAdapterStatus =
+          EFI_EXT_SCSI_STATUS_HOST_ADAPTER_SELECTION_TIMEOUT;
+        return EFI_TIMEOUT;
+      case MPT_SCSI_IOCSTATUS_DATA_UNDERRUN:
+      case MPT_SCSI_IOCSTATUS_DATA_OVERRUN:
+        Packet->HostAdapterStatus =
+          EFI_EXT_SCSI_STATUS_HOST_ADAPTER_DATA_OVERRUN_UNDERRUN;
+        break;
+      default:
+        Packet->HostAdapterStatus = EFI_EXT_SCSI_STATUS_HOST_ADAPTER_OTHER;
+        return EFI_DEVICE_ERROR;
     }
-
   } else {
     DEBUG ((DEBUG_ERROR, "%a: unexpected reply (%x)\n", __FUNCTION__, Reply));
     return ReportHostAdapterError (Packet);
@@ -564,9 +801,9 @@ MptScsiPassThru (
   IN EFI_EVENT                                      Event     OPTIONAL
   )
 {
-  EFI_STATUS   Status;
-  MPT_SCSI_DEV *Dev;
-  UINT32       Reply;
+  EFI_STATUS    Status;
+  MPT_SCSI_DEV  *Dev;
+  UINT32        Reply;
 
   Dev = MPT_SCSI_FROM_PASS_THRU (This);
   //
@@ -593,22 +830,69 @@ MptScsiPassThru (
   return MptScsiHandleReply (Dev, Reply, Packet);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 BOOLEAN
 IsTargetInitialized (
   IN UINT8                                          *Target
   )
 {
-  UINTN Idx;
+  UINTN  Idx;
 
   for (Idx = 0; Idx < TARGET_MAX_BYTES; ++Idx) {
     if (Target[Idx] != 0xFF) {
       return TRUE;
     }
   }
+
   return FALSE;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -618,7 +902,7 @@ MptScsiGetNextTargetLun (
   IN OUT UINT64                                     *Lun
   )
 {
-  MPT_SCSI_DEV *Dev;
+  MPT_SCSI_DEV  *Dev;
 
   Dev = MPT_SCSI_FROM_PASS_THRU (This);
   //
@@ -642,6 +926,29 @@ MptScsiGetNextTargetLun (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -650,7 +957,7 @@ MptScsiGetNextTarget (
   IN OUT UINT8                                     **Target
   )
 {
-  MPT_SCSI_DEV *Dev;
+  MPT_SCSI_DEV  *Dev;
 
   Dev = MPT_SCSI_FROM_PASS_THRU (This);
   if (!IsTargetInitialized (*Target)) {
@@ -670,6 +977,29 @@ MptScsiGetNextTarget (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -680,8 +1010,8 @@ MptScsiBuildDevicePath (
   IN OUT EFI_DEVICE_PATH_PROTOCOL                  **DevicePath
   )
 {
-  MPT_SCSI_DEV     *Dev;
-  SCSI_DEVICE_PATH *ScsiDevicePath;
+  MPT_SCSI_DEV      *Dev;
+  SCSI_DEVICE_PATH  *ScsiDevicePath;
 
   if (DevicePath == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -703,15 +1033,38 @@ MptScsiBuildDevicePath (
 
   ScsiDevicePath->Header.Type      = MESSAGING_DEVICE_PATH;
   ScsiDevicePath->Header.SubType   = MSG_SCSI_DP;
-  ScsiDevicePath->Header.Length[0] = (UINT8)sizeof (*ScsiDevicePath);
-  ScsiDevicePath->Header.Length[1] = (UINT8)(sizeof (*ScsiDevicePath) >> 8);
-  ScsiDevicePath->Pun              = *Target;
-  ScsiDevicePath->Lun              = (UINT16)Lun;
+  ScsiDevicePath->Header.Length[0] = (UINT8) sizeof (*ScsiDevicePath);
+  ScsiDevicePath->Header.Length[1] = (UINT8) (sizeof (*ScsiDevicePath) >> 8);
+  ScsiDevicePath->Pun = *Target;
+  ScsiDevicePath->Lun = (UINT16) Lun;
 
   *DevicePath = &ScsiDevicePath->Header;
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -722,8 +1075,8 @@ MptScsiGetTargetLun (
   OUT UINT64                                       *Lun
   )
 {
-  MPT_SCSI_DEV     *Dev;
-  SCSI_DEVICE_PATH *ScsiDevicePath;
+  MPT_SCSI_DEV      *Dev;
+  SCSI_DEVICE_PATH  *ScsiDevicePath;
 
   if (DevicePath == NULL ||
       Target == NULL || *Target == NULL || Lun == NULL) {
@@ -736,7 +1089,7 @@ MptScsiGetTargetLun (
   }
 
   Dev = MPT_SCSI_FROM_PASS_THRU (This);
-  ScsiDevicePath = (SCSI_DEVICE_PATH *)DevicePath;
+  ScsiDevicePath = (SCSI_DEVICE_PATH *) DevicePath;
   if (ScsiDevicePath->Pun > Dev->MaxTarget ||
       ScsiDevicePath->Lun > 0) {
     return EFI_NOT_FOUND;
@@ -747,12 +1100,35 @@ MptScsiGetTargetLun (
   // This device support 256 targets only, so it's enough to set the LSB
   // of Target.
   //
-  **Target = (UINT8)ScsiDevicePath->Pun;
-  *Lun = ScsiDevicePath->Lun;
+  **Target = (UINT8) ScsiDevicePath->Pun;
+  *Lun     = ScsiDevicePath->Lun;
 
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -763,6 +1139,29 @@ MptScsiResetChannel (
   return EFI_UNSUPPORTED;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 VOID
 EFIAPI
@@ -771,12 +1170,36 @@ MptScsiExitBoot (
   IN  VOID      *Context
   )
 {
-  MPT_SCSI_DEV *Dev;
+  MPT_SCSI_DEV  *Dev;
 
   Dev = Context;
   DEBUG ((DEBUG_VERBOSE, "%a: Context=0x%p\n", __FUNCTION__, Context));
   MptScsiReset (Dev);
 }
+
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -802,29 +1225,29 @@ MptScsiControllerSupported (
   IN EFI_DEVICE_PATH_PROTOCOL               *RemainingDevicePath OPTIONAL
   )
 {
-  EFI_STATUS          Status;
-  EFI_PCI_IO_PROTOCOL *PciIo;
-  PCI_TYPE00          Pci;
+  EFI_STATUS           Status;
+  EFI_PCI_IO_PROTOCOL  *PciIo;
+  PCI_TYPE00           Pci;
 
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiPciIoProtocolGuid,
-                  (VOID **)&PciIo,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              ControllerHandle,
+                              &gEfiPciIoProtocolGuid,
+                              (VOID **) &PciIo,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   Status = PciIo->Pci.Read (
-                        PciIo,
-                        EfiPciIoWidthUint32,
-                        0,
-                        sizeof (Pci) / sizeof (UINT32),
-                        &Pci
-                        );
+                            PciIo,
+                            EfiPciIoWidthUint32,
+                            0,
+                            sizeof (Pci) / sizeof (UINT32),
+                            &Pci
+                            );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
@@ -840,14 +1263,37 @@ MptScsiControllerSupported (
 
 Done:
   gBS->CloseProtocol (
-         ControllerHandle,
-         &gEfiPciIoProtocolGuid,
-         This->DriverBindingHandle,
-         ControllerHandle
-         );
+                      ControllerHandle,
+                      &gEfiPciIoProtocolGuid,
+                      This->DriverBindingHandle,
+                      ControllerHandle
+                      );
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -857,10 +1303,10 @@ MptScsiControllerStart (
   IN EFI_DEVICE_PATH_PROTOCOL               *RemainingDevicePath OPTIONAL
   )
 {
-  EFI_STATUS           Status;
-  MPT_SCSI_DEV         *Dev;
-  UINTN                Pages;
-  UINTN                BytesMapped;
+  EFI_STATUS    Status;
+  MPT_SCSI_DEV  *Dev;
+  UINTN         Pages;
+  UINTN         BytesMapped;
 
   Dev = AllocateZeroPool (sizeof (*Dev));
   if (Dev == NULL) {
@@ -873,23 +1319,23 @@ MptScsiControllerStart (
   Dev->StallPerPollUsec = PcdGet32 (PcdMptScsiStallPerPollUsec);
 
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiPciIoProtocolGuid,
-                  (VOID **)&Dev->PciIo,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              ControllerHandle,
+                              &gEfiPciIoProtocolGuid,
+                              (VOID **) &Dev->PciIo,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (EFI_ERROR (Status)) {
     goto FreePool;
   }
 
   Status = Dev->PciIo->Attributes (
-                         Dev->PciIo,
-                         EfiPciIoAttributeOperationGet,
-                         0,
-                         &Dev->OriginalPciAttributes
-                         );
+                                   Dev->PciIo,
+                                   EfiPciIoAttributeOperationGet,
+                                   0,
+                                   &Dev->OriginalPciAttributes
+                                   );
   if (EFI_ERROR (Status)) {
     goto CloseProtocol;
   }
@@ -898,12 +1344,12 @@ MptScsiControllerStart (
   // Enable I/O Space & Bus-Mastering
   //
   Status = Dev->PciIo->Attributes (
-                         Dev->PciIo,
-                         EfiPciIoAttributeOperationEnable,
-                         (EFI_PCI_IO_ATTRIBUTE_IO |
-                          EFI_PCI_IO_ATTRIBUTE_BUS_MASTER),
-                         NULL
-                         );
+                                   Dev->PciIo,
+                                   EfiPciIoAttributeOperationEnable,
+                                   (EFI_PCI_IO_ATTRIBUTE_IO |
+                                    EFI_PCI_IO_ATTRIBUTE_BUS_MASTER),
+                                   NULL
+                                   );
   if (EFI_ERROR (Status)) {
     goto CloseProtocol;
   }
@@ -912,11 +1358,11 @@ MptScsiControllerStart (
   // Signal device supports 64-bit DMA addresses
   //
   Status = Dev->PciIo->Attributes (
-                         Dev->PciIo,
-                         EfiPciIoAttributeOperationEnable,
-                         EFI_PCI_IO_ATTRIBUTE_DUAL_ADDRESS_CYCLE,
-                         NULL
-                         );
+                                   Dev->PciIo,
+                                   EfiPciIoAttributeOperationEnable,
+                                   EFI_PCI_IO_ATTRIBUTE_DUAL_ADDRESS_CYCLE,
+                                   NULL
+                                   );
   if (EFI_ERROR (Status)) {
     //
     // Warn user that device will only be using 32-bit DMA addresses.
@@ -924,38 +1370,40 @@ MptScsiControllerStart (
     // Note that this does not prevent the device/driver from working
     // and therefore we only warn and continue as usual.
     //
-    DEBUG ((
-      DEBUG_WARN,
-      "%a: failed to enable 64-bit DMA addresses\n",
-      __FUNCTION__
-      ));
+    DEBUG (
+           (
+            DEBUG_WARN,
+            "%a: failed to enable 64-bit DMA addresses\n",
+            __FUNCTION__
+           )
+           );
   }
 
   //
   // Create buffers for data transfer
   //
-  Pages = EFI_SIZE_TO_PAGES (sizeof (*Dev->Dma));
+  Pages  = EFI_SIZE_TO_PAGES (sizeof (*Dev->Dma));
   Status = Dev->PciIo->AllocateBuffer (
-                         Dev->PciIo,
-                         AllocateAnyPages,
-                         EfiBootServicesData,
-                         Pages,
-                         (VOID **)&Dev->Dma,
-                         EFI_PCI_ATTRIBUTE_MEMORY_CACHED
-                         );
+                                       Dev->PciIo,
+                                       AllocateAnyPages,
+                                       EfiBootServicesData,
+                                       Pages,
+                                       (VOID **) &Dev->Dma,
+                                       EFI_PCI_ATTRIBUTE_MEMORY_CACHED
+                                       );
   if (EFI_ERROR (Status)) {
     goto RestoreAttributes;
   }
 
   BytesMapped = EFI_PAGES_TO_SIZE (Pages);
   Status = Dev->PciIo->Map (
-                         Dev->PciIo,
-                         EfiPciIoOperationBusMasterCommonBuffer,
-                         Dev->Dma,
-                         &BytesMapped,
-                         &Dev->DmaPhysical,
-                         &Dev->DmaMapping
-                         );
+                            Dev->PciIo,
+                            EfiPciIoOperationBusMasterCommonBuffer,
+                            Dev->Dma,
+                            &BytesMapped,
+                            &Dev->DmaPhysical,
+                            &Dev->DmaMapping
+                            );
   if (EFI_ERROR (Status)) {
     goto FreeBuffer;
   }
@@ -971,12 +1419,12 @@ MptScsiControllerStart (
   }
 
   Status = gBS->CreateEvent (
-                  EVT_SIGNAL_EXIT_BOOT_SERVICES,
-                  TPL_CALLBACK,
-                  &MptScsiExitBoot,
-                  Dev,
-                  &Dev->ExitBoot
-                  );
+                             EVT_SIGNAL_EXIT_BOOT_SERVICES,
+                             TPL_CALLBACK,
+                             &MptScsiExitBoot,
+                             Dev,
+                             &Dev->ExitBoot
+                             );
   if (EFI_ERROR (Status)) {
     goto UninitDev;
   }
@@ -984,26 +1432,26 @@ MptScsiControllerStart (
   //
   // Host adapter channel, doesn't exist
   //
-  Dev->PassThruMode.AdapterId = MAX_UINT32;
+  Dev->PassThruMode.AdapterId  = MAX_UINT32;
   Dev->PassThruMode.Attributes =
     EFI_EXT_SCSI_PASS_THRU_ATTRIBUTES_PHYSICAL |
     EFI_EXT_SCSI_PASS_THRU_ATTRIBUTES_LOGICAL;
 
-  Dev->PassThru.Mode = &Dev->PassThruMode;
+  Dev->PassThru.Mode     = &Dev->PassThruMode;
   Dev->PassThru.PassThru = &MptScsiPassThru;
   Dev->PassThru.GetNextTargetLun = &MptScsiGetNextTargetLun;
-  Dev->PassThru.BuildDevicePath = &MptScsiBuildDevicePath;
-  Dev->PassThru.GetTargetLun = &MptScsiGetTargetLun;
-  Dev->PassThru.ResetChannel = &MptScsiResetChannel;
-  Dev->PassThru.ResetTargetLun = &MptScsiResetTargetLun;
-  Dev->PassThru.GetNextTarget = &MptScsiGetNextTarget;
+  Dev->PassThru.BuildDevicePath  = &MptScsiBuildDevicePath;
+  Dev->PassThru.GetTargetLun     = &MptScsiGetTargetLun;
+  Dev->PassThru.ResetChannel     = &MptScsiResetChannel;
+  Dev->PassThru.ResetTargetLun   = &MptScsiResetTargetLun;
+  Dev->PassThru.GetNextTarget    = &MptScsiGetNextTarget;
 
   Status = gBS->InstallProtocolInterface (
-                  &ControllerHandle,
-                  &gEfiExtScsiPassThruProtocolGuid,
-                  EFI_NATIVE_INTERFACE,
-                  &Dev->PassThru
-                  );
+                                          &ControllerHandle,
+                                          &gEfiExtScsiPassThruProtocolGuid,
+                                          EFI_NATIVE_INTERFACE,
+                                          &Dev->PassThru
+                                          );
   if (EFI_ERROR (Status)) {
     goto CloseExitBoot;
   }
@@ -1018,32 +1466,32 @@ UninitDev:
 
 Unmap:
   Dev->PciIo->Unmap (
-                Dev->PciIo,
-                Dev->DmaMapping
-                );
+                     Dev->PciIo,
+                     Dev->DmaMapping
+                     );
 
 FreeBuffer:
   Dev->PciIo->FreeBuffer (
-                Dev->PciIo,
-                Pages,
-                Dev->Dma
-                );
+                          Dev->PciIo,
+                          Pages,
+                          Dev->Dma
+                          );
 
 RestoreAttributes:
   Dev->PciIo->Attributes (
-                Dev->PciIo,
-                EfiPciIoAttributeOperationSet,
-                Dev->OriginalPciAttributes,
-                NULL
-                );
+                          Dev->PciIo,
+                          EfiPciIoAttributeOperationSet,
+                          Dev->OriginalPciAttributes,
+                          NULL
+                          );
 
 CloseProtocol:
   gBS->CloseProtocol (
-         ControllerHandle,
-         &gEfiPciIoProtocolGuid,
-         This->DriverBindingHandle,
-         ControllerHandle
-         );
+                      ControllerHandle,
+                      &gEfiPciIoProtocolGuid,
+                      This->DriverBindingHandle,
+                      ControllerHandle
+                      );
 
 FreePool:
   FreePool (Dev);
@@ -1051,6 +1499,29 @@ FreePool:
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -1061,18 +1532,18 @@ MptScsiControllerStop (
   IN  EFI_HANDLE                            *ChildHandleBuffer
   )
 {
-  EFI_STATUS                      Status;
-  EFI_EXT_SCSI_PASS_THRU_PROTOCOL *PassThru;
-  MPT_SCSI_DEV                    *Dev;
+  EFI_STATUS                       Status;
+  EFI_EXT_SCSI_PASS_THRU_PROTOCOL  *PassThru;
+  MPT_SCSI_DEV                     *Dev;
 
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiExtScsiPassThruProtocolGuid,
-                  (VOID **)&PassThru,
-                  This->DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL // Lookup only
-                  );
+                              ControllerHandle,
+                              &gEfiExtScsiPassThruProtocolGuid,
+                              (VOID **) &PassThru,
+                              This->DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL // Lookup only
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -1080,10 +1551,10 @@ MptScsiControllerStop (
   Dev = MPT_SCSI_FROM_PASS_THRU (PassThru);
 
   Status = gBS->UninstallProtocolInterface (
-                  ControllerHandle,
-                  &gEfiExtScsiPassThruProtocolGuid,
-                  &Dev->PassThru
-                  );
+                                            ControllerHandle,
+                                            &gEfiExtScsiPassThruProtocolGuid,
+                                            &Dev->PassThru
+                                            );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -1093,29 +1564,29 @@ MptScsiControllerStop (
   MptScsiReset (Dev);
 
   Dev->PciIo->Unmap (
-                Dev->PciIo,
-                Dev->DmaMapping
-                );
+                     Dev->PciIo,
+                     Dev->DmaMapping
+                     );
 
   Dev->PciIo->FreeBuffer (
-                Dev->PciIo,
-                EFI_SIZE_TO_PAGES (sizeof (*Dev->Dma)),
-                Dev->Dma
-                );
+                          Dev->PciIo,
+                          EFI_SIZE_TO_PAGES (sizeof (*Dev->Dma)),
+                          Dev->Dma
+                          );
 
   Dev->PciIo->Attributes (
-                Dev->PciIo,
-                EfiPciIoAttributeOperationSet,
-                Dev->OriginalPciAttributes,
-                NULL
-                );
+                          Dev->PciIo,
+                          EfiPciIoAttributeOperationSet,
+                          Dev->OriginalPciAttributes,
+                          NULL
+                          );
 
   gBS->CloseProtocol (
-         ControllerHandle,
-         &gEfiPciIoProtocolGuid,
-         This->DriverBindingHandle,
-         ControllerHandle
-         );
+                      ControllerHandle,
+                      &gEfiPciIoProtocolGuid,
+                      This->DriverBindingHandle,
+                      ControllerHandle
+                      );
 
   FreePool (Dev);
 
@@ -1123,7 +1594,7 @@ MptScsiControllerStop (
 }
 
 STATIC
-EFI_DRIVER_BINDING_PROTOCOL mMptScsiDriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  mMptScsiDriverBinding = {
   &MptScsiControllerSupported,
   &MptScsiControllerStart,
   &MptScsiControllerStop,
@@ -1137,14 +1608,37 @@ EFI_DRIVER_BINDING_PROTOCOL mMptScsiDriverBinding = {
 //
 
 STATIC
-EFI_UNICODE_STRING_TABLE mDriverNameTable[] = {
+EFI_UNICODE_STRING_TABLE  mDriverNameTable[] = {
   { "eng;en", L"LSI Fusion MPT SCSI Driver" },
-  { NULL,     NULL                   }
+  { NULL,     NULL                          }
 };
 
 STATIC
-EFI_COMPONENT_NAME_PROTOCOL mComponentName;
+EFI_COMPONENT_NAME_PROTOCOL  mComponentName;
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 MptScsiGetDriverName (
@@ -1154,14 +1648,37 @@ MptScsiGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mDriverNameTable,
-           DriverName,
-           (BOOLEAN)(This == &mComponentName) // Iso639Language
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &mComponentName) // Iso639Language
+                               );
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 MptScsiGetDeviceName (
@@ -1176,15 +1693,15 @@ MptScsiGetDeviceName (
 }
 
 STATIC
-EFI_COMPONENT_NAME_PROTOCOL mComponentName = {
+EFI_COMPONENT_NAME_PROTOCOL  mComponentName = {
   &MptScsiGetDriverName,
   &MptScsiGetDeviceName,
   "eng" // SupportedLanguages, ISO 639-2 language codes
 };
 
 STATIC
-EFI_COMPONENT_NAME2_PROTOCOL mComponentName2 = {
-  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)     &MptScsiGetDriverName,
+EFI_COMPONENT_NAME2_PROTOCOL  mComponentName2 = {
+  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) &MptScsiGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) &MptScsiGetDeviceName,
   "en" // SupportedLanguages, RFC 4646 language codes
 };
@@ -1201,11 +1718,11 @@ MptScsiEntryPoint (
   )
 {
   return EfiLibInstallDriverBindingComponentName2 (
-           ImageHandle,
-           SystemTable,
-           &mMptScsiDriverBinding,
-           ImageHandle, // The handle to install onto
-           &mComponentName,
-           &mComponentName2
-           );
+                                                   ImageHandle,
+                                                   SystemTable,
+                                                   &mMptScsiDriverBinding,
+                                                   ImageHandle, // The handle to install onto
+                                                   &mComponentName,
+                                                   &mComponentName2
+                                                   );
 }

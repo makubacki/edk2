@@ -74,7 +74,7 @@ MemEncryptSevEsIsEnabled (
   VOID
   )
 {
-  MSR_SEV_STATUS_REGISTER           Msr;
+  MSR_SEV_STATUS_REGISTER  Msr;
 
   Msr.Uint32 = InternalMemEncryptSevStatus ();
 
@@ -93,7 +93,7 @@ MemEncryptSevIsEnabled (
   VOID
   )
 {
-  MSR_SEV_STATUS_REGISTER           Msr;
+  MSR_SEV_STATUS_REGISTER  Msr;
 
   Msr.Uint32 = InternalMemEncryptSevStatus ();
 

@@ -29,9 +29,8 @@
 BOOLEAN
 EFIAPI
 QemuFwCfgS3Enabled (
-  VOID
-  );
-
+                    VOID
+                    );
 
 /**
   Prototype for the callback function that the client module provides.
@@ -86,11 +85,11 @@ QemuFwCfgS3Enabled (
                                 ScratchBuffer is aligned at 8 bytes.
 **/
 typedef
-VOID (EFIAPI FW_CFG_BOOT_SCRIPT_CALLBACK_FUNCTION) (
-  IN OUT VOID *Context,      OPTIONAL
-  IN OUT VOID *ScratchBuffer
-  );
-
+  VOID (EFIAPI FW_CFG_BOOT_SCRIPT_CALLBACK_FUNCTION)(
+                                                     IN OUT VOID *Context,
+                                                     OPTIONAL
+                                                     IN OUT VOID *ScratchBuffer
+                                                     );
 
 /**
   Install the client module's FW_CFG_BOOT_SCRIPT_CALLBACK_FUNCTION callback for
@@ -153,10 +152,9 @@ RETURN_STATUS
 EFIAPI
 QemuFwCfgS3CallWhenBootScriptReady (
   IN     FW_CFG_BOOT_SCRIPT_CALLBACK_FUNCTION *Callback,
-  IN OUT VOID                                 *Context,          OPTIONAL
+  IN OUT VOID                                 *Context, OPTIONAL
   IN     UINTN                                ScratchBufferSize
   );
-
 
 /**
   Produce ACPI S3 Boot Script opcodes that (optionally) select an fw_cfg item,
@@ -205,7 +203,6 @@ QemuFwCfgS3ScriptWriteBytes (
   IN UINTN NumberOfBytes
   );
 
-
 /**
   Produce ACPI S3 Boot Script opcodes that (optionally) select an fw_cfg item,
   and transfer data from it.
@@ -252,7 +249,6 @@ QemuFwCfgS3ScriptReadBytes (
   IN UINTN NumberOfBytes
   );
 
-
 /**
   Produce ACPI S3 Boot Script opcodes that (optionally) select an fw_cfg item,
   and increase its offset.
@@ -291,7 +287,6 @@ QemuFwCfgS3ScriptSkipBytes (
   IN INT32 FirmwareConfigItem,
   IN UINTN NumberOfBytes
   );
-
 
 /**
   Produce ACPI S3 Boot Script opcodes that check a value in ScratchBuffer.

@@ -19,8 +19,8 @@
 RETURN_STATUS
 EFIAPI
 XenHypercallLibInit (
-  VOID
-  );
+                     VOID
+                     );
 
 /**
   Check if the Xen Hypercall library is able to make calls to the Xen
@@ -35,8 +35,8 @@ XenHypercallLibInit (
 BOOLEAN
 EFIAPI
 XenHypercallIsAvailable (
-  VOID
-  );
+                         VOID
+                         );
 
 /**
   This function will put the two arguments in the right place (registers) and

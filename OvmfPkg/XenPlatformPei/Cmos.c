@@ -8,7 +8,6 @@
 
 **/
 
-
 #include "Cmos.h"
 #include "Library/IoLib.h"
 
@@ -33,7 +32,6 @@ CmosRead8 (
   return IoRead8 (0x71);
 }
 
-
 /**
   Writes 8-bits of CMOS data.
 
@@ -57,4 +55,3 @@ CmosWrite8 (
   IoWrite8 (0x71, Value);
   return Value;
 }
-

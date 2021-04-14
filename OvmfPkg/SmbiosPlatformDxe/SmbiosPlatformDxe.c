@@ -19,12 +19,12 @@
 //
 #pragma pack(1)
 typedef struct {
-  SMBIOS_TABLE_TYPE0 Base;
-  UINT8              Strings[sizeof(TYPE0_STRINGS)];
+  SMBIOS_TABLE_TYPE0    Base;
+  UINT8                 Strings[sizeof (TYPE0_STRINGS)];
 } OVMF_TYPE0;
 #pragma pack()
 
-STATIC CONST OVMF_TYPE0 mOvmfDefaultType0 = {
+STATIC CONST OVMF_TYPE0  mOvmfDefaultType0 = {
   {
     // SMBIOS_STRUCTURE Hdr
     {
@@ -37,16 +37,16 @@ STATIC CONST OVMF_TYPE0 mOvmfDefaultType0 = {
     3,     // SMBIOS_TABLE_STRING       BiosReleaseDate
     0,     // UINT8                     BiosSize
     {      // MISC_BIOS_CHARACTERISTICS BiosCharacteristics
-      0,     // Reserved                                      :2
-      0,     // Unknown                                       :1
-      1,     // BiosCharacteristicsNotSupported               :1
+      0,   // Reserved                                      :2
+      0,   // Unknown                                       :1
+      1,   // BiosCharacteristicsNotSupported               :1
              // Remaining BiosCharacteristics bits left unset :60
     },
     {      // BIOSCharacteristicsExtensionBytes[2]
-      0,     // BiosReserved
-      0x1C   // SystemReserved = VirtualMachineSupported |
-             //                  UefiSpecificationSupported |
-             //                  TargetContentDistributionEnabled
+      0,   // BiosReserved
+      0x1C // SystemReserved = VirtualMachineSupported |
+             // UefiSpecificationSupported |
+             // TargetContentDistributionEnabled
     },
     0,     // UINT8                     SystemBiosMajorRelease
     0,     // UINT8                     SystemBiosMinorRelease
@@ -56,7 +56,6 @@ STATIC CONST OVMF_TYPE0 mOvmfDefaultType0 = {
   // Text strings (unformatted area)
   TYPE0_STRINGS
 };
-
 
 /**
   Get SMBIOS record length.
@@ -72,19 +71,19 @@ SmbiosTableLength (
   CHAR8  *AChar;
   UINTN  Length;
 
-  AChar = (CHAR8 *)(SmbiosTable.Raw + SmbiosTable.Hdr->Length);
+  AChar = (CHAR8 *) (SmbiosTable.Raw + SmbiosTable.Hdr->Length);
 
   //
   // Each structure shall be terminated by a double-null (SMBIOS spec.7.1)
   //
   while ((*AChar != 0) || (*(AChar + 1) != 0)) {
-    AChar ++;
+    AChar++;
   }
-  Length = ((UINTN)AChar - (UINTN)SmbiosTable.Raw + 2);
+
+  Length = ((UINTN) AChar - (UINTN) SmbiosTable.Raw + 2);
 
   return Length;
 }
-
 
 /**
   Install all structures from the given SMBIOS structures block
@@ -117,11 +116,11 @@ InstallAllStructures (
     //
     SmbiosHandle = SmbiosTable.Hdr->Handle;
     Status = Smbios->Add (
-                       Smbios,
-                       NULL,
-                       &SmbiosHandle,
-                       (EFI_SMBIOS_TABLE_HEADER*) SmbiosTable.Raw
-                       );
+                          Smbios,
+                          NULL,
+                          &SmbiosHandle,
+                          (EFI_SMBIOS_TABLE_HEADER *) SmbiosTable.Raw
+                          );
     ASSERT_EFI_ERROR (Status);
 
     if (SmbiosTable.Hdr->Type == 0) {
@@ -131,7 +130,7 @@ InstallAllStructures (
     //
     // Get the next structure address
     //
-    SmbiosTable.Raw = (UINT8 *)(SmbiosTable.Raw + SmbiosTableLength (SmbiosTable));
+    SmbiosTable.Raw = (UINT8 *) (SmbiosTable.Raw + SmbiosTableLength (SmbiosTable));
   }
 
   if (NeedSmbiosType0) {
@@ -140,17 +139,16 @@ InstallAllStructures (
     //
     SmbiosHandle = SMBIOS_HANDLE_PI_RESERVED;
     Status = Smbios->Add (
-                       Smbios,
-                       NULL,
-                       &SmbiosHandle,
-                       (EFI_SMBIOS_TABLE_HEADER*) &mOvmfDefaultType0
-                       );
+                          Smbios,
+                          NULL,
+                          &SmbiosHandle,
+                          (EFI_SMBIOS_TABLE_HEADER *) &mOvmfDefaultType0
+                          );
     ASSERT_EFI_ERROR (Status);
   }
 
   return EFI_SUCCESS;
 }
-
 
 /**
   Installs SMBIOS information for OVMF
@@ -178,10 +176,10 @@ SmbiosTablePublishEntry (
   // Find the SMBIOS protocol
   //
   Status = gBS->LocateProtocol (
-                  &gEfiSmbiosProtocolGuid,
-                  NULL,
-                  (VOID**)&Smbios
-                  );
+                                &gEfiSmbiosProtocolGuid,
+                                NULL,
+                                (VOID **) &Smbios
+                                );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -191,7 +189,7 @@ SmbiosTablePublishEntry (
   //
   EntryPointStructure = GetXenSmbiosTables ();
   if (EntryPointStructure != NULL) {
-    SmbiosTables = (UINT8*)(UINTN)EntryPointStructure->TableAddress;
+    SmbiosTables = (UINT8 *) (UINTN) EntryPointStructure->TableAddress;
   } else {
     SmbiosTables = GetQemuSmbiosTables ();
   }

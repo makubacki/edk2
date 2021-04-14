@@ -46,11 +46,11 @@ MemEncryptSevClearPageEncMask (
   )
 {
   return InternalMemEncryptSevSetMemoryDecrypted (
-           Cr3BaseAddress,
-           BaseAddress,
-           EFI_PAGES_TO_SIZE (NumPages),
-           Flush
-           );
+                                                  Cr3BaseAddress,
+                                                  BaseAddress,
+                                                  EFI_PAGES_TO_SIZE (NumPages),
+                                                  Flush
+                                                  );
 }
 
 /**
@@ -82,11 +82,11 @@ MemEncryptSevSetPageEncMask (
   )
 {
   return InternalMemEncryptSevSetMemoryEncrypted (
-           Cr3BaseAddress,
-           BaseAddress,
-           EFI_PAGES_TO_SIZE (NumPages),
-           Flush
-           );
+                                                  Cr3BaseAddress,
+                                                  BaseAddress,
+                                                  EFI_PAGES_TO_SIZE (NumPages),
+                                                  Flush
+                                                  );
 }
 
 /**
@@ -113,8 +113,8 @@ MemEncryptSevGetAddressRangeState (
   )
 {
   return InternalMemEncryptSevGetAddressRangeState (
-           Cr3BaseAddress,
-           BaseAddress,
-           Length
-           );
+                                                    Cr3BaseAddress,
+                                                    BaseAddress,
+                                                    Length
+                                                    );
 }

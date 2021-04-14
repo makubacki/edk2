@@ -17,7 +17,7 @@
 
 #include <IndustryStandard/Virtio.h>
 
-#define VIRTIO_RNG_SIG SIGNATURE_32 ('V', 'R', 'N', 'G')
+#define VIRTIO_RNG_SIG  SIGNATURE_32 ('V', 'R', 'N', 'G')
 
 typedef struct {
   //
@@ -25,8 +25,8 @@ typedef struct {
   // at various call depths. The table to the right should make it easier to
   // track them.
   //
-  //                        field              init function       init depth
-  //                        ----------------   ------------------  ----------
+  // field              init function       init depth
+  // ----------------   ------------------  ----------
   UINT32                    Signature;      // DriverBindingStart   0
   VIRTIO_DEVICE_PROTOCOL    *VirtIo;        // DriverBindingStart   0
   EFI_EVENT                 ExitBoot;       // DriverBindingStart   0
@@ -36,6 +36,6 @@ typedef struct {
 } VIRTIO_RNG_DEV;
 
 #define VIRTIO_ENTROPY_SOURCE_FROM_RNG(RngPointer) \
-          CR (RngPointer, VIRTIO_RNG_DEV, Rng, VIRTIO_RNG_SIG)
+  CR (RngPointer, VIRTIO_RNG_DEV, Rng, VIRTIO_RNG_SIG)
 
 #endif

@@ -35,8 +35,8 @@
 #define SEC_IDT_ENTRY_COUNT  34
 
 typedef struct _SEC_IDT_TABLE {
-  EFI_PEI_SERVICES          *PeiService;
-  IA32_IDT_GATE_DESCRIPTOR  IdtTable[SEC_IDT_ENTRY_COUNT];
+  EFI_PEI_SERVICES            *PeiService;
+  IA32_IDT_GATE_DESCRIPTOR    IdtTable[SEC_IDT_ENTRY_COUNT];
 } SEC_IDT_TABLE;
 
 VOID
@@ -57,11 +57,11 @@ TemporaryRamMigration (
 //
 //
 //
-EFI_PEI_TEMPORARY_RAM_SUPPORT_PPI mTemporaryRamSupportPpi = {
+EFI_PEI_TEMPORARY_RAM_SUPPORT_PPI  mTemporaryRamSupportPpi = {
   TemporaryRamMigration
 };
 
-EFI_PEI_PPI_DESCRIPTOR mPrivateDispatchTable[] = {
+EFI_PEI_PPI_DESCRIPTOR  mPrivateDispatchTable[] = {
   {
     (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
     &gEfiTemporaryRamSupportPpiGuid,
@@ -105,7 +105,7 @@ FindMainFv (
   Fv = *BootFv;
   Distance = (UINTN) (*BootFv)->FvLength;
   do {
-    Fv = (EFI_FIRMWARE_VOLUME_HEADER*) ((UINT8*) Fv - EFI_PAGE_SIZE);
+    Fv = (EFI_FIRMWARE_VOLUME_HEADER *) ((UINT8 *) Fv - EFI_PAGE_SIZE);
     Distance += EFI_PAGE_SIZE;
     if (Distance > SIZE_32MB) {
       return EFI_NOT_FOUND;
@@ -121,7 +121,6 @@ FindMainFv (
 
     *BootFv = Fv;
     return EFI_SUCCESS;
-
   } while (TRUE);
 }
 
@@ -152,27 +151,28 @@ FindFfsSectionInstance (
   OUT EFI_COMMON_SECTION_HEADER        **FoundSection
   )
 {
-  EFI_PHYSICAL_ADDRESS        CurrentAddress;
-  UINT32                      Size;
-  EFI_PHYSICAL_ADDRESS        EndOfSections;
-  EFI_COMMON_SECTION_HEADER   *Section;
-  EFI_PHYSICAL_ADDRESS        EndOfSection;
+  EFI_PHYSICAL_ADDRESS       CurrentAddress;
+  UINT32                     Size;
+  EFI_PHYSICAL_ADDRESS       EndOfSections;
+  EFI_COMMON_SECTION_HEADER  *Section;
+  EFI_PHYSICAL_ADDRESS       EndOfSection;
 
   //
   // Loop through the FFS file sections within the PEI Core FFS file
   //
-  EndOfSection = (EFI_PHYSICAL_ADDRESS)(UINTN) Sections;
+  EndOfSection  = (EFI_PHYSICAL_ADDRESS) (UINTN) Sections;
   EndOfSections = EndOfSection + SizeOfSections;
-  for (;;) {
+  for ( ; ;) {
     if (EndOfSection == EndOfSections) {
       break;
     }
+
     CurrentAddress = (EndOfSection + 3) & ~(3ULL);
     if (CurrentAddress >= EndOfSections) {
       return EFI_VOLUME_CORRUPTED;
     }
 
-    Section = (EFI_COMMON_SECTION_HEADER*)(UINTN) CurrentAddress;
+    Section = (EFI_COMMON_SECTION_HEADER *) (UINTN) CurrentAddress;
 
     Size = SECTION_SIZE (Section);
     if (Size < sizeof (*Section)) {
@@ -223,12 +223,12 @@ FindFfsSectionInSections (
   )
 {
   return FindFfsSectionInstance (
-           Sections,
-           SizeOfSections,
-           SectionType,
-           0,
-           FoundSection
-           );
+                                 Sections,
+                                 SizeOfSections,
+                                 SectionType,
+                                 0,
+                                 FoundSection
+                                 );
 }
 
 /**
@@ -253,32 +253,31 @@ FindFfsFileAndSection (
   OUT EFI_COMMON_SECTION_HEADER        **FoundSection
   )
 {
-  EFI_STATUS                  Status;
-  EFI_PHYSICAL_ADDRESS        CurrentAddress;
-  EFI_PHYSICAL_ADDRESS        EndOfFirmwareVolume;
-  EFI_FFS_FILE_HEADER         *File;
-  UINT32                      Size;
-  EFI_PHYSICAL_ADDRESS        EndOfFile;
+  EFI_STATUS            Status;
+  EFI_PHYSICAL_ADDRESS  CurrentAddress;
+  EFI_PHYSICAL_ADDRESS  EndOfFirmwareVolume;
+  EFI_FFS_FILE_HEADER   *File;
+  UINT32                Size;
+  EFI_PHYSICAL_ADDRESS  EndOfFile;
 
   if (Fv->Signature != EFI_FVH_SIGNATURE) {
     DEBUG ((DEBUG_ERROR, "FV at %p does not have FV header signature\n", Fv));
     return EFI_VOLUME_CORRUPTED;
   }
 
-  CurrentAddress = (EFI_PHYSICAL_ADDRESS)(UINTN) Fv;
+  CurrentAddress = (EFI_PHYSICAL_ADDRESS) (UINTN) Fv;
   EndOfFirmwareVolume = CurrentAddress + Fv->FvLength;
 
   //
   // Loop through the FFS files in the Boot Firmware Volume
   //
   for (EndOfFile = CurrentAddress + Fv->HeaderLength; ; ) {
-
     CurrentAddress = (EndOfFile + 7) & ~(7ULL);
     if (CurrentAddress > EndOfFirmwareVolume) {
       return EFI_VOLUME_CORRUPTED;
     }
 
-    File = (EFI_FFS_FILE_HEADER*)(UINTN) CurrentAddress;
+    File = (EFI_FFS_FILE_HEADER *) (UINTN) CurrentAddress;
     Size = FFS_FILE_SIZE (File);
     if (Size < (sizeof (*File) + sizeof (EFI_COMMON_SECTION_HEADER))) {
       return EFI_VOLUME_CORRUPTED;
@@ -297,11 +296,11 @@ FindFfsFileAndSection (
     }
 
     Status = FindFfsSectionInSections (
-               (VOID*) (File + 1),
-               (UINTN) EndOfFile - (UINTN) (File + 1),
-               SectionType,
-               FoundSection
-               );
+                                       (VOID *) (File + 1),
+                                       (UINTN) EndOfFile - (UINTN) (File + 1),
+                                       SectionType,
+                                       FoundSection
+                                       );
     if (!EFI_ERROR (Status) || (Status == EFI_VOLUME_CORRUPTED)) {
       return Status;
     }
@@ -324,83 +323,89 @@ DecompressMemFvs (
   IN OUT EFI_FIRMWARE_VOLUME_HEADER       **Fv
   )
 {
-  EFI_STATUS                        Status;
-  EFI_GUID_DEFINED_SECTION          *Section;
-  UINT32                            OutputBufferSize;
-  UINT32                            ScratchBufferSize;
-  UINT16                            SectionAttribute;
-  UINT32                            AuthenticationStatus;
-  VOID                              *OutputBuffer;
-  VOID                              *ScratchBuffer;
-  EFI_COMMON_SECTION_HEADER         *FvSection;
-  EFI_FIRMWARE_VOLUME_HEADER        *PeiMemFv;
-  EFI_FIRMWARE_VOLUME_HEADER        *DxeMemFv;
-  UINT32                            FvHeaderSize;
-  UINT32                            FvSectionSize;
+  EFI_STATUS                  Status;
+  EFI_GUID_DEFINED_SECTION    *Section;
+  UINT32                      OutputBufferSize;
+  UINT32                      ScratchBufferSize;
+  UINT16                      SectionAttribute;
+  UINT32                      AuthenticationStatus;
+  VOID                        *OutputBuffer;
+  VOID                        *ScratchBuffer;
+  EFI_COMMON_SECTION_HEADER   *FvSection;
+  EFI_FIRMWARE_VOLUME_HEADER  *PeiMemFv;
+  EFI_FIRMWARE_VOLUME_HEADER  *DxeMemFv;
+  UINT32                      FvHeaderSize;
+  UINT32                      FvSectionSize;
 
-  FvSection = (EFI_COMMON_SECTION_HEADER*) NULL;
+  FvSection = (EFI_COMMON_SECTION_HEADER *) NULL;
 
   Status = FindFfsFileAndSection (
-             *Fv,
-             EFI_FV_FILETYPE_FIRMWARE_VOLUME_IMAGE,
-             EFI_SECTION_GUID_DEFINED,
-             (EFI_COMMON_SECTION_HEADER**) &Section
-             );
+                                  *Fv,
+                                  EFI_FV_FILETYPE_FIRMWARE_VOLUME_IMAGE,
+                                  EFI_SECTION_GUID_DEFINED,
+                                  (EFI_COMMON_SECTION_HEADER **) &Section
+                                  );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Unable to find GUID defined section\n"));
     return Status;
   }
 
   Status = ExtractGuidedSectionGetInfo (
-             Section,
-             &OutputBufferSize,
-             &ScratchBufferSize,
-             &SectionAttribute
-             );
+                                        Section,
+                                        &OutputBufferSize,
+                                        &ScratchBufferSize,
+                                        &SectionAttribute
+                                        );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Unable to GetInfo for GUIDed section\n"));
     return Status;
   }
 
-  OutputBuffer = (VOID*) ((UINT8*)(UINTN) PcdGet32 (PcdOvmfDxeMemFvBase) + SIZE_1MB);
-  ScratchBuffer = ALIGN_POINTER ((UINT8*) OutputBuffer + OutputBufferSize, SIZE_1MB);
+  OutputBuffer  = (VOID *) ((UINT8 *) (UINTN) PcdGet32 (PcdOvmfDxeMemFvBase) + SIZE_1MB);
+  ScratchBuffer = ALIGN_POINTER ((UINT8 *) OutputBuffer + OutputBufferSize, SIZE_1MB);
 
-  DEBUG ((DEBUG_VERBOSE, "%a: OutputBuffer@%p+0x%x ScratchBuffer@%p+0x%x "
-    "PcdOvmfDecompressionScratchEnd=0x%x\n", __FUNCTION__, OutputBuffer,
-    OutputBufferSize, ScratchBuffer, ScratchBufferSize,
-    PcdGet32 (PcdOvmfDecompressionScratchEnd)));
-  ASSERT ((UINTN)ScratchBuffer + ScratchBufferSize ==
-    PcdGet32 (PcdOvmfDecompressionScratchEnd));
+  DEBUG (
+         (DEBUG_VERBOSE, "%a: OutputBuffer@%p+0x%x ScratchBuffer@%p+0x%x "
+                         "PcdOvmfDecompressionScratchEnd=0x%x\n", __FUNCTION__, OutputBuffer,
+          OutputBufferSize, ScratchBuffer, ScratchBufferSize,
+          PcdGet32 (PcdOvmfDecompressionScratchEnd))
+         );
+  ASSERT (
+          (UINTN) ScratchBuffer + ScratchBufferSize ==
+          PcdGet32 (PcdOvmfDecompressionScratchEnd)
+          );
 
   Status = ExtractGuidedSectionDecode (
-             Section,
-             &OutputBuffer,
-             ScratchBuffer,
-             &AuthenticationStatus
-             );
+                                       Section,
+                                       &OutputBuffer,
+                                       ScratchBuffer,
+                                       &AuthenticationStatus
+                                       );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Error during GUID section decode\n"));
     return Status;
   }
 
   Status = FindFfsSectionInstance (
-             OutputBuffer,
-             OutputBufferSize,
-             EFI_SECTION_FIRMWARE_VOLUME_IMAGE,
-             0,
-             &FvSection
-             );
+                                   OutputBuffer,
+                                   OutputBufferSize,
+                                   EFI_SECTION_FIRMWARE_VOLUME_IMAGE,
+                                   0,
+                                   &FvSection
+                                   );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Unable to find PEI FV section\n"));
     return Status;
   }
 
-  ASSERT (SECTION_SIZE (FvSection) ==
-          (PcdGet32 (PcdOvmfPeiMemFvSize) + sizeof (*FvSection)));
+  ASSERT (
+          SECTION_SIZE (FvSection) ==
+          (PcdGet32 (PcdOvmfPeiMemFvSize) + sizeof (*FvSection))
+          );
   ASSERT (FvSection->Type == EFI_SECTION_FIRMWARE_VOLUME_IMAGE);
 
-  PeiMemFv = (EFI_FIRMWARE_VOLUME_HEADER*)(UINTN) PcdGet32 (PcdOvmfPeiMemFvBase);
-  CopyMem (PeiMemFv, (VOID*) (FvSection + 1), PcdGet32 (PcdOvmfPeiMemFvSize));
+  PeiMemFv = (EFI_FIRMWARE_VOLUME_HEADER *) (UINTN) PcdGet32 (PcdOvmfPeiMemFvBase);
+  CopyMem (PeiMemFv, (VOID *) (FvSection + 1), PcdGet32 (PcdOvmfPeiMemFvSize));
 
   if (PeiMemFv->Signature != EFI_FVH_SIGNATURE) {
     DEBUG ((DEBUG_ERROR, "Extracted FV at %p does not have FV header signature\n", PeiMemFv));
@@ -409,12 +414,12 @@ DecompressMemFvs (
   }
 
   Status = FindFfsSectionInstance (
-             OutputBuffer,
-             OutputBufferSize,
-             EFI_SECTION_FIRMWARE_VOLUME_IMAGE,
-             1,
-             &FvSection
-             );
+                                   OutputBuffer,
+                                   OutputBufferSize,
+                                   EFI_SECTION_FIRMWARE_VOLUME_IMAGE,
+                                   1,
+                                   &FvSection
+                                   );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Unable to find DXE FV section\n"));
     return Status;
@@ -424,16 +429,16 @@ DecompressMemFvs (
 
   if (IS_SECTION2 (FvSection)) {
     FvSectionSize = SECTION2_SIZE (FvSection);
-    FvHeaderSize = sizeof (EFI_COMMON_SECTION_HEADER2);
+    FvHeaderSize  = sizeof (EFI_COMMON_SECTION_HEADER2);
   } else {
     FvSectionSize = SECTION_SIZE (FvSection);
-    FvHeaderSize = sizeof (EFI_COMMON_SECTION_HEADER);
+    FvHeaderSize  = sizeof (EFI_COMMON_SECTION_HEADER);
   }
 
   ASSERT (FvSectionSize == (PcdGet32 (PcdOvmfDxeMemFvSize) + FvHeaderSize));
 
-  DxeMemFv = (EFI_FIRMWARE_VOLUME_HEADER*)(UINTN) PcdGet32 (PcdOvmfDxeMemFvBase);
-  CopyMem (DxeMemFv, (VOID*) ((UINTN)FvSection + FvHeaderSize), PcdGet32 (PcdOvmfDxeMemFvSize));
+  DxeMemFv = (EFI_FIRMWARE_VOLUME_HEADER *) (UINTN) PcdGet32 (PcdOvmfDxeMemFvBase);
+  CopyMem (DxeMemFv, (VOID *) ((UINTN) FvSection + FvHeaderSize), PcdGet32 (PcdOvmfDxeMemFvSize));
 
   if (DxeMemFv->Signature != EFI_FVH_SIGNATURE) {
     DEBUG ((DEBUG_ERROR, "Extracted FV at %p does not have FV header signature\n", DxeMemFv));
@@ -462,32 +467,31 @@ FindPeiCoreImageBaseInFv (
   OUT  EFI_PHYSICAL_ADDRESS             *PeiCoreImageBase
   )
 {
-  EFI_STATUS                  Status;
-  EFI_COMMON_SECTION_HEADER   *Section;
+  EFI_STATUS                 Status;
+  EFI_COMMON_SECTION_HEADER  *Section;
 
   Status = FindFfsFileAndSection (
-             Fv,
-             EFI_FV_FILETYPE_PEI_CORE,
-             EFI_SECTION_PE32,
-             &Section
-             );
+                                  Fv,
+                                  EFI_FV_FILETYPE_PEI_CORE,
+                                  EFI_SECTION_PE32,
+                                  &Section
+                                  );
   if (EFI_ERROR (Status)) {
     Status = FindFfsFileAndSection (
-               Fv,
-               EFI_FV_FILETYPE_PEI_CORE,
-               EFI_SECTION_TE,
-               &Section
-               );
+                                    Fv,
+                                    EFI_FV_FILETYPE_PEI_CORE,
+                                    EFI_SECTION_TE,
+                                    &Section
+                                    );
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_ERROR, "Unable to find PEI Core image\n"));
       return Status;
     }
   }
 
-  *PeiCoreImageBase = (EFI_PHYSICAL_ADDRESS)(UINTN)(Section + 1);
+  *PeiCoreImageBase = (EFI_PHYSICAL_ADDRESS) (UINTN) (Section + 1);
   return EFI_SUCCESS;
 }
-
 
 /**
   Reads 8-bits of CMOS data.
@@ -510,7 +514,29 @@ CmosRead8 (
   return IoRead8 (0x71);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 BOOLEAN
 IsS3Resume (
@@ -520,17 +546,38 @@ IsS3Resume (
   return (CmosRead8 (0xF) == 0xFE);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 GetS3ResumePeiFv (
   IN OUT EFI_FIRMWARE_VOLUME_HEADER       **PeiFv
   )
 {
-  *PeiFv = (EFI_FIRMWARE_VOLUME_HEADER*)(UINTN) PcdGet32 (PcdOvmfPeiMemFvBase);
+  *PeiFv = (EFI_FIRMWARE_VOLUME_HEADER *) (UINTN) PcdGet32 (PcdOvmfPeiMemFvBase);
   return EFI_SUCCESS;
 }
-
 
 /**
   Locates the PEI Core entry point address
@@ -546,10 +593,10 @@ GetS3ResumePeiFv (
 VOID
 FindPeiCoreImageBase (
   IN OUT  EFI_FIRMWARE_VOLUME_HEADER       **BootFv,
-     OUT  EFI_PHYSICAL_ADDRESS             *PeiCoreImageBase
+  OUT  EFI_PHYSICAL_ADDRESS             *PeiCoreImageBase
   )
 {
-  BOOLEAN S3Resume;
+  BOOLEAN  S3Resume;
 
   *PeiCoreImageBase = 0;
 
@@ -566,8 +613,10 @@ FindPeiCoreImageBase (
     // We're either not resuming, or resuming "securely" -- we'll decompress
     // both PEI FV and DXE FV from pristine flash.
     //
-    DEBUG ((DEBUG_VERBOSE, "SEC: %a\n",
-      S3Resume ? "S3 resume (with PEI decompression)" : "Normal boot"));
+    DEBUG (
+           (DEBUG_VERBOSE, "SEC: %a\n",
+            S3Resume ? "S3 resume (with PEI decompression)" : "Normal boot")
+           );
     FindMainFv (BootFv);
 
     DecompressMemFvs (BootFv);
@@ -586,30 +635,29 @@ FindImageBase (
   OUT EFI_PHYSICAL_ADDRESS             *SecCoreImageBase
   )
 {
-  EFI_PHYSICAL_ADDRESS        CurrentAddress;
-  EFI_PHYSICAL_ADDRESS        EndOfFirmwareVolume;
-  EFI_FFS_FILE_HEADER         *File;
-  UINT32                      Size;
-  EFI_PHYSICAL_ADDRESS        EndOfFile;
-  EFI_COMMON_SECTION_HEADER   *Section;
-  EFI_PHYSICAL_ADDRESS        EndOfSection;
+  EFI_PHYSICAL_ADDRESS       CurrentAddress;
+  EFI_PHYSICAL_ADDRESS       EndOfFirmwareVolume;
+  EFI_FFS_FILE_HEADER        *File;
+  UINT32                     Size;
+  EFI_PHYSICAL_ADDRESS       EndOfFile;
+  EFI_COMMON_SECTION_HEADER  *Section;
+  EFI_PHYSICAL_ADDRESS       EndOfSection;
 
   *SecCoreImageBase = 0;
 
-  CurrentAddress = (EFI_PHYSICAL_ADDRESS)(UINTN) BootFirmwareVolumePtr;
+  CurrentAddress = (EFI_PHYSICAL_ADDRESS) (UINTN) BootFirmwareVolumePtr;
   EndOfFirmwareVolume = CurrentAddress + BootFirmwareVolumePtr->FvLength;
 
   //
   // Loop through the FFS files in the Boot Firmware Volume
   //
   for (EndOfFile = CurrentAddress + BootFirmwareVolumePtr->HeaderLength; ; ) {
-
     CurrentAddress = (EndOfFile + 7) & 0xfffffffffffffff8ULL;
     if (CurrentAddress > EndOfFirmwareVolume) {
       return EFI_NOT_FOUND;
     }
 
-    File = (EFI_FFS_FILE_HEADER*)(UINTN) CurrentAddress;
+    File = (EFI_FFS_FILE_HEADER *) (UINTN) CurrentAddress;
     Size = FFS_FILE_SIZE (File);
     if (Size < sizeof (*File)) {
       return EFI_NOT_FOUND;
@@ -630,10 +678,10 @@ FindImageBase (
     //
     // Loop through the FFS file sections within the FFS file
     //
-    EndOfSection = (EFI_PHYSICAL_ADDRESS)(UINTN) (File + 1);
-    for (;;) {
+    EndOfSection = (EFI_PHYSICAL_ADDRESS) (UINTN) (File + 1);
+    for ( ; ;) {
       CurrentAddress = (EndOfSection + 3) & 0xfffffffffffffffcULL;
-      Section = (EFI_COMMON_SECTION_HEADER*)(UINTN) CurrentAddress;
+      Section = (EFI_COMMON_SECTION_HEADER *) (UINTN) CurrentAddress;
 
       Size = SECTION_SIZE (Section);
       if (Size < sizeof (*Section)) {
@@ -652,6 +700,7 @@ FindImageBase (
         if (File->Type == EFI_FV_FILETYPE_SECURITY_CORE) {
           *SecCoreImageBase = (PHYSICAL_ADDRESS) (UINTN) (Section + 1);
         }
+
         break;
       }
     }
@@ -678,14 +727,14 @@ FindAndReportEntryPoints (
   OUT EFI_PEI_CORE_ENTRY_POINT         *PeiCoreEntryPoint
   )
 {
-  EFI_STATUS                       Status;
-  EFI_PHYSICAL_ADDRESS             SecCoreImageBase;
-  EFI_PHYSICAL_ADDRESS             PeiCoreImageBase;
-  PE_COFF_LOADER_IMAGE_CONTEXT     ImageContext;
+  EFI_STATUS                    Status;
+  EFI_PHYSICAL_ADDRESS          SecCoreImageBase;
+  EFI_PHYSICAL_ADDRESS          PeiCoreImageBase;
+  PE_COFF_LOADER_IMAGE_CONTEXT  ImageContext;
 
   //
   // Find SEC Core and PEI Core image base
-   //
+  //
   Status = FindImageBase (*BootFirmwareVolumePtr, &SecCoreImageBase);
   ASSERT_EFI_ERROR (Status);
 
@@ -696,20 +745,20 @@ FindAndReportEntryPoints (
   // Report SEC Core debug information when remote debug is enabled
   //
   ImageContext.ImageAddress = SecCoreImageBase;
-  ImageContext.PdbPointer = PeCoffLoaderGetPdbPointer ((VOID*) (UINTN) ImageContext.ImageAddress);
+  ImageContext.PdbPointer   = PeCoffLoaderGetPdbPointer ((VOID *) (UINTN) ImageContext.ImageAddress);
   PeCoffLoaderRelocateImageExtraAction (&ImageContext);
 
   //
   // Report PEI Core debug information when remote debug is enabled
   //
-  ImageContext.ImageAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)PeiCoreImageBase;
-  ImageContext.PdbPointer = PeCoffLoaderGetPdbPointer ((VOID*) (UINTN) ImageContext.ImageAddress);
+  ImageContext.ImageAddress = (EFI_PHYSICAL_ADDRESS) (UINTN) PeiCoreImageBase;
+  ImageContext.PdbPointer   = PeCoffLoaderGetPdbPointer ((VOID *) (UINTN) ImageContext.ImageAddress);
   PeCoffLoaderRelocateImageExtraAction (&ImageContext);
 
   //
   // Find PEI Core entry point
   //
-  Status = PeCoffLoaderGetEntryPoint ((VOID *) (UINTN) PeiCoreImageBase, (VOID**) PeiCoreEntryPoint);
+  Status = PeCoffLoaderGetEntryPoint ((VOID *) (UINTN) PeiCoreImageBase, (VOID **) PeiCoreEntryPoint);
   if (EFI_ERROR (Status)) {
     *PeiCoreEntryPoint = 0;
   }
@@ -738,10 +787,10 @@ SevEsProtocolFailure (
   //
   // Use the GHCB MSR Protocol to request termination by the hypervisor
   //
-  Msr.GhcbPhysicalAddress = 0;
+  Msr.GhcbPhysicalAddress    = 0;
   Msr.GhcbTerminate.Function = GHCB_INFO_TERMINATE_REQUEST;
   Msr.GhcbTerminate.ReasonCodeSet = GHCB_TERMINATE_GHCB;
-  Msr.GhcbTerminate.ReasonCode = ReasonCode;
+  Msr.GhcbTerminate.ReasonCode    = ReasonCode;
   AsmWriteMsr64 (MSR_SEV_ES_GHCB, Msr.GhcbPhysicalAddress);
 
   AsmVmgExit ();
@@ -771,7 +820,7 @@ SevEsProtocolCheck (
   // protocol checking
   //
   Msr.GhcbPhysicalAddress = 0;
-  Msr.GhcbInfo.Function = GHCB_INFO_SEV_INFO_GET;
+  Msr.GhcbInfo.Function   = GHCB_INFO_SEV_INFO_GET;
   AsmWriteMsr64 (MSR_SEV_ES_GHCB, Msr.GhcbPhysicalAddress);
 
   AsmVmgExit ();
@@ -831,6 +880,29 @@ SevEsIsEnabled (
   return ((SevEsWorkArea != NULL) && (SevEsWorkArea->SevEsEnabled != 0));
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 EFIAPI
 SecCoreStartupWithStack (
@@ -838,18 +910,18 @@ SecCoreStartupWithStack (
   IN VOID                             *TopOfCurrentStack
   )
 {
-  EFI_SEC_PEI_HAND_OFF        SecCoreData;
-  SEC_IDT_TABLE               IdtTableInStack;
-  IA32_DESCRIPTOR             IdtDescriptor;
-  UINT32                      Index;
-  volatile UINT8              *Table;
+  EFI_SEC_PEI_HAND_OFF  SecCoreData;
+  SEC_IDT_TABLE         IdtTableInStack;
+  IA32_DESCRIPTOR       IdtDescriptor;
+  UINT32                Index;
+  volatile UINT8        *Table;
 
   //
   // To ensure SMM can't be compromised on S3 resume, we must force re-init of
   // the BaseExtractGuidedSectionLib. Since this is before library contructors
   // are called, we must use a loop rather than SetMem.
   //
-  Table = (UINT8*)(UINTN)FixedPcdGet64 (PcdGuidedExtractHandlerTableAddress);
+  Table = (UINT8 *) (UINTN) FixedPcdGet64 (PcdGuidedExtractHandlerTableAddress);
   for (Index = 0;
        Index < FixedPcdGet32 (PcdGuidedExtractHandlerTableSize);
        ++Index) {
@@ -861,10 +933,10 @@ SecCoreStartupWithStack (
   // we use a loop rather than CopyMem.
   //
   IdtTableInStack.PeiService = NULL;
-  for (Index = 0; Index < SEC_IDT_ENTRY_COUNT; Index ++) {
-    UINT8  *Src;
-    UINT8  *Dst;
-    UINTN  Byte;
+  for (Index = 0; Index < SEC_IDT_ENTRY_COUNT; Index++) {
+  UINT8  *Src;
+  UINT8  *Dst;
+  UINTN  Byte;
 
     Src = (UINT8 *) &mIdtEntryTemplate;
     Dst = (UINT8 *) &IdtTableInStack.IdtTable[Index];
@@ -873,8 +945,8 @@ SecCoreStartupWithStack (
     }
   }
 
-  IdtDescriptor.Base  = (UINTN)&IdtTableInStack.IdtTable;
-  IdtDescriptor.Limit = (UINT16)(sizeof (IdtTableInStack.IdtTable) - 1);
+  IdtDescriptor.Base  = (UINTN) &IdtTableInStack.IdtTable;
+  IdtDescriptor.Limit = (UINT16) (sizeof (IdtTableInStack.IdtTable) - 1);
 
   if (SevEsIsEnabled ()) {
     SevEsProtocolCheck ();
@@ -913,11 +985,13 @@ SecCoreStartupWithStack (
     AsmEnableCache ();
   }
 
-  DEBUG ((DEBUG_INFO,
-    "SecCoreStartupWithStack(0x%x, 0x%x)\n",
-    (UINT32)(UINTN)BootFv,
-    (UINT32)(UINTN)TopOfCurrentStack
-    ));
+  DEBUG (
+         (DEBUG_INFO,
+          "SecCoreStartupWithStack(0x%x, 0x%x)\n",
+          (UINT32) (UINTN) BootFv,
+          (UINT32) (UINTN) TopOfCurrentStack
+         )
+         );
 
   //
   // Initialize floating point operating environment
@@ -925,13 +999,13 @@ SecCoreStartupWithStack (
   //
   InitializeFloatingPointUnits ();
 
-#if defined (MDE_CPU_X64)
-  //
-  // ASSERT that the Page Tables were set by the reset vector code to
-  // the address we expect.
-  //
-  ASSERT (AsmReadCr3 () == (UINTN) PcdGet32 (PcdOvmfSecPageTablesBase));
-#endif
+ #if defined (MDE_CPU_X64)
+    //
+    // ASSERT that the Page Tables were set by the reset vector code to
+    // the address we expect.
+    //
+    ASSERT (AsmReadCr3 () == (UINTN) PcdGet32 (PcdOvmfSecPageTablesBase));
+ #endif
 
   //
   // |-------------|       <-- TopOfCurrentStack
@@ -941,23 +1015,25 @@ SecCoreStartupWithStack (
   // |-------------|       <-- SecCoreData.TemporaryRamBase
   //
 
-  ASSERT ((UINTN) (PcdGet32 (PcdOvmfSecPeiTempRamBase) +
+  ASSERT (
+          (UINTN) (PcdGet32 (PcdOvmfSecPeiTempRamBase) +
                    PcdGet32 (PcdOvmfSecPeiTempRamSize)) ==
-          (UINTN) TopOfCurrentStack);
+          (UINTN) TopOfCurrentStack
+          );
 
   //
   // Initialize SEC hand-off state
   //
-  SecCoreData.DataSize = sizeof(EFI_SEC_PEI_HAND_OFF);
+  SecCoreData.DataSize = sizeof (EFI_SEC_PEI_HAND_OFF);
 
-  SecCoreData.TemporaryRamSize       = (UINTN) PcdGet32 (PcdOvmfSecPeiTempRamSize);
-  SecCoreData.TemporaryRamBase       = (VOID*)((UINT8 *)TopOfCurrentStack - SecCoreData.TemporaryRamSize);
+  SecCoreData.TemporaryRamSize = (UINTN) PcdGet32 (PcdOvmfSecPeiTempRamSize);
+  SecCoreData.TemporaryRamBase = (VOID *) ((UINT8 *) TopOfCurrentStack - SecCoreData.TemporaryRamSize);
 
-  SecCoreData.PeiTemporaryRamBase    = SecCoreData.TemporaryRamBase;
-  SecCoreData.PeiTemporaryRamSize    = SecCoreData.TemporaryRamSize >> 1;
+  SecCoreData.PeiTemporaryRamBase = SecCoreData.TemporaryRamBase;
+  SecCoreData.PeiTemporaryRamSize = SecCoreData.TemporaryRamSize >> 1;
 
-  SecCoreData.StackBase              = (UINT8 *)SecCoreData.TemporaryRamBase + SecCoreData.PeiTemporaryRamSize;
-  SecCoreData.StackSize              = SecCoreData.TemporaryRamSize >> 1;
+  SecCoreData.StackBase = (UINT8 *) SecCoreData.TemporaryRamBase + SecCoreData.PeiTemporaryRamSize;
+  SecCoreData.StackSize = SecCoreData.TemporaryRamSize >> 1;
 
   SecCoreData.BootFirmwareVolumeBase = BootFv;
   SecCoreData.BootFirmwareVolumeSize = (UINTN) BootFv->FvLength;
@@ -994,7 +1070,7 @@ SecCoreStartupWithStack (
 **/
 VOID
 EFIAPI
-SecStartupPhase2(
+SecStartupPhase2 (
   IN VOID                     *Context
   )
 {
@@ -1008,7 +1084,7 @@ SecStartupPhase2(
   // Find PEI Core entry point. It will report SEC and Pei Core debug information if remote debug
   // is enabled.
   //
-  BootFv = (EFI_FIRMWARE_VOLUME_HEADER *)SecCoreData->BootFirmwareVolumeBase;
+  BootFv = (EFI_FIRMWARE_VOLUME_HEADER *) SecCoreData->BootFirmwareVolumeBase;
   FindAndReportEntryPoints (&BootFv, &PeiCoreEntryPoint);
   SecCoreData->BootFirmwareVolumeBase = BootFv;
   SecCoreData->BootFirmwareVolumeSize = (UINTN) BootFv->FvLength;
@@ -1016,7 +1092,7 @@ SecStartupPhase2(
   //
   // Transfer the control to the PEI core
   //
-  (*PeiCoreEntryPoint) (SecCoreData, (EFI_PEI_PPI_DESCRIPTOR *)&mPrivateDispatchTable);
+  (*PeiCoreEntryPoint)(SecCoreData, (EFI_PEI_PPI_DESCRIPTOR *) &mPrivateDispatchTable);
 
   //
   // If we get here then the PEI Core returned, which is not recoverable.
@@ -1025,6 +1101,29 @@ SecStartupPhase2(
   CpuDeadLoop ();
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 TemporaryRamMigration (
@@ -1043,21 +1142,23 @@ TemporaryRamMigration (
   BOOLEAN                          OldStatus;
   BASE_LIBRARY_JUMP_BUFFER         JumpBuffer;
 
-  DEBUG ((DEBUG_INFO,
-    "TemporaryRamMigration(0x%Lx, 0x%Lx, 0x%Lx)\n",
-    TemporaryMemoryBase,
-    PermanentMemoryBase,
-    (UINT64)CopySize
-    ));
+  DEBUG (
+         (DEBUG_INFO,
+          "TemporaryRamMigration(0x%Lx, 0x%Lx, 0x%Lx)\n",
+          TemporaryMemoryBase,
+          PermanentMemoryBase,
+          (UINT64) CopySize
+         )
+         );
 
-  OldHeap = (VOID*)(UINTN)TemporaryMemoryBase;
-  NewHeap = (VOID*)((UINTN)PermanentMemoryBase + (CopySize >> 1));
+  OldHeap = (VOID *) (UINTN) TemporaryMemoryBase;
+  NewHeap = (VOID *) ((UINTN) PermanentMemoryBase + (CopySize >> 1));
 
-  OldStack = (VOID*)((UINTN)TemporaryMemoryBase + (CopySize >> 1));
-  NewStack = (VOID*)(UINTN)PermanentMemoryBase;
+  OldStack = (VOID *) ((UINTN) TemporaryMemoryBase + (CopySize >> 1));
+  NewStack = (VOID *) (UINTN) PermanentMemoryBase;
 
-  DebugAgentContext.HeapMigrateOffset = (UINTN)NewHeap - (UINTN)OldHeap;
-  DebugAgentContext.StackMigrateOffset = (UINTN)NewStack - (UINTN)OldStack;
+  DebugAgentContext.HeapMigrateOffset  = (UINTN) NewHeap - (UINTN) OldHeap;
+  DebugAgentContext.StackMigrateOffset = (UINTN) NewStack - (UINTN) OldStack;
 
   OldStatus = SaveAndSetDebugTimerInterrupt (FALSE);
   InitializeDebugAgent (DEBUG_AGENT_INIT_POSTMEM_SEC, (VOID *) &DebugAgentContext, NULL);
@@ -1076,7 +1177,7 @@ TemporaryRamMigration (
   // Rebase IDT table in permanent memory
   //
   AsmReadIdtr (&IdtDescriptor);
-  IdtDescriptor.Base = IdtDescriptor.Base - (UINTN)OldStack + (UINTN)NewStack;
+  IdtDescriptor.Base = IdtDescriptor.Base - (UINTN) OldStack + (UINTN) NewStack;
 
   AsmWriteIdtr (&IdtDescriptor);
 
@@ -1084,19 +1185,18 @@ TemporaryRamMigration (
   // Use SetJump()/LongJump() to switch to a new stack.
   //
   if (SetJump (&JumpBuffer) == 0) {
-#if defined (MDE_CPU_IA32)
-    JumpBuffer.Esp = JumpBuffer.Esp + DebugAgentContext.StackMigrateOffset;
-    JumpBuffer.Ebp = JumpBuffer.Ebp + DebugAgentContext.StackMigrateOffset;
-#endif
-#if defined (MDE_CPU_X64)
-    JumpBuffer.Rsp = JumpBuffer.Rsp + DebugAgentContext.StackMigrateOffset;
-    JumpBuffer.Rbp = JumpBuffer.Rbp + DebugAgentContext.StackMigrateOffset;
-#endif
-    LongJump (&JumpBuffer, (UINTN)-1);
+ #if defined (MDE_CPU_IA32)
+      JumpBuffer.Esp = JumpBuffer.Esp + DebugAgentContext.StackMigrateOffset;
+      JumpBuffer.Ebp = JumpBuffer.Ebp + DebugAgentContext.StackMigrateOffset;
+ #endif
+ #if defined (MDE_CPU_X64)
+      JumpBuffer.Rsp = JumpBuffer.Rsp + DebugAgentContext.StackMigrateOffset;
+      JumpBuffer.Rbp = JumpBuffer.Rbp + DebugAgentContext.StackMigrateOffset;
+ #endif
+    LongJump (&JumpBuffer, (UINTN) - 1);
   }
 
   SaveAndSetDebugTimerInterrupt (OldStatus);
 
   return EFI_SUCCESS;
 }
-

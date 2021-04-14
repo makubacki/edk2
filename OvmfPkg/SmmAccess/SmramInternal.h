@@ -28,23 +28,23 @@ typedef enum {
 //
 // The value of PcdQ35TsegMbytes is saved into this variable at module startup.
 //
-extern UINT16 mQ35TsegMbytes;
+extern UINT16  mQ35TsegMbytes;
 
 /**
   Save PcdQ35TsegMbytes into mQ35TsegMbytes.
 **/
 VOID
-InitQ35TsegMbytes (
-  VOID
-  );
+  InitQ35TsegMbytes (
+                     VOID
+                     );
 
 /**
   Save PcdQ35SmramAtDefaultSmbase into mQ35SmramAtDefaultSmbase.
 **/
 VOID
-InitQ35SmramAtDefaultSmbase (
-  VOID
-  );
+  InitQ35SmramAtDefaultSmbase (
+                               VOID
+                               );
 
 /**
   Read the MCH_SMRAM and ESMRAMC registers, and update the LockState and

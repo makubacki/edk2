@@ -34,30 +34,55 @@ Module Name:
 #include "Platform.h"
 #include "Cmos.h"
 
-UINT8 mPhysMemAddressWidth;
+UINT8  mPhysMemAddressWidth;
 
-STATIC UINT32 mS3AcpiReservedMemoryBase;
-STATIC UINT32 mS3AcpiReservedMemorySize;
+STATIC UINT32  mS3AcpiReservedMemoryBase;
+STATIC UINT32  mS3AcpiReservedMemorySize;
 
-STATIC UINT16 mQ35TsegMbytes;
+STATIC UINT16  mQ35TsegMbytes;
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 Q35TsegMbytesInitialization (
   VOID
   )
 {
-  UINT16        ExtendedTsegMbytes;
-  RETURN_STATUS PcdStatus;
+  UINT16         ExtendedTsegMbytes;
+  RETURN_STATUS  PcdStatus;
 
   if (mHostBridgeDevId != INTEL_Q35_MCH_DEVICE_ID) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "%a: no TSEG (SMRAM) on host bridge DID=0x%04x; "
-      "only DID=0x%04x (Q35) is supported\n",
-      __FUNCTION__,
-      mHostBridgeDevId,
-      INTEL_Q35_MCH_DEVICE_ID
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "%a: no TSEG (SMRAM) on host bridge DID=0x%04x; "
+            "only DID=0x%04x (Q35) is supported\n",
+            __FUNCTION__,
+            mHostBridgeDevId,
+            INTEL_Q35_MCH_DEVICE_ID
+           )
+           );
     ASSERT (FALSE);
     CpuDeadLoop ();
   }
@@ -85,30 +110,55 @@ Q35TsegMbytesInitialization (
     return;
   }
 
-  DEBUG ((
-    DEBUG_INFO,
-    "%a: QEMU offers an extended TSEG (%d MB)\n",
-    __FUNCTION__,
-    ExtendedTsegMbytes
-    ));
+  DEBUG (
+         (
+          DEBUG_INFO,
+          "%a: QEMU offers an extended TSEG (%d MB)\n",
+          __FUNCTION__,
+          ExtendedTsegMbytes
+         )
+         );
   PcdStatus = PcdSet16S (PcdQ35TsegMbytes, ExtendedTsegMbytes);
   ASSERT_RETURN_ERROR (PcdStatus);
   mQ35TsegMbytes = ExtendedTsegMbytes;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 UINT64
 GetHighestSystemMemoryAddress (
   BOOLEAN       Below4gb
   )
 {
-  EFI_E820_ENTRY64    *E820Map;
-  UINT32              E820EntriesCount;
-  EFI_E820_ENTRY64    *Entry;
-  EFI_STATUS          Status;
-  UINT32              Loop;
-  UINT64              HighestAddress;
-  UINT64              EntryEnd;
+  EFI_E820_ENTRY64  *E820Map;
+  UINT32            E820EntriesCount;
+  EFI_E820_ENTRY64  *Entry;
+  EFI_STATUS        Status;
+  UINT32            Loop;
+  UINT64            HighestAddress;
+  UINT64            EntryEnd;
 
   HighestAddress = 0;
 
@@ -116,12 +166,11 @@ GetHighestSystemMemoryAddress (
   ASSERT_EFI_ERROR (Status);
 
   for (Loop = 0; Loop < E820EntriesCount; Loop++) {
-    Entry = E820Map + Loop;
+    Entry    = E820Map + Loop;
     EntryEnd = Entry->BaseAddr + Entry->Length;
 
     if (Entry->Type == EfiAcpiAddressRangeMemory &&
         EntryEnd > HighestAddress) {
-
       if (Below4gb && (EntryEnd <= BASE_4GB)) {
         HighestAddress = EntryEnd;
       } else if (!Below4gb && (EntryEnd >= BASE_4GB)) {
@@ -133,23 +182,46 @@ GetHighestSystemMemoryAddress (
   //
   // Round down the end address.
   //
-  return HighestAddress & ~(UINT64)EFI_PAGE_MASK;
+  return HighestAddress & ~(UINT64) EFI_PAGE_MASK;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 UINT32
 GetSystemMemorySizeBelow4gb (
   VOID
   )
 {
-  UINT8 Cmos0x34;
-  UINT8 Cmos0x35;
+  UINT8  Cmos0x34;
+  UINT8  Cmos0x35;
 
   //
   // In PVH case, there is no CMOS, we have to calculate the memory size
   // from parsing the E820
   //
   if (XenPvhDetected ()) {
-    UINT64  HighestAddress;
+  UINT64  HighestAddress;
 
     HighestAddress = GetHighestSystemMemoryAddress (TRUE);
     ASSERT (HighestAddress > 0 && HighestAddress <= BASE_4GB);
@@ -163,13 +235,13 @@ GetSystemMemorySizeBelow4gb (
   // * CMOS(0x34) is the low byte
   // * The size is specified in 64kb chunks
   // * Since this is memory above 16MB, the 16MB must be added
-  //   into the calculation to get the total memory size.
+  // into the calculation to get the total memory size.
   //
 
   Cmos0x34 = (UINT8) CmosRead8 (0x34);
   Cmos0x35 = (UINT8) CmosRead8 (0x35);
 
-  return (UINT32) (((UINTN)((Cmos0x35 << 8) + Cmos0x34) << 16) + SIZE_16MB);
+  return (UINT32) (((UINTN) ((Cmos0x35 << 8) + Cmos0x34) << 16) + SIZE_16MB);
 }
 
 /**
@@ -180,7 +252,7 @@ AddressWidthInitialization (
   VOID
   )
 {
-  UINT32 RegEax;
+  UINT32  RegEax;
 
   AsmCpuid (0x80000000, &RegEax, NULL, NULL, NULL);
   if (RegEax >= 0x80000008) {
@@ -208,21 +280,22 @@ GetPeiMemoryCap (
   VOID
   )
 {
-  BOOLEAN Page1GSupport;
-  UINT32  RegEax;
-  UINT32  RegEdx;
-  UINT32  Pml4Entries;
-  UINT32  PdpEntries;
-  UINTN   TotalPages;
+  BOOLEAN  Page1GSupport;
+  UINT32   RegEax;
+  UINT32   RegEdx;
+  UINT32   Pml4Entries;
+  UINT32   PdpEntries;
+  UINTN    TotalPages;
 
   //
   // If DXE is 32-bit, then just return the traditional 64 MB cap.
   //
-#ifdef MDE_CPU_IA32
-  if (!FeaturePcdGet (PcdDxeIplSwitchToLongMode)) {
-    return SIZE_64MB;
-  }
-#endif
+ #ifdef MDE_CPU_IA32
+    if (!FeaturePcdGet (PcdDxeIplSwitchToLongMode)) {
+      return SIZE_64MB;
+    }
+
+ #endif
 
   //
   // Dependent on physical address width, PEI memory allocations can be
@@ -243,7 +316,7 @@ GetPeiMemoryCap (
 
   if (mPhysMemAddressWidth <= 39) {
     Pml4Entries = 1;
-    PdpEntries = 1 << (mPhysMemAddressWidth - 30);
+    PdpEntries  = 1 << (mPhysMemAddressWidth - 30);
     ASSERT (PdpEntries <= 0x200);
   } else {
     Pml4Entries = 1 << (mPhysMemAddressWidth - 39);
@@ -252,7 +325,7 @@ GetPeiMemoryCap (
   }
 
   TotalPages = Page1GSupport ? Pml4Entries + 1 :
-                               (PdpEntries + 1) * Pml4Entries + 1;
+               (PdpEntries + 1) * Pml4Entries + 1;
   ASSERT (TotalPages <= 0x40201);
 
   //
@@ -260,9 +333,8 @@ GetPeiMemoryCap (
   // mPhysMemAddressWidth values close to 36, the cap will actually be
   // dominated by this increment.
   //
-  return (UINT32)(EFI_PAGES_TO_SIZE (TotalPages) + SIZE_64MB);
+  return (UINT32) (EFI_PAGES_TO_SIZE (TotalPages) + SIZE_64MB);
 }
-
 
 /**
   Publish PEI core memory
@@ -275,11 +347,11 @@ PublishPeiMemory (
   VOID
   )
 {
-  EFI_STATUS                  Status;
-  EFI_PHYSICAL_ADDRESS        MemoryBase;
-  UINT64                      MemorySize;
-  UINT32                      LowerMemorySize;
-  UINT32                      PeiMemoryCap;
+  EFI_STATUS            Status;
+  EFI_PHYSICAL_ADDRESS  MemoryBase;
+  UINT64                MemorySize;
+  UINT32                LowerMemorySize;
+  UINT32                PeiMemoryCap;
 
   LowerMemorySize = GetSystemMemorySizeBelow4gb ();
 
@@ -288,8 +360,10 @@ PublishPeiMemory (
     MemorySize = mS3AcpiReservedMemorySize;
   } else {
     PeiMemoryCap = GetPeiMemoryCap ();
-    DEBUG ((DEBUG_INFO, "%a: mPhysMemAddressWidth=%d PeiMemoryCap=%u KB\n",
-      __FUNCTION__, mPhysMemAddressWidth, PeiMemoryCap >> 10));
+    DEBUG (
+           (DEBUG_INFO, "%a: mPhysMemAddressWidth=%d PeiMemoryCap=%u KB\n",
+            __FUNCTION__, mPhysMemAddressWidth, PeiMemoryCap >> 10)
+           );
 
     //
     // Determine the range of memory to use during PEI
@@ -306,12 +380,11 @@ PublishPeiMemory (
   //
   // Publish this memory to the PEI Core
   //
-  Status = PublishSystemMemory(MemoryBase, MemorySize);
+  Status = PublishSystemMemory (MemoryBase, MemorySize);
   ASSERT_EFI_ERROR (Status);
 
   return Status;
 }
-
 
 /**
   Publish system RAM and reserve memory regions
@@ -336,13 +409,13 @@ InitializeRamRegions (
     // such that they would overlap the LockBox storage.
     //
     ZeroMem (
-      (VOID*)(UINTN) PcdGet32 (PcdOvmfLockBoxStorageBase),
-      (UINTN) PcdGet32 (PcdOvmfLockBoxStorageSize)
-      );
+             (VOID *) (UINTN) PcdGet32 (PcdOvmfLockBoxStorageBase),
+             (UINTN) PcdGet32 (PcdOvmfLockBoxStorageSize)
+             );
     BuildMemoryAllocationHob (
-      (EFI_PHYSICAL_ADDRESS)(UINTN) PcdGet32 (PcdOvmfLockBoxStorageBase),
-      (UINT64)(UINTN) PcdGet32 (PcdOvmfLockBoxStorageSize),
-      EfiBootServicesData
-      );
+                              (EFI_PHYSICAL_ADDRESS) (UINTN) PcdGet32 (PcdOvmfLockBoxStorageBase),
+                              (UINT64) (UINTN) PcdGet32 (PcdOvmfLockBoxStorageSize),
+                              EfiBootServicesData
+                              );
   }
 }

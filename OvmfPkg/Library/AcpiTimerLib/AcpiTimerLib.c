@@ -33,17 +33,17 @@ InternalAcpiDelay (
   IN      UINT32                    Delay
   )
 {
-  UINT32                            Ticks;
-  UINT32                            Times;
+  UINT32  Ticks;
+  UINT32  Times;
 
-  Times    = Delay >> 22;
-  Delay   &= BIT22 - 1;
+  Times  = Delay >> 22;
+  Delay &= BIT22 - 1;
   do {
     //
     // The target timer count is calculated here
     //
-    Ticks    = InternalAcpiGetTimerTick () + Delay;
-    Delay    = BIT22;
+    Ticks = InternalAcpiGetTimerTick () + Delay;
+    Delay = BIT22;
     //
     // Wait until time out
     // Delay >= 2^23 could not be handled by this function
@@ -72,14 +72,14 @@ MicroSecondDelay (
   )
 {
   InternalAcpiDelay (
-    (UINT32)DivU64x32 (
-              MultU64x32 (
-                MicroSeconds,
-                ACPI_TIMER_FREQUENCY
-                ),
-              1000000u
-              )
-    );
+                     (UINT32) DivU64x32 (
+                                         MultU64x32 (
+                                                     MicroSeconds,
+                                                     ACPI_TIMER_FREQUENCY
+                                                     ),
+                                         1000000u
+                                         )
+                     );
   return MicroSeconds;
 }
 
@@ -100,14 +100,14 @@ NanoSecondDelay (
   )
 {
   InternalAcpiDelay (
-    (UINT32)DivU64x32 (
-              MultU64x32 (
-                NanoSeconds,
-                ACPI_TIMER_FREQUENCY
-                ),
-              1000000000u
-              )
-    );
+                     (UINT32) DivU64x32 (
+                                         MultU64x32 (
+                                                     NanoSeconds,
+                                                     ACPI_TIMER_FREQUENCY
+                                                     ),
+                                         1000000000u
+                                         )
+                     );
   return NanoSeconds;
 }
 
@@ -129,7 +129,7 @@ GetPerformanceCounter (
   VOID
   )
 {
-  return (UINT64)InternalAcpiGetTimerTick ();
+  return (UINT64) InternalAcpiGetTimerTick ();
 }
 
 /**
@@ -158,7 +158,7 @@ GetPerformanceCounter (
 UINT64
 EFIAPI
 GetPerformanceCounterProperties (
-  OUT      UINT64                    *StartValue,  OPTIONAL
+  OUT      UINT64                    *StartValue, OPTIONAL
   OUT      UINT64                    *EndValue     OPTIONAL
   )
 {
@@ -194,9 +194,9 @@ GetTimeInNanoSecond (
   UINT32  Remainder;
 
   //
-  //          Ticks
+  // Ticks
   // Time = --------- x 1,000,000,000
-  //        Frequency
+  // Frequency
   //
   NanoSeconds = MultU64x32 (DivU64x32Remainder (Ticks, ACPI_TIMER_FREQUENCY, &Remainder), 1000000000u);
 

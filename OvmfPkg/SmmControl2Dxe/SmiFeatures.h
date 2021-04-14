@@ -24,17 +24,17 @@
                  and the function never returns in that case.)
 **/
 BOOLEAN
-NegotiateSmiFeatures (
-  VOID
-  );
+  NegotiateSmiFeatures (
+                        VOID
+                        );
 
 /**
   Append a boot script fragment that will re-select the previously negotiated
   SMI features during S3 resume.
 **/
 VOID
-SaveSmiFeatures (
-  VOID
-  );
+  SaveSmiFeatures (
+                   VOID
+                   );
 
 #endif

@@ -17,9 +17,9 @@
 // info of the packets queued in TxRing
 //
 typedef struct {
-  VOID                  *Buffer;
-  EFI_PHYSICAL_ADDRESS  DeviceAddress;  // lookup key for reverse mapping
-  VOID                  *BufMap;
+  VOID                    *Buffer;
+  EFI_PHYSICAL_ADDRESS    DeviceAddress; // lookup key for reverse mapping
+  VOID                    *BufMap;
 } TX_BUF_MAP_INFO;
 
 /**
@@ -36,7 +36,6 @@ typedef struct {
   @param[in,out] Dev  The VNET_DEV driver instance being shut down, or whose
                       partial, failed initialization is being rolled back.
 */
-
 VOID
 EFIAPI
 VirtioNetShutdownRx (
@@ -45,29 +44,51 @@ VirtioNetShutdownRx (
 {
   Dev->VirtIo->UnmapSharedBuffer (Dev->VirtIo, Dev->RxBufMap);
   Dev->VirtIo->FreeSharedPages (
-                 Dev->VirtIo,
-                 Dev->RxBufNrPages,
-                 Dev->RxBuf
-                 );
+                                Dev->VirtIo,
+                                Dev->RxBufNrPages,
+                                Dev->RxBuf
+                                );
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 EFIAPI
 VirtioNetShutdownTx (
   IN OUT VNET_DEV *Dev
   )
 {
-  ORDERED_COLLECTION_ENTRY *Entry, *Entry2;
-  TX_BUF_MAP_INFO          *TxBufMapInfo;
-  VOID                     *UserStruct;
+  ORDERED_COLLECTION_ENTRY  *Entry, *Entry2;
+  TX_BUF_MAP_INFO           *TxBufMapInfo;
+  VOID                      *UserStruct;
 
   Dev->VirtIo->UnmapSharedBuffer (Dev->VirtIo, Dev->TxSharedReqMap);
   Dev->VirtIo->FreeSharedPages (
-                 Dev->VirtIo,
-                 EFI_SIZE_TO_PAGES (sizeof *(Dev->TxSharedReq)),
-                 Dev->TxSharedReq
-                 );
+                                Dev->VirtIo,
+                                EFI_SIZE_TO_PAGES (sizeof *(Dev->TxSharedReq)),
+                                Dev->TxSharedReq
+                                );
 
   for (Entry = OrderedCollectionMin (Dev->TxBufCollection);
        Entry != NULL;
@@ -78,6 +99,7 @@ VirtioNetShutdownTx (
     Dev->VirtIo->UnmapSharedBuffer (Dev->VirtIo, TxBufMapInfo->BufMap);
     FreePool (TxBufMapInfo);
   }
+
   OrderedCollectionUninit (Dev->TxBufCollection);
 
   FreePool (Dev->TxFreeStack);
@@ -102,7 +124,6 @@ VirtioNetUninitRing (
   Dev->VirtIo->UnmapSharedBuffer (Dev->VirtIo, RingMap);
   VirtioRingUninit (Dev->VirtIo, Ring);
 }
-
 
 /**
   Map Caller-supplied TxBuf buffer to the device-mapped address
@@ -129,10 +150,10 @@ VirtioNetMapTxBuf (
   OUT EFI_PHYSICAL_ADDRESS  *DeviceAddress
   )
 {
-  EFI_STATUS                Status;
-  TX_BUF_MAP_INFO           *TxBufMapInfo;
-  EFI_PHYSICAL_ADDRESS      Address;
-  VOID                      *Mapping;
+  EFI_STATUS            Status;
+  TX_BUF_MAP_INFO       *TxBufMapInfo;
+  EFI_PHYSICAL_ADDRESS  Address;
+  VOID                  *Mapping;
 
   TxBufMapInfo = AllocatePool (sizeof (*TxBufMapInfo));
   if (TxBufMapInfo == NULL) {
@@ -140,13 +161,13 @@ VirtioNetMapTxBuf (
   }
 
   Status = VirtioMapAllBytesInSharedBuffer (
-             Dev->VirtIo,
-             VirtioOperationBusMasterRead,
-             Buffer,
-             NumberOfBytes,
-             &Address,
-             &Mapping
-            );
+                                            Dev->VirtIo,
+                                            VirtioOperationBusMasterRead,
+                                            Buffer,
+                                            NumberOfBytes,
+                                            &Address,
+                                            &Mapping
+                                            );
   if (EFI_ERROR (Status)) {
     goto FreeTxBufMapInfo;
   }
@@ -156,31 +177,31 @@ VirtioNetMapTxBuf (
   TxBufMapInfo->BufMap = Mapping;
 
   Status = OrderedCollectionInsert (
-             Dev->TxBufCollection,
-             NULL,
-             TxBufMapInfo
-             );
+                                    Dev->TxBufCollection,
+                                    NULL,
+                                    TxBufMapInfo
+                                    );
   switch (Status) {
-  case EFI_OUT_OF_RESOURCES:
-    goto UnmapTxBuf;
-  case EFI_ALREADY_STARTED:
-    //
-    // This should never happen: it implies
-    //
-    // - an identity-mapping VIRTIO_DEVICE_PROTOCOL.MapSharedBuffer()
-    //   implementation -- which is fine,
-    //
-    // - and an SNP client that queues multiple instances of the exact same
-    //   buffer address with SNP.Transmit() -- which is undefined behavior,
-    //   based on the TxBuf language in UEFI-2.7,
-    //   EFI_SIMPLE_NETWORK.GetStatus().
-    //
-    ASSERT (FALSE);
-    Status = EFI_INVALID_PARAMETER;
-    goto UnmapTxBuf;
-  default:
-    ASSERT_EFI_ERROR (Status);
-    break;
+    case EFI_OUT_OF_RESOURCES:
+      goto UnmapTxBuf;
+    case EFI_ALREADY_STARTED:
+      //
+      // This should never happen: it implies
+      //
+      // - an identity-mapping VIRTIO_DEVICE_PROTOCOL.MapSharedBuffer()
+      // implementation -- which is fine,
+      //
+      // - and an SNP client that queues multiple instances of the exact same
+      // buffer address with SNP.Transmit() -- which is undefined behavior,
+      // based on the TxBuf language in UEFI-2.7,
+      // EFI_SIMPLE_NETWORK.GetStatus().
+      //
+      ASSERT (FALSE);
+      Status = EFI_INVALID_PARAMETER;
+      goto UnmapTxBuf;
+    default:
+      ASSERT_EFI_ERROR (Status);
+      break;
   }
 
   *DeviceAddress = Address;
@@ -257,13 +278,13 @@ VirtioNetTxBufMapInfoCompare (
   IN CONST VOID *UserStruct2
   )
 {
-  CONST TX_BUF_MAP_INFO *MapInfo1;
-  CONST TX_BUF_MAP_INFO *MapInfo2;
+  CONST TX_BUF_MAP_INFO  *MapInfo1;
+  CONST TX_BUF_MAP_INFO  *MapInfo2;
 
   MapInfo1 = UserStruct1;
   MapInfo2 = UserStruct2;
 
-  return MapInfo1->DeviceAddress < MapInfo2->DeviceAddress ? -1 :
+  return MapInfo1->DeviceAddress < MapInfo2->DeviceAddress ? - 1 :
          MapInfo1->DeviceAddress > MapInfo2->DeviceAddress ?  1 :
          0;
 }
@@ -291,13 +312,13 @@ VirtioNetTxBufDeviceAddressCompare (
   IN CONST VOID *UserStruct
   )
 {
-  CONST EFI_PHYSICAL_ADDRESS *DeviceAddress;
-  CONST TX_BUF_MAP_INFO      *MapInfo;
+  CONST EFI_PHYSICAL_ADDRESS  *DeviceAddress;
+  CONST TX_BUF_MAP_INFO       *MapInfo;
 
   DeviceAddress = StandaloneKey;
   MapInfo = UserStruct;
 
-  return *DeviceAddress < MapInfo->DeviceAddress ? -1 :
+  return *DeviceAddress < MapInfo->DeviceAddress ? - 1 :
          *DeviceAddress > MapInfo->DeviceAddress ?  1 :
          0;
 }

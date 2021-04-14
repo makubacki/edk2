@@ -32,7 +32,7 @@
 EFI_STATUS
 EFIAPI
 AmdSevInstallIoMmuProtocol (
-  VOID
-  );
+                            VOID
+                            );
 
 #endif

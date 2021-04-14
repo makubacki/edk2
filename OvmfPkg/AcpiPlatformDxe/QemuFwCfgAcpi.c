@@ -19,22 +19,20 @@
 #include <Library/OrderedCollectionLib.h>
 #include <IndustryStandard/Acpi.h>
 
-
 //
 // The user structure for the ordered collection that will track the fw_cfg
 // blobs under processing.
 //
 typedef struct {
-  UINT8   File[QEMU_LOADER_FNAME_SIZE]; // NUL-terminated name of the fw_cfg
-                                        // blob. This is the ordering / search
-                                        // key.
-  UINTN   Size;                         // The number of bytes in this blob.
-  UINT8   *Base;                        // Pointer to the blob data.
-  BOOLEAN HostsOnlyTableData;           // TRUE iff the blob has been found to
-                                        // only contain data that is directly
-                                        // part of ACPI tables.
+  UINT8      File[QEMU_LOADER_FNAME_SIZE]; // NUL-terminated name of the fw_cfg
+                                           // blob. This is the ordering / search
+                                           // key.
+  UINTN      Size;                         // The number of bytes in this blob.
+  UINT8      *Base;                        // Pointer to the blob data.
+  BOOLEAN    HostsOnlyTableData;           // TRUE iff the blob has been found to
+                                           // only contain data that is directly
+                                           // part of ACPI tables.
 } BLOB;
-
 
 /**
   Compare a standalone key against a user structure containing an embedded key.
@@ -58,12 +56,11 @@ BlobKeyCompare (
   IN CONST VOID *UserStruct
   )
 {
-  CONST BLOB *Blob;
+  CONST BLOB  *Blob;
 
   Blob = UserStruct;
-  return AsciiStrCmp (StandaloneKey, (CONST CHAR8 *)Blob->File);
+  return AsciiStrCmp (StandaloneKey, (CONST CHAR8 *) Blob->File);
 }
-
 
 /**
   Comparator function for two user structures.
@@ -86,12 +83,11 @@ BlobCompare (
   IN CONST VOID *UserStruct2
   )
 {
-  CONST BLOB *Blob1;
+  CONST BLOB  *Blob1;
 
   Blob1 = UserStruct1;
   return BlobKeyCompare (Blob1->File, UserStruct2);
 }
-
 
 /**
   Comparator function for two opaque pointers, ordering on (unsigned) pointer
@@ -119,12 +115,13 @@ PointerCompare (
   if (Pointer1 == Pointer2) {
     return 0;
   }
-  if ((UINTN)Pointer1 < (UINTN)Pointer2) {
-    return -1;
+
+  if ((UINTN) Pointer1 < (UINTN) Pointer2) {
+    return - 1;
   }
+
   return 1;
 }
-
 
 /**
   Comparator function for two ASCII strings. Can be used as both Key and
@@ -150,7 +147,6 @@ AsciiStringCompare (
   return AsciiStrCmp (AsciiString1, AsciiString2);
 }
 
-
 /**
   Release the ORDERED_COLLECTION structure populated by
   CollectAllocationsRestrictedTo32Bit() (below).
@@ -165,9 +161,9 @@ STATIC
 VOID
 ReleaseAllocationsRestrictedTo32Bit (
   IN ORDERED_COLLECTION *AllocationsRestrictedTo32Bit
-)
+  )
 {
-  ORDERED_COLLECTION_ENTRY *Entry, *Entry2;
+  ORDERED_COLLECTION_ENTRY  *Entry, *Entry2;
 
   for (Entry = OrderedCollectionMin (AllocationsRestrictedTo32Bit);
        Entry != NULL;
@@ -175,9 +171,9 @@ ReleaseAllocationsRestrictedTo32Bit (
     Entry2 = OrderedCollectionNext (Entry);
     OrderedCollectionDelete (AllocationsRestrictedTo32Bit, Entry, NULL);
   }
+
   OrderedCollectionUninit (AllocationsRestrictedTo32Bit);
 }
-
 
 /**
   Iterate over the linker/loader script, and collect the names of the fw_cfg
@@ -212,11 +208,11 @@ CollectAllocationsRestrictedTo32Bit (
   OUT ORDERED_COLLECTION     **AllocationsRestrictedTo32Bit,
   IN CONST QEMU_LOADER_ENTRY *LoaderStart,
   IN CONST QEMU_LOADER_ENTRY *LoaderEnd
-)
+  )
 {
-  ORDERED_COLLECTION      *Collection;
-  CONST QEMU_LOADER_ENTRY *LoaderEntry;
-  EFI_STATUS              Status;
+  ORDERED_COLLECTION       *Collection;
+  CONST QEMU_LOADER_ENTRY  *LoaderEntry;
+  EFI_STATUS               Status;
 
   Collection = OrderedCollectionInit (AsciiStringCompare, AsciiStringCompare);
   if (Collection == NULL) {
@@ -224,11 +220,12 @@ CollectAllocationsRestrictedTo32Bit (
   }
 
   for (LoaderEntry = LoaderStart; LoaderEntry < LoaderEnd; ++LoaderEntry) {
-    CONST QEMU_LOADER_ADD_POINTER *AddPointer;
+  CONST QEMU_LOADER_ADD_POINTER  *AddPointer;
 
     if (LoaderEntry->Type != QemuLoaderCmdAddPointer) {
       continue;
     }
+
     AddPointer = &LoaderEntry->Command.AddPointer;
 
     if (AddPointer->PointerSize >= 8) {
@@ -242,28 +239,30 @@ CollectAllocationsRestrictedTo32Bit (
     }
 
     Status = OrderedCollectionInsert (
-               Collection,
-               NULL,                           // Entry
-               (VOID *)AddPointer->PointeeFile
-               );
+                                      Collection,
+                                      NULL,    // Entry
+                                      (VOID *) AddPointer->PointeeFile
+                                      );
     switch (Status) {
-    case EFI_SUCCESS:
-      DEBUG ((
-        DEBUG_VERBOSE,
-        "%a: restricting blob \"%a\" from 64-bit allocation\n",
-        __FUNCTION__,
-        AddPointer->PointeeFile
-        ));
-      break;
-    case EFI_ALREADY_STARTED:
-      //
-      // The restriction has been recorded already.
-      //
-      break;
-    case EFI_OUT_OF_RESOURCES:
-      goto RollBack;
-    default:
-      ASSERT (FALSE);
+      case EFI_SUCCESS:
+        DEBUG (
+               (
+                DEBUG_VERBOSE,
+                "%a: restricting blob \"%a\" from 64-bit allocation\n",
+                __FUNCTION__,
+                AddPointer->PointeeFile
+               )
+               );
+        break;
+      case EFI_ALREADY_STARTED:
+        //
+        // The restriction has been recorded already.
+        //
+        break;
+      case EFI_OUT_OF_RESOURCES:
+        goto RollBack;
+      default:
+        ASSERT (FALSE);
     }
   }
 
@@ -274,7 +273,6 @@ RollBack:
   ReleaseAllocationsRestrictedTo32Bit (Collection);
   return Status;
 }
-
 
 /**
   Process a QEMU_LOADER_ALLOCATE command.
@@ -321,12 +319,12 @@ ProcessCmdAllocate (
   IN ORDERED_COLLECTION         *AllocationsRestrictedTo32Bit
   )
 {
-  FIRMWARE_CONFIG_ITEM FwCfgItem;
-  UINTN                FwCfgSize;
-  EFI_STATUS           Status;
-  UINTN                NumPages;
-  EFI_PHYSICAL_ADDRESS Address;
-  BLOB                 *Blob;
+  FIRMWARE_CONFIG_ITEM  FwCfgItem;
+  UINTN                 FwCfgSize;
+  EFI_STATUS            Status;
+  UINTN                 NumPages;
+  EFI_PHYSICAL_ADDRESS  Address;
+  BLOB                  *Blob;
 
   if (Allocate->File[QEMU_LOADER_FNAME_SIZE - 1] != '\0') {
     DEBUG ((DEBUG_ERROR, "%a: malformed file name\n", __FUNCTION__));
@@ -334,28 +332,37 @@ ProcessCmdAllocate (
   }
 
   if (Allocate->Alignment > EFI_PAGE_SIZE) {
-    DEBUG ((DEBUG_ERROR, "%a: unsupported alignment 0x%x\n", __FUNCTION__,
-      Allocate->Alignment));
+    DEBUG (
+           (DEBUG_ERROR, "%a: unsupported alignment 0x%x\n", __FUNCTION__,
+            Allocate->Alignment)
+           );
     return EFI_UNSUPPORTED;
   }
 
-  Status = QemuFwCfgFindFile ((CHAR8 *)Allocate->File, &FwCfgItem, &FwCfgSize);
+  Status = QemuFwCfgFindFile ((CHAR8 *) Allocate->File, &FwCfgItem, &FwCfgSize);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: QemuFwCfgFindFile(\"%a\"): %r\n", __FUNCTION__,
-      Allocate->File, Status));
+    DEBUG (
+           (DEBUG_ERROR, "%a: QemuFwCfgFindFile(\"%a\"): %r\n", __FUNCTION__,
+            Allocate->File, Status)
+           );
     return Status;
   }
 
   NumPages = EFI_SIZE_TO_PAGES (FwCfgSize);
-  Address = MAX_UINT64;
+  Address  = MAX_UINT64;
   if (OrderedCollectionFind (
-        AllocationsRestrictedTo32Bit,
-        Allocate->File
-        ) != NULL) {
+                             AllocationsRestrictedTo32Bit,
+                             Allocate->File
+                             ) != NULL) {
     Address = MAX_UINT32;
   }
-  Status = gBS->AllocatePages (AllocateMaxAddress, EfiACPIMemoryNVS, NumPages,
-                  &Address);
+
+  Status = gBS->AllocatePages (
+                               AllocateMaxAddress,
+                               EfiACPIMemoryNVS,
+                               NumPages,
+                               &Address
+                               );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -365,17 +372,21 @@ ProcessCmdAllocate (
     Status = EFI_OUT_OF_RESOURCES;
     goto FreePages;
   }
+
   CopyMem (Blob->File, Allocate->File, QEMU_LOADER_FNAME_SIZE);
   Blob->Size = FwCfgSize;
-  Blob->Base = (VOID *)(UINTN)Address;
+  Blob->Base = (VOID *) (UINTN) Address;
   Blob->HostsOnlyTableData = TRUE;
 
   Status = OrderedCollectionInsert (Tracker, NULL, Blob);
   if (Status == RETURN_ALREADY_STARTED) {
-    DEBUG ((DEBUG_ERROR, "%a: duplicated file \"%a\"\n", __FUNCTION__,
-      Allocate->File));
+    DEBUG (
+           (DEBUG_ERROR, "%a: duplicated file \"%a\"\n", __FUNCTION__,
+            Allocate->File)
+           );
     Status = EFI_PROTOCOL_ERROR;
   }
+
   if (EFI_ERROR (Status)) {
     goto FreeBlob;
   }
@@ -384,9 +395,11 @@ ProcessCmdAllocate (
   QemuFwCfgReadBytes (FwCfgSize, Blob->Base);
   ZeroMem (Blob->Base + Blob->Size, EFI_PAGES_TO_SIZE (NumPages) - Blob->Size);
 
-  DEBUG ((DEBUG_VERBOSE, "%a: File=\"%a\" Alignment=0x%x Zone=%d Size=0x%Lx "
-    "Address=0x%Lx\n", __FUNCTION__, Allocate->File, Allocate->Alignment,
-    Allocate->Zone, (UINT64)Blob->Size, (UINT64)(UINTN)Blob->Base));
+  DEBUG (
+         (DEBUG_VERBOSE, "%a: File=\"%a\" Alignment=0x%x Zone=%d Size=0x%Lx "
+                         "Address=0x%Lx\n", __FUNCTION__, Allocate->File, Allocate->Alignment,
+          Allocate->Zone, (UINT64) Blob->Size, (UINT64) (UINTN) Blob->Base)
+         );
   return EFI_SUCCESS;
 
 FreeBlob:
@@ -397,7 +410,6 @@ FreePages:
 
   return Status;
 }
-
 
 /**
   Process a QEMU_LOADER_ADD_POINTER command.
@@ -425,10 +437,10 @@ ProcessCmdAddPointer (
   IN CONST ORDERED_COLLECTION      *Tracker
   )
 {
-  ORDERED_COLLECTION_ENTRY *TrackerEntry, *TrackerEntry2;
-  BLOB                     *Blob, *Blob2;
-  UINT8                    *PointerField;
-  UINT64                   PointerValue;
+  ORDERED_COLLECTION_ENTRY  *TrackerEntry, *TrackerEntry2;
+  BLOB                      *Blob, *Blob2;
+  UINT8                     *PointerField;
+  UINT64                    PointerValue;
 
   if (AddPointer->PointerFile[QEMU_LOADER_FNAME_SIZE - 1] != '\0' ||
       AddPointer->PointeeFile[QEMU_LOADER_FNAME_SIZE - 1] != '\0') {
@@ -436,22 +448,26 @@ ProcessCmdAddPointer (
     return EFI_PROTOCOL_ERROR;
   }
 
-  TrackerEntry = OrderedCollectionFind (Tracker, AddPointer->PointerFile);
+  TrackerEntry  = OrderedCollectionFind (Tracker, AddPointer->PointerFile);
   TrackerEntry2 = OrderedCollectionFind (Tracker, AddPointer->PointeeFile);
   if (TrackerEntry == NULL || TrackerEntry2 == NULL) {
-    DEBUG ((DEBUG_ERROR, "%a: invalid blob reference(s) \"%a\" / \"%a\"\n",
-      __FUNCTION__, AddPointer->PointerFile, AddPointer->PointeeFile));
+    DEBUG (
+           (DEBUG_ERROR, "%a: invalid blob reference(s) \"%a\" / \"%a\"\n",
+            __FUNCTION__, AddPointer->PointerFile, AddPointer->PointeeFile)
+           );
     return EFI_PROTOCOL_ERROR;
   }
 
-  Blob = OrderedCollectionUserStruct (TrackerEntry);
+  Blob  = OrderedCollectionUserStruct (TrackerEntry);
   Blob2 = OrderedCollectionUserStruct (TrackerEntry2);
   if ((AddPointer->PointerSize != 1 && AddPointer->PointerSize != 2 &&
        AddPointer->PointerSize != 4 && AddPointer->PointerSize != 8) ||
       Blob->Size < AddPointer->PointerSize ||
       Blob->Size - AddPointer->PointerSize < AddPointer->PointerOffset) {
-    DEBUG ((DEBUG_ERROR, "%a: invalid pointer location or size in \"%a\"\n",
-      __FUNCTION__, AddPointer->PointerFile));
+    DEBUG (
+           (DEBUG_ERROR, "%a: invalid pointer location or size in \"%a\"\n",
+            __FUNCTION__, AddPointer->PointerFile)
+           );
     return EFI_PROTOCOL_ERROR;
   }
 
@@ -459,8 +475,10 @@ ProcessCmdAddPointer (
   PointerValue = 0;
   CopyMem (&PointerValue, PointerField, AddPointer->PointerSize);
   if (PointerValue >= Blob2->Size) {
-    DEBUG ((DEBUG_ERROR, "%a: invalid pointer value in \"%a\"\n", __FUNCTION__,
-      AddPointer->PointerFile));
+    DEBUG (
+           (DEBUG_ERROR, "%a: invalid pointer value in \"%a\"\n", __FUNCTION__,
+            AddPointer->PointerFile)
+           );
     return EFI_PROTOCOL_ERROR;
   }
 
@@ -468,25 +486,28 @@ ProcessCmdAddPointer (
   // The memory allocation system ensures that the address of the byte past the
   // last byte of any allocated object is expressible (no wraparound).
   //
-  ASSERT ((UINTN)Blob2->Base <= MAX_ADDRESS - Blob2->Size);
+  ASSERT ((UINTN) Blob2->Base <= MAX_ADDRESS - Blob2->Size);
 
-  PointerValue += (UINT64)(UINTN)Blob2->Base;
+  PointerValue += (UINT64) (UINTN) Blob2->Base;
   if (AddPointer->PointerSize < 8 &&
       RShiftU64 (PointerValue, AddPointer->PointerSize * 8) != 0) {
-    DEBUG ((DEBUG_ERROR, "%a: relocated pointer value unrepresentable in "
-      "\"%a\"\n", __FUNCTION__, AddPointer->PointerFile));
+    DEBUG (
+           (DEBUG_ERROR, "%a: relocated pointer value unrepresentable in "
+                         "\"%a\"\n", __FUNCTION__, AddPointer->PointerFile)
+           );
     return EFI_PROTOCOL_ERROR;
   }
 
   CopyMem (PointerField, &PointerValue, AddPointer->PointerSize);
 
-  DEBUG ((DEBUG_VERBOSE, "%a: PointerFile=\"%a\" PointeeFile=\"%a\" "
-    "PointerOffset=0x%x PointerSize=%d\n", __FUNCTION__,
-    AddPointer->PointerFile, AddPointer->PointeeFile,
-    AddPointer->PointerOffset, AddPointer->PointerSize));
+  DEBUG (
+         (DEBUG_VERBOSE, "%a: PointerFile=\"%a\" PointeeFile=\"%a\" "
+                         "PointerOffset=0x%x PointerSize=%d\n", __FUNCTION__,
+          AddPointer->PointerFile, AddPointer->PointeeFile,
+          AddPointer->PointerOffset, AddPointer->PointerSize)
+         );
   return EFI_SUCCESS;
 }
-
 
 /**
   Process a QEMU_LOADER_ADD_CHECKSUM command.
@@ -511,8 +532,8 @@ ProcessCmdAddChecksum (
   IN CONST ORDERED_COLLECTION       *Tracker
   )
 {
-  ORDERED_COLLECTION_ENTRY *TrackerEntry;
-  BLOB                     *Blob;
+  ORDERED_COLLECTION_ENTRY  *TrackerEntry;
+  BLOB                      *Blob;
 
   if (AddChecksum->File[QEMU_LOADER_FNAME_SIZE - 1] != '\0') {
     DEBUG ((DEBUG_ERROR, "%a: malformed file name\n", __FUNCTION__));
@@ -521,8 +542,10 @@ ProcessCmdAddChecksum (
 
   TrackerEntry = OrderedCollectionFind (Tracker, AddChecksum->File);
   if (TrackerEntry == NULL) {
-    DEBUG ((DEBUG_ERROR, "%a: invalid blob reference \"%a\"\n", __FUNCTION__,
-      AddChecksum->File));
+    DEBUG (
+           (DEBUG_ERROR, "%a: invalid blob reference \"%a\"\n", __FUNCTION__,
+            AddChecksum->File)
+           );
     return EFI_PROTOCOL_ERROR;
   }
 
@@ -530,21 +553,24 @@ ProcessCmdAddChecksum (
   if (Blob->Size <= AddChecksum->ResultOffset ||
       Blob->Size < AddChecksum->Length ||
       Blob->Size - AddChecksum->Length < AddChecksum->Start) {
-    DEBUG ((DEBUG_ERROR, "%a: invalid checksum range in \"%a\"\n",
-      __FUNCTION__, AddChecksum->File));
+    DEBUG (
+           (DEBUG_ERROR, "%a: invalid checksum range in \"%a\"\n",
+            __FUNCTION__, AddChecksum->File)
+           );
     return EFI_PROTOCOL_ERROR;
   }
 
   Blob->Base[AddChecksum->ResultOffset] = CalculateCheckSum8 (
-                                           Blob->Base + AddChecksum->Start,
-                                           AddChecksum->Length
-                                           );
-  DEBUG ((DEBUG_VERBOSE, "%a: File=\"%a\" ResultOffset=0x%x Start=0x%x "
-    "Length=0x%x\n", __FUNCTION__, AddChecksum->File,
-    AddChecksum->ResultOffset, AddChecksum->Start, AddChecksum->Length));
+                                                              Blob->Base + AddChecksum->Start,
+                                                              AddChecksum->Length
+                                                              );
+  DEBUG (
+         (DEBUG_VERBOSE, "%a: File=\"%a\" ResultOffset=0x%x Start=0x%x "
+                         "Length=0x%x\n", __FUNCTION__, AddChecksum->File,
+          AddChecksum->ResultOffset, AddChecksum->Start, AddChecksum->Length)
+         );
   return EFI_SUCCESS;
 }
-
 
 /**
   Process a QEMU_LOADER_WRITE_POINTER command.
@@ -585,12 +611,12 @@ ProcessCmdWritePointer (
   IN OUT       S3_CONTEXT                *S3Context OPTIONAL
   )
 {
-  RETURN_STATUS            Status;
-  FIRMWARE_CONFIG_ITEM     PointerItem;
-  UINTN                    PointerItemSize;
-  ORDERED_COLLECTION_ENTRY *PointeeEntry;
-  BLOB                     *PointeeBlob;
-  UINT64                   PointerValue;
+  RETURN_STATUS             Status;
+  FIRMWARE_CONFIG_ITEM      PointerItem;
+  UINTN                     PointerItemSize;
+  ORDERED_COLLECTION_ENTRY  *PointeeEntry;
+  BLOB                      *PointeeBlob;
+  UINT64                    PointerValue;
 
   if (WritePointer->PointerFile[QEMU_LOADER_FNAME_SIZE - 1] != '\0' ||
       WritePointer->PointeeFile[QEMU_LOADER_FNAME_SIZE - 1] != '\0') {
@@ -598,13 +624,18 @@ ProcessCmdWritePointer (
     return EFI_PROTOCOL_ERROR;
   }
 
-  Status = QemuFwCfgFindFile ((CONST CHAR8 *)WritePointer->PointerFile,
-             &PointerItem, &PointerItemSize);
+  Status = QemuFwCfgFindFile (
+                              (CONST CHAR8 *) WritePointer->PointerFile,
+                              &PointerItem,
+                              &PointerItemSize
+                              );
   PointeeEntry = OrderedCollectionFind (Tracker, WritePointer->PointeeFile);
   if (RETURN_ERROR (Status) || PointeeEntry == NULL) {
-    DEBUG ((DEBUG_ERROR,
-      "%a: invalid fw_cfg file or blob reference \"%a\" / \"%a\"\n",
-      __FUNCTION__, WritePointer->PointerFile, WritePointer->PointeeFile));
+    DEBUG (
+           (DEBUG_ERROR,
+            "%a: invalid fw_cfg file or blob reference \"%a\" / \"%a\"\n",
+            __FUNCTION__, WritePointer->PointerFile, WritePointer->PointeeFile)
+           );
     return EFI_PROTOCOL_ERROR;
   }
 
@@ -613,12 +644,14 @@ ProcessCmdWritePointer (
       (PointerItemSize < WritePointer->PointerSize) ||
       (PointerItemSize - WritePointer->PointerSize <
        WritePointer->PointerOffset)) {
-    DEBUG ((DEBUG_ERROR, "%a: invalid pointer location or size in \"%a\"\n",
-      __FUNCTION__, WritePointer->PointerFile));
+    DEBUG (
+           (DEBUG_ERROR, "%a: invalid pointer location or size in \"%a\"\n",
+            __FUNCTION__, WritePointer->PointerFile)
+           );
     return EFI_PROTOCOL_ERROR;
   }
 
-  PointeeBlob = OrderedCollectionUserStruct (PointeeEntry);
+  PointeeBlob  = OrderedCollectionUserStruct (PointeeEntry);
   PointerValue = WritePointer->PointeeOffset;
   if (PointerValue >= PointeeBlob->Size) {
     DEBUG ((DEBUG_ERROR, "%a: invalid PointeeOffset\n", __FUNCTION__));
@@ -629,13 +662,15 @@ ProcessCmdWritePointer (
   // The memory allocation system ensures that the address of the byte past the
   // last byte of any allocated object is expressible (no wraparound).
   //
-  ASSERT ((UINTN)PointeeBlob->Base <= MAX_ADDRESS - PointeeBlob->Size);
+  ASSERT ((UINTN) PointeeBlob->Base <= MAX_ADDRESS - PointeeBlob->Size);
 
-  PointerValue += (UINT64)(UINTN)PointeeBlob->Base;
+  PointerValue += (UINT64) (UINTN) PointeeBlob->Base;
   if (WritePointer->PointerSize < 8 &&
       RShiftU64 (PointerValue, WritePointer->PointerSize * 8) != 0) {
-    DEBUG ((DEBUG_ERROR, "%a: pointer value unrepresentable in \"%a\"\n",
-      __FUNCTION__, WritePointer->PointerFile));
+    DEBUG (
+           (DEBUG_ERROR, "%a: pointer value unrepresentable in \"%a\"\n",
+            __FUNCTION__, WritePointer->PointerFile)
+           );
     return EFI_PROTOCOL_ERROR;
   }
 
@@ -644,15 +679,15 @@ ProcessCmdWritePointer (
   // form, to be replayed during S3 resume.
   //
   if (S3Context != NULL) {
-    EFI_STATUS SaveStatus;
+  EFI_STATUS  SaveStatus;
 
     SaveStatus = SaveCondensedWritePointerToS3Context (
-                   S3Context,
-                   (UINT16)PointerItem,
-                   WritePointer->PointerSize,
-                   WritePointer->PointerOffset,
-                   PointerValue
-                   );
+                                                       S3Context,
+                                                       (UINT16) PointerItem,
+                                                       WritePointer->PointerSize,
+                                                       WritePointer->PointerOffset,
+                                                       PointerValue
+                                                       );
     if (EFI_ERROR (SaveStatus)) {
       return SaveStatus;
     }
@@ -669,14 +704,15 @@ ProcessCmdWritePointer (
   //
   PointeeBlob->HostsOnlyTableData = FALSE;
 
-  DEBUG ((DEBUG_VERBOSE, "%a: PointerFile=\"%a\" PointeeFile=\"%a\" "
-    "PointerOffset=0x%x PointeeOffset=0x%x PointerSize=%d\n", __FUNCTION__,
-    WritePointer->PointerFile, WritePointer->PointeeFile,
-    WritePointer->PointerOffset, WritePointer->PointeeOffset,
-    WritePointer->PointerSize));
+  DEBUG (
+         (DEBUG_VERBOSE, "%a: PointerFile=\"%a\" PointeeFile=\"%a\" "
+                         "PointerOffset=0x%x PointeeOffset=0x%x PointerSize=%d\n", __FUNCTION__,
+          WritePointer->PointerFile, WritePointer->PointeeFile,
+          WritePointer->PointerOffset, WritePointer->PointeeOffset,
+          WritePointer->PointerSize)
+         );
   return EFI_SUCCESS;
 }
-
 
 /**
   Undo a QEMU_LOADER_WRITE_POINTER command.
@@ -694,13 +730,16 @@ UndoCmdWritePointer (
   IN CONST QEMU_LOADER_WRITE_POINTER *WritePointer
   )
 {
-  RETURN_STATUS        Status;
-  FIRMWARE_CONFIG_ITEM PointerItem;
-  UINTN                PointerItemSize;
-  UINT64               PointerValue;
+  RETURN_STATUS         Status;
+  FIRMWARE_CONFIG_ITEM  PointerItem;
+  UINTN                 PointerItemSize;
+  UINT64                PointerValue;
 
-  Status = QemuFwCfgFindFile ((CONST CHAR8 *)WritePointer->PointerFile,
-             &PointerItem, &PointerItemSize);
+  Status = QemuFwCfgFindFile (
+                              (CONST CHAR8 *) WritePointer->PointerFile,
+                              &PointerItem,
+                              &PointerItemSize
+                              );
   ASSERT_RETURN_ERROR (Status);
 
   PointerValue = 0;
@@ -708,18 +747,19 @@ UndoCmdWritePointer (
   QemuFwCfgSkipBytes (WritePointer->PointerOffset);
   QemuFwCfgWriteBytes (WritePointer->PointerSize, &PointerValue);
 
-  DEBUG ((DEBUG_VERBOSE,
-    "%a: PointerFile=\"%a\" PointerOffset=0x%x PointerSize=%d\n", __FUNCTION__,
-    WritePointer->PointerFile, WritePointer->PointerOffset,
-    WritePointer->PointerSize));
+  DEBUG (
+         (DEBUG_VERBOSE,
+          "%a: PointerFile=\"%a\" PointerOffset=0x%x PointerSize=%d\n", __FUNCTION__,
+          WritePointer->PointerFile, WritePointer->PointerOffset,
+          WritePointer->PointerSize)
+         );
 }
-
 
 //
 // We'll be saving the keys of installed tables so that we can roll them back
 // in case of failure. 128 tables should be enough for anyone (TM).
 //
-#define INSTALLED_TABLES_MAX 128
+#define INSTALLED_TABLES_MAX  128
 
 /**
   Process a QEMU_LOADER_ADD_POINTER command in order to see if its target byte
@@ -792,26 +832,26 @@ Process2ndPassCmdAddPointer (
   IN OUT ORDERED_COLLECTION            *SeenPointers
   )
 {
-  CONST ORDERED_COLLECTION_ENTRY                     *TrackerEntry;
-  CONST ORDERED_COLLECTION_ENTRY                     *TrackerEntry2;
-  ORDERED_COLLECTION_ENTRY                           *SeenPointerEntry;
-  CONST BLOB                                         *Blob;
-  BLOB                                               *Blob2;
-  CONST UINT8                                        *PointerField;
-  UINT64                                             PointerValue;
-  UINTN                                              Blob2Remaining;
-  UINTN                                              TableSize;
-  CONST EFI_ACPI_1_0_FIRMWARE_ACPI_CONTROL_STRUCTURE *Facs;
-  CONST EFI_ACPI_DESCRIPTION_HEADER                  *Header;
-  EFI_STATUS                                         Status;
+  CONST ORDERED_COLLECTION_ENTRY                      *TrackerEntry;
+  CONST ORDERED_COLLECTION_ENTRY                      *TrackerEntry2;
+  ORDERED_COLLECTION_ENTRY                            *SeenPointerEntry;
+  CONST BLOB                                          *Blob;
+  BLOB                                                *Blob2;
+  CONST UINT8                                         *PointerField;
+  UINT64                                              PointerValue;
+  UINTN                                               Blob2Remaining;
+  UINTN                                               TableSize;
+  CONST EFI_ACPI_1_0_FIRMWARE_ACPI_CONTROL_STRUCTURE  *Facs;
+  CONST EFI_ACPI_DESCRIPTION_HEADER                   *Header;
+  EFI_STATUS                                          Status;
 
   if (*NumInstalled < 0 || *NumInstalled > INSTALLED_TABLES_MAX) {
     return EFI_INVALID_PARAMETER;
   }
 
-  TrackerEntry = OrderedCollectionFind (Tracker, AddPointer->PointerFile);
+  TrackerEntry  = OrderedCollectionFind (Tracker, AddPointer->PointerFile);
   TrackerEntry2 = OrderedCollectionFind (Tracker, AddPointer->PointeeFile);
-  Blob = OrderedCollectionUserStruct (TrackerEntry);
+  Blob  = OrderedCollectionUserStruct (TrackerEntry);
   Blob2 = OrderedCollectionUserStruct (TrackerEntry2);
   PointerField = Blob->Base + AddPointer->PointerOffset;
   PointerValue = 0;
@@ -821,36 +861,41 @@ Process2ndPassCmdAddPointer (
   // We assert that PointerValue falls inside Blob2's contents. This is ensured
   // by the Blob2->Size check and later checks in ProcessCmdAddPointer().
   //
-  Blob2Remaining = (UINTN)Blob2->Base;
-  ASSERT(PointerValue >= Blob2Remaining);
+  Blob2Remaining = (UINTN) Blob2->Base;
+  ASSERT (PointerValue >= Blob2Remaining);
   Blob2Remaining += Blob2->Size;
   ASSERT (PointerValue < Blob2Remaining);
 
   Status = OrderedCollectionInsert (
-             SeenPointers,
-             &SeenPointerEntry, // for reverting insertion in error case
-             (VOID *)(UINTN)PointerValue
-             );
+                                    SeenPointers,
+                                    &SeenPointerEntry, // for reverting insertion in error case
+                                    (VOID *) (UINTN) PointerValue
+                                    );
   if (EFI_ERROR (Status)) {
     if (Status == RETURN_ALREADY_STARTED) {
       //
       // Already seen this pointer, don't try to process it again.
       //
-      DEBUG ((
-        DEBUG_VERBOSE,
-        "%a: PointerValue=0x%Lx already processed, skipping.\n",
-        __FUNCTION__,
-        PointerValue
-        ));
+      DEBUG (
+             (
+              DEBUG_VERBOSE,
+              "%a: PointerValue=0x%Lx already processed, skipping.\n",
+              __FUNCTION__,
+              PointerValue
+             )
+             );
       Status = EFI_SUCCESS;
     }
+
     return Status;
   }
 
   Blob2Remaining -= (UINTN) PointerValue;
-  DEBUG ((DEBUG_VERBOSE, "%a: checking for ACPI header in \"%a\" at 0x%Lx "
-    "(remaining: 0x%Lx): ", __FUNCTION__, AddPointer->PointeeFile,
-    PointerValue, (UINT64)Blob2Remaining));
+  DEBUG (
+         (DEBUG_VERBOSE, "%a: checking for ACPI header in \"%a\" at 0x%Lx "
+                         "(remaining: 0x%Lx): ", __FUNCTION__, AddPointer->PointeeFile,
+          PointerValue, (UINT64) Blob2Remaining)
+         );
 
   TableSize = 0;
 
@@ -858,14 +903,16 @@ Process2ndPassCmdAddPointer (
   // To make our job simple, the FACS has a custom header. Sigh.
   //
   if (sizeof *Facs <= Blob2Remaining) {
-    Facs = (EFI_ACPI_1_0_FIRMWARE_ACPI_CONTROL_STRUCTURE *)(UINTN)PointerValue;
+    Facs = (EFI_ACPI_1_0_FIRMWARE_ACPI_CONTROL_STRUCTURE *) (UINTN) PointerValue;
 
     if (Facs->Length >= sizeof *Facs &&
         Facs->Length <= Blob2Remaining &&
         Facs->Signature ==
-                EFI_ACPI_1_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE) {
-      DEBUG ((DEBUG_VERBOSE, "found \"%-4.4a\" size 0x%x\n",
-        (CONST CHAR8 *)&Facs->Signature, Facs->Length));
+        EFI_ACPI_1_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE) {
+      DEBUG (
+             (DEBUG_VERBOSE, "found \"%-4.4a\" size 0x%x\n",
+              (CONST CHAR8 *) &Facs->Signature, Facs->Length)
+             );
       TableSize = Facs->Length;
     }
   }
@@ -874,27 +921,29 @@ Process2ndPassCmdAddPointer (
   // check for the uniform tables
   //
   if (TableSize == 0 && sizeof *Header <= Blob2Remaining) {
-    Header = (EFI_ACPI_DESCRIPTION_HEADER *)(UINTN)PointerValue;
+    Header = (EFI_ACPI_DESCRIPTION_HEADER *) (UINTN) PointerValue;
 
     if (Header->Length >= sizeof *Header &&
         Header->Length <= Blob2Remaining &&
-        CalculateSum8 ((CONST UINT8 *)Header, Header->Length) == 0) {
+        CalculateSum8 ((CONST UINT8 *) Header, Header->Length) == 0) {
       //
       // This looks very much like an ACPI table from QEMU:
       // - Length field consistent with both ACPI and containing blob size
       // - checksum is correct
       //
-      DEBUG ((DEBUG_VERBOSE, "found \"%-4.4a\" size 0x%x\n",
-        (CONST CHAR8 *)&Header->Signature, Header->Length));
+      DEBUG (
+             (DEBUG_VERBOSE, "found \"%-4.4a\" size 0x%x\n",
+              (CONST CHAR8 *) &Header->Signature, Header->Length)
+             );
       TableSize = Header->Length;
 
       //
       // Skip RSDT and XSDT because those are handled by
       // EFI_ACPI_TABLE_PROTOCOL automatically.
       if (Header->Signature ==
-                    EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE ||
+          EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE ||
           Header->Signature ==
-                    EFI_ACPI_2_0_EXTENDED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
+          EFI_ACPI_2_0_EXTENDED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
         return EFI_SUCCESS;
       }
     }
@@ -907,20 +956,28 @@ Process2ndPassCmdAddPointer (
   }
 
   if (*NumInstalled == INSTALLED_TABLES_MAX) {
-    DEBUG ((DEBUG_ERROR, "%a: can't install more than %d tables\n",
-      __FUNCTION__, INSTALLED_TABLES_MAX));
+    DEBUG (
+           (DEBUG_ERROR, "%a: can't install more than %d tables\n",
+            __FUNCTION__, INSTALLED_TABLES_MAX)
+           );
     Status = EFI_OUT_OF_RESOURCES;
     goto RollbackSeenPointer;
   }
 
-  Status = AcpiProtocol->InstallAcpiTable (AcpiProtocol,
-                           (VOID *)(UINTN)PointerValue, TableSize,
-                           &InstalledKey[*NumInstalled]);
+  Status = AcpiProtocol->InstallAcpiTable (
+                                           AcpiProtocol,
+                                           (VOID *) (UINTN) PointerValue,
+                                           TableSize,
+                                           &InstalledKey[*NumInstalled]
+                                           );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: InstallAcpiTable(): %r\n", __FUNCTION__,
-      Status));
+    DEBUG (
+           (DEBUG_ERROR, "%a: InstallAcpiTable(): %r\n", __FUNCTION__,
+            Status)
+           );
     goto RollbackSeenPointer;
   }
+
   ++*NumInstalled;
   return EFI_SUCCESS;
 
@@ -928,7 +985,6 @@ RollbackSeenPointer:
   OrderedCollectionDelete (SeenPointers, SeenPointerEntry, NULL);
   return Status;
 }
-
 
 /**
   Download, process, and install ACPI table data from the QEMU loader
@@ -958,30 +1014,33 @@ InstallQemuFwCfgTables (
   IN   EFI_ACPI_TABLE_PROTOCOL       *AcpiProtocol
   )
 {
-  EFI_STATUS               Status;
-  FIRMWARE_CONFIG_ITEM     FwCfgItem;
-  UINTN                    FwCfgSize;
-  QEMU_LOADER_ENTRY        *LoaderStart;
-  CONST QEMU_LOADER_ENTRY  *LoaderEntry, *LoaderEnd;
-  CONST QEMU_LOADER_ENTRY  *WritePointerSubsetEnd;
-  ORIGINAL_ATTRIBUTES      *OriginalPciAttributes;
-  UINTN                    OriginalPciAttributesCount;
-  ORDERED_COLLECTION       *AllocationsRestrictedTo32Bit;
-  S3_CONTEXT               *S3Context;
-  ORDERED_COLLECTION       *Tracker;
-  UINTN                    *InstalledKey;
-  INT32                    Installed;
-  ORDERED_COLLECTION_ENTRY *TrackerEntry, *TrackerEntry2;
-  ORDERED_COLLECTION       *SeenPointers;
-  ORDERED_COLLECTION_ENTRY *SeenPointerEntry, *SeenPointerEntry2;
+  EFI_STATUS                Status;
+  FIRMWARE_CONFIG_ITEM      FwCfgItem;
+  UINTN                     FwCfgSize;
+  QEMU_LOADER_ENTRY         *LoaderStart;
+  CONST QEMU_LOADER_ENTRY   *LoaderEntry, *LoaderEnd;
+  CONST QEMU_LOADER_ENTRY   *WritePointerSubsetEnd;
+  ORIGINAL_ATTRIBUTES       *OriginalPciAttributes;
+  UINTN                     OriginalPciAttributesCount;
+  ORDERED_COLLECTION        *AllocationsRestrictedTo32Bit;
+  S3_CONTEXT                *S3Context;
+  ORDERED_COLLECTION        *Tracker;
+  UINTN                     *InstalledKey;
+  INT32                     Installed;
+  ORDERED_COLLECTION_ENTRY  *TrackerEntry, *TrackerEntry2;
+  ORDERED_COLLECTION        *SeenPointers;
+  ORDERED_COLLECTION_ENTRY  *SeenPointerEntry, *SeenPointerEntry2;
 
   Status = QemuFwCfgFindFile ("etc/table-loader", &FwCfgItem, &FwCfgSize);
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   if (FwCfgSize % sizeof *LoaderEntry != 0) {
-    DEBUG ((DEBUG_ERROR, "%a: \"etc/table-loader\" has invalid size 0x%Lx\n",
-      __FUNCTION__, (UINT64)FwCfgSize));
+    DEBUG (
+           (DEBUG_ERROR, "%a: \"etc/table-loader\" has invalid size 0x%Lx\n",
+            __FUNCTION__, (UINT64) FwCfgSize)
+           );
     return EFI_PROTOCOL_ERROR;
   }
 
@@ -989,6 +1048,7 @@ InstallQemuFwCfgTables (
   if (LoaderStart == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
+
   EnablePciDecoding (&OriginalPciAttributes, &OriginalPciAttributesCount);
   QemuFwCfgSelectItem (FwCfgItem);
   QemuFwCfgReadBytes (FwCfgSize, LoaderStart);
@@ -997,10 +1057,10 @@ InstallQemuFwCfgTables (
 
   AllocationsRestrictedTo32Bit = NULL;
   Status = CollectAllocationsRestrictedTo32Bit (
-             &AllocationsRestrictedTo32Bit,
-             LoaderStart,
-             LoaderEnd
-             );
+                                                &AllocationsRestrictedTo32Bit,
+                                                LoaderStart,
+                                                LoaderEnd
+                                                );
   if (EFI_ERROR (Status)) {
     goto FreeLoader;
   }
@@ -1033,36 +1093,46 @@ InstallQemuFwCfgTables (
   WritePointerSubsetEnd = LoaderStart;
   for (LoaderEntry = LoaderStart; LoaderEntry < LoaderEnd; ++LoaderEntry) {
     switch (LoaderEntry->Type) {
-    case QemuLoaderCmdAllocate:
-      Status = ProcessCmdAllocate (
-                 &LoaderEntry->Command.Allocate,
-                 Tracker,
-                 AllocationsRestrictedTo32Bit
-                 );
-      break;
+      case QemuLoaderCmdAllocate:
+        Status = ProcessCmdAllocate (
+                                     &LoaderEntry->Command.Allocate,
+                                     Tracker,
+                                     AllocationsRestrictedTo32Bit
+                                     );
+        break;
 
-    case QemuLoaderCmdAddPointer:
-      Status = ProcessCmdAddPointer (&LoaderEntry->Command.AddPointer,
-                 Tracker);
-      break;
+      case QemuLoaderCmdAddPointer:
+        Status = ProcessCmdAddPointer (
+                                       &LoaderEntry->Command.AddPointer,
+                                       Tracker
+                                       );
+        break;
 
-    case QemuLoaderCmdAddChecksum:
-      Status = ProcessCmdAddChecksum (&LoaderEntry->Command.AddChecksum,
-                 Tracker);
-      break;
+      case QemuLoaderCmdAddChecksum:
+        Status = ProcessCmdAddChecksum (
+                                        &LoaderEntry->Command.AddChecksum,
+                                        Tracker
+                                        );
+        break;
 
-    case QemuLoaderCmdWritePointer:
-        Status = ProcessCmdWritePointer (&LoaderEntry->Command.WritePointer,
-                   Tracker, S3Context);
+      case QemuLoaderCmdWritePointer:
+        Status = ProcessCmdWritePointer (
+                                         &LoaderEntry->Command.WritePointer,
+                                         Tracker,
+                                         S3Context
+                                         );
         if (!EFI_ERROR (Status)) {
           WritePointerSubsetEnd = LoaderEntry + 1;
         }
+
         break;
 
-    default:
-      DEBUG ((DEBUG_VERBOSE, "%a: unknown loader command: 0x%x\n",
-        __FUNCTION__, LoaderEntry->Type));
-      break;
+      default:
+        DEBUG (
+               (DEBUG_VERBOSE, "%a: unknown loader command: 0x%x\n",
+                __FUNCTION__, LoaderEntry->Type)
+               );
+        break;
     }
 
     if (EFI_ERROR (Status)) {
@@ -1089,13 +1159,13 @@ InstallQemuFwCfgTables (
   for (LoaderEntry = LoaderStart; LoaderEntry < LoaderEnd; ++LoaderEntry) {
     if (LoaderEntry->Type == QemuLoaderCmdAddPointer) {
       Status = Process2ndPassCmdAddPointer (
-                 &LoaderEntry->Command.AddPointer,
-                 Tracker,
-                 AcpiProtocol,
-                 InstalledKey,
-                 &Installed,
-                 SeenPointers
-                 );
+                                            &LoaderEntry->Command.AddPointer,
+                                            Tracker,
+                                            AcpiProtocol,
+                                            InstalledKey,
+                                            &Installed,
+                                            SeenPointers
+                                            );
       if (EFI_ERROR (Status)) {
         goto UninstallAcpiTables;
       }
@@ -1112,6 +1182,7 @@ InstallQemuFwCfgTables (
     if (EFI_ERROR (Status)) {
       goto UninstallAcpiTables;
     }
+
     //
     // Ownership of S3Context has been transferred.
     //
@@ -1137,6 +1208,7 @@ UninstallAcpiTables:
     SeenPointerEntry2 = OrderedCollectionNext (SeenPointerEntry);
     OrderedCollectionDelete (SeenPointers, SeenPointerEntry, NULL);
   }
+
   OrderedCollectionUninit (SeenPointers);
 
 FreeKeys:
@@ -1164,20 +1236,24 @@ RollbackWritePointersAndFreeTracker:
   //
   for (TrackerEntry = OrderedCollectionMin (Tracker); TrackerEntry != NULL;
        TrackerEntry = TrackerEntry2) {
-    VOID *UserStruct;
-    BLOB *Blob;
+  VOID  *UserStruct;
+  BLOB  *Blob;
 
     TrackerEntry2 = OrderedCollectionNext (TrackerEntry);
     OrderedCollectionDelete (Tracker, TrackerEntry, &UserStruct);
     Blob = UserStruct;
 
     if (EFI_ERROR (Status) || Blob->HostsOnlyTableData) {
-      DEBUG ((DEBUG_VERBOSE, "%a: freeing \"%a\"\n", __FUNCTION__,
-        Blob->File));
-      gBS->FreePages ((UINTN)Blob->Base, EFI_SIZE_TO_PAGES (Blob->Size));
+      DEBUG (
+             (DEBUG_VERBOSE, "%a: freeing \"%a\"\n", __FUNCTION__,
+              Blob->File)
+             );
+      gBS->FreePages ((UINTN) Blob->Base, EFI_SIZE_TO_PAGES (Blob->Size));
     }
+
     FreePool (Blob);
   }
+
   OrderedCollectionUninit (Tracker);
 
 FreeS3Context:

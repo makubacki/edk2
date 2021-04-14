@@ -18,7 +18,7 @@
 //
 // The value to be written to the Feature Control MSR, retrieved from fw_cfg.
 //
-STATIC UINT64 mFeatureControlValue;
+STATIC UINT64  mFeatureControlValue;
 
 /**
   Write the Feature Control MSR on an Application Processor or the Boot
@@ -60,8 +60,8 @@ OnMpServicesAvailable (
   IN VOID                       *Ppi
   )
 {
-  EFI_PEI_MP_SERVICES_PPI *MpServices;
-  EFI_STATUS              Status;
+  EFI_PEI_MP_SERVICES_PPI  *MpServices;
+  EFI_STATUS               Status;
 
   DEBUG ((DEBUG_VERBOSE, "%a: %a\n", gEfiCallerBaseName, __FUNCTION__));
 
@@ -69,14 +69,14 @@ OnMpServicesAvailable (
   // Write the MSR on all the APs in parallel.
   //
   MpServices = Ppi;
-  Status = MpServices->StartupAllAPs (
-                         (CONST EFI_PEI_SERVICES **)PeiServices,
-                         MpServices,
-                         WriteFeatureControl, // Procedure
-                         FALSE,               // SingleThread
-                         0,                   // TimeoutInMicroSeconds: inf.
-                         NULL                 // ProcedureArgument
-                         );
+  Status     = MpServices->StartupAllAPs (
+                                          (CONST EFI_PEI_SERVICES **) PeiServices,
+                                          MpServices,
+                                          WriteFeatureControl, // Procedure
+                                          FALSE,               // SingleThread
+                                          0,                   // TimeoutInMicroSeconds: inf.
+                                          NULL                 // ProcedureArgument
+                                          );
   if (EFI_ERROR (Status) && Status != EFI_NOT_STARTED) {
     DEBUG ((DEBUG_ERROR, "%a: StartupAllAps(): %r\n", __FUNCTION__, Status));
     return Status;
@@ -93,36 +93,65 @@ OnMpServicesAvailable (
 // Notification object for registering the callback, for when
 // EFI_PEI_MP_SERVICES_PPI becomes available.
 //
-STATIC CONST EFI_PEI_NOTIFY_DESCRIPTOR mMpServicesNotify = {
+STATIC CONST EFI_PEI_NOTIFY_DESCRIPTOR  mMpServicesNotify = {
   EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | // Flags
   EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST,
   &gEfiPeiMpServicesPpiGuid,               // Guid
   OnMpServicesAvailable                    // Notify
 };
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 InstallFeatureControlCallback (
   VOID
   )
 {
-  EFI_STATUS           Status;
-  FIRMWARE_CONFIG_ITEM FwCfgItem;
-  UINTN                FwCfgSize;
+  EFI_STATUS            Status;
+  FIRMWARE_CONFIG_ITEM  FwCfgItem;
+  UINTN                 FwCfgSize;
 
-  Status = QemuFwCfgFindFile ("etc/msr_feature_control", &FwCfgItem,
-             &FwCfgSize);
+  Status = QemuFwCfgFindFile (
+                              "etc/msr_feature_control",
+                              &FwCfgItem,
+                              &FwCfgSize
+                              );
   if (EFI_ERROR (Status) || FwCfgSize != sizeof mFeatureControlValue) {
     //
     // Nothing to do.
     //
     return;
   }
+
   QemuFwCfgSelectItem (FwCfgItem);
   QemuFwCfgReadBytes (sizeof mFeatureControlValue, &mFeatureControlValue);
 
   Status = PeiServicesNotifyPpi (&mMpServicesNotify);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: failed to set up MP Services callback: %r\n",
-      __FUNCTION__, Status));
+    DEBUG (
+           (DEBUG_ERROR, "%a: failed to set up MP Services callback: %r\n",
+            __FUNCTION__, Status)
+           );
   }
 }

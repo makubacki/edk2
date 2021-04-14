@@ -39,10 +39,10 @@ EFI_STATUS
 PopulateFileInfo (
   IN     VIRTIO_FS_FUSE_DIRENTPLUS_RESPONSE *Dirent,
   IN     UINTN                              SingleFileInfoSize,
-     OUT EFI_FILE_INFO                      *FileInfo
+  OUT EFI_FILE_INFO                      *FileInfo
   )
 {
-  EFI_STATUS Status;
+  EFI_STATUS  Status;
 
   //
   // Convert the name, set the actual size.
@@ -52,6 +52,7 @@ PopulateFileInfo (
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   //
   // Populate the scalar fields.
   //
@@ -68,16 +69,16 @@ RefillFileInfoCache (
   IN OUT VIRTIO_FS_FILE *VirtioFsFile
   )
 {
-  VIRTIO_FS                      *VirtioFs;
-  EFI_STATUS                     Status;
-  VIRTIO_FS_FUSE_STATFS_RESPONSE FilesysAttr;
-  UINT32                         DirentBufSize;
-  UINT8                          *DirentBuf;
-  UINTN                          SingleFileInfoSize;
-  UINT8                          *FileInfoArray;
-  UINT64                         DirStreamCookie;
-  UINT64                         CacheEndsAtCookie;
-  UINTN                          NumFileInfo;
+  VIRTIO_FS                       *VirtioFs;
+  EFI_STATUS                      Status;
+  VIRTIO_FS_FUSE_STATFS_RESPONSE  FilesysAttr;
+  UINT32                          DirentBufSize;
+  UINT8                           *DirentBuf;
+  UINTN                           SingleFileInfoSize;
+  UINT8                           *FileInfoArray;
+  UINT64                          DirStreamCookie;
+  UINT64                          CacheEndsAtCookie;
+  UINTN                           NumFileInfo;
 
   //
   // Allocate a DirentBuf that can receive at least
@@ -87,17 +88,20 @@ RefillFileInfoCache (
   // check.
   //
   VirtioFs = VirtioFsFile->OwnerFs;
-  Status = VirtioFsFuseStatFs (VirtioFs, VirtioFsFile->NodeId, &FilesysAttr);
+  Status   = VirtioFsFuseStatFs (VirtioFs, VirtioFsFile->NodeId, &FilesysAttr);
   if (EFI_ERROR (Status)) {
     return Status;
   }
-  DirentBufSize = (UINT32)VIRTIO_FS_FUSE_DIRENTPLUS_RESPONSE_SIZE (
-                            FilesysAttr.Namelen);
+
+  DirentBufSize = (UINT32) VIRTIO_FS_FUSE_DIRENTPLUS_RESPONSE_SIZE (
+                                                                    FilesysAttr.Namelen
+                                                                    );
   if (DirentBufSize == 0) {
     return EFI_UNSUPPORTED;
   }
+
   DirentBufSize *= VIRTIO_FS_FILE_MAX_FILE_INFO;
-  DirentBuf = AllocatePool (DirentBufSize);
+  DirentBuf      = AllocatePool (DirentBufSize);
   if (DirentBuf == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -112,10 +116,10 @@ RefillFileInfoCache (
   // account.
   //
   SingleFileInfoSize = (OFFSET_OF (EFI_FILE_INFO, FileName) +
-                        ((UINTN)FilesysAttr.Namelen + 1) * sizeof (CHAR16));
+                        ((UINTN) FilesysAttr.Namelen + 1) * sizeof (CHAR16));
   FileInfoArray = AllocatePool (
-                    VIRTIO_FS_FILE_MAX_FILE_INFO * SingleFileInfoSize
-                    );
+                                VIRTIO_FS_FILE_MAX_FILE_INFO * SingleFileInfoSize
+                                );
   if (FileInfoArray == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto FreeDirentBuf;
@@ -126,10 +130,10 @@ RefillFileInfoCache (
   //
   DirStreamCookie   = VirtioFsFile->FilePosition;
   CacheEndsAtCookie = VirtioFsFile->FilePosition;
-  NumFileInfo       = 0;
+  NumFileInfo = 0;
   do {
-    UINT32 Remaining;
-    UINT32 Consumed;
+  UINT32  Remaining;
+  UINT32  Consumed;
 
     //
     // Fetch a chunk of the directory stream. The chunk may hold more entries
@@ -138,15 +142,15 @@ RefillFileInfoCache (
     // supported under UEFI (sockets, FIFOs, filenames with backslashes, etc).
     //
     Remaining = DirentBufSize;
-    Status = VirtioFsFuseReadFileOrDir (
-               VirtioFs,
-               VirtioFsFile->NodeId,
-               VirtioFsFile->FuseHandle,
-               TRUE,                     // IsDir
-               DirStreamCookie,          // Offset
-               &Remaining,               // Size
-               DirentBuf                 // Data
-               );
+    Status    = VirtioFsFuseReadFileOrDir (
+                                           VirtioFs,
+                                           VirtioFsFile->NodeId,
+                                           VirtioFsFile->FuseHandle,
+                                           TRUE,            // IsDir
+                                           DirStreamCookie, // Offset
+                                           &Remaining,      // Size
+                                           DirentBuf        // Data
+                                           );
     if (EFI_ERROR (Status)) {
       goto FreeFileInfoArray;
     }
@@ -165,12 +169,13 @@ RefillFileInfoCache (
     //
     Consumed = 0;
     while (Remaining >= sizeof (VIRTIO_FS_FUSE_DIRENTPLUS_RESPONSE)) {
-      VIRTIO_FS_FUSE_DIRENTPLUS_RESPONSE *Dirent;
-      UINT32                             DirentSize;
+  VIRTIO_FS_FUSE_DIRENTPLUS_RESPONSE  *Dirent;
+  UINT32                              DirentSize;
 
-      Dirent = (VIRTIO_FS_FUSE_DIRENTPLUS_RESPONSE *)(DirentBuf + Consumed);
-      DirentSize = (UINT32)VIRTIO_FS_FUSE_DIRENTPLUS_RESPONSE_SIZE (
-                             Dirent->Namelen);
+      Dirent     = (VIRTIO_FS_FUSE_DIRENTPLUS_RESPONSE *) (DirentBuf + Consumed);
+      DirentSize = (UINT32) VIRTIO_FS_FUSE_DIRENTPLUS_RESPONSE_SIZE (
+                                                                     Dirent->Namelen
+                                                                     );
       if (DirentSize == 0) {
         //
         // This means one of two things: (a) Dirent->Namelen is zero, or (b)
@@ -182,6 +187,7 @@ RefillFileInfoCache (
         Status = EFI_PROTOCOL_ERROR;
         goto FreeFileInfoArray;
       }
+
       if (DirentSize > Remaining) {
         //
         // Dirent->Namelen suggests that the filename byte array (plus any
@@ -191,6 +197,7 @@ RefillFileInfoCache (
         Status = EFI_PROTOCOL_ERROR;
         goto FreeFileInfoArray;
       }
+
       if (Dirent->Namelen > FilesysAttr.Namelen) {
         //
         // This is possible without tripping the truncation check above, due to
@@ -207,10 +214,10 @@ RefillFileInfoCache (
       // Dirent to EFI_FILE_INFO.
       //
       if (NumFileInfo < VIRTIO_FS_FILE_MAX_FILE_INFO) {
-        EFI_FILE_INFO *FileInfo;
+  EFI_FILE_INFO  *FileInfo;
 
-        FileInfo = (EFI_FILE_INFO *)(FileInfoArray +
-                                     (NumFileInfo * SingleFileInfoSize));
+        FileInfo = (EFI_FILE_INFO *) (FileInfoArray +
+                                      (NumFileInfo * SingleFileInfoSize));
         Status = PopulateFileInfo (Dirent, SingleFileInfoSize, FileInfo);
         if (!EFI_ERROR (Status)) {
           //
@@ -224,6 +231,7 @@ RefillFileInfoCache (
           //
           CacheEndsAtCookie = Dirent->CookieForNextEntry;
         }
+
         //
         // If Dirent wasn't transformable to an EFI_FILE_INFO, we'll just skip
         // it.
@@ -244,7 +252,7 @@ RefillFileInfoCache (
       // Advance to the next entry in DirentBuf.
       //
       DirStreamCookie = Dirent->CookieForNextEntry;
-      Consumed += DirentSize;
+      Consumed  += DirentSize;
       Remaining -= DirentSize;
     }
 
@@ -257,6 +265,7 @@ RefillFileInfoCache (
       Status = EFI_PROTOCOL_ERROR;
       goto FreeFileInfoArray;
     }
+
     //
     // Fetch another DirentBuf from the directory stream, unless we've filled
     // the EFI_FILE_INFO cache.
@@ -269,11 +278,12 @@ RefillFileInfoCache (
   if (VirtioFsFile->FileInfoArray != NULL) {
     FreePool (VirtioFsFile->FileInfoArray);
   }
-  VirtioFsFile->FileInfoArray      = FileInfoArray;
+
+  VirtioFsFile->FileInfoArray = FileInfoArray;
   VirtioFsFile->SingleFileInfoSize = SingleFileInfoSize;
-  VirtioFsFile->NumFileInfo        = NumFileInfo;
-  VirtioFsFile->NextFileInfo       = 0;
-  VirtioFsFile->FilePosition       = CacheEndsAtCookie;
+  VirtioFsFile->NumFileInfo  = NumFileInfo;
+  VirtioFsFile->NextFileInfo = 0;
+  VirtioFsFile->FilePosition = CacheEndsAtCookie;
 
   FreePool (DirentBuf);
   return EFI_SUCCESS;
@@ -295,31 +305,33 @@ EFI_STATUS
 ReadFileInfoCache (
   IN OUT VIRTIO_FS_FILE *VirtioFsFile,
   IN OUT UINTN          *BufferSize,
-     OUT VOID           *Buffer
+  OUT VOID           *Buffer
   )
 {
-  EFI_FILE_INFO *FileInfo;
-  UINTN         CallerAllocated;
+  EFI_FILE_INFO  *FileInfo;
+  UINTN          CallerAllocated;
 
   //
   // Refill the cache if needed. If the refill doesn't produce any new
   // EFI_FILE_INFO, report End of Directory, by setting (*BufferSize) to 0.
   //
   if (VirtioFsFile->NextFileInfo == VirtioFsFile->NumFileInfo) {
-    EFI_STATUS Status;
+  EFI_STATUS  Status;
 
     Status = RefillFileInfoCache (VirtioFsFile);
     if (EFI_ERROR (Status)) {
       return (Status == EFI_BUFFER_TOO_SMALL) ? EFI_DEVICE_ERROR : Status;
     }
+
     if (VirtioFsFile->NumFileInfo == 0) {
       *BufferSize = 0;
       return EFI_SUCCESS;
     }
   }
-  FileInfo = (EFI_FILE_INFO *)(VirtioFsFile->FileInfoArray +
-                               (VirtioFsFile->NextFileInfo *
-                                VirtioFsFile->SingleFileInfoSize));
+
+  FileInfo = (EFI_FILE_INFO *) (VirtioFsFile->FileInfoArray +
+                                (VirtioFsFile->NextFileInfo *
+                                 VirtioFsFile->SingleFileInfoSize));
 
   //
   // Check if the caller is ready to accept FileInfo. If not, we'll just
@@ -328,19 +340,20 @@ ReadFileInfoCache (
   // (The (UINTN) cast below is safe because FileInfo->Size has been reduced
   // from VirtioFsFile->SingleFileInfoSize, in
   //
-  //   RefillFileInfoCache()
-  //     PopulateFileInfo()
-  //       VirtioFsFuseDirentPlusToEfiFileInfo()
+  // RefillFileInfoCache()
+  // PopulateFileInfo()
+  // VirtioFsFuseDirentPlusToEfiFileInfo()
   //
   // and VirtioFsFile->SingleFileInfoSize was computed from
   // FilesysAttr.Namelen, which had been accepted by
   // VIRTIO_FS_FUSE_DIRENTPLUS_RESPONSE_SIZE().)
   //
   CallerAllocated = *BufferSize;
-  *BufferSize = (UINTN)FileInfo->Size;
+  *BufferSize     = (UINTN) FileInfo->Size;
   if (CallerAllocated < *BufferSize) {
     return EFI_BUFFER_TOO_SMALL;
   }
+
   //
   // Output FileInfo, and remove it from the cache.
   //
@@ -357,14 +370,14 @@ EFI_STATUS
 ReadRegularFile (
   IN OUT VIRTIO_FS_FILE *VirtioFsFile,
   IN OUT UINTN          *BufferSize,
-     OUT VOID           *Buffer
+  OUT VOID           *Buffer
   )
 {
-  VIRTIO_FS                          *VirtioFs;
-  EFI_STATUS                         Status;
-  VIRTIO_FS_FUSE_ATTRIBUTES_RESPONSE FuseAttr;
-  UINTN                              Transferred;
-  UINTN                              Left;
+  VIRTIO_FS                           *VirtioFs;
+  EFI_STATUS                          Status;
+  VIRTIO_FS_FUSE_ATTRIBUTES_RESPONSE  FuseAttr;
+  UINTN                               Transferred;
+  UINTN                               Left;
 
   VirtioFs = VirtioFsFile->OwnerFs;
   //
@@ -375,30 +388,31 @@ ReadRegularFile (
     return EFI_DEVICE_ERROR;
   }
 
-  Status      = EFI_SUCCESS;
+  Status = EFI_SUCCESS;
   Transferred = 0;
-  Left        = *BufferSize;
+  Left = *BufferSize;
   while (Left > 0) {
-    UINT32 ReadSize;
+  UINT32  ReadSize;
 
     //
     // FUSE_READ cannot express a >=4GB buffer size.
     //
-    ReadSize = (UINT32)MIN ((UINTN)MAX_UINT32, Left);
-    Status = VirtioFsFuseReadFileOrDir (
-               VirtioFs,
-               VirtioFsFile->NodeId,
-               VirtioFsFile->FuseHandle,
-               FALSE,                                    // IsDir
-               VirtioFsFile->FilePosition + Transferred,
-               &ReadSize,
-               (UINT8 *)Buffer + Transferred
-               );
+    ReadSize = (UINT32) MIN ((UINTN) MAX_UINT32, Left);
+    Status   = VirtioFsFuseReadFileOrDir (
+                                          VirtioFs,
+                                          VirtioFsFile->NodeId,
+                                          VirtioFsFile->FuseHandle,
+                                          FALSE,         // IsDir
+                                          VirtioFsFile->FilePosition + Transferred,
+                                          &ReadSize,
+                                          (UINT8 *) Buffer + Transferred
+                                          );
     if (EFI_ERROR (Status) || ReadSize == 0) {
       break;
     }
+
     Transferred += ReadSize;
-    Left        -= ReadSize;
+    Left -= ReadSize;
   }
 
   *BufferSize = Transferred;
@@ -412,16 +426,39 @@ ReadRegularFile (
   return (Transferred > 0) ? EFI_SUCCESS : Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 VirtioFsSimpleFileRead (
   IN     EFI_FILE_PROTOCOL *This,
   IN OUT UINTN             *BufferSize,
-     OUT VOID              *Buffer
+  OUT VOID              *Buffer
   )
 {
-  VIRTIO_FS_FILE *VirtioFsFile;
-  EFI_STATUS     Status;
+  VIRTIO_FS_FILE  *VirtioFsFile;
+  EFI_STATUS      Status;
 
   VirtioFsFile = VIRTIO_FS_FILE_FROM_SIMPLE_FILE (This);
 
@@ -430,5 +467,6 @@ VirtioFsSimpleFileRead (
   } else {
     Status = ReadRegularFile (VirtioFsFile, BufferSize, Buffer);
   }
+
   return Status;
 }

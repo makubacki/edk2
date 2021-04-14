@@ -1,4 +1,13 @@
+/** @file
+  [TEMPLATE] - Provide a file description!
 
+  Describe the purpose of the file. Try to make the description as
+  specific to this file as possible. Do not copy/paste the same
+  description between all files in a driver or library.
+
+  Copyright (c) Microsoft Corporation.
+
+**/
 /** @file
   XenBus protocol to be used between the XenBus bus driver and Xen PV devices.
 
@@ -19,7 +28,7 @@
 #define __PROTOCOL_XENBUS_H__
 
 #define XENBUS_PROTOCOL_GUID \
-  {0x3d3ca290, 0xb9a5, 0x11e3, {0xb7, 0x5d, 0xb8, 0xac, 0x6f, 0x7d, 0x65, 0xe6}}
+  { 0x3d3ca290, 0xb9a5, 0x11e3, { 0xb7, 0x5d, 0xb8, 0xac, 0x6f, 0x7d, 0x65, 0xe6 } }
 
 ///
 /// Forward declaration
@@ -28,12 +37,11 @@ typedef struct _XENBUS_PROTOCOL XENBUS_PROTOCOL;
 
 typedef enum xenbus_state XenBusState;
 
-typedef struct
-{
-  UINT32 Id;
+typedef struct {
+  UINT32    Id;
 } XENSTORE_TRANSACTION;
 
-#define XST_NIL ((XENSTORE_TRANSACTION *) NULL)
+#define XST_NIL  ((XENSTORE_TRANSACTION *) NULL)
 
 typedef enum {
   XENSTORE_STATUS_SUCCESS = 0,
@@ -54,7 +62,6 @@ typedef enum {
   XENSTORE_STATUS_EISCONN,
   XENSTORE_STATUS_E2BIG
 } XENSTORE_STATUS;
-
 
 #include <IndustryStandard/Xen/grant_table.h>
 #include <IndustryStandard/Xen/event_channel.h>
@@ -79,13 +86,13 @@ typedef enum {
         caller.
 **/
 typedef
-XENSTORE_STATUS
+  XENSTORE_STATUS
 (EFIAPI *XENBUS_XS_READ)(
-  IN  XENBUS_PROTOCOL       *This,
-  IN  CONST XENSTORE_TRANSACTION *Transaction,
-  IN  CONST CHAR8           *Node,
-  OUT VOID                  **Result
-  );
+                         IN  XENBUS_PROTOCOL       *This,
+                         IN  CONST XENSTORE_TRANSACTION *Transaction,
+                         IN  CONST CHAR8           *Node,
+                         OUT VOID                  **Result
+                         );
 
 /**
   Get the contents of the node Node of the PV device's backend. Returns the
@@ -103,13 +110,13 @@ XENSTORE_STATUS
         caller.
 **/
 typedef
-XENSTORE_STATUS
+  XENSTORE_STATUS
 (EFIAPI *XENBUS_XS_BACKEND_READ)(
-  IN  XENBUS_PROTOCOL       *This,
-  IN  CONST XENSTORE_TRANSACTION *Transaction,
-  IN  CONST CHAR8           *Node,
-  OUT VOID                  **Result
-  );
+                                 IN  XENBUS_PROTOCOL       *This,
+                                 IN  CONST XENSTORE_TRANSACTION *Transaction,
+                                 IN  CONST CHAR8           *Node,
+                                 OUT VOID                  **Result
+                                 );
 
 /**
   Print formatted write to a XenStore node.
@@ -125,15 +132,15 @@ XENSTORE_STATUS
            indicating the type of write failure.
 **/
 typedef
-XENSTORE_STATUS
-(EFIAPI *XENBUS_XS_PRINTF) (
-  IN XENBUS_PROTOCOL        *This,
-  IN CONST XENSTORE_TRANSACTION *Transaction,
-  IN CONST CHAR8            *Directory,
-  IN CONST CHAR8            *Node,
-  IN CONST CHAR8            *Format,
-  ...
-  );
+  XENSTORE_STATUS
+(EFIAPI *XENBUS_XS_PRINTF)(
+                           IN XENBUS_PROTOCOL        *This,
+                           IN CONST XENSTORE_TRANSACTION *Transaction,
+                           IN CONST CHAR8            *Directory,
+                           IN CONST CHAR8            *Node,
+                           IN CONST CHAR8            *Format,
+                           ...
+                           );
 
 /**
   Remove a node or directory (directories must be empty) of the PV driver's
@@ -147,12 +154,12 @@ XENSTORE_STATUS
            indicating the type of failure.
 **/
 typedef
-XENSTORE_STATUS
-(EFIAPI *XENBUS_XS_REMOVE) (
-  IN XENBUS_PROTOCOL        *This,
-  IN CONST XENSTORE_TRANSACTION *Transaction,
-  IN CONST CHAR8            *Node
-  );
+  XENSTORE_STATUS
+(EFIAPI *XENBUS_XS_REMOVE)(
+                           IN XENBUS_PROTOCOL        *This,
+                           IN CONST XENSTORE_TRANSACTION *Transaction,
+                           IN CONST CHAR8            *Node
+                           );
 
 /**
   Start a transaction.
@@ -168,11 +175,11 @@ XENSTORE_STATUS
            indicating the type of failure.
 **/
 typedef
-XENSTORE_STATUS
+  XENSTORE_STATUS
 (EFIAPI *XENBUS_XS_TRANSACTION_START)(
-  IN  XENBUS_PROTOCOL       *This,
-  OUT XENSTORE_TRANSACTION  *Transaction
-  );
+                                      IN  XENBUS_PROTOCOL       *This,
+                                      OUT XENSTORE_TRANSACTION  *Transaction
+                                      );
 
 /**
   End a transaction.
@@ -186,12 +193,12 @@ XENSTORE_STATUS
            indicating the type of failure.
 **/
 typedef
-XENSTORE_STATUS
-(EFIAPI *XENBUS_XS_TRANSACTION_END) (
-  IN XENBUS_PROTOCOL        *This,
-  IN CONST XENSTORE_TRANSACTION *Transaction,
-  IN BOOLEAN                Abort
-  );
+  XENSTORE_STATUS
+(EFIAPI *XENBUS_XS_TRANSACTION_END)(
+                                    IN XENBUS_PROTOCOL        *This,
+                                    IN CONST XENSTORE_TRANSACTION *Transaction,
+                                    IN BOOLEAN                Abort
+                                    );
 
 /**
   Set a new state for the frontend of the PV driver.
@@ -204,12 +211,12 @@ XENSTORE_STATUS
            indicating the type of failure.
 **/
 typedef
-XENSTORE_STATUS
+  XENSTORE_STATUS
 (EFIAPI *XENBUS_SET_STATE)(
-  IN XENBUS_PROTOCOL        *This,
-  IN CONST XENSTORE_TRANSACTION *Transaction,
-  IN XenBusState            State
-  );
+                           IN XENBUS_PROTOCOL        *This,
+                           IN CONST XENSTORE_TRANSACTION *Transaction,
+                           IN XenBusState            State
+                           );
 
 /**
   Grant access to the page Frame to the domain DomainId.
@@ -221,14 +228,14 @@ XENSTORE_STATUS
   @param RefPtr     Reference number of the grant will be written to this pointer.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *XENBUS_GRANT_ACCESS)(
-  IN  XENBUS_PROTOCOL *This,
-  IN  domid_t         DomainId,
-  IN  UINTN           Frame,
-  IN  BOOLEAN         ReadOnly,
-  OUT grant_ref_t     *refp
-  );
+                              IN  XENBUS_PROTOCOL *This,
+                              IN  domid_t         DomainId,
+                              IN  UINTN           Frame,
+                              IN  BOOLEAN         ReadOnly,
+                              OUT grant_ref_t     *refp
+                              );
 
 /**
   End access to grant Ref, previously return by XenBusGrantAccess.
@@ -238,11 +245,11 @@ EFI_STATUS
                     XenBusGrantAccess.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *XENBUS_GRANT_END_ACCESS)(
-  IN XENBUS_PROTOCOL  *This,
-  IN grant_ref_t      Ref
-  );
+                                  IN XENBUS_PROTOCOL  *This,
+                                  IN grant_ref_t      Ref
+                                  );
 
 /**
   Allocate a port that can be bind from domain DomainId.
@@ -255,12 +262,12 @@ EFI_STATUS
   @retval UINT32    The return value from the hypercall, 0 if success.
 **/
 typedef
-UINT32
-(EFIAPI *XENBUS_EVENT_CHANNEL_ALLOCATE) (
-  IN  XENBUS_PROTOCOL *This,
-  IN  domid_t         DomainId,
-  OUT evtchn_port_t   *Port
-  );
+  UINT32
+(EFIAPI *XENBUS_EVENT_CHANNEL_ALLOCATE)(
+                                        IN  XENBUS_PROTOCOL *This,
+                                        IN  domid_t         DomainId,
+                                        OUT evtchn_port_t   *Port
+                                        );
 
 /**
   Send an event to the remote end of the channel whose local endpoint is Port.
@@ -271,11 +278,11 @@ UINT32
   @retval UINT32    The return value from the hypercall, 0 if success.
 **/
 typedef
-UINT32
-(EFIAPI *XENBUS_EVENT_CHANNEL_NOTIFY) (
-  IN XENBUS_PROTOCOL  *This,
-  IN evtchn_port_t    Port
-  );
+  UINT32
+(EFIAPI *XENBUS_EVENT_CHANNEL_NOTIFY)(
+                                      IN XENBUS_PROTOCOL  *This,
+                                      IN evtchn_port_t    Port
+                                      );
 
 /**
   Close a local event channel Port.
@@ -286,11 +293,11 @@ UINT32
   @retval UINT32    The return value from the hypercall, 0 if success.
 **/
 typedef
-UINT32
-(EFIAPI *XENBUS_EVENT_CHANNEL_CLOSE) (
-  IN XENBUS_PROTOCOL  *This,
-  IN evtchn_port_t    Port
-  );
+  UINT32
+(EFIAPI *XENBUS_EVENT_CHANNEL_CLOSE)(
+                                     IN XENBUS_PROTOCOL  *This,
+                                     IN evtchn_port_t    Port
+                                     );
 
 /**
   Register a XenStore watch.
@@ -308,12 +315,12 @@ UINT32
            xenbus_watch objects, to watch the same path in the XenStore.
 **/
 typedef
-XENSTORE_STATUS
-(EFIAPI *XENBUS_REGISTER_WATCH) (
-  IN  XENBUS_PROTOCOL *This,
-  IN  CONST CHAR8     *Node,
-  OUT VOID            **Token
-  );
+  XENSTORE_STATUS
+(EFIAPI *XENBUS_REGISTER_WATCH)(
+                                IN  XENBUS_PROTOCOL *This,
+                                IN  CONST CHAR8     *Node,
+                                OUT VOID            **Token
+                                );
 
 /**
   Register a XenStore watch on a backend's node.
@@ -331,12 +338,12 @@ XENSTORE_STATUS
            xenbus_watch objects, to watch the same path in the XenStore.
 **/
 typedef
-XENSTORE_STATUS
-(EFIAPI *XENBUS_REGISTER_WATCH_BACKEND) (
-  IN  XENBUS_PROTOCOL *This,
-  IN  CONST CHAR8     *Node,
-  OUT VOID            **Token
-  );
+  XENSTORE_STATUS
+(EFIAPI *XENBUS_REGISTER_WATCH_BACKEND)(
+                                        IN  XENBUS_PROTOCOL *This,
+                                        IN  CONST CHAR8     *Node,
+                                        OUT VOID            **Token
+                                        );
 
 /**
   Unregister a XenStore watch.
@@ -346,11 +353,11 @@ XENSTORE_STATUS
                 call to RegisterWatch ().
 **/
 typedef
-VOID
-(EFIAPI *XENBUS_UNREGISTER_WATCH) (
-  IN XENBUS_PROTOCOL  *This,
-  IN VOID             *Token
-  );
+  VOID
+(EFIAPI *XENBUS_UNREGISTER_WATCH)(
+                                  IN XENBUS_PROTOCOL  *This,
+                                  IN VOID             *Token
+                                  );
 
 /**
   Block until the node watch by Token change.
@@ -363,12 +370,11 @@ VOID
            indicating the type of failure.
 **/
 typedef
-XENSTORE_STATUS
-(EFIAPI *XENBUS_WAIT_FOR_WATCH) (
-  IN XENBUS_PROTOCOL  *This,
-  IN VOID             *Token
-  );
-
+  XENSTORE_STATUS
+(EFIAPI *XENBUS_WAIT_FOR_WATCH)(
+                                IN XENBUS_PROTOCOL  *This,
+                                IN VOID             *Token
+                                );
 
 ///
 /// Protocol structure
@@ -377,34 +383,34 @@ XENSTORE_STATUS
 /// should not be used outside of the EDK II tree.
 ///
 struct _XENBUS_PROTOCOL {
-  XENBUS_XS_READ                XsRead;
-  XENBUS_XS_BACKEND_READ        XsBackendRead;
-  XENBUS_XS_PRINTF              XsPrintf;
-  XENBUS_XS_REMOVE              XsRemove;
-  XENBUS_XS_TRANSACTION_START   XsTransactionStart;
-  XENBUS_XS_TRANSACTION_END     XsTransactionEnd;
-  XENBUS_SET_STATE              SetState;
+  XENBUS_XS_READ                   XsRead;
+  XENBUS_XS_BACKEND_READ           XsBackendRead;
+  XENBUS_XS_PRINTF                 XsPrintf;
+  XENBUS_XS_REMOVE                 XsRemove;
+  XENBUS_XS_TRANSACTION_START      XsTransactionStart;
+  XENBUS_XS_TRANSACTION_END        XsTransactionEnd;
+  XENBUS_SET_STATE                 SetState;
 
-  XENBUS_GRANT_ACCESS           GrantAccess;
-  XENBUS_GRANT_END_ACCESS       GrantEndAccess;
+  XENBUS_GRANT_ACCESS              GrantAccess;
+  XENBUS_GRANT_END_ACCESS          GrantEndAccess;
 
-  XENBUS_EVENT_CHANNEL_ALLOCATE EventChannelAllocate;
-  XENBUS_EVENT_CHANNEL_NOTIFY   EventChannelNotify;
-  XENBUS_EVENT_CHANNEL_CLOSE    EventChannelClose;
+  XENBUS_EVENT_CHANNEL_ALLOCATE    EventChannelAllocate;
+  XENBUS_EVENT_CHANNEL_NOTIFY      EventChannelNotify;
+  XENBUS_EVENT_CHANNEL_CLOSE       EventChannelClose;
 
-  XENBUS_REGISTER_WATCH         RegisterWatch;
-  XENBUS_REGISTER_WATCH_BACKEND RegisterWatchBackend;
-  XENBUS_UNREGISTER_WATCH       UnregisterWatch;
-  XENBUS_WAIT_FOR_WATCH         WaitForWatch;
+  XENBUS_REGISTER_WATCH            RegisterWatch;
+  XENBUS_REGISTER_WATCH_BACKEND    RegisterWatchBackend;
+  XENBUS_UNREGISTER_WATCH          UnregisterWatch;
+  XENBUS_WAIT_FOR_WATCH            WaitForWatch;
   //
   // Protocol data fields
   //
-  CONST CHAR8                   *Type;
-  UINT16                        DeviceId;
-  CONST CHAR8                   *Node;
-  CONST CHAR8                   *Backend;
+  CONST CHAR8                      *Type;
+  UINT16                           DeviceId;
+  CONST CHAR8                      *Node;
+  CONST CHAR8                      *Backend;
 };
 
-extern EFI_GUID gXenBusProtocolGuid;
+extern EFI_GUID  gXenBusProtocolGuid;
 
 #endif

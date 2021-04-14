@@ -20,7 +20,7 @@
 #include <IndustryStandard/Xen/xen.h>
 
 #define XENIO_PROTOCOL_GUID \
-  {0x6efac84f, 0x0ab0, 0x4747, {0x81, 0xbe, 0x85, 0x55, 0x62, 0x59, 0x04, 0x49}}
+  { 0x6efac84f, 0x0ab0, 0x4747, { 0x81, 0xbe, 0x85, 0x55, 0x62, 0x59, 0x04, 0x49 } }
 
 ///
 /// Forward declaration
@@ -34,9 +34,9 @@ struct _XENIO_PROTOCOL {
   //
   // Protocol data fields
   //
-  EFI_PHYSICAL_ADDRESS          GrantTableAddress;
+  EFI_PHYSICAL_ADDRESS    GrantTableAddress;
 };
 
-extern EFI_GUID gXenIoProtocolGuid;
+extern EFI_GUID  gXenIoProtocolGuid;
 
 #endif
