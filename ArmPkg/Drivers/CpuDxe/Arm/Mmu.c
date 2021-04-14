@@ -13,6 +13,29 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/MemoryAllocationLib.h>
 #include "CpuDxe.h"
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 SectionToGcdAttributes (
   IN  UINT32  SectionAttributes,
@@ -51,7 +74,7 @@ SectionToGcdAttributes (
   // determine protection attributes
   switch(SectionAttributes & TT_DESCRIPTOR_SECTION_AP_MASK) {
     case TT_DESCRIPTOR_SECTION_AP_NO_NO: // no read, no write
-      //*GcdAttributes |= EFI_MEMORY_RO | EFI_MEMORY_RP;
+      // *GcdAttributes |= EFI_MEMORY_RO | EFI_MEMORY_RP;
       break;
 
     case TT_DESCRIPTOR_SECTION_AP_RW_NO:
@@ -77,6 +100,29 @@ SectionToGcdAttributes (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 PageToGcdAttributes (
   IN  UINT32  PageAttributes,
@@ -115,7 +161,7 @@ PageToGcdAttributes (
   // determine protection attributes
   switch(PageAttributes & TT_DESCRIPTOR_PAGE_AP_MASK) {
     case TT_DESCRIPTOR_PAGE_AP_NO_NO: // no read, no write
-      //*GcdAttributes |= EFI_MEMORY_RO | EFI_MEMORY_RP;
+      // *GcdAttributes |= EFI_MEMORY_RO | EFI_MEMORY_RP;
       break;
 
     case TT_DESCRIPTOR_PAGE_AP_RW_NO:
@@ -141,6 +187,29 @@ PageToGcdAttributes (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 SyncCacheConfigPage (
   IN     UINT32                             SectionIndex,
@@ -152,34 +221,34 @@ SyncCacheConfigPage (
   IN OUT UINT32                             *NextSectionAttributes
   )
 {
-  EFI_STATUS                          Status;
-  UINT32                              i;
-  volatile ARM_PAGE_TABLE_ENTRY       *SecondLevelTable;
-  UINT32                              NextPageAttributes;
-  UINT32                              PageAttributes;
-  UINT32                              BaseAddress;
-  UINT64                              GcdAttributes;
+  EFI_STATUS                     Status;
+  UINT32                         i;
+  volatile ARM_PAGE_TABLE_ENTRY  *SecondLevelTable;
+  UINT32                         NextPageAttributes;
+  UINT32                         PageAttributes;
+  UINT32                         BaseAddress;
+  UINT64                         GcdAttributes;
 
   // Get the Base Address from FirstLevelDescriptor;
-  BaseAddress = TT_DESCRIPTOR_PAGE_BASE_ADDRESS(SectionIndex << TT_DESCRIPTOR_SECTION_BASE_SHIFT);
+  BaseAddress = TT_DESCRIPTOR_PAGE_BASE_ADDRESS (SectionIndex << TT_DESCRIPTOR_SECTION_BASE_SHIFT);
 
   // Convert SectionAttributes into PageAttributes
   NextPageAttributes =
-      TT_DESCRIPTOR_CONVERT_TO_PAGE_CACHE_POLICY(*NextSectionAttributes,0) |
-      TT_DESCRIPTOR_CONVERT_TO_PAGE_AP(*NextSectionAttributes);
+    TT_DESCRIPTOR_CONVERT_TO_PAGE_CACHE_POLICY (*NextSectionAttributes, 0) |
+    TT_DESCRIPTOR_CONVERT_TO_PAGE_AP (*NextSectionAttributes);
 
   // obtain page table base
-  SecondLevelTable = (ARM_PAGE_TABLE_ENTRY *)(FirstLevelDescriptor & TT_DESCRIPTOR_SECTION_PAGETABLE_ADDRESS_MASK);
+  SecondLevelTable = (ARM_PAGE_TABLE_ENTRY *) (FirstLevelDescriptor & TT_DESCRIPTOR_SECTION_PAGETABLE_ADDRESS_MASK);
 
-  for (i=0; i < TRANSLATION_TABLE_PAGE_COUNT; i++) {
+  for (i = 0; i < TRANSLATION_TABLE_PAGE_COUNT; i++) {
     if ((SecondLevelTable[i] & TT_DESCRIPTOR_PAGE_TYPE_MASK) == TT_DESCRIPTOR_PAGE_TYPE_PAGE) {
       // extract attributes (cacheability and permissions)
       PageAttributes = SecondLevelTable[i] & (TT_DESCRIPTOR_PAGE_CACHE_POLICY_MASK | TT_DESCRIPTOR_PAGE_AP_MASK);
 
       if (NextPageAttributes == 0) {
         // start on a new region
-        *NextRegionLength = 0;
-        *NextRegionBase = BaseAddress | (i << TT_DESCRIPTOR_PAGE_BASE_SHIFT);
+        *NextRegionLength  = 0;
+        *NextRegionBase    = BaseAddress | (i << TT_DESCRIPTOR_PAGE_BASE_SHIFT);
         NextPageAttributes = PageAttributes;
       } else if (PageAttributes != NextPageAttributes) {
         // Convert Section Attributes into GCD Attributes
@@ -187,11 +256,17 @@ SyncCacheConfigPage (
         ASSERT_EFI_ERROR (Status);
 
         // update GCD with these changes (this will recurse into our own CpuSetMemoryAttributes below which is OK)
-        SetGcdMemorySpaceAttributes (MemorySpaceMap, NumberOfDescriptors, *NextRegionBase, *NextRegionLength, GcdAttributes);
+        SetGcdMemorySpaceAttributes (
+                                    MemorySpaceMap,
+                                    NumberOfDescriptors,
+                                    *NextRegionBase,
+                                    *NextRegionLength,
+                                    GcdAttributes
+                                    );
 
         // start on a new region
-        *NextRegionLength = 0;
-        *NextRegionBase = BaseAddress | (i << TT_DESCRIPTOR_PAGE_BASE_SHIFT);
+        *NextRegionLength  = 0;
+        *NextRegionBase    = BaseAddress | (i << TT_DESCRIPTOR_PAGE_BASE_SHIFT);
         NextPageAttributes = PageAttributes;
       }
     } else if (NextPageAttributes != 0) {
@@ -200,39 +275,68 @@ SyncCacheConfigPage (
       ASSERT_EFI_ERROR (Status);
 
       // update GCD with these changes (this will recurse into our own CpuSetMemoryAttributes below which is OK)
-      SetGcdMemorySpaceAttributes (MemorySpaceMap, NumberOfDescriptors, *NextRegionBase, *NextRegionLength, GcdAttributes);
+      SetGcdMemorySpaceAttributes (
+                                  MemorySpaceMap,
+                                  NumberOfDescriptors,
+                                  *NextRegionBase,
+                                  *NextRegionLength,
+                                  GcdAttributes
+                                  );
 
-      *NextRegionLength = 0;
-      *NextRegionBase = BaseAddress | (i << TT_DESCRIPTOR_PAGE_BASE_SHIFT);
+      *NextRegionLength  = 0;
+      *NextRegionBase    = BaseAddress | (i << TT_DESCRIPTOR_PAGE_BASE_SHIFT);
       NextPageAttributes = 0;
     }
+
     *NextRegionLength += TT_DESCRIPTOR_PAGE_SIZE;
   }
 
   // Convert back PageAttributes into SectionAttributes
   *NextSectionAttributes =
-      TT_DESCRIPTOR_CONVERT_TO_SECTION_CACHE_POLICY(NextPageAttributes,0) |
-      TT_DESCRIPTOR_CONVERT_TO_SECTION_AP(NextPageAttributes);
+    TT_DESCRIPTOR_CONVERT_TO_SECTION_CACHE_POLICY (NextPageAttributes, 0) |
+    TT_DESCRIPTOR_CONVERT_TO_SECTION_AP (NextPageAttributes);
 
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 SyncCacheConfig (
   IN  EFI_CPU_ARCH_PROTOCOL *CpuProtocol
   )
 {
-  EFI_STATUS                          Status;
-  UINT32                              i;
-  EFI_PHYSICAL_ADDRESS                NextRegionBase;
-  UINT64                              NextRegionLength;
-  UINT32                              NextSectionAttributes;
-  UINT32                              SectionAttributes;
-  UINT64                              GcdAttributes;
-  volatile ARM_FIRST_LEVEL_DESCRIPTOR   *FirstLevelTable;
-  UINTN                               NumberOfDescriptors;
-  EFI_GCD_MEMORY_SPACE_DESCRIPTOR     *MemorySpaceMap;
-
+  EFI_STATUS                           Status;
+  UINT32                               i;
+  EFI_PHYSICAL_ADDRESS                 NextRegionBase;
+  UINT64                               NextRegionLength;
+  UINT32                               NextSectionAttributes;
+  UINT32                               SectionAttributes;
+  UINT64                               GcdAttributes;
+  volatile ARM_FIRST_LEVEL_DESCRIPTOR  *FirstLevelTable;
+  UINTN                                NumberOfDescriptors;
+  EFI_GCD_MEMORY_SPACE_DESCRIPTOR      *MemorySpaceMap;
 
   DEBUG ((DEBUG_PAGE, "SyncCacheConfig()\n"));
 
@@ -246,7 +350,6 @@ SyncCacheConfig (
   Status = gDS->GetMemorySpaceMap (&NumberOfDescriptors, &MemorySpaceMap);
   ASSERT_EFI_ERROR (Status);
 
-
   // The GCD implementation maintains its own copy of the state of memory space attributes.  GCD needs
   // to know what the initial memory space attributes are.  The CPU Arch. Protocol does not provide a
   // GetMemoryAttributes function for GCD to get this so we must resort to calling GCD (as if we were
@@ -254,22 +357,24 @@ SyncCacheConfig (
   // with a way for GCD to query the CPU Arch. driver of the existing memory space attributes instead.
 
   // obtain page table base
-  FirstLevelTable = (ARM_FIRST_LEVEL_DESCRIPTOR *)(ArmGetTTBR0BaseAddress ());
+  FirstLevelTable = (ARM_FIRST_LEVEL_DESCRIPTOR *) (ArmGetTTBR0BaseAddress ());
 
   // Get the first region
-  NextSectionAttributes = FirstLevelTable[0] & (TT_DESCRIPTOR_SECTION_CACHE_POLICY_MASK | TT_DESCRIPTOR_SECTION_AP_MASK);
+  NextSectionAttributes = FirstLevelTable[0] &
+                          (TT_DESCRIPTOR_SECTION_CACHE_POLICY_MASK | TT_DESCRIPTOR_SECTION_AP_MASK);
 
   // iterate through each 1MB descriptor
   NextRegionBase = NextRegionLength = 0;
-  for (i=0; i < TRANSLATION_TABLE_SECTION_COUNT; i++) {
+  for (i = 0; i < TRANSLATION_TABLE_SECTION_COUNT; i++) {
     if ((FirstLevelTable[i] & TT_DESCRIPTOR_SECTION_TYPE_MASK) == TT_DESCRIPTOR_SECTION_TYPE_SECTION) {
       // extract attributes (cacheability and permissions)
-      SectionAttributes = FirstLevelTable[i] & (TT_DESCRIPTOR_SECTION_CACHE_POLICY_MASK | TT_DESCRIPTOR_SECTION_AP_MASK);
+      SectionAttributes = FirstLevelTable[i] &
+                          (TT_DESCRIPTOR_SECTION_CACHE_POLICY_MASK | TT_DESCRIPTOR_SECTION_AP_MASK);
 
       if (NextSectionAttributes == 0) {
         // start on a new region
         NextRegionLength = 0;
-        NextRegionBase = TT_DESCRIPTOR_SECTION_BASE_ADDRESS(i << TT_DESCRIPTOR_SECTION_BASE_SHIFT);
+        NextRegionBase   = TT_DESCRIPTOR_SECTION_BASE_ADDRESS (i << TT_DESCRIPTOR_SECTION_BASE_SHIFT);
         NextSectionAttributes = SectionAttributes;
       } else if (SectionAttributes != NextSectionAttributes) {
         // Convert Section Attributes into GCD Attributes
@@ -277,24 +382,36 @@ SyncCacheConfig (
         ASSERT_EFI_ERROR (Status);
 
         // update GCD with these changes (this will recurse into our own CpuSetMemoryAttributes below which is OK)
-        SetGcdMemorySpaceAttributes (MemorySpaceMap, NumberOfDescriptors, NextRegionBase, NextRegionLength, GcdAttributes);
+        SetGcdMemorySpaceAttributes (
+                                    MemorySpaceMap,
+                                    NumberOfDescriptors,
+                                    NextRegionBase,
+                                    NextRegionLength,
+                                    GcdAttributes
+                                    );
 
         // start on a new region
         NextRegionLength = 0;
-        NextRegionBase = TT_DESCRIPTOR_SECTION_BASE_ADDRESS(i << TT_DESCRIPTOR_SECTION_BASE_SHIFT);
+        NextRegionBase   = TT_DESCRIPTOR_SECTION_BASE_ADDRESS (i << TT_DESCRIPTOR_SECTION_BASE_SHIFT);
         NextSectionAttributes = SectionAttributes;
       }
+
       NextRegionLength += TT_DESCRIPTOR_SECTION_SIZE;
-    } else if (TT_DESCRIPTOR_SECTION_TYPE_IS_PAGE_TABLE(FirstLevelTable[i])) {
+    } else if (TT_DESCRIPTOR_SECTION_TYPE_IS_PAGE_TABLE (FirstLevelTable[i])) {
       // In this case any bits set in the 'NextSectionAttributes' are garbage and were set from
       // bits that are actually part of the pagetable address.  We clear it out to zero so that
       // the SyncCacheConfigPage will use the page attributes instead of trying to convert the
       // section attributes into page attributes
       NextSectionAttributes = 0;
       Status = SyncCacheConfigPage (
-          i,FirstLevelTable[i],
-          NumberOfDescriptors, MemorySpaceMap,
-          &NextRegionBase,&NextRegionLength,&NextSectionAttributes);
+                                    i,
+                                    FirstLevelTable[i],
+                                    NumberOfDescriptors,
+                                    MemorySpaceMap,
+                                    &NextRegionBase,
+                                    &NextRegionLength,
+                                    &NextSectionAttributes
+                                    );
       ASSERT_EFI_ERROR (Status);
     } else {
       // We do not support yet 16MB sections
@@ -307,12 +424,19 @@ SyncCacheConfig (
         ASSERT_EFI_ERROR (Status);
 
         // update GCD with these changes (this will recurse into our own CpuSetMemoryAttributes below which is OK)
-        SetGcdMemorySpaceAttributes (MemorySpaceMap, NumberOfDescriptors, NextRegionBase, NextRegionLength, GcdAttributes);
+        SetGcdMemorySpaceAttributes (
+                                    MemorySpaceMap,
+                                    NumberOfDescriptors,
+                                    NextRegionBase,
+                                    NextRegionLength,
+                                    GcdAttributes
+                                    );
 
         NextRegionLength = 0;
-        NextRegionBase = TT_DESCRIPTOR_SECTION_BASE_ADDRESS(i << TT_DESCRIPTOR_SECTION_BASE_SHIFT);
+        NextRegionBase   = TT_DESCRIPTOR_SECTION_BASE_ADDRESS (i << TT_DESCRIPTOR_SECTION_BASE_SHIFT);
         NextSectionAttributes = 0;
       }
+
       NextRegionLength += TT_DESCRIPTOR_SECTION_SIZE;
     }
   } // section entry loop
@@ -331,12 +455,35 @@ SyncCacheConfig (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 UINT64
 EfiAttributeToArmAttribute (
   IN UINT64                    EfiAttributes
   )
 {
-  UINT64 ArmAttributes;
+  UINT64  ArmAttributes;
 
   switch (EfiAttributes & EFI_MEMORY_CACHETYPE_MASK) {
     case EFI_MEMORY_UC:
@@ -380,6 +527,29 @@ EfiAttributeToArmAttribute (
   return ArmAttributes;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 GetMemoryRegionPage (
   IN     UINT32                  *PageTable,
@@ -388,9 +558,9 @@ GetMemoryRegionPage (
   OUT    UINTN                   *RegionAttributes
   )
 {
-  UINT32      PageAttributes;
-  UINT32      TableIndex;
-  UINT32      PageDescriptor;
+  UINT32  PageAttributes;
+  UINT32  TableIndex;
+  UINT32  PageDescriptor;
 
   // Convert the section attributes into page attributes
   PageAttributes = ConvertSectionAttributesToPageAttributes (*RegionAttributes, 0);
@@ -400,7 +570,7 @@ GetMemoryRegionPage (
   ASSERT (TableIndex < TRANSLATION_TABLE_PAGE_COUNT);
 
   // Go through the page table to find the end of the section
-  for (; TableIndex < TRANSLATION_TABLE_PAGE_COUNT; TableIndex++) {
+  for ( ; TableIndex < TRANSLATION_TABLE_PAGE_COUNT; TableIndex++) {
     // Get the section at the given index
     PageDescriptor = PageTable[TableIndex];
 
@@ -416,7 +586,7 @@ GetMemoryRegionPage (
       }
     } else {
       // We do not support Large Page yet. We return EFI_SUCCESS that means end of the region.
-      ASSERT(0);
+      ASSERT (0);
       return EFI_SUCCESS;
     }
   }
@@ -424,6 +594,29 @@ GetMemoryRegionPage (
   return EFI_NOT_FOUND;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 GetMemoryRegion (
   IN OUT UINTN                   *BaseAddress,
@@ -436,14 +629,14 @@ GetMemoryRegion (
   UINT32                      PageAttributes;
   UINT32                      PageTableIndex;
   UINT32                      SectionDescriptor;
-  ARM_FIRST_LEVEL_DESCRIPTOR *FirstLevelTable;
-  UINT32                     *PageTable;
+  ARM_FIRST_LEVEL_DESCRIPTOR  *FirstLevelTable;
+  UINT32                      *PageTable;
 
   // Initialize the arguments
   *RegionLength = 0;
 
   // Obtain page table base
-  FirstLevelTable = (ARM_FIRST_LEVEL_DESCRIPTOR *)ArmGetTTBR0BaseAddress ();
+  FirstLevelTable = (ARM_FIRST_LEVEL_DESCRIPTOR *) ArmGetTTBR0BaseAddress ();
 
   // Calculate index into first level translation table for start of modification
   TableIndex = TT_DESCRIPTOR_SECTION_BASE_ADDRESS (*BaseAddress) >> TT_DESCRIPTOR_SECTION_BASE_SHIFT;
@@ -457,8 +650,7 @@ GetMemoryRegion (
 
   // If 'BaseAddress' belongs to the section then round it to the section boundary
   if (((SectionDescriptor & TT_DESCRIPTOR_SECTION_TYPE_MASK) == TT_DESCRIPTOR_SECTION_TYPE_SECTION) ||
-      ((SectionDescriptor & TT_DESCRIPTOR_SECTION_TYPE_MASK) == TT_DESCRIPTOR_SECTION_TYPE_SUPERSECTION))
-  {
+      ((SectionDescriptor & TT_DESCRIPTOR_SECTION_TYPE_MASK) == TT_DESCRIPTOR_SECTION_TYPE_SUPERSECTION)) {
     *BaseAddress = (*BaseAddress) & TT_DESCRIPTOR_SECTION_BASE_ADDRESS_MASK;
     *RegionAttributes = SectionDescriptor & TT_DESCRIPTOR_SECTION_ATTRIBUTE_MASK;
   } else {
@@ -466,25 +658,25 @@ GetMemoryRegion (
     *BaseAddress = (*BaseAddress) & TT_DESCRIPTOR_PAGE_BASE_ADDRESS_MASK;
 
     // Get the attribute at the page table level (Level 2)
-    PageTable = (UINT32*)(SectionDescriptor & TT_DESCRIPTOR_SECTION_PAGETABLE_ADDRESS_MASK);
+    PageTable = (UINT32 *) (SectionDescriptor & TT_DESCRIPTOR_SECTION_PAGETABLE_ADDRESS_MASK);
 
     // Calculate index into first level translation table for start of modification
     PageTableIndex = ((*BaseAddress) & TT_DESCRIPTOR_PAGE_INDEX_MASK)  >> TT_DESCRIPTOR_PAGE_BASE_SHIFT;
     ASSERT (PageTableIndex < TRANSLATION_TABLE_PAGE_COUNT);
 
-    PageAttributes = PageTable[PageTableIndex] & TT_DESCRIPTOR_PAGE_ATTRIBUTE_MASK;
+    PageAttributes    = PageTable[PageTableIndex] & TT_DESCRIPTOR_PAGE_ATTRIBUTE_MASK;
     *RegionAttributes = TT_DESCRIPTOR_CONVERT_TO_SECTION_CACHE_POLICY (PageAttributes, 0) |
                         TT_DESCRIPTOR_CONVERT_TO_SECTION_AP (PageAttributes);
   }
 
-  for (;TableIndex < TRANSLATION_TABLE_SECTION_COUNT; TableIndex++) {
+  for ( ; TableIndex < TRANSLATION_TABLE_SECTION_COUNT; TableIndex++) {
     // Get the section at the given index
     SectionDescriptor = FirstLevelTable[TableIndex];
 
     // If the entry is a level-2 page table then we scan it to find the end of the region
     if (TT_DESCRIPTOR_SECTION_TYPE_IS_PAGE_TABLE (SectionDescriptor)) {
       // Extract the page table location from the descriptor
-      PageTable = (UINT32*)(SectionDescriptor & TT_DESCRIPTOR_SECTION_PAGETABLE_ADDRESS_MASK);
+      PageTable = (UINT32 *) (SectionDescriptor & TT_DESCRIPTOR_SECTION_PAGETABLE_ADDRESS_MASK);
 
       // Scan the page table to find the end of the region.
       Status = GetMemoryRegionPage (PageTable, BaseAddress, RegionLength, RegionAttributes);

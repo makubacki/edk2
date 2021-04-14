@@ -13,6 +13,29 @@
 
 #include "SemihostPrivate.h"
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 BOOLEAN
 SemihostConnectionSupported (
   VOID
@@ -21,6 +44,29 @@ SemihostConnectionSupported (
   return SEMIHOST_SUPPORTED;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 RETURN_STATUS
 SemihostFileOpen (
   IN  CHAR8  *FileName,
@@ -40,13 +86,13 @@ SemihostFileOpen (
     FileName++;
   }
 
-  OpenBlock.FileName    = FileName;
-  OpenBlock.Mode        = Mode;
-  OpenBlock.NameLength  = AsciiStrLen(FileName);
+  OpenBlock.FileName   = FileName;
+  OpenBlock.Mode       = Mode;
+  OpenBlock.NameLength = AsciiStrLen (FileName);
 
-  Result = Semihost_SYS_OPEN(&OpenBlock);
+  Result = Semihost_SYS_OPEN (&OpenBlock);
 
-  if (Result == -1) {
+  if (Result == - 1) {
     return RETURN_NOT_FOUND;
   } else {
     *FileHandle = Result;
@@ -54,6 +100,29 @@ SemihostFileOpen (
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 RETURN_STATUS
 SemihostFileSeek (
   IN UINTN  FileHandle,
@@ -66,7 +135,7 @@ SemihostFileSeek (
   SeekBlock.Handle   = FileHandle;
   SeekBlock.Location = Offset;
 
-  Result = Semihost_SYS_SEEK(&SeekBlock);
+  Result = Semihost_SYS_SEEK (&SeekBlock);
 
   // Semihosting does not behave as documented. It returns the offset on
   // success.
@@ -77,6 +146,29 @@ SemihostFileSeek (
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 RETURN_STATUS
 SemihostFileRead (
   IN     UINTN  FileHandle,
@@ -95,7 +187,7 @@ SemihostFileRead (
   ReadBlock.Buffer = Buffer;
   ReadBlock.Length = *Length;
 
-  Result = Semihost_SYS_READ(&ReadBlock);
+  Result = Semihost_SYS_READ (&ReadBlock);
 
   if ((*Length != 0) && (Result == *Length)) {
     return RETURN_ABORTED;
@@ -105,6 +197,29 @@ SemihostFileRead (
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 RETURN_STATUS
 SemihostFileWrite (
   IN     UINTN  FileHandle,
@@ -122,41 +237,88 @@ SemihostFileWrite (
   WriteBlock.Buffer = Buffer;
   WriteBlock.Length = *Length;
 
-  *Length = Semihost_SYS_WRITE(&WriteBlock);
+  *Length = Semihost_SYS_WRITE (&WriteBlock);
 
-  if (*Length != 0)
+  if (*Length != 0) {
     return RETURN_ABORTED;
-  else
+  } else {
     return RETURN_SUCCESS;
+  }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 RETURN_STATUS
 SemihostFileClose (
   IN UINTN  FileHandle
   )
 {
-  if (Semihost_SYS_CLOSE (&FileHandle) == -1) {
+  if (Semihost_SYS_CLOSE (&FileHandle) == - 1) {
     return RETURN_INVALID_PARAMETER;
   } else {
     return RETURN_SUCCESS;
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 RETURN_STATUS
 SemihostFileLength (
   IN  UINTN  FileHandle,
   OUT UINTN  *Length
   )
 {
-  INT32       Result;
+  INT32  Result;
 
   if (Length == NULL) {
     return RETURN_INVALID_PARAMETER;
   }
 
-  Result = Semihost_SYS_FLEN(&FileHandle);
+  Result = Semihost_SYS_FLEN (&FileHandle);
 
-  if (Result == -1) {
+  if (Result == - 1) {
     return RETURN_ABORTED;
   } else {
     *Length = Result;
@@ -178,7 +340,7 @@ SemihostFileLength (
 
 **/
 RETURN_STATUS
-SemihostFileTmpName(
+SemihostFileTmpName (
   OUT  VOID   *Buffer,
   IN   UINT8  Identifier,
   IN   UINTN  Length
@@ -198,12 +360,35 @@ SemihostFileTmpName(
   Result = Semihost_SYS_TMPNAME (&TmpNameBlock);
 
   if (Result != 0) {
-    return  RETURN_ABORTED;
+    return RETURN_ABORTED;
   } else {
-    return  RETURN_SUCCESS;
+    return RETURN_SUCCESS;
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 RETURN_STATUS
 SemihostFileRemove (
   IN CHAR8 *FileName
@@ -217,10 +402,10 @@ SemihostFileRemove (
     FileName++;
   }
 
-  RemoveBlock.FileName    = FileName;
-  RemoveBlock.NameLength  = AsciiStrLen(FileName);
+  RemoveBlock.FileName   = FileName;
+  RemoveBlock.NameLength = AsciiStrLen (FileName);
 
-  Result = Semihost_SYS_REMOVE(&RemoveBlock);
+  Result = Semihost_SYS_REMOVE (&RemoveBlock);
 
   if (Result == 0) {
     return RETURN_SUCCESS;
@@ -241,7 +426,7 @@ SemihostFileRemove (
 
 **/
 RETURN_STATUS
-SemihostFileRename(
+SemihostFileRename (
   IN  CHAR8  *FileName,
   IN  CHAR8  *NewFileName
   )
@@ -253,7 +438,7 @@ SemihostFileRename(
     return RETURN_INVALID_PARAMETER;
   }
 
-  RenameBlock.FileName          = FileName;
+  RenameBlock.FileName = FileName;
   RenameBlock.FileNameLength    = AsciiStrLen (FileName);
   RenameBlock.NewFileName       = NewFileName;
   RenameBlock.NewFileNameLength = AsciiStrLen (NewFileName);
@@ -261,45 +446,137 @@ SemihostFileRename(
   Result = Semihost_SYS_RENAME (&RenameBlock);
 
   if (Result != 0) {
-    return  RETURN_ABORTED;
+    return RETURN_ABORTED;
   } else {
-    return  RETURN_SUCCESS;
+    return RETURN_SUCCESS;
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 CHAR8
 SemihostReadCharacter (
   VOID
   )
 {
-  return Semihost_SYS_READC();
+  return Semihost_SYS_READC ();
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 SemihostWriteCharacter (
   IN CHAR8 Character
   )
 {
-  Semihost_SYS_WRITEC(&Character);
+  Semihost_SYS_WRITEC (&Character);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 SemihostWriteString (
   IN CHAR8 *String
   )
 {
-  Semihost_SYS_WRITE0(String);
+  Semihost_SYS_WRITE0 (String);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 UINT32
 SemihostSystem (
   IN CHAR8 *CommandLine
   )
 {
-  SEMIHOST_SYSTEM_BLOCK SystemBlock;
+  SEMIHOST_SYSTEM_BLOCK  SystemBlock;
 
   SystemBlock.CommandLine   = CommandLine;
-  SystemBlock.CommandLength = AsciiStrLen(CommandLine);
+  SystemBlock.CommandLength = AsciiStrLen (CommandLine);
 
-  return Semihost_SYS_SYSTEM(&SystemBlock);
+  return Semihost_SYS_SYSTEM (&SystemBlock);
 }

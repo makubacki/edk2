@@ -24,20 +24,43 @@ PHYSICAL_ADDRESS        gExceptionVectorAlignmentMask = ARM_VECTOR_TABLE_ALIGNME
 
 // Exception handler contains branch to vector location (jmp $) so no handler
 // NOTE: This code assumes vectors are ARM and not Thumb code
-UINTN                   gDebuggerNoHandlerValue = 0xEAFFFFFE;
+UINTN  gDebuggerNoHandlerValue = 0xEAFFFFFE;
 
-RETURN_STATUS ArchVectorConfig(
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
+RETURN_STATUS
+ArchVectorConfig (
   IN  UINTN       VectorBaseAddress
   )
 {
   // if the vector address corresponds to high vectors
   if (VectorBaseAddress == 0xFFFF0000) {
     // set SCTLR.V to enable high vectors
-    ArmSetHighVectors();
-  }
-  else {
+    ArmSetHighVectors ();
+  } else {
     // Set SCTLR.V to 0 to enable VBAR to be used
-    ArmSetLowVectors();
+    ArmSetLowVectors ();
   }
 
   return RETURN_SUCCESS;

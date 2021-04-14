@@ -97,19 +97,19 @@ BaseDiscoverVendorDetails (
   PayloadLength = 0;
 
   Status = ScmiCommandExecute (
-             &Cmd,
-             &PayloadLength,
-             &ReturnValues
-             );
+                               &Cmd,
+                               &PayloadLength,
+                               &ReturnValues
+                               );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   AsciiStrCpyS (
-    (CHAR8*)VendorIdentifier,
-    SCMI_MAX_STR_LEN,
-    (CONST CHAR8*)ReturnValues
-    );
+                (CHAR8 *) VendorIdentifier,
+                SCMI_MAX_STR_LEN,
+                (CONST CHAR8 *) ReturnValues
+                );
 
   return EFI_SUCCESS;
 }
@@ -133,9 +133,9 @@ BaseDiscoverVendor (
   )
 {
   return BaseDiscoverVendorDetails (
-           SCMI_MESSAGE_ID_BASE_DISCOVER_VENDOR,
-           VendorIdentifier
-           );
+                                    SCMI_MESSAGE_ID_BASE_DISCOVER_VENDOR,
+                                    VendorIdentifier
+                                    );
 }
 
 /** Return sub vendor name.
@@ -156,9 +156,9 @@ BaseDiscoverSubVendor (
   )
 {
   return BaseDiscoverVendorDetails (
-           SCMI_MESSAGE_ID_BASE_DISCOVER_SUB_VENDOR,
-           VendorIdentifier
-           );
+                                    SCMI_MESSAGE_ID_BASE_DISCOVER_SUB_VENDOR,
+                                    VendorIdentifier
+                                    );
 }
 
 /** Return implementation version.
@@ -189,10 +189,10 @@ BaseDiscoverImplVersion (
   PayloadLength = 0;
 
   Status = ScmiCommandExecute (
-             &Cmd,
-             &PayloadLength,
-             &ReturnValues
-             );
+                               &Cmd,
+                               &PayloadLength,
+                               &ReturnValues
+                               );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -256,17 +256,16 @@ BaseDiscoverListProtocols (
   Skip = 0;
 
   while (Skip < TotalProtocols) {
-
     *MessageParams = Skip;
 
     // Note PayloadLength is a IN/OUT parameter.
     PayloadLength = sizeof (Skip);
 
     Status = ScmiCommandExecute (
-               &Cmd,
-               &PayloadLength,
-               (UINT32**)&DiscoverList
-               );
+                                 &Cmd,
+                                 &PayloadLength,
+                                 (UINT32 **) &DiscoverList
+                                 );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -282,7 +281,7 @@ BaseDiscoverListProtocols (
 }
 
 // Instance of the SCMI Base protocol.
-STATIC CONST SCMI_BASE_PROTOCOL BaseProtocol = {
+STATIC CONST SCMI_BASE_PROTOCOL  BaseProtocol = {
   BaseGetVersion,
   BaseGetTotalProtocols,
   BaseDiscoverVendor,
@@ -300,13 +299,13 @@ STATIC CONST SCMI_BASE_PROTOCOL BaseProtocol = {
 **/
 EFI_STATUS
 ScmiBaseProtocolInit (
-  IN OUT EFI_HANDLE* Handle
+  IN OUT EFI_HANDLE *Handle
   )
 {
   return gBS->InstallMultipleProtocolInterfaces (
-                Handle,
-                &gArmScmiBaseProtocolGuid,
-                &BaseProtocol,
-                NULL
-                );
+                                                 Handle,
+                                                 &gArmScmiBaseProtocolGuid,
+                                                 &BaseProtocol,
+                                                 NULL
+                                                 );
 }

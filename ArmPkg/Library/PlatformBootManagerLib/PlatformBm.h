@@ -46,8 +46,8 @@ EnableQuietBoot (
   @retval EFI_SUCCESS     UGA devices are back in text mode and synced up.
 **/
 EFI_STATUS
-DisableQuietBoot (
-  VOID
-  );
+  DisableQuietBoot (
+                    VOID
+                    );
 
 #endif // _PLATFORM_BM_H_

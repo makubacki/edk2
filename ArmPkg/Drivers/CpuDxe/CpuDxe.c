@@ -11,7 +11,7 @@
 
 #include <Guid/IdleLoopEvent.h>
 
-BOOLEAN                   mIsFlushingGCD;
+BOOLEAN  mIsFlushingGCD;
 
 /**
   This function flushes the range of addresses from Start to Start+Length
@@ -49,16 +49,15 @@ CpuFlushCpuDataCache (
   IN EFI_CPU_FLUSH_TYPE              FlushType
   )
 {
-
   switch (FlushType) {
     case EfiCpuFlushTypeWriteBack:
-      WriteBackDataCacheRange ((VOID *)(UINTN)Start, (UINTN)Length);
+      WriteBackDataCacheRange ((VOID *) (UINTN) Start, (UINTN) Length);
       break;
     case EfiCpuFlushTypeInvalidate:
-      InvalidateDataCacheRange ((VOID *)(UINTN)Start, (UINTN)Length);
+      InvalidateDataCacheRange ((VOID *) (UINTN) Start, (UINTN) Length);
       break;
     case EfiCpuFlushTypeWriteBackInvalidate:
-      WriteBackInvalidateDataCacheRange ((VOID *)(UINTN)Start, (UINTN)Length);
+      WriteBackInvalidateDataCacheRange ((VOID *) (UINTN) Start, (UINTN) Length);
       break;
     default:
       return EFI_INVALID_PARAMETER;
@@ -66,7 +65,6 @@ CpuFlushCpuDataCache (
 
   return EFI_SUCCESS;
 }
-
 
 /**
   This function enables interrupt processing by the processor.
@@ -88,7 +86,6 @@ CpuEnableInterrupt (
   return EFI_SUCCESS;
 }
 
-
 /**
   This function disables interrupt processing by the processor.
 
@@ -108,7 +105,6 @@ CpuDisableInterrupt (
 
   return EFI_SUCCESS;
 }
-
 
 /**
   This function retrieves the processor's current interrupt state a returns it in
@@ -134,10 +130,9 @@ CpuGetInterruptState (
     return EFI_INVALID_PARAMETER;
   }
 
-  *State = ArmGetInterruptState();
+  *State = ArmGetInterruptState ();
   return EFI_SUCCESS;
 }
-
 
 /**
   This function generates an INIT on the processor. If this function succeeds, then the
@@ -165,6 +160,29 @@ CpuInit (
   return EFI_UNSUPPORTED;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 CpuRegisterInterruptHandler (
@@ -176,6 +194,29 @@ CpuRegisterInterruptHandler (
   return RegisterInterruptHandler (InterruptType, InterruptHandler);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 CpuGetTimerValue (
@@ -209,8 +250,8 @@ IdleLoopEventCallback (
 //
 // Globals used to initialize the protocol
 //
-EFI_HANDLE            mCpuHandle = NULL;
-EFI_CPU_ARCH_PROTOCOL mCpu = {
+EFI_HANDLE             mCpuHandle = NULL;
+EFI_CPU_ARCH_PROTOCOL  mCpu = {
   CpuFlushCpuDataCache,
   CpuEnableInterrupt,
   CpuDisableInterrupt,
@@ -223,6 +264,29 @@ EFI_CPU_ARCH_PROTOCOL mCpu = {
   2048,       // DmaBufferAlignment
 };
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 VOID
 InitializeDma (
@@ -232,6 +296,29 @@ InitializeDma (
   CpuArchProtocol->DmaBufferAlignment = ArmCacheWritebackGranule ();
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 CpuDxeInitialize (
   IN EFI_HANDLE         ImageHandle,
@@ -239,17 +326,18 @@ CpuDxeInitialize (
   )
 {
   EFI_STATUS  Status;
-  EFI_EVENT    IdleLoopEvent;
+  EFI_EVENT   IdleLoopEvent;
 
   InitializeExceptions (&mCpu);
 
   InitializeDma (&mCpu);
 
   Status = gBS->InstallMultipleProtocolInterfaces (
-                &mCpuHandle,
-                &gEfiCpuArchProtocolGuid,           &mCpu,
-                NULL
-                );
+                                                   &mCpuHandle,
+                                                   &gEfiCpuArchProtocolGuid,
+                                                   &mCpu,
+                                                   NULL
+                                                   );
 
   //
   // Make sure GCD and MMU settings match. This API calls gDS->SetMemorySpaceAttributes ()
@@ -262,21 +350,21 @@ CpuDxeInitialize (
 
   // If the platform is a MPCore system then install the Configuration Table describing the
   // secondary core states
-  if (ArmIsMpCore()) {
-    PublishArmProcessorTable();
+  if (ArmIsMpCore ()) {
+    PublishArmProcessorTable ();
   }
 
   //
   // Setup a callback for idle events
   //
   Status = gBS->CreateEventEx (
-                  EVT_NOTIFY_SIGNAL,
-                  TPL_NOTIFY,
-                  IdleLoopEventCallback,
-                  NULL,
-                  &gIdleLoopEventGuid,
-                  &IdleLoopEvent
-                  );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_NOTIFY,
+                               IdleLoopEventCallback,
+                               NULL,
+                               &gIdleLoopEventGuid,
+                               &IdleLoopEvent
+                               );
   ASSERT_EFI_ERROR (Status);
 
   return Status;

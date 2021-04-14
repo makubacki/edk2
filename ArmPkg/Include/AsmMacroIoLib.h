@@ -9,31 +9,30 @@
 
 **/
 
-
 #ifndef __MACRO_IO_LIB_H__
 #define __MACRO_IO_LIB_H__
 
 #define _ASM_FUNC(Name, Section)    \
-  .global   Name                  ; \
-  .section  #Section, "ax"        ; \
-  .type     Name, %function       ; \
-  .p2align  2                     ; \
-  Name:
+    .global   Name; \
+  .section  # Section, "ax"; \
+  .type     Name, %function; \
+  .p2align  2; \
+  Name :
 
-#define ASM_FUNC(Name)            _ASM_FUNC(ASM_PFX(Name), .text. ## Name)
+#define ASM_FUNC(Name)  _ASM_FUNC (ASM_PFX (Name), .text. ## Name)
 
 #define MOV32(Reg, Val)                       \
-  movw      Reg, #(Val) & 0xffff            ; \
-  movt      Reg, #(Val) >> 16
+  movw      Reg, # (Val) & 0xffff; \
+  movt  Reg, # (Val) >> 16
 
 #define ADRL(Reg, Sym)                        \
-  movw      Reg, #:lower16:(Sym) - (. + 16) ; \
-  movt      Reg, #:upper16:(Sym) - (. + 12) ; \
-  add       Reg, Reg, pc
+  movw      Reg, # : lower16 : (Sym) - (.+ 16); \
+  movt  Reg, # : upper16 : (Sym) - (.+ 12); \
+  add   Reg, Reg, pc
 
 #define LDRL(Reg, Sym)                        \
-  movw      Reg, #:lower16:(Sym) - (. + 16) ; \
-  movt      Reg, #:upper16:(Sym) - (. + 12) ; \
-  ldr       Reg, [pc, Reg]
+  movw      Reg, # : lower16 : (Sym) - (.+ 16); \
+  movt  Reg, # : upper16 : (Sym) - (.+ 12); \
+  ldr   Reg, [pc, Reg]
 
 #endif

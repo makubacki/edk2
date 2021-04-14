@@ -69,12 +69,12 @@ MmCommunication2Communicate (
   IN OUT UINTN                              *CommSize OPTIONAL
   )
 {
-  EFI_MM_COMMUNICATE_HEADER   *CommunicateHeader;
-  ARM_SMC_ARGS                CommunicateSmcArgs;
-  EFI_STATUS                  Status;
-  UINTN                       BufferSize;
+  EFI_MM_COMMUNICATE_HEADER  *CommunicateHeader;
+  ARM_SMC_ARGS               CommunicateSmcArgs;
+  EFI_STATUS                 Status;
+  UINTN                      BufferSize;
 
-  Status = EFI_ACCESS_DENIED;
+  Status     = EFI_ACCESS_DENIED;
   BufferSize = 0;
 
   ZeroMem (&CommunicateSmcArgs, sizeof (ARM_SMC_ARGS));
@@ -104,11 +104,12 @@ MmCommunication2Communicate (
       *CommSize = mNsCommBuffMemRegion.Length;
       return EFI_BAD_BUFFER_SIZE;
     }
+
     //
     // CommSize must match MessageLength + sizeof (EFI_MM_COMMUNICATE_HEADER);
     //
     if (*CommSize != BufferSize) {
-        return EFI_INVALID_PARAMETER;
+      return EFI_INVALID_PARAMETER;
     }
   }
 
@@ -131,10 +132,10 @@ MmCommunication2Communicate (
   CommunicateSmcArgs.Arg1 = 0;
 
   // Copy Communication Payload
-  CopyMem ((VOID *)mNsCommBuffMemRegion.VirtualBase, CommBufferVirtual, BufferSize);
+  CopyMem ((VOID *) mNsCommBuffMemRegion.VirtualBase, CommBufferVirtual, BufferSize);
 
   // comm_buffer_address (64-bit physical address)
-  CommunicateSmcArgs.Arg2 = (UINTN)mNsCommBuffMemRegion.PhysicalBase;
+  CommunicateSmcArgs.Arg2 = (UINTN) mNsCommBuffMemRegion.PhysicalBase;
 
   // comm_size_address (not used, indicated by setting to zero)
   CommunicateSmcArgs.Arg3 = 0;
@@ -143,41 +144,41 @@ MmCommunication2Communicate (
   ArmCallSmc (&CommunicateSmcArgs);
 
   switch (CommunicateSmcArgs.Arg0) {
-  case ARM_SMC_MM_RET_SUCCESS:
-    ZeroMem (CommBufferVirtual, BufferSize);
-    // On successful return, the size of data being returned is inferred from
-    // MessageLength + Header.
-    CommunicateHeader = (EFI_MM_COMMUNICATE_HEADER *)mNsCommBuffMemRegion.VirtualBase;
-    BufferSize = CommunicateHeader->MessageLength +
-                 sizeof (CommunicateHeader->HeaderGuid) +
-                 sizeof (CommunicateHeader->MessageLength);
+    case ARM_SMC_MM_RET_SUCCESS:
+      ZeroMem (CommBufferVirtual, BufferSize);
+      // On successful return, the size of data being returned is inferred from
+      // MessageLength + Header.
+      CommunicateHeader = (EFI_MM_COMMUNICATE_HEADER *) mNsCommBuffMemRegion.VirtualBase;
+      BufferSize = CommunicateHeader->MessageLength +
+                   sizeof (CommunicateHeader->HeaderGuid) +
+                   sizeof (CommunicateHeader->MessageLength);
 
-    CopyMem (
-      CommBufferVirtual,
-      (VOID *)mNsCommBuffMemRegion.VirtualBase,
-      BufferSize
-      );
-    Status = EFI_SUCCESS;
-    break;
+      CopyMem (
+               CommBufferVirtual,
+               (VOID *) mNsCommBuffMemRegion.VirtualBase,
+               BufferSize
+               );
+      Status = EFI_SUCCESS;
+      break;
 
-  case ARM_SMC_MM_RET_INVALID_PARAMS:
-    Status = EFI_INVALID_PARAMETER;
-    break;
+    case ARM_SMC_MM_RET_INVALID_PARAMS:
+      Status = EFI_INVALID_PARAMETER;
+      break;
 
-  case ARM_SMC_MM_RET_DENIED:
-    Status = EFI_ACCESS_DENIED;
-    break;
+    case ARM_SMC_MM_RET_DENIED:
+      Status = EFI_ACCESS_DENIED;
+      break;
 
-  case ARM_SMC_MM_RET_NO_MEMORY:
-    // Unexpected error since the CommSize was checked for zero length
-    // prior to issuing the SMC
-    Status = EFI_OUT_OF_RESOURCES;
-    ASSERT (0);
-    break;
+    case ARM_SMC_MM_RET_NO_MEMORY:
+      // Unexpected error since the CommSize was checked for zero length
+      // prior to issuing the SMC
+      Status = EFI_OUT_OF_RESOURCES;
+      ASSERT (0);
+      break;
 
-  default:
-    Status = EFI_ACCESS_DENIED;
-    ASSERT (0);
+    default:
+      Status = EFI_ACCESS_DENIED;
+      ASSERT (0);
   }
 
   return Status;
@@ -215,23 +216,48 @@ NotifySetVirtualAddressMap (
   EFI_STATUS  Status;
 
   Status = gRT->ConvertPointer (
-                  EFI_OPTIONAL_PTR,
-                  (VOID **)&mNsCommBuffMemRegion.VirtualBase
-                  );
+                                EFI_OPTIONAL_PTR,
+                                (VOID **) &mNsCommBuffMemRegion.VirtualBase
+                                );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "NotifySetVirtualAddressMap():"
-            " Unable to convert MM runtime pointer. Status:0x%r\n", Status));
+    DEBUG (
+           (DEBUG_ERROR, "NotifySetVirtualAddressMap():"
+                         " Unable to convert MM runtime pointer. Status:0x%r\n", Status)
+           );
   }
-
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
-GetMmCompatibility ()
+GetMmCompatibility (
+  )
 {
-  EFI_STATUS   Status;
-  UINT32       MmVersion;
-  ARM_SMC_ARGS MmVersionArgs;
+  EFI_STATUS    Status;
+  UINT32        MmVersion;
+  ARM_SMC_ARGS  MmVersionArgs;
 
   // MM_VERSION uses SMC32 calling conventions
   MmVersionArgs.Arg0 = ARM_SMC_ID_MM_VERSION_AARCH32;
@@ -240,27 +266,32 @@ GetMmCompatibility ()
 
   MmVersion = MmVersionArgs.Arg0;
 
-  if ((MM_MAJOR_VER(MmVersion) == MM_CALLER_MAJOR_VER) &&
-      (MM_MINOR_VER(MmVersion) >= MM_CALLER_MINOR_VER)) {
-    DEBUG ((DEBUG_INFO, "MM Version: Major=0x%x, Minor=0x%x\n",
-            MM_MAJOR_VER(MmVersion), MM_MINOR_VER(MmVersion)));
+  if ((MM_MAJOR_VER (MmVersion) == MM_CALLER_MAJOR_VER) &&
+      (MM_MINOR_VER (MmVersion) >= MM_CALLER_MINOR_VER)) {
+    DEBUG (
+           (DEBUG_INFO, "MM Version: Major=0x%x, Minor=0x%x\n",
+            MM_MAJOR_VER (MmVersion), MM_MINOR_VER (MmVersion))
+           );
     Status = EFI_SUCCESS;
   } else {
-    DEBUG ((DEBUG_ERROR, "Incompatible MM Versions.\n Current Version: Major=0x%x, Minor=0x%x.\n Expected: Major=0x%x, Minor>=0x%x.\n",
-            MM_MAJOR_VER(MmVersion), MM_MINOR_VER(MmVersion), MM_CALLER_MAJOR_VER, MM_CALLER_MINOR_VER));
+    DEBUG (
+           (DEBUG_ERROR,
+            "Incompatible MM Versions.\n Current Version: Major=0x%x, Minor=0x%x.\n Expected: Major=0x%x, Minor>=0x%x.\n",
+            MM_MAJOR_VER (MmVersion), MM_MINOR_VER (MmVersion), MM_CALLER_MAJOR_VER, MM_CALLER_MINOR_VER)
+           );
     Status = EFI_UNSUPPORTED;
   }
 
   return Status;
 }
 
-STATIC EFI_GUID* CONST mGuidedEventGuid[] = {
+STATIC EFI_GUID *CONST  mGuidedEventGuid[] = {
   &gEfiEndOfDxeEventGroupGuid,
   &gEfiEventExitBootServicesGuid,
   &gEfiEventReadyToBootGuid,
 };
 
-STATIC EFI_EVENT mGuidedEvent[ARRAY_SIZE (mGuidedEventGuid)];
+STATIC EFI_EVENT  mGuidedEvent[ARRAY_SIZE (mGuidedEventGuid)];
 
 /**
   Event notification that is fired when GUIDed Event Group is signaled.
@@ -277,8 +308,8 @@ MmGuidedEventNotify (
   IN VOID       *Context
   )
 {
-  EFI_MM_COMMUNICATE_HEADER   Header;
-  UINTN                       Size;
+  EFI_MM_COMMUNICATE_HEADER  Header;
+  UINTN                      Size;
 
   //
   // Use Guid to initialize EFI_SMM_COMMUNICATE_HEADER structure
@@ -312,12 +343,12 @@ MmCommunication2Initialize (
   IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  EFI_STATUS                 Status;
-  UINTN                      Index;
+  EFI_STATUS  Status;
+  UINTN       Index;
 
   // Check if we can make the MM call
   Status = GetMmCompatibility ();
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     goto ReturnErrorStatus;
   }
 
@@ -331,40 +362,46 @@ MmCommunication2Initialize (
   ASSERT (mNsCommBuffMemRegion.Length != 0);
 
   Status = gDS->AddMemorySpace (
-                  EfiGcdMemoryTypeReserved,
-                  mNsCommBuffMemRegion.PhysicalBase,
-                  mNsCommBuffMemRegion.Length,
-                  EFI_MEMORY_WB |
-                  EFI_MEMORY_XP |
-                  EFI_MEMORY_RUNTIME
-                  );
+                                EfiGcdMemoryTypeReserved,
+                                mNsCommBuffMemRegion.PhysicalBase,
+                                mNsCommBuffMemRegion.Length,
+                                EFI_MEMORY_WB |
+                                EFI_MEMORY_XP |
+                                EFI_MEMORY_RUNTIME
+                                );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "MmCommunicateInitialize: "
-            "Failed to add MM-NS Buffer Memory Space\n"));
+    DEBUG (
+           (DEBUG_ERROR, "MmCommunicateInitialize: "
+                         "Failed to add MM-NS Buffer Memory Space\n")
+           );
     goto ReturnErrorStatus;
   }
 
   Status = gDS->SetMemorySpaceAttributes (
-                  mNsCommBuffMemRegion.PhysicalBase,
-                  mNsCommBuffMemRegion.Length,
-                  EFI_MEMORY_WB | EFI_MEMORY_XP | EFI_MEMORY_RUNTIME
-                  );
+                                          mNsCommBuffMemRegion.PhysicalBase,
+                                          mNsCommBuffMemRegion.Length,
+                                          EFI_MEMORY_WB | EFI_MEMORY_XP | EFI_MEMORY_RUNTIME
+                                          );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "MmCommunicateInitialize: "
-            "Failed to set MM-NS Buffer Memory attributes\n"));
+    DEBUG (
+           (DEBUG_ERROR, "MmCommunicateInitialize: "
+                         "Failed to set MM-NS Buffer Memory attributes\n")
+           );
     goto CleanAddedMemorySpace;
   }
 
   // Install the communication protocol
   Status = gBS->InstallProtocolInterface (
-                  &mMmCommunicateHandle,
-                  &gEfiMmCommunication2ProtocolGuid,
-                  EFI_NATIVE_INTERFACE,
-                  &mMmCommunication2
-                  );
-  if (EFI_ERROR(Status)) {
-    DEBUG ((DEBUG_ERROR, "MmCommunicationInitialize: "
-            "Failed to install MM communication protocol\n"));
+                                          &mMmCommunicateHandle,
+                                          &gEfiMmCommunication2ProtocolGuid,
+                                          EFI_NATIVE_INTERFACE,
+                                          &mMmCommunication2
+                                          );
+  if (EFI_ERROR (Status)) {
+    DEBUG (
+           (DEBUG_ERROR, "MmCommunicationInitialize: "
+                         "Failed to install MM communication protocol\n")
+           );
     goto CleanAddedMemorySpace;
   }
 
@@ -372,40 +409,47 @@ MmCommunication2Initialize (
   // with the physical address.
   // Create a Set Virtual Address Map event.
   Status = gBS->CreateEvent (
-                  EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE,
-                  TPL_NOTIFY,
-                  NotifySetVirtualAddressMap,
-                  NULL,
-                  &mSetVirtualAddressMapEvent
-                  );
+                             EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE,
+                             TPL_NOTIFY,
+                             NotifySetVirtualAddressMap,
+                             NULL,
+                             &mSetVirtualAddressMapEvent
+                             );
   ASSERT_EFI_ERROR (Status);
 
   for (Index = 0; Index < ARRAY_SIZE (mGuidedEventGuid); Index++) {
-    Status = gBS->CreateEventEx (EVT_NOTIFY_SIGNAL, TPL_CALLBACK,
-                    MmGuidedEventNotify, mGuidedEventGuid[Index],
-                    mGuidedEventGuid[Index], &mGuidedEvent[Index]);
+    Status = gBS->CreateEventEx (
+                                 EVT_NOTIFY_SIGNAL,
+                                 TPL_CALLBACK,
+                                 MmGuidedEventNotify,
+                                 mGuidedEventGuid[Index],
+                                 mGuidedEventGuid[Index],
+                                 &mGuidedEvent[Index]
+                                 );
     ASSERT_EFI_ERROR (Status);
     if (EFI_ERROR (Status)) {
       while (Index-- > 0) {
-        gBS->CloseEvent (mGuidedEvent[Index]);
+  gBS->CloseEvent (mGuidedEvent[Index]);
       }
+
       goto UninstallProtocol;
     }
   }
+
   return EFI_SUCCESS;
 
 UninstallProtocol:
   gBS->UninstallProtocolInterface (
-         mMmCommunicateHandle,
-         &gEfiMmCommunication2ProtocolGuid,
-         &mMmCommunication2
-         );
+                                   mMmCommunicateHandle,
+                                   &gEfiMmCommunication2ProtocolGuid,
+                                   &mMmCommunication2
+                                   );
 
 CleanAddedMemorySpace:
   gDS->RemoveMemorySpace (
-         mNsCommBuffMemRegion.PhysicalBase,
-         mNsCommBuffMemRegion.Length
-         );
+                          mNsCommBuffMemRegion.PhysicalBase,
+                          mNsCommBuffMemRegion.Length
+                          );
 
 ReturnErrorStatus:
   return EFI_INVALID_PARAMETER;

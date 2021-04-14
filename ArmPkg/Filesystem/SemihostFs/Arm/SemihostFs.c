@@ -27,16 +27,16 @@
 
 #include "SemihostFs.h"
 
-#define DEFAULT_SEMIHOST_FS_LABEL   L"SemihostFs"
+#define DEFAULT_SEMIHOST_FS_LABEL  L"SemihostFs"
 
-STATIC CHAR16 *mSemihostFsLabel;
+STATIC CHAR16  *mSemihostFsLabel;
 
-EFI_SIMPLE_FILE_SYSTEM_PROTOCOL gSemihostFs = {
+EFI_SIMPLE_FILE_SYSTEM_PROTOCOL  gSemihostFs = {
   EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_REVISION,
   VolumeOpen
 };
 
-EFI_FILE gSemihostFsFile = {
+EFI_FILE  gSemihostFsFile = {
   EFI_FILE_PROTOCOL_REVISION,
   FileOpen,
   FileClose,
@@ -54,43 +54,66 @@ EFI_FILE gSemihostFsFile = {
 // Device path for semi-hosting. It contains our autogened Caller ID GUID.
 //
 typedef struct {
-  VENDOR_DEVICE_PATH        Guid;
-  EFI_DEVICE_PATH_PROTOCOL  End;
+  VENDOR_DEVICE_PATH          Guid;
+  EFI_DEVICE_PATH_PROTOCOL    End;
 } SEMIHOST_DEVICE_PATH;
 
-SEMIHOST_DEVICE_PATH gDevicePath = {
+SEMIHOST_DEVICE_PATH  gDevicePath = {
   {
-    { HARDWARE_DEVICE_PATH, HW_VENDOR_DP, { sizeof (VENDOR_DEVICE_PATH), 0 } },
+    { HARDWARE_DEVICE_PATH, HW_VENDOR_DP,                   { sizeof (VENDOR_DEVICE_PATH),       0 } },
     EFI_CALLER_ID_GUID
   },
   { END_DEVICE_PATH_TYPE, END_ENTIRE_DEVICE_PATH_SUBTYPE, { sizeof (EFI_DEVICE_PATH_PROTOCOL), 0 } }
 };
 
 typedef struct {
-  LIST_ENTRY    Link;
-  UINT64        Signature;
-  EFI_FILE      File;
-  CHAR8         *FileName;
-  UINT64        OpenMode;
-  UINT32        Position;
-  UINTN         SemihostHandle;
-  BOOLEAN       IsRoot;
-  EFI_FILE_INFO Info;
+  LIST_ENTRY       Link;
+  UINT64           Signature;
+  EFI_FILE         File;
+  CHAR8            *FileName;
+  UINT64           OpenMode;
+  UINT32           Position;
+  UINTN            SemihostHandle;
+  BOOLEAN          IsRoot;
+  EFI_FILE_INFO    Info;
 } SEMIHOST_FCB;
 
-#define SEMIHOST_FCB_SIGNATURE      SIGNATURE_32( 'S', 'H', 'F', 'C' )
-#define SEMIHOST_FCB_FROM_THIS(a)   CR(a, SEMIHOST_FCB, File, SEMIHOST_FCB_SIGNATURE)
-#define SEMIHOST_FCB_FROM_LINK(a)   CR(a, SEMIHOST_FCB, Link, SEMIHOST_FCB_SIGNATURE);
+#define SEMIHOST_FCB_SIGNATURE  SIGNATURE_32 ('S', 'H', 'F', 'C')
+#define SEMIHOST_FCB_FROM_THIS(a)  CR (a, SEMIHOST_FCB, File, SEMIHOST_FCB_SIGNATURE)
+#define SEMIHOST_FCB_FROM_LINK(a)  CR (a, SEMIHOST_FCB, Link, SEMIHOST_FCB_SIGNATURE);
 
 EFI_HANDLE  gInstallHandle = NULL;
 LIST_ENTRY  gFileList = INITIALIZE_LIST_HEAD_VARIABLE (gFileList);
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 SEMIHOST_FCB *
 AllocateFCB (
   VOID
   )
 {
-  SEMIHOST_FCB *Fcb;
+  SEMIHOST_FCB  *Fcb;
 
   Fcb = AllocateZeroPool (sizeof (SEMIHOST_FCB));
   if (Fcb != NULL) {
@@ -101,6 +124,29 @@ AllocateFCB (
   return Fcb;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 FreeFCB (
   IN SEMIHOST_FCB *Fcb
@@ -115,15 +161,36 @@ FreeFCB (
   FreePool (Fcb);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
 
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 VolumeOpen (
   IN  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *This,
   OUT EFI_FILE                        **Root
   )
 {
-  SEMIHOST_FCB *RootFcb;
+  SEMIHOST_FCB  *RootFcb;
 
   if (Root == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -191,9 +258,9 @@ FileOpen (
     return EFI_INVALID_PARAMETER;
   }
 
-  if ( (OpenMode != EFI_FILE_MODE_READ) &&
-       (OpenMode != (EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE)) &&
-       (OpenMode != (EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE)) ) {
+  if ((OpenMode != EFI_FILE_MODE_READ) &&
+      (OpenMode != (EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE)) &&
+      (OpenMode != (EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE))) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -207,13 +274,14 @@ FileOpen (
   if (AsciiFileName == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
+
   UnicodeStrToAsciiStrS (FileName, AsciiFileName, Length);
 
   // Opening '/', '\', '.', or the NULL pathname is trying to open the root directory
   if ((AsciiStrCmp (AsciiFileName, "\\") == 0) ||
       (AsciiStrCmp (AsciiFileName, "/")  == 0) ||
       (AsciiStrCmp (AsciiFileName, "")   == 0) ||
-      (AsciiStrCmp (AsciiFileName, ".")  == 0)    ) {
+      (AsciiStrCmp (AsciiFileName, ".")  == 0)) {
     FreePool (AsciiFileName);
     return (VolumeOpen (&gSemihostFs, NewHandle));
   }
@@ -232,6 +300,7 @@ FileOpen (
   } else {
     SemihostMode = SEMIHOST_FILE_MODE_READ | SEMIHOST_FILE_MODE_BINARY | SEMIHOST_FILE_MODE_UPDATE;
   }
+
   Return = SemihostFileOpen (AsciiFileName, SemihostMode, &SemihostHandle);
 
   if (RETURN_ERROR (Return)) {
@@ -242,10 +311,10 @@ FileOpen (
       // mode allows for both read and write from and to the file.
       //
       Return = SemihostFileOpen (
-                 AsciiFileName,
-                 SEMIHOST_FILE_MODE_WRITE | SEMIHOST_FILE_MODE_BINARY | SEMIHOST_FILE_MODE_UPDATE,
-                 &SemihostHandle
-                 );
+                                 AsciiFileName,
+                                 SEMIHOST_FILE_MODE_WRITE | SEMIHOST_FILE_MODE_BINARY | SEMIHOST_FILE_MODE_UPDATE,
+                                 &SemihostHandle
+                                 );
       if (RETURN_ERROR (Return)) {
         Status = EFI_DEVICE_ERROR;
         goto Error;
@@ -263,11 +332,11 @@ FileOpen (
     goto Error;
   }
 
-  FileFcb->FileName       = AsciiFileName;
+  FileFcb->FileName = AsciiFileName;
   FileFcb->SemihostHandle = SemihostHandle;
-  FileFcb->Position       = 0;
-  FileFcb->IsRoot         = 0;
-  FileFcb->OpenMode       = OpenMode;
+  FileFcb->Position = 0;
+  FileFcb->IsRoot   = 0;
+  FileFcb->OpenMode = OpenMode;
 
   Return = SemihostFileLength (SemihostHandle, &Length);
   if (RETURN_ERROR (Return)) {
@@ -279,7 +348,7 @@ FileOpen (
   FileFcb->Info.FileSize     = Length;
   FileFcb->Info.PhysicalSize = Length;
   FileFcb->Info.Attribute    = ((OpenMode & EFI_FILE_MODE_CREATE) != 0) ?
-                                 Attributes : 0;
+                               Attributes : 0;
 
   InsertTailList (&gFileList, &FileFcb->Link);
 
@@ -324,10 +393,10 @@ TruncateFile (
   Buffer     = NULL;
 
   Return = SemihostFileOpen (
-             FileName,
-             SEMIHOST_FILE_MODE_READ | SEMIHOST_FILE_MODE_BINARY,
-             &FileHandle
-             );
+                             FileName,
+                             SEMIHOST_FILE_MODE_READ | SEMIHOST_FILE_MODE_BINARY,
+                             &FileHandle
+                             );
   if (RETURN_ERROR (Return)) {
     goto Error;
   }
@@ -346,21 +415,22 @@ TruncateFile (
     if (RETURN_ERROR (Return)) {
       goto Error;
     }
+
     Remaining -= ToRead;
-    Read      += ToRead;
+    Read += ToRead;
   }
 
-  Return = SemihostFileClose (FileHandle);
+  Return     = SemihostFileClose (FileHandle);
   FileHandle = 0;
   if (RETURN_ERROR (Return)) {
     goto Error;
   }
 
   Return = SemihostFileOpen (
-             FileName,
-             SEMIHOST_FILE_MODE_WRITE | SEMIHOST_FILE_MODE_BINARY,
-             &FileHandle
-             );
+                             FileName,
+                             SEMIHOST_FILE_MODE_WRITE | SEMIHOST_FILE_MODE_BINARY,
+                             &FileHandle
+                             );
   if (RETURN_ERROR (Return)) {
     goto Error;
   }
@@ -379,12 +449,12 @@ Error:
   if (FileHandle != 0) {
     SemihostFileClose (FileHandle);
   }
+
   if (Buffer != NULL) {
     FreePool (Buffer);
   }
 
   return (Status);
-
 }
 
 /**
@@ -402,13 +472,13 @@ FileClose (
   IN EFI_FILE  *This
   )
 {
-  SEMIHOST_FCB   *Fcb;
+  SEMIHOST_FCB  *Fcb;
 
   if (This == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
-  Fcb = SEMIHOST_FCB_FROM_THIS(This);
+  Fcb = SEMIHOST_FCB_FROM_THIS (This);
 
   if (!Fcb->IsRoot) {
     SemihostFileClose (Fcb->SemihostHandle);
@@ -420,6 +490,7 @@ FileClose (
     if (Fcb->Info.FileSize < Fcb->Info.PhysicalSize) {
       TruncateFile (Fcb->FileName, Fcb->Info.FileSize);
     }
+
     FreePool (Fcb->FileName);
   }
 
@@ -471,6 +542,7 @@ FileDelete (
     if (RETURN_ERROR (Return)) {
       return EFI_WARN_DELETE_FAILURE;
     }
+
     return EFI_SUCCESS;
   } else {
     return EFI_WARN_DELETE_FAILURE;
@@ -566,14 +638,15 @@ ExtendFile (
   }
 
   Remaining = Size;
-  SetMem (WriteBuffer, 0, sizeof(WriteBuffer));
+  SetMem (WriteBuffer, 0, sizeof (WriteBuffer));
   while (Remaining > 0) {
-    WriteNb = MIN (Remaining, sizeof(WriteBuffer));
+    WriteNb   = MIN (Remaining, sizeof (WriteBuffer));
     WriteSize = WriteNb;
-    Return = SemihostFileWrite (Fcb->SemihostHandle, &WriteSize, WriteBuffer);
+    Return    = SemihostFileWrite (Fcb->SemihostHandle, &WriteSize, WriteBuffer);
     if (RETURN_ERROR (Return)) {
       return EFI_DEVICE_ERROR;
     }
+
     Remaining -= WriteNb;
   }
 
@@ -617,8 +690,8 @@ FileWrite (
   Fcb = SEMIHOST_FCB_FROM_THIS (This);
 
   // We cannot write a read-only file
-  if ((Fcb->Info.Attribute & EFI_FILE_READ_ONLY)
-      || !(Fcb->OpenMode & EFI_FILE_MODE_WRITE)) {
+  if (  (Fcb->Info.Attribute & EFI_FILE_READ_ONLY)
+     || !(Fcb->OpenMode & EFI_FILE_MODE_WRITE)) {
     return EFI_ACCESS_DENIED;
   }
 
@@ -632,11 +705,12 @@ FileWrite (
     if (EFI_ERROR (Status)) {
       return Status;
     }
+
     Fcb->Info.FileSize = Fcb->Position;
   }
 
   WriteSize = *BufferSize;
-  Return = SemihostFileWrite (Fcb->SemihostHandle, &WriteSize, Buffer);
+  Return    = SemihostFileWrite (Fcb->SemihostHandle, &WriteSize, Buffer);
   if (RETURN_ERROR (Return)) {
     return EFI_DEVICE_ERROR;
   }
@@ -650,6 +724,7 @@ FileWrite (
   if (RETURN_ERROR (Return)) {
     return EFI_DEVICE_ERROR;
   }
+
   Fcb->Info.PhysicalSize = Length;
 
   return EFI_SUCCESS;
@@ -672,13 +747,13 @@ FileGetPosition (
   OUT UINT64      *Position
   )
 {
-  SEMIHOST_FCB *Fcb;
+  SEMIHOST_FCB  *Fcb;
 
   if ((This == NULL) || (Position == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
 
-  Fcb = SEMIHOST_FCB_FROM_THIS(This);
+  Fcb = SEMIHOST_FCB_FROM_THIS (This);
 
   *Position = Fcb->Position;
 
@@ -718,8 +793,7 @@ FileSetPosition (
     if (Position != 0) {
       return EFI_UNSUPPORTED;
     }
-  }
-  else {
+  } else {
     //
     // UEFI Spec section 12.5:
     // "Seeking to position 0xFFFFFFFFFFFFFFFF causes the current position to
@@ -728,6 +802,7 @@ FileSetPosition (
     if (Position == 0xFFFFFFFFFFFFFFFF) {
       Position = Fcb->Info.FileSize;
     }
+
     Return = SemihostFileSeek (Fcb->SemihostHandle, MIN (Position, Fcb->Info.FileSize));
     if (RETURN_ERROR (Return)) {
       return EFI_DEVICE_ERROR;
@@ -760,14 +835,14 @@ GetFileInfo (
   OUT    VOID          *Buffer
   )
 {
-  EFI_FILE_INFO   *Info;
-  UINTN           NameSize;
-  UINTN           ResultSize;
-  UINTN           Index;
+  EFI_FILE_INFO  *Info;
+  UINTN          NameSize;
+  UINTN          ResultSize;
+  UINTN          Index;
 
   if (Fcb->IsRoot) {
-    NameSize = 0;
-    ResultSize = SIZE_OF_EFI_FILE_INFO + sizeof(CHAR16);
+    NameSize   = 0;
+    ResultSize = SIZE_OF_EFI_FILE_INFO + sizeof (CHAR16);
   } else {
     NameSize   = AsciiStrLen (Fcb->FileName) + 1;
     ResultSize = SIZE_OF_EFI_FILE_INFO + NameSize * sizeof (CHAR16);
@@ -787,7 +862,7 @@ GetFileInfo (
   Info->Size = ResultSize;
 
   if (Fcb->IsRoot) {
-    Info->FileName[0]  = L'\0';
+    Info->FileName[0] = L'\0';
   } else {
     for (Index = 0; Index < NameSize; Index++) {
       Info->FileName[Index] = Fcb->FileName[Index];
@@ -882,18 +957,18 @@ FileGetInfo (
   OUT    VOID      *Buffer
   )
 {
-  SEMIHOST_FCB *Fcb;
-  EFI_STATUS   Status;
-  UINTN        ResultSize;
+  SEMIHOST_FCB  *Fcb;
+  EFI_STATUS    Status;
+  UINTN         ResultSize;
 
   if ((This == NULL)                         ||
       (InformationType == NULL)              ||
       (BufferSize == NULL)                   ||
-      ((Buffer == NULL) && (*BufferSize > 0))  ) {
+      ((Buffer == NULL) && (*BufferSize > 0))) {
     return EFI_INVALID_PARAMETER;
   }
 
-  Fcb = SEMIHOST_FCB_FROM_THIS(This);
+  Fcb = SEMIHOST_FCB_FROM_THIS (This);
 
   if (CompareGuid (InformationType, &gEfiFileSystemInfoGuid)) {
     Status = GetFilesystemInfo (Fcb, BufferSize, Buffer);
@@ -968,15 +1043,16 @@ SetFileInfo (
   if (AsciiFileName == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
+
   UnicodeStrToAsciiStrS (Info->FileName, AsciiFileName, Length);
 
   FileSizeIsDifferent = (Info->FileSize != Fcb->Info.FileSize);
   FileNameIsDifferent = (AsciiStrCmp (AsciiFileName, Fcb->FileName) != 0);
   ReadOnlyIsDifferent = CompareMem (
-                          &Info->CreateTime,
-                          &Fcb->Info.CreateTime,
-                          3 * sizeof (EFI_TIME)
-                          ) != 0;
+                                    &Info->CreateTime,
+                                    &Fcb->Info.CreateTime,
+                                    3 * sizeof (EFI_TIME)
+                                    ) != 0;
 
   //
   // For a read-only file or a file opened in read-only mode, only
@@ -985,7 +1061,7 @@ SetFileInfo (
   // description.
   //
   if ((Fcb->OpenMode == EFI_FILE_MODE_READ)     ||
-      (Fcb->Info.Attribute & EFI_FILE_READ_ONLY)  ) {
+      (Fcb->Info.Attribute & EFI_FILE_READ_ONLY)) {
     if (FileSizeIsDifferent || FileNameIsDifferent || ReadOnlyIsDifferent) {
       Status = EFI_ACCESS_DENIED;
       goto Error;
@@ -1006,6 +1082,7 @@ SetFileInfo (
       if (EFI_ERROR (Status)) {
         goto Error;
       }
+
       //
       // The read/write position from the host file system point of view
       // is at the end of the file. If the position from this module
@@ -1016,12 +1093,14 @@ SetFileInfo (
         FileSetPosition (&Fcb->File, Fcb->Position);
       }
     }
+
     Fcb->Info.FileSize = FileSize;
 
     Return = SemihostFileLength (Fcb->SemihostHandle, &Length);
     if (RETURN_ERROR (Return)) {
       goto Error;
     }
+
     Fcb->Info.PhysicalSize = Length;
   }
 
@@ -1034,10 +1113,10 @@ SetFileInfo (
 
   if (FileNameIsDifferent) {
     Return = SemihostFileOpen (
-               AsciiFileName,
-               SEMIHOST_FILE_MODE_READ | SEMIHOST_FILE_MODE_BINARY,
-               &SemihostHandle
-               );
+                               AsciiFileName,
+                               SEMIHOST_FILE_MODE_READ | SEMIHOST_FILE_MODE_BINARY,
+                               &SemihostHandle
+                               );
     if (!RETURN_ERROR (Return)) {
       SemihostFileClose (SemihostHandle);
       Status = EFI_ACCESS_DENIED;
@@ -1048,6 +1127,7 @@ SetFileInfo (
     if (RETURN_ERROR (Return)) {
       goto Error;
     }
+
     FreePool (Fcb->FileName);
     Fcb->FileName = AsciiFileName;
     AsciiFileName = NULL;
@@ -1119,9 +1199,11 @@ FileSetInfo (
     if (Info->Size < (SIZE_OF_EFI_FILE_INFO + StrSize (Info->FileName))) {
       return EFI_INVALID_PARAMETER;
     }
+
     if (BufferSize < Info->Size) {
       return EFI_BAD_BUFFER_SIZE;
     }
+
     return SetFileInfo (Fcb, Info);
   } else if (CompareGuid (InformationType, &gEfiFileSystemInfoGuid)) {
     SystemInfo = Buffer;
@@ -1129,9 +1211,11 @@ FileSetInfo (
         (SIZE_OF_EFI_FILE_SYSTEM_INFO + StrSize (SystemInfo->VolumeLabel))) {
       return EFI_INVALID_PARAMETER;
     }
+
     if (BufferSize < SystemInfo->Size) {
       return EFI_BAD_BUFFER_SIZE;
     }
+
     Buffer = SystemInfo->VolumeLabel;
 
     if (StrSize (Buffer) > 0) {
@@ -1153,20 +1237,43 @@ FileSetInfo (
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 FileFlush (
   IN EFI_FILE *File
   )
 {
-  SEMIHOST_FCB *Fcb;
+  SEMIHOST_FCB  *Fcb;
 
-  Fcb = SEMIHOST_FCB_FROM_THIS(File);
+  Fcb = SEMIHOST_FCB_FROM_THIS (File);
 
   if (Fcb->IsRoot) {
     return EFI_SUCCESS;
   } else {
-    if ((Fcb->Info.Attribute & EFI_FILE_READ_ONLY)
-        || !(Fcb->OpenMode & EFI_FILE_MODE_WRITE)) {
+    if (  (Fcb->Info.Attribute & EFI_FILE_READ_ONLY)
+       || !(Fcb->OpenMode & EFI_FILE_MODE_WRITE)) {
       return EFI_ACCESS_DENIED;
     } else {
       return EFI_SUCCESS;
@@ -1174,13 +1281,36 @@ FileFlush (
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 SemihostFsEntryPoint (
   IN EFI_HANDLE           ImageHandle,
   IN EFI_SYSTEM_TABLE     *SystemTable
   )
 {
-  EFI_STATUS    Status;
+  EFI_STATUS  Status;
 
   Status = EFI_NOT_FOUND;
 
@@ -1191,13 +1321,15 @@ SemihostFsEntryPoint (
     }
 
     Status = gBS->InstallMultipleProtocolInterfaces (
-                    &gInstallHandle,
-                    &gEfiSimpleFileSystemProtocolGuid, &gSemihostFs,
-                    &gEfiDevicePathProtocolGuid,       &gDevicePath,
-                    NULL
-                    );
+                                                     &gInstallHandle,
+                                                     &gEfiSimpleFileSystemProtocolGuid,
+                                                     &gSemihostFs,
+                                                     &gEfiDevicePathProtocolGuid,
+                                                     &gDevicePath,
+                                                     NULL
+                                                     );
 
-    if (EFI_ERROR(Status)) {
+    if (EFI_ERROR (Status)) {
       FreePool (mSemihostFsLabel);
     }
   }

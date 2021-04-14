@@ -20,11 +20,10 @@
 //
 // Data table entry update function.
 //
-typedef EFI_STATUS (EFIAPI SMBIOS_MISC_DATA_FUNCTION) (
-  IN  VOID                 *RecordData,
-  IN  EFI_SMBIOS_PROTOCOL  *Smbios
-  );
-
+typedef EFI_STATUS (EFIAPI SMBIOS_MISC_DATA_FUNCTION)(
+                                                      IN  VOID                 *RecordData,
+                                                      IN  EFI_SMBIOS_PROTOCOL  *Smbios
+                                                      );
 
 //
 // Data table entry definition.
@@ -33,18 +32,16 @@ typedef struct {
   //
   // intermediate input data for SMBIOS record
   //
-  VOID                          *RecordData;
-  SMBIOS_MISC_DATA_FUNCTION     *Function;
+  VOID                         *RecordData;
+  SMBIOS_MISC_DATA_FUNCTION    *Function;
 } SMBIOS_MISC_DATA_TABLE;
-
 
 //
 // SMBIOS table extern definitions
 //
 #define SMBIOS_MISC_TABLE_EXTERNS(NAME1, NAME2, NAME3) \
-extern NAME1 NAME2 ## Data; \
-extern SMBIOS_MISC_DATA_FUNCTION NAME3 ## Function;
-
+  extern NAME1 NAME2 ## Data; \
+  extern SMBIOS_MISC_DATA_FUNCTION  NAME3 ## Function;
 
 //
 // SMBIOS data table entries
@@ -53,10 +50,10 @@ extern SMBIOS_MISC_DATA_FUNCTION NAME3 ## Function;
 // in order to iterate through the list of tables, populate them and add
 // them into the system.
 #define SMBIOS_MISC_TABLE_ENTRY_DATA_AND_FUNCTION(NAME1, NAME2) \
-{ \
-  & NAME1 ## Data, \
+  { \
+    &NAME1 ## Data, \
     NAME2 ## Function \
-}
+  }
 
 //
 // Global definition macros.
@@ -65,22 +62,21 @@ extern SMBIOS_MISC_DATA_FUNCTION NAME3 ## Function;
   NAME1 NAME2 ## Data
 
 #define SMBIOS_MISC_TABLE_FUNCTION(NAME2) \
-  EFI_STATUS EFIAPI NAME2 ## Function( \
-  IN  VOID                  *RecordData, \
-  IN  EFI_SMBIOS_PROTOCOL   *Smbios \
-  )
+  EFI_STATUS EFIAPI NAME2 ## Function ( \
+                                        IN  VOID                  *RecordData, \
+                                        IN  EFI_SMBIOS_PROTOCOL   *Smbios \
+                                        )
 
 //
 // Data Table Array Entries
 //
-extern EFI_HII_HANDLE               mSmbiosMiscHiiHandle;
+extern EFI_HII_HANDLE  mSmbiosMiscHiiHandle;
 
-typedef struct _SMBIOS_TYPE13_BIOS_LANGUAGE_INFORMATION_STRING{
-  UINT8                               *LanguageSignature;
-  EFI_STRING_ID                       InstallableLanguageLongString;
-  EFI_STRING_ID                       InstallableLanguageAbbreviateString;
+typedef struct _SMBIOS_TYPE13_BIOS_LANGUAGE_INFORMATION_STRING {
+  UINT8            *LanguageSignature;
+  EFI_STRING_ID    InstallableLanguageLongString;
+  EFI_STRING_ID    InstallableLanguageAbbreviateString;
 } SMBIOS_TYPE13_BIOS_LANGUAGE_INFORMATION_STRING;
-
 
 /**
   Adds an SMBIOS record.
@@ -114,7 +110,7 @@ SmbiosMiscAddRecord (
 
 **/
 VOID
-SmbiosMiscGetLinkTypeHandle(
+SmbiosMiscGetLinkTypeHandle (
   IN  UINT8                 SmbiosType,
   OUT UINT16                **HandleArray,
   OUT UINTN                 *HandleCount
@@ -123,12 +119,12 @@ SmbiosMiscGetLinkTypeHandle(
 //
 // Data Table Array
 //
-extern SMBIOS_MISC_DATA_TABLE   mSmbiosMiscDataTable[];
+extern SMBIOS_MISC_DATA_TABLE  mSmbiosMiscDataTable[];
 
 //
 // Data Table Array Entries
 //
-extern UINTN   mSmbiosMiscDataTableEntries;
-extern UINT8   mSmbiosMiscDxeStrings[];
+extern UINTN  mSmbiosMiscDataTableEntries;
+extern UINT8  mSmbiosMiscDxeStrings[];
 
 #endif // SMBIOS_MISC_H_

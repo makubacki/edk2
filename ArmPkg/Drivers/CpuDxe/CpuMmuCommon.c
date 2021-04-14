@@ -37,7 +37,7 @@ SearchGcdMemorySpaces (
   OUT UINTN                             *EndIndex
   )
 {
-  UINTN           Index;
+  UINTN  Index;
 
   *StartIndex = 0;
   *EndIndex   = 0;
@@ -46,15 +46,16 @@ SearchGcdMemorySpaces (
         (BaseAddress < (MemorySpaceMap[Index].BaseAddress + MemorySpaceMap[Index].Length))) {
       *StartIndex = Index;
     }
+
     if (((BaseAddress + Length - 1) >= MemorySpaceMap[Index].BaseAddress) &&
         ((BaseAddress + Length - 1) < (MemorySpaceMap[Index].BaseAddress + MemorySpaceMap[Index].Length))) {
       *EndIndex = Index;
       return EFI_SUCCESS;
     }
   }
+
   return EFI_NOT_FOUND;
 }
-
 
 /**
   Sets the attributes for a specified range in Gcd Memory Space Map.
@@ -88,27 +89,31 @@ SetGcdMemorySpaceAttributes (
   EFI_PHYSICAL_ADDRESS  RegionStart;
   UINT64                RegionLength;
 
-  DEBUG ((DEBUG_GCD, "SetGcdMemorySpaceAttributes[0x%lX; 0x%lX] = 0x%lX\n",
-      BaseAddress, BaseAddress + Length, Attributes));
+  DEBUG (
+         (DEBUG_GCD, "SetGcdMemorySpaceAttributes[0x%lX; 0x%lX] = 0x%lX\n",
+          BaseAddress, BaseAddress + Length, Attributes)
+         );
 
   // We do not support a smaller granularity than 4KB on ARM Architecture
   if ((Length & EFI_PAGE_MASK) != 0) {
-    DEBUG ((DEBUG_WARN,
+    DEBUG (
+           (DEBUG_WARN,
             "Warning: We do not support smaller granularity than 4KB on ARM Architecture (passed length: 0x%lX).\n",
-            Length));
+            Length)
+           );
   }
 
   //
   // Get all memory descriptors covered by the memory range
   //
   Status = SearchGcdMemorySpaces (
-             MemorySpaceMap,
-             NumberOfDescriptors,
-             BaseAddress,
-             Length,
-             &StartIndex,
-             &EndIndex
-             );
+                                  MemorySpaceMap,
+                                  NumberOfDescriptors,
+                                  BaseAddress,
+                                  Length,
+                                  &StartIndex,
+                                  &EndIndex
+                                  );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -120,6 +125,7 @@ SetGcdMemorySpaceAttributes (
     if (MemorySpaceMap[Index].GcdMemoryType == EfiGcdMemoryTypeNonExistent) {
       continue;
     }
+
     //
     // Calculate the start and end address of the overlapping range
     //
@@ -128,19 +134,22 @@ SetGcdMemorySpaceAttributes (
     } else {
       RegionStart = MemorySpaceMap[Index].BaseAddress;
     }
+
     if ((BaseAddress + Length - 1) < (MemorySpaceMap[Index].BaseAddress + MemorySpaceMap[Index].Length)) {
       RegionLength = BaseAddress + Length - RegionStart;
     } else {
       RegionLength = MemorySpaceMap[Index].BaseAddress + MemorySpaceMap[Index].Length - RegionStart;
     }
+
     //
     // Set memory attributes according to MTRR attribute and the original attribute of descriptor
     //
     gDS->SetMemorySpaceAttributes (
-           RegionStart,
-           RegionLength,
-           (MemorySpaceMap[Index].Attributes & ~EFI_MEMORY_CACHETYPE_MASK) | (MemorySpaceMap[Index].Capabilities & Attributes)
-           );
+                                   RegionStart,
+                                   RegionLength,
+                                   (MemorySpaceMap[Index].Attributes & ~EFI_MEMORY_CACHETYPE_MASK) |
+                                   (MemorySpaceMap[Index].Capabilities & Attributes)
+                                   );
   }
 
   return EFI_SUCCESS;
@@ -188,7 +197,10 @@ CpuSetMemoryAttributes (
 
   if ((BaseAddress & (SIZE_4KB - 1)) != 0) {
     // Minimum granularity is SIZE_4KB (4KB on ARM)
-    DEBUG ((DEBUG_PAGE, "CpuSetMemoryAttributes(%lx, %lx, %lx): Minimum granularity is SIZE_4KB\n", BaseAddress, Length, EfiAttributes));
+    DEBUG (
+          (DEBUG_PAGE, "CpuSetMemoryAttributes(%lx, %lx, %lx): Minimum granularity is SIZE_4KB\n", BaseAddress, Length,
+           EfiAttributes)
+          );
     return EFI_UNSUPPORTED;
   }
 
@@ -202,8 +214,7 @@ CpuSetMemoryAttributes (
   // Data & Instruction Caches are flushed when we set new memory attributes.
   // So, we only set the attributes if the new region is different.
   if (EFI_ERROR (Status) || (RegionArmAttributes != ArmAttributes) ||
-      ((BaseAddress + Length) > (RegionBaseAddress + RegionLength)))
-  {
+      ((BaseAddress + Length) > (RegionBaseAddress + RegionLength))) {
     return ArmSetMemoryAttributes (BaseAddress, Length, EfiAttributes);
   } else {
     return EFI_SUCCESS;

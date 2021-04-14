@@ -45,7 +45,7 @@ STATIC
 EFI_STATUS
 SendMemoryPermissionRequest (
   IN OUT  ARM_SVC_ARGS *SvcArgs,
-     OUT  INT32        *RetVal
+  OUT  INT32        *RetVal
   )
 {
   if ((SvcArgs == NULL) || (RetVal == NULL)) {
@@ -236,91 +236,189 @@ RequestMemoryPermissionChange (
   return SendMemoryPermissionRequest (&SvcArgs, &Ret);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 ArmSetMemoryRegionNoExec (
   IN  EFI_PHYSICAL_ADDRESS      BaseAddress,
   IN  UINT64                    Length
   )
 {
-  EFI_STATUS    Status;
-  UINT32 MemoryAttributes;
-  UINT32 CodePermission;
+  EFI_STATUS  Status;
+  UINT32      MemoryAttributes;
+  UINT32      CodePermission;
 
   Status = GetMemoryPermissions (BaseAddress, &MemoryAttributes);
   if (!EFI_ERROR (Status)) {
     CodePermission = SET_MEM_ATTR_CODE_PERM_XN << SET_MEM_ATTR_CODE_PERM_SHIFT;
     return RequestMemoryPermissionChange (
-             BaseAddress,
-             Length,
-             MemoryAttributes | CodePermission
-             );
+                                          BaseAddress,
+                                          Length,
+                                          MemoryAttributes | CodePermission
+                                          );
   }
+
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 ArmClearMemoryRegionNoExec (
   IN  EFI_PHYSICAL_ADDRESS      BaseAddress,
   IN  UINT64                    Length
   )
 {
-  EFI_STATUS    Status;
-  UINT32 MemoryAttributes;
-  UINT32 CodePermission;
+  EFI_STATUS  Status;
+  UINT32      MemoryAttributes;
+  UINT32      CodePermission;
 
   Status = GetMemoryPermissions (BaseAddress, &MemoryAttributes);
   if (!EFI_ERROR (Status)) {
     CodePermission = SET_MEM_ATTR_CODE_PERM_XN << SET_MEM_ATTR_CODE_PERM_SHIFT;
     return RequestMemoryPermissionChange (
-             BaseAddress,
-             Length,
-             MemoryAttributes & ~CodePermission
-             );
+                                          BaseAddress,
+                                          Length,
+                                          MemoryAttributes & ~CodePermission
+                                          );
   }
+
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 ArmSetMemoryRegionReadOnly (
   IN  EFI_PHYSICAL_ADDRESS      BaseAddress,
   IN  UINT64                    Length
   )
 {
-  EFI_STATUS    Status;
-  UINT32 MemoryAttributes;
-  UINT32 DataPermission;
+  EFI_STATUS  Status;
+  UINT32      MemoryAttributes;
+  UINT32      DataPermission;
 
   Status = GetMemoryPermissions (BaseAddress, &MemoryAttributes);
   if (!EFI_ERROR (Status)) {
     DataPermission = SET_MEM_ATTR_DATA_PERM_RO << SET_MEM_ATTR_DATA_PERM_SHIFT;
     return RequestMemoryPermissionChange (
-             BaseAddress,
-             Length,
-             MemoryAttributes | DataPermission
-             );
+                                          BaseAddress,
+                                          Length,
+                                          MemoryAttributes | DataPermission
+                                          );
   }
+
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 ArmClearMemoryRegionReadOnly (
   IN  EFI_PHYSICAL_ADDRESS      BaseAddress,
   IN  UINT64                    Length
   )
 {
-  EFI_STATUS    Status;
-  UINT32 MemoryAttributes;
-  UINT32 PermissionRequest;
+  EFI_STATUS  Status;
+  UINT32      MemoryAttributes;
+  UINT32      PermissionRequest;
 
   Status = GetMemoryPermissions (BaseAddress, &MemoryAttributes);
   if (!EFI_ERROR (Status)) {
-    PermissionRequest = SET_MEM_ATTR_MAKE_PERM_REQUEST (SET_MEM_ATTR_DATA_PERM_RW,
-                                                        MemoryAttributes);
+    PermissionRequest = SET_MEM_ATTR_MAKE_PERM_REQUEST (
+                                                        SET_MEM_ATTR_DATA_PERM_RW,
+                                                        MemoryAttributes
+                                                        );
     return RequestMemoryPermissionChange (
-             BaseAddress,
-             Length,
-             PermissionRequest
-             );
+                                          BaseAddress,
+                                          Length,
+                                          PermissionRequest
+                                          );
   }
+
   return Status;
 }

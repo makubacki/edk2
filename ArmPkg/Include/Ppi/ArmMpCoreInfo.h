@@ -12,7 +12,7 @@
 #include <Guid/ArmMpCoreInfo.h>
 
 #define ARM_MP_CORE_INFO_PPI_GUID  \
-  { 0x6847cc74, 0xe9ec, 0x4f8f, {0xa2, 0x9d, 0xab, 0x44, 0xe7, 0x54, 0xa8, 0xfc} }
+  { 0x6847cc74, 0xe9ec, 0x4f8f, { 0xa2, 0x9d, 0xab, 0x44, 0xe7, 0x54, 0xa8, 0xfc } }
 
 /**
   This service of the EFI_PEI_TEMPORARY_RAM_SUPPORT_PPI that migrates temporary RAM into
@@ -31,22 +31,22 @@
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI * ARM_MP_CORE_INFO_GET) (
-  OUT UINTN                   *ArmCoreCount,
-  OUT ARM_CORE_INFO           **ArmCoreTable
-);
+  EFI_STATUS
+(EFIAPI *ARM_MP_CORE_INFO_GET)(
+                               OUT UINTN                   *ArmCoreCount,
+                               OUT ARM_CORE_INFO           **ArmCoreTable
+                               );
 
 ///
 /// This service abstracts the ability to migrate contents of the platform early memory store.
 /// Note: The name EFI_PEI_TEMPORARY_RAM_SUPPORT_PPI is different from the current PI 1.2 spec.
-///       This PPI was optional.
+/// This PPI was optional.
 ///
 typedef struct {
-  ARM_MP_CORE_INFO_GET   GetMpCoreInfo;
+  ARM_MP_CORE_INFO_GET    GetMpCoreInfo;
 } ARM_MP_CORE_INFO_PPI;
 
-extern EFI_GUID gArmMpCoreInfoPpiGuid;
-extern EFI_GUID gArmMpCoreInfoGuid;
+extern EFI_GUID  gArmMpCoreInfoPpiGuid;
+extern EFI_GUID  gArmMpCoreInfoGuid;
 
 #endif

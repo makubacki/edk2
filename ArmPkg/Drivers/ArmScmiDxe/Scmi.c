@@ -29,7 +29,7 @@
 **/
 EFI_STATUS
 ScmiCommandGetPayload (
-  OUT UINT32** Payload
+  OUT UINT32 **Payload
   )
 {
   EFI_STATUS   Status;
@@ -94,17 +94,17 @@ ScmiCommandExecute (
 
   // Fill in message header.
   MessageHeader = SCMI_MESSAGE_HEADER (
-                    Command->MessageId,
-                    SCMI_MESSAGE_TYPE_COMMAND,
-                    Command->ProtocolId
-                    );
+                                       Command->MessageId,
+                                       SCMI_MESSAGE_TYPE_COMMAND,
+                                       Command->ProtocolId
+                                       );
 
   // Send payload using MTL channel.
   Status = MtlSendMessage (
-             Channel,
-             MessageHeader,
-             *PayloadLength
-             );
+                           Channel,
+                           MessageHeader,
+                           *PayloadLength
+                           );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -121,14 +121,16 @@ ScmiCommandExecute (
     return EFI_DEVICE_ERROR;
   }
 
-  Response = (SCMI_MESSAGE_RESPONSE*)MtlGetChannelPayload (Channel);
+  Response = (SCMI_MESSAGE_RESPONSE *) MtlGetChannelPayload (Channel);
 
   if (Response->Status != SCMI_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "SCMI error: ProtocolId = 0x%x, MessageId = 0x%x, error = %d\n",
-      Command->ProtocolId,
-      Command->MessageId,
-      Response->Status
-      ));
+    DEBUG (
+           (DEBUG_ERROR, "SCMI error: ProtocolId = 0x%x, MessageId = 0x%x, error = %d\n",
+            Command->ProtocolId,
+            Command->MessageId,
+            Response->Status
+           )
+           );
 
     ASSERT (FALSE);
     return EFI_DEVICE_ERROR;
@@ -168,10 +170,10 @@ ScmiProtocolDiscoveryCommon (
   Command.MessageId  = MessageId;
 
   return ScmiCommandExecute (
-           &Command,
-           &PayloadLength,
-           ReturnValues
-           );
+                             &Command,
+                             &PayloadLength,
+                             ReturnValues
+                             );
 }
 
 /** Return protocol version from SCP for a given protocol ID.
@@ -190,14 +192,14 @@ ScmiGetProtocolVersion (
   OUT UINT32            *Version
   )
 {
-  EFI_STATUS             Status;
-  UINT32                 *ProtocolVersion;
+  EFI_STATUS  Status;
+  UINT32      *ProtocolVersion;
 
   Status = ScmiProtocolDiscoveryCommon (
-             ProtocolId,
-             SCMI_MESSAGE_ID_PROTOCOL_VERSION,
-             (UINT32**)&ProtocolVersion
-             );
+                                        ProtocolId,
+                                        SCMI_MESSAGE_ID_PROTOCOL_VERSION,
+                                        (UINT32 **) &ProtocolVersion
+                                        );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -223,10 +225,10 @@ ScmiGetProtocolAttributes (
   )
 {
   return ScmiProtocolDiscoveryCommon (
-           ProtocolId,
-           SCMI_MESSAGE_ID_PROTOCOL_ATTRIBUTES,
-           ReturnValues
-           );
+                                      ProtocolId,
+                                      SCMI_MESSAGE_ID_PROTOCOL_ATTRIBUTES,
+                                      ReturnValues
+                                      );
 }
 
 /** Return protocol message attributes from SCP for a given protocol ID.
@@ -245,8 +247,8 @@ ScmiGetProtocolMessageAttributes (
   )
 {
   return ScmiProtocolDiscoveryCommon (
-           ProtocolId,
-           SCMI_MESSAGE_ID_PROTOCOL_MESSAGE_ATTRIBUTES,
-           ReturnValues
-           );
+                                      ProtocolId,
+                                      SCMI_MESSAGE_ID_PROTOCOL_MESSAGE_ATTRIBUTES,
+                                      ReturnValues
+                                      );
 }

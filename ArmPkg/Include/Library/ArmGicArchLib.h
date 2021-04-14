@@ -17,11 +17,10 @@ typedef enum {
   ARM_GIC_ARCH_REVISION_3
 } ARM_GIC_ARCH_REVISION;
 
-
 ARM_GIC_ARCH_REVISION
 EFIAPI
 ArmGicGetSupportedArchRevision (
-  VOID
-  );
+                                VOID
+                                );
 
 #endif

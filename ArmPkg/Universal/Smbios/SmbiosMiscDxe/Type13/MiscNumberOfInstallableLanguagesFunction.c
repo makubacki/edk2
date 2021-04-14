@@ -49,12 +49,13 @@ GetNextLanguage (
     Index++;
   }
 
-  (VOID)CopyMem (Lang, StringPtr, Index);
+  (VOID) CopyMem (Lang, StringPtr, Index);
   Lang[Index] = 0;
 
   if (StringPtr[Index] == ';') {
     Index++;
   }
+
   *LangCode = StringPtr + Index;
 }
 
@@ -90,12 +91,13 @@ GetSupportedLanguageNumber (
       GetNextLanguage (&LanguageString, Lang);
       LangNumber++;
     }
+
     FreePool (Lang);
   }
+
   FreePool (Languages);
   return LangNumber;
 }
-
 
 /**
   This function makes boot time changes to the contents of the
@@ -109,14 +111,13 @@ GetSupportedLanguageNumber (
   @retval EFI_OUT_OF_RESOURCES       Failed to allocate required memory.
 
 **/
-SMBIOS_MISC_TABLE_FUNCTION(MiscNumberOfInstallableLanguages)
-{
-  UINTN                                     LangStrLen;
-  CHAR8                                     CurrentLang[SMBIOS_STRING_MAX_LENGTH + 1];
-  CHAR8                                     *OptionalStrStart;
-  EFI_STATUS                                Status;
-  SMBIOS_TABLE_TYPE13                       *SmbiosRecord;
-  SMBIOS_TABLE_TYPE13                       *InputData;
+SMBIOS_MISC_TABLE_FUNCTION (MiscNumberOfInstallableLanguages) {
+  UINTN                LangStrLen;
+  CHAR8                CurrentLang[SMBIOS_STRING_MAX_LENGTH + 1];
+  CHAR8                *OptionalStrStart;
+  EFI_STATUS           Status;
+  SMBIOS_TABLE_TYPE13  *SmbiosRecord;
+  SMBIOS_TABLE_TYPE13  *InputData;
 
   InputData = NULL;
 
@@ -127,7 +128,7 @@ SMBIOS_MISC_TABLE_FUNCTION(MiscNumberOfInstallableLanguages)
     return EFI_INVALID_PARAMETER;
   }
 
-  InputData = (SMBIOS_TABLE_TYPE13 *)RecordData;
+  InputData = (SMBIOS_TABLE_TYPE13 *) RecordData;
 
   InputData->InstallableLanguages = GetSupportedLanguageNumber (mSmbiosMiscHiiHandle);
 
@@ -135,7 +136,7 @@ SMBIOS_MISC_TABLE_FUNCTION(MiscNumberOfInstallableLanguages)
   // Try to check if current langcode matches with the langcodes in installed languages
   //
   ZeroMem (CurrentLang, SMBIOS_STRING_MAX_LENGTH - 1);
-  (VOID)AsciiStrCpyS (CurrentLang, SMBIOS_STRING_MAX_LENGTH - 1, "en|US|iso8859-1");
+  (VOID) AsciiStrCpyS (CurrentLang, SMBIOS_STRING_MAX_LENGTH - 1, "en|US|iso8859-1");
   LangStrLen = AsciiStrLen (CurrentLang);
 
   //
@@ -146,19 +147,21 @@ SMBIOS_MISC_TABLE_FUNCTION(MiscNumberOfInstallableLanguages)
     return EFI_OUT_OF_RESOURCES;
   }
 
-  (VOID)CopyMem (SmbiosRecord, InputData, sizeof (SMBIOS_TABLE_TYPE13));
+  (VOID) CopyMem (SmbiosRecord, InputData, sizeof (SMBIOS_TABLE_TYPE13));
 
   SmbiosRecord->Hdr.Length = sizeof (SMBIOS_TABLE_TYPE13);
 
-  OptionalStrStart = (CHAR8 *)(SmbiosRecord + 1);
-  (VOID)AsciiStrCpyS (OptionalStrStart, SMBIOS_STRING_MAX_LENGTH - 1, CurrentLang);
+  OptionalStrStart = (CHAR8 *) (SmbiosRecord + 1);
+  (VOID) AsciiStrCpyS (OptionalStrStart, SMBIOS_STRING_MAX_LENGTH - 1, CurrentLang);
   //
   // Now we have got the full smbios record, call smbios protocol to add this record.
   //
-  Status = SmbiosMiscAddRecord ((UINT8*)SmbiosRecord, NULL);
+  Status = SmbiosMiscAddRecord ((UINT8 *) SmbiosRecord, NULL);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "[%a]:[%dL] Smbios Type13 Table Log Failed! %r \n",
-            __FUNCTION__, __LINE__, Status));
+    DEBUG (
+           (DEBUG_ERROR, "[%a]:[%dL] Smbios Type13 Table Log Failed! %r \n",
+            __FUNCTION__, __LINE__, Status)
+           );
   }
 
   FreePool (SmbiosRecord);

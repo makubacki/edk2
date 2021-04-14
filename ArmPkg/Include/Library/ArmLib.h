@@ -15,15 +15,15 @@
 
 #ifdef MDE_CPU_ARM
   #include <Chipset/ArmV7.h>
-#elif defined(MDE_CPU_AARCH64)
+#elif defined (MDE_CPU_AARCH64)
   #include <Chipset/AArch64.h>
 #else
- #error "Unknown chipset."
+  #error "Unknown chipset."
 #endif
 
-#define EFI_MEMORY_CACHETYPE_MASK   (EFI_MEMORY_UC | EFI_MEMORY_WC | \
-                                     EFI_MEMORY_WT | EFI_MEMORY_WB | \
-                                     EFI_MEMORY_UCE)
+#define EFI_MEMORY_CACHETYPE_MASK  (EFI_MEMORY_UC | EFI_MEMORY_WC | \
+                                    EFI_MEMORY_WT | EFI_MEMORY_WB | \
+                                    EFI_MEMORY_UCE)
 
 /**
  * The UEFI firmware must not use the ARM_MEMORY_REGION_ATTRIBUTE_NONSECURE_* attributes.
@@ -50,17 +50,21 @@ typedef enum {
   ARM_MEMORY_REGION_ATTRIBUTE_NONSECURE_DEVICE
 } ARM_MEMORY_REGION_ATTRIBUTES;
 
-#define IS_ARM_MEMORY_REGION_ATTRIBUTES_SECURE(attr) ((UINT32)(attr) & 1)
+#define IS_ARM_MEMORY_REGION_ATTRIBUTES_SECURE(attr)  ((UINT32) (attr) & 1)
 
 typedef struct {
-  EFI_PHYSICAL_ADDRESS          PhysicalBase;
-  EFI_VIRTUAL_ADDRESS           VirtualBase;
-  UINT64                        Length;
-  ARM_MEMORY_REGION_ATTRIBUTES  Attributes;
+  EFI_PHYSICAL_ADDRESS            PhysicalBase;
+  EFI_VIRTUAL_ADDRESS             VirtualBase;
+  UINT64                          Length;
+  ARM_MEMORY_REGION_ATTRIBUTES    Attributes;
 } ARM_MEMORY_REGION_DESCRIPTOR;
 
-typedef VOID (*CACHE_OPERATION)(VOID);
-typedef VOID (*LINE_OPERATION)(UINTN);
+typedef VOID (*CACHE_OPERATION)(
+  VOID
+  );
+typedef VOID (*LINE_OPERATION)(
+  UINTN
+  );
 
 //
 // ARM Processor Mode
@@ -80,99 +84,98 @@ typedef enum {
 //
 // ARM Cpu IDs
 //
-#define ARM_CPU_IMPLEMENTER_MASK          (0xFFU << 24)
-#define ARM_CPU_IMPLEMENTER_ARMLTD        (0x41U << 24)
-#define ARM_CPU_IMPLEMENTER_DEC           (0x44U << 24)
-#define ARM_CPU_IMPLEMENTER_MOT           (0x4DU << 24)
-#define ARM_CPU_IMPLEMENTER_QUALCOMM      (0x51U << 24)
-#define ARM_CPU_IMPLEMENTER_MARVELL       (0x56U << 24)
+#define ARM_CPU_IMPLEMENTER_MASK      (0xFFU << 24)
+#define ARM_CPU_IMPLEMENTER_ARMLTD    (0x41U << 24)
+#define ARM_CPU_IMPLEMENTER_DEC       (0x44U << 24)
+#define ARM_CPU_IMPLEMENTER_MOT       (0x4DU << 24)
+#define ARM_CPU_IMPLEMENTER_QUALCOMM  (0x51U << 24)
+#define ARM_CPU_IMPLEMENTER_MARVELL   (0x56U << 24)
 
-#define ARM_CPU_PRIMARY_PART_MASK         (0xFFF << 4)
-#define ARM_CPU_PRIMARY_PART_CORTEXA5     (0xC05 << 4)
-#define ARM_CPU_PRIMARY_PART_CORTEXA7     (0xC07 << 4)
-#define ARM_CPU_PRIMARY_PART_CORTEXA8     (0xC08 << 4)
-#define ARM_CPU_PRIMARY_PART_CORTEXA9     (0xC09 << 4)
-#define ARM_CPU_PRIMARY_PART_CORTEXA15    (0xC0F << 4)
+#define ARM_CPU_PRIMARY_PART_MASK       (0xFFF << 4)
+#define ARM_CPU_PRIMARY_PART_CORTEXA5   (0xC05 << 4)
+#define ARM_CPU_PRIMARY_PART_CORTEXA7   (0xC07 << 4)
+#define ARM_CPU_PRIMARY_PART_CORTEXA8   (0xC08 << 4)
+#define ARM_CPU_PRIMARY_PART_CORTEXA9   (0xC09 << 4)
+#define ARM_CPU_PRIMARY_PART_CORTEXA15  (0xC0F << 4)
 
 //
 // ARM MP Core IDs
 //
-#define ARM_CORE_AFF0         0xFF
-#define ARM_CORE_AFF1         (0xFF << 8)
-#define ARM_CORE_AFF2         (0xFF << 16)
-#define ARM_CORE_AFF3         (0xFFULL << 32)
+#define ARM_CORE_AFF0  0xFF
+#define ARM_CORE_AFF1  (0xFF << 8)
+#define ARM_CORE_AFF2  (0xFF << 16)
+#define ARM_CORE_AFF3  (0xFFULL << 32)
 
-#define ARM_CORE_MASK         ARM_CORE_AFF0
-#define ARM_CLUSTER_MASK      ARM_CORE_AFF1
-#define GET_CORE_ID(MpId)     ((MpId) & ARM_CORE_MASK)
-#define GET_CLUSTER_ID(MpId)  (((MpId) & ARM_CLUSTER_MASK) >> 8)
-#define GET_MPID(ClusterId, CoreId)   (((ClusterId) << 8) | (CoreId))
-#define PRIMARY_CORE_ID       (PcdGet32(PcdArmPrimaryCore) & ARM_CORE_MASK)
+#define ARM_CORE_MASK     ARM_CORE_AFF0
+#define ARM_CLUSTER_MASK  ARM_CORE_AFF1
+#define GET_CORE_ID(MpId)            ((MpId) & ARM_CORE_MASK)
+#define GET_CLUSTER_ID(MpId)         (((MpId) & ARM_CLUSTER_MASK) >> 8)
+#define GET_MPID(ClusterId, CoreId)  (((ClusterId) << 8) | (CoreId))
+#define PRIMARY_CORE_ID  (PcdGet32 (PcdArmPrimaryCore) & ARM_CORE_MASK)
 
 // The ARM Architecture Reference Manual for ARMv8-A defines up
 // to 7 levels of cache, L1 through L7.
-#define MAX_ARM_CACHE_LEVEL   7
+#define MAX_ARM_CACHE_LEVEL  7
 
 UINTN
 EFIAPI
 ArmDataCacheLineLength (
-  VOID
-  );
+                        VOID
+                        );
 
 UINTN
 EFIAPI
 ArmInstructionCacheLineLength (
-  VOID
-  );
+                               VOID
+                               );
 
 UINTN
 EFIAPI
 ArmCacheWritebackGranule (
-  VOID
-  );
+                          VOID
+                          );
 
 UINTN
 EFIAPI
 ArmIsArchTimerImplemented (
-  VOID
-  );
+                           VOID
+                           );
 
 UINTN
 EFIAPI
 ArmCacheInfo (
-  VOID
-  );
+              VOID
+              );
 
 BOOLEAN
 EFIAPI
 ArmIsMpCore (
-  VOID
-  );
+             VOID
+             );
 
 VOID
 EFIAPI
 ArmInvalidateDataCache (
-  VOID
-  );
-
+                        VOID
+                        );
 
 VOID
 EFIAPI
 ArmCleanInvalidateDataCache (
-  VOID
-  );
+                             VOID
+                             );
 
 VOID
 EFIAPI
 ArmCleanDataCache (
-  VOID
-  );
+                   VOID
+                   );
 
 VOID
 EFIAPI
 ArmInvalidateInstructionCache (
-  VOID
-  );
+                               VOID
+                               );
 
 VOID
 EFIAPI
@@ -195,8 +198,8 @@ ArmInvalidateInstructionCacheEntryToPoUByMVA (
 VOID
 EFIAPI
 ArmCleanDataCacheEntryByMVA (
-IN  UINTN   Address
-);
+  IN  UINTN   Address
+  );
 
 VOID
 EFIAPI
@@ -207,110 +210,110 @@ ArmCleanInvalidateDataCacheEntryByMVA (
 VOID
 EFIAPI
 ArmEnableDataCache (
-  VOID
-  );
+                    VOID
+                    );
 
 VOID
 EFIAPI
 ArmDisableDataCache (
-  VOID
-  );
+                     VOID
+                     );
 
 VOID
 EFIAPI
 ArmEnableInstructionCache (
-  VOID
-  );
+                           VOID
+                           );
 
 VOID
 EFIAPI
 ArmDisableInstructionCache (
-  VOID
-  );
+                            VOID
+                            );
 
 VOID
 EFIAPI
 ArmEnableMmu (
-  VOID
-  );
+              VOID
+              );
 
 VOID
 EFIAPI
 ArmDisableMmu (
-  VOID
-  );
+               VOID
+               );
 
 VOID
 EFIAPI
 ArmEnableCachesAndMmu (
-  VOID
-  );
+                       VOID
+                       );
 
 VOID
 EFIAPI
 ArmDisableCachesAndMmu (
-  VOID
-  );
+                        VOID
+                        );
 
 VOID
 EFIAPI
 ArmEnableInterrupts (
-  VOID
-  );
+                     VOID
+                     );
 
 UINTN
 EFIAPI
 ArmDisableInterrupts (
-  VOID
-  );
+                      VOID
+                      );
 
 BOOLEAN
 EFIAPI
 ArmGetInterruptState (
-  VOID
-  );
+                      VOID
+                      );
 
 VOID
 EFIAPI
 ArmEnableAsynchronousAbort (
-  VOID
-  );
+                            VOID
+                            );
 
 UINTN
 EFIAPI
 ArmDisableAsynchronousAbort (
-  VOID
-  );
+                             VOID
+                             );
 
 VOID
 EFIAPI
 ArmEnableIrq (
-  VOID
-  );
+              VOID
+              );
 
 UINTN
 EFIAPI
 ArmDisableIrq (
-  VOID
-  );
+               VOID
+               );
 
 VOID
 EFIAPI
 ArmEnableFiq (
-  VOID
-  );
+              VOID
+              );
 
 UINTN
 EFIAPI
 ArmDisableFiq (
-  VOID
-  );
+               VOID
+               );
 
 BOOLEAN
 EFIAPI
 ArmGetFiqState (
-  VOID
-  );
+                VOID
+                );
 
 /**
  * Invalidate Data and Instruction TLBs
@@ -318,8 +321,8 @@ ArmGetFiqState (
 VOID
 EFIAPI
 ArmInvalidateTlb (
-  VOID
-  );
+                  VOID
+                  );
 
 VOID
 EFIAPI
@@ -349,56 +352,56 @@ ArmSetTTBCR (
 VOID *
 EFIAPI
 ArmGetTTBR0BaseAddress (
-  VOID
-  );
+                        VOID
+                        );
 
 BOOLEAN
 EFIAPI
 ArmMmuEnabled (
-  VOID
-  );
+               VOID
+               );
 
 VOID
 EFIAPI
 ArmEnableBranchPrediction (
-  VOID
-  );
+                           VOID
+                           );
 
 VOID
 EFIAPI
 ArmDisableBranchPrediction (
-  VOID
-  );
+                            VOID
+                            );
 
 VOID
 EFIAPI
 ArmSetLowVectors (
-  VOID
-  );
+                  VOID
+                  );
 
 VOID
 EFIAPI
 ArmSetHighVectors (
-  VOID
-  );
+                   VOID
+                   );
 
 VOID
 EFIAPI
 ArmDataMemoryBarrier (
-  VOID
-  );
+                      VOID
+                      );
 
 VOID
 EFIAPI
 ArmDataSynchronizationBarrier (
-  VOID
-  );
+                               VOID
+                               );
 
 VOID
 EFIAPI
 ArmInstructionSynchronizationBarrier (
-  VOID
-  );
+                                      VOID
+                                      );
 
 VOID
 EFIAPI
@@ -409,8 +412,8 @@ ArmWriteVBar (
 UINTN
 EFIAPI
 ArmReadVBar (
-  VOID
-  );
+             VOID
+             );
 
 VOID
 EFIAPI
@@ -421,8 +424,8 @@ ArmWriteAuxCr (
 UINT32
 EFIAPI
 ArmReadAuxCr (
-  VOID
-  );
+              VOID
+              );
 
 VOID
 EFIAPI
@@ -439,39 +442,39 @@ ArmUnsetAuxCrBit (
 VOID
 EFIAPI
 ArmCallSEV (
-  VOID
-  );
+            VOID
+            );
 
 VOID
 EFIAPI
 ArmCallWFE (
-  VOID
-  );
+            VOID
+            );
 
 VOID
 EFIAPI
 ArmCallWFI (
 
-  VOID
-  );
+            VOID
+            );
 
 UINTN
 EFIAPI
 ArmReadMpidr (
-  VOID
-  );
+              VOID
+              );
 
 UINTN
 EFIAPI
 ArmReadMidr (
-  VOID
-  );
+             VOID
+             );
 
 UINT32
 EFIAPI
 ArmReadCpacr (
-  VOID
-  );
+              VOID
+              );
 
 VOID
 EFIAPI
@@ -482,8 +485,8 @@ ArmWriteCpacr (
 VOID
 EFIAPI
 ArmEnableVFP (
-  VOID
-  );
+              VOID
+              );
 
 /**
   Get the Secure Configuration Register value
@@ -494,8 +497,8 @@ ArmEnableVFP (
 UINT32
 EFIAPI
 ArmReadScr (
-  VOID
-  );
+            VOID
+            );
 
 /**
   Set the Secure Configuration Register
@@ -512,8 +515,8 @@ ArmWriteScr (
 UINT32
 EFIAPI
 ArmReadMVBar (
-  VOID
-  );
+              VOID
+              );
 
 VOID
 EFIAPI
@@ -524,8 +527,8 @@ ArmWriteMVBar (
 UINT32
 EFIAPI
 ArmReadSctlr (
-  VOID
-  );
+              VOID
+              );
 
 VOID
 EFIAPI
@@ -536,15 +539,14 @@ ArmWriteSctlr (
 UINTN
 EFIAPI
 ArmReadHVBar (
-  VOID
-  );
+              VOID
+              );
 
 VOID
 EFIAPI
 ArmWriteHVBar (
   IN  UINTN   HypModeVectorBase
   );
-
 
 //
 // Helper functions for accessing CPU ACTLR
@@ -553,8 +555,8 @@ ArmWriteHVBar (
 UINTN
 EFIAPI
 ArmReadCpuActlr (
-  VOID
-  );
+                 VOID
+                 );
 
 VOID
 EFIAPI
@@ -578,15 +580,15 @@ ArmUnsetCpuActlrBit (
 // Accessors for the architected generic timer registers
 //
 
-#define ARM_ARCH_TIMER_ENABLE           (1 << 0)
-#define ARM_ARCH_TIMER_IMASK            (1 << 1)
-#define ARM_ARCH_TIMER_ISTATUS          (1 << 2)
+#define ARM_ARCH_TIMER_ENABLE   (1 << 0)
+#define ARM_ARCH_TIMER_IMASK    (1 << 1)
+#define ARM_ARCH_TIMER_ISTATUS  (1 << 2)
 
 UINTN
 EFIAPI
 ArmReadCntFrq (
-  VOID
-  );
+               VOID
+               );
 
 VOID
 EFIAPI
@@ -597,14 +599,14 @@ ArmWriteCntFrq (
 UINT64
 EFIAPI
 ArmReadCntPct (
-  VOID
-  );
+               VOID
+               );
 
 UINTN
 EFIAPI
 ArmReadCntkCtl (
-  VOID
-  );
+                VOID
+                );
 
 VOID
 EFIAPI
@@ -615,8 +617,8 @@ ArmWriteCntkCtl (
 UINTN
 EFIAPI
 ArmReadCntpTval (
-  VOID
-  );
+                 VOID
+                 );
 
 VOID
 EFIAPI
@@ -627,8 +629,8 @@ ArmWriteCntpTval (
 UINTN
 EFIAPI
 ArmReadCntpCtl (
-  VOID
-  );
+                VOID
+                );
 
 VOID
 EFIAPI
@@ -639,8 +641,8 @@ ArmWriteCntpCtl (
 UINTN
 EFIAPI
 ArmReadCntvTval (
-  VOID
-  );
+                 VOID
+                 );
 
 VOID
 EFIAPI
@@ -651,8 +653,8 @@ ArmWriteCntvTval (
 UINTN
 EFIAPI
 ArmReadCntvCtl (
-  VOID
-  );
+                VOID
+                );
 
 VOID
 EFIAPI
@@ -663,14 +665,14 @@ ArmWriteCntvCtl (
 UINT64
 EFIAPI
 ArmReadCntvCt (
-  VOID
-  );
+               VOID
+               );
 
 UINT64
 EFIAPI
 ArmReadCntpCval (
-  VOID
-  );
+                 VOID
+                 );
 
 VOID
 EFIAPI
@@ -681,8 +683,8 @@ ArmWriteCntpCval (
 UINT64
 EFIAPI
 ArmReadCntvCval (
-  VOID
-  );
+                 VOID
+                 );
 
 VOID
 EFIAPI
@@ -693,8 +695,8 @@ ArmWriteCntvCval (
 UINT64
 EFIAPI
 ArmReadCntvOff (
-  VOID
-  );
+                VOID
+                );
 
 VOID
 EFIAPI
@@ -705,12 +707,11 @@ ArmWriteCntvOff (
 UINTN
 EFIAPI
 ArmGetPhysicalAddressBits (
-  VOID
-  );
-
+                           VOID
+                           );
 
 ///
-///  ID Register Helper functions
+/// ID Register Helper functions
 ///
 
 /**
@@ -722,8 +723,8 @@ ArmGetPhysicalAddressBits (
 BOOLEAN
 EFIAPI
 ArmHasGicSystemRegisters (
-  VOID
-  );
+                          VOID
+                          );
 
 /** Checks if CCIDX is implemented.
 
@@ -733,24 +734,25 @@ ArmHasGicSystemRegisters (
 BOOLEAN
 EFIAPI
 ArmHasCcidx (
-  VOID
-  );
+             VOID
+             );
 
 #ifdef MDE_CPU_ARM
-///
-/// AArch32-only ID Register Helper functions
-///
-/**
-  Check whether the CPU supports the Security extensions
+  ///
+  /// AArch32-only ID Register Helper functions
+  ///
 
-  @return   Whether the Security extensions are implemented
+  /**
+    Check whether the CPU supports the Security extensions
 
-**/
-BOOLEAN
-EFIAPI
-ArmHasSecurityExtensions (
-  VOID
-  );
+    @return   Whether the Security extensions are implemented
+
+  **/
+  BOOLEAN
+  EFIAPI
+  ArmHasSecurityExtensions (
+                            VOID
+                            );
 #endif // MDE_CPU_ARM
 
 #endif // __ARM_LIB__

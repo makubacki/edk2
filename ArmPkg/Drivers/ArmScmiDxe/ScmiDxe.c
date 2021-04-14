@@ -23,10 +23,10 @@
 #include "ScmiDxe.h"
 #include "ScmiPrivate.h"
 
-STATIC CONST SCMI_PROTOCOL_ENTRY Protocols[] = {
-  { SCMI_PROTOCOL_ID_BASE, ScmiBaseProtocolInit },
+STATIC CONST SCMI_PROTOCOL_ENTRY  Protocols[] = {
+  { SCMI_PROTOCOL_ID_BASE,        ScmiBaseProtocolInit        },
   { SCMI_PROTOCOL_ID_PERFORMANCE, ScmiPerformanceProtocolInit },
-  { SCMI_PROTOCOL_ID_CLOCK, ScmiClockProtocolInit }
+  { SCMI_PROTOCOL_ID_CLOCK,       ScmiClockProtocolInit       }
 };
 
 /** ARM SCMI driver entry point function.
@@ -70,10 +70,10 @@ ArmScmiDxeEntryPoint (
   }
 
   Status = gBS->LocateProtocol (
-                  &gArmScmiBaseProtocolGuid,
-                  NULL,
-                  (VOID**)&BaseProtocol
-                  );
+                                &gArmScmiBaseProtocolGuid,
+                                NULL,
+                                (VOID **) &BaseProtocol
+                                );
   if (EFI_ERROR (Status)) {
     ASSERT (FALSE);
     return Status;
@@ -105,10 +105,10 @@ ArmScmiDxeEntryPoint (
   SupportedListSize = (NumProtocols * sizeof (*SupportedList));
 
   Status = gBS->AllocatePool (
-                  EfiBootServicesData,
-                  SupportedListSize,
-                  (VOID**)&SupportedList
-                  );
+                              EfiBootServicesData,
+                              SupportedListSize,
+                              (VOID **) &SupportedList
+                              );
   if (EFI_ERROR (Status)) {
     ASSERT (FALSE);
     return Status;
@@ -116,12 +116,12 @@ ArmScmiDxeEntryPoint (
 
   // Get the list of protocols supported by SCP firmware on the platform.
   Status = BaseProtocol->DiscoverListProtocols (
-                           BaseProtocol,
-                           &SupportedListSize,
-                           SupportedList
-                           );
+                                                BaseProtocol,
+                                                &SupportedListSize,
+                                                SupportedList
+                                                );
   if (EFI_ERROR (Status)) {
-    gBS->FreePool (SupportedList);
+  gBS->FreePool (SupportedList);
     ASSERT (FALSE);
     return Status;
   }
@@ -136,6 +136,7 @@ ArmScmiDxeEntryPoint (
           ASSERT_EFI_ERROR (Status);
           return Status;
         }
+
         break;
       }
     }

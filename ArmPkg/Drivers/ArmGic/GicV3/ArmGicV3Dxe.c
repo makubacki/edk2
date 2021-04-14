@@ -12,11 +12,11 @@
 
 #define ARM_GIC_DEFAULT_PRIORITY  0x80
 
-extern EFI_HARDWARE_INTERRUPT_PROTOCOL gHardwareInterruptV3Protocol;
-extern EFI_HARDWARE_INTERRUPT2_PROTOCOL gHardwareInterrupt2V3Protocol;
+extern EFI_HARDWARE_INTERRUPT_PROTOCOL   gHardwareInterruptV3Protocol;
+extern EFI_HARDWARE_INTERRUPT2_PROTOCOL  gHardwareInterrupt2V3Protocol;
 
-STATIC UINTN mGicDistributorBase;
-STATIC UINTN mGicRedistributorsBase;
+STATIC UINTN  mGicDistributorBase;
+STATIC UINTN  mGicRedistributorsBase;
 
 /**
   Enable interrupt source Source.
@@ -37,7 +37,7 @@ GicV3EnableInterruptSource (
   )
 {
   if (Source >= mGicNumInterrupts) {
-    ASSERT(FALSE);
+    ASSERT (FALSE);
     return EFI_UNSUPPORTED;
   }
 
@@ -65,7 +65,7 @@ GicV3DisableInterruptSource (
   )
 {
   if (Source >= mGicNumInterrupts) {
-    ASSERT(FALSE);
+    ASSERT (FALSE);
     return EFI_UNSUPPORTED;
   }
 
@@ -95,15 +95,15 @@ GicV3GetInterruptSourceState (
   )
 {
   if (Source >= mGicNumInterrupts) {
-    ASSERT(FALSE);
+    ASSERT (FALSE);
     return EFI_UNSUPPORTED;
   }
 
   *InterruptState = ArmGicIsInterruptEnabled (
-                      mGicDistributorBase,
-                      mGicRedistributorsBase,
-                      Source
-                      );
+                                              mGicDistributorBase,
+                                              mGicRedistributorsBase,
+                                              Source
+                                              );
 
   return EFI_SUCCESS;
 }
@@ -128,7 +128,7 @@ GicV3EndOfInterrupt (
   )
 {
   if (Source >= mGicNumInterrupts) {
-    ASSERT(FALSE);
+    ASSERT (FALSE);
     return EFI_UNSUPPORTED;
   }
 
@@ -179,7 +179,7 @@ GicV3IrqInterruptHandler (
 }
 
 // The protocol instance produced by this driver
-EFI_HARDWARE_INTERRUPT_PROTOCOL gHardwareInterruptV3Protocol = {
+EFI_HARDWARE_INTERRUPT_PROTOCOL  gHardwareInterruptV3Protocol = {
   RegisterInterruptSource,
   GicV3EnableInterruptSource,
   GicV3DisableInterruptSource,
@@ -206,24 +206,24 @@ GicV3GetTriggerType (
   OUT EFI_HARDWARE_INTERRUPT2_TRIGGER_TYPE  *TriggerType
   )
 {
-  UINTN                   RegAddress;
-  UINTN                   Config1Bit;
-  EFI_STATUS              Status;
+  UINTN       RegAddress;
+  UINTN       Config1Bit;
+  EFI_STATUS  Status;
 
   Status = GicGetDistributorIcfgBaseAndBit (
-             Source,
-             &RegAddress,
-             &Config1Bit
-             );
+                                            Source,
+                                            &RegAddress,
+                                            &Config1Bit
+                                            );
 
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   if ((MmioRead32 (RegAddress) & (1 << Config1Bit)) == 0) {
-     *TriggerType = EFI_HARDWARE_INTERRUPT2_TRIGGER_LEVEL_HIGH;
+    *TriggerType = EFI_HARDWARE_INTERRUPT2_TRIGGER_LEVEL_HIGH;
   } else {
-     *TriggerType = EFI_HARDWARE_INTERRUPT2_TRIGGER_EDGE_RISING;
+    *TriggerType = EFI_HARDWARE_INTERRUPT2_TRIGGER_EDGE_RISING;
   }
 
   return EFI_SUCCESS;
@@ -248,35 +248,37 @@ GicV3SetTriggerType (
   IN  EFI_HARDWARE_INTERRUPT2_TRIGGER_TYPE  TriggerType
   )
 {
-  UINTN                   RegAddress;
-  UINTN                   Config1Bit;
-  UINT32                  Value;
-  EFI_STATUS              Status;
-  BOOLEAN                 SourceEnabled;
+  UINTN       RegAddress;
+  UINTN       Config1Bit;
+  UINT32      Value;
+  EFI_STATUS  Status;
+  BOOLEAN     SourceEnabled;
 
-  if (   (TriggerType != EFI_HARDWARE_INTERRUPT2_TRIGGER_EDGE_RISING)
-      && (TriggerType != EFI_HARDWARE_INTERRUPT2_TRIGGER_LEVEL_HIGH)) {
-          DEBUG ((DEBUG_ERROR, "Invalid interrupt trigger type: %d\n", \
-                 TriggerType));
-          ASSERT (FALSE);
-          return EFI_UNSUPPORTED;
+  if (  (TriggerType != EFI_HARDWARE_INTERRUPT2_TRIGGER_EDGE_RISING)
+     && (TriggerType != EFI_HARDWARE_INTERRUPT2_TRIGGER_LEVEL_HIGH)) {
+    DEBUG (
+           (DEBUG_ERROR, "Invalid interrupt trigger type: %d\n", \
+            TriggerType)
+           );
+    ASSERT (FALSE);
+    return EFI_UNSUPPORTED;
   }
 
   Status = GicGetDistributorIcfgBaseAndBit (
-             Source,
-             &RegAddress,
-             &Config1Bit
-             );
+                                            Source,
+                                            &RegAddress,
+                                            &Config1Bit
+                                            );
 
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   Status = GicV3GetInterruptSourceState (
-             (EFI_HARDWARE_INTERRUPT_PROTOCOL*)This,
-             Source,
-             &SourceEnabled
-             );
+                                         (EFI_HARDWARE_INTERRUPT_PROTOCOL *) This,
+                                         Source,
+                                         &SourceEnabled
+                                         );
 
   if (EFI_ERROR (Status)) {
     return Status;
@@ -290,33 +292,33 @@ GicV3SetTriggerType (
   // otherwise GIC behavior is UNPREDICTABLE.
   if (SourceEnabled) {
     GicV3DisableInterruptSource (
-      (EFI_HARDWARE_INTERRUPT_PROTOCOL*)This,
-      Source
-      );
+                                 (EFI_HARDWARE_INTERRUPT_PROTOCOL *) This,
+                                 Source
+                                 );
   }
 
   MmioAndThenOr32 (
-    RegAddress,
-    ~(0x1 << Config1Bit),
-    Value << Config1Bit
-    );
+                   RegAddress,
+                   ~(0x1 << Config1Bit),
+                   Value << Config1Bit
+                   );
   // Restore interrupt state
   if (SourceEnabled) {
     GicV3EnableInterruptSource (
-      (EFI_HARDWARE_INTERRUPT_PROTOCOL*)This,
-      Source
-      );
+                                (EFI_HARDWARE_INTERRUPT_PROTOCOL *) This,
+                                Source
+                                );
   }
 
   return EFI_SUCCESS;
 }
 
-EFI_HARDWARE_INTERRUPT2_PROTOCOL gHardwareInterrupt2V3Protocol = {
-  (HARDWARE_INTERRUPT2_REGISTER)RegisterInterruptSource,
-  (HARDWARE_INTERRUPT2_ENABLE)GicV3EnableInterruptSource,
-  (HARDWARE_INTERRUPT2_DISABLE)GicV3DisableInterruptSource,
-  (HARDWARE_INTERRUPT2_INTERRUPT_STATE)GicV3GetInterruptSourceState,
-  (HARDWARE_INTERRUPT2_END_OF_INTERRUPT)GicV3EndOfInterrupt,
+EFI_HARDWARE_INTERRUPT2_PROTOCOL  gHardwareInterrupt2V3Protocol = {
+  (HARDWARE_INTERRUPT2_REGISTER) RegisterInterruptSource,
+  (HARDWARE_INTERRUPT2_ENABLE) GicV3EnableInterruptSource,
+  (HARDWARE_INTERRUPT2_DISABLE) GicV3DisableInterruptSource,
+  (HARDWARE_INTERRUPT2_INTERRUPT_STATE) GicV3GetInterruptSourceState,
+  (HARDWARE_INTERRUPT2_END_OF_INTERRUPT) GicV3EndOfInterrupt,
   GicV3GetTriggerType,
   GicV3SetTriggerType
 };
@@ -337,7 +339,7 @@ GicV3ExitBootServicesEvent (
   IN VOID       *Context
   )
 {
-  UINTN    Index;
+  UINTN  Index;
 
   // Acknowledge all pending interrupts
   for (Index = 0; Index < mGicNumInterrupts; Index++) {
@@ -372,10 +374,10 @@ GicV3DxeInitialize (
   IN EFI_SYSTEM_TABLE   *SystemTable
   )
 {
-  EFI_STATUS              Status;
-  UINTN                   Index;
-  UINT64                  CpuTarget;
-  UINT64                  MpId;
+  EFI_STATUS  Status;
+  UINTN       Index;
+  UINT64      CpuTarget;
+  UINT64      MpId;
 
   // Make sure the Interrupt Controller Protocol is not already installed in
   // the system.
@@ -383,7 +385,7 @@ GicV3DxeInitialize (
 
   mGicDistributorBase    = PcdGet64 (PcdGicDistributorBase);
   mGicRedistributorsBase = PcdGet64 (PcdGicRedistributorsBase);
-  mGicNumInterrupts      = ArmGicGetMaxNumInterrupts (mGicDistributorBase);
+  mGicNumInterrupts = ArmGicGetMaxNumInterrupts (mGicDistributorBase);
 
   // We will be driving this GIC in native v3 mode, i.e., with Affinity
   // Routing enabled. So ensure that the ARE bit is set.
@@ -396,11 +398,11 @@ GicV3DxeInitialize (
 
     // Set Priority
     ArmGicSetInterruptPriority (
-      mGicDistributorBase,
-      mGicRedistributorsBase,
-      Index,
-      ARM_GIC_DEFAULT_PRIORITY
-      );
+                                mGicDistributorBase,
+                                mGicRedistributorsBase,
+                                Index,
+                                ARM_GIC_DEFAULT_PRIORITY
+                                );
   }
 
   // Targets the interrupts to the Primary Cpu
@@ -422,20 +424,19 @@ GicV3DxeInitialize (
       // The 8 first Interrupt Processor Targets Registers are read-only
       for (Index = 8; Index < (mGicNumInterrupts / 4); Index++) {
         MmioWrite32 (
-          mGicDistributorBase + ARM_GIC_ICDIPTR + (Index * 4),
-          CpuTarget
-          );
+                     mGicDistributorBase + ARM_GIC_ICDIPTR + (Index * 4),
+                     CpuTarget
+                     );
       }
     }
   } else {
     MpId = ArmReadMpidr ();
     CpuTarget = MpId &
-      (ARM_CORE_AFF0 | ARM_CORE_AFF1 | ARM_CORE_AFF2 | ARM_CORE_AFF3);
+                (ARM_CORE_AFF0 | ARM_CORE_AFF1 | ARM_CORE_AFF2 | ARM_CORE_AFF3);
 
     if ((MmioRead32 (
-           mGicDistributorBase + ARM_GIC_ICDDCR
-         ) & ARM_GIC_ICDDCR_DS) != 0) {
-
+                     mGicDistributorBase + ARM_GIC_ICDDCR
+                     ) & ARM_GIC_ICDDCR_DS) != 0) {
       // If the Disable Security (DS) control bit is set, we are dealing with a
       // GIC that has only one security state. In this case, let's assume we are
       // executing in non-secure state (which is appropriate for DXE modules)
@@ -444,24 +445,24 @@ GicV3DxeInitialize (
       // first.
 
       MmioWrite32 (
-        mGicRedistributorsBase + ARM_GICR_CTLR_FRAME_SIZE + ARM_GIC_ICDISR,
-        0xffffffff
-        );
+                   mGicRedistributorsBase + ARM_GICR_CTLR_FRAME_SIZE + ARM_GIC_ICDISR,
+                   0xffffffff
+                   );
 
       for (Index = 32; Index < mGicNumInterrupts; Index += 32) {
         MmioWrite32 (
-          mGicDistributorBase + ARM_GIC_ICDISR + Index / 8,
-          0xffffffff
-          );
+                     mGicDistributorBase + ARM_GIC_ICDISR + Index / 8,
+                     0xffffffff
+                     );
       }
     }
 
     // Route the SPIs to the primary CPU. SPIs start at the INTID 32
     for (Index = 0; Index < (mGicNumInterrupts - 32); Index++) {
       MmioWrite64 (
-        mGicDistributorBase + ARM_GICD_IROUTER + (Index * 8),
-        CpuTarget
-        );
+                   mGicDistributorBase + ARM_GICD_IROUTER + (Index * 8),
+                   CpuTarget
+                   );
     }
   }
 
@@ -478,11 +479,11 @@ GicV3DxeInitialize (
   ArmGicEnableDistributor (mGicDistributorBase);
 
   Status = InstallAndRegisterInterruptService (
-             &gHardwareInterruptV3Protocol,
-             &gHardwareInterrupt2V3Protocol,
-             GicV3IrqInterruptHandler,
-             GicV3ExitBootServicesEvent
-             );
+                                               &gHardwareInterruptV3Protocol,
+                                               &gHardwareInterrupt2V3Protocol,
+                                               GicV3IrqInterruptHandler,
+                                               GicV3ExitBootServicesEvent
+                                               );
 
   return Status;
 }
