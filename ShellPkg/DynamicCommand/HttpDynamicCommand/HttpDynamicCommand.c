@@ -35,7 +35,7 @@ HttpCommandHandler (
   )
 {
   gEfiShellParametersProtocol = ShellParameters;
-  gEfiShellProtocol           = Shell;
+  gEfiShellProtocol = Shell;
 
   return RunHttp (gImageHandle, SystemTable);
 }
@@ -58,13 +58,13 @@ HttpCommandGetHelp (
   )
 {
   return HiiGetString (
-           mHttpHiiHandle,
-           STRING_TOKEN (STR_GET_HELP_HTTP),
-           Language
-           );
+                       mHttpHiiHandle,
+                       STRING_TOKEN (STR_GET_HELP_HTTP),
+                       Language
+                       );
 }
 
-EFI_SHELL_DYNAMIC_COMMAND_PROTOCOL mHttpDynamicCommand = {
+EFI_SHELL_DYNAMIC_COMMAND_PROTOCOL  mHttpDynamicCommand = {
   HTTP_APP_NAME,
   HttpCommandHandler,
   HttpCommandGetHelp
@@ -89,7 +89,7 @@ HttpCommandInitialize (
   IN EFI_SYSTEM_TABLE         *SystemTable
   )
 {
-  EFI_STATUS                  Status;
+  EFI_STATUS  Status;
 
   mHttpHiiHandle = InitializeHiiPackage (ImageHandle);
   if (mHttpHiiHandle == NULL) {
@@ -97,11 +97,11 @@ HttpCommandInitialize (
   }
 
   Status = gBS->InstallProtocolInterface (
-                  &ImageHandle,
-                  &gEfiShellDynamicCommandProtocolGuid,
-                  EFI_NATIVE_INTERFACE,
-                  &mHttpDynamicCommand
-                  );
+                                          &ImageHandle,
+                                          &gEfiShellDynamicCommandProtocolGuid,
+                                          EFI_NATIVE_INTERFACE,
+                                          &mHttpDynamicCommand
+                                          );
   ASSERT_EFI_ERROR (Status);
   return Status;
 }
@@ -118,15 +118,15 @@ EFI_STATUS
 EFIAPI
 HttpUnload (
   IN EFI_HANDLE               ImageHandle
-)
+  )
 {
-  EFI_STATUS                  Status;
+  EFI_STATUS  Status;
 
   Status = gBS->UninstallProtocolInterface (
-                  ImageHandle,
-                  &gEfiShellDynamicCommandProtocolGuid,
-                  &mHttpDynamicCommand
-                  );
+                                            ImageHandle,
+                                            &gEfiShellDynamicCommandProtocolGuid,
+                                            &mHttpDynamicCommand
+                                            );
   if (EFI_ERROR (Status)) {
     return Status;
   }

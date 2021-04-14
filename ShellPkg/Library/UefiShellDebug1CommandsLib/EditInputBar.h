@@ -23,9 +23,9 @@ InputBarInit (
   Cleanup function for input bar.
 **/
 VOID
-InputBarCleanup (
-  VOID
-  );
+  InputBarCleanup (
+                   VOID
+                   );
 
 /**
   The refresh function for InputBar, it will wait for user input
@@ -73,9 +73,9 @@ InputBarSetStringSize (
   @retval NULL                  No input has been received.
   @return The string that was input.
 **/
-CONST CHAR16*
-InputBarGetString (
-  VOID
-  );
+CONST CHAR16 *
+  InputBarGetString (
+                     VOID
+                     );
 
 #endif

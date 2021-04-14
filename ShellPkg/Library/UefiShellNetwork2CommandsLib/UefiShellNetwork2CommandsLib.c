@@ -7,15 +7,15 @@
 **/
 #include "UefiShellNetwork2CommandsLib.h"
 
-CONST CHAR16 gShellNetwork2FileName[] = L"ShellCommands";
-EFI_HII_HANDLE gShellNetwork2HiiHandle = NULL;
+CONST CHAR16    gShellNetwork2FileName[] = L"ShellCommands";
+EFI_HII_HANDLE  gShellNetwork2HiiHandle  = NULL;
 
 /**
   return the file name of the help text file if not using HII.
 
   @return The string pointer to the file name.
 **/
-CONST CHAR16*
+CONST CHAR16 *
 EFIAPI
 ShellCommandGetManFileNameNetwork2 (
   VOID
@@ -47,22 +47,45 @@ ShellNetwork2CommandsLibConstructor (
   //
   // check our bit of the profiles mask
   //
-  if ((PcdGet8(PcdShellProfileMask) & BIT4) == 0) {
+  if ((PcdGet8 (PcdShellProfileMask) & BIT4) == 0) {
     return (EFI_SUCCESS);
   }
 
-  gShellNetwork2HiiHandle = HiiAddPackages (&gShellNetwork2HiiGuid, gImageHandle, UefiShellNetwork2CommandsLibStrings, NULL);
+  gShellNetwork2HiiHandle = HiiAddPackages (
+                                           &gShellNetwork2HiiGuid,
+                                           gImageHandle,
+                                           UefiShellNetwork2CommandsLibStrings,
+                                           NULL
+                                           );
   if (gShellNetwork2HiiHandle == NULL) {
     return (EFI_DEVICE_ERROR);
   }
+
   //
   // install our shell command handlers
   //
-  ShellCommandRegisterCommandName(L"ping6",    ShellCommandRunPing6     , ShellCommandGetManFileNameNetwork2, 0, L"network2", TRUE , gShellNetwork2HiiHandle, STRING_TOKEN(STR_GET_HELP_PING6));
-  ShellCommandRegisterCommandName(L"ifconfig6",ShellCommandRunIfconfig6 , ShellCommandGetManFileNameNetwork2, 0, L"network2", TRUE , gShellNetwork2HiiHandle, STRING_TOKEN(STR_GET_HELP_IFCONFIG6));
+  ShellCommandRegisterCommandName (
+                                 L"ping6",
+                                 ShellCommandRunPing6,
+                                 ShellCommandGetManFileNameNetwork2,
+                                 0,
+                                 L"network2",
+                                 TRUE,
+                                 gShellNetwork2HiiHandle,
+                                 STRING_TOKEN (STR_GET_HELP_PING6)
+                                 );
+  ShellCommandRegisterCommandName (
+                                 L"ifconfig6",
+                                 ShellCommandRunIfconfig6,
+                                 ShellCommandGetManFileNameNetwork2,
+                                 0,
+                                 L"network2",
+                                 TRUE,
+                                 gShellNetwork2HiiHandle,
+                                 STRING_TOKEN (STR_GET_HELP_IFCONFIG6)
+                                 );
 
   return EFI_SUCCESS;
-
 }
 
 /**
@@ -79,8 +102,8 @@ ShellNetwork2CommandsLibDestructor (
   )
 {
   if (gShellNetwork2HiiHandle != NULL) {
-    HiiRemovePackages(gShellNetwork2HiiHandle);
+    HiiRemovePackages (gShellNetwork2HiiHandle);
   }
+
   return EFI_SUCCESS;
 }
-

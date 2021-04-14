@@ -26,9 +26,9 @@ MainTitleBarInit (
   Clean up the memory used.
 **/
 VOID
-MainTitleBarCleanup (
-  VOID
-  );
+  MainTitleBarCleanup (
+                       VOID
+                       );
 
 typedef enum {
   FileTypeNone,

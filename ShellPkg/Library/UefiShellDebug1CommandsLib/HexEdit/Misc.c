@@ -21,11 +21,10 @@ HLineFree (
   )
 {
   if (Src == NULL) {
-    return ;
+    return;
   }
 
   SHELL_FREE_NON_NULL (Src);
-
 }
 
 /**
@@ -118,14 +117,14 @@ HMoveLine (
 
   //
   // difference with MoveCurrentLine
-  //     just return Line
-  //     do not set currentline to Line
+  // just return Line
+  // do not set currentline to Line
   //
   if (Count <= 0) {
-    AbsCount  = (UINTN)ABS(Count);
-    Line      = HLineRetreat (AbsCount);
+    AbsCount = (UINTN) ABS (Count);
+    Line     = HLineRetreat (AbsCount);
   } else {
-    Line = HLineAdvance ((UINTN)Count);
+    Line = HLineAdvance ((UINTN) Count);
   }
 
   return Line;
@@ -154,10 +153,10 @@ HMoveCurrentLine (
   // >0: advance
   //
   if (Count <= 0) {
-    AbsCount  = (UINTN)ABS(Count);
-    Line      = HLineRetreat (AbsCount);
+    AbsCount = (UINTN) ABS (Count);
+    Line     = HLineRetreat (AbsCount);
   } else {
-    Line = HLineAdvance ((UINTN)Count);
+    Line = HLineAdvance ((UINTN) Count);
   }
 
   if (Line == NULL) {
@@ -168,7 +167,6 @@ HMoveCurrentLine (
 
   return Line;
 }
-
 
 /**
   Free all the lines in HBufferImage.
@@ -196,18 +194,17 @@ HFreeLines (
   // release all the lines
   //
   if (Lines != NULL) {
-
-    Line  = Lines;
-    Link  = &(Line->Link);
+    Line = Lines;
+    Link = &(Line->Link);
     do {
-      Line  = CR (Link, HEFI_EDITOR_LINE, Link, EFI_EDITOR_LINE_LIST);
-      Link  = Link->ForwardLink;
+      Line = CR (Link, HEFI_EDITOR_LINE, Link, EFI_EDITOR_LINE_LIST);
+      Link = Link->ForwardLink;
       HLineFree (Line);
     } while (Link != ListHead);
   }
 
   ListHead->ForwardLink = ListHead;
-  ListHead->BackLink = ListHead;
+  ListHead->BackLink    = ListHead;
 
   return EFI_SUCCESS;
 }
@@ -224,11 +221,13 @@ HGetTextX (
   IN INT32 GuidX
   )
 {
-  INT32 Gap;
+  INT32  Gap;
 
   HMainEditor.MouseAccumulatorX += GuidX;
-  Gap = (HMainEditor.MouseAccumulatorX * (INT32) HMainEditor.ScreenSize.Column) / (INT32) (50 * (INT32) HMainEditor.MouseInterface->Mode->ResolutionX);
-  HMainEditor.MouseAccumulatorX = (HMainEditor.MouseAccumulatorX * (INT32) HMainEditor.ScreenSize.Column) % (INT32) (50 * (INT32) HMainEditor.MouseInterface->Mode->ResolutionX);
+  Gap = (HMainEditor.MouseAccumulatorX * (INT32) HMainEditor.ScreenSize.Column) /
+        (INT32) (50 * (INT32) HMainEditor.MouseInterface->Mode->ResolutionX);
+  HMainEditor.MouseAccumulatorX = (HMainEditor.MouseAccumulatorX * (INT32) HMainEditor.ScreenSize.Column) %
+                                  (INT32) (50 * (INT32) HMainEditor.MouseInterface->Mode->ResolutionX);
   HMainEditor.MouseAccumulatorX = HMainEditor.MouseAccumulatorX / (INT32) HMainEditor.ScreenSize.Column;
   return Gap;
 }
@@ -245,11 +244,13 @@ HGetTextY (
   IN INT32 GuidY
   )
 {
-  INT32 Gap;
+  INT32  Gap;
 
   HMainEditor.MouseAccumulatorY += GuidY;
-  Gap = (HMainEditor.MouseAccumulatorY * (INT32) HMainEditor.ScreenSize.Row) / (INT32) (50 * (INT32) HMainEditor.MouseInterface->Mode->ResolutionY);
-  HMainEditor.MouseAccumulatorY = (HMainEditor.MouseAccumulatorY * (INT32) HMainEditor.ScreenSize.Row) % (INT32) (50 * (INT32) HMainEditor.MouseInterface->Mode->ResolutionY);
+  Gap = (HMainEditor.MouseAccumulatorY * (INT32) HMainEditor.ScreenSize.Row) /
+        (INT32) (50 * (INT32) HMainEditor.MouseInterface->Mode->ResolutionY);
+  HMainEditor.MouseAccumulatorY = (HMainEditor.MouseAccumulatorY * (INT32) HMainEditor.ScreenSize.Row) %
+                                  (INT32) (50 * (INT32) HMainEditor.MouseInterface->Mode->ResolutionY);
   HMainEditor.MouseAccumulatorY = HMainEditor.MouseAccumulatorY / (INT32) HMainEditor.ScreenSize.Row;
 
   return Gap;

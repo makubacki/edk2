@@ -21,9 +21,9 @@
   @retval EFI_LOAD_ERROR          A load error occurred.
 **/
 EFI_STATUS
-HMainEditorInit (
-  VOID
-  );
+  HMainEditorInit (
+                   VOID
+                   );
 
 /**
   Cleanup function for MainEditor.
@@ -32,9 +32,9 @@ HMainEditorInit (
   @retval EFI_LOAD_ERROR          A load error occurred.
 **/
 EFI_STATUS
-HMainEditorCleanup (
-  VOID
-  );
+  HMainEditorCleanup (
+                      VOID
+                      );
 
 /**
   Refresh function for MainEditor.
@@ -42,9 +42,9 @@ HMainEditorCleanup (
   @retval EFI_SUCCESS             The operation was successful.
 **/
 EFI_STATUS
-HMainEditorRefresh (
-  VOID
-  );
+  HMainEditorRefresh (
+                      VOID
+                      );
 
 /**
   Handle user key input. will route it to other components handle function.
@@ -54,16 +54,16 @@ HMainEditorRefresh (
   @retval EFI_LOAD_ERROR          A load error occurred.
 **/
 EFI_STATUS
-HMainEditorKeyInput (
-  VOID
-  );
+  HMainEditorKeyInput (
+                       VOID
+                       );
 
 /**
   Backup function for MainEditor.
 **/
 VOID
-HMainEditorBackup (
-  VOID
-  );
+  HMainEditorBackup (
+                     VOID
+                     );
 
 #endif

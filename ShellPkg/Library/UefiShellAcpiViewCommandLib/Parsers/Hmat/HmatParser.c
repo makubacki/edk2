@@ -21,27 +21,27 @@
 #include "AcpiView.h"
 
 // Maximum Memory Domain matrix print size.
-#define MAX_MEMORY_DOMAIN_TARGET_PRINT_MATRIX    10
+#define MAX_MEMORY_DOMAIN_TARGET_PRINT_MATRIX  10
 
 // Local variables
-STATIC CONST UINT16*  HmatStructureType;
-STATIC CONST UINT32*  HmatStructureLength;
+STATIC CONST UINT16  *HmatStructureType;
+STATIC CONST UINT32  *HmatStructureLength;
 
-STATIC CONST UINT32*  NumberInitiatorProximityDomain;
-STATIC CONST UINT32*  NumberTargetProximityDomain;
+STATIC CONST UINT32  *NumberInitiatorProximityDomain;
+STATIC CONST UINT32  *NumberTargetProximityDomain;
 STATIC CONST
-EFI_ACPI_6_3_HMAT_STRUCTURE_SYSTEM_LOCALITY_LATENCY_AND_BANDWIDTH_INFO_FLAGS*
-SllbiFlags;
+EFI_ACPI_6_3_HMAT_STRUCTURE_SYSTEM_LOCALITY_LATENCY_AND_BANDWIDTH_INFO_FLAGS *
+  SllbiFlags;
 
-STATIC CONST UINT8*   SllbiDataType;
-STATIC CONST UINT16*  NumberSMBIOSHandles;
+STATIC CONST UINT8   *SllbiDataType;
+STATIC CONST UINT16  *NumberSMBIOSHandles;
 
-STATIC ACPI_DESCRIPTION_HEADER_INFO AcpiHdrInfo;
+STATIC ACPI_DESCRIPTION_HEADER_INFO  AcpiHdrInfo;
 
 /**
   Names of System Locality Latency Bandwidth Information (SLLBI) data types
 **/
-STATIC CONST CHAR16* SllbiNames[] = {
+STATIC CONST CHAR16  *SllbiNames[] = {
   L"Access %sLatency%s",
   L"Read %sLatency%s",
   L"Write %sLatency%s",
@@ -61,43 +61,46 @@ STATIC
 VOID
 EFIAPI
 ValidateCacheAttributes (
-  IN UINT8* Ptr,
-  IN VOID*  Context
+  IN UINT8 *Ptr,
+  IN VOID *Context
   )
 {
-  EFI_ACPI_6_3_HMAT_STRUCTURE_MEMORY_SIDE_CACHE_INFO_CACHE_ATTRIBUTES*
-  Attributes;
+  EFI_ACPI_6_3_HMAT_STRUCTURE_MEMORY_SIDE_CACHE_INFO_CACHE_ATTRIBUTES *
+    Attributes;
 
   Attributes =
-    (EFI_ACPI_6_3_HMAT_STRUCTURE_MEMORY_SIDE_CACHE_INFO_CACHE_ATTRIBUTES*)Ptr;
+    (EFI_ACPI_6_3_HMAT_STRUCTURE_MEMORY_SIDE_CACHE_INFO_CACHE_ATTRIBUTES *) Ptr;
 
   if (Attributes->TotalCacheLevels > 0x3) {
     IncrementErrorCount ();
     Print (
-      L"\nERROR: Attributes bits [3:0] have invalid value: 0x%x",
-      Attributes->TotalCacheLevels
-      );
+           L"\nERROR: Attributes bits [3:0] have invalid value: 0x%x",
+           Attributes->TotalCacheLevels
+           );
   }
+
   if (Attributes->CacheLevel > 0x3) {
     IncrementErrorCount ();
     Print (
-      L"\nERROR: Attributes bits [7:4] have invalid value: 0x%x",
-      Attributes->CacheLevel
-      );
+           L"\nERROR: Attributes bits [7:4] have invalid value: 0x%x",
+           Attributes->CacheLevel
+           );
   }
+
   if (Attributes->CacheAssociativity > 0x2) {
     IncrementErrorCount ();
     Print (
-      L"\nERROR: Attributes bits [11:8] have invalid value: 0x%x",
-      Attributes->CacheAssociativity
-      );
+           L"\nERROR: Attributes bits [11:8] have invalid value: 0x%x",
+           Attributes->CacheAssociativity
+           );
   }
+
   if (Attributes->WritePolicy > 0x2) {
     IncrementErrorCount ();
     Print (
-      L"\nERROR: Attributes bits [15:12] have invalid value: 0x%x",
-      Attributes->WritePolicy
-      );
+           L"\nERROR: Attributes bits [15:12] have invalid value: 0x%x",
+           Attributes->WritePolicy
+           );
   }
 }
 
@@ -111,15 +114,15 @@ STATIC
 VOID
 EFIAPI
 DumpCacheAttributes (
-  IN CONST CHAR16* Format OPTIONAL,
-  IN UINT8*        Ptr
+  IN CONST CHAR16 *Format OPTIONAL,
+  IN UINT8 *Ptr
   )
 {
-  EFI_ACPI_6_3_HMAT_STRUCTURE_MEMORY_SIDE_CACHE_INFO_CACHE_ATTRIBUTES*
-  Attributes;
+  EFI_ACPI_6_3_HMAT_STRUCTURE_MEMORY_SIDE_CACHE_INFO_CACHE_ATTRIBUTES *
+    Attributes;
 
   Attributes =
-    (EFI_ACPI_6_3_HMAT_STRUCTURE_MEMORY_SIDE_CACHE_INFO_CACHE_ATTRIBUTES*)Ptr;
+    (EFI_ACPI_6_3_HMAT_STRUCTURE_MEMORY_SIDE_CACHE_INFO_CACHE_ATTRIBUTES *) Ptr;
 
   Print (L"\n");
   PrintFieldName (4, L"Total Cache Levels");
@@ -137,54 +140,54 @@ DumpCacheAttributes (
 /**
   An ACPI_PARSER array describing the ACPI HMAT Table.
 */
-STATIC CONST ACPI_PARSER HmatParser[] = {
+STATIC CONST ACPI_PARSER  HmatParser[] = {
   PARSE_ACPI_HEADER (&AcpiHdrInfo),
-  {L"Reserved", 4, 36, NULL, NULL, NULL, NULL, NULL}
+  { L"Reserved",                   4,36, NULL, NULL, NULL, NULL, NULL }
 };
 
 /**
   An ACPI_PARSER array describing the HMAT structure header.
 */
-STATIC CONST ACPI_PARSER HmatStructureHeaderParser[] = {
-  {L"Type", 2, 0, NULL, NULL, (VOID**)&HmatStructureType, NULL, NULL},
-  {L"Reserved", 2, 2, NULL, NULL, NULL, NULL, NULL},
-  {L"Length", 4, 4, NULL, NULL, (VOID**)&HmatStructureLength, NULL, NULL}
+STATIC CONST ACPI_PARSER  HmatStructureHeaderParser[] = {
+  { L"Type",     2, 0, NULL, NULL, (VOID **) &HmatStructureType,   NULL, NULL },
+  { L"Reserved", 2, 2, NULL, NULL, NULL,                           NULL, NULL },
+  { L"Length",   4, 4, NULL, NULL, (VOID **) &HmatStructureLength, NULL, NULL }
 };
 
 /**
   An ACPI PARSER array describing the Memory Proximity Domain Attributes
   Structure - Type 0.
 */
-STATIC CONST ACPI_PARSER MemProximityDomainAttributeParser[] = {
-  {L"Type", 2, 0, L"0x%x", NULL, NULL, NULL, NULL},
-  {L"Reserved", 2, 2, L"0x%x", NULL, NULL, NULL, NULL},
-  {L"Length", 4, 4, L"%d", NULL, NULL, NULL, NULL},
-  {L"Flags", 2, 8, L"0x%x", NULL, NULL, NULL, NULL},
-  {L"Reserved", 2, 10, L"0x%x", NULL, NULL, NULL, NULL},
-  {L"Proximity Dom for initiator", 4, 12, L"0x%x", NULL, NULL, NULL, NULL},
-  {L"Proximity Dom for memory", 4, 16, L"0x%x", NULL, NULL, NULL, NULL},
-  {L"Reserved", 4, 20, L"0x%x", NULL, NULL, NULL, NULL},
-  {L"Reserved", 8, 24, L"0x%lx", NULL, NULL, NULL, NULL},
-  {L"Reserved", 8, 32, L"0x%lx", NULL, NULL, NULL, NULL}
+STATIC CONST ACPI_PARSER  MemProximityDomainAttributeParser[] = {
+  { L"Type",                        2, 0,  L"0x%x",  NULL, NULL, NULL, NULL },
+  { L"Reserved",                    2, 2,  L"0x%x",  NULL, NULL, NULL, NULL },
+  { L"Length",                      4, 4,  L"%d",    NULL, NULL, NULL, NULL },
+  { L"Flags",                       2, 8,  L"0x%x",  NULL, NULL, NULL, NULL },
+  { L"Reserved",                    2, 10, L"0x%x",  NULL, NULL, NULL, NULL },
+  { L"Proximity Dom for initiator", 4, 12, L"0x%x",  NULL, NULL, NULL, NULL },
+  { L"Proximity Dom for memory",    4, 16, L"0x%x",  NULL, NULL, NULL, NULL },
+  { L"Reserved",                    4, 20, L"0x%x",  NULL, NULL, NULL, NULL },
+  { L"Reserved",                    8, 24, L"0x%lx", NULL, NULL, NULL, NULL },
+  { L"Reserved",                    8, 32, L"0x%lx", NULL, NULL, NULL, NULL }
 };
 
 /**
   An ACPI PARSER array describing the System Locality Latency and Bandwidth
   Information Structure - Type 1.
 */
-STATIC CONST ACPI_PARSER SllbiParser[] = {
-  {L"Type", 2, 0, L"0x%x", NULL, NULL, NULL, NULL},
-  {L"Reserved", 2, 2, L"0x%x", NULL, NULL, NULL, NULL},
-  {L"Length", 4, 4, L"%d", NULL, NULL, NULL, NULL},
-  {L"Flags", 1, 8, L"0x%x", NULL, (VOID**)&SllbiFlags, NULL, NULL},
-  {L"Data type", 1, 9, L"0x%x", NULL, (VOID**)&SllbiDataType, NULL, NULL},
-  {L"Reserved", 2, 10, L"0x%x", NULL, NULL, NULL, NULL},
-  {L"Initiator Proximity Dom Count", 4, 12, L"%d", NULL,
-    (VOID**)&NumberInitiatorProximityDomain, NULL, NULL},
-  {L"Target Proximity Dom Count", 4, 16, L"%d", NULL,
-    (VOID**)&NumberTargetProximityDomain, NULL, NULL},
-  {L"Reserved", 4, 20, L"0x%x", NULL, NULL, NULL, NULL},
-  {L"Entry Base Unit", 8, 24, L"0x%lx", NULL, NULL, NULL, NULL}
+STATIC CONST ACPI_PARSER  SllbiParser[] = {
+  { L"Type",                          2, 0,  L"0x%x",  NULL, NULL,                     NULL, NULL },
+  { L"Reserved",                      2, 2,  L"0x%x",  NULL, NULL,                     NULL, NULL },
+  { L"Length",                        4, 4,  L"%d",    NULL, NULL,                     NULL, NULL },
+  { L"Flags",                         1, 8,  L"0x%x",  NULL, (VOID **) &SllbiFlags,    NULL, NULL },
+  { L"Data type",                     1, 9,  L"0x%x",  NULL, (VOID **) &SllbiDataType, NULL, NULL },
+  { L"Reserved",                      2, 10, L"0x%x",  NULL, NULL,                     NULL, NULL },
+  { L"Initiator Proximity Dom Count", 4, 12, L"%d",    NULL,
+    (VOID **) &NumberInitiatorProximityDomain, NULL, NULL },
+  { L"Target Proximity Dom Count",    4, 16, L"%d",    NULL,
+    (VOID **) &NumberTargetProximityDomain, NULL, NULL },
+  { L"Reserved",                      4, 20, L"0x%x",  NULL, NULL,                     NULL, NULL },
+  { L"Entry Base Unit",               8, 24, L"0x%lx", NULL, NULL,                     NULL, NULL }
   // initiator Proximity Domain list ...
   // target Proximity Domain list ...
   // Latency/Bandwidth matrix ...
@@ -194,18 +197,18 @@ STATIC CONST ACPI_PARSER SllbiParser[] = {
   An ACPI PARSER array describing the Memory Side Cache Information
   Structure - Type 2.
 */
-STATIC CONST ACPI_PARSER MemSideCacheInfoParser[] = {
-  {L"Type", 2, 0, L"0x%x", NULL, NULL, NULL, NULL},
-  {L"Reserved", 2, 2, L"0x%x", NULL, NULL, NULL, NULL},
-  {L"Length", 4, 4, L"%d", NULL, NULL, NULL, NULL},
-  {L"Proximity Dom for memory", 4, 8, L"0x%x", NULL, NULL, NULL, NULL},
-  {L"Reserved", 4, 12, L"0x%x", NULL, NULL, NULL, NULL},
-  {L"Memory Side Cache Size", 8, 16, L"0x%lx", NULL, NULL, NULL, NULL},
-  {L"Cache Attributes", 4, 24, NULL, DumpCacheAttributes, NULL,
-    ValidateCacheAttributes, NULL},
-  {L"Reserved", 2, 28, L"0x%x", NULL, NULL, NULL, NULL},
-  {L"SMBIOS Handle Count", 2, 30, L"%d", NULL,
-    (VOID**)&NumberSMBIOSHandles, NULL, NULL}
+STATIC CONST ACPI_PARSER  MemSideCacheInfoParser[] = {
+  { L"Type",                     2, 0,  L"0x%x",  NULL,                NULL, NULL, NULL },
+  { L"Reserved",                 2, 2,  L"0x%x",  NULL,                NULL, NULL, NULL },
+  { L"Length",                   4, 4,  L"%d",    NULL,                NULL, NULL, NULL },
+  { L"Proximity Dom for memory", 4, 8,  L"0x%x",  NULL,                NULL, NULL, NULL },
+  { L"Reserved",                 4, 12, L"0x%x",  NULL,                NULL, NULL, NULL },
+  { L"Memory Side Cache Size",   8, 16, L"0x%lx", NULL,                NULL, NULL, NULL },
+  { L"Cache Attributes",         4, 24, NULL,     DumpCacheAttributes, NULL,
+    ValidateCacheAttributes, NULL },
+  { L"Reserved",                 2, 28, L"0x%x",  NULL,                NULL, NULL, NULL },
+  { L"SMBIOS Handle Count",      2, 30, L"%d",    NULL,
+    (VOID **) &NumberSMBIOSHandles, NULL, NULL }
   // SMBIOS handles List ...
 };
 
@@ -221,18 +224,18 @@ STATIC CONST ACPI_PARSER MemSideCacheInfoParser[] = {
 STATIC
 VOID
 DumpMpda (
-  IN UINT8* Ptr,
+  IN UINT8 *Ptr,
   IN UINT32 Length
   )
 {
   ParseAcpi (
-    TRUE,
-    2,
-    "Memory Proximity Domain Attributes Structure",
-    Ptr,
-    Length,
-    PARSER_PARAMS (MemProximityDomainAttributeParser)
-    );
+             TRUE,
+             2,
+             "Memory Proximity Domain Attributes Structure",
+             Ptr,
+             Length,
+             PARSER_PARAMS (MemProximityDomainAttributeParser)
+             );
 }
 
 /**
@@ -247,13 +250,13 @@ DumpMpda (
 STATIC
 VOID
 DumpSllbi (
-  IN UINT8* Ptr,
+  IN UINT8 *Ptr,
   IN UINT32 Length
   )
 {
-  CONST UINT32* InitiatorProximityDomainList;
-  CONST UINT32* TargetProximityDomainList;
-  CONST UINT16* LatencyBandwidthMatrix;
+  CONST UINT32  *InitiatorProximityDomainList;
+  CONST UINT32  *TargetProximityDomainList;
+  CONST UINT16  *LatencyBandwidthMatrix;
   UINT32        Offset;
   CHAR16        Buffer[OUTPUT_FIELD_COLUMN_WIDTH];
   CHAR16        SecondBuffer[OUTPUT_FIELD_COLUMN_WIDTH];
@@ -264,13 +267,13 @@ DumpSllbi (
   UINT32        TargetStartOffset;
 
   Offset = ParseAcpi (
-             TRUE,
-             2,
-             "System Locality Latency and Bandwidth Information Structure",
-             Ptr,
-             Length,
-             PARSER_PARAMS (SllbiParser)
-             );
+                      TRUE,
+                      2,
+                      "System Locality Latency and Bandwidth Information Structure",
+                      Ptr,
+                      Length,
+                      PARSER_PARAMS (SllbiParser)
+                      );
 
   // Check if the values used to control the parsing logic have been
   // successfully read.
@@ -280,10 +283,10 @@ DumpSllbi (
       (NumberTargetProximityDomain == NULL)) {
     IncrementErrorCount ();
     Print (
-      L"ERROR: Insufficient remaining table buffer length to read the " \
-        L"SLLBI structure header. Length = %d.\n",
-      Length
-      );
+           L"ERROR: Insufficient remaining table buffer length to read the " \
+           L"SLLBI structure header. Length = %d.\n",
+           Length
+           );
     return;
   }
 
@@ -296,51 +299,51 @@ DumpSllbi (
   if (RequiredTableSize > Length) {
     IncrementErrorCount ();
     Print (
-      L"ERROR: Insufficient System Locality Latency and Bandwidth" \
-      L"Information Structure length. TableLength = %d. " \
-      L"RequiredTableLength = %d.\n",
-      Length,
-      RequiredTableSize
-      );
+           L"ERROR: Insufficient System Locality Latency and Bandwidth" \
+           L"Information Structure length. TableLength = %d. " \
+           L"RequiredTableLength = %d.\n",
+           Length,
+           RequiredTableSize
+           );
     return;
   }
 
-  InitiatorProximityDomainList = (UINT32*) (Ptr + Offset);
-  TargetProximityDomainList = InitiatorProximityDomainList +
-                              *NumberInitiatorProximityDomain;
-  LatencyBandwidthMatrix = (UINT16*) (TargetProximityDomainList +
-                                      *NumberTargetProximityDomain);
+  InitiatorProximityDomainList = (UINT32 *) (Ptr + Offset);
+  TargetProximityDomainList    = InitiatorProximityDomainList +
+                                 *NumberInitiatorProximityDomain;
+  LatencyBandwidthMatrix = (UINT16 *) (TargetProximityDomainList +
+                                       *NumberTargetProximityDomain);
 
   // Display each element of the Initiator Proximity Domain list
   for (Index = 0; Index < *NumberInitiatorProximityDomain; Index++) {
     UnicodeSPrint (
-      Buffer,
-      sizeof (Buffer),
-      L"Initiator Proximity Dom [%d]",
-      Index
-      );
+                   Buffer,
+                   sizeof (Buffer),
+                   L"Initiator Proximity Dom [%d]",
+                   Index
+                   );
 
     PrintFieldName (4, Buffer);
     Print (
-      L"0x%x\n",
-      InitiatorProximityDomainList[Index]
-      );
+           L"0x%x\n",
+           InitiatorProximityDomainList[Index]
+           );
   }
 
   // Display each element of the Target Proximity Domain list
   for (Index = 0; Index < *NumberTargetProximityDomain; Index++) {
     UnicodeSPrint (
-      Buffer,
-      sizeof (Buffer),
-      L"Target Proximity Dom [%d]",
-      Index
-      );
+                   Buffer,
+                   sizeof (Buffer),
+                   L"Target Proximity Dom [%d]",
+                   Index
+                   );
 
     PrintFieldName (4, Buffer);
     Print (
-      L"0x%x\n",
-      TargetProximityDomainList[Index]
-      );
+           L"0x%x\n",
+           TargetProximityDomainList[Index]
+           );
   }
 
   // Create base name depending on Data Type in this Structure
@@ -349,48 +352,48 @@ DumpSllbi (
     Print (L"Error: Unkown Data Type. DataType = 0x%x.\n", *SllbiDataType);
     return;
   }
+
   StrCpyS (Buffer, sizeof (Buffer), SllbiNames[*SllbiDataType]);
 
   // Adjust base name depending on Memory Hierarchy in this Structure
   switch (SllbiFlags->MemoryHierarchy) {
     case 0:
       UnicodeSPrint (
-        SecondBuffer,
-        sizeof (SecondBuffer),
-        Buffer,
-        L"",
-        L"%s"
-        );
+                     SecondBuffer,
+                     sizeof (SecondBuffer),
+                     Buffer,
+                     L"",
+                     L"%s"
+                     );
       break;
     case 1:
     case 2:
     case 3:
       UnicodeSPrint (
-        SecondBuffer,
-        sizeof (SecondBuffer),
-        Buffer,
-        L"Hit ",
-        L"%s"
-        );
+                     SecondBuffer,
+                     sizeof (SecondBuffer),
+                     Buffer,
+                     L"Hit ",
+                     L"%s"
+                     );
       break;
     default:
       IncrementErrorCount ();
       Print (
-        L"Error: Invalid Memory Hierarchy. MemoryHierarchy = %d.\n",
-        SllbiFlags->MemoryHierarchy
-        );
+             L"Error: Invalid Memory Hierarchy. MemoryHierarchy = %d.\n",
+             SllbiFlags->MemoryHierarchy
+             );
       return;
-
   } // switch
 
   if (*NumberTargetProximityDomain <= MAX_MEMORY_DOMAIN_TARGET_PRINT_MATRIX) {
     // Display the latency/bandwidth matrix as a matrix
     UnicodeSPrint (
-      Buffer,
-      sizeof (Buffer),
-      SecondBuffer,
-      L""
-      );
+                   Buffer,
+                   sizeof (Buffer),
+                   SecondBuffer,
+                   L""
+                   );
     PrintFieldName (4, Buffer);
 
     Print (L"\n      Target    : X-axis (Horizontal)");
@@ -409,6 +412,7 @@ DumpSllbi (
          IndexTarget++) {
       Print (L"------");
     }
+
     Print (L"\n");
 
     TargetStartOffset = 0;
@@ -420,22 +424,24 @@ DumpSllbi (
            IndexTarget < *NumberTargetProximityDomain;
            IndexTarget++) {
         Print (
-          L" %5d",
-          LatencyBandwidthMatrix[TargetStartOffset + IndexTarget]
-          );
+               L" %5d",
+               LatencyBandwidthMatrix[TargetStartOffset + IndexTarget]
+               );
       } // for Target
+
       Print (L"\n");
       TargetStartOffset += (*NumberTargetProximityDomain);
     } // for Initiator
+
     Print (L"\n");
   } else {
     // Display the latency/bandwidth matrix as a list
     UnicodeSPrint (
-      Buffer,
-      sizeof (Buffer),
-      SecondBuffer,
-      L" [%d][%d]"
-      );
+                   Buffer,
+                   sizeof (Buffer),
+                   SecondBuffer,
+                   L" [%d][%d]"
+                   );
 
     TargetStartOffset = 0;
     for (IndexInitiator = 0;
@@ -445,19 +451,20 @@ DumpSllbi (
            IndexTarget < *NumberTargetProximityDomain;
            IndexTarget++) {
         UnicodeSPrint (
-          SecondBuffer,
-          sizeof (SecondBuffer),
-          Buffer,
-          IndexInitiator,
-          IndexTarget
-          );
+                       SecondBuffer,
+                       sizeof (SecondBuffer),
+                       Buffer,
+                       IndexInitiator,
+                       IndexTarget
+                       );
 
         PrintFieldName (4, SecondBuffer);
         Print (
-          L"%d\n",
-          LatencyBandwidthMatrix[TargetStartOffset + IndexTarget]
-          );
+               L"%d\n",
+               LatencyBandwidthMatrix[TargetStartOffset + IndexTarget]
+               );
       } // for Target
+
       TargetStartOffset += (*NumberTargetProximityDomain);
     } // for Initiator
   }
@@ -473,62 +480,62 @@ DumpSllbi (
 STATIC
 VOID
 DumpMsci (
-  IN UINT8* Ptr,
+  IN UINT8 *Ptr,
   IN UINT32 Length
   )
 {
-  CONST UINT16* SMBIOSHandlesList;
+  CONST UINT16  *SMBIOSHandlesList;
   CHAR16        Buffer[OUTPUT_FIELD_COLUMN_WIDTH];
   UINT32        Offset;
   UINT16        Index;
 
   Offset = ParseAcpi (
-             TRUE,
-             2,
-             "Memory Side Cache Information Structure",
-             Ptr,
-             Length,
-             PARSER_PARAMS (MemSideCacheInfoParser)
-             );
+                      TRUE,
+                      2,
+                      "Memory Side Cache Information Structure",
+                      Ptr,
+                      Length,
+                      PARSER_PARAMS (MemSideCacheInfoParser)
+                      );
 
   // Check if the values used to control the parsing logic have been
   // successfully read.
   if (NumberSMBIOSHandles == NULL) {
     IncrementErrorCount ();
     Print (
-      L"ERROR: Insufficient remaining table buffer length to read the " \
-        L"MSCI structure header. Length = %d.\n",
-      Length
-      );
+           L"ERROR: Insufficient remaining table buffer length to read the " \
+           L"MSCI structure header. Length = %d.\n",
+           Length
+           );
     return;
   }
 
   if ((*NumberSMBIOSHandles * sizeof (UINT16)) > (Length - Offset)) {
     IncrementErrorCount ();
     Print (
-      L"ERROR: Invalid Number of SMBIOS Handles. SMBIOSHandlesCount = %d." \
-      L"RemainingBufferLength = %d.\n",
-      *NumberSMBIOSHandles,
-      Length - Offset
-      );
+           L"ERROR: Invalid Number of SMBIOS Handles. SMBIOSHandlesCount = %d." \
+           L"RemainingBufferLength = %d.\n",
+           *NumberSMBIOSHandles,
+           Length - Offset
+           );
     return;
   }
 
-  SMBIOSHandlesList = (UINT16*) (Ptr + Offset);
+  SMBIOSHandlesList = (UINT16 *) (Ptr + Offset);
 
   for (Index = 0; Index < *NumberSMBIOSHandles; Index++) {
     UnicodeSPrint (
-      Buffer,
-      sizeof (Buffer),
-      L"SMBIOS Handles [%d]",
-      Index
-      );
+                   Buffer,
+                   sizeof (Buffer),
+                   L"SMBIOS Handles [%d]",
+                   Index
+                   );
 
     PrintFieldName (4, Buffer);
     Print (
-      L"0x%x\n",
-      SMBIOSHandlesList[Index]
-      );
+           L"0x%x\n",
+           SMBIOSHandlesList[Index]
+           );
   }
 }
 
@@ -553,39 +560,39 @@ VOID
 EFIAPI
 ParseAcpiHmat (
   IN BOOLEAN Trace,
-  IN UINT8*  Ptr,
+  IN UINT8 *Ptr,
   IN UINT32  AcpiTableLength,
   IN UINT8   AcpiTableRevision
   )
 {
-  UINT32 Offset;
-  UINT8* HmatStructurePtr;
+  UINT32  Offset;
+  UINT8   *HmatStructurePtr;
 
   if (!Trace) {
     return;
   }
 
   Offset = ParseAcpi (
-             Trace,
-             0,
-             "HMAT",
-             Ptr,
-             AcpiTableLength,
-             PARSER_PARAMS (HmatParser)
-             );
+                      Trace,
+                      0,
+                      "HMAT",
+                      Ptr,
+                      AcpiTableLength,
+                      PARSER_PARAMS (HmatParser)
+                      );
 
   HmatStructurePtr = Ptr + Offset;
 
   while (Offset < AcpiTableLength) {
     // Parse HMAT Structure Header to obtain Type and Length.
     ParseAcpi (
-      FALSE,
-      0,
-      NULL,
-      HmatStructurePtr,
-      AcpiTableLength - Offset,
-      PARSER_PARAMS (HmatStructureHeaderParser)
-      );
+               FALSE,
+               0,
+               NULL,
+               HmatStructurePtr,
+               AcpiTableLength - Offset,
+               PARSER_PARAMS (HmatStructureHeaderParser)
+               );
 
     // Check if the values used to control the parsing logic have been
     // successfully read.
@@ -593,10 +600,10 @@ ParseAcpiHmat (
         (HmatStructureLength == NULL)) {
       IncrementErrorCount ();
       Print (
-        L"ERROR: Insufficient remaining table buffer length to read the " \
-          L"HMAT structure header. Length = %d.\n",
-        AcpiTableLength - Offset
-        );
+             L"ERROR: Insufficient remaining table buffer length to read the " \
+             L"HMAT structure header. Length = %d.\n",
+             AcpiTableLength - Offset
+             );
       return;
     }
 
@@ -605,42 +612,42 @@ ParseAcpiHmat (
         ((Offset + (*HmatStructureLength)) > AcpiTableLength)) {
       IncrementErrorCount ();
       Print (
-        L"ERROR: Invalid HMAT Structure length. " \
-          L"Length = %d. Offset = %d. AcpiTableLength = %d.\n",
-        *HmatStructureLength,
-        Offset,
-        AcpiTableLength
-        );
+             L"ERROR: Invalid HMAT Structure length. " \
+             L"Length = %d. Offset = %d. AcpiTableLength = %d.\n",
+             *HmatStructureLength,
+             Offset,
+             AcpiTableLength
+             );
       return;
     }
 
     switch (*HmatStructureType) {
       case EFI_ACPI_6_3_HMAT_TYPE_MEMORY_PROXIMITY_DOMAIN_ATTRIBUTES:
         DumpMpda (
-          HmatStructurePtr,
-          *HmatStructureLength
-          );
+                  HmatStructurePtr,
+                  *HmatStructureLength
+                  );
         break;
       case EFI_ACPI_6_3_HMAT_TYPE_SYSTEM_LOCALITY_LATENCY_AND_BANDWIDTH_INFO:
         DumpSllbi (
-          HmatStructurePtr,
-          *HmatStructureLength
-          );
+                   HmatStructurePtr,
+                   *HmatStructureLength
+                   );
         break;
       case EFI_ACPI_6_3_HMAT_TYPE_MEMORY_SIDE_CACHE_INFO:
-         DumpMsci (
-          HmatStructurePtr,
-          *HmatStructureLength
-          );
+        DumpMsci (
+                  HmatStructurePtr,
+                  *HmatStructureLength
+                  );
         break;
       default:
         IncrementErrorCount ();
         Print (
-          L"ERROR: Unknown HMAT structure:"
-            L" Type = %d, Length = %d\n",
-          *HmatStructureType,
-          *HmatStructureLength
-          );
+               L"ERROR: Unknown HMAT structure:"
+               L" Type = %d, Length = %d\n",
+               *HmatStructureType,
+               *HmatStructureLength
+               );
         break;
     } // switch
 

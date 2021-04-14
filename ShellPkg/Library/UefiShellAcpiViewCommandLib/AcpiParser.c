@@ -12,16 +12,16 @@
 #include "AcpiView.h"
 #include "AcpiViewConfig.h"
 
-STATIC UINT32   gIndent;
-STATIC UINT32   mTableErrorCount;
-STATIC UINT32   mTableWarningCount;
+STATIC UINT32  gIndent;
+STATIC UINT32  mTableErrorCount;
+STATIC UINT32  mTableWarningCount;
 
-STATIC ACPI_DESCRIPTION_HEADER_INFO AcpiHdrInfo;
+STATIC ACPI_DESCRIPTION_HEADER_INFO  AcpiHdrInfo;
 
 /**
   An ACPI_PARSER array describing the ACPI header.
 **/
-STATIC CONST ACPI_PARSER AcpiHeaderParser[] = {
+STATIC CONST ACPI_PARSER  AcpiHeaderParser[] = {
   PARSE_ACPI_HEADER (&AcpiHdrInfo)
 };
 
@@ -114,20 +114,20 @@ BOOLEAN
 EFIAPI
 VerifyChecksum (
   IN BOOLEAN Log,
-  IN UINT8*  Ptr,
+  IN UINT8 *Ptr,
   IN UINT32  Length
   )
 {
-  UINTN ByteCount;
-  UINT8 Checksum;
-  UINTN OriginalAttribute;
+  UINTN  ByteCount;
+  UINT8  Checksum;
+  UINTN  OriginalAttribute;
 
   //
   // set local variables to suppress incorrect compiler/analyzer warnings
   //
   OriginalAttribute = 0;
   ByteCount = 0;
-  Checksum = 0;
+  Checksum  = 0;
 
   while (ByteCount < Length) {
     Checksum += *(Ptr++);
@@ -138,26 +138,33 @@ VerifyChecksum (
     OriginalAttribute = gST->ConOut->Mode->Attribute;
     if (Checksum == 0) {
       if (GetColourHighlighting ()) {
-        gST->ConOut->SetAttribute (
-                       gST->ConOut,
-                       EFI_TEXT_ATTR (EFI_GREEN,
-                         ((OriginalAttribute&(BIT4|BIT5|BIT6))>>4))
-                       );
+  gST->ConOut->SetAttribute (
+                             gST->ConOut,
+                             EFI_TEXT_ATTR (
+                                            EFI_GREEN,
+                                            ((OriginalAttribute&(BIT4|BIT5|BIT6))>>4)
+                                            )
+                             );
       }
+
       Print (L"Table Checksum : OK\n\n");
     } else {
       IncrementErrorCount ();
       if (GetColourHighlighting ()) {
-        gST->ConOut->SetAttribute (
-                       gST->ConOut,
-                       EFI_TEXT_ATTR (EFI_RED,
-                         ((OriginalAttribute&(BIT4|BIT5|BIT6))>>4))
-                       );
+  gST->ConOut->SetAttribute (
+                             gST->ConOut,
+                             EFI_TEXT_ATTR (
+                                            EFI_RED,
+                                            ((OriginalAttribute&(BIT4|BIT5|BIT6))>>4)
+                                            )
+                             );
       }
+
       Print (L"Table Checksum : FAILED (0x%X)\n\n", Checksum);
     }
+
     if (GetColourHighlighting ()) {
-      gST->ConOut->SetAttribute (gST->ConOut, OriginalAttribute);
+  gST->ConOut->SetAttribute (gST->ConOut, OriginalAttribute);
     }
   }
 
@@ -173,14 +180,14 @@ VerifyChecksum (
 VOID
 EFIAPI
 DumpRaw (
-  IN UINT8* Ptr,
+  IN UINT8 *Ptr,
   IN UINT32 Length
   )
 {
-  UINTN ByteCount;
-  UINTN PartLineChars;
-  UINTN AsciiBufferIndex;
-  CHAR8 AsciiBuffer[17];
+  UINTN  ByteCount;
+  UINTN  PartLineChars;
+  UINTN  AsciiBufferIndex;
+  CHAR8  AsciiBuffer[17];
 
   ByteCount = 0;
   AsciiBufferIndex = 0;
@@ -216,6 +223,7 @@ DumpRaw (
     if ((Length & 0x0F) <= 8) {
       PartLineChars += 2;
     }
+
     while (PartLineChars > 0) {
       Print (L" ");
       PartLineChars--;
@@ -236,8 +244,8 @@ DumpRaw (
 VOID
 EFIAPI
 DumpUint8 (
-  IN CONST CHAR16* Format,
-  IN UINT8*        Ptr
+  IN CONST CHAR16 *Format,
+  IN UINT8 *Ptr
   )
 {
   Print (Format, *Ptr);
@@ -252,11 +260,11 @@ DumpUint8 (
 VOID
 EFIAPI
 DumpUint16 (
-  IN CONST CHAR16* Format,
-  IN UINT8*        Ptr
+  IN CONST CHAR16 *Format,
+  IN UINT8 *Ptr
   )
 {
-  Print (Format, *(UINT16*)Ptr);
+  Print (Format, *(UINT16 *) Ptr);
 }
 
 /**
@@ -268,11 +276,11 @@ DumpUint16 (
 VOID
 EFIAPI
 DumpUint32 (
-  IN CONST CHAR16* Format,
-  IN UINT8*        Ptr
+  IN CONST CHAR16 *Format,
+  IN UINT8 *Ptr
   )
 {
-  Print (Format, *(UINT32*)Ptr);
+  Print (Format, *(UINT32 *) Ptr);
 }
 
 /**
@@ -284,19 +292,19 @@ DumpUint32 (
 VOID
 EFIAPI
 DumpUint64 (
-  IN CONST CHAR16* Format,
-  IN UINT8*        Ptr
+  IN CONST CHAR16 *Format,
+  IN UINT8 *Ptr
   )
 {
   // Some fields are not aligned and this causes alignment faults
   // on ARM platforms if the compiler generates LDRD instructions.
   // Perform word access so that LDRD instructions are not generated.
-  UINT64 Val;
+  UINT64  Val;
 
-  Val = *(UINT32*)(Ptr + sizeof (UINT32));
+  Val = *(UINT32 *) (Ptr + sizeof (UINT32));
 
-  Val = LShiftU64(Val,32);
-  Val |= (UINT64)*(UINT32*)Ptr;
+  Val  = LShiftU64 (Val, 32);
+  Val |= (UINT64) *(UINT32 *) Ptr;
 
   Print (Format, Val);
 }
@@ -313,16 +321,16 @@ DumpUint64 (
 VOID
 EFIAPI
 Dump3Chars (
-  IN CONST CHAR16* Format OPTIONAL,
-  IN UINT8*        Ptr
+  IN CONST CHAR16 *Format OPTIONAL,
+  IN UINT8 *Ptr
   )
 {
   Print (
-    (Format != NULL) ? Format : L"%c%c%c",
-    Ptr[0],
-    Ptr[1],
-    Ptr[2]
-    );
+         (Format != NULL) ? Format : L"%c%c%c",
+         Ptr[0],
+         Ptr[1],
+         Ptr[2]
+         );
 }
 
 /**
@@ -337,17 +345,17 @@ Dump3Chars (
 VOID
 EFIAPI
 Dump4Chars (
-  IN CONST CHAR16* Format OPTIONAL,
-  IN UINT8*        Ptr
+  IN CONST CHAR16 *Format OPTIONAL,
+  IN UINT8 *Ptr
   )
 {
   Print (
-    (Format != NULL) ? Format : L"%c%c%c%c",
-    Ptr[0],
-    Ptr[1],
-    Ptr[2],
-    Ptr[3]
-    );
+         (Format != NULL) ? Format : L"%c%c%c%c",
+         Ptr[0],
+         Ptr[1],
+         Ptr[2],
+         Ptr[3]
+         );
 }
 
 /**
@@ -362,19 +370,19 @@ Dump4Chars (
 VOID
 EFIAPI
 Dump6Chars (
-  IN CONST CHAR16* Format OPTIONAL,
-  IN UINT8*        Ptr
+  IN CONST CHAR16 *Format OPTIONAL,
+  IN UINT8 *Ptr
   )
 {
   Print (
-    (Format != NULL) ? Format : L"%c%c%c%c%c%c",
-    Ptr[0],
-    Ptr[1],
-    Ptr[2],
-    Ptr[3],
-    Ptr[4],
-    Ptr[5]
-    );
+         (Format != NULL) ? Format : L"%c%c%c%c%c%c",
+         Ptr[0],
+         Ptr[1],
+         Ptr[2],
+         Ptr[3],
+         Ptr[4],
+         Ptr[5]
+         );
 }
 
 /**
@@ -389,21 +397,21 @@ Dump6Chars (
 VOID
 EFIAPI
 Dump8Chars (
-  IN CONST CHAR16* Format OPTIONAL,
-  IN UINT8*        Ptr
+  IN CONST CHAR16 *Format OPTIONAL,
+  IN UINT8 *Ptr
   )
 {
   Print (
-    (Format != NULL) ? Format : L"%c%c%c%c%c%c%c%c",
-    Ptr[0],
-    Ptr[1],
-    Ptr[2],
-    Ptr[3],
-    Ptr[4],
-    Ptr[5],
-    Ptr[6],
-    Ptr[7]
-    );
+         (Format != NULL) ? Format : L"%c%c%c%c%c%c%c%c",
+         Ptr[0],
+         Ptr[1],
+         Ptr[2],
+         Ptr[3],
+         Ptr[4],
+         Ptr[5],
+         Ptr[6],
+         Ptr[7]
+         );
 }
 
 /**
@@ -418,25 +426,25 @@ Dump8Chars (
 VOID
 EFIAPI
 Dump12Chars (
-  IN CONST CHAR16* Format OPTIONAL,
-  IN       UINT8*  Ptr
+  IN CONST CHAR16 *Format OPTIONAL,
+  IN       UINT8 *Ptr
   )
 {
   Print (
-    (Format != NULL) ? Format : L"%c%c%c%c%c%c%c%c%c%c%c%c",
-    Ptr[0],
-    Ptr[1],
-    Ptr[2],
-    Ptr[3],
-    Ptr[4],
-    Ptr[5],
-    Ptr[6],
-    Ptr[7],
-    Ptr[8],
-    Ptr[9],
-    Ptr[10],
-    Ptr[11]
-    );
+         (Format != NULL) ? Format : L"%c%c%c%c%c%c%c%c%c%c%c%c",
+         Ptr[0],
+         Ptr[1],
+         Ptr[2],
+         Ptr[3],
+         Ptr[4],
+         Ptr[5],
+         Ptr[6],
+         Ptr[7],
+         Ptr[8],
+         Ptr[9],
+         Ptr[10],
+         Ptr[11]
+         );
 }
 
 /**
@@ -455,16 +463,16 @@ VOID
 EFIAPI
 PrintFieldName (
   IN UINT32         Indent,
-  IN CONST CHAR16*  FieldName
-)
+  IN CONST CHAR16 *FieldName
+  )
 {
   Print (
-    L"%*a%-*s : ",
-    gIndent + Indent,
-    "",
-    (OUTPUT_FIELD_COLUMN_WIDTH - gIndent - Indent),
-    FieldName
-    );
+         L"%*a%-*s : ",
+         gIndent + Indent,
+         "",
+         (OUTPUT_FIELD_COLUMN_WIDTH - gIndent - Indent),
+         FieldName
+         );
 }
 
 /**
@@ -498,17 +506,17 @@ EFIAPI
 ParseAcpi (
   IN BOOLEAN            Trace,
   IN UINT32             Indent,
-  IN CONST CHAR8*       AsciiName OPTIONAL,
-  IN UINT8*             Ptr,
+  IN CONST CHAR8 *AsciiName OPTIONAL,
+  IN UINT8 *Ptr,
   IN UINT32             Length,
-  IN CONST ACPI_PARSER* Parser,
+  IN CONST ACPI_PARSER *Parser,
   IN UINT32             ParserItems
-)
+  )
 {
-  UINT32  Index;
-  UINT32  Offset;
-  BOOLEAN HighLight;
-  UINTN   OriginalAttribute;
+  UINT32   Index;
+  UINT32   Offset;
+  BOOLEAN  HighLight;
+  UINTN    OriginalAttribute;
 
   //
   // set local variables to suppress incorrect compiler/analyzer warnings
@@ -519,32 +527,34 @@ ParseAcpi (
   // Increment the Indent
   gIndent += Indent;
 
-  if (Trace && (AsciiName != NULL)){
+  if (Trace && (AsciiName != NULL)) {
     HighLight = GetColourHighlighting ();
 
     if (HighLight) {
       OriginalAttribute = gST->ConOut->Mode->Attribute;
       gST->ConOut->SetAttribute (
-                     gST->ConOut,
-                     EFI_TEXT_ATTR(EFI_YELLOW,
-                       ((OriginalAttribute&(BIT4|BIT5|BIT6))>>4))
-                     );
+                                 gST->ConOut,
+                                 EFI_TEXT_ATTR (
+                                                EFI_YELLOW,
+                                                ((OriginalAttribute&(BIT4|BIT5|BIT6))>>4)
+                                                )
+                                 );
     }
+
     Print (
-      L"%*a%-*a :\n",
-      gIndent,
-      "",
-      (OUTPUT_FIELD_COLUMN_WIDTH - gIndent),
-      AsciiName
-      );
+           L"%*a%-*a :\n",
+           gIndent,
+           "",
+           (OUTPUT_FIELD_COLUMN_WIDTH - gIndent),
+           AsciiName
+           );
     if (HighLight) {
-      gST->ConOut->SetAttribute (gST->ConOut, OriginalAttribute);
+  gST->ConOut->SetAttribute (gST->ConOut, OriginalAttribute);
     }
   }
 
   for (Index = 0; Index < ParserItems; Index++) {
     if ((Offset + Parser[Index].Length) > Length) {
-
       // For fields outside the buffer length provided, reset any pointers
       // which were supposed to be updated by this function call
       if (Parser[Index].ItemPtr != NULL) {
@@ -559,13 +569,13 @@ ParseAcpi (
         (Offset != Parser[Index].Offset)) {
       IncrementErrorCount ();
       Print (
-        L"\nERROR: %a: Offset Mismatch for %s\n"
-          L"CurrentOffset = %d FieldOffset = %d\n",
-        AsciiName,
-        Parser[Index].NameStr,
-        Offset,
-        Parser[Index].Offset
-        );
+             L"\nERROR: %a: Offset Mismatch for %s\n"
+             L"CurrentOffset = %d FieldOffset = %d\n",
+             AsciiName,
+             Parser[Index].NameStr,
+             Offset,
+             Parser[Index].Offset
+             );
     }
 
     if (Trace) {
@@ -591,26 +601,28 @@ ParseAcpi (
             break;
           default:
             Print (
-              L"\nERROR: %a: CANNOT PARSE THIS FIELD, Field Length = %d\n",
-              AsciiName,
-              Parser[Index].Length
-              );
+                   L"\nERROR: %a: CANNOT PARSE THIS FIELD, Field Length = %d\n",
+                   AsciiName,
+                   Parser[Index].Length
+                   );
         } // switch
       }
+
       // Validating only makes sense if we are tracing
       // the parsed table entries, to report by table name.
       if (GetConsistencyChecking () &&
           (Parser[Index].FieldValidator != NULL)) {
         Parser[Index].FieldValidator (Ptr, Parser[Index].Context);
       }
+
       Print (L"\n");
     } // if (Trace)
 
     if (Parser[Index].ItemPtr != NULL) {
-      *Parser[Index].ItemPtr = (VOID*)Ptr;
+      *Parser[Index].ItemPtr = (VOID *) Ptr;
     }
 
-    Ptr += Parser[Index].Length;
+    Ptr    += Parser[Index].Length;
     Offset += Parser[Index].Length;
   } // for
 
@@ -624,12 +636,12 @@ ParseAcpi (
   The GasParser array is used by the ParseAcpi function to parse and/or trace
   the GAS structure.
 **/
-STATIC CONST ACPI_PARSER GasParser[] = {
-  {L"Address Space ID", 1, 0, L"0x%x", NULL, NULL, NULL, NULL},
-  {L"Register Bit Width", 1, 1, L"0x%x", NULL, NULL, NULL, NULL},
-  {L"Register Bit Offset", 1, 2, L"0x%x", NULL, NULL, NULL, NULL},
-  {L"Address Size", 1, 3, L"0x%x", NULL, NULL, NULL, NULL},
-  {L"Address", 8, 4, L"0x%lx", NULL, NULL, NULL, NULL}
+STATIC CONST ACPI_PARSER  GasParser[] = {
+  { L"Address Space ID",    1, 0, L"0x%x",  NULL, NULL, NULL, NULL },
+  { L"Register Bit Width",  1, 1, L"0x%x",  NULL, NULL, NULL, NULL },
+  { L"Register Bit Offset", 1, 2, L"0x%x",  NULL, NULL, NULL, NULL },
+  { L"Address Size",        1, 3, L"0x%x",  NULL, NULL, NULL, NULL },
+  { L"Address",             8, 4, L"0x%lx", NULL, NULL, NULL, NULL }
 };
 
 /**
@@ -644,20 +656,20 @@ STATIC CONST ACPI_PARSER GasParser[] = {
 UINT32
 EFIAPI
 DumpGasStruct (
-  IN UINT8*        Ptr,
+  IN UINT8 *Ptr,
   IN UINT32        Indent,
   IN UINT32        Length
   )
 {
   Print (L"\n");
   return ParseAcpi (
-           TRUE,
-           Indent,
-           NULL,
-           Ptr,
-           Length,
-           PARSER_PARAMS (GasParser)
-           );
+                    TRUE,
+                    Indent,
+                    NULL,
+                    Ptr,
+                    Length,
+                    PARSER_PARAMS (GasParser)
+                    );
 }
 
 /**
@@ -669,8 +681,8 @@ DumpGasStruct (
 VOID
 EFIAPI
 DumpGas (
-  IN CONST CHAR16* Format OPTIONAL,
-  IN UINT8*        Ptr
+  IN CONST CHAR16 *Format OPTIONAL,
+  IN UINT8 *Ptr
   )
 {
   DumpGasStruct (Ptr, 2, sizeof (EFI_ACPI_6_3_GENERIC_ADDRESS_STRUCTURE));
@@ -686,17 +698,17 @@ DumpGas (
 UINT32
 EFIAPI
 DumpAcpiHeader (
-  IN UINT8* Ptr
+  IN UINT8 *Ptr
   )
 {
   return ParseAcpi (
-           TRUE,
-           0,
-           "ACPI Table Header",
-           Ptr,
-           sizeof (EFI_ACPI_DESCRIPTION_HEADER),
-           PARSER_PARAMS (AcpiHeaderParser)
-           );
+                    TRUE,
+                    0,
+                    "ACPI Table Header",
+                    Ptr,
+                    sizeof (EFI_ACPI_DESCRIPTION_HEADER),
+                    PARSER_PARAMS (AcpiHeaderParser)
+                    );
 }
 
 /**
@@ -715,26 +727,26 @@ DumpAcpiHeader (
 UINT32
 EFIAPI
 ParseAcpiHeader (
-  IN  UINT8*         Ptr,
-  OUT CONST UINT32** Signature,
-  OUT CONST UINT32** Length,
-  OUT CONST UINT8**  Revision
+  IN  UINT8 *Ptr,
+  OUT CONST UINT32 **Signature,
+  OUT CONST UINT32 **Length,
+  OUT CONST UINT8 **Revision
   )
 {
-  UINT32                        BytesParsed;
+  UINT32  BytesParsed;
 
   BytesParsed = ParseAcpi (
-                  FALSE,
-                  0,
-                  NULL,
-                  Ptr,
-                  sizeof (EFI_ACPI_DESCRIPTION_HEADER),
-                  PARSER_PARAMS (AcpiHeaderParser)
-                  );
+                           FALSE,
+                           0,
+                           NULL,
+                           Ptr,
+                           sizeof (EFI_ACPI_DESCRIPTION_HEADER),
+                           PARSER_PARAMS (AcpiHeaderParser)
+                           );
 
   *Signature = AcpiHdrInfo.Signature;
-  *Length = AcpiHdrInfo.Length;
-  *Revision = AcpiHdrInfo.Revision;
+  *Length    = AcpiHdrInfo.Length;
+  *Revision  = AcpiHdrInfo.Revision;
 
   return BytesParsed;
 }

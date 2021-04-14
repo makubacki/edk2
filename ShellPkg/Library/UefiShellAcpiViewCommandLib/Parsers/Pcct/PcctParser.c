@@ -17,12 +17,12 @@
 #include "PcctParser.h"
 
 // Local variables
-STATIC ACPI_DESCRIPTION_HEADER_INFO AcpiHdrInfo;
+STATIC ACPI_DESCRIPTION_HEADER_INFO  AcpiHdrInfo;
 
-STATIC UINT32* PccGlobalFlags;
-STATIC UINT8*  PccSubspaceLength;
-STATIC UINT8*  PccSubspaceType;
-STATIC UINT8*  ExtendedPccSubspaceInterruptFlags;
+STATIC UINT32  *PccGlobalFlags;
+STATIC UINT8   *PccSubspaceLength;
+STATIC UINT8   *PccSubspaceType;
+STATIC UINT8   *ExtendedPccSubspaceInterruptFlags;
 
 /**
   This function validates the length coded on 4 bytes of a shared memory range
@@ -35,18 +35,18 @@ STATIC
 VOID
 EFIAPI
 ValidateRangeLength4 (
-  IN UINT8* Ptr,
-  IN VOID*  Context
+  IN UINT8 *Ptr,
+  IN VOID *Context
   )
 {
-  if (*(UINT32*)Ptr < MIN_EXT_PCC_SUBSPACE_MEM_RANGE_LEN) {
+  if (*(UINT32 *) Ptr < MIN_EXT_PCC_SUBSPACE_MEM_RANGE_LEN) {
     IncrementErrorCount ();
     Print (
-      L"\nError: Shared memory range length is too short.\n"
-      L"Length is %u when it should be greater than or equal to %u",
-      *(UINT32*)Ptr,
-      MIN_EXT_PCC_SUBSPACE_MEM_RANGE_LEN
-      );
+           L"\nError: Shared memory range length is too short.\n"
+           L"Length is %u when it should be greater than or equal to %u",
+           *(UINT32 *) Ptr,
+           MIN_EXT_PCC_SUBSPACE_MEM_RANGE_LEN
+           );
   }
 }
 
@@ -61,18 +61,18 @@ STATIC
 VOID
 EFIAPI
 ValidateRangeLength8 (
-  IN UINT8* Ptr,
-  IN VOID*  Context
+  IN UINT8 *Ptr,
+  IN VOID *Context
   )
 {
-  if (*(UINT64*)Ptr <= MIN_MEMORY_RANGE_LENGTH) {
+  if (*(UINT64 *) Ptr <= MIN_MEMORY_RANGE_LENGTH) {
     IncrementErrorCount ();
     Print (
-      L"\nError: Shared memory range length is too short.\n"
-      L"Length is %u when it should be greater than %u",
-      *(UINT64*)Ptr,
-      MIN_MEMORY_RANGE_LENGTH
-      );
+           L"\nError: Shared memory range length is too short.\n"
+           L"Length is %u when it should be greater than %u",
+           *(UINT64 *) Ptr,
+           MIN_MEMORY_RANGE_LENGTH
+           );
   }
 }
 
@@ -87,14 +87,14 @@ STATIC
 VOID
 EFIAPI
 ValidatePccType0Gas (
-  IN UINT8* Ptr,
-  IN VOID*  Context
+  IN UINT8 *Ptr,
+  IN VOID *Context
   )
 {
-  switch (*(UINT8*)Ptr) {
-#if !(defined (MDE_CPU_ARM) || defined (MDE_CPU_AARCH64))
-    case EFI_ACPI_6_3_SYSTEM_IO:
-#endif //if not (defined (MDE_CPU_ARM) || defined (MDE_CPU_AARCH64))
+  switch (*(UINT8 *) Ptr) {
+ #if !(defined (MDE_CPU_ARM) || defined (MDE_CPU_AARCH64))
+      case EFI_ACPI_6_3_SYSTEM_IO:
+ #endif //if not (defined (MDE_CPU_ARM) || defined (MDE_CPU_AARCH64))
     case EFI_ACPI_6_3_SYSTEM_MEMORY:
       return;
     default:
@@ -114,14 +114,14 @@ STATIC
 VOID
 EFIAPI
 ValidatePccGas (
-  IN UINT8* Ptr,
-  IN VOID*  Context
+  IN UINT8 *Ptr,
+  IN VOID *Context
   )
 {
-  switch (*(UINT8*)Ptr) {
-#if !(defined (MDE_CPU_ARM) || defined (MDE_CPU_AARCH64))
-    case EFI_ACPI_6_3_SYSTEM_IO:
-#endif //if not (defined (MDE_CPU_ARM) || defined (MDE_CPU_AARCH64))
+  switch (*(UINT8 *) Ptr) {
+ #if !(defined (MDE_CPU_ARM) || defined (MDE_CPU_AARCH64))
+      case EFI_ACPI_6_3_SYSTEM_IO:
+ #endif //if not (defined (MDE_CPU_ARM) || defined (MDE_CPU_AARCH64))
     case EFI_ACPI_6_3_FUNCTIONAL_FIXED_HARDWARE:
     case EFI_ACPI_6_3_SYSTEM_MEMORY:
       return;
@@ -142,17 +142,17 @@ STATIC
 VOID
 EFIAPI
 ValidatePccDoorbellGas (
-  IN UINT8* Ptr,
-  IN VOID*  Context
+  IN UINT8 *Ptr,
+  IN VOID *Context
   )
 {
   // For slave subspaces this field is optional, if not present the field
   // should just contain zeros.
   if (*PccSubspaceType == EFI_ACPI_6_3_PCCT_SUBSPACE_TYPE_4_EXTENDED_PCC) {
     if (IsZeroBuffer (
-          Ptr,
-          sizeof (EFI_ACPI_6_3_GENERIC_ADDRESS_STRUCTURE)
-          )) {
+                      Ptr,
+                      sizeof (EFI_ACPI_6_3_GENERIC_ADDRESS_STRUCTURE)
+                      )) {
       return;
     }
   }
@@ -172,8 +172,8 @@ STATIC
 VOID
 EFIAPI
 ValidatePccIntAckGas (
-  IN UINT8* Ptr,
-  IN VOID*  Context
+  IN UINT8 *Ptr,
+  IN VOID *Context
   )
 {
   // If the subspace does not support interrupts or the interrupt is
@@ -183,12 +183,12 @@ ValidatePccIntAckGas (
   if (((*PccGlobalFlags & EFI_ACPI_6_3_PCCT_FLAGS_PLATFORM_INTERRUPT) !=
        EFI_ACPI_6_3_PCCT_FLAGS_PLATFORM_INTERRUPT) ||
       ((*ExtendedPccSubspaceInterruptFlags &
-       EFI_ACPI_6_3_PCCT_SUBSPACE_PLATFORM_INTERRUPT_FLAGS_MODE) ==
+        EFI_ACPI_6_3_PCCT_SUBSPACE_PLATFORM_INTERRUPT_FLAGS_MODE) ==
        EFI_ACPI_6_3_PCCT_SUBSPACE_PLATFORM_INTERRUPT_FLAGS_MODE)) {
     if (IsZeroBuffer (
-          Ptr,
-          sizeof (EFI_ACPI_6_3_GENERIC_ADDRESS_STRUCTURE)
-          )) {
+                      Ptr,
+                      sizeof (EFI_ACPI_6_3_GENERIC_ADDRESS_STRUCTURE)
+                      )) {
       return;
     }
   }
@@ -207,8 +207,8 @@ STATIC
 VOID
 EFIAPI
 ValidatePccErrStatusGas (
-  IN UINT8* Ptr,
-  IN VOID*  Context
+  IN UINT8 *Ptr,
+  IN VOID *Context
   )
 {
   // This field is ignored by the OSPM on slave channels.
@@ -230,37 +230,37 @@ STATIC
 VOID
 EFIAPI
 ValidatePlatInterrupt (
-  IN UINT8* Ptr,
-  IN VOID*  Context
+  IN UINT8 *Ptr,
+  IN VOID *Context
   )
 {
   // If a slave subspace is present in the PCCT, then the global Platform
   // Interrupt flag must be set to 1.
   if ((*PccSubspaceType == EFI_ACPI_6_3_PCCT_SUBSPACE_TYPE_4_EXTENDED_PCC) &&
       ((*PccGlobalFlags & EFI_ACPI_6_3_PCCT_FLAGS_PLATFORM_INTERRUPT) !=
-        EFI_ACPI_6_3_PCCT_FLAGS_PLATFORM_INTERRUPT)) {
+       EFI_ACPI_6_3_PCCT_FLAGS_PLATFORM_INTERRUPT)) {
     IncrementErrorCount ();
     Print (
-      L"\nError: Global Platform interrupt flag must be set to 1" \
-        L" if a PCC type 4 structure is present in PCCT."
-      );
+           L"\nError: Global Platform interrupt flag must be set to 1" \
+           L" if a PCC type 4 structure is present in PCCT."
+           );
   }
 }
 
 /**
   An ACPI_PARSER array describing the ACPI PCCT Table.
 */
-STATIC CONST ACPI_PARSER PcctParser[] = {
+STATIC CONST ACPI_PARSER  PcctParser[] = {
   PARSE_ACPI_HEADER (&AcpiHdrInfo),
-  {L"Flags", 4, 36, NULL, NULL, (VOID**)&PccGlobalFlags, NULL, NULL},
-  {L"Reserved", 8, 40, NULL, NULL, NULL, NULL, NULL}
+  { L"Flags",                      4,  36, NULL, NULL, (VOID **) &PccGlobalFlags, NULL, NULL },
+  { L"Reserved",                   8,  40, NULL, NULL, NULL,                      NULL, NULL }
 };
 
 /**
   An ACPI_PARSER array describing the platform communications channel subspace
   structure header.
 */
-STATIC CONST ACPI_PARSER PccSubspaceHeaderParser[] = {
+STATIC CONST ACPI_PARSER  PccSubspaceHeaderParser[] = {
   PCC_SUBSPACE_HEADER ()
   // ... Type Specific Fields ...
 };
@@ -268,103 +268,103 @@ STATIC CONST ACPI_PARSER PccSubspaceHeaderParser[] = {
 /**
   An ACPI_PARSER array describing the Generic Communications Subspace - Type 0
 */
-STATIC CONST ACPI_PARSER PccSubspaceType0Parser[] = {
+STATIC CONST ACPI_PARSER  PccSubspaceType0Parser[] = {
   PCC_SUBSPACE_HEADER (),
-  {L"Reserved", 6, 2, L"%x %x %x %x %x %x", Dump6Chars, NULL, NULL, NULL},
-  {L"Base Address", 8, 8, L"0x%lx", NULL, NULL, NULL, NULL},
-  {L"Memory Range Length", 8, 16, L"0x%lx", NULL, NULL, ValidateRangeLength8,
-    NULL},
-  {L"Doorbell Register", 12, 24, NULL, DumpGas, NULL, ValidatePccType0Gas,
-    NULL},
-  {L"Doorbell Preserve", 8, 36, L"0x%lx", NULL, NULL, NULL, NULL},
-  {L"Doorbell Write", 8, 44, L"0x%lx", NULL, NULL, NULL, NULL},
-  {L"Nominal Latency", 4, 52, L"%u", NULL, NULL, NULL, NULL},
-  {L"Maximum Periodic Access Rate", 4, 56, L"%u", NULL, NULL, NULL, NULL},
-  {L"Minimum Request Turnaround Time", 2, 60, L"%u", NULL, NULL, NULL, NULL}
+  { L"Reserved",         6,   2,  L"%x %x %x %x %x %x", Dump6Chars, NULL, NULL,                 NULL },
+  { L"Base Address",     8,   8,  L"0x%lx",             NULL,       NULL, NULL,                 NULL },
+  { L"Memory Range Length",8,   16, L"0x%lx",             NULL,       NULL, ValidateRangeLength8,
+    NULL },
+  { L"Doorbell Register",12,  24, NULL,                 DumpGas,    NULL, ValidatePccType0Gas,
+    NULL },
+  { L"Doorbell Preserve",8,   36, L"0x%lx",             NULL,       NULL, NULL,                 NULL },
+  { L"Doorbell Write",   8,   44, L"0x%lx",             NULL,       NULL, NULL,                 NULL },
+  { L"Nominal Latency",  4,   52, L"%u",                NULL,       NULL, NULL,                 NULL },
+  { L"Maximum Periodic Access Rate",4,   56, L"%u",                NULL,       NULL, NULL,                 NULL },
+  { L"Minimum Request Turnaround Time",2,   60, L"%u",                NULL,       NULL, NULL,                 NULL }
 };
 
 /**
   An ACPI_PARSER array describing the HW-Reduced Communications Subspace
   - Type 1
 */
-STATIC CONST ACPI_PARSER PccSubspaceType1Parser[] = {
+STATIC CONST ACPI_PARSER  PccSubspaceType1Parser[] = {
   PCC_SUBSPACE_HEADER (),
-  {L"Platform Interrupt", 4, 2, L"0x%x", NULL, NULL, NULL, NULL},
-  {L"Platform Interrupt Flags", 1, 6, L"0x%x", NULL, NULL, NULL, NULL},
-  {L"Reserved", 1, 7, L"0x%x", NULL, NULL, NULL, NULL},
-  {L"Base Address", 8, 8, L"0x%lx", NULL, NULL, NULL, NULL},
-  {L"Memory Range Length", 8, 16, L"0x%lx", NULL, NULL, ValidateRangeLength8,
-    NULL},
-  {L"Doorbell Register", 12, 24, NULL, DumpGas, NULL,
-    ValidatePccGas, NULL},
-  {L"Doorbell Preserve", 8, 36, L"0x%lx", NULL, NULL, NULL, NULL},
-  {L"Doorbell Write", 8, 44, L"0x%lx", NULL, NULL, NULL, NULL},
-  {L"Nominal Latency", 4, 52, L"%u", NULL, NULL, NULL, NULL},
-  {L"Maximum Periodic Access Rate", 4, 56, L"%u", NULL, NULL, NULL, NULL},
-  {L"Minimum Request Turnaround Time", 2, 60, L"%u", NULL, NULL, NULL, NULL}
+  { L"Platform Interrupt",4,   2,  L"0x%x",  NULL,    NULL, NULL,                 NULL },
+  { L"Platform Interrupt Flags",1,   6,  L"0x%x",  NULL,    NULL, NULL,                 NULL },
+  { L"Reserved",         1,   7,  L"0x%x",  NULL,    NULL, NULL,                 NULL },
+  { L"Base Address",     8,   8,  L"0x%lx", NULL,    NULL, NULL,                 NULL },
+  { L"Memory Range Length",8,   16, L"0x%lx", NULL,    NULL, ValidateRangeLength8,
+    NULL },
+  { L"Doorbell Register",12,  24, NULL,     DumpGas, NULL,
+    ValidatePccGas,      NULL },
+  { L"Doorbell Preserve",8,   36, L"0x%lx", NULL,    NULL, NULL,                 NULL },
+  { L"Doorbell Write",   8,   44, L"0x%lx", NULL,    NULL, NULL,                 NULL },
+  { L"Nominal Latency",  4,   52, L"%u",    NULL,    NULL, NULL,                 NULL },
+  { L"Maximum Periodic Access Rate",4,   56, L"%u",    NULL,    NULL, NULL,                 NULL },
+  { L"Minimum Request Turnaround Time",2,   60, L"%u",    NULL,    NULL, NULL,                 NULL }
 };
 
 /**
   An ACPI_PARSER array describing the HW-Reduced Communications Subspace
   - Type 2
 */
-STATIC CONST ACPI_PARSER PccSubspaceType2Parser[] = {
+STATIC CONST ACPI_PARSER  PccSubspaceType2Parser[] = {
   PCC_SUBSPACE_HEADER (),
-  {L"Platform Interrupt", 4, 2, L"0x%x", NULL, NULL, NULL, NULL},
-  {L"Platform Interrupt Flags", 1, 6, L"0x%x", NULL, NULL, NULL, NULL},
-  {L"Reserved", 1, 7, L"0x%x", NULL, NULL, NULL, NULL},
-  {L"Base Address", 8, 8, L"0x%lx", NULL, NULL, NULL, NULL},
-  {L"Memory Range Length", 8, 16, L"0x%lx", NULL, NULL, ValidateRangeLength8,
-    NULL},
-  {L"Doorbell Register", 12, 24, NULL, DumpGas, NULL,
-    ValidatePccGas, NULL},
-  {L"Doorbell Preserve", 8, 36, L"0x%lx", NULL, NULL, NULL, NULL},
-  {L"Doorbell Write", 8, 44, L"0x%lx", NULL, NULL, NULL, NULL},
-  {L"Nominal Latency", 4, 52, L"%u", NULL, NULL, NULL, NULL},
-  {L"Maximum Periodic Access Rate", 4, 56, L"%u", NULL, NULL, NULL, NULL},
-  {L"Minimum Request Turnaround Time", 2, 60, L"%u", NULL, NULL, NULL, NULL},
-  {L"Platform Interrupt Ack Register", 12, 62, NULL, DumpGas, NULL,
-    ValidatePccGas, NULL},
-  {L"Platform Interrupt Ack Preserve", 8, 74, L"0x%lx", NULL, NULL, NULL, NULL},
-  {L"Platform Interrupt Ack Write", 8, 82, L"0x%lx", NULL, NULL,
-    NULL, NULL},
+  { L"Platform Interrupt",4,   2,  L"0x%x",  NULL,    NULL, NULL,                 NULL },
+  { L"Platform Interrupt Flags",1,   6,  L"0x%x",  NULL,    NULL, NULL,                 NULL },
+  { L"Reserved",         1,   7,  L"0x%x",  NULL,    NULL, NULL,                 NULL },
+  { L"Base Address",     8,   8,  L"0x%lx", NULL,    NULL, NULL,                 NULL },
+  { L"Memory Range Length",8,   16, L"0x%lx", NULL,    NULL, ValidateRangeLength8,
+    NULL },
+  { L"Doorbell Register",12,  24, NULL,     DumpGas, NULL,
+    ValidatePccGas,      NULL },
+  { L"Doorbell Preserve",8,   36, L"0x%lx", NULL,    NULL, NULL,                 NULL },
+  { L"Doorbell Write",   8,   44, L"0x%lx", NULL,    NULL, NULL,                 NULL },
+  { L"Nominal Latency",  4,   52, L"%u",    NULL,    NULL, NULL,                 NULL },
+  { L"Maximum Periodic Access Rate",4,   56, L"%u",    NULL,    NULL, NULL,                 NULL },
+  { L"Minimum Request Turnaround Time",2,   60, L"%u",    NULL,    NULL, NULL,                 NULL },
+  { L"Platform Interrupt Ack Register",12,  62, NULL,     DumpGas, NULL,
+    ValidatePccGas,      NULL },
+  { L"Platform Interrupt Ack Preserve",8,   74, L"0x%lx", NULL,    NULL, NULL,                 NULL },
+  { L"Platform Interrupt Ack Write",8,   82, L"0x%lx", NULL,    NULL,
+    NULL,                NULL },
 };
 
 /**
   An ACPI_PARSER array describing the Extended PCC Subspaces - Type 3/4
 */
-STATIC CONST ACPI_PARSER PccSubspaceType3Parser[] = {
+STATIC CONST ACPI_PARSER  PccSubspaceType3Parser[] = {
   PCC_SUBSPACE_HEADER (),
-  {L"Platform Interrupt", 4, 2, L"0x%x", NULL, NULL,
-    ValidatePlatInterrupt, NULL},
-  {L"Platform Interrupt Flags", 1, 6, L"0x%x", NULL,
-    (VOID**)&ExtendedPccSubspaceInterruptFlags, NULL, NULL},
-  {L"Reserved", 1, 7, L"0x%x", NULL, NULL, NULL, NULL},
-  {L"Base Address", 8, 8, L"0x%lx", NULL, NULL, NULL, NULL},
-  {L"Memory Range Length", 4, 16, L"0x%x", NULL, NULL, ValidateRangeLength4,
-    NULL},
-  {L"Doorbell Register", 12, 20, NULL, DumpGas, NULL,
-    ValidatePccDoorbellGas, NULL},
-  {L"Doorbell Preserve", 8, 32, L"0x%lx", NULL, NULL, NULL, NULL},
-  {L"Doorbell Write", 8, 40, L"0x%lx", NULL, NULL, NULL, NULL},
-  {L"Nominal Latency", 4, 48, L"%u", NULL, NULL, NULL, NULL},
-  {L"Maximum Periodic Access Rate", 4, 52, L"%u", NULL, NULL, NULL, NULL},
-  {L"Minimum Request Turnaround Time", 4, 56, L"%u", NULL, NULL, NULL, NULL},
-  {L"Platform Interrupt Ack Register", 12, 60, NULL, DumpGas, NULL,
-    ValidatePccIntAckGas, NULL},
-  {L"Platform Interrupt Ack Preserve", 8, 72, L"0x%lx", NULL, NULL, NULL, NULL},
-  {L"Platform Interrupt Ack Set", 8, 80, L"0x%lx", NULL, NULL, NULL, NULL},
-  {L"Reserved", 8, 88, L"0x%lx", NULL, NULL, NULL, NULL},
-  {L"Cmd Complete Check Reg Addr", 12, 96, NULL, DumpGas, NULL,
-    ValidatePccGas, NULL},
-  {L"Cmd Complete Check Mask", 8, 108, L"0x%lx", NULL, NULL, NULL, NULL},
-  {L"Cmd Update Reg Addr", 12, 116, NULL, DumpGas, NULL,
-    ValidatePccGas, NULL},
-  {L"Cmd Update Preserve mask", 8, 128, L"0x%lx", NULL, NULL, NULL, NULL},
-  {L"Cmd Update Set mask", 8, 136, L"0x%lx", NULL, NULL, NULL, NULL},
-  {L"Error Status Register", 12, 144, NULL, DumpGas, NULL,
-    ValidatePccErrStatusGas, NULL},
-  {L"Error Status Mask", 8, 156, L"0x%lx", NULL, NULL, NULL, NULL},
+  { L"Platform Interrupt",                       4,     2,   L"0x%x",  NULL,    NULL,
+    ValidatePlatInterrupt,                       NULL },
+  { L"Platform Interrupt Flags",                 1,     6,   L"0x%x",  NULL,
+    (VOID **) &ExtendedPccSubspaceInterruptFlags,NULL,  NULL },
+  { L"Reserved",                                 1,     7,   L"0x%x",  NULL,    NULL,NULL,                  NULL },
+  { L"Base Address",                             8,     8,   L"0x%lx", NULL,    NULL,NULL,                  NULL },
+  { L"Memory Range Length",                      4,     16,  L"0x%x",  NULL,    NULL,ValidateRangeLength4,
+    NULL },
+  { L"Doorbell Register",                        12,    20,  NULL,     DumpGas, NULL,
+    ValidatePccDoorbellGas,                      NULL },
+  { L"Doorbell Preserve",                        8,     32,  L"0x%lx", NULL,    NULL,NULL,                  NULL },
+  { L"Doorbell Write",                           8,     40,  L"0x%lx", NULL,    NULL,NULL,                  NULL },
+  { L"Nominal Latency",                          4,     48,  L"%u",    NULL,    NULL,NULL,                  NULL },
+  { L"Maximum Periodic Access Rate",             4,     52,  L"%u",    NULL,    NULL,NULL,                  NULL },
+  { L"Minimum Request Turnaround Time",          4,     56,  L"%u",    NULL,    NULL,NULL,                  NULL },
+  { L"Platform Interrupt Ack Register",          12,    60,  NULL,     DumpGas, NULL,
+    ValidatePccIntAckGas,                        NULL },
+  { L"Platform Interrupt Ack Preserve",          8,     72,  L"0x%lx", NULL,    NULL,NULL,                  NULL },
+  { L"Platform Interrupt Ack Set",               8,     80,  L"0x%lx", NULL,    NULL,NULL,                  NULL },
+  { L"Reserved",                                 8,     88,  L"0x%lx", NULL,    NULL,NULL,                  NULL },
+  { L"Cmd Complete Check Reg Addr",              12,    96,  NULL,     DumpGas, NULL,
+    ValidatePccGas,                              NULL },
+  { L"Cmd Complete Check Mask",                  8,     108, L"0x%lx", NULL,    NULL,NULL,                  NULL },
+  { L"Cmd Update Reg Addr",                      12,    116, NULL,     DumpGas, NULL,
+    ValidatePccGas,                              NULL },
+  { L"Cmd Update Preserve mask",                 8,     128, L"0x%lx", NULL,    NULL,NULL,                  NULL },
+  { L"Cmd Update Set mask",                      8,     136, L"0x%lx", NULL,    NULL,NULL,                  NULL },
+  { L"Error Status Register",                    12,    144, NULL,     DumpGas, NULL,
+    ValidatePccErrStatusGas,                     NULL },
+  { L"Error Status Mask",                        8,     156, L"0x%lx", NULL,    NULL,NULL,                  NULL },
 };
 
 /**
@@ -376,18 +376,18 @@ STATIC CONST ACPI_PARSER PccSubspaceType3Parser[] = {
 STATIC
 VOID
 DumpPccSubspaceType0 (
-  IN UINT8* Ptr,
+  IN UINT8 *Ptr,
   IN UINT8  Length
   )
 {
   ParseAcpi (
-    TRUE,
-    2,
-    "Subspace Type 0",
-    Ptr,
-    Length,
-    PARSER_PARAMS (PccSubspaceType0Parser)
-    );
+             TRUE,
+             2,
+             "Subspace Type 0",
+             Ptr,
+             Length,
+             PARSER_PARAMS (PccSubspaceType0Parser)
+             );
 }
 
 /**
@@ -399,18 +399,18 @@ DumpPccSubspaceType0 (
 STATIC
 VOID
 DumpPccSubspaceType1 (
-  IN UINT8* Ptr,
+  IN UINT8 *Ptr,
   IN UINT8  Length
   )
 {
   ParseAcpi (
-    TRUE,
-    2,
-    "Subspace Type 1",
-    Ptr,
-    Length,
-    PARSER_PARAMS (PccSubspaceType1Parser)
-    );
+             TRUE,
+             2,
+             "Subspace Type 1",
+             Ptr,
+             Length,
+             PARSER_PARAMS (PccSubspaceType1Parser)
+             );
 }
 
 /**
@@ -422,18 +422,18 @@ DumpPccSubspaceType1 (
 STATIC
 VOID
 DumpPccSubspaceType2 (
-  IN UINT8* Ptr,
+  IN UINT8 *Ptr,
   IN UINT8  Length
   )
 {
   ParseAcpi (
-    TRUE,
-    2,
-    "Subspace Type 2",
-    Ptr,
-    Length,
-    PARSER_PARAMS (PccSubspaceType2Parser)
-    );
+             TRUE,
+             2,
+             "Subspace Type 2",
+             Ptr,
+             Length,
+             PARSER_PARAMS (PccSubspaceType2Parser)
+             );
 }
 
 /**
@@ -445,18 +445,18 @@ DumpPccSubspaceType2 (
 STATIC
 VOID
 DumpPccSubspaceType3 (
-  IN UINT8* Ptr,
+  IN UINT8 *Ptr,
   IN UINT8  Length
   )
 {
   ParseAcpi (
-    TRUE,
-    2,
-    "Subspace Type 3",
-    Ptr,
-    Length,
-    PARSER_PARAMS (PccSubspaceType3Parser)
-    );
+             TRUE,
+             2,
+             "Subspace Type 3",
+             Ptr,
+             Length,
+             PARSER_PARAMS (PccSubspaceType3Parser)
+             );
 }
 
 /**
@@ -468,18 +468,18 @@ DumpPccSubspaceType3 (
 STATIC
 VOID
 DumpPccSubspaceType4 (
-  IN UINT8* Ptr,
+  IN UINT8 *Ptr,
   IN UINT8  Length
   )
 {
   ParseAcpi (
-    TRUE,
-    2,
-    "Subspace Type 4",
-    Ptr,
-    Length,
-    PARSER_PARAMS (PccSubspaceType3Parser)
-    );
+             TRUE,
+             2,
+             "Subspace Type 4",
+             Ptr,
+             Length,
+             PARSER_PARAMS (PccSubspaceType3Parser)
+             );
 }
 
 /**
@@ -499,27 +499,27 @@ VOID
 EFIAPI
 ParseAcpiPcct (
   IN BOOLEAN Trace,
-  IN UINT8*  Ptr,
+  IN UINT8 *Ptr,
   IN UINT32  AcpiTableLength,
   IN UINT8   AcpiTableRevision
   )
 {
-  UINT32 Offset;
-  UINT8* PccSubspacePtr;
-  UINTN  SubspaceCount;
+  UINT32  Offset;
+  UINT8   *PccSubspacePtr;
+  UINTN   SubspaceCount;
 
   if (!Trace) {
     return;
   }
 
   Offset = ParseAcpi (
-             TRUE,
-             0,
-             "PCCT",
-             Ptr,
-             AcpiTableLength,
-             PARSER_PARAMS (PcctParser)
-             );
+                      TRUE,
+                      0,
+                      "PCCT",
+                      Ptr,
+                      AcpiTableLength,
+                      PARSER_PARAMS (PcctParser)
+                      );
 
   PccSubspacePtr = Ptr + Offset;
 
@@ -527,13 +527,13 @@ ParseAcpiPcct (
   while (Offset < AcpiTableLength) {
     // Parse common structure header to obtain Type and Length.
     ParseAcpi (
-      FALSE,
-      0,
-      NULL,
-      PccSubspacePtr,
-      AcpiTableLength - Offset,
-      PARSER_PARAMS (PccSubspaceHeaderParser)
-      );
+               FALSE,
+               0,
+               NULL,
+               PccSubspacePtr,
+               AcpiTableLength - Offset,
+               PARSER_PARAMS (PccSubspaceHeaderParser)
+               );
 
     // Check if the values used to control the parsing logic have been
     // successfully read.
@@ -541,10 +541,10 @@ ParseAcpiPcct (
         (PccSubspaceLength == NULL)) {
       IncrementErrorCount ();
       Print (
-        L"ERROR: Insufficient remaining table buffer length to read the " \
-          L"structure header. Length = %u.\n",
-        AcpiTableLength - Offset
-        );
+             L"ERROR: Insufficient remaining table buffer length to read the " \
+             L"structure header. Length = %u.\n",
+             AcpiTableLength - Offset
+             );
       return;
     }
 
@@ -553,54 +553,54 @@ ParseAcpiPcct (
         ((Offset + (*PccSubspaceLength)) > AcpiTableLength)) {
       IncrementErrorCount ();
       Print (
-        L"ERROR: Invalid Structure length. " \
-          L"Length = %u. Offset = %u. AcpiTableLength = %u.\n",
-        *PccSubspaceLength,
-        Offset,
-        AcpiTableLength
-        );
+             L"ERROR: Invalid Structure length. " \
+             L"Length = %u. Offset = %u. AcpiTableLength = %u.\n",
+             *PccSubspaceLength,
+             Offset,
+             AcpiTableLength
+             );
       return;
     }
 
     switch (*PccSubspaceType) {
       case EFI_ACPI_6_3_PCCT_SUBSPACE_TYPE_GENERIC:
         DumpPccSubspaceType0 (
-          PccSubspacePtr,
-          *PccSubspaceLength
-          );
+                              PccSubspacePtr,
+                              *PccSubspaceLength
+                              );
         break;
       case EFI_ACPI_6_3_PCCT_SUBSPACE_TYPE_1_HW_REDUCED_COMMUNICATIONS:
         DumpPccSubspaceType1 (
-          PccSubspacePtr,
-          *PccSubspaceLength
-          );
+                              PccSubspacePtr,
+                              *PccSubspaceLength
+                              );
         break;
       case EFI_ACPI_6_3_PCCT_SUBSPACE_TYPE_2_HW_REDUCED_COMMUNICATIONS:
         DumpPccSubspaceType2 (
-          PccSubspacePtr,
-          *PccSubspaceLength
-          );
+                              PccSubspacePtr,
+                              *PccSubspaceLength
+                              );
         break;
       case EFI_ACPI_6_3_PCCT_SUBSPACE_TYPE_3_EXTENDED_PCC:
         DumpPccSubspaceType3 (
-          PccSubspacePtr,
-          *PccSubspaceLength
-          );
+                              PccSubspacePtr,
+                              *PccSubspaceLength
+                              );
         break;
       case EFI_ACPI_6_3_PCCT_SUBSPACE_TYPE_4_EXTENDED_PCC:
         DumpPccSubspaceType4 (
-          PccSubspacePtr,
-          *PccSubspaceLength
-          );
+                              PccSubspacePtr,
+                              *PccSubspaceLength
+                              );
         break;
       default:
         IncrementErrorCount ();
         Print (
-          L"ERROR: Unknown PCC subspace structure:"
-            L" Type = %u, Length = %u\n",
-          PccSubspaceType,
-          *PccSubspaceLength
-          );
+               L"ERROR: Unknown PCC subspace structure:"
+               L" Type = %u, Length = %u\n",
+               PccSubspaceType,
+               *PccSubspaceLength
+               );
     }
 
     PccSubspacePtr += *PccSubspaceLength;

@@ -19,9 +19,9 @@
   @retval EFI_LOAD_ERROR    A load error occurred.
 **/
 EFI_STATUS
-HBufferImageInit (
-  VOID
-  );
+  HBufferImageInit (
+                    VOID
+                    );
 
 /**
   Cleanup function for HBufferImage
@@ -29,9 +29,9 @@ HBufferImageInit (
   @retval EFI_SUCCESS  The operation was successful.
 **/
 EFI_STATUS
-HBufferImageCleanup (
-  VOID
-  );
+  HBufferImageCleanup (
+                       VOID
+                       );
 
 /**
   Refresh function for HBufferImage.
@@ -41,9 +41,9 @@ HBufferImageCleanup (
 
 **/
 EFI_STATUS
-HBufferImageRefresh (
-  VOID
-  );
+  HBufferImageRefresh (
+                       VOID
+                       );
 
 /**
   Dispatch input to different handler
@@ -72,9 +72,9 @@ HBufferImageHandleInput (
   @retval EFI_SUCCESS  The operation was successful.
 **/
 EFI_STATUS
-HBufferImageBackup (
-  VOID
-  );
+  HBufferImageBackup (
+                      VOID
+                      );
 
 /**
   Read an image into a buffer friom a source.
@@ -140,7 +140,6 @@ HBufferImageMovePosition (
   IN BOOLEAN  HighBits
   );
 
-
 /**
   Create a new line and append it to the line list.
     Fields affected:
@@ -152,9 +151,9 @@ HBufferImageMovePosition (
 
 **/
 HEFI_EDITOR_LINE  *
-HBufferImageCreateLine (
-  VOID
-  );
+  HBufferImageCreateLine (
+                          VOID
+                          );
 
 /**
   Free the current image.
@@ -162,9 +161,9 @@ HBufferImageCreateLine (
   @retval EFI_SUCCESS   The operation was successful.
 **/
 EFI_STATUS
-HBufferImageFree (
-  VOID
-  );
+  HBufferImageFree (
+                    VOID
+                    );
 
 /**
   Delete character from buffer.
@@ -260,8 +259,8 @@ HBufferImageIsAtHighBits (
   @retval The size in bytes.
 **/
 UINTN
-HBufferImageGetTotalSize (
-  VOID
-  );
+  HBufferImageGetTotalSize (
+                            VOID
+                            );
 
 #endif

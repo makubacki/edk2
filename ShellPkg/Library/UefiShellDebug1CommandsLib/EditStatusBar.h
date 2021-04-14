@@ -17,17 +17,17 @@
   @sa StatusBarSetStatusString
 **/
 EFI_STATUS
-StatusBarInit (
-  VOID
-  );
+  StatusBarInit (
+                 VOID
+                 );
 
 /**
   Cleanup function for the status bar.
 **/
 VOID
-StatusBarCleanup (
-  VOID
-  );
+  StatusBarCleanup (
+                    VOID
+                    );
 
 /**
   Cause the status bar to refresh it's printing on the screen.
@@ -70,18 +70,18 @@ StatusBarSetStatusString (
 
   @return The string that is used.
 **/
-CONST CHAR16*
-StatusBarGetString (
-  VOID
-  );
+CONST CHAR16 *
+  StatusBarGetString (
+                      VOID
+                      );
 
 /**
   Function to set the need refresh boolean to TRUE.
 **/
 VOID
-StatusBarSetRefresh(
-  VOID
-  );
+  StatusBarSetRefresh (
+                       VOID
+                       );
 
 /**
   Function to get the need refresh boolean to TRUE.
@@ -89,8 +89,8 @@ StatusBarSetRefresh(
   @retval TRUE    The status bar needs to be refreshed.
 **/
 BOOLEAN
-StatusBarGetRefresh(
-  VOID
-  );
+  StatusBarGetRefresh (
+                       VOID
+                       );
 
 #endif

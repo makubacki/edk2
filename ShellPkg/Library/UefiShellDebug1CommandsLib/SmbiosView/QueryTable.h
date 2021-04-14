@@ -12,11 +12,11 @@
 
 #include <IndustryStandard/SmBios.h>
 
-#define QUERY_TABLE_UNFOUND 0xFF
+#define QUERY_TABLE_UNFOUND  0xFF
 
 typedef struct TABLE_ITEM {
-  UINT16  Key;
-  CHAR16  *Info;
+  UINT16    Key;
+  CHAR16    *Info;
 } TABLE_ITEM;
 
 //
@@ -25,11 +25,11 @@ typedef struct TABLE_ITEM {
 #define PRINT_INFO_OPTION(Value, Option) \
   do { \
     if (Option == SHOW_NONE) { \
-      return ; \
+      return; \
     } \
     if (Option < SHOW_DETAIL) { \
       Print (L"0x%x\n", Value); \
-      return ; \
+      return; \
     } \
   } while (0);
 
@@ -109,7 +109,7 @@ DisplayBaseBoardFeatureFlags (
   @param[in] Option         The optional information.
 **/
 VOID
-DisplayBaseBoardBoardType(
+DisplayBaseBoardBoardType (
   IN UINT8 Type,
   IN UINT8 Option
   );

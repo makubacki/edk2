@@ -33,7 +33,7 @@
 #include <Library/HiiLib.h>
 #include <Library/FileHandleLib.h>
 
-extern        EFI_HII_HANDLE                    gShellLevel1HiiHandle;
+extern        EFI_HII_HANDLE  gShellLevel1HiiHandle;
 
 /**
   Function for 'stall' command.
@@ -139,7 +139,6 @@ ShellCommandRunShift (
   IN EFI_SYSTEM_TABLE  *SystemTable
   );
 
-
 /**
   Function for 'else' command.
 
@@ -158,11 +157,11 @@ ShellCommandRunElse (
 /// This is used to control the MoveToTag function direction...
 ///
 typedef
-LIST_ENTRY *
+  LIST_ENTRY *
 (EFIAPI *LIST_MANIP_FUNC)(
-  IN CONST LIST_ENTRY *List,
-  IN CONST LIST_ENTRY *Node
-  );
+                          IN CONST LIST_ENTRY *List,
+                          IN CONST LIST_ENTRY *Node
+                          );
 
 /**
   Move the script pointer from 1 tag (line) to another.
@@ -200,4 +199,3 @@ MoveToTag (
   );
 
 #endif
-
