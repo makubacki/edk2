@@ -25,7 +25,7 @@
 EFI_STATUS
 EFIAPI
 SetBootNextDevice (
-  VOID
-  );
+                   VOID
+                   );
 
 #endif

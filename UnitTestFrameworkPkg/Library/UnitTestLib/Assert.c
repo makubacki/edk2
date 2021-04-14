@@ -15,6 +15,29 @@
 
 extern BASE_LIBRARY_JUMP_BUFFER  gUnitTestJumpBuffer;
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 AddUnitTestFailure (
@@ -32,14 +55,37 @@ AddUnitTestFailure (
 
   UnitTest->FailureType = FailureType;
   AsciiStrCpyS (
-    &UnitTest->FailureMessage[0],
-    UNIT_TEST_TESTFAILUREMSG_LENGTH,
-    FailureMessage
-    );
+                &UnitTest->FailureMessage[0],
+                UNIT_TEST_TESTFAILUREMSG_LENGTH,
+                FailureMessage
+                );
 
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 VOID
 UnitTestLogFailure (
@@ -68,10 +114,10 @@ UnitTestLogFailure (
   // Finally, add the string to the log.
   //
   AddUnitTestFailure (
-    ((UNIT_TEST_FRAMEWORK *)FrameworkHandle)->CurrentTest,
-    LogString,
-    FailureType
-    );
+                      ((UNIT_TEST_FRAMEWORK *) FrameworkHandle)->CurrentTest,
+                      LogString,
+                      FailureType
+                      );
 
   LongJump (&gUnitTestJumpBuffer, 1);
 }
@@ -106,19 +152,20 @@ UnitTestAssertTrue (
 {
   if (!Expression) {
     UT_LOG_ERROR (
-      "[ASSERT FAIL] %a:%d: Expression (%a) is not TRUE!\n",
-      FileName,
-      LineNumber,
-      Description
-      );
+                  "[ASSERT FAIL] %a:%d: Expression (%a) is not TRUE!\n",
+                  FileName,
+                  LineNumber,
+                  Description
+                  );
     UnitTestLogFailure (
-      FAILURETYPE_ASSERTTRUE,
-      "%a:%d: Expression (%a) is not TRUE!\n",
-      FileName,
-      LineNumber,
-      Description
-      );
+                        FAILURETYPE_ASSERTTRUE,
+                        "%a:%d: Expression (%a) is not TRUE!\n",
+                        FileName,
+                        LineNumber,
+                        Description
+                        );
   }
+
   return Expression;
 }
 
@@ -152,19 +199,20 @@ UnitTestAssertFalse (
 {
   if (Expression) {
     UT_LOG_ERROR (
-      "[ASSERT FAIL] %a:%d: Expression (%a) is not FALSE!\n",
-      FileName,
-      LineNumber,
-      Description
-      );
+                  "[ASSERT FAIL] %a:%d: Expression (%a) is not FALSE!\n",
+                  FileName,
+                  LineNumber,
+                  Description
+                  );
     UnitTestLogFailure (
-      FAILURETYPE_ASSERTFALSE,
-      "%a:%d: Expression(%a) is not FALSE!\n",
-      FileName,
-      LineNumber,
-      Description
-      );
+                        FAILURETYPE_ASSERTFALSE,
+                        "%a:%d: Expression(%a) is not FALSE!\n",
+                        FileName,
+                        LineNumber,
+                        Description
+                        );
   }
+
   return !Expression;
 }
 
@@ -198,22 +246,23 @@ UnitTestAssertNotEfiError (
 {
   if (EFI_ERROR (Status)) {
     UT_LOG_ERROR (
-      "[ASSERT FAIL] %a:%d: Status '%a' is EFI_ERROR (%r)!\n",
-      FileName,
-      LineNumber,
-      Description,
-      Status
-      );
+                  "[ASSERT FAIL] %a:%d: Status '%a' is EFI_ERROR (%r)!\n",
+                  FileName,
+                  LineNumber,
+                  Description,
+                  Status
+                  );
     UnitTestLogFailure (
-      FAILURETYPE_ASSERTNOTEFIERROR,
-      "%a:%d: Status '%a' is EFI_ERROR (%r)!\n",
-      FileName,
-      LineNumber,
-      Description,
-      Status
-      );
+                        FAILURETYPE_ASSERTNOTEFIERROR,
+                        "%a:%d: Status '%a' is EFI_ERROR (%r)!\n",
+                        FileName,
+                        LineNumber,
+                        Description,
+                        Status
+                        );
   }
-  return !EFI_ERROR( Status );
+
+  return !EFI_ERROR (Status);
 }
 
 /**
@@ -251,25 +300,26 @@ UnitTestAssertEqual (
 {
   if (ValueA != ValueB) {
     UT_LOG_ERROR (
-      "[ASSERT FAIL] %a:%d: Value %a != %a (%d != %d)!\n",
-      FileName,
-      LineNumber,
-      DescriptionA,
-      DescriptionB,
-      ValueA,
-      ValueB
-      );
+                  "[ASSERT FAIL] %a:%d: Value %a != %a (%d != %d)!\n",
+                  FileName,
+                  LineNumber,
+                  DescriptionA,
+                  DescriptionB,
+                  ValueA,
+                  ValueB
+                  );
     UnitTestLogFailure (
-      FAILURETYPE_ASSERTEQUAL,
-      "%a:%d: Value %a != %a (%d != %d)!\n",
-      FileName,
-      LineNumber,
-      DescriptionA,
-      DescriptionB,
-      ValueA,
-      ValueB
-      );
+                        FAILURETYPE_ASSERTEQUAL,
+                        "%a:%d: Value %a != %a (%d != %d)!\n",
+                        FileName,
+                        LineNumber,
+                        DescriptionA,
+                        DescriptionB,
+                        ValueA,
+                        ValueB
+                        );
   }
+
   return (ValueA == ValueB);
 }
 
@@ -311,26 +361,27 @@ UnitTestAssertMemEqual (
   IN CONST CHAR8  *DescriptionB
   )
 {
-  if (CompareMem(BufferA, BufferB, Length) != 0) {
+  if (CompareMem (BufferA, BufferB, Length) != 0) {
     UT_LOG_ERROR (
-      "[ASSERT FAIL] %a:%d: Value %a != %a for length %d bytes!\n",
-      FileName,
-      LineNumber,
-      DescriptionA,
-      DescriptionB,
-      Length
-      );
+                  "[ASSERT FAIL] %a:%d: Value %a != %a for length %d bytes!\n",
+                  FileName,
+                  LineNumber,
+                  DescriptionA,
+                  DescriptionB,
+                  Length
+                  );
     UnitTestLogFailure (
-      FAILURETYPE_ASSERTEQUAL,
-      "%a:%d: Memory at %a != %a for length %d bytes!\n",
-      FileName,
-      LineNumber,
-      DescriptionA,
-      DescriptionB,
-      Length
-      );
+                        FAILURETYPE_ASSERTEQUAL,
+                        "%a:%d: Memory at %a != %a for length %d bytes!\n",
+                        FileName,
+                        LineNumber,
+                        DescriptionA,
+                        DescriptionB,
+                        Length
+                        );
     return FALSE;
   }
+
   return TRUE;
 }
 
@@ -369,25 +420,26 @@ UnitTestAssertNotEqual (
 {
   if (ValueA == ValueB) {
     UT_LOG_ERROR (
-      "[ASSERT FAIL] %a:%d: Value %a == %a (%d == %d)!\n",
-      FileName,
-      LineNumber,
-      DescriptionA,
-      DescriptionB,
-      ValueA,
-      ValueB
-      );
+                  "[ASSERT FAIL] %a:%d: Value %a == %a (%d == %d)!\n",
+                  FileName,
+                  LineNumber,
+                  DescriptionA,
+                  DescriptionB,
+                  ValueA,
+                  ValueB
+                  );
     UnitTestLogFailure (
-      FAILURETYPE_ASSERTNOTEQUAL,
-      "%a:%d: Value %a == %a (%d == %d)!\n",
-      FileName,
-      LineNumber,
-      DescriptionA,
-      DescriptionB,
-      ValueA,
-      ValueB
-      );
+                        FAILURETYPE_ASSERTNOTEQUAL,
+                        "%a:%d: Value %a == %a (%d == %d)!\n",
+                        FileName,
+                        LineNumber,
+                        DescriptionA,
+                        DescriptionB,
+                        ValueA,
+                        ValueB
+                        );
   }
+
   return (ValueA != ValueB);
 }
 
@@ -424,23 +476,24 @@ UnitTestAssertStatusEqual (
 {
   if (Status != Expected) {
     UT_LOG_ERROR (
-      "[ASSERT FAIL] %a:%d: Status '%a' is %r, should be %r!\n",
-      FileName,
-      LineNumber,
-      Description,
-      Status,
-      Expected
-      );
+                  "[ASSERT FAIL] %a:%d: Status '%a' is %r, should be %r!\n",
+                  FileName,
+                  LineNumber,
+                  Description,
+                  Status,
+                  Expected
+                  );
     UnitTestLogFailure (
-      FAILURETYPE_ASSERTSTATUSEQUAL,
-      "%a:%d: Status '%a' is %r, should be %r!\n",
-      FileName,
-      LineNumber,
-      Description,
-      Status,
-      Expected
-      );
+                        FAILURETYPE_ASSERTSTATUSEQUAL,
+                        "%a:%d: Status '%a' is %r, should be %r!\n",
+                        FileName,
+                        LineNumber,
+                        Description,
+                        Status,
+                        Expected
+                        );
   }
+
   return (Status == Expected);
 }
 
@@ -476,19 +529,20 @@ UnitTestAssertNotNull (
 {
   if (Pointer == NULL) {
     UT_LOG_ERROR (
-      "[ASSERT FAIL] %a:%d: Pointer (%a) is NULL!\n",
-      FileName,
-      LineNumber,
-      PointerName
-      );
+                  "[ASSERT FAIL] %a:%d: Pointer (%a) is NULL!\n",
+                  FileName,
+                  LineNumber,
+                  PointerName
+                  );
     UnitTestLogFailure (
-      FAILURETYPE_ASSERTNOTNULL,
-      "%a:%d: Pointer (%a) is NULL!\n",
-      FileName,
-      LineNumber,
-      PointerName
-      );
+                        FAILURETYPE_ASSERTNOTNULL,
+                        "%a:%d: Pointer (%a) is NULL!\n",
+                        FileName,
+                        LineNumber,
+                        PointerName
+                        );
   }
+
   return (Pointer != NULL);
 }
 
@@ -535,36 +589,40 @@ UnitTestExpectAssertFailure (
   if (ResultStatus != NULL) {
     *ResultStatus = UnitTestStatus;
   }
+
   if (UnitTestStatus == UNIT_TEST_PASSED) {
     UT_LOG_INFO (
-      "[ASSERT PASS] %a:%d: UT_EXPECT_ASSERT_FAILURE(%a) detected expected assert\n",
-      FileName,
-      LineNumber,
-      FunctionCall
-      );
+                 "[ASSERT PASS] %a:%d: UT_EXPECT_ASSERT_FAILURE(%a) detected expected assert\n",
+                 FileName,
+                 LineNumber,
+                 FunctionCall
+                 );
   }
+
   if (UnitTestStatus == UNIT_TEST_SKIPPED) {
     UT_LOG_WARNING (
-      "[ASSERT WARN] %a:%d: UT_EXPECT_ASSERT_FAILURE(%a) disabled\n",
-      FileName,
-      LineNumber,
-      FunctionCall
-      );
+                    "[ASSERT WARN] %a:%d: UT_EXPECT_ASSERT_FAILURE(%a) disabled\n",
+                    FileName,
+                    LineNumber,
+                    FunctionCall
+                    );
   }
+
   if (UnitTestStatus == UNIT_TEST_ERROR_TEST_FAILED) {
     UT_LOG_ERROR (
-      "[ASSERT FAIL] %a:%d: Function call (%a) did not ASSERT()!\n",
-      FileName,
-      LineNumber,
-      FunctionCall
-      );
+                  "[ASSERT FAIL] %a:%d: Function call (%a) did not ASSERT()!\n",
+                  FileName,
+                  LineNumber,
+                  FunctionCall
+                  );
     UnitTestLogFailure (
-      FAILURETYPE_EXPECTASSERT,
-      "%a:%d: Function call (%a) did not ASSERT()!\n",
-      FileName,
-      LineNumber,
-      FunctionCall
-      );
+                        FAILURETYPE_EXPECTASSERT,
+                        "%a:%d: Function call (%a) did not ASSERT()!\n",
+                        FileName,
+                        LineNumber,
+                        FunctionCall
+                        );
   }
+
   return (UnitTestStatus != UNIT_TEST_ERROR_TEST_FAILED);
 }

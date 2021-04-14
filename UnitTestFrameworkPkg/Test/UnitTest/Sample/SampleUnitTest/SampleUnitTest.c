@@ -49,7 +49,7 @@ MakeSureThatPointerIsNull (
   IN UNIT_TEST_CONTEXT  Context
   )
 {
-  UT_ASSERT_EQUAL ((UINTN)mSampleGlobalTestPointer, (UINTN)NULL);
+  UT_ASSERT_EQUAL ((UINTN) mSampleGlobalTestPointer, (UINTN) NULL);
   return UNIT_TEST_PASSED;
 }
 
@@ -176,8 +176,8 @@ GlobalPointerShouldBeChangeable (
   //
   UT_LOG_WARNING ("About to change a global pointer! Current value is 0x%X\n", mSampleGlobalTestPointer);
 
-  mSampleGlobalTestPointer = (VOID *)-1;
-  UT_ASSERT_EQUAL ((UINTN)mSampleGlobalTestPointer, (UINTN)((VOID *)-1));
+  mSampleGlobalTestPointer = (VOID *) - 1;
+  UT_ASSERT_EQUAL ((UINTN) mSampleGlobalTestPointer, (UINTN) ((VOID *) - 1));
   return UNIT_TEST_PASSED;
 }
 
@@ -664,14 +664,14 @@ UefiTestMain (
 
   Framework = NULL;
 
-  DEBUG(( DEBUG_INFO, "%a v%a\n", UNIT_TEST_NAME, UNIT_TEST_VERSION ));
+  DEBUG ((DEBUG_INFO, "%a v%a\n", UNIT_TEST_NAME, UNIT_TEST_VERSION));
 
   //
   // Start setting up the test framework for running the tests.
   //
   Status = InitUnitTestFramework (&Framework, UNIT_TEST_NAME, gEfiCallerBaseName, UNIT_TEST_VERSION);
   if (EFI_ERROR (Status)) {
-    DEBUG((DEBUG_ERROR, "Failed in InitUnitTestFramework. Status = %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "Failed in InitUnitTestFramework. Status = %r\n", Status));
     goto EXIT;
   }
 
@@ -684,7 +684,16 @@ UefiTestMain (
     Status = EFI_OUT_OF_RESOURCES;
     goto EXIT;
   }
-  AddTestCase (SimpleMathTests, "Adding 1 to 1 should produce 2", "Addition", OnePlusOneShouldEqualTwo, NULL, NULL, NULL);
+
+  AddTestCase (
+              SimpleMathTests,
+              "Adding 1 to 1 should produce 2",
+              "Addition",
+              OnePlusOneShouldEqualTwo,
+              NULL,
+              NULL,
+              NULL
+              );
 
   //
   // Populate the GlobalVarTests Unit Test Suite.
@@ -695,56 +704,297 @@ UefiTestMain (
     Status = EFI_OUT_OF_RESOURCES;
     goto EXIT;
   }
-  AddTestCase (GlobalVarTests, "You should be able to change a global BOOLEAN", "Boolean", GlobalBooleanShouldBeChangeable, NULL, NULL, NULL);
-  AddTestCase (GlobalVarTests, "You should be able to change a global pointer", "Pointer", GlobalPointerShouldBeChangeable, MakeSureThatPointerIsNull, ClearThePointer, NULL);
+
+  AddTestCase (
+              GlobalVarTests,
+              "You should be able to change a global BOOLEAN",
+              "Boolean",
+              GlobalBooleanShouldBeChangeable,
+              NULL,
+              NULL,
+              NULL
+              );
+  AddTestCase (
+              GlobalVarTests,
+              "You should be able to change a global pointer",
+              "Pointer",
+              GlobalPointerShouldBeChangeable,
+              MakeSureThatPointerIsNull,
+              ClearThePointer,
+              NULL
+              );
 
   //
   // Populate the Macro Tests with ASSERT() enabled
   //
-  Status = CreateUnitTestSuite (&MacroTestsAssertsEnabled, Framework, "Macro Tests with ASSERT() enabled", "Sample.MacroAssertsEnabled", TestSuiteEnableAsserts, NULL);
+  Status = CreateUnitTestSuite (
+                               &MacroTestsAssertsEnabled,
+                               Framework,
+                               "Macro Tests with ASSERT() enabled",
+                               "Sample.MacroAssertsEnabled",
+                               TestSuiteEnableAsserts,
+                               NULL
+                               );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Failed in CreateUnitTestSuite for MacroTestsAssertsEnabled\n"));
     Status = EFI_OUT_OF_RESOURCES;
     goto EXIT;
   }
-  AddTestCase (MacroTestsAssertsEnabled, "Test UT_ASSERT_TRUE() macro",           "MacroUtAssertTrue",          MacroUtAssertTrue,          NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsEnabled, "Test UT_ASSERT_FALSE() macro",          "MacroUtAssertFalse",         MacroUtAssertFalse,         NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsEnabled, "Test UT_ASSERT_EQUAL() macro",          "MacroUtAssertEqual",         MacroUtAssertEqual,         NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsEnabled, "Test UT_ASSERT_MEM_EQUAL() macro",      "MacroUtAssertMemEqual",      MacroUtAssertMemEqual,      NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsEnabled, "Test UT_ASSERT_NOT_EQUAL() macro",      "MacroUtAssertNotEqual",      MacroUtAssertNotEqual,      NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsEnabled, "Test UT_ASSERT_NOT_EFI_ERROR() macro",  "MacroUtAssertNotEfiError",   MacroUtAssertNotEfiError,   NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsEnabled, "Test UT_ASSERT_STATUS_EQUAL() macro",   "MacroUtAssertStatusEqual",   MacroUtAssertStatusEqual,   NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsEnabled, "Test UT_ASSERT_NOT_NULL() macro",       "MacroUtAssertNotNull",       MacroUtAssertNotNull,       NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsEnabled, "Test UT_EXPECT_ASSERT_FAILURE() macro", "MacroUtExpectAssertFailure", MacroUtExpectAssertFailure, NULL, NULL, NULL);
 
-  AddTestCase (MacroTestsAssertsEnabled, "Test UT_LOG_ERROR() macro",   "MacroUtLogError",   MacroUtLogError,   NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsEnabled, "Test UT_LOG_WARNING() macro", "MacroUtLogWarning", MacroUtLogWarning, NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsEnabled, "Test UT_LOG_INFO() macro",    "MacroUtLogInfo",    MacroUtLogInfo,    NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsEnabled, "Test UT_LOG_VERBOSE() macro", "MacroUtLogVerbose", MacroUtLogVerbose, NULL, NULL, NULL);
+  AddTestCase (
+              MacroTestsAssertsEnabled,
+              "Test UT_ASSERT_TRUE() macro",
+              "MacroUtAssertTrue",
+              MacroUtAssertTrue,
+              NULL,
+              NULL,
+              NULL
+              );
+  AddTestCase (
+              MacroTestsAssertsEnabled,
+              "Test UT_ASSERT_FALSE() macro",
+              "MacroUtAssertFalse",
+              MacroUtAssertFalse,
+              NULL,
+              NULL,
+              NULL
+              );
+  AddTestCase (
+              MacroTestsAssertsEnabled,
+              "Test UT_ASSERT_EQUAL() macro",
+              "MacroUtAssertEqual",
+              MacroUtAssertEqual,
+              NULL,
+              NULL,
+              NULL
+              );
+  AddTestCase (
+              MacroTestsAssertsEnabled,
+              "Test UT_ASSERT_MEM_EQUAL() macro",
+              "MacroUtAssertMemEqual",
+              MacroUtAssertMemEqual,
+              NULL,
+              NULL,
+              NULL
+              );
+  AddTestCase (
+              MacroTestsAssertsEnabled,
+              "Test UT_ASSERT_NOT_EQUAL() macro",
+              "MacroUtAssertNotEqual",
+              MacroUtAssertNotEqual,
+              NULL,
+              NULL,
+              NULL
+              );
+  AddTestCase (
+              MacroTestsAssertsEnabled,
+              "Test UT_ASSERT_NOT_EFI_ERROR() macro",
+              "MacroUtAssertNotEfiError",
+              MacroUtAssertNotEfiError,
+              NULL,
+              NULL,
+              NULL
+              );
+  AddTestCase (
+              MacroTestsAssertsEnabled,
+              "Test UT_ASSERT_STATUS_EQUAL() macro",
+              "MacroUtAssertStatusEqual",
+              MacroUtAssertStatusEqual,
+              NULL,
+              NULL,
+              NULL
+              );
+  AddTestCase (
+              MacroTestsAssertsEnabled,
+              "Test UT_ASSERT_NOT_NULL() macro",
+              "MacroUtAssertNotNull",
+              MacroUtAssertNotNull,
+              NULL,
+              NULL,
+              NULL
+              );
+  AddTestCase (
+              MacroTestsAssertsEnabled,
+              "Test UT_EXPECT_ASSERT_FAILURE() macro",
+              "MacroUtExpectAssertFailure",
+              MacroUtExpectAssertFailure,
+              NULL,
+              NULL,
+              NULL
+              );
+
+  AddTestCase (
+              MacroTestsAssertsEnabled,
+              "Test UT_LOG_ERROR() macro",
+              "MacroUtLogError",
+              MacroUtLogError,
+              NULL,
+              NULL,
+              NULL
+              );
+  AddTestCase (
+              MacroTestsAssertsEnabled,
+              "Test UT_LOG_WARNING() macro",
+              "MacroUtLogWarning",
+              MacroUtLogWarning,
+              NULL,
+              NULL,
+              NULL
+              );
+  AddTestCase (
+              MacroTestsAssertsEnabled,
+              "Test UT_LOG_INFO() macro",
+              "MacroUtLogInfo",
+              MacroUtLogInfo,
+              NULL,
+              NULL,
+              NULL
+              );
+  AddTestCase (
+              MacroTestsAssertsEnabled,
+              "Test UT_LOG_VERBOSE() macro",
+              "MacroUtLogVerbose",
+              MacroUtLogVerbose,
+              NULL,
+              NULL,
+              NULL
+              );
 
   //
   // Populate the Macro Tests with ASSERT() disabled
   //
-  Status = CreateUnitTestSuite (&MacroTestsAssertsDisabled, Framework, "Macro Tests with ASSERT() disabled", "Sample.MacroAssertsDisables", TestSuiteDisableAsserts, NULL);
+  Status = CreateUnitTestSuite (
+                               &MacroTestsAssertsDisabled,
+                               Framework,
+                               "Macro Tests with ASSERT() disabled",
+                               "Sample.MacroAssertsDisables",
+                               TestSuiteDisableAsserts,
+                               NULL
+                               );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Failed in CreateUnitTestSuite for MacroTestsAssertsDisabled\n"));
     Status = EFI_OUT_OF_RESOURCES;
     goto EXIT;
   }
-  AddTestCase (MacroTestsAssertsDisabled, "Test UT_ASSERT_TRUE() macro",           "MacroUtAssertTrue",          MacroUtAssertTrue,          NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsDisabled, "Test UT_ASSERT_FALSE() macro",          "MacroUtAssertFalse",         MacroUtAssertFalse,         NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsDisabled, "Test UT_ASSERT_EQUAL() macro",          "MacroUtAssertEqual",         MacroUtAssertEqual,         NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsDisabled, "Test UT_ASSERT_MEM_EQUAL() macro",      "MacroUtAssertMemEqual",      MacroUtAssertMemEqual,      NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsDisabled, "Test UT_ASSERT_NOT_EQUAL() macro",      "MacroUtAssertNotEqual",      MacroUtAssertNotEqual,      NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsDisabled, "Test UT_ASSERT_NOT_EFI_ERROR() macro",  "MacroUtAssertNotEfiError",   MacroUtAssertNotEfiError,   NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsDisabled, "Test UT_ASSERT_STATUS_EQUAL() macro",   "MacroUtAssertStatusEqual",   MacroUtAssertStatusEqual,   NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsDisabled, "Test UT_ASSERT_NOT_NULL() macro",       "MacroUtAssertNotNull",       MacroUtAssertNotNull,       NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsDisabled, "Test UT_EXPECT_ASSERT_FAILURE() macro", "MacroUtExpectAssertFailure", MacroUtExpectAssertFailure, NULL, NULL, NULL);
 
-  AddTestCase (MacroTestsAssertsDisabled, "Test UT_LOG_ERROR() macro",   "MacroUtLogError",   MacroUtLogError,   NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsDisabled, "Test UT_LOG_WARNING() macro", "MacroUtLogWarning", MacroUtLogWarning, NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsDisabled, "Test UT_LOG_INFO() macro",    "MacroUtLogInfo",    MacroUtLogInfo,    NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsDisabled, "Test UT_LOG_VERBOSE() macro", "MacroUtLogVerbose", MacroUtLogVerbose, NULL, NULL, NULL);
+  AddTestCase (
+              MacroTestsAssertsDisabled,
+              "Test UT_ASSERT_TRUE() macro",
+              "MacroUtAssertTrue",
+              MacroUtAssertTrue,
+              NULL,
+              NULL,
+              NULL
+              );
+  AddTestCase (
+              MacroTestsAssertsDisabled,
+              "Test UT_ASSERT_FALSE() macro",
+              "MacroUtAssertFalse",
+              MacroUtAssertFalse,
+              NULL,
+              NULL,
+              NULL
+              );
+  AddTestCase (
+              MacroTestsAssertsDisabled,
+              "Test UT_ASSERT_EQUAL() macro",
+              "MacroUtAssertEqual",
+              MacroUtAssertEqual,
+              NULL,
+              NULL,
+              NULL
+              );
+  AddTestCase (
+              MacroTestsAssertsDisabled,
+              "Test UT_ASSERT_MEM_EQUAL() macro",
+              "MacroUtAssertMemEqual",
+              MacroUtAssertMemEqual,
+              NULL,
+              NULL,
+              NULL
+              );
+  AddTestCase (
+              MacroTestsAssertsDisabled,
+              "Test UT_ASSERT_NOT_EQUAL() macro",
+              "MacroUtAssertNotEqual",
+              MacroUtAssertNotEqual,
+              NULL,
+              NULL,
+              NULL
+              );
+  AddTestCase (
+              MacroTestsAssertsDisabled,
+              "Test UT_ASSERT_NOT_EFI_ERROR() macro",
+              "MacroUtAssertNotEfiError",
+              MacroUtAssertNotEfiError,
+              NULL,
+              NULL,
+              NULL
+              );
+  AddTestCase (
+              MacroTestsAssertsDisabled,
+              "Test UT_ASSERT_STATUS_EQUAL() macro",
+              "MacroUtAssertStatusEqual",
+              MacroUtAssertStatusEqual,
+              NULL,
+              NULL,
+              NULL
+              );
+  AddTestCase (
+              MacroTestsAssertsDisabled,
+              "Test UT_ASSERT_NOT_NULL() macro",
+              "MacroUtAssertNotNull",
+              MacroUtAssertNotNull,
+              NULL,
+              NULL,
+              NULL
+              );
+  AddTestCase (
+              MacroTestsAssertsDisabled,
+              "Test UT_EXPECT_ASSERT_FAILURE() macro",
+              "MacroUtExpectAssertFailure",
+              MacroUtExpectAssertFailure,
+              NULL,
+              NULL,
+              NULL
+              );
+
+  AddTestCase (
+              MacroTestsAssertsDisabled,
+              "Test UT_LOG_ERROR() macro",
+              "MacroUtLogError",
+              MacroUtLogError,
+              NULL,
+              NULL,
+              NULL
+              );
+  AddTestCase (
+              MacroTestsAssertsDisabled,
+              "Test UT_LOG_WARNING() macro",
+              "MacroUtLogWarning",
+              MacroUtLogWarning,
+              NULL,
+              NULL,
+              NULL
+              );
+  AddTestCase (
+              MacroTestsAssertsDisabled,
+              "Test UT_LOG_INFO() macro",
+              "MacroUtLogInfo",
+              MacroUtLogInfo,
+              NULL,
+              NULL,
+              NULL
+              );
+  AddTestCase (
+              MacroTestsAssertsDisabled,
+              "Test UT_LOG_VERBOSE() macro",
+              "MacroUtLogVerbose",
+              MacroUtLogVerbose,
+              NULL,
+              NULL,
+              NULL
+              );
 
   //
   // Execute the tests.

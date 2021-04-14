@@ -19,8 +19,8 @@
 #define UNIT_TEST_MAX_LOG_BUFFER                SIZE_16KB
 
 struct _UNIT_TEST_LOG_PREFIX_STRING {
-  UNIT_TEST_STATUS  LogLevel;
-  CHAR8             *String;
+  UNIT_TEST_STATUS    LogLevel;
+  CHAR8               *String;
 };
 
 struct _UNIT_TEST_LOG_PREFIX_STRING  mLogPrefixStrings[] = {
@@ -35,7 +35,7 @@ struct _UNIT_TEST_LOG_PREFIX_STRING  mLogPrefixStrings[] = {
 //
 
 STATIC
-CONST CHAR8*
+CONST CHAR8 *
 GetStringForStatusLogPrefix (
   IN UINTN  LogLevel
   )
@@ -50,9 +50,33 @@ GetStringForStatusLogPrefix (
       break;
     }
   }
+
   return Result;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 AddStringToUnitTestLog (
@@ -81,11 +105,11 @@ AddStringToUnitTestLog (
   }
 
   Status = AsciiStrnCatS (
-             UnitTest->Log,
-             UNIT_TEST_MAX_LOG_BUFFER / sizeof (CHAR8),
-             String,
-             UNIT_TEST_MAX_SINGLE_LOG_STRING_LENGTH
-             );
+                          UnitTest->Log,
+                          UNIT_TEST_MAX_LOG_BUFFER / sizeof (CHAR8),
+                          String,
+                          UNIT_TEST_MAX_SINGLE_LOG_STRING_LENGTH
+                          );
   if(EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Failed to add unit test log string.  Status = %r\n", Status));
     return Status;
@@ -109,7 +133,7 @@ VOID
 EFIAPI
 UnitTestLogInit (
   IN OUT UNIT_TEST  *Test,
-  IN     UINT8      *Buffer,     OPTIONAL
+  IN     UINT8      *Buffer, OPTIONAL
   IN     UINTN      BufferSize   OPTIONAL
   )
 {
@@ -129,7 +153,7 @@ UnitTestLogInit (
   }
 
   //
-  //check again to make sure allocate worked
+  // check again to make sure allocate worked
   //
   if(Test->Log == NULL) {
     DEBUG ((DEBUG_ERROR, "Failed to allocate memory for the log\n"));
@@ -171,7 +195,7 @@ UnitTestLog (
   //
   // Make sure that this unit test log level is enabled.
   //
-  if ((ErrorLevel & (UINTN)PcdGet32 (PcdUnitTestLogLevel)) == 0) {
+  if ((ErrorLevel & (UINTN) PcdGet32 (PcdUnitTestLogLevel)) == 0) {
     return;
   }
 
@@ -196,5 +220,5 @@ UnitTestLog (
   //
   // Finally, add the string to the log.
   //
-  AddStringToUnitTestLog (((UNIT_TEST_FRAMEWORK *)FrameworkHandle)->CurrentTest, LogString);
+  AddStringToUnitTestLog (((UNIT_TEST_FRAMEWORK *) FrameworkHandle)->CurrentTest, LogString);
 }
