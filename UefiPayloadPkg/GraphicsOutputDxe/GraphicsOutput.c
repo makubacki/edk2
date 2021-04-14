@@ -8,7 +8,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 **/
 
 #include "GraphicsOutput.h"
-CONST ACPI_ADR_DEVICE_PATH mGraphicsOutputAdrNode = {
+CONST ACPI_ADR_DEVICE_PATH  mGraphicsOutputAdrNode = {
   {
     ACPI_DEVICE_PATH,
     ACPI_ADR_DP,
@@ -17,7 +17,7 @@ CONST ACPI_ADR_DEVICE_PATH mGraphicsOutputAdrNode = {
   ACPI_DISPLAY_ADR (1, 0, 0, 1, 0, ACPI_ADR_DISPLAY_TYPE_VGA, 0, 0)
 };
 
-EFI_PEI_GRAPHICS_DEVICE_INFO_HOB mDefaultGraphicsDeviceInfo = {
+EFI_PEI_GRAPHICS_DEVICE_INFO_HOB  mDefaultGraphicsDeviceInfo = {
   MAX_UINT16, MAX_UINT16, MAX_UINT16, MAX_UINT16, MAX_UINT8, MAX_UINT8
 };
 
@@ -25,7 +25,7 @@ EFI_PEI_GRAPHICS_DEVICE_INFO_HOB mDefaultGraphicsDeviceInfo = {
 // The driver should only start on one graphics controller.
 // So a global flag is used to remember that the driver is already started.
 //
-BOOLEAN mDriverStarted = FALSE;
+BOOLEAN  mDriverStarted = FALSE;
 
 /**
   Returns information for an available graphics mode that the graphics device
@@ -55,7 +55,7 @@ GraphicsOutputQueryMode (
   }
 
   *SizeOfInfo = This->Mode->SizeOfInfo;
-  *Info       = AllocateCopyPool (*SizeOfInfo, This->Mode->Info);
+  *Info = AllocateCopyPool (*SizeOfInfo, This->Mode->Info);
   return EFI_SUCCESS;
 }
 
@@ -76,11 +76,11 @@ EFIAPI
 GraphicsOutputSetMode (
   IN  EFI_GRAPHICS_OUTPUT_PROTOCOL *This,
   IN  UINT32                       ModeNumber
-)
+  )
 {
-  RETURN_STATUS                    Status;
-  EFI_GRAPHICS_OUTPUT_BLT_PIXEL    Black;
-  GRAPHICS_OUTPUT_PRIVATE_DATA     *Private;
+  RETURN_STATUS                  Status;
+  EFI_GRAPHICS_OUTPUT_BLT_PIXEL  Black;
+  GRAPHICS_OUTPUT_PRIVATE_DATA   *Private;
 
   if (ModeNumber >= This->Mode->MaxMode) {
     return EFI_UNSUPPORTED;
@@ -88,21 +88,23 @@ GraphicsOutputSetMode (
 
   Private = GRAPHICS_OUTPUT_PRIVATE_FROM_THIS (This);
 
-  Black.Blue = 0;
-  Black.Green = 0;
-  Black.Red = 0;
+  Black.Blue     = 0;
+  Black.Green    = 0;
+  Black.Red      = 0;
   Black.Reserved = 0;
 
   Status = FrameBufferBlt (
-             Private->FrameBufferBltLibConfigure,
-             &Black,
-             EfiBltVideoFill,
-             0, 0,
-             0, 0,
-             This->Mode->Info->HorizontalResolution,
-             This->Mode->Info->VerticalResolution,
-             0
-             );
+                           Private->FrameBufferBltLibConfigure,
+                           &Black,
+                           EfiBltVideoFill,
+                           0,
+                           0,
+                           0,
+                           0,
+                           This->Mode->Info->HorizontalResolution,
+                           This->Mode->Info->VerticalResolution,
+                           0
+                           );
   return RETURN_ERROR (Status) ? EFI_DEVICE_ERROR : EFI_SUCCESS;
 }
 
@@ -144,9 +146,9 @@ GraphicsOutputBlt (
   IN  UINTN                             Delta         OPTIONAL
   )
 {
-  RETURN_STATUS                         Status;
-  EFI_TPL                               Tpl;
-  GRAPHICS_OUTPUT_PRIVATE_DATA          *Private;
+  RETURN_STATUS                 Status;
+  EFI_TPL                       Tpl;
+  GRAPHICS_OUTPUT_PRIVATE_DATA  *Private;
 
   Private = GRAPHICS_OUTPUT_PRIVATE_FROM_THIS (This);
   //
@@ -154,21 +156,25 @@ GraphicsOutputBlt (
   // We would not want a timer based event (Cursor, ...) to come in while we are
   // doing this operation.
   //
-  Tpl = gBS->RaiseTPL (TPL_NOTIFY);
+  Tpl    = gBS->RaiseTPL (TPL_NOTIFY);
   Status = FrameBufferBlt (
-             Private->FrameBufferBltLibConfigure,
-             BltBuffer,
-             BltOperation,
-             SourceX, SourceY,
-             DestinationX, DestinationY, Width, Height,
-             Delta
-             );
+                           Private->FrameBufferBltLibConfigure,
+                           BltBuffer,
+                           BltOperation,
+                           SourceX,
+                           SourceY,
+                           DestinationX,
+                           DestinationY,
+                           Width,
+                           Height,
+                           Delta
+                           );
   gBS->RestoreTPL (Tpl);
 
   return RETURN_ERROR (Status) ? EFI_INVALID_PARAMETER : EFI_SUCCESS;
 }
 
-CONST GRAPHICS_OUTPUT_PRIVATE_DATA mGraphicsOutputInstanceTemplate = {
+CONST GRAPHICS_OUTPUT_PRIVATE_DATA  mGraphicsOutputInstanceTemplate = {
   GRAPHICS_OUTPUT_PRIVATE_DATA_SIGNATURE,          // Signature
   NULL,                                            // GraphicsOutputHandle
   {
@@ -211,9 +217,9 @@ GraphicsOutputDriverBindingSupported (
   IN EFI_DEVICE_PATH_PROTOCOL       *RemainingDevicePath
   )
 {
-  EFI_STATUS                        Status;
-  EFI_PCI_IO_PROTOCOL               *PciIo;
-  EFI_DEVICE_PATH_PROTOCOL          *DevicePath;
+  EFI_STATUS                Status;
+  EFI_PCI_IO_PROTOCOL       *PciIo;
+  EFI_DEVICE_PATH_PROTOCOL  *DevicePath;
 
   //
   // Since there is only one GraphicsInfo HOB, the driver only manages one video device.
@@ -226,49 +232,53 @@ GraphicsOutputDriverBindingSupported (
   // Test the PCI I/O Protocol
   //
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiPciIoProtocolGuid,
-                  (VOID **) &PciIo,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              Controller,
+                              &gEfiPciIoProtocolGuid,
+                              (VOID **) &PciIo,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (Status == EFI_ALREADY_STARTED) {
     Status = EFI_SUCCESS;
   }
+
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   gBS->CloseProtocol (
-         Controller,
-         &gEfiPciIoProtocolGuid,
-         This->DriverBindingHandle,
-         Controller
-         );
+                      Controller,
+                      &gEfiPciIoProtocolGuid,
+                      This->DriverBindingHandle,
+                      Controller
+                      );
 
   //
   // Test the DevicePath protocol
   //
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiDevicePathProtocolGuid,
-                  (VOID **) &DevicePath,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              Controller,
+                              &gEfiDevicePathProtocolGuid,
+                              (VOID **) &DevicePath,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (Status == EFI_ALREADY_STARTED) {
     Status = EFI_SUCCESS;
   }
+
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   gBS->CloseProtocol (
-         Controller,
-         &gEfiDevicePathProtocolGuid,
-         This->DriverBindingHandle,
-         Controller
-         );
+                      Controller,
+                      &gEfiDevicePathProtocolGuid,
+                      This->DriverBindingHandle,
+                      Controller
+                      );
 
   if ((RemainingDevicePath == NULL) ||
       IsDevicePathEnd (RemainingDevicePath) ||
@@ -298,18 +308,18 @@ GraphicsOutputDriverBindingStart (
   IN EFI_DEVICE_PATH_PROTOCOL       *RemainingDevicePath
   )
 {
-  EFI_STATUS                        Status;
-  RETURN_STATUS                     ReturnStatus;
-  GRAPHICS_OUTPUT_PRIVATE_DATA      *Private;
-  EFI_PCI_IO_PROTOCOL               *PciIo;
-  EFI_DEVICE_PATH                   *PciDevicePath;
-  PCI_TYPE00                        Pci;
-  UINT8                             Index;
-  EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *Resources;
-  VOID                              *HobStart;
-  EFI_PEI_GRAPHICS_INFO_HOB         *GraphicsInfo;
-  EFI_PEI_GRAPHICS_DEVICE_INFO_HOB  *DeviceInfo;
-  EFI_PHYSICAL_ADDRESS              FrameBufferBase;
+  EFI_STATUS                         Status;
+  RETURN_STATUS                      ReturnStatus;
+  GRAPHICS_OUTPUT_PRIVATE_DATA       *Private;
+  EFI_PCI_IO_PROTOCOL                *PciIo;
+  EFI_DEVICE_PATH                    *PciDevicePath;
+  PCI_TYPE00                         Pci;
+  UINT8                              Index;
+  EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR  *Resources;
+  VOID                               *HobStart;
+  EFI_PEI_GRAPHICS_INFO_HOB          *GraphicsInfo;
+  EFI_PEI_GRAPHICS_DEVICE_INFO_HOB   *DeviceInfo;
+  EFI_PHYSICAL_ADDRESS               FrameBufferBase;
 
   FrameBufferBase = 0;
 
@@ -326,43 +336,47 @@ GraphicsOutputDriverBindingStart (
     DEBUG ((DEBUG_INFO, "[%a]: GraphicsDeviceInfo HOB doesn't exist!\n", gEfiCallerBaseName));
   } else {
     DeviceInfo = (EFI_PEI_GRAPHICS_DEVICE_INFO_HOB *) (GET_GUID_HOB_DATA (HobStart));
-    DEBUG ((DEBUG_INFO, "[%a]: GraphicsDeviceInfo HOB:\n"
-            "  VendorId = %04x, DeviceId = %04x,\n"
-            "  RevisionId = %02x, BarIndex = %x,\n"
-            "  SubsystemVendorId = %04x, SubsystemId = %04x\n",
+    DEBUG (
+           (DEBUG_INFO, "[%a]: GraphicsDeviceInfo HOB:\n"
+                        "  VendorId = %04x, DeviceId = %04x,\n"
+                        "  RevisionId = %02x, BarIndex = %x,\n"
+                        "  SubsystemVendorId = %04x, SubsystemId = %04x\n",
             gEfiCallerBaseName,
             DeviceInfo->VendorId, DeviceInfo->DeviceId,
             DeviceInfo->RevisionId, DeviceInfo->BarIndex,
-            DeviceInfo->SubsystemVendorId, DeviceInfo->SubsystemId));
+            DeviceInfo->SubsystemVendorId, DeviceInfo->SubsystemId)
+           );
   }
 
   //
   // Open the PCI I/O Protocol
   //
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiPciIoProtocolGuid,
-                  (VOID **) &PciIo,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              Controller,
+                              &gEfiPciIoProtocolGuid,
+                              (VOID **) &PciIo,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (Status == EFI_ALREADY_STARTED) {
     Status = EFI_SUCCESS;
   }
+
   ASSERT_EFI_ERROR (Status);
 
   Status = gBS->OpenProtocol (
-                  Controller,
-                  &gEfiDevicePathProtocolGuid,
-                  (VOID **) &PciDevicePath,
-                  This->DriverBindingHandle,
-                  Controller,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              Controller,
+                              &gEfiDevicePathProtocolGuid,
+                              (VOID **) &PciDevicePath,
+                              This->DriverBindingHandle,
+                              Controller,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
   if (Status == EFI_ALREADY_STARTED) {
     Status = EFI_SUCCESS;
   }
+
   ASSERT_EFI_ERROR (Status);
 
   //
@@ -371,12 +385,17 @@ GraphicsOutputDriverBindingStart (
   Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint8, 0, sizeof (Pci), &Pci);
   if (!EFI_ERROR (Status)) {
     if (!IS_PCI_DISPLAY (&Pci) || (
-        ((DeviceInfo->VendorId != MAX_UINT16) && (DeviceInfo->VendorId != Pci.Hdr.VendorId)) ||
-        ((DeviceInfo->DeviceId != MAX_UINT16) && (DeviceInfo->DeviceId != Pci.Hdr.DeviceId)) ||
-        ((DeviceInfo->RevisionId != MAX_UINT8) && (DeviceInfo->RevisionId != Pci.Hdr.RevisionID)) ||
-        ((DeviceInfo->SubsystemVendorId != MAX_UINT16) && (DeviceInfo->SubsystemVendorId != Pci.Device.SubsystemVendorID)) ||
-        ((DeviceInfo->SubsystemId != MAX_UINT16) && (DeviceInfo->SubsystemId != Pci.Device.SubsystemID))
-        )
+                                   ((DeviceInfo->VendorId != MAX_UINT16) &&
+                                    (DeviceInfo->VendorId != Pci.Hdr.VendorId)) ||
+                                   ((DeviceInfo->DeviceId != MAX_UINT16) &&
+                                    (DeviceInfo->DeviceId != Pci.Hdr.DeviceId)) ||
+                                   ((DeviceInfo->RevisionId != MAX_UINT8) &&
+                                    (DeviceInfo->RevisionId != Pci.Hdr.RevisionID)) ||
+                                   ((DeviceInfo->SubsystemVendorId != MAX_UINT16) &&
+                                    (DeviceInfo->SubsystemVendorId != Pci.Device.SubsystemVendorID)) ||
+                                   ((DeviceInfo->SubsystemId != MAX_UINT16) &&
+                                    (DeviceInfo->SubsystemId != Pci.Device.SubsystemID))
+                                   )
         ) {
       //
       // It's not a video device, or device infomation doesn't match.
@@ -393,18 +412,22 @@ GraphicsOutputDriverBindingStart (
         if ((DeviceInfo->BarIndex != MAX_UINT8) && (DeviceInfo->BarIndex != Index)) {
           continue;
         }
-        Status = PciIo->GetBarAttributes (PciIo, Index, NULL, (VOID**) &Resources);
+
+        Status = PciIo->GetBarAttributes (PciIo, Index, NULL, (VOID **) &Resources);
         if (!EFI_ERROR (Status)) {
-          DEBUG ((DEBUG_INFO, "[%a]: BAR[%d]: Base = %lx, Length = %lx\n",
-                  gEfiCallerBaseName, Index, Resources->AddrRangeMin, Resources->AddrLen));
+          DEBUG (
+                 (DEBUG_INFO, "[%a]: BAR[%d]: Base = %lx, Length = %lx\n",
+                  gEfiCallerBaseName, Index, Resources->AddrRangeMin, Resources->AddrLen)
+                 );
           if ((Resources->Desc == ACPI_ADDRESS_SPACE_DESCRIPTOR) &&
-            (Resources->Len == (UINT16) (sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) - 3)) &&
+              (Resources->Len == (UINT16) (sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) - 3)) &&
               (Resources->ResType == ACPI_ADDRESS_SPACE_TYPE_MEM) &&
               (Resources->AddrLen >= GraphicsInfo->FrameBufferSize)
               ) {
             if (FrameBufferBase == 0) {
               FrameBufferBase = Resources->AddrRangeMin;
             }
+
             if (DeviceInfo->BarIndex == MAX_UINT8) {
               if (Resources->AddrRangeMin == GraphicsInfo->FrameBufferBase) {
                 FrameBufferBase = Resources->AddrRangeMin;
@@ -416,6 +439,7 @@ GraphicsOutputDriverBindingStart (
           }
         }
       }
+
       if (Index == MAX_PCI_BAR) {
         Status = EFI_UNSUPPORTED;
       } else {
@@ -451,18 +475,18 @@ GraphicsOutputDriverBindingStart (
   // Set attributes
   //
   Status = PciIo->Attributes (
-                    PciIo,
-                    EfiPciIoAttributeOperationGet,
-                    0,
-                    &Private->PciAttributes
-                    );
+                              PciIo,
+                              EfiPciIoAttributeOperationGet,
+                              0,
+                              &Private->PciAttributes
+                              );
   if (!EFI_ERROR (Status)) {
     Status = PciIo->Attributes (
-                      PciIo,
-                      EfiPciIoAttributeOperationEnable,
-                      EFI_PCI_DEVICE_ENABLE,
-                      NULL
-                      );
+                                PciIo,
+                                EfiPciIoAttributeOperationEnable,
+                                EFI_PCI_DEVICE_ENABLE,
+                                NULL
+                                );
   }
 
   if (EFI_ERROR (Status)) {
@@ -473,22 +497,23 @@ GraphicsOutputDriverBindingStart (
   // Create the FrameBufferBltLib configuration.
   //
   ReturnStatus = FrameBufferBltConfigure (
-                   (VOID *) (UINTN) Private->GraphicsOutput.Mode->FrameBufferBase,
-                   Private->GraphicsOutput.Mode->Info,
-                   Private->FrameBufferBltLibConfigure,
-                   &Private->FrameBufferBltLibConfigureSize
-                   );
+                                          (VOID *) (UINTN) Private->GraphicsOutput.Mode->FrameBufferBase,
+                                          Private->GraphicsOutput.Mode->Info,
+                                          Private->FrameBufferBltLibConfigure,
+                                          &Private->FrameBufferBltLibConfigureSize
+                                          );
   if (ReturnStatus == RETURN_BUFFER_TOO_SMALL) {
     Private->FrameBufferBltLibConfigure = AllocatePool (Private->FrameBufferBltLibConfigureSize);
     if (Private->FrameBufferBltLibConfigure != NULL) {
       ReturnStatus = FrameBufferBltConfigure (
-                       (VOID *) (UINTN) Private->GraphicsOutput.Mode->FrameBufferBase,
-                       Private->GraphicsOutput.Mode->Info,
-                       Private->FrameBufferBltLibConfigure,
-                       &Private->FrameBufferBltLibConfigureSize
-                       );
+                                              (VOID *) (UINTN) Private->GraphicsOutput.Mode->FrameBufferBase,
+                                              Private->GraphicsOutput.Mode->Info,
+                                              Private->FrameBufferBltLibConfigure,
+                                              &Private->FrameBufferBltLibConfigureSize
+                                              );
     }
   }
+
   if (RETURN_ERROR (ReturnStatus)) {
     Status = EFI_OUT_OF_RESOURCES;
     goto RestorePciAttributes;
@@ -501,30 +526,34 @@ GraphicsOutputDriverBindingStart (
   }
 
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &Private->GraphicsOutputHandle,
-                  &gEfiGraphicsOutputProtocolGuid, &Private->GraphicsOutput,
-                  &gEfiDevicePathProtocolGuid, Private->DevicePath,
-                  NULL
-                  );
+                                                   &Private->GraphicsOutputHandle,
+                                                   &gEfiGraphicsOutputProtocolGuid,
+                                                   &Private->GraphicsOutput,
+                                                   &gEfiDevicePathProtocolGuid,
+                                                   Private->DevicePath,
+                                                   NULL
+                                                   );
 
   if (!EFI_ERROR (Status)) {
     Status = gBS->OpenProtocol (
-                    Controller,
-                    &gEfiPciIoProtocolGuid,
-                    (VOID **) &Private->PciIo,
-                    This->DriverBindingHandle,
-                    Private->GraphicsOutputHandle,
-                    EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
-                    );
+                                Controller,
+                                &gEfiPciIoProtocolGuid,
+                                (VOID **) &Private->PciIo,
+                                This->DriverBindingHandle,
+                                Private->GraphicsOutputHandle,
+                                EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+                                );
     if (!EFI_ERROR (Status)) {
       mDriverStarted = TRUE;
     } else {
-      gBS->UninstallMultipleProtocolInterfaces (
-             Private->GraphicsOutputHandle,
-             &gEfiGraphicsOutputProtocolGuid, &Private->GraphicsOutput,
-             &gEfiDevicePathProtocolGuid, Private->DevicePath,
-             NULL
-             );
+  gBS->UninstallMultipleProtocolInterfaces (
+                                            Private->GraphicsOutputHandle,
+                                            &gEfiGraphicsOutputProtocolGuid,
+                                            &Private->GraphicsOutput,
+                                            &gEfiDevicePathProtocolGuid,
+                                            Private->DevicePath,
+                                            NULL
+                                            );
     }
   }
 
@@ -534,11 +563,11 @@ RestorePciAttributes:
     // Restore original PCI attributes
     //
     PciIo->Attributes (
-             PciIo,
-             EfiPciIoAttributeOperationSet,
-             Private->PciAttributes,
-             NULL
-             );
+                       PciIo,
+                       EfiPciIoAttributeOperationSet,
+                       Private->PciAttributes,
+                       NULL
+                       );
   }
 
 FreeMemory:
@@ -547,9 +576,11 @@ FreeMemory:
       if (Private->DevicePath != NULL) {
         FreePool (Private->DevicePath);
       }
+
       if (Private->FrameBufferBltLibConfigure != NULL) {
         FreePool (Private->FrameBufferBltLibConfigure);
       }
+
       FreePool (Private);
     }
   }
@@ -560,22 +591,23 @@ CloseProtocols:
     // Close the PCI I/O Protocol
     //
     gBS->CloseProtocol (
-           Controller,
-           &gEfiDevicePathProtocolGuid,
-           This->DriverBindingHandle,
-           Controller
-           );
+                        Controller,
+                        &gEfiDevicePathProtocolGuid,
+                        This->DriverBindingHandle,
+                        Controller
+                        );
 
     //
     // Close the PCI I/O Protocol
     //
     gBS->CloseProtocol (
-           Controller,
-           &gEfiPciIoProtocolGuid,
-           This->DriverBindingHandle,
-           Controller
-           );
+                        Controller,
+                        &gEfiPciIoProtocolGuid,
+                        This->DriverBindingHandle,
+                        Controller
+                        );
   }
+
   return Status;
 }
 
@@ -600,42 +632,41 @@ GraphicsOutputDriverBindingStop (
   IN EFI_HANDLE                     *ChildHandleBuffer
   )
 {
-  EFI_STATUS                        Status;
-  EFI_GRAPHICS_OUTPUT_PROTOCOL      *Gop;
-  GRAPHICS_OUTPUT_PRIVATE_DATA      *Private;
+  EFI_STATUS                    Status;
+  EFI_GRAPHICS_OUTPUT_PROTOCOL  *Gop;
+  GRAPHICS_OUTPUT_PRIVATE_DATA  *Private;
 
   if (NumberOfChildren == 0) {
-
     //
     // Close the PCI I/O Protocol
     //
     Status = gBS->CloseProtocol (
-                    Controller,
-                    &gEfiPciIoProtocolGuid,
-                    This->DriverBindingHandle,
-                    Controller
-                    );
+                                 Controller,
+                                 &gEfiPciIoProtocolGuid,
+                                 This->DriverBindingHandle,
+                                 Controller
+                                 );
     ASSERT_EFI_ERROR (Status);
 
     Status = gBS->CloseProtocol (
-                    Controller,
-                    &gEfiDevicePathProtocolGuid,
-                    This->DriverBindingHandle,
-                    Controller
-                    );
+                                 Controller,
+                                 &gEfiDevicePathProtocolGuid,
+                                 This->DriverBindingHandle,
+                                 Controller
+                                 );
     ASSERT_EFI_ERROR (Status);
     return EFI_SUCCESS;
   }
 
   ASSERT (NumberOfChildren == 1);
   Status = gBS->OpenProtocol (
-                  ChildHandleBuffer[0],
-                  &gEfiGraphicsOutputProtocolGuid,
-                  (VOID **) &Gop,
-                  This->DriverBindingHandle,
-                  ChildHandleBuffer[0],
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ChildHandleBuffer[0],
+                              &gEfiGraphicsOutputProtocolGuid,
+                              (VOID **) &Gop,
+                              This->DriverBindingHandle,
+                              ChildHandleBuffer[0],
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -643,31 +674,33 @@ GraphicsOutputDriverBindingStop (
   Private = GRAPHICS_OUTPUT_PRIVATE_FROM_THIS (Gop);
 
   Status = gBS->CloseProtocol (
-                  Controller,
-                  &gEfiPciIoProtocolGuid,
-                  This->DriverBindingHandle,
-                  Private->GraphicsOutputHandle
-                  );
+                               Controller,
+                               &gEfiPciIoProtocolGuid,
+                               This->DriverBindingHandle,
+                               Private->GraphicsOutputHandle
+                               );
   ASSERT_EFI_ERROR (Status);
   //
   // Remove the GOP protocol interface from the system
   //
   Status = gBS->UninstallMultipleProtocolInterfaces (
-                  Private->GraphicsOutputHandle,
-                  &gEfiGraphicsOutputProtocolGuid, &Private->GraphicsOutput,
-                  &gEfiDevicePathProtocolGuid, Private->DevicePath,
-                  NULL
-                  );
+                                                     Private->GraphicsOutputHandle,
+                                                     &gEfiGraphicsOutputProtocolGuid,
+                                                     &Private->GraphicsOutput,
+                                                     &gEfiDevicePathProtocolGuid,
+                                                     Private->DevicePath,
+                                                     NULL
+                                                     );
   if (!EFI_ERROR (Status)) {
     //
     // Restore original PCI attributes
     //
     Status = Private->PciIo->Attributes (
-                               Private->PciIo,
-                               EfiPciIoAttributeOperationSet,
-                               Private->PciAttributes,
-                               NULL
-                               );
+                                         Private->PciIo,
+                                         EfiPciIoAttributeOperationSet,
+                                         Private->PciAttributes,
+                                         NULL
+                                         );
     ASSERT_EFI_ERROR (Status);
 
     FreePool (Private->DevicePath);
@@ -675,19 +708,20 @@ GraphicsOutputDriverBindingStop (
     mDriverStarted = FALSE;
   } else {
     Status = gBS->OpenProtocol (
-                    Controller,
-                    &gEfiPciIoProtocolGuid,
-                    (VOID **) &Private->PciIo,
-                    This->DriverBindingHandle,
-                    Private->GraphicsOutputHandle,
-                    EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
-                    );
+                                Controller,
+                                &gEfiPciIoProtocolGuid,
+                                (VOID **) &Private->PciIo,
+                                This->DriverBindingHandle,
+                                Private->GraphicsOutputHandle,
+                                EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+                                );
     ASSERT_EFI_ERROR (Status);
   }
+
   return Status;
 }
 
-EFI_DRIVER_BINDING_PROTOCOL mGraphicsOutputDriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  mGraphicsOutputDriverBinding = {
   GraphicsOutputDriverBindingSupported,
   GraphicsOutputDriverBindingStart,
   GraphicsOutputDriverBindingStop,
@@ -716,8 +750,8 @@ InitializeGraphicsOutput (
   IN EFI_SYSTEM_TABLE                  *SystemTable
   )
 {
-  EFI_STATUS                           Status;
-  VOID                                 *HobStart;
+  EFI_STATUS  Status;
+  VOID        *HobStart;
 
   HobStart = GetFirstGuidHob (&gEfiGraphicsInfoHobGuid);
 
@@ -726,13 +760,13 @@ InitializeGraphicsOutput (
   }
 
   Status = EfiLibInstallDriverBindingComponentName2 (
-             ImageHandle,
-             SystemTable,
-             &mGraphicsOutputDriverBinding,
-             ImageHandle,
-             &mGraphicsOutputComponentName,
-             &mGraphicsOutputComponentName2
-             );
+                                                     ImageHandle,
+                                                     SystemTable,
+                                                     &mGraphicsOutputDriverBinding,
+                                                     ImageHandle,
+                                                     &mGraphicsOutputComponentName,
+                                                     &mGraphicsOutputComponentName2
+                                                     );
   ASSERT_EFI_ERROR (Status);
 
   return Status;

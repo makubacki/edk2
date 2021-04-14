@@ -12,14 +12,14 @@
 #define _PCI_HOST_BRIDGE_H
 
 typedef struct {
-  ACPI_HID_DEVICE_PATH     AcpiDevicePath;
-  EFI_DEVICE_PATH_PROTOCOL EndDevicePath;
+  ACPI_HID_DEVICE_PATH        AcpiDevicePath;
+  EFI_DEVICE_PATH_PROTOCOL    EndDevicePath;
 } CB_PCI_ROOT_BRIDGE_DEVICE_PATH;
 
 PCI_ROOT_BRIDGE *
 ScanForRootBridges (
   UINTN      *NumberOfRootBridges
-);
+  );
 
 /**
   Initialize a PCI_ROOT_BRIDGE structure.
@@ -75,6 +75,6 @@ InitRootBridge (
   IN  PCI_ROOT_BRIDGE_APERTURE *PMem,
   IN  PCI_ROOT_BRIDGE_APERTURE *PMemAbove4G,
   OUT PCI_ROOT_BRIDGE          *RootBus
-);
+  );
 
 #endif

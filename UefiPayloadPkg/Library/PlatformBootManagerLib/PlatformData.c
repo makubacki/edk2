@@ -11,15 +11,14 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 ///
 /// Predefined platform default console device path
 ///
-GLOBAL_REMOVE_IF_UNREFERENCED PLATFORM_CONSOLE_CONNECT_ENTRY   gPlatformConsole[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED PLATFORM_CONSOLE_CONNECT_ENTRY  gPlatformConsole[] = {
   {
     NULL,
     0
   }
 };
 
-
-GLOBAL_REMOVE_IF_UNREFERENCED USB_CLASS_FORMAT_DEVICE_PATH gUsbClassKeyboardDevicePath = {
+GLOBAL_REMOVE_IF_UNREFERENCED USB_CLASS_FORMAT_DEVICE_PATH  gUsbClassKeyboardDevicePath = {
   {
     {
       MESSAGING_DEVICE_PATH,

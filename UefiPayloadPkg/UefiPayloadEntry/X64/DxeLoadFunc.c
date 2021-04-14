@@ -15,8 +15,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/HobLib.h>
 #include "X64/VirtualMemory.h"
 #include "UefiPayloadEntry.h"
-#define STACK_SIZE            0x20000
-
+#define STACK_SIZE  0x20000
 
 /**
    Transfers control to DxeCore.
@@ -35,11 +34,11 @@ HandOffToDxeCore (
   IN EFI_PEI_HOB_POINTERS   HobList
   )
 {
-  VOID                            *BaseOfStack;
-  VOID                            *TopOfStack;
-  UINTN                           PageTables;
-  VOID                            *GhcbBase;
-  UINTN                           GhcbSize;
+  VOID   *BaseOfStack;
+  VOID   *TopOfStack;
+  UINTN  PageTables;
+  VOID   *GhcbBase;
+  UINTN  GhcbSize;
 
   //
   // Clear page 0 and mark it as allocated if NULL pointer detection is enabled.
@@ -48,7 +47,6 @@ HandOffToDxeCore (
     ClearFirst4KPage (HobList.Raw);
     BuildMemoryAllocationHob (0, EFI_PAGES_TO_SIZE (1), EfiBootServicesData);
   }
-
 
   //
   // Allocate 128KB for the Stack
@@ -74,8 +72,12 @@ HandOffToDxeCore (
     //
     // Create page table and save PageMapLevel4 to CR3
     //
-    PageTables = CreateIdentityMappingPageTables ((EFI_PHYSICAL_ADDRESS) (UINTN) BaseOfStack, STACK_SIZE,
-                                                  (EFI_PHYSICAL_ADDRESS) (UINTN) GhcbBase, GhcbSize);
+    PageTables = CreateIdentityMappingPageTables (
+                                                  (EFI_PHYSICAL_ADDRESS) (UINTN) BaseOfStack,
+                                                  STACK_SIZE,
+                                                  (EFI_PHYSICAL_ADDRESS) (UINTN) GhcbBase,
+                                                  GhcbSize
+                                                  );
   } else {
     //
     // Set NX for stack feature also require PcdDxeIplBuildPageTables be TRUE
@@ -85,7 +87,6 @@ HandOffToDxeCore (
     ASSERT (PcdGetBool (PcdCpuStackGuard) == FALSE);
   }
 
-
   if (FeaturePcdGet (PcdDxeIplBuildPageTables)) {
     AsmWriteCr3 (PageTables);
   }
@@ -93,15 +94,15 @@ HandOffToDxeCore (
   //
   // Update the contents of BSP stack HOB to reflect the real stack info passed to DxeCore.
   //
-  UpdateStackHob ((EFI_PHYSICAL_ADDRESS)(UINTN) BaseOfStack, STACK_SIZE);
+  UpdateStackHob ((EFI_PHYSICAL_ADDRESS) (UINTN) BaseOfStack, STACK_SIZE);
 
   //
   // Transfer the control to the entry point of DxeCore.
   //
   SwitchStack (
-    (SWITCH_STACK_ENTRY_POINT)(UINTN)DxeCoreEntryPoint,
-    HobList.Raw,
-    NULL,
-    TopOfStack
-    );
+               (SWITCH_STACK_ENTRY_POINT) (UINTN) DxeCoreEntryPoint,
+               HobList.Raw,
+               NULL,
+               TopOfStack
+               );
 }

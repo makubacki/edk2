@@ -30,55 +30,58 @@ ReserveResourceInGcd (
   IN EFI_HANDLE            ImageHandle
   )
 {
-  EFI_STATUS               Status;
+  EFI_STATUS  Status;
 
   if (IsMMIO) {
     Status = gDS->AddMemorySpace (
-                    GcdType,
-                    BaseAddress,
-                    Length,
-                    EFI_MEMORY_UC
-                    );
+                                  GcdType,
+                                  BaseAddress,
+                                  Length,
+                                  EFI_MEMORY_UC
+                                  );
     if (EFI_ERROR (Status)) {
-      DEBUG ((
-        DEBUG_ERROR,
-        "Failed to add memory space :0x%lx 0x%lx\n",
-        BaseAddress,
-        Length
-        ));
+      DEBUG (
+             (
+              DEBUG_ERROR,
+              "Failed to add memory space :0x%lx 0x%lx\n",
+              BaseAddress,
+              Length
+             )
+             );
     }
+
     ASSERT_EFI_ERROR (Status);
     Status = gDS->AllocateMemorySpace (
-                    EfiGcdAllocateAddress,
-                    GcdType,
-                    Alignment,
-                    Length,
-                    &BaseAddress,
-                    ImageHandle,
-                    NULL
-                    );
+                                       EfiGcdAllocateAddress,
+                                       GcdType,
+                                       Alignment,
+                                       Length,
+                                       &BaseAddress,
+                                       ImageHandle,
+                                       NULL
+                                       );
     ASSERT_EFI_ERROR (Status);
   } else {
     Status = gDS->AddIoSpace (
-                    GcdType,
-                    BaseAddress,
-                    Length
-                    );
+                              GcdType,
+                              BaseAddress,
+                              Length
+                              );
     ASSERT_EFI_ERROR (Status);
     Status = gDS->AllocateIoSpace (
-                    EfiGcdAllocateAddress,
-                    GcdType,
-                    Alignment,
-                    Length,
-                    &BaseAddress,
-                    ImageHandle,
-                    NULL
-                    );
+                                   EfiGcdAllocateAddress,
+                                   GcdType,
+                                   Alignment,
+                                   Length,
+                                   &BaseAddress,
+                                   ImageHandle,
+                                   NULL
+                                   );
     ASSERT_EFI_ERROR (Status);
   }
+
   return Status;
 }
-
 
 /**
   Main entry for the bootloader support DXE module.
@@ -97,7 +100,7 @@ BlDxeEntryPoint (
   IN EFI_SYSTEM_TABLE        *SystemTable
   )
 {
-  EFI_STATUS Status;
+  EFI_STATUS                 Status;
   EFI_HOB_GUID_TYPE          *GuidHob;
   SYSTEM_TABLE_INFO          *SystemTableInfo;
   EFI_PEI_GRAPHICS_INFO_HOB  *GfxInfo;
@@ -118,14 +121,17 @@ BlDxeEntryPoint (
   //
   GuidHob = GetFirstGuidHob (&gUefiSystemTableInfoGuid);
   ASSERT (GuidHob != NULL);
-  SystemTableInfo = (SYSTEM_TABLE_INFO *)GET_GUID_HOB_DATA (GuidHob);
+  SystemTableInfo = (SYSTEM_TABLE_INFO *) GET_GUID_HOB_DATA (GuidHob);
 
   //
   // Install Acpi Table
   //
   if (SystemTableInfo->AcpiTableBase != 0 && SystemTableInfo->AcpiTableSize != 0) {
-    DEBUG ((DEBUG_ERROR, "Install Acpi Table at 0x%lx, length 0x%x\n", SystemTableInfo->AcpiTableBase, SystemTableInfo->AcpiTableSize));
-    Status = gBS->InstallConfigurationTable (&gEfiAcpiTableGuid, (VOID *)(UINTN)SystemTableInfo->AcpiTableBase);
+    DEBUG (
+          (DEBUG_ERROR, "Install Acpi Table at 0x%lx, length 0x%x\n", SystemTableInfo->AcpiTableBase,
+           SystemTableInfo->AcpiTableSize)
+          );
+    Status = gBS->InstallConfigurationTable (&gEfiAcpiTableGuid, (VOID *) (UINTN) SystemTableInfo->AcpiTableBase);
     ASSERT_EFI_ERROR (Status);
   }
 
@@ -133,8 +139,11 @@ BlDxeEntryPoint (
   // Install Smbios Table
   //
   if (SystemTableInfo->SmbiosTableBase != 0 && SystemTableInfo->SmbiosTableSize != 0) {
-    DEBUG ((DEBUG_ERROR, "Install Smbios Table at 0x%lx, length 0x%x\n", SystemTableInfo->SmbiosTableBase, SystemTableInfo->SmbiosTableSize));
-    Status = gBS->InstallConfigurationTable (&gEfiSmbiosTableGuid, (VOID *)(UINTN)SystemTableInfo->SmbiosTableBase);
+    DEBUG (
+          (DEBUG_ERROR, "Install Smbios Table at 0x%lx, length 0x%x\n", SystemTableInfo->SmbiosTableBase,
+           SystemTableInfo->SmbiosTableSize)
+          );
+    Status = gBS->InstallConfigurationTable (&gEfiSmbiosTableGuid, (VOID *) (UINTN) SystemTableInfo->SmbiosTableBase);
     ASSERT_EFI_ERROR (Status);
   }
 
@@ -143,8 +152,8 @@ BlDxeEntryPoint (
   //
   GuidHob = GetFirstGuidHob (&gEfiGraphicsInfoHobGuid);
   if (GuidHob != NULL) {
-    GfxInfo = (EFI_PEI_GRAPHICS_INFO_HOB *)GET_GUID_HOB_DATA (GuidHob);
-    Status = PcdSet32S (PcdVideoHorizontalResolution, GfxInfo->GraphicsMode.HorizontalResolution);
+    GfxInfo = (EFI_PEI_GRAPHICS_INFO_HOB *) GET_GUID_HOB_DATA (GuidHob);
+    Status  = PcdSet32S (PcdVideoHorizontalResolution, GfxInfo->GraphicsMode.HorizontalResolution);
     ASSERT_EFI_ERROR (Status);
     Status = PcdSet32S (PcdVideoVerticalResolution, GfxInfo->GraphicsMode.VerticalResolution);
     ASSERT_EFI_ERROR (Status);
@@ -159,7 +168,7 @@ BlDxeEntryPoint (
   //
   GuidHob = GetFirstGuidHob (&gUefiAcpiBoardInfoGuid);
   if (GuidHob != NULL) {
-    AcpiBoardInfo = (ACPI_BOARD_INFO *)GET_GUID_HOB_DATA (GuidHob);
+    AcpiBoardInfo = (ACPI_BOARD_INFO *) GET_GUID_HOB_DATA (GuidHob);
     Status = PcdSet64S (PcdPciExpressBaseAddress, AcpiBoardInfo->PcieBaseAddress);
     ASSERT_EFI_ERROR (Status);
     Status = PcdSet64S (PcdPciExpressBaseSize, AcpiBoardInfo->PcieBaseSize);
@@ -168,4 +177,3 @@ BlDxeEntryPoint (
 
   return EFI_SUCCESS;
 }
-

@@ -20,8 +20,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/DevicePathLib.h>
 #include <Protocol/PciIo.h>
 
-#define IS_PCI_ISA_PDECODE(_p)        IS_CLASS3 (_p, PCI_CLASS_BRIDGE, PCI_CLASS_BRIDGE_ISA_PDECODE, 0)
-#define IS_PCI_16550SERIAL(_p)        IS_CLASS3 (_p, PCI_CLASS_SCC, PCI_SUBCLASS_SERIAL, PCI_IF_16550)
+#define IS_PCI_ISA_PDECODE(_p)  IS_CLASS3 (_p, PCI_CLASS_BRIDGE, PCI_CLASS_BRIDGE_ISA_PDECODE, 0)
+#define IS_PCI_16550SERIAL(_p)  IS_CLASS3 (_p, PCI_CLASS_SCC, PCI_SUBCLASS_SERIAL, PCI_IF_16550)
 
 //
 // Type definitions
@@ -31,17 +31,17 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // Platform Root Bridge
 //
 typedef struct {
-  ACPI_HID_DEVICE_PATH      PciRootBridge;
-  EFI_DEVICE_PATH_PROTOCOL  End;
+  ACPI_HID_DEVICE_PATH        PciRootBridge;
+  EFI_DEVICE_PATH_PROTOCOL    End;
 } PLATFORM_ROOT_BRIDGE_DEVICE_PATH;
 
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *PROTOCOL_INSTANCE_CALLBACK)(
-  IN EFI_HANDLE            Handle,
-  IN VOID                 *Instance,
-  IN VOID                 *Context
-);
+                                     IN EFI_HANDLE            Handle,
+                                     IN VOID                 *Instance,
+                                     IN VOID                 *Context
+                                     );
 
 /**
   @param[in]  Handle - Handle of PCI device instance
@@ -49,12 +49,12 @@ EFI_STATUS
   @param[in]  Pci - PCI Header register block
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *VISIT_PCI_INSTANCE_CALLBACK)(
-  IN EFI_HANDLE           Handle,
-  IN EFI_PCI_IO_PROTOCOL  *PciIo,
-  IN PCI_TYPE00           *Pci
-);
+                                      IN EFI_HANDLE           Handle,
+                                      IN EFI_PCI_IO_PROTOCOL  *PciIo,
+                                      IN PCI_TYPE00           *Pci
+                                      );
 
 /**
   Platform console init. Include the platform firmware vendor, revision
@@ -64,7 +64,7 @@ EFI_STATUS
 VOID
 EFIAPI
 PlatformConsoleInit (
-  VOID
-);
+                     VOID
+                     );
 
 #endif

@@ -10,14 +10,14 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <PiDxe.h>
 #include <Library/UefiLib.h>
 
-extern EFI_COMPONENT_NAME_PROTOCOL  mGraphicsOutputComponentName;
-extern EFI_COMPONENT_NAME2_PROTOCOL mGraphicsOutputComponentName2;
+extern EFI_COMPONENT_NAME_PROTOCOL   mGraphicsOutputComponentName;
+extern EFI_COMPONENT_NAME2_PROTOCOL  mGraphicsOutputComponentName2;
 
 //
 // Driver name table for GraphicsOutput module.
 // It is shared by the implementation of ComponentName & ComponentName2 Protocol.
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mGraphicsOutputDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mGraphicsOutputDriverNameTable[] = {
   {
     "eng;en",
     L"Generic Graphics Output Driver"
@@ -76,12 +76,12 @@ GraphicsOutputComponentNameGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mGraphicsOutputDriverNameTable,
-           DriverName,
-           (BOOLEAN) (This == &mGraphicsOutputComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mGraphicsOutputDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &mGraphicsOutputComponentName)
+                               );
 }
 
 /**
@@ -177,7 +177,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  mGraphicsOutputCompon
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL mGraphicsOutputComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  mGraphicsOutputComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) GraphicsOutputComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) GraphicsOutputComponentNameGetControllerName,
   "en"
