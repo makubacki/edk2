@@ -37,30 +37,30 @@
 #include <Library/DebugLib.h>
 #include <Library/MemoryAllocationLib.h>
 
-#define IS_HYPHEN(a)               ((a) == '-')
-#define IS_NULL(a)                 ((a) == '\0')
+#define IS_HYPHEN(a)  ((a) == '-')
+#define IS_NULL(a)    ((a) == '\0')
 
 // This is default allocation. Reallocation will happen if it is not enough.
-#define MAX_LINE_LENGTH           512
+#define MAX_LINE_LENGTH  512
 
 typedef struct _INI_SECTION_ITEM SECTION_ITEM;
 struct _INI_SECTION_ITEM {
-  CHAR8                           *PtrSection;
-  UINTN                           SecNameLen;
-  CHAR8                           *PtrEntry;
-  CHAR8                           *PtrValue;
-  SECTION_ITEM                    *PtrNext;
+  CHAR8           *PtrSection;
+  UINTN           SecNameLen;
+  CHAR8           *PtrEntry;
+  CHAR8           *PtrValue;
+  SECTION_ITEM    *PtrNext;
 };
 
 typedef struct _INI_COMMENT_LINE COMMENT_LINE;
 struct _INI_COMMENT_LINE {
-  CHAR8                           *PtrComment;
-  COMMENT_LINE                    *PtrNext;
+  CHAR8           *PtrComment;
+  COMMENT_LINE    *PtrNext;
 };
 
 typedef struct {
-  SECTION_ITEM                  *SectionHead;
-  COMMENT_LINE                  *CommentHead;
+  SECTION_ITEM    *SectionHead;
+  COMMENT_LINE    *CommentHead;
 } INI_PARSING_LIB_CONTEXT;
 
 /**
@@ -81,14 +81,17 @@ IsValidDigitalChar (
   if (DigitalChar >= '0' && DigitalChar <= '9') {
     return TRUE;
   }
+
   if (IncludeHex) {
     if (DigitalChar >= 'a' && DigitalChar <= 'f') {
       return TRUE;
     }
+
     if (DigitalChar >= 'A' && DigitalChar <= 'F') {
       return TRUE;
     }
   }
+
   return FALSE;
 }
 
@@ -108,15 +111,19 @@ IsValidNameChar (
   if (NameChar >= 'a' && NameChar <= 'z') {
     return TRUE;
   }
+
   if (NameChar >= 'A' && NameChar <= 'Z') {
     return TRUE;
   }
+
   if (NameChar >= '0' && NameChar <= '9') {
     return TRUE;
   }
+
   if (NameChar == '_') {
     return TRUE;
   }
+
   return FALSE;
 }
 
@@ -138,11 +145,13 @@ IsValidDigital (
   )
 {
   UINTN  Index;
+
   for (Index = 0; Index < Length; Index++) {
-    if (!IsValidDigitalChar(Digital[Index], IncludeHex)) {
+    if (!IsValidDigitalChar (Digital[Index], IncludeHex)) {
       return FALSE;
     }
   }
+
   return TRUE;
 }
 
@@ -161,7 +170,7 @@ IsValidDecimalString (
   IN UINTN  Length
   )
 {
-  return IsValidDigital(Decimal, Length, FALSE);
+  return IsValidDigital (Decimal, Length, FALSE);
 }
 
 /**
@@ -182,13 +191,16 @@ IsValidHexString (
   if (Length <= 2) {
     return FALSE;
   }
+
   if (Hex[0] != '0') {
     return FALSE;
   }
+
   if (Hex[1] != 'x' && Hex[1] != 'X') {
     return FALSE;
   }
-  return IsValidDigital(&Hex[2], Length - 2, TRUE);
+
+  return IsValidDigital (&Hex[2], Length - 2, TRUE);
 }
 
 /**
@@ -207,11 +219,13 @@ IsValidName (
   )
 {
   UINTN  Index;
+
   for (Index = 0; Index < Length; Index++) {
-    if (!IsValidNameChar(Name[Index])) {
+    if (!IsValidNameChar (Name[Index])) {
       return FALSE;
     }
   }
+
   return TRUE;
 }
 
@@ -230,36 +244,46 @@ IsValidGuid (
   IN UINTN  Length
   )
 {
-  if (Length != sizeof("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx") - 1) {
+  if (Length != sizeof ("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx") - 1) {
     return FALSE;
   }
-  if (!IS_HYPHEN(Value[8])) {
+
+  if (!IS_HYPHEN (Value[8])) {
     return FALSE;
   }
-  if (!IS_HYPHEN(Value[13])) {
+
+  if (!IS_HYPHEN (Value[13])) {
     return FALSE;
   }
-  if (!IS_HYPHEN(Value[18])) {
+
+  if (!IS_HYPHEN (Value[18])) {
     return FALSE;
   }
-  if (!IS_HYPHEN(Value[23])) {
+
+  if (!IS_HYPHEN (Value[23])) {
     return FALSE;
   }
-  if (!IsValidDigital(&Value[0], 8, TRUE)) {
+
+  if (!IsValidDigital (&Value[0], 8, TRUE)) {
     return FALSE;
   }
-  if (!IsValidDigital(&Value[9], 4, TRUE)) {
+
+  if (!IsValidDigital (&Value[9], 4, TRUE)) {
     return FALSE;
   }
-  if (!IsValidDigital(&Value[14], 4, TRUE)) {
+
+  if (!IsValidDigital (&Value[14], 4, TRUE)) {
     return FALSE;
   }
-  if (!IsValidDigital(&Value[19], 4, TRUE)) {
+
+  if (!IsValidDigital (&Value[19], 4, TRUE)) {
     return FALSE;
   }
-  if (!IsValidDigital(&Value[24], 12, TRUE)) {
+
+  if (!IsValidDigital (&Value[24], 12, TRUE)) {
     return FALSE;
   }
+
   return TRUE;
 }
 
@@ -278,9 +302,10 @@ IsValidValue (
   IN UINTN  Length
   )
 {
-  if (IsValidName(Value, Length) || IsValidGuid(Value, Length)) {
+  if (IsValidName (Value, Length) || IsValidGuid (Value, Length)) {
     return TRUE;
   }
+
   return FALSE;
 }
 
@@ -294,28 +319,30 @@ DumpIniSection (
   IN VOID  *Context
   )
 {
-  INI_PARSING_LIB_CONTEXT               *IniContext;
-  SECTION_ITEM                          *PtrSection;
-  SECTION_ITEM                          *Section;
+  INI_PARSING_LIB_CONTEXT  *IniContext;
+  SECTION_ITEM             *PtrSection;
+  SECTION_ITEM             *Section;
 
   if (Context == NULL) {
     return;
   }
 
   IniContext = Context;
-  Section = IniContext->SectionHead;
+  Section    = IniContext->SectionHead;
 
   while (Section != NULL) {
     PtrSection = Section;
-    Section = Section->PtrNext;
+    Section    = Section->PtrNext;
     if (PtrSection->PtrSection != NULL) {
-      DEBUG((DEBUG_VERBOSE, "Section - %a\n", PtrSection->PtrSection));
+      DEBUG ((DEBUG_VERBOSE, "Section - %a\n", PtrSection->PtrSection));
     }
+
     if (PtrSection->PtrEntry != NULL) {
       DEBUG ((DEBUG_VERBOSE, "  Entry - %a\n", PtrSection->PtrEntry));
     }
+
     if (PtrSection->PtrValue != NULL) {
-      DEBUG((DEBUG_VERBOSE, "  Value - %a\n", PtrSection->PtrValue));
+      DEBUG ((DEBUG_VERBOSE, "  Value - %a\n", PtrSection->PtrValue));
     }
   }
 }
@@ -341,36 +368,37 @@ ProfileGetLine (
   IN OUT  UINTN                         *LineSize
   )
 {
-  UINTN                                 Length;
-  UINT8                                 *PtrBuf;
-  UINTN                                 PtrEnd;
+  UINTN  Length;
+  UINT8  *PtrBuf;
+  UINTN  PtrEnd;
 
-  PtrBuf      = Buffer;
-  PtrEnd      = (UINTN)Buffer + BufferSize;
+  PtrBuf = Buffer;
+  PtrEnd = (UINTN) Buffer + BufferSize;
 
   //
   // 0x0D indicates a line break. Otherwise there is no line break
   //
-  while ((UINTN)PtrBuf < PtrEnd) {
+  while ((UINTN) PtrBuf < PtrEnd) {
     if (*PtrBuf == 0x0D || *PtrBuf == 0x0A) {
       break;
     }
+
     PtrBuf++;
   }
 
-  if ((UINTN)PtrBuf >= (PtrEnd - 1)) {
+  if ((UINTN) PtrBuf >= (PtrEnd - 1)) {
     //
     // The buffer ends without any line break
     // or it is the last character of the buffer
     //
-    Length    = BufferSize;
+    Length = BufferSize;
   } else if (*(PtrBuf + 1) == 0x0A) {
     //
     // Further check if a 0x0A follows. If yes, count 0xA
     //
-    Length    = (UINTN) PtrBuf - (UINTN) Buffer + 2;
+    Length = (UINTN) PtrBuf - (UINTN) Buffer + 2;
   } else {
-    Length    = (UINTN) PtrBuf - (UINTN) Buffer + 1;
+    Length = (UINTN) PtrBuf - (UINTN) Buffer + 1;
   }
 
   if (Length > (*LineSize)) {
@@ -379,7 +407,7 @@ ProfileGetLine (
   }
 
   SetMem (LineBuffer, *LineSize, 0x0);
-  *LineSize   = Length;
+  *LineSize = Length;
   CopyMem (LineBuffer, Buffer, Length);
 
   return EFI_SUCCESS;
@@ -400,9 +428,9 @@ ProfileTrim (
   IN OUT  UINTN                         *BufferSize
   )
 {
-  UINTN                                 Length;
-  UINT8                                 *PtrBuf;
-  UINT8                                 *PtrEnd;
+  UINTN  Length;
+  UINT8  *PtrBuf;
+  UINT8  *PtrEnd;
 
   if (*BufferSize == 0) {
     return;
@@ -411,36 +439,38 @@ ProfileTrim (
   //
   // Trim the tail first, include CR, LF, TAB, and SPACE.
   //
-  Length          = *BufferSize;
-  PtrBuf          = (UINT8 *) ((UINTN) Buffer + Length - 1);
+  Length = *BufferSize;
+  PtrBuf = (UINT8 *) ((UINTN) Buffer + Length - 1);
   while (PtrBuf >= Buffer) {
-    if ((*PtrBuf != 0x0D) && (*PtrBuf != 0x0A )
-      && (*PtrBuf != 0x20) && (*PtrBuf != 0x09)) {
+    if (  (*PtrBuf != 0x0D) && (*PtrBuf != 0x0A)
+       && (*PtrBuf != 0x20) && (*PtrBuf != 0x09)) {
       break;
     }
-    PtrBuf --;
+
+    PtrBuf--;
   }
 
   //
   // all spaces, a blank line, return directly;
   //
   if (PtrBuf < Buffer) {
-    *BufferSize   = 0;
+    *BufferSize = 0;
     return;
   }
 
-  Length          = (UINTN)PtrBuf - (UINTN)Buffer + 1;
-  PtrEnd          = PtrBuf;
-  PtrBuf          = Buffer;
+  Length = (UINTN) PtrBuf - (UINTN) Buffer + 1;
+  PtrEnd = PtrBuf;
+  PtrBuf = Buffer;
 
   //
   // Now skip the heading CR, LF, TAB and SPACE
   //
   while (PtrBuf <= PtrEnd) {
-    if ((*PtrBuf != 0x0D) && (*PtrBuf != 0x0A )
-      && (*PtrBuf != 0x20) && (*PtrBuf != 0x09)) {
+    if (  (*PtrBuf != 0x0D) && (*PtrBuf != 0x0A)
+       && (*PtrBuf != 0x20) && (*PtrBuf != 0x09)) {
       break;
     }
+
     PtrBuf++;
   }
 
@@ -448,18 +478,18 @@ ProfileTrim (
   // If no heading CR, LF, TAB or SPACE, directly return
   //
   if (PtrBuf == Buffer) {
-    *BufferSize   = Length;
+    *BufferSize = Length;
     return;
   }
 
-  *BufferSize     = (UINTN)PtrEnd - (UINTN)PtrBuf + 1;
+  *BufferSize = (UINTN) PtrEnd - (UINTN) PtrBuf + 1;
 
   //
   // The first Buffer..PtrBuf characters are CR, LF, TAB or SPACE.
   // Now move out all these characters.
   //
   while (PtrBuf <= PtrEnd) {
-    *Buffer       = *PtrBuf;
+    *Buffer = *PtrBuf;
     Buffer++;
     PtrBuf++;
   }
@@ -485,7 +515,7 @@ ProfileGetComments (
   IN OUT  COMMENT_LINE                  **CommentHead
   )
 {
-  COMMENT_LINE                          *CommentItem;
+  COMMENT_LINE  *CommentItem;
 
   CommentItem = NULL;
   CommentItem = AllocatePool (sizeof (COMMENT_LINE));
@@ -493,8 +523,8 @@ ProfileGetComments (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  CommentItem->PtrNext  = *CommentHead;
-  *CommentHead          = CommentItem;
+  CommentItem->PtrNext = *CommentHead;
+  *CommentHead = CommentItem;
 
   //
   // Add a trailing '\0'
@@ -504,6 +534,7 @@ ProfileGetComments (
     FreePool (CommentItem);
     return EFI_OUT_OF_RESOURCES;
   }
+
   CopyMem (CommentItem->PtrComment, Buffer, BufferSize);
   *(CommentItem->PtrComment + BufferSize) = '\0';
 
@@ -528,29 +559,32 @@ ProfileGetSection (
   IN OUT  SECTION_ITEM                  **SectionHead
   )
 {
-  SECTION_ITEM                          *SectionItem;
-  UINTN                                 Length;
-  UINT8                                 *PtrBuf;
-  UINT8                                 *PtrEnd;
+  SECTION_ITEM  *SectionItem;
+  UINTN         Length;
+  UINT8         *PtrBuf;
+  UINT8         *PtrEnd;
 
-  ASSERT(BufferSize >= 1);
+  ASSERT (BufferSize >= 1);
   //
   // The first character of Buffer is '[', now we want for ']'
   //
-  PtrEnd      = (UINT8 *)((UINTN)Buffer + BufferSize - 1);
-  PtrBuf      = (UINT8 *)((UINTN)Buffer + 1);
+  PtrEnd = (UINT8 *) ((UINTN) Buffer + BufferSize - 1);
+  PtrBuf = (UINT8 *) ((UINTN) Buffer + 1);
   while (PtrBuf <= PtrEnd) {
     if (*PtrBuf == ']') {
       break;
     }
-    PtrBuf ++;
+
+    PtrBuf++;
   }
+
   if (PtrBuf > PtrEnd) {
     //
     // Not found. Invalid line
     //
     return EFI_NOT_FOUND;
   }
+
   if (PtrBuf <= Buffer + 1) {
     // Empty name
     return EFI_NOT_FOUND;
@@ -559,11 +593,11 @@ ProfileGetSection (
   //
   // excluding the heading '[' and tailing ']'
   //
-  Length      = PtrBuf - Buffer - 1;
+  Length = PtrBuf - Buffer - 1;
   ProfileTrim (
-    Buffer + 1,
-    &Length
-  );
+               Buffer + 1,
+               &Length
+               );
 
   //
   // Invalid line if the section name is null
@@ -572,7 +606,7 @@ ProfileGetSection (
     return EFI_NOT_FOUND;
   }
 
-  if (!IsValidName((CHAR8 *)Buffer + 1, Length)) {
+  if (!IsValidName ((CHAR8 *) Buffer + 1, Length)) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -586,7 +620,7 @@ ProfileGetSection (
   SectionItem->PtrEntry   = NULL;
   SectionItem->PtrValue   = NULL;
   SectionItem->PtrNext    = *SectionHead;
-  *SectionHead            = SectionItem;
+  *SectionHead = SectionItem;
 
   //
   // Add a trailing '\0'
@@ -625,16 +659,16 @@ ProfileGetEntry (
   IN OUT  SECTION_ITEM                  **SectionHead
   )
 {
-  EFI_STATUS                            Status;
-  SECTION_ITEM                          *SectionItem;
-  SECTION_ITEM                          *PtrSection;
-  UINTN                                 Length;
-  UINT8                                 *PtrBuf;
-  UINT8                                 *PtrEnd;
+  EFI_STATUS    Status;
+  SECTION_ITEM  *SectionItem;
+  SECTION_ITEM  *PtrSection;
+  UINTN         Length;
+  UINT8         *PtrBuf;
+  UINT8         *PtrEnd;
 
-  Status      = EFI_SUCCESS;
-  PtrBuf      = Buffer;
-  PtrEnd      = (UINT8 *) ((UINTN)Buffer + BufferSize - 1);
+  Status = EFI_SUCCESS;
+  PtrBuf = Buffer;
+  PtrEnd = (UINT8 *) ((UINTN) Buffer + BufferSize - 1);
 
   //
   // First search for '='
@@ -643,14 +677,17 @@ ProfileGetEntry (
     if (*PtrBuf == '=') {
       break;
     }
+
     PtrBuf++;
   }
+
   if (PtrBuf > PtrEnd) {
     //
     // Not found. Invalid line
     //
     return EFI_NOT_FOUND;
   }
+
   if (PtrBuf <= Buffer) {
     // Empty name
     return EFI_NOT_FOUND;
@@ -659,11 +696,11 @@ ProfileGetEntry (
   //
   // excluding the tailing '='
   //
-  Length      = PtrBuf - Buffer;
+  Length = PtrBuf - Buffer;
   ProfileTrim (
-    Buffer,
-    &Length
-  );
+               Buffer,
+               &Length
+               );
 
   //
   // Invalid line if the entry name is null
@@ -672,7 +709,7 @@ ProfileGetEntry (
     return EFI_NOT_FOUND;
   }
 
-  if (!IsValidName((CHAR8 *)Buffer, Length)) {
+  if (!IsValidName ((CHAR8 *) Buffer, Length)) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -682,7 +719,8 @@ ProfileGetEntry (
   if (*SectionHead == NULL) {
     return Status;
   }
-  PtrSection  = *SectionHead;
+
+  PtrSection = *SectionHead;
 
   SectionItem = AllocatePool (sizeof (SECTION_ITEM));
   if (SectionItem == NULL) {
@@ -694,7 +732,7 @@ ProfileGetEntry (
   SectionItem->PtrValue   = NULL;
   SectionItem->SecNameLen = PtrSection->SecNameLen;
   SectionItem->PtrNext    = *SectionHead;
-  *SectionHead            = SectionItem;
+  *SectionHead = SectionItem;
 
   //
   // SectionName, add a trailing '\0'
@@ -703,6 +741,7 @@ ProfileGetEntry (
   if (SectionItem->PtrSection == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
+
   CopyMem (SectionItem->PtrSection, PtrSection->PtrSection, PtrSection->SecNameLen + 1);
 
   //
@@ -710,47 +749,51 @@ ProfileGetEntry (
   //
   SectionItem->PtrEntry = AllocatePool (Length + 1);
   if (SectionItem->PtrEntry == NULL) {
-    FreePool(SectionItem->PtrSection);
+    FreePool (SectionItem->PtrSection);
     return EFI_OUT_OF_RESOURCES;
   }
+
   CopyMem (SectionItem->PtrEntry, Buffer, Length);
   *(SectionItem->PtrEntry + Length) = '\0';
 
   //
   // Next search for '#' or ';'
   //
-  PtrBuf      = PtrBuf + 1;
-  Buffer      = PtrBuf;
+  PtrBuf = PtrBuf + 1;
+  Buffer = PtrBuf;
   while (PtrBuf <= PtrEnd) {
     if (*PtrBuf == '#' || *PtrBuf == ';') {
       break;
     }
+
     PtrBuf++;
   }
+
   if (PtrBuf <= Buffer) {
     // Empty name
-    FreePool(SectionItem->PtrEntry);
-    FreePool(SectionItem->PtrSection);
+    FreePool (SectionItem->PtrEntry);
+    FreePool (SectionItem->PtrSection);
     return EFI_NOT_FOUND;
   }
-  Length      = PtrBuf - Buffer;
+
+  Length = PtrBuf - Buffer;
   ProfileTrim (
-    Buffer,
-    &Length
-  );
+               Buffer,
+               &Length
+               );
 
   //
   // Invalid line if the entry value is null
   //
   if (Length == 0) {
-    FreePool(SectionItem->PtrEntry);
-    FreePool(SectionItem->PtrSection);
+    FreePool (SectionItem->PtrEntry);
+    FreePool (SectionItem->PtrSection);
     return EFI_NOT_FOUND;
   }
 
-  if (!IsValidValue((CHAR8 *)Buffer, Length)) {
-    FreePool(SectionItem->PtrEntry);
-    FreePool(SectionItem->PtrSection);
+  if (!IsValidValue ((CHAR8 *) Buffer, Length)) {
+    FreePool (SectionItem->PtrEntry);
+    FreePool (SectionItem->PtrSection);
     return EFI_INVALID_PARAMETER;
   }
 
@@ -759,10 +802,11 @@ ProfileGetEntry (
   //
   SectionItem->PtrValue = AllocatePool (Length + 1);
   if (SectionItem->PtrValue == NULL) {
-    FreePool(SectionItem->PtrEntry);
-    FreePool(SectionItem->PtrSection);
+    FreePool (SectionItem->PtrEntry);
+    FreePool (SectionItem->PtrSection);
     return EFI_OUT_OF_RESOURCES;
   }
+
   CopyMem (SectionItem->PtrValue, Buffer, Length);
   *(SectionItem->PtrValue + Length) = '\0';
 
@@ -782,30 +826,34 @@ FreeAllList (
   IN      COMMENT_LINE                  *Comment
   )
 {
-  SECTION_ITEM                          *PtrSection;
-  COMMENT_LINE                          *PtrComment;
+  SECTION_ITEM  *PtrSection;
+  COMMENT_LINE  *PtrComment;
 
   while (Section != NULL) {
-    PtrSection    = Section;
-    Section       = Section->PtrNext;
+    PtrSection = Section;
+    Section    = Section->PtrNext;
     if (PtrSection->PtrEntry != NULL) {
       FreePool (PtrSection->PtrEntry);
     }
+
     if (PtrSection->PtrSection != NULL) {
       FreePool (PtrSection->PtrSection);
     }
+
     if (PtrSection->PtrValue != NULL) {
       FreePool (PtrSection->PtrValue);
     }
+
     FreePool (PtrSection);
   }
 
   while (Comment != NULL) {
-    PtrComment    = Comment;
-    Comment       = Comment->PtrNext;
+    PtrComment = Comment;
+    Comment    = Comment->PtrNext;
     if (PtrComment->PtrComment != NULL) {
       FreePool (PtrComment->PtrComment);
     }
+
     FreePool (PtrComment);
   }
 
@@ -832,7 +880,7 @@ UpdateGetProfileString (
   OUT     CHAR8                         **EntryValue
   )
 {
-  *EntryValue   = NULL;
+  *EntryValue = NULL;
 
   while (Section != NULL) {
     if (AsciiStrCmp ((CONST CHAR8 *) Section->PtrSection, (CONST CHAR8 *) SectionName) == 0) {
@@ -842,14 +890,15 @@ UpdateGetProfileString (
         }
       }
     }
-    Section     = Section->PtrNext;
+
+    Section = Section->PtrNext;
   }
 
   if (Section == NULL) {
     return EFI_NOT_FOUND;
   }
 
-  *EntryValue   = Section->PtrValue;
+  *EntryValue = Section->PtrValue;
 
   return EFI_SUCCESS;
 }
@@ -876,21 +925,21 @@ PreProcessDataFile (
   IN OUT  COMMENT_LINE                  **CommentHead
   )
 {
-  EFI_STATUS                            Status;
-  CHAR8                                 *Source;
-  CHAR8                                 *CurrentPtr;
-  CHAR8                                 *BufferEnd;
-  CHAR8                                 *PtrLine;
-  UINTN                                 LineLength;
-  UINTN                                 SourceLength;
-  UINTN                                 MaxLineLength;
+  EFI_STATUS  Status;
+  CHAR8       *Source;
+  CHAR8       *CurrentPtr;
+  CHAR8       *BufferEnd;
+  CHAR8       *PtrLine;
+  UINTN       LineLength;
+  UINTN       SourceLength;
+  UINTN       MaxLineLength;
 
-  *SectionHead          = NULL;
-  *CommentHead          = NULL;
-  BufferEnd             = (CHAR8 *) ( (UINTN) DataBuffer + BufferSize);
-  CurrentPtr            = (CHAR8 *) DataBuffer;
-  MaxLineLength         = MAX_LINE_LENGTH;
-  Status                = EFI_SUCCESS;
+  *SectionHead  = NULL;
+  *CommentHead  = NULL;
+  BufferEnd     = (CHAR8 *) ((UINTN) DataBuffer + BufferSize);
+  CurrentPtr    = (CHAR8 *) DataBuffer;
+  MaxLineLength = MAX_LINE_LENGTH;
+  Status = EFI_SUCCESS;
 
   PtrLine = AllocatePool (MaxLineLength);
   if (PtrLine == NULL) {
@@ -898,19 +947,19 @@ PreProcessDataFile (
   }
 
   while (CurrentPtr < BufferEnd) {
-    Source              = CurrentPtr;
-    SourceLength        = (UINTN)BufferEnd - (UINTN)CurrentPtr;
-    LineLength          = MaxLineLength;
+    Source = CurrentPtr;
+    SourceLength = (UINTN) BufferEnd - (UINTN) CurrentPtr;
+    LineLength   = MaxLineLength;
     //
     // With the assumption that line length is less than 512
     // characters. Otherwise BUFFER_TOO_SMALL will be returned.
     //
-    Status              = ProfileGetLine (
-                            (UINT8 *) Source,
-                            SourceLength,
-                            (UINT8 *) PtrLine,
-                            &LineLength
-                            );
+    Status = ProfileGetLine (
+                             (UINT8 *) Source,
+                             SourceLength,
+                             (UINT8 *) PtrLine,
+                             &LineLength
+                             );
     if (EFI_ERROR (Status)) {
       if (Status == EFI_BUFFER_TOO_SMALL) {
         //
@@ -918,36 +967,39 @@ PreProcessDataFile (
         // to the returned LineLength and try again.
         //
         FreePool (PtrLine);
-        PtrLine         = NULL;
+        PtrLine = NULL;
         PtrLine = AllocatePool (LineLength);
         if (PtrLine == NULL) {
-          Status        = EFI_OUT_OF_RESOURCES;
+          Status = EFI_OUT_OF_RESOURCES;
           break;
         }
-        SourceLength    = LineLength;
-        Status          = ProfileGetLine (
-                            (UINT8 *) Source,
-                            SourceLength,
-                            (UINT8 *) PtrLine,
-                            &LineLength
-                            );
+
+        SourceLength = LineLength;
+        Status = ProfileGetLine (
+                                 (UINT8 *) Source,
+                                 SourceLength,
+                                 (UINT8 *) PtrLine,
+                                 &LineLength
+                                 );
         if (EFI_ERROR (Status)) {
           break;
         }
-        MaxLineLength   = LineLength;
+
+        MaxLineLength = LineLength;
       } else {
         break;
       }
     }
-    CurrentPtr          = (CHAR8 *) ( (UINTN) CurrentPtr + LineLength);
+
+    CurrentPtr = (CHAR8 *) ((UINTN) CurrentPtr + LineLength);
 
     //
     // Line got. Trim the line before processing it.
     //
     ProfileTrim (
-      (UINT8 *) PtrLine,
-      &LineLength
-   );
+                 (UINT8 *) PtrLine,
+                 &LineLength
+                 );
 
     //
     // Blank line
@@ -957,23 +1009,23 @@ PreProcessDataFile (
     }
 
     if (PtrLine[0] == '#' || PtrLine[0] == ';') {
-      Status            = ProfileGetComments (
-                            (UINT8 *) PtrLine,
-                            LineLength,
-                            CommentHead
-                            );
+      Status = ProfileGetComments (
+                                   (UINT8 *) PtrLine,
+                                   LineLength,
+                                   CommentHead
+                                   );
     } else if (PtrLine[0] == '[') {
-      Status            = ProfileGetSection (
-                            (UINT8 *) PtrLine,
-                            LineLength,
-                            SectionHead
-                            );
+      Status = ProfileGetSection (
+                                  (UINT8 *) PtrLine,
+                                  LineLength,
+                                  SectionHead
+                                  );
     } else {
-      Status            = ProfileGetEntry (
-                            (UINT8 *) PtrLine,
-                            LineLength,
-                            SectionHead
-                            );
+      Status = ProfileGetEntry (
+                                (UINT8 *) PtrLine,
+                                LineLength,
+                                SectionHead
+                                );
     }
 
     if (EFI_ERROR (Status)) {
@@ -1006,14 +1058,14 @@ OpenIniFile (
   IN      UINTN                         BufferSize
   )
 {
-  EFI_STATUS                            Status;
-  INI_PARSING_LIB_CONTEXT               *IniContext;
+  EFI_STATUS               Status;
+  INI_PARSING_LIB_CONTEXT  *IniContext;
 
   if (DataBuffer == NULL || BufferSize == 0) {
     return NULL;
   }
 
-  IniContext = AllocateZeroPool(sizeof(INI_PARSING_LIB_CONTEXT));
+  IniContext = AllocateZeroPool (sizeof (INI_PARSING_LIB_CONTEXT));
   if (IniContext == NULL) {
     return NULL;
   }
@@ -1022,17 +1074,18 @@ OpenIniFile (
   // First process the data buffer and get all sections and entries
   //
   Status = PreProcessDataFile (
-             DataBuffer,
-             BufferSize,
-             &IniContext->SectionHead,
-             &IniContext->CommentHead
-             );
-  if (EFI_ERROR(Status)) {
-    FreePool(IniContext);
+                               DataBuffer,
+                               BufferSize,
+                               &IniContext->SectionHead,
+                               &IniContext->CommentHead
+                               );
+  if (EFI_ERROR (Status)) {
+    FreePool (IniContext);
     return NULL;
   }
+
   DEBUG_CODE_BEGIN ();
-    DumpIniSection(IniContext);
+  DumpIniSection (IniContext);
   DEBUG_CODE_END ();
   return IniContext;
 }
@@ -1050,15 +1103,15 @@ OpenIniFile (
 **/
 EFI_STATUS
 EFIAPI
-GetStringFromDataFile(
+GetStringFromDataFile (
   IN      VOID                          *Context,
   IN      CHAR8                         *SectionName,
   IN      CHAR8                         *EntryName,
   OUT     CHAR8                         **EntryValue
   )
 {
-  INI_PARSING_LIB_CONTEXT               *IniContext;
-  EFI_STATUS                            Status;
+  INI_PARSING_LIB_CONTEXT  *IniContext;
+  EFI_STATUS               Status;
 
   if (Context == NULL || SectionName == NULL || EntryName == NULL || EntryValue == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -1066,13 +1119,13 @@ GetStringFromDataFile(
 
   IniContext = Context;
 
-  *EntryValue  = NULL;
+  *EntryValue = NULL;
   Status = UpdateGetProfileString (
-             IniContext->SectionHead,
-             SectionName,
-             EntryName,
-             EntryValue
-             );
+                                   IniContext->SectionHead,
+                                   SectionName,
+                                   EntryName,
+                                   EntryValue
+                                   );
   return Status;
 }
 
@@ -1096,28 +1149,30 @@ GetGuidFromDataFile (
   OUT     EFI_GUID                      *Guid
   )
 {
-  CHAR8                                 *Value;
-  EFI_STATUS                            Status;
-  RETURN_STATUS                         RStatus;
+  CHAR8          *Value;
+  EFI_STATUS     Status;
+  RETURN_STATUS  RStatus;
 
   if (Context == NULL || SectionName == NULL || EntryName == NULL || Guid == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
-  Status = GetStringFromDataFile(
-             Context,
-             SectionName,
-             EntryName,
-             &Value
-             );
-  if (EFI_ERROR(Status)) {
+  Status = GetStringFromDataFile (
+                                  Context,
+                                  SectionName,
+                                  EntryName,
+                                  &Value
+                                  );
+  if (EFI_ERROR (Status)) {
     return EFI_NOT_FOUND;
   }
+
   ASSERT (Value != NULL);
   RStatus = AsciiStrToGuid (Value, Guid);
   if (RETURN_ERROR (RStatus) || (Value[GUID_STRING_LENGTH] != '\0')) {
     return EFI_NOT_FOUND;
   }
+
   return EFI_SUCCESS;
 }
 
@@ -1141,27 +1196,29 @@ GetDecimalUintnFromDataFile (
   OUT     UINTN                         *Data
   )
 {
-  CHAR8                                 *Value;
-  EFI_STATUS                            Status;
+  CHAR8       *Value;
+  EFI_STATUS  Status;
 
   if (Context == NULL || SectionName == NULL || EntryName == NULL || Data == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
-  Status = GetStringFromDataFile(
-             Context,
-             SectionName,
-             EntryName,
-             &Value
-             );
-  if (EFI_ERROR(Status)) {
+  Status = GetStringFromDataFile (
+                                  Context,
+                                  SectionName,
+                                  EntryName,
+                                  &Value
+                                  );
+  if (EFI_ERROR (Status)) {
     return EFI_NOT_FOUND;
   }
+
   ASSERT (Value != NULL);
-  if (!IsValidDecimalString(Value, AsciiStrLen(Value))) {
+  if (!IsValidDecimalString (Value, AsciiStrLen (Value))) {
     return EFI_NOT_FOUND;
   }
-  *Data = AsciiStrDecimalToUintn(Value);
+
+  *Data = AsciiStrDecimalToUintn (Value);
   return EFI_SUCCESS;
 }
 
@@ -1185,27 +1242,29 @@ GetHexUintnFromDataFile (
   OUT     UINTN                         *Data
   )
 {
-  CHAR8                                 *Value;
-  EFI_STATUS                            Status;
+  CHAR8       *Value;
+  EFI_STATUS  Status;
 
   if (Context == NULL || SectionName == NULL || EntryName == NULL || Data == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
-  Status = GetStringFromDataFile(
-             Context,
-             SectionName,
-             EntryName,
-             &Value
-             );
-  if (EFI_ERROR(Status)) {
+  Status = GetStringFromDataFile (
+                                  Context,
+                                  SectionName,
+                                  EntryName,
+                                  &Value
+                                  );
+  if (EFI_ERROR (Status)) {
     return EFI_NOT_FOUND;
   }
+
   ASSERT (Value != NULL);
-  if (!IsValidHexString(Value, AsciiStrLen(Value))) {
+  if (!IsValidHexString (Value, AsciiStrLen (Value))) {
     return EFI_NOT_FOUND;
   }
-  *Data = AsciiStrHexToUintn(Value);
+
+  *Data = AsciiStrHexToUintn (Value);
   return EFI_SUCCESS;
 }
 
@@ -1229,27 +1288,29 @@ GetHexUint64FromDataFile (
   OUT     UINT64                        *Data
   )
 {
-  CHAR8                                 *Value;
-  EFI_STATUS                            Status;
+  CHAR8       *Value;
+  EFI_STATUS  Status;
 
   if (Context == NULL || SectionName == NULL || EntryName == NULL || Data == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
-  Status = GetStringFromDataFile(
-             Context,
-             SectionName,
-             EntryName,
-             &Value
-             );
-  if (EFI_ERROR(Status)) {
+  Status = GetStringFromDataFile (
+                                  Context,
+                                  SectionName,
+                                  EntryName,
+                                  &Value
+                                  );
+  if (EFI_ERROR (Status)) {
     return EFI_NOT_FOUND;
   }
+
   ASSERT (Value != NULL);
-  if (!IsValidHexString(Value, AsciiStrLen(Value))) {
+  if (!IsValidHexString (Value, AsciiStrLen (Value))) {
     return EFI_NOT_FOUND;
   }
-  *Data = AsciiStrHexToUint64(Value);
+
+  *Data = AsciiStrHexToUint64 (Value);
   return EFI_SUCCESS;
 }
 
@@ -1264,14 +1325,14 @@ CloseIniFile (
   IN      VOID                          *Context
   )
 {
-  INI_PARSING_LIB_CONTEXT               *IniContext;
+  INI_PARSING_LIB_CONTEXT  *IniContext;
 
   if (Context == NULL) {
-    return ;
+    return;
   }
 
   IniContext = Context;
-  FreeAllList(IniContext->SectionHead, IniContext->CommentHead);
+  FreeAllList (IniContext->SectionHead, IniContext->CommentHead);
 
   return;
 }
