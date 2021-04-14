@@ -22,10 +22,10 @@
 #pragma pack(1)
 
 typedef struct {
-  UINT32  Signature;
-  UINT32  HeaderSize;
-  UINT32  FwVersion;
-  UINT32  LowestSupportedVersion;
+  UINT32    Signature;
+  UINT32    HeaderSize;
+  UINT32    FwVersion;
+  UINT32    LowestSupportedVersion;
 } FMP_PAYLOAD_HEADER;
 
 #pragma pack()
@@ -34,7 +34,7 @@ typedef struct {
 /// Identifier is used to make sure the data in the header is for this structure
 /// and version.  If the structure changes update the last digit.
 ///
-#define FMP_PAYLOAD_HEADER_SIGNATURE SIGNATURE_32 ('M', 'S', 'S', '1')
+#define FMP_PAYLOAD_HEADER_SIGNATURE  SIGNATURE_32 ('M', 'S', 'S', '1')
 
 /**
   Returns the FMP Payload Header size in bytes.
@@ -65,9 +65,9 @@ GetFmpPayloadHeaderSize (
     return EFI_INVALID_PARAMETER;
   }
 
-  FmpPayloadHeader = (FMP_PAYLOAD_HEADER *)Header;
-  if ((UINTN)FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) < (UINTN)FmpPayloadHeader ||
-      (UINTN)FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) >= (UINTN)FmpPayloadHeader + FmpPayloadSize ||
+  FmpPayloadHeader = (FMP_PAYLOAD_HEADER *) Header;
+  if ((UINTN) FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) < (UINTN) FmpPayloadHeader ||
+      (UINTN) FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) >= (UINTN) FmpPayloadHeader + FmpPayloadSize ||
       FmpPayloadHeader->HeaderSize < sizeof (FMP_PAYLOAD_HEADER)) {
     return EFI_INVALID_PARAMETER;
   }
@@ -110,9 +110,9 @@ GetFmpPayloadHeaderVersion (
     return EFI_INVALID_PARAMETER;
   }
 
-  FmpPayloadHeader = (FMP_PAYLOAD_HEADER *)Header;
-  if ((UINTN)FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) < (UINTN)FmpPayloadHeader ||
-      (UINTN)FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) >= (UINTN)FmpPayloadHeader + FmpPayloadSize ||
+  FmpPayloadHeader = (FMP_PAYLOAD_HEADER *) Header;
+  if ((UINTN) FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) < (UINTN) FmpPayloadHeader ||
+      (UINTN) FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) >= (UINTN) FmpPayloadHeader + FmpPayloadSize ||
       FmpPayloadHeader->HeaderSize < sizeof (FMP_PAYLOAD_HEADER)) {
     return EFI_INVALID_PARAMETER;
   }
@@ -155,9 +155,9 @@ GetFmpPayloadHeaderLowestSupportedVersion (
     return EFI_INVALID_PARAMETER;
   }
 
-  FmpPayloadHeader = (FMP_PAYLOAD_HEADER *)Header;
-  if ((UINTN)FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) < (UINTN)FmpPayloadHeader ||
-      (UINTN)FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) >= (UINTN)FmpPayloadHeader + FmpPayloadSize ||
+  FmpPayloadHeader = (FMP_PAYLOAD_HEADER *) Header;
+  if ((UINTN) FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) < (UINTN) FmpPayloadHeader ||
+      (UINTN) FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) >= (UINTN) FmpPayloadHeader + FmpPayloadSize ||
       FmpPayloadHeader->HeaderSize < sizeof (FMP_PAYLOAD_HEADER)) {
     return EFI_INVALID_PARAMETER;
   }

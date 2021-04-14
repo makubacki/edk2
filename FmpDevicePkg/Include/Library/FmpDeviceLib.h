@@ -29,10 +29,10 @@
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *FMP_DEVICE_LIB_REGISTER_FMP_INSTALLER)(
-  IN  EFI_HANDLE      Handle
-  );
+                                                IN  EFI_HANDLE      Handle
+                                                );
 
 /**
   Callback function that uninstalls a Firmware Management Protocol instance from
@@ -49,10 +49,10 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *FMP_DEVICE_LIB_REGISTER_FMP_UNINSTALLER)(
-  IN  EFI_HANDLE      Handle
-  );
+                                                  IN  EFI_HANDLE      Handle
+                                                  );
 
 /**
   Provide a function to install the Firmware Management Protocol instance onto a
@@ -504,8 +504,8 @@ EFIAPI
 FmpDeviceSetImage (
   IN  CONST VOID                                     *Image,
   IN  UINTN                                          ImageSize,
-  IN  CONST VOID                                     *VendorCode,       OPTIONAL
-  IN  EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS  Progress,          OPTIONAL
+  IN  CONST VOID                                     *VendorCode, OPTIONAL
+  IN  EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS  Progress, OPTIONAL
   IN  UINT32                                         CapsuleFwVersion,
   OUT CHAR16                                         **AbortReason
   );
@@ -578,8 +578,8 @@ EFIAPI
 FmpDeviceSetImageWithStatus (
   IN  CONST VOID                                     *Image,
   IN  UINTN                                          ImageSize,
-  IN  CONST VOID                                     *VendorCode,       OPTIONAL
-  IN  EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS  Progress,          OPTIONAL
+  IN  CONST VOID                                     *VendorCode, OPTIONAL
+  IN  EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS  Progress, OPTIONAL
   IN  UINT32                                         CapsuleFwVersion,
   OUT CHAR16                                         **AbortReason,
   OUT UINT32                                         *LastAttemptStatus
@@ -603,7 +603,7 @@ FmpDeviceSetImageWithStatus (
 EFI_STATUS
 EFIAPI
 FmpDeviceLock (
-  VOID
-  );
+               VOID
+               );
 
 #endif

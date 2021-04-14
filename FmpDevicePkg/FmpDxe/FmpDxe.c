@@ -40,8 +40,8 @@ EDKII_FIRMWARE_MANAGEMENT_PROGRESS_PROTOCOL  mFmpProgress;
 // Protocol instance
 //
 const FIRMWARE_MANAGEMENT_PRIVATE_DATA  mFirmwareManagementPrivateDataTemplate = {
-  FIRMWARE_MANAGEMENT_PRIVATE_DATA_SIGNATURE,  // Signature
-  NULL,                                        // Handle
+  FIRMWARE_MANAGEMENT_PRIVATE_DATA_SIGNATURE, // Signature
+  NULL,                                       // Handle
   {                                            // Fmp
     GetTheImageInfo,
     GetTheImage,
@@ -50,13 +50,13 @@ const FIRMWARE_MANAGEMENT_PRIVATE_DATA  mFirmwareManagementPrivateDataTemplate =
     GetPackageInfo,
     SetPackageInfo
   },
-  FALSE,                                       // DescriptorPopulated
-  {                                            // Desc
-    1,     // ImageIndex
+  FALSE,            // DescriptorPopulated
+  {                 // Desc
+    1,              // ImageIndex
     //
     // ImageTypeId
     //
-    { 0x00000000, 0x0000, 0x0000, {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00} },
+    { 0x00000000,   0x0000, 0x0000,{ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
     1,     // ImageId
     NULL,  // ImageIdName
     0,     // Version
@@ -70,18 +70,18 @@ const FIRMWARE_MANAGEMENT_PRIVATE_DATA  mFirmwareManagementPrivateDataTemplate =
     0,     // LastAttemptStatus
     0      // HardwareInstance
   },
-  NULL,                                        // ImageIdName
-  NULL,                                        // VersionName
-  TRUE,                                        // RuntimeVersionSupported
-  NULL,                                        // FmpDeviceLockEvent
-  FALSE,                                       // FmpDeviceLocked
-  NULL,                                        // FmpDeviceContext
-  NULL,                                        // VersionVariableName
-  NULL,                                        // LsvVariableName
-  NULL,                                        // LastAttemptStatusVariableName
-  NULL,                                        // LastAttemptVersionVariableName
-  NULL,                                        // FmpStateVariableName
-  TRUE                                         // DependenciesSatisfied
+  NULL,             // ImageIdName
+  NULL,             // VersionName
+  TRUE,             // RuntimeVersionSupported
+  NULL,             // FmpDeviceLockEvent
+  FALSE,            // FmpDeviceLocked
+  NULL,             // FmpDeviceContext
+  NULL,             // VersionVariableName
+  NULL,             // LsvVariableName
+  NULL,             // LastAttemptStatusVariableName
+  NULL,             // LastAttemptVersionVariableName
+  NULL,             // FmpStateVariableName
+  TRUE              // DependenciesSatisfied
 };
 
 ///
@@ -125,7 +125,7 @@ FmpDxeProgress (
   IN UINTN  Completion
   )
 {
-  EFI_STATUS Status;
+  EFI_STATUS  Status;
 
   Status = EFI_UNSUPPORTED;
 
@@ -168,21 +168,26 @@ GetImageTypeIdGuid (
   Status = FmpDeviceGetImageTypeIdGuidPtr (&FmpDeviceLibGuid);
   if (EFI_ERROR (Status)) {
     if (Status != EFI_UNSUPPORTED) {
-      DEBUG ((DEBUG_ERROR, "FmpDxe(%s): FmpDeviceLib GetImageTypeIdGuidPtr() returned invalid error %r\n", mImageIdName, Status));
+      DEBUG (
+            (DEBUG_ERROR, "FmpDxe(%s): FmpDeviceLib GetImageTypeIdGuidPtr() returned invalid error %r\n", mImageIdName,
+             Status)
+            );
     }
   } else if (FmpDeviceLibGuid == NULL) {
     DEBUG ((DEBUG_ERROR, "FmpDxe(%s): FmpDeviceLib GetImageTypeIdGuidPtr() returned invalid GUID\n", mImageIdName));
     Status = EFI_NOT_FOUND;
   }
+
   if (EFI_ERROR (Status)) {
     ImageTypeIdGuidSize = PcdGetSize (PcdFmpDeviceImageTypeIdGuid);
     if (ImageTypeIdGuidSize == sizeof (EFI_GUID)) {
-      FmpDeviceLibGuid = (EFI_GUID *)PcdGetPtr (PcdFmpDeviceImageTypeIdGuid);
+      FmpDeviceLibGuid = (EFI_GUID *) PcdGetPtr (PcdFmpDeviceImageTypeIdGuid);
     } else {
       DEBUG ((DEBUG_WARN, "FmpDxe(%s): Fall back to ImageTypeIdGuid of gEfiCallerIdGuid\n", mImageIdName));
       FmpDeviceLibGuid = &gEfiCallerIdGuid;
     }
   }
+
   return FmpDeviceLibGuid;
 }
 
@@ -288,9 +293,9 @@ PopulateDescriptor (
   }
 
   Private->Descriptor.ImageIndex = 1;
-  CopyGuid (&Private->Descriptor.ImageTypeId, GetImageTypeIdGuid());
+  CopyGuid (&Private->Descriptor.ImageTypeId, GetImageTypeIdGuid ());
   Private->Descriptor.ImageId     = Private->Descriptor.ImageIndex;
-  Private->Descriptor.ImageIdName = GetImageTypeNameString();
+  Private->Descriptor.ImageIdName = GetImageTypeNameString ();
 
   //
   // Get the hardware instance from FmpDeviceLib
@@ -319,7 +324,10 @@ PopulateDescriptor (
     //
     // Unexpected error.   Use default version.
     //
-    DEBUG ((DEBUG_ERROR, "FmpDxe(%s): GetVersion() from FmpDeviceLib (%s) returned %r\n", mImageIdName, GetImageTypeNameString(), Status));
+    DEBUG (
+          (DEBUG_ERROR, "FmpDxe(%s): GetVersion() from FmpDeviceLib (%s) returned %r\n", mImageIdName,
+           GetImageTypeNameString (), Status)
+          );
     Private->Descriptor.Version = DEFAULT_VERSION;
   }
 
@@ -339,15 +347,15 @@ PopulateDescriptor (
   if (Status == EFI_UNSUPPORTED) {
     DEBUG ((DEBUG_INFO, "FmpDxe(%s): GetVersionString() unsupported in FmpDeviceLib.\n", mImageIdName));
     Private->Descriptor.VersionName = AllocateCopyPool (
-                                        sizeof (VERSION_STRING_NOT_SUPPORTED),
-                                        VERSION_STRING_NOT_SUPPORTED
-                                        );
+                                                        sizeof (VERSION_STRING_NOT_SUPPORTED),
+                                                        VERSION_STRING_NOT_SUPPORTED
+                                                        );
   } else if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INFO, "FmpDxe(%s): GetVersionString() not available in FmpDeviceLib.\n", mImageIdName));
     Private->Descriptor.VersionName = AllocateCopyPool (
-                                        sizeof (VERSION_STRING_NOT_AVAILABLE),
-                                        VERSION_STRING_NOT_AVAILABLE
-                                        );
+                                                        sizeof (VERSION_STRING_NOT_AVAILABLE),
+                                                        VERSION_STRING_NOT_AVAILABLE
+                                                        );
   }
 
   Private->Descriptor.LowestSupportedImageVersion = GetLowestSupportedVersion (Private);
@@ -356,9 +364,9 @@ PopulateDescriptor (
   // Get attributes from the FmpDeviceLib
   //
   FmpDeviceGetAttributes (
-    &Private->Descriptor.AttributesSupported,
-    &Private->Descriptor.AttributesSetting
-    );
+                          &Private->Descriptor.AttributesSupported,
+                          &Private->Descriptor.AttributesSetting
+                          );
 
   //
   // Force set the updatable bits in the attributes;
@@ -491,8 +499,8 @@ GetTheImageInfo (
   //
   // Confirm that buffer isn't null
   //
-  if ( (ImageInfo == NULL) || (DescriptorVersion == NULL) || (DescriptorCount == NULL) || (DescriptorSize == NULL)
-       || (PackageVersion == NULL)) {
+  if (  (ImageInfo == NULL) || (DescriptorVersion == NULL) || (DescriptorCount == NULL) || (DescriptorSize == NULL)
+     || (PackageVersion == NULL)) {
     DEBUG ((DEBUG_ERROR, "FmpDxe(%s): GetImageInfo() - Pointer Parameter is NULL.\n", mImageIdName));
     Status = EFI_INVALID_PARAMETER;
     goto cleanup;
@@ -514,8 +522,8 @@ GetTheImageInfo (
   CopyMem (ImageInfo, &Private->Descriptor, sizeof (EFI_FIRMWARE_IMAGE_DESCRIPTOR));
 
   *DescriptorVersion = EFI_FIRMWARE_IMAGE_DESCRIPTOR_VERSION;
-  *DescriptorCount = 1;
-  *DescriptorSize = sizeof (EFI_FIRMWARE_IMAGE_DESCRIPTOR);
+  *DescriptorCount   = 1;
+  *DescriptorSize    = sizeof (EFI_FIRMWARE_IMAGE_DESCRIPTOR);
   //
   // means unsupported
   //
@@ -606,6 +614,7 @@ GetTheImage (
   if (EFI_ERROR (Status)) {
     Size = 0;
   }
+
   if (*ImageSize < Size) {
     *ImageSize = Size;
     DEBUG ((DEBUG_VERBOSE, "FmpDxe(%s): GetImage() - ImageSize is to small.\n", mImageIdName));
@@ -650,8 +659,10 @@ GetFmpHeader (
   //
   // Check to make sure that operation can be safely performed.
   //
-  if (((UINTN)Image + sizeof (Image->MonotonicCount) + Image->AuthInfo.Hdr.dwLength) + AdditionalHeaderSize < (UINTN)Image || \
-      ((UINTN)Image + sizeof (Image->MonotonicCount) + Image->AuthInfo.Hdr.dwLength) + AdditionalHeaderSize >= (UINTN)Image + ImageSize) {
+  if (((UINTN) Image + sizeof (Image->MonotonicCount) + Image->AuthInfo.Hdr.dwLength) + AdditionalHeaderSize <
+      (UINTN) Image || \
+      ((UINTN) Image + sizeof (Image->MonotonicCount) + Image->AuthInfo.Hdr.dwLength) + AdditionalHeaderSize >=
+      (UINTN) Image + ImageSize) {
     //
     // Pointer overflow. Invalid image.
     //
@@ -662,7 +673,8 @@ GetFmpHeader (
     *PayloadSize = ImageSize - (sizeof (Image->MonotonicCount) + Image->AuthInfo.Hdr.dwLength + AdditionalHeaderSize);
   }
 
-  return (VOID *)((UINT8 *)Image + sizeof (Image->MonotonicCount) + Image->AuthInfo.Hdr.dwLength  + AdditionalHeaderSize);
+  return (VOID *) ((UINT8 *) Image + sizeof (Image->MonotonicCount) + Image->AuthInfo.Hdr.dwLength  +
+                   AdditionalHeaderSize);
 }
 
 /**
@@ -774,16 +786,16 @@ CheckTheImageInternal (
   EFI_FIRMWARE_IMAGE_DEP            *Dependencies;
   UINT32                            DependenciesSize;
 
-  Status                  = EFI_SUCCESS;
-  LocalLastAttemptStatus  = LAST_ATTEMPT_STATUS_SUCCESS;
-  RawSize                 = 0;
-  FmpPayloadHeader        = NULL;
-  FmpPayloadSize          = 0;
-  Version                 = 0;
-  FmpHeaderSize           = 0;
-  AllHeaderSize           = 0;
-  Dependencies            = NULL;
-  DependenciesSize        = 0;
+  Status = EFI_SUCCESS;
+  LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_SUCCESS;
+  RawSize = 0;
+  FmpPayloadHeader = NULL;
+  FmpPayloadSize   = 0;
+  Version = 0;
+  FmpHeaderSize    = 0;
+  AllHeaderSize    = 0;
+  Dependencies     = NULL;
+  DependenciesSize = 0;
 
   if (!FeaturePcdGet (PcdFmpDeviceStorageAccessEnable)) {
     return EFI_UNSUPPORTED;
@@ -827,7 +839,7 @@ CheckTheImageInternal (
   }
 
   //
-  //Set to valid and then if any tests fail it will update this flag.
+  // Set to valid and then if any tests fail it will update this flag.
   //
   *ImageUpdatable = IMAGE_UPDATABLE_VALID;
 
@@ -841,7 +853,7 @@ CheckTheImageInternal (
     //
     // not sure if this is needed
     //
-    *ImageUpdatable = IMAGE_UPDATABLE_INVALID;
+    *ImageUpdatable    = IMAGE_UPDATABLE_INVALID;
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DRIVER_ERROR_IMAGE_NOT_PROVIDED;
     return EFI_INVALID_PARAMETER;
   }
@@ -860,14 +872,14 @@ CheckTheImageInternal (
     for (Index = 1; PublicKeyDataXdr < PublicKeyDataXdrEnd; Index++) {
       Index++;
       DEBUG (
-        (DEBUG_INFO,
-        "FmpDxe(%s): Certificate #%d [%p..%p].\n",
-        mImageIdName,
-        Index,
-        PublicKeyDataXdr,
-        PublicKeyDataXdrEnd
-        )
-        );
+             (DEBUG_INFO,
+              "FmpDxe(%s): Certificate #%d [%p..%p].\n",
+              mImageIdName,
+              Index,
+              PublicKeyDataXdr,
+              PublicKeyDataXdrEnd
+             )
+             );
 
       if ((PublicKeyDataXdr + sizeof (UINT32)) > PublicKeyDataXdrEnd) {
         //
@@ -878,10 +890,11 @@ CheckTheImageInternal (
         LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DRIVER_ERROR_INVALID_KEY_LENGTH_VALUE;
         break;
       }
+
       //
       // Read key length stored in big-endian format
       //
-      PublicKeyDataLength = SwapBytes32 (*(UINT32 *)(PublicKeyDataXdr));
+      PublicKeyDataLength = SwapBytes32 (*(UINT32 *) (PublicKeyDataXdr));
       //
       // Point to the start of the key data
       //
@@ -895,18 +908,20 @@ CheckTheImageInternal (
         LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DRIVER_ERROR_INVALID_KEY_LENGTH;
         break;
       }
+
       PublicKeyData = PublicKeyDataXdr;
       Status = AuthenticateFmpImage (
-                 (EFI_FIRMWARE_IMAGE_AUTHENTICATION *)Image,
-                 ImageSize,
-                 PublicKeyData,
-                 PublicKeyDataLength
-                 );
+                                     (EFI_FIRMWARE_IMAGE_AUTHENTICATION *) Image,
+                                     ImageSize,
+                                     PublicKeyData,
+                                     PublicKeyDataLength
+                                     );
       if (!EFI_ERROR (Status)) {
         break;
       }
+
       PublicKeyDataXdr += PublicKeyDataLength;
-      PublicKeyDataXdr = (UINT8 *)ALIGN_POINTER (PublicKeyDataXdr, sizeof (UINT32));
+      PublicKeyDataXdr  = (UINT8 *) ALIGN_POINTER (PublicKeyDataXdr, sizeof (UINT32));
     }
   }
 
@@ -917,6 +932,7 @@ CheckTheImageInternal (
     } else {
       *LastAttemptStatus = LAST_ATTEMPT_STATUS_DRIVER_ERROR_IMAGE_AUTH_FAILURE;
     }
+
     goto cleanup;
   }
 
@@ -935,11 +951,11 @@ CheckTheImageInternal (
   // Get the dependency from Image.
   //
   Dependencies =  GetImageDependency (
-                    (EFI_FIRMWARE_IMAGE_AUTHENTICATION *) Image,
-                    ImageSize,
-                    &DependenciesSize,
-                    LastAttemptStatus
-                    );
+                                      (EFI_FIRMWARE_IMAGE_AUTHENTICATION *) Image,
+                                      ImageSize,
+                                      &DependenciesSize,
+                                      LastAttemptStatus
+                                      );
   if (*LastAttemptStatus != LAST_ATTEMPT_STATUS_SUCCESS) {
     Status = EFI_ABORTED;
     goto cleanup;
@@ -948,16 +964,25 @@ CheckTheImageInternal (
   //
   // Check the FmpPayloadHeader
   //
-  FmpPayloadHeader = GetFmpHeader ( (EFI_FIRMWARE_IMAGE_AUTHENTICATION *)Image, ImageSize, DependenciesSize, &FmpPayloadSize );
+  FmpPayloadHeader = GetFmpHeader (
+                                  (EFI_FIRMWARE_IMAGE_AUTHENTICATION *) Image,
+                                  ImageSize,
+                                  DependenciesSize,
+                                  &FmpPayloadSize
+                                  );
   if (FmpPayloadHeader == NULL) {
     DEBUG ((DEBUG_ERROR, "FmpDxe(%s): CheckTheImage() - GetFmpHeader failed.\n", mImageIdName));
     Status = EFI_ABORTED;
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DRIVER_ERROR_GET_FMP_HEADER;
     goto cleanup;
   }
+
   Status = GetFmpPayloadHeaderVersion (FmpPayloadHeader, FmpPayloadSize, &Version);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "FmpDxe(%s): CheckTheImage() - GetFmpPayloadHeaderVersion failed %r.\n", mImageIdName, Status));
+    DEBUG (
+          (DEBUG_ERROR, "FmpDxe(%s): CheckTheImage() - GetFmpPayloadHeaderVersion failed %r.\n", mImageIdName,
+           Status)
+          );
     *ImageUpdatable = IMAGE_UPDATABLE_INVALID;
     Status = EFI_SUCCESS;
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DRIVER_ERROR_GET_FMP_HEADER_VERSION;
@@ -969,10 +994,10 @@ CheckTheImageInternal (
   //
   if (Version < Private->Descriptor.LowestSupportedImageVersion) {
     DEBUG (
-      (DEBUG_ERROR,
-      "FmpDxe(%s): CheckTheImage() - Version Lower than lowest supported version. 0x%08X < 0x%08X\n",
-      mImageIdName, Version, Private->Descriptor.LowestSupportedImageVersion)
-      );
+           (DEBUG_ERROR,
+            "FmpDxe(%s): CheckTheImage() - Version Lower than lowest supported version. 0x%08X < 0x%08X\n",
+            mImageIdName, Version, Private->Descriptor.LowestSupportedImageVersion)
+           );
     *ImageUpdatable = IMAGE_UPDATABLE_INVALID_OLD;
     Status = EFI_SUCCESS;
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DRIVER_ERROR_VERSION_TOO_LOW;
@@ -983,12 +1008,12 @@ CheckTheImageInternal (
   // Evaluate dependency expression
   //
   Private->DependenciesSatisfied =  CheckFmpDependency (
-                                      Private->Descriptor.ImageTypeId,
-                                      Version,
-                                      Dependencies,
-                                      DependenciesSize,
-                                      &LocalLastAttemptStatus
-                                      );
+                                                        Private->Descriptor.ImageTypeId,
+                                                        Version,
+                                                        Dependencies,
+                                                        DependenciesSize,
+                                                        &LocalLastAttemptStatus
+                                                        );
   if (!Private->DependenciesSatisfied) {
     DEBUG ((DEBUG_ERROR, "FmpDxe(%s): CheckTheImage() - Dependency check failed.\n", mImageIdName));
     *ImageUpdatable = IMAGE_UPDATABLE_INVALID;
@@ -1013,34 +1038,44 @@ CheckTheImageInternal (
   // Call FmpDevice Lib Check Image on the
   // Raw payload.  So all headers need stripped off
   //
-  AllHeaderSize = GetAllHeaderSize ( (EFI_FIRMWARE_IMAGE_AUTHENTICATION *)Image, FmpHeaderSize + DependenciesSize);
+  AllHeaderSize = GetAllHeaderSize ((EFI_FIRMWARE_IMAGE_AUTHENTICATION *) Image, FmpHeaderSize + DependenciesSize);
   if (AllHeaderSize == 0) {
     DEBUG ((DEBUG_ERROR, "FmpDxe(%s): CheckTheImage() - GetAllHeaderSize failed.\n", mImageIdName));
     Status = EFI_ABORTED;
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DRIVER_ERROR_GET_ALL_HEADER_SIZE;
     goto cleanup;
   }
+
   RawSize = ImageSize - AllHeaderSize;
 
   //
   // FmpDeviceLib CheckImage function to do any specific checks
   //
-  Status = FmpDeviceCheckImageWithStatus ((((UINT8 *) Image) + AllHeaderSize), RawSize, ImageUpdatable, LastAttemptStatus);
+  Status = FmpDeviceCheckImageWithStatus (
+                                         (((UINT8 *) Image) + AllHeaderSize),
+                                         RawSize,
+                                         ImageUpdatable,
+                                         LastAttemptStatus
+                                         );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "FmpDxe(%s): CheckTheImage() - FmpDeviceLib CheckImage failed. Status = %r\n", mImageIdName, Status));
+    DEBUG (
+          (DEBUG_ERROR, "FmpDxe(%s): CheckTheImage() - FmpDeviceLib CheckImage failed. Status = %r\n", mImageIdName,
+           Status)
+          );
 
     //
     // LastAttemptStatus returned from the device library should fall within the designated error range
-    // [LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_MIN_ERROR_CODE_VALUE, LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_MAX_ERROR_CODE_VALUE]
+    // [LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_MIN_ERROR_CODE_VALUE,
+    // LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_MAX_ERROR_CODE_VALUE]
     //
     if ((*LastAttemptStatus < LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_MIN_ERROR_CODE_VALUE) ||
         (*LastAttemptStatus > LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_MAX_ERROR_CODE_VALUE)) {
       DEBUG (
-        (DEBUG_ERROR,
-        "FmpDxe(%s): CheckTheImage() - LastAttemptStatus %d from FmpDeviceCheckImageWithStatus() is invalid.\n",
-        mImageIdName,
-        *LastAttemptStatus)
-        );
+             (DEBUG_ERROR,
+              "FmpDxe(%s): CheckTheImage() - LastAttemptStatus %d from FmpDeviceCheckImageWithStatus() is invalid.\n",
+              mImageIdName,
+              *LastAttemptStatus)
+             );
       *LastAttemptStatus = LAST_ATTEMPT_STATUS_ERROR_UNSUCCESSFUL;
     }
   }
@@ -1158,18 +1193,18 @@ SetTheImage (
   EFI_FIRMWARE_IMAGE_DEP            *Dependencies;
   UINT32                            DependenciesSize;
 
-  Status             = EFI_SUCCESS;
-  Private            = NULL;
-  Updateable         = 0;
-  BooleanValue       = FALSE;
-  FmpHeaderSize      = 0;
-  FmpHeader          = NULL;
-  FmpPayloadSize     = 0;
-  AllHeaderSize      = 0;
-  IncomingFwVersion  = 0;
-  LastAttemptStatus  = LAST_ATTEMPT_STATUS_ERROR_UNSUCCESSFUL;
-  Dependencies       = NULL;
-  DependenciesSize   = 0;
+  Status            = EFI_SUCCESS;
+  Private           = NULL;
+  Updateable        = 0;
+  BooleanValue      = FALSE;
+  FmpHeaderSize     = 0;
+  FmpHeader         = NULL;
+  FmpPayloadSize    = 0;
+  AllHeaderSize     = 0;
+  IncomingFwVersion = 0;
+  LastAttemptStatus = LAST_ATTEMPT_STATUS_ERROR_UNSUCCESSFUL;
+  Dependencies      = NULL;
+  DependenciesSize  = 0;
 
   if (!FeaturePcdGet (PcdFmpDeviceStorageAccessEnable)) {
     return EFI_UNSUPPORTED;
@@ -1221,19 +1256,25 @@ SetTheImage (
   //
   // Get the dependency from Image.
   //
-  Dependencies = GetImageDependency ((EFI_FIRMWARE_IMAGE_AUTHENTICATION *)Image, ImageSize, &DependenciesSize, &LastAttemptStatus);
+  Dependencies = GetImageDependency (
+                                    (EFI_FIRMWARE_IMAGE_AUTHENTICATION *) Image,
+                                    ImageSize,
+                                    &DependenciesSize,
+                                    &LastAttemptStatus
+                                    );
 
   //
   // No functional error in CheckTheImage.  Attempt to get the Version to
   // support better error reporting.
   //
-  FmpHeader = GetFmpHeader ( (EFI_FIRMWARE_IMAGE_AUTHENTICATION *)Image, ImageSize, DependenciesSize, &FmpPayloadSize );
+  FmpHeader = GetFmpHeader ((EFI_FIRMWARE_IMAGE_AUTHENTICATION *) Image, ImageSize, DependenciesSize, &FmpPayloadSize);
   if (FmpHeader == NULL) {
     DEBUG ((DEBUG_ERROR, "FmpDxe(%s): SetTheImage() - GetFmpHeader failed.\n", mImageIdName));
     LastAttemptStatus = LAST_ATTEMPT_STATUS_DRIVER_ERROR_GET_FMP_HEADER;
     Status = EFI_ABORTED;
     goto cleanup;
   }
+
   Status = GetFmpPayloadHeaderVersion (FmpHeader, FmpPayloadSize, &IncomingFwVersion);
   if (!EFI_ERROR (Status)) {
     //
@@ -1242,16 +1283,16 @@ SetTheImage (
     SetLastAttemptVersionInVariable (Private, IncomingFwVersion);
   }
 
-
   if (Updateable != IMAGE_UPDATABLE_VALID) {
     DEBUG (
-      (DEBUG_ERROR,
-      "FmpDxe(%s): SetTheImage() - Check The Image returned that the Image was not valid for update.  Updatable value = 0x%X.\n",
-      mImageIdName, Updateable)
-      );
+           (DEBUG_ERROR,
+            "FmpDxe(%s): SetTheImage() - Check The Image returned that the Image was not valid for update.  Updatable value = 0x%X.\n",
+            mImageIdName, Updateable)
+           );
     if (Private->DependenciesSatisfied == FALSE) {
       LastAttemptStatus = LAST_ATTEMPT_STATUS_ERROR_UNSATISFIED_DEPENDENCIES;
     }
+
     Status = EFI_ABORTED;
     goto cleanup;
   }
@@ -1270,11 +1311,14 @@ SetTheImage (
   //
   Status = Progress (1);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "FmpDxe(%s): SetTheImage() - Progress Callback failed with Status %r.\n", mImageIdName, Status));
+    DEBUG (
+          (DEBUG_ERROR, "FmpDxe(%s): SetTheImage() - Progress Callback failed with Status %r.\n", mImageIdName,
+           Status)
+          );
   }
 
   //
-  //Check System Power
+  // Check System Power
   //
   Status = CheckSystemPower (&BooleanValue);
   if (EFI_ERROR (Status)) {
@@ -1282,12 +1326,14 @@ SetTheImage (
     LastAttemptStatus = LAST_ATTEMPT_STATUS_DRIVER_ERROR_CHECK_POWER_API;
     goto cleanup;
   }
+
   if (!BooleanValue) {
     Status = EFI_ABORTED;
     DEBUG (
-      (DEBUG_ERROR,
-      "FmpDxe(%s): SetTheImage() - CheckSystemPower - returned False.  Update not allowed due to System Power.\n", mImageIdName)
-      );
+           (DEBUG_ERROR,
+            "FmpDxe(%s): SetTheImage() - CheckSystemPower - returned False.  Update not allowed due to System Power.\n",
+            mImageIdName)
+           );
     LastAttemptStatus = LAST_ATTEMPT_STATUS_ERROR_PWR_EVT_BATT;
     goto cleanup;
   }
@@ -1295,42 +1341,52 @@ SetTheImage (
   Progress (2);
 
   //
-  //Check System Thermal
+  // Check System Thermal
   //
   Status = CheckSystemThermal (&BooleanValue);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "FmpDxe(%s): SetTheImage() - CheckSystemThermal - API call failed %r.\n", mImageIdName, Status));
+    DEBUG (
+          (DEBUG_ERROR, "FmpDxe(%s): SetTheImage() - CheckSystemThermal - API call failed %r.\n", mImageIdName,
+           Status)
+          );
     LastAttemptStatus = LAST_ATTEMPT_STATUS_DRIVER_ERROR_CHECK_SYS_THERMAL_API;
     goto cleanup;
   }
+
   if (!BooleanValue) {
     Status = EFI_ABORTED;
     LastAttemptStatus = LAST_ATTEMPT_STATUS_DRIVER_ERROR_THERMAL;
     DEBUG (
-      (DEBUG_ERROR,
-      "FmpDxe(%s): SetTheImage() - CheckSystemThermal - returned False.  Update not allowed due to System Thermal.\n", mImageIdName)
-      );
+           (DEBUG_ERROR,
+            "FmpDxe(%s): SetTheImage() - CheckSystemThermal - returned False.  Update not allowed due to System Thermal.\n",
+            mImageIdName)
+           );
     goto cleanup;
   }
 
   Progress (3);
 
   //
-  //Check System Environment
+  // Check System Environment
   //
   Status = CheckSystemEnvironment (&BooleanValue);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "FmpDxe(%s): SetTheImage() - CheckSystemEnvironment - API call failed %r.\n", mImageIdName, Status));
+    DEBUG (
+          (DEBUG_ERROR, "FmpDxe(%s): SetTheImage() - CheckSystemEnvironment - API call failed %r.\n", mImageIdName,
+           Status)
+          );
     LastAttemptStatus = LAST_ATTEMPT_STATUS_DRIVER_ERROR_CHECK_SYS_ENV_API;
     goto cleanup;
   }
+
   if (!BooleanValue) {
     Status = EFI_ABORTED;
     LastAttemptStatus = LAST_ATTEMPT_STATUS_DRIVER_ERROR_SYSTEM_ENV;
     DEBUG (
-      (DEBUG_ERROR,
-      "FmpDxe(%s): SetTheImage() - CheckSystemEnvironment - returned False.  Update not allowed due to System Environment.\n", mImageIdName)
-      );
+           (DEBUG_ERROR,
+            "FmpDxe(%s): SetTheImage() - CheckSystemEnvironment - returned False.  Update not allowed due to System Environment.\n",
+            mImageIdName)
+           );
     goto cleanup;
   }
 
@@ -1352,7 +1408,7 @@ SetTheImage (
     goto cleanup;
   }
 
-  AllHeaderSize = GetAllHeaderSize ((EFI_FIRMWARE_IMAGE_AUTHENTICATION *)Image, FmpHeaderSize + DependenciesSize);
+  AllHeaderSize = GetAllHeaderSize ((EFI_FIRMWARE_IMAGE_AUTHENTICATION *) Image, FmpHeaderSize + DependenciesSize);
   if (AllHeaderSize == 0) {
     DEBUG ((DEBUG_ERROR, "FmpDxe(%s): SetTheImage() - GetAllHeaderSize failed.\n", mImageIdName));
     LastAttemptStatus = LAST_ATTEMPT_STATUS_DRIVER_ERROR_GET_ALL_HEADER_SIZE;
@@ -1366,32 +1422,36 @@ SetTheImage (
   Progress (5);
 
   //
-  //Copy the requested image to the firmware using the FmpDeviceLib
+  // Copy the requested image to the firmware using the FmpDeviceLib
   //
   Status = FmpDeviceSetImageWithStatus (
-             (((UINT8 *) Image) + AllHeaderSize),
-             ImageSize - AllHeaderSize,
-             VendorCode,
-             FmpDxeProgress,
-             IncomingFwVersion,
-             AbortReason,
-             &LastAttemptStatus
-             );
+                                        (((UINT8 *) Image) + AllHeaderSize),
+                                        ImageSize - AllHeaderSize,
+                                        VendorCode,
+                                        FmpDxeProgress,
+                                        IncomingFwVersion,
+                                        AbortReason,
+                                        &LastAttemptStatus
+                                        );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "FmpDxe(%s): SetTheImage() SetImage from FmpDeviceLib failed. Status =  %r.\n", mImageIdName, Status));
+    DEBUG (
+          (DEBUG_ERROR, "FmpDxe(%s): SetTheImage() SetImage from FmpDeviceLib failed. Status =  %r.\n", mImageIdName,
+           Status)
+          );
 
     //
     // LastAttemptStatus returned from the device library should fall within the designated error range
-    // [LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_MIN_ERROR_CODE_VALUE, LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_MAX_ERROR_CODE_VALUE]
+    // [LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_MIN_ERROR_CODE_VALUE,
+    // LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_MAX_ERROR_CODE_VALUE]
     //
     if ((LastAttemptStatus < LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_MIN_ERROR_CODE_VALUE) ||
         (LastAttemptStatus > LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_MAX_ERROR_CODE_VALUE)) {
       DEBUG (
-        (DEBUG_ERROR,
-        "FmpDxe(%s): SetTheImage() - LastAttemptStatus %d from FmpDeviceSetImageWithStatus() is invalid.\n",
-        mImageIdName,
-        LastAttemptStatus)
-        );
+             (DEBUG_ERROR,
+              "FmpDxe(%s): SetTheImage() - LastAttemptStatus %d from FmpDeviceSetImageWithStatus() is invalid.\n",
+              mImageIdName,
+              LastAttemptStatus)
+             );
       LastAttemptStatus = LAST_ATTEMPT_STATUS_ERROR_UNSUCCESSFUL;
     }
 
@@ -1404,8 +1464,12 @@ SetTheImage (
   if (Private->Descriptor.AttributesSetting & IMAGE_ATTRIBUTE_DEPENDENCY) {
     Status = SaveFmpDependency (Dependencies, DependenciesSize);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "FmpDxe(%s): SetTheImage() SaveFmpDependency from FmpDependencyCheckLib failed. (%r)\n", mImageIdName, Status));
+      DEBUG (
+            (DEBUG_ERROR, "FmpDxe(%s): SetTheImage() SaveFmpDependency from FmpDependencyCheckLib failed. (%r)\n",
+             mImageIdName, Status)
+            );
     }
+
     Status = EFI_SUCCESS;
   }
 
@@ -1573,14 +1637,14 @@ FmpDxeLockEventNotify (
     return;
   }
 
-  Private = (FIRMWARE_MANAGEMENT_PRIVATE_DATA *)Context;
+  Private = (FIRMWARE_MANAGEMENT_PRIVATE_DATA *) Context;
 
   if (!Private->FmpDeviceLocked) {
     //
     // Lock the firmware device
     //
     FmpDeviceSetContext (Private->Handle, &Private->FmpDeviceContext);
-    Status = FmpDeviceLock();
+    Status = FmpDeviceLock ();
     if (EFI_ERROR (Status)) {
       if (Status != EFI_UNSUPPORTED) {
         DEBUG ((DEBUG_ERROR, "FmpDxe(%s): FmpDeviceLock() returned error.  Status = %r\n", mImageIdName, Status));
@@ -1588,6 +1652,7 @@ FmpDxeLockEventNotify (
         DEBUG ((DEBUG_WARN, "FmpDxe(%s): FmpDeviceLock() returned error.  Status = %r\n", mImageIdName, Status));
       }
     }
+
     Private->FmpDeviceLocked = TRUE;
   }
 }
@@ -1616,13 +1681,13 @@ InstallFmpInstance (
   // Only allow a single FMP Protocol instance to be installed
   //
   Status = gBS->OpenProtocol (
-                  Handle,
-                  &gEfiFirmwareManagementProtocolGuid,
-                  (VOID **)&Fmp,
-                  NULL,
-                  NULL,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              Handle,
+                              &gEfiFirmwareManagementProtocolGuid,
+                              (VOID **) &Fmp,
+                              NULL,
+                              NULL,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (!EFI_ERROR (Status)) {
     return EFI_ALREADY_STARTED;
   }
@@ -1631,9 +1696,9 @@ InstallFmpInstance (
   // Allocate FMP Protocol instance
   //
   Private = AllocateCopyPool (
-              sizeof (mFirmwareManagementPrivateDataTemplate),
-              &mFirmwareManagementPrivateDataTemplate
-              );
+                              sizeof (mFirmwareManagementPrivateDataTemplate),
+                              &mFirmwareManagementPrivateDataTemplate
+                              );
   if (Private == NULL) {
     DEBUG ((DEBUG_ERROR, "FmpDxe(%s): Failed to allocate memory for private structure.\n", mImageIdName));
     Status = EFI_OUT_OF_RESOURCES;
@@ -1672,30 +1737,36 @@ InstallFmpInstance (
     // Create and register notify function to lock the FMP device.
     //
     Status = gBS->CreateEventEx (
-                    EVT_NOTIFY_SIGNAL,
-                    TPL_CALLBACK,
-                    FmpDxeLockEventNotify,
-                    Private,
-                    mLockGuid,
-                    &Private->FmpDeviceLockEvent
-                    );
+                                 EVT_NOTIFY_SIGNAL,
+                                 TPL_CALLBACK,
+                                 FmpDxeLockEventNotify,
+                                 Private,
+                                 mLockGuid,
+                                 &Private->FmpDeviceLockEvent
+                                 );
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_ERROR, "FmpDxe(%s): Failed to register notification.  Status = %r\n", mImageIdName, Status));
     }
+
     ASSERT_EFI_ERROR (Status);
   } else {
-    DEBUG ((DEBUG_VERBOSE, "FmpDxe(%s): Not registering notification to call FmpDeviceLock() because mfg mode\n", mImageIdName));
+    DEBUG (
+          (DEBUG_VERBOSE, "FmpDxe(%s): Not registering notification to call FmpDeviceLock() because mfg mode\n",
+           mImageIdName)
+          );
   }
 
   //
   // Install FMP Protocol and FMP Progress Protocol
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &Private->Handle,
-                  &gEfiFirmwareManagementProtocolGuid, &Private->Fmp,
-                  &gEdkiiFirmwareManagementProgressProtocolGuid, &mFmpProgress,
-                  NULL
-                  );
+                                                   &Private->Handle,
+                                                   &gEfiFirmwareManagementProtocolGuid,
+                                                   &Private->Fmp,
+                                                   &gEdkiiFirmwareManagementProgressProtocolGuid,
+                                                   &mFmpProgress,
+                                                   NULL
+                                                   );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "FmpDxe(%s): Protocol install error. Status = %r.\n", mImageIdName, Status));
     goto cleanup;
@@ -1706,29 +1777,37 @@ cleanup:
   if (EFI_ERROR (Status)) {
     if (Private != NULL) {
       if (Private->FmpDeviceLockEvent != NULL) {
-        gBS->CloseEvent (Private->FmpDeviceLockEvent);
+  gBS->CloseEvent (Private->FmpDeviceLockEvent);
       }
+
       if (Private->Descriptor.VersionName != NULL) {
         FreePool (Private->Descriptor.VersionName);
       }
+
       if (Private->FmpDeviceContext != NULL) {
         FmpDeviceSetContext (NULL, &Private->FmpDeviceContext);
       }
+
       if (Private->VersionVariableName != NULL) {
         FreePool (Private->VersionVariableName);
       }
+
       if (Private->LsvVariableName != NULL) {
         FreePool (Private->LsvVariableName);
       }
+
       if (Private->LastAttemptStatusVariableName != NULL) {
         FreePool (Private->LastAttemptStatusVariableName);
       }
+
       if (Private->LastAttemptVersionVariableName != NULL) {
         FreePool (Private->LastAttemptVersionVariableName);
       }
+
       if (Private->FmpStateVariableName != NULL) {
         FreePool (Private->FmpStateVariableName);
       }
+
       FreePool (Private);
     }
   }
@@ -1757,13 +1836,13 @@ UninstallFmpInstance (
   FIRMWARE_MANAGEMENT_PRIVATE_DATA  *Private;
 
   Status = gBS->OpenProtocol (
-                  Handle,
-                  &gEfiFirmwareManagementProtocolGuid,
-                  (VOID **)&Fmp,
-                  NULL,
-                  NULL,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              Handle,
+                              &gEfiFirmwareManagementProtocolGuid,
+                              (VOID **) &Fmp,
+                              NULL,
+                              NULL,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "FmpDxe(%s): Protocol open error. Status = %r.\n", mImageIdName, Status));
     return Status;
@@ -1773,15 +1852,17 @@ UninstallFmpInstance (
   FmpDeviceSetContext (Private->Handle, &Private->FmpDeviceContext);
 
   if (Private->FmpDeviceLockEvent != NULL) {
-    gBS->CloseEvent (Private->FmpDeviceLockEvent);
+  gBS->CloseEvent (Private->FmpDeviceLockEvent);
   }
 
   Status = gBS->UninstallMultipleProtocolInterfaces (
-                  Private->Handle,
-                  &gEfiFirmwareManagementProtocolGuid, &Private->Fmp,
-                  &gEdkiiFirmwareManagementProgressProtocolGuid, &mFmpProgress,
-                  NULL
-                  );
+                                                     Private->Handle,
+                                                     &gEfiFirmwareManagementProtocolGuid,
+                                                     &Private->Fmp,
+                                                     &gEdkiiFirmwareManagementProgressProtocolGuid,
+                                                     &mFmpProgress,
+                                                     NULL
+                                                     );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "FmpDxe(%s): Protocol uninstall error. Status = %r.\n", mImageIdName, Status));
     return Status;
@@ -1790,24 +1871,31 @@ UninstallFmpInstance (
   if (Private->Descriptor.VersionName != NULL) {
     FreePool (Private->Descriptor.VersionName);
   }
+
   if (Private->FmpDeviceContext != NULL) {
     FmpDeviceSetContext (NULL, &Private->FmpDeviceContext);
   }
+
   if (Private->VersionVariableName != NULL) {
     FreePool (Private->VersionVariableName);
   }
+
   if (Private->LsvVariableName != NULL) {
     FreePool (Private->LsvVariableName);
   }
+
   if (Private->LastAttemptStatusVariableName != NULL) {
     FreePool (Private->LastAttemptStatusVariableName);
   }
+
   if (Private->LastAttemptVersionVariableName != NULL) {
     FreePool (Private->LastAttemptVersionVariableName);
   }
+
   if (Private->FmpStateVariableName != NULL) {
     FreePool (Private->FmpStateVariableName);
   }
+
   FreePool (Private);
 
   return EFI_SUCCESS;
@@ -1832,6 +1920,7 @@ FmpDxeLibDestructor (
   if (mFmpSingleInstance) {
     return UninstallFmpInstance (ImageHandle);
   }
+
   return EFI_SUCCESS;
 }
 
@@ -1883,9 +1972,9 @@ FmpDxeEntryPoint (
   //
   // Fill in FMP Progress Protocol fields for Version 1
   //
-  mFmpProgress.Version                        = 1;
+  mFmpProgress.Version = 1;
   mFmpProgress.ProgressBarForegroundColor.Raw = PcdGet32 (PcdFmpDeviceProgressColor);
-  mFmpProgress.WatchdogSeconds                = PcdGet8 (PcdFmpDeviceProgressWatchdogTimeInSeconds);
+  mFmpProgress.WatchdogSeconds = PcdGet8 (PcdFmpDeviceProgressWatchdogTimeInSeconds);
 
   // The lock event GUID is retrieved from PcdFmpDeviceLockEventGuid.
   // If PcdFmpDeviceLockEventGuid is not the size of an EFI_GUID, then
@@ -1893,8 +1982,9 @@ FmpDxeEntryPoint (
   //
   mLockGuid = &gEfiEndOfDxeEventGroupGuid;
   if (PcdGetSize (PcdFmpDeviceLockEventGuid) == sizeof (EFI_GUID)) {
-    mLockGuid = (EFI_GUID *)PcdGetPtr (PcdFmpDeviceLockEventGuid);
+    mLockGuid = (EFI_GUID *) PcdGetPtr (PcdFmpDeviceLockEventGuid);
   }
+
   DEBUG ((DEBUG_INFO, "FmpDxe(%s): Lock GUID: %g\n", mImageIdName, mLockGuid));
 
   //
@@ -1906,25 +1996,40 @@ FmpDxeEntryPoint (
   Status = RegisterFmpInstaller (InstallFmpInstance);
   if (Status == EFI_UNSUPPORTED) {
     mFmpSingleInstance = TRUE;
-    DEBUG ((DEBUG_INFO, "FmpDxe(%s): FmpDeviceLib registration returned EFI_UNSUPPORTED.  Installing single FMP instance.\n", mImageIdName));
+    DEBUG (
+          (DEBUG_INFO,
+           "FmpDxe(%s): FmpDeviceLib registration returned EFI_UNSUPPORTED.  Installing single FMP instance.\n",
+           mImageIdName)
+          );
     Status = RegisterFmpUninstaller (UninstallFmpInstance);
     if (Status == EFI_UNSUPPORTED) {
       Status = InstallFmpInstance (ImageHandle);
     } else {
-      DEBUG ((DEBUG_ERROR, "FmpDxe(%s): FmpDeviceLib RegisterFmpInstaller and RegisterFmpUninstaller do not match.\n", mImageIdName));
+      DEBUG (
+            (DEBUG_ERROR, "FmpDxe(%s): FmpDeviceLib RegisterFmpInstaller and RegisterFmpUninstaller do not match.\n",
+             mImageIdName)
+            );
       Status = EFI_UNSUPPORTED;
     }
   } else if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "FmpDxe(%s): FmpDeviceLib registration returned %r.  No FMP installed.\n", mImageIdName, Status));
+    DEBUG (
+          (DEBUG_ERROR, "FmpDxe(%s): FmpDeviceLib registration returned %r.  No FMP installed.\n", mImageIdName,
+           Status)
+          );
   } else {
-    DEBUG ((
-      DEBUG_INFO,
-      "FmpDxe(%s): FmpDeviceLib registration returned EFI_SUCCESS.  Expect FMP to be installed during the BDS/Device connection phase.\n",
-      mImageIdName
-      ));
+    DEBUG (
+           (
+            DEBUG_INFO,
+            "FmpDxe(%s): FmpDeviceLib registration returned EFI_SUCCESS.  Expect FMP to be installed during the BDS/Device connection phase.\n",
+            mImageIdName
+           )
+           );
     Status = RegisterFmpUninstaller (UninstallFmpInstance);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "FmpDxe(%s): FmpDeviceLib RegisterFmpInstaller and RegisterFmpUninstaller do not match.\n", mImageIdName));
+      DEBUG (
+            (DEBUG_ERROR, "FmpDxe(%s): FmpDeviceLib RegisterFmpInstaller and RegisterFmpUninstaller do not match.\n",
+             mImageIdName)
+            );
     }
   }
 

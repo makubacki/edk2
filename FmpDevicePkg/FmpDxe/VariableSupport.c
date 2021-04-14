@@ -40,15 +40,16 @@ GetFmpVariable (
   Size   = 0;
   Buffer = NULL;
   Status = GetVariable2 (
-             VariableName,
-             &gEfiCallerIdGuid,
-             (VOID **)&Buffer,
-             &Size
-             );
+                         VariableName,
+                         &gEfiCallerIdGuid,
+                         (VOID **) &Buffer,
+                         &Size
+                         );
   if (!EFI_ERROR (Status) && Size == sizeof (*Value) && Buffer != NULL) {
     *Valid = TRUE;
     *Value = *Buffer;
   }
+
   if (Buffer != NULL) {
     FreePool (Buffer);
   }
@@ -75,7 +76,10 @@ DeleteFmpVariable (
   if (Valid) {
     Status = gRT->SetVariable (VariableName, &gEfiCallerIdGuid, 0, 0, NULL);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "FmpDxe(%s): Failed to delete variable %s.  Status = %r\n", mImageIdName, VariableName, Status));
+      DEBUG (
+            (DEBUG_ERROR, "FmpDxe(%s): Failed to delete variable %s.  Status = %r\n", mImageIdName, VariableName,
+             Status)
+            );
     } else {
       DEBUG ((DEBUG_INFO, "FmpDxe(%s): Deleted variable %s\n", mImageIdName, VariableName));
     }
@@ -104,24 +108,30 @@ GetFmpControllerState (
   UINTN                 Size;
 
   FmpControllerState = NULL;
-  Size               = 0;
+  Size   = 0;
   Status = GetVariable2 (
-             Private->FmpStateVariableName,
-             &gEfiCallerIdGuid,
-             (VOID **)&FmpControllerState,
-             &Size
-             );
+                         Private->FmpStateVariableName,
+                         &gEfiCallerIdGuid,
+                         (VOID **) &FmpControllerState,
+                         &Size
+                         );
   if (EFI_ERROR (Status) || FmpControllerState == NULL) {
     DEBUG ((DEBUG_ERROR, "FmpDxe(%s): Failed to get the controller state.  Status = %r\n", mImageIdName, Status));
   } else {
     if (Size == sizeof (*FmpControllerState)) {
       return FmpControllerState;
     }
-    DEBUG ((DEBUG_ERROR, "FmpDxe(%s): Getting controller state returned a size different than expected. Size = 0x%x\n", mImageIdName, Size));
+
+    DEBUG (
+          (DEBUG_ERROR, "FmpDxe(%s): Getting controller state returned a size different than expected. Size = 0x%x\n",
+           mImageIdName, Size)
+          );
   }
+
   if (FmpControllerState != NULL) {
     FreePool (FmpControllerState);
   }
+
   return NULL;
 }
 
@@ -160,16 +170,18 @@ GenerateFmpVariableName (
     DEBUG ((DEBUG_ERROR, "FmpDxe(%s): Failed to generate variable name %s.\n", mImageIdName, BaseVariableName));
     return VariableName;
   }
+
   if (HardwareInstance == 0) {
     return VariableName;
   }
+
   UnicodeValueToStringS (
-    &VariableName[StrLen(BaseVariableName)],
-    Size,
-    PREFIX_ZERO | RADIX_HEX,
-    HardwareInstance,
-    16
-    );
+                         &VariableName[StrLen (BaseVariableName)],
+                         Size,
+                         PREFIX_ZERO | RADIX_HEX,
+                         HardwareInstance,
+                         16
+                         );
   return VariableName;
 }
 
@@ -202,51 +214,61 @@ GenerateFmpVariableNames (
   IN OUT FIRMWARE_MANAGEMENT_PRIVATE_DATA  *Private
   )
 {
-  EFI_STATUS                   Status;
-  VOID                         *Buffer;
+  EFI_STATUS            Status;
+  VOID                  *Buffer;
   FMP_CONTROLLER_STATE  FmpControllerState;
 
   if (Private->VersionVariableName != NULL) {
     FreePool (Private->VersionVariableName);
   }
+
   if (Private->LsvVariableName != NULL) {
     FreePool (Private->LsvVariableName);
   }
+
   if (Private->LastAttemptStatusVariableName != NULL) {
     FreePool (Private->LastAttemptStatusVariableName);
   }
+
   if (Private->LastAttemptVersionVariableName != NULL) {
     FreePool (Private->LastAttemptVersionVariableName);
   }
+
   if (Private->FmpStateVariableName != NULL) {
     FreePool (Private->FmpStateVariableName);
   }
 
   Private->VersionVariableName = GenerateFmpVariableName (
-                                   Private->Descriptor.HardwareInstance,
-                                   VARNAME_VERSION
-                                   );
+                                                          Private->Descriptor.HardwareInstance,
+                                                          VARNAME_VERSION
+                                                          );
   Private->LsvVariableName = GenerateFmpVariableName (
-                               Private->Descriptor.HardwareInstance,
-                               VARNAME_LSV
-                               );
+                                                      Private->Descriptor.HardwareInstance,
+                                                      VARNAME_LSV
+                                                      );
   Private->LastAttemptStatusVariableName = GenerateFmpVariableName (
-                                             Private->Descriptor.HardwareInstance,
-                                             VARNAME_LASTATTEMPTSTATUS
-                                             );
+                                                                    Private->Descriptor.HardwareInstance,
+                                                                    VARNAME_LASTATTEMPTSTATUS
+                                                                    );
   Private->LastAttemptVersionVariableName = GenerateFmpVariableName (
-                                              Private->Descriptor.HardwareInstance,
-                                              VARNAME_LASTATTEMPTVERSION
-                                              );
+                                                                     Private->Descriptor.HardwareInstance,
+                                                                     VARNAME_LASTATTEMPTVERSION
+                                                                     );
   Private->FmpStateVariableName = GenerateFmpVariableName (
-                                    Private->Descriptor.HardwareInstance,
-                                    VARNAME_FMPSTATE
-                                    );
+                                                           Private->Descriptor.HardwareInstance,
+                                                           VARNAME_FMPSTATE
+                                                           );
 
   DEBUG ((DEBUG_INFO, "FmpDxe(%s): Variable %g %s\n", mImageIdName, &gEfiCallerIdGuid, Private->VersionVariableName));
   DEBUG ((DEBUG_INFO, "FmpDxe(%s): Variable %g %s\n", mImageIdName, &gEfiCallerIdGuid, Private->LsvVariableName));
-  DEBUG ((DEBUG_INFO, "FmpDxe(%s): Variable %g %s\n", mImageIdName, &gEfiCallerIdGuid, Private->LastAttemptStatusVariableName));
-  DEBUG ((DEBUG_INFO, "FmpDxe(%s): Variable %g %s\n", mImageIdName, &gEfiCallerIdGuid, Private->LastAttemptVersionVariableName));
+  DEBUG (
+        (DEBUG_INFO, "FmpDxe(%s): Variable %g %s\n", mImageIdName, &gEfiCallerIdGuid,
+         Private->LastAttemptStatusVariableName)
+        );
+  DEBUG (
+        (DEBUG_INFO, "FmpDxe(%s): Variable %g %s\n", mImageIdName, &gEfiCallerIdGuid,
+         Private->LastAttemptVersionVariableName)
+        );
   DEBUG ((DEBUG_INFO, "FmpDxe(%s): Variable %g %s\n", mImageIdName, &gEfiCallerIdGuid, Private->FmpStateVariableName));
 
   Buffer = GetFmpControllerState (Private);
@@ -269,32 +291,32 @@ GenerateFmpVariableNames (
   //
   DEBUG ((DEBUG_INFO, "FmpDxe(%s): Create controller state\n", mImageIdName));
   GetFmpVariable (
-    Private->VersionVariableName,
-    &FmpControllerState.VersionValid,
-    &FmpControllerState.Version
-    );
-  GetFmpVariable (
-    Private->LsvVariableName,
-    &FmpControllerState.LsvValid,
-    &FmpControllerState.Lsv
-    );
-  GetFmpVariable (
-    Private->LastAttemptStatusVariableName,
-    &FmpControllerState.LastAttemptStatusValid,
-    &FmpControllerState.LastAttemptStatus
-    );
-  GetFmpVariable (
-    Private->LastAttemptVersionVariableName,
-    &FmpControllerState.LastAttemptVersionValid,
-    &FmpControllerState.LastAttemptVersion
-    );
-  Status = gRT->SetVariable (
-                  Private->FmpStateVariableName,
-                  &gEfiCallerIdGuid,
-                  EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS,
-                  sizeof (FmpControllerState),
-                  &FmpControllerState
+                  Private->VersionVariableName,
+                  &FmpControllerState.VersionValid,
+                  &FmpControllerState.Version
                   );
+  GetFmpVariable (
+                  Private->LsvVariableName,
+                  &FmpControllerState.LsvValid,
+                  &FmpControllerState.Lsv
+                  );
+  GetFmpVariable (
+                  Private->LastAttemptStatusVariableName,
+                  &FmpControllerState.LastAttemptStatusValid,
+                  &FmpControllerState.LastAttemptStatus
+                  );
+  GetFmpVariable (
+                  Private->LastAttemptVersionVariableName,
+                  &FmpControllerState.LastAttemptVersionValid,
+                  &FmpControllerState.LastAttemptVersion
+                  );
+  Status = gRT->SetVariable (
+                             Private->FmpStateVariableName,
+                             &gEfiCallerIdGuid,
+                             EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS,
+                             sizeof (FmpControllerState),
+                             &FmpControllerState
+                             );
   if (EFI_ERROR (Status)) {
     //
     // Failed to create FMP Controller State.  In this case, do not
@@ -336,15 +358,19 @@ GetVersionFromVariable (
   if (FmpControllerState != NULL) {
     if (FmpControllerState->VersionValid) {
       Value = FmpControllerState->Version;
-      DEBUG ((DEBUG_INFO, "FmpDxe(%s): Get variable %g %s Version %08x\n",
-        mImageIdName,
-        &gEfiCallerIdGuid,
-        Private->FmpStateVariableName,
-        Value
-        ));
+      DEBUG (
+             (DEBUG_INFO, "FmpDxe(%s): Get variable %g %s Version %08x\n",
+              mImageIdName,
+              &gEfiCallerIdGuid,
+              Private->FmpStateVariableName,
+              Value
+             )
+             );
     }
+
     FreePool (FmpControllerState);
   }
+
   return Value;
 }
 
@@ -375,15 +401,19 @@ GetLowestSupportedVersionFromVariable (
   if (FmpControllerState != NULL) {
     if (FmpControllerState->LsvValid) {
       Value = FmpControllerState->Lsv;
-      DEBUG ((DEBUG_INFO, "FmpDxe(%s): Get variable %g %s LowestSupportedVersion %08x\n",
-        mImageIdName,
-        &gEfiCallerIdGuid,
-        Private->FmpStateVariableName,
-        Value
-        ));
+      DEBUG (
+             (DEBUG_INFO, "FmpDxe(%s): Get variable %g %s LowestSupportedVersion %08x\n",
+              mImageIdName,
+              &gEfiCallerIdGuid,
+              Private->FmpStateVariableName,
+              Value
+             )
+             );
     }
+
     FreePool (FmpControllerState);
   }
+
   return Value;
 }
 
@@ -413,15 +443,19 @@ GetLastAttemptStatusFromVariable (
   if (FmpControllerState != NULL) {
     if (FmpControllerState->LastAttemptStatusValid) {
       Value = FmpControllerState->LastAttemptStatus;
-      DEBUG ((DEBUG_INFO, "FmpDxe(%s): Get variable %g %s LastAttemptStatus %08x\n",
-        mImageIdName,
-        &gEfiCallerIdGuid,
-        Private->FmpStateVariableName,
-        Value
-        ));
+      DEBUG (
+             (DEBUG_INFO, "FmpDxe(%s): Get variable %g %s LastAttemptStatus %08x\n",
+              mImageIdName,
+              &gEfiCallerIdGuid,
+              Private->FmpStateVariableName,
+              Value
+             )
+             );
     }
+
     FreePool (FmpControllerState);
   }
+
   return Value;
 }
 
@@ -451,15 +485,19 @@ GetLastAttemptVersionFromVariable (
   if (FmpControllerState != NULL) {
     if (FmpControllerState->LastAttemptVersionValid) {
       Value = FmpControllerState->LastAttemptVersion;
-      DEBUG ((DEBUG_INFO, "FmpDxe(%s): Get variable %g %s LastAttemptVersion %08x\n",
-        mImageIdName,
-        &gEfiCallerIdGuid,
-        Private->FmpStateVariableName,
-        Value
-        ));
+      DEBUG (
+             (DEBUG_INFO, "FmpDxe(%s): Get variable %g %s LastAttemptVersion %08x\n",
+              mImageIdName,
+              &gEfiCallerIdGuid,
+              Private->FmpStateVariableName,
+              Value
+             )
+             );
     }
+
     FreePool (FmpControllerState);
   }
+
   return Value;
 }
 
@@ -495,32 +533,37 @@ SetVersionInVariable (
   if (!FmpControllerState->VersionValid) {
     Update = TRUE;
   }
+
   if (FmpControllerState->Version != Version) {
     Update = TRUE;
   }
+
   if (!Update) {
     DEBUG ((DEBUG_INFO, "FmpDxe(%s): No need to update controller state.  Same value as before.\n", mImageIdName));
   } else {
     FmpControllerState->VersionValid = TRUE;
-    FmpControllerState->Version      = Version;
+    FmpControllerState->Version = Version;
     Status = gRT->SetVariable (
-                    Private->FmpStateVariableName,
-                    &gEfiCallerIdGuid,
-                    EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS,
-                    sizeof (*FmpControllerState),
-                    FmpControllerState
-                    );
+                               Private->FmpStateVariableName,
+                               &gEfiCallerIdGuid,
+                               EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS,
+                               sizeof (*FmpControllerState),
+                               FmpControllerState
+                               );
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_ERROR, "FmpDxe(%s): Failed to update controller state.  Status = %r\n", mImageIdName, Status));
     } else {
-      DEBUG ((DEBUG_INFO, "FmpDxe(%s): Set variable %g %s Version %08x\n",
-        mImageIdName,
-        &gEfiCallerIdGuid,
-        Private->FmpStateVariableName,
-        Version
-        ));
+      DEBUG (
+             (DEBUG_INFO, "FmpDxe(%s): Set variable %g %s Version %08x\n",
+              mImageIdName,
+              &gEfiCallerIdGuid,
+              Private->FmpStateVariableName,
+              Version
+             )
+             );
     }
   }
+
   FreePool (FmpControllerState);
 }
 
@@ -558,32 +601,37 @@ SetLowestSupportedVersionInVariable (
   if (!FmpControllerState->LsvValid) {
     Update = TRUE;
   }
+
   if (FmpControllerState->Lsv < LowestSupportedVersion) {
     Update = TRUE;
   }
+
   if (!Update) {
     DEBUG ((DEBUG_INFO, "FmpDxe(%s): No need to update controller state.  Same value as before.\n", mImageIdName));
   } else {
     FmpControllerState->LsvValid = TRUE;
-    FmpControllerState->Lsv      = LowestSupportedVersion;
+    FmpControllerState->Lsv = LowestSupportedVersion;
     Status = gRT->SetVariable (
-                    Private->FmpStateVariableName,
-                    &gEfiCallerIdGuid,
-                    EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS,
-                    sizeof (*FmpControllerState),
-                    FmpControllerState
-                    );
+                               Private->FmpStateVariableName,
+                               &gEfiCallerIdGuid,
+                               EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS,
+                               sizeof (*FmpControllerState),
+                               FmpControllerState
+                               );
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_ERROR, "FmpDxe(%s): Failed to update controller state.  Status = %r\n", mImageIdName, Status));
     } else {
-      DEBUG ((DEBUG_INFO, "FmpDxe(%s): Set variable %g %s LowestSupportedVersion %08x\n",
-        mImageIdName,
-        &gEfiCallerIdGuid,
-        Private->FmpStateVariableName,
-        LowestSupportedVersion
-        ));
+      DEBUG (
+             (DEBUG_INFO, "FmpDxe(%s): Set variable %g %s LowestSupportedVersion %08x\n",
+              mImageIdName,
+              &gEfiCallerIdGuid,
+              Private->FmpStateVariableName,
+              LowestSupportedVersion
+             )
+             );
     }
   }
+
   FreePool (FmpControllerState);
 }
 
@@ -621,32 +669,37 @@ SetLastAttemptStatusInVariable (
   if (!FmpControllerState->LastAttemptStatusValid) {
     Update = TRUE;
   }
+
   if (FmpControllerState->LastAttemptStatus != LastAttemptStatus) {
     Update = TRUE;
   }
+
   if (!Update) {
     DEBUG ((DEBUG_INFO, "FmpDxe(%s): No need to update controller state.  Same value as before.\n", mImageIdName));
   } else {
     FmpControllerState->LastAttemptStatusValid = TRUE;
-    FmpControllerState->LastAttemptStatus      = LastAttemptStatus;
+    FmpControllerState->LastAttemptStatus = LastAttemptStatus;
     Status = gRT->SetVariable (
-                    Private->FmpStateVariableName,
-                    &gEfiCallerIdGuid,
-                    EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS,
-                    sizeof (*FmpControllerState),
-                    FmpControllerState
-                    );
+                               Private->FmpStateVariableName,
+                               &gEfiCallerIdGuid,
+                               EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS,
+                               sizeof (*FmpControllerState),
+                               FmpControllerState
+                               );
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_ERROR, "FmpDxe(%s): Failed to update controller state.  Status = %r\n", mImageIdName, Status));
     } else {
-      DEBUG ((DEBUG_INFO, "FmpDxe(%s): Set variable %g %s LastAttemptStatus %08x\n",
-        mImageIdName,
-        &gEfiCallerIdGuid,
-        Private->FmpStateVariableName,
-        LastAttemptStatus
-        ));
+      DEBUG (
+             (DEBUG_INFO, "FmpDxe(%s): Set variable %g %s LastAttemptStatus %08x\n",
+              mImageIdName,
+              &gEfiCallerIdGuid,
+              Private->FmpStateVariableName,
+              LastAttemptStatus
+             )
+             );
     }
   }
+
   FreePool (FmpControllerState);
 }
 
@@ -684,32 +737,37 @@ SetLastAttemptVersionInVariable (
   if (!FmpControllerState->LastAttemptVersionValid) {
     Update = TRUE;
   }
+
   if (FmpControllerState->LastAttemptVersion != LastAttemptVersion) {
     Update = TRUE;
   }
+
   if (!Update) {
     DEBUG ((DEBUG_INFO, "FmpDxe(%s): No need to update controller state.  Same value as before.\n", mImageIdName));
   } else {
     FmpControllerState->LastAttemptVersionValid = TRUE;
-    FmpControllerState->LastAttemptVersion      = LastAttemptVersion;
+    FmpControllerState->LastAttemptVersion = LastAttemptVersion;
     Status = gRT->SetVariable (
-                    Private->FmpStateVariableName,
-                    &gEfiCallerIdGuid,
-                    EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS,
-                    sizeof (*FmpControllerState),
-                    FmpControllerState
-                    );
+                               Private->FmpStateVariableName,
+                               &gEfiCallerIdGuid,
+                               EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS,
+                               sizeof (*FmpControllerState),
+                               FmpControllerState
+                               );
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_ERROR, "FmpDxe(%s): Failed to update controller state.  Status = %r\n", mImageIdName, Status));
     } else {
-      DEBUG ((DEBUG_INFO, "FmpDxe(%s): Set variable %g %s LastAttemptVersion %08x\n",
-        mImageIdName,
-        &gEfiCallerIdGuid,
-        Private->FmpStateVariableName,
-        LastAttemptVersion
-        ));
+      DEBUG (
+             (DEBUG_INFO, "FmpDxe(%s): Set variable %g %s LastAttemptVersion %08x\n",
+              mImageIdName,
+              &gEfiCallerIdGuid,
+              Private->FmpStateVariableName,
+              LastAttemptVersion
+             )
+             );
     }
   }
+
   FreePool (FmpControllerState);
 }
 
@@ -737,24 +795,27 @@ LockFmpVariable (
   EFI_STATUS  Status;
 
   Status = VariableLock->RequestToLock (
-                           VariableLock,
-                           VariableName,
-                           &gEfiCallerIdGuid
-                           );
+                                        VariableLock,
+                                        VariableName,
+                                        &gEfiCallerIdGuid
+                                        );
   if (!EFI_ERROR (Status)) {
     return PreviousStatus;
   }
 
-  DEBUG ((DEBUG_ERROR, "FmpDxe(%s): Failed to lock variable %g %s.  Status = %r\n",
-    mImageIdName,
-    &gEfiCallerIdGuid,
-    VariableName,
-    Status
-    ));
+  DEBUG (
+         (DEBUG_ERROR, "FmpDxe(%s): Failed to lock variable %g %s.  Status = %r\n",
+          mImageIdName,
+          &gEfiCallerIdGuid,
+          VariableName,
+          Status
+         )
+         );
 
   if (EFI_ERROR (PreviousStatus)) {
     return PreviousStatus;
   }
+
   return Status;
 }
 
@@ -778,10 +839,10 @@ LockAllFmpVariables (
 
   VariableLock = NULL;
   Status = gBS->LocateProtocol (
-                  &gEdkiiVariableLockProtocolGuid,
-                  NULL,
-                  (VOID **)&VariableLock
-                  );
+                                &gEdkiiVariableLockProtocolGuid,
+                                NULL,
+                                (VOID **) &VariableLock
+                                );
   if (EFI_ERROR (Status) || VariableLock == NULL) {
     DEBUG ((DEBUG_ERROR, "FmpDxe(%s): Failed to locate Variable Lock Protocol (%r).\n", mImageIdName, Status));
     return EFI_UNSUPPORTED;
