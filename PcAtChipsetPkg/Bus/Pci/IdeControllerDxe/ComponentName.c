@@ -21,7 +21,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gIdeControllerCompone
 //
 /// EFI Component Name 2 Protocol
 ///
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL gIdeControllerComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gIdeControllerComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) IdeControllerComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) IdeControllerComponentNameGetControllerName,
   "en"
@@ -30,10 +30,10 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL gIdeControllerCompone
 //
 /// Driver Name Strings
 ///
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mIdeControllerDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mIdeControllerDriverNameTable[] = {
   {
     "eng;en",
-    (CHAR16 *)L"IDE Controller Init Driver"
+    (CHAR16 *) L"IDE Controller Init Driver"
   },
   {
     NULL,
@@ -44,10 +44,10 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mIdeControllerDriverNameT
 ///
 /// Controller Name Strings
 ///
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mIdeControllerControllerNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mIdeControllerControllerNameTable[] = {
   {
     "eng;en",
-    (CHAR16 *)L"PCAT IDE Controller"
+    (CHAR16 *) L"PCAT IDE Controller"
   },
   {
     NULL,
@@ -85,12 +85,12 @@ IdeControllerComponentNameGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mIdeControllerDriverNameTable,
-           DriverName,
-           (BOOLEAN)(This == &gIdeControllerComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mIdeControllerDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gIdeControllerComponentName)
+                               );
 }
 
 /**
@@ -143,16 +143,16 @@ IdeControllerComponentNameGetControllerName (
   OUT CHAR16                                          **ControllerName
   )
 {
-  EFI_STATUS            Status;
+  EFI_STATUS  Status;
 
   //
   // Make sure this driver is currently managing ControllHandle
   //
   Status = EfiTestManagedDevice (
-             ControllerHandle,
-             gIdeControllerDriverBinding.DriverBindingHandle,
-             &gEfiPciIoProtocolGuid
-             );
+                                 ControllerHandle,
+                                 gIdeControllerDriverBinding.DriverBindingHandle,
+                                 &gEfiPciIoProtocolGuid
+                                 );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -162,10 +162,10 @@ IdeControllerComponentNameGetControllerName (
   }
 
   return LookupUnicodeString2 (
-          Language,
-          This->SupportedLanguages,
-          mIdeControllerControllerNameTable,
-          ControllerName,
-          (BOOLEAN)(This == &gIdeControllerComponentName)
-          );
+                               Language,
+                               This->SupportedLanguages,
+                               mIdeControllerControllerNameTable,
+                               ControllerName,
+                               (BOOLEAN) (This == &gIdeControllerComponentName)
+                               );
 }

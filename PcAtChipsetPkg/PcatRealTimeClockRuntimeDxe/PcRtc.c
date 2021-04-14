@@ -17,12 +17,12 @@ extern UINTN  mRtcTargetRegister;
 //
 // Days of month.
 //
-UINTN mDayOfMonth[] = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+UINTN  mDayOfMonth[] = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
 //
 // The name of NV variable to store the timezone and daylight saving information.
 //
-CHAR16 mTimeZoneVariableName[] = L"RTC";
+CHAR16  mTimeZoneVariableName[] = L"RTC";
 
 /**
   Compare the Hour, Minute and Second of the From time and the To time.
@@ -72,9 +72,9 @@ IoRtcRead (
   )
 {
   IoWrite8 (
-    PcdGet8 (PcdRtcIndexRegister),
-    (UINT8)(Address | (UINT8)(IoRead8 (PcdGet8 (PcdRtcIndexRegister)) & 0x80))
-    );
+            PcdGet8 (PcdRtcIndexRegister),
+            (UINT8) (Address | (UINT8) (IoRead8 (PcdGet8 (PcdRtcIndexRegister)) & 0x80))
+            );
   return IoRead8 (PcdGet8 (PcdRtcTargetRegister));
 }
 
@@ -94,9 +94,9 @@ IoRtcWrite (
   )
 {
   IoWrite8 (
-    PcdGet8 (PcdRtcIndexRegister),
-    (UINT8)(Address | (UINT8)(IoRead8 (PcdGet8 (PcdRtcIndexRegister)) & 0x80))
-    );
+            PcdGet8 (PcdRtcIndexRegister),
+            (UINT8) (Address | (UINT8) (IoRead8 (PcdGet8 (PcdRtcIndexRegister)) & 0x80))
+            );
   IoWrite8 (PcdGet8 (PcdRtcTargetRegister), Data);
 }
 
@@ -115,9 +115,9 @@ MmioRtcRead (
   )
 {
   MmioWrite8 (
-    mRtcIndexRegister,
-    (UINT8)(Address | (UINT8)(MmioRead8 (mRtcIndexRegister) & 0x80))
-    );
+              mRtcIndexRegister,
+              (UINT8) (Address | (UINT8) (MmioRead8 (mRtcIndexRegister) & 0x80))
+              );
   return MmioRead8 (mRtcTargetRegister);
 }
 
@@ -137,9 +137,9 @@ MmioRtcWrite (
   )
 {
   MmioWrite8 (
-    mRtcIndexRegister,
-    (UINT8)(Address | (UINT8)(MmioRead8 (mRtcIndexRegister) & 0x80))
-    );
+              mRtcIndexRegister,
+              (UINT8) (Address | (UINT8) (MmioRead8 (mRtcIndexRegister) & 0x80))
+              );
   MmioWrite8 (mRtcTargetRegister, Data);
 }
 
@@ -216,6 +216,7 @@ PcRtcInit (
   if (!EfiAtRuntime ()) {
     EfiAcquireLock (&Global->RtcLock);
   }
+
   //
   // Initialize RTC Register
   //
@@ -250,12 +251,14 @@ PcRtcInit (
     // Set the variable with default value if the RTC is functioning incorrectly.
     //
     Global->SavedTimeZone = EFI_UNSPECIFIED_TIMEZONE;
-    Global->Daylight      = 0;
+    Global->Daylight = 0;
     if (!EfiAtRuntime ()) {
       EfiReleaseLock (&Global->RtcLock);
     }
+
     return EFI_DEVICE_ERROR;
   }
+
   //
   // Get the Time/Date/Daylight Savings values.
   //
@@ -285,13 +288,13 @@ PcRtcInit (
   // stored in NV variable during previous boot.
   //
   DataSize = sizeof (UINT32);
-  Status = EfiGetVariable (
-             mTimeZoneVariableName,
-             &gEfiCallerIdGuid,
-             NULL,
-             &DataSize,
-             &TimerVar
-             );
+  Status   = EfiGetVariable (
+                             mTimeZoneVariableName,
+                             &gEfiCallerIdGuid,
+                             NULL,
+                             &DataSize,
+                             &TimerVar
+                             );
   if (!EFI_ERROR (Status)) {
     Time.TimeZone = (INT16) TimerVar;
     Time.Daylight = (UINT8) (TimerVar >> 16);
@@ -307,23 +310,24 @@ PcRtcInit (
   if (!EFI_ERROR (Status)) {
     Status = RtcTimeFieldsValid (&Time);
   }
+
   if (EFI_ERROR (Status)) {
     //
     // Report Status Code to indicate that the RTC has bad date and time
     //
     REPORT_STATUS_CODE (
-      EFI_ERROR_CODE | EFI_ERROR_MINOR,
-      (EFI_SOFTWARE_DXE_RT_DRIVER | EFI_SW_EC_BAD_DATE_TIME)
-      );
-    Time.Second = RTC_INIT_SECOND;
-    Time.Minute = RTC_INIT_MINUTE;
-    Time.Hour   = RTC_INIT_HOUR;
-    Time.Day    = RTC_INIT_DAY;
-    Time.Month  = RTC_INIT_MONTH;
-    Time.Year   = PcdGet16 (PcdMinimalValidYear);
-    Time.Nanosecond  = 0;
-    Time.TimeZone = EFI_UNSPECIFIED_TIMEZONE;
-    Time.Daylight = 0;
+                        EFI_ERROR_CODE | EFI_ERROR_MINOR,
+                        (EFI_SOFTWARE_DXE_RT_DRIVER | EFI_SW_EC_BAD_DATE_TIME)
+                        );
+    Time.Second     = RTC_INIT_SECOND;
+    Time.Minute     = RTC_INIT_MINUTE;
+    Time.Hour       = RTC_INIT_HOUR;
+    Time.Day        = RTC_INIT_DAY;
+    Time.Month      = RTC_INIT_MONTH;
+    Time.Year       = PcdGet16 (PcdMinimalValidYear);
+    Time.Nanosecond = 0;
+    Time.TimeZone   = EFI_UNSPECIFIED_TIMEZONE;
+    Time.Daylight   = 0;
   }
 
   //
@@ -348,15 +352,15 @@ PcRtcInit (
   // When wakeup time is disabled and invalid, reset wakeup time register to valid state
   // but keep wakeup alarm disabled.
   //
-  Time.Second = RTC_INIT_SECOND;
-  Time.Minute = RTC_INIT_MINUTE;
-  Time.Hour   = RTC_INIT_HOUR;
-  Time.Day    = RTC_INIT_DAY;
-  Time.Month  = RTC_INIT_MONTH;
-  Time.Year   = PcdGet16 (PcdMinimalValidYear);
-  Time.Nanosecond  = 0;
-  Time.TimeZone = Global->SavedTimeZone;
-  Time.Daylight = Global->Daylight;;
+  Time.Second     = RTC_INIT_SECOND;
+  Time.Minute     = RTC_INIT_MINUTE;
+  Time.Hour       = RTC_INIT_HOUR;
+  Time.Day        = RTC_INIT_DAY;
+  Time.Month      = RTC_INIT_MONTH;
+  Time.Year       = PcdGet16 (PcdMinimalValidYear);
+  Time.Nanosecond = 0;
+  Time.TimeZone   = Global->SavedTimeZone;
+  Time.Daylight   = Global->Daylight;
 
   //
   // Acquire RTC Lock to make access to RTC atomic
@@ -364,14 +368,16 @@ PcRtcInit (
   if (!EfiAtRuntime ()) {
     EfiAcquireLock (&Global->RtcLock);
   }
+
   //
   // Wait for up to 0.1 seconds for the RTC to be updated
   //
   Status = RtcWaitToUpdate (PcdGet32 (PcdRealTimeClockUpdateTimeout));
   if (EFI_ERROR (Status)) {
     if (!EfiAtRuntime ()) {
-    EfiReleaseLock (&Global->RtcLock);
+      EfiReleaseLock (&Global->RtcLock);
     }
+
     return EFI_DEVICE_ERROR;
   }
 
@@ -381,23 +387,24 @@ PcRtcInit (
   // Set the Y/M/D info to variable as it has no corresponding hw registers.
   //
   Status =  EfiSetVariable (
-              L"RTCALARM",
-              &gEfiCallerIdGuid,
-              EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
-              sizeof (Time),
-              &Time
-              );
+                            L"RTCALARM",
+                            &gEfiCallerIdGuid,
+                            EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
+                            sizeof (Time),
+                            &Time
+                            );
   if (EFI_ERROR (Status)) {
     if (!EfiAtRuntime ()) {
       EfiReleaseLock (&Global->RtcLock);
     }
+
     return EFI_DEVICE_ERROR;
   }
 
   //
   // Inhibit updates of the RTC
   //
-  RegisterB.Bits.Set  = 1;
+  RegisterB.Bits.Set = 1;
   RtcWrite (RTC_ADDRESS_REGISTER_B, RegisterB.Data);
 
   //
@@ -419,6 +426,7 @@ PcRtcInit (
   if (!EfiAtRuntime ()) {
     EfiReleaseLock (&Global->RtcLock);
   }
+
   return EFI_SUCCESS;
 }
 
@@ -439,7 +447,7 @@ PcRtcInit (
 EFI_STATUS
 PcRtcGetTime (
   OUT  EFI_TIME               *Time,
-  OUT  EFI_TIME_CAPABILITIES  *Capabilities,  OPTIONAL
+  OUT  EFI_TIME_CAPABILITIES  *Capabilities, OPTIONAL
   IN   PC_RTC_MODULE_GLOBALS  *Global
   )
 {
@@ -451,24 +459,27 @@ PcRtcGetTime (
   //
   if (Time == NULL) {
     return EFI_INVALID_PARAMETER;
-
   }
+
   //
   // Acquire RTC Lock to make access to RTC atomic
   //
   if (!EfiAtRuntime ()) {
     EfiAcquireLock (&Global->RtcLock);
   }
+
   //
   // Wait for up to 0.1 seconds for the RTC to be updated
   //
   Status = RtcWaitToUpdate (PcdGet32 (PcdRealTimeClockUpdateTimeout));
   if (EFI_ERROR (Status)) {
-      if (!EfiAtRuntime ()) {
-        EfiReleaseLock (&Global->RtcLock);
-      }
+    if (!EfiAtRuntime ()) {
+      EfiReleaseLock (&Global->RtcLock);
+    }
+
     return Status;
   }
+
   //
   // Read Register B
   //
@@ -477,12 +488,12 @@ PcRtcGetTime (
   //
   // Get the Time/Date/Daylight Savings values.
   //
-  Time->Second  = RtcRead (RTC_ADDRESS_SECONDS);
-  Time->Minute  = RtcRead (RTC_ADDRESS_MINUTES);
-  Time->Hour    = RtcRead (RTC_ADDRESS_HOURS);
-  Time->Day     = RtcRead (RTC_ADDRESS_DAY_OF_THE_MONTH);
-  Time->Month   = RtcRead (RTC_ADDRESS_MONTH);
-  Time->Year    = RtcRead (RTC_ADDRESS_YEAR);
+  Time->Second = RtcRead (RTC_ADDRESS_SECONDS);
+  Time->Minute = RtcRead (RTC_ADDRESS_MINUTES);
+  Time->Hour   = RtcRead (RTC_ADDRESS_HOURS);
+  Time->Day    = RtcRead (RTC_ADDRESS_DAY_OF_THE_MONTH);
+  Time->Month  = RtcRead (RTC_ADDRESS_MONTH);
+  Time->Year   = RtcRead (RTC_ADDRESS_YEAR);
 
   //
   // Release RTC Lock.
@@ -494,8 +505,8 @@ PcRtcGetTime (
   //
   // Get the variable that contains the TimeZone and Daylight fields
   //
-  Time->TimeZone  = Global->SavedTimeZone;
-  Time->Daylight  = Global->Daylight;
+  Time->TimeZone = Global->SavedTimeZone;
+  Time->Daylight = Global->Daylight;
 
   //
   // Make sure all field values are in correct range
@@ -504,12 +515,13 @@ PcRtcGetTime (
   if (!EFI_ERROR (Status)) {
     Status = RtcTimeFieldsValid (Time);
   }
+
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
   }
 
   //
-  //  Fill in Capabilities if it was passed in
+  // Fill in Capabilities if it was passed in
   //
   if (Capabilities != NULL) {
     Capabilities->Resolution = 1;
@@ -551,6 +563,7 @@ PcRtcSetTime (
   if (Time == NULL) {
     return EFI_INVALID_PARAMETER;
   }
+
   //
   // Make sure that the time fields are valid
   //
@@ -567,14 +580,16 @@ PcRtcSetTime (
   if (!EfiAtRuntime ()) {
     EfiAcquireLock (&Global->RtcLock);
   }
+
   //
   // Wait for up to 0.1 seconds for the RTC to be updated
   //
   Status = RtcWaitToUpdate (PcdGet32 (PcdRealTimeClockUpdateTimeout));
   if (EFI_ERROR (Status)) {
-     if (!EfiAtRuntime ()) {
-       EfiReleaseLock (&Global->RtcLock);
-     }
+    if (!EfiAtRuntime ()) {
+      EfiReleaseLock (&Global->RtcLock);
+    }
+
     return Status;
   }
 
@@ -583,39 +598,40 @@ PcRtcSetTime (
   //
   if ((Time->TimeZone == EFI_UNSPECIFIED_TIMEZONE) && (Time->Daylight == 0)) {
     Status = EfiSetVariable (
-               mTimeZoneVariableName,
-               &gEfiCallerIdGuid,
-               0,
-               0,
-               NULL
-               );
+                             mTimeZoneVariableName,
+                             &gEfiCallerIdGuid,
+                             0,
+                             0,
+                             NULL
+                             );
     if (Status == EFI_NOT_FOUND) {
       Status = EFI_SUCCESS;
     }
   } else {
     TimerVar = Time->Daylight;
-    TimerVar = (UINT32) ((TimerVar << 16) | (UINT16)(Time->TimeZone));
-    Status = EfiSetVariable (
-               mTimeZoneVariableName,
-               &gEfiCallerIdGuid,
-               EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
-               sizeof (TimerVar),
-               &TimerVar
-               );
+    TimerVar = (UINT32) ((TimerVar << 16) | (UINT16) (Time->TimeZone));
+    Status   = EfiSetVariable (
+                               mTimeZoneVariableName,
+                               &gEfiCallerIdGuid,
+                               EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
+                               sizeof (TimerVar),
+                               &TimerVar
+                               );
   }
 
   if (EFI_ERROR (Status)) {
     if (!EfiAtRuntime ()) {
       EfiReleaseLock (&Global->RtcLock);
     }
+
     return EFI_DEVICE_ERROR;
   }
 
   //
   // Read Register B, and inhibit updates of the RTC
   //
-  RegisterB.Data      = RtcRead (RTC_ADDRESS_REGISTER_B);
-  RegisterB.Bits.Set  = 1;
+  RegisterB.Data     = RtcRead (RTC_ADDRESS_REGISTER_B);
+  RegisterB.Bits.Set = 1;
   RtcWrite (RTC_ADDRESS_REGISTER_B, RegisterB.Data);
 
   //
@@ -646,11 +662,12 @@ PcRtcSetTime (
   if (!EfiAtRuntime ()) {
     EfiReleaseLock (&Global->RtcLock);
   }
+
   //
   // Set the variable that contains the TimeZone and Daylight fields
   //
   Global->SavedTimeZone = Time->TimeZone;
-  Global->Daylight      = Time->Daylight;
+  Global->Daylight = Time->Daylight;
 
   return EFI_SUCCESS;
 }
@@ -690,29 +707,32 @@ PcRtcGetWakeupTime (
   //
   if ((Enabled == NULL) || (Pending == NULL) || (Time == NULL)) {
     return EFI_INVALID_PARAMETER;
-
   }
+
   //
   // Acquire RTC Lock to make access to RTC atomic
   //
   if (!EfiAtRuntime ()) {
     EfiAcquireLock (&Global->RtcLock);
   }
+
   //
   // Wait for up to 0.1 seconds for the RTC to be updated
   //
   Status = RtcWaitToUpdate (PcdGet32 (PcdRealTimeClockUpdateTimeout));
   if (EFI_ERROR (Status)) {
     if (!EfiAtRuntime ()) {
-    EfiReleaseLock (&Global->RtcLock);
+      EfiReleaseLock (&Global->RtcLock);
     }
+
     return EFI_DEVICE_ERROR;
   }
+
   //
   // Read Register B and Register C
   //
-  RegisterB.Data  = RtcRead (RTC_ADDRESS_REGISTER_B);
-  RegisterC.Data  = RtcRead (RTC_ADDRESS_REGISTER_C);
+  RegisterB.Data = RtcRead (RTC_ADDRESS_REGISTER_B);
+  RegisterC.Data = RtcRead (RTC_ADDRESS_REGISTER_C);
 
   //
   // Get the Time/Date/Daylight Savings values.
@@ -720,12 +740,12 @@ PcRtcGetWakeupTime (
   *Enabled = RegisterB.Bits.Aie;
   *Pending = RegisterC.Bits.Af;
 
-  Time->Second = RtcRead (RTC_ADDRESS_SECONDS_ALARM);
-  Time->Minute = RtcRead (RTC_ADDRESS_MINUTES_ALARM);
-  Time->Hour   = RtcRead (RTC_ADDRESS_HOURS_ALARM);
-  Time->Day    = RtcRead (RTC_ADDRESS_DAY_OF_THE_MONTH);
-  Time->Month  = RtcRead (RTC_ADDRESS_MONTH);
-  Time->Year   = RtcRead (RTC_ADDRESS_YEAR);
+  Time->Second   = RtcRead (RTC_ADDRESS_SECONDS_ALARM);
+  Time->Minute   = RtcRead (RTC_ADDRESS_MINUTES_ALARM);
+  Time->Hour     = RtcRead (RTC_ADDRESS_HOURS_ALARM);
+  Time->Day      = RtcRead (RTC_ADDRESS_DAY_OF_THE_MONTH);
+  Time->Month    = RtcRead (RTC_ADDRESS_MONTH);
+  Time->Year     = RtcRead (RTC_ADDRESS_YEAR);
   Time->TimeZone = Global->SavedTimeZone;
   Time->Daylight = Global->Daylight;
 
@@ -733,13 +753,13 @@ PcRtcGetWakeupTime (
   // Get the alarm info from variable
   //
   DataSize = sizeof (EFI_TIME);
-  Status = EfiGetVariable (
-              L"RTCALARM",
-              &gEfiCallerIdGuid,
-              NULL,
-              &DataSize,
-              &RtcTime
-              );
+  Status   = EfiGetVariable (
+                             L"RTCALARM",
+                             &gEfiCallerIdGuid,
+                             NULL,
+                             &DataSize,
+                             &RtcTime
+                             );
   if (!EFI_ERROR (Status)) {
     //
     // The alarm variable exists. In this case, we read variable to get info.
@@ -763,6 +783,7 @@ PcRtcGetWakeupTime (
   if (!EFI_ERROR (Status)) {
     Status = RtcTimeFieldsValid (Time);
   }
+
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
   }
@@ -788,22 +809,22 @@ PcRtcGetWakeupTime (
 EFI_STATUS
 PcRtcSetWakeupTime (
   IN BOOLEAN                Enable,
-  IN EFI_TIME               *Time,   OPTIONAL
+  IN EFI_TIME               *Time, OPTIONAL
   IN PC_RTC_MODULE_GLOBALS  *Global
   )
 {
-  EFI_STATUS            Status;
-  EFI_TIME              RtcTime;
-  RTC_REGISTER_B        RegisterB;
-  EFI_TIME_CAPABILITIES Capabilities;
+  EFI_STATUS             Status;
+  EFI_TIME               RtcTime;
+  RTC_REGISTER_B         RegisterB;
+  EFI_TIME_CAPABILITIES  Capabilities;
 
   ZeroMem (&RtcTime, sizeof (RtcTime));
 
   if (Enable) {
-
     if (Time == NULL) {
       return EFI_INVALID_PARAMETER;
     }
+
     //
     // Make sure that the time fields are valid
     //
@@ -811,6 +832,7 @@ PcRtcSetWakeupTime (
     if (EFI_ERROR (Status)) {
       return EFI_INVALID_PARAMETER;
     }
+
     //
     // Just support set alarm time within 24 hours
     //
@@ -819,31 +841,36 @@ PcRtcSetWakeupTime (
     if (EFI_ERROR (Status)) {
       return EFI_DEVICE_ERROR;
     }
+
     if (!IsWithinOneDay (&RtcTime, Time)) {
       return EFI_UNSUPPORTED;
     }
+
     //
     // Make a local copy of the time and date
     //
     CopyMem (&RtcTime, Time, sizeof (EFI_TIME));
-
   }
+
   //
   // Acquire RTC Lock to make access to RTC atomic
   //
   if (!EfiAtRuntime ()) {
     EfiAcquireLock (&Global->RtcLock);
   }
+
   //
   // Wait for up to 0.1 seconds for the RTC to be updated
   //
   Status = RtcWaitToUpdate (PcdGet32 (PcdRealTimeClockUpdateTimeout));
   if (EFI_ERROR (Status)) {
     if (!EfiAtRuntime ()) {
-    EfiReleaseLock (&Global->RtcLock);
+      EfiReleaseLock (&Global->RtcLock);
     }
+
     return EFI_DEVICE_ERROR;
   }
+
   //
   // Read Register B
   //
@@ -855,12 +882,12 @@ PcRtcSetWakeupTime (
     //
     // if the alarm is disable, record the current setting.
     //
-    RtcTime.Second  = RtcRead (RTC_ADDRESS_SECONDS_ALARM);
-    RtcTime.Minute  = RtcRead (RTC_ADDRESS_MINUTES_ALARM);
-    RtcTime.Hour    = RtcRead (RTC_ADDRESS_HOURS_ALARM);
-    RtcTime.Day     = RtcRead (RTC_ADDRESS_DAY_OF_THE_MONTH);
-    RtcTime.Month   = RtcRead (RTC_ADDRESS_MONTH);
-    RtcTime.Year    = RtcRead (RTC_ADDRESS_YEAR);
+    RtcTime.Second   = RtcRead (RTC_ADDRESS_SECONDS_ALARM);
+    RtcTime.Minute   = RtcRead (RTC_ADDRESS_MINUTES_ALARM);
+    RtcTime.Hour     = RtcRead (RTC_ADDRESS_HOURS_ALARM);
+    RtcTime.Day      = RtcRead (RTC_ADDRESS_DAY_OF_THE_MONTH);
+    RtcTime.Month    = RtcRead (RTC_ADDRESS_MONTH);
+    RtcTime.Year     = RtcRead (RTC_ADDRESS_YEAR);
     RtcTime.TimeZone = Global->SavedTimeZone;
     RtcTime.Daylight = Global->Daylight;
   }
@@ -869,23 +896,24 @@ PcRtcSetWakeupTime (
   // Set the Y/M/D info to variable as it has no corresponding hw registers.
   //
   Status =  EfiSetVariable (
-              L"RTCALARM",
-              &gEfiCallerIdGuid,
-              EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
-              sizeof (RtcTime),
-              &RtcTime
-              );
+                            L"RTCALARM",
+                            &gEfiCallerIdGuid,
+                            EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
+                            sizeof (RtcTime),
+                            &RtcTime
+                            );
   if (EFI_ERROR (Status)) {
     if (!EfiAtRuntime ()) {
       EfiReleaseLock (&Global->RtcLock);
     }
+
     return EFI_DEVICE_ERROR;
   }
 
   //
   // Inhibit updates of the RTC
   //
-  RegisterB.Bits.Set  = 1;
+  RegisterB.Bits.Set = 1;
   RtcWrite (RTC_ADDRESS_REGISTER_B, RegisterB.Data);
 
   if (Enable) {
@@ -897,10 +925,10 @@ PcRtcSetWakeupTime (
     RtcWrite (RTC_ADDRESS_HOURS_ALARM, RtcTime.Hour);
 
     RegisterB.Bits.Aie = 1;
-
   } else {
     RegisterB.Bits.Aie = 0;
   }
+
   //
   // Allow updates of the RTC registers
   //
@@ -913,9 +941,9 @@ PcRtcSetWakeupTime (
   if (!EfiAtRuntime ()) {
     EfiReleaseLock (&Global->RtcLock);
   }
+
   return EFI_SUCCESS;
 }
-
 
 /**
   Checks an 8-bit BCD value, and converts to an 8-bit value if valid.
@@ -964,8 +992,8 @@ ConvertRtcTimeToEfiTime (
   IN     RTC_REGISTER_B  RegisterB
   )
 {
-  BOOLEAN IsPM;
-  UINT8   Century;
+  BOOLEAN  IsPM;
+  UINT8    Century;
 
   if ((Time->Hour & 0x80) != 0) {
     IsPM = TRUE;
@@ -976,12 +1004,12 @@ ConvertRtcTimeToEfiTime (
   Time->Hour = (UINT8) (Time->Hour & 0x7f);
 
   if (RegisterB.Bits.Dm == 0) {
-    Time->Year    = CheckAndConvertBcd8ToDecimal8 ((UINT8) Time->Year);
-    Time->Month   = CheckAndConvertBcd8ToDecimal8 (Time->Month);
-    Time->Day     = CheckAndConvertBcd8ToDecimal8 (Time->Day);
-    Time->Hour    = CheckAndConvertBcd8ToDecimal8 (Time->Hour);
-    Time->Minute  = CheckAndConvertBcd8ToDecimal8 (Time->Minute);
-    Time->Second  = CheckAndConvertBcd8ToDecimal8 (Time->Second);
+    Time->Year   = CheckAndConvertBcd8ToDecimal8 ((UINT8) Time->Year);
+    Time->Month  = CheckAndConvertBcd8ToDecimal8 (Time->Month);
+    Time->Day    = CheckAndConvertBcd8ToDecimal8 (Time->Day);
+    Time->Hour   = CheckAndConvertBcd8ToDecimal8 (Time->Hour);
+    Time->Minute = CheckAndConvertBcd8ToDecimal8 (Time->Minute);
+    Time->Second = CheckAndConvertBcd8ToDecimal8 (Time->Second);
   }
 
   if (Time->Year == 0xff || Time->Month == 0xff || Time->Day == 0xff ||
@@ -991,13 +1019,14 @@ ConvertRtcTimeToEfiTime (
 
   //
   // For minimal/maximum year range [1970, 2069],
-  //   Century is 19 if RTC year >= 70,
-  //   Century is 20 otherwise.
+  // Century is 19 if RTC year >= 70,
+  // Century is 20 otherwise.
   //
   Century = (UINT8) (PcdGet16 (PcdMinimalValidYear) / 100);
   if (Time->Year < PcdGet16 (PcdMinimalValidYear) % 100) {
     Century++;
   }
+
   Time->Year = (UINT16) (Century * 100 + Time->Year);
 
   //
@@ -1013,7 +1042,7 @@ ConvertRtcTimeToEfiTime (
     }
   }
 
-  Time->Nanosecond  = 0;
+  Time->Nanosecond = 0;
 
   return EFI_SUCCESS;
 }
@@ -1042,11 +1071,12 @@ RtcWaitToUpdate (
   if (RegisterD.Bits.Vrt == 0) {
     return EFI_DEVICE_ERROR;
   }
+
   //
   // Wait for up to 0.1 seconds for the RTC to be ready.
   //
-  Timeout         = (Timeout / 10) + 1;
-  RegisterA.Data  = RtcRead (RTC_ADDRESS_REGISTER_A);
+  Timeout = (Timeout / 10) + 1;
+  RegisterA.Data = RtcRead (RTC_ADDRESS_REGISTER_A);
   while (RegisterA.Bits.Uip == 1 && Timeout > 0) {
     MicroSecondDelay (10);
     RegisterA.Data = RtcRead (RTC_ADDRESS_REGISTER_A);
@@ -1084,7 +1114,7 @@ RtcTimeFieldsValid (
       Time->Minute > 59 ||
       Time->Second > 59 ||
       Time->Nanosecond > 999999999 ||
-      (!(Time->TimeZone == EFI_UNSPECIFIED_TIMEZONE || (Time->TimeZone >= -1440 && Time->TimeZone <= 1440))) ||
+      (!(Time->TimeZone == EFI_UNSPECIFIED_TIMEZONE || (Time->TimeZone >= - 1440 && Time->TimeZone <= 1440))) ||
       ((Time->Daylight & (~(EFI_TIME_ADJUST_DAYLIGHT | EFI_TIME_IN_DAYLIGHT))) != 0)) {
     return EFI_INVALID_PARAMETER;
   }
@@ -1108,8 +1138,8 @@ DayValid (
   //
   // The validity of Time->Month field should be checked before
   //
-  ASSERT (Time->Month >=1);
-  ASSERT (Time->Month <=12);
+  ASSERT (Time->Month >= 1);
+  ASSERT (Time->Month <= 12);
   if (Time->Day < 1 ||
       Time->Day > mDayOfMonth[Time->Month - 1] ||
       (Time->Month == 2 && (!IsLeapYear (Time) && Time->Day > 28))
@@ -1165,7 +1195,7 @@ ConvertEfiTimeToRtcTime (
   IN     RTC_REGISTER_B  RegisterB
   )
 {
-  BOOLEAN IsPM;
+  BOOLEAN  IsPM;
 
   IsPM = TRUE;
   //
@@ -1182,19 +1212,21 @@ ConvertEfiTimeToRtcTime (
       Time->Hour = 12;
     }
   }
+
   //
   // Set the Time/Date values.
   //
-  Time->Year  = (UINT16) (Time->Year % 100);
+  Time->Year = (UINT16) (Time->Year % 100);
 
   if (RegisterB.Bits.Dm == 0) {
-    Time->Year    = DecimalToBcd8 ((UINT8) Time->Year);
-    Time->Month   = DecimalToBcd8 (Time->Month);
-    Time->Day     = DecimalToBcd8 (Time->Day);
-    Time->Hour    = DecimalToBcd8 (Time->Hour);
-    Time->Minute  = DecimalToBcd8 (Time->Minute);
-    Time->Second  = DecimalToBcd8 (Time->Second);
+    Time->Year   = DecimalToBcd8 ((UINT8) Time->Year);
+    Time->Month  = DecimalToBcd8 (Time->Month);
+    Time->Day    = DecimalToBcd8 (Time->Day);
+    Time->Hour   = DecimalToBcd8 (Time->Hour);
+    Time->Minute = DecimalToBcd8 (Time->Minute);
+    Time->Second = DecimalToBcd8 (Time->Second);
   }
+
   //
   // If we are in 12 hour mode and PM is set, then set bit 7 of the Hour field.
   //
@@ -1222,13 +1254,13 @@ CompareHMS (
   )
 {
   if ((From->Hour > To->Hour) ||
-     ((From->Hour == To->Hour) && (From->Minute > To->Minute)) ||
-     ((From->Hour == To->Hour) && (From->Minute == To->Minute) && (From->Second > To->Second))) {
+      ((From->Hour == To->Hour) && (From->Minute > To->Minute)) ||
+      ((From->Hour == To->Hour) && (From->Minute == To->Minute) && (From->Second > To->Second))) {
     return 1;
   } else if ((From->Hour == To->Hour) && (From->Minute == To->Minute) && (From->Second == To->Second)) {
     return 0;
   } else {
-    return -1;
+    return - 1;
   }
 }
 
@@ -1247,37 +1279,37 @@ IsWithinOneDay (
   IN EFI_TIME  *To
   )
 {
-  BOOLEAN Adjacent;
+  BOOLEAN  Adjacent;
 
   Adjacent = FALSE;
 
   //
   // The validity of From->Month field should be checked before
   //
-  ASSERT (From->Month >=1);
-  ASSERT (From->Month <=12);
+  ASSERT (From->Month >= 1);
+  ASSERT (From->Month <= 12);
 
   if (From->Year == To->Year) {
     if (From->Month == To->Month) {
       if ((From->Day + 1) == To->Day) {
-        if ((CompareHMS(From, To) >= 0)) {
+        if ((CompareHMS (From, To) >= 0)) {
           Adjacent = TRUE;
         }
       } else if (From->Day == To->Day) {
-        if ((CompareHMS(From, To) <= 0)) {
+        if ((CompareHMS (From, To) <= 0)) {
           Adjacent = TRUE;
         }
       }
     } else if (((From->Month + 1) == To->Month) && (To->Day == 1)) {
-      if ((From->Month == 2) && !IsLeapYear(From)) {
+      if ((From->Month == 2) && !IsLeapYear (From)) {
         if (From->Day == 28) {
-          if ((CompareHMS(From, To) >= 0)) {
+          if ((CompareHMS (From, To) >= 0)) {
             Adjacent = TRUE;
           }
         }
       } else if (From->Day == mDayOfMonth[From->Month - 1]) {
-        if ((CompareHMS(From, To) >= 0)) {
-           Adjacent = TRUE;
+        if ((CompareHMS (From, To) >= 0)) {
+          Adjacent = TRUE;
         }
       }
     }
@@ -1286,7 +1318,7 @@ IsWithinOneDay (
              (From->Day   == 31) &&
              (To->Month   == 1)  &&
              (To->Day     == 1)) {
-    if ((CompareHMS(From, To) >= 0)) {
+    if ((CompareHMS (From, To) >= 0)) {
       Adjacent = TRUE;
     }
   }
@@ -1304,11 +1336,11 @@ GetCenturyRtcAddress (
   VOID
   )
 {
-  EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE     *Fadt;
+  EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE  *Fadt;
 
   Fadt = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *) EfiLocateFirstAcpiTable (
-                                                         EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE
-                                                         );
+                                                                                EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE
+                                                                                );
 
   if ((Fadt != NULL) &&
       (Fadt->Century > RTC_ADDRESS_REGISTER_D) && (Fadt->Century < 0x80)
@@ -1336,10 +1368,10 @@ PcRtcAcpiTableChangeCallback (
   IN VOID             *Context
   )
 {
-  EFI_STATUS          Status;
-  EFI_TIME            Time;
-  UINT8               CenturyRtcAddress;
-  UINT8               Century;
+  EFI_STATUS  Status;
+  EFI_TIME    Time;
+  UINT8       CenturyRtcAddress;
+  UINT8       Century;
 
   CenturyRtcAddress = GetCenturyRtcAddress ();
   if ((CenturyRtcAddress != 0) && (mModuleGlobal.CenturyRtcAddress != CenturyRtcAddress)) {

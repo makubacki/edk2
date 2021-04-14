@@ -10,39 +10,39 @@
 #include <Library/IoLib.h>
 #include <Library/SerialPortLib.h>
 
-//---------------------------------------------
+// ---------------------------------------------
 // UART Register Offsets
-//---------------------------------------------
-#define BAUD_LOW_OFFSET         0x00
-#define BAUD_HIGH_OFFSET        0x01
-#define IER_OFFSET              0x01
-#define LCR_SHADOW_OFFSET       0x01
-#define FCR_SHADOW_OFFSET       0x02
-#define IR_CONTROL_OFFSET       0x02
-#define FCR_OFFSET              0x02
-#define EIR_OFFSET              0x02
-#define BSR_OFFSET              0x03
-#define LCR_OFFSET              0x03
-#define MCR_OFFSET              0x04
-#define LSR_OFFSET              0x05
-#define MSR_OFFSET              0x06
+// ---------------------------------------------
+#define BAUD_LOW_OFFSET    0x00
+#define BAUD_HIGH_OFFSET   0x01
+#define IER_OFFSET         0x01
+#define LCR_SHADOW_OFFSET  0x01
+#define FCR_SHADOW_OFFSET  0x02
+#define IR_CONTROL_OFFSET  0x02
+#define FCR_OFFSET         0x02
+#define EIR_OFFSET         0x02
+#define BSR_OFFSET         0x03
+#define LCR_OFFSET         0x03
+#define MCR_OFFSET         0x04
+#define LSR_OFFSET         0x05
+#define MSR_OFFSET         0x06
 
-//---------------------------------------------
+// ---------------------------------------------
 // UART Register Bit Defines
-//---------------------------------------------
-#define LSR_TXRDY               0x20
-#define LSR_RXDA                0x01
-#define DLAB                    0x01
-#define MCR_DTRC                0x01
-#define MCR_RTS                 0x02
-#define MSR_CTS                 0x10
-#define MSR_DSR                 0x20
-#define MSR_RI                  0x40
-#define MSR_DCD                 0x80
+// ---------------------------------------------
+#define LSR_TXRDY  0x20
+#define LSR_RXDA   0x01
+#define DLAB       0x01
+#define MCR_DTRC   0x01
+#define MCR_RTS    0x02
+#define MSR_CTS    0x10
+#define MSR_DSR    0x20
+#define MSR_RI     0x40
+#define MSR_DCD    0x80
 
-//---------------------------------------------
+// ---------------------------------------------
 // UART Settings
-//---------------------------------------------
+// ---------------------------------------------
 UINT16  gUartBase = 0x3F8;
 UINTN   gBps      = 115200;
 UINT8   gData     = 8;
@@ -96,7 +96,7 @@ SerialPortInitialize (
   //
   // Switch back to bank 0
   //
-  OutputData = (UINT8) ( (gBreakSet << 6) | (gParity << 3) | (gStop << 2) | Data);
+  OutputData = (UINT8) ((gBreakSet << 6) | (gParity << 3) | (gStop << 2) | Data);
   IoWrite8 (gUartBase + LCR_OFFSET, OutputData);
 
   return RETURN_SUCCESS;
@@ -126,7 +126,7 @@ EFIAPI
 SerialPortWrite (
   IN UINT8     *Buffer,
   IN UINTN     NumberOfBytes
-)
+  )
 {
   UINTN  Result;
   UINT8  Data;
@@ -144,12 +144,12 @@ SerialPortWrite (
     do {
       Data = IoRead8 ((UINT16) gUartBase + LSR_OFFSET);
     } while ((Data & LSR_TXRDY) == 0);
+
     IoWrite8 ((UINT16) gUartBase, *Buffer++);
   }
 
   return Result;
 }
-
 
 /**
   Reads data from a serial device into a buffer.
@@ -167,7 +167,7 @@ EFIAPI
 SerialPortRead (
   OUT UINT8     *Buffer,
   IN  UINTN     NumberOfBytes
-)
+  )
 {
   UINTN  Result;
   UINT8  Data;
@@ -235,7 +235,7 @@ SerialPortSetControl (
   IN UINT32 Control
   )
 {
-  UINT8 Mcr;
+  UINT8  Mcr;
 
   //
   // First determine the parameter is invalid.
@@ -247,7 +247,7 @@ SerialPortSetControl (
   //
   // Read the Modem Control Register.
   //
-  Mcr = IoRead8 ((UINT16) gUartBase + MCR_OFFSET);
+  Mcr  = IoRead8 ((UINT16) gUartBase + MCR_OFFSET);
   Mcr &= (~(MCR_DTRC | MCR_RTS));
 
   if ((Control & EFI_SERIAL_DATA_TERMINAL_READY) == EFI_SERIAL_DATA_TERMINAL_READY) {
@@ -282,9 +282,9 @@ SerialPortGetControl (
   OUT UINT32 *Control
   )
 {
-  UINT8 Msr;
-  UINT8 Mcr;
-  UINT8 Lsr;
+  UINT8  Msr;
+  UINT8  Mcr;
+  UINT8  Lsr;
 
   *Control = 0;
 
@@ -382,11 +382,11 @@ SerialPortSetAttributes (
   IN OUT EFI_STOP_BITS_TYPE *StopBits
   )
 {
-  UINTN Divisor;
-  UINT8 OutputData;
-  UINT8 LcrData;
-  UINT8 LcrParity;
-  UINT8 LcrStop;
+  UINTN  Divisor;
+  UINT8  OutputData;
+  UINT8  LcrData;
+  UINT8  LcrParity;
+  UINT8  LcrStop;
 
   //
   // Check for default settings and fill in actual values.
@@ -480,4 +480,3 @@ SerialPortSetAttributes (
 
   return RETURN_SUCCESS;
 }
-
