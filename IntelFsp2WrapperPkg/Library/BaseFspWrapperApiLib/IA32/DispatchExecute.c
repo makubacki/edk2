@@ -18,11 +18,11 @@
   @return EFI_STATUS.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *FSP_FUNCTION) (
-  IN VOID *Param1,
-  IN VOID *Param2
-  );
+  EFI_STATUS
+(EFIAPI *FSP_FUNCTION)(
+                       IN VOID *Param1,
+                       IN VOID *Param2
+                       );
 
 /**
   Wrapper for a thunk to transition from long mode to compatibility mode to execute 32-bit code and then transit back to
@@ -41,12 +41,11 @@ Execute32BitCode (
   IN UINT64      Param2
   )
 {
-  FSP_FUNCTION               EntryFunc;
-  EFI_STATUS                 Status;
+  FSP_FUNCTION  EntryFunc;
+  EFI_STATUS    Status;
 
   EntryFunc = (FSP_FUNCTION) (UINTN) (Function);
-  Status    = EntryFunc ((VOID *)(UINTN)Param1, (VOID *)(UINTN)Param2);
+  Status    = EntryFunc ((VOID *) (UINTN) Param1, (VOID *) (UINTN) Param2);
 
   return Status;
 }
-

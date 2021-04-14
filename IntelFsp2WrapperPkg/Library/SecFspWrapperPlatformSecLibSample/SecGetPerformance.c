@@ -49,12 +49,12 @@ SecGetPerformance (
   DEBUG ((DEBUG_INFO, "SecGetPerformance\n"));
 
   Status = (*PeiServices)->LocatePpi (
-                             PeiServices,
-                             &gTopOfTemporaryRamPpiGuid,
-                             0,
-                             NULL,
-                             (VOID **) &TopOfTemporaryRamPpi
-                             );
+                                      PeiServices,
+                                      &gTopOfTemporaryRamPpiGuid,
+                                      0,
+                                      NULL,
+                                      (VOID **) &TopOfTemporaryRamPpi
+                                      );
   if (EFI_ERROR (Status)) {
     return EFI_NOT_FOUND;
   }
@@ -72,10 +72,10 @@ SecGetPerformance (
   // |  TSC[31:00]  |
   // |--------------|
   //
-  TopOfTemporaryRam = (UINT32)(UINTN)TopOfTemporaryRamPpi - sizeof(UINT32);
-  TopOfTemporaryRam -= sizeof(UINT32) * 2;
-  Count             = *(UINT32 *) (UINTN) (TopOfTemporaryRam - sizeof (UINT32));
-  Size              = Count * sizeof (UINT64);
+  TopOfTemporaryRam  = (UINT32) (UINTN) TopOfTemporaryRamPpi - sizeof (UINT32);
+  TopOfTemporaryRam -= sizeof (UINT32) * 2;
+  Count = *(UINT32 *) (UINTN) (TopOfTemporaryRam - sizeof (UINT32));
+  Size  = Count * sizeof (UINT64);
 
   Ticker = *(UINT64 *) (UINTN) (TopOfTemporaryRam - sizeof (UINT32) - Size - sizeof (UINT32) * 2);
   Performance->ResetEnd = GetTimeInNanoSecond (Ticker);

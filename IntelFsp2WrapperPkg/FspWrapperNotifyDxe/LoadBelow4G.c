@@ -33,19 +33,19 @@ RelocateImageUnder4GIfNeeded (
   IN EFI_SYSTEM_TABLE     *SystemTable
   )
 {
-  EFI_STATUS                                    Status;
-  UINT8                                         *Buffer;
-  UINTN                                         BufferSize;
-  EFI_HANDLE                                    NewImageHandle;
-  UINTN                                         Pages;
-  EFI_PHYSICAL_ADDRESS                          FfsBuffer;
-  PE_COFF_LOADER_IMAGE_CONTEXT                  ImageContext;
-  VOID                                          *Interface;
+  EFI_STATUS                    Status;
+  UINT8                         *Buffer;
+  UINTN                         BufferSize;
+  EFI_HANDLE                    NewImageHandle;
+  UINTN                         Pages;
+  EFI_PHYSICAL_ADDRESS          FfsBuffer;
+  PE_COFF_LOADER_IMAGE_CONTEXT  ImageContext;
+  VOID                          *Interface;
 
   //
   // If it is already <4G, no need do relocate
   //
-  if ((UINTN)RelocateImageUnder4GIfNeeded < 0xFFFFFFFF) {
+  if ((UINTN) RelocateImageUnder4GIfNeeded < 0xFFFFFFFF) {
     return EFI_SUCCESS;
   }
 
@@ -65,23 +65,23 @@ RelocateImageUnder4GIfNeeded (
   //
   NewImageHandle = NULL;
   Status = gBS->InstallProtocolInterface (
-                  &NewImageHandle,
-                  &gEfiCallerIdGuid,
-                  EFI_NATIVE_INTERFACE,
-                  NULL
-                  );
+                                          &NewImageHandle,
+                                          &gEfiCallerIdGuid,
+                                          EFI_NATIVE_INTERFACE,
+                                          NULL
+                                          );
   ASSERT_EFI_ERROR (Status);
 
   //
   // Reload image itself to <4G mem
   //
-  Status = GetSectionFromAnyFv  (
-             &gEfiCallerIdGuid,
-             EFI_SECTION_PE32,
-             0,
-             (VOID **) &Buffer,
-             &BufferSize
-             );
+  Status = GetSectionFromAnyFv (
+                                &gEfiCallerIdGuid,
+                                EFI_SECTION_PE32,
+                                0,
+                                (VOID **) &Buffer,
+                                &BufferSize
+                                );
   ASSERT_EFI_ERROR (Status);
   ImageContext.Handle    = Buffer;
   ImageContext.ImageRead = PeCoffLoaderImageReadFromMemory;
@@ -95,20 +95,21 @@ RelocateImageUnder4GIfNeeded (
   } else {
     Pages = EFI_SIZE_TO_PAGES ((UINTN) ImageContext.ImageSize);
   }
+
   FfsBuffer = 0xFFFFFFFF;
-  Status = gBS->AllocatePages (
-                  AllocateMaxAddress,
-                  EfiBootServicesCode,
-                  Pages,
-                  &FfsBuffer
-                  );
+  Status    = gBS->AllocatePages (
+                                  AllocateMaxAddress,
+                                  EfiBootServicesCode,
+                                  Pages,
+                                  &FfsBuffer
+                                  );
   ASSERT_EFI_ERROR (Status);
-  ImageContext.ImageAddress = (PHYSICAL_ADDRESS)(UINTN)FfsBuffer;
+  ImageContext.ImageAddress = (PHYSICAL_ADDRESS) (UINTN) FfsBuffer;
   //
   // Align buffer on section boundary
   //
   ImageContext.ImageAddress += ImageContext.SectionAlignment - 1;
-  ImageContext.ImageAddress &= ~((EFI_PHYSICAL_ADDRESS)ImageContext.SectionAlignment - 1);
+  ImageContext.ImageAddress &= ~((EFI_PHYSICAL_ADDRESS) ImageContext.SectionAlignment - 1);
   //
   // Load the image to our new buffer
   //
@@ -129,10 +130,13 @@ RelocateImageUnder4GIfNeeded (
   //
   // Flush the instruction cache so the image data is written before we execute it
   //
-  InvalidateInstructionCacheRange ((VOID *)(UINTN)ImageContext.ImageAddress, (UINTN)ImageContext.ImageSize);
+  InvalidateInstructionCacheRange ((VOID *) (UINTN) ImageContext.ImageAddress, (UINTN) ImageContext.ImageSize);
 
-  DEBUG ((DEBUG_INFO, "Loading driver at 0x%08x EntryPoint=0x%08x\n", (UINTN)ImageContext.ImageAddress, (UINTN)ImageContext.EntryPoint));
-  Status = ((EFI_IMAGE_ENTRY_POINT)(UINTN)(ImageContext.EntryPoint)) (NewImageHandle, gST);
+  DEBUG (
+        (DEBUG_INFO, "Loading driver at 0x%08x EntryPoint=0x%08x\n", (UINTN) ImageContext.ImageAddress,
+         (UINTN) ImageContext.EntryPoint)
+        );
+  Status = ((EFI_IMAGE_ENTRY_POINT) (UINTN) (ImageContext.EntryPoint))(NewImageHandle, gST);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Error: Image at 0x%08x start failed: %r\n", ImageContext.ImageAddress, Status));
     gBS->FreePages (FfsBuffer, Pages);
