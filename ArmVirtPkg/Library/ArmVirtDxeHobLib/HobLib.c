@@ -43,7 +43,7 @@ HobLibConstructor (
   IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  UINTN             Index;
+  UINTN  Index;
 
   for (Index = 0; Index < SystemTable->NumberOfTableEntries; Index++) {
     if (CompareGuid (&gEfiHobListGuid, &(SystemTable->ConfigurationTable[Index].VendorGuid))) {
@@ -117,8 +117,10 @@ GetNextHob (
     if (Hob.Header->HobType == Type) {
       return Hob.Raw;
     }
+
     Hob.Raw = GET_NEXT_HOB (Hob);
   }
+
   return NULL;
 }
 
@@ -141,7 +143,7 @@ GetFirstHob (
   IN UINT16                 Type
   )
 {
-  VOID      *HobList;
+  VOID  *HobList;
 
   HobList = GetHobList ();
   return GetNextHob (Type, HobList);
@@ -183,8 +185,10 @@ GetNextGuidHob (
     if (CompareGuid (Guid, &GuidHob.Guid->Name)) {
       break;
     }
+
     GuidHob.Raw = GET_NEXT_HOB (GuidHob);
   }
+
   return GuidHob.Raw;
 }
 
@@ -212,7 +216,7 @@ GetFirstGuidHob (
   IN CONST EFI_GUID         *Guid
   )
 {
-  VOID      *HobList;
+  VOID  *HobList;
 
   HobList = GetHobList ();
   return GetNextGuidHob (Guid, HobList);
@@ -237,11 +241,11 @@ GetBootModeHob (
   VOID
   )
 {
-  EFI_HOB_HANDOFF_INFO_TABLE    *HandOffHob;
+  EFI_HOB_HANDOFF_INFO_TABLE  *HandOffHob;
 
   HandOffHob = (EFI_HOB_HANDOFF_INFO_TABLE *) GetHobList ();
 
-  return  HandOffHob->BootMode;
+  return HandOffHob->BootMode;
 }
 
 /**

@@ -17,6 +17,29 @@
 #include <Library/SerialPortLib.h>
 #include <libfdt.h>
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 RETURN_STATUS
 EFIAPI
 SerialPortInitialize (
@@ -27,15 +50,15 @@ SerialPortInitialize (
   // This SerialPortInitialize() function is completely empty, for a number of
   // reasons:
   // - if we are executing from flash, it is hard to keep state (i.e., store the
-  //   discovered base address in a global), and the most robust way to deal
-  //   with this is to discover the base address at every Write ();
+  // discovered base address in a global), and the most robust way to deal
+  // with this is to discover the base address at every Write ();
   // - calls to the Write() function in this module may be issued before this
-  //   initialization function is called: this is not a problem when the base
-  //   address of the UART is hardcoded, and only the baud rate may be wrong,
-  //   but if we don't know the base address yet, we may be poking into memory
-  //   that does not tolerate being poked into;
+  // initialization function is called: this is not a problem when the base
+  // address of the UART is hardcoded, and only the baud rate may be wrong,
+  // but if we don't know the base address yet, we may be poking into memory
+  // that does not tolerate being poked into;
   // - SEC and PEI phases produce debug output only, so with debug disabled, no
-  //   initialization (or device tree parsing) is performed at all.
+  // initialization (or device tree parsing) is performed at all.
   //
   // Note that this means that on *every* Write () call, the device tree will be
   // parsed and the UART re-initialized. However, this is a small price to pay
@@ -44,6 +67,29 @@ SerialPortInitialize (
   return RETURN_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 UINT64
 SerialPortGetBaseAddress (
@@ -65,7 +111,7 @@ SerialPortGetBaseAddress (
   UINTN               UartBase;
   RETURN_STATUS       Status;
 
-  DeviceTreeBase = (VOID *)(UINTN)PcdGet64 (PcdDeviceTreeInitialBaseAddress);
+  DeviceTreeBase = (VOID *) (UINTN) PcdGet64 (PcdDeviceTreeInitialBaseAddress);
 
   if ((DeviceTreeBase == NULL) || (fdt_check_header (DeviceTreeBase) != 0)) {
     return 0;
@@ -74,7 +120,7 @@ SerialPortGetBaseAddress (
   //
   // Enumerate all FDT nodes looking for a PL011 and capture its base address
   //
-  for (Prev = 0;; Prev = Node) {
+  for (Prev = 0; ; Prev = Node) {
     Node = fdt_next_node (DeviceTreeBase, Prev, NULL);
     if (Node < 0) {
       break;
@@ -89,8 +135,7 @@ SerialPortGetBaseAddress (
     // Iterate over the NULL-separated items in the compatible string
     //
     for (CompatibleItem = Compatible; CompatibleItem < Compatible + Len;
-      CompatibleItem += 1 + AsciiStrLen (CompatibleItem)) {
-
+         CompatibleItem += 1 + AsciiStrLen (CompatibleItem)) {
       if (AsciiStrCmp (CompatibleItem, "arm,pl011") == 0) {
         NodeStatus = fdt_getprop (DeviceTreeBase, Node, "status", &Len);
         if (NodeStatus != NULL && AsciiStrCmp (NodeStatus, "okay") != 0) {
@@ -101,29 +146,31 @@ SerialPortGetBaseAddress (
         if (Len != 16) {
           return 0;
         }
-        UartBase = (UINTN)fdt64_to_cpu (ReadUnaligned64 (RegProperty));
 
-        BaudRate = (UINTN)FixedPcdGet64 (PcdUartDefaultBaudRate);
+        UartBase = (UINTN) fdt64_to_cpu (ReadUnaligned64 (RegProperty));
+
+        BaudRate = (UINTN) FixedPcdGet64 (PcdUartDefaultBaudRate);
         ReceiveFifoDepth = 0; // Use the default value for Fifo depth
-        Parity = (EFI_PARITY_TYPE)FixedPcdGet8 (PcdUartDefaultParity);
+        Parity   = (EFI_PARITY_TYPE) FixedPcdGet8 (PcdUartDefaultParity);
         DataBits = FixedPcdGet8 (PcdUartDefaultDataBits);
         StopBits = (EFI_STOP_BITS_TYPE) FixedPcdGet8 (PcdUartDefaultStopBits);
 
         Status = PL011UartInitializePort (
-                   UartBase,
-                   FixedPcdGet32 (PL011UartClkInHz),
-                   &BaudRate,
-                   &ReceiveFifoDepth,
-                   &Parity,
-                   &DataBits,
-                   &StopBits
-                   );
+                                          UartBase,
+                                          FixedPcdGet32 (PL011UartClkInHz),
+                                          &BaudRate,
+                                          &ReceiveFifoDepth,
+                                          &Parity,
+                                          &DataBits,
+                                          &StopBits
+                                          );
         if (!EFI_ERROR (Status)) {
           return UartBase;
         }
       }
     }
   }
+
   return 0;
 }
 
@@ -144,12 +191,13 @@ SerialPortWrite (
   IN UINTN     NumberOfBytes
   )
 {
-  UINT64 SerialRegisterBase;
+  UINT64  SerialRegisterBase;
 
   SerialRegisterBase = SerialPortGetBaseAddress ();
   if (SerialRegisterBase != 0) {
-    return PL011UartWrite ((UINTN)SerialRegisterBase, Buffer, NumberOfBytes);
+    return PL011UartWrite ((UINTN) SerialRegisterBase, Buffer, NumberOfBytes);
   }
+
   return 0;
 }
 
@@ -168,7 +216,7 @@ EFIAPI
 SerialPortRead (
   OUT UINT8     *Buffer,
   IN  UINTN     NumberOfBytes
-)
+  )
 {
   return 0;
 }
@@ -273,4 +321,3 @@ SerialPortSetAttributes (
 {
   return RETURN_UNSUPPORTED;
 }
-

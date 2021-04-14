@@ -83,6 +83,7 @@ GetSerialConsolePortAddress (
     if (Path == NULL) {
       return EFI_NOT_FOUND;
     }
+
     SerialConsoleNode = fdt_path_offset (Fdt, Path);
   }
 
@@ -115,15 +116,15 @@ PlatformHookSerialPortInitialize (
   VOID
   )
 {
-  RETURN_STATUS   Status;
-  VOID            *DeviceTreeBase;
-  UINT64          SerialConsoleAddress;
+  RETURN_STATUS  Status;
+  VOID           *DeviceTreeBase;
+  UINT64         SerialConsoleAddress;
 
   if (PcdGet64 (PcdSerialRegisterBase) != 0) {
     return RETURN_SUCCESS;
   }
 
-  DeviceTreeBase = (VOID *)(UINTN)PcdGet64 (PcdDeviceTreeInitialBaseAddress);
+  DeviceTreeBase = (VOID *) (UINTN) PcdGet64 (PcdDeviceTreeInitialBaseAddress);
   if (DeviceTreeBase == NULL) {
     return RETURN_NOT_FOUND;
   }
@@ -133,5 +134,5 @@ PlatformHookSerialPortInitialize (
     return Status;
   }
 
-  return (EFI_STATUS)PcdSet64S (PcdSerialRegisterBase, SerialConsoleAddress);
+  return (EFI_STATUS) PcdSet64S (PcdSerialRegisterBase, SerialConsoleAddress);
 }

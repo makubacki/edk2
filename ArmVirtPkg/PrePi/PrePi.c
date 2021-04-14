@@ -28,6 +28,29 @@ ProcessLibraryConstructorList (
   VOID
   );
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 PrePiMain (
   IN  UINTN                     UefiMemoryBase,
@@ -35,22 +58,22 @@ PrePiMain (
   IN  UINT64                    StartTimeStamp
   )
 {
-  EFI_HOB_HANDOFF_INFO_TABLE*   HobList;
-  EFI_STATUS                    Status;
-  CHAR8                         Buffer[100];
-  UINTN                         CharCount;
-  UINTN                         StacksSize;
+  EFI_HOB_HANDOFF_INFO_TABLE  *HobList;
+  EFI_STATUS                  Status;
+  CHAR8                       Buffer[100];
+  UINTN                       CharCount;
+  UINTN                       StacksSize;
 
   // Initialize the architecture specific bits
   ArchInitialize ();
 
   // Declare the PI/UEFI memory region
   HobList = HobConstructor (
-    (VOID*)UefiMemoryBase,
-    FixedPcdGet32 (PcdSystemMemoryUefiRegionSize),
-    (VOID*)UefiMemoryBase,
-    (VOID*)StacksBase  // The top of the UEFI Memory is reserved for the stacks
-    );
+                            (VOID *) UefiMemoryBase,
+                            FixedPcdGet32 (PcdSystemMemoryUefiRegionSize),
+                            (VOID *) UefiMemoryBase,
+                            (VOID *) StacksBase // The top of the UEFI Memory is reserved for the stacks
+                            );
   PrePeiSetHobList (HobList);
 
   //
@@ -58,7 +81,7 @@ PrePiMain (
   // modifications we made with the caches and MMU off (such as the applied
   // relocations) don't become invisible once we turn them on.
   //
-  InvalidateDataCacheRange((VOID *)(UINTN)PcdGet64 (PcdFdBaseAddress), PcdGet32 (PcdFdSize));
+  InvalidateDataCacheRange ((VOID *) (UINTN) PcdGet64 (PcdFdBaseAddress), PcdGet32 (PcdFdSize));
 
   // Initialize MMU and Memory HOBs (Resource Descriptor HOBs)
   Status = MemoryPeim (UefiMemoryBase, FixedPcdGet32 (PcdSystemMemoryUefiRegionSize));
@@ -66,15 +89,21 @@ PrePiMain (
 
   // Initialize the Serial Port
   SerialPortInitialize ();
-  CharCount = AsciiSPrint (Buffer,sizeof (Buffer),"UEFI firmware (version %s built at %a on %a)\n\r",
-    (CHAR16*)PcdGetPtr(PcdFirmwareVersionString), __TIME__, __DATE__);
+  CharCount = AsciiSPrint (
+                           Buffer,
+                           sizeof (Buffer),
+                           "UEFI firmware (version %s built at %a on %a)\n\r",
+                           (CHAR16 *) PcdGetPtr (PcdFirmwareVersionString),
+                           __TIME__,
+                           __DATE__
+                           );
   SerialPortWrite ((UINT8 *) Buffer, CharCount);
 
   // Create the Stacks HOB (reserve the memory for all stacks)
   StacksSize = PcdGet32 (PcdCPUCorePrimaryStackSize);
   BuildStackHob (StacksBase, StacksSize);
 
-  //TODO: Call CpuPei as a library
+  // TODO: Call CpuPei as a library
   BuildCpuHob (ArmGetPhysicalAddressBits (), PcdGet8 (PcdPrePiCpuIoSize));
 
   // Set the Boot Mode
@@ -99,6 +128,29 @@ PrePiMain (
   ASSERT_EFI_ERROR (Status);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 CEntryPoint (
   IN  UINTN                     MpId,
@@ -106,7 +158,7 @@ CEntryPoint (
   IN  UINTN                     StacksBase
   )
 {
-  UINT64   StartTimeStamp;
+  UINT64  StartTimeStamp;
 
   if (PerformanceMeasurementEnabled ()) {
     // Initialize the Timer Library to setup the Timer HW controller
@@ -130,6 +182,29 @@ CEntryPoint (
   ASSERT (FALSE);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 RelocatePeCoffImage (
   IN  EFI_PEI_FV_HANDLE             FwVolHeader,
@@ -142,24 +217,28 @@ RelocatePeCoffImage (
   EFI_STATUS                    Status;
 
   FileHandle = NULL;
-  Status = FfsFindNextFile (EFI_FV_FILETYPE_SECURITY_CORE, FwVolHeader,
-             &FileHandle);
+  Status     = FfsFindNextFile (
+                                EFI_FV_FILETYPE_SECURITY_CORE,
+                                FwVolHeader,
+                                &FileHandle
+                                );
   ASSERT_EFI_ERROR (Status);
 
   Status = FfsFindSectionData (EFI_SECTION_PE32, FileHandle, &SectionData);
   if (EFI_ERROR (Status)) {
     Status = FfsFindSectionData (EFI_SECTION_TE, FileHandle, &SectionData);
   }
+
   ASSERT_EFI_ERROR (Status);
 
   ZeroMem (&ImageContext, sizeof ImageContext);
 
-  ImageContext.Handle       = (EFI_HANDLE)SectionData;
-  ImageContext.ImageRead    = ImageRead;
+  ImageContext.Handle    = (EFI_HANDLE) SectionData;
+  ImageContext.ImageRead = ImageRead;
   PeCoffLoaderGetImageInfo (&ImageContext);
 
-  if (ImageContext.ImageAddress != (UINTN)SectionData) {
-    ImageContext.ImageAddress = (UINTN)SectionData;
+  if (ImageContext.ImageAddress != (UINTN) SectionData) {
+    ImageContext.ImageAddress = (UINTN) SectionData;
     PeCoffLoaderRelocateImage (&ImageContext);
   }
 }

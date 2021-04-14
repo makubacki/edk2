@@ -22,6 +22,29 @@
 
 STATIC VOID  *mDeviceTreeBase;
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -33,7 +56,7 @@ GetNodeProperty (
   OUT UINT32                  *PropSize OPTIONAL
   )
 {
-  INT32 Len;
+  INT32  Len;
 
   ASSERT (mDeviceTreeBase != NULL);
   ASSERT (Prop != NULL);
@@ -46,9 +69,33 @@ GetNodeProperty (
   if (PropSize != NULL) {
     *PropSize = Len;
   }
+
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -60,7 +107,7 @@ SetNodeProperty (
   IN  UINT32                  PropSize
   )
 {
-  INT32 Ret;
+  INT32  Ret;
 
   ASSERT (mDeviceTreeBase != NULL);
 
@@ -72,14 +119,37 @@ SetNodeProperty (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 BOOLEAN
 IsNodeEnabled (
   INT32                       Node
   )
 {
-  CONST CHAR8   *NodeStatus;
-  INT32         Len;
+  CONST CHAR8  *NodeStatus;
+  INT32        Len;
 
   //
   // A missing status property implies 'ok' so ignore any errors that
@@ -90,15 +160,41 @@ IsNodeEnabled (
   if (NodeStatus == NULL) {
     return TRUE;
   }
+
   if (Len >= 5 && AsciiStrCmp (NodeStatus, "okay") == 0) {
     return TRUE;
   }
+
   if (Len >= 3 && AsciiStrCmp (NodeStatus, "ok") == 0) {
     return TRUE;
   }
+
   return FALSE;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -109,14 +205,14 @@ FindNextCompatibleNode (
   OUT INT32                   *Node
   )
 {
-  INT32          Prev, Next;
-  CONST CHAR8    *Type, *Compatible;
-  INT32          Len;
+  INT32        Prev, Next;
+  CONST CHAR8  *Type, *Compatible;
+  INT32        Len;
 
   ASSERT (mDeviceTreeBase != NULL);
   ASSERT (Node != NULL);
 
-  for (Prev = PrevNode;; Prev = Next) {
+  for (Prev = PrevNode; ; Prev = Next) {
     Next = fdt_next_node (mDeviceTreeBase, Prev, NULL);
     if (Next < 0) {
       break;
@@ -143,9 +239,33 @@ FindNextCompatibleNode (
       }
     }
   }
+
   return EFI_NOT_FOUND;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -158,6 +278,29 @@ FindCompatibleNode (
   return FindNextCompatibleNode (This, CompatibleString, 0, Node);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -169,8 +312,8 @@ FindCompatibleNodeProperty (
   OUT UINT32                  *PropSize OPTIONAL
   )
 {
-  EFI_STATUS        Status;
-  INT32             Node;
+  EFI_STATUS  Status;
+  INT32       Node;
 
   Status = FindCompatibleNode (This, CompatibleString, &Node);
   if (EFI_ERROR (Status)) {
@@ -180,6 +323,29 @@ FindCompatibleNodeProperty (
   return GetNodeProperty (This, Node, PropertyName, Prop, PropSize);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -192,7 +358,7 @@ FindCompatibleNodeReg (
   OUT UINT32                  *RegSize
   )
 {
-  EFI_STATUS Status;
+  EFI_STATUS  Status;
 
   ASSERT (RegSize != NULL);
 
@@ -201,25 +367,55 @@ FindCompatibleNodeReg (
   // 8 byte quantities for base and size, respectively.
   // TODO use #cells root properties instead
   //
-  Status = FindCompatibleNodeProperty (This, CompatibleString, "reg", Reg,
-             RegSize);
+  Status = FindCompatibleNodeProperty (
+                                       This,
+                                       CompatibleString,
+                                       "reg",
+                                       Reg,
+                                       RegSize
+                                       );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   if ((*RegSize % 16) != 0) {
-    DEBUG ((EFI_D_ERROR,
-      "%a: '%a' compatible node has invalid 'reg' property (size == 0x%x)\n",
-      __FUNCTION__, CompatibleString, *RegSize));
+    DEBUG (
+           (EFI_D_ERROR,
+            "%a: '%a' compatible node has invalid 'reg' property (size == 0x%x)\n",
+            __FUNCTION__, CompatibleString, *RegSize)
+           );
     return EFI_NOT_FOUND;
   }
 
   *AddressCells = 2;
-  *SizeCells = 2;
+  *SizeCells    = 2;
 
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -233,15 +429,15 @@ FindNextMemoryNodeReg (
   OUT UINT32                  *RegSize
   )
 {
-  INT32          Prev, Next;
-  CONST CHAR8    *DeviceType;
-  INT32          Len;
-  EFI_STATUS     Status;
+  INT32        Prev, Next;
+  CONST CHAR8  *DeviceType;
+  INT32        Len;
+  EFI_STATUS   Status;
 
   ASSERT (mDeviceTreeBase != NULL);
   ASSERT (Node != NULL);
 
-  for (Prev = PrevNode;; Prev = Next) {
+  for (Prev = PrevNode; ; Prev = Next) {
     Next = fdt_next_node (mDeviceTreeBase, Prev, NULL);
     if (Next < 0) {
       break;
@@ -261,27 +457,56 @@ FindNextMemoryNodeReg (
       //
       Status = GetNodeProperty (This, Next, "reg", Reg, RegSize);
       if (EFI_ERROR (Status)) {
-        DEBUG ((EFI_D_WARN,
-          "%a: ignoring memory node with no 'reg' property\n",
-          __FUNCTION__));
+        DEBUG (
+               (EFI_D_WARN,
+                "%a: ignoring memory node with no 'reg' property\n",
+                __FUNCTION__)
+               );
         continue;
       }
+
       if ((*RegSize % 16) != 0) {
-        DEBUG ((EFI_D_WARN,
-          "%a: ignoring memory node with invalid 'reg' property (size == 0x%x)\n",
-          __FUNCTION__, *RegSize));
+        DEBUG (
+               (EFI_D_WARN,
+                "%a: ignoring memory node with invalid 'reg' property (size == 0x%x)\n",
+                __FUNCTION__, *RegSize)
+               );
         continue;
       }
 
       *Node = Next;
       *AddressCells = 2;
-      *SizeCells = 2;
+      *SizeCells    = 2;
       return EFI_SUCCESS;
     }
   }
+
   return EFI_NOT_FOUND;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -294,10 +519,40 @@ FindMemoryNodeReg (
   OUT UINT32                  *RegSize
   )
 {
-  return FindNextMemoryNodeReg (This, 0, Node, Reg, AddressCells, SizeCells,
-           RegSize);
+  return FindNextMemoryNodeReg (
+                                This,
+                                0,
+                                Node,
+                                Reg,
+                                AddressCells,
+                                SizeCells,
+                                RegSize
+                                );
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 EFIAPI
@@ -306,7 +561,7 @@ GetOrInsertChosenNode (
   OUT INT32                   *Node
   )
 {
-  INT32 NewNode;
+  INT32  NewNode;
 
   ASSERT (mDeviceTreeBase != NULL);
   ASSERT (Node != NULL);
@@ -325,7 +580,7 @@ GetOrInsertChosenNode (
   return EFI_SUCCESS;
 }
 
-STATIC FDT_CLIENT_PROTOCOL mFdtClientProtocol = {
+STATIC FDT_CLIENT_PROTOCOL  mFdtClientProtocol = {
   GetNodeProperty,
   SetNodeProperty,
   FindCompatibleNode,
@@ -337,6 +592,29 @@ STATIC FDT_CLIENT_PROTOCOL mFdtClientProtocol = {
   GetOrInsertChosenNode,
 };
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 VOID
 EFIAPI
@@ -345,32 +623,57 @@ OnPlatformHasDeviceTree (
   IN VOID      *Context
   )
 {
-  EFI_STATUS Status;
-  VOID       *Interface;
-  VOID       *DeviceTreeBase;
+  EFI_STATUS  Status;
+  VOID        *Interface;
+  VOID        *DeviceTreeBase;
 
   Status = gBS->LocateProtocol (
-                  &gEdkiiPlatformHasDeviceTreeGuid,
-                  NULL,                             // Registration
-                  &Interface
-                  );
+                                &gEdkiiPlatformHasDeviceTreeGuid,
+                                NULL,               // Registration
+                                &Interface
+                                );
   if (EFI_ERROR (Status)) {
     return;
   }
 
   DeviceTreeBase = Context;
-  DEBUG ((
-    DEBUG_INFO,
-    "%a: exposing DTB @ 0x%p to OS\n",
-    __FUNCTION__,
-    DeviceTreeBase
-    ));
+  DEBUG (
+         (
+          DEBUG_INFO,
+          "%a: exposing DTB @ 0x%p to OS\n",
+          __FUNCTION__,
+          DeviceTreeBase
+         )
+         );
   Status = gBS->InstallConfigurationTable (&gFdtTableGuid, DeviceTreeBase);
   ASSERT_EFI_ERROR (Status);
 
   gBS->CloseEvent (Event);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 InitializeFdtClientDxe (
@@ -378,21 +681,24 @@ InitializeFdtClientDxe (
   IN EFI_SYSTEM_TABLE     *SystemTable
   )
 {
-  VOID              *Hob;
-  VOID              *DeviceTreeBase;
-  EFI_STATUS        Status;
-  EFI_EVENT         PlatformHasDeviceTreeEvent;
-  VOID              *Registration;
+  VOID        *Hob;
+  VOID        *DeviceTreeBase;
+  EFI_STATUS  Status;
+  EFI_EVENT   PlatformHasDeviceTreeEvent;
+  VOID        *Registration;
 
   Hob = GetFirstGuidHob (&gFdtHobGuid);
   if (Hob == NULL || GET_GUID_HOB_DATA_SIZE (Hob) != sizeof (UINT64)) {
     return EFI_NOT_FOUND;
   }
-  DeviceTreeBase = (VOID *)(UINTN)*(UINT64 *)GET_GUID_HOB_DATA (Hob);
+
+  DeviceTreeBase = (VOID *) (UINTN) *(UINT64 *) GET_GUID_HOB_DATA (Hob);
 
   if (fdt_check_header (DeviceTreeBase) != 0) {
-    DEBUG ((EFI_D_ERROR, "%a: No DTB found @ 0x%p\n", __FUNCTION__,
-      DeviceTreeBase));
+    DEBUG (
+           (EFI_D_ERROR, "%a: No DTB found @ 0x%p\n", __FUNCTION__,
+            DeviceTreeBase)
+           );
     return EFI_NOT_FOUND;
   }
 
@@ -405,29 +711,31 @@ InitializeFdtClientDxe (
   // Protocol.
   //
   Status = gBS->CreateEvent (
-                  EVT_NOTIFY_SIGNAL,
-                  TPL_CALLBACK,
-                  OnPlatformHasDeviceTree,
-                  DeviceTreeBase,             // Context
-                  &PlatformHasDeviceTreeEvent
-                  );
+                             EVT_NOTIFY_SIGNAL,
+                             TPL_CALLBACK,
+                             OnPlatformHasDeviceTree,
+                             DeviceTreeBase,  // Context
+                             &PlatformHasDeviceTreeEvent
+                             );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a: CreateEvent(): %r\n", __FUNCTION__, Status));
     return Status;
   }
 
   Status = gBS->RegisterProtocolNotify (
-                  &gEdkiiPlatformHasDeviceTreeGuid,
-                  PlatformHasDeviceTreeEvent,
-                  &Registration
-                  );
+                                        &gEdkiiPlatformHasDeviceTreeGuid,
+                                        PlatformHasDeviceTreeEvent,
+                                        &Registration
+                                        );
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "%a: RegisterProtocolNotify(): %r\n",
-      __FUNCTION__,
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "%a: RegisterProtocolNotify(): %r\n",
+            __FUNCTION__,
+            Status
+           )
+           );
     goto CloseEvent;
   }
 
@@ -441,18 +749,20 @@ InitializeFdtClientDxe (
   }
 
   Status = gBS->InstallProtocolInterface (
-                  &ImageHandle,
-                  &gFdtClientProtocolGuid,
-                  EFI_NATIVE_INTERFACE,
-                  &mFdtClientProtocol
-                  );
+                                          &ImageHandle,
+                                          &gFdtClientProtocolGuid,
+                                          EFI_NATIVE_INTERFACE,
+                                          &mFdtClientProtocol
+                                          );
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "%a: InstallProtocolInterface(): %r\n",
-      __FUNCTION__,
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "%a: InstallProtocolInterface(): %r\n",
+            __FUNCTION__,
+            Status
+           )
+           );
     goto CloseEvent;
   }
 

@@ -20,13 +20,13 @@
 #include <Library/HobLib.h>
 #include <Library/SerialPortLib.h>
 
-#define SerialPrint(txt)  SerialPortWrite (txt, AsciiStrLen(txt)+1);
+#define SerialPrint(txt)  SerialPortWrite (txt, AsciiStrLen (txt)+1);
 
 RETURN_STATUS
 EFIAPI
 TimerConstructor (
-  VOID
-  );
+                  VOID
+                  );
 
 VOID
 PrePiMain (
@@ -45,19 +45,19 @@ MemoryPeim (
 EFI_STATUS
 EFIAPI
 PlatformPeim (
-  VOID
-  );
+              VOID
+              );
 
 // Either implemented by PrePiLib or by MemoryInitPei
 VOID
-BuildMemoryTypeInformationHob (
-  VOID
-  );
+  BuildMemoryTypeInformationHob (
+                                 VOID
+                                 );
 
 // Initialize the Architecture specific controllers
 VOID
-ArchInitialize (
-  VOID
-  );
+  ArchInitialize (
+                  VOID
+                  );
 
 #endif /* _PREPI_H_ */

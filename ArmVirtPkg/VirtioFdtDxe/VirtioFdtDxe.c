@@ -22,12 +22,35 @@
 
 #pragma pack (1)
 typedef struct {
-  VENDOR_DEVICE_PATH                  Vendor;
-  UINT64                              PhysBase;
-  EFI_DEVICE_PATH_PROTOCOL            End;
+  VENDOR_DEVICE_PATH          Vendor;
+  UINT64                      PhysBase;
+  EFI_DEVICE_PATH_PROTOCOL    End;
 } VIRTIO_TRANSPORT_DEVICE_PATH;
 #pragma pack ()
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 InitializeVirtioFdtDxe (
@@ -35,30 +58,46 @@ InitializeVirtioFdtDxe (
   IN EFI_SYSTEM_TABLE     *SystemTable
   )
 {
-  EFI_STATUS                     Status, FindNodeStatus;
-  FDT_CLIENT_PROTOCOL            *FdtClient;
-  INT32                          Node;
-  CONST UINT64                   *Reg;
-  UINT32                         RegSize;
-  VIRTIO_TRANSPORT_DEVICE_PATH   *DevicePath;
-  EFI_HANDLE                     Handle;
-  UINT64                         RegBase;
+  EFI_STATUS                    Status, FindNodeStatus;
+  FDT_CLIENT_PROTOCOL           *FdtClient;
+  INT32                         Node;
+  CONST UINT64                  *Reg;
+  UINT32                        RegSize;
+  VIRTIO_TRANSPORT_DEVICE_PATH  *DevicePath;
+  EFI_HANDLE                    Handle;
+  UINT64                        RegBase;
 
-  Status = gBS->LocateProtocol (&gFdtClientProtocolGuid, NULL,
-                  (VOID **)&FdtClient);
+  Status = gBS->LocateProtocol (
+                                &gFdtClientProtocolGuid,
+                                NULL,
+                                (VOID **) &FdtClient
+                                );
   ASSERT_EFI_ERROR (Status);
 
-  for (FindNodeStatus = FdtClient->FindCompatibleNode (FdtClient,
-                                     "virtio,mmio", &Node);
+  for (FindNodeStatus = FdtClient->FindCompatibleNode (
+                                                       FdtClient,
+                                                       "virtio,mmio",
+                                                       &Node
+                                                       );
        !EFI_ERROR (FindNodeStatus);
-       FindNodeStatus = FdtClient->FindNextCompatibleNode (FdtClient,
-                                     "virtio,mmio", Node, &Node)) {
-
-    Status = FdtClient->GetNodeProperty (FdtClient, Node, "reg",
-                          (CONST VOID **)&Reg, &RegSize);
+       FindNodeStatus = FdtClient->FindNextCompatibleNode (
+                                                           FdtClient,
+                                                           "virtio,mmio",
+                                                           Node,
+                                                           &Node
+                                                           )) {
+    Status = FdtClient->GetNodeProperty (
+                                         FdtClient,
+                                         Node,
+                                         "reg",
+                                         (CONST VOID **) &Reg,
+                                         &RegSize
+                                         );
     if (EFI_ERROR (Status)) {
-      DEBUG ((EFI_D_ERROR, "%a: GetNodeProperty () failed (Status == %r)\n",
-        __FUNCTION__, Status));
+      DEBUG (
+             (EFI_D_ERROR, "%a: GetNodeProperty () failed (Status == %r)\n",
+              __FUNCTION__, Status)
+             );
       continue;
     }
 
@@ -67,11 +106,12 @@ InitializeVirtioFdtDxe (
     //
     // Create a unique device path for this transport on the fly
     //
-    RegBase = SwapBytes64 (*Reg);
-    DevicePath = (VIRTIO_TRANSPORT_DEVICE_PATH *)CreateDeviceNode (
-                                  HARDWARE_DEVICE_PATH,
-                                  HW_VENDOR_DP,
-                                  sizeof (VIRTIO_TRANSPORT_DEVICE_PATH));
+    RegBase    = SwapBytes64 (*Reg);
+    DevicePath = (VIRTIO_TRANSPORT_DEVICE_PATH *) CreateDeviceNode (
+                                                                    HARDWARE_DEVICE_PATH,
+                                                                    HW_VENDOR_DP,
+                                                                    sizeof (VIRTIO_TRANSPORT_DEVICE_PATH)
+                                                                    );
     if (DevicePath == NULL) {
       DEBUG ((EFI_D_ERROR, "%a: Out of memory\n", __FUNCTION__));
       continue;
@@ -79,30 +119,42 @@ InitializeVirtioFdtDxe (
 
     CopyGuid (&DevicePath->Vendor.Guid, &gVirtioMmioTransportGuid);
     DevicePath->PhysBase = RegBase;
-    SetDevicePathNodeLength (&DevicePath->Vendor,
-      sizeof (*DevicePath) - sizeof (DevicePath->End));
+    SetDevicePathNodeLength (
+                             &DevicePath->Vendor,
+                             sizeof (*DevicePath) - sizeof (DevicePath->End)
+                             );
     SetDevicePathEndNode (&DevicePath->End);
 
     Handle = NULL;
-    Status = gBS->InstallProtocolInterface (&Handle,
-                     &gEfiDevicePathProtocolGuid, EFI_NATIVE_INTERFACE,
-                     DevicePath);
+    Status = gBS->InstallProtocolInterface (
+                                            &Handle,
+                                            &gEfiDevicePathProtocolGuid,
+                                            EFI_NATIVE_INTERFACE,
+                                            DevicePath
+                                            );
     if (EFI_ERROR (Status)) {
-      DEBUG ((EFI_D_ERROR, "%a: Failed to install the EFI_DEVICE_PATH "
-        "protocol on a new handle (Status == %r)\n",
-        __FUNCTION__, Status));
+      DEBUG (
+             (EFI_D_ERROR, "%a: Failed to install the EFI_DEVICE_PATH "
+                           "protocol on a new handle (Status == %r)\n",
+              __FUNCTION__, Status)
+             );
       FreePool (DevicePath);
       continue;
     }
 
     Status = VirtioMmioInstallDevice (RegBase, Handle);
     if (EFI_ERROR (Status)) {
-      DEBUG ((EFI_D_ERROR, "%a: Failed to install VirtIO transport @ 0x%Lx "
-        "on handle %p (Status == %r)\n", __FUNCTION__, RegBase,
-        Handle, Status));
+      DEBUG (
+             (EFI_D_ERROR, "%a: Failed to install VirtIO transport @ 0x%Lx "
+                           "on handle %p (Status == %r)\n", __FUNCTION__, RegBase,
+              Handle, Status)
+             );
 
-      Status = gBS->UninstallProtocolInterface (Handle,
-                      &gEfiDevicePathProtocolGuid, DevicePath);
+      Status = gBS->UninstallProtocolInterface (
+                                                Handle,
+                                                &gEfiDevicePathProtocolGuid,
+                                                DevicePath
+                                                );
       ASSERT_EFI_ERROR (Status);
       FreePool (DevicePath);
       continue;
@@ -110,8 +162,10 @@ InitializeVirtioFdtDxe (
   }
 
   if (EFI_ERROR (FindNodeStatus) && FindNodeStatus != EFI_NOT_FOUND) {
-     DEBUG ((EFI_D_ERROR, "%a: Error occurred while iterating DT nodes "
-       "(FindNodeStatus == %r)\n", __FUNCTION__, FindNodeStatus));
+    DEBUG (
+           (EFI_D_ERROR, "%a: Error occurred while iterating DT nodes "
+                         "(FindNodeStatus == %r)\n", __FUNCTION__, FindNodeStatus)
+           );
   }
 
   return EFI_SUCCESS;

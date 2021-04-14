@@ -23,8 +23,31 @@
 #include <Library/HobLib.h>
 #include <Guid/EarlyPL011BaseAddress.h>
 
-STATIC UINTN mSerialBaseAddress;
+STATIC UINTN  mSerialBaseAddress;
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 RETURN_STATUS
 EFIAPI
 SerialPortInitialize (
@@ -60,28 +83,29 @@ FdtPL011SerialPortLibInitialize (
   if (Hob == NULL || GET_GUID_HOB_DATA_SIZE (Hob) != sizeof *UartBase) {
     return RETURN_NOT_FOUND;
   }
+
   UartBase = GET_GUID_HOB_DATA (Hob);
 
-  mSerialBaseAddress = (UINTN)*UartBase;
+  mSerialBaseAddress = (UINTN) *UartBase;
   if (mSerialBaseAddress == 0) {
     return RETURN_NOT_FOUND;
   }
 
-  BaudRate = (UINTN)PcdGet64 (PcdUartDefaultBaudRate);
+  BaudRate = (UINTN) PcdGet64 (PcdUartDefaultBaudRate);
   ReceiveFifoDepth = 0; // Use the default value for Fifo depth
-  Parity = (EFI_PARITY_TYPE)PcdGet8 (PcdUartDefaultParity);
+  Parity   = (EFI_PARITY_TYPE) PcdGet8 (PcdUartDefaultParity);
   DataBits = PcdGet8 (PcdUartDefaultDataBits);
   StopBits = (EFI_STOP_BITS_TYPE) PcdGet8 (PcdUartDefaultStopBits);
 
   return PL011UartInitializePort (
-           mSerialBaseAddress,
-           FixedPcdGet32 (PL011UartClkInHz),
-           &BaudRate,
-           &ReceiveFifoDepth,
-           &Parity,
-           &DataBits,
-           &StopBits
-           );
+                                  mSerialBaseAddress,
+                                  FixedPcdGet32 (PL011UartClkInHz),
+                                  &BaudRate,
+                                  &ReceiveFifoDepth,
+                                  &Parity,
+                                  &DataBits,
+                                  &StopBits
+                                  );
 }
 
 /**
@@ -104,6 +128,7 @@ SerialPortWrite (
   if (mSerialBaseAddress != 0) {
     return PL011UartWrite (mSerialBaseAddress, Buffer, NumberOfBytes);
   }
+
   return 0;
 }
 
@@ -122,11 +147,12 @@ EFIAPI
 SerialPortRead (
   OUT UINT8     *Buffer,
   IN  UINTN     NumberOfBytes
-)
+  )
 {
   if (mSerialBaseAddress != 0) {
     return PL011UartRead (mSerialBaseAddress, Buffer, NumberOfBytes);
   }
+
   return 0;
 }
 
@@ -146,6 +172,7 @@ SerialPortPoll (
   if (mSerialBaseAddress != 0) {
     return PL011UartPoll (mSerialBaseAddress);
   }
+
   return FALSE;
 }
 
@@ -193,20 +220,20 @@ SerialPortSetAttributes (
   IN OUT EFI_STOP_BITS_TYPE *StopBits
   )
 {
-  RETURN_STATUS Status;
+  RETURN_STATUS  Status;
 
   if (mSerialBaseAddress == 0) {
     Status = RETURN_UNSUPPORTED;
   } else {
     Status = PL011UartInitializePort (
-               mSerialBaseAddress,
-               FixedPcdGet32 (PL011UartClkInHz),
-               BaudRate,
-               ReceiveFifoDepth,
-               Parity,
-               DataBits,
-               StopBits
-               );
+                                      mSerialBaseAddress,
+                                      FixedPcdGet32 (PL011UartClkInHz),
+                                      BaudRate,
+                                      ReceiveFifoDepth,
+                                      Parity,
+                                      DataBits,
+                                      StopBits
+                                      );
   }
 
   return Status;
@@ -228,7 +255,7 @@ SerialPortSetControl (
   IN UINT32 Control
   )
 {
-  RETURN_STATUS Status;
+  RETURN_STATUS  Status;
 
   if (mSerialBaseAddress == 0) {
     Status = RETURN_UNSUPPORTED;
@@ -255,7 +282,7 @@ SerialPortGetControl (
   OUT UINT32 *Control
   )
 {
-  RETURN_STATUS Status;
+  RETURN_STATUS  Status;
 
   if (mSerialBaseAddress == 0) {
     Status = RETURN_UNSUPPORTED;
@@ -265,4 +292,3 @@ SerialPortGetControl (
 
   return Status;
 }
-

@@ -19,16 +19,16 @@
 
 /** Macro defining the maximum number of Flash devices.
 */
-#define MAX_FLASH_DEVICES       4
+#define MAX_FLASH_DEVICES  4
 
 /** Macro defining the cfi-flash label describing the UEFI variable store.
 */
-#define LABEL_UEFI_VAR_STORE    "System-firmware"
+#define LABEL_UEFI_VAR_STORE  "System-firmware"
 
 STATIC NOR_FLASH_DESCRIPTION  mNorFlashDevices[MAX_FLASH_DEVICES];
-STATIC UINTN                  mNorFlashDeviceCount = 0;
-STATIC INT32                  mUefiVarStoreNode = MAX_INT32;
-STATIC FDT_CLIENT_PROTOCOL    *mFdtClient;
+STATIC UINTN                mNorFlashDeviceCount = 0;
+STATIC INT32                mUefiVarStoreNode    = MAX_INT32;
+STATIC FDT_CLIENT_PROTOCOL  *mFdtClient;
 
 /** This function performs platform specific actions to initialise
     the NOR flash, if required.
@@ -40,7 +40,7 @@ NorFlashPlatformInitialization (
   VOID
   )
 {
-  EFI_STATUS                  Status;
+  EFI_STATUS  Status;
 
   DEBUG ((DEBUG_INFO, "NorFlashPlatformInitialization\n"));
 
@@ -61,12 +61,12 @@ NorFlashPlatformInitialization (
     // we know it is safe to disable the node here.
     //
     Status = mFdtClient->SetNodeProperty (
-                           mFdtClient,
-                           mUefiVarStoreNode,
-                           "status",
-                           "disabled",
-                           sizeof ("disabled")
-                           );
+                                          mFdtClient,
+                                          mUefiVarStoreNode,
+                                          "status",
+                                          "disabled",
+                                          sizeof ("disabled")
+                                          );
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_WARN, "Failed to set cfi-flash status to 'disabled'\n"));
     }
@@ -89,20 +89,20 @@ NorFlashPlatformInitialization (
 STATIC
 EFI_STATUS
 SetupVariableStore (
-  IN NOR_FLASH_DESCRIPTION * FlashDevice
+  IN NOR_FLASH_DESCRIPTION *FlashDevice
   )
 {
-  UINTN   FlashRegion;
-  UINTN   FlashNvStorageVariableBase;
-  UINTN   FlashNvStorageFtwWorkingBase;
-  UINTN   FlashNvStorageFtwSpareBase;
-  UINTN   FlashNvStorageVariableSize;
-  UINTN   FlashNvStorageFtwWorkingSize;
-  UINTN   FlashNvStorageFtwSpareSize;
+  UINTN  FlashRegion;
+  UINTN  FlashNvStorageVariableBase;
+  UINTN  FlashNvStorageFtwWorkingBase;
+  UINTN  FlashNvStorageFtwSpareBase;
+  UINTN  FlashNvStorageVariableSize;
+  UINTN  FlashNvStorageFtwWorkingSize;
+  UINTN  FlashNvStorageFtwSpareSize;
 
-  FlashNvStorageVariableSize = PcdGet32 (PcdFlashNvStorageVariableSize);
+  FlashNvStorageVariableSize   = PcdGet32 (PcdFlashNvStorageVariableSize);
   FlashNvStorageFtwWorkingSize = PcdGet32 (PcdFlashNvStorageFtwWorkingSize);
-  FlashNvStorageFtwSpareSize =  PcdGet32 (PcdFlashNvStorageFtwSpareSize);
+  FlashNvStorageFtwSpareSize   =  PcdGet32 (PcdFlashNvStorageFtwSpareSize);
 
   if ((FlashNvStorageVariableSize == 0)   ||
       (FlashNvStorageFtwWorkingSize == 0) ||
@@ -129,50 +129,62 @@ SetupVariableStore (
   }
 
   PcdSet32S (
-    PcdFlashNvStorageVariableBase,
-    FlashNvStorageVariableBase
-    );
+             PcdFlashNvStorageVariableBase,
+             FlashNvStorageVariableBase
+             );
 
   PcdSet32S (
-    PcdFlashNvStorageFtwWorkingBase,
-    FlashNvStorageFtwWorkingBase
-    );
+             PcdFlashNvStorageFtwWorkingBase,
+             FlashNvStorageFtwWorkingBase
+             );
 
   PcdSet32S (
-    PcdFlashNvStorageFtwSpareBase,
-    FlashNvStorageFtwSpareBase
-    );
+             PcdFlashNvStorageFtwSpareBase,
+             FlashNvStorageFtwSpareBase
+             );
 
-  DEBUG ((
-    DEBUG_INFO,
-    "PcdFlashNvStorageVariableBase = 0x%x\n",
-    FlashNvStorageVariableBase
-    ));
-  DEBUG ((
-    DEBUG_INFO,
-    "PcdFlashNvStorageVariableSize = 0x%x\n",
-    FlashNvStorageVariableSize
-    ));
-  DEBUG ((
-    DEBUG_INFO,
-    "PcdFlashNvStorageFtwWorkingBase = 0x%x\n",
-    FlashNvStorageFtwWorkingBase
-    ));
-  DEBUG ((
-    DEBUG_INFO,
-    "PcdFlashNvStorageFtwWorkingSize = 0x%x\n",
-    FlashNvStorageFtwWorkingSize
-    ));
-  DEBUG ((
-    DEBUG_INFO,
-    "PcdFlashNvStorageFtwSpareBase = 0x%x\n",
-    FlashNvStorageFtwSpareBase
-    ));
-  DEBUG ((
-    DEBUG_INFO,
-    "PcdFlashNvStorageFtwSpareSize = 0x%x\n",
-    FlashNvStorageFtwSpareSize
-    ));
+  DEBUG (
+         (
+          DEBUG_INFO,
+          "PcdFlashNvStorageVariableBase = 0x%x\n",
+          FlashNvStorageVariableBase
+         )
+         );
+  DEBUG (
+         (
+          DEBUG_INFO,
+          "PcdFlashNvStorageVariableSize = 0x%x\n",
+          FlashNvStorageVariableSize
+         )
+         );
+  DEBUG (
+         (
+          DEBUG_INFO,
+          "PcdFlashNvStorageFtwWorkingBase = 0x%x\n",
+          FlashNvStorageFtwWorkingBase
+         )
+         );
+  DEBUG (
+         (
+          DEBUG_INFO,
+          "PcdFlashNvStorageFtwWorkingSize = 0x%x\n",
+          FlashNvStorageFtwWorkingSize
+         )
+         );
+  DEBUG (
+         (
+          DEBUG_INFO,
+          "PcdFlashNvStorageFtwSpareBase = 0x%x\n",
+          FlashNvStorageFtwSpareBase
+         )
+         );
+  DEBUG (
+         (
+          DEBUG_INFO,
+          "PcdFlashNvStorageFtwSpareSize = 0x%x\n",
+          FlashNvStorageFtwSpareSize
+         )
+         );
 
   return EFI_SUCCESS;
 }
@@ -196,6 +208,7 @@ NorFlashPlatformGetDevices (
     *Count = mNorFlashDeviceCount;
     return EFI_SUCCESS;
   }
+
   return EFI_NOT_FOUND;
 }
 
@@ -212,74 +225,78 @@ EFI_STATUS
 EFIAPI
 NorFlashPlatformLibConstructor (
   IN  EFI_HANDLE          ImageHandle,
-  IN  EFI_SYSTEM_TABLE  * SystemTable
+  IN  EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  INT32                       Node;
-  EFI_STATUS                  Status;
-  EFI_STATUS                  FindNodeStatus;
-  CONST UINT32                *Reg;
-  UINT32                      PropSize;
-  UINT64                      Base;
-  UINT64                      Size;
-  UINTN                       UefiVarStoreIndex;
-  CONST CHAR8                 *Label;
-  UINT32                      LabelLen;
+  INT32         Node;
+  EFI_STATUS    Status;
+  EFI_STATUS    FindNodeStatus;
+  CONST UINT32  *Reg;
+  UINT32        PropSize;
+  UINT64        Base;
+  UINT64        Size;
+  UINTN         UefiVarStoreIndex;
+  CONST CHAR8   *Label;
+  UINT32        LabelLen;
 
   if (mNorFlashDeviceCount != 0) {
     return EFI_SUCCESS;
   }
 
   Status = gBS->LocateProtocol (
-                  &gFdtClientProtocolGuid,
-                  NULL,
-                  (VOID **)&mFdtClient
-                  );
+                                &gFdtClientProtocolGuid,
+                                NULL,
+                                (VOID **) &mFdtClient
+                                );
   ASSERT_EFI_ERROR (Status);
 
   UefiVarStoreIndex = MAX_UINTN;
   for (FindNodeStatus = mFdtClient->FindCompatibleNode (
-                                      mFdtClient,
-                                      "cfi-flash",
-                                      &Node
-                                      );
+                                                        mFdtClient,
+                                                        "cfi-flash",
+                                                        &Node
+                                                        );
        !EFI_ERROR (FindNodeStatus) &&
-         (mNorFlashDeviceCount < MAX_FLASH_DEVICES);
+       (mNorFlashDeviceCount < MAX_FLASH_DEVICES);
        FindNodeStatus = mFdtClient->FindNextCompatibleNode (
-                                      mFdtClient,
-                                      "cfi-flash",
-                                      Node,
-                                      &Node
-    )) {
+                                                            mFdtClient,
+                                                            "cfi-flash",
+                                                            Node,
+                                                            &Node
+                                                            )) {
     Status = mFdtClient->GetNodeProperty (
-                           mFdtClient,
-                           Node,
-                           "label",
-                           (CONST VOID **)&Label,
-                           &LabelLen
-                           );
+                                          mFdtClient,
+                                          Node,
+                                          "label",
+                                          (CONST VOID **) &Label,
+                                          &LabelLen
+                                          );
     if (EFI_ERROR (Status)) {
-      DEBUG ((
-        DEBUG_ERROR,
-        "%a: GetNodeProperty ('label') failed (Status == %r)\n",
-        __FUNCTION__,
-        Status
-        ));
+      DEBUG (
+             (
+              DEBUG_ERROR,
+              "%a: GetNodeProperty ('label') failed (Status == %r)\n",
+              __FUNCTION__,
+              Status
+             )
+             );
     } else if (AsciiStrCmp (Label, LABEL_UEFI_VAR_STORE) == 0) {
       UefiVarStoreIndex = mNorFlashDeviceCount;
       mUefiVarStoreNode = Node;
     }
 
     Status = mFdtClient->GetNodeProperty (
-                           mFdtClient,
-                           Node,
-                           "reg",
-                           (CONST VOID **)&Reg,
-                           &PropSize
-                           );
+                                          mFdtClient,
+                                          Node,
+                                          "reg",
+                                          (CONST VOID **) &Reg,
+                                          &PropSize
+                                          );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "%a: GetNodeProperty () failed (Status == %r)\n",
-        __FUNCTION__, Status));
+      DEBUG (
+             (DEBUG_ERROR, "%a: GetNodeProperty () failed (Status == %r)\n",
+              __FUNCTION__, Status)
+             );
       continue;
     }
 
@@ -287,8 +304,8 @@ NorFlashPlatformLibConstructor (
 
     while ((PropSize >= (4 * sizeof (UINT32))) &&
            (mNorFlashDeviceCount < MAX_FLASH_DEVICES)) {
-      Base = SwapBytes64 (ReadUnaligned64 ((VOID *)&Reg[0]));
-      Size = SwapBytes64 (ReadUnaligned64 ((VOID *)&Reg[2]));
+      Base = SwapBytes64 (ReadUnaligned64 ((VOID *) &Reg[0]));
+      Size = SwapBytes64 (ReadUnaligned64 ((VOID *) &Reg[2]));
       Reg += 4;
 
       PropSize -= 4 * sizeof (UINT32);
@@ -302,17 +319,19 @@ NorFlashPlatformLibConstructor (
         continue;
       }
 
-      DEBUG ((
-        DEBUG_INFO,
-        "NOR%d : Base = 0x%lx, Size = 0x%lx\n",
-        mNorFlashDeviceCount,
-        Base,
-        Size
-        ));
+      DEBUG (
+             (
+              DEBUG_INFO,
+              "NOR%d : Base = 0x%lx, Size = 0x%lx\n",
+              mNorFlashDeviceCount,
+              Base,
+              Size
+             )
+             );
 
-      mNorFlashDevices[mNorFlashDeviceCount].DeviceBaseAddress = (UINTN)Base;
-      mNorFlashDevices[mNorFlashDeviceCount].RegionBaseAddress = (UINTN)Base;
-      mNorFlashDevices[mNorFlashDeviceCount].Size = (UINTN)Size;
+      mNorFlashDevices[mNorFlashDeviceCount].DeviceBaseAddress = (UINTN) Base;
+      mNorFlashDevices[mNorFlashDeviceCount].RegionBaseAddress = (UINTN) Base;
+      mNorFlashDevices[mNorFlashDeviceCount].Size = (UINTN) Size;
       mNorFlashDevices[mNorFlashDeviceCount].BlockSize = KVMTOOL_NOR_BLOCK_SIZE;
       mNorFlashDeviceCount++;
     }
@@ -326,6 +345,7 @@ NorFlashPlatformLibConstructor (
       UefiVarStoreIndex = mNorFlashDeviceCount - 1;
       mUefiVarStoreNode = Node;
     }
+
     if (mNorFlashDevices[UefiVarStoreIndex].DeviceBaseAddress != 0) {
       return SetupVariableStore (&mNorFlashDevices[UefiVarStoreIndex]);
     }

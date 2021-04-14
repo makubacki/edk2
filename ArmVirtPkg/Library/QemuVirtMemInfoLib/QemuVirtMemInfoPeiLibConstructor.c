@@ -11,25 +11,48 @@
 #include <Library/PcdLib.h>
 #include <libfdt.h>
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 RETURN_STATUS
 EFIAPI
 QemuVirtMemInfoPeiLibConstructor (
   VOID
   )
 {
-  VOID          *DeviceTreeBase;
-  INT32         Node, Prev;
-  UINT64        NewBase, CurBase;
-  UINT64        NewSize, CurSize;
-  CONST CHAR8   *Type;
-  INT32         Len;
-  CONST UINT64  *RegProp;
-  RETURN_STATUS PcdStatus;
+  VOID           *DeviceTreeBase;
+  INT32          Node, Prev;
+  UINT64         NewBase, CurBase;
+  UINT64         NewSize, CurSize;
+  CONST CHAR8    *Type;
+  INT32          Len;
+  CONST UINT64   *RegProp;
+  RETURN_STATUS  PcdStatus;
 
   NewBase = 0;
   NewSize = 0;
 
-  DeviceTreeBase = (VOID *)(UINTN)PcdGet64 (PcdDeviceTreeInitialBaseAddress);
+  DeviceTreeBase = (VOID *) (UINTN) PcdGet64 (PcdDeviceTreeInitialBaseAddress);
   ASSERT (DeviceTreeBase != NULL);
 
   //
@@ -40,7 +63,7 @@ QemuVirtMemInfoPeiLibConstructor (
   //
   // Look for the lowest memory node
   //
-  for (Prev = 0;; Prev = Node) {
+  for (Prev = 0; ; Prev = Node) {
     Node = fdt_next_node (DeviceTreeBase, Prev, NULL);
     if (Node < 0) {
       break;
@@ -57,20 +80,23 @@ QemuVirtMemInfoPeiLibConstructor (
       //
       RegProp = fdt_getprop (DeviceTreeBase, Node, "reg", &Len);
       if (RegProp != 0 && Len == (2 * sizeof (UINT64))) {
-
         CurBase = fdt64_to_cpu (ReadUnaligned64 (RegProp));
         CurSize = fdt64_to_cpu (ReadUnaligned64 (RegProp + 1));
 
-        DEBUG ((DEBUG_INFO, "%a: System RAM @ 0x%lx - 0x%lx\n",
-          __FUNCTION__, CurBase, CurBase + CurSize - 1));
+        DEBUG (
+               (DEBUG_INFO, "%a: System RAM @ 0x%lx - 0x%lx\n",
+                __FUNCTION__, CurBase, CurBase + CurSize - 1)
+               );
 
         if (NewBase > CurBase || NewBase == 0) {
           NewBase = CurBase;
           NewSize = CurSize;
         }
       } else {
-        DEBUG ((DEBUG_ERROR, "%a: Failed to parse FDT memory node\n",
-          __FUNCTION__));
+        DEBUG (
+               (DEBUG_ERROR, "%a: Failed to parse FDT memory node\n",
+                __FUNCTION__)
+               );
       }
     }
   }
@@ -92,9 +118,10 @@ QemuVirtMemInfoPeiLibConstructor (
   //
   ASSERT (NewSize >= SIZE_128MB);
   ASSERT (
-    (((UINT64)PcdGet64 (PcdFdBaseAddress) +
-      (UINT64)PcdGet32 (PcdFdSize)) <= NewBase) ||
-    ((UINT64)PcdGet64 (PcdFdBaseAddress) >= (NewBase + NewSize)));
+          (((UINT64) PcdGet64 (PcdFdBaseAddress) +
+            (UINT64) PcdGet32 (PcdFdSize)) <= NewBase) ||
+          ((UINT64) PcdGet64 (PcdFdBaseAddress) >= (NewBase + NewSize))
+          );
 
   return RETURN_SUCCESS;
 }

@@ -35,30 +35,40 @@ GetXenArmAcpiRsdp (
   OUT   EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER   **RsdpPtr
   )
 {
-  EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER   *RsdpStructurePtr;
-  EFI_STATUS                                     Status;
-  FDT_CLIENT_PROTOCOL                            *FdtClient;
-  CONST UINT64                                   *Reg;
-  UINT32                                         RegSize;
-  UINTN                                          AddressCells, SizeCells;
-  UINT64                                         RegBase;
-  UINT8                                          Sum;
+  EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER  *RsdpStructurePtr;
+  EFI_STATUS                                    Status;
+  FDT_CLIENT_PROTOCOL                           *FdtClient;
+  CONST UINT64                                  *Reg;
+  UINT32                                        RegSize;
+  UINTN                                         AddressCells, SizeCells;
+  UINT64                                        RegBase;
+  UINT8                                         Sum;
 
   RsdpStructurePtr = NULL;
   FdtClient = NULL;
   //
   // Get the RSDP structure address from DeviceTree
   //
-  Status = gBS->LocateProtocol (&gFdtClientProtocolGuid, NULL,
-                  (VOID **)&FdtClient);
+  Status = gBS->LocateProtocol (
+                                &gFdtClientProtocolGuid,
+                                NULL,
+                                (VOID **) &FdtClient
+                                );
   ASSERT_EFI_ERROR (Status);
 
-  Status = FdtClient->FindCompatibleNodeReg (FdtClient, "xen,guest-acpi",
-                        (CONST VOID **)&Reg, &AddressCells, &SizeCells,
-                        &RegSize);
+  Status = FdtClient->FindCompatibleNodeReg (
+                                             FdtClient,
+                                             "xen,guest-acpi",
+                                             (CONST VOID **) &Reg,
+                                             &AddressCells,
+                                             &SizeCells,
+                                             &RegSize
+                                             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_WARN, "%a: No 'xen,guest-acpi' compatible DT node found\n",
-      __FUNCTION__));
+    DEBUG (
+           (EFI_D_WARN, "%a: No 'xen,guest-acpi' compatible DT node found\n",
+            __FUNCTION__)
+           );
     return EFI_NOT_FOUND;
   }
 
@@ -66,13 +76,15 @@ GetXenArmAcpiRsdp (
   ASSERT (SizeCells == 2);
   ASSERT (RegSize == 2 * sizeof (UINT64));
 
-  RegBase = SwapBytes64(Reg[0]);
+  RegBase = SwapBytes64 (Reg[0]);
   RsdpStructurePtr =
-    (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER *)(UINTN)RegBase;
+    (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER *) (UINTN) RegBase;
 
   if (RsdpStructurePtr && RsdpStructurePtr->Revision >= 2) {
-    Sum = CalculateSum8 ((CONST UINT8 *)RsdpStructurePtr,
-            sizeof (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER));
+    Sum = CalculateSum8 (
+                         (CONST UINT8 *) RsdpStructurePtr,
+                         sizeof (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER)
+                         );
     if (Sum != 0) {
       return EFI_ABORTED;
     }
@@ -104,17 +116,17 @@ InstallXenArmTables (
   IN   EFI_ACPI_TABLE_PROTOCOL       *AcpiProtocol
   )
 {
-  EFI_STATUS                                       Status;
-  UINTN                                            TableHandle;
-  VOID                                             *CurrentTableEntry;
-  UINTN                                            CurrentTablePointer;
-  EFI_ACPI_DESCRIPTION_HEADER                      *CurrentTable;
-  UINTN                                            Index;
-  UINTN                                            NumberOfTableEntries;
-  EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER     *XenAcpiRsdpStructurePtr;
-  EFI_ACPI_DESCRIPTION_HEADER                      *Xsdt;
-  EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE        *FadtTable;
-  EFI_ACPI_DESCRIPTION_HEADER                      *DsdtTable;
+  EFI_STATUS                                    Status;
+  UINTN                                         TableHandle;
+  VOID                                          *CurrentTableEntry;
+  UINTN                                         CurrentTablePointer;
+  EFI_ACPI_DESCRIPTION_HEADER                   *CurrentTable;
+  UINTN                                         Index;
+  UINTN                                         NumberOfTableEntries;
+  EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER  *XenAcpiRsdpStructurePtr;
+  EFI_ACPI_DESCRIPTION_HEADER                   *Xsdt;
+  EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE     *FadtTable;
+  EFI_ACPI_DESCRIPTION_HEADER                   *DsdtTable;
 
   XenAcpiRsdpStructurePtr = NULL;
   FadtTable   = NULL;
@@ -140,10 +152,10 @@ InstallXenArmTables (
     // calculate the number of its table entries.
     //
     Xsdt = (EFI_ACPI_DESCRIPTION_HEADER *) (UINTN)
-             XenAcpiRsdpStructurePtr->XsdtAddress;
+           XenAcpiRsdpStructurePtr->XsdtAddress;
     NumberOfTableEntries = (Xsdt->Length -
-                             sizeof (EFI_ACPI_DESCRIPTION_HEADER)) /
-                             sizeof (UINT64);
+                            sizeof (EFI_ACPI_DESCRIPTION_HEADER)) /
+                           sizeof (UINT64);
     //
     // Install ACPI tables found in XSDT.
     //
@@ -152,20 +164,20 @@ InstallXenArmTables (
       // Get the table entry from XSDT
       //
       CurrentTableEntry = (VOID *) ((UINT8 *) Xsdt +
-                            sizeof (EFI_ACPI_DESCRIPTION_HEADER) +
-                            Index * sizeof (UINT64));
-      CurrentTablePointer = (UINTN) *(UINT64 *)CurrentTableEntry;
+                                    sizeof (EFI_ACPI_DESCRIPTION_HEADER) +
+                                    Index * sizeof (UINT64));
+      CurrentTablePointer = (UINTN) *(UINT64 *) CurrentTableEntry;
       CurrentTable = (EFI_ACPI_DESCRIPTION_HEADER *) CurrentTablePointer;
 
       //
       // Install the XSDT tables
       //
       Status = AcpiProtocol->InstallAcpiTable (
-                 AcpiProtocol,
-                 CurrentTable,
-                 CurrentTable->Length,
-                 &TableHandle
-                 );
+                                               AcpiProtocol,
+                                               CurrentTable,
+                                               CurrentTable->Length,
+                                               &TableHandle
+                                               );
 
       if (EFI_ERROR (Status)) {
         return Status;
@@ -176,8 +188,8 @@ InstallXenArmTables (
       //
       if (!AsciiStrnCmp ((CHAR8 *) &CurrentTable->Signature, "FACP", 4)) {
         FadtTable = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *)
-                      (UINTN) CurrentTablePointer;
-        DsdtTable  = (EFI_ACPI_DESCRIPTION_HEADER *) (UINTN) FadtTable->Dsdt;
+                    (UINTN) CurrentTablePointer;
+        DsdtTable = (EFI_ACPI_DESCRIPTION_HEADER *) (UINTN) FadtTable->Dsdt;
       }
     }
   }
@@ -186,11 +198,11 @@ InstallXenArmTables (
   // Install DSDT table.
   //
   Status = AcpiProtocol->InstallAcpiTable (
-             AcpiProtocol,
-             DsdtTable,
-             DsdtTable->Length,
-             &TableHandle
-             );
+                                           AcpiProtocol,
+                                           DsdtTable,
+                                           DsdtTable->Length,
+                                           &TableHandle
+                                           );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -198,21 +210,44 @@ InstallXenArmTables (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_ACPI_TABLE_PROTOCOL *
 FindAcpiTableProtocol (
   VOID
   )
 {
-  EFI_STATUS              Status;
-  EFI_ACPI_TABLE_PROTOCOL *AcpiTable;
+  EFI_STATUS               Status;
+  EFI_ACPI_TABLE_PROTOCOL  *AcpiTable;
 
   AcpiTable = NULL;
-  Status = gBS->LocateProtocol (
-                  &gEfiAcpiTableProtocolGuid,
-                  NULL,
-                  (VOID**)&AcpiTable
-                  );
+  Status    = gBS->LocateProtocol (
+                                   &gEfiAcpiTableProtocolGuid,
+                                   NULL,
+                                   (VOID **) &AcpiTable
+                                   );
   ASSERT_EFI_ERROR (Status);
   return AcpiTable;
 }
@@ -228,7 +263,6 @@ FindAcpiTableProtocol (
   @return EFI_OUT_OF_RESOURCES
 
 **/
-
 EFI_STATUS
 EFIAPI
 XenAcpiPlatformEntryPoint (
@@ -236,7 +270,7 @@ XenAcpiPlatformEntryPoint (
   IN EFI_SYSTEM_TABLE   *SystemTable
   )
 {
-  EFI_STATUS                         Status;
+  EFI_STATUS  Status;
 
   Status = InstallXenArmTables (FindAcpiTableProtocol ());
   return Status;

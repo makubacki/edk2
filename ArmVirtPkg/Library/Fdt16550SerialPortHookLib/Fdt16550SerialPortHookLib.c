@@ -35,8 +35,8 @@ PlatformHookSerialPortInitialize (
   VOID
   )
 {
-  VOID            *Hob;
-  UINT64          *UartBase;
+  VOID    *Hob;
+  UINT64  *UartBase;
 
   if (PcdGet64 (PcdSerialRegisterBase) != 0) {
     return RETURN_SUCCESS;
@@ -48,9 +48,9 @@ PlatformHookSerialPortInitialize (
   }
 
   UartBase = GET_GUID_HOB_DATA (Hob);
-  if ((UINTN)*UartBase == 0) {
+  if ((UINTN) *UartBase == 0) {
     return RETURN_NOT_FOUND;
   }
 
-  return (RETURN_STATUS)PcdSet64S (PcdSerialRegisterBase, (UINTN)*UartBase);
+  return (RETURN_STATUS) PcdSet64S (PcdSerialRegisterBase, (UINTN) *UartBase);
 }

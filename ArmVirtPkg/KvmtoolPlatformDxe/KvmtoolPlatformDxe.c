@@ -39,20 +39,20 @@ PlatformHasAcpiDt (
   if (!PcdGetBool (PcdForceNoAcpi)) {
     // Expose ACPI tables
     return gBS->InstallProtocolInterface (
-                  &ImageHandle,
-                  &gEdkiiPlatformHasAcpiGuid,
-                  EFI_NATIVE_INTERFACE,
-                  NULL
-                  );
+                                          &ImageHandle,
+                                          &gEdkiiPlatformHasAcpiGuid,
+                                          EFI_NATIVE_INTERFACE,
+                                          NULL
+                                          );
   }
 
   // Expose the Device Tree.
   return gBS->InstallProtocolInterface (
-                &ImageHandle,
-                &gEdkiiPlatformHasDeviceTreeGuid,
-                EFI_NATIVE_INTERFACE,
-                NULL
-                );
+                                        &ImageHandle,
+                                        &gEdkiiPlatformHasDeviceTreeGuid,
+                                        EFI_NATIVE_INTERFACE,
+                                        NULL
+                                        );
 }
 
 /** Entry point for Kvmtool Platform Dxe
@@ -73,7 +73,7 @@ KvmtoolPlatformDxeEntryPoint (
   IN EFI_SYSTEM_TABLE     *SystemTable
   )
 {
-  EFI_STATUS                     Status;
+  EFI_STATUS  Status;
 
   Status = PlatformHasAcpiDt (ImageHandle);
   ASSERT_EFI_ERROR (Status);

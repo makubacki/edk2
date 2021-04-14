@@ -7,6 +7,29 @@
 #include <Uefi.h>
 #include <Include/libfdt.h>
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 BOOLEAN
 FindMemnode (
   IN  VOID    *DeviceTreeBlob,
@@ -14,11 +37,11 @@ FindMemnode (
   OUT UINT64  *SystemMemorySize
   )
 {
-  INT32         MemoryNode;
-  INT32         AddressCells;
-  INT32         SizeCells;
-  INT32         Length;
-  CONST INT32   *Prop;
+  INT32        MemoryNode;
+  INT32        AddressCells;
+  INT32        SizeCells;
+  INT32        Length;
+  CONST INT32  *Prop;
 
   if (fdt_check_header (DeviceTreeBlob) != 0) {
     return FALSE;
@@ -37,7 +60,7 @@ FindMemnode (
   // from the root node, or use the default if not provided.
   //
   AddressCells = 1;
-  SizeCells = 1;
+  SizeCells    = 1;
 
   Prop = fdt_getprop (DeviceTreeBlob, 0, "#address-cells", &Length);
   if (Length == 4) {
@@ -63,6 +86,7 @@ FindMemnode (
   if (AddressCells > 1) {
     *SystemMemoryBase = (*SystemMemoryBase << 32) | fdt32_to_cpu (Prop[1]);
   }
+
   Prop += AddressCells;
 
   *SystemMemorySize = fdt32_to_cpu (Prop[0]);
@@ -73,12 +97,35 @@ FindMemnode (
   return TRUE;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 CopyFdt (
   IN    VOID    *FdtDest,
   IN    VOID    *FdtSource
   )
 {
-  fdt_pack(FdtSource);
+  fdt_pack (FdtSource);
   CopyMem (FdtDest, FdtSource, fdt_totalsize (FdtSource));
 }
