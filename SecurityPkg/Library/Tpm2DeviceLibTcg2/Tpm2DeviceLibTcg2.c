@@ -37,8 +37,8 @@ Tpm2SubmitCommand (
   IN UINT8             *OutputParameterBlock
   )
 {
-  EFI_STATUS                Status;
-  TPM2_RESPONSE_HEADER      *Header;
+  EFI_STATUS            Status;
+  TPM2_RESPONSE_HEADER  *Header;
 
   if (mTcg2Protocol == NULL) {
     Status = gBS->LocateProtocol (&gEfiTcg2ProtocolGuid, NULL, (VOID **) &mTcg2Protocol);
@@ -50,20 +50,22 @@ Tpm2SubmitCommand (
       return EFI_NOT_FOUND;
     }
   }
+
   //
   // Assume when Tcg2 Protocol is ready, RequestUseTpm already done.
   //
   Status = mTcg2Protocol->SubmitCommand (
-                            mTcg2Protocol,
-                            InputParameterBlockSize,
-                            InputParameterBlock,
-                            *OutputParameterBlockSize,
-                            OutputParameterBlock
-                            );
+                                         mTcg2Protocol,
+                                         InputParameterBlockSize,
+                                         InputParameterBlock,
+                                         *OutputParameterBlockSize,
+                                         OutputParameterBlock
+                                         );
   if (EFI_ERROR (Status)) {
     return Status;
   }
-  Header = (TPM2_RESPONSE_HEADER *)OutputParameterBlock;
+
+  Header = (TPM2_RESPONSE_HEADER *) OutputParameterBlock;
   *OutputParameterBlockSize = SwapBytes32 (Header->paramSize);
 
   return EFI_SUCCESS;
@@ -82,7 +84,7 @@ Tpm2RequestUseTpm (
   VOID
   )
 {
-  EFI_STATUS   Status;
+  EFI_STATUS  Status;
 
   if (mTcg2Protocol == NULL) {
     Status = gBS->LocateProtocol (&gEfiTcg2ProtocolGuid, NULL, (VOID **) &mTcg2Protocol);
@@ -94,6 +96,7 @@ Tpm2RequestUseTpm (
       return EFI_NOT_FOUND;
     }
   }
+
   //
   // Assume when Tcg2 Protocol is ready, RequestUseTpm already done.
   //

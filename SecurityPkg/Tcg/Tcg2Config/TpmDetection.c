@@ -6,7 +6,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
-
 #include <PiPei.h>
 #include <Ppi/ReadOnlyVariable2.h>
 
@@ -34,11 +33,11 @@ DetectTpmDevice (
   IN UINT8 SetupTpmDevice
   )
 {
-  EFI_STATUS                        Status;
-  EFI_BOOT_MODE                     BootMode;
-  TCG2_DEVICE_DETECTION             Tcg2DeviceDetection;
-  EFI_PEI_READ_ONLY_VARIABLE2_PPI   *VariablePpi;
-  UINTN                             Size;
+  EFI_STATUS                       Status;
+  EFI_BOOT_MODE                    BootMode;
+  TCG2_DEVICE_DETECTION            Tcg2DeviceDetection;
+  EFI_PEI_READ_ONLY_VARIABLE2_PPI  *VariablePpi;
+  UINTN                            Size;
 
   Status = PeiServicesGetBootMode (&BootMode);
   ASSERT_EFI_ERROR (Status);
@@ -52,16 +51,16 @@ DetectTpmDevice (
     Status = PeiServicesLocatePpi (&gEfiPeiReadOnlyVariable2PpiGuid, 0, NULL, (VOID **) &VariablePpi);
     ASSERT_EFI_ERROR (Status);
 
-    Size = sizeof(TCG2_DEVICE_DETECTION);
-    ZeroMem (&Tcg2DeviceDetection, sizeof(Tcg2DeviceDetection));
+    Size = sizeof (TCG2_DEVICE_DETECTION);
+    ZeroMem (&Tcg2DeviceDetection, sizeof (Tcg2DeviceDetection));
     Status = VariablePpi->GetVariable (
-                            VariablePpi,
-                            TCG2_DEVICE_DETECTION_NAME,
-                            &gTcg2ConfigFormSetGuid,
-                            NULL,
-                            &Size,
-                            &Tcg2DeviceDetection
-                            );
+                                       VariablePpi,
+                                       TCG2_DEVICE_DETECTION_NAME,
+                                       &gTcg2ConfigFormSetGuid,
+                                       NULL,
+                                       &Size,
+                                       &Tcg2DeviceDetection
+                                       );
     if (!EFI_ERROR (Status) &&
         (Tcg2DeviceDetection.TpmDeviceDetected >= TPM_DEVICE_MIN) &&
         (Tcg2DeviceDetection.TpmDeviceDetected <= TPM_DEVICE_MAX)) {
@@ -89,6 +88,7 @@ DetectTpmDevice (
   } else {
     Status = Tpm12Startup (TPM_ST_CLEAR);
   }
+
   if (EFI_ERROR (Status)) {
     return TPM_DEVICE_2_0_DTPM;
   }

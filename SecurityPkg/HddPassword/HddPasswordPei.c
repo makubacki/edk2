@@ -9,8 +9,7 @@
 
 #include "HddPasswordPei.h"
 
-EFI_GUID mHddPasswordDeviceInfoGuid = HDD_PASSWORD_DEVICE_INFO_GUID;
-
+EFI_GUID  mHddPasswordDeviceInfoGuid = HDD_PASSWORD_DEVICE_INFO_GUID;
 
 /**
   Send unlock hdd password cmd through ATA PassThru PPI.
@@ -36,11 +35,11 @@ UnlockDevice (
   IN CHAR8                          *Password
   )
 {
-  EFI_STATUS                          Status;
-  EFI_ATA_COMMAND_BLOCK               Acb;
-  EFI_ATA_STATUS_BLOCK                *Asb;
-  EFI_ATA_PASS_THRU_COMMAND_PACKET    Packet;
-  UINT8                               Buffer[HDD_PAYLOAD];
+  EFI_STATUS                        Status;
+  EFI_ATA_COMMAND_BLOCK             Acb;
+  EFI_ATA_STATUS_BLOCK              *Asb;
+  EFI_ATA_PASS_THRU_COMMAND_PACKET  Packet;
+  UINT8                             Buffer[HDD_PAYLOAD];
 
   if ((AtaPassThru == NULL) || (Password == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -56,9 +55,9 @@ UnlockDevice (
   // aligned.
   //
   Asb = AllocateAlignedPages (
-          EFI_SIZE_TO_PAGES (sizeof (EFI_ATA_STATUS_BLOCK)),
-          AtaPassThru->Mode->IoAlign
-          );
+                              EFI_SIZE_TO_PAGES (sizeof (EFI_ATA_STATUS_BLOCK)),
+                              AtaPassThru->Mode->IoAlign
+                              );
   if (Asb == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -77,22 +76,22 @@ UnlockDevice (
   ZeroMem (&Packet, sizeof (Packet));
   Packet.Protocol = EFI_ATA_PASS_THRU_PROTOCOL_PIO_DATA_OUT;
   Packet.Length   = EFI_ATA_PASS_THRU_LENGTH_BYTES;
-  Packet.Asb      = Asb;
-  Packet.Acb      = &Acb;
+  Packet.Asb = Asb;
+  Packet.Acb = &Acb;
 
   ((CHAR16 *) Buffer)[0] = Identifier & BIT0;
   CopyMem (&((CHAR16 *) Buffer)[1], Password, HDD_PASSWORD_MAX_LENGTH);
 
   Packet.OutDataBuffer     = Buffer;
   Packet.OutTransferLength = sizeof (Buffer);
-  Packet.Timeout           = ATA_TIMEOUT;
+  Packet.Timeout = ATA_TIMEOUT;
 
   Status = AtaPassThru->PassThru (
-                          AtaPassThru,
-                          Port,
-                          PortMultiplierPort,
-                          &Packet
-                          );
+                                  AtaPassThru,
+                                  Port,
+                                  PortMultiplierPort,
+                                  &Packet
+                                  );
   if (!EFI_ERROR (Status) &&
       ((Asb->AtaStatus & ATA_STSREG_ERR) != 0) &&
       ((Asb->AtaError & ATA_ERRREG_ABRT) != 0)) {
@@ -127,10 +126,10 @@ FreezeLockDevice (
   IN UINT16                         PortMultiplierPort
   )
 {
-  EFI_STATUS                          Status;
-  EFI_ATA_COMMAND_BLOCK               Acb;
-  EFI_ATA_STATUS_BLOCK                *Asb;
-  EFI_ATA_PASS_THRU_COMMAND_PACKET    Packet;
+  EFI_STATUS                        Status;
+  EFI_ATA_COMMAND_BLOCK             Acb;
+  EFI_ATA_STATUS_BLOCK              *Asb;
+  EFI_ATA_PASS_THRU_COMMAND_PACKET  Packet;
 
   if (AtaPassThru == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -146,9 +145,9 @@ FreezeLockDevice (
   // aligned.
   //
   Asb = AllocateAlignedPages (
-          EFI_SIZE_TO_PAGES (sizeof (EFI_ATA_STATUS_BLOCK)),
-          AtaPassThru->Mode->IoAlign
-          );
+                              EFI_SIZE_TO_PAGES (sizeof (EFI_ATA_STATUS_BLOCK)),
+                              AtaPassThru->Mode->IoAlign
+                              );
   if (Asb == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -167,16 +166,16 @@ FreezeLockDevice (
   ZeroMem (&Packet, sizeof (Packet));
   Packet.Protocol = EFI_ATA_PASS_THRU_PROTOCOL_ATA_NON_DATA;
   Packet.Length   = EFI_ATA_PASS_THRU_LENGTH_NO_DATA_TRANSFER;
-  Packet.Asb      = Asb;
-  Packet.Acb      = &Acb;
-  Packet.Timeout  = ATA_TIMEOUT;
+  Packet.Asb     = Asb;
+  Packet.Acb     = &Acb;
+  Packet.Timeout = ATA_TIMEOUT;
 
   Status = AtaPassThru->PassThru (
-                          AtaPassThru,
-                          Port,
-                          PortMultiplierPort,
-                          &Packet
-                          );
+                                  AtaPassThru,
+                                  Port,
+                                  PortMultiplierPort,
+                                  &Packet
+                                  );
   if (!EFI_ERROR (Status) &&
       ((Asb->AtaStatus & ATA_STSREG_ERR) != 0) &&
       ((Asb->AtaError & ATA_ERRREG_ABRT) != 0)) {
@@ -200,15 +199,15 @@ UnlockHddPassword (
   IN EDKII_PEI_ATA_PASS_THRU_PPI    *AtaPassThruPpi
   )
 {
-  EFI_STATUS                     Status;
-  VOID                           *Buffer;
-  UINTN                          Length;
-  UINT8                          DummyData;
-  HDD_PASSWORD_DEVICE_INFO       *DevInfo;
-  UINT16                         Port;
-  UINT16                         PortMultiplierPort;
-  EFI_DEVICE_PATH_PROTOCOL       *DevicePath;
-  UINTN                          DevicePathLength;
+  EFI_STATUS                Status;
+  VOID                      *Buffer;
+  UINTN                     Length;
+  UINT8                     DummyData;
+  HDD_PASSWORD_DEVICE_INFO  *DevInfo;
+  UINT16                    Port;
+  UINT16                    PortMultiplierPort;
+  EFI_DEVICE_PATH_PROTOCOL  *DevicePath;
+  UINTN                     DevicePathLength;
 
   //
   // Get HDD password device info from LockBox.
@@ -222,6 +221,7 @@ UnlockHddPassword (
       Status = RestoreLockBox (&mHddPasswordDeviceInfoGuid, Buffer, &Length);
     }
   }
+
   if ((Buffer == NULL) || (Buffer == (VOID *) &DummyData)) {
     return;
   } else if (EFI_ERROR (Status)) {
@@ -270,15 +270,17 @@ UnlockHddPassword (
             (DevInfo->Device.PortMultiplierPort == PortMultiplierPort) &&
             (DevInfo->DevicePathLength >= DevicePathLength) &&
             (CompareMem (
-              DevInfo->DevicePath,
-              DevicePath,
-              DevicePathLength - sizeof (EFI_DEVICE_PATH_PROTOCOL)) == 0)) {
+                         DevInfo->DevicePath,
+                         DevicePath,
+                         DevicePathLength - sizeof (EFI_DEVICE_PATH_PROTOCOL)
+                         ) == 0)) {
           //
           // If device locked, unlock first.
           //
           if (!IsZeroBuffer (DevInfo->Password, HDD_PASSWORD_MAX_LENGTH)) {
             UnlockDevice (AtaPassThruPpi, Port, PortMultiplierPort, 0, DevInfo->Password);
           }
+
           //
           // Freeze lock the device.
           //
@@ -295,7 +297,6 @@ UnlockHddPassword (
 Exit:
   ZeroMem (Buffer, Length);
   FreePages (Buffer, EFI_SIZE_TO_PAGES (Length));
-
 }
 
 /**
@@ -326,13 +327,11 @@ HddPasswordAtaPassThruNotify (
   return EFI_SUCCESS;
 }
 
-
-EFI_PEI_NOTIFY_DESCRIPTOR mHddPasswordAtaPassThruPpiNotifyDesc = {
+EFI_PEI_NOTIFY_DESCRIPTOR  mHddPasswordAtaPassThruPpiNotifyDesc = {
   (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
   &gEdkiiPeiAtaPassThruPpiGuid,
   HddPasswordAtaPassThruNotify
 };
-
 
 /**
   Main entry for this module.
@@ -350,8 +349,8 @@ HddPasswordPeiInit (
   IN CONST EFI_PEI_SERVICES     **PeiServices
   )
 {
-  EFI_STATUS                              Status;
-  EFI_BOOT_MODE                           BootMode;
+  EFI_STATUS     Status;
+  EFI_BOOT_MODE  BootMode;
 
   Status = PeiServicesGetBootMode (&BootMode);
   if ((EFI_ERROR (Status)) || (BootMode != BOOT_ON_S3_RESUME)) {
@@ -364,4 +363,3 @@ HddPasswordPeiInit (
   ASSERT_EFI_ERROR (Status);
   return Status;
 }
-

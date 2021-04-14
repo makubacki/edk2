@@ -21,10 +21,10 @@ TisPcPresenceCheck (
   IN      TIS_PC_REGISTERS_PTR      TisReg
   )
 {
-  UINT8                             RegRead;
+  UINT8  RegRead;
 
-  RegRead = MmioRead8 ((UINTN)&TisReg->Access);
-  return (BOOLEAN)(RegRead != (UINT8)-1);
+  RegRead = MmioRead8 ((UINTN) &TisReg->Access);
+  return (BOOLEAN) (RegRead != (UINT8) - 1);
 }
 
 /**
@@ -47,15 +47,18 @@ TisPcWaitRegisterBits (
   IN      UINT32                    TimeOut
   )
 {
-  UINT8                             RegRead;
-  UINT32                            WaitTime;
+  UINT8   RegRead;
+  UINT32  WaitTime;
 
-  for (WaitTime = 0; WaitTime < TimeOut; WaitTime += 30){
-    RegRead = MmioRead8 ((UINTN)Register);
-    if ((RegRead & BitSet) == BitSet && (RegRead & BitClear) == 0)
+  for (WaitTime = 0; WaitTime < TimeOut; WaitTime += 30) {
+    RegRead = MmioRead8 ((UINTN) Register);
+    if ((RegRead & BitSet) == BitSet && (RegRead & BitClear) == 0) {
       return EFI_SUCCESS;
+    }
+
     MicroSecondDelay (30);
   }
+
   return EFI_TIMEOUT;
 }
 
@@ -74,12 +77,12 @@ EFI_STATUS
 EFIAPI
 TisPcReadBurstCount (
   IN      TIS_PC_REGISTERS_PTR      TisReg,
-     OUT  UINT16                    *BurstCount
+  OUT  UINT16                    *BurstCount
   )
 {
-  UINT32                            WaitTime;
-  UINT8                             DataByte0;
-  UINT8                             DataByte1;
+  UINT32  WaitTime;
+  UINT8   DataByte0;
+  UINT8   DataByte1;
 
   if (BurstCount == NULL || TisReg == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -91,12 +94,13 @@ TisPcReadBurstCount (
     // TIS_PC_REGISTERS_PTR->burstCount is UINT16, but it is not 2bytes aligned,
     // so it needs to use MmioRead8 to read two times
     //
-    DataByte0   = MmioRead8 ((UINTN)&TisReg->BurstCount);
-    DataByte1   = MmioRead8 ((UINTN)&TisReg->BurstCount + 1);
-    *BurstCount = (UINT16)((DataByte1 << 8) + DataByte0);
+    DataByte0   = MmioRead8 ((UINTN) &TisReg->BurstCount);
+    DataByte1   = MmioRead8 ((UINTN) &TisReg->BurstCount + 1);
+    *BurstCount = (UINT16) ((DataByte1 << 8) + DataByte0);
     if (*BurstCount != 0) {
       return EFI_SUCCESS;
     }
+
     MicroSecondDelay (30);
     WaitTime += 30;
   } while (WaitTime < TIS_TIMEOUT_D);
@@ -120,19 +124,19 @@ TisPcPrepareCommand (
   IN      TIS_PC_REGISTERS_PTR      TisReg
   )
 {
-  EFI_STATUS                        Status;
+  EFI_STATUS  Status;
 
   if (TisReg == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
-  MmioWrite8((UINTN)&TisReg->Status, TIS_PC_STS_READY);
+  MmioWrite8 ((UINTN) &TisReg->Status, TIS_PC_STS_READY);
   Status = TisPcWaitRegisterBits (
-             &TisReg->Status,
-             TIS_PC_STS_READY,
-             0,
-             TIS_TIMEOUT_B
-             );
+                                  &TisReg->Status,
+                                  TIS_PC_STS_READY,
+                                  0,
+                                  TIS_TIMEOUT_B
+                                  );
   return Status;
 }
 
@@ -153,7 +157,7 @@ TisPcRequestUseTpm (
   IN      TIS_PC_REGISTERS_PTR      TisReg
   )
 {
-  EFI_STATUS                        Status;
+  EFI_STATUS  Status;
 
   if (TisReg == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -163,15 +167,15 @@ TisPcRequestUseTpm (
     return EFI_NOT_FOUND;
   }
 
-  MmioWrite8((UINTN)&TisReg->Access, TIS_PC_ACC_RQUUSE);
+  MmioWrite8 ((UINTN) &TisReg->Access, TIS_PC_ACC_RQUUSE);
   //
   // No locality set before, ACCESS_X.activeLocality MUST be valid within TIMEOUT_A
   //
   Status = TisPcWaitRegisterBits (
-             &TisReg->Access,
-             (UINT8)(TIS_PC_ACC_ACTIVE |TIS_PC_VALID),
-             0,
-             TIS_TIMEOUT_A
-             );
+                                  &TisReg->Access,
+                                  (UINT8) (TIS_PC_ACC_ACTIVE |TIS_PC_VALID),
+                                  0,
+                                  TIS_TIMEOUT_A
+                                  );
   return Status;
 }

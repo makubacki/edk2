@@ -71,11 +71,11 @@ Tpm2SubmitCommand (
   )
 {
   return DTpm2SubmitCommand (
-           InputParameterBlockSize,
-           InputParameterBlock,
-           OutputParameterBlockSize,
-           OutputParameterBlock
-           );
+                             InputParameterBlockSize,
+                             InputParameterBlock,
+                             OutputParameterBlockSize,
+                             OutputParameterBlock
+                             );
 }
 
 /**

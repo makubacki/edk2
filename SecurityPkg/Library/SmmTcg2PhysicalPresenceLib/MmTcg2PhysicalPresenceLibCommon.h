@@ -27,8 +27,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
   @retval Other value   The constructor can't add string package.
 **/
 EFI_STATUS
-Tcg2PhysicalPresenceLibCommonConstructor (
-  VOID
-  );
+  Tcg2PhysicalPresenceLibCommonConstructor (
+                                            VOID
+                                            );
 
 #endif

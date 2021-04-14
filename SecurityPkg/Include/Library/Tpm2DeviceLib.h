@@ -52,8 +52,8 @@ Tpm2SubmitCommand (
 EFI_STATUS
 EFIAPI
 Tpm2RequestUseTpm (
-  VOID
-  );
+                   VOID
+                   );
 
 /**
   This service enables the sending of commands to the TPM2.
@@ -68,13 +68,13 @@ Tpm2RequestUseTpm (
   @retval EFI_BUFFER_TOO_SMALL   The output parameter block is too small.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *TPM2_SUBMIT_COMMAND) (
-  IN UINT32            InputParameterBlockSize,
-  IN UINT8             *InputParameterBlock,
-  IN OUT UINT32        *OutputParameterBlockSize,
-  IN UINT8             *OutputParameterBlock
-  );
+  EFI_STATUS
+(EFIAPI *TPM2_SUBMIT_COMMAND)(
+                              IN UINT32            InputParameterBlockSize,
+                              IN UINT8             *InputParameterBlock,
+                              IN OUT UINT32        *OutputParameterBlockSize,
+                              IN UINT8             *OutputParameterBlock
+                              );
 
 /**
   This service requests use TPM2.
@@ -84,15 +84,15 @@ EFI_STATUS
   @retval EFI_DEVICE_ERROR Unexpected device behavior.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *TPM2_REQUEST_USE_TPM) (
-  VOID
-  );
+  EFI_STATUS
+(EFIAPI *TPM2_REQUEST_USE_TPM)(
+                               VOID
+                               );
 
 typedef struct {
-  EFI_GUID                           ProviderGuid;
-  TPM2_SUBMIT_COMMAND                Tpm2SubmitCommand;
-  TPM2_REQUEST_USE_TPM               Tpm2RequestUseTpm;
+  EFI_GUID                ProviderGuid;
+  TPM2_SUBMIT_COMMAND     Tpm2SubmitCommand;
+  TPM2_REQUEST_USE_TPM    Tpm2RequestUseTpm;
 } TPM2_DEVICE_INTERFACE;
 
 /**

@@ -9,7 +9,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <PiDxe.h>
 #include <Library/SecurityManagementLib.h>
 
-
 /**
   Check image authentication status returned from Section Extraction Protocol
 
@@ -47,7 +46,6 @@ DxeImageAuthenticationStatusHandler (
   return EFI_SUCCESS;
 }
 
-
 /**
   Register image authentication status check handler.
 
@@ -64,7 +62,7 @@ DxeImageAuthenticationStatusLibConstructor (
   )
 {
   return RegisterSecurity2Handler (
-           DxeImageAuthenticationStatusHandler,
-           EFI_AUTH_OPERATION_AUTHENTICATION_STATE
-           );
+                                   DxeImageAuthenticationStatusHandler,
+                                   EFI_AUTH_OPERATION_AUTHENTICATION_STATE
+                                   );
 }

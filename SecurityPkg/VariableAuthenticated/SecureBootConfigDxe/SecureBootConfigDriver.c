@@ -27,20 +27,20 @@ SecureBootConfigDriverEntryPoint (
   IN EFI_SYSTEM_TABLE    *SystemTable
   )
 {
-  EFI_STATUS                       Status;
-  SECUREBOOT_CONFIG_PRIVATE_DATA   *PrivateData;
+  EFI_STATUS                      Status;
+  SECUREBOOT_CONFIG_PRIVATE_DATA  *PrivateData;
 
   //
   // If already started, return.
   //
-    Status = gBS->OpenProtocol (
-                  ImageHandle,
-                  &gEfiCallerIdGuid,
-                  NULL,
-                  ImageHandle,
-                  ImageHandle,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+  Status = gBS->OpenProtocol (
+                              ImageHandle,
+                              &gEfiCallerIdGuid,
+                              NULL,
+                              ImageHandle,
+                              ImageHandle,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
   if (!EFI_ERROR (Status)) {
     return EFI_ALREADY_STARTED;
   }
@@ -65,11 +65,11 @@ SecureBootConfigDriverEntryPoint (
   // Install private GUID.
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &ImageHandle,
-                  &gEfiCallerIdGuid,
-                  PrivateData,
-                  NULL
-                  );
+                                                   &ImageHandle,
+                                                   &gEfiCallerIdGuid,
+                                                   PrivateData,
+                                                   NULL
+                                                   );
 
   if (EFI_ERROR (Status)) {
     goto ErrorExit;
@@ -100,14 +100,14 @@ SecureBootConfigDriverUnload (
   IN EFI_HANDLE  ImageHandle
   )
 {
-  EFI_STATUS                  Status;
-  SECUREBOOT_CONFIG_PRIVATE_DATA   *PrivateData;
+  EFI_STATUS                      Status;
+  SECUREBOOT_CONFIG_PRIVATE_DATA  *PrivateData;
 
   Status = gBS->HandleProtocol (
-                  ImageHandle,
-                  &gEfiCallerIdGuid,
-                  (VOID **) &PrivateData
-                  );
+                                ImageHandle,
+                                &gEfiCallerIdGuid,
+                                (VOID **) &PrivateData
+                                );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -115,11 +115,11 @@ SecureBootConfigDriverUnload (
   ASSERT (PrivateData->Signature == SECUREBOOT_CONFIG_PRIVATE_DATA_SIGNATURE);
 
   gBS->UninstallMultipleProtocolInterfaces (
-         ImageHandle,
-         &gEfiCallerIdGuid,
-         PrivateData,
-         NULL
-         );
+                                            ImageHandle,
+                                            &gEfiCallerIdGuid,
+                                            PrivateData,
+                                            NULL
+                                            );
 
   UninstallSecureBootConfigForm (PrivateData);
 

@@ -31,10 +31,10 @@ Tpm2SetSha1ToDigestList (
   DigestList->count = 1;
   DigestList->digests[0].hashAlg = TPM_ALG_SHA1;
   CopyMem (
-    DigestList->digests[0].digest.sha1,
-    Sha1Digest,
-    SHA1_DIGEST_SIZE
-    );
+           DigestList->digests[0].digest.sha1,
+           Sha1Digest,
+           SHA1_DIGEST_SIZE
+           );
 }
 
 /**
@@ -51,8 +51,8 @@ Sha1HashInit (
   OUT HASH_HANDLE    *HashHandle
   )
 {
-  VOID     *Sha1Ctx;
-  UINTN    CtxSize;
+  VOID   *Sha1Ctx;
+  UINTN  CtxSize;
 
   CtxSize = Sha1GetContextSize ();
   Sha1Ctx = AllocatePool (CtxSize);
@@ -60,7 +60,7 @@ Sha1HashInit (
 
   Sha1Init (Sha1Ctx);
 
-  *HashHandle = (HASH_HANDLE)Sha1Ctx;
+  *HashHandle = (HASH_HANDLE) Sha1Ctx;
 
   return EFI_SUCCESS;
 }
@@ -82,9 +82,9 @@ Sha1HashUpdate (
   IN UINTN          DataToHashLen
   )
 {
-  VOID     *Sha1Ctx;
+  VOID  *Sha1Ctx;
 
-  Sha1Ctx = (VOID *)HashHandle;
+  Sha1Ctx = (VOID *) HashHandle;
   Sha1Update (Sha1Ctx, DataToHash, DataToHashLen);
 
   return EFI_SUCCESS;
@@ -105,10 +105,10 @@ Sha1HashFinal (
   OUT TPML_DIGEST_VALUES *DigestList
   )
 {
-  UINT8         Digest[SHA1_DIGEST_SIZE];
-  VOID          *Sha1Ctx;
+  UINT8  Digest[SHA1_DIGEST_SIZE];
+  VOID   *Sha1Ctx;
 
-  Sha1Ctx = (VOID *)HashHandle;
+  Sha1Ctx = (VOID *) HashHandle;
   Sha1Final (Sha1Ctx, Digest);
 
   FreePool (Sha1Ctx);
@@ -145,5 +145,6 @@ HashInstanceLibSha1Constructor (
     //
     return EFI_SUCCESS;
   }
+
   return Status;
 }

@@ -45,15 +45,15 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // Flag to check GPT partition. It only need be measured once.
 //
-BOOLEAN                           mTcg2MeasureGptTableFlag = FALSE;
-UINTN                             mTcg2MeasureGptCount = 0;
-VOID                              *mTcg2FileBuffer;
-UINTN                             mTcg2ImageSize;
+BOOLEAN  mTcg2MeasureGptTableFlag = FALSE;
+UINTN    mTcg2MeasureGptCount     = 0;
+VOID     *mTcg2FileBuffer;
+UINTN    mTcg2ImageSize;
 //
 // Measured FV handle cache
 //
-EFI_HANDLE                        mTcg2CacheMeasuredHandle  = NULL;
-MEASURED_HOB_DATA                 *mTcg2MeasuredHobData     = NULL;
+EFI_HANDLE         mTcg2CacheMeasuredHandle = NULL;
+MEASURED_HOB_DATA  *mTcg2MeasuredHobData    = NULL;
 
 /**
   Reads contents of a PE/COFF image in memory buffer.
@@ -79,7 +79,7 @@ DxeTpm2MeasureBootLibImageRead (
   OUT    VOID    *Buffer
   )
 {
-  UINTN               EndPosition;
+  UINTN  EndPosition;
 
   if (FileHandle == NULL || ReadSize == NULL || Buffer == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -91,14 +91,14 @@ DxeTpm2MeasureBootLibImageRead (
 
   EndPosition = FileOffset + *ReadSize;
   if (EndPosition > mTcg2ImageSize) {
-    *ReadSize = (UINT32)(mTcg2ImageSize - FileOffset);
+    *ReadSize = (UINT32) (mTcg2ImageSize - FileOffset);
   }
 
   if (FileOffset >= mTcg2ImageSize) {
     *ReadSize = 0;
   }
 
-  CopyMem (Buffer, (UINT8 *)((UINTN) FileHandle + FileOffset), *ReadSize);
+  CopyMem (Buffer, (UINT8 *) ((UINTN) FileHandle + FileOffset), *ReadSize);
 
   return EFI_SUCCESS;
 }
@@ -125,30 +125,32 @@ Tcg2MeasureGptTable (
   IN  EFI_HANDLE         GptHandle
   )
 {
-  EFI_STATUS                        Status;
-  EFI_BLOCK_IO_PROTOCOL             *BlockIo;
-  EFI_DISK_IO_PROTOCOL              *DiskIo;
-  EFI_PARTITION_TABLE_HEADER        *PrimaryHeader;
-  EFI_PARTITION_ENTRY               *PartitionEntry;
-  UINT8                             *EntryPtr;
-  UINTN                             NumberOfPartition;
-  UINT32                            Index;
-  EFI_TCG2_EVENT                    *Tcg2Event;
-  EFI_GPT_DATA                      *GptData;
-  UINT32                            EventSize;
+  EFI_STATUS                  Status;
+  EFI_BLOCK_IO_PROTOCOL       *BlockIo;
+  EFI_DISK_IO_PROTOCOL        *DiskIo;
+  EFI_PARTITION_TABLE_HEADER  *PrimaryHeader;
+  EFI_PARTITION_ENTRY         *PartitionEntry;
+  UINT8                       *EntryPtr;
+  UINTN                       NumberOfPartition;
+  UINT32                      Index;
+  EFI_TCG2_EVENT              *Tcg2Event;
+  EFI_GPT_DATA                *GptData;
+  UINT32                      EventSize;
 
   if (mTcg2MeasureGptCount > 0) {
     return EFI_SUCCESS;
   }
 
-  Status = gBS->HandleProtocol (GptHandle, &gEfiBlockIoProtocolGuid, (VOID**)&BlockIo);
+  Status = gBS->HandleProtocol (GptHandle, &gEfiBlockIoProtocolGuid, (VOID **) &BlockIo);
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
-  Status = gBS->HandleProtocol (GptHandle, &gEfiDiskIoProtocolGuid, (VOID**)&DiskIo);
+
+  Status = gBS->HandleProtocol (GptHandle, &gEfiDiskIoProtocolGuid, (VOID **) &DiskIo);
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
+
   //
   // Read the EFI Partition Table Header
   //
@@ -156,33 +158,36 @@ Tcg2MeasureGptTable (
   if (PrimaryHeader == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
+
   Status = DiskIo->ReadDisk (
-                     DiskIo,
-                     BlockIo->Media->MediaId,
-                     1 * BlockIo->Media->BlockSize,
-                     BlockIo->Media->BlockSize,
-                     (UINT8 *)PrimaryHeader
-                     );
+                             DiskIo,
+                             BlockIo->Media->MediaId,
+                             1 * BlockIo->Media->BlockSize,
+                             BlockIo->Media->BlockSize,
+                             (UINT8 *) PrimaryHeader
+                             );
   if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "Failed to Read Partition Table Header!\n"));
     FreePool (PrimaryHeader);
     return EFI_DEVICE_ERROR;
   }
+
   //
   // Read the partition entry.
   //
-  EntryPtr = (UINT8 *)AllocatePool (PrimaryHeader->NumberOfPartitionEntries * PrimaryHeader->SizeOfPartitionEntry);
+  EntryPtr = (UINT8 *) AllocatePool (PrimaryHeader->NumberOfPartitionEntries * PrimaryHeader->SizeOfPartitionEntry);
   if (EntryPtr == NULL) {
     FreePool (PrimaryHeader);
     return EFI_OUT_OF_RESOURCES;
   }
+
   Status = DiskIo->ReadDisk (
-                     DiskIo,
-                     BlockIo->Media->MediaId,
-                     MultU64x32(PrimaryHeader->PartitionEntryLBA, BlockIo->Media->BlockSize),
-                     PrimaryHeader->NumberOfPartitionEntries * PrimaryHeader->SizeOfPartitionEntry,
-                     EntryPtr
-                     );
+                             DiskIo,
+                             BlockIo->Media->MediaId,
+                             MultU64x32 (PrimaryHeader->PartitionEntryLBA, BlockIo->Media->BlockSize),
+                             PrimaryHeader->NumberOfPartitionEntries * PrimaryHeader->SizeOfPartitionEntry,
+                             EntryPtr
+                             );
   if (EFI_ERROR (Status)) {
     FreePool (PrimaryHeader);
     FreePool (EntryPtr);
@@ -192,66 +197,68 @@ Tcg2MeasureGptTable (
   //
   // Count the valid partition
   //
-  PartitionEntry    = (EFI_PARTITION_ENTRY *)EntryPtr;
+  PartitionEntry    = (EFI_PARTITION_ENTRY *) EntryPtr;
   NumberOfPartition = 0;
   for (Index = 0; Index < PrimaryHeader->NumberOfPartitionEntries; Index++) {
     if (!IsZeroGuid (&PartitionEntry->PartitionTypeGUID)) {
       NumberOfPartition++;
     }
-    PartitionEntry = (EFI_PARTITION_ENTRY *)((UINT8 *)PartitionEntry + PrimaryHeader->SizeOfPartitionEntry);
+
+    PartitionEntry = (EFI_PARTITION_ENTRY *) ((UINT8 *) PartitionEntry + PrimaryHeader->SizeOfPartitionEntry);
   }
 
   //
   // Prepare Data for Measurement
   //
-  EventSize = (UINT32)(sizeof (EFI_GPT_DATA) - sizeof (GptData->Partitions)
+  EventSize = (UINT32) (sizeof (EFI_GPT_DATA) - sizeof (GptData->Partitions)
                         + NumberOfPartition * PrimaryHeader->SizeOfPartitionEntry);
-  Tcg2Event = (EFI_TCG2_EVENT *) AllocateZeroPool (EventSize + sizeof (EFI_TCG2_EVENT) - sizeof(Tcg2Event->Event));
+  Tcg2Event = (EFI_TCG2_EVENT *) AllocateZeroPool (EventSize + sizeof (EFI_TCG2_EVENT) - sizeof (Tcg2Event->Event));
   if (Tcg2Event == NULL) {
     FreePool (PrimaryHeader);
     FreePool (EntryPtr);
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Tcg2Event->Size = EventSize + sizeof (EFI_TCG2_EVENT) - sizeof(Tcg2Event->Event);
-  Tcg2Event->Header.HeaderSize    = sizeof(EFI_TCG2_EVENT_HEADER);
+  Tcg2Event->Size = EventSize + sizeof (EFI_TCG2_EVENT) - sizeof (Tcg2Event->Event);
+  Tcg2Event->Header.HeaderSize    = sizeof (EFI_TCG2_EVENT_HEADER);
   Tcg2Event->Header.HeaderVersion = EFI_TCG2_EVENT_HEADER_VERSION;
-  Tcg2Event->Header.PCRIndex      = 5;
-  Tcg2Event->Header.EventType     = EV_EFI_GPT_EVENT;
+  Tcg2Event->Header.PCRIndex  = 5;
+  Tcg2Event->Header.EventType = EV_EFI_GPT_EVENT;
   GptData = (EFI_GPT_DATA *) Tcg2Event->Event;
 
   //
   // Copy the EFI_PARTITION_TABLE_HEADER and NumberOfPartition
   //
-  CopyMem ((UINT8 *)GptData, (UINT8*)PrimaryHeader, sizeof (EFI_PARTITION_TABLE_HEADER));
+  CopyMem ((UINT8 *) GptData, (UINT8 *) PrimaryHeader, sizeof (EFI_PARTITION_TABLE_HEADER));
   GptData->NumberOfPartitions = NumberOfPartition;
   //
   // Copy the valid partition entry
   //
-  PartitionEntry    = (EFI_PARTITION_ENTRY*)EntryPtr;
+  PartitionEntry    = (EFI_PARTITION_ENTRY *) EntryPtr;
   NumberOfPartition = 0;
   for (Index = 0; Index < PrimaryHeader->NumberOfPartitionEntries; Index++) {
     if (!IsZeroGuid (&PartitionEntry->PartitionTypeGUID)) {
       CopyMem (
-        (UINT8 *)&GptData->Partitions + NumberOfPartition * PrimaryHeader->SizeOfPartitionEntry,
-        (UINT8 *)PartitionEntry,
-        PrimaryHeader->SizeOfPartitionEntry
-        );
+               (UINT8 *) &GptData->Partitions + NumberOfPartition * PrimaryHeader->SizeOfPartitionEntry,
+               (UINT8 *) PartitionEntry,
+               PrimaryHeader->SizeOfPartitionEntry
+               );
       NumberOfPartition++;
     }
-    PartitionEntry =(EFI_PARTITION_ENTRY *)((UINT8 *)PartitionEntry + PrimaryHeader->SizeOfPartitionEntry);
+
+    PartitionEntry = (EFI_PARTITION_ENTRY *) ((UINT8 *) PartitionEntry + PrimaryHeader->SizeOfPartitionEntry);
   }
 
   //
   // Measure the GPT data
   //
   Status = Tcg2Protocol->HashLogExtendEvent (
-             Tcg2Protocol,
-             0,
-             (EFI_PHYSICAL_ADDRESS) (UINTN) (VOID *) GptData,
-             (UINT64) EventSize,
-             Tcg2Event
-             );
+                                             Tcg2Protocol,
+                                             0,
+                                             (EFI_PHYSICAL_ADDRESS) (UINTN) (VOID *) GptData,
+                                             (UINT64) EventSize,
+                                             Tcg2Event
+                                             );
   if (!EFI_ERROR (Status)) {
     mTcg2MeasureGptCount++;
   }
@@ -295,29 +302,29 @@ Tcg2MeasurePeImage (
   IN  EFI_DEVICE_PATH_PROTOCOL  *FilePath
   )
 {
-  EFI_STATUS                        Status;
-  EFI_TCG2_EVENT                    *Tcg2Event;
-  EFI_IMAGE_LOAD_EVENT              *ImageLoad;
-  UINT32                            FilePathSize;
-  UINT32                            EventSize;
+  EFI_STATUS            Status;
+  EFI_TCG2_EVENT        *Tcg2Event;
+  EFI_IMAGE_LOAD_EVENT  *ImageLoad;
+  UINT32                FilePathSize;
+  UINT32                EventSize;
 
-  Status        = EFI_UNSUPPORTED;
-  ImageLoad     = NULL;
-  FilePathSize  = (UINT32) GetDevicePathSize (FilePath);
+  Status       = EFI_UNSUPPORTED;
+  ImageLoad    = NULL;
+  FilePathSize = (UINT32) GetDevicePathSize (FilePath);
 
   //
   // Determine destination PCR by BootPolicy
   //
   EventSize = sizeof (*ImageLoad) - sizeof (ImageLoad->DevicePath) + FilePathSize;
-  Tcg2Event = AllocateZeroPool (EventSize + sizeof (EFI_TCG2_EVENT) - sizeof(Tcg2Event->Event));
+  Tcg2Event = AllocateZeroPool (EventSize + sizeof (EFI_TCG2_EVENT) - sizeof (Tcg2Event->Event));
   if (Tcg2Event == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Tcg2Event->Size = EventSize + sizeof (EFI_TCG2_EVENT) - sizeof(Tcg2Event->Event);
-  Tcg2Event->Header.HeaderSize    = sizeof(EFI_TCG2_EVENT_HEADER);
+  Tcg2Event->Size = EventSize + sizeof (EFI_TCG2_EVENT) - sizeof (Tcg2Event->Event);
+  Tcg2Event->Header.HeaderSize    = sizeof (EFI_TCG2_EVENT_HEADER);
   Tcg2Event->Header.HeaderVersion = EFI_TCG2_EVENT_HEADER_VERSION;
-  ImageLoad           = (EFI_IMAGE_LOAD_EVENT *) Tcg2Event->Event;
+  ImageLoad = (EFI_IMAGE_LOAD_EVENT *) Tcg2Event->Event;
 
   switch (ImageType) {
     case EFI_IMAGE_SUBSYSTEM_EFI_APPLICATION:
@@ -333,11 +340,13 @@ Tcg2MeasurePeImage (
       Tcg2Event->Header.PCRIndex  = 2;
       break;
     default:
-      DEBUG ((
-        EFI_D_ERROR,
-        "Tcg2MeasurePeImage: Unknown subsystem type %d",
-        ImageType
-        ));
+      DEBUG (
+             (
+              EFI_D_ERROR,
+              "Tcg2MeasurePeImage: Unknown subsystem type %d",
+              ImageType
+             )
+             );
       goto Finish;
   }
 
@@ -353,12 +362,12 @@ Tcg2MeasurePeImage (
   // Log the PE data
   //
   Status = Tcg2Protocol->HashLogExtendEvent (
-             Tcg2Protocol,
-             PE_COFF_IMAGE,
-             ImageAddress,
-             ImageSize,
-             Tcg2Event
-             );
+                                             Tcg2Protocol,
+                                             PE_COFF_IMAGE,
+                                             ImageAddress,
+                                             ImageSize,
+                                             Tcg2Event
+                                             );
   if (Status == EFI_VOLUME_FULL) {
     //
     // Volume full here means the image is hashed and its result is extended to PCR.
@@ -447,14 +456,17 @@ DxeTpm2MeasureBootHandler (
 
   ProtocolCapability.Size = (UINT8) sizeof (ProtocolCapability);
   Status = Tcg2Protocol->GetCapability (
-                           Tcg2Protocol,
-                           &ProtocolCapability
-                           );
+                                        Tcg2Protocol,
+                                        &ProtocolCapability
+                                        );
   if (EFI_ERROR (Status) || (!ProtocolCapability.TPMPresentFlag)) {
     //
     // TPM device doesn't work or activate.
     //
-    DEBUG ((EFI_D_ERROR, "DxeTpm2MeasureBootHandler (%r) - TPMPresentFlag - %x\n", Status, ProtocolCapability.TPMPresentFlag));
+    DEBUG (
+          (EFI_D_ERROR, "DxeTpm2MeasureBootHandler (%r) - TPMPresentFlag - %x\n", Status,
+           ProtocolCapability.TPMPresentFlag)
+          );
     return EFI_SUCCESS;
   }
 
@@ -480,24 +492,23 @@ DxeTpm2MeasureBootHandler (
       // Find the Gpt partition
       //
       if (DevicePathType (DevicePathNode) == MEDIA_DEVICE_PATH &&
-            DevicePathSubType (DevicePathNode) == MEDIA_HARDDRIVE_DP) {
+          DevicePathSubType (DevicePathNode) == MEDIA_HARDDRIVE_DP) {
         //
         // Check whether it is a gpt partition or not
         //
         if (((HARDDRIVE_DEVICE_PATH *) DevicePathNode)->MBRType == MBR_TYPE_EFI_PARTITION_TABLE_HEADER &&
             ((HARDDRIVE_DEVICE_PATH *) DevicePathNode)->SignatureType == SIGNATURE_TYPE_GUID) {
-
           //
           // Change the partition device path to its parent device path (disk) and get the handle.
           //
           DevicePathNode->Type    = END_DEVICE_PATH_TYPE;
           DevicePathNode->SubType = END_ENTIRE_DEVICE_PATH_SUBTYPE;
-          DevicePathNode          = OrigDevicePathNode;
+          DevicePathNode = OrigDevicePathNode;
           Status = gBS->LocateDevicePath (
-                         &gEfiDiskIoProtocolGuid,
-                         &DevicePathNode,
-                         &Handle
-                         );
+                                          &gEfiDiskIoProtocolGuid,
+                                          &DevicePathNode,
+                                          &Handle
+                                          );
           if (!EFI_ERROR (Status)) {
             //
             // Measure GPT disk.
@@ -511,13 +522,15 @@ DxeTpm2MeasureBootHandler (
               mTcg2MeasureGptTableFlag = TRUE;
             }
           }
+
           FreePool (OrigDevicePathNode);
           OrigDevicePathNode = DuplicateDevicePath (File);
           ASSERT (OrigDevicePathNode != NULL);
           break;
         }
       }
-      DevicePathNode    = NextDevicePathNode (DevicePathNode);
+
+      DevicePathNode = NextDevicePathNode (DevicePathNode);
     }
   }
 
@@ -539,11 +552,12 @@ DxeTpm2MeasureBootHandler (
     if (IsDevicePathEnd (DevicePathNode)) {
       return EFI_SUCCESS;
     }
+
     //
     // The PE image from unmeasured Firmware volume need be measured
     // The PE image from measured Firmware volume will be measured according to policy below.
-    //   If it is driver, do not measure
-    //   If it is application, still measure.
+    // If it is driver, do not measure
+    // If it is application, still measure.
     //
     ApplicationRequired = TRUE;
 
@@ -553,19 +567,19 @@ DxeTpm2MeasureBootHandler (
       //
       TempHandle = Handle;
       do {
-        Status = gBS->HandleProtocol(
-                        TempHandle,
-                        &gEfiFirmwareVolumeBlockProtocolGuid,
-                        (VOID**)&FvbProtocol
-                        );
+        Status = gBS->HandleProtocol (
+                                      TempHandle,
+                                      &gEfiFirmwareVolumeBlockProtocolGuid,
+                                      (VOID **) &FvbProtocol
+                                      );
         TempHandle = FvbProtocol->ParentHandle;
-      } while (!EFI_ERROR(Status) && FvbProtocol->ParentHandle != NULL);
+      } while (!EFI_ERROR (Status) && FvbProtocol->ParentHandle != NULL);
 
       //
       // Search in measured FV Hob
       //
-      Status = FvbProtocol->GetPhysicalAddress(FvbProtocol, &FvAddress);
-      if (EFI_ERROR(Status)){
+      Status = FvbProtocol->GetPhysicalAddress (FvbProtocol, &FvAddress);
+      if (EFI_ERROR (Status)) {
         return Status;
       }
 
@@ -577,7 +591,7 @@ DxeTpm2MeasureBootHandler (
           // Cache measured FV for next measurement
           //
           mTcg2CacheMeasuredHandle = Handle;
-          ApplicationRequired  = TRUE;
+          ApplicationRequired = TRUE;
           break;
         }
       }
@@ -626,34 +640,35 @@ DxeTpm2MeasureBootHandler (
   // Measure drivers and applications if Application flag is not set
   //
   if ((!ApplicationRequired) ||
-        (ApplicationRequired && ImageContext.ImageType == EFI_IMAGE_SUBSYSTEM_EFI_APPLICATION)) {
+      (ApplicationRequired && ImageContext.ImageType == EFI_IMAGE_SUBSYSTEM_EFI_APPLICATION)) {
     //
     // Print the image path to be measured.
     //
     DEBUG_CODE_BEGIN ();
-      CHAR16                            *ToText;
-      ToText = ConvertDevicePathToText (
-                 DevicePathNode,
-                 FALSE,
-                 TRUE
-                 );
-      if (ToText != NULL) {
-        DEBUG ((DEBUG_INFO, "The measured image path is %s.\n", ToText));
-        FreePool (ToText);
-      }
+    CHAR16  *ToText;
+    ToText = ConvertDevicePathToText (
+                                      DevicePathNode,
+                                      FALSE,
+                                      TRUE
+                                      );
+    if (ToText != NULL) {
+      DEBUG ((DEBUG_INFO, "The measured image path is %s.\n", ToText));
+      FreePool (ToText);
+    }
+
     DEBUG_CODE_END ();
 
     //
     // Measure PE image into TPM log.
     //
     Status = Tcg2MeasurePeImage (
-               Tcg2Protocol,
-               (EFI_PHYSICAL_ADDRESS) (UINTN) FileBuffer,
-               FileSize,
-               (UINTN) ImageContext.ImageAddress,
-               ImageContext.ImageType,
-               DevicePathNode
-               );
+                                 Tcg2Protocol,
+                                 (EFI_PHYSICAL_ADDRESS) (UINTN) FileBuffer,
+                                 FileSize,
+                                 (UINTN) ImageContext.ImageAddress,
+                                 ImageContext.ImageType,
+                                 DevicePathNode
+                                 );
     DEBUG ((EFI_D_INFO, "DxeTpm2MeasureBootHandler - Tcg2MeasurePeImage - %r\n", Status));
   }
 
@@ -697,7 +712,7 @@ DxeTpm2MeasureBootLibConstructor (
   }
 
   return RegisterSecurity2Handler (
-          DxeTpm2MeasureBootHandler,
-          EFI_AUTH_OPERATION_MEASURE_IMAGE | EFI_AUTH_OPERATION_IMAGE_REQUIRED
-          );
+                                   DxeTpm2MeasureBootHandler,
+                                   EFI_AUTH_OPERATION_MEASURE_IMAGE | EFI_AUTH_OPERATION_IMAGE_REQUIRED
+                                   );
 }

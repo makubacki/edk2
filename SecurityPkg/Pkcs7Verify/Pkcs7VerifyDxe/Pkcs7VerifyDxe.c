@@ -55,10 +55,10 @@ CalculateDataHash (
     if (HashCtx == NULL) {
       goto _Exit;
     }
-    Status = Sha1Init   (HashCtx);
-    Status = Sha1Update (HashCtx, Data, DataSize);
-    Status = Sha1Final  (HashCtx, HashValue);
 
+    Status = Sha1Init (HashCtx);
+    Status = Sha1Update (HashCtx, Data, DataSize);
+    Status = Sha1Final (HashCtx, HashValue);
   } else if (CompareGuid (CertGuid, &gEfiCertSha256Guid)) {
     //
     // SHA256 Hash
@@ -68,10 +68,10 @@ CalculateDataHash (
     if (HashCtx == NULL) {
       goto _Exit;
     }
-    Status = Sha256Init   (HashCtx);
-    Status = Sha256Update (HashCtx, Data, DataSize);
-    Status = Sha256Final  (HashCtx, HashValue);
 
+    Status = Sha256Init (HashCtx);
+    Status = Sha256Update (HashCtx, Data, DataSize);
+    Status = Sha256Final (HashCtx, HashValue);
   } else if (CompareGuid (CertGuid, &gEfiCertSha384Guid)) {
     //
     // SHA384 Hash
@@ -81,10 +81,10 @@ CalculateDataHash (
     if (HashCtx == NULL) {
       goto _Exit;
     }
-    Status = Sha384Init   (HashCtx);
-    Status = Sha384Update (HashCtx, Data, DataSize);
-    Status = Sha384Final  (HashCtx, HashValue);
 
+    Status = Sha384Init (HashCtx);
+    Status = Sha384Update (HashCtx, Data, DataSize);
+    Status = Sha384Final (HashCtx, HashValue);
   } else if (CompareGuid (CertGuid, &gEfiCertSha512Guid)) {
     //
     // SHA512 Hash
@@ -94,9 +94,10 @@ CalculateDataHash (
     if (HashCtx == NULL) {
       goto _Exit;
     }
-    Status = Sha512Init   (HashCtx);
+
+    Status = Sha512Init (HashCtx);
     Status = Sha512Update (HashCtx, Data, DataSize);
-    Status = Sha512Final  (HashCtx, HashValue);
+    Status = Sha512Final (HashCtx, HashValue);
   }
 
 _Exit:
@@ -143,7 +144,7 @@ IsContentHashRevokedByHash (
   // Check if any hash matching content hash can be found in RevokedDB
   //
   for (Index = 0; ; Index++) {
-    SigList = (EFI_SIGNATURE_LIST *)(RevokedDb[Index]);
+    SigList = (EFI_SIGNATURE_LIST *) (RevokedDb[Index]);
 
     //
     // The list is terminated by a NULL pointer.
@@ -155,17 +156,17 @@ IsContentHashRevokedByHash (
     //
     // Search the signature database to search the revoked content hash
     //
-    SigData    = (EFI_SIGNATURE_DATA *) ((UINT8 *) SigList + sizeof (EFI_SIGNATURE_LIST) +
-                                        SigList->SignatureHeaderSize);
+    SigData = (EFI_SIGNATURE_DATA *) ((UINT8 *) SigList + sizeof (EFI_SIGNATURE_LIST) +
+                                      SigList->SignatureHeaderSize);
     EntryCount = (SigList->SignatureListSize - SigList->SignatureHeaderSize -
-                 sizeof (EFI_SIGNATURE_LIST)) / SigList->SignatureSize;
+                  sizeof (EFI_SIGNATURE_LIST)) / SigList->SignatureSize;
     for (EntryIndex = 0; EntryIndex < EntryCount; EntryIndex++) {
       //
       // The problem case.  There's a revocation hash but the sizes
       // don't match, meaning it's a different hash algorithm and we
       // can't tell if it's revoking our binary or not.  Assume not.
       //
-      if (SigList->SignatureSize - sizeof(EFI_GUID) == HashSize) {
+      if (SigList->SignatureSize - sizeof (EFI_GUID) == HashSize) {
         //
         // Compare Data Hash with Signature Data
         //
@@ -220,7 +221,7 @@ IsContentHashRevoked (
   // Check if any hash matching content hash can be found in RevokedDB
   //
   for (Index = 0; ; Index++) {
-    SigList = (EFI_SIGNATURE_LIST *)(RevokedDb[Index]);
+    SigList = (EFI_SIGNATURE_LIST *) (RevokedDb[Index]);
 
     //
     // The list is terminated by a NULL pointer.
@@ -242,10 +243,10 @@ IsContentHashRevoked (
     //
     // Search the signature database to search the revoked content hash
     //
-    SigData    = (EFI_SIGNATURE_DATA *) ((UINT8 *) SigList + sizeof (EFI_SIGNATURE_LIST) +
-                                        SigList->SignatureHeaderSize);
+    SigData = (EFI_SIGNATURE_DATA *) ((UINT8 *) SigList + sizeof (EFI_SIGNATURE_LIST) +
+                                      SigList->SignatureHeaderSize);
     EntryCount = (SigList->SignatureListSize - SigList->SignatureHeaderSize -
-                 sizeof (EFI_SIGNATURE_LIST)) / SigList->SignatureSize;
+                  sizeof (EFI_SIGNATURE_LIST)) / SigList->SignatureSize;
     for (EntryIndex = 0; EntryIndex < EntryCount; EntryIndex++) {
       //
       // Compare Data Hash with Signature Data
@@ -308,8 +309,7 @@ IsCertHashRevoked (
 
   Status = FALSE;
   for (Index = 0; ; Index++) {
-
-    SigList = (EFI_SIGNATURE_LIST *)(RevokedDb[Index]);
+    SigList = (EFI_SIGNATURE_LIST *) (RevokedDb[Index]);
     //
     // The list is terminated by a NULL pointer.
     //
@@ -323,13 +323,10 @@ IsCertHashRevoked (
     //
     if (CompareGuid (&SigList->SignatureType, &gEfiCertX509Sha256Guid)) {
       Status = CalculateDataHash (TBSCert, TBSCertSize, &gEfiCertSha256Guid, CertHashVal);
-
     } else if (CompareGuid (&SigList->SignatureType, &gEfiCertX509Sha384Guid)) {
       Status = CalculateDataHash (TBSCert, TBSCertSize, &gEfiCertSha384Guid, CertHashVal);
-
     } else if (CompareGuid (&SigList->SignatureType, &gEfiCertX509Sha512Guid)) {
       Status = CalculateDataHash (TBSCert, TBSCertSize, &gEfiCertSha512Guid, CertHashVal);
-
     } else {
       //
       // Un-matched Cert Hash GUID
@@ -341,7 +338,7 @@ IsCertHashRevoked (
       continue;
     }
 
-    SigData    = (EFI_SIGNATURE_DATA *) ((UINT8 *) SigList + sizeof (EFI_SIGNATURE_LIST) +
+    SigData = (EFI_SIGNATURE_DATA *) ((UINT8 *) SigList + sizeof (EFI_SIGNATURE_LIST) +
                                       SigList->SignatureHeaderSize);
     EntryCount = (SigList->SignatureListSize - SigList->SignatureHeaderSize -
                   sizeof (EFI_SIGNATURE_LIST)) / SigList->SignatureSize;
@@ -349,17 +346,20 @@ IsCertHashRevoked (
       //
       // Check if the Certificate Hash is revoked.
       //
-      if (CompareMem (SigData->SignatureData, CertHashVal,
-                      SigList->SignatureSize - sizeof (EFI_GUID) - sizeof (EFI_TIME)) == 0) {
+      if (CompareMem (
+                      SigData->SignatureData,
+                      CertHashVal,
+                      SigList->SignatureSize - sizeof (EFI_GUID) - sizeof (EFI_TIME)
+                      ) == 0) {
         Status = TRUE;
         //
         // Return the revocation time of this revoked certificate.
         //
         CopyMem (
-          RevocationTime,
-          (EFI_TIME *)((UINT8 *)SigData + SigList->SignatureSize - sizeof (EFI_TIME)),
-          sizeof (EFI_TIME)
-          );
+                 RevocationTime,
+                 (EFI_TIME *) ((UINT8 *) SigData + SigList->SignatureSize - sizeof (EFI_TIME)),
+                 sizeof (EFI_TIME)
+                 );
         goto _Exit;
       }
 
@@ -487,7 +487,6 @@ IsValidTimestamp (
       continue;
     }
 
-
     SigData = (EFI_SIGNATURE_DATA *) ((UINT8 *) SigList + sizeof (EFI_SIGNATURE_LIST) +
                                       SigList->SignatureHeaderSize);
     TsaCert     = SigData->SignatureData;
@@ -584,7 +583,7 @@ P7CheckRevocationByHash (
   // Check if the signer's certificate can be found in Revoked database
   //
   for (Index = 0; ; Index++) {
-    SigList = (EFI_SIGNATURE_LIST *)(RevokedDb[Index]);
+    SigList = (EFI_SIGNATURE_LIST *) (RevokedDb[Index]);
 
     //
     // The list is terminated by a NULL pointer.
@@ -648,7 +647,7 @@ P7CheckRevocationByHash (
     // Retrieve the Certificate data
     //
     CertSize = (UINTN) ReadUnaligned32 ((UINT32 *) CertPtr);
-    Cert     = (UINT8 *)CertPtr + sizeof (UINT32);
+    Cert     = (UINT8 *) CertPtr + sizeof (UINT32);
 
     if (IsCertHashRevoked (Cert, CertSize, RevokedDb, &RevocationTime)) {
       //
@@ -749,7 +748,7 @@ P7CheckRevocation (
   // Check if the signer's certificate can be found in Revoked database
   //
   for (Index = 0; ; Index++) {
-    SigList = (EFI_SIGNATURE_LIST *)(RevokedDb[Index]);
+    SigList = (EFI_SIGNATURE_LIST *) (RevokedDb[Index]);
 
     //
     // The list is terminated by a NULL pointer.
@@ -813,7 +812,7 @@ P7CheckRevocation (
     // Retrieve the Certificate data
     //
     CertSize = (UINTN) ReadUnaligned32 ((UINT32 *) CertPtr);
-    Cert     = (UINT8 *)CertPtr + sizeof (UINT32);
+    Cert     = (UINT8 *) CertPtr + sizeof (UINT32);
 
     if (IsCertHashRevoked (Cert, CertSize, RevokedDb, &RevocationTime)) {
       //
@@ -898,7 +897,7 @@ P7CheckTrustByHash (
   // Signature List for PKCS7 Verification.
   //
   for (Index = 0; ; Index++) {
-    SigList = (EFI_SIGNATURE_LIST *)(AllowedDb[Index]);
+    SigList = (EFI_SIGNATURE_LIST *) (AllowedDb[Index]);
 
     //
     // The list is terminated by a NULL pointer.
@@ -992,7 +991,7 @@ P7CheckTrust (
   // Signature List for PKCS7 Verification.
   //
   for (Index = 0; ; Index++) {
-    SigList = (EFI_SIGNATURE_LIST *)(AllowedDb[Index]);
+    SigList = (EFI_SIGNATURE_LIST *) (AllowedDb[Index]);
 
     //
     // The list is terminated by a NULL pointer.
@@ -1144,6 +1143,7 @@ VerifyBuffer (
   if ((SignedData == NULL) || (SignedDataSize == 0) || (AllowedDb == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
+
   if ((Content != NULL) && (ContentSize == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
@@ -1152,14 +1152,15 @@ VerifyBuffer (
   // Check if any invalid entry format in AllowedDb list contents
   //
   for (Index = 0; ; Index++) {
-    SigList = (EFI_SIGNATURE_LIST *)(AllowedDb[Index]);
+    SigList = (EFI_SIGNATURE_LIST *) (AllowedDb[Index]);
 
     if (SigList == NULL) {
       break;
     }
+
     if (SigList->SignatureListSize < sizeof (EFI_SIGNATURE_LIST) +
-                                     SigList->SignatureHeaderSize +
-                                     SigList->SignatureSize) {
+        SigList->SignatureHeaderSize +
+        SigList->SignatureSize) {
       return EFI_ABORTED;
     }
   }
@@ -1169,14 +1170,15 @@ VerifyBuffer (
   //
   if (RevokedDb != NULL) {
     for (Index = 0; ; Index++) {
-      SigList = (EFI_SIGNATURE_LIST *)(RevokedDb[Index]);
+      SigList = (EFI_SIGNATURE_LIST *) (RevokedDb[Index]);
 
       if (SigList == NULL) {
         break;
       }
+
       if (SigList->SignatureListSize < sizeof (EFI_SIGNATURE_LIST) +
-                                       SigList->SignatureHeaderSize +
-                                       SigList->SignatureSize) {
+          SigList->SignatureHeaderSize +
+          SigList->SignatureSize) {
         return EFI_ABORTED;
       }
     }
@@ -1187,14 +1189,15 @@ VerifyBuffer (
   //
   if (TimeStampDb != NULL) {
     for (Index = 0; ; Index++) {
-      SigList = (EFI_SIGNATURE_LIST *)(TimeStampDb[Index]);
+      SigList = (EFI_SIGNATURE_LIST *) (TimeStampDb[Index]);
 
       if (SigList == NULL) {
         break;
       }
+
       if (SigList->SignatureListSize < sizeof (EFI_SIGNATURE_LIST) +
-                                       SigList->SignatureHeaderSize +
-                                       SigList->SignatureSize) {
+          SigList->SignatureHeaderSize +
+          SigList->SignatureSize) {
         return EFI_ABORTED;
       }
     }
@@ -1206,15 +1209,17 @@ VerifyBuffer (
   AttachedData     = NULL;
   AttachedDataSize = 0;
   if (!Pkcs7GetAttachedContent (
-         SignedData,
-         SignedDataSize,
-         (VOID **)&AttachedData,
-         &AttachedDataSize)) {
+                                SignedData,
+                                SignedDataSize,
+                                (VOID **) &AttachedData,
+                                &AttachedDataSize
+                                )) {
     //
     // The SignedData buffer was not correctly formatted for processing
     //
     return EFI_UNSUPPORTED;
   }
+
   if (AttachedData != NULL) {
     if (InData != NULL) {
       //
@@ -1223,19 +1228,19 @@ VerifyBuffer (
       Status = EFI_UNSUPPORTED;
       goto _Exit;
     }
+
     //
     // PKCS7-formatted signedData with attached content; Use the embedded
     // content for verification
     //
     DataPtr  = AttachedData;
     DataSize = AttachedDataSize;
-
   } else if (InData != NULL) {
     //
     // PKCS7-formatted signedData with detached content; Use the user-supplied
     // input data for verification
     //
-    DataPtr  = (UINT8 *)InData;
+    DataPtr  = (UINT8 *) InData;
     DataSize = InDataSize;
   } else {
     //
@@ -1252,13 +1257,13 @@ VerifyBuffer (
   //
   if (RevokedDb != NULL) {
     Status = P7CheckRevocation (
-               SignedData,
-               SignedDataSize,
-               DataPtr,
-               DataSize,
-               RevokedDb,
-               TimeStampDb
-               );
+                                SignedData,
+                                SignedDataSize,
+                                DataPtr,
+                                DataSize,
+                                RevokedDb,
+                                TimeStampDb
+                                );
     if (!EFI_ERROR (Status)) {
       //
       // The PKCS7 SignedData is revoked
@@ -1272,17 +1277,17 @@ VerifyBuffer (
   // Verify PKCS7 SignedData with AllowedDB
   //
   Status = P7CheckTrust (
-             SignedData,
-             SignedDataSize,
-             DataPtr,
-             DataSize,
-             AllowedDb
-             );
+                         SignedData,
+                         SignedDataSize,
+                         DataPtr,
+                         DataSize,
+                         AllowedDb
+                         );
   if (EFI_ERROR (Status)) {
-      //
-      // Verification failed with AllowedDb
-      //
-      goto _Exit;
+    //
+    // Verification failed with AllowedDb
+    //
+    goto _Exit;
   }
 
   //
@@ -1393,8 +1398,8 @@ VerifySignature (
   //
   // Parameters Checking
   //
-  if ((Signature == NULL) || (SignatureSize == 0) || (AllowedDb == NULL)
-      || (InHash == NULL) || (InHashSize == 0)) {
+  if (  (Signature == NULL) || (SignatureSize == 0) || (AllowedDb == NULL)
+     || (InHash == NULL) || (InHashSize == 0)) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1403,13 +1408,13 @@ VerifySignature (
   //
   if (RevokedDb != NULL) {
     Status = P7CheckRevocationByHash (
-               Signature,
-               SignatureSize,
-               InHash,
-               InHashSize,
-               RevokedDb,
-               TimeStampDb
-               );
+                                      Signature,
+                                      SignatureSize,
+                                      InHash,
+                                      InHashSize,
+                                      RevokedDb,
+                                      TimeStampDb
+                                      );
 
     if (!EFI_ERROR (Status)) {
       //
@@ -1423,12 +1428,12 @@ VerifySignature (
   // Verify PKCS7 SignedData with AllowedDB
   //
   Status = P7CheckTrustByHash (
-             Signature,
-             SignatureSize,
-             InHash,
-             InHashSize,
-             AllowedDb
-             );
+                               Signature,
+                               SignatureSize,
+                               InHash,
+                               InHashSize,
+                               AllowedDb
+                               );
 
   return Status;
 }
@@ -1436,7 +1441,7 @@ VerifySignature (
 //
 // The PKCS7 Verification Protocol
 //
-EFI_PKCS7_VERIFY_PROTOCOL mPkcs7Verify = {
+EFI_PKCS7_VERIFY_PROTOCOL  mPkcs7Verify = {
   VerifyBuffer,
   VerifySignature
 };
@@ -1466,7 +1471,7 @@ Pkcs7VerifyDriverEntry (
   //
   // Avoid loading a second copy if this is built as an external module
   //
-  Status = gBS->LocateProtocol (&gEfiPkcs7VerifyProtocolGuid, NULL, (VOID **)&Useless);
+  Status = gBS->LocateProtocol (&gEfiPkcs7VerifyProtocolGuid, NULL, (VOID **) &Useless);
   if (!EFI_ERROR (Status)) {
     return EFI_ABORTED;
   }
@@ -1476,11 +1481,11 @@ Pkcs7VerifyDriverEntry (
   //
   Handle = NULL;
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &Handle,
-                  &gEfiPkcs7VerifyProtocolGuid,
-                  &mPkcs7Verify,
-                  NULL
-                  );
+                                                   &Handle,
+                                                   &gEfiPkcs7VerifyProtocolGuid,
+                                                   &mPkcs7Verify,
+                                                   NULL
+                                                   );
 
   return Status;
 }

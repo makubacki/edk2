@@ -40,9 +40,9 @@ Tpm2GetIdleByPass (
   @return Cached PTP interface type.
 **/
 TPM2_PTP_INTERFACE_TYPE
-GetCachedPtpInterface (
-  VOID
-  );
+  GetCachedPtpInterface (
+                         VOID
+                         );
 
 /**
   Return cached PTP CRB interface IdleByPass state.
@@ -50,9 +50,9 @@ GetCachedPtpInterface (
   @return Cached PTP CRB interface IdleByPass state.
 **/
 UINT8
-GetCachedIdleByPass (
-  VOID
-  );
+  GetCachedIdleByPass (
+                       VOID
+                       );
 
 /**
   The common function cache current active TpmInterfaceType when needed.
@@ -60,8 +60,8 @@ GetCachedIdleByPass (
   @retval EFI_SUCCESS   DTPM2.0 instance is registered, or system does not support register DTPM2.0 instance
 **/
 EFI_STATUS
-InternalTpm2DeviceLibDTpmCommonConstructor (
-  VOID
-  );
+  InternalTpm2DeviceLibDTpmCommonConstructor (
+                                              VOID
+                                              );
 
 #endif // _TPM2_DEVICE_LIB_DTPM_H_

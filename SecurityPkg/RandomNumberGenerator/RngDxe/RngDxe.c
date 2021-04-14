@@ -25,7 +25,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // Supported RNG Algorithms list by this driver.
 //
-EFI_RNG_ALGORITHM mSupportedRngAlgorithms[] = {
+EFI_RNG_ALGORITHM  mSupportedRngAlgorithms[] = {
   EFI_RNG_ALGORITHM_SP800_90_CTR_256_GUID,
   EFI_RNG_ALGORITHM_RAW
 };
@@ -61,8 +61,8 @@ RngGetInfo (
   OUT EFI_RNG_ALGORITHM           *RNGAlgorithmList
   )
 {
-  EFI_STATUS    Status;
-  UINTN         RequiredSize;
+  EFI_STATUS  Status;
+  UINTN       RequiredSize;
 
   if ((This == NULL) || (RNGAlgorithmListSize == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -82,6 +82,7 @@ RngGetInfo (
       Status = EFI_INVALID_PARAMETER;
     }
   }
+
   *RNGAlgorithmListSize = RequiredSize;
 
   return Status;
@@ -118,7 +119,7 @@ RngGetRNG (
   OUT UINT8                      *RNGValue
   )
 {
-  EFI_STATUS    Status;
+  EFI_STATUS  Status;
 
   if ((RNGValueLength == 0) || (RNGValue == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -165,7 +166,7 @@ RngGetRNG (
 //
 // The Random Number Generator (RNG) protocol
 //
-EFI_RNG_PROTOCOL mRngRdRand = {
+EFI_RNG_PROTOCOL  mRngRdRand = {
   RngGetInfo,
   RngGetRNG
 };
@@ -188,19 +189,19 @@ RngDriverEntry (
   IN EFI_SYSTEM_TABLE    *SystemTable
   )
 {
-  EFI_STATUS    Status;
-  EFI_HANDLE    Handle;
+  EFI_STATUS  Status;
+  EFI_HANDLE  Handle;
 
   //
   // Install UEFI RNG (Random Number Generator) Protocol
   //
   Handle = NULL;
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &Handle,
-                  &gEfiRngProtocolGuid,
-                  &mRngRdRand,
-                  NULL
-                  );
+                                                   &Handle,
+                                                   &gEfiRngProtocolGuid,
+                                                   &mRngRdRand,
+                                                   NULL
+                                                   );
 
   return Status;
 }

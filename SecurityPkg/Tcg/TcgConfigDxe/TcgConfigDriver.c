@@ -28,11 +28,11 @@ TcgConfigDriverEntryPoint (
   IN EFI_SYSTEM_TABLE    *SystemTable
   )
 {
-  EFI_STATUS                Status;
-  TCG_CONFIG_PRIVATE_DATA   *PrivateData;
-  EFI_TCG_PROTOCOL          *TcgProtocol;
+  EFI_STATUS               Status;
+  TCG_CONFIG_PRIVATE_DATA  *PrivateData;
+  EFI_TCG_PROTOCOL         *TcgProtocol;
 
-  if (!CompareGuid (PcdGetPtr(PcdTpmInstanceGuid), &gEfiTpmDeviceInstanceTpm12Guid)){
+  if (!CompareGuid (PcdGetPtr (PcdTpmInstanceGuid), &gEfiTpmDeviceInstanceTpm12Guid)) {
     DEBUG ((EFI_D_ERROR, "No TPM12 instance required!\n"));
     return EFI_UNSUPPORTED;
   }
@@ -49,13 +49,13 @@ TcgConfigDriverEntryPoint (
   }
 
   Status = gBS->OpenProtocol (
-                  ImageHandle,
-                  &gEfiCallerIdGuid,
-                  NULL,
-                  ImageHandle,
-                  ImageHandle,
-                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                  );
+                              ImageHandle,
+                              &gEfiCallerIdGuid,
+                              NULL,
+                              ImageHandle,
+                              ImageHandle,
+                              EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                              );
   if (!EFI_ERROR (Status)) {
     return EFI_ALREADY_STARTED;
   }
@@ -88,11 +88,11 @@ TcgConfigDriverEntryPoint (
   // Install private GUID.
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &ImageHandle,
-                  &gEfiCallerIdGuid,
-                  PrivateData,
-                  NULL
-                  );
+                                                   &ImageHandle,
+                                                   &gEfiCallerIdGuid,
+                                                   PrivateData,
+                                                   NULL
+                                                   );
 
   if (EFI_ERROR (Status)) {
     goto ErrorExit;
@@ -123,14 +123,14 @@ TcgConfigDriverUnload (
   IN EFI_HANDLE  ImageHandle
   )
 {
-  EFI_STATUS                  Status;
-  TCG_CONFIG_PRIVATE_DATA   *PrivateData;
+  EFI_STATUS               Status;
+  TCG_CONFIG_PRIVATE_DATA  *PrivateData;
 
   Status = gBS->HandleProtocol (
-                  ImageHandle,
-                  &gEfiCallerIdGuid,
-                  (VOID **) &PrivateData
-                  );
+                                ImageHandle,
+                                &gEfiCallerIdGuid,
+                                (VOID **) &PrivateData
+                                );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -138,11 +138,11 @@ TcgConfigDriverUnload (
   ASSERT (PrivateData->Signature == TCG_CONFIG_PRIVATE_DATA_SIGNATURE);
 
   gBS->UninstallMultipleProtocolInterfaces (
-         ImageHandle,
-         &gEfiCallerIdGuid,
-         PrivateData,
-         NULL
-         );
+                                            ImageHandle,
+                                            &gEfiCallerIdGuid,
+                                            PrivateData,
+                                            NULL
+                                            );
 
   UninstallTcgConfigForm (PrivateData);
 

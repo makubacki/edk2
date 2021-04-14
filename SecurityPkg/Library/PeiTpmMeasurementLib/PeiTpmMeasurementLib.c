@@ -44,17 +44,17 @@ TpmMeasureAndLogData (
   IN UINT64             HashDataLen
   )
 {
-  EFI_STATUS                Status;
-  EDKII_TCG_PPI             *TcgPpi;
-  TCG_PCR_EVENT_HDR         TcgEventHdr;
+  EFI_STATUS         Status;
+  EDKII_TCG_PPI      *TcgPpi;
+  TCG_PCR_EVENT_HDR  TcgEventHdr;
 
   Status = PeiServicesLocatePpi (
-             &gEdkiiTcgPpiGuid,
-             0,
-             NULL,
-             (VOID**)&TcgPpi
-             );
-  if (EFI_ERROR(Status)) {
+                                 &gEdkiiTcgPpiGuid,
+                                 0,
+                                 NULL,
+                                 (VOID **) &TcgPpi
+                                 );
+  if (EFI_ERROR (Status)) {
     return Status;
   }
 
@@ -63,12 +63,12 @@ TpmMeasureAndLogData (
   TcgEventHdr.EventSize = LogLen;
 
   Status = TcgPpi->HashLogExtendEvent (
-                     TcgPpi,
-                     0,
-                     HashData,
-                     (UINTN)HashDataLen,
-                     &TcgEventHdr,
-                     EventLog
-                     );
+                                       TcgPpi,
+                                       0,
+                                       HashData,
+                                       (UINTN) HashDataLen,
+                                       &TcgEventHdr,
+                                       EventLog
+                                       );
   return Status;
 }

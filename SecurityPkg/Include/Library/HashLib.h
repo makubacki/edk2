@@ -14,7 +14,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Uefi.h>
 #include <Protocol/Hash.h>
 #include <IndustryStandard/Tpm20.h>
-typedef UINTN  HASH_HANDLE;
+typedef UINTN HASH_HANDLE;
 
 /**
   Start hash sequence.
@@ -96,10 +96,10 @@ HashAndExtend (
   @retval EFI_OUT_OF_RESOURCES No enough resource to start hash.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *HASH_INIT) (
-  OUT HASH_HANDLE    *HashHandle
-  );
+  EFI_STATUS
+(EFIAPI *HASH_INIT)(
+                    OUT HASH_HANDLE    *HashHandle
+                    );
 
 /**
   Update hash sequence data.
@@ -111,12 +111,12 @@ EFI_STATUS
   @retval EFI_SUCCESS     Hash sequence updated.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *HASH_UPDATE) (
-  IN HASH_HANDLE    HashHandle,
-  IN VOID           *DataToHash,
-  IN UINTN          DataToHashLen
-  );
+  EFI_STATUS
+(EFIAPI *HASH_UPDATE)(
+                      IN HASH_HANDLE    HashHandle,
+                      IN VOID           *DataToHash,
+                      IN UINTN          DataToHashLen
+                      );
 
 /**
   Complete hash sequence complete.
@@ -127,11 +127,11 @@ EFI_STATUS
   @retval EFI_SUCCESS     Hash sequence complete and DigestList is returned.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *HASH_FINAL) (
-  IN HASH_HANDLE         HashHandle,
-  OUT TPML_DIGEST_VALUES *DigestList
-  );
+  EFI_STATUS
+(EFIAPI *HASH_FINAL)(
+                     IN HASH_HANDLE         HashHandle,
+                     OUT TPML_DIGEST_VALUES *DigestList
+                     );
 
 #define HASH_ALGORITHM_SHA1_GUID    EFI_HASH_ALGORITHM_SHA1_GUID
 #define HASH_ALGORITHM_SHA256_GUID  EFI_HASH_ALGORITHM_SHA256_GUID
@@ -143,10 +143,10 @@ EFI_STATUS
   }
 
 typedef struct {
-  EFI_GUID                           HashGuid;
-  HASH_INIT                          HashInit;
-  HASH_UPDATE                        HashUpdate;
-  HASH_FINAL                         HashFinal;
+  EFI_GUID       HashGuid;
+  HASH_INIT      HashInit;
+  HASH_UPDATE    HashUpdate;
+  HASH_FINAL     HashFinal;
 } HASH_INTERFACE;
 
 /**

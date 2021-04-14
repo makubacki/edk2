@@ -43,23 +43,23 @@ typedef struct _EDKII_TCG_PPI EDKII_TCG_PPI;
   @retval EFI_DEVICE_ERROR      The operation was unsuccessful.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EDKII_TCG_HASH_LOG_EXTEND_EVENT)(
-  IN      EDKII_TCG_PPI             *This,
-  IN      UINT64                    Flags,
-  IN      UINT8                     *HashData,
-  IN      UINTN                     HashDataLen,
-  IN      TCG_PCR_EVENT_HDR         *NewEventHdr,
-  IN      UINT8                     *NewEventData
-  );
+                                          IN      EDKII_TCG_PPI             *This,
+                                          IN      UINT64                    Flags,
+                                          IN      UINT8                     *HashData,
+                                          IN      UINTN                     HashDataLen,
+                                          IN      TCG_PCR_EVENT_HDR         *NewEventHdr,
+                                          IN      UINT8                     *NewEventData
+                                          );
 
 ///
 /// The EFI_TCG Protocol abstracts TCG activity.
 ///
 struct _EDKII_TCG_PPI {
-  EDKII_TCG_HASH_LOG_EXTEND_EVENT     HashLogExtendEvent;
+  EDKII_TCG_HASH_LOG_EXTEND_EVENT    HashLogExtendEvent;
 };
 
-extern EFI_GUID gEdkiiTcgPpiGuid;
+extern EFI_GUID  gEdkiiTcgPpiGuid;
 
 #endif

@@ -42,7 +42,7 @@ Tpm12SubmitCommand (
 EFI_STATUS
 EFIAPI
 Tpm12RequestUseTpm (
-  VOID
-  );
+                    VOID
+                    );
 
 #endif

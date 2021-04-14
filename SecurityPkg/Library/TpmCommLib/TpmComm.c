@@ -26,8 +26,8 @@ TpmCommHashAll (
   OUT       TPM_DIGEST              *Digest
   )
 {
-  VOID     *Sha1Ctx;
-  UINTN    CtxSize;
+  VOID   *Sha1Ctx;
+  UINTN  CtxSize;
 
   CtxSize = Sha1GetContextSize ();
   Sha1Ctx = AllocatePool (CtxSize);
@@ -35,10 +35,9 @@ TpmCommHashAll (
 
   Sha1Init (Sha1Ctx);
   Sha1Update (Sha1Ctx, Data, DataLen);
-  Sha1Final (Sha1Ctx, (UINT8 *)Digest);
+  Sha1Final (Sha1Ctx, (UINT8 *) Digest);
 
   FreePool (Sha1Ctx);
 
   return EFI_SUCCESS;
 }
-

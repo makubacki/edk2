@@ -8,10 +8,10 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "SecureBootConfigImpl.h"
 
-VOID                  *mStartOpCodeHandle = NULL;
-VOID                  *mEndOpCodeHandle = NULL;
-EFI_IFR_GUID_LABEL    *mStartLabel = NULL;
-EFI_IFR_GUID_LABEL    *mEndLabel = NULL;
+VOID                *mStartOpCodeHandle = NULL;
+VOID                *mEndOpCodeHandle   = NULL;
+EFI_IFR_GUID_LABEL  *mStartLabel = NULL;
+EFI_IFR_GUID_LABEL  *mEndLabel   = NULL;
 
 /**
   Refresh the global UpdateData structure.
@@ -38,11 +38,11 @@ RefreshUpdateData (
   // Create Hii Extend Label OpCode as the start opcode
   //
   mStartLabel = (EFI_IFR_GUID_LABEL *) HiiCreateGuidOpCode (
-                                         mStartOpCodeHandle,
-                                         &gEfiIfrTianoGuid,
-                                         NULL,
-                                         sizeof (EFI_IFR_GUID_LABEL)
-                                         );
+                                                            mStartOpCodeHandle,
+                                                            &gEfiIfrTianoGuid,
+                                                            NULL,
+                                                            sizeof (EFI_IFR_GUID_LABEL)
+                                                            );
   mStartLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
 }
 
@@ -66,12 +66,12 @@ CleanUpPage (
   //
   mStartLabel->Number = LabelId;
   HiiUpdateForm (
-    PrivateData->HiiHandle,
-    &gSecureBootConfigFormSetGuid,
-    LabelId,
-    mStartOpCodeHandle, // Label LabelId
-    mEndOpCodeHandle    // LABEL_END
-    );
+                 PrivateData->HiiHandle,
+                 &gSecureBootConfigFormSetGuid,
+                 LabelId,
+                 mStartOpCodeHandle, // Label LabelId
+                 mEndOpCodeHandle    // LABEL_END
+                 );
 }
 
 /**
@@ -90,35 +90,34 @@ ExtractFileNameFromDevicePath (
   IN   EFI_DEVICE_PATH_PROTOCOL *DevicePath
   )
 {
-  CHAR16          *String;
-  CHAR16          *MatchString;
-  CHAR16          *LastMatch;
-  CHAR16          *FileName;
-  UINTN           Length;
+  CHAR16  *String;
+  CHAR16  *MatchString;
+  CHAR16  *LastMatch;
+  CHAR16  *FileName;
+  UINTN   Length;
 
-  ASSERT(DevicePath != NULL);
+  ASSERT (DevicePath != NULL);
 
-  String = DevicePathToStr(DevicePath);
+  String = DevicePathToStr (DevicePath);
   MatchString = String;
   LastMatch   = String;
   FileName    = NULL;
 
-  while(MatchString != NULL){
+  while(MatchString != NULL) {
     LastMatch   = MatchString + 1;
-    MatchString = StrStr(LastMatch,L"\\");
+    MatchString = StrStr (LastMatch, L"\\");
   }
 
-  Length = StrLen(LastMatch);
-  FileName = AllocateCopyPool ((Length + 1) * sizeof(CHAR16), LastMatch);
+  Length   = StrLen (LastMatch);
+  FileName = AllocateCopyPool ((Length + 1) * sizeof (CHAR16), LastMatch);
   if (FileName != NULL) {
     *(FileName + Length) = 0;
   }
 
-  FreePool(String);
+  FreePool (String);
 
   return FileName;
 }
-
 
 /**
   Update  the form base on the selected file.
@@ -131,19 +130,20 @@ ExtractFileNameFromDevicePath (
 
 **/
 BOOLEAN
-UpdatePage(
+UpdatePage (
   IN  EFI_DEVICE_PATH_PROTOCOL  *FilePath,
   IN  EFI_FORM_ID               FormId
   )
 {
-  CHAR16                *FileName;
-  EFI_STRING_ID         StringToken;
+  CHAR16         *FileName;
+  EFI_STRING_ID  StringToken;
 
   FileName = NULL;
 
   if (FilePath != NULL) {
-    FileName = ExtractFileNameFromDevicePath(FilePath);
+    FileName = ExtractFileNameFromDevicePath (FilePath);
   }
+
   if (FileName == NULL) {
     //
     // FileName = NULL has two case:
@@ -153,16 +153,17 @@ UpdatePage(
     //
     return TRUE;
   }
+
   StringToken =  HiiSetString (gSecureBootPrivateData->HiiHandle, 0, FileName, NULL);
 
   gSecureBootPrivateData->FileContext->FileName = FileName;
 
   EfiOpenFileByDevicePath (
-    &FilePath,
-    &gSecureBootPrivateData->FileContext->FHandle,
-    EFI_FILE_MODE_READ,
-    0
-    );
+                           &FilePath,
+                           &gSecureBootPrivateData->FileContext->FHandle,
+                           EFI_FILE_MODE_READ,
+                           0
+                           );
   //
   // Create Subtitle op-code for the display string of the option.
   //
@@ -170,20 +171,20 @@ UpdatePage(
   mStartLabel->Number = FormId;
 
   HiiCreateSubTitleOpCode (
-    mStartOpCodeHandle,
-    StringToken,
-    0,
-    0,
-    0
-   );
+                           mStartOpCodeHandle,
+                           StringToken,
+                           0,
+                           0,
+                           0
+                           );
 
   HiiUpdateForm (
-    gSecureBootPrivateData->HiiHandle,
-    &gSecureBootConfigFormSetGuid,
-    FormId,
-    mStartOpCodeHandle, // Label FormId
-    mEndOpCodeHandle    // LABEL_END
-    );
+                 gSecureBootPrivateData->HiiHandle,
+                 &gSecureBootConfigFormSetGuid,
+                 FormId,
+                 mStartOpCodeHandle, // Label FormId
+                 mEndOpCodeHandle    // LABEL_END
+                 );
 
   return TRUE;
 }
@@ -202,8 +203,7 @@ UpdatePKFromFile (
   IN EFI_DEVICE_PATH_PROTOCOL    *FilePath
   )
 {
-  return UpdatePage(FilePath, FORMID_ENROLL_PK_FORM);
-
+  return UpdatePage (FilePath, FORMID_ENROLL_PK_FORM);
 }
 
 /**
@@ -220,7 +220,7 @@ UpdateKEKFromFile (
   IN EFI_DEVICE_PATH_PROTOCOL    *FilePath
   )
 {
-  return UpdatePage(FilePath, FORMID_ENROLL_KEK_FORM);
+  return UpdatePage (FilePath, FORMID_ENROLL_KEK_FORM);
 }
 
 /**
@@ -237,7 +237,7 @@ UpdateDBFromFile (
   IN EFI_DEVICE_PATH_PROTOCOL    *FilePath
   )
 {
-  return UpdatePage(FilePath, SECUREBOOT_ENROLL_SIGNATURE_TO_DB);
+  return UpdatePage (FilePath, SECUREBOOT_ENROLL_SIGNATURE_TO_DB);
 }
 
 /**
@@ -254,7 +254,7 @@ UpdateDBXFromFile (
   IN EFI_DEVICE_PATH_PROTOCOL    *FilePath
   )
 {
-  return UpdatePage(FilePath, SECUREBOOT_ENROLL_SIGNATURE_TO_DBX);
+  return UpdatePage (FilePath, SECUREBOOT_ENROLL_SIGNATURE_TO_DBX);
 }
 
 /**
@@ -271,6 +271,5 @@ UpdateDBTFromFile (
   IN EFI_DEVICE_PATH_PROTOCOL    *FilePath
   )
 {
-  return UpdatePage(FilePath, SECUREBOOT_ENROLL_SIGNATURE_TO_DBT);
+  return UpdatePage (FilePath, SECUREBOOT_ENROLL_SIGNATURE_TO_DBT);
 }
-

@@ -26,8 +26,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 VOID
 EFIAPI
 TcgPhysicalPresenceLibProcessRequest (
-  VOID
-  );
+                                      VOID
+                                      );
 
 /**
   Check if the pending TPM request needs user input to confirm.
@@ -41,8 +41,8 @@ TcgPhysicalPresenceLibProcessRequest (
 **/
 BOOLEAN
 EFIAPI
-TcgPhysicalPresenceLibNeedUserConfirm(
-  VOID
-  );
+TcgPhysicalPresenceLibNeedUserConfirm (
+                                       VOID
+                                       );
 
 #endif

@@ -12,7 +12,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "TcgMor.h"
 
-UINT8    mMorControl;
+UINT8  mMorControl;
 
 /**
   Ready to Boot Event notification handler.
@@ -35,8 +35,9 @@ OnReadyToBoot (
     //
     // MorControl is expected, directly return to avoid unnecessary variable operation
     //
-    return ;
+    return;
   }
+
   //
   // Clear MOR_CLEAR_MEMORY_BIT
   //
@@ -45,12 +46,12 @@ OnReadyToBoot (
 
   DataSize = sizeof (mMorControl);
   Status   = gRT->SetVariable (
-               MEMORY_OVERWRITE_REQUEST_VARIABLE_NAME,
-               &gEfiMemoryOverwriteControlDataGuid,
-               EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-               DataSize,
-               &mMorControl
-               );
+                               MEMORY_OVERWRITE_REQUEST_VARIABLE_NAME,
+                               &gEfiMemoryOverwriteControlDataGuid,
+                               EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                               DataSize,
+                               &mMorControl
+                               );
   if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "TcgMor: Clear MOR_CLEAR_MEMORY_BIT failure, Status = %r\n"));
   }
@@ -74,7 +75,6 @@ InitiateTPerReset (
   IN  UINT32                                   MediaId
   )
 {
-
   EFI_STATUS                                   Status;
   UINT8                                        *Buffer;
   UINTN                                        XferSize;
@@ -84,17 +84,17 @@ InitiateTPerReset (
   BOOLEAN                                      IeeeFlag;
   SUPPORTED_SECURITY_PROTOCOLS_PARAMETER_DATA  *Data;
 
-  Buffer        = NULL;
-  TcgFlag       = FALSE;
-  IeeeFlag      = FALSE;
+  Buffer   = NULL;
+  TcgFlag  = FALSE;
+  IeeeFlag = FALSE;
 
   //
   // ATA8-ACS 7.57.6.1 indicates the Transfer Length field requirements a multiple of 512.
   // If the length of the TRUSTED RECEIVE parameter data is greater than the Transfer Length,
   // then the device shall return the TRUSTED RECEIVE parameter data truncated to the requested Transfer Length.
   //
-  Len           = ROUNDUP512(sizeof(SUPPORTED_SECURITY_PROTOCOLS_PARAMETER_DATA));
-  Buffer        = AllocateZeroPool(Len);
+  Len    = ROUNDUP512 (sizeof (SUPPORTED_SECURITY_PROTOCOLS_PARAMETER_DATA));
+  Buffer = AllocateZeroPool (Len);
 
   if (Buffer == NULL) {
     return;
@@ -105,15 +105,15 @@ InitiateTPerReset (
   // command, the device basic information data shall be returned.
   //
   Status = Ssp->ReceiveData (
-                  Ssp,
-                  MediaId,
-                  100000000,                    // Timeout 10-sec
-                  0,                            // SecurityProtocol
-                  0,                            // SecurityProtocolSpecificData
-                  Len,                          // PayloadBufferSize,
-                  Buffer,                       // PayloadBuffer
-                  &XferSize
-                  );
+                             Ssp,
+                             MediaId,
+                             100000000,         // Timeout 10-sec
+                             0,                 // SecurityProtocol
+                             0,                 // SecurityProtocolSpecificData
+                             Len,               // PayloadBufferSize,
+                             Buffer,            // PayloadBuffer
+                             &XferSize
+                             );
   if (EFI_ERROR (Status)) {
     goto Exit;
   }
@@ -122,17 +122,18 @@ InitiateTPerReset (
   // In returned data, the ListLength field indicates the total length, in bytes,
   // of the supported security protocol list.
   //
-  Data = (SUPPORTED_SECURITY_PROTOCOLS_PARAMETER_DATA*)Buffer;
-  Len  = ROUNDUP512(sizeof (SUPPORTED_SECURITY_PROTOCOLS_PARAMETER_DATA) +
-                    (Data->SupportedSecurityListLength[0] << 8) +
-                    (Data->SupportedSecurityListLength[1])
-                    );
+  Data = (SUPPORTED_SECURITY_PROTOCOLS_PARAMETER_DATA *) Buffer;
+  Len  = ROUNDUP512 (
+                     sizeof (SUPPORTED_SECURITY_PROTOCOLS_PARAMETER_DATA) +
+                     (Data->SupportedSecurityListLength[0] << 8) +
+                     (Data->SupportedSecurityListLength[1])
+                     );
 
   //
   // Free original buffer and allocate new buffer.
   //
-  FreePool(Buffer);
-  Buffer = AllocateZeroPool(Len);
+  FreePool (Buffer);
+  Buffer = AllocateZeroPool (Len);
   if (Buffer == NULL) {
     return;
   }
@@ -141,21 +142,21 @@ InitiateTPerReset (
   // Read full supported security protocol list from device.
   //
   Status = Ssp->ReceiveData (
-                  Ssp,
-                  MediaId,
-                  100000000,                    // Timeout 10-sec
-                  0,                            // SecurityProtocol
-                  0,                            // SecurityProtocolSpecificData
-                  Len,                          // PayloadBufferSize,
-                  Buffer,                       // PayloadBuffer
-                  &XferSize
-                  );
+                             Ssp,
+                             MediaId,
+                             100000000,         // Timeout 10-sec
+                             0,                 // SecurityProtocol
+                             0,                 // SecurityProtocolSpecificData
+                             Len,               // PayloadBufferSize,
+                             Buffer,            // PayloadBuffer
+                             &XferSize
+                             );
 
   if (EFI_ERROR (Status)) {
     goto Exit;
   }
 
-  Data = (SUPPORTED_SECURITY_PROTOCOLS_PARAMETER_DATA*)Buffer;
+  Data = (SUPPORTED_SECURITY_PROTOCOLS_PARAMETER_DATA *) Buffer;
   Len  = (Data->SupportedSecurityListLength[0] << 8) + Data->SupportedSecurityListLength[1];
 
   //
@@ -193,14 +194,14 @@ InitiateTPerReset (
     // TCG command to the device via the TrustedSend command with a non-zero Transfer Length.
     //
     Status = Ssp->SendData (
-                    Ssp,
-                    MediaId,
-                    100000000,                    // Timeout 10-sec
-                    SECURITY_PROTOCOL_TCG,        // SecurityProtocol
-                    0x0400,                       // SecurityProtocolSpecificData
-                    512,                          // PayloadBufferSize,
-                    Buffer                        // PayloadBuffer
-                    );
+                            Ssp,
+                            MediaId,
+                            100000000,             // Timeout 10-sec
+                            SECURITY_PROTOCOL_TCG, // SecurityProtocol
+                            0x0400,                // SecurityProtocolSpecificData
+                            512,                   // PayloadBufferSize,
+                            Buffer                 // PayloadBuffer
+                            );
 
     if (!EFI_ERROR (Status)) {
       DEBUG ((EFI_D_INFO, "Send TPer Reset Command Successfully !\n"));
@@ -219,7 +220,7 @@ InitiateTPerReset (
 Exit:
 
   if (Buffer != NULL) {
-    FreePool(Buffer);
+    FreePool (Buffer);
   }
 }
 
@@ -237,12 +238,12 @@ TPerResetAtEndOfDxe (
   IN VOID       *Context
   )
 {
-  EFI_STORAGE_SECURITY_COMMAND_PROTOCOL   *Ssp;
-  EFI_BLOCK_IO_PROTOCOL                   *BlockIo;
-  EFI_STATUS                              Status;
-  UINTN                                   HandleCount;
-  EFI_HANDLE                              *HandleBuffer;
-  UINTN                                   Index;
+  EFI_STORAGE_SECURITY_COMMAND_PROTOCOL  *Ssp;
+  EFI_BLOCK_IO_PROTOCOL                  *BlockIo;
+  EFI_STATUS                             Status;
+  UINTN                                  HandleCount;
+  EFI_HANDLE                             *HandleBuffer;
+  UINTN                                  Index;
 
   //
   // Locate all SSP protocol instances.
@@ -251,36 +252,36 @@ TPerResetAtEndOfDxe (
   HandleBuffer = NULL;
 
   Status = gBS->LocateHandleBuffer (
-                  ByProtocol,
-                  &gEfiStorageSecurityCommandProtocolGuid,
-                  NULL,
-                  &HandleCount,
-                  &HandleBuffer
-                  );
+                                    ByProtocol,
+                                    &gEfiStorageSecurityCommandProtocolGuid,
+                                    NULL,
+                                    &HandleCount,
+                                    &HandleBuffer
+                                    );
 
   if (EFI_ERROR (Status) || (HandleCount == 0) || (HandleBuffer == NULL)) {
     return;
   }
 
-  for (Index = 0; Index < HandleCount; Index ++) {
+  for (Index = 0; Index < HandleCount; Index++) {
     //
     // Get the SSP interface.
     //
-    Status = gBS->HandleProtocol(
-                    HandleBuffer[Index],
-                    &gEfiStorageSecurityCommandProtocolGuid,
-                    (VOID **) &Ssp
-                    );
+    Status = gBS->HandleProtocol (
+                                  HandleBuffer[Index],
+                                  &gEfiStorageSecurityCommandProtocolGuid,
+                                  (VOID **) &Ssp
+                                  );
 
     if (EFI_ERROR (Status)) {
       continue;
     }
 
-    Status = gBS->HandleProtocol(
-                    HandleBuffer[Index],
-                    &gEfiBlockIoProtocolGuid,
-                    (VOID **) &BlockIo
-                    );
+    Status = gBS->HandleProtocol (
+                                  HandleBuffer[Index],
+                                  &gEfiBlockIoProtocolGuid,
+                                  (VOID **) &BlockIo
+                                  );
 
     if (EFI_ERROR (Status)) {
       continue;
@@ -317,25 +318,25 @@ MorDriverEntryPoint (
   ///
 
   DataSize = sizeof (mMorControl);
-  Status = gRT->GetVariable (
-                  MEMORY_OVERWRITE_REQUEST_VARIABLE_NAME,
-                  &gEfiMemoryOverwriteControlDataGuid,
-                  NULL,
-                  &DataSize,
-                  &mMorControl
-                  );
+  Status   = gRT->GetVariable (
+                               MEMORY_OVERWRITE_REQUEST_VARIABLE_NAME,
+                               &gEfiMemoryOverwriteControlDataGuid,
+                               NULL,
+                               &DataSize,
+                               &mMorControl
+                               );
   if (EFI_ERROR (Status)) {
     //
     // Set default value to 0
     //
     mMorControl = 0;
     Status = gRT->SetVariable (
-                    MEMORY_OVERWRITE_REQUEST_VARIABLE_NAME,
-                    &gEfiMemoryOverwriteControlDataGuid,
-                    EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                    DataSize,
-                    &mMorControl
-                    );
+                               MEMORY_OVERWRITE_REQUEST_VARIABLE_NAME,
+                               &gEfiMemoryOverwriteControlDataGuid,
+                               EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                               DataSize,
+                               &mMorControl
+                               );
     DEBUG ((EFI_D_INFO, "TcgMor: Create MOR variable! Status = %r\n", Status));
   } else {
     //
@@ -343,11 +344,11 @@ MorDriverEntryPoint (
     //
     DEBUG ((DEBUG_INFO, "TcgMor: Create ReadyToBoot Event for MorControl Bit cleaning!\n"));
     Status = EfiCreateEventReadyToBootEx (
-               TPL_CALLBACK,
-               OnReadyToBoot,
-               NULL,
-               &Event
-               );
+                                          TPL_CALLBACK,
+                                          OnReadyToBoot,
+                                          NULL,
+                                          &Event
+                                          );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -357,13 +358,13 @@ MorDriverEntryPoint (
     //
     DEBUG ((EFI_D_INFO, "TcgMor: Create EndofDxe Event for Mor TPer Reset!\n"));
     Status = gBS->CreateEventEx (
-                    EVT_NOTIFY_SIGNAL,
-                    TPL_CALLBACK,
-                    TPerResetAtEndOfDxe,
-                    NULL,
-                    &gEfiEndOfDxeEventGroupGuid,
-                    &Event
-                    );
+                                 EVT_NOTIFY_SIGNAL,
+                                 TPL_CALLBACK,
+                                 TPerResetAtEndOfDxe,
+                                 NULL,
+                                 &gEfiEndOfDxeEventGroupGuid,
+                                 &Event
+                                 );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -371,5 +372,3 @@ MorDriverEntryPoint (
 
   return Status;
 }
-
-

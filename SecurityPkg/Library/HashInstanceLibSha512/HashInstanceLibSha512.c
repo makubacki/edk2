@@ -30,10 +30,10 @@ Tpm2SetSha512ToDigestList (
   DigestList->count = 1;
   DigestList->digests[0].hashAlg = TPM_ALG_SHA512;
   CopyMem (
-    DigestList->digests[0].digest.sha512,
-    Sha512Digest,
-    SHA512_DIGEST_SIZE
-    );
+           DigestList->digests[0].digest.sha512,
+           Sha512Digest,
+           SHA512_DIGEST_SIZE
+           );
 }
 
 /**
@@ -50,16 +50,16 @@ Sha512HashInit (
   OUT HASH_HANDLE    *HashHandle
   )
 {
-  VOID     *Sha512Ctx;
-  UINTN    CtxSize;
+  VOID   *Sha512Ctx;
+  UINTN  CtxSize;
 
-  CtxSize = Sha512GetContextSize ();
+  CtxSize   = Sha512GetContextSize ();
   Sha512Ctx = AllocatePool (CtxSize);
   ASSERT (Sha512Ctx != NULL);
 
   Sha512Init (Sha512Ctx);
 
-  *HashHandle = (HASH_HANDLE)Sha512Ctx;
+  *HashHandle = (HASH_HANDLE) Sha512Ctx;
 
   return EFI_SUCCESS;
 }
@@ -81,9 +81,9 @@ Sha512HashUpdate (
   IN UINTN          DataToHashLen
   )
 {
-  VOID     *Sha512Ctx;
+  VOID  *Sha512Ctx;
 
-  Sha512Ctx = (VOID *)HashHandle;
+  Sha512Ctx = (VOID *) HashHandle;
   Sha512Update (Sha512Ctx, DataToHash, DataToHashLen);
 
   return EFI_SUCCESS;
@@ -104,10 +104,10 @@ Sha512HashFinal (
   OUT TPML_DIGEST_VALUES *DigestList
   )
 {
-  UINT8         Digest[SHA512_DIGEST_SIZE];
-  VOID          *Sha512Ctx;
+  UINT8  Digest[SHA512_DIGEST_SIZE];
+  VOID   *Sha512Ctx;
 
-  Sha512Ctx = (VOID *)HashHandle;
+  Sha512Ctx = (VOID *) HashHandle;
   Sha512Final (Sha512Ctx, Digest);
 
   FreePool (Sha512Ctx);
@@ -144,5 +144,6 @@ HashInstanceLibSha512Constructor (
     //
     return EFI_SUCCESS;
   }
+
   return Status;
 }

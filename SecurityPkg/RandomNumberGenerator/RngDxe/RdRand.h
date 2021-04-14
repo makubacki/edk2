@@ -57,4 +57,4 @@ RdRandGenerateEntropy (
   OUT UINT8        *Entropy
   );
 
-#endif  // __RD_RAND_H__
+#endif // __RD_RAND_H__

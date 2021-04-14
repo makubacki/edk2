@@ -28,15 +28,15 @@ EFI_STATUS
 ReadFileContent (
   IN      EFI_FILE_HANDLE           FileHandle,
   IN OUT  VOID                      **BufferPtr,
-     OUT  UINTN                     *FileSize,
+  OUT  UINTN                     *FileSize,
   IN      UINTN                     AdditionAllocateSize
   )
 
 {
-  UINTN      BufferSize;
-  UINT64     SourceFileSize;
-  VOID       *Buffer;
-  EFI_STATUS Status;
+  UINTN       BufferSize;
+  UINT64      SourceFileSize;
+  VOID        *Buffer;
+  EFI_STATUS  Status;
 
   if ((FileHandle == NULL) || (FileSize == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -47,7 +47,7 @@ ReadFileContent (
   //
   // Get the file size
   //
-  Status = FileHandle->SetPosition (FileHandle, (UINT64) -1);
+  Status = FileHandle->SetPosition (FileHandle, (UINT64) - 1);
   if (EFI_ERROR (Status)) {
     goto ON_EXIT;
   }
@@ -63,7 +63,7 @@ ReadFileContent (
   }
 
   BufferSize = (UINTN) SourceFileSize + AdditionAllocateSize;
-  Buffer =  AllocateZeroPool(BufferSize);
+  Buffer     =  AllocateZeroPool (BufferSize);
   if (Buffer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -75,7 +75,7 @@ ReadFileContent (
   if (EFI_ERROR (Status) || BufferSize != *FileSize) {
     FreePool (Buffer);
     Buffer = NULL;
-    Status  = EFI_BAD_BUFFER_SIZE;
+    Status = EFI_BAD_BUFFER_SIZE;
     goto ON_EXIT;
   }
 
@@ -97,7 +97,7 @@ CloseFile (
   )
 {
   if (FileHandle != NULL) {
-    FileHandle->Close (FileHandle);
+  FileHandle->Close (FileHandle);
   }
 }
 
@@ -120,22 +120,23 @@ EFIAPI
 Int2OctStr (
   IN     CONST UINTN                *Integer,
   IN     UINTN                      IntSizeInWords,
-     OUT UINT8                      *OctetString,
+  OUT UINT8                      *OctetString,
   IN     UINTN                      OSSizeInBytes
   )
 {
   CONST UINT8  *Ptr1;
   UINT8        *Ptr2;
 
-  for (Ptr1 = (CONST UINT8 *)Integer, Ptr2 = OctetString + OSSizeInBytes - 1;
-       Ptr1 < (UINT8 *)(Integer + IntSizeInWords) && Ptr2 >= OctetString;
+  for (Ptr1 = (CONST UINT8 *) Integer, Ptr2 = OctetString + OSSizeInBytes - 1;
+       Ptr1 < (UINT8 *) (Integer + IntSizeInWords) && Ptr2 >= OctetString;
        Ptr1++, Ptr2--) {
     *Ptr2 = *Ptr1;
   }
 
-  for (; Ptr1 < (CONST UINT8 *)(Integer + IntSizeInWords) && *Ptr1 == 0; Ptr1++);
+  for ( ; Ptr1 < (CONST UINT8 *) (Integer + IntSizeInWords) && *Ptr1 == 0; Ptr1++) {
+  }
 
-  if (Ptr1 < (CONST UINT8 *)(Integer + IntSizeInWords)) {
+  if (Ptr1 < (CONST UINT8 *) (Integer + IntSizeInWords)) {
     return EFI_BUFFER_TOO_SMALL;
   }
 
@@ -163,24 +164,24 @@ GuidToString (
   IN  UINTN     BufferSize
   )
 {
-  UINTN Size;
+  UINTN  Size;
 
   Size = UnicodeSPrint (
-            Buffer,
-            BufferSize,
-            L"%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
-            (UINTN)Guid->Data1,
-            (UINTN)Guid->Data2,
-            (UINTN)Guid->Data3,
-            (UINTN)Guid->Data4[0],
-            (UINTN)Guid->Data4[1],
-            (UINTN)Guid->Data4[2],
-            (UINTN)Guid->Data4[3],
-            (UINTN)Guid->Data4[4],
-            (UINTN)Guid->Data4[5],
-            (UINTN)Guid->Data4[6],
-            (UINTN)Guid->Data4[7]
-            );
+                        Buffer,
+                        BufferSize,
+                        L"%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+                        (UINTN) Guid->Data1,
+                        (UINTN) Guid->Data2,
+                        (UINTN) Guid->Data3,
+                        (UINTN) Guid->Data4[0],
+                        (UINTN) Guid->Data4[1],
+                        (UINTN) Guid->Data4[2],
+                        (UINTN) Guid->Data4[3],
+                        (UINTN) Guid->Data4[4],
+                        (UINTN) Guid->Data4[5],
+                        (UINTN) Guid->Data4[6],
+                        (UINTN) Guid->Data4[7]
+                        );
 
   //
   // SPrint will null terminate the string. The -1 skips the null

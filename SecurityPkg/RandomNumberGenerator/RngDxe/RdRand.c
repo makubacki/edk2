@@ -28,20 +28,21 @@ RdRandGetBytes (
   OUT UINT8        *RandBuffer
   )
 {
-  BOOLEAN     IsRandom;
-  UINT64      TempRand[2];
+  BOOLEAN  IsRandom;
+  UINT64   TempRand[2];
 
   while (Length > 0) {
     IsRandom = GetRandomNumber128 (TempRand);
     if (!IsRandom) {
       return EFI_NOT_READY;
     }
+
     if (Length >= sizeof (TempRand)) {
-      WriteUnaligned64 ((UINT64*)RandBuffer, TempRand[0]);
+      WriteUnaligned64 ((UINT64 *) RandBuffer, TempRand[0]);
       RandBuffer += sizeof (UINT64);
-      WriteUnaligned64 ((UINT64*)RandBuffer, TempRand[1]);
+      WriteUnaligned64 ((UINT64 *) RandBuffer, TempRand[1]);
       RandBuffer += sizeof (UINT64);
-      Length -= sizeof (TempRand);
+      Length     -= sizeof (TempRand);
     } else {
       CopyMem (RandBuffer, TempRand, Length);
       Length = 0;
@@ -138,7 +139,7 @@ RdRandGenerateEntropy (
 
   Status     = EFI_NOT_READY;
   BlockCount = Length / 16;
-  Ptr        = (UINT8 *)Entropy;
+  Ptr = (UINT8 *) Entropy;
 
   //
   // Generate high-quality seed for DRBG Entropy
@@ -148,6 +149,7 @@ RdRandGenerateEntropy (
     if (EFI_ERROR (Status)) {
       return Status;
     }
+
     CopyMem (Ptr, Seed, 16);
 
     BlockCount--;
@@ -161,6 +163,7 @@ RdRandGenerateEntropy (
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   CopyMem (Ptr, Seed, (Length % 16));
 
   return Status;

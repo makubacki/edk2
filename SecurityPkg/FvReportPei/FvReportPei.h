@@ -25,10 +25,10 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/ReportStatusCodeLib.h>
 
 #define HASH_INFO_PTR(PreHashedFvPpi)  \
-  (HASH_INFO *)((UINT8 *)(PreHashedFvPpi) + sizeof (EDKII_PEI_FIRMWARE_VOLUME_INFO_PREHASHED_FV_PPI))
+  (HASH_INFO *) ((UINT8 *) (PreHashedFvPpi) + sizeof (EDKII_PEI_FIRMWARE_VOLUME_INFO_PREHASHED_FV_PPI))
 
 #define HASH_VALUE_PTR(HashInfo)   \
-  (VOID *)((UINT8 *)(HashInfo) + sizeof (HASH_INFO))
+  (VOID *) ((UINT8 *) (HashInfo) + sizeof (HASH_INFO))
 
 /**
   Computes the message digest of a input data buffer.
@@ -47,12 +47,12 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 typedef
-BOOLEAN
-(EFIAPI *HASH_ALL_METHOD) (
-  IN   CONST VOID  *Data,
-  IN   UINTN       DataSize,
-  OUT  UINT8       *HashValue
-  );
+  BOOLEAN
+(EFIAPI *HASH_ALL_METHOD)(
+                          IN   CONST VOID  *Data,
+                          IN   UINTN       DataSize,
+                          OUT  UINT8       *HashValue
+                          );
 
 /**
   Initializes user-supplied memory as hash context for subsequent use.
@@ -65,10 +65,10 @@ BOOLEAN
 
 **/
 typedef
-BOOLEAN
-(EFIAPI *HASH_INIT_METHOD) (
-  OUT  VOID  *HashContext
-  );
+  BOOLEAN
+(EFIAPI *HASH_INIT_METHOD)(
+                           OUT  VOID  *HashContext
+                           );
 
 /**
   Digests the input data and updates hash context.
@@ -83,12 +83,12 @@ BOOLEAN
 
 **/
 typedef
-BOOLEAN
-(EFIAPI *HASH_UPDATE_METHOD) (
-  IN OUT  VOID        *HashContext,
-  IN      CONST VOID  *Data,
-  IN      UINTN       DataSize
-  );
+  BOOLEAN
+(EFIAPI *HASH_UPDATE_METHOD)(
+                             IN OUT  VOID        *HashContext,
+                             IN      CONST VOID  *Data,
+                             IN      UINTN       DataSize
+                             );
 
 /**
   Completes computation of the hash digest value.
@@ -103,20 +103,19 @@ BOOLEAN
 
 **/
 typedef
-BOOLEAN
-(EFIAPI *HASH_FINAL_METHOD) (
-  IN OUT  VOID   *HashContext,
-  OUT     UINT8  *HashValue
-  );
+  BOOLEAN
+(EFIAPI *HASH_FINAL_METHOD)(
+                            IN OUT  VOID   *HashContext,
+                            OUT     UINT8  *HashValue
+                            );
 
 typedef struct {
-  UINT16              HashAlgId;
-  UINTN               HashSize;
-  HASH_INIT_METHOD    HashInit;
-  HASH_UPDATE_METHOD  HashUpdate;
-  HASH_FINAL_METHOD   HashFinal;
-  HASH_ALL_METHOD     HashAll;
+  UINT16                HashAlgId;
+  UINTN                 HashSize;
+  HASH_INIT_METHOD      HashInit;
+  HASH_UPDATE_METHOD    HashUpdate;
+  HASH_FINAL_METHOD     HashFinal;
+  HASH_ALL_METHOD       HashAll;
 } HASH_ALG_INFO;
 
 #endif //__FV_REPORT_PEI_H__
-

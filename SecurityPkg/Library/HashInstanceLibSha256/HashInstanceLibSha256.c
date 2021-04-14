@@ -31,10 +31,10 @@ Tpm2SetSha256ToDigestList (
   DigestList->count = 1;
   DigestList->digests[0].hashAlg = TPM_ALG_SHA256;
   CopyMem (
-    DigestList->digests[0].digest.sha256,
-    Sha256Digest,
-    SHA256_DIGEST_SIZE
-    );
+           DigestList->digests[0].digest.sha256,
+           Sha256Digest,
+           SHA256_DIGEST_SIZE
+           );
 }
 
 /**
@@ -51,16 +51,16 @@ Sha256HashInit (
   OUT HASH_HANDLE    *HashHandle
   )
 {
-  VOID     *Sha256Ctx;
-  UINTN    CtxSize;
+  VOID   *Sha256Ctx;
+  UINTN  CtxSize;
 
-  CtxSize = Sha256GetContextSize ();
+  CtxSize   = Sha256GetContextSize ();
   Sha256Ctx = AllocatePool (CtxSize);
   ASSERT (Sha256Ctx != NULL);
 
   Sha256Init (Sha256Ctx);
 
-  *HashHandle = (HASH_HANDLE)Sha256Ctx;
+  *HashHandle = (HASH_HANDLE) Sha256Ctx;
 
   return EFI_SUCCESS;
 }
@@ -82,9 +82,9 @@ Sha256HashUpdate (
   IN UINTN          DataToHashLen
   )
 {
-  VOID     *Sha256Ctx;
+  VOID  *Sha256Ctx;
 
-  Sha256Ctx = (VOID *)HashHandle;
+  Sha256Ctx = (VOID *) HashHandle;
   Sha256Update (Sha256Ctx, DataToHash, DataToHashLen);
 
   return EFI_SUCCESS;
@@ -105,10 +105,10 @@ Sha256HashFinal (
   OUT TPML_DIGEST_VALUES *DigestList
   )
 {
-  UINT8         Digest[SHA256_DIGEST_SIZE];
-  VOID          *Sha256Ctx;
+  UINT8  Digest[SHA256_DIGEST_SIZE];
+  VOID   *Sha256Ctx;
 
-  Sha256Ctx = (VOID *)HashHandle;
+  Sha256Ctx = (VOID *) HashHandle;
   Sha256Final (Sha256Ctx, Digest);
 
   FreePool (Sha256Ctx);
@@ -145,5 +145,6 @@ HashInstanceLibSha256Constructor (
     //
     return EFI_SUCCESS;
   }
+
   return Status;
 }
