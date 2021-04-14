@@ -34,8 +34,8 @@
 EFI_STATUS
 EFIAPI
 GetCgfMgrInfo (
-  IN  CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL      * CONST  CfgMgrProtocol,
-  OUT       CM_STD_OBJ_CONFIGURATION_MANAGER_INFO    **        CfgMfrInfo
+  IN  CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL      *CONST  CfgMgrProtocol,
+  OUT       CM_STD_OBJ_CONFIGURATION_MANAGER_INFO    **CfgMfrInfo
   )
 {
   EFI_STATUS         Status;
@@ -46,43 +46,49 @@ GetCgfMgrInfo (
 
   *CfgMfrInfo = NULL;
   Status = CfgMgrProtocol->GetObject (
-                             CfgMgrProtocol,
-                             CREATE_CM_STD_OBJECT_ID (EStdObjCfgMgrInfo),
-                             CM_NULL_TOKEN,
-                             &CmObjectDesc
-                             );
+                                      CfgMgrProtocol,
+                                      CREATE_CM_STD_OBJECT_ID (EStdObjCfgMgrInfo),
+                                      CM_NULL_TOKEN,
+                                      &CmObjectDesc
+                                      );
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: Failed to Get Configuration Manager Info. Status = %r\n",
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: Failed to Get Configuration Manager Info. Status = %r\n",
+            Status
+           )
+           );
     return Status;
   }
 
   if (CmObjectDesc.ObjectId != CREATE_CM_STD_OBJECT_ID (EStdObjCfgMgrInfo)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: EStdObjCfgMgrInfo: Invalid ObjectId = 0x%x, expected Id = 0x%x\n",
-      CmObjectDesc.ObjectId,
-      CREATE_CM_STD_OBJECT_ID (EStdObjCfgMgrInfo)
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: EStdObjCfgMgrInfo: Invalid ObjectId = 0x%x, expected Id = 0x%x\n",
+            CmObjectDesc.ObjectId,
+            CREATE_CM_STD_OBJECT_ID (EStdObjCfgMgrInfo)
+           )
+           );
     ASSERT (FALSE);
     return EFI_INVALID_PARAMETER;
   }
 
   if (CmObjectDesc.Size <
       (sizeof (CM_STD_OBJ_CONFIGURATION_MANAGER_INFO) * CmObjectDesc.Count)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: EStdObjCfgMgrInfo: Buffer too small, size  = 0x%x\n",
-      CmObjectDesc.Size
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: EStdObjCfgMgrInfo: Buffer too small, size  = 0x%x\n",
+            CmObjectDesc.Size
+           )
+           );
     ASSERT (FALSE);
     return EFI_BAD_BUFFER_SIZE;
   }
 
-  *CfgMfrInfo = (CM_STD_OBJ_CONFIGURATION_MANAGER_INFO*)CmObjectDesc.Data;
+  *CfgMfrInfo = (CM_STD_OBJ_CONFIGURATION_MANAGER_INFO *) CmObjectDesc.Data;
   return Status;
 }
 
@@ -109,15 +115,15 @@ GetCgfMgrInfo (
 EFI_STATUS
 EFIAPI
 AddAcpiHeader (
-  IN      CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL  * CONST CfgMgrProtocol,
-  IN      CONST ACPI_TABLE_GENERATOR                  * CONST Generator,
-  IN OUT  EFI_ACPI_DESCRIPTION_HEADER                 * CONST AcpiHeader,
-  IN      CONST CM_STD_OBJ_ACPI_TABLE_INFO            * CONST AcpiTableInfo,
+  IN      CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL  *CONST CfgMgrProtocol,
+  IN      CONST ACPI_TABLE_GENERATOR                  *CONST Generator,
+  IN OUT  EFI_ACPI_DESCRIPTION_HEADER                 *CONST AcpiHeader,
+  IN      CONST CM_STD_OBJ_ACPI_TABLE_INFO            *CONST AcpiTableInfo,
   IN      CONST UINT32                                        Length
   )
 {
-  EFI_STATUS                               Status;
-  CM_STD_OBJ_CONFIGURATION_MANAGER_INFO  * CfgMfrInfo;
+  EFI_STATUS                             Status;
+  CM_STD_OBJ_CONFIGURATION_MANAGER_INFO  *CfgMfrInfo;
 
   ASSERT (CfgMgrProtocol != NULL);
   ASSERT (Generator != NULL);
@@ -128,17 +134,19 @@ AddAcpiHeader (
       (Generator == NULL) ||
       (AcpiHeader == NULL) ||
       (Length < sizeof (EFI_ACPI_DESCRIPTION_HEADER))
-    ) {
+      ) {
     return EFI_INVALID_PARAMETER;
   }
 
   Status = GetCgfMgrInfo (CfgMgrProtocol, &CfgMfrInfo);
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: Failed to get Configuration Manager info. Status = %r\n",
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: Failed to get Configuration Manager info. Status = %r\n",
+            Status
+           )
+           );
     goto error_handler;
   }
 
@@ -159,12 +167,12 @@ AddAcpiHeader (
     AcpiHeader->OemTableId = AcpiTableInfo->OemTableId;
   } else {
     AcpiHeader->OemTableId = SIGNATURE_32 (
-                               CfgMfrInfo->OemId[0],
-                               CfgMfrInfo->OemId[1],
-                               CfgMfrInfo->OemId[2],
-                               CfgMfrInfo->OemId[3]
-                               ) |
-                             ((UINT64)Generator->AcpiTableSignature << 32);
+                                           CfgMfrInfo->OemId[0],
+                                           CfgMfrInfo->OemId[1],
+                                           CfgMfrInfo->OemId[2],
+                                           CfgMfrInfo->OemId[3]
+                                           ) |
+                             ((UINT64) Generator->AcpiTableSignature << 32);
   }
 
   // UINT32  OemRevision
@@ -200,16 +208,16 @@ error_handler:
 BOOLEAN
 EFIAPI
 FindDuplicateValue (
-  IN  CONST VOID          * Array,
+  IN  CONST VOID          *Array,
   IN  CONST UINTN           Count,
   IN  CONST UINTN           ElementSize,
   IN        PFN_IS_EQUAL    EqualTestFunction
   )
 {
-  UINTN         Index1;
-  UINTN         Index2;
-  UINT8       * Element1;
-  UINT8       * Element2;
+  UINTN  Index1;
+  UINTN  Index2;
+  UINT8  *Element1;
+  UINT8  *Element2;
 
   if (Array == NULL) {
     DEBUG ((DEBUG_ERROR, "ERROR: FindDuplicateValues: Array is NULL.\n"));
@@ -222,10 +230,12 @@ FindDuplicateValue (
   }
 
   if (EqualTestFunction == NULL) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: FindDuplicateValues: EqualTestFunction is NULL.\n"
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: FindDuplicateValues: EqualTestFunction is NULL.\n"
+           )
+           );
     return TRUE;
   }
 
@@ -235,14 +245,15 @@ FindDuplicateValue (
 
   for (Index1 = 0; Index1 < Count - 1; Index1++) {
     for (Index2 = Index1 + 1; Index2 < Count; Index2++) {
-      Element1 = (UINT8*)Array + (Index1 * ElementSize);
-      Element2 = (UINT8*)Array + (Index2 * ElementSize);
+      Element1 = (UINT8 *) Array + (Index1 * ElementSize);
+      Element2 = (UINT8 *) Array + (Index2 * ElementSize);
 
       if (EqualTestFunction (Element1, Element2, Index1, Index2)) {
         return TRUE;
       }
     }
   }
+
   return FALSE;
 }
 
@@ -260,15 +271,15 @@ AsciiFromHex (
   )
 {
   if (x < 10) {
-    return (UINT8)(x + '0');
+    return (UINT8) (x + '0');
   }
 
   if (x < 16) {
-    return (UINT8)(x - 10 + 'A');
+    return (UINT8) (x - 10 + 'A');
   }
 
   ASSERT (FALSE);
-  return (UINT8)0;
+  return (UINT8) 0;
 }
 
 /** Check if a HID is a valid PNP ID.
@@ -280,10 +291,10 @@ AsciiFromHex (
 **/
 BOOLEAN
 IsValidPnpId (
-  IN  CONST CHAR8  * Hid
+  IN  CONST CHAR8  *Hid
   )
 {
-  UINTN Index;
+  UINTN  Index;
 
   if (AsciiStrLen (Hid) != 7) {
     return FALSE;
@@ -315,10 +326,10 @@ IsValidPnpId (
 **/
 BOOLEAN
 IsValidAcpiId (
-  IN  CONST CHAR8  * Hid
+  IN  CONST CHAR8  *Hid
   )
 {
-  UINTN Index;
+  UINTN  Index;
 
   if (AsciiStrLen (Hid) != 8) {
     return FALSE;

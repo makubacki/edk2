@@ -40,18 +40,18 @@ EFI_STATUS
 EFIAPI
 AmlDeviceOpUpdateName (
   IN  AML_OBJECT_NODE_HANDLE    DeviceOpNode,
-  IN  CHAR8                   * NewNameString
+  IN  CHAR8                   *NewNameString
   )
 {
-  EFI_STATUS              Status;
+  EFI_STATUS  Status;
 
-  AML_DATA_NODE_HANDLE    DeviceNameDataNode;
-  CHAR8                 * NewAmlNameString;
-  UINT32                  NewAmlNameStringSize;
+  AML_DATA_NODE_HANDLE  DeviceNameDataNode;
+  CHAR8                 *NewAmlNameString;
+  UINT32                NewAmlNameStringSize;
 
   // Check the input node is an object node.
   if ((DeviceOpNode == NULL)                                              ||
-      (AmlGetNodeType ((AML_NODE_HANDLE)DeviceOpNode) != EAmlNodeObject)  ||
+      (AmlGetNodeType ((AML_NODE_HANDLE) DeviceOpNode) != EAmlNodeObject)  ||
       (!AmlNodeHasOpCode (DeviceOpNode, AML_EXT_OP, AML_EXT_DEVICE_OP))   ||
       (NewNameString == NULL)) {
     ASSERT (0);
@@ -60,12 +60,12 @@ AmlDeviceOpUpdateName (
 
   // Get the Device's name, being a data node
   // which is the 1st fixed argument (i.e. index 0).
-  DeviceNameDataNode = (AML_DATA_NODE_HANDLE)AmlGetFixedArgument (
-                                               DeviceOpNode,
-                                               EAmlParseIndexTerm0
-                                               );
+  DeviceNameDataNode = (AML_DATA_NODE_HANDLE) AmlGetFixedArgument (
+                                                                   DeviceOpNode,
+                                                                   EAmlParseIndexTerm0
+                                                                   );
   if ((DeviceNameDataNode == NULL)                                            ||
-      (AmlGetNodeType ((AML_NODE_HANDLE)DeviceNameDataNode) != EAmlNodeData)  ||
+      (AmlGetNodeType ((AML_NODE_HANDLE) DeviceNameDataNode) != EAmlNodeData)  ||
       (!AmlNodeHasDataType (DeviceNameDataNode, EAmlNodeDataTypeNameString))) {
     ASSERT (0);
     return EFI_INVALID_PARAMETER;
@@ -85,11 +85,11 @@ AmlDeviceOpUpdateName (
 
   // Update the Device's name node.
   Status = AmlUpdateDataNode (
-             DeviceNameDataNode,
-             EAmlNodeDataTypeNameString,
-             (UINT8*)NewAmlNameString,
-             NewAmlNameStringSize
-             );
+                              DeviceNameDataNode,
+                              EAmlNodeDataTypeNameString,
+                              (UINT8 *) NewAmlNameString,
+                              NewAmlNameStringSize
+                              );
   ASSERT_EFI_ERROR (Status);
 
 exit_handler:
@@ -123,7 +123,7 @@ AmlNameOpUpdateInteger (
   AML_OBJECT_NODE_HANDLE  IntegerOpNode;
 
   if ((NameOpNode == NULL)                                             ||
-      (AmlGetNodeType ((AML_NODE_HANDLE)NameOpNode) != EAmlNodeObject) ||
+      (AmlGetNodeType ((AML_NODE_HANDLE) NameOpNode) != EAmlNodeObject) ||
       (!AmlNodeHasOpCode (NameOpNode, AML_NAME_OP, 0))) {
     ASSERT (0);
     return EFI_INVALID_PARAMETER;
@@ -133,12 +133,12 @@ AmlNameOpUpdateInteger (
   // it must have an Integer OpCode (Byte/Word/DWord/QWord).
   // It is the 2nd fixed argument (i.e. index 1) of the NameOp node.
   // This can also be a ZeroOp or OneOp node.
-  IntegerOpNode = (AML_OBJECT_NODE_HANDLE)AmlGetFixedArgument (
-                                            NameOpNode,
-                                            EAmlParseIndexTerm1
-                                            );
+  IntegerOpNode = (AML_OBJECT_NODE_HANDLE) AmlGetFixedArgument (
+                                                                NameOpNode,
+                                                                EAmlParseIndexTerm1
+                                                                );
   if ((IntegerOpNode == NULL)  ||
-      (AmlGetNodeType ((AML_NODE_HANDLE)IntegerOpNode) != EAmlNodeObject)) {
+      (AmlGetNodeType ((AML_NODE_HANDLE) IntegerOpNode) != EAmlNodeObject)) {
     ASSERT (0);
     return EFI_INVALID_PARAMETER;
   }
@@ -171,7 +171,7 @@ EFI_STATUS
 EFIAPI
 AmlNameOpUpdateString (
   IN        AML_OBJECT_NODE_HANDLE    NameOpNode,
-  IN  CONST CHAR8                   * NewName
+  IN  CONST CHAR8                   *NewName
   )
 {
   EFI_STATUS              Status;
@@ -179,7 +179,7 @@ AmlNameOpUpdateString (
   AML_DATA_NODE_HANDLE    StringDataNode;
 
   if ((NameOpNode == NULL)                                             ||
-      (AmlGetNodeType ((AML_NODE_HANDLE)NameOpNode) != EAmlNodeObject) ||
+      (AmlGetNodeType ((AML_NODE_HANDLE) NameOpNode) != EAmlNodeObject) ||
       (!AmlNodeHasOpCode (NameOpNode, AML_NAME_OP, 0))) {
     ASSERT (0);
     return EFI_INVALID_PARAMETER;
@@ -188,35 +188,35 @@ AmlNameOpUpdateString (
   // Get the String object node defined by the "Name ()" function:
   // it must have a string OpCode.
   // It is the 2nd fixed argument (i.e. index 1) of the NameOp node.
-  StringOpNode = (AML_OBJECT_NODE_HANDLE)AmlGetFixedArgument (
-                                           NameOpNode,
-                                           EAmlParseIndexTerm1
-                                           );
+  StringOpNode = (AML_OBJECT_NODE_HANDLE) AmlGetFixedArgument (
+                                                               NameOpNode,
+                                                               EAmlParseIndexTerm1
+                                                               );
   if ((StringOpNode == NULL)  ||
-      (AmlGetNodeType ((AML_NODE_HANDLE)StringOpNode) != EAmlNodeObject)) {
+      (AmlGetNodeType ((AML_NODE_HANDLE) StringOpNode) != EAmlNodeObject)) {
     ASSERT (0);
     return EFI_INVALID_PARAMETER;
   }
 
   // Get the string data node.
   // It is the 1st fixed argument (i.e. index 0) of the StringOpNode node.
-  StringDataNode = (AML_DATA_NODE_HANDLE)AmlGetFixedArgument (
-                                           StringOpNode,
-                                           EAmlParseIndexTerm0
-                                           );
+  StringDataNode = (AML_DATA_NODE_HANDLE) AmlGetFixedArgument (
+                                                               StringOpNode,
+                                                               EAmlParseIndexTerm0
+                                                               );
   if ((StringDataNode == NULL)  ||
-      (AmlGetNodeType ((AML_NODE_HANDLE)StringDataNode) != EAmlNodeData)) {
+      (AmlGetNodeType ((AML_NODE_HANDLE) StringDataNode) != EAmlNodeData)) {
     ASSERT (0);
     return EFI_INVALID_PARAMETER;
   }
 
   // Update the string value.
   Status = AmlUpdateDataNode (
-             StringDataNode,
-             EAmlNodeDataTypeString,
-             (UINT8*)NewName,
-             (UINT32)AsciiStrLen (NewName) + 1
-             );
+                              StringDataNode,
+                              EAmlNodeDataTypeString,
+                              (UINT8 *) NewName,
+                              (UINT32) AsciiStrLen (NewName) + 1
+                              );
   ASSERT_EFI_ERROR (Status);
 
   return Status;
@@ -252,14 +252,14 @@ EFI_STATUS
 EFIAPI
 AmlNameOpCrsGetFirstRdNode (
   IN  AML_OBJECT_NODE_HANDLE   NameOpCrsNode,
-  OUT AML_DATA_NODE_HANDLE   * OutRdNode
+  OUT AML_DATA_NODE_HANDLE   *OutRdNode
   )
 {
   AML_OBJECT_NODE_HANDLE  BufferOpNode;
   AML_DATA_NODE_HANDLE    FirstRdNode;
 
   if ((NameOpCrsNode == NULL)                                              ||
-      (AmlGetNodeType ((AML_NODE_HANDLE)NameOpCrsNode) != EAmlNodeObject)  ||
+      (AmlGetNodeType ((AML_NODE_HANDLE) NameOpCrsNode) != EAmlNodeObject)  ||
       (!AmlNodeHasOpCode (NameOpCrsNode, AML_NAME_OP, 0))                  ||
       (!AmlNameOpCompareName (NameOpCrsNode, "_CRS"))                      ||
       (OutRdNode == NULL)) {
@@ -271,12 +271,12 @@ AmlNameOpCrsGetFirstRdNode (
 
   // Get the _CRS value which is represented as a BufferOp object node
   // which is the 2nd fixed argument (i.e. index 1).
-  BufferOpNode = (AML_OBJECT_NODE_HANDLE)AmlGetFixedArgument (
-                                           NameOpCrsNode,
-                                           EAmlParseIndexTerm1
-                                           );
+  BufferOpNode = (AML_OBJECT_NODE_HANDLE) AmlGetFixedArgument (
+                                                               NameOpCrsNode,
+                                                               EAmlParseIndexTerm1
+                                                               );
   if ((BufferOpNode == NULL)                                             ||
-      (AmlGetNodeType ((AML_NODE_HANDLE)BufferOpNode) != EAmlNodeObject) ||
+      (AmlGetNodeType ((AML_NODE_HANDLE) BufferOpNode) != EAmlNodeObject) ||
       (!AmlNodeHasOpCode (BufferOpNode, AML_BUFFER_OP, 0))) {
     ASSERT (0);
     return EFI_INVALID_PARAMETER;
@@ -284,12 +284,12 @@ AmlNameOpCrsGetFirstRdNode (
 
   // Get the first Resource data node in the variable list of
   // argument of the BufferOp node.
-  FirstRdNode = (AML_DATA_NODE_HANDLE)AmlGetNextVariableArgument (
-                                        (AML_NODE_HANDLE)BufferOpNode,
-                                        NULL
-                                        );
+  FirstRdNode = (AML_DATA_NODE_HANDLE) AmlGetNextVariableArgument (
+                                                                   (AML_NODE_HANDLE) BufferOpNode,
+                                                                   NULL
+                                                                   );
   if ((FirstRdNode == NULL)                                            ||
-      (AmlGetNodeType ((AML_NODE_HANDLE)FirstRdNode) != EAmlNodeData)  ||
+      (AmlGetNodeType ((AML_NODE_HANDLE) FirstRdNode) != EAmlNodeData)  ||
       (!AmlNodeHasDataType (FirstRdNode, EAmlNodeDataTypeResourceData))) {
     ASSERT (0);
     return EFI_INVALID_PARAMETER;
@@ -329,14 +329,14 @@ EFI_STATUS
 EFIAPI
 AmlNameOpCrsGetNextRdNode (
   IN  AML_DATA_NODE_HANDLE    CurrRdNode,
-  OUT AML_DATA_NODE_HANDLE  * OutRdNode
+  OUT AML_DATA_NODE_HANDLE  *OutRdNode
   )
 {
-  AML_OBJECT_NODE_HANDLE     NameOpCrsNode;
-  AML_OBJECT_NODE_HANDLE     BufferOpNode;
+  AML_OBJECT_NODE_HANDLE  NameOpCrsNode;
+  AML_OBJECT_NODE_HANDLE  BufferOpNode;
 
   if ((CurrRdNode == NULL)                                              ||
-      (AmlGetNodeType ((AML_NODE_HANDLE)CurrRdNode) != EAmlNodeData)    ||
+      (AmlGetNodeType ((AML_NODE_HANDLE) CurrRdNode) != EAmlNodeData)    ||
       (!AmlNodeHasDataType (CurrRdNode, EAmlNodeDataTypeResourceData))  ||
       (OutRdNode == NULL)) {
     ASSERT (0);
@@ -346,9 +346,9 @@ AmlNameOpCrsGetNextRdNode (
   *OutRdNode = NULL;
 
   // The parent of the CurrRdNode must be a BufferOp node.
-  BufferOpNode = (AML_OBJECT_NODE_HANDLE)AmlGetParent (
-                                           (AML_NODE_HANDLE)CurrRdNode
-                                           );
+  BufferOpNode = (AML_OBJECT_NODE_HANDLE) AmlGetParent (
+                                                        (AML_NODE_HANDLE) CurrRdNode
+                                                        );
   if ((BufferOpNode == NULL)  ||
       (!AmlNodeHasOpCode (BufferOpNode, AML_BUFFER_OP, 0))) {
     ASSERT (0);
@@ -356,9 +356,9 @@ AmlNameOpCrsGetNextRdNode (
   }
 
   // The parent of the BufferOpNode must be a NameOp node.
-  NameOpCrsNode = (AML_OBJECT_NODE_HANDLE)AmlGetParent (
-                                            (AML_NODE_HANDLE)BufferOpNode
-                                            );
+  NameOpCrsNode = (AML_OBJECT_NODE_HANDLE) AmlGetParent (
+                                                         (AML_NODE_HANDLE) BufferOpNode
+                                                         );
   if ((NameOpCrsNode == NULL)                             ||
       (!AmlNodeHasOpCode (NameOpCrsNode, AML_NAME_OP, 0)) ||
       (!AmlNameOpCompareName (NameOpCrsNode, "_CRS"))) {
@@ -366,15 +366,16 @@ AmlNameOpCrsGetNextRdNode (
     return EFI_INVALID_PARAMETER;
   }
 
-  *OutRdNode = (AML_DATA_NODE_HANDLE)AmlGetNextVariableArgument (
-                                       (AML_NODE_HANDLE)BufferOpNode,
-                                       (AML_NODE_HANDLE)CurrRdNode
-                                       );
+  *OutRdNode = (AML_DATA_NODE_HANDLE) AmlGetNextVariableArgument (
+                                                                  (AML_NODE_HANDLE) BufferOpNode,
+                                                                  (AML_NODE_HANDLE) CurrRdNode
+                                                                  );
 
   // If the Resource Data is an End Tag, return NULL.
   if (AmlNodeHasRdDataType (
-        *OutRdNode,
-        AML_RD_BUILD_SMALL_DESC_ID (ACPI_SMALL_END_TAG_DESCRIPTOR_NAME))) {
+                            *OutRdNode,
+                            AML_RD_BUILD_SMALL_DESC_ID (ACPI_SMALL_END_TAG_DESCRIPTOR_NAME)
+                            )) {
     *OutRdNode = NULL;
   }
 

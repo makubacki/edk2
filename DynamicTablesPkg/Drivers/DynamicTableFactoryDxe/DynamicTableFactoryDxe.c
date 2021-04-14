@@ -27,14 +27,14 @@
 /** The Dynamic Table Factory protocol structure that holds the
     list of registered ACPI and SMBIOS table generators.
 */
-EDKII_DYNAMIC_TABLE_FACTORY_INFO TableFactoryInfo;
+EDKII_DYNAMIC_TABLE_FACTORY_INFO  TableFactoryInfo;
 
 /** A structure describing the Dynamic Table Factory protocol.
 */
 STATIC
 CONST
-EDKII_DYNAMIC_TABLE_FACTORY_PROTOCOL DynamicTableFactoryProtocol = {
-  CREATE_REVISION (1, 0),
+EDKII_DYNAMIC_TABLE_FACTORY_PROTOCOL  DynamicTableFactoryProtocol = {
+  CREATE_REVISION (1,             0),
   GetAcpiTableGenerator,
   RegisterAcpiTableGenerator,
   DeregisterAcpiTableGenerator,
@@ -61,24 +61,27 @@ EFI_STATUS
 EFIAPI
 DynamicTableFactoryDxeInitialize (
   IN  EFI_HANDLE            ImageHandle,
-  IN  EFI_SYSTEM_TABLE   *  SystemTable
+  IN  EFI_SYSTEM_TABLE   *SystemTable
   )
 {
   EFI_STATUS  Status;
 
   Status = gBS->InstallProtocolInterface (
-                  &ImageHandle,
-                  &gEdkiiDynamicTableFactoryProtocolGuid,
-                  EFI_NATIVE_INTERFACE,
-                  (VOID*)&DynamicTableFactoryProtocol
-                  );
+                                          &ImageHandle,
+                                          &gEdkiiDynamicTableFactoryProtocolGuid,
+                                          EFI_NATIVE_INTERFACE,
+                                          (VOID *) &DynamicTableFactoryProtocol
+                                          );
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: Failed to install the Dynamic Table Factory Protocol." \
-      " Status = %r\n",
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: Failed to install the Dynamic Table Factory Protocol." \
+            " Status = %r\n",
+            Status
+           )
+           );
   }
+
   return Status;
 }

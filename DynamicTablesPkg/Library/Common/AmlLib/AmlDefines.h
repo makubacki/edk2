@@ -35,18 +35,18 @@ typedef enum EAmlNodeDataType {
   EAmlNodeDataTypeReserved4,        ///< EAmlUInt64, converted to the UInt type.
   EAmlNodeDataTypeReserved5,        ///< EAmlObject, not accessible.
   EAmlNodeDataTypeNameString,       ///< EAmlName, name corresponding to the
-                                    ///  NameString keyword in the ACPI
-                                    ///  specification. E.g.: "\_SB_.DEV0"
+                                    /// NameString keyword in the ACPI
+                                    /// specification. E.g.: "\_SB_.DEV0"
   EAmlNodeDataTypeString,           ///< EAmlString, NULL terminated string.
   EAmlNodeDataTypeUInt,             ///< Integer data of any length, EAmlUIntX
-                                    ///  are converted to this type.
+                                    /// are converted to this type.
   EAmlNodeDataTypeRaw,              ///< Raw bytes contained in a buffer.
   EAmlNodeDataTypeResourceData,     ///< Resource data element.
   EAmlNodeDataTypeFieldPkgLen,      ///< FieldPkgLen data element.
-                                    ///  PkgLen are usually stored as
-                                    ///  part of object node structures.
-                                    ///  However, they can be found
-                                    ///  standalone in a FieldList.
+                                    /// PkgLen are usually stored as
+                                    /// part of object node structures.
+                                    /// However, they can be found
+                                    /// standalone in a FieldList.
   EAmlNodeDataTypeMax               ///< Max enum.
 } EAML_NODE_DATA_TYPE;
 
@@ -62,7 +62,7 @@ typedef enum EAmlNodeDataType {
   @ingroup TreeStructures
 */
 typedef enum EAmlParseIndex {
-  EAmlParseIndexTerm0  = 0,     ///< First fixed argument index.
+  EAmlParseIndexTerm0 = 0,      ///< First fixed argument index.
   EAmlParseIndexTerm1,          ///< Second fixed argument index.
   EAmlParseIndexTerm2,          ///< Third fixed argument index.
   EAmlParseIndexTerm3,          ///< Fourth fixed argument index.
@@ -84,7 +84,7 @@ typedef enum EAmlParseIndex {
 
   @ingroup TreeStructures
 */
-#define MAX_AML_NAMESTRING_SIZE       1277U
+#define MAX_AML_NAMESTRING_SIZE  1277U
 
 /** Maximum size of an ASL NameString.
 
@@ -98,7 +98,7 @@ typedef enum EAmlParseIndex {
 
   @ingroup TreeStructures
 */
-#define MAX_ASL_NAMESTRING_SIZE       1529U
+#define MAX_ASL_NAMESTRING_SIZE  1529U
 
 /** Pseudo OpCode for method invocations.
 
@@ -117,7 +117,7 @@ typedef enum EAmlParseIndex {
 
   @ingroup TreeStructures
 */
-#define AML_METHOD_INVOC_OP           0xD0
+#define AML_METHOD_INVOC_OP  0xD0
 
 /** Pseudo OpCode for NamedField field elements.
 
@@ -136,14 +136,14 @@ typedef enum EAmlParseIndex {
 
   @ingroup TreeStructures
 */
-#define AML_FIELD_NAMED_OP            0x04
+#define AML_FIELD_NAMED_OP  0x04
 
 /** Size of a NameSeg.
     Cf. ACPI 6.3 specification, s20.2.
 
   @ingroup TreeStructures
 */
- #define AML_NAME_SEG_SIZE            4U
+#define AML_NAME_SEG_SIZE  4U
 
 /** AML object types.
 
@@ -153,7 +153,7 @@ typedef enum EAmlParseIndex {
   @ingroup TreeStructures
 */
 typedef enum EAmlObjType {
-  EAmlObjTypeUnknown        = 0x0,
+  EAmlObjTypeUnknown = 0x0,
   EAmlObjTypeInt,
   EAmlObjTypeStrObj,
   EAmlObjTypeBuffObj,
@@ -179,9 +179,9 @@ typedef enum EAmlNodeType {
   EAmlNodeUnknown,  ///< Unknown/Invalid AML Node Type.
   EAmlNodeRoot,     ///< AML Root Node, typically represents a DefinitionBlock.
   EAmlNodeObject,   ///< AML Object Node, typically represents an ASL statement
-                    ///  or its arguments.
+                    /// or its arguments.
   EAmlNodeData,     ///< AML Data Node, typically represents arguments for an
-                    ///  ASL statement.
+                    /// ASL statement.
   EAmlNodeMax       ///< Max enum.
 } EAML_NODE_TYPE;
 

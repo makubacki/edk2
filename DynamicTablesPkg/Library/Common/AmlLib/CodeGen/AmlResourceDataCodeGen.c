@@ -38,13 +38,13 @@ STATIC
 EFI_STATUS
 EFIAPI
 LinkRdNode (
-  IN  AML_DATA_NODE      * RdNode,
-  IN  AML_OBJECT_NODE    * ParentNode,
-  OUT AML_DATA_NODE     ** NewRdNode
+  IN  AML_DATA_NODE      *RdNode,
+  IN  AML_OBJECT_NODE    *ParentNode,
+  OUT AML_DATA_NODE     **NewRdNode
   )
 {
-  EFI_STATUS    Status;
-  EFI_STATUS    Status1;
+  EFI_STATUS  Status;
+  EFI_STATUS  Status1;
 
   if (NewRdNode != NULL) {
     *NewRdNode = RdNode;
@@ -55,7 +55,7 @@ LinkRdNode (
     Status = AmlAppendRdNode (ParentNode, RdNode);
     if (EFI_ERROR (Status)) {
       ASSERT (0);
-      Status1 = AmlDeleteTree ((AML_NODE_HEADER*)RdNode);
+      Status1 = AmlDeleteTree ((AML_NODE_HEADER *) RdNode);
       ASSERT_EFI_ERROR (Status1);
       // Return original error.
       return Status;
@@ -106,17 +106,17 @@ AmlCodeGenInterrupt (
   IN  BOOLEAN             EdgeTriggered,
   IN  BOOLEAN             ActiveLow,
   IN  BOOLEAN             Shared,
-  IN  UINT32            * IrqList,
+  IN  UINT32            *IrqList,
   IN  UINT8               IrqCount,
-  IN  AML_OBJECT_NODE   * ParentNode,   OPTIONAL
-  OUT AML_DATA_NODE    ** NewRdNode     OPTIONAL
+  IN  AML_OBJECT_NODE   *ParentNode, OPTIONAL
+  OUT AML_DATA_NODE    **NewRdNode     OPTIONAL
   )
 {
-  EFI_STATUS                               Status;
+  EFI_STATUS  Status;
 
-  AML_DATA_NODE                          * RdNode;
-  EFI_ACPI_EXTENDED_INTERRUPT_DESCRIPTOR   RdInterrupt;
-  UINT32                                 * FirstInterrupt;
+  AML_DATA_NODE                           *RdNode;
+  EFI_ACPI_EXTENDED_INTERRUPT_DESCRIPTOR  RdInterrupt;
+  UINT32                                  *FirstInterrupt;
 
   if ((IrqList == NULL) ||
       (IrqCount == 0)   ||
@@ -129,7 +129,7 @@ AmlCodeGenInterrupt (
     ACPI_LARGE_EXTENDED_IRQ_DESCRIPTOR_NAME;
   RdInterrupt.Header.Header.Bits.Type = ACPI_LARGE_ITEM_FLAG;
   RdInterrupt.Header.Length = sizeof (EFI_ACPI_EXTENDED_INTERRUPT_DESCRIPTOR) -
-                                sizeof (ACPI_LARGE_RESOURCE_HEADER);
+                              sizeof (ACPI_LARGE_RESOURCE_HEADER);
   RdInterrupt.InterruptVectorFlags = (ResourceConsumer ? BIT0 : 0) |
                                      (EdgeTriggered ? BIT1 : 0)    |
                                      (ActiveLow ? BIT2 : 0)        |
@@ -143,11 +143,11 @@ AmlCodeGenInterrupt (
   CopyMem (FirstInterrupt, IrqList, (sizeof (UINT32) * IrqCount));
 
   Status = AmlCreateDataNode (
-             EAmlNodeDataTypeResourceData,
-             (UINT8*)&RdInterrupt,
-             sizeof (EFI_ACPI_EXTENDED_INTERRUPT_DESCRIPTOR),
-             &RdNode
-             );
+                              EAmlNodeDataTypeResourceData,
+                              (UINT8 *) &RdInterrupt,
+                              sizeof (EFI_ACPI_EXTENDED_INTERRUPT_DESCRIPTOR),
+                              &RdNode
+                              );
   if (EFI_ERROR (Status)) {
     ASSERT (0);
     return Status;
@@ -207,11 +207,11 @@ AmlCodeGenCrsAddRdInterrupt (
   IN  BOOLEAN                 EdgeTriggered,
   IN  BOOLEAN                 ActiveLow,
   IN  BOOLEAN                 Shared,
-  IN  UINT32                * IrqList,
+  IN  UINT32                *IrqList,
   IN  UINT8                   IrqCount
   )
 {
-  EFI_STATUS              Status;
+  EFI_STATUS  Status;
 
   AML_OBJECT_NODE_HANDLE  BufferOpNode;
 
@@ -225,12 +225,12 @@ AmlCodeGenCrsAddRdInterrupt (
 
   // Get the _CRS value which is represented as a BufferOp object node
   // which is the 2nd fixed argument (i.e. index 1).
-  BufferOpNode = (AML_OBJECT_NODE_HANDLE)AmlGetFixedArgument (
-                                           NameOpCrsNode,
-                                           EAmlParseIndexTerm1
-                                           );
+  BufferOpNode = (AML_OBJECT_NODE_HANDLE) AmlGetFixedArgument (
+                                                               NameOpCrsNode,
+                                                               EAmlParseIndexTerm1
+                                                               );
   if ((BufferOpNode == NULL)                                             ||
-      (AmlGetNodeType ((AML_NODE_HANDLE)BufferOpNode) != EAmlNodeObject) ||
+      (AmlGetNodeType ((AML_NODE_HANDLE) BufferOpNode) != EAmlNodeObject) ||
       (!AmlNodeHasOpCode (BufferOpNode, AML_BUFFER_OP, 0))) {
     ASSERT (0);
     return EFI_INVALID_PARAMETER;
@@ -239,15 +239,15 @@ AmlCodeGenCrsAddRdInterrupt (
   // Generate the Extended Interrupt Resource Data node,
   // and attach it as the last variable argument of the BufferOpNode.
   Status = AmlCodeGenInterrupt (
-             ResourceConsumer,
-             EdgeTriggered,
-             ActiveLow,
-             Shared,
-             IrqList,
-             IrqCount,
-             BufferOpNode,
-             NULL
-             );
+                                ResourceConsumer,
+                                EdgeTriggered,
+                                ActiveLow,
+                                Shared,
+                                IrqList,
+                                IrqCount,
+                                BufferOpNode,
+                                NULL
+                                );
   if (EFI_ERROR (Status)) {
     ASSERT (0);
   }

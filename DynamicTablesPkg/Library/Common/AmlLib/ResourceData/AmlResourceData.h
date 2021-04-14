@@ -58,19 +58,19 @@ typedef UINT8 AML_RD_HEADER;
 
   @ingroup ResourceDataStructures
 */
-#define AML_RD_SMALL_SIZE_MASK    (0x7U)
+#define AML_RD_SMALL_SIZE_MASK  (0x7U)
 
 /** Mask for the small resource data ID.
 
   @ingroup ResourceDataStructures
 */
-#define AML_RD_SMALL_ID_MASK      (0xFU << 3)
+#define AML_RD_SMALL_ID_MASK  (0xFU << 3)
 
 /** Mask for the large resource data ID.
 
   @ingroup ResourceDataStructures
 */
-#define AML_RD_LARGE_ID_MASK      (0x7FU)
+#define AML_RD_LARGE_ID_MASK  (0x7FU)
 
 /**
   @defgroup ResourceDataApis Resource data APIs
@@ -90,8 +90,8 @@ typedef UINT8 AML_RD_HEADER;
   @retval FALSE Otherwise.
 **/
 #define AML_RD_IS_LARGE(Header)                                               \
-          (((ACPI_SMALL_RESOURCE_HEADER*)Header)->Bits.Type ==                \
-          ACPI_LARGE_ITEM_FLAG)
+  (((ACPI_SMALL_RESOURCE_HEADER *) Header)->Bits.Type ==                \
+   ACPI_LARGE_ITEM_FLAG)
 
 /** Build a small resource data descriptor Id.
     The small/large bit is included in the descriptor Id,
@@ -103,7 +103,7 @@ typedef UINT8 AML_RD_HEADER;
 
   @return A descriptor Id.
 **/
-#define AML_RD_BUILD_SMALL_DESC_ID(Id)  ((AML_RD_HEADER)((Id & 0xF) << 3))
+#define AML_RD_BUILD_SMALL_DESC_ID(Id)  ((AML_RD_HEADER) ((Id & 0xF) << 3))
 
 /** Build a large resource data descriptor Id.
     The small/large bit is included in the descriptor Id.
@@ -114,7 +114,7 @@ typedef UINT8 AML_RD_HEADER;
 
   @return A descriptor Id.
 **/
-#define AML_RD_BUILD_LARGE_DESC_ID(Id)  ((AML_RD_HEADER)((BIT7) | Id))
+#define AML_RD_BUILD_LARGE_DESC_ID(Id)  ((AML_RD_HEADER) ((BIT7) | Id))
 
 /** Check whether the resource data has the input descriptor Id.
 
@@ -133,7 +133,7 @@ typedef UINT8 AML_RD_HEADER;
 BOOLEAN
 EFIAPI
 AmlRdCompareDescId (
-  IN  CONST AML_RD_HEADER   * Header,
+  IN  CONST AML_RD_HEADER   *Header,
   IN        AML_RD_HEADER     DescriptorId
   );
 
@@ -151,7 +151,7 @@ AmlRdCompareDescId (
 AML_RD_HEADER
 EFIAPI
 AmlRdGetDescId (
-  IN  CONST AML_RD_HEADER   * Header
+  IN  CONST AML_RD_HEADER   *Header
   );
 
 /** Get the size of a resource data element.
@@ -168,7 +168,7 @@ AmlRdGetDescId (
 UINT32
 EFIAPI
 AmlRdGetSize (
-  IN  CONST AML_RD_HEADER   * Header
+  IN  CONST AML_RD_HEADER   *Header
   );
 
 #endif // AML_RESOURCE_DATA_H_

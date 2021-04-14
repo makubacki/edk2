@@ -40,48 +40,48 @@ Requirements:
 
 /** The number of debug ports represented by the Table.
 */
-#define DBG2_NUM_DEBUG_PORTS                       1
+#define DBG2_NUM_DEBUG_PORTS  1
 
 /** The number of Generic Address Registers
     presented in the debug device information.
 */
-#define DBG2_NUMBER_OF_GENERIC_ADDRESS_REGISTERS   1
+#define DBG2_NUMBER_OF_GENERIC_ADDRESS_REGISTERS  1
 
 /** The index for the debug port 0 in the Debug port information list.
 */
-#define INDEX_DBG_PORT0                            0
+#define INDEX_DBG_PORT0  0
 
 /** A string representing the name of the debug port 0.
 */
-#define NAME_STR_DBG_PORT0                         "COM0"
+#define NAME_STR_DBG_PORT0  "COM0"
 
 /** An UID representing the debug port 0.
 */
-#define UID_DBG_PORT0                              0
+#define UID_DBG_PORT0  0
 
 /** The length of the namespace string.
 */
-#define DBG2_NAMESPACESTRING_FIELD_SIZE            sizeof (NAME_STR_DBG_PORT0)
+#define DBG2_NAMESPACESTRING_FIELD_SIZE  sizeof (NAME_STR_DBG_PORT0)
 
 /** The PL011 UART address range length.
 */
-#define PL011_UART_LENGTH                          0x1000
+#define PL011_UART_LENGTH  0x1000
 
 /** A structure that provides the OS with the required information
     for initializing a debugger connection.
 */
 typedef struct {
   /// The debug device information for the platform
-  EFI_ACPI_DBG2_DEBUG_DEVICE_INFORMATION_STRUCT Dbg2Device;
+  EFI_ACPI_DBG2_DEBUG_DEVICE_INFORMATION_STRUCT    Dbg2Device;
 
   /// The base address register for the serial port
-  EFI_ACPI_6_2_GENERIC_ADDRESS_STRUCTURE        BaseAddressRegister;
+  EFI_ACPI_6_2_GENERIC_ADDRESS_STRUCTURE           BaseAddressRegister;
 
   /// The address size
-  UINT32 AddressSize;
+  UINT32                                           AddressSize;
 
   /// The debug port name string
-  UINT8  NameSpaceString[DBG2_NAMESPACESTRING_FIELD_SIZE];
+  UINT8                                            NameSpaceString[DBG2_NAMESPACESTRING_FIELD_SIZE];
 } DBG2_DEBUG_DEVICE_INFORMATION;
 
 /** A structure representing the information about the debug port(s)
@@ -89,10 +89,10 @@ typedef struct {
 */
 typedef struct {
   /// The DBG2 table header
-  EFI_ACPI_DEBUG_PORT_2_DESCRIPTION_TABLE Description;
+  EFI_ACPI_DEBUG_PORT_2_DESCRIPTION_TABLE    Description;
 
   /// Debug port information list
-  DBG2_DEBUG_DEVICE_INFORMATION       Dbg2DeviceInfo[DBG2_NUM_DEBUG_PORTS];
+  DBG2_DEBUG_DEVICE_INFORMATION              Dbg2DeviceInfo[DBG2_NUM_DEBUG_PORTS];
 } DBG2_TABLE;
 
 /** A helper macro used for initializing the debug port device
@@ -104,11 +104,11 @@ typedef struct {
   @param [in]  UartNameStr  The UART port name string.
 **/
 #define DBG2_DEBUG_PORT_DDI(                                          \
-          SubType,                                                    \
-          UartBase,                                                   \
-          UartAddrLen,                                                \
-          UartNameStr                                                 \
-          ) {                                                         \
+                                                                      SubType,                                                    \
+                                                                      UartBase,                                                   \
+                                                                      UartAddrLen,                                                \
+                                                                      UartNameStr                                                 \
+                                                                      )  {                                                         \
     {                                                                 \
       /* UINT8     Revision */                                        \
       EFI_ACPI_DBG2_DEBUG_DEVICE_INFORMATION_STRUCT_REVISION,         \
@@ -129,7 +129,7 @@ typedef struct {
       /* UINT16    Port Subtype */                                    \
       SubType,                                                        \
       /* UINT8     Reserved[2] */                                     \
-      {EFI_ACPI_RESERVED_BYTE, EFI_ACPI_RESERVED_BYTE},               \
+      { EFI_ACPI_RESERVED_BYTE, EFI_ACPI_RESERVED_BYTE },               \
       /* UINT16    BaseAddressRegister Offset */                      \
       OFFSET_OF (DBG2_DEBUG_DEVICE_INFORMATION, BaseAddressRegister), \
       /* UINT16    AddressSize Offset */                              \
@@ -141,20 +141,20 @@ typedef struct {
     UartAddrLen,                                                      \
     /* UINT8   NameSpaceString[MAX_DBG2_NAME_LEN] */                  \
     UartNameStr                                                       \
-  }
+}
 
 /** The DBG2 Table template definition.
 
   Note: fields marked with "{Template}" will be set dynamically
 */
 STATIC
-DBG2_TABLE AcpiDbg2 = {
+DBG2_TABLE  AcpiDbg2 = {
   {
     ACPI_HEADER (
-      EFI_ACPI_6_2_DEBUG_PORT_2_TABLE_SIGNATURE,
-      DBG2_TABLE,
-      EFI_ACPI_DBG2_DEBUG_DEVICE_INFORMATION_STRUCT_REVISION
-      ),
+                 EFI_ACPI_6_2_DEBUG_PORT_2_TABLE_SIGNATURE,
+                 DBG2_TABLE,
+                 EFI_ACPI_DBG2_DEBUG_DEVICE_INFORMATION_STRUCT_REVISION
+                 ),
     OFFSET_OF (DBG2_TABLE, Dbg2DeviceInfo),
     DBG2_NUM_DEBUG_PORTS
   },
@@ -163,11 +163,11 @@ DBG2_TABLE AcpiDbg2 = {
      * Debug port 1
      */
     DBG2_DEBUG_PORT_DDI (
-      0,                    // {Template}: Serial Port Subtype
-      0,                    // {Template}: Serial Port Base Address
-      PL011_UART_LENGTH,
-      NAME_STR_DBG_PORT0
-      )
+                         0, // {Template}: Serial Port Subtype
+                         0, // {Template}: Serial Port Base Address
+                         PL011_UART_LENGTH,
+                         NAME_STR_DBG_PORT0
+                         )
   }
 };
 
@@ -177,10 +177,10 @@ DBG2_TABLE AcpiDbg2 = {
     debug port information from the Configuration Manager
 */
 GET_OBJECT_LIST (
-  EObjNameSpaceArm,
-  EArmObjSerialDebugPortInfo,
-  CM_ARM_SERIAL_PORT_INFO
-  );
+                 EObjNameSpaceArm,
+                 EArmObjSerialDebugPortInfo,
+                 CM_ARM_SERIAL_PORT_INFO
+                 );
 
 /** Initialize the PL011/SBSA UART with the parameters obtained from
     the Configuration Manager.
@@ -194,7 +194,7 @@ GET_OBJECT_LIST (
 STATIC
 EFI_STATUS
 SetupDebugUart (
-  IN  CONST CM_ARM_SERIAL_PORT_INFO  * CONST SerialPortInfo
+  IN  CONST CM_ARM_SERIAL_PORT_INFO  *CONST SerialPortInfo
   )
 {
   EFI_STATUS          Status;
@@ -209,20 +209,20 @@ SetupDebugUart (
   // Initialize the Serial Debug UART
   DEBUG ((DEBUG_INFO, "Initializing Serial Debug UART...\n"));
   ReceiveFifoDepth = 0; // Use the default value for FIFO depth
-  Parity = (EFI_PARITY_TYPE)FixedPcdGet8 (PcdUartDefaultParity);
+  Parity   = (EFI_PARITY_TYPE) FixedPcdGet8 (PcdUartDefaultParity);
   DataBits = FixedPcdGet8 (PcdUartDefaultDataBits);
-  StopBits = (EFI_STOP_BITS_TYPE)FixedPcdGet8 (PcdUartDefaultStopBits);
+  StopBits = (EFI_STOP_BITS_TYPE) FixedPcdGet8 (PcdUartDefaultStopBits);
 
   BaudRate = SerialPortInfo->BaudRate;
-  Status = PL011UartInitializePort (
-             (UINTN)SerialPortInfo->BaseAddress,
-             SerialPortInfo->Clock,
-             &BaudRate,
-             &ReceiveFifoDepth,
-             &Parity,
-             &DataBits,
-             &StopBits
-             );
+  Status   = PL011UartInitializePort (
+                                      (UINTN) SerialPortInfo->BaseAddress,
+                                      SerialPortInfo->Clock,
+                                      &BaudRate,
+                                      &ReceiveFifoDepth,
+                                      &Parity,
+                                      &DataBits,
+                                      &StopBits
+                                      );
 
   ASSERT_EFI_ERROR (Status);
   return Status;
@@ -245,15 +245,15 @@ STATIC
 EFI_STATUS
 EFIAPI
 FreeDbg2TableEx (
-  IN      CONST ACPI_TABLE_GENERATOR                   * CONST This,
-  IN      CONST CM_STD_OBJ_ACPI_TABLE_INFO             * CONST AcpiTableInfo,
-  IN      CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL   * CONST CfgMgrProtocol,
-  IN OUT        EFI_ACPI_DESCRIPTION_HEADER          *** CONST Table,
+  IN      CONST ACPI_TABLE_GENERATOR                   *CONST This,
+  IN      CONST CM_STD_OBJ_ACPI_TABLE_INFO             *CONST AcpiTableInfo,
+  IN      CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL   *CONST CfgMgrProtocol,
+  IN OUT        EFI_ACPI_DESCRIPTION_HEADER          ***CONST Table,
   IN      CONST UINTN                                          TableCount
   )
 {
-  EFI_STATUS                        Status;
-  EFI_ACPI_DESCRIPTION_HEADER    ** TableList;
+  EFI_STATUS                   Status;
+  EFI_ACPI_DESCRIPTION_HEADER  **TableList;
 
   ASSERT (This != NULL);
   ASSERT (AcpiTableInfo != NULL);
@@ -316,17 +316,17 @@ STATIC
 EFI_STATUS
 EFIAPI
 BuildDbg2TableEx (
-  IN  CONST ACPI_TABLE_GENERATOR                   *       This,
-  IN  CONST CM_STD_OBJ_ACPI_TABLE_INFO             * CONST AcpiTableInfo,
-  IN  CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL   * CONST CfgMgrProtocol,
-  OUT       EFI_ACPI_DESCRIPTION_HEADER          ***       Table,
-  OUT       UINTN                                  * CONST TableCount
+  IN  CONST ACPI_TABLE_GENERATOR                   *This,
+  IN  CONST CM_STD_OBJ_ACPI_TABLE_INFO             *CONST AcpiTableInfo,
+  IN  CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL   *CONST CfgMgrProtocol,
+  OUT       EFI_ACPI_DESCRIPTION_HEADER          ***Table,
+  OUT       UINTN                                  *CONST TableCount
   )
 {
-  EFI_STATUS                      Status;
-  CM_ARM_SERIAL_PORT_INFO       * SerialPortInfo;
-  UINT32                          SerialPortCount;
-  EFI_ACPI_DESCRIPTION_HEADER  ** TableList;
+  EFI_STATUS                   Status;
+  CM_ARM_SERIAL_PORT_INFO      *SerialPortInfo;
+  UINT32                       SerialPortCount;
+  EFI_ACPI_DESCRIPTION_HEADER  **TableList;
 
   ASSERT (This != NULL);
   ASSERT (AcpiTableInfo != NULL);
@@ -338,81 +338,93 @@ BuildDbg2TableEx (
 
   if ((AcpiTableInfo->AcpiTableRevision < This->MinAcpiTableRevision) ||
       (AcpiTableInfo->AcpiTableRevision > This->AcpiTableRevision)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: DBG2: Requested table revision = %d, is not supported."
-      "Supported table revision: Minimum = %d, Maximum = %d\n",
-      AcpiTableInfo->AcpiTableRevision,
-      This->MinAcpiTableRevision,
-      This->AcpiTableRevision
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: DBG2: Requested table revision = %d, is not supported."
+            "Supported table revision: Minimum = %d, Maximum = %d\n",
+            AcpiTableInfo->AcpiTableRevision,
+            This->MinAcpiTableRevision,
+            This->AcpiTableRevision
+           )
+           );
     return EFI_INVALID_PARAMETER;
   }
 
   *Table = NULL;
 
   Status = GetEArmObjSerialDebugPortInfo (
-             CfgMgrProtocol,
-             CM_NULL_TOKEN,
-             &SerialPortInfo,
-             &SerialPortCount
-             );
+                                          CfgMgrProtocol,
+                                          CM_NULL_TOKEN,
+                                          &SerialPortInfo,
+                                          &SerialPortCount
+                                          );
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: DBG2: Failed to get serial port information. Status = %r\n",
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: DBG2: Failed to get serial port information. Status = %r\n",
+            Status
+           )
+           );
     return Status;
   }
 
   if (SerialPortCount == 0) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: DBG2: Serial port information not found. Status = %r\n",
-      EFI_NOT_FOUND
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: DBG2: Serial port information not found. Status = %r\n",
+            EFI_NOT_FOUND
+           )
+           );
     return EFI_NOT_FOUND;
   }
 
   // Only use the first DBG2 port information.
   Status = ValidateSerialPortInfo (SerialPortInfo, 1);
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: DBG2: Invalid serial port information. Status = %r\n",
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: DBG2: Invalid serial port information. Status = %r\n",
+            Status
+           )
+           );
     return Status;
   }
 
   // Allocate a table to store pointers to the DBG2 and SSDT tables.
-  TableList = (EFI_ACPI_DESCRIPTION_HEADER**)
-              AllocateZeroPool (sizeof (EFI_ACPI_DESCRIPTION_HEADER*) * 2);
+  TableList = (EFI_ACPI_DESCRIPTION_HEADER **)
+              AllocateZeroPool (sizeof (EFI_ACPI_DESCRIPTION_HEADER *) * 2);
   if (TableList == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: DBG2: Failed to allocate memory for Table List," \
-      " Status = %r\n",
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: DBG2: Failed to allocate memory for Table List," \
+            " Status = %r\n",
+            Status
+           )
+           );
     return Status;
   }
 
   Status = AddAcpiHeader (
-             CfgMgrProtocol,
-             This,
-             (EFI_ACPI_DESCRIPTION_HEADER*)&AcpiDbg2,
-             AcpiTableInfo,
-             sizeof (DBG2_TABLE)
-             );
+                          CfgMgrProtocol,
+                          This,
+                          (EFI_ACPI_DESCRIPTION_HEADER *) &AcpiDbg2,
+                          AcpiTableInfo,
+                          sizeof (DBG2_TABLE)
+                          );
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: DBG2: Failed to add ACPI header. Status = %r\n",
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: DBG2: Failed to add ACPI header. Status = %r\n",
+            Status
+           )
+           );
     goto error_handler;
   }
 
@@ -425,39 +437,43 @@ BuildDbg2TableEx (
     SerialPortInfo->PortSubtype;
 
   if ((SerialPortInfo->PortSubtype ==
-      EFI_ACPI_DBG2_PORT_SUBTYPE_SERIAL_ARM_PL011_UART)           ||
+       EFI_ACPI_DBG2_PORT_SUBTYPE_SERIAL_ARM_PL011_UART)           ||
       (SerialPortInfo->PortSubtype ==
-      EFI_ACPI_DBG2_PORT_SUBTYPE_SERIAL_ARM_SBSA_GENERIC_UART_2X) ||
+       EFI_ACPI_DBG2_PORT_SUBTYPE_SERIAL_ARM_SBSA_GENERIC_UART_2X) ||
       (SerialPortInfo->PortSubtype ==
-      EFI_ACPI_DBG2_PORT_SUBTYPE_SERIAL_ARM_SBSA_GENERIC_UART)) {
+       EFI_ACPI_DBG2_PORT_SUBTYPE_SERIAL_ARM_SBSA_GENERIC_UART)) {
     // Initialize the serial port
     Status = SetupDebugUart (SerialPortInfo);
     if (EFI_ERROR (Status)) {
-      DEBUG ((
-        DEBUG_ERROR,
-        "ERROR: DBG2: Failed to configure debug serial port. Status = %r\n",
-        Status
-        ));
+      DEBUG (
+             (
+              DEBUG_ERROR,
+              "ERROR: DBG2: Failed to configure debug serial port. Status = %r\n",
+              Status
+             )
+             );
       goto error_handler;
     }
   }
 
-  TableList[0] = (EFI_ACPI_DESCRIPTION_HEADER*)&AcpiDbg2;
+  TableList[0] = (EFI_ACPI_DESCRIPTION_HEADER *) &AcpiDbg2;
 
   // Build a SSDT table describing the serial port.
   Status = BuildSsdtSerialPortTable (
-             AcpiTableInfo,
-             SerialPortInfo,
-             NAME_STR_DBG_PORT0,
-             UID_DBG_PORT0,
-             &TableList[1]
-             );
+                                     AcpiTableInfo,
+                                     SerialPortInfo,
+                                     NAME_STR_DBG_PORT0,
+                                     UID_DBG_PORT0,
+                                     &TableList[1]
+                                     );
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: DBG2: Failed to build associated SSDT table. Status = %r\n",
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: DBG2: Failed to build associated SSDT table. Status = %r\n",
+            Status
+           )
+           );
     goto error_handler;
   }
 
@@ -476,13 +492,13 @@ error_handler:
 
 /** This macro defines the DBG2 Table Generator revision.
 */
-#define DBG2_GENERATOR_REVISION CREATE_REVISION (1, 0)
+#define DBG2_GENERATOR_REVISION  CREATE_REVISION (1, 0)
 
 /** The interface for the DBG2 Table Generator.
 */
 STATIC
 CONST
-ACPI_TABLE_GENERATOR Dbg2Generator = {
+ACPI_TABLE_GENERATOR  Dbg2Generator = {
   // Generator ID
   CREATE_STD_ACPI_TABLE_GEN_ID (EStdAcpiTableIdDbg2),
   // Generator Description
@@ -521,10 +537,11 @@ EFI_STATUS
 EFIAPI
 AcpiDbg2LibConstructor (
   IN  EFI_HANDLE           ImageHandle,
-  IN  EFI_SYSTEM_TABLE  *  SystemTable
+  IN  EFI_SYSTEM_TABLE  *SystemTable
   )
 {
   EFI_STATUS  Status;
+
   Status = RegisterAcpiTableGenerator (&Dbg2Generator);
   DEBUG ((DEBUG_INFO, "DBG2: Register Generator. Status = %r\n", Status));
   ASSERT_EFI_ERROR (Status);
@@ -544,10 +561,11 @@ EFI_STATUS
 EFIAPI
 AcpiDbg2LibDestructor (
   IN  EFI_HANDLE           ImageHandle,
-  IN  EFI_SYSTEM_TABLE  *  SystemTable
+  IN  EFI_SYSTEM_TABLE  *SystemTable
   )
 {
   EFI_STATUS  Status;
+
   Status = DeregisterAcpiTableGenerator (&Dbg2Generator);
   DEBUG ((DEBUG_INFO, "DBG2: Deregister Generator. Status = %r\n", Status));
   ASSERT_EFI_ERROR (Status);

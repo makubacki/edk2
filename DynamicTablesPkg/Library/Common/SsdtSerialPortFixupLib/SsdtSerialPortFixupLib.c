@@ -35,7 +35,7 @@ extern CHAR8  ssdtserialporttemplate_aml_code[];
 
 /** UART address range length.
 */
-#define MIN_UART_ADDRESS_LENGTH         0x1000U
+#define MIN_UART_ADDRESS_LENGTH  0x1000U
 
 /** Validate the Serial Port Information.
 
@@ -48,12 +48,12 @@ extern CHAR8  ssdtserialporttemplate_aml_code[];
 EFI_STATUS
 EFIAPI
 ValidateSerialPortInfo (
-  IN  CONST CM_ARM_SERIAL_PORT_INFO  * SerialPortInfoTable,
+  IN  CONST CM_ARM_SERIAL_PORT_INFO  *SerialPortInfoTable,
   IN        UINT32                     SerialPortCount
   )
 {
-  UINT32                            Index;
-  CONST CM_ARM_SERIAL_PORT_INFO   * SerialPortInfo;
+  UINT32                         Index;
+  CONST CM_ARM_SERIAL_PORT_INFO  *SerialPortInfo;
 
   if  ((SerialPortInfoTable == NULL)  ||
        (SerialPortCount == 0)) {
@@ -65,13 +65,15 @@ ValidateSerialPortInfo (
     SerialPortInfo = &SerialPortInfoTable[Index];
     ASSERT (SerialPortInfo != NULL);
 
-    if ((SerialPortInfo == NULL ) ||
+    if ((SerialPortInfo == NULL) ||
         (SerialPortInfo->BaseAddress == 0)) {
-      DEBUG ((
-        DEBUG_ERROR,
-        "ERROR: UART port base address is invalid. BaseAddress = 0x%llx\n",
-        SerialPortInfo->BaseAddress
-        ));
+      DEBUG (
+             (
+              DEBUG_ERROR,
+              "ERROR: UART port base address is invalid. BaseAddress = 0x%llx\n",
+              SerialPortInfo->BaseAddress
+             )
+             );
       return EFI_INVALID_PARAMETER;
     }
 
@@ -85,26 +87,32 @@ ValidateSerialPortInfo (
          EFI_ACPI_DBG2_PORT_SUBTYPE_SERIAL_DCC) &&
         (SerialPortInfo->PortSubtype !=
          EFI_ACPI_DBG2_PORT_SUBTYPE_SERIAL_FULL_16550)) {
-      DEBUG ((
-        DEBUG_ERROR,
-        "ERROR: UART port subtype is invalid."
-        " UART Base  = 0x%llx, PortSubtype = 0x%x\n",
-        SerialPortInfo->BaseAddress,
-        SerialPortInfo->PortSubtype
-        ));
+      DEBUG (
+             (
+              DEBUG_ERROR,
+              "ERROR: UART port subtype is invalid."
+              " UART Base  = 0x%llx, PortSubtype = 0x%x\n",
+              SerialPortInfo->BaseAddress,
+              SerialPortInfo->PortSubtype
+             )
+             );
       return EFI_INVALID_PARAMETER;
     }
 
     DEBUG ((DEBUG_INFO, "UART Configuration:\n"));
-    DEBUG ((
-      DEBUG_INFO,
-      "  UART Base  = 0x%llx\n", SerialPortInfo->BaseAddress
-      ));
-    DEBUG ((
-      DEBUG_INFO,
-      "  Length     = 0x%llx\n",
-      SerialPortInfo->BaseAddressLength
-      ));
+    DEBUG (
+           (
+            DEBUG_INFO,
+            "  UART Base  = 0x%llx\n", SerialPortInfo->BaseAddress
+           )
+           );
+    DEBUG (
+           (
+            DEBUG_INFO,
+            "  Length     = 0x%llx\n",
+            SerialPortInfo->BaseAddressLength
+           )
+           );
     DEBUG ((DEBUG_INFO, "  Clock      = %lu\n", SerialPortInfo->Clock));
     DEBUG ((DEBUG_INFO, "  BaudRate   = %llu\n", SerialPortInfo->BaudRate));
     DEBUG ((DEBUG_INFO, "  Interrupt  = %lu\n", SerialPortInfo->Interrupt));
@@ -132,21 +140,21 @@ EFIAPI
 FixupIds (
   IN        AML_ROOT_NODE_HANDLE        RootNodeHandle,
   IN  CONST UINT64                      Uid,
-  IN  CONST CM_ARM_SERIAL_PORT_INFO   * SerialPortInfo
+  IN  CONST CM_ARM_SERIAL_PORT_INFO   *SerialPortInfo
   )
 {
-  EFI_STATUS                Status;
-  AML_OBJECT_NODE_HANDLE    NameOpIdNode;
-  CONST CHAR8             * HidString;
-  CONST CHAR8             * CidString;
-  CONST CHAR8             * NonBsaHid;
+  EFI_STATUS              Status;
+  AML_OBJECT_NODE_HANDLE  NameOpIdNode;
+  CONST CHAR8             *HidString;
+  CONST CHAR8             *CidString;
+  CONST CHAR8             *NonBsaHid;
 
   // Get the _CID and _HID value to write.
   switch (SerialPortInfo->PortSubtype) {
     case EFI_ACPI_DBG2_PORT_SUBTYPE_SERIAL_FULL_16550:
     {
       // If there is a non-BSA compliant HID, use that.
-      NonBsaHid = (CONST CHAR8*)PcdGetPtr (PcdNonBsaCompliant16550SerialHid);
+      NonBsaHid = (CONST CHAR8 *) PcdGetPtr (PcdNonBsaCompliant16550SerialHid);
       if ((NonBsaHid != NULL) && (AsciiStrLen (NonBsaHid) != 0)) {
         if (!(IsValidPnpId (NonBsaHid) || IsValidAcpiId (NonBsaHid))) {
           return EFI_INVALID_PARAMETER;
@@ -158,6 +166,7 @@ FixupIds (
         HidString = "PNP0501";
         CidString = "PNP0500";
       }
+
       break;
     }
     case EFI_ACPI_DBG2_PORT_SUBTYPE_SERIAL_ARM_PL011_UART:
@@ -182,15 +191,15 @@ FixupIds (
   // Get the _UID NameOp object defined by the "Name ()" statement,
   // and update its value.
   Status = AmlFindNode (
-             RootNodeHandle,
-             "\\_SB_.COM0._UID",
-             &NameOpIdNode
-             );
+                        RootNodeHandle,
+                        "\\_SB_.COM0._UID",
+                        &NameOpIdNode
+                        );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  Status = AmlNameOpUpdateInteger (NameOpIdNode, (UINT64)Uid);
+  Status = AmlNameOpUpdateInteger (NameOpIdNode, (UINT64) Uid);
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -198,10 +207,10 @@ FixupIds (
   // Get the _HID NameOp object defined by the "Name ()" statement,
   // and update its value.
   Status = AmlFindNode (
-             RootNodeHandle,
-             "\\_SB_.COM0._HID",
-             &NameOpIdNode
-             );
+                        RootNodeHandle,
+                        "\\_SB_.COM0._HID",
+                        &NameOpIdNode
+                        );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -214,10 +223,10 @@ FixupIds (
   // Get the _CID NameOp object defined by the "Name ()" statement,
   // and update its value.
   Status = AmlFindNode (
-             RootNodeHandle,
-             "\\_SB_.COM0._CID",
-             &NameOpIdNode
-             );
+                        RootNodeHandle,
+                        "\\_SB_.COM0._CID",
+                        &NameOpIdNode
+                        );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -256,20 +265,20 @@ EFI_STATUS
 EFIAPI
 FixupCrs (
   IN        AML_ROOT_NODE_HANDLE        RootNodeHandle,
-  IN  CONST CM_ARM_SERIAL_PORT_INFO   * SerialPortInfo
+  IN  CONST CM_ARM_SERIAL_PORT_INFO   *SerialPortInfo
   )
 {
-  EFI_STATUS                Status;
-  AML_OBJECT_NODE_HANDLE    NameOpCrsNode;
-  AML_DATA_NODE_HANDLE      QWordRdNode;
-  AML_DATA_NODE_HANDLE      InterruptRdNode;
+  EFI_STATUS              Status;
+  AML_OBJECT_NODE_HANDLE  NameOpCrsNode;
+  AML_DATA_NODE_HANDLE    QWordRdNode;
+  AML_DATA_NODE_HANDLE    InterruptRdNode;
 
   // Get the "_CRS" object defined by the "Name ()" statement.
   Status = AmlFindNode (
-             RootNodeHandle,
-             "\\_SB_.COM0._CRS",
-             &NameOpCrsNode
-             );
+                        RootNodeHandle,
+                        "\\_SB_.COM0._CRS",
+                        &NameOpCrsNode
+                        );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -286,11 +295,11 @@ FixupCrs (
 
   // Update the Serial Port base address and length.
   Status = AmlUpdateRdQWord (
-             QWordRdNode,
-             SerialPortInfo->BaseAddress,
-             ((SerialPortInfo->BaseAddressLength < MIN_UART_ADDRESS_LENGTH) ?
-                 MIN_UART_ADDRESS_LENGTH: SerialPortInfo->BaseAddressLength)
-             );
+                             QWordRdNode,
+                             SerialPortInfo->BaseAddress,
+                             ((SerialPortInfo->BaseAddressLength < MIN_UART_ADDRESS_LENGTH) ?
+                              MIN_UART_ADDRESS_LENGTH : SerialPortInfo->BaseAddressLength)
+                             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -331,12 +340,12 @@ EFI_STATUS
 EFIAPI
 FixupName (
   IN        AML_ROOT_NODE_HANDLE        RootNodeHandle,
-  IN  CONST CM_ARM_SERIAL_PORT_INFO   * SerialPortInfo,
-  IN  CONST CHAR8                     * Name
+  IN  CONST CM_ARM_SERIAL_PORT_INFO   *SerialPortInfo,
+  IN  CONST CHAR8                     *Name
   )
 {
-  EFI_STATUS                Status;
-  AML_OBJECT_NODE_HANDLE    DeviceNode;
+  EFI_STATUS              Status;
+  AML_OBJECT_NODE_HANDLE  DeviceNode;
 
   // Get the COM0 variable defined by the "Device ()" statement.
   Status = AmlFindNode (RootNodeHandle, "\\_SB_.COM0", &DeviceNode);
@@ -345,7 +354,7 @@ FixupName (
   }
 
   // Update the Device's name.
-  return AmlDeviceOpUpdateName (DeviceNode, (CHAR8*)Name);
+  return AmlDeviceOpUpdateName (DeviceNode, (CHAR8 *) Name);
 }
 
 /** Fixup the Serial Port Information in the AML tree.
@@ -375,13 +384,13 @@ EFI_STATUS
 EFIAPI
 FixupSerialPortInfo (
   IN            AML_ROOT_NODE_HANDLE              RootNodeHandle,
-  IN      CONST CM_ARM_SERIAL_PORT_INFO         * SerialPortInfo,
-  IN      CONST CHAR8                           * Name,
+  IN      CONST CM_ARM_SERIAL_PORT_INFO         *SerialPortInfo,
+  IN      CONST CHAR8                           *Name,
   IN      CONST UINT64                            Uid,
-      OUT       EFI_ACPI_DESCRIPTION_HEADER    ** Table
+  OUT       EFI_ACPI_DESCRIPTION_HEADER    **Table
   )
 {
-  EFI_STATUS                Status;
+  EFI_STATUS  Status;
 
   ASSERT (RootNodeHandle != NULL);
   ASSERT (SerialPortInfo != NULL);
@@ -416,7 +425,7 @@ FixupSerialPortInfo (
 EFI_STATUS
 EFIAPI
 FreeSsdtSerialPortTable (
-  IN EFI_ACPI_DESCRIPTION_HEADER  * Table
+  IN EFI_ACPI_DESCRIPTION_HEADER  *Table
   )
 {
   ASSERT (Table != NULL);
@@ -444,16 +453,16 @@ FreeSsdtSerialPortTable (
 EFI_STATUS
 EFIAPI
 BuildSsdtSerialPortTable (
-  IN  CONST CM_STD_OBJ_ACPI_TABLE_INFO    *  AcpiTableInfo,
-  IN  CONST CM_ARM_SERIAL_PORT_INFO       *  SerialPortInfo,
-  IN  CONST CHAR8                         *  Name,
+  IN  CONST CM_STD_OBJ_ACPI_TABLE_INFO    *AcpiTableInfo,
+  IN  CONST CM_ARM_SERIAL_PORT_INFO       *SerialPortInfo,
+  IN  CONST CHAR8                         *Name,
   IN  CONST UINT64                           Uid,
-  OUT       EFI_ACPI_DESCRIPTION_HEADER  **  Table
+  OUT       EFI_ACPI_DESCRIPTION_HEADER  **Table
   )
 {
-  EFI_STATUS              Status;
-  EFI_STATUS              Status1;
-  AML_ROOT_NODE_HANDLE    RootNodeHandle;
+  EFI_STATUS            Status;
+  EFI_STATUS            Status1;
+  AML_ROOT_NODE_HANDLE  RootNodeHandle;
 
   ASSERT (AcpiTableInfo != NULL);
   ASSERT (SerialPortInfo != NULL);
@@ -468,49 +477,55 @@ BuildSsdtSerialPortTable (
 
   // Parse the SSDT Serial Port Template.
   Status = AmlParseDefinitionBlock (
-             (EFI_ACPI_DESCRIPTION_HEADER*)ssdtserialporttemplate_aml_code,
-             &RootNodeHandle
-             );
+                                    (EFI_ACPI_DESCRIPTION_HEADER *) ssdtserialporttemplate_aml_code,
+                                    &RootNodeHandle
+                                    );
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: SSDT-SERIAL-PORT-FIXUP:"
-      " Failed to parse SSDT Serial Port Template. Status = %r\n",
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: SSDT-SERIAL-PORT-FIXUP:"
+            " Failed to parse SSDT Serial Port Template. Status = %r\n",
+            Status
+           )
+           );
     return Status;
   }
 
   // Fixup the template values.
   Status = FixupSerialPortInfo (
-             RootNodeHandle,
-             SerialPortInfo,
-             Name,
-             Uid,
-             Table
-             );
+                                RootNodeHandle,
+                                SerialPortInfo,
+                                Name,
+                                Uid,
+                                Table
+                                );
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: SSDT-SERIAL-PORT-FIXUP: Failed to fixup SSDT Serial Port Table."
-      " Status = %r\n",
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: SSDT-SERIAL-PORT-FIXUP: Failed to fixup SSDT Serial Port Table."
+            " Status = %r\n",
+            Status
+           )
+           );
     goto exit_handler;
   }
 
   // Serialize the tree.
   Status = AmlSerializeDefinitionBlock (
-             RootNodeHandle,
-             Table
-             );
+                                        RootNodeHandle,
+                                        Table
+                                        );
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: SSDT-SERIAL-PORT-FIXUP: Failed to Serialize SSDT Table Data."
-      " Status = %r\n",
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: SSDT-SERIAL-PORT-FIXUP: Failed to Serialize SSDT Table Data."
+            " Status = %r\n",
+            Status
+           )
+           );
   }
 
 exit_handler:
@@ -518,12 +533,14 @@ exit_handler:
   if (RootNodeHandle != NULL) {
     Status1 = AmlDeleteTree (RootNodeHandle);
     if (EFI_ERROR (Status1)) {
-      DEBUG ((
-        DEBUG_ERROR,
-        "ERROR: SSDT-SERIAL-PORT-FIXUP: Failed to cleanup AML tree."
-        " Status = %r\n",
-        Status1
-        ));
+      DEBUG (
+             (
+              DEBUG_ERROR,
+              "ERROR: SSDT-SERIAL-PORT-FIXUP: Failed to cleanup AML tree."
+              " Status = %r\n",
+              Status1
+             )
+             );
       // If Status was success but we failed to delete the AML Tree
       // return Status1 else return the original error code, i.e. Status.
       if (!EFI_ERROR (Status)) {

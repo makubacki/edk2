@@ -42,6 +42,7 @@ AmlIsNameString (
       ((SegCount + Root + ParentPrefix) != 0)) {
     return TRUE;
   }
+
   return FALSE;
 }
 
@@ -61,13 +62,13 @@ AmlIsNameString (
 EFI_STATUS
 EFIAPI
 AmlUpperCaseMemCpyS (
-  OUT       CHAR8   * DstBuffer,
+  OUT       CHAR8   *DstBuffer,
   IN        UINT32    MaxDstBufferSize,
-  IN  CONST CHAR8   * SrcBuffer,
+  IN  CONST CHAR8   *SrcBuffer,
   IN        UINT32    Count
   )
 {
-  UINT32 Index;
+  UINT32  Index;
 
   if ((DstBuffer == NULL) ||
       (SrcBuffer == NULL)) {
@@ -85,7 +86,7 @@ AmlUpperCaseMemCpyS (
 
   for (Index = 0; Index < Count; Index++) {
     if ((SrcBuffer[Index] >= 'a') && (SrcBuffer[Index] <= 'z')) {
-      DstBuffer[Index] = (CHAR8)((UINT8)SrcBuffer[Index] - ('a' - 'A'));
+      DstBuffer[Index] = (CHAR8) ((UINT8) SrcBuffer[Index] - ('a' - 'A'));
     } else {
       DstBuffer[Index] = SrcBuffer[Index];
     }
@@ -107,7 +108,7 @@ AmlUpperCaseMemCpyS (
 BOOLEAN
 EFIAPI
 AmlIsRootPath (
-  IN  CONST  CHAR8  * Buffer
+  IN  CONST  CHAR8  *Buffer
   )
 {
   if (Buffer == NULL) {
@@ -195,11 +196,11 @@ AmlIsNameChar (
 BOOLEAN
 EFIAPI
 AslIsNameSeg (
-  IN  CONST  CHAR8    * AslBuffer,
-  OUT        UINT32   * Size
+  IN  CONST  CHAR8    *AslBuffer,
+  OUT        UINT32   *Size
   )
 {
-  UINT32    Index;
+  UINT32  Index;
 
   if ((AslBuffer == NULL) ||
       (Size == NULL)) {
@@ -237,10 +238,10 @@ AslIsNameSeg (
 BOOLEAN
 EFIAPI
 AmlIsNameSeg (
-  IN  CONST  CHAR8    * AmlBuffer
+  IN  CONST  CHAR8    *AmlBuffer
   )
 {
-  UINT32    Index;
+  UINT32  Index;
 
   if (AmlBuffer == NULL) {
     return FALSE;
@@ -279,13 +280,13 @@ AmlIsNameSeg (
 EFI_STATUS
 EFIAPI
 AslParseNameStringInfo (
-  IN  CONST CHAR8     * Buffer,
-  OUT       UINT32    * Root,
-  OUT       UINT32    * ParentPrefix,
-  OUT       UINT32    * SegCount
+  IN  CONST CHAR8     *Buffer,
+  OUT       UINT32    *Root,
+  OUT       UINT32    *ParentPrefix,
+  OUT       UINT32    *SegCount
   )
 {
-  UINT32      NameSegSize;
+  UINT32  NameSegSize;
 
   if ((Buffer == NULL)        ||
       (Root == NULL)          ||
@@ -297,7 +298,7 @@ AslParseNameStringInfo (
 
   *Root = 0;
   *ParentPrefix = 0;
-  *SegCount = 0;
+  *SegCount     = 0;
 
   // Handle Root and ParentPrefix(s).
   if (*Buffer == AML_ROOT_CHAR) {
@@ -363,10 +364,10 @@ AslParseNameStringInfo (
 EFI_STATUS
 EFIAPI
 AmlParseNameStringInfo (
-  IN  CONST CHAR8   * Buffer,
-  OUT       UINT32  * Root,
-  OUT       UINT32  * ParentPrefix,
-  OUT       UINT32  * SegCount
+  IN  CONST CHAR8   *Buffer,
+  OUT       UINT32  *Root,
+  OUT       UINT32  *ParentPrefix,
+  OUT       UINT32  *SegCount
   )
 {
   if ((Buffer == NULL) ||
@@ -379,7 +380,7 @@ AmlParseNameStringInfo (
 
   *Root = 0;
   *ParentPrefix = 0;
-  *SegCount = 0;
+  *SegCount     = 0;
 
   // Handle Root and ParentPrefix(s).
   if (*Buffer == AML_ROOT_CHAR) {
@@ -396,7 +397,7 @@ AmlParseNameStringInfo (
   if (*Buffer == AML_DUAL_NAME_PREFIX) {
     *SegCount = 2;
   } else if (*Buffer == AML_MULTI_NAME_PREFIX) {
-    *SegCount = *((UINT8*)(Buffer + 1));
+    *SegCount = *((UINT8 *) (Buffer + 1));
   } else if (AmlIsNameSeg (Buffer)) {
     *SegCount = 1;
   } else if (*Buffer == AML_ZERO_OP) {
@@ -435,7 +436,7 @@ AslComputeNameStringSize (
   IN  UINT32    SegCount
   )
 {
-  UINT32    TotalSize;
+  UINT32  TotalSize;
 
   if (!AmlIsNameString (Root, ParentPrefix, SegCount)) {
     ASSERT (0);
@@ -477,7 +478,7 @@ AmlComputeNameStringSize (
   IN  UINT32    SegCount
   )
 {
-  UINT32    TotalSize;
+  UINT32  TotalSize;
 
   if (!AmlIsNameString (Root, ParentPrefix, SegCount)) {
     ASSERT (0);
@@ -507,8 +508,8 @@ AmlComputeNameStringSize (
 EFI_STATUS
 EFIAPI
 AslGetNameStringSize (
-  IN  CONST CHAR8   * AslPath,
-  OUT       UINT32  * AslPathSizePtr
+  IN  CONST CHAR8   *AslPath,
+  OUT       UINT32  *AslPathSizePtr
   )
 {
   if ((AslPath == NULL) ||
@@ -537,15 +538,15 @@ AslGetNameStringSize (
 EFI_STATUS
 EFIAPI
 AmlGetNameStringSize (
-  IN   CONST  CHAR8   * AmlPath,
-  OUT         UINT32  * AmlPathSizePtr
+  IN   CONST  CHAR8   *AmlPath,
+  OUT         UINT32  *AmlPathSizePtr
   )
 {
-  EFI_STATUS    Status;
+  EFI_STATUS  Status;
 
-  UINT32        Root;
-  UINT32        ParentPrefix;
-  UINT32        SegCount;
+  UINT32  Root;
+  UINT32  ParentPrefix;
+  UINT32  SegCount;
 
   if ((AmlPath == NULL) ||
       (AmlPathSizePtr == NULL)) {
@@ -554,11 +555,11 @@ AmlGetNameStringSize (
   }
 
   Status = AmlParseNameStringInfo (
-             AmlPath,
-             &Root,
-             &ParentPrefix,
-             &SegCount
-             );
+                                   AmlPath,
+                                   &Root,
+                                   &ParentPrefix,
+                                   &SegCount
+                                   );
   if (EFI_ERROR (Status)) {
     ASSERT (0);
     return Status;
@@ -587,21 +588,21 @@ AmlGetNameStringSize (
 EFI_STATUS
 EFIAPI
 ConvertAslNameToAmlName (
-  IN  CONST  CHAR8   * AslPath,
-  OUT        CHAR8  ** OutAmlPath
+  IN  CONST  CHAR8   *AslPath,
+  OUT        CHAR8  **OutAmlPath
   )
 {
-  EFI_STATUS      Status;
+  EFI_STATUS  Status;
 
-  UINT32          Root;
-  UINT32          ParentPrefix;
-  UINT32          SegCount;
-  UINT32          TotalSize;
-  UINT32          NameSegSize;
+  UINT32  Root;
+  UINT32  ParentPrefix;
+  UINT32  SegCount;
+  UINT32  TotalSize;
+  UINT32  NameSegSize;
 
-  CONST CHAR8   * AslBuffer;
-  CHAR8         * AmlBuffer;
-  CHAR8         * AmlPath;
+  CONST CHAR8  *AslBuffer;
+  CHAR8        *AmlBuffer;
+  CHAR8        *AmlPath;
 
   if ((AslPath == NULL) ||
       (OutAmlPath == NULL)) {
@@ -647,7 +648,7 @@ ConvertAslNameToAmlName (
   if (SegCount > 2) {
     *AmlBuffer = AML_MULTI_NAME_PREFIX;
     AmlBuffer++;
-    *AmlBuffer = (UINT8)SegCount;
+    *AmlBuffer = (UINT8) SegCount;
     AmlBuffer++;
   } else if (SegCount == 2) {
     *AmlBuffer = AML_DUAL_NAME_PREFIX;
@@ -668,11 +669,11 @@ ConvertAslNameToAmlName (
 
       // Convert to Upper case and copy.
       Status = AmlUpperCaseMemCpyS (
-                 AmlBuffer,
-                 TotalSize,
-                 AslBuffer,
-                 NameSegSize
-                 );
+                                    AmlBuffer,
+                                    TotalSize,
+                                    AslBuffer,
+                                    NameSegSize
+                                    );
       if (EFI_ERROR (Status)) {
         ASSERT (0);
         goto error_handler;
@@ -680,10 +681,10 @@ ConvertAslNameToAmlName (
 
       // Complete the NameSeg with an underscore ('_') if shorter than 4 bytes.
       SetMem (
-        AmlBuffer + NameSegSize,
-        AML_NAME_SEG_SIZE - NameSegSize,
-        AML_NAME_CHAR__
-        );
+              AmlBuffer + NameSegSize,
+              AML_NAME_SEG_SIZE - NameSegSize,
+              AML_NAME_CHAR__
+              );
 
       // Go to the next NameSeg.
       AmlBuffer += AML_NAME_SEG_SIZE;
@@ -709,7 +710,6 @@ ConvertAslNameToAmlName (
         }
       }
     } // while
-
   } else {
     // (SegCount == 0)
     // '\0' needs to end the AML NameString/path.
@@ -721,10 +721,10 @@ ConvertAslNameToAmlName (
   // Check that AmlPath has been filled with TotalSize bytes.
   if ((SegCount != 0)               ||
       (*AslBuffer != AML_ZERO_OP)   ||
-      (((UINT32)(AmlBuffer - AmlPath)) != TotalSize)) {
-      ASSERT (0);
-      Status = EFI_INVALID_PARAMETER;
-      goto error_handler;
+      (((UINT32) (AmlBuffer - AmlPath)) != TotalSize)) {
+    ASSERT (0);
+    Status = EFI_INVALID_PARAMETER;
+    goto error_handler;
   }
 
   *OutAmlPath = AmlPath;
@@ -749,20 +749,20 @@ error_handler:
 EFI_STATUS
 EFIAPI
 ConvertAmlNameToAslName (
-  IN  CONST CHAR8     * AmlPath,
-  OUT       CHAR8    ** OutAslPath
+  IN  CONST CHAR8     *AmlPath,
+  OUT       CHAR8    **OutAslPath
   )
 {
-  EFI_STATUS      Status;
+  EFI_STATUS  Status;
 
-  UINT32          Root;
-  UINT32          ParentPrefix;
-  UINT32          SegCount;
-  UINT32          TotalSize;
+  UINT32  Root;
+  UINT32  ParentPrefix;
+  UINT32  SegCount;
+  UINT32  TotalSize;
 
-  CONST CHAR8   * AmlBuffer;
-  CHAR8         * AslBuffer;
-  CHAR8         * AslPath;
+  CONST CHAR8  *AmlBuffer;
+  CHAR8        *AslBuffer;
+  CHAR8        *AslPath;
 
   if ((AmlPath == NULL)   ||
       (OutAslPath == NULL)) {
@@ -835,7 +835,7 @@ ConvertAmlNameToAslName (
 
   // Safety checks on exit.
   // Check that AslPath has been filled with TotalSize bytes.
-  if (((UINT32)(AslBuffer - AslPath)) != TotalSize) {
+  if (((UINT32) (AslBuffer - AslPath)) != TotalSize) {
     ASSERT (0);
     Status = EFI_INVALID_PARAMETER;
     goto error_handler;
@@ -860,13 +860,13 @@ error_handler:
 BOOLEAN
 EFIAPI
 AslCompareNameString (
-  IN  CONST CHAR8 *   AslName1,
-  IN  CONST CHAR8 *   AslName2
+  IN  CONST CHAR8 *AslName1,
+  IN  CONST CHAR8 *AslName2
   )
 {
-  EFI_STATUS    Status;
-  UINT32        AslName1Len;
-  UINT32        AslName2Len;
+  EFI_STATUS  Status;
+  UINT32      AslName1Len;
+  UINT32      AslName2Len;
 
   if ((AslName1 == NULL) ||
       (AslName2 == NULL)) {
@@ -905,13 +905,13 @@ AslCompareNameString (
 BOOLEAN
 EFIAPI
 AmlCompareNameString (
-  IN  CONST CHAR8 *   AmlName1,
-  IN  CONST CHAR8 *   AmlName2
+  IN  CONST CHAR8 *AmlName1,
+  IN  CONST CHAR8 *AmlName2
   )
 {
-  EFI_STATUS    Status;
-  UINT32        AmlName1Len;
-  UINT32        AmlName2Len;
+  EFI_STATUS  Status;
+  UINT32      AmlName1Len;
+  UINT32      AmlName2Len;
 
   if ((AmlName1 == NULL) ||
       (AmlName2 == NULL)) {
@@ -956,14 +956,14 @@ AmlCompareNameString (
 BOOLEAN
 EFIAPI
 CompareAmlWithAslNameString (
-  IN  CONST CHAR8 *   AmlName1,
-  IN  CONST CHAR8 *   AslName2
+  IN  CONST CHAR8 *AmlName1,
+  IN  CONST CHAR8 *AslName2
   )
 {
-  EFI_STATUS    Status;
+  EFI_STATUS  Status;
 
-  CHAR8       * AmlName2;
-  BOOLEAN       RetVal;
+  CHAR8    *AmlName2;
+  BOOLEAN  RetVal;
 
   if ((AmlName1 == NULL) ||
       (AslName2 == NULL)) {
@@ -986,6 +986,7 @@ CompareAmlWithAslNameString (
 
   return RetVal;
 }
+
 /** Given an AmlPath, return the address of the first NameSeg.
 
   It is possible to determine the size of an AML NameString/path just
@@ -1004,7 +1005,7 @@ CONST
 CHAR8 *
 EFIAPI
 AmlGetFirstNameSeg (
-  IN  CONST  CHAR8    * AmlPath,
+  IN  CONST  CHAR8    *AmlPath,
   IN         UINT32     Root,
   IN         UINT32     ParentPrefix
   )

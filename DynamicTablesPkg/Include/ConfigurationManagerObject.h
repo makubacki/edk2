@@ -82,19 +82,19 @@ Object ID's in the ARM Namespace:
   29 - Processor Hierarchy Node ID Info
   30 - CM Object Reference
 */
-typedef UINT32  CM_OBJECT_ID;
+typedef UINT32 CM_OBJECT_ID;
 
 /** A mask for Object ID
 */
-#define OBJECT_ID_MASK            0xFF
+#define OBJECT_ID_MASK  0xFF
 
 /** A mask for Namespace ID
 */
-#define NAMESPACE_ID_MASK         0xF
+#define NAMESPACE_ID_MASK  0xF
 
 /** Starting bit position for Namespace ID
 */
-#define NAMESPACE_ID_BIT_SHIFT    28
+#define NAMESPACE_ID_BIT_SHIFT  28
 
 /** The EOBJECT_NAMESPACE_ID enum describes the defined namespaces
     for the Configuration Manager Objects.
@@ -113,16 +113,16 @@ typedef enum ObjectNameSpaceID {
 */
 typedef struct CmObjDescriptor {
   /// Object Id
-  CM_OBJECT_ID  ObjectId;
+  CM_OBJECT_ID    ObjectId;
 
   /// Size of the described Object or Object List
-  UINT32        Size;
+  UINT32          Size;
 
   /// Pointer to the described Object or Object List
-  VOID        * Data;
+  VOID            *Data;
 
   /// Count of objects in the list
-  UINT32        Count;
+  UINT32          Count;
 } CM_OBJ_DESCRIPTOR;
 
 #pragma pack()
@@ -134,8 +134,8 @@ typedef struct CmObjDescriptor {
   @retval Returns the Namespace ID corresponding to the CmObjectID.
 **/
 #define GET_CM_NAMESPACE_ID(CmObjectId)               \
-          (((CmObjectId) >> NAMESPACE_ID_BIT_SHIFT) & \
-            NAMESPACE_ID_MASK)
+  (((CmObjectId) >> NAMESPACE_ID_BIT_SHIFT) & \
+   NAMESPACE_ID_MASK)
 
 /** This macro returns the Object ID from the CmObjectID.
 
@@ -143,7 +143,7 @@ typedef struct CmObjDescriptor {
 
   @retval Returns the Object ID corresponding to the CmObjectID.
 **/
-#define GET_CM_OBJECT_ID(CmObjectId)    ((CmObjectId) & OBJECT_ID_MASK)
+#define GET_CM_OBJECT_ID(CmObjectId)  ((CmObjectId) & OBJECT_ID_MASK)
 
 /** This macro returns a Configuration Manager Object ID
     from the NameSpace ID and the ObjectID.
@@ -154,8 +154,8 @@ typedef struct CmObjDescriptor {
   @retval Returns the Configuration Manager Object ID.
 **/
 #define CREATE_CM_OBJECT_ID(NameSpaceId, ObjectId)                           \
-          ((((NameSpaceId) & NAMESPACE_ID_MASK) << NAMESPACE_ID_BIT_SHIFT) | \
-            ((ObjectId) & OBJECT_ID_MASK))
+  ((((NameSpaceId) & NAMESPACE_ID_MASK) << NAMESPACE_ID_BIT_SHIFT) | \
+   ((ObjectId) & OBJECT_ID_MASK))
 
 /** This macro returns a Configuration Manager Object ID
     in the Standard Object Namespace.
@@ -165,7 +165,7 @@ typedef struct CmObjDescriptor {
   @retval Returns a Standard Configuration Manager Object ID.
 **/
 #define CREATE_CM_STD_OBJECT_ID(ObjectId) \
-          (CREATE_CM_OBJECT_ID (EObjNameSpaceStandard, ObjectId))
+  (CREATE_CM_OBJECT_ID (EObjNameSpaceStandard, ObjectId))
 
 /** This macro returns a Configuration Manager Object ID
     in the ARM Object Namespace.
@@ -175,7 +175,7 @@ typedef struct CmObjDescriptor {
   @retval Returns an ARM Configuration Manager Object ID.
 **/
 #define CREATE_CM_ARM_OBJECT_ID(ObjectId) \
-          (CREATE_CM_OBJECT_ID (EObjNameSpaceArm, ObjectId))
+  (CREATE_CM_OBJECT_ID (EObjNameSpaceArm, ObjectId))
 
 /** This macro returns a Configuration Manager Object ID
     in the OEM Object Namespace.
@@ -185,6 +185,6 @@ typedef struct CmObjDescriptor {
   @retval Returns an OEM Configuration Manager Object ID.
 **/
 #define CREATE_CM_OEM_OBJECT_ID(ObjectId) \
-          (CREATE_CM_OBJECT_ID (EObjNameSpaceOem, ObjectId))
+  (CREATE_CM_OBJECT_ID (EObjNameSpaceOem, ObjectId))
 
 #endif // CONFIGURATION_MANAGER_OBJECT_H_

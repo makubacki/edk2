@@ -26,10 +26,10 @@
     List from the Configuration Manager.
 */
 GET_OBJECT_LIST (
-  EObjNameSpaceStandard,
-  EStdObjAcpiTableList,
-  CM_STD_OBJ_ACPI_TABLE_INFO
-  )
+                 EObjNameSpaceStandard,
+                 EStdObjAcpiTableList,
+                 CM_STD_OBJ_ACPI_TABLE_INFO
+                 )
 
 /** A helper function to build and install a single ACPI table.
 
@@ -56,33 +56,35 @@ STATIC
 EFI_STATUS
 EFIAPI
 BuildAndInstallSingleAcpiTable (
-  IN CONST EDKII_DYNAMIC_TABLE_FACTORY_PROTOCOL  * CONST TableFactoryProtocol,
-  IN CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL  * CONST CfgMgrProtocol,
-  IN CONST ACPI_TABLE_GENERATOR                  * CONST Generator,
-  IN       EFI_ACPI_TABLE_PROTOCOL               *       AcpiTableProtocol,
-  IN CONST CM_STD_OBJ_ACPI_TABLE_INFO            * CONST AcpiTableInfo
+  IN CONST EDKII_DYNAMIC_TABLE_FACTORY_PROTOCOL  *CONST TableFactoryProtocol,
+  IN CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL  *CONST CfgMgrProtocol,
+  IN CONST ACPI_TABLE_GENERATOR                  *CONST Generator,
+  IN       EFI_ACPI_TABLE_PROTOCOL               *AcpiTableProtocol,
+  IN CONST CM_STD_OBJ_ACPI_TABLE_INFO            *CONST AcpiTableInfo
   )
 {
-  EFI_STATUS                    Status;
-  EFI_STATUS                    Status1;
-  EFI_ACPI_DESCRIPTION_HEADER * AcpiTable;
-  UINTN                         TableHandle;
+  EFI_STATUS                   Status;
+  EFI_STATUS                   Status1;
+  EFI_ACPI_DESCRIPTION_HEADER  *AcpiTable;
+  UINTN                        TableHandle;
 
   AcpiTable = NULL;
-  Status = Generator->BuildAcpiTable (
-                        Generator,
-                        AcpiTableInfo,
-                        CfgMgrProtocol,
-                        &AcpiTable
-                        );
+  Status    = Generator->BuildAcpiTable (
+                                         Generator,
+                                         AcpiTableInfo,
+                                         CfgMgrProtocol,
+                                         &AcpiTable
+                                         );
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: Failed to Build Table." \
-      " TableGeneratorId = 0x%x. Status = %r\n",
-      AcpiTableInfo->TableGeneratorId,
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: Failed to Build Table." \
+            " TableGeneratorId = 0x%x. Status = %r\n",
+            AcpiTableInfo->TableGeneratorId,
+            Status
+           )
+           );
     // Free any allocated resources.
     goto exit_handler;
   }
@@ -97,44 +99,50 @@ BuildAndInstallSingleAcpiTable (
 
   // Install ACPI table
   Status = AcpiTableProtocol->InstallAcpiTable (
-                                AcpiTableProtocol,
-                                AcpiTable,
-                                AcpiTable->Length,
-                                &TableHandle
-                                );
+                                                AcpiTableProtocol,
+                                                AcpiTable,
+                                                AcpiTable->Length,
+                                                &TableHandle
+                                                );
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: Failed to Install ACPI Table. Status = %r\n",
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: Failed to Install ACPI Table. Status = %r\n",
+            Status
+           )
+           );
     // Free any allocated resources.
     goto exit_handler;
   }
 
-  DEBUG ((
-    DEBUG_INFO,
-    "INFO: ACPI Table installed. Status = %r\n",
-    Status
-    ));
+  DEBUG (
+         (
+          DEBUG_INFO,
+          "INFO: ACPI Table installed. Status = %r\n",
+          Status
+         )
+         );
 
 exit_handler:
   // Free any resources allocated for generating the tables.
   if (Generator->FreeTableResources != NULL) {
     Status1 = Generator->FreeTableResources (
-                          Generator,
-                          AcpiTableInfo,
-                          CfgMgrProtocol,
-                          &AcpiTable
-                          );
+                                             Generator,
+                                             AcpiTableInfo,
+                                             CfgMgrProtocol,
+                                             &AcpiTable
+                                             );
     if (EFI_ERROR (Status1)) {
-      DEBUG ((
-        DEBUG_ERROR,
-        "ERROR: Failed to Free Table Resources." \
-        "TableGeneratorId = 0x%x. Status = %r\n",
-        AcpiTableInfo->TableGeneratorId,
-        Status1
-        ));
+      DEBUG (
+             (
+              DEBUG_ERROR,
+              "ERROR: Failed to Free Table Resources." \
+              "TableGeneratorId = 0x%x. Status = %r\n",
+              AcpiTableInfo->TableGeneratorId,
+              Status1
+             )
+             );
     }
 
     // Return the first error status in case of failure
@@ -142,6 +150,7 @@ exit_handler:
       Status = Status1;
     }
   }
+
   return Status;
 }
 
@@ -170,37 +179,39 @@ STATIC
 EFI_STATUS
 EFIAPI
 BuildAndInstallMultipleAcpiTable (
-  IN CONST EDKII_DYNAMIC_TABLE_FACTORY_PROTOCOL  * CONST TableFactoryProtocol,
-  IN CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL  * CONST CfgMgrProtocol,
-  IN CONST ACPI_TABLE_GENERATOR                  * CONST Generator,
-  IN       EFI_ACPI_TABLE_PROTOCOL               *       AcpiTableProtocol,
-  IN CONST CM_STD_OBJ_ACPI_TABLE_INFO            * CONST AcpiTableInfo
+  IN CONST EDKII_DYNAMIC_TABLE_FACTORY_PROTOCOL  *CONST TableFactoryProtocol,
+  IN CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL  *CONST CfgMgrProtocol,
+  IN CONST ACPI_TABLE_GENERATOR                  *CONST Generator,
+  IN       EFI_ACPI_TABLE_PROTOCOL               *AcpiTableProtocol,
+  IN CONST CM_STD_OBJ_ACPI_TABLE_INFO            *CONST AcpiTableInfo
   )
 {
-  EFI_STATUS                     Status;
-  EFI_STATUS                     Status1;
-  EFI_ACPI_DESCRIPTION_HEADER ** AcpiTable;
-  UINTN                          TableCount;
-  UINTN                          TableHandle;
-  UINTN                          Index;
+  EFI_STATUS                   Status;
+  EFI_STATUS                   Status1;
+  EFI_ACPI_DESCRIPTION_HEADER  **AcpiTable;
+  UINTN                        TableCount;
+  UINTN                        TableHandle;
+  UINTN                        Index;
 
-  AcpiTable = NULL;
+  AcpiTable  = NULL;
   TableCount = 0;
-  Status = Generator->BuildAcpiTableEx (
-                        Generator,
-                        AcpiTableInfo,
-                        CfgMgrProtocol,
-                        &AcpiTable,
-                        &TableCount
-                        );
+  Status     = Generator->BuildAcpiTableEx (
+                                            Generator,
+                                            AcpiTableInfo,
+                                            CfgMgrProtocol,
+                                            &AcpiTable,
+                                            &TableCount
+                                            );
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: Failed to Build Table." \
-      " TableGeneratorId = 0x%x. Status = %r\n",
-      AcpiTableInfo->TableGeneratorId,
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: Failed to Build Table." \
+            " TableGeneratorId = 0x%x. Status = %r\n",
+            AcpiTableInfo->TableGeneratorId,
+            Status
+           )
+           );
     // Free any allocated resources.
     goto exit_handler;
   }
@@ -215,46 +226,52 @@ BuildAndInstallMultipleAcpiTable (
     DUMP_ACPI_TABLE_HEADER (AcpiTable[Index]);
     // Install ACPI table
     Status = AcpiTableProtocol->InstallAcpiTable (
-                                  AcpiTableProtocol,
-                                  AcpiTable[Index],
-                                  AcpiTable[Index]->Length,
-                                  &TableHandle
-                                  );
+                                                  AcpiTableProtocol,
+                                                  AcpiTable[Index],
+                                                  AcpiTable[Index]->Length,
+                                                  &TableHandle
+                                                  );
     if (EFI_ERROR (Status)) {
-      DEBUG ((
-        DEBUG_ERROR,
-        "ERROR: Failed to Install ACPI Table. Status = %r\n",
-        Status
-        ));
+      DEBUG (
+             (
+              DEBUG_ERROR,
+              "ERROR: Failed to Install ACPI Table. Status = %r\n",
+              Status
+             )
+             );
       // Free any allocated resources.
       goto exit_handler;
     }
 
-    DEBUG ((
-      DEBUG_INFO,
-      "INFO: ACPI Table installed. Status = %r\n",
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_INFO,
+            "INFO: ACPI Table installed. Status = %r\n",
+            Status
+           )
+           );
   }
 
 exit_handler:
   // Free any resources allocated for generating the tables.
   if (Generator->FreeTableResourcesEx != NULL) {
     Status1 = Generator->FreeTableResourcesEx (
-                          Generator,
-                          AcpiTableInfo,
-                          CfgMgrProtocol,
-                          &AcpiTable,
-                          TableCount
-                          );
+                                               Generator,
+                                               AcpiTableInfo,
+                                               CfgMgrProtocol,
+                                               &AcpiTable,
+                                               TableCount
+                                               );
     if (EFI_ERROR (Status1)) {
-      DEBUG ((
-        DEBUG_ERROR,
-        "ERROR: Failed to Free Table Resources." \
-        "TableGeneratorId = 0x%x. Status = %r\n",
-        AcpiTableInfo->TableGeneratorId,
-        Status1
-        ));
+      DEBUG (
+             (
+              DEBUG_ERROR,
+              "ERROR: Failed to Free Table Resources." \
+              "TableGeneratorId = 0x%x. Status = %r\n",
+              AcpiTableInfo->TableGeneratorId,
+              Status1
+             )
+             );
     }
 
     // Return the first error status in case of failure
@@ -262,6 +279,7 @@ exit_handler:
       Status = Status1;
     }
   }
+
   return Status;
 }
 
@@ -289,42 +307,46 @@ STATIC
 EFI_STATUS
 EFIAPI
 BuildAndInstallAcpiTable (
-  IN CONST EDKII_DYNAMIC_TABLE_FACTORY_PROTOCOL  * CONST TableFactoryProtocol,
-  IN CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL  * CONST CfgMgrProtocol,
-  IN       EFI_ACPI_TABLE_PROTOCOL               *       AcpiTableProtocol,
-  IN CONST CM_STD_OBJ_ACPI_TABLE_INFO            * CONST AcpiTableInfo
+  IN CONST EDKII_DYNAMIC_TABLE_FACTORY_PROTOCOL  *CONST TableFactoryProtocol,
+  IN CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL  *CONST CfgMgrProtocol,
+  IN       EFI_ACPI_TABLE_PROTOCOL               *AcpiTableProtocol,
+  IN CONST CM_STD_OBJ_ACPI_TABLE_INFO            *CONST AcpiTableInfo
   )
 {
-  EFI_STATUS                    Status;
-  CONST ACPI_TABLE_GENERATOR  * Generator;
+  EFI_STATUS                  Status;
+  CONST ACPI_TABLE_GENERATOR  *Generator;
 
   ASSERT (TableFactoryProtocol != NULL);
   ASSERT (CfgMgrProtocol != NULL);
   ASSERT (AcpiTableProtocol != NULL);
   ASSERT (AcpiTableInfo != NULL);
 
-  DEBUG ((
-    DEBUG_INFO,
-    "INFO: EStdObjAcpiTableList: Address = 0x%p," \
-    " TableGeneratorId = 0x%x\n",
-    AcpiTableInfo,
-    AcpiTableInfo->TableGeneratorId
-    ));
+  DEBUG (
+         (
+          DEBUG_INFO,
+          "INFO: EStdObjAcpiTableList: Address = 0x%p," \
+          " TableGeneratorId = 0x%x\n",
+          AcpiTableInfo,
+          AcpiTableInfo->TableGeneratorId
+         )
+         );
 
   Generator = NULL;
-  Status = TableFactoryProtocol->GetAcpiTableGenerator (
-                                   TableFactoryProtocol,
-                                   AcpiTableInfo->TableGeneratorId,
-                                   &Generator
-                                   );
+  Status    = TableFactoryProtocol->GetAcpiTableGenerator (
+                                                           TableFactoryProtocol,
+                                                           AcpiTableInfo->TableGeneratorId,
+                                                           &Generator
+                                                           );
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: Table Generator not found." \
-      " TableGeneratorId = 0x%x. Status = %r\n",
-      AcpiTableInfo->TableGeneratorId,
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: Table Generator not found." \
+            " TableGeneratorId = 0x%x. Status = %r\n",
+            AcpiTableInfo->TableGeneratorId,
+            Status
+           )
+           );
     return Status;
   }
 
@@ -332,54 +354,62 @@ BuildAndInstallAcpiTable (
     return EFI_NOT_FOUND;
   }
 
-  DEBUG ((
-    DEBUG_INFO,
-    "INFO: Generator found : %s\n",
-    Generator->Description
-    ));
+  DEBUG (
+         (
+          DEBUG_INFO,
+          "INFO: Generator found : %s\n",
+          Generator->Description
+         )
+         );
 
   if (Generator->BuildAcpiTableEx != NULL) {
     Status = BuildAndInstallMultipleAcpiTable (
-               TableFactoryProtocol,
-               CfgMgrProtocol,
-               Generator,
-               AcpiTableProtocol,
-               AcpiTableInfo
-               );
+                                               TableFactoryProtocol,
+                                               CfgMgrProtocol,
+                                               Generator,
+                                               AcpiTableProtocol,
+                                               AcpiTableInfo
+                                               );
     if (EFI_ERROR (Status)) {
-      DEBUG ((
-        DEBUG_ERROR,
-        "ERROR: Failed to find build and install ACPI Table." \
-        " Status = %r\n",
-        Status
-        ));
+      DEBUG (
+             (
+              DEBUG_ERROR,
+              "ERROR: Failed to find build and install ACPI Table." \
+              " Status = %r\n",
+              Status
+             )
+             );
     }
   } else if (Generator->BuildAcpiTable != NULL) {
     Status = BuildAndInstallSingleAcpiTable (
-               TableFactoryProtocol,
-               CfgMgrProtocol,
-               Generator,
-               AcpiTableProtocol,
-               AcpiTableInfo
-               );
+                                             TableFactoryProtocol,
+                                             CfgMgrProtocol,
+                                             Generator,
+                                             AcpiTableProtocol,
+                                             AcpiTableInfo
+                                             );
     if (EFI_ERROR (Status)) {
-      DEBUG ((
-        DEBUG_ERROR,
-        "ERROR: Failed to find build and install ACPI Table." \
-        " Status = %r\n",
-        Status
-        ));
+      DEBUG (
+             (
+              DEBUG_ERROR,
+              "ERROR: Failed to find build and install ACPI Table." \
+              " Status = %r\n",
+              Status
+             )
+             );
     }
   } else {
     Status = EFI_INVALID_PARAMETER;
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: Table Generator does not implement the" \
-      " ACPI_TABLE_GENERATOR_BUILD_TABLE interface." \
-      " TableGeneratorId = 0x%x. Status = %r\n",
-      AcpiTableInfo->TableGeneratorId,
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: Table Generator does not implement the" \
+            " ACPI_TABLE_GENERATOR_BUILD_TABLE interface." \
+            " TableGeneratorId = 0x%x. Status = %r\n",
+            AcpiTableInfo->TableGeneratorId,
+            Status
+           )
+           );
   }
 
   return Status;
@@ -398,7 +428,7 @@ STATIC
 EFI_STATUS
 EFIAPI
 VerifyMandatoryTablesArePresent (
-  IN CONST CM_STD_OBJ_ACPI_TABLE_INFO  * CONST AcpiTableInfo,
+  IN CONST CM_STD_OBJ_ACPI_TABLE_INFO  *CONST AcpiTableInfo,
   IN       UINT32                              AcpiTableCount
   )
 {
@@ -410,7 +440,7 @@ VerifyMandatoryTablesArePresent (
   BOOLEAN     Dbg2Found;
   BOOLEAN     SpcrFound;
 
-  Status = EFI_SUCCESS;
+  Status    = EFI_SUCCESS;
   FadtFound = FALSE;
   MadtFound = FALSE;
   GtdtFound = FALSE;
@@ -446,27 +476,33 @@ VerifyMandatoryTablesArePresent (
 
   // We need at least the FADT, MADT, GTDT and the DSDT tables to boot
   if (!FadtFound) {
-    DEBUG ((DEBUG_ERROR,"ERROR: FADT Table not found\n"));
+    DEBUG ((DEBUG_ERROR, "ERROR: FADT Table not found\n"));
     Status = EFI_NOT_FOUND;
   }
+
   if (!MadtFound) {
     DEBUG ((DEBUG_ERROR, "ERROR: MADT Table not found.\n"));
     Status = EFI_NOT_FOUND;
   }
+
   if (!GtdtFound) {
     DEBUG ((DEBUG_ERROR, "ERROR: GTDT Table not found.\n"));
     Status = EFI_NOT_FOUND;
   }
+
   if (!DsdtFound) {
     DEBUG ((DEBUG_ERROR, "ERROR: DSDT Table not found.\n"));
     Status = EFI_NOT_FOUND;
   }
+
   if (!Dbg2Found) {
     DEBUG ((DEBUG_WARN, "WARNING: DBG2 Table not found.\n"));
   }
+
   if (!SpcrFound) {
     DEBUG ((DEBUG_WARN, "WARNING: SPCR Table not found.\n"));
   }
+
   return Status;
 }
 
@@ -488,76 +524,86 @@ STATIC
 EFI_STATUS
 EFIAPI
 ProcessAcpiTables (
-  IN CONST EDKII_DYNAMIC_TABLE_FACTORY_PROTOCOL  * CONST TableFactoryProtocol,
-  IN CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL  * CONST CfgMgrProtocol
+  IN CONST EDKII_DYNAMIC_TABLE_FACTORY_PROTOCOL  *CONST TableFactoryProtocol,
+  IN CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL  *CONST CfgMgrProtocol
   )
 {
-  EFI_STATUS                    Status;
-  EFI_ACPI_TABLE_PROTOCOL     * AcpiTableProtocol;
-  CM_STD_OBJ_ACPI_TABLE_INFO  * AcpiTableInfo;
-  UINT32                        AcpiTableCount;
-  UINT32                        Idx;
+  EFI_STATUS                  Status;
+  EFI_ACPI_TABLE_PROTOCOL     *AcpiTableProtocol;
+  CM_STD_OBJ_ACPI_TABLE_INFO  *AcpiTableInfo;
+  UINT32                      AcpiTableCount;
+  UINT32                      Idx;
 
   ASSERT (TableFactoryProtocol != NULL);
   ASSERT (CfgMgrProtocol != NULL);
 
   // Find the AcpiTable protocol
   Status = gBS->LocateProtocol (
-                  &gEfiAcpiTableProtocolGuid,
-                  NULL,
-                  (VOID**)&AcpiTableProtocol
-                  );
+                                &gEfiAcpiTableProtocolGuid,
+                                NULL,
+                                (VOID **) &AcpiTableProtocol
+                                );
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: Failed to find AcpiTable protocol. Status = %r\n",
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: Failed to find AcpiTable protocol. Status = %r\n",
+            Status
+           )
+           );
     return Status;
   }
 
   Status = GetEStdObjAcpiTableList (
-             CfgMgrProtocol,
-             CM_NULL_TOKEN,
-             &AcpiTableInfo,
-             &AcpiTableCount
-             );
+                                    CfgMgrProtocol,
+                                    CM_NULL_TOKEN,
+                                    &AcpiTableInfo,
+                                    &AcpiTableCount
+                                    );
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: Failed to get ACPI Table List. Status = %r\n",
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: Failed to get ACPI Table List. Status = %r\n",
+            Status
+           )
+           );
     return Status;
   }
 
   if (0 == AcpiTableCount) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: EStdObjAcpiTableList: AcpiTableCount = %d\n",
-      AcpiTableCount
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: EStdObjAcpiTableList: AcpiTableCount = %d\n",
+            AcpiTableCount
+           )
+           );
     return EFI_NOT_FOUND;
   }
 
-  DEBUG ((
-    DEBUG_INFO,
-    "INFO: EStdObjAcpiTableList: AcpiTableCount = %d\n",
-    AcpiTableCount
-    ));
+  DEBUG (
+         (
+          DEBUG_INFO,
+          "INFO: EStdObjAcpiTableList: AcpiTableCount = %d\n",
+          AcpiTableCount
+         )
+         );
 
   // Check if mandatory ACPI tables are present.
   Status = VerifyMandatoryTablesArePresent (
-             AcpiTableInfo,
-             AcpiTableCount
-             );
+                                            AcpiTableInfo,
+                                            AcpiTableCount
+                                            );
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: Failed to find mandatory ACPI Table(s)."
-      " Status = %r\n",
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: Failed to find mandatory ACPI Table(s)."
+            " Status = %r\n",
+            Status
+           )
+           );
     return Status;
   }
 
@@ -566,32 +612,37 @@ ProcessAcpiTables (
     if (CREATE_STD_ACPI_TABLE_GEN_ID (EStdAcpiTableIdFadt) ==
         AcpiTableInfo[Idx].TableGeneratorId) {
       Status = BuildAndInstallAcpiTable (
-                 TableFactoryProtocol,
-                 CfgMgrProtocol,
-                 AcpiTableProtocol,
-                 &AcpiTableInfo[Idx]
-                 );
+                                         TableFactoryProtocol,
+                                         CfgMgrProtocol,
+                                         AcpiTableProtocol,
+                                         &AcpiTableInfo[Idx]
+                                         );
       if (EFI_ERROR (Status)) {
-        DEBUG ((
-          DEBUG_ERROR,
-          "ERROR: Failed to find build and install ACPI FADT Table." \
-          " Status = %r\n",
-          Status
-          ));
+        DEBUG (
+               (
+                DEBUG_ERROR,
+                "ERROR: Failed to find build and install ACPI FADT Table." \
+                " Status = %r\n",
+                Status
+               )
+               );
         return Status;
       }
+
       break;
     }
   } // for
 
   // Add remaining ACPI Tables
   for (Idx = 0; Idx < AcpiTableCount; Idx++) {
-    DEBUG ((
-      DEBUG_INFO,
-      "INFO: AcpiTableInfo[%d].TableGeneratorId = 0x%x\n",
-      Idx,
-      AcpiTableInfo[Idx].TableGeneratorId
-      ));
+    DEBUG (
+           (
+            DEBUG_INFO,
+            "INFO: AcpiTableInfo[%d].TableGeneratorId = 0x%x\n",
+            Idx,
+            AcpiTableInfo[Idx].TableGeneratorId
+           )
+           );
 
     // Skip FADT Table since we have already added
     if (CREATE_STD_ACPI_TABLE_GEN_ID (EStdAcpiTableIdFadt) ==
@@ -602,30 +653,34 @@ ProcessAcpiTables (
     // Skip the Reserved table Generator ID for standard generators
     if ((IS_GENERATOR_NAMESPACE_STD (AcpiTableInfo[Idx].TableGeneratorId)) &&
         ((CREATE_STD_ACPI_TABLE_GEN_ID (EStdAcpiTableIdReserved)           >=
-            AcpiTableInfo[Idx].TableGeneratorId)                           ||
+          AcpiTableInfo[Idx].TableGeneratorId)                           ||
          (CREATE_STD_ACPI_TABLE_GEN_ID (EStdAcpiTableIdMax)                <=
-            AcpiTableInfo[Idx].TableGeneratorId))) {
-      DEBUG ((
-        DEBUG_WARN,
-        "WARNING: Invalid ACPI Generator table ID = 0x%x, Skipping...\n",
-        AcpiTableInfo[Idx].TableGeneratorId
-        ));
+          AcpiTableInfo[Idx].TableGeneratorId))) {
+      DEBUG (
+             (
+              DEBUG_WARN,
+              "WARNING: Invalid ACPI Generator table ID = 0x%x, Skipping...\n",
+              AcpiTableInfo[Idx].TableGeneratorId
+             )
+             );
       continue;
     }
 
     Status = BuildAndInstallAcpiTable (
-               TableFactoryProtocol,
-               CfgMgrProtocol,
-               AcpiTableProtocol,
-               &AcpiTableInfo[Idx]
-               );
+                                       TableFactoryProtocol,
+                                       CfgMgrProtocol,
+                                       AcpiTableProtocol,
+                                       &AcpiTableInfo[Idx]
+                                       );
     if (EFI_ERROR (Status)) {
-      DEBUG ((
-        DEBUG_ERROR,
-        "ERROR: Failed to find, build, and install ACPI Table." \
-        " Status = %r\n",
-        Status
-        ));
+      DEBUG (
+             (
+              DEBUG_ERROR,
+              "ERROR: Failed to find, build, and install ACPI Table." \
+              " Status = %r\n",
+              Status
+             )
+             );
       return Status;
     }
   } // for
@@ -656,74 +711,85 @@ EFI_STATUS
 EFIAPI
 DynamicTableManagerDxeInitialize (
   IN  EFI_HANDLE            ImageHandle,
-  IN  EFI_SYSTEM_TABLE   *  SystemTable
+  IN  EFI_SYSTEM_TABLE   *SystemTable
   )
 {
-  EFI_STATUS                                 Status;
-  EDKII_CONFIGURATION_MANAGER_PROTOCOL     * CfgMgrProtocol;
-  CM_STD_OBJ_CONFIGURATION_MANAGER_INFO    * CfgMfrInfo;
-  EDKII_DYNAMIC_TABLE_FACTORY_PROTOCOL     * TableFactoryProtocol;
+  EFI_STATUS                             Status;
+  EDKII_CONFIGURATION_MANAGER_PROTOCOL   *CfgMgrProtocol;
+  CM_STD_OBJ_CONFIGURATION_MANAGER_INFO  *CfgMfrInfo;
+  EDKII_DYNAMIC_TABLE_FACTORY_PROTOCOL   *TableFactoryProtocol;
 
   // Locate the Dynamic Table Factory
   Status = gBS->LocateProtocol (
-                  &gEdkiiDynamicTableFactoryProtocolGuid,
-                  NULL,
-                  (VOID**)&TableFactoryProtocol
-                  );
+                                &gEdkiiDynamicTableFactoryProtocolGuid,
+                                NULL,
+                                (VOID **) &TableFactoryProtocol
+                                );
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: Failed to find Dynamic Table Factory protocol." \
-      " Status = %r\n",
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: Failed to find Dynamic Table Factory protocol." \
+            " Status = %r\n",
+            Status
+           )
+           );
     return Status;
   }
 
   // Locate the Configuration Manager for the Platform
   Status = gBS->LocateProtocol (
-                  &gEdkiiConfigurationManagerProtocolGuid,
-                  NULL,
-                  (VOID**)&CfgMgrProtocol
-                  );
+                                &gEdkiiConfigurationManagerProtocolGuid,
+                                NULL,
+                                (VOID **) &CfgMgrProtocol
+                                );
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: Failed to find Configuration Manager protocol. Status = %r\n",
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: Failed to find Configuration Manager protocol. Status = %r\n",
+            Status
+           )
+           );
     return Status;
   }
 
   Status = GetCgfMgrInfo (CfgMgrProtocol, &CfgMfrInfo);
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: Failed to get Configuration Manager info. Status = %r\n",
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: Failed to get Configuration Manager info. Status = %r\n",
+            Status
+           )
+           );
     return Status;
   }
 
-  DEBUG ((
-    DEBUG_INFO,
-    "INFO: Configuration Manager Version = 0x%x, OemID = %c%c%c%c%c%c\n",
-    CfgMfrInfo->Revision,
-    CfgMfrInfo->OemId[0],
-    CfgMfrInfo->OemId[1],
-    CfgMfrInfo->OemId[2],
-    CfgMfrInfo->OemId[3],
-    CfgMfrInfo->OemId[4],
-    CfgMfrInfo->OemId[5]
-    ));
+  DEBUG (
+         (
+          DEBUG_INFO,
+          "INFO: Configuration Manager Version = 0x%x, OemID = %c%c%c%c%c%c\n",
+          CfgMfrInfo->Revision,
+          CfgMfrInfo->OemId[0],
+          CfgMfrInfo->OemId[1],
+          CfgMfrInfo->OemId[2],
+          CfgMfrInfo->OemId[3],
+          CfgMfrInfo->OemId[4],
+          CfgMfrInfo->OemId[5]
+         )
+         );
 
   Status = ProcessAcpiTables (TableFactoryProtocol, CfgMgrProtocol);
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: ACPI Table processing failure. Status = %r\n",
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: ACPI Table processing failure. Status = %r\n",
+            Status
+           )
+           );
   }
+
   return Status;
 }

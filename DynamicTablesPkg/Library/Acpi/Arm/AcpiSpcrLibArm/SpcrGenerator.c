@@ -45,27 +45,27 @@ NOTE: This implementation ignores the possibility that the Serial settings may
 
 /** A string representing the name of the SPCR port.
 */
-#define NAME_STR_SPCR_PORT               "COM1"
+#define NAME_STR_SPCR_PORT  "COM1"
 
 /** An UID representing the SPCR port.
 */
-#define UID_SPCR_PORT                    1
+#define UID_SPCR_PORT  1
 
 /** This macro defines the no flow control option.
 */
-#define SPCR_FLOW_CONTROL_NONE           0
+#define SPCR_FLOW_CONTROL_NONE  0
 
 /**A template for generating the SPCR Table.
 
   Note: fields marked "{Template}" will be updated dynamically.
 */
 STATIC
-EFI_ACPI_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE AcpiSpcr = {
+EFI_ACPI_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE  AcpiSpcr = {
   ACPI_HEADER (
-    EFI_ACPI_6_2_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE_SIGNATURE,
-    EFI_ACPI_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE,
-    EFI_ACPI_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE_REVISION
-    ),
+               EFI_ACPI_6_2_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE_SIGNATURE,
+               EFI_ACPI_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE,
+               EFI_ACPI_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE_REVISION
+               ),
   0, // {Template}: Serial Port Subtype
   {
     EFI_ACPI_RESERVED_BYTE,
@@ -98,10 +98,10 @@ EFI_ACPI_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE AcpiSpcr = {
     Port Information from the Configuration Manager.
 */
 GET_OBJECT_LIST (
-  EObjNameSpaceArm,
-  EArmObjSerialConsolePortInfo,
-  CM_ARM_SERIAL_PORT_INFO
-  )
+                 EObjNameSpaceArm,
+                 EArmObjSerialConsolePortInfo,
+                 CM_ARM_SERIAL_PORT_INFO
+                 )
 
 /** Free any resources allocated for constructing the tables.
 
@@ -120,15 +120,15 @@ STATIC
 EFI_STATUS
 EFIAPI
 FreeSpcrTableEx (
-  IN      CONST ACPI_TABLE_GENERATOR                   * CONST This,
-  IN      CONST CM_STD_OBJ_ACPI_TABLE_INFO             * CONST AcpiTableInfo,
-  IN      CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL   * CONST CfgMgrProtocol,
-  IN OUT        EFI_ACPI_DESCRIPTION_HEADER          *** CONST Table,
+  IN      CONST ACPI_TABLE_GENERATOR                   *CONST This,
+  IN      CONST CM_STD_OBJ_ACPI_TABLE_INFO             *CONST AcpiTableInfo,
+  IN      CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL   *CONST CfgMgrProtocol,
+  IN OUT        EFI_ACPI_DESCRIPTION_HEADER          ***CONST Table,
   IN      CONST UINTN                                          TableCount
   )
 {
-  EFI_STATUS                        Status;
-  EFI_ACPI_DESCRIPTION_HEADER    ** TableList;
+  EFI_STATUS                   Status;
+  EFI_ACPI_DESCRIPTION_HEADER  **TableList;
 
   ASSERT (This != NULL);
   ASSERT (AcpiTableInfo != NULL);
@@ -191,17 +191,17 @@ STATIC
 EFI_STATUS
 EFIAPI
 BuildSpcrTableEx (
-  IN  CONST ACPI_TABLE_GENERATOR                   *       This,
-  IN  CONST CM_STD_OBJ_ACPI_TABLE_INFO             * CONST AcpiTableInfo,
-  IN  CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL   * CONST CfgMgrProtocol,
-  OUT       EFI_ACPI_DESCRIPTION_HEADER          ***       Table,
-  OUT       UINTN                                  * CONST TableCount
+  IN  CONST ACPI_TABLE_GENERATOR                   *This,
+  IN  CONST CM_STD_OBJ_ACPI_TABLE_INFO             *CONST AcpiTableInfo,
+  IN  CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL   *CONST CfgMgrProtocol,
+  OUT       EFI_ACPI_DESCRIPTION_HEADER          ***Table,
+  OUT       UINTN                                  *CONST TableCount
   )
 {
-  EFI_STATUS                      Status;
-  CM_ARM_SERIAL_PORT_INFO       * SerialPortInfo;
-  UINT32                          SerialPortCount;
-  EFI_ACPI_DESCRIPTION_HEADER  ** TableList;
+  EFI_STATUS                   Status;
+  CM_ARM_SERIAL_PORT_INFO      *SerialPortInfo;
+  UINT32                       SerialPortCount;
+  EFI_ACPI_DESCRIPTION_HEADER  **TableList;
 
   ASSERT (This != NULL);
   ASSERT (AcpiTableInfo != NULL);
@@ -213,40 +213,46 @@ BuildSpcrTableEx (
 
   if ((AcpiTableInfo->AcpiTableRevision < This->MinAcpiTableRevision) ||
       (AcpiTableInfo->AcpiTableRevision > This->AcpiTableRevision)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: SPCR: Requested table revision = %d, is not supported."
-      "Supported table revision: Minimum = %d, Maximum = %d\n",
-      AcpiTableInfo->AcpiTableRevision,
-      This->MinAcpiTableRevision,
-      This->AcpiTableRevision
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: SPCR: Requested table revision = %d, is not supported."
+            "Supported table revision: Minimum = %d, Maximum = %d\n",
+            AcpiTableInfo->AcpiTableRevision,
+            This->MinAcpiTableRevision,
+            This->AcpiTableRevision
+           )
+           );
     return EFI_INVALID_PARAMETER;
   }
 
   *Table = NULL;
 
   Status = GetEArmObjSerialConsolePortInfo (
-             CfgMgrProtocol,
-             CM_NULL_TOKEN,
-             &SerialPortInfo,
-             &SerialPortCount
-             );
+                                            CfgMgrProtocol,
+                                            CM_NULL_TOKEN,
+                                            &SerialPortInfo,
+                                            &SerialPortCount
+                                            );
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: SPCR: Failed to get serial port information. Status = %r\n",
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: SPCR: Failed to get serial port information. Status = %r\n",
+            Status
+           )
+           );
     return Status;
   }
 
   if (SerialPortCount == 0) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: SPCR: Serial port information not found. Status = %r\n",
-      EFI_NOT_FOUND
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: SPCR: Serial port information not found. Status = %r\n",
+            EFI_NOT_FOUND
+           )
+           );
     return EFI_NOT_FOUND;
   }
 
@@ -255,42 +261,48 @@ BuildSpcrTableEx (
   // first SPCR port information.
   Status = ValidateSerialPortInfo (SerialPortInfo, 1);
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: SPCR: Invalid serial port information. Status = %r\n",
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: SPCR: Invalid serial port information. Status = %r\n",
+            Status
+           )
+           );
     return Status;
   }
 
   // Allocate a table to store pointers to the SPCR and SSDT tables.
-  TableList = (EFI_ACPI_DESCRIPTION_HEADER**)
-              AllocateZeroPool (sizeof (EFI_ACPI_DESCRIPTION_HEADER*) * 2);
+  TableList = (EFI_ACPI_DESCRIPTION_HEADER **)
+              AllocateZeroPool (sizeof (EFI_ACPI_DESCRIPTION_HEADER *) * 2);
   if (TableList == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: SPCR: Failed to allocate memory for Table List," \
-      " Status = %r\n",
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: SPCR: Failed to allocate memory for Table List," \
+            " Status = %r\n",
+            Status
+           )
+           );
     return Status;
   }
 
   // Build SPCR table.
   Status = AddAcpiHeader (
-             CfgMgrProtocol,
-             This,
-             (EFI_ACPI_DESCRIPTION_HEADER*)&AcpiSpcr,
-             AcpiTableInfo,
-             sizeof (EFI_ACPI_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE)
-             );
+                          CfgMgrProtocol,
+                          This,
+                          (EFI_ACPI_DESCRIPTION_HEADER *) &AcpiSpcr,
+                          AcpiTableInfo,
+                          sizeof (EFI_ACPI_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE)
+                          );
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: SPCR: Failed to add ACPI header. Status = %r\n",
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: SPCR: Failed to add ACPI header. Status = %r\n",
+            Status
+           )
+           );
     goto error_handler;
   }
 
@@ -299,16 +311,18 @@ BuildSpcrTableEx (
   // while the Port Subtype field in the DBG2 table is 16-bit.
   if ((SerialPortInfo->PortSubtype & 0xFF00) != 0) {
     Status = EFI_INVALID_PARAMETER;
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: SPCR: Invalid Port subtype (must be < 256). Status = %r\n",
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: SPCR: Invalid Port subtype (must be < 256). Status = %r\n",
+            Status
+           )
+           );
     goto error_handler;
   }
 
   // Update the serial port subtype
-  AcpiSpcr.InterfaceType = (UINT8)SerialPortInfo->PortSubtype;
+  AcpiSpcr.InterfaceType = (UINT8) SerialPortInfo->PortSubtype;
 
   // Update the base address
   AcpiSpcr.BaseAddress.Address = SerialPortInfo->BaseAddress;
@@ -335,31 +349,35 @@ BuildSpcrTableEx (
       break;
     default:
       Status = EFI_UNSUPPORTED;
-      DEBUG ((
-        DEBUG_ERROR,
-        "ERROR: SPCR: Invalid Baud Rate %ld, Status = %r\n",
-        SerialPortInfo->BaudRate,
-        Status
-        ));
+      DEBUG (
+             (
+              DEBUG_ERROR,
+              "ERROR: SPCR: Invalid Baud Rate %ld, Status = %r\n",
+              SerialPortInfo->BaudRate,
+              Status
+             )
+             );
       goto error_handler;
   } // switch
 
-  TableList[0] = (EFI_ACPI_DESCRIPTION_HEADER*)&AcpiSpcr;
+  TableList[0] = (EFI_ACPI_DESCRIPTION_HEADER *) &AcpiSpcr;
 
   // Build a SSDT table describing the serial port.
   Status = BuildSsdtSerialPortTable (
-             AcpiTableInfo,
-             SerialPortInfo,
-             NAME_STR_SPCR_PORT,
-             UID_SPCR_PORT,
-             &TableList[1]
-             );
+                                     AcpiTableInfo,
+                                     SerialPortInfo,
+                                     NAME_STR_SPCR_PORT,
+                                     UID_SPCR_PORT,
+                                     &TableList[1]
+                                     );
   if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "ERROR: SPCR: Failed to build associated SSDT table. Status = %r\n",
-      Status
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "ERROR: SPCR: Failed to build associated SSDT table. Status = %r\n",
+            Status
+           )
+           );
     goto error_handler;
   }
 
@@ -378,13 +396,13 @@ error_handler:
 
 /** This macro defines the SPCR Table Generator revision.
 */
-#define SPCR_GENERATOR_REVISION CREATE_REVISION (1, 0)
+#define SPCR_GENERATOR_REVISION  CREATE_REVISION (1, 0)
 
 /** The interface for the SPCR Table Generator.
 */
 STATIC
 CONST
-ACPI_TABLE_GENERATOR SpcrGenerator = {
+ACPI_TABLE_GENERATOR  SpcrGenerator = {
   // Generator ID
   CREATE_STD_ACPI_TABLE_GEN_ID (EStdAcpiTableIdSpcr),
   // Generator Description
@@ -423,10 +441,11 @@ EFI_STATUS
 EFIAPI
 AcpiSpcrLibConstructor (
   IN  EFI_HANDLE           ImageHandle,
-  IN  EFI_SYSTEM_TABLE  *  SystemTable
+  IN  EFI_SYSTEM_TABLE  *SystemTable
   )
 {
   EFI_STATUS  Status;
+
   Status = RegisterAcpiTableGenerator (&SpcrGenerator);
   DEBUG ((DEBUG_INFO, "SPCR: Register Generator. Status = %r\n", Status));
   ASSERT_EFI_ERROR (Status);
@@ -446,10 +465,11 @@ EFI_STATUS
 EFIAPI
 AcpiSpcrLibDestructor (
   IN  EFI_HANDLE           ImageHandle,
-  IN  EFI_SYSTEM_TABLE  *  SystemTable
+  IN  EFI_SYSTEM_TABLE  *SystemTable
   )
 {
   EFI_STATUS  Status;
+
   Status = DeregisterAcpiTableGenerator (&SpcrGenerator);
   DEBUG ((DEBUG_INFO, "SPCR: Deregister Generator. Status = %r\n", Status));
   ASSERT_EFI_ERROR (Status);
