@@ -60,9 +60,9 @@ ArmPlatformIsPrimaryCore (
 
 **/
 UINTN
-ArmPlatformGetPrimaryCoreMpId (
-  VOID
-  );
+  ArmPlatformGetPrimaryCoreMpId (
+                                 VOID
+                                 );
 
 /**
   Return the current Boot Mode
@@ -73,9 +73,9 @@ ArmPlatformGetPrimaryCoreMpId (
 
 **/
 EFI_BOOT_MODE
-ArmPlatformGetBootMode (
-  VOID
-  );
+  ArmPlatformGetBootMode (
+                          VOID
+                          );
 
 /**
   First platform specific function to be called in the PEI phase
@@ -89,9 +89,9 @@ ArmPlatformGetBootMode (
 
 **/
 VOID
-ArmPlatformPeiBootAction (
-  VOID
-  );
+  ArmPlatformPeiBootAction (
+                            VOID
+                            );
 
 /**
   Initialize controllers that must setup in the normal world
@@ -117,7 +117,7 @@ ArmPlatformInitialize (
 **/
 VOID
 ArmPlatformGetVirtualMemoryMap (
-  OUT ARM_MEMORY_REGION_DESCRIPTOR** VirtualMemoryMap
+  OUT ARM_MEMORY_REGION_DESCRIPTOR **VirtualMemoryMap
   );
 
 /**

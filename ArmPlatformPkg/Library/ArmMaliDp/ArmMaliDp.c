@@ -17,7 +17,7 @@
 #include "ArmMaliDp.h"
 
 // CORE_ID of the MALI DP
-STATIC UINT32 mDpDeviceId;
+STATIC UINT32  mDpDeviceId;
 
 /** Disable the graphics layer
 
@@ -25,7 +25,9 @@ STATIC UINT32 mDpDeviceId;
 **/
 STATIC
 VOID
-LayerGraphicsDisable (VOID)
+LayerGraphicsDisable (
+  VOID
+  )
 {
   MmioAnd32 (DP_BASE + DP_DE_LG_CONTROL, ~DP_DE_LG_ENABLE);
 }
@@ -36,7 +38,9 @@ LayerGraphicsDisable (VOID)
 **/
 STATIC
 VOID
-LayerGraphicsEnable (VOID)
+LayerGraphicsEnable (
+  VOID
+  )
 {
   MmioOr32 (DP_BASE + DP_DE_LG_CONTROL, DP_DE_LG_ENABLE);
 }
@@ -58,15 +62,15 @@ LayerGraphicsSetFrame (
   // Set up memory address of the data buffer for graphics layer.
   // write lower bits of the address.
   MmioWrite32 (
-    DP_BASE + DP_DE_LG_PTR_LOW,
-    DP_DE_LG_PTR_LOW_MASK & FrameBaseAddress
-    );
+               DP_BASE + DP_DE_LG_PTR_LOW,
+               DP_DE_LG_PTR_LOW_MASK & FrameBaseAddress
+               );
 
   // Write higher bits of the address.
   MmioWrite32 (
-    DP_BASE + DP_DE_LG_PTR_HIGH,
-    (UINT32)(FrameBaseAddress >> DP_DE_LG_PTR_HIGH_SHIFT)
-    );
+               DP_BASE + DP_DE_LG_PTR_HIGH,
+               (UINT32) (FrameBaseAddress >> DP_DE_LG_PTR_HIGH_SHIFT)
+               );
 
   // Enable the graphics layer.
   LayerGraphicsEnable ();
@@ -89,7 +93,7 @@ LayerGraphicsConfig (
   IN CONST UINT32 VRes
   )
 {
-  UINT32 PixelFormat;
+  UINT32  PixelFormat;
 
   // Disable the graphics layer before configuring any settings.
   LayerGraphicsDisable ();
@@ -134,52 +138,52 @@ LayerGraphicsConfig (
 STATIC
 VOID
 SetDisplayEngineTiming (
-  IN CONST SCAN_TIMINGS * CONST Horizontal,
-  IN CONST SCAN_TIMINGS * CONST Vertical
+  IN CONST SCAN_TIMINGS *CONST Horizontal,
+  IN CONST SCAN_TIMINGS *CONST Vertical
   )
 {
-  UINTN RegHIntervals;
-  UINTN RegVIntervals;
-  UINTN RegSyncControl;
-  UINTN RegHVActiveSize;
+  UINTN  RegHIntervals;
+  UINTN  RegVIntervals;
+  UINTN  RegSyncControl;
+  UINTN  RegHVActiveSize;
 
   if (mDpDeviceId == MALIDP_500) {
     // MALI DP500 timing registers.
-    RegHIntervals = DP_BASE + DP_DE_DP500_H_INTERVALS;
-    RegVIntervals = DP_BASE + DP_DE_DP500_V_INTERVALS;
-    RegSyncControl = DP_BASE + DP_DE_DP500_SYNC_CONTROL;
+    RegHIntervals   = DP_BASE + DP_DE_DP500_H_INTERVALS;
+    RegVIntervals   = DP_BASE + DP_DE_DP500_V_INTERVALS;
+    RegSyncControl  = DP_BASE + DP_DE_DP500_SYNC_CONTROL;
     RegHVActiveSize = DP_BASE + DP_DE_DP500_HV_ACTIVESIZE;
   } else {
     // MALI DP550/DP650 timing registers.
-    RegHIntervals = DP_BASE + DP_DE_H_INTERVALS;
-    RegVIntervals = DP_BASE + DP_DE_V_INTERVALS;
-    RegSyncControl = DP_BASE + DP_DE_SYNC_CONTROL;
+    RegHIntervals   = DP_BASE + DP_DE_H_INTERVALS;
+    RegVIntervals   = DP_BASE + DP_DE_V_INTERVALS;
+    RegSyncControl  = DP_BASE + DP_DE_SYNC_CONTROL;
     RegHVActiveSize = DP_BASE + DP_DE_HV_ACTIVESIZE;
   }
 
   // Horizontal back porch and front porch.
   MmioWrite32 (
-    RegHIntervals,
-    H_INTERVALS (Horizontal->FrontPorch, Horizontal->BackPorch)
-    );
+               RegHIntervals,
+               H_INTERVALS (Horizontal->FrontPorch, Horizontal->BackPorch)
+               );
 
   // Vertical back porch and front porch.
   MmioWrite32 (
-    RegVIntervals,
-    V_INTERVALS (Vertical->FrontPorch, Vertical->BackPorch)
-    );
+               RegVIntervals,
+               V_INTERVALS (Vertical->FrontPorch, Vertical->BackPorch)
+               );
 
   // Sync control, Horizontal and Vertical sync.
   MmioWrite32 (
-    RegSyncControl,
-    SYNC_WIDTH (Horizontal->Sync, Vertical->Sync)
-    );
+               RegSyncControl,
+               SYNC_WIDTH (Horizontal->Sync, Vertical->Sync)
+               );
 
   // Set up Horizontal and Vertical area size.
   MmioWrite32 (
-    RegHVActiveSize,
-    HV_ACTIVE (Horizontal->Resolution, Vertical->Resolution)
-    );
+               RegHVActiveSize,
+               HV_ACTIVE (Horizontal->Resolution, Vertical->Resolution)
+               );
 }
 
 /** Return CORE_ID of the ARM Mali DP.
@@ -194,11 +198,11 @@ UINT32
 ArmMaliDpGetCoreId (
   )
 {
-  UINT32 DpCoreId;
+  UINT32  DpCoreId;
 
   // First check for DP500 as register offset for DP550/DP650 CORE_ID
   // is beyond 3K/4K register space of the DP500.
-  DpCoreId = MmioRead32 (DP_BASE + DP_DE_DP500_CORE_ID);
+  DpCoreId   = MmioRead32 (DP_BASE + DP_DE_DP500_CORE_ID);
   DpCoreId >>= DP_DE_DP500_CORE_ID_SHIFT;
 
   if (DpCoreId == MALIDP_500) {
@@ -206,7 +210,7 @@ ArmMaliDpGetCoreId (
   }
 
   // Check for DP550 or DP650.
-  DpCoreId = MmioRead32 (DP_BASE + DP_DC_CORE_ID);
+  DpCoreId   = MmioRead32 (DP_BASE + DP_DC_CORE_ID);
   DpCoreId >>= DP_DC_CORE_ID_SHIFT;
 
   if ((DpCoreId == MALIDP_550) || (DpCoreId == MALIDP_650)) {
@@ -227,20 +231,24 @@ ArmMaliDpGetCoreId (
                                 on the platform.
 **/
 EFI_STATUS
-LcdIdentify (VOID)
+LcdIdentify (
+  VOID
+  )
 {
-  DEBUG ((DEBUG_WARN,
-    "Probing ARM Mali DP500/DP550/DP650 at base address 0x%p\n",
-    DP_BASE
-    ));
+  DEBUG (
+         (DEBUG_WARN,
+          "Probing ARM Mali DP500/DP550/DP650 at base address 0x%p\n",
+          DP_BASE
+         )
+         );
 
   if (mDpDeviceId == 0) {
     mDpDeviceId = ArmMaliDpGetCoreId ();
   }
 
   if (mDpDeviceId == MALIDP_NOT_PRESENT) {
-     DEBUG ((DEBUG_WARN, "ARM Mali DP not found...\n"));
-     return EFI_NOT_FOUND;
+    DEBUG ((DEBUG_WARN, "ARM Mali DP not found...\n"));
+    return EFI_NOT_FOUND;
   }
 
   DEBUG ((DEBUG_WARN, "Found ARM Mali DP %x\n", mDpDeviceId));
@@ -266,8 +274,10 @@ LcdInitialize (
   }
 
   if (mDpDeviceId == MALIDP_NOT_PRESENT) {
-    DEBUG ((DEBUG_ERROR, "ARM Mali DP initialization failed,"
-      "no ARM Mali DP present\n"));
+    DEBUG (
+           (DEBUG_ERROR, "ARM Mali DP initialization failed,"
+                         "no ARM Mali DP present\n")
+           );
     return EFI_NOT_FOUND;
   }
 
@@ -285,7 +295,9 @@ LcdInitialize (
 **/
 STATIC
 VOID
-SetConfigurationMode (VOID)
+SetConfigurationMode (
+  VOID
+  )
 {
   // Request configuration Mode.
   if (mDpDeviceId == MALIDP_500) {
@@ -303,7 +315,9 @@ SetConfigurationMode (VOID)
 **/
 STATIC
 VOID
-SetNormalMode (VOID)
+SetNormalMode (
+  VOID
+  )
 {
   // Disable configuration Mode.
   if (mDpDeviceId == MALIDP_500) {
@@ -321,7 +335,9 @@ SetNormalMode (VOID)
 **/
 STATIC
 VOID
-SetConfigValid (VOID)
+SetConfigValid (
+  VOID
+  )
 {
   if (mDpDeviceId == MALIDP_500) {
     MmioOr32 (DP_BASE + DP_DP500_CONFIG_VALID, DP_DC_CONFIG_VALID);
@@ -350,10 +366,10 @@ LcdSetMode (
 
   // Get the display mode timings and other relevant information.
   Status = LcdPlatformGetTimings (
-             ModeNumber,
-             &Horizontal,
-             &Vertical
-             );
+                                  ModeNumber,
+                                  &Horizontal,
+                                  &Vertical
+                                  );
   if (EFI_ERROR (Status)) {
     ASSERT_EFI_ERROR (Status);
     return Status;
@@ -374,10 +390,10 @@ LcdSetMode (
 
   // Configure the graphics layer.
   LayerGraphicsConfig (
-    ModeInfo.PixelFormat,
-    Horizontal->Resolution,
-    Vertical->Resolution
-    );
+                       ModeInfo.PixelFormat,
+                       Horizontal->Resolution,
+                       Vertical->Resolution
+                       );
 
   // Set the display engine timings.
   SetDisplayEngineTiming (Horizontal, Vertical);
@@ -396,7 +412,9 @@ LcdSetMode (
 
 **/
 VOID
-LcdShutdown (VOID)
+LcdShutdown (
+  VOID
+  )
 {
   // Disable graphics layer.
   LayerGraphicsDisable ();

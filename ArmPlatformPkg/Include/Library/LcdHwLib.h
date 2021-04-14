@@ -21,9 +21,9 @@
 
 **/
 EFI_STATUS
-LcdIdentify (
-  VOID
-  );
+  LcdIdentify (
+               VOID
+               );
 
 /**
   Initialize display.
@@ -55,8 +55,8 @@ LcdSetMode (
   De-initializes the display.
 **/
 VOID
-LcdShutdown (
-  VOID
-  );
+  LcdShutdown (
+               VOID
+               );
 
 #endif /* LCD_HW_LIB_H_ */

@@ -16,7 +16,7 @@
 
 #include "HdLcd.h"
 
-#define BYTES_PER_PIXEL 4
+#define BYTES_PER_PIXEL  4
 
 /** Initialize display.
 
@@ -36,17 +36,17 @@ LcdInitialize (
   MmioWrite32 (HDLCD_REG_INT_MASK, 0);
 
   // Define start of the VRAM. This never changes for any graphics mode
-  MmioWrite32 (HDLCD_REG_FB_BASE, (UINT32)VramBaseAddress);
+  MmioWrite32 (HDLCD_REG_FB_BASE, (UINT32) VramBaseAddress);
 
   // Setup various registers that never change
-  MmioWrite32 (HDLCD_REG_BUS_OPTIONS,  (4 << 8) | HDLCD_BURST_8);
+  MmioWrite32 (HDLCD_REG_BUS_OPTIONS, (4 << 8) | HDLCD_BURST_8);
 
   MmioWrite32 (HDLCD_REG_POLARITIES, HDLCD_DEFAULT_POLARITIES);
 
   MmioWrite32 (
-    HDLCD_REG_PIXEL_FORMAT,
-    HDLCD_LITTLE_ENDIAN | HDLCD_4BYTES_PER_PIXEL
-    );
+               HDLCD_REG_PIXEL_FORMAT,
+               HDLCD_LITTLE_ENDIAN | HDLCD_4BYTES_PER_PIXEL
+               );
 
   return EFI_SUCCESS;
 }
@@ -63,9 +63,9 @@ LcdSetMode (
   IN UINT32  ModeNumber
   )
 {
-  EFI_STATUS        Status;
-  SCAN_TIMINGS      *Horizontal;
-  SCAN_TIMINGS      *Vertical;
+  EFI_STATUS    Status;
+  SCAN_TIMINGS  *Horizontal;
+  SCAN_TIMINGS  *Vertical;
 
   EFI_GRAPHICS_PIXEL_FORMAT  PixelFormat;
 
@@ -73,10 +73,10 @@ LcdSetMode (
 
   // Set the video mode timings and other relevant information
   Status = LcdPlatformGetTimings (
-             ModeNumber,
-             &Horizontal,
-             &Vertical
-             );
+                                  ModeNumber,
+                                  &Horizontal,
+                                  &Vertical
+                                  );
   if (EFI_ERROR (Status)) {
     ASSERT_EFI_ERROR (Status);
     return Status;
@@ -100,11 +100,11 @@ LcdSetMode (
                 : PixelBlueGreenRedReserved8BitPerColor;
 
   if (ModeInfo.PixelFormat == PixelFormat) {
-    MmioWrite32 (HDLCD_REG_RED_SELECT,  (8 << 8) | 16);
+    MmioWrite32 (HDLCD_REG_RED_SELECT, (8 << 8) | 16);
     MmioWrite32 (HDLCD_REG_BLUE_SELECT, (8 << 8) | 0);
   } else {
     MmioWrite32 (HDLCD_REG_BLUE_SELECT, (8 << 8) | 16);
-    MmioWrite32 (HDLCD_REG_RED_SELECT,  (8 << 8) | 0);
+    MmioWrite32 (HDLCD_REG_RED_SELECT, (8 << 8) | 0);
   }
 
   MmioWrite32 (HDLCD_REG_GREEN_SELECT, (8 << 8) | 8);
@@ -114,27 +114,27 @@ LcdSetMode (
 
   // Update the frame buffer information with the new settings
   MmioWrite32 (
-    HDLCD_REG_FB_LINE_LENGTH,
-    Horizontal->Resolution * BYTES_PER_PIXEL
-    );
+               HDLCD_REG_FB_LINE_LENGTH,
+               Horizontal->Resolution * BYTES_PER_PIXEL
+               );
 
   MmioWrite32 (
-    HDLCD_REG_FB_LINE_PITCH,
-    Horizontal->Resolution * BYTES_PER_PIXEL
-    );
+               HDLCD_REG_FB_LINE_PITCH,
+               Horizontal->Resolution * BYTES_PER_PIXEL
+               );
 
   MmioWrite32 (HDLCD_REG_FB_LINE_COUNT, Vertical->Resolution - 1);
 
   // Set the vertical timing information
-  MmioWrite32 (HDLCD_REG_V_SYNC,        Vertical->Sync);
-  MmioWrite32 (HDLCD_REG_V_BACK_PORCH,  Vertical->BackPorch);
-  MmioWrite32 (HDLCD_REG_V_DATA,        Vertical->Resolution - 1);
+  MmioWrite32 (HDLCD_REG_V_SYNC, Vertical->Sync);
+  MmioWrite32 (HDLCD_REG_V_BACK_PORCH, Vertical->BackPorch);
+  MmioWrite32 (HDLCD_REG_V_DATA, Vertical->Resolution - 1);
   MmioWrite32 (HDLCD_REG_V_FRONT_PORCH, Vertical->FrontPorch);
 
   // Set the horizontal timing information
-  MmioWrite32 (HDLCD_REG_H_SYNC,        Horizontal->Sync);
-  MmioWrite32 (HDLCD_REG_H_BACK_PORCH,  Horizontal->BackPorch);
-  MmioWrite32 (HDLCD_REG_H_DATA,        Horizontal->Resolution - 1);
+  MmioWrite32 (HDLCD_REG_H_SYNC, Horizontal->Sync);
+  MmioWrite32 (HDLCD_REG_H_BACK_PORCH, Horizontal->BackPorch);
+  MmioWrite32 (HDLCD_REG_H_DATA, Horizontal->Resolution - 1);
   MmioWrite32 (HDLCD_REG_H_FRONT_PORCH, Horizontal->FrontPorch);
 
   // Enable the controller
