@@ -27,8 +27,8 @@
 
 **/
 VOID
-InstallSerialIo (
-  VOID
-  );
+  InstallSerialIo (
+                   VOID
+                   );
 
 #endif

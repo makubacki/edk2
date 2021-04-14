@@ -8,15 +8,15 @@
 
 #include "DxeDebugAgentLib.h"
 
-DEBUG_AGENT_MAILBOX          mMailbox;
-DEBUG_AGENT_MAILBOX          *mMailboxPointer = NULL;
-IA32_IDT_GATE_DESCRIPTOR     mIdtEntryTable[33];
-BOOLEAN                      mDxeCoreFlag                = FALSE;
-BOOLEAN                      mMultiProcessorDebugSupport = FALSE;
-VOID                         *mSavedIdtTable             = NULL;
-UINTN                        mSaveIdtTableSize           = 0;
-BOOLEAN                      mDebugAgentInitialized      = FALSE;
-BOOLEAN                      mSkipBreakpoint             = FALSE;
+DEBUG_AGENT_MAILBOX       mMailbox;
+DEBUG_AGENT_MAILBOX       *mMailboxPointer = NULL;
+IA32_IDT_GATE_DESCRIPTOR  mIdtEntryTable[33];
+BOOLEAN                   mDxeCoreFlag = FALSE;
+BOOLEAN                   mMultiProcessorDebugSupport = FALSE;
+VOID                      *mSavedIdtTable   = NULL;
+UINTN                     mSaveIdtTableSize = 0;
+BOOLEAN                   mDebugAgentInitialized = FALSE;
+BOOLEAN                   mSkipBreakpoint = FALSE;
 
 /**
   Check if debug agent support multi-processor.
@@ -46,18 +46,18 @@ InternalConstructorWorker (
   VOID
   )
 {
-  EFI_STATUS                  Status;
-  EFI_PHYSICAL_ADDRESS        Address;
-  BOOLEAN                     DebugTimerInterruptState;
-  DEBUG_AGENT_MAILBOX         *Mailbox;
-  DEBUG_AGENT_MAILBOX         *NewMailbox;
-  EFI_HOB_GUID_TYPE           *GuidHob;
-  EFI_VECTOR_HANDOFF_INFO     *VectorHandoffInfo;
+  EFI_STATUS               Status;
+  EFI_PHYSICAL_ADDRESS     Address;
+  BOOLEAN                  DebugTimerInterruptState;
+  DEBUG_AGENT_MAILBOX      *Mailbox;
+  DEBUG_AGENT_MAILBOX      *NewMailbox;
+  EFI_HOB_GUID_TYPE        *GuidHob;
+  EFI_VECTOR_HANDOFF_INFO  *VectorHandoffInfo;
 
   //
   // Check persisted vector handoff info
   //
-  Status = EFI_SUCCESS;
+  Status  = EFI_SUCCESS;
   GuidHob = GetFirstGuidHob (&gEfiVectorHandoffInfoPpiGuid);
   if (GuidHob != NULL && !mDxeCoreFlag) {
     //
@@ -66,6 +66,7 @@ InternalConstructorWorker (
     //
     Status = EfiGetSystemConfigurationTable (&gEfiVectorHandoffTableGuid, (VOID **) &VectorHandoffInfo);
   }
+
   if (GuidHob == NULL || Status != EFI_SUCCESS) {
     //
     // Install configuration table for persisted vector handoff info if GUIDed HOB cannot be found or
@@ -84,12 +85,15 @@ InternalConstructorWorker (
   InstallSerialIo ();
 
   Address = 0;
-  Status = gBS->AllocatePages (
-                  AllocateAnyPages,
-                  EfiACPIMemoryNVS,
-                  EFI_SIZE_TO_PAGES (sizeof(DEBUG_AGENT_MAILBOX) + PcdGet16(PcdDebugPortHandleBufferSize)),
-                  &Address
-                  );
+  Status  = gBS->AllocatePages (
+                                AllocateAnyPages,
+                                EfiACPIMemoryNVS,
+                                EFI_SIZE_TO_PAGES (
+                                    sizeof (DEBUG_AGENT_MAILBOX) +
+                                    PcdGet16 (PcdDebugPortHandleBufferSize)
+                                    ),
+                                &Address
+                                );
   if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "DebugAgent: Cannot install configuration table for mailbox!\n"));
     CpuDeadLoop ();
@@ -104,11 +108,11 @@ InternalConstructorWorker (
   //
   Mailbox = GetMailboxPointer ();
   CopyMem (NewMailbox, Mailbox, sizeof (DEBUG_AGENT_MAILBOX));
-  CopyMem (NewMailbox + 1, (VOID *)(UINTN)Mailbox->DebugPortHandle, PcdGet16(PcdDebugPortHandleBufferSize));
+  CopyMem (NewMailbox + 1, (VOID *) (UINTN) Mailbox->DebugPortHandle, PcdGet16 (PcdDebugPortHandleBufferSize));
   //
   // Update Debug Port Handle in new Mailbox
   //
-  UpdateMailboxContent (NewMailbox, DEBUG_MAILBOX_DEBUG_PORT_HANDLE_INDEX, (UINT64)(UINTN)(NewMailbox + 1));
+  UpdateMailboxContent (NewMailbox, DEBUG_MAILBOX_DEBUG_PORT_HANDLE_INDEX, (UINT64) (UINTN) (NewMailbox + 1));
   mMailboxPointer = NewMailbox;
 
   DebugTimerInterruptState = SaveAndSetDebugTimerInterrupt (DebugTimerInterruptState);
@@ -157,8 +161,8 @@ GetMailboxFromConfigurationTable (
   VOID
   )
 {
-  EFI_STATUS               Status;
-  DEBUG_AGENT_MAILBOX      *Mailbox;
+  EFI_STATUS           Status;
+  DEBUG_AGENT_MAILBOX  *Mailbox;
 
   Status = EfiGetSystemConfigurationTable (&gEfiDebugAgentGuid, (VOID **) &Mailbox);
   if (Status == EFI_SUCCESS && Mailbox != NULL) {
@@ -182,16 +186,17 @@ GetMailboxFromHob (
   IN VOID                  *HobStart
   )
 {
-  EFI_HOB_GUID_TYPE        *GuidHob;
-  UINT64                   *MailboxLocation;
-  DEBUG_AGENT_MAILBOX      *Mailbox;
+  EFI_HOB_GUID_TYPE    *GuidHob;
+  UINT64               *MailboxLocation;
+  DEBUG_AGENT_MAILBOX  *Mailbox;
 
   GuidHob = GetNextGuidHob (&gEfiDebugAgentGuid, HobStart);
   if (GuidHob == NULL) {
     return NULL;
   }
-  MailboxLocation = (UINT64 *) (GET_GUID_HOB_DATA(GuidHob));
-  Mailbox = (DEBUG_AGENT_MAILBOX *)(UINTN)(*MailboxLocation);
+
+  MailboxLocation = (UINT64 *) (GET_GUID_HOB_DATA (GuidHob));
+  Mailbox = (DEBUG_AGENT_MAILBOX *) (UINTN) (*MailboxLocation);
   VerifyMailboxChecksum (Mailbox);
 
   return Mailbox;
@@ -225,7 +230,7 @@ GetDebugPortHandle (
   VOID
   )
 {
-  return (DEBUG_PORT_HANDLE) (UINTN)(GetMailboxPointer ()->DebugPortHandle);
+  return (DEBUG_PORT_HANDLE) (UINTN) (GetMailboxPointer ()->DebugPortHandle);
 }
 
 /**
@@ -243,10 +248,10 @@ SetupDebugAgentEnvironment (
   IN DEBUG_AGENT_MAILBOX       *Mailbox
   )
 {
-  IA32_DESCRIPTOR              Idtr;
-  UINT16                       IdtEntryCount;
-  UINT64                       DebugPortHandle;
-  UINT32                       DebugTimerFrequency;
+  IA32_DESCRIPTOR  Idtr;
+  UINT16           IdtEntryCount;
+  UINT64           DebugPortHandle;
+  UINT32           DebugTimerFrequency;
 
   if (mMultiProcessorDebugSupport) {
     InitializeSpinLock (&mDebugMpContext.MpContextSpinLock);
@@ -255,7 +260,7 @@ SetupDebugAgentEnvironment (
     //
     // Clear Break CPU index value
     //
-    mDebugMpContext.BreakAtCpuIndex = (UINT32) -1;
+    mDebugMpContext.BreakAtCpuIndex = (UINT32) - 1;
   }
 
   //
@@ -294,6 +299,7 @@ SetupDebugAgentEnvironment (
     } else {
       ZeroMem (&mMailbox, sizeof (DEBUG_AGENT_MAILBOX));
     }
+
     mMailboxPointer = &mMailbox;
   }
 
@@ -305,7 +311,7 @@ SetupDebugAgentEnvironment (
   //
   // Initialize debug communication port
   //
-  DebugPortHandle = (UINT64) (UINTN)DebugPortInitialize ((VOID *)(UINTN)mMailboxPointer->DebugPortHandle, NULL);
+  DebugPortHandle = (UINT64) (UINTN) DebugPortInitialize ((VOID *) (UINTN) mMailboxPointer->DebugPortHandle, NULL);
   UpdateMailboxContent (mMailboxPointer, DEBUG_MAILBOX_DEBUG_PORT_HANDLE_INDEX, DebugPortHandle);
 
   if (Mailbox == NULL) {
@@ -325,7 +331,6 @@ SetupDebugAgentEnvironment (
     }
   }
 }
-
 
 /**
   Initialize debug agent.
@@ -352,15 +357,15 @@ InitializeDebugAgent (
   IN DEBUG_AGENT_CONTINUE  Function  OPTIONAL
   )
 {
-  UINT64                       *MailboxLocation;
-  DEBUG_AGENT_MAILBOX          *Mailbox;
-  BOOLEAN                      InterruptStatus;
-  VOID                         *HobList;
-  IA32_DESCRIPTOR              IdtDescriptor;
-  IA32_DESCRIPTOR              *Ia32Idtr;
-  IA32_IDT_ENTRY               *Ia32IdtEntry;
-  BOOLEAN                      PeriodicMode;
-  UINTN                        TimerCycle;
+  UINT64               *MailboxLocation;
+  DEBUG_AGENT_MAILBOX  *Mailbox;
+  BOOLEAN              InterruptStatus;
+  VOID                 *HobList;
+  IA32_DESCRIPTOR      IdtDescriptor;
+  IA32_DESCRIPTOR      *Ia32Idtr;
+  IA32_IDT_ENTRY       *Ia32IdtEntry;
+  BOOLEAN              PeriodicMode;
+  UINTN                TimerCycle;
 
   if (InitFlag == DEBUG_AGENT_INIT_DXE_AP) {
     //
@@ -372,11 +377,12 @@ InitializeDebugAgent (
     if (!PeriodicMode || TimerCycle == 0) {
       InitializeDebugTimer (NULL, FALSE);
     }
+
     //
     // Invoked by AP, enable interrupt to let AP could receive IPI from other processors
     //
     EnableInterrupts ();
-    return ;
+    return;
   }
 
   //
@@ -391,154 +397,156 @@ InitializeDebugAgent (
   //
   // Try to get mailbox firstly
   //
-  HobList         = NULL;
-  Mailbox         = NULL;
+  HobList = NULL;
+  Mailbox = NULL;
   MailboxLocation = NULL;
 
   switch (InitFlag) {
+    case DEBUG_AGENT_INIT_DXE_LOAD:
+      //
+      // Check if Debug Agent has been initialized before
+      //
+      if (IsDebugAgentInitialzed ()) {
+        DEBUG ((EFI_D_INFO, "Debug Agent: The former agent will be overwritten by the new one!\n"));
+      }
 
-  case DEBUG_AGENT_INIT_DXE_LOAD:
-    //
-    // Check if Debug Agent has been initialized before
-    //
-    if (IsDebugAgentInitialzed ()) {
-      DEBUG ((EFI_D_INFO, "Debug Agent: The former agent will be overwritten by the new one!\n"));
-    }
+      mMultiProcessorDebugSupport = TRUE;
+      //
+      // Save original IDT table
+      //
+      AsmReadIdtr (&IdtDescriptor);
+      mSaveIdtTableSize = IdtDescriptor.Limit + 1;
+      mSavedIdtTable    = AllocateCopyPool (mSaveIdtTableSize, (VOID *) IdtDescriptor.Base);
+      //
+      // Check if Debug Agent initialized in DXE phase
+      //
+      Mailbox = GetMailboxFromConfigurationTable ();
+      if (Mailbox == NULL) {
+        //
+        // Try to get mailbox from GUIDed HOB build in PEI
+        //
+        HobList = GetHobList ();
+        Mailbox = GetMailboxFromHob (HobList);
+      }
 
-    mMultiProcessorDebugSupport = TRUE;
-    //
-    // Save original IDT table
-    //
-    AsmReadIdtr (&IdtDescriptor);
-    mSaveIdtTableSize = IdtDescriptor.Limit + 1;
-    mSavedIdtTable    = AllocateCopyPool (mSaveIdtTableSize, (VOID *) IdtDescriptor.Base);
-    //
-    // Check if Debug Agent initialized in DXE phase
-    //
-    Mailbox = GetMailboxFromConfigurationTable ();
-    if (Mailbox == NULL) {
+      //
+      // Set up Debug Agent Environment and try to connect HOST if required
+      //
+      SetupDebugAgentEnvironment (Mailbox);
+      //
+      // For DEBUG_AGENT_INIT_S3, needn't to install configuration table and EFI Serial IO protocol
+      // For DEBUG_AGENT_INIT_DXE_CORE, InternalConstructorWorker() will invoked in Constructor()
+      //
+      InternalConstructorWorker ();
+      //
+      // Enable Debug Timer interrupt
+      //
+      SaveAndSetDebugTimerInterrupt (TRUE);
+      //
+      // Enable interrupt to receive Debug Timer interrupt
+      //
+      EnableInterrupts ();
+
+      mDebugAgentInitialized = TRUE;
+      FindAndReportModuleImageInfo (SIZE_4KB);
+
+      *(EFI_STATUS *) Context = EFI_SUCCESS;
+
+      break;
+
+    case DEBUG_AGENT_INIT_DXE_UNLOAD:
+      if (mDebugAgentInitialized) {
+        if (IsHostAttached ()) {
+          *(EFI_STATUS *) Context = EFI_ACCESS_DENIED;
+          //
+          // Enable Debug Timer interrupt again
+          //
+          SaveAndSetDebugTimerInterrupt (TRUE);
+        } else {
+          //
+          // Restore original IDT table
+          //
+          AsmReadIdtr (&IdtDescriptor);
+          IdtDescriptor.Limit = (UINT16) (mSaveIdtTableSize - 1);
+          CopyMem ((VOID *) IdtDescriptor.Base, mSavedIdtTable, mSaveIdtTableSize);
+          AsmWriteIdtr (&IdtDescriptor);
+          FreePool (mSavedIdtTable);
+          mDebugAgentInitialized  = FALSE;
+          *(EFI_STATUS *) Context = EFI_SUCCESS;
+        }
+      } else {
+        *(EFI_STATUS *) Context = EFI_NOT_STARTED;
+      }
+
+      //
+      // Restore interrupt state.
+      //
+      SetInterruptState (InterruptStatus);
+      break;
+
+    case DEBUG_AGENT_INIT_DXE_CORE:
+      mDxeCoreFlag = TRUE;
+      mMultiProcessorDebugSupport = TRUE;
       //
       // Try to get mailbox from GUIDed HOB build in PEI
       //
-      HobList = GetHobList ();
+      HobList = Context;
       Mailbox = GetMailboxFromHob (HobList);
-    }
-    //
-    // Set up Debug Agent Environment and try to connect HOST if required
-    //
-    SetupDebugAgentEnvironment (Mailbox);
-    //
-    // For DEBUG_AGENT_INIT_S3, needn't to install configuration table and EFI Serial IO protocol
-    // For DEBUG_AGENT_INIT_DXE_CORE, InternalConstructorWorker() will invoked in Constructor()
-    //
-    InternalConstructorWorker ();
-    //
-    // Enable Debug Timer interrupt
-    //
-    SaveAndSetDebugTimerInterrupt (TRUE);
-    //
-    // Enable interrupt to receive Debug Timer interrupt
-    //
-    EnableInterrupts ();
+      //
+      // Set up Debug Agent Environment and try to connect HOST if required
+      //
+      SetupDebugAgentEnvironment (Mailbox);
+      //
+      // Enable Debug Timer interrupt
+      //
+      SaveAndSetDebugTimerInterrupt (TRUE);
+      //
+      // Enable interrupt to receive Debug Timer interrupt
+      //
+      EnableInterrupts ();
 
-    mDebugAgentInitialized = TRUE;
-    FindAndReportModuleImageInfo (SIZE_4KB);
+      break;
 
-    *(EFI_STATUS *)Context = EFI_SUCCESS;
+    case DEBUG_AGENT_INIT_S3:
 
-    break;
-
-  case DEBUG_AGENT_INIT_DXE_UNLOAD:
-    if (mDebugAgentInitialized) {
-      if (IsHostAttached ()) {
-        *(EFI_STATUS *)Context = EFI_ACCESS_DENIED;
-        //
-        // Enable Debug Timer interrupt again
-        //
-        SaveAndSetDebugTimerInterrupt (TRUE);
-      } else {
-        //
-        // Restore original IDT table
-        //
-        AsmReadIdtr (&IdtDescriptor);
-        IdtDescriptor.Limit = (UINT16) (mSaveIdtTableSize - 1);
-        CopyMem ((VOID *) IdtDescriptor.Base, mSavedIdtTable, mSaveIdtTableSize);
-        AsmWriteIdtr (&IdtDescriptor);
-        FreePool (mSavedIdtTable);
-        mDebugAgentInitialized = FALSE;
-        *(EFI_STATUS *)Context = EFI_SUCCESS;
+      if (Context != NULL) {
+        Ia32Idtr        =  (IA32_DESCRIPTOR *) Context;
+        Ia32IdtEntry    = (IA32_IDT_ENTRY *) (Ia32Idtr->Base);
+        MailboxLocation = (UINT64 *) ((UINTN) Ia32IdtEntry[DEBUG_MAILBOX_VECTOR].Bits.OffsetLow +
+                                      ((UINTN) Ia32IdtEntry[DEBUG_MAILBOX_VECTOR].Bits.OffsetHigh << 16));
+        Mailbox = (DEBUG_AGENT_MAILBOX *) (UINTN) (*MailboxLocation);
+        VerifyMailboxChecksum (Mailbox);
       }
-    } else {
-      *(EFI_STATUS *)Context = EFI_NOT_STARTED;
-    }
 
-    //
-    // Restore interrupt state.
-    //
-    SetInterruptState (InterruptStatus);
-    break;
-
-  case DEBUG_AGENT_INIT_DXE_CORE:
-    mDxeCoreFlag                = TRUE;
-    mMultiProcessorDebugSupport = TRUE;
-    //
-    // Try to get mailbox from GUIDed HOB build in PEI
-    //
-    HobList = Context;
-    Mailbox = GetMailboxFromHob (HobList);
-    //
-    // Set up Debug Agent Environment and try to connect HOST if required
-    //
-    SetupDebugAgentEnvironment (Mailbox);
-    //
-    // Enable Debug Timer interrupt
-    //
-    SaveAndSetDebugTimerInterrupt (TRUE);
-    //
-    // Enable interrupt to receive Debug Timer interrupt
-    //
-    EnableInterrupts ();
-
-    break;
-
-  case DEBUG_AGENT_INIT_S3:
-
-    if (Context != NULL) {
-      Ia32Idtr =  (IA32_DESCRIPTOR *) Context;
-      Ia32IdtEntry = (IA32_IDT_ENTRY *)(Ia32Idtr->Base);
-      MailboxLocation = (UINT64 *) ((UINTN) Ia32IdtEntry[DEBUG_MAILBOX_VECTOR].Bits.OffsetLow +
-                                   ((UINTN) Ia32IdtEntry[DEBUG_MAILBOX_VECTOR].Bits.OffsetHigh << 16));
-      Mailbox = (DEBUG_AGENT_MAILBOX *)(UINTN)(*MailboxLocation);
-      VerifyMailboxChecksum (Mailbox);
-    }
-    //
-    // Save Mailbox pointer in global variable
-    //
-    mMailboxPointer = Mailbox;
-    //
-    // Set up Debug Agent Environment and try to connect HOST if required
-    //
-    SetupDebugAgentEnvironment (Mailbox);
-    //
-    // Disable interrupt
-    //
-    DisableInterrupts ();
-    FindAndReportModuleImageInfo (SIZE_4KB);
-    if (GetDebugFlag (DEBUG_AGENT_FLAG_BREAK_BOOT_SCRIPT) == 1) {
       //
-      // If Boot Script entry break is set, code will be break at here.
+      // Save Mailbox pointer in global variable
       //
-      CpuBreakpoint ();
-    }
-    break;
+      mMailboxPointer = Mailbox;
+      //
+      // Set up Debug Agent Environment and try to connect HOST if required
+      //
+      SetupDebugAgentEnvironment (Mailbox);
+      //
+      // Disable interrupt
+      //
+      DisableInterrupts ();
+      FindAndReportModuleImageInfo (SIZE_4KB);
+      if (GetDebugFlag (DEBUG_AGENT_FLAG_BREAK_BOOT_SCRIPT) == 1) {
+        //
+        // If Boot Script entry break is set, code will be break at here.
+        //
+        CpuBreakpoint ();
+      }
 
-  default:
-    //
-    // Only DEBUG_AGENT_INIT_PREMEM_SEC and DEBUG_AGENT_INIT_POSTMEM_SEC are allowed for this
-    // Debug Agent library instance.
-    //
-    DEBUG ((EFI_D_ERROR, "Debug Agent: The InitFlag value is not allowed!\n"));
-    CpuDeadLoop ();
-    break;
+      break;
+
+    default:
+      //
+      // Only DEBUG_AGENT_INIT_PREMEM_SEC and DEBUG_AGENT_INIT_POSTMEM_SEC are allowed for this
+      // Debug Agent library instance.
+      //
+      DEBUG ((EFI_D_ERROR, "Debug Agent: The InitFlag value is not allowed!\n"));
+      CpuDeadLoop ();
+      break;
   }
 }
