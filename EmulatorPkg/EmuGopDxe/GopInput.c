@@ -9,12 +9,35 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "Gop.h"
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 BOOLEAN
 GopPrivateIsKeyRegistered (
   IN EFI_KEY_DATA  *RegsiteredData,
   IN EFI_KEY_DATA  *InputData
   )
+
 /*++
 
 Routine Description:
@@ -46,16 +69,38 @@ Returns:
       RegsiteredData->KeyState.KeyShiftState != InputData->KeyState.KeyShiftState) {
     return FALSE;
   }
+
   if (RegsiteredData->KeyState.KeyToggleState != 0 &&
       RegsiteredData->KeyState.KeyToggleState != InputData->KeyState.KeyToggleState) {
     return FALSE;
   }
 
   return TRUE;
-
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 EFIAPI
 GopPrivateMakeCallbackFunction (
@@ -63,19 +108,19 @@ GopPrivateMakeCallbackFunction (
   IN EFI_KEY_DATA   *KeyData
   )
 {
-  LIST_ENTRY                        *Link;
+  LIST_ENTRY                       *Link;
   EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY  *CurrentNotify;
-  GOP_PRIVATE_DATA                  *Private = (GOP_PRIVATE_DATA *)Context;
+  GOP_PRIVATE_DATA                 *Private = (GOP_PRIVATE_DATA *) Context;
 
   KeyMapMake (KeyData);
 
   for (Link = Private->NotifyList.ForwardLink; Link != &Private->NotifyList; Link = Link->ForwardLink) {
     CurrentNotify = CR (
-                      Link,
-                      EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY,
-                      NotifyEntry,
-                      EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY_SIGNATURE
-                      );
+                        Link,
+                        EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY,
+                        NotifyEntry,
+                        EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY_SIGNATURE
+                        );
     if (GopPrivateIsKeyRegistered (&CurrentNotify->KeyData, KeyData)) {
       // We could be called at a high TPL so signal an event to call the registered function
       // at a lower TPL.
@@ -84,7 +129,29 @@ GopPrivateMakeCallbackFunction (
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 EFIAPI
 GopPrivateBreakCallbackFunction (
@@ -94,8 +161,6 @@ GopPrivateBreakCallbackFunction (
 {
   KeyMapBreak (KeyData);
 }
-
-
 
 //
 // Simple Text In implementation.
@@ -135,8 +200,8 @@ EmuGopSimpleTextInReset (
   //
   // A reset is draining the Queue
   //
-  while (Private->EmuGraphicsWindow->GetKey (Private->EmuGraphicsWindow, &KeyData) == EFI_SUCCESS)
-    ;
+  while (Private->EmuGraphicsWindow->GetKey (Private->EmuGraphicsWindow, &KeyData) == EFI_SUCCESS) {
+  }
 
   //
   // Leave critical section and return
@@ -144,7 +209,6 @@ EmuGopSimpleTextInReset (
   gBS->RestoreTPL (OldTpl);
   return EFI_SUCCESS;
 }
-
 
 /**
   Reads the next keystroke from the input device. The WaitForKey Event can
@@ -180,9 +244,9 @@ EmuGopSimpleTextInReadKeyStroke (
   //
   // Enter critical section
   //
-  OldTpl  = gBS->RaiseTPL (TPL_NOTIFY);
+  OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
 
-  Status  = Private->EmuGraphicsWindow->GetKey (Private->EmuGraphicsWindow, &KeyData);
+  Status = Private->EmuGraphicsWindow->GetKey (Private->EmuGraphicsWindow, &KeyData);
   if (!EFI_ERROR (Status)) {
     if ((KeyData.Key.ScanCode == 0) && (KeyData.Key.UnicodeChar == 0)) {
       // Modifier key was pressed
@@ -199,8 +263,6 @@ EmuGopSimpleTextInReadKeyStroke (
 
   return Status;
 }
-
-
 
 /**
   SimpleTextIn and SimpleTextInEx Notify Wait Event
@@ -228,26 +290,25 @@ EmuGopSimpleTextInWaitForKey (
   //
   // Enter critical section
   //
-  OldTpl  = gBS->RaiseTPL (TPL_NOTIFY);
+  OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
 
-  Status  = Private->EmuGraphicsWindow->CheckKey (Private->EmuGraphicsWindow);
+  Status = Private->EmuGraphicsWindow->CheckKey (Private->EmuGraphicsWindow);
   if (!EFI_ERROR (Status)) {
     //
     // If a there is a key in the queue signal our event.
     //
     gBS->SignalEvent (Event);
   }
+
   //
   // Leave critical section and return
   //
   gBS->RestoreTPL (OldTpl);
 }
 
-
 //
 // Simple Text Input Ex protocol functions
 //
-
 
 /**
   The Reset() function resets the input device hardware. As part
@@ -280,6 +341,7 @@ EmuGopSimpleTextInExResetEx (
   IN EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL  *This,
   IN BOOLEAN                            ExtendedVerification
   )
+
 /*++
 
   Routine Description:
@@ -296,8 +358,6 @@ EmuGopSimpleTextInExResetEx (
 {
   return EFI_SUCCESS;
 }
-
-
 
 /**
   The function reads the next keystroke from the input device. If
@@ -354,6 +414,7 @@ EmuGopSimpleTextInExReadKeyStrokeEx (
   IN  EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL *This,
   OUT EFI_KEY_DATA                      *KeyData
   )
+
 /*++
 
   Routine Description:
@@ -378,7 +439,6 @@ EmuGopSimpleTextInExReadKeyStrokeEx (
   GOP_PRIVATE_DATA  *Private;
   EFI_TPL           OldTpl;
 
-
   if (KeyData == NULL) {
     return EFI_INVALID_PARAMETER;
   }
@@ -391,9 +451,9 @@ EmuGopSimpleTextInExReadKeyStrokeEx (
   //
   // Enter critical section
   //
-  OldTpl  = gBS->RaiseTPL (TPL_NOTIFY);
+  OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
 
-  Status  = Private->EmuGraphicsWindow->GetKey(Private->EmuGraphicsWindow, KeyData);
+  Status = Private->EmuGraphicsWindow->GetKey (Private->EmuGraphicsWindow, KeyData);
 
   //
   // Leave critical section and return
@@ -402,8 +462,6 @@ EmuGopSimpleTextInExReadKeyStrokeEx (
 
   return Status;
 }
-
-
 
 /**
   The SetState() function allows the input device hardware to
@@ -453,9 +511,9 @@ EmuGopSimpleTextInExSetState (
   //
   // Enter critical section
   //
-  OldTpl  = gBS->RaiseTPL (TPL_NOTIFY);
+  OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
 
-  Status  = Private->EmuGraphicsWindow->KeySetState (Private->EmuGraphicsWindow, KeyToggleState);
+  Status = Private->EmuGraphicsWindow->KeySetState (Private->EmuGraphicsWindow, KeyToggleState);
   //
   // Leave critical section and return
   //
@@ -463,7 +521,6 @@ EmuGopSimpleTextInExSetState (
 
   return Status;
 }
-
 
 /**
   SimpleTextIn and SimpleTextInEx Notify Wait Event
@@ -479,12 +536,10 @@ EmuGopRegisterKeyCallback (
   IN VOID               *Context
   )
 {
-  EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY *ExNotify = (EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY *)Context;
+  EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY  *ExNotify = (EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY *) Context;
 
   ExNotify->KeyNotificationFn (&ExNotify->KeyData);
 }
-
-
 
 /**
   The RegisterKeystrokeNotify() function registers a function
@@ -520,11 +575,11 @@ EmuGopSimpleTextInExRegisterKeyNotify (
   OUT VOID                              **NotifyHandle
   )
 {
-  EFI_STATUS                          Status;
-  GOP_PRIVATE_DATA                    *Private;
-  EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY     *CurrentNotify;
-  LIST_ENTRY                          *Link;
-  EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY     *NewNotify;
+  EFI_STATUS                       Status;
+  GOP_PRIVATE_DATA                 *Private;
+  EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY  *CurrentNotify;
+  LIST_ENTRY                       *Link;
+  EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY  *NewNotify;
 
   if (KeyData == NULL || KeyNotificationFunction == NULL || NotifyHandle == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -537,11 +592,11 @@ EmuGopSimpleTextInExRegisterKeyNotify (
   //
   for (Link = Private->NotifyList.ForwardLink; Link != &Private->NotifyList; Link = Link->ForwardLink) {
     CurrentNotify = CR (
-                      Link,
-                      EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY,
-                      NotifyEntry,
-                      EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY_SIGNATURE
-                      );
+                        Link,
+                        EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY,
+                        NotifyEntry,
+                        EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY_SIGNATURE
+                        );
     if (GopPrivateIsKeyRegistered (&CurrentNotify->KeyData, KeyData)) {
       if (CurrentNotify->KeyNotificationFn == KeyNotificationFunction) {
         *NotifyHandle = CurrentNotify->NotifyHandle;
@@ -558,28 +613,25 @@ EmuGopSimpleTextInExRegisterKeyNotify (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  NewNotify->Signature         = EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY_SIGNATURE;
+  NewNotify->Signature = EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY_SIGNATURE;
   NewNotify->KeyNotificationFn = KeyNotificationFunction;
-  NewNotify->NotifyHandle      = (EFI_HANDLE) NewNotify;
+  NewNotify->NotifyHandle = (EFI_HANDLE) NewNotify;
   CopyMem (&NewNotify->KeyData, KeyData, sizeof (KeyData));
   InsertTailList (&Private->NotifyList, &NewNotify->NotifyEntry);
 
   Status = gBS->CreateEvent (
-                  EVT_NOTIFY_SIGNAL,
-                  TPL_NOTIFY,
-                  EmuGopRegisterKeyCallback,
-                  NewNotify,
-                  &NewNotify->Event
-                  );
+                             EVT_NOTIFY_SIGNAL,
+                             TPL_NOTIFY,
+                             EmuGopRegisterKeyCallback,
+                             NewNotify,
+                             &NewNotify->Event
+                             );
   ASSERT_EFI_ERROR (Status);
-
 
   *NotifyHandle = NewNotify->NotifyHandle;
 
   return EFI_SUCCESS;
-
 }
-
 
 /**
   The UnregisterKeystrokeNotify() function removes the
@@ -602,6 +654,7 @@ EmuGopSimpleTextInExUnregisterKeyNotify (
   IN EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL  *This,
   IN VOID                               *NotificationHandle
   )
+
 /*++
 
   Routine Description:
@@ -617,15 +670,16 @@ EmuGopSimpleTextInExUnregisterKeyNotify (
 
 **/
 {
-  GOP_PRIVATE_DATA                   *Private;
-  LIST_ENTRY                         *Link;
-  EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY *CurrentNotify;
+  GOP_PRIVATE_DATA                 *Private;
+  LIST_ENTRY                       *Link;
+  EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY  *CurrentNotify;
 
   if (NotificationHandle == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
-  if (((EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY *) NotificationHandle)->Signature != EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY_SIGNATURE) {
+  if (((EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY *) NotificationHandle)->Signature !=
+      EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY_SIGNATURE) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -633,11 +687,11 @@ EmuGopSimpleTextInExUnregisterKeyNotify (
 
   for (Link = Private->NotifyList.ForwardLink; Link != &Private->NotifyList; Link = Link->ForwardLink) {
     CurrentNotify = CR (
-                      Link,
-                      EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY,
-                      NotifyEntry,
-                      EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY_SIGNATURE
-                      );
+                        Link,
+                        EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY,
+                        NotifyEntry,
+                        EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY_SIGNATURE
+                        );
     if (CurrentNotify->NotifyHandle == NotificationHandle) {
       //
       // Remove the notification function from NotifyList and free resources
@@ -656,8 +710,6 @@ EmuGopSimpleTextInExUnregisterKeyNotify (
   //
   return EFI_INVALID_PARAMETER;
 }
-
-
 
 /**
   Initialize SimplelTextIn and SimpleTextInEx protocols in the Private
@@ -678,26 +730,25 @@ EmuGopInitializeSimpleTextInForWindow (
   //
   // Initialize Simple Text In protoocol
   //
-  Private->SimpleTextIn.Reset         = EmuGopSimpleTextInReset;
+  Private->SimpleTextIn.Reset = EmuGopSimpleTextInReset;
   Private->SimpleTextIn.ReadKeyStroke = EmuGopSimpleTextInReadKeyStroke;
 
   Status = gBS->CreateEvent (
-                  EVT_NOTIFY_WAIT,
-                  TPL_NOTIFY,
-                  EmuGopSimpleTextInWaitForKey,
-                  Private,
-                  &Private->SimpleTextIn.WaitForKey
-                  );
+                             EVT_NOTIFY_WAIT,
+                             TPL_NOTIFY,
+                             EmuGopSimpleTextInWaitForKey,
+                             Private,
+                             &Private->SimpleTextIn.WaitForKey
+                             );
   ASSERT_EFI_ERROR (Status);
-
 
   //
   // Initialize Simple Text In Ex
   //
 
-  Private->SimpleTextInEx.Reset               = EmuGopSimpleTextInExResetEx;
-  Private->SimpleTextInEx.ReadKeyStrokeEx     = EmuGopSimpleTextInExReadKeyStrokeEx;
-  Private->SimpleTextInEx.SetState            = EmuGopSimpleTextInExSetState;
+  Private->SimpleTextInEx.Reset = EmuGopSimpleTextInExResetEx;
+  Private->SimpleTextInEx.ReadKeyStrokeEx = EmuGopSimpleTextInExReadKeyStrokeEx;
+  Private->SimpleTextInEx.SetState = EmuGopSimpleTextInExSetState;
   Private->SimpleTextInEx.RegisterKeyNotify   = EmuGopSimpleTextInExRegisterKeyNotify;
   Private->SimpleTextInEx.UnregisterKeyNotify = EmuGopSimpleTextInExUnregisterKeyNotify;
 
@@ -706,28 +757,20 @@ EmuGopInitializeSimpleTextInForWindow (
   InitializeListHead (&Private->NotifyList);
 
   Status = gBS->CreateEvent (
-                  EVT_NOTIFY_WAIT,
-                  TPL_NOTIFY,
-                  EmuGopSimpleTextInWaitForKey,
-                  Private,
-                  &Private->SimpleTextInEx.WaitForKeyEx
-                  );
+                             EVT_NOTIFY_WAIT,
+                             TPL_NOTIFY,
+                             EmuGopSimpleTextInWaitForKey,
+                             Private,
+                             &Private->SimpleTextInEx.WaitForKeyEx
+                             );
   ASSERT_EFI_ERROR (Status);
-
 
   return Status;
 }
 
-
-
-
-
-
-
 //
 // Simple Pointer implementation.
 //
-
 
 /**
   Resets the pointer device hardware.
@@ -748,9 +791,9 @@ EmuGopSimplePointerReset (
   IN BOOLEAN                              ExtendedVerification
   )
 {
-  GOP_PRIVATE_DATA             *Private;
-  EFI_SIMPLE_POINTER_STATE     State;
-  EFI_TPL                      OldTpl;
+  GOP_PRIVATE_DATA          *Private;
+  EFI_SIMPLE_POINTER_STATE  State;
+  EFI_TPL                   OldTpl;
 
   Private = GOP_PRIVATE_DATA_FROM_POINTER_MODE_THIS (This);
   if (Private->EmuGraphicsWindow == NULL) {
@@ -765,8 +808,8 @@ EmuGopSimplePointerReset (
   //
   // A reset is draining the Queue
   //
-  while (Private->EmuGraphicsWindow->GetPointerState (Private->EmuGraphicsWindow, &State) == EFI_SUCCESS)
-    ;
+  while (Private->EmuGraphicsWindow->GetPointerState (Private->EmuGraphicsWindow, &State) == EFI_SUCCESS) {
+  }
 
   //
   // Leave critical section and return
@@ -774,7 +817,6 @@ EmuGopSimplePointerReset (
   gBS->RestoreTPL (OldTpl);
   return EFI_SUCCESS;
 }
-
 
 /**
   Retrieves the current state of a pointer device.
@@ -809,9 +851,9 @@ EmuGopSimplePointerGetState (
   //
   // Enter critical section
   //
-  OldTpl  = gBS->RaiseTPL (TPL_NOTIFY);
+  OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
 
-  Status  = Private->EmuGraphicsWindow->GetPointerState (Private->EmuGraphicsWindow, State);
+  Status = Private->EmuGraphicsWindow->GetPointerState (Private->EmuGraphicsWindow, State);
   //
   // Leave critical section and return
   //
@@ -819,7 +861,6 @@ EmuGopSimplePointerGetState (
 
   return Status;
 }
-
 
 /**
   SimplePointer Notify Wait Event
@@ -847,21 +888,21 @@ EmuGopSimplePointerWaitForInput (
   //
   // Enter critical section
   //
-  OldTpl  = gBS->RaiseTPL (TPL_NOTIFY);
+  OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
 
-  Status  = Private->EmuGraphicsWindow->CheckPointer (Private->EmuGraphicsWindow);
+  Status = Private->EmuGraphicsWindow->CheckPointer (Private->EmuGraphicsWindow);
   if (!EFI_ERROR (Status)) {
     //
     // If the pointer state has changed, signal our event.
     //
     gBS->SignalEvent (Event);
   }
+
   //
   // Leave critical section and return
   //
   gBS->RestoreTPL (OldTpl);
 }
-
 
 /**
   SimplePointer constructor
@@ -887,17 +928,17 @@ EmuGopInitializeSimplePointerForWindow (
   Private->PointerMode.LeftButton  = TRUE;
   Private->PointerMode.RightButton = TRUE;
 
-  Private->SimplePointer.Reset     = EmuGopSimplePointerReset;
-  Private->SimplePointer.GetState  = EmuGopSimplePointerGetState;
-  Private->SimplePointer.Mode      = &Private->PointerMode;
+  Private->SimplePointer.Reset    = EmuGopSimplePointerReset;
+  Private->SimplePointer.GetState = EmuGopSimplePointerGetState;
+  Private->SimplePointer.Mode     = &Private->PointerMode;
 
   Status = gBS->CreateEvent (
-                  EVT_NOTIFY_WAIT,
-                  TPL_NOTIFY,
-                  EmuGopSimplePointerWaitForInput,
-                  Private,
-                  &Private->SimplePointer.WaitForInput
-                  );
+                             EVT_NOTIFY_WAIT,
+                             TPL_NOTIFY,
+                             EmuGopSimplePointerWaitForInput,
+                             Private,
+                             &Private->SimplePointer.WaitForInput
+                             );
 
   return Status;
 }

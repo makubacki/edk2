@@ -8,9 +8,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "PlatformBm.h"
 
-
-
-EMU_PLATFORM_UGA_DEVICE_PATH gGopDevicePath = {
+EMU_PLATFORM_UGA_DEVICE_PATH  gGopDevicePath = {
   {
     {
       {
@@ -42,7 +40,7 @@ EMU_PLATFORM_UGA_DEVICE_PATH gGopDevicePath = {
   gEndEntire
 };
 
-EMU_PLATFORM_UGA_DEVICE_PATH gGopDevicePath2 = {
+EMU_PLATFORM_UGA_DEVICE_PATH  gGopDevicePath2 = {
   {
     {
       {
@@ -77,7 +75,7 @@ EMU_PLATFORM_UGA_DEVICE_PATH gGopDevicePath2 = {
 //
 // Predefined platform default console device path
 //
-BDS_CONSOLE_CONNECT_ENTRY   gPlatformConsole[] = {
+BDS_CONSOLE_CONNECT_ENTRY  gPlatformConsole[] = {
   {
     (EFI_DEVICE_PATH_PROTOCOL *) &gGopDevicePath,
     (CONSOLE_OUT | CONSOLE_IN)
@@ -91,4 +89,3 @@ BDS_CONSOLE_CONNECT_ENTRY   gPlatformConsole[] = {
     0
   }
 };
-

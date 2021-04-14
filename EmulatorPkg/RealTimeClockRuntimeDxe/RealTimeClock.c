@@ -40,12 +40,36 @@ InitializeRealTimeClock (
   IN EFI_SYSTEM_TABLE                    *SystemTable
   );
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 EmuGetTime (
-  OUT EFI_TIME                                 * Time,
-  OUT EFI_TIME_CAPABILITIES                    * Capabilities OPTIONAL
+  OUT EFI_TIME                                 *Time,
+  OUT EFI_TIME_CAPABILITIES                    *Capabilities OPTIONAL
   )
+
 /*++
 
 Routine Description:
@@ -67,13 +91,11 @@ Returns:
 
 **/
 {
-
   //
   // Check parameter for null pointer
   //
   if (Time == NULL) {
     return EFI_INVALID_PARAMETER;
-
   }
 
   gEmuThunk->GetTime (Time, Capabilities);
@@ -81,11 +103,35 @@ Returns:
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 EmuSetTime (
   IN EFI_TIME   *Time
   )
+
 /*++
 
 Routine Description:
@@ -106,11 +152,12 @@ Returns:
 
 **/
 {
-  EFI_STATUS            Status;
+  EFI_STATUS  Status;
 
   if (Time == NULL) {
     return EFI_INVALID_PARAMETER;
   }
+
   //
   // Make sure that the time fields are valid
   //
@@ -118,9 +165,33 @@ Returns:
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   return EFI_UNSUPPORTED;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 EmuGetWakeupTime (
@@ -128,6 +199,7 @@ EmuGetWakeupTime (
   OUT BOOLEAN        *Pending,
   OUT EFI_TIME       *Time
   )
+
 /*++
 
 Routine Description:
@@ -156,12 +228,36 @@ Returns:
   return EFI_UNSUPPORTED;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 EmuSetWakeupTime (
   IN BOOLEAN      Enable,
   OUT EFI_TIME    *Time
   )
+
 /*++
 
 Routine Description:
@@ -190,12 +286,36 @@ Returns:
   return EFI_UNSUPPORTED;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 InitializeRealTimeClock (
   IN EFI_HANDLE                            ImageHandle,
   IN EFI_SYSTEM_TABLE                      *SystemTable
   )
+
 /*++
 
 Routine Description:
@@ -214,25 +334,49 @@ Returns:
   EFI_STATUS  Status;
   EFI_HANDLE  Handle;
 
-  SystemTable->RuntimeServices->GetTime       = EmuGetTime;
-  SystemTable->RuntimeServices->SetTime       = EmuSetTime;
+  SystemTable->RuntimeServices->GetTime = EmuGetTime;
+  SystemTable->RuntimeServices->SetTime = EmuSetTime;
   SystemTable->RuntimeServices->GetWakeupTime = EmuGetWakeupTime;
   SystemTable->RuntimeServices->SetWakeupTime = EmuSetWakeupTime;
 
   Handle = NULL;
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &Handle,
-                  &gEfiRealTimeClockArchProtocolGuid,
-                  NULL,
-                  NULL
-                  );
+                                                   &Handle,
+                                                   &gEfiRealTimeClockArchProtocolGuid,
+                                                   NULL,
+                                                   NULL
+                                                   );
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 RtcTimeFieldsValid (
   IN EFI_TIME *Time
   )
+
 /*++
 
 Routine Description:
@@ -251,7 +395,7 @@ Routine Description:
       Time->Minute > 59 ||
       Time->Second > 59 ||
       Time->Nanosecond > 999999999 ||
-      (!(Time->TimeZone == EFI_UNSPECIFIED_TIMEZONE || (Time->TimeZone >= -1440 && Time->TimeZone <= 1440))) ||
+      (!(Time->TimeZone == EFI_UNSPECIFIED_TIMEZONE || (Time->TimeZone >= - 1440 && Time->TimeZone <= 1440))) ||
       (Time->Daylight & (~(EFI_TIME_ADJUST_DAYLIGHT | EFI_TIME_IN_DAYLIGHT)))
       ) {
     return EFI_INVALID_PARAMETER;
@@ -260,12 +404,34 @@ Routine Description:
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 BOOLEAN
 DayValid (
   IN  EFI_TIME  *Time
   )
 {
-
   STATIC const INTN  DayOfMonth[12] = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
   if (Time->Day < 1 ||
@@ -278,6 +444,29 @@ DayValid (
   return TRUE;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 BOOLEAN
 IsLeapYear (
   IN EFI_TIME   *Time

@@ -26,7 +26,7 @@
 #define VERBOSE_COLUME_SIZE  (16)
 
 REDFISH_OVER_IP_PROTOCOL_DATA  *mRedfishOverIpProtocolData;
-UINT8 mRedfishProtocolDataSize;
+UINT8                          mRedfishProtocolDataSize;
 
 /**
   Get the MAC address of NIC.
@@ -41,16 +41,16 @@ GetMacAddressInformation (
   OUT EFI_MAC_ADDRESS *MacAddress
   )
 {
-  MAC_ADDR_DEVICE_PATH                     *Mac;
-  REST_EX_SERVICE_DEVICE_PATH_DATA         *RestExServiceDevicePathData;
-  EFI_DEVICE_PATH_PROTOCOL                 *RestExServiceDevicePath;
-  MAC_ADDR_DEVICE_PATH                     *MacAddressDevicePath;
+  MAC_ADDR_DEVICE_PATH              *Mac;
+  REST_EX_SERVICE_DEVICE_PATH_DATA  *RestExServiceDevicePathData;
+  EFI_DEVICE_PATH_PROTOCOL          *RestExServiceDevicePath;
+  MAC_ADDR_DEVICE_PATH              *MacAddressDevicePath;
 
   Mac = NULL;
-  RestExServiceDevicePathData  = NULL;
-  RestExServiceDevicePath      = NULL;
+  RestExServiceDevicePathData = NULL;
+  RestExServiceDevicePath     = NULL;
 
-  RestExServiceDevicePathData = (REST_EX_SERVICE_DEVICE_PATH_DATA *)PcdGetPtr(PcdRedfishRestExServiceDevicePath);
+  RestExServiceDevicePathData = (REST_EX_SERVICE_DEVICE_PATH_DATA *) PcdGetPtr (PcdRedfishRestExServiceDevicePath);
   if (RestExServiceDevicePathData == NULL ||
       RestExServiceDevicePathData->DevicePathNum == 0 ||
       !IsDevicePathValid (RestExServiceDevicePathData->DevicePath, 0)) {
@@ -72,10 +72,11 @@ GetMacAddressInformation (
   }
 
   if (!IsDevicePathEnd (RestExServiceDevicePath)) {
-    MacAddressDevicePath = (MAC_ADDR_DEVICE_PATH *)RestExServiceDevicePath;
-    CopyMem ((VOID *)MacAddress, (VOID *)&MacAddressDevicePath->MacAddress, sizeof (EFI_MAC_ADDRESS));
+    MacAddressDevicePath = (MAC_ADDR_DEVICE_PATH *) RestExServiceDevicePath;
+    CopyMem ((VOID *) MacAddress, (VOID *) &MacAddressDevicePath->MacAddress, sizeof (EFI_MAC_ADDRESS));
     return EFI_SUCCESS;
   }
+
   return EFI_NOT_FOUND;
 }
 
@@ -93,33 +94,36 @@ EFI_STATUS
 RedfishPlatformHostInterfaceDeviceDescriptor (
   OUT UINT8 *DeviceType,
   OUT REDFISH_INTERFACE_DATA  **DeviceDescriptor
-)
+  )
 {
-  EFI_STATUS Status;
-  EFI_MAC_ADDRESS MacAddress;
-  REDFISH_INTERFACE_DATA *RedfishInterfaceData;
-  PCI_OR_PCIE_INTERFACE_DEVICE_DESCRIPTOR_V2 *ThisDeviceDescriptor;
+  EFI_STATUS                                  Status;
+  EFI_MAC_ADDRESS                             MacAddress;
+  REDFISH_INTERFACE_DATA                      *RedfishInterfaceData;
+  PCI_OR_PCIE_INTERFACE_DEVICE_DESCRIPTOR_V2  *ThisDeviceDescriptor;
 
   RedfishInterfaceData = AllocateZeroPool (sizeof (PCI_OR_PCIE_INTERFACE_DEVICE_DESCRIPTOR_V2) + 1);
   if (RedfishInterfaceData == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
+
   RedfishInterfaceData->DeviceType = REDFISH_HOST_INTERFACE_DEVICE_TYPE_PCI_PCIE_V2;
   //
   // Fill up device type information.
   //
-  ThisDeviceDescriptor = (PCI_OR_PCIE_INTERFACE_DEVICE_DESCRIPTOR_V2 *)((UINT8 *)RedfishInterfaceData + 1);
+  ThisDeviceDescriptor = (PCI_OR_PCIE_INTERFACE_DEVICE_DESCRIPTOR_V2 *) ((UINT8 *) RedfishInterfaceData + 1);
   ThisDeviceDescriptor->Length = sizeof (PCI_OR_PCIE_INTERFACE_DEVICE_DESCRIPTOR_V2) + 1;
   Status = GetMacAddressInformation (&MacAddress);
   if (EFI_ERROR (Status)) {
     FreePool (RedfishInterfaceData);
     return EFI_NOT_FOUND;
   }
-  CopyMem ((VOID *)&ThisDeviceDescriptor->MacAddress, (VOID *)&MacAddress, sizeof (ThisDeviceDescriptor->MacAddress));
+
+  CopyMem ((VOID *) &ThisDeviceDescriptor->MacAddress, (VOID *) &MacAddress, sizeof (ThisDeviceDescriptor->MacAddress));
   *DeviceType = REDFISH_HOST_INTERFACE_DEVICE_TYPE_PCI_PCIE_V2;
   *DeviceDescriptor = RedfishInterfaceData;
   return EFI_SUCCESS;
 }
+
 /**
   Get platform Redfish host interface protocol data.
   Caller should pass NULL in ProtocolRecord to retrive the first protocol record.
@@ -138,27 +142,38 @@ EFI_STATUS
 RedfishPlatformHostInterfaceProtocolData (
   OUT MC_HOST_INTERFACE_PROTOCOL_RECORD **ProtocolRecord,
   IN UINT8  IndexOfProtocolData
-)
+  )
 {
-  MC_HOST_INTERFACE_PROTOCOL_RECORD *ThisProtocolRecord;
+  MC_HOST_INTERFACE_PROTOCOL_RECORD  *ThisProtocolRecord;
 
   if (mRedfishOverIpProtocolData == 0) {
     return EFI_NOT_FOUND;
   }
+
   if (IndexOfProtocolData == 0) {
     //
     // Return the first Redfish protocol data to caller. We only have
     // one protocol data in this case.
     //
-    ThisProtocolRecord = (MC_HOST_INTERFACE_PROTOCOL_RECORD *) AllocatePool (mRedfishProtocolDataSize + sizeof (MC_HOST_INTERFACE_PROTOCOL_RECORD) - 1);
+    ThisProtocolRecord =
+      (MC_HOST_INTERFACE_PROTOCOL_RECORD *) AllocatePool (
+                                                                              mRedfishProtocolDataSize +
+                                                                              sizeof (MC_HOST_INTERFACE_PROTOCOL_RECORD) - 1
+                                                                              );
     ThisProtocolRecord->ProtocolType = MCHostInterfaceProtocolTypeRedfishOverIP;
     ThisProtocolRecord->ProtocolTypeDataLen = mRedfishProtocolDataSize;
-    CopyMem ((VOID *)&ThisProtocolRecord->ProtocolTypeData, (VOID *)mRedfishOverIpProtocolData, mRedfishProtocolDataSize);
+    CopyMem (
+            (VOID *) &ThisProtocolRecord->ProtocolTypeData,
+            (VOID *) mRedfishOverIpProtocolData,
+            mRedfishProtocolDataSize
+            );
     *ProtocolRecord = ThisProtocolRecord;
     return EFI_SUCCESS;
   }
+
   return EFI_NOT_FOUND;
 }
+
 /**
   Dump IPv4 address.
 
@@ -169,7 +184,7 @@ InternalDumpIp4Addr (
   IN EFI_IPv4_ADDRESS   *Ip
   )
 {
-  UINTN                 Index;
+  UINTN  Index;
 
   for (Index = 0; Index < 4; Index++) {
     DEBUG ((DEBUG_VERBOSE, "%d", Ip->Addr[Index]));
@@ -180,6 +195,7 @@ InternalDumpIp4Addr (
 
   DEBUG ((DEBUG_VERBOSE, "\n"));
 }
+
 /**
   Dump IPv6 address.
 
@@ -190,12 +206,13 @@ InternalDumpIp6Addr (
   IN EFI_IPv6_ADDRESS   *Ip
   )
 {
-  UINTN Index;
+  UINTN  Index;
 
   for (Index = 0; Index < 16; Index++) {
     if (Ip->Addr[Index] != 0) {
       DEBUG ((DEBUG_VERBOSE, "%x", Ip->Addr[Index]));
     }
+
     Index++;
 
     if (Index > 15) {
@@ -205,14 +222,17 @@ InternalDumpIp6Addr (
     if (((Ip->Addr[Index] & 0xf0) == 0) && (Ip->Addr[Index - 1] != 0)) {
       DEBUG ((DEBUG_VERBOSE, "0"));
     }
+
     DEBUG ((DEBUG_VERBOSE, "%x", Ip->Addr[Index]));
 
     if (Index < 15) {
       DEBUG ((DEBUG_VERBOSE, ":"));
     }
   }
+
   DEBUG ((DEBUG_VERBOSE, "\n"));
 }
+
 /**
   Dump data
 
@@ -226,10 +246,12 @@ InternalDumpData (
   )
 {
   UINTN  Index;
+
   for (Index = 0; Index < Size; Index++) {
-    DEBUG ((DEBUG_VERBOSE, "%02x ", (UINTN)Data[Index]));
+    DEBUG ((DEBUG_VERBOSE, "%02x ", (UINTN) Data[Index]));
   }
 }
+
 /**
   Dump hex data
 
@@ -242,9 +264,9 @@ InternalDumpHex (
   IN UINTN  Size
   )
 {
-  UINTN   Index;
-  UINTN   Count;
-  UINTN   Left;
+  UINTN  Index;
+  UINTN  Count;
+  UINTN  Left;
 
   Count = Size / VERBOSE_COLUME_SIZE;
   Left  = Size % VERBOSE_COLUME_SIZE;
@@ -260,6 +282,7 @@ InternalDumpHex (
 
   DEBUG ((DEBUG_VERBOSE, "\n"));
 }
+
 /**
   Dump Redfish over IP protocol data
 
@@ -272,7 +295,7 @@ DumpRedfishIpProtocolData (
   IN UINT8                           RedfishProtocolDataSize
   )
 {
-  CHAR16 Hostname[16];
+  CHAR16  Hostname[16];
 
   DEBUG ((DEBUG_VERBOSE, "RedfishProtocolData: \n"));
   InternalDumpHex ((UINT8 *) RedfishProtocolData, RedfishProtocolDataSize);
@@ -281,7 +304,10 @@ DumpRedfishIpProtocolData (
 
   DEBUG ((DEBUG_VERBOSE, "RedfishProtocolData->ServiceUuid - %g\n", &(RedfishProtocolData->ServiceUuid)));
 
-  DEBUG ((DEBUG_VERBOSE, "RedfishProtocolData->HostIpAssignmentType - %d\n", RedfishProtocolData->HostIpAssignmentType));
+  DEBUG (
+        (DEBUG_VERBOSE, "RedfishProtocolData->HostIpAssignmentType - %d\n",
+         RedfishProtocolData->HostIpAssignmentType)
+        );
 
   DEBUG ((DEBUG_VERBOSE, "RedfishProtocolData->HostIpAddressFormat - %d\n", RedfishProtocolData->HostIpAddressFormat));
 
@@ -299,9 +325,15 @@ DumpRedfishIpProtocolData (
     InternalDumpIp6Addr ((EFI_IPv6_ADDRESS *) (RedfishProtocolData->HostIpMask));
   }
 
-  DEBUG ((DEBUG_VERBOSE, "RedfishProtocolData->RedfishServiceIpDiscoveryType - %d\n", RedfishProtocolData->RedfishServiceIpDiscoveryType));
+  DEBUG (
+        (DEBUG_VERBOSE, "RedfishProtocolData->RedfishServiceIpDiscoveryType - %d\n",
+         RedfishProtocolData->RedfishServiceIpDiscoveryType)
+        );
 
-  DEBUG ((DEBUG_VERBOSE, "RedfishProtocolData->RedfishServiceIpAddressFormat - %d\n", RedfishProtocolData->RedfishServiceIpAddressFormat));
+  DEBUG (
+        (DEBUG_VERBOSE, "RedfishProtocolData->RedfishServiceIpAddressFormat - %d\n",
+         RedfishProtocolData->RedfishServiceIpAddressFormat)
+        );
 
   DEBUG ((DEBUG_VERBOSE, "RedfishProtocolData->RedfishServiceIpAddress: \n"));
   if (RedfishProtocolData->RedfishServiceIpAddressFormat == 0x01) {
@@ -317,13 +349,26 @@ DumpRedfishIpProtocolData (
     InternalDumpIp6Addr ((EFI_IPv6_ADDRESS *) (RedfishProtocolData->RedfishServiceIpMask));
   }
 
-  DEBUG ((DEBUG_VERBOSE, "RedfishProtocolData->RedfishServiceIpPort - %d\n", RedfishProtocolData->RedfishServiceIpPort));
+  DEBUG (
+        (DEBUG_VERBOSE, "RedfishProtocolData->RedfishServiceIpPort - %d\n",
+         RedfishProtocolData->RedfishServiceIpPort)
+        );
 
-  DEBUG ((DEBUG_VERBOSE, "RedfishProtocolData->RedfishServiceVlanId - %d\n", RedfishProtocolData->RedfishServiceVlanId));
+  DEBUG (
+        (DEBUG_VERBOSE, "RedfishProtocolData->RedfishServiceVlanId - %d\n",
+         RedfishProtocolData->RedfishServiceVlanId)
+        );
 
-  DEBUG ((DEBUG_VERBOSE, "RedfishProtocolData->RedfishServiceHostnameLength - %d\n", RedfishProtocolData->RedfishServiceHostnameLength));
+  DEBUG (
+        (DEBUG_VERBOSE, "RedfishProtocolData->RedfishServiceHostnameLength - %d\n",
+         RedfishProtocolData->RedfishServiceHostnameLength)
+        );
 
-  AsciiStrToUnicodeStrS((CHAR8 *) RedfishProtocolData->RedfishServiceHostname, Hostname, sizeof (Hostname) / sizeof (Hostname[0]));
+  AsciiStrToUnicodeStrS (
+                       (CHAR8 *) RedfishProtocolData->RedfishServiceHostname,
+                       Hostname,
+                       sizeof (Hostname) / sizeof (Hostname[0])
+                       );
   DEBUG ((DEBUG_VERBOSE, "RedfishProtocolData->RedfishServiceHostname - %s\n", Hostname));
 }
 
@@ -341,18 +386,18 @@ GetRedfishRecordFromVariable (
   OUT UINT8 *RedfishProtocolDataSize
   )
 {
-  EFI_STATUS                      Status;
-  UINT8                           HostIpAssignmentType;
-  UINTN                           HostIpAssignmentTypeSize;
-  EFI_IPv4_ADDRESS                HostIpAddress;
-  UINTN                           IPv4DataSize;
-  EFI_IPv4_ADDRESS                HostIpMask;
-  EFI_IPv4_ADDRESS                RedfishServiceIpAddress;
-  EFI_IPv4_ADDRESS                RedfishServiceIpMask;
-  UINT16                          RedfishServiceIpPort;
-  UINTN                           IpPortDataSize;
-  UINT8                           HostNameSize;
-  CHAR8                           RedfishHostName[20];
+  EFI_STATUS        Status;
+  UINT8             HostIpAssignmentType;
+  UINTN             HostIpAssignmentTypeSize;
+  EFI_IPv4_ADDRESS  HostIpAddress;
+  UINTN             IPv4DataSize;
+  EFI_IPv4_ADDRESS  HostIpMask;
+  EFI_IPv4_ADDRESS  RedfishServiceIpAddress;
+  EFI_IPv4_ADDRESS  RedfishServiceIpMask;
+  UINT16            RedfishServiceIpPort;
+  UINTN             IpPortDataSize;
+  UINT8             HostNameSize;
+  CHAR8             RedfishHostName[20];
 
   if (RedfishProtocolData == NULL || RedfishProtocolDataSize == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -362,12 +407,12 @@ GetRedfishRecordFromVariable (
   // 1. Retrieve Address Information from variable.
   //
   Status = gRT->GetVariable (
-                  L"HostIpAssignmentType",
-                  &gEmuRedfishServiceGuid,
-                  NULL,
-                  &HostIpAssignmentTypeSize,
-                  &HostIpAssignmentType
-                  );
+                             L"HostIpAssignmentType",
+                             &gEmuRedfishServiceGuid,
+                             NULL,
+                             &HostIpAssignmentTypeSize,
+                             &HostIpAssignmentType
+                             );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "RedfishPlatformDxe: GetVariable HostIpAssignmentType - %r\n", Status));
     return Status;
@@ -376,24 +421,24 @@ GetRedfishRecordFromVariable (
   IPv4DataSize = sizeof (EFI_IPv4_ADDRESS);
   if (HostIpAssignmentType == 1 ) {
     Status = gRT->GetVariable (
-                    L"HostIpAddress",
-                    &gEmuRedfishServiceGuid,
-                    NULL,
-                    &IPv4DataSize,
-                    &HostIpAddress
-                    );
+                               L"HostIpAddress",
+                               &gEmuRedfishServiceGuid,
+                               NULL,
+                               &IPv4DataSize,
+                               &HostIpAddress
+                               );
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_ERROR, "RedfishPlatformDxe: GetVariable HostIpAddress - %r\n", Status));
       return Status;
     }
 
     Status = gRT->GetVariable (
-                    L"HostIpMask",
-                    &gEmuRedfishServiceGuid,
-                    NULL,
-                    &IPv4DataSize,
-                    &HostIpMask
-                    );
+                               L"HostIpMask",
+                               &gEmuRedfishServiceGuid,
+                               NULL,
+                               &IPv4DataSize,
+                               &HostIpMask
+                               );
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_ERROR, "RedfishPlatformDxe: GetVariable HostIpMask - %r\n", Status));
       return Status;
@@ -401,50 +446,50 @@ GetRedfishRecordFromVariable (
   }
 
   Status = gRT->GetVariable (
-                  L"RedfishServiceIpAddress",
-                  &gEmuRedfishServiceGuid,
-                  NULL,
-                  &IPv4DataSize,
-                  &RedfishServiceIpAddress
-                  );
+                             L"RedfishServiceIpAddress",
+                             &gEmuRedfishServiceGuid,
+                             NULL,
+                             &IPv4DataSize,
+                             &RedfishServiceIpAddress
+                             );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "RedfishPlatformDxe: GetVariable RedfishServiceIpAddress - %r\n", Status));
     return Status;
   }
 
   Status = gRT->GetVariable (
-                  L"RedfishServiceIpMask",
-                  &gEmuRedfishServiceGuid,
-                  NULL,
-                  &IPv4DataSize,
-                  &RedfishServiceIpMask
-                  );
+                             L"RedfishServiceIpMask",
+                             &gEmuRedfishServiceGuid,
+                             NULL,
+                             &IPv4DataSize,
+                             &RedfishServiceIpMask
+                             );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "RedfishPlatformDxe: GetVariable RedfishServiceIpMask - %r\n", Status));
     return Status;
   }
 
   Status = gRT->GetVariable (
-                  L"RedfishServiceIpPort",
-                  &gEmuRedfishServiceGuid,
-                  NULL,
-                  &IpPortDataSize,
-                  &RedfishServiceIpPort
-                  );
+                             L"RedfishServiceIpPort",
+                             &gEmuRedfishServiceGuid,
+                             NULL,
+                             &IpPortDataSize,
+                             &RedfishServiceIpPort
+                             );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "RedfishPlatformDxe: GetVariable RedfishServiceIpPort - %r\n", Status));
     return Status;
   }
 
   AsciiSPrint (
-    RedfishHostName,
-    sizeof (RedfishHostName),
-    "%d.%d.%d.%d",
-    RedfishServiceIpAddress.Addr[0],
-    RedfishServiceIpAddress.Addr[1],
-    RedfishServiceIpAddress.Addr[2],
-    RedfishServiceIpAddress.Addr[3]
-    );
+               RedfishHostName,
+               sizeof (RedfishHostName),
+               "%d.%d.%d.%d",
+               RedfishServiceIpAddress.Addr[0],
+               RedfishServiceIpAddress.Addr[1],
+               RedfishServiceIpAddress.Addr[2],
+               RedfishServiceIpAddress.Addr[3]
+               );
 
   HostNameSize = (UINT8) AsciiStrLen (RedfishHostName) + 1;
 
@@ -464,7 +509,7 @@ GetRedfishRecordFromVariable (
   CopyGuid (&(*RedfishProtocolData)->ServiceUuid, &gEmuRedfishServiceGuid);
 
   (*RedfishProtocolData)->HostIpAssignmentType = HostIpAssignmentType;
-  (*RedfishProtocolData)->HostIpAddressFormat = 1;   // Only support IPv4
+  (*RedfishProtocolData)->HostIpAddressFormat  = 1;  // Only support IPv4
 
   if (HostIpAssignmentType == 1 ) {
     (*RedfishProtocolData)->HostIpAddress[0] = HostIpAddress.Addr[0];
@@ -515,14 +560,15 @@ EFIAPI
 RedfishPlatformHostInterfaceConstructor (
   IN EFI_HANDLE                            ImageHandle,
   IN EFI_SYSTEM_TABLE                      *SystemTable
-)
+  )
 {
-  EFI_STATUS Status;
+  EFI_STATUS  Status;
 
   Status = GetRedfishRecordFromVariable (&mRedfishOverIpProtocolData, &mRedfishProtocolDataSize);
   DEBUG ((DEBUG_INFO, "%a: GetRedfishRecordFromVariable() - %r\n", __FUNCTION__, Status));
   if (!EFI_ERROR (Status)) {
     DumpRedfishIpProtocolData (mRedfishOverIpProtocolData, mRedfishProtocolDataSize);
   }
+
   return EFI_SUCCESS;
 }

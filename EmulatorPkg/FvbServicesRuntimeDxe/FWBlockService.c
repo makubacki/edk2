@@ -25,11 +25,11 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "FwBlockService.h"
 
-ESAL_FWB_GLOBAL         *mFvbModuleGlobal;
+ESAL_FWB_GLOBAL  *mFvbModuleGlobal;
 
-#define EFI_FVB2_STATUS (EFI_FVB2_READ_STATUS | EFI_FVB2_WRITE_STATUS | EFI_FVB2_LOCK_STATUS)
+#define EFI_FVB2_STATUS  (EFI_FVB2_READ_STATUS | EFI_FVB2_WRITE_STATUS | EFI_FVB2_LOCK_STATUS)
 
-EFI_FW_VOL_BLOCK_DEVICE mFvbDeviceTemplate = {
+EFI_FW_VOL_BLOCK_DEVICE  mFvbDeviceTemplate = {
   FVB_DEVICE_SIGNATURE,
   {
     {
@@ -67,14 +67,36 @@ EFI_FW_VOL_BLOCK_DEVICE mFvbDeviceTemplate = {
   }
 };
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
 
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 EFIAPI
 FvbVirtualddressChangeEvent (
   IN EFI_EVENT        Event,
   IN VOID             *Context
   )
+
 /*++
 
 Routine Description:
@@ -97,29 +119,52 @@ Returns:
 
 **/
 {
-  EFI_FW_VOL_INSTANCE *FwhInstance;
-  UINTN               Index;
+  EFI_FW_VOL_INSTANCE  *FwhInstance;
+  UINTN                Index;
 
   EfiConvertPointer (0x0, (VOID **) &mFvbModuleGlobal->FvInstance[FVB_VIRTUAL]);
 
   //
   // Convert the base address of all the instances
   //
-  Index       = 0;
+  Index = 0;
   FwhInstance = mFvbModuleGlobal->FvInstance[FVB_PHYSICAL];
   while (Index < mFvbModuleGlobal->NumFv) {
     EfiConvertPointer (0x0, (VOID **) &FwhInstance->FvBase[FVB_VIRTUAL]);
     FwhInstance = (EFI_FW_VOL_INSTANCE *)
-      (
-        (UINTN) ((UINT8 *) FwhInstance) + FwhInstance->VolumeHeader.HeaderLength +
-          (sizeof (EFI_FW_VOL_INSTANCE) - sizeof (EFI_FIRMWARE_VOLUME_HEADER))
-      );
+                  (
+                   (UINTN) ((UINT8 *) FwhInstance) + FwhInstance->VolumeHeader.HeaderLength +
+                   (sizeof (EFI_FW_VOL_INSTANCE) - sizeof (EFI_FIRMWARE_VOLUME_HEADER))
+                  );
     Index++;
   }
 
   EfiConvertPointer (0x0, (VOID **) &mFvbModuleGlobal);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 GetFvbInstance (
   IN  UINTN                               Instance,
@@ -127,6 +172,7 @@ GetFvbInstance (
   OUT EFI_FW_VOL_INSTANCE                 **FwhInstance,
   IN BOOLEAN                              Virtual
   )
+
 /*++
 
 Routine Description:
@@ -146,21 +192,22 @@ Returns:
 
 **/
 {
-  EFI_FW_VOL_INSTANCE *FwhRecord;
+  EFI_FW_VOL_INSTANCE  *FwhRecord;
 
   if (Instance >= Global->NumFv) {
     return EFI_INVALID_PARAMETER;
   }
+
   //
   // Find the right instance of the FVB private data
   //
   FwhRecord = Global->FvInstance[Virtual];
   while (Instance > 0) {
     FwhRecord = (EFI_FW_VOL_INSTANCE *)
-      (
-        (UINTN) ((UINT8 *) FwhRecord) + FwhRecord->VolumeHeader.HeaderLength +
-          (sizeof (EFI_FW_VOL_INSTANCE) - sizeof (EFI_FIRMWARE_VOLUME_HEADER))
-      );
+                (
+                 (UINTN) ((UINT8 *) FwhRecord) + FwhRecord->VolumeHeader.HeaderLength +
+                 (sizeof (EFI_FW_VOL_INSTANCE) - sizeof (EFI_FIRMWARE_VOLUME_HEADER))
+                );
     Instance--;
   }
 
@@ -169,6 +216,29 @@ Returns:
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 FvbGetPhysicalAddress (
   IN UINTN                                Instance,
@@ -176,6 +246,7 @@ FvbGetPhysicalAddress (
   IN ESAL_FWB_GLOBAL                      *Global,
   IN BOOLEAN                              Virtual
   )
+
 /*++
 
 Routine Description:
@@ -197,8 +268,8 @@ Returns:
 
 **/
 {
-  EFI_FW_VOL_INSTANCE *FwhInstance = NULL;
-  EFI_STATUS          Status;
+  EFI_FW_VOL_INSTANCE  *FwhInstance = NULL;
+  EFI_STATUS           Status;
 
   //
   // Find the right instance of the FVB private data
@@ -210,6 +281,29 @@ Returns:
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 FvbGetVolumeAttributes (
   IN UINTN                                Instance,
@@ -217,6 +311,7 @@ FvbGetVolumeAttributes (
   IN ESAL_FWB_GLOBAL                      *Global,
   IN BOOLEAN                              Virtual
   )
+
 /*++
 
 Routine Description:
@@ -237,8 +332,8 @@ Returns:
 
 **/
 {
-  EFI_FW_VOL_INSTANCE *FwhInstance = NULL;
-  EFI_STATUS          Status;
+  EFI_FW_VOL_INSTANCE  *FwhInstance = NULL;
+  EFI_STATUS           Status;
 
   //
   // Find the right instance of the FVB private data
@@ -250,6 +345,29 @@ Returns:
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 FvbGetLbaAddress (
   IN  UINTN                               Instance,
@@ -260,6 +378,7 @@ FvbGetLbaAddress (
   IN  ESAL_FWB_GLOBAL                     *Global,
   IN  BOOLEAN                             Virtual
   )
+
 /*++
 
 Routine Description:
@@ -300,9 +419,9 @@ Returns:
   Status = GetFvbInstance (Instance, Global, &FwhInstance, Virtual);
   ASSERT_EFI_ERROR (Status);
 
-  StartLba  = 0;
-  Offset    = 0;
-  BlockMap  = &(FwhInstance->VolumeHeader.BlockMap[0]);
+  StartLba = 0;
+  Offset   = 0;
+  BlockMap = &(FwhInstance->VolumeHeader.BlockMap[0]);
 
   //
   // Parse the blockmap of the FV to find which map entry the Lba belongs to
@@ -337,12 +456,35 @@ Returns:
       return EFI_SUCCESS;
     }
 
-    StartLba  = NextLba;
-    Offset    = Offset + NumBlocks * BlockLength;
+    StartLba = NextLba;
+    Offset   = Offset + NumBlocks * BlockLength;
     BlockMap++;
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 FvbReadBlock (
   IN UINTN                                Instance,
@@ -353,6 +495,7 @@ FvbReadBlock (
   IN ESAL_FWB_GLOBAL                      *Global,
   IN BOOLEAN                              Virtual
   )
+
 /*++
 
 Routine Description:
@@ -385,9 +528,9 @@ Returns:
 **/
 {
   EFI_FVB_ATTRIBUTES_2  Attributes;
-  UINTN               LbaAddress;
-  UINTN               LbaLength;
-  EFI_STATUS          Status;
+  UINTN                 LbaAddress;
+  UINTN                 LbaLength;
+  EFI_STATUS            Status;
 
   //
   // Check for invalid conditions
@@ -404,6 +547,7 @@ Returns:
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   //
   // Check if the FV is read enabled
   //
@@ -412,6 +556,7 @@ Returns:
   if ((Attributes & EFI_FVB2_READ_STATUS) == 0) {
     return EFI_ACCESS_DENIED;
   }
+
   //
   // Perform boundary checks and adjust NumBytes
   //
@@ -429,6 +574,29 @@ Returns:
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 FvbWriteBlock (
   IN UINTN                                Instance,
@@ -439,6 +607,7 @@ FvbWriteBlock (
   IN ESAL_FWB_GLOBAL                      *Global,
   IN BOOLEAN                              Virtual
   )
+
 /*++
 
 Routine Description:
@@ -470,9 +639,9 @@ Returns:
 **/
 {
   EFI_FVB_ATTRIBUTES_2  Attributes;
-  UINTN               LbaAddress;
-  UINTN               LbaLength;
-  EFI_STATUS          Status;
+  UINTN                 LbaAddress;
+  UINTN                 LbaLength;
+  EFI_STATUS            Status;
 
   //
   // Check for invalid conditions
@@ -489,6 +658,7 @@ Returns:
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   //
   // Check if the FV is write enabled
   //
@@ -497,6 +667,7 @@ Returns:
   if ((Attributes & EFI_FVB2_WRITE_STATUS) == 0) {
     return EFI_ACCESS_DENIED;
   }
+
   //
   // Perform boundary checks and adjust NumBytes
   //
@@ -508,6 +679,7 @@ Returns:
     *NumBytes = (UINT32) (LbaLength - BlockOffset);
     Status    = EFI_BAD_BUFFER_SIZE;
   }
+
   //
   // Write data
   //
@@ -516,6 +688,29 @@ Returns:
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 FvbEraseBlock (
   IN UINTN                                Instance,
@@ -523,6 +718,7 @@ FvbEraseBlock (
   IN ESAL_FWB_GLOBAL                      *Global,
   IN BOOLEAN                              Virtual
   )
+
 /*++
 
 Routine Description:
@@ -545,7 +741,6 @@ Returns:
 
 **/
 {
-
   EFI_FVB_ATTRIBUTES_2  Attributes;
   UINTN                 LbaAddress;
   UINTN                 LbaLength;
@@ -560,6 +755,7 @@ Returns:
   if ((Attributes & EFI_FVB2_WRITE_STATUS) == 0) {
     return EFI_ACCESS_DENIED;
   }
+
   //
   // Get the starting address of the block for erase.
   //
@@ -580,6 +776,29 @@ Returns:
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 FvbSetVolumeAttributes (
   IN UINTN                                Instance,
@@ -587,6 +806,7 @@ FvbSetVolumeAttributes (
   IN ESAL_FWB_GLOBAL                      *Global,
   IN BOOLEAN                              Virtual
   )
+
 /*++
 
 Routine Description:
@@ -622,7 +842,6 @@ Returns:
   EFI_STATUS            Status;
   EFI_FVB_ATTRIBUTES_2  UnchangedAttributes;
 
-
   //
   // Find the right instance of the FVB private data
   //
@@ -638,8 +857,8 @@ Returns:
                                    EFI_FVB2_LOCK_CAP \
                                    );
 
-  OldStatus     = OldAttributes & EFI_FVB2_STATUS;
-  NewStatus     = *Attributes & EFI_FVB2_STATUS;
+  OldStatus = OldAttributes & EFI_FVB2_STATUS;
+  NewStatus = *Attributes & EFI_FVB2_STATUS;
   UnchangedAttributes = EFI_FVB2_READ_DISABLED_CAP  | \
                         EFI_FVB2_READ_ENABLED_CAP   | \
                         EFI_FVB2_WRITE_DISABLED_CAP | \
@@ -667,6 +886,7 @@ Returns:
       return EFI_ACCESS_DENIED;
     }
   }
+
   //
   // Test read disable
   //
@@ -675,6 +895,7 @@ Returns:
       return EFI_INVALID_PARAMETER;
     }
   }
+
   //
   // Test read enable
   //
@@ -683,6 +904,7 @@ Returns:
       return EFI_INVALID_PARAMETER;
     }
   }
+
   //
   // Test write disable
   //
@@ -691,6 +913,7 @@ Returns:
       return EFI_INVALID_PARAMETER;
     }
   }
+
   //
   // Test write enable
   //
@@ -699,6 +922,7 @@ Returns:
       return EFI_INVALID_PARAMETER;
     }
   }
+
   //
   // Test lock
   //
@@ -714,6 +938,7 @@ Returns:
 
   return EFI_SUCCESS;
 }
+
 //
 // FVB protocol APIs
 //
@@ -723,6 +948,7 @@ FvbProtocolGetPhysicalAddress (
   IN CONST EFI_FIRMWARE_VOLUME_BLOCK_PROTOCOL     *This,
   OUT EFI_PHYSICAL_ADDRESS                        *Address
   )
+
 /*++
 
 Routine Description:
@@ -741,13 +967,36 @@ Returns:
 
 **/
 {
-  EFI_FW_VOL_BLOCK_DEVICE *FvbDevice;
+  EFI_FW_VOL_BLOCK_DEVICE  *FvbDevice;
 
   FvbDevice = FVB_DEVICE_FROM_THIS (This);
 
   return FvbGetPhysicalAddress (FvbDevice->Instance, Address, mFvbModuleGlobal, EfiGoneVirtual ());
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 FvbProtocolGetBlockSize (
@@ -756,6 +1005,7 @@ FvbProtocolGetBlockSize (
   OUT UINTN                                       *BlockSize,
   OUT UINTN                                       *NumOfBlocks
   )
+
 /*++
 
 Routine Description:
@@ -777,27 +1027,51 @@ Returns:
 
 **/
 {
-  EFI_FW_VOL_BLOCK_DEVICE *FvbDevice;
+  EFI_FW_VOL_BLOCK_DEVICE  *FvbDevice;
 
   FvbDevice = FVB_DEVICE_FROM_THIS (This);
 
   return FvbGetLbaAddress (
-          FvbDevice->Instance,
-          Lba,
-          NULL,
-          BlockSize,
-          NumOfBlocks,
-          mFvbModuleGlobal,
-          EfiGoneVirtual ()
-          );
+                           FvbDevice->Instance,
+                           Lba,
+                           NULL,
+                           BlockSize,
+                           NumOfBlocks,
+                           mFvbModuleGlobal,
+                           EfiGoneVirtual ()
+                           );
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 FvbProtocolGetAttributes (
   IN CONST EFI_FIRMWARE_VOLUME_BLOCK_PROTOCOL     *This,
   OUT EFI_FVB_ATTRIBUTES_2                        *Attributes
   )
+
 /*++
 
 Routine Description:
@@ -812,19 +1086,43 @@ Returns:
 
 **/
 {
-  EFI_FW_VOL_BLOCK_DEVICE *FvbDevice;
+  EFI_FW_VOL_BLOCK_DEVICE  *FvbDevice;
 
   FvbDevice = FVB_DEVICE_FROM_THIS (This);
 
   return FvbGetVolumeAttributes (FvbDevice->Instance, Attributes, mFvbModuleGlobal, EfiGoneVirtual ());
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 FvbProtocolSetAttributes (
   IN CONST EFI_FIRMWARE_VOLUME_BLOCK_PROTOCOL     *This,
   IN OUT EFI_FVB_ATTRIBUTES_2                     *Attributes
   )
+
 /*++
 
 Routine Description:
@@ -839,19 +1137,43 @@ Returns:
 
 **/
 {
-  EFI_FW_VOL_BLOCK_DEVICE *FvbDevice;
+  EFI_FW_VOL_BLOCK_DEVICE  *FvbDevice;
 
   FvbDevice = FVB_DEVICE_FROM_THIS (This);
 
   return FvbSetVolumeAttributes (FvbDevice->Instance, Attributes, mFvbModuleGlobal, EfiGoneVirtual ());
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 FvbProtocolEraseBlocks (
   IN CONST EFI_FIRMWARE_VOLUME_BLOCK_PROTOCOL    *This,
   ...
   )
+
 /*++
 
 Routine Description:
@@ -877,17 +1199,17 @@ Returns:
 
 **/
 {
-  EFI_FW_VOL_BLOCK_DEVICE *FvbDevice;
-  EFI_FW_VOL_INSTANCE     *FwhInstance = NULL;
-  UINTN                   NumOfBlocks;
-  VA_LIST                 args;
-  EFI_LBA                 StartingLba;
-  UINTN                   NumOfLba;
-  EFI_STATUS              Status;
+  EFI_FW_VOL_BLOCK_DEVICE  *FvbDevice;
+  EFI_FW_VOL_INSTANCE      *FwhInstance = NULL;
+  UINTN                    NumOfBlocks;
+  VA_LIST                  args;
+  EFI_LBA                  StartingLba;
+  UINTN                    NumOfLba;
+  EFI_STATUS               Status;
 
   FvbDevice = FVB_DEVICE_FROM_THIS (This);
 
-  Status    = GetFvbInstance (FvbDevice->Instance, mFvbModuleGlobal, &FwhInstance, EfiGoneVirtual ());
+  Status = GetFvbInstance (FvbDevice->Instance, mFvbModuleGlobal, &FwhInstance, EfiGoneVirtual ());
   ASSERT_EFI_ERROR (Status);
 
   NumOfBlocks = FwhInstance->NumOfBlocks;
@@ -932,7 +1254,6 @@ Returns:
       StartingLba++;
       NumOfLba--;
     }
-
   } while (1);
 
   VA_END (args);
@@ -940,6 +1261,29 @@ Returns:
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 FvbProtocolWrite (
@@ -949,6 +1293,7 @@ FvbProtocolWrite (
   IN OUT UINTN                                    *NumBytes,
   IN UINT8                                        *Buffer
   )
+
 /*++
 
 Routine Description:
@@ -980,14 +1325,36 @@ Returns:
 
 **/
 {
-
-  EFI_FW_VOL_BLOCK_DEVICE *FvbDevice;
+  EFI_FW_VOL_BLOCK_DEVICE  *FvbDevice;
 
   FvbDevice = FVB_DEVICE_FROM_THIS (This);
 
   return FvbWriteBlock (FvbDevice->Instance, Lba, Offset, NumBytes, Buffer, mFvbModuleGlobal, EfiGoneVirtual ());
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 FvbProtocolRead (
@@ -997,6 +1364,7 @@ FvbProtocolRead (
   IN OUT UINTN                                    *NumBytes,
   IN UINT8                                        *Buffer
   )
+
 /*++
 
 Routine Description:
@@ -1029,17 +1397,41 @@ Returns:
 
 **/
 {
-
-  EFI_FW_VOL_BLOCK_DEVICE *FvbDevice;
+  EFI_FW_VOL_BLOCK_DEVICE  *FvbDevice;
 
   FvbDevice = FVB_DEVICE_FROM_THIS (This);
 
   return FvbReadBlock (FvbDevice->Instance, Lba, Offset, NumBytes, Buffer, mFvbModuleGlobal, EfiGoneVirtual ());
 }
+
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 ValidateFvHeader (
   EFI_FIRMWARE_VOLUME_HEADER            *FwVolHeader
   )
+
 /*++
 
 Routine Description:
@@ -1065,17 +1457,18 @@ Returns:
   //
   if ((FwVolHeader->Revision != EFI_FVH_REVISION) ||
       (FwVolHeader->Signature != EFI_FVH_SIGNATURE) ||
-      (FwVolHeader->FvLength == ((UINTN) -1)) ||
+      (FwVolHeader->FvLength == ((UINTN) - 1)) ||
       ((FwVolHeader->HeaderLength & 0x01) != 0)
       ) {
     return EFI_NOT_FOUND;
   }
+
   //
   // Verify the header checksum
   //
-  HeaderLength  = (UINT16) (FwVolHeader->HeaderLength / 2);
-  Ptr           = (UINT16 *) FwVolHeader;
-  Checksum      = 0;
+  HeaderLength = (UINT16) (FwVolHeader->HeaderLength / 2);
+  Ptr = (UINT16 *) FwVolHeader;
+  Checksum = 0;
   while (HeaderLength > 0) {
     Checksum = Checksum + (*Ptr);
     HeaderLength--;
@@ -1089,12 +1482,36 @@ Returns:
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 FvbInitialize (
   IN EFI_HANDLE         ImageHandle,
   IN EFI_SYSTEM_TABLE   *SystemTable
   )
+
 /*++
 
 Routine Description:
@@ -1124,7 +1541,7 @@ Returns:
   UINTN                               NumOfBlocks;
   EFI_PEI_HOB_POINTERS                FvHob;
 
-   //
+  //
   // Get the DXE services table
   //
   DxeServices = gDS;
@@ -1134,28 +1551,28 @@ Returns:
   // the private data of all firmware volume block instances
   //
   Status = gBS->AllocatePool (
-                  EfiRuntimeServicesData,
-                  sizeof (ESAL_FWB_GLOBAL),
-                  (VOID**) &mFvbModuleGlobal
-                  );
+                              EfiRuntimeServicesData,
+                              sizeof (ESAL_FWB_GLOBAL),
+                              (VOID **) &mFvbModuleGlobal
+                              );
   ASSERT_EFI_ERROR (Status);
 
   //
   // Calculate the total size for all firmware volume block instances
   //
-  BufferSize            = 0;
+  BufferSize = 0;
 
   FvHob.Raw = GetHobList ();
   while ((FvHob.Raw = GetNextHob (EFI_HOB_TYPE_FV, FvHob.Raw)) != NULL) {
     BaseAddress = FvHob.FirmwareVolume->BaseAddress;
-    Length      = FvHob.FirmwareVolume->Length;
+    Length = FvHob.FirmwareVolume->Length;
     //
     // Check if it is a "real" flash
     //
     Status = DxeServices->GetMemorySpaceDescriptor (
-                            BaseAddress,
-                            &Descriptor
-                            );
+                                                    BaseAddress,
+                                                    &Descriptor
+                                                    );
     if (EFI_ERROR (Status)) {
       break;
     }
@@ -1166,7 +1583,7 @@ Returns:
     }
 
     FwVolHeader = (EFI_FIRMWARE_VOLUME_HEADER *) (UINTN) BaseAddress;
-    Status      = ValidateFvHeader (FwVolHeader);
+    Status = ValidateFvHeader (FwVolHeader);
     if (EFI_ERROR (Status)) {
       //
       // Get FvbInfo
@@ -1179,7 +1596,7 @@ Returns:
     }
 
     BufferSize += (sizeof (EFI_FW_VOL_INSTANCE) + FwVolHeader->HeaderLength - sizeof (EFI_FIRMWARE_VOLUME_HEADER));
-    FvHob.Raw = GET_NEXT_HOB (FvHob);
+    FvHob.Raw   = GET_NEXT_HOB (FvHob);
   }
 
   //
@@ -1188,10 +1605,10 @@ Returns:
   // mode, the address of the the physical memory may be different.
   //
   Status = gBS->AllocatePool (
-                  EfiRuntimeServicesData,
-                  BufferSize,
-                  (VOID**) &mFvbModuleGlobal->FvInstance[FVB_PHYSICAL]
-                  );
+                              EfiRuntimeServicesData,
+                              BufferSize,
+                              (VOID **) &mFvbModuleGlobal->FvInstance[FVB_PHYSICAL]
+                              );
   ASSERT_EFI_ERROR (Status);
 
   //
@@ -1200,20 +1617,20 @@ Returns:
   FwhInstance = mFvbModuleGlobal->FvInstance[FVB_PHYSICAL];
   mFvbModuleGlobal->FvInstance[FVB_VIRTUAL] = FwhInstance;
 
-  mFvbModuleGlobal->NumFv                   = 0;
+  mFvbModuleGlobal->NumFv = 0;
   MaxLbaSize = 0;
 
   FvHob.Raw = GetHobList ();
   while (NULL != (FvHob.Raw = GetNextHob (EFI_HOB_TYPE_FV, FvHob.Raw))) {
     BaseAddress = FvHob.FirmwareVolume->BaseAddress;
-    Length      = FvHob.FirmwareVolume->Length;
+    Length = FvHob.FirmwareVolume->Length;
     //
     // Check if it is a "real" flash
     //
     Status = DxeServices->GetMemorySpaceDescriptor (
-                            BaseAddress,
-                            &Descriptor
-                            );
+                                                    BaseAddress,
+                                                    &Descriptor
+                                                    );
     if (EFI_ERROR (Status)) {
       break;
     }
@@ -1224,7 +1641,7 @@ Returns:
     }
 
     FwVolHeader = (EFI_FIRMWARE_VOLUME_HEADER *) (UINTN) BaseAddress;
-    Status      = ValidateFvHeader (FwVolHeader);
+    Status = ValidateFvHeader (FwVolHeader);
     if (EFI_ERROR (Status)) {
       //
       // Get FvbInfo to provide in FwhInstance.
@@ -1234,14 +1651,15 @@ Returns:
         FvHob.Raw = GET_NEXT_HOB (FvHob);
         continue;
       }
+
       //
-      //  Write healthy FV header back.
+      // Write healthy FV header back.
       //
       CopyMem (
-        (VOID *) (UINTN) BaseAddress,
-        (VOID *) FwVolHeader,
-        FwVolHeader->HeaderLength
-        );
+               (VOID *) (UINTN) BaseAddress,
+               (VOID *) FwVolHeader,
+               FwVolHeader->HeaderLength
+               );
     }
 
     FwhInstance->FvBase[FVB_PHYSICAL] = (UINTN) BaseAddress;
@@ -1265,6 +1683,7 @@ Returns:
 
       NumOfBlocks = NumOfBlocks + PtrBlockMapEntry->NumBlocks;
     }
+
     //
     // The total number of blocks in the FV.
     //
@@ -1274,10 +1693,10 @@ Returns:
     // Add a FVB Protocol Instance
     //
     Status = gBS->AllocatePool (
-                    EfiRuntimeServicesData,
-                    sizeof (EFI_FW_VOL_BLOCK_DEVICE),
-                    (VOID**) &FvbDevice
-                    );
+                                EfiRuntimeServicesData,
+                                sizeof (EFI_FW_VOL_BLOCK_DEVICE),
+                                (VOID **) &FvbDevice
+                                );
     ASSERT_EFI_ERROR (Status);
 
     CopyMem (FvbDevice, &mFvbDeviceTemplate, sizeof (EFI_FW_VOL_BLOCK_DEVICE));
@@ -1302,34 +1721,33 @@ Returns:
       // LocateDevicePath fails so install a new interface and device path
       //
       FwbHandle = NULL;
-      Status = gBS->InstallMultipleProtocolInterfaces (
-                      &FwbHandle,
-                      &gEfiFirmwareVolumeBlockProtocolGuid,
-                      &FvbDevice->FwVolBlockInstance,
-                      &gEfiDevicePathProtocolGuid,
-                      &FvbDevice->DevicePath,
-                      NULL
-                      );
+      Status    = gBS->InstallMultipleProtocolInterfaces (
+                                                          &FwbHandle,
+                                                          &gEfiFirmwareVolumeBlockProtocolGuid,
+                                                          &FvbDevice->FwVolBlockInstance,
+                                                          &gEfiDevicePathProtocolGuid,
+                                                          &FvbDevice->DevicePath,
+                                                          NULL
+                                                          );
       ASSERT_EFI_ERROR (Status);
     } else if (IsDevicePathEnd (TempFwbDevicePath)) {
       //
       // Device allready exists, so reinstall the FVB protocol
       //
       Status = gBS->HandleProtocol (
-                      FwbHandle,
-                      &gEfiFirmwareVolumeBlockProtocolGuid,
-                      (VOID**)&OldFwbInterface
-                      );
+                                    FwbHandle,
+                                    &gEfiFirmwareVolumeBlockProtocolGuid,
+                                    (VOID **) &OldFwbInterface
+                                    );
       ASSERT_EFI_ERROR (Status);
 
       Status = gBS->ReinstallProtocolInterface (
-                      FwbHandle,
-                      &gEfiFirmwareVolumeBlockProtocolGuid,
-                      OldFwbInterface,
-                      &FvbDevice->FwVolBlockInstance
-                      );
+                                                FwbHandle,
+                                                &gEfiFirmwareVolumeBlockProtocolGuid,
+                                                OldFwbInterface,
+                                                &FvbDevice->FwVolBlockInstance
+                                                );
       ASSERT_EFI_ERROR (Status);
-
     } else {
       //
       // There was a FVB protocol on an End Device Path node
@@ -1338,10 +1756,10 @@ Returns:
     }
 
     FwhInstance = (EFI_FW_VOL_INSTANCE *)
-      (
-        (UINTN) ((UINT8 *) FwhInstance) + FwVolHeader->HeaderLength +
-          (sizeof (EFI_FW_VOL_INSTANCE) - sizeof (EFI_FIRMWARE_VOLUME_HEADER))
-      );
+                  (
+                   (UINTN) ((UINT8 *) FwhInstance) + FwVolHeader->HeaderLength +
+                   (sizeof (EFI_FW_VOL_INSTANCE) - sizeof (EFI_FIRMWARE_VOLUME_HEADER))
+                  );
 
     FvHob.Raw = GET_NEXT_HOB (FvHob);
   }

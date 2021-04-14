@@ -38,7 +38,7 @@ EmuGopComponentNameGetControllerName (
 //
 // EFI Component Name Protocol
 //
-EFI_COMPONENT_NAME_PROTOCOL     gEmuGopComponentName = {
+EFI_COMPONENT_NAME_PROTOCOL  gEmuGopComponentName = {
   EmuGopComponentNameGetDriverName,
   EmuGopComponentNameGetControllerName,
   "eng"
@@ -47,18 +47,16 @@ EFI_COMPONENT_NAME_PROTOCOL     gEmuGopComponentName = {
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL gEmuGopComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gEmuGopComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) EmuGopComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) EmuGopComponentNameGetControllerName,
   "en"
 };
 
-
-EFI_UNICODE_STRING_TABLE mEmuGopDriverNameTable[] = {
+EFI_UNICODE_STRING_TABLE  mEmuGopDriverNameTable[] = {
   { "eng", L"Emulator GOP Driver" },
-  { NULL , NULL }
+  { NULL,  NULL                   }
 };
-
 
 /**
   Retrieves a Unicode string that is the user readable name of the driver.
@@ -108,14 +106,13 @@ EmuGopComponentNameGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           mEmuGopDriverNameTable,
-           DriverName,
-           (BOOLEAN)(This == &gEmuGopComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               mEmuGopDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gEmuGopComponentName)
+                               );
 }
-
 
 /**
   Retrieves a Unicode string that is the user readable name of the controller
@@ -210,24 +207,25 @@ EmuGopComponentNameGetControllerName (
   // Make sure this driver is currently managing ControllerHandle
   //
   Status = EfiTestManagedDevice (
-             ControllerHandle,
-             gEmuGopDriverBinding.DriverBindingHandle,
-             &gEmuIoThunkProtocolGuid
-             );
+                                 ControllerHandle,
+                                 gEmuGopDriverBinding.DriverBindingHandle,
+                                 &gEmuIoThunkProtocolGuid
+                                 );
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
+
   //
   // Get our context back
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiGraphicsOutputProtocolGuid,
-                  (VOID **)&GraphicsOutput,
-                  gEmuGopDriverBinding.DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiGraphicsOutputProtocolGuid,
+                              (VOID **) &GraphicsOutput,
+                              gEmuGopDriverBinding.DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
@@ -235,10 +233,10 @@ EmuGopComponentNameGetControllerName (
   Private = GOP_PRIVATE_DATA_FROM_THIS (GraphicsOutput);
 
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           Private->ControllerNameTable,
-           ControllerName,
-           (BOOLEAN)(This == &gEmuGopComponentName)
-           );
+                               Language,
+                               This->SupportedLanguages,
+                               Private->ControllerNameTable,
+                               ControllerName,
+                               (BOOLEAN) (This == &gEmuGopComponentName)
+                               );
 }

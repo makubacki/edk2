@@ -31,14 +31,13 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/PcdLib.h>
 #include <Library/DevicePathLib.h>
 
-
 typedef struct {
-  UINT64                      FvLength;
-  EFI_FIRMWARE_VOLUME_HEADER  FvbInfo;
+  UINT64                        FvLength;
+  EFI_FIRMWARE_VOLUME_HEADER    FvbInfo;
   //
   // EFI_FV_BLOCK_MAP_ENTRY    ExtraBlockMap[n];//n=0
   //
-  EFI_FV_BLOCK_MAP_ENTRY      End[1];
+  EFI_FV_BLOCK_MAP_ENTRY        End[1];
 } EFI_FVB_MEDIA_INFO;
 
 EFI_FVB_MEDIA_INFO  mPlatformFvbMediaInfo[] = {
@@ -55,10 +54,10 @@ EFI_FVB_MEDIA_INFO  mPlatformFvbMediaInfo[] = {
       FixedPcdGet32 (PcdEmuFlashFvRecoverySize),
       EFI_FVH_SIGNATURE,
       EFI_FVB2_READ_ENABLED_CAP |
-        EFI_FVB2_READ_STATUS |
-        EFI_FVB2_WRITE_ENABLED_CAP |
-        EFI_FVB2_WRITE_STATUS |
-        EFI_FVB2_ERASE_POLARITY,
+      EFI_FVB2_READ_STATUS |
+      EFI_FVB2_WRITE_ENABLED_CAP |
+      EFI_FVB2_WRITE_STATUS |
+      EFI_FVB2_ERASE_POLARITY,
       sizeof (EFI_FIRMWARE_VOLUME_HEADER) + sizeof (EFI_FV_BLOCK_MAP_ENTRY),
       0,  // CheckSum
       0,  // ExtHeaderOffset
@@ -99,10 +98,10 @@ EFI_FVB_MEDIA_INFO  mPlatformFvbMediaInfo[] = {
       FixedPcdGet32 (PcdEmuFlashNvStorageEventLogSize),
       EFI_FVH_SIGNATURE,
       EFI_FVB2_READ_ENABLED_CAP |
-        EFI_FVB2_READ_STATUS |
-        EFI_FVB2_WRITE_ENABLED_CAP |
-        EFI_FVB2_WRITE_STATUS |
-        EFI_FVB2_ERASE_POLARITY,
+      EFI_FVB2_READ_STATUS |
+      EFI_FVB2_WRITE_ENABLED_CAP |
+      EFI_FVB2_WRITE_STATUS |
+      EFI_FVB2_ERASE_POLARITY,
       sizeof (EFI_FIRMWARE_VOLUME_HEADER) + sizeof (EFI_FV_BLOCK_MAP_ENTRY),
       0,  // CheckSum
       0,  // ExtHeaderOffset
@@ -113,9 +112,9 @@ EFI_FVB_MEDIA_INFO  mPlatformFvbMediaInfo[] = {
       {
         {
           (FixedPcdGet32 (PcdFlashNvStorageVariableSize) + \
-          FixedPcdGet32 (PcdFlashNvStorageFtwWorkingSize) + \
-          FixedPcdGet32 (PcdFlashNvStorageFtwSpareSize) + \
-          FixedPcdGet32 (PcdEmuFlashNvStorageEventLogSize)) / FixedPcdGet32 (PcdEmuFirmwareBlockSize),
+           FixedPcdGet32 (PcdFlashNvStorageFtwWorkingSize) + \
+           FixedPcdGet32 (PcdFlashNvStorageFtwSpareSize) + \
+           FixedPcdGet32 (PcdEmuFlashNvStorageEventLogSize)) / FixedPcdGet32 (PcdEmuFirmwareBlockSize),
           FixedPcdGet32 (PcdEmuFirmwareBlockSize),
         }
       }
@@ -129,13 +128,36 @@ EFI_FVB_MEDIA_INFO  mPlatformFvbMediaInfo[] = {
   }
 };
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 GetFvbInfo (
   IN  UINT64                        FvLength,
   OUT EFI_FIRMWARE_VOLUME_HEADER    **FvbInfo
   )
 {
-  UINTN Index;
+  UINTN  Index;
 
   for (Index = 0; Index < sizeof (mPlatformFvbMediaInfo) / sizeof (EFI_FVB_MEDIA_INFO); Index += 1) {
     if (mPlatformFvbMediaInfo[Index].FvLength == FvLength) {

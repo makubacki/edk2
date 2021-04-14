@@ -15,10 +15,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Protocol/SimpleNetwork.h>
 
 #define EMU_SNP_PROTOCOL_GUID \
- { 0xFD5FBE54, 0x8C35, 0xB345, { 0x8A, 0x0F, 0x7A, 0xC8, 0xA5, 0xFD, 0x05, 0x21 } }
+  { 0xFD5FBE54, 0x8C35, 0xB345, { 0x8A, 0x0F, 0x7A, 0xC8, 0xA5, 0xFD, 0x05, 0x21 } }
 
-typedef struct _EMU_SNP_PROTOCOL  EMU_SNP_PROTOCOL;
-
+typedef struct _EMU_SNP_PROTOCOL EMU_SNP_PROTOCOL;
 
 /**
   Register storage for SNP Mode.
@@ -31,12 +30,11 @@ typedef struct _EMU_SNP_PROTOCOL  EMU_SNP_PROTOCOL;
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EMU_SNP_CREATE_MAPPING)(
-  IN EMU_SNP_PROTOCOL         *This,
-  IN EFI_SIMPLE_NETWORK_MODE  *Mode
-  );
-
+                                 IN EMU_SNP_PROTOCOL         *This,
+                                 IN EFI_SIMPLE_NETWORK_MODE  *Mode
+                                 );
 
 /**
   Changes the state of a network interface from "stopped" to "started".
@@ -51,10 +49,10 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EMU_SNP_START)(
-  IN EMU_SNP_PROTOCOL  *This
-  );
+                        IN EMU_SNP_PROTOCOL  *This
+                        );
 
 /**
   Changes the state of a network interface from "started" to "stopped".
@@ -69,10 +67,10 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EMU_SNP_STOP)(
-  IN EMU_SNP_PROTOCOL  *This
-  );
+                       IN EMU_SNP_PROTOCOL  *This
+                       );
 
 /**
   Resets a network adapter and allocates the transmit and receive buffers
@@ -101,12 +99,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EMU_SNP_INITIALIZE)(
-  IN EMU_SNP_PROTOCOL                    *This,
-  IN UINTN                               ExtraRxBufferSize  OPTIONAL,
-  IN UINTN                               ExtraTxBufferSize  OPTIONAL
-  );
+                             IN EMU_SNP_PROTOCOL                    *This,
+                             IN UINTN                               ExtraRxBufferSize  OPTIONAL,
+                             IN UINTN                               ExtraTxBufferSize  OPTIONAL
+                             );
 
 /**
   Resets a network adapter and re-initializes it with the parameters that were
@@ -125,11 +123,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EMU_SNP_RESET)(
-  IN EMU_SNP_PROTOCOL   *This,
-  IN BOOLEAN            ExtendedVerification
-  );
+                        IN EMU_SNP_PROTOCOL   *This,
+                        IN BOOLEAN            ExtendedVerification
+                        );
 
 /**
   Resets a network adapter and leaves it in a state that is safe for
@@ -145,10 +143,10 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EMU_SNP_SHUTDOWN)(
-  IN EMU_SNP_PROTOCOL  *This
-  );
+                           IN EMU_SNP_PROTOCOL  *This
+                           );
 
 /**
   Manages the multicast receive filters of a network interface.
@@ -175,15 +173,15 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EMU_SNP_RECEIVE_FILTERS)(
-  IN EMU_SNP_PROTOCOL                             *This,
-  IN UINT32                                       Enable,
-  IN UINT32                                       Disable,
-  IN BOOLEAN                                      ResetMCastFilter,
-  IN UINTN                                        MCastFilterCnt     OPTIONAL,
-  IN EFI_MAC_ADDRESS                              *MCastFilter OPTIONAL
-  );
+                                  IN EMU_SNP_PROTOCOL                             *This,
+                                  IN UINT32                                       Enable,
+                                  IN UINT32                                       Disable,
+                                  IN BOOLEAN                                      ResetMCastFilter,
+                                  IN UINTN                                        MCastFilterCnt     OPTIONAL,
+                                  IN EFI_MAC_ADDRESS                              *MCastFilter OPTIONAL
+                                  );
 
 /**
   Modifies or resets the current station address, if supported.
@@ -201,12 +199,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EMU_SNP_STATION_ADDRESS)(
-  IN EMU_SNP_PROTOCOL            *This,
-  IN BOOLEAN                     Reset,
-  IN EFI_MAC_ADDRESS             *New OPTIONAL
-  );
+                                  IN EMU_SNP_PROTOCOL            *This,
+                                  IN BOOLEAN                     Reset,
+                                  IN EFI_MAC_ADDRESS             *New OPTIONAL
+                                  );
 
 /**
   Resets or collects the statistics on a network interface.
@@ -230,13 +228,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EMU_SNP_STATISTICS)(
-  IN EMU_SNP_PROTOCOL                     *This,
-  IN BOOLEAN                              Reset,
-  IN OUT UINTN                            *StatisticsSize   OPTIONAL,
-  OUT EFI_NETWORK_STATISTICS              *StatisticsTable  OPTIONAL
-  );
+                             IN EMU_SNP_PROTOCOL                     *This,
+                             IN BOOLEAN                              Reset,
+                             IN OUT UINTN                            *StatisticsSize   OPTIONAL,
+                             OUT EFI_NETWORK_STATISTICS              *StatisticsTable  OPTIONAL
+                             );
 
 /**
   Converts a multicast IP address to a multicast HW MAC address.
@@ -260,13 +258,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EMU_SNP_MCAST_IP_TO_MAC)(
-  IN EMU_SNP_PROTOCOL                     *This,
-  IN BOOLEAN                              IPv6,
-  IN EFI_IP_ADDRESS                       *IP,
-  OUT EFI_MAC_ADDRESS                     *MAC
-  );
+                                  IN EMU_SNP_PROTOCOL                     *This,
+                                  IN BOOLEAN                              IPv6,
+                                  IN EFI_IP_ADDRESS                       *IP,
+                                  OUT EFI_MAC_ADDRESS                     *MAC
+                                  );
 
 /**
   Performs read and write operations on the NVRAM device attached to a
@@ -289,14 +287,14 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EMU_SNP_NVDATA)(
-  IN EMU_SNP_PROTOCOL                     *This,
-  IN BOOLEAN                              ReadWrite,
-  IN UINTN                                Offset,
-  IN UINTN                                BufferSize,
-  IN OUT VOID                             *Buffer
-  );
+                         IN EMU_SNP_PROTOCOL                     *This,
+                         IN BOOLEAN                              ReadWrite,
+                         IN UINTN                                Offset,
+                         IN UINTN                                BufferSize,
+                         IN OUT VOID                             *Buffer
+                         );
 
 /**
   Reads the current interrupt status and recycled transmit buffer status from
@@ -324,12 +322,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EMU_SNP_GET_STATUS)(
-  IN EMU_SNP_PROTOCOL                     *This,
-  OUT UINT32                              *InterruptStatus OPTIONAL,
-  OUT VOID                                **TxBuf OPTIONAL
-  );
+                             IN EMU_SNP_PROTOCOL                     *This,
+                             OUT UINT32                              *InterruptStatus OPTIONAL,
+                             OUT VOID                                **TxBuf OPTIONAL
+                             );
 
 /**
   Places a packet in the transmit queue of a network interface.
@@ -365,16 +363,16 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EMU_SNP_TRANSMIT)(
-  IN EMU_SNP_PROTOCOL                     *This,
-  IN UINTN                                HeaderSize,
-  IN UINTN                                BufferSize,
-  IN VOID                                 *Buffer,
-  IN EFI_MAC_ADDRESS                      *SrcAddr  OPTIONAL,
-  IN EFI_MAC_ADDRESS                      *DestAddr OPTIONAL,
-  IN UINT16                               *Protocol OPTIONAL
-  );
+                           IN EMU_SNP_PROTOCOL                     *This,
+                           IN UINTN                                HeaderSize,
+                           IN UINTN                                BufferSize,
+                           IN VOID                                 *Buffer,
+                           IN EFI_MAC_ADDRESS                      *SrcAddr  OPTIONAL,
+                           IN EFI_MAC_ADDRESS                      *DestAddr OPTIONAL,
+                           IN UINT16                               *Protocol OPTIONAL
+                           );
 
 /**
   Receives a packet from a network interface.
@@ -409,45 +407,45 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EMU_SNP_RECEIVE)(
-  IN EMU_SNP_PROTOCOL                     *This,
-  OUT UINTN                               *HeaderSize OPTIONAL,
-  IN OUT UINTN                            *BufferSize,
-  OUT VOID                                *Buffer,
-  OUT EFI_MAC_ADDRESS                     *SrcAddr    OPTIONAL,
-  OUT EFI_MAC_ADDRESS                     *DestAddr   OPTIONAL,
-  OUT UINT16                              *Protocol   OPTIONAL
-  );
+                          IN EMU_SNP_PROTOCOL                     *This,
+                          OUT UINTN                               *HeaderSize OPTIONAL,
+                          IN OUT UINTN                            *BufferSize,
+                          OUT VOID                                *Buffer,
+                          OUT EFI_MAC_ADDRESS                     *SrcAddr    OPTIONAL,
+                          OUT EFI_MAC_ADDRESS                     *DestAddr   OPTIONAL,
+                          OUT UINT16                              *Protocol   OPTIONAL
+                          );
 
 #define EMU_SNP_PROTOCOL_REVISION  0x00010000
 
 //
 // Revision defined in EFI1.1
 //
-#define EMU_SNP_INTERFACE_REVISION   EMU_SNP_PROTOCOL_REVISION
+#define EMU_SNP_INTERFACE_REVISION  EMU_SNP_PROTOCOL_REVISION
 
 ///
 /// The EMU_SNP_PROTOCOL protocol abstracts OS network sercices
 /// from the EFI driver that produces EFI Simple Network Protocol.
 ///
 struct _EMU_SNP_PROTOCOL {
-  EMU_SNP_CREATE_MAPPING   CreateMapping;
-  EMU_SNP_START            Start;
-  EMU_SNP_STOP             Stop;
-  EMU_SNP_INITIALIZE       Initialize;
-  EMU_SNP_RESET            Reset;
-  EMU_SNP_SHUTDOWN         Shutdown;
-  EMU_SNP_RECEIVE_FILTERS  ReceiveFilters;
-  EMU_SNP_STATION_ADDRESS  StationAddress;
-  EMU_SNP_STATISTICS       Statistics;
-  EMU_SNP_MCAST_IP_TO_MAC  MCastIpToMac;
-  EMU_SNP_NVDATA           NvData;
-  EMU_SNP_GET_STATUS       GetStatus;
-  EMU_SNP_TRANSMIT         Transmit;
-  EMU_SNP_RECEIVE          Receive;
+  EMU_SNP_CREATE_MAPPING     CreateMapping;
+  EMU_SNP_START              Start;
+  EMU_SNP_STOP               Stop;
+  EMU_SNP_INITIALIZE         Initialize;
+  EMU_SNP_RESET              Reset;
+  EMU_SNP_SHUTDOWN           Shutdown;
+  EMU_SNP_RECEIVE_FILTERS    ReceiveFilters;
+  EMU_SNP_STATION_ADDRESS    StationAddress;
+  EMU_SNP_STATISTICS         Statistics;
+  EMU_SNP_MCAST_IP_TO_MAC    MCastIpToMac;
+  EMU_SNP_NVDATA             NvData;
+  EMU_SNP_GET_STATUS         GetStatus;
+  EMU_SNP_TRANSMIT           Transmit;
+  EMU_SNP_RECEIVE            Receive;
 };
 
-extern EFI_GUID gEmuSnpProtocolGuid;
+extern EFI_GUID  gEmuSnpProtocolGuid;
 
 #endif

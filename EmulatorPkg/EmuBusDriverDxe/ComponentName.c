@@ -31,7 +31,7 @@ EmuBusDriverComponentNameGetControllerName (
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL     gEmuBusDriverComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gEmuBusDriverComponentName = {
   EmuBusDriverComponentNameGetDriverName,
   EmuBusDriverComponentNameGetControllerName,
   "eng"
@@ -40,15 +40,15 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL     gEmuBusDriverCompo
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL gEmuBusDriverComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gEmuBusDriverComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) EmuBusDriverComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) EmuBusDriverComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mEmuBusDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mEmuBusDriverNameTable[] = {
   { "eng", L"Emu Bus Driver" },
-  { NULL , NULL }
+  { NULL,  NULL              }
 };
 
 /**
@@ -99,12 +99,12 @@ EmuBusDriverComponentNameGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-          Language,
-          This->SupportedLanguages,
-          mEmuBusDriverNameTable,
-          DriverName,
-          (BOOLEAN)(This == &gEmuBusDriverComponentName)
-          );
+                               Language,
+                               This->SupportedLanguages,
+                               mEmuBusDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gEmuBusDriverComponentName)
+                               );
 }
 
 /**
@@ -185,18 +185,18 @@ EmuBusDriverComponentNameGetControllerName (
   OUT CHAR16                                          **ControllerName
   )
 {
-  EFI_STATUS              Status;
-  EMU_IO_THUNK_PROTOCOL   *EmuIo;
-  EMU_IO_DEVICE           *Private;
+  EFI_STATUS             Status;
+  EMU_IO_THUNK_PROTOCOL  *EmuIo;
+  EMU_IO_DEVICE          *Private;
 
   //
   // Make sure this driver is currently managing ControllHandle
   //
   Status = EfiTestManagedDevice (
-             ControllerHandle,
-             gEmuBusDriverBinding.DriverBindingHandle,
-             &gEmuThunkProtocolGuid
-             );
+                                 ControllerHandle,
+                                 gEmuBusDriverBinding.DriverBindingHandle,
+                                 &gEmuThunkProtocolGuid
+                                 );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -209,10 +209,10 @@ EmuBusDriverComponentNameGetControllerName (
   }
 
   Status = EfiTestChildHandle (
-             ControllerHandle,
-             ChildHandle,
-             &gEmuThunkProtocolGuid
-             );
+                               ControllerHandle,
+                               ChildHandle,
+                               &gEmuThunkProtocolGuid
+                               );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -221,13 +221,13 @@ EmuBusDriverComponentNameGetControllerName (
   // Get our context back
   //
   Status = gBS->OpenProtocol (
-                  ChildHandle,
-                  &gEmuIoThunkProtocolGuid,
-                  (VOID**)&EmuIo,
-                  gEmuBusDriverBinding.DriverBindingHandle,
-                  ChildHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ChildHandle,
+                              &gEmuIoThunkProtocolGuid,
+                              (VOID **) &EmuIo,
+                              gEmuBusDriverBinding.DriverBindingHandle,
+                              ChildHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
@@ -235,10 +235,10 @@ EmuBusDriverComponentNameGetControllerName (
   Private = EMU_IO_DEVICE_FROM_THIS (EmuIo);
 
   return LookupUnicodeString2 (
-           Language,
-           This->SupportedLanguages,
-           Private->ControllerNameTable,
-           ControllerName,
-           (BOOLEAN)(This == &gEmuBusDriverComponentName)
-          );
+                               Language,
+                               This->SupportedLanguages,
+                               Private->ControllerNameTable,
+                               ControllerName,
+                               (BOOLEAN) (This == &gEmuBusDriverComponentName)
+                               );
 }

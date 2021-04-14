@@ -30,35 +30,80 @@ Abstract:
 
 #include "WinHost.h"
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 UINTN
 SecWriteStdErr (
   IN UINT8     *Buffer,
   IN UINTN     NumberOfBytes
   )
 {
-  BOOL  Success;
-  DWORD CharCount;
+  BOOL   Success;
+  DWORD  CharCount;
 
-  CharCount = (DWORD)NumberOfBytes;
-  Success = WriteFile (
-    GetStdHandle (STD_ERROR_HANDLE),
-    Buffer,
-    CharCount,
-    &CharCount,
-    NULL
-    );
+  CharCount = (DWORD) NumberOfBytes;
+  Success   = WriteFile (
+                         GetStdHandle (STD_ERROR_HANDLE),
+                         Buffer,
+                         CharCount,
+                         &CharCount,
+                         NULL
+                         );
 
   return Success ? CharCount : 0;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 SecConfigStdIn (
   VOID
   )
 {
-  BOOL     Success;
-  DWORD    Mode;
+  BOOL   Success;
+  DWORD  Mode;
 
   Success = GetConsoleMode (GetStdHandle (STD_INPUT_HANDLE), &Mode);
   if (Success) {
@@ -67,74 +112,122 @@ SecConfigStdIn (
     //
     Mode &= ~(ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT | ENABLE_MOUSE_INPUT | ENABLE_WINDOW_INPUT);
 
-#if defined(NTDDI_VERSION) && defined (NTDDI_WIN10_TH2) && (NTDDI_VERSION > NTDDI_WIN10_TH2)
-    //
-    // Enable virtual terminal input for Win10 above TH2
-    //
-    Mode |= ENABLE_VIRTUAL_TERMINAL_INPUT;
-#endif
+ #if defined (NTDDI_VERSION) && defined (NTDDI_WIN10_TH2) && (NTDDI_VERSION > NTDDI_WIN10_TH2)
+      //
+      // Enable virtual terminal input for Win10 above TH2
+      //
+      Mode |= ENABLE_VIRTUAL_TERMINAL_INPUT;
+ #endif
 
     Success = SetConsoleMode (GetStdHandle (STD_INPUT_HANDLE), Mode);
   }
 
-#if defined(NTDDI_VERSION) && defined (NTDDI_WIN10_TH2) && (NTDDI_VERSION > NTDDI_WIN10_TH2)
-  //
-  // Enable terminal mode for Win10 above TH2
-  //
-  if (Success) {
-    Success = GetConsoleMode (GetStdHandle (STD_OUTPUT_HANDLE), &Mode);
+ #if defined (NTDDI_VERSION) && defined (NTDDI_WIN10_TH2) && (NTDDI_VERSION > NTDDI_WIN10_TH2)
+    //
+    // Enable terminal mode for Win10 above TH2
+    //
     if (Success) {
-      Success = SetConsoleMode (
-        GetStdHandle (STD_OUTPUT_HANDLE),
-        Mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING | DISABLE_NEWLINE_AUTO_RETURN
-      );
+      Success = GetConsoleMode (GetStdHandle (STD_OUTPUT_HANDLE), &Mode);
+      if (Success) {
+        Success = SetConsoleMode (
+                                  GetStdHandle (STD_OUTPUT_HANDLE),
+                                  Mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING | DISABLE_NEWLINE_AUTO_RETURN
+                                  );
+      }
     }
-  }
-#endif
+
+ #endif
   return Success ? EFI_SUCCESS : EFI_DEVICE_ERROR;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 UINTN
 SecWriteStdOut (
   IN UINT8     *Buffer,
   IN UINTN     NumberOfBytes
   )
 {
-  BOOL  Success;
-  DWORD CharCount;
+  BOOL   Success;
+  DWORD  CharCount;
 
-  CharCount = (DWORD)NumberOfBytes;
-  Success = WriteFile (
-    GetStdHandle (STD_OUTPUT_HANDLE),
-    Buffer,
-    CharCount,
-    &CharCount,
-    NULL
-    );
+  CharCount = (DWORD) NumberOfBytes;
+  Success   = WriteFile (
+                         GetStdHandle (STD_OUTPUT_HANDLE),
+                         Buffer,
+                         CharCount,
+                         &CharCount,
+                         NULL
+                         );
 
   return Success ? CharCount : 0;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 BOOLEAN
 SecPollStdIn (
   VOID
   )
 {
-  BOOL           Success;
-  INPUT_RECORD   Record;
-  DWORD          RecordNum;
+  BOOL          Success;
+  INPUT_RECORD  Record;
+  DWORD         RecordNum;
 
   do {
     Success = GetNumberOfConsoleInputEvents (GetStdHandle (STD_INPUT_HANDLE), &RecordNum);
     if (!Success || (RecordNum == 0)) {
       break;
     }
+
     Success = PeekConsoleInput (
-      GetStdHandle (STD_INPUT_HANDLE),
-      &Record,
-      1,
-      &RecordNum
-    );
+                                GetStdHandle (STD_INPUT_HANDLE),
+                                &Record,
+                                1,
+                                &RecordNum
+                                );
     if (Success && (RecordNum == 1)) {
       if (Record.EventType == KEY_EVENT && Record.Event.KeyEvent.bKeyDown) {
         return TRUE;
@@ -143,11 +236,11 @@ SecPollStdIn (
         // Consume the non-key event.
         //
         Success = ReadConsoleInput (
-          GetStdHandle (STD_INPUT_HANDLE),
-          &Record,
-          1,
-          &RecordNum
-        );
+                                    GetStdHandle (STD_INPUT_HANDLE),
+                                    &Record,
+                                    1,
+                                    &RecordNum
+                                    );
       }
     }
   } while (Success);
@@ -155,44 +248,114 @@ SecPollStdIn (
   return FALSE;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 UINTN
 SecReadStdIn (
   IN UINT8     *Buffer,
   IN UINTN     NumberOfBytes
   )
 {
-  BOOL           Success;
-  INPUT_RECORD   Record;
-  DWORD          RecordNum;
-  UINTN          BytesReturn;
+  BOOL          Success;
+  INPUT_RECORD  Record;
+  DWORD         RecordNum;
+  UINTN         BytesReturn;
 
   if (!SecPollStdIn ()) {
     return 0;
   }
+
   Success = ReadConsoleInput (
-    GetStdHandle (STD_INPUT_HANDLE),
-    &Record,
-    1,
-    &RecordNum
-  );
+                              GetStdHandle (STD_INPUT_HANDLE),
+                              &Record,
+                              1,
+                              &RecordNum
+                              );
   ASSERT (Success && (RecordNum == 1) && (Record.EventType == KEY_EVENT) && (Record.Event.KeyEvent.bKeyDown));
   NumberOfBytes = MIN (Record.Event.KeyEvent.wRepeatCount, NumberOfBytes);
   BytesReturn   = NumberOfBytes;
   while (NumberOfBytes-- != 0) {
     Buffer[NumberOfBytes] = Record.Event.KeyEvent.uChar.AsciiChar;
   }
+
   return BytesReturn;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID *
 SecAlloc (
   IN  UINTN Size
   )
 {
-  return malloc ((size_t)Size);
+  return malloc ((size_t) Size);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 BOOLEAN
 SecFree (
   IN  VOID *Ptr
@@ -208,13 +371,11 @@ SecFree (
   return TRUE;
 }
 
-
-
 //
 // Define a global that we can use to shut down the NT timer thread when
 // the timer is canceled.
 //
-BOOLEAN                 mCancelTimerThread = FALSE;
+BOOLEAN  mCancelTimerThread = FALSE;
 
 //
 // The notification function to call on every timer interrupt
@@ -224,26 +385,49 @@ EMU_SET_TIMER_CALLBACK  *mTimerNotifyFunction = NULL;
 //
 // The thread handle for this driver
 //
-HANDLE                  mNtMainThreadHandle;
+HANDLE  mNtMainThreadHandle;
 
 //
 // The timer value from the last timer interrupt
 //
-UINT32                  mNtLastTick;
+UINT32  mNtLastTick;
 
 //
 // Critical section used to update varibles shared between the main thread and
 // the timer interrupt thread.
 //
-CRITICAL_SECTION        mNtCriticalSection;
+CRITICAL_SECTION  mNtCriticalSection;
 
 //
 // Worker Functions
 //
-UINT                    mMMTimerThreadID = 0;
+UINT  mMMTimerThreadID = 0;
 
-volatile BOOLEAN        mInterruptEnabled = FALSE;
+volatile BOOLEAN  mInterruptEnabled = FALSE;
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 CALLBACK
 MMTimerThread (
@@ -252,13 +436,12 @@ MMTimerThread (
   DWORD dwUser,
   DWORD dw1,
   DWORD dw2
-)
+  )
 {
-  UINT32            CurrentTick;
-  UINT32            Delta;
+  UINT32  CurrentTick;
+  UINT32  Delta;
 
   if (!mCancelTimerThread) {
-
     //
     // Suspend the main thread until we are done.
     // Enter the critical section before suspending
@@ -283,37 +466,36 @@ MMTimerThread (
 
     while (!mInterruptEnabled) {
       //
-      //  Resume the main thread
+      // Resume the main thread
       //
       ResumeThread (mNtMainThreadHandle);
       LeaveCriticalSection (&mNtCriticalSection);
 
       //
-      //  Wait for interrupts to be enabled.
+      // Wait for interrupts to be enabled.
       //
       while (!mInterruptEnabled) {
         Sleep (1);
       }
 
       //
-      //  Suspend the main thread until we are done
+      // Suspend the main thread until we are done
       //
       EnterCriticalSection (&mNtCriticalSection);
       SuspendThread (mNtMainThreadHandle);
     }
 
     //
-    //  Get the current system tick
+    // Get the current system tick
     //
     CurrentTick = GetTickCount ();
     Delta = CurrentTick - mNtLastTick;
     mNtLastTick = CurrentTick;
 
     //
-    //  If delay was more then 1 second, ignore it (probably debugging case)
+    // If delay was more then 1 second, ignore it (probably debugging case)
     //
     if (Delta < 1000) {
-
       //
       // Only invoke the callback function if a Non-NULL handler has been
       // registered. Assume all other handlers are legal.
@@ -324,7 +506,7 @@ MMTimerThread (
     }
 
     //
-    //  Resume the main thread
+    // Resume the main thread
     //
     ResumeThread (mNtMainThreadHandle);
     LeaveCriticalSection (&mNtCriticalSection);
@@ -332,18 +514,40 @@ MMTimerThread (
     timeKillEvent (wTimerID);
     mMMTimerThreadID = 0;
   }
-
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 SecSetTimer (
   IN  UINT64                  TimerPeriod,
   IN  EMU_SET_TIMER_CALLBACK  Callback
-)
+  )
 {
   //
-// If TimerPeriod is 0, then the timer thread should be canceled
-//
+  // If TimerPeriod is 0, then the timer thread should be canceled
+  //
   if (TimerPeriod == 0) {
     //
     // Cancel the timer thread
@@ -373,7 +577,7 @@ SecSetTimer (
     LeaveCriticalSection (&mNtCriticalSection);
 
     //
-    //  Get the starting tick location if we are just starting the timer thread
+    // Get the starting tick location if we are just starting the timer thread
     //
     mNtLastTick = GetTickCount ();
 
@@ -382,39 +586,86 @@ SecSetTimer (
     }
 
     SetThreadPriority (
-      GetCurrentThread (),
-      THREAD_PRIORITY_HIGHEST
-    );
+                       GetCurrentThread (),
+                       THREAD_PRIORITY_HIGHEST
+                       );
 
     mMMTimerThreadID = timeSetEvent (
-      (UINT)TimerPeriod,
-      0,
-      MMTimerThread,
-      (DWORD_PTR)NULL,
-      TIME_PERIODIC | TIME_KILL_SYNCHRONOUS | TIME_CALLBACK_FUNCTION
-    );
+                                     (UINT) TimerPeriod,
+                                     0,
+                                     MMTimerThread,
+                                     (DWORD_PTR) NULL,
+                                     TIME_PERIODIC | TIME_KILL_SYNCHRONOUS | TIME_CALLBACK_FUNCTION
+                                     );
   }
+
   mTimerNotifyFunction = Callback;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 SecInitializeThunk (
   VOID
-)
+  )
 {
   InitializeCriticalSection (&mNtCriticalSection);
 
   DuplicateHandle (
-    GetCurrentProcess (),
-    GetCurrentThread (),
-    GetCurrentProcess (),
-    &mNtMainThreadHandle,
-    0,
-    FALSE,
-    DUPLICATE_SAME_ACCESS
-  );
+                   GetCurrentProcess (),
+                   GetCurrentThread (),
+                   GetCurrentProcess (),
+                   &mNtMainThreadHandle,
+                   0,
+                   FALSE,
+                   DUPLICATE_SAME_ACCESS
+                   );
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 SecEnableInterrupt (
   VOID
@@ -423,7 +674,29 @@ SecEnableInterrupt (
   mInterruptEnabled = TRUE;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 SecDisableInterrupt (
   VOID
@@ -432,7 +705,29 @@ SecDisableInterrupt (
   mInterruptEnabled = FALSE;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 UINT64
 SecQueryPerformanceFrequency (
   VOID
@@ -442,6 +737,29 @@ SecQueryPerformanceFrequency (
   return 1000000000ULL;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 UINT64
 SecQueryPerformanceCounter (
   VOID
@@ -450,17 +768,60 @@ SecQueryPerformanceCounter (
   return 0;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
 
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 SecSleep (
   IN  UINT64 Nanoseconds
   )
 {
-  Sleep ((DWORD)DivU64x32 (Nanoseconds, 1000000));
+  Sleep ((DWORD) DivU64x32 (Nanoseconds, 1000000));
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 SecCpuSleep (
   VOID
@@ -469,57 +830,124 @@ SecCpuSleep (
   Sleep (1);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 SecExit (
   UINTN   Status
   )
 {
-  exit ((int)Status);
+  exit ((int) Status);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 SecGetTime (
   OUT  EFI_TIME               *Time,
   OUT EFI_TIME_CAPABILITIES   *Capabilities OPTIONAL
   )
 {
-  SYSTEMTIME            SystemTime;
-  TIME_ZONE_INFORMATION TimeZone;
+  SYSTEMTIME             SystemTime;
+  TIME_ZONE_INFORMATION  TimeZone;
 
   GetLocalTime (&SystemTime);
   GetTimeZoneInformation (&TimeZone);
 
-  Time->Year = (UINT16)SystemTime.wYear;
-  Time->Month = (UINT8)SystemTime.wMonth;
-  Time->Day = (UINT8)SystemTime.wDay;
-  Time->Hour = (UINT8)SystemTime.wHour;
-  Time->Minute = (UINT8)SystemTime.wMinute;
-  Time->Second = (UINT8)SystemTime.wSecond;
-  Time->Nanosecond = (UINT32)(SystemTime.wMilliseconds * 1000000);
-  Time->TimeZone = (INT16)TimeZone.Bias;
+  Time->Year       = (UINT16) SystemTime.wYear;
+  Time->Month      = (UINT8) SystemTime.wMonth;
+  Time->Day        = (UINT8) SystemTime.wDay;
+  Time->Hour       = (UINT8) SystemTime.wHour;
+  Time->Minute     = (UINT8) SystemTime.wMinute;
+  Time->Second     = (UINT8) SystemTime.wSecond;
+  Time->Nanosecond = (UINT32) (SystemTime.wMilliseconds * 1000000);
+  Time->TimeZone   = (INT16) TimeZone.Bias;
 
   if (Capabilities != NULL) {
     Capabilities->Resolution = 1;
-    Capabilities->Accuracy = 50000000;
+    Capabilities->Accuracy   = 50000000;
     Capabilities->SetsToZero = FALSE;
   }
 
   Time->Daylight = 0;
   if (TimeZone.StandardDate.wMonth) {
-    Time->Daylight = (UINT8)TimeZone.StandardDate.wMonth;
+    Time->Daylight = (UINT8) TimeZone.StandardDate.wMonth;
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 SecSetTime (
   IN  EFI_TIME               *Time
   )
 {
-  TIME_ZONE_INFORMATION TimeZone;
-  SYSTEMTIME            SystemTime;
-  BOOL                  Flag;
+  TIME_ZONE_INFORMATION  TimeZone;
+  SYSTEMTIME             SystemTime;
+  BOOL                   Flag;
 
   //
   // Set Daylight savings time information and Time Zone
@@ -532,13 +960,13 @@ SecSetTime (
     return EFI_DEVICE_ERROR;
   }
 
-  SystemTime.wYear = Time->Year;
-  SystemTime.wMonth = Time->Month;
-  SystemTime.wDay = Time->Day;
-  SystemTime.wHour = Time->Hour;
+  SystemTime.wYear   = Time->Year;
+  SystemTime.wMonth  = Time->Month;
+  SystemTime.wDay    = Time->Day;
+  SystemTime.wHour   = Time->Hour;
   SystemTime.wMinute = Time->Minute;
   SystemTime.wSecond = Time->Second;
-  SystemTime.wMilliseconds = (INT16)(Time->Nanosecond / 1000000);
+  SystemTime.wMilliseconds = (INT16) (Time->Nanosecond / 1000000);
 
   Flag = SetLocalTime (&SystemTime);
 
@@ -549,7 +977,7 @@ SecSetTime (
   }
 }
 
-EMU_THUNK_PROTOCOL gEmuThunkProtocol = {
+EMU_THUNK_PROTOCOL  gEmuThunkProtocol = {
   SecWriteStdErr,
   SecConfigStdIn,
   SecWriteStdOut,
@@ -574,7 +1002,5 @@ EMU_THUNK_PROTOCOL gEmuThunkProtocol = {
   GetNextThunkProtocol
 };
 
-
 #pragma warning(default : 4996)
 #pragma warning(default : 4232)
-

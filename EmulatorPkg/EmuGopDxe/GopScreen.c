@@ -18,17 +18,15 @@ Abstract:
 
 #include "Gop.h"
 
+EFI_EVENT  mGopScreenExitBootServicesEvent;
 
-EFI_EVENT               mGopScreenExitBootServicesEvent;
-
-GOP_MODE_DATA mGopModeData[] = {
-    { 800,  600, 0, 0 },
-    { 640,  480, 0, 0 },
-    { 720,  400, 0, 0 },
-    {1024,  768, 0, 0 },
-    {1280, 1024, 0, 0 }
-    };
-
+GOP_MODE_DATA  mGopModeData[] = {
+  { 800,  600,  0, 0 },
+  { 640,  480,  0, 0 },
+  { 720,  400,  0, 0 },
+  { 1024, 768,  0, 0 },
+  { 1280, 1024, 0, 0 }
+};
 
 /**
   Returns information for an available graphics mode that the graphics device
@@ -79,8 +77,6 @@ EmuGopQuerytMode (
   return EFI_SUCCESS;
 }
 
-
-
 /**
   Set the video device into the specified mode and clears the visible portions of
   the output display to black.
@@ -100,10 +96,10 @@ EmuGopSetMode (
   IN  UINT32                        ModeNumber
   )
 {
-  EFI_STATUS                      Status;
-  GOP_PRIVATE_DATA                *Private;
-  GOP_MODE_DATA                   *ModeData;
-  EFI_GRAPHICS_OUTPUT_BLT_PIXEL   Fill;
+  EFI_STATUS                     Status;
+  GOP_PRIVATE_DATA               *Private;
+  GOP_MODE_DATA                  *ModeData;
+  EFI_GRAPHICS_OUTPUT_BLT_PIXEL  Fill;
 
   Private = GOP_PRIVATE_DATA_FROM_THIS (This);
 
@@ -114,17 +110,17 @@ EmuGopSetMode (
   ModeData = &Private->ModeData[ModeNumber];
   This->Mode->Mode = ModeNumber;
   Private->GraphicsOutput.Mode->Info->HorizontalResolution = ModeData->HorizontalResolution;
-  Private->GraphicsOutput.Mode->Info->VerticalResolution = ModeData->VerticalResolution;
-  Private->GraphicsOutput.Mode->Info->PixelsPerScanLine = ModeData->HorizontalResolution;
+  Private->GraphicsOutput.Mode->Info->VerticalResolution   = ModeData->VerticalResolution;
+  Private->GraphicsOutput.Mode->Info->PixelsPerScanLine    = ModeData->HorizontalResolution;
 
   if (Private->HardwareNeedsStarting) {
     Status = EmuGopStartWindow (
-              Private,
-              ModeData->HorizontalResolution,
-              ModeData->VerticalResolution,
-              ModeData->ColorDepth,
-              ModeData->RefreshRate
-              );
+                                Private,
+                                ModeData->HorizontalResolution,
+                                ModeData->VerticalResolution,
+                                ModeData->ColorDepth,
+                                ModeData->RefreshRate
+                                );
     if (EFI_ERROR (Status)) {
       return EFI_DEVICE_ERROR;
     }
@@ -132,33 +128,29 @@ EmuGopSetMode (
     Private->HardwareNeedsStarting = FALSE;
   }
 
-
-  Status = Private->EmuGraphicsWindow->Size(
-                            Private->EmuGraphicsWindow,
-                            ModeData->HorizontalResolution,
-                            ModeData->VerticalResolution
-                            );
-
+  Status = Private->EmuGraphicsWindow->Size (
+                                             Private->EmuGraphicsWindow,
+                                             ModeData->HorizontalResolution,
+                                             ModeData->VerticalResolution
+                                             );
 
   Fill.Red   = 0;
   Fill.Green = 0;
   Fill.Blue  = 0;
   This->Blt (
-          This,
-          &Fill,
-          EfiBltVideoFill,
-          0,
-          0,
-          0,
-          0,
-          ModeData->HorizontalResolution,
-          ModeData->VerticalResolution,
-          ModeData->HorizontalResolution * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)
-          );
+             This,
+             &Fill,
+             EfiBltVideoFill,
+             0,
+             0,
+             0,
+             0,
+             ModeData->HorizontalResolution,
+             ModeData->VerticalResolution,
+             ModeData->HorizontalResolution * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)
+             );
   return EFI_SUCCESS;
 }
-
-
 
 /**
   Blt a rectangle of pixels on the graphics screen. Blt stands for BLock Transfer.
@@ -184,7 +176,7 @@ EFI_STATUS
 EFIAPI
 EmuGopBlt (
   IN  EFI_GRAPHICS_OUTPUT_PROTOCOL            *This,
-  IN  EFI_GRAPHICS_OUTPUT_BLT_PIXEL           *BltBuffer,   OPTIONAL
+  IN  EFI_GRAPHICS_OUTPUT_BLT_PIXEL           *BltBuffer, OPTIONAL
   IN  EFI_GRAPHICS_OUTPUT_BLT_OPERATION       BltOperation,
   IN  UINTN                                   SourceX,
   IN  UINTN                                   SourceY,
@@ -195,20 +187,21 @@ EmuGopBlt (
   IN  UINTN                                   Delta         OPTIONAL
   )
 {
-  GOP_PRIVATE_DATA  *Private;
-  EFI_TPL           OriginalTPL;
-  EFI_STATUS        Status;
-  EMU_GRAPHICS_WINDOWS__BLT_ARGS      GopBltArgs;
+  GOP_PRIVATE_DATA                *Private;
+  EFI_TPL                         OriginalTPL;
+  EFI_STATUS                      Status;
+  EMU_GRAPHICS_WINDOWS__BLT_ARGS  GopBltArgs;
 
   Private = GOP_PRIVATE_DATA_FROM_THIS (This);
 
-  if ((UINT32)BltOperation >= EfiGraphicsOutputBltOperationMax) {
+  if ((UINT32) BltOperation >= EfiGraphicsOutputBltOperationMax) {
     return EFI_INVALID_PARAMETER;
   }
 
   if (Width == 0 || Height == 0) {
     return EFI_INVALID_PARAMETER;
   }
+
   //
   // If Delta is zero, then the entire BltBuffer is being used, so Delta
   // is the number of bytes in each row of BltBuffer.  Since BltBuffer is Width pixels size,
@@ -231,23 +224,22 @@ EmuGopBlt (
   //
   GopBltArgs.DestinationX = DestinationX;
   GopBltArgs.DestinationY = DestinationY;
-  GopBltArgs.Height       = Height;
-  GopBltArgs.Width        = Width;
-  GopBltArgs.SourceX      = SourceX;
-  GopBltArgs.SourceY      = SourceY;
-  GopBltArgs.Delta        = Delta;
+  GopBltArgs.Height  = Height;
+  GopBltArgs.Width   = Width;
+  GopBltArgs.SourceX = SourceX;
+  GopBltArgs.SourceY = SourceY;
+  GopBltArgs.Delta   = Delta;
   Status = Private->EmuGraphicsWindow->Blt (
-                            Private->EmuGraphicsWindow,
-                            (EFI_UGA_PIXEL *)BltBuffer,
-                            (EFI_UGA_BLT_OPERATION)BltOperation,
-                            &GopBltArgs
-                            );
+                                            Private->EmuGraphicsWindow,
+                                            (EFI_UGA_PIXEL *) BltBuffer,
+                                            (EFI_UGA_BLT_OPERATION) BltOperation,
+                                            &GopBltArgs
+                                            );
 
   gBS->RestoreTPL (OriginalTPL);
 
   return Status;
 }
-
 
 //
 // Construction and Destruction functions
@@ -270,7 +262,29 @@ EmuGopSupported (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EmuGopStartWindow (
   IN  GOP_PRIVATE_DATA    *Private,
@@ -280,35 +294,59 @@ EmuGopStartWindow (
   IN  UINT32              RefreshRate
   )
 {
-  EFI_STATUS          Status;
+  EFI_STATUS  Status;
 
   //
   // Register to be notified on exit boot services so we can destroy the window.
   //
   Status = gBS->CreateEvent (
-                  EVT_SIGNAL_EXIT_BOOT_SERVICES,
-                  TPL_CALLBACK,
-                  ShutdownGopEvent,
-                  Private,
-                  &mGopScreenExitBootServicesEvent
-                  );
+                             EVT_SIGNAL_EXIT_BOOT_SERVICES,
+                             TPL_CALLBACK,
+                             ShutdownGopEvent,
+                             Private,
+                             &mGopScreenExitBootServicesEvent
+                             );
 
   Status = Private->EmuIoThunk->Open (Private->EmuIoThunk);
   if (!EFI_ERROR (Status)) {
     Private->EmuGraphicsWindow = Private->EmuIoThunk->Interface;
 
     // Register callback to support RegisterKeyNotify()
-    Status  = Private->EmuGraphicsWindow->RegisterKeyNotify (
-                                            Private->EmuGraphicsWindow,
-                                            GopPrivateMakeCallbackFunction,
-                                            GopPrivateBreakCallbackFunction,
-                                            Private
-                                            );
+    Status = Private->EmuGraphicsWindow->RegisterKeyNotify (
+                                                            Private->EmuGraphicsWindow,
+                                                            GopPrivateMakeCallbackFunction,
+                                                            GopPrivateBreakCallbackFunction,
+                                                            Private
+                                                            );
     ASSERT_EFI_ERROR (Status);
   }
+
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EmuGopConstructor (
   GOP_PRIVATE_DATA    *Private
@@ -316,9 +354,9 @@ EmuGopConstructor (
 {
   Private->ModeData = mGopModeData;
 
-  Private->GraphicsOutput.QueryMode      = EmuGopQuerytMode;
-  Private->GraphicsOutput.SetMode        = EmuGopSetMode;
-  Private->GraphicsOutput.Blt            = EmuGopBlt;
+  Private->GraphicsOutput.QueryMode = EmuGopQuerytMode;
+  Private->GraphicsOutput.SetMode   = EmuGopSetMode;
+  Private->GraphicsOutput.Blt = EmuGopBlt;
 
   //
   // Allocate buffer for Graphics Output Protocol mode information
@@ -327,26 +365,27 @@ EmuGopConstructor (
   if (Private->GraphicsOutput.Mode == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
+
   Private->GraphicsOutput.Mode->Info = AllocatePool (sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION));
   if (Private->GraphicsOutput.Mode->Info == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Private->GraphicsOutput.Mode->MaxMode = sizeof(mGopModeData) / sizeof(GOP_MODE_DATA);
+  Private->GraphicsOutput.Mode->MaxMode = sizeof (mGopModeData) / sizeof (GOP_MODE_DATA);
   //
   // Till now, we have no idea about the window size.
   //
   Private->GraphicsOutput.Mode->Mode = GRAPHICS_OUTPUT_INVALIDE_MODE_NUMBER;
   Private->GraphicsOutput.Mode->Info->Version = 0;
   Private->GraphicsOutput.Mode->Info->HorizontalResolution = 0;
-  Private->GraphicsOutput.Mode->Info->VerticalResolution = 0;
+  Private->GraphicsOutput.Mode->Info->VerticalResolution   = 0;
   Private->GraphicsOutput.Mode->Info->PixelFormat = PixelBltOnly;
   Private->GraphicsOutput.Mode->SizeOfInfo = sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
   Private->GraphicsOutput.Mode->FrameBufferBase = (EFI_PHYSICAL_ADDRESS) (UINTN) NULL;
   Private->GraphicsOutput.Mode->FrameBufferSize = 0;
 
-  Private->HardwareNeedsStarting  = TRUE;
-  Private->EmuGraphicsWindow                  = NULL;
+  Private->HardwareNeedsStarting = TRUE;
+  Private->EmuGraphicsWindow     = NULL;
 
   EmuGopInitializeSimpleTextInForWindow (Private);
 
@@ -355,15 +394,36 @@ EmuGopConstructor (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
 
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EmuGopDestructor (
   GOP_PRIVATE_DATA     *Private
   )
 {
   if (!Private->HardwareNeedsStarting) {
-    Private->EmuIoThunk->Close (Private->EmuIoThunk);
+  Private->EmuIoThunk->Close (Private->EmuIoThunk);
     Private->EmuGraphicsWindow = NULL;
   }
 
@@ -374,19 +434,43 @@ EmuGopDestructor (
     if (Private->GraphicsOutput.Mode->Info != NULL) {
       FreePool (Private->GraphicsOutput.Mode->Info);
     }
+
     FreePool (Private->GraphicsOutput.Mode);
   }
 
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 EFIAPI
 ShutdownGopEvent (
   IN EFI_EVENT  Event,
   IN VOID       *Context
   )
+
 /*++
 
 Routine Description:
@@ -407,4 +491,3 @@ Returns:
 {
   EmuGopDestructor (Context);
 }
-

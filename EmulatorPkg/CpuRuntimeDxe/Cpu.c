@@ -11,7 +11,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 UINT64  mTimerPeriod;
 
-CPU_ARCH_PROTOCOL_PRIVATE mCpuTemplate = {
+CPU_ARCH_PROTOCOL_PRIVATE  mCpuTemplate = {
   CPU_ARCH_PROT_PRIVATE_SIGNATURE,
   NULL,
   {
@@ -39,61 +39,61 @@ CPU_ARCH_PROTOCOL_PRIVATE mCpuTemplate = {
   TRUE
 };
 
-#define EFI_CPU_DATA_MAXIMUM_LENGTH 0x100
+#define EFI_CPU_DATA_MAXIMUM_LENGTH  0x100
 
-SMBIOS_TABLE_TYPE4 mCpuSmbiosType4 = {
-  { EFI_SMBIOS_TYPE_PROCESSOR_INFORMATION, sizeof (SMBIOS_TABLE_TYPE4), 0},
+SMBIOS_TABLE_TYPE4  mCpuSmbiosType4 = {
+  { EFI_SMBIOS_TYPE_PROCESSOR_INFORMATION, sizeof (SMBIOS_TABLE_TYPE4), 0 },
   1,                    // Socket String
   ProcessorOther,       // ProcessorType;          ///< The enumeration value from PROCESSOR_TYPE_DATA.
   ProcessorFamilyOther, // ProcessorFamily;        ///< The enumeration value from PROCESSOR_FAMILY_DATA.
   2,                    // ProcessorManufacture String;
   {                     // ProcessorId;
-    {  // PROCESSOR_SIGNATURE
-      0, //  ProcessorSteppingId:4;
-      0, //  ProcessorModel:     4;
-      0, //  ProcessorFamily:    4;
-      0, //  ProcessorType:      2;
-      0, //  ProcessorReserved1: 2;
-      0, //  ProcessorXModel:    4;
-      0, //  ProcessorXFamily:   8;
-      0, //  ProcessorReserved2: 4;
+    {    // PROCESSOR_SIGNATURE
+      0, // ProcessorSteppingId:4;
+      0, // ProcessorModel:     4;
+      0, // ProcessorFamily:    4;
+      0, // ProcessorType:      2;
+      0, // ProcessorReserved1: 2;
+      0, // ProcessorXModel:    4;
+      0, // ProcessorXFamily:   8;
+      0, // ProcessorReserved2: 4;
     },
-    {  // PROCESSOR_FEATURE_FLAGS
-      0, //  ProcessorFpu       :1;
-      0, //  ProcessorVme       :1;
-      0, //  ProcessorDe        :1;
-      0, //  ProcessorPse       :1;
-      0, //  ProcessorTsc       :1;
-      0, //  ProcessorMsr       :1;
-      0, //  ProcessorPae       :1;
-      0, //  ProcessorMce       :1;
-      0, //  ProcessorCx8       :1;
-      0, //  ProcessorApic      :1;
-      0, //  ProcessorReserved1 :1;
-      0, //  ProcessorSep       :1;
-      0, //  ProcessorMtrr      :1;
-      0, //  ProcessorPge       :1;
-      0, //  ProcessorMca       :1;
-      0, //  ProcessorCmov      :1;
-      0, //  ProcessorPat       :1;
-      0, //  ProcessorPse36     :1;
-      0, //  ProcessorPsn       :1;
-      0, //  ProcessorClfsh     :1;
-      0, //  ProcessorReserved2 :1;
-      0, //  ProcessorDs        :1;
-      0, //  ProcessorAcpi      :1;
-      0, //  ProcessorMmx       :1;
-      0, //  ProcessorFxsr      :1;
-      0, //  ProcessorSse       :1;
-      0, //  ProcessorSse2      :1;
-      0, //  ProcessorSs        :1;
-      0, //  ProcessorReserved3 :1;
-      0, //  ProcessorTm        :1;
-      0, //  ProcessorReserved4 :2;
+    {    // PROCESSOR_FEATURE_FLAGS
+      0, // ProcessorFpu       :1;
+      0, // ProcessorVme       :1;
+      0, // ProcessorDe        :1;
+      0, // ProcessorPse       :1;
+      0, // ProcessorTsc       :1;
+      0, // ProcessorMsr       :1;
+      0, // ProcessorPae       :1;
+      0, // ProcessorMce       :1;
+      0, // ProcessorCx8       :1;
+      0, // ProcessorApic      :1;
+      0, // ProcessorReserved1 :1;
+      0, // ProcessorSep       :1;
+      0, // ProcessorMtrr      :1;
+      0, // ProcessorPge       :1;
+      0, // ProcessorMca       :1;
+      0, // ProcessorCmov      :1;
+      0, // ProcessorPat       :1;
+      0, // ProcessorPse36     :1;
+      0, // ProcessorPsn       :1;
+      0, // ProcessorClfsh     :1;
+      0, // ProcessorReserved2 :1;
+      0, // ProcessorDs        :1;
+      0, // ProcessorAcpi      :1;
+      0, // ProcessorMmx       :1;
+      0, // ProcessorFxsr      :1;
+      0, // ProcessorSse       :1;
+      0, // ProcessorSse2      :1;
+      0, // ProcessorSs        :1;
+      0, // ProcessorReserved3 :1;
+      0, // ProcessorTm        :1;
+      0, // ProcessorReserved4 :2;
     }
   },
   3,                    // ProcessorVersion String;
-  {                     // Voltage;
+  {     // Voltage;
     1,  // ProcessorVoltageCapability5V        :1;
     1,  // ProcessorVoltageCapability3_3V      :1;
     1,  // ProcessorVoltageCapability2_9V      :1;
@@ -119,7 +119,7 @@ SMBIOS_TABLE_TYPE4 mCpuSmbiosType4 = {
   0,                      // ProcessorFamily2;
 };
 
-CHAR8 *mCpuSmbiosType4Strings[] = {
+CHAR8  *mCpuSmbiosType4Strings[] = {
   "Socket",
   "http://www.tianocore.org/edk2/",
   "Emulated Processor",
@@ -128,7 +128,6 @@ CHAR8 *mCpuSmbiosType4Strings[] = {
   "1.0",
   NULL
 };
-
 
 /**
   Create SMBIOS record.
@@ -163,19 +162,19 @@ LogSmbiosData (
   IN  CHAR8                   **StringPack
   )
 {
-  EFI_STATUS                Status;
-  EFI_SMBIOS_PROTOCOL       *Smbios;
-  EFI_SMBIOS_HANDLE         SmbiosHandle;
-  EFI_SMBIOS_TABLE_HEADER   *Record;
-  UINTN                     Index;
-  UINTN                     StringSize;
-  UINTN                     Size;
-  CHAR8                     *Str;
+  EFI_STATUS               Status;
+  EFI_SMBIOS_PROTOCOL      *Smbios;
+  EFI_SMBIOS_HANDLE        SmbiosHandle;
+  EFI_SMBIOS_TABLE_HEADER  *Record;
+  UINTN                    Index;
+  UINTN                    StringSize;
+  UINTN                    Size;
+  CHAR8                    *Str;
 
   //
   // Locate Smbios protocol.
   //
-  Status = gBS->LocateProtocol (&gEfiSmbiosProtocolGuid, NULL, (VOID **)&Smbios);
+  Status = gBS->LocateProtocol (&gEfiSmbiosProtocolGuid, NULL, (VOID **) &Smbios);
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -190,61 +189,84 @@ LogSmbiosData (
       StringSize = AsciiStrSize (StringPack[Index]);
       Size += StringSize;
     }
+
     if (StringPack[0] == NULL) {
       // At least a double null is required
       Size += 1;
     }
+
     // Don't forget the terminating double null
     Size += 1;
   }
 
   // Copy over Template
-  Record = (EFI_SMBIOS_TABLE_HEADER *)AllocateZeroPool (Size);
+  Record = (EFI_SMBIOS_TABLE_HEADER *) AllocateZeroPool (Size);
   if (Record == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
+
   CopyMem (Record, Template, Template->Length);
 
   // Append string pack
-  Str = ((CHAR8 *)Record) + Record->Length;
+  Str = ((CHAR8 *) Record) + Record->Length;
   for (Index = 0; StringPack[Index] != NULL; Index++) {
     StringSize = AsciiStrSize (StringPack[Index]);
     CopyMem (Str, StringPack[Index], StringSize);
     Str += StringSize;
   }
+
   *Str = 0;
 
   SmbiosHandle = SMBIOS_HANDLE_PI_RESERVED;
   Status = Smbios->Add (
-                     Smbios,
-                     gImageHandle,
-                     &SmbiosHandle,
-                     Record
-                     );
+                        Smbios,
+                        gImageHandle,
+                        &SmbiosHandle,
+                        Record
+                        );
   ASSERT_EFI_ERROR (Status);
 
   FreePool (Record);
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
 
+  Anything a caller should be aware of must be noted in the description.
 
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 CpuUpdateSmbios (
   IN UINTN  MaxCpus
   )
 {
-  mCpuSmbiosType4.CoreCount        = (UINT8) MaxCpus;
+  mCpuSmbiosType4.CoreCount = (UINT8) MaxCpus;
   mCpuSmbiosType4.EnabledCoreCount = (UINT8) MaxCpus;
-  mCpuSmbiosType4.ThreadCount      = (UINT8) MaxCpus;
+  mCpuSmbiosType4.ThreadCount = (UINT8) MaxCpus;
   //
   // The value of 1234 is fake value for CPU frequency
   //
   mCpuSmbiosType4.CurrentSpeed = 1234;
-  LogSmbiosData ((EFI_SMBIOS_TABLE_HEADER *)&mCpuSmbiosType4, mCpuSmbiosType4Strings);
+  LogSmbiosData ((EFI_SMBIOS_TABLE_HEADER *) &mCpuSmbiosType4, mCpuSmbiosType4Strings);
 }
-
 
 //
 // Service routines for the driver
@@ -265,40 +287,110 @@ EmuFlushCpuDataCache (
     //
     return EFI_SUCCESS;
   }
+
   //
   // Other flush types are not supported by Emu emulator
   //
   return EFI_UNSUPPORTED;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 EmuEnableInterrupt (
   IN EFI_CPU_ARCH_PROTOCOL  *This
   )
 {
-  CPU_ARCH_PROTOCOL_PRIVATE *Private;
+  CPU_ARCH_PROTOCOL_PRIVATE  *Private;
 
-  Private                 = CPU_ARCH_PROTOCOL_PRIVATE_DATA_FROM_THIS (This);
+  Private = CPU_ARCH_PROTOCOL_PRIVATE_DATA_FROM_THIS (This);
   Private->InterruptState = TRUE;
   gEmuThunk->EnableInterrupt ();
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 EmuDisableInterrupt (
   IN EFI_CPU_ARCH_PROTOCOL  *This
   )
 {
-  CPU_ARCH_PROTOCOL_PRIVATE *Private;
+  CPU_ARCH_PROTOCOL_PRIVATE  *Private;
 
-  Private                 = CPU_ARCH_PROTOCOL_PRIVATE_DATA_FROM_THIS (This);
+  Private = CPU_ARCH_PROTOCOL_PRIVATE_DATA_FROM_THIS (This);
   Private->InterruptState = FALSE;
   gEmuThunk->DisableInterrupt ();
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 EmuGetInterruptState (
@@ -306,7 +398,7 @@ EmuGetInterruptState (
   OUT BOOLEAN               *State
   )
 {
-  CPU_ARCH_PROTOCOL_PRIVATE *Private;
+  CPU_ARCH_PROTOCOL_PRIVATE  *Private;
 
   if (State == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -317,6 +409,29 @@ EmuGetInterruptState (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 EmuInit (
@@ -327,6 +442,29 @@ EmuInit (
   return EFI_UNSUPPORTED;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 EmuRegisterInterruptHandler (
@@ -341,12 +479,36 @@ EmuRegisterInterruptHandler (
   if (InterruptType < 0 || InterruptType > 0xff) {
     return EFI_UNSUPPORTED;
   }
+
   //
   // Do nothing for Emu emulation
   //
   return EFI_UNSUPPORTED;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 EmuGetTimerValue (
@@ -373,7 +535,29 @@ EmuGetTimerValue (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 EmuSetMemoryAttributes (
@@ -396,9 +580,6 @@ EmuSetMemoryAttributes (
   return EFI_UNSUPPORTED;
 }
 
-
-
-
 /**
   Callback function for idle events.
 
@@ -417,7 +598,29 @@ IdleLoopEventCallback (
   gEmuThunk->CpuSleep ();
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 InitializeCpu (
@@ -425,10 +628,10 @@ InitializeCpu (
   IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  EFI_STATUS    Status;
-  UINT64        Frequency;
-  EFI_EVENT     IdleLoopEvent;
-  UINTN         MaxCpu;
+  EFI_STATUS  Status;
+  UINT64      Frequency;
+  EFI_EVENT   IdleLoopEvent;
+  UINTN       MaxCpu;
 
   //
   // Retrieve the frequency of the performance counter in Hz.
@@ -444,24 +647,24 @@ InitializeCpu (
 
   CpuUpdateSmbios (MaxCpu);
 
-
   Status = gBS->CreateEventEx (
-                  EVT_NOTIFY_SIGNAL,
-                  TPL_NOTIFY,
-                  IdleLoopEventCallback,
-                  NULL,
-                  &gIdleLoopEventGuid,
-                  &IdleLoopEvent
-                  );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_NOTIFY,
+                               IdleLoopEventCallback,
+                               NULL,
+                               &gIdleLoopEventGuid,
+                               &IdleLoopEvent
+                               );
   ASSERT_EFI_ERROR (Status);
 
-
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &mCpuTemplate.Handle,
-                  &gEfiCpuArchProtocolGuid,   &mCpuTemplate.Cpu,
-                  &gEfiCpuIo2ProtocolGuid,    &mCpuTemplate.CpuIo,
-                  NULL
-                  );
+                                                   &mCpuTemplate.Handle,
+                                                   &gEfiCpuArchProtocolGuid,
+                                                   &mCpuTemplate.Cpu,
+                                                   &gEfiCpuIo2ProtocolGuid,
+                                                   &mCpuTemplate.CpuIo,
+                                                   NULL
+                                                   );
   ASSERT_EFI_ERROR (Status);
 
   return Status;

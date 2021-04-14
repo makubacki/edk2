@@ -16,12 +16,34 @@
 
 #include <Protocol/Timer.h>
 
+STATIC UINT64                   gTimerPeriod   = 0;
+STATIC EFI_TIMER_ARCH_PROTOCOL  *gTimerAp      = NULL;
+STATIC EFI_EVENT                gTimerEvent    = NULL;
+STATIC VOID                     *gRegistration = NULL;
 
-STATIC UINT64                  gTimerPeriod = 0;
-STATIC EFI_TIMER_ARCH_PROTOCOL *gTimerAp = NULL;
-STATIC EFI_EVENT               gTimerEvent = NULL;
-STATIC VOID                    *gRegistration = NULL;
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 EFIAPI
 RegisterTimerArchProtocol (
@@ -31,7 +53,7 @@ RegisterTimerArchProtocol (
 {
   EFI_STATUS  Status;
 
-  Status = gBS->LocateProtocol (&gEfiTimerArchProtocolGuid, NULL, (VOID **)&gTimerAp);
+  Status = gBS->LocateProtocol (&gEfiTimerArchProtocolGuid, NULL, (VOID **) &gTimerAp);
   if (!EFI_ERROR (Status)) {
     Status = gTimerAp->GetTimerPeriod (gTimerAp, &gTimerPeriod);
     ASSERT_EFI_ERROR (Status);
@@ -45,8 +67,6 @@ RegisterTimerArchProtocol (
     }
   }
 }
-
-
 
 /**
   Stalls the CPU for at least the given number of microseconds.
@@ -66,7 +86,6 @@ MicroSecondDelay (
 {
   return NanoSecondDelay (MicroSeconds * 1000);
 }
-
 
 /**
   Stalls the CPU for at least the given number of nanoseconds.
@@ -89,7 +108,7 @@ NanoSecondDelay (
   UINTN       Index;
 
   if ((gTimerPeriod != 0) &&
-      ((UINT64)NanoSeconds > gTimerPeriod) &&
+      ((UINT64) NanoSeconds > gTimerPeriod) &&
       (EfiGetCurrentTpl () == TPL_APPLICATION)) {
     //
     // This stall is long, so use gBS->WaitForEvent () to yield CPU to DXE Core
@@ -101,13 +120,12 @@ NanoSecondDelay (
 
     Status = gBS->WaitForEvent (sizeof (gTimerEvent)/sizeof (EFI_EVENT), &gTimerEvent, &Index);
     ASSERT_EFI_ERROR (Status);
-
   } else {
-    gEmuThunk->Sleep (NanoSeconds);
+  gEmuThunk->Sleep (NanoSeconds);
   }
+
   return NanoSeconds;
 }
-
 
 /**
   Retrieves the current value of a 64-bit free running performance counter.
@@ -155,21 +173,20 @@ GetPerformanceCounter (
 UINT64
 EFIAPI
 GetPerformanceCounterProperties (
-  OUT      UINT64                    *StartValue,  OPTIONAL
+  OUT      UINT64                    *StartValue, OPTIONAL
   OUT      UINT64                    *EndValue     OPTIONAL
   )
 {
-
   if (StartValue != NULL) {
     *StartValue = 0ULL;
   }
+
   if (EndValue != NULL) {
-    *EndValue = (UINT64)-1LL;
+    *EndValue = (UINT64) - 1LL;
   }
 
   return gEmuThunk->QueryPerformanceFrequency ();
 }
-
 
 /**
   Register for the Timer AP protocol.
@@ -188,12 +205,12 @@ DxeTimerLibConstructor (
   )
 {
   EfiCreateProtocolNotifyEvent (
-    &gEfiTimerArchProtocolGuid,
-    TPL_CALLBACK,
-    RegisterTimerArchProtocol,
-    NULL,
-    &gRegistration
-    );
+                                &gEfiTimerArchProtocolGuid,
+                                TPL_CALLBACK,
+                                RegisterTimerArchProtocol,
+                                NULL,
+                                &gRegistration
+                                );
 
   return EFI_SUCCESS;
 }
@@ -223,9 +240,9 @@ GetTimeInNanoSecond (
   Frequency = GetPerformanceCounterProperties (NULL, NULL);
 
   //
-  //          Ticks
+  // Ticks
   // Time = --------- x 1,000,000,000
-  //        Frequency
+  // Frequency
   //
   NanoSeconds = MultU64x32 (DivU64x64Remainder (Ticks, Frequency, &Remainder), 1000000000u);
 
@@ -234,9 +251,9 @@ GetTimeInNanoSecond (
   // Since 2^29 < 1,000,000,000 = 0x3B9ACA00 < 2^30, Remainder should < 2^(64-30) = 2^34,
   // i.e. highest bit set in Remainder should <= 33.
   //
-  Shift = MAX (0, HighBitSet64 (Remainder) - 33);
-  Remainder = RShiftU64 (Remainder, (UINTN) Shift);
-  Frequency = RShiftU64 (Frequency, (UINTN) Shift);
+  Shift        = MAX (0, HighBitSet64 (Remainder) - 33);
+  Remainder    = RShiftU64 (Remainder, (UINTN) Shift);
+  Frequency    = RShiftU64 (Frequency, (UINTN) Shift);
   NanoSeconds += DivU64x64Remainder (MultU64x32 (Remainder, 1000000000u), Frequency, NULL);
 
   return NanoSeconds;

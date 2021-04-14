@@ -34,35 +34,33 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/HobLib.h>
 #include <Library/HiiLib.h>
 
-#define CONSOLE_OUT 0x00000001
-#define STD_ERROR   0x00000002
-#define CONSOLE_IN  0x00000004
-#define CONSOLE_ALL (CONSOLE_OUT | CONSOLE_IN | STD_ERROR)
+#define CONSOLE_OUT  0x00000001
+#define STD_ERROR    0x00000002
+#define CONSOLE_IN   0x00000004
+#define CONSOLE_ALL  (CONSOLE_OUT | CONSOLE_IN | STD_ERROR)
 
 typedef struct {
-  EFI_DEVICE_PATH_PROTOCOL  *DevicePath;
-  UINTN                     ConnectType;
+  EFI_DEVICE_PATH_PROTOCOL    *DevicePath;
+  UINTN                       ConnectType;
 } BDS_CONSOLE_CONNECT_ENTRY;
 
 extern BDS_CONSOLE_CONNECT_ENTRY  gPlatformConsole[];
 
 #define gEndEntire \
   { \
-    END_DEVICE_PATH_TYPE,\
-    END_ENTIRE_DEVICE_PATH_SUBTYPE,\
+    END_DEVICE_PATH_TYPE, \
+    END_ENTIRE_DEVICE_PATH_SUBTYPE, \
     { \
-      END_DEVICE_PATH_LENGTH,\
-      0\
-    }\
+      END_DEVICE_PATH_LENGTH, \
+      0 \
+    } \
   }
 
-
 typedef struct {
-  EMU_VENDOR_DEVICE_PATH_NODE     EmuBus;
-  EMU_VENDOR_DEVICE_PATH_NODE     EmuGraphicsWindow;
-  EFI_DEVICE_PATH_PROTOCOL        End;
+  EMU_VENDOR_DEVICE_PATH_NODE    EmuBus;
+  EMU_VENDOR_DEVICE_PATH_NODE    EmuGraphicsWindow;
+  EFI_DEVICE_PATH_PROTOCOL       End;
 } EMU_PLATFORM_UGA_DEVICE_PATH;
-
 
 //
 // Platform BDS Functions
@@ -83,10 +81,9 @@ PlatformBootManagerMemoryTest (
   IN EXTENDMEM_COVERAGE_LEVEL Level
   );
 
-
 VOID
-PlatformBdsConnectSequence (
-  VOID
-  );
+  PlatformBdsConnectSequence (
+                              VOID
+                              );
 
 #endif // _PLATFORM_BM_H

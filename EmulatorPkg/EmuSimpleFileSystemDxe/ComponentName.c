@@ -38,12 +38,12 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gEmuSimpleFileSystemC
 };
 
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gEmuSimpleFileSystemComponentName2 = {
-  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)EmuSimpleFileSystemComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)EmuSimpleFileSystemComponentNameGetControllerName,
+  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) EmuSimpleFileSystemComponentNameGetDriverName,
+  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) EmuSimpleFileSystemComponentNameGetControllerName,
   "en"
 };
 
-EFI_UNICODE_STRING_TABLE mEmuSimpleFileSystemDriverNameTable[] = {
+EFI_UNICODE_STRING_TABLE  mEmuSimpleFileSystemDriverNameTable[] = {
   {
     "eng;en",
     L"Emu Simple File System Driver"
@@ -102,14 +102,13 @@ EmuSimpleFileSystemComponentNameGetDriverName (
   )
 {
   return LookupUnicodeString2 (
-          Language,
-          This->SupportedLanguages,
-          mEmuSimpleFileSystemDriverNameTable,
-          DriverName,
-          (BOOLEAN)(This == &gEmuSimpleFileSystemComponentName)
-          );
+                               Language,
+                               This->SupportedLanguages,
+                               mEmuSimpleFileSystemDriverNameTable,
+                               DriverName,
+                               (BOOLEAN) (This == &gEmuSimpleFileSystemComponentName)
+                               );
 }
-
 
 /**
   Retrieves a Unicode string that is the user readable name of the controller
@@ -189,9 +188,9 @@ EmuSimpleFileSystemComponentNameGetControllerName (
   OUT CHAR16                                                             **ControllerName
   )
 {
-  EFI_STATUS                        Status;
-  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL   *SimpleFileSystem;
-  EMU_SIMPLE_FILE_SYSTEM_PRIVATE    *Private;
+  EFI_STATUS                       Status;
+  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL  *SimpleFileSystem;
+  EMU_SIMPLE_FILE_SYSTEM_PRIVATE   *Private;
 
   //
   // This is a device driver, so ChildHandle must be NULL.
@@ -204,24 +203,25 @@ EmuSimpleFileSystemComponentNameGetControllerName (
   // Make sure this driver is currently managing ControllerHandle
   //
   Status = EfiTestManagedDevice (
-             ControllerHandle,
-             gEmuSimpleFileSystemDriverBinding.DriverBindingHandle,
-             &gEmuIoThunkProtocolGuid
-             );
+                                 ControllerHandle,
+                                 gEmuSimpleFileSystemDriverBinding.DriverBindingHandle,
+                                 &gEmuIoThunkProtocolGuid
+                                 );
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
+
   //
   // Get our context back
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiSimpleFileSystemProtocolGuid,
-                  (VOID**)&SimpleFileSystem,
-                  gEmuSimpleFileSystemDriverBinding.DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
+                              ControllerHandle,
+                              &gEfiSimpleFileSystemProtocolGuid,
+                              (VOID **) &SimpleFileSystem,
+                              gEmuSimpleFileSystemDriverBinding.DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
@@ -229,10 +229,10 @@ EmuSimpleFileSystemComponentNameGetControllerName (
   Private = EMU_SIMPLE_FILE_SYSTEM_PRIVATE_DATA_FROM_THIS (SimpleFileSystem);
 
   return LookupUnicodeString2 (
-          Language,
-          This->SupportedLanguages,
-          Private->ControllerNameTable,
-          ControllerName,
-          (BOOLEAN)(This == &gEmuSimpleFileSystemComponentName)
-          );
+                               Language,
+                               This->SupportedLanguages,
+                               Private->ControllerNameTable,
+                               ControllerName,
+                               (BOOLEAN) (This == &gEmuSimpleFileSystemComponentName)
+                               );
 }

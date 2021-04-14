@@ -32,7 +32,7 @@ EmuBlockIoDriverDiagnosticsRunDiagnostics (
 //
 // EFI Driver Diagnostics Protocol
 //
-EFI_DRIVER_DIAGNOSTICS_PROTOCOL gEmuBlockIoDriverDiagnostics = {
+EFI_DRIVER_DIAGNOSTICS_PROTOCOL  gEmuBlockIoDriverDiagnostics = {
   EmuBlockIoDriverDiagnosticsRunDiagnostics,
   "eng"
 };
@@ -40,11 +40,34 @@ EFI_DRIVER_DIAGNOSTICS_PROTOCOL gEmuBlockIoDriverDiagnostics = {
 //
 // EFI Driver Diagnostics 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_DRIVER_DIAGNOSTICS2_PROTOCOL gEmuBlockIoDriverDiagnostics2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_DRIVER_DIAGNOSTICS2_PROTOCOL  gEmuBlockIoDriverDiagnostics2 = {
   (EFI_DRIVER_DIAGNOSTICS2_RUN_DIAGNOSTICS) EmuBlockIoDriverDiagnosticsRunDiagnostics,
   "en"
 };
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 EmuBlockIoDriverDiagnosticsRunDiagnostics (
@@ -57,6 +80,7 @@ EmuBlockIoDriverDiagnosticsRunDiagnostics (
   OUT UINTN                                         *BufferSize,
   OUT CHAR16                                        **Buffer
   )
+
 /*++
 
   Routine Description:
@@ -117,24 +141,23 @@ EmuBlockIoDriverDiagnosticsRunDiagnostics (
 
 --*/
 {
-  EFI_STATUS            Status;
-  EFI_BLOCK_IO_PROTOCOL *BlockIo;
-  CHAR8                 *SupportedLanguages;
-  BOOLEAN               Iso639Language;
-  BOOLEAN               Found;
-  UINTN                 Index;
+  EFI_STATUS             Status;
+  EFI_BLOCK_IO_PROTOCOL  *BlockIo;
+  CHAR8                  *SupportedLanguages;
+  BOOLEAN                Iso639Language;
+  BOOLEAN                Found;
+  UINTN                  Index;
 
   if (Language         == NULL ||
       ErrorType        == NULL ||
       Buffer           == NULL ||
       ControllerHandle == NULL ||
       BufferSize       == NULL) {
-
     return EFI_INVALID_PARAMETER;
   }
 
   SupportedLanguages = This->SupportedLanguages;
-  Iso639Language = (BOOLEAN)(This == &gEmuBlockIoDriverDiagnostics);
+  Iso639Language     = (BOOLEAN) (This == &gEmuBlockIoDriverDiagnostics);
   //
   // Make sure Language is in the set of Supported Languages
   //
@@ -143,19 +166,25 @@ EmuBlockIoDriverDiagnosticsRunDiagnostics (
     if (Iso639Language) {
       if (CompareMem (Language, SupportedLanguages, 3) == 0) {
         Found = TRUE;
-      break;
-    }
+        break;
+      }
+
       SupportedLanguages += 3;
     } else {
-      for (Index = 0; SupportedLanguages[Index] != 0 && SupportedLanguages[Index] != ';'; Index++);
-      if ((AsciiStrnCmp(SupportedLanguages, Language, Index) == 0) && (Language[Index] == 0)) {
+      for (Index = 0; SupportedLanguages[Index] != 0 && SupportedLanguages[Index] != ';'; Index++) {
+      }
+
+      if ((AsciiStrnCmp (SupportedLanguages, Language, Index) == 0) && (Language[Index] == 0)) {
         Found = TRUE;
         break;
-  }
+      }
+
       SupportedLanguages += Index;
-      for (; *SupportedLanguages != 0 && *SupportedLanguages == ';'; SupportedLanguages++);
+      for ( ; *SupportedLanguages != 0 && *SupportedLanguages == ';'; SupportedLanguages++) {
+      }
     }
   }
+
   //
   // If Language is not a member of SupportedLanguages, then return EFI_UNSUPPORTED
   //
@@ -184,21 +213,21 @@ EmuBlockIoDriverDiagnosticsRunDiagnostics (
   // Validate controller handle
   //
   Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEmuIoThunkProtocolGuid,
-                  (VOID **)&BlockIo,
-                  gEmuBlockIoDriverBinding.DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
-                  );
+                              ControllerHandle,
+                              &gEmuIoThunkProtocolGuid,
+                              (VOID **) &BlockIo,
+                              gEmuBlockIoDriverBinding.DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_BY_DRIVER
+                              );
 
   if (!EFI_ERROR (Status)) {
-    gBS->CloseProtocol (
-          ControllerHandle,
-          &gEmuIoThunkProtocolGuid,
-          gEmuBlockIoDriverBinding.DriverBindingHandle,
-          ControllerHandle
-          );
+  gBS->CloseProtocol (
+                      ControllerHandle,
+                      &gEmuIoThunkProtocolGuid,
+                      gEmuBlockIoDriverBinding.DriverBindingHandle,
+                      ControllerHandle
+                      );
 
     return EFI_UNSUPPORTED;
   }

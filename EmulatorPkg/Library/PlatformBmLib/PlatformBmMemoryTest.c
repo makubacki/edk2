@@ -42,27 +42,27 @@ PlatformBootManagerMemoryTest (
   ReturnStatus = EFI_SUCCESS;
   ZeroMem (&Key, sizeof (EFI_INPUT_KEY));
 
-  TestedMemorySize  = 0;
-  TotalMemorySize   = 0;
-  ErrorOut          = FALSE;
-  TestAbort         = FALSE;
+  TestedMemorySize = 0;
+  TotalMemorySize  = 0;
+  ErrorOut  = FALSE;
+  TestAbort = FALSE;
 
   RequireSoftECCInit = FALSE;
 
   Status = gBS->LocateProtocol (
-                  &gEfiGenericMemTestProtocolGuid,
-                  NULL,
-                  (VOID **) &GenMemoryTest
-                  );
+                                &gEfiGenericMemTestProtocolGuid,
+                                NULL,
+                                (VOID **) &GenMemoryTest
+                                );
   if (EFI_ERROR (Status)) {
     return EFI_SUCCESS;
   }
 
   InitStatus = GenMemoryTest->MemoryTestInit (
-                                GenMemoryTest,
-                                Level,
-                                &RequireSoftECCInit
-                                );
+                                              GenMemoryTest,
+                                              Level,
+                                              &RequireSoftECCInit
+                                              );
   if (InitStatus == EFI_NO_MEDIA) {
     //
     // The PEI codes also have the relevant memory test code to check the memory,
@@ -77,22 +77,21 @@ PlatformBootManagerMemoryTest (
   DEBUG ((DEBUG_INFO, "Enter memory test.\n"));
   do {
     Status = GenMemoryTest->PerformMemoryTest (
-                              GenMemoryTest,
-                              &TestedMemorySize,
-                              &TotalMemorySize,
-                              &ErrorOut,
-                              TestAbort
-                              );
+                                               GenMemoryTest,
+                                               &TestedMemorySize,
+                                               &TotalMemorySize,
+                                               &ErrorOut,
+                                               TestAbort
+                                               );
     if (ErrorOut && (Status == EFI_DEVICE_ERROR)) {
       PrintXY (10, 10, NULL, NULL, L"Memory Testing failed!");
       ASSERT (0);
     }
 
-
     DEBUG ((DEBUG_INFO, "Perform memory test (ESC to skip).\n"));
 
     if (!PcdGetBool (PcdConInConnectOnDemand)) {
-      KeyStatus     = gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
+      KeyStatus = gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
       if (!EFI_ERROR (KeyStatus) && (Key.ScanCode == SCAN_ESC)) {
         if (!RequireSoftECCInit) {
           Status = GenMemoryTest->Finished (GenMemoryTest);
