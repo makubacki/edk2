@@ -54,7 +54,7 @@ InvalidateInstructionCacheRange (
   IN      UINTN                     Length
   )
 {
-  ASSERT (Length <= MAX_ADDRESS - (UINTN)Address + 1);
+  ASSERT (Length <= MAX_ADDRESS - (UINTN) Address + 1);
   return Address;
 }
 
@@ -109,7 +109,7 @@ WriteBackInvalidateDataCacheRange (
   IN      UINTN                     Length
   )
 {
-  ASSERT (Length <= MAX_ADDRESS - (UINTN)Address + 1);
+  ASSERT (Length <= MAX_ADDRESS - (UINTN) Address + 1);
   return Address;
 }
 
@@ -163,7 +163,7 @@ WriteBackDataCacheRange (
   IN      UINTN                     Length
   )
 {
-  ASSERT (Length <= MAX_ADDRESS - (UINTN)Address + 1);
+  ASSERT (Length <= MAX_ADDRESS - (UINTN) Address + 1);
   return Address;
 }
 
@@ -220,6 +220,6 @@ InvalidateDataCacheRange (
   IN      UINTN                     Length
   )
 {
-  ASSERT (Length <= MAX_ADDRESS - (UINTN)Address + 1);
+  ASSERT (Length <= MAX_ADDRESS - (UINTN) Address + 1);
   return Address;
 }

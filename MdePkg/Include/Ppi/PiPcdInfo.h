@@ -13,15 +13,15 @@
 #ifndef __PI_PCD_INFO_PPI_H__
 #define __PI_PCD_INFO_PPI_H__
 
-extern EFI_GUID gEfiGetPcdInfoPpiGuid;
+extern EFI_GUID  gEfiGetPcdInfoPpiGuid;
 
 #define EFI_GET_PCD_INFO_PPI_GUID \
-  { 0xa60c6b59, 0xe459, 0x425d, { 0x9c, 0x69,  0xb, 0xcc, 0x9c, 0xb2, 0x7d, 0x81 } }
+  { 0xa60c6b59, 0xe459, 0x425d, { 0x9c, 0x69, 0xb, 0xcc, 0x9c, 0xb2, 0x7d, 0x81 } }
 
 ///
 /// The forward declaration for EFI_GET_PCD_INFO_PPI.
 ///
-typedef struct _EFI_GET_PCD_INFO_PPI  EFI_GET_PCD_INFO_PPI;
+typedef struct _EFI_GET_PCD_INFO_PPI EFI_GET_PCD_INFO_PPI;
 
 /**
   Retrieve additional information associated with a PCD token.
@@ -37,12 +37,12 @@ typedef struct _EFI_GET_PCD_INFO_PPI  EFI_GET_PCD_INFO_PPI;
   @retval  EFI_NOT_FOUND    The PCD service could not find the requested token number.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_GET_PCD_INFO_PPI_GET_INFO) (
-  IN CONST  EFI_GUID        *Guid,
-  IN        UINTN           TokenNumber,
-  OUT       EFI_PCD_INFO    *PcdInfo
-);
+  EFI_STATUS
+(EFIAPI *EFI_GET_PCD_INFO_PPI_GET_INFO)(
+                                        IN CONST  EFI_GUID        *Guid,
+                                        IN        UINTN           TokenNumber,
+                                        OUT       EFI_PCD_INFO    *PcdInfo
+                                        );
 
 /**
   Retrieve the currently set SKU Id.
@@ -52,10 +52,10 @@ EFI_STATUS
             Id is returned.
 **/
 typedef
-UINTN
-(EFIAPI *EFI_GET_PCD_INFO_PPI_GET_SKU) (
-  VOID
-);
+  UINTN
+(EFIAPI *EFI_GET_PCD_INFO_PPI_GET_SKU)(
+                                       VOID
+                                       );
 
 ///
 /// This is the PCD service to use when querying for some additional data that can be contained in the
@@ -65,12 +65,11 @@ struct _EFI_GET_PCD_INFO_PPI {
   ///
   /// Retrieve additional information associated with a PCD.
   ///
-  EFI_GET_PCD_INFO_PPI_GET_INFO         GetInfo;
+  EFI_GET_PCD_INFO_PPI_GET_INFO    GetInfo;
   ///
   /// Retrieve the currently set SKU Id.
   ///
-  EFI_GET_PCD_INFO_PPI_GET_SKU          GetSku;
+  EFI_GET_PCD_INFO_PPI_GET_SKU     GetSku;
 };
 
 #endif
-

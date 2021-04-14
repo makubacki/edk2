@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 /**
   Divides a 64-bit unsigned integer by a 32-bit unsigned integer and
   generates a 64-bit unsigned result.
@@ -31,14 +28,13 @@ InternalMathDivU64x32 (
   )
 {
   _asm {
-    mov     eax, dword ptr [Dividend + 4]
+  mov  eax, dword ptr[Dividend + 4]
     mov     ecx, Divisor
     xor     edx, edx
     div     ecx
-    push    eax                     ; save quotient on stack
-    mov     eax, dword ptr [Dividend]
+    push    eax;save quotient on stack
+    mov  eax, dword ptr[Dividend]
     div     ecx
-    pop     edx                     ; restore high-order dword of the quotient
+    pop     edx;restore  high-order dword of the quotient
   }
 }
-

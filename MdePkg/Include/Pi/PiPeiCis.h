@@ -18,27 +18,25 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 ///
 /// The handles of EFI FV.
 ///
-typedef VOID    *EFI_PEI_FV_HANDLE;
+typedef VOID *EFI_PEI_FV_HANDLE;
 
 ///
 /// The handles of EFI FFS.
 ///
-typedef VOID    *EFI_PEI_FILE_HANDLE;
+typedef VOID *EFI_PEI_FILE_HANDLE;
 
 ///
 /// Declare the forward reference data structure for EFI_PEI_SERVICE.
 ///
-typedef struct _EFI_PEI_SERVICES          EFI_PEI_SERVICES;
+typedef struct _EFI_PEI_SERVICES EFI_PEI_SERVICES;
 
 ///
 /// Declare the forward reference data structure for EFI_PEI_NOTIFY_DESCRIPTOR.
 ///
 typedef struct _EFI_PEI_NOTIFY_DESCRIPTOR EFI_PEI_NOTIFY_DESCRIPTOR;
 
-
 #include <Ppi/CpuIo.h>
 #include <Ppi/PciCfg2.h>
-
 
 /**
   The PEI Dispatcher will invoke each PEIM one time.  During this pass, the PEI
@@ -52,11 +50,11 @@ typedef struct _EFI_PEI_NOTIFY_DESCRIPTOR EFI_PEI_NOTIFY_DESCRIPTOR;
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEIM_ENTRY_POINT2)(
-  IN EFI_PEI_FILE_HANDLE             FileHandle,
-  IN CONST EFI_PEI_SERVICES          **PeiServices
-  );
+                                IN EFI_PEI_FILE_HANDLE             FileHandle,
+                                IN CONST EFI_PEI_SERVICES          **PeiServices
+                                );
 
 /**
   Entry point of the notification callback function itself within the PEIM.
@@ -69,12 +67,12 @@ EFI_STATUS
           The status code returned from this function is ignored.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEIM_NOTIFY_ENTRY_POINT)(
-  IN EFI_PEI_SERVICES           **PeiServices,
-  IN EFI_PEI_NOTIFY_DESCRIPTOR  *NotifyDescriptor,
-  IN VOID                       *Ppi
-  );
+                                      IN EFI_PEI_SERVICES           **PeiServices,
+                                      IN EFI_PEI_NOTIFY_DESCRIPTOR  *NotifyDescriptor,
+                                      IN VOID                       *Ppi
+                                      );
 
 //
 // PEI Ppi Services List Descriptors
@@ -94,15 +92,15 @@ typedef struct {
   /// This field is a set of flags describing the characteristics of this imported table entry.
   /// All flags are defined as EFI_PEI_PPI_DESCRIPTOR_***, which can also be combined into one.
   ///
-  UINTN     Flags;
+  UINTN       Flags;
   ///
   /// The address of the EFI_GUID that names the interface.
   ///
-  EFI_GUID  *Guid;
+  EFI_GUID    *Guid;
   ///
   /// A pointer to the PPI. It contains the information necessary to install a service.
   ///
-  VOID      *Ppi;
+  VOID        *Ppi;
 } EFI_PEI_PPI_DESCRIPTOR;
 
 ///
@@ -113,15 +111,15 @@ struct _EFI_PEI_NOTIFY_DESCRIPTOR {
   ///
   /// Details if the type of notification are callback or dispatch.
   ///
-  UINTN                       Flags;
+  UINTN                          Flags;
   ///
   /// The address of the EFI_GUID that names the interface.
   ///
-  EFI_GUID                    *Guid;
+  EFI_GUID                       *Guid;
   ///
   /// Address of the notification callback function itself within the PEIM.
   ///
-  EFI_PEIM_NOTIFY_ENTRY_POINT Notify;
+  EFI_PEIM_NOTIFY_ENTRY_POINT    Notify;
 };
 
 ///
@@ -132,11 +130,11 @@ typedef union {
   ///
   /// The typedef structure of the notification descriptor.
   ///
-  EFI_PEI_NOTIFY_DESCRIPTOR   Notify;
+  EFI_PEI_NOTIFY_DESCRIPTOR    Notify;
   ///
   /// The typedef structure of the PPI descriptor.
   ///
-  EFI_PEI_PPI_DESCRIPTOR      Ppi;
+  EFI_PEI_PPI_DESCRIPTOR       Ppi;
 } EFI_PEI_DESCRIPTOR;
 
 /**
@@ -157,11 +155,11 @@ typedef union {
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_INSTALL_PPI)(
-  IN CONST EFI_PEI_SERVICES            **PeiServices,
-  IN CONST EFI_PEI_PPI_DESCRIPTOR      *PpiList
-  );
+                              IN CONST EFI_PEI_SERVICES            **PeiServices,
+                              IN CONST EFI_PEI_PPI_DESCRIPTOR      *PpiList
+                              );
 
 /**
   This function reinstalls an interface in the PEI PPI database by GUID.
@@ -182,12 +180,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_REINSTALL_PPI)(
-  IN CONST EFI_PEI_SERVICES                **PeiServices,
-  IN CONST EFI_PEI_PPI_DESCRIPTOR          *OldPpi,
-  IN CONST EFI_PEI_PPI_DESCRIPTOR          *NewPpi
-  );
+                                IN CONST EFI_PEI_SERVICES                **PeiServices,
+                                IN CONST EFI_PEI_PPI_DESCRIPTOR          *OldPpi,
+                                IN CONST EFI_PEI_PPI_DESCRIPTOR          *NewPpi
+                                );
 
 /**
   This function locates an interface in the PEI PPI database by GUID.
@@ -203,14 +201,14 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_LOCATE_PPI)(
-  IN CONST EFI_PEI_SERVICES            **PeiServices,
-  IN CONST EFI_GUID                    *Guid,
-  IN UINTN                             Instance,
-  IN OUT   EFI_PEI_PPI_DESCRIPTOR      **PpiDescriptor OPTIONAL,
-  IN OUT   VOID                        **Ppi
-  );
+                             IN CONST EFI_PEI_SERVICES            **PeiServices,
+                             IN CONST EFI_GUID                    *Guid,
+                             IN UINTN                             Instance,
+                             IN OUT   EFI_PEI_PPI_DESCRIPTOR      **PpiDescriptor OPTIONAL,
+                             IN OUT   VOID                        **Ppi
+                             );
 
 /**
   This function installs a notification service to be called back when a
@@ -228,11 +226,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_NOTIFY_PPI)(
-  IN CONST EFI_PEI_SERVICES                **PeiServices,
-  IN CONST EFI_PEI_NOTIFY_DESCRIPTOR       *NotifyList
-  );
+                             IN CONST EFI_PEI_SERVICES                **PeiServices,
+                             IN CONST EFI_PEI_NOTIFY_DESCRIPTOR       *NotifyList
+                             );
 
 /**
   This function returns the present value of the boot mode.
@@ -244,11 +242,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_GET_BOOT_MODE)(
-  IN CONST EFI_PEI_SERVICES            **PeiServices,
-  OUT EFI_BOOT_MODE                    *BootMode
-  );
+                                IN CONST EFI_PEI_SERVICES            **PeiServices,
+                                OUT EFI_BOOT_MODE                    *BootMode
+                                );
 
 /**
   This function sets the value of the boot mode.
@@ -260,11 +258,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_SET_BOOT_MODE)(
-  IN CONST EFI_PEI_SERVICES            **PeiServices,
-  IN EFI_BOOT_MODE                     BootMode
-  );
+                                IN CONST EFI_PEI_SERVICES            **PeiServices,
+                                IN EFI_BOOT_MODE                     BootMode
+                                );
 
 /**
   This function returns the pointer to the list of Hand-Off Blocks (HOBs) in memory.
@@ -277,11 +275,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_GET_HOB_LIST)(
-  IN CONST EFI_PEI_SERVICES        **PeiServices,
-  OUT VOID                         **HobList
-  );
+                               IN CONST EFI_PEI_SERVICES        **PeiServices,
+                               OUT VOID                         **HobList
+                               );
 
 /**
   This service, published by the PEI Foundation, abstracts the creation of a Hand-Off Block's (HOB's) headers.
@@ -296,13 +294,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_CREATE_HOB)(
-  IN CONST EFI_PEI_SERVICES            **PeiServices,
-  IN UINT16                            Type,
-  IN UINT16                            Length,
-  IN OUT VOID                          **Hob
-  );
+                             IN CONST EFI_PEI_SERVICES            **PeiServices,
+                             IN UINT16                            Type,
+                             IN UINT16                            Length,
+                             IN OUT VOID                          **Hob
+                             );
 
 /**
   The purpose of the service is to abstract the capability of the PEI
@@ -324,12 +322,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_FFS_FIND_NEXT_VOLUME2)(
-  IN CONST EFI_PEI_SERVICES                **PeiServices,
-  IN UINTN                                 Instance,
-  OUT EFI_PEI_FV_HANDLE                    *VolumeHandle
-  );
+                                        IN CONST EFI_PEI_SERVICES                **PeiServices,
+                                        IN UINTN                                 Instance,
+                                        OUT EFI_PEI_FV_HANDLE                    *VolumeHandle
+                                        );
 
 /**
   Searches for the next matching file in the firmware volume.
@@ -353,13 +351,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_FFS_FIND_NEXT_FILE2)(
-  IN CONST EFI_PEI_SERVICES                **PeiServices,
-  IN EFI_FV_FILETYPE                       SearchType,
-  IN CONST EFI_PEI_FV_HANDLE               FvHandle,
-  IN OUT EFI_PEI_FILE_HANDLE               *FileHandle
-  );
+                                      IN CONST EFI_PEI_SERVICES                **PeiServices,
+                                      IN EFI_FV_FILETYPE                       SearchType,
+                                      IN CONST EFI_PEI_FV_HANDLE               FvHandle,
+                                      IN OUT EFI_PEI_FILE_HANDLE               *FileHandle
+                                      );
 
 /**
   Searches for the next matching section within the specified file.
@@ -381,13 +379,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_FFS_FIND_SECTION_DATA2)(
-  IN CONST EFI_PEI_SERVICES            **PeiServices,
-  IN EFI_SECTION_TYPE                  SectionType,
-  IN EFI_PEI_FILE_HANDLE               FileHandle,
-  OUT VOID                             **SectionData
-  );
+                                         IN CONST EFI_PEI_SERVICES            **PeiServices,
+                                         IN EFI_SECTION_TYPE                  SectionType,
+                                         IN EFI_PEI_FILE_HANDLE               FileHandle,
+                                         OUT VOID                             **SectionData
+                                         );
 
 /**
   Searches for the next matching section within the specified file.
@@ -411,15 +409,15 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_FFS_FIND_SECTION_DATA3)(
-  IN CONST EFI_PEI_SERVICES            **PeiServices,
-  IN EFI_SECTION_TYPE                  SectionType,
-  IN UINTN                             SectionInstance,
-  IN EFI_PEI_FILE_HANDLE               FileHandle,
-  OUT VOID                             **SectionData,
-  OUT UINT32                           *AuthenticationStatus
-  );
+                                         IN CONST EFI_PEI_SERVICES            **PeiServices,
+                                         IN EFI_SECTION_TYPE                  SectionType,
+                                         IN UINTN                             SectionInstance,
+                                         IN EFI_PEI_FILE_HANDLE               FileHandle,
+                                         OUT VOID                             **SectionData,
+                                         OUT UINT32                           *AuthenticationStatus
+                                         );
 
 /**
   This function registers the found memory configuration with the PEI Foundation.
@@ -434,12 +432,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_INSTALL_PEI_MEMORY)(
-  IN CONST EFI_PEI_SERVICES     **PeiServices,
-  IN EFI_PHYSICAL_ADDRESS       MemoryBegin,
-  IN UINT64                     MemoryLength
-  );
+                                     IN CONST EFI_PEI_SERVICES     **PeiServices,
+                                     IN EFI_PHYSICAL_ADDRESS       MemoryBegin,
+                                     IN UINT64                     MemoryLength
+                                     );
 
 /**
   The purpose of the service is to publish an interface that allows
@@ -464,13 +462,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_ALLOCATE_PAGES)(
-  IN CONST EFI_PEI_SERVICES     **PeiServices,
-  IN EFI_MEMORY_TYPE            MemoryType,
-  IN UINTN                      Pages,
-  OUT EFI_PHYSICAL_ADDRESS      *Memory
-  );
+                                 IN CONST EFI_PEI_SERVICES     **PeiServices,
+                                 IN EFI_MEMORY_TYPE            MemoryType,
+                                 IN UINTN                      Pages,
+                                 OUT EFI_PHYSICAL_ADDRESS      *Memory
+                                 );
 
 /**
   Frees memory pages.
@@ -486,12 +484,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_PEI_FREE_PAGES) (
-  IN CONST EFI_PEI_SERVICES     **PeiServices,
-  IN EFI_PHYSICAL_ADDRESS       Memory,
-  IN UINTN                      Pages
-  );
+  EFI_STATUS
+(EFIAPI *EFI_PEI_FREE_PAGES)(
+                             IN CONST EFI_PEI_SERVICES     **PeiServices,
+                             IN EFI_PHYSICAL_ADDRESS       Memory,
+                             IN UINTN                      Pages
+                             );
 
 /**
   The purpose of this service is to publish an interface that
@@ -506,12 +504,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_ALLOCATE_POOL)(
-  IN CONST EFI_PEI_SERVICES     **PeiServices,
-  IN UINTN                      Size,
-  OUT VOID                      **Buffer
-  );
+                                IN CONST EFI_PEI_SERVICES     **PeiServices,
+                                IN UINTN                      Size,
+                                OUT VOID                      **Buffer
+                                );
 
 /**
   This service copies the contents of one buffer to another buffer.
@@ -522,12 +520,12 @@ EFI_STATUS
 
 **/
 typedef
-VOID
+  VOID
 (EFIAPI *EFI_PEI_COPY_MEM)(
-  IN VOID                       *Destination,
-  IN VOID                       *Source,
-  IN UINTN                      Length
-  );
+                           IN VOID                       *Destination,
+                           IN VOID                       *Source,
+                           IN UINTN                      Length
+                           );
 
 /**
   The service fills a buffer with a specified value.
@@ -538,12 +536,12 @@ VOID
 
 **/
 typedef
-VOID
+  VOID
 (EFIAPI *EFI_PEI_SET_MEM)(
-  IN VOID                       *Buffer,
-  IN UINTN                      Size,
-  IN UINT8                      Value
-  );
+                          IN VOID                       *Buffer,
+                          IN UINTN                      Size,
+                          IN UINT8                      Value
+                          );
 
 /**
   This service publishes an interface that allows PEIMs to report status codes.
@@ -575,15 +573,15 @@ VOID
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_REPORT_STATUS_CODE)(
-  IN CONST EFI_PEI_SERVICES         **PeiServices,
-  IN EFI_STATUS_CODE_TYPE           Type,
-  IN EFI_STATUS_CODE_VALUE          Value,
-  IN UINT32                         Instance,
-  IN CONST EFI_GUID                 *CallerId OPTIONAL,
-  IN CONST EFI_STATUS_CODE_DATA     *Data OPTIONAL
-  );
+                                     IN CONST EFI_PEI_SERVICES         **PeiServices,
+                                     IN EFI_STATUS_CODE_TYPE           Type,
+                                     IN EFI_STATUS_CODE_VALUE          Value,
+                                     IN UINT32                         Instance,
+                                     IN CONST EFI_GUID                 *CallerId OPTIONAL,
+                                     IN CONST EFI_STATUS_CODE_DATA     *Data OPTIONAL
+                                     );
 
 /**
   Resets the entire platform.
@@ -599,10 +597,10 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_RESET_SYSTEM)(
-  IN CONST EFI_PEI_SERVICES   **PeiServices
-  );
+                               IN CONST EFI_PEI_SERVICES   **PeiServices
+                               );
 
 /**
   Resets the entire platform.
@@ -618,13 +616,13 @@ EFI_STATUS
 
 **/
 typedef
-VOID
-(EFIAPI *EFI_PEI_RESET2_SYSTEM) (
-  IN EFI_RESET_TYPE     ResetType,
-  IN EFI_STATUS         ResetStatus,
-  IN UINTN              DataSize,
-  IN VOID               *ResetData OPTIONAL
-  );
+  VOID
+(EFIAPI *EFI_PEI_RESET2_SYSTEM)(
+                                IN EFI_RESET_TYPE     ResetType,
+                                IN EFI_STATUS         ResetStatus,
+                                IN UINTN              DataSize,
+                                IN VOID               *ResetData OPTIONAL
+                                );
 
 /**
   Find a file within a volume by its name.
@@ -647,12 +645,12 @@ VOID
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_FFS_FIND_BY_NAME)(
-  IN  CONST  EFI_GUID            *FileName,
-  IN  EFI_PEI_FV_HANDLE          VolumeHandle,
-  OUT EFI_PEI_FILE_HANDLE        *FileHandle
-  );
+                                   IN  CONST  EFI_GUID            *FileName,
+                                   IN  EFI_PEI_FV_HANDLE          VolumeHandle,
+                                   OUT EFI_PEI_FILE_HANDLE        *FileHandle
+                                   );
 
 ///
 /// The information of the FV file.
@@ -661,25 +659,25 @@ typedef struct {
   ///
   /// Name of the file.
   ///
-  EFI_GUID                FileName;
+  EFI_GUID                  FileName;
   ///
   /// File type.
   ///
-  EFI_FV_FILETYPE         FileType;
+  EFI_FV_FILETYPE           FileType;
   ///
   /// Attributes of the file.
   ///
-  EFI_FV_FILE_ATTRIBUTES  FileAttributes;
+  EFI_FV_FILE_ATTRIBUTES    FileAttributes;
   ///
   /// Points to the file's data (not the header).
   /// Not valid if EFI_FV_FILE_ATTRIB_MEMORY_MAPPED
   /// is zero.
   ///
-  VOID                    *Buffer;
+  VOID                      *Buffer;
   ///
   /// Size of the file's data.
   ///
-  UINT32                  BufferSize;
+  UINT32                    BufferSize;
 } EFI_FV_FILE_INFO;
 
 ///
@@ -689,29 +687,29 @@ typedef struct {
   ///
   /// Name of the file.
   ///
-  EFI_GUID                FileName;
+  EFI_GUID                  FileName;
   ///
   /// File type.
   ///
-  EFI_FV_FILETYPE         FileType;
+  EFI_FV_FILETYPE           FileType;
   ///
   /// Attributes of the file.
   ///
-  EFI_FV_FILE_ATTRIBUTES  FileAttributes;
+  EFI_FV_FILE_ATTRIBUTES    FileAttributes;
   ///
   /// Points to the file's data (not the header).
   /// Not valid if EFI_FV_FILE_ATTRIB_MEMORY_MAPPED
   /// is zero.
   ///
-  VOID                    *Buffer;
+  VOID                      *Buffer;
   ///
   /// Size of the file's data.
   ///
-  UINT32                  BufferSize;
+  UINT32                    BufferSize;
   ///
   /// Authentication status for this file.
   ///
-  UINT32                  AuthenticationStatus;
+  UINT32                    AuthenticationStatus;
 } EFI_FV_FILE_INFO2;
 
 /**
@@ -733,11 +731,11 @@ typedef struct {
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_FFS_GET_FILE_INFO)(
-  IN  EFI_PEI_FILE_HANDLE         FileHandle,
-  OUT EFI_FV_FILE_INFO            *FileInfo
-  );
+                                    IN  EFI_PEI_FILE_HANDLE         FileHandle,
+                                    OUT EFI_FV_FILE_INFO            *FileInfo
+                                    );
 
 /**
   Returns information about a specific file.
@@ -757,11 +755,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_FFS_GET_FILE_INFO2)(
-  IN  EFI_PEI_FILE_HANDLE         FileHandle,
-  OUT EFI_FV_FILE_INFO2           *FileInfo
-  );
+                                     IN  EFI_PEI_FILE_HANDLE         FileHandle,
+                                     OUT EFI_FV_FILE_INFO2           *FileInfo
+                                     );
 
 ///
 /// The information of the FV volume.
@@ -770,25 +768,25 @@ typedef struct {
   ///
   /// Attributes of the firmware volume.
   ///
-  EFI_FVB_ATTRIBUTES_2  FvAttributes;
+  EFI_FVB_ATTRIBUTES_2    FvAttributes;
   ///
   /// Format of the firmware volume.
   ///
-  EFI_GUID              FvFormat;
+  EFI_GUID                FvFormat;
   ///
   /// Name of the firmware volume.
   ///
-  EFI_GUID              FvName;
+  EFI_GUID                FvName;
   ///
   /// Points to the first byte of the firmware
   /// volume, if bit EFI_FVB_MEMORY_MAPPED is
   /// set in FvAttributes.
   ///
-  VOID                  *FvStart;
+  VOID                    *FvStart;
   ///
   /// Size of the firmware volume.
   ///
-  UINT64                FvSize;
+  UINT64                  FvSize;
 } EFI_FV_INFO;
 
 /**
@@ -809,11 +807,11 @@ typedef struct {
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_FFS_GET_VOLUME_INFO)(
-  IN  EFI_PEI_FV_HANDLE       VolumeHandle,
-  OUT EFI_FV_INFO             *VolumeInfo
-  );
+                                      IN  EFI_PEI_FV_HANDLE       VolumeHandle,
+                                      OUT EFI_FV_INFO             *VolumeInfo
+                                      );
 
 /**
   Register a PEIM so that it will be shadowed and called again.
@@ -840,11 +838,10 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_REGISTER_FOR_SHADOW)(
-  IN  EFI_PEI_FILE_HANDLE FileHandle
-  );
-
+                                      IN  EFI_PEI_FILE_HANDLE FileHandle
+                                      );
 
 //
 // PEI Specification Revision information
@@ -866,7 +863,7 @@ EFI_STATUS
 /// #define ((PEI_SPECIFICATION_MAJOR_REVISION<<16) |(PEI_SPECIFICATION_MINOR_REVISION))
 /// and it should be as follows:
 ///
-#define PEI_SERVICES_REVISION   ((PEI_SPECIFICATION_MAJOR_REVISION<<16) | (PEI_SPECIFICATION_MINOR_REVISION))
+#define PEI_SERVICES_REVISION  ((PEI_SPECIFICATION_MAJOR_REVISION<<16) | (PEI_SPECIFICATION_MINOR_REVISION))
 
 ///
 /// EFI_PEI_SERVICES is a collection of functions whose implementation is provided by the PEI
@@ -881,74 +878,73 @@ struct _EFI_PEI_SERVICES {
   ///
   /// The table header for the PEI Services Table.
   ///
-  EFI_TABLE_HEADER                Hdr;
+  EFI_TABLE_HEADER                  Hdr;
 
   //
   // PPI Functions
   //
-  EFI_PEI_INSTALL_PPI             InstallPpi;
-  EFI_PEI_REINSTALL_PPI           ReInstallPpi;
-  EFI_PEI_LOCATE_PPI              LocatePpi;
-  EFI_PEI_NOTIFY_PPI              NotifyPpi;
+  EFI_PEI_INSTALL_PPI               InstallPpi;
+  EFI_PEI_REINSTALL_PPI             ReInstallPpi;
+  EFI_PEI_LOCATE_PPI                LocatePpi;
+  EFI_PEI_NOTIFY_PPI                NotifyPpi;
 
   //
   // Boot Mode Functions
   //
-  EFI_PEI_GET_BOOT_MODE           GetBootMode;
-  EFI_PEI_SET_BOOT_MODE           SetBootMode;
+  EFI_PEI_GET_BOOT_MODE             GetBootMode;
+  EFI_PEI_SET_BOOT_MODE             SetBootMode;
 
   //
   // HOB Functions
   //
-  EFI_PEI_GET_HOB_LIST            GetHobList;
-  EFI_PEI_CREATE_HOB              CreateHob;
+  EFI_PEI_GET_HOB_LIST              GetHobList;
+  EFI_PEI_CREATE_HOB                CreateHob;
 
   //
   // Firmware Volume Functions
   //
-  EFI_PEI_FFS_FIND_NEXT_VOLUME2   FfsFindNextVolume;
-  EFI_PEI_FFS_FIND_NEXT_FILE2     FfsFindNextFile;
-  EFI_PEI_FFS_FIND_SECTION_DATA2  FfsFindSectionData;
+  EFI_PEI_FFS_FIND_NEXT_VOLUME2     FfsFindNextVolume;
+  EFI_PEI_FFS_FIND_NEXT_FILE2       FfsFindNextFile;
+  EFI_PEI_FFS_FIND_SECTION_DATA2    FfsFindSectionData;
 
   //
   // PEI Memory Functions
   //
-  EFI_PEI_INSTALL_PEI_MEMORY      InstallPeiMemory;
-  EFI_PEI_ALLOCATE_PAGES          AllocatePages;
-  EFI_PEI_ALLOCATE_POOL           AllocatePool;
-  EFI_PEI_COPY_MEM                CopyMem;
-  EFI_PEI_SET_MEM                 SetMem;
+  EFI_PEI_INSTALL_PEI_MEMORY        InstallPeiMemory;
+  EFI_PEI_ALLOCATE_PAGES            AllocatePages;
+  EFI_PEI_ALLOCATE_POOL             AllocatePool;
+  EFI_PEI_COPY_MEM                  CopyMem;
+  EFI_PEI_SET_MEM                   SetMem;
 
   //
   // Status Code
   //
-  EFI_PEI_REPORT_STATUS_CODE      ReportStatusCode;
+  EFI_PEI_REPORT_STATUS_CODE        ReportStatusCode;
 
   //
   // Reset
   //
-  EFI_PEI_RESET_SYSTEM            ResetSystem;
+  EFI_PEI_RESET_SYSTEM              ResetSystem;
 
   //
   // (the following interfaces are installed by publishing PEIM)
   // I/O Abstractions
   //
-  EFI_PEI_CPU_IO_PPI              *CpuIo;
-  EFI_PEI_PCI_CFG2_PPI            *PciCfg;
+  EFI_PEI_CPU_IO_PPI                *CpuIo;
+  EFI_PEI_PCI_CFG2_PPI              *PciCfg;
 
   //
   // Future Installed Services
   //
-  EFI_PEI_FFS_FIND_BY_NAME        FfsFindFileByName;
-  EFI_PEI_FFS_GET_FILE_INFO       FfsGetFileInfo;
-  EFI_PEI_FFS_GET_VOLUME_INFO     FfsGetVolumeInfo;
-  EFI_PEI_REGISTER_FOR_SHADOW     RegisterForShadow;
-  EFI_PEI_FFS_FIND_SECTION_DATA3  FindSectionData3;
-  EFI_PEI_FFS_GET_FILE_INFO2      FfsGetFileInfo2;
-  EFI_PEI_RESET2_SYSTEM           ResetSystem2;
-  EFI_PEI_FREE_PAGES              FreePages;
+  EFI_PEI_FFS_FIND_BY_NAME          FfsFindFileByName;
+  EFI_PEI_FFS_GET_FILE_INFO         FfsGetFileInfo;
+  EFI_PEI_FFS_GET_VOLUME_INFO       FfsGetVolumeInfo;
+  EFI_PEI_REGISTER_FOR_SHADOW       RegisterForShadow;
+  EFI_PEI_FFS_FIND_SECTION_DATA3    FindSectionData3;
+  EFI_PEI_FFS_GET_FILE_INFO2        FfsGetFileInfo2;
+  EFI_PEI_RESET2_SYSTEM             ResetSystem2;
+  EFI_PEI_FREE_PAGES                FreePages;
 };
-
 
 ///
 /// EFI_SEC_PEI_HAND_OFF structure holds information about
@@ -959,29 +955,29 @@ typedef struct _EFI_SEC_PEI_HAND_OFF {
   ///
   /// Size of the data structure.
   ///
-  UINT16  DataSize;
+  UINT16    DataSize;
 
   ///
   /// Points to the first byte of the boot firmware volume,
   /// which the PEI Dispatcher should search for
   /// PEI modules.
   ///
-  VOID    *BootFirmwareVolumeBase;
+  VOID      *BootFirmwareVolumeBase;
 
   ///
   /// Size of the boot firmware volume, in bytes.
   ///
-  UINTN   BootFirmwareVolumeSize;
+  UINTN     BootFirmwareVolumeSize;
 
   ///
   /// Points to the first byte of the temporary RAM.
   ///
-  VOID    *TemporaryRamBase;
+  VOID      *TemporaryRamBase;
 
   ///
   /// Size of the temporary RAM, in bytes.
   ///
-  UINTN   TemporaryRamSize;
+  UINTN     TemporaryRamSize;
 
   ///
   /// Points to the first byte of the temporary RAM
@@ -992,13 +988,13 @@ typedef struct _EFI_SEC_PEI_HAND_OFF {
   /// overlap with the area reported by StackBase and
   /// StackSize.
   ///
-  VOID    *PeiTemporaryRamBase;
+  VOID     *PeiTemporaryRamBase;
 
   ///
   /// The size of the available temporary RAM available for
   /// use by the PEI Foundation, in bytes.
   ///
-  UINTN   PeiTemporaryRamSize;
+  UINTN    PeiTemporaryRamSize;
 
   ///
   /// Points to the first byte of the stack.
@@ -1006,14 +1002,13 @@ typedef struct _EFI_SEC_PEI_HAND_OFF {
   /// TemporaryRamBase and TemporaryRamSize
   /// or may be an entirely separate area.
   ///
-  VOID    *StackBase;
+  VOID     *StackBase;
 
   ///
   /// Size of the stack, in bytes.
   ///
-  UINTN   StackSize;
+  UINTN    StackSize;
 } EFI_SEC_PEI_HAND_OFF;
-
 
 /**
   The entry point of PEI Foundation.
@@ -1052,10 +1047,10 @@ typedef struct _EFI_SEC_PEI_HAND_OFF {
 
 **/
 typedef
-VOID
+  VOID
 (EFIAPI *EFI_PEI_CORE_ENTRY_POINT)(
-  IN CONST  EFI_SEC_PEI_HAND_OFF    *SecCoreData,
-  IN CONST  EFI_PEI_PPI_DESCRIPTOR  *PpiList
-);
+                                   IN CONST  EFI_SEC_PEI_HAND_OFF    *SecCoreData,
+                                   IN CONST  EFI_PEI_PPI_DESCRIPTOR  *PpiList
+                                   );
 
 #endif

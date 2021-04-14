@@ -26,8 +26,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 UINT64 *
 EFIAPI
 PeriodicSmiSupportedTickPeriod (
-  VOID
-  );
+                                VOID
+                                );
 
 /**
   This function returns the time in 100ns units since the periodic SMI
@@ -43,8 +43,8 @@ PeriodicSmiSupportedTickPeriod (
 UINT64
 EFIAPI
 PeriodicSmiExecutionTime (
-  VOID
-  );
+                          VOID
+                          );
 
 /**
   This function returns control back to the SMM Foundation.  When the next
@@ -57,8 +57,8 @@ PeriodicSmiExecutionTime (
 VOID
 EFIAPI
 PeriodicSmiExit (
-  VOID
-  );
+                 VOID
+                 );
 
 /**
   This function yields control back to the SMM Foundation.  When the next
@@ -80,8 +80,8 @@ PeriodicSmiExit (
 UINT64
 EFIAPI
 PeriodicSmiYield (
-  VOID
-  );
+                  VOID
+                  );
 
 /**
   This function is a prototype for a periodic SMI handler function
@@ -95,11 +95,11 @@ PeriodicSmiYield (
 
 **/
 typedef
-VOID
-(EFIAPI *PERIODIC_SMI_LIBRARY_HANDLER) (
-  IN CONST VOID  *Context OPTIONAL,
-  IN UINT64      ElapsedTime
-  );
+  VOID
+(EFIAPI *PERIODIC_SMI_LIBRARY_HANDLER)(
+                                       IN CONST VOID  *Context OPTIONAL,
+                                       IN UINT64      ElapsedTime
+                                       );
 
 /**
   This function enables a periodic SMI handler.
@@ -144,9 +144,9 @@ VOID
 EFI_STATUS
 EFIAPI
 PeriodicSmiEnable (
-  IN OUT EFI_HANDLE                    *DispatchHandle,    OPTIONAL
+  IN OUT EFI_HANDLE                    *DispatchHandle, OPTIONAL
   IN     PERIODIC_SMI_LIBRARY_HANDLER  DispatchFunction,
-  IN     CONST VOID                    *Context,           OPTIONAL
+  IN     CONST VOID                    *Context, OPTIONAL
   IN     UINT64                        TickPeriod,
   IN     UINTN                         Cpu,
   IN     UINTN                         StackSize

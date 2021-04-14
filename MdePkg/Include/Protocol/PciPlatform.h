@@ -27,7 +27,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 ///
 #define EFI_PCI_PLATFORM_PROTOCOL_GUID \
   { \
-    0x7d75280, 0x27d4, 0x4d69, {0x90, 0xd0, 0x56, 0x43, 0xe2, 0x38, 0xb3, 0x41} \
+    0x7d75280, 0x27d4, 0x4d69, { 0x90, 0xd0, 0x56, 0x43, 0xe2, 0x38, 0xb3, 0x41 } \
   }
 
 ///
@@ -37,110 +37,110 @@ typedef struct _EFI_PCI_PLATFORM_PROTOCOL EFI_PCI_PLATFORM_PROTOCOL;
 
 ///
 /// EFI_PCI_PLATFORM_POLICY that is a bitmask with the following legal combinations:
-///   - EFI_RESERVE_NONE_IO_ALIAS:<BR>
-///       Does not set aside either ISA or VGA I/O resources during PCI
-///       enumeration. By using this selection, the platform indicates that it does
-///       not want to support a PCI device that requires ISA or legacy VGA
-///       resources. If a PCI device driver asks for these resources, the request
-///       will be turned down.
-///   - EFI_RESERVE_ISA_IO_ALIAS | EFI_RESERVE_VGA_IO_ALIAS:<BR>
-///       Sets aside the ISA I/O range and all the aliases during PCI
-///       enumeration. VGA I/O ranges and aliases are included in ISA alias
-///       ranges. In this scheme, seventy-five percent of the I/O space remains unused.
-///       By using this selection, the platform indicates that it wants to support
-///       PCI devices that require the following, at the cost of wasted I/O space:
-///       ISA range and its aliases
-///       Legacy VGA range and its aliases
-///       The PCI bus driver will not allocate I/O addresses out of the ISA I/O
-///       range and its aliases. The following are the ISA I/O ranges:
-///         - n100..n3FF
-///         - n500..n7FF
-///         - n900..nBFF
-///         - nD00..nFFF
+/// - EFI_RESERVE_NONE_IO_ALIAS:<BR>
+/// Does not set aside either ISA or VGA I/O resources during PCI
+/// enumeration. By using this selection, the platform indicates that it does
+/// not want to support a PCI device that requires ISA or legacy VGA
+/// resources. If a PCI device driver asks for these resources, the request
+/// will be turned down.
+/// - EFI_RESERVE_ISA_IO_ALIAS | EFI_RESERVE_VGA_IO_ALIAS:<BR>
+/// Sets aside the ISA I/O range and all the aliases during PCI
+/// enumeration. VGA I/O ranges and aliases are included in ISA alias
+/// ranges. In this scheme, seventy-five percent of the I/O space remains unused.
+/// By using this selection, the platform indicates that it wants to support
+/// PCI devices that require the following, at the cost of wasted I/O space:
+/// ISA range and its aliases
+/// Legacy VGA range and its aliases
+/// The PCI bus driver will not allocate I/O addresses out of the ISA I/O
+/// range and its aliases. The following are the ISA I/O ranges:
+/// - n100..n3FF
+/// - n500..n7FF
+/// - n900..nBFF
+/// - nD00..nFFF
 ///
-///       In this case, the PCI bus driver will ask the PCI host bridge driver for
-///       larger I/O ranges. The PCI host bridge driver is not aware of the ISA
-///       aliasing policy and merely attempts to allocate the requested ranges.
-///       The first device that requests the legacy VGA range will get all the
-///       legacy VGA range plus its aliased addresses forwarded to it. The first
-///       device that requests the legacy ISA range will get all the legacy ISA
-///       range, plus its aliased addresses, forwarded to it.
-///   - EFI_RESERVE_ISA_IO_NO_ALIAS | EFI_RESERVE_VGA_IO_ALIAS:<BR>
-///       Sets aside the ISA I/O range (0x100 - 0x3FF) during PCI enumeration
-///       and the aliases of the VGA I/O ranges. By using this selection, the
-///       platform indicates that it will support VGA devices that require VGA
-///       ranges, including those that require VGA aliases. The platform further
-///       wants to support non-VGA devices that ask for the ISA range (0x100 -
-///       3FF), but not if it also asks for the ISA aliases. The PCI bus driver will
-///       not allocate I/O addresses out of the legacy ISA I/O range (0x100 -
-///       0x3FF) range or the aliases of the VGA I/O range. If a PCI device
-///       driver asks for the ISA I/O ranges, including aliases, the request will be
-///       turned down. The first device that requests the legacy VGA range will
-///       get all the legacy VGA range plus its aliased addresses forwarded to
-///       it. When the legacy VGA device asks for legacy VGA ranges and its
-///       aliases, all the upstream PCI-to-PCI bridges must be set up to perform
-///       10-bit decode on legacy VGA ranges. To prevent two bridges from
-///       positively decoding the same address, all PCI-to-PCI bridges that are
-///       peers to this bridge will have to be set up to not decode ISA aliased
-///       ranges. In that case, all the devices behind the peer bridges can
-///       occupy only I/O addresses that are not ISA aliases. This is a limitation
-///       of PCI-to-PCI bridges and is described in the white paper PCI-to-PCI
-///       Bridges and Card Bus Controllers on Windows 2000, Windows XP,
-///       and Windows Server 2003. The PCI enumeration process must be
-///       cognizant of this restriction.
-///   - EFI_RESERVE_ISA_IO_NO_ALIAS | EFI_RESERVE_VGA_IO_NO_ALIAS:<BR>
-///       Sets aside the ISA I/O range (0x100 - 0x3FF) during PCI enumeration.
-///       VGA I/O ranges are included in the ISA range. By using this selection,
-///       the platform indicates that it wants to support PCI devices that require
-///       the ISA range and legacy VGA range, but it does not want to support
-///       devices that require ISA alias ranges or VGA alias ranges. The PCI
-///       bus driver will not allocate I/O addresses out of the legacy ISA I/O
-///       range (0x100-0x3FF). If a PCI device driver asks for the ISA I/O
-///       ranges, including aliases, the request will be turned down. By using
-///       this selection, the platform indicates that it will support VGA devices
-///       that require VGA ranges, but it will not support VGA devices that
-///       require VGA aliases. To truly support 16-bit VGA decode, all the PCIto-
-///       PCI bridges that are upstream to a VGA device, as well as
-///       upstream to the parent PCI root bridge, must support 16-bit VGA I/O
-///       decode. See the PCI-to-PCI Bridge Architecture Specification for
-///       information regarding the 16-bit VGA decode support. This
-///       requirement must hold true for every VGA device in the system. If any
-///       of these bridges does not support 16-bit VGA decode, it will positively
-///       decode all the aliases of the VGA I/O ranges and this selection must
-///       be treated like EFI_RESERVE_ISA_IO_NO_ALIAS |
-///       EFI_RESERVE_VGA_IO_ALIAS.
+/// In this case, the PCI bus driver will ask the PCI host bridge driver for
+/// larger I/O ranges. The PCI host bridge driver is not aware of the ISA
+/// aliasing policy and merely attempts to allocate the requested ranges.
+/// The first device that requests the legacy VGA range will get all the
+/// legacy VGA range plus its aliased addresses forwarded to it. The first
+/// device that requests the legacy ISA range will get all the legacy ISA
+/// range, plus its aliased addresses, forwarded to it.
+/// - EFI_RESERVE_ISA_IO_NO_ALIAS | EFI_RESERVE_VGA_IO_ALIAS:<BR>
+/// Sets aside the ISA I/O range (0x100 - 0x3FF) during PCI enumeration
+/// and the aliases of the VGA I/O ranges. By using this selection, the
+/// platform indicates that it will support VGA devices that require VGA
+/// ranges, including those that require VGA aliases. The platform further
+/// wants to support non-VGA devices that ask for the ISA range (0x100 -
+/// 3FF), but not if it also asks for the ISA aliases. The PCI bus driver will
+/// not allocate I/O addresses out of the legacy ISA I/O range (0x100 -
+/// 0x3FF) range or the aliases of the VGA I/O range. If a PCI device
+/// driver asks for the ISA I/O ranges, including aliases, the request will be
+/// turned down. The first device that requests the legacy VGA range will
+/// get all the legacy VGA range plus its aliased addresses forwarded to
+/// it. When the legacy VGA device asks for legacy VGA ranges and its
+/// aliases, all the upstream PCI-to-PCI bridges must be set up to perform
+/// 10-bit decode on legacy VGA ranges. To prevent two bridges from
+/// positively decoding the same address, all PCI-to-PCI bridges that are
+/// peers to this bridge will have to be set up to not decode ISA aliased
+/// ranges. In that case, all the devices behind the peer bridges can
+/// occupy only I/O addresses that are not ISA aliases. This is a limitation
+/// of PCI-to-PCI bridges and is described in the white paper PCI-to-PCI
+/// Bridges and Card Bus Controllers on Windows 2000, Windows XP,
+/// and Windows Server 2003. The PCI enumeration process must be
+/// cognizant of this restriction.
+/// - EFI_RESERVE_ISA_IO_NO_ALIAS | EFI_RESERVE_VGA_IO_NO_ALIAS:<BR>
+/// Sets aside the ISA I/O range (0x100 - 0x3FF) during PCI enumeration.
+/// VGA I/O ranges are included in the ISA range. By using this selection,
+/// the platform indicates that it wants to support PCI devices that require
+/// the ISA range and legacy VGA range, but it does not want to support
+/// devices that require ISA alias ranges or VGA alias ranges. The PCI
+/// bus driver will not allocate I/O addresses out of the legacy ISA I/O
+/// range (0x100-0x3FF). If a PCI device driver asks for the ISA I/O
+/// ranges, including aliases, the request will be turned down. By using
+/// this selection, the platform indicates that it will support VGA devices
+/// that require VGA ranges, but it will not support VGA devices that
+/// require VGA aliases. To truly support 16-bit VGA decode, all the PCIto-
+/// PCI bridges that are upstream to a VGA device, as well as
+/// upstream to the parent PCI root bridge, must support 16-bit VGA I/O
+/// decode. See the PCI-to-PCI Bridge Architecture Specification for
+/// information regarding the 16-bit VGA decode support. This
+/// requirement must hold true for every VGA device in the system. If any
+/// of these bridges does not support 16-bit VGA decode, it will positively
+/// decode all the aliases of the VGA I/O ranges and this selection must
+/// be treated like EFI_RESERVE_ISA_IO_NO_ALIAS |
+/// EFI_RESERVE_VGA_IO_ALIAS.
 ///
-typedef UINT32  EFI_PCI_PLATFORM_POLICY;
+typedef UINT32 EFI_PCI_PLATFORM_POLICY;
 
 ///
 /// Does not set aside either ISA or VGA I/O resources during PCI
 /// enumeration.
 ///
-#define     EFI_RESERVE_NONE_IO_ALIAS        0x0000
+#define     EFI_RESERVE_NONE_IO_ALIAS  0x0000
 
 ///
 /// Sets aside ISA I/O range and all aliases:
-///   - n100..n3FF
-///   - n500..n7FF
-///   - n900..nBFF
-///   - nD00..nFFF.
+/// - n100..n3FF
+/// - n500..n7FF
+/// - n900..nBFF
+/// - nD00..nFFF.
 ///
-#define     EFI_RESERVE_ISA_IO_ALIAS         0x0001
+#define     EFI_RESERVE_ISA_IO_ALIAS  0x0001
 
 ///
 /// Sets aside ISA I/O range 0x100-0x3FF.
 ///
-#define     EFI_RESERVE_ISA_IO_NO_ALIAS      0x0002
+#define     EFI_RESERVE_ISA_IO_NO_ALIAS  0x0002
 
 ///
 /// Sets aside VGA I/O ranges and all aliases.
 ///
-#define     EFI_RESERVE_VGA_IO_ALIAS         0x0004
+#define     EFI_RESERVE_VGA_IO_ALIAS  0x0004
 
 ///
 /// Sets aside VGA I/O ranges
 ///
-#define     EFI_RESERVE_VGA_IO_NO_ALIAS      0x0008
+#define     EFI_RESERVE_VGA_IO_NO_ALIAS  0x0008
 
 ///
 /// EFI_PCI_EXECUTION_PHASE is used to call a platform protocol and execute
@@ -203,13 +203,13 @@ typedef EFI_PCI_EXECUTION_PHASE EFI_PCI_CHIPSET_EXECUTION_PHASE;
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PCI_PLATFORM_PHASE_NOTIFY)(
-  IN EFI_PCI_PLATFORM_PROTOCOL                      *This,
-  IN EFI_HANDLE                                     HostBridge,
-  IN EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PHASE  Phase,
-  IN EFI_PCI_EXECUTION_PHASE                        ExecPhase
-  );
+                                        IN EFI_PCI_PLATFORM_PROTOCOL                      *This,
+                                        IN EFI_HANDLE                                     HostBridge,
+                                        IN EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PHASE  Phase,
+                                        IN EFI_PCI_EXECUTION_PHASE                        ExecPhase
+                                        );
 
 /**
   The notification from the PCI bus enumerator to the platform for each PCI
@@ -238,15 +238,15 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PCI_PLATFORM_PREPROCESS_CONTROLLER)(
-  IN EFI_PCI_PLATFORM_PROTOCOL                     *This,
-  IN EFI_HANDLE                                    HostBridge,
-  IN EFI_HANDLE                                    RootBridge,
-  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_PCI_ADDRESS   PciAddress,
-  IN EFI_PCI_CONTROLLER_RESOURCE_ALLOCATION_PHASE  Phase,
-  IN EFI_PCI_EXECUTION_PHASE                       ExecPhase
-  );
+                                                 IN EFI_PCI_PLATFORM_PROTOCOL                     *This,
+                                                 IN EFI_HANDLE                                    HostBridge,
+                                                 IN EFI_HANDLE                                    RootBridge,
+                                                 IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_PCI_ADDRESS   PciAddress,
+                                                 IN EFI_PCI_CONTROLLER_RESOURCE_ALLOCATION_PHASE  Phase,
+                                                 IN EFI_PCI_EXECUTION_PHASE                       ExecPhase
+                                                 );
 
 /**
   Retrieves the platform policy regarding enumeration.
@@ -263,11 +263,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PCI_PLATFORM_GET_PLATFORM_POLICY)(
-  IN  CONST EFI_PCI_PLATFORM_PROTOCOL  *This,
-  OUT       EFI_PCI_PLATFORM_POLICY    *PciPolicy
-  );
+                                               IN  CONST EFI_PCI_PLATFORM_PROTOCOL  *This,
+                                               OUT       EFI_PCI_PLATFORM_POLICY    *PciPolicy
+                                               );
 
 /**
   Gets the PCI device's option ROM from a platform-specific location.
@@ -299,13 +299,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PCI_PLATFORM_GET_PCI_ROM)(
-  IN  CONST EFI_PCI_PLATFORM_PROTOCOL  *This,
-  IN        EFI_HANDLE                 PciHandle,
-  OUT       VOID                       **RomImage,
-  OUT       UINTN                      *RomSize
-  );
+                                       IN  CONST EFI_PCI_PLATFORM_PROTOCOL  *This,
+                                       IN        EFI_HANDLE                 PciHandle,
+                                       OUT       VOID                       **RomImage,
+                                       OUT       UINTN                      *RomSize
+                                       );
 
 ///
 /// This protocol provides the interface between the PCI bus driver/PCI Host
@@ -317,22 +317,22 @@ struct _EFI_PCI_PLATFORM_PROTOCOL {
   /// The notification from the PCI bus enumerator to the platform that it is about to
   /// enter a certain phase during the enumeration process.
   ///
-  EFI_PCI_PLATFORM_PHASE_NOTIFY          PlatformNotify;
+  EFI_PCI_PLATFORM_PHASE_NOTIFY             PlatformNotify;
   ///
   /// The notification from the PCI bus enumerator to the platform for each PCI
   /// controller at several predefined points during PCI controller initialization.
   ///
-  EFI_PCI_PLATFORM_PREPROCESS_CONTROLLER PlatformPrepController;
+  EFI_PCI_PLATFORM_PREPROCESS_CONTROLLER    PlatformPrepController;
   ///
   /// Retrieves the platform policy regarding enumeration.
   ///
-  EFI_PCI_PLATFORM_GET_PLATFORM_POLICY   GetPlatformPolicy;
+  EFI_PCI_PLATFORM_GET_PLATFORM_POLICY      GetPlatformPolicy;
   ///
   /// Gets the PCI device's option ROM from a platform-specific location.
   ///
-  EFI_PCI_PLATFORM_GET_PCI_ROM           GetPciRom;
+  EFI_PCI_PLATFORM_GET_PCI_ROM              GetPciRom;
 };
 
-extern EFI_GUID   gEfiPciPlatformProtocolGuid;
+extern EFI_GUID  gEfiPciPlatformProtocolGuid;
 
 #endif

@@ -11,7 +11,7 @@
 //
 // Net function definition for Firmware command
 //
-#define IPMI_NETFN_FIRMWARE 0x08
+#define IPMI_NETFN_FIRMWARE  0x08
 
 //
 // All Firmware commands and their structure definitions to follow here

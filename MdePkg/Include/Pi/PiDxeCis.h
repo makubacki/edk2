@@ -122,29 +122,29 @@ typedef struct {
   /// EFI_PHYSICAL_ADDRESS is defined in the AllocatePages() function
   /// description in the UEFI 2.0 specification.
   ///
-  EFI_PHYSICAL_ADDRESS  BaseAddress;
+  EFI_PHYSICAL_ADDRESS    BaseAddress;
 
   ///
   /// The number of bytes in the memory region.
   ///
-  UINT64                Length;
+  UINT64                  Length;
 
   ///
   /// The bit mask of attributes that the memory region is capable of supporting. The bit
   /// mask of available attributes is defined in the GetMemoryMap() function description
   /// in the UEFI 2.0 specification.
   ///
-  UINT64                Capabilities;
+  UINT64                  Capabilities;
   ///
   /// The bit mask of attributes that the memory region is currently using. The bit mask of
   /// available attributes is defined in GetMemoryMap().
   ///
-  UINT64                Attributes;
+  UINT64                  Attributes;
   ///
   /// Type of the memory region. Type EFI_GCD_MEMORY_TYPE is defined in the
   /// AddMemorySpace() function description.
   ///
-  EFI_GCD_MEMORY_TYPE   GcdMemoryType;
+  EFI_GCD_MEMORY_TYPE     GcdMemoryType;
 
   ///
   /// The image handle of the agent that allocated the memory resource described by
@@ -152,7 +152,7 @@ typedef struct {
   /// resource is not currently allocated. Type EFI_HANDLE is defined in
   /// InstallProtocolInterface() in the UEFI 2.0 specification.
   ///
-  EFI_HANDLE            ImageHandle;
+  EFI_HANDLE              ImageHandle;
 
   ///
   /// The device handle for which the memory resource has been allocated. If
@@ -161,7 +161,7 @@ typedef struct {
   /// described by a device handle. Type EFI_HANDLE is defined in
   /// InstallProtocolInterface() in the UEFI 2.0 specification.
   ///
-  EFI_HANDLE            DeviceHandle;
+  EFI_HANDLE    DeviceHandle;
 } EFI_GCD_MEMORY_SPACE_DESCRIPTOR;
 
 ///
@@ -173,18 +173,18 @@ typedef struct {
   /// EFI_PHYSICAL_ADDRESS is defined in the AllocatePages() function
   /// description in the UEFI 2.0 specification.
   ///
-  EFI_PHYSICAL_ADDRESS  BaseAddress;
+  EFI_PHYSICAL_ADDRESS    BaseAddress;
 
   ///
   /// Number of bytes in the I/O region.
   ///
-  UINT64                Length;
+  UINT64                  Length;
 
   ///
   /// Type of the I/O region. Type EFI_GCD_IO_TYPE is defined in the
   /// AddIoSpace() function description.
   ///
-  EFI_GCD_IO_TYPE       GcdIoType;
+  EFI_GCD_IO_TYPE         GcdIoType;
 
   ///
   /// The image handle of the agent that allocated the I/O resource described by
@@ -192,7 +192,7 @@ typedef struct {
   /// resource is not currently allocated. Type EFI_HANDLE is defined in
   /// InstallProtocolInterface() in the UEFI 2.0 specification.
   ///
-  EFI_HANDLE            ImageHandle;
+  EFI_HANDLE              ImageHandle;
 
   ///
   /// The device handle for which the I/O resource has been allocated. If ImageHandle
@@ -201,9 +201,8 @@ typedef struct {
   /// Type EFI_HANDLE is defined in InstallProtocolInterface() in the UEFI
   /// 2.0 specification.
   ///
-  EFI_HANDLE            DeviceHandle;
+  EFI_HANDLE    DeviceHandle;
 } EFI_GCD_IO_SPACE_DESCRIPTOR;
-
 
 /**
   Adds reserved memory, system memory, or memory-mapped I/O resources to the
@@ -237,13 +236,13 @@ typedef struct {
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_ADD_MEMORY_SPACE)(
-  IN EFI_GCD_MEMORY_TYPE   GcdMemoryType,
-  IN EFI_PHYSICAL_ADDRESS  BaseAddress,
-  IN UINT64                Length,
-  IN UINT64                Capabilities
-  );
+                               IN EFI_GCD_MEMORY_TYPE   GcdMemoryType,
+                               IN EFI_PHYSICAL_ADDRESS  BaseAddress,
+                               IN UINT64                Length,
+                               IN UINT64                Capabilities
+                               );
 
 /**
   Allocates nonexistent memory, reserved memory, system memory, or memorymapped
@@ -276,16 +275,16 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_ALLOCATE_MEMORY_SPACE)(
-  IN     EFI_GCD_ALLOCATE_TYPE               GcdAllocateType,
-  IN     EFI_GCD_MEMORY_TYPE                 GcdMemoryType,
-  IN     UINTN                               Alignment,
-  IN     UINT64                              Length,
-  IN OUT EFI_PHYSICAL_ADDRESS                *BaseAddress,
-  IN     EFI_HANDLE                          ImageHandle,
-  IN     EFI_HANDLE                          DeviceHandle OPTIONAL
-  );
+                                    IN     EFI_GCD_ALLOCATE_TYPE               GcdAllocateType,
+                                    IN     EFI_GCD_MEMORY_TYPE                 GcdMemoryType,
+                                    IN     UINTN                               Alignment,
+                                    IN     UINT64                              Length,
+                                    IN OUT EFI_PHYSICAL_ADDRESS                *BaseAddress,
+                                    IN     EFI_HANDLE                          ImageHandle,
+                                    IN     EFI_HANDLE                          DeviceHandle OPTIONAL
+                                    );
 
 /**
   Frees nonexistent memory, reserved memory, system memory, or memory-mapped
@@ -306,11 +305,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_FREE_MEMORY_SPACE)(
-  IN EFI_PHYSICAL_ADDRESS  BaseAddress,
-  IN UINT64                Length
-  );
+                                IN EFI_PHYSICAL_ADDRESS  BaseAddress,
+                                IN UINT64                Length
+                                );
 
 /**
   Removes reserved memory, system memory, or memory-mapped I/O resources from
@@ -334,11 +333,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_REMOVE_MEMORY_SPACE)(
-  IN EFI_PHYSICAL_ADDRESS  BaseAddress,
-  IN UINT64                Length
-  );
+                                  IN EFI_PHYSICAL_ADDRESS  BaseAddress,
+                                  IN UINT64                Length
+                                  );
 
 /**
   Retrieves the descriptor for a memory region containing a specified address.
@@ -353,11 +352,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_GET_MEMORY_SPACE_DESCRIPTOR)(
-  IN  EFI_PHYSICAL_ADDRESS             BaseAddress,
-  OUT EFI_GCD_MEMORY_SPACE_DESCRIPTOR  *Descriptor
-  );
+                                          IN  EFI_PHYSICAL_ADDRESS             BaseAddress,
+                                          OUT EFI_GCD_MEMORY_SPACE_DESCRIPTOR  *Descriptor
+                                          );
 
 /**
   Modifies the attributes for a memory region in the global coherency domain of the
@@ -381,12 +380,12 @@ EFI_STATUS
                                 not available yet.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_SET_MEMORY_SPACE_ATTRIBUTES)(
-  IN EFI_PHYSICAL_ADDRESS         BaseAddress,
-  IN UINT64                       Length,
-  IN UINT64                       Attributes
-  );
+                                          IN EFI_PHYSICAL_ADDRESS         BaseAddress,
+                                          IN UINT64                       Length,
+                                          IN UINT64                       Attributes
+                                          );
 
 /**
   Modifies the capabilities for a memory region in the global coherency domain of the
@@ -406,12 +405,12 @@ EFI_STATUS
                                 of the memory resource range.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_SET_MEMORY_SPACE_CAPABILITIES) (
-  IN EFI_PHYSICAL_ADDRESS  BaseAddress,
-  IN UINT64                Length,
-  IN UINT64                Capabilities
-  );
+  EFI_STATUS
+(EFIAPI *EFI_SET_MEMORY_SPACE_CAPABILITIES)(
+                                            IN EFI_PHYSICAL_ADDRESS  BaseAddress,
+                                            IN UINT64                Length,
+                                            IN UINT64                Capabilities
+                                            );
 
 /**
   Returns a map of the memory resources in the global coherency domain of the
@@ -429,11 +428,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_GET_MEMORY_SPACE_MAP)(
-  OUT UINTN                            *NumberOfDescriptors,
-  OUT EFI_GCD_MEMORY_SPACE_DESCRIPTOR  **MemorySpaceMap
-  );
+                                   OUT UINTN                            *NumberOfDescriptors,
+                                   OUT EFI_GCD_MEMORY_SPACE_DESCRIPTOR  **MemorySpaceMap
+                                   );
 
 /**
   Adds reserved I/O or I/O resources to the global coherency domain of the processor.
@@ -460,12 +459,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_ADD_IO_SPACE)(
-  IN EFI_GCD_IO_TYPE       GcdIoType,
-  IN EFI_PHYSICAL_ADDRESS  BaseAddress,
-  IN UINT64                Length
-  );
+                           IN EFI_GCD_IO_TYPE       GcdIoType,
+                           IN EFI_PHYSICAL_ADDRESS  BaseAddress,
+                           IN UINT64                Length
+                           );
 
 /**
   Allocates nonexistent I/O, reserved I/O, or I/O resources from the global coherency
@@ -492,16 +491,16 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_ALLOCATE_IO_SPACE)(
-  IN     EFI_GCD_ALLOCATE_TYPE               GcdAllocateType,
-  IN     EFI_GCD_IO_TYPE                     GcdIoType,
-  IN     UINTN                               Alignment,
-  IN     UINT64                              Length,
-  IN OUT EFI_PHYSICAL_ADDRESS                *BaseAddress,
-  IN     EFI_HANDLE                          ImageHandle,
-  IN     EFI_HANDLE                          DeviceHandle OPTIONAL
-  );
+                                IN     EFI_GCD_ALLOCATE_TYPE               GcdAllocateType,
+                                IN     EFI_GCD_IO_TYPE                     GcdIoType,
+                                IN     UINTN                               Alignment,
+                                IN     UINT64                              Length,
+                                IN OUT EFI_PHYSICAL_ADDRESS                *BaseAddress,
+                                IN     EFI_HANDLE                          ImageHandle,
+                                IN     EFI_HANDLE                          DeviceHandle OPTIONAL
+                                );
 
 /**
   Frees nonexistent I/O, reserved I/O, or I/O resources from the global coherency
@@ -522,11 +521,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_FREE_IO_SPACE)(
-  IN EFI_PHYSICAL_ADDRESS  BaseAddress,
-  IN UINT64                Length
-  );
+                            IN EFI_PHYSICAL_ADDRESS  BaseAddress,
+                            IN UINT64                Length
+                            );
 
 /**
   Removes reserved I/O or I/O resources from the global coherency domain of the
@@ -552,11 +551,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_REMOVE_IO_SPACE)(
-  IN EFI_PHYSICAL_ADDRESS  BaseAddress,
-  IN UINT64                Length
-  );
+                              IN EFI_PHYSICAL_ADDRESS  BaseAddress,
+                              IN UINT64                Length
+                              );
 
 /**
   Retrieves the descriptor for an I/O region containing a specified address.
@@ -571,11 +570,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_GET_IO_SPACE_DESCRIPTOR)(
-  IN  EFI_PHYSICAL_ADDRESS         BaseAddress,
-  OUT EFI_GCD_IO_SPACE_DESCRIPTOR  *Descriptor
-  );
+                                      IN  EFI_PHYSICAL_ADDRESS         BaseAddress,
+                                      OUT EFI_GCD_IO_SPACE_DESCRIPTOR  *Descriptor
+                                      );
 
 /**
   Returns a map of the I/O resources in the global coherency domain of the processor.
@@ -593,13 +592,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_GET_IO_SPACE_MAP)(
-  OUT UINTN                        *NumberOfDescriptors,
-  OUT EFI_GCD_IO_SPACE_DESCRIPTOR  **IoSpaceMap
-  );
-
-
+                               OUT UINTN                        *NumberOfDescriptors,
+                               OUT EFI_GCD_IO_SPACE_DESCRIPTOR  **IoSpaceMap
+                               );
 
 /**
   Loads and executed DXE drivers from firmware volumes.
@@ -618,10 +615,10 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_DISPATCH)(
-  VOID
-  );
+                       VOID
+                       );
 
 /**
   Clears the Schedule on Request (SOR) flag for a component that is stored in a firmware volume.
@@ -635,11 +632,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_SCHEDULE)(
-  IN EFI_HANDLE  FirmwareVolumeHandle,
-  IN CONST EFI_GUID    *FileName
-  );
+                       IN EFI_HANDLE  FirmwareVolumeHandle,
+                       IN CONST EFI_GUID    *FileName
+                       );
 
 /**
   Promotes a file stored in a firmware volume from the untrusted to the trusted state.
@@ -653,11 +650,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_TRUST)(
-  IN EFI_HANDLE  FirmwareVolumeHandle,
-  IN CONST EFI_GUID    *FileName
-  );
+                    IN EFI_HANDLE  FirmwareVolumeHandle,
+                    IN CONST EFI_GUID    *FileName
+                    );
 
 /**
   Creates a firmware volume handle for a firmware volume that is present in system memory.
@@ -678,12 +675,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PROCESS_FIRMWARE_VOLUME)(
-  IN CONST VOID                       *FirmwareVolumeHeader,
-  IN UINTN                            Size,
-  OUT EFI_HANDLE                      *FirmwareVolumeHandle
-  );
+                                      IN CONST VOID                       *FirmwareVolumeHeader,
+                                      IN UINTN                            Size,
+                                      OUT EFI_HANDLE                      *FirmwareVolumeHandle
+                                      );
 
 //
 // DXE Services Table
@@ -698,39 +695,39 @@ typedef struct {
   /// The table header for the DXE Services Table.
   /// This header contains the DXE_SERVICES_SIGNATURE and DXE_SERVICES_REVISION values.
   ///
-  EFI_TABLE_HEADER                Hdr;
+  EFI_TABLE_HEADER                     Hdr;
 
   //
   // Global Coherency Domain Services
   //
-  EFI_ADD_MEMORY_SPACE            AddMemorySpace;
-  EFI_ALLOCATE_MEMORY_SPACE       AllocateMemorySpace;
-  EFI_FREE_MEMORY_SPACE           FreeMemorySpace;
-  EFI_REMOVE_MEMORY_SPACE         RemoveMemorySpace;
-  EFI_GET_MEMORY_SPACE_DESCRIPTOR GetMemorySpaceDescriptor;
-  EFI_SET_MEMORY_SPACE_ATTRIBUTES SetMemorySpaceAttributes;
-  EFI_GET_MEMORY_SPACE_MAP        GetMemorySpaceMap;
-  EFI_ADD_IO_SPACE                AddIoSpace;
-  EFI_ALLOCATE_IO_SPACE           AllocateIoSpace;
-  EFI_FREE_IO_SPACE               FreeIoSpace;
-  EFI_REMOVE_IO_SPACE             RemoveIoSpace;
-  EFI_GET_IO_SPACE_DESCRIPTOR     GetIoSpaceDescriptor;
-  EFI_GET_IO_SPACE_MAP            GetIoSpaceMap;
+  EFI_ADD_MEMORY_SPACE                 AddMemorySpace;
+  EFI_ALLOCATE_MEMORY_SPACE            AllocateMemorySpace;
+  EFI_FREE_MEMORY_SPACE                FreeMemorySpace;
+  EFI_REMOVE_MEMORY_SPACE              RemoveMemorySpace;
+  EFI_GET_MEMORY_SPACE_DESCRIPTOR      GetMemorySpaceDescriptor;
+  EFI_SET_MEMORY_SPACE_ATTRIBUTES      SetMemorySpaceAttributes;
+  EFI_GET_MEMORY_SPACE_MAP             GetMemorySpaceMap;
+  EFI_ADD_IO_SPACE                     AddIoSpace;
+  EFI_ALLOCATE_IO_SPACE                AllocateIoSpace;
+  EFI_FREE_IO_SPACE                    FreeIoSpace;
+  EFI_REMOVE_IO_SPACE                  RemoveIoSpace;
+  EFI_GET_IO_SPACE_DESCRIPTOR          GetIoSpaceDescriptor;
+  EFI_GET_IO_SPACE_MAP                 GetIoSpaceMap;
 
   //
   // Dispatcher Services
   //
-  EFI_DISPATCH                    Dispatch;
-  EFI_SCHEDULE                    Schedule;
-  EFI_TRUST                       Trust;
+  EFI_DISPATCH                         Dispatch;
+  EFI_SCHEDULE                         Schedule;
+  EFI_TRUST                            Trust;
   //
   // Service to process a single firmware volume found in a capsule
   //
-  EFI_PROCESS_FIRMWARE_VOLUME     ProcessFirmwareVolume;
+  EFI_PROCESS_FIRMWARE_VOLUME          ProcessFirmwareVolume;
   //
   // Extensions to Global Coherency Domain Services
   //
-  EFI_SET_MEMORY_SPACE_CAPABILITIES SetMemorySpaceCapabilities;
+  EFI_SET_MEMORY_SPACE_CAPABILITIES    SetMemorySpaceCapabilities;
 } DXE_SERVICES;
 
 typedef DXE_SERVICES EFI_DXE_SERVICES;

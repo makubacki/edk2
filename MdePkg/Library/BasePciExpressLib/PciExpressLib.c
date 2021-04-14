@@ -10,7 +10,6 @@
 
 **/
 
-
 #include <Base.h>
 
 #include <Library/BaseLib.h>
@@ -18,7 +17,6 @@
 #include <Library/IoLib.h>
 #include <Library/DebugLib.h>
 #include <Library/PcdLib.h>
-
 
 /**
   Assert the validity of a PCI address. A valid PCI address should contain 1's
@@ -29,7 +27,7 @@
 
 **/
 #define ASSERT_INVALID_PCI_ADDRESS(A) \
-  ASSERT (((A) & ~0xfffffff) == 0)
+  ASSERT (((A) &~0xfffffff) == 0)
 
 /**
   Registers a PCI device so PCI configuration registers may be accessed after
@@ -72,12 +70,12 @@ PciExpressRegisterForRuntimeAccess (
   @return The base address of PCI Express.
 
 **/
-VOID*
+VOID *
 GetPciExpressBaseAddress (
   VOID
   )
 {
-  return (VOID*)(UINTN) PcdGet64 (PcdPciExpressBaseAddress);
+  return (VOID *) (UINTN) PcdGet64 (PcdPciExpressBaseAddress);
 }
 
 /**
@@ -121,9 +119,10 @@ PciExpressRead8 (
   )
 {
   ASSERT_INVALID_PCI_ADDRESS (Address);
-  if (Address >= PcdPciExpressBaseSize()) {
-    return (UINT8) -1;
+  if (Address >= PcdPciExpressBaseSize ()) {
+    return (UINT8) - 1;
   }
+
   return MmioRead8 ((UINTN) GetPciExpressBaseAddress () + Address);
 }
 
@@ -152,9 +151,10 @@ PciExpressWrite8 (
   )
 {
   ASSERT_INVALID_PCI_ADDRESS (Address);
-  if (Address >= PcdPciExpressBaseSize()) {
-    return (UINT8) -1;
+  if (Address >= PcdPciExpressBaseSize ()) {
+    return (UINT8) - 1;
   }
+
   return MmioWrite8 ((UINTN) GetPciExpressBaseAddress () + Address, Value);
 }
 
@@ -187,9 +187,10 @@ PciExpressOr8 (
   )
 {
   ASSERT_INVALID_PCI_ADDRESS (Address);
-  if (Address >= PcdPciExpressBaseSize()) {
-    return (UINT8) -1;
+  if (Address >= PcdPciExpressBaseSize ()) {
+    return (UINT8) - 1;
   }
+
   return MmioOr8 ((UINTN) GetPciExpressBaseAddress () + Address, OrData);
 }
 
@@ -222,9 +223,10 @@ PciExpressAnd8 (
   )
 {
   ASSERT_INVALID_PCI_ADDRESS (Address);
-  if (Address >= PcdPciExpressBaseSize()) {
-    return (UINT8) -1;
+  if (Address >= PcdPciExpressBaseSize ()) {
+    return (UINT8) - 1;
   }
+
   return MmioAnd8 ((UINTN) GetPciExpressBaseAddress () + Address, AndData);
 }
 
@@ -260,14 +262,15 @@ PciExpressAndThenOr8 (
   )
 {
   ASSERT_INVALID_PCI_ADDRESS (Address);
-  if (Address >= PcdPciExpressBaseSize()) {
-    return (UINT8) -1;
+  if (Address >= PcdPciExpressBaseSize ()) {
+    return (UINT8) - 1;
   }
+
   return MmioAndThenOr8 (
-           (UINTN) GetPciExpressBaseAddress () + Address,
-           AndData,
-           OrData
-           );
+                         (UINTN) GetPciExpressBaseAddress () + Address,
+                         AndData,
+                         OrData
+                         );
 }
 
 /**
@@ -302,14 +305,15 @@ PciExpressBitFieldRead8 (
   )
 {
   ASSERT_INVALID_PCI_ADDRESS (Address);
-  if (Address >= PcdPciExpressBaseSize()) {
-    return (UINT8) -1;
+  if (Address >= PcdPciExpressBaseSize ()) {
+    return (UINT8) - 1;
   }
+
   return MmioBitFieldRead8 (
-           (UINTN) GetPciExpressBaseAddress () + Address,
-           StartBit,
-           EndBit
-           );
+                            (UINTN) GetPciExpressBaseAddress () + Address,
+                            StartBit,
+                            EndBit
+                            );
 }
 
 /**
@@ -347,15 +351,16 @@ PciExpressBitFieldWrite8 (
   )
 {
   ASSERT_INVALID_PCI_ADDRESS (Address);
-  if (Address >= PcdPciExpressBaseSize()) {
-    return (UINT8) -1;
+  if (Address >= PcdPciExpressBaseSize ()) {
+    return (UINT8) - 1;
   }
+
   return MmioBitFieldWrite8 (
-           (UINTN) GetPciExpressBaseAddress () + Address,
-           StartBit,
-           EndBit,
-           Value
-           );
+                             (UINTN) GetPciExpressBaseAddress () + Address,
+                             StartBit,
+                             EndBit,
+                             Value
+                             );
 }
 
 /**
@@ -396,15 +401,16 @@ PciExpressBitFieldOr8 (
   )
 {
   ASSERT_INVALID_PCI_ADDRESS (Address);
-  if (Address >= PcdPciExpressBaseSize()) {
-    return (UINT8) -1;
+  if (Address >= PcdPciExpressBaseSize ()) {
+    return (UINT8) - 1;
   }
+
   return MmioBitFieldOr8 (
-           (UINTN) GetPciExpressBaseAddress () + Address,
-           StartBit,
-           EndBit,
-           OrData
-           );
+                          (UINTN) GetPciExpressBaseAddress () + Address,
+                          StartBit,
+                          EndBit,
+                          OrData
+                          );
 }
 
 /**
@@ -445,15 +451,16 @@ PciExpressBitFieldAnd8 (
   )
 {
   ASSERT_INVALID_PCI_ADDRESS (Address);
-  if (Address >= PcdPciExpressBaseSize()) {
-    return (UINT8) -1;
+  if (Address >= PcdPciExpressBaseSize ()) {
+    return (UINT8) - 1;
   }
+
   return MmioBitFieldAnd8 (
-           (UINTN) GetPciExpressBaseAddress () + Address,
-           StartBit,
-           EndBit,
-           AndData
-           );
+                           (UINTN) GetPciExpressBaseAddress () + Address,
+                           StartBit,
+                           EndBit,
+                           AndData
+                           );
 }
 
 /**
@@ -499,16 +506,17 @@ PciExpressBitFieldAndThenOr8 (
   )
 {
   ASSERT_INVALID_PCI_ADDRESS (Address);
-  if (Address >= PcdPciExpressBaseSize()) {
-    return (UINT8) -1;
+  if (Address >= PcdPciExpressBaseSize ()) {
+    return (UINT8) - 1;
   }
+
   return MmioBitFieldAndThenOr8 (
-           (UINTN) GetPciExpressBaseAddress () + Address,
-           StartBit,
-           EndBit,
-           AndData,
-           OrData
-           );
+                                 (UINTN) GetPciExpressBaseAddress () + Address,
+                                 StartBit,
+                                 EndBit,
+                                 AndData,
+                                 OrData
+                                 );
 }
 
 /**
@@ -535,9 +543,10 @@ PciExpressRead16 (
   )
 {
   ASSERT_INVALID_PCI_ADDRESS (Address);
-  if (Address >= PcdPciExpressBaseSize()) {
-    return (UINT16) -1;
+  if (Address >= PcdPciExpressBaseSize ()) {
+    return (UINT16) - 1;
   }
+
   return MmioRead16 ((UINTN) GetPciExpressBaseAddress () + Address);
 }
 
@@ -567,9 +576,10 @@ PciExpressWrite16 (
   )
 {
   ASSERT_INVALID_PCI_ADDRESS (Address);
-  if (Address >= PcdPciExpressBaseSize()) {
-    return (UINT16) -1;
+  if (Address >= PcdPciExpressBaseSize ()) {
+    return (UINT16) - 1;
   }
+
   return MmioWrite16 ((UINTN) GetPciExpressBaseAddress () + Address, Value);
 }
 
@@ -603,9 +613,10 @@ PciExpressOr16 (
   )
 {
   ASSERT_INVALID_PCI_ADDRESS (Address);
-  if (Address >= PcdPciExpressBaseSize()) {
-    return (UINT16) -1;
+  if (Address >= PcdPciExpressBaseSize ()) {
+    return (UINT16) - 1;
   }
+
   return MmioOr16 ((UINTN) GetPciExpressBaseAddress () + Address, OrData);
 }
 
@@ -639,9 +650,10 @@ PciExpressAnd16 (
   )
 {
   ASSERT_INVALID_PCI_ADDRESS (Address);
-  if (Address >= PcdPciExpressBaseSize()) {
-    return (UINT16) -1;
+  if (Address >= PcdPciExpressBaseSize ()) {
+    return (UINT16) - 1;
   }
+
   return MmioAnd16 ((UINTN) GetPciExpressBaseAddress () + Address, AndData);
 }
 
@@ -678,14 +690,15 @@ PciExpressAndThenOr16 (
   )
 {
   ASSERT_INVALID_PCI_ADDRESS (Address);
-  if (Address >= PcdPciExpressBaseSize()) {
-    return (UINT16) -1;
+  if (Address >= PcdPciExpressBaseSize ()) {
+    return (UINT16) - 1;
   }
+
   return MmioAndThenOr16 (
-           (UINTN) GetPciExpressBaseAddress () + Address,
-           AndData,
-           OrData
-           );
+                          (UINTN) GetPciExpressBaseAddress () + Address,
+                          AndData,
+                          OrData
+                          );
 }
 
 /**
@@ -721,14 +734,15 @@ PciExpressBitFieldRead16 (
   )
 {
   ASSERT_INVALID_PCI_ADDRESS (Address);
-  if (Address >= PcdPciExpressBaseSize()) {
-    return (UINT16) -1;
+  if (Address >= PcdPciExpressBaseSize ()) {
+    return (UINT16) - 1;
   }
+
   return MmioBitFieldRead16 (
-           (UINTN) GetPciExpressBaseAddress () + Address,
-           StartBit,
-           EndBit
-           );
+                             (UINTN) GetPciExpressBaseAddress () + Address,
+                             StartBit,
+                             EndBit
+                             );
 }
 
 /**
@@ -767,15 +781,16 @@ PciExpressBitFieldWrite16 (
   )
 {
   ASSERT_INVALID_PCI_ADDRESS (Address);
-  if (Address >= PcdPciExpressBaseSize()) {
-    return (UINT16) -1;
+  if (Address >= PcdPciExpressBaseSize ()) {
+    return (UINT16) - 1;
   }
+
   return MmioBitFieldWrite16 (
-           (UINTN) GetPciExpressBaseAddress () + Address,
-           StartBit,
-           EndBit,
-           Value
-           );
+                              (UINTN) GetPciExpressBaseAddress () + Address,
+                              StartBit,
+                              EndBit,
+                              Value
+                              );
 }
 
 /**
@@ -817,15 +832,16 @@ PciExpressBitFieldOr16 (
   )
 {
   ASSERT_INVALID_PCI_ADDRESS (Address);
-  if (Address >= PcdPciExpressBaseSize()) {
-    return (UINT16) -1;
+  if (Address >= PcdPciExpressBaseSize ()) {
+    return (UINT16) - 1;
   }
+
   return MmioBitFieldOr16 (
-           (UINTN) GetPciExpressBaseAddress () + Address,
-           StartBit,
-           EndBit,
-           OrData
-           );
+                           (UINTN) GetPciExpressBaseAddress () + Address,
+                           StartBit,
+                           EndBit,
+                           OrData
+                           );
 }
 
 /**
@@ -867,15 +883,16 @@ PciExpressBitFieldAnd16 (
   )
 {
   ASSERT_INVALID_PCI_ADDRESS (Address);
-  if (Address >= PcdPciExpressBaseSize()) {
-    return (UINT16) -1;
+  if (Address >= PcdPciExpressBaseSize ()) {
+    return (UINT16) - 1;
   }
+
   return MmioBitFieldAnd16 (
-           (UINTN) GetPciExpressBaseAddress () + Address,
-           StartBit,
-           EndBit,
-           AndData
-           );
+                            (UINTN) GetPciExpressBaseAddress () + Address,
+                            StartBit,
+                            EndBit,
+                            AndData
+                            );
 }
 
 /**
@@ -922,16 +939,17 @@ PciExpressBitFieldAndThenOr16 (
   )
 {
   ASSERT_INVALID_PCI_ADDRESS (Address);
-  if (Address >= PcdPciExpressBaseSize()) {
-    return (UINT16) -1;
+  if (Address >= PcdPciExpressBaseSize ()) {
+    return (UINT16) - 1;
   }
+
   return MmioBitFieldAndThenOr16 (
-           (UINTN) GetPciExpressBaseAddress () + Address,
-           StartBit,
-           EndBit,
-           AndData,
-           OrData
-           );
+                                  (UINTN) GetPciExpressBaseAddress () + Address,
+                                  StartBit,
+                                  EndBit,
+                                  AndData,
+                                  OrData
+                                  );
 }
 
 /**
@@ -958,9 +976,10 @@ PciExpressRead32 (
   )
 {
   ASSERT_INVALID_PCI_ADDRESS (Address);
-  if (Address >= PcdPciExpressBaseSize()) {
-    return (UINT32) -1;
+  if (Address >= PcdPciExpressBaseSize ()) {
+    return (UINT32) - 1;
   }
+
   return MmioRead32 ((UINTN) GetPciExpressBaseAddress () + Address);
 }
 
@@ -990,9 +1009,10 @@ PciExpressWrite32 (
   )
 {
   ASSERT_INVALID_PCI_ADDRESS (Address);
-  if (Address >= PcdPciExpressBaseSize()) {
-    return (UINT32) -1;
+  if (Address >= PcdPciExpressBaseSize ()) {
+    return (UINT32) - 1;
   }
+
   return MmioWrite32 ((UINTN) GetPciExpressBaseAddress () + Address, Value);
 }
 
@@ -1026,9 +1046,10 @@ PciExpressOr32 (
   )
 {
   ASSERT_INVALID_PCI_ADDRESS (Address);
-  if (Address >= PcdPciExpressBaseSize()) {
-    return (UINT32) -1;
+  if (Address >= PcdPciExpressBaseSize ()) {
+    return (UINT32) - 1;
   }
+
   return MmioOr32 ((UINTN) GetPciExpressBaseAddress () + Address, OrData);
 }
 
@@ -1062,9 +1083,10 @@ PciExpressAnd32 (
   )
 {
   ASSERT_INVALID_PCI_ADDRESS (Address);
-  if (Address >= PcdPciExpressBaseSize()) {
-    return (UINT32) -1;
+  if (Address >= PcdPciExpressBaseSize ()) {
+    return (UINT32) - 1;
   }
+
   return MmioAnd32 ((UINTN) GetPciExpressBaseAddress () + Address, AndData);
 }
 
@@ -1101,14 +1123,15 @@ PciExpressAndThenOr32 (
   )
 {
   ASSERT_INVALID_PCI_ADDRESS (Address);
-  if (Address >= PcdPciExpressBaseSize()) {
-    return (UINT32) -1;
+  if (Address >= PcdPciExpressBaseSize ()) {
+    return (UINT32) - 1;
   }
+
   return MmioAndThenOr32 (
-           (UINTN) GetPciExpressBaseAddress () + Address,
-           AndData,
-           OrData
-           );
+                          (UINTN) GetPciExpressBaseAddress () + Address,
+                          AndData,
+                          OrData
+                          );
 }
 
 /**
@@ -1144,14 +1167,15 @@ PciExpressBitFieldRead32 (
   )
 {
   ASSERT_INVALID_PCI_ADDRESS (Address);
-  if (Address >= PcdPciExpressBaseSize()) {
-    return (UINT32) -1;
+  if (Address >= PcdPciExpressBaseSize ()) {
+    return (UINT32) - 1;
   }
+
   return MmioBitFieldRead32 (
-           (UINTN) GetPciExpressBaseAddress () + Address,
-           StartBit,
-           EndBit
-           );
+                             (UINTN) GetPciExpressBaseAddress () + Address,
+                             StartBit,
+                             EndBit
+                             );
 }
 
 /**
@@ -1190,15 +1214,16 @@ PciExpressBitFieldWrite32 (
   )
 {
   ASSERT_INVALID_PCI_ADDRESS (Address);
-  if (Address >= PcdPciExpressBaseSize()) {
-    return (UINT32) -1;
+  if (Address >= PcdPciExpressBaseSize ()) {
+    return (UINT32) - 1;
   }
+
   return MmioBitFieldWrite32 (
-           (UINTN) GetPciExpressBaseAddress () + Address,
-           StartBit,
-           EndBit,
-           Value
-           );
+                              (UINTN) GetPciExpressBaseAddress () + Address,
+                              StartBit,
+                              EndBit,
+                              Value
+                              );
 }
 
 /**
@@ -1240,15 +1265,16 @@ PciExpressBitFieldOr32 (
   )
 {
   ASSERT_INVALID_PCI_ADDRESS (Address);
-  if (Address >= PcdPciExpressBaseSize()) {
-    return (UINT32) -1;
+  if (Address >= PcdPciExpressBaseSize ()) {
+    return (UINT32) - 1;
   }
+
   return MmioBitFieldOr32 (
-           (UINTN) GetPciExpressBaseAddress () + Address,
-           StartBit,
-           EndBit,
-           OrData
-           );
+                           (UINTN) GetPciExpressBaseAddress () + Address,
+                           StartBit,
+                           EndBit,
+                           OrData
+                           );
 }
 
 /**
@@ -1290,15 +1316,16 @@ PciExpressBitFieldAnd32 (
   )
 {
   ASSERT_INVALID_PCI_ADDRESS (Address);
-  if (Address >= PcdPciExpressBaseSize()) {
-    return (UINT32) -1;
+  if (Address >= PcdPciExpressBaseSize ()) {
+    return (UINT32) - 1;
   }
+
   return MmioBitFieldAnd32 (
-           (UINTN) GetPciExpressBaseAddress () + Address,
-           StartBit,
-           EndBit,
-           AndData
-           );
+                            (UINTN) GetPciExpressBaseAddress () + Address,
+                            StartBit,
+                            EndBit,
+                            AndData
+                            );
 }
 
 /**
@@ -1345,16 +1372,17 @@ PciExpressBitFieldAndThenOr32 (
   )
 {
   ASSERT_INVALID_PCI_ADDRESS (Address);
-  if (Address >= PcdPciExpressBaseSize()) {
-    return (UINT32) -1;
+  if (Address >= PcdPciExpressBaseSize ()) {
+    return (UINT32) - 1;
   }
+
   return MmioBitFieldAndThenOr32 (
-           (UINTN) GetPciExpressBaseAddress () + Address,
-           StartBit,
-           EndBit,
-           AndData,
-           OrData
-           );
+                                  (UINTN) GetPciExpressBaseAddress () + Address,
+                                  StartBit,
+                                  EndBit,
+                                  AndData,
+                                  OrData
+                                  );
 }
 
 /**
@@ -1389,12 +1417,13 @@ PciExpressReadBuffer (
   OUT     VOID                      *Buffer
   )
 {
-  UINTN   ReturnValue;
+  UINTN  ReturnValue;
 
   ASSERT_INVALID_PCI_ADDRESS (StartAddress);
-  if (StartAddress >= PcdPciExpressBaseSize()) {
-    return (UINTN) -1;
+  if (StartAddress >= PcdPciExpressBaseSize ()) {
+    return (UINTN) - 1;
   }
+
   ASSERT (((StartAddress & 0xFFF) + Size) <= 0x1000);
 
   if (Size == 0) {
@@ -1412,10 +1441,10 @@ PciExpressReadBuffer (
     //
     // Read a byte if StartAddress is byte aligned
     //
-    *(volatile UINT8 *)Buffer = PciExpressRead8 (StartAddress);
+    *(volatile UINT8 *) Buffer = PciExpressRead8 (StartAddress);
     StartAddress += sizeof (UINT8);
-    Size -= sizeof (UINT8);
-    Buffer = (UINT8*)Buffer + 1;
+    Size  -= sizeof (UINT8);
+    Buffer = (UINT8 *) Buffer + 1;
   }
 
   if (Size >= sizeof (UINT16) && (StartAddress & 2) != 0) {
@@ -1425,8 +1454,8 @@ PciExpressReadBuffer (
     WriteUnaligned16 ((UINT16 *) Buffer, (UINT16) PciExpressRead16 (StartAddress));
 
     StartAddress += sizeof (UINT16);
-    Size -= sizeof (UINT16);
-    Buffer = (UINT16*)Buffer + 1;
+    Size  -= sizeof (UINT16);
+    Buffer = (UINT16 *) Buffer + 1;
   }
 
   while (Size >= sizeof (UINT32)) {
@@ -1436,8 +1465,8 @@ PciExpressReadBuffer (
     WriteUnaligned32 ((UINT32 *) Buffer, (UINT32) PciExpressRead32 (StartAddress));
 
     StartAddress += sizeof (UINT32);
-    Size -= sizeof (UINT32);
-    Buffer = (UINT32*)Buffer + 1;
+    Size  -= sizeof (UINT32);
+    Buffer = (UINT32 *) Buffer + 1;
   }
 
   if (Size >= sizeof (UINT16)) {
@@ -1446,15 +1475,15 @@ PciExpressReadBuffer (
     //
     WriteUnaligned16 ((UINT16 *) Buffer, (UINT16) PciExpressRead16 (StartAddress));
     StartAddress += sizeof (UINT16);
-    Size -= sizeof (UINT16);
-    Buffer = (UINT16*)Buffer + 1;
+    Size  -= sizeof (UINT16);
+    Buffer = (UINT16 *) Buffer + 1;
   }
 
   if (Size >= sizeof (UINT8)) {
     //
     // Read the last remaining byte if exist
     //
-    *(volatile UINT8 *)Buffer = PciExpressRead8 (StartAddress);
+    *(volatile UINT8 *) Buffer = PciExpressRead8 (StartAddress);
   }
 
   return ReturnValue;
@@ -1493,12 +1522,13 @@ PciExpressWriteBuffer (
   IN      VOID                      *Buffer
   )
 {
-  UINTN                             ReturnValue;
+  UINTN  ReturnValue;
 
   ASSERT_INVALID_PCI_ADDRESS (StartAddress);
-  if (StartAddress >= PcdPciExpressBaseSize()) {
-    return (UINTN) -1;
+  if (StartAddress >= PcdPciExpressBaseSize ()) {
+    return (UINTN) - 1;
   }
+
   ASSERT (((StartAddress & 0xFFF) + Size) <= 0x1000);
 
   if (Size == 0) {
@@ -1516,47 +1546,47 @@ PciExpressWriteBuffer (
     //
     // Write a byte if StartAddress is byte aligned
     //
-    PciExpressWrite8 (StartAddress, *(UINT8*)Buffer);
+    PciExpressWrite8 (StartAddress, *(UINT8 *) Buffer);
     StartAddress += sizeof (UINT8);
-    Size -= sizeof (UINT8);
-    Buffer = (UINT8*)Buffer + 1;
+    Size  -= sizeof (UINT8);
+    Buffer = (UINT8 *) Buffer + 1;
   }
 
   if (Size >= sizeof (UINT16) && (StartAddress & 2) != 0) {
     //
     // Write a word if StartAddress is word aligned
     //
-    PciExpressWrite16 (StartAddress, ReadUnaligned16 ((UINT16*)Buffer));
+    PciExpressWrite16 (StartAddress, ReadUnaligned16 ((UINT16 *) Buffer));
     StartAddress += sizeof (UINT16);
-    Size -= sizeof (UINT16);
-    Buffer = (UINT16*)Buffer + 1;
+    Size  -= sizeof (UINT16);
+    Buffer = (UINT16 *) Buffer + 1;
   }
 
   while (Size >= sizeof (UINT32)) {
     //
     // Write as many double words as possible
     //
-    PciExpressWrite32 (StartAddress, ReadUnaligned32 ((UINT32*)Buffer));
+    PciExpressWrite32 (StartAddress, ReadUnaligned32 ((UINT32 *) Buffer));
     StartAddress += sizeof (UINT32);
-    Size -= sizeof (UINT32);
-    Buffer = (UINT32*)Buffer + 1;
+    Size  -= sizeof (UINT32);
+    Buffer = (UINT32 *) Buffer + 1;
   }
 
   if (Size >= sizeof (UINT16)) {
     //
     // Write the last remaining word if exist
     //
-    PciExpressWrite16 (StartAddress, ReadUnaligned16 ((UINT16*)Buffer));
+    PciExpressWrite16 (StartAddress, ReadUnaligned16 ((UINT16 *) Buffer));
     StartAddress += sizeof (UINT16);
-    Size -= sizeof (UINT16);
-    Buffer = (UINT16*)Buffer + 1;
+    Size  -= sizeof (UINT16);
+    Buffer = (UINT16 *) Buffer + 1;
   }
 
   if (Size >= sizeof (UINT8)) {
     //
     // Write the last remaining byte if exist
     //
-    PciExpressWrite8 (StartAddress, *(UINT8*)Buffer);
+    PciExpressWrite8 (StartAddress, *(UINT8 *) Buffer);
   }
 
   return ReturnValue;

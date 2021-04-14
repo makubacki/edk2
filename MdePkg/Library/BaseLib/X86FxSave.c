@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 #include "BaseLibInternals.h"
 
 /**
@@ -31,7 +28,7 @@ AsmFxSave (
   )
 {
   ASSERT (Buffer != NULL);
-  ASSERT (0 == ((UINTN)Buffer & 0xf));
+  ASSERT (0 == ((UINTN) Buffer & 0xf));
 
   InternalX86FxSave (Buffer);
 

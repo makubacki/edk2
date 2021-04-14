@@ -12,7 +12,7 @@
 #include <Library/MmServicesTableLib.h>
 #include <Library/DebugLib.h>
 
-EFI_MM_SYSTEM_TABLE   *gMmst             = NULL;
+EFI_MM_SYSTEM_TABLE  *gMmst = NULL;
 
 /**
   The constructor function caches the pointer of the MM Services Table.
@@ -30,8 +30,8 @@ MmServicesTableLibConstructor (
   IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  EFI_STATUS              Status;
-  EFI_MM_BASE_PROTOCOL    *InternalMmBase;
+  EFI_STATUS            Status;
+  EFI_MM_BASE_PROTOCOL  *InternalMmBase;
 
   InternalMmBase = NULL;
   //
@@ -40,10 +40,10 @@ MmServicesTableLibConstructor (
   // MM driver explicity declares that dependency.
   //
   Status = SystemTable->BootServices->LocateProtocol (
-                                        &gEfiMmBaseProtocolGuid,
-                                        NULL,
-                                        (VOID **)&InternalMmBase
-                                        );
+                                                      &gEfiMmBaseProtocolGuid,
+                                                      NULL,
+                                                      (VOID **) &InternalMmBase
+                                                      );
   ASSERT_EFI_ERROR (Status);
   ASSERT (InternalMmBase != NULL);
 

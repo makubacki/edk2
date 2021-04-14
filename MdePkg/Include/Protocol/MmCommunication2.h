@@ -20,7 +20,7 @@
     0x378daedc, 0xf06b, 0x4446, { 0x83, 0x14, 0x40, 0xab, 0x93, 0x3c, 0x87, 0xa3 } \
   }
 
-typedef struct _EFI_MM_COMMUNICATION2_PROTOCOL  EFI_MM_COMMUNICATION2_PROTOCOL;
+typedef struct _EFI_MM_COMMUNICATION2_PROTOCOL EFI_MM_COMMUNICATION2_PROTOCOL;
 
 /**
   Communicates with a registered handler.
@@ -47,23 +47,22 @@ typedef struct _EFI_MM_COMMUNICATION2_PROTOCOL  EFI_MM_COMMUNICATION2_PROTOCOL;
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MM_COMMUNICATE2)(
-  IN CONST EFI_MM_COMMUNICATION2_PROTOCOL   *This,
-  IN OUT VOID                               *CommBufferPhysical,
-  IN OUT VOID                               *CommBufferVirtual,
-  IN OUT UINTN                              *CommSize OPTIONAL
-  );
+                              IN CONST EFI_MM_COMMUNICATION2_PROTOCOL   *This,
+                              IN OUT VOID                               *CommBufferPhysical,
+                              IN OUT VOID                               *CommBufferVirtual,
+                              IN OUT UINTN                              *CommSize OPTIONAL
+                              );
 
 ///
 /// EFI MM Communication Protocol provides runtime services for communicating
 /// between DXE drivers and a registered MMI handler.
 ///
 struct _EFI_MM_COMMUNICATION2_PROTOCOL {
-  EFI_MM_COMMUNICATE2  Communicate;
+  EFI_MM_COMMUNICATE2    Communicate;
 };
 
-extern EFI_GUID gEfiMmCommunication2ProtocolGuid;
+extern EFI_GUID  gEfiMmCommunication2ProtocolGuid;
 
 #endif
-

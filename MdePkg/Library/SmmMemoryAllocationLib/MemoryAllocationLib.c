@@ -58,16 +58,16 @@ SmmMemoryAllocationLibConstructor (
   // Locate SMM Access2 Protocol
   //
   Status = gBS->LocateProtocol (
-                  &gEfiSmmAccess2ProtocolGuid,
-                  NULL,
-                  (VOID **)&SmmAccess
-                  );
+                                &gEfiSmmAccess2ProtocolGuid,
+                                NULL,
+                                (VOID **) &SmmAccess
+                                );
   ASSERT_EFI_ERROR (Status);
 
   //
   // Get SMRAM range information
   //
-  Size = 0;
+  Size   = 0;
   Status = SmmAccess->GetCapabilities (SmmAccess, &Size, NULL);
   ASSERT (Status == EFI_BUFFER_TOO_SMALL);
 
@@ -119,7 +119,7 @@ BufferInSmram (
 {
   UINTN  Index;
 
-  for (Index = 0; Index < mSmramRangeCount; Index ++) {
+  for (Index = 0; Index < mSmramRangeCount; Index++) {
     if (((EFI_PHYSICAL_ADDRESS) (UINTN) Buffer >= mSmramRanges[Index].CpuStart) &&
         ((EFI_PHYSICAL_ADDRESS) (UINTN) Buffer < (mSmramRanges[Index].CpuStart + mSmramRanges[Index].PhysicalSize))) {
       return TRUE;
@@ -160,6 +160,7 @@ InternalAllocatePages (
   if (EFI_ERROR (Status)) {
     return NULL;
   }
+
   return (VOID *) (UINTN) Memory;
 }
 
@@ -269,6 +270,7 @@ FreePages (
     //
     Status = gBS->FreePages ((EFI_PHYSICAL_ADDRESS) (UINTN) Buffer, Pages);
   }
+
   ASSERT_EFI_ERROR (Status);
 }
 
@@ -313,21 +315,23 @@ InternalAllocateAlignedPages (
   if (Pages == 0) {
     return NULL;
   }
+
   if (Alignment > EFI_PAGE_SIZE) {
     //
     // Calculate the total number of pages since alignment is larger than page size.
     //
-    AlignmentMask  = Alignment - 1;
-    RealPages      = Pages + EFI_SIZE_TO_PAGES (Alignment);
+    AlignmentMask = Alignment - 1;
+    RealPages     = Pages + EFI_SIZE_TO_PAGES (Alignment);
     //
     // Make sure that Pages plus EFI_SIZE_TO_PAGES (Alignment) does not overflow.
     //
     ASSERT (RealPages > Pages);
 
-    Status         = gSmst->SmmAllocatePages (AllocateAnyPages, MemoryType, RealPages, &Memory);
+    Status = gSmst->SmmAllocatePages (AllocateAnyPages, MemoryType, RealPages, &Memory);
     if (EFI_ERROR (Status)) {
       return NULL;
     }
+
     AlignedMemory  = ((UINTN) Memory + AlignmentMask) & ~AlignmentMask;
     UnalignedPages = EFI_SIZE_TO_PAGES (AlignedMemory - (UINTN) Memory);
     if (UnalignedPages > 0) {
@@ -337,7 +341,8 @@ InternalAllocateAlignedPages (
       Status = gSmst->SmmFreePages (Memory, UnalignedPages);
       ASSERT_EFI_ERROR (Status);
     }
-    Memory         = AlignedMemory + EFI_PAGES_TO_SIZE (Pages);
+
+    Memory = AlignedMemory + EFI_PAGES_TO_SIZE (Pages);
     UnalignedPages = RealPages - Pages - UnalignedPages;
     if (UnalignedPages > 0) {
       //
@@ -354,8 +359,10 @@ InternalAllocateAlignedPages (
     if (EFI_ERROR (Status)) {
       return NULL;
     }
-    AlignedMemory  = (UINTN) Memory;
+
+    AlignedMemory = (UINTN) Memory;
   }
+
   return (VOID *) AlignedMemory;
 }
 
@@ -486,6 +493,7 @@ FreeAlignedPages (
     //
     Status = gBS->FreePages ((EFI_PHYSICAL_ADDRESS) (UINTN) Buffer, Pages);
   }
+
   ASSERT_EFI_ERROR (Status);
 }
 
@@ -516,6 +524,7 @@ InternalAllocatePool (
   if (EFI_ERROR (Status)) {
     Memory = NULL;
   }
+
   return Memory;
 }
 
@@ -611,6 +620,7 @@ InternalAllocateZeroPool (
   if (Memory != NULL) {
     Memory = ZeroMem (Memory, AllocationSize);
   }
+
   return Memory;
 }
 
@@ -711,8 +721,9 @@ InternalAllocateCopyPool (
 
   Memory = InternalAllocatePool (PoolType, AllocationSize);
   if (Memory != NULL) {
-     Memory = CopyMem (Memory, Buffer, AllocationSize);
+    Memory = CopyMem (Memory, Buffer, AllocationSize);
   }
+
   return Memory;
 }
 
@@ -837,6 +848,7 @@ InternalReallocatePool (
     CopyMem (NewBuffer, OldBuffer, MIN (OldSize, NewSize));
     FreePool (OldBuffer);
   }
+
   return NewBuffer;
 }
 
@@ -957,7 +969,7 @@ FreePool (
   IN VOID   *Buffer
   )
 {
-  EFI_STATUS    Status;
+  EFI_STATUS  Status;
 
   if (BufferInSmram (Buffer)) {
     //
@@ -972,5 +984,6 @@ FreePool (
     //
     Status = gBS->FreePool (Buffer);
   }
+
   ASSERT_EFI_ERROR (Status);
 }

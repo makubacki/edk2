@@ -45,7 +45,7 @@
 
 #define EFI_PEI_RECOVERY_MODULE_PPI_GUID \
   { \
-    0xFB6D9542, 0x612D, 0x4f45, {0x87, 0x2F, 0x5C, 0xFF, 0x52, 0xE9, 0x3D, 0xCF } \
+    0xFB6D9542, 0x612D, 0x4f45, { 0x87, 0x2F, 0x5C, 0xFF, 0x52, 0xE9, 0x3D, 0xCF } \
   }
 
 typedef struct _EFI_PEI_RECOVERY_MODULE_PPI EFI_PEI_RECOVERY_MODULE_PPI;
@@ -63,19 +63,19 @@ typedef struct _EFI_PEI_RECOVERY_MODULE_PPI EFI_PEI_RECOVERY_MODULE_PPI;
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_LOAD_RECOVERY_CAPSULE)(
-  IN EFI_PEI_SERVICES             **PeiServices,
-  IN EFI_PEI_RECOVERY_MODULE_PPI  *This
-  );
+                                        IN EFI_PEI_SERVICES             **PeiServices,
+                                        IN EFI_PEI_RECOVERY_MODULE_PPI  *This
+                                        );
 
 ///
-///  Finds and loads the recovery files.
+/// Finds and loads the recovery files.
 ///
 struct _EFI_PEI_RECOVERY_MODULE_PPI {
-  EFI_PEI_LOAD_RECOVERY_CAPSULE LoadRecoveryCapsule;  ///< Loads a DXE binary capsule into memory.
+  EFI_PEI_LOAD_RECOVERY_CAPSULE    LoadRecoveryCapsule; ///< Loads a DXE binary capsule into memory.
 };
 
-extern EFI_GUID gEfiPeiRecoveryModulePpiGuid;
+extern EFI_GUID  gEfiPeiRecoveryModulePpiGuid;
 
 #endif

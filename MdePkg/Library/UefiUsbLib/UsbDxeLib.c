@@ -10,7 +10,6 @@
 
 #include "UefiUsbLibInternal.h"
 
-
 /**
   Get the descriptor of the specified USB device.
 
@@ -56,23 +55,22 @@ UsbGetDescriptor (
 
   ZeroMem (&DevReq, sizeof (EFI_USB_DEVICE_REQUEST));
 
-  DevReq.RequestType  = USB_DEV_GET_DESCRIPTOR_REQ_TYPE;
-  DevReq.Request      = USB_REQ_GET_DESCRIPTOR;
-  DevReq.Value        = Value;
-  DevReq.Index        = Index;
-  DevReq.Length       = DescriptorLength;
+  DevReq.RequestType = USB_DEV_GET_DESCRIPTOR_REQ_TYPE;
+  DevReq.Request     = USB_REQ_GET_DESCRIPTOR;
+  DevReq.Value  = Value;
+  DevReq.Index  = Index;
+  DevReq.Length = DescriptorLength;
 
   return UsbIo->UsbControlTransfer (
-                  UsbIo,
-                  &DevReq,
-                  EfiUsbDataIn,
-                  PcdGet32 (PcdUsbTransferTimeoutValue),
-                  Descriptor,
-                  DescriptorLength,
-                  Status
-                  );
+                                    UsbIo,
+                                    &DevReq,
+                                    EfiUsbDataIn,
+                                    PcdGet32 (PcdUsbTransferTimeoutValue),
+                                    Descriptor,
+                                    DescriptorLength,
+                                    Status
+                                    );
 }
-
 
 /**
   Set the descriptor of the specified USB device.
@@ -116,23 +114,22 @@ UsbSetDescriptor (
 
   ZeroMem (&DevReq, sizeof (EFI_USB_DEVICE_REQUEST));
 
-  DevReq.RequestType  = USB_DEV_SET_DESCRIPTOR_REQ_TYPE;
-  DevReq.Request      = USB_REQ_SET_DESCRIPTOR;
-  DevReq.Value        = Value;
-  DevReq.Index        = Index;
-  DevReq.Length       = DescriptorLength;
+  DevReq.RequestType = USB_DEV_SET_DESCRIPTOR_REQ_TYPE;
+  DevReq.Request     = USB_REQ_SET_DESCRIPTOR;
+  DevReq.Value  = Value;
+  DevReq.Index  = Index;
+  DevReq.Length = DescriptorLength;
 
   return UsbIo->UsbControlTransfer (
-                  UsbIo,
-                  &DevReq,
-                  EfiUsbDataOut,
-                  PcdGet32 (PcdUsbTransferTimeoutValue),
-                  Descriptor,
-                  DescriptorLength,
-                  Status
-                  );
+                                    UsbIo,
+                                    &DevReq,
+                                    EfiUsbDataOut,
+                                    PcdGet32 (PcdUsbTransferTimeoutValue),
+                                    Descriptor,
+                                    DescriptorLength,
+                                    Status
+                                    );
 }
-
 
 /**
   Get the interface setting of the specified USB device.
@@ -174,22 +171,21 @@ UsbGetInterface (
 
   ZeroMem (&DevReq, sizeof (EFI_USB_DEVICE_REQUEST));
 
-  DevReq.RequestType  = USB_DEV_GET_INTERFACE_REQ_TYPE;
-  DevReq.Request      = USB_REQ_GET_INTERFACE;
-  DevReq.Index        = Interface;
-  DevReq.Length       = 1;
+  DevReq.RequestType = USB_DEV_GET_INTERFACE_REQ_TYPE;
+  DevReq.Request     = USB_REQ_GET_INTERFACE;
+  DevReq.Index  = Interface;
+  DevReq.Length = 1;
 
   return UsbIo->UsbControlTransfer (
-                  UsbIo,
-                  &DevReq,
-                  EfiUsbDataIn,
-                  PcdGet32 (PcdUsbTransferTimeoutValue),
-                  AlternateSetting,
-                  1,
-                  Status
-                  );
+                                    UsbIo,
+                                    &DevReq,
+                                    EfiUsbDataIn,
+                                    PcdGet32 (PcdUsbTransferTimeoutValue),
+                                    AlternateSetting,
+                                    1,
+                                    Status
+                                    );
 }
-
 
 /**
   Set the interface setting of the specified USB device.
@@ -227,22 +223,21 @@ UsbSetInterface (
 
   ZeroMem (&DevReq, sizeof (EFI_USB_DEVICE_REQUEST));
 
-  DevReq.RequestType  = USB_DEV_SET_INTERFACE_REQ_TYPE;
-  DevReq.Request      = USB_REQ_SET_INTERFACE;
-  DevReq.Value        = AlternateSetting;
-  DevReq.Index        = Interface;
+  DevReq.RequestType = USB_DEV_SET_INTERFACE_REQ_TYPE;
+  DevReq.Request     = USB_REQ_SET_INTERFACE;
+  DevReq.Value = AlternateSetting;
+  DevReq.Index = Interface;
 
   return UsbIo->UsbControlTransfer (
-                  UsbIo,
-                  &DevReq,
-                  EfiUsbNoData,
-                  PcdGet32 (PcdUsbTransferTimeoutValue),
-                  NULL,
-                  0,
-                  Status
-                  );
+                                    UsbIo,
+                                    &DevReq,
+                                    EfiUsbNoData,
+                                    PcdGet32 (PcdUsbTransferTimeoutValue),
+                                    NULL,
+                                    0,
+                                    Status
+                                    );
 }
-
 
 /**
   Get the device configuration.
@@ -282,21 +277,20 @@ UsbGetConfiguration (
 
   ZeroMem (&DevReq, sizeof (EFI_USB_DEVICE_REQUEST));
 
-  DevReq.RequestType  = USB_DEV_GET_CONFIGURATION_REQ_TYPE;
-  DevReq.Request      = USB_REQ_GET_CONFIG;
-  DevReq.Length       = 1;
+  DevReq.RequestType = USB_DEV_GET_CONFIGURATION_REQ_TYPE;
+  DevReq.Request     = USB_REQ_GET_CONFIG;
+  DevReq.Length = 1;
 
   return UsbIo->UsbControlTransfer (
-                  UsbIo,
-                  &DevReq,
-                  EfiUsbDataIn,
-                  PcdGet32 (PcdUsbTransferTimeoutValue),
-                  ConfigurationValue,
-                  1,
-                  Status
-                  );
+                                    UsbIo,
+                                    &DevReq,
+                                    EfiUsbDataIn,
+                                    PcdGet32 (PcdUsbTransferTimeoutValue),
+                                    ConfigurationValue,
+                                    1,
+                                    Status
+                                    );
 }
-
 
 /**
   Set the device configuration.
@@ -332,21 +326,20 @@ UsbSetConfiguration (
 
   ZeroMem (&DevReq, sizeof (EFI_USB_DEVICE_REQUEST));
 
-  DevReq.RequestType  = USB_DEV_SET_CONFIGURATION_REQ_TYPE;
-  DevReq.Request      = USB_REQ_SET_CONFIG;
-  DevReq.Value        = ConfigurationValue;
+  DevReq.RequestType = USB_DEV_SET_CONFIGURATION_REQ_TYPE;
+  DevReq.Request     = USB_REQ_SET_CONFIG;
+  DevReq.Value = ConfigurationValue;
 
   return UsbIo->UsbControlTransfer (
-                  UsbIo,
-                  &DevReq,
-                  EfiUsbNoData,
-                  PcdGet32 (PcdUsbTransferTimeoutValue),
-                  NULL,
-                  0,
-                  Status
-                  );
+                                    UsbIo,
+                                    &DevReq,
+                                    EfiUsbNoData,
+                                    PcdGet32 (PcdUsbTransferTimeoutValue),
+                                    NULL,
+                                    0,
+                                    Status
+                                    );
 }
-
 
 /**
   Set the specified feature of the specified device.
@@ -389,41 +382,39 @@ UsbSetFeature (
   ZeroMem (&DevReq, sizeof (EFI_USB_DEVICE_REQUEST));
 
   switch (Recipient) {
+    case USB_TARGET_DEVICE:
+      DevReq.RequestType = USB_DEV_SET_FEATURE_REQ_TYPE_D;
+      break;
 
-  case USB_TARGET_DEVICE:
-    DevReq.RequestType = USB_DEV_SET_FEATURE_REQ_TYPE_D;
-    break;
+    case USB_TARGET_INTERFACE:
+      DevReq.RequestType = USB_DEV_SET_FEATURE_REQ_TYPE_I;
+      break;
 
-  case USB_TARGET_INTERFACE:
-    DevReq.RequestType = USB_DEV_SET_FEATURE_REQ_TYPE_I;
-    break;
+    case USB_TARGET_ENDPOINT:
+      DevReq.RequestType = USB_DEV_SET_FEATURE_REQ_TYPE_E;
+      break;
 
-  case USB_TARGET_ENDPOINT:
-    DevReq.RequestType = USB_DEV_SET_FEATURE_REQ_TYPE_E;
-    break;
-
-  default:
-    break;
+    default:
+      break;
   }
+
   //
   // Fill device request, see USB1.1 spec
   //
-  DevReq.Request  = USB_REQ_SET_FEATURE;
-  DevReq.Value    = Value;
-  DevReq.Index    = Target;
-
+  DevReq.Request = USB_REQ_SET_FEATURE;
+  DevReq.Value   = Value;
+  DevReq.Index   = Target;
 
   return UsbIo->UsbControlTransfer (
-                  UsbIo,
-                  &DevReq,
-                  EfiUsbNoData,
-                  PcdGet32 (PcdUsbTransferTimeoutValue),
-                  NULL,
-                  0,
-                  Status
-                  );
+                                    UsbIo,
+                                    &DevReq,
+                                    EfiUsbNoData,
+                                    PcdGet32 (PcdUsbTransferTimeoutValue),
+                                    NULL,
+                                    0,
+                                    Status
+                                    );
 }
-
 
 /**
   Clear the specified feature of the specified device.
@@ -463,45 +454,42 @@ UsbClearFeature (
   ASSERT (UsbIo != NULL);
   ASSERT (Status != NULL);
 
-
   ZeroMem (&DevReq, sizeof (EFI_USB_DEVICE_REQUEST));
 
   switch (Recipient) {
+    case USB_TARGET_DEVICE:
+      DevReq.RequestType = USB_DEV_CLEAR_FEATURE_REQ_TYPE_D;
+      break;
 
-  case USB_TARGET_DEVICE:
-    DevReq.RequestType = USB_DEV_CLEAR_FEATURE_REQ_TYPE_D;
-    break;
+    case USB_TARGET_INTERFACE:
+      DevReq.RequestType = USB_DEV_CLEAR_FEATURE_REQ_TYPE_I;
+      break;
 
-  case USB_TARGET_INTERFACE:
-    DevReq.RequestType = USB_DEV_CLEAR_FEATURE_REQ_TYPE_I;
-    break;
+    case USB_TARGET_ENDPOINT:
+      DevReq.RequestType = USB_DEV_CLEAR_FEATURE_REQ_TYPE_E;
+      break;
 
-  case USB_TARGET_ENDPOINT:
-    DevReq.RequestType = USB_DEV_CLEAR_FEATURE_REQ_TYPE_E;
-    break;
-
-  default:
-    break;
+    default:
+      break;
   }
+
   //
   // Fill device request, see USB1.1 spec
   //
-  DevReq.Request  = USB_REQ_CLEAR_FEATURE;
-  DevReq.Value    = Value;
-  DevReq.Index    = Target;
-
+  DevReq.Request = USB_REQ_CLEAR_FEATURE;
+  DevReq.Value   = Value;
+  DevReq.Index   = Target;
 
   return UsbIo->UsbControlTransfer (
-                  UsbIo,
-                  &DevReq,
-                  EfiUsbNoData,
-                  PcdGet32 (PcdUsbTransferTimeoutValue),
-                  NULL,
-                  0,
-                  Status
-                  );
+                                    UsbIo,
+                                    &DevReq,
+                                    EfiUsbNoData,
+                                    PcdGet32 (PcdUsbTransferTimeoutValue),
+                                    NULL,
+                                    0,
+                                    Status
+                                    );
 }
-
 
 /**
   Get the status of the specified device.
@@ -546,41 +534,40 @@ UsbGetStatus (
   ZeroMem (&DevReq, sizeof (EFI_USB_DEVICE_REQUEST));
 
   switch (Recipient) {
+    case USB_TARGET_DEVICE:
+      DevReq.RequestType = USB_DEV_GET_STATUS_REQ_TYPE_D;
+      break;
 
-  case USB_TARGET_DEVICE:
-    DevReq.RequestType = USB_DEV_GET_STATUS_REQ_TYPE_D;
-    break;
+    case USB_TARGET_INTERFACE:
+      DevReq.RequestType = USB_DEV_GET_STATUS_REQ_TYPE_I;
+      break;
 
-  case USB_TARGET_INTERFACE:
-    DevReq.RequestType = USB_DEV_GET_STATUS_REQ_TYPE_I;
-    break;
+    case USB_TARGET_ENDPOINT:
+      DevReq.RequestType = USB_DEV_GET_STATUS_REQ_TYPE_E;
+      break;
 
-  case USB_TARGET_ENDPOINT:
-    DevReq.RequestType = USB_DEV_GET_STATUS_REQ_TYPE_E;
-    break;
-
-  default:
-    break;
+    default:
+      break;
   }
+
   //
   // Fill device request, see USB1.1 spec
   //
-  DevReq.Request  = USB_REQ_GET_STATUS;
-  DevReq.Value    = 0;
-  DevReq.Index    = Target;
-  DevReq.Length   = 2;
+  DevReq.Request = USB_REQ_GET_STATUS;
+  DevReq.Value   = 0;
+  DevReq.Index   = Target;
+  DevReq.Length  = 2;
 
   return UsbIo->UsbControlTransfer (
-                  UsbIo,
-                  &DevReq,
-                  EfiUsbDataIn,
-                  PcdGet32 (PcdUsbTransferTimeoutValue),
-                  DeviceStatus,
-                  2,
-                  Status
-                  );
+                                    UsbIo,
+                                    &DevReq,
+                                    EfiUsbDataIn,
+                                    PcdGet32 (PcdUsbTransferTimeoutValue),
+                                    DeviceStatus,
+                                    2,
+                                    Status
+                                    );
 }
-
 
 /**
   Clear halt feature of the specified usb endpoint.
@@ -624,19 +611,19 @@ UsbClearEndpointHalt (
   // First search the endpoint descriptor for that endpoint addr
   //
   Result = UsbIo->UsbGetInterfaceDescriptor (
-                    UsbIo,
-                    &InterfaceDescriptor
-                    );
+                                             UsbIo,
+                                             &InterfaceDescriptor
+                                             );
   if (EFI_ERROR (Result)) {
     return Result;
   }
 
   for (Index = 0; Index < InterfaceDescriptor.NumEndpoints; Index++) {
     Result = UsbIo->UsbGetEndpointDescriptor (
-                      UsbIo,
-                      Index,
-                      &EndpointDescriptor
-                      );
+                                              UsbIo,
+                                              Index,
+                                              &EndpointDescriptor
+                                              );
     if (EFI_ERROR (Result)) {
       continue;
     }
@@ -654,12 +641,12 @@ UsbClearEndpointHalt (
   }
 
   Result = UsbClearFeature (
-            UsbIo,
-            USB_TARGET_ENDPOINT,
-            USB_FEATURE_ENDPOINT_HALT,
-            EndpointDescriptor.EndpointAddress,
-            Status
-            );
+                            UsbIo,
+                            USB_TARGET_ENDPOINT,
+                            USB_FEATURE_ENDPOINT_HALT,
+                            EndpointDescriptor.EndpointAddress,
+                            Status
+                            );
 
   return Result;
 }

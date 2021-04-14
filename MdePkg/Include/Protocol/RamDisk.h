@@ -16,12 +16,12 @@
 // EFI RAM Disk Protocol GUID value
 //
 #define EFI_RAM_DISK_PROTOCOL_GUID \
-  { 0xab38a0df, 0x6873, 0x44a9, { 0x87, 0xe6, 0xd4, 0xeb, 0x56, 0x14, 0x84, 0x49 }};
+  { 0xab38a0df, 0x6873, 0x44a9, { 0x87, 0xe6, 0xd4, 0xeb, 0x56, 0x14, 0x84, 0x49 } };
 
 //
 // Forward reference for pure ANSI compatability
 //
-typedef struct _EFI_RAM_DISK_PROTOCOL  EFI_RAM_DISK_PROTOCOL;
+typedef struct _EFI_RAM_DISK_PROTOCOL EFI_RAM_DISK_PROTOCOL;
 
 /**
   Register a RAM disk with specified address, size and type.
@@ -54,14 +54,14 @@ typedef struct _EFI_RAM_DISK_PROTOCOL  EFI_RAM_DISK_PROTOCOL;
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_RAM_DISK_REGISTER_RAMDISK) (
-  IN UINT64                       RamDiskBase,
-  IN UINT64                       RamDiskSize,
-  IN EFI_GUID                     *RamDiskType,
-  IN EFI_DEVICE_PATH              *ParentDevicePath     OPTIONAL,
-  OUT EFI_DEVICE_PATH_PROTOCOL    **DevicePath
-  );
+  EFI_STATUS
+(EFIAPI *EFI_RAM_DISK_REGISTER_RAMDISK)(
+                                        IN UINT64                       RamDiskBase,
+                                        IN UINT64                       RamDiskSize,
+                                        IN EFI_GUID                     *RamDiskType,
+                                        IN EFI_DEVICE_PATH              *ParentDevicePath     OPTIONAL,
+                                        OUT EFI_DEVICE_PATH_PROTOCOL    **DevicePath
+                                        );
 
 /**
   Unregister a RAM disk specified by DevicePath.
@@ -79,22 +79,22 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_RAM_DISK_UNREGISTER_RAMDISK) (
-  IN  EFI_DEVICE_PATH_PROTOCOL    *DevicePath
-  );
+  EFI_STATUS
+(EFIAPI *EFI_RAM_DISK_UNREGISTER_RAMDISK)(
+                                          IN  EFI_DEVICE_PATH_PROTOCOL    *DevicePath
+                                          );
 
 ///
 /// RAM Disk Protocol structure.
 ///
 struct _EFI_RAM_DISK_PROTOCOL {
-  EFI_RAM_DISK_REGISTER_RAMDISK        Register;
-  EFI_RAM_DISK_UNREGISTER_RAMDISK      Unregister;
+  EFI_RAM_DISK_REGISTER_RAMDISK      Register;
+  EFI_RAM_DISK_UNREGISTER_RAMDISK    Unregister;
 };
 
 ///
 /// RAM Disk Protocol GUID variable.
 ///
-extern EFI_GUID gEfiRamDiskProtocolGuid;
+extern EFI_GUID  gEfiRamDiskProtocolGuid;
 
 #endif

@@ -19,7 +19,7 @@
 
 #define EFI_MM_STANDBY_BUTTON_DISPATCH_PROTOCOL_GUID \
   { \
-    0x7300c4a1, 0x43f2, 0x4017, {0xa5, 0x1b, 0xc8, 0x1a, 0x7f, 0x40, 0x58, 0x5b } \
+    0x7300c4a1, 0x43f2, 0x4017, { 0xa5, 0x1b, 0xc8, 0x1a, 0x7f, 0x40, 0x58, 0x5b } \
   }
 
 ///
@@ -39,7 +39,7 @@ typedef struct {
   /// Describes whether the child handler should be invoked upon the entry to the button
   /// activation or upon exit.
   ///
-  EFI_STANDBY_BUTTON_PHASE  Phase;
+  EFI_STANDBY_BUTTON_PHASE    Phase;
 } EFI_MM_STANDBY_BUTTON_REGISTER_CONTEXT;
 
 typedef struct _EFI_MM_STANDBY_BUTTON_DISPATCH_PROTOCOL EFI_MM_STANDBY_BUTTON_DISPATCH_PROTOCOL;
@@ -69,13 +69,13 @@ typedef struct _EFI_MM_STANDBY_BUTTON_DISPATCH_PROTOCOL EFI_MM_STANDBY_BUTTON_DI
   @retval EFI_OUT_OF_RESOURCES   There is not enough memory (system or MM) to manage this child.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MM_STANDBY_BUTTON_REGISTER)(
-  IN CONST EFI_MM_STANDBY_BUTTON_DISPATCH_PROTOCOL  *This,
-  IN       EFI_MM_HANDLER_ENTRY_POINT               DispatchFunction,
-  IN       EFI_MM_STANDBY_BUTTON_REGISTER_CONTEXT   *RegisterContext,
-  OUT      EFI_HANDLE                               *DispatchHandle
-  );
+                                         IN CONST EFI_MM_STANDBY_BUTTON_DISPATCH_PROTOCOL  *This,
+                                         IN       EFI_MM_HANDLER_ENTRY_POINT               DispatchFunction,
+                                         IN       EFI_MM_STANDBY_BUTTON_REGISTER_CONTEXT   *RegisterContext,
+                                         OUT      EFI_HANDLE                               *DispatchHandle
+                                         );
 
 /**
   Unregisters a child MMI source dispatch function with a parent MM driver.
@@ -90,11 +90,11 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER  The DispatchHandle was not valid.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MM_STANDBY_BUTTON_UNREGISTER)(
-  IN CONST EFI_MM_STANDBY_BUTTON_DISPATCH_PROTOCOL  *This,
-  IN       EFI_HANDLE                               DispatchHandle
-  );
+                                           IN CONST EFI_MM_STANDBY_BUTTON_DISPATCH_PROTOCOL  *This,
+                                           IN       EFI_HANDLE                               DispatchHandle
+                                           );
 
 ///
 /// Interface structure for the MM Standby Button Dispatch Protocol.
@@ -103,11 +103,10 @@ EFI_STATUS
 /// button MMI source generator.
 ///
 struct _EFI_MM_STANDBY_BUTTON_DISPATCH_PROTOCOL {
-  EFI_MM_STANDBY_BUTTON_REGISTER    Register;
-  EFI_MM_STANDBY_BUTTON_UNREGISTER  UnRegister;
+  EFI_MM_STANDBY_BUTTON_REGISTER      Register;
+  EFI_MM_STANDBY_BUTTON_UNREGISTER    UnRegister;
 };
 
-extern EFI_GUID gEfiMmStandbyButtonDispatchProtocolGuid;
+extern EFI_GUID  gEfiMmStandbyButtonDispatchProtocolGuid;
 
 #endif
-

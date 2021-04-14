@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 /**
   Reads the current value of 64-bit MMX Register #7 (MM7).
 
@@ -25,12 +22,11 @@ AsmReadMm7 (
   )
 {
   _asm {
-    push    eax
-    push    eax
-    movq    [esp], mm7
+  push    eax
+  push    eax
+      movq[esp], mm7
     pop     eax
     pop     edx
-    emms
+      emms
   }
 }
-

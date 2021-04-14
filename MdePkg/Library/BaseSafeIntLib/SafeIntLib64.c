@@ -134,7 +134,7 @@ SafeIntnToUint32 (
   OUT UINT32  *Result
   )
 {
-  return SafeInt64ToUint32 ((INT64)Operand, Result);
+  return SafeInt64ToUint32 ((INT64) Operand, Result);
 }
 
 /**
@@ -164,7 +164,7 @@ SafeUintnToUint32 (
   OUT UINT32  *Result
   )
 {
-  return SafeUint64ToUint32 ((UINT64)Operand, Result);
+  return SafeUint64ToUint32 ((UINT64) Operand, Result);
 }
 
 /**
@@ -194,7 +194,7 @@ SafeUintnToInt64 (
   OUT INT64  *Result
   )
 {
-  return SafeUint64ToInt64 ((UINT64)Operand, Result);
+  return SafeUint64ToInt64 ((UINT64) Operand, Result);
 }
 
 /**
@@ -228,7 +228,7 @@ SafeInt64ToIntn (
     return RETURN_INVALID_PARAMETER;
   }
 
-  *Result = (INTN)Operand;
+  *Result = (INTN) Operand;
   return RETURN_SUCCESS;
 }
 
@@ -259,7 +259,7 @@ SafeInt64ToUintn (
   OUT UINTN  *Result
   )
 {
-  return SafeInt64ToUint64 (Operand, (UINT64 *)Result);
+  return SafeInt64ToUint64 (Operand, (UINT64 *) Result);
 }
 
 /**
@@ -326,7 +326,7 @@ SafeUintnAdd (
   OUT UINTN  *Result
   )
 {
-  return SafeUint64Add ((UINT64)Augend, (UINT64)Addend, (UINT64 *)Result);
+  return SafeUint64Add ((UINT64) Augend, (UINT64) Addend, (UINT64 *) Result);
 }
 
 /**
@@ -358,7 +358,7 @@ SafeUintnSub (
   OUT UINTN  *Result
   )
 {
-  return SafeUint64Sub ((UINT64)Minuend, (UINT64)Subtrahend, (UINT64 *)Result);
+  return SafeUint64Sub ((UINT64) Minuend, (UINT64) Subtrahend, (UINT64 *) Result);
 }
 
 /**
@@ -390,7 +390,7 @@ SafeUintnMult (
   OUT UINTN  *Result
   )
 {
-  return SafeUint64Mult ((UINT64)Multiplicand, (UINT64)Multiplier, (UINT64 *)Result);
+  return SafeUint64Mult ((UINT64) Multiplicand, (UINT64) Multiplier, (UINT64 *) Result);
 }
 
 /**
@@ -422,7 +422,7 @@ SafeIntnAdd (
   OUT INTN  *Result
   )
 {
-  return SafeInt64Add ((INT64)Augend, (INT64)Addend, (INT64 *)Result);
+  return SafeInt64Add ((INT64) Augend, (INT64) Addend, (INT64 *) Result);
 }
 
 /**
@@ -454,7 +454,7 @@ SafeIntnSub (
   OUT INTN  *Result
   )
 {
-  return SafeInt64Sub ((INT64)Minuend, (INT64)Subtrahend, (INT64 *)Result);
+  return SafeInt64Sub ((INT64) Minuend, (INT64) Subtrahend, (INT64 *) Result);
 }
 
 /**
@@ -486,6 +486,5 @@ SafeIntnMult (
   OUT INTN  *Result
   )
 {
-  return SafeInt64Mult ((INT64)Multiplicand, (INT64)Multiplier, (INT64 *)Result);
+  return SafeInt64Mult ((INT64) Multiplicand, (INT64) Multiplier, (INT64 *) Result);
 }
-

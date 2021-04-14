@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 /**
   Switches the endianess of a 64-bit integer.
 
@@ -28,10 +25,9 @@ InternalMathSwapBytes64 (
   )
 {
   _asm {
-    mov     eax, dword ptr [Operand + 4]
-    mov     edx, dword ptr [Operand + 0]
+  mov  eax, dword ptr[Operand + 4]
+    mov     edx, dword ptr[Operand + 0]
     bswap   eax
     bswap   edx
   }
 }
-

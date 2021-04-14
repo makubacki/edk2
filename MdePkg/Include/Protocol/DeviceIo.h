@@ -14,7 +14,7 @@
 
 #define EFI_DEVICE_IO_PROTOCOL_GUID \
   { \
-    0xaf6ac311, 0x84c3, 0x11d2, {0x8e, 0x3c, 0x00, 0xa0, 0xc9, 0x69, 0x72, 0x3b } \
+    0xaf6ac311, 0x84c3, 0x11d2, { 0x8e, 0x3c, 0x00, 0xa0, 0xc9, 0x69, 0x72, 0x3b } \
   }
 
 typedef struct _EFI_DEVICE_IO_PROTOCOL EFI_DEVICE_IO_PROTOCOL;
@@ -27,7 +27,7 @@ typedef struct _EFI_DEVICE_IO_PROTOCOL EFI_DEVICE_IO_PROTOCOL;
 ///
 /// Protocol defined in EFI1.1.
 ///
-typedef EFI_DEVICE_IO_PROTOCOL  EFI_DEVICE_IO_INTERFACE;
+typedef EFI_DEVICE_IO_PROTOCOL EFI_DEVICE_IO_INTERFACE;
 
 ///
 /// Device IO Access Width
@@ -66,18 +66,18 @@ typedef enum {
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_DEVICE_IO)(
-  IN EFI_DEVICE_IO_PROTOCOL         *This,
-  IN EFI_IO_WIDTH                   Width,
-  IN UINT64                         Address,
-  IN UINTN                          Count,
-  IN OUT VOID                       *Buffer
-  );
+                        IN EFI_DEVICE_IO_PROTOCOL         *This,
+                        IN EFI_IO_WIDTH                   Width,
+                        IN UINT64                         Address,
+                        IN UINTN                          Count,
+                        IN OUT VOID                       *Buffer
+                        );
 
 typedef struct {
-  EFI_DEVICE_IO Read;
-  EFI_DEVICE_IO Write;
+  EFI_DEVICE_IO    Read;
+  EFI_DEVICE_IO    Write;
 } EFI_IO_ACCESS;
 
 /**
@@ -95,12 +95,12 @@ typedef struct {
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PCI_DEVICE_PATH)(
-  IN EFI_DEVICE_IO_PROTOCOL           *This,
-  IN UINT64                           PciAddress,
-  IN OUT EFI_DEVICE_PATH_PROTOCOL     **PciDevicePath
-  );
+                              IN EFI_DEVICE_IO_PROTOCOL           *This,
+                              IN UINT64                           PciAddress,
+                              IN OUT EFI_DEVICE_PATH_PROTOCOL     **PciDevicePath
+                              );
 
 typedef enum {
   ///
@@ -142,15 +142,15 @@ typedef enum {
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_IO_MAP)(
-  IN EFI_DEVICE_IO_PROTOCOL           *This,
-  IN EFI_IO_OPERATION_TYPE            Operation,
-  IN EFI_PHYSICAL_ADDRESS             *HostAddress,
-  IN OUT UINTN                        *NumberOfBytes,
-  OUT EFI_PHYSICAL_ADDRESS            *DeviceAddress,
-  OUT VOID                            **Mapping
-  );
+                     IN EFI_DEVICE_IO_PROTOCOL           *This,
+                     IN EFI_IO_OPERATION_TYPE            Operation,
+                     IN EFI_PHYSICAL_ADDRESS             *HostAddress,
+                     IN OUT UINTN                        *NumberOfBytes,
+                     OUT EFI_PHYSICAL_ADDRESS            *DeviceAddress,
+                     OUT VOID                            **Mapping
+                     );
 
 /**
   Completes the Map() operation and releases any corresponding resources.
@@ -163,11 +163,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_IO_UNMAP)(
-  IN EFI_DEVICE_IO_PROTOCOL           *This,
-  IN VOID                             *Mapping
-  );
+                       IN EFI_DEVICE_IO_PROTOCOL           *This,
+                       IN VOID                             *Mapping
+                       );
 
 /**
   Allocates pages that are suitable for an EFIBusMasterCommonBuffer mapping.
@@ -187,14 +187,14 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_IO_ALLOCATE_BUFFER)(
-  IN EFI_DEVICE_IO_PROTOCOL           *This,
-  IN EFI_ALLOCATE_TYPE                Type,
-  IN EFI_MEMORY_TYPE                  MemoryType,
-  IN UINTN                            Pages,
-  IN OUT EFI_PHYSICAL_ADDRESS         *HostAddress
-  );
+                                 IN EFI_DEVICE_IO_PROTOCOL           *This,
+                                 IN EFI_ALLOCATE_TYPE                Type,
+                                 IN EFI_MEMORY_TYPE                  MemoryType,
+                                 IN UINTN                            Pages,
+                                 IN OUT EFI_PHYSICAL_ADDRESS         *HostAddress
+                                 );
 
 /**
   Flushes any posted write data to the device.
@@ -206,10 +206,10 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_IO_FLUSH)(
-  IN EFI_DEVICE_IO_PROTOCOL  *This
-  );
+                       IN EFI_DEVICE_IO_PROTOCOL  *This
+                       );
 
 /**
   Frees pages that were allocated with AllocateBuffer().
@@ -225,12 +225,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_IO_FREE_BUFFER)(
-  IN EFI_DEVICE_IO_PROTOCOL           *This,
-  IN UINTN                            Pages,
-  IN EFI_PHYSICAL_ADDRESS             HostAddress
-  );
+                             IN EFI_DEVICE_IO_PROTOCOL           *This,
+                             IN UINTN                            Pages,
+                             IN EFI_PHYSICAL_ADDRESS             HostAddress
+                             );
 
 ///
 /// This protocol provides the basic Memory, I/O, and PCI interfaces that
@@ -240,23 +240,23 @@ struct _EFI_DEVICE_IO_PROTOCOL {
   ///
   /// Allows reads and writes to memory mapped I/O space.
   ///
-  EFI_IO_ACCESS           Mem;
+  EFI_IO_ACCESS             Mem;
   ///
   /// Allows reads and writes to I/O space.
   ///
-  EFI_IO_ACCESS           Io;
+  EFI_IO_ACCESS             Io;
   ///
   /// Allows reads and writes to PCI configuration space.
   ///
-  EFI_IO_ACCESS           Pci;
-  EFI_IO_MAP              Map;
-  EFI_PCI_DEVICE_PATH     PciDevicePath;
-  EFI_IO_UNMAP            Unmap;
-  EFI_IO_ALLOCATE_BUFFER  AllocateBuffer;
-  EFI_IO_FLUSH            Flush;
-  EFI_IO_FREE_BUFFER      FreeBuffer;
+  EFI_IO_ACCESS             Pci;
+  EFI_IO_MAP                Map;
+  EFI_PCI_DEVICE_PATH       PciDevicePath;
+  EFI_IO_UNMAP              Unmap;
+  EFI_IO_ALLOCATE_BUFFER    AllocateBuffer;
+  EFI_IO_FLUSH              Flush;
+  EFI_IO_FREE_BUFFER        FreeBuffer;
 };
 
-extern EFI_GUID gEfiDeviceIoProtocolGuid;
+extern EFI_GUID  gEfiDeviceIoProtocolGuid;
 
 #endif

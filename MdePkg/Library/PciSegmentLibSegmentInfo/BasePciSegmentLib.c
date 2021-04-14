@@ -54,11 +54,11 @@ PciSegmentRegisterForRuntimeAccess (
   // Use PciSegmentLibGetEcamAddress() to validate the Address.
   //
   DEBUG_CODE (
-    UINTN                        Count;
-    PCI_SEGMENT_INFO             *SegmentInfo;
+              UINTN                        Count;
+              PCI_SEGMENT_INFO             *SegmentInfo;
 
-    SegmentInfo = GetPciSegmentInfo (&Count);
-    PciSegmentLibGetEcamAddress (Address, SegmentInfo, Count);
-  );
+              SegmentInfo = GetPciSegmentInfo (&Count);
+              PciSegmentLibGetEcamAddress (Address, SegmentInfo, Count);
+              );
   return RETURN_SUCCESS;
 }

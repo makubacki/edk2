@@ -17,11 +17,10 @@
 
 #define EFI_HTTP_UTILITIES_PROTOCOL_GUID  \
   { \
-    0x3e35c163, 0x4074, 0x45dd, {0x43, 0x1e, 0x23, 0x98, 0x9d, 0xd8, 0x6b, 0x32 } \
+    0x3e35c163, 0x4074, 0x45dd, { 0x43, 0x1e, 0x23, 0x98, 0x9d, 0xd8, 0x6b, 0x32 } \
   }
 
 typedef struct _EFI_HTTP_UTILITIES_PROTOCOL EFI_HTTP_UTILITIES_PROTOCOL;
-
 
 /**
   Create HTTP header based on a combination of seed header, fields
@@ -56,18 +55,21 @@ typedef struct _EFI_HTTP_UTILITIES_PROTOCOL EFI_HTTP_UTILITIES_PROTOCOL;
                                   This is NULL.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_HTTP_UTILS_BUILD) (
-  IN  EFI_HTTP_UTILITIES_PROTOCOL  *This,
-  IN  UINTN                        SeedMessageSize,
-  IN  VOID                         *SeedMessage,   OPTIONAL
-  IN  UINTN                        DeleteCount,
-  IN  CHAR8                        *DeleteList[],  OPTIONAL
-  IN  UINTN                        AppendCount,
-  IN  EFI_HTTP_HEADER              *AppendList[],  OPTIONAL
-  OUT UINTN                        *NewMessageSize,
-  OUT VOID                         **NewMessage
-  );
+  EFI_STATUS
+(EFIAPI *EFI_HTTP_UTILS_BUILD)(
+                               IN  EFI_HTTP_UTILITIES_PROTOCOL  *This,
+                               IN  UINTN                        SeedMessageSize,
+                               IN  VOID                         *SeedMessage,
+                               OPTIONAL
+                               IN  UINTN                        DeleteCount,
+                               IN  CHAR8                        *DeleteList[],
+                               OPTIONAL
+                               IN  UINTN                        AppendCount,
+                               IN  EFI_HTTP_HEADER              *AppendList[],
+                               OPTIONAL
+                               OUT UINTN                        *NewMessageSize,
+                               OUT VOID                         **NewMessage
+                               );
 
 /**
   Parses HTTP header and produces an array of key/value pairs.
@@ -91,15 +93,14 @@ EFI_STATUS
                                   FieldCount is NULL.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_HTTP_UTILS_PARSE) (
-  IN  EFI_HTTP_UTILITIES_PROTOCOL  *This,
-  IN  CHAR8                        *HttpMessage,
-  IN  UINTN                        HttpMessageSize,
-  OUT EFI_HTTP_HEADER              **HeaderFields,
-  OUT UINTN                        *FieldCount
-  );
-
+  EFI_STATUS
+(EFIAPI *EFI_HTTP_UTILS_PARSE)(
+                               IN  EFI_HTTP_UTILITIES_PROTOCOL  *This,
+                               IN  CHAR8                        *HttpMessage,
+                               IN  UINTN                        HttpMessageSize,
+                               OUT EFI_HTTP_HEADER              **HeaderFields,
+                               OUT UINTN                        *FieldCount
+                               );
 
 ///
 /// EFI_HTTP_UTILITIES_PROTOCOL
@@ -109,10 +110,10 @@ EFI_STATUS
 /// infrastructure.
 ///
 struct _EFI_HTTP_UTILITIES_PROTOCOL {
-  EFI_HTTP_UTILS_BUILD          Build;
-  EFI_HTTP_UTILS_PARSE          Parse;
+  EFI_HTTP_UTILS_BUILD    Build;
+  EFI_HTTP_UTILS_PARSE    Parse;
 };
 
-extern EFI_GUID gEfiHttpUtilitiesProtocolGuid;
+extern EFI_GUID  gEfiHttpUtilitiesProtocolGuid;
 
 #endif

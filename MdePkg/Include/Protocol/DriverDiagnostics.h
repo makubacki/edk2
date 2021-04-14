@@ -14,32 +14,32 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 ///
 #define EFI_DRIVER_DIAGNOSTICS_PROTOCOL_GUID \
   { \
-    0x0784924f, 0xe296, 0x11d4, {0x9a, 0x49, 0x0, 0x90, 0x27, 0x3f, 0xc1, 0x4d } \
+    0x0784924f, 0xe296, 0x11d4, { 0x9a, 0x49, 0x0, 0x90, 0x27, 0x3f, 0xc1, 0x4d } \
   }
 
-typedef struct _EFI_DRIVER_DIAGNOSTICS_PROTOCOL  EFI_DRIVER_DIAGNOSTICS_PROTOCOL;
+typedef struct _EFI_DRIVER_DIAGNOSTICS_PROTOCOL EFI_DRIVER_DIAGNOSTICS_PROTOCOL;
 
 typedef enum {
   ///
   /// Performs standard diagnostics on the controller.
   ///
-  EfiDriverDiagnosticTypeStandard     = 0,
+  EfiDriverDiagnosticTypeStandard = 0,
   ///
   /// This is an optional diagnostic type that performs diagnostics on the controller that may
   /// take an extended amount of time to execute.
   ///
-  EfiDriverDiagnosticTypeExtended     = 1,
+  EfiDriverDiagnosticTypeExtended = 1,
   ///
   /// This is an optional diagnostic type that performs diagnostics on the controller that are
   /// suitable for a manufacturing and test environment.
   ///
-  EfiDriverDiagnosticTypeManufacturing= 2,
+  EfiDriverDiagnosticTypeManufacturing = 2,
   ///
   /// This is an optional diagnostic type that would only be used in the situation where an
   /// EFI_NOT_READY had been returned by a previous call to RunDiagnostics()
   /// and there is a desire to cancel the current running diagnostics operation.
   ///
-  EfiDriverDiagnosticTypeCancel       = 3,
+  EfiDriverDiagnosticTypeCancel = 3,
   EfiDriverDiagnosticTypeMaximum
 } EFI_DRIVER_DIAGNOSTIC_TYPE;
 
@@ -96,30 +96,33 @@ typedef enum {
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_DRIVER_DIAGNOSTICS_RUN_DIAGNOSTICS)(
-  IN EFI_DRIVER_DIAGNOSTICS_PROTOCOL                        *This,
-  IN  EFI_HANDLE                                            ControllerHandle,
-  IN  EFI_HANDLE                                            ChildHandle  OPTIONAL,
-  IN  EFI_DRIVER_DIAGNOSTIC_TYPE                            DiagnosticType,
-  IN  CHAR8                                                 *Language,
-  OUT EFI_GUID                                              **ErrorType,
-  OUT UINTN                                                 *BufferSize,
-  OUT CHAR16                                                **Buffer
-  );
+                                                 IN EFI_DRIVER_DIAGNOSTICS_PROTOCOL                        *This,
+                                                 IN  EFI_HANDLE
+                                                 ControllerHandle,
+                                                 IN  EFI_HANDLE                                            ChildHandle
+                                                 OPTIONAL,
+                                                 IN  EFI_DRIVER_DIAGNOSTIC_TYPE
+                                                 DiagnosticType,
+                                                 IN  CHAR8                                                 *Language,
+                                                 OUT EFI_GUID                                              **ErrorType,
+                                                 OUT UINTN                                                 *BufferSize,
+                                                 OUT CHAR16                                                **Buffer
+                                                 );
 
 ///
 /// Used to perform diagnostics on a controller that an EFI Driver is managing.
 ///
 struct _EFI_DRIVER_DIAGNOSTICS_PROTOCOL {
-  EFI_DRIVER_DIAGNOSTICS_RUN_DIAGNOSTICS  RunDiagnostics;
+  EFI_DRIVER_DIAGNOSTICS_RUN_DIAGNOSTICS    RunDiagnostics;
   ///
   /// A Null-terminated ASCII string that contains one or more ISO 639-2
   /// language codes.  This is the list of language codes that this protocol supports.
   ///
-  CHAR8                                   *SupportedLanguages;
+  CHAR8                                     *SupportedLanguages;
 };
 
-extern EFI_GUID gEfiDriverDiagnosticsProtocolGuid;
+extern EFI_GUID  gEfiDriverDiagnosticsProtocolGuid;
 
 #endif

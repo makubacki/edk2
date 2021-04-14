@@ -29,10 +29,10 @@ InternalMemCopyMem (
   )
 {
   (*GetPeiServicesTablePointer ())->CopyMem (
-                                      Destination,
-                                      (VOID*)Source,
-                                      Length
-                                      );
+                                             Destination,
+                                             (VOID *) Source,
+                                             Length
+                                             );
   return Destination;
 }
 
@@ -57,9 +57,9 @@ InternalMemSetMem (
   )
 {
   (*GetPeiServicesTablePointer ())->SetMem (
-                                      Buffer,
-                                      Size,
-                                      Value
-                                      );
+                                            Buffer,
+                                            Size,
+                                            Value
+                                            );
   return Buffer;
 }

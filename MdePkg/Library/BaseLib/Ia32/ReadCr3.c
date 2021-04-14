@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 /**
   Reads the current value of the Control Register 3 (CR3).
 
@@ -26,7 +23,6 @@ AsmReadCr3 (
   )
 {
   __asm {
-    mov     eax, cr3
+  mov  eax, cr3
   }
 }
-

@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 /**
   Multiplies a 64-bit unsigned integer by a 64-bit unsigned integer
   and generates a 64-bit unsigned result.
@@ -31,15 +28,14 @@ InternalMathMultU64x64 (
   )
 {
   _asm {
-    mov     ebx, dword ptr [Multiplicand + 0]
-    mov     edx, dword ptr [Multiplier + 0]
+  mov  ebx, dword ptr[Multiplicand + 0]
+    mov     edx, dword ptr[Multiplier + 0]
     mov     ecx, ebx
     mov     eax, edx
-    imul    ebx, dword ptr [Multiplier + 4]
-    imul    edx, dword ptr [Multiplicand + 4]
+    imul    ebx, dword ptr[Multiplier + 4]
+    imul    edx, dword ptr[Multiplicand + 4]
     add     ebx, edx
     mul     ecx
     add     edx, ebx
   }
 }
-

@@ -15,12 +15,12 @@
 /// Global ID for the Timer Architectural Protocol
 ///
 #define EFI_TIMER_ARCH_PROTOCOL_GUID \
-  { 0x26baccb3, 0x6f42, 0x11d4, {0xbc, 0xe7, 0x0, 0x80, 0xc7, 0x3c, 0x88, 0x81 } }
+  { 0x26baccb3, 0x6f42, 0x11d4, { 0xbc, 0xe7, 0x0, 0x80, 0xc7, 0x3c, 0x88, 0x81 } }
 
 ///
 /// Declare forward reference for the Timer Architectural Protocol
 ///
-typedef struct _EFI_TIMER_ARCH_PROTOCOL   EFI_TIMER_ARCH_PROTOCOL;
+typedef struct _EFI_TIMER_ARCH_PROTOCOL EFI_TIMER_ARCH_PROTOCOL;
 
 /**
   This function of this type is called when a timer interrupt fires.  This
@@ -37,10 +37,10 @@ typedef struct _EFI_TIMER_ARCH_PROTOCOL   EFI_TIMER_ARCH_PROTOCOL;
 
 **/
 typedef
-VOID
+  VOID
 (EFIAPI *EFI_TIMER_NOTIFY)(
-  IN UINT64  Time
-  );
+                           IN UINT64  Time
+                           );
 
 /**
   This function registers the handler NotifyFunction so it is called every time
@@ -72,11 +72,11 @@ VOID
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_TIMER_REGISTER_HANDLER)(
-  IN EFI_TIMER_ARCH_PROTOCOL    *This,
-  IN EFI_TIMER_NOTIFY           NotifyFunction
-);
+                                     IN EFI_TIMER_ARCH_PROTOCOL    *This,
+                                     IN EFI_TIMER_NOTIFY           NotifyFunction
+                                     );
 
 /**
   This function adjusts the period of timer interrupts to the value specified
@@ -105,11 +105,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_TIMER_SET_TIMER_PERIOD)(
-  IN EFI_TIMER_ARCH_PROTOCOL    *This,
-  IN UINT64                     TimerPeriod
-  );
+                                     IN EFI_TIMER_ARCH_PROTOCOL    *This,
+                                     IN UINT64                     TimerPeriod
+                                     );
 
 /**
   This function retrieves the period of timer interrupts in 100 ns units,
@@ -126,11 +126,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_TIMER_GET_TIMER_PERIOD)(
-  IN EFI_TIMER_ARCH_PROTOCOL      *This,
-  OUT UINT64                      *TimerPeriod
-  );
+                                     IN EFI_TIMER_ARCH_PROTOCOL      *This,
+                                     OUT UINT64                      *TimerPeriod
+                                     );
 
 /**
   This function generates a soft timer interrupt. If the platform does not support soft
@@ -148,11 +148,10 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_TIMER_GENERATE_SOFT_INTERRUPT)(
-  IN EFI_TIMER_ARCH_PROTOCOL    *This
-  );
-
+                                            IN EFI_TIMER_ARCH_PROTOCOL    *This
+                                            );
 
 ///
 /// This protocol provides the services to initialize a periodic timer
@@ -163,12 +162,12 @@ EFI_STATUS
 /// interrupt.
 ///
 struct _EFI_TIMER_ARCH_PROTOCOL {
-  EFI_TIMER_REGISTER_HANDLER          RegisterHandler;
-  EFI_TIMER_SET_TIMER_PERIOD          SetTimerPeriod;
-  EFI_TIMER_GET_TIMER_PERIOD          GetTimerPeriod;
-  EFI_TIMER_GENERATE_SOFT_INTERRUPT   GenerateSoftInterrupt;
+  EFI_TIMER_REGISTER_HANDLER           RegisterHandler;
+  EFI_TIMER_SET_TIMER_PERIOD           SetTimerPeriod;
+  EFI_TIMER_GET_TIMER_PERIOD           GetTimerPeriod;
+  EFI_TIMER_GENERATE_SOFT_INTERRUPT    GenerateSoftInterrupt;
 };
 
-extern EFI_GUID gEfiTimerArchProtocolGuid;
+extern EFI_GUID  gEfiTimerArchProtocolGuid;
 
 #endif

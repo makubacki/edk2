@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 /**
   Reads the current value of the EFLAGS register.
 
@@ -26,8 +23,7 @@ AsmReadEflags (
   )
 {
   __asm {
-    pushfd
-    pop     eax
+  pushfd
+  pop  eax
   }
 }
-

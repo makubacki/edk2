@@ -13,17 +13,17 @@
 #define __ACPI_SYSTEM_DESCRIPTION_TABLE_H___
 
 #define EFI_ACPI_SDT_PROTOCOL_GUID \
-  { 0xeb97088e, 0xcfdf, 0x49c6, { 0xbe, 0x4b, 0xd9, 0x6, 0xa5, 0xb2, 0xe, 0x86 }}
+  { 0xeb97088e, 0xcfdf, 0x49c6, { 0xbe, 0x4b, 0xd9, 0x6, 0xa5, 0xb2, 0xe, 0x86 } }
 
 typedef UINT32  EFI_ACPI_TABLE_VERSION;
 typedef VOID    *EFI_ACPI_HANDLE;
 
-#define EFI_ACPI_TABLE_VERSION_NONE (1 << 0)
-#define EFI_ACPI_TABLE_VERSION_1_0B (1 << 1)
-#define EFI_ACPI_TABLE_VERSION_2_0  (1 << 2)
-#define EFI_ACPI_TABLE_VERSION_3_0  (1 << 3)
-#define EFI_ACPI_TABLE_VERSION_4_0  (1 << 4)
-#define EFI_ACPI_TABLE_VERSION_5_0  (1 << 5)
+#define EFI_ACPI_TABLE_VERSION_NONE  (1 << 0)
+#define EFI_ACPI_TABLE_VERSION_1_0B  (1 << 1)
+#define EFI_ACPI_TABLE_VERSION_2_0   (1 << 2)
+#define EFI_ACPI_TABLE_VERSION_3_0   (1 << 3)
+#define EFI_ACPI_TABLE_VERSION_4_0   (1 << 4)
+#define EFI_ACPI_TABLE_VERSION_5_0   (1 << 5)
 
 typedef UINT32 EFI_ACPI_DATA_TYPE;
 #define EFI_ACPI_DATA_TYPE_NONE         0
@@ -47,12 +47,12 @@ typedef struct {
 } EFI_ACPI_SDT_HEADER;
 
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_ACPI_NOTIFICATION_FN)(
-  IN EFI_ACPI_SDT_HEADER    *Table,     ///< A pointer to the ACPI table header.
-  IN EFI_ACPI_TABLE_VERSION Version,    ///< The ACPI table's version.
-  IN UINTN                  TableKey    ///< The table key for this ACPI table.
-);
+                                   IN EFI_ACPI_SDT_HEADER    *Table,  ///< A pointer to the ACPI table header.
+                                   IN EFI_ACPI_TABLE_VERSION Version, ///< The ACPI table's version.
+                                   IN UINTN                  TableKey ///< The table key for this ACPI table.
+                                   );
 
 /**
   Returns a requested ACPI table.
@@ -81,13 +81,13 @@ EFI_STATUS
   @retval EFI_NOT_FOUND     The requested index is too large and a table was not found.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_ACPI_GET_ACPI_TABLE2)(
-  IN    UINTN                   Index,
-  OUT   EFI_ACPI_SDT_HEADER     **Table,
-  OUT   EFI_ACPI_TABLE_VERSION  *Version,
-  OUT   UINTN                   *TableKey
-);
+                                   IN    UINTN                   Index,
+                                   OUT   EFI_ACPI_SDT_HEADER     **Table,
+                                   OUT   EFI_ACPI_TABLE_VERSION  *Version,
+                                   OUT   UINTN                   *TableKey
+                                   );
 
 /**
   Register or unregister a callback when an ACPI table is installed.
@@ -104,11 +104,11 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER Register is FALSE and Notification does not match a known registration function.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_ACPI_REGISTER_NOTIFY)(
-  IN BOOLEAN                    Register,
-  IN EFI_ACPI_NOTIFICATION_FN   Notification
-);
+                                   IN BOOLEAN                    Register,
+                                   IN EFI_ACPI_NOTIFICATION_FN   Notification
+                                   );
 
 /**
   Create a handle from an ACPI opcode
@@ -122,11 +122,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_ACPI_OPEN)(
-  IN    VOID            *Buffer,
-  OUT   EFI_ACPI_HANDLE *Handle
-);
+                        IN    VOID            *Buffer,
+                        OUT   EFI_ACPI_HANDLE *Handle
+                        );
 
 /**
   Create a handle for the first ACPI opcode in an ACPI system description table.
@@ -138,11 +138,11 @@ EFI_STATUS
   @retval EFI_NOT_FOUND     TableKey does not refer to a valid ACPI table.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_ACPI_OPEN_SDT)(
-  IN    UINTN           TableKey,
-  OUT   EFI_ACPI_HANDLE *Handle
-);
+                            IN    UINTN           TableKey,
+                            OUT   EFI_ACPI_HANDLE *Handle
+                            );
 
 /**
   Close an ACPI handle.
@@ -153,10 +153,10 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER Handle is NULL or does not refer to a valid ACPI object.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_ACPI_CLOSE)(
-  IN EFI_ACPI_HANDLE Handle
-);
+                         IN EFI_ACPI_HANDLE Handle
+                         );
 
 /**
   Return the child ACPI objects.
@@ -170,11 +170,11 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER     ParentHandle is NULL or does not refer to a valid ACPI object.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_ACPI_GET_CHILD)(
-  IN EFI_ACPI_HANDLE        ParentHandle,
-  IN OUT EFI_ACPI_HANDLE    *Handle
-);
+                             IN EFI_ACPI_HANDLE        ParentHandle,
+                             IN OUT EFI_ACPI_HANDLE    *Handle
+                             );
 
 /**
   Retrieve information about an ACPI object.
@@ -190,14 +190,14 @@ EFI_STATUS
   @retval
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_ACPI_GET_OPTION)(
-  IN        EFI_ACPI_HANDLE     Handle,
-  IN        UINTN               Index,
-  OUT       EFI_ACPI_DATA_TYPE  *DataType,
-  OUT CONST VOID                **Data,
-  OUT       UINTN               *DataSize
-);
+                              IN        EFI_ACPI_HANDLE     Handle,
+                              IN        UINTN               Index,
+                              OUT       EFI_ACPI_DATA_TYPE  *DataType,
+                              OUT CONST VOID                **Data,
+                              OUT       UINTN               *DataSize
+                              );
 
 /**
   Change information about an ACPI object.
@@ -215,13 +215,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_ACPI_SET_OPTION)(
-  IN        EFI_ACPI_HANDLE Handle,
-  IN        UINTN           Index,
-  IN CONST  VOID            *Data,
-  IN        UINTN           DataSize
-);
+                              IN        EFI_ACPI_HANDLE Handle,
+                              IN        UINTN           Index,
+                              IN CONST  VOID            *Data,
+                              IN        UINTN           DataSize
+                              );
 
 /**
   Returns the handle of the ACPI object representing the specified ACPI path
@@ -235,29 +235,29 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER HandleIn is NULL or does not refer to a valid ACPI object.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_ACPI_FIND_PATH)(
-  IN    EFI_ACPI_HANDLE HandleIn,
-  IN    VOID            *AcpiPath,
-  OUT   EFI_ACPI_HANDLE *HandleOut
-);
+                             IN    EFI_ACPI_HANDLE HandleIn,
+                             IN    VOID            *AcpiPath,
+                             OUT   EFI_ACPI_HANDLE *HandleOut
+                             );
 
 typedef struct _EFI_ACPI_SDT_PROTOCOL {
   ///
   /// A bit map containing all the ACPI versions supported by this protocol.
   ///
-  EFI_ACPI_TABLE_VERSION    AcpiVersion;
-  EFI_ACPI_GET_ACPI_TABLE2  GetAcpiTable;
-  EFI_ACPI_REGISTER_NOTIFY  RegisterNotify;
-  EFI_ACPI_OPEN             Open;
-  EFI_ACPI_OPEN_SDT         OpenSdt;
-  EFI_ACPI_CLOSE            Close;
-  EFI_ACPI_GET_CHILD        GetChild;
-  EFI_ACPI_GET_OPTION       GetOption;
-  EFI_ACPI_SET_OPTION       SetOption;
-  EFI_ACPI_FIND_PATH        FindPath;
+  EFI_ACPI_TABLE_VERSION      AcpiVersion;
+  EFI_ACPI_GET_ACPI_TABLE2    GetAcpiTable;
+  EFI_ACPI_REGISTER_NOTIFY    RegisterNotify;
+  EFI_ACPI_OPEN               Open;
+  EFI_ACPI_OPEN_SDT           OpenSdt;
+  EFI_ACPI_CLOSE              Close;
+  EFI_ACPI_GET_CHILD          GetChild;
+  EFI_ACPI_GET_OPTION         GetOption;
+  EFI_ACPI_SET_OPTION         SetOption;
+  EFI_ACPI_FIND_PATH          FindPath;
 } EFI_ACPI_SDT_PROTOCOL;
 
-extern EFI_GUID gEfiAcpiSdtProtocolGuid;
+extern EFI_GUID  gEfiAcpiSdtProtocolGuid;
 
 #endif // __ACPI_SYSTEM_DESCRIPTION_TABLE_H___

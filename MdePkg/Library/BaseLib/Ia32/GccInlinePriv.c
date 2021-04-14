@@ -8,7 +8,6 @@
 
 **/
 
-
 #include "BaseLibInternals.h"
 #include <Library/RegisterFilterLib.h>
 
@@ -24,9 +23,8 @@ EnableInterrupts (
   VOID
   )
 {
-  __asm__ __volatile__ ("sti"::: "memory");
+  __asm__ __volatile__ ("sti" ::: "memory");
 }
-
 
 /**
   Disables CPU interrupts.
@@ -40,7 +38,7 @@ DisableInterrupts (
   VOID
   )
 {
-  __asm__ __volatile__ ("cli"::: "memory");
+  __asm__ __volatile__ ("cli" ::: "memory");
 }
 
 /**
@@ -63,17 +61,18 @@ AsmReadMsr64 (
   IN      UINT32                    Index
   )
 {
-  UINT64 Data;
-  BOOLEAN Flag;
+  UINT64   Data;
+  BOOLEAN  Flag;
 
   Flag = FilterBeforeMsrRead (Index, &Data);
   if (Flag) {
     __asm__ __volatile__ (
-      "rdmsr"
-      : "=A" (Data)   // %0
-      : "c"  (Index)  // %1
-      );
+                          "rdmsr"
+                          : "=A" (Data)  // %0
+                          : "c"  (Index) // %1
+                          );
   }
+
   FilterAfterMsrRead (Index, &Data);
 
   return Data;
@@ -108,12 +107,13 @@ AsmWriteMsr64 (
   Flag = FilterBeforeMsrWrite (Index, &Value);
   if (Flag) {
     __asm__ __volatile__ (
-      "wrmsr"
-      :
-      : "c" (Index),
-        "A" (Value)
-      );
+                          "wrmsr"
+                          :
+                          : "c" (Index),
+                          "A" (Value)
+                          );
   }
+
   FilterAfterMsrWrite (Index, &Value);
 
   return Value;
@@ -135,16 +135,15 @@ AsmReadCr0 (
   VOID
   )
 {
-  UINTN   Data;
+  UINTN  Data;
 
   __asm__ __volatile__ (
-    "movl %%cr0,%0"
-    : "=a" (Data)
-    );
+                        "movl %%cr0,%0"
+                        : "=a" (Data)
+                        );
 
   return Data;
 }
-
 
 /**
   Reads the current value of the Control Register 2 (CR2).
@@ -162,12 +161,12 @@ AsmReadCr2 (
   VOID
   )
 {
-  UINTN Data;
+  UINTN  Data;
 
   __asm__ __volatile__ (
-    "movl %%cr2, %0"
-    : "=r" (Data)
-    );
+                        "movl %%cr2, %0"
+                        : "=r" (Data)
+                        );
 
   return Data;
 }
@@ -188,16 +187,15 @@ AsmReadCr3 (
   VOID
   )
 {
-  UINTN Data;
+  UINTN  Data;
 
   __asm__ __volatile__ (
-    "movl %%cr3, %0"
-    : "=r" (Data)
-    );
+                        "movl %%cr3, %0"
+                        : "=r" (Data)
+                        );
 
   return Data;
 }
-
 
 /**
   Reads the current value of the Control Register 4 (CR4).
@@ -215,16 +213,15 @@ AsmReadCr4 (
   VOID
   )
 {
-  UINTN Data;
+  UINTN  Data;
 
   __asm__ __volatile__ (
-    "movl %%cr4, %0"
-    : "=a" (Data)
-    );
+                        "movl %%cr4, %0"
+                        : "=a" (Data)
+                        );
 
   return Data;
 }
-
 
 /**
   Writes a value to Control Register 0 (CR0).
@@ -244,13 +241,12 @@ AsmWriteCr0 (
   )
 {
   __asm__ __volatile__ (
-    "movl %0, %%cr0"
-    :
-    : "r" (Cr0)
-    );
+                        "movl %0, %%cr0"
+                        :
+                        : "r" (Cr0)
+                        );
   return Cr0;
 }
-
 
 /**
   Writes a value to Control Register 2 (CR2).
@@ -270,13 +266,12 @@ AsmWriteCr2 (
   )
 {
   __asm__ __volatile__ (
-    "movl %0, %%cr2"
-    :
-    : "r" (Cr2)
-    );
+                        "movl %0, %%cr2"
+                        :
+                        : "r" (Cr2)
+                        );
   return Cr2;
 }
-
 
 /**
   Writes a value to Control Register 3 (CR3).
@@ -296,13 +291,12 @@ AsmWriteCr3 (
   )
 {
   __asm__ __volatile__ (
-    "movl %0, %%cr3"
-    :
-    : "r" (Cr3)
-    );
+                        "movl %0, %%cr3"
+                        :
+                        : "r" (Cr3)
+                        );
   return Cr3;
 }
-
 
 /**
   Writes a value to Control Register 4 (CR4).
@@ -322,13 +316,12 @@ AsmWriteCr4 (
   )
 {
   __asm__ __volatile__ (
-    "movl %0, %%cr4"
-    :
-    : "r" (Cr4)
-    );
+                        "movl %0, %%cr4"
+                        :
+                        : "r" (Cr4)
+                        );
   return Cr4;
 }
-
 
 /**
   Reads the current value of Debug Register 0 (DR0).
@@ -346,16 +339,15 @@ AsmReadDr0 (
   VOID
   )
 {
-  UINTN Data;
+  UINTN  Data;
 
   __asm__ __volatile__ (
-    "movl %%dr0, %0"
-    : "=r" (Data)
-    );
+                        "movl %%dr0, %0"
+                        : "=r" (Data)
+                        );
 
   return Data;
 }
-
 
 /**
   Reads the current value of Debug Register 1 (DR1).
@@ -373,16 +365,15 @@ AsmReadDr1 (
   VOID
   )
 {
-  UINTN Data;
+  UINTN  Data;
 
   __asm__ __volatile__ (
-    "movl %%dr1, %0"
-    : "=r" (Data)
-    );
+                        "movl %%dr1, %0"
+                        : "=r" (Data)
+                        );
 
   return Data;
 }
-
 
 /**
   Reads the current value of Debug Register 2 (DR2).
@@ -400,16 +391,15 @@ AsmReadDr2 (
   VOID
   )
 {
-  UINTN Data;
+  UINTN  Data;
 
   __asm__ __volatile__ (
-    "movl %%dr2, %0"
-    : "=r" (Data)
-    );
+                        "movl %%dr2, %0"
+                        : "=r" (Data)
+                        );
 
   return Data;
 }
-
 
 /**
   Reads the current value of Debug Register 3 (DR3).
@@ -427,16 +417,15 @@ AsmReadDr3 (
   VOID
   )
 {
-  UINTN Data;
+  UINTN  Data;
 
   __asm__ __volatile__ (
-    "movl %%dr3, %0"
-    : "=r" (Data)
-    );
+                        "movl %%dr3, %0"
+                        : "=r" (Data)
+                        );
 
   return Data;
 }
-
 
 /**
   Reads the current value of Debug Register 4 (DR4).
@@ -454,16 +443,15 @@ AsmReadDr4 (
   VOID
   )
 {
-  UINTN Data;
+  UINTN  Data;
 
   __asm__ __volatile__ (
-    "movl %%dr4, %0"
-    : "=r" (Data)
-    );
+                        "movl %%dr4, %0"
+                        : "=r" (Data)
+                        );
 
   return Data;
 }
-
 
 /**
   Reads the current value of Debug Register 5 (DR5).
@@ -481,16 +469,15 @@ AsmReadDr5 (
   VOID
   )
 {
-  UINTN Data;
+  UINTN  Data;
 
   __asm__ __volatile__ (
-    "movl %%dr5, %0"
-    : "=r" (Data)
-    );
+                        "movl %%dr5, %0"
+                        : "=r" (Data)
+                        );
 
   return Data;
 }
-
 
 /**
   Reads the current value of Debug Register 6 (DR6).
@@ -508,16 +495,15 @@ AsmReadDr6 (
   VOID
   )
 {
-  UINTN Data;
+  UINTN  Data;
 
   __asm__ __volatile__ (
-    "movl %%dr6, %0"
-    : "=r" (Data)
-    );
+                        "movl %%dr6, %0"
+                        : "=r" (Data)
+                        );
 
   return Data;
 }
-
 
 /**
   Reads the current value of Debug Register 7 (DR7).
@@ -535,16 +521,15 @@ AsmReadDr7 (
   VOID
   )
 {
-  UINTN Data;
+  UINTN  Data;
 
   __asm__ __volatile__ (
-    "movl %%dr7, %0"
-    : "=r" (Data)
-    );
+                        "movl %%dr7, %0"
+                        : "=r" (Data)
+                        );
 
   return Data;
 }
-
 
 /**
   Writes a value to Debug Register 0 (DR0).
@@ -564,13 +549,12 @@ AsmWriteDr0 (
   )
 {
   __asm__ __volatile__ (
-    "movl %0, %%dr0"
-    :
-    : "r" (Dr0)
-    );
+                        "movl %0, %%dr0"
+                        :
+                        : "r" (Dr0)
+                        );
   return Dr0;
 }
-
 
 /**
   Writes a value to Debug Register 1 (DR1).
@@ -590,13 +574,12 @@ AsmWriteDr1 (
   )
 {
   __asm__ __volatile__ (
-    "movl %0, %%dr1"
-    :
-    : "r" (Dr1)
-    );
+                        "movl %0, %%dr1"
+                        :
+                        : "r" (Dr1)
+                        );
   return Dr1;
 }
-
 
 /**
   Writes a value to Debug Register 2 (DR2).
@@ -616,13 +599,12 @@ AsmWriteDr2 (
   )
 {
   __asm__ __volatile__ (
-    "movl %0, %%dr2"
-    :
-    : "r" (Dr2)
-    );
+                        "movl %0, %%dr2"
+                        :
+                        : "r" (Dr2)
+                        );
   return Dr2;
 }
-
 
 /**
   Writes a value to Debug Register 3 (DR3).
@@ -642,13 +624,12 @@ AsmWriteDr3 (
   )
 {
   __asm__ __volatile__ (
-    "movl %0, %%dr3"
-    :
-    : "r" (Dr3)
-    );
+                        "movl %0, %%dr3"
+                        :
+                        : "r" (Dr3)
+                        );
   return Dr3;
 }
-
 
 /**
   Writes a value to Debug Register 4 (DR4).
@@ -668,13 +649,12 @@ AsmWriteDr4 (
   )
 {
   __asm__ __volatile__ (
-    "movl %0, %%dr4"
-    :
-    : "r" (Dr4)
-    );
+                        "movl %0, %%dr4"
+                        :
+                        : "r" (Dr4)
+                        );
   return Dr4;
 }
-
 
 /**
   Writes a value to Debug Register 5 (DR5).
@@ -694,13 +674,12 @@ AsmWriteDr5 (
   )
 {
   __asm__ __volatile__ (
-    "movl %0, %%dr5"
-    :
-    : "r" (Dr5)
-    );
+                        "movl %0, %%dr5"
+                        :
+                        : "r" (Dr5)
+                        );
   return Dr5;
 }
-
 
 /**
   Writes a value to Debug Register 6 (DR6).
@@ -720,13 +699,12 @@ AsmWriteDr6 (
   )
 {
   __asm__ __volatile__ (
-    "movl %0, %%dr6"
-    :
-    : "r" (Dr6)
-    );
+                        "movl %0, %%dr6"
+                        :
+                        : "r" (Dr6)
+                        );
   return Dr6;
 }
-
 
 /**
   Writes a value to Debug Register 7 (DR7).
@@ -746,13 +724,12 @@ AsmWriteDr7 (
   )
 {
   __asm__ __volatile__ (
-    "movl %0, %%dr7"
-    :
-    : "r" (Dr7)
-    );
+                        "movl %0, %%dr7"
+                        :
+                        : "r" (Dr7)
+                        );
   return Dr7;
 }
-
 
 /**
   Reads the current value of Code Segment Register (CS).
@@ -772,13 +749,12 @@ AsmReadCs (
   UINT16  Data;
 
   __asm__ __volatile__ (
-    "mov   %%cs, %0"
-    :"=a" (Data)
-    );
+                        "mov   %%cs, %0"
+                        : "=a" (Data)
+                        );
 
   return Data;
 }
-
 
 /**
   Reads the current value of Data Segment Register (DS).
@@ -798,13 +774,12 @@ AsmReadDs (
   UINT16  Data;
 
   __asm__ __volatile__ (
-    "mov  %%ds, %0"
-    :"=a" (Data)
-    );
+                        "mov  %%ds, %0"
+                        : "=a" (Data)
+                        );
 
   return Data;
 }
-
 
 /**
   Reads the current value of Extra Segment Register (ES).
@@ -824,13 +799,12 @@ AsmReadEs (
   UINT16  Data;
 
   __asm__ __volatile__ (
-    "mov  %%es, %0"
-    :"=a" (Data)
-    );
+                        "mov  %%es, %0"
+                        : "=a" (Data)
+                        );
 
   return Data;
 }
-
 
 /**
   Reads the current value of FS Data Segment Register (FS).
@@ -850,13 +824,12 @@ AsmReadFs (
   UINT16  Data;
 
   __asm__ __volatile__ (
-    "mov  %%fs, %0"
-    :"=a" (Data)
-    );
+                        "mov  %%fs, %0"
+                        : "=a" (Data)
+                        );
 
   return Data;
 }
-
 
 /**
   Reads the current value of GS Data Segment Register (GS).
@@ -876,13 +849,12 @@ AsmReadGs (
   UINT16  Data;
 
   __asm__ __volatile__ (
-    "mov  %%gs, %0"
-    :"=a" (Data)
-    );
+                        "mov  %%gs, %0"
+                        : "=a" (Data)
+                        );
 
   return Data;
 }
-
 
 /**
   Reads the current value of Stack Segment Register (SS).
@@ -902,13 +874,12 @@ AsmReadSs (
   UINT16  Data;
 
   __asm__ __volatile__ (
-    "mov  %%ds, %0"
-    :"=a" (Data)
-    );
+                        "mov  %%ds, %0"
+                        : "=a" (Data)
+                        );
 
   return Data;
 }
-
 
 /**
   Reads the current value of Task Register (TR).
@@ -928,13 +899,12 @@ AsmReadTr (
   UINT16  Data;
 
   __asm__ __volatile__ (
-    "str  %0"
-    : "=a" (Data)
-    );
+                        "str  %0"
+                        : "=a" (Data)
+                        );
 
   return Data;
 }
-
 
 /**
   Reads the current Global Descriptor Table Register(GDTR) descriptor.
@@ -952,11 +922,10 @@ InternalX86ReadGdtr (
   )
 {
   __asm__ __volatile__ (
-    "sgdt %0"
-    : "=m" (*Gdtr)
-    );
+                        "sgdt %0"
+                        : "=m" (*Gdtr)
+                        );
 }
-
 
 /**
   Writes the current Global Descriptor Table Register (GDTR) descriptor.
@@ -974,13 +943,11 @@ InternalX86WriteGdtr (
   )
 {
   __asm__ __volatile__ (
-    "lgdt %0"
-    :
-    : "m" (*Gdtr)
-    );
-
+                        "lgdt %0"
+                        :
+                        : "m" (*Gdtr)
+                        );
 }
-
 
 /**
   Reads the current Interrupt Descriptor Table Register(GDTR) descriptor.
@@ -998,11 +965,10 @@ InternalX86ReadIdtr (
   )
 {
   __asm__ __volatile__ (
-    "sidt  %0"
-    : "=m" (*Idtr)
-    );
+                        "sidt  %0"
+                        : "=m" (*Idtr)
+                        );
 }
-
 
 /**
   Writes the current Interrupt Descriptor Table Register(GDTR) descriptor.
@@ -1020,12 +986,11 @@ InternalX86WriteIdtr (
   )
 {
   __asm__ __volatile__ (
-    "lidt %0"
-    :
-    : "m" (*Idtr)
-    );
+                        "lidt %0"
+                        :
+                        : "m" (*Idtr)
+                        );
 }
-
 
 /**
   Reads the current Local Descriptor Table Register(LDTR) selector.
@@ -1045,13 +1010,12 @@ AsmReadLdtr (
   UINT16  Data;
 
   __asm__ __volatile__ (
-    "sldt  %0"
-    : "=g" (Data)   // %0
-    );
+                        "sldt  %0"
+                        : "=g" (Data) // %0
+                        );
 
   return Data;
 }
-
 
 /**
   Writes the current Local Descriptor Table Register (GDTR) selector.
@@ -1069,10 +1033,10 @@ AsmWriteLdtr (
   )
 {
   __asm__ __volatile__ (
-    "lldtw  %0"
-    :
-    : "g" (Ldtr)   // %0
-    );
+                        "lldtw  %0"
+                        :
+                        : "g" (Ldtr) // %0
+                        );
 }
 
 /**
@@ -1095,10 +1059,10 @@ AsmReadPmc (
   UINT64  Data;
 
   __asm__ __volatile__ (
-    "rdpmc"
-    : "=A" (Data)
-    : "c"  (Index)
-    );
+                        "rdpmc"
+                        : "=A" (Data)
+                        : "c"  (Index)
+                        );
 
   return Data;
 }
@@ -1116,7 +1080,7 @@ AsmWbinvd (
   VOID
   )
 {
-  __asm__ __volatile__ ("wbinvd":::"memory");
+  __asm__ __volatile__ ("wbinvd" ::: "memory");
 }
 
 /**
@@ -1132,10 +1096,8 @@ AsmInvd (
   VOID
   )
 {
-  __asm__ __volatile__ ("invd":::"memory");
-
+  __asm__ __volatile__ ("invd" ::: "memory");
 }
-
 
 /**
   Flushes a cache line from all the instruction and data caches within the
@@ -1166,17 +1128,16 @@ AsmFlushCacheLine (
   //
   AsmCpuid (0x01, NULL, NULL, NULL, &RegEdx);
   if ((RegEdx & BIT19) == 0) {
-    __asm__ __volatile__ ("wbinvd":::"memory");
+    __asm__ __volatile__ ("wbinvd" ::: "memory");
     return LinearAddress;
   }
 
-
   __asm__ __volatile__ (
-    "clflush (%0)"
-    : "+a" (LinearAddress)
-    :
-    : "memory"
-    );
+                        "clflush (%0)"
+                        : "+a" (LinearAddress)
+                        :
+                        : "memory"
+                        );
 
   return LinearAddress;
 }

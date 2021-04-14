@@ -9,7 +9,6 @@
 
 **/
 
-
 #include "DxeCpuIo2LibInternal.h"
 
 /**
@@ -164,9 +163,9 @@ IoBitFieldWrite8 (
   )
 {
   return IoWrite8 (
-           Port,
-           BitFieldWrite8 (IoRead8 (Port), StartBit, EndBit, Value)
-           );
+                   Port,
+                   BitFieldWrite8 (IoRead8 (Port), StartBit, EndBit, Value)
+                   );
 }
 
 /**
@@ -205,9 +204,9 @@ IoBitFieldOr8 (
   )
 {
   return IoWrite8 (
-           Port,
-           BitFieldOr8 (IoRead8 (Port), StartBit, EndBit, OrData)
-           );
+                   Port,
+                   BitFieldOr8 (IoRead8 (Port), StartBit, EndBit, OrData)
+                   );
 }
 
 /**
@@ -246,9 +245,9 @@ IoBitFieldAnd8 (
   )
 {
   return IoWrite8 (
-           Port,
-           BitFieldAnd8 (IoRead8 (Port), StartBit, EndBit, AndData)
-           );
+                   Port,
+                   BitFieldAnd8 (IoRead8 (Port), StartBit, EndBit, AndData)
+                   );
 }
 
 /**
@@ -292,9 +291,9 @@ IoBitFieldAndThenOr8 (
   )
 {
   return IoWrite8 (
-           Port,
-           BitFieldAndThenOr8 (IoRead8 (Port), StartBit, EndBit, AndData, OrData)
-           );
+                   Port,
+                   BitFieldAndThenOr8 (IoRead8 (Port), StartBit, EndBit, AndData, OrData)
+                   );
 }
 
 /**
@@ -449,9 +448,9 @@ IoBitFieldWrite16 (
   )
 {
   return IoWrite16 (
-           Port,
-           BitFieldWrite16 (IoRead16 (Port), StartBit, EndBit, Value)
-           );
+                    Port,
+                    BitFieldWrite16 (IoRead16 (Port), StartBit, EndBit, Value)
+                    );
 }
 
 /**
@@ -490,9 +489,9 @@ IoBitFieldOr16 (
   )
 {
   return IoWrite16 (
-           Port,
-           BitFieldOr16 (IoRead16 (Port), StartBit, EndBit, OrData)
-           );
+                    Port,
+                    BitFieldOr16 (IoRead16 (Port), StartBit, EndBit, OrData)
+                    );
 }
 
 /**
@@ -531,9 +530,9 @@ IoBitFieldAnd16 (
   )
 {
   return IoWrite16 (
-           Port,
-           BitFieldAnd16 (IoRead16 (Port), StartBit, EndBit, AndData)
-           );
+                    Port,
+                    BitFieldAnd16 (IoRead16 (Port), StartBit, EndBit, AndData)
+                    );
 }
 
 /**
@@ -577,9 +576,9 @@ IoBitFieldAndThenOr16 (
   )
 {
   return IoWrite16 (
-           Port,
-           BitFieldAndThenOr16 (IoRead16 (Port), StartBit, EndBit, AndData, OrData)
-           );
+                    Port,
+                    BitFieldAndThenOr16 (IoRead16 (Port), StartBit, EndBit, AndData, OrData)
+                    );
 }
 
 /**
@@ -734,9 +733,9 @@ IoBitFieldWrite32 (
   )
 {
   return IoWrite32 (
-           Port,
-           BitFieldWrite32 (IoRead32 (Port), StartBit, EndBit, Value)
-           );
+                    Port,
+                    BitFieldWrite32 (IoRead32 (Port), StartBit, EndBit, Value)
+                    );
 }
 
 /**
@@ -775,9 +774,9 @@ IoBitFieldOr32 (
   )
 {
   return IoWrite32 (
-           Port,
-           BitFieldOr32 (IoRead32 (Port), StartBit, EndBit, OrData)
-           );
+                    Port,
+                    BitFieldOr32 (IoRead32 (Port), StartBit, EndBit, OrData)
+                    );
 }
 
 /**
@@ -816,9 +815,9 @@ IoBitFieldAnd32 (
   )
 {
   return IoWrite32 (
-           Port,
-           BitFieldAnd32 (IoRead32 (Port), StartBit, EndBit, AndData)
-           );
+                    Port,
+                    BitFieldAnd32 (IoRead32 (Port), StartBit, EndBit, AndData)
+                    );
 }
 
 /**
@@ -862,9 +861,9 @@ IoBitFieldAndThenOr32 (
   )
 {
   return IoWrite32 (
-           Port,
-           BitFieldAndThenOr32 (IoRead32 (Port), StartBit, EndBit, AndData, OrData)
-           );
+                    Port,
+                    BitFieldAndThenOr32 (IoRead32 (Port), StartBit, EndBit, AndData, OrData)
+                    );
 }
 
 /**
@@ -1019,9 +1018,9 @@ IoBitFieldWrite64 (
   )
 {
   return IoWrite64 (
-           Port,
-           BitFieldWrite64 (IoRead64 (Port), StartBit, EndBit, Value)
-           );
+                    Port,
+                    BitFieldWrite64 (IoRead64 (Port), StartBit, EndBit, Value)
+                    );
 }
 
 /**
@@ -1060,9 +1059,9 @@ IoBitFieldOr64 (
   )
 {
   return IoWrite64 (
-           Port,
-           BitFieldOr64 (IoRead64 (Port), StartBit, EndBit, OrData)
-           );
+                    Port,
+                    BitFieldOr64 (IoRead64 (Port), StartBit, EndBit, OrData)
+                    );
 }
 
 /**
@@ -1101,9 +1100,9 @@ IoBitFieldAnd64 (
   )
 {
   return IoWrite64 (
-           Port,
-           BitFieldAnd64 (IoRead64 (Port), StartBit, EndBit, AndData)
-           );
+                    Port,
+                    BitFieldAnd64 (IoRead64 (Port), StartBit, EndBit, AndData)
+                    );
 }
 
 /**
@@ -1147,9 +1146,9 @@ IoBitFieldAndThenOr64 (
   )
 {
   return IoWrite64 (
-           Port,
-           BitFieldAndThenOr64 (IoRead64 (Port), StartBit, EndBit, AndData, OrData)
-           );
+                    Port,
+                    BitFieldAndThenOr64 (IoRead64 (Port), StartBit, EndBit, AndData, OrData)
+                    );
 }
 
 /**
@@ -1304,9 +1303,9 @@ MmioBitFieldWrite8 (
   )
 {
   return MmioWrite8 (
-           Address,
-           BitFieldWrite8 (MmioRead8 (Address), StartBit, EndBit, Value)
-           );
+                     Address,
+                     BitFieldWrite8 (MmioRead8 (Address), StartBit, EndBit, Value)
+                     );
 }
 
 /**
@@ -1346,9 +1345,9 @@ MmioBitFieldOr8 (
   )
 {
   return MmioWrite8 (
-           Address,
-           BitFieldOr8 (MmioRead8 (Address), StartBit, EndBit, OrData)
-           );
+                     Address,
+                     BitFieldOr8 (MmioRead8 (Address), StartBit, EndBit, OrData)
+                     );
 }
 
 /**
@@ -1388,9 +1387,9 @@ MmioBitFieldAnd8 (
   )
 {
   return MmioWrite8 (
-           Address,
-           BitFieldAnd8 (MmioRead8 (Address), StartBit, EndBit, AndData)
-           );
+                     Address,
+                     BitFieldAnd8 (MmioRead8 (Address), StartBit, EndBit, AndData)
+                     );
 }
 
 /**
@@ -1434,9 +1433,9 @@ MmioBitFieldAndThenOr8 (
   )
 {
   return MmioWrite8 (
-           Address,
-           BitFieldAndThenOr8 (MmioRead8 (Address), StartBit, EndBit, AndData, OrData)
-           );
+                     Address,
+                     BitFieldAndThenOr8 (MmioRead8 (Address), StartBit, EndBit, AndData, OrData)
+                     );
 }
 
 /**
@@ -1591,9 +1590,9 @@ MmioBitFieldWrite16 (
   )
 {
   return MmioWrite16 (
-           Address,
-           BitFieldWrite16 (MmioRead16 (Address), StartBit, EndBit, Value)
-           );
+                      Address,
+                      BitFieldWrite16 (MmioRead16 (Address), StartBit, EndBit, Value)
+                      );
 }
 
 /**
@@ -1633,9 +1632,9 @@ MmioBitFieldOr16 (
   )
 {
   return MmioWrite16 (
-           Address,
-           BitFieldOr16 (MmioRead16 (Address), StartBit, EndBit, OrData)
-           );
+                      Address,
+                      BitFieldOr16 (MmioRead16 (Address), StartBit, EndBit, OrData)
+                      );
 }
 
 /**
@@ -1675,9 +1674,9 @@ MmioBitFieldAnd16 (
   )
 {
   return MmioWrite16 (
-           Address,
-           BitFieldAnd16 (MmioRead16 (Address), StartBit, EndBit, AndData)
-           );
+                      Address,
+                      BitFieldAnd16 (MmioRead16 (Address), StartBit, EndBit, AndData)
+                      );
 }
 
 /**
@@ -1721,9 +1720,9 @@ MmioBitFieldAndThenOr16 (
   )
 {
   return MmioWrite16 (
-           Address,
-           BitFieldAndThenOr16 (MmioRead16 (Address), StartBit, EndBit, AndData, OrData)
-           );
+                      Address,
+                      BitFieldAndThenOr16 (MmioRead16 (Address), StartBit, EndBit, AndData, OrData)
+                      );
 }
 
 /**
@@ -1878,9 +1877,9 @@ MmioBitFieldWrite32 (
   )
 {
   return MmioWrite32 (
-           Address,
-           BitFieldWrite32 (MmioRead32 (Address), StartBit, EndBit, Value)
-           );
+                      Address,
+                      BitFieldWrite32 (MmioRead32 (Address), StartBit, EndBit, Value)
+                      );
 }
 
 /**
@@ -1920,9 +1919,9 @@ MmioBitFieldOr32 (
   )
 {
   return MmioWrite32 (
-           Address,
-           BitFieldOr32 (MmioRead32 (Address), StartBit, EndBit, OrData)
-           );
+                      Address,
+                      BitFieldOr32 (MmioRead32 (Address), StartBit, EndBit, OrData)
+                      );
 }
 
 /**
@@ -1962,9 +1961,9 @@ MmioBitFieldAnd32 (
   )
 {
   return MmioWrite32 (
-           Address,
-           BitFieldAnd32 (MmioRead32 (Address), StartBit, EndBit, AndData)
-           );
+                      Address,
+                      BitFieldAnd32 (MmioRead32 (Address), StartBit, EndBit, AndData)
+                      );
 }
 
 /**
@@ -2008,9 +2007,9 @@ MmioBitFieldAndThenOr32 (
   )
 {
   return MmioWrite32 (
-           Address,
-           BitFieldAndThenOr32 (MmioRead32 (Address), StartBit, EndBit, AndData, OrData)
-           );
+                      Address,
+                      BitFieldAndThenOr32 (MmioRead32 (Address), StartBit, EndBit, AndData, OrData)
+                      );
 }
 
 /**
@@ -2165,9 +2164,9 @@ MmioBitFieldWrite64 (
   )
 {
   return MmioWrite64 (
-           Address,
-           BitFieldWrite64 (MmioRead64 (Address), StartBit, EndBit, Value)
-           );
+                      Address,
+                      BitFieldWrite64 (MmioRead64 (Address), StartBit, EndBit, Value)
+                      );
 }
 
 /**
@@ -2207,9 +2206,9 @@ MmioBitFieldOr64 (
   )
 {
   return MmioWrite64 (
-           Address,
-           BitFieldOr64 (MmioRead64 (Address), StartBit, EndBit, OrData)
-           );
+                      Address,
+                      BitFieldOr64 (MmioRead64 (Address), StartBit, EndBit, OrData)
+                      );
 }
 
 /**
@@ -2249,9 +2248,9 @@ MmioBitFieldAnd64 (
   )
 {
   return MmioWrite64 (
-           Address,
-           BitFieldAnd64 (MmioRead64 (Address), StartBit, EndBit, AndData)
-           );
+                      Address,
+                      BitFieldAnd64 (MmioRead64 (Address), StartBit, EndBit, AndData)
+                      );
 }
 
 /**
@@ -2295,7 +2294,7 @@ MmioBitFieldAndThenOr64 (
   )
 {
   return MmioWrite64 (
-           Address,
-           BitFieldAndThenOr64 (MmioRead64 (Address), StartBit, EndBit, AndData, OrData)
-           );
+                      Address,
+                      BitFieldAndThenOr64 (MmioRead64 (Address), StartBit, EndBit, AndData, OrData)
+                      );
 }

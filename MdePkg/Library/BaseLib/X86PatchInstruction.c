@@ -55,29 +55,29 @@ PatchInstructionX86 (
   // The equality ((UINTN)InstructionEnd == ValueSize) would assume a zero-size
   // instruction at address 0; forbid it.
   //
-  ASSERT ((UINTN)InstructionEnd > ValueSize);
+  ASSERT ((UINTN) InstructionEnd > ValueSize);
 
   switch (ValueSize) {
-  case 1:
-    ASSERT (PatchValue <= MAX_UINT8);
-    *((UINT8 *)(UINTN)InstructionEnd - 1) = (UINT8)PatchValue;
-    break;
+    case 1:
+      ASSERT (PatchValue <= MAX_UINT8);
+      *((UINT8 *) (UINTN) InstructionEnd - 1) = (UINT8) PatchValue;
+      break;
 
-  case 2:
-    ASSERT (PatchValue <= MAX_UINT16);
-    WriteUnaligned16 ((UINT16 *)(UINTN)InstructionEnd - 1, (UINT16)PatchValue);
-    break;
+    case 2:
+      ASSERT (PatchValue <= MAX_UINT16);
+      WriteUnaligned16 ((UINT16 *) (UINTN) InstructionEnd - 1, (UINT16) PatchValue);
+      break;
 
-  case 4:
-    ASSERT (PatchValue <= MAX_UINT32);
-    WriteUnaligned32 ((UINT32 *)(UINTN)InstructionEnd - 1, (UINT32)PatchValue);
-    break;
+    case 4:
+      ASSERT (PatchValue <= MAX_UINT32);
+      WriteUnaligned32 ((UINT32 *) (UINTN) InstructionEnd - 1, (UINT32) PatchValue);
+      break;
 
-  case 8:
-    WriteUnaligned64 ((UINT64 *)(UINTN)InstructionEnd - 1, PatchValue);
-    break;
+    case 8:
+      WriteUnaligned64 ((UINT64 *) (UINTN) InstructionEnd - 1, PatchValue);
+      break;
 
-  default:
-    ASSERT (FALSE);
+    default:
+      ASSERT (FALSE);
   }
 }

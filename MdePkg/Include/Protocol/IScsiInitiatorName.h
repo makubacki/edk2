@@ -11,9 +11,9 @@
 #define __ISCSI_INITIATOR_NAME_H__
 
 #define EFI_ISCSI_INITIATOR_NAME_PROTOCOL_GUID \
-{ \
-  0x59324945, 0xec44, 0x4c0d, {0xb1, 0xcd, 0x9d, 0xb1, 0x39, 0xdf, 0x7, 0xc } \
-}
+  { \
+    0x59324945, 0xec44, 0x4c0d, { 0xb1, 0xcd, 0x9d, 0xb1, 0x39, 0xdf, 0x7, 0xc } \
+  }
 
 typedef struct _EFI_ISCSI_INITIATOR_NAME_PROTOCOL EFI_ISCSI_INITIATOR_NAME_PROTOCOL;
 
@@ -34,14 +34,12 @@ typedef struct _EFI_ISCSI_INITIATOR_NAME_PROTOCOL EFI_ISCSI_INITIATOR_NAME_PROTO
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_ISCSI_INITIATOR_NAME_GET)(
-  IN EFI_ISCSI_INITIATOR_NAME_PROTOCOL *This,
-  IN OUT UINTN                         *BufferSize,
-  OUT VOID                             *Buffer
-  );
-
-
+                                       IN EFI_ISCSI_INITIATOR_NAME_PROTOCOL *This,
+                                       IN OUT UINTN                         *BufferSize,
+                                       OUT VOID                             *Buffer
+                                       );
 
 /**
   Sets the iSCSI Initiator Name.
@@ -62,20 +60,19 @@ EFI_STATUS
 **/
 typedef EFI_STATUS
 (EFIAPI *EFI_ISCSI_INITIATOR_NAME_SET)(
-  IN EFI_ISCSI_INITIATOR_NAME_PROTOCOL *This,
-  IN OUT UINTN                         *BufferSize,
-  IN VOID                              *Buffer
-  );
+                                       IN EFI_ISCSI_INITIATOR_NAME_PROTOCOL *This,
+                                       IN OUT UINTN                         *BufferSize,
+                                       IN VOID                              *Buffer
+                                       );
 
 ///
 /// iSCSI Initiator Name Protocol for setting and obtaining the iSCSI Initiator Name.
 ///
 struct _EFI_ISCSI_INITIATOR_NAME_PROTOCOL {
-  EFI_ISCSI_INITIATOR_NAME_GET         Get;
-  EFI_ISCSI_INITIATOR_NAME_SET         Set;
+  EFI_ISCSI_INITIATOR_NAME_GET    Get;
+  EFI_ISCSI_INITIATOR_NAME_SET    Set;
 };
 
-extern EFI_GUID gEfiIScsiInitiatorNameProtocolGuid;
+extern EFI_GUID  gEfiIScsiInitiatorNameProtocolGuid;
 
 #endif
-

@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 /**
   Reads the current value of 64-bit MMX Register #5 (MM5).
 
@@ -25,12 +22,11 @@ AsmReadMm5 (
   )
 {
   _asm {
-    push    eax
-    push    eax
-    movq    [esp], mm5
+  push    eax
+  push    eax
+      movq[esp], mm5
     pop     eax
     pop     edx
-    emms
+      emms
   }
 }
-

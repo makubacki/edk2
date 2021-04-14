@@ -55,8 +55,8 @@ NanoSecondDelay (
 UINT64
 EFIAPI
 GetPerformanceCounter (
-  VOID
-  );
+                       VOID
+                       );
 
 /**
   Retrieves the 64-bit frequency in Hz and the range of performance counter
@@ -84,7 +84,7 @@ GetPerformanceCounter (
 UINT64
 EFIAPI
 GetPerformanceCounterProperties (
-  OUT      UINT64                    *StartValue,  OPTIONAL
+  OUT      UINT64                    *StartValue, OPTIONAL
   OUT      UINT64                    *EndValue     OPTIONAL
   );
 

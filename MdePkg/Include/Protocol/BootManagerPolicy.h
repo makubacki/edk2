@@ -33,7 +33,7 @@
 
 typedef struct _EFI_BOOT_MANAGER_POLICY_PROTOCOL EFI_BOOT_MANAGER_POLICY_PROTOCOL;
 
-#define EFI_BOOT_MANAGER_POLICY_PROTOCOL_REVISION 0x00010000
+#define EFI_BOOT_MANAGER_POLICY_PROTOCOL_REVISION  0x00010000
 
 /**
   Connect a device path following the platforms EFI Boot Manager policy.
@@ -60,12 +60,12 @@ typedef struct _EFI_BOOT_MANAGER_POLICY_PROTOCOL EFI_BOOT_MANAGER_POLICY_PROTOCO
   @retval EFI_UNSUPPORTED        The current TPL is not TPL_APPLICATION.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_BOOT_MANAGER_POLICY_CONNECT_DEVICE_PATH)(
-  IN EFI_BOOT_MANAGER_POLICY_PROTOCOL *This,
-  IN EFI_DEVICE_PATH                  *DevicePath,
-  IN BOOLEAN                          Recursive
-  );
+                                                      IN EFI_BOOT_MANAGER_POLICY_PROTOCOL *This,
+                                                      IN EFI_DEVICE_PATH                  *DevicePath,
+                                                      IN BOOLEAN                          Recursive
+                                                      );
 
 /**
   Connect a class of devices using the platform Boot Manager policy.
@@ -111,22 +111,22 @@ EFI_STATUS
   @retval EFI_UNSUPPORTED  The current TPL is not TPL_APPLICATION.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_BOOT_MANAGER_POLICY_CONNECT_DEVICE_CLASS)(
-  IN EFI_BOOT_MANAGER_POLICY_PROTOCOL *This,
-  IN EFI_GUID                         *Class
-  );
+                                                       IN EFI_BOOT_MANAGER_POLICY_PROTOCOL *This,
+                                                       IN EFI_GUID                         *Class
+                                                       );
 
 struct _EFI_BOOT_MANAGER_POLICY_PROTOCOL {
-  UINT64                                       Revision;
-  EFI_BOOT_MANAGER_POLICY_CONNECT_DEVICE_PATH  ConnectDevicePath;
-  EFI_BOOT_MANAGER_POLICY_CONNECT_DEVICE_CLASS ConnectDeviceClass;
+  UINT64                                          Revision;
+  EFI_BOOT_MANAGER_POLICY_CONNECT_DEVICE_PATH     ConnectDevicePath;
+  EFI_BOOT_MANAGER_POLICY_CONNECT_DEVICE_CLASS    ConnectDeviceClass;
 };
 
-extern EFI_GUID gEfiBootManagerPolicyProtocolGuid;
+extern EFI_GUID  gEfiBootManagerPolicyProtocolGuid;
 
-extern EFI_GUID gEfiBootManagerPolicyConsoleGuid;
-extern EFI_GUID gEfiBootManagerPolicyNetworkGuid;
-extern EFI_GUID gEfiBootManagerPolicyConnectAllGuid;
+extern EFI_GUID  gEfiBootManagerPolicyConsoleGuid;
+extern EFI_GUID  gEfiBootManagerPolicyNetworkGuid;
+extern EFI_GUID  gEfiBootManagerPolicyConnectAllGuid;
 
 #endif

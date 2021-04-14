@@ -49,10 +49,11 @@ ScanMem8 (
   if (Length == 0) {
     return NULL;
   }
-  ASSERT (Buffer != NULL);
-  ASSERT ((Length - 1) <= (MAX_ADDRESS - (UINTN)Buffer));
 
-  return (VOID*)InternalMemScanMem8 (Buffer, Length, Value);
+  ASSERT (Buffer != NULL);
+  ASSERT ((Length - 1) <= (MAX_ADDRESS - (UINTN) Buffer));
+
+  return (VOID *) InternalMemScanMem8 (Buffer, Length, Value);
 }
 
 /**
@@ -85,9 +86,8 @@ ScanMemN (
   )
 {
   if (sizeof (UINTN) == sizeof (UINT64)) {
-    return ScanMem64 (Buffer, Length, (UINT64)Value);
+    return ScanMem64 (Buffer, Length, (UINT64) Value);
   } else {
-    return ScanMem32 (Buffer, Length, (UINT32)Value);
+    return ScanMem32 (Buffer, Length, (UINT32) Value);
   }
 }
-

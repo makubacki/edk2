@@ -16,15 +16,15 @@
 #ifndef __PCD_INFO_PPI_H__
 #define __PCD_INFO_PPI_H__
 
-extern EFI_GUID gGetPcdInfoPpiGuid;
+extern EFI_GUID  gGetPcdInfoPpiGuid;
 
 #define GET_PCD_INFO_PPI_GUID \
-  { 0x4d8b155b, 0xc059, 0x4c8f, { 0x89, 0x26,  0x6, 0xfd, 0x43, 0x31, 0xdb, 0x8a } }
+  { 0x4d8b155b, 0xc059, 0x4c8f, { 0x89, 0x26, 0x6, 0xfd, 0x43, 0x31, 0xdb, 0x8a } }
 
 ///
 /// The forward declaration for GET_PCD_INFO_PPI.
 ///
-typedef struct _GET_PCD_INFO_PPI  GET_PCD_INFO_PPI;
+typedef struct _GET_PCD_INFO_PPI GET_PCD_INFO_PPI;
 
 /**
   Retrieve additional information associated with a PCD token in the default token space.
@@ -39,11 +39,11 @@ typedef struct _GET_PCD_INFO_PPI  GET_PCD_INFO_PPI;
   @retval  EFI_NOT_FOUND    The PCD service could not find the requested token number.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *GET_PCD_INFO_PPI_GET_INFO) (
-  IN        UINTN           TokenNumber,
-  OUT       EFI_PCD_INFO    *PcdInfo
-);
+  EFI_STATUS
+(EFIAPI *GET_PCD_INFO_PPI_GET_INFO)(
+                                    IN        UINTN           TokenNumber,
+                                    OUT       EFI_PCD_INFO    *PcdInfo
+                                    );
 
 /**
   Retrieve additional information associated with a PCD token.
@@ -59,12 +59,12 @@ EFI_STATUS
   @retval  EFI_NOT_FOUND    The PCD service could not find the requested token number.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *GET_PCD_INFO_PPI_GET_INFO_EX) (
-  IN CONST  EFI_GUID        *Guid,
-  IN        UINTN           TokenNumber,
-  OUT       EFI_PCD_INFO    *PcdInfo
-);
+  EFI_STATUS
+(EFIAPI *GET_PCD_INFO_PPI_GET_INFO_EX)(
+                                       IN CONST  EFI_GUID        *Guid,
+                                       IN        UINTN           TokenNumber,
+                                       OUT       EFI_PCD_INFO    *PcdInfo
+                                       );
 
 /**
   Retrieve the currently set SKU Id.
@@ -74,10 +74,10 @@ EFI_STATUS
             Id is returned.
 **/
 typedef
-UINTN
-(EFIAPI *GET_PCD_INFO_PPI_GET_SKU) (
-  VOID
-);
+  UINTN
+(EFIAPI *GET_PCD_INFO_PPI_GET_SKU)(
+                                   VOID
+                                   );
 
 ///
 /// This is the PCD service to use when querying for some additional data that can be contained in the
@@ -87,13 +87,12 @@ struct _GET_PCD_INFO_PPI {
   ///
   /// Retrieve additional information associated with a PCD.
   ///
-  GET_PCD_INFO_PPI_GET_INFO             GetInfo;
-  GET_PCD_INFO_PPI_GET_INFO_EX          GetInfoEx;
+  GET_PCD_INFO_PPI_GET_INFO       GetInfo;
+  GET_PCD_INFO_PPI_GET_INFO_EX    GetInfoEx;
   ///
   /// Retrieve the currently set SKU Id.
   ///
-  GET_PCD_INFO_PPI_GET_SKU              GetSku;
+  GET_PCD_INFO_PPI_GET_SKU        GetSku;
 };
 
 #endif
-

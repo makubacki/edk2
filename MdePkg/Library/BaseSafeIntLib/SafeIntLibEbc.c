@@ -40,8 +40,9 @@ SafeInt32ToUintn (
   )
 {
   if (sizeof (UINTN) == sizeof (UINT32)) {
-    return SafeInt32ToUint32 (Operand, (UINT32 *)Result);
+    return SafeInt32ToUint32 (Operand, (UINT32 *) Result);
   }
+
   return SafeInt32ToUint64 (Operand, (UINT64 *) Result);
 }
 
@@ -77,8 +78,9 @@ SafeUint32ToIntn (
   }
 
   if (sizeof (UINTN) == sizeof (UINT32)) {
-    return SafeUint32ToInt32 (Operand, (INT32 *)Result);
+    return SafeUint32ToInt32 (Operand, (INT32 *) Result);
   }
+
   *Result = Operand;
   return RETURN_SUCCESS;
 }
@@ -115,9 +117,10 @@ SafeIntnToInt32 (
   }
 
   if (sizeof (UINTN) == sizeof (UINT32)) {
-    *Result = (INT32)Operand;
+    *Result = (INT32) Operand;
     return RETURN_SUCCESS;
   }
+
   return SafeInt64ToInt32 ((INT64) Operand, Result);
 }
 
@@ -156,16 +159,17 @@ SafeIntnToUint32 (
 
   if (sizeof (UINTN) == sizeof (UINT32)) {
     if (Operand >= 0) {
-      *Result = (UINT32)Operand;
-      Status = RETURN_SUCCESS;
+      *Result = (UINT32) Operand;
+      Status  = RETURN_SUCCESS;
     } else {
       *Result = UINT32_ERROR;
-      Status = RETURN_BUFFER_TOO_SMALL;
+      Status  = RETURN_BUFFER_TOO_SMALL;
     }
 
     return Status;
   }
-  return SafeInt64ToUint32 ((INT64)Operand, Result);
+
+  return SafeInt64ToUint32 ((INT64) Operand, Result);
 }
 
 /**
@@ -200,10 +204,11 @@ SafeUintnToUint32 (
   }
 
   if (sizeof (UINTN) == sizeof (UINT32)) {
-    *Result = (UINT32)Operand;
+    *Result = (UINT32) Operand;
     return RETURN_SUCCESS;
   }
-  return SafeUint64ToUint32 ((UINT64)Operand, Result);
+
+  return SafeUint64ToUint32 ((UINT64) Operand, Result);
 }
 
 /**
@@ -238,10 +243,11 @@ SafeUintnToInt64 (
   }
 
   if (sizeof (UINTN) == sizeof (UINT32)) {
-    *Result = (INT64)Operand;
+    *Result = (INT64) Operand;
     return RETURN_SUCCESS;
   }
-  return SafeUint64ToInt64 ((UINT64)Operand, Result);
+
+  return SafeUint64ToInt64 ((UINT64) Operand, Result);
 }
 
 /**
@@ -276,9 +282,10 @@ SafeInt64ToIntn (
   }
 
   if (sizeof (UINTN) == sizeof (UINT32)) {
-    return SafeInt64ToInt32 (Operand, (INT32 *)Result);
+    return SafeInt64ToInt32 (Operand, (INT32 *) Result);
   }
-  *Result = (INTN)Operand;
+
+  *Result = (INTN) Operand;
   return RETURN_SUCCESS;
 }
 
@@ -310,9 +317,10 @@ SafeInt64ToUintn (
   )
 {
   if (sizeof (UINTN) == sizeof (UINT32)) {
-    return SafeInt64ToUint32 (Operand, (UINT32 *)Result);
+    return SafeInt64ToUint32 (Operand, (UINT32 *) Result);
   }
-  return SafeInt64ToUint64 (Operand, (UINT64 *)Result);
+
+  return SafeInt64ToUint64 (Operand, (UINT64 *) Result);
 }
 
 /**
@@ -347,8 +355,9 @@ SafeUint64ToUintn (
   }
 
   if (sizeof (UINTN) == sizeof (UINT32)) {
-    return SafeUint64ToUint32 ((UINT64) Operand, (UINT32 *)Result);
+    return SafeUint64ToUint32 ((UINT64) Operand, (UINT32 *) Result);
   }
+
   *Result = Operand;
   return RETURN_SUCCESS;
 }
@@ -389,17 +398,18 @@ SafeUintnAdd (
   }
 
   if (sizeof (UINTN) == sizeof (UINT32)) {
-    if ((UINT32)(Augend + Addend) >= Augend) {
+    if ((UINT32) (Augend + Addend) >= Augend) {
       *Result = (Augend + Addend);
-      Status = RETURN_SUCCESS;
+      Status  = RETURN_SUCCESS;
     } else {
       *Result = UINTN_ERROR;
-      Status = RETURN_BUFFER_TOO_SMALL;
+      Status  = RETURN_BUFFER_TOO_SMALL;
     }
 
     return Status;
   }
-  return SafeUint64Add ((UINT64)Augend, (UINT64)Addend, (UINT64 *)Result);
+
+  return SafeUint64Add ((UINT64) Augend, (UINT64) Addend, (UINT64 *) Result);
 }
 
 /**
@@ -440,15 +450,16 @@ SafeUintnSub (
   if (sizeof (UINTN) == sizeof (UINT32)) {
     if (Minuend >= Subtrahend) {
       *Result = (Minuend - Subtrahend);
-      Status = RETURN_SUCCESS;
+      Status  = RETURN_SUCCESS;
     } else {
       *Result = UINTN_ERROR;
-      Status = RETURN_BUFFER_TOO_SMALL;
+      Status  = RETURN_BUFFER_TOO_SMALL;
     }
 
     return Status;
   }
-  return SafeUint64Sub ((UINT64)Minuend, (UINT64)Subtrahend, (UINT64 *)Result);
+
+  return SafeUint64Sub ((UINT64) Minuend, (UINT64) Subtrahend, (UINT64 *) Result);
 }
 
 /**
@@ -487,7 +498,8 @@ SafeUintnMult (
 
     return SafeUint64ToUintn (IntermediateResult, Result);
   }
-  return SafeUint64Mult ((UINT64)Multiplicand, (UINT64)Multiplier, (UINT64 *)Result);
+
+  return SafeUint64Mult ((UINT64) Multiplicand, (UINT64) Multiplier, (UINT64 *) Result);
 }
 
 /**
@@ -520,9 +532,10 @@ SafeIntnAdd (
   )
 {
   if (sizeof (UINTN) == sizeof (UINT32)) {
-    return SafeInt64ToIntn (((INT64)Augend) + ((INT64)Addend), Result);
+    return SafeInt64ToIntn (((INT64) Augend) + ((INT64) Addend), Result);
   }
-  return SafeInt64Add ((INT64)Augend, (INT64)Addend, (INT64 *)Result);
+
+  return SafeInt64Add ((INT64) Augend, (INT64) Addend, (INT64 *) Result);
 }
 
 /**
@@ -555,9 +568,10 @@ SafeIntnSub (
   )
 {
   if (sizeof (UINTN) == sizeof (UINT32)) {
-    return SafeInt64ToIntn (((INT64)Minuend) - ((INT64)Subtrahend), Result);
+    return SafeInt64ToIntn (((INT64) Minuend) - ((INT64) Subtrahend), Result);
   }
-  return SafeInt64Sub ((INT64)Minuend, (INT64)Subtrahend, (INT64 *)Result);
+
+  return SafeInt64Sub ((INT64) Minuend, (INT64) Subtrahend, (INT64 *) Result);
 }
 
 /**
@@ -590,8 +604,8 @@ SafeIntnMult (
   )
 {
   if (sizeof (UINTN) == sizeof (UINT32)) {
-    return SafeInt64ToIntn (((INT64)Multiplicand) *((INT64)Multiplier), Result);
+    return SafeInt64ToIntn (((INT64) Multiplicand) *((INT64) Multiplier), Result);
   }
-  return SafeInt64Mult ((INT64)Multiplicand, (INT64)Multiplier, (INT64 *)Result);
-}
 
+  return SafeInt64Mult ((INT64) Multiplicand, (INT64) Multiplier, (INT64 *) Result);
+}

@@ -27,8 +27,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 RETURN_STATUS
 EFIAPI
 SerialPortInitialize (
-  VOID
-  );
+                      VOID
+                      );
 
 /**
   Write data from buffer to serial device.
@@ -53,7 +53,6 @@ SerialPortWrite (
   IN UINT8     *Buffer,
   IN UINTN     NumberOfBytes
   );
-
 
 /**
   Read data from serial device and save the datas in buffer.
@@ -92,8 +91,8 @@ SerialPortRead (
 BOOLEAN
 EFIAPI
 SerialPortPoll (
-  VOID
-  );
+                VOID
+                );
 
 /**
   Sets the control bits on a serial device.

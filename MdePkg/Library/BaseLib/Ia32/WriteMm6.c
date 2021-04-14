@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 /**
   Writes the current value of 64-bit MMX Register #6 (MM6).
 
@@ -25,8 +22,7 @@ AsmWriteMm6 (
   )
 {
   _asm {
-    movq    mm6, qword ptr [Value]
+  movq  mm6, qword ptr[Value]
     emms
   }
 }
-

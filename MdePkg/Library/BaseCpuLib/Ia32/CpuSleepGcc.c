@@ -7,7 +7,6 @@
 
 **/
 
-
 /**
   Places the CPU in a sleep state until an interrupt is received.
 
@@ -22,6 +21,5 @@ CpuSleep (
   VOID
   )
 {
-  __asm__ __volatile__ ("hlt"::: "memory");
+  __asm__ __volatile__ ("hlt" ::: "memory");
 }
-

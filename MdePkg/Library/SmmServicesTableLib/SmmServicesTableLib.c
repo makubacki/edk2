@@ -11,7 +11,7 @@
 #include <Library/SmmServicesTableLib.h>
 #include <Library/DebugLib.h>
 
-EFI_SMM_SYSTEM_TABLE2   *gSmst             = NULL;
+EFI_SMM_SYSTEM_TABLE2  *gSmst = NULL;
 
 /**
   The constructor function caches the pointer of SMM Services Table.
@@ -39,10 +39,10 @@ SmmServicesTableLibConstructor (
   // SMM driver explicitly declares that dependency.
   //
   Status = SystemTable->BootServices->LocateProtocol (
-                                        &gEfiSmmBase2ProtocolGuid,
-                                        NULL,
-                                        (VOID **)&InternalSmmBase2
-                                        );
+                                                      &gEfiSmmBase2ProtocolGuid,
+                                                      NULL,
+                                                      (VOID **) &InternalSmmBase2
+                                                      );
   ASSERT_EFI_ERROR (Status);
   ASSERT (InternalSmmBase2 != NULL);
 

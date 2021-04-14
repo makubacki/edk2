@@ -212,10 +212,10 @@ typedef struct {
   // If TRUE, indicates GTK is just refreshed after a successful call to
   // EFI_SUPPLICANT_PROTOCOL.BuildResponsePacket().
   //
-  BOOLEAN                                 GTKRefresh;
+  BOOLEAN    GTKRefresh;
 } EFI_SUPPLICANT_KEY_REFRESH;
 
-#define EFI_MAX_KEY_LEN 64
+#define EFI_MAX_KEY_LEN  64
 
 ///
 /// EFI_SUPPLICANT_KEY
@@ -224,45 +224,45 @@ typedef struct {
   //
   // The key value.
   //
-  UINT8                                   Key[EFI_MAX_KEY_LEN];
+  UINT8                           Key[EFI_MAX_KEY_LEN];
   //
   // Length in bytes of the Key. Should be up to EFI_MAX_KEY_LEN.
   //
-  UINT8                                   KeyLen;
+  UINT8                           KeyLen;
   //
   // The key identifier.
   //
-  UINT8                                   KeyId;
+  UINT8                           KeyId;
   //
   // Defines whether this key is a group key, pairwise key, PeerKey, or
   // Integrity Group.
   //
-  EFI_SUPPLICANT_KEY_TYPE                 KeyType;
+  EFI_SUPPLICANT_KEY_TYPE         KeyType;
   //
   // The value is set according to the KeyType.
   //
-  EFI_80211_MAC_ADDRESS                   Addr;
+  EFI_80211_MAC_ADDRESS           Addr;
   //
   // The Receive Sequence Count value.
   //
-  UINT8                                   Rsc[8];
+  UINT8                           Rsc[8];
   //
   // Length in bytes of the Rsc. Should be up to 8.
   //
-  UINT8                                   RscLen;
+  UINT8                           RscLen;
   //
   // Indicates whether the key is configured by the Authenticator or
   // Supplicant. The value true indicates Authenticator.
   //
-  BOOLEAN                                 IsAuthenticator;
+  BOOLEAN                         IsAuthenticator;
   //
   // The cipher suite required for this association.
   //
-  EFI_80211_SUITE_SELECTOR                CipherSuite;
+  EFI_80211_SUITE_SELECTOR        CipherSuite;
   //
   // Indicates the direction for which the keys are to be installed.
   //
-  EFI_SUPPLICANT_KEY_DIRECTION            Direction;
+  EFI_SUPPLICANT_KEY_DIRECTION    Direction;
 } EFI_SUPPLICANT_KEY;
 
 ///
@@ -272,12 +272,12 @@ typedef struct {
   //
   // Indicates the number of GTKs that are contained in GTKList.
   //
-  UINT8                                   GTKCount;
+  UINT8                 GTKCount;
   //
   // A variable-length array of GTKs of type EFI_SUPPLICANT_KEY. The number of
   // entries is specified by GTKCount.
   //
-  EFI_SUPPLICANT_KEY                      GTKList[1];
+  EFI_SUPPLICANT_KEY    GTKList[1];
 } EFI_SUPPLICANT_GTK_LIST;
 
 ///
@@ -287,11 +287,11 @@ typedef struct {
   //
   // Length of data buffer in the fragment.
   //
-  UINT32                                  FragmentLength;
+  UINT32    FragmentLength;
   //
   // Pointer to the data buffer in the fragment.
   //
-  VOID                                    *FragmentBuffer;
+  VOID      *FragmentBuffer;
 } EFI_SUPPLICANT_FRAGMENT_DATA;
 
 /**
@@ -332,14 +332,16 @@ typedef struct {
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_SUPPLICANT_BUILD_RESPONSE_PACKET) (
-  IN     EFI_SUPPLICANT_PROTOCOL          *This,
-  IN     UINT8                            *RequestBuffer,     OPTIONAL
-  IN     UINTN                            RequestBufferSize,  OPTIONAL
-     OUT UINT8                            *Buffer,
-  IN OUT UINTN                            *BufferSize
-  );
+  EFI_STATUS
+(EFIAPI *EFI_SUPPLICANT_BUILD_RESPONSE_PACKET)(
+                                               IN     EFI_SUPPLICANT_PROTOCOL          *This,
+                                               IN     UINT8                            *RequestBuffer,
+                                               OPTIONAL
+                                               IN     UINTN                            RequestBufferSize,
+                                               OPTIONAL
+                                               OUT UINT8                            *Buffer,
+                                               IN OUT UINTN                            *BufferSize
+                                               );
 
 /**
   ProcessPacket() is called to Supplicant driver to encrypt or decrypt the data
@@ -366,13 +368,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_SUPPLICANT_PROCESS_PACKET) (
-  IN     EFI_SUPPLICANT_PROTOCOL          *This,
-  IN OUT EFI_SUPPLICANT_FRAGMENT_DATA     **FragmentTable,
-  IN     UINT32                           *FragmentCount,
-  IN     EFI_SUPPLICANT_CRYPT_MODE        CryptMode
-  );
+  EFI_STATUS
+(EFIAPI *EFI_SUPPLICANT_PROCESS_PACKET)(
+                                        IN     EFI_SUPPLICANT_PROTOCOL          *This,
+                                        IN OUT EFI_SUPPLICANT_FRAGMENT_DATA     **FragmentTable,
+                                        IN     UINT32                           *FragmentCount,
+                                        IN     EFI_SUPPLICANT_CRYPT_MODE        CryptMode
+                                        );
 
 /**
   Set Supplicant configuration data.
@@ -394,13 +396,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_SUPPLICANT_SET_DATA) (
-  IN EFI_SUPPLICANT_PROTOCOL              *This,
-  IN EFI_SUPPLICANT_DATA_TYPE             DataType,
-  IN VOID                                 *Data,
-  IN UINTN                                DataSize
-  );
+  EFI_STATUS
+(EFIAPI *EFI_SUPPLICANT_SET_DATA)(
+                                  IN EFI_SUPPLICANT_PROTOCOL              *This,
+                                  IN EFI_SUPPLICANT_DATA_TYPE             DataType,
+                                  IN VOID                                 *Data,
+                                  IN UINTN                                DataSize
+                                  );
 
 /**
   Get Supplicant configuration data.
@@ -431,13 +433,14 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_SUPPLICANT_GET_DATA) (
-  IN     EFI_SUPPLICANT_PROTOCOL          *This,
-  IN     EFI_SUPPLICANT_DATA_TYPE         DataType,
-     OUT UINT8                            *Data,     OPTIONAL
-  IN OUT UINTN                            *DataSize
-  );
+  EFI_STATUS
+(EFIAPI *EFI_SUPPLICANT_GET_DATA)(
+                                  IN     EFI_SUPPLICANT_PROTOCOL          *This,
+                                  IN     EFI_SUPPLICANT_DATA_TYPE         DataType,
+                                  OUT UINT8                            *Data,
+                                  OPTIONAL
+                                  IN OUT UINTN                            *DataSize
+                                  );
 
 ///
 /// The EFI_SUPPLICANT_PROTOCOL is designed to provide unified place for WIFI
@@ -452,7 +455,7 @@ struct _EFI_SUPPLICANT_PROTOCOL {
   EFI_SUPPLICANT_GET_DATA                 GetData;
 };
 
-extern EFI_GUID gEfiSupplicantServiceBindingProtocolGuid;
-extern EFI_GUID gEfiSupplicantProtocolGuid;
+extern EFI_GUID  gEfiSupplicantServiceBindingProtocolGuid;
+extern EFI_GUID  gEfiSupplicantProtocolGuid;
 
 #endif

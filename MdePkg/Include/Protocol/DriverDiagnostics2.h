@@ -13,10 +13,10 @@
 
 #define EFI_DRIVER_DIAGNOSTICS2_PROTOCOL_GUID \
   { \
-    0x4d330321, 0x025f, 0x4aac, {0x90, 0xd8, 0x5e, 0xd9, 0x00, 0x17, 0x3b, 0x63 } \
+    0x4d330321, 0x025f, 0x4aac, { 0x90, 0xd8, 0x5e, 0xd9, 0x00, 0x17, 0x3b, 0x63 } \
   }
 
-typedef struct _EFI_DRIVER_DIAGNOSTICS2_PROTOCOL  EFI_DRIVER_DIAGNOSTICS2_PROTOCOL;
+typedef struct _EFI_DRIVER_DIAGNOSTICS2_PROTOCOL EFI_DRIVER_DIAGNOSTICS2_PROTOCOL;
 
 /**
   Runs diagnostics on a controller.
@@ -76,30 +76,33 @@ typedef struct _EFI_DRIVER_DIAGNOSTICS2_PROTOCOL  EFI_DRIVER_DIAGNOSTICS2_PROTOC
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_DRIVER_DIAGNOSTICS2_RUN_DIAGNOSTICS)(
-  IN EFI_DRIVER_DIAGNOSTICS2_PROTOCOL                       *This,
-  IN  EFI_HANDLE                                            ControllerHandle,
-  IN  EFI_HANDLE                                            ChildHandle  OPTIONAL,
-  IN  EFI_DRIVER_DIAGNOSTIC_TYPE                            DiagnosticType,
-  IN  CHAR8                                                 *Language,
-  OUT EFI_GUID                                              **ErrorType,
-  OUT UINTN                                                 *BufferSize,
-  OUT CHAR16                                                **Buffer
-  );
+                                                  IN EFI_DRIVER_DIAGNOSTICS2_PROTOCOL                       *This,
+                                                  IN  EFI_HANDLE
+                                                  ControllerHandle,
+                                                  IN  EFI_HANDLE                                            ChildHandle
+                                                  OPTIONAL,
+                                                  IN  EFI_DRIVER_DIAGNOSTIC_TYPE
+                                                  DiagnosticType,
+                                                  IN  CHAR8                                                 *Language,
+                                                  OUT EFI_GUID                                              **ErrorType,
+                                                  OUT UINTN                                                 *BufferSize,
+                                                  OUT CHAR16                                                **Buffer
+                                                  );
 
 ///
 /// Used to perform diagnostics on a controller that an EFI Driver is managing.
 ///
 struct _EFI_DRIVER_DIAGNOSTICS2_PROTOCOL {
-  EFI_DRIVER_DIAGNOSTICS2_RUN_DIAGNOSTICS RunDiagnostics;
+  EFI_DRIVER_DIAGNOSTICS2_RUN_DIAGNOSTICS    RunDiagnostics;
   ///
   /// A Null-terminated ASCII string that contains one or more RFC 4646
   /// language codes.  This is the list of language codes that this protocol supports.
   ///
-  CHAR8                                   *SupportedLanguages;
+  CHAR8                                      *SupportedLanguages;
 };
 
-extern EFI_GUID gEfiDriverDiagnostics2ProtocolGuid;
+extern EFI_GUID  gEfiDriverDiagnostics2ProtocolGuid;
 
 #endif

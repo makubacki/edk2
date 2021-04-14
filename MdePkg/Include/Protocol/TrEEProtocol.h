@@ -13,70 +13,70 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <IndustryStandard/Tpm20.h>
 
 #define EFI_TREE_PROTOCOL_GUID \
-  {0x607f766c, 0x7455, 0x42be, 0x93, 0x0b, 0xe4, 0xd7, 0x6d, 0xb2, 0x72, 0x0f}
+  { 0x607f766c, 0x7455, 0x42be, 0x93, 0x0b, 0xe4, 0xd7, 0x6d, 0xb2, 0x72, 0x0f }
 
 typedef struct _EFI_TREE_PROTOCOL EFI_TREE_PROTOCOL;
 
 typedef struct _TREE_VERSION {
-  UINT8 Major;
-  UINT8 Minor;
+  UINT8    Major;
+  UINT8    Minor;
 } TREE_VERSION;
 
 typedef UINT32 TREE_EVENT_LOG_BITMAP;
 typedef UINT32 TREE_EVENT_LOG_FORMAT;
 
-#define TREE_EVENT_LOG_FORMAT_TCG_1_2       0x00000001
+#define TREE_EVENT_LOG_FORMAT_TCG_1_2  0x00000001
 
 typedef struct _TREE_BOOT_SERVICE_CAPABILITY {
   //
   // Allocated size of the structure passed in
   //
-  UINT8                 Size;
+  UINT8                    Size;
   //
   // Version of the TREE_BOOT_SERVICE_CAPABILITY structure itself.
   // For this version of the protocol, the Major version shall be set to 1
   // and the Minor version shall be set to 0.
   //
-  TREE_VERSION          StructureVersion;
+  TREE_VERSION             StructureVersion;
   //
   // Version of the TrEE protocol.
   // For this version of the protocol, the Major version shall be set to 1
   // and the Minor version shall be set to 0.
   //
-  TREE_VERSION          ProtocolVersion;
+  TREE_VERSION             ProtocolVersion;
   //
   // Supported hash algorithms
   //
-  UINT32                HashAlgorithmBitmap;
+  UINT32                   HashAlgorithmBitmap;
   //
   // Bitmap of supported event log formats
   //
-  TREE_EVENT_LOG_BITMAP SupportedEventLogs;
+  TREE_EVENT_LOG_BITMAP    SupportedEventLogs;
   //
   // False = TrEE not present
   //
-  BOOLEAN               TrEEPresentFlag;
+  BOOLEAN                  TrEEPresentFlag;
   //
   // Max size (in bytes) of a command that can be sent to the TrEE
   //
-  UINT16                MaxCommandSize;
+  UINT16                   MaxCommandSize;
   //
   // Max size (in bytes) of a response that can be provided by the TrEE
   //
-  UINT16                MaxResponseSize;
+  UINT16                   MaxResponseSize;
   //
   // 4-byte Vendor ID (see Trusted Computing Group, "TCG Vendor ID Registry,"
   // Version 1.0, Revision 0.1, August 31, 2007, "TPM Capabilities Vendor ID" section)
   //
-  UINT32                ManufacturerID;
+  UINT32                   ManufacturerID;
 } TREE_BOOT_SERVICE_CAPABILITY_1_0;
 
 typedef TREE_BOOT_SERVICE_CAPABILITY_1_0 TREE_BOOT_SERVICE_CAPABILITY;
 
-#define TREE_BOOT_HASH_ALG_SHA1   0x00000001
-#define TREE_BOOT_HASH_ALG_SHA256 0x00000002
-#define TREE_BOOT_HASH_ALG_SHA384 0x00000004
-#define TREE_BOOT_HASH_ALG_SHA512 0x00000008
+#define TREE_BOOT_HASH_ALG_SHA1    0x00000001
+#define TREE_BOOT_HASH_ALG_SHA256  0x00000002
+#define TREE_BOOT_HASH_ALG_SHA384  0x00000004
+#define TREE_BOOT_HASH_ALG_SHA512  0x00000008
 
 //
 // This bit is shall be set when an event shall be extended but not logged.
@@ -85,12 +85,12 @@ typedef TREE_BOOT_SERVICE_CAPABILITY_1_0 TREE_BOOT_SERVICE_CAPABILITY;
 //
 // This bit shall be set when the intent is to measure a PE/COFF image.
 //
-#define PE_COFF_IMAGE     0x0000000000000010
+#define PE_COFF_IMAGE  0x0000000000000010
 
 typedef UINT32 TrEE_PCRINDEX;
 typedef UINT32 TrEE_EVENTTYPE;
 
-#define MAX_PCR_INDEX  23
+#define MAX_PCR_INDEX              23
 #define TREE_EVENT_HEADER_VERSION  1
 
 #pragma pack(1)
@@ -118,9 +118,9 @@ typedef struct {
   //
   // Total size of the event including the Size component, the header and the Event data.
   //
-  UINT32            Size;
-  TrEE_EVENT_HEADER Header;
-  UINT8             Event[1];
+  UINT32               Size;
+  TrEE_EVENT_HEADER    Header;
+  UINT8                Event[1];
 } TrEE_EVENT;
 
 #pragma pack()
@@ -145,11 +145,11 @@ typedef struct {
                                  It will be partially populated (required Size field will be set).
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_TREE_GET_CAPABILITY) (
-  IN EFI_TREE_PROTOCOL                *This,
-  IN OUT TREE_BOOT_SERVICE_CAPABILITY *ProtocolCapability
-  );
+  EFI_STATUS
+(EFIAPI *EFI_TREE_GET_CAPABILITY)(
+                                  IN EFI_TREE_PROTOCOL                *This,
+                                  IN OUT TREE_BOOT_SERVICE_CAPABILITY *ProtocolCapability
+                                  );
 
 /**
   The EFI_TREE_PROTOCOL Get Event Log function call allows a caller to
@@ -169,14 +169,14 @@ EFI_STATUS
                                  (e.g. asking for an event log whose format is not supported).
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_TREE_GET_EVENT_LOG) (
-  IN EFI_TREE_PROTOCOL     *This,
-  IN TREE_EVENT_LOG_FORMAT EventLogFormat,
-  OUT EFI_PHYSICAL_ADDRESS *EventLogLocation,
-  OUT EFI_PHYSICAL_ADDRESS *EventLogLastEntry,
-  OUT BOOLEAN              *EventLogTruncated
-  );
+  EFI_STATUS
+(EFIAPI *EFI_TREE_GET_EVENT_LOG)(
+                                 IN EFI_TREE_PROTOCOL     *This,
+                                 IN TREE_EVENT_LOG_FORMAT EventLogFormat,
+                                 OUT EFI_PHYSICAL_ADDRESS *EventLogLocation,
+                                 OUT EFI_PHYSICAL_ADDRESS *EventLogLastEntry,
+                                 OUT BOOLEAN              *EventLogTruncated
+                                 );
 
 /**
   The EFI_TREE_PROTOCOL HashLogExtendEvent function call provides callers with
@@ -198,14 +198,14 @@ EFI_STATUS
   @retval EFI_UNSUPPORTED        The PE/COFF image type is not supported.
 **/
 typedef
-EFI_STATUS
-(EFIAPI * EFI_TREE_HASH_LOG_EXTEND_EVENT) (
-  IN EFI_TREE_PROTOCOL    *This,
-  IN UINT64               Flags,
-  IN EFI_PHYSICAL_ADDRESS DataToHash,
-  IN UINT64               DataToHashLen,
-  IN TrEE_EVENT           *Event
-  );
+  EFI_STATUS
+(EFIAPI *EFI_TREE_HASH_LOG_EXTEND_EVENT)(
+                                         IN EFI_TREE_PROTOCOL    *This,
+                                         IN UINT64               Flags,
+                                         IN EFI_PHYSICAL_ADDRESS DataToHash,
+                                         IN UINT64               DataToHashLen,
+                                         IN TrEE_EVENT           *Event
+                                         );
 
 /**
   This service enables the sending of commands to the TrEE.
@@ -222,22 +222,22 @@ EFI_STATUS
   @retval EFI_BUFFER_TOO_SMALL   The output parameter block is too small.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_TREE_SUBMIT_COMMAND) (
-  IN EFI_TREE_PROTOCOL *This,
-  IN UINT32            InputParameterBlockSize,
-  IN UINT8             *InputParameterBlock,
-  IN UINT32            OutputParameterBlockSize,
-  IN UINT8             *OutputParameterBlock
-  );
+  EFI_STATUS
+(EFIAPI *EFI_TREE_SUBMIT_COMMAND)(
+                                  IN EFI_TREE_PROTOCOL *This,
+                                  IN UINT32            InputParameterBlockSize,
+                                  IN UINT8             *InputParameterBlock,
+                                  IN UINT32            OutputParameterBlockSize,
+                                  IN UINT8             *OutputParameterBlock
+                                  );
 
 struct _EFI_TREE_PROTOCOL {
-  EFI_TREE_GET_CAPABILITY        GetCapability;
-  EFI_TREE_GET_EVENT_LOG         GetEventLog;
-  EFI_TREE_HASH_LOG_EXTEND_EVENT HashLogExtendEvent;
-  EFI_TREE_SUBMIT_COMMAND        SubmitCommand;
+  EFI_TREE_GET_CAPABILITY           GetCapability;
+  EFI_TREE_GET_EVENT_LOG            GetEventLog;
+  EFI_TREE_HASH_LOG_EXTEND_EVENT    HashLogExtendEvent;
+  EFI_TREE_SUBMIT_COMMAND           SubmitCommand;
 };
 
-extern EFI_GUID gEfiTrEEProtocolGuid;
+extern EFI_GUID  gEfiTrEEProtocolGuid;
 
 #endif

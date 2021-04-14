@@ -45,7 +45,7 @@ SetMem (
     return Buffer;
   }
 
-  ASSERT ((Length - 1) <= (MAX_ADDRESS - (UINTN)Buffer));
+  ASSERT ((Length - 1) <= (MAX_ADDRESS - (UINTN) Buffer));
 
   return InternalMemSetMem (Buffer, Length, Value);
 }
@@ -78,8 +78,8 @@ SetMemN (
   )
 {
   if (sizeof (UINTN) == sizeof (UINT64)) {
-    return SetMem64 (Buffer, Length, (UINT64)Value);
+    return SetMem64 (Buffer, Length, (UINT64) Value);
   } else {
-    return SetMem32 (Buffer, Length, (UINT32)Value);
+    return SetMem32 (Buffer, Length, (UINT32) Value);
   }
 }

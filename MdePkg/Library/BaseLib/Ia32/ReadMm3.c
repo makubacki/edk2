@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 /**
   Reads the current value of 64-bit MMX Register #3 (MM3).
 
@@ -25,12 +22,11 @@ AsmReadMm3 (
   )
 {
   _asm {
-    push    eax
-    push    eax
-    movq    [esp], mm3
+  push    eax
+  push    eax
+      movq[esp], mm3
     pop     eax
     pop     edx
-    emms
+      emms
   }
 }
-

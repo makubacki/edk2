@@ -43,34 +43,34 @@ EFIAPI
 AsmCpuidEx (
   IN      UINT32                    Index,
   IN      UINT32                    SubIndex,
-  OUT     UINT32                    *RegisterEax,  OPTIONAL
-  OUT     UINT32                    *RegisterEbx,  OPTIONAL
-  OUT     UINT32                    *RegisterEcx,  OPTIONAL
+  OUT     UINT32                    *RegisterEax, OPTIONAL
+  OUT     UINT32                    *RegisterEbx, OPTIONAL
+  OUT     UINT32                    *RegisterEcx, OPTIONAL
   OUT     UINT32                    *RegisterEdx   OPTIONAL
   )
 {
   _asm {
-    mov     eax, Index
+  mov  eax, Index
     mov     ecx, SubIndex
     cpuid
     push    ecx
     mov     ecx, RegisterEax
     jecxz   SkipEax
-    mov     [ecx], eax
+       mov[ecx], eax
 SkipEax:
-    mov     ecx, RegisterEbx
+    mov  ecx, RegisterEbx
     jecxz   SkipEbx
-    mov     [ecx], ebx
+       mov[ecx], ebx
 SkipEbx:
     pop     eax
-    mov     ecx, RegisterEcx
+    mov  ecx, RegisterEcx
     jecxz   SkipEcx
-    mov     [ecx], eax
+       mov[ecx], eax
 SkipEcx:
-    mov     ecx, RegisterEdx
+    mov  ecx, RegisterEdx
     jecxz   SkipEdx
-    mov     [ecx], edx
+       mov[ecx], edx
 SkipEdx:
-    mov     eax, Index
+    mov  eax, Index
   }
 }

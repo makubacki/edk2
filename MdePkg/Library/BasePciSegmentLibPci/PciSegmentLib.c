@@ -22,7 +22,7 @@
   @param  M Additional bits to assert to be zero.
 
 **/
-#define ASSERT_INVALID_PCI_SEGMENT_ADDRESS(A,M) \
+#define ASSERT_INVALID_PCI_SEGMENT_ADDRESS(A, M) \
   ASSERT (((A) & (0xfffffffff0000000ULL | (M))) == 0)
 
 /**
@@ -30,7 +30,7 @@
 
   @param A The address to convert.
 **/
-#define PCI_SEGMENT_TO_PCI_ADDRESS(A) ((UINTN) (UINT32) A)
+#define PCI_SEGMENT_TO_PCI_ADDRESS(A)  ((UINTN) (UINT32) A)
 
 /**
   Register a PCI device so PCI configuration registers may be accessed after
@@ -260,9 +260,9 @@ PciSegmentBitFieldWrite8 (
   )
 {
   return PciSegmentWrite8 (
-           Address,
-           BitFieldWrite8 (PciSegmentRead8 (Address), StartBit, EndBit, Value)
-           );
+                           Address,
+                           BitFieldWrite8 (PciSegmentRead8 (Address), StartBit, EndBit, Value)
+                           );
 }
 
 /**
@@ -302,9 +302,9 @@ PciSegmentBitFieldOr8 (
   )
 {
   return PciSegmentWrite8 (
-           Address,
-           BitFieldOr8 (PciSegmentRead8 (Address), StartBit, EndBit, OrData)
-           );
+                           Address,
+                           BitFieldOr8 (PciSegmentRead8 (Address), StartBit, EndBit, OrData)
+                           );
 }
 
 /**
@@ -344,9 +344,9 @@ PciSegmentBitFieldAnd8 (
   )
 {
   return PciSegmentWrite8 (
-           Address,
-           BitFieldAnd8 (PciSegmentRead8 (Address), StartBit, EndBit, AndData)
-           );
+                           Address,
+                           BitFieldAnd8 (PciSegmentRead8 (Address), StartBit, EndBit, AndData)
+                           );
 }
 
 /**
@@ -390,9 +390,9 @@ PciSegmentBitFieldAndThenOr8 (
   )
 {
   return PciSegmentWrite8 (
-           Address,
-           BitFieldAndThenOr8 (PciSegmentRead8 (Address), StartBit, EndBit, AndData, OrData)
-           );
+                           Address,
+                           BitFieldAndThenOr8 (PciSegmentRead8 (Address), StartBit, EndBit, AndData, OrData)
+                           );
 }
 
 /**
@@ -605,9 +605,9 @@ PciSegmentBitFieldWrite16 (
   )
 {
   return PciSegmentWrite16 (
-           Address,
-           BitFieldWrite16 (PciSegmentRead16 (Address), StartBit, EndBit, Value)
-           );
+                            Address,
+                            BitFieldWrite16 (PciSegmentRead16 (Address), StartBit, EndBit, Value)
+                            );
 }
 
 /**
@@ -648,9 +648,9 @@ PciSegmentBitFieldOr16 (
   )
 {
   return PciSegmentWrite16 (
-           Address,
-           BitFieldOr16 (PciSegmentRead16 (Address), StartBit, EndBit, OrData)
-           );
+                            Address,
+                            BitFieldOr16 (PciSegmentRead16 (Address), StartBit, EndBit, OrData)
+                            );
 }
 
 /**
@@ -691,9 +691,9 @@ PciSegmentBitFieldAnd16 (
   )
 {
   return PciSegmentWrite16 (
-           Address,
-           BitFieldAnd16 (PciSegmentRead16 (Address), StartBit, EndBit, AndData)
-           );
+                            Address,
+                            BitFieldAnd16 (PciSegmentRead16 (Address), StartBit, EndBit, AndData)
+                            );
 }
 
 /**
@@ -738,9 +738,9 @@ PciSegmentBitFieldAndThenOr16 (
   )
 {
   return PciSegmentWrite16 (
-           Address,
-           BitFieldAndThenOr16 (PciSegmentRead16 (Address), StartBit, EndBit, AndData, OrData)
-           );
+                            Address,
+                            BitFieldAndThenOr16 (PciSegmentRead16 (Address), StartBit, EndBit, AndData, OrData)
+                            );
 }
 
 /**
@@ -951,9 +951,9 @@ PciSegmentBitFieldWrite32 (
   )
 {
   return PciSegmentWrite32 (
-           Address,
-           BitFieldWrite32 (PciSegmentRead32 (Address), StartBit, EndBit, Value)
-           );
+                            Address,
+                            BitFieldWrite32 (PciSegmentRead32 (Address), StartBit, EndBit, Value)
+                            );
 }
 
 /**
@@ -993,9 +993,9 @@ PciSegmentBitFieldOr32 (
   )
 {
   return PciSegmentWrite32 (
-           Address,
-           BitFieldOr32 (PciSegmentRead32 (Address), StartBit, EndBit, OrData)
-           );
+                            Address,
+                            BitFieldOr32 (PciSegmentRead32 (Address), StartBit, EndBit, OrData)
+                            );
 }
 
 /**
@@ -1035,9 +1035,9 @@ PciSegmentBitFieldAnd32 (
   )
 {
   return PciSegmentWrite32 (
-           Address,
-           BitFieldAnd32 (PciSegmentRead32 (Address), StartBit, EndBit, AndData)
-           );
+                            Address,
+                            BitFieldAnd32 (PciSegmentRead32 (Address), StartBit, EndBit, AndData)
+                            );
 }
 
 /**
@@ -1082,9 +1082,9 @@ PciSegmentBitFieldAndThenOr32 (
   )
 {
   return PciSegmentWrite32 (
-           Address,
-           BitFieldAndThenOr32 (PciSegmentRead32 (Address), StartBit, EndBit, AndData, OrData)
-           );
+                            Address,
+                            BitFieldAndThenOr32 (PciSegmentRead32 (Address), StartBit, EndBit, AndData, OrData)
+                            );
 }
 
 /**
@@ -1118,7 +1118,7 @@ PciSegmentReadBuffer (
   OUT VOID                     *Buffer
   )
 {
-  UINTN                                ReturnValue;
+  UINTN  ReturnValue;
 
   ASSERT_INVALID_PCI_SEGMENT_ADDRESS (StartAddress, 0);
   ASSERT (((StartAddress & 0xFFF) + Size) <= 0x1000);
@@ -1138,10 +1138,10 @@ PciSegmentReadBuffer (
     //
     // Read a byte if StartAddress is byte aligned
     //
-    *(volatile UINT8 *)Buffer = PciSegmentRead8 (StartAddress);
+    *(volatile UINT8 *) Buffer = PciSegmentRead8 (StartAddress);
     StartAddress += sizeof (UINT8);
-    Size -= sizeof (UINT8);
-    Buffer = (UINT8*)Buffer + 1;
+    Size  -= sizeof (UINT8);
+    Buffer = (UINT8 *) Buffer + 1;
   }
 
   if (Size >= sizeof (UINT16) && (StartAddress & BIT1) != 0) {
@@ -1150,8 +1150,8 @@ PciSegmentReadBuffer (
     //
     WriteUnaligned16 (Buffer, PciSegmentRead16 (StartAddress));
     StartAddress += sizeof (UINT16);
-    Size -= sizeof (UINT16);
-    Buffer = (UINT16*)Buffer + 1;
+    Size  -= sizeof (UINT16);
+    Buffer = (UINT16 *) Buffer + 1;
   }
 
   while (Size >= sizeof (UINT32)) {
@@ -1160,8 +1160,8 @@ PciSegmentReadBuffer (
     //
     WriteUnaligned32 (Buffer, PciSegmentRead32 (StartAddress));
     StartAddress += sizeof (UINT32);
-    Size -= sizeof (UINT32);
-    Buffer = (UINT32*)Buffer + 1;
+    Size  -= sizeof (UINT32);
+    Buffer = (UINT32 *) Buffer + 1;
   }
 
   if (Size >= sizeof (UINT16)) {
@@ -1170,15 +1170,15 @@ PciSegmentReadBuffer (
     //
     WriteUnaligned16 (Buffer, PciSegmentRead16 (StartAddress));
     StartAddress += sizeof (UINT16);
-    Size -= sizeof (UINT16);
-    Buffer = (UINT16*)Buffer + 1;
+    Size  -= sizeof (UINT16);
+    Buffer = (UINT16 *) Buffer + 1;
   }
 
   if (Size >= sizeof (UINT8)) {
     //
     // Read the last remaining byte if exist
     //
-    *(volatile UINT8 *)Buffer = PciSegmentRead8 (StartAddress);
+    *(volatile UINT8 *) Buffer = PciSegmentRead8 (StartAddress);
   }
 
   return ReturnValue;
@@ -1216,7 +1216,7 @@ PciSegmentWriteBuffer (
   IN VOID                      *Buffer
   )
 {
-  UINTN                                ReturnValue;
+  UINTN  ReturnValue;
 
   ASSERT_INVALID_PCI_SEGMENT_ADDRESS (StartAddress, 0);
   ASSERT (((StartAddress & 0xFFF) + Size) <= 0x1000);
@@ -1236,10 +1236,10 @@ PciSegmentWriteBuffer (
     //
     // Write a byte if StartAddress is byte aligned
     //
-    PciSegmentWrite8 (StartAddress, *(UINT8*) Buffer);
+    PciSegmentWrite8 (StartAddress, *(UINT8 *) Buffer);
     StartAddress += sizeof (UINT8);
-    Size -= sizeof (UINT8);
-    Buffer = (UINT8*) Buffer + 1;
+    Size  -= sizeof (UINT8);
+    Buffer = (UINT8 *) Buffer + 1;
   }
 
   if (Size >= sizeof (UINT16) && (StartAddress & BIT1) != 0) {
@@ -1248,8 +1248,8 @@ PciSegmentWriteBuffer (
     //
     PciSegmentWrite16 (StartAddress, ReadUnaligned16 (Buffer));
     StartAddress += sizeof (UINT16);
-    Size -= sizeof (UINT16);
-    Buffer = (UINT16*) Buffer + 1;
+    Size  -= sizeof (UINT16);
+    Buffer = (UINT16 *) Buffer + 1;
   }
 
   while (Size >= sizeof (UINT32)) {
@@ -1258,8 +1258,8 @@ PciSegmentWriteBuffer (
     //
     PciSegmentWrite32 (StartAddress, ReadUnaligned32 (Buffer));
     StartAddress += sizeof (UINT32);
-    Size -= sizeof (UINT32);
-    Buffer = (UINT32*) Buffer + 1;
+    Size  -= sizeof (UINT32);
+    Buffer = (UINT32 *) Buffer + 1;
   }
 
   if (Size >= sizeof (UINT16)) {
@@ -1268,15 +1268,15 @@ PciSegmentWriteBuffer (
     //
     PciSegmentWrite16 (StartAddress, ReadUnaligned16 (Buffer));
     StartAddress += sizeof (UINT16);
-    Size -= sizeof (UINT16);
-    Buffer = (UINT16*) Buffer + 1;
+    Size  -= sizeof (UINT16);
+    Buffer = (UINT16 *) Buffer + 1;
   }
 
   if (Size >= sizeof (UINT8)) {
     //
     // Write the last remaining byte if exist
     //
-    PciSegmentWrite8 (StartAddress, *(UINT8*) Buffer);
+    PciSegmentWrite8 (StartAddress, *(UINT8 *) Buffer);
   }
 
   return ReturnValue;

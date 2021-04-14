@@ -6,7 +6,6 @@
 
 **/
 
-
 #include <Library/RegisterFilterLib.h>
 
 /**
@@ -33,19 +32,19 @@ AsmWriteMsr64 (
   IN UINT64  Value
   )
 {
-  BOOLEAN                           Flag;
+  BOOLEAN  Flag;
 
   Flag = FilterBeforeMsrWrite (Index, &Value);
   if (Flag) {
     _asm {
-      mov     edx, dword ptr [Value + 4]
-      mov     eax, dword ptr [Value + 0]
+  mov  edx, dword ptr[Value + 4]
+      mov     eax, dword ptr[Value + 0]
       mov     ecx, Index
-      wrmsr
+       wrmsr
     }
   }
+
   FilterAfterMsrWrite (Index, &Value);
 
   return Value;
 }
-

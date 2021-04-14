@@ -20,11 +20,10 @@ AsmEnableCache (
   )
 {
   _asm {
-    wbinvd
-    mov     eax, cr0
+  wbinvd
+  mov  eax, cr0
     btr     eax, 30
     btr     eax, 29
     mov     cr0, eax
   }
 }
-

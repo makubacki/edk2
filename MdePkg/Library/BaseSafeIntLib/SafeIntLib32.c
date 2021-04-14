@@ -40,7 +40,7 @@ SafeInt32ToUintn (
   OUT UINTN  *Result
   )
 {
-  return SafeInt32ToUint32 (Operand, (UINT32 *)Result);
+  return SafeInt32ToUint32 (Operand, (UINT32 *) Result);
 }
 
 /**
@@ -70,7 +70,7 @@ SafeUint32ToIntn (
   OUT INTN    *Result
   )
 {
-  return SafeUint32ToInt32 (Operand, (INT32 *)Result);
+  return SafeUint32ToInt32 (Operand, (INT32 *) Result);
 }
 
 /**
@@ -104,7 +104,7 @@ SafeIntnToInt32 (
     return RETURN_INVALID_PARAMETER;
   }
 
-  *Result = (INT32)Operand;
+  *Result = (INT32) Operand;
   return RETURN_SUCCESS;
 }
 
@@ -142,11 +142,11 @@ SafeIntnToUint32 (
   }
 
   if (Operand >= 0) {
-    *Result = (UINT32)Operand;
-    Status = RETURN_SUCCESS;
+    *Result = (UINT32) Operand;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT32_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -183,7 +183,7 @@ SafeUintnToUint32 (
     return RETURN_INVALID_PARAMETER;
   }
 
-  *Result = (UINT32)Operand;
+  *Result = (UINT32) Operand;
   return RETURN_SUCCESS;
 }
 
@@ -218,7 +218,7 @@ SafeUintnToInt64 (
     return RETURN_INVALID_PARAMETER;
   }
 
-  *Result = (INT64)Operand;
+  *Result = (INT64) Operand;
   return RETURN_SUCCESS;
 }
 
@@ -249,7 +249,7 @@ SafeInt64ToIntn (
   OUT INTN   *Result
   )
 {
-  return SafeInt64ToInt32 (Operand, (INT32 *)Result);
+  return SafeInt64ToInt32 (Operand, (INT32 *) Result);
 }
 
 /**
@@ -279,7 +279,7 @@ SafeInt64ToUintn (
   OUT UINTN  *Result
   )
 {
-  return SafeInt64ToUint32 (Operand, (UINT32 *)Result);
+  return SafeInt64ToUint32 (Operand, (UINT32 *) Result);
 }
 
 /**
@@ -309,7 +309,7 @@ SafeUint64ToUintn (
   OUT UINTN   *Result
   )
 {
-  return SafeUint64ToUint32 ((UINT64) Operand, (UINT32 *)Result);
+  return SafeUint64ToUint32 ((UINT64) Operand, (UINT32 *) Result);
 }
 
 /**
@@ -349,10 +349,10 @@ SafeUintnAdd (
 
   if ((Augend + Addend) >= Augend) {
     *Result = (Augend + Addend);
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINTN_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -395,10 +395,10 @@ SafeUintnSub (
 
   if (Minuend >= Subtrahend) {
     *Result = (Minuend - Subtrahend);
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINTN_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -469,7 +469,7 @@ SafeIntnAdd (
   OUT INTN  *Result
   )
 {
-  return SafeInt64ToIntn (((INT64)Augend) + ((INT64)Addend), Result);
+  return SafeInt64ToIntn (((INT64) Augend) + ((INT64) Addend), Result);
 }
 
 /**
@@ -501,7 +501,7 @@ SafeIntnSub (
   OUT INTN  *Result
   )
 {
-  return SafeInt64ToIntn (((INT64)Minuend) - ((INT64)Subtrahend), Result);
+  return SafeInt64ToIntn (((INT64) Minuend) - ((INT64) Subtrahend), Result);
 }
 
 /**
@@ -535,4 +535,3 @@ SafeIntnMult (
 {
   return SafeInt64ToIntn (MultS64x64 (Multiplicand, Multiplier), Result);
 }
-

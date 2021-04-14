@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 /**
   Reads the current value of 64-bit MMX Register #2 (MM2).
 
@@ -25,12 +22,11 @@ AsmReadMm2 (
   )
 {
   _asm {
-    push    eax
-    push    eax
-    movq    [esp], mm2
+  push    eax
+  push    eax
+      movq[esp], mm2
     pop     eax
     pop     edx
-    emms
+      emms
   }
 }
-

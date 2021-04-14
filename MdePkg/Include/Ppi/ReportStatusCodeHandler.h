@@ -11,19 +11,19 @@
 
 #define EFI_PEI_RSC_HANDLER_PPI_GUID \
   { \
-    0x65d394, 0x9951, 0x4144, {0x82, 0xa3, 0xa, 0xfc, 0x85, 0x79, 0xc2, 0x51} \
+    0x65d394, 0x9951, 0x4144, { 0x82, 0xa3, 0xa, 0xfc, 0x85, 0x79, 0xc2, 0x51 } \
   }
 
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_RSC_HANDLER_CALLBACK)(
-  IN CONST  EFI_PEI_SERVICES        **PeiServices,
-  IN        EFI_STATUS_CODE_TYPE    Type,
-  IN        EFI_STATUS_CODE_VALUE   Value,
-  IN        UINT32                  Instance,
-  IN CONST  EFI_GUID                *CallerId,
-  IN CONST  EFI_STATUS_CODE_DATA    *Data
-);
+                                       IN CONST  EFI_PEI_SERVICES        **PeiServices,
+                                       IN        EFI_STATUS_CODE_TYPE    Type,
+                                       IN        EFI_STATUS_CODE_VALUE   Value,
+                                       IN        UINT32                  Instance,
+                                       IN CONST  EFI_GUID                *CallerId,
+                                       IN CONST  EFI_STATUS_CODE_DATA    *Data
+                                       );
 
 /**
   Register the callback function for ReportStatusCode() notification.
@@ -42,10 +42,10 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_RSC_HANDLER_REGISTER)(
-  IN EFI_PEI_RSC_HANDLER_CALLBACK Callback
-);
+                                       IN EFI_PEI_RSC_HANDLER_CALLBACK Callback
+                                       );
 
 /**
   Remove a previously registered callback function from the notification list.
@@ -61,16 +61,16 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_RSC_HANDLER_UNREGISTER)(
-  IN EFI_PEI_RSC_HANDLER_CALLBACK Callback
-);
+                                         IN EFI_PEI_RSC_HANDLER_CALLBACK Callback
+                                         );
 
 typedef struct _EFI_PEI_RSC_HANDLER_PPI {
-  EFI_PEI_RSC_HANDLER_REGISTER Register;
-  EFI_PEI_RSC_HANDLER_UNREGISTER Unregister;
+  EFI_PEI_RSC_HANDLER_REGISTER      Register;
+  EFI_PEI_RSC_HANDLER_UNREGISTER    Unregister;
 } EFI_PEI_RSC_HANDLER_PPI;
 
-extern EFI_GUID gEfiPeiRscHandlerPpiGuid;
+extern EFI_GUID  gEfiPeiRscHandlerPpiGuid;
 
 #endif // __REPORT_STATUS_CODE_HANDLER_PPI_H__

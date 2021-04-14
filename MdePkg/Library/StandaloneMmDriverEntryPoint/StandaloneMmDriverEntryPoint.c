@@ -104,14 +104,14 @@ _ModuleEntryPoint (
   ProcessLibraryConstructorList (ImageHandle, MmSystemTable);
 
   //
-  //  Install unload handler...
+  // Install unload handler...
   //
   if (_gDriverUnloadImageCount != 0) {
     Status = gMmst->MmHandleProtocol (
-                      ImageHandle,
-                      &gEfiLoadedImageProtocolGuid,
-                      (VOID **)&LoadedImage
-                      );
+                                      ImageHandle,
+                                      &gEfiLoadedImageProtocolGuid,
+                                      (VOID **) &LoadedImage
+                                      );
     ASSERT_EFI_ERROR (Status);
     LoadedImage->Unload = _DriverUnloadHandler;
   }

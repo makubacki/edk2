@@ -11,13 +11,12 @@
 #ifndef _MM_STATUS_CODE_H__
 #define _MM_STATUS_CODE_H__
 
-
 #define EFI_MM_STATUS_CODE_PROTOCOL_GUID \
   { \
-    0x6afd2b77, 0x98c1, 0x4acd, {0xa6, 0xf9, 0x8a, 0x94, 0x39, 0xde, 0xf, 0xb1} \
+    0x6afd2b77, 0x98c1, 0x4acd, { 0xa6, 0xf9, 0x8a, 0x94, 0x39, 0xde, 0xf, 0xb1 } \
   }
 
-typedef struct _EFI_MM_STATUS_CODE_PROTOCOL  EFI_MM_STATUS_CODE_PROTOCOL;
+typedef struct _EFI_MM_STATUS_CODE_PROTOCOL EFI_MM_STATUS_CODE_PROTOCOL;
 
 /**
   Service to emit the status code in MM.
@@ -39,21 +38,20 @@ typedef struct _EFI_MM_STATUS_CODE_PROTOCOL  EFI_MM_STATUS_CODE_PROTOCOL;
   @retval EFI_INVALID_PARAMETER  The function should not be completed due to a device error.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MM_REPORT_STATUS_CODE)(
-  IN CONST EFI_MM_STATUS_CODE_PROTOCOL   *This,
-  IN EFI_STATUS_CODE_TYPE                CodeType,
-  IN EFI_STATUS_CODE_VALUE               Value,
-  IN UINT32                              Instance,
-  IN CONST EFI_GUID                      *CallerId,
-  IN EFI_STATUS_CODE_DATA                *Data OPTIONAL
-  );
+                                    IN CONST EFI_MM_STATUS_CODE_PROTOCOL   *This,
+                                    IN EFI_STATUS_CODE_TYPE                CodeType,
+                                    IN EFI_STATUS_CODE_VALUE               Value,
+                                    IN UINT32                              Instance,
+                                    IN CONST EFI_GUID                      *CallerId,
+                                    IN EFI_STATUS_CODE_DATA                *Data OPTIONAL
+                                    );
 
 struct _EFI_MM_STATUS_CODE_PROTOCOL {
-  EFI_MM_REPORT_STATUS_CODE  ReportStatusCode;
+  EFI_MM_REPORT_STATUS_CODE    ReportStatusCode;
 };
 
-extern EFI_GUID gEfiMmStatusCodeProtocolGuid;
+extern EFI_GUID  gEfiMmStatusCodeProtocolGuid;
 
 #endif
-

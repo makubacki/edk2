@@ -18,7 +18,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #define EFI_SEC_HOB_DATA_PPI_GUID \
   { \
-    0x3ebdaf20, 0x6667, 0x40d8, {0xb4, 0xee, 0xf5, 0x99, 0x9a, 0xc1, 0xb7, 0x1f } \
+    0x3ebdaf20, 0x6667, 0x40d8, { 0xb4, 0xee, 0xf5, 0x99, 0x9a, 0xc1, 0xb7, 0x1f } \
   }
 
 typedef struct _EFI_SEC_HOB_DATA_PPI EFI_SEC_HOB_DATA_PPI;
@@ -41,19 +41,19 @@ typedef struct _EFI_SEC_HOB_DATA_PPI EFI_SEC_HOB_DATA_PPI;
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_SEC_HOB_DATA_GET) (
-  IN CONST EFI_SEC_HOB_DATA_PPI *This,
-  OUT EFI_HOB_GENERIC_HEADER    **HobList
-);
+  EFI_STATUS
+(EFIAPI *EFI_SEC_HOB_DATA_GET)(
+                               IN CONST EFI_SEC_HOB_DATA_PPI *This,
+                               OUT EFI_HOB_GENERIC_HEADER    **HobList
+                               );
 
 ///
 /// This PPI provides a way for the SEC code to pass zero or more HOBs in a HOB list.
 ///
 struct _EFI_SEC_HOB_DATA_PPI {
-  EFI_SEC_HOB_DATA_GET          GetHobs;
+  EFI_SEC_HOB_DATA_GET    GetHobs;
 };
 
-extern EFI_GUID gEfiSecHobDataPpiGuid;
+extern EFI_GUID  gEfiSecHobDataPpiGuid;
 
 #endif

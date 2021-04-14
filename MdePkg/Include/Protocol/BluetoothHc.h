@@ -52,13 +52,13 @@ typedef struct _EFI_BLUETOOTH_HC_PROTOCOL EFI_BLUETOOTH_HC_PROTOCOL;
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_BLUETOOTH_HC_SEND_COMMAND)(
-  IN EFI_BLUETOOTH_HC_PROTOCOL      *This,
-  IN OUT UINTN                      *BufferSize,
-  IN VOID                           *Buffer,
-  IN UINTN                          Timeout
-  );
+                                        IN EFI_BLUETOOTH_HC_PROTOCOL      *This,
+                                        IN OUT UINTN                      *BufferSize,
+                                        IN VOID                           *Buffer,
+                                        IN UINTN                          Timeout
+                                        );
 
 /**
   Receive HCI event packet.
@@ -88,13 +88,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_BLUETOOTH_HC_RECEIVE_EVENT)(
-  IN EFI_BLUETOOTH_HC_PROTOCOL      *This,
-  IN OUT UINTN                      *BufferSize,
-  OUT VOID                          *Buffer,
-  IN UINTN                          Timeout
-  );
+                                         IN EFI_BLUETOOTH_HC_PROTOCOL      *This,
+                                         IN OUT UINTN                      *BufferSize,
+                                         OUT VOID                          *Buffer,
+                                         IN UINTN                          Timeout
+                                         );
 
 /**
   The async callback of AsyncReceiveEvent().
@@ -109,12 +109,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_BLUETOOTH_HC_ASYNC_FUNC_CALLBACK) (
-  IN VOID                           *Data,
-  IN UINTN                          DataLength,
-  IN VOID                           *Context
-  );
+  EFI_STATUS
+(EFIAPI *EFI_BLUETOOTH_HC_ASYNC_FUNC_CALLBACK)(
+                                               IN VOID                           *Data,
+                                               IN UINTN                          DataLength,
+                                               IN VOID                           *Context
+                                               );
 
 /**
   Receive HCI event packet in non-blocking way.
@@ -141,15 +141,15 @@ EFI_STATUS
                                       request already exists.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_BLUETOOTH_HC_ASYNC_RECEIVE_EVENT) (
-  IN EFI_BLUETOOTH_HC_PROTOCOL              *This,
-  IN BOOLEAN                                IsNewTransfer,
-  IN UINTN                                  PollingInterval,
-  IN UINTN                                  DataLength,
-  IN EFI_BLUETOOTH_HC_ASYNC_FUNC_CALLBACK   Callback,
-  IN VOID                                   *Context
-  );
+  EFI_STATUS
+(EFIAPI *EFI_BLUETOOTH_HC_ASYNC_RECEIVE_EVENT)(
+                                               IN EFI_BLUETOOTH_HC_PROTOCOL              *This,
+                                               IN BOOLEAN                                IsNewTransfer,
+                                               IN UINTN                                  PollingInterval,
+                                               IN UINTN                                  DataLength,
+                                               IN EFI_BLUETOOTH_HC_ASYNC_FUNC_CALLBACK   Callback,
+                                               IN VOID                                   *Context
+                                               );
 
 /**
   Send HCI ACL data packet.
@@ -185,13 +185,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_BLUETOOTH_HC_SEND_ACL_DATA)(
-  IN EFI_BLUETOOTH_HC_PROTOCOL      *This,
-  IN OUT UINTN                      *BufferSize,
-  IN VOID                           *Buffer,
-  IN UINTN                          Timeout
-  );
+                                         IN EFI_BLUETOOTH_HC_PROTOCOL      *This,
+                                         IN OUT UINTN                      *BufferSize,
+                                         IN VOID                           *Buffer,
+                                         IN UINTN                          Timeout
+                                         );
 
 /**
   Receive HCI ACL data packet.
@@ -221,13 +221,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_BLUETOOTH_HC_RECEIVE_ACL_DATA)(
-  IN EFI_BLUETOOTH_HC_PROTOCOL      *This,
-  IN OUT UINTN                      *BufferSize,
-  OUT VOID                          *Buffer,
-  IN UINTN                          Timeout
-  );
+                                            IN EFI_BLUETOOTH_HC_PROTOCOL      *This,
+                                            IN OUT UINTN                      *BufferSize,
+                                            OUT VOID                          *Buffer,
+                                            IN UINTN                          Timeout
+                                            );
 
 /**
   Receive HCI ACL data packet in non-blocking way.
@@ -254,15 +254,15 @@ EFI_STATUS
                                       request already exists.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_BLUETOOTH_HC_ASYNC_RECEIVE_ACL_DATA) (
-  IN EFI_BLUETOOTH_HC_PROTOCOL              *This,
-  IN BOOLEAN                                IsNewTransfer,
-  IN UINTN                                  PollingInterval,
-  IN UINTN                                  DataLength,
-  IN EFI_BLUETOOTH_HC_ASYNC_FUNC_CALLBACK   Callback,
-  IN VOID                                   *Context
-  );
+  EFI_STATUS
+(EFIAPI *EFI_BLUETOOTH_HC_ASYNC_RECEIVE_ACL_DATA)(
+                                                  IN EFI_BLUETOOTH_HC_PROTOCOL              *This,
+                                                  IN BOOLEAN                                IsNewTransfer,
+                                                  IN UINTN                                  PollingInterval,
+                                                  IN UINTN                                  DataLength,
+                                                  IN EFI_BLUETOOTH_HC_ASYNC_FUNC_CALLBACK   Callback,
+                                                  IN VOID                                   *Context
+                                                  );
 
 /**
   Send HCI SCO data packet.
@@ -292,13 +292,13 @@ EFI_STATUS
                                     error.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_BLUETOOTH_HC_SEND_SCO_DATA)(
-  IN EFI_BLUETOOTH_HC_PROTOCOL      *This,
-  IN OUT UINTN                      *BufferSize,
-  IN VOID                           *Buffer,
-  IN UINTN                          Timeout
-  );
+                                         IN EFI_BLUETOOTH_HC_PROTOCOL      *This,
+                                         IN OUT UINTN                      *BufferSize,
+                                         IN VOID                           *Buffer,
+                                         IN UINTN                          Timeout
+                                         );
 
 /**
   Receive HCI SCO data packet.
@@ -327,13 +327,13 @@ EFI_STATUS
                                     error.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_BLUETOOTH_HC_RECEIVE_SCO_DATA)(
-  IN EFI_BLUETOOTH_HC_PROTOCOL      *This,
-  IN OUT UINTN                      *BufferSize,
-  OUT VOID                          *Buffer,
-  IN UINTN                          Timeout
-  );
+                                            IN EFI_BLUETOOTH_HC_PROTOCOL      *This,
+                                            IN OUT UINTN                      *BufferSize,
+                                            OUT VOID                          *Buffer,
+                                            IN UINTN                          Timeout
+                                            );
 
 /**
   Receive HCI SCO data packet in non-blocking way.
@@ -360,15 +360,15 @@ EFI_STATUS
                                       request already exists.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_BLUETOOTH_HC_ASYNC_RECEIVE_SCO_DATA) (
-  IN EFI_BLUETOOTH_HC_PROTOCOL              *This,
-  IN BOOLEAN                                IsNewTransfer,
-  IN UINTN                                  PollingInterval,
-  IN UINTN                                  DataLength,
-  IN EFI_BLUETOOTH_HC_ASYNC_FUNC_CALLBACK   Callback,
-  IN VOID                                   *Context
-  );
+  EFI_STATUS
+(EFIAPI *EFI_BLUETOOTH_HC_ASYNC_RECEIVE_SCO_DATA)(
+                                                  IN EFI_BLUETOOTH_HC_PROTOCOL              *This,
+                                                  IN BOOLEAN                                IsNewTransfer,
+                                                  IN UINTN                                  PollingInterval,
+                                                  IN UINTN                                  DataLength,
+                                                  IN EFI_BLUETOOTH_HC_ASYNC_FUNC_CALLBACK   Callback,
+                                                  IN VOID                                   *Context
+                                                  );
 
 //
 // The EFI_BLUETOOTH_HC_PROTOCOL is used to transmit or receive HCI layer data packets.
@@ -377,42 +377,41 @@ struct _EFI_BLUETOOTH_HC_PROTOCOL {
   //
   // Send HCI command packet.
   //
-  EFI_BLUETOOTH_HC_SEND_COMMAND               SendCommand;
+  EFI_BLUETOOTH_HC_SEND_COMMAND              SendCommand;
   //
   // Receive HCI event packets.
   //
-  EFI_BLUETOOTH_HC_RECEIVE_EVENT              ReceiveEvent;
+  EFI_BLUETOOTH_HC_RECEIVE_EVENT             ReceiveEvent;
   //
   // Non-blocking receive HCI event packets.
   //
-  EFI_BLUETOOTH_HC_ASYNC_RECEIVE_EVENT        AsyncReceiveEvent;
+  EFI_BLUETOOTH_HC_ASYNC_RECEIVE_EVENT       AsyncReceiveEvent;
   //
   // Send HCI ACL (asynchronous connection-oriented) data packets.
   //
-  EFI_BLUETOOTH_HC_SEND_ACL_DATA              SendACLData;
+  EFI_BLUETOOTH_HC_SEND_ACL_DATA             SendACLData;
   //
   // Receive HCI ACL data packets.
   //
-  EFI_BLUETOOTH_HC_RECEIVE_ACL_DATA           ReceiveACLData;
+  EFI_BLUETOOTH_HC_RECEIVE_ACL_DATA          ReceiveACLData;
   //
   // Non-blocking receive HCI ACL data packets.
   //
-  EFI_BLUETOOTH_HC_ASYNC_RECEIVE_ACL_DATA     AsyncReceiveACLData;
+  EFI_BLUETOOTH_HC_ASYNC_RECEIVE_ACL_DATA    AsyncReceiveACLData;
   //
   // Send HCI synchronous (SCO and eSCO) data packets.
   //
-  EFI_BLUETOOTH_HC_SEND_SCO_DATA              SendSCOData;
+  EFI_BLUETOOTH_HC_SEND_SCO_DATA             SendSCOData;
   //
   // Receive HCI synchronous data packets.
   //
-  EFI_BLUETOOTH_HC_RECEIVE_SCO_DATA           ReceiveSCOData;
+  EFI_BLUETOOTH_HC_RECEIVE_SCO_DATA          ReceiveSCOData;
   //
   // Non-blocking receive HCI synchronous data packets.
   //
-  EFI_BLUETOOTH_HC_ASYNC_RECEIVE_SCO_DATA     AsyncReceiveSCOData;
+  EFI_BLUETOOTH_HC_ASYNC_RECEIVE_SCO_DATA    AsyncReceiveSCOData;
 };
 
-extern EFI_GUID gEfiBluetoothHcProtocolGuid;
+extern EFI_GUID  gEfiBluetoothHcProtocolGuid;
 
 #endif
-

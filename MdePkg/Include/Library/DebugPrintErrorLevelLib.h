@@ -5,6 +5,7 @@
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
+
 #ifndef _DEBUG_PRINT_ERROR_LEVEL_LIB_H_
 #define _DEBUG_PRINT_ERROR_LEVEL_LIB_H_
 
@@ -17,8 +18,8 @@
 UINT32
 EFIAPI
 GetDebugPrintErrorLevel (
-  VOID
-  );
+                         VOID
+                         );
 
 /**
   Sets the global debug print error level mask fpr the entire platform.
@@ -34,4 +35,5 @@ EFIAPI
 SetDebugPrintErrorLevel (
   UINT32  ErrorLevel
   );
+
 #endif

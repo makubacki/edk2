@@ -30,25 +30,24 @@ typedef enum {
 // header. Beside completing the types, we introduce typedefs here that reflect
 // the implementation closely.
 //
-typedef ORDERED_COLLECTION              RED_BLACK_TREE;
-typedef ORDERED_COLLECTION_ENTRY        RED_BLACK_TREE_NODE;
-typedef ORDERED_COLLECTION_USER_COMPARE RED_BLACK_TREE_USER_COMPARE;
-typedef ORDERED_COLLECTION_KEY_COMPARE  RED_BLACK_TREE_KEY_COMPARE;
+typedef ORDERED_COLLECTION               RED_BLACK_TREE;
+typedef ORDERED_COLLECTION_ENTRY         RED_BLACK_TREE_NODE;
+typedef ORDERED_COLLECTION_USER_COMPARE  RED_BLACK_TREE_USER_COMPARE;
+typedef ORDERED_COLLECTION_KEY_COMPARE   RED_BLACK_TREE_KEY_COMPARE;
 
 struct ORDERED_COLLECTION {
-  RED_BLACK_TREE_NODE         *Root;
-  RED_BLACK_TREE_USER_COMPARE UserStructCompare;
-  RED_BLACK_TREE_KEY_COMPARE  KeyCompare;
+  RED_BLACK_TREE_NODE            *Root;
+  RED_BLACK_TREE_USER_COMPARE    UserStructCompare;
+  RED_BLACK_TREE_KEY_COMPARE     KeyCompare;
 };
 
 struct ORDERED_COLLECTION_ENTRY {
-  VOID                 *UserStruct;
-  RED_BLACK_TREE_NODE  *Parent;
-  RED_BLACK_TREE_NODE  *Left;
-  RED_BLACK_TREE_NODE  *Right;
-  RED_BLACK_TREE_COLOR Color;
+  VOID                    *UserStruct;
+  RED_BLACK_TREE_NODE     *Parent;
+  RED_BLACK_TREE_NODE     *Left;
+  RED_BLACK_TREE_NODE     *Right;
+  RED_BLACK_TREE_COLOR    Color;
 };
-
 
 /**
   Retrieve the user structure linked by the specified tree node.
@@ -86,7 +85,6 @@ RedBlackTreeValidate (
   IN CONST RED_BLACK_TREE *Tree
   );
 
-
 /**
   Allocate and initialize the RED_BLACK_TREE structure.
 
@@ -113,23 +111,23 @@ OrderedCollectionInit (
   IN RED_BLACK_TREE_KEY_COMPARE  KeyCompare
   )
 {
-  RED_BLACK_TREE *Tree;
+  RED_BLACK_TREE  *Tree;
 
   Tree = AllocatePool (sizeof *Tree);
   if (Tree == NULL) {
     return NULL;
   }
 
-  Tree->Root              = NULL;
+  Tree->Root = NULL;
   Tree->UserStructCompare = UserStructCompare;
-  Tree->KeyCompare        = KeyCompare;
+  Tree->KeyCompare = KeyCompare;
 
   if (FeaturePcdGet (PcdValidateOrderedCollection)) {
     RedBlackTreeValidate (Tree);
   }
+
   return Tree;
 }
-
 
 /**
   Check whether the tree is empty (has no nodes).
@@ -148,9 +146,8 @@ OrderedCollectionIsEmpty (
   IN CONST RED_BLACK_TREE *Tree
   )
 {
-  return (BOOLEAN)(Tree->Root == NULL);
+  return (BOOLEAN) (Tree->Root == NULL);
 }
-
 
 /**
   Uninitialize and release an empty RED_BLACK_TREE structure.
@@ -173,7 +170,6 @@ OrderedCollectionUninit (
   ASSERT (OrderedCollectionIsEmpty (Tree));
   FreePool (Tree);
 }
-
 
 /**
   Look up the tree node that links the user structure that matches the
@@ -199,21 +195,22 @@ OrderedCollectionFind (
   IN CONST VOID           *StandaloneKey
   )
 {
-  RED_BLACK_TREE_NODE *Node;
+  RED_BLACK_TREE_NODE  *Node;
 
   Node = Tree->Root;
   while (Node != NULL) {
-    INTN Result;
+  INTN  Result;
 
     Result = Tree->KeyCompare (StandaloneKey, Node->UserStruct);
     if (Result == 0) {
       break;
     }
+
     Node = (Result < 0) ? Node->Left : Node->Right;
   }
+
   return Node;
 }
-
 
 /**
   Find the tree node of the minimum user structure stored in the tree.
@@ -234,18 +231,19 @@ OrderedCollectionMin (
   IN CONST RED_BLACK_TREE *Tree
   )
 {
-  RED_BLACK_TREE_NODE *Node;
+  RED_BLACK_TREE_NODE  *Node;
 
   Node = Tree->Root;
   if (Node == NULL) {
     return NULL;
   }
+
   while (Node->Left != NULL) {
     Node = Node->Left;
   }
+
   return Node;
 }
-
 
 /**
   Find the tree node of the maximum user structure stored in the tree.
@@ -266,18 +264,19 @@ OrderedCollectionMax (
   IN CONST RED_BLACK_TREE *Tree
   )
 {
-  RED_BLACK_TREE_NODE *Node;
+  RED_BLACK_TREE_NODE  *Node;
 
   Node = Tree->Root;
   if (Node == NULL) {
     return NULL;
   }
+
   while (Node->Right != NULL) {
     Node = Node->Right;
   }
+
   return Node;
 }
-
 
 /**
   Get the tree node of the least user structure that is greater than the one
@@ -299,8 +298,8 @@ OrderedCollectionNext (
   IN CONST RED_BLACK_TREE_NODE *Node
   )
 {
-  RED_BLACK_TREE_NODE       *Walk;
-  CONST RED_BLACK_TREE_NODE *Child;
+  RED_BLACK_TREE_NODE        *Walk;
+  CONST RED_BLACK_TREE_NODE  *Child;
 
   if (Node == NULL) {
     return NULL;
@@ -315,6 +314,7 @@ OrderedCollectionNext (
     while (Walk->Left != NULL) {
       Walk = Walk->Left;
     }
+
     return Walk;
   }
 
@@ -323,14 +323,14 @@ OrderedCollectionNext (
   // ascending to the left).
   //
   Child = Node;
-  Walk = Child->Parent;
+  Walk  = Child->Parent;
   while (Walk != NULL && Child == Walk->Right) {
     Child = Walk;
-    Walk = Child->Parent;
+    Walk  = Child->Parent;
   }
+
   return Walk;
 }
-
 
 /**
   Get the tree node of the greatest user structure that is less than the one
@@ -352,8 +352,8 @@ OrderedCollectionPrev (
   IN CONST RED_BLACK_TREE_NODE *Node
   )
 {
-  RED_BLACK_TREE_NODE       *Walk;
-  CONST RED_BLACK_TREE_NODE *Child;
+  RED_BLACK_TREE_NODE        *Walk;
+  CONST RED_BLACK_TREE_NODE  *Child;
 
   if (Node == NULL) {
     return NULL;
@@ -368,6 +368,7 @@ OrderedCollectionPrev (
     while (Walk->Right != NULL) {
       Walk = Walk->Right;
     }
+
     return Walk;
   }
 
@@ -376,14 +377,14 @@ OrderedCollectionPrev (
   // ascending to the right).
   //
   Child = Node;
-  Walk = Child->Parent;
+  Walk  = Child->Parent;
   while (Walk != NULL && Child == Walk->Left) {
     Child = Walk;
-    Walk = Child->Parent;
+    Walk  = Child->Parent;
   }
+
   return Walk;
 }
-
 
 /**
   Rotate tree nodes around Pivot to the right.
@@ -423,18 +424,19 @@ RedBlackTreeRotateRight (
   OUT    RED_BLACK_TREE_NODE **NewRoot
   )
 {
-  RED_BLACK_TREE_NODE *Parent;
-  RED_BLACK_TREE_NODE *LeftChild;
-  RED_BLACK_TREE_NODE *LeftRightChild;
+  RED_BLACK_TREE_NODE  *Parent;
+  RED_BLACK_TREE_NODE  *LeftChild;
+  RED_BLACK_TREE_NODE  *LeftRightChild;
 
-  Parent         = Pivot->Parent;
-  LeftChild      = Pivot->Left;
+  Parent    = Pivot->Parent;
+  LeftChild = Pivot->Left;
   LeftRightChild = LeftChild->Right;
 
   Pivot->Left = LeftRightChild;
   if (LeftRightChild != NULL) {
     LeftRightChild->Parent = Pivot;
   }
+
   LeftChild->Parent = Parent;
   if (Parent == NULL) {
     *NewRoot = LeftChild;
@@ -445,10 +447,10 @@ RedBlackTreeRotateRight (
       Parent->Right = LeftChild;
     }
   }
-  LeftChild->Right = Pivot;
-  Pivot->Parent = LeftChild;
-}
 
+  LeftChild->Right = Pivot;
+  Pivot->Parent    = LeftChild;
+}
 
 /**
   Rotate tree nodes around Pivot to the left.
@@ -488,9 +490,9 @@ RedBlackTreeRotateLeft (
   OUT    RED_BLACK_TREE_NODE **NewRoot
   )
 {
-  RED_BLACK_TREE_NODE *Parent;
-  RED_BLACK_TREE_NODE *RightChild;
-  RED_BLACK_TREE_NODE *RightLeftChild;
+  RED_BLACK_TREE_NODE  *Parent;
+  RED_BLACK_TREE_NODE  *RightChild;
+  RED_BLACK_TREE_NODE  *RightLeftChild;
 
   Parent         = Pivot->Parent;
   RightChild     = Pivot->Right;
@@ -500,6 +502,7 @@ RedBlackTreeRotateLeft (
   if (RightLeftChild != NULL) {
     RightLeftChild->Parent = Pivot;
   }
+
   RightChild->Parent = Parent;
   if (Parent == NULL) {
     *NewRoot = RightChild;
@@ -510,10 +513,10 @@ RedBlackTreeRotateLeft (
       Parent->Right = RightChild;
     }
   }
-  RightChild->Left = Pivot;
-  Pivot->Parent = RightChild;
-}
 
+  RightChild->Left = Pivot;
+  Pivot->Parent    = RightChild;
+}
 
 /**
   Insert (link) a user structure into the tree.
@@ -584,13 +587,13 @@ OrderedCollectionInsert (
   IN     VOID                *UserStruct
   )
 {
-  RED_BLACK_TREE_NODE *Tmp;
-  RED_BLACK_TREE_NODE *Parent;
-  INTN                Result;
-  RETURN_STATUS       Status;
-  RED_BLACK_TREE_NODE *NewRoot;
+  RED_BLACK_TREE_NODE  *Tmp;
+  RED_BLACK_TREE_NODE  *Parent;
+  INTN                 Result;
+  RETURN_STATUS        Status;
+  RED_BLACK_TREE_NODE  *NewRoot;
 
-  Tmp = Tree->Root;
+  Tmp    = Tree->Root;
   Parent = NULL;
   Result = 0;
 
@@ -603,14 +606,16 @@ OrderedCollectionInsert (
     if (Result == 0) {
       break;
     }
+
     Parent = Tmp;
-    Tmp = (Result < 0) ? Tmp->Left : Tmp->Right;
+    Tmp    = (Result < 0) ? Tmp->Left : Tmp->Right;
   }
 
   if (Tmp != NULL) {
     if (Node != NULL) {
       *Node = Tmp;
     }
+
     Status = RETURN_ALREADY_STARTED;
     goto Done;
   }
@@ -623,6 +628,7 @@ OrderedCollectionInsert (
     Status = RETURN_OUT_OF_RESOURCES;
     goto Done;
   }
+
   if (Node != NULL) {
     *Node = Tmp;
   }
@@ -637,19 +643,21 @@ OrderedCollectionInsert (
   // If there's no parent, the new node is the root node in the tree.
   //
   Tmp->Parent = Parent;
-  Tmp->Left = NULL;
-  Tmp->Right = NULL;
+  Tmp->Left   = NULL;
+  Tmp->Right  = NULL;
   if (Parent == NULL) {
     Tree->Root = Tmp;
     Tmp->Color = RedBlackTreeBlack;
-    Status = RETURN_SUCCESS;
+    Status     = RETURN_SUCCESS;
     goto Done;
   }
+
   if (Result < 0) {
     Parent->Left = Tmp;
   } else {
     Parent->Right = Tmp;
   }
+
   Tmp->Color = RedBlackTreeRed;
 
   //
@@ -658,12 +666,12 @@ OrderedCollectionInsert (
   // #1 Each node is either red or black (RED_BLACK_TREE_NODE.Color).
   //
   // #2 Each leaf (ie. a pseudo-node pointed-to by a NULL valued
-  //    RED_BLACK_TREE_NODE.Left or RED_BLACK_TREE_NODE.Right field) is black.
+  // RED_BLACK_TREE_NODE.Left or RED_BLACK_TREE_NODE.Right field) is black.
   //
   // #3 Each red node has two black children.
   //
   // #4 For any node N, and for any leaves L1 and L2 reachable from N, the
-  //    paths N..L1 and N..L2 contain the same number of black nodes.
+  // paths N..L1 and N..L2 contain the same number of black nodes.
   //
   // #5 The root node is black.
   //
@@ -674,8 +682,8 @@ OrderedCollectionInsert (
 
   NewRoot = Tree->Root;
   while (Tmp != NewRoot && Parent->Color == RedBlackTreeRed) {
-    RED_BLACK_TREE_NODE *GrandParent;
-    RED_BLACK_TREE_NODE *Uncle;
+  RED_BLACK_TREE_NODE  *GrandParent;
+  RED_BLACK_TREE_NODE  *Uncle;
 
     //
     // Tmp is not the root node. Tmp is red. Tmp's parent is red. (Breaking
@@ -693,23 +701,23 @@ OrderedCollectionInsert (
       Uncle = GrandParent->Right;
       if (Uncle != NULL && Uncle->Color == RedBlackTreeRed) {
         //
-        //             GrandParent (black)
-        //            /                   \_
+        // GrandParent (black)
+        ///                   \_
         // Parent (red)                    Uncle (red)
-        //      |
-        //  Tmp (red)
+        // |
+        // Tmp (red)
         //
 
         Parent->Color = RedBlackTreeBlack;
-        Uncle->Color = RedBlackTreeBlack;
+        Uncle->Color  = RedBlackTreeBlack;
         GrandParent->Color = RedBlackTreeRed;
 
         //
-        //                GrandParent (red)
-        //               /                 \_
+        // GrandParent (red)
+        ///                 \_
         // Parent (black)                   Uncle (black)
-        //       |
-        //   Tmp (red)
+        // |
+        // Tmp (red)
         //
         // We restored property #3 between Tmp and Tmp's parent, without
         // breaking property #4. However, we may have broken property #3
@@ -720,7 +728,7 @@ OrderedCollectionInsert (
         // and we will have broken property #5, by coloring the root red. We'll
         // restore property #5 after the loop, without breaking any others.
         //
-        Tmp = GrandParent;
+        Tmp    = GrandParent;
         Parent = Tmp->Parent;
       } else {
         //
@@ -730,13 +738,13 @@ OrderedCollectionInsert (
 
         if (Tmp == Parent->Right) {
           //
-          //                 GrandParent (black): D
-          //                /                      \_
+          // GrandParent (black): D
+          ///                      \_
           // Parent (red): A                        Uncle (black): E
-          //      \_
-          //       Tmp (red): B
-          //            \_
-          //             black: C
+          // \_
+          // Tmp (red): B
+          // \_
+          // black: C
           //
           // Rotate left, pivoting on node A. This keeps the breakage of
           // property #3 in the same spot, and keeps other properties intact
@@ -750,10 +758,10 @@ OrderedCollectionInsert (
           // With the rotation we reached the same configuration as if Tmp had
           // been a left child to begin with.
           //
-          //                       GrandParent (black): D
-          //                      /                      \_
-          //       Parent (red): B                        Uncle (black): E
-          //             / \_
+          // GrandParent (black): D
+          ///                      \_
+          // Parent (red): B                        Uncle (black): E
+          /// \_
           // Tmp (red): A   black: C
           //
           ASSERT (GrandParent == Parent->Parent);
@@ -767,10 +775,10 @@ OrderedCollectionInsert (
         // paths going through node E now see a decrease in black count, while
         // paths going through node B don't.
         //
-        //                        GrandParent (red): D
-        //                       /                    \_
-        //      Parent (black): B                      Uncle (black): E
-        //             / \_
+        // GrandParent (red): D
+        ///                    \_
+        // Parent (black): B                      Uncle (black): E
+        /// \_
         // Tmp (red): A   black: C
         //
 
@@ -779,11 +787,11 @@ OrderedCollectionInsert (
         //
         // Property #4 has been restored for node E, and preserved for others.
         //
-        //              Parent (black): B
-        //             /                 \_
+        // Parent (black): B
+        ///                 \_
         // Tmp (red): A                   [GrandParent] (red): D
-        //                                         / \_
-        //                                 black: C   [Uncle] (black): E
+        /// \_
+        // black: C   [Uncle] (black): E
         //
         // This configuration terminates the loop because Tmp's parent is now
         // black.
@@ -796,9 +804,9 @@ OrderedCollectionInsert (
       Uncle = GrandParent->Left;
       if (Uncle != NULL && Uncle->Color == RedBlackTreeRed) {
         Parent->Color = RedBlackTreeBlack;
-        Uncle->Color = RedBlackTreeBlack;
+        Uncle->Color  = RedBlackTreeBlack;
         GrandParent->Color = RedBlackTreeRed;
-        Tmp = GrandParent;
+        Tmp    = GrandParent;
         Parent = Tmp->Parent;
       } else {
         if (Tmp == Parent->Left) {
@@ -807,6 +815,7 @@ OrderedCollectionInsert (
           Parent = Tmp->Parent;
           ASSERT (GrandParent == Parent->Parent);
         }
+
         Parent->Color = RedBlackTreeBlack;
         GrandParent->Color = RedBlackTreeRed;
         RedBlackTreeRotateLeft (GrandParent, &NewRoot);
@@ -815,16 +824,16 @@ OrderedCollectionInsert (
   }
 
   NewRoot->Color = RedBlackTreeBlack;
-  Tree->Root = NewRoot;
+  Tree->Root     = NewRoot;
   Status = RETURN_SUCCESS;
 
 Done:
   if (FeaturePcdGet (PcdValidateOrderedCollection)) {
     RedBlackTreeValidate (Tree);
   }
+
   return Status;
 }
-
 
 /**
   Check if a node is black, allowing for leaf nodes (see property #2).
@@ -840,9 +849,8 @@ NodeIsNullOrBlack (
   IN CONST RED_BLACK_TREE_NODE *Node
   )
 {
-  return (BOOLEAN)(Node == NULL || Node->Color == RedBlackTreeBlack);
+  return (BOOLEAN) (Node == NULL || Node->Color == RedBlackTreeBlack);
 }
-
 
 /**
   Delete a node from the tree, unlinking the associated user structure.
@@ -917,15 +925,15 @@ OrderedCollectionDelete (
   OUT    VOID                **UserStruct OPTIONAL
   )
 {
-  RED_BLACK_TREE_NODE  *NewRoot;
-  RED_BLACK_TREE_NODE  *OrigLeftChild;
-  RED_BLACK_TREE_NODE  *OrigRightChild;
-  RED_BLACK_TREE_NODE  *OrigParent;
-  RED_BLACK_TREE_NODE  *Child;
-  RED_BLACK_TREE_NODE  *Parent;
-  RED_BLACK_TREE_COLOR ColorOfUnlinked;
+  RED_BLACK_TREE_NODE   *NewRoot;
+  RED_BLACK_TREE_NODE   *OrigLeftChild;
+  RED_BLACK_TREE_NODE   *OrigRightChild;
+  RED_BLACK_TREE_NODE   *OrigParent;
+  RED_BLACK_TREE_NODE   *Child;
+  RED_BLACK_TREE_NODE   *Parent;
+  RED_BLACK_TREE_COLOR  ColorOfUnlinked;
 
-  NewRoot        = Tree->Root;
+  NewRoot = Tree->Root;
   OrigLeftChild  = Node->Left,
   OrigRightChild = Node->Right,
   OrigParent     = Node->Parent;
@@ -937,9 +945,9 @@ OrderedCollectionDelete (
   //
   // After this block, no matter which branch we take:
   // - Child will point to the unique (or NULL) original child of the node that
-  //   we will have unlinked,
+  // we will have unlinked,
   // - Parent will point to the *position* of the original parent of the node
-  //   that we will have unlinked.
+  // that we will have unlinked.
   //
   if (OrigLeftChild == NULL || OrigRightChild == NULL) {
     //
@@ -949,12 +957,13 @@ OrderedCollectionDelete (
     // side of Node's parent (if any) that Node was before.
     //
     Parent = OrigParent;
-    Child = (OrigLeftChild != NULL) ? OrigLeftChild : OrigRightChild;
+    Child  = (OrigLeftChild != NULL) ? OrigLeftChild : OrigRightChild;
     ColorOfUnlinked = Node->Color;
 
     if (Child != NULL) {
       Child->Parent = Parent;
     }
+
     if (OrigParent == NULL) {
       NewRoot = Child;
     } else {
@@ -970,31 +979,31 @@ OrderedCollectionDelete (
     // Node's place, keeping Node's original color. This preserves ordering
     // because:
     // - Node's left subtree is less than Node, hence less than Node's
-    //   successor.
+    // successor.
     // - Node's right subtree is greater than Node. Node's successor is the
-    //   minimum of that subtree, hence Node's successor is less than Node's
-    //   right subtree with its minimum removed.
+    // minimum of that subtree, hence Node's successor is less than Node's
+    // right subtree with its minimum removed.
     // - Node's successor is in Node's subtree, hence it falls on the same side
-    //   of Node's parent as Node itself. The relinking doesn't change this
-    //   relation.
+    // of Node's parent as Node itself. The relinking doesn't change this
+    // relation.
     //
-    RED_BLACK_TREE_NODE *ToRelink;
+    RED_BLACK_TREE_NODE  *ToRelink;
 
     ToRelink = OrigRightChild;
     if (ToRelink->Left == NULL) {
       //
       // OrigRightChild itself is Node's successor, it has no left child:
       //
-      //                OrigParent
-      //                    |
-      //                  Node: B
-      //                 /       \_
+      // OrigParent
+      // |
+      // Node: B
+      ///       \_
       // OrigLeftChild: A         OrigRightChild: E <--- Parent, ToRelink
-      //                                           \_
-      //                                            F <--- Child
+      // \_
+      // F <--- Child
       //
       Parent = OrigRightChild;
-      Child = OrigRightChild->Right;
+      Child  = OrigRightChild->Right;
     } else {
       do {
         ToRelink = ToRelink->Left;
@@ -1003,30 +1012,30 @@ OrderedCollectionDelete (
       //
       // Node's successor is the minimum of OrigRightChild's proper subtree:
       //
-      //                OrigParent
-      //                    |
-      //                  Node: B
-      //                 /       \_
+      // OrigParent
+      // |
+      // Node: B
+      ///       \_
       // OrigLeftChild: A         OrigRightChild: E <--- Parent
-      //                                  /
-      //                                 C <--- ToRelink
-      //                                  \_
-      //                                   D <--- Child
+      ///
+      // C <--- ToRelink
+      // \_
+      // D <--- Child
       Parent = ToRelink->Parent;
-      Child = ToRelink->Right;
+      Child  = ToRelink->Right;
 
       //
       // Unlink Node's successor (ie. ToRelink):
       //
-      //                OrigParent
-      //                    |
-      //                  Node: B
-      //                 /       \_
+      // OrigParent
+      // |
+      // Node: B
+      ///       \_
       // OrigLeftChild: A         OrigRightChild: E <--- Parent
-      //                                  /
-      //                                 D <--- Child
+      ///
+      // D <--- Child
       //
-      //                                 C <--- ToRelink
+      // C <--- ToRelink
       //
       Parent->Left = Child;
       if (Child != NULL) {
@@ -1036,13 +1045,13 @@ OrderedCollectionDelete (
       //
       // We start to link Node's unlinked successor into Node's place:
       //
-      //                OrigParent
-      //                    |
-      //                  Node: B     C <--- ToRelink
-      //                 /             \_
+      // OrigParent
+      // |
+      // Node: B     C <--- ToRelink
+      ///             \_
       // OrigLeftChild: A               OrigRightChild: E <--- Parent
-      //                                        /
-      //                                       D <--- Child
+      ///
+      // D <--- Child
       //
       //
       //
@@ -1054,17 +1063,17 @@ OrderedCollectionDelete (
     // The rest handles both cases, attaching ToRelink (Node's original
     // successor) to OrigLeftChild and OrigParent.
     //
-    //                           Parent,
-    //              OrigParent   ToRelink             OrigParent
-    //                  |        |                        |
-    //                Node: B    |                      Node: B          Parent
-    //                           v                                          |
-    //           OrigRightChild: E                        C <--- ToRelink   |
-    //                 / \                               / \                v
+    // Parent,
+    // OrigParent   ToRelink             OrigParent
+    // |        |                        |
+    // Node: B    |                      Node: B          Parent
+    // v                                          |
+    // OrigRightChild: E                        C <--- ToRelink   |
+    /// \                               / \                v
     // OrigLeftChild: A   F              OrigLeftChild: A   OrigRightChild: E
-    //                    ^                                         /
-    //                    |                                        D <--- Child
-    //                  Child
+    // ^                                         /
+    // |                                        D <--- Child
+    // Child
     //
     ToRelink->Left = OrigLeftChild;
     OrigLeftChild->Parent = ToRelink;
@@ -1078,17 +1087,17 @@ OrderedCollectionDelete (
     //
     // Finish linking Node's unlinked successor into Node's place.
     //
-    //                           Parent,
-    //                Node: B    ToRelink               Node: B
-    //                           |
-    //              OrigParent   |                    OrigParent         Parent
-    //                  |        v                        |                 |
-    //           OrigRightChild: E                        C <--- ToRelink   |
-    //                 / \                               / \                v
+    // Parent,
+    // Node: B    ToRelink               Node: B
+    // |
+    // OrigParent   |                    OrigParent         Parent
+    // |        v                        |                 |
+    // OrigRightChild: E                        C <--- ToRelink   |
+    /// \                               / \                v
     // OrigLeftChild: A   F              OrigLeftChild: A   OrigRightChild: E
-    //                    ^                                         /
-    //                    |                                        D <--- Child
-    //                  Child
+    // ^                                         /
+    // |                                        D <--- Child
+    // Child
     //
     ToRelink->Parent = OrigParent;
     if (OrigParent == NULL) {
@@ -1129,9 +1138,9 @@ OrderedCollectionDelete (
     // Rotations in the loop preserve property #4.
     //
     while (Child != NewRoot && NodeIsNullOrBlack (Child)) {
-      RED_BLACK_TREE_NODE *Sibling;
-      RED_BLACK_TREE_NODE *LeftNephew;
-      RED_BLACK_TREE_NODE *RightNephew;
+  RED_BLACK_TREE_NODE  *Sibling;
+  RED_BLACK_TREE_NODE  *LeftNephew;
+  RED_BLACK_TREE_NODE  *RightNephew;
 
       if (Child == Parent->Left) {
         Sibling = Parent->Right;
@@ -1154,16 +1163,16 @@ OrderedCollectionDelete (
           // Sibling's red color implies its children (if any), node C and node
           // E, are black (property #3). It also implies that Parent is black.
           //
-          //           grandparent                                 grandparent
-          //                |                                           |
-          //            Parent,b:B                                     b:D
-          //           /          \                                   /   \_
+          // grandparent                                 grandparent
+          // |                                           |
+          // Parent,b:B                                     b:D
+          ///          \                                   /   \_
           // Child,2b:A            Sibling,r:D  --->        Parent,r:B     b:E
-          //                           /\                       /\_
-          //                        b:C  b:E          Child,2b:A  Sibling,b:C
+          ///\                       /\_
+          // b:C  b:E          Child,2b:A  Sibling,b:C
           //
           Sibling->Color = RedBlackTreeBlack;
-          Parent->Color = RedBlackTreeRed;
+          Parent->Color  = RedBlackTreeRed;
           RedBlackTreeRotateLeft (Parent, &NewRoot);
           Sibling = Parent->Right;
           //
@@ -1177,7 +1186,7 @@ OrderedCollectionDelete (
         // node.)
         //
         ASSERT (Sibling->Color == RedBlackTreeBlack);
-        LeftNephew = Sibling->Left;
+        LeftNephew  = Sibling->Left;
         RightNephew = Sibling->Right;
         if (NodeIsNullOrBlack (LeftNephew) &&
             NodeIsNullOrBlack (RightNephew)) {
@@ -1191,16 +1200,16 @@ OrderedCollectionDelete (
           // Sibling is allowed to become red because both of its children are
           // black (property #3).
           //
-          //           grandparent                             Parent
-          //                |                                     |
-          //            Parent,x:B                            Child,x:B
-          //           /          \                          /         \_
+          // grandparent                             Parent
+          // |                                     |
+          // Parent,x:B                            Child,x:B
+          ///          \                          /         \_
           // Child,2b:A            Sibling,b:D    --->    b:A           r:D
-          //                           /\                                /\_
-          //             LeftNephew,b:C  RightNephew,b:E              b:C  b:E
+          ///\                                /\_
+          // LeftNephew,b:C  RightNephew,b:E              b:C  b:E
           //
           Sibling->Color = RedBlackTreeRed;
-          Child = Parent;
+          Child  = Parent;
           Parent = Parent->Parent;
           //
           // Continue ascending.
@@ -1219,25 +1228,26 @@ OrderedCollectionDelete (
             // (because property #3 will be satisfied). We flip node D to black
             // to maintain property #4.
             //
-            //      grandparent                         grandparent
-            //           |                                   |
-            //       Parent,x:B                          Parent,x:B
-            //           /\                                  /\_
+            // grandparent                         grandparent
+            // |                                   |
+            // Parent,x:B                          Parent,x:B
+            ///\                                  /\_
             // Child,2b:A  Sibling,b:F     --->    Child,2b:A  Sibling,b:D
-            //                  /\                            /   \_
-            //    LeftNephew,r:D  RightNephew,b:G          b:C  RightNephew,r:F
-            //               /\                                       /\_
-            //            b:C  b:E                                 b:E  b:G
+            ///\                            /   \_
+            // LeftNephew,r:D  RightNephew,b:G          b:C  RightNephew,r:F
+            ///\                                       /\_
+            // b:C  b:E                                 b:E  b:G
             //
             LeftNephew->Color = RedBlackTreeBlack;
-            Sibling->Color = RedBlackTreeRed;
+            Sibling->Color    = RedBlackTreeRed;
             RedBlackTreeRotateRight (Sibling, &NewRoot);
-            Sibling = Parent->Right;
+            Sibling     = Parent->Right;
             RightNephew = Sibling->Right;
             //
             // These operations ensure that...
             //
           }
+
           //
           // ... RightNephew is definitely red here, plus Sibling is (still)
           // black and non-NULL.
@@ -1263,17 +1273,17 @@ OrderedCollectionDelete (
           // both children of node D are black after the transformation
           // (preserving property #3).
           //
-          //           grandparent                                  grandparent
-          //                |                                            |
-          //            Parent,x:B                                      x:D
-          //           /          \                                    /   \_
+          // grandparent                                  grandparent
+          // |                                            |
+          // Parent,x:B                                      x:D
+          ///          \                                    /   \_
           // Child,2b:A            Sibling,b:D              --->    b:B     b:E
-          //                         /     \                       /   \_
-          //                      y:C       RightNephew,r:E     b:A     y:C
+          ///     \                       /   \_
+          // y:C       RightNephew,r:E     b:A     y:C
           //
           //
-          Sibling->Color = Parent->Color;
-          Parent->Color = RedBlackTreeBlack;
+          Sibling->Color     = Parent->Color;
+          Parent->Color      = RedBlackTreeBlack;
           RightNephew->Color = RedBlackTreeBlack;
           RedBlackTreeRotateLeft (Parent, &NewRoot);
           Child = NewRoot;
@@ -1289,7 +1299,7 @@ OrderedCollectionDelete (
         ASSERT (Sibling != NULL);
         if (Sibling->Color == RedBlackTreeRed) {
           Sibling->Color = RedBlackTreeBlack;
-          Parent->Color = RedBlackTreeRed;
+          Parent->Color  = RedBlackTreeRed;
           RedBlackTreeRotateRight (Parent, &NewRoot);
           Sibling = Parent->Left;
           ASSERT (Sibling != NULL);
@@ -1297,26 +1307,27 @@ OrderedCollectionDelete (
 
         ASSERT (Sibling->Color == RedBlackTreeBlack);
         RightNephew = Sibling->Right;
-        LeftNephew = Sibling->Left;
+        LeftNephew  = Sibling->Left;
         if (NodeIsNullOrBlack (RightNephew) &&
             NodeIsNullOrBlack (LeftNephew)) {
           Sibling->Color = RedBlackTreeRed;
-          Child = Parent;
+          Child  = Parent;
           Parent = Parent->Parent;
         } else {
           if (NodeIsNullOrBlack (LeftNephew)) {
             RightNephew->Color = RedBlackTreeBlack;
-            Sibling->Color = RedBlackTreeRed;
+            Sibling->Color     = RedBlackTreeRed;
             RedBlackTreeRotateLeft (Sibling, &NewRoot);
-            Sibling = Parent->Left;
+            Sibling    = Parent->Left;
             LeftNephew = Sibling->Left;
           }
+
           ASSERT (LeftNephew != NULL);
           ASSERT (LeftNephew->Color == RedBlackTreeRed);
           ASSERT (Sibling != NULL);
           ASSERT (Sibling->Color == RedBlackTreeBlack);
-          Sibling->Color = Parent->Color;
-          Parent->Color = RedBlackTreeBlack;
+          Sibling->Color    = Parent->Color;
+          Parent->Color     = RedBlackTreeBlack;
           LeftNephew->Color = RedBlackTreeBlack;
           RedBlackTreeRotateRight (Parent, &NewRoot);
           Child = NewRoot;
@@ -1336,7 +1347,6 @@ OrderedCollectionDelete (
   }
 }
 
-
 /**
   Recursively check the red-black tree properties #1 to #4 on a node.
 
@@ -1349,8 +1359,8 @@ RedBlackTreeRecursiveCheck (
   IN CONST RED_BLACK_TREE_NODE *Node
   )
 {
-  UINT32 LeftHeight;
-  UINT32 RightHeight;
+  UINT32  LeftHeight;
+  UINT32  RightHeight;
 
   //
   // property #2
@@ -1375,13 +1385,12 @@ RedBlackTreeRecursiveCheck (
   //
   // property #4
   //
-  LeftHeight = RedBlackTreeRecursiveCheck (Node->Left);
+  LeftHeight  = RedBlackTreeRecursiveCheck (Node->Left);
   RightHeight = RedBlackTreeRecursiveCheck (Node->Right);
   ASSERT (LeftHeight == RightHeight);
 
   return (Node->Color == RedBlackTreeBlack) + LeftHeight;
 }
-
 
 /**
   A slow function that asserts that the tree is a valid red-black tree, and
@@ -1399,11 +1408,11 @@ RedBlackTreeValidate (
   IN CONST RED_BLACK_TREE *Tree
   )
 {
-  UINT32                    BlackHeight;
-  UINT32                    ForwardCount;
-  UINT32                    BackwardCount;
-  CONST RED_BLACK_TREE_NODE *Last;
-  CONST RED_BLACK_TREE_NODE *Node;
+  UINT32                     BlackHeight;
+  UINT32                     ForwardCount;
+  UINT32                     BackwardCount;
+  CONST RED_BLACK_TREE_NODE  *Last;
+  CONST RED_BLACK_TREE_NODE  *Node;
 
   DEBUG ((DEBUG_VERBOSE, "%a: Tree=%p\n", __FUNCTION__, Tree));
 
@@ -1443,6 +1452,8 @@ RedBlackTreeValidate (
 
   ASSERT (ForwardCount == BackwardCount);
 
-  DEBUG ((DEBUG_VERBOSE, "%a: Tree=%p BlackHeight=%Ld Count=%Ld\n",
-    __FUNCTION__, Tree, (INT64)BlackHeight, (INT64)ForwardCount));
+  DEBUG (
+         (DEBUG_VERBOSE, "%a: Tree=%p BlackHeight=%Ld Count=%Ld\n",
+          __FUNCTION__, Tree, (INT64) BlackHeight, (INT64) ForwardCount)
+         );
 }

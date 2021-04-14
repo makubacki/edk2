@@ -18,7 +18,7 @@
 #define __I2C_BUS_CONFIGURATION_MANAGEMENT_H__
 
 #define EFI_I2C_BUS_CONFIGURATION_MANAGEMENT_PROTOCOL_GUID \
-  { 0x55b71fb5, 0x17c6, 0x410e, { 0xb5, 0xbd, 0x5f, 0xa2, 0xe3, 0xd4, 0x46, 0x6b }}
+  { 0x55b71fb5, 0x17c6, 0x410e, { 0xb5, 0xbd, 0x5f, 0xa2, 0xe3, 0xd4, 0x46, 0x6b } }
 
 ///
 /// I2C bus configuration management protocol
@@ -86,7 +86,6 @@
 ///
 typedef struct _EFI_I2C_BUS_CONFIGURATION_MANAGEMENT_PROTOCOL EFI_I2C_BUS_CONFIGURATION_MANAGEMENT_PROTOCOL;
 
-
 /**
   Enable access to an I2C bus configuration.
 
@@ -139,13 +138,18 @@ typedef struct _EFI_I2C_BUS_CONFIGURATION_MANAGEMENT_PROTOCOL EFI_I2C_BUS_CONFIG
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_I2C_BUS_CONFIGURATION_MANAGEMENT_PROTOCOL_ENABLE_I2C_BUS_CONFIGURATION) (
-  IN CONST EFI_I2C_BUS_CONFIGURATION_MANAGEMENT_PROTOCOL *This,
-  IN UINTN                                               I2cBusConfiguration,
-  IN EFI_EVENT                                           Event      OPTIONAL,
-  IN EFI_STATUS                                          *I2cStatus OPTIONAL
-  );
+  EFI_STATUS
+(EFIAPI *EFI_I2C_BUS_CONFIGURATION_MANAGEMENT_PROTOCOL_ENABLE_I2C_BUS_CONFIGURATION)(
+                                                                                     IN CONST
+                                                                                     EFI_I2C_BUS_CONFIGURATION_MANAGEMENT_PROTOCOL
+                                                                                     *This,
+                                                                                     IN UINTN
+                                                                                     I2cBusConfiguration,
+                                                                                     IN EFI_EVENT
+                                                                                     Event      OPTIONAL,
+                                                                                     IN EFI_STATUS
+                                                                                     *I2cStatus OPTIONAL
+                                                                                     );
 
 ///
 /// I2C bus configuration management protocol
@@ -154,12 +158,12 @@ struct _EFI_I2C_BUS_CONFIGURATION_MANAGEMENT_PROTOCOL {
   ///
   /// Enable an I2C bus configuration for use.
   ///
-  EFI_I2C_BUS_CONFIGURATION_MANAGEMENT_PROTOCOL_ENABLE_I2C_BUS_CONFIGURATION EnableI2cBusConfiguration;
+  EFI_I2C_BUS_CONFIGURATION_MANAGEMENT_PROTOCOL_ENABLE_I2C_BUS_CONFIGURATION    EnableI2cBusConfiguration;
 };
 
 ///
 /// Reference to variable defined in the .DEC file
 ///
-extern EFI_GUID gEfiI2cBusConfigurationManagementProtocolGuid;
+extern EFI_GUID  gEfiI2cBusConfigurationManagementProtocolGuid;
 
-#endif  //  __I2C_BUS_CONFIGURATION_MANAGEMENT_H__
+#endif //  __I2C_BUS_CONFIGURATION_MANAGEMENT_H__

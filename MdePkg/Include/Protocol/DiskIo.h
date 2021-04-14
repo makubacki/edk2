@@ -15,7 +15,7 @@
 
 #define EFI_DISK_IO_PROTOCOL_GUID \
   { \
-    0xce345171, 0xba0b, 0x11d2, {0x8e, 0x4f, 0x0, 0xa0, 0xc9, 0x69, 0x72, 0x3b } \
+    0xce345171, 0xba0b, 0x11d2, { 0x8e, 0x4f, 0x0, 0xa0, 0xc9, 0x69, 0x72, 0x3b } \
   }
 
 ///
@@ -28,7 +28,7 @@ typedef struct _EFI_DISK_IO_PROTOCOL EFI_DISK_IO_PROTOCOL;
 ///
 /// Protocol defined in EFI1.1.
 ///
-typedef EFI_DISK_IO_PROTOCOL  EFI_DISK_IO;
+typedef EFI_DISK_IO_PROTOCOL EFI_DISK_IO;
 
 /**
   Read BufferSize bytes from Offset into Buffer.
@@ -48,14 +48,14 @@ typedef EFI_DISK_IO_PROTOCOL  EFI_DISK_IO;
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_DISK_READ)(
-  IN EFI_DISK_IO_PROTOCOL         *This,
-  IN UINT32                       MediaId,
-  IN UINT64                       Offset,
-  IN UINTN                        BufferSize,
-  OUT VOID                        *Buffer
-  );
+                        IN EFI_DISK_IO_PROTOCOL         *This,
+                        IN UINT32                       MediaId,
+                        IN UINT64                       Offset,
+                        IN UINTN                        BufferSize,
+                        OUT VOID                        *Buffer
+                        );
 
 /**
   Writes a specified number of bytes to a device.
@@ -76,16 +76,16 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_DISK_WRITE)(
-  IN EFI_DISK_IO_PROTOCOL         *This,
-  IN UINT32                       MediaId,
-  IN UINT64                       Offset,
-  IN UINTN                        BufferSize,
-  IN VOID                         *Buffer
-  );
+                         IN EFI_DISK_IO_PROTOCOL         *This,
+                         IN UINT32                       MediaId,
+                         IN UINT64                       Offset,
+                         IN UINTN                        BufferSize,
+                         IN VOID                         *Buffer
+                         );
 
-#define EFI_DISK_IO_PROTOCOL_REVISION 0x00010000
+#define EFI_DISK_IO_PROTOCOL_REVISION  0x00010000
 
 ///
 /// Revision defined in EFI1.1
@@ -101,11 +101,11 @@ struct _EFI_DISK_IO_PROTOCOL {
   /// revisions must be backwards compatible. If a future version is not
   /// backwards compatible, it is not the same GUID.
   ///
-  UINT64          Revision;
-  EFI_DISK_READ   ReadDisk;
-  EFI_DISK_WRITE  WriteDisk;
+  UINT64            Revision;
+  EFI_DISK_READ     ReadDisk;
+  EFI_DISK_WRITE    WriteDisk;
 };
 
-extern EFI_GUID gEfiDiskIoProtocolGuid;
+extern EFI_GUID  gEfiDiskIoProtocolGuid;
 
 #endif

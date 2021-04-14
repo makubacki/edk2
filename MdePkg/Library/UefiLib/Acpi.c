@@ -37,11 +37,11 @@ ScanTableInSDT (
   OUT BOOLEAN                       *PreviousTableLocated OPTIONAL
   )
 {
-  UINTN                             Index;
-  UINTN                             EntryCount;
-  UINT64                            EntryPtr;
-  UINTN                             BasePtr;
-  EFI_ACPI_COMMON_HEADER            *Table;
+  UINTN                   Index;
+  UINTN                   EntryCount;
+  UINT64                  EntryPtr;
+  UINTN                   BasePtr;
+  EFI_ACPI_COMMON_HEADER  *Table;
 
   if (PreviousTableLocated != NULL) {
     ASSERT (PreviousTable != NULL);
@@ -56,11 +56,11 @@ ScanTableInSDT (
 
   EntryCount = (Sdt->Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / TablePointerSize;
 
-  BasePtr = (UINTN)(Sdt + 1);
-  for (Index = 0; Index < EntryCount; Index ++) {
+  BasePtr = (UINTN) (Sdt + 1);
+  for (Index = 0; Index < EntryCount; Index++) {
     EntryPtr = 0;
-    CopyMem (&EntryPtr, (VOID *)(BasePtr + Index * TablePointerSize), TablePointerSize);
-    Table = (EFI_ACPI_COMMON_HEADER *)((UINTN)(EntryPtr));
+    CopyMem (&EntryPtr, (VOID *) (BasePtr + Index * TablePointerSize), TablePointerSize);
+    Table = (EFI_ACPI_COMMON_HEADER *) ((UINTN) (EntryPtr));
     if ((Table != NULL) && (Table->Signature == Signature)) {
       if (PreviousTable != NULL) {
         if (Table == PreviousTable) {
@@ -77,7 +77,6 @@ ScanTableInSDT (
         //
         return Table;
       }
-
     }
   }
 
@@ -97,23 +96,24 @@ LocateAcpiFacsFromFadt (
   IN EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE  *Fadt
   )
 {
-  EFI_ACPI_COMMON_HEADER                        *Facs;
-  UINT64                                        Data64;
+  EFI_ACPI_COMMON_HEADER  *Facs;
+  UINT64                  Data64;
 
   if (Fadt == NULL) {
     return NULL;
   }
 
   if (Fadt->Header.Revision < EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_REVISION) {
-    Facs = (EFI_ACPI_COMMON_HEADER *)(UINTN)Fadt->FirmwareCtrl;
+    Facs = (EFI_ACPI_COMMON_HEADER *) (UINTN) Fadt->FirmwareCtrl;
   } else {
-    CopyMem (&Data64, &Fadt->XFirmwareCtrl, sizeof(UINT64));
+    CopyMem (&Data64, &Fadt->XFirmwareCtrl, sizeof (UINT64));
     if (Data64 != 0) {
-      Facs = (EFI_ACPI_COMMON_HEADER *)(UINTN)Data64;
+      Facs = (EFI_ACPI_COMMON_HEADER *) (UINTN) Data64;
     } else {
-      Facs = (EFI_ACPI_COMMON_HEADER *)(UINTN)Fadt->FirmwareCtrl;
+      Facs = (EFI_ACPI_COMMON_HEADER *) (UINTN) Fadt->FirmwareCtrl;
     }
   }
+
   return Facs;
 }
 
@@ -130,23 +130,24 @@ LocateAcpiDsdtFromFadt (
   IN EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE  *Fadt
   )
 {
-  EFI_ACPI_COMMON_HEADER                        *Dsdt;
-  UINT64                                        Data64;
+  EFI_ACPI_COMMON_HEADER  *Dsdt;
+  UINT64                  Data64;
 
   if (Fadt == NULL) {
     return NULL;
   }
 
   if (Fadt->Header.Revision < EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_REVISION) {
-    Dsdt = (EFI_ACPI_COMMON_HEADER *)(UINTN)Fadt->Dsdt;
+    Dsdt = (EFI_ACPI_COMMON_HEADER *) (UINTN) Fadt->Dsdt;
   } else {
-    CopyMem (&Data64, &Fadt->XDsdt, sizeof(UINT64));
+    CopyMem (&Data64, &Fadt->XDsdt, sizeof (UINT64));
     if (Data64 != 0) {
-      Dsdt = (EFI_ACPI_COMMON_HEADER *)(UINTN)Data64;
+      Dsdt = (EFI_ACPI_COMMON_HEADER *) (UINTN) Data64;
     } else {
-      Dsdt = (EFI_ACPI_COMMON_HEADER *)(UINTN)Fadt->Dsdt;
+      Dsdt = (EFI_ACPI_COMMON_HEADER *) (UINTN) Fadt->Dsdt;
     }
   }
+
   return Dsdt;
 }
 
@@ -194,7 +195,7 @@ LocateAcpiTableInAcpiConfigurationTable (
   //
   // Get ACPI ConfigurationTable (RSD_PTR)
   //
-  Status = EfiGetSystemConfigurationTable(AcpiGuid, (VOID **)&Rsdp);
+  Status = EfiGetSystemConfigurationTable (AcpiGuid, (VOID **) &Rsdp);
   if (EFI_ERROR (Status) || (Rsdp == NULL)) {
     return NULL;
   }
@@ -205,7 +206,7 @@ LocateAcpiTableInAcpiConfigurationTable (
   // Search XSDT
   //
   if (Rsdp->Revision >= EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER_REVISION) {
-    Xsdt = (EFI_ACPI_DESCRIPTION_HEADER *)(UINTN) Rsdp->XsdtAddress;
+    Xsdt = (EFI_ACPI_DESCRIPTION_HEADER *) (UINTN) Rsdp->XsdtAddress;
     if (Signature == EFI_ACPI_2_0_DIFFERENTIATED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
       ASSERT (PreviousTable == NULL);
       //
@@ -213,12 +214,12 @@ LocateAcpiTableInAcpiConfigurationTable (
       // need to locate FADT first.
       //
       Fadt = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *) ScanTableInSDT (
-               Xsdt,
-               sizeof (UINT64),
-               EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE,
-               NULL,
-               NULL
-               );
+                                                                           Xsdt,
+                                                                           sizeof (UINT64),
+                                                                           EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE,
+                                                                           NULL,
+                                                                           NULL
+                                                                           );
       Table = LocateAcpiDsdtFromFadt (Fadt);
     } else if (Signature == EFI_ACPI_2_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE) {
       ASSERT (PreviousTable == NULL);
@@ -227,28 +228,28 @@ LocateAcpiTableInAcpiConfigurationTable (
       // need to locate FADT first.
       //
       Fadt = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *) ScanTableInSDT (
-               Xsdt,
-               sizeof (UINT64),
-               EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE,
-               NULL,
-               NULL
-               );
+                                                                           Xsdt,
+                                                                           sizeof (UINT64),
+                                                                           EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE,
+                                                                           NULL,
+                                                                           NULL
+                                                                           );
       Table = LocateAcpiFacsFromFadt (Fadt);
     } else {
       Table = ScanTableInSDT (
-                Xsdt,
-                sizeof (UINT64),
-                Signature,
-                PreviousTable,
-                PreviousTableLocated
-                );
+                              Xsdt,
+                              sizeof (UINT64),
+                              Signature,
+                              PreviousTable,
+                              PreviousTableLocated
+                              );
     }
   }
 
   if (Table != NULL) {
     return Table;
   } else if ((PreviousTableLocated != NULL) &&
-              *PreviousTableLocated) {
+             *PreviousTableLocated) {
     //
     // PreviousTable could be located in XSDT,
     // but next table could not be located in XSDT.
@@ -259,7 +260,7 @@ LocateAcpiTableInAcpiConfigurationTable (
   //
   // Search RSDT
   //
-  Rsdt = (EFI_ACPI_DESCRIPTION_HEADER *)(UINTN) Rsdp->RsdtAddress;
+  Rsdt = (EFI_ACPI_DESCRIPTION_HEADER *) (UINTN) Rsdp->RsdtAddress;
   if (Signature == EFI_ACPI_2_0_DIFFERENTIATED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
     ASSERT (PreviousTable == NULL);
     //
@@ -267,12 +268,12 @@ LocateAcpiTableInAcpiConfigurationTable (
     // need to locate FADT first.
     //
     Fadt = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *) ScanTableInSDT (
-             Rsdt,
-             sizeof (UINT32),
-             EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE,
-             NULL,
-             NULL
-             );
+                                                                         Rsdt,
+                                                                         sizeof (UINT32),
+                                                                         EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE,
+                                                                         NULL,
+                                                                         NULL
+                                                                         );
     Table = LocateAcpiDsdtFromFadt (Fadt);
   } else if (Signature == EFI_ACPI_2_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE) {
     ASSERT (PreviousTable == NULL);
@@ -281,21 +282,21 @@ LocateAcpiTableInAcpiConfigurationTable (
     // need to locate FADT first.
     //
     Fadt = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *) ScanTableInSDT (
-             Rsdt,
-             sizeof (UINT32),
-             EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE,
-             NULL,
-             NULL
-             );
+                                                                         Rsdt,
+                                                                         sizeof (UINT32),
+                                                                         EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE,
+                                                                         NULL,
+                                                                         NULL
+                                                                         );
     Table = LocateAcpiFacsFromFadt (Fadt);
   } else {
     Table = ScanTableInSDT (
-              Rsdt,
-              sizeof (UINT32),
-              Signature,
-              PreviousTable,
-              PreviousTableLocated
-              );
+                            Rsdt,
+                            sizeof (UINT32),
+                            Signature,
+                            PreviousTable,
+                            PreviousTableLocated
+                            );
   }
 
   return Table;
@@ -343,9 +344,9 @@ EfiLocateNextAcpiTable (
   IN EFI_ACPI_COMMON_HEADER     *PreviousTable OPTIONAL
   )
 {
-  EFI_ACPI_COMMON_HEADER        *Table;
-  BOOLEAN                       TempPreviousTableLocated;
-  BOOLEAN                       *PreviousTableLocated;
+  EFI_ACPI_COMMON_HEADER  *Table;
+  BOOLEAN                 TempPreviousTableLocated;
+  BOOLEAN                 *PreviousTableLocated;
 
   if (PreviousTable != NULL) {
     if (PreviousTable->Signature != Signature) {
@@ -363,22 +364,22 @@ EfiLocateNextAcpiTable (
       return NULL;
     }
 
-    PreviousTableLocated = &TempPreviousTableLocated;
+    PreviousTableLocated  = &TempPreviousTableLocated;
     *PreviousTableLocated = FALSE;
   } else {
     PreviousTableLocated = NULL;
   }
 
   Table = LocateAcpiTableInAcpiConfigurationTable (
-            &gEfiAcpi20TableGuid,
-            Signature,
-            PreviousTable,
-            PreviousTableLocated
-            );
+                                                   &gEfiAcpi20TableGuid,
+                                                   Signature,
+                                                   PreviousTable,
+                                                   PreviousTableLocated
+                                                   );
   if (Table != NULL) {
     return Table;
   } else if ((PreviousTableLocated != NULL) &&
-              *PreviousTableLocated) {
+             *PreviousTableLocated) {
     //
     // PreviousTable could be located in gEfiAcpi20TableGuid system
     // configuration table, but next table could not be located in
@@ -388,11 +389,11 @@ EfiLocateNextAcpiTable (
   }
 
   return LocateAcpiTableInAcpiConfigurationTable (
-           &gEfiAcpi10TableGuid,
-           Signature,
-           PreviousTable,
-           PreviousTableLocated
-           );
+                                                  &gEfiAcpi10TableGuid,
+                                                  Signature,
+                                                  PreviousTable,
+                                                  PreviousTableLocated
+                                                  );
 }
 
 /**

@@ -14,10 +14,10 @@
 ///
 #define EFI_PLATFORM_DRIVER_OVERRIDE_PROTOCOL_GUID \
   { \
-    0x6b30c738, 0xa391, 0x11d4, {0x9a, 0x3b, 0x00, 0x90, 0x27, 0x3f, 0xc1, 0x4d } \
+    0x6b30c738, 0xa391, 0x11d4, { 0x9a, 0x3b, 0x00, 0x90, 0x27, 0x3f, 0xc1, 0x4d } \
   }
 
-typedef struct _EFI_PLATFORM_DRIVER_OVERRIDE_PROTOCOL  EFI_PLATFORM_DRIVER_OVERRIDE_PROTOCOL;
+typedef struct _EFI_PLATFORM_DRIVER_OVERRIDE_PROTOCOL EFI_PLATFORM_DRIVER_OVERRIDE_PROTOCOL;
 
 //
 // Prototypes for the Platform Driver Override Protocol
@@ -43,12 +43,13 @@ typedef struct _EFI_PLATFORM_DRIVER_OVERRIDE_PROTOCOL  EFI_PLATFORM_DRIVER_OVERR
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PLATFORM_DRIVER_OVERRIDE_GET_DRIVER)(
-  IN EFI_PLATFORM_DRIVER_OVERRIDE_PROTOCOL              *This,
-  IN     EFI_HANDLE                                     ControllerHandle,
-  IN OUT EFI_HANDLE                                     *DriverImageHandle
-  );
+                                                  IN EFI_PLATFORM_DRIVER_OVERRIDE_PROTOCOL              *This,
+                                                  IN     EFI_HANDLE                                     ControllerHandle,
+                                                  IN OUT EFI_HANDLE                                     *
+                                                  DriverImageHandle
+                                                  );
 
 /**
   Retrieves the device path of the platform override driver for a controller in the system.
@@ -71,12 +72,14 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PLATFORM_DRIVER_OVERRIDE_GET_DRIVER_PATH)(
-  IN EFI_PLATFORM_DRIVER_OVERRIDE_PROTOCOL              *This,
-  IN     EFI_HANDLE                                     ControllerHandle,
-  IN OUT EFI_DEVICE_PATH_PROTOCOL                       **DriverImagePath
-  );
+                                                       IN EFI_PLATFORM_DRIVER_OVERRIDE_PROTOCOL              *This,
+                                                       IN     EFI_HANDLE
+                                                       ControllerHandle,
+                                                       IN OUT EFI_DEVICE_PATH_PROTOCOL                       **
+                                                       DriverImagePath
+                                                       );
 
 /**
   Used to associate a driver image handle with a device path that was returned on a prior call to the
@@ -105,13 +108,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PLATFORM_DRIVER_OVERRIDE_DRIVER_LOADED)(
-  IN EFI_PLATFORM_DRIVER_OVERRIDE_PROTOCOL          *This,
-  IN EFI_HANDLE                                     ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL                       *DriverImagePath,
-  IN EFI_HANDLE                                     DriverImageHandle
-  );
+                                                     IN EFI_PLATFORM_DRIVER_OVERRIDE_PROTOCOL          *This,
+                                                     IN EFI_HANDLE                                     ControllerHandle,
+                                                     IN EFI_DEVICE_PATH_PROTOCOL                       *DriverImagePath,
+                                                     IN EFI_HANDLE                                     DriverImageHandle
+                                                     );
 
 ///
 /// This protocol matches one or more drivers to a controller. A platform driver
@@ -124,11 +127,11 @@ EFI_STATUS
 /// order from highest precedence to lowest precedence.
 ///
 struct _EFI_PLATFORM_DRIVER_OVERRIDE_PROTOCOL {
-  EFI_PLATFORM_DRIVER_OVERRIDE_GET_DRIVER       GetDriver;
-  EFI_PLATFORM_DRIVER_OVERRIDE_GET_DRIVER_PATH  GetDriverPath;
-  EFI_PLATFORM_DRIVER_OVERRIDE_DRIVER_LOADED    DriverLoaded;
+  EFI_PLATFORM_DRIVER_OVERRIDE_GET_DRIVER         GetDriver;
+  EFI_PLATFORM_DRIVER_OVERRIDE_GET_DRIVER_PATH    GetDriverPath;
+  EFI_PLATFORM_DRIVER_OVERRIDE_DRIVER_LOADED      DriverLoaded;
 };
 
-extern EFI_GUID gEfiPlatformDriverOverrideProtocolGuid;
+extern EFI_GUID  gEfiPlatformDriverOverrideProtocolGuid;
 
 #endif

@@ -21,7 +21,7 @@
 ///
 #define EFI_EAP_MANAGEMENT2_PROTOCOL_GUID \
   { \
-    0x5e93c847, 0x456d, 0x40b3, {0xa6, 0xb4, 0x78, 0xb0, 0xc9, 0xcf, 0x7f, 0x20 } \
+    0x5e93c847, 0x456d, 0x40b3, { 0xa6, 0xb4, 0x78, 0xb0, 0xc9, 0xcf, 0x7f, 0x20 } \
   }
 
 typedef struct _EFI_EAP_MANAGEMENT2_PROTOCOL EFI_EAP_MANAGEMENT2_PROTOCOL;
@@ -48,14 +48,14 @@ typedef struct _EFI_EAP_MANAGEMENT2_PROTOCOL EFI_EAP_MANAGEMENT2_PROTOCOL;
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_EAP_GET_KEY) (
-  IN EFI_EAP_MANAGEMENT2_PROTOCOL         *This,
-  IN OUT UINT8                            *Msk,
-  IN OUT UINTN                            *MskSize,
-  IN OUT UINT8                            *Emsk,
-  IN OUT UINT8                            *EmskSize
-  );
+  EFI_STATUS
+(EFIAPI *EFI_EAP_GET_KEY)(
+                          IN EFI_EAP_MANAGEMENT2_PROTOCOL         *This,
+                          IN OUT UINT8                            *Msk,
+                          IN OUT UINTN                            *MskSize,
+                          IN OUT UINT8                            *Emsk,
+                          IN OUT UINT8                            *EmskSize
+                          );
 
 ///
 /// The EFI_EAP_MANAGEMENT2_PROTOCOL
@@ -76,6 +76,6 @@ struct _EFI_EAP_MANAGEMENT2_PROTOCOL {
   EFI_EAP_GET_KEY                         GetKey;
 };
 
-extern EFI_GUID gEfiEapManagement2ProtocolGuid;
+extern EFI_GUID  gEfiEapManagement2ProtocolGuid;
 
 #endif

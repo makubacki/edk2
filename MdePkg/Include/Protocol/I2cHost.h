@@ -17,7 +17,7 @@
 
 #include <Pi/PiI2c.h>
 
-#define EFI_I2C_HOST_PROTOCOL_GUID  { 0xa5aab9e3, 0xc727, 0x48cd, { 0x8b, 0xbf, 0x42, 0x72, 0x33, 0x85, 0x49, 0x48 }}
+#define EFI_I2C_HOST_PROTOCOL_GUID  { 0xa5aab9e3, 0xc727, 0x48cd, { 0x8b, 0xbf, 0x42, 0x72, 0x33, 0x85, 0x49, 0x48 } }
 
 ///
 /// I2C Host Protocol
@@ -36,7 +36,6 @@
 /// the EFI_I2C_MASTER_PROTOCOL.
 ///
 typedef struct _EFI_I2C_HOST_PROTOCOL EFI_I2C_HOST_PROTOCOL;
-
 
 /**
   Queue an I2C transaction for execution on the I2C controller.
@@ -112,15 +111,15 @@ typedef struct _EFI_I2C_HOST_PROTOCOL EFI_I2C_HOST_PROTOCOL;
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_I2C_HOST_PROTOCOL_QUEUE_REQUEST) (
-  IN CONST EFI_I2C_HOST_PROTOCOL *This,
-  IN UINTN                       I2cBusConfiguration,
-  IN UINTN                       SlaveAddress,
-  IN EFI_EVENT                   Event      OPTIONAL,
-  IN EFI_I2C_REQUEST_PACKET      *RequestPacket,
-  OUT EFI_STATUS                 *I2cStatus OPTIONAL
-  );
+  EFI_STATUS
+(EFIAPI *EFI_I2C_HOST_PROTOCOL_QUEUE_REQUEST)(
+                                              IN CONST EFI_I2C_HOST_PROTOCOL *This,
+                                              IN UINTN                       I2cBusConfiguration,
+                                              IN UINTN                       SlaveAddress,
+                                              IN EFI_EVENT                   Event      OPTIONAL,
+                                              IN EFI_I2C_REQUEST_PACKET      *RequestPacket,
+                                              OUT EFI_STATUS                 *I2cStatus OPTIONAL
+                                              );
 
 ///
 /// I2C Host Protocol
@@ -129,18 +128,18 @@ struct _EFI_I2C_HOST_PROTOCOL {
   ///
   /// Queue an I2C transaction for execution on the I2C bus
   ///
-  EFI_I2C_HOST_PROTOCOL_QUEUE_REQUEST     QueueRequest;
+  EFI_I2C_HOST_PROTOCOL_QUEUE_REQUEST      QueueRequest;
 
   ///
   /// Pointer to an EFI_I2C_CONTROLLER_CAPABILITIES data structure
   /// containing the capabilities of the I2C host controller.
   ///
-  CONST EFI_I2C_CONTROLLER_CAPABILITIES   *I2cControllerCapabilities;
+  CONST EFI_I2C_CONTROLLER_CAPABILITIES    *I2cControllerCapabilities;
 };
 
 ///
 /// Reference to variable defined in the .DEC file
 ///
-extern EFI_GUID gEfiI2cHostProtocolGuid;
+extern EFI_GUID  gEfiI2cHostProtocolGuid;
 
-#endif  //  __I2C_HOST_H__
+#endif //  __I2C_HOST_H__

@@ -17,16 +17,15 @@
 
 #define EFI_LOAD_FILE2_PROTOCOL_GUID \
   { \
-    0x4006c0c1, 0xfcb3, 0x403e, {0x99, 0x6d, 0x4a, 0x6c, 0x87, 0x24, 0xe0, 0x6d } \
+    0x4006c0c1, 0xfcb3, 0x403e, { 0x99, 0x6d, 0x4a, 0x6c, 0x87, 0x24, 0xe0, 0x6d } \
   }
 
 ///
 /// Protocol Guid defined by UEFI2.1.
 ///
-#define LOAD_FILE2_PROTOCOL EFI_LOAD_FILE2_PROTOCOL_GUID
+#define LOAD_FILE2_PROTOCOL  EFI_LOAD_FILE2_PROTOCOL_GUID
 
 typedef struct _EFI_LOAD_FILE2_PROTOCOL EFI_LOAD_FILE2_PROTOCOL;
-
 
 /**
   Causes the driver to load a specified file.
@@ -58,22 +57,22 @@ typedef struct _EFI_LOAD_FILE2_PROTOCOL EFI_LOAD_FILE2_PROTOCOL;
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_LOAD_FILE2)(
-  IN EFI_LOAD_FILE2_PROTOCOL           *This,
-  IN EFI_DEVICE_PATH_PROTOCOL         *FilePath,
-  IN BOOLEAN                          BootPolicy,
-  IN OUT UINTN                        *BufferSize,
-  IN VOID                             *Buffer OPTIONAL
-  );
+                         IN EFI_LOAD_FILE2_PROTOCOL           *This,
+                         IN EFI_DEVICE_PATH_PROTOCOL         *FilePath,
+                         IN BOOLEAN                          BootPolicy,
+                         IN OUT UINTN                        *BufferSize,
+                         IN VOID                             *Buffer OPTIONAL
+                         );
 
 ///
 /// The EFI_LOAD_FILE_PROTOCOL is a simple protocol used to obtain files from arbitrary devices.
 ///
 struct _EFI_LOAD_FILE2_PROTOCOL {
-  EFI_LOAD_FILE2 LoadFile;
+  EFI_LOAD_FILE2    LoadFile;
 };
 
-extern EFI_GUID gEfiLoadFile2ProtocolGuid;
+extern EFI_GUID  gEfiLoadFile2ProtocolGuid;
 
 #endif

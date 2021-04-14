@@ -32,18 +32,17 @@ InternalMathDivRemU64x32 (
   )
 {
   _asm {
-    mov     ecx, Divisor
-    mov     eax, dword ptr [Dividend + 4]
+  mov  ecx, Divisor
+    mov     eax, dword ptr[Dividend + 4]
     xor     edx, edx
     div     ecx
     push    eax
-    mov     eax, dword ptr [Dividend + 0]
+    mov     eax, dword ptr[Dividend + 0]
     div     ecx
     mov     ecx, Remainder
     jecxz   RemainderNull                      // abandon remainder if Remainder == NULL
-    mov     [ecx], edx
+       mov[ecx], edx
 RemainderNull:
-    pop     edx
+    pop  edx
   }
 }
-

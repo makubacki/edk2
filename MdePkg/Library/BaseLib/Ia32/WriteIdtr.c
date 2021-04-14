@@ -6,7 +6,6 @@
 
 **/
 
-
 #include "BaseLibInternals.h"
 
 /**
@@ -25,11 +24,10 @@ InternalX86WriteIdtr (
   )
 {
   _asm {
-    mov     eax, Idtr
+  mov  eax, Idtr
     pushfd
     cli
-    lidt    fword ptr [eax]
+    lidt    fword ptr[eax]
     popfd
   }
 }
-

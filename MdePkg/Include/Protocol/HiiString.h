@@ -52,17 +52,17 @@ typedef struct _EFI_HII_STRING_PROTOCOL EFI_HII_STRING_PROTOCOL;
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_HII_NEW_STRING)(
-  IN CONST  EFI_HII_STRING_PROTOCOL   *This,
-  IN        EFI_HII_HANDLE            PackageList,
-  OUT       EFI_STRING_ID             *StringId,
-  IN CONST  CHAR8                     *Language,
-  IN  CONST CHAR16                    *LanguageName, OPTIONAL
-  IN CONST  EFI_STRING                String,
-  IN CONST  EFI_FONT_INFO             *StringFontInfo OPTIONAL
-);
-
+                             IN CONST  EFI_HII_STRING_PROTOCOL   *This,
+                             IN        EFI_HII_HANDLE            PackageList,
+                             OUT       EFI_STRING_ID             *StringId,
+                             IN CONST  CHAR8                     *Language,
+                             IN  CONST CHAR16                    *LanguageName,
+                             OPTIONAL
+                             IN CONST  EFI_STRING                String,
+                             IN CONST  EFI_FONT_INFO             *StringFontInfo OPTIONAL
+                             );
 
 /**
   This function retrieves the string specified by StringId which is associated
@@ -98,16 +98,16 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_HII_GET_STRING)(
-  IN CONST  EFI_HII_STRING_PROTOCOL *This,
-  IN CONST  CHAR8                   *Language,
-  IN        EFI_HII_HANDLE          PackageList,
-  IN        EFI_STRING_ID           StringId,
-  OUT       EFI_STRING              String,
-  IN OUT    UINTN                   *StringSize,
-  OUT       EFI_FONT_INFO           **StringFontInfo OPTIONAL
-);
+                             IN CONST  EFI_HII_STRING_PROTOCOL *This,
+                             IN CONST  CHAR8                   *Language,
+                             IN        EFI_HII_HANDLE          PackageList,
+                             IN        EFI_STRING_ID           StringId,
+                             OUT       EFI_STRING              String,
+                             IN OUT    UINTN                   *StringSize,
+                             OUT       EFI_FONT_INFO           **StringFontInfo OPTIONAL
+                             );
 
 /**
   This function updates the string specified by StringId in the specified PackageList to the text
@@ -133,16 +133,15 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_HII_SET_STRING)(
-  IN CONST  EFI_HII_STRING_PROTOCOL *This,
-  IN        EFI_HII_HANDLE          PackageList,
-  IN        EFI_STRING_ID           StringId,
-  IN CONST  CHAR8                   *Language,
-  IN        EFI_STRING              String,
-  IN CONST  EFI_FONT_INFO           *StringFontInfo OPTIONAL
-);
-
+                             IN CONST  EFI_HII_STRING_PROTOCOL *This,
+                             IN        EFI_HII_HANDLE          PackageList,
+                             IN        EFI_STRING_ID           StringId,
+                             IN CONST  CHAR8                   *Language,
+                             IN        EFI_STRING              String,
+                             IN CONST  EFI_FONT_INFO           *StringFontInfo OPTIONAL
+                             );
 
 /**
   This function returns the list of supported languages.
@@ -167,14 +166,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_HII_GET_LANGUAGES)(
-  IN CONST  EFI_HII_STRING_PROTOCOL   *This,
-  IN        EFI_HII_HANDLE            PackageList,
-  IN OUT    CHAR8                     *Languages,
-  IN OUT    UINTN                     *LanguagesSize
-);
-
+                                IN CONST  EFI_HII_STRING_PROTOCOL   *This,
+                                IN        EFI_HII_HANDLE            PackageList,
+                                IN OUT    CHAR8                     *Languages,
+                                IN OUT    UINTN                     *LanguagesSize
+                                );
 
 /**
   Each string package has associated with it a single primary language and zero
@@ -210,29 +208,26 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_HII_GET_2ND_LANGUAGES)(
-  IN CONST  EFI_HII_STRING_PROTOCOL   *This,
-  IN        EFI_HII_HANDLE            PackageList,
-  IN CONST  CHAR8                     *PrimaryLanguage,
-  IN OUT    CHAR8                     *SecondaryLanguages,
-  IN OUT    UINTN                     *SecondaryLanguagesSize
-);
-
+                                    IN CONST  EFI_HII_STRING_PROTOCOL   *This,
+                                    IN        EFI_HII_HANDLE            PackageList,
+                                    IN CONST  CHAR8                     *PrimaryLanguage,
+                                    IN OUT    CHAR8                     *SecondaryLanguages,
+                                    IN OUT    UINTN                     *SecondaryLanguagesSize
+                                    );
 
 ///
 /// Services to manipulate the string.
 ///
 struct _EFI_HII_STRING_PROTOCOL {
-  EFI_HII_NEW_STRING        NewString;
-  EFI_HII_GET_STRING        GetString;
-  EFI_HII_SET_STRING        SetString;
-  EFI_HII_GET_LANGUAGES     GetLanguages;
-  EFI_HII_GET_2ND_LANGUAGES GetSecondaryLanguages;
+  EFI_HII_NEW_STRING           NewString;
+  EFI_HII_GET_STRING           GetString;
+  EFI_HII_SET_STRING           SetString;
+  EFI_HII_GET_LANGUAGES        GetLanguages;
+  EFI_HII_GET_2ND_LANGUAGES    GetSecondaryLanguages;
 };
 
-
-extern EFI_GUID gEfiHiiStringProtocolGuid;
+extern EFI_GUID  gEfiHiiStringProtocolGuid;
 
 #endif
-

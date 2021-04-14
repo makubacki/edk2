@@ -6,9 +6,7 @@
 
 **/
 
-
 #include "BaseLibInternals.h"
-
 
 /**
   Reads the current Interrupt Descriptor Table Register(GDTR) descriptor.
@@ -26,7 +24,7 @@ InternalX86ReadIdtr (
   )
 {
   _asm {
-    mov     eax, Idtr
-    sidt    fword ptr [eax]
+  mov  eax, Idtr
+    sidt    fword ptr[eax]
   }
 }

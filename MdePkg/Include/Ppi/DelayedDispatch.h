@@ -15,9 +15,8 @@
 ///
 #define EFI_DELAYED_DISPATCH_PPI_GUID \
   { \
-    0x869c711d, 0x649c, 0x44fe, { 0x8b, 0x9e, 0x2c, 0xbb, 0x29, 0x11, 0xc3, 0xe6} } \
+    0x869c711d, 0x649c, 0x44fe, { 0x8b, 0x9e, 0x2c, 0xbb, 0x29, 0x11, 0xc3, 0xe6 } } \
   }
-
 
 /**
   Delayed Dispatch function.  This routine is called sometime after the required
@@ -30,19 +29,17 @@
 **/
 
 typedef
-VOID
-(EFIAPI *EFI_DELAYED_DISPATCH_FUNCTION) (
-  IN OUT UINT64 *Context,
-     OUT UINT32 *NewDelay
-  );
-
+  VOID
+(EFIAPI *EFI_DELAYED_DISPATCH_FUNCTION)(
+                                        IN OUT UINT64 *Context,
+                                        OUT UINT32 *NewDelay
+                                        );
 
 ///
 /// The forward declaration for EFI_DELAYED_DISPATCH_PPI
 ///
 
-typedef  struct _EFI_DELAYED_DISPATCH_PPI  EFI_DELAYED_DISPATCH_PPI;
-
+typedef  struct _EFI_DELAYED_DISPATCH_PPI EFI_DELAYED_DISPATCH_PPI;
 
 /**
 Register a callback to be called after a minimum delay has occurred.
@@ -60,14 +57,13 @@ This service is the single member function of the EFI_DELAYED_DISPATCH_PPI
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_DELAYED_DISPATCH_REGISTER)(
-  IN  EFI_DELAYED_DISPATCH_PPI      *This,
-  IN  EFI_DELAYED_DISPATCH_FUNCTION  Function,
-  IN  UINT64                     Context,
-  OUT UINT32                     Delay
-  );
-
+                                        IN  EFI_DELAYED_DISPATCH_PPI      *This,
+                                        IN  EFI_DELAYED_DISPATCH_FUNCTION  Function,
+                                        IN  UINT64                     Context,
+                                        OUT UINT32                     Delay
+                                        );
 
 ///
 /// This PPI is a pointer to the Delayed Dispatch Service.
@@ -78,7 +74,6 @@ EFI_STATUS
 struct _EFI_DELAYED_DISPATCH_PPI {
   EFI_DELAYED_DISPATCH_REGISTER      Register;
 };
-
 
 extern EFI_GUID gEfiPeiDelayedDispatchPpiGuid;
 

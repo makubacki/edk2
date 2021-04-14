@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 /**
   Reads the current value of 64-bit MMX Register #1 (MM1).
 
@@ -25,12 +22,11 @@ AsmReadMm1 (
   )
 {
   _asm {
-    push    eax
-    push    eax
-    movq    [esp], mm1
+  push    eax
+  push    eax
+      movq[esp], mm1
     pop     eax
     pop     edx
-    emms
+      emms
   }
 }
-

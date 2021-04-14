@@ -24,8 +24,7 @@ AsmWriteDr7 (
   )
 {
   _asm {
-    mov     eax, Value
+  mov  eax, Value
     mov     dr7, eax
   }
 }
-

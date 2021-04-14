@@ -10,7 +10,6 @@
 
 **/
 
-
 #include <PiDxe.h>
 
 #include <Guid/EventGroup.h>
@@ -33,31 +32,31 @@
 
 **/
 #define ASSERT_INVALID_PCI_ADDRESS(A) \
- ASSERT (((A) & ~0xfffffff) == 0)
+  ASSERT (((A) &~0xfffffff) == 0)
 
 ///
 /// Define table for mapping PCI Express MMIO physical addresses to virtual addresses at OS runtime
 ///
 typedef struct {
-  UINTN  PhysicalAddress;
-  UINTN  VirtualAddress;
+  UINTN    PhysicalAddress;
+  UINTN    VirtualAddress;
 } PCI_EXPRESS_RUNTIME_REGISTRATION_TABLE;
 
 ///
 /// Set Virtual Address Map Event
 ///
-EFI_EVENT                               mDxeRuntimePciExpressLibVirtualNotifyEvent = NULL;
+EFI_EVENT  mDxeRuntimePciExpressLibVirtualNotifyEvent = NULL;
 
 ///
 /// Module global that contains the base physical address and size of the PCI Express MMIO range.
 ///
-UINTN                                   mDxeRuntimePciExpressLibPciExpressBaseAddress = 0;
-UINTN                                   mDxeRuntimePciExpressLibPciExpressBaseSize = 0;
+UINTN  mDxeRuntimePciExpressLibPciExpressBaseAddress = 0;
+UINTN  mDxeRuntimePciExpressLibPciExpressBaseSize    = 0;
 
 ///
 /// The number of PCI devices that have been registered for runtime access.
 ///
-UINTN                                   mDxeRuntimePciExpressLibNumberOfRuntimeRanges = 0;
+UINTN  mDxeRuntimePciExpressLibNumberOfRuntimeRanges = 0;
 
 ///
 /// The table of PCI devices that have been registered for runtime access.
@@ -67,8 +66,7 @@ PCI_EXPRESS_RUNTIME_REGISTRATION_TABLE  *mDxeRuntimePciExpressLibRegistrationTab
 ///
 /// The table index of the most recent virtual address lookup.
 ///
-UINTN                                   mDxeRuntimePciExpressLibLastRuntimeRange = 0;
-
+UINTN  mDxeRuntimePciExpressLibLastRuntimeRange = 0;
 
 /**
   Convert the physical PCI Express MMIO addresses for all registered PCI devices
@@ -131,18 +129,18 @@ DxeRuntimePciExpressLibConstructor (
   // Cache the physical address of the PCI Express MMIO range into a module global variable
   //
   mDxeRuntimePciExpressLibPciExpressBaseAddress = (UINTN) PcdGet64 (PcdPciExpressBaseAddress);
-  mDxeRuntimePciExpressLibPciExpressBaseSize = (UINTN) PcdGet64 (PcdPciExpressBaseSize);
+  mDxeRuntimePciExpressLibPciExpressBaseSize    = (UINTN) PcdGet64 (PcdPciExpressBaseSize);
 
   //
   // Register SetVirtualAddressMap () notify function
   //
   Status = gBS->CreateEvent (
-                  EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE,
-                  TPL_NOTIFY,
-                  DxeRuntimePciExpressLibVirtualNotify,
-                  NULL,
-                  &mDxeRuntimePciExpressLibVirtualNotifyEvent
-                  );
+                             EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE,
+                             TPL_NOTIFY,
+                             DxeRuntimePciExpressLibVirtualNotify,
+                             NULL,
+                             &mDxeRuntimePciExpressLibVirtualNotifyEvent
+                             );
   ASSERT_EFI_ERROR (Status);
 
   return Status;
@@ -215,7 +213,7 @@ GetPciExpressAddress (
   // Make sure the Address is in MMCONF address space
   //
   if (Address >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINTN) -1;
+    return (UINTN) - 1;
   }
 
   //
@@ -233,11 +231,13 @@ GetPciExpressAddress (
   //
   // See if there is a physical address match at the exact same index as the last address match
   //
-  if (mDxeRuntimePciExpressLibRegistrationTable[mDxeRuntimePciExpressLibLastRuntimeRange].PhysicalAddress == (Address & (~0x00000fff))) {
+  if (mDxeRuntimePciExpressLibRegistrationTable[mDxeRuntimePciExpressLibLastRuntimeRange].PhysicalAddress ==
+      (Address & (~0x00000fff))) {
     //
     // Convert the physical address to a virtual address and return the virtual address
     //
-    return (Address & 0x00000fff) + mDxeRuntimePciExpressLibRegistrationTable[mDxeRuntimePciExpressLibLastRuntimeRange].VirtualAddress;
+    return (Address & 0x00000fff) +
+           mDxeRuntimePciExpressLibRegistrationTable[mDxeRuntimePciExpressLibLastRuntimeRange].VirtualAddress;
   }
 
   //
@@ -259,7 +259,7 @@ GetPciExpressAddress (
   //
   // No match was found.  This is a critical error at OS runtime, so ASSERT() and force a breakpoint.
   //
-  CpuBreakpoint();
+  CpuBreakpoint ();
 
   //
   // Return the physical address
@@ -310,7 +310,7 @@ PciExpressRegisterForRuntimeAccess (
   //
   // Make sure Address is valid
   //
- ASSERT_INVALID_PCI_ADDRESS (Address);
+  ASSERT_INVALID_PCI_ADDRESS (Address);
 
   //
   // Make sure the Address is in MMCONF address space
@@ -356,13 +356,16 @@ PciExpressRegisterForRuntimeAccess (
   // Grow the size of the registration table
   //
   NewTable = ReallocateRuntimePool (
-               (mDxeRuntimePciExpressLibNumberOfRuntimeRanges + 0) * sizeof (PCI_EXPRESS_RUNTIME_REGISTRATION_TABLE),
-               (mDxeRuntimePciExpressLibNumberOfRuntimeRanges + 1) * sizeof (PCI_EXPRESS_RUNTIME_REGISTRATION_TABLE),
-               mDxeRuntimePciExpressLibRegistrationTable
-               );
+                                    (mDxeRuntimePciExpressLibNumberOfRuntimeRanges + 0) *
+                                    sizeof (PCI_EXPRESS_RUNTIME_REGISTRATION_TABLE),
+                                    (mDxeRuntimePciExpressLibNumberOfRuntimeRanges + 1) *
+                                    sizeof (PCI_EXPRESS_RUNTIME_REGISTRATION_TABLE),
+                                    mDxeRuntimePciExpressLibRegistrationTable
+                                    );
   if (NewTable == NULL) {
     return RETURN_OUT_OF_RESOURCES;
   }
+
   mDxeRuntimePciExpressLibRegistrationTable = NewTable;
   mDxeRuntimePciExpressLibRegistrationTable[mDxeRuntimePciExpressLibNumberOfRuntimeRanges].PhysicalAddress = Address;
   mDxeRuntimePciExpressLibRegistrationTable[mDxeRuntimePciExpressLibNumberOfRuntimeRanges].VirtualAddress  = Address;
@@ -370,7 +373,6 @@ PciExpressRegisterForRuntimeAccess (
 
   return RETURN_SUCCESS;
 }
-
 
 /**
   Reads an 8-bit PCI configuration register.
@@ -395,8 +397,9 @@ PciExpressRead8 (
 {
   ASSERT_INVALID_PCI_ADDRESS (Address);
   if (Address >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINT8) -1;
+    return (UINT8) - 1;
   }
+
   return MmioRead8 (GetPciExpressAddress (Address));
 }
 
@@ -425,8 +428,9 @@ PciExpressWrite8 (
   )
 {
   if (Address >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINT8) -1;
+    return (UINT8) - 1;
   }
+
   return MmioWrite8 (GetPciExpressAddress (Address), Value);
 }
 
@@ -459,8 +463,9 @@ PciExpressOr8 (
   )
 {
   if (Address >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINT8) -1;
+    return (UINT8) - 1;
   }
+
   return MmioOr8 (GetPciExpressAddress (Address), OrData);
 }
 
@@ -493,8 +498,9 @@ PciExpressAnd8 (
   )
 {
   if (Address >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINT8) -1;
+    return (UINT8) - 1;
   }
+
   return MmioAnd8 (GetPciExpressAddress (Address), AndData);
 }
 
@@ -530,13 +536,14 @@ PciExpressAndThenOr8 (
   )
 {
   if (Address >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINT8) -1;
+    return (UINT8) - 1;
   }
+
   return MmioAndThenOr8 (
-           GetPciExpressAddress (Address),
-           AndData,
-           OrData
-           );
+                         GetPciExpressAddress (Address),
+                         AndData,
+                         OrData
+                         );
 }
 
 /**
@@ -570,13 +577,14 @@ PciExpressBitFieldRead8 (
   )
 {
   if (Address >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINT8) -1;
+    return (UINT8) - 1;
   }
+
   return MmioBitFieldRead8 (
-           GetPciExpressAddress (Address),
-           StartBit,
-           EndBit
-           );
+                            GetPciExpressAddress (Address),
+                            StartBit,
+                            EndBit
+                            );
 }
 
 /**
@@ -614,14 +622,15 @@ PciExpressBitFieldWrite8 (
   )
 {
   if (Address >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINT8) -1;
+    return (UINT8) - 1;
   }
+
   return MmioBitFieldWrite8 (
-           GetPciExpressAddress (Address),
-           StartBit,
-           EndBit,
-           Value
-           );
+                             GetPciExpressAddress (Address),
+                             StartBit,
+                             EndBit,
+                             Value
+                             );
 }
 
 /**
@@ -662,14 +671,15 @@ PciExpressBitFieldOr8 (
   )
 {
   if (Address >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINT8) -1;
+    return (UINT8) - 1;
   }
+
   return MmioBitFieldOr8 (
-           GetPciExpressAddress (Address),
-           StartBit,
-           EndBit,
-           OrData
-           );
+                          GetPciExpressAddress (Address),
+                          StartBit,
+                          EndBit,
+                          OrData
+                          );
 }
 
 /**
@@ -710,14 +720,15 @@ PciExpressBitFieldAnd8 (
   )
 {
   if (Address >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINT8) -1;
+    return (UINT8) - 1;
   }
+
   return MmioBitFieldAnd8 (
-           GetPciExpressAddress (Address),
-           StartBit,
-           EndBit,
-           AndData
-           );
+                           GetPciExpressAddress (Address),
+                           StartBit,
+                           EndBit,
+                           AndData
+                           );
 }
 
 /**
@@ -763,15 +774,16 @@ PciExpressBitFieldAndThenOr8 (
   )
 {
   if (Address >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINT8) -1;
+    return (UINT8) - 1;
   }
+
   return MmioBitFieldAndThenOr8 (
-           GetPciExpressAddress (Address),
-           StartBit,
-           EndBit,
-           AndData,
-           OrData
-           );
+                                 GetPciExpressAddress (Address),
+                                 StartBit,
+                                 EndBit,
+                                 AndData,
+                                 OrData
+                                 );
 }
 
 /**
@@ -798,8 +810,9 @@ PciExpressRead16 (
   )
 {
   if (Address >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINT16) -1;
+    return (UINT16) - 1;
   }
+
   return MmioRead16 (GetPciExpressAddress (Address));
 }
 
@@ -829,8 +842,9 @@ PciExpressWrite16 (
   )
 {
   if (Address >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINT16) -1;
+    return (UINT16) - 1;
   }
+
   return MmioWrite16 (GetPciExpressAddress (Address), Value);
 }
 
@@ -864,8 +878,9 @@ PciExpressOr16 (
   )
 {
   if (Address >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINT16) -1;
+    return (UINT16) - 1;
   }
+
   return MmioOr16 (GetPciExpressAddress (Address), OrData);
 }
 
@@ -899,8 +914,9 @@ PciExpressAnd16 (
   )
 {
   if (Address >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINT16) -1;
+    return (UINT16) - 1;
   }
+
   return MmioAnd16 (GetPciExpressAddress (Address), AndData);
 }
 
@@ -937,13 +953,14 @@ PciExpressAndThenOr16 (
   )
 {
   if (Address >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINT16) -1;
+    return (UINT16) - 1;
   }
+
   return MmioAndThenOr16 (
-           GetPciExpressAddress (Address),
-           AndData,
-           OrData
-           );
+                          GetPciExpressAddress (Address),
+                          AndData,
+                          OrData
+                          );
 }
 
 /**
@@ -978,13 +995,14 @@ PciExpressBitFieldRead16 (
   )
 {
   if (Address >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINT16) -1;
+    return (UINT16) - 1;
   }
+
   return MmioBitFieldRead16 (
-           GetPciExpressAddress (Address),
-           StartBit,
-           EndBit
-           );
+                             GetPciExpressAddress (Address),
+                             StartBit,
+                             EndBit
+                             );
 }
 
 /**
@@ -1023,14 +1041,15 @@ PciExpressBitFieldWrite16 (
   )
 {
   if (Address >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINT16) -1;
+    return (UINT16) - 1;
   }
+
   return MmioBitFieldWrite16 (
-           GetPciExpressAddress (Address),
-           StartBit,
-           EndBit,
-           Value
-           );
+                              GetPciExpressAddress (Address),
+                              StartBit,
+                              EndBit,
+                              Value
+                              );
 }
 
 /**
@@ -1072,14 +1091,15 @@ PciExpressBitFieldOr16 (
   )
 {
   if (Address >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINT16) -1;
+    return (UINT16) - 1;
   }
+
   return MmioBitFieldOr16 (
-           GetPciExpressAddress (Address),
-           StartBit,
-           EndBit,
-           OrData
-           );
+                           GetPciExpressAddress (Address),
+                           StartBit,
+                           EndBit,
+                           OrData
+                           );
 }
 
 /**
@@ -1121,14 +1141,15 @@ PciExpressBitFieldAnd16 (
   )
 {
   if (Address >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINT16) -1;
+    return (UINT16) - 1;
   }
+
   return MmioBitFieldAnd16 (
-           GetPciExpressAddress (Address),
-           StartBit,
-           EndBit,
-           AndData
-           );
+                            GetPciExpressAddress (Address),
+                            StartBit,
+                            EndBit,
+                            AndData
+                            );
 }
 
 /**
@@ -1175,15 +1196,16 @@ PciExpressBitFieldAndThenOr16 (
   )
 {
   if (Address >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINT16) -1;
+    return (UINT16) - 1;
   }
+
   return MmioBitFieldAndThenOr16 (
-           GetPciExpressAddress (Address),
-           StartBit,
-           EndBit,
-           AndData,
-           OrData
-           );
+                                  GetPciExpressAddress (Address),
+                                  StartBit,
+                                  EndBit,
+                                  AndData,
+                                  OrData
+                                  );
 }
 
 /**
@@ -1210,8 +1232,9 @@ PciExpressRead32 (
   )
 {
   if (Address >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINT32) -1;
+    return (UINT32) - 1;
   }
+
   return MmioRead32 (GetPciExpressAddress (Address));
 }
 
@@ -1241,8 +1264,9 @@ PciExpressWrite32 (
   )
 {
   if (Address >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINT32) -1;
+    return (UINT32) - 1;
   }
+
   return MmioWrite32 (GetPciExpressAddress (Address), Value);
 }
 
@@ -1276,8 +1300,9 @@ PciExpressOr32 (
   )
 {
   if (Address >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINT32) -1;
+    return (UINT32) - 1;
   }
+
   return MmioOr32 (GetPciExpressAddress (Address), OrData);
 }
 
@@ -1311,8 +1336,9 @@ PciExpressAnd32 (
   )
 {
   if (Address >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINT32) -1;
+    return (UINT32) - 1;
   }
+
   return MmioAnd32 (GetPciExpressAddress (Address), AndData);
 }
 
@@ -1349,13 +1375,14 @@ PciExpressAndThenOr32 (
   )
 {
   if (Address >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINT32) -1;
+    return (UINT32) - 1;
   }
+
   return MmioAndThenOr32 (
-           GetPciExpressAddress (Address),
-           AndData,
-           OrData
-           );
+                          GetPciExpressAddress (Address),
+                          AndData,
+                          OrData
+                          );
 }
 
 /**
@@ -1390,13 +1417,14 @@ PciExpressBitFieldRead32 (
   )
 {
   if (Address >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINT32) -1;
+    return (UINT32) - 1;
   }
+
   return MmioBitFieldRead32 (
-           GetPciExpressAddress (Address),
-           StartBit,
-           EndBit
-           );
+                             GetPciExpressAddress (Address),
+                             StartBit,
+                             EndBit
+                             );
 }
 
 /**
@@ -1435,14 +1463,15 @@ PciExpressBitFieldWrite32 (
   )
 {
   if (Address >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINT32) -1;
+    return (UINT32) - 1;
   }
+
   return MmioBitFieldWrite32 (
-           GetPciExpressAddress (Address),
-           StartBit,
-           EndBit,
-           Value
-           );
+                              GetPciExpressAddress (Address),
+                              StartBit,
+                              EndBit,
+                              Value
+                              );
 }
 
 /**
@@ -1484,14 +1513,15 @@ PciExpressBitFieldOr32 (
   )
 {
   if (Address >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINT32) -1;
+    return (UINT32) - 1;
   }
+
   return MmioBitFieldOr32 (
-           GetPciExpressAddress (Address),
-           StartBit,
-           EndBit,
-           OrData
-           );
+                           GetPciExpressAddress (Address),
+                           StartBit,
+                           EndBit,
+                           OrData
+                           );
 }
 
 /**
@@ -1533,14 +1563,15 @@ PciExpressBitFieldAnd32 (
   )
 {
   if (Address >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINT32) -1;
+    return (UINT32) - 1;
   }
+
   return MmioBitFieldAnd32 (
-           GetPciExpressAddress (Address),
-           StartBit,
-           EndBit,
-           AndData
-           );
+                            GetPciExpressAddress (Address),
+                            StartBit,
+                            EndBit,
+                            AndData
+                            );
 }
 
 /**
@@ -1587,15 +1618,16 @@ PciExpressBitFieldAndThenOr32 (
   )
 {
   if (Address >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINT32) -1;
+    return (UINT32) - 1;
   }
+
   return MmioBitFieldAndThenOr32 (
-           GetPciExpressAddress (Address),
-           StartBit,
-           EndBit,
-           AndData,
-           OrData
-           );
+                                  GetPciExpressAddress (Address),
+                                  StartBit,
+                                  EndBit,
+                                  AndData,
+                                  OrData
+                                  );
 }
 
 /**
@@ -1630,7 +1662,7 @@ PciExpressReadBuffer (
   OUT     VOID                      *Buffer
   )
 {
-  UINTN   ReturnValue;
+  UINTN  ReturnValue;
 
   //
   // Make sure Address is valid
@@ -1642,7 +1674,7 @@ PciExpressReadBuffer (
   // Make sure the Address is in MMCONF address space
   //
   if (StartAddress >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINTN) -1;
+    return (UINTN) - 1;
   }
 
   if (Size == 0) {
@@ -1660,10 +1692,10 @@ PciExpressReadBuffer (
     //
     // Read a byte if StartAddress is byte aligned
     //
-    *(volatile UINT8 *)Buffer = PciExpressRead8 (StartAddress);
+    *(volatile UINT8 *) Buffer = PciExpressRead8 (StartAddress);
     StartAddress += sizeof (UINT8);
-    Size -= sizeof (UINT8);
-    Buffer = (UINT8*)Buffer + 1;
+    Size  -= sizeof (UINT8);
+    Buffer = (UINT8 *) Buffer + 1;
   }
 
   if (Size >= sizeof (UINT16) && (StartAddress & 2) != 0) {
@@ -1673,8 +1705,8 @@ PciExpressReadBuffer (
     WriteUnaligned16 ((UINT16 *) Buffer, (UINT16) PciExpressRead16 (StartAddress));
 
     StartAddress += sizeof (UINT16);
-    Size -= sizeof (UINT16);
-    Buffer = (UINT16*)Buffer + 1;
+    Size  -= sizeof (UINT16);
+    Buffer = (UINT16 *) Buffer + 1;
   }
 
   while (Size >= sizeof (UINT32)) {
@@ -1684,8 +1716,8 @@ PciExpressReadBuffer (
     WriteUnaligned32 ((UINT32 *) Buffer, (UINT32) PciExpressRead32 (StartAddress));
 
     StartAddress += sizeof (UINT32);
-    Size -= sizeof (UINT32);
-    Buffer = (UINT32*)Buffer + 1;
+    Size  -= sizeof (UINT32);
+    Buffer = (UINT32 *) Buffer + 1;
   }
 
   if (Size >= sizeof (UINT16)) {
@@ -1694,15 +1726,15 @@ PciExpressReadBuffer (
     //
     WriteUnaligned16 ((UINT16 *) Buffer, (UINT16) PciExpressRead16 (StartAddress));
     StartAddress += sizeof (UINT16);
-    Size -= sizeof (UINT16);
-    Buffer = (UINT16*)Buffer + 1;
+    Size  -= sizeof (UINT16);
+    Buffer = (UINT16 *) Buffer + 1;
   }
 
   if (Size >= sizeof (UINT8)) {
     //
     // Read the last remaining byte if exist
     //
-    *(volatile UINT8 *)Buffer = PciExpressRead8 (StartAddress);
+    *(volatile UINT8 *) Buffer = PciExpressRead8 (StartAddress);
   }
 
   return ReturnValue;
@@ -1741,7 +1773,7 @@ PciExpressWriteBuffer (
   IN      VOID                      *Buffer
   )
 {
-  UINTN                             ReturnValue;
+  UINTN  ReturnValue;
 
   //
   // Make sure Address is valid
@@ -1753,7 +1785,7 @@ PciExpressWriteBuffer (
   // Make sure the Address is in MMCONF address space
   //
   if (StartAddress >= mDxeRuntimePciExpressLibPciExpressBaseSize) {
-    return (UINTN) -1;
+    return (UINTN) - 1;
   }
 
   if (Size == 0) {
@@ -1771,47 +1803,47 @@ PciExpressWriteBuffer (
     //
     // Write a byte if StartAddress is byte aligned
     //
-    PciExpressWrite8 (StartAddress, *(UINT8*)Buffer);
+    PciExpressWrite8 (StartAddress, *(UINT8 *) Buffer);
     StartAddress += sizeof (UINT8);
-    Size -= sizeof (UINT8);
-    Buffer = (UINT8*)Buffer + 1;
+    Size  -= sizeof (UINT8);
+    Buffer = (UINT8 *) Buffer + 1;
   }
 
   if (Size >= sizeof (UINT16) && (StartAddress & 2) != 0) {
     //
     // Write a word if StartAddress is word aligned
     //
-    PciExpressWrite16 (StartAddress, ReadUnaligned16 ((UINT16*)Buffer));
+    PciExpressWrite16 (StartAddress, ReadUnaligned16 ((UINT16 *) Buffer));
     StartAddress += sizeof (UINT16);
-    Size -= sizeof (UINT16);
-    Buffer = (UINT16*)Buffer + 1;
+    Size  -= sizeof (UINT16);
+    Buffer = (UINT16 *) Buffer + 1;
   }
 
   while (Size >= sizeof (UINT32)) {
     //
     // Write as many double words as possible
     //
-    PciExpressWrite32 (StartAddress, ReadUnaligned32 ((UINT32*)Buffer));
+    PciExpressWrite32 (StartAddress, ReadUnaligned32 ((UINT32 *) Buffer));
     StartAddress += sizeof (UINT32);
-    Size -= sizeof (UINT32);
-    Buffer = (UINT32*)Buffer + 1;
+    Size  -= sizeof (UINT32);
+    Buffer = (UINT32 *) Buffer + 1;
   }
 
   if (Size >= sizeof (UINT16)) {
     //
     // Write the last remaining word if exist
     //
-    PciExpressWrite16 (StartAddress, ReadUnaligned16 ((UINT16*)Buffer));
+    PciExpressWrite16 (StartAddress, ReadUnaligned16 ((UINT16 *) Buffer));
     StartAddress += sizeof (UINT16);
-    Size -= sizeof (UINT16);
-    Buffer = (UINT16*)Buffer + 1;
+    Size  -= sizeof (UINT16);
+    Buffer = (UINT16 *) Buffer + 1;
   }
 
   if (Size >= sizeof (UINT8)) {
     //
     // Write the last remaining byte if exist
     //
-    PciExpressWrite8 (StartAddress, *(UINT8*)Buffer);
+    PciExpressWrite8 (StartAddress, *(UINT8 *) Buffer);
   }
 
   return ReturnValue;

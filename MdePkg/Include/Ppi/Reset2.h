@@ -17,16 +17,16 @@
 
 #define EFI_PEI_RESET2_PPI_GUID \
   { \
-    0x6cc45765, 0xcce4, 0x42fd, {0xbc, 0x56, 0x1, 0x1a, 0xaa, 0xc6, 0xc9, 0xa8 } \
+    0x6cc45765, 0xcce4, 0x42fd, { 0xbc, 0x56, 0x1, 0x1a, 0xaa, 0xc6, 0xc9, 0xa8 } \
   }
 
 ///
 /// This PPI provides provide a simple reset service.
 ///
 typedef struct _EFI_PEI_RESET2_PPI {
-  EFI_PEI_RESET2_SYSTEM ResetSystem;
+  EFI_PEI_RESET2_SYSTEM    ResetSystem;
 } EFI_PEI_RESET2_PPI;
 
-extern EFI_GUID gEfiPeiReset2PpiGuid;
+extern EFI_GUID  gEfiPeiReset2PpiGuid;
 
 #endif

@@ -32,13 +32,13 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 ///
 #define EFI_IDE_CONTROLLER_INIT_PROTOCOL_GUID \
   { \
-    0xa1e37052, 0x80d9, 0x4e65, {0xa3, 0x17, 0x3e, 0x9a, 0x55, 0xc4, 0x3e, 0xc9 } \
+    0xa1e37052, 0x80d9, 0x4e65, { 0xa3, 0x17, 0x3e, 0x9a, 0x55, 0xc4, 0x3e, 0xc9 } \
   }
 
 ///
 /// Forward declaration for EFI_IDE_CONTROLLER_INIT_PROTOCOL.
 ///
-typedef struct _EFI_IDE_CONTROLLER_INIT_PROTOCOL  EFI_IDE_CONTROLLER_INIT_PROTOCOL;
+typedef struct _EFI_IDE_CONTROLLER_INIT_PROTOCOL EFI_IDE_CONTROLLER_INIT_PROTOCOL;
 
 ///
 /// The phase of the IDE Controller enumeration.
@@ -119,8 +119,8 @@ typedef enum {
 /// EFI_ATA_MODE structure.
 ///
 typedef struct {
-  BOOLEAN      Valid;   ///< TRUE if Mode is valid.
-  UINT32       Mode;    ///< The actual ATA mode. This field is not a bit map.
+  BOOLEAN    Valid;     ///< TRUE if Mode is valid.
+  UINT32     Mode;      ///< The actual ATA mode. This field is not a bit map.
 } EFI_ATA_MODE;
 
 ///
@@ -136,11 +136,11 @@ typedef struct {
   /// can support new transport protocols beyond UDMA. Type EFI_ATA_EXT_TRANSFER_PROTOCOL
   /// is defined below.
   ///
-  EFI_ATA_EXT_TRANSFER_PROTOCOL  TransferProtocol;
+  EFI_ATA_EXT_TRANSFER_PROTOCOL    TransferProtocol;
   ///
   /// The mode for operating the transfer protocol that is identified by TransferProtocol.
   ///
-  UINT32                         Mode;
+  UINT32                           Mode;
 } EFI_ATA_EXTENDED_MODE;
 
 ///
@@ -154,7 +154,7 @@ typedef struct {
   /// of PIO mode 1 is governed by the ATA/ATAPI specification. Type EFI_ATA_MODE
   /// is defined below.
   ///
-  EFI_ATA_MODE           PioMode;
+  EFI_ATA_MODE    PioMode;
   ///
   /// This field specifies the single word DMA mode. Single word DMA modes are defined
   /// in the ATA/ATAPI specification, versions 1 and 2. Single word DMA support was
@@ -164,26 +164,26 @@ typedef struct {
   /// mode 1. The actual meaning of single word DMA mode 1 is governed by the ATA/
   /// ATAPI specification.
   ///
-  EFI_ATA_MODE           SingleWordDmaMode;
+  EFI_ATA_MODE             SingleWordDmaMode;
   ///
   /// This field specifies the multiword DMA mode. Various multiword DMA modes are
   /// defined in the ATA/ATAPI specification. A value of 1 in this field means multiword
   /// DMA mode 1. The actual meaning of multiword DMA mode 1 is governed by the
   /// ATA/ATAPI specification.
   ///
-  EFI_ATA_MODE           MultiWordDmaMode;
+  EFI_ATA_MODE             MultiWordDmaMode;
   ///
   /// This field specifies the ultra DMA (UDMA) mode. UDMA modes are defined in the
   /// ATA/ATAPI specification. A value of 1 in this field means UDMA mode 1. The
   /// actual meaning of UDMA mode 1 is governed by the ATA/ATAPI specification.
   ///
-  EFI_ATA_MODE           UdmaMode;
+  EFI_ATA_MODE             UdmaMode;
   ///
   /// The number of extended-mode bitmap entries. Extended modes describe transfer
   /// protocols beyond PIO, single word DMA, multiword DMA, and UDMA. This field
   /// can be zero and provides extensibility.
   ///
-  UINT32                 ExtModeCount;
+  UINT32                   ExtModeCount;
   ///
   /// ExtModeCount number of entries. Each entry represents a transfer protocol other
   /// than the ones defined above (i.e., PIO, single word DMA, multiword DMA, and
@@ -191,7 +191,7 @@ typedef struct {
   /// transfer protocol is defined to cover SATA transfers. Type
   /// EFI_ATA_EXTENDED_MODE is defined below.
   ///
-  EFI_ATA_EXTENDED_MODE  ExtMode[1];
+  EFI_ATA_EXTENDED_MODE    ExtMode[1];
 } EFI_ATA_COLLECTIVE_MODE;
 
 ///
@@ -222,12 +222,12 @@ typedef union {
   /// The data that is returned by an ATA device upon successful completion
   /// of the ATA IDENTIFY_DEVICE command.
   ///
-  EFI_ATA_IDENTIFY_DATA       AtaData;
+  EFI_ATA_IDENTIFY_DATA      AtaData;
   ///
   /// The data that is returned by an ATAPI device upon successful completion
   /// of the ATA IDENTIFY_PACKET_DEVICE command.
   ///
-  EFI_ATAPI_IDENTIFY_DATA     AtapiData;
+  EFI_ATAPI_IDENTIFY_DATA    AtapiData;
 } EFI_IDENTIFY_DATA;
 
 /**
@@ -267,13 +267,13 @@ typedef union {
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_IDE_CONTROLLER_GET_CHANNEL_INFO)(
-  IN  EFI_IDE_CONTROLLER_INIT_PROTOCOL  *This,
-  IN  UINT8                             Channel,
-  OUT BOOLEAN                           *Enabled,
-  OUT UINT8                             *MaxDevices
-  );
+                                              IN  EFI_IDE_CONTROLLER_INIT_PROTOCOL  *This,
+                                              IN  UINT8                             Channel,
+                                              OUT BOOLEAN                           *Enabled,
+                                              OUT UINT8                             *MaxDevices
+                                              );
 
 /**
   The notifications from the driver entity that it is about to enter a certain
@@ -300,12 +300,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_IDE_CONTROLLER_NOTIFY_PHASE)(
-  IN EFI_IDE_CONTROLLER_INIT_PROTOCOL  *This,
-  IN EFI_IDE_CONTROLLER_ENUM_PHASE     Phase,
-  IN UINT8                             Channel
-  );
+                                          IN EFI_IDE_CONTROLLER_INIT_PROTOCOL  *This,
+                                          IN EFI_IDE_CONTROLLER_ENUM_PHASE     Phase,
+                                          IN UINT8                             Channel
+                                          );
 
 /**
   Submits the device information to the IDE controller driver.
@@ -347,13 +347,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_IDE_CONTROLLER_SUBMIT_DATA)(
-  IN EFI_IDE_CONTROLLER_INIT_PROTOCOL  *This,
-  IN UINT8                             Channel,
-  IN UINT8                             Device,
-  IN EFI_IDENTIFY_DATA                 *IdentifyData
-  );
+                                         IN EFI_IDE_CONTROLLER_INIT_PROTOCOL  *This,
+                                         IN UINT8                             Channel,
+                                         IN UINT8                             Device,
+                                         IN EFI_IDENTIFY_DATA                 *IdentifyData
+                                         );
 
 /**
   Disqualifies specific modes for an IDE device.
@@ -396,13 +396,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_IDE_CONTROLLER_DISQUALIFY_MODE)(
-  IN EFI_IDE_CONTROLLER_INIT_PROTOCOL  *This,
-  IN UINT8                             Channel,
-  IN UINT8                             Device,
-  IN EFI_ATA_COLLECTIVE_MODE           *BadModes
-  );
+                                             IN EFI_IDE_CONTROLLER_INIT_PROTOCOL  *This,
+                                             IN UINT8                             Channel,
+                                             IN UINT8                             Device,
+                                             IN EFI_ATA_COLLECTIVE_MODE           *BadModes
+                                             );
 
 /**
   Returns the information about the optimum modes for the specified IDE device.
@@ -459,13 +459,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_IDE_CONTROLLER_CALCULATE_MODE)(
-  IN  EFI_IDE_CONTROLLER_INIT_PROTOCOL  *This,
-  IN  UINT8                             Channel,
-  IN  UINT8                             Device,
-  OUT EFI_ATA_COLLECTIVE_MODE           **SupportedModes
-  );
+                                            IN  EFI_IDE_CONTROLLER_INIT_PROTOCOL  *This,
+                                            IN  UINT8                             Channel,
+                                            IN  UINT8                             Device,
+                                            OUT EFI_ATA_COLLECTIVE_MODE           **SupportedModes
+                                            );
 
 /**
   Commands the IDE controller driver to program the IDE controller hardware
@@ -491,13 +491,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_IDE_CONTROLLER_SET_TIMING)(
-  IN EFI_IDE_CONTROLLER_INIT_PROTOCOL  *This,
-  IN UINT8                             Channel,
-  IN UINT8                             Device,
-  IN EFI_ATA_COLLECTIVE_MODE           *Modes
-  );
+                                        IN EFI_IDE_CONTROLLER_INIT_PROTOCOL  *This,
+                                        IN UINT8                             Channel,
+                                        IN UINT8                             Device,
+                                        IN EFI_ATA_COLLECTIVE_MODE           *Modes
+                                        );
 
 ///
 /// Provides the basic interfaces to abstract an IDE controller.
@@ -551,9 +551,9 @@ struct _EFI_IDE_CONTROLLER_INIT_PROTOCOL {
   /// each of which can have up to one device. In the presence of a multiplier,
   /// each channel can have fifteen devices.
   ///
-  UINT8                                  ChannelCount;
+  UINT8    ChannelCount;
 };
 
-extern EFI_GUID gEfiIdeControllerInitProtocolGuid;
+extern EFI_GUID  gEfiIdeControllerInitProtocolGuid;
 
 #endif

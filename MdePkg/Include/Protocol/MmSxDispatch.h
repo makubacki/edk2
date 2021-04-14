@@ -16,7 +16,7 @@
 
 #define EFI_MM_SX_DISPATCH_PROTOCOL_GUID \
   { \
-    0x456d2859, 0xa84b, 0x4e47, {0xa2, 0xee, 0x32, 0x76, 0xd8, 0x86, 0x99, 0x7d } \
+    0x456d2859, 0xa84b, 0x4e47, { 0xa2, 0xee, 0x32, 0x76, 0xd8, 0x86, 0x99, 0x7d } \
   }
 
 ///
@@ -45,11 +45,11 @@ typedef enum {
 /// The dispatch function's context
 ///
 typedef struct {
-  EFI_SLEEP_TYPE  Type;
-  EFI_SLEEP_PHASE Phase;
+  EFI_SLEEP_TYPE     Type;
+  EFI_SLEEP_PHASE    Phase;
 } EFI_MM_SX_REGISTER_CONTEXT;
 
-typedef struct _EFI_MM_SX_DISPATCH_PROTOCOL  EFI_MM_SX_DISPATCH_PROTOCOL;
+typedef struct _EFI_MM_SX_DISPATCH_PROTOCOL EFI_MM_SX_DISPATCH_PROTOCOL;
 
 /**
   Provides the parent dispatch service for a given Sx source generator.
@@ -86,13 +86,13 @@ typedef struct _EFI_MM_SX_DISPATCH_PROTOCOL  EFI_MM_SX_DISPATCH_PROTOCOL;
                                  child.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MM_SX_REGISTER)(
-  IN  CONST EFI_MM_SX_DISPATCH_PROTOCOL  *This,
-  IN        EFI_MM_HANDLER_ENTRY_POINT   DispatchFunction,
-  IN  CONST EFI_MM_SX_REGISTER_CONTEXT   *RegisterContext,
-  OUT       EFI_HANDLE                   *DispatchHandle
-  );
+                             IN  CONST EFI_MM_SX_DISPATCH_PROTOCOL  *This,
+                             IN        EFI_MM_HANDLER_ENTRY_POINT   DispatchFunction,
+                             IN  CONST EFI_MM_SX_REGISTER_CONTEXT   *RegisterContext,
+                             OUT       EFI_HANDLE                   *DispatchHandle
+                             );
 
 /**
   Unregisters an Sx-state service.
@@ -107,11 +107,11 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER  The DispatchHandle was not valid.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MM_SX_UNREGISTER)(
-  IN CONST EFI_MM_SX_DISPATCH_PROTOCOL  *This,
-  IN       EFI_HANDLE                   DispatchHandle
-  );
+                               IN CONST EFI_MM_SX_DISPATCH_PROTOCOL  *This,
+                               IN       EFI_HANDLE                   DispatchHandle
+                               );
 
 ///
 /// Interface structure for the MM Sx Dispatch Protocol
@@ -120,10 +120,10 @@ EFI_STATUS
 /// respond to sleep state related events.
 ///
 struct _EFI_MM_SX_DISPATCH_PROTOCOL {
-  EFI_MM_SX_REGISTER    Register;
-  EFI_MM_SX_UNREGISTER  UnRegister;
+  EFI_MM_SX_REGISTER      Register;
+  EFI_MM_SX_UNREGISTER    UnRegister;
 };
 
-extern EFI_GUID gEfiMmSxDispatchProtocolGuid;
+extern EFI_GUID  gEfiMmSxDispatchProtocolGuid;
 
 #endif

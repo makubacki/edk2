@@ -45,13 +45,13 @@
 ///
 #define EFI_PCI_HOTPLUG_REQUEST_PROTOCOL_GUID \
   { \
-    0x19cb87ab, 0x2cb9, 0x4665, {0x83, 0x60, 0xdd, 0xcf, 0x60, 0x54, 0xf7, 0x9d} \
+    0x19cb87ab, 0x2cb9, 0x4665, { 0x83, 0x60, 0xdd, 0xcf, 0x60, 0x54, 0xf7, 0x9d } \
   }
 
 ///
 /// Forward declaration for EFI_PCI_HOTPLUG_REQUEST_PROTOCOL
 ///
-typedef struct _EFI_PCI_HOTPLUG_REQUEST_PROTOCOL  EFI_PCI_HOTPLUG_REQUEST_PROTOCOL;
+typedef struct _EFI_PCI_HOTPLUG_REQUEST_PROTOCOL EFI_PCI_HOTPLUG_REQUEST_PROTOCOL;
 
 ///
 /// Enumeration of PCI hot plug operations
@@ -134,15 +134,15 @@ typedef enum {
                                   devices.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PCI_HOTPLUG_REQUEST_NOTIFY)(
-  IN     EFI_PCI_HOTPLUG_REQUEST_PROTOCOL  *This,
-  IN     EFI_PCI_HOTPLUG_OPERATION         Operation,
-  IN     EFI_HANDLE                        Controller,
-  IN     EFI_DEVICE_PATH_PROTOCOL          *RemainingDevicePath  OPTIONAL,
-  IN OUT UINT8                             *NumberOfChildren,
-  IN OUT EFI_HANDLE                        *ChildHandleBuffer
-  );
+                                         IN     EFI_PCI_HOTPLUG_REQUEST_PROTOCOL  *This,
+                                         IN     EFI_PCI_HOTPLUG_OPERATION         Operation,
+                                         IN     EFI_HANDLE                        Controller,
+                                         IN     EFI_DEVICE_PATH_PROTOCOL          *RemainingDevicePath  OPTIONAL,
+                                         IN OUT UINT8                             *NumberOfChildren,
+                                         IN OUT EFI_HANDLE                        *ChildHandleBuffer
+                                         );
 
 ///
 /// Provides services to notify PCI bus driver that some events have happened in
@@ -156,9 +156,9 @@ struct _EFI_PCI_HOTPLUG_REQUEST_PROTOCOL {
   /// to create or destroy handles for the PCI-like devices. See Section 0 for
   /// a detailed description.
   ///
-  EFI_PCI_HOTPLUG_REQUEST_NOTIFY  Notify;
+  EFI_PCI_HOTPLUG_REQUEST_NOTIFY    Notify;
 };
 
-extern EFI_GUID gEfiPciHotPlugRequestProtocolGuid;
+extern EFI_GUID  gEfiPciHotPlugRequestProtocolGuid;
 
 #endif

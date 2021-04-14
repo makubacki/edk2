@@ -43,6 +43,6 @@ IsZeroBuffer (
   )
 {
   ASSERT (!(Buffer == NULL && Length > 0));
-  ASSERT ((Length - 1) <= (MAX_ADDRESS - (UINTN)Buffer));
+  ASSERT ((Length - 1) <= (MAX_ADDRESS - (UINTN) Buffer));
   return InternalMemIsZeroBuffer (Buffer, Length);
 }

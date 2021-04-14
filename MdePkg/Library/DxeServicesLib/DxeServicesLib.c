@@ -43,16 +43,16 @@ InternalImageHandleToFvHandle (
   EFI_HANDLE ImageHandle
   )
 {
-  EFI_STATUS                    Status;
-  EFI_LOADED_IMAGE_PROTOCOL     *LoadedImage;
+  EFI_STATUS                 Status;
+  EFI_LOADED_IMAGE_PROTOCOL  *LoadedImage;
 
   ASSERT (ImageHandle != NULL);
 
   Status = gBS->HandleProtocol (
-             ImageHandle,
-             &gEfiLoadedImageProtocolGuid,
-             (VOID **) &LoadedImage
-             );
+                                ImageHandle,
+                                &gEfiLoadedImageProtocolGuid,
+                                (VOID **) &LoadedImage
+                                );
 
   ASSERT_EFI_ERROR (Status);
 
@@ -63,7 +63,6 @@ InternalImageHandleToFvHandle (
   // protocol is installed.
   //
   return LoadedImage->DeviceHandle;
-
 }
 
 /**
@@ -119,9 +118,9 @@ InternalGetSectionFromFv (
   OUT UINTN                         *Size
   )
 {
-  EFI_STATUS                    Status;
-  EFI_FIRMWARE_VOLUME2_PROTOCOL *Fv;
-  UINT32                        AuthenticationStatus;
+  EFI_STATUS                     Status;
+  EFI_FIRMWARE_VOLUME2_PROTOCOL  *Fv;
+  UINT32                         AuthenticationStatus;
 
   ASSERT (NameGuid != NULL);
   ASSERT (Buffer != NULL);
@@ -135,10 +134,10 @@ InternalGetSectionFromFv (
   }
 
   Status = gBS->HandleProtocol (
-                  FvHandle,
-                  &gEfiFirmwareVolume2ProtocolGuid,
-                  (VOID **) &Fv
-                  );
+                                FvHandle,
+                                &gEfiFirmwareVolume2ProtocolGuid,
+                                (VOID **) &Fv
+                                );
   if (EFI_ERROR (Status)) {
     return EFI_NOT_FOUND;
   }
@@ -146,17 +145,17 @@ InternalGetSectionFromFv (
   //
   // Read desired section content in NameGuid file
   //
-  *Buffer     = NULL;
-  *Size       = 0;
-  Status      = Fv->ReadSection (
-                      Fv,
-                      NameGuid,
-                      SectionType,
-                      SectionInstance,
-                      Buffer,
-                      Size,
-                      &AuthenticationStatus
-                      );
+  *Buffer = NULL;
+  *Size   = 0;
+  Status  = Fv->ReadSection (
+                             Fv,
+                             NameGuid,
+                             SectionType,
+                             SectionInstance,
+                             Buffer,
+                             Size,
+                             &AuthenticationStatus
+                             );
 
   if (EFI_ERROR (Status) && (SectionType == EFI_SECTION_TE)) {
     //
@@ -165,14 +164,14 @@ InternalGetSectionFromFv (
     *Buffer = NULL;
     *Size   = 0;
     Status  = Fv->ReadSection (
-                    Fv,
-                    NameGuid,
-                    EFI_SECTION_PE32,
-                    SectionInstance,
-                    Buffer,
-                    Size,
-                    &AuthenticationStatus
-                    );
+                               Fv,
+                               NameGuid,
+                               EFI_SECTION_PE32,
+                               SectionInstance,
+                               Buffer,
+                               Size,
+                               &AuthenticationStatus
+                               );
   }
 
   return Status;
@@ -237,15 +236,15 @@ GetSectionFromAnyFvByFileType  (
   OUT UINTN                         *Size
   )
 {
-  EFI_STATUS                    Status;
-  EFI_HANDLE                    *HandleBuffer;
-  UINTN                         HandleCount;
-  UINTN                         IndexFv;
-  UINTN                         IndexFile;
-  UINTN                         Key;
-  EFI_GUID                      NameGuid;
-  EFI_FV_FILE_ATTRIBUTES        Attributes;
-  EFI_FIRMWARE_VOLUME2_PROTOCOL *Fv;
+  EFI_STATUS                     Status;
+  EFI_HANDLE                     *HandleBuffer;
+  UINTN                          HandleCount;
+  UINTN                          IndexFv;
+  UINTN                          IndexFile;
+  UINTN                          Key;
+  EFI_GUID                       NameGuid;
+  EFI_FV_FILE_ATTRIBUTES         Attributes;
+  EFI_FIRMWARE_VOLUME2_PROTOCOL  *Fv;
 
   ASSERT (Buffer != NULL);
   ASSERT (Size != NULL);
@@ -255,12 +254,12 @@ GetSectionFromAnyFvByFileType  (
   //
   HandleBuffer = NULL;
   Status = gBS->LocateHandleBuffer (
-                  ByProtocol,
-                  &gEfiFirmwareVolume2ProtocolGuid,
-                  NULL,
-                  &HandleCount,
-                  &HandleBuffer
-                  );
+                                    ByProtocol,
+                                    &gEfiFirmwareVolume2ProtocolGuid,
+                                    NULL,
+                                    &HandleCount,
+                                    &HandleBuffer
+                                    );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -270,10 +269,10 @@ GetSectionFromAnyFvByFileType  (
   //
   for (IndexFv = 0; IndexFv < HandleCount; IndexFv++) {
     Status = gBS->HandleProtocol (
-                    HandleBuffer[IndexFv],
-                    &gEfiFirmwareVolume2ProtocolGuid,
-                    (VOID **)&Fv
-                    );
+                                  HandleBuffer[IndexFv],
+                                  &gEfiFirmwareVolume2ProtocolGuid,
+                                  (VOID **) &Fv
+                                  );
     if (EFI_ERROR (Status)) {
       continue;
     }
@@ -288,7 +287,8 @@ GetSectionFromAnyFvByFileType  (
       if (EFI_ERROR (Status)) {
         break;
       }
-      IndexFile --;
+
+      IndexFile--;
     } while (IndexFile > 0);
 
     //
@@ -297,13 +297,13 @@ GetSectionFromAnyFvByFileType  (
     //
     if (IndexFile == 0) {
       Status = InternalGetSectionFromFv (
-                 HandleBuffer[IndexFv],
-                 &NameGuid,
-                 SectionType,
-                 SectionInstance,
-                 Buffer,
-                 Size
-                 );
+                                         HandleBuffer[IndexFv],
+                                         &NameGuid,
+                                         SectionType,
+                                         SectionInstance,
+                                         Buffer,
+                                         Size
+                                         );
 
       if (!EFI_ERROR (Status)) {
         goto Done;
@@ -320,7 +320,7 @@ GetSectionFromAnyFvByFileType  (
 
 Done:
   if (HandleBuffer != NULL) {
-    FreePool(HandleBuffer);
+    FreePool (HandleBuffer);
   }
 
   return Status;
@@ -379,11 +379,11 @@ GetSectionFromAnyFv  (
   OUT       UINTN              *Size
   )
 {
-  EFI_STATUS                    Status;
-  EFI_HANDLE                    *HandleBuffer;
-  UINTN                         HandleCount;
-  UINTN                         Index;
-  EFI_HANDLE                    FvHandle;
+  EFI_STATUS  Status;
+  EFI_HANDLE  *HandleBuffer;
+  UINTN       HandleCount;
+  UINTN       Index;
+  EFI_HANDLE  FvHandle;
 
   //
   // Search the FV that contain the caller's FFS first.
@@ -392,26 +392,26 @@ GetSectionFromAnyFv  (
   // will locate the FFS faster.
   //
   FvHandle = InternalImageHandleToFvHandle (gImageHandle);
-  Status = InternalGetSectionFromFv (
-             FvHandle,
-             NameGuid,
-             SectionType,
-             SectionInstance,
-             Buffer,
-             Size
-             );
+  Status   = InternalGetSectionFromFv (
+                                       FvHandle,
+                                       NameGuid,
+                                       SectionType,
+                                       SectionInstance,
+                                       Buffer,
+                                       Size
+                                       );
   if (!EFI_ERROR (Status)) {
     return EFI_SUCCESS;
   }
 
   HandleBuffer = NULL;
   Status = gBS->LocateHandleBuffer (
-                  ByProtocol,
-                  &gEfiFirmwareVolume2ProtocolGuid,
-                  NULL,
-                  &HandleCount,
-                  &HandleBuffer
-                  );
+                                    ByProtocol,
+                                    &gEfiFirmwareVolume2ProtocolGuid,
+                                    NULL,
+                                    &HandleCount,
+                                    &HandleBuffer
+                                    );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
@@ -422,19 +422,18 @@ GetSectionFromAnyFv  (
     //
     if (HandleBuffer[Index] != FvHandle) {
       Status = InternalGetSectionFromFv (
-                 HandleBuffer[Index],
-                 NameGuid,
-                 SectionType,
-                 SectionInstance,
-                 Buffer,
-                 Size
-                 );
+                                         HandleBuffer[Index],
+                                         NameGuid,
+                                         SectionType,
+                                         SectionInstance,
+                                         Buffer,
+                                         Size
+                                         );
 
       if (!EFI_ERROR (Status)) {
         goto Done;
       }
     }
-
   }
 
   if (Index == HandleCount) {
@@ -444,10 +443,10 @@ GetSectionFromAnyFv  (
 Done:
 
   if (HandleBuffer != NULL) {
-    FreePool(HandleBuffer);
+    FreePool (HandleBuffer);
   }
-  return Status;
 
+  return Status;
 }
 
 /**
@@ -503,18 +502,17 @@ GetSectionFromFv (
   IN  UINTN                         SectionInstance,
   OUT VOID                          **Buffer,
   OUT UINTN                         *Size
-    )
+  )
 {
   return InternalGetSectionFromFv (
-           InternalImageHandleToFvHandle(gImageHandle),
-           NameGuid,
-           SectionType,
-           SectionInstance,
-           Buffer,
-           Size
-           );
+                                   InternalImageHandleToFvHandle (gImageHandle),
+                                   NameGuid,
+                                   SectionType,
+                                   SectionInstance,
+                                   Buffer,
+                                   Size
+                                   );
 }
-
 
 /**
   Searches the FFS file the currently executing module was loaded from and returns the first matching FFS section.
@@ -565,18 +563,17 @@ GetSectionFromFfs (
   IN  UINTN                         SectionInstance,
   OUT VOID                          **Buffer,
   OUT UINTN                         *Size
-    )
+  )
 {
-  return InternalGetSectionFromFv(
-           InternalImageHandleToFvHandle(gImageHandle),
-           &gEfiCallerIdGuid,
-           SectionType,
-           SectionInstance,
-           Buffer,
-           Size
-           );
+  return InternalGetSectionFromFv (
+                                   InternalImageHandleToFvHandle (gImageHandle),
+                                   &gEfiCallerIdGuid,
+                                   SectionType,
+                                   SectionInstance,
+                                   Buffer,
+                                   Size
+                                   );
 }
-
 
 /**
   Get the image file buffer data and buffer size by its device path.
@@ -614,25 +611,25 @@ GetFileBufferByFilePath (
   OUT UINT32                           *AuthenticationStatus
   )
 {
-  EFI_DEVICE_PATH_PROTOCOL          *DevicePathNode;
-  EFI_DEVICE_PATH_PROTOCOL          *OrigDevicePathNode;
-  EFI_DEVICE_PATH_PROTOCOL          *TempDevicePathNode;
-  EFI_HANDLE                        Handle;
-  EFI_GUID                          *FvNameGuid;
-  EFI_FIRMWARE_VOLUME2_PROTOCOL     *FwVol;
-  EFI_SECTION_TYPE                  SectionType;
-  UINT8                             *ImageBuffer;
-  UINTN                             ImageBufferSize;
-  EFI_FV_FILETYPE                   Type;
-  EFI_FV_FILE_ATTRIBUTES            Attrib;
-  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL   *Volume;
-  EFI_FILE_HANDLE                   FileHandle;
-  EFI_FILE_HANDLE                   LastHandle;
-  EFI_FILE_INFO                     *FileInfo;
-  UINTN                             FileInfoSize;
-  EFI_LOAD_FILE_PROTOCOL            *LoadFile;
-  EFI_LOAD_FILE2_PROTOCOL           *LoadFile2;
-  EFI_STATUS                        Status;
+  EFI_DEVICE_PATH_PROTOCOL         *DevicePathNode;
+  EFI_DEVICE_PATH_PROTOCOL         *OrigDevicePathNode;
+  EFI_DEVICE_PATH_PROTOCOL         *TempDevicePathNode;
+  EFI_HANDLE                       Handle;
+  EFI_GUID                         *FvNameGuid;
+  EFI_FIRMWARE_VOLUME2_PROTOCOL    *FwVol;
+  EFI_SECTION_TYPE                 SectionType;
+  UINT8                            *ImageBuffer;
+  UINTN                            ImageBufferSize;
+  EFI_FV_FILETYPE                  Type;
+  EFI_FV_FILE_ATTRIBUTES           Attrib;
+  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL  *Volume;
+  EFI_FILE_HANDLE                  FileHandle;
+  EFI_FILE_HANDLE                  LastHandle;
+  EFI_FILE_INFO                    *FileInfo;
+  UINTN                            FileInfoSize;
+  EFI_LOAD_FILE_PROTOCOL           *LoadFile;
+  EFI_LOAD_FILE2_PROTOCOL          *LoadFile2;
+  EFI_STATUS                       Status;
 
   //
   // Check input File device path.
@@ -644,12 +641,12 @@ GetFileBufferByFilePath (
   //
   // Init local variable
   //
-  TempDevicePathNode  = NULL;
-  FvNameGuid          = NULL;
-  FileInfo            = NULL;
-  FileHandle          = NULL;
-  ImageBuffer         = NULL;
-  ImageBufferSize     = 0;
+  TempDevicePathNode = NULL;
+  FvNameGuid      = NULL;
+  FileInfo        = NULL;
+  FileHandle      = NULL;
+  ImageBuffer     = NULL;
+  ImageBufferSize = 0;
   *AuthenticationStatus = 0;
 
   //
@@ -677,19 +674,19 @@ GetFileBufferByFilePath (
       //
       // Read image from the firmware file
       //
-      Status = gBS->HandleProtocol (Handle, &gEfiFirmwareVolume2ProtocolGuid, (VOID**)&FwVol);
+      Status = gBS->HandleProtocol (Handle, &gEfiFirmwareVolume2ProtocolGuid, (VOID **) &FwVol);
       if (!EFI_ERROR (Status)) {
         SectionType = EFI_SECTION_PE32;
         ImageBuffer = NULL;
         Status = FwVol->ReadSection (
-                          FwVol,
-                          FvNameGuid,
-                          SectionType,
-                          0,
-                          (VOID **)&ImageBuffer,
-                          &ImageBufferSize,
-                          AuthenticationStatus
-                          );
+                                     FwVol,
+                                     FvNameGuid,
+                                     SectionType,
+                                     0,
+                                     (VOID **) &ImageBuffer,
+                                     &ImageBufferSize,
+                                     AuthenticationStatus
+                                     );
         if (EFI_ERROR (Status)) {
           //
           // Try a raw file, since a PE32 SECTION does not exist
@@ -698,19 +695,21 @@ GetFileBufferByFilePath (
             FreePool (ImageBuffer);
             *AuthenticationStatus = 0;
           }
+
           ImageBuffer = NULL;
           Status = FwVol->ReadFile (
-                            FwVol,
-                            FvNameGuid,
-                            (VOID **)&ImageBuffer,
-                            &ImageBufferSize,
-                            &Type,
-                            &Attrib,
-                            AuthenticationStatus
-                            );
+                                    FwVol,
+                                    FvNameGuid,
+                                    (VOID **) &ImageBuffer,
+                                    &ImageBufferSize,
+                                    &Type,
+                                    &Attrib,
+                                    AuthenticationStatus
+                                    );
         }
       }
     }
+
     if (!EFI_ERROR (Status)) {
       goto Finish;
     }
@@ -722,7 +721,7 @@ GetFileBufferByFilePath (
   DevicePathNode = OrigDevicePathNode;
   Status = gBS->LocateDevicePath (&gEfiSimpleFileSystemProtocolGuid, &DevicePathNode, &Handle);
   if (!EFI_ERROR (Status)) {
-    Status = gBS->HandleProtocol (Handle, &gEfiSimpleFileSystemProtocolGuid, (VOID**)&Volume);
+    Status = gBS->HandleProtocol (Handle, &gEfiSimpleFileSystemProtocolGuid, (VOID **) &Volume);
     if (!EFI_ERROR (Status)) {
       //
       // Open the Volume to get the File System handle
@@ -736,13 +735,14 @@ GetFileBufferByFilePath (
         //
         TempDevicePathNode = DuplicateDevicePath (DevicePathNode);
         if (TempDevicePathNode == NULL) {
-          FileHandle->Close (FileHandle);
+  FileHandle->Close (FileHandle);
           //
           // Setting Status to an EFI_ERROR value will cause the rest of
           // the file system support below to be skipped.
           //
           Status = EFI_OUT_OF_RESOURCES;
         }
+
         //
         // Parse each MEDIA_FILEPATH_DP node. There may be more than one, since the
         // directory information and filename can be separate. The goal is to inch
@@ -760,12 +760,12 @@ GetFileBufferByFilePath (
           FileHandle = NULL;
 
           Status = LastHandle->Open (
-                                LastHandle,
-                                &FileHandle,
-                                ((FILEPATH_DEVICE_PATH *) DevicePathNode)->PathName,
-                                EFI_FILE_MODE_READ,
-                                0
-                                );
+                                     LastHandle,
+                                     &FileHandle,
+                                     ((FILEPATH_DEVICE_PATH *) DevicePathNode)->PathName,
+                                     EFI_FILE_MODE_READ,
+                                     0
+                                     );
 
           //
           // Close the previous node
@@ -780,14 +780,14 @@ GetFileBufferByFilePath (
           // We have found the file. Now we need to read it. Before we can read the file we need to
           // figure out how big the file is.
           //
-          FileInfo = NULL;
+          FileInfo     = NULL;
           FileInfoSize = 0;
           Status = FileHandle->GetInfo (
-                                FileHandle,
-                                &gEfiFileInfoGuid,
-                                &FileInfoSize,
-                                FileInfo
-                                );
+                                        FileHandle,
+                                        &gEfiFileInfoGuid,
+                                        &FileInfoSize,
+                                        FileInfo
+                                        );
 
           if (Status == EFI_BUFFER_TOO_SMALL) {
             FileInfo = AllocatePool (FileInfoSize);
@@ -795,11 +795,11 @@ GetFileBufferByFilePath (
               Status = EFI_OUT_OF_RESOURCES;
             } else {
               Status = FileHandle->GetInfo (
-                                    FileHandle,
-                                    &gEfiFileInfoGuid,
-                                    &FileInfoSize,
-                                    FileInfo
-                                    );
+                                            FileHandle,
+                                            &gEfiFileInfoGuid,
+                                            &FileInfoSize,
+                                            FileInfo
+                                            );
             }
           }
 
@@ -808,33 +808,37 @@ GetFileBufferByFilePath (
               //
               // Allocate space for the file
               //
-              ImageBuffer = AllocatePool ((UINTN)FileInfo->FileSize);
+              ImageBuffer = AllocatePool ((UINTN) FileInfo->FileSize);
               if (ImageBuffer == NULL) {
                 Status = EFI_OUT_OF_RESOURCES;
               } else {
                 //
                 // Read the file into the buffer we allocated
                 //
-                ImageBufferSize = (UINTN)FileInfo->FileSize;
-                Status          = FileHandle->Read (FileHandle, &ImageBufferSize, ImageBuffer);
+                ImageBufferSize = (UINTN) FileInfo->FileSize;
+                Status = FileHandle->Read (FileHandle, &ImageBufferSize, ImageBuffer);
               }
             }
           }
         }
+
         //
         // Close the file and Free FileInfo and TempDevicePathNode since we are done
         //
         if (FileInfo != NULL) {
           FreePool (FileInfo);
         }
+
         if (FileHandle != NULL) {
-          FileHandle->Close (FileHandle);
+  FileHandle->Close (FileHandle);
         }
+
         if (TempDevicePathNode != NULL) {
           FreePool (TempDevicePathNode);
         }
       }
     }
+
     if (!EFI_ERROR (Status)) {
       goto Finish;
     }
@@ -847,7 +851,7 @@ GetFileBufferByFilePath (
     DevicePathNode = OrigDevicePathNode;
     Status = gBS->LocateDevicePath (&gEfiLoadFile2ProtocolGuid, &DevicePathNode, &Handle);
     if (!EFI_ERROR (Status)) {
-      Status = gBS->HandleProtocol (Handle, &gEfiLoadFile2ProtocolGuid, (VOID**)&LoadFile2);
+      Status = gBS->HandleProtocol (Handle, &gEfiLoadFile2ProtocolGuid, (VOID **) &LoadFile2);
       if (!EFI_ERROR (Status)) {
         //
         // Call LoadFile2 with the correct buffer size
@@ -855,27 +859,28 @@ GetFileBufferByFilePath (
         ImageBufferSize = 0;
         ImageBuffer     = NULL;
         Status = LoadFile2->LoadFile (
-                             LoadFile2,
-                             DevicePathNode,
-                             FALSE,
-                             &ImageBufferSize,
-                             ImageBuffer
-                             );
+                                      LoadFile2,
+                                      DevicePathNode,
+                                      FALSE,
+                                      &ImageBufferSize,
+                                      ImageBuffer
+                                      );
         if (Status == EFI_BUFFER_TOO_SMALL) {
           ImageBuffer = AllocatePool (ImageBufferSize);
           if (ImageBuffer == NULL) {
             Status = EFI_OUT_OF_RESOURCES;
           } else {
             Status = LoadFile2->LoadFile (
-                                 LoadFile2,
-                                 DevicePathNode,
-                                 FALSE,
-                                 &ImageBufferSize,
-                                 ImageBuffer
-                                 );
+                                          LoadFile2,
+                                          DevicePathNode,
+                                          FALSE,
+                                          &ImageBufferSize,
+                                          ImageBuffer
+                                          );
           }
         }
       }
+
       if (!EFI_ERROR (Status)) {
         goto Finish;
       }
@@ -888,7 +893,7 @@ GetFileBufferByFilePath (
   DevicePathNode = OrigDevicePathNode;
   Status = gBS->LocateDevicePath (&gEfiLoadFileProtocolGuid, &DevicePathNode, &Handle);
   if (!EFI_ERROR (Status)) {
-    Status = gBS->HandleProtocol (Handle, &gEfiLoadFileProtocolGuid, (VOID**)&LoadFile);
+    Status = gBS->HandleProtocol (Handle, &gEfiLoadFileProtocolGuid, (VOID **) &LoadFile);
     if (!EFI_ERROR (Status)) {
       //
       // Call LoadFile with the correct buffer size
@@ -896,24 +901,24 @@ GetFileBufferByFilePath (
       ImageBufferSize = 0;
       ImageBuffer     = NULL;
       Status = LoadFile->LoadFile (
-                           LoadFile,
-                           DevicePathNode,
-                           BootPolicy,
-                           &ImageBufferSize,
-                           ImageBuffer
-                           );
+                                   LoadFile,
+                                   DevicePathNode,
+                                   BootPolicy,
+                                   &ImageBufferSize,
+                                   ImageBuffer
+                                   );
       if (Status == EFI_BUFFER_TOO_SMALL) {
         ImageBuffer = AllocatePool (ImageBufferSize);
         if (ImageBuffer == NULL) {
           Status = EFI_OUT_OF_RESOURCES;
         } else {
           Status = LoadFile->LoadFile (
-                               LoadFile,
-                               DevicePathNode,
-                               BootPolicy,
-                               &ImageBufferSize,
-                               ImageBuffer
-                               );
+                                       LoadFile,
+                                       DevicePathNode,
+                                       BootPolicy,
+                                       &ImageBufferSize,
+                                       ImageBuffer
+                                       );
         }
       }
     }
@@ -926,6 +931,7 @@ Finish:
       FreePool (ImageBuffer);
       ImageBuffer = NULL;
     }
+
     *FileSize = 0;
   } else {
     *FileSize = ImageBufferSize;
@@ -978,25 +984,25 @@ GetFileDevicePathFromAnyFv (
   OUT       EFI_DEVICE_PATH_PROTOCOL  **FvFileDevicePath
   )
 {
-  EFI_STATUS                        Status;
-  EFI_HANDLE                        *HandleBuffer;
-  UINTN                             HandleCount;
-  UINTN                             Index;
-  EFI_HANDLE                        FvHandle;
-  EFI_DEVICE_PATH_PROTOCOL          *FvDevicePath;
-  MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *TempFvFileDevicePath;
-  VOID                              *Buffer;
-  UINTN                             Size;
+  EFI_STATUS                         Status;
+  EFI_HANDLE                         *HandleBuffer;
+  UINTN                              HandleCount;
+  UINTN                              Index;
+  EFI_HANDLE                         FvHandle;
+  EFI_DEVICE_PATH_PROTOCOL           *FvDevicePath;
+  MEDIA_FW_VOL_FILEPATH_DEVICE_PATH  *TempFvFileDevicePath;
+  VOID                               *Buffer;
+  UINTN                              Size;
 
   if (FvFileDevicePath == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
-  HandleBuffer         = NULL;
-  FvDevicePath         = NULL;
+  HandleBuffer = NULL;
+  FvDevicePath = NULL;
   TempFvFileDevicePath = NULL;
-  Buffer               = NULL;
-  Size                 = 0;
+  Buffer = NULL;
+  Size   = 0;
 
   //
   // Search the FV that contain the caller's FFS first.
@@ -1005,25 +1011,25 @@ GetFileDevicePathFromAnyFv (
   // will locate the FFS faster.
   //
   FvHandle = InternalImageHandleToFvHandle (gImageHandle);
-  Status = InternalGetSectionFromFv (
-             FvHandle,
-             NameGuid,
-             SectionType,
-             SectionInstance,
-             &Buffer,
-             &Size
-             );
+  Status   = InternalGetSectionFromFv (
+                                       FvHandle,
+                                       NameGuid,
+                                       SectionType,
+                                       SectionInstance,
+                                       &Buffer,
+                                       &Size
+                                       );
   if (!EFI_ERROR (Status)) {
     goto Done;
   }
 
   Status = gBS->LocateHandleBuffer (
-                  ByProtocol,
-                  &gEfiFirmwareVolume2ProtocolGuid,
-                  NULL,
-                  &HandleCount,
-                  &HandleBuffer
-                  );
+                                    ByProtocol,
+                                    &gEfiFirmwareVolume2ProtocolGuid,
+                                    NULL,
+                                    &HandleCount,
+                                    &HandleBuffer
+                                    );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
@@ -1034,13 +1040,13 @@ GetFileDevicePathFromAnyFv (
     //
     if (HandleBuffer[Index] != FvHandle) {
       Status = InternalGetSectionFromFv (
-                 HandleBuffer[Index],
-                 NameGuid,
-                 SectionType,
-                 SectionInstance,
-                 &Buffer,
-                 &Size
-                 );
+                                         HandleBuffer[Index],
+                                         NameGuid,
+                                         SectionType,
+                                         SectionInstance,
+                                         &Buffer,
+                                         &Size
+                                         );
 
       if (!EFI_ERROR (Status)) {
         //
@@ -1061,7 +1067,7 @@ Done:
     //
     // Build a device path to the file in the FV to pass into gBS->LoadImage
     //
-    Status = gBS->HandleProtocol (FvHandle, &gEfiDevicePathProtocolGuid, (VOID **)&FvDevicePath);
+    Status = gBS->HandleProtocol (FvHandle, &gEfiDevicePathProtocolGuid, (VOID **) &FvDevicePath);
     if (EFI_ERROR (Status)) {
       *FvFileDevicePath = NULL;
     } else {
@@ -1070,12 +1076,13 @@ Done:
         *FvFileDevicePath = NULL;
         return EFI_OUT_OF_RESOURCES;
       }
-      EfiInitializeFwVolDevicepathNode ((MEDIA_FW_VOL_FILEPATH_DEVICE_PATH*)TempFvFileDevicePath, NameGuid);
+
+      EfiInitializeFwVolDevicepathNode ((MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *) TempFvFileDevicePath, NameGuid);
       SetDevicePathEndNode (NextDevicePathNode (TempFvFileDevicePath));
       *FvFileDevicePath = AppendDevicePath (
-                            FvDevicePath,
-                            (EFI_DEVICE_PATH_PROTOCOL *)TempFvFileDevicePath
-                            );
+                                            FvDevicePath,
+                                            (EFI_DEVICE_PATH_PROTOCOL *) TempFvFileDevicePath
+                                            );
       FreePool (TempFvFileDevicePath);
     }
   }

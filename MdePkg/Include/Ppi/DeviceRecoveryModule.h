@@ -24,7 +24,7 @@
 
 #define EFI_PEI_DEVICE_RECOVERY_MODULE_PPI_GUID \
   { \
-    0x0DE2CE25, 0x446A, 0x45a7, {0xBF, 0xC9, 0x37, 0xDA, 0x26, 0x34, 0x4B, 0x37 } \
+    0x0DE2CE25, 0x446A, 0x45a7, { 0xBF, 0xC9, 0x37, 0xDA, 0x26, 0x34, 0x4B, 0x37 } \
   }
 
 typedef struct _EFI_PEI_DEVICE_RECOVERY_MODULE_PPI EFI_PEI_DEVICE_RECOVERY_MODULE_PPI;
@@ -53,12 +53,12 @@ typedef struct _EFI_PEI_DEVICE_RECOVERY_MODULE_PPI EFI_PEI_DEVICE_RECOVERY_MODUL
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_DEVICE_GET_NUMBER_RECOVERY_CAPSULE)(
-  IN  EFI_PEI_SERVICES                    **PeiServices,
-  IN  EFI_PEI_DEVICE_RECOVERY_MODULE_PPI  *This,
-  OUT UINTN                               *NumberRecoveryCapsules
-  );
+                                                     IN  EFI_PEI_SERVICES                    **PeiServices,
+                                                     IN  EFI_PEI_DEVICE_RECOVERY_MODULE_PPI  *This,
+                                                     OUT UINTN                               *NumberRecoveryCapsules
+                                                     );
 
 /**
   Returns the size and type of the requested recovery capsule.
@@ -86,14 +86,14 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_DEVICE_GET_RECOVERY_CAPSULE_INFO)(
-  IN  EFI_PEI_SERVICES                    **PeiServices,
-  IN  EFI_PEI_DEVICE_RECOVERY_MODULE_PPI  *This,
-  IN  UINTN                               CapsuleInstance,
-  OUT UINTN                               *Size,
-  OUT EFI_GUID                            *CapsuleType
-  );
+                                                   IN  EFI_PEI_SERVICES                    **PeiServices,
+                                                   IN  EFI_PEI_DEVICE_RECOVERY_MODULE_PPI  *This,
+                                                   IN  UINTN                               CapsuleInstance,
+                                                   OUT UINTN                               *Size,
+                                                   OUT EFI_GUID                            *CapsuleType
+                                                   );
 
 /**
   Loads a DXE capsule from some media into memory.
@@ -115,24 +115,27 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_DEVICE_LOAD_RECOVERY_CAPSULE)(
-  IN     EFI_PEI_SERVICES                    **PeiServices,
-  IN     EFI_PEI_DEVICE_RECOVERY_MODULE_PPI  *This,
-  IN     UINTN                               CapsuleInstance,
-  OUT    VOID                                *Buffer
-  );
+                                               IN     EFI_PEI_SERVICES                    **PeiServices,
+                                               IN     EFI_PEI_DEVICE_RECOVERY_MODULE_PPI  *This,
+                                               IN     UINTN                               CapsuleInstance,
+                                               OUT    VOID                                *Buffer
+                                               );
 
 ///
 /// Presents a standard interface to EFI_PEI_DEVICE_RECOVERY_MODULE_PPI,
 /// regardless of the underlying device(s).
 ///
 struct _EFI_PEI_DEVICE_RECOVERY_MODULE_PPI {
-  EFI_PEI_DEVICE_GET_NUMBER_RECOVERY_CAPSULE  GetNumberRecoveryCapsules;    ///< Returns the number of DXE capsules residing on the device.
-  EFI_PEI_DEVICE_GET_RECOVERY_CAPSULE_INFO    GetRecoveryCapsuleInfo;       ///< Returns the size and type of the requested recovery capsule.
-  EFI_PEI_DEVICE_LOAD_RECOVERY_CAPSULE        LoadRecoveryCapsule;          ///< Loads a DXE capsule from some media into memory.
+  EFI_PEI_DEVICE_GET_NUMBER_RECOVERY_CAPSULE    GetNumberRecoveryCapsules;  ///< Returns the number of DXE capsules
+                                                                            ///< residing on the device.
+  EFI_PEI_DEVICE_GET_RECOVERY_CAPSULE_INFO      GetRecoveryCapsuleInfo;     ///< Returns the size and type of the
+                                                                            ///< requested recovery capsule.
+  EFI_PEI_DEVICE_LOAD_RECOVERY_CAPSULE          LoadRecoveryCapsule;        ///< Loads a DXE capsule from some media
+                                                                            ///< into memory.
 };
 
-extern EFI_GUID gEfiPeiDeviceRecoveryModulePpiGuid;
+extern EFI_GUID  gEfiPeiDeviceRecoveryModulePpiGuid;
 
-#endif  /* _PEI_DEVICE_RECOVERY_MODULE_PPI_H_ */
+#endif /* _PEI_DEVICE_RECOVERY_MODULE_PPI_H_ */

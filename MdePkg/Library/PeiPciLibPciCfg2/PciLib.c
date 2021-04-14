@@ -24,8 +24,8 @@
   @param  M Additional bits to assert to be zero.
 
 **/
-#define ASSERT_INVALID_PCI_ADDRESS(A,M) \
-  ASSERT (((A) & (~0xfffffff | (M))) == 0)
+#define ASSERT_INVALID_PCI_ADDRESS(A, M) \
+  ASSERT (((A) &(~0xfffffff | (M))) == 0)
 
 /**
   Translate PCI Lib address into format of PCI CFG2 PPI.
@@ -35,7 +35,7 @@
 
 **/
 #define PCI_TO_PCICFG2_ADDRESS(A) \
-  ((((A) << 4) & 0xff000000) | (((A) >> 4) & 0x00000700) | (((A) << 1) & 0x001f0000) | (LShiftU64((A) & 0xfff, 32)))
+  ((((A) << 4) & 0xff000000) | (((A) >> 4) & 0x00000700) | (((A) << 1) & 0x001f0000) | (LShiftU64 ((A) & 0xfff, 32)))
 
 /**
   Internal worker function to read a PCI configuration register.
@@ -57,10 +57,10 @@ PeiPciLibPciCfg2ReadWorker (
   IN    EFI_PEI_PCI_CFG_PPI_WIDTH   Width
   )
 {
-  EFI_STATUS                   Status;
-  UINT32                       Data;
-  CONST EFI_PEI_PCI_CFG2_PPI   *PciCfg2Ppi;
-  UINT64                       PciCfg2Address;
+  EFI_STATUS                  Status;
+  UINT32                      Data;
+  CONST EFI_PEI_PCI_CFG2_PPI  *PciCfg2Ppi;
+  UINT64                      PciCfg2Address;
 
   Status = PeiServicesLocatePpi (&gEfiPciCfg2PpiGuid, 0, NULL, (VOID **) &PciCfg2Ppi);
   ASSERT_EFI_ERROR (Status);
@@ -68,12 +68,12 @@ PeiPciLibPciCfg2ReadWorker (
 
   PciCfg2Address = PCI_TO_PCICFG2_ADDRESS (Address);
   PciCfg2Ppi->Read (
-                GetPeiServicesTablePointer (),
-                PciCfg2Ppi,
-                Width,
-                PciCfg2Address,
-                &Data
-                );
+                    GetPeiServicesTablePointer (),
+                    PciCfg2Ppi,
+                    Width,
+                    PciCfg2Address,
+                    &Data
+                    );
 
   return Data;
 }
@@ -101,9 +101,9 @@ PeiPciLibPciCfg2WriteWorker (
   IN    UINT32                      Data
   )
 {
-  EFI_STATUS                      Status;
-  CONST EFI_PEI_PCI_CFG2_PPI      *PciCfg2Ppi;
-  UINT64                          PciCfg2Address;
+  EFI_STATUS                  Status;
+  CONST EFI_PEI_PCI_CFG2_PPI  *PciCfg2Ppi;
+  UINT64                      PciCfg2Address;
 
   Status = PeiServicesLocatePpi (&gEfiPciCfg2PpiGuid, 0, NULL, (VOID **) &PciCfg2Ppi);
   ASSERT_EFI_ERROR (Status);
@@ -111,12 +111,12 @@ PeiPciLibPciCfg2WriteWorker (
 
   PciCfg2Address = PCI_TO_PCICFG2_ADDRESS (Address);
   PciCfg2Ppi->Write (
-                GetPeiServicesTablePointer (),
-                PciCfg2Ppi,
-                Width,
-                PciCfg2Address,
-                &Data
-                );
+                     GetPeiServicesTablePointer (),
+                     PciCfg2Ppi,
+                     Width,
+                     PciCfg2Address,
+                     &Data
+                     );
 
   return Data;
 }
@@ -365,9 +365,9 @@ PciBitFieldWrite8 (
   )
 {
   return PciWrite8 (
-           Address,
-           BitFieldWrite8 (PciRead8 (Address), StartBit, EndBit, Value)
-           );
+                    Address,
+                    BitFieldWrite8 (PciRead8 (Address), StartBit, EndBit, Value)
+                    );
 }
 
 /**
@@ -407,9 +407,9 @@ PciBitFieldOr8 (
   )
 {
   return PciWrite8 (
-           Address,
-           BitFieldOr8 (PciRead8 (Address), StartBit, EndBit, OrData)
-           );
+                    Address,
+                    BitFieldOr8 (PciRead8 (Address), StartBit, EndBit, OrData)
+                    );
 }
 
 /**
@@ -449,9 +449,9 @@ PciBitFieldAnd8 (
   )
 {
   return PciWrite8 (
-           Address,
-           BitFieldAnd8 (PciRead8 (Address), StartBit, EndBit, AndData)
-           );
+                    Address,
+                    BitFieldAnd8 (PciRead8 (Address), StartBit, EndBit, AndData)
+                    );
 }
 
 /**
@@ -496,9 +496,9 @@ PciBitFieldAndThenOr8 (
   )
 {
   return PciWrite8 (
-           Address,
-           BitFieldAndThenOr8 (PciRead8 (Address), StartBit, EndBit, AndData, OrData)
-           );
+                    Address,
+                    BitFieldAndThenOr8 (PciRead8 (Address), StartBit, EndBit, AndData, OrData)
+                    );
 }
 
 /**
@@ -721,9 +721,9 @@ PciBitFieldWrite16 (
   )
 {
   return PciWrite16 (
-           Address,
-           BitFieldWrite16 (PciRead16 (Address), StartBit, EndBit, Value)
-           );
+                     Address,
+                     BitFieldWrite16 (PciRead16 (Address), StartBit, EndBit, Value)
+                     );
 }
 
 /**
@@ -764,9 +764,9 @@ PciBitFieldOr16 (
   )
 {
   return PciWrite16 (
-           Address,
-           BitFieldOr16 (PciRead16 (Address), StartBit, EndBit, OrData)
-           );
+                     Address,
+                     BitFieldOr16 (PciRead16 (Address), StartBit, EndBit, OrData)
+                     );
 }
 
 /**
@@ -807,9 +807,9 @@ PciBitFieldAnd16 (
   )
 {
   return PciWrite16 (
-           Address,
-           BitFieldAnd16 (PciRead16 (Address), StartBit, EndBit, AndData)
-           );
+                     Address,
+                     BitFieldAnd16 (PciRead16 (Address), StartBit, EndBit, AndData)
+                     );
 }
 
 /**
@@ -855,9 +855,9 @@ PciBitFieldAndThenOr16 (
   )
 {
   return PciWrite16 (
-           Address,
-           BitFieldAndThenOr16 (PciRead16 (Address), StartBit, EndBit, AndData, OrData)
-           );
+                     Address,
+                     BitFieldAndThenOr16 (PciRead16 (Address), StartBit, EndBit, AndData, OrData)
+                     );
 }
 
 /**
@@ -1080,9 +1080,9 @@ PciBitFieldWrite32 (
   )
 {
   return PciWrite32 (
-           Address,
-           BitFieldWrite32 (PciRead32 (Address), StartBit, EndBit, Value)
-           );
+                     Address,
+                     BitFieldWrite32 (PciRead32 (Address), StartBit, EndBit, Value)
+                     );
 }
 
 /**
@@ -1123,9 +1123,9 @@ PciBitFieldOr32 (
   )
 {
   return PciWrite32 (
-           Address,
-           BitFieldOr32 (PciRead32 (Address), StartBit, EndBit, OrData)
-           );
+                     Address,
+                     BitFieldOr32 (PciRead32 (Address), StartBit, EndBit, OrData)
+                     );
 }
 
 /**
@@ -1166,9 +1166,9 @@ PciBitFieldAnd32 (
   )
 {
   return PciWrite32 (
-           Address,
-           BitFieldAnd32 (PciRead32 (Address), StartBit, EndBit, AndData)
-           );
+                     Address,
+                     BitFieldAnd32 (PciRead32 (Address), StartBit, EndBit, AndData)
+                     );
 }
 
 /**
@@ -1214,9 +1214,9 @@ PciBitFieldAndThenOr32 (
   )
 {
   return PciWrite32 (
-           Address,
-           BitFieldAndThenOr32 (PciRead32 (Address), StartBit, EndBit, AndData, OrData)
-           );
+                     Address,
+                     BitFieldAndThenOr32 (PciRead32 (Address), StartBit, EndBit, AndData, OrData)
+                     );
 }
 
 /**
@@ -1250,7 +1250,7 @@ PciReadBuffer (
   OUT     VOID                      *Buffer
   )
 {
-  UINTN                             ReturnValue;
+  UINTN  ReturnValue;
 
   ASSERT_INVALID_PCI_ADDRESS (StartAddress, 0);
   ASSERT (((StartAddress & 0xFFF) + Size) <= 0x1000);
@@ -1270,10 +1270,10 @@ PciReadBuffer (
     //
     // Read a byte if StartAddress is byte aligned
     //
-    *(volatile UINT8 *)Buffer = PciRead8 (StartAddress);
+    *(volatile UINT8 *) Buffer = PciRead8 (StartAddress);
     StartAddress += sizeof (UINT8);
-    Size -= sizeof (UINT8);
-    Buffer = (UINT8*)Buffer + 1;
+    Size  -= sizeof (UINT8);
+    Buffer = (UINT8 *) Buffer + 1;
   }
 
   if (Size >= sizeof (UINT16) && (StartAddress & BIT1) != 0) {
@@ -1282,8 +1282,8 @@ PciReadBuffer (
     //
     WriteUnaligned16 (Buffer, PciRead16 (StartAddress));
     StartAddress += sizeof (UINT16);
-    Size -= sizeof (UINT16);
-    Buffer = (UINT16*)Buffer + 1;
+    Size  -= sizeof (UINT16);
+    Buffer = (UINT16 *) Buffer + 1;
   }
 
   while (Size >= sizeof (UINT32)) {
@@ -1292,8 +1292,8 @@ PciReadBuffer (
     //
     WriteUnaligned32 (Buffer, PciRead32 (StartAddress));
     StartAddress += sizeof (UINT32);
-    Size -= sizeof (UINT32);
-    Buffer = (UINT32*)Buffer + 1;
+    Size  -= sizeof (UINT32);
+    Buffer = (UINT32 *) Buffer + 1;
   }
 
   if (Size >= sizeof (UINT16)) {
@@ -1302,15 +1302,15 @@ PciReadBuffer (
     //
     WriteUnaligned16 (Buffer, PciRead16 (StartAddress));
     StartAddress += sizeof (UINT16);
-    Size -= sizeof (UINT16);
-    Buffer = (UINT16*)Buffer + 1;
+    Size  -= sizeof (UINT16);
+    Buffer = (UINT16 *) Buffer + 1;
   }
 
   if (Size >= sizeof (UINT8)) {
     //
     // Read the last remaining byte if exist
     //
-    *(volatile UINT8 *)Buffer = PciRead8 (StartAddress);
+    *(volatile UINT8 *) Buffer = PciRead8 (StartAddress);
   }
 
   return ReturnValue;
@@ -1348,7 +1348,7 @@ PciWriteBuffer (
   IN      VOID                      *Buffer
   )
 {
-  UINTN                             ReturnValue;
+  UINTN  ReturnValue;
 
   ASSERT_INVALID_PCI_ADDRESS (StartAddress, 0);
   ASSERT (((StartAddress & 0xFFF) + Size) <= 0x1000);
@@ -1368,10 +1368,10 @@ PciWriteBuffer (
     //
     // Write a byte if StartAddress is byte aligned
     //
-    PciWrite8 (StartAddress, *(UINT8*)Buffer);
+    PciWrite8 (StartAddress, *(UINT8 *) Buffer);
     StartAddress += sizeof (UINT8);
-    Size -= sizeof (UINT8);
-    Buffer = (UINT8*)Buffer + 1;
+    Size  -= sizeof (UINT8);
+    Buffer = (UINT8 *) Buffer + 1;
   }
 
   if (Size >= sizeof (UINT16) && (StartAddress & BIT1) != 0) {
@@ -1380,8 +1380,8 @@ PciWriteBuffer (
     //
     PciWrite16 (StartAddress, ReadUnaligned16 (Buffer));
     StartAddress += sizeof (UINT16);
-    Size -= sizeof (UINT16);
-    Buffer = (UINT16*)Buffer + 1;
+    Size  -= sizeof (UINT16);
+    Buffer = (UINT16 *) Buffer + 1;
   }
 
   while (Size >= sizeof (UINT32)) {
@@ -1390,8 +1390,8 @@ PciWriteBuffer (
     //
     PciWrite32 (StartAddress, ReadUnaligned32 (Buffer));
     StartAddress += sizeof (UINT32);
-    Size -= sizeof (UINT32);
-    Buffer = (UINT32*)Buffer + 1;
+    Size  -= sizeof (UINT32);
+    Buffer = (UINT32 *) Buffer + 1;
   }
 
   if (Size >= sizeof (UINT16)) {
@@ -1400,15 +1400,15 @@ PciWriteBuffer (
     //
     PciWrite16 (StartAddress, ReadUnaligned16 (Buffer));
     StartAddress += sizeof (UINT16);
-    Size -= sizeof (UINT16);
-    Buffer = (UINT16*)Buffer + 1;
+    Size  -= sizeof (UINT16);
+    Buffer = (UINT16 *) Buffer + 1;
   }
 
   if (Size >= sizeof (UINT8)) {
     //
     // Write the last remaining byte if exist
     //
-    PciWrite8 (StartAddress, *(UINT8*)Buffer);
+    PciWrite8 (StartAddress, *(UINT8 *) Buffer);
   }
 
   return ReturnValue;

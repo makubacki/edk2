@@ -14,9 +14,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define __PEI_CPUIO_PPI_H__
 
 #define EFI_PEI_CPU_IO_PPI_INSTALLED_GUID \
-  { 0xe6af1f7b, 0xfc3f, 0x46da, {0xa8, 0x28, 0xa3, 0xb4, 0x57, 0xa4, 0x42, 0x82 } }
+  { 0xe6af1f7b, 0xfc3f, 0x46da, { 0xa8, 0x28, 0xa3, 0xb4, 0x57, 0xa4, 0x42, 0x82 } }
 
-typedef struct _EFI_PEI_CPU_IO_PPI  EFI_PEI_CPU_IO_PPI;
+typedef struct _EFI_PEI_CPU_IO_PPI EFI_PEI_CPU_IO_PPI;
 
 ///
 /// EFI_PEI_CPU_IO_PPI_WIDTH.
@@ -53,15 +53,15 @@ typedef enum {
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_CPU_IO_PPI_IO_MEM)(
-  IN     CONST EFI_PEI_SERVICES    **PeiServices,
-  IN     CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN     EFI_PEI_CPU_IO_PPI_WIDTH  Width,
-  IN     UINT64                    Address,
-  IN     UINTN                     Count,
-  IN OUT VOID                      *Buffer
-  );
+                                    IN     CONST EFI_PEI_SERVICES    **PeiServices,
+                                    IN     CONST EFI_PEI_CPU_IO_PPI  *This,
+                                    IN     EFI_PEI_CPU_IO_PPI_WIDTH  Width,
+                                    IN     UINT64                    Address,
+                                    IN     UINTN                     Count,
+                                    IN OUT VOID                      *Buffer
+                                    );
 
 ///
 /// EFI_PEI_CPU_IO_PPI_ACCESS
@@ -70,11 +70,11 @@ typedef struct {
   ///
   /// This service provides the various modalities of memory and I/O read.
   ///
-  EFI_PEI_CPU_IO_PPI_IO_MEM  Read;
+  EFI_PEI_CPU_IO_PPI_IO_MEM    Read;
   ///
   /// This service provides the various modalities of memory and I/O write.
   ///
-  EFI_PEI_CPU_IO_PPI_IO_MEM  Write;
+  EFI_PEI_CPU_IO_PPI_IO_MEM    Write;
 } EFI_PEI_CPU_IO_PPI_ACCESS;
 
 /**
@@ -89,12 +89,12 @@ typedef struct {
 
 **/
 typedef
-UINT8
+  UINT8
 (EFIAPI *EFI_PEI_CPU_IO_PPI_IO_READ8)(
-  IN  CONST EFI_PEI_SERVICES    **PeiServices,
-  IN  CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN  UINT64                    Address
-  );
+                                      IN  CONST EFI_PEI_SERVICES    **PeiServices,
+                                      IN  CONST EFI_PEI_CPU_IO_PPI  *This,
+                                      IN  UINT64                    Address
+                                      );
 
 /**
   16-bit I/O read operations.
@@ -108,12 +108,12 @@ UINT8
 
 **/
 typedef
-UINT16
+  UINT16
 (EFIAPI *EFI_PEI_CPU_IO_PPI_IO_READ16)(
-  IN  CONST EFI_PEI_SERVICES    **PeiServices,
-  IN  CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN  UINT64                    Address
-  );
+                                       IN  CONST EFI_PEI_SERVICES    **PeiServices,
+                                       IN  CONST EFI_PEI_CPU_IO_PPI  *This,
+                                       IN  UINT64                    Address
+                                       );
 
 /**
   32-bit I/O read operations.
@@ -127,12 +127,12 @@ UINT16
 
 **/
 typedef
-UINT32
+  UINT32
 (EFIAPI *EFI_PEI_CPU_IO_PPI_IO_READ32)(
-  IN  CONST EFI_PEI_SERVICES    **PeiServices,
-  IN  CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN  UINT64                    Address
-  );
+                                       IN  CONST EFI_PEI_SERVICES    **PeiServices,
+                                       IN  CONST EFI_PEI_CPU_IO_PPI  *This,
+                                       IN  UINT64                    Address
+                                       );
 
 /**
   64-bit I/O read operations.
@@ -146,12 +146,12 @@ UINT32
 
 **/
 typedef
-UINT64
+  UINT64
 (EFIAPI *EFI_PEI_CPU_IO_PPI_IO_READ64)(
-  IN  CONST EFI_PEI_SERVICES    **PeiServices,
-  IN  CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN  UINT64                    Address
-  );
+                                       IN  CONST EFI_PEI_SERVICES    **PeiServices,
+                                       IN  CONST EFI_PEI_CPU_IO_PPI  *This,
+                                       IN  UINT64                    Address
+                                       );
 
 /**
   8-bit I/O write operations.
@@ -164,13 +164,13 @@ UINT64
 
 **/
 typedef
-VOID
+  VOID
 (EFIAPI *EFI_PEI_CPU_IO_PPI_IO_WRITE8)(
-  IN  CONST EFI_PEI_SERVICES    **PeiServices,
-  IN  CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN  UINT64                    Address,
-  IN  UINT8                     Data
-  );
+                                       IN  CONST EFI_PEI_SERVICES    **PeiServices,
+                                       IN  CONST EFI_PEI_CPU_IO_PPI  *This,
+                                       IN  UINT64                    Address,
+                                       IN  UINT8                     Data
+                                       );
 
 /**
   16-bit I/O write operations.
@@ -183,13 +183,13 @@ VOID
 
 **/
 typedef
-VOID
+  VOID
 (EFIAPI *EFI_PEI_CPU_IO_PPI_IO_WRITE16)(
-  IN  CONST EFI_PEI_SERVICES    **PeiServices,
-  IN  CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN  UINT64                    Address,
-  IN  UINT16                    Data
-  );
+                                        IN  CONST EFI_PEI_SERVICES    **PeiServices,
+                                        IN  CONST EFI_PEI_CPU_IO_PPI  *This,
+                                        IN  UINT64                    Address,
+                                        IN  UINT16                    Data
+                                        );
 
 /**
   32-bit I/O write operations.
@@ -202,13 +202,13 @@ VOID
 
 **/
 typedef
-VOID
+  VOID
 (EFIAPI *EFI_PEI_CPU_IO_PPI_IO_WRITE32)(
-  IN  CONST EFI_PEI_SERVICES    **PeiServices,
-  IN  CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN  UINT64                    Address,
-  IN  UINT32                    Data
-  );
+                                        IN  CONST EFI_PEI_SERVICES    **PeiServices,
+                                        IN  CONST EFI_PEI_CPU_IO_PPI  *This,
+                                        IN  UINT64                    Address,
+                                        IN  UINT32                    Data
+                                        );
 
 /**
   64-bit I/O write operations.
@@ -221,13 +221,13 @@ VOID
 
 **/
 typedef
-VOID
+  VOID
 (EFIAPI *EFI_PEI_CPU_IO_PPI_IO_WRITE64)(
-  IN  CONST EFI_PEI_SERVICES    **PeiServices,
-  IN  CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN  UINT64                    Address,
-  IN  UINT64                    Data
-  );
+                                        IN  CONST EFI_PEI_SERVICES    **PeiServices,
+                                        IN  CONST EFI_PEI_CPU_IO_PPI  *This,
+                                        IN  UINT64                    Address,
+                                        IN  UINT64                    Data
+                                        );
 
 /**
   8-bit memory read operations.
@@ -241,12 +241,12 @@ VOID
 
 **/
 typedef
-UINT8
+  UINT8
 (EFIAPI *EFI_PEI_CPU_IO_PPI_MEM_READ8)(
-  IN  CONST EFI_PEI_SERVICES    **PeiServices,
-  IN  CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN  UINT64                    Address
-  );
+                                       IN  CONST EFI_PEI_SERVICES    **PeiServices,
+                                       IN  CONST EFI_PEI_CPU_IO_PPI  *This,
+                                       IN  UINT64                    Address
+                                       );
 
 /**
   16-bit memory read operations.
@@ -260,12 +260,12 @@ UINT8
 
 **/
 typedef
-UINT16
+  UINT16
 (EFIAPI *EFI_PEI_CPU_IO_PPI_MEM_READ16)(
-  IN  CONST EFI_PEI_SERVICES    **PeiServices,
-  IN  CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN  UINT64                    Address
-  );
+                                        IN  CONST EFI_PEI_SERVICES    **PeiServices,
+                                        IN  CONST EFI_PEI_CPU_IO_PPI  *This,
+                                        IN  UINT64                    Address
+                                        );
 
 /**
   32-bit memory read operations.
@@ -279,12 +279,12 @@ UINT16
 
 **/
 typedef
-UINT32
+  UINT32
 (EFIAPI *EFI_PEI_CPU_IO_PPI_MEM_READ32)(
-  IN  CONST EFI_PEI_SERVICES    **PeiServices,
-  IN  CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN  UINT64                    Address
-  );
+                                        IN  CONST EFI_PEI_SERVICES    **PeiServices,
+                                        IN  CONST EFI_PEI_CPU_IO_PPI  *This,
+                                        IN  UINT64                    Address
+                                        );
 
 /**
   64-bit memory read operations.
@@ -298,12 +298,12 @@ UINT32
 
 **/
 typedef
-UINT64
+  UINT64
 (EFIAPI *EFI_PEI_CPU_IO_PPI_MEM_READ64)(
-  IN  CONST EFI_PEI_SERVICES    **PeiServices,
-  IN  CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN  UINT64                    Address
-  );
+                                        IN  CONST EFI_PEI_SERVICES    **PeiServices,
+                                        IN  CONST EFI_PEI_CPU_IO_PPI  *This,
+                                        IN  UINT64                    Address
+                                        );
 
 /**
   8-bit memory write operations.
@@ -316,13 +316,13 @@ UINT64
 
 **/
 typedef
-VOID
+  VOID
 (EFIAPI *EFI_PEI_CPU_IO_PPI_MEM_WRITE8)(
-  IN  CONST EFI_PEI_SERVICES    **PeiServices,
-  IN  CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN  UINT64                    Address,
-  IN  UINT8                     Data
-  );
+                                        IN  CONST EFI_PEI_SERVICES    **PeiServices,
+                                        IN  CONST EFI_PEI_CPU_IO_PPI  *This,
+                                        IN  UINT64                    Address,
+                                        IN  UINT8                     Data
+                                        );
 
 /**
   16-bit memory write operations.
@@ -335,13 +335,13 @@ VOID
 
 **/
 typedef
-VOID
+  VOID
 (EFIAPI *EFI_PEI_CPU_IO_PPI_MEM_WRITE16)(
-  IN  CONST EFI_PEI_SERVICES    **PeiServices,
-  IN  CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN  UINT64                    Address,
-  IN  UINT16                    Data
-  );
+                                         IN  CONST EFI_PEI_SERVICES    **PeiServices,
+                                         IN  CONST EFI_PEI_CPU_IO_PPI  *This,
+                                         IN  UINT64                    Address,
+                                         IN  UINT16                    Data
+                                         );
 
 /**
   32-bit memory write operations.
@@ -354,13 +354,13 @@ VOID
 
 **/
 typedef
-VOID
+  VOID
 (EFIAPI *EFI_PEI_CPU_IO_PPI_MEM_WRITE32)(
-  IN  CONST EFI_PEI_SERVICES    **PeiServices,
-  IN  CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN  UINT64                    Address,
-  IN  UINT32                    Data
-  );
+                                         IN  CONST EFI_PEI_SERVICES    **PeiServices,
+                                         IN  CONST EFI_PEI_CPU_IO_PPI  *This,
+                                         IN  UINT64                    Address,
+                                         IN  UINT32                    Data
+                                         );
 
 /**
   64-bit memory write operations.
@@ -373,13 +373,13 @@ VOID
 
 **/
 typedef
-VOID
+  VOID
 (EFIAPI *EFI_PEI_CPU_IO_PPI_MEM_WRITE64)(
-  IN  CONST EFI_PEI_SERVICES    **PeiServices,
-  IN  CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN  UINT64                    Address,
-  IN  UINT64                    Data
-  );
+                                         IN  CONST EFI_PEI_SERVICES    **PeiServices,
+                                         IN  CONST EFI_PEI_CPU_IO_PPI  *This,
+                                         IN  UINT64                    Address,
+                                         IN  UINT64                    Data
+                                         );
 
 ///
 /// EFI_PEI_CPU_IO_PPI provides a set of memory and I/O-based services.
@@ -390,33 +390,33 @@ struct _EFI_PEI_CPU_IO_PPI {
   ///
   /// Collection of memory-access services.
   ///
-  EFI_PEI_CPU_IO_PPI_ACCESS       Mem;
+  EFI_PEI_CPU_IO_PPI_ACCESS         Mem;
   ///
   /// Collection of I/O-access services.
   ///
-  EFI_PEI_CPU_IO_PPI_ACCESS       Io;
+  EFI_PEI_CPU_IO_PPI_ACCESS         Io;
 
-  EFI_PEI_CPU_IO_PPI_IO_READ8     IoRead8;
-  EFI_PEI_CPU_IO_PPI_IO_READ16    IoRead16;
-  EFI_PEI_CPU_IO_PPI_IO_READ32    IoRead32;
-  EFI_PEI_CPU_IO_PPI_IO_READ64    IoRead64;
+  EFI_PEI_CPU_IO_PPI_IO_READ8       IoRead8;
+  EFI_PEI_CPU_IO_PPI_IO_READ16      IoRead16;
+  EFI_PEI_CPU_IO_PPI_IO_READ32      IoRead32;
+  EFI_PEI_CPU_IO_PPI_IO_READ64      IoRead64;
 
-  EFI_PEI_CPU_IO_PPI_IO_WRITE8    IoWrite8;
-  EFI_PEI_CPU_IO_PPI_IO_WRITE16   IoWrite16;
-  EFI_PEI_CPU_IO_PPI_IO_WRITE32   IoWrite32;
-  EFI_PEI_CPU_IO_PPI_IO_WRITE64   IoWrite64;
+  EFI_PEI_CPU_IO_PPI_IO_WRITE8      IoWrite8;
+  EFI_PEI_CPU_IO_PPI_IO_WRITE16     IoWrite16;
+  EFI_PEI_CPU_IO_PPI_IO_WRITE32     IoWrite32;
+  EFI_PEI_CPU_IO_PPI_IO_WRITE64     IoWrite64;
 
-  EFI_PEI_CPU_IO_PPI_MEM_READ8    MemRead8;
-  EFI_PEI_CPU_IO_PPI_MEM_READ16   MemRead16;
-  EFI_PEI_CPU_IO_PPI_MEM_READ32   MemRead32;
-  EFI_PEI_CPU_IO_PPI_MEM_READ64   MemRead64;
+  EFI_PEI_CPU_IO_PPI_MEM_READ8      MemRead8;
+  EFI_PEI_CPU_IO_PPI_MEM_READ16     MemRead16;
+  EFI_PEI_CPU_IO_PPI_MEM_READ32     MemRead32;
+  EFI_PEI_CPU_IO_PPI_MEM_READ64     MemRead64;
 
-  EFI_PEI_CPU_IO_PPI_MEM_WRITE8   MemWrite8;
-  EFI_PEI_CPU_IO_PPI_MEM_WRITE16  MemWrite16;
-  EFI_PEI_CPU_IO_PPI_MEM_WRITE32  MemWrite32;
-  EFI_PEI_CPU_IO_PPI_MEM_WRITE64  MemWrite64;
+  EFI_PEI_CPU_IO_PPI_MEM_WRITE8     MemWrite8;
+  EFI_PEI_CPU_IO_PPI_MEM_WRITE16    MemWrite16;
+  EFI_PEI_CPU_IO_PPI_MEM_WRITE32    MemWrite32;
+  EFI_PEI_CPU_IO_PPI_MEM_WRITE64    MemWrite64;
 };
 
-extern EFI_GUID gEfiPeiCpuIoPpiInstalledGuid;
+extern EFI_GUID  gEfiPeiCpuIoPpiInstalledGuid;
 
 #endif

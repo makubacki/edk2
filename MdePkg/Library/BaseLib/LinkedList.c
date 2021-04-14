@@ -32,7 +32,8 @@
     do {                                                                     \
       if (FeaturePcdGet (PcdVerifyNodeInList)) {                             \
         ASSERT (InList == IsNodeInList ((FirstEntry), (SecondEntry)));       \
-      } else {                                                               \
+      } \
+      else {                                                               \
         ASSERT (InternalBaseLibIsListValid (FirstEntry));                    \
       }                                                                      \
     } while (FALSE)
@@ -91,7 +92,7 @@ InternalBaseLibIsListValid (
     //
     // return whether linked list is too long
     //
-    return (BOOLEAN)(Count < PcdGet32 (PcdMaximumLinkedListLength));
+    return (BOOLEAN) (Count < PcdGet32 (PcdMaximumLinkedListLength));
   }
 
   return TRUE;
@@ -149,7 +150,7 @@ IsNodeInList (
       // Return if the linked list is too long
       //
       if (Count == PcdGet32 (PcdMaximumLinkedListLength)) {
-        return (BOOLEAN)(Ptr == SecondEntry);
+        return (BOOLEAN) (Ptr == SecondEntry);
       }
     }
 
@@ -187,7 +188,7 @@ InitializeListHead (
   ASSERT (ListHead != NULL);
 
   ListHead->ForwardLink = ListHead;
-  ListHead->BackLink = ListHead;
+  ListHead->BackLink    = ListHead;
   return ListHead;
 }
 
@@ -226,7 +227,7 @@ InsertHeadList (
   ASSERT_VERIFY_NODE_IN_VALID_LIST (ListHead, Entry, FALSE);
 
   Entry->ForwardLink = ListHead->ForwardLink;
-  Entry->BackLink = ListHead;
+  Entry->BackLink    = ListHead;
   Entry->ForwardLink->BackLink = Entry;
   ListHead->ForwardLink = Entry;
   return ListHead;
@@ -267,7 +268,7 @@ InsertTailList (
   ASSERT_VERIFY_NODE_IN_VALID_LIST (ListHead, Entry, FALSE);
 
   Entry->ForwardLink = ListHead;
-  Entry->BackLink = ListHead->BackLink;
+  Entry->BackLink    = ListHead->BackLink;
   Entry->BackLink->ForwardLink = Entry;
   ListHead->BackLink = Entry;
   return ListHead;
@@ -409,7 +410,7 @@ IsListEmpty (
   //
   ASSERT (InternalBaseLibIsListValid (ListHead));
 
-  return (BOOLEAN)(ListHead->ForwardLink == ListHead);
+  return (BOOLEAN) (ListHead->ForwardLink == ListHead);
 }
 
 /**
@@ -450,7 +451,7 @@ IsNull (
   //
   ASSERT_VERIFY_NODE_IN_VALID_LIST (List, Node, TRUE);
 
-  return (BOOLEAN)(Node == List);
+  return (BOOLEAN) (Node == List);
 }
 
 /**
@@ -488,7 +489,7 @@ IsNodeAtEnd (
   //
   ASSERT_VERIFY_NODE_IN_VALID_LIST (List, Node, TRUE);
 
-  return (BOOLEAN)(!IsNull (List, Node) && List->BackLink == Node);
+  return (BOOLEAN) (!IsNull (List, Node) && List->BackLink == Node);
 }
 
 /**
@@ -524,7 +525,7 @@ SwapListEntries (
   IN OUT  LIST_ENTRY                *SecondEntry
   )
 {
-  LIST_ENTRY                    *Ptr;
+  LIST_ENTRY  *Ptr;
 
   if (FirstEntry == SecondEntry) {
     return SecondEntry;

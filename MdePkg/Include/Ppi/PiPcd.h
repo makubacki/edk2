@@ -21,12 +21,12 @@
 #ifndef __PI_PCD_PPI_H__
 #define __PI_PCD_PPI_H__
 
-extern EFI_GUID gEfiPeiPcdPpiGuid;
+extern EFI_GUID  gEfiPeiPcdPpiGuid;
 
 #define EFI_PEI_PCD_PPI_GUID \
   { 0x1f34d25, 0x4de2, 0x23ad, { 0x3f, 0xf3, 0x36, 0x35, 0x3f, 0xf3, 0x23, 0xf1 } }
 
-#define EFI_PCD_INVALID_TOKEN_NUMBER ((UINTN) 0)
+#define EFI_PCD_INVALID_TOKEN_NUMBER  ((UINTN) 0)
 
 /**
   SetSku() sets the SKU Id to be used for subsequent calls to set or get PCD values. SetSku() is
@@ -44,10 +44,10 @@ extern EFI_GUID gEfiPeiPcdPpiGuid;
   @param[in]    SkuId   The SKU value to set.
 **/
 typedef
-VOID
+  VOID
 (EFIAPI *EFI_PEI_PCD_PPI_SET_SKU)(
-  IN UINTN SkuId
-);
+                                  IN UINTN SkuId
+                                  );
 
 /**
   Retrieves the current byte-sized value for a PCD token number. If the TokenNumber is invalid,
@@ -59,11 +59,11 @@ VOID
   @return 8-bit value for a given PCD token.
 **/
 typedef
-UINT8
+  UINT8
 (EFIAPI *EFI_PEI_PCD_PPI_GET_8)(
-  IN CONST  EFI_GUID  *Guid,
-  IN        UINTN     TokenNumber
-);
+                                IN CONST  EFI_GUID  *Guid,
+                                IN        UINTN     TokenNumber
+                                );
 
 /**
   Retrieves the current word-sized value for a PCD token number. If the TokenNumber is invalid,
@@ -75,11 +75,11 @@ UINT8
   @return 16-bit value for a given PCD token.
 **/
 typedef
-UINT16
+  UINT16
 (EFIAPI *EFI_PEI_PCD_PPI_GET_16)(
-  IN CONST  EFI_GUID  *Guid,
-  IN        UINTN     TokenNumber
-);
+                                 IN CONST  EFI_GUID  *Guid,
+                                 IN        UINTN     TokenNumber
+                                 );
 
 /**
   Retrieves the current 32-bit value for a PCD token number. If the TokenNumber is invalid, the
@@ -91,11 +91,11 @@ UINT16
   @return 32-bit value for a given PCD token.
 **/
 typedef
-UINT32
+  UINT32
 (EFIAPI *EFI_PEI_PCD_PPI_GET_32)(
-  IN CONST  EFI_GUID  *Guid,
-  IN        UINTN     TokenNumber
-);
+                                 IN CONST  EFI_GUID  *Guid,
+                                 IN        UINTN     TokenNumber
+                                 );
 
 /**
   Retrieves the current 64-bit value for a PCD token number. If the TokenNumber is invalid, the
@@ -107,11 +107,11 @@ UINT32
   @return 64-bit value for a given PCD token.
 **/
 typedef
-UINT64
+  UINT64
 (EFIAPI *EFI_PEI_PCD_PPI_GET_64)(
-  IN CONST  EFI_GUID  *Guid,
-  IN        UINTN     TokenNumber
-);
+                                 IN CONST  EFI_GUID  *Guid,
+                                 IN        UINTN     TokenNumber
+                                 );
 
 /**
   Retrieves the current pointer to the value for a PCD token number. There should not be any
@@ -122,11 +122,11 @@ UINT64
   @param[in]    TokenNumber   The PCD token number.
 **/
 typedef
-VOID *
+  VOID *
 (EFIAPI *EFI_PEI_PCD_PPI_GET_POINTER)(
-  IN CONST  EFI_GUID  *Guid,
-  IN        UINTN     TokenNumber
-);
+                                      IN CONST  EFI_GUID  *Guid,
+                                      IN        UINTN     TokenNumber
+                                      );
 
 /**
   Retrieves the current Boolean-sized value for a PCD token number. If the TokenNumber is
@@ -138,11 +138,11 @@ VOID *
   @return Boolean value for a given PCD token.
 **/
 typedef
-BOOLEAN
+  BOOLEAN
 (EFIAPI *EFI_PEI_PCD_PPI_GET_BOOLEAN)(
-  IN CONST  EFI_GUID  *Guid,
-  IN        UINTN     TokenNumber
-);
+                                      IN CONST  EFI_GUID  *Guid,
+                                      IN        UINTN     TokenNumber
+                                      );
 
 /**
   Retrieves the current size of a particular PCD token. If the TokenNumber is invalid, the results are
@@ -154,11 +154,11 @@ BOOLEAN
   @return the size of the value for a given PCD token.
 **/
 typedef
-UINTN
+  UINTN
 (EFIAPI *EFI_PEI_PCD_PPI_GET_SIZE)(
-  IN CONST  EFI_GUID  *Guid,
-  IN        UINTN     TokenNumber
-);
+                                   IN CONST  EFI_GUID  *Guid,
+                                   IN        UINTN     TokenNumber
+                                   );
 
 /**
   Sets an 8-bit value for a given PCD token.
@@ -177,12 +177,12 @@ UINTN
   @retval   EFI_NOT_FOUND           The PCD service could not find the requested token number.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_PCD_PPI_SET_8)(
-  IN CONST  EFI_GUID  *Guid,
-  IN        UINTN     TokenNumber,
-  IN        UINT8     Value
-);
+                                IN CONST  EFI_GUID  *Guid,
+                                IN        UINTN     TokenNumber,
+                                IN        UINT8     Value
+                                );
 
 /**
   Sets an 16-bit value for a given PCD token.
@@ -201,12 +201,12 @@ EFI_STATUS
   @retval   EFI_NOT_FOUND           The PCD service could not find the requested token number.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_PCD_PPI_SET_16)(
-  IN CONST  EFI_GUID  *Guid,
-  IN        UINTN     TokenNumber,
-  IN        UINT16    Value
-);
+                                 IN CONST  EFI_GUID  *Guid,
+                                 IN        UINTN     TokenNumber,
+                                 IN        UINT16    Value
+                                 );
 
 /**
   Sets an 32-bit value for a given PCD token.
@@ -225,12 +225,12 @@ EFI_STATUS
   @retval   EFI_NOT_FOUND           The PCD service could not find the requested token number.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_PCD_PPI_SET_32)(
-  IN CONST  EFI_GUID  *Guid,
-  IN        UINTN     TokenNumber,
-  IN        UINT32    Value
-);
+                                 IN CONST  EFI_GUID  *Guid,
+                                 IN        UINTN     TokenNumber,
+                                 IN        UINT32    Value
+                                 );
 
 /**
   Sets an 64-bit value for a given PCD token.
@@ -249,12 +249,12 @@ EFI_STATUS
   @retval   EFI_NOT_FOUND           The PCD service could not find the requested token number.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_PCD_PPI_SET_64)(
-  IN CONST  EFI_GUID  *Guid,
-  IN        UINTN     TokenNumber,
-  IN        UINT64    Value
-);
+                                 IN CONST  EFI_GUID  *Guid,
+                                 IN        UINTN     TokenNumber,
+                                 IN        UINT64    Value
+                                 );
 
 /**
   Sets a value of the specified size for a given PCD token.
@@ -276,13 +276,13 @@ EFI_STATUS
   @retval   EFI_NOT_FOUND           The PCD service could not find the requested token number.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_PCD_PPI_SET_POINTER)(
-  IN CONST  EFI_GUID  *Guid,
-  IN        UINTN     TokenNumber,
-  IN OUT    UINTN     *SizeOfValue,
-  IN        VOID      *Buffer
-);
+                                      IN CONST  EFI_GUID  *Guid,
+                                      IN        UINTN     TokenNumber,
+                                      IN OUT    UINTN     *SizeOfValue,
+                                      IN        VOID      *Buffer
+                                      );
 
 /**
   Sets a Boolean value for a given PCD token.
@@ -301,21 +301,21 @@ EFI_STATUS
   @retval   EFI_NOT_FOUND           The PCD service could not find the requested token number.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_PCD_PPI_SET_BOOLEAN)(
-  IN CONST  EFI_GUID  *Guid,
-  IN        UINTN     TokenNumber,
-  IN        BOOLEAN   Value
-);
+                                      IN CONST  EFI_GUID  *Guid,
+                                      IN        UINTN     TokenNumber,
+                                      IN        BOOLEAN   Value
+                                      );
 
 typedef
-VOID
+  VOID
 (EFIAPI *EFI_PEI_PCD_PPI_CALLBACK)(
-  IN     EFI_GUID *Guid     OPTIONAL,
-  IN     UINTN    CallBackToken,
-  IN OUT VOID     *TokenData,
-  IN     UINTN    TokenDatSize
-);
+                                   IN     EFI_GUID *Guid     OPTIONAL,
+                                   IN     UINTN    CallBackToken,
+                                   IN OUT VOID     *TokenData,
+                                   IN     UINTN    TokenDatSize
+                                   );
 
 /**
   Specifies a function to be called anytime the value of a designated token is changed.
@@ -331,12 +331,12 @@ VOID
   @retval EFI_NOT_FOUND   The PCD service could not find the referenced token number.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_PCD_PPI_CALLBACK_ON_SET)(
-  IN CONST  EFI_GUID                  *Guid   OPTIONAL,
-  IN        UINTN                     CallBackToken,
-  IN        EFI_PEI_PCD_PPI_CALLBACK  CallBackFunction
-);
+                                          IN CONST  EFI_GUID                  *Guid   OPTIONAL,
+                                          IN        UINTN                     CallBackToken,
+                                          IN        EFI_PEI_PCD_PPI_CALLBACK  CallBackFunction
+                                          );
 
 /**
   Cancels a previously set callback function for a particular PCD token number.
@@ -353,12 +353,12 @@ EFI_STATUS
   @retval     EFI_NOT_FOUND     The PCD service could not find data the requested token number.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_PCD_PPI_CANCEL_CALLBACK)(
-  IN CONST  EFI_GUID                  *Guid   OPTIONAL,
-  IN        UINTN                     CallBackToken,
-  IN        EFI_PEI_PCD_PPI_CALLBACK  CallBackFunction
-);
+                                          IN CONST  EFI_GUID                  *Guid   OPTIONAL,
+                                          IN        UINTN                     CallBackToken,
+                                          IN        EFI_PEI_PCD_PPI_CALLBACK  CallBackFunction
+                                          );
 
 /**
   Retrieves the next valid PCD token for a given namespace.
@@ -375,11 +375,11 @@ EFI_STATUS
   @retval   EFI_NOT_FOUND     The PCD service could not find data from the requested token number.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_PCD_PPI_GET_NEXT_TOKEN)(
-  IN CONST  EFI_GUID      *Guid     OPTIONAL,
-  IN        UINTN         *TokenNumber
-);
+                                         IN CONST  EFI_GUID      *Guid     OPTIONAL,
+                                         IN        UINTN         *TokenNumber
+                                         );
 
 /**
   Retrieves the next valid PCD token namespace for a given namespace.
@@ -397,30 +397,30 @@ EFI_STATUS
   @retval  EFI_NOT_FOUND    The PCD service could not find the next valid token namespace.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_PCD_PPI_GET_NEXT_TOKEN_SPACE)(
-  IN OUT CONST EFI_GUID     **Guid
-);
+                                               IN OUT CONST EFI_GUID     **Guid
+                                               );
 
 typedef struct {
-  EFI_PEI_PCD_PPI_SET_SKU               SetSku;
-  EFI_PEI_PCD_PPI_GET_8                 Get8;
-  EFI_PEI_PCD_PPI_GET_16                Get16;
-  EFI_PEI_PCD_PPI_GET_32                Get32;
-  EFI_PEI_PCD_PPI_GET_64                Get64;
-  EFI_PEI_PCD_PPI_GET_POINTER           GetPtr;
-  EFI_PEI_PCD_PPI_GET_BOOLEAN           GetBool;
-  EFI_PEI_PCD_PPI_GET_SIZE              GetSize;
-  EFI_PEI_PCD_PPI_SET_8                 Set8;
-  EFI_PEI_PCD_PPI_SET_16                Set16;
-  EFI_PEI_PCD_PPI_SET_32                Set32;
-  EFI_PEI_PCD_PPI_SET_64                Set64;
-  EFI_PEI_PCD_PPI_SET_POINTER           SetPtr;
-  EFI_PEI_PCD_PPI_SET_BOOLEAN           SetBool;
-  EFI_PEI_PCD_PPI_CALLBACK_ON_SET       CallbackOnSet;
-  EFI_PEI_PCD_PPI_CANCEL_CALLBACK       CancelCallback;
-  EFI_PEI_PCD_PPI_GET_NEXT_TOKEN        GetNextToken;
-  EFI_PEI_PCD_PPI_GET_NEXT_TOKEN_SPACE  GetNextTokenSpace;
+  EFI_PEI_PCD_PPI_SET_SKU                 SetSku;
+  EFI_PEI_PCD_PPI_GET_8                   Get8;
+  EFI_PEI_PCD_PPI_GET_16                  Get16;
+  EFI_PEI_PCD_PPI_GET_32                  Get32;
+  EFI_PEI_PCD_PPI_GET_64                  Get64;
+  EFI_PEI_PCD_PPI_GET_POINTER             GetPtr;
+  EFI_PEI_PCD_PPI_GET_BOOLEAN             GetBool;
+  EFI_PEI_PCD_PPI_GET_SIZE                GetSize;
+  EFI_PEI_PCD_PPI_SET_8                   Set8;
+  EFI_PEI_PCD_PPI_SET_16                  Set16;
+  EFI_PEI_PCD_PPI_SET_32                  Set32;
+  EFI_PEI_PCD_PPI_SET_64                  Set64;
+  EFI_PEI_PCD_PPI_SET_POINTER             SetPtr;
+  EFI_PEI_PCD_PPI_SET_BOOLEAN             SetBool;
+  EFI_PEI_PCD_PPI_CALLBACK_ON_SET         CallbackOnSet;
+  EFI_PEI_PCD_PPI_CANCEL_CALLBACK         CancelCallback;
+  EFI_PEI_PCD_PPI_GET_NEXT_TOKEN          GetNextToken;
+  EFI_PEI_PCD_PPI_GET_NEXT_TOKEN_SPACE    GetNextTokenSpace;
 } EFI_PEI_PCD_PPI;
 
 #endif

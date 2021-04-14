@@ -26,7 +26,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 ///
 #define EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL_GUID \
   { \
-    0xCF8034BE, 0x6768, 0x4d8b, {0xB7,0x39,0x7C,0xCE,0x68,0x3A,0x9F,0xBE } \
+    0xCF8034BE, 0x6768, 0x4d8b, { 0xB7, 0x39, 0x7C, 0xCE, 0x68, 0x3A, 0x9F, 0xBE } \
   }
 
 ///
@@ -47,7 +47,7 @@ typedef struct _EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL EFI_PCI_HOST_BR
 /// the PCI bus driver needs to include requests for 64 bit
 /// memory address in the corresponding 32 bit memory pool.
 ///
-#define EFI_PCI_HOST_BRIDGE_MEM64_DECODE   2
+#define EFI_PCI_HOST_BRIDGE_MEM64_DECODE  2
 
 ///
 /// A UINT64 value that contains the status of a PCI resource requested
@@ -61,7 +61,7 @@ typedef UINT64 EFI_RESOURCE_ALLOCATION_STATUS;
 /// Configuration parameter returned by GetProposedResources() to identify
 /// a PCI resources request that can be satisfied.
 ///
-#define EFI_RESOURCE_SATISFIED      0x0000000000000000ULL
+#define EFI_RESOURCE_SATISFIED  0x0000000000000000ULL
 
 ///
 /// The request of this resource type could not be fulfilled for its
@@ -180,11 +180,14 @@ typedef enum {
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL_NOTIFY_PHASE)(
-  IN EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL  *This,
-  IN EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PHASE     Phase
-  );
+                                                                        IN
+                                                                        EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL
+                                                                        *This,
+                                                                        IN EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PHASE
+                                                                        Phase
+                                                                        );
 
 /**
   Returns the device handle of the next PCI root bridge that is associated with this host bridge.
@@ -203,11 +206,14 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL_GET_NEXT_ROOT_BRIDGE)(
-  IN     EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL  *This,
-  IN OUT EFI_HANDLE                                        *RootBridgeHandle
-  );
+                                                                                IN
+                                                                                EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL
+                                                                                *This,
+                                                                                IN OUT EFI_HANDLE
+                                                                                *RootBridgeHandle
+                                                                                );
 
 /**
   Returns the allocation attributes of a PCI root bridge.
@@ -223,12 +229,16 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL_GET_ATTRIBUTES)(
-  IN  EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL   *This,
-  IN  EFI_HANDLE                                         RootBridgeHandle,
-  OUT UINT64                                             *Attributes
-  );
+                                                                          IN
+                                                                          EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL
+                                                                          *This,
+                                                                          IN  EFI_HANDLE
+                                                                          RootBridgeHandle,
+                                                                          OUT UINT64
+                                                                          *Attributes
+                                                                          );
 
 /**
   Sets up the specified PCI root bridge for the bus enumeration process.
@@ -246,12 +256,16 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL_START_BUS_ENUMERATION)(
-  IN  EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL   *This,
-  IN  EFI_HANDLE                                         RootBridgeHandle,
-  OUT VOID                                               **Configuration
-  );
+                                                                                 IN
+                                                                                 EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL
+                                                                                 *This,
+                                                                                 IN  EFI_HANDLE
+                                                                                 RootBridgeHandle,
+                                                                                 OUT VOID
+                                                                                 **Configuration
+                                                                                 );
 
 /**
   Programs the PCI root bridge hardware so that it decodes the specified PCI bus range.
@@ -278,12 +292,16 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL_SET_BUS_NUMBERS)(
-  IN EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL   *This,
-  IN EFI_HANDLE                                         RootBridgeHandle,
-  IN VOID                                               *Configuration
-  );
+                                                                           IN
+                                                                           EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL
+                                                                           *This,
+                                                                           IN EFI_HANDLE
+                                                                           RootBridgeHandle,
+                                                                           IN VOID
+                                                                           *Configuration
+                                                                           );
 
 /**
   Submits the I/O and memory resource requirements for the specified PCI root bridge.
@@ -310,12 +328,16 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL_SUBMIT_RESOURCES)(
-  IN EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL   *This,
-  IN EFI_HANDLE                                         RootBridgeHandle,
-  IN VOID                                               *Configuration
-  );
+                                                                            IN
+                                                                            EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL
+                                                                            *This,
+                                                                            IN EFI_HANDLE
+                                                                            RootBridgeHandle,
+                                                                            IN VOID
+                                                                            *Configuration
+                                                                            );
 
 /**
   Returns the proposed resource settings for the specified PCI root bridge.
@@ -332,12 +354,16 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL_GET_PROPOSED_RESOURCES)(
-  IN  EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL  *This,
-  IN  EFI_HANDLE                                        RootBridgeHandle,
-  OUT VOID                                              **Configuration
-  );
+                                                                                  IN
+                                                                                  EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL
+                                                                                  *This,
+                                                                                  IN  EFI_HANDLE
+                                                                                  RootBridgeHandle,
+                                                                                  OUT VOID
+                                                                                  **Configuration
+                                                                                  );
 
 /**
   Provides the hooks from the PCI bus driver to every PCI controller (device/function) at various
@@ -359,13 +385,20 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL_PREPROCESS_CONTROLLER)(
-  IN EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL  *This,
-  IN EFI_HANDLE                                        RootBridgeHandle,
-  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_PCI_ADDRESS       PciAddress,
-  IN EFI_PCI_CONTROLLER_RESOURCE_ALLOCATION_PHASE      Phase
-  );
+                                                                                 IN
+                                                                                 EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL
+                                                                                 *This,
+                                                                                 IN EFI_HANDLE
+                                                                                 RootBridgeHandle,
+                                                                                 IN
+                                                                                 EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_PCI_ADDRESS
+                                                                                 PciAddress,
+                                                                                 IN
+                                                                                 EFI_PCI_CONTROLLER_RESOURCE_ALLOCATION_PHASE
+                                                                                 Phase
+                                                                                 );
 
 ///
 /// Provides the basic interfaces to abstract a PCI host bridge resource allocation.
@@ -375,38 +408,38 @@ struct _EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL {
   /// The notification from the PCI bus enumerator that it is about to enter
   /// a certain phase during the enumeration process.
   ///
-  EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL_NOTIFY_PHASE           NotifyPhase;
+  EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL_NOTIFY_PHASE              NotifyPhase;
 
   ///
   /// Retrieves the device handle for the next PCI root bridge that is produced by the
   /// host bridge to which this instance of the EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL is attached.
   ///
-  EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL_GET_NEXT_ROOT_BRIDGE   GetNextRootBridge;
+  EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL_GET_NEXT_ROOT_BRIDGE      GetNextRootBridge;
 
   ///
   /// Retrieves the allocation-related attributes of a PCI root bridge.
   ///
-  EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL_GET_ATTRIBUTES         GetAllocAttributes;
+  EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL_GET_ATTRIBUTES            GetAllocAttributes;
 
   ///
   /// Sets up a PCI root bridge for bus enumeration.
   ///
-  EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL_START_BUS_ENUMERATION  StartBusEnumeration;
+  EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL_START_BUS_ENUMERATION     StartBusEnumeration;
 
   ///
   /// Sets up the PCI root bridge so that it decodes a specific range of bus numbers.
   ///
-  EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL_SET_BUS_NUMBERS        SetBusNumbers;
+  EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL_SET_BUS_NUMBERS           SetBusNumbers;
 
   ///
   /// Submits the resource requirements for the specified PCI root bridge.
   ///
-  EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL_SUBMIT_RESOURCES       SubmitResources;
+  EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL_SUBMIT_RESOURCES          SubmitResources;
 
   ///
   /// Returns the proposed resource assignment for the specified PCI root bridges.
   ///
-  EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL_GET_PROPOSED_RESOURCES GetProposedResources;
+  EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL_GET_PROPOSED_RESOURCES    GetProposedResources;
 
   ///
   /// Provides hooks from the PCI bus driver to every PCI controller
@@ -414,9 +447,9 @@ struct _EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL {
   /// allow the host bridge driver to preinitialize individual PCI controllers
   /// before enumeration.
   ///
-  EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL_PREPROCESS_CONTROLLER  PreprocessController;
+  EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL_PREPROCESS_CONTROLLER     PreprocessController;
 };
 
-extern EFI_GUID gEfiPciHostBridgeResourceAllocationProtocolGuid;
+extern EFI_GUID  gEfiPciHostBridgeResourceAllocationProtocolGuid;
 
 #endif

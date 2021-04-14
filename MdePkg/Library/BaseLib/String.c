@@ -8,7 +8,6 @@
 
 #include "BaseLibInternals.h"
 
-
 /**
   Returns the length of a Null-terminated Unicode string.
 
@@ -32,7 +31,7 @@ StrLen (
   IN      CONST CHAR16              *String
   )
 {
-  UINTN                             Length;
+  UINTN  Length;
 
   ASSERT (String != NULL);
   ASSERT (((UINTN) String & BIT0) == 0);
@@ -46,6 +45,7 @@ StrLen (
       ASSERT (Length < PcdGet32 (PcdMaximumUnicodeStringLength));
     }
   }
+
   return Length;
 }
 
@@ -121,6 +121,7 @@ StrCmp (
     FirstString++;
     SecondString++;
   }
+
   return *FirstString - *SecondString;
 }
 
@@ -191,7 +192,6 @@ StrnCmp (
   return *FirstString - *SecondString;
 }
 
-
 /**
   Returns the first occurrence of a Null-terminated Unicode sub-string
   in a Null-terminated Unicode string.
@@ -225,8 +225,8 @@ StrStr (
   IN      CONST CHAR16              *SearchString
   )
 {
-  CONST CHAR16 *FirstMatch;
-  CONST CHAR16 *SearchStringTmp;
+  CONST CHAR16  *FirstMatch;
+  CONST CHAR16  *SearchStringTmp;
 
   //
   // ASSERT both strings are less long than PcdMaximumUnicodeStringLength.
@@ -243,8 +243,8 @@ StrStr (
     SearchStringTmp = SearchString;
     FirstMatch = String;
 
-    while ((*String == *SearchStringTmp)
-            && (*String != L'\0')) {
+    while (  (*String == *SearchStringTmp)
+          && (*String != L'\0')) {
       String++;
       SearchStringTmp++;
     }
@@ -359,10 +359,9 @@ InternalIsHexaDecimalDigitCharacter (
   IN      CHAR16                    Char
   )
 {
-
   return (BOOLEAN) (InternalIsDecimalDigitCharacter (Char) ||
-    (Char >= L'A' && Char <= L'F') ||
-    (Char >= L'a' && Char <= L'f'));
+                    (Char >= L'A' && Char <= L'F') ||
+                    (Char >= L'a' && Char <= L'f'));
 }
 
 /**
@@ -405,12 +404,11 @@ StrDecimalToUintn (
   IN      CONST CHAR16              *String
   )
 {
-  UINTN     Result;
+  UINTN  Result;
 
   StrDecimalToUintnS (String, (CHAR16 **) NULL, &Result);
   return Result;
 }
-
 
 /**
   Convert a Null-terminated Unicode decimal string to a value of
@@ -452,7 +450,7 @@ StrDecimalToUint64 (
   IN      CONST CHAR16              *String
   )
 {
-  UINT64     Result;
+  UINT64  Result;
 
   StrDecimalToUint64S (String, (CHAR16 **) NULL, &Result);
   return Result;
@@ -499,12 +497,11 @@ StrHexToUintn (
   IN      CONST CHAR16              *String
   )
 {
-  UINTN     Result;
+  UINTN  Result;
 
   StrHexToUintnS (String, (CHAR16 **) NULL, &Result);
   return Result;
 }
-
 
 /**
   Convert a Null-terminated Unicode hexadecimal string to a value of type UINT64.
@@ -547,7 +544,7 @@ StrHexToUint64 (
   IN      CONST CHAR16             *String
   )
 {
-  UINT64    Result;
+  UINT64  Result;
 
   StrHexToUint64S (String, (CHAR16 **) NULL, &Result);
   return Result;
@@ -595,12 +592,10 @@ InternalAsciiIsHexaDecimalDigitCharacter (
   IN      CHAR8                    Char
   )
 {
-
   return (BOOLEAN) (InternalAsciiIsDecimalDigitCharacter (Char) ||
-    (Char >= 'A' && Char <= 'F') ||
-    (Char >= 'a' && Char <= 'f'));
+                    (Char >= 'A' && Char <= 'F') ||
+                    (Char >= 'a' && Char <= 'f'));
 }
-
 
 /**
   Returns the length of a Null-terminated ASCII string.
@@ -625,7 +620,7 @@ AsciiStrLen (
   IN      CONST CHAR8               *String
   )
 {
-  UINTN                             Length;
+  UINTN  Length;
 
   ASSERT (String != NULL);
 
@@ -638,6 +633,7 @@ AsciiStrLen (
       ASSERT (Length < PcdGet32 (PcdMaximumAsciiStringLength));
     }
   }
+
   return Length;
 }
 
@@ -762,7 +758,6 @@ InternalAsciiHexCharToUintn (
   return (10 + AsciiCharToUpper (Char) - 'A');
 }
 
-
 /**
   Performs a case insensitive comparison of two Null-terminated ASCII strings,
   and returns the difference between the first mismatched ASCII characters.
@@ -880,9 +875,9 @@ AsciiStrnCmp (
     SecondString++;
     Length--;
   }
+
   return *FirstString - *SecondString;
 }
-
 
 /**
   Returns the first occurrence of a Null-terminated ASCII sub-string
@@ -915,8 +910,8 @@ AsciiStrStr (
   IN      CONST CHAR8               *SearchString
   )
 {
-  CONST CHAR8 *FirstMatch;
-  CONST CHAR8 *SearchStringTmp;
+  CONST CHAR8  *FirstMatch;
+  CONST CHAR8  *SearchStringTmp;
 
   //
   // ASSERT both strings are less long than PcdMaximumAsciiStringLength
@@ -932,8 +927,8 @@ AsciiStrStr (
     SearchStringTmp = SearchString;
     FirstMatch = String;
 
-    while ((*String == *SearchStringTmp)
-            && (*String != '\0')) {
+    while (  (*String == *SearchStringTmp)
+          && (*String != '\0')) {
       String++;
       SearchStringTmp++;
     }
@@ -988,12 +983,11 @@ AsciiStrDecimalToUintn (
   IN      CONST CHAR8               *String
   )
 {
-  UINTN     Result;
+  UINTN  Result;
 
   AsciiStrDecimalToUintnS (String, (CHAR8 **) NULL, &Result);
   return Result;
 }
-
 
 /**
   Convert a Null-terminated ASCII decimal string to a value of type
@@ -1031,7 +1025,7 @@ AsciiStrDecimalToUint64 (
   IN      CONST CHAR8               *String
   )
 {
-  UINT64     Result;
+  UINT64  Result;
 
   AsciiStrDecimalToUint64S (String, (CHAR8 **) NULL, &Result);
   return Result;
@@ -1077,12 +1071,11 @@ AsciiStrHexToUintn (
   IN      CONST CHAR8               *String
   )
 {
-  UINTN     Result;
+  UINTN  Result;
 
   AsciiStrHexToUintnS (String, (CHAR8 **) NULL, &Result);
   return Result;
 }
-
 
 /**
   Convert a Null-terminated ASCII hexadecimal string to a value of type UINT64.
@@ -1124,14 +1117,13 @@ AsciiStrHexToUint64 (
   IN      CONST CHAR8                *String
   )
 {
-  UINT64    Result;
+  UINT64  Result;
 
   AsciiStrHexToUint64S (String, (CHAR8 **) NULL, &Result);
   return Result;
 }
 
-
-STATIC CHAR8 EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+STATIC CHAR8  EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                                 "abcdefghijklmnopqrstuvwxyz"
                                 "0123456789+/";
 
@@ -1163,9 +1155,8 @@ Base64Encode (
   IN OUT    UINTN  *DestinationSize
   )
 {
-
-  UINTN          RequiredSize;
-  UINTN          Left;
+  UINTN  RequiredSize;
+  UINTN  Left;
 
   //
   // Check pointers, and SourceLength is valid
@@ -1182,15 +1173,16 @@ Base64Encode (
       *DestinationSize = 1;
       return RETURN_BUFFER_TOO_SMALL;
     }
+
     *DestinationSize = 1;
-    *Destination = '\0';
+    *Destination     = '\0';
     return RETURN_SUCCESS;
   }
 
   //
   // Check if SourceLength or  DestinationSize is valid
   //
-  if ((SourceLength >= (MAX_ADDRESS - (UINTN)Source)) || (*DestinationSize >= (MAX_ADDRESS - (UINTN)Destination))){
+  if ((SourceLength >= (MAX_ADDRESS - (UINTN) Source)) || (*DestinationSize >= (MAX_ADDRESS - (UINTN) Destination))) {
     return RETURN_INVALID_PARAMETER;
   }
 
@@ -1209,12 +1201,11 @@ Base64Encode (
   // Encode 24 bits (three bytes) into 4 ascii characters
   //
   while (Left >= 3) {
-
-    *Destination++ = EncodingTable[( Source[0] & 0xfc) >> 2 ];
+    *Destination++ = EncodingTable[(Source[0] & 0xfc) >> 2];
     *Destination++ = EncodingTable[((Source[0] & 0x03) << 4) + ((Source[1] & 0xf0) >> 4)];
     *Destination++ = EncodingTable[((Source[1] & 0x0f) << 2) + ((Source[2] & 0xc0) >> 6)];
-    *Destination++ = EncodingTable[( Source[2] & 0x3f)];
-    Left -= 3;
+    *Destination++ = EncodingTable[(Source[2] & 0x3f)];
+    Left   -= 3;
     Source += 3;
   }
 
@@ -1233,7 +1224,7 @@ Base64Encode (
       //
       // One more data byte, two pad characters
       //
-      *Destination++ = EncodingTable[( Source[0] & 0xfc) >> 2];
+      *Destination++ = EncodingTable[(Source[0] & 0xfc) >> 2];
       *Destination++ = EncodingTable[((Source[0] & 0x03) << 4)];
       *Destination++ = '=';
       *Destination++ = '=';
@@ -1243,12 +1234,13 @@ Base64Encode (
       //
       // Two more data bytes, and one pad character
       //
-      *Destination++ = EncodingTable[( Source[0] & 0xfc) >> 2];
+      *Destination++ = EncodingTable[(Source[0] & 0xfc) >> 2];
       *Destination++ = EncodingTable[((Source[0] & 0x03) << 4) + ((Source[1] & 0xf0) >> 4)];
       *Destination++ = EncodingTable[((Source[1] & 0x0f) << 2)];
       *Destination++ = '=';
       break;
-    }
+  }
+
   //
   // Add terminating NULL
   //
@@ -1347,14 +1339,14 @@ Base64Decode (
   IN OUT UINTN       *DestinationSize
   )
 {
-  BOOLEAN PaddingMode;
-  UINTN   SixBitGroupsConsumed;
-  UINT32  Accumulator;
-  UINTN   OriginalDestinationSize;
-  UINTN   SourceIndex;
-  CHAR8   SourceChar;
-  UINT32  Base64Value;
-  UINT8   DestinationOctet;
+  BOOLEAN  PaddingMode;
+  UINTN    SixBitGroupsConsumed;
+  UINT32   Accumulator;
+  UINTN    OriginalDestinationSize;
+  UINTN    SourceIndex;
+  CHAR8    SourceChar;
+  UINT32   Base64Value;
+  UINT8    DestinationOctet;
 
   if (DestinationSize == NULL) {
     return RETURN_INVALID_PARAMETER;
@@ -1370,7 +1362,7 @@ Base64Decode (
       //
       return RETURN_INVALID_PARAMETER;
     }
-  } else if (SourceSize > MAX_ADDRESS - (UINTN)Source) {
+  } else if (SourceSize > MAX_ADDRESS - (UINTN) Source) {
     //
     // Non-NULL Source, but it wraps around.
     //
@@ -1387,7 +1379,7 @@ Base64Decode (
       //
       return RETURN_INVALID_PARAMETER;
     }
-  } else if (*DestinationSize > MAX_ADDRESS - (UINTN)Destination) {
+  } else if (*DestinationSize > MAX_ADDRESS - (UINTN) Destination) {
     //
     // Non-NULL Destination, but it wraps around.
     //
@@ -1402,11 +1394,11 @@ Base64Decode (
     // Both arrays have been provided, and we know from earlier that each array
     // is valid in itself.
     //
-    if ((UINTN)Source + SourceSize <= (UINTN)Destination) {
+    if ((UINTN) Source + SourceSize <= (UINTN) Destination) {
       //
       // Source array precedes Destination array, OK.
       //
-    } else if ((UINTN)Destination + *DestinationSize <= (UINTN)Source) {
+    } else if ((UINTN) Destination + *DestinationSize <= (UINTN) Source) {
       //
       // Destination array precedes Source array, OK.
       //
@@ -1421,11 +1413,11 @@ Base64Decode (
   //
   // Decoding loop setup.
   //
-  PaddingMode             = FALSE;
-  SixBitGroupsConsumed    = 0;
-  Accumulator             = 0;
+  PaddingMode = FALSE;
+  SixBitGroupsConsumed = 0;
+  Accumulator = 0;
   OriginalDestinationSize = *DestinationSize;
-  *DestinationSize        = 0;
+  *DestinationSize = 0;
 
   //
   // Decoding loop.
@@ -1447,14 +1439,15 @@ Base64Decode (
     // from RFC4648, Chapter 4. "Base 64 Encoding":
     //
     // (2) The final quantum of encoding input is exactly 8 bits; here, the
-    //     final unit of encoded output will be two characters followed by two
-    //     "=" padding characters.
+    // final unit of encoded output will be two characters followed by two
+    // "=" padding characters.
     //
     if (PaddingMode) {
       if (SourceChar == '=' && SixBitGroupsConsumed == 3) {
         SixBitGroupsConsumed = 0;
         continue;
       }
+
       return RETURN_INVALID_PARAMETER;
     }
 
@@ -1530,38 +1523,38 @@ Base64Decode (
     Accumulator = (Accumulator << 6) | Base64Value;
     SixBitGroupsConsumed++;
     switch (SixBitGroupsConsumed) {
-    case 1:
-      //
-      // No octet to spill after consuming the first 6-bit group of the
-      // quantum; advance to the next source character.
-      //
-      continue;
-    case 2:
-      //
-      // 12 bits accumulated (6 pending + 6 new); prepare for spilling an
-      // octet. 4 bits remain pending.
-      //
-      DestinationOctet = (UINT8)(Accumulator >> 4);
-      Accumulator &= 0xF;
-      break;
-    case 3:
-      //
-      // 10 bits accumulated (4 pending + 6 new); prepare for spilling an
-      // octet. 2 bits remain pending.
-      //
-      DestinationOctet = (UINT8)(Accumulator >> 2);
-      Accumulator &= 0x3;
-      break;
-    default:
-      ASSERT (SixBitGroupsConsumed == 4);
-      //
-      // 8 bits accumulated (2 pending + 6 new); prepare for spilling an octet.
-      // The quantum is complete, 0 bits remain pending.
-      //
-      DestinationOctet = (UINT8)Accumulator;
-      Accumulator = 0;
-      SixBitGroupsConsumed = 0;
-      break;
+      case 1:
+        //
+        // No octet to spill after consuming the first 6-bit group of the
+        // quantum; advance to the next source character.
+        //
+        continue;
+      case 2:
+        //
+        // 12 bits accumulated (6 pending + 6 new); prepare for spilling an
+        // octet. 4 bits remain pending.
+        //
+        DestinationOctet = (UINT8) (Accumulator >> 4);
+        Accumulator &= 0xF;
+        break;
+      case 3:
+        //
+        // 10 bits accumulated (4 pending + 6 new); prepare for spilling an
+        // octet. 2 bits remain pending.
+        //
+        DestinationOctet = (UINT8) (Accumulator >> 2);
+        Accumulator &= 0x3;
+        break;
+      default:
+        ASSERT (SixBitGroupsConsumed == 4);
+        //
+        // 8 bits accumulated (2 pending + 6 new); prepare for spilling an octet.
+        // The quantum is complete, 0 bits remain pending.
+        //
+        DestinationOctet = (UINT8) Accumulator;
+        Accumulator = 0;
+        SixBitGroupsConsumed = 0;
+        break;
     }
 
     //
@@ -1572,6 +1565,7 @@ Base64Decode (
       ASSERT (Destination != NULL);
       Destination[*DestinationSize] = DestinationOctet;
     }
+
     (*DestinationSize)++;
 
     //
@@ -1592,6 +1586,7 @@ Base64Decode (
   if (*DestinationSize <= OriginalDestinationSize) {
     return RETURN_SUCCESS;
   }
+
   return RETURN_BUFFER_TOO_SMALL;
 }
 

@@ -17,10 +17,10 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 ///
 #define EFI_DRIVER_BINDING_PROTOCOL_GUID \
   { \
-    0x18a031ab, 0xb443, 0x4d1a, {0xa5, 0xc0, 0xc, 0x9, 0x26, 0x1e, 0x9f, 0x71 } \
+    0x18a031ab, 0xb443, 0x4d1a, { 0xa5, 0xc0, 0xc, 0x9, 0x26, 0x1e, 0x9f, 0x71 } \
   }
 
-typedef struct _EFI_DRIVER_BINDING_PROTOCOL  EFI_DRIVER_BINDING_PROTOCOL;
+typedef struct _EFI_DRIVER_BINDING_PROTOCOL EFI_DRIVER_BINDING_PROTOCOL;
 
 /**
   Tests to see if this driver supports a given controller. If a child device is provided,
@@ -65,12 +65,12 @@ typedef struct _EFI_DRIVER_BINDING_PROTOCOL  EFI_DRIVER_BINDING_PROTOCOL;
                                    RemainingDevicePath is not supported by the driver specified by This.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_DRIVER_BINDING_SUPPORTED)(
-  IN EFI_DRIVER_BINDING_PROTOCOL            *This,
-  IN EFI_HANDLE                             ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL               *RemainingDevicePath OPTIONAL
-  );
+                                       IN EFI_DRIVER_BINDING_PROTOCOL            *This,
+                                       IN EFI_HANDLE                             ControllerHandle,
+                                       IN EFI_DEVICE_PATH_PROTOCOL               *RemainingDevicePath OPTIONAL
+                                       );
 
 /**
   Starts a device controller or a bus controller.
@@ -108,12 +108,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_DRIVER_BINDING_START)(
-  IN EFI_DRIVER_BINDING_PROTOCOL            *This,
-  IN EFI_HANDLE                             ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL               *RemainingDevicePath OPTIONAL
-  );
+                                   IN EFI_DRIVER_BINDING_PROTOCOL            *This,
+                                   IN EFI_HANDLE                             ControllerHandle,
+                                   IN EFI_DEVICE_PATH_PROTOCOL               *RemainingDevicePath OPTIONAL
+                                   );
 
 /**
   Stops a device controller or a bus controller.
@@ -142,22 +142,22 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_DRIVER_BINDING_STOP)(
-  IN EFI_DRIVER_BINDING_PROTOCOL            *This,
-  IN  EFI_HANDLE                            ControllerHandle,
-  IN  UINTN                                 NumberOfChildren,
-  IN  EFI_HANDLE                            *ChildHandleBuffer OPTIONAL
-  );
+                                  IN EFI_DRIVER_BINDING_PROTOCOL            *This,
+                                  IN  EFI_HANDLE                            ControllerHandle,
+                                  IN  UINTN                                 NumberOfChildren,
+                                  IN  EFI_HANDLE                            *ChildHandleBuffer OPTIONAL
+                                  );
 
 ///
 /// This protocol provides the services required to determine if a driver supports a given controller.
 /// If a controller is supported, then it also provides routines to start and stop the controller.
 ///
 struct _EFI_DRIVER_BINDING_PROTOCOL {
-  EFI_DRIVER_BINDING_SUPPORTED  Supported;
-  EFI_DRIVER_BINDING_START      Start;
-  EFI_DRIVER_BINDING_STOP       Stop;
+  EFI_DRIVER_BINDING_SUPPORTED    Supported;
+  EFI_DRIVER_BINDING_START        Start;
+  EFI_DRIVER_BINDING_STOP         Stop;
 
   ///
   /// The version number of the UEFI driver that produced the
@@ -171,13 +171,13 @@ struct _EFI_DRIVER_BINDING_PROTOCOL {
   /// platform/OEM specific drivers. The Version values of 0x10-
   /// 0xffffffef are reserved for IHV-developed drivers.
   ///
-  UINT32                        Version;
+  UINT32        Version;
 
   ///
   /// The image handle of the UEFI driver that produced this instance
   /// of the EFI_DRIVER_BINDING_PROTOCOL.
   ///
-  EFI_HANDLE                    ImageHandle;
+  EFI_HANDLE    ImageHandle;
 
   ///
   /// The handle on which this instance of the
@@ -187,9 +187,9 @@ struct _EFI_DRIVER_BINDING_PROTOCOL {
   /// EFI_DRIVER_BINDING_PROTOCOL, this value may not be
   /// the same as ImageHandle.
   ///
-  EFI_HANDLE                    DriverBindingHandle;
+  EFI_HANDLE    DriverBindingHandle;
 };
 
-extern EFI_GUID gEfiDriverBindingProtocolGuid;
+extern EFI_GUID  gEfiDriverBindingProtocolGuid;
 
 #endif

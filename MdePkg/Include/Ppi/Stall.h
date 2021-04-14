@@ -15,7 +15,7 @@
 #define __STALL_PPI_H__
 
 #define EFI_PEI_STALL_PPI_GUID \
-  { 0x1f4c6f90, 0xb06b, 0x48d8, {0xa2, 0x01, 0xba, 0xe5, 0xf1, 0xcd, 0x7d, 0x56 } }
+  { 0x1f4c6f90, 0xb06b, 0x48d8, { 0xa2, 0x01, 0xba, 0xe5, 0xf1, 0xcd, 0x7d, 0x56 } }
 
 typedef struct _EFI_PEI_STALL_PPI EFI_PEI_STALL_PPI;
 
@@ -32,12 +32,12 @@ typedef struct _EFI_PEI_STALL_PPI EFI_PEI_STALL_PPI;
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_STALL)(
-  IN CONST EFI_PEI_SERVICES     **PeiServices,
-  IN CONST EFI_PEI_STALL_PPI    *This,
-  IN UINTN                      Microseconds
-  );
+                        IN CONST EFI_PEI_SERVICES     **PeiServices,
+                        IN CONST EFI_PEI_STALL_PPI    *This,
+                        IN UINTN                      Microseconds
+                        );
 
 ///
 /// This service provides a simple, blocking stall with platform-specific resolution.
@@ -46,11 +46,11 @@ struct _EFI_PEI_STALL_PPI {
   ///
   /// The resolution in microseconds of the stall services.
   ///
-  UINTN          Resolution;
+  UINTN            Resolution;
 
-  EFI_PEI_STALL  Stall;
+  EFI_PEI_STALL    Stall;
 };
 
-extern EFI_GUID gEfiPeiStallPpiGuid;
+extern EFI_GUID  gEfiPeiStallPpiGuid;
 
 #endif

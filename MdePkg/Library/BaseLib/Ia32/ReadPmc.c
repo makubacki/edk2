@@ -24,8 +24,7 @@ AsmReadPmc (
   )
 {
   _asm {
-    mov     ecx, Index
-    rdpmc
+  mov  ecx, Index
+       rdpmc
   }
 }
-

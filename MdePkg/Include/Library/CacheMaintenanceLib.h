@@ -20,8 +20,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 VOID
 EFIAPI
 InvalidateInstructionCache (
-  VOID
-  );
+                            VOID
+                            );
 
 /**
   Invalidates a range of instruction cache lines in the cache coherency domain
@@ -68,8 +68,8 @@ InvalidateInstructionCacheRange (
 VOID
 EFIAPI
 WriteBackInvalidateDataCache (
-  VOID
-  );
+                              VOID
+                              );
 
 /**
   Writes Back and Invalidates a range of data cache lines in the cache
@@ -117,8 +117,8 @@ WriteBackInvalidateDataCacheRange (
 VOID
 EFIAPI
 WriteBackDataCache (
-  VOID
-  );
+                    VOID
+                    );
 
 /**
   Writes Back a range of data cache lines in the cache coherency domain of the
@@ -166,8 +166,8 @@ WriteBackDataCacheRange (
 VOID
 EFIAPI
 InvalidateDataCache (
-  VOID
-  );
+                     VOID
+                     );
 
 /**
   Invalidates a range of data cache lines in the cache coherency domain of the

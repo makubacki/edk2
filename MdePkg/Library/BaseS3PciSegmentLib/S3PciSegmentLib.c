@@ -8,7 +8,6 @@
 
 **/
 
-
 #include <Base.h>
 
 #include <Library/DebugLib.h>
@@ -24,10 +23,10 @@
   @retval New address that can be pass to the S3 Boot Script Library functions.
 **/
 #define PCI_SEGMENT_LIB_ADDRESS_TO_S3_BOOT_SCRIPT_PCI_ADDRESS(Address) \
-          ((((UINT32)(Address) >> 20) & 0xff) << 24) | \
-          ((((UINT32)(Address) >> 15) & 0x1f) << 16) | \
-          ((((UINT32)(Address) >> 12) & 0x07) <<  8) | \
-          LShiftU64 ((Address) & 0xfff, 32)    // Always put Register in high four bytes.
+  ((((UINT32) (Address) >> 20) & 0xff) << 24) | \
+  ((((UINT32) (Address) >> 15) & 0x1f) << 16) | \
+  ((((UINT32) (Address) >> 12) & 0x07) <<  8) | \
+  LShiftU64 ((Address) & 0xfff, 32)            // Always put Register in high four bytes.
 
 /**
   Saves a PCI configuration value to the boot script.
@@ -50,15 +49,15 @@ InternalSavePciSegmentWriteValueToBootScript (
   IN VOID                   *Buffer
   )
 {
-  RETURN_STATUS                Status;
+  RETURN_STATUS  Status;
 
   Status = S3BootScriptSavePciCfg2Write (
-             Width,
-             RShiftU64 ((Address), 32) & 0xffff,
-             PCI_SEGMENT_LIB_ADDRESS_TO_S3_BOOT_SCRIPT_PCI_ADDRESS (Address),
-             1,
-             Buffer
-             );
+                                         Width,
+                                         RShiftU64 ((Address), 32) & 0xffff,
+                                         PCI_SEGMENT_LIB_ADDRESS_TO_S3_BOOT_SCRIPT_PCI_ADDRESS (Address),
+                                         1,
+                                         Buffer
+                                         );
   ASSERT_RETURN_ERROR (Status);
 }
 
@@ -290,7 +289,10 @@ S3PciSegmentBitFieldWrite8 (
   IN UINT8                     Value
   )
 {
-  return InternalSavePciSegmentWrite8ValueToBootScript (Address, PciSegmentBitFieldWrite8 (Address, StartBit, EndBit, Value));
+  return InternalSavePciSegmentWrite8ValueToBootScript (
+                                                       Address,
+                                                       PciSegmentBitFieldWrite8 (Address, StartBit, EndBit, Value)
+                                                       );
 }
 
 /**
@@ -330,7 +332,10 @@ S3PciSegmentBitFieldOr8 (
   IN UINT8                     OrData
   )
 {
-  return InternalSavePciSegmentWrite8ValueToBootScript (Address, PciSegmentBitFieldOr8 (Address, StartBit, EndBit, OrData));
+  return InternalSavePciSegmentWrite8ValueToBootScript (
+                                                       Address,
+                                                       PciSegmentBitFieldOr8 (Address, StartBit, EndBit, OrData)
+                                                       );
 }
 
 /**
@@ -370,7 +375,10 @@ S3PciSegmentBitFieldAnd8 (
   IN UINT8                     AndData
   )
 {
-  return InternalSavePciSegmentWrite8ValueToBootScript (Address, PciSegmentBitFieldAnd8 (Address, StartBit, EndBit, AndData));
+  return InternalSavePciSegmentWrite8ValueToBootScript (
+                                                       Address,
+                                                       PciSegmentBitFieldAnd8 (Address, StartBit, EndBit, AndData)
+                                                       );
 }
 
 /**
@@ -414,7 +422,11 @@ S3PciSegmentBitFieldAndThenOr8 (
   IN UINT8                     OrData
   )
 {
-  return InternalSavePciSegmentWrite8ValueToBootScript (Address, PciSegmentBitFieldAndThenOr8 (Address, StartBit, EndBit, AndData, OrData));
+  return InternalSavePciSegmentWrite8ValueToBootScript (
+                                                       Address,
+                                                       PciSegmentBitFieldAndThenOr8 (Address, StartBit, EndBit, AndData,
+                                                                                     OrData)
+                                                       );
 }
 
 /**
@@ -654,7 +666,10 @@ S3PciSegmentBitFieldWrite16 (
   IN UINT16                    Value
   )
 {
-  return InternalSavePciSegmentWrite16ValueToBootScript (Address, PciSegmentBitFieldWrite16 (Address, StartBit, EndBit, Value));
+  return InternalSavePciSegmentWrite16ValueToBootScript (
+                                                        Address,
+                                                        PciSegmentBitFieldWrite16 (Address, StartBit, EndBit, Value)
+                                                        );
 }
 
 /**
@@ -695,7 +710,10 @@ S3PciSegmentBitFieldOr16 (
   IN UINT16                    OrData
   )
 {
-  return InternalSavePciSegmentWrite16ValueToBootScript (Address, PciSegmentBitFieldOr16 (Address, StartBit, EndBit, OrData));
+  return InternalSavePciSegmentWrite16ValueToBootScript (
+                                                        Address,
+                                                        PciSegmentBitFieldOr16 (Address, StartBit, EndBit, OrData)
+                                                        );
 }
 
 /**
@@ -736,7 +754,10 @@ S3PciSegmentBitFieldAnd16 (
   IN UINT16                    AndData
   )
 {
-  return InternalSavePciSegmentWrite16ValueToBootScript (Address, PciSegmentBitFieldAnd16 (Address, StartBit, EndBit, AndData));
+  return InternalSavePciSegmentWrite16ValueToBootScript (
+                                                        Address,
+                                                        PciSegmentBitFieldAnd16 (Address, StartBit, EndBit, AndData)
+                                                        );
 }
 
 /**
@@ -780,10 +801,12 @@ S3PciSegmentBitFieldAndThenOr16 (
   IN UINT16                    OrData
   )
 {
-  return InternalSavePciSegmentWrite16ValueToBootScript (Address, PciSegmentBitFieldAndThenOr16 (Address, StartBit, EndBit, AndData, OrData));
+  return InternalSavePciSegmentWrite16ValueToBootScript (
+                                                        Address,
+                                                        PciSegmentBitFieldAndThenOr16 (Address, StartBit, EndBit,
+                                                                                       AndData, OrData)
+                                                        );
 }
-
-
 
 /**
   Saves a 32-bit PCI configuration value to the boot script.
@@ -1022,7 +1045,10 @@ S3PciSegmentBitFieldWrite32 (
   IN UINT32                    Value
   )
 {
-  return InternalSavePciSegmentWrite32ValueToBootScript (Address, PciSegmentBitFieldWrite32 (Address, StartBit, EndBit, Value));
+  return InternalSavePciSegmentWrite32ValueToBootScript (
+                                                        Address,
+                                                        PciSegmentBitFieldWrite32 (Address, StartBit, EndBit, Value)
+                                                        );
 }
 
 /**
@@ -1063,7 +1089,10 @@ S3PciSegmentBitFieldOr32 (
   IN UINT32                    OrData
   )
 {
-  return InternalSavePciSegmentWrite32ValueToBootScript (Address, PciSegmentBitFieldOr32 (Address, StartBit, EndBit, OrData));
+  return InternalSavePciSegmentWrite32ValueToBootScript (
+                                                        Address,
+                                                        PciSegmentBitFieldOr32 (Address, StartBit, EndBit, OrData)
+                                                        );
 }
 
 /**
@@ -1104,7 +1133,10 @@ S3PciSegmentBitFieldAnd32 (
   IN UINT32                    AndData
   )
 {
-  return InternalSavePciSegmentWrite32ValueToBootScript (Address, PciSegmentBitFieldAnd32 (Address, StartBit, EndBit, AndData));
+  return InternalSavePciSegmentWrite32ValueToBootScript (
+                                                        Address,
+                                                        PciSegmentBitFieldAnd32 (Address, StartBit, EndBit, AndData)
+                                                        );
 }
 
 /**
@@ -1148,7 +1180,11 @@ S3PciSegmentBitFieldAndThenOr32 (
   IN UINT32                    OrData
   )
 {
-  return InternalSavePciSegmentWrite32ValueToBootScript (Address, PciSegmentBitFieldAndThenOr32 (Address, StartBit, EndBit, AndData, OrData));
+  return InternalSavePciSegmentWrite32ValueToBootScript (
+                                                        Address,
+                                                        PciSegmentBitFieldAndThenOr32 (Address, StartBit, EndBit,
+                                                                                       AndData, OrData)
+                                                        );
 }
 
 /**
@@ -1183,15 +1219,15 @@ S3PciSegmentReadBuffer (
   OUT VOID                     *Buffer
   )
 {
-  RETURN_STATUS    Status;
+  RETURN_STATUS  Status;
 
   Status = S3BootScriptSavePciCfg2Write (
-             S3BootScriptWidthUint8,
-             RShiftU64 (StartAddress, 32) & 0xffff,
-             PCI_SEGMENT_LIB_ADDRESS_TO_S3_BOOT_SCRIPT_PCI_ADDRESS (StartAddress),
-             PciSegmentReadBuffer (StartAddress, Size, Buffer),
-             Buffer
-             );
+                                         S3BootScriptWidthUint8,
+                                         RShiftU64 (StartAddress, 32) & 0xffff,
+                                         PCI_SEGMENT_LIB_ADDRESS_TO_S3_BOOT_SCRIPT_PCI_ADDRESS (StartAddress),
+                                         PciSegmentReadBuffer (StartAddress, Size, Buffer),
+                                         Buffer
+                                         );
   ASSERT_RETURN_ERROR (Status);
   return Size;
 }
@@ -1229,15 +1265,15 @@ S3PciSegmentWriteBuffer (
   IN VOID                      *Buffer
   )
 {
-  RETURN_STATUS    Status;
+  RETURN_STATUS  Status;
 
   Status = S3BootScriptSavePciCfg2Write (
-             S3BootScriptWidthUint8,
-             RShiftU64 (StartAddress, 32) & 0xffff,
-             PCI_SEGMENT_LIB_ADDRESS_TO_S3_BOOT_SCRIPT_PCI_ADDRESS (StartAddress),
-             PciSegmentWriteBuffer (StartAddress, Size, Buffer),
-             Buffer
-             );
+                                         S3BootScriptWidthUint8,
+                                         RShiftU64 (StartAddress, 32) & 0xffff,
+                                         PCI_SEGMENT_LIB_ADDRESS_TO_S3_BOOT_SCRIPT_PCI_ADDRESS (StartAddress),
+                                         PciSegmentWriteBuffer (StartAddress, Size, Buffer),
+                                         Buffer
+                                         );
   ASSERT_RETURN_ERROR (Status);
   return Size;
 }

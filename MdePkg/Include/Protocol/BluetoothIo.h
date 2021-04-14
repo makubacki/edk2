@@ -36,31 +36,31 @@ typedef struct {
   ///
   /// The version of the structure
   ///
-  UINT32                      Version;
+  UINT32                       Version;
   ///
   /// 48bit Bluetooth device address.
   ///
-  BLUETOOTH_ADDRESS           BD_ADDR;
+  BLUETOOTH_ADDRESS            BD_ADDR;
   ///
   /// Bluetooth PageScanRepetitionMode. See Bluetooth specification for detail.
   ///
-  UINT8                       PageScanRepetitionMode;
+  UINT8                        PageScanRepetitionMode;
   ///
   /// Bluetooth ClassOfDevice. See Bluetooth specification for detail.
   ///
-  BLUETOOTH_CLASS_OF_DEVICE   ClassOfDevice;
+  BLUETOOTH_CLASS_OF_DEVICE    ClassOfDevice;
   ///
   /// Bluetooth CloseOffset. See Bluetooth specification for detail.
   ///
-  UINT16                      ClockOffset;
+  UINT16                       ClockOffset;
   ///
   /// Bluetooth RSSI. See Bluetooth specification for detail.
   ///
-  UINT8                       RSSI;
+  UINT8                        RSSI;
   ///
   /// Bluetooth ExtendedInquiryResponse. See Bluetooth specification for detail.
   ///
-  UINT8                       ExtendedInquiryResponse[240];
+  UINT8                        ExtendedInquiryResponse[240];
 } EFI_BLUETOOTH_DEVICE_INFO;
 
 /**
@@ -75,12 +75,12 @@ typedef struct {
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_BLUETOOTH_IO_GET_DEVICE_INFO)(
-  IN EFI_BLUETOOTH_IO_PROTOCOL    *This,
-  OUT UINTN                       *DeviceInfoSize,
-  OUT VOID                        **DeviceInfo
-  );
+                                           IN EFI_BLUETOOTH_IO_PROTOCOL    *This,
+                                           OUT UINTN                       *DeviceInfoSize,
+                                           OUT VOID                        **DeviceInfo
+                                           );
 
 /**
   Get Bluetooth SDP information.
@@ -94,12 +94,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_BLUETOOTH_IO_GET_SDP_INFO)(
-  IN EFI_BLUETOOTH_IO_PROTOCOL    *This,
-  OUT UINTN                       *SdpInfoSize,
-  OUT VOID                        **SdpInfo
-  );
+                                        IN EFI_BLUETOOTH_IO_PROTOCOL    *This,
+                                        OUT UINTN                       *SdpInfoSize,
+                                        OUT VOID                        **SdpInfo
+                                        );
 
 /**
   Send L2CAP message (including L2CAP header).
@@ -122,13 +122,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_BLUETOOTH_IO_L2CAP_RAW_SEND)(
-  IN EFI_BLUETOOTH_IO_PROTOCOL      *This,
-  IN OUT UINTN                      *BufferSize,
-  IN VOID                           *Buffer,
-  IN UINTN                          Timeout
-  );
+                                          IN EFI_BLUETOOTH_IO_PROTOCOL      *This,
+                                          IN OUT UINTN                      *BufferSize,
+                                          IN VOID                           *Buffer,
+                                          IN UINTN                          Timeout
+                                          );
 
 /**
   Receive L2CAP message (including L2CAP header).
@@ -151,13 +151,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_BLUETOOTH_IO_L2CAP_RAW_RECEIVE)(
-  IN EFI_BLUETOOTH_IO_PROTOCOL  *This,
-  IN OUT UINTN                  *BufferSize,
-  OUT VOID                      *Buffer,
-  IN UINTN                      Timeout
-  );
+                                             IN EFI_BLUETOOTH_IO_PROTOCOL  *This,
+                                             IN OUT UINTN                  *BufferSize,
+                                             OUT VOID                      *Buffer,
+                                             IN UINTN                      Timeout
+                                             );
 
 /**
   Callback function, it is called when asynchronous transfer is completed.
@@ -171,13 +171,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_BLUETOOTH_IO_ASYNC_FUNC_CALLBACK) (
-  IN UINT16                     ChannelID,
-  IN VOID                       *Data,
-  IN UINTN                      DataLength,
-  IN VOID                       *Context
-  );
+  EFI_STATUS
+(EFIAPI *EFI_BLUETOOTH_IO_ASYNC_FUNC_CALLBACK)(
+                                               IN UINT16                     ChannelID,
+                                               IN VOID                       *Data,
+                                               IN UINTN                      DataLength,
+                                               IN VOID                       *Context
+                                               );
 
 /**
   Receive L2CAP message (including L2CAP header) in non-blocking way.
@@ -197,15 +197,15 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_BLUETOOTH_IO_L2CAP_RAW_ASYNC_RECEIVE)(
-  IN EFI_BLUETOOTH_IO_PROTOCOL              *This,
-  IN BOOLEAN                                IsNewTransfer,
-  IN UINTN                                  PollingInterval,
-  IN UINTN                                  DataLength,
-  IN EFI_BLUETOOTH_IO_ASYNC_FUNC_CALLBACK   Callback,
-  IN VOID                                   *Context
-  );
+                                                   IN EFI_BLUETOOTH_IO_PROTOCOL              *This,
+                                                   IN BOOLEAN                                IsNewTransfer,
+                                                   IN UINTN                                  PollingInterval,
+                                                   IN UINTN                                  DataLength,
+                                                   IN EFI_BLUETOOTH_IO_ASYNC_FUNC_CALLBACK   Callback,
+                                                   IN VOID                                   *Context
+                                                   );
 
 /**
   Send L2CAP message (excluding L2CAP header) to a specific channel.
@@ -230,14 +230,14 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_BLUETOOTH_IO_L2CAP_SEND)(
-  IN EFI_BLUETOOTH_IO_PROTOCOL      *This,
-  IN EFI_HANDLE                     Handle,
-  IN OUT UINTN                      *BufferSize,
-  IN VOID                           *Buffer,
-  IN UINTN                          Timeout
-  );
+                                      IN EFI_BLUETOOTH_IO_PROTOCOL      *This,
+                                      IN EFI_HANDLE                     Handle,
+                                      IN OUT UINTN                      *BufferSize,
+                                      IN VOID                           *Buffer,
+                                      IN UINTN                          Timeout
+                                      );
 
 /**
   Receive L2CAP message (excluding L2CAP header) from a specific channel.
@@ -261,14 +261,14 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_BLUETOOTH_IO_L2CAP_RECEIVE)(
-  IN EFI_BLUETOOTH_IO_PROTOCOL    *This,
-  IN EFI_HANDLE                   Handle,
-  OUT UINTN                       *BufferSize,
-  OUT VOID                        **Buffer,
-  IN UINTN                        Timeout
-  );
+                                         IN EFI_BLUETOOTH_IO_PROTOCOL    *This,
+                                         IN EFI_HANDLE                   Handle,
+                                         OUT UINTN                       *BufferSize,
+                                         OUT VOID                        **Buffer,
+                                         IN UINTN                        Timeout
+                                         );
 
 /**
   Callback function, it is called when asynchronous transfer is completed.
@@ -281,12 +281,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_BLUETOOTH_IO_CHANNEL_SERVICE_CALLBACK) (
-  IN VOID                         *Data,
-  IN UINTN                        DataLength,
-  IN VOID                         *Context
-  );
+  EFI_STATUS
+(EFIAPI *EFI_BLUETOOTH_IO_CHANNEL_SERVICE_CALLBACK)(
+                                                    IN VOID                         *Data,
+                                                    IN UINTN                        DataLength,
+                                                    IN VOID                         *Context
+                                                    );
 
 /**
   Receive L2CAP message (excluding L2CAP header) in non-blocking way from a specific channel.
@@ -306,13 +306,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_BLUETOOTH_IO_L2CAP_ASYNC_RECEIVE)(
-  IN  EFI_BLUETOOTH_IO_PROTOCOL                   *This,
-  IN  EFI_HANDLE                                  Handle,
-  IN  EFI_BLUETOOTH_IO_CHANNEL_SERVICE_CALLBACK   Callback,
-  IN  VOID*                                       Context
-  );
+                                               IN  EFI_BLUETOOTH_IO_PROTOCOL                   *This,
+                                               IN  EFI_HANDLE                                  Handle,
+                                               IN  EFI_BLUETOOTH_IO_CHANNEL_SERVICE_CALLBACK   Callback,
+                                               IN  VOID *Context
+                                               );
 
 /**
   Do L2CAP connection.
@@ -332,15 +332,15 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_BLUETOOTH_IO_L2CAP_CONNECT)(
-  IN EFI_BLUETOOTH_IO_PROTOCOL                    *This,
-  OUT EFI_HANDLE                                  *Handle,
-  IN UINT16                                       Psm,
-  IN UINT16                                       Mtu,
-  IN EFI_BLUETOOTH_IO_CHANNEL_SERVICE_CALLBACK    Callback,
-  IN VOID                                         *Context
-  );
+                                         IN EFI_BLUETOOTH_IO_PROTOCOL                    *This,
+                                         OUT EFI_HANDLE                                  *Handle,
+                                         IN UINT16                                       Psm,
+                                         IN UINT16                                       Mtu,
+                                         IN EFI_BLUETOOTH_IO_CHANNEL_SERVICE_CALLBACK    Callback,
+                                         IN VOID                                         *Context
+                                         );
 
 /**
   Do L2CAP disconnection.
@@ -354,11 +354,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_BLUETOOTH_IO_L2CAP_DISCONNECT)(
-  IN EFI_BLUETOOTH_IO_PROTOCOL                    *This,
-  IN EFI_HANDLE                                   Handle
-  );
+                                            IN EFI_BLUETOOTH_IO_PROTOCOL                    *This,
+                                            IN EFI_HANDLE                                   Handle
+                                            );
 
 /**
   Register L2CAP callback function for special channel.
@@ -377,15 +377,15 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_BLUETOOTH_IO_L2CAP_REGISTER_SERVICE)(
-  IN EFI_BLUETOOTH_IO_PROTOCOL                    *This,
-  OUT EFI_HANDLE                                  *Handle,
-  IN UINT16                                       Psm,
-  IN UINT16                                       Mtu,
-  IN EFI_BLUETOOTH_IO_CHANNEL_SERVICE_CALLBACK    Callback,
-  IN VOID                                         *Context
-  );
+                                                  IN EFI_BLUETOOTH_IO_PROTOCOL                    *This,
+                                                  OUT EFI_HANDLE                                  *Handle,
+                                                  IN UINT16                                       Psm,
+                                                  IN UINT16                                       Mtu,
+                                                  IN EFI_BLUETOOTH_IO_CHANNEL_SERVICE_CALLBACK    Callback,
+                                                  IN VOID                                         *Context
+                                                  );
 
 ///
 /// This protocol provides service for Bluetooth L2CAP (Logical Link Control and Adaptation Protocol)
@@ -405,7 +405,7 @@ struct _EFI_BLUETOOTH_IO_PROTOCOL {
   EFI_BLUETOOTH_IO_L2CAP_REGISTER_SERVICE     L2CapRegisterService;
 };
 
-extern EFI_GUID gEfiBluetoothIoServiceBindingProtocolGuid;
-extern EFI_GUID gEfiBluetoothIoProtocolGuid;
+extern EFI_GUID  gEfiBluetoothIoServiceBindingProtocolGuid;
+extern EFI_GUID  gEfiBluetoothIoProtocolGuid;
 
 #endif

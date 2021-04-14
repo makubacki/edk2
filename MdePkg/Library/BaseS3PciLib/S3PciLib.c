@@ -9,7 +9,6 @@
 
 **/
 
-
 #include <Base.h>
 
 #include <Library/DebugLib.h>
@@ -18,7 +17,9 @@
 #include <Library/S3PciLib.h>
 
 #define PCILIB_TO_COMMON_ADDRESS(Address) \
-        ((((UINTN) ((Address>>20) & 0xff)) << 24) + (((UINTN) ((Address>>15) & 0x1f)) << 16) + (((UINTN) ((Address>>12) & 0x07)) << 8) + ((UINTN) (Address & 0xfff )))
+  ((((UINTN) ((Address>>20) & 0xff)) << \
+    24) + \
+   (((UINTN) ((Address>>15) & 0x1f)) << 16) + (((UINTN) ((Address>>12) & 0x07)) << 8) + ((UINTN) (Address & 0xfff)))
 
 /**
   Saves a PCI configuration value to the boot script.
@@ -41,14 +42,14 @@ InternalSavePciWriteValueToBootScript (
   IN VOID                   *Buffer
   )
 {
-  RETURN_STATUS                Status;
+  RETURN_STATUS  Status;
 
   Status = S3BootScriptSavePciCfgWrite (
-             Width,
-             PCILIB_TO_COMMON_ADDRESS(Address),
-             1,
-             Buffer
-             );
+                                        Width,
+                                        PCILIB_TO_COMMON_ADDRESS (Address),
+                                        1,
+                                        Buffer
+                                        );
   ASSERT (Status == RETURN_SUCCESS);
 }
 
@@ -415,7 +416,10 @@ S3PciBitFieldAndThenOr8 (
   IN UINT8                     OrData
   )
 {
-  return InternalSavePciWrite8ValueToBootScript (Address, PciBitFieldAndThenOr8 (Address, StartBit, EndBit, AndData, OrData));
+  return InternalSavePciWrite8ValueToBootScript (
+                                                Address,
+                                                PciBitFieldAndThenOr8 (Address, StartBit, EndBit, AndData, OrData)
+                                                );
 }
 
 /**
@@ -791,7 +795,10 @@ S3PciBitFieldAndThenOr16 (
   IN UINT16                    OrData
   )
 {
-  return InternalSavePciWrite16ValueToBootScript (Address, PciBitFieldAndThenOr16 (Address, StartBit, EndBit, AndData, OrData));
+  return InternalSavePciWrite16ValueToBootScript (
+                                                 Address,
+                                                 PciBitFieldAndThenOr16 (Address, StartBit, EndBit, AndData, OrData)
+                                                 );
 }
 
 /**
@@ -1167,7 +1174,10 @@ S3PciBitFieldAndThenOr32 (
   IN UINT32                    OrData
   )
 {
-  return InternalSavePciWrite32ValueToBootScript (Address, PciBitFieldAndThenOr32 (Address, StartBit, EndBit, AndData, OrData));
+  return InternalSavePciWrite32ValueToBootScript (
+                                                 Address,
+                                                 PciBitFieldAndThenOr32 (Address, StartBit, EndBit, AndData, OrData)
+                                                 );
 }
 
 /**
@@ -1202,15 +1212,15 @@ S3PciReadBuffer (
   OUT VOID                     *Buffer
   )
 {
-  RETURN_STATUS    Status;
+  RETURN_STATUS  Status;
 
   Status = S3BootScriptSavePciCfgWrite (
-             S3BootScriptWidthUint8,
-             PCILIB_TO_COMMON_ADDRESS (StartAddress),
-             PciReadBuffer (StartAddress, Size, Buffer),
-             Buffer
-             );
- ASSERT (Status == RETURN_SUCCESS);
+                                        S3BootScriptWidthUint8,
+                                        PCILIB_TO_COMMON_ADDRESS (StartAddress),
+                                        PciReadBuffer (StartAddress, Size, Buffer),
+                                        Buffer
+                                        );
+  ASSERT (Status == RETURN_SUCCESS);
 
   return Size;
 }
@@ -1248,14 +1258,14 @@ S3PciWriteBuffer (
   IN VOID                      *Buffer
   )
 {
-  RETURN_STATUS    Status;
+  RETURN_STATUS  Status;
 
   Status = S3BootScriptSavePciCfgWrite (
-             S3BootScriptWidthUint8,
-             PCILIB_TO_COMMON_ADDRESS (StartAddress),
-             PciWriteBuffer (StartAddress, Size, Buffer),
-             Buffer
-             );
+                                        S3BootScriptWidthUint8,
+                                        PCILIB_TO_COMMON_ADDRESS (StartAddress),
+                                        PciWriteBuffer (StartAddress, Size, Buffer),
+                                        Buffer
+                                        );
   ASSERT (Status == RETURN_SUCCESS);
 
   return Size;

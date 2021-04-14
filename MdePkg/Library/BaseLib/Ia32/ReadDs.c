@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 /**
   Reads the current value of Data Segment Register (DS).
 
@@ -25,8 +22,7 @@ AsmReadDs (
   )
 {
   __asm {
-    xor     eax, eax
+  xor  eax, eax
     mov     ax, ds
   }
 }
-

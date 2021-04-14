@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 #include "BaseLibInternals.h"
 
 /**
@@ -32,7 +29,7 @@ AsmFxRestore (
   )
 {
   ASSERT (Buffer != NULL);
-  ASSERT (0 == ((UINTN)Buffer & 0xf));
+  ASSERT (0 == ((UINTN) Buffer & 0xf));
 
   //
   // Check the flag recorded by AsmFxSave()

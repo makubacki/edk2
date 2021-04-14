@@ -6,9 +6,7 @@
 
 **/
 
-
 #include "BaseLibInternals.h"
-
 
 /**
   Reads the current Global Descriptor Table Register(GDTR) descriptor.
@@ -26,8 +24,7 @@ InternalX86ReadGdtr (
   )
 {
   _asm {
-    mov     eax, Gdtr
-    sgdt    fword ptr [eax]
+  mov  eax, Gdtr
+    sgdt    fword ptr[eax]
   }
 }
-

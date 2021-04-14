@@ -49,15 +49,16 @@ AllocatePeiAccessiblePages (
   // need to check the memory limit set by PEI, and allocate below 4 GB if the
   // limit is set to 4 GB or lower.
   //
-  PhitHob = (EFI_HOB_HANDOFF_INFO_TABLE *)GetHobList ();
+  PhitHob = (EFI_HOB_HANDOFF_INFO_TABLE *) GetHobList ();
   if (PhitHob->EfiFreeMemoryTop <= MAX_UINT32) {
     AllocType = AllocateMaxAddress;
-    Memory = MAX_UINT32;
+    Memory    = MAX_UINT32;
   }
 
   Status = gBS->AllocatePages (AllocType, MemoryType, Pages, &Memory);
   if (EFI_ERROR (Status)) {
     return NULL;
   }
-  return (VOID *)(UINTN)Memory;
+
+  return (VOID *) (UINTN) Memory;
 }

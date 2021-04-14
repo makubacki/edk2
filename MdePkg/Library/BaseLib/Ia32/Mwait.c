@@ -28,11 +28,10 @@ AsmMwait (
   )
 {
   _asm {
-    mov     eax, RegisterEax
+  mov  eax, RegisterEax
     mov     ecx, RegisterEcx
-    _emit   0x0f              // mwait
+       _emit   0x0f           // mwait
     _emit   0x01
     _emit   0xC9
   }
 }
-

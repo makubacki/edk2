@@ -13,18 +13,18 @@
 #include <Library/PcdLib.h>
 #include <Library/DebugLib.h>
 
-#define APIC_SVR        0x0f0
-#define APIC_LVTERR     0x370
-#define APIC_TMICT      0x380
-#define APIC_TMCCT      0x390
-#define APIC_TDCR       0x3e0
+#define APIC_SVR     0x0f0
+#define APIC_LVTERR  0x370
+#define APIC_TMICT   0x380
+#define APIC_TMCCT   0x390
+#define APIC_TDCR    0x3e0
 
 //
 // The following array is used in calculating the frequency of local APIC
 // timer. Refer to IA-32 developers' manual for more details.
 //
 GLOBAL_REMOVE_IF_UNREFERENCED
-CONST UINT8                           mTimerLibLocalApicDivisor[] = {
+CONST UINT8  mTimerLibLocalApicDivisor[] = {
   0x02, 0x04, 0x08, 0x10,
   0x02, 0x04, 0x08, 0x10,
   0x20, 0x40, 0x80, 0x01,
@@ -48,8 +48,8 @@ InternalX86GetApicBase (
   VOID
   )
 {
-  UINTN                             MsrValue;
-  UINTN                             ApicBase;
+  UINTN  MsrValue;
+  UINTN  ApicBase;
 
   MsrValue = (UINTN) AsmReadMsr64 (27);
   ApicBase = MsrValue & 0xffffff000ULL;
@@ -90,9 +90,8 @@ InternalX86GetTimerFrequency (
   IN      UINTN                     ApicBase
   )
 {
-  return
-    PcdGet32(PcdFSBClock) /
-    mTimerLibLocalApicDivisor[MmioBitFieldRead32 (ApicBase + APIC_TDCR, 0, 3)];
+  return PcdGet32 (PcdFSBClock) /
+         mTimerLibLocalApicDivisor[MmioBitFieldRead32 (ApicBase + APIC_TDCR, 0, 3)];
 }
 
 /**
@@ -148,10 +147,10 @@ InternalX86Delay (
   IN      UINT32                    Delay
   )
 {
-  INT32                             Ticks;
-  UINT32                            Times;
-  UINT32                            InitCount;
-  UINT32                            StartTick;
+  INT32   Ticks;
+  UINT32  Times;
+  UINT32  InitCount;
+  UINT32  StartTick;
 
   //
   // In case Delay is too larger, separate it into several small delay slot.
@@ -162,13 +161,13 @@ InternalX86Delay (
   //
   InitCount = InternalX86GetInitTimerCount (ApicBase);
   ASSERT (InitCount != 0);
-  Times     = Delay / (InitCount / 2);
-  Delay     = Delay % (InitCount / 2);
+  Times = Delay / (InitCount / 2);
+  Delay = Delay % (InitCount / 2);
 
   //
   // Get Start Tick and do delay
   //
-  StartTick  = InternalX86GetTimerTick (ApicBase);
+  StartTick = InternalX86GetTimerTick (ApicBase);
   do {
     //
     // Wait until time out by Delay value
@@ -185,7 +184,7 @@ InternalX86Delay (
       if (Ticks < 0) {
         Ticks += InitCount;
       }
-    } while ((UINT32)Ticks < Delay);
+    } while ((UINT32) Ticks < Delay);
 
     //
     // Update StartTick and Delay for next delay slot
@@ -211,19 +210,19 @@ MicroSecondDelay (
   IN      UINTN                     MicroSeconds
   )
 {
-  UINTN                             ApicBase;
+  UINTN  ApicBase;
 
   ApicBase = InternalX86GetApicBase ();
   InternalX86Delay (
-    ApicBase,
-    (UINT32)DivU64x32 (
-              MultU64x64 (
-                InternalX86GetTimerFrequency (ApicBase),
-                MicroSeconds
-                ),
-              1000000u
-              )
-    );
+                    ApicBase,
+                    (UINT32) DivU64x32 (
+                                        MultU64x64 (
+                                                    InternalX86GetTimerFrequency (ApicBase),
+                                                    MicroSeconds
+                                                    ),
+                                        1000000u
+                                        )
+                    );
   return MicroSeconds;
 }
 
@@ -243,19 +242,19 @@ NanoSecondDelay (
   IN      UINTN                     NanoSeconds
   )
 {
-  UINTN                             ApicBase;
+  UINTN  ApicBase;
 
   ApicBase = InternalX86GetApicBase ();
   InternalX86Delay (
-    ApicBase,
-    (UINT32)DivU64x32 (
-              MultU64x64 (
-                InternalX86GetTimerFrequency (ApicBase),
-                NanoSeconds
-                ),
-              1000000000u
-              )
-    );
+                    ApicBase,
+                    (UINT32) DivU64x32 (
+                                        MultU64x64 (
+                                                    InternalX86GetTimerFrequency (ApicBase),
+                                                    NanoSeconds
+                                                    ),
+                                        1000000000u
+                                        )
+                    );
   return NanoSeconds;
 }
 
@@ -276,7 +275,7 @@ GetPerformanceCounter (
   VOID
   )
 {
-  return (UINT64)(UINT32)InternalX86GetTimerTick (InternalX86GetApicBase ());
+  return (UINT64) (UINT32) InternalX86GetTimerTick (InternalX86GetApicBase ());
 }
 
 /**
@@ -305,16 +304,16 @@ GetPerformanceCounter (
 UINT64
 EFIAPI
 GetPerformanceCounterProperties (
-  OUT      UINT64                    *StartValue,  OPTIONAL
+  OUT      UINT64                    *StartValue, OPTIONAL
   OUT      UINT64                    *EndValue     OPTIONAL
   )
 {
-  UINTN                             ApicBase;
+  UINTN  ApicBase;
 
   ApicBase = InternalX86GetApicBase ();
 
   if (StartValue != NULL) {
-    *StartValue = (UINT64)InternalX86GetInitTimerCount (ApicBase);
+    *StartValue = (UINT64) InternalX86GetInitTimerCount (ApicBase);
   }
 
   if (EndValue != NULL) {
@@ -349,9 +348,9 @@ GetTimeInNanoSecond (
   Frequency = GetPerformanceCounterProperties (NULL, NULL);
 
   //
-  //          Ticks
+  // Ticks
   // Time = --------- x 1,000,000,000
-  //        Frequency
+  // Frequency
   //
   NanoSeconds = MultU64x32 (DivU64x64Remainder (Ticks, Frequency, &Remainder), 1000000000u);
 
@@ -360,9 +359,9 @@ GetTimeInNanoSecond (
   // Since 2^29 < 1,000,000,000 = 0x3B9ACA00 < 2^30, Remainder should < 2^(64-30) = 2^34,
   // i.e. highest bit set in Remainder should <= 33.
   //
-  Shift = MAX (0, HighBitSet64 (Remainder) - 33);
-  Remainder = RShiftU64 (Remainder, (UINTN) Shift);
-  Frequency = RShiftU64 (Frequency, (UINTN) Shift);
+  Shift        = MAX (0, HighBitSet64 (Remainder) - 33);
+  Remainder    = RShiftU64 (Remainder, (UINTN) Shift);
+  Frequency    = RShiftU64 (Frequency, (UINTN) Shift);
   NanoSeconds += DivU64x64Remainder (MultU64x32 (Remainder, 1000000000u), Frequency, NULL);
 
   return NanoSeconds;

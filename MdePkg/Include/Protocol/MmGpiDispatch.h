@@ -24,7 +24,7 @@
 
 #define EFI_MM_GPI_DISPATCH_PROTOCOL_GUID \
   { \
-    0x25566b03, 0xb577, 0x4cbf, {0x95, 0x8c, 0xed, 0x66, 0x3e, 0xa2, 0x43, 0x80 } \
+    0x25566b03, 0xb577, 0x4cbf, { 0x95, 0x8c, 0xed, 0x66, 0x3e, 0xa2, 0x43, 0x80 } \
   }
 
 ///
@@ -36,7 +36,7 @@ typedef struct {
   /// 0 corresponds to logical GPI[0]; 1 corresponds to logical GPI[1]; and
   /// GpiNum of N corresponds to GPI[N], where N can span from 0 to 2^64-1.
   ///
-  UINT64 GpiNum;
+  UINT64    GpiNum;
 } EFI_MM_GPI_REGISTER_CONTEXT;
 
 typedef struct _EFI_MM_GPI_DISPATCH_PROTOCOL EFI_MM_GPI_DISPATCH_PROTOCOL;
@@ -71,13 +71,13 @@ typedef struct _EFI_MM_GPI_DISPATCH_PROTOCOL EFI_MM_GPI_DISPATCH_PROTOCOL;
   @retval EFI_OUT_OF_RESOURCES   There is not enough memory (system or MM) to manage this child.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MM_GPI_REGISTER)(
-  IN CONST EFI_MM_GPI_DISPATCH_PROTOCOL    *This,
-  IN       EFI_MM_HANDLER_ENTRY_POINT      DispatchFunction,
-  IN CONST EFI_MM_GPI_REGISTER_CONTEXT     *RegisterContext,
-  OUT      EFI_HANDLE                      *DispatchHandle
-  );
+                              IN CONST EFI_MM_GPI_DISPATCH_PROTOCOL    *This,
+                              IN       EFI_MM_HANDLER_ENTRY_POINT      DispatchFunction,
+                              IN CONST EFI_MM_GPI_REGISTER_CONTEXT     *RegisterContext,
+                              OUT      EFI_HANDLE                      *DispatchHandle
+                              );
 
 /**
   Unregisters a General Purpose Input (GPI) service.
@@ -92,11 +92,11 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER  The DispatchHandle was not valid.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MM_GPI_UNREGISTER)(
-  IN CONST EFI_MM_GPI_DISPATCH_PROTOCOL    *This,
-  IN       EFI_HANDLE                      DispatchHandle
-  );
+                                IN CONST EFI_MM_GPI_DISPATCH_PROTOCOL    *This,
+                                IN       EFI_HANDLE                      DispatchHandle
+                                );
 
 ///
 /// Interface structure for the MM GPI MMI Dispatch Protocol
@@ -105,15 +105,14 @@ EFI_STATUS
 /// for the General Purpose Input (GPI) MMI source generator.
 ///
 struct _EFI_MM_GPI_DISPATCH_PROTOCOL {
-  EFI_MM_GPI_REGISTER    Register;
-  EFI_MM_GPI_UNREGISTER  UnRegister;
+  EFI_MM_GPI_REGISTER      Register;
+  EFI_MM_GPI_UNREGISTER    UnRegister;
   ///
   /// Denotes the maximum value of inputs that can have handlers attached.
   ///
-  UINTN                   NumSupportedGpis;
+  UINTN                    NumSupportedGpis;
 };
 
-extern EFI_GUID gEfiMmGpiDispatchProtocolGuid;
+extern EFI_GUID  gEfiMmGpiDispatchProtocolGuid;
 
 #endif
-

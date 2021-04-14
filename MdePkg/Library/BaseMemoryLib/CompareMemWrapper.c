@@ -51,10 +51,11 @@ CompareMem (
   if (Length == 0 || DestinationBuffer == SourceBuffer) {
     return 0;
   }
+
   ASSERT (DestinationBuffer != NULL);
   ASSERT (SourceBuffer != NULL);
-  ASSERT ((Length - 1) <= (MAX_ADDRESS - (UINTN)DestinationBuffer));
-  ASSERT ((Length - 1) <= (MAX_ADDRESS - (UINTN)SourceBuffer));
+  ASSERT ((Length - 1) <= (MAX_ADDRESS - (UINTN) DestinationBuffer));
+  ASSERT ((Length - 1) <= (MAX_ADDRESS - (UINTN) SourceBuffer));
 
   return InternalMemCompareMem (DestinationBuffer, SourceBuffer, Length);
 }

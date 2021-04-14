@@ -37,8 +37,8 @@ GetHobList (
   VOID
   )
 {
-  EFI_STATUS            Status;
-  VOID                  *HobList;
+  EFI_STATUS  Status;
+  VOID        *HobList;
 
   Status = PeiServicesGetHobList (&HobList);
   ASSERT_EFI_ERROR (Status);
@@ -83,8 +83,10 @@ GetNextHob (
     if (Hob.Header->HobType == Type) {
       return Hob.Raw;
     }
+
     Hob.Raw = GET_NEXT_HOB (Hob);
   }
+
   return NULL;
 }
 
@@ -107,7 +109,7 @@ GetFirstHob (
   IN UINT16                 Type
   )
 {
-  VOID      *HobList;
+  VOID  *HobList;
 
   HobList = GetHobList ();
   return GetNextHob (Type, HobList);
@@ -149,8 +151,10 @@ GetNextGuidHob (
     if (CompareGuid (Guid, &GuidHob.Guid->Name)) {
       break;
     }
+
     GuidHob.Raw = GET_NEXT_HOB (GuidHob);
   }
+
   return GuidHob.Raw;
 }
 
@@ -178,7 +182,7 @@ GetFirstGuidHob (
   IN CONST EFI_GUID         *Guid
   )
 {
-  VOID      *HobList;
+  VOID  *HobList;
 
   HobList = GetHobList ();
   return GetNextGuidHob (Guid, HobList);
@@ -203,8 +207,8 @@ GetBootModeHob (
   VOID
   )
 {
-  EFI_STATUS             Status;
-  EFI_BOOT_MODE          BootMode;
+  EFI_STATUS     Status;
+  EFI_BOOT_MODE  BootMode;
 
   Status = PeiServicesGetBootMode (&BootMode);
   ASSERT_EFI_ERROR (Status);
@@ -231,13 +235,14 @@ InternalPeiCreateHob (
   IN UINT16                      Length
   )
 {
-  EFI_STATUS        Status;
-  VOID              *Hob;
+  EFI_STATUS  Status;
+  VOID        *Hob;
 
   Status = PeiServicesCreateHob (Type, Length, &Hob);
   if (EFI_ERROR (Status)) {
     Hob = NULL;
   }
+
   //
   // Assume the process of HOB building is always successful.
   //
@@ -272,8 +277,10 @@ BuildModuleHob (
 {
   EFI_HOB_MEMORY_ALLOCATION_MODULE  *Hob;
 
-  ASSERT (((MemoryAllocationModule & (EFI_PAGE_SIZE - 1)) == 0) &&
-          ((ModuleLength & (EFI_PAGE_SIZE - 1)) == 0));
+  ASSERT (
+          ((MemoryAllocationModule & (EFI_PAGE_SIZE - 1)) == 0) &&
+          ((ModuleLength & (EFI_PAGE_SIZE - 1)) == 0)
+          );
 
   Hob = InternalPeiCreateHob (EFI_HOB_TYPE_MEMORY_ALLOCATION, (UINT16) sizeof (EFI_HOB_MEMORY_ALLOCATION_MODULE));
   if (Hob == NULL) {
@@ -282,8 +289,8 @@ BuildModuleHob (
 
   CopyGuid (&(Hob->MemoryAllocationHeader.Name), &gEfiHobMemoryAllocModuleGuid);
   Hob->MemoryAllocationHeader.MemoryBaseAddress = MemoryAllocationModule;
-  Hob->MemoryAllocationHeader.MemoryLength      = ModuleLength;
-  Hob->MemoryAllocationHeader.MemoryType        = EfiBootServicesCode;
+  Hob->MemoryAllocationHeader.MemoryLength = ModuleLength;
+  Hob->MemoryAllocationHeader.MemoryType   = EfiBootServicesCode;
 
   //
   // Zero the reserved space to match HOB spec
@@ -327,7 +334,7 @@ BuildResourceDescriptorWithOwnerHob (
     return;
   }
 
-  Hob->ResourceType      = ResourceType;
+  Hob->ResourceType = ResourceType;
   Hob->ResourceAttribute = ResourceAttribute;
   Hob->PhysicalStart     = PhysicalStart;
   Hob->ResourceLength    = NumberOfBytes;
@@ -366,7 +373,7 @@ BuildResourceDescriptorHob (
     return;
   }
 
-  Hob->ResourceType      = ResourceType;
+  Hob->ResourceType = ResourceType;
   Hob->ResourceAttribute = ResourceAttribute;
   Hob->PhysicalStart     = PhysicalStart;
   Hob->ResourceLength    = NumberOfBytes;
@@ -402,7 +409,7 @@ BuildGuidHob (
   IN UINTN                       DataLength
   )
 {
-  EFI_HOB_GUID_TYPE *Hob;
+  EFI_HOB_GUID_TYPE  *Hob;
 
   //
   // Make sure Guid is valid
@@ -418,6 +425,7 @@ BuildGuidHob (
   if (Hob == NULL) {
     return Hob;
   }
+
   CopyGuid (&Hob->Name, Guid);
   return Hob + 1;
 }
@@ -483,8 +491,8 @@ InternalCheckFvAlignment (
   IN UINT64                     Length
   )
 {
-  EFI_FIRMWARE_VOLUME_HEADER    *FwVolHeader;
-  UINT32                        FvAlignment;
+  EFI_FIRMWARE_VOLUME_HEADER  *FwVolHeader;
+  UINT32                      FvAlignment;
 
   FvAlignment = 0;
   FwVolHeader = (EFI_FIRMWARE_VOLUME_HEADER *) (UINTN) BaseAddress;
@@ -505,17 +513,20 @@ InternalCheckFvAlignment (
     if (FvAlignment < 8) {
       FvAlignment = 8;
     }
-    if ((UINTN)BaseAddress % FvAlignment != 0) {
+
+    if ((UINTN) BaseAddress % FvAlignment != 0) {
       //
       // FvImage buffer is not at its required alignment.
       //
-      DEBUG ((
-        DEBUG_ERROR,
-        "Unaligned FvImage found at 0x%lx:0x%lx, the required alignment is 0x%x\n",
-        BaseAddress,
-        Length,
-        FvAlignment
-        ));
+      DEBUG (
+             (
+              DEBUG_ERROR,
+              "Unaligned FvImage found at 0x%lx:0x%lx, the required alignment is 0x%x\n",
+              BaseAddress,
+              Length,
+              FvAlignment
+             )
+             );
       return FALSE;
     }
   }
@@ -557,7 +568,7 @@ BuildFvHob (
   }
 
   Hob->BaseAddress = BaseAddress;
-  Hob->Length      = Length;
+  Hob->Length = Length;
 }
 
 /**
@@ -598,7 +609,7 @@ BuildFv2Hob (
   }
 
   Hob->BaseAddress = BaseAddress;
-  Hob->Length      = Length;
+  Hob->Length = Length;
   CopyGuid (&Hob->FvName, FvName);
   CopyGuid (&Hob->FileName, FileName);
 }
@@ -647,10 +658,10 @@ BuildFv3Hob (
     return;
   }
 
-  Hob->BaseAddress          = BaseAddress;
-  Hob->Length               = Length;
+  Hob->BaseAddress = BaseAddress;
+  Hob->Length = Length;
   Hob->AuthenticationStatus = AuthenticationStatus;
-  Hob->ExtractedFv          = ExtractedFv;
+  Hob->ExtractedFv = ExtractedFv;
   if (ExtractedFv) {
     CopyGuid (&Hob->FvName, FvName);
     CopyGuid (&Hob->FileName, FileName);
@@ -685,8 +696,8 @@ BuildCvHob (
     return;
   }
 
-  Hob->BaseAddress  = BaseAddress;
-  Hob->Length       = Length;
+  Hob->BaseAddress = BaseAddress;
+  Hob->Length = Length;
 }
 
 /**
@@ -747,8 +758,10 @@ BuildStackHob (
 {
   EFI_HOB_MEMORY_ALLOCATION_STACK  *Hob;
 
-  ASSERT (((BaseAddress & (EFI_PAGE_SIZE - 1)) == 0) &&
-          ((Length & (EFI_PAGE_SIZE - 1)) == 0));
+  ASSERT (
+          ((BaseAddress & (EFI_PAGE_SIZE - 1)) == 0) &&
+          ((Length & (EFI_PAGE_SIZE - 1)) == 0)
+          );
 
   Hob = InternalPeiCreateHob (EFI_HOB_TYPE_MEMORY_ALLOCATION, (UINT16) sizeof (EFI_HOB_MEMORY_ALLOCATION_STACK));
   if (Hob == NULL) {
@@ -757,8 +770,8 @@ BuildStackHob (
 
   CopyGuid (&(Hob->AllocDescriptor.Name), &gEfiHobMemoryAllocStackGuid);
   Hob->AllocDescriptor.MemoryBaseAddress = BaseAddress;
-  Hob->AllocDescriptor.MemoryLength      = Length;
-  Hob->AllocDescriptor.MemoryType        = EfiBootServicesData;
+  Hob->AllocDescriptor.MemoryLength = Length;
+  Hob->AllocDescriptor.MemoryType   = EfiBootServicesData;
 
   //
   // Zero the reserved space to match HOB spec
@@ -790,8 +803,10 @@ BuildBspStoreHob (
 {
   EFI_HOB_MEMORY_ALLOCATION_BSP_STORE  *Hob;
 
-  ASSERT (((BaseAddress & (EFI_PAGE_SIZE - 1)) == 0) &&
-          ((Length & (EFI_PAGE_SIZE - 1)) == 0));
+  ASSERT (
+          ((BaseAddress & (EFI_PAGE_SIZE - 1)) == 0) &&
+          ((Length & (EFI_PAGE_SIZE - 1)) == 0)
+          );
 
   Hob = InternalPeiCreateHob (EFI_HOB_TYPE_MEMORY_ALLOCATION, (UINT16) sizeof (EFI_HOB_MEMORY_ALLOCATION_BSP_STORE));
   if (Hob == NULL) {
@@ -800,8 +815,8 @@ BuildBspStoreHob (
 
   CopyGuid (&(Hob->AllocDescriptor.Name), &gEfiHobMemoryAllocBspStoreGuid);
   Hob->AllocDescriptor.MemoryBaseAddress = BaseAddress;
-  Hob->AllocDescriptor.MemoryLength      = Length;
-  Hob->AllocDescriptor.MemoryType        = MemoryType;
+  Hob->AllocDescriptor.MemoryLength = Length;
+  Hob->AllocDescriptor.MemoryType   = MemoryType;
 
   //
   // Zero the reserved space to match HOB spec
@@ -833,8 +848,10 @@ BuildMemoryAllocationHob (
 {
   EFI_HOB_MEMORY_ALLOCATION  *Hob;
 
-  ASSERT (((BaseAddress & (EFI_PAGE_SIZE - 1)) == 0) &&
-          ((Length & (EFI_PAGE_SIZE - 1)) == 0));
+  ASSERT (
+          ((BaseAddress & (EFI_PAGE_SIZE - 1)) == 0) &&
+          ((Length & (EFI_PAGE_SIZE - 1)) == 0)
+          );
 
   Hob = InternalPeiCreateHob (EFI_HOB_TYPE_MEMORY_ALLOCATION, (UINT16) sizeof (EFI_HOB_MEMORY_ALLOCATION));
   if (Hob == NULL) {
@@ -843,8 +860,8 @@ BuildMemoryAllocationHob (
 
   ZeroMem (&(Hob->AllocDescriptor.Name), sizeof (EFI_GUID));
   Hob->AllocDescriptor.MemoryBaseAddress = BaseAddress;
-  Hob->AllocDescriptor.MemoryLength      = Length;
-  Hob->AllocDescriptor.MemoryType        = MemoryType;
+  Hob->AllocDescriptor.MemoryLength = Length;
+  Hob->AllocDescriptor.MemoryType   = MemoryType;
   //
   // Zero the reserved space to match HOB spec
   //

@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 /**
   Flushes a cache line from all the instruction and data caches within the
   coherency domain of the CPU.
@@ -35,12 +32,12 @@ AsmFlushCacheLine (
   // then promote flush range to flush entire cache.
   //
   _asm {
-    mov     eax, 1
+  mov  eax, 1
     cpuid
     test    edx, BIT19
     jz      NoClflush
-    mov     eax, dword ptr [LinearAddress]
-    clflush [eax]
+    mov     eax, dword ptr[LinearAddress]
+    clflush[eax]
     jmp     Done
 NoClflush:
     wbinvd
@@ -49,4 +46,3 @@ Done:
 
   return LinearAddress;
 }
-

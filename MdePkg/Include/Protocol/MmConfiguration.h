@@ -18,7 +18,7 @@
 
 #define EFI_MM_CONFIGURATION_PROTOCOL_GUID \
   { \
-    0x26eeb3de, 0xb689, 0x492e, {0x80, 0xf0, 0xbe, 0x8b, 0xd7, 0xda, 0x4b, 0xa7 }  \
+    0x26eeb3de, 0xb689, 0x492e, { 0x80, 0xf0, 0xbe, 0x8b, 0xd7, 0xda, 0x4b, 0xa7 }  \
   }
 
 ///
@@ -37,7 +37,7 @@ typedef struct _EFI_MM_RESERVED_MMRAM_REGION {
   UINT64                  MmramReservedSize;
 } EFI_MM_RESERVED_MMRAM_REGION;
 
-typedef struct _EFI_MM_CONFIGURATION_PROTOCOL  EFI_MM_CONFIGURATION_PROTOCOL;
+typedef struct _EFI_MM_CONFIGURATION_PROTOCOL EFI_MM_CONFIGURATION_PROTOCOL;
 
 /**
   Register the MM Foundation entry point.
@@ -52,11 +52,11 @@ typedef struct _EFI_MM_CONFIGURATION_PROTOCOL  EFI_MM_CONFIGURATION_PROTOCOL;
   @retval EFI_INVALID_PARAMETER  MmEntryPoint is NULL.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MM_REGISTER_MM_ENTRY)(
-  IN CONST EFI_MM_CONFIGURATION_PROTOCOL  *This,
-  IN EFI_MM_ENTRY_POINT                   MmEntryPoint
-  );
+                                   IN CONST EFI_MM_CONFIGURATION_PROTOCOL  *This,
+                                   IN EFI_MM_ENTRY_POINT                   MmEntryPoint
+                                   );
 
 ///
 /// The EFI MM Configuration Protocol is a mandatory protocol published by a DXE CPU driver to
@@ -70,11 +70,10 @@ struct _EFI_MM_CONFIGURATION_PROTOCOL {
   ///
   /// A pointer to an array MMRAM ranges used by the initial MM entry code.
   ///
-  EFI_MM_RESERVED_MMRAM_REGION  *MmramReservedRegions;
-  EFI_MM_REGISTER_MM_ENTRY      RegisterMmEntry;
+  EFI_MM_RESERVED_MMRAM_REGION    *MmramReservedRegions;
+  EFI_MM_REGISTER_MM_ENTRY        RegisterMmEntry;
 };
 
-extern EFI_GUID gEfiMmConfigurationProtocolGuid;
+extern EFI_GUID  gEfiMmConfigurationProtocolGuid;
 
 #endif
-

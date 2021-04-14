@@ -19,7 +19,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #define EFI_SEC_PLATFORM_INFORMATION2_GUID \
   { \
-    0x9e9f374b, 0x8f16, 0x4230, {0x98, 0x24, 0x58, 0x46, 0xee, 0x76, 0x6a, 0x97 } \
+    0x9e9f374b, 0x8f16, 0x4230, { 0x98, 0x24, 0x58, 0x46, 0xee, 0x76, 0x6a, 0x97 } \
   }
 
 typedef struct _EFI_SEC_PLATFORM_INFORMATION2_PPI EFI_SEC_PLATFORM_INFORMATION2_PPI;
@@ -28,8 +28,8 @@ typedef struct _EFI_SEC_PLATFORM_INFORMATION2_PPI EFI_SEC_PLATFORM_INFORMATION2_
 /// EFI_SEC_PLATFORM_INFORMATION_CPU.
 ///
 typedef struct {
-  UINT32                               CpuLocation;
-  EFI_SEC_PLATFORM_INFORMATION_RECORD  InfoRecord;
+  UINT32                                 CpuLocation;
+  EFI_SEC_PLATFORM_INFORMATION_RECORD    InfoRecord;
 } EFI_SEC_PLATFORM_INFORMATION_CPU;
 
 ///
@@ -39,8 +39,8 @@ typedef struct {
   ///
   /// The CPU location would be the local APIC ID
   ///
-  UINT32                               NumberOfCpus;
-  EFI_SEC_PLATFORM_INFORMATION_CPU     CpuInstance[1];
+  UINT32                              NumberOfCpus;
+  EFI_SEC_PLATFORM_INFORMATION_CPU    CpuInstance[1];
 } EFI_SEC_PLATFORM_INFORMATION_RECORD2;
 
 /**
@@ -58,12 +58,12 @@ typedef struct {
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_SEC_PLATFORM_INFORMATION2)(
-  IN CONST  EFI_PEI_SERVICES                     **PeiServices,
-  IN OUT    UINT64                               *StructureSize,
-  OUT       EFI_SEC_PLATFORM_INFORMATION_RECORD2 *PlatformInformationRecord2
-);
+                                        IN CONST  EFI_PEI_SERVICES                     **PeiServices,
+                                        IN OUT    UINT64                               *StructureSize,
+                                        OUT       EFI_SEC_PLATFORM_INFORMATION_RECORD2 *PlatformInformationRecord2
+                                        );
 
 ///
 /// This service abstracts platform-specific information for many CPU's.
@@ -71,9 +71,9 @@ EFI_STATUS
 /// implementations that synchronize some, if not all CPU's in the SEC phase.
 ///
 struct _EFI_SEC_PLATFORM_INFORMATION2_PPI {
-  EFI_SEC_PLATFORM_INFORMATION2  PlatformInformation2;
+  EFI_SEC_PLATFORM_INFORMATION2    PlatformInformation2;
 };
 
-extern EFI_GUID gEfiSecPlatformInformation2PpiGuid;
+extern EFI_GUID  gEfiSecPlatformInformation2PpiGuid;
 
 #endif

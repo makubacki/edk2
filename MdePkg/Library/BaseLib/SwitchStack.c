@@ -41,13 +41,13 @@ VOID
 EFIAPI
 SwitchStack (
   IN      SWITCH_STACK_ENTRY_POINT  EntryPoint,
-  IN      VOID                      *Context1,  OPTIONAL
-  IN      VOID                      *Context2,  OPTIONAL
+  IN      VOID                      *Context1, OPTIONAL
+  IN      VOID                      *Context2, OPTIONAL
   IN      VOID                      *NewStack,
   ...
   )
 {
-  VA_LIST    Marker;
+  VA_LIST  Marker;
 
   ASSERT (EntryPoint != NULL);
   ASSERT (NewStack != NULL);
@@ -55,7 +55,7 @@ SwitchStack (
   //
   // New stack must be aligned with CPU_STACK_ALIGNMENT
   //
-  ASSERT (((UINTN)NewStack & (CPU_STACK_ALIGNMENT - 1)) == 0);
+  ASSERT (((UINTN) NewStack & (CPU_STACK_ALIGNMENT - 1)) == 0);
 
   VA_START (Marker, NewStack);
 

@@ -80,21 +80,20 @@ InternalMathARShiftU64 (
   //
   // Test if this compiler supports arithmetic shift
   //
-  TestValue = (INTN)((INT64)(1ULL << 63) >> 63);
-  if (TestValue == -1) {
+  TestValue = (INTN) ((INT64) (1ULL << 63) >> 63);
+  if (TestValue == - 1) {
     //
     // Arithmetic shift is supported
     //
-    return (UINT64)((INT64)Operand >> Count);
+    return (UINT64) ((INT64) Operand >> Count);
   }
 
   //
   // Arithmetic is not supported
   //
   return (Operand >> Count) |
-         ((INTN)Operand < 0 ? ~((UINTN)-1 >> Count) : 0);
+         ((INTN) Operand < 0 ? ~((UINTN) - 1 >> Count) : 0);
 }
-
 
 /**
   Rotates a 64-bit integer left between 0 and 63 bits, filling
@@ -195,7 +194,6 @@ InternalMathMultU64x32 (
   return Multiplicand * Multiplier;
 }
 
-
 /**
   Multiplies a 64-bit unsigned integer by a 64-bit unsigned integer
   and generates a 64-bit unsigned result.
@@ -265,7 +263,7 @@ InternalMathModU64x32 (
   IN      UINT32                    Divisor
   )
 {
-  return (UINT32)(Dividend % Divisor);
+  return (UINT32) (Dividend % Divisor);
 }
 
 /**
@@ -294,8 +292,9 @@ InternalMathDivRemU64x32 (
   )
 {
   if (Remainder != NULL) {
-    *Remainder = (UINT32)(Dividend % Divisor);
+    *Remainder = (UINT32) (Dividend % Divisor);
   }
+
   return Dividend / Divisor;
 }
 
@@ -327,6 +326,7 @@ InternalMathDivRemU64x64 (
   if (Remainder != NULL) {
     *Remainder = Dividend % Divisor;
   }
+
   return Dividend / Divisor;
 }
 
@@ -358,5 +358,6 @@ InternalMathDivRemS64x64 (
   if (Remainder != NULL) {
     *Remainder = Dividend % Divisor;
   }
+
   return Dividend / Divisor;
 }

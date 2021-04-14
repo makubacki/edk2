@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 /**
   Reads the current value of Task Register (TR).
 
@@ -25,7 +22,6 @@ AsmReadTr (
   )
 {
   _asm {
-    str     ax
+  str  ax
   }
 }
-

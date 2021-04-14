@@ -19,7 +19,7 @@
 
 #define EFI_MM_IO_TRAP_DISPATCH_PROTOCOL_GUID \
   { \
-    0x58dc368d, 0x7bfa, 0x4e77, {0xab, 0xbc, 0xe, 0x29, 0x41, 0x8d, 0xf9, 0x30 } \
+    0x58dc368d, 0x7bfa, 0x4e77, { 0xab, 0xbc, 0xe, 0x29, 0x41, 0x8d, 0xf9, 0x30 } \
   }
 
 ///
@@ -37,16 +37,16 @@ typedef enum {
 /// IO trap event that should invoke the handler
 ///
 typedef struct {
-  UINT16                         Address;
-  UINT16                         Length;
-  EFI_MM_IO_TRAP_DISPATCH_TYPE   Type;
+  UINT16                          Address;
+  UINT16                          Length;
+  EFI_MM_IO_TRAP_DISPATCH_TYPE    Type;
 } EFI_MM_IO_TRAP_REGISTER_CONTEXT;
 
 ///
 /// IO Trap context structure containing information about the IO trap that occurred
 ///
 typedef struct {
-  UINT32  WriteData;
+  UINT32    WriteData;
 } EFI_MM_IO_TRAP_CONTEXT;
 
 typedef struct _EFI_MM_IO_TRAP_DISPATCH_PROTOCOL EFI_MM_IO_TRAP_DISPATCH_PROTOCOL;
@@ -87,13 +87,13 @@ typedef struct _EFI_MM_IO_TRAP_DISPATCH_PROTOCOL EFI_MM_IO_TRAP_DISPATCH_PROTOCO
   @retval EFI_INVALID_PARAMETER  RegisterContext is invalid.  The input value is not within a valid range.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MM_IO_TRAP_DISPATCH_REGISTER)(
-  IN CONST EFI_MM_IO_TRAP_DISPATCH_PROTOCOL    *This,
-  IN       EFI_MM_HANDLER_ENTRY_POINT          DispatchFunction,
-  IN OUT   EFI_MM_IO_TRAP_REGISTER_CONTEXT     *RegisterContext,
-     OUT   EFI_HANDLE                          *DispatchHandle
-  );
+                                           IN CONST EFI_MM_IO_TRAP_DISPATCH_PROTOCOL    *This,
+                                           IN       EFI_MM_HANDLER_ENTRY_POINT          DispatchFunction,
+                                           IN OUT   EFI_MM_IO_TRAP_REGISTER_CONTEXT     *RegisterContext,
+                                           OUT   EFI_HANDLE                          *DispatchHandle
+                                           );
 
 /**
   Unregister a child MMI source dispatch function with a parent MM driver.
@@ -108,11 +108,11 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER  The DispatchHandle was not valid.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MM_IO_TRAP_DISPATCH_UNREGISTER)(
-  IN CONST EFI_MM_IO_TRAP_DISPATCH_PROTOCOL    *This,
-  IN       EFI_HANDLE                          DispatchHandle
-  );
+                                             IN CONST EFI_MM_IO_TRAP_DISPATCH_PROTOCOL    *This,
+                                             IN       EFI_HANDLE                          DispatchHandle
+                                             );
 
 ///
 /// Interface structure for the MM IO Trap Dispatch Protocol.
@@ -120,11 +120,10 @@ EFI_STATUS
 /// This protocol provides a parent dispatch service for IO trap MMI sources.
 ///
 struct _EFI_MM_IO_TRAP_DISPATCH_PROTOCOL {
-  EFI_MM_IO_TRAP_DISPATCH_REGISTER    Register;
-  EFI_MM_IO_TRAP_DISPATCH_UNREGISTER  UnRegister;
+  EFI_MM_IO_TRAP_DISPATCH_REGISTER      Register;
+  EFI_MM_IO_TRAP_DISPATCH_UNREGISTER    UnRegister;
 };
 
-extern EFI_GUID gEfiMmIoTrapDispatchProtocolGuid;
+extern EFI_GUID  gEfiMmIoTrapDispatchProtocolGuid;
 
 #endif
-

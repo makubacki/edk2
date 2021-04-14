@@ -18,29 +18,29 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 ///
 #define EFI_PXE_BASE_CODE_CALLBACK_PROTOCOL_GUID \
   { \
-    0x245dca21, 0xfb7b, 0x11d3, {0x8f, 0x01, 0x00, 0xa0, 0xc9, 0x69, 0x72, 0x3b } \
+    0x245dca21, 0xfb7b, 0x11d3, { 0x8f, 0x01, 0x00, 0xa0, 0xc9, 0x69, 0x72, 0x3b } \
   }
 
 ///
 /// UEFI Revision Number Definition.
 ///
-#define EFI_PXE_BASE_CODE_CALLBACK_PROTOCOL_REVISION 0x00010000
+#define EFI_PXE_BASE_CODE_CALLBACK_PROTOCOL_REVISION  0x00010000
 
 ///
 /// EFI 1.1 Revision Number defintion.
 ///
 #define EFI_PXE_BASE_CODE_CALLBACK_INTERFACE_REVISION  \
-        EFI_PXE_BASE_CODE_CALLBACK_PROTOCOL_REVISION
+  EFI_PXE_BASE_CODE_CALLBACK_PROTOCOL_REVISION
 
 ///
 /// UEFI Protocol name.
 ///
-typedef struct _EFI_PXE_BASE_CODE_CALLBACK_PROTOCOL  EFI_PXE_BASE_CODE_CALLBACK_PROTOCOL;
+typedef struct _EFI_PXE_BASE_CODE_CALLBACK_PROTOCOL EFI_PXE_BASE_CODE_CALLBACK_PROTOCOL;
 
 ///
 /// EFI1.1 Protocol name.
 ///
-typedef EFI_PXE_BASE_CODE_CALLBACK_PROTOCOL   EFI_PXE_BASE_CODE_CALLBACK;
+typedef EFI_PXE_BASE_CODE_CALLBACK_PROTOCOL EFI_PXE_BASE_CODE_CALLBACK;
 
 ///
 /// Event type list for PXE Base Code Protocol function.
@@ -95,14 +95,14 @@ typedef enum {
 
 **/
 typedef
-EFI_PXE_BASE_CODE_CALLBACK_STATUS
+  EFI_PXE_BASE_CODE_CALLBACK_STATUS
 (EFIAPI *EFI_PXE_CALLBACK)(
-  IN EFI_PXE_BASE_CODE_CALLBACK_PROTOCOL  *This,
-  IN EFI_PXE_BASE_CODE_FUNCTION           Function,
-  IN BOOLEAN                              Received,
-  IN UINT32                               PacketLen,
-  IN EFI_PXE_BASE_CODE_PACKET             *Packet     OPTIONAL
-  );
+                           IN EFI_PXE_BASE_CODE_CALLBACK_PROTOCOL  *This,
+                           IN EFI_PXE_BASE_CODE_FUNCTION           Function,
+                           IN BOOLEAN                              Received,
+                           IN UINT32                               PacketLen,
+                           IN EFI_PXE_BASE_CODE_PACKET             *Packet     OPTIONAL
+                           );
 
 ///
 /// Protocol that is invoked when the PXE Base Code Protocol is about
@@ -110,15 +110,14 @@ EFI_PXE_BASE_CODE_CALLBACK_STATUS
 ///
 struct _EFI_PXE_BASE_CODE_CALLBACK_PROTOCOL {
   ///
-  ///  The revision of the EFI_PXE_BASE_CODE_PROTOCOL. All future revisions must
-  ///  be backwards compatible. If a future version is not backwards compatible
-  ///  it is not the same GUID.
+  /// The revision of the EFI_PXE_BASE_CODE_PROTOCOL. All future revisions must
+  /// be backwards compatible. If a future version is not backwards compatible
+  /// it is not the same GUID.
   ///
-  UINT64            Revision;
-  EFI_PXE_CALLBACK  Callback;
+  UINT64              Revision;
+  EFI_PXE_CALLBACK    Callback;
 };
 
-extern EFI_GUID gEfiPxeBaseCodeCallbackProtocolGuid;
+extern EFI_GUID  gEfiPxeBaseCodeCallbackProtocolGuid;
 
 #endif
-

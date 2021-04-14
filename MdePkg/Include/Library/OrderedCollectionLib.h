@@ -55,11 +55,11 @@ typedef struct ORDERED_COLLECTION_ENTRY ORDERED_COLLECTION_ENTRY;
   @retval >0  If UserStruct1 compares greater than UserStruct2.
 **/
 typedef
-INTN
+  INTN
 (EFIAPI *ORDERED_COLLECTION_USER_COMPARE)(
-  IN CONST VOID *UserStruct1,
-  IN CONST VOID *UserStruct2
-  );
+                                          IN CONST VOID *UserStruct1,
+                                          IN CONST VOID *UserStruct2
+                                          );
 
 /**
   Compare a standalone key against a user structure containing an embedded key.
@@ -76,12 +76,11 @@ INTN
   @retval >0  If StandaloneKey compares greater than UserStruct's key.
 **/
 typedef
-INTN
+  INTN
 (EFIAPI *ORDERED_COLLECTION_KEY_COMPARE)(
-  IN CONST VOID *StandaloneKey,
-  IN CONST VOID *UserStruct
-  );
-
+                                         IN CONST VOID *StandaloneKey,
+                                         IN CONST VOID *UserStruct
+                                         );
 
 //
 // Some functions below are read-only, while others are read-write. If any
@@ -107,7 +106,6 @@ OrderedCollectionUserStruct (
   IN CONST ORDERED_COLLECTION_ENTRY *Entry
   );
 
-
 /**
   Allocate and initialize the ORDERED_COLLECTION structure.
 
@@ -132,7 +130,6 @@ OrderedCollectionInit (
   IN ORDERED_COLLECTION_KEY_COMPARE  KeyCompare
   );
 
-
 /**
   Check whether the collection is empty (has no entries).
 
@@ -150,7 +147,6 @@ OrderedCollectionIsEmpty (
   IN CONST ORDERED_COLLECTION *Collection
   );
 
-
 /**
   Uninitialize and release an empty ORDERED_COLLECTION structure.
 
@@ -166,7 +162,6 @@ EFIAPI
 OrderedCollectionUninit (
   IN ORDERED_COLLECTION *Collection
   );
-
 
 /**
   Look up the collection entry that links the user structure that matches the
@@ -192,7 +187,6 @@ OrderedCollectionFind (
   IN CONST VOID               *StandaloneKey
   );
 
-
 /**
   Find the collection entry of the minimum user structure stored in the
   collection.
@@ -213,7 +207,6 @@ EFIAPI
 OrderedCollectionMin (
   IN CONST ORDERED_COLLECTION *Collection
   );
-
 
 /**
   Find the collection entry of the maximum user structure stored in the
@@ -237,7 +230,6 @@ OrderedCollectionMax (
   IN CONST ORDERED_COLLECTION *Collection
   );
 
-
 /**
   Get the collection entry of the least user structure that is greater than the
   one linked by Entry.
@@ -258,7 +250,6 @@ OrderedCollectionNext (
   IN CONST ORDERED_COLLECTION_ENTRY *Entry
   );
 
-
 /**
   Get the collection entry of the greatest user structure that is less than the
   one linked by Entry.
@@ -278,7 +269,6 @@ EFIAPI
 OrderedCollectionPrev (
   IN CONST ORDERED_COLLECTION_ENTRY *Entry
   );
-
 
 /**
   Insert (link) a user structure into the collection, allocating a new
@@ -348,7 +338,6 @@ OrderedCollectionInsert (
   OUT    ORDERED_COLLECTION_ENTRY **Entry      OPTIONAL,
   IN     VOID                     *UserStruct
   );
-
 
 /**
   Delete an entry from the collection, unlinking the associated user structure.

@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 /**
   Writes the current value of 64-bit MMX Register #2 (MM2).
 
@@ -25,8 +22,7 @@ AsmWriteMm2 (
   )
 {
   _asm {
-    movq    mm2, qword ptr [Value]
+  movq  mm2, qword ptr[Value]
     emms
   }
 }
-

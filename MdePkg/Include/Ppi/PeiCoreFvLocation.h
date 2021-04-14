@@ -15,7 +15,6 @@
 
 **/
 
-
 #ifndef _EFI_PEI_CORE_FV_LOCATION_H_
 #define _EFI_PEI_CORE_FV_LOCATION_H_
 
@@ -24,7 +23,7 @@
 ///
 #define EFI_PEI_CORE_FV_LOCATION_GUID \
   { \
-    0x52888eae, 0x5b10, 0x47d0, {0xa8, 0x7f, 0xb8, 0x22, 0xab, 0xa0, 0xca, 0xf4 } \
+    0x52888eae, 0x5b10, 0x47d0, { 0xa8, 0x7f, 0xb8, 0x22, 0xab, 0xa0, 0xca, 0xf4 } \
   }
 
 ///
@@ -37,6 +36,6 @@ typedef struct {
   VOID    *PeiCoreFvLocation;
 } EFI_PEI_CORE_FV_LOCATION_PPI;
 
-extern EFI_GUID gEfiPeiCoreFvLocationPpiGuid;
+extern EFI_GUID  gEfiPeiCoreFvLocationPpiGuid;
 
 #endif // _EFI_PEI_CORE_FV_LOCATION_H_

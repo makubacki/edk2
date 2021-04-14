@@ -8,23 +8,24 @@
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
+
 #ifndef __INT_SAFE_LIB_H__
 #define __INT_SAFE_LIB_H__
 
 //
 // It is common for -1 to be used as an error value
 //
-#define INT8_ERROR    ((INT8) -1)
+#define INT8_ERROR    ((INT8) - 1)
 #define UINT8_ERROR   MAX_UINT8
-#define CHAR8_ERROR   ((CHAR8)(MAX_INT8))
-#define INT16_ERROR   ((INT16) -1)
+#define CHAR8_ERROR   ((CHAR8) (MAX_INT8))
+#define INT16_ERROR   ((INT16) - 1)
 #define UINT16_ERROR  MAX_UINT16
 #define CHAR16_ERROR  MAX_UINT16
-#define INT32_ERROR   ((INT32) -1)
+#define INT32_ERROR   ((INT32) - 1)
 #define UINT32_ERROR  MAX_UINT32
-#define INT64_ERROR   ((INT64) -1)
+#define INT64_ERROR   ((INT64) - 1)
 #define UINT64_ERROR  MAX_UINT64
-#define INTN_ERROR    ((INTN) -1)
+#define INTN_ERROR    ((INTN) - 1)
 #define UINTN_ERROR   MAX_UINTN
 
 //
@@ -40,14 +41,14 @@
 #define SafeIntnToChar16    SafeIntnToUint16
 #define SafeUintnToChar16   SafeUintnToUint16
 
-#define SafeChar16ToInt8    SafeUint16ToInt8
-#define SafeChar16ToUint8   SafeUint16ToUint8
-#define SafeChar16ToChar8   SafeUint16ToChar8
-#define SafeChar16ToInt16   SafeUint16ToInt16
+#define SafeChar16ToInt8   SafeUint16ToInt8
+#define SafeChar16ToUint8  SafeUint16ToUint8
+#define SafeChar16ToChar8  SafeUint16ToChar8
+#define SafeChar16ToInt16  SafeUint16ToInt16
 
-#define SafeChar16Mult      SafeUint16Mult
-#define SafeChar16Sub       SafeUint16Sub
-#define SafeChar16Add       SafeUint16Add
+#define SafeChar16Mult  SafeUint16Mult
+#define SafeChar16Sub   SafeUint16Sub
+#define SafeChar16Add   SafeUint16Add
 
 //
 // Conversion functions
@@ -55,13 +56,13 @@
 // There are three reasons for having conversion functions:
 //
 // 1. We are converting from a signed type to an unsigned type of the same
-//    size, or vice-versa.
+// size, or vice-versa.
 //
 // 2. We are converting to a smaller type, and we could therefore possibly
-//    overflow.
+// overflow.
 //
 // 3. We are converting to a bigger type, and we are signed and the type we are
-//    converting to is unsigned.
+// converting to is unsigned.
 //
 
 /**
@@ -711,7 +712,6 @@ SafeInt32ToUint16 (
   IN  INT32   Operand,
   OUT UINT16  *Result
   );
-
 
 /**
   INT32 -> UINT32 conversion

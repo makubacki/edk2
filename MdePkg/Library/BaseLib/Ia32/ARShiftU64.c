@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 /**
   Shifts a 64-bit integer right between 0 and 63 bits. The high bits
   are filled with original integer's bit 63. The shifted value is returned.
@@ -30,16 +27,15 @@ InternalMathARShiftU64 (
   )
 {
   _asm {
-    mov     cl, byte ptr [Count]
-    mov     eax, dword ptr [Operand + 4]
+  mov  cl, byte ptr[Count]
+    mov     eax, dword ptr[Operand + 4]
     cdq
     test    cl, 32
     jnz     L0
     mov     edx, eax
-    mov     eax, dword ptr [Operand + 0]
+    mov     eax, dword ptr[Operand + 0]
 L0:
-    shrd    eax, edx, cl
+    shrd  eax, edx, cl
     sar     edx, cl
   }
 }
-

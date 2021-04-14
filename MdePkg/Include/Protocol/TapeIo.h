@@ -12,29 +12,29 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #define EFI_TAPE_IO_PROTOCOL_GUID \
   { \
-    0x1e93e633, 0xd65a, 0x459e, {0xab, 0x84, 0x93, 0xd9, 0xec, 0x26, 0x6d, 0x18 } \
+    0x1e93e633, 0xd65a, 0x459e, { 0xab, 0x84, 0x93, 0xd9, 0xec, 0x26, 0x6d, 0x18 } \
   }
 
 typedef struct _EFI_TAPE_IO_PROTOCOL EFI_TAPE_IO_PROTOCOL;
 
 typedef struct _EFI_TAPE_HEADER {
-  UINT64     Signature;
-  UINT32     Revision;
-  UINT32     BootDescSize;
-  UINT32     BootDescCRC;
-  EFI_GUID   TapeGUID;
-  EFI_GUID   TapeType;
-  EFI_GUID   TapeUnique;
-  UINT32     BLLocation;
-  UINT32     BLBlocksize;
-  UINT32     BLFilesize;
-  CHAR8      OSVersion[40];
-  CHAR8      AppVersion[40];
-  CHAR8      CreationDate[10];
-  CHAR8      CreationTime[10];
-  CHAR8      SystemName[256];  // UTF-8
-  CHAR8      TapeTitle[120];   // UTF-8
-  CHAR8      pad[468];         // pad to 1024
+  UINT64      Signature;
+  UINT32      Revision;
+  UINT32      BootDescSize;
+  UINT32      BootDescCRC;
+  EFI_GUID    TapeGUID;
+  EFI_GUID    TapeType;
+  EFI_GUID    TapeUnique;
+  UINT32      BLLocation;
+  UINT32      BLBlocksize;
+  UINT32      BLFilesize;
+  CHAR8       OSVersion[40];
+  CHAR8       AppVersion[40];
+  CHAR8       CreationDate[10];
+  CHAR8       CreationTime[10];
+  CHAR8       SystemName[256]; // UTF-8
+  CHAR8       TapeTitle[120];  // UTF-8
+  CHAR8       pad[468];        // pad to 1024
 } EFI_TAPE_HEADER;
 
 /**
@@ -65,12 +65,12 @@ typedef struct _EFI_TAPE_HEADER {
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_TAPE_READ)(
-  IN EFI_TAPE_IO_PROTOCOL *This,
-  IN OUT UINTN            *BufferSize,
-  OUT VOID                *Buffer
-  );
+                        IN EFI_TAPE_IO_PROTOCOL *This,
+                        IN OUT UINTN            *BufferSize,
+                        OUT VOID                *Buffer
+                        );
 
 /**
   Writes to the tape.
@@ -101,13 +101,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_TAPE_WRITE)(
-  IN EFI_TAPE_IO_PROTOCOL *This,
-  IN UINTN                *BufferSize,
-  IN VOID                 *Buffer
-  );
-
+                         IN EFI_TAPE_IO_PROTOCOL *This,
+                         IN UINTN                *BufferSize,
+                         IN VOID                 *Buffer
+                         );
 
 /**
   Rewinds the tape.
@@ -124,11 +123,10 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_TAPE_REWIND)(
-  IN EFI_TAPE_IO_PROTOCOL *This
-  );
-
+                          IN EFI_TAPE_IO_PROTOCOL *This
+                          );
 
 /**
   Positions the tape.
@@ -155,13 +153,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_TAPE_SPACE)(
-  IN EFI_TAPE_IO_PROTOCOL *This,
-  IN INTN                 Direction,
-  IN UINTN                Type
-  );
-
+                         IN EFI_TAPE_IO_PROTOCOL *This,
+                         IN INTN                 Direction,
+                         IN UINTN                Type
+                         );
 
 /**
   Writes filemarks to the media.
@@ -182,12 +179,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_TAPE_WRITEFM)(
-  IN EFI_TAPE_IO_PROTOCOL *This,
-  IN UINTN                Count
-  );
-
+                           IN EFI_TAPE_IO_PROTOCOL *This,
+                           IN UINTN                Count
+                           );
 
 /**
   Resets the tape device.
@@ -205,11 +201,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_TAPE_RESET)(
-  IN EFI_TAPE_IO_PROTOCOL *This,
-  IN BOOLEAN              ExtendedVerification
-  );
+                         IN EFI_TAPE_IO_PROTOCOL *This,
+                         IN BOOLEAN              ExtendedVerification
+                         );
 
 ///
 /// The EFI_TAPE_IO_PROTOCOL provides basic sequential operations for tape devices.
@@ -218,14 +214,14 @@ EFI_STATUS
 /// to load the bootloader image from tape.
 ///
 struct _EFI_TAPE_IO_PROTOCOL {
-  EFI_TAPE_READ           TapeRead;
-  EFI_TAPE_WRITE          TapeWrite;
-  EFI_TAPE_REWIND         TapeRewind;
-  EFI_TAPE_SPACE          TapeSpace;
-  EFI_TAPE_WRITEFM        TapeWriteFM;
-  EFI_TAPE_RESET          TapeReset;
+  EFI_TAPE_READ       TapeRead;
+  EFI_TAPE_WRITE      TapeWrite;
+  EFI_TAPE_REWIND     TapeRewind;
+  EFI_TAPE_SPACE      TapeSpace;
+  EFI_TAPE_WRITEFM    TapeWriteFM;
+  EFI_TAPE_RESET      TapeReset;
 };
 
-extern EFI_GUID gEfiTapeIoProtocolGuid;
+extern EFI_GUID  gEfiTapeIoProtocolGuid;
 
 #endif

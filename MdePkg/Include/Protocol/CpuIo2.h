@@ -26,7 +26,7 @@
 
 #define EFI_CPU_IO2_PROTOCOL_GUID \
   { \
-    0xad61f191, 0xae5f, 0x4c0e, {0xb9, 0xfa, 0xe8, 0x69, 0xd2, 0x88, 0xc6, 0x4f} \
+    0xad61f191, 0xae5f, 0x4c0e, { 0xb9, 0xfa, 0xe8, 0x69, 0xd2, 0x88, 0xc6, 0x4f } \
   }
 
 typedef struct _EFI_CPU_IO2_PROTOCOL EFI_CPU_IO2_PROTOCOL;
@@ -93,14 +93,14 @@ typedef enum {
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_CPU_IO_PROTOCOL_IO_MEM)(
-  IN     EFI_CPU_IO2_PROTOCOL              *This,
-  IN     EFI_CPU_IO_PROTOCOL_WIDTH         Width,
-  IN     UINT64                            Address,
-  IN     UINTN                             Count,
-  IN OUT VOID                              *Buffer
-  );
+                                     IN     EFI_CPU_IO2_PROTOCOL              *This,
+                                     IN     EFI_CPU_IO_PROTOCOL_WIDTH         Width,
+                                     IN     UINT64                            Address,
+                                     IN     UINTN                             Count,
+                                     IN OUT VOID                              *Buffer
+                                     );
 
 ///
 /// Service for read and write accesses.
@@ -109,11 +109,11 @@ typedef struct {
   ///
   /// This service provides the various modalities of memory and I/O read.
   ///
-  EFI_CPU_IO_PROTOCOL_IO_MEM  Read;
+  EFI_CPU_IO_PROTOCOL_IO_MEM    Read;
   ///
   /// This service provides the various modalities of memory and I/O write.
   ///
-  EFI_CPU_IO_PROTOCOL_IO_MEM  Write;
+  EFI_CPU_IO_PROTOCOL_IO_MEM    Write;
 } EFI_CPU_IO_PROTOCOL_ACCESS;
 
 ///
@@ -124,13 +124,13 @@ struct _EFI_CPU_IO2_PROTOCOL {
   ///
   /// Enables a driver to access memory-mapped registers in the EFI system memory space.
   ///
-  EFI_CPU_IO_PROTOCOL_ACCESS  Mem;
+  EFI_CPU_IO_PROTOCOL_ACCESS    Mem;
   ///
   /// Enables a driver to access registers in the EFI CPU I/O space.
   ///
-  EFI_CPU_IO_PROTOCOL_ACCESS  Io;
+  EFI_CPU_IO_PROTOCOL_ACCESS    Io;
 };
 
-extern EFI_GUID gEfiCpuIo2ProtocolGuid;
+extern EFI_GUID  gEfiCpuIo2ProtocolGuid;
 
 #endif

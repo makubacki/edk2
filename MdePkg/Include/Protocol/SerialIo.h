@@ -14,7 +14,7 @@
 
 #define EFI_SERIAL_IO_PROTOCOL_GUID \
   { \
-    0xBB25CF6F, 0xF1D4, 0x11D2, {0x9A, 0x0C, 0x00, 0x90, 0x27, 0x3F, 0xC1, 0xFD } \
+    0xBB25CF6F, 0xF1D4, 0x11D2, { 0x9A, 0x0C, 0x00, 0x90, 0x27, 0x3F, 0xC1, 0xFD } \
   }
 
 #define EFI_SERIAL_TERMINAL_DEVICE_TYPE_GUID \
@@ -29,11 +29,10 @@
 
 typedef struct _EFI_SERIAL_IO_PROTOCOL EFI_SERIAL_IO_PROTOCOL;
 
-
 ///
 /// Backward-compatible with EFI1.1.
 ///
-typedef EFI_SERIAL_IO_PROTOCOL  SERIAL_IO_INTERFACE;
+typedef EFI_SERIAL_IO_PROTOCOL SERIAL_IO_INTERFACE;
 
 ///
 /// Parity type that is computed or checked as each character is transmitted or received. If the
@@ -80,13 +79,14 @@ typedef enum {
 //
 // Read Write
 //
-#define EFI_SERIAL_HARDWARE_LOOPBACK_ENABLE     0x00001000
-#define EFI_SERIAL_SOFTWARE_LOOPBACK_ENABLE     0x00002000
-#define EFI_SERIAL_HARDWARE_FLOW_CONTROL_ENABLE 0x00004000
+#define EFI_SERIAL_HARDWARE_LOOPBACK_ENABLE      0x00001000
+#define EFI_SERIAL_SOFTWARE_LOOPBACK_ENABLE      0x00002000
+#define EFI_SERIAL_HARDWARE_FLOW_CONTROL_ENABLE  0x00004000
 
 //
 // Serial IO Member Functions
 //
+
 /**
   Reset the serial device.
 
@@ -97,10 +97,10 @@ typedef enum {
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_SERIAL_RESET)(
-  IN EFI_SERIAL_IO_PROTOCOL *This
-  );
+                           IN EFI_SERIAL_IO_PROTOCOL *This
+                           );
 
 /**
   Sets the baud rate, receive FIFO depth, transmit/receice time out, parity,
@@ -130,16 +130,16 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_SERIAL_SET_ATTRIBUTES)(
-  IN EFI_SERIAL_IO_PROTOCOL         *This,
-  IN UINT64                         BaudRate,
-  IN UINT32                         ReceiveFifoDepth,
-  IN UINT32                         Timeout,
-  IN EFI_PARITY_TYPE                Parity,
-  IN UINT8                          DataBits,
-  IN EFI_STOP_BITS_TYPE             StopBits
-  );
+                                    IN EFI_SERIAL_IO_PROTOCOL         *This,
+                                    IN UINT64                         BaudRate,
+                                    IN UINT32                         ReceiveFifoDepth,
+                                    IN UINT32                         Timeout,
+                                    IN EFI_PARITY_TYPE                Parity,
+                                    IN UINT8                          DataBits,
+                                    IN EFI_STOP_BITS_TYPE             StopBits
+                                    );
 
 /**
   Set the control bits on a serial device
@@ -153,11 +153,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_SERIAL_SET_CONTROL_BITS)(
-  IN EFI_SERIAL_IO_PROTOCOL         *This,
-  IN UINT32                         Control
-  );
+                                      IN EFI_SERIAL_IO_PROTOCOL         *This,
+                                      IN UINT32                         Control
+                                      );
 
 /**
   Retrieves the status of thecontrol bits on a serial device
@@ -170,11 +170,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_SERIAL_GET_CONTROL_BITS)(
-  IN EFI_SERIAL_IO_PROTOCOL         *This,
-  OUT UINT32                        *Control
-  );
+                                      IN EFI_SERIAL_IO_PROTOCOL         *This,
+                                      OUT UINT32                        *Control
+                                      );
 
 /**
   Writes data to a serial device.
@@ -190,12 +190,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_SERIAL_WRITE)(
-  IN EFI_SERIAL_IO_PROTOCOL         *This,
-  IN OUT UINTN                      *BufferSize,
-  IN VOID                           *Buffer
-  );
+                           IN EFI_SERIAL_IO_PROTOCOL         *This,
+                           IN OUT UINTN                      *BufferSize,
+                           IN VOID                           *Buffer
+                           );
 
 /**
   Writes data to a serial device.
@@ -211,12 +211,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_SERIAL_READ)(
-  IN EFI_SERIAL_IO_PROTOCOL         *This,
-  IN OUT UINTN                      *BufferSize,
-  OUT VOID                          *Buffer
-  );
+                          IN EFI_SERIAL_IO_PROTOCOL         *This,
+                          IN OUT UINTN                      *BufferSize,
+                          OUT VOID                          *Buffer
+                          );
 
 /**
   @par Data Structure Description:
@@ -254,22 +254,22 @@ EFI_STATUS
 
 **/
 typedef struct {
-  UINT32  ControlMask;
+  UINT32    ControlMask;
 
   //
   // current Attributes
   //
-  UINT32  Timeout;
-  UINT64  BaudRate;
-  UINT32  ReceiveFifoDepth;
-  UINT32  DataBits;
-  UINT32  Parity;
-  UINT32  StopBits;
+  UINT32    Timeout;
+  UINT64    BaudRate;
+  UINT32    ReceiveFifoDepth;
+  UINT32    DataBits;
+  UINT32    Parity;
+  UINT32    StopBits;
 } EFI_SERIAL_IO_MODE;
 
-#define EFI_SERIAL_IO_PROTOCOL_REVISION    0x00010000
-#define EFI_SERIAL_IO_PROTOCOL_REVISION1p1 0x00010001
-#define SERIAL_IO_INTERFACE_REVISION  EFI_SERIAL_IO_PROTOCOL_REVISION
+#define EFI_SERIAL_IO_PROTOCOL_REVISION     0x00010000
+#define EFI_SERIAL_IO_PROTOCOL_REVISION1p1  0x00010001
+#define SERIAL_IO_INTERFACE_REVISION        EFI_SERIAL_IO_PROTOCOL_REVISION
 
 ///
 /// The Serial I/O protocol is used to communicate with UART-style serial devices.
@@ -282,17 +282,17 @@ struct _EFI_SERIAL_IO_PROTOCOL {
   /// must be backwards compatible. If a future version is not backwards compatible,
   /// it is not the same GUID.
   ///
-  UINT32                      Revision;
-  EFI_SERIAL_RESET            Reset;
-  EFI_SERIAL_SET_ATTRIBUTES   SetAttributes;
-  EFI_SERIAL_SET_CONTROL_BITS SetControl;
-  EFI_SERIAL_GET_CONTROL_BITS GetControl;
-  EFI_SERIAL_WRITE            Write;
-  EFI_SERIAL_READ             Read;
+  UINT32                         Revision;
+  EFI_SERIAL_RESET               Reset;
+  EFI_SERIAL_SET_ATTRIBUTES      SetAttributes;
+  EFI_SERIAL_SET_CONTROL_BITS    SetControl;
+  EFI_SERIAL_GET_CONTROL_BITS    GetControl;
+  EFI_SERIAL_WRITE               Write;
+  EFI_SERIAL_READ                Read;
   ///
   /// Pointer to SERIAL_IO_MODE data.
   ///
-  EFI_SERIAL_IO_MODE          *Mode;
+  EFI_SERIAL_IO_MODE             *Mode;
   ///
   /// Pointer to a GUID identifying the device connected to the serial port.
   /// This field is NULL when the protocol is installed by the serial port
@@ -300,10 +300,10 @@ struct _EFI_SERIAL_IO_PROTOCOL {
   /// with a known device attached. The field will remain NULL if there is
   /// no platform serial device identification information available.
   ///
-  CONST EFI_GUID              *DeviceTypeGuid; // Revision 1.1
+  CONST EFI_GUID                 *DeviceTypeGuid; // Revision 1.1
 };
 
-extern EFI_GUID gEfiSerialIoProtocolGuid;
-extern EFI_GUID gEfiSerialTerminalDeviceTypeGuid;
+extern EFI_GUID  gEfiSerialIoProtocolGuid;
+extern EFI_GUID  gEfiSerialTerminalDeviceTypeGuid;
 
 #endif

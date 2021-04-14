@@ -9,6 +9,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 This Protocol is introduced in UEFI Specification 2.5
 
 **/
+
 #ifndef __EFI_IP4CONFIG2_PROTOCOL_H__
 #define __EFI_IP4CONFIG2_PROTOCOL_H__
 
@@ -16,11 +17,10 @@ This Protocol is introduced in UEFI Specification 2.5
 
 #define EFI_IP4_CONFIG2_PROTOCOL_GUID \
   { \
-    0x5b446ed1, 0xe30b, 0x4faa, {0x87, 0x1a, 0x36, 0x54, 0xec, 0xa3, 0x60, 0x80 } \
+    0x5b446ed1, 0xe30b, 0x4faa, { 0x87, 0x1a, 0x36, 0x54, 0xec, 0xa3, 0x60, 0x80 } \
   }
 
 typedef struct _EFI_IP4_CONFIG2_PROTOCOL EFI_IP4_CONFIG2_PROTOCOL;
-
 
 ///
 /// EFI_IP4_CONFIG2_DATA_TYPE
@@ -78,7 +78,7 @@ typedef enum {
 ///
 /// EFI_IP4_CONFIG2_INTERFACE_INFO related definitions
 ///
-#define EFI_IP4_CONFIG2_INTERFACE_INFO_NAME_SIZE 32
+#define EFI_IP4_CONFIG2_INTERFACE_INFO_NAME_SIZE  32
 
 ///
 /// EFI_IP4_CONFIG2_INTERFACE_INFO
@@ -87,38 +87,38 @@ typedef struct {
   ///
   /// The name of the interface. It is a NULL-terminated Unicode string.
   ///
-  CHAR16                Name[EFI_IP4_CONFIG2_INTERFACE_INFO_NAME_SIZE];
+  CHAR16                               Name[EFI_IP4_CONFIG2_INTERFACE_INFO_NAME_SIZE];
   ///
   /// The interface type of the network interface. See RFC 1700,
   /// section "Number Hardware Type".
   ///
-  UINT8                 IfType;
+  UINT8                                IfType;
   ///
   /// The size, in bytes, of the network interface's hardware address.
   ///
-  UINT32                HwAddressSize;
+  UINT32                               HwAddressSize;
   ///
   /// The hardware address for the network interface.
   ///
-  EFI_MAC_ADDRESS       HwAddress;
+  EFI_MAC_ADDRESS                      HwAddress;
   ///
   /// The station IPv4 address of this EFI IPv4 network stack.
   ///
-  EFI_IPv4_ADDRESS      StationAddress;
+  EFI_IPv4_ADDRESS                     StationAddress;
   ///
   /// The subnet address mask that is associated with the station address.
   ///
-  EFI_IPv4_ADDRESS      SubnetMask;
+  EFI_IPv4_ADDRESS                     SubnetMask;
   ///
   /// Size of the following RouteTable, in bytes. May be zero.
   ///
-  UINT32                RouteTableSize;
+  UINT32                               RouteTableSize;
   ///
   /// The route table of the IPv4 network stack runs on this interface.
   /// Set to NULL if RouteTableSize is zero. Type EFI_IP4_ROUTE_TABLE is defined in
   /// EFI_IP4_PROTOCOL.GetModeData().
   ///
-  EFI_IP4_ROUTE_TABLE   *RouteTable     OPTIONAL;
+  EFI_IP4_ROUTE_TABLE   *RouteTable    OPTIONAL;
 } EFI_IP4_CONFIG2_INTERFACE_INFO;
 
 ///
@@ -150,11 +150,11 @@ typedef struct {
   ///
   /// The IPv4 unicast address.
   ///
-  EFI_IPv4_ADDRESS        Address;
+  EFI_IPv4_ADDRESS    Address;
   ///
   /// The subnet mask.
   ///
-  EFI_IPv4_ADDRESS        SubnetMask;
+  EFI_IPv4_ADDRESS    SubnetMask;
 } EFI_IP4_CONFIG2_MANUAL_ADDRESS;
 
 /**
@@ -199,13 +199,13 @@ typedef struct {
   @retval EFI_DEVICE_ERROR        An unexpected system error or network error occurred.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_IP4_CONFIG2_SET_DATA) (
-  IN EFI_IP4_CONFIG2_PROTOCOL   *This,
-  IN EFI_IP4_CONFIG2_DATA_TYPE  DataType,
-  IN UINTN                      DataSize,
-  IN VOID                       *Data
-  );
+  EFI_STATUS
+(EFIAPI *EFI_IP4_CONFIG2_SET_DATA)(
+                                   IN EFI_IP4_CONFIG2_PROTOCOL   *This,
+                                   IN EFI_IP4_CONFIG2_DATA_TYPE  DataType,
+                                   IN UINTN                      DataSize,
+                                   IN VOID                       *Data
+                                   );
 
 /**
   Get the configuration data for the EFI IPv4 network stack running on the communication device this
@@ -241,13 +241,13 @@ EFI_STATUS
   @retval EFI_NOT_FOUND           The specified configuration data is not found.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_IP4_CONFIG2_GET_DATA) (
-  IN EFI_IP4_CONFIG2_PROTOCOL     *This,
-  IN EFI_IP4_CONFIG2_DATA_TYPE    DataType,
-  IN OUT UINTN                    *DataSize,
-  IN VOID                         *Data        OPTIONAL
-  );
+  EFI_STATUS
+(EFIAPI *EFI_IP4_CONFIG2_GET_DATA)(
+                                   IN EFI_IP4_CONFIG2_PROTOCOL     *This,
+                                   IN EFI_IP4_CONFIG2_DATA_TYPE    DataType,
+                                   IN OUT UINTN                    *DataSize,
+                                   IN VOID                         *Data        OPTIONAL
+                                   );
 
 /**
   Register an event that is to be signaled whenever a configuration process on the specified
@@ -270,12 +270,12 @@ EFI_STATUS
   @retval EFI_ACCESS_DENIED       The Event is already registered for the DataType.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_IP4_CONFIG2_REGISTER_NOTIFY) (
-  IN EFI_IP4_CONFIG2_PROTOCOL     *This,
-  IN EFI_IP4_CONFIG2_DATA_TYPE    DataType,
-  IN EFI_EVENT                    Event
-  );
+  EFI_STATUS
+(EFIAPI *EFI_IP4_CONFIG2_REGISTER_NOTIFY)(
+                                          IN EFI_IP4_CONFIG2_PROTOCOL     *This,
+                                          IN EFI_IP4_CONFIG2_DATA_TYPE    DataType,
+                                          IN EFI_EVENT                    Event
+                                          );
 
 /**
   Remove a previously registered event for the specified configuration data.
@@ -291,12 +291,12 @@ EFI_STATUS
   @retval EFI_NOT_FOUND           The Eventhas not been registered for the specified DataType.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_IP4_CONFIG2_UNREGISTER_NOTIFY) (
-  IN EFI_IP4_CONFIG2_PROTOCOL     *This,
-  IN EFI_IP4_CONFIG2_DATA_TYPE    DataType,
-  IN EFI_EVENT                    Event
-  );
+  EFI_STATUS
+(EFIAPI *EFI_IP4_CONFIG2_UNREGISTER_NOTIFY)(
+                                            IN EFI_IP4_CONFIG2_PROTOCOL     *This,
+                                            IN EFI_IP4_CONFIG2_DATA_TYPE    DataType,
+                                            IN EFI_EVENT                    Event
+                                            );
 
 ///
 /// The EFI_IP4_CONFIG2_PROTOCOL is designed to be the central repository for the common
@@ -305,13 +305,12 @@ EFI_STATUS
 /// the EFI IPv4 network stack runs on.
 ///
 struct _EFI_IP4_CONFIG2_PROTOCOL {
-  EFI_IP4_CONFIG2_SET_DATA           SetData;
-  EFI_IP4_CONFIG2_GET_DATA           GetData;
-  EFI_IP4_CONFIG2_REGISTER_NOTIFY    RegisterDataNotify;
-  EFI_IP4_CONFIG2_UNREGISTER_NOTIFY  UnregisterDataNotify;
+  EFI_IP4_CONFIG2_SET_DATA             SetData;
+  EFI_IP4_CONFIG2_GET_DATA             GetData;
+  EFI_IP4_CONFIG2_REGISTER_NOTIFY      RegisterDataNotify;
+  EFI_IP4_CONFIG2_UNREGISTER_NOTIFY    UnregisterDataNotify;
 };
 
-extern EFI_GUID gEfiIp4Config2ProtocolGuid;
+extern EFI_GUID  gEfiIp4Config2ProtocolGuid;
 
 #endif
-

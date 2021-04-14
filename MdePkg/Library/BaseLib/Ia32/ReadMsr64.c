@@ -6,7 +6,6 @@
 
 **/
 
-
 #include <Library/RegisterFilterLib.h>
 
 /**
@@ -29,8 +28,8 @@ AsmReadMsr64Internal (
   )
 {
   _asm {
-    mov     ecx, Index
-    rdmsr
+  mov  ecx, Index
+       rdmsr
   }
 }
 
@@ -54,13 +53,14 @@ AsmReadMsr64 (
   IN UINT32  Index
   )
 {
-  UINT64                            Value;
-  BOOLEAN                           Flag;
+  UINT64   Value;
+  BOOLEAN  Flag;
 
   Flag = FilterBeforeMsrRead (Index, &Value);
   if (Flag) {
     Value = AsmReadMsr64Internal (Index);
   }
+
   FilterAfterMsrRead (Index, &Value);
 
   return Value;

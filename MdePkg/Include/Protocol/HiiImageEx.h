@@ -19,7 +19,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // Global ID for the Hii Image Ex Protocol.
 //
 #define EFI_HII_IMAGE_EX_PROTOCOL_GUID \
-  {0x1a1241e6, 0x8f19, 0x41a9,  { 0xbc, 0xe, 0xe8, 0xef, 0x39, 0xe0, 0x65, 0x46 }}
+  { 0x1a1241e6, 0x8f19, 0x41a9, { 0xbc, 0xe, 0xe8, 0xef, 0x39, 0xe0, 0x65, 0x46 } }
 
 typedef struct _EFI_HII_IMAGE_EX_PROTOCOL EFI_HII_IMAGE_EX_PROTOCOL;
 
@@ -42,13 +42,13 @@ typedef struct _EFI_HII_IMAGE_EX_PROTOCOL EFI_HII_IMAGE_EX_PROTOCOL;
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_HII_NEW_IMAGE_EX)(
-  IN CONST  EFI_HII_IMAGE_EX_PROTOCOL  *This,
-  IN        EFI_HII_HANDLE              PackageList,
-  OUT       EFI_IMAGE_ID                *ImageId,
-  IN CONST  EFI_IMAGE_INPUT             *Image
-  );
+                               IN CONST  EFI_HII_IMAGE_EX_PROTOCOL  *This,
+                               IN        EFI_HII_HANDLE              PackageList,
+                               OUT       EFI_IMAGE_ID                *ImageId,
+                               IN CONST  EFI_IMAGE_INPUT             *Image
+                               );
 
 /**
   Return the information about the image, associated with the package list.
@@ -76,13 +76,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_HII_GET_IMAGE_EX)(
-  IN CONST  EFI_HII_IMAGE_EX_PROTOCOL       *This,
-  IN        EFI_HII_HANDLE                  PackageList,
-  IN        EFI_IMAGE_ID                    ImageId,
-  OUT       EFI_IMAGE_INPUT                 *Image
-  );
+                               IN CONST  EFI_HII_IMAGE_EX_PROTOCOL       *This,
+                               IN        EFI_HII_HANDLE                  PackageList,
+                               IN        EFI_IMAGE_ID                    ImageId,
+                               OUT       EFI_IMAGE_INPUT                 *Image
+                               );
 
 /**
   Change the information about the image.
@@ -104,13 +104,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_HII_SET_IMAGE_EX)(
-  IN CONST  EFI_HII_IMAGE_EX_PROTOCOL   *This,
-  IN        EFI_HII_HANDLE              PackageList,
-  IN        EFI_IMAGE_ID                ImageId,
-  IN CONST  EFI_IMAGE_INPUT             *Image
-  );
+                               IN CONST  EFI_HII_IMAGE_EX_PROTOCOL   *This,
+                               IN        EFI_HII_HANDLE              PackageList,
+                               IN        EFI_IMAGE_ID                ImageId,
+                               IN CONST  EFI_IMAGE_INPUT             *Image
+                               );
 
 /**
   Renders an image to a bitmap or to the display.
@@ -141,15 +141,15 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_HII_DRAW_IMAGE_EX)(
-  IN CONST  EFI_HII_IMAGE_EX_PROTOCOL   *This,
-  IN        EFI_HII_DRAW_FLAGS          Flags,
-  IN CONST  EFI_IMAGE_INPUT             *Image,
-  IN OUT    EFI_IMAGE_OUTPUT            **Blt,
-  IN        UINTN                       BltX,
-  IN        UINTN                       BltY
-  );
+                                IN CONST  EFI_HII_IMAGE_EX_PROTOCOL   *This,
+                                IN        EFI_HII_DRAW_FLAGS          Flags,
+                                IN CONST  EFI_IMAGE_INPUT             *Image,
+                                IN OUT    EFI_IMAGE_OUTPUT            **Blt,
+                                IN        UINTN                       BltX,
+                                IN        UINTN                       BltY
+                                );
 
 /**
   Renders an image to a bitmap or the screen containing the contents of the specified
@@ -188,16 +188,16 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_HII_DRAW_IMAGE_ID_EX)(
-  IN CONST  EFI_HII_IMAGE_EX_PROTOCOL   *This,
-  IN        EFI_HII_DRAW_FLAGS          Flags,
-  IN        EFI_HII_HANDLE              PackageList,
-  IN        EFI_IMAGE_ID                ImageId,
-  IN OUT    EFI_IMAGE_OUTPUT            **Blt,
-  IN        UINTN                       BltX,
-  IN        UINTN                       BltY
-  );
+                                   IN CONST  EFI_HII_IMAGE_EX_PROTOCOL   *This,
+                                   IN        EFI_HII_DRAW_FLAGS          Flags,
+                                   IN        EFI_HII_HANDLE              PackageList,
+                                   IN        EFI_IMAGE_ID                ImageId,
+                                   IN OUT    EFI_IMAGE_OUTPUT            **Blt,
+                                   IN        UINTN                       BltX,
+                                   IN        UINTN                       BltY
+                                   );
 
 /**
   This function returns the image information to EFI_IMAGE_OUTPUT. Only the width
@@ -223,26 +223,26 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_HII_GET_IMAGE_INFO)(
-  IN CONST  EFI_HII_IMAGE_EX_PROTOCOL       *This,
-  IN        EFI_HII_HANDLE                  PackageList,
-  IN        EFI_IMAGE_ID                    ImageId,
-  OUT       EFI_IMAGE_OUTPUT                *Image
-  );
+                                 IN CONST  EFI_HII_IMAGE_EX_PROTOCOL       *This,
+                                 IN        EFI_HII_HANDLE                  PackageList,
+                                 IN        EFI_IMAGE_ID                    ImageId,
+                                 OUT       EFI_IMAGE_OUTPUT                *Image
+                                 );
 
 ///
 /// Protocol which allows access to the images in the images database.
 ///
 struct _EFI_HII_IMAGE_EX_PROTOCOL {
-  EFI_HII_NEW_IMAGE_EX      NewImageEx;
-  EFI_HII_GET_IMAGE_EX      GetImageEx;
-  EFI_HII_SET_IMAGE_EX      SetImageEx;
-  EFI_HII_DRAW_IMAGE_EX     DrawImageEx;
-  EFI_HII_DRAW_IMAGE_ID_EX  DrawImageIdEx;
-  EFI_HII_GET_IMAGE_INFO    GetImageInfo;
+  EFI_HII_NEW_IMAGE_EX        NewImageEx;
+  EFI_HII_GET_IMAGE_EX        GetImageEx;
+  EFI_HII_SET_IMAGE_EX        SetImageEx;
+  EFI_HII_DRAW_IMAGE_EX       DrawImageEx;
+  EFI_HII_DRAW_IMAGE_ID_EX    DrawImageIdEx;
+  EFI_HII_GET_IMAGE_INFO      GetImageInfo;
 };
 
-extern EFI_GUID gEfiHiiImageExProtocolGuid;
+extern EFI_GUID  gEfiHiiImageExProtocolGuid;
 
 #endif

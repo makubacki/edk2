@@ -21,11 +21,10 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 ///
 #define EFI_PKCS7_VERIFY_PROTOCOL_GUID \
   { \
-    0x47889fb2, 0xd671, 0x4fab, {0xa0, 0xca, 0xdf, 0x0e, 0x44, 0xdf, 0x70, 0xd6 } \
+    0x47889fb2, 0xd671, 0x4fab, { 0xa0, 0xca, 0xdf, 0x0e, 0x44, 0xdf, 0x70, 0xd6 } \
   }
 
 typedef struct _EFI_PKCS7_VERIFY_PROTOCOL EFI_PKCS7_VERIFY_PROTOCOL;
-
 
 /**
   Processes a buffer containing binary DER-encoded PKCS7 signature.
@@ -114,19 +113,19 @@ typedef struct _EFI_PKCS7_VERIFY_PROTOCOL EFI_PKCS7_VERIFY_PROTOCOL;
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_PKCS7_VERIFY_BUFFER) (
-  IN EFI_PKCS7_VERIFY_PROTOCOL    *This,
-  IN VOID                         *SignedData,
-  IN UINTN                        SignedDataSize,
-  IN VOID                         *InData          OPTIONAL,
-  IN UINTN                        InDataSize,
-  IN EFI_SIGNATURE_LIST           **AllowedDb,
-  IN EFI_SIGNATURE_LIST           **RevokedDb      OPTIONAL,
-  IN EFI_SIGNATURE_LIST           **TimeStampDb    OPTIONAL,
-  OUT VOID                        *Content         OPTIONAL,
-  IN OUT UINTN                    *ContentSize
-  );
+  EFI_STATUS
+(EFIAPI *EFI_PKCS7_VERIFY_BUFFER)(
+                                  IN EFI_PKCS7_VERIFY_PROTOCOL    *This,
+                                  IN VOID                         *SignedData,
+                                  IN UINTN                        SignedDataSize,
+                                  IN VOID                         *InData          OPTIONAL,
+                                  IN UINTN                        InDataSize,
+                                  IN EFI_SIGNATURE_LIST           **AllowedDb,
+                                  IN EFI_SIGNATURE_LIST           **RevokedDb      OPTIONAL,
+                                  IN EFI_SIGNATURE_LIST           **TimeStampDb    OPTIONAL,
+                                  OUT VOID                        *Content         OPTIONAL,
+                                  IN OUT UINTN                    *ContentSize
+                                  );
 
 /**
   Processes a buffer containing binary DER-encoded detached PKCS7 signature.
@@ -195,17 +194,17 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_PKCS7_VERIFY_SIGNATURE) (
-  IN EFI_PKCS7_VERIFY_PROTOCOL   *This,
-  IN VOID                        *Signature,
-  IN UINTN                       SignatureSize,
-  IN VOID                        *InHash,
-  IN UINTN                       InHashSize,
-  IN EFI_SIGNATURE_LIST          **AllowedDb,
-  IN EFI_SIGNATURE_LIST          **RevokedDb       OPTIONAL,
-  IN EFI_SIGNATURE_LIST          **TimeStampDb     OPTIONAL
-  );
+  EFI_STATUS
+(EFIAPI *EFI_PKCS7_VERIFY_SIGNATURE)(
+                                     IN EFI_PKCS7_VERIFY_PROTOCOL   *This,
+                                     IN VOID                        *Signature,
+                                     IN UINTN                       SignatureSize,
+                                     IN VOID                        *InHash,
+                                     IN UINTN                       InHashSize,
+                                     IN EFI_SIGNATURE_LIST          **AllowedDb,
+                                     IN EFI_SIGNATURE_LIST          **RevokedDb       OPTIONAL,
+                                     IN EFI_SIGNATURE_LIST          **TimeStampDb     OPTIONAL
+                                     );
 
 ///
 /// The EFI_PKCS7_VERIFY_PROTOCOL is used to verify data signed using PKCS7
@@ -214,10 +213,10 @@ EFI_STATUS
 /// Support of other hash algorithms is optional.
 ///
 struct _EFI_PKCS7_VERIFY_PROTOCOL {
-  EFI_PKCS7_VERIFY_BUFFER         VerifyBuffer;
-  EFI_PKCS7_VERIFY_SIGNATURE      VerifySignature;
+  EFI_PKCS7_VERIFY_BUFFER       VerifyBuffer;
+  EFI_PKCS7_VERIFY_SIGNATURE    VerifySignature;
 };
 
-extern EFI_GUID gEfiPkcs7VerifyProtocolGuid;
+extern EFI_GUID  gEfiPkcs7VerifyProtocolGuid;
 
 #endif

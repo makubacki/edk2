@@ -13,14 +13,13 @@
 #ifndef __EFI_TIME_STAMP_PROTOCOL_H__
 #define __EFI_TIME_STAMP_PROTOCOL_H__
 
-
 #define EFI_TIMESTAMP_PROTOCOL_GUID \
-  { 0xafbfde41, 0x2e6e, 0x4262, {0xba, 0x65, 0x62, 0xb9, 0x23, 0x6e, 0x54, 0x95 } }
+  { 0xafbfde41, 0x2e6e, 0x4262, { 0xba, 0x65, 0x62, 0xb9, 0x23, 0x6e, 0x54, 0x95 } }
 
 ///
 /// Declare forward reference for the Time Stamp Protocol
 ///
-typedef struct _EFI_TIMESTAMP_PROTOCOL  EFI_TIMESTAMP_PROTOCOL;
+typedef struct _EFI_TIMESTAMP_PROTOCOL EFI_TIMESTAMP_PROTOCOL;
 
 ///
 /// EFI_TIMESTAMP_PROPERTIES
@@ -29,13 +28,13 @@ typedef struct {
   ///
   /// The frequency of the timestamp counter in Hz.
   ///
-  UINT64                               Frequency;
+  UINT64    Frequency;
   ///
   /// The value that the timestamp counter ends with immediately before it rolls over.
   /// For example, a 64-bit free running counter would have an EndValue of 0xFFFFFFFFFFFFFFFF.
   /// A 24-bit free running counter would have an EndValue of 0xFFFFFF.
   ///
-  UINT64                               EndValue;
+  UINT64    EndValue;
 } EFI_TIMESTAMP_PROPERTIES;
 
 /**
@@ -55,10 +54,10 @@ typedef struct {
 
 **/
 typedef
-UINT64
+  UINT64
 (EFIAPI *TIMESTAMP_GET)(
-  VOID
-  );
+                        VOID
+                        );
 
 /**
   Obtains timestamp counter properties including frequency and value limits.
@@ -72,12 +71,10 @@ UINT64
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *TIMESTAMP_GET_PROPERTIES)(
-  OUT   EFI_TIMESTAMP_PROPERTIES       *Properties
-  );
-
-
+                                   OUT   EFI_TIMESTAMP_PROPERTIES       *Properties
+                                   );
 
 ///
 /// EFI_TIMESTAMP_PROTOCOL
@@ -85,11 +82,10 @@ EFI_STATUS
 /// timestamp counter.
 ///
 struct _EFI_TIMESTAMP_PROTOCOL {
-  TIMESTAMP_GET                        GetTimestamp;
-  TIMESTAMP_GET_PROPERTIES             GetProperties;
+  TIMESTAMP_GET               GetTimestamp;
+  TIMESTAMP_GET_PROPERTIES    GetProperties;
 };
 
-extern EFI_GUID gEfiTimestampProtocolGuid;
+extern EFI_GUID  gEfiTimestampProtocolGuid;
 
 #endif
-

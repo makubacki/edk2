@@ -19,7 +19,7 @@
 
 #define EFI_MM_POWER_BUTTON_DISPATCH_PROTOCOL_GUID \
   { \
-    0x1b1183fa, 0x1823, 0x46a7, {0x88, 0x72, 0x9c, 0x57, 0x87, 0x55, 0x40, 0x9d } \
+    0x1b1183fa, 0x1823, 0x46a7, { 0x88, 0x72, 0x9c, 0x57, 0x87, 0x55, 0x40, 0x9d } \
   }
 
 ///
@@ -38,7 +38,7 @@ typedef struct {
   ///
   /// Designates whether this handler should be invoked upon entry or exit.
   ///
-  EFI_POWER_BUTTON_PHASE  Phase;
+  EFI_POWER_BUTTON_PHASE    Phase;
 } EFI_MM_POWER_BUTTON_REGISTER_CONTEXT;
 
 typedef struct _EFI_MM_POWER_BUTTON_DISPATCH_PROTOCOL EFI_MM_POWER_BUTTON_DISPATCH_PROTOCOL;
@@ -68,13 +68,13 @@ typedef struct _EFI_MM_POWER_BUTTON_DISPATCH_PROTOCOL EFI_MM_POWER_BUTTON_DISPAT
   @retval EFI_OUT_OF_RESOURCES   There is not enough memory (system or MM) to manage this child.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MM_POWER_BUTTON_REGISTER)(
-  IN CONST EFI_MM_POWER_BUTTON_DISPATCH_PROTOCOL  *This,
-  IN       EFI_MM_HANDLER_ENTRY_POINT             DispatchFunction,
-  IN       EFI_MM_POWER_BUTTON_REGISTER_CONTEXT   *RegisterContext,
-  OUT      EFI_HANDLE                             *DispatchHandle
-  );
+                                       IN CONST EFI_MM_POWER_BUTTON_DISPATCH_PROTOCOL  *This,
+                                       IN       EFI_MM_HANDLER_ENTRY_POINT             DispatchFunction,
+                                       IN       EFI_MM_POWER_BUTTON_REGISTER_CONTEXT   *RegisterContext,
+                                       OUT      EFI_HANDLE                             *DispatchHandle
+                                       );
 
 /**
   Unregisters a power-button service.
@@ -89,11 +89,11 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER  The DispatchHandle was not valid.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MM_POWER_BUTTON_UNREGISTER)(
-  IN CONST EFI_MM_POWER_BUTTON_DISPATCH_PROTOCOL  *This,
-  IN       EFI_HANDLE                             DispatchHandle
-  );
+                                         IN CONST EFI_MM_POWER_BUTTON_DISPATCH_PROTOCOL  *This,
+                                         IN       EFI_HANDLE                             DispatchHandle
+                                         );
 
 ///
 /// Interface structure for the MM Power Button Dispatch Protocol.
@@ -101,11 +101,10 @@ EFI_STATUS
 /// This protocol provides the parent dispatch service for the power button MMI source generator.
 ///
 struct _EFI_MM_POWER_BUTTON_DISPATCH_PROTOCOL {
-  EFI_MM_POWER_BUTTON_REGISTER    Register;
-  EFI_MM_POWER_BUTTON_UNREGISTER  UnRegister;
+  EFI_MM_POWER_BUTTON_REGISTER      Register;
+  EFI_MM_POWER_BUTTON_UNREGISTER    UnRegister;
 };
 
-extern EFI_GUID gEfiMmPowerButtonDispatchProtocolGuid;
+extern EFI_GUID  gEfiMmPowerButtonDispatchProtocolGuid;
 
 #endif
-

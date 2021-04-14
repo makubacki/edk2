@@ -21,11 +21,10 @@
 
 #define EFI_MM_ACCESS_PROTOCOL_GUID \
   { \
-     0xc2702b74, 0x800c, 0x4131, {0x87, 0x46, 0x8f, 0xb5, 0xb8, 0x9c, 0xe4, 0xac } \
+    0xc2702b74, 0x800c, 0x4131, { 0x87, 0x46, 0x8f, 0xb5, 0xb8, 0x9c, 0xe4, 0xac } \
   }
 
-
-typedef struct _EFI_MM_ACCESS_PROTOCOL  EFI_MM_ACCESS_PROTOCOL;
+typedef struct _EFI_MM_ACCESS_PROTOCOL EFI_MM_ACCESS_PROTOCOL;
 
 /**
   Opens the MMRAM area to be accessible by a boot-service driver.
@@ -41,10 +40,10 @@ typedef struct _EFI_MM_ACCESS_PROTOCOL  EFI_MM_ACCESS_PROTOCOL;
   @retval EFI_DEVICE_ERROR  MMRAM cannot be opened, perhaps because it is locked.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MM_OPEN)(
-  IN EFI_MM_ACCESS_PROTOCOL  *This
-  );
+                      IN EFI_MM_ACCESS_PROTOCOL  *This
+                      );
 
 /**
   Inhibits access to the MMRAM.
@@ -59,10 +58,10 @@ EFI_STATUS
   @retval EFI_DEVICE_ERROR  MMRAM cannot be closed.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MM_CLOSE)(
-  IN EFI_MM_ACCESS_PROTOCOL  *This
-  );
+                       IN EFI_MM_ACCESS_PROTOCOL  *This
+                       );
 
 /**
   Inhibits access to the MMRAM.
@@ -76,10 +75,10 @@ EFI_STATUS
   @retval EFI_UNSUPPORTED  The system does not support locking of MMRAM.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MM_LOCK)(
-  IN EFI_MM_ACCESS_PROTOCOL  *This
-  );
+                      IN EFI_MM_ACCESS_PROTOCOL  *This
+                      );
 
 /**
   Queries the memory controller for the possible regions that will support MMRAM.
@@ -93,35 +92,34 @@ EFI_STATUS
                                 needed to hold the memory map is returned in MmramMapSize.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MM_CAPABILITIES)(
-  IN CONST EFI_MM_ACCESS_PROTOCOL    *This,
-  IN OUT UINTN                       *MmramMapSize,
-  IN OUT EFI_MMRAM_DESCRIPTOR        *MmramMap
-  );
+                              IN CONST EFI_MM_ACCESS_PROTOCOL    *This,
+                              IN OUT UINTN                       *MmramMapSize,
+                              IN OUT EFI_MMRAM_DESCRIPTOR        *MmramMap
+                              );
 
 ///
-///  EFI MM Access Protocol is used to control the visibility of the MMRAM on the platform.
-///  It abstracts the location and characteristics of MMRAM. The platform should report all
-///  MMRAM via EFI_MM_ACCESS_PROTOCOL. The expectation is that the north bridge or memory
-///  controller would publish this protocol.
+/// EFI MM Access Protocol is used to control the visibility of the MMRAM on the platform.
+/// It abstracts the location and characteristics of MMRAM. The platform should report all
+/// MMRAM via EFI_MM_ACCESS_PROTOCOL. The expectation is that the north bridge or memory
+/// controller would publish this protocol.
 ///
 struct _EFI_MM_ACCESS_PROTOCOL {
-  EFI_MM_OPEN          Open;
-  EFI_MM_CLOSE         Close;
-  EFI_MM_LOCK          Lock;
-  EFI_MM_CAPABILITIES  GetCapabilities;
+  EFI_MM_OPEN            Open;
+  EFI_MM_CLOSE           Close;
+  EFI_MM_LOCK            Lock;
+  EFI_MM_CAPABILITIES    GetCapabilities;
   ///
   /// Indicates the current state of the MMRAM. Set to TRUE if MMRAM is locked.
   ///
-  BOOLEAN               LockState;
+  BOOLEAN                LockState;
   ///
   /// Indicates the current state of the MMRAM. Set to TRUE if MMRAM is open.
   ///
-  BOOLEAN               OpenState;
+  BOOLEAN                OpenState;
 };
 
-extern EFI_GUID gEfiMmAccessProtocolGuid;
+extern EFI_GUID  gEfiMmAccessProtocolGuid;
 
 #endif
-

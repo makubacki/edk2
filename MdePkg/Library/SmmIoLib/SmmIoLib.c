@@ -10,7 +10,6 @@
 
 **/
 
-
 #include <PiSmm.h>
 
 #include <Library/BaseLib.h>
@@ -24,15 +23,15 @@
 #include <Protocol/SmmReadyToLock.h>
 #include <Protocol/SmmEndOfDxe.h>
 
-EFI_GCD_MEMORY_SPACE_DESCRIPTOR   *mSmmIoLibGcdMemSpace       = NULL;
-UINTN                             mSmmIoLibGcdMemNumberOfDesc = 0;
+EFI_GCD_MEMORY_SPACE_DESCRIPTOR  *mSmmIoLibGcdMemSpace = NULL;
+UINTN                            mSmmIoLibGcdMemNumberOfDesc = 0;
 
 EFI_PHYSICAL_ADDRESS  mSmmIoLibInternalMaximumSupportMemAddress = 0;
 
-VOID                  *mSmmIoLibRegistrationEndOfDxe;
-VOID                  *mSmmIoLibRegistrationReadyToLock;
+VOID  *mSmmIoLibRegistrationEndOfDxe;
+VOID  *mSmmIoLibRegistrationReadyToLock;
 
-BOOLEAN               mSmmIoLibReadyToLock = FALSE;
+BOOLEAN  mSmmIoLibReadyToLock = FALSE;
 
 /**
   Calculate and save the maximum support address.
@@ -43,9 +42,9 @@ SmmIoLibInternalCalculateMaximumSupportAddress (
   VOID
   )
 {
-  VOID         *Hob;
-  UINT32       RegEax;
-  UINT8        MemPhysicalAddressBits;
+  VOID    *Hob;
+  UINT32  RegEax;
+  UINT8   MemPhysicalAddressBits;
 
   //
   // Get physical address bits supported.
@@ -62,6 +61,7 @@ SmmIoLibInternalCalculateMaximumSupportAddress (
       MemPhysicalAddressBits = 36;
     }
   }
+
   //
   // IA-32e paging translates 48-bit linear addresses to 52-bit physical addresses.
   //
@@ -73,8 +73,12 @@ SmmIoLibInternalCalculateMaximumSupportAddress (
   //
   // Save the maximum support address in one global variable
   //
-  mSmmIoLibInternalMaximumSupportMemAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)(LShiftU64 (1, MemPhysicalAddressBits) - 1);
-  DEBUG ((DEBUG_INFO, "mSmmIoLibInternalMaximumSupportMemAddress = 0x%lx\n", mSmmIoLibInternalMaximumSupportMemAddress));
+  mSmmIoLibInternalMaximumSupportMemAddress =
+    (EFI_PHYSICAL_ADDRESS) (UINTN) (LShiftU64 (1, MemPhysicalAddressBits) - 1);
+  DEBUG (
+        (DEBUG_INFO, "mSmmIoLibInternalMaximumSupportMemAddress = 0x%lx\n",
+         mSmmIoLibInternalMaximumSupportMemAddress)
+        );
 }
 
 /**
@@ -98,9 +102,9 @@ SmmIsMmioValid (
   IN EFI_GUID              *Owner  OPTIONAL
   )
 {
-  UINTN                           Index;
-  EFI_GCD_MEMORY_SPACE_DESCRIPTOR *Desc;
-  BOOLEAN                         InValidRegion;
+  UINTN                            Index;
+  EFI_GCD_MEMORY_SPACE_DESCRIPTOR  *Desc;
+  BOOLEAN                          InValidRegion;
 
   //
   // Check override.
@@ -108,17 +112,19 @@ SmmIsMmioValid (
   //
   if ((Length > mSmmIoLibInternalMaximumSupportMemAddress) ||
       (BaseAddress > mSmmIoLibInternalMaximumSupportMemAddress) ||
-      ((Length != 0) && (BaseAddress > (mSmmIoLibInternalMaximumSupportMemAddress - (Length - 1)))) ) {
+      ((Length != 0) && (BaseAddress > (mSmmIoLibInternalMaximumSupportMemAddress - (Length - 1))))) {
     //
     // Overflow happen
     //
-    DEBUG ((
-      DEBUG_ERROR,
-      "SmmIsMmioValid: Overflow: BaseAddress (0x%lx) - Length (0x%lx), MaximumSupportMemAddress (0x%lx)\n",
-      BaseAddress,
-      Length,
-      mSmmIoLibInternalMaximumSupportMemAddress
-      ));
+    DEBUG (
+           (
+            DEBUG_ERROR,
+            "SmmIsMmioValid: Overflow: BaseAddress (0x%lx) - Length (0x%lx), MaximumSupportMemAddress (0x%lx)\n",
+            BaseAddress,
+            Length,
+            mSmmIoLibInternalMaximumSupportMemAddress
+           )
+           );
     return FALSE;
   }
 
@@ -127,7 +133,7 @@ SmmIsMmioValid (
   //
   if (mSmmIoLibReadyToLock) {
     InValidRegion = FALSE;
-    for (Index = 0; Index < mSmmIoLibGcdMemNumberOfDesc; Index ++) {
+    for (Index = 0; Index < mSmmIoLibGcdMemNumberOfDesc; Index++) {
       Desc = &mSmmIoLibGcdMemSpace[Index];
       if ((Desc->GcdMemoryType == EfiGcdMemoryTypeMemoryMappedIo) &&
           (BaseAddress >= Desc->BaseAddress) &&
@@ -137,15 +143,18 @@ SmmIsMmioValid (
     }
 
     if (!InValidRegion) {
-      DEBUG ((
-        DEBUG_ERROR,
-        "SmmIsMmioValid: Not in valid MMIO region: BaseAddress (0x%lx) - Length (0x%lx)\n",
-        BaseAddress,
-        Length
-        ));
+      DEBUG (
+             (
+              DEBUG_ERROR,
+              "SmmIsMmioValid: Not in valid MMIO region: BaseAddress (0x%lx) - Length (0x%lx)\n",
+              BaseAddress,
+              Length
+             )
+             );
       return FALSE;
     }
   }
+
   return TRUE;
 }
 
@@ -166,21 +175,24 @@ MergeGcdMmioEntry (
   IN OUT UINTN                            *NumberOfDescriptors
   )
 {
-  EFI_GCD_MEMORY_SPACE_DESCRIPTOR       *GcdMemoryMapEntry;
-  EFI_GCD_MEMORY_SPACE_DESCRIPTOR       *GcdMemoryMapEnd;
-  EFI_GCD_MEMORY_SPACE_DESCRIPTOR       *NewGcdMemoryMapEntry;
-  EFI_GCD_MEMORY_SPACE_DESCRIPTOR       *NextGcdMemoryMapEntry;
+  EFI_GCD_MEMORY_SPACE_DESCRIPTOR  *GcdMemoryMapEntry;
+  EFI_GCD_MEMORY_SPACE_DESCRIPTOR  *GcdMemoryMapEnd;
+  EFI_GCD_MEMORY_SPACE_DESCRIPTOR  *NewGcdMemoryMapEntry;
+  EFI_GCD_MEMORY_SPACE_DESCRIPTOR  *NextGcdMemoryMapEntry;
 
-  GcdMemoryMapEntry = GcdMemoryMap;
+  GcdMemoryMapEntry    = GcdMemoryMap;
   NewGcdMemoryMapEntry = GcdMemoryMap;
-  GcdMemoryMapEnd = (EFI_GCD_MEMORY_SPACE_DESCRIPTOR *) ((UINT8 *) GcdMemoryMap + (*NumberOfDescriptors) * sizeof(EFI_GCD_MEMORY_SPACE_DESCRIPTOR));
-  while ((UINTN)GcdMemoryMapEntry < (UINTN)GcdMemoryMapEnd) {
-    CopyMem (NewGcdMemoryMapEntry, GcdMemoryMapEntry, sizeof(EFI_GCD_MEMORY_SPACE_DESCRIPTOR));
+  GcdMemoryMapEnd =
+    (EFI_GCD_MEMORY_SPACE_DESCRIPTOR *) ((UINT8 *) GcdMemoryMap + (*NumberOfDescriptors) *
+                                         sizeof (EFI_GCD_MEMORY_SPACE_DESCRIPTOR));
+  while ((UINTN) GcdMemoryMapEntry < (UINTN) GcdMemoryMapEnd) {
+    CopyMem (NewGcdMemoryMapEntry, GcdMemoryMapEntry, sizeof (EFI_GCD_MEMORY_SPACE_DESCRIPTOR));
     NextGcdMemoryMapEntry = GcdMemoryMapEntry + 1;
 
     do {
-      if (((UINTN)NextGcdMemoryMapEntry < (UINTN)GcdMemoryMapEnd) &&
-          (GcdMemoryMapEntry->GcdMemoryType == EfiGcdMemoryTypeMemoryMappedIo) && (NextGcdMemoryMapEntry->GcdMemoryType == EfiGcdMemoryTypeMemoryMappedIo) &&
+      if (((UINTN) NextGcdMemoryMapEntry < (UINTN) GcdMemoryMapEnd) &&
+          (GcdMemoryMapEntry->GcdMemoryType == EfiGcdMemoryTypeMemoryMappedIo) &&
+          (NextGcdMemoryMapEntry->GcdMemoryType == EfiGcdMemoryTypeMemoryMappedIo) &&
           ((GcdMemoryMapEntry->BaseAddress + GcdMemoryMapEntry->Length) == NextGcdMemoryMapEntry->BaseAddress)) {
         GcdMemoryMapEntry->Length += NextGcdMemoryMapEntry->Length;
         if (NewGcdMemoryMapEntry != GcdMemoryMapEntry) {
@@ -195,13 +207,14 @@ MergeGcdMmioEntry (
       }
     } while (TRUE);
 
-    GcdMemoryMapEntry = GcdMemoryMapEntry + 1;
+    GcdMemoryMapEntry    = GcdMemoryMapEntry + 1;
     NewGcdMemoryMapEntry = NewGcdMemoryMapEntry + 1;
   }
 
-  *NumberOfDescriptors = ((UINTN)NewGcdMemoryMapEntry - (UINTN)GcdMemoryMap) / sizeof(EFI_GCD_MEMORY_SPACE_DESCRIPTOR);
+  *NumberOfDescriptors = ((UINTN) NewGcdMemoryMapEntry - (UINTN) GcdMemoryMap) /
+                         sizeof (EFI_GCD_MEMORY_SPACE_DESCRIPTOR);
 
-  return ;
+  return;
 }
 
 /**
@@ -228,13 +241,13 @@ SmmIoLibInternalEndOfDxeNotify (
 
   Status = gDS->GetMemorySpaceMap (&NumberOfDescriptors, &MemSpaceMap);
   if (!EFI_ERROR (Status)) {
-
     MergeGcdMmioEntry (MemSpaceMap, &NumberOfDescriptors);
 
-    mSmmIoLibGcdMemSpace = AllocateCopyPool (NumberOfDescriptors * sizeof (EFI_GCD_MEMORY_SPACE_DESCRIPTOR), MemSpaceMap);
+    mSmmIoLibGcdMemSpace =
+      AllocateCopyPool (NumberOfDescriptors * sizeof (EFI_GCD_MEMORY_SPACE_DESCRIPTOR), MemSpaceMap);
     ASSERT (mSmmIoLibGcdMemSpace != NULL);
     if (mSmmIoLibGcdMemSpace == NULL) {
-      gBS->FreePool (MemSpaceMap);
+  gBS->FreePool (MemSpaceMap);
       return EFI_OUT_OF_RESOURCES;
     }
 
@@ -282,7 +295,7 @@ SmmIoLibConstructor (
   IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  EFI_STATUS                    Status;
+  EFI_STATUS  Status;
 
   //
   // Calculate and save maximum support address
@@ -292,13 +305,21 @@ SmmIoLibConstructor (
   //
   // Register EndOfDxe to get GCD resource map
   //
-  Status = gSmst->SmmRegisterProtocolNotify (&gEfiSmmEndOfDxeProtocolGuid, SmmIoLibInternalEndOfDxeNotify, &mSmmIoLibRegistrationEndOfDxe);
+  Status = gSmst->SmmRegisterProtocolNotify (
+                                            &gEfiSmmEndOfDxeProtocolGuid,
+                                            SmmIoLibInternalEndOfDxeNotify,
+                                            &mSmmIoLibRegistrationEndOfDxe
+                                            );
   ASSERT_EFI_ERROR (Status);
 
   //
   // Register ready to lock so that we can know when to check valid resource region
   //
-  Status = gSmst->SmmRegisterProtocolNotify (&gEfiSmmReadyToLockProtocolGuid, SmmIoLibInternalReadyToLockNotify, &mSmmIoLibRegistrationReadyToLock);
+  Status = gSmst->SmmRegisterProtocolNotify (
+                                            &gEfiSmmReadyToLockProtocolGuid,
+                                            SmmIoLibInternalReadyToLockNotify,
+                                            &mSmmIoLibRegistrationReadyToLock
+                                            );
   ASSERT_EFI_ERROR (Status);
 
   return EFI_SUCCESS;

@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 /**
   Reads the current value of FS Data Segment Register (FS).
 
@@ -25,8 +22,7 @@ AsmReadFs (
   )
 {
   __asm {
-    xor     eax, eax
+  xor  eax, eax
     mov     ax, fs
   }
 }
-

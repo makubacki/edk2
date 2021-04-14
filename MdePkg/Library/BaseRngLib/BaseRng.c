@@ -13,14 +13,14 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // Bit mask used to determine if RdRand instruction is supported.
 //
-#define RDRAND_MASK                  BIT30
+#define RDRAND_MASK  BIT30
 
 //
 // Limited retry number when valid random data is returned.
 // Uses the recommended value defined in Section 7.3.17 of "Intel 64 and IA-32
 // Architectures Software Developer's Mannual".
 //
-#define RDRAND_RETRY_LIMIT           10
+#define RDRAND_RETRY_LIMIT  10
 
 /**
   The constructor function checks whether or not RDRAND instruction is supported

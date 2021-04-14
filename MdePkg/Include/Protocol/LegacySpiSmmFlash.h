@@ -19,12 +19,12 @@
 ///
 #define EFI_LEGACY_SPI_SMM_FLASH_PROTOCOL_GUID  \
   { 0x5e3848d4, 0x0db5, 0x4fc0,                 \
-    { 0x97, 0x29, 0x3f, 0x35, 0x3d, 0x4f, 0x87, 0x9f }}
+    { 0x97, 0x29, 0x3f, 0x35, 0x3d, 0x4f, 0x87, 0x9f } }
 
 typedef
-struct _EFI_LEGACY_SPI_FLASH_PROTOCOL
-EFI_LEGACY_SPI_SMM_FLASH_PROTOCOL;
+  struct _EFI_LEGACY_SPI_FLASH_PROTOCOL
+  EFI_LEGACY_SPI_SMM_FLASH_PROTOCOL;
 
-extern EFI_GUID gEfiLegacySpiSmmFlashProtocolGuid;
+extern EFI_GUID  gEfiLegacySpiSmmFlashProtocolGuid;
 
 #endif // __SPI_SMM_FLASH_PROTOCOL_H__

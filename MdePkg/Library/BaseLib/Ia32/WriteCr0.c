@@ -24,8 +24,7 @@ AsmWriteCr0 (
   )
 {
   _asm {
-    mov     eax, Value
+  mov  eax, Value
     mov     cr0, eax
   }
 }
-

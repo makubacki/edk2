@@ -17,7 +17,7 @@
 ///
 #define EFI_EAP_CONFIGURATION_PROTOCOL_GUID \
   { \
-    0xe5b58dbb, 0x7688, 0x44b4, {0x97, 0xbf, 0x5f, 0x1d, 0x4b, 0x7c, 0xc8, 0xdb } \
+    0xe5b58dbb, 0x7688, 0x44b4, { 0x97, 0xbf, 0x5f, 0x1d, 0x4b, 0x7c, 0xc8, 0xdb } \
   }
 
 typedef struct _EFI_EAP_CONFIGURATION_PROTOCOL EFI_EAP_CONFIGURATION_PROTOCOL;
@@ -25,7 +25,7 @@ typedef struct _EFI_EAP_CONFIGURATION_PROTOCOL EFI_EAP_CONFIGURATION_PROTOCOL;
 ///
 /// Make sure it not conflict with any real EapTypeXXX
 ///
-#define EFI_EAP_TYPE_ATTRIBUTE 0
+#define EFI_EAP_TYPE_ATTRIBUTE  0
 
 typedef enum {
   ///
@@ -97,14 +97,14 @@ typedef UINT8 EFI_EAP_TYPE;
   @retval EFI_OUT_OF_RESOURCES    Required system resources could not be allocated.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_EAP_CONFIGURATION_SET_DATA) (
-  IN EFI_EAP_CONFIGURATION_PROTOCOL       *This,
-  IN EFI_EAP_TYPE                         EapType,
-  IN EFI_EAP_CONFIG_DATA_TYPE             DataType,
-  IN VOID                                 *Data,
-  IN UINTN                                DataSize
-  );
+  EFI_STATUS
+(EFIAPI *EFI_EAP_CONFIGURATION_SET_DATA)(
+                                         IN EFI_EAP_CONFIGURATION_PROTOCOL       *This,
+                                         IN EFI_EAP_TYPE                         EapType,
+                                         IN EFI_EAP_CONFIG_DATA_TYPE             DataType,
+                                         IN VOID                                 *Data,
+                                         IN UINTN                                DataSize
+                                         );
 
 /**
   Get EAP configuration data.
@@ -129,14 +129,14 @@ EFI_STATUS
   @retval EFI_BUFFER_TOO_SMALL    The buffer is too small to hold the buffer.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_EAP_CONFIGURATION_GET_DATA) (
-  IN EFI_EAP_CONFIGURATION_PROTOCOL       *This,
-  IN EFI_EAP_TYPE                         EapType,
-  IN EFI_EAP_CONFIG_DATA_TYPE             DataType,
-  IN OUT VOID                             *Data,
-  IN OUT UINTN                            *DataSize
-  );
+  EFI_STATUS
+(EFIAPI *EFI_EAP_CONFIGURATION_GET_DATA)(
+                                         IN EFI_EAP_CONFIGURATION_PROTOCOL       *This,
+                                         IN EFI_EAP_TYPE                         EapType,
+                                         IN EFI_EAP_CONFIG_DATA_TYPE             DataType,
+                                         IN OUT VOID                             *Data,
+                                         IN OUT UINTN                            *DataSize
+                                         );
 
 ///
 /// The EFI_EAP_CONFIGURATION_PROTOCOL
@@ -144,10 +144,10 @@ EFI_STATUS
 /// private key file.
 ///
 struct _EFI_EAP_CONFIGURATION_PROTOCOL {
-  EFI_EAP_CONFIGURATION_SET_DATA          SetData;
-  EFI_EAP_CONFIGURATION_GET_DATA          GetData;
+  EFI_EAP_CONFIGURATION_SET_DATA    SetData;
+  EFI_EAP_CONFIGURATION_GET_DATA    GetData;
 };
 
-extern EFI_GUID gEfiEapConfigurationProtocolGuid;
+extern EFI_GUID  gEfiEapConfigurationProtocolGuid;
 
 #endif

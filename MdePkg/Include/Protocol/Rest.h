@@ -16,7 +16,7 @@
 
 #define EFI_REST_PROTOCOL_GUID \
   { \
-    0x0db48a36, 0x4e54, 0xea9c, {0x9b, 0x09, 0x1e, 0xa5, 0xbe, 0x3a, 0x66, 0x0b } \
+    0x0db48a36, 0x4e54, 0xea9c, { 0x9b, 0x09, 0x1e, 0xa5, 0xbe, 0x3a, 0x66, 0x0b } \
   }
 
 typedef struct _EFI_REST_PROTOCOL EFI_REST_PROTOCOL;
@@ -42,12 +42,12 @@ typedef struct _EFI_REST_PROTOCOL EFI_REST_PROTOCOL;
   @retval EFI_DEVICE_ERROR        An unexpected system or network error occurred.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_REST_SEND_RECEIVE) (
-  IN  EFI_REST_PROTOCOL         *This,
-  IN  EFI_HTTP_MESSAGE          *RequestMessage,
-  OUT EFI_HTTP_MESSAGE          *ResponseMessage
-  );
+  EFI_STATUS
+(EFIAPI *EFI_REST_SEND_RECEIVE)(
+                                IN  EFI_REST_PROTOCOL         *This,
+                                IN  EFI_HTTP_MESSAGE          *RequestMessage,
+                                OUT EFI_HTTP_MESSAGE          *ResponseMessage
+                                );
 
 /**
   The GetServiceTime() function is an optional interface to obtain the current time from
@@ -65,11 +65,11 @@ EFI_STATUS
   @retval EFI_DEVICE_ERROR        An unexpected system or network error occurred.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_REST_GET_TIME) (
-  IN  EFI_REST_PROTOCOL         *This,
-  OUT EFI_TIME                  *Time
-  );
+  EFI_STATUS
+(EFIAPI *EFI_REST_GET_TIME)(
+                            IN  EFI_REST_PROTOCOL         *This,
+                            OUT EFI_TIME                  *Time
+                            );
 
 ///
 /// The EFI REST protocol is designed to be used by EFI drivers and applications to send
@@ -79,10 +79,10 @@ EFI_STATUS
 /// interfaces that abstract HTTP access to the resources.
 ///
 struct _EFI_REST_PROTOCOL {
-  EFI_REST_SEND_RECEIVE         SendReceive;
-  EFI_REST_GET_TIME             GetServiceTime;
+  EFI_REST_SEND_RECEIVE    SendReceive;
+  EFI_REST_GET_TIME        GetServiceTime;
 };
 
-extern EFI_GUID gEfiRestProtocolGuid;
+extern EFI_GUID  gEfiRestProtocolGuid;
 
 #endif

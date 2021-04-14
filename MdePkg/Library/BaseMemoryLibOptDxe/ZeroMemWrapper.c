@@ -45,6 +45,6 @@ ZeroMem (
   }
 
   ASSERT (Buffer != NULL);
-  ASSERT (Length <= (MAX_ADDRESS - (UINTN)Buffer + 1));
+  ASSERT (Length <= (MAX_ADDRESS - (UINTN) Buffer + 1));
   return InternalMemZeroMem (Buffer, Length);
 }

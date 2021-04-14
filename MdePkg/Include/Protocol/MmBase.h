@@ -16,10 +16,10 @@
 
 #define EFI_MM_BASE_PROTOCOL_GUID \
   { \
-    0xf4ccbfb7, 0xf6e0, 0x47fd, {0x9d, 0xd4, 0x10, 0xa8, 0xf1, 0x50, 0xc1, 0x91 }  \
+    0xf4ccbfb7, 0xf6e0, 0x47fd, { 0x9d, 0xd4, 0x10, 0xa8, 0xf1, 0x50, 0xc1, 0x91 }  \
   }
 
-typedef struct _EFI_MM_BASE_PROTOCOL  EFI_MM_BASE_PROTOCOL;
+typedef struct _EFI_MM_BASE_PROTOCOL EFI_MM_BASE_PROTOCOL;
 
 /**
   Service to indicate whether the driver is currently executing in the MM Initialization phase.
@@ -37,11 +37,11 @@ typedef struct _EFI_MM_BASE_PROTOCOL  EFI_MM_BASE_PROTOCOL;
   @retval EFI_INVALID_PARAMETER  InMmram was NULL.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MM_INSIDE_OUT)(
-  IN CONST EFI_MM_BASE_PROTOCOL    *This,
-  OUT BOOLEAN                      *InMmram
-  )
+                            IN CONST EFI_MM_BASE_PROTOCOL    *This,
+                            OUT BOOLEAN                      *InMmram
+                            )
 ;
 
 /**
@@ -59,11 +59,11 @@ EFI_STATUS
   @retval EFI_UNSUPPORTED        Not in MM.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MM_GET_MMST_LOCATION)(
-  IN CONST EFI_MM_BASE_PROTOCOL  *This,
-  IN OUT EFI_MM_SYSTEM_TABLE     **Mmst
-  )
+                                   IN CONST EFI_MM_BASE_PROTOCOL  *This,
+                                   IN OUT EFI_MM_SYSTEM_TABLE     **Mmst
+                                   )
 ;
 
 ///
@@ -71,11 +71,10 @@ EFI_STATUS
 /// services and determine whether the driver is being invoked inside MMRAM or outside of MMRAM.
 ///
 struct _EFI_MM_BASE_PROTOCOL {
-  EFI_MM_INSIDE_OUT         InMm;
-  EFI_MM_GET_MMST_LOCATION  GetMmstLocation;
+  EFI_MM_INSIDE_OUT           InMm;
+  EFI_MM_GET_MMST_LOCATION    GetMmstLocation;
 };
 
-extern EFI_GUID gEfiMmBaseProtocolGuid;
+extern EFI_GUID  gEfiMmBaseProtocolGuid;
 
 #endif
-

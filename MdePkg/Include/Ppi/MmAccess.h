@@ -21,9 +21,9 @@
 #define _MM_ACCESS_PPI_H_
 
 #define EFI_PEI_MM_ACCESS_PPI_GUID \
-  { 0x268f33a9, 0xcccd, 0x48be, { 0x88, 0x17, 0x86, 0x5, 0x3a, 0xc3, 0x2e, 0xd6 }}
+  { 0x268f33a9, 0xcccd, 0x48be, { 0x88, 0x17, 0x86, 0x5, 0x3a, 0xc3, 0x2e, 0xd6 } }
 
-typedef struct _EFI_PEI_MM_ACCESS_PPI  EFI_PEI_MM_ACCESS_PPI;
+typedef struct _EFI_PEI_MM_ACCESS_PPI EFI_PEI_MM_ACCESS_PPI;
 
 /**
   Opens the MMRAM area to be accessible by a PEIM.
@@ -42,12 +42,12 @@ typedef struct _EFI_PEI_MM_ACCESS_PPI  EFI_PEI_MM_ACCESS_PPI;
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_MM_OPEN)(
-  IN EFI_PEI_SERVICES                **PeiServices,
-  IN EFI_PEI_MM_ACCESS_PPI           *This,
-  IN UINTN                           DescriptorIndex
-  );
+                          IN EFI_PEI_SERVICES                **PeiServices,
+                          IN EFI_PEI_MM_ACCESS_PPI           *This,
+                          IN UINTN                           DescriptorIndex
+                          );
 
 /**
   Inhibits access to the MMRAM.
@@ -65,12 +65,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_MM_CLOSE)(
-  IN EFI_PEI_SERVICES                **PeiServices,
-  IN EFI_PEI_MM_ACCESS_PPI           *This,
-  IN UINTN                           DescriptorIndex
-  );
+                           IN EFI_PEI_SERVICES                **PeiServices,
+                           IN EFI_PEI_MM_ACCESS_PPI           *This,
+                           IN UINTN                           DescriptorIndex
+                           );
 
 /**
   This function prohibits access to the MMRAM region. This function is usually implemented such
@@ -85,12 +85,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_MM_LOCK)(
-  IN EFI_PEI_SERVICES                **PeiServices,
-  IN EFI_PEI_MM_ACCESS_PPI           *This,
-  IN UINTN                           DescriptorIndex
-  );
+                          IN EFI_PEI_SERVICES                **PeiServices,
+                          IN EFI_PEI_MM_ACCESS_PPI           *This,
+                          IN UINTN                           DescriptorIndex
+                          );
 
 /**
   Queries the memory controller for the possible regions that will support MMRAM.
@@ -127,29 +127,29 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_MM_CAPABILITIES)(
-  IN EFI_PEI_SERVICES                **PeiServices,
-  IN EFI_PEI_MM_ACCESS_PPI           *This,
-  IN OUT UINTN                       *MmramMapSize,
-  IN OUT EFI_MMRAM_DESCRIPTOR        *MmramMap
-  );
+                                  IN EFI_PEI_SERVICES                **PeiServices,
+                                  IN EFI_PEI_MM_ACCESS_PPI           *This,
+                                  IN OUT UINTN                       *MmramMapSize,
+                                  IN OUT EFI_MMRAM_DESCRIPTOR        *MmramMap
+                                  );
 
 ///
-///  EFI MM Access PPI is used to control the visibility of the MMRAM on the platform.
-///  It abstracts the location and characteristics of MMRAM. The platform should report
-///  all MMRAM via EFI_PEI_MM_ACCESS_PPI. The expectation is that the north bridge or
-///  memory controller would publish this PPI.
+/// EFI MM Access PPI is used to control the visibility of the MMRAM on the platform.
+/// It abstracts the location and characteristics of MMRAM. The platform should report
+/// all MMRAM via EFI_PEI_MM_ACCESS_PPI. The expectation is that the north bridge or
+/// memory controller would publish this PPI.
 ///
 struct _EFI_PEI_MM_ACCESS_PPI {
-  EFI_PEI_MM_OPEN          Open;
-  EFI_PEI_MM_CLOSE         Close;
-  EFI_PEI_MM_LOCK          Lock;
-  EFI_PEI_MM_CAPABILITIES  GetCapabilities;
-  BOOLEAN                  LockState;
-  BOOLEAN                  OpenState;
+  EFI_PEI_MM_OPEN            Open;
+  EFI_PEI_MM_CLOSE           Close;
+  EFI_PEI_MM_LOCK            Lock;
+  EFI_PEI_MM_CAPABILITIES    GetCapabilities;
+  BOOLEAN                    LockState;
+  BOOLEAN                    OpenState;
 };
 
-extern EFI_GUID gEfiPeiMmAccessPpiGuid;
+extern EFI_GUID  gEfiPeiMmAccessPpiGuid;
 
 #endif

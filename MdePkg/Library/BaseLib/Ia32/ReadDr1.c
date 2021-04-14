@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 /**
   Reads the current value of Debug Register 1 (DR1).
 
@@ -26,7 +23,6 @@ AsmReadDr1 (
   )
 {
   __asm {
-    mov     eax, dr1
+  mov  eax, dr1
   }
 }
-

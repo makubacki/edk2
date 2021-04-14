@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 #include "BaseLibInternals.h"
 
 /**
@@ -31,19 +28,19 @@ HighBitSet64 (
   IN      UINT64                    Operand
   )
 {
-  if (Operand == (UINT32)Operand) {
+  if (Operand == (UINT32) Operand) {
     //
     // Operand is just a 32-bit integer
     //
-    return HighBitSet32 ((UINT32)Operand);
+    return HighBitSet32 ((UINT32) Operand);
   }
 
   //
   // Operand is really a 64-bit integer
   //
   if (sizeof (UINTN) == sizeof (UINT32)) {
-    return HighBitSet32 (((UINT32*)&Operand)[1]) + 32;
+    return HighBitSet32 (((UINT32 *) &Operand)[1]) + 32;
   } else {
-    return HighBitSet32 ((UINT32)RShiftU64 (Operand, 32)) + 32;
+    return HighBitSet32 ((UINT32) RShiftU64 (Operand, 32)) + 32;
   }
 }

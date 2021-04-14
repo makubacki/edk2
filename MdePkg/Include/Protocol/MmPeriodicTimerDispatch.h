@@ -19,40 +19,40 @@
 
 #define EFI_MM_PERIODIC_TIMER_DISPATCH_PROTOCOL_GUID \
   { \
-    0x4cec368e, 0x8e8e, 0x4d71, {0x8b, 0xe1, 0x95, 0x8c, 0x45, 0xfc, 0x8a, 0x53 } \
+    0x4cec368e, 0x8e8e, 0x4d71, { 0x8b, 0xe1, 0x95, 0x8c, 0x45, 0xfc, 0x8a, 0x53 } \
   }
 
 ///
 /// Example: A chipset supports periodic MMIs on every 64ms or 2 seconds.
-///   A child wishes schedule a period MMI to fire on a period of 3 seconds, there
-///   are several ways to approach the problem:
-///   1. The child may accept a 4 second periodic rate, in which case it registers with
-///        Period = 40000
-///        MmiTickInterval = 20000
-///      The resulting MMI will occur every 2 seconds with the child called back on
-///      every 2nd MMI.
-///      NOTE: the same result would occur if the child set MmiTickInterval = 0.
-///   2. The child may choose the finer granularity MMI (64ms):
-///        Period = 30000
-///        MmiTickInterval = 640
-///      The resulting MMI will occur every 64ms with the child called back on
-///      every 47th MMI.
-///      NOTE: the child driver should be aware that this will result in more
-///        MMIs occuring during system runtime which can negatively impact system
-///        performance.
+/// A child wishes schedule a period MMI to fire on a period of 3 seconds, there
+/// are several ways to approach the problem:
+/// 1. The child may accept a 4 second periodic rate, in which case it registers with
+/// Period = 40000
+/// MmiTickInterval = 20000
+/// The resulting MMI will occur every 2 seconds with the child called back on
+/// every 2nd MMI.
+/// NOTE: the same result would occur if the child set MmiTickInterval = 0.
+/// 2. The child may choose the finer granularity MMI (64ms):
+/// Period = 30000
+/// MmiTickInterval = 640
+/// The resulting MMI will occur every 64ms with the child called back on
+/// every 47th MMI.
+/// NOTE: the child driver should be aware that this will result in more
+/// MMIs occuring during system runtime which can negatively impact system
+/// performance.
 ///
 typedef struct {
   ///
   /// The minimum period of time in 100 nanosecond units that the child gets called. The
   /// child will be called back after a time greater than the time Period.
   ///
-  UINT64  Period;
+  UINT64    Period;
   ///
   /// The period of time interval between MMIs. Children of this interface should use this
   /// field when registering for periodic timer intervals when a finer granularity periodic
   /// MMI is desired.
   ///
-  UINT64  MmiTickInterval;
+  UINT64    MmiTickInterval;
 } EFI_MM_PERIODIC_TIMER_REGISTER_CONTEXT;
 
 ///
@@ -65,10 +65,10 @@ typedef struct {
   /// ElapsedTime is the actual time in 100 nanosecond units elapsed since last called, a
   /// value of 0 indicates an unknown amount of time.
   ///
-  UINT64  ElapsedTime;
+  UINT64    ElapsedTime;
 } EFI_MM_PERIODIC_TIMER_CONTEXT;
 
-typedef struct _EFI_MM_PERIODIC_TIMER_DISPATCH_PROTOCOL  EFI_MM_PERIODIC_TIMER_DISPATCH_PROTOCOL;
+typedef struct _EFI_MM_PERIODIC_TIMER_DISPATCH_PROTOCOL EFI_MM_PERIODIC_TIMER_DISPATCH_PROTOCOL;
 
 /**
   Register a child MMI source dispatch function for MM periodic timer.
@@ -98,13 +98,13 @@ typedef struct _EFI_MM_PERIODIC_TIMER_DISPATCH_PROTOCOL  EFI_MM_PERIODIC_TIMER_D
   @retval EFI_OUT_OF_RESOURCES   There is not enough memory (system or MM) to manage this child.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MM_PERIODIC_TIMER_REGISTER)(
-  IN CONST EFI_MM_PERIODIC_TIMER_DISPATCH_PROTOCOL    *This,
-  IN       EFI_MM_HANDLER_ENTRY_POINT                 DispatchFunction,
-  IN CONST EFI_MM_PERIODIC_TIMER_REGISTER_CONTEXT     *RegisterContext,
-  OUT      EFI_HANDLE                                 *DispatchHandle
-  );
+                                         IN CONST EFI_MM_PERIODIC_TIMER_DISPATCH_PROTOCOL    *This,
+                                         IN       EFI_MM_HANDLER_ENTRY_POINT                 DispatchFunction,
+                                         IN CONST EFI_MM_PERIODIC_TIMER_REGISTER_CONTEXT     *RegisterContext,
+                                         OUT      EFI_HANDLE                                 *DispatchHandle
+                                         );
 
 /**
   Unregisters a periodic timer service.
@@ -119,11 +119,11 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER  The DispatchHandle was not valid.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MM_PERIODIC_TIMER_UNREGISTER)(
-  IN CONST EFI_MM_PERIODIC_TIMER_DISPATCH_PROTOCOL  *This,
-  IN       EFI_HANDLE                               DispatchHandle
-  );
+                                           IN CONST EFI_MM_PERIODIC_TIMER_DISPATCH_PROTOCOL  *This,
+                                           IN       EFI_HANDLE                               DispatchHandle
+                                           );
 
 /**
   Returns the next MMI tick period supported by the chipset.
@@ -141,11 +141,11 @@ EFI_STATUS
   @retval EFI_SUCCESS             The service returned successfully.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MM_PERIODIC_TIMER_INTERVAL)(
-  IN CONST EFI_MM_PERIODIC_TIMER_DISPATCH_PROTOCOL  *This,
-  IN OUT UINT64                                     **MmiTickInterval
-  );
+                                         IN CONST EFI_MM_PERIODIC_TIMER_DISPATCH_PROTOCOL  *This,
+                                         IN OUT UINT64                                     **MmiTickInterval
+                                         );
 
 ///
 /// Interface structure for the MM Periodic Timer Dispatch Protocol
@@ -153,12 +153,11 @@ EFI_STATUS
 /// This protocol provides the parent dispatch service for the periodical timer MMI source generator.
 ///
 struct _EFI_MM_PERIODIC_TIMER_DISPATCH_PROTOCOL {
-  EFI_MM_PERIODIC_TIMER_REGISTER    Register;
-  EFI_MM_PERIODIC_TIMER_UNREGISTER  UnRegister;
-  EFI_MM_PERIODIC_TIMER_INTERVAL    GetNextShorterInterval;
+  EFI_MM_PERIODIC_TIMER_REGISTER      Register;
+  EFI_MM_PERIODIC_TIMER_UNREGISTER    UnRegister;
+  EFI_MM_PERIODIC_TIMER_INTERVAL      GetNextShorterInterval;
 };
 
-extern EFI_GUID gEfiMmPeriodicTimerDispatchProtocolGuid;
+extern EFI_GUID  gEfiMmPeriodicTimerDispatchProtocolGuid;
 
 #endif
-

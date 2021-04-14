@@ -23,11 +23,11 @@
 
 #define EFI_MM_CONTROL_PROTOCOL_GUID \
   { \
-    0x843dc720, 0xab1e, 0x42cb, {0x93, 0x57, 0x8a, 0x0, 0x78, 0xf3, 0x56, 0x1b}  \
+    0x843dc720, 0xab1e, 0x42cb, { 0x93, 0x57, 0x8a, 0x0, 0x78, 0xf3, 0x56, 0x1b }  \
   }
 
 typedef struct _EFI_MM_CONTROL_PROTOCOL  EFI_MM_CONTROL_PROTOCOL;
-typedef UINTN  EFI_MM_PERIOD;
+typedef UINTN                            EFI_MM_PERIOD;
 
 /**
   Invokes MMI activation from either the preboot or runtime environment.
@@ -48,14 +48,14 @@ typedef UINTN  EFI_MM_PERIOD;
   @retval EFI_NOT_STARTED        The MM base service has not been initialized.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MM_ACTIVATE)(
-  IN CONST EFI_MM_CONTROL_PROTOCOL    *This,
-  IN OUT UINT8                        *CommandPort       OPTIONAL,
-  IN OUT UINT8                        *DataPort          OPTIONAL,
-  IN BOOLEAN                          Periodic           OPTIONAL,
-  IN UINTN                            ActivationInterval OPTIONAL
-  );
+                          IN CONST EFI_MM_CONTROL_PROTOCOL    *This,
+                          IN OUT UINT8                        *CommandPort       OPTIONAL,
+                          IN OUT UINT8                        *DataPort          OPTIONAL,
+                          IN BOOLEAN                          Periodic           OPTIONAL,
+                          IN UINTN                            ActivationInterval OPTIONAL
+                          );
 
 /**
   Clears any system state that was created in response to the Trigger() call.
@@ -70,11 +70,11 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER  The service did not support the Periodic input argument.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MM_DEACTIVATE)(
-  IN CONST EFI_MM_CONTROL_PROTOCOL    *This,
-  IN BOOLEAN                          Periodic OPTIONAL
-  );
+                            IN CONST EFI_MM_CONTROL_PROTOCOL    *This,
+                            IN BOOLEAN                          Periodic OPTIONAL
+                            );
 
 ///
 /// The EFI_MM_CONTROL_PROTOCOL is produced by a runtime driver. It provides  an
@@ -83,18 +83,17 @@ EFI_STATUS
 /// these signals.
 ///
 struct _EFI_MM_CONTROL_PROTOCOL {
-  EFI_MM_ACTIVATE    Trigger;
-  EFI_MM_DEACTIVATE  Clear;
+  EFI_MM_ACTIVATE      Trigger;
+  EFI_MM_DEACTIVATE    Clear;
   ///
   /// Minimum interval at which the platform can set the period.  A maximum is not
   /// specified in that the MM infrastructure code can emulate a maximum interval that is
   /// greater than the hardware capabilities by using software emulation in the MM
   /// infrastructure code.
   ///
-  EFI_MM_PERIOD      MinimumTriggerPeriod;
+  EFI_MM_PERIOD        MinimumTriggerPeriod;
 };
 
-extern EFI_GUID gEfiMmControlProtocolGuid;
+extern EFI_GUID  gEfiMmControlProtocolGuid;
 
 #endif
-

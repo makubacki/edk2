@@ -13,21 +13,46 @@
 
 **/
 
-
-
 #include "BaseIoLibIntrinsicInternal.h"
 
 //
 // Microsoft Visual Studio 7.1 Function Prototypes for I/O Intrinsics.
 //
 
-int            _inp (unsigned short port);
-unsigned short _inpw (unsigned short port);
-unsigned long  _inpd (unsigned short port);
-int            _outp (unsigned short port, int databyte );
-unsigned short _outpw (unsigned short port, unsigned short dataword );
-unsigned long  _outpd (unsigned short port, unsigned long dataword );
-void          _ReadWriteBarrier (void);
+int
+_inp (
+  unsigned short port
+  );
+
+unsigned short
+_inpw (
+  unsigned short port
+  );
+
+unsigned long
+_inpd (
+  unsigned short port
+  );
+
+int
+_outp (
+  unsigned short port, int databyte
+  );
+
+unsigned short
+_outpw (
+  unsigned short port, unsigned short dataword
+  );
+
+unsigned long
+_outpd (
+  unsigned short port, unsigned long dataword
+  );
+
+void
+_ReadWriteBarrier (
+  void
+  );
 
 #pragma intrinsic(_inp)
 #pragma intrinsic(_inpw)
@@ -65,15 +90,16 @@ IoRead8 (
   IN      UINTN                     Port
   )
 {
-  UINT8                             Value;
-  BOOLEAN                           Flag;
+  UINT8    Value;
+  BOOLEAN  Flag;
 
   Flag = FilterBeforeIoRead (FilterWidth8, Port, &Value);
   if (Flag) {
     _ReadWriteBarrier ();
-    Value = (UINT8)_inp ((UINT16)Port);
+    Value = (UINT8) _inp ((UINT16) Port);
     _ReadWriteBarrier ();
   }
+
   FilterAfterIoRead (FilterWidth8, Port, &Value);
 
   return Value;
@@ -101,14 +127,15 @@ IoWrite8 (
   IN      UINT8                     Value
   )
 {
-  BOOLEAN                           Flag;
+  BOOLEAN  Flag;
 
-  Flag = FilterBeforeIoWrite(FilterWidth8, Port, &Value);
+  Flag = FilterBeforeIoWrite (FilterWidth8, Port, &Value);
   if (Flag) {
     _ReadWriteBarrier ();
-    (UINT8)_outp ((UINT16)Port, Value);
+    (UINT8) _outp ((UINT16) Port, Value);
     _ReadWriteBarrier ();
   }
+
   FilterAfterIoWrite (FilterWidth8, Port, &Value);
 
   return Value;
@@ -135,17 +162,18 @@ IoRead16 (
   IN      UINTN                     Port
   )
 {
-  UINT16                            Value;
-  BOOLEAN                           Flag;
+  UINT16   Value;
+  BOOLEAN  Flag;
 
   ASSERT ((Port & 1) == 0);
 
   Flag = FilterBeforeIoRead (FilterWidth16, Port, &Value);
   if (Flag) {
     _ReadWriteBarrier ();
-    Value = _inpw ((UINT16)Port);
+    Value = _inpw ((UINT16) Port);
     _ReadWriteBarrier ();
   }
+
   FilterBeforeIoRead (FilterWidth16, Port, &Value);
 
   return Value;
@@ -174,16 +202,17 @@ IoWrite16 (
   IN      UINT16                    Value
   )
 {
-  BOOLEAN                           Flag;
+  BOOLEAN  Flag;
 
   ASSERT ((Port & 1) == 0);
 
-  Flag = FilterBeforeIoWrite(FilterWidth16, Port, &Value);
+  Flag = FilterBeforeIoWrite (FilterWidth16, Port, &Value);
   if (Flag) {
     _ReadWriteBarrier ();
-    _outpw ((UINT16)Port, Value);
+    _outpw ((UINT16) Port, Value);
     _ReadWriteBarrier ();
   }
+
   FilterAfterIoWrite (FilterWidth16, Port, &Value);
 
   return Value;
@@ -210,17 +239,18 @@ IoRead32 (
   IN      UINTN                     Port
   )
 {
-  UINT32                            Value;
-  BOOLEAN                           Flag;
+  UINT32   Value;
+  BOOLEAN  Flag;
 
   ASSERT ((Port & 3) == 0);
 
-  Flag = FilterBeforeIoRead(FilterWidth32, Port, &Value);
+  Flag = FilterBeforeIoRead (FilterWidth32, Port, &Value);
   if (Flag) {
     _ReadWriteBarrier ();
-    Value = _inpd ((UINT16)Port);
+    Value = _inpd ((UINT16) Port);
     _ReadWriteBarrier ();
   }
+
   FilterAfterIoRead (FilterWidth32, Port, &Value);
 
   return Value;
@@ -249,16 +279,17 @@ IoWrite32 (
   IN      UINT32                    Value
   )
 {
-  BOOLEAN                           Flag;
+  BOOLEAN  Flag;
 
   ASSERT ((Port & 3) == 0);
 
-  Flag = FilterBeforeIoWrite(FilterWidth32, Port, &Value);
+  Flag = FilterBeforeIoWrite (FilterWidth32, Port, &Value);
   if (Flag) {
     _ReadWriteBarrier ();
-    _outpd ((UINT16)Port, Value);
+    _outpd ((UINT16) Port, Value);
     _ReadWriteBarrier ();
   }
+
   FilterAfterIoWrite (FilterWidth32, Port, &Value);
 
   return Value;

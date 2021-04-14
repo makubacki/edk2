@@ -19,11 +19,10 @@
 
 typedef struct _EFI_HII_IMAGE_PROTOCOL EFI_HII_IMAGE_PROTOCOL;
 
-
 ///
 /// Flags in EFI_IMAGE_INPUT
 ///
-#define EFI_IMAGE_TRANSPARENT 0x00000001
+#define EFI_IMAGE_TRANSPARENT  0x00000001
 
 /**
 
@@ -44,12 +43,11 @@ typedef struct _EFI_HII_IMAGE_PROTOCOL EFI_HII_IMAGE_PROTOCOL;
 
 **/
 typedef struct _EFI_IMAGE_INPUT {
-  UINT32                          Flags;
-  UINT16                          Width;
-  UINT16                          Height;
-  EFI_GRAPHICS_OUTPUT_BLT_PIXEL   *Bitmap;
+  UINT32                           Flags;
+  UINT16                           Width;
+  UINT16                           Height;
+  EFI_GRAPHICS_OUTPUT_BLT_PIXEL    *Bitmap;
 } EFI_IMAGE_INPUT;
-
 
 /**
 
@@ -77,13 +75,13 @@ typedef struct _EFI_IMAGE_INPUT {
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_HII_NEW_IMAGE)(
-  IN CONST  EFI_HII_IMAGE_PROTOCOL  *This,
-  IN        EFI_HII_HANDLE          PackageList,
-  OUT       EFI_IMAGE_ID            *ImageId,
-  IN CONST  EFI_IMAGE_INPUT         *Image
-);
+                            IN CONST  EFI_HII_IMAGE_PROTOCOL  *This,
+                            IN        EFI_HII_HANDLE          PackageList,
+                            OUT       EFI_IMAGE_ID            *ImageId,
+                            IN CONST  EFI_IMAGE_INPUT         *Image
+                            );
 
 /**
 
@@ -119,13 +117,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_HII_GET_IMAGE)(
-  IN CONST  EFI_HII_IMAGE_PROTOCOL  *This,
-  IN        EFI_HII_HANDLE          PackageList,
-  IN        EFI_IMAGE_ID            ImageId,
-  OUT       EFI_IMAGE_INPUT         *Image
-);
+                            IN CONST  EFI_HII_IMAGE_PROTOCOL  *This,
+                            IN        EFI_HII_HANDLE          PackageList,
+                            IN        EFI_IMAGE_ID            ImageId,
+                            OUT       EFI_IMAGE_INPUT         *Image
+                            );
 
 /**
 
@@ -150,20 +148,19 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_HII_SET_IMAGE)(
-  IN CONST  EFI_HII_IMAGE_PROTOCOL  *This,
-  IN        EFI_HII_HANDLE          PackageList,
-  IN        EFI_IMAGE_ID            ImageId,
-  IN CONST  EFI_IMAGE_INPUT         *Image
-);
-
+                            IN CONST  EFI_HII_IMAGE_PROTOCOL  *This,
+                            IN        EFI_HII_HANDLE          PackageList,
+                            IN        EFI_IMAGE_ID            ImageId,
+                            IN CONST  EFI_IMAGE_INPUT         *Image
+                            );
 
 ///
 /// EFI_HII_DRAW_FLAGS describes how the image is to be drawn.
 /// These flags are defined as EFI_HII_DRAW_FLAG_***
 ///
-typedef UINT32  EFI_HII_DRAW_FLAGS;
+typedef UINT32 EFI_HII_DRAW_FLAGS;
 
 #define EFI_HII_DRAW_FLAG_CLIP          0x00000001
 #define EFI_HII_DRAW_FLAG_TRANSPARENT   0x00000030
@@ -188,14 +185,13 @@ typedef UINT32  EFI_HII_DRAW_FLAGS;
 
 **/
 typedef struct _EFI_IMAGE_OUTPUT {
-  UINT16  Width;
-  UINT16  Height;
+  UINT16    Width;
+  UINT16    Height;
   union {
-    EFI_GRAPHICS_OUTPUT_BLT_PIXEL *Bitmap;
-    EFI_GRAPHICS_OUTPUT_PROTOCOL  *Screen;
+  EFI_GRAPHICS_OUTPUT_BLT_PIXEL    *Bitmap;
+  EFI_GRAPHICS_OUTPUT_PROTOCOL     *Screen;
   } Image;
 } EFI_IMAGE_OUTPUT;
-
 
 /**
 
@@ -245,15 +241,15 @@ typedef struct _EFI_IMAGE_OUTPUT {
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_HII_DRAW_IMAGE)(
-  IN CONST  EFI_HII_IMAGE_PROTOCOL  *This,
-  IN        EFI_HII_DRAW_FLAGS      Flags,
-  IN CONST  EFI_IMAGE_INPUT         *Image,
-  IN OUT    EFI_IMAGE_OUTPUT        **Blt,
-  IN        UINTN                   BltX,
-  IN        UINTN                   BltY
-);
+                             IN CONST  EFI_HII_IMAGE_PROTOCOL  *This,
+                             IN        EFI_HII_DRAW_FLAGS      Flags,
+                             IN CONST  EFI_IMAGE_INPUT         *Image,
+                             IN OUT    EFI_IMAGE_OUTPUT        **Blt,
+                             IN        UINTN                   BltX,
+                             IN        UINTN                   BltY
+                             );
 
 /**
 
@@ -323,31 +319,28 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_HII_DRAW_IMAGE_ID)(
-IN CONST  EFI_HII_IMAGE_PROTOCOL  *This,
-IN        EFI_HII_DRAW_FLAGS      Flags,
-IN        EFI_HII_HANDLE          PackageList,
-IN        EFI_IMAGE_ID            ImageId,
-IN OUT    EFI_IMAGE_OUTPUT        **Blt,
-IN        UINTN                   BltX,
-IN        UINTN                   BltY
-);
-
+                                IN CONST  EFI_HII_IMAGE_PROTOCOL  *This,
+                                IN        EFI_HII_DRAW_FLAGS      Flags,
+                                IN        EFI_HII_HANDLE          PackageList,
+                                IN        EFI_IMAGE_ID            ImageId,
+                                IN OUT    EFI_IMAGE_OUTPUT        **Blt,
+                                IN        UINTN                   BltX,
+                                IN        UINTN                   BltY
+                                );
 
 ///
 /// Services to access to images in the images database.
 ///
 struct _EFI_HII_IMAGE_PROTOCOL {
-  EFI_HII_NEW_IMAGE     NewImage;
-  EFI_HII_GET_IMAGE     GetImage;
-  EFI_HII_SET_IMAGE     SetImage;
-  EFI_HII_DRAW_IMAGE    DrawImage;
-  EFI_HII_DRAW_IMAGE_ID DrawImageId;
+  EFI_HII_NEW_IMAGE        NewImage;
+  EFI_HII_GET_IMAGE        GetImage;
+  EFI_HII_SET_IMAGE        SetImage;
+  EFI_HII_DRAW_IMAGE       DrawImage;
+  EFI_HII_DRAW_IMAGE_ID    DrawImageId;
 };
 
-extern EFI_GUID gEfiHiiImageProtocolGuid;
+extern EFI_GUID  gEfiHiiImageProtocolGuid;
 
 #endif
-
-

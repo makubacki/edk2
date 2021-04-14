@@ -24,10 +24,9 @@ AsmWriteDr5 (
   )
 {
   _asm {
-    mov     eax, Value
-    _emit   0x0f         // mov dr5, eax
+  mov  eax, Value
+       _emit   0x0f      // mov dr5, eax
     _emit   0x23
     _emit   0xe8
   }
 }
-

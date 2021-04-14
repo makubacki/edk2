@@ -24,10 +24,9 @@ AsmWriteCr4 (
   )
 {
   _asm {
-    mov     eax, Value
-    _emit  0x0f  // mov  cr4, eax
+  mov  eax, Value
+       _emit  0x0f// mov  cr4, eax
     _emit  0x22
     _emit  0xE0
   }
 }
-

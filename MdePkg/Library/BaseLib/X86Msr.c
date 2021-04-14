@@ -6,9 +6,7 @@
 
 **/
 
-
 #include "BaseLibInternals.h"
-
 
 /**
   Returns the lower 32-bits of a Machine Specific Register(MSR).
@@ -30,7 +28,7 @@ AsmReadMsr32 (
   IN      UINT32                    Index
   )
 {
-  return (UINT32)AsmReadMsr64 (Index);
+  return (UINT32) AsmReadMsr64 (Index);
 }
 
 /**
@@ -57,7 +55,7 @@ AsmWriteMsr32 (
   IN      UINT32                    Value
   )
 {
-  return (UINT32)AsmWriteMsr64 (Index, Value);
+  return (UINT32) AsmWriteMsr64 (Index, Value);
 }
 
 /**
@@ -86,7 +84,7 @@ AsmMsrOr32 (
   IN      UINT32                    OrData
   )
 {
-  return (UINT32)AsmMsrOr64 (Index, OrData);
+  return (UINT32) AsmMsrOr64 (Index, OrData);
 }
 
 /**
@@ -115,7 +113,7 @@ AsmMsrAnd32 (
   IN      UINT32                    AndData
   )
 {
-  return (UINT32)AsmMsrAnd64 (Index, AndData);
+  return (UINT32) AsmMsrAnd64 (Index, AndData);
 }
 
 /**
@@ -148,7 +146,7 @@ AsmMsrAndThenOr32 (
   IN      UINT32                    OrData
   )
 {
-  return (UINT32)AsmMsrAndThenOr64 (Index, AndData, OrData);
+  return (UINT32) AsmMsrAndThenOr64 (Index, AndData, OrData);
 }
 
 /**
@@ -220,7 +218,7 @@ AsmMsrBitFieldWrite32 (
 {
   ASSERT (EndBit < sizeof (Value) * 8);
   ASSERT (StartBit <= EndBit);
-  return (UINT32)AsmMsrBitFieldWrite64 (Index, StartBit, EndBit, Value);
+  return (UINT32) AsmMsrBitFieldWrite64 (Index, StartBit, EndBit, Value);
 }
 
 /**
@@ -261,7 +259,7 @@ AsmMsrBitFieldOr32 (
 {
   ASSERT (EndBit < sizeof (OrData) * 8);
   ASSERT (StartBit <= EndBit);
-  return (UINT32)AsmMsrBitFieldOr64 (Index, StartBit, EndBit, OrData);
+  return (UINT32) AsmMsrBitFieldOr64 (Index, StartBit, EndBit, OrData);
 }
 
 /**
@@ -302,7 +300,7 @@ AsmMsrBitFieldAnd32 (
 {
   ASSERT (EndBit < sizeof (AndData) * 8);
   ASSERT (StartBit <= EndBit);
-  return (UINT32)AsmMsrBitFieldAnd64 (Index, StartBit, EndBit, AndData);
+  return (UINT32) AsmMsrBitFieldAnd64 (Index, StartBit, EndBit, AndData);
 }
 
 /**
@@ -348,13 +346,13 @@ AsmMsrBitFieldAndThenOr32 (
 {
   ASSERT (EndBit < sizeof (AndData) * 8);
   ASSERT (StartBit <= EndBit);
-  return (UINT32)AsmMsrBitFieldAndThenOr64 (
-                   Index,
-                   StartBit,
-                   EndBit,
-                   AndData,
-                   OrData
-                   );
+  return (UINT32) AsmMsrBitFieldAndThenOr64 (
+                                             Index,
+                                             StartBit,
+                                             EndBit,
+                                             AndData,
+                                             OrData
+                                             );
 }
 
 /**
@@ -512,9 +510,9 @@ AsmMsrBitFieldWrite64 (
   )
 {
   return AsmWriteMsr64 (
-           Index,
-           BitFieldWrite64 (AsmReadMsr64 (Index), StartBit, EndBit, Value)
-           );
+                        Index,
+                        BitFieldWrite64 (AsmReadMsr64 (Index), StartBit, EndBit, Value)
+                        );
 }
 
 /**
@@ -554,9 +552,9 @@ AsmMsrBitFieldOr64 (
   )
 {
   return AsmWriteMsr64 (
-           Index,
-           BitFieldOr64 (AsmReadMsr64 (Index), StartBit, EndBit, OrData)
-           );
+                        Index,
+                        BitFieldOr64 (AsmReadMsr64 (Index), StartBit, EndBit, OrData)
+                        );
 }
 
 /**
@@ -596,9 +594,9 @@ AsmMsrBitFieldAnd64 (
   )
 {
   return AsmWriteMsr64 (
-           Index,
-           BitFieldAnd64 (AsmReadMsr64 (Index), StartBit, EndBit, AndData)
-           );
+                        Index,
+                        BitFieldAnd64 (AsmReadMsr64 (Index), StartBit, EndBit, AndData)
+                        );
 }
 
 /**
@@ -642,13 +640,13 @@ AsmMsrBitFieldAndThenOr64 (
   )
 {
   return AsmWriteMsr64 (
-           Index,
-           BitFieldAndThenOr64 (
-             AsmReadMsr64 (Index),
-             StartBit,
-             EndBit,
-             AndData,
-             OrData
-             )
-           );
+                        Index,
+                        BitFieldAndThenOr64 (
+                                             AsmReadMsr64 (Index),
+                                             StartBit,
+                                             EndBit,
+                                             AndData,
+                                             OrData
+                                             )
+                        );
 }

@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 /**
   Writes the current value of 64-bit MMX Register #4 (MM4).
 
@@ -25,7 +22,7 @@ AsmWriteMm4 (
   )
 {
   _asm {
-    movq    mm4, qword ptr [Value]
+  movq  mm4, qword ptr[Value]
     emms
   }
 }

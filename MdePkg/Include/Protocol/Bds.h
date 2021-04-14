@@ -15,12 +15,12 @@
 /// Global ID for the BDS Architectural Protocol
 ///
 #define EFI_BDS_ARCH_PROTOCOL_GUID \
-  { 0x665E3FF6, 0x46CC, 0x11d4, {0x9A, 0x38, 0x00, 0x90, 0x27, 0x3F, 0xC1, 0x4D } }
+  { 0x665E3FF6, 0x46CC, 0x11d4, { 0x9A, 0x38, 0x00, 0x90, 0x27, 0x3F, 0xC1, 0x4D } }
 
 ///
 /// Declare forward reference for the BDS Architectural Protocol
 ///
-typedef struct _EFI_BDS_ARCH_PROTOCOL   EFI_BDS_ARCH_PROTOCOL;
+typedef struct _EFI_BDS_ARCH_PROTOCOL EFI_BDS_ARCH_PROTOCOL;
 
 /**
   This function uses policy data from the platform to determine what operating
@@ -44,10 +44,10 @@ typedef struct _EFI_BDS_ARCH_PROTOCOL   EFI_BDS_ARCH_PROTOCOL;
 
 **/
 typedef
-VOID
+  VOID
 (EFIAPI *EFI_BDS_ENTRY)(
-  IN EFI_BDS_ARCH_PROTOCOL  *This
-  );
+                        IN EFI_BDS_ARCH_PROTOCOL  *This
+                        );
 
 ///
 /// The EFI_BDS_ARCH_PROTOCOL transfers control from DXE to an operating
@@ -58,9 +58,9 @@ VOID
 /// the boot device can be used to load and invoke an OS or a system utility.
 ///
 struct _EFI_BDS_ARCH_PROTOCOL {
-  EFI_BDS_ENTRY Entry;
+  EFI_BDS_ENTRY    Entry;
 };
 
-extern EFI_GUID gEfiBdsArchProtocolGuid;
+extern EFI_GUID  gEfiBdsArchProtocolGuid;
 
 #endif

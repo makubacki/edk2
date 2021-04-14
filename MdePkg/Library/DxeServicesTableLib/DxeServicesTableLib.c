@@ -26,7 +26,7 @@
 //
 // Cache copy of the DXE Services Table
 //
-EFI_DXE_SERVICES  *gDS      = NULL;
+EFI_DXE_SERVICES  *gDS = NULL;
 
 /**
   The constructor function caches the pointer of DXE Services Table.

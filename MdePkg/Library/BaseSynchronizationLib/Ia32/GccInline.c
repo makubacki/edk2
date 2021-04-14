@@ -7,8 +7,6 @@
 
 **/
 
-
-
 /**
   Performs an atomic increment of an 32-bit unsigned integer.
 
@@ -30,20 +28,19 @@ InternalSyncIncrement (
   UINT32  Result;
 
   __asm__ __volatile__ (
-    "movl    $1, %%eax  \n\t"
-    "lock               \n\t"
-    "xadd    %%eax, %1  \n\t"
-    "inc     %%eax      \n\t"
-    : "=&a" (Result),         // %0
-      "+m" (*Value)           // %1
-    :                         // no inputs that aren't also outputs
-    : "memory",
-      "cc"
-    );
+                        "movl    $1, %%eax  \n\t"
+                        "lock               \n\t"
+                        "xadd    %%eax, %1  \n\t"
+                        "inc     %%eax      \n\t"
+                        : "=&a" (Result), // %0
+                        "+m" (*Value)     // %1
+                        :                 // no inputs that aren't also outputs
+                        : "memory",
+                        "cc"
+                        );
 
   return Result;
 }
-
 
 /**
   Performs an atomic decrement of an 32-bit unsigned integer.
@@ -63,23 +60,22 @@ InternalSyncDecrement (
   IN      volatile UINT32       *Value
   )
 {
-   UINT32  Result;
+  UINT32  Result;
 
   __asm__ __volatile__ (
-    "movl    $-1, %%eax  \n\t"
-    "lock                \n\t"
-    "xadd    %%eax, %1   \n\t"
-    "dec     %%eax       \n\t"
-    : "=&a" (Result),          // %0
-      "+m" (*Value)            // %1
-    :                          // no inputs that aren't also outputs
-    : "memory",
-      "cc"
-    );
+                        "movl    $-1, %%eax  \n\t"
+                        "lock                \n\t"
+                        "xadd    %%eax, %1   \n\t"
+                        "dec     %%eax       \n\t"
+                        : "=&a" (Result), // %0
+                        "+m" (*Value)     // %1
+                        :                 // no inputs that aren't also outputs
+                        : "memory",
+                        "cc"
+                        );
 
   return Result;
 }
-
 
 /**
   Performs an atomic compare exchange operation on a 16-bit unsigned integer.
@@ -108,18 +104,17 @@ InternalSyncCompareExchange16 (
   )
 {
   __asm__ __volatile__ (
-    "lock                 \n\t"
-    "cmpxchgw    %2, %1   \n\t"
-    : "+a" (CompareValue),      // %0
-      "+m" (*Value)             // %1
-    : "q"  (ExchangeValue)      // %2
-    : "memory",
-      "cc"
-    );
+                        "lock                 \n\t"
+                        "cmpxchgw    %2, %1   \n\t"
+                        : "+a" (CompareValue), // %0
+                        "+m" (*Value)          // %1
+                        : "q"  (ExchangeValue) // %2
+                        : "memory",
+                        "cc"
+                        );
 
   return CompareValue;
 }
-
 
 /**
   Performs an atomic compare exchange operation on a 32-bit unsigned integer.
@@ -148,18 +143,17 @@ InternalSyncCompareExchange32 (
   )
 {
   __asm__ __volatile__ (
-    "lock                 \n\t"
-    "cmpxchgl    %2, %1   \n\t"
-    : "+a" (CompareValue),      // %0
-      "+m" (*Value)             // %1
-    : "q"  (ExchangeValue)      // %2
-    : "memory",
-      "cc"
-    );
+                        "lock                 \n\t"
+                        "cmpxchgl    %2, %1   \n\t"
+                        : "+a" (CompareValue), // %0
+                        "+m" (*Value)          // %1
+                        : "q"  (ExchangeValue) // %2
+                        : "memory",
+                        "cc"
+                        );
 
   return CompareValue;
 }
-
 
 /**
   Performs an atomic compare exchange operation on a 64-bit unsigned integer.
@@ -187,15 +181,15 @@ InternalSyncCompareExchange64 (
   )
 {
   __asm__ __volatile__ (
-    "lock                   \n\t"
-    "cmpxchg8b   (%1)       \n\t"
-    : "+A"  (CompareValue)                    // %0
-    : "S"   (Value),                          // %1
-      "b"   ((UINT32) ExchangeValue),         // %2
-      "c"   ((UINT32) (ExchangeValue >> 32))  // %3
-    : "memory",
-      "cc"
-    );
+                        "lock                   \n\t"
+                        "cmpxchg8b   (%1)       \n\t"
+                        : "+A"  (CompareValue)                 // %0
+                        : "S"   (Value),                       // %1
+                        "b"   ((UINT32) ExchangeValue),        // %2
+                        "c"   ((UINT32) (ExchangeValue >> 32)) // %3
+                        : "memory",
+                        "cc"
+                        );
 
   return CompareValue;
 }

@@ -6,8 +6,6 @@
 
 **/
 
-
-
 /**
   Flushes all the Translation Lookaside Buffers(TLB) entries in a CPU.
 
@@ -21,8 +19,7 @@ CpuFlushTlb (
   )
 {
   _asm {
-    mov     eax, cr3
+  mov  eax, cr3
     mov     cr3, eax
   }
 }
-

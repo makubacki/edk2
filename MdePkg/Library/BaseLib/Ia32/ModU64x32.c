@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 /**
   Divides a 64-bit unsigned integer by a 32-bit unsigned integer and
   generates a 32-bit unsigned remainder.
@@ -31,11 +28,11 @@ InternalMathModU64x32 (
   )
 {
   _asm {
-    mov     eax, dword ptr [Dividend + 4]
+  mov  eax, dword ptr[Dividend + 4]
     mov     ecx, Divisor
     xor     edx, edx
     div     ecx
-    mov     eax, dword ptr [Dividend + 0]
+    mov     eax, dword ptr[Dividend + 0]
     div     ecx
     mov     eax, edx
   }

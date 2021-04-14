@@ -14,6 +14,7 @@ Copyright (c) 2006 - 2018, Intel Corporation. All rights reserved.<BR>
 SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
+
 #ifndef __EXTRACT_GUIDED_SECTION_H__
 #define __EXTRACT_GUIDED_SECTION_H__
 
@@ -51,13 +52,13 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 typedef
-RETURN_STATUS
+  RETURN_STATUS
 (EFIAPI *EXTRACT_GUIDED_SECTION_GET_INFO_HANDLER)(
-  IN CONST  VOID    *InputSection,
-  OUT       UINT32  *OutputBufferSize,
-  OUT       UINT32  *ScratchBufferSize,
-  OUT       UINT16  *SectionAttribute
-  );
+                                                  IN CONST  VOID    *InputSection,
+                                                  OUT       UINT32  *OutputBufferSize,
+                                                  OUT       UINT32  *ScratchBufferSize,
+                                                  OUT       UINT16  *SectionAttribute
+                                                  );
 
 /**
   Decodes a GUIDed section into a caller allocated output buffer.
@@ -93,13 +94,14 @@ RETURN_STATUS
 
 **/
 typedef
-RETURN_STATUS
+  RETURN_STATUS
 (EFIAPI *EXTRACT_GUIDED_SECTION_DECODE_HANDLER)(
-  IN CONST  VOID    *InputSection,
-  OUT       VOID    **OutputBuffer,
-  IN        VOID    *ScratchBuffer,        OPTIONAL
-  OUT       UINT32  *AuthenticationStatus
-  );
+                                                IN CONST  VOID    *InputSection,
+                                                OUT       VOID    **OutputBuffer,
+                                                IN        VOID    *ScratchBuffer,
+                                                OPTIONAL
+                                                OUT       UINT32  *AuthenticationStatus
+                                                );
 
 /**
   Registers handlers of type EXTRACT_GUIDED_SECTION_GET_INFO_HANDLER and EXTRACT_GUIDED_SECTION_DECODE_HANDLER
@@ -236,7 +238,7 @@ EFIAPI
 ExtractGuidedSectionDecode (
   IN  CONST VOID    *InputSection,
   OUT       VOID    **OutputBuffer,
-  IN        VOID    *ScratchBuffer,        OPTIONAL
+  IN        VOID    *ScratchBuffer, OPTIONAL
   OUT       UINT32  *AuthenticationStatus
   );
 
@@ -271,7 +273,7 @@ RETURN_STATUS
 EFIAPI
 ExtractGuidedSectionGetHandlers (
   IN CONST   GUID                                     *SectionGuid,
-  OUT        EXTRACT_GUIDED_SECTION_GET_INFO_HANDLER  *GetInfoHandler,  OPTIONAL
+  OUT        EXTRACT_GUIDED_SECTION_GET_INFO_HANDLER  *GetInfoHandler, OPTIONAL
   OUT        EXTRACT_GUIDED_SECTION_DECODE_HANDLER    *DecodeHandler    OPTIONAL
   );
 

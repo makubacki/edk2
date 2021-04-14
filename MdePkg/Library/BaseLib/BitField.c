@@ -32,7 +32,7 @@ InternalBaseLibBitFieldReadUint (
   // ~((UINTN)-2 << EndBit) is a mask in which bit[0] thru bit[EndBit]
   // are 1's while bit[EndBit + 1] thru the most significant bit are 0's.
   //
-  return (Operand & ~((UINTN)-2 << EndBit)) >> StartBit;
+  return (Operand & ~((UINTN) - 2 << EndBit)) >> StartBit;
 }
 
 /**
@@ -74,7 +74,7 @@ InternalBaseLibBitFieldOrUint (
   // ~((UINTN)-2 << EndBit) is a mask in which bit[0] thru bit[EndBit]
   // are 1's while bit[EndBit + 1] thru the most significant bit are 0's.
   //
-  return Operand | ((OrData << StartBit) & ~((UINTN) -2 << EndBit));
+  return Operand | ((OrData << StartBit) & ~((UINTN) - 2 << EndBit));
 }
 
 /**
@@ -116,7 +116,7 @@ InternalBaseLibBitFieldAndUint (
   // ~((UINTN)-2 << EndBit) is a mask in which bit[0] thru bit[EndBit]
   // are 1's while bit[EndBit + 1] thru the most significant bit are 0's.
   //
-  return Operand & ~((~AndData << StartBit) & ~((UINTN)-2 << EndBit));
+  return Operand & ~((~AndData << StartBit) & ~((UINTN) - 2 << EndBit));
 }
 
 /**
@@ -148,7 +148,7 @@ BitFieldRead8 (
 {
   ASSERT (EndBit < 8);
   ASSERT (StartBit <= EndBit);
-  return (UINT8)InternalBaseLibBitFieldReadUint (Operand, StartBit, EndBit);
+  return (UINT8) InternalBaseLibBitFieldReadUint (Operand, StartBit, EndBit);
 }
 
 /**
@@ -223,7 +223,7 @@ BitFieldOr8 (
 {
   ASSERT (EndBit < 8);
   ASSERT (StartBit <= EndBit);
-  return (UINT8)InternalBaseLibBitFieldOrUint (Operand, StartBit, EndBit, OrData);
+  return (UINT8) InternalBaseLibBitFieldOrUint (Operand, StartBit, EndBit, OrData);
 }
 
 /**
@@ -261,7 +261,7 @@ BitFieldAnd8 (
 {
   ASSERT (EndBit < 8);
   ASSERT (StartBit <= EndBit);
-  return (UINT8)InternalBaseLibBitFieldAndUint (Operand, StartBit, EndBit, AndData);
+  return (UINT8) InternalBaseLibBitFieldAndUint (Operand, StartBit, EndBit, AndData);
 }
 
 /**
@@ -304,11 +304,11 @@ BitFieldAndThenOr8 (
   ASSERT (EndBit < 8);
   ASSERT (StartBit <= EndBit);
   return BitFieldOr8 (
-           BitFieldAnd8 (Operand, StartBit, EndBit, AndData),
-           StartBit,
-           EndBit,
-           OrData
-           );
+                      BitFieldAnd8 (Operand, StartBit, EndBit, AndData),
+                      StartBit,
+                      EndBit,
+                      OrData
+                      );
 }
 
 /**
@@ -340,7 +340,7 @@ BitFieldRead16 (
 {
   ASSERT (EndBit < 16);
   ASSERT (StartBit <= EndBit);
-  return (UINT16)InternalBaseLibBitFieldReadUint (Operand, StartBit, EndBit);
+  return (UINT16) InternalBaseLibBitFieldReadUint (Operand, StartBit, EndBit);
 }
 
 /**
@@ -415,7 +415,7 @@ BitFieldOr16 (
 {
   ASSERT (EndBit < 16);
   ASSERT (StartBit <= EndBit);
-  return (UINT16)InternalBaseLibBitFieldOrUint (Operand, StartBit, EndBit, OrData);
+  return (UINT16) InternalBaseLibBitFieldOrUint (Operand, StartBit, EndBit, OrData);
 }
 
 /**
@@ -453,7 +453,7 @@ BitFieldAnd16 (
 {
   ASSERT (EndBit < 16);
   ASSERT (StartBit <= EndBit);
-  return (UINT16)InternalBaseLibBitFieldAndUint (Operand, StartBit, EndBit, AndData);
+  return (UINT16) InternalBaseLibBitFieldAndUint (Operand, StartBit, EndBit, AndData);
 }
 
 /**
@@ -496,11 +496,11 @@ BitFieldAndThenOr16 (
   ASSERT (EndBit < 16);
   ASSERT (StartBit <= EndBit);
   return BitFieldOr16 (
-           BitFieldAnd16 (Operand, StartBit, EndBit, AndData),
-           StartBit,
-           EndBit,
-           OrData
-           );
+                       BitFieldAnd16 (Operand, StartBit, EndBit, AndData),
+                       StartBit,
+                       EndBit,
+                       OrData
+                       );
 }
 
 /**
@@ -532,7 +532,7 @@ BitFieldRead32 (
 {
   ASSERT (EndBit < 32);
   ASSERT (StartBit <= EndBit);
-  return (UINT32)InternalBaseLibBitFieldReadUint (Operand, StartBit, EndBit);
+  return (UINT32) InternalBaseLibBitFieldReadUint (Operand, StartBit, EndBit);
 }
 
 /**
@@ -607,7 +607,7 @@ BitFieldOr32 (
 {
   ASSERT (EndBit < 32);
   ASSERT (StartBit <= EndBit);
-  return (UINT32)InternalBaseLibBitFieldOrUint (Operand, StartBit, EndBit, OrData);
+  return (UINT32) InternalBaseLibBitFieldOrUint (Operand, StartBit, EndBit, OrData);
 }
 
 /**
@@ -645,7 +645,7 @@ BitFieldAnd32 (
 {
   ASSERT (EndBit < 32);
   ASSERT (StartBit <= EndBit);
-  return (UINT32)InternalBaseLibBitFieldAndUint (Operand, StartBit, EndBit, AndData);
+  return (UINT32) InternalBaseLibBitFieldAndUint (Operand, StartBit, EndBit, AndData);
 }
 
 /**
@@ -688,11 +688,11 @@ BitFieldAndThenOr32 (
   ASSERT (EndBit < 32);
   ASSERT (StartBit <= EndBit);
   return BitFieldOr32 (
-           BitFieldAnd32 (Operand, StartBit, EndBit, AndData),
-           StartBit,
-           EndBit,
-           OrData
-           );
+                       BitFieldAnd32 (Operand, StartBit, EndBit, AndData),
+                       StartBit,
+                       EndBit,
+                       OrData
+                       );
 }
 
 /**
@@ -724,7 +724,7 @@ BitFieldRead64 (
 {
   ASSERT (EndBit < 64);
   ASSERT (StartBit <= EndBit);
-  return RShiftU64 (Operand & ~LShiftU64 ((UINT64)-2, EndBit), StartBit);
+  return RShiftU64 (Operand & ~LShiftU64 ((UINT64) - 2, EndBit), StartBit);
 }
 
 /**
@@ -863,7 +863,7 @@ BitFieldAnd64 (
   ASSERT (RShiftU64 (AndData, EndBit - StartBit) == (RShiftU64 (AndData, EndBit - StartBit) & 1));
 
   Value1 = LShiftU64 (~AndData, StartBit);
-  Value2 = LShiftU64 ((UINT64)-2, EndBit);
+  Value2 = LShiftU64 ((UINT64) - 2, EndBit);
 
   return Operand & ~(Value1 & ~Value2);
 }
@@ -908,11 +908,11 @@ BitFieldAndThenOr64 (
   ASSERT (EndBit < 64);
   ASSERT (StartBit <= EndBit);
   return BitFieldOr64 (
-           BitFieldAnd64 (Operand, StartBit, EndBit, AndData),
-           StartBit,
-           EndBit,
-           OrData
-           );
+                       BitFieldAnd64 (Operand, StartBit, EndBit, AndData),
+                       StartBit,
+                       EndBit,
+                       OrData
+                       );
 }
 
 /**
@@ -943,14 +943,14 @@ BitFieldCountOnes32 (
   IN       UINTN                    EndBit
   )
 {
-  UINT32 Count;
+  UINT32  Count;
 
   ASSERT (EndBit < 32);
   ASSERT (StartBit <= EndBit);
 
-  Count = BitFieldRead32 (Operand, StartBit, EndBit);
+  Count  = BitFieldRead32 (Operand, StartBit, EndBit);
   Count -= ((Count >> 1) & 0x55555555);
-  Count = (Count & 0x33333333) + ((Count >> 2) & 0x33333333);
+  Count  = (Count & 0x33333333) + ((Count >> 2) & 0x33333333);
   Count += Count >> 4;
   Count &= 0x0F0F0F0F;
   Count += Count >> 8;
@@ -987,16 +987,15 @@ BitFieldCountOnes64 (
   IN       UINTN                    EndBit
   )
 {
-  UINT64 BitField;
-  UINT8 Count;
+  UINT64  BitField;
+  UINT8   Count;
 
   ASSERT (EndBit < 64);
   ASSERT (StartBit <= EndBit);
 
   BitField = BitFieldRead64 (Operand, StartBit, EndBit);
-  Count = BitFieldCountOnes32 ((UINT32) BitField, 0, 31);
-  Count += BitFieldCountOnes32 ((UINT32) RShiftU64(BitField, 32), 0, 31);
+  Count    = BitFieldCountOnes32 ((UINT32) BitField, 0, 31);
+  Count   += BitFieldCountOnes32 ((UINT32) RShiftU64 (BitField, 32), 0, 31);
 
   return Count;
 }
-

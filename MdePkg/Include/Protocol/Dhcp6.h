@@ -15,12 +15,12 @@
 
 #define EFI_DHCP6_PROTOCOL_GUID \
   { \
-    0x87c8bad7, 0x595, 0x4053, {0x82, 0x97, 0xde, 0xde, 0x39, 0x5f, 0x5d, 0x5b } \
+    0x87c8bad7, 0x595, 0x4053, { 0x82, 0x97, 0xde, 0xde, 0x39, 0x5f, 0x5d, 0x5b } \
   }
 
 #define EFI_DHCP6_SERVICE_BINDING_PROTOCOL_GUID \
   { \
-    0x9fb9a8a1, 0x2f4a, 0x43a6, {0x88, 0x9c, 0xd0, 0xf7, 0xb6, 0xc4, 0x7a, 0xd5 } \
+    0x9fb9a8a1, 0x2f4a, 0x43a6, { 0x88, 0x9c, 0xd0, 0xf7, 0xb6, 0xc4, 0x7a, 0xd5 } \
   }
 
 typedef struct _EFI_DHCP6_PROTOCOL EFI_DHCP6_PROTOCOL;
@@ -30,47 +30,47 @@ typedef enum {
   /// The EFI DHCPv6 Protocol instance is configured, and start() needs
   /// to be called
   ///
-  Dhcp6Init                    = 0x0,
+  Dhcp6Init = 0x0,
   ///
   /// A Solicit packet is sent out to discover DHCPv6 server, and the EFI
   /// DHCPv6 Protocol instance is collecting Advertise packets.
   ///
-  Dhcp6Selecting               = 0x1,
+  Dhcp6Selecting = 0x1,
   ///
   /// A Request is sent out to the DHCPv6 server, and the EFI DHCPv6
   /// Protocol instance is waiting for Reply packet.
   ///
-  Dhcp6Requesting              = 0x2,
+  Dhcp6Requesting = 0x2,
   ///
   /// A Decline packet is sent out to indicate one or more addresses of the
   /// configured IA are in use by another node, and the EFI DHCPv6.
   /// Protocol instance is waiting for Reply packet.
   ///
-  Dhcp6Declining               = 0x3,
+  Dhcp6Declining = 0x3,
   ///
   /// A Confirm packet is sent out to confirm the IPv6 addresses of the
   /// configured IA, and the EFI DHCPv6 Protocol instance is waiting for Reply packet.
   ///
-  Dhcp6Confirming              = 0x4,
+  Dhcp6Confirming = 0x4,
   ///
   /// A Release packet is sent out to release one or more IPv6 addresses of
   /// the configured IA, and the EFI DHCPv6 Protocol instance is waiting for Reply packet.
   ///
-  Dhcp6Releasing               = 0x5,
+  Dhcp6Releasing = 0x5,
   ///
   /// The DHCPv6 S.A.R.R process is completed for the configured IA.
   ///
-  Dhcp6Bound                   = 0x6,
+  Dhcp6Bound = 0x6,
   ///
   /// A Renew packet is sent out to extend lifetime for the IPv6 addresses of
   /// the configured IA, and the EFI DHCPv6 Protocol instance is waiting for Reply packet.
   ///
-  Dhcp6Renewing                = 0x7,
+  Dhcp6Renewing = 0x7,
   ///
   /// A Rebind packet is sent out to extend lifetime for the IPv6 addresses of
   /// the configured IA, and the EFI DHCPv6 Protocol instance is waiting for Reply packet.
   ///
-  Dhcp6Rebinding               = 0x8
+  Dhcp6Rebinding = 0x8
 } EFI_DHCP6_STATE;
 
 typedef enum {
@@ -78,64 +78,64 @@ typedef enum {
   /// A Solicit packet is about to be sent. The packet is passed to Dhcp6Callback and
   /// can be modified or replaced in Dhcp6Callback.
   ///
-  Dhcp6SendSolicit             = 0x0,
+  Dhcp6SendSolicit = 0x0,
   ///
   /// An Advertise packet is received and will be passed to Dhcp6Callback.
   ///
-  Dhcp6RcvdAdvertise           = 0x1,
+  Dhcp6RcvdAdvertise = 0x1,
   ///
   /// It is time for Dhcp6Callback to determine whether select the default Advertise
   /// packet by RFC 3315 policy, or overwrite it by specific user policy.
   ///
-  Dhcp6SelectAdvertise         = 0x2,
+  Dhcp6SelectAdvertise = 0x2,
   ///
   /// A Request packet is about to be sent. The packet is passed to Dhcp6Callback and
   /// can be modified or replaced in Dhcp6Callback.
   ///
-  Dhcp6SendRequest             = 0x3,
+  Dhcp6SendRequest = 0x3,
   ///
   /// A Reply packet is received and will be passed to Dhcp6Callback.
   ///
-  Dhcp6RcvdReply               = 0x4,
+  Dhcp6RcvdReply = 0x4,
   ///
   /// A Reconfigure packet is received and will be passed to Dhcp6Callback.
   ///
-  Dhcp6RcvdReconfigure         = 0x5,
+  Dhcp6RcvdReconfigure = 0x5,
   ///
   /// A Decline packet is about to be sent. The packet is passed to Dhcp6Callback and
   /// can be modified or replaced in Dhcp6Callback.
   ///
-  Dhcp6SendDecline             = 0x6,
+  Dhcp6SendDecline = 0x6,
   ///
   /// A Confirm packet is about to be sent. The packet is passed to Dhcp6Callback and
   /// can be modified or replaced in Dhcp6Callback.
   ///
-  Dhcp6SendConfirm             = 0x7,
+  Dhcp6SendConfirm = 0x7,
   ///
   /// A Release packet is about to be sent. The packet is passed to Dhcp6Callback and
   /// can be modified or replaced in Dhcp6Callback.
   ///
-  Dhcp6SendRelease             = 0x8,
+  Dhcp6SendRelease = 0x8,
   ///
   /// A Renew packet is about to be sent. The packet is passed to Dhcp6Callback and
   /// can be modified or replaced in Dhcp6Callback.
   ///
-  Dhcp6EnterRenewing           = 0x9,
+  Dhcp6EnterRenewing = 0x9,
   ///
   /// A Rebind packet is about to be sent. The packet is passed to Dhcp6Callback and
   /// can be modified or replaced in Dhcp6Callback.
   ///
-  Dhcp6EnterRebinding          = 0xa
+  Dhcp6EnterRebinding = 0xa
 } EFI_DHCP6_EVENT;
 
 ///
 /// An IA which carries assigned not temporary address.
 ///
-#define EFI_DHCP6_IA_TYPE_NA   3
+#define EFI_DHCP6_IA_TYPE_NA  3
 ///
 /// An IA which carries assigned temporary address.
 ///
-#define EFI_DHCP6_IA_TYPE_TA   4
+#define EFI_DHCP6_IA_TYPE_TA  4
 
 #pragma pack(1)
 ///
@@ -147,31 +147,31 @@ typedef struct {
   ///
   /// The DHCPv6 option code, stored in network order.
   ///
-  UINT16                       OpCode;
+  UINT16    OpCode;
   ///
   /// Length of the DHCPv6 option data, stored in network order.
   /// From the first byte to the last byte of the Data field.
   ///
-  UINT16                       OpLen;
+  UINT16    OpLen;
   ///
   /// The data for the DHCPv6 option, stored in network order.
   ///
-  UINT8                        Data[1];
+  UINT8     Data[1];
 } EFI_DHCP6_PACKET_OPTION;
 
 ///
 /// EFI_DHCP6_HEADER
 /// defines the format of the DHCPv6 header. See RFC 3315 for more information.
 ///
-typedef struct{
+typedef struct {
   ///
   /// The DHCPv6 transaction ID.
   ///
-  UINT32                       MessageType:8;
+  UINT32    MessageType   : 8;
   ///
   /// The DHCPv6 message type.
   ///
-  UINT32                       TransactionId:24;
+  UINT32    TransactionId : 24;
 } EFI_DHCP6_HEADER;
 
 ///
@@ -182,21 +182,21 @@ typedef struct {
   ///
   /// Size of the EFI_DHCP6_PACKET buffer.
   ///
-  UINT32                       Size;
+  UINT32    Size;
   ///
   /// Length of the EFI_DHCP6_PACKET from the first byte of the Header field to the last
   /// byte of the Option[] field.
   ///
-  UINT32                       Length;
-  struct{
+  UINT32    Length;
+  struct {
     ///
     /// The DHCPv6 packet header.
     ///
-    EFI_DHCP6_HEADER           Header;
+    EFI_DHCP6_HEADER    Header;
     ///
     /// Start of the DHCPv6 packed option data.
     ///
-    UINT8                      Option[1];
+    UINT8               Option[1];
   } Dhcp6;
 } EFI_DHCP6_PACKET;
 
@@ -206,91 +206,91 @@ typedef struct {
   ///
   /// Length of DUID in octects.
   ///
-  UINT16                       Length;
+  UINT16    Length;
   ///
   /// Array of DUID octects.
   ///
-  UINT8                        Duid[1];
+  UINT8     Duid[1];
 } EFI_DHCP6_DUID;
 
 typedef struct {
   ///
   /// Initial retransmission timeout.
   ///
-  UINT32                       Irt;
+  UINT32    Irt;
   ///
   /// Maximum retransmission count for one packet. If Mrc is zero, there's no upper limit
   /// for retransmission count.
   ///
-  UINT32                       Mrc;
+  UINT32    Mrc;
   ///
   /// Maximum retransmission timeout for each retry. It's the upper bound of the number of
   /// retransmission timeout. If Mrt is zero, there is no upper limit for retransmission
   /// timeout.
   ///
-  UINT32                       Mrt;
+  UINT32    Mrt;
   ///
   /// Maximum retransmission duration for one packet. It's the upper bound of the numbers
   /// the client may retransmit a message. If Mrd is zero, there's no upper limit for
   /// retransmission duration.
   ///
-  UINT32                       Mrd;
+  UINT32    Mrd;
 } EFI_DHCP6_RETRANSMISSION;
 
 typedef struct {
   ///
   /// The IPv6 address.
   ///
-  EFI_IPv6_ADDRESS             IpAddress;
+  EFI_IPv6_ADDRESS    IpAddress;
   ///
   /// The preferred lifetime in unit of seconds for the IPv6 address.
   ///
-  UINT32                       PreferredLifetime;
+  UINT32              PreferredLifetime;
   ///
   /// The valid lifetime in unit of seconds for the IPv6 address.
   ///
-  UINT32                       ValidLifetime;
+  UINT32              ValidLifetime;
 } EFI_DHCP6_IA_ADDRESS;
 
 typedef struct {
-  UINT16                       Type; ///< Type for an IA.
-  UINT32                       IaId; ///< The identifier for an IA.
+  UINT16    Type;                    ///< Type for an IA.
+  UINT32    IaId;                    ///< The identifier for an IA.
 } EFI_DHCP6_IA_DESCRIPTOR;
 
 typedef struct {
   ///
   /// The descriptor for IA.
   ///
-  EFI_DHCP6_IA_DESCRIPTOR      Descriptor;
+  EFI_DHCP6_IA_DESCRIPTOR    Descriptor;
   ///
   /// The state of the configured IA.
   ///
-  EFI_DHCP6_STATE              State;
+  EFI_DHCP6_STATE            State;
   ///
   /// Pointer to the cached latest Reply packet. May be NULL if no packet is cached.
   ///
-  EFI_DHCP6_PACKET             *ReplyPacket;
+  EFI_DHCP6_PACKET           *ReplyPacket;
   ///
   /// Number of IPv6 addresses of the configured IA.
   ///
-  UINT32                       IaAddressCount;
+  UINT32                     IaAddressCount;
   ///
   /// List of the IPv6 addresses of the configured IA. When the state of the configured IA is
   /// in Dhcp6Bound, Dhcp6Renewing and Dhcp6Rebinding, the IPv6 addresses are usable.
   ///
-  EFI_DHCP6_IA_ADDRESS         IaAddress[1];
+  EFI_DHCP6_IA_ADDRESS       IaAddress[1];
 } EFI_DHCP6_IA;
 
 typedef struct {
   ///
   /// Pointer to the DHCPv6 unique identifier. The caller is responsible for freeing this buffer.
   ///
-  EFI_DHCP6_DUID               *ClientId;
+  EFI_DHCP6_DUID    *ClientId;
   ///
   /// Pointer to the configured IA of current instance. The caller can free this buffer after
   /// using it.
   ///
-  EFI_DHCP6_IA                 *Ia;
+  EFI_DHCP6_IA      *Ia;
 } EFI_DHCP6_MODE_DATA;
 
 /**
@@ -314,30 +314,30 @@ typedef struct {
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_DHCP6_CALLBACK)(
-  IN EFI_DHCP6_PROTOCOL        *This,
-  IN VOID                      *Context,
-  IN EFI_DHCP6_STATE           CurrentState,
-  IN EFI_DHCP6_EVENT           Dhcp6Event,
-  IN EFI_DHCP6_PACKET          *Packet,
-  OUT EFI_DHCP6_PACKET         **NewPacket OPTIONAL
-  );
+                             IN EFI_DHCP6_PROTOCOL        *This,
+                             IN VOID                      *Context,
+                             IN EFI_DHCP6_STATE           CurrentState,
+                             IN EFI_DHCP6_EVENT           Dhcp6Event,
+                             IN EFI_DHCP6_PACKET          *Packet,
+                             OUT EFI_DHCP6_PACKET         **NewPacket OPTIONAL
+                             );
 
 typedef struct {
   ///
   /// The callback function is to intercept various events that occur in the DHCPv6 S.A.R.R
   /// process. Set to NULL to ignore all those events.
   ///
-  EFI_DHCP6_CALLBACK           Dhcp6Callback;
+  EFI_DHCP6_CALLBACK          Dhcp6Callback;
   ///
   /// Pointer to the context that will be passed to Dhcp6Callback.
   ///
-  VOID                         *CallbackContext;
+  VOID                        *CallbackContext;
   ///
   /// Number of the DHCPv6 options in the OptionList.
   ///
-  UINT32                       OptionCount;
+  UINT32                      OptionCount;
   ///
   /// List of the DHCPv6 options to be included in Solicit and Request packet. The buffer
   /// can be freed after EFI_DHCP6_PROTOCOL.Configure() returns. Ignored if
@@ -345,11 +345,11 @@ typedef struct {
   /// and any IA option, which will be appended by EFI DHCPv6 Protocol instance
   /// automatically.
   ///
-  EFI_DHCP6_PACKET_OPTION      **OptionList;
+  EFI_DHCP6_PACKET_OPTION     **OptionList;
   ///
   /// The descriptor for the IA of the EFI DHCPv6 Protocol instance.
   ///
-  EFI_DHCP6_IA_DESCRIPTOR      IaDescriptor;
+  EFI_DHCP6_IA_DESCRIPTOR     IaDescriptor;
   ///
   /// If not NULL, the event will be signaled when any IPv6 address information of the
   /// configured IA is updated, including IPv6 address, preferred lifetime and valid
@@ -357,24 +357,24 @@ typedef struct {
   /// renewrebind(), decline(), release() and stop() will be blocking
   /// operations, and they will wait for the exchange process completion or failure.
   ///
-  EFI_EVENT                    IaInfoEvent;
+  EFI_EVENT                   IaInfoEvent;
   ///
   /// If TRUE, the EFI DHCPv6 Protocol instance is willing to accept Reconfigure packet.
   /// Otherwise, it will ignore it. Reconfigure Accept option can not be specified through
   /// OptionList parameter.
   ///
-  BOOLEAN                      ReconfigureAccept;
+  BOOLEAN                     ReconfigureAccept;
   ///
   /// If TRUE, the EFI DHCPv6 Protocol instance will send Solicit packet with Rapid
   /// Commit option. Otherwise, Rapid Commit option will not be included in Solicit
   /// packet. Rapid Commit option can not be specified through OptionList parameter.
   ///
-  BOOLEAN                      RapidCommit;
+  BOOLEAN                     RapidCommit;
   ///
   /// Parameter to control Solicit packet retransmission behavior. The
   /// buffer can be freed after EFI_DHCP6_PROTOCOL.Configure() returns.
   ///
-  EFI_DHCP6_RETRANSMISSION     *SolicitRetransmission;
+  EFI_DHCP6_RETRANSMISSION    *SolicitRetransmission;
 } EFI_DHCP6_CONFIG_DATA;
 
 /**
@@ -393,12 +393,12 @@ typedef struct {
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_DHCP6_INFO_CALLBACK)(
-  IN EFI_DHCP6_PROTOCOL        *This,
-  IN VOID                      *Context,
-  IN EFI_DHCP6_PACKET          *Packet
-  );
+                                  IN EFI_DHCP6_PROTOCOL        *This,
+                                  IN VOID                      *Context,
+                                  IN EFI_DHCP6_PACKET          *Packet
+                                  );
 
 /**
   Retrieve the current operating mode data and configuration data for the EFI DHCPv6 Protocol instance.
@@ -417,12 +417,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_DHCP6_GET_MODE_DATA)(
-  IN EFI_DHCP6_PROTOCOL        *This,
-  OUT EFI_DHCP6_MODE_DATA      *Dhcp6ModeData OPTIONAL,
-  OUT EFI_DHCP6_CONFIG_DATA    *Dhcp6ConfigData OPTIONAL
-  );
+                                  IN EFI_DHCP6_PROTOCOL        *This,
+                                  OUT EFI_DHCP6_MODE_DATA      *Dhcp6ModeData OPTIONAL,
+                                  OUT EFI_DHCP6_CONFIG_DATA    *Dhcp6ConfigData OPTIONAL
+                                  );
 
 /**
   Initialize or clean up the configuration data for the EFI DHCPv6 Protocol instance.
@@ -461,11 +461,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_DHCP6_CONFIGURE)(
-  IN EFI_DHCP6_PROTOCOL        *This,
-  IN EFI_DHCP6_CONFIG_DATA     *Dhcp6CfgData OPTIONAL
-  );
+                              IN EFI_DHCP6_PROTOCOL        *This,
+                              IN EFI_DHCP6_CONFIG_DATA     *Dhcp6CfgData OPTIONAL
+                              );
 
 /**
   Start the DHCPv6 S.A.R.R process.
@@ -502,10 +502,10 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_DHCP6_START)(
-  IN EFI_DHCP6_PROTOCOL        *This
-  );
+                          IN EFI_DHCP6_PROTOCOL        *This
+                          );
 
 /**
   Request configuration information without the assignment of any IA addresses of the client.
@@ -565,18 +565,18 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_DHCP6_INFO_REQUEST)(
-  IN EFI_DHCP6_PROTOCOL        *This,
-  IN BOOLEAN                   SendClientId,
-  IN EFI_DHCP6_PACKET_OPTION   *OptionRequest,
-  IN UINT32                    OptionCount,
-  IN EFI_DHCP6_PACKET_OPTION   *OptionList[] OPTIONAL,
-  IN EFI_DHCP6_RETRANSMISSION  *Retransmission,
-  IN EFI_EVENT                 TimeoutEvent OPTIONAL,
-  IN EFI_DHCP6_INFO_CALLBACK   ReplyCallback,
-  IN VOID                      *CallbackContext OPTIONAL
-  );
+                                 IN EFI_DHCP6_PROTOCOL        *This,
+                                 IN BOOLEAN                   SendClientId,
+                                 IN EFI_DHCP6_PACKET_OPTION   *OptionRequest,
+                                 IN UINT32                    OptionCount,
+                                 IN EFI_DHCP6_PACKET_OPTION   *OptionList[] OPTIONAL,
+                                 IN EFI_DHCP6_RETRANSMISSION  *Retransmission,
+                                 IN EFI_EVENT                 TimeoutEvent OPTIONAL,
+                                 IN EFI_DHCP6_INFO_CALLBACK   ReplyCallback,
+                                 IN VOID                      *CallbackContext OPTIONAL
+                                 );
 
 /**
   Manually extend the valid and preferred lifetimes for the IPv6 addresses of the configured
@@ -619,11 +619,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_DHCP6_RENEW_REBIND)(
-  IN EFI_DHCP6_PROTOCOL        *This,
-  IN BOOLEAN                   RebindRequest
-  );
+                                 IN EFI_DHCP6_PROTOCOL        *This,
+                                 IN BOOLEAN                   RebindRequest
+                                 );
 
 /**
   Inform that one or more IPv6 addresses assigned by a server are already in use by
@@ -657,12 +657,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_DHCP6_DECLINE)(
-  IN EFI_DHCP6_PROTOCOL        *This,
-  IN UINT32                    AddressCount,
-  IN EFI_IPv6_ADDRESS          *Addresses
-  );
+                            IN EFI_DHCP6_PROTOCOL        *This,
+                            IN UINT32                    AddressCount,
+                            IN EFI_IPv6_ADDRESS          *Addresses
+                            );
 
 /**
   Release one or more IPv6 addresses associated with the configured IA for current instance.
@@ -695,12 +695,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_DHCP6_RELEASE)(
-  IN EFI_DHCP6_PROTOCOL        *This,
-  IN UINT32                    AddressCount,
-  IN EFI_IPv6_ADDRESS          *Addresses
-  );
+                            IN EFI_DHCP6_PROTOCOL        *This,
+                            IN UINT32                    AddressCount,
+                            IN EFI_IPv6_ADDRESS          *Addresses
+                            );
 
 /**
   Stop the DHCPv6 S.A.R.R process.
@@ -720,10 +720,10 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_DHCP6_STOP)(
-  IN EFI_DHCP6_PROTOCOL        *This
-  );
+                         IN EFI_DHCP6_PROTOCOL        *This
+                         );
 
 /**
   Parse the option data in the DHCPv6 packet.
@@ -750,31 +750,31 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_DHCP6_PARSE)(
-  IN EFI_DHCP6_PROTOCOL        *This,
-  IN EFI_DHCP6_PACKET          *Packet,
-  IN OUT UINT32                *OptionCount,
-  OUT EFI_DHCP6_PACKET_OPTION  *PacketOptionList[] OPTIONAL
-);
+                          IN EFI_DHCP6_PROTOCOL        *This,
+                          IN EFI_DHCP6_PACKET          *Packet,
+                          IN OUT UINT32                *OptionCount,
+                          OUT EFI_DHCP6_PACKET_OPTION  *PacketOptionList[] OPTIONAL
+                          );
 
 ///
 /// The EFI DHCPv6 Protocol is used to get IPv6 addresses and other configuration parameters
 /// from DHCPv6 servers.
 ///
 struct _EFI_DHCP6_PROTOCOL {
-  EFI_DHCP6_GET_MODE_DATA      GetModeData;
-  EFI_DHCP6_CONFIGURE          Configure;
-  EFI_DHCP6_START              Start;
-  EFI_DHCP6_INFO_REQUEST       InfoRequest;
-  EFI_DHCP6_RENEW_REBIND       RenewRebind;
-  EFI_DHCP6_DECLINE            Decline;
-  EFI_DHCP6_RELEASE            Release;
-  EFI_DHCP6_STOP               Stop;
-  EFI_DHCP6_PARSE              Parse;
+  EFI_DHCP6_GET_MODE_DATA    GetModeData;
+  EFI_DHCP6_CONFIGURE        Configure;
+  EFI_DHCP6_START            Start;
+  EFI_DHCP6_INFO_REQUEST     InfoRequest;
+  EFI_DHCP6_RENEW_REBIND     RenewRebind;
+  EFI_DHCP6_DECLINE          Decline;
+  EFI_DHCP6_RELEASE          Release;
+  EFI_DHCP6_STOP             Stop;
+  EFI_DHCP6_PARSE            Parse;
 };
 
-extern EFI_GUID gEfiDhcp6ProtocolGuid;
-extern EFI_GUID gEfiDhcp6ServiceBindingProtocolGuid;
+extern EFI_GUID  gEfiDhcp6ProtocolGuid;
+extern EFI_GUID  gEfiDhcp6ServiceBindingProtocolGuid;
 
 #endif

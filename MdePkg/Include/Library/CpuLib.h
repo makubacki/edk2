@@ -26,8 +26,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 VOID
 EFIAPI
 CpuSleep (
-  VOID
-  );
+          VOID
+          );
 
 /**
   Flushes all the Translation Lookaside Buffers(TLB) entries in a CPU.
@@ -38,8 +38,7 @@ CpuSleep (
 VOID
 EFIAPI
 CpuFlushTlb (
-  VOID
-  );
-
+             VOID
+             );
 
 #endif

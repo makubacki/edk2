@@ -30,12 +30,12 @@ typedef struct {
   // The caller must be prepared to handle the case where the callback associated with Event occurs
   // before the original asynchronous I/O request call returns.
   //
-  EFI_EVENT  Event;
+  EFI_EVENT     Event;
 
   //
   // Defines whether or not the signaled event encountered an error.
   //
-  EFI_STATUS TransactionStatus;
+  EFI_STATUS    TransactionStatus;
 } EFI_DISK_IO2_TOKEN;
 
 /**
@@ -48,10 +48,10 @@ typedef struct {
                                 operation.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_DISK_CANCEL_EX) (
-  IN EFI_DISK_IO2_PROTOCOL *This
-  );
+  EFI_STATUS
+(EFIAPI *EFI_DISK_CANCEL_EX)(
+                             IN EFI_DISK_IO2_PROTOCOL *This
+                             );
 
 /**
   Reads a specified number of bytes from a device.
@@ -76,15 +76,15 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_DISK_READ_EX) (
-  IN EFI_DISK_IO2_PROTOCOL        *This,
-  IN UINT32                       MediaId,
-  IN UINT64                       Offset,
-  IN OUT EFI_DISK_IO2_TOKEN       *Token,
-  IN UINTN                        BufferSize,
-  OUT VOID                        *Buffer
-  );
+  EFI_STATUS
+(EFIAPI *EFI_DISK_READ_EX)(
+                           IN EFI_DISK_IO2_PROTOCOL        *This,
+                           IN UINT32                       MediaId,
+                           IN UINT64                       Offset,
+                           IN OUT EFI_DISK_IO2_TOKEN       *Token,
+                           IN UINTN                        BufferSize,
+                           OUT VOID                        *Buffer
+                           );
 
 /**
   Writes a specified number of bytes to a device.
@@ -109,15 +109,15 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_DISK_WRITE_EX) (
-  IN EFI_DISK_IO2_PROTOCOL        *This,
-  IN UINT32                       MediaId,
-  IN UINT64                       Offset,
-  IN OUT EFI_DISK_IO2_TOKEN       *Token,
-  IN UINTN                        BufferSize,
-  IN VOID                         *Buffer
-  );
+  EFI_STATUS
+(EFIAPI *EFI_DISK_WRITE_EX)(
+                            IN EFI_DISK_IO2_PROTOCOL        *This,
+                            IN UINT32                       MediaId,
+                            IN UINT64                       Offset,
+                            IN OUT EFI_DISK_IO2_TOKEN       *Token,
+                            IN UINTN                        BufferSize,
+                            IN VOID                         *Buffer
+                            );
 
 /**
   Flushes all modified data to the physical device.
@@ -137,13 +137,13 @@ EFI_STATUS
   @retval EFI_OUT_OF_RESOURCES  The request could not be completed due to a lack of resources.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_DISK_FLUSH_EX) (
-  IN EFI_DISK_IO2_PROTOCOL        *This,
-  IN OUT EFI_DISK_IO2_TOKEN       *Token
-  );
+  EFI_STATUS
+(EFIAPI *EFI_DISK_FLUSH_EX)(
+                            IN EFI_DISK_IO2_PROTOCOL        *This,
+                            IN OUT EFI_DISK_IO2_TOKEN       *Token
+                            );
 
-#define EFI_DISK_IO2_PROTOCOL_REVISION 0x00020000
+#define EFI_DISK_IO2_PROTOCOL_REVISION  0x00020000
 
 ///
 /// This protocol is used to abstract Block I/O interfaces.
@@ -154,13 +154,13 @@ struct _EFI_DISK_IO2_PROTOCOL {
   /// revisions must be backwards compatible. If a future version is not
   /// backwards compatible, it is not the same GUID.
   ///
-  UINT64             Revision;
-  EFI_DISK_CANCEL_EX Cancel;
-  EFI_DISK_READ_EX   ReadDiskEx;
-  EFI_DISK_WRITE_EX  WriteDiskEx;
-  EFI_DISK_FLUSH_EX  FlushDiskEx;
+  UINT64                Revision;
+  EFI_DISK_CANCEL_EX    Cancel;
+  EFI_DISK_READ_EX      ReadDiskEx;
+  EFI_DISK_WRITE_EX     WriteDiskEx;
+  EFI_DISK_FLUSH_EX     FlushDiskEx;
 };
 
-extern EFI_GUID gEfiDiskIo2ProtocolGuid;
+extern EFI_GUID  gEfiDiskIo2ProtocolGuid;
 
 #endif

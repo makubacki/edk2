@@ -11,7 +11,6 @@
 #ifndef __SMM_LIB_H__
 #define __SMM_LIB_H__
 
-
 /**
   Triggers an SMI at boot time.
 
@@ -21,9 +20,8 @@
 VOID
 EFIAPI
 TriggerBootServiceSoftwareSmi (
-  VOID
-  );
-
+                               VOID
+                               );
 
 /**
   Triggers an SMI at run time.
@@ -34,9 +32,8 @@ TriggerBootServiceSoftwareSmi (
 VOID
 EFIAPI
 TriggerRuntimeSoftwareSmi (
-  VOID
-  );
-
+                           VOID
+                           );
 
 /**
   Test if a boot time software SMI happened.
@@ -51,9 +48,8 @@ TriggerRuntimeSoftwareSmi (
 BOOLEAN
 EFIAPI
 IsBootServiceSoftwareSmi (
-  VOID
-  );
-
+                          VOID
+                          );
 
 /**
   Test if a run time software SMI happened.
@@ -68,8 +64,8 @@ IsBootServiceSoftwareSmi (
 BOOLEAN
 EFIAPI
 IsRuntimeSoftwareSmi (
-  VOID
-  );
+                      VOID
+                      );
 
 /**
   Clear APM SMI Status Bit; Set the EOS bit.
@@ -78,6 +74,6 @@ IsRuntimeSoftwareSmi (
 VOID
 EFIAPI
 ClearSmi (
-  VOID
-  );
+          VOID
+          );
 #endif

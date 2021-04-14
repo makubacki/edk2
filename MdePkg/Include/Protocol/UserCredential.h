@@ -19,7 +19,7 @@
     0x71ee5e94, 0x65b9, 0x45d5, { 0x82, 0x1a, 0x3a, 0x4d, 0x86, 0xcf, 0xe6, 0xbe } \
   }
 
-typedef struct _EFI_USER_CREDENTIAL_PROTOCOL  EFI_USER_CREDENTIAL_PROTOCOL;
+typedef struct _EFI_USER_CREDENTIAL_PROTOCOL EFI_USER_CREDENTIAL_PROTOCOL;
 
 /**
   Enroll a user on a credential provider.
@@ -41,11 +41,11 @@ typedef struct _EFI_USER_CREDENTIAL_PROTOCOL  EFI_USER_CREDENTIAL_PROTOCOL;
   @retval EFI_INVALID_PARAMETER  User does not refer to a valid user profile handle.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_CREDENTIAL_ENROLL)(
-  IN CONST EFI_USER_CREDENTIAL_PROTOCOL  *This,
-  IN       EFI_USER_PROFILE_HANDLE       User
-  );
+                                IN CONST EFI_USER_CREDENTIAL_PROTOCOL  *This,
+                                IN       EFI_USER_PROFILE_HANDLE       User
+                                );
 
 /**
   Returns the user interface information used during user identification.
@@ -68,13 +68,13 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER  Hii is NULL or FormSetId is NULL or FormId is NULL.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_CREDENTIAL_FORM)(
-  IN CONST EFI_USER_CREDENTIAL_PROTOCOL  *This,
-  OUT      EFI_HII_HANDLE                *Hii,
-  OUT      EFI_GUID                      *FormSetId,
-  OUT      EFI_FORM_ID                   *FormId
-  );
+                              IN CONST EFI_USER_CREDENTIAL_PROTOCOL  *This,
+                              OUT      EFI_HII_HANDLE                *Hii,
+                              OUT      EFI_GUID                      *FormSetId,
+                              OUT      EFI_FORM_ID                   *FormId
+                              );
 
 /**
   Returns bitmap used to describe the credential provider type.
@@ -97,14 +97,14 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER  Hii is NULL or Image is NULL.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_CREDENTIAL_TILE)(
-  IN CONST EFI_USER_CREDENTIAL_PROTOCOL  *This,
-  IN OUT   UINTN                         *Width,
-  IN OUT   UINTN                         *Height,
-  OUT      EFI_HII_HANDLE                *Hii,
-  OUT      EFI_IMAGE_ID                  *Image
-  );
+                              IN CONST EFI_USER_CREDENTIAL_PROTOCOL  *This,
+                              IN OUT   UINTN                         *Width,
+                              IN OUT   UINTN                         *Height,
+                              OUT      EFI_HII_HANDLE                *Hii,
+                              OUT      EFI_IMAGE_ID                  *Image
+                              );
 
 /**
   Returns string used to describe the credential provider type.
@@ -121,12 +121,12 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER  Hii is NULL or String is NULL.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_CREDENTIAL_TITLE)(
-  IN CONST EFI_USER_CREDENTIAL_PROTOCOL  *This,
-  OUT      EFI_HII_HANDLE                *Hii,
-  OUT      EFI_STRING_ID                 *String
-  );
+                               IN CONST EFI_USER_CREDENTIAL_PROTOCOL  *This,
+                               OUT      EFI_HII_HANDLE                *Hii,
+                               OUT      EFI_STRING_ID                 *String
+                               );
 
 /**
   Return the user identifier associated with the currently authenticated user.
@@ -149,12 +149,12 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER  Identifier is NULL.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_CREDENTIAL_USER)(
-  IN CONST EFI_USER_CREDENTIAL_PROTOCOL  *This,
-  IN       EFI_USER_PROFILE_HANDLE       User,
-  OUT      EFI_USER_INFO_IDENTIFIER      *Identifier
-  );
+                              IN CONST EFI_USER_CREDENTIAL_PROTOCOL  *This,
+                              IN       EFI_USER_PROFILE_HANDLE       User,
+                              OUT      EFI_USER_INFO_IDENTIFIER      *Identifier
+                              );
 
 /**
   Indicate that user interface interaction has begun for the specified credential.
@@ -170,11 +170,11 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER  AutoLogon is NULL.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_CREDENTIAL_SELECT)(
-  IN CONST EFI_USER_CREDENTIAL_PROTOCOL  *This,
-  OUT      EFI_CREDENTIAL_LOGON_FLAGS    *AutoLogon
-  );
+                                IN CONST EFI_USER_CREDENTIAL_PROTOCOL  *This,
+                                OUT      EFI_CREDENTIAL_LOGON_FLAGS    *AutoLogon
+                                );
 
 /**
   Indicate that user interface interaction has ended for the specified credential.
@@ -186,10 +186,10 @@ EFI_STATUS
   @retval EFI_SUCCESS    Credential provider successfully deselected.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_CREDENTIAL_DESELECT)(
-  IN CONST EFI_USER_CREDENTIAL_PROTOCOL  *This
-  );
+                                  IN CONST EFI_USER_CREDENTIAL_PROTOCOL  *This
+                                  );
 
 /**
   Return the default logon behavior for this user credential.
@@ -204,11 +204,11 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER  AutoLogon is NULL.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_CREDENTIAL_DEFAULT)(
-  IN  CONST EFI_USER_CREDENTIAL_PROTOCOL        *This,
-  OUT EFI_CREDENTIAL_LOGON_FLAGS                *AutoLogon
-  );
+                                 IN  CONST EFI_USER_CREDENTIAL_PROTOCOL        *This,
+                                 OUT EFI_CREDENTIAL_LOGON_FLAGS                *AutoLogon
+                                 );
 
 /**
   Return information attached to the credential provider.
@@ -231,13 +231,13 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER Info is NULL or InfoSize is NULL.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_CREDENTIAL_GET_INFO)(
-  IN CONST EFI_USER_CREDENTIAL_PROTOCOL  *This,
-  IN       EFI_USER_INFO_HANDLE          UserInfo,
-  OUT      EFI_USER_INFO                 *Info,
-  IN OUT   UINTN                         *InfoSize
-  );
+                                  IN CONST EFI_USER_CREDENTIAL_PROTOCOL  *This,
+                                  IN       EFI_USER_INFO_HANDLE          UserInfo,
+                                  OUT      EFI_USER_INFO                 *Info,
+                                  IN OUT   UINTN                         *InfoSize
+                                  );
 
 /**
   Enumerate all of the user information records on the credential provider.
@@ -256,31 +256,31 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER  UserInfo is NULL.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_CREDENTIAL_GET_NEXT_INFO)(
-  IN CONST EFI_USER_CREDENTIAL_PROTOCOL  *This,
-  IN OUT   EFI_USER_INFO_HANDLE          *UserInfo
-  );
+                                       IN CONST EFI_USER_CREDENTIAL_PROTOCOL  *This,
+                                       IN OUT   EFI_USER_INFO_HANDLE          *UserInfo
+                                       );
 
 ///
 /// This protocol provides support for a single class of credentials
 ///
 struct _EFI_USER_CREDENTIAL_PROTOCOL {
-  EFI_GUID                      Identifier;  ///< Uniquely identifies this credential provider.
-  EFI_GUID                      Type;        ///< Identifies this class of User Credential Provider.
-  EFI_CREDENTIAL_ENROLL         Enroll;
-  EFI_CREDENTIAL_FORM           Form;
-  EFI_CREDENTIAL_TILE           Tile;
-  EFI_CREDENTIAL_TITLE          Title;
-  EFI_CREDENTIAL_USER           User;
-  EFI_CREDENTIAL_SELECT         Select;
-  EFI_CREDENTIAL_DESELECT       Deselect;
-  EFI_CREDENTIAL_DEFAULT        Default;
-  EFI_CREDENTIAL_GET_INFO       GetInfo;
-  EFI_CREDENTIAL_GET_NEXT_INFO  GetNextInfo;
-  EFI_CREDENTIAL_CAPABILITIES   Capabilities;
+  EFI_GUID                        Identifier; ///< Uniquely identifies this credential provider.
+  EFI_GUID                        Type;       ///< Identifies this class of User Credential Provider.
+  EFI_CREDENTIAL_ENROLL           Enroll;
+  EFI_CREDENTIAL_FORM             Form;
+  EFI_CREDENTIAL_TILE             Tile;
+  EFI_CREDENTIAL_TITLE            Title;
+  EFI_CREDENTIAL_USER             User;
+  EFI_CREDENTIAL_SELECT           Select;
+  EFI_CREDENTIAL_DESELECT         Deselect;
+  EFI_CREDENTIAL_DEFAULT          Default;
+  EFI_CREDENTIAL_GET_INFO         GetInfo;
+  EFI_CREDENTIAL_GET_NEXT_INFO    GetNextInfo;
+  EFI_CREDENTIAL_CAPABILITIES     Capabilities;
 };
 
-extern EFI_GUID gEfiUserCredentialProtocolGuid;
+extern EFI_GUID  gEfiUserCredentialProtocolGuid;
 
 #endif

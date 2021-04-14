@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 /**
   Reads the current value of Stack Segment Register (SS).
 
@@ -25,8 +22,7 @@ AsmReadSs (
   )
 {
   __asm {
-    xor     eax, eax
+  xor  eax, eax
     mov     ax, ss
   }
 }
-

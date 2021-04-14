@@ -16,10 +16,10 @@
 ///
 #define EFI_DRIVER_CONFIGURATION_PROTOCOL_GUID \
   { \
-    0x107a772b, 0xd5e1, 0x11d4, {0x9a, 0x46, 0x0, 0x90, 0x27, 0x3f, 0xc1, 0x4d } \
+    0x107a772b, 0xd5e1, 0x11d4, { 0x9a, 0x46, 0x0, 0x90, 0x27, 0x3f, 0xc1, 0x4d } \
   }
 
-typedef struct _EFI_DRIVER_CONFIGURATION_PROTOCOL  EFI_DRIVER_CONFIGURATION_PROTOCOL;
+typedef struct _EFI_DRIVER_CONFIGURATION_PROTOCOL EFI_DRIVER_CONFIGURATION_PROTOCOL;
 
 /**
   Allows the user to set controller specific options for a controller that a
@@ -64,14 +64,17 @@ typedef struct _EFI_DRIVER_CONFIGURATION_PROTOCOL  EFI_DRIVER_CONFIGURATION_PROT
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_DRIVER_CONFIGURATION_SET_OPTIONS)(
-  IN EFI_DRIVER_CONFIGURATION_PROTOCOL                        *This,
-  IN  EFI_HANDLE                                              ControllerHandle,
-  IN  EFI_HANDLE                                              ChildHandle  OPTIONAL,
-  IN  CHAR8                                                   *Language,
-  OUT EFI_DRIVER_CONFIGURATION_ACTION_REQUIRED                *ActionRequired
-  );
+                                               IN EFI_DRIVER_CONFIGURATION_PROTOCOL                        *This,
+                                               IN  EFI_HANDLE
+                                               ControllerHandle,
+                                               IN  EFI_HANDLE                                              ChildHandle
+                                               OPTIONAL,
+                                               IN  CHAR8                                                   *Language,
+                                               OUT EFI_DRIVER_CONFIGURATION_ACTION_REQUIRED                *
+                                               ActionRequired
+                                               );
 
 /**
   Tests to see if a controller's current configuration options are valid.
@@ -103,12 +106,14 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_DRIVER_CONFIGURATION_OPTIONS_VALID)(
-  IN EFI_DRIVER_CONFIGURATION_PROTOCOL                        *This,
-  IN  EFI_HANDLE                                              ControllerHandle,
-  IN  EFI_HANDLE                                              ChildHandle  OPTIONAL
-  );
+                                                 IN EFI_DRIVER_CONFIGURATION_PROTOCOL                        *This,
+                                                 IN  EFI_HANDLE
+                                                 ControllerHandle,
+                                                 IN  EFI_HANDLE                                              ChildHandle
+                                                 OPTIONAL
+                                                 );
 
 /**
   Forces a driver to set the default configuration options for a controller.
@@ -130,32 +135,34 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_DRIVER_CONFIGURATION_FORCE_DEFAULTS)(
-  IN EFI_DRIVER_CONFIGURATION_PROTOCOL                        *This,
-  IN  EFI_HANDLE                                              ControllerHandle,
-  IN  EFI_HANDLE                                              ChildHandle  OPTIONAL,
-  IN  UINT32                                                  DefaultType,
-  OUT EFI_DRIVER_CONFIGURATION_ACTION_REQUIRED                *ActionRequired
-  );
-
+                                                  IN EFI_DRIVER_CONFIGURATION_PROTOCOL                        *This,
+                                                  IN  EFI_HANDLE
+                                                  ControllerHandle,
+                                                  IN  EFI_HANDLE
+                                                  ChildHandle  OPTIONAL,
+                                                  IN  UINT32
+                                                  DefaultType,
+                                                  OUT EFI_DRIVER_CONFIGURATION_ACTION_REQUIRED                *
+                                                  ActionRequired
+                                                  );
 
 ///
 /// Used to set configuration options for a controller that an EFI Driver is managing.
 ///
 struct _EFI_DRIVER_CONFIGURATION_PROTOCOL {
-  EFI_DRIVER_CONFIGURATION_SET_OPTIONS    SetOptions;
-  EFI_DRIVER_CONFIGURATION_OPTIONS_VALID  OptionsValid;
-  EFI_DRIVER_CONFIGURATION_FORCE_DEFAULTS ForceDefaults;
+  EFI_DRIVER_CONFIGURATION_SET_OPTIONS       SetOptions;
+  EFI_DRIVER_CONFIGURATION_OPTIONS_VALID     OptionsValid;
+  EFI_DRIVER_CONFIGURATION_FORCE_DEFAULTS    ForceDefaults;
   ///
   /// A Null-terminated ASCII string that contains one or more
   /// ISO 639-2 language codes.  This is the list of language
   /// codes that this protocol supports.
   ///
-  CHAR8                                   *SupportedLanguages;
+  CHAR8                                      *SupportedLanguages;
 };
 
-
-extern EFI_GUID gEfiDriverConfigurationProtocolGuid;
+extern EFI_GUID  gEfiDriverConfigurationProtocolGuid;
 
 #endif

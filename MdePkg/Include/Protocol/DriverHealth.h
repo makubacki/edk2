@@ -37,7 +37,7 @@
     0x2a534210, 0x9280, 0x41d8, { 0xae, 0x79, 0xca, 0xda, 0x1, 0xa2, 0xb1, 0x27 } \
   }
 
-typedef struct _EFI_DRIVER_HEALTH_PROTOCOL  EFI_DRIVER_HEALTH_PROTOCOL;
+typedef struct _EFI_DRIVER_HEALTH_PROTOCOL EFI_DRIVER_HEALTH_PROTOCOL;
 
 ///
 /// EFI_DRIVER_HEALTH_HEALTH_STATUS
@@ -55,18 +55,18 @@ typedef enum {
 /// EFI_DRIVER_HEALTH_HII_MESSAGE
 ///
 typedef struct {
-  EFI_HII_HANDLE  HiiHandle;
-  EFI_STRING_ID   StringId;
+  EFI_HII_HANDLE    HiiHandle;
+  EFI_STRING_ID     StringId;
 
   ///
   /// 64-bit numeric value of the warning/error specified by this message.
-  ///   A value of 0x0000000000000000 is used to indicate that MessageCode is not specified.
-  ///   The values  0x0000000000000001 to 0x0fffffffffffffff are reserved for allocation by the UEFI Specification.
-  ///   The values  0x1000000000000000 to 0x1fffffffffffffff are reserved for IHV-developed drivers.
-  ///   The values 0x8000000000000000 to 0x8fffffffffffffff is reserved for platform/OEM drivers.
-  ///   All other values are reserved and should not be used.
+  /// A value of 0x0000000000000000 is used to indicate that MessageCode is not specified.
+  /// The values  0x0000000000000001 to 0x0fffffffffffffff are reserved for allocation by the UEFI Specification.
+  /// The values  0x1000000000000000 to 0x1fffffffffffffff are reserved for IHV-developed drivers.
+  /// The values 0x8000000000000000 to 0x8fffffffffffffff is reserved for platform/OEM drivers.
+  /// All other values are reserved and should not be used.
   ///
-  UINT64          MessageCode;
+  UINT64    MessageCode;
 } EFI_DRIVER_HEALTH_HII_MESSAGE;
 
 /**
@@ -80,11 +80,11 @@ typedef struct {
                                 percent would use a Limit value of 100.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_DRIVER_HEALTH_REPAIR_NOTIFY)(
-  IN UINTN  Value,
-  IN UINTN  Limit
-  );
+                                          IN UINTN  Value,
+                                          IN UINTN  Limit
+                                          );
 
 /**
   Retrieves the health status of a controller in the platform.  This function can also
@@ -173,15 +173,15 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_DRIVER_HEALTH_GET_HEALTH_STATUS)(
-  IN  EFI_DRIVER_HEALTH_PROTOCOL       *This,
-  IN  EFI_HANDLE                       ControllerHandle OPTIONAL,
-  IN  EFI_HANDLE                       ChildHandle      OPTIONAL,
-  OUT EFI_DRIVER_HEALTH_STATUS         *HealthStatus,
-  OUT EFI_DRIVER_HEALTH_HII_MESSAGE    **MessageList    OPTIONAL,
-  OUT EFI_HII_HANDLE                   *FormHiiHandle   OPTIONAL
-  );
+                                              IN  EFI_DRIVER_HEALTH_PROTOCOL       *This,
+                                              IN  EFI_HANDLE                       ControllerHandle OPTIONAL,
+                                              IN  EFI_HANDLE                       ChildHandle      OPTIONAL,
+                                              OUT EFI_DRIVER_HEALTH_STATUS         *HealthStatus,
+                                              OUT EFI_DRIVER_HEALTH_HII_MESSAGE    **MessageList    OPTIONAL,
+                                              OUT EFI_HII_HANDLE                   *FormHiiHandle   OPTIONAL
+                                              );
 
 /**
   Performs a repair operation on a controller in the platform.  This function can
@@ -212,13 +212,13 @@ EFI_STATUS
 
 */
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_DRIVER_HEALTH_REPAIR)(
-  IN  EFI_DRIVER_HEALTH_PROTOCOL                *This,
-  IN  EFI_HANDLE                                ControllerHandle,
-  IN  EFI_HANDLE                                ChildHandle       OPTIONAL,
-  IN  EFI_DRIVER_HEALTH_REPAIR_NOTIFY           RepairNotify      OPTIONAL
-  );
+                                   IN  EFI_DRIVER_HEALTH_PROTOCOL                *This,
+                                   IN  EFI_HANDLE                                ControllerHandle,
+                                   IN  EFI_HANDLE                                ChildHandle       OPTIONAL,
+                                   IN  EFI_DRIVER_HEALTH_REPAIR_NOTIFY           RepairNotify      OPTIONAL
+                                   );
 
 ///
 /// When installed, the Driver Health Protocol produces a collection of services
@@ -228,14 +228,10 @@ EFI_STATUS
 /// hardware configuration changes.
 ///
 struct _EFI_DRIVER_HEALTH_PROTOCOL {
-  EFI_DRIVER_HEALTH_GET_HEALTH_STATUS  GetHealthStatus;
-  EFI_DRIVER_HEALTH_REPAIR             Repair;
+  EFI_DRIVER_HEALTH_GET_HEALTH_STATUS    GetHealthStatus;
+  EFI_DRIVER_HEALTH_REPAIR               Repair;
 };
 
-extern EFI_GUID gEfiDriverHealthProtocolGuid;
+extern EFI_GUID  gEfiDriverHealthProtocolGuid;
 
 #endif
-
-
-
-

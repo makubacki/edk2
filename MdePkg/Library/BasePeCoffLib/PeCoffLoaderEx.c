@@ -8,7 +8,6 @@
 
 #include "BasePeCoffLibInternals.h"
 
-
 /**
   Performs an Itanium-based specific relocation fixup and is a no-op on other
   instruction sets.
@@ -81,4 +80,3 @@ PeHotRelocateImageEx (
 {
   return RETURN_UNSUPPORTED;
 }
-

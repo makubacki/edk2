@@ -16,15 +16,13 @@
 // {3C7200E9-005F-4EA4-87DE-A3DFAC8A27C3}
 #define EFI_SHELL_DYNAMIC_COMMAND_PROTOCOL_GUID \
   { \
-  0x3c7200e9, 0x005f, 0x4ea4, { 0x87, 0xde, 0xa3, 0xdf, 0xac, 0x8a, 0x27, 0xc3 } \
+    0x3c7200e9, 0x005f, 0x4ea4, { 0x87, 0xde, 0xa3, 0xdf, 0xac, 0x8a, 0x27, 0xc3 } \
   }
-
 
 //
 // Define for forward reference.
 //
 typedef struct _EFI_SHELL_DYNAMIC_COMMAND_PROTOCOL EFI_SHELL_DYNAMIC_COMMAND_PROTOCOL;
-
 
 /**
   This is the shell command handler function pointer callback type.  This
@@ -40,13 +38,13 @@ typedef struct _EFI_SHELL_DYNAMIC_COMMAND_PROTOCOL EFI_SHELL_DYNAMIC_COMMAND_PRO
   @return other                     the operation failed.
 **/
 typedef
-SHELL_STATUS
-(EFIAPI * SHELL_COMMAND_HANDLER)(
-  IN EFI_SHELL_DYNAMIC_COMMAND_PROTOCOL    *This,
-  IN EFI_SYSTEM_TABLE                      *SystemTable,
-  IN EFI_SHELL_PARAMETERS_PROTOCOL         *ShellParameters,
-  IN EFI_SHELL_PROTOCOL                    *Shell
-  );
+  SHELL_STATUS
+(EFIAPI *SHELL_COMMAND_HANDLER)(
+                                IN EFI_SHELL_DYNAMIC_COMMAND_PROTOCOL    *This,
+                                IN EFI_SYSTEM_TABLE                      *SystemTable,
+                                IN EFI_SHELL_PARAMETERS_PROTOCOL         *ShellParameters,
+                                IN EFI_SHELL_PROTOCOL                    *Shell
+                                );
 
 /**
   This is the command help handler function pointer callback type.  This
@@ -59,21 +57,19 @@ SHELL_STATUS
   @return string                    Pool allocated help string, must be freed by caller
 **/
 typedef
-CHAR16*
-(EFIAPI * SHELL_COMMAND_GETHELP)(
-  IN EFI_SHELL_DYNAMIC_COMMAND_PROTOCOL    *This,
-  IN CONST CHAR8                           *Language
-  );
+  CHAR16 *
+(EFIAPI *SHELL_COMMAND_GETHELP)(
+                                IN EFI_SHELL_DYNAMIC_COMMAND_PROTOCOL    *This,
+                                IN CONST CHAR8                           *Language
+                                );
 
 /// EFI_SHELL_DYNAMIC_COMMAND_PROTOCOL protocol structure.
 struct _EFI_SHELL_DYNAMIC_COMMAND_PROTOCOL {
-
-  CONST CHAR16           *CommandName;
-  SHELL_COMMAND_HANDLER  Handler;
-  SHELL_COMMAND_GETHELP  GetHelp;
-
+  CONST CHAR16             *CommandName;
+  SHELL_COMMAND_HANDLER    Handler;
+  SHELL_COMMAND_GETHELP    GetHelp;
 };
 
-extern EFI_GUID gEfiShellDynamicCommandProtocolGuid;
+extern EFI_GUID  gEfiShellDynamicCommandProtocolGuid;
 
 #endif

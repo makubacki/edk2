@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 /**
   Enables CPU interrupts for the smallest window required to capture any
   pending interrupts.
@@ -21,10 +18,9 @@ EnableDisableInterrupts (
   )
 {
   _asm {
-    sti
-    nop
-    nop
-    cli
+  sti
+  nop
+  nop
+      cli
   }
 }
-

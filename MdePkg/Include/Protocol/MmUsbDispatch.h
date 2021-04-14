@@ -19,7 +19,7 @@
 
 #define EFI_MM_USB_DISPATCH_PROTOCOL_GUID \
   { \
-    0xee9b8d90, 0xc5a6, 0x40a2, {0xbd, 0xe2, 0x52, 0x55, 0x8d, 0x33, 0xcc, 0xa1 } \
+    0xee9b8d90, 0xc5a6, 0x40a2, { 0xbd, 0xe2, 0x52, 0x55, 0x8d, 0x33, 0xcc, 0xa1 } \
   }
 
 ///
@@ -39,14 +39,14 @@ typedef struct {
   /// emulation event, such as port-trap on the PS/2* keyboard control registers, or to a
   /// USB wake event, such as resumption from a sleep state.
   ///
-  EFI_USB_MMI_TYPE          Type;
+  EFI_USB_MMI_TYPE            Type;
   ///
   /// The device path is part of the context structure and describes the location of the
   /// particular USB host controller in the system for which this register event will occur.
   /// This location is important because of the possible integration of several USB host
   /// controllers in a system.
   ///
-  EFI_DEVICE_PATH_PROTOCOL  *Device;
+  EFI_DEVICE_PATH_PROTOCOL    *Device;
 } EFI_MM_USB_REGISTER_CONTEXT;
 
 typedef struct _EFI_MM_USB_DISPATCH_PROTOCOL EFI_MM_USB_DISPATCH_PROTOCOL;
@@ -78,13 +78,13 @@ typedef struct _EFI_MM_USB_DISPATCH_PROTOCOL EFI_MM_USB_DISPATCH_PROTOCOL;
   @retval EFI_OUT_OF_RESOURCES   There is not enough memory (system or MM) to manage this child.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MM_USB_REGISTER)(
-  IN  CONST EFI_MM_USB_DISPATCH_PROTOCOL  *This,
-  IN        EFI_MM_HANDLER_ENTRY_POINT    DispatchFunction,
-  IN  CONST EFI_MM_USB_REGISTER_CONTEXT   *RegisterContext,
-  OUT       EFI_HANDLE                    *DispatchHandle
-  );
+                              IN  CONST EFI_MM_USB_DISPATCH_PROTOCOL  *This,
+                              IN        EFI_MM_HANDLER_ENTRY_POINT    DispatchFunction,
+                              IN  CONST EFI_MM_USB_REGISTER_CONTEXT   *RegisterContext,
+                              OUT       EFI_HANDLE                    *DispatchHandle
+                              );
 
 /**
   Unregisters a USB service.
@@ -102,11 +102,11 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER  The DispatchHandle was not valid.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MM_USB_UNREGISTER)(
-  IN CONST EFI_MM_USB_DISPATCH_PROTOCOL  *This,
-  IN       EFI_HANDLE                    DispatchHandle
-  );
+                                IN CONST EFI_MM_USB_DISPATCH_PROTOCOL  *This,
+                                IN       EFI_HANDLE                    DispatchHandle
+                                );
 
 ///
 /// Interface structure for the MM USB MMI Dispatch Protocol
@@ -114,11 +114,10 @@ EFI_STATUS
 /// This protocol provides the parent dispatch service for the USB MMI source generator.
 ///
 struct _EFI_MM_USB_DISPATCH_PROTOCOL {
-  EFI_MM_USB_REGISTER    Register;
-  EFI_MM_USB_UNREGISTER  UnRegister;
+  EFI_MM_USB_REGISTER      Register;
+  EFI_MM_USB_UNREGISTER    UnRegister;
 };
 
-extern EFI_GUID gEfiMmUsbDispatchProtocolGuid;
+extern EFI_GUID  gEfiMmUsbDispatchProtocolGuid;
 
 #endif
-

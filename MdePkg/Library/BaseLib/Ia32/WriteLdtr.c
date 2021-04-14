@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 /**
   Writes the current Local Descriptor Table Register (GDTR) selector.
 
@@ -25,9 +22,8 @@ AsmWriteLdtr (
   )
 {
   _asm {
-    xor     eax, eax
+  xor  eax, eax
     mov     ax, Ldtr
     lldt    ax
   }
 }
-

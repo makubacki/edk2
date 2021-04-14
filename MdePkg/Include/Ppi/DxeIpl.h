@@ -15,7 +15,7 @@
 
 #define EFI_DXE_IPL_PPI_GUID \
   { \
-    0xae8ce5d, 0xe448, 0x4437, {0xa8, 0xd7, 0xeb, 0xf5, 0xf1, 0x94, 0xf7, 0x31 } \
+    0xae8ce5d, 0xe448, 0x4437, { 0xa8, 0xd7, 0xeb, 0xf5, 0xf1, 0x94, 0xf7, 0x31 } \
   }
 
 typedef struct _EFI_DXE_IPL_PPI EFI_DXE_IPL_PPI;
@@ -45,12 +45,12 @@ typedef struct _EFI_DXE_IPL_PPI EFI_DXE_IPL_PPI;
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_DXE_IPL_ENTRY)(
-  IN CONST EFI_DXE_IPL_PPI        *This,
-  IN EFI_PEI_SERVICES             **PeiServices,
-  IN EFI_PEI_HOB_POINTERS         HobList
-  );
+                            IN CONST EFI_DXE_IPL_PPI        *This,
+                            IN EFI_PEI_SERVICES             **PeiServices,
+                            IN EFI_PEI_HOB_POINTERS         HobList
+                            );
 
 ///
 /// Final service to be invoked by the PEI Foundation.
@@ -58,9 +58,9 @@ EFI_STATUS
 /// The DXE IPL PPI may use PEI services to locate and load the DXE Foundation.
 ///
 struct _EFI_DXE_IPL_PPI {
-  EFI_DXE_IPL_ENTRY Entry;
+  EFI_DXE_IPL_ENTRY    Entry;
 };
 
-extern EFI_GUID gEfiDxeIplPpiGuid;
+extern EFI_GUID  gEfiDxeIplPpiGuid;
 
 #endif

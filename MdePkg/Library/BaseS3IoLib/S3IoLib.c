@@ -15,7 +15,6 @@
 #include <Library/IoLib.h>
 #include <Library/S3BootScriptLib.h>
 
-
 /**
   Saves an I/O port value to the boot script.
 
@@ -36,14 +35,14 @@ InternalSaveIoWriteValueToBootScript (
   IN VOID                   *Buffer
   )
 {
-  RETURN_STATUS                Status;
+  RETURN_STATUS  Status;
 
   Status = S3BootScriptSaveIoWrite (
-             Width,
-             Port,
-             1,
-             Buffer
-             );
+                                    Width,
+                                    Port,
+                                    1,
+                                    Buffer
+                                    );
   ASSERT (Status == RETURN_SUCCESS);
 }
 
@@ -1490,14 +1489,14 @@ InternalSaveMmioWriteValueToBootScript (
   IN VOID                   *Buffer
   )
 {
-  RETURN_STATUS            Status;
+  RETURN_STATUS  Status;
 
   Status = S3BootScriptSaveMemWrite (
-             Width,
-             Address,
-             1,
-             Buffer
-             );
+                                     Width,
+                                     Address,
+                                     1,
+                                     Buffer
+                                     );
   ASSERT (Status == RETURN_SUCCESS);
 }
 
@@ -1855,7 +1854,10 @@ S3MmioBitFieldAndThenOr8 (
   IN UINT8              OrData
   )
 {
-  return InternalSaveMmioWrite8ValueToBootScript (Address, MmioBitFieldAndThenOr8 (Address, StartBit, EndBit, AndData, OrData));
+  return InternalSaveMmioWrite8ValueToBootScript (
+                                                 Address,
+                                                 MmioBitFieldAndThenOr8 (Address, StartBit, EndBit, AndData, OrData)
+                                                 );
 }
 
 /**
@@ -2213,7 +2215,10 @@ S3MmioBitFieldAndThenOr16 (
   IN UINT16             OrData
   )
 {
-  return InternalSaveMmioWrite16ValueToBootScript (Address, MmioBitFieldAndThenOr16 (Address, StartBit, EndBit, AndData, OrData));
+  return InternalSaveMmioWrite16ValueToBootScript (
+                                                  Address,
+                                                  MmioBitFieldAndThenOr16 (Address, StartBit, EndBit, AndData, OrData)
+                                                  );
 }
 
 /**
@@ -2570,7 +2575,10 @@ S3MmioBitFieldAndThenOr32 (
   IN UINT32             OrData
   )
 {
-  return InternalSaveMmioWrite32ValueToBootScript (Address, MmioBitFieldAndThenOr32 (Address, StartBit, EndBit, AndData, OrData));
+  return InternalSaveMmioWrite32ValueToBootScript (
+                                                  Address,
+                                                  MmioBitFieldAndThenOr32 (Address, StartBit, EndBit, AndData, OrData)
+                                                  );
 }
 
 /**
@@ -2927,7 +2935,10 @@ S3MmioBitFieldAndThenOr64 (
   IN UINT64             OrData
   )
 {
-  return InternalSaveMmioWrite64ValueToBootScript (Address, MmioBitFieldAndThenOr64 (Address, StartBit, EndBit, AndData, OrData));
+  return InternalSaveMmioWrite64ValueToBootScript (
+                                                  Address,
+                                                  MmioBitFieldAndThenOr64 (Address, StartBit, EndBit, AndData, OrData)
+                                                  );
 }
 
 /**
@@ -2957,17 +2968,17 @@ S3MmioReadBuffer8 (
   OUT UINT8       *Buffer
   )
 {
-  UINT8       *ReturnBuffer;
+  UINT8          *ReturnBuffer;
   RETURN_STATUS  Status;
 
   ReturnBuffer = MmioReadBuffer8 (StartAddress, Length, Buffer);
 
   Status = S3BootScriptSaveMemWrite (
-             S3BootScriptWidthUint8,
-             StartAddress,
-             Length / sizeof (UINT8),
-             ReturnBuffer
-             );
+                                     S3BootScriptWidthUint8,
+                                     StartAddress,
+                                     Length / sizeof (UINT8),
+                                     ReturnBuffer
+                                     );
   ASSERT (Status == RETURN_SUCCESS);
 
   return ReturnBuffer;
@@ -3004,17 +3015,17 @@ S3MmioReadBuffer16 (
   OUT UINT16      *Buffer
   )
 {
-  UINT16       *ReturnBuffer;
-  RETURN_STATUS   Status;
+  UINT16         *ReturnBuffer;
+  RETURN_STATUS  Status;
 
   ReturnBuffer = MmioReadBuffer16 (StartAddress, Length, Buffer);
 
   Status = S3BootScriptSaveMemWrite (
-             S3BootScriptWidthUint16,
-             StartAddress,
-             Length / sizeof (UINT16),
-             ReturnBuffer
-             );
+                                     S3BootScriptWidthUint16,
+                                     StartAddress,
+                                     Length / sizeof (UINT16),
+                                     ReturnBuffer
+                                     );
   ASSERT (Status == RETURN_SUCCESS);
 
   return ReturnBuffer;
@@ -3051,17 +3062,17 @@ S3MmioReadBuffer32 (
   OUT UINT32      *Buffer
   )
 {
-  UINT32      *ReturnBuffer;
+  UINT32         *ReturnBuffer;
   RETURN_STATUS  Status;
 
   ReturnBuffer = MmioReadBuffer32 (StartAddress, Length, Buffer);
 
   Status = S3BootScriptSaveMemWrite (
-             S3BootScriptWidthUint32,
-             StartAddress,
-             Length / sizeof (UINT32),
-             ReturnBuffer
-             );
+                                     S3BootScriptWidthUint32,
+                                     StartAddress,
+                                     Length / sizeof (UINT32),
+                                     ReturnBuffer
+                                     );
   ASSERT (Status == RETURN_SUCCESS);
 
   return ReturnBuffer;
@@ -3098,22 +3109,21 @@ S3MmioReadBuffer64 (
   OUT UINT64      *Buffer
   )
 {
-  UINT64      *ReturnBuffer;
+  UINT64         *ReturnBuffer;
   RETURN_STATUS  Status;
 
   ReturnBuffer = MmioReadBuffer64 (StartAddress, Length, Buffer);
 
   Status = S3BootScriptSaveMemWrite (
-             S3BootScriptWidthUint64,
-             StartAddress,
-             Length / sizeof (UINT64),
-             ReturnBuffer
-             );
+                                     S3BootScriptWidthUint64,
+                                     StartAddress,
+                                     Length / sizeof (UINT64),
+                                     ReturnBuffer
+                                     );
   ASSERT (Status == RETURN_SUCCESS);
 
   return ReturnBuffer;
 }
-
 
 /**
   Copy data from system memory to MMIO region by using 8-bit access
@@ -3142,17 +3152,17 @@ S3MmioWriteBuffer8 (
   IN  CONST UINT8   *Buffer
   )
 {
-  UINT8       *ReturnBuffer;
+  UINT8          *ReturnBuffer;
   RETURN_STATUS  Status;
 
   ReturnBuffer = MmioWriteBuffer8 (StartAddress, Length, Buffer);
 
   Status = S3BootScriptSaveMemWrite (
-             S3BootScriptWidthUint8,
-             StartAddress,
-             Length / sizeof (UINT8),
-             ReturnBuffer
-             );
+                                     S3BootScriptWidthUint8,
+                                     StartAddress,
+                                     Length / sizeof (UINT8),
+                                     ReturnBuffer
+                                     );
   ASSERT (Status == RETURN_SUCCESS);
 
   return ReturnBuffer;
@@ -3190,22 +3200,21 @@ S3MmioWriteBuffer16 (
   IN  CONST UINT16 *Buffer
   )
 {
-  UINT16      *ReturnBuffer;
+  UINT16         *ReturnBuffer;
   RETURN_STATUS  Status;
 
   ReturnBuffer = MmioWriteBuffer16 (StartAddress, Length, Buffer);
 
   Status = S3BootScriptSaveMemWrite (
-             S3BootScriptWidthUint16,
-             StartAddress,
-             Length / sizeof (UINT16),
-             ReturnBuffer
-             );
+                                     S3BootScriptWidthUint16,
+                                     StartAddress,
+                                     Length / sizeof (UINT16),
+                                     ReturnBuffer
+                                     );
   ASSERT (Status == RETURN_SUCCESS);
 
   return ReturnBuffer;
 }
-
 
 /**
   Copy data from system memory to MMIO region by using 32-bit access
@@ -3239,17 +3248,17 @@ S3MmioWriteBuffer32 (
   IN  CONST UINT32 *Buffer
   )
 {
-  UINT32      *ReturnBuffer;
+  UINT32         *ReturnBuffer;
   RETURN_STATUS  Status;
 
   ReturnBuffer = MmioWriteBuffer32 (StartAddress, Length, Buffer);
 
   Status = S3BootScriptSaveMemWrite (
-             S3BootScriptWidthUint32,
-             StartAddress,
-             Length / sizeof (UINT32),
-             ReturnBuffer
-             );
+                                     S3BootScriptWidthUint32,
+                                     StartAddress,
+                                     Length / sizeof (UINT32),
+                                     ReturnBuffer
+                                     );
   ASSERT (Status == RETURN_SUCCESS);
 
   return ReturnBuffer;
@@ -3287,19 +3296,18 @@ S3MmioWriteBuffer64 (
   IN  CONST UINT64 *Buffer
   )
 {
-  UINT64      *ReturnBuffer;
+  UINT64         *ReturnBuffer;
   RETURN_STATUS  Status;
 
   ReturnBuffer = MmioWriteBuffer64 (StartAddress, Length, Buffer);
 
   Status = S3BootScriptSaveMemWrite (
-             S3BootScriptWidthUint64,
-             StartAddress,
-             Length / sizeof (UINT64),
-             ReturnBuffer
-             );
+                                     S3BootScriptWidthUint64,
+                                     StartAddress,
+                                     Length / sizeof (UINT64),
+                                     ReturnBuffer
+                                     );
   ASSERT (Status == RETURN_SUCCESS);
 
   return ReturnBuffer;
 }
-

@@ -11,8 +11,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
-
-
 #include "UefiLibInternal.h"
 
 /**
@@ -39,11 +37,11 @@ EfiCreateEventLegacyBoot (
   )
 {
   return EfiCreateEventLegacyBootEx (
-           TPL_CALLBACK,
-           EfiEventEmptyFunction,
-           NULL,
-           LegacyBootEvent
-           );
+                                     TPL_CALLBACK,
+                                     EfiEventEmptyFunction,
+                                     NULL,
+                                     LegacyBootEvent
+                                     );
 }
 
 /**
@@ -69,8 +67,8 @@ EFI_STATUS
 EFIAPI
 EfiCreateEventLegacyBootEx (
   IN  EFI_TPL           NotifyTpl,
-  IN  EFI_EVENT_NOTIFY  NotifyFunction,  OPTIONAL
-  IN  VOID              *NotifyContext,  OPTIONAL
+  IN  EFI_EVENT_NOTIFY  NotifyFunction, OPTIONAL
+  IN  VOID              *NotifyContext, OPTIONAL
   OUT EFI_EVENT         *LegacyBootEvent
   )
 {
@@ -97,14 +95,15 @@ EfiCreateEventLegacyBootEx (
     } else {
       WorkerNotifyFunction = NotifyFunction;
     }
+
     Status = gBS->CreateEventEx (
-                    EVT_NOTIFY_SIGNAL,
-                    NotifyTpl,
-                    WorkerNotifyFunction,
-                    NotifyContext,
-                    &gEfiEventLegacyBootGuid,
-                    LegacyBootEvent
-                    );
+                                 EVT_NOTIFY_SIGNAL,
+                                 NotifyTpl,
+                                 WorkerNotifyFunction,
+                                 NotifyContext,
+                                 &gEfiEventLegacyBootGuid,
+                                 LegacyBootEvent
+                                 );
   }
 
   return Status;
@@ -134,11 +133,11 @@ EfiCreateEventReadyToBoot (
   )
 {
   return EfiCreateEventReadyToBootEx (
-           TPL_CALLBACK,
-           EfiEventEmptyFunction,
-           NULL,
-           ReadyToBootEvent
-           );
+                                      TPL_CALLBACK,
+                                      EfiEventEmptyFunction,
+                                      NULL,
+                                      ReadyToBootEvent
+                                      );
 }
 
 /**
@@ -164,8 +163,8 @@ EFI_STATUS
 EFIAPI
 EfiCreateEventReadyToBootEx (
   IN  EFI_TPL           NotifyTpl,
-  IN  EFI_EVENT_NOTIFY  NotifyFunction,  OPTIONAL
-  IN  VOID              *NotifyContext,  OPTIONAL
+  IN  EFI_EVENT_NOTIFY  NotifyFunction, OPTIONAL
+  IN  VOID              *NotifyContext, OPTIONAL
   OUT EFI_EVENT         *ReadyToBootEvent
   )
 {
@@ -192,19 +191,19 @@ EfiCreateEventReadyToBootEx (
     } else {
       WorkerNotifyFunction = NotifyFunction;
     }
+
     Status = gBS->CreateEventEx (
-                    EVT_NOTIFY_SIGNAL,
-                    NotifyTpl,
-                    WorkerNotifyFunction,
-                    NotifyContext,
-                    &gEfiEventReadyToBootGuid,
-                    ReadyToBootEvent
-                    );
+                                 EVT_NOTIFY_SIGNAL,
+                                 NotifyTpl,
+                                 WorkerNotifyFunction,
+                                 NotifyContext,
+                                 &gEfiEventReadyToBootGuid,
+                                 ReadyToBootEvent
+                                 );
   }
 
   return Status;
 }
-
 
 /**
   Create, Signal, and Close the Ready to Boot event using EfiSignalEventReadyToBoot().
@@ -221,13 +220,13 @@ EfiSignalEventReadyToBoot (
   VOID
   )
 {
-  EFI_STATUS    Status;
-  EFI_EVENT     ReadyToBootEvent;
+  EFI_STATUS  Status;
+  EFI_EVENT   ReadyToBootEvent;
 
   Status = EfiCreateEventReadyToBoot (&ReadyToBootEvent);
   if (!EFI_ERROR (Status)) {
-    gBS->SignalEvent (ReadyToBootEvent);
-    gBS->CloseEvent (ReadyToBootEvent);
+  gBS->SignalEvent (ReadyToBootEvent);
+  gBS->CloseEvent (ReadyToBootEvent);
   }
 }
 
@@ -246,16 +245,15 @@ EfiSignalEventLegacyBoot (
   VOID
   )
 {
-  EFI_STATUS    Status;
-  EFI_EVENT     LegacyBootEvent;
+  EFI_STATUS  Status;
+  EFI_EVENT   LegacyBootEvent;
 
   Status = EfiCreateEventLegacyBoot (&LegacyBootEvent);
   if (!EFI_ERROR (Status)) {
-    gBS->SignalEvent (LegacyBootEvent);
-    gBS->CloseEvent (LegacyBootEvent);
+  gBS->SignalEvent (LegacyBootEvent);
+  gBS->CloseEvent (LegacyBootEvent);
   }
 }
-
 
 /**
   Check to see if the Firmware Volume (FV) Media Device Path is valid
@@ -291,7 +289,6 @@ EfiGetNameGuidFromFwVolDevicePathNode (
   return NULL;
 }
 
-
 /**
   Initialize a Firmware Volume (FV) Media Device Path node.
 
@@ -321,10 +318,9 @@ EfiInitializeFwVolDevicepathNode (
   //
   // Use the new Device path that does not conflict with the UEFI
   //
-  FvDevicePathNode->Header.Type     = MEDIA_DEVICE_PATH;
-  FvDevicePathNode->Header.SubType  = MEDIA_PIWG_FW_FILE_DP;
+  FvDevicePathNode->Header.Type    = MEDIA_DEVICE_PATH;
+  FvDevicePathNode->Header.SubType = MEDIA_PIWG_FW_FILE_DP;
   SetDevicePathNodeLength (&FvDevicePathNode->Header, sizeof (MEDIA_FW_VOL_FILEPATH_DEVICE_PATH));
 
   CopyGuid (&FvDevicePathNode->FvFileName, NameGuid);
 }
-

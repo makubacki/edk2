@@ -6,9 +6,7 @@
 
 **/
 
-
 #include "BaseLibInternals.h"
-
 
 /**
   Restores the current floating point/SSE/SSE2 context from a buffer.
@@ -27,8 +25,7 @@ InternalX86FxRestore (
   )
 {
   _asm {
-    mov     eax, Buffer
-    fxrstor [eax]
+  mov  eax, Buffer
+       fxrstor[eax]
   }
 }
-

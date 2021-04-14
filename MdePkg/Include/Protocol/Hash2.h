@@ -42,20 +42,20 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 typedef struct _EFI_HASH2_PROTOCOL EFI_HASH2_PROTOCOL;
 
-typedef UINT8  EFI_MD5_HASH2[16];
-typedef UINT8  EFI_SHA1_HASH2[20];
-typedef UINT8  EFI_SHA224_HASH2[28];
-typedef UINT8  EFI_SHA256_HASH2[32];
-typedef UINT8  EFI_SHA384_HASH2[48];
-typedef UINT8  EFI_SHA512_HASH2[64];
+typedef UINT8 EFI_MD5_HASH2[16];
+typedef UINT8 EFI_SHA1_HASH2[20];
+typedef UINT8 EFI_SHA224_HASH2[28];
+typedef UINT8 EFI_SHA256_HASH2[32];
+typedef UINT8 EFI_SHA384_HASH2[48];
+typedef UINT8 EFI_SHA512_HASH2[64];
 
 typedef union {
-  EFI_MD5_HASH2     Md5Hash;
-  EFI_SHA1_HASH2    Sha1Hash;
-  EFI_SHA224_HASH2  Sha224Hash;
-  EFI_SHA256_HASH2  Sha256Hash;
-  EFI_SHA384_HASH2  Sha384Hash;
-  EFI_SHA512_HASH2  Sha512Hash;
+  EFI_MD5_HASH2       Md5Hash;
+  EFI_SHA1_HASH2      Sha1Hash;
+  EFI_SHA224_HASH2    Sha224Hash;
+  EFI_SHA256_HASH2    Sha256Hash;
+  EFI_SHA384_HASH2    Sha384Hash;
+  EFI_SHA512_HASH2    Sha512Hash;
 } EFI_HASH2_OUTPUT;
 
 /**
@@ -72,12 +72,12 @@ typedef union {
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_HASH2_GET_HASH_SIZE)(
-  IN  CONST EFI_HASH2_PROTOCOL     *This,
-  IN  CONST EFI_GUID               *HashAlgorithm,
-  OUT UINTN                        *HashSize
-  );
+                                  IN  CONST EFI_HASH2_PROTOCOL     *This,
+                                  IN  CONST EFI_GUID               *HashAlgorithm,
+                                  OUT UINTN                        *HashSize
+                                  );
 
 /**
   Creates a hash for the specified message text. The hash is not extendable.
@@ -100,14 +100,14 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_HASH2_HASH)(
-  IN CONST EFI_HASH2_PROTOCOL      *This,
-  IN CONST EFI_GUID                *HashAlgorithm,
-  IN CONST UINT8                   *Message,
-  IN UINTN                         MessageSize,
-  IN OUT EFI_HASH2_OUTPUT          *Hash
-  );
+                         IN CONST EFI_HASH2_PROTOCOL      *This,
+                         IN CONST EFI_GUID                *HashAlgorithm,
+                         IN CONST UINT8                   *Message,
+                         IN UINTN                         MessageSize,
+                         IN OUT EFI_HASH2_OUTPUT          *Hash
+                         );
 
 /**
   This function must be called to initialize a digest calculation to be subsequently performed using the
@@ -126,11 +126,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_HASH2_HASH_INIT)(
-  IN CONST EFI_HASH2_PROTOCOL      *This,
-  IN CONST EFI_GUID                *HashAlgorithm
-  );
+                              IN CONST EFI_HASH2_PROTOCOL      *This,
+                              IN CONST EFI_GUID                *HashAlgorithm
+                              );
 
 /**
   Updates the hash of a computation in progress by adding a message text.
@@ -148,12 +148,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_HASH2_HASH_UPDATE)(
-  IN CONST EFI_HASH2_PROTOCOL      *This,
-  IN CONST UINT8                   *Message,
-  IN UINTN                         MessageSize
-  );
+                                IN CONST EFI_HASH2_PROTOCOL      *This,
+                                IN CONST UINT8                   *Message,
+                                IN UINTN                         MessageSize
+                                );
 
 /**
   Finalizes a hash operation in progress and returns calculation result.
@@ -172,25 +172,25 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_HASH2_HASH_FINAL)(
-  IN CONST EFI_HASH2_PROTOCOL      *This,
-  IN OUT EFI_HASH2_OUTPUT          *Hash
-  );
+                               IN CONST EFI_HASH2_PROTOCOL      *This,
+                               IN OUT EFI_HASH2_OUTPUT          *Hash
+                               );
 
 ///
 /// This protocol describes hashing functions for which the algorithm-required message padding and
 /// finalization are performed by the supporting driver.
 ///
 struct _EFI_HASH2_PROTOCOL {
-  EFI_HASH2_GET_HASH_SIZE          GetHashSize;
-  EFI_HASH2_HASH                   Hash;
-  EFI_HASH2_HASH_INIT              HashInit;
-  EFI_HASH2_HASH_UPDATE            HashUpdate;
-  EFI_HASH2_HASH_FINAL             HashFinal;
+  EFI_HASH2_GET_HASH_SIZE    GetHashSize;
+  EFI_HASH2_HASH             Hash;
+  EFI_HASH2_HASH_INIT        HashInit;
+  EFI_HASH2_HASH_UPDATE      HashUpdate;
+  EFI_HASH2_HASH_FINAL       HashFinal;
 };
 
-extern EFI_GUID gEfiHash2ServiceBindingProtocolGuid;
-extern EFI_GUID gEfiHash2ProtocolGuid;
+extern EFI_GUID  gEfiHash2ServiceBindingProtocolGuid;
+extern EFI_GUID  gEfiHash2ProtocolGuid;
 
 #endif

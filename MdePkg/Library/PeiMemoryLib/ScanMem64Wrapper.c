@@ -53,9 +53,9 @@ ScanMem64 (
   }
 
   ASSERT (Buffer != NULL);
-  ASSERT (((UINTN)Buffer & (sizeof (Value) - 1)) == 0);
-  ASSERT ((Length - 1) <= (MAX_ADDRESS - (UINTN)Buffer));
+  ASSERT (((UINTN) Buffer & (sizeof (Value) - 1)) == 0);
+  ASSERT ((Length - 1) <= (MAX_ADDRESS - (UINTN) Buffer));
   ASSERT ((Length & (sizeof (Value) - 1)) == 0);
 
-  return (VOID*)InternalMemScanMem64 (Buffer, Length / sizeof (Value), Value);
+  return (VOID *) InternalMemScanMem64 (Buffer, Length / sizeof (Value), Value);
 }

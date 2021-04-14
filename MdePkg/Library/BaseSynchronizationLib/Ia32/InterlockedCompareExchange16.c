@@ -7,9 +7,6 @@
 
 **/
 
-
-
-
 /**
   Performs an atomic compare exchange operation on a 16-bit unsigned integer.
 
@@ -36,10 +33,9 @@ InternalSyncCompareExchange16 (
   )
 {
   _asm {
-    mov     ecx, Value
+  mov  ecx, Value
     mov     ax, CompareValue
     mov     dx, ExchangeValue
-    lock    cmpxchg [ecx], dx
+    lock    cmpxchg[ecx], dx
   }
 }
-

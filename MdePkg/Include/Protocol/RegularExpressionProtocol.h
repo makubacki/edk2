@@ -15,32 +15,31 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #define EFI_REGULAR_EXPRESSION_PROTOCOL_GUID \
   { \
-    0xB3F79D9A, 0x436C, 0xDC11, {0xB0, 0x52, 0xCD, 0x85, 0xDF, 0x52, 0x4C, 0xE6 } \
+    0xB3F79D9A, 0x436C, 0xDC11, { 0xB0, 0x52, 0xCD, 0x85, 0xDF, 0x52, 0x4C, 0xE6 } \
   }
 
 #define EFI_REGEX_SYNTAX_TYPE_POSIX_EXTENDED_GUID \
   { \
-    0x5F05B20F, 0x4A56, 0xC231, {0xFA, 0x0B, 0xA7, 0xB1, 0xF1, 0x10, 0x04, 0x1D } \
+    0x5F05B20F, 0x4A56, 0xC231, { 0xFA, 0x0B, 0xA7, 0xB1, 0xF1, 0x10, 0x04, 0x1D } \
   }
 
 #define EFI_REGEX_SYNTAX_TYPE_PERL_GUID \
   { \
-    0x63E60A51, 0x497D, 0xD427, {0xC4, 0xA5, 0xB8, 0xAB, 0xDC, 0x3A, 0xAE, 0xB6 } \
+    0x63E60A51, 0x497D, 0xD427, { 0xC4, 0xA5, 0xB8, 0xAB, 0xDC, 0x3A, 0xAE, 0xB6 } \
   }
 
 #define EFI_REGEX_SYNTAX_TYPE_ECMA_262_GUID \
   { \
-    0x9A473A4A, 0x4CEB, 0xB95A, {0x41, 0x5E, 0x5B, 0xA0, 0xBC, 0x63, 0x9B, 0x2E } \
+    0x9A473A4A, 0x4CEB, 0xB95A, { 0x41, 0x5E, 0x5B, 0xA0, 0xBC, 0x63, 0x9B, 0x2E } \
   }
 
-typedef struct _EFI_REGULAR_EXPRESSION_PROTOCOL  EFI_REGULAR_EXPRESSION_PROTOCOL;
-
+typedef struct _EFI_REGULAR_EXPRESSION_PROTOCOL EFI_REGULAR_EXPRESSION_PROTOCOL;
 
 typedef struct {
-  CONST CHAR16 *CapturePtr; // Pointer to the start of the captured sub-expression
-                            // within matched String.
+  CONST CHAR16    *CapturePtr; // Pointer to the start of the captured sub-expression
+                               // within matched String.
 
-  UINTN        Length;      // Length of captured sub-expression.
+  UINTN           Length;   // Length of captured sub-expression.
 } EFI_REGEX_CAPTURE;
 
 typedef EFI_GUID EFI_REGEX_SYNTAX_TYPE;
@@ -48,6 +47,7 @@ typedef EFI_GUID EFI_REGEX_SYNTAX_TYPE;
 //
 // Protocol member functions
 //
+
 /**
   Returns information about the regular expression syntax types supported
   by the implementation.
@@ -81,12 +81,12 @@ typedef EFI_GUID EFI_REGEX_SYNTAX_TYPE;
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_REGULAR_EXPRESSION_GET_INFO) (
-  IN     EFI_REGULAR_EXPRESSION_PROTOCOL *This,
-  IN OUT UINTN                           *RegExSyntaxTypeListSize,
-  OUT    EFI_REGEX_SYNTAX_TYPE           *RegExSyntaxTypeList
-  );
+  EFI_STATUS
+(EFIAPI *EFI_REGULAR_EXPRESSION_GET_INFO)(
+                                          IN     EFI_REGULAR_EXPRESSION_PROTOCOL *This,
+                                          IN OUT UINTN                           *RegExSyntaxTypeListSize,
+                                          OUT    EFI_REGEX_SYNTAX_TYPE           *RegExSyntaxTypeList
+                                          );
 
 /**
   Checks if the input string matches to the regular expression pattern.
@@ -138,38 +138,40 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_REGULAR_EXPRESSION_MATCH) (
-  IN  EFI_REGULAR_EXPRESSION_PROTOCOL *This,
-  IN  CHAR16                          *String,
-  IN  CHAR16                          *Pattern,
-  IN  EFI_REGEX_SYNTAX_TYPE           *SyntaxType, OPTIONAL
-  OUT BOOLEAN                         *Result,
-  OUT EFI_REGEX_CAPTURE               **Captures, OPTIONAL
-  OUT UINTN                           *CapturesCount
-  );
+  EFI_STATUS
+(EFIAPI *EFI_REGULAR_EXPRESSION_MATCH)(
+                                       IN  EFI_REGULAR_EXPRESSION_PROTOCOL *This,
+                                       IN  CHAR16                          *String,
+                                       IN  CHAR16                          *Pattern,
+                                       IN  EFI_REGEX_SYNTAX_TYPE           *SyntaxType,
+                                       OPTIONAL
+                                       OUT BOOLEAN                         *Result,
+                                       OUT EFI_REGEX_CAPTURE               **Captures,
+                                       OPTIONAL
+                                       OUT UINTN                           *CapturesCount
+                                       );
 
 struct _EFI_REGULAR_EXPRESSION_PROTOCOL {
-  EFI_REGULAR_EXPRESSION_MATCH     MatchString;
-  EFI_REGULAR_EXPRESSION_GET_INFO  GetInfo;
-} ;
+  EFI_REGULAR_EXPRESSION_MATCH       MatchString;
+  EFI_REGULAR_EXPRESSION_GET_INFO    GetInfo;
+};
 
-extern EFI_GUID gEfiRegularExpressionProtocolGuid;
+extern EFI_GUID  gEfiRegularExpressionProtocolGuid;
 
 //
 // For regular expression rules specified in the POSIX Extended Regular
 // Expression (ERE) Syntax:
 //
-extern EFI_GUID gEfiRegexSyntaxTypePosixExtendedGuid;
+extern EFI_GUID  gEfiRegexSyntaxTypePosixExtendedGuid;
 
 //
 // For regular expression rules specifiedin the ECMA 262 Specification
 //
-extern EFI_GUID gEfiRegexSyntaxTypeEcma262Guid;
+extern EFI_GUID  gEfiRegexSyntaxTypeEcma262Guid;
 
 //
 // For regular expression rules specified in the Perl standard:
 //
-extern EFI_GUID gEfiRegexSyntaxTypePerlGuid;
+extern EFI_GUID  gEfiRegexSyntaxTypePerlGuid;
 
 #endif

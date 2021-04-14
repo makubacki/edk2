@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 /**
   Reads the current value of 64-bit MMX Register #4 (MM4).
 
@@ -25,12 +22,11 @@ AsmReadMm4 (
   )
 {
   _asm {
-    push    eax
-    push    eax
-    movq    [esp], mm4
+  push    eax
+  push    eax
+      movq[esp], mm4
     pop     eax
     pop     edx
-    emms
+      emms
   }
 }
-

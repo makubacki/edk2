@@ -31,12 +31,11 @@ AsmMonitor (
   )
 {
   _asm {
-    mov     eax, RegisterEax
+  mov  eax, RegisterEax
     mov     ecx, RegisterEcx
     mov     edx, RegisterEdx
-    _emit   0x0f             // monitor
+       _emit   0x0f          // monitor
     _emit   0x01
     _emit   0xc8
   }
 }
-

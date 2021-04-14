@@ -13,7 +13,7 @@
 
 #define EFI_SHELL_PARAMETERS_PROTOCOL_GUID \
   { \
-  0x752f3136, 0x4e16, 0x4fdc, { 0xa2, 0x2a, 0xe5, 0xf4, 0x68, 0x12, 0xf4, 0xca } \
+    0x752f3136, 0x4e16, 0x4fdc, { 0xa2, 0x2a, 0xe5, 0xf4, 0x68, 0x12, 0xf4, 0xca } \
   }
 
 typedef struct _EFI_SHELL_PARAMETERS_PROTOCOL {
@@ -23,32 +23,32 @@ typedef struct _EFI_SHELL_PARAMETERS_PROTOCOL {
   /// path of the executable. Any quotation marks that were used to preserve
   /// whitespace have been removed.
   ///
-  CHAR16 **Argv;
+  CHAR16               **Argv;
 
   ///
   /// The number of elements in the Argv array.
   ///
-  UINTN Argc;
+  UINTN                Argc;
 
   ///
   /// The file handle for the standard input for this executable. This may be different
   /// from the ConInHandle in EFI_SYSTEM_TABLE.
   ///
-  SHELL_FILE_HANDLE StdIn;
+  SHELL_FILE_HANDLE    StdIn;
 
   ///
   /// The file handle for the standard output for this executable. This may be different
   /// from the ConOutHandle in EFI_SYSTEM_TABLE.
   ///
-  SHELL_FILE_HANDLE StdOut;
+  SHELL_FILE_HANDLE    StdOut;
 
   ///
   /// The file handle for the standard error output for this executable. This may be
   /// different from the StdErrHandle in EFI_SYSTEM_TABLE.
   ///
-  SHELL_FILE_HANDLE StdErr;
+  SHELL_FILE_HANDLE    StdErr;
 } EFI_SHELL_PARAMETERS_PROTOCOL;
 
-extern EFI_GUID gEfiShellParametersProtocolGuid;
+extern EFI_GUID  gEfiShellParametersProtocolGuid;
 
 #endif

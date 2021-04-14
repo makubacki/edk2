@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 /**
   Performs an atomic compare exchange operation on a 64-bit unsigned integer.
 
@@ -34,11 +31,11 @@ InternalSyncCompareExchange64 (
   )
 {
   _asm {
-    mov     esi, Value
-    mov     eax, dword ptr [CompareValue + 0]
-    mov     edx, dword ptr [CompareValue + 4]
-    mov     ebx, dword ptr [ExchangeValue + 0]
-    mov     ecx, dword ptr [ExchangeValue + 4]
-    lock    cmpxchg8b   qword ptr [esi]
+  mov  esi, Value
+    mov     eax, dword ptr[CompareValue + 0]
+    mov     edx, dword ptr[CompareValue + 4]
+    mov     ebx, dword ptr[ExchangeValue + 0]
+    mov     ecx, dword ptr[ExchangeValue + 4]
+    lock    cmpxchg8b   qword ptr[esi]
   }
 }

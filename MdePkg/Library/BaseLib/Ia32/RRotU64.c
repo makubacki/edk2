@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 /**
   Rotates a 64-bit integer right between 0 and 63 bits, filling
   the high bits with the high low bits that were rotated.
@@ -31,9 +28,9 @@ InternalMathRRotU64 (
   )
 {
   _asm {
-    mov     cl, byte ptr [Count]
-    mov     eax, dword ptr [Operand + 0]
-    mov     edx, dword ptr [Operand + 4]
+  mov  cl, byte ptr[Count]
+    mov     eax, dword ptr[Operand + 0]
+    mov     edx, dword ptr[Operand + 4]
     shrd    ebx, eax, cl
     shrd    eax, edx, cl
     rol     ebx, cl
@@ -46,4 +43,3 @@ InternalMathRRotU64 (
 L0:
   }
 }
-

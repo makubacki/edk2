@@ -70,9 +70,11 @@ GetParamByNodeName (
     if (IS_RIGHT_PARENTH (*StrPointer)) {
       break;
     }
+
     StrPointer++;
     ParameterLength++;
   }
+
   if (IS_NULL (*StrPointer)) {
     //
     // ')' not found
@@ -84,6 +86,7 @@ GetParamByNodeName (
   if (ParamStr == NULL) {
     return NULL;
   }
+
   //
   // Terminate the parameter string
   //
@@ -127,6 +130,7 @@ SplitStr (
     if (*Str == Separator) {
       break;
     }
+
     Str++;
   }
 
@@ -199,6 +203,7 @@ GetNextDeviceNodeStr (
         !IS_RIGHT_PARENTH (*Str)) {
       break;
     }
+
     Str++;
   }
 
@@ -246,7 +251,6 @@ GetNextDeviceNodeStr (
   return ReturnStr;
 }
 
-
 /**
   Return whether the integer string is a hex string.
 
@@ -265,13 +269,14 @@ IsHexStr (
   // skip preceeding white space
   //
   while ((*Str != 0) && *Str == L' ') {
-    Str ++;
+    Str++;
   }
+
   //
   // skip preceeding zeros
   //
   while ((*Str != 0) && *Str == L'0') {
-    Str ++;
+    Str++;
   }
 
   return (BOOLEAN) (*Str == L'x' || *Str == L'X');
@@ -333,12 +338,13 @@ StrToAscii (
   IN OUT CHAR8  **AsciiStr
   )
 {
-  CHAR8 *Dest;
+  CHAR8  *Dest;
 
   Dest = *AsciiStr;
   while (!IS_NULL (*Str)) {
     *(Dest++) = (CHAR8) *(Str++);
   }
+
   *Dest = 0;
 
   //
@@ -361,10 +367,10 @@ DevPathFromTextGenericPath (
   IN CHAR16 *TextDeviceNode
   )
 {
-  EFI_DEVICE_PATH_PROTOCOL *Node;
-  CHAR16                   *SubtypeStr;
-  CHAR16                   *DataStr;
-  UINTN                    DataLength;
+  EFI_DEVICE_PATH_PROTOCOL  *Node;
+  CHAR16                    *SubtypeStr;
+  CHAR16                    *DataStr;
+  UINTN                     DataLength;
 
   SubtypeStr = GetNextParamStr (&TextDeviceNode);
   DataStr    = GetNextParamStr (&TextDeviceNode);
@@ -374,11 +380,12 @@ DevPathFromTextGenericPath (
   } else {
     DataLength = StrLen (DataStr) / 2;
   }
+
   Node = CreateDeviceNode (
-           Type,
-           (UINT8) Strtoi (SubtypeStr),
-           (UINT16) (sizeof (EFI_DEVICE_PATH_PROTOCOL) + DataLength)
-           );
+                           Type,
+                           (UINT8) Strtoi (SubtypeStr),
+                           (UINT16) (sizeof (EFI_DEVICE_PATH_PROTOCOL) + DataLength)
+                           );
 
   StrHexToBytes (DataStr, DataLength * 2, (UINT8 *) (Node + 1), DataLength);
   return Node;
@@ -397,9 +404,9 @@ DevPathFromTextPath (
   IN CHAR16 *TextDeviceNode
   )
 {
-  CHAR16                   *TypeStr;
+  CHAR16  *TypeStr;
 
-  TypeStr    = GetNextParamStr (&TextDeviceNode);
+  TypeStr = GetNextParamStr (&TextDeviceNode);
 
   return DevPathFromTextGenericPath ((UINT8) Strtoi (TypeStr), TextDeviceNode);
 }
@@ -433,17 +440,17 @@ DevPathFromTextPci (
   IN CHAR16 *TextDeviceNode
   )
 {
-  CHAR16          *FunctionStr;
-  CHAR16          *DeviceStr;
-  PCI_DEVICE_PATH *Pci;
+  CHAR16           *FunctionStr;
+  CHAR16           *DeviceStr;
+  PCI_DEVICE_PATH  *Pci;
 
   DeviceStr   = GetNextParamStr (&TextDeviceNode);
   FunctionStr = GetNextParamStr (&TextDeviceNode);
-  Pci         = (PCI_DEVICE_PATH *) CreateDeviceNode (
-                                      HARDWARE_DEVICE_PATH,
-                                      HW_PCI_DP,
-                                      (UINT16) sizeof (PCI_DEVICE_PATH)
-                                      );
+  Pci = (PCI_DEVICE_PATH *) CreateDeviceNode (
+                                              HARDWARE_DEVICE_PATH,
+                                              HW_PCI_DP,
+                                              (UINT16) sizeof (PCI_DEVICE_PATH)
+                                              );
 
   Pci->Function = (UINT8) Strtoi (FunctionStr);
   Pci->Device   = (UINT8) Strtoi (DeviceStr);
@@ -468,13 +475,13 @@ DevPathFromTextPcCard (
   PCCARD_DEVICE_PATH  *Pccard;
 
   FunctionNumberStr = GetNextParamStr (&TextDeviceNode);
-  Pccard            = (PCCARD_DEVICE_PATH *) CreateDeviceNode (
-                                               HARDWARE_DEVICE_PATH,
-                                               HW_PCCARD_DP,
-                                               (UINT16) sizeof (PCCARD_DEVICE_PATH)
-                                               );
+  Pccard = (PCCARD_DEVICE_PATH *) CreateDeviceNode (
+                                                    HARDWARE_DEVICE_PATH,
+                                                    HW_PCCARD_DP,
+                                                    (UINT16) sizeof (PCCARD_DEVICE_PATH)
+                                                    );
 
-  Pccard->FunctionNumber  = (UINT8) Strtoi (FunctionNumberStr);
+  Pccard->FunctionNumber = (UINT8) Strtoi (FunctionNumberStr);
 
   return (EFI_DEVICE_PATH_PROTOCOL *) Pccard;
 }
@@ -497,14 +504,14 @@ DevPathFromTextMemoryMapped (
   CHAR16              *EndingAddressStr;
   MEMMAP_DEVICE_PATH  *MemMap;
 
-  MemoryTypeStr      = GetNextParamStr (&TextDeviceNode);
+  MemoryTypeStr = GetNextParamStr (&TextDeviceNode);
   StartingAddressStr = GetNextParamStr (&TextDeviceNode);
   EndingAddressStr   = GetNextParamStr (&TextDeviceNode);
-  MemMap             = (MEMMAP_DEVICE_PATH *) CreateDeviceNode (
-                                               HARDWARE_DEVICE_PATH,
-                                               HW_MEMMAP_DP,
-                                               (UINT16) sizeof (MEMMAP_DEVICE_PATH)
-                                               );
+  MemMap = (MEMMAP_DEVICE_PATH *) CreateDeviceNode (
+                                                    HARDWARE_DEVICE_PATH,
+                                                    HW_MEMMAP_DP,
+                                                    (UINT16) sizeof (MEMMAP_DEVICE_PATH)
+                                                    );
 
   MemMap->MemoryType = (UINT32) Strtoi (MemoryTypeStr);
   Strtoi64 (StartingAddressStr, &MemMap->StartingAddress);
@@ -543,13 +550,13 @@ ConvertFromTextVendor (
   //
   // Two hex characters make up 1 buffer byte
   //
-  Length  = (Length + 1) / 2;
+  Length = (Length + 1) / 2;
 
-  Vendor  = (VENDOR_DEVICE_PATH *) CreateDeviceNode (
-                                     Type,
-                                     SubType,
-                                     (UINT16) (sizeof (VENDOR_DEVICE_PATH) + Length)
-                                     );
+  Vendor = (VENDOR_DEVICE_PATH *) CreateDeviceNode (
+                                                    Type,
+                                                    SubType,
+                                                    (UINT16) (sizeof (VENDOR_DEVICE_PATH) + Length)
+                                                    );
 
   StrToGuid (GuidStr, &Vendor->Guid);
   StrHexToBytes (DataStr, Length * 2, (UINT8 *) (Vendor + 1), Length);
@@ -571,10 +578,10 @@ DevPathFromTextVenHw (
   )
 {
   return ConvertFromTextVendor (
-           TextDeviceNode,
-           HARDWARE_DEVICE_PATH,
-           HW_VENDOR_DP
-           );
+                                TextDeviceNode,
+                                HARDWARE_DEVICE_PATH,
+                                HW_VENDOR_DP
+                                );
 }
 
 /**
@@ -595,10 +602,10 @@ DevPathFromTextCtrl (
 
   ControllerStr = GetNextParamStr (&TextDeviceNode);
   Controller    = (CONTROLLER_DEVICE_PATH *) CreateDeviceNode (
-                                               HARDWARE_DEVICE_PATH,
-                                               HW_CONTROLLER_DP,
-                                               (UINT16) sizeof (CONTROLLER_DEVICE_PATH)
-                                               );
+                                                               HARDWARE_DEVICE_PATH,
+                                                               HW_CONTROLLER_DP,
+                                                               (UINT16) sizeof (CONTROLLER_DEVICE_PATH)
+                                                               );
   Controller->ControllerNumber = (UINT32) Strtoi (ControllerStr);
 
   return (EFI_DEVICE_PATH_PROTOCOL *) Controller;
@@ -617,23 +624,23 @@ DevPathFromTextBmc (
   IN CHAR16 *TextDeviceNode
   )
 {
-  CHAR16                *InterfaceTypeStr;
-  CHAR16                *BaseAddressStr;
-  BMC_DEVICE_PATH       *BmcDp;
+  CHAR16           *InterfaceTypeStr;
+  CHAR16           *BaseAddressStr;
+  BMC_DEVICE_PATH  *BmcDp;
 
   InterfaceTypeStr = GetNextParamStr (&TextDeviceNode);
   BaseAddressStr   = GetNextParamStr (&TextDeviceNode);
-  BmcDp            = (BMC_DEVICE_PATH *) CreateDeviceNode (
-                                           HARDWARE_DEVICE_PATH,
-                                           HW_BMC_DP,
-                                           (UINT16) sizeof (BMC_DEVICE_PATH)
-                                           );
+  BmcDp = (BMC_DEVICE_PATH *) CreateDeviceNode (
+                                                HARDWARE_DEVICE_PATH,
+                                                HW_BMC_DP,
+                                                (UINT16) sizeof (BMC_DEVICE_PATH)
+                                                );
 
   BmcDp->InterfaceType = (UINT8) Strtoi (InterfaceTypeStr);
   WriteUnaligned64 (
-    (UINT64 *) (&BmcDp->BaseAddress),
-    StrHexToUint64 (BaseAddressStr)
-    );
+                    (UINT64 *) (&BmcDp->BaseAddress),
+                    StrHexToUint64 (BaseAddressStr)
+                    );
 
   return (EFI_DEVICE_PATH_PROTOCOL *) BmcDp;
 }
@@ -667,10 +674,10 @@ EisaIdFromText (
   )
 {
   return (((Text[0] - 'A' + 1) & 0x1f) << 10)
-       + (((Text[1] - 'A' + 1) & 0x1f) <<  5)
-       + (((Text[2] - 'A' + 1) & 0x1f) <<  0)
-       + (UINT32) (StrHexToUintn (&Text[3]) << 16)
-       ;
+         + (((Text[1] - 'A' + 1) & 0x1f) <<  5)
+         + (((Text[2] - 'A' + 1) & 0x1f) <<  0)
+         + (UINT32) (StrHexToUintn (&Text[3]) << 16)
+  ;
 }
 
 /**
@@ -693,10 +700,10 @@ DevPathFromTextAcpi (
   HIDStr = GetNextParamStr (&TextDeviceNode);
   UIDStr = GetNextParamStr (&TextDeviceNode);
   Acpi   = (ACPI_HID_DEVICE_PATH *) CreateDeviceNode (
-                                      ACPI_DEVICE_PATH,
-                                      ACPI_DP,
-                                      (UINT16) sizeof (ACPI_HID_DEVICE_PATH)
-                                      );
+                                                      ACPI_DEVICE_PATH,
+                                                      ACPI_DP,
+                                                      (UINT16) sizeof (ACPI_HID_DEVICE_PATH)
+                                                      );
 
   Acpi->HID = EisaIdFromText (HIDStr);
   Acpi->UID = (UINT32) Strtoi (UIDStr);
@@ -724,10 +731,10 @@ ConvertFromTextAcpi (
 
   UIDStr = GetNextParamStr (&TextDeviceNode);
   Acpi   = (ACPI_HID_DEVICE_PATH *) CreateDeviceNode (
-                                      ACPI_DEVICE_PATH,
-                                      ACPI_DP,
-                                      (UINT16) sizeof (ACPI_HID_DEVICE_PATH)
-                                      );
+                                                      ACPI_DEVICE_PATH,
+                                                      ACPI_DP,
+                                                      (UINT16) sizeof (ACPI_HID_DEVICE_PATH)
+                                                      );
 
   Acpi->HID = EFI_PNP_ID (PnPId);
   Acpi->UID = (UINT32) Strtoi (UIDStr);
@@ -861,20 +868,20 @@ DevPathFromTextAcpiEx (
   CIDSTRStr = GetNextParamStr (&TextDeviceNode);
   UIDSTRStr = GetNextParamStr (&TextDeviceNode);
 
-  Length    = (UINT16) (sizeof (ACPI_EXTENDED_HID_DEVICE_PATH) + StrLen (HIDSTRStr) + 1);
-  Length    = (UINT16) (Length + StrLen (UIDSTRStr) + 1);
-  Length    = (UINT16) (Length + StrLen (CIDSTRStr) + 1);
+  Length = (UINT16) (sizeof (ACPI_EXTENDED_HID_DEVICE_PATH) + StrLen (HIDSTRStr) + 1);
+  Length = (UINT16) (Length + StrLen (UIDSTRStr) + 1);
+  Length = (UINT16) (Length + StrLen (CIDSTRStr) + 1);
   AcpiEx = (ACPI_EXTENDED_HID_DEVICE_PATH *) CreateDeviceNode (
-                                               ACPI_DEVICE_PATH,
-                                               ACPI_EXTENDED_DP,
-                                               Length
-                                               );
+                                                               ACPI_DEVICE_PATH,
+                                                               ACPI_EXTENDED_DP,
+                                                               Length
+                                                               );
 
   AcpiEx->HID = EisaIdFromText (HIDStr);
   AcpiEx->CID = EisaIdFromText (CIDStr);
   AcpiEx->UID = (UINT32) Strtoi (UIDStr);
 
-  AsciiStr = (CHAR8 *) ((UINT8 *)AcpiEx + sizeof (ACPI_EXTENDED_HID_DEVICE_PATH));
+  AsciiStr = (CHAR8 *) ((UINT8 *) AcpiEx + sizeof (ACPI_EXTENDED_HID_DEVICE_PATH));
   StrToAscii (HIDSTRStr, &AsciiStr);
   StrToAscii (UIDSTRStr, &AsciiStr);
   StrToAscii (CIDSTRStr, &AsciiStr);
@@ -907,10 +914,10 @@ DevPathFromTextAcpiExp (
   UIDSTRStr = GetNextParamStr (&TextDeviceNode);
   Length    = (UINT16) (sizeof (ACPI_EXTENDED_HID_DEVICE_PATH) + StrLen (UIDSTRStr) + 3);
   AcpiEx    = (ACPI_EXTENDED_HID_DEVICE_PATH *) CreateDeviceNode (
-                                                  ACPI_DEVICE_PATH,
-                                                  ACPI_EXTENDED_DP,
-                                                  Length
-                                                  );
+                                                                  ACPI_DEVICE_PATH,
+                                                                  ACPI_EXTENDED_DP,
+                                                                  Length
+                                                                  );
 
   AcpiEx->HID = EisaIdFromText (HIDStr);
   //
@@ -923,9 +930,10 @@ DevPathFromTextAcpiExp (
   } else {
     AcpiEx->CID = EisaIdFromText (CIDStr);
   }
+
   AcpiEx->UID = 0;
 
-  AsciiStr = (CHAR8 *) ((UINT8 *)AcpiEx + sizeof (ACPI_EXTENDED_HID_DEVICE_PATH));
+  AsciiStr = (CHAR8 *) ((UINT8 *) AcpiEx + sizeof (ACPI_EXTENDED_HID_DEVICE_PATH));
   //
   // HID string is NULL
   //
@@ -962,10 +970,10 @@ DevPathFromTextAcpiAdr (
   UINTN                 Length;
 
   AcpiAdr = (ACPI_ADR_DEVICE_PATH *) CreateDeviceNode (
-                                       ACPI_DEVICE_PATH,
-                                       ACPI_ADR_DP,
-                                       (UINT16) sizeof (ACPI_ADR_DEVICE_PATH)
-                                       );
+                                                       ACPI_DEVICE_PATH,
+                                                       ACPI_ADR_DP,
+                                                       (UINT16) sizeof (ACPI_ADR_DEVICE_PATH)
+                                                       );
   ASSERT (AcpiAdr != NULL);
 
   for (Index = 0; ; Index++) {
@@ -973,13 +981,14 @@ DevPathFromTextAcpiAdr (
     if (IS_NULL (*DisplayDeviceStr)) {
       break;
     }
+
     if (Index > 0) {
       Length  = DevicePathNodeLength (AcpiAdr);
       AcpiAdr = ReallocatePool (
-                  Length,
-                  Length + sizeof (UINT32),
-                  AcpiAdr
-                  );
+                                Length,
+                                Length + sizeof (UINT32),
+                                AcpiAdr
+                                );
       ASSERT (AcpiAdr != NULL);
       SetDevicePathNodeLength (AcpiAdr, Length + sizeof (UINT32));
     }
@@ -1016,23 +1025,23 @@ DevPathFromTextMsg (
 **/
 EFI_DEVICE_PATH_PROTOCOL *
 DevPathFromTextAta (
-IN CHAR16 *TextDeviceNode
-)
+  IN CHAR16 *TextDeviceNode
+  )
 {
-  CHAR16            *PrimarySecondaryStr;
-  CHAR16            *SlaveMasterStr;
-  CHAR16            *LunStr;
-  ATAPI_DEVICE_PATH *Atapi;
+  CHAR16             *PrimarySecondaryStr;
+  CHAR16             *SlaveMasterStr;
+  CHAR16             *LunStr;
+  ATAPI_DEVICE_PATH  *Atapi;
 
   Atapi = (ATAPI_DEVICE_PATH *) CreateDeviceNode (
-    MESSAGING_DEVICE_PATH,
-    MSG_ATAPI_DP,
-    (UINT16) sizeof (ATAPI_DEVICE_PATH)
-    );
+                                                  MESSAGING_DEVICE_PATH,
+                                                  MSG_ATAPI_DP,
+                                                  (UINT16) sizeof (ATAPI_DEVICE_PATH)
+                                                  );
 
   PrimarySecondaryStr = GetNextParamStr (&TextDeviceNode);
-  SlaveMasterStr      = GetNextParamStr (&TextDeviceNode);
-  LunStr              = GetNextParamStr (&TextDeviceNode);
+  SlaveMasterStr = GetNextParamStr (&TextDeviceNode);
+  LunStr = GetNextParamStr (&TextDeviceNode);
 
   if (StrCmp (PrimarySecondaryStr, L"Primary") == 0) {
     Atapi->PrimarySecondary = 0;
@@ -1041,15 +1050,16 @@ IN CHAR16 *TextDeviceNode
   } else {
     Atapi->PrimarySecondary = (UINT8) Strtoi (PrimarySecondaryStr);
   }
+
   if (StrCmp (SlaveMasterStr, L"Master") == 0) {
-    Atapi->SlaveMaster      = 0;
+    Atapi->SlaveMaster = 0;
   } else if (StrCmp (SlaveMasterStr, L"Slave") == 0) {
-    Atapi->SlaveMaster      = 1;
+    Atapi->SlaveMaster = 1;
   } else {
-    Atapi->SlaveMaster      = (UINT8) Strtoi (SlaveMasterStr);
+    Atapi->SlaveMaster = (UINT8) Strtoi (SlaveMasterStr);
   }
 
-  Atapi->Lun                = (UINT16) Strtoi (LunStr);
+  Atapi->Lun = (UINT16) Strtoi (LunStr);
 
   return (EFI_DEVICE_PATH_PROTOCOL *) Atapi;
 }
@@ -1074,10 +1084,10 @@ DevPathFromTextScsi (
   PunStr = GetNextParamStr (&TextDeviceNode);
   LunStr = GetNextParamStr (&TextDeviceNode);
   Scsi   = (SCSI_DEVICE_PATH *) CreateDeviceNode (
-                                   MESSAGING_DEVICE_PATH,
-                                   MSG_SCSI_DP,
-                                   (UINT16) sizeof (SCSI_DEVICE_PATH)
-                                   );
+                                                  MESSAGING_DEVICE_PATH,
+                                                  MSG_SCSI_DP,
+                                                  (UINT16) sizeof (SCSI_DEVICE_PATH)
+                                                  );
 
   Scsi->Pun = (UINT16) Strtoi (PunStr);
   Scsi->Lun = (UINT16) Strtoi (LunStr);
@@ -1105,10 +1115,10 @@ DevPathFromTextFibre (
   WWNStr = GetNextParamStr (&TextDeviceNode);
   LunStr = GetNextParamStr (&TextDeviceNode);
   Fibre  = (FIBRECHANNEL_DEVICE_PATH *) CreateDeviceNode (
-                                          MESSAGING_DEVICE_PATH,
-                                          MSG_FIBRECHANNEL_DP,
-                                          (UINT16) sizeof (FIBRECHANNEL_DEVICE_PATH)
-                                          );
+                                                          MESSAGING_DEVICE_PATH,
+                                                          MSG_FIBRECHANNEL_DP,
+                                                          (UINT16) sizeof (FIBRECHANNEL_DEVICE_PATH)
+                                                          );
 
   Fibre->Reserved = 0;
   Strtoi64 (WWNStr, &Fibre->WWN);
@@ -1137,10 +1147,10 @@ DevPathFromTextFibreEx (
   WWNStr  = GetNextParamStr (&TextDeviceNode);
   LunStr  = GetNextParamStr (&TextDeviceNode);
   FibreEx = (FIBRECHANNELEX_DEVICE_PATH *) CreateDeviceNode (
-                                             MESSAGING_DEVICE_PATH,
-                                             MSG_FIBRECHANNELEX_DP,
-                                             (UINT16) sizeof (FIBRECHANNELEX_DEVICE_PATH)
-                                             );
+                                                             MESSAGING_DEVICE_PATH,
+                                                             MSG_FIBRECHANNELEX_DP,
+                                                             (UINT16) sizeof (FIBRECHANNELEX_DEVICE_PATH)
+                                                             );
 
   FibreEx->Reserved = 0;
   Strtoi64 (WWNStr, (UINT64 *) (&FibreEx->WWN));
@@ -1165,15 +1175,15 @@ DevPathFromText1394 (
   IN CHAR16 *TextDeviceNode
   )
 {
-  CHAR16            *GuidStr;
-  F1394_DEVICE_PATH *F1394DevPath;
+  CHAR16             *GuidStr;
+  F1394_DEVICE_PATH  *F1394DevPath;
 
   GuidStr = GetNextParamStr (&TextDeviceNode);
-  F1394DevPath  = (F1394_DEVICE_PATH *) CreateDeviceNode (
-                                          MESSAGING_DEVICE_PATH,
-                                          MSG_1394_DP,
-                                          (UINT16) sizeof (F1394_DEVICE_PATH)
-                                          );
+  F1394DevPath = (F1394_DEVICE_PATH *) CreateDeviceNode (
+                                                         MESSAGING_DEVICE_PATH,
+                                                         MSG_1394_DP,
+                                                         (UINT16) sizeof (F1394_DEVICE_PATH)
+                                                         );
 
   F1394DevPath->Reserved = 0;
   F1394DevPath->Guid     = StrHexToUint64 (GuidStr);
@@ -1194,17 +1204,17 @@ DevPathFromTextUsb (
   IN CHAR16 *TextDeviceNode
   )
 {
-  CHAR16          *PortStr;
-  CHAR16          *InterfaceStr;
-  USB_DEVICE_PATH *Usb;
+  CHAR16           *PortStr;
+  CHAR16           *InterfaceStr;
+  USB_DEVICE_PATH  *Usb;
 
-  PortStr               = GetNextParamStr (&TextDeviceNode);
-  InterfaceStr          = GetNextParamStr (&TextDeviceNode);
-  Usb                   = (USB_DEVICE_PATH *) CreateDeviceNode (
-                                                MESSAGING_DEVICE_PATH,
-                                                MSG_USB_DP,
-                                                (UINT16) sizeof (USB_DEVICE_PATH)
-                                                );
+  PortStr = GetNextParamStr (&TextDeviceNode);
+  InterfaceStr = GetNextParamStr (&TextDeviceNode);
+  Usb = (USB_DEVICE_PATH *) CreateDeviceNode (
+                                              MESSAGING_DEVICE_PATH,
+                                              MSG_USB_DP,
+                                              (UINT16) sizeof (USB_DEVICE_PATH)
+                                              );
 
   Usb->ParentPortNumber = (UINT8) Strtoi (PortStr);
   Usb->InterfaceNumber  = (UINT8) Strtoi (InterfaceStr);
@@ -1225,17 +1235,17 @@ DevPathFromTextI2O (
   IN CHAR16 *TextDeviceNode
   )
 {
-  CHAR16          *TIDStr;
-  I2O_DEVICE_PATH *I2ODevPath;
+  CHAR16           *TIDStr;
+  I2O_DEVICE_PATH  *I2ODevPath;
 
   TIDStr     = GetNextParamStr (&TextDeviceNode);
   I2ODevPath = (I2O_DEVICE_PATH *) CreateDeviceNode (
-                                    MESSAGING_DEVICE_PATH,
-                                    MSG_I2O_DP,
-                                    (UINT16) sizeof (I2O_DEVICE_PATH)
-                                    );
+                                                     MESSAGING_DEVICE_PATH,
+                                                     MSG_I2O_DP,
+                                                     (UINT16) sizeof (I2O_DEVICE_PATH)
+                                                     );
 
-  I2ODevPath->Tid  = (UINT32) Strtoi (TIDStr);
+  I2ODevPath->Tid = (UINT32) Strtoi (TIDStr);
 
   return (EFI_DEVICE_PATH_PROTOCOL *) I2ODevPath;
 }
@@ -1266,10 +1276,10 @@ DevPathFromTextInfiniband (
   TidStr     = GetNextParamStr (&TextDeviceNode);
   DidStr     = GetNextParamStr (&TextDeviceNode);
   InfiniBand = (INFINIBAND_DEVICE_PATH *) CreateDeviceNode (
-                                            MESSAGING_DEVICE_PATH,
-                                            MSG_INFINIBAND_DP,
-                                            (UINT16) sizeof (INFINIBAND_DEVICE_PATH)
-                                            );
+                                                            MESSAGING_DEVICE_PATH,
+                                                            MSG_INFINIBAND_DP,
+                                                            (UINT16) sizeof (INFINIBAND_DEVICE_PATH)
+                                                            );
 
   InfiniBand->ResourceFlags = (UINT32) Strtoi (FlagsStr);
   StrToGuid (GuidStr, (EFI_GUID *) InfiniBand->PortGid);
@@ -1294,10 +1304,10 @@ DevPathFromTextVenMsg (
   )
 {
   return ConvertFromTextVendor (
-            TextDeviceNode,
-            MESSAGING_DEVICE_PATH,
-            MSG_VENDOR_DP
-            );
+                                TextDeviceNode,
+                                MESSAGING_DEVICE_PATH,
+                                MSG_VENDOR_DP
+                                );
 }
 
 /**
@@ -1316,9 +1326,10 @@ DevPathFromTextVenPcAnsi (
   VENDOR_DEVICE_PATH  *Vendor;
 
   Vendor = (VENDOR_DEVICE_PATH *) CreateDeviceNode (
-                                    MESSAGING_DEVICE_PATH,
-                                    MSG_VENDOR_DP,
-                                    (UINT16) sizeof (VENDOR_DEVICE_PATH));
+                                                    MESSAGING_DEVICE_PATH,
+                                                    MSG_VENDOR_DP,
+                                                    (UINT16) sizeof (VENDOR_DEVICE_PATH)
+                                                    );
   CopyGuid (&Vendor->Guid, &gEfiPcAnsiGuid);
 
   return (EFI_DEVICE_PATH_PROTOCOL *) Vendor;
@@ -1340,9 +1351,10 @@ DevPathFromTextVenVt100 (
   VENDOR_DEVICE_PATH  *Vendor;
 
   Vendor = (VENDOR_DEVICE_PATH *) CreateDeviceNode (
-                                    MESSAGING_DEVICE_PATH,
-                                    MSG_VENDOR_DP,
-                                    (UINT16) sizeof (VENDOR_DEVICE_PATH));
+                                                    MESSAGING_DEVICE_PATH,
+                                                    MSG_VENDOR_DP,
+                                                    (UINT16) sizeof (VENDOR_DEVICE_PATH)
+                                                    );
   CopyGuid (&Vendor->Guid, &gEfiVT100Guid);
 
   return (EFI_DEVICE_PATH_PROTOCOL *) Vendor;
@@ -1364,9 +1376,10 @@ DevPathFromTextVenVt100Plus (
   VENDOR_DEVICE_PATH  *Vendor;
 
   Vendor = (VENDOR_DEVICE_PATH *) CreateDeviceNode (
-                                    MESSAGING_DEVICE_PATH,
-                                    MSG_VENDOR_DP,
-                                    (UINT16) sizeof (VENDOR_DEVICE_PATH));
+                                                    MESSAGING_DEVICE_PATH,
+                                                    MSG_VENDOR_DP,
+                                                    (UINT16) sizeof (VENDOR_DEVICE_PATH)
+                                                    );
   CopyGuid (&Vendor->Guid, &gEfiVT100PlusGuid);
 
   return (EFI_DEVICE_PATH_PROTOCOL *) Vendor;
@@ -1388,9 +1401,10 @@ DevPathFromTextVenUtf8 (
   VENDOR_DEVICE_PATH  *Vendor;
 
   Vendor = (VENDOR_DEVICE_PATH *) CreateDeviceNode (
-                                    MESSAGING_DEVICE_PATH,
-                                    MSG_VENDOR_DP,
-                                    (UINT16) sizeof (VENDOR_DEVICE_PATH));
+                                                    MESSAGING_DEVICE_PATH,
+                                                    MSG_VENDOR_DP,
+                                                    (UINT16) sizeof (VENDOR_DEVICE_PATH)
+                                                    );
   CopyGuid (&Vendor->Guid, &gEfiVTUTF8Guid);
 
   return (EFI_DEVICE_PATH_PROTOCOL *) Vendor;
@@ -1409,15 +1423,15 @@ DevPathFromTextUartFlowCtrl (
   IN CHAR16 *TextDeviceNode
   )
 {
-  CHAR16                        *ValueStr;
-  UART_FLOW_CONTROL_DEVICE_PATH *UartFlowControl;
+  CHAR16                         *ValueStr;
+  UART_FLOW_CONTROL_DEVICE_PATH  *UartFlowControl;
 
-  ValueStr        = GetNextParamStr (&TextDeviceNode);
+  ValueStr = GetNextParamStr (&TextDeviceNode);
   UartFlowControl = (UART_FLOW_CONTROL_DEVICE_PATH *) CreateDeviceNode (
-                                                        MESSAGING_DEVICE_PATH,
-                                                        MSG_VENDOR_DP,
-                                                        (UINT16) sizeof (UART_FLOW_CONTROL_DEVICE_PATH)
-                                                        );
+                                                                        MESSAGING_DEVICE_PATH,
+                                                                        MSG_VENDOR_DP,
+                                                                        (UINT16) sizeof (UART_FLOW_CONTROL_DEVICE_PATH)
+                                                                        );
 
   CopyGuid (&UartFlowControl->Guid, &gEfiUartDevicePathGuid);
   if (StrCmp (ValueStr, L"XonXoff") == 0) {
@@ -1444,17 +1458,17 @@ DevPathFromTextSAS (
   IN CHAR16 *TextDeviceNode
   )
 {
-  CHAR16          *AddressStr;
-  CHAR16          *LunStr;
-  CHAR16          *RTPStr;
-  CHAR16          *SASSATAStr;
-  CHAR16          *LocationStr;
-  CHAR16          *ConnectStr;
-  CHAR16          *DriveBayStr;
-  CHAR16          *ReservedStr;
-  UINT16          Info;
-  UINT16          Uint16;
-  SAS_DEVICE_PATH *Sas;
+  CHAR16           *AddressStr;
+  CHAR16           *LunStr;
+  CHAR16           *RTPStr;
+  CHAR16           *SASSATAStr;
+  CHAR16           *LocationStr;
+  CHAR16           *ConnectStr;
+  CHAR16           *DriveBayStr;
+  CHAR16           *ReservedStr;
+  UINT16           Info;
+  UINT16           Uint16;
+  SAS_DEVICE_PATH  *Sas;
 
   AddressStr  = GetNextParamStr (&TextDeviceNode);
   LunStr      = GetNextParamStr (&TextDeviceNode);
@@ -1464,11 +1478,11 @@ DevPathFromTextSAS (
   ConnectStr  = GetNextParamStr (&TextDeviceNode);
   DriveBayStr = GetNextParamStr (&TextDeviceNode);
   ReservedStr = GetNextParamStr (&TextDeviceNode);
-  Sas         = (SAS_DEVICE_PATH *) CreateDeviceNode (
-                                       MESSAGING_DEVICE_PATH,
-                                       MSG_VENDOR_DP,
-                                       (UINT16) sizeof (SAS_DEVICE_PATH)
-                                       );
+  Sas = (SAS_DEVICE_PATH *) CreateDeviceNode (
+                                              MESSAGING_DEVICE_PATH,
+                                              MSG_VENDOR_DP,
+                                              (UINT16) sizeof (SAS_DEVICE_PATH)
+                                              );
 
   CopyGuid (&Sas->Guid, &gEfiSasDevicePathGuid);
   Strtoi64 (AddressStr, &Sas->SasAddress);
@@ -1477,9 +1491,7 @@ DevPathFromTextSAS (
 
   if (StrCmp (SASSATAStr, L"NoTopology") == 0) {
     Info = 0x0;
-
   } else if ((StrCmp (SASSATAStr, L"SATA") == 0) || (StrCmp (SASSATAStr, L"SAS") == 0)) {
-
     Uint16 = (UINT16) Strtoi (DriveBayStr);
     if (Uint16 == 0) {
       Info = 0x1;
@@ -1502,6 +1514,7 @@ DevPathFromTextSAS (
     } else {
       Uint16 = ((UINT16) Strtoi (LocationStr) & BIT0);
     }
+
     Info |= (Uint16 << 5);
 
     //
@@ -1515,14 +1528,14 @@ DevPathFromTextSAS (
     } else {
       Uint16 = ((UINT16) Strtoi (ConnectStr) & (BIT0 | BIT1));
     }
-    Info |= (Uint16 << 6);
 
+    Info |= (Uint16 << 6);
   } else {
     Info = (UINT16) Strtoi (SASSATAStr);
   }
 
   Sas->DeviceTopology = Info;
-  Sas->Reserved       = (UINT32) Strtoi (ReservedStr);
+  Sas->Reserved = (UINT32) Strtoi (ReservedStr);
 
   return (EFI_DEVICE_PATH_PROTOCOL *) Sas;
 }
@@ -1540,18 +1553,18 @@ DevPathFromTextSasEx (
   IN CHAR16 *TextDeviceNode
   )
 {
-  CHAR16            *AddressStr;
-  CHAR16            *LunStr;
-  CHAR16            *RTPStr;
-  CHAR16            *SASSATAStr;
-  CHAR16            *LocationStr;
-  CHAR16            *ConnectStr;
-  CHAR16            *DriveBayStr;
-  UINT16            Info;
-  UINT16            Uint16;
-  UINT64            SasAddress;
-  UINT64            Lun;
-  SASEX_DEVICE_PATH *SasEx;
+  CHAR16             *AddressStr;
+  CHAR16             *LunStr;
+  CHAR16             *RTPStr;
+  CHAR16             *SASSATAStr;
+  CHAR16             *LocationStr;
+  CHAR16             *ConnectStr;
+  CHAR16             *DriveBayStr;
+  UINT16             Info;
+  UINT16             Uint16;
+  UINT64             SasAddress;
+  UINT64             Lun;
+  SASEX_DEVICE_PATH  *SasEx;
 
   AddressStr  = GetNextParamStr (&TextDeviceNode);
   LunStr      = GetNextParamStr (&TextDeviceNode);
@@ -1560,23 +1573,21 @@ DevPathFromTextSasEx (
   LocationStr = GetNextParamStr (&TextDeviceNode);
   ConnectStr  = GetNextParamStr (&TextDeviceNode);
   DriveBayStr = GetNextParamStr (&TextDeviceNode);
-  SasEx       = (SASEX_DEVICE_PATH *) CreateDeviceNode (
-                                        MESSAGING_DEVICE_PATH,
-                                        MSG_SASEX_DP,
-                                        (UINT16) sizeof (SASEX_DEVICE_PATH)
-                                        );
+  SasEx = (SASEX_DEVICE_PATH *) CreateDeviceNode (
+                                                  MESSAGING_DEVICE_PATH,
+                                                  MSG_SASEX_DP,
+                                                  (UINT16) sizeof (SASEX_DEVICE_PATH)
+                                                  );
 
   Strtoi64 (AddressStr, &SasAddress);
-  Strtoi64 (LunStr,     &Lun);
+  Strtoi64 (LunStr, &Lun);
   WriteUnaligned64 ((UINT64 *) &SasEx->SasAddress, SwapBytes64 (SasAddress));
-  WriteUnaligned64 ((UINT64 *) &SasEx->Lun,        SwapBytes64 (Lun));
-  SasEx->RelativeTargetPort      = (UINT16) Strtoi (RTPStr);
+  WriteUnaligned64 ((UINT64 *) &SasEx->Lun, SwapBytes64 (Lun));
+  SasEx->RelativeTargetPort = (UINT16) Strtoi (RTPStr);
 
   if (StrCmp (SASSATAStr, L"NoTopology") == 0) {
     Info = 0x0;
-
   } else if ((StrCmp (SASSATAStr, L"SATA") == 0) || (StrCmp (SASSATAStr, L"SAS") == 0)) {
-
     Uint16 = (UINT16) Strtoi (DriveBayStr);
     if (Uint16 == 0) {
       Info = 0x1;
@@ -1599,6 +1610,7 @@ DevPathFromTextSasEx (
     } else {
       Uint16 = ((UINT16) Strtoi (LocationStr) & BIT0);
     }
+
     Info |= (Uint16 << 5);
 
     //
@@ -1612,8 +1624,8 @@ DevPathFromTextSasEx (
     } else {
       Uint16 = ((UINT16) Strtoi (ConnectStr) & (BIT0 | BIT1));
     }
-    Info |= (Uint16 << 6);
 
+    Info |= (Uint16 << 6);
   } else {
     Info = (UINT16) Strtoi (SASSATAStr);
   }
@@ -1636,19 +1648,19 @@ DevPathFromTextNVMe (
   IN CHAR16 *TextDeviceNode
   )
 {
-  CHAR16                     *NamespaceIdStr;
-  CHAR16                     *NamespaceUuidStr;
-  NVME_NAMESPACE_DEVICE_PATH *Nvme;
-  UINT8                      *Uuid;
-  UINTN                      Index;
+  CHAR16                      *NamespaceIdStr;
+  CHAR16                      *NamespaceUuidStr;
+  NVME_NAMESPACE_DEVICE_PATH  *Nvme;
+  UINT8                       *Uuid;
+  UINTN                       Index;
 
   NamespaceIdStr   = GetNextParamStr (&TextDeviceNode);
   NamespaceUuidStr = GetNextParamStr (&TextDeviceNode);
   Nvme = (NVME_NAMESPACE_DEVICE_PATH *) CreateDeviceNode (
-    MESSAGING_DEVICE_PATH,
-    MSG_NVME_NAMESPACE_DP,
-    (UINT16) sizeof (NVME_NAMESPACE_DEVICE_PATH)
-    );
+                                                          MESSAGING_DEVICE_PATH,
+                                                          MSG_NVME_NAMESPACE_DP,
+                                                          (UINT16) sizeof (NVME_NAMESPACE_DEVICE_PATH)
+                                                          );
 
   Nvme->NamespaceId = (UINT32) Strtoi (NamespaceIdStr);
   Uuid = (UINT8 *) &Nvme->NamespaceUuid;
@@ -1674,17 +1686,17 @@ DevPathFromTextUfs (
   IN CHAR16 *TextDeviceNode
   )
 {
-  CHAR16            *PunStr;
-  CHAR16            *LunStr;
-  UFS_DEVICE_PATH   *Ufs;
+  CHAR16           *PunStr;
+  CHAR16           *LunStr;
+  UFS_DEVICE_PATH  *Ufs;
 
   PunStr = GetNextParamStr (&TextDeviceNode);
   LunStr = GetNextParamStr (&TextDeviceNode);
   Ufs    = (UFS_DEVICE_PATH *) CreateDeviceNode (
-                                 MESSAGING_DEVICE_PATH,
-                                 MSG_UFS_DP,
-                                 (UINT16) sizeof (UFS_DEVICE_PATH)
-                                 );
+                                                 MESSAGING_DEVICE_PATH,
+                                                 MSG_UFS_DP,
+                                                 (UINT16) sizeof (UFS_DEVICE_PATH)
+                                                 );
 
   Ufs->Pun = (UINT8) Strtoi (PunStr);
   Ufs->Lun = (UINT8) Strtoi (LunStr);
@@ -1705,15 +1717,15 @@ DevPathFromTextSd (
   IN CHAR16 *TextDeviceNode
   )
 {
-  CHAR16            *SlotNumberStr;
-  SD_DEVICE_PATH    *Sd;
+  CHAR16          *SlotNumberStr;
+  SD_DEVICE_PATH  *Sd;
 
   SlotNumberStr = GetNextParamStr (&TextDeviceNode);
-  Sd            = (SD_DEVICE_PATH *) CreateDeviceNode (
-                                       MESSAGING_DEVICE_PATH,
-                                       MSG_SD_DP,
-                                       (UINT16) sizeof (SD_DEVICE_PATH)
-                                       );
+  Sd = (SD_DEVICE_PATH *) CreateDeviceNode (
+                                            MESSAGING_DEVICE_PATH,
+                                            MSG_SD_DP,
+                                            (UINT16) sizeof (SD_DEVICE_PATH)
+                                            );
 
   Sd->SlotNumber = (UINT8) Strtoi (SlotNumberStr);
 
@@ -1737,11 +1749,11 @@ DevPathFromTextEmmc (
   EMMC_DEVICE_PATH  *Emmc;
 
   SlotNumberStr = GetNextParamStr (&TextDeviceNode);
-  Emmc          = (EMMC_DEVICE_PATH *) CreateDeviceNode (
-                                       MESSAGING_DEVICE_PATH,
-                                       MSG_EMMC_DP,
-                                       (UINT16) sizeof (EMMC_DEVICE_PATH)
-                                       );
+  Emmc = (EMMC_DEVICE_PATH *) CreateDeviceNode (
+                                                MESSAGING_DEVICE_PATH,
+                                                MSG_EMMC_DP,
+                                                (UINT16) sizeof (EMMC_DEVICE_PATH)
+                                                );
 
   Emmc->SlotNumber = (UINT8) Strtoi (SlotNumberStr);
 
@@ -1764,10 +1776,10 @@ DevPathFromTextDebugPort (
   VENDOR_DEVICE_PATH  *Vend;
 
   Vend = (VENDOR_DEVICE_PATH *) CreateDeviceNode (
-                                                    MESSAGING_DEVICE_PATH,
-                                                    MSG_VENDOR_DP,
-                                                    (UINT16) sizeof (VENDOR_DEVICE_PATH)
-                                                    );
+                                                  MESSAGING_DEVICE_PATH,
+                                                  MSG_VENDOR_DP,
+                                                  (UINT16) sizeof (VENDOR_DEVICE_PATH)
+                                                  );
 
   CopyGuid (&Vend->Guid, &gEfiDebugPortProtocolGuid);
 
@@ -1792,15 +1804,15 @@ DevPathFromTextMAC (
   UINTN                 Length;
   MAC_ADDR_DEVICE_PATH  *MACDevPath;
 
-  AddressStr    = GetNextParamStr (&TextDeviceNode);
-  IfTypeStr     = GetNextParamStr (&TextDeviceNode);
-  MACDevPath    = (MAC_ADDR_DEVICE_PATH *) CreateDeviceNode (
-                                              MESSAGING_DEVICE_PATH,
-                                              MSG_MAC_ADDR_DP,
-                                              (UINT16) sizeof (MAC_ADDR_DEVICE_PATH)
-                                              );
+  AddressStr = GetNextParamStr (&TextDeviceNode);
+  IfTypeStr  = GetNextParamStr (&TextDeviceNode);
+  MACDevPath = (MAC_ADDR_DEVICE_PATH *) CreateDeviceNode (
+                                                          MESSAGING_DEVICE_PATH,
+                                                          MSG_MAC_ADDR_DP,
+                                                          (UINT16) sizeof (MAC_ADDR_DEVICE_PATH)
+                                                          );
 
-  MACDevPath->IfType   = (UINT8) Strtoi (IfTypeStr);
+  MACDevPath->IfType = (UINT8) Strtoi (IfTypeStr);
 
   Length = sizeof (EFI_MAC_ADDRESS);
   if (MACDevPath->IfType == 0x01 || MACDevPath->IfType == 0x00) {
@@ -1811,7 +1823,6 @@ DevPathFromTextMAC (
 
   return (EFI_DEVICE_PATH_PROTOCOL *) MACDevPath;
 }
-
 
 /**
   Converts a text format to the network protocol ID.
@@ -1837,7 +1848,6 @@ NetworkProtocolFromText (
   return Strtoi (Text);
 }
 
-
 /**
   Converts a text device path node to IPV4 device path structure.
 
@@ -1859,17 +1869,17 @@ DevPathFromTextIPv4 (
   CHAR16            *SubnetMaskStr;
   IPv4_DEVICE_PATH  *IPv4;
 
-  RemoteIPStr           = GetNextParamStr (&TextDeviceNode);
-  ProtocolStr           = GetNextParamStr (&TextDeviceNode);
-  TypeStr               = GetNextParamStr (&TextDeviceNode);
-  LocalIPStr            = GetNextParamStr (&TextDeviceNode);
-  GatewayIPStr          = GetNextParamStr (&TextDeviceNode);
-  SubnetMaskStr         = GetNextParamStr (&TextDeviceNode);
-  IPv4                  = (IPv4_DEVICE_PATH *) CreateDeviceNode (
-                                                 MESSAGING_DEVICE_PATH,
-                                                 MSG_IPv4_DP,
-                                                 (UINT16) sizeof (IPv4_DEVICE_PATH)
-                                                 );
+  RemoteIPStr   = GetNextParamStr (&TextDeviceNode);
+  ProtocolStr   = GetNextParamStr (&TextDeviceNode);
+  TypeStr       = GetNextParamStr (&TextDeviceNode);
+  LocalIPStr    = GetNextParamStr (&TextDeviceNode);
+  GatewayIPStr  = GetNextParamStr (&TextDeviceNode);
+  SubnetMaskStr = GetNextParamStr (&TextDeviceNode);
+  IPv4 = (IPv4_DEVICE_PATH *) CreateDeviceNode (
+                                                MESSAGING_DEVICE_PATH,
+                                                MSG_IPv4_DP,
+                                                (UINT16) sizeof (IPv4_DEVICE_PATH)
+                                                );
 
   StrToIpv4Address (RemoteIPStr, NULL, &IPv4->RemoteIpAddress, NULL);
   IPv4->Protocol = (UINT16) NetworkProtocolFromText (ProtocolStr);
@@ -1881,15 +1891,15 @@ DevPathFromTextIPv4 (
 
   StrToIpv4Address (LocalIPStr, NULL, &IPv4->LocalIpAddress, NULL);
   if (!IS_NULL (*GatewayIPStr) && !IS_NULL (*SubnetMaskStr)) {
-    StrToIpv4Address (GatewayIPStr,  NULL, &IPv4->GatewayIpAddress, NULL);
-    StrToIpv4Address (SubnetMaskStr, NULL, &IPv4->SubnetMask,       NULL);
+    StrToIpv4Address (GatewayIPStr, NULL, &IPv4->GatewayIpAddress, NULL);
+    StrToIpv4Address (SubnetMaskStr, NULL, &IPv4->SubnetMask, NULL);
   } else {
     ZeroMem (&IPv4->GatewayIpAddress, sizeof (IPv4->GatewayIpAddress));
-    ZeroMem (&IPv4->SubnetMask,    sizeof (IPv4->SubnetMask));
+    ZeroMem (&IPv4->SubnetMask, sizeof (IPv4->SubnetMask));
   }
 
-  IPv4->LocalPort       = 0;
-  IPv4->RemotePort      = 0;
+  IPv4->LocalPort  = 0;
+  IPv4->RemotePort = 0;
 
   return (EFI_DEVICE_PATH_PROTOCOL *) IPv4;
 }
@@ -1915,20 +1925,20 @@ DevPathFromTextIPv6 (
   CHAR16            *PrefixLengthStr;
   IPv6_DEVICE_PATH  *IPv6;
 
-  RemoteIPStr           = GetNextParamStr (&TextDeviceNode);
-  ProtocolStr           = GetNextParamStr (&TextDeviceNode);
-  TypeStr               = GetNextParamStr (&TextDeviceNode);
-  LocalIPStr            = GetNextParamStr (&TextDeviceNode);
-  PrefixLengthStr       = GetNextParamStr (&TextDeviceNode);
-  GatewayIPStr          = GetNextParamStr (&TextDeviceNode);
-  IPv6                  = (IPv6_DEVICE_PATH *) CreateDeviceNode (
-                                                 MESSAGING_DEVICE_PATH,
-                                                 MSG_IPv6_DP,
-                                                 (UINT16) sizeof (IPv6_DEVICE_PATH)
-                                                 );
+  RemoteIPStr     = GetNextParamStr (&TextDeviceNode);
+  ProtocolStr     = GetNextParamStr (&TextDeviceNode);
+  TypeStr         = GetNextParamStr (&TextDeviceNode);
+  LocalIPStr      = GetNextParamStr (&TextDeviceNode);
+  PrefixLengthStr = GetNextParamStr (&TextDeviceNode);
+  GatewayIPStr    = GetNextParamStr (&TextDeviceNode);
+  IPv6 = (IPv6_DEVICE_PATH *) CreateDeviceNode (
+                                                MESSAGING_DEVICE_PATH,
+                                                MSG_IPv6_DP,
+                                                (UINT16) sizeof (IPv6_DEVICE_PATH)
+                                                );
 
   StrToIpv6Address (RemoteIPStr, NULL, &IPv6->RemoteIpAddress, NULL);
-  IPv6->Protocol        = (UINT16) NetworkProtocolFromText (ProtocolStr);
+  IPv6->Protocol = (UINT16) NetworkProtocolFromText (ProtocolStr);
   if (StrCmp (TypeStr, L"Static") == 0) {
     IPv6->IpAddressOrigin = 0;
   } else if (StrCmp (TypeStr, L"StatelessAutoConfigure") == 0) {
@@ -1946,8 +1956,8 @@ DevPathFromTextIPv6 (
     IPv6->PrefixLength = 0;
   }
 
-  IPv6->LocalPort       = 0;
-  IPv6->RemotePort      = 0;
+  IPv6->LocalPort  = 0;
+  IPv6->RemotePort = 0;
 
   return (EFI_DEVICE_PATH_PROTOCOL *) IPv6;
 }
@@ -1971,50 +1981,51 @@ DevPathFromTextUart (
   CHAR16            *StopBitsStr;
   UART_DEVICE_PATH  *Uart;
 
-  BaudStr         = GetNextParamStr (&TextDeviceNode);
-  DataBitsStr     = GetNextParamStr (&TextDeviceNode);
-  ParityStr       = GetNextParamStr (&TextDeviceNode);
-  StopBitsStr     = GetNextParamStr (&TextDeviceNode);
-  Uart            = (UART_DEVICE_PATH *) CreateDeviceNode (
-                                           MESSAGING_DEVICE_PATH,
-                                           MSG_UART_DP,
-                                           (UINT16) sizeof (UART_DEVICE_PATH)
-                                           );
+  BaudStr     = GetNextParamStr (&TextDeviceNode);
+  DataBitsStr = GetNextParamStr (&TextDeviceNode);
+  ParityStr   = GetNextParamStr (&TextDeviceNode);
+  StopBitsStr = GetNextParamStr (&TextDeviceNode);
+  Uart = (UART_DEVICE_PATH *) CreateDeviceNode (
+                                                MESSAGING_DEVICE_PATH,
+                                                MSG_UART_DP,
+                                                (UINT16) sizeof (UART_DEVICE_PATH)
+                                                );
 
   if (StrCmp (BaudStr, L"DEFAULT") == 0) {
     Uart->BaudRate = 115200;
   } else {
     Strtoi64 (BaudStr, &Uart->BaudRate);
   }
-  Uart->DataBits  = (UINT8) ((StrCmp (DataBitsStr, L"DEFAULT") == 0) ? 8 : Strtoi (DataBitsStr));
+
+  Uart->DataBits = (UINT8) ((StrCmp (DataBitsStr, L"DEFAULT") == 0) ? 8 : Strtoi (DataBitsStr));
   switch (*ParityStr) {
-  case L'D':
-    Uart->Parity = 0;
-    break;
+    case L'D':
+      Uart->Parity = 0;
+      break;
 
-  case L'N':
-    Uart->Parity = 1;
-    break;
+    case L'N':
+      Uart->Parity = 1;
+      break;
 
-  case L'E':
-    Uart->Parity = 2;
-    break;
+    case L'E':
+      Uart->Parity = 2;
+      break;
 
-  case L'O':
-    Uart->Parity = 3;
-    break;
+    case L'O':
+      Uart->Parity = 3;
+      break;
 
-  case L'M':
-    Uart->Parity = 4;
-    break;
+    case L'M':
+      Uart->Parity = 4;
+      break;
 
-  case L'S':
-    Uart->Parity = 5;
-    break;
+    case L'S':
+      Uart->Parity = 5;
+      break;
 
-  default:
-    Uart->Parity = (UINT8) Strtoi (ParityStr);
-    break;
+    default:
+      Uart->Parity = (UINT8) Strtoi (ParityStr);
+      break;
   }
 
   if (StrCmp (StopBitsStr, L"D") == 0) {
@@ -2047,21 +2058,21 @@ ConvertFromTextUsbClass (
   IN USB_CLASS_TEXT *UsbClassText
   )
 {
-  CHAR16                *VIDStr;
-  CHAR16                *PIDStr;
-  CHAR16                *ClassStr;
-  CHAR16                *SubClassStr;
-  CHAR16                *ProtocolStr;
-  USB_CLASS_DEVICE_PATH *UsbClass;
+  CHAR16                 *VIDStr;
+  CHAR16                 *PIDStr;
+  CHAR16                 *ClassStr;
+  CHAR16                 *SubClassStr;
+  CHAR16                 *ProtocolStr;
+  USB_CLASS_DEVICE_PATH  *UsbClass;
 
-  UsbClass    = (USB_CLASS_DEVICE_PATH *) CreateDeviceNode (
-                                            MESSAGING_DEVICE_PATH,
-                                            MSG_USB_CLASS_DP,
-                                            (UINT16) sizeof (USB_CLASS_DEVICE_PATH)
-                                            );
+  UsbClass = (USB_CLASS_DEVICE_PATH *) CreateDeviceNode (
+                                                         MESSAGING_DEVICE_PATH,
+                                                         MSG_USB_CLASS_DP,
+                                                         (UINT16) sizeof (USB_CLASS_DEVICE_PATH)
+                                                         );
 
-  VIDStr      = GetNextParamStr (&TextDeviceNode);
-  PIDStr      = GetNextParamStr (&TextDeviceNode);
+  VIDStr = GetNextParamStr (&TextDeviceNode);
+  PIDStr = GetNextParamStr (&TextDeviceNode);
   if (UsbClassText->ClassExist) {
     ClassStr = GetNextParamStr (&TextDeviceNode);
     if (*ClassStr == L'\0') {
@@ -2072,6 +2083,7 @@ ConvertFromTextUsbClass (
   } else {
     UsbClass->DeviceClass = UsbClassText->Class;
   }
+
   if (UsbClassText->SubClassExist) {
     SubClassStr = GetNextParamStr (&TextDeviceNode);
     if (*SubClassStr == L'\0') {
@@ -2086,24 +2098,25 @@ ConvertFromTextUsbClass (
   ProtocolStr = GetNextParamStr (&TextDeviceNode);
 
   if (*VIDStr == L'\0') {
-    UsbClass->VendorId        = 0xFFFF;
+    UsbClass->VendorId = 0xFFFF;
   } else {
-    UsbClass->VendorId        = (UINT16) Strtoi (VIDStr);
+    UsbClass->VendorId = (UINT16) Strtoi (VIDStr);
   }
+
   if (*PIDStr == L'\0') {
-    UsbClass->ProductId       = 0xFFFF;
+    UsbClass->ProductId = 0xFFFF;
   } else {
-    UsbClass->ProductId       = (UINT16) Strtoi (PIDStr);
+    UsbClass->ProductId = (UINT16) Strtoi (PIDStr);
   }
+
   if (*ProtocolStr == L'\0') {
-    UsbClass->DeviceProtocol  = 0xFF;
+    UsbClass->DeviceProtocol = 0xFF;
   } else {
-    UsbClass->DeviceProtocol  = (UINT8) Strtoi (ProtocolStr);
+    UsbClass->DeviceProtocol = (UINT8) Strtoi (ProtocolStr);
   }
 
   return (EFI_DEVICE_PATH_PROTOCOL *) UsbClass;
 }
-
 
 /**
   Converts a text device path node to USB class device path structure.
@@ -2141,8 +2154,8 @@ DevPathFromTextUsbAudio (
 {
   USB_CLASS_TEXT  UsbClassText;
 
-  UsbClassText.ClassExist    = FALSE;
-  UsbClassText.Class         = USB_CLASS_AUDIO;
+  UsbClassText.ClassExist = FALSE;
+  UsbClassText.Class = USB_CLASS_AUDIO;
   UsbClassText.SubClassExist = TRUE;
 
   return ConvertFromTextUsbClass (TextDeviceNode, &UsbClassText);
@@ -2163,8 +2176,8 @@ DevPathFromTextUsbCDCControl (
 {
   USB_CLASS_TEXT  UsbClassText;
 
-  UsbClassText.ClassExist    = FALSE;
-  UsbClassText.Class         = USB_CLASS_CDCCONTROL;
+  UsbClassText.ClassExist = FALSE;
+  UsbClassText.Class = USB_CLASS_CDCCONTROL;
   UsbClassText.SubClassExist = TRUE;
 
   return ConvertFromTextUsbClass (TextDeviceNode, &UsbClassText);
@@ -2185,8 +2198,8 @@ DevPathFromTextUsbHID (
 {
   USB_CLASS_TEXT  UsbClassText;
 
-  UsbClassText.ClassExist    = FALSE;
-  UsbClassText.Class         = USB_CLASS_HID;
+  UsbClassText.ClassExist = FALSE;
+  UsbClassText.Class = USB_CLASS_HID;
   UsbClassText.SubClassExist = TRUE;
 
   return ConvertFromTextUsbClass (TextDeviceNode, &UsbClassText);
@@ -2207,8 +2220,8 @@ DevPathFromTextUsbImage (
 {
   USB_CLASS_TEXT  UsbClassText;
 
-  UsbClassText.ClassExist    = FALSE;
-  UsbClassText.Class         = USB_CLASS_IMAGE;
+  UsbClassText.ClassExist = FALSE;
+  UsbClassText.Class = USB_CLASS_IMAGE;
   UsbClassText.SubClassExist = TRUE;
 
   return ConvertFromTextUsbClass (TextDeviceNode, &UsbClassText);
@@ -2229,8 +2242,8 @@ DevPathFromTextUsbPrinter (
 {
   USB_CLASS_TEXT  UsbClassText;
 
-  UsbClassText.ClassExist    = FALSE;
-  UsbClassText.Class         = USB_CLASS_PRINTER;
+  UsbClassText.ClassExist = FALSE;
+  UsbClassText.Class = USB_CLASS_PRINTER;
   UsbClassText.SubClassExist = TRUE;
 
   return ConvertFromTextUsbClass (TextDeviceNode, &UsbClassText);
@@ -2251,8 +2264,8 @@ DevPathFromTextUsbMassStorage (
 {
   USB_CLASS_TEXT  UsbClassText;
 
-  UsbClassText.ClassExist    = FALSE;
-  UsbClassText.Class         = USB_CLASS_MASS_STORAGE;
+  UsbClassText.ClassExist = FALSE;
+  UsbClassText.Class = USB_CLASS_MASS_STORAGE;
   UsbClassText.SubClassExist = TRUE;
 
   return ConvertFromTextUsbClass (TextDeviceNode, &UsbClassText);
@@ -2273,8 +2286,8 @@ DevPathFromTextUsbHub (
 {
   USB_CLASS_TEXT  UsbClassText;
 
-  UsbClassText.ClassExist    = FALSE;
-  UsbClassText.Class         = USB_CLASS_HUB;
+  UsbClassText.ClassExist = FALSE;
+  UsbClassText.Class = USB_CLASS_HUB;
   UsbClassText.SubClassExist = TRUE;
 
   return ConvertFromTextUsbClass (TextDeviceNode, &UsbClassText);
@@ -2295,8 +2308,8 @@ DevPathFromTextUsbCDCData (
 {
   USB_CLASS_TEXT  UsbClassText;
 
-  UsbClassText.ClassExist    = FALSE;
-  UsbClassText.Class         = USB_CLASS_CDCDATA;
+  UsbClassText.ClassExist = FALSE;
+  UsbClassText.Class = USB_CLASS_CDCDATA;
   UsbClassText.SubClassExist = TRUE;
 
   return ConvertFromTextUsbClass (TextDeviceNode, &UsbClassText);
@@ -2317,8 +2330,8 @@ DevPathFromTextUsbSmartCard (
 {
   USB_CLASS_TEXT  UsbClassText;
 
-  UsbClassText.ClassExist    = FALSE;
-  UsbClassText.Class         = USB_CLASS_SMART_CARD;
+  UsbClassText.ClassExist = FALSE;
+  UsbClassText.Class = USB_CLASS_SMART_CARD;
   UsbClassText.SubClassExist = TRUE;
 
   return ConvertFromTextUsbClass (TextDeviceNode, &UsbClassText);
@@ -2339,8 +2352,8 @@ DevPathFromTextUsbVideo (
 {
   USB_CLASS_TEXT  UsbClassText;
 
-  UsbClassText.ClassExist    = FALSE;
-  UsbClassText.Class         = USB_CLASS_VIDEO;
+  UsbClassText.ClassExist = FALSE;
+  UsbClassText.Class = USB_CLASS_VIDEO;
   UsbClassText.SubClassExist = TRUE;
 
   return ConvertFromTextUsbClass (TextDeviceNode, &UsbClassText);
@@ -2361,8 +2374,8 @@ DevPathFromTextUsbDiagnostic (
 {
   USB_CLASS_TEXT  UsbClassText;
 
-  UsbClassText.ClassExist    = FALSE;
-  UsbClassText.Class         = USB_CLASS_DIAGNOSTIC;
+  UsbClassText.ClassExist = FALSE;
+  UsbClassText.Class = USB_CLASS_DIAGNOSTIC;
   UsbClassText.SubClassExist = TRUE;
 
   return ConvertFromTextUsbClass (TextDeviceNode, &UsbClassText);
@@ -2383,8 +2396,8 @@ DevPathFromTextUsbWireless (
 {
   USB_CLASS_TEXT  UsbClassText;
 
-  UsbClassText.ClassExist    = FALSE;
-  UsbClassText.Class         = USB_CLASS_WIRELESS;
+  UsbClassText.ClassExist = FALSE;
+  UsbClassText.Class = USB_CLASS_WIRELESS;
   UsbClassText.SubClassExist = TRUE;
 
   return ConvertFromTextUsbClass (TextDeviceNode, &UsbClassText);
@@ -2405,10 +2418,10 @@ DevPathFromTextUsbDeviceFirmwareUpdate (
 {
   USB_CLASS_TEXT  UsbClassText;
 
-  UsbClassText.ClassExist    = FALSE;
-  UsbClassText.Class         = USB_CLASS_RESERVE;
+  UsbClassText.ClassExist = FALSE;
+  UsbClassText.Class = USB_CLASS_RESERVE;
   UsbClassText.SubClassExist = FALSE;
-  UsbClassText.SubClass      = USB_SUBCLASS_FW_UPDATE;
+  UsbClassText.SubClass = USB_SUBCLASS_FW_UPDATE;
 
   return ConvertFromTextUsbClass (TextDeviceNode, &UsbClassText);
 }
@@ -2428,10 +2441,10 @@ DevPathFromTextUsbIrdaBridge (
 {
   USB_CLASS_TEXT  UsbClassText;
 
-  UsbClassText.ClassExist    = FALSE;
-  UsbClassText.Class         = USB_CLASS_RESERVE;
+  UsbClassText.ClassExist = FALSE;
+  UsbClassText.Class = USB_CLASS_RESERVE;
   UsbClassText.SubClassExist = FALSE;
-  UsbClassText.SubClass      = USB_SUBCLASS_IRDA_BRIDGE;
+  UsbClassText.SubClass = USB_SUBCLASS_IRDA_BRIDGE;
 
   return ConvertFromTextUsbClass (TextDeviceNode, &UsbClassText);
 }
@@ -2451,10 +2464,10 @@ DevPathFromTextUsbTestAndMeasurement (
 {
   USB_CLASS_TEXT  UsbClassText;
 
-  UsbClassText.ClassExist    = FALSE;
-  UsbClassText.Class         = USB_CLASS_RESERVE;
+  UsbClassText.ClassExist = FALSE;
+  UsbClassText.Class = USB_CLASS_RESERVE;
   UsbClassText.SubClassExist = FALSE;
-  UsbClassText.SubClass      = USB_SUBCLASS_TEST;
+  UsbClassText.SubClass = USB_SUBCLASS_TEST;
 
   return ConvertFromTextUsbClass (TextDeviceNode, &UsbClassText);
 }
@@ -2479,26 +2492,28 @@ DevPathFromTextUsbWwid (
   USB_WWID_DEVICE_PATH  *UsbWwid;
   UINTN                 SerialNumberStrLen;
 
-  VIDStr                   = GetNextParamStr (&TextDeviceNode);
-  PIDStr                   = GetNextParamStr (&TextDeviceNode);
-  InterfaceNumStr          = GetNextParamStr (&TextDeviceNode);
-  SerialNumberStr          = GetNextParamStr (&TextDeviceNode);
-  SerialNumberStrLen       = StrLen (SerialNumberStr);
+  VIDStr = GetNextParamStr (&TextDeviceNode);
+  PIDStr = GetNextParamStr (&TextDeviceNode);
+  InterfaceNumStr    = GetNextParamStr (&TextDeviceNode);
+  SerialNumberStr    = GetNextParamStr (&TextDeviceNode);
+  SerialNumberStrLen = StrLen (SerialNumberStr);
   if (SerialNumberStrLen >= 2 &&
       SerialNumberStr[0] == L'\"' &&
       SerialNumberStr[SerialNumberStrLen - 1] == L'\"'
-    ) {
+      ) {
     SerialNumberStr[SerialNumberStrLen - 1] = L'\0';
     SerialNumberStr++;
     SerialNumberStrLen -= 2;
   }
-  UsbWwid                  = (USB_WWID_DEVICE_PATH *) CreateDeviceNode (
-                                                         MESSAGING_DEVICE_PATH,
-                                                         MSG_USB_WWID_DP,
-                                                         (UINT16) (sizeof (USB_WWID_DEVICE_PATH) + SerialNumberStrLen * sizeof (CHAR16))
-                                                         );
-  UsbWwid->VendorId        = (UINT16) Strtoi (VIDStr);
-  UsbWwid->ProductId       = (UINT16) Strtoi (PIDStr);
+
+  UsbWwid = (USB_WWID_DEVICE_PATH *) CreateDeviceNode (
+                                                       MESSAGING_DEVICE_PATH,
+                                                       MSG_USB_WWID_DP,
+                                                       (UINT16) (sizeof (USB_WWID_DEVICE_PATH) + SerialNumberStrLen *
+                                                                 sizeof (CHAR16))
+                                                       );
+  UsbWwid->VendorId  = (UINT16) Strtoi (VIDStr);
+  UsbWwid->ProductId = (UINT16) Strtoi (PIDStr);
   UsbWwid->InterfaceNumber = (UINT16) Strtoi (InterfaceNumStr);
 
   //
@@ -2506,10 +2521,10 @@ DevPathFromTextUsbWwid (
   // Therefore, the '\0' will not be copied.
   //
   CopyMem (
-    (UINT8 *) UsbWwid + sizeof (USB_WWID_DEVICE_PATH),
-    SerialNumberStr,
-    SerialNumberStrLen * sizeof (CHAR16)
-    );
+           (UINT8 *) UsbWwid + sizeof (USB_WWID_DEVICE_PATH),
+           SerialNumberStr,
+           SerialNumberStrLen * sizeof (CHAR16)
+           );
 
   return (EFI_DEVICE_PATH_PROTOCOL *) UsbWwid;
 }
@@ -2527,17 +2542,17 @@ DevPathFromTextUnit (
   IN CHAR16 *TextDeviceNode
   )
 {
-  CHAR16                          *LunStr;
-  DEVICE_LOGICAL_UNIT_DEVICE_PATH *LogicalUnit;
+  CHAR16                           *LunStr;
+  DEVICE_LOGICAL_UNIT_DEVICE_PATH  *LogicalUnit;
 
-  LunStr      = GetNextParamStr (&TextDeviceNode);
+  LunStr = GetNextParamStr (&TextDeviceNode);
   LogicalUnit = (DEVICE_LOGICAL_UNIT_DEVICE_PATH *) CreateDeviceNode (
-                                                      MESSAGING_DEVICE_PATH,
-                                                      MSG_DEVICE_LOGICAL_UNIT_DP,
-                                                      (UINT16) sizeof (DEVICE_LOGICAL_UNIT_DEVICE_PATH)
-                                                      );
+                                                                      MESSAGING_DEVICE_PATH,
+                                                                      MSG_DEVICE_LOGICAL_UNIT_DP,
+                                                                      (UINT16) sizeof (DEVICE_LOGICAL_UNIT_DEVICE_PATH)
+                                                                      );
 
-  LogicalUnit->Lun  = (UINT8) Strtoi (LunStr);
+  LogicalUnit->Lun = (UINT8) Strtoi (LunStr);
 
   return (EFI_DEVICE_PATH_PROTOCOL *) LogicalUnit;
 }
@@ -2555,30 +2570,31 @@ DevPathFromTextiSCSI (
   IN CHAR16 *TextDeviceNode
   )
 {
-  UINT16                      Options;
-  CHAR16                      *NameStr;
-  CHAR16                      *PortalGroupStr;
-  CHAR16                      *LunStr;
-  CHAR16                      *HeaderDigestStr;
-  CHAR16                      *DataDigestStr;
-  CHAR16                      *AuthenticationStr;
-  CHAR16                      *ProtocolStr;
-  CHAR8                       *AsciiStr;
-  ISCSI_DEVICE_PATH_WITH_NAME *ISCSIDevPath;
-  UINT64                      Lun;
+  UINT16                       Options;
+  CHAR16                       *NameStr;
+  CHAR16                       *PortalGroupStr;
+  CHAR16                       *LunStr;
+  CHAR16                       *HeaderDigestStr;
+  CHAR16                       *DataDigestStr;
+  CHAR16                       *AuthenticationStr;
+  CHAR16                       *ProtocolStr;
+  CHAR8                        *AsciiStr;
+  ISCSI_DEVICE_PATH_WITH_NAME  *ISCSIDevPath;
+  UINT64                       Lun;
 
-  NameStr           = GetNextParamStr (&TextDeviceNode);
-  PortalGroupStr    = GetNextParamStr (&TextDeviceNode);
-  LunStr            = GetNextParamStr (&TextDeviceNode);
+  NameStr = GetNextParamStr (&TextDeviceNode);
+  PortalGroupStr = GetNextParamStr (&TextDeviceNode);
+  LunStr = GetNextParamStr (&TextDeviceNode);
   HeaderDigestStr   = GetNextParamStr (&TextDeviceNode);
   DataDigestStr     = GetNextParamStr (&TextDeviceNode);
   AuthenticationStr = GetNextParamStr (&TextDeviceNode);
-  ProtocolStr       = GetNextParamStr (&TextDeviceNode);
-  ISCSIDevPath      = (ISCSI_DEVICE_PATH_WITH_NAME *) CreateDeviceNode (
-                                                        MESSAGING_DEVICE_PATH,
-                                                        MSG_ISCSI_DP,
-                                                        (UINT16) (sizeof (ISCSI_DEVICE_PATH_WITH_NAME) + StrLen (NameStr))
-                                                        );
+  ProtocolStr  = GetNextParamStr (&TextDeviceNode);
+  ISCSIDevPath = (ISCSI_DEVICE_PATH_WITH_NAME *) CreateDeviceNode (
+                                                                   MESSAGING_DEVICE_PATH,
+                                                                   MSG_ISCSI_DP,
+                                                                   (UINT16) (sizeof (ISCSI_DEVICE_PATH_WITH_NAME) +
+                                                                             StrLen (NameStr))
+                                                                   );
 
   AsciiStr = ISCSIDevPath->TargetName;
   StrToAscii (NameStr, &AsciiStr);
@@ -2604,7 +2620,7 @@ DevPathFromTextiSCSI (
     Options |= 0x1000;
   }
 
-  ISCSIDevPath->LoginOption      = (UINT16) Options;
+  ISCSIDevPath->LoginOption = (UINT16) Options;
 
   if (IS_NULL (*ProtocolStr) || (StrCmp (ProtocolStr, L"TCP") == 0)) {
     ISCSIDevPath->NetworkProtocol = 0;
@@ -2636,10 +2652,10 @@ DevPathFromTextVlan (
 
   VlanStr = GetNextParamStr (&TextDeviceNode);
   Vlan    = (VLAN_DEVICE_PATH *) CreateDeviceNode (
-                                   MESSAGING_DEVICE_PATH,
-                                   MSG_VLAN_DP,
-                                   (UINT16) sizeof (VLAN_DEVICE_PATH)
-                                   );
+                                                   MESSAGING_DEVICE_PATH,
+                                                   MSG_VLAN_DP,
+                                                   (UINT16) sizeof (VLAN_DEVICE_PATH)
+                                                   );
 
   Vlan->VlanId = (UINT16) Strtoi (VlanStr);
 
@@ -2659,21 +2675,21 @@ DevPathFromTextBluetooth (
   IN CHAR16 *TextDeviceNode
   )
 {
-  CHAR16                  *BluetoothStr;
-  BLUETOOTH_DEVICE_PATH   *BluetoothDp;
+  CHAR16                 *BluetoothStr;
+  BLUETOOTH_DEVICE_PATH  *BluetoothDp;
 
   BluetoothStr = GetNextParamStr (&TextDeviceNode);
   BluetoothDp  = (BLUETOOTH_DEVICE_PATH *) CreateDeviceNode (
-                                             MESSAGING_DEVICE_PATH,
-                                             MSG_BLUETOOTH_DP,
-                                             (UINT16) sizeof (BLUETOOTH_DEVICE_PATH)
-                                             );
+                                                             MESSAGING_DEVICE_PATH,
+                                                             MSG_BLUETOOTH_DP,
+                                                             (UINT16) sizeof (BLUETOOTH_DEVICE_PATH)
+                                                             );
   StrHexToBytes (
-    BluetoothStr,
-    sizeof (BLUETOOTH_ADDRESS) * 2,
-    BluetoothDp->BD_ADDR.Address,
-    sizeof (BLUETOOTH_ADDRESS)
-    );
+                 BluetoothStr,
+                 sizeof (BLUETOOTH_ADDRESS) * 2,
+                 BluetoothDp->BD_ADDR.Address,
+                 sizeof (BLUETOOTH_ADDRESS)
+                 );
   return (EFI_DEVICE_PATH_PROTOCOL *) BluetoothDp;
 }
 
@@ -2690,17 +2706,17 @@ DevPathFromTextWiFi (
   IN CHAR16 *TextDeviceNode
   )
 {
-  CHAR16                *SSIdStr;
-  CHAR8                 AsciiStr[33];
-  UINTN                 DataLen;
-  WIFI_DEVICE_PATH      *WiFiDp;
+  CHAR16            *SSIdStr;
+  CHAR8             AsciiStr[33];
+  UINTN             DataLen;
+  WIFI_DEVICE_PATH  *WiFiDp;
 
   SSIdStr = GetNextParamStr (&TextDeviceNode);
   WiFiDp  = (WIFI_DEVICE_PATH *) CreateDeviceNode (
-                                   MESSAGING_DEVICE_PATH,
-                                   MSG_WIFI_DP,
-                                   (UINT16) sizeof (WIFI_DEVICE_PATH)
-                                   );
+                                                   MESSAGING_DEVICE_PATH,
+                                                   MSG_WIFI_DP,
+                                                   (UINT16) sizeof (WIFI_DEVICE_PATH)
+                                                   );
 
   if (NULL != SSIdStr) {
     DataLen = StrLen (SSIdStr);
@@ -2729,23 +2745,25 @@ DevPathFromTextBluetoothLE (
   IN CHAR16 *TextDeviceNode
   )
 {
-  CHAR16                     *BluetoothLeAddrStr;
-  CHAR16                     *BluetoothLeAddrTypeStr;
-  BLUETOOTH_LE_DEVICE_PATH   *BluetoothLeDp;
+  CHAR16                    *BluetoothLeAddrStr;
+  CHAR16                    *BluetoothLeAddrTypeStr;
+  BLUETOOTH_LE_DEVICE_PATH  *BluetoothLeDp;
 
   BluetoothLeAddrStr     = GetNextParamStr (&TextDeviceNode);
   BluetoothLeAddrTypeStr = GetNextParamStr (&TextDeviceNode);
   BluetoothLeDp = (BLUETOOTH_LE_DEVICE_PATH *) CreateDeviceNode (
-                                                 MESSAGING_DEVICE_PATH,
-                                                 MSG_BLUETOOTH_LE_DP,
-                                                 (UINT16) sizeof (BLUETOOTH_LE_DEVICE_PATH)
-                                                 );
+                                                                 MESSAGING_DEVICE_PATH,
+                                                                 MSG_BLUETOOTH_LE_DP,
+                                                                 (UINT16) sizeof (BLUETOOTH_LE_DEVICE_PATH)
+                                                                 );
 
   BluetoothLeDp->Address.Type = (UINT8) Strtoi (BluetoothLeAddrTypeStr);
   StrHexToBytes (
-    BluetoothLeAddrStr, sizeof (BluetoothLeDp->Address.Address) * 2,
-    BluetoothLeDp->Address.Address, sizeof (BluetoothLeDp->Address.Address)
-    );
+                 BluetoothLeAddrStr,
+                 sizeof (BluetoothLeDp->Address.Address) * 2,
+                 BluetoothLeDp->Address.Address,
+                 sizeof (BluetoothLeDp->Address.Address)
+                 );
   return (EFI_DEVICE_PATH_PROTOCOL *) BluetoothLeDp;
 }
 
@@ -2762,14 +2780,13 @@ DevPathFromTextDns (
   IN CHAR16 *TextDeviceNode
   )
 {
-  CHAR16            *DeviceNodeStr;
-  CHAR16            *DeviceNodeStrPtr;
-  UINT32            DnsServerIpCount;
-  UINT16            DnsDeviceNodeLength;
-  DNS_DEVICE_PATH   *DnsDeviceNode;
-  UINT32            DnsServerIpIndex;
-  CHAR16            *DnsServerIp;
-
+  CHAR16           *DeviceNodeStr;
+  CHAR16           *DeviceNodeStrPtr;
+  UINT32           DnsServerIpCount;
+  UINT16           DnsDeviceNodeLength;
+  DNS_DEVICE_PATH  *DnsDeviceNode;
+  UINT32           DnsServerIpIndex;
+  CHAR16           *DnsServerIp;
 
   //
   // Count the DNS server address number.
@@ -2784,7 +2801,7 @@ DevPathFromTextDns (
   DnsServerIpCount = 0;
   while (DeviceNodeStrPtr != NULL && *DeviceNodeStrPtr != L'\0') {
     GetNextParamStr (&DeviceNodeStrPtr);
-    DnsServerIpCount ++;
+    DnsServerIpCount++;
   }
 
   FreePool (DeviceNodeStr);
@@ -2801,12 +2818,13 @@ DevPathFromTextDns (
   //
   // Create the DNS DeviceNode.
   //
-  DnsDeviceNodeLength = (UINT16) (sizeof (EFI_DEVICE_PATH_PROTOCOL) + sizeof (UINT8) + DnsServerIpCount * sizeof (EFI_IP_ADDRESS));
-  DnsDeviceNode       = (DNS_DEVICE_PATH *) CreateDeviceNode (
-                                              MESSAGING_DEVICE_PATH,
-                                              MSG_DNS_DP,
-                                              DnsDeviceNodeLength
-                                              );
+  DnsDeviceNodeLength =
+    (UINT16) (sizeof (EFI_DEVICE_PATH_PROTOCOL) + sizeof (UINT8) + DnsServerIpCount * sizeof (EFI_IP_ADDRESS));
+  DnsDeviceNode = (DNS_DEVICE_PATH *) CreateDeviceNode (
+                                                        MESSAGING_DEVICE_PATH,
+                                                        MSG_DNS_DP,
+                                                        DnsDeviceNodeLength
+                                                        );
   if (DnsDeviceNode == NULL) {
     return NULL;
   }
@@ -2832,7 +2850,7 @@ DevPathFromTextDns (
   for (DnsServerIpIndex = 0; DnsServerIpIndex < DnsServerIpCount; DnsServerIpIndex++) {
     DnsServerIp = GetNextParamStr (&TextDeviceNode);
     if (DnsDeviceNode->IsIPv6 == 0x00) {
-      StrToIpv4Address (DnsServerIp,  NULL, &(DnsDeviceNode->DnsServerIp[DnsServerIpIndex].v4), NULL);
+      StrToIpv4Address (DnsServerIp, NULL, &(DnsDeviceNode->DnsServerIp[DnsServerIpIndex].v4), NULL);
     } else {
       StrToIpv6Address (DnsServerIp, NULL, &(DnsDeviceNode->DnsServerIp[DnsServerIpIndex].v6), NULL);
     }
@@ -2858,13 +2876,13 @@ DevPathFromTextUri (
   UINTN            UriLength;
   URI_DEVICE_PATH  *Uri;
 
-  UriStr = GetNextParamStr (&TextDeviceNode);
+  UriStr    = GetNextParamStr (&TextDeviceNode);
   UriLength = StrnLenS (UriStr, MAX_UINT16 - sizeof (URI_DEVICE_PATH));
-  Uri    = (URI_DEVICE_PATH *) CreateDeviceNode (
-                                 MESSAGING_DEVICE_PATH,
-                                 MSG_URI_DP,
-                                 (UINT16) (sizeof (URI_DEVICE_PATH) + UriLength)
-                                 );
+  Uri = (URI_DEVICE_PATH *) CreateDeviceNode (
+                                              MESSAGING_DEVICE_PATH,
+                                              MSG_URI_DP,
+                                              (UINT16) (sizeof (URI_DEVICE_PATH) + UriLength)
+                                              );
 
   while (UriLength-- != 0) {
     Uri->Uri[UriLength] = (CHAR8) UriStr[UriLength];
@@ -2902,24 +2920,24 @@ DevPathFromTextHD (
   IN CHAR16 *TextDeviceNode
   )
 {
-  CHAR16                *PartitionStr;
-  CHAR16                *TypeStr;
-  CHAR16                *SignatureStr;
-  CHAR16                *StartStr;
-  CHAR16                *SizeStr;
-  UINT32                Signature32;
-  HARDDRIVE_DEVICE_PATH *Hd;
+  CHAR16                 *PartitionStr;
+  CHAR16                 *TypeStr;
+  CHAR16                 *SignatureStr;
+  CHAR16                 *StartStr;
+  CHAR16                 *SizeStr;
+  UINT32                 Signature32;
+  HARDDRIVE_DEVICE_PATH  *Hd;
 
-  PartitionStr        = GetNextParamStr (&TextDeviceNode);
-  TypeStr             = GetNextParamStr (&TextDeviceNode);
-  SignatureStr        = GetNextParamStr (&TextDeviceNode);
-  StartStr            = GetNextParamStr (&TextDeviceNode);
-  SizeStr             = GetNextParamStr (&TextDeviceNode);
-  Hd                  = (HARDDRIVE_DEVICE_PATH *) CreateDeviceNode (
-                                                    MEDIA_DEVICE_PATH,
-                                                    MEDIA_HARDDRIVE_DP,
-                                                    (UINT16) sizeof (HARDDRIVE_DEVICE_PATH)
-                                                    );
+  PartitionStr = GetNextParamStr (&TextDeviceNode);
+  TypeStr = GetNextParamStr (&TextDeviceNode);
+  SignatureStr = GetNextParamStr (&TextDeviceNode);
+  StartStr     = GetNextParamStr (&TextDeviceNode);
+  SizeStr = GetNextParamStr (&TextDeviceNode);
+  Hd = (HARDDRIVE_DEVICE_PATH *) CreateDeviceNode (
+                                                   MEDIA_DEVICE_PATH,
+                                                   MEDIA_HARDDRIVE_DP,
+                                                   (UINT16) sizeof (HARDDRIVE_DEVICE_PATH)
+                                                   );
 
   Hd->PartitionNumber = (UINT32) Strtoi (PartitionStr);
 
@@ -2928,13 +2946,13 @@ DevPathFromTextHD (
 
   if (StrCmp (TypeStr, L"MBR") == 0) {
     Hd->SignatureType = SIGNATURE_TYPE_MBR;
-    Hd->MBRType       = 0x01;
+    Hd->MBRType = 0x01;
 
-    Signature32       = (UINT32) Strtoi (SignatureStr);
+    Signature32 = (UINT32) Strtoi (SignatureStr);
     CopyMem (Hd->Signature, &Signature32, sizeof (UINT32));
   } else if (StrCmp (TypeStr, L"GPT") == 0) {
     Hd->SignatureType = SIGNATURE_TYPE_GUID;
-    Hd->MBRType       = 0x02;
+    Hd->MBRType = 0x02;
 
     StrToGuid (SignatureStr, (EFI_GUID *) Hd->Signature);
   } else {
@@ -2960,19 +2978,19 @@ DevPathFromTextCDROM (
   IN CHAR16 *TextDeviceNode
   )
 {
-  CHAR16            *EntryStr;
-  CHAR16            *StartStr;
-  CHAR16            *SizeStr;
-  CDROM_DEVICE_PATH *CDROMDevPath;
+  CHAR16             *EntryStr;
+  CHAR16             *StartStr;
+  CHAR16             *SizeStr;
+  CDROM_DEVICE_PATH  *CDROMDevPath;
 
-  EntryStr              = GetNextParamStr (&TextDeviceNode);
-  StartStr              = GetNextParamStr (&TextDeviceNode);
-  SizeStr               = GetNextParamStr (&TextDeviceNode);
-  CDROMDevPath          = (CDROM_DEVICE_PATH *) CreateDeviceNode (
-                                                  MEDIA_DEVICE_PATH,
-                                                  MEDIA_CDROM_DP,
-                                                  (UINT16) sizeof (CDROM_DEVICE_PATH)
-                                                  );
+  EntryStr     = GetNextParamStr (&TextDeviceNode);
+  StartStr     = GetNextParamStr (&TextDeviceNode);
+  SizeStr      = GetNextParamStr (&TextDeviceNode);
+  CDROMDevPath = (CDROM_DEVICE_PATH *) CreateDeviceNode (
+                                                         MEDIA_DEVICE_PATH,
+                                                         MEDIA_CDROM_DP,
+                                                         (UINT16) sizeof (CDROM_DEVICE_PATH)
+                                                         );
 
   CDROMDevPath->BootEntry = (UINT32) Strtoi (EntryStr);
   Strtoi64 (StartStr, &CDROMDevPath->PartitionStart);
@@ -2995,10 +3013,10 @@ DevPathFromTextVenMedia (
   )
 {
   return ConvertFromTextVendor (
-           TextDeviceNode,
-           MEDIA_DEVICE_PATH,
-           MEDIA_VENDOR_DP
-           );
+                                TextDeviceNode,
+                                MEDIA_DEVICE_PATH,
+                                MEDIA_VENDOR_DP
+                                );
 }
 
 /**
@@ -3017,10 +3035,11 @@ DevPathFromTextFilePath (
   FILEPATH_DEVICE_PATH  *File;
 
   File = (FILEPATH_DEVICE_PATH *) CreateDeviceNode (
-                                    MEDIA_DEVICE_PATH,
-                                    MEDIA_FILEPATH_DP,
-                                    (UINT16) (sizeof (FILEPATH_DEVICE_PATH) + StrLen (TextDeviceNode) * 2)
-                                    );
+                                                    MEDIA_DEVICE_PATH,
+                                                    MEDIA_FILEPATH_DP,
+                                                    (UINT16) (sizeof (FILEPATH_DEVICE_PATH) + StrLen (TextDeviceNode) *
+                                                              2)
+                                                    );
 
   StrCpyS (File->PathName, StrLen (TextDeviceNode) + 1, TextDeviceNode);
 
@@ -3045,10 +3064,10 @@ DevPathFromTextMedia (
 
   GuidStr = GetNextParamStr (&TextDeviceNode);
   Media   = (MEDIA_PROTOCOL_DEVICE_PATH *) CreateDeviceNode (
-                                             MEDIA_DEVICE_PATH,
-                                             MEDIA_PROTOCOL_DP,
-                                             (UINT16) sizeof (MEDIA_PROTOCOL_DEVICE_PATH)
-                                             );
+                                                             MEDIA_DEVICE_PATH,
+                                                             MEDIA_PROTOCOL_DP,
+                                                             (UINT16) sizeof (MEDIA_PROTOCOL_DEVICE_PATH)
+                                                             );
 
   StrToGuid (GuidStr, &Media->Protocol);
 
@@ -3072,11 +3091,11 @@ DevPathFromTextFv (
   MEDIA_FW_VOL_DEVICE_PATH  *Fv;
 
   GuidStr = GetNextParamStr (&TextDeviceNode);
-  Fv      = (MEDIA_FW_VOL_DEVICE_PATH *) CreateDeviceNode (
-                                           MEDIA_DEVICE_PATH,
-                                           MEDIA_PIWG_FW_VOL_DP,
-                                           (UINT16) sizeof (MEDIA_FW_VOL_DEVICE_PATH)
-                                           );
+  Fv = (MEDIA_FW_VOL_DEVICE_PATH *) CreateDeviceNode (
+                                                      MEDIA_DEVICE_PATH,
+                                                      MEDIA_PIWG_FW_VOL_DP,
+                                                      (UINT16) sizeof (MEDIA_FW_VOL_DEVICE_PATH)
+                                                      );
 
   StrToGuid (GuidStr, &Fv->FvName);
 
@@ -3101,10 +3120,10 @@ DevPathFromTextFvFile (
 
   GuidStr = GetNextParamStr (&TextDeviceNode);
   FvFile  = (MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *) CreateDeviceNode (
-                                                    MEDIA_DEVICE_PATH,
-                                                    MEDIA_PIWG_FW_FILE_DP,
-                                                    (UINT16) sizeof (MEDIA_FW_VOL_FILEPATH_DEVICE_PATH)
-                                                    );
+                                                                    MEDIA_DEVICE_PATH,
+                                                                    MEDIA_PIWG_FW_FILE_DP,
+                                                                    (UINT16) sizeof (MEDIA_FW_VOL_FILEPATH_DEVICE_PATH)
+                                                                    );
 
   StrToGuid (GuidStr, &FvFile->FvFileName);
 
@@ -3124,17 +3143,18 @@ DevPathFromTextRelativeOffsetRange (
   IN CHAR16 *TextDeviceNode
   )
 {
-  CHAR16                                  *StartingOffsetStr;
-  CHAR16                                  *EndingOffsetStr;
-  MEDIA_RELATIVE_OFFSET_RANGE_DEVICE_PATH *Offset;
+  CHAR16                                   *StartingOffsetStr;
+  CHAR16                                   *EndingOffsetStr;
+  MEDIA_RELATIVE_OFFSET_RANGE_DEVICE_PATH  *Offset;
 
   StartingOffsetStr = GetNextParamStr (&TextDeviceNode);
   EndingOffsetStr   = GetNextParamStr (&TextDeviceNode);
-  Offset            = (MEDIA_RELATIVE_OFFSET_RANGE_DEVICE_PATH *) CreateDeviceNode (
-                                                                    MEDIA_DEVICE_PATH,
-                                                                    MEDIA_RELATIVE_OFFSET_RANGE_DP,
-                                                                    (UINT16) sizeof (MEDIA_RELATIVE_OFFSET_RANGE_DEVICE_PATH)
-                                                                    );
+  Offset = (MEDIA_RELATIVE_OFFSET_RANGE_DEVICE_PATH *) CreateDeviceNode (
+                                                                         MEDIA_DEVICE_PATH,
+                                                                         MEDIA_RELATIVE_OFFSET_RANGE_DP,
+                                                                         (UINT16) sizeof (
+                                                                                    MEDIA_RELATIVE_OFFSET_RANGE_DEVICE_PATH)
+                                                                         );
 
   Strtoi64 (StartingOffsetStr, &Offset->StartingOffset);
   Strtoi64 (EndingOffsetStr, &Offset->EndingOffset);
@@ -3155,23 +3175,23 @@ DevPathFromTextRamDisk (
   IN CHAR16 *TextDeviceNode
   )
 {
-  CHAR16                                  *StartingAddrStr;
-  CHAR16                                  *EndingAddrStr;
-  CHAR16                                  *TypeGuidStr;
-  CHAR16                                  *InstanceStr;
-  MEDIA_RAM_DISK_DEVICE_PATH              *RamDisk;
-  UINT64                                  StartingAddr;
-  UINT64                                  EndingAddr;
+  CHAR16                      *StartingAddrStr;
+  CHAR16                      *EndingAddrStr;
+  CHAR16                      *TypeGuidStr;
+  CHAR16                      *InstanceStr;
+  MEDIA_RAM_DISK_DEVICE_PATH  *RamDisk;
+  UINT64                      StartingAddr;
+  UINT64                      EndingAddr;
 
   StartingAddrStr = GetNextParamStr (&TextDeviceNode);
   EndingAddrStr   = GetNextParamStr (&TextDeviceNode);
   InstanceStr     = GetNextParamStr (&TextDeviceNode);
   TypeGuidStr     = GetNextParamStr (&TextDeviceNode);
-  RamDisk         = (MEDIA_RAM_DISK_DEVICE_PATH *) CreateDeviceNode (
-                                                     MEDIA_DEVICE_PATH,
-                                                     MEDIA_RAM_DISK_DP,
-                                                     (UINT16) sizeof (MEDIA_RAM_DISK_DEVICE_PATH)
-                                                     );
+  RamDisk = (MEDIA_RAM_DISK_DEVICE_PATH *) CreateDeviceNode (
+                                                             MEDIA_DEVICE_PATH,
+                                                             MEDIA_RAM_DISK_DP,
+                                                             (UINT16) sizeof (MEDIA_RAM_DISK_DEVICE_PATH)
+                                                             );
 
   Strtoi64 (StartingAddrStr, &StartingAddr);
   WriteUnaligned64 ((UINT64 *) &(RamDisk->StartingAddr[0]), StartingAddr);
@@ -3196,22 +3216,22 @@ DevPathFromTextVirtualDisk (
   IN CHAR16 *TextDeviceNode
   )
 {
-  CHAR16                                  *StartingAddrStr;
-  CHAR16                                  *EndingAddrStr;
-  CHAR16                                  *InstanceStr;
-  MEDIA_RAM_DISK_DEVICE_PATH              *RamDisk;
-  UINT64                                  StartingAddr;
-  UINT64                                  EndingAddr;
+  CHAR16                      *StartingAddrStr;
+  CHAR16                      *EndingAddrStr;
+  CHAR16                      *InstanceStr;
+  MEDIA_RAM_DISK_DEVICE_PATH  *RamDisk;
+  UINT64                      StartingAddr;
+  UINT64                      EndingAddr;
 
   StartingAddrStr = GetNextParamStr (&TextDeviceNode);
   EndingAddrStr   = GetNextParamStr (&TextDeviceNode);
   InstanceStr     = GetNextParamStr (&TextDeviceNode);
 
-  RamDisk         = (MEDIA_RAM_DISK_DEVICE_PATH *) CreateDeviceNode (
-                                                     MEDIA_DEVICE_PATH,
-                                                     MEDIA_RAM_DISK_DP,
-                                                     (UINT16) sizeof (MEDIA_RAM_DISK_DEVICE_PATH)
-                                                     );
+  RamDisk = (MEDIA_RAM_DISK_DEVICE_PATH *) CreateDeviceNode (
+                                                             MEDIA_DEVICE_PATH,
+                                                             MEDIA_RAM_DISK_DP,
+                                                             (UINT16) sizeof (MEDIA_RAM_DISK_DEVICE_PATH)
+                                                             );
 
   Strtoi64 (StartingAddrStr, &StartingAddr);
   WriteUnaligned64 ((UINT64 *) &(RamDisk->StartingAddr[0]), StartingAddr);
@@ -3236,22 +3256,22 @@ DevPathFromTextVirtualCd (
   IN CHAR16 *TextDeviceNode
   )
 {
-  CHAR16                                  *StartingAddrStr;
-  CHAR16                                  *EndingAddrStr;
-  CHAR16                                  *InstanceStr;
-  MEDIA_RAM_DISK_DEVICE_PATH              *RamDisk;
-  UINT64                                  StartingAddr;
-  UINT64                                  EndingAddr;
+  CHAR16                      *StartingAddrStr;
+  CHAR16                      *EndingAddrStr;
+  CHAR16                      *InstanceStr;
+  MEDIA_RAM_DISK_DEVICE_PATH  *RamDisk;
+  UINT64                      StartingAddr;
+  UINT64                      EndingAddr;
 
   StartingAddrStr = GetNextParamStr (&TextDeviceNode);
   EndingAddrStr   = GetNextParamStr (&TextDeviceNode);
   InstanceStr     = GetNextParamStr (&TextDeviceNode);
 
-  RamDisk         = (MEDIA_RAM_DISK_DEVICE_PATH *) CreateDeviceNode (
-                                                     MEDIA_DEVICE_PATH,
-                                                     MEDIA_RAM_DISK_DP,
-                                                     (UINT16) sizeof (MEDIA_RAM_DISK_DEVICE_PATH)
-                                                     );
+  RamDisk = (MEDIA_RAM_DISK_DEVICE_PATH *) CreateDeviceNode (
+                                                             MEDIA_DEVICE_PATH,
+                                                             MEDIA_RAM_DISK_DP,
+                                                             (UINT16) sizeof (MEDIA_RAM_DISK_DEVICE_PATH)
+                                                             );
 
   Strtoi64 (StartingAddrStr, &StartingAddr);
   WriteUnaligned64 ((UINT64 *) &(RamDisk->StartingAddr[0]), StartingAddr);
@@ -3276,22 +3296,22 @@ DevPathFromTextPersistentVirtualDisk (
   IN CHAR16 *TextDeviceNode
   )
 {
-  CHAR16                                  *StartingAddrStr;
-  CHAR16                                  *EndingAddrStr;
-  CHAR16                                  *InstanceStr;
-  MEDIA_RAM_DISK_DEVICE_PATH              *RamDisk;
-  UINT64                                  StartingAddr;
-  UINT64                                  EndingAddr;
+  CHAR16                      *StartingAddrStr;
+  CHAR16                      *EndingAddrStr;
+  CHAR16                      *InstanceStr;
+  MEDIA_RAM_DISK_DEVICE_PATH  *RamDisk;
+  UINT64                      StartingAddr;
+  UINT64                      EndingAddr;
 
   StartingAddrStr = GetNextParamStr (&TextDeviceNode);
   EndingAddrStr   = GetNextParamStr (&TextDeviceNode);
   InstanceStr     = GetNextParamStr (&TextDeviceNode);
 
-  RamDisk         = (MEDIA_RAM_DISK_DEVICE_PATH *) CreateDeviceNode (
-                                                     MEDIA_DEVICE_PATH,
-                                                     MEDIA_RAM_DISK_DP,
-                                                     (UINT16) sizeof (MEDIA_RAM_DISK_DEVICE_PATH)
-                                                     );
+  RamDisk = (MEDIA_RAM_DISK_DEVICE_PATH *) CreateDeviceNode (
+                                                             MEDIA_DEVICE_PATH,
+                                                             MEDIA_RAM_DISK_DP,
+                                                             (UINT16) sizeof (MEDIA_RAM_DISK_DEVICE_PATH)
+                                                             );
 
   Strtoi64 (StartingAddrStr, &StartingAddr);
   WriteUnaligned64 ((UINT64 *) &(RamDisk->StartingAddr[0]), StartingAddr);
@@ -3316,22 +3336,22 @@ DevPathFromTextPersistentVirtualCd (
   IN CHAR16 *TextDeviceNode
   )
 {
-  CHAR16                                  *StartingAddrStr;
-  CHAR16                                  *EndingAddrStr;
-  CHAR16                                  *InstanceStr;
-  MEDIA_RAM_DISK_DEVICE_PATH              *RamDisk;
-  UINT64                                  StartingAddr;
-  UINT64                                  EndingAddr;
+  CHAR16                      *StartingAddrStr;
+  CHAR16                      *EndingAddrStr;
+  CHAR16                      *InstanceStr;
+  MEDIA_RAM_DISK_DEVICE_PATH  *RamDisk;
+  UINT64                      StartingAddr;
+  UINT64                      EndingAddr;
 
   StartingAddrStr = GetNextParamStr (&TextDeviceNode);
   EndingAddrStr   = GetNextParamStr (&TextDeviceNode);
   InstanceStr     = GetNextParamStr (&TextDeviceNode);
 
-  RamDisk         = (MEDIA_RAM_DISK_DEVICE_PATH *) CreateDeviceNode (
-                                                     MEDIA_DEVICE_PATH,
-                                                     MEDIA_RAM_DISK_DP,
-                                                     (UINT16) sizeof (MEDIA_RAM_DISK_DEVICE_PATH)
-                                                     );
+  RamDisk = (MEDIA_RAM_DISK_DEVICE_PATH *) CreateDeviceNode (
+                                                             MEDIA_DEVICE_PATH,
+                                                             MEDIA_RAM_DISK_DP,
+                                                             (UINT16) sizeof (MEDIA_RAM_DISK_DEVICE_PATH)
+                                                             );
 
   Strtoi64 (StartingAddrStr, &StartingAddr);
   WriteUnaligned64 ((UINT64 *) &(RamDisk->StartingAddr[0]), StartingAddr);
@@ -3372,20 +3392,20 @@ DevPathFromTextBBS (
   IN CHAR16 *TextDeviceNode
   )
 {
-  CHAR16              *TypeStr;
-  CHAR16              *IdStr;
-  CHAR16              *FlagsStr;
-  CHAR8               *AsciiStr;
-  BBS_BBS_DEVICE_PATH *Bbs;
+  CHAR16               *TypeStr;
+  CHAR16               *IdStr;
+  CHAR16               *FlagsStr;
+  CHAR8                *AsciiStr;
+  BBS_BBS_DEVICE_PATH  *Bbs;
 
-  TypeStr   = GetNextParamStr (&TextDeviceNode);
-  IdStr     = GetNextParamStr (&TextDeviceNode);
-  FlagsStr  = GetNextParamStr (&TextDeviceNode);
-  Bbs       = (BBS_BBS_DEVICE_PATH *) CreateDeviceNode (
-                                        BBS_DEVICE_PATH,
-                                        BBS_BBS_DP,
-                                        (UINT16) (sizeof (BBS_BBS_DEVICE_PATH) + StrLen (IdStr))
-                                        );
+  TypeStr  = GetNextParamStr (&TextDeviceNode);
+  IdStr    = GetNextParamStr (&TextDeviceNode);
+  FlagsStr = GetNextParamStr (&TextDeviceNode);
+  Bbs = (BBS_BBS_DEVICE_PATH *) CreateDeviceNode (
+                                                  BBS_DEVICE_PATH,
+                                                  BBS_BBS_DP,
+                                                  (UINT16) (sizeof (BBS_BBS_DEVICE_PATH) + StrLen (IdStr))
+                                                  );
 
   if (StrCmp (TypeStr, L"Floppy") == 0) {
     Bbs->DeviceType = BBS_TYPE_FLOPPY;
@@ -3424,21 +3444,21 @@ DevPathFromTextSata (
   IN CHAR16 *TextDeviceNode
   )
 {
-  SATA_DEVICE_PATH *Sata;
-  CHAR16           *Param1;
-  CHAR16           *Param2;
-  CHAR16           *Param3;
+  SATA_DEVICE_PATH  *Sata;
+  CHAR16            *Param1;
+  CHAR16            *Param2;
+  CHAR16            *Param3;
 
   Param1 = GetNextParamStr (&TextDeviceNode);
   Param2 = GetNextParamStr (&TextDeviceNode);
   Param3 = GetNextParamStr (&TextDeviceNode);
 
   Sata = (SATA_DEVICE_PATH *) CreateDeviceNode (
-                                MESSAGING_DEVICE_PATH,
-                                MSG_SATA_DP,
-                                (UINT16) sizeof (SATA_DEVICE_PATH)
-                                );
-  Sata->HBAPortNumber            = (UINT16) Strtoi (Param1);
+                                                MESSAGING_DEVICE_PATH,
+                                                MSG_SATA_DP,
+                                                (UINT16) sizeof (SATA_DEVICE_PATH)
+                                                );
+  Sata->HBAPortNumber = (UINT16) Strtoi (Param1);
 
   //
   // According to UEFI spec, if PMPN is not provided, the default is 0xFFFF
@@ -3448,103 +3468,104 @@ DevPathFromTextSata (
   } else {
     Sata->PortMultiplierPortNumber = (UINT16) Strtoi (Param2);
   }
-  Sata->Lun                      = (UINT16) Strtoi (Param3);
+
+  Sata->Lun = (UINT16) Strtoi (Param3);
 
   return (EFI_DEVICE_PATH_PROTOCOL *) Sata;
 }
 
-GLOBAL_REMOVE_IF_UNREFERENCED DEVICE_PATH_FROM_TEXT_TABLE mUefiDevicePathLibDevPathFromTextTable[] = {
-  {L"Path",                    DevPathFromTextPath                    },
+GLOBAL_REMOVE_IF_UNREFERENCED DEVICE_PATH_FROM_TEXT_TABLE  mUefiDevicePathLibDevPathFromTextTable[] = {
+  { L"Path",                    DevPathFromTextPath                                          },
 
-  {L"HardwarePath",            DevPathFromTextHardwarePath            },
-  {L"Pci",                     DevPathFromTextPci                     },
-  {L"PcCard",                  DevPathFromTextPcCard                  },
-  {L"MemoryMapped",            DevPathFromTextMemoryMapped            },
-  {L"VenHw",                   DevPathFromTextVenHw                   },
-  {L"Ctrl",                    DevPathFromTextCtrl                    },
-  {L"BMC",                     DevPathFromTextBmc                     },
+  { L"HardwarePath",            DevPathFromTextHardwarePath                                  },
+  { L"Pci",                     DevPathFromTextPci                                           },
+  { L"PcCard",                  DevPathFromTextPcCard                                        },
+  { L"MemoryMapped",            DevPathFromTextMemoryMapped                                  },
+  { L"VenHw",                   DevPathFromTextVenHw                                         },
+  { L"Ctrl",                    DevPathFromTextCtrl                                          },
+  { L"BMC",                     DevPathFromTextBmc                                           },
 
-  {L"AcpiPath",                DevPathFromTextAcpiPath                },
-  {L"Acpi",                    DevPathFromTextAcpi                    },
-  {L"PciRoot",                 DevPathFromTextPciRoot                 },
-  {L"PcieRoot",                DevPathFromTextPcieRoot                },
-  {L"Floppy",                  DevPathFromTextFloppy                  },
-  {L"Keyboard",                DevPathFromTextKeyboard                },
-  {L"Serial",                  DevPathFromTextSerial                  },
-  {L"ParallelPort",            DevPathFromTextParallelPort            },
-  {L"AcpiEx",                  DevPathFromTextAcpiEx                  },
-  {L"AcpiExp",                 DevPathFromTextAcpiExp                 },
-  {L"AcpiAdr",                 DevPathFromTextAcpiAdr                 },
+  { L"AcpiPath",                DevPathFromTextAcpiPath                                      },
+  { L"Acpi",                    DevPathFromTextAcpi                                          },
+  { L"PciRoot",                 DevPathFromTextPciRoot                                       },
+  { L"PcieRoot",                DevPathFromTextPcieRoot                                      },
+  { L"Floppy",                  DevPathFromTextFloppy                                        },
+  { L"Keyboard",                DevPathFromTextKeyboard                                      },
+  { L"Serial",                  DevPathFromTextSerial                                        },
+  { L"ParallelPort",            DevPathFromTextParallelPort                                  },
+  { L"AcpiEx",                  DevPathFromTextAcpiEx                                        },
+  { L"AcpiExp",                 DevPathFromTextAcpiExp                                       },
+  { L"AcpiAdr",                 DevPathFromTextAcpiAdr                                       },
 
-  {L"Msg",                     DevPathFromTextMsg                     },
-  {L"Ata",                     DevPathFromTextAta                     },
-  {L"Scsi",                    DevPathFromTextScsi                    },
-  {L"Fibre",                   DevPathFromTextFibre                   },
-  {L"FibreEx",                 DevPathFromTextFibreEx                 },
-  {L"I1394",                   DevPathFromText1394                    },
-  {L"USB",                     DevPathFromTextUsb                     },
-  {L"I2O",                     DevPathFromTextI2O                     },
-  {L"Infiniband",              DevPathFromTextInfiniband              },
-  {L"VenMsg",                  DevPathFromTextVenMsg                  },
-  {L"VenPcAnsi",               DevPathFromTextVenPcAnsi               },
-  {L"VenVt100",                DevPathFromTextVenVt100                },
-  {L"VenVt100Plus",            DevPathFromTextVenVt100Plus            },
-  {L"VenUtf8",                 DevPathFromTextVenUtf8                 },
-  {L"UartFlowCtrl",            DevPathFromTextUartFlowCtrl            },
-  {L"SAS",                     DevPathFromTextSAS                     },
-  {L"SasEx",                   DevPathFromTextSasEx                   },
-  {L"NVMe",                    DevPathFromTextNVMe                    },
-  {L"UFS",                     DevPathFromTextUfs                     },
-  {L"SD",                      DevPathFromTextSd                      },
-  {L"eMMC",                    DevPathFromTextEmmc                    },
-  {L"DebugPort",               DevPathFromTextDebugPort               },
-  {L"MAC",                     DevPathFromTextMAC                     },
-  {L"IPv4",                    DevPathFromTextIPv4                    },
-  {L"IPv6",                    DevPathFromTextIPv6                    },
-  {L"Uart",                    DevPathFromTextUart                    },
-  {L"UsbClass",                DevPathFromTextUsbClass                },
-  {L"UsbAudio",                DevPathFromTextUsbAudio                },
-  {L"UsbCDCControl",           DevPathFromTextUsbCDCControl           },
-  {L"UsbHID",                  DevPathFromTextUsbHID                  },
-  {L"UsbImage",                DevPathFromTextUsbImage                },
-  {L"UsbPrinter",              DevPathFromTextUsbPrinter              },
-  {L"UsbMassStorage",          DevPathFromTextUsbMassStorage          },
-  {L"UsbHub",                  DevPathFromTextUsbHub                  },
-  {L"UsbCDCData",              DevPathFromTextUsbCDCData              },
-  {L"UsbSmartCard",            DevPathFromTextUsbSmartCard            },
-  {L"UsbVideo",                DevPathFromTextUsbVideo                },
-  {L"UsbDiagnostic",           DevPathFromTextUsbDiagnostic           },
-  {L"UsbWireless",             DevPathFromTextUsbWireless             },
-  {L"UsbDeviceFirmwareUpdate", DevPathFromTextUsbDeviceFirmwareUpdate },
-  {L"UsbIrdaBridge",           DevPathFromTextUsbIrdaBridge           },
-  {L"UsbTestAndMeasurement",   DevPathFromTextUsbTestAndMeasurement   },
-  {L"UsbWwid",                 DevPathFromTextUsbWwid                 },
-  {L"Unit",                    DevPathFromTextUnit                    },
-  {L"iSCSI",                   DevPathFromTextiSCSI                   },
-  {L"Vlan",                    DevPathFromTextVlan                    },
-  {L"Dns",                     DevPathFromTextDns                     },
-  {L"Uri",                     DevPathFromTextUri                     },
-  {L"Bluetooth",               DevPathFromTextBluetooth               },
-  {L"Wi-Fi",                   DevPathFromTextWiFi                    },
-  {L"BluetoothLE",             DevPathFromTextBluetoothLE             },
-  {L"MediaPath",               DevPathFromTextMediaPath               },
-  {L"HD",                      DevPathFromTextHD                      },
-  {L"CDROM",                   DevPathFromTextCDROM                   },
-  {L"VenMedia",                DevPathFromTextVenMedia                },
-  {L"Media",                   DevPathFromTextMedia                   },
-  {L"Fv",                      DevPathFromTextFv                      },
-  {L"FvFile",                  DevPathFromTextFvFile                  },
-  {L"Offset",                  DevPathFromTextRelativeOffsetRange     },
-  {L"RamDisk",                 DevPathFromTextRamDisk                 },
-  {L"VirtualDisk",             DevPathFromTextVirtualDisk             },
-  {L"VirtualCD",               DevPathFromTextVirtualCd               },
-  {L"PersistentVirtualDisk",   DevPathFromTextPersistentVirtualDisk   },
-  {L"PersistentVirtualCD",     DevPathFromTextPersistentVirtualCd     },
+  { L"Msg",                     DevPathFromTextMsg                                           },
+  { L"Ata",                     DevPathFromTextAta                                           },
+  { L"Scsi",                    DevPathFromTextScsi                                          },
+  { L"Fibre",                   DevPathFromTextFibre                                         },
+  { L"FibreEx",                 DevPathFromTextFibreEx                                       },
+  { L"I1394",                   DevPathFromText1394                                          },
+  { L"USB",                     DevPathFromTextUsb                                           },
+  { L"I2O",                     DevPathFromTextI2O                                           },
+  { L"Infiniband",              DevPathFromTextInfiniband                                    },
+  { L"VenMsg",                  DevPathFromTextVenMsg                                        },
+  { L"VenPcAnsi",               DevPathFromTextVenPcAnsi                                     },
+  { L"VenVt100",                DevPathFromTextVenVt100                                      },
+  { L"VenVt100Plus",            DevPathFromTextVenVt100Plus                                  },
+  { L"VenUtf8",                 DevPathFromTextVenUtf8                                       },
+  { L"UartFlowCtrl",            DevPathFromTextUartFlowCtrl                                  },
+  { L"SAS",                     DevPathFromTextSAS                                           },
+  { L"SasEx",                   DevPathFromTextSasEx                                         },
+  { L"NVMe",                    DevPathFromTextNVMe                                          },
+  { L"UFS",                     DevPathFromTextUfs                                           },
+  { L"SD",                      DevPathFromTextSd                                            },
+  { L"eMMC",                    DevPathFromTextEmmc                                          },
+  { L"DebugPort",               DevPathFromTextDebugPort                                     },
+  { L"MAC",                     DevPathFromTextMAC                                           },
+  { L"IPv4",                    DevPathFromTextIPv4                                          },
+  { L"IPv6",                    DevPathFromTextIPv6                                          },
+  { L"Uart",                    DevPathFromTextUart                                          },
+  { L"UsbClass",                DevPathFromTextUsbClass                                      },
+  { L"UsbAudio",                DevPathFromTextUsbAudio                                      },
+  { L"UsbCDCControl",           DevPathFromTextUsbCDCControl                                 },
+  { L"UsbHID",                  DevPathFromTextUsbHID                                        },
+  { L"UsbImage",                DevPathFromTextUsbImage                                      },
+  { L"UsbPrinter",              DevPathFromTextUsbPrinter                                    },
+  { L"UsbMassStorage",          DevPathFromTextUsbMassStorage                                },
+  { L"UsbHub",                  DevPathFromTextUsbHub                                        },
+  { L"UsbCDCData",              DevPathFromTextUsbCDCData                                    },
+  { L"UsbSmartCard",            DevPathFromTextUsbSmartCard                                  },
+  { L"UsbVideo",                DevPathFromTextUsbVideo                                      },
+  { L"UsbDiagnostic",           DevPathFromTextUsbDiagnostic                                 },
+  { L"UsbWireless",             DevPathFromTextUsbWireless                                   },
+  { L"UsbDeviceFirmwareUpdate", DevPathFromTextUsbDeviceFirmwareUpdate                       },
+  { L"UsbIrdaBridge",           DevPathFromTextUsbIrdaBridge                                 },
+  { L"UsbTestAndMeasurement",   DevPathFromTextUsbTestAndMeasurement                         },
+  { L"UsbWwid",                 DevPathFromTextUsbWwid                                       },
+  { L"Unit",                    DevPathFromTextUnit                                          },
+  { L"iSCSI",                   DevPathFromTextiSCSI                                         },
+  { L"Vlan",                    DevPathFromTextVlan                                          },
+  { L"Dns",                     DevPathFromTextDns                                           },
+  { L"Uri",                     DevPathFromTextUri                                           },
+  { L"Bluetooth",               DevPathFromTextBluetooth                                     },
+  { L"Wi-Fi",                   DevPathFromTextWiFi                                          },
+  { L"BluetoothLE",             DevPathFromTextBluetoothLE                                   },
+  { L"MediaPath",               DevPathFromTextMediaPath                                     },
+  { L"HD",                      DevPathFromTextHD                                            },
+  { L"CDROM",                   DevPathFromTextCDROM                                         },
+  { L"VenMedia",                DevPathFromTextVenMedia                                      },
+  { L"Media",                   DevPathFromTextMedia                                         },
+  { L"Fv",                      DevPathFromTextFv                                            },
+  { L"FvFile",                  DevPathFromTextFvFile                                        },
+  { L"Offset",                  DevPathFromTextRelativeOffsetRange                           },
+  { L"RamDisk",                 DevPathFromTextRamDisk                                       },
+  { L"VirtualDisk",             DevPathFromTextVirtualDisk                                   },
+  { L"VirtualCD",               DevPathFromTextVirtualCd                                     },
+  { L"PersistentVirtualDisk",   DevPathFromTextPersistentVirtualDisk                         },
+  { L"PersistentVirtualCD",     DevPathFromTextPersistentVirtualCd                           },
 
-  {L"BbsPath",                 DevPathFromTextBbsPath                 },
-  {L"BBS",                     DevPathFromTextBBS                     },
-  {L"Sata",                    DevPathFromTextSata                    },
-  {NULL, NULL}
+  { L"BbsPath",                 DevPathFromTextBbsPath                                       },
+  { L"BBS",                     DevPathFromTextBBS                                           },
+  { L"Sata",                    DevPathFromTextSata                                          },
+  { NULL,                       NULL                                                         }
 };
 
 /**
@@ -3564,18 +3585,18 @@ UefiDevicePathLibConvertTextToDeviceNode (
   IN CONST CHAR16 *TextDeviceNode
   )
 {
-  DEVICE_PATH_FROM_TEXT    FromText;
-  CHAR16                   *ParamStr;
-  EFI_DEVICE_PATH_PROTOCOL *DeviceNode;
-  CHAR16                   *DeviceNodeStr;
-  UINTN                    Index;
+  DEVICE_PATH_FROM_TEXT     FromText;
+  CHAR16                    *ParamStr;
+  EFI_DEVICE_PATH_PROTOCOL  *DeviceNode;
+  CHAR16                    *DeviceNodeStr;
+  UINTN                     Index;
 
   if ((TextDeviceNode == NULL) || (IS_NULL (*TextDeviceNode))) {
     return NULL;
   }
 
-  ParamStr      = NULL;
-  FromText      = NULL;
+  ParamStr = NULL;
+  FromText = NULL;
   DeviceNodeStr = UefiDevicePathLibStrDuplicate (TextDeviceNode);
   ASSERT (DeviceNodeStr != NULL);
 
@@ -3591,7 +3612,7 @@ UefiDevicePathLibConvertTextToDeviceNode (
     //
     // A file path
     //
-    FromText = DevPathFromTextFilePath;
+    FromText   = DevPathFromTextFilePath;
     DeviceNode = FromText (DeviceNodeStr);
   } else {
     DeviceNode = FromText (ParamStr);
@@ -3621,13 +3642,13 @@ UefiDevicePathLibConvertTextToDevicePath (
   IN CONST CHAR16 *TextDevicePath
   )
 {
-  EFI_DEVICE_PATH_PROTOCOL *DeviceNode;
-  EFI_DEVICE_PATH_PROTOCOL *NewDevicePath;
-  CHAR16                   *DevicePathStr;
-  CHAR16                   *Str;
-  CHAR16                   *DeviceNodeStr;
-  BOOLEAN                  IsInstanceEnd;
-  EFI_DEVICE_PATH_PROTOCOL *DevicePath;
+  EFI_DEVICE_PATH_PROTOCOL  *DeviceNode;
+  EFI_DEVICE_PATH_PROTOCOL  *NewDevicePath;
+  CHAR16                    *DevicePathStr;
+  CHAR16                    *Str;
+  CHAR16                    *DeviceNodeStr;
+  BOOLEAN                   IsInstanceEnd;
+  EFI_DEVICE_PATH_PROTOCOL  *DevicePath;
 
   if ((TextDevicePath == NULL) || (IS_NULL (*TextDevicePath))) {
     return NULL;
@@ -3639,7 +3660,7 @@ UefiDevicePathLibConvertTextToDevicePath (
 
   DevicePathStr = UefiDevicePathLibStrDuplicate (TextDevicePath);
 
-  Str           = DevicePathStr;
+  Str = DevicePathStr;
   while ((DeviceNodeStr = GetNextDeviceNodeStr (&Str, &IsInstanceEnd)) != NULL) {
     DeviceNode = UefiDevicePathLibConvertTextToDeviceNode (DeviceNodeStr);
 

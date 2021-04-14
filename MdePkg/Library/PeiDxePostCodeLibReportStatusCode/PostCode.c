@@ -7,7 +7,6 @@
 
 **/
 
-
 #include <PiPei.h>
 
 #include <Library/PostCodeLib.h>
@@ -58,7 +57,6 @@ PostCode (
   return Value;
 }
 
-
 /**
   Sends an 32-bit value to a POST and associated ASCII string.
 
@@ -92,21 +90,20 @@ PostCodeWithDescription (
 {
   if (Description == NULL) {
     REPORT_STATUS_CODE (
-      EFI_PROGRESS_CODE,
-      POST_CODE_TO_STATUS_CODE_VALUE (Value)
-      );
+                        EFI_PROGRESS_CODE,
+                        POST_CODE_TO_STATUS_CODE_VALUE (Value)
+                        );
   } else {
     REPORT_STATUS_CODE_WITH_EXTENDED_DATA (
-      EFI_PROGRESS_CODE,
-      POST_CODE_TO_STATUS_CODE_VALUE (Value),
-      Description,
-      AsciiStrSize (Description)
-      );
+                                           EFI_PROGRESS_CODE,
+                                           POST_CODE_TO_STATUS_CODE_VALUE (Value),
+                                           Description,
+                                           AsciiStrSize (Description)
+                                           );
   }
 
   return Value;
 }
-
 
 /**
   Returns TRUE if POST Codes are enabled.
@@ -126,9 +123,8 @@ PostCodeEnabled (
   VOID
   )
 {
-  return (BOOLEAN) ((PcdGet8(PcdPostCodePropertyMask) & POST_CODE_PROPERTY_POST_CODE_ENABLED) != 0);
+  return (BOOLEAN) ((PcdGet8 (PcdPostCodePropertyMask) & POST_CODE_PROPERTY_POST_CODE_ENABLED) != 0);
 }
-
 
 /**
   Returns TRUE if POST code descriptions are enabled.
@@ -148,6 +144,5 @@ PostCodeDescriptionEnabled (
   VOID
   )
 {
-  return (BOOLEAN) ((PcdGet8(PcdPostCodePropertyMask) & POST_CODE_PROPERTY_POST_CODE_DESCRIPTION_ENABLED) != 0);
+  return (BOOLEAN) ((PcdGet8 (PcdPostCodePropertyMask) & POST_CODE_PROPERTY_POST_CODE_DESCRIPTION_ENABLED) != 0);
 }
-

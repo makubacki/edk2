@@ -25,26 +25,25 @@
 
 #define EFI_IPSEC_PROTOCOL_GUID \
   { \
-    0xdfb386f7, 0xe100, 0x43ad, {0x9c, 0x9a, 0xed, 0x90, 0xd0, 0x8a, 0x5e, 0x12 } \
+    0xdfb386f7, 0xe100, 0x43ad, { 0x9c, 0x9a, 0xed, 0x90, 0xd0, 0x8a, 0x5e, 0x12 } \
   }
 
 #define EFI_IPSEC2_PROTOCOL_GUID \
   { \
-    0xa3979e64, 0xace8, 0x4ddc, {0xbc, 0x7, 0x4d, 0x66, 0xb8, 0xfd, 0x9, 0x77 } \
+    0xa3979e64, 0xace8, 0x4ddc, { 0xbc, 0x7, 0x4d, 0x66, 0xb8, 0xfd, 0x9, 0x77 } \
   }
 
-typedef struct _EFI_IPSEC_PROTOCOL  EFI_IPSEC_PROTOCOL;
-typedef struct _EFI_IPSEC2_PROTOCOL EFI_IPSEC2_PROTOCOL;
+typedef struct _EFI_IPSEC_PROTOCOL   EFI_IPSEC_PROTOCOL;
+typedef struct _EFI_IPSEC2_PROTOCOL  EFI_IPSEC2_PROTOCOL;
 
 ///
 /// EFI_IPSEC_FRAGMENT_DATA
 /// defines the instances of packet fragments.
 ///
 typedef struct _EFI_IPSEC_FRAGMENT_DATA {
-  UINT32  FragmentLength;
-  VOID    *FragmentBuffer;
+  UINT32    FragmentLength;
+  VOID      *FragmentBuffer;
 } EFI_IPSEC_FRAGMENT_DATA;
-
 
 /**
   Handles IPsec packet processing for inbound and outbound IP packets.
@@ -71,33 +70,33 @@ typedef struct _EFI_IPSEC_FRAGMENT_DATA {
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI  *EFI_IPSEC_PROCESS)(
-  IN     EFI_IPSEC_PROTOCOL      *This,
-  IN     EFI_HANDLE              NicHandle,
-  IN     UINT8                   IpVer,
-  IN OUT VOID                    *IpHead,
-  IN     UINT8                   *LastHead,
-  IN     VOID                    *OptionsBuffer,
-  IN     UINT32                  OptionsLength,
-  IN OUT EFI_IPSEC_FRAGMENT_DATA **FragmentTable,
-  IN     UINT32                  *FragmentCount,
-  IN     EFI_IPSEC_TRAFFIC_DIR   TrafficDirection,
-     OUT EFI_EVENT               *RecycleSignal
-  );
+                             IN     EFI_IPSEC_PROTOCOL      *This,
+                             IN     EFI_HANDLE              NicHandle,
+                             IN     UINT8                   IpVer,
+                             IN OUT VOID                    *IpHead,
+                             IN     UINT8                   *LastHead,
+                             IN     VOID                    *OptionsBuffer,
+                             IN     UINT32                  OptionsLength,
+                             IN OUT EFI_IPSEC_FRAGMENT_DATA **FragmentTable,
+                             IN     UINT32                  *FragmentCount,
+                             IN     EFI_IPSEC_TRAFFIC_DIR   TrafficDirection,
+                             OUT EFI_EVENT               *RecycleSignal
+                             );
 
 ///
 /// EFI_IPSEC_PROTOCOL
 /// provides the ability for  securing IP communications by authenticating
 /// and/or encrypting each IP packet in a data stream.
-//  EFI_IPSEC_PROTOCOL can be consumed by both the IPv4 and IPv6 stack.
-//  A user can employ this protocol for IPsec package handling in both IPv4
-//  and IPv6 environment.
+// EFI_IPSEC_PROTOCOL can be consumed by both the IPv4 and IPv6 stack.
+// A user can employ this protocol for IPsec package handling in both IPv4
+// and IPv6 environment.
 ///
 struct _EFI_IPSEC_PROTOCOL {
-  EFI_IPSEC_PROCESS      Process;           ///< Handle the IPsec message.
-  EFI_EVENT              DisabledEvent;     ///< Event signaled when the interface is disabled.
-  BOOLEAN                DisabledFlag;      ///< State of the interface.
+  EFI_IPSEC_PROCESS    Process;             ///< Handle the IPsec message.
+  EFI_EVENT            DisabledEvent;       ///< Event signaled when the interface is disabled.
+  BOOLEAN              DisabledFlag;        ///< State of the interface.
 };
 
 /**
@@ -184,20 +183,20 @@ struct _EFI_IPSEC_PROTOCOL {
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_IPSEC_PROCESSEXT) (
-  IN EFI_IPSEC2_PROTOCOL         *This,
-  IN EFI_HANDLE                  NicHandle,
-  IN UINT8                       IpVer,
-  IN OUT VOID                    *IpHead,
-  IN OUT UINT8                   *LastHead,
-  IN OUT VOID                    **OptionsBuffer,
-  IN OUT UINT32                  *OptionsLength,
-  IN OUT EFI_IPSEC_FRAGMENT_DATA **FragmentTable,
-  IN OUT UINT32                  *FragmentCount,
-  IN EFI_IPSEC_TRAFFIC_DIR       TrafficDirection,
-     OUT EFI_EVENT               *RecycleSignal
-  );
+  EFI_STATUS
+(EFIAPI *EFI_IPSEC_PROCESSEXT)(
+                               IN EFI_IPSEC2_PROTOCOL         *This,
+                               IN EFI_HANDLE                  NicHandle,
+                               IN UINT8                       IpVer,
+                               IN OUT VOID                    *IpHead,
+                               IN OUT UINT8                   *LastHead,
+                               IN OUT VOID                    **OptionsBuffer,
+                               IN OUT UINT32                  *OptionsLength,
+                               IN OUT EFI_IPSEC_FRAGMENT_DATA **FragmentTable,
+                               IN OUT UINT32                  *FragmentCount,
+                               IN EFI_IPSEC_TRAFFIC_DIR       TrafficDirection,
+                               OUT EFI_EVENT               *RecycleSignal
+                               );
 
 ///
 /// EFI_IPSEC2_PROTOCOL
@@ -208,11 +207,11 @@ EFI_STATUS
 /// encrypting each IP packet in a data stream.
 ///
 struct _EFI_IPSEC2_PROTOCOL {
-EFI_IPSEC_PROCESSEXT ProcessExt;
-EFI_EVENT            DisabledEvent;
-BOOLEAN              DisabledFlag;
+  EFI_IPSEC_PROCESSEXT    ProcessExt;
+  EFI_EVENT               DisabledEvent;
+  BOOLEAN                 DisabledFlag;
 };
 
-extern EFI_GUID gEfiIpSecProtocolGuid;
-extern EFI_GUID gEfiIpSec2ProtocolGuid;
+extern EFI_GUID  gEfiIpSecProtocolGuid;
+extern EFI_GUID  gEfiIpSec2ProtocolGuid;
 #endif

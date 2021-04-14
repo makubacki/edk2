@@ -19,7 +19,7 @@
 ///
 #define EFI_SPI_NOR_FLASH_PROTOCOL_GUID  \
   { 0xb57ec3fe, 0xf833, 0x4ba6,          \
-    { 0x85, 0x78, 0x2a, 0x7d, 0x6a, 0x87, 0x44, 0x4b }}
+    { 0x85, 0x78, 0x2a, 0x7d, 0x6a, 0x87, 0x44, 0x4b } }
 
 typedef struct _EFI_SPI_NOR_FLASH_PROTOCOL EFI_SPI_NOR_FLASH_PROTOCOL;
 
@@ -43,11 +43,11 @@ typedef struct _EFI_SPI_NOR_FLASH_PROTOCOL EFI_SPI_NOR_FLASH_PROTOCOL;
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_SPI_NOR_FLASH_PROTOCOL_GET_FLASH_ID) (
-  IN  CONST EFI_SPI_NOR_FLASH_PROTOCOL  *This,
-  OUT UINT8                             *Buffer
-  );
+  EFI_STATUS
+(EFIAPI *EFI_SPI_NOR_FLASH_PROTOCOL_GET_FLASH_ID)(
+                                                  IN  CONST EFI_SPI_NOR_FLASH_PROTOCOL  *This,
+                                                  OUT UINT8                             *Buffer
+                                                  );
 
 /**
   Read data from the SPI flash.
@@ -68,13 +68,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_SPI_NOR_FLASH_PROTOCOL_READ_DATA) (
-  IN  CONST EFI_SPI_NOR_FLASH_PROTOCOL  *This,
-  IN  UINT32                            FlashAddress,
-  IN  UINT32                            LengthInBytes,
-  OUT UINT8                             *Buffer
-  );
+  EFI_STATUS
+(EFIAPI *EFI_SPI_NOR_FLASH_PROTOCOL_READ_DATA)(
+                                               IN  CONST EFI_SPI_NOR_FLASH_PROTOCOL  *This,
+                                               IN  UINT32                            FlashAddress,
+                                               IN  UINT32                            LengthInBytes,
+                                               OUT UINT8                             *Buffer
+                                               );
 
 /**
   Read the flash status register.
@@ -91,12 +91,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_SPI_NOR_FLASH_PROTOCOL_READ_STATUS) (
-  IN  CONST EFI_SPI_NOR_FLASH_PROTOCOL  *This,
-  IN  UINT32                            LengthInBytes,
-  OUT UINT8                             *FlashStatus
-  );
+  EFI_STATUS
+(EFIAPI *EFI_SPI_NOR_FLASH_PROTOCOL_READ_STATUS)(
+                                                 IN  CONST EFI_SPI_NOR_FLASH_PROTOCOL  *This,
+                                                 IN  UINT32                            LengthInBytes,
+                                                 OUT UINT8                             *FlashStatus
+                                                 );
 
 /**
   Write the flash status register.
@@ -114,12 +114,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_SPI_NOR_FLASH_PROTOCOL_WRITE_STATUS) (
-  IN CONST EFI_SPI_NOR_FLASH_PROTOCOL  *This,
-  IN UINT32                            LengthInBytes,
-  IN UINT8                             *FlashStatus
-  );
+  EFI_STATUS
+(EFIAPI *EFI_SPI_NOR_FLASH_PROTOCOL_WRITE_STATUS)(
+                                                  IN CONST EFI_SPI_NOR_FLASH_PROTOCOL  *This,
+                                                  IN UINT32                            LengthInBytes,
+                                                  IN UINT8                             *FlashStatus
+                                                  );
 
 /**
   Write data to the SPI flash.
@@ -142,13 +142,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_SPI_NOR_FLASH_PROTOCOL_WRITE_DATA) (
-  IN CONST EFI_SPI_NOR_FLASH_PROTOCOL  *This,
-  IN UINT32                            FlashAddress,
-  IN UINT32                            LengthInBytes,
-  IN UINT8                             *Buffer
-  );
+  EFI_STATUS
+(EFIAPI *EFI_SPI_NOR_FLASH_PROTOCOL_WRITE_DATA)(
+                                                IN CONST EFI_SPI_NOR_FLASH_PROTOCOL  *This,
+                                                IN UINT32                            FlashAddress,
+                                                IN UINT32                            LengthInBytes,
+                                                IN UINT8                             *Buffer
+                                                );
 
 /**
   Efficiently erases one or more 4KiB regions in the SPI flash.
@@ -169,12 +169,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_SPI_NOR_FLASH_PROTOCOL_ERASE) (
-  IN CONST EFI_SPI_NOR_FLASH_PROTOCOL  *This,
-  IN UINT32                            FlashAddress,
-  IN UINT32                            BlockCount
-  );
+  EFI_STATUS
+(EFIAPI *EFI_SPI_NOR_FLASH_PROTOCOL_ERASE)(
+                                           IN CONST EFI_SPI_NOR_FLASH_PROTOCOL  *This,
+                                           IN UINT32                            FlashAddress,
+                                           IN UINT32                            BlockCount
+                                           );
 
 ///
 /// The EFI_SPI_NOR_FLASH_PROTOCOL exists in the SPI peripheral layer.
@@ -198,59 +198,59 @@ struct _EFI_SPI_NOR_FLASH_PROTOCOL {
   ///
   /// Pointer to an EFI_SPI_PERIPHERAL data structure
   ///
-  CONST EFI_SPI_PERIPHERAL                *SpiPeripheral;
+  CONST EFI_SPI_PERIPHERAL                   *SpiPeripheral;
 
   ///
   /// Flash size in bytes
   ///
-  UINT32                                  FlashSize;
+  UINT32                                     FlashSize;
 
   ///
   /// Manufacture and Device ID
   ///
-  UINT8                                   Deviceid[3];
+  UINT8                                      Deviceid[3];
 
   ///
   /// Erase block size in bytes
   ///
-  UINT32                                  EraseBlockBytes;
+  UINT32                                     EraseBlockBytes;
 
   ///
   /// Read the 3 byte manufacture and device ID from the SPI flash.
   ///
-  EFI_SPI_NOR_FLASH_PROTOCOL_GET_FLASH_ID GetFlashid;
+  EFI_SPI_NOR_FLASH_PROTOCOL_GET_FLASH_ID    GetFlashid;
 
   ///
   /// Read data from the SPI flash.
   ///
-  EFI_SPI_NOR_FLASH_PROTOCOL_READ_DATA    ReadData;
+  EFI_SPI_NOR_FLASH_PROTOCOL_READ_DATA       ReadData;
 
   ///
   /// Low frequency read data from the SPI flash.
   ///
-  EFI_SPI_NOR_FLASH_PROTOCOL_READ_DATA    LfReadData;
+  EFI_SPI_NOR_FLASH_PROTOCOL_READ_DATA       LfReadData;
 
   ///
   /// Read the flash status register.
   ///
-  EFI_SPI_NOR_FLASH_PROTOCOL_READ_STATUS  ReadStatus;
+  EFI_SPI_NOR_FLASH_PROTOCOL_READ_STATUS     ReadStatus;
 
   ///
   /// Write the flash status register.
   ///
-  EFI_SPI_NOR_FLASH_PROTOCOL_WRITE_STATUS WriteStatus;
+  EFI_SPI_NOR_FLASH_PROTOCOL_WRITE_STATUS    WriteStatus;
 
   ///
   /// Write data to the SPI flash.
   ///
-  EFI_SPI_NOR_FLASH_PROTOCOL_WRITE_DATA   WriteData;
+  EFI_SPI_NOR_FLASH_PROTOCOL_WRITE_DATA      WriteData;
 
   ///
   /// Efficiently erases one or more 4KiB regions in the SPI flash.
   ///
-  EFI_SPI_NOR_FLASH_PROTOCOL_ERASE        Erase;
+  EFI_SPI_NOR_FLASH_PROTOCOL_ERASE           Erase;
 };
 
-extern EFI_GUID gEfiSpiNorFlashProtocolGuid;
+extern EFI_GUID  gEfiSpiNorFlashProtocolGuid;
 
 #endif // __SPI_NOR_FLASH_PROTOCOL_H__

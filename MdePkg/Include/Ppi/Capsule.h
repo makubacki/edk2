@@ -18,7 +18,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 ///
 #define EFI_PEI_CAPSULE_PPI_GUID \
   { \
-    0x3acf33ee, 0xd892, 0x40f4, {0xa2, 0xfc, 0x38, 0x54, 0xd2, 0xe1, 0x32, 0x3d } \
+    0x3acf33ee, 0xd892, 0x40f4, { 0xa2, 0xfc, 0x38, 0x54, 0xd2, 0xe1, 0x32, 0x3d } \
   }
 
 ///
@@ -52,12 +52,12 @@ typedef struct _EFI_PEI_CAPSULE_PPI PEI_CAPSULE_PPI;
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_CAPSULE_COALESCE)(
-  IN EFI_PEI_SERVICES  **PeiServices,
-  IN OUT VOID          **MemoryBase,
-  IN OUT UINTN         *MemSize
-  );
+                                   IN EFI_PEI_SERVICES  **PeiServices,
+                                   IN OUT VOID          **MemoryBase,
+                                   IN OUT UINTN         *MemSize
+                                   );
 
 /**
   Determine if a capsule needs to be processed.
@@ -73,10 +73,10 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_CAPSULE_CHECK_CAPSULE_UPDATE)(
-  IN EFI_PEI_SERVICES  **PeiServices
-  );
+                                               IN EFI_PEI_SERVICES  **PeiServices
+                                               );
 
 /**
   The Capsule PPI service that gets called after memory is available. The
@@ -100,12 +100,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_CAPSULE_CREATE_STATE)(
-  IN EFI_PEI_SERVICES  **PeiServices,
-  IN VOID              *CapsuleBase,
-  IN UINTN             CapsuleSize
-  );
+                                       IN EFI_PEI_SERVICES  **PeiServices,
+                                       IN VOID              *CapsuleBase,
+                                       IN UINTN             CapsuleSize
+                                       );
 
 ///
 /// This PPI provides several services in PEI to work with the underlying
@@ -115,16 +115,16 @@ EFI_STATUS
 /// processing, and once memory is available, create a HOB for the capsule.
 ///
 struct _EFI_PEI_CAPSULE_PPI {
-  EFI_PEI_CAPSULE_COALESCE              Coalesce;
-  EFI_PEI_CAPSULE_CHECK_CAPSULE_UPDATE  CheckCapsuleUpdate;
-  EFI_PEI_CAPSULE_CREATE_STATE          CreateState;
+  EFI_PEI_CAPSULE_COALESCE                Coalesce;
+  EFI_PEI_CAPSULE_CHECK_CAPSULE_UPDATE    CheckCapsuleUpdate;
+  EFI_PEI_CAPSULE_CREATE_STATE            CreateState;
 };
 
 ///
 /// Keep name backwards compatible before PI Version 1.4
 ///
-extern EFI_GUID gPeiCapsulePpiGuid;
+extern EFI_GUID  gPeiCapsulePpiGuid;
 
-extern EFI_GUID gEfiPeiCapsulePpiGuid;
+extern EFI_GUID  gEfiPeiCapsulePpiGuid;
 
 #endif // #ifndef _PEI_CAPSULE_PPI_H_

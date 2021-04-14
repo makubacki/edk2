@@ -14,27 +14,27 @@
 
 #define EFI_SIMPLE_TEXT_INPUT_PROTOCOL_GUID \
   { \
-    0x387477c1, 0x69c7, 0x11d2, {0x8e, 0x39, 0x0, 0xa0, 0xc9, 0x69, 0x72, 0x3b } \
+    0x387477c1, 0x69c7, 0x11d2, { 0x8e, 0x39, 0x0, 0xa0, 0xc9, 0x69, 0x72, 0x3b } \
   }
 
-typedef struct _EFI_SIMPLE_TEXT_INPUT_PROTOCOL  EFI_SIMPLE_TEXT_INPUT_PROTOCOL;
+typedef struct _EFI_SIMPLE_TEXT_INPUT_PROTOCOL EFI_SIMPLE_TEXT_INPUT_PROTOCOL;
 
 ///
 /// Protocol GUID name defined in EFI1.1.
 ///
-#define SIMPLE_INPUT_PROTOCOL   EFI_SIMPLE_TEXT_INPUT_PROTOCOL_GUID
+#define SIMPLE_INPUT_PROTOCOL  EFI_SIMPLE_TEXT_INPUT_PROTOCOL_GUID
 
 ///
 /// Protocol name in EFI1.1 for backward-compatible.
 ///
-typedef struct _EFI_SIMPLE_TEXT_INPUT_PROTOCOL  SIMPLE_INPUT_INTERFACE;
+typedef struct _EFI_SIMPLE_TEXT_INPUT_PROTOCOL SIMPLE_INPUT_INTERFACE;
 
 ///
 /// The keystroke information for the key that was pressed.
 ///
 typedef struct {
-  UINT16  ScanCode;
-  CHAR16  UnicodeChar;
+  UINT16    ScanCode;
+  CHAR16    UnicodeChar;
 } EFI_INPUT_KEY;
 
 //
@@ -82,11 +82,11 @@ typedef struct {
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_INPUT_RESET)(
-  IN EFI_SIMPLE_TEXT_INPUT_PROTOCOL       *This,
-  IN BOOLEAN                              ExtendedVerification
-  );
+                          IN EFI_SIMPLE_TEXT_INPUT_PROTOCOL       *This,
+                          IN BOOLEAN                              ExtendedVerification
+                          );
 
 /**
   Reads the next keystroke from the input device. The WaitForKey Event can
@@ -103,25 +103,25 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_INPUT_READ_KEY)(
-  IN EFI_SIMPLE_TEXT_INPUT_PROTOCOL       *This,
-  OUT EFI_INPUT_KEY                       *Key
-  );
+                             IN EFI_SIMPLE_TEXT_INPUT_PROTOCOL       *This,
+                             OUT EFI_INPUT_KEY                       *Key
+                             );
 
 ///
 /// The EFI_SIMPLE_TEXT_INPUT_PROTOCOL is used on the ConsoleIn device.
 /// It is the minimum required protocol for ConsoleIn.
 ///
 struct _EFI_SIMPLE_TEXT_INPUT_PROTOCOL {
-  EFI_INPUT_RESET     Reset;
-  EFI_INPUT_READ_KEY  ReadKeyStroke;
+  EFI_INPUT_RESET       Reset;
+  EFI_INPUT_READ_KEY    ReadKeyStroke;
   ///
   /// Event to use with WaitForEvent() to wait for a key to be available
   ///
-  EFI_EVENT           WaitForKey;
+  EFI_EVENT             WaitForKey;
 };
 
-extern EFI_GUID gEfiSimpleTextInProtocolGuid;
+extern EFI_GUID  gEfiSimpleTextInProtocolGuid;
 
 #endif

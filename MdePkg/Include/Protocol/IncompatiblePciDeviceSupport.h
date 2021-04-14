@@ -75,7 +75,7 @@
 ///
 #define EFI_INCOMPATIBLE_PCI_DEVICE_SUPPORT_PROTOCOL_GUID \
   { \
-    0xeb23f55a, 0x7863, 0x4ac2, {0x8d, 0x3d, 0x95, 0x65, 0x35, 0xde, 0x03, 0x75} \
+    0xeb23f55a, 0x7863, 0x4ac2, { 0x8d, 0x3d, 0x95, 0x65, 0x35, 0xde, 0x03, 0x75 } \
   }
 
 ///
@@ -139,29 +139,32 @@ typedef struct _EFI_INCOMPATIBLE_PCI_DEVICE_SUPPORT_PROTOCOL EFI_INCOMPATIBLE_PC
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_INCOMPATIBLE_PCI_DEVICE_SUPPORT_CHECK_DEVICE)(
-  IN  EFI_INCOMPATIBLE_PCI_DEVICE_SUPPORT_PROTOCOL  *This,
-  IN  UINTN                                         VendorId,
-  IN  UINTN                                         DeviceId,
-  IN  UINTN                                         RevisionId,
-  IN  UINTN                                         SubsystemVendorId,
-  IN  UINTN                                         SubsystemDeviceId,
-  OUT VOID                                          **Configuration
-  );
+                                                           IN  EFI_INCOMPATIBLE_PCI_DEVICE_SUPPORT_PROTOCOL  *This,
+                                                           IN  UINTN                                         VendorId,
+                                                           IN  UINTN                                         DeviceId,
+                                                           IN  UINTN                                         RevisionId,
+                                                           IN  UINTN
+                                                           SubsystemVendorId,
+                                                           IN  UINTN
+                                                           SubsystemDeviceId,
+                                                           OUT VOID                                          **
+                                                           Configuration
+                                                           );
 
 ///
 /// Interface structure for the Incompatible PCI Device Support Protocol
 ///
 struct _EFI_INCOMPATIBLE_PCI_DEVICE_SUPPORT_PROTOCOL {
   ///
-  ///  Returns a list of ACPI resource descriptors that detail any special
-  ///  resource configuration requirements if the specified device is a recognized
-  ///  incompatible PCI device.
+  /// Returns a list of ACPI resource descriptors that detail any special
+  /// resource configuration requirements if the specified device is a recognized
+  /// incompatible PCI device.
   ///
-  EFI_INCOMPATIBLE_PCI_DEVICE_SUPPORT_CHECK_DEVICE  CheckDevice;
+  EFI_INCOMPATIBLE_PCI_DEVICE_SUPPORT_CHECK_DEVICE    CheckDevice;
 };
 
-extern EFI_GUID gEfiIncompatiblePciDeviceSupportProtocolGuid;
+extern EFI_GUID  gEfiIncompatiblePciDeviceSupportProtocolGuid;
 
 #endif

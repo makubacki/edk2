@@ -33,8 +33,8 @@ IoReadWorker (
   IN      EFI_SMM_IO_WIDTH          Width
   )
 {
-  EFI_STATUS                        Status;
-  UINT64                            Data;
+  EFI_STATUS  Status;
+  UINT64      Data;
 
   Status = gSmst->SmmIo.Io.Read (&gSmst->SmmIo, Width, Port, 1, &Data);
   ASSERT_EFI_ERROR (Status);
@@ -65,7 +65,7 @@ IoWriteWorker (
   IN      UINT64                    Data
   )
 {
-  EFI_STATUS                        Status;
+  EFI_STATUS  Status;
 
   Status = gSmst->SmmIo.Io.Write (&gSmst->SmmIo, Width, Port, 1, &Data);
   ASSERT_EFI_ERROR (Status);
@@ -94,8 +94,8 @@ MmioReadWorker (
   IN      EFI_SMM_IO_WIDTH          Width
   )
 {
-  EFI_STATUS                        Status;
-  UINT64                            Data;
+  EFI_STATUS  Status;
+  UINT64      Data;
 
   Status = gSmst->SmmIo.Mem.Read (&gSmst->SmmIo, Width, Address, 1, &Data);
   ASSERT_EFI_ERROR (Status);
@@ -126,7 +126,7 @@ MmioWriteWorker (
   IN      UINT64                    Data
   )
 {
-  EFI_STATUS                        Status;
+  EFI_STATUS  Status;
 
   Status = gSmst->SmmIo.Mem.Write (&gSmst->SmmIo, Width, Address, 1, &Data);
   ASSERT_EFI_ERROR (Status);
@@ -154,7 +154,7 @@ IoRead8 (
   IN      UINTN                     Port
   )
 {
-  return (UINT8)IoReadWorker (Port, SMM_IO_UINT8);
+  return (UINT8) IoReadWorker (Port, SMM_IO_UINT8);
 }
 
 /**
@@ -179,7 +179,7 @@ IoWrite8 (
   IN      UINT8                     Value
   )
 {
-  return (UINT8)IoWriteWorker (Port, SMM_IO_UINT8, Value);
+  return (UINT8) IoWriteWorker (Port, SMM_IO_UINT8, Value);
 }
 
 /**
@@ -208,7 +208,7 @@ IoRead16 (
   // Make sure Port is aligned on a 16-bit boundary.
   //
   ASSERT ((Port & 1) == 0);
-  return (UINT16)IoReadWorker (Port, SMM_IO_UINT16);
+  return (UINT16) IoReadWorker (Port, SMM_IO_UINT16);
 }
 
 /**
@@ -239,7 +239,7 @@ IoWrite16 (
   // Make sure Port is aligned on a 16-bit boundary.
   //
   ASSERT ((Port & 1) == 0);
-  return (UINT16)IoWriteWorker (Port, SMM_IO_UINT16, Value);
+  return (UINT16) IoWriteWorker (Port, SMM_IO_UINT16, Value);
 }
 
 /**
@@ -268,7 +268,7 @@ IoRead32 (
   // Make sure Port is aligned on a 32-bit boundary.
   //
   ASSERT ((Port & 3) == 0);
-  return (UINT32)IoReadWorker (Port, SMM_IO_UINT32);
+  return (UINT32) IoReadWorker (Port, SMM_IO_UINT32);
 }
 
 /**
@@ -299,7 +299,7 @@ IoWrite32 (
   // Make sure Port is aligned on a 32-bit boundary.
   //
   ASSERT ((Port & 3) == 0);
-  return (UINT32)IoWriteWorker (Port, SMM_IO_UINT32, Value);
+  return (UINT32) IoWriteWorker (Port, SMM_IO_UINT32, Value);
 }
 
 /**
@@ -387,9 +387,9 @@ IoReadFifo8 (
   OUT     VOID                      *Buffer
   )
 {
-  UINT8 *Buffer8;
+  UINT8  *Buffer8;
 
-  Buffer8 = (UINT8 *)Buffer;
+  Buffer8 = (UINT8 *) Buffer;
   while (Count-- > 0) {
     *Buffer8++ = IoRead8 (Port);
   }
@@ -420,9 +420,9 @@ IoWriteFifo8 (
   IN      VOID                      *Buffer
   )
 {
-  UINT8 *Buffer8;
+  UINT8  *Buffer8;
 
-  Buffer8 = (UINT8 *)Buffer;
+  Buffer8 = (UINT8 *) Buffer;
   while (Count-- > 0) {
     IoWrite8 (Port, *Buffer8++);
   }
@@ -453,13 +453,13 @@ IoReadFifo16 (
   OUT     VOID                      *Buffer
   )
 {
-  UINT16 *Buffer16;
+  UINT16  *Buffer16;
 
   //
   // Make sure Port is aligned on a 16-bit boundary.
   //
   ASSERT ((Port & 1) == 0);
-  Buffer16 = (UINT16 *)Buffer;
+  Buffer16 = (UINT16 *) Buffer;
   while (Count-- > 0) {
     *Buffer16++ = IoRead16 (Port);
   }
@@ -490,13 +490,13 @@ IoWriteFifo16 (
   IN      VOID                      *Buffer
   )
 {
-  UINT16 *Buffer16;
+  UINT16  *Buffer16;
 
   //
   // Make sure Port is aligned on a 16-bit boundary.
   //
   ASSERT ((Port & 1) == 0);
-  Buffer16 = (UINT16 *)Buffer;
+  Buffer16 = (UINT16 *) Buffer;
   while (Count-- > 0) {
     IoWrite16 (Port, *Buffer16++);
   }
@@ -527,13 +527,13 @@ IoReadFifo32 (
   OUT     VOID                      *Buffer
   )
 {
-  UINT32 *Buffer32;
+  UINT32  *Buffer32;
 
   //
   // Make sure Port is aligned on a 32-bit boundary.
   //
   ASSERT ((Port & 3) == 0);
-  Buffer32 = (UINT32 *)Buffer;
+  Buffer32 = (UINT32 *) Buffer;
   while (Count-- > 0) {
     *Buffer32++ = IoRead32 (Port);
   }
@@ -564,13 +564,13 @@ IoWriteFifo32 (
   IN      VOID                      *Buffer
   )
 {
-  UINT32 *Buffer32;
+  UINT32  *Buffer32;
 
   //
   // Make sure Port is aligned on a 32-bit boundary.
   //
   ASSERT ((Port & 3) == 0);
-  Buffer32 = (UINT32 *)Buffer;
+  Buffer32 = (UINT32 *) Buffer;
   while (Count-- > 0) {
     IoWrite32 (Port, *Buffer32++);
   }
@@ -596,7 +596,7 @@ MmioRead8 (
   IN      UINTN                     Address
   )
 {
-  return (UINT8)MmioReadWorker (Address, SMM_IO_UINT8);
+  return (UINT8) MmioReadWorker (Address, SMM_IO_UINT8);
 }
 
 /**
@@ -619,7 +619,7 @@ MmioWrite8 (
   IN      UINT8                     Value
   )
 {
-  return (UINT8)MmioWriteWorker (Address, SMM_IO_UINT8, Value);
+  return (UINT8) MmioWriteWorker (Address, SMM_IO_UINT8, Value);
 }
 
 /**
@@ -648,7 +648,7 @@ MmioRead16 (
   // Make sure Address is aligned on a 16-bit boundary.
   //
   ASSERT ((Address & 1) == 0);
-  return (UINT16)MmioReadWorker (Address, SMM_IO_UINT16);
+  return (UINT16) MmioReadWorker (Address, SMM_IO_UINT16);
 }
 
 /**
@@ -677,7 +677,7 @@ MmioWrite16 (
   // Make sure Address is aligned on a 16-bit boundary.
   //
   ASSERT ((Address & 1) == 0);
-  return (UINT16)MmioWriteWorker (Address, SMM_IO_UINT16, Value);
+  return (UINT16) MmioWriteWorker (Address, SMM_IO_UINT16, Value);
 }
 
 /**
@@ -706,7 +706,7 @@ MmioRead32 (
   // Make sure Address is aligned on a 32-bit boundary.
   //
   ASSERT ((Address & 3) == 0);
-  return (UINT32)MmioReadWorker (Address, SMM_IO_UINT32);
+  return (UINT32) MmioReadWorker (Address, SMM_IO_UINT32);
 }
 
 /**
@@ -735,7 +735,7 @@ MmioWrite32 (
   // Make sure Address is aligned on a 32-bit boundary.
   //
   ASSERT ((Address & 3) == 0);
-  return (UINT32)MmioWriteWorker (Address, SMM_IO_UINT32, Value);
+  return (UINT32) MmioWriteWorker (Address, SMM_IO_UINT32, Value);
 }
 
 /**
@@ -764,7 +764,7 @@ MmioRead64 (
   // Make sure Address is aligned on a 64-bit boundary.
   //
   ASSERT ((Address & 7) == 0);
-  return (UINT64)MmioReadWorker (Address, SMM_IO_UINT64);
+  return (UINT64) MmioReadWorker (Address, SMM_IO_UINT64);
 }
 
 /**
@@ -793,5 +793,5 @@ MmioWrite64 (
   // Make sure Address is aligned on a 64-bit boundary.
   //
   ASSERT ((Address & 7) == 0);
-  return (UINT64)MmioWriteWorker (Address, SMM_IO_UINT64, Value);
+  return (UINT64) MmioWriteWorker (Address, SMM_IO_UINT64, Value);
 }

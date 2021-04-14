@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 /**
   Reads the current value of the Control Register 0 (CR0).
 
@@ -26,6 +23,6 @@ AsmReadCr0 (
   )
 {
   __asm {
-    mov     eax, cr0
+  mov  eax, cr0
   }
 }

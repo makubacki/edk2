@@ -13,7 +13,7 @@
 ///
 /// Unit Test Status
 ///
-typedef UINT32  UNIT_TEST_STATUS;
+typedef UINT32 UNIT_TEST_STATUS;
 #define UNIT_TEST_PASSED                      (0)
 #define UNIT_TEST_ERROR_PREREQUISITE_NOT_MET  (1)
 #define UNIT_TEST_ERROR_TEST_FAILED           (2)
@@ -34,24 +34,24 @@ typedef UINT32  UNIT_TEST_STATUS;
 /// Unit Test Framework Handle
 ///
 struct UNIT_TEST_FRAMEWORK_OBJECT;
-typedef struct UNIT_TEST_FRAMEWORK_OBJECT  *UNIT_TEST_FRAMEWORK_HANDLE;
+typedef struct UNIT_TEST_FRAMEWORK_OBJECT *UNIT_TEST_FRAMEWORK_HANDLE;
 
 ///
 /// Unit Test Suite Handle
 ///
 struct UNIT_TEST_SUITE_OBJECT;
-typedef struct UNIT_TEST_SUITE_OBJECT  *UNIT_TEST_SUITE_HANDLE;
+typedef struct UNIT_TEST_SUITE_OBJECT *UNIT_TEST_SUITE_HANDLE;
 
 ///
 /// Unit Test Handle
 ///
 struct UNIT_TEST_OBJECT;
-typedef struct UNIT_TEST_OBJECT  *UNIT_TEST_HANDLE;
+typedef struct UNIT_TEST_OBJECT *UNIT_TEST_HANDLE;
 
 ///
 /// Unit Test Context
 ///
-typedef VOID*  UNIT_TEST_CONTEXT;
+typedef VOID *UNIT_TEST_CONTEXT;
 
 /**
   The prototype for a single UnitTest case function.
@@ -73,10 +73,10 @@ typedef VOID*  UNIT_TEST_CONTEXT;
 
 **/
 typedef
-UNIT_TEST_STATUS
+  UNIT_TEST_STATUS
 (EFIAPI *UNIT_TEST_FUNCTION)(
-  IN UNIT_TEST_CONTEXT  Context
-  );
+                             IN UNIT_TEST_CONTEXT  Context
+                             );
 
 /**
   Unit-Test Prerequisite Function pointer type.
@@ -99,10 +99,10 @@ UNIT_TEST_STATUS
 
 **/
 typedef
-UNIT_TEST_STATUS
+  UNIT_TEST_STATUS
 (EFIAPI *UNIT_TEST_PREREQUISITE)(
-  IN UNIT_TEST_CONTEXT  Context
-  );
+                                 IN UNIT_TEST_CONTEXT  Context
+                                 );
 
 /**
   Unit-Test Cleanup (after) function pointer type.
@@ -126,10 +126,10 @@ UNIT_TEST_STATUS
 
 **/
 typedef
-VOID
+  VOID
 (EFIAPI *UNIT_TEST_CLEANUP)(
-  IN UNIT_TEST_CONTEXT  Context
-  );
+                            IN UNIT_TEST_CONTEXT  Context
+                            );
 
 /**
   Unit-Test Test Suite Setup (before) function pointer type. Functions with this
@@ -140,10 +140,10 @@ VOID
   The purpose of this function is to set up any global state or test data.
 **/
 typedef
-VOID
-(EFIAPI *UNIT_TEST_SUITE_SETUP)(
   VOID
-  );
+(EFIAPI *UNIT_TEST_SUITE_SETUP)(
+                                VOID
+                                );
 
 /**
   Unit-Test Test Suite Teardown (after) function pointer type.  Functions with
@@ -154,10 +154,10 @@ VOID
   The purpose of this function is to clean up any global state or test data.
 **/
 typedef
-VOID
-(EFIAPI *UNIT_TEST_SUITE_TEARDOWN)(
   VOID
-  );
+(EFIAPI *UNIT_TEST_SUITE_TEARDOWN)(
+                                   VOID
+                                   );
 
 /**
   Method to Initialize the Unit Test framework.  This function registers the
@@ -348,7 +348,7 @@ SaveFrameworkState (
   @param[in]  Expression  Expression to be evaluated for TRUE.
 **/
 #define UT_ASSERT_TRUE(Expression)                                                        \
-  if(!UnitTestAssertTrue ((Expression), __FUNCTION__, __LINE__, __FILE__, #Expression)) { \
+  if(!UnitTestAssertTrue ((Expression), __FUNCTION__, __LINE__, __FILE__, # Expression)) { \
     return UNIT_TEST_ERROR_TEST_FAILED;                                                   \
   }
 
@@ -360,7 +360,7 @@ SaveFrameworkState (
   @param[in]  Expression  Expression to be evaluated for FALSE.
 **/
 #define UT_ASSERT_FALSE(Expression)                                                        \
-  if(!UnitTestAssertFalse ((Expression), __FUNCTION__, __LINE__, __FILE__, #Expression)) { \
+  if(!UnitTestAssertFalse ((Expression), __FUNCTION__, __LINE__, __FILE__, # Expression)) { \
     return UNIT_TEST_ERROR_TEST_FAILED;                                                    \
   }
 
@@ -373,7 +373,15 @@ SaveFrameworkState (
   @param[in]  ValueB  Value to be compared for equality (64-bit comparison).
 **/
 #define UT_ASSERT_EQUAL(ValueA, ValueB)                                                                           \
-  if(!UnitTestAssertEqual ((UINT64)(ValueA), (UINT64)(ValueB), __FUNCTION__, __LINE__, __FILE__, #ValueA, #ValueB)) { \
+  if(!UnitTestAssertEqual ( \
+                          (UINT64) (ValueA), \
+                          (UINT64) (ValueB), \
+                          __FUNCTION__, \
+                          __LINE__, \
+                          __FILE__, \
+                          # ValueA, \
+                          # ValueB \
+                          )) { \
     return UNIT_TEST_ERROR_TEST_FAILED;                                                                           \
   }
 
@@ -387,7 +395,16 @@ SaveFrameworkState (
   @param[in]  Length   Number of bytes to compare in BufferA and BufferB.
 **/
 #define UT_ASSERT_MEM_EQUAL(BufferA, BufferB, Length)                                                                               \
-  if(!UnitTestAssertMemEqual ((VOID *)(UINTN)(BufferA), (VOID *)(UINTN)(BufferB), (UINTN)Length, __FUNCTION__, __LINE__, __FILE__, #BufferA, #BufferB)) { \
+  if(!UnitTestAssertMemEqual ( \
+                             (VOID *) (UINTN) (BufferA), \
+                             (VOID *) (UINTN) (BufferB), \
+                             (UINTN) Length, \
+                             __FUNCTION__, \
+                             __LINE__, \
+                             __FILE__, \
+                             # BufferA, \
+                             # BufferB \
+                             )) { \
     return UNIT_TEST_ERROR_TEST_FAILED;                                                                                           \
   }
 
@@ -399,8 +416,17 @@ SaveFrameworkState (
   @param[in]  ValueA  Value to be compared for inequality (64-bit comparison).
   @param[in]  ValueB  Value to be compared for inequality (64-bit comparison).
 **/
-#define UT_ASSERT_NOT_EQUAL(ValueA, ValueB)                                                                          \
-  if(!UnitTestAssertNotEqual ((UINT64)(ValueA), (UINT64)(ValueB), __FUNCTION__, __LINE__, __FILE__, #ValueA, #ValueB)) { \
+#define UT_ASSERT_NOT_EQUAL(ValueA, \
+                            ValueB)                                                                          \
+  if(!UnitTestAssertNotEqual ( \
+                             (UINT64) (ValueA), \
+                             (UINT64) (ValueB), \
+                             __FUNCTION__, \
+                             __LINE__, \
+                             __FILE__, \
+                             # ValueA, \
+                             # ValueB \
+                             )) { \
     return UNIT_TEST_ERROR_TEST_FAILED;                                                                              \
   }
 
@@ -412,7 +438,7 @@ SaveFrameworkState (
   @param[in]  Status  EFI_STATUS value to check.
 **/
 #define UT_ASSERT_NOT_EFI_ERROR(Status)                                                \
-  if(!UnitTestAssertNotEfiError ((Status), __FUNCTION__, __LINE__, __FILE__, #Status)) { \
+  if(!UnitTestAssertNotEfiError ((Status), __FUNCTION__, __LINE__, __FILE__, # Status)) { \
     return UNIT_TEST_ERROR_TEST_FAILED;                                                \
   }
 
@@ -425,7 +451,7 @@ SaveFrameworkState (
   @param[in]  Expected  EFI_STATUS values to compare for equality.
 **/
 #define UT_ASSERT_STATUS_EQUAL(Status, Expected)                                                 \
-  if(!UnitTestAssertStatusEqual ((Status), (Expected), __FUNCTION__, __LINE__, __FILE__, #Status)) { \
+  if(!UnitTestAssertStatusEqual ((Status), (Expected), __FUNCTION__, __LINE__, __FILE__, # Status)) { \
     return UNIT_TEST_ERROR_TEST_FAILED;                                                          \
   }
 
@@ -437,7 +463,7 @@ SaveFrameworkState (
   @param[in]  Pointer  Pointer to be checked against NULL.
 **/
 #define UT_ASSERT_NOT_NULL(Pointer)                                                  \
-  if(!UnitTestAssertNotNull ((Pointer), __FUNCTION__, __LINE__, __FILE__, #Pointer)) { \
+  if(!UnitTestAssertNotNull ((Pointer), __FUNCTION__, __LINE__, __FILE__, # Pointer)) { \
     return UNIT_TEST_ERROR_TEST_FAILED;                                              \
   }
 
@@ -467,23 +493,28 @@ SaveFrameworkState (
 
   #define UT_EXPECT_ASSERT_FAILURE(FunctionCall, Status)               \
     do {                                                               \
-      UNIT_TEST_STATUS          UnitTestJumpStatus;                    \
-      BASE_LIBRARY_JUMP_BUFFER  UnitTestJumpBuffer;                    \
+  UNIT_TEST_STATUS          UnitTestJumpStatus;                    \
+  BASE_LIBRARY_JUMP_BUFFER  UnitTestJumpBuffer;                    \
       UnitTestJumpStatus = UNIT_TEST_SKIPPED;                          \
       if (DebugAssertEnabled ()) {                                     \
         gUnitTestExpectAssertFailureJumpBuffer = &UnitTestJumpBuffer;  \
         if (SetJump (gUnitTestExpectAssertFailureJumpBuffer) == 0) {   \
           FunctionCall;                                                \
           UnitTestJumpStatus = UNIT_TEST_ERROR_TEST_FAILED;            \
-        } else {                                                       \
+        } \
+        else {                                                       \
           UnitTestJumpStatus = UNIT_TEST_PASSED;                       \
         }                                                              \
         gUnitTestExpectAssertFailureJumpBuffer = NULL;                 \
       }                                                                \
       if (!UnitTestExpectAssertFailure (                               \
-             UnitTestJumpStatus,                                       \
-             __FUNCTION__, __LINE__, __FILE__,                         \
-             #FunctionCall, Status)) {                                 \
+                                                                       UnitTestJumpStatus,                                       \
+                                                                       __FUNCTION__, \
+                                                                       __LINE__, \
+                                                                       __FILE__,                         \
+                                                                       # FunctionCall, \
+                                                                       Status \
+                                                                       )) {                                 \
         return UNIT_TEST_ERROR_TEST_FAILED;                            \
       }                                                                \
     } while (FALSE)
@@ -789,7 +820,7 @@ UnitTestExpectAssertFailure (
   @param[in]  ...     Print args.
 **/
 #define UT_LOG_ERROR(Format, ...)  \
-  UnitTestLog (UNIT_TEST_LOG_LEVEL_ERROR, Format, ##__VA_ARGS__)
+  UnitTestLog (UNIT_TEST_LOG_LEVEL_ERROR, Format, ## __VA_ARGS__)
 
 /**
   Test logging macro that records a WARNING message in the test framework log.
@@ -800,7 +831,7 @@ UnitTestExpectAssertFailure (
   @param[in]  ...     Print args.
 **/
 #define UT_LOG_WARNING(Format, ...)  \
-  UnitTestLog (UNIT_TEST_LOG_LEVEL_WARN, Format, ##__VA_ARGS__)
+  UnitTestLog (UNIT_TEST_LOG_LEVEL_WARN, Format, ## __VA_ARGS__)
 
 /**
   Test logging macro that records an INFO message in the test framework log.
@@ -811,7 +842,7 @@ UnitTestExpectAssertFailure (
   @param[in]  ...     Print args.
 **/
 #define UT_LOG_INFO(Format, ...)  \
-  UnitTestLog (UNIT_TEST_LOG_LEVEL_INFO, Format, ##__VA_ARGS__)
+  UnitTestLog (UNIT_TEST_LOG_LEVEL_INFO, Format, ## __VA_ARGS__)
 
 /**
   Test logging macro that records a VERBOSE message in the test framework log.
@@ -822,7 +853,7 @@ UnitTestExpectAssertFailure (
   @param[in]  ...     Print args.
 **/
 #define UT_LOG_VERBOSE(Format, ...)  \
-  UnitTestLog (UNIT_TEST_LOG_LEVEL_VERBOSE, Format, ##__VA_ARGS__)
+  UnitTestLog (UNIT_TEST_LOG_LEVEL_VERBOSE, Format, ## __VA_ARGS__)
 
 /**
   Test logging function that records a messages in the test framework log.

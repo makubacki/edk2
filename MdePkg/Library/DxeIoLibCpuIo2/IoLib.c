@@ -250,7 +250,7 @@ IoRead8 (
   IN      UINTN                     Port
   )
 {
-  return (UINT8)IoReadWorker (Port, EfiCpuIoWidthUint8);
+  return (UINT8) IoReadWorker (Port, EfiCpuIoWidthUint8);
 }
 
 /**
@@ -275,7 +275,7 @@ IoWrite8 (
   IN      UINT8                     Value
   )
 {
-  return (UINT8)IoWriteWorker (Port, EfiCpuIoWidthUint8, Value);
+  return (UINT8) IoWriteWorker (Port, EfiCpuIoWidthUint8, Value);
 }
 
 /**
@@ -304,7 +304,7 @@ IoRead16 (
   // Make sure Port is aligned on a 16-bit boundary.
   //
   ASSERT ((Port & 1) == 0);
-  return (UINT16)IoReadWorker (Port, EfiCpuIoWidthUint16);
+  return (UINT16) IoReadWorker (Port, EfiCpuIoWidthUint16);
 }
 
 /**
@@ -335,7 +335,7 @@ IoWrite16 (
   // Make sure Port is aligned on a 16-bit boundary.
   //
   ASSERT ((Port & 1) == 0);
-  return (UINT16)IoWriteWorker (Port, EfiCpuIoWidthUint16, Value);
+  return (UINT16) IoWriteWorker (Port, EfiCpuIoWidthUint16, Value);
 }
 
 /**
@@ -364,7 +364,7 @@ IoRead32 (
   // Make sure Port is aligned on a 32-bit boundary.
   //
   ASSERT ((Port & 3) == 0);
-  return (UINT32)IoReadWorker (Port, EfiCpuIoWidthUint32);
+  return (UINT32) IoReadWorker (Port, EfiCpuIoWidthUint32);
 }
 
 /**
@@ -395,7 +395,7 @@ IoWrite32 (
   // Make sure Port is aligned on a 32-bit boundary.
   //
   ASSERT ((Port & 3) == 0);
-  return (UINT32)IoWriteWorker (Port, EfiCpuIoWidthUint32, Value);
+  return (UINT32) IoWriteWorker (Port, EfiCpuIoWidthUint32, Value);
 }
 
 /**
@@ -662,7 +662,7 @@ MmioRead8 (
   IN      UINTN                     Address
   )
 {
-  return (UINT8)MmioReadWorker (Address, EfiCpuIoWidthUint8);
+  return (UINT8) MmioReadWorker (Address, EfiCpuIoWidthUint8);
 }
 
 /**
@@ -685,7 +685,7 @@ MmioWrite8 (
   IN      UINT8                     Value
   )
 {
-  return (UINT8)MmioWriteWorker (Address, EfiCpuIoWidthUint8, Value);
+  return (UINT8) MmioWriteWorker (Address, EfiCpuIoWidthUint8, Value);
 }
 
 /**
@@ -714,7 +714,7 @@ MmioRead16 (
   // Make sure Address is aligned on a 16-bit boundary.
   //
   ASSERT ((Address & 1) == 0);
-  return (UINT16)MmioReadWorker (Address, EfiCpuIoWidthUint16);
+  return (UINT16) MmioReadWorker (Address, EfiCpuIoWidthUint16);
 }
 
 /**
@@ -743,7 +743,7 @@ MmioWrite16 (
   // Make sure Address is aligned on a 16-bit boundary.
   //
   ASSERT ((Address & 1) == 0);
-  return (UINT16)MmioWriteWorker (Address, EfiCpuIoWidthUint16, Value);
+  return (UINT16) MmioWriteWorker (Address, EfiCpuIoWidthUint16, Value);
 }
 
 /**
@@ -772,7 +772,7 @@ MmioRead32 (
   // Make sure Address is aligned on a 32-bit boundary.
   //
   ASSERT ((Address & 3) == 0);
-  return (UINT32)MmioReadWorker (Address, EfiCpuIoWidthUint32);
+  return (UINT32) MmioReadWorker (Address, EfiCpuIoWidthUint32);
 }
 
 /**
@@ -801,7 +801,7 @@ MmioWrite32 (
   // Make sure Address is aligned on a 32-bit boundary.
   //
   ASSERT ((Address & 3) == 0);
-  return (UINT32)MmioWriteWorker (Address, EfiCpuIoWidthUint32, Value);
+  return (UINT32) MmioWriteWorker (Address, EfiCpuIoWidthUint32, Value);
 }
 
 /**
@@ -830,7 +830,7 @@ MmioRead64 (
   // Make sure Address is aligned on a 64-bit boundary.
   //
   ASSERT ((Address & 7) == 0);
-  return (UINT64)MmioReadWorker (Address, EfiCpuIoWidthUint64);
+  return (UINT64) MmioReadWorker (Address, EfiCpuIoWidthUint64);
 }
 
 /**
@@ -859,5 +859,5 @@ MmioWrite64 (
   // Make sure Address is aligned on a 64-bit boundary.
   //
   ASSERT ((Address & 7) == 0);
-  return (UINT64)MmioWriteWorker (Address, EfiCpuIoWidthUint64, Value);
+  return (UINT64) MmioWriteWorker (Address, EfiCpuIoWidthUint64, Value);
 }

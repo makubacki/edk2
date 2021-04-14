@@ -14,18 +14,18 @@
 
 #define EFI_MM_RSC_HANDLER_PROTOCOL_GUID \
   { \
-    0x2ff29fa7, 0x5e80, 0x4ed9, {0xb3, 0x80, 0x1, 0x7d, 0x3c, 0x55, 0x4f, 0xf4} \
+    0x2ff29fa7, 0x5e80, 0x4ed9, { 0xb3, 0x80, 0x1, 0x7d, 0x3c, 0x55, 0x4f, 0xf4 } \
   }
 
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MM_RSC_HANDLER_CALLBACK)(
-  IN EFI_STATUS_CODE_TYPE   CodeType,
-  IN EFI_STATUS_CODE_VALUE  Value,
-  IN UINT32                 Instance,
-  IN EFI_GUID               *CallerId,
-  IN EFI_STATUS_CODE_DATA   *Data
-);
+                                      IN EFI_STATUS_CODE_TYPE   CodeType,
+                                      IN EFI_STATUS_CODE_VALUE  Value,
+                                      IN UINT32                 Instance,
+                                      IN EFI_GUID               *CallerId,
+                                      IN EFI_STATUS_CODE_DATA   *Data
+                                      );
 
 /**
   Register the callback function for ReportStatusCode() notification.
@@ -43,10 +43,10 @@ EFI_STATUS
   @retval EFI_ALREADY_STARTED       The function was already registered. It can't be registered again.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MM_RSC_HANDLER_REGISTER)(
-  IN EFI_MM_RSC_HANDLER_CALLBACK Callback
-);
+                                      IN EFI_MM_RSC_HANDLER_CALLBACK Callback
+                                      );
 
 /**
   Remove a previously registered callback function from the notification list.
@@ -63,16 +63,16 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_MM_RSC_HANDLER_UNREGISTER)(
-  IN EFI_MM_RSC_HANDLER_CALLBACK Callback
-);
+                                        IN EFI_MM_RSC_HANDLER_CALLBACK Callback
+                                        );
 
 typedef struct _EFI_MM_RSC_HANDLER_PROTOCOL {
   EFI_MM_RSC_HANDLER_REGISTER      Register;
   EFI_MM_RSC_HANDLER_UNREGISTER    Unregister;
 } EFI_MM_RSC_HANDLER_PROTOCOL;
 
-extern EFI_GUID gEfiMmRscHandlerProtocolGuid;
+extern EFI_GUID  gEfiMmRscHandlerProtocolGuid;
 
 #endif

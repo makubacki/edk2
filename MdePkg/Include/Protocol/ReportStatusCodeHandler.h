@@ -15,18 +15,18 @@
 
 #define EFI_RSC_HANDLER_PROTOCOL_GUID \
   { \
-    0x86212936, 0xe76, 0x41c8, {0xa0, 0x3a, 0x2a, 0xf2, 0xfc, 0x1c, 0x39, 0xe2} \
+    0x86212936, 0xe76, 0x41c8, { 0xa0, 0x3a, 0x2a, 0xf2, 0xfc, 0x1c, 0x39, 0xe2 } \
   }
 
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_RSC_HANDLER_CALLBACK)(
-  IN EFI_STATUS_CODE_TYPE   CodeType,
-  IN EFI_STATUS_CODE_VALUE  Value,
-  IN UINT32                 Instance,
-  IN EFI_GUID               *CallerId,
-  IN EFI_STATUS_CODE_DATA   *Data
-);
+                                   IN EFI_STATUS_CODE_TYPE   CodeType,
+                                   IN EFI_STATUS_CODE_VALUE  Value,
+                                   IN UINT32                 Instance,
+                                   IN EFI_GUID               *CallerId,
+                                   IN EFI_STATUS_CODE_DATA   *Data
+                                   );
 
 /**
   Register the callback function for ReportStatusCode() notification.
@@ -56,11 +56,11 @@ EFI_STATUS
   @retval  EFI_ALREADY_STARTED      The function was already registered. It can't be registered again.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_RSC_HANDLER_REGISTER)(
-  IN EFI_RSC_HANDLER_CALLBACK   Callback,
-  IN EFI_TPL                    Tpl
-);
+                                   IN EFI_RSC_HANDLER_CALLBACK   Callback,
+                                   IN EFI_TPL                    Tpl
+                                   );
 
 /**
   Remove a previously registered callback function from the notification list.
@@ -76,16 +76,16 @@ EFI_STATUS
   @retval EFI_NOT_FOUND         The callback function was not found to be unregistered.
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_RSC_HANDLER_UNREGISTER)(
-  IN EFI_RSC_HANDLER_CALLBACK Callback
-);
+                                     IN EFI_RSC_HANDLER_CALLBACK Callback
+                                     );
 
 typedef struct {
-  EFI_RSC_HANDLER_REGISTER Register;
-  EFI_RSC_HANDLER_UNREGISTER Unregister;
+  EFI_RSC_HANDLER_REGISTER      Register;
+  EFI_RSC_HANDLER_UNREGISTER    Unregister;
 } EFI_RSC_HANDLER_PROTOCOL;
 
-extern EFI_GUID gEfiRscHandlerProtocolGuid;
+extern EFI_GUID  gEfiRscHandlerProtocolGuid;
 
 #endif // __REPORT_STATUS_CODE_HANDLER_H__

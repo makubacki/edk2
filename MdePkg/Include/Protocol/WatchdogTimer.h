@@ -14,12 +14,12 @@
 /// Global ID for the Watchdog Timer Architectural Protocol
 ///
 #define EFI_WATCHDOG_TIMER_ARCH_PROTOCOL_GUID \
-  { 0x665E3FF5, 0x46CC, 0x11d4, {0x9A, 0x38, 0x00, 0x90, 0x27, 0x3F, 0xC1, 0x4D } }
+  { 0x665E3FF5, 0x46CC, 0x11d4, { 0x9A, 0x38, 0x00, 0x90, 0x27, 0x3F, 0xC1, 0x4D } }
 
 ///
 /// Declare forward reference for the Timer Architectural Protocol
 ///
-typedef struct _EFI_WATCHDOG_TIMER_ARCH_PROTOCOL  EFI_WATCHDOG_TIMER_ARCH_PROTOCOL;
+typedef struct _EFI_WATCHDOG_TIMER_ARCH_PROTOCOL EFI_WATCHDOG_TIMER_ARCH_PROTOCOL;
 
 /**
   A function of this type is called when the watchdog timer fires if a
@@ -33,10 +33,10 @@ typedef struct _EFI_WATCHDOG_TIMER_ARCH_PROTOCOL  EFI_WATCHDOG_TIMER_ARCH_PROTOC
 
 **/
 typedef
-VOID
+  VOID
 (EFIAPI *EFI_WATCHDOG_TIMER_NOTIFY)(
-  IN UINT64  Time
-  );
+                                    IN UINT64  Time
+                                    );
 
 /**
   This function registers a handler that is to be invoked when the watchdog
@@ -63,11 +63,11 @@ VOID
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_WATCHDOG_TIMER_REGISTER_HANDLER)(
-  IN EFI_WATCHDOG_TIMER_ARCH_PROTOCOL  *This,
-  IN EFI_WATCHDOG_TIMER_NOTIFY         NotifyFunction
-  );
+                                              IN EFI_WATCHDOG_TIMER_ARCH_PROTOCOL  *This,
+                                              IN EFI_WATCHDOG_TIMER_NOTIFY         NotifyFunction
+                                              );
 
 /**
   This function sets the amount of time to wait before firing the watchdog
@@ -86,11 +86,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_WATCHDOG_TIMER_SET_TIMER_PERIOD)(
-  IN EFI_WATCHDOG_TIMER_ARCH_PROTOCOL  *This,
-  IN UINT64                            TimerPeriod
-  );
+                                              IN EFI_WATCHDOG_TIMER_ARCH_PROTOCOL  *This,
+                                              IN UINT64                            TimerPeriod
+                                              );
 
 /**
   This function retrieves the amount of time the system will wait before firing
@@ -108,12 +108,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_WATCHDOG_TIMER_GET_TIMER_PERIOD)(
-  IN  EFI_WATCHDOG_TIMER_ARCH_PROTOCOL  *This,
-  OUT UINT64                            *TimerPeriod
-  );
-
+                                              IN  EFI_WATCHDOG_TIMER_ARCH_PROTOCOL  *This,
+                                              OUT UINT64                            *TimerPeriod
+                                              );
 
 ///
 /// This protocol provides the services required to implement the Boot Service
@@ -127,12 +126,11 @@ EFI_STATUS
 /// reset by calling the Runtime Service ResetSystem().
 ///
 struct _EFI_WATCHDOG_TIMER_ARCH_PROTOCOL {
-  EFI_WATCHDOG_TIMER_REGISTER_HANDLER  RegisterHandler;
-  EFI_WATCHDOG_TIMER_SET_TIMER_PERIOD  SetTimerPeriod;
-  EFI_WATCHDOG_TIMER_GET_TIMER_PERIOD  GetTimerPeriod;
+  EFI_WATCHDOG_TIMER_REGISTER_HANDLER    RegisterHandler;
+  EFI_WATCHDOG_TIMER_SET_TIMER_PERIOD    SetTimerPeriod;
+  EFI_WATCHDOG_TIMER_GET_TIMER_PERIOD    GetTimerPeriod;
 };
 
-extern EFI_GUID gEfiWatchdogTimerArchProtocolGuid;
+extern EFI_GUID  gEfiWatchdogTimerArchProtocolGuid;
 
 #endif
-

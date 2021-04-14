@@ -18,24 +18,24 @@
 #define __SMART_CARD_EDGE_H__
 
 #define EFI_SMART_CARD_EDGE_PROTOCOL_GUID \
-    { \
-      0xd317f29b, 0xa325, 0x4712, {0x9b, 0xf1, 0xc6, 0x19, 0x54, 0xdc, 0x19, 0x8c} \
-    }
+  { \
+    0xd317f29b, 0xa325, 0x4712, { 0x9b, 0xf1, 0xc6, 0x19, 0x54, 0xdc, 0x19, 0x8c } \
+  }
 
-typedef struct _EFI_SMART_CARD_EDGE_PROTOCOL  EFI_SMART_CARD_EDGE_PROTOCOL;
+typedef struct _EFI_SMART_CARD_EDGE_PROTOCOL EFI_SMART_CARD_EDGE_PROTOCOL;
 
 //
 // Maximum size for a Smart Card AID (Application IDentifier)
 //
-#define SCARD_AID_MAXSIZE                        0x0010
+#define SCARD_AID_MAXSIZE  0x0010
 //
 // Size of CSN (Card Serial Number)
 //
-#define SCARD_CSN_SIZE                           0x0010
+#define SCARD_CSN_SIZE  0x0010
 //
 // Current specification version 1.00
 //
-#define SMART_CARD_EDGE_PROTOCOL_VERSION_1       0x00000100
+#define SMART_CARD_EDGE_PROTOCOL_VERSION_1  0x00000100
 //
 // Parameters type definition
 //
@@ -47,23 +47,23 @@ typedef UINT8 SMART_CARD_CSN[SCARD_CSN_SIZE];
 //
 // value of tag field for header, the number of containers
 //
-#define SC_EDGE_TAG_HEADER              0x0000
+#define SC_EDGE_TAG_HEADER  0x0000
 //
 // value of tag field for certificate
 //
-#define SC_EDGE_TAG_CERT                0x0001
+#define SC_EDGE_TAG_CERT  0x0001
 //
 // value of tag field for key index associated with certificate
 //
-#define SC_EDGE_TAG_KEY_ID              0x0002
+#define SC_EDGE_TAG_KEY_ID  0x0002
 //
 // value of tag field for key type
 //
-#define SC_EDGE_TAG_KEY_TYPE            0x0003
+#define SC_EDGE_TAG_KEY_TYPE  0x0003
 //
 // value of tag field for key size
 //
-#define SC_EDGE_TAG_KEY_SIZE            0x0004
+#define SC_EDGE_TAG_KEY_SIZE  0x0004
 
 //
 // Length of L fields of TLV items
@@ -71,42 +71,42 @@ typedef UINT8 SMART_CARD_CSN[SCARD_CSN_SIZE];
 //
 // size of L field for header
 //
-#define SC_EDGE_L_SIZE_HEADER           1
+#define SC_EDGE_L_SIZE_HEADER  1
 //
 // size of L field for certificate (big endian)
 //
-#define SC_EDGE_L_SIZE_CERT             2
+#define SC_EDGE_L_SIZE_CERT  2
 //
 // size of L field for key index
 //
-#define SC_EDGE_L_SIZE_KEY_ID           1
+#define SC_EDGE_L_SIZE_KEY_ID  1
 //
 // size of L field for key type
 //
-#define SC_EDGE_L_SIZE_KEY_TYPE         1
+#define SC_EDGE_L_SIZE_KEY_TYPE  1
 //
 // size of L field for key size (big endian)
 //
-#define SC_EDGE_L_SIZE_KEY_SIZE         2
+#define SC_EDGE_L_SIZE_KEY_SIZE  2
 
 //
 // Some TLV items have a fixed value for L field
 //
 // value of L field for header
 //
-#define SC_EDGE_L_VALUE_HEADER          1
+#define SC_EDGE_L_VALUE_HEADER  1
 //
 // value of L field for key index
 //
-#define SC_EDGE_L_VALUE_KEY_ID          1
+#define SC_EDGE_L_VALUE_KEY_ID  1
 //
 // value of L field for key type
 //
-#define SC_EDGE_L_VALUE_KEY_TYPE        1
+#define SC_EDGE_L_VALUE_KEY_TYPE  1
 //
 // value of L field for key size
 //
-#define SC_EDGE_L_VALUE_KEY_SIZE        2
+#define SC_EDGE_L_VALUE_KEY_SIZE  2
 
 //
 // Possible values for key type
@@ -114,35 +114,35 @@ typedef UINT8 SMART_CARD_CSN[SCARD_CSN_SIZE];
 //
 // RSA decryption
 //
-#define SC_EDGE_RSA_EXCHANGE            0x01
+#define SC_EDGE_RSA_EXCHANGE  0x01
 //
 // RSA signature
 //
-#define SC_EDGE_RSA_SIGNATURE           0x02
+#define SC_EDGE_RSA_SIGNATURE  0x02
 //
 // ECDSA signature
 //
-#define SC_EDGE_ECDSA_256               0x03
+#define SC_EDGE_ECDSA_256  0x03
 //
 // ECDSA signature
 //
-#define SC_EDGE_ECDSA_384               0x04
+#define SC_EDGE_ECDSA_384  0x04
 //
 // ECDSA signature
 //
-#define SC_EDGE_ECDSA_521               0x05
+#define SC_EDGE_ECDSA_521  0x05
 //
 // ECDH agreement
 //
-#define SC_EDGE_ECDH_256                0x06
+#define SC_EDGE_ECDH_256  0x06
 //
 // ECDH agreement
 //
-#define SC_EDGE_ECDH_384                0x07
+#define SC_EDGE_ECDH_384  0x07
 //
 // ECDH agreement
 //
-#define SC_EDGE_ECDH_521                0x08
+#define SC_EDGE_ECDH_521  0x08
 
 //
 // Padding methods GUIDs for signature
@@ -152,20 +152,20 @@ typedef UINT8 SMART_CARD_CSN[SCARD_CSN_SIZE];
 //
 #define EFI_PADDING_RSASSA_PKCS1V1P5_GUID \
   { \
-    0x9317ec24, 0x7cb0, 0x4d0e, {0x8b, 0x32, 0x2e, 0xd9, 0x20, 0x9c, 0xd8, 0xaf} \
+    0x9317ec24, 0x7cb0, 0x4d0e, { 0x8b, 0x32, 0x2e, 0xd9, 0x20, 0x9c, 0xd8, 0xaf } \
   }
 
-extern EFI_GUID gEfiPaddingRsassaPkcs1V1P5Guid;
+extern EFI_GUID  gEfiPaddingRsassaPkcs1V1P5Guid;
 
 //
 // RSASSA-PSS padding method, for signature
 //
 #define EFI_PADDING_RSASSA_PSS_GUID \
   { \
-    0x7b2349e0, 0x522d, 0x4f8e, {0xb9, 0x27, 0x69, 0xd9, 0x7c, 0x9e, 0x79, 0x5f} \
+    0x7b2349e0, 0x522d, 0x4f8e, { 0xb9, 0x27, 0x69, 0xd9, 0x7c, 0x9e, 0x79, 0x5f } \
   }
 
-extern EFI_GUID gEfiPaddingRsassaPssGuid;
+extern EFI_GUID  gEfiPaddingRsassaPssGuid;
 
 //
 // Padding methods GUIDs for decryption
@@ -175,30 +175,30 @@ extern EFI_GUID gEfiPaddingRsassaPssGuid;
 //
 #define EFI_PADDING_NONE_GUID \
   { \
-    0x3629ddb1, 0x228c, 0x452e, {0xb6, 0x16, 0x09, 0xed, 0x31, 0x6a, 0x97, 0x00} \
+    0x3629ddb1, 0x228c, 0x452e, { 0xb6, 0x16, 0x09, 0xed, 0x31, 0x6a, 0x97, 0x00 } \
   }
 
-extern EFI_GUID gEfiPaddingNoneGuid;
+extern EFI_GUID  gEfiPaddingNoneGuid;
 
 //
 // RSAES-PKCS#1-V1.5 padding, for decryption
 //
 #define EFI_PADDING_RSAES_PKCS1V1P5_GUID \
   { \
-    0xe1c1d0a9, 0x40b1, 0x4632, {0xbd, 0xcc, 0xd9, 0xd6, 0xe5, 0x29, 0x56, 0x31} \
+    0xe1c1d0a9, 0x40b1, 0x4632, { 0xbd, 0xcc, 0xd9, 0xd6, 0xe5, 0x29, 0x56, 0x31 } \
   }
 
-extern EFI_GUID gEfiPaddingRsaesPkcs1V1P5Guid;
+extern EFI_GUID  gEfiPaddingRsaesPkcs1V1P5Guid;
 
 //
 // RSAES-OAEP padding, for decryption
 //
 #define EFI_PADDING_RSAES_OAEP_GUID \
   { \
-    0xc1e63ac4, 0xd0cf, 0x4ce6, {0x83, 0x5b, 0xee, 0xd0, 0xe6, 0xa8, 0xa4, 0x5b} \
+    0xc1e63ac4, 0xd0cf, 0x4ce6, { 0x83, 0x5b, 0xee, 0xd0, 0xe6, 0xa8, 0xa4, 0x5b } \
   }
 
-extern EFI_GUID gEfiPaddingRsaesOaepGuid;
+extern EFI_GUID  gEfiPaddingRsaesOaepGuid;
 
 /**
   This function retrieves the context driver.
@@ -244,17 +244,17 @@ extern EFI_GUID gEfiPaddingRsaesOaepGuid;
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_SMART_CARD_EDGE_GET_CONTEXT) (
-  IN     EFI_SMART_CARD_EDGE_PROTOCOL      *This,
-     OUT UINTN                             *NumberAidSupported,
-  IN OUT UINTN                             *AidTableSize OPTIONAL,
-     OUT SMART_CARD_AID                    *AidTable OPTIONAL,
-     OUT UINTN                             *NumberSCPresent,
-  IN OUT UINTN                             *CsnTableSize OPTIONAL,
-     OUT SMART_CARD_CSN                    *CsnTable OPTIONAL,
-     OUT UINT32                            *VersionScEdgeProtocol OPTIONAL
-  );
+  EFI_STATUS
+(EFIAPI *EFI_SMART_CARD_EDGE_GET_CONTEXT)(
+                                          IN     EFI_SMART_CARD_EDGE_PROTOCOL      *This,
+                                          OUT UINTN                             *NumberAidSupported,
+                                          IN OUT UINTN                             *AidTableSize OPTIONAL,
+                                          OUT SMART_CARD_AID                    *AidTable OPTIONAL,
+                                          OUT UINTN                             *NumberSCPresent,
+                                          IN OUT UINTN                             *CsnTableSize OPTIONAL,
+                                          OUT SMART_CARD_CSN                    *CsnTable OPTIONAL,
+                                          OUT UINT32                            *VersionScEdgeProtocol OPTIONAL
+                                          );
 
 /**
   This function establish a connection with a Smart Card the protocol support.
@@ -286,13 +286,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_SMART_CARD_EDGE_CONNECT) (
-  IN     EFI_SMART_CARD_EDGE_PROTOCOL      *This,
-     OUT EFI_HANDLE                        *SCardHandle,
-  IN     UINT8                             *ScardCsn OPTIONAL,
-     OUT UINT8                             *ScardAid OPTIONAL
-  );
+  EFI_STATUS
+(EFIAPI *EFI_SMART_CARD_EDGE_CONNECT)(
+                                      IN     EFI_SMART_CARD_EDGE_PROTOCOL      *This,
+                                      OUT EFI_HANDLE                        *SCardHandle,
+                                      IN     UINT8                             *ScardCsn OPTIONAL,
+                                      OUT UINT8                             *ScardAid OPTIONAL
+                                      );
 
 /**
   This function releases a connection previously established by Connect.
@@ -310,11 +310,11 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_SMART_CARD_EDGE_DISCONNECT) (
-  IN  EFI_SMART_CARD_EDGE_PROTOCOL         *This,
-  IN  EFI_HANDLE                           SCardHandle
-  );
+  EFI_STATUS
+(EFIAPI *EFI_SMART_CARD_EDGE_DISCONNECT)(
+                                         IN  EFI_SMART_CARD_EDGE_PROTOCOL         *This,
+                                         IN  EFI_HANDLE                           SCardHandle
+                                         );
 
 /**
   This function returns the Smart Card serial number.
@@ -331,12 +331,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_SMART_CARD_EDGE_GET_CSN) (
-  IN     EFI_SMART_CARD_EDGE_PROTOCOL      *This,
-  IN     EFI_HANDLE                        SCardHandle,
-     OUT UINT8                             Csn[SCARD_CSN_SIZE]
-  );
+  EFI_STATUS
+(EFIAPI *EFI_SMART_CARD_EDGE_GET_CSN)(
+                                      IN     EFI_SMART_CARD_EDGE_PROTOCOL      *This,
+                                      IN     EFI_HANDLE                        SCardHandle,
+                                      OUT UINT8                             Csn[SCARD_CSN_SIZE]
+                                      );
 
 /**
   This function returns the name of the Smart Card reader used for this connection.
@@ -358,13 +358,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_SMART_CARD_EDGE_GET_READER_NAME) (
-  IN     EFI_SMART_CARD_EDGE_PROTOCOL      *This,
-  IN     EFI_HANDLE                        SCardHandle,
-  IN OUT UINTN                             *ReaderNameLength,
-     OUT CHAR16                            *ReaderName OPTIONAL
-  );
+  EFI_STATUS
+(EFIAPI *EFI_SMART_CARD_EDGE_GET_READER_NAME)(
+                                              IN     EFI_SMART_CARD_EDGE_PROTOCOL      *This,
+                                              IN     EFI_HANDLE                        SCardHandle,
+                                              IN OUT UINTN                             *ReaderNameLength,
+                                              OUT CHAR16                            *ReaderName OPTIONAL
+                                              );
 
 /**
   This function authenticates a Smart Card user by presenting a PIN code.
@@ -408,15 +408,15 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_SMART_CARD_EDGE_VERIFY_PIN) (
-  IN     EFI_SMART_CARD_EDGE_PROTOCOL      *This,
-  IN     EFI_HANDLE                        SCardHandle,
-  IN     INT32                             PinSize,
-  IN     UINT8                             *PinCode,
-     OUT BOOLEAN                           *PinResult,
-     OUT UINT32                            *RemainingAttempts OPTIONAL
-  );
+  EFI_STATUS
+(EFIAPI *EFI_SMART_CARD_EDGE_VERIFY_PIN)(
+                                         IN     EFI_SMART_CARD_EDGE_PROTOCOL      *This,
+                                         IN     EFI_HANDLE                        SCardHandle,
+                                         IN     INT32                             PinSize,
+                                         IN     UINT8                             *PinCode,
+                                         OUT BOOLEAN                           *PinResult,
+                                         OUT UINT32                            *RemainingAttempts OPTIONAL
+                                         );
 
 /**
   This function gives the remaining number of attempts for PIN code presentation.
@@ -439,12 +439,12 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_SMART_CARD_EDGE_GET_PIN_REMAINING) (
-  IN     EFI_SMART_CARD_EDGE_PROTOCOL      *This,
-  IN     EFI_HANDLE                        SCardHandle,
-     OUT UINT32                            *RemainingAttempts
-  );
+  EFI_STATUS
+(EFIAPI *EFI_SMART_CARD_EDGE_GET_PIN_REMAINING)(
+                                                IN     EFI_SMART_CARD_EDGE_PROTOCOL      *This,
+                                                IN     EFI_HANDLE                        SCardHandle,
+                                                OUT UINT32                            *RemainingAttempts
+                                                );
 
 /**
   This function returns a specific data from Smart Card.
@@ -478,14 +478,14 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_SMART_CARD_EDGE_GET_DATA) (
-  IN     EFI_SMART_CARD_EDGE_PROTOCOL      *This,
-  IN     EFI_HANDLE                        SCardHandle,
-  IN     EFI_GUID                          *DataId,
-  IN OUT UINTN                             *DataSize,
-     OUT VOID                              *Data OPTIONAL
-  );
+  EFI_STATUS
+(EFIAPI *EFI_SMART_CARD_EDGE_GET_DATA)(
+                                       IN     EFI_SMART_CARD_EDGE_PROTOCOL      *This,
+                                       IN     EFI_HANDLE                        SCardHandle,
+                                       IN     EFI_GUID                          *DataId,
+                                       IN OUT UINTN                             *DataSize,
+                                       OUT VOID                              *Data OPTIONAL
+                                       );
 
 /**
   This function retrieve credentials store into the Smart Card.
@@ -529,13 +529,13 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_SMART_CARD_EDGE_GET_CREDENTIAL) (
-  IN     EFI_SMART_CARD_EDGE_PROTOCOL      *This,
-  IN     EFI_HANDLE                        SCardHandle,
-  IN OUT UINTN                             *CredentialSize,
-     OUT UINT8                             *CredentialList OPTIONAL
-  );
+  EFI_STATUS
+(EFIAPI *EFI_SMART_CARD_EDGE_GET_CREDENTIAL)(
+                                             IN     EFI_SMART_CARD_EDGE_PROTOCOL      *This,
+                                             IN     EFI_HANDLE                        SCardHandle,
+                                             IN OUT UINTN                             *CredentialSize,
+                                             OUT UINT8                             *CredentialList OPTIONAL
+                                             );
 
 /**
   This function signs an already hashed data with a Smart Card private key.
@@ -587,17 +587,17 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_SMART_CARD_EDGE_SIGN_DATA) (
-  IN     EFI_SMART_CARD_EDGE_PROTOCOL      *This,
-  IN     EFI_HANDLE                        SCardHandle,
-  IN     UINTN                             KeyId,
-  IN     UINTN                             KeyType,
-  IN     EFI_GUID                          *HashAlgorithm,
-  IN     EFI_GUID                          *PaddingMethod,
-  IN     UINT8                             *HashedData,
-     OUT UINT8                             *SignatureData
-  );
+  EFI_STATUS
+(EFIAPI *EFI_SMART_CARD_EDGE_SIGN_DATA)(
+                                        IN     EFI_SMART_CARD_EDGE_PROTOCOL      *This,
+                                        IN     EFI_HANDLE                        SCardHandle,
+                                        IN     UINTN                             KeyId,
+                                        IN     UINTN                             KeyType,
+                                        IN     EFI_GUID                          *HashAlgorithm,
+                                        IN     EFI_GUID                          *PaddingMethod,
+                                        IN     UINT8                             *HashedData,
+                                        OUT UINT8                             *SignatureData
+                                        );
 
 /**
   This function decrypts data with a PKI/RSA Smart Card private key.
@@ -651,18 +651,18 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_SMART_CARD_EDGE_DECRYPT_DATA) (
-  IN     EFI_SMART_CARD_EDGE_PROTOCOL      *This,
-  IN     EFI_HANDLE                        SCardHandle,
-  IN     UINTN                             KeyId,
-  IN     EFI_GUID                          *HashAlgorithm,
-  IN     EFI_GUID                          *PaddingMethod,
-  IN     UINTN                             EncryptedSize,
-  IN     UINT8                             *EncryptedData,
-  IN OUT UINTN                             *PlaintextSize,
-     OUT UINT8                             *PlaintextData
-  );
+  EFI_STATUS
+(EFIAPI *EFI_SMART_CARD_EDGE_DECRYPT_DATA)(
+                                           IN     EFI_SMART_CARD_EDGE_PROTOCOL      *This,
+                                           IN     EFI_HANDLE                        SCardHandle,
+                                           IN     UINTN                             KeyId,
+                                           IN     EFI_GUID                          *HashAlgorithm,
+                                           IN     EFI_GUID                          *PaddingMethod,
+                                           IN     UINTN                             EncryptedSize,
+                                           IN     UINT8                             *EncryptedData,
+                                           IN OUT UINTN                             *PlaintextSize,
+                                           OUT UINT8                             *PlaintextData
+                                           );
 
 /**
   This function performs a secret Diffie Hellman agreement calculation that would
@@ -701,36 +701,35 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_SMART_CARD_EDGE_BUILD_DH_AGREEMENT) (
-  IN     EFI_SMART_CARD_EDGE_PROTOCOL      *This,
-  IN     EFI_HANDLE                        SCardHandle,
-  IN     UINTN                             KeyId,
-  IN     UINT8                             *dataQx,
-  IN     UINT8                             *dataQy,
-     OUT UINT8                             *DHAgreement
-  );
+  EFI_STATUS
+(EFIAPI *EFI_SMART_CARD_EDGE_BUILD_DH_AGREEMENT)(
+                                                 IN     EFI_SMART_CARD_EDGE_PROTOCOL      *This,
+                                                 IN     EFI_HANDLE                        SCardHandle,
+                                                 IN     UINTN                             KeyId,
+                                                 IN     UINT8                             *dataQx,
+                                                 IN     UINT8                             *dataQy,
+                                                 OUT UINT8                             *DHAgreement
+                                                 );
 
 ///
 /// Smart card aware application invokes this protocol to get access to an inserted
 /// smart card in the reader or to the reader itself.
 ///
 struct _EFI_SMART_CARD_EDGE_PROTOCOL {
-  EFI_SMART_CARD_EDGE_GET_CONTEXT          GetContext;
-  EFI_SMART_CARD_EDGE_CONNECT              Connect;
-  EFI_SMART_CARD_EDGE_DISCONNECT           Disconnect;
-  EFI_SMART_CARD_EDGE_GET_CSN              GetCsn;
-  EFI_SMART_CARD_EDGE_GET_READER_NAME      GetReaderName;
-  EFI_SMART_CARD_EDGE_VERIFY_PIN           VerifyPin;
-  EFI_SMART_CARD_EDGE_GET_PIN_REMAINING    GetPinRemaining;
-  EFI_SMART_CARD_EDGE_GET_DATA             GetData;
-  EFI_SMART_CARD_EDGE_GET_CREDENTIAL       GetCredential;
-  EFI_SMART_CARD_EDGE_SIGN_DATA            SignData;
-  EFI_SMART_CARD_EDGE_DECRYPT_DATA         DecryptData;
-  EFI_SMART_CARD_EDGE_BUILD_DH_AGREEMENT   BuildDHAgreement;
+  EFI_SMART_CARD_EDGE_GET_CONTEXT           GetContext;
+  EFI_SMART_CARD_EDGE_CONNECT               Connect;
+  EFI_SMART_CARD_EDGE_DISCONNECT            Disconnect;
+  EFI_SMART_CARD_EDGE_GET_CSN               GetCsn;
+  EFI_SMART_CARD_EDGE_GET_READER_NAME       GetReaderName;
+  EFI_SMART_CARD_EDGE_VERIFY_PIN            VerifyPin;
+  EFI_SMART_CARD_EDGE_GET_PIN_REMAINING     GetPinRemaining;
+  EFI_SMART_CARD_EDGE_GET_DATA              GetData;
+  EFI_SMART_CARD_EDGE_GET_CREDENTIAL        GetCredential;
+  EFI_SMART_CARD_EDGE_SIGN_DATA             SignData;
+  EFI_SMART_CARD_EDGE_DECRYPT_DATA          DecryptData;
+  EFI_SMART_CARD_EDGE_BUILD_DH_AGREEMENT    BuildDHAgreement;
 };
 
-extern EFI_GUID gEfiSmartCardEdgeProtocolGuid;
+extern EFI_GUID  gEfiSmartCardEdgeProtocolGuid;
 
 #endif
-

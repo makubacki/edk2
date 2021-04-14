@@ -36,7 +36,6 @@ PostCode (
   IN UINT32  Value
   );
 
-
 /**
   Sends a 32-bit value to a POST and associated ASCII string.
 
@@ -68,7 +67,6 @@ PostCodeWithDescription (
   IN CONST CHAR8  *Description  OPTIONAL
   );
 
-
 /**
   Returns TRUE if POST Codes are enabled.
 
@@ -84,9 +82,8 @@ PostCodeWithDescription (
 BOOLEAN
 EFIAPI
 PostCodeEnabled (
-  VOID
-  );
-
+                 VOID
+                 );
 
 /**
   Returns TRUE if POST code descriptions are enabled.
@@ -103,9 +100,8 @@ PostCodeEnabled (
 BOOLEAN
 EFIAPI
 PostCodeDescriptionEnabled (
-  VOID
-  );
-
+                            VOID
+                            );
 
 /**
   Sends a 32-bit value to a POST card.
@@ -118,7 +114,7 @@ PostCodeDescriptionEnabled (
   @return  Value The 32-bit value to write to the POST card.
 
 **/
-#define POST_CODE(Value)  PostCodeEnabled() ? PostCode(Value) : Value
+#define POST_CODE(Value)  PostCodeEnabled () ? PostCode (Value) : Value
 
 /**
   Sends a 32-bit value to a POST and associated ASCII string.
@@ -134,11 +130,11 @@ PostCodeDescriptionEnabled (
 
   @return Value        The 32-bit value to write to the POST card.
 **/
-#define POST_CODE_WITH_DESCRIPTION(Value,Description)  \
-  PostCodeEnabled()                              ?     \
-    (PostCodeDescriptionEnabled()                ?     \
-      PostCodeWithDescription(Value,Description) :     \
-      PostCode(Value))                           :     \
-    Value
+#define POST_CODE_WITH_DESCRIPTION(Value, Description)  \
+  PostCodeEnabled ()                              ?     \
+  (PostCodeDescriptionEnabled ()                ?     \
+   PostCodeWithDescription (Value, Description) :     \
+   PostCode (Value))                           :     \
+  Value
 
 #endif

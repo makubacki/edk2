@@ -20,23 +20,23 @@
 #define EFI_PEI_PCI_CFG2_PPI_GUID \
   { 0x57a449a, 0x1fdc, 0x4c06, { 0xbf, 0xc9, 0xf5, 0x3f, 0x6a, 0x99, 0xbb, 0x92 } }
 
-typedef struct _EFI_PEI_PCI_CFG2_PPI   EFI_PEI_PCI_CFG2_PPI;
+typedef struct _EFI_PEI_PCI_CFG2_PPI EFI_PEI_PCI_CFG2_PPI;
 
-#define EFI_PEI_PCI_CFG_ADDRESS(bus,dev,func,reg) \
+#define EFI_PEI_PCI_CFG_ADDRESS(bus, dev, func, reg) \
   (UINT64) ( \
-  (((UINTN) bus) << 24) | \
-  (((UINTN) dev) << 16) | \
-  (((UINTN) func) << 8) | \
-  (((UINTN) (reg)) < 256 ? ((UINTN) (reg)) : (UINT64) (LShiftU64 ((UINT64) (reg), 32))))
+             (((UINTN) bus) << 24) | \
+             (((UINTN) dev) << 16) | \
+             (((UINTN) func) << 8) | \
+             (((UINTN) (reg)) < 256 ? ((UINTN) (reg)) : (UINT64) (LShiftU64 ((UINT64) (reg), 32))))
 
 ///
 /// EFI_PEI_PCI_CFG_PPI_WIDTH
 ///
 typedef enum {
   ///
-  ///  8-bit access
+  /// 8-bit access
   ///
-  EfiPeiPciCfgWidthUint8  = 0,
+  EfiPeiPciCfgWidthUint8 = 0,
   ///
   /// 16-bit access
   ///
@@ -60,26 +60,26 @@ typedef struct {
   /// 8-bit register offset within the PCI configuration space for a given device's function
   /// space.
   ///
-  UINT8   Register;
+  UINT8     Register;
   ///
   /// Only the 3 least-significant bits are used to encode one of 8 possible functions within a
   /// given device.
   ///
-  UINT8   Function;
+  UINT8     Function;
   ///
   /// Only the 5 least-significant bits are used to encode one of 32 possible devices.
   ///
-  UINT8   Device;
+  UINT8     Device;
   ///
   /// 8-bit value to encode between 0 and 255 buses.
   ///
-  UINT8   Bus;
+  UINT8     Bus;
   ///
   /// Register number in PCI configuration space. If this field is zero, then Register is used
   /// for the register number. If this field is non-zero, then Register is ignored and this field
   /// is used for the register number.
   ///
-  UINT32  ExtendedRegister;
+  UINT32    ExtendedRegister;
 } EFI_PEI_PCI_CFG_PPI_PCI_ADDRESS;
 
 /**
@@ -107,15 +107,14 @@ typedef struct {
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_PCI_CFG2_PPI_IO)(
-  IN CONST  EFI_PEI_SERVICES          **PeiServices,
-  IN CONST  EFI_PEI_PCI_CFG2_PPI      *This,
-  IN        EFI_PEI_PCI_CFG_PPI_WIDTH Width,
-  IN        UINT64                    Address,
-  IN OUT    VOID                      *Buffer
-);
-
+                                  IN CONST  EFI_PEI_SERVICES          **PeiServices,
+                                  IN CONST  EFI_PEI_PCI_CFG2_PPI      *This,
+                                  IN        EFI_PEI_PCI_CFG_PPI_WIDTH Width,
+                                  IN        UINT64                    Address,
+                                  IN OUT    VOID                      *Buffer
+                                  );
 
 /**
   Performs a read-modify-write operation on the contents
@@ -148,31 +147,30 @@ EFI_STATUS
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_PEI_PCI_CFG2_PPI_RW)(
-  IN CONST  EFI_PEI_SERVICES          **PeiServices,
-  IN CONST  EFI_PEI_PCI_CFG2_PPI      *This,
-  IN        EFI_PEI_PCI_CFG_PPI_WIDTH Width,
-  IN        UINT64                    Address,
-  IN        VOID                      *SetBits,
-  IN        VOID                      *ClearBits
-);
+                                  IN CONST  EFI_PEI_SERVICES          **PeiServices,
+                                  IN CONST  EFI_PEI_PCI_CFG2_PPI      *This,
+                                  IN        EFI_PEI_PCI_CFG_PPI_WIDTH Width,
+                                  IN        UINT64                    Address,
+                                  IN        VOID                      *SetBits,
+                                  IN        VOID                      *ClearBits
+                                  );
 
 ///
 /// The EFI_PEI_PCI_CFG_PPI interfaces are used to abstract accesses to PCI
 /// controllers behind a PCI root bridge controller.
 ///
 struct _EFI_PEI_PCI_CFG2_PPI {
-  EFI_PEI_PCI_CFG2_PPI_IO  Read;
-  EFI_PEI_PCI_CFG2_PPI_IO  Write;
-  EFI_PEI_PCI_CFG2_PPI_RW  Modify;
+  EFI_PEI_PCI_CFG2_PPI_IO    Read;
+  EFI_PEI_PCI_CFG2_PPI_IO    Write;
+  EFI_PEI_PCI_CFG2_PPI_RW    Modify;
   ///
   /// The PCI bus segment which the specified functions will access.
   ///
-  UINT16                  Segment;
+  UINT16                     Segment;
 };
 
-
-extern EFI_GUID gEfiPciCfg2PpiGuid;
+extern EFI_GUID  gEfiPciCfg2PpiGuid;
 
 #endif

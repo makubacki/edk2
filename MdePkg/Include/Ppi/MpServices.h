@@ -21,7 +21,7 @@
     0xee16160a, 0xe8be, 0x47a6, { 0x82, 0xa, 0xc6, 0x90, 0xd, 0xb0, 0x25, 0xa } \
   }
 
-typedef struct _EFI_PEI_MP_SERVICES_PPI  EFI_PEI_MP_SERVICES_PPI ;
+typedef struct _EFI_PEI_MP_SERVICES_PPI EFI_PEI_MP_SERVICES_PPI;
 
 /**
   Get the number of CPU's.
@@ -41,13 +41,13 @@ typedef struct _EFI_PEI_MP_SERVICES_PPI  EFI_PEI_MP_SERVICES_PPI ;
                                   NumberOfEnabledProcessors is NULL.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_PEI_MP_SERVICES_GET_NUMBER_OF_PROCESSORS) (
-  IN  CONST EFI_PEI_SERVICES      **PeiServices,
-  IN  EFI_PEI_MP_SERVICES_PPI     *This,
-  OUT UINTN                       *NumberOfProcessors,
-  OUT UINTN                       *NumberOfEnabledProcessors
-  );
+  EFI_STATUS
+(EFIAPI *EFI_PEI_MP_SERVICES_GET_NUMBER_OF_PROCESSORS)(
+                                                       IN  CONST EFI_PEI_SERVICES      **PeiServices,
+                                                       IN  EFI_PEI_MP_SERVICES_PPI     *This,
+                                                       OUT UINTN                       *NumberOfProcessors,
+                                                       OUT UINTN                       *NumberOfEnabledProcessors
+                                                       );
 
 /**
   Get information on a specific CPU.
@@ -66,13 +66,13 @@ EFI_STATUS
                                   ProcessorNumber does not exist in the platform.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_PEI_MP_SERVICES_GET_PROCESSOR_INFO) (
-  IN  CONST EFI_PEI_SERVICES      **PeiServices,
-  IN  EFI_PEI_MP_SERVICES_PPI     *This,
-  IN  UINTN                       ProcessorNumber,
-  OUT EFI_PROCESSOR_INFORMATION   *ProcessorInfoBuffer
-  );
+  EFI_STATUS
+(EFIAPI *EFI_PEI_MP_SERVICES_GET_PROCESSOR_INFO)(
+                                                 IN  CONST EFI_PEI_SERVICES      **PeiServices,
+                                                 IN  EFI_PEI_MP_SERVICES_PPI     *This,
+                                                 IN  UINTN                       ProcessorNumber,
+                                                 OUT EFI_PROCESSOR_INFORMATION   *ProcessorInfoBuffer
+                                                 );
 
 /**
   Activate all of the application processors.
@@ -109,15 +109,15 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER   Procedure is NULL.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_PEI_MP_SERVICES_STARTUP_ALL_APS) (
-  IN  CONST EFI_PEI_SERVICES      **PeiServices,
-  IN  EFI_PEI_MP_SERVICES_PPI     *This,
-  IN  EFI_AP_PROCEDURE            Procedure,
-  IN  BOOLEAN                     SingleThread,
-  IN  UINTN                       TimeoutInMicroSeconds,
-  IN  VOID                        *ProcedureArgument      OPTIONAL
-  );
+  EFI_STATUS
+(EFIAPI *EFI_PEI_MP_SERVICES_STARTUP_ALL_APS)(
+                                              IN  CONST EFI_PEI_SERVICES      **PeiServices,
+                                              IN  EFI_PEI_MP_SERVICES_PPI     *This,
+                                              IN  EFI_AP_PROCEDURE            Procedure,
+                                              IN  BOOLEAN                     SingleThread,
+                                              IN  UINTN                       TimeoutInMicroSeconds,
+                                              IN  VOID                        *ProcedureArgument      OPTIONAL
+                                              );
 
 /**
   Activate a specific application processor.
@@ -154,15 +154,15 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER   Procedure is NULL.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_PEI_MP_SERVICES_STARTUP_THIS_AP) (
-  IN  CONST EFI_PEI_SERVICES      **PeiServices,
-  IN  EFI_PEI_MP_SERVICES_PPI     *This,
-  IN  EFI_AP_PROCEDURE            Procedure,
-  IN  UINTN                       ProcessorNumber,
-  IN  UINTN                       TimeoutInMicroseconds,
-  IN  VOID                        *ProcedureArgument      OPTIONAL
-  );
+  EFI_STATUS
+(EFIAPI *EFI_PEI_MP_SERVICES_STARTUP_THIS_AP)(
+                                              IN  CONST EFI_PEI_SERVICES      **PeiServices,
+                                              IN  EFI_PEI_MP_SERVICES_PPI     *This,
+                                              IN  EFI_AP_PROCEDURE            Procedure,
+                                              IN  UINTN                       ProcessorNumber,
+                                              IN  UINTN                       TimeoutInMicroseconds,
+                                              IN  VOID                        *ProcedureArgument      OPTIONAL
+                                              );
 
 /**
   Switch the boot strap processor.
@@ -189,13 +189,13 @@ EFI_STATUS
   @retval EFI_NOT_READY           The specified AP is busy.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_PEI_MP_SERVICES_SWITCH_BSP) (
-  IN  CONST EFI_PEI_SERVICES      **PeiServices,
-  IN  EFI_PEI_MP_SERVICES_PPI     *This,
-  IN  UINTN                       ProcessorNumber,
-  IN  BOOLEAN                     EnableOldBSP
-  );
+  EFI_STATUS
+(EFIAPI *EFI_PEI_MP_SERVICES_SWITCH_BSP)(
+                                         IN  CONST EFI_PEI_SERVICES      **PeiServices,
+                                         IN  EFI_PEI_MP_SERVICES_PPI     *This,
+                                         IN  UINTN                       ProcessorNumber,
+                                         IN  BOOLEAN                     EnableOldBSP
+                                         );
 
 /**
   Enable or disable an application processor.
@@ -226,14 +226,14 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER   ProcessorNumber specifies the BSP.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_PEI_MP_SERVICES_ENABLEDISABLEAP) (
-  IN  CONST EFI_PEI_SERVICES      **PeiServices,
-  IN  EFI_PEI_MP_SERVICES_PPI     *This,
-  IN  UINTN                       ProcessorNumber,
-  IN  BOOLEAN                     EnableAP,
-  IN  UINT32                      *HealthFlag      OPTIONAL
-  );
+  EFI_STATUS
+(EFIAPI *EFI_PEI_MP_SERVICES_ENABLEDISABLEAP)(
+                                              IN  CONST EFI_PEI_SERVICES      **PeiServices,
+                                              IN  EFI_PEI_MP_SERVICES_PPI     *This,
+                                              IN  UINTN                       ProcessorNumber,
+                                              IN  BOOLEAN                     EnableAP,
+                                              IN  UINT32                      *HealthFlag      OPTIONAL
+                                              );
 
 /**
   Identify the currently executing processor.
@@ -251,27 +251,27 @@ EFI_STATUS
   @retval EFI_INVALID_PARAMETER   ProcessorNumber is NULL.
 **/
 typedef
-EFI_STATUS
-(EFIAPI *EFI_PEI_MP_SERVICES_WHOAMI) (
-  IN  CONST EFI_PEI_SERVICES      **PeiServices,
-  IN  EFI_PEI_MP_SERVICES_PPI     *This,
-  OUT UINTN                       *ProcessorNumber
-  );
+  EFI_STATUS
+(EFIAPI *EFI_PEI_MP_SERVICES_WHOAMI)(
+                                     IN  CONST EFI_PEI_SERVICES      **PeiServices,
+                                     IN  EFI_PEI_MP_SERVICES_PPI     *This,
+                                     OUT UINTN                       *ProcessorNumber
+                                     );
 
 ///
 /// This PPI is installed by some platform or chipset-specific PEIM that abstracts
 /// handling multiprocessor support.
 ///
 struct _EFI_PEI_MP_SERVICES_PPI {
-  EFI_PEI_MP_SERVICES_GET_NUMBER_OF_PROCESSORS   GetNumberOfProcessors;
-  EFI_PEI_MP_SERVICES_GET_PROCESSOR_INFO         GetProcessorInfo;
-  EFI_PEI_MP_SERVICES_STARTUP_ALL_APS            StartupAllAPs;
-  EFI_PEI_MP_SERVICES_STARTUP_THIS_AP            StartupThisAP;
-  EFI_PEI_MP_SERVICES_SWITCH_BSP                 SwitchBSP;
-  EFI_PEI_MP_SERVICES_ENABLEDISABLEAP            EnableDisableAP;
-  EFI_PEI_MP_SERVICES_WHOAMI                     WhoAmI;
+  EFI_PEI_MP_SERVICES_GET_NUMBER_OF_PROCESSORS    GetNumberOfProcessors;
+  EFI_PEI_MP_SERVICES_GET_PROCESSOR_INFO          GetProcessorInfo;
+  EFI_PEI_MP_SERVICES_STARTUP_ALL_APS             StartupAllAPs;
+  EFI_PEI_MP_SERVICES_STARTUP_THIS_AP             StartupThisAP;
+  EFI_PEI_MP_SERVICES_SWITCH_BSP                  SwitchBSP;
+  EFI_PEI_MP_SERVICES_ENABLEDISABLEAP             EnableDisableAP;
+  EFI_PEI_MP_SERVICES_WHOAMI                      WhoAmI;
 };
 
-extern EFI_GUID gEfiPeiMpServicesPpiGuid;
+extern EFI_GUID  gEfiPeiMpServicesPpiGuid;
 
 #endif

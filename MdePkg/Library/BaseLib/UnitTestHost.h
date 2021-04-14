@@ -19,8 +19,8 @@
 VOID
 EFIAPI
 UnitTestHostBaseLibEnableInterrupts (
-  VOID
-  );
+                                     VOID
+                                     );
 
 /**
   Disables CPU interrupts.
@@ -29,8 +29,8 @@ UnitTestHostBaseLibEnableInterrupts (
 VOID
 EFIAPI
 UnitTestHostBaseLibDisableInterrupts (
-  VOID
-  );
+                                      VOID
+                                      );
 
 /**
   Enables CPU interrupts for the smallest window required to capture any
@@ -40,8 +40,8 @@ UnitTestHostBaseLibDisableInterrupts (
 VOID
 EFIAPI
 UnitTestHostBaseLibEnableDisableInterrupts (
-  VOID
-  );
+                                            VOID
+                                            );
 
 /**
   Set the current CPU interrupt state.
@@ -60,7 +60,7 @@ UnitTestHostBaseLibEnableDisableInterrupts (
 BOOLEAN
 EFIAPI
 UnitTestHostBaseLibGetInterruptState (
-  VOID
-  );
+                                      VOID
+                                      );
 
 #endif

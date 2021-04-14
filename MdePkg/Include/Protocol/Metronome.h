@@ -15,12 +15,12 @@
 /// Global ID for the Metronome Architectural Protocol
 ///
 #define EFI_METRONOME_ARCH_PROTOCOL_GUID \
-  { 0x26baccb2, 0x6f42, 0x11d4, {0xbc, 0xe7, 0x0, 0x80, 0xc7, 0x3c, 0x88, 0x81 } }
+  { 0x26baccb2, 0x6f42, 0x11d4, { 0xbc, 0xe7, 0x0, 0x80, 0xc7, 0x3c, 0x88, 0x81 } }
 
 ///
 /// Declare forward reference for the Metronome Architectural Protocol
 ///
-typedef struct _EFI_METRONOME_ARCH_PROTOCOL   EFI_METRONOME_ARCH_PROTOCOL;
+typedef struct _EFI_METRONOME_ARCH_PROTOCOL EFI_METRONOME_ARCH_PROTOCOL;
 
 /**
   The WaitForTick() function waits for the number of ticks specified by
@@ -45,11 +45,11 @@ typedef struct _EFI_METRONOME_ARCH_PROTOCOL   EFI_METRONOME_ARCH_PROTOCOL;
 
 **/
 typedef
-EFI_STATUS
+  EFI_STATUS
 (EFIAPI *EFI_METRONOME_WAIT_FOR_TICK)(
-   IN EFI_METRONOME_ARCH_PROTOCOL   *This,
-   IN UINT32                        TickNumber
-  );
+                                      IN EFI_METRONOME_ARCH_PROTOCOL   *This,
+                                      IN UINT32                        TickNumber
+                                      );
 
 ///
 /// This protocol provides access to a known time source in the platform to the
@@ -57,7 +57,7 @@ EFI_STATUS
 /// require calibrated delays.
 ///
 struct _EFI_METRONOME_ARCH_PROTOCOL {
-  EFI_METRONOME_WAIT_FOR_TICK  WaitForTick;
+  EFI_METRONOME_WAIT_FOR_TICK    WaitForTick;
 
   ///
   /// The period of platform's known time source in 100 nS units.
@@ -66,9 +66,9 @@ struct _EFI_METRONOME_ARCH_PROTOCOL {
   /// not be modified after the Metronome architectural protocol is
   /// installed.  All consumers must treat this as a read-only field.
   ///
-  UINT32                       TickPeriod;
+  UINT32    TickPeriod;
 };
 
-extern EFI_GUID gEfiMetronomeArchProtocolGuid;
+extern EFI_GUID  gEfiMetronomeArchProtocolGuid;
 
 #endif
