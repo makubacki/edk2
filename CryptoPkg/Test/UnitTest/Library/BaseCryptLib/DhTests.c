@@ -8,9 +8,32 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "TestBaseCryptLib.h"
 
-VOID    *mDh1;
-VOID    *mDh2;
+VOID  *mDh1;
+VOID  *mDh2;
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 UNIT_TEST_STATUS
 EFIAPI
 TestVerifyDhPreReq (
@@ -30,6 +53,29 @@ TestVerifyDhPreReq (
   return UNIT_TEST_PASSED;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 EFIAPI
 TestVerifyDhCleanUp (
@@ -40,36 +86,60 @@ TestVerifyDhCleanUp (
     DhFree (mDh1);
     mDh1 = NULL;
   }
+
   if (mDh2 != NULL) {
     DhFree (mDh2);
     mDh2 = NULL;
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 UNIT_TEST_STATUS
 EFIAPI
 TestVerifyDhGenerateKey (
   UNIT_TEST_CONTEXT           Context
   )
 {
-  UINT8   Prime[64];
-  UINT8   PublicKey1[64];
-  UINTN   PublicKey1Length;
-  UINT8   PublicKey2[64];
-  UINTN   PublicKey2Length;
-  UINT8   Key1[64];
-  UINTN   Key1Length;
-  UINT8   Key2[64];
-  UINTN   Key2Length;
-  BOOLEAN Status;
+  UINT8    Prime[64];
+  UINT8    PublicKey1[64];
+  UINTN    PublicKey1Length;
+  UINT8    PublicKey2[64];
+  UINTN    PublicKey2Length;
+  UINT8    Key1[64];
+  UINTN    Key1Length;
+  UINT8    Key2[64];
+  UINTN    Key2Length;
+  BOOLEAN  Status;
 
   //
   // Initialize Key Length
   //
   PublicKey1Length = sizeof (PublicKey1);
   PublicKey2Length = sizeof (PublicKey2);
-  Key1Length       = sizeof (Key1);
-  Key2Length       = sizeof (Key2);
+  Key1Length = sizeof (Key1);
+  Key2Length = sizeof (Key2);
 
   Status = DhGenerateParameter (mDh1, 2, 64, Prime);
   UT_ASSERT_TRUE (Status);
@@ -96,11 +166,12 @@ TestVerifyDhGenerateKey (
   return UNIT_TEST_PASSED;
 }
 
-TEST_DESC mDhTest[] = {
-    //
-    // -----Description--------------------------------Class---------------------Function----------------Pre-----------------Post------------Context
-    //
-    {"TestVerifyDhGenerateKey()",        "CryptoPkg.BaseCryptLib.Dh",   TestVerifyDhGenerateKey,  TestVerifyDhPreReq, TestVerifyDhCleanUp, NULL},
+TEST_DESC  mDhTest[] = {
+  //
+  // -----Description--------------------------------Class---------------------Function----------------Pre-----------------Post------------Context
+  //
+  { "TestVerifyDhGenerateKey()", "CryptoPkg.BaseCryptLib.Dh", TestVerifyDhGenerateKey, TestVerifyDhPreReq,
+    TestVerifyDhCleanUp, NULL },
 };
 
-UINTN mDhTestNum = ARRAY_SIZE(mDhTest);
+UINTN  mDhTestNum = ARRAY_SIZE (mDhTest);

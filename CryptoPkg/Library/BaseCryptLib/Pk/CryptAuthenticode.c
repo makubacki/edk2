@@ -23,9 +23,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // OID ASN.1 Value for SPC_INDIRECT_DATA_OBJID
 //
-UINT8 mSpcIndirectOidValue[] = {
+UINT8  mSpcIndirectOidValue[] = {
   0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x02, 0x01, 0x04
-  };
+};
 
 /**
   Verifies the validity of a PE/COFF Authenticode Signature as described in "Windows
@@ -84,15 +84,15 @@ AuthenticodeVerify (
     return FALSE;
   }
 
-  Status       = FALSE;
-  Pkcs7        = NULL;
+  Status = FALSE;
+  Pkcs7  = NULL;
   OrigAuthData = AuthData;
 
   //
   // Retrieve & Parse PKCS#7 Data (DER encoding) from Authenticode Signature
   //
   Temp  = AuthData;
-  Pkcs7 = d2i_PKCS7 (NULL, &Temp, (int)DataSize);
+  Pkcs7 = d2i_PKCS7 (NULL, &Temp, (int) DataSize);
   if (Pkcs7 == NULL) {
     goto _Exit;
   }
@@ -106,24 +106,23 @@ AuthenticodeVerify (
 
   //
   // NOTE: OpenSSL PKCS7 Decoder didn't work for Authenticode-format signed data due to
-  //       some authenticode-specific structure. Use opaque ASN.1 string to retrieve
-  //       PKCS#7 ContentInfo here.
+  // some authenticode-specific structure. Use opaque ASN.1 string to retrieve
+  // PKCS#7 ContentInfo here.
   //
-  SpcIndirectDataOid = OBJ_get0_data(Pkcs7->d.sign->contents->type);
-  if (OBJ_length(Pkcs7->d.sign->contents->type) != sizeof(mSpcIndirectOidValue) ||
+  SpcIndirectDataOid = OBJ_get0_data (Pkcs7->d.sign->contents->type);
+  if (OBJ_length (Pkcs7->d.sign->contents->type) != sizeof (mSpcIndirectOidValue) ||
       CompareMem (
-        SpcIndirectDataOid,
-        mSpcIndirectOidValue,
-        sizeof (mSpcIndirectOidValue)
-        ) != 0) {
+                  SpcIndirectDataOid,
+                  mSpcIndirectOidValue,
+                  sizeof (mSpcIndirectOidValue)
+                  ) != 0) {
     //
     // Un-matched SPC_INDIRECT_DATA_OBJID.
     //
     goto _Exit;
   }
 
-
-  SpcIndirectDataContent = (UINT8 *)(Pkcs7->d.sign->contents->d.other->value.asn1_string->data);
+  SpcIndirectDataContent = (UINT8 *) (Pkcs7->d.sign->contents->d.other->value.asn1_string->data);
 
   //
   // Retrieve the SEQUENCE data size from ASN.1-encoded SpcIndirectDataContent.
@@ -139,28 +138,25 @@ AuthenticodeVerify (
     // Skip the SEQUENCE Tag;
     //
     SpcIndirectDataContent += 2;
-
   } else if ((Asn1Byte & 0x81) == 0x81) {
     //
     // Long Form of Length Encoding (128 <= Length < 255, Single Octet)
     //
-    ContentSize = (UINTN) (*(UINT8 *)(SpcIndirectDataContent + 2));
+    ContentSize = (UINTN) (*(UINT8 *) (SpcIndirectDataContent + 2));
     //
     // Skip the SEQUENCE Tag;
     //
     SpcIndirectDataContent += 3;
-
   } else if ((Asn1Byte & 0x82) == 0x82) {
     //
     // Long Form of Length Encoding (Length > 255, Two Octet)
     //
-    ContentSize = (UINTN) (*(UINT8 *)(SpcIndirectDataContent + 2));
-    ContentSize = (ContentSize << 8) + (UINTN)(*(UINT8 *)(SpcIndirectDataContent + 3));
+    ContentSize = (UINTN) (*(UINT8 *) (SpcIndirectDataContent + 2));
+    ContentSize = (ContentSize << 8) + (UINTN) (*(UINT8 *) (SpcIndirectDataContent + 3));
     //
     // Skip the SEQUENCE Tag;
     //
     SpcIndirectDataContent += 4;
-
   } else {
     goto _Exit;
   }

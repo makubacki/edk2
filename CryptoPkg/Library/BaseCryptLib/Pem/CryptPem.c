@@ -35,8 +35,8 @@ PasswordCallback (
     //
     // Duplicate key phrase directly.
     //
-    KeyLength = (INTN) AsciiStrLen ((CHAR8 *)Key);
-    KeyLength = (KeyLength > Size ) ? Size : KeyLength;
+    KeyLength = (INTN) AsciiStrLen ((CHAR8 *) Key);
+    KeyLength = (KeyLength > Size) ? Size : KeyLength;
     CopyMem (Buf, Key, (UINTN) KeyLength);
     return KeyLength;
   } else {
@@ -87,9 +87,11 @@ RsaGetPrivateKeyFromPem (
   if (EVP_add_cipher (EVP_aes_128_cbc ()) == 0) {
     return FALSE;
   }
+
   if (EVP_add_cipher (EVP_aes_192_cbc ()) == 0) {
     return FALSE;
   }
+
   if (EVP_add_cipher (EVP_aes_256_cbc ()) == 0) {
     return FALSE;
   }

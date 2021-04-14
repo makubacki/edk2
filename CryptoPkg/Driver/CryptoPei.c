@@ -47,11 +47,11 @@ CryptoPeiEntry (
   // always shadow this module in memory in Post-Mem.
   //
   Status = PeiServicesLocatePpi (
-              &gEfiPeiMemoryDiscoveredPpiGuid,
-              0,
-              NULL,
-              (VOID **)&MemoryDiscoveredPpi
-              );
+                                 &gEfiPeiMemoryDiscoveredPpiGuid,
+                                 0,
+                                 NULL,
+                                 (VOID **) &MemoryDiscoveredPpi
+                                 );
   if (Status == EFI_NOT_FOUND) {
     //
     // CryptoPei is dispatched before gEfiPeiMemoryDiscoveredPpiGuid
@@ -72,20 +72,20 @@ CryptoPeiEntry (
     // CryptoPei is dispatched after gEfiPeiMemoryDiscoveredPpiGuid
     //
     Status = PeiServicesLocatePpi (
-               &gEdkiiCryptoPpiGuid,
-               0,
-               &EdkiiCryptoPpiDescriptor,
-               (VOID **)&EdkiiCryptoPpi
-               );
+                                   &gEdkiiCryptoPpiGuid,
+                                   0,
+                                   &EdkiiCryptoPpiDescriptor,
+                                   (VOID **) &EdkiiCryptoPpi
+                                   );
     if (!EFI_ERROR (Status)) {
       //
       // CryptoPei was also dispatched before gEfiPeiMemoryDiscoveredPpiGuid
       //
-      DEBUG((DEBUG_INFO, "CryptoPeiEntry: ReInstall Post-Memmory Crypto PPI\n"));
+      DEBUG ((DEBUG_INFO, "CryptoPeiEntry: ReInstall Post-Memmory Crypto PPI\n"));
       Status = PeiServicesReInstallPpi (
-                 EdkiiCryptoPpiDescriptor,
-                 &mEdkiiCryptoPpiList
-                 );
+                                        EdkiiCryptoPpiDescriptor,
+                                        &mEdkiiCryptoPpiList
+                                        );
       ASSERT_EFI_ERROR (Status);
     } else {
       DEBUG ((DEBUG_INFO, "CryptoPeiEntry: Install Post-Memmory Crypto PPI\n"));

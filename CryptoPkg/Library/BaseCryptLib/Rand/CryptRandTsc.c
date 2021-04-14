@@ -59,11 +59,11 @@ RandomSeed (
     // Retrieve current time.
     //
     AsciiSPrint (
-      DefaultSeed,
-      sizeof (DefaultSeed),
-      "UEFI Crypto Library default seed (%ld)",
-      AsmReadTsc ()
-      );
+                 DefaultSeed,
+                 sizeof (DefaultSeed),
+                 "UEFI Crypto Library default seed (%ld)",
+                 AsmReadTsc ()
+                 );
 
     RAND_seed (DefaultSeed, sizeof (DefaultSeed));
   }

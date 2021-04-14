@@ -80,8 +80,8 @@ DhGenerateParameter (
   OUT     UINT8  *Prime
   )
 {
-  BOOLEAN RetVal;
-  BIGNUM  *BnP;
+  BOOLEAN  RetVal;
+  BIGNUM   *BnP;
 
   //
   // Check input parameters.
@@ -99,7 +99,7 @@ DhGenerateParameter (
     return FALSE;
   }
 
-  DH_get0_pqg (DhContext, (const BIGNUM **)&BnP, NULL, NULL);
+  DH_get0_pqg (DhContext, (const BIGNUM **) &BnP, NULL, NULL);
   BN_bn2bin (BnP, Prime);
 
   return TRUE;
@@ -153,9 +153,9 @@ DhSetParameter (
   //
   // Set the generator and prime parameters for DH object.
   //
-  Dh  = (DH *)DhContext;
-  BnP = BN_bin2bn ((const unsigned char *)Prime, (int)(PrimeLength / 8), NULL);
-  BnG = BN_bin2bn ((const unsigned char *)&Generator, 1, NULL);
+  Dh  = (DH *) DhContext;
+  BnP = BN_bin2bn ((const unsigned char *) Prime, (int) (PrimeLength / 8), NULL);
+  BnG = BN_bin2bn ((const unsigned char *) &Generator, 1, NULL);
   if ((BnP == NULL) || (BnG == NULL) || !DH_set0_pqg (Dh, BnP, NULL, BnG)) {
     goto Error;
   }
@@ -199,10 +199,10 @@ DhGenerateKey (
   IN OUT  UINTN  *PublicKeySize
   )
 {
-  BOOLEAN RetVal;
-  DH      *Dh;
-  BIGNUM  *DhPubKey;
-  INTN    Size;
+  BOOLEAN  RetVal;
+  DH       *Dh;
+  BIGNUM   *DhPubKey;
+  INTN     Size;
 
   //
   // Check input parameters.
@@ -219,7 +219,7 @@ DhGenerateKey (
 
   RetVal = (BOOLEAN) DH_generate_key (DhContext);
   if (RetVal) {
-    DH_get0_key (Dh, (const BIGNUM **)&DhPubKey, NULL);
+    DH_get0_key (Dh, (const BIGNUM **) &DhPubKey, NULL);
     Size = BN_num_bytes (DhPubKey);
     if ((Size > 0) && (*PublicKeySize < (UINTN) Size)) {
       *PublicKeySize = Size;
@@ -229,6 +229,7 @@ DhGenerateKey (
     if (PublicKey != NULL) {
       BN_bn2bin (DhPubKey, PublicKey);
     }
+
     *PublicKeySize = Size;
   }
 

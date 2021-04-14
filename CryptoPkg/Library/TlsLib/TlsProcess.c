@@ -10,7 +10,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "InternalTlsLib.h"
 
-#define MAX_BUFFER_SIZE   32768
+#define MAX_BUFFER_SIZE  32768
 
 /**
   Checks if the TLS handshake was done.
@@ -74,7 +74,7 @@ TlsDoHandshake (
   IN     VOID                     *Tls,
   IN     UINT8                    *BufferIn, OPTIONAL
   IN     UINTN                    BufferInSize, OPTIONAL
-     OUT UINT8                    *BufferOut, OPTIONAL
+  OUT UINT8                    *BufferOut, OPTIONAL
   IN OUT UINTN                    *BufferOutSize
   )
 {
@@ -83,16 +83,16 @@ TlsDoHandshake (
   INTN            Ret;
   UINTN           ErrorCode;
 
-  TlsConn           = (TLS_CONNECTION *) Tls;
+  TlsConn = (TLS_CONNECTION *) Tls;
   PendingBufferSize = 0;
-  Ret               = 1;
+  Ret = 1;
 
   if (TlsConn == NULL || \
-    TlsConn->Ssl == NULL || TlsConn->InBio == NULL || TlsConn->OutBio == NULL || \
-    BufferOutSize == NULL || \
-    (BufferIn == NULL && BufferInSize != 0) || \
-    (BufferIn != NULL && BufferInSize == 0) || \
-    (BufferOut == NULL && *BufferOutSize != 0)) {
+      TlsConn->Ssl == NULL || TlsConn->InBio == NULL || TlsConn->OutBio == NULL || \
+      BufferOutSize == NULL || \
+      (BufferIn == NULL && BufferInSize != 0) || \
+      (BufferIn != NULL && BufferInSize == 0) || \
+      (BufferOut == NULL && *BufferOutSize != 0)) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -122,29 +122,35 @@ TlsDoHandshake (
     if (Ret == SSL_ERROR_SSL ||
         Ret == SSL_ERROR_SYSCALL ||
         Ret == SSL_ERROR_ZERO_RETURN) {
-      DEBUG ((
-        DEBUG_ERROR,
-        "%a SSL_HANDSHAKE_ERROR State=0x%x SSL_ERROR_%a\n",
-        __FUNCTION__,
-        SSL_get_state (TlsConn->Ssl),
-        Ret == SSL_ERROR_SSL ? "SSL" : Ret == SSL_ERROR_SYSCALL ? "SYSCALL" : "ZERO_RETURN"
-        ));
+      DEBUG (
+             (
+              DEBUG_ERROR,
+              "%a SSL_HANDSHAKE_ERROR State=0x%x SSL_ERROR_%a\n",
+              __FUNCTION__,
+              SSL_get_state (TlsConn->Ssl),
+              Ret == SSL_ERROR_SSL ? "SSL" : Ret == SSL_ERROR_SYSCALL ? "SYSCALL" : "ZERO_RETURN"
+             )
+             );
       DEBUG_CODE_BEGIN ();
-        while (TRUE) {
-          ErrorCode = ERR_get_error ();
-          if (ErrorCode == 0) {
-            break;
-          }
-          DEBUG ((
-            DEBUG_ERROR,
-            "%a ERROR 0x%x=L%x:F%x:R%x\n",
-            __FUNCTION__,
-            ErrorCode,
-            ERR_GET_LIB (ErrorCode),
-            ERR_GET_FUNC (ErrorCode),
-            ERR_GET_REASON (ErrorCode)
-            ));
+      while (TRUE) {
+        ErrorCode = ERR_get_error ();
+        if (ErrorCode == 0) {
+          break;
         }
+
+        DEBUG (
+               (
+                DEBUG_ERROR,
+                "%a ERROR 0x%x=L%x:F%x:R%x\n",
+                __FUNCTION__,
+                ErrorCode,
+                ERR_GET_LIB (ErrorCode),
+                ERR_GET_FUNC (ErrorCode),
+                ERR_GET_REASON (ErrorCode)
+               )
+               );
+      }
+
       DEBUG_CODE_END ();
       return EFI_ABORTED;
     }
@@ -195,7 +201,7 @@ TlsHandleAlert (
   IN     VOID                     *Tls,
   IN     UINT8                    *BufferIn, OPTIONAL
   IN     UINTN                    BufferInSize, OPTIONAL
-     OUT UINT8                    *BufferOut, OPTIONAL
+  OUT UINT8                    *BufferOut, OPTIONAL
   IN OUT UINTN                    *BufferOutSize
   )
 {
@@ -204,17 +210,17 @@ TlsHandleAlert (
   UINT8           *TempBuffer;
   INTN            Ret;
 
-  TlsConn           = (TLS_CONNECTION *) Tls;
+  TlsConn = (TLS_CONNECTION *) Tls;
   PendingBufferSize = 0;
-  TempBuffer        = NULL;
-  Ret               = 0;
+  TempBuffer = NULL;
+  Ret = 0;
 
   if (TlsConn == NULL || \
-    TlsConn->Ssl == NULL || TlsConn->InBio == NULL || TlsConn->OutBio == NULL || \
-    BufferOutSize == NULL || \
-    (BufferIn == NULL && BufferInSize != 0) || \
-    (BufferIn != NULL && BufferInSize == 0) || \
-    (BufferOut == NULL && *BufferOutSize != 0)) {
+      TlsConn->Ssl == NULL || TlsConn->InBio == NULL || TlsConn->OutBio == NULL || \
+      BufferOutSize == NULL || \
+      (BufferIn == NULL && BufferInSize != 0) || \
+      (BufferIn != NULL && BufferInSize == 0) || \
+      (BufferOut == NULL && *BufferOutSize != 0)) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -281,13 +287,13 @@ TlsCloseNotify (
   TLS_CONNECTION  *TlsConn;
   UINTN           PendingBufferSize;
 
-  TlsConn           = (TLS_CONNECTION *) Tls;
+  TlsConn = (TLS_CONNECTION *) Tls;
   PendingBufferSize = 0;
 
   if (TlsConn == NULL || \
-    TlsConn->Ssl == NULL || TlsConn->InBio == NULL || TlsConn->OutBio == NULL || \
-    BufferSize == NULL || \
-    (Buffer == NULL && *BufferSize != 0)) {
+      TlsConn->Ssl == NULL || TlsConn->InBio == NULL || TlsConn->OutBio == NULL || \
+      BufferSize == NULL || \
+      (Buffer == NULL && *BufferSize != 0)) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -340,7 +346,7 @@ TlsCtrlTrafficOut (
 
   TlsConn = (TLS_CONNECTION *) Tls;
   if (TlsConn == NULL || TlsConn->OutBio == 0) {
-    return -1;
+    return - 1;
   }
 
   //
@@ -375,7 +381,7 @@ TlsCtrlTrafficIn (
 
   TlsConn = (TLS_CONNECTION *) Tls;
   if (TlsConn == NULL || TlsConn->InBio == 0) {
-    return -1;
+    return - 1;
   }
 
   //
@@ -383,6 +389,7 @@ TlsCtrlTrafficIn (
   //
   return BIO_write (TlsConn->InBio, Buffer, (UINT32) BufferSize);
 }
+
 /**
   Attempts to read bytes from the specified TLS connection into the buffer.
 
@@ -410,7 +417,7 @@ TlsRead (
 
   TlsConn = (TLS_CONNECTION *) Tls;
   if (TlsConn == NULL || TlsConn->Ssl == NULL) {
-    return -1;
+    return - 1;
   }
 
   //
@@ -446,7 +453,7 @@ TlsWrite (
 
   TlsConn = (TLS_CONNECTION *) Tls;
   if (TlsConn == NULL || TlsConn->Ssl == NULL) {
-    return -1;
+    return - 1;
   }
 
   //
@@ -454,4 +461,3 @@ TlsWrite (
   //
   return SSL_write (TlsConn->Ssl, Buffer, (UINT32) BufferSize);
 }
-

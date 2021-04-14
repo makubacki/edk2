@@ -210,6 +210,7 @@ Sha384HashAll (
   if (HashValue == NULL) {
     return FALSE;
   }
+
   if (Data == NULL && DataSize != 0) {
     return FALSE;
   }
@@ -425,6 +426,7 @@ Sha512HashAll (
   if (HashValue == NULL) {
     return FALSE;
   }
+
   if (Data == NULL && DataSize != 0) {
     return FALSE;
   }

@@ -208,6 +208,7 @@ Sha256HashAll (
   if (HashValue == NULL) {
     return FALSE;
   }
+
   if (Data == NULL && DataSize != 0) {
     return FALSE;
   }

@@ -43,7 +43,7 @@ HmacSha256Free (
   //
   // Free OpenSSL HMAC_CTX Context
   //
-  HMAC_CTX_free ((HMAC_CTX *)HmacSha256Ctx);
+  HMAC_CTX_free ((HMAC_CTX *) HmacSha256Ctx);
 }
 
 /**
@@ -75,7 +75,7 @@ HmacSha256SetKey (
     return FALSE;
   }
 
-  if (HMAC_Init_ex ((HMAC_CTX *)HmacSha256Context, Key, (UINT32) KeySize, EVP_sha256(), NULL) != 1) {
+  if (HMAC_Init_ex ((HMAC_CTX *) HmacSha256Context, Key, (UINT32) KeySize, EVP_sha256 (), NULL) != 1) {
     return FALSE;
   }
 
@@ -109,7 +109,7 @@ HmacSha256Duplicate (
     return FALSE;
   }
 
-  if (HMAC_CTX_copy ((HMAC_CTX *)NewHmacSha256Context, (HMAC_CTX *)HmacSha256Context) != 1) {
+  if (HMAC_CTX_copy ((HMAC_CTX *) NewHmacSha256Context, (HMAC_CTX *) HmacSha256Context) != 1) {
     return FALSE;
   }
 
@@ -159,7 +159,7 @@ HmacSha256Update (
   //
   // OpenSSL HMAC-SHA256 digest update
   //
-  if (HMAC_Update ((HMAC_CTX *)HmacSha256Context, Data, DataSize) != 1) {
+  if (HMAC_Update ((HMAC_CTX *) HmacSha256Context, Data, DataSize) != 1) {
     return FALSE;
   }
 
@@ -205,10 +205,11 @@ HmacSha256Final (
   //
   // OpenSSL HMAC-SHA256 digest finalization
   //
-  if (HMAC_Final ((HMAC_CTX *)HmacSha256Context, HmacValue, &Length) != 1) {
+  if (HMAC_Final ((HMAC_CTX *) HmacSha256Context, HmacValue, &Length) != 1) {
     return FALSE;
   }
-  if (HMAC_CTX_reset ((HMAC_CTX *)HmacSha256Context) != 1) {
+
+  if (HMAC_CTX_reset ((HMAC_CTX *) HmacSha256Context) != 1) {
     return FALSE;
   }
 

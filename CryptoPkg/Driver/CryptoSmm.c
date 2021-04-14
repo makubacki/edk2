@@ -33,9 +33,9 @@ CryptoSmmEntry (
 
   Handle = NULL;
   return gSmst->SmmInstallProtocolInterface (
-                  &Handle,
-                  &gEdkiiSmmCryptoProtocolGuid,
-                  EFI_NATIVE_INTERFACE,
-                  (EDKII_CRYPTO_PROTOCOL *) &mEdkiiCrypto
-                  );
+                                             &Handle,
+                                             &gEdkiiSmmCryptoProtocolGuid,
+                                             EFI_NATIVE_INTERFACE,
+                                             (EDKII_CRYPTO_PROTOCOL *) &mEdkiiCrypto
+                                             );
 }

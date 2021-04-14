@@ -18,8 +18,8 @@
   A macro used to retrieve the FixedAtBuild PcdCryptoServiceFamilyEnable with a
   typecast to its associcted structure type PCD_CRYPTO_SERVICE_FAMILY_ENABLE.
 **/
-#define EDKII_CRYPTO_PCD ((const PCD_CRYPTO_SERVICE_FAMILY_ENABLE *) \
-  (FixedPcdGetPtr (PcdCryptoServiceFamilyEnable)))
+#define EDKII_CRYPTO_PCD  ((const PCD_CRYPTO_SERVICE_FAMILY_ENABLE *) \
+                           (FixedPcdGetPtr (PcdCryptoServiceFamilyEnable)))
 
 /**
   A macro used to call a non-void BaseCryptLib function if it is enabled.
@@ -41,7 +41,7 @@
 #define CALL_BASECRYPTLIB(Enable, Function, Args, ErrorReturnValue) \
   EDKII_CRYPTO_PCD->Enable                                          \
     ? Function Args                                                 \
-    : (BaseCryptLibServiceNotEnabled (#Function), ErrorReturnValue)
+    : (BaseCryptLibServiceNotEnabled (# Function), ErrorReturnValue)
 
 /**
   A macro used to call a void BaseCryptLib function if it is enabled.
@@ -61,7 +61,7 @@
 #define CALL_VOID_BASECRYPTLIB(Enable, Function, Args)  \
   EDKII_CRYPTO_PCD->Enable                              \
     ? Function Args                                     \
-    : BaseCryptLibServiceNotEnabled (#Function)
+    : BaseCryptLibServiceNotEnabled (# Function)
 
 /**
   Internal worker function that prints a debug message and asserts if a call is
@@ -100,7 +100,10 @@ BaseCryptLibServiceDeprecated (
   IN CONST CHAR8  *FunctionName
   )
 {
-  DEBUG ((DEBUG_ERROR, "[%a] Function %a() is deprecated and unsupported any longer\n", gEfiCallerBaseName, FunctionName));
+  DEBUG (
+        (DEBUG_ERROR, "[%a] Function %a() is deprecated and unsupported any longer\n", gEfiCallerBaseName,
+         FunctionName)
+        );
   ASSERT_EFI_ERROR (EFI_UNSUPPORTED);
 }
 
@@ -119,9 +122,9 @@ CryptoServiceGetCryptoVersion (
   return EDKII_CRYPTO_VERSION;
 }
 
-//=====================================================================================
-//    One-Way Cryptographic Hash Primitives
-//=====================================================================================
+// =====================================================================================
+// One-Way Cryptographic Hash Primitives
+// =====================================================================================
 
 /**
   MD4 is deprecated and unsupported any longer.
@@ -244,619 +247,627 @@ DeprecatedCryptoServiceMd4HashAll (
 }
 
 #ifndef ENABLE_MD5_DEPRECATED_INTERFACES
-/**
-  Retrieves the size, in bytes, of the context buffer required for MD5 hash operations.
 
-  If this interface is not supported, then return zero.
+  /**
+    Retrieves the size, in bytes, of the context buffer required for MD5 hash operations.
 
-  @retval  0   This interface is not supported.
+    If this interface is not supported, then return zero.
 
-**/
-UINTN
-EFIAPI
-DeprecatedCryptoServiceMd5GetContextSize (
+    @retval  0   This interface is not supported.
+
+  **/
+  UINTN
+  EFIAPI
+  DeprecatedCryptoServiceMd5GetContextSize (
   VOID
   )
-{
-  return BaseCryptLibServiceDeprecated ("Md5GetContextSize"), 0;
-}
+  {
+    return BaseCryptLibServiceDeprecated ("Md5GetContextSize"), 0;
+  }
 
-/**
-  Initializes user-supplied memory pointed by Md5Context as MD5 hash context for
-  subsequent use.
+  /**
+    Initializes user-supplied memory pointed by Md5Context as MD5 hash context for
+    subsequent use.
 
-  If Md5Context is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Md5Context is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[out]  Md5Context  Pointer to MD5 context being initialized.
+    @param[out]  Md5Context  Pointer to MD5 context being initialized.
 
-  @retval FALSE  This interface is not supported.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-DeprecatedCryptoServiceMd5Init (
+  **/
+  BOOLEAN
+  EFIAPI
+  DeprecatedCryptoServiceMd5Init (
   OUT  VOID  *Md5Context
   )
-{
-  return BaseCryptLibServiceDeprecated ("Md5Init"), FALSE;
-}
+  {
+    return BaseCryptLibServiceDeprecated ("Md5Init"), FALSE;
+  }
 
-/**
-  Makes a copy of an existing MD5 context.
+  /**
+    Makes a copy of an existing MD5 context.
 
-  If Md5Context is NULL, then return FALSE.
-  If NewMd5Context is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Md5Context is NULL, then return FALSE.
+    If NewMd5Context is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in]  Md5Context     Pointer to MD5 context being copied.
-  @param[out] NewMd5Context  Pointer to new MD5 context.
+    @param[in]  Md5Context     Pointer to MD5 context being copied.
+    @param[out] NewMd5Context  Pointer to new MD5 context.
 
-  @retval FALSE  This interface is not supported.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-DeprecatedCryptoServiceMd5Duplicate (
+  **/
+  BOOLEAN
+  EFIAPI
+  DeprecatedCryptoServiceMd5Duplicate (
   IN   CONST VOID  *Md5Context,
   OUT  VOID        *NewMd5Context
   )
-{
-  return BaseCryptLibServiceDeprecated ("Md5Init"), FALSE;
-}
+  {
+    return BaseCryptLibServiceDeprecated ("Md5Init"), FALSE;
+  }
 
-/**
-  Digests the input data and updates MD5 context.
+  /**
+    Digests the input data and updates MD5 context.
 
-  This function performs MD5 digest on a data buffer of the specified size.
-  It can be called multiple times to compute the digest of long or discontinuous data streams.
-  MD5 context should be already correctly initialized by Md5Init(), and should not be finalized
-  by Md5Final(). Behavior with invalid context is undefined.
+    This function performs MD5 digest on a data buffer of the specified size.
+    It can be called multiple times to compute the digest of long or discontinuous data streams.
+    MD5 context should be already correctly initialized by Md5Init(), and should not be finalized
+    by Md5Final(). Behavior with invalid context is undefined.
 
-  If Md5Context is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Md5Context is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in, out]  Md5Context  Pointer to the MD5 context.
-  @param[in]       Data        Pointer to the buffer containing the data to be hashed.
-  @param[in]       DataSize    Size of Data buffer in bytes.
+    @param[in, out]  Md5Context  Pointer to the MD5 context.
+    @param[in]       Data        Pointer to the buffer containing the data to be hashed.
+    @param[in]       DataSize    Size of Data buffer in bytes.
 
-  @retval FALSE  This interface is not supported.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-DeprecatedCryptoServiceMd5Update (
+  **/
+  BOOLEAN
+  EFIAPI
+  DeprecatedCryptoServiceMd5Update (
   IN OUT  VOID        *Md5Context,
   IN      CONST VOID  *Data,
   IN      UINTN       DataSize
   )
-{
-  return BaseCryptLibServiceDeprecated ("Md5Init"), FALSE;
-}
+  {
+    return BaseCryptLibServiceDeprecated ("Md5Init"), FALSE;
+  }
 
-/**
-  Completes computation of the MD5 digest value.
+  /**
+    Completes computation of the MD5 digest value.
 
-  This function completes MD5 hash computation and retrieves the digest value into
-  the specified memory. After this function has been called, the MD5 context cannot
-  be used again.
-  MD5 context should be already correctly initialized by Md5Init(), and should not be
-  finalized by Md5Final(). Behavior with invalid MD5 context is undefined.
+    This function completes MD5 hash computation and retrieves the digest value into
+    the specified memory. After this function has been called, the MD5 context cannot
+    be used again.
+    MD5 context should be already correctly initialized by Md5Init(), and should not be
+    finalized by Md5Final(). Behavior with invalid MD5 context is undefined.
 
-  If Md5Context is NULL, then return FALSE.
-  If HashValue is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Md5Context is NULL, then return FALSE.
+    If HashValue is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in, out]  Md5Context  Pointer to the MD5 context.
-  @param[out]      HashValue   Pointer to a buffer that receives the MD5 digest
-                               value (16 bytes).
+    @param[in, out]  Md5Context  Pointer to the MD5 context.
+    @param[out]      HashValue   Pointer to a buffer that receives the MD5 digest
+                                 value (16 bytes).
 
-  @retval FALSE  This interface is not supported.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-DeprecatedCryptoServiceMd5Final (
+  **/
+  BOOLEAN
+  EFIAPI
+  DeprecatedCryptoServiceMd5Final (
   IN OUT  VOID   *Md5Context,
   OUT     UINT8  *HashValue
   )
-{
-  return BaseCryptLibServiceDeprecated ("Md5Final"), FALSE;
-}
+  {
+    return BaseCryptLibServiceDeprecated ("Md5Final"), FALSE;
+  }
 
-/**
-  Computes the MD5 message digest of a input data buffer.
+  /**
+    Computes the MD5 message digest of a input data buffer.
 
-  This function performs the MD5 message digest of a given data buffer, and places
-  the digest value into the specified memory.
+    This function performs the MD5 message digest of a given data buffer, and places
+    the digest value into the specified memory.
 
-  If this interface is not supported, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in]   Data        Pointer to the buffer containing the data to be hashed.
-  @param[in]   DataSize    Size of Data buffer in bytes.
-  @param[out]  HashValue   Pointer to a buffer that receives the MD5 digest
-                           value (16 bytes).
+    @param[in]   Data        Pointer to the buffer containing the data to be hashed.
+    @param[in]   DataSize    Size of Data buffer in bytes.
+    @param[out]  HashValue   Pointer to a buffer that receives the MD5 digest
+                             value (16 bytes).
 
-  @retval FALSE  This interface is not supported.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-DeprecatedCryptoServiceMd5HashAll (
+  **/
+  BOOLEAN
+  EFIAPI
+  DeprecatedCryptoServiceMd5HashAll (
   IN   CONST VOID  *Data,
   IN   UINTN       DataSize,
   OUT  UINT8       *HashValue
   )
-{
-  return BaseCryptLibServiceDeprecated ("Md5HashAll"), FALSE;
-}
+  {
+    return BaseCryptLibServiceDeprecated ("Md5HashAll"), FALSE;
+  }
+
 #else
-/**
-  Retrieves the size, in bytes, of the context buffer required for MD5 hash operations.
 
-  If this interface is not supported, then return zero.
+  /**
+    Retrieves the size, in bytes, of the context buffer required for MD5 hash operations.
 
-  @return  The size, in bytes, of the context buffer required for MD5 hash operations.
-  @retval  0   This interface is not supported.
+    If this interface is not supported, then return zero.
 
-**/
-UINTN
-EFIAPI
-CryptoServiceMd5GetContextSize (
+    @return  The size, in bytes, of the context buffer required for MD5 hash operations.
+    @retval  0   This interface is not supported.
+
+  **/
+  UINTN
+  EFIAPI
+  CryptoServiceMd5GetContextSize (
   VOID
   )
-{
-  return CALL_BASECRYPTLIB (Md5.Services.GetContextSize, Md5GetContextSize, (), 0);
-}
+  {
+    return CALL_BASECRYPTLIB (Md5.Services.GetContextSize, Md5GetContextSize, (), 0);
+  }
 
-/**
-  Initializes user-supplied memory pointed by Md5Context as MD5 hash context for
-  subsequent use.
+  /**
+    Initializes user-supplied memory pointed by Md5Context as MD5 hash context for
+    subsequent use.
 
-  If Md5Context is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Md5Context is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[out]  Md5Context  Pointer to MD5 context being initialized.
+    @param[out]  Md5Context  Pointer to MD5 context being initialized.
 
-  @retval TRUE   MD5 context initialization succeeded.
-  @retval FALSE  MD5 context initialization failed.
-  @retval FALSE  This interface is not supported.
+    @retval TRUE   MD5 context initialization succeeded.
+    @retval FALSE  MD5 context initialization failed.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-CryptoServiceMd5Init (
+  **/
+  BOOLEAN
+  EFIAPI
+  CryptoServiceMd5Init (
   OUT  VOID  *Md5Context
   )
-{
-  return CALL_BASECRYPTLIB (Md5.Services.Init, Md5Init, (Md5Context), FALSE);
-}
+  {
+    return CALL_BASECRYPTLIB (Md5.Services.Init, Md5Init, (Md5Context), FALSE);
+  }
 
-/**
-  Makes a copy of an existing MD5 context.
+  /**
+    Makes a copy of an existing MD5 context.
 
-  If Md5Context is NULL, then return FALSE.
-  If NewMd5Context is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Md5Context is NULL, then return FALSE.
+    If NewMd5Context is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in]  Md5Context     Pointer to MD5 context being copied.
-  @param[out] NewMd5Context  Pointer to new MD5 context.
+    @param[in]  Md5Context     Pointer to MD5 context being copied.
+    @param[out] NewMd5Context  Pointer to new MD5 context.
 
-  @retval TRUE   MD5 context copy succeeded.
-  @retval FALSE  MD5 context copy failed.
-  @retval FALSE  This interface is not supported.
+    @retval TRUE   MD5 context copy succeeded.
+    @retval FALSE  MD5 context copy failed.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-CryptoServiceMd5Duplicate (
+  **/
+  BOOLEAN
+  EFIAPI
+  CryptoServiceMd5Duplicate (
   IN   CONST VOID  *Md5Context,
   OUT  VOID        *NewMd5Context
   )
-{
-  return CALL_BASECRYPTLIB (Md5.Services.Duplicate, Md5Duplicate, (Md5Context, NewMd5Context), FALSE);
-}
+  {
+    return CALL_BASECRYPTLIB (Md5.Services.Duplicate, Md5Duplicate, (Md5Context, NewMd5Context), FALSE);
+  }
 
-/**
-  Digests the input data and updates MD5 context.
+  /**
+    Digests the input data and updates MD5 context.
 
-  This function performs MD5 digest on a data buffer of the specified size.
-  It can be called multiple times to compute the digest of long or discontinuous data streams.
-  MD5 context should be already correctly initialized by Md5Init(), and should not be finalized
-  by Md5Final(). Behavior with invalid context is undefined.
+    This function performs MD5 digest on a data buffer of the specified size.
+    It can be called multiple times to compute the digest of long or discontinuous data streams.
+    MD5 context should be already correctly initialized by Md5Init(), and should not be finalized
+    by Md5Final(). Behavior with invalid context is undefined.
 
-  If Md5Context is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Md5Context is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in, out]  Md5Context  Pointer to the MD5 context.
-  @param[in]       Data        Pointer to the buffer containing the data to be hashed.
-  @param[in]       DataSize    Size of Data buffer in bytes.
+    @param[in, out]  Md5Context  Pointer to the MD5 context.
+    @param[in]       Data        Pointer to the buffer containing the data to be hashed.
+    @param[in]       DataSize    Size of Data buffer in bytes.
 
-  @retval TRUE   MD5 data digest succeeded.
-  @retval FALSE  MD5 data digest failed.
-  @retval FALSE  This interface is not supported.
+    @retval TRUE   MD5 data digest succeeded.
+    @retval FALSE  MD5 data digest failed.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-CryptoServiceMd5Update (
+  **/
+  BOOLEAN
+  EFIAPI
+  CryptoServiceMd5Update (
   IN OUT  VOID        *Md5Context,
   IN      CONST VOID  *Data,
   IN      UINTN       DataSize
   )
-{
-  return CALL_BASECRYPTLIB (Md5.Services.Update, Md5Update, (Md5Context, Data, DataSize), FALSE);
-}
+  {
+    return CALL_BASECRYPTLIB (Md5.Services.Update, Md5Update, (Md5Context, Data, DataSize), FALSE);
+  }
 
-/**
-  Completes computation of the MD5 digest value.
+  /**
+    Completes computation of the MD5 digest value.
 
-  This function completes MD5 hash computation and retrieves the digest value into
-  the specified memory. After this function has been called, the MD5 context cannot
-  be used again.
-  MD5 context should be already correctly initialized by Md5Init(), and should not be
-  finalized by Md5Final(). Behavior with invalid MD5 context is undefined.
+    This function completes MD5 hash computation and retrieves the digest value into
+    the specified memory. After this function has been called, the MD5 context cannot
+    be used again.
+    MD5 context should be already correctly initialized by Md5Init(), and should not be
+    finalized by Md5Final(). Behavior with invalid MD5 context is undefined.
 
-  If Md5Context is NULL, then return FALSE.
-  If HashValue is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Md5Context is NULL, then return FALSE.
+    If HashValue is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in, out]  Md5Context  Pointer to the MD5 context.
-  @param[out]      HashValue   Pointer to a buffer that receives the MD5 digest
-                               value (16 bytes).
+    @param[in, out]  Md5Context  Pointer to the MD5 context.
+    @param[out]      HashValue   Pointer to a buffer that receives the MD5 digest
+                                 value (16 bytes).
 
-  @retval TRUE   MD5 digest computation succeeded.
-  @retval FALSE  MD5 digest computation failed.
-  @retval FALSE  This interface is not supported.
+    @retval TRUE   MD5 digest computation succeeded.
+    @retval FALSE  MD5 digest computation failed.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-CryptoServiceMd5Final (
+  **/
+  BOOLEAN
+  EFIAPI
+  CryptoServiceMd5Final (
   IN OUT  VOID   *Md5Context,
   OUT     UINT8  *HashValue
   )
-{
-  return CALL_BASECRYPTLIB (Md5.Services.Final, Md5Final, (Md5Context, HashValue), FALSE);
-}
+  {
+    return CALL_BASECRYPTLIB (Md5.Services.Final, Md5Final, (Md5Context, HashValue), FALSE);
+  }
 
-/**
-  Computes the MD5 message digest of a input data buffer.
+  /**
+    Computes the MD5 message digest of a input data buffer.
 
-  This function performs the MD5 message digest of a given data buffer, and places
-  the digest value into the specified memory.
+    This function performs the MD5 message digest of a given data buffer, and places
+    the digest value into the specified memory.
 
-  If this interface is not supported, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in]   Data        Pointer to the buffer containing the data to be hashed.
-  @param[in]   DataSize    Size of Data buffer in bytes.
-  @param[out]  HashValue   Pointer to a buffer that receives the MD5 digest
-                           value (16 bytes).
+    @param[in]   Data        Pointer to the buffer containing the data to be hashed.
+    @param[in]   DataSize    Size of Data buffer in bytes.
+    @param[out]  HashValue   Pointer to a buffer that receives the MD5 digest
+                             value (16 bytes).
 
-  @retval TRUE   MD5 digest computation succeeded.
-  @retval FALSE  MD5 digest computation failed.
-  @retval FALSE  This interface is not supported.
+    @retval TRUE   MD5 digest computation succeeded.
+    @retval FALSE  MD5 digest computation failed.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-CryptoServiceMd5HashAll (
+  **/
+  BOOLEAN
+  EFIAPI
+  CryptoServiceMd5HashAll (
   IN   CONST VOID  *Data,
   IN   UINTN       DataSize,
   OUT  UINT8       *HashValue
   )
-{
-  return CALL_BASECRYPTLIB (Md5.Services.HashAll, Md5HashAll, (Data, DataSize, HashValue), FALSE);
-}
+  {
+    return CALL_BASECRYPTLIB (Md5.Services.HashAll, Md5HashAll, (Data, DataSize, HashValue), FALSE);
+  }
+
 #endif
 
 #ifdef DISABLE_SHA1_DEPRECATED_INTERFACES
-/**
-  Retrieves the size, in bytes, of the context buffer required for SHA-1 hash operations.
 
-  If this interface is not supported, then return zero.
+  /**
+    Retrieves the size, in bytes, of the context buffer required for SHA-1 hash operations.
 
-  @retval  0   This interface is not supported.
+    If this interface is not supported, then return zero.
 
-**/
-UINTN
-EFIAPI
-DeprecatedCryptoServiceSha1GetContextSize (
+    @retval  0   This interface is not supported.
+
+  **/
+  UINTN
+  EFIAPI
+  DeprecatedCryptoServiceSha1GetContextSize (
   VOID
   )
-{
-  return BaseCryptLibServiceDeprecated ("Sha1GetContextSize"), 0;
-}
+  {
+    return BaseCryptLibServiceDeprecated ("Sha1GetContextSize"), 0;
+  }
 
-/**
-  Initializes user-supplied memory pointed by Sha1Context as SHA-1 hash context for
-  subsequent use.
+  /**
+    Initializes user-supplied memory pointed by Sha1Context as SHA-1 hash context for
+    subsequent use.
 
-  If Sha1Context is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Sha1Context is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[out]  Sha1Context  Pointer to SHA-1 context being initialized.
+    @param[out]  Sha1Context  Pointer to SHA-1 context being initialized.
 
-  @retval TRUE   SHA-1 context initialization succeeded.
-  @retval FALSE  SHA-1 context initialization failed.
-  @retval FALSE  This interface is not supported.
+    @retval TRUE   SHA-1 context initialization succeeded.
+    @retval FALSE  SHA-1 context initialization failed.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-DeprecatedCryptoServiceSha1Init (
+  **/
+  BOOLEAN
+  EFIAPI
+  DeprecatedCryptoServiceSha1Init (
   OUT  VOID  *Sha1Context
   )
-{
-  return BaseCryptLibServiceDeprecated ("Sha1Init"), FALSE;
-}
+  {
+    return BaseCryptLibServiceDeprecated ("Sha1Init"), FALSE;
+  }
 
-/**
-  Makes a copy of an existing SHA-1 context.
+  /**
+    Makes a copy of an existing SHA-1 context.
 
-  If Sha1Context is NULL, then return FALSE.
-  If NewSha1Context is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Sha1Context is NULL, then return FALSE.
+    If NewSha1Context is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in]  Sha1Context     Pointer to SHA-1 context being copied.
-  @param[out] NewSha1Context  Pointer to new SHA-1 context.
+    @param[in]  Sha1Context     Pointer to SHA-1 context being copied.
+    @param[out] NewSha1Context  Pointer to new SHA-1 context.
 
-  @retval FALSE  This interface is not supported.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-DeprecatedCryptoServiceSha1Duplicate (
+  **/
+  BOOLEAN
+  EFIAPI
+  DeprecatedCryptoServiceSha1Duplicate (
   IN   CONST VOID  *Sha1Context,
   OUT  VOID        *NewSha1Context
   )
-{
-  return BaseCryptLibServiceDeprecated ("Sha1Duplicate"), FALSE;
-}
+  {
+    return BaseCryptLibServiceDeprecated ("Sha1Duplicate"), FALSE;
+  }
 
-/**
-  Digests the input data and updates SHA-1 context.
+  /**
+    Digests the input data and updates SHA-1 context.
 
-  This function performs SHA-1 digest on a data buffer of the specified size.
-  It can be called multiple times to compute the digest of long or discontinuous data streams.
-  SHA-1 context should be already correctly initialized by Sha1Init(), and should not be finalized
-  by Sha1Final(). Behavior with invalid context is undefined.
+    This function performs SHA-1 digest on a data buffer of the specified size.
+    It can be called multiple times to compute the digest of long or discontinuous data streams.
+    SHA-1 context should be already correctly initialized by Sha1Init(), and should not be finalized
+    by Sha1Final(). Behavior with invalid context is undefined.
 
-  If Sha1Context is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Sha1Context is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in, out]  Sha1Context  Pointer to the SHA-1 context.
-  @param[in]       Data         Pointer to the buffer containing the data to be hashed.
-  @param[in]       DataSize     Size of Data buffer in bytes.
+    @param[in, out]  Sha1Context  Pointer to the SHA-1 context.
+    @param[in]       Data         Pointer to the buffer containing the data to be hashed.
+    @param[in]       DataSize     Size of Data buffer in bytes.
 
-  @retval FALSE  This interface is not supported.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-DeprecatedCryptoServiceSha1Update (
+  **/
+  BOOLEAN
+  EFIAPI
+  DeprecatedCryptoServiceSha1Update (
   IN OUT  VOID        *Sha1Context,
   IN      CONST VOID  *Data,
   IN      UINTN       DataSize
   )
-{
-  return BaseCryptLibServiceDeprecated ("Sha1Update"), FALSE;
-}
+  {
+    return BaseCryptLibServiceDeprecated ("Sha1Update"), FALSE;
+  }
 
-/**
-  Completes computation of the SHA-1 digest value.
+  /**
+    Completes computation of the SHA-1 digest value.
 
-  This function completes SHA-1 hash computation and retrieves the digest value into
-  the specified memory. After this function has been called, the SHA-1 context cannot
-  be used again.
-  SHA-1 context should be already correctly initialized by Sha1Init(), and should not be
-  finalized by Sha1Final(). Behavior with invalid SHA-1 context is undefined.
+    This function completes SHA-1 hash computation and retrieves the digest value into
+    the specified memory. After this function has been called, the SHA-1 context cannot
+    be used again.
+    SHA-1 context should be already correctly initialized by Sha1Init(), and should not be
+    finalized by Sha1Final(). Behavior with invalid SHA-1 context is undefined.
 
-  If Sha1Context is NULL, then return FALSE.
-  If HashValue is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Sha1Context is NULL, then return FALSE.
+    If HashValue is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in, out]  Sha1Context  Pointer to the SHA-1 context.
-  @param[out]      HashValue    Pointer to a buffer that receives the SHA-1 digest
-                                value (20 bytes).
+    @param[in, out]  Sha1Context  Pointer to the SHA-1 context.
+    @param[out]      HashValue    Pointer to a buffer that receives the SHA-1 digest
+                                  value (20 bytes).
 
-  @retval FALSE  This interface is not supported.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-DeprecatedCryptoServiceSha1Final (
+  **/
+  BOOLEAN
+  EFIAPI
+  DeprecatedCryptoServiceSha1Final (
   IN OUT  VOID   *Sha1Context,
   OUT     UINT8  *HashValue
   )
-{
-  return BaseCryptLibServiceDeprecated ("Sha1Final"), FALSE;
-}
+  {
+    return BaseCryptLibServiceDeprecated ("Sha1Final"), FALSE;
+  }
 
-/**
-  Computes the SHA-1 message digest of a input data buffer.
+  /**
+    Computes the SHA-1 message digest of a input data buffer.
 
-  This function performs the SHA-1 message digest of a given data buffer, and places
-  the digest value into the specified memory.
+    This function performs the SHA-1 message digest of a given data buffer, and places
+    the digest value into the specified memory.
 
-  If this interface is not supported, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in]   Data        Pointer to the buffer containing the data to be hashed.
-  @param[in]   DataSize    Size of Data buffer in bytes.
-  @param[out]  HashValue   Pointer to a buffer that receives the SHA-1 digest
-                           value (20 bytes).
+    @param[in]   Data        Pointer to the buffer containing the data to be hashed.
+    @param[in]   DataSize    Size of Data buffer in bytes.
+    @param[out]  HashValue   Pointer to a buffer that receives the SHA-1 digest
+                             value (20 bytes).
 
-  @retval FALSE  This interface is not supported.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-DeprecatedCryptoServiceSha1HashAll (
+  **/
+  BOOLEAN
+  EFIAPI
+  DeprecatedCryptoServiceSha1HashAll (
   IN   CONST VOID  *Data,
   IN   UINTN       DataSize,
   OUT  UINT8       *HashValue
   )
-{
-  return BaseCryptLibServiceDeprecated ("Sha1HashAll"), FALSE;
-}
+  {
+    return BaseCryptLibServiceDeprecated ("Sha1HashAll"), FALSE;
+  }
+
 #else
-/**
-  Retrieves the size, in bytes, of the context buffer required for SHA-1 hash operations.
 
-  If this interface is not supported, then return zero.
+  /**
+    Retrieves the size, in bytes, of the context buffer required for SHA-1 hash operations.
 
-  @return  The size, in bytes, of the context buffer required for SHA-1 hash operations.
-  @retval  0   This interface is not supported.
+    If this interface is not supported, then return zero.
 
-**/
-UINTN
-EFIAPI
-CryptoServiceSha1GetContextSize (
+    @return  The size, in bytes, of the context buffer required for SHA-1 hash operations.
+    @retval  0   This interface is not supported.
+
+  **/
+  UINTN
+  EFIAPI
+  CryptoServiceSha1GetContextSize (
   VOID
   )
-{
-  return CALL_BASECRYPTLIB (Sha1.Services.GetContextSize, Sha1GetContextSize, (), 0);
-}
+  {
+    return CALL_BASECRYPTLIB (Sha1.Services.GetContextSize, Sha1GetContextSize, (), 0);
+  }
 
-/**
-  Initializes user-supplied memory pointed by Sha1Context as SHA-1 hash context for
-  subsequent use.
+  /**
+    Initializes user-supplied memory pointed by Sha1Context as SHA-1 hash context for
+    subsequent use.
 
-  If Sha1Context is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Sha1Context is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[out]  Sha1Context  Pointer to SHA-1 context being initialized.
+    @param[out]  Sha1Context  Pointer to SHA-1 context being initialized.
 
-  @retval TRUE   SHA-1 context initialization succeeded.
-  @retval FALSE  SHA-1 context initialization failed.
-  @retval FALSE  This interface is not supported.
+    @retval TRUE   SHA-1 context initialization succeeded.
+    @retval FALSE  SHA-1 context initialization failed.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-CryptoServiceSha1Init (
+  **/
+  BOOLEAN
+  EFIAPI
+  CryptoServiceSha1Init (
   OUT  VOID  *Sha1Context
   )
-{
-  return CALL_BASECRYPTLIB (Sha1.Services.Init, Sha1Init, (Sha1Context), FALSE);
-}
+  {
+    return CALL_BASECRYPTLIB (Sha1.Services.Init, Sha1Init, (Sha1Context), FALSE);
+  }
 
-/**
-  Makes a copy of an existing SHA-1 context.
+  /**
+    Makes a copy of an existing SHA-1 context.
 
-  If Sha1Context is NULL, then return FALSE.
-  If NewSha1Context is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Sha1Context is NULL, then return FALSE.
+    If NewSha1Context is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in]  Sha1Context     Pointer to SHA-1 context being copied.
-  @param[out] NewSha1Context  Pointer to new SHA-1 context.
+    @param[in]  Sha1Context     Pointer to SHA-1 context being copied.
+    @param[out] NewSha1Context  Pointer to new SHA-1 context.
 
-  @retval TRUE   SHA-1 context copy succeeded.
-  @retval FALSE  SHA-1 context copy failed.
-  @retval FALSE  This interface is not supported.
+    @retval TRUE   SHA-1 context copy succeeded.
+    @retval FALSE  SHA-1 context copy failed.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-CryptoServiceSha1Duplicate (
+  **/
+  BOOLEAN
+  EFIAPI
+  CryptoServiceSha1Duplicate (
   IN   CONST VOID  *Sha1Context,
   OUT  VOID        *NewSha1Context
   )
-{
-  return CALL_BASECRYPTLIB (Sha1.Services.Duplicate, Sha1Duplicate, (Sha1Context, NewSha1Context), FALSE);
-}
+  {
+    return CALL_BASECRYPTLIB (Sha1.Services.Duplicate, Sha1Duplicate, (Sha1Context, NewSha1Context), FALSE);
+  }
 
-/**
-  Digests the input data and updates SHA-1 context.
+  /**
+    Digests the input data and updates SHA-1 context.
 
-  This function performs SHA-1 digest on a data buffer of the specified size.
-  It can be called multiple times to compute the digest of long or discontinuous data streams.
-  SHA-1 context should be already correctly initialized by Sha1Init(), and should not be finalized
-  by Sha1Final(). Behavior with invalid context is undefined.
+    This function performs SHA-1 digest on a data buffer of the specified size.
+    It can be called multiple times to compute the digest of long or discontinuous data streams.
+    SHA-1 context should be already correctly initialized by Sha1Init(), and should not be finalized
+    by Sha1Final(). Behavior with invalid context is undefined.
 
-  If Sha1Context is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Sha1Context is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in, out]  Sha1Context  Pointer to the SHA-1 context.
-  @param[in]       Data         Pointer to the buffer containing the data to be hashed.
-  @param[in]       DataSize     Size of Data buffer in bytes.
+    @param[in, out]  Sha1Context  Pointer to the SHA-1 context.
+    @param[in]       Data         Pointer to the buffer containing the data to be hashed.
+    @param[in]       DataSize     Size of Data buffer in bytes.
 
-  @retval TRUE   SHA-1 data digest succeeded.
-  @retval FALSE  SHA-1 data digest failed.
-  @retval FALSE  This interface is not supported.
+    @retval TRUE   SHA-1 data digest succeeded.
+    @retval FALSE  SHA-1 data digest failed.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-CryptoServiceSha1Update (
+  **/
+  BOOLEAN
+  EFIAPI
+  CryptoServiceSha1Update (
   IN OUT  VOID        *Sha1Context,
   IN      CONST VOID  *Data,
   IN      UINTN       DataSize
   )
-{
-  return CALL_BASECRYPTLIB (Sha1.Services.Update, Sha1Update, (Sha1Context, Data, DataSize), FALSE);
-}
+  {
+    return CALL_BASECRYPTLIB (Sha1.Services.Update, Sha1Update, (Sha1Context, Data, DataSize), FALSE);
+  }
 
-/**
-  Completes computation of the SHA-1 digest value.
+  /**
+    Completes computation of the SHA-1 digest value.
 
-  This function completes SHA-1 hash computation and retrieves the digest value into
-  the specified memory. After this function has been called, the SHA-1 context cannot
-  be used again.
-  SHA-1 context should be already correctly initialized by Sha1Init(), and should not be
-  finalized by Sha1Final(). Behavior with invalid SHA-1 context is undefined.
+    This function completes SHA-1 hash computation and retrieves the digest value into
+    the specified memory. After this function has been called, the SHA-1 context cannot
+    be used again.
+    SHA-1 context should be already correctly initialized by Sha1Init(), and should not be
+    finalized by Sha1Final(). Behavior with invalid SHA-1 context is undefined.
 
-  If Sha1Context is NULL, then return FALSE.
-  If HashValue is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Sha1Context is NULL, then return FALSE.
+    If HashValue is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in, out]  Sha1Context  Pointer to the SHA-1 context.
-  @param[out]      HashValue    Pointer to a buffer that receives the SHA-1 digest
-                                value (20 bytes).
+    @param[in, out]  Sha1Context  Pointer to the SHA-1 context.
+    @param[out]      HashValue    Pointer to a buffer that receives the SHA-1 digest
+                                  value (20 bytes).
 
-  @retval TRUE   SHA-1 digest computation succeeded.
-  @retval FALSE  SHA-1 digest computation failed.
-  @retval FALSE  This interface is not supported.
+    @retval TRUE   SHA-1 digest computation succeeded.
+    @retval FALSE  SHA-1 digest computation failed.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-CryptoServiceSha1Final (
+  **/
+  BOOLEAN
+  EFIAPI
+  CryptoServiceSha1Final (
   IN OUT  VOID   *Sha1Context,
   OUT     UINT8  *HashValue
   )
-{
-  return CALL_BASECRYPTLIB (Sha1.Services.Final, Sha1Final, (Sha1Context, HashValue), FALSE);
-}
+  {
+    return CALL_BASECRYPTLIB (Sha1.Services.Final, Sha1Final, (Sha1Context, HashValue), FALSE);
+  }
 
-/**
-  Computes the SHA-1 message digest of a input data buffer.
+  /**
+    Computes the SHA-1 message digest of a input data buffer.
 
-  This function performs the SHA-1 message digest of a given data buffer, and places
-  the digest value into the specified memory.
+    This function performs the SHA-1 message digest of a given data buffer, and places
+    the digest value into the specified memory.
 
-  If this interface is not supported, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in]   Data        Pointer to the buffer containing the data to be hashed.
-  @param[in]   DataSize    Size of Data buffer in bytes.
-  @param[out]  HashValue   Pointer to a buffer that receives the SHA-1 digest
-                           value (20 bytes).
+    @param[in]   Data        Pointer to the buffer containing the data to be hashed.
+    @param[in]   DataSize    Size of Data buffer in bytes.
+    @param[out]  HashValue   Pointer to a buffer that receives the SHA-1 digest
+                             value (20 bytes).
 
-  @retval TRUE   SHA-1 digest computation succeeded.
-  @retval FALSE  SHA-1 digest computation failed.
-  @retval FALSE  This interface is not supported.
+    @retval TRUE   SHA-1 digest computation succeeded.
+    @retval FALSE  SHA-1 digest computation failed.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-CryptoServiceSha1HashAll (
+  **/
+  BOOLEAN
+  EFIAPI
+  CryptoServiceSha1HashAll (
   IN   CONST VOID  *Data,
   IN   UINTN       DataSize,
   OUT  UINT8       *HashValue
   )
-{
-  return CALL_BASECRYPTLIB (Sha1.Services.HashAll, Sha1HashAll, (Data, DataSize, HashValue), FALSE);
-}
+  {
+    return CALL_BASECRYPTLIB (Sha1.Services.HashAll, Sha1HashAll, (Data, DataSize, HashValue), FALSE);
+  }
+
 #endif
 
 /**
@@ -1455,9 +1466,9 @@ CryptoServiceSm3HashAll (
   return CALL_BASECRYPTLIB (Sm3.Services.HashAll, Sm3HashAll, (Data, DataSize, HashValue), FALSE);
 }
 
-//=====================================================================================
-//    MAC (Message Authentication Code) Primitive
-//=====================================================================================
+// =====================================================================================
+// MAC (Message Authentication Code) Primitive
+// =====================================================================================
 
 /**
   HMAC MD5 is deprecated and unsupported any longer.
@@ -1773,7 +1784,12 @@ CryptoServiceHmacSha256Duplicate (
   OUT  VOID        *NewHmacSha256Context
   )
 {
-  return CALL_BASECRYPTLIB (HmacSha256.Services.Duplicate, HmacSha256Duplicate, (HmacSha256Context, NewHmacSha256Context), FALSE);
+  return CALL_BASECRYPTLIB (
+                           HmacSha256.Services.Duplicate,
+                           HmacSha256Duplicate,
+                           (HmacSha256Context, NewHmacSha256Context),
+                           FALSE
+                           );
 }
 
 /**
@@ -1839,9 +1855,9 @@ CryptoServiceHmacSha256Final (
   return CALL_BASECRYPTLIB (HmacSha256.Services.Final, HmacSha256Final, (HmacSha256Context, HmacValue), FALSE);
 }
 
-//=====================================================================================
-//    Symmetric Cryptography Primitive
-//=====================================================================================
+// =====================================================================================
+// Symmetric Cryptography Primitive
+// =====================================================================================
 
 /**
   TDES is deprecated and unsupported any longer.
@@ -2119,7 +2135,12 @@ CryptoServiceAesCbcEncrypt (
   OUT  UINT8        *Output
   )
 {
-  return CALL_BASECRYPTLIB (Aes.Services.CbcEncrypt, AesCbcEncrypt, (AesContext, Input, InputSize, Ivec, Output), FALSE);
+  return CALL_BASECRYPTLIB (
+                           Aes.Services.CbcEncrypt,
+                           AesCbcEncrypt,
+                           (AesContext, Input, InputSize, Ivec, Output),
+                           FALSE
+                           );
 }
 
 /**
@@ -2161,7 +2182,12 @@ CryptoServiceAesCbcDecrypt (
   OUT  UINT8        *Output
   )
 {
-  return CALL_BASECRYPTLIB (Aes.Services.CbcDecrypt, AesCbcDecrypt, (AesContext, Input, InputSize, Ivec, Output), FALSE);
+  return CALL_BASECRYPTLIB (
+                           Aes.Services.CbcDecrypt,
+                           AesCbcDecrypt,
+                           (AesContext, Input, InputSize, Ivec, Output),
+                           FALSE
+                           );
 }
 
 /**
@@ -2268,9 +2294,9 @@ DeprecatedCryptoServiceArc4Reset (
   return BaseCryptLibServiceDeprecated ("Arc4Reset"), FALSE;
 }
 
-//=====================================================================================
-//    Asymmetric Cryptography Primitive
-//=====================================================================================
+// =====================================================================================
+// Asymmetric Cryptography Primitive
+// =====================================================================================
 
 /**
   Allocates and initializes one RSA context for subsequent use.
@@ -2411,7 +2437,12 @@ CryptoServiceRsaGenerateKey (
   IN      UINTN        PublicExponentSize
   )
 {
-  return CALL_BASECRYPTLIB (Rsa.Services.GenerateKey, RsaGenerateKey, (RsaContext, ModulusLength, PublicExponent, PublicExponentSize), FALSE);
+  return CALL_BASECRYPTLIB (
+                           Rsa.Services.GenerateKey,
+                           RsaGenerateKey,
+                           (RsaContext, ModulusLength, PublicExponent, PublicExponentSize),
+                           FALSE
+                           );
 }
 
 /**
@@ -2481,7 +2512,12 @@ CryptoServiceRsaPkcs1Sign (
   IN OUT  UINTN        *SigSize
   )
 {
-  return CALL_BASECRYPTLIB (Rsa.Services.Pkcs1Sign, RsaPkcs1Sign, (RsaContext, MessageHash, HashSize, Signature, SigSize), FALSE);
+  return CALL_BASECRYPTLIB (
+                           Rsa.Services.Pkcs1Sign,
+                           RsaPkcs1Sign,
+                           (RsaContext, MessageHash, HashSize, Signature, SigSize),
+                           FALSE
+                           );
 }
 
 /**
@@ -2513,7 +2549,12 @@ CryptoServiceRsaPkcs1Verify (
   IN  UINTN        SigSize
   )
 {
-  return CALL_BASECRYPTLIB (Rsa.Services.Pkcs1Verify, RsaPkcs1Verify, (RsaContext, MessageHash, HashSize, Signature, SigSize), FALSE);
+  return CALL_BASECRYPTLIB (
+                           Rsa.Services.Pkcs1Verify,
+                           RsaPkcs1Verify,
+                           (RsaContext, MessageHash, HashSize, Signature, SigSize),
+                           FALSE
+                           );
 }
 
 /**
@@ -2544,7 +2585,12 @@ CryptoServiceRsaGetPrivateKeyFromPem (
   OUT  VOID         **RsaContext
   )
 {
-  return CALL_BASECRYPTLIB (Rsa.Services.GetPrivateKeyFromPem, RsaGetPrivateKeyFromPem, (PemData, PemSize, Password, RsaContext), FALSE);
+  return CALL_BASECRYPTLIB (
+                           Rsa.Services.GetPrivateKeyFromPem,
+                           RsaGetPrivateKeyFromPem,
+                           (PemData, PemSize, Password, RsaContext),
+                           FALSE
+                           );
 }
 
 /**
@@ -2573,7 +2619,12 @@ CryptoServiceRsaGetPublicKeyFromX509 (
   OUT  VOID         **RsaContext
   )
 {
-  return CALL_BASECRYPTLIB (Rsa.Services.GetPublicKeyFromX509, RsaGetPublicKeyFromX509, (Cert, CertSize, RsaContext), FALSE);
+  return CALL_BASECRYPTLIB (
+                           Rsa.Services.GetPublicKeyFromX509,
+                           RsaGetPublicKeyFromX509,
+                           (Cert, CertSize, RsaContext),
+                           FALSE
+                           );
 }
 
 /**
@@ -2604,7 +2655,12 @@ CryptoServiceX509GetSubjectName (
   IN OUT  UINTN        *SubjectSize
   )
 {
-  return CALL_BASECRYPTLIB (X509.Services.GetSubjectName, X509GetSubjectName, (Cert, CertSize, CertSubject, SubjectSize), FALSE);
+  return CALL_BASECRYPTLIB (
+                           X509.Services.GetSubjectName,
+                           X509GetSubjectName,
+                           (Cert, CertSize, CertSubject, SubjectSize),
+                           FALSE
+                           );
 }
 
 /**
@@ -2638,11 +2694,16 @@ EFIAPI
 CryptoServiceX509GetCommonName (
   IN      CONST UINT8  *Cert,
   IN      UINTN        CertSize,
-  OUT     CHAR8        *CommonName,  OPTIONAL
+  OUT     CHAR8        *CommonName, OPTIONAL
   IN OUT  UINTN        *CommonNameSize
   )
 {
-  return CALL_BASECRYPTLIB (X509.Services.GetCommonName, X509GetCommonName, (Cert, CertSize, CommonName, CommonNameSize), RETURN_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+                           X509.Services.GetCommonName,
+                           X509GetCommonName,
+                           (Cert, CertSize, CommonName, CommonNameSize),
+                           RETURN_UNSUPPORTED
+                           );
 }
 
 /**
@@ -2676,11 +2737,16 @@ EFIAPI
 CryptoServiceX509GetOrganizationName (
   IN      CONST UINT8   *Cert,
   IN      UINTN         CertSize,
-  OUT     CHAR8         *NameBuffer,  OPTIONAL
+  OUT     CHAR8         *NameBuffer, OPTIONAL
   IN OUT  UINTN         *NameBufferSize
   )
 {
-  return CALL_BASECRYPTLIB (X509.Services.GetOrganizationName, X509GetOrganizationName, (Cert, CertSize, NameBuffer, NameBufferSize), RETURN_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+                           X509.Services.GetOrganizationName,
+                           X509GetOrganizationName,
+                           (Cert, CertSize, NameBuffer, NameBufferSize),
+                           RETURN_UNSUPPORTED
+                           );
 }
 
 /**
@@ -2737,7 +2803,12 @@ CryptoServiceX509ConstructCertificate (
   OUT  UINT8        **SingleX509Cert
   )
 {
-  return CALL_BASECRYPTLIB (X509.Services.ConstructCertificate, X509ConstructCertificate, (Cert, CertSize, SingleX509Cert), FALSE);
+  return CALL_BASECRYPTLIB (
+                           X509.Services.ConstructCertificate,
+                           X509ConstructCertificate,
+                           (Cert, CertSize, SingleX509Cert),
+                           FALSE
+                           );
 }
 
 /**
@@ -2766,7 +2837,12 @@ CryptoServiceX509ConstructCertificateStackV (
   IN      VA_LIST  Args
   )
 {
-  return CALL_BASECRYPTLIB (X509.Services.ConstructCertificateStackV, X509ConstructCertificateStackV, (X509Stack, Args), FALSE);
+  return CALL_BASECRYPTLIB (
+                           X509.Services.ConstructCertificateStackV,
+                           X509ConstructCertificateStackV,
+                           (X509Stack, Args),
+                           FALSE
+                           );
 }
 
 /**
@@ -2906,7 +2982,12 @@ CryptoServicePkcs5HashPassword (
   OUT UINT8        *OutKey
   )
 {
-  return CALL_BASECRYPTLIB (Pkcs.Services.Pkcs5HashPassword, Pkcs5HashPassword, (PasswordLength, Password, SaltLength, Salt, IterationCount, DigestSize, KeyLength, OutKey), FALSE);
+  return CALL_BASECRYPTLIB (
+                           Pkcs.Services.Pkcs5HashPassword,
+                           Pkcs5HashPassword,
+                           (PasswordLength, Password, SaltLength, Salt, IterationCount, DigestSize, KeyLength, OutKey),
+                           FALSE
+                           );
 }
 
 /**
@@ -2945,13 +3026,19 @@ CryptoServicePkcs1v2Encrypt (
   IN   UINTN        PublicKeySize,
   IN   UINT8        *InData,
   IN   UINTN        InDataSize,
-  IN   CONST UINT8  *PrngSeed,  OPTIONAL
-  IN   UINTN        PrngSeedSize,  OPTIONAL
+  IN   CONST UINT8  *PrngSeed, OPTIONAL
+  IN   UINTN        PrngSeedSize, OPTIONAL
   OUT  UINT8        **EncryptedData,
   OUT  UINTN        *EncryptedDataSize
   )
 {
-  return CALL_BASECRYPTLIB (Pkcs.Services.Pkcs1v2Encrypt, Pkcs1v2Encrypt, (PublicKey, PublicKeySize, InData, InDataSize, PrngSeed, PrngSeedSize, EncryptedData, EncryptedDataSize), FALSE);
+  return CALL_BASECRYPTLIB (
+                           Pkcs.Services.Pkcs1v2Encrypt,
+                           Pkcs1v2Encrypt,
+                           (PublicKey, PublicKeySize, InData, InDataSize, PrngSeed, PrngSeedSize, EncryptedData,
+                            EncryptedDataSize),
+                           FALSE
+                           );
 }
 
 /**
@@ -2991,7 +3078,12 @@ CryptoServicePkcs7GetSigners (
   OUT UINTN        *CertLength
   )
 {
-  return CALL_BASECRYPTLIB (Pkcs.Services.Pkcs7GetSigners, Pkcs7GetSigners, (P7Data, P7Length, CertStack, StackLength, TrustedCert, CertLength), FALSE);
+  return CALL_BASECRYPTLIB (
+                           Pkcs.Services.Pkcs7GetSigners,
+                           Pkcs7GetSigners,
+                           (P7Data, P7Length, CertStack, StackLength, TrustedCert, CertLength),
+                           FALSE
+                           );
 }
 
 /**
@@ -3044,7 +3136,12 @@ CryptoServicePkcs7GetCertificatesList (
   OUT UINTN        *UnchainLength
   )
 {
-  return CALL_BASECRYPTLIB (Pkcs.Services.Pkcs7GetCertificatesList, Pkcs7GetCertificatesList, (P7Data, P7Length, SignerChainCerts, ChainLength, UnchainCerts, UnchainLength), FALSE);
+  return CALL_BASECRYPTLIB (
+                           Pkcs.Services.Pkcs7GetCertificatesList,
+                           Pkcs7GetCertificatesList,
+                           (P7Data, P7Length, SignerChainCerts, ChainLength, UnchainCerts, UnchainLength),
+                           FALSE
+                           );
 }
 
 /**
@@ -3088,7 +3185,13 @@ CryptoServicePkcs7Sign (
   OUT  UINTN        *SignedDataSize
   )
 {
-  return CALL_BASECRYPTLIB (Pkcs.Services.Pkcs7Sign, Pkcs7Sign, (PrivateKey, PrivateKeySize, KeyPassword, InData, InDataSize, SignCert, OtherCerts, SignedData, SignedDataSize), FALSE);
+  return CALL_BASECRYPTLIB (
+                           Pkcs.Services.Pkcs7Sign,
+                           Pkcs7Sign,
+                           (PrivateKey, PrivateKeySize, KeyPassword, InData, InDataSize, SignCert, OtherCerts,
+                            SignedData, SignedDataSize),
+                           FALSE
+                           );
 }
 
 /**
@@ -3124,7 +3227,12 @@ CryptoServicePkcs7Verify (
   IN  UINTN        DataLength
   )
 {
-  return CALL_BASECRYPTLIB (Pkcs.Services.Pkcs7Verify, Pkcs7Verify, (P7Data, P7Length, TrustedCert, CertLength, InData, DataLength), FALSE);
+  return CALL_BASECRYPTLIB (
+                           Pkcs.Services.Pkcs7Verify,
+                           Pkcs7Verify,
+                           (P7Data, P7Length, TrustedCert, CertLength, InData, DataLength),
+                           FALSE
+                           );
 }
 
 /**
@@ -3169,9 +3277,13 @@ CryptoServiceVerifyEKUsInPkcs7Signature (
   IN  BOOLEAN       RequireAllPresent
   )
 {
-  return CALL_BASECRYPTLIB (Pkcs.Services.VerifyEKUsInPkcs7Signature, VerifyEKUsInPkcs7Signature, (Pkcs7Signature, SignatureSize, RequiredEKUs, RequiredEKUsSize, RequireAllPresent), FALSE);
+  return CALL_BASECRYPTLIB (
+                           Pkcs.Services.VerifyEKUsInPkcs7Signature,
+                           VerifyEKUsInPkcs7Signature,
+                           (Pkcs7Signature, SignatureSize, RequiredEKUs, RequiredEKUsSize, RequireAllPresent),
+                           FALSE
+                           );
 }
-
 
 /**
   Extracts the attached content from a PKCS#7 signed data if existed. The input signed
@@ -3202,7 +3314,12 @@ CryptoServicePkcs7GetAttachedContent (
   OUT UINTN        *ContentSize
   )
 {
-  return CALL_BASECRYPTLIB (Pkcs.Services.Pkcs7GetAttachedContent, Pkcs7GetAttachedContent, (P7Data, P7Length, Content, ContentSize), FALSE);
+  return CALL_BASECRYPTLIB (
+                           Pkcs.Services.Pkcs7GetAttachedContent,
+                           Pkcs7GetAttachedContent,
+                           (P7Data, P7Length, Content, ContentSize),
+                           FALSE
+                           );
 }
 
 /**
@@ -3240,7 +3357,12 @@ CryptoServiceAuthenticodeVerify (
   IN  UINTN        HashSize
   )
 {
-  return CALL_BASECRYPTLIB (Pkcs.Services.AuthenticodeVerify, AuthenticodeVerify, (AuthData, DataSize, TrustedCert, CertSize, ImageHash, HashSize), FALSE);
+  return CALL_BASECRYPTLIB (
+                           Pkcs.Services.AuthenticodeVerify,
+                           AuthenticodeVerify,
+                           (AuthData, DataSize, TrustedCert, CertSize, ImageHash, HashSize),
+                           FALSE
+                           );
 }
 
 /**
@@ -3273,12 +3395,17 @@ CryptoServiceImageTimestampVerify (
   OUT EFI_TIME     *SigningTime
   )
 {
-  return CALL_BASECRYPTLIB (Pkcs.Services.ImageTimestampVerify, ImageTimestampVerify, (AuthData, DataSize, TsaCert, CertSize, SigningTime), FALSE);
+  return CALL_BASECRYPTLIB (
+                           Pkcs.Services.ImageTimestampVerify,
+                           ImageTimestampVerify,
+                           (AuthData, DataSize, TsaCert, CertSize, SigningTime),
+                           FALSE
+                           );
 }
 
-//=====================================================================================
-//    DH Key Exchange Primitive
-//=====================================================================================
+// =====================================================================================
+// DH Key Exchange Primitive
+// =====================================================================================
 
 /**
   Allocates and Initializes one Diffie-Hellman Context for subsequent use.
@@ -3347,7 +3474,12 @@ CryptoServiceDhGenerateParameter (
   OUT     UINT8  *Prime
   )
 {
-  return CALL_BASECRYPTLIB (Dh.Services.GenerateParameter, DhGenerateParameter, (DhContext, Generator, PrimeLength, Prime), FALSE);
+  return CALL_BASECRYPTLIB (
+                           Dh.Services.GenerateParameter,
+                           DhGenerateParameter,
+                           (DhContext, Generator, PrimeLength, Prime),
+                           FALSE
+                           );
 }
 
 /**
@@ -3382,7 +3514,12 @@ CryptoServiceDhSetParameter (
   IN      CONST UINT8  *Prime
   )
 {
-  return CALL_BASECRYPTLIB (Dh.Services.SetParameter, DhSetParameter, (DhContext, Generator, PrimeLength, Prime), FALSE);
+  return CALL_BASECRYPTLIB (
+                           Dh.Services.SetParameter,
+                           DhSetParameter,
+                           (DhContext, Generator, PrimeLength, Prime),
+                           FALSE
+                           );
 }
 
 /**
@@ -3456,12 +3593,17 @@ CryptoServiceDhComputeKey (
   IN OUT  UINTN        *KeySize
   )
 {
-  return CALL_BASECRYPTLIB (Dh.Services.ComputeKey, DhComputeKey, (DhContext, PeerPublicKey, PeerPublicKeySize, Key, KeySize), FALSE);
+  return CALL_BASECRYPTLIB (
+                           Dh.Services.ComputeKey,
+                           DhComputeKey,
+                           (DhContext, PeerPublicKey, PeerPublicKeySize, Key, KeySize),
+                           FALSE
+                           );
 }
 
-//=====================================================================================
-//    Pseudo-Random Generation Primitive
-//=====================================================================================
+// =====================================================================================
+// Pseudo-Random Generation Primitive
+// =====================================================================================
 
 /**
   Sets up the seed value for the pseudorandom number generator.
@@ -3515,9 +3657,9 @@ CryptoServiceRandomBytes (
   return CALL_BASECRYPTLIB (Random.Services.Bytes, RandomBytes, (Output, Size), FALSE);
 }
 
-//=====================================================================================
-//    Key Derivation Function Primitive
-//=====================================================================================
+// =====================================================================================
+// Key Derivation Function Primitive
+// =====================================================================================
 
 /**
   Derive key data using HMAC-SHA256 based KDF.
@@ -3548,7 +3690,12 @@ CryptoServiceHkdfSha256ExtractAndExpand (
   IN   UINTN        OutSize
   )
 {
-  return CALL_BASECRYPTLIB (Hkdf.Services.Sha256ExtractAndExpand, HkdfSha256ExtractAndExpand, (Key, KeySize, Salt, SaltSize, Info, InfoSize, Out, OutSize), FALSE);
+  return CALL_BASECRYPTLIB (
+                           Hkdf.Services.Sha256ExtractAndExpand,
+                           HkdfSha256ExtractAndExpand,
+                           (Key, KeySize, Salt, SaltSize, Info, InfoSize, Out, OutSize),
+                           FALSE
+                           );
 }
 
 /**
@@ -3699,11 +3846,16 @@ CryptoServiceTlsDoHandshake (
   IN     VOID                     *Tls,
   IN     UINT8                    *BufferIn, OPTIONAL
   IN     UINTN                    BufferInSize, OPTIONAL
-     OUT UINT8                    *BufferOut, OPTIONAL
+  OUT UINT8                    *BufferOut, OPTIONAL
   IN OUT UINTN                    *BufferOutSize
   )
 {
-  return CALL_BASECRYPTLIB (Tls.Services.DoHandshake, TlsDoHandshake, (Tls, BufferIn, BufferInSize, BufferOut, BufferOutSize), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+                           Tls.Services.DoHandshake,
+                           TlsDoHandshake,
+                           (Tls, BufferIn, BufferInSize, BufferOut, BufferOutSize),
+                           EFI_UNSUPPORTED
+                           );
 }
 
 /**
@@ -3737,11 +3889,16 @@ CryptoServiceTlsHandleAlert (
   IN     VOID                     *Tls,
   IN     UINT8                    *BufferIn, OPTIONAL
   IN     UINTN                    BufferInSize, OPTIONAL
-     OUT UINT8                    *BufferOut, OPTIONAL
+  OUT UINT8                    *BufferOut, OPTIONAL
   IN OUT UINTN                    *BufferOutSize
   )
 {
-  return CALL_BASECRYPTLIB (Tls.Services.HandleAlert, TlsHandleAlert, (Tls, BufferIn, BufferInSize, BufferOut, BufferOutSize), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+                           Tls.Services.HandleAlert,
+                           TlsHandleAlert,
+                           (Tls, BufferIn, BufferInSize, BufferOut, BufferOutSize),
+                           EFI_UNSUPPORTED
+                           );
 }
 
 /**
@@ -4038,7 +4195,12 @@ CryptoServiceTlsSetSessionId (
   IN     UINT16                   SessionIdLen
   )
 {
-  return CALL_BASECRYPTLIB (TlsSet.Services.SessionId, TlsSetSessionId, (Tls, SessionId, SessionIdLen), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+                           TlsSet.Services.SessionId,
+                           TlsSetSessionId,
+                           (Tls, SessionId, SessionIdLen),
+                           EFI_UNSUPPORTED
+                           );
 }
 
 /**
@@ -4094,7 +4256,12 @@ CryptoServiceTlsSetHostPublicCert (
   IN     UINTN                    DataSize
   )
 {
-  return CALL_BASECRYPTLIB (TlsSet.Services.HostPublicCert, TlsSetHostPublicCert, (Tls, Data, DataSize), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+                           TlsSet.Services.HostPublicCert,
+                           TlsSetHostPublicCert,
+                           (Tls, Data, DataSize),
+                           EFI_UNSUPPORTED
+                           );
 }
 
 /**
@@ -4121,7 +4288,12 @@ CryptoServiceTlsSetHostPrivateKey (
   IN     UINTN                    DataSize
   )
 {
-  return CALL_BASECRYPTLIB (TlsSet.Services.HostPrivateKey, TlsSetHostPrivateKey, (Tls, Data, DataSize), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+                           TlsSet.Services.HostPrivateKey,
+                           TlsSetHostPrivateKey,
+                           (Tls, Data, DataSize),
+                           EFI_UNSUPPORTED
+                           );
 }
 
 /**
@@ -4145,7 +4317,12 @@ CryptoServiceTlsSetCertRevocationList (
   IN     UINTN                    DataSize
   )
 {
-  return CALL_BASECRYPTLIB (TlsSet.Services.CertRevocationList, TlsSetCertRevocationList, (Data, DataSize), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+                           TlsSet.Services.CertRevocationList,
+                           TlsSetCertRevocationList,
+                           (Data, DataSize),
+                           EFI_UNSUPPORTED
+                           );
 }
 
 /**
@@ -4239,7 +4416,12 @@ CryptoServiceTlsGetCurrentCompressionId (
   IN OUT UINT8                    *CompressionId
   )
 {
-  return CALL_BASECRYPTLIB (TlsGet.Services.CurrentCompressionId, TlsGetCurrentCompressionId, (Tls, CompressionId), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+                           TlsGet.Services.CurrentCompressionId,
+                           TlsGetCurrentCompressionId,
+                           (Tls, CompressionId),
+                           EFI_UNSUPPORTED
+                           );
 }
 
 /**
@@ -4287,7 +4469,12 @@ CryptoServiceTlsGetSessionId (
   IN OUT UINT16                   *SessionIdLen
   )
 {
-  return CALL_BASECRYPTLIB (TlsGet.Services.SessionId, TlsGetSessionId, (Tls, SessionId, SessionIdLen), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+                           TlsGet.Services.SessionId,
+                           TlsGetSessionId,
+                           (Tls, SessionId, SessionIdLen),
+                           EFI_UNSUPPORTED
+                           );
 }
 
 /**
@@ -4408,7 +4595,12 @@ CryptoServiceTlsGetHostPublicCert (
   IN OUT UINTN                    *DataSize
   )
 {
-  return CALL_BASECRYPTLIB (TlsGet.Services.HostPublicCert, TlsGetHostPublicCert, (Tls, Data, DataSize), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+                           TlsGet.Services.HostPublicCert,
+                           TlsGetHostPublicCert,
+                           (Tls, Data, DataSize),
+                           EFI_UNSUPPORTED
+                           );
 }
 
 /**
@@ -4435,7 +4627,12 @@ CryptoServiceTlsGetHostPrivateKey (
   IN OUT UINTN                    *DataSize
   )
 {
-  return CALL_BASECRYPTLIB (TlsGet.Services.HostPrivateKey, TlsGetHostPrivateKey, (Tls, Data, DataSize), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+                           TlsGet.Services.HostPrivateKey,
+                           TlsGetHostPrivateKey,
+                           (Tls, Data, DataSize),
+                           EFI_UNSUPPORTED
+                           );
 }
 
 /**
@@ -4460,10 +4657,15 @@ CryptoServiceTlsGetCertRevocationList (
   IN OUT UINTN                    *DataSize
   )
 {
-  return CALL_BASECRYPTLIB (TlsGet.Services.CertRevocationList, TlsGetCertRevocationList, (Data, DataSize), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+                           TlsGet.Services.CertRevocationList,
+                           TlsGetCertRevocationList,
+                           (Data, DataSize),
+                           EFI_UNSUPPORTED
+                           );
 }
 
-const EDKII_CRYPTO_PROTOCOL mEdkiiCrypto = {
+const EDKII_CRYPTO_PROTOCOL  mEdkiiCrypto = {
   /// Version
   CryptoServiceGetCryptoVersion,
   /// HMAC MD5 - deprecated and unsupported
@@ -4494,23 +4696,23 @@ const EDKII_CRYPTO_PROTOCOL mEdkiiCrypto = {
   DeprecatedCryptoServiceMd4Update,
   DeprecatedCryptoServiceMd4Final,
   DeprecatedCryptoServiceMd4HashAll,
-#ifndef ENABLE_MD5_DEPRECATED_INTERFACES
-  /// Md5 - deprecated and unsupported
-  DeprecatedCryptoServiceMd5GetContextSize,
-  DeprecatedCryptoServiceMd5Init,
-  DeprecatedCryptoServiceMd5Duplicate,
-  DeprecatedCryptoServiceMd5Update,
-  DeprecatedCryptoServiceMd5Final,
-  DeprecatedCryptoServiceMd5HashAll,
-#else
-  /// Md5
-  CryptoServiceMd5GetContextSize,
-  CryptoServiceMd5Init,
-  CryptoServiceMd5Duplicate,
-  CryptoServiceMd5Update,
-  CryptoServiceMd5Final,
-  CryptoServiceMd5HashAll,
-#endif
+ #ifndef ENABLE_MD5_DEPRECATED_INTERFACES
+    /// Md5 - deprecated and unsupported
+    DeprecatedCryptoServiceMd5GetContextSize,
+    DeprecatedCryptoServiceMd5Init,
+    DeprecatedCryptoServiceMd5Duplicate,
+    DeprecatedCryptoServiceMd5Update,
+    DeprecatedCryptoServiceMd5Final,
+    DeprecatedCryptoServiceMd5HashAll,
+ #else
+    /// Md5
+    CryptoServiceMd5GetContextSize,
+    CryptoServiceMd5Init,
+    CryptoServiceMd5Duplicate,
+    CryptoServiceMd5Update,
+    CryptoServiceMd5Final,
+    CryptoServiceMd5HashAll,
+ #endif
   /// Pkcs
   CryptoServicePkcs1v2Encrypt,
   CryptoServicePkcs5HashPassword,
@@ -4545,23 +4747,23 @@ const EDKII_CRYPTO_PROTOCOL mEdkiiCrypto = {
   CryptoServiceRsaPkcs1Verify,
   CryptoServiceRsaGetPrivateKeyFromPem,
   CryptoServiceRsaGetPublicKeyFromX509,
-#ifdef DISABLE_SHA1_DEPRECATED_INTERFACES
-  /// Sha1 - deprecated and unsupported
-  DeprecatedCryptoServiceSha1GetContextSize,
-  DeprecatedCryptoServiceSha1Init,
-  DeprecatedCryptoServiceSha1Duplicate,
-  DeprecatedCryptoServiceSha1Update,
-  DeprecatedCryptoServiceSha1Final,
-  DeprecatedCryptoServiceSha1HashAll,
-#else
-  /// Sha1
-  CryptoServiceSha1GetContextSize,
-  CryptoServiceSha1Init,
-  CryptoServiceSha1Duplicate,
-  CryptoServiceSha1Update,
-  CryptoServiceSha1Final,
-  CryptoServiceSha1HashAll,
-#endif
+ #ifdef DISABLE_SHA1_DEPRECATED_INTERFACES
+    /// Sha1 - deprecated and unsupported
+    DeprecatedCryptoServiceSha1GetContextSize,
+    DeprecatedCryptoServiceSha1Init,
+    DeprecatedCryptoServiceSha1Duplicate,
+    DeprecatedCryptoServiceSha1Update,
+    DeprecatedCryptoServiceSha1Final,
+    DeprecatedCryptoServiceSha1HashAll,
+ #else
+    /// Sha1
+    CryptoServiceSha1GetContextSize,
+    CryptoServiceSha1Init,
+    CryptoServiceSha1Duplicate,
+    CryptoServiceSha1Update,
+    CryptoServiceSha1Final,
+    CryptoServiceSha1HashAll,
+ #endif
   /// Sha256
   CryptoServiceSha256GetContextSize,
   CryptoServiceSha256Init,

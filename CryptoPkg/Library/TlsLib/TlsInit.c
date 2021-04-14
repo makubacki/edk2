@@ -26,16 +26,16 @@ TlsInitialize (
   VOID
   )
 {
-  INTN            Ret;
+  INTN  Ret;
 
   //
   // Performs initialization of crypto and ssl library, and loads required
   // algorithms.
   //
   Ret = OPENSSL_init_ssl (
-          OPENSSL_INIT_LOAD_SSL_STRINGS | OPENSSL_INIT_LOAD_CRYPTO_STRINGS,
-          NULL
-          );
+                          OPENSSL_INIT_LOAD_SSL_STRINGS | OPENSSL_INIT_LOAD_CRYPTO_STRINGS,
+                          NULL
+                          );
   if (Ret != 1) {
     return FALSE;
   }
@@ -210,7 +210,7 @@ TlsNew (
   // Sets the behaviour of memory BIO when it is empty. It will set the
   // read retry flag.
   //
-  BIO_set_mem_eof_return (TlsConn->InBio, -1);
+  BIO_set_mem_eof_return (TlsConn->InBio, - 1);
 
   TlsConn->OutBio = NULL;
 
@@ -227,7 +227,7 @@ TlsNew (
   // Sets the behaviour of memory BIO when it is empty. It will set the
   // write retry flag.
   //
-  BIO_set_mem_eof_return (TlsConn->OutBio, -1);
+  BIO_set_mem_eof_return (TlsConn->OutBio, - 1);
 
   ASSERT (TlsConn->Ssl != NULL && TlsConn->InBio != NULL && TlsConn->OutBio != NULL);
 
@@ -247,6 +247,7 @@ TlsNew (
       TlsFree ((VOID *) TlsConn);
       return NULL;
     }
+
     SSL_CTX_set1_verify_cert_store (SslCtx, X509Store);
     X509_STORE_free (X509Store);
   }
@@ -255,9 +256,8 @@ TlsNew (
   // Set X509_STORE flags used in certificate validation
   //
   X509_STORE_set_flags (
-    X509Store,
-    X509_V_FLAG_PARTIAL_CHAIN | X509_V_FLAG_NO_CHECK_TIME
-    );
+                        X509Store,
+                        X509_V_FLAG_PARTIAL_CHAIN | X509_V_FLAG_NO_CHECK_TIME
+                        );
   return (VOID *) TlsConn;
 }
-

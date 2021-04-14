@@ -72,9 +72,11 @@ AesInit (
   if (AES_set_encrypt_key (Key, (UINT32) KeyLength, AesKey) != 0) {
     return FALSE;
   }
+
   if (AES_set_decrypt_key (Key, (UINT32) KeyLength, AesKey + 1) != 0) {
     return FALSE;
   }
+
   return TRUE;
 }
 

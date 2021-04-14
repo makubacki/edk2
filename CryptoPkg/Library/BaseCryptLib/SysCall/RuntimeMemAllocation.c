@@ -13,42 +13,42 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/MemoryAllocationLib.h>
 #include <Guid/EventGroup.h>
 
-//----------------------------------------------------------------
+// ----------------------------------------------------------------
 // Initial version. Needs further optimizations.
-//----------------------------------------------------------------
+// ----------------------------------------------------------------
 
 //
 // Definitions for Runtime Memory Operations
 //
-#define RT_PAGE_SIZE                0x200
-#define RT_PAGE_MASK                0x1FF
-#define RT_PAGE_SHIFT               9
+#define RT_PAGE_SIZE   0x200
+#define RT_PAGE_MASK   0x1FF
+#define RT_PAGE_SHIFT  9
 
-#define RT_SIZE_TO_PAGES(a)         (((a) >> RT_PAGE_SHIFT) + (((a) & RT_PAGE_MASK) ? 1 : 0))
-#define RT_PAGES_TO_SIZE(a)         ((a) << RT_PAGE_SHIFT)
+#define RT_SIZE_TO_PAGES(a)  (((a) >> RT_PAGE_SHIFT) + (((a) & RT_PAGE_MASK) ? 1 : 0))
+#define RT_PAGES_TO_SIZE(a)  ((a) << RT_PAGE_SHIFT)
 
 //
 // Page Flag Definitions
 //
-#define RT_PAGE_FREE                0x00000000
-#define RT_PAGE_USED                0x00000001
+#define RT_PAGE_FREE  0x00000000
+#define RT_PAGE_USED  0x00000001
 
-#define MIN_REQUIRED_BLOCKS         600
+#define MIN_REQUIRED_BLOCKS  600
 
 //
 // Memory Page Table
 //
 typedef struct {
-  UINTN   StartPageOffset;      // Offset of the starting page allocated.
+  UINTN     StartPageOffset;    // Offset of the starting page allocated.
                                 // Only available for USED pages.
-  UINT32  PageFlag;             // Page Attributes.
+  UINT32    PageFlag;           // Page Attributes.
 } RT_MEMORY_PAGE_ENTRY;
 
 typedef struct {
-  UINTN                 PageCount;
-  UINTN                 LastEmptyPageOffset;
-  UINT8                 *DataAreaBase;         // Pointer to data Area.
-  RT_MEMORY_PAGE_ENTRY  Pages[1];              // Page Table Entries.
+  UINTN                   PageCount;
+  UINTN                   LastEmptyPageOffset;
+  UINT8                   *DataAreaBase;       // Pointer to data Area.
+  RT_MEMORY_PAGE_ENTRY    Pages[1];            // Page Table Entries.
 } RT_MEMORY_PAGE_TABLE;
 
 //
@@ -59,8 +59,7 @@ RT_MEMORY_PAGE_TABLE  *mRTPageTable = NULL;
 //
 // Event for Runtime Address Conversion.
 //
-STATIC EFI_EVENT      mVirtualAddressChangeEvent;
-
+STATIC EFI_EVENT  mVirtualAddressChangeEvent;
 
 /**
   Initializes pre-allocated memory pointed by ScratchBuffer for subsequent
@@ -92,7 +91,7 @@ InitializeScratchMemory (
     return EFI_BUFFER_TOO_SMALL;
   }
 
-  mRTPageTable = (RT_MEMORY_PAGE_TABLE *)ScratchBuffer;
+  mRTPageTable = (RT_MEMORY_PAGE_TABLE *) ScratchBuffer;
 
   //
   // Initialize Internal Page Table for Memory Management
@@ -100,11 +99,11 @@ InitializeScratchMemory (
   SetMem (mRTPageTable, ScratchBufferSize, 0xFF);
   MemorySize = ScratchBufferSize - sizeof (RT_MEMORY_PAGE_TABLE) + sizeof (RT_MEMORY_PAGE_ENTRY);
 
-  mRTPageTable->PageCount           = MemorySize / (RT_PAGE_SIZE + sizeof (RT_MEMORY_PAGE_ENTRY));
+  mRTPageTable->PageCount = MemorySize / (RT_PAGE_SIZE + sizeof (RT_MEMORY_PAGE_ENTRY));
   mRTPageTable->LastEmptyPageOffset = 0x0;
 
   for (Index = 0; Index < mRTPageTable->PageCount; Index++) {
-    mRTPageTable->Pages[Index].PageFlag        = RT_PAGE_FREE;
+    mRTPageTable->Pages[Index].PageFlag = RT_PAGE_FREE;
     mRTPageTable->Pages[Index].StartPageOffset = 0;
   }
 
@@ -113,7 +112,6 @@ InitializeScratchMemory (
 
   return EFI_SUCCESS;
 }
-
 
 /**
   Look-up Free memory Region for object allocation.
@@ -134,12 +132,12 @@ LookupFreeMemRegion (
   UINTN  ReqPages;
 
   StartPageIndex = RT_SIZE_TO_PAGES (mRTPageTable->LastEmptyPageOffset);
-  ReqPages       = RT_SIZE_TO_PAGES (AllocationSize);
+  ReqPages = RT_SIZE_TO_PAGES (AllocationSize);
   if (ReqPages > mRTPageTable->PageCount) {
     //
     // No enough region for object allocation.
     //
-    return (UINTN)(-1);
+    return (UINTN) (- 1);
   }
 
   //
@@ -180,8 +178,9 @@ LookupFreeMemRegion (
     //
     // No enough region for object allocation.
     //
-    return (UINTN)(-1);
+    return (UINTN) (- 1);
   }
+
   for (Index = 0; Index < (StartPageIndex - ReqPages); ) {
     //
     // Check Consecutive ReqPages Pages.
@@ -213,9 +212,8 @@ LookupFreeMemRegion (
   //
   // No available region for object allocation!
   //
-  return (UINTN)(-1);
+  return (UINTN) (- 1);
 }
-
 
 /**
   Allocates a buffer at runtime phase.
@@ -245,7 +243,7 @@ RuntimeAllocateMem (
   // If still not found, return NULL to indicate failed allocation.
   //
   AllocOffset = LookupFreeMemRegion (AllocationSize);
-  if (AllocOffset == (UINTN)(-1)) {
+  if (AllocOffset == (UINTN) (- 1)) {
     return NULL;
   }
 
@@ -258,7 +256,7 @@ RuntimeAllocateMem (
   StartPage = RT_SIZE_TO_PAGES (AllocOffset);
   Index     = 0;
   while (Index < ReqPages) {
-    mRTPageTable->Pages[StartPage + Index].PageFlag       |= RT_PAGE_USED;
+    mRTPageTable->Pages[StartPage + Index].PageFlag |= RT_PAGE_USED;
     mRTPageTable->Pages[StartPage + Index].StartPageOffset = AllocOffset;
 
     Index++;
@@ -274,7 +272,6 @@ RuntimeAllocateMem (
   return AllocPtr;
 }
 
-
 /**
   Frees a buffer that was previously allocated at runtime phase.
 
@@ -289,20 +286,20 @@ RuntimeFreeMem (
   UINTN  StartOffset;
   UINTN  StartPageIndex;
 
-  StartOffset    = (UINTN)Buffer - (UINTN)mRTPageTable->DataAreaBase;
-  StartPageIndex = RT_SIZE_TO_PAGES (mRTPageTable->Pages[RT_SIZE_TO_PAGES(StartOffset)].StartPageOffset);
+  StartOffset    = (UINTN) Buffer - (UINTN) mRTPageTable->DataAreaBase;
+  StartPageIndex = RT_SIZE_TO_PAGES (mRTPageTable->Pages[RT_SIZE_TO_PAGES (StartOffset)].StartPageOffset);
 
   while (StartPageIndex < mRTPageTable->PageCount) {
     if (((mRTPageTable->Pages[StartPageIndex].PageFlag & RT_PAGE_USED) != 0) &&
         (mRTPageTable->Pages[StartPageIndex].StartPageOffset == StartOffset)) {
-        //
-        // Free this page
-        //
-        mRTPageTable->Pages[StartPageIndex].PageFlag       &= ~RT_PAGE_USED;
-        mRTPageTable->Pages[StartPageIndex].PageFlag       |= RT_PAGE_FREE;
-        mRTPageTable->Pages[StartPageIndex].StartPageOffset = 0;
+      //
+      // Free this page
+      //
+      mRTPageTable->Pages[StartPageIndex].PageFlag &= ~RT_PAGE_USED;
+      mRTPageTable->Pages[StartPageIndex].PageFlag |= RT_PAGE_FREE;
+      mRTPageTable->Pages[StartPageIndex].StartPageOffset = 0;
 
-        StartPageIndex++;
+      StartPageIndex++;
     } else {
       break;
     }
@@ -310,7 +307,6 @@ RuntimeFreeMem (
 
   return;
 }
-
 
 /**
   Notification function of EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE.
@@ -335,7 +331,6 @@ RuntimeCryptLibAddressChangeEvent (
   EfiConvertPointer (0x0, (VOID **) &mRTPageTable->DataAreaBase);
   EfiConvertPointer (0x0, (VOID **) &mRTPageTable);
 }
-
 
 /**
   Constructor routine for runtime crypt library instance.
@@ -372,31 +367,36 @@ RuntimeCryptLibConstructor (
   // Create address change event
   //
   Status = gBS->CreateEventEx (
-                  EVT_NOTIFY_SIGNAL,
-                  TPL_NOTIFY,
-                  RuntimeCryptLibAddressChangeEvent,
-                  NULL,
-                  &gEfiEventVirtualAddressChangeGuid,
-                  &mVirtualAddressChangeEvent
-                  );
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_NOTIFY,
+                               RuntimeCryptLibAddressChangeEvent,
+                               NULL,
+                               &gEfiEventVirtualAddressChangeGuid,
+                               &mVirtualAddressChangeEvent
+                               );
   ASSERT_EFI_ERROR (Status);
 
   return Status;
 }
-
 
 //
 // -- Memory-Allocation Routines Wrapper for UEFI-OpenSSL Library --
 //
 
 /* Allocates memory blocks */
-void *malloc (size_t size)
+void *
+malloc (
+  size_t size
+  )
 {
   return RuntimeAllocateMem ((UINTN) size);
 }
 
 /* Reallocate memory blocks */
-void *realloc (void *ptr, size_t size)
+void *
+realloc (
+  void *ptr, size_t size
+  )
 {
   VOID   *NewPtr;
   UINTN  StartOffset;
@@ -410,14 +410,14 @@ void *realloc (void *ptr, size_t size)
   //
   // Get Original Size of ptr
   //
-  StartOffset    = (UINTN)ptr - (UINTN)mRTPageTable->DataAreaBase;
+  StartOffset    = (UINTN) ptr - (UINTN) mRTPageTable->DataAreaBase;
   StartPageIndex = RT_SIZE_TO_PAGES (mRTPageTable->Pages[RT_SIZE_TO_PAGES (StartOffset)].StartPageOffset);
-  PageCount      = 0;
+  PageCount = 0;
   while (StartPageIndex < mRTPageTable->PageCount) {
     if (((mRTPageTable->Pages[StartPageIndex].PageFlag & RT_PAGE_USED) != 0) &&
         (mRTPageTable->Pages[StartPageIndex].StartPageOffset == StartOffset)) {
-        StartPageIndex++;
-        PageCount++;
+      StartPageIndex++;
+      PageCount++;
     } else {
       break;
     }
@@ -443,7 +443,10 @@ void *realloc (void *ptr, size_t size)
 }
 
 /* Deallocates or frees a memory block */
-void free (void *ptr)
+void
+free (
+  void *ptr
+  )
 {
   //
   // In Standard C, free() handles a null pointer argument transparently. This

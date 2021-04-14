@@ -29,10 +29,10 @@ CryptoDxeEntry (
   IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  return gBS->InstallMultipleProtocolInterfaces(
-                &ImageHandle,
-                &gEdkiiCryptoProtocolGuid,
-                (EDKII_CRYPTO_PROTOCOL *) &mEdkiiCrypto,
-                NULL
-                );
+  return gBS->InstallMultipleProtocolInterfaces (
+                                                 &ImageHandle,
+                                                 &gEdkiiCryptoProtocolGuid,
+                                                 (EDKII_CRYPTO_PROTOCOL *) &mEdkiiCrypto,
+                                                 NULL
+                                                 );
 }
