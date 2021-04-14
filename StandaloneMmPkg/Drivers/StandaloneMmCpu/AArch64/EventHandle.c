@@ -10,7 +10,6 @@
 #include <Base.h>
 #include <Pi/PiMmCis.h>
 
-
 #include <Library/ArmSvcLib.h>
 #include <Library/ArmLib.h>
 #include <Library/BaseMemoryLib.h>
@@ -45,19 +44,19 @@ MmFoundationEntryRegister (
 // number of CPUs in the system are made known through the
 // MP_INFORMATION_HOB_DATA.
 //
-EFI_MM_COMMUNICATE_HEADER **PerCpuGuidedEventContext = NULL;
+EFI_MM_COMMUNICATE_HEADER  **PerCpuGuidedEventContext = NULL;
 
 // Descriptor with whereabouts of memory used for communication with the normal world
 EFI_MMRAM_DESCRIPTOR  mNsCommBuffer;
 
-MP_INFORMATION_HOB_DATA *mMpInformationHobData;
+MP_INFORMATION_HOB_DATA  *mMpInformationHobData;
 
-EFI_MM_CONFIGURATION_PROTOCOL mMmConfig = {
+EFI_MM_CONFIGURATION_PROTOCOL  mMmConfig = {
   0,
   MmFoundationEntryRegister
 };
 
-STATIC EFI_MM_ENTRY_POINT     mMmEntryPoint = NULL;
+STATIC EFI_MM_ENTRY_POINT  mMmEntryPoint = NULL;
 
 /**
   The PI Standalone MM entry point for the TF-A CPU driver.
@@ -79,10 +78,10 @@ PiMmStandaloneArmTfCpuDriverEntry (
   IN UINTN NsCommBufferAddr
   )
 {
-  EFI_MM_COMMUNICATE_HEADER   *GuidedEventContext;
-  EFI_MM_ENTRY_CONTEXT        MmEntryPointContext;
-  EFI_STATUS                  Status;
-  UINTN                       NsCommBufferSize;
+  EFI_MM_COMMUNICATE_HEADER  *GuidedEventContext;
+  EFI_MM_ENTRY_CONTEXT       MmEntryPointContext;
+  EFI_STATUS                 Status;
+  UINTN                      NsCommBufferSize;
 
   DEBUG ((DEBUG_INFO, "Received event - 0x%x on cpu %d\n", EventId, CpuNumber));
 
@@ -99,7 +98,7 @@ PiMmStandaloneArmTfCpuDriverEntry (
   }
 
   // Perform parameter validation of NsCommBufferAddr
-  if (NsCommBufferAddr == (UINTN)NULL) {
+  if (NsCommBufferAddr == (UINTN) NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -114,7 +113,7 @@ PiMmStandaloneArmTfCpuDriverEntry (
 
   // Find out the size of the buffer passed
   NsCommBufferSize = ((EFI_MM_COMMUNICATE_HEADER *) NsCommBufferAddr)->MessageLength +
-    sizeof (EFI_MM_COMMUNICATE_HEADER);
+                     sizeof (EFI_MM_COMMUNICATE_HEADER);
 
   // perform bounds check.
   if (NsCommBufferAddr + NsCommBufferSize >=
@@ -126,10 +125,10 @@ PiMmStandaloneArmTfCpuDriverEntry (
   // Now that the secure world can see the normal world buffer, allocate
   // memory to copy the communication buffer to the secure world.
   Status = mMmst->MmAllocatePool (
-                    EfiRuntimeServicesData,
-                    NsCommBufferSize,
-                    (VOID **) &GuidedEventContext
-                    );
+                                  EfiRuntimeServicesData,
+                                  NsCommBufferSize,
+                                  (VOID **) &GuidedEventContext
+                                  );
 
   if (Status != EFI_SUCCESS) {
     DEBUG ((DEBUG_INFO, "Mem alloc failed - 0x%x\n", EventId));
@@ -150,9 +149,9 @@ PiMmStandaloneArmTfCpuDriverEntry (
 
   // Populate the MM system table with MP and state information
   mMmst->CurrentlyExecutingCpu = CpuNumber;
-  mMmst->NumberOfCpus = mMpInformationHobData->NumberOfProcessors;
+  mMmst->NumberOfCpus     = mMpInformationHobData->NumberOfProcessors;
   mMmst->CpuSaveStateSize = 0;
-  mMmst->CpuSaveState = NULL;
+  mMmst->CpuSaveState     = NULL;
 
   if (mMmEntryPoint == NULL) {
     DEBUG ((DEBUG_INFO, "Mm Entry point Not Found\n"));
@@ -163,12 +162,13 @@ PiMmStandaloneArmTfCpuDriverEntry (
 
   // Free the memory allocation done earlier and reset the per-cpu context
   ASSERT (GuidedEventContext);
-  CopyMem ((VOID *)NsCommBufferAddr, (CONST VOID *) GuidedEventContext, NsCommBufferSize);
+  CopyMem ((VOID *) NsCommBufferAddr, (CONST VOID *) GuidedEventContext, NsCommBufferSize);
 
   Status = mMmst->MmFreePool ((VOID *) GuidedEventContext);
   if (Status != EFI_SUCCESS) {
     return EFI_OUT_OF_RESOURCES;
   }
+
   PerCpuGuidedEventContext[CpuNumber] = NULL;
 
   return Status;
@@ -214,13 +214,13 @@ EFI_STATUS
 EFIAPI
 PiMmCpuTpFwRootMmiHandler (
   IN     EFI_HANDLE               DispatchHandle,
-  IN     CONST VOID               *Context,        OPTIONAL
-  IN OUT VOID                     *CommBuffer,     OPTIONAL
+  IN     CONST VOID               *Context, OPTIONAL
+  IN OUT VOID                     *CommBuffer, OPTIONAL
   IN OUT UINTN                    *CommBufferSize  OPTIONAL
   )
 {
-  EFI_STATUS Status;
-  UINTN      CpuNumber;
+  EFI_STATUS  Status;
+  UINTN       CpuNumber;
 
   ASSERT (Context == NULL);
   ASSERT (CommBuffer == NULL);
@@ -231,16 +231,18 @@ PiMmCpuTpFwRootMmiHandler (
     return EFI_NOT_FOUND;
   }
 
-  DEBUG ((DEBUG_INFO, "CommBuffer - 0x%x, CommBufferSize - 0x%x\n",
+  DEBUG (
+         (DEBUG_INFO, "CommBuffer - 0x%x, CommBufferSize - 0x%x\n",
           PerCpuGuidedEventContext[CpuNumber],
-          PerCpuGuidedEventContext[CpuNumber]->MessageLength));
+          PerCpuGuidedEventContext[CpuNumber]->MessageLength)
+         );
 
   Status = mMmst->MmiManage (
-                    &PerCpuGuidedEventContext[CpuNumber]->HeaderGuid,
-                    NULL,
-                    PerCpuGuidedEventContext[CpuNumber]->Data,
-                    &PerCpuGuidedEventContext[CpuNumber]->MessageLength
-                    );
+                             &PerCpuGuidedEventContext[CpuNumber]->HeaderGuid,
+                             NULL,
+                             PerCpuGuidedEventContext[CpuNumber]->Data,
+                             &PerCpuGuidedEventContext[CpuNumber]->MessageLength
+                             );
 
   if (Status != EFI_SUCCESS) {
     DEBUG ((DEBUG_WARN, "Unable to manage Guided Event - %d\n", Status));

@@ -7,7 +7,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
-
 #include <PiMm.h>
 
 #include <Library/AArch64/StandaloneMmCoreEntryPoint.h>
@@ -29,20 +28,20 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <IndustryStandard/ArmMmSvc.h>
 #include <IndustryStandard/ArmFfaSvc.h>
 
-#define SPM_MAJOR_VER_MASK        0xFFFF0000
-#define SPM_MINOR_VER_MASK        0x0000FFFF
-#define SPM_MAJOR_VER_SHIFT       16
-#define FFA_NOT_SUPPORTED         -1
+#define SPM_MAJOR_VER_MASK   0xFFFF0000
+#define SPM_MINOR_VER_MASK   0x0000FFFF
+#define SPM_MAJOR_VER_SHIFT  16
+#define FFA_NOT_SUPPORTED    - 1
 
-STATIC CONST UINT32 mSpmMajorVer = SPM_MAJOR_VERSION;
-STATIC CONST UINT32 mSpmMinorVer = SPM_MINOR_VERSION;
+STATIC CONST UINT32  mSpmMajorVer = SPM_MAJOR_VERSION;
+STATIC CONST UINT32  mSpmMinorVer = SPM_MINOR_VERSION;
 
-STATIC CONST UINT32 mSpmMajorVerFfa = SPM_MAJOR_VERSION_FFA;
-STATIC CONST UINT32 mSpmMinorVerFfa = SPM_MINOR_VERSION_FFA;
+STATIC CONST UINT32  mSpmMajorVerFfa = SPM_MAJOR_VERSION_FFA;
+STATIC CONST UINT32  mSpmMinorVerFfa = SPM_MINOR_VERSION_FFA;
 
-#define BOOT_PAYLOAD_VERSION      1
+#define BOOT_PAYLOAD_VERSION  1
 
-PI_MM_ARM_TF_CPU_DRIVER_ENTRYPOINT      CpuDriverEntryPoint = NULL;
+PI_MM_ARM_TF_CPU_DRIVER_ENTRYPOINT  CpuDriverEntryPoint = NULL;
 
 /**
   Retrieve a pointer to and print the boot information passed by privileged
@@ -55,11 +54,11 @@ PI_MM_ARM_TF_CPU_DRIVER_ENTRYPOINT      CpuDriverEntryPoint = NULL;
 EFI_SECURE_PARTITION_BOOT_INFO *
 GetAndPrintBootinformation (
   IN VOID                      *SharedBufAddress
-)
+  )
 {
-  EFI_SECURE_PARTITION_BOOT_INFO *PayloadBootInfo;
-  EFI_SECURE_PARTITION_CPU_INFO  *PayloadCpuInfo;
-  UINTN                          Index;
+  EFI_SECURE_PARTITION_BOOT_INFO  *PayloadBootInfo;
+  EFI_SECURE_PARTITION_CPU_INFO   *PayloadCpuInfo;
+  UINTN                           Index;
 
   PayloadBootInfo = (EFI_SECURE_PARTITION_BOOT_INFO *) SharedBufAddress;
 
@@ -69,8 +68,10 @@ GetAndPrintBootinformation (
   }
 
   if (PayloadBootInfo->Header.Version != BOOT_PAYLOAD_VERSION) {
-    DEBUG ((DEBUG_ERROR, "Boot Information Version Mismatch. Current=0x%x, Expected=0x%x.\n",
-            PayloadBootInfo->Header.Version, BOOT_PAYLOAD_VERSION));
+    DEBUG (
+           (DEBUG_ERROR, "Boot Information Version Mismatch. Current=0x%x, Expected=0x%x.\n",
+            PayloadBootInfo->Header.Version, BOOT_PAYLOAD_VERSION)
+           );
     return NULL;
   }
 
@@ -120,9 +121,9 @@ DelegatedEventLoop (
   IN ARM_SVC_ARGS *EventCompleteSvcArgs
   )
 {
-  BOOLEAN FfaEnabled;
-  EFI_STATUS Status;
-  UINTN SvcStatus;
+  BOOLEAN     FfaEnabled;
+  EFI_STATUS  Status;
+  UINTN       SvcStatus;
 
   while (TRUE) {
     ArmCallSvc (EventCompleteSvcArgs);
@@ -140,45 +141,49 @@ DelegatedEventLoop (
     FfaEnabled = FeaturePcdGet (PcdFfaEnable);
     if (FfaEnabled) {
       Status = CpuDriverEntryPoint (
-                 EventCompleteSvcArgs->Arg0,
-                 EventCompleteSvcArgs->Arg6,
-                 EventCompleteSvcArgs->Arg3
-                 );
+                                    EventCompleteSvcArgs->Arg0,
+                                    EventCompleteSvcArgs->Arg6,
+                                    EventCompleteSvcArgs->Arg3
+                                    );
       if (EFI_ERROR (Status)) {
-        DEBUG ((DEBUG_ERROR, "Failed delegated event 0x%x, Status 0x%x\n",
-          EventCompleteSvcArgs->Arg3, Status));
+        DEBUG (
+               (DEBUG_ERROR, "Failed delegated event 0x%x, Status 0x%x\n",
+                EventCompleteSvcArgs->Arg3, Status)
+               );
       }
     } else {
       Status = CpuDriverEntryPoint (
-                 EventCompleteSvcArgs->Arg0,
-                 EventCompleteSvcArgs->Arg3,
-                 EventCompleteSvcArgs->Arg1
-                 );
+                                    EventCompleteSvcArgs->Arg0,
+                                    EventCompleteSvcArgs->Arg3,
+                                    EventCompleteSvcArgs->Arg1
+                                    );
       if (EFI_ERROR (Status)) {
-        DEBUG ((DEBUG_ERROR, "Failed delegated event 0x%x, Status 0x%x\n",
-          EventCompleteSvcArgs->Arg0, Status));
+        DEBUG (
+               (DEBUG_ERROR, "Failed delegated event 0x%x, Status 0x%x\n",
+                EventCompleteSvcArgs->Arg0, Status)
+               );
       }
     }
 
     switch (Status) {
-    case EFI_SUCCESS:
-      SvcStatus = ARM_SVC_SPM_RET_SUCCESS;
-      break;
-    case EFI_INVALID_PARAMETER:
-      SvcStatus = ARM_SVC_SPM_RET_INVALID_PARAMS;
-      break;
-    case EFI_ACCESS_DENIED:
-      SvcStatus = ARM_SVC_SPM_RET_DENIED;
-      break;
-    case EFI_OUT_OF_RESOURCES:
-      SvcStatus = ARM_SVC_SPM_RET_NO_MEMORY;
-      break;
-    case EFI_UNSUPPORTED:
-      SvcStatus = ARM_SVC_SPM_RET_NOT_SUPPORTED;
-      break;
-    default:
-      SvcStatus = ARM_SVC_SPM_RET_NOT_SUPPORTED;
-      break;
+      case EFI_SUCCESS:
+        SvcStatus = ARM_SVC_SPM_RET_SUCCESS;
+        break;
+      case EFI_INVALID_PARAMETER:
+        SvcStatus = ARM_SVC_SPM_RET_INVALID_PARAMS;
+        break;
+      case EFI_ACCESS_DENIED:
+        SvcStatus = ARM_SVC_SPM_RET_DENIED;
+        break;
+      case EFI_OUT_OF_RESOURCES:
+        SvcStatus = ARM_SVC_SPM_RET_NO_MEMORY;
+        break;
+      case EFI_UNSUPPORTED:
+        SvcStatus = ARM_SVC_SPM_RET_NOT_SUPPORTED;
+        break;
+      default:
+        SvcStatus = ARM_SVC_SPM_RET_NOT_SUPPORTED;
+        break;
     }
 
     if (FfaEnabled) {
@@ -202,26 +207,28 @@ DelegatedEventLoop (
 **/
 STATIC
 EFI_STATUS
-GetSpmVersion (VOID)
+GetSpmVersion (
+  VOID
+  )
 {
-  EFI_STATUS   Status;
-  UINT16       CalleeSpmMajorVer;
-  UINT16       CallerSpmMajorVer;
-  UINT16       CalleeSpmMinorVer;
-  UINT16       CallerSpmMinorVer;
-  UINT32       SpmVersion;
-  ARM_SVC_ARGS SpmVersionArgs;
+  EFI_STATUS    Status;
+  UINT16        CalleeSpmMajorVer;
+  UINT16        CallerSpmMajorVer;
+  UINT16        CalleeSpmMinorVer;
+  UINT16        CallerSpmMinorVer;
+  UINT32        SpmVersion;
+  ARM_SVC_ARGS  SpmVersionArgs;
 
   if (FeaturePcdGet (PcdFfaEnable)) {
-    SpmVersionArgs.Arg0 = ARM_SVC_ID_FFA_VERSION_AARCH32;
-    SpmVersionArgs.Arg1 = mSpmMajorVerFfa << SPM_MAJOR_VER_SHIFT;
+    SpmVersionArgs.Arg0  = ARM_SVC_ID_FFA_VERSION_AARCH32;
+    SpmVersionArgs.Arg1  = mSpmMajorVerFfa << SPM_MAJOR_VER_SHIFT;
     SpmVersionArgs.Arg1 |= mSpmMinorVerFfa;
-    CallerSpmMajorVer = mSpmMajorVerFfa;
-    CallerSpmMinorVer = mSpmMinorVerFfa;
+    CallerSpmMajorVer    = mSpmMajorVerFfa;
+    CallerSpmMinorVer    = mSpmMinorVerFfa;
   } else {
     SpmVersionArgs.Arg0 = ARM_SVC_ID_SPM_VERSION_AARCH32;
-    CallerSpmMajorVer = mSpmMajorVer;
-    CallerSpmMinorVer = mSpmMinorVer;
+    CallerSpmMajorVer   = mSpmMajorVer;
+    CallerSpmMinorVer   = mSpmMinorVer;
   }
 
   ArmCallSvc (&SpmVersionArgs);
@@ -242,16 +249,18 @@ GetSpmVersion (VOID)
   // However, it is possible for revision B to have a higher
   // function count than revision A.
   if ((CalleeSpmMajorVer == CallerSpmMajorVer) &&
-      (CalleeSpmMinorVer >= CallerSpmMinorVer))
-  {
-    DEBUG ((DEBUG_INFO, "SPM Version: Major=0x%x, Minor=0x%x\n",
-           CalleeSpmMajorVer, CalleeSpmMinorVer));
+      (CalleeSpmMinorVer >= CallerSpmMinorVer)) {
+    DEBUG (
+           (DEBUG_INFO, "SPM Version: Major=0x%x, Minor=0x%x\n",
+            CalleeSpmMajorVer, CalleeSpmMinorVer)
+           );
     Status = EFI_SUCCESS;
-  }
-  else
-  {
-    DEBUG ((DEBUG_INFO, "Incompatible SPM Versions.\n Callee Version: Major=0x%x, Minor=0x%x.\n Caller: Major=0x%x, Minor>=0x%x.\n",
-            CalleeSpmMajorVer, CalleeSpmMinorVer, CallerSpmMajorVer, CallerSpmMinorVer));
+  } else {
+    DEBUG (
+           (DEBUG_INFO,
+            "Incompatible SPM Versions.\n Callee Version: Major=0x%x, Minor=0x%x.\n Caller: Major=0x%x, Minor>=0x%x.\n",
+            CalleeSpmMajorVer, CalleeSpmMinorVer, CallerSpmMajorVer, CallerSpmMinorVer)
+           );
     Status = EFI_UNSUPPORTED;
   }
 
@@ -302,17 +311,17 @@ _ModuleEntryPoint (
   IN UINT64  cookie2
   )
 {
-  PE_COFF_LOADER_IMAGE_CONTEXT            ImageContext;
-  EFI_SECURE_PARTITION_BOOT_INFO          *PayloadBootInfo;
-  ARM_SVC_ARGS                            InitMmFoundationSvcArgs;
-  EFI_STATUS                              Status;
-  INT32                                   Ret;
-  UINT32                                  SectionHeaderOffset;
-  UINT16                                  NumberOfSections;
-  VOID                                    *HobStart;
-  VOID                                    *TeData;
-  UINTN                                   TeDataSize;
-  EFI_PHYSICAL_ADDRESS                    ImageBase;
+  PE_COFF_LOADER_IMAGE_CONTEXT    ImageContext;
+  EFI_SECURE_PARTITION_BOOT_INFO  *PayloadBootInfo;
+  ARM_SVC_ARGS                    InitMmFoundationSvcArgs;
+  EFI_STATUS                      Status;
+  INT32                           Ret;
+  UINT32                          SectionHeaderOffset;
+  UINT16                          NumberOfSections;
+  VOID                            *HobStart;
+  VOID                            *TeData;
+  UINTN                           TeDataSize;
+  EFI_PHYSICAL_ADDRESS            ImageBase;
 
   // Get Secure Partition Manager Version Information
   Status = GetSpmVersion ();
@@ -328,10 +337,10 @@ _ModuleEntryPoint (
 
   // Locate PE/COFF File information for the Standalone MM core module
   Status = LocateStandaloneMmCorePeCoffData (
-             (EFI_FIRMWARE_VOLUME_HEADER *) PayloadBootInfo->SpImageBase,
-             &TeData,
-             &TeDataSize
-             );
+                                             (EFI_FIRMWARE_VOLUME_HEADER *) PayloadBootInfo->SpImageBase,
+                                             &TeData,
+                                             &TeDataSize
+                                             );
 
   if (EFI_ERROR (Status)) {
     goto finish;
@@ -339,12 +348,12 @@ _ModuleEntryPoint (
 
   // Obtain the PE/COFF Section information for the Standalone MM core module
   Status = GetStandaloneMmCorePeCoffSections (
-             TeData,
-             &ImageContext,
-             &ImageBase,
-             &SectionHeaderOffset,
-             &NumberOfSections
-             );
+                                              TeData,
+                                              &ImageContext,
+                                              &ImageBase,
+                                              &SectionHeaderOffset,
+                                              &NumberOfSections
+                                              );
 
   if (EFI_ERROR (Status)) {
     goto finish;
@@ -358,26 +367,26 @@ _ModuleEntryPoint (
   // case, we need to fix up ImageBase so it refers to the actual current
   // load address.
   //
-  ImageBase += (UINTN)TeData - ImageContext.ImageAddress;
+  ImageBase += (UINTN) TeData - ImageContext.ImageAddress;
 
   // Update the memory access permissions of individual sections in the
   // Standalone MM core module
   Status = UpdateMmFoundationPeCoffPermissions (
-             &ImageContext,
-             ImageBase,
-             SectionHeaderOffset,
-             NumberOfSections,
-             ArmSetMemoryRegionNoExec,
-             ArmSetMemoryRegionReadOnly,
-             ArmClearMemoryRegionReadOnly
-             );
+                                                &ImageContext,
+                                                ImageBase,
+                                                SectionHeaderOffset,
+                                                NumberOfSections,
+                                                ArmSetMemoryRegionNoExec,
+                                                ArmSetMemoryRegionReadOnly,
+                                                ArmClearMemoryRegionReadOnly
+                                                );
 
   if (EFI_ERROR (Status)) {
     goto finish;
   }
 
-  if (ImageContext.ImageAddress != (UINTN)TeData) {
-    ImageContext.ImageAddress = (UINTN)TeData;
+  if (ImageContext.ImageAddress != (UINTN) TeData) {
+    ImageContext.ImageAddress = (UINTN) TeData;
     ArmSetMemoryRegionNoExec (ImageBase, SIZE_4KB);
     ArmClearMemoryRegionReadOnly (ImageBase, SIZE_4KB);
 
@@ -399,15 +408,16 @@ _ModuleEntryPoint (
 
 finish:
   if (Status == RETURN_UNSUPPORTED) {
-    Ret = -1;
+    Ret = - 1;
   } else if (Status == RETURN_INVALID_PARAMETER) {
-    Ret = -2;
+    Ret = - 2;
   } else if (Status == EFI_NOT_FOUND) {
-    Ret = -7;
+    Ret = - 7;
   } else {
     Ret = 0;
   }
-  ZeroMem (&InitMmFoundationSvcArgs, sizeof(InitMmFoundationSvcArgs));
+
+  ZeroMem (&InitMmFoundationSvcArgs, sizeof (InitMmFoundationSvcArgs));
   InitArmSvcArgs (&InitMmFoundationSvcArgs, &Ret);
   DelegatedEventLoop (&InitMmFoundationSvcArgs);
 }

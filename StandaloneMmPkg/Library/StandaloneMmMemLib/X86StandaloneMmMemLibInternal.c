@@ -27,7 +27,7 @@
 // Maximum support address used to check input buffer
 //
 extern EFI_PHYSICAL_ADDRESS  mMmMemLibInternalMaximumSupportAddress;
-extern EFI_MMRAM_DESCRIPTOR *mMmMemLibInternalMmramRanges;
+extern EFI_MMRAM_DESCRIPTOR  *mMmMemLibInternalMmramRanges;
 extern UINTN                 mMmMemLibInternalMmramCount;
 
 /**
@@ -39,9 +39,9 @@ MmMemLibInternalCalculateMaximumSupportAddress (
   VOID
   )
 {
-  VOID         *Hob;
-  UINT32       RegEax;
-  UINT8        PhysicalAddressBits;
+  VOID    *Hob;
+  UINT32  RegEax;
+  UINT8   PhysicalAddressBits;
 
   //
   // Get physical address bits supported.
@@ -58,6 +58,7 @@ MmMemLibInternalCalculateMaximumSupportAddress (
       PhysicalAddressBits = 36;
     }
   }
+
   //
   // IA-32e paging translates 48-bit linear addresses to 52-bit physical addresses.
   //
@@ -69,7 +70,7 @@ MmMemLibInternalCalculateMaximumSupportAddress (
   //
   // Save the maximum support address in one global variable
   //
-  mMmMemLibInternalMaximumSupportAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)(LShiftU64 (1, PhysicalAddressBits) - 1);
+  mMmMemLibInternalMaximumSupportAddress = (EFI_PHYSICAL_ADDRESS) (UINTN) (LShiftU64 (1, PhysicalAddressBits) - 1);
   DEBUG ((DEBUG_INFO, "mMmMemLibInternalMaximumSupportAddress = 0x%lx\n", mMmMemLibInternalMaximumSupportAddress));
 }
 
@@ -131,9 +132,11 @@ MmMemLibInternalPopulateMmramRanges (
 
   mMmMemLibInternalMmramRanges = AllocatePool (mMmMemLibInternalMmramCount * sizeof (EFI_MMRAM_DESCRIPTOR));
   if (mMmMemLibInternalMmramRanges) {
-    CopyMem (mMmMemLibInternalMmramRanges,
+    CopyMem (
+             mMmMemLibInternalMmramRanges,
              MmramDescriptors,
-             mMmMemLibInternalMmramCount * sizeof (EFI_MMRAM_DESCRIPTOR));
+             mMmMemLibInternalMmramCount * sizeof (EFI_MMRAM_DESCRIPTOR)
+             );
   }
 
   return EFI_SUCCESS;
@@ -152,4 +155,3 @@ MmMemLibInternalFreeMmramRanges (
     FreePool (mMmMemLibInternalMmramRanges);
   }
 }
-

@@ -17,7 +17,7 @@
 #include <Library/HobLib.h>
 #include "StandaloneMmCoreMemoryAllocationServices.h"
 
-EFI_MM_SYSTEM_TABLE   *gMmst = NULL;
+EFI_MM_SYSTEM_TABLE  *gMmst = NULL;
 
 /**
   Allocates one or more 4KB pages of a certain memory type.
@@ -49,6 +49,7 @@ InternalAllocatePages (
   if (EFI_ERROR (Status)) {
     return NULL;
   }
+
   return (VOID *) (UINTN) Memory;
 }
 
@@ -189,12 +190,13 @@ InternalAllocateAlignedPages (
   if (Pages == 0) {
     return NULL;
   }
+
   if (Alignment > EFI_PAGE_SIZE) {
     //
     // Calculate the total number of pages since alignment is larger than page size.
     //
-    AlignmentMask  = Alignment - 1;
-    RealPages      = Pages + EFI_SIZE_TO_PAGES (Alignment);
+    AlignmentMask = Alignment - 1;
+    RealPages     = Pages + EFI_SIZE_TO_PAGES (Alignment);
     //
     // Make sure that Pages plus EFI_SIZE_TO_PAGES (Alignment) does not overflow.
     //
@@ -204,6 +206,7 @@ InternalAllocateAlignedPages (
     if (EFI_ERROR (Status)) {
       return NULL;
     }
+
     AlignedMemory  = ((UINTN) Memory + AlignmentMask) & ~AlignmentMask;
     UnalignedPages = EFI_SIZE_TO_PAGES (AlignedMemory - (UINTN) Memory);
     if (UnalignedPages > 0) {
@@ -213,6 +216,7 @@ InternalAllocateAlignedPages (
       Status = gMmst->MmFreePages (Memory, UnalignedPages);
       ASSERT_EFI_ERROR (Status);
     }
+
     Memory = (EFI_PHYSICAL_ADDRESS) (AlignedMemory + EFI_PAGES_TO_SIZE (Pages));
     UnalignedPages = RealPages - Pages - UnalignedPages;
     if (UnalignedPages > 0) {
@@ -230,8 +234,10 @@ InternalAllocateAlignedPages (
     if (EFI_ERROR (Status)) {
       return NULL;
     }
-    AlignedMemory  = (UINTN) Memory;
+
+    AlignedMemory = (UINTN) Memory;
   }
+
   return (VOID *) AlignedMemory;
 }
 
@@ -378,6 +384,7 @@ InternalAllocatePool (
   if (EFI_ERROR (Status)) {
     Memory = NULL;
   }
+
   return Memory;
 }
 
@@ -470,6 +477,7 @@ InternalAllocateZeroPool (
   if (Memory != NULL) {
     Memory = ZeroMem (Memory, AllocationSize);
   }
+
   return Memory;
 }
 
@@ -572,6 +580,7 @@ InternalAllocateCopyPool (
   if (Memory != NULL) {
     Memory = CopyMem (Memory, Buffer, AllocationSize);
   }
+
   return Memory;
 }
 
@@ -693,6 +702,7 @@ InternalReallocatePool (
     CopyMem (NewBuffer, OldBuffer, MIN (OldSize, NewSize));
     FreePool (OldBuffer);
   }
+
   return NewBuffer;
 }
 
@@ -812,7 +822,7 @@ FreePool (
   IN VOID   *Buffer
   )
 {
-  EFI_STATUS    Status;
+  EFI_STATUS  Status;
 
   Status = gMmst->MmFreePool (Buffer);
   ASSERT_EFI_ERROR (Status);
@@ -835,13 +845,13 @@ MemoryAllocationLibConstructor (
   IN EFI_MM_SYSTEM_TABLE    *MmSystemTable
   )
 {
-  MM_CORE_PRIVATE_DATA           *MmCorePrivate;
+  MM_CORE_PRIVATE_DATA            *MmCorePrivate;
   EFI_HOB_GUID_TYPE               *GuidHob;
-  MM_CORE_DATA_HOB_DATA          *DataInHob;
+  MM_CORE_DATA_HOB_DATA           *DataInHob;
   VOID                            *HobStart;
   EFI_MMRAM_HOB_DESCRIPTOR_BLOCK  *MmramRangesHobData;
   EFI_MMRAM_DESCRIPTOR            *MmramRanges;
-  UINTN                            MmramRangeCount;
+  UINTN                           MmramRangeCount;
   EFI_HOB_GUID_TYPE               *MmramRangesHob;
 
   HobStart = GetHobList ();
@@ -872,21 +882,22 @@ MemoryAllocationLibConstructor (
     if (MmramRanges == NULL) {
       return EFI_UNSUPPORTED;
     }
-
   } else {
-    DataInHob      = GET_GUID_HOB_DATA (GuidHob);
-    MmCorePrivate = (MM_CORE_PRIVATE_DATA *)(UINTN)DataInHob->Address;
-    MmramRanges     = (EFI_MMRAM_DESCRIPTOR *)(UINTN)MmCorePrivate->MmramRanges;
+    DataInHob       = GET_GUID_HOB_DATA (GuidHob);
+    MmCorePrivate   = (MM_CORE_PRIVATE_DATA *) (UINTN) DataInHob->Address;
+    MmramRanges     = (EFI_MMRAM_DESCRIPTOR *) (UINTN) MmCorePrivate->MmramRanges;
     MmramRangeCount = (UINTN) MmCorePrivate->MmramRangeCount;
   }
 
   {
-    UINTN                Index;
+  UINTN  Index;
 
     DEBUG ((DEBUG_INFO, "MmramRangeCount - 0x%x\n", MmramRangeCount));
     for (Index = 0; Index < MmramRangeCount; Index++) {
-      DEBUG ((DEBUG_INFO, "MmramRanges[%d]: 0x%016lx - 0x%016lx\n",
-              Index, MmramRanges[Index].CpuStart, MmramRanges[Index].PhysicalSize));
+      DEBUG (
+             (DEBUG_INFO, "MmramRanges[%d]: 0x%016lx - 0x%016lx\n",
+              Index, MmramRanges[Index].CpuStart, MmramRanges[Index].PhysicalSize)
+             );
     }
   }
 
@@ -894,7 +905,7 @@ MemoryAllocationLibConstructor (
   // Initialize memory service using free MMRAM
   //
   DEBUG ((DEBUG_INFO, "MmInitializeMemoryServices\n"));
-  MmInitializeMemoryServices ((UINTN)MmramRangeCount, (VOID *)(UINTN)MmramRanges);
+  MmInitializeMemoryServices ((UINTN) MmramRangeCount, (VOID *) (UINTN) MmramRanges);
 
   // Initialize MM Services Table
   gMmst = MmSystemTable;

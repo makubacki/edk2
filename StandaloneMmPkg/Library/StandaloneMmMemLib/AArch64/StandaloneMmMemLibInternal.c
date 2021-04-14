@@ -29,14 +29,14 @@ MmMemLibInternalCalculateMaximumSupportAddress (
   VOID
   )
 {
-  UINT8        PhysicalAddressBits;
+  UINT8  PhysicalAddressBits;
 
   PhysicalAddressBits = 36;
 
   //
   // Save the maximum support address in one global variable
   //
-  mMmMemLibInternalMaximumSupportAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)(LShiftU64 (1, PhysicalAddressBits) - 1);
+  mMmMemLibInternalMaximumSupportAddress = (EFI_PHYSICAL_ADDRESS) (UINTN) (LShiftU64 (1, PhysicalAddressBits) - 1);
   DEBUG ((DEBUG_INFO, "mMmMemLibInternalMaximumSupportAddress = 0x%lx\n", mMmMemLibInternalMaximumSupportAddress));
 }
 
@@ -67,4 +67,3 @@ MmMemLibInternalFreeMmramRanges (
 {
   // Not implemented for AARCH64.
 }
-

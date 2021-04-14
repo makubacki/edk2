@@ -30,18 +30,18 @@ VariableMmDependencyLibConstructor (
   IN EFI_SYSTEM_TABLE                     *SystemTable
   )
 {
-  EFI_STATUS            Status;
-  EFI_HANDLE            Handle;
+  EFI_STATUS  Status;
+  EFI_HANDLE  Handle;
 
   Handle = NULL;
   Status = gBS->InstallMultipleProtocolInterfaces (
-                  &Handle,
-                  &gEfiSmmVariableProtocolGuid,
-                  NULL,
-                  &gSmmVariableWriteGuid,
-                  NULL,
-                  NULL
-                  );
+                                                   &Handle,
+                                                   &gEfiSmmVariableProtocolGuid,
+                                                   NULL,
+                                                   &gSmmVariableWriteGuid,
+                                                   NULL,
+                                                   NULL
+                                                   );
   ASSERT_EFI_ERROR (Status);
   return EFI_SUCCESS;
 }

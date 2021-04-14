@@ -14,16 +14,16 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <PiMm.h>
 
 typedef
-EFI_STATUS
-(EFIAPI *MM_IMAGE_ENTRY_POINT) (
-  IN EFI_HANDLE            ImageHandle,
-  IN EFI_MM_SYSTEM_TABLE   *MmSystemTable
-  );
+  EFI_STATUS
+(EFIAPI *MM_IMAGE_ENTRY_POINT)(
+                               IN EFI_HANDLE            ImageHandle,
+                               IN EFI_MM_SYSTEM_TABLE   *MmSystemTable
+                               );
 
 typedef
-EFI_STATUS
-(EFIAPI *STANDALONE_MM_FOUNDATION_ENTRY_POINT) (
-  IN VOID  *HobStart
-  );
+  EFI_STATUS
+(EFIAPI *STANDALONE_MM_FOUNDATION_ENTRY_POINT)(
+                                               IN VOID  *HobStart
+                                               );
 
 #endif

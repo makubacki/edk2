@@ -9,7 +9,7 @@
 
 #include "StandaloneMmCore.h"
 
-#define CONFIG_TABLE_SIZE_INCREASED 0x10
+#define CONFIG_TABLE_SIZE_INCREASED  0x10
 
 UINTN  mMmSystemTableAllocateSize = 0;
 
@@ -83,11 +83,10 @@ MmInstallConfigurationTable (
     // Copy over deleted entry
     //
     CopyMem (
-      &(ConfigurationTable[Index]),
-      &(ConfigurationTable[Index + 1]),
-      (gMmCoreMmst.NumberOfTableEntries - Index) * sizeof (EFI_CONFIGURATION_TABLE)
-      );
-
+             &(ConfigurationTable[Index]),
+             &(ConfigurationTable[Index + 1]),
+             (gMmCoreMmst.NumberOfTableEntries - Index) * sizeof (EFI_CONFIGURATION_TABLE)
+             );
   } else {
     //
     // No matching GUIDs were found, so this is an add operation.
@@ -120,10 +119,10 @@ MmInstallConfigurationTable (
         // Copy the old table to the new table.
         //
         CopyMem (
-          ConfigurationTable,
-          gMmCoreMmst.MmConfigurationTable,
-          Index * sizeof (EFI_CONFIGURATION_TABLE)
-          );
+                 ConfigurationTable,
+                 gMmCoreMmst.MmConfigurationTable,
+                 Index * sizeof (EFI_CONFIGURATION_TABLE)
+                 );
 
         //
         // Record the old table pointer.
@@ -155,7 +154,7 @@ MmInstallConfigurationTable (
     //
     // Fill in the new entry
     //
-    CopyGuid ((VOID *)&ConfigurationTable[Index].VendorGuid, Guid);
+    CopyGuid ((VOID *) &ConfigurationTable[Index].VendorGuid, Guid);
     ConfigurationTable[Index].VendorTable = Table;
 
     //
