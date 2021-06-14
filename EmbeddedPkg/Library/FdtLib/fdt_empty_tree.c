@@ -55,29 +55,60 @@
 
 #include "libfdt_internal.h"
 
-int fdt_create_empty_tree(void *buf, int bufsize)
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
+int
+fdt_create_empty_tree (
+  void *buf, int bufsize
+  )
 {
-	int err;
+  int  err;
 
-	err = fdt_create(buf, bufsize);
-	if (err)
-		return err;
+  err = fdt_create (buf, bufsize);
+  if (err) {
+    return err;
+  }
 
-	err = fdt_finish_reservemap(buf);
-	if (err)
-		return err;
+  err = fdt_finish_reservemap (buf);
+  if (err) {
+    return err;
+  }
 
-	err = fdt_begin_node(buf, "");
-	if (err)
-		return err;
+  err = fdt_begin_node (buf, "");
+  if (err) {
+    return err;
+  }
 
-	err =  fdt_end_node(buf);
-	if (err)
-		return err;
+  err =  fdt_end_node (buf);
+  if (err) {
+    return err;
+  }
 
-	err = fdt_finish(buf);
-	if (err)
-		return err;
+  err = fdt_finish (buf);
+  if (err) {
+    return err;
+  }
 
-	return fdt_open_into(buf, buf, bufsize);
+  return fdt_open_into (buf, buf, bufsize);
 }

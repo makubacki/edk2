@@ -17,43 +17,113 @@
 
 #define DIAGNOSTIC_LOGBUFFER_MAXCHAR  1024
 
-CHAR16* mLogBuffer = NULL;
+CHAR16  *mLogBuffer    = NULL;
 UINTN   mLogRemainChar = 0;
 
-CHAR16*
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
+CHAR16 *
 DiagnosticInitLog (
   UINTN MaxBufferChar
   )
 {
   mLogRemainChar = MaxBufferChar;
-  mLogBuffer = AllocatePool ((UINTN)MaxBufferChar * sizeof (CHAR16));
+  mLogBuffer     = AllocatePool ((UINTN)MaxBufferChar * sizeof (CHAR16));
   return mLogBuffer;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 UINTN
 DiagnosticLog (
-  CONST CHAR16* Str
+  CONST CHAR16 *Str
   )
 {
-  UINTN len = StrLen (Str);
+  UINTN  len = StrLen (Str);
+
   if (len < mLogRemainChar) {
     StrCpyS (mLogBuffer, mLogRemainChar, Str);
     mLogRemainChar -= len;
-    mLogBuffer += len;
+    mLogBuffer     += len;
     return len;
   } else {
     return 0;
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 GenerateRandomBuffer (
-  VOID* Buffer,
+  VOID *Buffer,
   UINTN BufferSize
   )
 {
   UINT64  i;
-  UINT64* Buffer64 = (UINT64*)Buffer;
+  UINT64  *Buffer64 = (UINT64 *)Buffer;
 
   for (i = 0; i < (BufferSize >> 3); i++) {
     *Buffer64 = i | LShiftU64 (~i, 32);
@@ -61,6 +131,29 @@ GenerateRandomBuffer (
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 BOOLEAN
 CompareBuffer (
   VOID  *BufferA,
@@ -68,9 +161,9 @@ CompareBuffer (
   UINTN BufferSize
   )
 {
-  UINTN i;
-  UINT64* BufferA64 = (UINT64*)BufferA;
-  UINT64* BufferB64 = (UINT64*)BufferB;
+  UINTN   i;
+  UINT64  *BufferA64 = (UINT64 *)BufferA;
+  UINT64  *BufferB64 = (UINT64 *)BufferB;
 
   for (i = 0; i < (BufferSize >> 3); i++) {
     if (*BufferA64 != *BufferB64) {
@@ -78,12 +171,37 @@ CompareBuffer (
       DEBUG ((EFI_D_ERROR, "(0x%lX) != (0x%lX)\n", *BufferA64, *BufferB64));
       return FALSE;
     }
+
     BufferA64++;
     BufferB64++;
   }
+
   return TRUE;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 MmcReadWriteDataTest (
   MMC_HOST_INSTANCE *MmcHostInstance,
@@ -91,10 +209,10 @@ MmcReadWriteDataTest (
   UINTN             BufferSize
   )
 {
-  VOID                        *BackBuffer;
-  VOID                        *WriteBuffer;
-  VOID                        *ReadBuffer;
-  EFI_STATUS                  Status;
+  VOID        *BackBuffer;
+  VOID        *WriteBuffer;
+  VOID        *ReadBuffer;
+  EFI_STATUS  Status;
 
   // Check if a Media is Present
   if (!MmcHostInstance->BlockIo.Media->MediaPresent) {
@@ -107,54 +225,84 @@ MmcReadWriteDataTest (
     return EFI_NOT_READY;
   }
 
-  BackBuffer = AllocatePool (BufferSize);
+  BackBuffer  = AllocatePool (BufferSize);
   WriteBuffer = AllocatePool (BufferSize);
-  ReadBuffer = AllocatePool (BufferSize);
+  ReadBuffer  = AllocatePool (BufferSize);
 
   // Read (and save) buffer at a specific location
-  Status = MmcReadBlocks (&(MmcHostInstance->BlockIo), MmcHostInstance->BlockIo.Media->MediaId,Lba,BufferSize,BackBuffer);
+  Status = MmcReadBlocks (
+             &(MmcHostInstance->BlockIo),
+             MmcHostInstance->BlockIo.Media->MediaId,
+             Lba,
+             BufferSize,
+             BackBuffer
+             );
   if (Status != EFI_SUCCESS) {
     DiagnosticLog (L"ERROR: Fail to Read Block (1)\n");
     return Status;
   }
 
   // Write buffer at the same location
-  GenerateRandomBuffer (WriteBuffer,BufferSize);
-  Status = MmcWriteBlocks (&(MmcHostInstance->BlockIo), MmcHostInstance->BlockIo.Media->MediaId,Lba,BufferSize,WriteBuffer);
+  GenerateRandomBuffer (WriteBuffer, BufferSize);
+  Status = MmcWriteBlocks (
+             &(MmcHostInstance->BlockIo),
+             MmcHostInstance->BlockIo.Media->MediaId,
+             Lba,
+             BufferSize,
+             WriteBuffer
+             );
   if (Status != EFI_SUCCESS) {
     DiagnosticLog (L"ERROR: Fail to Write Block (1)\n");
     return Status;
   }
 
   // Read the buffer at the same location
-  Status = MmcReadBlocks (&(MmcHostInstance->BlockIo), MmcHostInstance->BlockIo.Media->MediaId,Lba,BufferSize,ReadBuffer);
+  Status = MmcReadBlocks (
+             &(MmcHostInstance->BlockIo),
+             MmcHostInstance->BlockIo.Media->MediaId,
+             Lba,
+             BufferSize,
+             ReadBuffer
+             );
   if (Status != EFI_SUCCESS) {
     DiagnosticLog (L"ERROR: Fail to Read Block (2)\n");
     return Status;
   }
 
   // Check that is conform
-  if (!CompareBuffer (ReadBuffer,WriteBuffer,BufferSize)) {
+  if (!CompareBuffer (ReadBuffer, WriteBuffer, BufferSize)) {
     DiagnosticLog (L"ERROR: Fail to Read/Write Block (1)\n");
     return EFI_INVALID_PARAMETER;
   }
 
   // Restore content at the original location
-  Status = MmcWriteBlocks (&(MmcHostInstance->BlockIo), MmcHostInstance->BlockIo.Media->MediaId,Lba,BufferSize,BackBuffer);
+  Status = MmcWriteBlocks (
+             &(MmcHostInstance->BlockIo),
+             MmcHostInstance->BlockIo.Media->MediaId,
+             Lba,
+             BufferSize,
+             BackBuffer
+             );
   if (Status != EFI_SUCCESS) {
     DiagnosticLog (L"ERROR: Fail to Write Block (2)\n");
     return Status;
   }
 
   // Read the restored content
-  Status = MmcReadBlocks (&(MmcHostInstance->BlockIo), MmcHostInstance->BlockIo.Media->MediaId,Lba,BufferSize,ReadBuffer);
+  Status = MmcReadBlocks (
+             &(MmcHostInstance->BlockIo),
+             MmcHostInstance->BlockIo.Media->MediaId,
+             Lba,
+             BufferSize,
+             ReadBuffer
+             );
   if (Status != EFI_SUCCESS) {
     DiagnosticLog (L"ERROR: Fail to Read Block (3)\n");
     return Status;
   }
 
   // Check the content is correct
-  if (!CompareBuffer (ReadBuffer,BackBuffer,BufferSize)) {
+  if (!CompareBuffer (ReadBuffer, BackBuffer, BufferSize)) {
     DiagnosticLog (L"ERROR: Fail to Read/Write Block (2)\n");
     return EFI_INVALID_PARAMETER;
   }
@@ -162,6 +310,29 @@ MmcReadWriteDataTest (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 MmcDriverDiagnosticsRunDiagnostics (
@@ -175,9 +346,9 @@ MmcDriverDiagnosticsRunDiagnostics (
   OUT CHAR16                                        **Buffer
   )
 {
-  LIST_ENTRY              *CurrentLink;
-  MMC_HOST_INSTANCE       *MmcHostInstance;
-  EFI_STATUS              Status;
+  LIST_ENTRY         *CurrentLink;
+  MMC_HOST_INSTANCE  *MmcHostInstance;
+  EFI_STATUS         Status;
 
   if ((Language         == NULL) ||
       (ErrorType        == NULL) ||
@@ -192,28 +363,29 @@ MmcDriverDiagnosticsRunDiagnostics (
     return EFI_UNSUPPORTED;
   }
 
-  Status = EFI_SUCCESS;
+  Status      = EFI_SUCCESS;
   *ErrorType  = NULL;
   *BufferSize = DIAGNOSTIC_LOGBUFFER_MAXCHAR;
-  *Buffer = DiagnosticInitLog (DIAGNOSTIC_LOGBUFFER_MAXCHAR);
+  *Buffer     = DiagnosticInitLog (DIAGNOSTIC_LOGBUFFER_MAXCHAR);
 
   DiagnosticLog (L"MMC Driver Diagnostics\n");
 
   // Find the MMC Host instance on which we have been asked to run diagnostics
   MmcHostInstance = NULL;
-  CurrentLink = mMmcHostPool.ForwardLink;
+  CurrentLink     = mMmcHostPool.ForwardLink;
   while (CurrentLink != NULL && CurrentLink != &mMmcHostPool && (Status == EFI_SUCCESS)) {
-    MmcHostInstance = MMC_HOST_INSTANCE_FROM_LINK(CurrentLink);
-    ASSERT(MmcHostInstance != NULL);
+    MmcHostInstance = MMC_HOST_INSTANCE_FROM_LINK (CurrentLink);
+    ASSERT (MmcHostInstance != NULL);
     if (MmcHostInstance->MmcHandle == ControllerHandle) {
       break;
     }
+
     CurrentLink = CurrentLink->ForwardLink;
   }
 
   // If we didn't find the controller, return EFI_UNSUPPORTED
-  if ((MmcHostInstance == NULL)
-      || (MmcHostInstance->MmcHandle != ControllerHandle)) {
+  if (  (MmcHostInstance == NULL)
+     || (MmcHostInstance->MmcHandle != ControllerHandle)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -235,7 +407,11 @@ MmcDriverDiagnosticsRunDiagnostics (
 
   // LBA=LastBlock Size=BlockSize
   DiagnosticLog (L"MMC Driver Diagnostics - Test: Last Block\n");
-  Status = MmcReadWriteDataTest (MmcHostInstance, MmcHostInstance->BlockIo.Media->LastBlock, MmcHostInstance->BlockIo.Media->BlockSize);
+  Status = MmcReadWriteDataTest (
+             MmcHostInstance,
+             MmcHostInstance->BlockIo.Media->LastBlock,
+             MmcHostInstance->BlockIo.Media->BlockSize
+             );
 
   // LBA=1 Size=2*BlockSize
   DiagnosticLog (L"MMC Driver Diagnostics - Test: First Block / 2 BlockSSize\n");
@@ -247,7 +423,7 @@ MmcDriverDiagnosticsRunDiagnostics (
 //
 // EFI Driver Diagnostics 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_DRIVER_DIAGNOSTICS2_PROTOCOL gMmcDriverDiagnostics2 = {
-  (EFI_DRIVER_DIAGNOSTICS2_RUN_DIAGNOSTICS) MmcDriverDiagnosticsRunDiagnostics,
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_DRIVER_DIAGNOSTICS2_PROTOCOL  gMmcDriverDiagnostics2 = {
+  (EFI_DRIVER_DIAGNOSTICS2_RUN_DIAGNOSTICS)MmcDriverDiagnosticsRunDiagnostics,
   "en"
 };

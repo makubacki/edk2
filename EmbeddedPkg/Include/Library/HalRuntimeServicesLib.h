@@ -6,15 +6,14 @@
 
 **/
 
-
 #ifndef __RUNTIME_SERVICES_LIB_H__
 #define __RUNTIME_SERVICES_LIB_H__
 
 VOID
-LibMtcInitialize (VOID);
+  LibMtcInitialize (VOID);
 
 VOID
-LibMtcVirtualAddressChangeEvent (VOID);
+  LibMtcVirtualAddressChangeEvent (VOID);
 
 EFI_STATUS
 EFIAPI
@@ -27,13 +26,11 @@ LibMtcGetNextMonotonicCount (
   OUT UINT64  *Count
   );
 
-
+VOID
+  LibVariableInitialize (VOID);
 
 VOID
-LibVariableInitialize (VOID);
-
-VOID
-LibVariableVirtualAddressChangeEvent (VOID);
+  LibVariableVirtualAddressChangeEvent (VOID);
 
 EFI_STATUS
 LibGetVariable (
@@ -68,13 +65,11 @@ LibQueryVariableInfo (
   OUT UINT64                 *MaximumVariableSize
   );
 
-
+VOID
+  LibResetInitializeReset (VOID);
 
 VOID
-LibResetInitializeReset (VOID);
-
-VOID
-LibResetVirtualAddressChangeEvent (VOID);
+  LibResetVirtualAddressChangeEvent (VOID);
 
 VOID
 LibResetSystem (
@@ -84,12 +79,11 @@ LibResetSystem (
   IN CHAR16           *ResetData OPTIONAL
   );
 
+VOID
+  LibCapsuleInitialize (VOID);
 
 VOID
-LibCapsuleInitialize (VOID);
-
-VOID
-LibCapsuleVirtualAddressChangeEvent (VOID);
+  LibCapsuleVirtualAddressChangeEvent (VOID);
 
 EFI_STATUS
 LibUpdateCapsule (
@@ -106,13 +100,11 @@ QueryCapsuleCapabilities (
   OUT EFI_RESET_TYPE       *ResetType
   );
 
-
+VOID
+  LibRtcInitialize (VOID);
 
 VOID
-LibRtcInitialize (VOID);
-
-VOID
-LibRtcVirtualAddressChangeEvent (VOID);
+  LibRtcVirtualAddressChangeEvent (VOID);
 
 EFI_STATUS
 LibGetTime (
@@ -138,12 +130,11 @@ LibSetWakeupTime (
   OUT EFI_TIME    *Time
   );
 
+VOID
+  LibReportStatusCodeInitialize (VOID);
 
 VOID
-LibReportStatusCodeInitialize (VOID);
-
-VOID
-LibReportStatusCodeVirtualAddressChangeEvent (VOID);
+  LibReportStatusCodeVirtualAddressChangeEvent (VOID);
 
 EFI_STATUS
 LibReportStatusCode (
@@ -154,6 +145,4 @@ LibReportStatusCode (
   IN EFI_STATUS_CODE_DATA     *Data OPTIONAL
   );
 
-
 #endif
-

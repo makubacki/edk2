@@ -56,47 +56,74 @@
 #include "libfdt_internal.h"
 
 struct fdt_errtabent {
-	const char *str;
+  const char    *str;
 };
 
 #define FDT_ERRTABENT(val) \
-	[(val)] = { .str = #val, }
+  [(val)] = { .str = # val, }
 
-static struct fdt_errtabent fdt_errtable[] = {
-	FDT_ERRTABENT(FDT_ERR_NOTFOUND),
-	FDT_ERRTABENT(FDT_ERR_EXISTS),
-	FDT_ERRTABENT(FDT_ERR_NOSPACE),
+static struct fdt_errtabent  fdt_errtable[] = {
+  FDT_ERRTABENT (FDT_ERR_NOTFOUND),
+  FDT_ERRTABENT (FDT_ERR_EXISTS),
+  FDT_ERRTABENT (FDT_ERR_NOSPACE),
 
-	FDT_ERRTABENT(FDT_ERR_BADOFFSET),
-	FDT_ERRTABENT(FDT_ERR_BADPATH),
-	FDT_ERRTABENT(FDT_ERR_BADPHANDLE),
-	FDT_ERRTABENT(FDT_ERR_BADSTATE),
+  FDT_ERRTABENT (FDT_ERR_BADOFFSET),
+  FDT_ERRTABENT (FDT_ERR_BADPATH),
+  FDT_ERRTABENT (FDT_ERR_BADPHANDLE),
+  FDT_ERRTABENT (FDT_ERR_BADSTATE),
 
-	FDT_ERRTABENT(FDT_ERR_TRUNCATED),
-	FDT_ERRTABENT(FDT_ERR_BADMAGIC),
-	FDT_ERRTABENT(FDT_ERR_BADVERSION),
-	FDT_ERRTABENT(FDT_ERR_BADSTRUCTURE),
-	FDT_ERRTABENT(FDT_ERR_BADLAYOUT),
-	FDT_ERRTABENT(FDT_ERR_INTERNAL),
-	FDT_ERRTABENT(FDT_ERR_BADNCELLS),
-	FDT_ERRTABENT(FDT_ERR_BADVALUE),
-	FDT_ERRTABENT(FDT_ERR_BADOVERLAY),
-	FDT_ERRTABENT(FDT_ERR_NOPHANDLES),
+  FDT_ERRTABENT (FDT_ERR_TRUNCATED),
+  FDT_ERRTABENT (FDT_ERR_BADMAGIC),
+  FDT_ERRTABENT (FDT_ERR_BADVERSION),
+  FDT_ERRTABENT (FDT_ERR_BADSTRUCTURE),
+  FDT_ERRTABENT (FDT_ERR_BADLAYOUT),
+  FDT_ERRTABENT (FDT_ERR_INTERNAL),
+  FDT_ERRTABENT (FDT_ERR_BADNCELLS),
+  FDT_ERRTABENT (FDT_ERR_BADVALUE),
+  FDT_ERRTABENT (FDT_ERR_BADOVERLAY),
+  FDT_ERRTABENT (FDT_ERR_NOPHANDLES),
 };
-#define FDT_ERRTABSIZE	(sizeof(fdt_errtable) / sizeof(fdt_errtable[0]))
+#define FDT_ERRTABSIZE  (sizeof (fdt_errtable) / sizeof (fdt_errtable[0]))
 
-const char *fdt_strerror(int errval)
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
+const char *
+fdt_strerror (
+  int errval
+  )
 {
-	if (errval > 0)
-		return "<valid offset/length>";
-	else if (errval == 0)
-		return "<no error>";
-	else if (errval > -FDT_ERRTABSIZE) {
-		const char *s = fdt_errtable[-errval].str;
+  if (errval > 0) {
+    return "<valid offset/length>";
+  } else if (errval == 0) {
+    return "<no error>";
+  } else if (errval > - FDT_ERRTABSIZE) {
+    const char  *s = fdt_errtable[- errval].str;
 
-		if (s)
-			return s;
-	}
+    if (s) {
+      return s;
+    }
+  }
 
-	return "<unknown error>";
+  return "<unknown error>";
 }

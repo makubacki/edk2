@@ -22,26 +22,48 @@
 #include <Protocol/Cpu.h>
 
 typedef struct {
-  EFI_PHYSICAL_ADDRESS      HostAddress;
-  VOID                      *BufferAddress;
-  UINTN                     NumberOfBytes;
-  DMA_MAP_OPERATION         Operation;
-  BOOLEAN                   DoubleBuffer;
+  EFI_PHYSICAL_ADDRESS    HostAddress;
+  VOID                    *BufferAddress;
+  UINTN                   NumberOfBytes;
+  DMA_MAP_OPERATION       Operation;
+  BOOLEAN                 DoubleBuffer;
 } MAP_INFO_INSTANCE;
 
-
 typedef struct {
-  LIST_ENTRY          Link;
-  VOID                *HostAddress;
-  UINTN               NumPages;
-  UINT64              Attributes;
+  LIST_ENTRY    Link;
+  VOID          *HostAddress;
+  UINTN         NumPages;
+  UINT64        Attributes;
 } UNCACHED_ALLOCATION;
 
-STATIC EFI_CPU_ARCH_PROTOCOL      *mCpu;
-STATIC LIST_ENTRY                 UncachedAllocationList;
+STATIC EFI_CPU_ARCH_PROTOCOL  *mCpu;
+STATIC LIST_ENTRY             UncachedAllocationList;
 
-STATIC PHYSICAL_ADDRESS           mDmaHostAddressLimit;
+STATIC PHYSICAL_ADDRESS  mDmaHostAddressLimit;
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 PHYSICAL_ADDRESS
 HostToDeviceAddress (
@@ -95,13 +117,14 @@ InternalAllocateAlignedPages (
   if (Pages == 0) {
     return NULL;
   }
+
   if (Alignment > EFI_PAGE_SIZE) {
     //
     // Calculate the total number of pages since alignment is larger than page
     // size.
     //
-    AlignmentMask  = Alignment - 1;
-    RealPages      = Pages + EFI_SIZE_TO_PAGES (Alignment);
+    AlignmentMask = Alignment - 1;
+    RealPages     = Pages + EFI_SIZE_TO_PAGES (Alignment);
     //
     // Make sure that Pages plus EFI_SIZE_TO_PAGES (Alignment) does not
     // overflow.
@@ -109,11 +132,16 @@ InternalAllocateAlignedPages (
     ASSERT (RealPages > Pages);
 
     Memory = mDmaHostAddressLimit;
-    Status = gBS->AllocatePages (AllocateMaxAddress, MemoryType, RealPages,
-                    &Memory);
+    Status = gBS->AllocatePages (
+                    AllocateMaxAddress,
+                    MemoryType,
+                    RealPages,
+                    &Memory
+                    );
     if (EFI_ERROR (Status)) {
       return NULL;
     }
+
     AlignedMemory  = ((UINTN)Memory + AlignmentMask) & ~AlignmentMask;
     UnalignedPages = EFI_SIZE_TO_PAGES (AlignedMemory - (UINTN)Memory);
     if (UnalignedPages > 0) {
@@ -123,7 +151,8 @@ InternalAllocateAlignedPages (
       Status = gBS->FreePages (Memory, UnalignedPages);
       ASSERT_EFI_ERROR (Status);
     }
-    Memory         = AlignedMemory + EFI_PAGES_TO_SIZE (Pages);
+
+    Memory = AlignedMemory + EFI_PAGES_TO_SIZE (Pages);
     UnalignedPages = RealPages - Pages - UnalignedPages;
     if (UnalignedPages > 0) {
       //
@@ -137,13 +166,19 @@ InternalAllocateAlignedPages (
     // Do not over-allocate pages in this case.
     //
     Memory = mDmaHostAddressLimit;
-    Status = gBS->AllocatePages (AllocateMaxAddress, MemoryType, Pages,
-                    &Memory);
+    Status = gBS->AllocatePages (
+                    AllocateMaxAddress,
+                    MemoryType,
+                    Pages,
+                    &Memory
+                    );
     if (EFI_ERROR (Status)) {
       return NULL;
     }
+
     AlignedMemory = (UINTN)Memory;
   }
+
   return (VOID *)AlignedMemory;
 }
 
@@ -184,11 +219,11 @@ DmaMap (
   OUT    VOID                           **Mapping
   )
 {
-  EFI_STATUS                      Status;
-  MAP_INFO_INSTANCE               *Map;
-  VOID                            *Buffer;
-  EFI_GCD_MEMORY_SPACE_DESCRIPTOR GcdDescriptor;
-  UINTN                           AllocSize;
+  EFI_STATUS                       Status;
+  MAP_INFO_INSTANCE                *Map;
+  VOID                             *Buffer;
+  EFI_GCD_MEMORY_SPACE_DESCRIPTOR  GcdDescriptor;
+  UINTN                            AllocSize;
 
   if (HostAddress == NULL ||
       NumberOfBytes == NULL ||
@@ -206,19 +241,20 @@ DmaMap (
   // Remember range so we can flush on the other side
   Map = AllocatePool (sizeof (MAP_INFO_INSTANCE));
   if (Map == NULL) {
-    return  EFI_OUT_OF_RESOURCES;
+    return EFI_OUT_OF_RESOURCES;
   }
 
   if (((UINTN)HostAddress + *NumberOfBytes) > mDmaHostAddressLimit) {
-
     if (Operation == MapOperationBusMasterCommonBuffer) {
       goto CommonBufferError;
     }
 
     AllocSize = ALIGN_VALUE (*NumberOfBytes, mCpu->DmaBufferAlignment);
-    Map->BufferAddress = InternalAllocateAlignedPages (EfiBootServicesData,
+    Map->BufferAddress = InternalAllocateAlignedPages (
+                           EfiBootServicesData,
                            EFI_SIZE_TO_PAGES (AllocSize),
-                           mCpu->DmaBufferAlignment);
+                           mCpu->DmaBufferAlignment
+                           );
     if (Map->BufferAddress == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
       goto FreeMapInfo;
@@ -227,17 +263,21 @@ DmaMap (
     if (Map->Operation == MapOperationBusMasterRead) {
       CopyMem (Map->BufferAddress, (VOID *)(UINTN)HostAddress, *NumberOfBytes);
     }
-    mCpu->FlushDataCache (mCpu, (UINTN)Map->BufferAddress, AllocSize,
-            EfiCpuFlushTypeWriteBack);
+
+    mCpu->FlushDataCache (
+            mCpu,
+            (UINTN)Map->BufferAddress,
+            AllocSize,
+            EfiCpuFlushTypeWriteBack
+            );
 
     *DeviceAddress = HostToDeviceAddress (Map->BufferAddress);
   } else if (Operation != MapOperationBusMasterRead &&
-      ((((UINTN)HostAddress & (mCpu->DmaBufferAlignment - 1)) != 0) ||
-       ((*NumberOfBytes & (mCpu->DmaBufferAlignment - 1)) != 0))) {
-
+             ((((UINTN)HostAddress & (mCpu->DmaBufferAlignment - 1)) != 0) ||
+              ((*NumberOfBytes & (mCpu->DmaBufferAlignment - 1)) != 0))) {
     // Get the cacheability of the region
     Status = gDS->GetMemorySpaceDescriptor ((UINTN)HostAddress, &GcdDescriptor);
-    if (EFI_ERROR(Status)) {
+    if (EFI_ERROR (Status)) {
       goto FreeMapInfo;
     }
 
@@ -275,13 +315,17 @@ DmaMap (
       // prevents them from being written back unexpectedly, potentially
       // overwriting the data we receive from the device.
       //
-      mCpu->FlushDataCache (mCpu, (UINTN)Buffer, *NumberOfBytes,
-              EfiCpuFlushTypeWriteBack);
+      mCpu->FlushDataCache (
+              mCpu,
+              (UINTN)Buffer,
+              *NumberOfBytes,
+              EfiCpuFlushTypeWriteBack
+              );
     } else {
-      Map->DoubleBuffer  = FALSE;
+      Map->DoubleBuffer = FALSE;
     }
   } else {
-    Map->DoubleBuffer  = FALSE;
+    Map->DoubleBuffer = FALSE;
 
     DEBUG_CODE_BEGIN ();
 
@@ -293,17 +337,23 @@ DmaMap (
     // that we are not trying to create a consistent mapping for cached memory.
     //
     Status = gDS->GetMemorySpaceDescriptor ((UINTN)HostAddress, &GcdDescriptor);
-    ASSERT_EFI_ERROR(Status);
+    ASSERT_EFI_ERROR (Status);
 
-    ASSERT (Operation != MapOperationBusMasterCommonBuffer ||
-            (GcdDescriptor.Attributes & (EFI_MEMORY_WB | EFI_MEMORY_WT)) == 0);
+    ASSERT (
+      Operation != MapOperationBusMasterCommonBuffer ||
+      (GcdDescriptor.Attributes & (EFI_MEMORY_WB | EFI_MEMORY_WT)) == 0
+      );
 
     DEBUG_CODE_END ();
 
     // Flush the Data Cache (should not have any effect if the memory region is
     // uncached)
-    mCpu->FlushDataCache (mCpu, (UINTN)HostAddress, *NumberOfBytes,
-            EfiCpuFlushTypeWriteBackInvalidate);
+    mCpu->FlushDataCache (
+            mCpu,
+            (UINTN)HostAddress,
+            *NumberOfBytes,
+            EfiCpuFlushTypeWriteBackInvalidate
+            );
   }
 
   Map->HostAddress   = (UINTN)HostAddress;
@@ -315,17 +365,19 @@ DmaMap (
   return EFI_SUCCESS;
 
 CommonBufferError:
-  DEBUG ((DEBUG_ERROR,
+  DEBUG ((
+    DEBUG_ERROR,
     "%a: Operation type 'MapOperationBusMasterCommonBuffer' is only "
     "supported\non memory regions that were allocated using "
-    "DmaAllocateBuffer ()\n", __FUNCTION__));
+    "DmaAllocateBuffer ()\n",
+    __FUNCTION__
+    ));
   Status = EFI_UNSUPPORTED;
 FreeMapInfo:
   FreePool (Map);
 
   return Status;
 }
-
 
 /**
   Completes the DmaMapBusMasterRead(), DmaMapBusMasterWrite(), or
@@ -347,10 +399,10 @@ DmaUnmap (
   IN  VOID                         *Mapping
   )
 {
-  MAP_INFO_INSTANCE *Map;
-  EFI_STATUS        Status;
-  VOID              *Buffer;
-  UINTN             AllocSize;
+  MAP_INFO_INSTANCE  *Map;
+  EFI_STATUS         Status;
+  VOID               *Buffer;
+  UINTN              AllocSize;
 
   if (Mapping == NULL) {
     ASSERT (FALSE);
@@ -363,14 +415,21 @@ DmaUnmap (
   if (((UINTN)Map->HostAddress + Map->NumberOfBytes) > mDmaHostAddressLimit) {
     AllocSize = ALIGN_VALUE (Map->NumberOfBytes, mCpu->DmaBufferAlignment);
     if (Map->Operation == MapOperationBusMasterWrite) {
-      mCpu->FlushDataCache (mCpu, (UINTN)Map->BufferAddress, AllocSize,
-              EfiCpuFlushTypeInvalidate);
-      CopyMem ((VOID *)(UINTN)Map->HostAddress, Map->BufferAddress,
-        Map->NumberOfBytes);
+      mCpu->FlushDataCache (
+              mCpu,
+              (UINTN)Map->BufferAddress,
+              AllocSize,
+              EfiCpuFlushTypeInvalidate
+              );
+      CopyMem (
+        (VOID *)(UINTN)Map->HostAddress,
+        Map->BufferAddress,
+        Map->NumberOfBytes
+        );
     }
+
     FreePages (Map->BufferAddress, EFI_SIZE_TO_PAGES (AllocSize));
   } else if (Map->DoubleBuffer) {
-
     ASSERT (Map->Operation == MapOperationBusMasterWrite);
 
     if (Map->Operation != MapOperationBusMasterWrite) {
@@ -378,8 +437,12 @@ DmaUnmap (
     } else {
       Buffer = ALIGN_POINTER (Map->BufferAddress, mCpu->DmaBufferAlignment);
 
-      mCpu->FlushDataCache (mCpu, (UINTN)Buffer, Map->NumberOfBytes,
-              EfiCpuFlushTypeInvalidate);
+      mCpu->FlushDataCache (
+              mCpu,
+              (UINTN)Buffer,
+              Map->NumberOfBytes,
+              EfiCpuFlushTypeInvalidate
+              );
 
       CopyMem ((VOID *)(UINTN)Map->HostAddress, Buffer, Map->NumberOfBytes);
 
@@ -390,8 +453,12 @@ DmaUnmap (
       //
       // Make sure we read buffer from uncached memory and not the cache
       //
-      mCpu->FlushDataCache (mCpu, Map->HostAddress, Map->NumberOfBytes,
-              EfiCpuFlushTypeInvalidate);
+      mCpu->FlushDataCache (
+              mCpu,
+              Map->HostAddress,
+              Map->NumberOfBytes,
+              EfiCpuFlushTypeInvalidate
+              );
     }
   }
 
@@ -452,11 +519,11 @@ DmaAllocateAlignedBuffer (
   OUT VOID                         **HostAddress
   )
 {
-  EFI_GCD_MEMORY_SPACE_DESCRIPTOR   GcdDescriptor;
-  VOID                              *Allocation;
-  UINT64                            MemType;
-  UNCACHED_ALLOCATION               *Alloc;
-  EFI_STATUS                        Status;
+  EFI_GCD_MEMORY_SPACE_DESCRIPTOR  GcdDescriptor;
+  VOID                             *Allocation;
+  UINT64                           MemType;
+  UNCACHED_ALLOCATION              *Alloc;
+  EFI_STATUS                       Status;
 
   if (Alignment == 0) {
     Alignment = EFI_PAGE_SIZE;
@@ -480,7 +547,7 @@ DmaAllocateAlignedBuffer (
 
   // Get the cacheability of the region
   Status = gDS->GetMemorySpaceDescriptor ((UINTN)Allocation, &GcdDescriptor);
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     goto FreeBuffer;
   }
 
@@ -500,23 +567,27 @@ DmaAllocateAlignedBuffer (
   }
 
   Alloc->HostAddress = Allocation;
-  Alloc->NumPages = Pages;
-  Alloc->Attributes = GcdDescriptor.Attributes;
+  Alloc->NumPages    = Pages;
+  Alloc->Attributes  = GcdDescriptor.Attributes;
 
   InsertHeadList (&UncachedAllocationList, &Alloc->Link);
 
   // Remap the region with the new attributes
-  Status = gDS->SetMemorySpaceAttributes ((PHYSICAL_ADDRESS)(UINTN)Allocation,
-                                          EFI_PAGES_TO_SIZE (Pages),
-                                          MemType);
+  Status = gDS->SetMemorySpaceAttributes (
+                  (PHYSICAL_ADDRESS)(UINTN)Allocation,
+                  EFI_PAGES_TO_SIZE (Pages),
+                  MemType
+                  );
   if (EFI_ERROR (Status)) {
     goto FreeAlloc;
   }
 
-  Status = mCpu->FlushDataCache (mCpu,
-                                 (PHYSICAL_ADDRESS)(UINTN)Allocation,
-                                 EFI_PAGES_TO_SIZE (Pages),
-                                 EfiCpuFlushTypeInvalidate);
+  Status = mCpu->FlushDataCache (
+                   mCpu,
+                   (PHYSICAL_ADDRESS)(UINTN)Allocation,
+                   EFI_PAGES_TO_SIZE (Pages),
+                   EfiCpuFlushTypeInvalidate
+                   );
   if (EFI_ERROR (Status)) {
     goto FreeAlloc;
   }
@@ -533,7 +604,6 @@ FreeBuffer:
   FreePages (Allocation, Pages);
   return Status;
 }
-
 
 /**
   Frees memory that was allocated with DmaAllocateBuffer().
@@ -555,19 +625,18 @@ DmaFreeBuffer (
   IN  VOID                         *HostAddress
   )
 {
-  LIST_ENTRY                       *Link;
-  UNCACHED_ALLOCATION              *Alloc;
-  BOOLEAN                          Found;
-  EFI_STATUS                       Status;
+  LIST_ENTRY           *Link;
+  UNCACHED_ALLOCATION  *Alloc;
+  BOOLEAN              Found;
+  EFI_STATUS           Status;
 
   if (HostAddress == NULL) {
-     return EFI_INVALID_PARAMETER;
+    return EFI_INVALID_PARAMETER;
   }
 
   for (Link = GetFirstNode (&UncachedAllocationList), Found = FALSE;
        !IsNull (&UncachedAllocationList, Link);
        Link = GetNextNode (&UncachedAllocationList, Link)) {
-
     Alloc = BASE_CR (Link, UNCACHED_ALLOCATION, Link);
     if (Alloc->HostAddress == HostAddress && Alloc->NumPages == Pages) {
       Found = TRUE;
@@ -582,9 +651,11 @@ DmaFreeBuffer (
 
   RemoveEntryList (&Alloc->Link);
 
-  Status = gDS->SetMemorySpaceAttributes ((PHYSICAL_ADDRESS)(UINTN)HostAddress,
-                                          EFI_PAGES_TO_SIZE (Pages),
-                                          Alloc->Attributes);
+  Status = gDS->SetMemorySpaceAttributes (
+                  (PHYSICAL_ADDRESS)(UINTN)HostAddress,
+                  EFI_PAGES_TO_SIZE (Pages),
+                  Alloc->Attributes
+                  );
   if (EFI_ERROR (Status)) {
     goto FreeAlloc;
   }
@@ -600,7 +671,29 @@ FreeAlloc:
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 NonCoherentDmaLibConstructor (

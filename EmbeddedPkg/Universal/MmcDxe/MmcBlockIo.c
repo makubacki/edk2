@@ -10,6 +10,29 @@
 
 #include "Mmc.h"
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 MmcNotifyState (
   IN MMC_HOST_INSTANCE *MmcHostInstance,
@@ -20,26 +43,50 @@ MmcNotifyState (
   return MmcHostInstance->MmcHost->NotifyState (MmcHostInstance->MmcHost, State);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 MmcGetCardStatus (
   IN MMC_HOST_INSTANCE     *MmcHostInstance
   )
 {
-  EFI_STATUS              Status;
-  UINT32                  Response[4];
-  UINTN                   CmdArg;
-  EFI_MMC_HOST_PROTOCOL   *MmcHost;
+  EFI_STATUS             Status;
+  UINT32                 Response[4];
+  UINTN                  CmdArg;
+  EFI_MMC_HOST_PROTOCOL  *MmcHost;
 
-  Status = EFI_SUCCESS;
+  Status  = EFI_SUCCESS;
   MmcHost = MmcHostInstance->MmcHost;
-  CmdArg = 0;
+  CmdArg  = 0;
 
   if (MmcHost == NULL) {
     return EFI_INVALID_PARAMETER;
   }
+
   if (MmcHostInstance->State != MmcHwInitializationState) {
-    //Get the Status of the card.
+    // Get the Status of the card.
     CmdArg = MmcHostInstance->CardInfo.RCA << 16;
     Status = MmcHost->SendCommand (MmcHost, MMC_CMD13, CmdArg);
     if (EFI_ERROR (Status)) {
@@ -47,7 +94,7 @@ MmcGetCardStatus (
       return Status;
     }
 
-    //Read Response
+    // Read Response
     MmcHost->ReceiveResponse (MmcHost, MMC_RESPONSE_TYPE_R1, Response);
     PrintResponseR1 (Response[0]);
   }
@@ -55,6 +102,29 @@ MmcGetCardStatus (
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 MmcReset (
@@ -62,7 +132,7 @@ MmcReset (
   IN BOOLEAN                  ExtendedVerification
   )
 {
-  MMC_HOST_INSTANCE       *MmcHostInstance;
+  MMC_HOST_INSTANCE  *MmcHostInstance;
 
   MmcHostInstance = MMC_HOST_INSTANCE_FROM_BLOCK_IO_THIS (This);
 
@@ -85,10 +155,33 @@ MmcReset (
   }
 
   // Implement me. Either send a CMD0 (could not work for some MMC host) or just turn off/turn
-  //      on power and restart Identification mode
+  // on power and restart Identification mode
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 MmcDetectCard (
   EFI_MMC_HOST_PROTOCOL     *MmcHost
@@ -101,25 +194,73 @@ MmcDetectCard (
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 MmcStopTransmission (
   EFI_MMC_HOST_PROTOCOL     *MmcHost
   )
 {
-  EFI_STATUS              Status;
-  UINT32                  Response[4];
+  EFI_STATUS  Status;
+  UINT32      Response[4];
+
   // Command 12 - Stop transmission (ends read or write)
   // Normally only needed for streaming transfers or after error.
   Status = MmcHost->SendCommand (MmcHost, MMC_CMD12, 0);
   if (!EFI_ERROR (Status)) {
     MmcHost->ReceiveResponse (MmcHost, MMC_RESPONSE_TYPE_R1b, Response);
   }
+
   return Status;
 }
 
-#define MMCI0_BLOCKLEN 512
-#define MMCI0_TIMEOUT  10000
+#define MMCI0_BLOCKLEN  512
+#define MMCI0_TIMEOUT   10000
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 MmcTransferBlock (
@@ -132,27 +273,27 @@ MmcTransferBlock (
   OUT VOID                    *Buffer
   )
 {
-  EFI_STATUS              Status;
-  UINTN                   CmdArg;
-  INTN                    Timeout;
-  UINT32                  Response[4];
-  MMC_HOST_INSTANCE       *MmcHostInstance;
-  EFI_MMC_HOST_PROTOCOL   *MmcHost;
+  EFI_STATUS             Status;
+  UINTN                  CmdArg;
+  INTN                   Timeout;
+  UINT32                 Response[4];
+  MMC_HOST_INSTANCE      *MmcHostInstance;
+  EFI_MMC_HOST_PROTOCOL  *MmcHost;
 
   MmcHostInstance = MMC_HOST_INSTANCE_FROM_BLOCK_IO_THIS (This);
   MmcHost = MmcHostInstance->MmcHost;
 
   if (MmcHostInstance->CardInfo.CardType != EMMC_CARD) {
-    //Set command argument based on the card capacity
-    //if 0 : SDSC card
-    //if 1 : SDXC/SDHC
+    // Set command argument based on the card capacity
+    // if 0 : SDSC card
+    // if 1 : SDXC/SDHC
     if (MmcHostInstance->CardInfo.OCRData.AccessMode & SD_CARD_CAPACITY) {
       CmdArg = Lba;
     } else {
       CmdArg = MultU64x32 (Lba, This->Media->BlockSize);
     }
   } else {
-    //Set command argument based on the card access mode (Byte mode or Block mode)
+    // Set command argument based on the card access mode (Byte mode or Block mode)
     if ((MmcHostInstance->CardInfo.OCRData.AccessMode & MMC_OCR_ACCESS_MASK) ==
         MMC_OCR_ACCESS_SECTOR) {
       CmdArg = Lba;
@@ -175,6 +316,7 @@ MmcTransferBlock (
       MmcStopTransmission (MmcHost);
       return Status;
     }
+
     Status = MmcNotifyState (MmcHostInstance, MmcProgrammingState);
     if (EFI_ERROR (Status)) {
       DEBUG ((EFI_D_ERROR, "%a() : Error MmcProgrammingState\n", __func__));
@@ -191,12 +333,12 @@ MmcTransferBlock (
   }
 
   // Command 13 - Read status and wait for programming to complete (return to tran)
-  Timeout = MMCI0_TIMEOUT;
-  CmdArg = MmcHostInstance->CardInfo.RCA << 16;
+  Timeout     = MMCI0_TIMEOUT;
+  CmdArg      = MmcHostInstance->CardInfo.RCA << 16;
   Response[0] = 0;
-  while(!(Response[0] & MMC_R0_READY_FOR_DATA)
-        && (MMC_R0_CURRENTSTATE (Response) != MMC_R0_STATE_TRAN)
-        && Timeout--) {
+  while(  !(Response[0] & MMC_R0_READY_FOR_DATA)
+       && (MMC_R0_CURRENTSTATE (Response) != MMC_R0_STATE_TRAN)
+       && Timeout--) {
     Status = MmcHost->SendCommand (MmcHost, MMC_CMD13, CmdArg);
     if (!EFI_ERROR (Status)) {
       MmcHost->ReceiveResponse (MmcHost, MMC_RESPONSE_TYPE_R1, Response);
@@ -211,6 +353,7 @@ MmcTransferBlock (
     if (EFI_ERROR (Status)) {
       DEBUG ((EFI_D_BLKIO, "%a(): Error and Status:%r\n", __func__, Status));
     }
+
     MmcHost->ReceiveResponse (MmcHost, MMC_RESPONSE_TYPE_R1b, Response);
   }
 
@@ -219,9 +362,33 @@ MmcTransferBlock (
     DEBUG ((EFI_D_ERROR, "MmcIoBlocks() : Error MmcTransferState\n"));
     return Status;
   }
+
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 MmcIoBlocks (
   IN EFI_BLOCK_IO_PROTOCOL    *This,
@@ -232,18 +399,18 @@ MmcIoBlocks (
   OUT VOID                    *Buffer
   )
 {
-  UINT32                  Response[4];
-  EFI_STATUS              Status;
-  UINTN                   CmdArg;
-  INTN                    Timeout;
-  UINTN                   Cmd;
-  MMC_HOST_INSTANCE       *MmcHostInstance;
-  EFI_MMC_HOST_PROTOCOL   *MmcHost;
-  UINTN                   BytesRemainingToBeTransfered;
-  UINTN                   BlockCount;
-  UINTN                   ConsumeSize;
-  UINT32                  MaxBlock;
-  UINTN                   RemainingBlock;
+  UINT32                 Response[4];
+  EFI_STATUS             Status;
+  UINTN                  CmdArg;
+  INTN                   Timeout;
+  UINTN                  Cmd;
+  MMC_HOST_INSTANCE      *MmcHostInstance;
+  EFI_MMC_HOST_PROTOCOL  *MmcHost;
+  UINTN                  BytesRemainingToBeTransfered;
+  UINTN                  BlockCount;
+  UINTN                  ConsumeSize;
+  UINT32                 MaxBlock;
+  UINTN                  RemainingBlock;
 
   BlockCount = 1;
   MmcHostInstance = MMC_HOST_INSTANCE_FROM_BLOCK_IO_THIS (This);
@@ -274,7 +441,7 @@ MmcIoBlocks (
     return EFI_BAD_BUFFER_SIZE;
   }
 
-  if (MMC_HOST_HAS_ISMULTIBLOCK(MmcHost) && MmcHost->IsMultiBlock(MmcHost)) {
+  if (MMC_HOST_HAS_ISMULTIBLOCK (MmcHost) && MmcHost->IsMultiBlock (MmcHost)) {
     BlockCount = BufferSize / This->Media->BlockSize;
   }
 
@@ -297,7 +464,6 @@ MmcIoBlocks (
   RemainingBlock = BlockCount;
   BytesRemainingToBeTransfered = BufferSize;
   while (BytesRemainingToBeTransfered > 0) {
-
     if (RemainingBlock <= MaxBlock) {
       BlockCount = RemainingBlock;
     } else {
@@ -307,10 +473,10 @@ MmcIoBlocks (
     // Check if the Card is in Ready status
     CmdArg = MmcHostInstance->CardInfo.RCA << 16;
     Response[0] = 0;
-    Timeout = 20;
-    while(   (!(Response[0] & MMC_R0_READY_FOR_DATA))
-          && (MMC_R0_CURRENTSTATE (Response) != MMC_R0_STATE_TRAN)
-          && Timeout--) {
+    Timeout     = 20;
+    while(  (!(Response[0] & MMC_R0_READY_FOR_DATA))
+         && (MMC_R0_CURRENTSTATE (Response) != MMC_R0_STATE_TRAN)
+         && Timeout--) {
       Status = MmcHost->SendCommand (MmcHost, MMC_CMD13, CmdArg);
       if (!EFI_ERROR (Status)) {
         MmcHost->ReceiveResponse (MmcHost, MMC_RESPONSE_TYPE_R1, Response);
@@ -327,16 +493,16 @@ MmcIoBlocks (
         // Read a single block
         Cmd = MMC_CMD17;
       } else {
-	// Read multiple blocks
-	Cmd = MMC_CMD18;
+        // Read multiple blocks
+        Cmd = MMC_CMD18;
       }
     } else {
       if (BlockCount == 1) {
         // Write a single block
         Cmd = MMC_CMD24;
       } else {
-	// Write multiple blocks
-	Cmd = MMC_CMD25;
+        // Write multiple blocks
+        Cmd = MMC_CMD25;
       }
     }
 
@@ -344,6 +510,7 @@ MmcIoBlocks (
     if (BytesRemainingToBeTransfered < ConsumeSize) {
       ConsumeSize = BytesRemainingToBeTransfered;
     }
+
     Status = MmcTransferBlock (This, Cmd, Transfer, MediaId, Lba, ConsumeSize, Buffer);
     if (EFI_ERROR (Status)) {
       DEBUG ((EFI_D_ERROR, "%a(): Failed to transfer block and Status:%r\n", __func__, Status));
@@ -352,7 +519,7 @@ MmcIoBlocks (
     RemainingBlock -= BlockCount;
     BytesRemainingToBeTransfered -= ConsumeSize;
     if (BytesRemainingToBeTransfered > 0) {
-      Lba    += BlockCount;
+      Lba   += BlockCount;
       Buffer = (UINT8 *)Buffer + ConsumeSize;
     }
   }
@@ -360,6 +527,29 @@ MmcIoBlocks (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 MmcReadBlocks (
@@ -373,6 +563,29 @@ MmcReadBlocks (
   return MmcIoBlocks (This, MMC_IOBLOCKS_READ, MediaId, Lba, BufferSize, Buffer);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 MmcWriteBlocks (
@@ -386,6 +599,29 @@ MmcWriteBlocks (
   return MmcIoBlocks (This, MMC_IOBLOCKS_WRITE, MediaId, Lba, BufferSize, Buffer);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 MmcFlushBlocks (

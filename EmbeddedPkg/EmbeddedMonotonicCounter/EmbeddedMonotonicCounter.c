@@ -15,8 +15,31 @@
 
 #include <Protocol/MonotonicCounter.h>
 
-UINT64 gCurrentMonotonicCount = 0;
+UINT64  gCurrentMonotonicCount = 0;
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 GetNextMonotonicCount (
@@ -31,6 +54,29 @@ GetNextMonotonicCount (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 GetNextHighMonotonicCount (
@@ -48,7 +94,29 @@ GetNextHighMonotonicCount (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 MonotonicCounterDriverInitialize (
@@ -60,7 +128,7 @@ MonotonicCounterDriverInitialize (
   EFI_HANDLE  Handle = NULL;
 
   // Make sure the Monotonic Counter Architectural Protocol is not already installed in the system
-  ASSERT_PROTOCOL_ALREADY_INSTALLED(NULL, &gEfiMonotonicCounterArchProtocolGuid);
+  ASSERT_PROTOCOL_ALREADY_INSTALLED (NULL, &gEfiMonotonicCounterArchProtocolGuid);
 
   // Fill in the EFI Boot Services and EFI Runtime Services Monotonic Counter Fields
   gBS->GetNextMonotonicCount     = GetNextMonotonicCount;
@@ -69,7 +137,8 @@ MonotonicCounterDriverInitialize (
   // Install the Monotonic Counter Architectural Protocol onto a new handle
   Status = gBS->InstallMultipleProtocolInterfaces (
                   &Handle,
-                  &gEfiMonotonicCounterArchProtocolGuid,    NULL,
+                  &gEfiMonotonicCounterArchProtocolGuid,
+                  NULL,
                   NULL
                   );
   return Status;

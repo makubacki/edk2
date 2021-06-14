@@ -20,8 +20,8 @@
 VOID *
 EFIAPI
 PrePeiGetHobList (
-  VOID
-  );
+                  VOID
+                  );
 
 /**
   Updates the pointer to the HOB list.
