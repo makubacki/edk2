@@ -24,17 +24,17 @@
 
 STATIC
 CONST
-CB_PCI_ROOT_BRIDGE_DEVICE_PATH mRootBridgeDevicePathTemplate = {
+CB_PCI_ROOT_BRIDGE_DEVICE_PATH  mRootBridgeDevicePathTemplate = {
   {
     {
       ACPI_DEVICE_PATH,
       ACPI_DP,
       {
-        (UINT8) (sizeof(ACPI_HID_DEVICE_PATH)),
-        (UINT8) ((sizeof(ACPI_HID_DEVICE_PATH)) >> 8)
+        (UINT8)(sizeof (ACPI_HID_DEVICE_PATH)),
+        (UINT8)((sizeof (ACPI_HID_DEVICE_PATH)) >> 8)
       }
     },
-    EISA_PNP_ID(0x0A03), // HID
+    EISA_PNP_ID (0x0A03), // HID
     0                    // UID
   },
 
@@ -47,7 +47,6 @@ CB_PCI_ROOT_BRIDGE_DEVICE_PATH mRootBridgeDevicePathTemplate = {
     }
   }
 };
-
 
 /**
   Initialize a PCI_ROOT_BRIDGE structure.
@@ -103,9 +102,9 @@ InitRootBridge (
   IN  PCI_ROOT_BRIDGE_APERTURE *PMem,
   IN  PCI_ROOT_BRIDGE_APERTURE *PMemAbove4G,
   OUT PCI_ROOT_BRIDGE          *RootBus
-)
+  )
 {
-  CB_PCI_ROOT_BRIDGE_DEVICE_PATH *DevicePath;
+  CB_PCI_ROOT_BRIDGE_DEVICE_PATH  *DevicePath;
 
   //
   // Be safe if other fields are added to PCI_ROOT_BRIDGE later.
@@ -130,21 +129,27 @@ InitRootBridge (
 
   RootBus->NoExtendedConfigSpace = FALSE;
 
-  DevicePath = AllocateCopyPool (sizeof (mRootBridgeDevicePathTemplate),
-                                 &mRootBridgeDevicePathTemplate);
+  DevicePath = AllocateCopyPool (
+                 sizeof (mRootBridgeDevicePathTemplate),
+                 &mRootBridgeDevicePathTemplate
+                 );
   if (DevicePath == NULL) {
     DEBUG ((DEBUG_ERROR, "%a: %r\n", __FUNCTION__, EFI_OUT_OF_RESOURCES));
     return EFI_OUT_OF_RESOURCES;
   }
+
   DevicePath->AcpiDevicePath.UID = RootBusNumber;
   RootBus->DevicePath = (EFI_DEVICE_PATH_PROTOCOL *)DevicePath;
 
-  DEBUG ((DEBUG_INFO,
-          "%a: populated root bus %d, with room for %d subordinate bus(es)\n",
-          __FUNCTION__, RootBusNumber, MaxSubBusNumber - RootBusNumber));
+  DEBUG ((
+    DEBUG_INFO,
+    "%a: populated root bus %d, with room for %d subordinate bus(es)\n",
+    __FUNCTION__,
+    RootBusNumber,
+    MaxSubBusNumber - RootBusNumber
+    ));
   return EFI_SUCCESS;
 }
-
 
 /**
   Return all the root bridge instances in an array.
@@ -159,11 +164,10 @@ PCI_ROOT_BRIDGE *
 EFIAPI
 PciHostBridgeGetRootBridges (
   UINTN *Count
-)
+  )
 {
   return ScanForRootBridges (Count);
 }
-
 
 /**
   Free the root bridge instances array returned from
@@ -177,11 +181,12 @@ EFIAPI
 PciHostBridgeFreeRootBridges (
   PCI_ROOT_BRIDGE *Bridges,
   UINTN           Count
-)
+  )
 {
   if (Bridges == NULL && Count == 0) {
     return;
   }
+
   ASSERT (Bridges != NULL && Count > 0);
 
   do {
@@ -191,7 +196,6 @@ PciHostBridgeFreeRootBridges (
 
   FreePool (Bridges);
 }
-
 
 /**
   Inform the platform that the resource conflict happens.
@@ -212,7 +216,7 @@ EFIAPI
 PciHostBridgeResourceConflict (
   EFI_HANDLE                        HostBridgeHandle,
   VOID                              *Configuration
-)
+  )
 {
   //
   // coreboot UEFI Payload does not do PCI enumeration and should not call this

@@ -32,7 +32,6 @@
 #include <Guid/AcpiBoardInfoGuid.h>
 #include <Guid/GraphicsInfoHob.h>
 
-
 #define LEGACY_8259_MASK_REGISTER_MASTER  0x21
 #define LEGACY_8259_MASK_REGISTER_SLAVE   0xA1
 #define GET_OCCUPIED_SIZE(ActualSize, Alignment) \
@@ -45,8 +44,8 @@
 VOID
 EFIAPI
 ProcessLibraryConstructorList (
-  VOID
-  );
+                               VOID
+                               );
 
 /**
   Add a new HOB to the HOB List.
@@ -94,7 +93,7 @@ UpdateStackHob (
   @return   The pointer to the handoff HOB table.
 
 **/
-EFI_HOB_HANDOFF_INFO_TABLE*
+EFI_HOB_HANDOFF_INFO_TABLE *
 EFIAPI
 HobConstructor (
   IN VOID   *EfiMemoryBegin,

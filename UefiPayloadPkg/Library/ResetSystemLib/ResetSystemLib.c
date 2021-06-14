@@ -14,7 +14,7 @@
 #include <Library/BaseMemoryLib.h>
 #include <Guid/AcpiBoardInfoGuid.h>
 
-ACPI_BOARD_INFO    mAcpiBoardInfo;
+ACPI_BOARD_INFO  mAcpiBoardInfo;
 
 /**
   The constructor function to initialize mAcpiBoardInfo.
@@ -43,18 +43,40 @@ ResetSystemLibConstructor (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 AcpiPmControl (
   UINTN   SuspendType
   )
 {
-  UINTN              PmCtrlReg;
+  UINTN  PmCtrlReg;
 
   ASSERT (SuspendType <= 7);
 
   PmCtrlReg = (UINTN)mAcpiBoardInfo.PmCtrlRegBase;
-  IoAndThenOr16 (PmCtrlReg, (UINT16) ~0x3c00, (UINT16) (SuspendType << 10));
+  IoAndThenOr16 (PmCtrlReg, (UINT16) ~0x3c00, (UINT16)(SuspendType << 10));
   IoOr16 (PmCtrlReg, BIT13);
   CpuDeadLoop ();
 }
@@ -108,23 +130,23 @@ ResetShutdown (
   VOID
   )
 {
-  UINTN              PmCtrlReg;
+  UINTN  PmCtrlReg;
 
   //
   // GPE0_EN should be disabled to avoid any GPI waking up the system from S5
   //
-  IoWrite16 ((UINTN)mAcpiBoardInfo.PmGpeEnBase,  0);
+  IoWrite16 ((UINTN)mAcpiBoardInfo.PmGpeEnBase, 0);
 
   //
   // Clear Power Button Status
   //
-  IoWrite16((UINTN) mAcpiBoardInfo.PmEvtBase, BIT8);
+  IoWrite16 ((UINTN)mAcpiBoardInfo.PmEvtBase, BIT8);
 
   //
   // Transform system into S5 sleep state
   //
   PmCtrlReg = (UINTN)mAcpiBoardInfo.PmCtrlRegBase;
-  IoAndThenOr16 (PmCtrlReg, (UINT16) ~0x3c00, (UINT16) (7 << 10));
+  IoAndThenOr16 (PmCtrlReg, (UINT16) ~0x3c00, (UINT16)(7 << 10));
   IoOr16 (PmCtrlReg, BIT13);
   CpuDeadLoop ();
 

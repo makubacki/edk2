@@ -16,7 +16,6 @@
 #include <Library/BlParseLib.h>
 #include <IndustryStandard/Acpi.h>
 
-
 /**
   This function retrieves the parameter base address from boot loader.
 
@@ -33,18 +32,17 @@ GetParameterBase (
   VOID
   )
 {
-  EFI_HOB_HANDOFF_INFO_TABLE          *HandoffTable;
+  EFI_HOB_HANDOFF_INFO_TABLE  *HandoffTable;
 
-  HandoffTable = (EFI_HOB_HANDOFF_INFO_TABLE *)(UINTN) GET_BOOTLOADER_PARAMETER ();
+  HandoffTable = (EFI_HOB_HANDOFF_INFO_TABLE *)(UINTN)GET_BOOTLOADER_PARAMETER ();
   if ((HandoffTable->Header.HobType == EFI_HOB_TYPE_HANDOFF) &&
-    (HandoffTable->Header.HobLength == sizeof (EFI_HOB_HANDOFF_INFO_TABLE)) &&
-    (HandoffTable->Header.Reserved == 0)) {
+      (HandoffTable->Header.HobLength == sizeof (EFI_HOB_HANDOFF_INFO_TABLE)) &&
+      (HandoffTable->Header.Reserved == 0)) {
     return (VOID *)HandoffTable;
   }
 
   return NULL;
 }
-
 
 /**
   This function retrieves a GUIDed HOB data from Slim Bootloader.
@@ -63,8 +61,8 @@ GetGuidHobDataFromSbl (
   IN       EFI_GUID      *Guid
   )
 {
-  UINT8                  *GuidHob;
-  CONST VOID             *HobList;
+  UINT8       *GuidHob;
+  CONST VOID  *HobList;
 
   HobList = GetParameterBase ();
   ASSERT (HobList != NULL);
@@ -93,10 +91,10 @@ ParseMemoryInfo (
   IN  VOID                       *Params
   )
 {
-  MEMROY_MAP_INFO               *MemoryMapInfo;
-  UINTN                          Idx;
+  MEMROY_MAP_INFO  *MemoryMapInfo;
+  UINTN            Idx;
 
-  MemoryMapInfo = (MEMROY_MAP_INFO *) GetGuidHobDataFromSbl (&gLoaderMemoryMapInfoGuid);
+  MemoryMapInfo = (MEMROY_MAP_INFO *)GetGuidHobDataFromSbl (&gLoaderMemoryMapInfoGuid);
   if (MemoryMapInfo == NULL) {
     ASSERT (FALSE);
     return RETURN_NOT_FOUND;
@@ -124,7 +122,7 @@ ParseSystemTable (
   OUT SYSTEM_TABLE_INFO     *SystemTableInfo
   )
 {
-  SYSTEM_TABLE_INFO         *TableInfo;
+  SYSTEM_TABLE_INFO  *TableInfo;
 
   TableInfo = (SYSTEM_TABLE_INFO *)GetGuidHobDataFromSbl (&gUefiSystemTableInfoGuid);
   if (TableInfo == NULL) {
@@ -136,7 +134,6 @@ ParseSystemTable (
 
   return RETURN_SUCCESS;
 }
-
 
 /**
   Find the serial port information
@@ -153,9 +150,9 @@ ParseSerialInfo (
   OUT SERIAL_PORT_INFO     *SerialPortInfo
   )
 {
-  SERIAL_PORT_INFO              *BlSerialInfo;
+  SERIAL_PORT_INFO  *BlSerialInfo;
 
-  BlSerialInfo = (SERIAL_PORT_INFO *) GetGuidHobDataFromSbl (&gUefiSerialPortInfoGuid);
+  BlSerialInfo = (SERIAL_PORT_INFO *)GetGuidHobDataFromSbl (&gUefiSerialPortInfoGuid);
   if (BlSerialInfo == NULL) {
     ASSERT (FALSE);
     return RETURN_NOT_FOUND;
@@ -165,7 +162,6 @@ ParseSerialInfo (
 
   return RETURN_SUCCESS;
 }
-
 
 /**
   Find the video frame buffer information
@@ -182,9 +178,9 @@ ParseGfxInfo (
   OUT EFI_PEI_GRAPHICS_INFO_HOB       *GfxInfo
   )
 {
-  EFI_PEI_GRAPHICS_INFO_HOB           *BlGfxInfo;
+  EFI_PEI_GRAPHICS_INFO_HOB  *BlGfxInfo;
 
-  BlGfxInfo = (EFI_PEI_GRAPHICS_INFO_HOB *) GetGuidHobDataFromSbl (&gEfiGraphicsInfoHobGuid);
+  BlGfxInfo = (EFI_PEI_GRAPHICS_INFO_HOB *)GetGuidHobDataFromSbl (&gEfiGraphicsInfoHobGuid);
   if (BlGfxInfo == NULL) {
     return RETURN_NOT_FOUND;
   }
@@ -209,9 +205,9 @@ ParseGfxDeviceInfo (
   OUT EFI_PEI_GRAPHICS_DEVICE_INFO_HOB       *GfxDeviceInfo
   )
 {
-  EFI_PEI_GRAPHICS_DEVICE_INFO_HOB           *BlGfxDeviceInfo;
+  EFI_PEI_GRAPHICS_DEVICE_INFO_HOB  *BlGfxDeviceInfo;
 
-  BlGfxDeviceInfo = (EFI_PEI_GRAPHICS_DEVICE_INFO_HOB *) GetGuidHobDataFromSbl (&gEfiGraphicsDeviceInfoHobGuid);
+  BlGfxDeviceInfo = (EFI_PEI_GRAPHICS_DEVICE_INFO_HOB *)GetGuidHobDataFromSbl (&gEfiGraphicsDeviceInfoHobGuid);
   if (BlGfxDeviceInfo == NULL) {
     return RETURN_NOT_FOUND;
   }
@@ -220,4 +216,3 @@ ParseGfxDeviceInfo (
 
   return RETURN_SUCCESS;
 }
-

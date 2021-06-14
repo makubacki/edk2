@@ -21,8 +21,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 ParsePlatformInfo (
-  VOID
-  );
+                   VOID
+                   );
 
 #endif // __BOOTLOADER_PLATFORM_SUPPORT_LIB__
-

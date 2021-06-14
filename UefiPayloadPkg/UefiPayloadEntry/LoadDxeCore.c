@@ -15,13 +15,13 @@
 
   @return Allocated memory.
 **/
-VOID*
+VOID *
 AllocateCodePages (
   IN  UINTN     Pages
   )
 {
-  VOID                    *Alloc;
-  EFI_PEI_HOB_POINTERS    Hob;
+  VOID                  *Alloc;
+  EFI_PEI_HOB_POINTERS  Hob;
 
   Alloc = AllocatePages (Pages);
   if (Alloc == NULL) {
@@ -35,6 +35,7 @@ AllocateCodePages (
       Hob.MemoryAllocation->AllocDescriptor.MemoryType = EfiBootServicesCode;
       return Alloc;
     }
+
     Hob.Raw = GetNextHob (EFI_HOB_TYPE_MEMORY_ALLOCATION, GET_NEXT_HOB (Hob));
   }
 
@@ -43,7 +44,6 @@ AllocateCodePages (
   FreePages (Alloc, Pages);
   return NULL;
 }
-
 
 /**
     Loads and relocates a PE/COFF image
@@ -64,9 +64,9 @@ LoadPeCoffImage (
   OUT EFI_PHYSICAL_ADDRESS          *EntryPoint
   )
 {
-  RETURN_STATUS                     Status;
-  PE_COFF_LOADER_IMAGE_CONTEXT      ImageContext;
-  VOID                              *Buffer;
+  RETURN_STATUS                 Status;
+  PE_COFF_LOADER_IMAGE_CONTEXT  ImageContext;
+  VOID                          *Buffer;
 
   ZeroMem (&ImageContext, sizeof (ImageContext));
 
@@ -82,10 +82,11 @@ LoadPeCoffImage (
   //
   // Allocate Memory for the image
   //
-  Buffer = AllocateCodePages (EFI_SIZE_TO_PAGES((UINT32)ImageContext.ImageSize));
+  Buffer = AllocateCodePages (EFI_SIZE_TO_PAGES ((UINT32)ImageContext.ImageSize));
   if (Buffer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
+
   ImageContext.ImageAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)Buffer;
 
   //
@@ -131,13 +132,13 @@ FvFindFile (
   OUT EFI_FFS_FILE_HEADER         **FileHeader
   )
 {
-  EFI_PHYSICAL_ADDRESS        CurrentAddress;
-  EFI_PHYSICAL_ADDRESS        EndOfFirmwareVolume;
-  EFI_FFS_FILE_HEADER         *File;
-  UINT32                      Size;
-  EFI_PHYSICAL_ADDRESS        EndOfFile;
+  EFI_PHYSICAL_ADDRESS  CurrentAddress;
+  EFI_PHYSICAL_ADDRESS  EndOfFirmwareVolume;
+  EFI_FFS_FILE_HEADER   *File;
+  UINT32                Size;
+  EFI_PHYSICAL_ADDRESS  EndOfFile;
 
-  CurrentAddress = (EFI_PHYSICAL_ADDRESS)(UINTN) FvHeader;
+  CurrentAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)FvHeader;
   EndOfFirmwareVolume = CurrentAddress + FvHeader->FvLength;
 
   //
@@ -149,7 +150,7 @@ FvFindFile (
       break;
     }
 
-    File = (EFI_FFS_FILE_HEADER*)(UINTN) CurrentAddress;
+    File = (EFI_FFS_FILE_HEADER *)(UINTN)CurrentAddress;
     if (IS_FFS_FILE2 (File)) {
       Size = FFS_FILE2_SIZE (File);
       if (Size <= 0x00FFFFFF) {
@@ -179,7 +180,6 @@ FvFindFile (
   return EFI_NOT_FOUND;
 }
 
-
 /**
   This function searchs a given section type within a valid FFS file.
 
@@ -199,27 +199,29 @@ FileFindSection (
   OUT VOID                      **SectionData
   )
 {
-  UINT32                        FileSize;
-  EFI_COMMON_SECTION_HEADER     *Section;
-  UINT32                        SectionSize;
-  UINT32                        Index;
+  UINT32                     FileSize;
+  EFI_COMMON_SECTION_HEADER  *Section;
+  UINT32                     SectionSize;
+  UINT32                     Index;
 
   if (IS_FFS_FILE2 (FileHeader)) {
     FileSize = FFS_FILE2_SIZE (FileHeader);
   } else {
     FileSize = FFS_FILE_SIZE (FileHeader);
   }
-  FileSize  -= sizeof (EFI_FFS_FILE_HEADER);
 
-  Section    = (EFI_COMMON_SECTION_HEADER *)(FileHeader + 1);
-  Index      = 0;
+  FileSize -= sizeof (EFI_FFS_FILE_HEADER);
+
+  Section = (EFI_COMMON_SECTION_HEADER *)(FileHeader + 1);
+  Index   = 0;
   while (Index < FileSize) {
     if (Section->Type == SectionType) {
       if (IS_SECTION2 (Section)) {
-        *SectionData = (VOID *)((UINT8 *) Section + sizeof (EFI_COMMON_SECTION_HEADER2));
+        *SectionData = (VOID *)((UINT8 *)Section + sizeof (EFI_COMMON_SECTION_HEADER2));
       } else {
-        *SectionData = (VOID *)((UINT8 *) Section + sizeof (EFI_COMMON_SECTION_HEADER));
+        *SectionData = (VOID *)((UINT8 *)Section + sizeof (EFI_COMMON_SECTION_HEADER));
       }
+
       return EFI_SUCCESS;
     }
 
@@ -238,7 +240,6 @@ FileFindSection (
 
   return EFI_NOT_FOUND;
 }
-
 
 /**
   Find DXE core from FV and build DXE core HOBs.
@@ -270,6 +271,7 @@ LoadDxeCore (
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   Status = FileFindSection (FileHeader, EFI_SECTION_FIRMWARE_VOLUME_IMAGE, (VOID **)&DxeCoreFv);
   if (EFI_ERROR (Status)) {
     return Status;
@@ -278,7 +280,7 @@ LoadDxeCore (
   //
   // Report DXE FV to DXE core
   //
-  BuildFvHob ((EFI_PHYSICAL_ADDRESS) (UINTN) DxeCoreFv, DxeCoreFv->FvLength);
+  BuildFvHob ((EFI_PHYSICAL_ADDRESS)(UINTN)DxeCoreFv, DxeCoreFv->FvLength);
 
   //
   // Find DXE core file from DXE FV
@@ -301,7 +303,12 @@ LoadDxeCore (
     return Status;
   }
 
-  BuildModuleHob (&FileHeader->Name, ImageAddress, EFI_SIZE_TO_PAGES ((UINT32) ImageSize) * EFI_PAGE_SIZE, *DxeCoreEntryPoint);
+  BuildModuleHob (
+    &FileHeader->Name,
+    ImageAddress,
+    EFI_SIZE_TO_PAGES ((UINT32)ImageSize) * EFI_PAGE_SIZE,
+    *DxeCoreEntryPoint
+    );
 
   return EFI_SUCCESS;
 }
