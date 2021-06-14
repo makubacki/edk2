@@ -23,8 +23,8 @@
 EFI_STATUS
 EFIAPI
 AmlStreamInit (
-  IN  OUT AML_STREAM              * Stream,
-  IN      UINT8                   * Buffer,
+  IN  OUT AML_STREAM              *Stream,
+  IN      UINT8                   *Buffer,
   IN      UINT32                    MaxBufferSize,
   IN      EAML_STREAM_DIRECTION     Direction
   )
@@ -40,7 +40,7 @@ AmlStreamInit (
 
   Stream->Buffer = Buffer;
   Stream->MaxBufferSize = MaxBufferSize;
-  Stream->Index = 0;
+  Stream->Index     = 0;
   Stream->Direction = Direction;
 
   return EFI_SUCCESS;
@@ -60,8 +60,8 @@ AmlStreamInit (
 EFI_STATUS
 EFIAPI
 AmlStreamClone (
-  IN  CONST AML_STREAM    * Stream,
-  OUT        AML_STREAM   * ClonedStream
+  IN  CONST AML_STREAM    *Stream,
+  OUT        AML_STREAM   *ClonedStream
   )
 {
   if (!IS_STREAM (Stream)   ||
@@ -72,7 +72,7 @@ AmlStreamClone (
 
   ClonedStream->Buffer = Stream->Buffer;
   ClonedStream->MaxBufferSize = Stream->MaxBufferSize;
-  ClonedStream->Index = Stream->Index;
+  ClonedStream->Index     = Stream->Index;
   ClonedStream->Direction = Stream->Direction;
 
   return EFI_SUCCESS;
@@ -105,8 +105,8 @@ AmlStreamClone (
 EFI_STATUS
 EFIAPI
 AmlStreamInitSubStream (
-  IN  CONST AML_STREAM  * Stream,
-  OUT       AML_STREAM  * SubStream
+  IN  CONST AML_STREAM  *Stream,
+  OUT       AML_STREAM  *SubStream
   )
 {
   if (!IS_STREAM (Stream) ||
@@ -125,7 +125,7 @@ AmlStreamInitSubStream (
   }
 
   SubStream->MaxBufferSize = AmlStreamGetFreeSpace (Stream);
-  SubStream->Index = 0;
+  SubStream->Index     = 0;
   SubStream->Direction = Stream->Direction;
 
   return EFI_SUCCESS;
@@ -141,13 +141,14 @@ AmlStreamInitSubStream (
 UINT8 *
 EFIAPI
 AmlStreamGetBuffer (
-  IN  CONST AML_STREAM  * Stream
+  IN  CONST AML_STREAM  *Stream
   )
 {
   if (!IS_STREAM (Stream)) {
     ASSERT (0);
     return NULL;
   }
+
   return Stream->Buffer;
 }
 
@@ -161,13 +162,14 @@ AmlStreamGetBuffer (
 UINT32
 EFIAPI
 AmlStreamGetMaxBufferSize (
-  IN  CONST AML_STREAM  * Stream
+  IN  CONST AML_STREAM  *Stream
   )
 {
   if (!IS_STREAM (Stream)) {
     ASSERT (0);
     return 0;
   }
+
   return Stream->MaxBufferSize;
 }
 
@@ -183,7 +185,7 @@ AmlStreamGetMaxBufferSize (
 EFI_STATUS
 EFIAPI
 AmlStreamReduceMaxBufferSize (
-  IN  AML_STREAM  * Stream,
+  IN  AML_STREAM  *Stream,
   IN  UINT32        Diff
   )
 {
@@ -214,13 +216,14 @@ AmlStreamReduceMaxBufferSize (
 UINT32
 EFIAPI
 AmlStreamGetIndex (
-  IN  CONST AML_STREAM  * Stream
+  IN  CONST AML_STREAM  *Stream
   )
 {
   if (!IS_STREAM (Stream)) {
     ASSERT (0);
     return 0;
   }
+
   return Stream->Index;
 }
 
@@ -234,13 +237,14 @@ AmlStreamGetIndex (
 EAML_STREAM_DIRECTION
 EFIAPI
 AmlStreamGetDirection (
-  IN  CONST AML_STREAM  * Stream
+  IN  CONST AML_STREAM  *Stream
   )
 {
   if (!IS_STREAM (Stream)) {
     ASSERT (0);
     return EAmlStreamDirectionInvalid;
   }
+
   return Stream->Direction;
 }
 
@@ -254,7 +258,7 @@ AmlStreamGetDirection (
 UINT8 *
 EFIAPI
 AmlStreamGetCurrPos (
-  IN  CONST AML_STREAM  * Stream
+  IN  CONST AML_STREAM  *Stream
   )
 {
   if (!IS_STREAM (Stream)) {
@@ -282,7 +286,7 @@ AmlStreamGetCurrPos (
 UINT32
 EFIAPI
 AmlStreamGetFreeSpace (
-  IN  CONST AML_STREAM  * Stream
+  IN  CONST AML_STREAM  *Stream
   )
 {
   if (!IS_STREAM (Stream)) {
@@ -314,12 +318,12 @@ AmlStreamGetFreeSpace (
 EFI_STATUS
 EFIAPI
 AmlStreamProgress (
-  IN  AML_STREAM  * Stream,
+  IN  AML_STREAM  *Stream,
   IN  UINT32        Offset
   )
 {
   if (!IS_STREAM (Stream)         ||
-      IS_END_OF_STREAM  (Stream)  ||
+      IS_END_OF_STREAM (Stream)  ||
       (Offset == 0)) {
     ASSERT (0);
     return EFI_INVALID_PARAMETER;
@@ -350,7 +354,7 @@ AmlStreamProgress (
 EFI_STATUS
 EFIAPI
 AmlStreamRewind (
-  IN  AML_STREAM  * Stream,
+  IN  AML_STREAM  *Stream,
   IN  UINT32        Offset
   )
 {
@@ -380,7 +384,7 @@ AmlStreamRewind (
 EFI_STATUS
 EFIAPI
 AmlStreamReset (
-  IN  AML_STREAM  * Stream
+  IN  AML_STREAM  *Stream
   )
 {
   if (!IS_STREAM (Stream)) {
@@ -409,11 +413,11 @@ AmlStreamReset (
 EFI_STATUS
 EFIAPI
 AmlStreamPeekByte (
-  IN  AML_STREAM  * Stream,
-  OUT UINT8       * OutByte
+  IN  AML_STREAM  *Stream,
+  OUT UINT8       *OutByte
   )
 {
-  UINT8   * CurPos;
+  UINT8  *CurPos;
 
   if (!IS_STREAM (Stream)       ||
       IS_END_OF_STREAM (Stream) ||
@@ -448,11 +452,11 @@ AmlStreamPeekByte (
 EFI_STATUS
 EFIAPI
 AmlStreamReadByte (
-  IN  AML_STREAM  * Stream,
-  OUT UINT8       * OutByte
+  IN  AML_STREAM  *Stream,
+  OUT UINT8       *OutByte
   )
 {
-  EFI_STATUS    Status;
+  EFI_STATUS  Status;
 
   if (!IS_STREAM (Stream)       ||
       IS_END_OF_STREAM (Stream) ||
@@ -498,12 +502,12 @@ AmlStreamReadByte (
 EFI_STATUS
 EFIAPI
 AmlStreamWrite (
-  IN        AML_STREAM  * Stream,
-  IN  CONST UINT8       * Buffer,
+  IN        AML_STREAM  *Stream,
+  IN  CONST UINT8       *Buffer,
   IN        UINT32        Size
   )
 {
-  UINT8   * CurrPos;
+  UINT8  *CurrPos;
 
   if (!IS_STREAM (Stream)       ||
       IS_END_OF_STREAM (Stream) ||
@@ -554,14 +558,14 @@ AmlStreamWrite (
 BOOLEAN
 EFIAPI
 AmlStreamCmp (
-  IN  CONST AML_STREAM    * Stream1,
-  IN  CONST AML_STREAM    * Stream2,
+  IN  CONST AML_STREAM    *Stream1,
+  IN  CONST AML_STREAM    *Stream2,
   IN        UINT32          Size
   )
 {
-  UINT32          MinSize;
-  UINT8         * CurrPosStream1;
-  UINT8         * CurrPosStream2;
+  UINT32  MinSize;
+  UINT8   *CurrPosStream1;
+  UINT8   *CurrPosStream2;
 
   if (!IS_STREAM (Stream1)                        ||
       IS_END_OF_STREAM (Stream1)                  ||
@@ -589,6 +593,7 @@ AmlStreamCmp (
     ASSERT (0);
     return FALSE;
   }
+
   CurrPosStream2 = AmlStreamGetCurrPos (Stream2);
   if (CurrPosStream2 == NULL) {
     ASSERT (0);
@@ -600,16 +605,16 @@ AmlStreamCmp (
   }
 
   // The stream is already pointing on the last byte, thus the (-1).
-  //          +---------------------+
+  // +---------------------+
   // BStream  | | | | | | | |M|E|T|0|
-  //          +---------------------+
-  //                               ^
-  //                             CurrPos
+  // +---------------------+
+  // ^
+  // CurrPos
   return (0 == CompareMem (
-                  CurrPosStream1 - (MinSize - 1),
-                  CurrPosStream2 - (MinSize - 1),
-                  MinSize
-                  ));
+                 CurrPosStream1 - (MinSize - 1),
+                 CurrPosStream2 - (MinSize - 1),
+                 MinSize
+                 ));
 }
 
 /** Copy Size bytes of the stream's data to DstBuffer.
@@ -633,13 +638,13 @@ AmlStreamCmp (
 EFI_STATUS
 EFIAPI
 AmlStreamCpyS (
-  OUT CHAR8         * DstBuffer,
+  OUT CHAR8         *DstBuffer,
   IN  UINT32          MaxDstBufferSize,
-  IN  AML_STREAM    * Stream,
+  IN  AML_STREAM    *Stream,
   IN  UINT32          Size
   )
 {
-  CHAR8   * StreamBufferStart;
+  CHAR8  *StreamBufferStart;
 
   // Stream is checked in the function call.
   if ((DstBuffer == NULL)       ||
@@ -655,9 +660,9 @@ AmlStreamCpyS (
   }
 
   // Find the address at which the data is starting.
-  StreamBufferStart = (CHAR8*)(IS_STREAM_FORWARD (Stream) ?
-                                 Stream->Buffer :
-                                 AmlStreamGetCurrPos (Stream));
+  StreamBufferStart = (CHAR8 *)(IS_STREAM_FORWARD (Stream) ?
+                                Stream->Buffer :
+                                AmlStreamGetCurrPos (Stream));
 
   CopyMem (DstBuffer, StreamBufferStart, Size);
 

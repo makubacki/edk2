@@ -48,79 +48,79 @@
                                 requested object.
 **/
 #define GET_OBJECT_LIST(CmObjectNameSpace, CmObjectId, Type)                  \
-STATIC                                                                        \
-EFI_STATUS                                                                    \
-EFIAPI                                                                        \
-Get##CmObjectId (                                                             \
-  IN  CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL  * CONST CfgMgrProtocol,     \
-  IN  CONST CM_OBJECT_TOKEN                               Token OPTIONAL,     \
-  OUT       Type                                 **       List,               \
-  OUT       UINT32                                * CONST Count OPTIONAL      \
-  )                                                                           \
-{                                                                             \
-  EFI_STATUS         Status;                                                  \
-  CM_OBJ_DESCRIPTOR  CmObjectDesc;                                            \
-  UINT32             ObjCount = 0;                                            \
-  if (List == NULL) {                                                         \
-    Status = EFI_INVALID_PARAMETER;                                           \
-    DEBUG ((                                                                  \
-      DEBUG_ERROR,                                                            \
-      "ERROR: Get" #CmObjectId ": Invalid out parameter for"                  \
-      " object list. Status = %r\n",                                          \
-      Status                                                                  \
-      ));                                                                     \
-    goto error_handler;                                                       \
-  }                                                                           \
-  Status = CfgMgrProtocol->GetObject (                                        \
-                             CfgMgrProtocol,                                  \
-                             CREATE_CM_OBJECT_ID (                            \
-                               CmObjectNameSpace,                             \
-                               CmObjectId                                     \
-                               ),                                             \
-                             Token,                                           \
-                             &CmObjectDesc                                    \
-                             );                                               \
-  if (EFI_ERROR (Status)) {                                                   \
-    DEBUG ((                                                                  \
-      DEBUG_INFO,                                                             \
-      "INFO: Get" #CmObjectId ": Platform does not implement "                \
-      #CmObjectId ". Status = %r\n",                                          \
-      Status                                                                  \
-      ));                                                                     \
-    *List = NULL;                                                             \
-    goto error_handler;                                                       \
-  }                                                                           \
-  if (CmObjectDesc.ObjectId !=                                                \
-      CREATE_CM_OBJECT_ID (CmObjectNameSpace, CmObjectId)) {                  \
-    DEBUG ((                                                                  \
-      DEBUG_ERROR,                                                            \
-      "ERROR: Get" #CmObjectId ": " #CmObjectId                               \
-      ": Invalid ObjectId = 0x%x\n, expected Id = 0x%x\n",                    \
-      CmObjectDesc.ObjectId,                                                  \
-      CREATE_CM_OBJECT_ID (CmObjectNameSpace, CmObjectId)                     \
-      ));                                                                     \
-    ASSERT (FALSE);                                                           \
-    Status = EFI_INVALID_PARAMETER;                                           \
-    goto error_handler;                                                       \
-  }                                                                           \
-  if (CmObjectDesc.Size < (sizeof (Type) * CmObjectDesc.Count)) {             \
-    DEBUG ((                                                                  \
-      DEBUG_ERROR,                                                            \
-      "ERROR: Get" #CmObjectId ": " #CmObjectId                               \
-      ": Buffer too small, size = 0x%x\n",                                    \
-      CmObjectDesc.Size                                                       \
-      ));                                                                     \
-    ASSERT (FALSE);                                                           \
-    Status = EFI_BAD_BUFFER_SIZE;                                             \
-    goto error_handler;                                                       \
-  }                                                                           \
-  ObjCount = CmObjectDesc.Count;                                              \
-  *List = (Type*)CmObjectDesc.Data;                                           \
+  STATIC                                                                        \
+  EFI_STATUS                                                                    \
+  EFIAPI                                                                        \
+  Get ## CmObjectId (                                                             \
+           IN  CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL  * CONST CfgMgrProtocol,     \
+           IN  CONST CM_OBJECT_TOKEN                               Token OPTIONAL,     \
+           OUT       Type                                 **List,               \
+           OUT       UINT32                                * CONST Count OPTIONAL      \
+           )                                                                           \
+  {                                                                             \
+    EFI_STATUS         Status;                                                  \
+    CM_OBJ_DESCRIPTOR  CmObjectDesc;                                            \
+    UINT32             ObjCount = 0;                                            \
+    if (List == NULL) {                                                         \
+      Status = EFI_INVALID_PARAMETER;                                           \
+      DEBUG ((                                                                  \
+        DEBUG_ERROR,                                                            \
+        "ERROR: Get" # CmObjectId ": Invalid out parameter for"                  \
+                                  " object list. Status = %r\n",                                          \
+        Status                                                                  \
+        ));                                                                     \
+      goto error_handler;                                                       \
+    }                                                                           \
+    Status = CfgMgrProtocol->GetObject (                                        \
+                               CfgMgrProtocol,                                  \
+                               CREATE_CM_OBJECT_ID (                            \
+                                 CmObjectNameSpace,                             \
+                                 CmObjectId                                     \
+                                 ),                                             \
+                               Token,                                           \
+                               &CmObjectDesc                                    \
+                               );                                               \
+    if (EFI_ERROR (Status)) {                                                   \
+      DEBUG ((                                                                  \
+        DEBUG_INFO,                                                             \
+        "INFO: Get" # CmObjectId ": Platform does not implement "                \
+        # CmObjectId ". Status = %r\n",                                          \
+        Status                                                                  \
+        ));                                                                     \
+      *List = NULL;                                                             \
+      goto error_handler;                                                       \
+    }                                                                           \
+    if (CmObjectDesc.ObjectId !=                                                \
+        CREATE_CM_OBJECT_ID (CmObjectNameSpace, CmObjectId)) {                  \
+      DEBUG ((                                                                  \
+        DEBUG_ERROR,                                                            \
+        "ERROR: Get" # CmObjectId ": " # CmObjectId                               \
+        ": Invalid ObjectId = 0x%x\n, expected Id = 0x%x\n",                    \
+        CmObjectDesc.ObjectId,                                                  \
+        CREATE_CM_OBJECT_ID (CmObjectNameSpace, CmObjectId)                     \
+        ));                                                                     \
+      ASSERT (FALSE);                                                           \
+      Status = EFI_INVALID_PARAMETER;                                           \
+      goto error_handler;                                                       \
+    }                                                                           \
+    if (CmObjectDesc.Size < (sizeof (Type) * CmObjectDesc.Count)) {             \
+      DEBUG ((                                                                  \
+        DEBUG_ERROR,                                                            \
+        "ERROR: Get" # CmObjectId ": " # CmObjectId                               \
+        ": Buffer too small, size = 0x%x\n",                                    \
+        CmObjectDesc.Size                                                       \
+        ));                                                                     \
+      ASSERT (FALSE);                                                           \
+      Status = EFI_BAD_BUFFER_SIZE;                                             \
+      goto error_handler;                                                       \
+    }                                                                           \
+    ObjCount = CmObjectDesc.Count;                                              \
+    *List    = (Type *)CmObjectDesc.Data;                                           \
 error_handler:                                                                \
-  if (Count != NULL) {                                                        \
-    *Count = ObjCount;                                                        \
-  }                                                                           \
-  return Status;                                                              \
-}
+    if (Count != NULL) {                                                        \
+      *Count = ObjCount;                                                        \
+    }                                                                           \
+    return Status;                                                              \
+  }
 
 #endif // CONFIGURATION_MANAGER_HELPER_H_

@@ -18,9 +18,9 @@
 typedef enum EAmlStreamDirection {
   EAmlStreamDirectionInvalid,     ///< Invalid AML Stream direction.
   EAmlStreamDirectionForward,     ///< Forward direction.
-                                  ///  The Stream goes toward higher addresses.
+                                  /// The Stream goes toward higher addresses.
   EAmlStreamDirectionBackward,    ///< Forward direction.
-                                  ///  The Stream goes toward lower addresses.
+                                  /// The Stream goes toward lower addresses.
   EAmlStreamDirectionMax,         ///< Max enum.
 } EAML_STREAM_DIRECTION;
 
@@ -31,17 +31,17 @@ typedef enum EAmlStreamDirection {
 */
 typedef struct AmlStream {
   /// Pointer to a buffer.
-  UINT8                 * Buffer;
+  UINT8     *Buffer;
 
   /// Size of Buffer.
-  UINT32                  MaxBufferSize;
+  UINT32    MaxBufferSize;
 
   /// Index in the Buffer.
   /// The Index field allows to keep track of how many bytes have been
   /// read/written in the Buffer, and to retrieve the current stream position.
   /// 0 <= Index <= MaxBufferSize.
   /// If Index == MaxBufferSize, no more action is allowed on the stream.
-  UINT32                  Index;
+  UINT32    Index;
 
   /// The direction the stream is progressing.
   /// If the stream goes backward (toward lower addresses), the bytes written
@@ -51,12 +51,12 @@ typedef struct AmlStream {
   /// Similarly, moving the stream position will be done according to the
   /// direction of the stream.
   /// Stream buffer:
-  ///    +---------------+-----+-----+-----+-----+-----+-----+---- +------+
-  ///    |-------------- | ' ' | 'w' | 'o' | 'r' | 'l' | 'd' | '!' | '\0' |
-  ///    +---------------+-----+-----+-----+-----+-----+-----+---- +------+
-  ///                       ^
-  ///                Current position.
-  EAML_STREAM_DIRECTION   Direction;
+  /// +---------------+-----+-----+-----+-----+-----+-----+---- +------+
+  /// |-------------- | ' ' | 'w' | 'o' | 'r' | 'l' | 'd' | '!' | '\0' |
+  /// +---------------+-----+-----+-----+-----+-----+-----+---- +------+
+  /// ^
+  /// Current position.
+  EAML_STREAM_DIRECTION    Direction;
 } AML_STREAM;
 
 /** Check whether a StreamPtr is a valid Stream.
@@ -67,8 +67,9 @@ typedef struct AmlStream {
   @retval FALSE Otherwise.
 */
 #define IS_STREAM(Stream)  (                                                  \
-          (((AML_STREAM*)Stream) != NULL)                                 &&  \
-          (((AML_STREAM*)Stream)->Buffer != NULL))
+                                                                              (((AML_STREAM *)Stream) != \
+                                                                               NULL)                                 &&  \
+                                                                              (((AML_STREAM *)Stream)->Buffer != NULL))
 
 /** Check whether a Stream is at the end of its buffer.
 
@@ -78,8 +79,8 @@ typedef struct AmlStream {
   @retval FALSE Otherwise.
 */
 #define IS_END_OF_STREAM(Stream)  (                                           \
-          (((AML_STREAM*)Stream)->Index ==                                    \
-             ((AML_STREAM*)Stream)->MaxBufferSize))
+                                                                              (((AML_STREAM *)Stream)->Index ==                                    \
+                                                                               ((AML_STREAM *)Stream)->MaxBufferSize))
 
 /** Check Stream goes forward.
 
@@ -88,8 +89,9 @@ typedef struct AmlStream {
   @retval TRUE  Stream goes forward.
   @retval FALSE Otherwise.
 */
-#define IS_STREAM_FORWARD(Stream)   (                                         \
-    ((AML_STREAM*)Stream)->Direction == EAmlStreamDirectionForward)
+#define IS_STREAM_FORWARD(Stream)  (                                         \
+                                                                             ((AML_STREAM *)Stream)->Direction == \
+                                                                             EAmlStreamDirectionForward)
 
 /** Check Stream goes backward.
 
@@ -98,8 +100,9 @@ typedef struct AmlStream {
   @retval TRUE  Stream goes backward.
   @retval FALSE Otherwise.
 */
-#define IS_STREAM_BACKWARD(Stream)   (                                        \
-    ((AML_STREAM*)Stream)->Direction == EAmlStreamDirectionBackward)
+#define IS_STREAM_BACKWARD(Stream)  (                                        \
+                                                                             ((AML_STREAM *)Stream)->Direction == \
+                                                                             EAmlStreamDirectionBackward)
 
 /** Initialize a stream.
 
@@ -116,8 +119,8 @@ typedef struct AmlStream {
 EFI_STATUS
 EFIAPI
 AmlStreamInit (
-  IN  OUT AML_STREAM              * Stream,
-  IN      UINT8                   * Buffer,
+  IN  OUT AML_STREAM              *Stream,
+  IN      UINT8                   *Buffer,
   IN      UINT32                    MaxBufferSize,
   IN      EAML_STREAM_DIRECTION     Direction
   );
@@ -136,8 +139,8 @@ AmlStreamInit (
 EFI_STATUS
 EFIAPI
 AmlStreamClone (
-  IN  CONST AML_STREAM    * Stream,
-  OUT        AML_STREAM   * ClonedStream
+  IN  CONST AML_STREAM    *Stream,
+  OUT        AML_STREAM   *ClonedStream
   );
 
 /** Initialize a sub-stream from a stream.
@@ -167,8 +170,8 @@ AmlStreamClone (
 EFI_STATUS
 EFIAPI
 AmlStreamInitSubStream (
-  IN  CONST AML_STREAM  * Stream,
-  OUT       AML_STREAM  * SubStream
+  IN  CONST AML_STREAM  *Stream,
+  OUT       AML_STREAM  *SubStream
   );
 
 /** Get the buffer of a stream.
@@ -181,7 +184,7 @@ AmlStreamInitSubStream (
 UINT8 *
 EFIAPI
 AmlStreamGetBuffer (
-  IN  CONST AML_STREAM  * Stream
+  IN  CONST AML_STREAM  *Stream
   );
 
 /** Get the size of Stream's Buffer.
@@ -194,7 +197,7 @@ AmlStreamGetBuffer (
 UINT32
 EFIAPI
 AmlStreamGetMaxBufferSize (
-  IN  CONST AML_STREAM  * Stream
+  IN  CONST AML_STREAM  *Stream
   );
 
 /** Reduce the maximal size of Stream's Buffer (MaxBufferSize field).
@@ -209,7 +212,7 @@ AmlStreamGetMaxBufferSize (
 EFI_STATUS
 EFIAPI
 AmlStreamReduceMaxBufferSize (
-  IN  AML_STREAM  * Stream,
+  IN  AML_STREAM  *Stream,
   IN  UINT32        Diff
   );
 
@@ -229,7 +232,7 @@ AmlStreamReduceMaxBufferSize (
 UINT32
 EFIAPI
 AmlStreamGetIndex (
-  IN  CONST AML_STREAM  * Stream
+  IN  CONST AML_STREAM  *Stream
   );
 
 /** Get Stream's Direction.
@@ -242,7 +245,7 @@ AmlStreamGetIndex (
 EAML_STREAM_DIRECTION
 EFIAPI
 AmlStreamGetDirection (
-  IN  CONST AML_STREAM  * Stream
+  IN  CONST AML_STREAM  *Stream
   );
 
 /** Return a pointer to the current position in the stream.
@@ -255,7 +258,7 @@ AmlStreamGetDirection (
 UINT8 *
 EFIAPI
 AmlStreamGetCurrPos (
-  IN  CONST AML_STREAM  * Stream
+  IN  CONST AML_STREAM  *Stream
   );
 
 /** Get the space available in the stream.
@@ -268,7 +271,7 @@ AmlStreamGetCurrPos (
 UINT32
 EFIAPI
 AmlStreamGetFreeSpace (
-  IN  CONST AML_STREAM  * Stream
+  IN  CONST AML_STREAM  *Stream
   );
 
 /** Move Stream by Offset bytes.
@@ -287,7 +290,7 @@ AmlStreamGetFreeSpace (
 EFI_STATUS
 EFIAPI
 AmlStreamProgress (
-  IN  AML_STREAM  * Stream,
+  IN  AML_STREAM  *Stream,
   IN  UINT32        Offset
   );
 
@@ -306,7 +309,7 @@ AmlStreamProgress (
 EFI_STATUS
 EFIAPI
 AmlStreamRewind (
-  IN  AML_STREAM  * Stream,
+  IN  AML_STREAM  *Stream,
   IN  UINT32        Offset
   );
 
@@ -320,7 +323,7 @@ AmlStreamRewind (
 EFI_STATUS
 EFIAPI
 AmlStreamReset (
-  IN  AML_STREAM  * Stream
+  IN  AML_STREAM  *Stream
   );
 
 /** Peek one byte at Stream's current position.
@@ -339,8 +342,8 @@ AmlStreamReset (
 EFI_STATUS
 EFIAPI
 AmlStreamPeekByte (
-  IN  AML_STREAM  * Stream,
-  OUT UINT8       * OutByte
+  IN  AML_STREAM  *Stream,
+  OUT UINT8       *OutByte
   );
 
 /** Read one byte at Stream's current position.
@@ -359,8 +362,8 @@ AmlStreamPeekByte (
 EFI_STATUS
 EFIAPI
 AmlStreamReadByte (
-  IN  AML_STREAM  * Stream,
-  OUT UINT8       * OutByte
+  IN  AML_STREAM  *Stream,
+  OUT UINT8       *OutByte
   );
 
 /** Write Size bytes in the stream.
@@ -388,8 +391,8 @@ AmlStreamReadByte (
 EFI_STATUS
 EFIAPI
 AmlStreamWrite (
-  IN        AML_STREAM  * Stream,
-  IN  CONST UINT8       * Buffer,
+  IN        AML_STREAM  *Stream,
+  IN  CONST UINT8       *Buffer,
   IN        UINT32        Size
   );
 
@@ -416,8 +419,8 @@ AmlStreamWrite (
 BOOLEAN
 EFIAPI
 AmlStreamCmp (
-  IN  CONST AML_STREAM    * Stream1,
-  IN  CONST AML_STREAM    * Stream2,
+  IN  CONST AML_STREAM    *Stream1,
+  IN  CONST AML_STREAM    *Stream2,
   IN        UINT32          Size
   );
 
@@ -442,9 +445,9 @@ AmlStreamCmp (
 EFI_STATUS
 EFIAPI
 AmlStreamCpyS (
-  OUT CHAR8         * DstBuffer,
+  OUT CHAR8         *DstBuffer,
   IN  UINT32          MaxDstBufferSize,
-  IN  AML_STREAM    * Stream,
+  IN  AML_STREAM    *Stream,
   IN  UINT32          Size
   );
 

@@ -50,10 +50,10 @@ AmlCodeGenInterrupt (
   IN  BOOLEAN             EdgeTriggered,
   IN  BOOLEAN             ActiveLow,
   IN  BOOLEAN             Shared,
-  IN  UINT32            * IrqList,
+  IN  UINT32            *IrqList,
   IN  UINT8               IrqCount,
-  IN  AML_OBJECT_NODE   * ParentNode,   OPTIONAL
-  OUT AML_DATA_NODE    ** NewRdNode     OPTIONAL
+  IN  AML_OBJECT_NODE   *ParentNode, OPTIONAL
+  OUT AML_DATA_NODE    **NewRdNode     OPTIONAL
   );
 
 #endif // AML_RESOURCE_DATA_CODE_GEN_H_

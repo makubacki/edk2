@@ -14,15 +14,15 @@
 
 /** Is a character upper case
 */
-#define IS_UPPER_CHAR(x) ((x >= 'A') && (x <= 'Z'))
+#define IS_UPPER_CHAR(x)  ((x >= 'A') && (x <= 'Z'))
 
 /** Is a character a decimal digit
 */
-#define IS_DIGIT(x) ((x >= '0') && (x <= '9'))
+#define IS_DIGIT(x)  ((x >= '0') && (x <= '9'))
 
 /** Is a character an upper case hexadecimal digit
 */
-#define IS_UPPER_HEX(x) (((x >= 'A') && (x <= 'F')) || IS_DIGIT (x))
+#define IS_UPPER_HEX(x)  (((x >= 'A') && (x <= 'F')) || IS_DIGIT (x))
 
 /** The GetCgfMgrInfo function gets the CM_STD_OBJ_CONFIGURATION_MANAGER_INFO
     object from the Configuration Manager.
@@ -41,8 +41,8 @@
 EFI_STATUS
 EFIAPI
 GetCgfMgrInfo (
-  IN  CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL      * CONST  CfgMgrProtocol,
-  OUT       CM_STD_OBJ_CONFIGURATION_MANAGER_INFO    **        CfgMfrInfo
+  IN  CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL      *CONST  CfgMgrProtocol,
+  OUT       CM_STD_OBJ_CONFIGURATION_MANAGER_INFO    **CfgMfrInfo
   );
 
 /** The AddAcpiHeader function updates the ACPI header structure. It uses the
@@ -67,10 +67,10 @@ GetCgfMgrInfo (
 EFI_STATUS
 EFIAPI
 AddAcpiHeader (
-  IN      CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL  * CONST CfgMgrProtocol,
-  IN      CONST ACPI_TABLE_GENERATOR                  * CONST Generator,
-  IN OUT  EFI_ACPI_DESCRIPTION_HEADER                 * CONST AcpiHeader,
-  IN      CONST CM_STD_OBJ_ACPI_TABLE_INFO            * CONST AcpiTableInfo,
+  IN      CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL  *CONST CfgMgrProtocol,
+  IN      CONST ACPI_TABLE_GENERATOR                  *CONST Generator,
+  IN OUT  EFI_ACPI_DESCRIPTION_HEADER                 *CONST AcpiHeader,
+  IN      CONST CM_STD_OBJ_ACPI_TABLE_INFO            *CONST AcpiTableInfo,
   IN      CONST UINT32                                        Length
   );
 
@@ -90,8 +90,8 @@ AddAcpiHeader (
 typedef
 BOOLEAN
 (EFIAPI *PFN_IS_EQUAL)(
-  IN CONST  VOID            * Object1,
-  IN CONST  VOID            * Object2,
+  IN CONST  VOID            *Object1,
+  IN CONST  VOID            *Object2,
   IN        UINTN             Index1 OPTIONAL,
   IN        UINTN             Index2 OPTIONAL
   );
@@ -113,7 +113,7 @@ BOOLEAN
 BOOLEAN
 EFIAPI
 FindDuplicateValue (
-  IN  CONST VOID          * Array,
+  IN  CONST VOID          *Array,
   IN  CONST UINTN           Count,
   IN  CONST UINTN           ElementSize,
   IN        PFN_IS_EQUAL    EqualTestFunction
@@ -141,7 +141,7 @@ AsciiFromHex (
 **/
 BOOLEAN
 IsValidPnpId (
-  IN  CONST CHAR8  * Hid
+  IN  CONST CHAR8  *Hid
   );
 
 /** Check if a HID is a valid ACPI ID.
@@ -153,7 +153,7 @@ IsValidPnpId (
 **/
 BOOLEAN
 IsValidAcpiId (
-  IN  CONST CHAR8  * Hid
+  IN  CONST CHAR8  *Hid
   );
 
 #endif // TABLE_HELPER_LIB_H_

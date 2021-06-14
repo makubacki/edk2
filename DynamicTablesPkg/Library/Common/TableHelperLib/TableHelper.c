@@ -34,8 +34,8 @@
 EFI_STATUS
 EFIAPI
 GetCgfMgrInfo (
-  IN  CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL      * CONST  CfgMgrProtocol,
-  OUT       CM_STD_OBJ_CONFIGURATION_MANAGER_INFO    **        CfgMfrInfo
+  IN  CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL      *CONST  CfgMgrProtocol,
+  OUT       CM_STD_OBJ_CONFIGURATION_MANAGER_INFO    **CfgMfrInfo
   )
 {
   EFI_STATUS         Status;
@@ -82,7 +82,7 @@ GetCgfMgrInfo (
     return EFI_BAD_BUFFER_SIZE;
   }
 
-  *CfgMfrInfo = (CM_STD_OBJ_CONFIGURATION_MANAGER_INFO*)CmObjectDesc.Data;
+  *CfgMfrInfo = (CM_STD_OBJ_CONFIGURATION_MANAGER_INFO *)CmObjectDesc.Data;
   return Status;
 }
 
@@ -109,15 +109,15 @@ GetCgfMgrInfo (
 EFI_STATUS
 EFIAPI
 AddAcpiHeader (
-  IN      CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL  * CONST CfgMgrProtocol,
-  IN      CONST ACPI_TABLE_GENERATOR                  * CONST Generator,
-  IN OUT  EFI_ACPI_DESCRIPTION_HEADER                 * CONST AcpiHeader,
-  IN      CONST CM_STD_OBJ_ACPI_TABLE_INFO            * CONST AcpiTableInfo,
+  IN      CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL  *CONST CfgMgrProtocol,
+  IN      CONST ACPI_TABLE_GENERATOR                  *CONST Generator,
+  IN OUT  EFI_ACPI_DESCRIPTION_HEADER                 *CONST AcpiHeader,
+  IN      CONST CM_STD_OBJ_ACPI_TABLE_INFO            *CONST AcpiTableInfo,
   IN      CONST UINT32                                        Length
   )
 {
-  EFI_STATUS                               Status;
-  CM_STD_OBJ_CONFIGURATION_MANAGER_INFO  * CfgMfrInfo;
+  EFI_STATUS                             Status;
+  CM_STD_OBJ_CONFIGURATION_MANAGER_INFO  *CfgMfrInfo;
 
   ASSERT (CfgMgrProtocol != NULL);
   ASSERT (Generator != NULL);
@@ -128,7 +128,7 @@ AddAcpiHeader (
       (Generator == NULL) ||
       (AcpiHeader == NULL) ||
       (Length < sizeof (EFI_ACPI_DESCRIPTION_HEADER))
-    ) {
+      ) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -200,16 +200,16 @@ error_handler:
 BOOLEAN
 EFIAPI
 FindDuplicateValue (
-  IN  CONST VOID          * Array,
+  IN  CONST VOID          *Array,
   IN  CONST UINTN           Count,
   IN  CONST UINTN           ElementSize,
   IN        PFN_IS_EQUAL    EqualTestFunction
   )
 {
-  UINTN         Index1;
-  UINTN         Index2;
-  UINT8       * Element1;
-  UINT8       * Element2;
+  UINTN  Index1;
+  UINTN  Index2;
+  UINT8  *Element1;
+  UINT8  *Element2;
 
   if (Array == NULL) {
     DEBUG ((DEBUG_ERROR, "ERROR: FindDuplicateValues: Array is NULL.\n"));
@@ -235,14 +235,15 @@ FindDuplicateValue (
 
   for (Index1 = 0; Index1 < Count - 1; Index1++) {
     for (Index2 = Index1 + 1; Index2 < Count; Index2++) {
-      Element1 = (UINT8*)Array + (Index1 * ElementSize);
-      Element2 = (UINT8*)Array + (Index2 * ElementSize);
+      Element1 = (UINT8 *)Array + (Index1 * ElementSize);
+      Element2 = (UINT8 *)Array + (Index2 * ElementSize);
 
       if (EqualTestFunction (Element1, Element2, Index1, Index2)) {
         return TRUE;
       }
     }
   }
+
   return FALSE;
 }
 
@@ -280,10 +281,10 @@ AsciiFromHex (
 **/
 BOOLEAN
 IsValidPnpId (
-  IN  CONST CHAR8  * Hid
+  IN  CONST CHAR8  *Hid
   )
 {
-  UINTN Index;
+  UINTN  Index;
 
   if (AsciiStrLen (Hid) != 7) {
     return FALSE;
@@ -315,10 +316,10 @@ IsValidPnpId (
 **/
 BOOLEAN
 IsValidAcpiId (
-  IN  CONST CHAR8  * Hid
+  IN  CONST CHAR8  *Hid
   )
 {
-  UINTN Index;
+  UINTN  Index;
 
   if (AsciiStrLen (Hid) != 8) {
     return FALSE;

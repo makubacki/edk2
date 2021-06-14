@@ -40,14 +40,14 @@ EFI_STATUS
 EFIAPI
 AmlDeviceOpUpdateName (
   IN  AML_OBJECT_NODE_HANDLE    DeviceOpNode,
-  IN  CHAR8                   * NewNameString
+  IN  CHAR8                   *NewNameString
   )
 {
-  EFI_STATUS              Status;
+  EFI_STATUS  Status;
 
-  AML_DATA_NODE_HANDLE    DeviceNameDataNode;
-  CHAR8                 * NewAmlNameString;
-  UINT32                  NewAmlNameStringSize;
+  AML_DATA_NODE_HANDLE  DeviceNameDataNode;
+  CHAR8                 *NewAmlNameString;
+  UINT32                NewAmlNameStringSize;
 
   // Check the input node is an object node.
   if ((DeviceOpNode == NULL)                                              ||
@@ -87,7 +87,7 @@ AmlDeviceOpUpdateName (
   Status = AmlUpdateDataNode (
              DeviceNameDataNode,
              EAmlNodeDataTypeNameString,
-             (UINT8*)NewAmlNameString,
+             (UINT8 *)NewAmlNameString,
              NewAmlNameStringSize
              );
   ASSERT_EFI_ERROR (Status);
@@ -171,7 +171,7 @@ EFI_STATUS
 EFIAPI
 AmlNameOpUpdateString (
   IN        AML_OBJECT_NODE_HANDLE    NameOpNode,
-  IN  CONST CHAR8                   * NewName
+  IN  CONST CHAR8                   *NewName
   )
 {
   EFI_STATUS              Status;
@@ -214,7 +214,7 @@ AmlNameOpUpdateString (
   Status = AmlUpdateDataNode (
              StringDataNode,
              EAmlNodeDataTypeString,
-             (UINT8*)NewName,
+             (UINT8 *)NewName,
              (UINT32)AsciiStrLen (NewName) + 1
              );
   ASSERT_EFI_ERROR (Status);
@@ -252,7 +252,7 @@ EFI_STATUS
 EFIAPI
 AmlNameOpCrsGetFirstRdNode (
   IN  AML_OBJECT_NODE_HANDLE   NameOpCrsNode,
-  OUT AML_DATA_NODE_HANDLE   * OutRdNode
+  OUT AML_DATA_NODE_HANDLE   *OutRdNode
   )
 {
   AML_OBJECT_NODE_HANDLE  BufferOpNode;
@@ -329,11 +329,11 @@ EFI_STATUS
 EFIAPI
 AmlNameOpCrsGetNextRdNode (
   IN  AML_DATA_NODE_HANDLE    CurrRdNode,
-  OUT AML_DATA_NODE_HANDLE  * OutRdNode
+  OUT AML_DATA_NODE_HANDLE  *OutRdNode
   )
 {
-  AML_OBJECT_NODE_HANDLE     NameOpCrsNode;
-  AML_OBJECT_NODE_HANDLE     BufferOpNode;
+  AML_OBJECT_NODE_HANDLE  NameOpCrsNode;
+  AML_OBJECT_NODE_HANDLE  BufferOpNode;
 
   if ((CurrRdNode == NULL)                                              ||
       (AmlGetNodeType ((AML_NODE_HANDLE)CurrRdNode) != EAmlNodeData)    ||
@@ -374,7 +374,8 @@ AmlNameOpCrsGetNextRdNode (
   // If the Resource Data is an End Tag, return NULL.
   if (AmlNodeHasRdDataType (
         *OutRdNode,
-        AML_RD_BUILD_SMALL_DESC_ID (ACPI_SMALL_END_TAG_DESCRIPTOR_NAME))) {
+        AML_RD_BUILD_SMALL_DESC_ID (ACPI_SMALL_END_TAG_DESCRIPTOR_NAME)
+        )) {
     *OutRdNode = NULL;
   }
 

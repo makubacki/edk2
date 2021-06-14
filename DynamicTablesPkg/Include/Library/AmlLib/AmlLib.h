@@ -40,21 +40,21 @@
 
 #ifndef AML_HANDLE
 
-/** Node handle.
-*/
-typedef void* AML_NODE_HANDLE;
+  /** Node handle.
+  */
+  typedef void *AML_NODE_HANDLE;
 
-/** Root Node handle.
-*/
-typedef void* AML_ROOT_NODE_HANDLE;
+  /** Root Node handle.
+  */
+  typedef void *AML_ROOT_NODE_HANDLE;
 
-/** Object Node handle.
-*/
-typedef void* AML_OBJECT_NODE_HANDLE;
+  /** Object Node handle.
+  */
+  typedef void *AML_OBJECT_NODE_HANDLE;
 
-/** Data Node handle.
-*/
-typedef void* AML_DATA_NODE_HANDLE;
+  /** Data Node handle.
+  */
+  typedef void *AML_DATA_NODE_HANDLE;
 
 #endif // AML_HANDLE
 
@@ -78,8 +78,8 @@ typedef void* AML_DATA_NODE_HANDLE;
 EFI_STATUS
 EFIAPI
 AmlParseDefinitionBlock (
-  IN  CONST EFI_ACPI_DESCRIPTION_HEADER   * DefinitionBlock,
-  OUT       AML_ROOT_NODE_HANDLE          * RootPtr
+  IN  CONST EFI_ACPI_DESCRIPTION_HEADER   *DefinitionBlock,
+  OUT       AML_ROOT_NODE_HANDLE          *RootPtr
   );
 
 /** Serialize an AML definition block.
@@ -102,7 +102,7 @@ EFI_STATUS
 EFIAPI
 AmlSerializeDefinitionBlock (
   IN  AML_ROOT_NODE_HANDLE              RootNode,
-  OUT EFI_ACPI_DESCRIPTION_HEADER    ** Table
+  OUT EFI_ACPI_DESCRIPTION_HEADER    **Table
   );
 
 /** Clone a node and its children (clone a tree branch).
@@ -124,7 +124,7 @@ EFI_STATUS
 EFIAPI
 AmlCloneTree (
   IN  AML_NODE_HANDLE   Node,
-  OUT AML_NODE_HANDLE * ClonedNode
+  OUT AML_NODE_HANDLE *ClonedNode
   );
 
 /** Delete a Node and its children.
@@ -213,8 +213,8 @@ EFI_STATUS
 EFIAPI
 AmlFindNode (
   IN  AML_NODE_HANDLE       ReferenceNode,
-  IN  CHAR8               * AslPath,
-  OUT AML_NODE_HANDLE     * OutNode
+  IN  CHAR8               *AslPath,
+  OUT AML_NODE_HANDLE     *OutNode
   );
 
 /**
@@ -248,7 +248,7 @@ EFI_STATUS
 EFIAPI
 AmlDeviceOpUpdateName (
   IN  AML_OBJECT_NODE_HANDLE    DeviceOpNode,
-  IN  CHAR8                   * NewNameString
+  IN  CHAR8                   *NewNameString
   );
 
 /** Update an integer value defined by a NameOp object node.
@@ -298,7 +298,7 @@ EFI_STATUS
 EFIAPI
 AmlNameOpUpdateString (
   IN        AML_OBJECT_NODE_HANDLE    NameOpNode,
-  IN  CONST CHAR8                   * NewName
+  IN  CONST CHAR8                   *NewName
   );
 
 /** Get the first Resource Data element contained in a "_CRS" object.
@@ -333,7 +333,7 @@ EFI_STATUS
 EFIAPI
 AmlNameOpCrsGetFirstRdNode (
   IN  AML_OBJECT_NODE_HANDLE   NameOpCrsNode,
-  OUT AML_DATA_NODE_HANDLE   * OutRdNode
+  OUT AML_DATA_NODE_HANDLE   *OutRdNode
   );
 
 /** Get the Resource Data element following the CurrRdNode Resource Data.
@@ -368,7 +368,7 @@ EFI_STATUS
 EFIAPI
 AmlNameOpCrsGetNextRdNode (
   IN  AML_DATA_NODE_HANDLE    CurrRdNode,
-  OUT AML_DATA_NODE_HANDLE  * OutRdNode
+  OUT AML_DATA_NODE_HANDLE  *OutRdNode
   );
 
 /** Update the first interrupt of an Interrupt resource data node.
@@ -471,7 +471,7 @@ AmlCodeGenCrsAddRdInterrupt (
   IN  BOOLEAN                 EdgeTriggered,
   IN  BOOLEAN                 ActiveLow,
   IN  BOOLEAN                 Shared,
-  IN  UINT32                * IrqList,
+  IN  UINT32                *IrqList,
   IN  UINT8                   IrqCount
   );
 
@@ -504,11 +504,11 @@ AmlCodeGenCrsAddRdInterrupt (
 EFI_STATUS
 EFIAPI
 AmlCodeGenDefinitionBlock (
-  IN  CONST CHAR8                 * TableSignature,
-  IN  CONST CHAR8                 * OemId,
-  IN  CONST CHAR8                 * OemTableId,
+  IN  CONST CHAR8                 *TableSignature,
+  IN  CONST CHAR8                 *OemId,
+  IN  CONST CHAR8                 *OemTableId,
   IN        UINT32                  OemRevision,
-  OUT       AML_ROOT_NODE_HANDLE  * NewRootNode
+  OUT       AML_ROOT_NODE_HANDLE  *NewRootNode
   );
 
 /** AML code generation for a Name object node, containing a String.
@@ -536,10 +536,10 @@ AmlCodeGenDefinitionBlock (
 EFI_STATUS
 EFIAPI
 AmlCodeGenNameString (
-  IN  CONST CHAR8                   * NameString,
-  IN        CHAR8                   * String,
-  IN        AML_NODE_HANDLE           ParentNode,     OPTIONAL
-  OUT       AML_OBJECT_NODE_HANDLE  * NewObjectNode   OPTIONAL
+  IN  CONST CHAR8                   *NameString,
+  IN        CHAR8                   *String,
+  IN        AML_NODE_HANDLE           ParentNode, OPTIONAL
+  OUT       AML_OBJECT_NODE_HANDLE  *NewObjectNode   OPTIONAL
   );
 
 /** AML code generation for a Name object node, containing an Integer.
@@ -566,10 +566,10 @@ AmlCodeGenNameString (
 EFI_STATUS
 EFIAPI
 AmlCodeGenNameInteger (
-  IN  CONST CHAR8                   * NameString,
+  IN  CONST CHAR8                   *NameString,
   IN        UINT64                    Integer,
-  IN        AML_NODE_HANDLE           ParentNode,     OPTIONAL
-  OUT       AML_OBJECT_NODE_HANDLE  * NewObjectNode   OPTIONAL
+  IN        AML_NODE_HANDLE           ParentNode, OPTIONAL
+  OUT       AML_OBJECT_NODE_HANDLE  *NewObjectNode   OPTIONAL
   );
 
 /** AML code generation for a Device object node.
@@ -595,9 +595,9 @@ AmlCodeGenNameInteger (
 EFI_STATUS
 EFIAPI
 AmlCodeGenDevice (
-  IN  CONST CHAR8                   * NameString,
-  IN        AML_NODE_HANDLE           ParentNode,     OPTIONAL
-  OUT       AML_OBJECT_NODE_HANDLE  * NewObjectNode   OPTIONAL
+  IN  CONST CHAR8                   *NameString,
+  IN        AML_NODE_HANDLE           ParentNode, OPTIONAL
+  OUT       AML_OBJECT_NODE_HANDLE  *NewObjectNode   OPTIONAL
   );
 
 /** AML code generation for a Scope object node.
@@ -623,9 +623,9 @@ AmlCodeGenDevice (
 EFI_STATUS
 EFIAPI
 AmlCodeGenScope (
-  IN  CONST CHAR8                   * NameString,
-  IN        AML_NODE_HANDLE           ParentNode,     OPTIONAL
-  OUT       AML_OBJECT_NODE_HANDLE  * NewObjectNode   OPTIONAL
+  IN  CONST CHAR8                   *NameString,
+  IN        AML_NODE_HANDLE           ParentNode, OPTIONAL
+  OUT       AML_OBJECT_NODE_HANDLE  *NewObjectNode   OPTIONAL
   );
 
 #endif // AML_LIB_H_

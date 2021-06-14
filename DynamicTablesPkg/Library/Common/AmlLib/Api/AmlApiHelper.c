@@ -45,16 +45,16 @@ BOOLEAN
 EFIAPI
 AmlNameOpCompareName (
   IN  AML_OBJECT_NODE_HANDLE    NameOpNode,
-  IN  CHAR8                   * AslName
+  IN  CHAR8                   *AslName
   )
 {
-  EFI_STATUS              Status;
-  AML_DATA_NODE_HANDLE    NameDataNode;
+  EFI_STATUS            Status;
+  AML_DATA_NODE_HANDLE  NameDataNode;
 
-  CHAR8                 * AmlName;
-  UINT32                  AmlNameSize;
+  CHAR8   *AmlName;
+  UINT32  AmlNameSize;
 
-  BOOLEAN                 RetVal;
+  BOOLEAN  RetVal;
 
   if ((NameOpNode == NULL)                                                ||
       (AmlGetNodeType ((AML_NODE_HANDLE)NameOpNode) != EAmlNodeObject)    ||
@@ -92,7 +92,7 @@ AmlNameOpCompareName (
   }
 
   // Fetch the name.
-  Status = AmlGetDataNodeBuffer (NameDataNode, (UINT8*)AmlName, &AmlNameSize);
+  Status = AmlGetDataNodeBuffer (NameDataNode, (UINT8 *)AmlName, &AmlNameSize);
   if (EFI_ERROR (Status)) {
     FreePool (AmlName);
     ASSERT (0);
@@ -125,9 +125,9 @@ AmlNodeHasOpCode (
   IN  UINT8                     SubOpCode
   )
 {
-  EFI_STATUS    Status;
-  UINT8         NodeOpCode;
-  UINT8         NodeSubOpCode;
+  EFI_STATUS  Status;
+  UINT8       NodeOpCode;
+  UINT8       NodeSubOpCode;
 
   // Get the Node information.
   Status = AmlGetObjectNodeInfo (
@@ -167,8 +167,8 @@ AmlNodeHasDataType (
   IN  EAML_NODE_DATA_TYPE     DataType
   )
 {
-  EFI_STATUS            Status;
-  EAML_NODE_DATA_TYPE   NodeDataType;
+  EFI_STATUS           Status;
+  EAML_NODE_DATA_TYPE  NodeDataType;
 
   // Get the data type.
   Status = AmlGetNodeDataType (DataNode, &NodeDataType);
@@ -201,8 +201,8 @@ AmlNodeHasRdDataType (
   IN  AML_RD_HEADER           RdDataType
   )
 {
-  EFI_STATUS      Status;
-  AML_RD_HEADER   NodeRdDataType;
+  EFI_STATUS     Status;
+  AML_RD_HEADER  NodeRdDataType;
 
   // Get the resource data type.
   Status = AmlGetResourceDataType (

@@ -63,14 +63,14 @@ STATIC
 EFI_STATUS
 EFIAPI
 ValidateCmn600Info (
-  IN  CONST CM_ARM_CMN_600_INFO       * Cmn600InfoList,
+  IN  CONST CM_ARM_CMN_600_INFO       *Cmn600InfoList,
   IN  CONST UINT32                      Cmn600Count
   )
 {
-  UINT32                            Index;
-  UINT32                            DtcIndex;
-  CONST CM_ARM_CMN_600_INFO       * Cmn600Info;
-  CONST CM_ARM_GENERIC_INTERRUPT  * DtcInterrupt;
+  UINT32                          Index;
+  UINT32                          DtcIndex;
+  CONST CM_ARM_CMN_600_INFO       *Cmn600Info;
+  CONST CM_ARM_GENERIC_INTERRUPT  *DtcInterrupt;
 
   if ((Cmn600InfoList == NULL) ||
       (Cmn600Count == 0)) {
@@ -105,7 +105,7 @@ ValidateCmn600Info (
     // dimension mesh, and 256MB aligned otherwise.
     // Check it is a least 64MB aligned.
     if ((Cmn600Info->PeriphBaseAddress &
-        (PERIPHBASE_MIN_ADDRESS_LENGTH - 1)) != 0) {
+         (PERIPHBASE_MIN_ADDRESS_LENGTH - 1)) != 0) {
       DEBUG ((
         DEBUG_ERROR,
         "ERROR: SSDT-CMN-600: PERIPHBASE address must be 64MB aligned.\n"
@@ -125,7 +125,7 @@ ValidateCmn600Info (
 
     // Check the 16 KB alignment of the ROOTNODEBASE address.
     if ((Cmn600Info->PeriphBaseAddress &
-        (ROOTNODEBASE_ADDRESS_LENGTH - 1)) != 0) {
+         (ROOTNODEBASE_ADDRESS_LENGTH - 1)) != 0) {
       DEBUG ((
         DEBUG_ERROR,
         "ERROR: SSDT-CMN-600: Root base address must be 16KB aligned.\n"
@@ -151,14 +151,13 @@ ValidateCmn600Info (
       if (((DtcInterrupt->Flags &
             EFI_ACPI_EXTENDED_INTERRUPT_FLAG_PRODUCER_CONSUMER_MASK) == 0)) {
         DEBUG ((
-        DEBUG_ERROR,
-        "ERROR: SSDT-CMN-600: DTC Interrupt must be consumer.\n"
-        ));
+          DEBUG_ERROR,
+          "ERROR: SSDT-CMN-600: DTC Interrupt must be consumer.\n"
+          ));
         goto error_handler;
       }
     } // for DTC Interrupt
-
-  } //for Cmn600InfoList
+  } // for Cmn600InfoList
 
   return EFI_SUCCESS;
 
@@ -178,24 +177,25 @@ error_handler:
 
   DEBUG_CODE (
     for (DtcIndex = 0; DtcIndex < Cmn600Info->DtcCount; DtcIndex++) {
-      DtcInterrupt = &Cmn600Info->DtcInterrupt[DtcIndex];
-      DEBUG ((
-        DEBUG_ERROR,
-        "  DTC[%d]:\n",
-        DtcIndex
-        ));
-      DEBUG ((
-        DEBUG_ERROR,
-        "    Interrupt = 0x%lx\n",
-        DtcInterrupt->Interrupt
-        ));
-      DEBUG ((
-        DEBUG_ERROR,
-        "    Flags = 0x%lx\n",
-        DtcInterrupt->Flags
-        ));
-    } // for
-  );
+    DtcInterrupt = &Cmn600Info->DtcInterrupt[DtcIndex];
+    DEBUG ((
+      DEBUG_ERROR,
+      "  DTC[%d]:\n",
+      DtcIndex
+      ));
+    DEBUG ((
+      DEBUG_ERROR,
+      "    Interrupt = 0x%lx\n",
+      DtcInterrupt->Interrupt
+      ));
+    DEBUG ((
+      DEBUG_ERROR,
+      "    Flags = 0x%lx\n",
+      DtcInterrupt->Flags
+      ));
+  }   // for
+
+    );
 
   return EFI_INVALID_PARAMETER;
 }
@@ -220,28 +220,28 @@ STATIC
 EFI_STATUS
 EFIAPI
 FixupCmn600Info (
-  IN  CONST CM_ARM_CMN_600_INFO           * Cmn600Info,
-  IN  CONST CHAR8                         * Name,
+  IN  CONST CM_ARM_CMN_600_INFO           *Cmn600Info,
+  IN  CONST CHAR8                         *Name,
   IN  CONST UINT64                          Uid,
-  OUT       EFI_ACPI_DESCRIPTION_HEADER  ** Table
+  OUT       EFI_ACPI_DESCRIPTION_HEADER  **Table
   )
 {
-  EFI_STATUS                        Status;
-  EFI_STATUS                        Status1;
-  UINT8                             Index;
-  CONST CM_ARM_GENERIC_INTERRUPT  * DtcInt;
+  EFI_STATUS                      Status;
+  EFI_STATUS                      Status1;
+  UINT8                           Index;
+  CONST CM_ARM_GENERIC_INTERRUPT  *DtcInt;
 
-  EFI_ACPI_DESCRIPTION_HEADER     * SsdtCmn600Template;
-  AML_ROOT_NODE_HANDLE              RootNodeHandle;
-  AML_OBJECT_NODE_HANDLE            NameOpIdNode;
-  AML_OBJECT_NODE_HANDLE            NameOpCrsNode;
-  AML_DATA_NODE_HANDLE              CmnPeriphBaseRdNode;
-  AML_DATA_NODE_HANDLE              CmnRootNodeBaseRdNode;
-  AML_OBJECT_NODE_HANDLE            DeviceNode;
+  EFI_ACPI_DESCRIPTION_HEADER  *SsdtCmn600Template;
+  AML_ROOT_NODE_HANDLE         RootNodeHandle;
+  AML_OBJECT_NODE_HANDLE       NameOpIdNode;
+  AML_OBJECT_NODE_HANDLE       NameOpCrsNode;
+  AML_DATA_NODE_HANDLE         CmnPeriphBaseRdNode;
+  AML_DATA_NODE_HANDLE         CmnRootNodeBaseRdNode;
+  AML_OBJECT_NODE_HANDLE       DeviceNode;
 
   // Parse the Ssdt CMN-600 Template.
-  SsdtCmn600Template = (EFI_ACPI_DESCRIPTION_HEADER*)
-                          ssdtcmn600template_aml_code;
+  SsdtCmn600Template = (EFI_ACPI_DESCRIPTION_HEADER *)
+                       ssdtcmn600template_aml_code;
 
   RootNodeHandle = NULL;
   Status = AmlParseDefinitionBlock (
@@ -348,7 +348,7 @@ FixupCmn600Info (
                  EFI_ACPI_EXTENDED_INTERRUPT_FLAG_POLARITY_MASK) != 0),
                ((DtcInt->Flags &
                  EFI_ACPI_EXTENDED_INTERRUPT_FLAG_SHARABLE_MASK) != 0),
-               (UINT32*)&DtcInt->Interrupt,
+               (UINT32 *)&DtcInt->Interrupt,
                1
                );
     if (EFI_ERROR (Status)) {
@@ -365,7 +365,7 @@ FixupCmn600Info (
   }
 
   // Update the CMN600 Device's name.
-  Status = AmlDeviceOpUpdateName (DeviceNode, (CHAR8*)Name);
+  Status = AmlDeviceOpUpdateName (DeviceNode, (CHAR8 *)Name);
   if (EFI_ERROR (Status)) {
     goto error_handler;
   }
@@ -423,15 +423,15 @@ STATIC
 EFI_STATUS
 EFIAPI
 FreeSsdtCmn600TableResourcesEx (
-  IN      CONST ACPI_TABLE_GENERATOR                   * CONST This,
-  IN      CONST CM_STD_OBJ_ACPI_TABLE_INFO             * CONST AcpiTableInfo,
-  IN      CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL   * CONST CfgMgrProtocol,
-  IN OUT        EFI_ACPI_DESCRIPTION_HEADER          *** CONST Table,
+  IN      CONST ACPI_TABLE_GENERATOR                   *CONST This,
+  IN      CONST CM_STD_OBJ_ACPI_TABLE_INFO             *CONST AcpiTableInfo,
+  IN      CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL   *CONST CfgMgrProtocol,
+  IN OUT        EFI_ACPI_DESCRIPTION_HEADER          ***CONST Table,
   IN      CONST UINTN                                          TableCount
   )
 {
-  EFI_ACPI_DESCRIPTION_HEADER    ** TableList;
-  UINTN                             Index;
+  EFI_ACPI_DESCRIPTION_HEADER  **TableList;
+  UINTN                        Index;
 
   ASSERT (This != NULL);
   ASSERT (AcpiTableInfo != NULL);
@@ -463,7 +463,7 @@ FreeSsdtCmn600TableResourcesEx (
         ));
       return EFI_INVALID_PARAMETER;
     }
-  } //for
+  } // for
 
   // Free the table list.
   FreePool (*Table);
@@ -500,19 +500,19 @@ STATIC
 EFI_STATUS
 EFIAPI
 BuildSsdtCmn600TableEx (
-  IN  CONST ACPI_TABLE_GENERATOR                   *       This,
-  IN  CONST CM_STD_OBJ_ACPI_TABLE_INFO             * CONST AcpiTableInfo,
-  IN  CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL   * CONST CfgMgrProtocol,
-  OUT       EFI_ACPI_DESCRIPTION_HEADER          ***       Table,
-  OUT       UINTN                                  * CONST TableCount
+  IN  CONST ACPI_TABLE_GENERATOR                   *This,
+  IN  CONST CM_STD_OBJ_ACPI_TABLE_INFO             *CONST AcpiTableInfo,
+  IN  CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL   *CONST CfgMgrProtocol,
+  OUT       EFI_ACPI_DESCRIPTION_HEADER          ***Table,
+  OUT       UINTN                                  *CONST TableCount
   )
 {
-  EFI_STATUS                        Status;
-  UINT64                            Index;
-  CM_ARM_CMN_600_INFO             * Cmn600Info;
-  UINT32                            Cmn600Count;
-  CHAR8                             NewName[AML_NAME_SEG_SIZE + 1];
-  EFI_ACPI_DESCRIPTION_HEADER    ** TableList;
+  EFI_STATUS                   Status;
+  UINT64                       Index;
+  CM_ARM_CMN_600_INFO          *Cmn600Info;
+  UINT32                       Cmn600Count;
+  CHAR8                        NewName[AML_NAME_SEG_SIZE + 1];
+  EFI_ACPI_DESCRIPTION_HEADER  **TableList;
 
   ASSERT (This != NULL);
   ASSERT (AcpiTableInfo != NULL);
@@ -563,9 +563,9 @@ BuildSsdtCmn600TableEx (
   }
 
   // Allocate a table to store pointers to the SSDT tables.
-  TableList = (EFI_ACPI_DESCRIPTION_HEADER**)
+  TableList = (EFI_ACPI_DESCRIPTION_HEADER **)
               AllocateZeroPool (
-                (sizeof (EFI_ACPI_DESCRIPTION_HEADER*) * Cmn600Count)
+                (sizeof (EFI_ACPI_DESCRIPTION_HEADER *) * Cmn600Count)
                 );
   if (TableList == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
@@ -619,13 +619,13 @@ BuildSsdtCmn600TableEx (
 
 /** This macro defines the Raw Generator revision.
 */
-#define SSDT_CMN_600_GENERATOR_REVISION CREATE_REVISION (1, 0)
+#define SSDT_CMN_600_GENERATOR_REVISION  CREATE_REVISION (1, 0)
 
 /** The interface for the Raw Table Generator.
 */
 STATIC
 CONST
-ACPI_TABLE_GENERATOR SsdtCmn600Generator = {
+ACPI_TABLE_GENERATOR  SsdtCmn600Generator = {
   // Generator ID
   CREATE_STD_ACPI_TABLE_GEN_ID (EStdAcpiTableIdSsdtCmn600),
   // Generator Description
@@ -664,7 +664,7 @@ EFI_STATUS
 EFIAPI
 AcpiSsdtCmn600LibConstructor (
   IN  EFI_HANDLE           ImageHandle,
-  IN  EFI_SYSTEM_TABLE  *  SystemTable
+  IN  EFI_SYSTEM_TABLE  *SystemTable
   )
 {
   EFI_STATUS  Status;
@@ -692,7 +692,7 @@ EFI_STATUS
 EFIAPI
 AcpiSsdtCmn600LibDestructor (
   IN  EFI_HANDLE           ImageHandle,
-  IN  EFI_SYSTEM_TABLE  *  SystemTable
+  IN  EFI_SYSTEM_TABLE  *SystemTable
   )
 {
   EFI_STATUS  Status;

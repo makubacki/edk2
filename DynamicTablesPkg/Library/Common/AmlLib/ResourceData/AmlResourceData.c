@@ -28,7 +28,7 @@
 BOOLEAN
 EFIAPI
 AmlRdCompareDescId (
-  IN  CONST AML_RD_HEADER   * Header,
+  IN  CONST AML_RD_HEADER   *Header,
   IN        AML_RD_HEADER     DescriptorId
   )
 {
@@ -56,7 +56,7 @@ AmlRdCompareDescId (
 AML_RD_HEADER
 EFIAPI
 AmlRdGetDescId (
-  IN  CONST AML_RD_HEADER   * Header
+  IN  CONST AML_RD_HEADER   *Header
   )
 {
   if (Header == NULL) {
@@ -84,7 +84,7 @@ AmlRdGetDescId (
 UINT32
 EFIAPI
 AmlRdGetSize (
-  IN  CONST AML_RD_HEADER   * Header
+  IN  CONST AML_RD_HEADER   *Header
   )
 {
   if (Header == NULL) {
@@ -93,11 +93,11 @@ AmlRdGetSize (
   }
 
   if (AML_RD_IS_LARGE (Header)) {
-    return ((ACPI_LARGE_RESOURCE_HEADER*)Header)->Length +
-             sizeof (ACPI_LARGE_RESOURCE_HEADER);
+    return ((ACPI_LARGE_RESOURCE_HEADER *)Header)->Length +
+           sizeof (ACPI_LARGE_RESOURCE_HEADER);
   }
 
   // Header is a small resource data element.
-  return ((ACPI_SMALL_RESOURCE_HEADER*)Header)->Bits.Length +
-           sizeof (ACPI_SMALL_RESOURCE_HEADER);
+  return ((ACPI_SMALL_RESOURCE_HEADER *)Header)->Bits.Length +
+         sizeof (ACPI_SMALL_RESOURCE_HEADER);
 }
