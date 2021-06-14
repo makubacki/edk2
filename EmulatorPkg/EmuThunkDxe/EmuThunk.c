@@ -22,15 +22,15 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // EmuThunk Device Path Protocol Instance
 //
-EMU_THUNK_DEVICE_PATH mEmuThunkDevicePath = {
+EMU_THUNK_DEVICE_PATH  mEmuThunkDevicePath = {
   {
     {
       {
         HARDWARE_DEVICE_PATH,
         HW_VENDOR_DP,
         {
-          (UINT8) (sizeof (EMU_VENDOR_DEVICE_PATH_NODE)),
-          (UINT8) ((sizeof (EMU_VENDOR_DEVICE_PATH_NODE)) >> 8)
+          (UINT8)(sizeof (EMU_VENDOR_DEVICE_PATH_NODE)),
+          (UINT8)((sizeof (EMU_VENDOR_DEVICE_PATH_NODE)) >> 8)
         }
       },
       EMU_THUNK_PROTOCOL_GUID
@@ -47,13 +47,36 @@ EMU_THUNK_DEVICE_PATH mEmuThunkDevicePath = {
   }
 };
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 InitializeEmuThunk (
   IN EFI_HANDLE                            ImageHandle,
   IN EFI_SYSTEM_TABLE                      *SystemTable
   )
+
 /*++
 
 Routine Description:
@@ -74,8 +97,10 @@ Returns:
   Handle = NULL;
   Status = gBS->InstallMultipleProtocolInterfaces (
                   &Handle,
-                  &gEmuThunkProtocolGuid,       gEmuThunk,
-                  &gEfiDevicePathProtocolGuid,  &mEmuThunkDevicePath,
+                  &gEmuThunkProtocolGuid,
+                  gEmuThunk,
+                  &gEfiDevicePathProtocolGuid,
+                  &mEmuThunkDevicePath,
                   NULL
                   );
 

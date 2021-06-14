@@ -12,7 +12,29 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include "Host.h"
 #include <pthread.h>
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 UINTN
 EFIAPI
 PthreadMutexLock (
@@ -22,8 +44,29 @@ PthreadMutexLock (
   return (UINTN)pthread_mutex_lock ((pthread_mutex_t *)Mutex);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
 
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 UINTN
 EFIAPI
 PthreadMutexUnLock (
@@ -33,7 +76,29 @@ PthreadMutexUnLock (
   return (UINTN)pthread_mutex_unlock ((pthread_mutex_t *)Mutex);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 UINTN
 EFIAPI
 PthreadMutexTryLock (
@@ -43,17 +108,39 @@ PthreadMutexTryLock (
   return (UINTN)pthread_mutex_trylock ((pthread_mutex_t *)Mutex);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID *
 PthreadMutexInit (
   IN VOID
   )
 {
-  pthread_mutex_t *Mutex;
-  int             err;
+  pthread_mutex_t  *Mutex;
+  int              err;
 
   Mutex = malloc (sizeof (pthread_mutex_t));
-  err = pthread_mutex_init (Mutex, NULL);
+  err   = pthread_mutex_init (Mutex, NULL);
   if (err == 0) {
     return Mutex;
   }
@@ -61,7 +148,29 @@ PthreadMutexInit (
   return NULL;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 UINTN
 PthreadMutexDestroy (
   IN VOID *Mutex
@@ -71,30 +180,53 @@ PthreadMutexDestroy (
     return pthread_mutex_destroy ((pthread_mutex_t *)Mutex);
   }
 
-  return -1;
+  return - 1;
 }
 
 // Can't store this data on PthreadCreate stack so we need a global
 typedef struct {
-  pthread_mutex_t             Mutex;
-  THREAD_THUNK_THREAD_ENTRY   Start;
+  pthread_mutex_t              Mutex;
+  THREAD_THUNK_THREAD_ENTRY    Start;
 } THREAD_MANGLE;
 
-THREAD_MANGLE mThreadMangle = {
+THREAD_MANGLE  mThreadMangle = {
   PTHREAD_MUTEX_INITIALIZER,
   NULL
 };
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID *
 SecFakePthreadStart (
   VOID  *Context
   )
 {
-  THREAD_THUNK_THREAD_ENTRY Start;
-  sigset_t                  SigMask;
+  THREAD_THUNK_THREAD_ENTRY  Start;
+  sigset_t                   SigMask;
 
   // Save global on the stack before we unlock
-  Start   = mThreadMangle.Start;
+  Start = mThreadMangle.Start;
   pthread_mutex_unlock (&mThreadMangle.Mutex);
 
   // Mask all signals to the APs
@@ -109,9 +241,32 @@ SecFakePthreadStart (
   // This is a great example of how all problems in computer
   // science can be solved by adding another level of indirection
   //
- return  (VOID *)ReverseGasketUint64 ((UINTN)Start, (UINTN)Context);
+  return (VOID *)ReverseGasketUint64 ((UINTN)Start, (UINTN)Context);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 UINTN
 PthreadCreate (
   IN  VOID                      *Thread,
@@ -120,8 +275,8 @@ PthreadCreate (
   IN  VOID                      *Context
   )
 {
-  int         err;
-  BOOLEAN     EnabledOnEntry;
+  int      err;
+  BOOLEAN  EnabledOnEntry;
 
   //
   // Threads inherit interrupt state so disable interrupts before we start thread
@@ -135,7 +290,7 @@ PthreadCreate (
 
   // Acquire lock for global, SecFakePthreadStart runs in a different thread.
   pthread_mutex_lock (&mThreadMangle.Mutex);
-  mThreadMangle.Start   = Start;
+  mThreadMangle.Start = Start;
 
   err = pthread_create (Thread, Attribute, SecFakePthreadStart, Context);
   if (err != 0) {
@@ -151,7 +306,29 @@ PthreadCreate (
   return err;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 PthreadExit (
   IN VOID *ValuePtr
@@ -161,7 +338,29 @@ PthreadExit (
   return;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 UINTN
 PthreadSelf (
   VOID
@@ -173,8 +372,7 @@ PthreadSelf (
   return (UINTN)pthread_self ();
 }
 
-
-EMU_THREAD_THUNK_PROTOCOL gPthreadThunk = {
+EMU_THREAD_THUNK_PROTOCOL  gPthreadThunk = {
   GasketPthreadMutexLock,
   GasketPthreadMutexUnLock,
   GasketPthreadMutexTryLock,
@@ -185,7 +383,29 @@ EMU_THREAD_THUNK_PROTOCOL gPthreadThunk = {
   GasketPthreadSelf
 };
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 PthreadOpen (
   IN  EMU_IO_THUNK_PROTOCOL   *This
@@ -206,7 +426,29 @@ PthreadOpen (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 PthreadClose (
   IN  EMU_IO_THUNK_PROTOCOL   *This
@@ -215,8 +457,7 @@ PthreadClose (
   return EFI_SUCCESS;
 }
 
-
-EMU_IO_THUNK_PROTOCOL gPthreadThunkIo = {
+EMU_IO_THUNK_PROTOCOL  gPthreadThunkIo = {
   &gEmuThreadThunkProtocolGuid,
   NULL,
   NULL,
@@ -225,5 +466,3 @@ EMU_IO_THUNK_PROTOCOL gPthreadThunkIo = {
   GasketPthreadClose,
   NULL
 };
-
-

@@ -27,12 +27,12 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // Pointer to the CPU Architectural Protocol instance
 //
-EFI_CPU_ARCH_PROTOCOL   *mCpu;
+EFI_CPU_ARCH_PROTOCOL  *mCpu;
 
 //
 // The Timer Architectural Protocol that this driver produces
 //
-EFI_TIMER_ARCH_PROTOCOL mTimer = {
+EFI_TIMER_ARCH_PROTOCOL  mTimer = {
   EmuTimerDriverRegisterHandler,
   EmuTimerDriverSetTimerPeriod,
   EmuTimerDriverGetTimerPeriod,
@@ -42,21 +42,44 @@ EFI_TIMER_ARCH_PROTOCOL mTimer = {
 //
 // The notification function to call on every timer interrupt
 //
-EFI_TIMER_NOTIFY        mTimerNotifyFunction = NULL;
+EFI_TIMER_NOTIFY  mTimerNotifyFunction = NULL;
 
 //
 // The current period of the timer interrupt
 //
-UINT64                  mTimerPeriodMs;
+UINT64  mTimerPeriodMs;
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 EFIAPI
-TimerCallback (UINT64 DeltaMs)
+TimerCallback (
+  UINT64 DeltaMs
+  )
 {
   EFI_TPL           OriginalTPL;
   EFI_TIMER_NOTIFY  CallbackFunction;
-
 
   OriginalTPL = gBS->RaiseTPL (TPL_HIGH_LEVEL);
 
@@ -73,15 +96,38 @@ TimerCallback (UINT64 DeltaMs)
   }
 
   gBS->RestoreTPL (OriginalTPL);
-
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 EmuTimerDriverRegisterHandler (
   IN EFI_TIMER_ARCH_PROTOCOL           *This,
   IN EFI_TIMER_NOTIFY                  NotifyFunction
   )
+
 /*++
 
 Routine Description:
@@ -142,17 +188,42 @@ Returns:
     /* Enable Timer.  */
     gEmuThunk->SetTimer (mTimerPeriodMs, TimerCallback);
   }
+
   mTimerNotifyFunction = NotifyFunction;
 
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 EmuTimerDriverSetTimerPeriod (
   IN EFI_TIMER_ARCH_PROTOCOL  *This,
   IN UINT64                   TimerPeriod
   )
+
 /*++
 
 Routine Description:
@@ -190,14 +261,13 @@ Returns:
 
 **/
 {
-
   //
   // If TimerPeriod is 0, then the timer thread should be canceled
   // If the TimerPeriod is valid, then create and/or adjust the period of the timer thread
   //
-  if (TimerPeriod == 0
-      || ((TimerPeriod > TIMER_MINIMUM_VALUE)
-    && (TimerPeriod < TIMER_MAXIMUM_VALUE))) {
+  if (  TimerPeriod == 0
+     || (  (TimerPeriod > TIMER_MINIMUM_VALUE)
+        && (TimerPeriod < TIMER_MAXIMUM_VALUE))) {
     mTimerPeriodMs = DivU64x32 (TimerPeriod + 5000, 10000);
 
     gEmuThunk->SetTimer (mTimerPeriodMs, TimerCallback);
@@ -206,12 +276,36 @@ Returns:
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 EmuTimerDriverGetTimerPeriod (
   IN EFI_TIMER_ARCH_PROTOCOL            *This,
   OUT UINT64                            *TimerPeriod
   )
+
 /*++
 
 Routine Description:
@@ -245,11 +339,35 @@ Returns:
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 EmuTimerDriverGenerateSoftInterrupt (
   IN EFI_TIMER_ARCH_PROTOCOL  *This
   )
+
 /*++
 
 Routine Description:
@@ -277,12 +395,36 @@ Returns:
   return EFI_UNSUPPORTED;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 EmuTimerDriverInitialize (
   IN EFI_HANDLE        ImageHandle,
   IN EFI_SYSTEM_TABLE  *SystemTable
   )
+
 /*++
 
 Routine Description:
@@ -340,7 +482,6 @@ Returns:
   if (EFI_ERROR (Status)) {
     return Status;
   }
-
 
   return EFI_SUCCESS;
 }

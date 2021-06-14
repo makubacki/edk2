@@ -29,7 +29,7 @@ CONST EFI_PEI_SERVICES  **gPeiServices;
 VOID
 EFIAPI
 SetPeiServicesTablePointer (
-  IN CONST EFI_PEI_SERVICES ** PeiServicesTablePointer
+  IN CONST EFI_PEI_SERVICES **PeiServicesTablePointer
   )
 {
   ASSERT (PeiServicesTablePointer != NULL);
@@ -57,7 +57,6 @@ GetPeiServicesTablePointer (
   ASSERT (gPeiServices != NULL);
   return gPeiServices;
 }
-
 
 /**
   The constructor function caches the pointer to PEI services.
@@ -103,9 +102,8 @@ MigratePeiServicesTablePointer (
   )
 {
   //
-  //  PEI Services Table pointer is cached in the global variable. No additional
-  //  migration actions are required.
+  // PEI Services Table pointer is cached in the global variable. No additional
+  // migration actions are required.
   //
   return;
 }
-

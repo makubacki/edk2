@@ -38,12 +38,11 @@ Abstract:
 #include <Library/MemoryAllocationLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 
-
 //
 // Language supported for driverconfiguration protocol
 //
 
-#define EMU_BLOCK_IO_PRIVATE_SIGNATURE SIGNATURE_32 ('E', 'M', 'b', 'k')
+#define EMU_BLOCK_IO_PRIVATE_SIGNATURE  SIGNATURE_32 ('E', 'M', 'b', 'k')
 typedef struct {
   UINTN                       Signature;
   EMU_IO_THUNK_PROTOCOL       *IoThunk;
@@ -55,15 +54,13 @@ typedef struct {
   EFI_BLOCK_IO_MEDIA          Media;
 
   EFI_UNICODE_STRING_TABLE    *ControllerNameTable;
-
 } EMU_BLOCK_IO_PRIVATE;
 
 #define EMU_BLOCK_IO_PRIVATE_DATA_FROM_THIS(a) \
-         CR(a, EMU_BLOCK_IO_PRIVATE, BlockIo, EMU_BLOCK_IO_PRIVATE_SIGNATURE)
+  CR (a, EMU_BLOCK_IO_PRIVATE, BlockIo, EMU_BLOCK_IO_PRIVATE_SIGNATURE)
 
 #define EMU_BLOCK_IO2_PRIVATE_DATA_FROM_THIS(a) \
-         CR(a, EMU_BLOCK_IO_PRIVATE, BlockIo2, EMU_BLOCK_IO_PRIVATE_SIGNATURE)
-
+  CR (a, EMU_BLOCK_IO_PRIVATE, BlockIo2, EMU_BLOCK_IO_PRIVATE_SIGNATURE)
 
 //
 // Block I/O Global Variables

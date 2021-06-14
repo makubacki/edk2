@@ -15,12 +15,36 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/PeiServicesTablePointerLib.h>
 #include <Library/PcdLib.h>
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 PeimInitializeFirmwareVolumePei (
   IN       EFI_PEI_FILE_HANDLE       FileHandle,
   IN CONST EFI_PEI_SERVICES          **PeiServices
   )
+
 /*++
 
 Routine Description:
@@ -50,11 +74,11 @@ Returns:
   // Get the Fwh Information PPI
   //
   Status = PeiServicesLocatePpi (
-              &gEmuThunkPpiGuid,  // GUID
-              0,                  // INSTANCE
-              &PpiDescriptor,     // EFI_PEI_PPI_DESCRIPTOR
-              (VOID **)&Thunk     // PPI
-              );
+             &gEmuThunkPpiGuid,   // GUID
+             0,                   // INSTANCE
+             &PpiDescriptor,      // EFI_PEI_PPI_DESCRIPTOR
+             (VOID **)&Thunk      // PPI
+             );
   ASSERT_EFI_ERROR (Status);
 
   Index = 0;
@@ -67,7 +91,7 @@ Returns:
       //
       // Assume the FD starts with an FV header
       //
-      FvHeader = (EFI_FIRMWARE_VOLUME_HEADER *) (UINTN) FdBase;
+      FvHeader = (EFI_FIRMWARE_VOLUME_HEADER *)(UINTN)FdBase;
 
       //
       // Make an FV Hob for the first FV in the FD
@@ -77,27 +101,27 @@ Returns:
       if (Index == 0) {
         //
         // Assume the first FD was produced by the NT32.DSC
-        //  All these strange offests are needed to keep in
-        //  sync with the FlashMap and NT32.dsc file
+        // All these strange offests are needed to keep in
+        // sync with the FlashMap and NT32.dsc file
         //
         BuildResourceDescriptorHob (
           EFI_RESOURCE_FIRMWARE_DEVICE,
           (EFI_RESOURCE_ATTRIBUTE_PRESENT | EFI_RESOURCE_ATTRIBUTE_INITIALIZED | EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE),
           FdBase,
           (
-            FvHeader->FvLength +
-            PcdGet32 (PcdFlashNvStorageVariableSize) +
-            PcdGet32 (PcdFlashNvStorageFtwWorkingSize) +
-            PcdGet32 (PcdFlashNvStorageFtwSpareSize) +
-            PcdGet32 (PcdEmuFlashNvStorageEventLogSize)
+           FvHeader->FvLength +
+           PcdGet32 (PcdFlashNvStorageVariableSize) +
+           PcdGet32 (PcdFlashNvStorageFtwWorkingSize) +
+           PcdGet32 (PcdFlashNvStorageFtwSpareSize) +
+           PcdGet32 (PcdEmuFlashNvStorageEventLogSize)
           )
-        );
+          );
 
         //
         // Hard code the address of the spare block and variable services.
-        //  Assume it's a hard coded offset from FV0 in FD0.
+        // Assume it's a hard coded offset from FV0 in FD0.
         //
-        FdSize  =
+        FdSize =
           PcdGet32 (PcdFlashNvStorageVariableSize) +
           PcdGet32 (PcdFlashNvStorageFtwWorkingSize) +
           PcdGet32 (PcdFlashNvStorageFtwSpareSize) +

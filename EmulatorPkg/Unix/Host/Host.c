@@ -9,9 +9,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include "Host.h"
 
 #ifdef __APPLE__
-#define MAP_ANONYMOUS MAP_ANON
+  #define MAP_ANONYMOUS  MAP_ANON
 #endif
-
 
 //
 // Globals
@@ -23,39 +22,34 @@ EMU_THUNK_PPI mSecEmuThunkPpi = {
   GasketSecEmuThunkAddress
 };
 
-char *gGdbWorkingFileName = NULL;
-unsigned int mScriptSymbolChangesCount = 0;
-
+char          *gGdbWorkingFileName = NULL;
+unsigned int  mScriptSymbolChangesCount = 0;
 
 //
 // Default information about where the FD is located.
-//  This array gets filled in with information from EFI_FIRMWARE_VOLUMES
-//  EFI_FIRMWARE_VOLUMES is a host environment variable set by system.cmd.
-//  The number of array elements is allocated base on parsing
-//  EFI_FIRMWARE_VOLUMES and the memory is never freed.
+// This array gets filled in with information from EFI_FIRMWARE_VOLUMES
+// EFI_FIRMWARE_VOLUMES is a host environment variable set by system.cmd.
+// The number of array elements is allocated base on parsing
+// EFI_FIRMWARE_VOLUMES and the memory is never freed.
 //
-UINTN       gFdInfoCount = 0;
-EMU_FD_INFO *gFdInfo;
+UINTN        gFdInfoCount = 0;
+EMU_FD_INFO  *gFdInfo;
 
 //
 // Array that supports separate memory ranges.
-//  The memory ranges are set in system.cmd via the EFI_MEMORY_SIZE variable.
-//  The number of array elements is allocated base on parsing
-//  EFI_MEMORY_SIZE and the memory is never freed.
+// The memory ranges are set in system.cmd via the EFI_MEMORY_SIZE variable.
+// The number of array elements is allocated base on parsing
+// EFI_MEMORY_SIZE and the memory is never freed.
 //
 UINTN              gSystemMemoryCount = 0;
 EMU_SYSTEM_MEMORY  *gSystemMemory;
 
-
-
 UINTN                        mImageContextModHandleArraySize = 0;
-IMAGE_CONTEXT_TO_MOD_HANDLE  *mImageContextModHandleArray = NULL;
+IMAGE_CONTEXT_TO_MOD_HANDLE  *mImageContextModHandleArray    = NULL;
 
 EFI_PEI_PPI_DESCRIPTOR  *gPpiList;
 
-
-int gInXcode = 0;
-
+int  gInXcode = 0;
 
 /*++
   Breakpoint target for Xcode project. Set in the Xcode XML
@@ -70,8 +64,6 @@ SecGdbConfigBreak (
   )
 {
 }
-
-
 
 /*++
 
@@ -122,7 +114,7 @@ main (
   // symbols to be loaded.
   //
   Index = strlen (*Argv);
-  gGdbWorkingFileName = AllocatePool (Index + strlen(".gdb") + 1);
+  gGdbWorkingFileName = AllocatePool (Index + strlen (".gdb") + 1);
   strcpy (gGdbWorkingFileName, *Argv);
   strcat (gGdbWorkingFileName, ".gdb");
 
@@ -139,8 +131,8 @@ main (
   setbuf (stdout, 0);
   setbuf (stderr, 0);
 
-  MemorySizeStr      = (CHAR16 *) PcdGetPtr (PcdEmuMemorySize);
-  FirmwareVolumesStr = (CHAR16 *) PcdGetPtr (PcdEmuFirmwareVolume);
+  MemorySizeStr = (CHAR16 *)PcdGetPtr (PcdEmuMemorySize);
+  FirmwareVolumesStr = (CHAR16 *)PcdGetPtr (PcdEmuFirmwareVolume);
 
   //
   // PPIs pased into PEI_CORE
@@ -169,17 +161,18 @@ main (
   //
   // Allocate space for gSystemMemory Array
   //
-  gSystemMemoryCount  = CountSeparatorsInString (MemorySizeStr, '!') + 1;
-  gSystemMemory       = AllocateZeroPool (gSystemMemoryCount * sizeof (EMU_SYSTEM_MEMORY));
+  gSystemMemoryCount = CountSeparatorsInString (MemorySizeStr, '!') + 1;
+  gSystemMemory = AllocateZeroPool (gSystemMemoryCount * sizeof (EMU_SYSTEM_MEMORY));
   if (gSystemMemory == NULL) {
     printf ("ERROR : Can not allocate memory for system.  Exiting.\n");
     exit (1);
   }
+
   //
   // Allocate space for gSystemMemory Array
   //
-  gFdInfoCount  = CountSeparatorsInString (FirmwareVolumesStr, '!') + 1;
-  gFdInfo       = AllocateZeroPool (gFdInfoCount * sizeof (EMU_FD_INFO));
+  gFdInfoCount = CountSeparatorsInString (FirmwareVolumesStr, '!') + 1;
+  gFdInfo = AllocateZeroPool (gFdInfoCount * sizeof (EMU_FD_INFO));
   if (gFdInfo == NULL) {
     printf ("ERROR : Can not allocate memory for fd info.  Exiting.\n");
     exit (1);
@@ -189,34 +182,37 @@ main (
 
   //
   // Open up a 128K file to emulate temp memory for SEC.
-  //  on a real platform this would be SRAM, or using the cache as RAM.
-  //  Set InitialStackMemory to zero so UnixOpenFile will allocate a new mapping
+  // on a real platform this would be SRAM, or using the cache as RAM.
+  // Set InitialStackMemory to zero so UnixOpenFile will allocate a new mapping
   //
-  InitialStackMemorySize  = STACK_SIZE;
-  InitialStackMemory = (UINTN)MapMemory (
-                                0, (UINT32) InitialStackMemorySize,
-                                PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANONYMOUS | MAP_PRIVATE
-                                );
+  InitialStackMemorySize = STACK_SIZE;
+  InitialStackMemory     = (UINTN)MapMemory (
+                                    0,
+                                    (UINT32)InitialStackMemorySize,
+                                    PROT_READ | PROT_WRITE | PROT_EXEC,
+                                    MAP_ANONYMOUS | MAP_PRIVATE
+                                    );
   if (InitialStackMemory == 0) {
     printf ("ERROR : Can not open SecStack Exiting\n");
     exit (1);
   }
 
-  printf ("  OS Emulator passing in %u KB of temp RAM at 0x%08lx to SEC\n",
+  printf (
+    "  OS Emulator passing in %u KB of temp RAM at 0x%08lx to SEC\n",
     (unsigned int)(InitialStackMemorySize / 1024),
     (unsigned long)InitialStackMemory
     );
 
-  for (StackPointer = (UINTN*) (UINTN) InitialStackMemory;
-     StackPointer < (UINTN*)(UINTN)((UINTN) InitialStackMemory + (UINT64) InitialStackMemorySize);
-     StackPointer ++) {
+  for (StackPointer = (UINTN *)(UINTN)InitialStackMemory;
+       StackPointer < (UINTN *)(UINTN)((UINTN)InitialStackMemory + (UINT64)InitialStackMemorySize);
+       StackPointer++) {
     *StackPointer = 0x5AA55AA5;
   }
 
   //
   // Open All the firmware volumes and remember the info in the gFdInfo global
   //
-  FileName = (CHAR8 *) AllocatePool (StrLen (FirmwareVolumesStr) + 1);
+  FileName = (CHAR8 *)AllocatePool (StrLen (FirmwareVolumesStr) + 1);
   if (FileName == NULL) {
     printf ("ERROR : Can not allocate memory for firmware volume string\n");
     exit (1);
@@ -229,35 +225,38 @@ main (
     for (Index1 = 0; (FirmwareVolumesStr[Index2] != '!') && (FirmwareVolumesStr[Index2] != 0); Index2++) {
       FileName[Index1++] = FirmwareVolumesStr[Index2];
     }
+
     if (FirmwareVolumesStr[Index2] == '!') {
       Index2++;
     }
-    FileName[Index1]  = '\0';
+
+    FileName[Index1] = '\0';
 
     if (Index == 0) {
       // Map FV Recovery Read Only and other areas Read/Write
       Status = MapFd0 (
-                FileName,
-                &gFdInfo[0].Address,
-                &gFdInfo[0].Size
-                );
+                 FileName,
+                 &gFdInfo[0].Address,
+                 &gFdInfo[0].Size
+                 );
     } else {
       //
       // Open the FD and remember where it got mapped into our processes address space
       // Maps Read Only
       //
       Status = MapFile (
-                FileName,
-                &gFdInfo[Index].Address,
-                &gFdInfo[Index].Size
-                );
+                 FileName,
+                 &gFdInfo[Index].Address,
+                 &gFdInfo[Index].Size
+                 );
     }
+
     if (EFI_ERROR (Status)) {
       printf ("ERROR : Can not open Firmware Device File %s (%x).  Exiting.\n", FileName, (unsigned int)Status);
       exit (1);
     }
 
-    printf ("  FD loaded from %s at 0x%08lx",FileName, (unsigned long)gFdInfo[Index].Address);
+    printf ("  FD loaded from %s at 0x%08lx", FileName, (unsigned long)gFdInfo[Index].Address);
 
     if (SecFile == NULL) {
       //
@@ -265,11 +264,11 @@ main (
       // Load the first one we find.
       //
       FileHandle = NULL;
-      Status = PeiServicesFfsFindNextFile (
-                  EFI_FV_FILETYPE_SECURITY_CORE,
-                  (EFI_PEI_FV_HANDLE)(UINTN)gFdInfo[Index].Address,
-                  &FileHandle
-                  );
+      Status     = PeiServicesFfsFindNextFile (
+                     EFI_FV_FILETYPE_SECURITY_CORE,
+                     (EFI_PEI_FV_HANDLE)(UINTN)gFdInfo[Index].Address,
+                     &FileHandle
+                     );
       if (!EFI_ERROR (Status)) {
         Status = PeiServicesFfsFindSectionData (EFI_SECTION_PE32, FileHandle, &SecFile);
         if (!EFI_ERROR (Status)) {
@@ -289,13 +288,13 @@ main (
 
   //
   // Calculate memory regions and store the information in the gSystemMemory
-  //  global for later use. The autosizing code will use this data to
-  //  map this memory into the SEC process memory space.
+  // global for later use. The autosizing code will use this data to
+  // map this memory into the SEC process memory space.
   //
   Index1 = 0;
-  Index = 0;
+  Index  = 0;
   while (1) {
-    UINTN val = 0;
+    UINTN  val = 0;
     //
     // Save the size of the memory.
     //
@@ -303,10 +302,12 @@ main (
       val = val * 10 + MemorySizeStr[Index1] - '0';
       Index1++;
     }
+
     gSystemMemory[Index++].Size = val * 0x100000;
     if (MemorySizeStr[Index1] == 0) {
       break;
     }
+
     Index1++;
   }
 
@@ -315,17 +316,39 @@ main (
   //
   // Hand off to SEC
   //
-  SecLoadFromCore ((UINTN) InitialStackMemory, (UINTN) InitialStackMemorySize, (UINTN) gFdInfo[0].Address, SecFile);
+  SecLoadFromCore ((UINTN)InitialStackMemory, (UINTN)InitialStackMemorySize, (UINTN)gFdInfo[0].Address, SecFile);
 
   //
   // If we get here, then the SEC Core returned. This is an error as SEC should
-  //  always hand off to PEI Core and then on to DXE Core.
+  // always hand off to PEI Core and then on to DXE Core.
   //
   printf ("ERROR : SEC returned\n");
   exit (1);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_PHYSICAL_ADDRESS *
 MapMemory (
   IN INTN   fd,
@@ -334,10 +357,10 @@ MapMemory (
   IN INTN   flags
   )
 {
-  STATIC UINTN base  = 0x40000000;
-  CONST UINTN  align = (1 << 24);
-  VOID         *res  = NULL;
-  BOOLEAN      isAligned = 0;
+  STATIC UINTN  base      = 0x40000000;
+  CONST UINTN   align     = (1 << 24);
+  VOID          *res      = NULL;
+  BOOLEAN       isAligned = 0;
 
   //
   // Try to get an aligned block somewhere in the address space of this
@@ -348,16 +371,17 @@ MapMemory (
     if (res == MAP_FAILED) {
       return NULL;
     }
+
     if ((((UINTN)res) & ~(align-1)) == (UINTN)res) {
-      isAligned=1;
+      isAligned = 1;
     } else {
-      munmap(res, length);
+      munmap (res, length);
       base += align;
     }
   }
+
   return res;
 }
-
 
 /*++
 
@@ -389,16 +413,16 @@ MapFile (
   OUT UINT64                    *Length
   )
 {
-  int     fd;
-  VOID    *res;
-  UINTN   FileSize;
+  int    fd;
+  VOID   *res;
+  UINTN  FileSize;
 
   fd = open (FileName, O_RDWR);
   if (fd < 0) {
     return EFI_NOT_FOUND;
   }
-  FileSize = lseek (fd, 0, SEEK_END);
 
+  FileSize = lseek (fd, 0, SEEK_END);
 
   res = MapMemory (fd, FileSize, PROT_READ | PROT_EXEC, MAP_PRIVATE);
 
@@ -409,12 +433,35 @@ MapFile (
     return EFI_DEVICE_ERROR;
   }
 
-  *Length = (UINT64) FileSize;
-  *BaseAddress = (EFI_PHYSICAL_ADDRESS) (UINTN) res;
+  *Length = (UINT64)FileSize;
+  *BaseAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)res;
 
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 MapFd0 (
   IN  CHAR8                     *FileName,
@@ -422,16 +469,17 @@ MapFd0 (
   OUT UINT64                    *Length
   )
 {
-  int     fd;
-  void    *res, *res2, *res3;
-  UINTN   FileSize;
-  UINTN   FvSize;
-  void    *EmuMagicPage;
+  int    fd;
+  void   *res, *res2, *res3;
+  UINTN  FileSize;
+  UINTN  FvSize;
+  void   *EmuMagicPage;
 
   fd = open (FileName, O_RDWR);
   if (fd < 0) {
     return EFI_NOT_FOUND;
   }
+
   FileSize = lseek (fd, 0, SEEK_END);
 
   FvSize = FixedPcdGet64 (PcdEmuFlashFvRecoverySize);
@@ -469,13 +517,13 @@ MapFd0 (
 
   // Map the rest of the FD as read/write
   res2 = mmap (
-          (void *)(UINTN)(FixedPcdGet64 (PcdEmuFlashFvRecoveryBase) + FvSize),
-          FileSize - FvSize,
-          PROT_READ | PROT_WRITE | PROT_EXEC,
-          MAP_SHARED,
-          fd,
-          FvSize
-          );
+           (void *)(UINTN)(FixedPcdGet64 (PcdEmuFlashFvRecoveryBase) + FvSize),
+           FileSize - FvSize,
+           PROT_READ | PROT_WRITE | PROT_EXEC,
+           MAP_SHARED,
+           fd,
+           FvSize
+           );
   close (fd);
   if (res2 == MAP_FAILED) {
     perror ("MapFd0() Failed res2 =");
@@ -504,12 +552,11 @@ MapFd0 (
     }
   }
 
-  *Length = (UINT64) FileSize;
-  *BaseAddress = (EFI_PHYSICAL_ADDRESS) (UINTN) res;
+  *Length = (UINT64)FileSize;
+  *BaseAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)res;
 
   return EFI_SUCCESS;
 }
-
 
 /*++
 
@@ -534,18 +581,18 @@ SecLoadFromCore (
   IN  VOID    *PeiCorePe32File
   )
 {
-  EFI_STATUS                  Status;
-  EFI_PHYSICAL_ADDRESS        TopOfMemory;
-  VOID                        *TopOfStack;
-  EFI_PHYSICAL_ADDRESS        PeiCoreEntryPoint;
-  EFI_SEC_PEI_HAND_OFF        *SecCoreData;
-  UINTN                       PeiStackSize;
+  EFI_STATUS            Status;
+  EFI_PHYSICAL_ADDRESS  TopOfMemory;
+  VOID                  *TopOfStack;
+  EFI_PHYSICAL_ADDRESS  PeiCoreEntryPoint;
+  EFI_SEC_PEI_HAND_OFF  *SecCoreData;
+  UINTN                 PeiStackSize;
 
   //
   // Compute Top Of Memory for Stack and PEI Core Allocations
   //
   TopOfMemory  = LargestRegion + LargestRegionSize;
-  PeiStackSize = (UINTN)RShiftU64((UINT64)STACK_SIZE,1);
+  PeiStackSize = (UINTN)RShiftU64 ((UINT64)STACK_SIZE, 1);
 
   //
   // |-----------| <---- TemporaryRamBase + TemporaryRamSize
@@ -562,37 +609,36 @@ SecLoadFromCore (
   //
   // Reservet space for storing PeiCore's parament in stack.
   //
-  TopOfStack  = (VOID *)((UINTN)TopOfStack - sizeof (EFI_SEC_PEI_HAND_OFF) - CPU_STACK_ALIGNMENT);
-  TopOfStack  = ALIGN_POINTER (TopOfStack, CPU_STACK_ALIGNMENT);
-
+  TopOfStack = (VOID *)((UINTN)TopOfStack - sizeof (EFI_SEC_PEI_HAND_OFF) - CPU_STACK_ALIGNMENT);
+  TopOfStack = ALIGN_POINTER (TopOfStack, CPU_STACK_ALIGNMENT);
 
   //
   // Bind this information into the SEC hand-off state
   //
-  SecCoreData                         = (EFI_SEC_PEI_HAND_OFF*)(UINTN) TopOfStack;
-  SecCoreData->DataSize               = sizeof(EFI_SEC_PEI_HAND_OFF);
-  SecCoreData->BootFirmwareVolumeBase = (VOID*)BootFirmwareVolumeBase;
+  SecCoreData = (EFI_SEC_PEI_HAND_OFF *)(UINTN)TopOfStack;
+  SecCoreData->DataSize = sizeof (EFI_SEC_PEI_HAND_OFF);
+  SecCoreData->BootFirmwareVolumeBase = (VOID *)BootFirmwareVolumeBase;
   SecCoreData->BootFirmwareVolumeSize = PcdGet32 (PcdEmuFirmwareFdSize);
-  SecCoreData->TemporaryRamBase       = (VOID*)(UINTN)LargestRegion;
-  SecCoreData->TemporaryRamSize       = STACK_SIZE;
-  SecCoreData->StackBase              = SecCoreData->TemporaryRamBase;
-  SecCoreData->StackSize              = PeiStackSize;
-  SecCoreData->PeiTemporaryRamBase    = (VOID*) ((UINTN) SecCoreData->TemporaryRamBase + PeiStackSize);
-  SecCoreData->PeiTemporaryRamSize    = STACK_SIZE - PeiStackSize;
+  SecCoreData->TemporaryRamBase = (VOID *)(UINTN)LargestRegion;
+  SecCoreData->TemporaryRamSize = STACK_SIZE;
+  SecCoreData->StackBase = SecCoreData->TemporaryRamBase;
+  SecCoreData->StackSize = PeiStackSize;
+  SecCoreData->PeiTemporaryRamBase = (VOID *)((UINTN)SecCoreData->TemporaryRamBase + PeiStackSize);
+  SecCoreData->PeiTemporaryRamSize = STACK_SIZE - PeiStackSize;
 
   //
   // Find the SEC Core Entry Point
   //
   Status = SecPeCoffGetEntryPoint (PeiCorePe32File, (VOID **)&PeiCoreEntryPoint);
   if (EFI_ERROR (Status)) {
-    return ;
+    return;
   }
 
   //
   // Transfer control to the SEC Core
   //
   PeiSwitchStacks (
-    (SWITCH_STACK_ENTRY_POINT) (UINTN) PeiCoreEntryPoint,
+    (SWITCH_STACK_ENTRY_POINT)(UINTN)PeiCoreEntryPoint,
     SecCoreData,
     (VOID *)gPpiList,
     TopOfStack
@@ -600,9 +646,8 @@ SecLoadFromCore (
   //
   // If we get here, then the SEC Core returned.  This is an error
   //
-  return ;
+  return;
 }
-
 
 /*++
 
@@ -631,7 +676,7 @@ SecUnixPeiAutoScan (
   OUT UINT64                *MemorySize
   )
 {
-  void *res;
+  void  *res;
 
   if (Index >= gSystemMemoryCount) {
     return EFI_UNSUPPORTED;
@@ -639,20 +684,21 @@ SecUnixPeiAutoScan (
 
   *MemoryBase = 0;
   res = MapMemory (
-          0, gSystemMemory[Index].Size,
+          0,
+          gSystemMemory[Index].Size,
           PROT_READ | PROT_WRITE | PROT_EXEC,
           MAP_PRIVATE | MAP_ANONYMOUS
           );
   if (res == MAP_FAILED) {
     return EFI_DEVICE_ERROR;
   }
+
   *MemorySize = gSystemMemory[Index].Size;
   *MemoryBase = (UINTN)res;
   gSystemMemory[Index].Memory = *MemoryBase;
 
   return EFI_SUCCESS;
 }
-
 
 /*++
 
@@ -684,14 +730,13 @@ EfiSystemMemoryRange (
   MemoryBase = (EFI_PHYSICAL_ADDRESS)(UINTN)MemoryAddress;
   for (Index = 0; Index < gSystemMemoryCount; Index++) {
     if ((MemoryBase >= gSystemMemory[Index].Memory) &&
-        (MemoryBase < (gSystemMemory[Index].Memory + gSystemMemory[Index].Size)) ) {
+        (MemoryBase < (gSystemMemory[Index].Memory + gSystemMemory[Index].Size))) {
       return TRUE;
     }
   }
 
   return FALSE;
 }
-
 
 /*++
 
@@ -715,8 +760,29 @@ SecEmuThunkAddress (
   return &gEmuThunkProtocol;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
 
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 RETURN_STATUS
 EFIAPI
 SecPeCoffGetEntryPoint (
@@ -728,10 +794,10 @@ SecPeCoffGetEntryPoint (
   PE_COFF_LOADER_IMAGE_CONTEXT  ImageContext;
 
   ZeroMem (&ImageContext, sizeof (ImageContext));
-  ImageContext.Handle     = Pe32Data;
-  ImageContext.ImageRead  = (PE_COFF_LOADER_READ_FILE) SecImageRead;
+  ImageContext.Handle    = Pe32Data;
+  ImageContext.ImageRead = (PE_COFF_LOADER_READ_FILE)SecImageRead;
 
-  Status                  = PeCoffLoaderGetImageInfo (&ImageContext);
+  Status = PeCoffLoaderGetImageInfo (&ImageContext);
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -759,6 +825,7 @@ SecPeCoffGetEntryPoint (
     if (EFI_ERROR (Status)) {
       return Status;
     }
+
     ImageContext.EntryPoint = (UINTN)*EntryPoint;
   }
 
@@ -768,8 +835,6 @@ SecPeCoffGetEntryPoint (
 
   return Status;
 }
-
-
 
 /*++
 
@@ -820,7 +885,6 @@ SecUnixFdAddress (
   return EFI_SUCCESS;
 }
 
-
 /*++
 
 Routine Description:
@@ -840,7 +904,7 @@ CountSeparatorsInString (
   IN  CHAR16         Separator
   )
 {
-  UINTN Count;
+  UINTN  Count;
 
   for (Count = 0; *String != '\0'; String++) {
     if (*String == Separator) {
@@ -851,7 +915,29 @@ CountSeparatorsInString (
   return Count;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 SecImageRead (
@@ -860,6 +946,7 @@ SecImageRead (
   IN OUT UINTN   *ReadSize,
   OUT    VOID    *Buffer
   )
+
 /*++
 
 Routine Description:
@@ -876,20 +963,19 @@ Returns:
 
 **/
 {
-  CHAR8 *Destination8;
-  CHAR8 *Source8;
-  UINTN Length;
+  CHAR8  *Destination8;
+  CHAR8  *Source8;
+  UINTN  Length;
 
-  Destination8  = Buffer;
-  Source8       = (CHAR8 *) ((UINTN) FileHandle + FileOffset);
-  Length        = *ReadSize;
+  Destination8 = Buffer;
+  Source8 = (CHAR8 *)((UINTN)FileHandle + FileOffset);
+  Length  = *ReadSize;
   while (Length--) {
     *(Destination8++) = *(Source8++);
   }
 
   return EFI_SUCCESS;
 }
-
 
 /*++
 
@@ -913,10 +999,9 @@ AddHandle (
   IN  VOID                                 *ModHandle
   )
 {
-  UINTN                       Index;
-  IMAGE_CONTEXT_TO_MOD_HANDLE *Array;
-  UINTN                       PreviousSize;
-
+  UINTN                        Index;
+  IMAGE_CONTEXT_TO_MOD_HANDLE  *Array;
+  UINTN                        PreviousSize;
 
   Array = mImageContextModHandleArray;
   for (Index = 0; Index < mImageContextModHandleArraySize; Index++, Array++) {
@@ -949,11 +1034,14 @@ AddHandle (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  memset (mImageContextModHandleArray + PreviousSize, 0, MAX_IMAGE_CONTEXT_TO_MOD_HANDLE_ARRAY_SIZE * sizeof (IMAGE_CONTEXT_TO_MOD_HANDLE));
+  memset (
+    mImageContextModHandleArray + PreviousSize,
+    0,
+    MAX_IMAGE_CONTEXT_TO_MOD_HANDLE_ARRAY_SIZE * sizeof (IMAGE_CONTEXT_TO_MOD_HANDLE)
+    );
 
   return AddHandle (ImageContext, ModHandle);
 }
-
 
 /*++
 
@@ -998,21 +1086,42 @@ RemoveHandle (
   return NULL;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
 
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 BOOLEAN
 IsPdbFile (
   IN  CHAR8   *PdbFileName
   )
 {
-  UINTN Len;
+  UINTN  Len;
 
   if (PdbFileName == NULL) {
     return FALSE;
   }
 
   Len = strlen (PdbFileName);
-  if ((Len < 5)|| (PdbFileName[Len - 4] != '.')) {
+  if ((Len < 5) || (PdbFileName[Len - 4] != '.')) {
     return FALSE;
   }
 
@@ -1025,32 +1134,56 @@ IsPdbFile (
   return FALSE;
 }
 
+#define MAX_SPRINT_BUFFER_SIZE  0x200
 
-#define MAX_SPRINT_BUFFER_SIZE 0x200
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 void
 PrintLoadAddress (
   IN PE_COFF_LOADER_IMAGE_CONTEXT          *ImageContext
   )
 {
   if (ImageContext->PdbPointer == NULL) {
-    fprintf (stderr,
+    fprintf (
+      stderr,
       "0x%08lx Loading NO DEBUG with entry point 0x%08lx\n",
       (unsigned long)(ImageContext->ImageAddress),
       (unsigned long)ImageContext->EntryPoint
       );
   } else {
-    fprintf (stderr,
+    fprintf (
+      stderr,
       "0x%08lx Loading %s with entry point 0x%08lx\n",
       (unsigned long)(ImageContext->ImageAddress + ImageContext->SizeOfHeaders),
       ImageContext->PdbPointer,
       (unsigned long)ImageContext->EntryPoint
       );
   }
+
   // Keep output synced up
   fflush (stderr);
 }
-
 
 /**
   Loads the image using dlopen so symbols will be automatically
@@ -1067,55 +1200,77 @@ DlLoadImage (
   IN OUT PE_COFF_LOADER_IMAGE_CONTEXT         *ImageContext
   )
 {
+ #ifdef __APPLE__
 
-#ifdef __APPLE__
-
-  return FALSE;
-
-#else
-
-  void        *Handle = NULL;
-  void        *Entry = NULL;
-
-  if (ImageContext->PdbPointer == NULL) {
     return FALSE;
-  }
 
-  if (!IsPdbFile (ImageContext->PdbPointer)) {
-    return FALSE;
-  }
+ #else
 
-  fprintf (
-     stderr,
-     "Loading %s 0x%08lx - entry point 0x%08lx\n",
-     ImageContext->PdbPointer,
-     (unsigned long)ImageContext->ImageAddress,
-     (unsigned long)ImageContext->EntryPoint
-     );
+    void  *Handle = NULL;
+    void  *Entry  = NULL;
 
-  Handle = dlopen (ImageContext->PdbPointer, RTLD_NOW);
-  if (Handle != NULL) {
-    Entry = dlsym (Handle, "_ModuleEntryPoint");
-    AddHandle (ImageContext, Handle);
-  } else {
-    printf("%s\n", dlerror());
-  }
+    if (ImageContext->PdbPointer == NULL) {
+      return FALSE;
+    }
 
-  if (Entry != NULL) {
-    ImageContext->EntryPoint = (UINTN)Entry;
-    printf ("Change %s Entrypoint to :0x%08lx\n", ImageContext->PdbPointer, (unsigned long)Entry);
-    return TRUE;
-  } else {
-    return FALSE;
-  }
+    if (!IsPdbFile (ImageContext->PdbPointer)) {
+      return FALSE;
+    }
 
-#endif
+    fprintf (
+      stderr,
+      "Loading %s 0x%08lx - entry point 0x%08lx\n",
+      ImageContext->PdbPointer,
+      (unsigned long)ImageContext->ImageAddress,
+      (unsigned long)ImageContext->EntryPoint
+      );
+
+    Handle = dlopen (ImageContext->PdbPointer, RTLD_NOW);
+    if (Handle != NULL) {
+      Entry = dlsym (Handle, "_ModuleEntryPoint");
+      AddHandle (ImageContext, Handle);
+    } else {
+      printf ("%s\n", dlerror ());
+    }
+
+    if (Entry != NULL) {
+      ImageContext->EntryPoint = (UINTN)Entry;
+      printf ("Change %s Entrypoint to :0x%08lx\n", ImageContext->PdbPointer, (unsigned long)Entry);
+      return TRUE;
+    } else {
+      return FALSE;
+    }
+
+ #endif
 }
 
-
 #ifdef __APPLE__
-__attribute__((noinline))
+  __attribute__ ((noinline))
 #endif
+
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 SecGdbScriptBreak (
   char                *FileName,
@@ -1126,7 +1281,6 @@ SecGdbScriptBreak (
 {
   return;
 }
-
 
 /**
   Adds the image to a gdb script so its symbols can be loaded.
@@ -1140,7 +1294,6 @@ GdbScriptAddImage (
   IN OUT PE_COFF_LOADER_IMAGE_CONTEXT         *ImageContext
   )
 {
-
   PrintLoadAddress (ImageContext);
 
   if (ImageContext->PdbPointer != NULL && !IsPdbFile (ImageContext->PdbPointer)) {
@@ -1148,7 +1301,7 @@ GdbScriptAddImage (
     if (FeaturePcdGet (PcdEmulatorLazyLoadSymbols)) {
       GdbTempFile = fopen (gGdbWorkingFileName, "a");
       if (GdbTempFile != NULL) {
-        long unsigned int SymbolsAddr = (long unsigned int)(ImageContext->ImageAddress + ImageContext->SizeOfHeaders);
+        long unsigned int  SymbolsAddr = (long unsigned int)(ImageContext->ImageAddress + ImageContext->SizeOfHeaders);
         mScriptSymbolChangesCount++;
         fprintf (
           GdbTempFile,
@@ -1159,7 +1312,12 @@ GdbScriptAddImage (
           );
         fclose (GdbTempFile);
         // This is for the lldb breakpoint only
-        SecGdbScriptBreak (ImageContext->PdbPointer, strlen (ImageContext->PdbPointer) + 1, (long unsigned int)(ImageContext->ImageAddress + ImageContext->SizeOfHeaders), 1);
+        SecGdbScriptBreak (
+          ImageContext->PdbPointer,
+          strlen (ImageContext->PdbPointer) + 1,
+          (long unsigned int)(ImageContext->ImageAddress + ImageContext->SizeOfHeaders),
+          1
+          );
       } else {
         ASSERT (FALSE);
       }
@@ -1180,7 +1338,12 @@ GdbScriptAddImage (
         // Also used for the lldb breakpoint script. The lldb breakpoint script does
         // not use the file, it uses the arguments.
         //
-        SecGdbScriptBreak (ImageContext->PdbPointer, strlen (ImageContext->PdbPointer) + 1, (long unsigned int)(ImageContext->ImageAddress + ImageContext->SizeOfHeaders), 1);
+        SecGdbScriptBreak (
+          ImageContext->PdbPointer,
+          strlen (ImageContext->PdbPointer) + 1,
+          (long unsigned int)(ImageContext->ImageAddress + ImageContext->SizeOfHeaders),
+          1
+          );
       } else {
         ASSERT (FALSE);
       }
@@ -1188,7 +1351,29 @@ GdbScriptAddImage (
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 EFIAPI
 SecPeCoffRelocateImageExtraAction (
@@ -1199,7 +1384,6 @@ SecPeCoffRelocateImageExtraAction (
     GdbScriptAddImage (ImageContext);
   }
 }
-
 
 /**
   Adds the image to a gdb script so its symbols can be unloaded.
@@ -1257,27 +1441,47 @@ GdbScriptRemoveImage (
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 EFIAPI
 SecPeCoffUnloadImageExtraAction (
   IN PE_COFF_LOADER_IMAGE_CONTEXT         *ImageContext
   )
 {
-  VOID *Handle;
+  VOID  *Handle;
 
   //
   // Check to see if the image symbols were loaded with gdb script, or dlopen
   //
   Handle = RemoveHandle (ImageContext);
   if (Handle != NULL) {
-#ifndef __APPLE__
-    dlclose (Handle);
-#endif
+ #ifndef __APPLE__
+      dlclose (Handle);
+ #endif
     return;
   }
 
   GdbScriptRemoveImage (ImageContext);
 }
-
-

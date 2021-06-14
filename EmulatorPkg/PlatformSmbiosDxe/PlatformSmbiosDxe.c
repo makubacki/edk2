@@ -17,11 +17,9 @@
 #include <Library/SmbiosLib.h>
 #include <Library/HobLib.h>
 
-extern SMBIOS_TEMPLATE_ENTRY gSmbiosTemplate[];
+extern SMBIOS_TEMPLATE_ENTRY  gSmbiosTemplate[];
 
-
-
-SMBIOS_TABLE_TYPE19 gSmbiosType19Template = {
+SMBIOS_TABLE_TYPE19  gSmbiosType19Template = {
   { EFI_SMBIOS_TYPE_MEMORY_ARRAY_MAPPED_ADDRESS, sizeof (SMBIOS_TABLE_TYPE19), 0 },
   0xffffffff, // StartingAddress;
   0xffffffff, // EndingAddress;
@@ -31,16 +29,39 @@ SMBIOS_TABLE_TYPE19 gSmbiosType19Template = {
   0,          // ExtendedEndingAddress;
 };
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 CreatePlatformSmbiosMemoryRecords (
   VOID
   )
 {
-  EFI_PEI_HOB_POINTERS        HobPtr;
-  SMBIOS_STRUCTURE_POINTER    Smbios16;
-  SMBIOS_STRUCTURE_POINTER    Smbios17;
-  EFI_SMBIOS_HANDLE           PhyscialMemoryArrayHandle;
-  EFI_SMBIOS_HANDLE           SmbiosHandle;
+  EFI_PEI_HOB_POINTERS      HobPtr;
+  SMBIOS_STRUCTURE_POINTER  Smbios16;
+  SMBIOS_STRUCTURE_POINTER  Smbios17;
+  EFI_SMBIOS_HANDLE         PhyscialMemoryArrayHandle;
+  EFI_SMBIOS_HANDLE         SmbiosHandle;
 
   Smbios16.Hdr = SmbiosLibGetRecord (EFI_SMBIOS_TYPE_PHYSICAL_MEMORY_ARRAY, 0, &PhyscialMemoryArrayHandle);
   if (Smbios16.Hdr == NULL) {
@@ -60,16 +81,16 @@ CreatePlatformSmbiosMemoryRecords (
   while ((HobPtr.Raw = GetNextHob (EFI_HOB_TYPE_RESOURCE_DESCRIPTOR, HobPtr.Raw)) != NULL) {
     if (HobPtr.ResourceDescriptor->ResourceType == EFI_RESOURCE_SYSTEM_MEMORY) {
       gSmbiosType19Template.ExtendedStartingAddress = HobPtr.ResourceDescriptor->PhysicalStart;
-      gSmbiosType19Template.ExtendedEndingAddress =
+      gSmbiosType19Template.ExtendedEndingAddress   =
         HobPtr.ResourceDescriptor->PhysicalStart +
         HobPtr.ResourceDescriptor->ResourceLength - 1;
 
       SmbiosLibCreateEntry ((SMBIOS_STRUCTURE *)&gSmbiosType19Template, NULL);
     }
+
     HobPtr.Raw = GET_NEXT_HOB (HobPtr);
   }
 }
-
 
 /**
   Main entry for this driver.
@@ -87,12 +108,12 @@ PlatformSmbiosDriverEntryPoint (
   IN EFI_SYSTEM_TABLE   *SystemTable
   )
 {
-  EFI_STATUS                  Status;
-  EFI_SMBIOS_HANDLE           SmbiosHandle;
-  SMBIOS_STRUCTURE_POINTER    Smbios;
+  EFI_STATUS                Status;
+  EFI_SMBIOS_HANDLE         SmbiosHandle;
+  SMBIOS_STRUCTURE_POINTER  Smbios;
 
   // Phase 0 - Patch table to make SMBIOS 2.7 structures smaller to conform
-  //           to an early version of the specification.
+  // to an early version of the specification.
 
   // Phase 1 - Initialize SMBIOS tables from template
   Status = SmbiosLibInitializeFromTemplate (gSmbiosTemplate);
@@ -108,12 +129,12 @@ PlatformSmbiosDriverEntryPoint (
     SmbiosLibUpdateUnicodeString (
       SmbiosHandle,
       Smbios.Type0->BiosVersion,
-      (CHAR16 *) PcdGetPtr (PcdFirmwareVersionString)
+      (CHAR16 *)PcdGetPtr (PcdFirmwareVersionString)
       );
     SmbiosLibUpdateUnicodeString (
       SmbiosHandle,
       Smbios.Type0->BiosReleaseDate,
-      (CHAR16 *) PcdGetPtr (PcdFirmwareReleaseDateString)
+      (CHAR16 *)PcdGetPtr (PcdFirmwareReleaseDateString)
       );
   }
 
