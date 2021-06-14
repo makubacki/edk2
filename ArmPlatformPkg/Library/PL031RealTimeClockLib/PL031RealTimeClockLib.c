@@ -31,50 +31,96 @@
 
 #include "PL031RealTimeClock.h"
 
-STATIC BOOLEAN                mPL031Initialized = FALSE;
-STATIC EFI_EVENT              mRtcVirtualAddrChangeEvent;
-STATIC UINTN                  mPL031RtcBase;
+STATIC BOOLEAN    mPL031Initialized = FALSE;
+STATIC EFI_EVENT  mRtcVirtualAddrChangeEvent;
+STATIC UINTN      mPL031RtcBase;
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 IdentifyPL031 (
   VOID
   )
 {
-  EFI_STATUS    Status;
+  EFI_STATUS  Status;
 
   // Check if this is a PrimeCell Peripheral
   if (  (MmioRead8 (mPL031RtcBase + PL031_RTC_PCELL_ID0) != 0x0D)
-      || (MmioRead8 (mPL031RtcBase + PL031_RTC_PCELL_ID1) != 0xF0)
-      || (MmioRead8 (mPL031RtcBase + PL031_RTC_PCELL_ID2) != 0x05)
-      || (MmioRead8 (mPL031RtcBase + PL031_RTC_PCELL_ID3) != 0xB1)) {
+     || (MmioRead8 (mPL031RtcBase + PL031_RTC_PCELL_ID1) != 0xF0)
+     || (MmioRead8 (mPL031RtcBase + PL031_RTC_PCELL_ID2) != 0x05)
+     || (MmioRead8 (mPL031RtcBase + PL031_RTC_PCELL_ID3) != 0xB1)) {
     Status = EFI_NOT_FOUND;
     goto EXIT;
   }
 
   // Check if this PrimeCell Peripheral is the PL031 Real Time Clock
   if (  (MmioRead8 (mPL031RtcBase + PL031_RTC_PERIPH_ID0) != 0x31)
-      || (MmioRead8 (mPL031RtcBase + PL031_RTC_PERIPH_ID1) != 0x10)
-      || ((MmioRead8 (mPL031RtcBase + PL031_RTC_PERIPH_ID2) & 0xF) != 0x04)
-      || (MmioRead8 (mPL031RtcBase + PL031_RTC_PERIPH_ID3) != 0x00)) {
+     || (MmioRead8 (mPL031RtcBase + PL031_RTC_PERIPH_ID1) != 0x10)
+     || ((MmioRead8 (mPL031RtcBase + PL031_RTC_PERIPH_ID2) & 0xF) != 0x04)
+     || (MmioRead8 (mPL031RtcBase + PL031_RTC_PERIPH_ID3) != 0x00)) {
     Status = EFI_NOT_FOUND;
     goto EXIT;
   }
 
   Status = EFI_SUCCESS;
 
-  EXIT:
+EXIT:
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 InitializePL031 (
   VOID
   )
 {
-  EFI_STATUS    Status;
+  EFI_STATUS  Status;
 
   // Prepare the hardware
-  Status = IdentifyPL031();
+  Status = IdentifyPL031 ();
   if (EFI_ERROR (Status)) {
     goto EXIT;
   }
@@ -85,7 +131,8 @@ InitializePL031 (
   }
 
   // Clear any existing interrupts
-  if ((MmioRead32 (mPL031RtcBase + PL031_RTC_RIS_RAW_IRQ_STATUS_REGISTER) & PL031_IRQ_TRIGGERED) == PL031_IRQ_TRIGGERED) {
+  if ((MmioRead32 (mPL031RtcBase + PL031_RTC_RIS_RAW_IRQ_STATUS_REGISTER) & PL031_IRQ_TRIGGERED) ==
+      PL031_IRQ_TRIGGERED) {
     MmioOr32 (mPL031RtcBase + PL031_RTC_ICR_IRQ_CLEAR_REGISTER, PL031_CLEAR_IRQ);
   }
 
@@ -96,7 +143,7 @@ InitializePL031 (
 
   mPL031Initialized = TRUE;
 
-  EXIT:
+EXIT:
   return Status;
 }
 
@@ -154,16 +201,15 @@ LibGetTime (
   // Update the Capabilities info
   if (Capabilities != NULL) {
     // PL031 runs at frequency 1Hz
-    Capabilities->Resolution  = PL031_COUNTS_PER_SECOND;
+    Capabilities->Resolution = PL031_COUNTS_PER_SECOND;
     // Accuracy in ppm multiplied by 1,000,000, e.g. for 50ppm set 50,000,000
-    Capabilities->Accuracy    = (UINT32)PcdGet32 (PcdPL031RtcPpmAccuracy);
+    Capabilities->Accuracy = (UINT32)PcdGet32 (PcdPL031RtcPpmAccuracy);
     // FALSE: Setting the time does not clear the values below the resolution level
-    Capabilities->SetsToZero  = FALSE;
+    Capabilities->SetsToZero = FALSE;
   }
 
   return EFI_SUCCESS;
 }
-
 
 /**
   Sets the current local time and date information.
@@ -217,7 +263,6 @@ LibSetTime (
   return EFI_SUCCESS;
 }
 
-
 /**
   Returns the current wakeup alarm clock setting.
 
@@ -241,7 +286,6 @@ LibGetWakeupTime (
   // Not a required feature
   return EFI_UNSUPPORTED;
 }
-
 
 /**
   Sets the system wakeup alarm clock time.
@@ -288,7 +332,7 @@ LibRtcVirtualNotifyEvent (
   // to virtual address. After the OS transitions to calling in virtual mode, all future
   // runtime calls will be made in virtual mode.
   //
-  EfiConvertPointer (0x0, (VOID**)&mPL031RtcBase);
+  EfiConvertPointer (0x0, (VOID **)&mPL031RtcBase);
   return;
 }
 
@@ -309,8 +353,8 @@ LibRtcInitialize (
   IN EFI_SYSTEM_TABLE                      *SystemTable
   )
 {
-  EFI_STATUS    Status;
-  EFI_HANDLE    Handle;
+  EFI_STATUS  Status;
+  EFI_HANDLE  Handle;
 
   // Initialize RTC Base Address
   mPL031RtcBase = PcdGet32 (PcdPL031RtcBase);
@@ -318,7 +362,8 @@ LibRtcInitialize (
   // Declare the controller as EFI_MEMORY_RUNTIME
   Status = gDS->AddMemorySpace (
                   EfiGcdMemoryTypeMemoryMappedIo,
-                  mPL031RtcBase, SIZE_4KB,
+                  mPL031RtcBase,
+                  SIZE_4KB,
                   EFI_MEMORY_UC | EFI_MEMORY_RUNTIME
                   );
   if (EFI_ERROR (Status)) {
@@ -334,9 +379,10 @@ LibRtcInitialize (
   Handle = NULL;
   Status = gBS->InstallMultipleProtocolInterfaces (
                   &Handle,
-                  &gEfiRealTimeClockArchProtocolGuid,  NULL,
+                  &gEfiRealTimeClockArchProtocolGuid,
+                  NULL,
                   NULL
-                 );
+                  );
   ASSERT_EFI_ERROR (Status);
 
   //

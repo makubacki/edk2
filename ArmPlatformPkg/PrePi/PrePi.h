@@ -21,13 +21,13 @@
 #include <Library/SerialPortLib.h>
 #include <Library/ArmPlatformLib.h>
 
-extern UINT64 mSystemMemoryEnd;
+extern UINT64  mSystemMemoryEnd;
 
 RETURN_STATUS
 EFIAPI
 TimerConstructor (
-  VOID
-  );
+                  VOID
+                  );
 
 VOID
 PrePiMain (
@@ -46,8 +46,8 @@ MemoryPeim (
 EFI_STATUS
 EFIAPI
 PlatformPeim (
-  VOID
-  );
+              VOID
+              );
 
 VOID
 PrimaryMain (
@@ -63,9 +63,9 @@ SecondaryMain (
 
 // Either implemented by PrePiLib or by MemoryInitPei
 VOID
-BuildMemoryTypeInformationHob (
-  VOID
-  );
+  BuildMemoryTypeInformationHob (
+                                 VOID
+                                 );
 
 EFI_STATUS
 GetPlatformPpi (
@@ -75,14 +75,14 @@ GetPlatformPpi (
 
 // Initialize the Architecture specific controllers
 VOID
-ArchInitialize (
-  VOID
-  );
+  ArchInitialize (
+                  VOID
+                  );
 
 VOID
 EFIAPI
 ProcessLibraryConstructorList (
-  VOID
-  );
+                               VOID
+                               );
 
 #endif /* _PREPI_H_ */

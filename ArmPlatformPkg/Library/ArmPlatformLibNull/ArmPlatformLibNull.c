@@ -11,8 +11,7 @@
 
 #include <Ppi/ArmMpCoreInfo.h>
 
-
-ARM_CORE_INFO mArmPlatformNullMpCoreInfoTable[] = {
+ARM_CORE_INFO  mArmPlatformNullMpCoreInfoTable[] = {
   {
     // Cluster 0, Core 0
     0x0, 0x0,
@@ -95,19 +94,42 @@ ArmPlatformInitialize (
     return RETURN_SUCCESS;
   }
 
-  //TODO: Implement me
+  // TODO: Implement me
 
   return RETURN_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 PrePeiCoreGetMpCoreInfo (
   OUT UINTN                   *CoreCount,
   OUT ARM_CORE_INFO           **ArmCoreTable
   )
 {
-  if (ArmIsMpCore()) {
-    *CoreCount    = sizeof(mArmPlatformNullMpCoreInfoTable) / sizeof(ARM_CORE_INFO);
+  if (ArmIsMpCore ()) {
+    *CoreCount    = sizeof (mArmPlatformNullMpCoreInfoTable) / sizeof (ARM_CORE_INFO);
     *ArmCoreTable = mArmPlatformNullMpCoreInfoTable;
     return EFI_SUCCESS;
   } else {
@@ -115,9 +137,9 @@ PrePeiCoreGetMpCoreInfo (
   }
 }
 
-ARM_MP_CORE_INFO_PPI mMpCoreInfoPpi = { PrePeiCoreGetMpCoreInfo };
+ARM_MP_CORE_INFO_PPI  mMpCoreInfoPpi = { PrePeiCoreGetMpCoreInfo };
 
-EFI_PEI_PPI_DESCRIPTOR      gPlatformPpiTable[] = {
+EFI_PEI_PPI_DESCRIPTOR  gPlatformPpiTable[] = {
   {
     EFI_PEI_PPI_DESCRIPTOR_PPI,
     &gArmMpCoreInfoPpiGuid,
@@ -125,18 +147,40 @@ EFI_PEI_PPI_DESCRIPTOR      gPlatformPpiTable[] = {
   }
 };
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 ArmPlatformGetPlatformPpiList (
   OUT UINTN                   *PpiListSize,
   OUT EFI_PEI_PPI_DESCRIPTOR  **PpiList
   )
 {
-  if (ArmIsMpCore()) {
-    *PpiListSize = sizeof(gPlatformPpiTable);
-    *PpiList = gPlatformPpiTable;
+  if (ArmIsMpCore ()) {
+    *PpiListSize = sizeof (gPlatformPpiTable);
+    *PpiList     = gPlatformPpiTable;
   } else {
     *PpiListSize = 0;
-    *PpiList = NULL;
+    *PpiList     = NULL;
   }
 }
-

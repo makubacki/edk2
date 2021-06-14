@@ -22,12 +22,36 @@
 
 #include "PrePi.h"
 
-#define IS_XIP() (((UINT64)FixedPcdGet64 (PcdFdBaseAddress) > mSystemMemoryEnd) || \
-                  ((FixedPcdGet64 (PcdFdBaseAddress) + FixedPcdGet32 (PcdFdSize)) <= FixedPcdGet64 (PcdSystemMemoryBase)))
+#define IS_XIP()  (((UINT64)FixedPcdGet64 (PcdFdBaseAddress) > mSystemMemoryEnd) || \
+                   ((FixedPcdGet64 (PcdFdBaseAddress) + FixedPcdGet32 (PcdFdSize)) <= \
+                    FixedPcdGet64 (PcdSystemMemoryBase)))
 
-UINT64 mSystemMemoryEnd = FixedPcdGet64(PcdSystemMemoryBase) +
-                          FixedPcdGet64(PcdSystemMemorySize) - 1;
+UINT64  mSystemMemoryEnd = FixedPcdGet64 (PcdSystemMemoryBase) +
+                           FixedPcdGet64 (PcdSystemMemorySize) - 1;
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 GetPlatformPpi (
   IN  EFI_GUID  *PpiGuid,
@@ -41,7 +65,7 @@ GetPlatformPpi (
 
   PpiListSize = 0;
   ArmPlatformGetPlatformPpiList (&PpiListSize, &PpiList);
-  PpiListCount = PpiListSize / sizeof(EFI_PEI_PPI_DESCRIPTOR);
+  PpiListCount = PpiListSize / sizeof (EFI_PEI_PPI_DESCRIPTOR);
   for (Index = 0; Index < PpiListCount; Index++, PpiList++) {
     if (CompareGuid (PpiList->Guid, PpiGuid) == TRUE) {
       *Ppi = PpiList->Ppi;
@@ -52,6 +76,29 @@ GetPlatformPpi (
   return EFI_NOT_FOUND;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 PrePiMain (
   IN  UINTN                     UefiMemoryBase,
@@ -59,29 +106,37 @@ PrePiMain (
   IN  UINT64                    StartTimeStamp
   )
 {
-  EFI_HOB_HANDOFF_INFO_TABLE*   HobList;
-  ARM_MP_CORE_INFO_PPI*         ArmMpCoreInfoPpi;
-  UINTN                         ArmCoreCount;
-  ARM_CORE_INFO*                ArmCoreInfoTable;
-  EFI_STATUS                    Status;
-  CHAR8                         Buffer[100];
-  UINTN                         CharCount;
-  UINTN                         StacksSize;
-  FIRMWARE_SEC_PERFORMANCE      Performance;
+  EFI_HOB_HANDOFF_INFO_TABLE  *HobList;
+  ARM_MP_CORE_INFO_PPI        *ArmMpCoreInfoPpi;
+  UINTN                       ArmCoreCount;
+  ARM_CORE_INFO               *ArmCoreInfoTable;
+  EFI_STATUS                  Status;
+  CHAR8                       Buffer[100];
+  UINTN                       CharCount;
+  UINTN                       StacksSize;
+  FIRMWARE_SEC_PERFORMANCE    Performance;
 
   // If ensure the FD is either part of the System Memory or totally outside of the System Memory (XIP)
-  ASSERT (IS_XIP() ||
-          ((FixedPcdGet64 (PcdFdBaseAddress) >= FixedPcdGet64 (PcdSystemMemoryBase)) &&
-           ((UINT64)(FixedPcdGet64 (PcdFdBaseAddress) + FixedPcdGet32 (PcdFdSize)) <= (UINT64)mSystemMemoryEnd)));
+  ASSERT (
+    IS_XIP () ||
+    ((FixedPcdGet64 (PcdFdBaseAddress) >= FixedPcdGet64 (PcdSystemMemoryBase)) &&
+     ((UINT64)(FixedPcdGet64 (PcdFdBaseAddress) + FixedPcdGet32 (PcdFdSize)) <= (UINT64)mSystemMemoryEnd))
+    );
 
   // Initialize the architecture specific bits
   ArchInitialize ();
 
   // Initialize the Serial Port
   SerialPortInitialize ();
-  CharCount = AsciiSPrint (Buffer,sizeof (Buffer),"UEFI firmware (version %s built at %a on %a)\n\r",
-    (CHAR16*)PcdGetPtr(PcdFirmwareVersionString), __TIME__, __DATE__);
-  SerialPortWrite ((UINT8 *) Buffer, CharCount);
+  CharCount = AsciiSPrint (
+                Buffer,
+                sizeof (Buffer),
+                "UEFI firmware (version %s built at %a on %a)\n\r",
+                (CHAR16 *)PcdGetPtr (PcdFirmwareVersionString),
+                __TIME__,
+                __DATE__
+                );
+  SerialPortWrite ((UINT8 *)Buffer, CharCount);
 
   // Initialize the Debug Agent for Source Level Debugging
   InitializeDebugAgent (DEBUG_AGENT_INIT_POSTMEM_SEC, NULL, NULL);
@@ -89,11 +144,11 @@ PrePiMain (
 
   // Declare the PI/UEFI memory region
   HobList = HobConstructor (
-    (VOID*)UefiMemoryBase,
-    FixedPcdGet32 (PcdSystemMemoryUefiRegionSize),
-    (VOID*)UefiMemoryBase,
-    (VOID*)StacksBase  // The top of the UEFI Memory is reserved for the stacks
-    );
+              (VOID *)UefiMemoryBase,
+              FixedPcdGet32 (PcdSystemMemoryUefiRegionSize),
+              (VOID *)UefiMemoryBase,
+              (VOID *)StacksBase // The top of the UEFI Memory is reserved for the stacks
+              );
   PrePeiSetHobList (HobList);
 
   // Initialize MMU and Memory HOBs (Resource Descriptor HOBs)
@@ -107,14 +162,15 @@ PrePiMain (
   } else {
     StacksSize = PcdGet32 (PcdCPUCorePrimaryStackSize);
   }
+
   BuildStackHob (StacksBase, StacksSize);
 
-  //TODO: Call CpuPei as a library
+  // TODO: Call CpuPei as a library
   BuildCpuHob (ArmGetPhysicalAddressBits (), PcdGet8 (PcdPrePiCpuIoSize));
 
   if (ArmIsMpCore ()) {
     // Only MP Core platform need to produce gArmMpCoreInfoPpiGuid
-    Status = GetPlatformPpi (&gArmMpCoreInfoPpiGuid, (VOID**)&ArmMpCoreInfoPpi);
+    Status = GetPlatformPpi (&gArmMpCoreInfoPpiGuid, (VOID **)&ArmMpCoreInfoPpi);
 
     // On MP Core Platform we must implement the ARM MP Core Info PPI (gArmMpCoreInfoPpiGuid)
     ASSERT_EFI_ERROR (Status);
@@ -122,7 +178,7 @@ PrePiMain (
     // Build the MP Core Info Table
     ArmCoreCount = 0;
     Status = ArmMpCoreInfoPpi->GetMpCoreInfo (&ArmCoreCount, &ArmCoreInfoTable);
-    if (!EFI_ERROR(Status) && (ArmCoreCount > 0)) {
+    if (!EFI_ERROR (Status) && (ArmCoreCount > 0)) {
       // Build MPCore Info HOB
       BuildGuidDataHob (&gArmMpCoreInfoGuid, ArmCoreInfoTable, sizeof (ARM_CORE_INFO) * ArmCoreCount);
     }
@@ -156,6 +212,29 @@ PrePiMain (
   ASSERT_EFI_ERROR (Status);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 CEntryPoint (
   IN  UINTN                     MpId,
@@ -163,7 +242,7 @@ CEntryPoint (
   IN  UINTN                     StacksBase
   )
 {
-  UINT64   StartTimeStamp;
+  UINT64  StartTimeStamp;
 
   // Initialize the platform specific controllers
   ArmPlatformInitialize (MpId);
@@ -185,9 +264,9 @@ CEntryPoint (
   ArmEnableInstructionCache ();
 
   // Define the Global Variable region when we are not running in XIP
-  if (!IS_XIP()) {
+  if (!IS_XIP ()) {
     if (ArmPlatformIsPrimaryCore (MpId)) {
-      if (ArmIsMpCore()) {
+      if (ArmIsMpCore ()) {
         // Signal the Global Variable Region is defined (event: ARM_CPU_EVENT_DEFAULT)
         ArmCallSEV ();
       }
@@ -199,9 +278,10 @@ CEntryPoint (
 
   // If not primary Jump to Secondary Main
   if (ArmPlatformIsPrimaryCore (MpId)) {
-
-    InvalidateDataCacheRange ((VOID *)UefiMemoryBase,
-                              FixedPcdGet32 (PcdSystemMemoryUefiRegionSize));
+    InvalidateDataCacheRange (
+      (VOID *)UefiMemoryBase,
+      FixedPcdGet32 (PcdSystemMemoryUefiRegionSize)
+      );
 
     // Goto primary Main.
     PrimaryMain (UefiMemoryBase, StacksBase, StartTimeStamp);

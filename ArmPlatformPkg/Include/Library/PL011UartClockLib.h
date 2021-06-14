@@ -19,7 +19,7 @@
 UINT32
 EFIAPI
 PL011UartClockGetFreq (
-  VOID
-  );
+                       VOID
+                       );
 
 #endif

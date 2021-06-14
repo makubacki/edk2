@@ -16,9 +16,9 @@
 //
 // Global variable declarations
 //
-NOR_FLASH_INSTANCE **mNorFlashInstances;
-UINT32               mNorFlashDeviceCount;
-UINTN                mFlashNvStorageVariableBase;
+NOR_FLASH_INSTANCE  **mNorFlashInstances;
+UINT32              mNorFlashDeviceCount;
+UINTN               mFlashNvStorageVariableBase;
 
 NOR_FLASH_INSTANCE  mNorFlashInstanceTemplate = {
   NOR_FLASH_SIGNATURE, // Signature
@@ -46,11 +46,11 @@ NOR_FLASH_INSTANCE  mNorFlashInstanceTemplate = {
     FALSE, // ReadOnly
     FALSE, // WriteCaching;
     0, // BlockSize ... NEED TO BE FILLED
-    4, //  IoAlign
+    4, // IoAlign
     0, // LastBlock ... NEED TO BE FILLED
     0, // LowestAlignedLba
     1, // LogicalBlocksPerPhysicalBlock
-  }, //Media;
+  }, // Media;
 
   {
     EFI_DISK_IO_PROTOCOL_REVISION, // Revision
@@ -61,13 +61,13 @@ NOR_FLASH_INSTANCE  mNorFlashInstanceTemplate = {
   {
     FvbGetAttributes, // GetAttributes
     FvbSetAttributes, // SetAttributes
-    FvbGetPhysicalAddress,  // GetPhysicalAddress
-    FvbGetBlockSize,  // GetBlockSize
-    FvbRead,  // Read
+    FvbGetPhysicalAddress, // GetPhysicalAddress
+    FvbGetBlockSize,       // GetBlockSize
+    FvbRead,               // Read
     FvbWrite, // Write
     FvbEraseBlocks, // EraseBlocks
-    NULL, //ParentHandle
-  }, //  FvbProtoccol;
+    NULL, // ParentHandle
+  }, // FvbProtoccol;
   NULL, // ShadowBuffer
   {
     {
@@ -79,7 +79,8 @@ NOR_FLASH_INSTANCE  mNorFlashInstanceTemplate = {
           (UINT8)(OFFSET_OF (NOR_FLASH_DEVICE_PATH, End) >> 8)
         }
       },
-      { 0x0, 0x0, 0x0, { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 } }, // GUID ... NEED TO BE FILLED
+      { 0x0,                               0x0,                               0x0,
+          { 0x0,                               0x0,                               0x0,                              0x0,0x0, 0x0, 0x0, 0x0 } }, // GUID ... NEED TO BE FILLED
     },
     0, // Index
     {
@@ -87,9 +88,32 @@ NOR_FLASH_INSTANCE  mNorFlashInstanceTemplate = {
       END_ENTIRE_DEVICE_PATH_SUBTYPE,
       { sizeof (EFI_DEVICE_PATH_PROTOCOL), 0 }
     }
-    } // DevicePath
+  }   // DevicePath
 };
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 NorFlashCreateInstance (
   IN UINTN                  NorFlashDeviceBase,
@@ -98,15 +122,15 @@ NorFlashCreateInstance (
   IN UINT32                 Index,
   IN UINT32                 BlockSize,
   IN BOOLEAN                SupportFvb,
-  OUT NOR_FLASH_INSTANCE**  NorFlashInstance
+  OUT NOR_FLASH_INSTANCE **NorFlashInstance
   )
 {
-  EFI_STATUS Status;
-  NOR_FLASH_INSTANCE* Instance;
+  EFI_STATUS          Status;
+  NOR_FLASH_INSTANCE  *Instance;
 
-  ASSERT(NorFlashInstance != NULL);
+  ASSERT (NorFlashInstance != NULL);
 
-  Instance = AllocateRuntimeCopyPool (sizeof(NOR_FLASH_INSTANCE),&mNorFlashInstanceTemplate);
+  Instance = AllocateRuntimeCopyPool (sizeof (NOR_FLASH_INSTANCE), &mNorFlashInstanceTemplate);
   if (Instance == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -116,14 +140,14 @@ NorFlashCreateInstance (
   Instance->Size = NorFlashSize;
 
   Instance->BlockIoProtocol.Media = &Instance->Media;
-  Instance->Media.MediaId = Index;
+  Instance->Media.MediaId   = Index;
   Instance->Media.BlockSize = BlockSize;
   Instance->Media.LastBlock = (NorFlashSize / BlockSize)-1;
 
   CopyGuid (&Instance->DevicePath.Vendor.Guid, &gEfiCallerIdGuid);
   Instance->DevicePath.Index = (UINT8)Index;
 
-  Instance->ShadowBuffer = AllocateRuntimePool (BlockSize);;
+  Instance->ShadowBuffer = AllocateRuntimePool (BlockSize);
   if (Instance->ShadowBuffer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -137,12 +161,12 @@ NorFlashCreateInstance (
                       EFI_NATIVE_INTERFACE,
                       &Instance->FvbProtocol
                       );
-    if (EFI_ERROR(Status)) {
+    if (EFI_ERROR (Status)) {
       FreePool (Instance);
       return Status;
     }
   } else {
-    DEBUG((DEBUG_ERROR,"standalone MM NOR Flash driver only support FVB.\n"));
+    DEBUG ((DEBUG_ERROR, "standalone MM NOR Flash driver only support FVB.\n"));
     FreePool (Instance);
     return EFI_UNSUPPORTED;
   }
@@ -160,8 +184,8 @@ NorFlashUnlockAndEraseSingleBlock (
   IN UINTN                  BlockAddress
   )
 {
-  EFI_STATUS      Status;
-  UINTN           Index;
+  EFI_STATUS  Status;
+  UINTN       Index;
 
   Index = 0;
   // The block erase might fail a first time (SW bug ?). Retry it ...
@@ -171,17 +195,46 @@ NorFlashUnlockAndEraseSingleBlock (
     if (EFI_ERROR (Status)) {
       break;
     }
+
     Status = NorFlashEraseSingleBlock (Instance, BlockAddress);
     Index++;
   } while ((Index < NOR_FLASH_ERASE_RETRY) && (Status == EFI_WRITE_PROTECTED));
 
   if (Index == NOR_FLASH_ERASE_RETRY) {
-    DEBUG((DEBUG_ERROR,"EraseSingleBlock(BlockAddress=0x%08x: Block Locked Error (try to erase %d times)\n", BlockAddress,Index));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EraseSingleBlock(BlockAddress=0x%08x: Block Locked Error (try to erase %d times)\n",
+      BlockAddress,
+      Index
+      ));
   }
 
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 NorFlashWriteFullBlock (
   IN NOR_FLASH_INSTANCE     *Instance,
@@ -190,14 +243,14 @@ NorFlashWriteFullBlock (
   IN UINT32                 BlockSizeInWords
   )
 {
-  EFI_STATUS    Status;
-  UINTN         WordAddress;
-  UINT32        WordIndex;
-  UINTN         BufferIndex;
-  UINTN         BlockAddress;
-  UINTN         BuffersInBlock;
-  UINTN         RemainingWords;
-  UINTN         Cnt;
+  EFI_STATUS  Status;
+  UINTN       WordAddress;
+  UINT32      WordIndex;
+  UINTN       BufferIndex;
+  UINTN       BlockAddress;
+  UINTN       BuffersInBlock;
+  UINTN       RemainingWords;
+  UINTN       Cnt;
 
   Status = EFI_SUCCESS;
 
@@ -208,8 +261,12 @@ NorFlashWriteFullBlock (
   WordAddress = BlockAddress;
 
   Status = NorFlashUnlockAndEraseSingleBlock (Instance, BlockAddress);
-  if (EFI_ERROR(Status)) {
-    DEBUG((DEBUG_ERROR, "WriteSingleBlock: ERROR - Failed to Unlock and Erase the single block at 0x%X\n", BlockAddress));
+  if (EFI_ERROR (Status)) {
+    DEBUG ((
+      DEBUG_ERROR,
+      "WriteSingleBlock: ERROR - Failed to Unlock and Erase the single block at 0x%X\n",
+      BlockAddress
+      ));
     goto EXIT;
   }
 
@@ -217,25 +274,29 @@ NorFlashWriteFullBlock (
 
   // Check that the address starts at a 32-word boundary, i.e. last 7 bits must be zero
   if ((WordAddress & BOUNDARY_OF_32_WORDS) == 0x00) {
-
     // First, break the entire block into buffer-sized chunks.
     BuffersInBlock = (UINTN)(BlockSizeInWords * 4) / P30_MAX_BUFFER_SIZE_IN_BYTES;
 
     // Then feed each buffer chunk to the NOR Flash
     // If a buffer does not contain any data, don't write it.
-    for(BufferIndex=0;
-         BufferIndex < BuffersInBlock;
-         BufferIndex++, WordAddress += P30_MAX_BUFFER_SIZE_IN_BYTES, DataBuffer += P30_MAX_BUFFER_SIZE_IN_WORDS
-      ) {
+    for(BufferIndex = 0;
+        BufferIndex < BuffersInBlock;
+        BufferIndex++, WordAddress += P30_MAX_BUFFER_SIZE_IN_BYTES, DataBuffer += P30_MAX_BUFFER_SIZE_IN_WORDS
+        ) {
       // Check the buffer to see if it contains any data (not set all 1s).
       for (Cnt = 0; Cnt < P30_MAX_BUFFER_SIZE_IN_WORDS; Cnt++) {
         if (~DataBuffer[Cnt] != 0 ) {
           // Some data found, write the buffer.
-          Status = NorFlashWriteBuffer (Instance, WordAddress, P30_MAX_BUFFER_SIZE_IN_BYTES,
-                                        DataBuffer);
-          if (EFI_ERROR(Status)) {
+          Status = NorFlashWriteBuffer (
+                     Instance,
+                     WordAddress,
+                     P30_MAX_BUFFER_SIZE_IN_BYTES,
+                     DataBuffer
+                     );
+          if (EFI_ERROR (Status)) {
             goto EXIT;
           }
+
           break;
         }
       }
@@ -246,30 +307,58 @@ NorFlashWriteFullBlock (
 
     if(RemainingWords != 0) {
       Status = NorFlashWriteBuffer (Instance, WordAddress, (RemainingWords * 4), DataBuffer);
-      if (EFI_ERROR(Status)) {
+      if (EFI_ERROR (Status)) {
         goto EXIT;
       }
     }
-
   } else {
     // For now, use the single word programming algorithm
     // It is unlikely that the NOR Flash will exist in an address which falls within a 32 word boundary range,
     // i.e. which ends in the range 0x......01 - 0x......7F.
-    for(WordIndex=0; WordIndex<BlockSizeInWords; WordIndex++, DataBuffer++, WordAddress = WordAddress + 4) {
+    for(WordIndex = 0; WordIndex < BlockSizeInWords; WordIndex++, DataBuffer++, WordAddress = WordAddress + 4) {
       Status = NorFlashWriteSingleWord (Instance, WordAddress, *DataBuffer);
-      if (EFI_ERROR(Status)) {
+      if (EFI_ERROR (Status)) {
         goto EXIT;
       }
     }
   }
 
 EXIT:
-  if (EFI_ERROR(Status)) {
-    DEBUG((DEBUG_ERROR, "NOR FLASH Programming [WriteSingleBlock] failed at address 0x%08x. Exit Status = \"%r\".\n", WordAddress, Status));
+  if (EFI_ERROR (Status)) {
+    DEBUG ((
+      DEBUG_ERROR,
+      "NOR FLASH Programming [WriteSingleBlock] failed at address 0x%08x. Exit Status = \"%r\".\n",
+      WordAddress,
+      Status
+      ));
   }
+
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 NorFlashInitialise (
@@ -277,71 +366,95 @@ NorFlashInitialise (
   IN EFI_MM_SYSTEM_TABLE   *MmSystemTable
   )
 {
-  EFI_STATUS              Status;
-  UINT32                  Index;
-  NOR_FLASH_DESCRIPTION*  NorFlashDevices;
-  BOOLEAN                 ContainVariableStorage;
+  EFI_STATUS             Status;
+  UINT32                 Index;
+  NOR_FLASH_DESCRIPTION  *NorFlashDevices;
+  BOOLEAN                ContainVariableStorage;
 
   Status = NorFlashPlatformInitialization ();
-  if (EFI_ERROR(Status)) {
-    DEBUG((DEBUG_ERROR,"NorFlashInitialise: Fail to initialize Nor Flash devices\n"));
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "NorFlashInitialise: Fail to initialize Nor Flash devices\n"));
     return Status;
   }
 
   Status = NorFlashPlatformGetDevices (&NorFlashDevices, &mNorFlashDeviceCount);
-  if (EFI_ERROR(Status)) {
-    DEBUG((DEBUG_ERROR,"NorFlashInitialise: Fail to get Nor Flash devices\n"));
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "NorFlashInitialise: Fail to get Nor Flash devices\n"));
     return Status;
   }
 
-  mNorFlashInstances = AllocatePool (sizeof(NOR_FLASH_INSTANCE*) * mNorFlashDeviceCount);
+  mNorFlashInstances = AllocatePool (sizeof (NOR_FLASH_INSTANCE *) * mNorFlashDeviceCount);
 
   for (Index = 0; Index < mNorFlashDeviceCount; Index++) {
     // Check if this NOR Flash device contain the variable storage region
 
-   if (FixedPcdGet64 (PcdFlashNvStorageVariableBase64) != 0) {
-     ContainVariableStorage =
-       (NorFlashDevices[Index].RegionBaseAddress <= FixedPcdGet64 (PcdFlashNvStorageVariableBase64)) &&
-       (FixedPcdGet64 (PcdFlashNvStorageVariableBase64) + FixedPcdGet32 (PcdFlashNvStorageVariableSize) <=
-        NorFlashDevices[Index].RegionBaseAddress + NorFlashDevices[Index].Size);
-   } else {
-     ContainVariableStorage =
-       (NorFlashDevices[Index].RegionBaseAddress <= FixedPcdGet32 (PcdFlashNvStorageVariableBase)) &&
-       (FixedPcdGet32 (PcdFlashNvStorageVariableBase) + FixedPcdGet32 (PcdFlashNvStorageVariableSize) <=
-        NorFlashDevices[Index].RegionBaseAddress + NorFlashDevices[Index].Size);
-  }
+    if (FixedPcdGet64 (PcdFlashNvStorageVariableBase64) != 0) {
+      ContainVariableStorage =
+        (NorFlashDevices[Index].RegionBaseAddress <= FixedPcdGet64 (PcdFlashNvStorageVariableBase64)) &&
+        (FixedPcdGet64 (PcdFlashNvStorageVariableBase64) + FixedPcdGet32 (PcdFlashNvStorageVariableSize) <=
+         NorFlashDevices[Index].RegionBaseAddress + NorFlashDevices[Index].Size);
+    } else {
+      ContainVariableStorage =
+        (NorFlashDevices[Index].RegionBaseAddress <= FixedPcdGet32 (PcdFlashNvStorageVariableBase)) &&
+        (FixedPcdGet32 (PcdFlashNvStorageVariableBase) + FixedPcdGet32 (PcdFlashNvStorageVariableSize) <=
+         NorFlashDevices[Index].RegionBaseAddress + NorFlashDevices[Index].Size);
+    }
 
     Status = NorFlashCreateInstance (
-      NorFlashDevices[Index].DeviceBaseAddress,
-      NorFlashDevices[Index].RegionBaseAddress,
-      NorFlashDevices[Index].Size,
-      Index,
-      NorFlashDevices[Index].BlockSize,
-      ContainVariableStorage,
-      &mNorFlashInstances[Index]
-    );
-    if (EFI_ERROR(Status)) {
-      DEBUG((DEBUG_ERROR,"NorFlashInitialise: Fail to create instance for NorFlash[%d]\n",Index));
+               NorFlashDevices[Index].DeviceBaseAddress,
+               NorFlashDevices[Index].RegionBaseAddress,
+               NorFlashDevices[Index].Size,
+               Index,
+               NorFlashDevices[Index].BlockSize,
+               ContainVariableStorage,
+               &mNorFlashInstances[Index]
+               );
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "NorFlashInitialise: Fail to create instance for NorFlash[%d]\n", Index));
     }
   }
 
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 NorFlashFvbInitialize (
-  IN NOR_FLASH_INSTANCE* Instance
+  IN NOR_FLASH_INSTANCE *Instance
   )
 {
   EFI_STATUS  Status;
   UINT32      FvbNumLba;
 
-  ASSERT((Instance != NULL));
-
+  ASSERT ((Instance != NULL));
 
   mFlashNvStorageVariableBase = (FixedPcdGet64 (PcdFlashNvStorageVariableBase64) != 0) ?
-    FixedPcdGet64 (PcdFlashNvStorageVariableBase64) : FixedPcdGet32 (PcdFlashNvStorageVariableBase);
+                                FixedPcdGet64 (PcdFlashNvStorageVariableBase64) : FixedPcdGet32 (
+                                                                                    PcdFlashNvStorageVariableBase
+                                                                                    );
   // Set the index of the first LBA for the FVB
   Instance->StartLba = (mFlashNvStorageVariableBase - Instance->RegionBaseAddress) / Instance->Media.BlockSize;
 
@@ -349,23 +462,30 @@ NorFlashFvbInitialize (
   Status = ValidateFvHeader (Instance);
 
   // Install the Default FVB header if required
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     // There is no valid header, so time to install one.
     DEBUG ((DEBUG_INFO, "%a: The FVB Header is not valid.\n", __FUNCTION__));
-    DEBUG ((DEBUG_INFO, "%a: Installing a correct one for this volume.\n",
-      __FUNCTION__));
+    DEBUG ((
+      DEBUG_INFO,
+      "%a: Installing a correct one for this volume.\n",
+      __FUNCTION__
+      ));
 
     // Erase all the NorFlash that is reserved for variable storage
-    FvbNumLba = (PcdGet32(PcdFlashNvStorageVariableSize) + PcdGet32(PcdFlashNvStorageFtwWorkingSize) + PcdGet32(PcdFlashNvStorageFtwSpareSize)) / Instance->Media.BlockSize;
+    FvbNumLba =
+      (PcdGet32 (PcdFlashNvStorageVariableSize) + PcdGet32 (PcdFlashNvStorageFtwWorkingSize) + PcdGet32 (
+                                                                                                 PcdFlashNvStorageFtwSpareSize
+                                                                                                 )) /
+      Instance->Media.BlockSize;
 
     Status = FvbEraseBlocks (&Instance->FvbProtocol, (EFI_LBA)0, FvbNumLba, EFI_LBA_LIST_TERMINATOR);
-    if (EFI_ERROR(Status)) {
+    if (EFI_ERROR (Status)) {
       return Status;
     }
 
     // Install all appropriate headers
     Status = InitializeFvAndVariableStoreHeaders (Instance);
-    if (EFI_ERROR(Status)) {
+    if (EFI_ERROR (Status)) {
       return Status;
     }
   }

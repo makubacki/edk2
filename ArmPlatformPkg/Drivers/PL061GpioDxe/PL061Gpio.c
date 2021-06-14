@@ -7,7 +7,6 @@
 
 **/
 
-
 #include <PiDxe.h>
 
 #include <Library/BaseLib.h>
@@ -24,8 +23,31 @@
 
 #include "PL061Gpio.h"
 
-PLATFORM_GPIO_CONTROLLER *mPL061PlatformGpio;
+PLATFORM_GPIO_CONTROLLER  *mPL061PlatformGpio;
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 PL061Locate (
@@ -35,18 +57,19 @@ PL061Locate (
   OUT UINTN             *RegisterBase
   )
 {
-  UINT32    Index;
+  UINT32  Index;
 
   for (Index = 0; Index < mPL061PlatformGpio->GpioControllerCount; Index++) {
-    if (    (Gpio >= mPL061PlatformGpio->GpioController[Index].GpioIndex)
-        &&  (Gpio < mPL061PlatformGpio->GpioController[Index].GpioIndex
-             + mPL061PlatformGpio->GpioController[Index].InternalGpioCount)) {
-      *ControllerIndex = Index;
+    if (  (Gpio >= mPL061PlatformGpio->GpioController[Index].GpioIndex)
+       &&  (Gpio < mPL061PlatformGpio->GpioController[Index].GpioIndex
+            + mPL061PlatformGpio->GpioController[Index].InternalGpioCount)) {
+      *ControllerIndex  = Index;
       *ControllerOffset = Gpio % mPL061PlatformGpio->GpioController[Index].InternalGpioCount;
-      *RegisterBase = mPL061PlatformGpio->GpioController[Index].RegisterBase;
+      *RegisterBase     = mPL061PlatformGpio->GpioController[Index].RegisterBase;
       return EFI_SUCCESS;
     }
   }
+
   DEBUG ((EFI_D_ERROR, "%a, failed to locate gpio %d\n", __func__, Gpio));
   return EFI_INVALID_PARAMETER;
 }
@@ -56,14 +79,14 @@ PL061Locate (
 // region 0x400 bytes in size, with bits [9:2] of the address operating as a
 // mask for both read and write operations:
 // For reads:
-//   - All bits where their corresponding mask bit is 1 return the current
-//     value of that bit in the GPIO_DATA register.
-//   - All bits where their corresponding mask bit is 0 return 0.
+// - All bits where their corresponding mask bit is 1 return the current
+// value of that bit in the GPIO_DATA register.
+// - All bits where their corresponding mask bit is 0 return 0.
 // For writes:
-//   - All bits where their corresponding mask bit is 1 set the bit in the
-//     GPIO_DATA register to the written value.
-//   - All bits where their corresponding mask bit is 0 are left untouched
-//     in the GPIO_DATA register.
+// - All bits where their corresponding mask bit is 1 set the bit in the
+// GPIO_DATA register to the written value.
+// - All bits where their corresponding mask bit is 0 are left untouched
+// in the GPIO_DATA register.
 //
 // To keep this driver intelligible, PL061EffectiveAddress, PL061GetPins and
 // Pl061SetPins provide an internal abstraction from this interface.
@@ -79,6 +102,29 @@ PL061EffectiveAddress (
   return ((Address + PL061_GPIO_DATA_REG_OFFSET) + (Mask << 2));
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 UINTN
 EFIAPI
@@ -90,6 +136,29 @@ PL061GetPins (
   return MmioRead8 (PL061EffectiveAddress (Address, Mask));
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 VOID
 EFIAPI
@@ -105,18 +174,17 @@ PL061SetPins (
 /**
   Function implementations
 **/
-
 EFI_STATUS
 PL061Identify (
   VOID
   )
 {
-  UINTN    Index;
-  UINTN    RegisterBase;
+  UINTN  Index;
+  UINTN  RegisterBase;
 
-  if (   (mPL061PlatformGpio->GpioCount == 0)
-      || (mPL061PlatformGpio->GpioControllerCount == 0)) {
-     return EFI_NOT_FOUND;
+  if (  (mPL061PlatformGpio->GpioCount == 0)
+     || (mPL061PlatformGpio->GpioControllerCount == 0)) {
+    return EFI_NOT_FOUND;
   }
 
   for (Index = 0; Index < mPL061PlatformGpio->GpioControllerCount; Index++) {
@@ -127,18 +195,18 @@ PL061Identify (
     RegisterBase = mPL061PlatformGpio->GpioController[Index].RegisterBase;
 
     // Check if this is a PrimeCell Peripheral
-    if (    (MmioRead8 (RegisterBase + PL061_GPIO_PCELL_ID0) != 0x0D)
-        ||  (MmioRead8 (RegisterBase + PL061_GPIO_PCELL_ID1) != 0xF0)
-        ||  (MmioRead8 (RegisterBase + PL061_GPIO_PCELL_ID2) != 0x05)
-        ||  (MmioRead8 (RegisterBase + PL061_GPIO_PCELL_ID3) != 0xB1)) {
+    if (  (MmioRead8 (RegisterBase + PL061_GPIO_PCELL_ID0) != 0x0D)
+       ||  (MmioRead8 (RegisterBase + PL061_GPIO_PCELL_ID1) != 0xF0)
+       ||  (MmioRead8 (RegisterBase + PL061_GPIO_PCELL_ID2) != 0x05)
+       ||  (MmioRead8 (RegisterBase + PL061_GPIO_PCELL_ID3) != 0xB1)) {
       return EFI_NOT_FOUND;
     }
 
     // Check if this PrimeCell Peripheral is the PL061 GPIO
-    if (    (MmioRead8 (RegisterBase + PL061_GPIO_PERIPH_ID0) != 0x61)
-        ||  (MmioRead8 (RegisterBase + PL061_GPIO_PERIPH_ID1) != 0x10)
-        ||  ((MmioRead8 (RegisterBase + PL061_GPIO_PERIPH_ID2) & 0xF) != 0x04)
-        ||  (MmioRead8 (RegisterBase + PL061_GPIO_PERIPH_ID3) != 0x00)) {
+    if (  (MmioRead8 (RegisterBase + PL061_GPIO_PERIPH_ID0) != 0x61)
+       ||  (MmioRead8 (RegisterBase + PL061_GPIO_PERIPH_ID1) != 0x10)
+       ||  ((MmioRead8 (RegisterBase + PL061_GPIO_PERIPH_ID2) & 0xF) != 0x04)
+       ||  (MmioRead8 (RegisterBase + PL061_GPIO_PERIPH_ID3) != 0x00)) {
       return EFI_NOT_FOUND;
     }
   }
@@ -171,8 +239,8 @@ Get (
   OUT UINTN             *Value
   )
 {
-  EFI_STATUS    Status;
-  UINTN         Index, Offset, RegisterBase;
+  EFI_STATUS  Status;
+  UINTN       Index, Offset, RegisterBase;
 
   Status = PL061Locate (Gpio, &Index, &Offset, &RegisterBase);
   ASSERT_EFI_ERROR (Status);
@@ -181,7 +249,7 @@ Get (
     return EFI_INVALID_PARAMETER;
   }
 
-  if (PL061GetPins (RegisterBase, GPIO_PIN_MASK(Offset)) != 0) {
+  if (PL061GetPins (RegisterBase, GPIO_PIN_MASK (Offset)) != 0) {
     *Value = 1;
   } else {
     *Value = 0;
@@ -216,32 +284,33 @@ Set (
   IN  EMBEDDED_GPIO_MODE  Mode
   )
 {
-  EFI_STATUS    Status;
-  UINTN         Index, Offset, RegisterBase;
+  EFI_STATUS  Status;
+  UINTN       Index, Offset, RegisterBase;
 
   Status = PL061Locate (Gpio, &Index, &Offset, &RegisterBase);
   ASSERT_EFI_ERROR (Status);
 
-  switch (Mode)
-  {
+  switch (Mode) {
     case GPIO_MODE_INPUT:
       // Set the corresponding direction bit to LOW for input
-      MmioAnd8 (RegisterBase + PL061_GPIO_DIR_REG,
-                ~GPIO_PIN_MASK(Offset) & 0xFF);
+      MmioAnd8 (
+        RegisterBase + PL061_GPIO_DIR_REG,
+        ~GPIO_PIN_MASK(Offset) & 0xFF
+        );
       break;
 
     case GPIO_MODE_OUTPUT_0:
       // Set the corresponding direction bit to HIGH for output
-      MmioOr8 (RegisterBase + PL061_GPIO_DIR_REG, GPIO_PIN_MASK(Offset));
+      MmioOr8 (RegisterBase + PL061_GPIO_DIR_REG, GPIO_PIN_MASK (Offset));
       // Set the corresponding data bit to LOW for 0
-      PL061SetPins (RegisterBase, GPIO_PIN_MASK(Offset), 0);
+      PL061SetPins (RegisterBase, GPIO_PIN_MASK (Offset), 0);
       break;
 
     case GPIO_MODE_OUTPUT_1:
       // Set the corresponding direction bit to HIGH for output
-      MmioOr8 (RegisterBase + PL061_GPIO_DIR_REG, GPIO_PIN_MASK(Offset));
+      MmioOr8 (RegisterBase + PL061_GPIO_DIR_REG, GPIO_PIN_MASK (Offset));
       // Set the corresponding data bit to HIGH for 1
-      PL061SetPins (RegisterBase, GPIO_PIN_MASK(Offset), 0xff);
+      PL061SetPins (RegisterBase, GPIO_PIN_MASK (Offset), 0xff);
       break;
 
     default:
@@ -278,8 +347,8 @@ GetMode (
   OUT EMBEDDED_GPIO_MODE  *Mode
   )
 {
-  EFI_STATUS    Status;
-  UINTN         Index, Offset, RegisterBase;
+  EFI_STATUS  Status;
+  UINTN       Index, Offset, RegisterBase;
 
   Status = PL061Locate (Gpio, &Index, &Offset, &RegisterBase);
   ASSERT_EFI_ERROR (Status);
@@ -290,9 +359,9 @@ GetMode (
   }
 
   // Check if it is input or output
-  if (MmioRead8 (RegisterBase + PL061_GPIO_DIR_REG) & GPIO_PIN_MASK(Offset)) {
+  if (MmioRead8 (RegisterBase + PL061_GPIO_DIR_REG) & GPIO_PIN_MASK (Offset)) {
     // Pin set to output
-    if (PL061GetPins (RegisterBase, GPIO_PIN_MASK(Offset)) != 0) {
+    if (PL061GetPins (RegisterBase, GPIO_PIN_MASK (Offset)) != 0) {
       *Mode = GPIO_MODE_OUTPUT_1;
     } else {
       *Mode = GPIO_MODE_OUTPUT_0;
@@ -336,7 +405,7 @@ SetPull (
 /**
  Protocol variable definition
  **/
-EMBEDDED_GPIO gGpio = {
+EMBEDDED_GPIO  gGpio = {
   Get,
   Set,
   GetMode,
@@ -361,9 +430,9 @@ PL061InstallProtocol (
   IN EFI_SYSTEM_TABLE   *SystemTable
   )
 {
-  EFI_STATUS            Status;
-  EFI_HANDLE            Handle;
-  GPIO_CONTROLLER       *GpioController;
+  EFI_STATUS       Status;
+  EFI_HANDLE       Handle;
+  GPIO_CONTROLLER  *GpioController;
 
   //
   // Make sure the Gpio protocol has not been installed in the system yet.
@@ -373,7 +442,8 @@ PL061InstallProtocol (
   Status = gBS->LocateProtocol (&gPlatformGpioProtocolGuid, NULL, (VOID **)&mPL061PlatformGpio);
   if (EFI_ERROR (Status) && (Status == EFI_NOT_FOUND)) {
     // Create the mPL061PlatformGpio
-    mPL061PlatformGpio = (PLATFORM_GPIO_CONTROLLER *)AllocateZeroPool (sizeof (PLATFORM_GPIO_CONTROLLER) + sizeof (GPIO_CONTROLLER));
+    mPL061PlatformGpio =
+      (PLATFORM_GPIO_CONTROLLER *)AllocateZeroPool (sizeof (PLATFORM_GPIO_CONTROLLER) + sizeof (GPIO_CONTROLLER));
     if (mPL061PlatformGpio == NULL) {
       DEBUG ((EFI_D_ERROR, "%a: failed to allocate PLATFORM_GPIO_CONTROLLER\n", __func__));
       return EFI_BAD_BUFFER_SIZE;
@@ -381,27 +451,29 @@ PL061InstallProtocol (
 
     mPL061PlatformGpio->GpioCount = PL061_GPIO_PINS;
     mPL061PlatformGpio->GpioControllerCount = 1;
-    mPL061PlatformGpio->GpioController = (GPIO_CONTROLLER *)((UINTN) mPL061PlatformGpio + sizeof (PLATFORM_GPIO_CONTROLLER));
+    mPL061PlatformGpio->GpioController =
+      (GPIO_CONTROLLER *)((UINTN)mPL061PlatformGpio + sizeof (PLATFORM_GPIO_CONTROLLER));
 
     GpioController = mPL061PlatformGpio->GpioController;
-    GpioController->RegisterBase = (UINTN) PcdGet32 (PcdPL061GpioBase);
-    GpioController->GpioIndex = 0;
+    GpioController->RegisterBase = (UINTN)PcdGet32 (PcdPL061GpioBase);
+    GpioController->GpioIndex    = 0;
     GpioController->InternalGpioCount = PL061_GPIO_PINS;
   }
 
-  Status = PL061Identify();
-  if (EFI_ERROR(Status)) {
+  Status = PL061Identify ();
+  if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
   }
 
   // Install the Embedded GPIO Protocol onto a new handle
   Handle = NULL;
-  Status = gBS->InstallMultipleProtocolInterfaces(
+  Status = gBS->InstallMultipleProtocolInterfaces (
                   &Handle,
-                  &gEmbeddedGpioProtocolGuid, &gGpio,
+                  &gEmbeddedGpioProtocolGuid,
+                  &gGpio,
                   NULL
-                 );
-  if (EFI_ERROR(Status)) {
+                  );
+  if (EFI_ERROR (Status)) {
     Status = EFI_OUT_OF_RESOURCES;
   }
 

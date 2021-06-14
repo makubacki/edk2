@@ -14,26 +14,49 @@
 
 #include "PrePeiCore.h"
 
-CONST EFI_PEI_TEMPORARY_RAM_SUPPORT_PPI   mTemporaryRamSupportPpi = { PrePeiCoreTemporaryRamSupport };
+CONST EFI_PEI_TEMPORARY_RAM_SUPPORT_PPI  mTemporaryRamSupportPpi = { PrePeiCoreTemporaryRamSupport };
 
-CONST EFI_PEI_PPI_DESCRIPTOR      gCommonPpiTable[] = {
+CONST EFI_PEI_PPI_DESCRIPTOR  gCommonPpiTable[] = {
   {
     EFI_PEI_PPI_DESCRIPTOR_PPI,
     &gEfiTemporaryRamSupportPpiGuid,
-    (VOID *) &mTemporaryRamSupportPpi
+    (VOID *)&mTemporaryRamSupportPpi
   }
 };
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 CreatePpiList (
   OUT UINTN                   *PpiListSize,
   OUT EFI_PEI_PPI_DESCRIPTOR  **PpiList
   )
 {
-  EFI_PEI_PPI_DESCRIPTOR *PlatformPpiList;
+  EFI_PEI_PPI_DESCRIPTOR  *PlatformPpiList;
   UINTN                   PlatformPpiListSize;
   UINTN                   ListBase;
-  EFI_PEI_PPI_DESCRIPTOR *LastPpi;
+  EFI_PEI_PPI_DESCRIPTOR  *LastPpi;
 
   // Get the Platform PPIs
   PlatformPpiListSize = 0;
@@ -41,17 +64,41 @@ CreatePpiList (
 
   // Copy the Common and Platform PPis in Temporary Memory
   ListBase = PcdGet64 (PcdCPUCoresStackBase);
-  CopyMem ((VOID*)ListBase, gCommonPpiTable, sizeof(gCommonPpiTable));
-  CopyMem ((VOID*)(ListBase + sizeof(gCommonPpiTable)), PlatformPpiList, PlatformPpiListSize);
+  CopyMem ((VOID *)ListBase, gCommonPpiTable, sizeof (gCommonPpiTable));
+  CopyMem ((VOID *)(ListBase + sizeof (gCommonPpiTable)), PlatformPpiList, PlatformPpiListSize);
 
   // Set the Terminate flag on the last PPI entry
-  LastPpi = (EFI_PEI_PPI_DESCRIPTOR*)ListBase + ((sizeof(gCommonPpiTable) + PlatformPpiListSize) / sizeof(EFI_PEI_PPI_DESCRIPTOR)) - 1;
+  LastPpi = (EFI_PEI_PPI_DESCRIPTOR *)ListBase +
+            ((sizeof (gCommonPpiTable) + PlatformPpiListSize) / sizeof (EFI_PEI_PPI_DESCRIPTOR)) - 1;
   LastPpi->Flags |= EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST;
 
-  *PpiList     = (EFI_PEI_PPI_DESCRIPTOR*)ListBase;
-  *PpiListSize = sizeof(gCommonPpiTable) + PlatformPpiListSize;
+  *PpiList     = (EFI_PEI_PPI_DESCRIPTOR *)ListBase;
+  *PpiListSize = sizeof (gCommonPpiTable) + PlatformPpiListSize;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 CEntryPoint (
   IN  UINTN                     MpId,
@@ -65,8 +112,10 @@ CEntryPoint (
   // Enable Instruction Caches on all cores.
   ArmEnableInstructionCache ();
 
-  InvalidateDataCacheRange ((VOID *)(UINTN)PcdGet64 (PcdCPUCoresStackBase),
-                            PcdGet32 (PcdCPUCorePrimaryStackSize));
+  InvalidateDataCacheRange (
+    (VOID *)(UINTN)PcdGet64 (PcdCPUCoresStackBase),
+    PcdGet32 (PcdCPUCorePrimaryStackSize)
+    );
 
   //
   // Note: Doesn't have to Enable CPU interface in non-secure world,
@@ -84,7 +133,7 @@ CEntryPoint (
     ArmEnableVFP ();
   }
 
-  //Note: The MMU will be enabled by MemoryPeim. Only the primary core will have the MMU on.
+  // Note: The MMU will be enabled by MemoryPeim. Only the primary core will have the MMU on.
 
   // If not primary Jump to Secondary Main
   if (ArmPlatformIsPrimaryCore (MpId)) {
@@ -105,6 +154,29 @@ CEntryPoint (
   ASSERT (FALSE);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 PrePeiCoreTemporaryRamSupport (
@@ -114,19 +186,19 @@ PrePeiCoreTemporaryRamSupport (
   IN UINTN                    CopySize
   )
 {
-  VOID                             *OldHeap;
-  VOID                             *NewHeap;
-  VOID                             *OldStack;
-  VOID                             *NewStack;
-  UINTN                            HeapSize;
+  VOID   *OldHeap;
+  VOID   *NewHeap;
+  VOID   *OldStack;
+  VOID   *NewStack;
+  UINTN  HeapSize;
 
   HeapSize = ALIGN_VALUE (CopySize / 2, CPU_STACK_ALIGNMENT);
 
-  OldHeap = (VOID*)(UINTN)TemporaryMemoryBase;
-  NewHeap = (VOID*)((UINTN)PermanentMemoryBase + (CopySize - HeapSize));
+  OldHeap = (VOID *)(UINTN)TemporaryMemoryBase;
+  NewHeap = (VOID *)((UINTN)PermanentMemoryBase + (CopySize - HeapSize));
 
-  OldStack = (VOID*)((UINTN)TemporaryMemoryBase + HeapSize);
-  NewStack = (VOID*)(UINTN)PermanentMemoryBase;
+  OldStack = (VOID *)((UINTN)TemporaryMemoryBase + HeapSize);
+  NewStack = (VOID *)(UINTN)PermanentMemoryBase;
 
   //
   // Migrate the temporary memory stack to permanent memory stack.

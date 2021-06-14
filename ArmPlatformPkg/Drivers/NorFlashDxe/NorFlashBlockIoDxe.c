@@ -21,9 +21,9 @@ NorFlashBlockIoReset (
   IN BOOLEAN                ExtendedVerification
   )
 {
-  NOR_FLASH_INSTANCE *Instance;
+  NOR_FLASH_INSTANCE  *Instance;
 
-  Instance = INSTANCE_FROM_BLKIO_THIS(This);
+  Instance = INSTANCE_FROM_BLKIO_THIS (This);
 
   DEBUG ((DEBUG_BLKIO, "NorFlashBlockIoReset(MediaId=0x%x)\n", This->Media->MediaId));
 
@@ -51,10 +51,17 @@ NorFlashBlockIoReadBlocks (
     return EFI_INVALID_PARAMETER;
   }
 
-  Instance = INSTANCE_FROM_BLKIO_THIS(This);
-  Media = This->Media;
+  Instance = INSTANCE_FROM_BLKIO_THIS (This);
+  Media    = This->Media;
 
-  DEBUG ((DEBUG_BLKIO, "NorFlashBlockIoReadBlocks(MediaId=0x%x, Lba=%ld, BufferSize=0x%x bytes (%d kB), BufferPtr @ 0x%08x)\n", MediaId, Lba, BufferSizeInBytes, Buffer));
+  DEBUG ((
+    DEBUG_BLKIO,
+    "NorFlashBlockIoReadBlocks(MediaId=0x%x, Lba=%ld, BufferSize=0x%x bytes (%d kB), BufferPtr @ 0x%08x)\n",
+    MediaId,
+    Lba,
+    BufferSizeInBytes,
+    Buffer
+    ));
 
   if (!Media) {
     Status = EFI_INVALID_PARAMETER;
@@ -87,9 +94,16 @@ NorFlashBlockIoWriteBlocks (
   NOR_FLASH_INSTANCE  *Instance;
   EFI_STATUS          Status;
 
-  Instance = INSTANCE_FROM_BLKIO_THIS(This);
+  Instance = INSTANCE_FROM_BLKIO_THIS (This);
 
-  DEBUG ((DEBUG_BLKIO, "NorFlashBlockIoWriteBlocks(MediaId=0x%x, Lba=%ld, BufferSize=0x%x bytes (%d kB), BufferPtr @ 0x%08x)\n", MediaId, Lba, BufferSizeInBytes, Buffer));
+  DEBUG ((
+    DEBUG_BLKIO,
+    "NorFlashBlockIoWriteBlocks(MediaId=0x%x, Lba=%ld, BufferSize=0x%x bytes (%d kB), BufferPtr @ 0x%08x)\n",
+    MediaId,
+    Lba,
+    BufferSizeInBytes,
+    Buffer
+    ));
 
   if( !This->Media->MediaPresent ) {
     Status = EFI_NO_MEDIA;
@@ -98,7 +112,7 @@ NorFlashBlockIoWriteBlocks (
   } else if( This->Media->ReadOnly ) {
     Status = EFI_WRITE_PROTECTED;
   } else {
-    Status = NorFlashWriteBlocks (Instance,Lba,BufferSizeInBytes,Buffer);
+    Status = NorFlashWriteBlocks (Instance, Lba, BufferSizeInBytes, Buffer);
   }
 
   return Status;
