@@ -16,14 +16,14 @@
 
 #define EFI_MPS_TABLE_GUID \
   { \
-    0xeb9d2d2f, 0x2d88, 0x11d3, {0x9a, 0x16, 0x0, 0x90, 0x27, 0x3f, 0xc1, 0x4d } \
+    0xeb9d2d2f, 0x2d88, 0x11d3, { 0x9a, 0x16, 0x0, 0x90, 0x27, 0x3f, 0xc1, 0x4d } \
   }
 
 //
 // GUID name defined in spec.
 //
-#define MPS_TABLE_GUID EFI_MPS_TABLE_GUID
+#define MPS_TABLE_GUID  EFI_MPS_TABLE_GUID
 
-extern EFI_GUID gEfiMpsTableGuid;
+extern EFI_GUID  gEfiMpsTableGuid;
 
 #endif
