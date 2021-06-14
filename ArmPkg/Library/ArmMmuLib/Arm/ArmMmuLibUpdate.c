@@ -18,29 +18,52 @@
 
 #include <Chipset/ArmV7.h>
 
-#define __EFI_MEMORY_RWX               0    // no restrictions
+#define __EFI_MEMORY_RWX  0                 // no restrictions
 
-#define CACHE_ATTRIBUTE_MASK   (EFI_MEMORY_UC | \
-                                EFI_MEMORY_WC | \
-                                EFI_MEMORY_WT | \
-                                EFI_MEMORY_WB | \
-                                EFI_MEMORY_UCE | \
-                                EFI_MEMORY_WP)
+#define CACHE_ATTRIBUTE_MASK  (EFI_MEMORY_UC | \
+                               EFI_MEMORY_WC | \
+                               EFI_MEMORY_WT | \
+                               EFI_MEMORY_WB | \
+                               EFI_MEMORY_UCE | \
+                               EFI_MEMORY_WP)
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 ConvertSectionToPages (
   IN EFI_PHYSICAL_ADDRESS  BaseAddress
   )
 {
-  UINT32                  FirstLevelIdx;
-  UINT32                  SectionDescriptor;
-  UINT32                  PageTableDescriptor;
-  UINT32                  PageDescriptor;
-  UINT32                  Index;
+  UINT32  FirstLevelIdx;
+  UINT32  SectionDescriptor;
+  UINT32  PageTableDescriptor;
+  UINT32  PageDescriptor;
+  UINT32  Index;
 
-  volatile ARM_FIRST_LEVEL_DESCRIPTOR   *FirstLevelTable;
-  volatile ARM_PAGE_TABLE_ENTRY         *PageTable;
+  volatile ARM_FIRST_LEVEL_DESCRIPTOR  *FirstLevelTable;
+  volatile ARM_PAGE_TABLE_ENTRY        *PageTable;
 
   DEBUG ((DEBUG_PAGE, "Converting section at 0x%x to pages\n", (UINTN)BaseAddress));
 
@@ -48,12 +71,13 @@ ConvertSectionToPages (
   FirstLevelTable = (ARM_FIRST_LEVEL_DESCRIPTOR *)ArmGetTTBR0BaseAddress ();
 
   // Calculate index into first level translation table for start of modification
-  FirstLevelIdx = TT_DESCRIPTOR_SECTION_BASE_ADDRESS(BaseAddress) >> TT_DESCRIPTOR_SECTION_BASE_SHIFT;
+  FirstLevelIdx = TT_DESCRIPTOR_SECTION_BASE_ADDRESS (BaseAddress) >> TT_DESCRIPTOR_SECTION_BASE_SHIFT;
   ASSERT (FirstLevelIdx < TRANSLATION_TABLE_SECTION_COUNT);
 
   // Get section attributes and convert to page attributes
   SectionDescriptor = FirstLevelTable[FirstLevelIdx];
-  PageDescriptor = TT_DESCRIPTOR_PAGE_TYPE_PAGE | ConvertSectionAttributesToPageAttributes (SectionDescriptor, FALSE);
+  PageDescriptor    = TT_DESCRIPTOR_PAGE_TYPE_PAGE |
+                      ConvertSectionAttributesToPageAttributes (SectionDescriptor, FALSE);
 
   // Allocate a page table for the 4KB entries (we use up a full page even though we only need 1KB)
   PageTable = (volatile ARM_PAGE_TABLE_ENTRY *)AllocatePages (1);
@@ -63,11 +87,12 @@ ConvertSectionToPages (
 
   // Write the page table entries out
   for (Index = 0; Index < TRANSLATION_TABLE_PAGE_COUNT; Index++) {
-    PageTable[Index] = TT_DESCRIPTOR_PAGE_BASE_ADDRESS(BaseAddress + (Index << 12)) | PageDescriptor;
+    PageTable[Index] = TT_DESCRIPTOR_PAGE_BASE_ADDRESS (BaseAddress + (Index << 12)) | PageDescriptor;
   }
 
   // Formulate page table entry, Domain=0, NS=0
-  PageTableDescriptor = (((UINTN)PageTable) & TT_DESCRIPTOR_SECTION_PAGETABLE_ADDRESS_MASK) | TT_DESCRIPTOR_SECTION_TYPE_PAGE_TABLE;
+  PageTableDescriptor = (((UINTN)PageTable) & TT_DESCRIPTOR_SECTION_PAGETABLE_ADDRESS_MASK) |
+                        TT_DESCRIPTOR_SECTION_TYPE_PAGE_TABLE;
 
   // Write the page table entry out, replacing section entry
   FirstLevelTable[FirstLevelIdx] = PageTableDescriptor;
@@ -75,6 +100,29 @@ ConvertSectionToPages (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 UpdatePageEntries (
@@ -84,21 +132,21 @@ UpdatePageEntries (
   OUT BOOLEAN                   *FlushTlbs OPTIONAL
   )
 {
-  EFI_STATUS    Status;
-  UINT32        EntryValue;
-  UINT32        EntryMask;
-  UINT32        FirstLevelIdx;
-  UINT32        Offset;
-  UINT32        NumPageEntries;
-  UINT32        Descriptor;
-  UINT32        p;
-  UINT32        PageTableIndex;
-  UINT32        PageTableEntry;
-  UINT32        CurrentPageTableEntry;
-  VOID          *Mva;
+  EFI_STATUS  Status;
+  UINT32      EntryValue;
+  UINT32      EntryMask;
+  UINT32      FirstLevelIdx;
+  UINT32      Offset;
+  UINT32      NumPageEntries;
+  UINT32      Descriptor;
+  UINT32      p;
+  UINT32      PageTableIndex;
+  UINT32      PageTableEntry;
+  UINT32      CurrentPageTableEntry;
+  VOID        *Mva;
 
-  volatile ARM_FIRST_LEVEL_DESCRIPTOR   *FirstLevelTable;
-  volatile ARM_PAGE_TABLE_ENTRY         *PageTable;
+  volatile ARM_FIRST_LEVEL_DESCRIPTOR  *FirstLevelTable;
+  volatile ARM_PAGE_TABLE_ENTRY        *PageTable;
 
   Status = EFI_SUCCESS;
 
@@ -159,16 +207,16 @@ UpdatePageEntries (
   for(p = 0; p < NumPageEntries; p++) {
     // Calculate index into first level translation table for page table value
 
-    FirstLevelIdx = TT_DESCRIPTOR_SECTION_BASE_ADDRESS(BaseAddress + Offset) >> TT_DESCRIPTOR_SECTION_BASE_SHIFT;
+    FirstLevelIdx = TT_DESCRIPTOR_SECTION_BASE_ADDRESS (BaseAddress + Offset) >> TT_DESCRIPTOR_SECTION_BASE_SHIFT;
     ASSERT (FirstLevelIdx < TRANSLATION_TABLE_SECTION_COUNT);
 
     // Read the descriptor from the first level page table
     Descriptor = FirstLevelTable[FirstLevelIdx];
 
     // Does this descriptor need to be converted from section entry to 4K pages?
-    if (!TT_DESCRIPTOR_SECTION_TYPE_IS_PAGE_TABLE(Descriptor)) {
+    if (!TT_DESCRIPTOR_SECTION_TYPE_IS_PAGE_TABLE (Descriptor)) {
       Status = ConvertSectionToPages (FirstLevelIdx << TT_DESCRIPTOR_SECTION_BASE_SHIFT);
-      if (EFI_ERROR(Status)) {
+      if (EFI_ERROR (Status)) {
         // Exit for loop
         break;
       }
@@ -181,7 +229,7 @@ UpdatePageEntries (
     }
 
     // Obtain page table base address
-    PageTable = (ARM_PAGE_TABLE_ENTRY *)TT_DESCRIPTOR_PAGE_BASE_ADDRESS(Descriptor);
+    PageTable = (ARM_PAGE_TABLE_ENTRY *)TT_DESCRIPTOR_PAGE_BASE_ADDRESS (Descriptor);
 
     // Calculate index into the page table
     PageTableIndex = ((BaseAddress + Offset) & TT_DESCRIPTOR_PAGE_INDEX_MASK) >> TT_DESCRIPTOR_PAGE_BASE_SHIFT;
@@ -197,21 +245,45 @@ UpdatePageEntries (
     PageTableEntry |= EntryValue;
 
     if (CurrentPageTableEntry  != PageTableEntry) {
-      Mva = (VOID *)(UINTN)((((UINTN)FirstLevelIdx) << TT_DESCRIPTOR_SECTION_BASE_SHIFT) + (PageTableIndex << TT_DESCRIPTOR_PAGE_BASE_SHIFT));
+      Mva =
+        (VOID *)(UINTN)((((UINTN)FirstLevelIdx) <<
+                         TT_DESCRIPTOR_SECTION_BASE_SHIFT) + (PageTableIndex << TT_DESCRIPTOR_PAGE_BASE_SHIFT));
 
       // Only need to update if we are changing the entry
       PageTable[PageTableIndex] = PageTableEntry;
       ArmUpdateTranslationTableEntry ((VOID *)&PageTable[PageTableIndex], Mva);
     }
 
-    Status = EFI_SUCCESS;
+    Status  = EFI_SUCCESS;
     Offset += TT_DESCRIPTOR_PAGE_SIZE;
-
   } // End first level translation table loop
 
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 UpdateSectionEntries (
@@ -220,16 +292,16 @@ UpdateSectionEntries (
   IN UINT64                    Attributes
   )
 {
-  EFI_STATUS    Status;
-  UINT32        EntryMask;
-  UINT32        EntryValue;
-  UINT32        FirstLevelIdx;
-  UINT32        NumSections;
-  UINT32        i;
-  UINT32        CurrentDescriptor;
-  UINT32        Descriptor;
-  VOID          *Mva;
-  volatile ARM_FIRST_LEVEL_DESCRIPTOR   *FirstLevelTable;
+  EFI_STATUS                           Status;
+  UINT32                               EntryMask;
+  UINT32                               EntryValue;
+  UINT32                               FirstLevelIdx;
+  UINT32                               NumSections;
+  UINT32                               i;
+  UINT32                               CurrentDescriptor;
+  UINT32                               Descriptor;
+  VOID                                 *Mva;
+  volatile ARM_FIRST_LEVEL_DESCRIPTOR  *FirstLevelTable;
 
   Status = EFI_SUCCESS;
 
@@ -286,24 +358,25 @@ UpdateSectionEntries (
   FirstLevelTable = (ARM_FIRST_LEVEL_DESCRIPTOR *)ArmGetTTBR0BaseAddress ();
 
   // calculate index into first level translation table for start of modification
-  FirstLevelIdx = TT_DESCRIPTOR_SECTION_BASE_ADDRESS(BaseAddress) >> TT_DESCRIPTOR_SECTION_BASE_SHIFT;
+  FirstLevelIdx = TT_DESCRIPTOR_SECTION_BASE_ADDRESS (BaseAddress) >> TT_DESCRIPTOR_SECTION_BASE_SHIFT;
   ASSERT (FirstLevelIdx < TRANSLATION_TABLE_SECTION_COUNT);
 
   // calculate number of 1MB first level entries this applies to
   NumSections = (UINT32)(Length / TT_DESCRIPTOR_SECTION_SIZE);
 
   // iterate through each descriptor
-  for(i=0; i<NumSections; i++) {
+  for(i = 0; i < NumSections; i++) {
     CurrentDescriptor = FirstLevelTable[FirstLevelIdx + i];
 
     // has this descriptor already been converted to pages?
-    if (TT_DESCRIPTOR_SECTION_TYPE_IS_PAGE_TABLE(CurrentDescriptor)) {
+    if (TT_DESCRIPTOR_SECTION_TYPE_IS_PAGE_TABLE (CurrentDescriptor)) {
       // forward this 1MB range to page table function instead
       Status = UpdatePageEntries (
                  (FirstLevelIdx + i) << TT_DESCRIPTOR_SECTION_BASE_SHIFT,
                  TT_DESCRIPTOR_SECTION_SIZE,
                  Attributes,
-                 NULL);
+                 NULL
+                 );
     } else {
       // still a section entry
 
@@ -332,6 +405,29 @@ UpdateSectionEntries (
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 ArmSetMemoryAttributes (
   IN EFI_PHYSICAL_ADDRESS      BaseAddress,
@@ -339,9 +435,9 @@ ArmSetMemoryAttributes (
   IN UINT64                    Attributes
   )
 {
-  EFI_STATUS    Status;
-  UINT64        ChunkLength;
-  BOOLEAN       FlushTlbs;
+  EFI_STATUS  Status;
+  UINT64      ChunkLength;
+  BOOLEAN     FlushTlbs;
 
   if (BaseAddress > (UINT64)MAX_ADDRESS) {
     return EFI_UNSUPPORTED;
@@ -356,18 +452,20 @@ ArmSetMemoryAttributes (
   while (Length > 0) {
     if ((BaseAddress % TT_DESCRIPTOR_SECTION_SIZE == 0) &&
         Length >= TT_DESCRIPTOR_SECTION_SIZE) {
-
       ChunkLength = Length - Length % TT_DESCRIPTOR_SECTION_SIZE;
 
-      DEBUG ((DEBUG_PAGE,
+      DEBUG ((
+        DEBUG_PAGE,
         "SetMemoryAttributes(): MMU section 0x%lx length 0x%lx to %lx\n",
-        BaseAddress, ChunkLength, Attributes));
+        BaseAddress,
+        ChunkLength,
+        Attributes
+        ));
 
       Status = UpdateSectionEntries (BaseAddress, ChunkLength, Attributes);
 
       FlushTlbs = TRUE;
     } else {
-
       //
       // Process page by page until the next section boundary, but only if
       // we have more than a section's worth of area to deal with after that.
@@ -378,12 +476,20 @@ ArmSetMemoryAttributes (
         ChunkLength = Length;
       }
 
-      DEBUG ((DEBUG_PAGE,
+      DEBUG ((
+        DEBUG_PAGE,
         "SetMemoryAttributes(): MMU page 0x%lx length 0x%lx to %lx\n",
-        BaseAddress, ChunkLength, Attributes));
+        BaseAddress,
+        ChunkLength,
+        Attributes
+        ));
 
-      Status = UpdatePageEntries (BaseAddress, ChunkLength, Attributes,
-                 &FlushTlbs);
+      Status = UpdatePageEntries (
+                 BaseAddress,
+                 ChunkLength,
+                 Attributes,
+                 &FlushTlbs
+                 );
     }
 
     if (EFI_ERROR (Status)) {
@@ -397,9 +503,33 @@ ArmSetMemoryAttributes (
   if (FlushTlbs) {
     ArmInvalidateTlb ();
   }
+
   return Status;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 ArmSetMemoryRegionNoExec (
   IN  EFI_PHYSICAL_ADDRESS      BaseAddress,
@@ -409,6 +539,29 @@ ArmSetMemoryRegionNoExec (
   return ArmSetMemoryAttributes (BaseAddress, Length, EFI_MEMORY_XP);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 ArmClearMemoryRegionNoExec (
   IN  EFI_PHYSICAL_ADDRESS      BaseAddress,
@@ -418,6 +571,29 @@ ArmClearMemoryRegionNoExec (
   return ArmSetMemoryAttributes (BaseAddress, Length, __EFI_MEMORY_RWX);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 ArmSetMemoryRegionReadOnly (
   IN  EFI_PHYSICAL_ADDRESS      BaseAddress,
@@ -427,6 +603,29 @@ ArmSetMemoryRegionReadOnly (
   return ArmSetMemoryAttributes (BaseAddress, Length, EFI_MEMORY_RO);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 ArmClearMemoryRegionReadOnly (
   IN  EFI_PHYSICAL_ADDRESS      BaseAddress,

@@ -11,25 +11,48 @@
 #include <Library/CpuExceptionHandlerLib.h>
 #include <Guid/VectorHandoffTable.h>
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 InitializeExceptions (
   IN EFI_CPU_ARCH_PROTOCOL    *Cpu
   )
 {
-  EFI_STATUS                      Status;
-  EFI_VECTOR_HANDOFF_INFO         *VectorInfoList;
-  EFI_VECTOR_HANDOFF_INFO         *VectorInfo;
-  BOOLEAN                         IrqEnabled;
-  BOOLEAN                         FiqEnabled;
+  EFI_STATUS               Status;
+  EFI_VECTOR_HANDOFF_INFO  *VectorInfoList;
+  EFI_VECTOR_HANDOFF_INFO  *VectorInfo;
+  BOOLEAN                  IrqEnabled;
+  BOOLEAN                  FiqEnabled;
 
   VectorInfo = (EFI_VECTOR_HANDOFF_INFO *)NULL;
-  Status = EfiGetSystemConfigurationTable(&gEfiVectorHandoffTableGuid, (VOID **)&VectorInfoList);
+  Status     = EfiGetSystemConfigurationTable (&gEfiVectorHandoffTableGuid, (VOID **)&VectorInfoList);
   if (Status == EFI_SUCCESS && VectorInfoList != NULL) {
     VectorInfo = VectorInfoList;
   }
 
   // initialize the CpuExceptionHandlerLib so we take over the exception vector table from the DXE Core
-  InitializeCpuExceptionHandlers(VectorInfo);
+  InitializeCpuExceptionHandlers (VectorInfo);
 
   Status = EFI_SUCCESS;
 
@@ -64,7 +87,7 @@ InitializeExceptions (
   //
   DEBUG_CODE (
     ArmEnableAsynchronousAbort ();
-  );
+    );
 
   return Status;
 }
@@ -90,11 +113,11 @@ previously installed.
 
 **/
 EFI_STATUS
-RegisterInterruptHandler(
+RegisterInterruptHandler (
   IN EFI_EXCEPTION_TYPE             InterruptType,
   IN EFI_CPU_INTERRUPT_HANDLER      InterruptHandler
   )
 {
   // pass down to CpuExceptionHandlerLib
-  return (EFI_STATUS)RegisterCpuInterruptHandler(InterruptType, InterruptHandler);
+  return (EFI_STATUS)RegisterCpuInterruptHandler (InterruptType, InterruptHandler);
 }

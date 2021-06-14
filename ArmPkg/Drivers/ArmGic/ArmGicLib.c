@@ -24,14 +24,14 @@
                                            + ARM_GICR_SGI_VLPI_FRAME_SIZE     \
                                            + ARM_GICR_SGI_RESERVED_FRAME_SIZE)
 
-#define ISENABLER_ADDRESS(base,offset) ((base) + \
-          ARM_GICR_CTLR_FRAME_SIZE + ARM_GICR_ISENABLER + 4 * (offset))
+#define ISENABLER_ADDRESS(base, offset)  ((base) + \
+                                          ARM_GICR_CTLR_FRAME_SIZE + ARM_GICR_ISENABLER + 4 * (offset))
 
-#define ICENABLER_ADDRESS(base,offset) ((base) + \
-          ARM_GICR_CTLR_FRAME_SIZE + ARM_GICR_ICENABLER + 4 * (offset))
+#define ICENABLER_ADDRESS(base, offset)  ((base) + \
+                                          ARM_GICR_CTLR_FRAME_SIZE + ARM_GICR_ICENABLER + 4 * (offset))
 
-#define IPRIORITY_ADDRESS(base,offset) ((base) + \
-          ARM_GICR_CTLR_FRAME_SIZE + ARM_GIC_ICDIPR + 4 * (offset))
+#define IPRIORITY_ADDRESS(base, offset)  ((base) + \
+                                          ARM_GICR_CTLR_FRAME_SIZE + ARM_GIC_ICDIPR + 4 * (offset))
 
 /**
  *
@@ -61,11 +61,11 @@ GicGetCpuRedistributorBase (
   IN ARM_GIC_ARCH_REVISION Revision
   )
 {
-  UINTN MpId;
-  UINTN CpuAffinity;
-  UINTN Affinity;
-  UINTN GicCpuRedistributorBase;
-  UINT64 TypeRegister;
+  UINTN   MpId;
+  UINTN   CpuAffinity;
+  UINTN   Affinity;
+  UINTN   GicCpuRedistributorBase;
+  UINT64  TypeRegister;
 
   MpId = ArmReadMpidr ();
   // Define CPU affinity as:
@@ -83,7 +83,7 @@ GicGetCpuRedistributorBase (
 
   do {
     TypeRegister = MmioRead64 (GicCpuRedistributorBase + ARM_GICR_TYPER);
-    Affinity = ARM_GICR_TYPER_GET_AFFINITY (TypeRegister);
+    Affinity     = ARM_GICR_TYPER_GET_AFFINITY (TypeRegister);
     if (Affinity == CpuAffinity) {
       return GicCpuRedistributorBase;
     }
@@ -104,6 +104,29 @@ GicGetCpuRedistributorBase (
   return 0;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 UINTN
 EFIAPI
 ArmGicGetInterfaceIdentification (
@@ -114,13 +137,36 @@ ArmGicGetInterfaceIdentification (
   return MmioRead32 (GicInterruptInterfaceBase + ARM_GIC_ICCIIDR);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 UINTN
 EFIAPI
 ArmGicGetMaxNumInterrupts (
   IN  INTN          GicDistributorBase
   )
 {
-  UINTN ItLines;
+  UINTN  ItLines;
 
   ItLines = MmioRead32 (GicDistributorBase + ARM_GIC_ICDICTR) & 0x1F;
 
@@ -130,6 +176,29 @@ ArmGicGetMaxNumInterrupts (
   return (ItLines == 0x1f) ? 1020 : 32 * (ItLines + 1);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 EFIAPI
 ArmGicSendSgiTo (
@@ -166,8 +235,8 @@ ArmGicAcknowledgeInterrupt (
   OUT UINTN          *InterruptId
   )
 {
-  UINTN Value;
-  ARM_GIC_ARCH_REVISION Revision;
+  UINTN                  Value;
+  ARM_GIC_ARCH_REVISION  Revision;
 
   Revision = ArmGicGetSupportedArchRevision ();
   if (Revision == ARM_GIC_ARCH_REVISION_2) {
@@ -190,6 +259,29 @@ ArmGicAcknowledgeInterrupt (
   return Value;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 EFIAPI
 ArmGicEndOfInterrupt (
@@ -197,7 +289,7 @@ ArmGicEndOfInterrupt (
   IN UINTN                  Source
   )
 {
-  ARM_GIC_ARCH_REVISION Revision;
+  ARM_GIC_ARCH_REVISION  Revision;
 
   Revision = ArmGicGetSupportedArchRevision ();
   if (Revision == ARM_GIC_ARCH_REVISION_2) {
@@ -209,6 +301,29 @@ ArmGicEndOfInterrupt (
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 EFIAPI
 ArmGicSetInterruptPriority (
@@ -218,14 +333,14 @@ ArmGicSetInterruptPriority (
   IN UINTN                  Priority
   )
 {
-  UINT32                RegOffset;
-  UINTN                 RegShift;
-  ARM_GIC_ARCH_REVISION Revision;
-  UINTN                 GicCpuRedistributorBase;
+  UINT32                 RegOffset;
+  UINTN                  RegShift;
+  ARM_GIC_ARCH_REVISION  Revision;
+  UINTN                  GicCpuRedistributorBase;
 
   // Calculate register offset and bit position
   RegOffset = Source / 4;
-  RegShift = (Source % 4) * 8;
+  RegShift  = (Source % 4) * 8;
 
   Revision = ArmGicGetSupportedArchRevision ();
   if ((Revision == ARM_GIC_ARCH_REVISION_2) ||
@@ -253,6 +368,29 @@ ArmGicSetInterruptPriority (
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 EFIAPI
 ArmGicEnableInterrupt (
@@ -261,14 +399,14 @@ ArmGicEnableInterrupt (
   IN UINTN                  Source
   )
 {
-  UINT32                RegOffset;
-  UINTN                 RegShift;
-  ARM_GIC_ARCH_REVISION Revision;
-  UINTN                 GicCpuRedistributorBase;
+  UINT32                 RegOffset;
+  UINTN                  RegShift;
+  ARM_GIC_ARCH_REVISION  Revision;
+  UINTN                  GicCpuRedistributorBase;
 
   // Calculate enable register offset and bit position
   RegOffset = Source / 32;
-  RegShift = Source % 32;
+  RegShift  = Source % 32;
 
   Revision = ArmGicGetSupportedArchRevision ();
   if ((Revision == ARM_GIC_ARCH_REVISION_2) ||
@@ -291,12 +429,35 @@ ArmGicEnableInterrupt (
 
     // Write set-enable register
     MmioWrite32 (
-      ISENABLER_ADDRESS(GicCpuRedistributorBase, RegOffset),
+      ISENABLER_ADDRESS (GicCpuRedistributorBase, RegOffset),
       1 << RegShift
       );
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 EFIAPI
 ArmGicDisableInterrupt (
@@ -305,14 +466,14 @@ ArmGicDisableInterrupt (
   IN UINTN                  Source
   )
 {
-  UINT32                RegOffset;
-  UINTN                 RegShift;
-  ARM_GIC_ARCH_REVISION Revision;
-  UINTN                 GicCpuRedistributorBase;
+  UINT32                 RegOffset;
+  UINTN                  RegShift;
+  ARM_GIC_ARCH_REVISION  Revision;
+  UINTN                  GicCpuRedistributorBase;
 
   // Calculate enable register offset and bit position
   RegOffset = Source / 32;
-  RegShift = Source % 32;
+  RegShift  = Source % 32;
 
   Revision = ArmGicGetSupportedArchRevision ();
   if ((Revision == ARM_GIC_ARCH_REVISION_2) ||
@@ -325,21 +486,44 @@ ArmGicDisableInterrupt (
       );
   } else {
     GicCpuRedistributorBase = GicGetCpuRedistributorBase (
-      GicRedistributorBase,
-      Revision
-      );
+                                GicRedistributorBase,
+                                Revision
+                                );
     if (GicCpuRedistributorBase == 0) {
       return;
     }
 
     // Write clear-enable register
     MmioWrite32 (
-      ICENABLER_ADDRESS(GicCpuRedistributorBase, RegOffset),
+      ICENABLER_ADDRESS (GicCpuRedistributorBase, RegOffset),
       1 << RegShift
       );
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 BOOLEAN
 EFIAPI
 ArmGicIsInterruptEnabled (
@@ -348,15 +532,15 @@ ArmGicIsInterruptEnabled (
   IN UINTN                  Source
   )
 {
-  UINT32                RegOffset;
-  UINTN                 RegShift;
-  ARM_GIC_ARCH_REVISION Revision;
-  UINTN                 GicCpuRedistributorBase;
-  UINT32                Interrupts;
+  UINT32                 RegOffset;
+  UINTN                  RegShift;
+  ARM_GIC_ARCH_REVISION  Revision;
+  UINTN                  GicCpuRedistributorBase;
+  UINT32                 Interrupts;
 
   // Calculate enable register offset and bit position
   RegOffset = Source / 32;
-  RegShift = Source % 32;
+  RegShift  = Source % 32;
 
   Revision = ArmGicGetSupportedArchRevision ();
   if ((Revision == ARM_GIC_ARCH_REVISION_2) ||
@@ -365,7 +549,7 @@ ArmGicIsInterruptEnabled (
     Interrupts = ((MmioRead32 (
                      GicDistributorBase + ARM_GIC_ICDISER + (4 * RegOffset)
                      )
-                  & (1 << RegShift)) != 0);
+                   & (1 << RegShift)) != 0);
   } else {
     GicCpuRedistributorBase = GicGetCpuRedistributorBase (
                                 GicRedistributorBase,
@@ -377,13 +561,36 @@ ArmGicIsInterruptEnabled (
 
     // Read set-enable register
     Interrupts = MmioRead32 (
-                   ISENABLER_ADDRESS(GicCpuRedistributorBase, RegOffset)
+                   ISENABLER_ADDRESS (GicCpuRedistributorBase, RegOffset)
                    );
   }
 
   return ((Interrupts & (1 << RegShift)) != 0);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 EFIAPI
 ArmGicDisableDistributor (
@@ -394,13 +601,36 @@ ArmGicDisableDistributor (
   MmioWrite32 (GicDistributorBase + ARM_GIC_ICDDCR, 0x0);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 EFIAPI
 ArmGicEnableInterruptInterface (
   IN  INTN          GicInterruptInterfaceBase
   )
 {
-  ARM_GIC_ARCH_REVISION Revision;
+  ARM_GIC_ARCH_REVISION  Revision;
 
   Revision = ArmGicGetSupportedArchRevision ();
   if (Revision == ARM_GIC_ARCH_REVISION_2) {
@@ -412,13 +642,36 @@ ArmGicEnableInterruptInterface (
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 EFIAPI
 ArmGicDisableInterruptInterface (
   IN  INTN          GicInterruptInterfaceBase
   )
 {
-  ARM_GIC_ARCH_REVISION Revision;
+  ARM_GIC_ARCH_REVISION  Revision;
 
   Revision = ArmGicGetSupportedArchRevision ();
   if (Revision == ARM_GIC_ARCH_REVISION_2) {

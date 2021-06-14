@@ -13,20 +13,20 @@
 VOID
 EFIAPI
 ArmGenericTimerEnableTimer (
-  VOID
-  );
+                            VOID
+                            );
 
 VOID
 EFIAPI
 ArmGenericTimerReenableTimer (
-  VOID
-  );
+                              VOID
+                              );
 
 VOID
 EFIAPI
 ArmGenericTimerDisableTimer (
-  VOID
-  );
+                             VOID
+                             );
 
 VOID
 EFIAPI
@@ -37,8 +37,8 @@ ArmGenericTimerSetTimerFreq (
 UINTN
 EFIAPI
 ArmGenericTimerGetTimerFreq (
-  VOID
-  );
+                             VOID
+                             );
 
 VOID
 EFIAPI
@@ -49,20 +49,20 @@ ArmGenericTimerSetTimerVal (
 UINTN
 EFIAPI
 ArmGenericTimerGetTimerVal (
-  VOID
-  );
+                            VOID
+                            );
 
 UINT64
 EFIAPI
 ArmGenericTimerGetSystemCount (
-  VOID
-  );
+                               VOID
+                               );
 
 UINTN
 EFIAPI
 ArmGenericTimerGetTimerCtrlReg (
-  VOID
-  );
+                                VOID
+                                );
 
 VOID
 EFIAPI
@@ -73,8 +73,8 @@ ArmGenericTimerSetTimerCtrlReg (
 UINT64
 EFIAPI
 ArmGenericTimerGetCompareVal (
-  VOID
-  );
+                              VOID
+                              );
 
 VOID
 EFIAPI

@@ -26,13 +26,12 @@ ExitBootServicesEvent (
 EFI_HANDLE  gHardwareInterruptHandle = NULL;
 
 // Notifications
-EFI_EVENT EfiExitBootServicesEvent      = (EFI_EVENT)NULL;
+EFI_EVENT  EfiExitBootServicesEvent = (EFI_EVENT)NULL;
 
 // Maximum Number of Interrupts
-UINTN mGicNumInterrupts                 = 0;
+UINTN  mGicNumInterrupts = 0;
 
 HARDWARE_INTERRUPT_HANDLER  *gRegisteredInterruptHandlers = NULL;
-
 
 /**
   Calculate GICD_ICFGRn base address and corresponding bit
@@ -52,16 +51,16 @@ GicGetDistributorIcfgBaseAndBit (
   OUT UINTN                               *Config1Bit
   )
 {
-  UINTN                  RegIndex;
-  UINTN                  Field;
+  UINTN  RegIndex;
+  UINTN  Field;
 
   if (Source >= mGicNumInterrupts) {
-    ASSERT(Source < mGicNumInterrupts);
+    ASSERT (Source < mGicNumInterrupts);
     return EFI_UNSUPPORTED;
   }
 
-  RegIndex = Source / ARM_GIC_ICDICFR_F_STRIDE;  // NOTE: truncation is significant
-  Field = Source % ARM_GIC_ICDICFR_F_STRIDE;
+  RegIndex    = Source / ARM_GIC_ICDICFR_F_STRIDE; // NOTE: truncation is significant
+  Field       = Source % ARM_GIC_ICDICFR_F_STRIDE;
   *RegAddress = PcdGet64 (PcdGicDistributorBase)
                 + ARM_GIC_ICDICFR
                 + (ARM_GIC_ICDICFR_BYTES * RegIndex);
@@ -70,8 +69,6 @@ GicGetDistributorIcfgBaseAndBit (
 
   return EFI_SUCCESS;
 }
-
-
 
 /**
   Register Handler for the specified interrupt source.
@@ -93,7 +90,7 @@ RegisterInterruptSource (
   )
 {
   if (Source >= mGicNumInterrupts) {
-    ASSERT(FALSE);
+    ASSERT (FALSE);
     return EFI_UNSUPPORTED;
   }
 
@@ -108,15 +105,38 @@ RegisterInterruptSource (
   gRegisteredInterruptHandlers[Source] = Handler;
 
   // If the interrupt handler is unregistered then disable the interrupt
-  if (NULL == Handler){
+  if (NULL == Handler) {
     return This->DisableInterruptSource (This, Source);
   } else {
     return This->EnableInterruptSource (This, Source);
   }
 }
 
-STATIC VOID *mCpuArchProtocolNotifyEventRegistration;
+STATIC VOID  *mCpuArchProtocolNotifyEventRegistration;
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 VOID
 EFIAPI
@@ -125,8 +145,8 @@ CpuArchEventProtocolNotify (
   IN  VOID            *Context
   )
 {
-  EFI_CPU_ARCH_PROTOCOL   *Cpu;
-  EFI_STATUS              Status;
+  EFI_CPU_ARCH_PROTOCOL  *Cpu;
+  EFI_STATUS             Status;
 
   // Get the CPU protocol that this driver requires.
   Status = gBS->LocateProtocol (&gEfiCpuArchProtocolGuid, NULL, (VOID **)&Cpu);
@@ -137,22 +157,56 @@ CpuArchEventProtocolNotify (
   // Unregister the default exception handler.
   Status = Cpu->RegisterInterruptHandler (Cpu, ARM_ARCH_EXCEPTION_IRQ, NULL);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: Cpu->RegisterInterruptHandler() - %r\n",
-      __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: Cpu->RegisterInterruptHandler() - %r\n",
+      __FUNCTION__,
+      Status
+      ));
     return;
   }
 
   // Register to receive interrupts
-  Status = Cpu->RegisterInterruptHandler (Cpu, ARM_ARCH_EXCEPTION_IRQ,
-                  Context);
+  Status = Cpu->RegisterInterruptHandler (
+                  Cpu,
+                  ARM_ARCH_EXCEPTION_IRQ,
+                  Context
+                  );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: Cpu->RegisterInterruptHandler() - %r\n",
-      __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: Cpu->RegisterInterruptHandler() - %r\n",
+      __FUNCTION__,
+      Status
+      ));
   }
 
   gBS->CloseEvent (Event);
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 InstallAndRegisterInterruptService (
   IN EFI_HARDWARE_INTERRUPT_PROTOCOL   *InterruptProtocol,
@@ -161,9 +215,9 @@ InstallAndRegisterInterruptService (
   IN EFI_EVENT_NOTIFY                   ExitBootServicesEvent
   )
 {
-  EFI_STATUS               Status;
-  CONST UINTN              RihArraySize =
-    (sizeof(HARDWARE_INTERRUPT_HANDLER) * mGicNumInterrupts);
+  EFI_STATUS   Status;
+  CONST UINTN  RihArraySize =
+    (sizeof (HARDWARE_INTERRUPT_HANDLER) * mGicNumInterrupts);
 
   // Initialize the array for the Interrupt Handlers
   gRegisteredInterruptHandlers = AllocateZeroPool (RihArraySize);
@@ -191,7 +245,8 @@ InstallAndRegisterInterruptService (
     TPL_CALLBACK,
     CpuArchEventProtocolNotify,
     InterruptHandler,
-    &mCpuArchProtocolNotifyEventRegistration);
+    &mCpuArchProtocolNotifyEventRegistration
+    );
 
   // Register for an ExitBootServicesEvent
   Status = gBS->CreateEvent (

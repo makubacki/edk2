@@ -8,15 +8,13 @@
 *
 **/
 
-
 #ifndef OEM_MISC_LIB_H_
 #define OEM_MISC_LIB_H_
 
 #include <Uefi.h>
 #include <IndustryStandard/SmBios.h>
 
-typedef enum
-{
+typedef enum {
   CpuCacheL1 = 1,
   CpuCacheL2,
   CpuCacheL3,
@@ -27,37 +25,35 @@ typedef enum
   CpuCacheLevelMax
 } OEM_MISC_CPU_CACHE_LEVEL;
 
-typedef struct
-{
-  UINT8 Voltage;        ///< Processor voltage
-  UINT16 CurrentSpeed;  ///< Current clock speed in MHz
-  UINT16 MaxSpeed;      ///< Maximum clock speed in MHz
-  UINT16 ExternalClock; ///< External clock speed in MHz
-  UINT16 CoreCount;     ///< Number of cores available
-  UINT16 CoresEnabled;  ///< Number of cores enabled
-  UINT16 ThreadCount;   ///< Number of threads per processor
+typedef struct {
+  UINT8     Voltage;      ///< Processor voltage
+  UINT16    CurrentSpeed; ///< Current clock speed in MHz
+  UINT16    MaxSpeed;     ///< Maximum clock speed in MHz
+  UINT16    ExternalClock; ///< External clock speed in MHz
+  UINT16    CoreCount;    ///< Number of cores available
+  UINT16    CoresEnabled; ///< Number of cores enabled
+  UINT16    ThreadCount;  ///< Number of threads per processor
 } OEM_MISC_PROCESSOR_DATA;
 
-typedef enum
-{
-    ProductNameType01,
-    SerialNumType01,
-    UuidType01,
-    SystemManufacturerType01,
-    SkuNumberType01,
-    FamilyType01,
-    AssertTagType02,
-    SerialNumberType02,
-    BoardManufacturerType02,
-    SkuNumberType02,
-    ChassisLocationType02,
-    AssetTagType03,
-    SerialNumberType03,
-    VersionType03,
-    ChassisTypeType03,
-    ManufacturerType03,
-    SkuNumberType03,
-    SmbiosHiiStringFieldMax
+typedef enum {
+  ProductNameType01,
+  SerialNumType01,
+  UuidType01,
+  SystemManufacturerType01,
+  SkuNumberType01,
+  FamilyType01,
+  AssertTagType02,
+  SerialNumberType02,
+  BoardManufacturerType02,
+  SkuNumberType02,
+  ChassisLocationType02,
+  AssetTagType03,
+  SerialNumberType03,
+  VersionType03,
+  ChassisTypeType03,
+  ManufacturerType03,
+  SkuNumberType03,
+  SmbiosHiiStringFieldMax
 } OEM_MISC_SMBIOS_HII_STRING_FIELD;
 
 /*
@@ -123,8 +119,8 @@ OemGetCacheInformation (
 UINT8
 EFIAPI
 OemGetMaxProcessors (
-  VOID
-  );
+                     VOID
+                     );
 
 /** Gets the type of chassis for the system.
 
@@ -133,8 +129,8 @@ OemGetMaxProcessors (
 MISC_CHASSIS_TYPE
 EFIAPI
 OemGetChassisType (
-  VOID
-  );
+                   VOID
+                   );
 
 /** Returns whether the specified processor is present or not.
 
@@ -169,8 +165,8 @@ OemUpdateSmbiosInfo (
 MISC_BOOT_INFORMATION_STATUS_DATA_TYPE
 EFIAPI
 OemGetBootStatus (
-  VOID
-  );
+                  VOID
+                  );
 
 /** Fetches the chassis status when it was last booted.
 
@@ -179,8 +175,8 @@ OemGetBootStatus (
 MISC_CHASSIS_STATE
 EFIAPI
 OemGetChassisBootupState (
-  VOID
-  );
+                          VOID
+                          );
 
 /** Fetches the chassis power supply/supplies status when last booted.
 
@@ -189,8 +185,8 @@ OemGetChassisBootupState (
 MISC_CHASSIS_STATE
 EFIAPI
 OemGetChassisPowerSupplyState (
-  VOID
-  );
+                               VOID
+                               );
 
 /** Fetches the chassis thermal status when last booted.
 
@@ -199,8 +195,8 @@ OemGetChassisPowerSupplyState (
 MISC_CHASSIS_STATE
 EFIAPI
 OemGetChassisThermalState (
-  VOID
-  );
+                           VOID
+                           );
 
 /** Fetches the chassis security status when last booted.
 
@@ -209,8 +205,8 @@ OemGetChassisThermalState (
 MISC_CHASSIS_SECURITY_STATE
 EFIAPI
 OemGetChassisSecurityStatus (
-  VOID
-  );
+                             VOID
+                             );
 
 /** Fetches the chassis height in RMUs (Rack Mount Units).
 
@@ -219,8 +215,8 @@ OemGetChassisSecurityStatus (
 UINT8
 EFIAPI
 OemGetChassisHeight (
-  VOID
-  );
+                     VOID
+                     );
 
 /** Fetches the number of power cords.
 
@@ -229,7 +225,7 @@ OemGetChassisHeight (
 UINT8
 EFIAPI
 OemGetChassisNumPowerCords (
-  VOID
-  );
+                            VOID
+                            );
 
 #endif // OEM_MISC_LIB_H_
