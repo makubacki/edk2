@@ -43,8 +43,8 @@ UpdateFspsUpdData (
 VOID *
 EFIAPI
 UpdateTempRamExitParam (
-  VOID
-  );
+                        VOID
+                        );
 
 /**
   Get S3 PEI memory information.
