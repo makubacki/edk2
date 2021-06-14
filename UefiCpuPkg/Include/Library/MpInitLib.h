@@ -28,8 +28,8 @@
 EFI_STATUS
 EFIAPI
 MpInitLibInitialize (
-  VOID
-  );
+                     VOID
+                     );
 
 /**
   Retrieves the number of logical processor in the platform and the number of
@@ -54,7 +54,7 @@ MpInitLibInitialize (
 EFI_STATUS
 EFIAPI
 MpInitLibGetNumberOfProcessors (
-  OUT UINTN                     *NumberOfProcessors,       OPTIONAL
+  OUT UINTN                     *NumberOfProcessors, OPTIONAL
   OUT UINTN                     *NumberOfEnabledProcessors OPTIONAL
   );
 

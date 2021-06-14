@@ -20,8 +20,8 @@
 UINT32
 EFIAPI
 GetProcessorMicrocodeSignature (
-  VOID
-  );
+                                VOID
+                                );
 
 /**
   Get the processor signature and platform ID for current processor.

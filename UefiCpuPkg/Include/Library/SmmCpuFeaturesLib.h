@@ -129,8 +129,8 @@ SmmCpuFeaturesHookReturnFromSmm (
 VOID
 EFIAPI
 SmmCpuFeaturesSmmRelocationComplete (
-  VOID
-  );
+                                     VOID
+                                     );
 
 /**
   Return the size, in bytes, of a custom SMI Handler in bytes.  If 0 is
@@ -145,8 +145,8 @@ SmmCpuFeaturesSmmRelocationComplete (
 UINTN
 EFIAPI
 SmmCpuFeaturesGetSmiHandlerSize (
-  VOID
-  );
+                                 VOID
+                                 );
 
 /**
   Install a custom SMI handler for the CPU specified by CpuIndex.  This function
@@ -217,8 +217,8 @@ SmmCpuFeaturesInstallSmiHandler (
 BOOLEAN
 EFIAPI
 SmmCpuFeaturesNeedConfigureMtrrs (
-  VOID
-  );
+                                  VOID
+                                  );
 
 /**
   Disable SMRR register if SMRR is supported and SmmCpuFeaturesNeedConfigureMtrrs()
@@ -227,8 +227,8 @@ SmmCpuFeaturesNeedConfigureMtrrs (
 VOID
 EFIAPI
 SmmCpuFeaturesDisableSmrr (
-  VOID
-  );
+                           VOID
+                           );
 
 /**
   Enable SMRR register if SMRR is supported and SmmCpuFeaturesNeedConfigureMtrrs()
@@ -237,8 +237,8 @@ SmmCpuFeaturesDisableSmrr (
 VOID
 EFIAPI
 SmmCpuFeaturesReenableSmrr (
-  VOID
-  );
+                            VOID
+                            );
 
 /**
   Processor specific hook point each time a CPU enters System Management Mode.
@@ -383,8 +383,8 @@ SmmCpuFeaturesWriteSaveStateRegister (
 VOID
 EFIAPI
 SmmCpuFeaturesCompleteSmmReadyToLock (
-  VOID
-  );
+                                      VOID
+                                      );
 
 /**
   This API provides a method for a CPU to allocate a specific region for storing page tables.

@@ -57,7 +57,7 @@ EFIAPI
 VmxInitialize (
   IN UINTN                             ProcessorNumber,
   IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN VOID                              *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   )
 {
@@ -135,7 +135,7 @@ EFIAPI
 LockFeatureControlRegisterInitialize (
   IN UINTN                             ProcessorNumber,
   IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN VOID                              *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   )
 {
@@ -214,11 +214,11 @@ EFIAPI
 SmxInitialize (
   IN UINTN                             ProcessorNumber,
   IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN VOID                              *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   )
 {
-  RETURN_STATUS                        Status;
+  RETURN_STATUS  Status;
 
   //
   // The scope of Lock bit in the MSR_IA32_FEATURE_CONTROL is core for
@@ -236,7 +236,7 @@ SmxInitialize (
 
   if (State && (!IsCpuFeatureInSetting (CPU_FEATURE_VMX))) {
     DEBUG ((DEBUG_WARN, "Warning :: Can't enable SMX feature when VMX feature not enabled, disable it.\n"));
-    State = FALSE;
+    State  = FALSE;
     Status = RETURN_UNSUPPORTED;
   }
 
@@ -247,7 +247,7 @@ SmxInitialize (
     IA32_CR4,
     Bits.SMXE,
     (State) ? 1 : 0
-  )
+    )
 
   CPU_REGISTER_TABLE_TEST_THEN_WRITE_FIELD (
     ProcessorNumber,

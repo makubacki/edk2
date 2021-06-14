@@ -17,9 +17,9 @@
 
 **/
 VOID
-CpuFeaturesLibInitialization (
-  VOID
-  );
+  CpuFeaturesLibInitialization (
+                                VOID
+                                );
 
 /**
   Internal worker function that is called to complete CPU initialization at the
@@ -27,9 +27,9 @@ CpuFeaturesLibInitialization (
 
 **/
 VOID
-FinishSmmCpuFeaturesInitializeProcessor (
-  VOID
-  );
+  FinishSmmCpuFeaturesInitializeProcessor (
+                                           VOID
+                                           );
 
 /**
   Gets the maximum number of logical processors from the PCD PcdCpuMaxLogicalProcessorNumber.
@@ -41,8 +41,8 @@ FinishSmmCpuFeaturesInitializeProcessor (
 
 **/
 UINT32
-GetCpuMaxLogicalProcessorNumber (
-  VOID
-  );
+  GetCpuMaxLogicalProcessorNumber (
+                                   VOID
+                                   );
 
 #endif

@@ -41,8 +41,8 @@ GetPageTable (
   )
 {
   *Base = ((mInternalCr3 == 0) ?
-            (AsmReadCr3 () & PAGING_4K_ADDRESS_MASK_64) :
-            mInternalCr3);
+           (AsmReadCr3 () & PAGING_4K_ADDRESS_MASK_64) :
+           mInternalCr3);
   if (FiveLevels != NULL) {
     *FiveLevels = FALSE;
   }
@@ -59,9 +59,9 @@ SmmInitPageTable (
   VOID
   )
 {
-  UINTN                             PageFaultHandlerHookAddress;
-  IA32_IDT_GATE_DESCRIPTOR          *IdtEntry;
-  EFI_STATUS                        Status;
+  UINTN                     PageFaultHandlerHookAddress;
+  IA32_IDT_GATE_DESCRIPTOR  *IdtEntry;
+  EFI_STATUS                Status;
 
   //
   // Initialize spin lock
@@ -78,12 +78,12 @@ SmmInitPageTable (
     // feature depends on IRET instruction to do Single Step
     //
     PageFaultHandlerHookAddress = (UINTN)PageFaultIdtHandlerSmmProfile;
-    IdtEntry  = (IA32_IDT_GATE_DESCRIPTOR *) gcSmiIdtr.Base;
+    IdtEntry  = (IA32_IDT_GATE_DESCRIPTOR *)gcSmiIdtr.Base;
     IdtEntry += EXCEPT_IA32_PAGE_FAULT;
-    IdtEntry->Bits.OffsetLow      = (UINT16)PageFaultHandlerHookAddress;
-    IdtEntry->Bits.Reserved_0     = 0;
-    IdtEntry->Bits.GateType       = IA32_IDT_GATE_TYPE_INTERRUPT_32;
-    IdtEntry->Bits.OffsetHigh     = (UINT16)(PageFaultHandlerHookAddress >> 16);
+    IdtEntry->Bits.OffsetLow  = (UINT16)PageFaultHandlerHookAddress;
+    IdtEntry->Bits.Reserved_0 = 0;
+    IdtEntry->Bits.GateType   = IA32_IDT_GATE_TYPE_INTERRUPT_32;
+    IdtEntry->Bits.OffsetHigh = (UINT16)(PageFaultHandlerHookAddress >> 16);
   } else {
     //
     // Register SMM Page Fault Handler
@@ -98,6 +98,7 @@ SmmInitPageTable (
   if (FeaturePcdGet (PcdCpuSmmStackGuard)) {
     InitializeIDTSmmStackGuard ();
   }
+
   return Gen4GPageTable (TRUE);
 }
 
@@ -128,9 +129,9 @@ SmiPFHandler (
   IN EFI_SYSTEM_CONTEXT   SystemContext
   )
 {
-  UINTN             PFAddress;
-  UINTN             GuardPageAddress;
-  UINTN             CpuIndex;
+  UINTN  PFAddress;
+  UINTN  GuardPageAddress;
+  UINTN  CpuIndex;
 
   ASSERT (InterruptType == EXCEPT_IA32_PAGE_FAULT);
 
@@ -156,12 +157,12 @@ SmiPFHandler (
         DEBUG ((DEBUG_ERROR, "SMM exception at execution (0x%x)\n", PFAddress));
         DEBUG_CODE (
           DumpModuleInfoByIp (*(UINTN *)(UINTN)SystemContext.SystemContextIa32->Esp);
-        );
+          );
       } else {
         DEBUG ((DEBUG_ERROR, "SMM exception at access (0x%x)\n", PFAddress));
         DEBUG_CODE (
           DumpModuleInfoByIp ((UINTN)SystemContext.SystemContextIa32->Eip);
-        );
+          );
       }
 
       if (HEAP_GUARD_NONSTOP_MODE) {
@@ -169,6 +170,7 @@ SmiPFHandler (
         goto Exit;
       }
     }
+
     CpuDeadLoop ();
     goto Exit;
   }
@@ -183,7 +185,7 @@ SmiPFHandler (
       DEBUG ((DEBUG_ERROR, "Code executed on IP(0x%x) out of SMM range after SMM is locked!\n", PFAddress));
       DEBUG_CODE (
         DumpModuleInfoByIp (*(UINTN *)(UINTN)SystemContext.SystemContextIa32->Esp);
-      );
+        );
       CpuDeadLoop ();
       goto Exit;
     }
@@ -197,7 +199,7 @@ SmiPFHandler (
       DEBUG ((DEBUG_ERROR, "!!! NULL pointer access !!!\n"));
       DEBUG_CODE (
         DumpModuleInfoByIp ((UINTN)SystemContext.SystemContextIa32->Eip);
-      );
+        );
 
       if (NULL_DETECTION_NONSTOP_MODE) {
         GuardPagePFHandler (SystemContext.SystemContextIa32->ExceptionData);
@@ -213,7 +215,7 @@ SmiPFHandler (
       DEBUG ((DEBUG_ERROR, "Access SMM communication forbidden address (0x%x)!\n", PFAddress));
       DEBUG_CODE (
         DumpModuleInfoByIp ((UINTN)SystemContext.SystemContextIa32->Eip);
-      );
+        );
       CpuDeadLoop ();
       goto Exit;
     }
@@ -241,25 +243,25 @@ SetPageTableAttributes (
   VOID
   )
 {
-  UINTN                 Index2;
-  UINTN                 Index3;
-  UINT64                *L1PageTable;
-  UINT64                *L2PageTable;
-  UINT64                *L3PageTable;
-  UINTN                 PageTableBase;
-  BOOLEAN               IsSplitted;
-  BOOLEAN               PageTableSplitted;
-  BOOLEAN               CetEnabled;
+  UINTN    Index2;
+  UINTN    Index3;
+  UINT64   *L1PageTable;
+  UINT64   *L2PageTable;
+  UINT64   *L3PageTable;
+  UINTN    PageTableBase;
+  BOOLEAN  IsSplitted;
+  BOOLEAN  PageTableSplitted;
+  BOOLEAN  CetEnabled;
 
   //
   // Don't mark page table to read-only if heap guard is enabled.
   //
-  //      BIT2: SMM page guard enabled
-  //      BIT3: SMM pool guard enabled
+  // BIT2: SMM page guard enabled
+  // BIT3: SMM pool guard enabled
   //
   if ((PcdGet8 (PcdHeapGuardPropertyMask) & (BIT3 | BIT2)) != 0) {
     DEBUG ((DEBUG_INFO, "Don't mark page table to read-only as heap guard is enabled\n"));
-    return ;
+    return;
   }
 
   //
@@ -267,7 +269,7 @@ SetPageTableAttributes (
   //
   if (FeaturePcdGet (PcdCpuSmmProfileEnable)) {
     DEBUG ((DEBUG_INFO, "Don't mark page table to read-only as SMM profile is enabled\n"));
-    return ;
+    return;
   }
 
   DEBUG ((DEBUG_INFO, "SetPageTableAttributes\n"));
@@ -276,14 +278,15 @@ SetPageTableAttributes (
   // Disable write protection, because we need mark page table to be write protected.
   // We need *write* page table memory, to mark itself to be *read only*.
   //
-  CetEnabled = ((AsmReadCr4() & CR4_CET_ENABLE) != 0) ? TRUE : FALSE;
+  CetEnabled = ((AsmReadCr4 () & CR4_CET_ENABLE) != 0) ? TRUE : FALSE;
   if (CetEnabled) {
     //
     // CET must be disabled if WP is disabled.
     //
-    DisableCet();
+    DisableCet ();
   }
-  AsmWriteCr0 (AsmReadCr0() & ~CR0_WP);
+
+  AsmWriteCr0 (AsmReadCr0 () & ~CR0_WP);
 
   do {
     DEBUG ((DEBUG_INFO, "Start...\n"));
@@ -304,15 +307,17 @@ SetPageTableAttributes (
       SmmSetMemoryAttributesEx ((EFI_PHYSICAL_ADDRESS)(UINTN)L2PageTable, SIZE_4KB, EFI_MEMORY_RO, &IsSplitted);
       PageTableSplitted = (PageTableSplitted || IsSplitted);
 
-      for (Index2 = 0; Index2 < SIZE_4KB/sizeof(UINT64); Index2++) {
+      for (Index2 = 0; Index2 < SIZE_4KB/sizeof (UINT64); Index2++) {
         if ((L2PageTable[Index2] & IA32_PG_PS) != 0) {
           // 2M
           continue;
         }
+
         L1PageTable = (UINT64 *)(UINTN)(L2PageTable[Index2] & ~mAddressEncMask & PAGING_4K_ADDRESS_MASK_64);
         if (L1PageTable == NULL) {
           continue;
         }
+
         SmmSetMemoryAttributesEx ((EFI_PHYSICAL_ADDRESS)(UINTN)L1PageTable, SIZE_4KB, EFI_MEMORY_RO, &IsSplitted);
         PageTableSplitted = (PageTableSplitted || IsSplitted);
       }
@@ -322,15 +327,15 @@ SetPageTableAttributes (
   //
   // Enable write protection, after page table updated.
   //
-  AsmWriteCr0 (AsmReadCr0() | CR0_WP);
+  AsmWriteCr0 (AsmReadCr0 () | CR0_WP);
   if (CetEnabled) {
     //
     // re-enable CET.
     //
-    EnableCet();
+    EnableCet ();
   }
 
-  return ;
+  return;
 }
 
 /**
@@ -343,7 +348,7 @@ SaveCr2 (
   OUT UINTN  *Cr2
   )
 {
-  return ;
+  return;
 }
 
 /**
@@ -356,7 +361,7 @@ RestoreCr2 (
   IN UINTN  Cr2
   )
 {
-  return ;
+  return;
 }
 
 /**

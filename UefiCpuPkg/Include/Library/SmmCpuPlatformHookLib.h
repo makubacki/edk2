@@ -13,10 +13,10 @@
 /// SMM Page Size Type
 ///
 typedef enum {
-    SmmPageSize4K,
-    SmmPageSize2M,
-    SmmPageSize1G,
-    MaxSmmPageSizeType
+  SmmPageSize4K,
+  SmmPageSize2M,
+  SmmPageSize1G,
+  MaxSmmPageSizeType
 } SMM_PAGE_SIZE_TYPE;
 
 /**
@@ -34,8 +34,8 @@ typedef enum {
 BOOLEAN
 EFIAPI
 PlatformValidSmi (
-  VOID
-  );
+                  VOID
+                  );
 
 /**
   Clears platform top level SMI status bit.
@@ -49,8 +49,8 @@ PlatformValidSmi (
 BOOLEAN
 EFIAPI
 ClearTopLevelSmiStatus (
-  VOID
-  );
+                        VOID
+                        );
 
 /**
   Performs platform specific way of SMM BSP election.

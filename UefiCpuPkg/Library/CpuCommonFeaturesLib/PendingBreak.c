@@ -39,6 +39,7 @@ PendingBreakSupport (
       IS_PENTIUM_M_PROCESSOR (CpuInfo->DisplayFamily, CpuInfo->DisplayModel)) {
     return (CpuInfo->CpuIdVersionInfoEdx.Bits.PBE == 1);
   }
+
   return FALSE;
 }
 
@@ -64,7 +65,7 @@ EFIAPI
 PendingBreakInitialize (
   IN UINTN                             ProcessorNumber,
   IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN VOID                              *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   )
 {
