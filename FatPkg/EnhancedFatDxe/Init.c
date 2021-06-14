@@ -45,21 +45,21 @@ FatAllocateVolume (
   //
   // Initialize the structure
   //
-  Volume->Signature                   = FAT_VOLUME_SIGNATURE;
-  Volume->Handle                      = Handle;
-  Volume->DiskIo                      = DiskIo;
-  Volume->DiskIo2                     = DiskIo2;
-  Volume->BlockIo                     = BlockIo;
-  Volume->MediaId                     = BlockIo->Media->MediaId;
-  Volume->ReadOnly                    = BlockIo->Media->ReadOnly;
-  Volume->VolumeInterface.Revision    = EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_REVISION;
-  Volume->VolumeInterface.OpenVolume  = FatOpenVolume;
+  Volume->Signature = FAT_VOLUME_SIGNATURE;
+  Volume->Handle    = Handle;
+  Volume->DiskIo    = DiskIo;
+  Volume->DiskIo2   = DiskIo2;
+  Volume->BlockIo   = BlockIo;
+  Volume->MediaId   = BlockIo->Media->MediaId;
+  Volume->ReadOnly  = BlockIo->Media->ReadOnly;
+  Volume->VolumeInterface.Revision   = EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_REVISION;
+  Volume->VolumeInterface.OpenVolume = FatOpenVolume;
   InitializeListHead (&Volume->CheckRef);
   InitializeListHead (&Volume->DirCacheList);
   //
   // Initialize Root Directory entry
   //
-  Volume->RootDirEnt.FileString       = Volume->RootFileString;
+  Volume->RootDirEnt.FileString = Volume->RootFileString;
   Volume->RootDirEnt.Entry.Attributes = FAT_ATTRIBUTE_DIRECTORY;
   //
   // Check to see if there's a file system on the volume
@@ -68,6 +68,7 @@ FatAllocateVolume (
   if (EFI_ERROR (Status)) {
     goto Done;
   }
+
   //
   // Initialize cache
   //
@@ -75,6 +76,7 @@ FatAllocateVolume (
   if (EFI_ERROR (Status)) {
     goto Done;
   }
+
   //
   // Install our protocol interfaces on the device's handle
   //
@@ -87,6 +89,7 @@ FatAllocateVolume (
   if (EFI_ERROR (Status)) {
     goto Done;
   }
+
   //
   // Volume installed
   //
@@ -146,6 +149,7 @@ FatAbandonVolume (
   if (!EFI_ERROR (Status)) {
     LockedByMe = TRUE;
   }
+
   //
   // The volume is still being used. Hence, set error flag for all OFiles still in
   // use. In two cases, we could get here. One is EFI_MEDIA_CHANGED, the other is
@@ -213,8 +217,8 @@ FatOpenDevice (
   // This is the only part of FAT code that uses parent DiskIo,
   // Others use FatDiskIo which utilizes a Cache.
   //
-  DiskIo  = Volume->DiskIo;
-  Status  = DiskIo->ReadDisk (DiskIo, Volume->MediaId, 0, sizeof (FatBs), &FatBs);
+  DiskIo = Volume->DiskIo;
+  Status = DiskIo->ReadDisk (DiskIo, Volume->MediaId, 0, sizeof (FatBs), &FatBs);
 
   if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_INIT, "FatOpenDevice: read of part_lba failed %r\n", Status));
@@ -234,8 +238,9 @@ FatOpenDevice (
   SectorsPerFat = FatBs.FatBsb.SectorsPerFat;
   if (SectorsPerFat == 0) {
     SectorsPerFat = FatBs.FatBse.Fat32Bse.LargeSectorsPerFat;
-    FatType       = Fat32;
+    FatType = Fat32;
   }
+
   //
   // Is boot sector a fat sector?
   // (Note that so far we only know if the sector is FAT32 or not, we don't
@@ -250,7 +255,7 @@ FatOpenDevice (
     return EFI_UNSUPPORTED;
   }
 
-  BlockAlignment = (UINT8) HighBitSet32 (FatBs.FatBsb.SectorSize);
+  BlockAlignment = (UINT8)HighBitSet32 (FatBs.FatBsb.SectorSize);
   if (BlockAlignment > MAX_BLOCK_ALIGNMENT || BlockAlignment < MIN_BLOCK_ALIGNMENT) {
     return EFI_UNSUPPORTED;
   }
@@ -259,7 +264,7 @@ FatOpenDevice (
     return EFI_UNSUPPORTED;
   }
 
-  SectorsPerClusterAlignment = (UINT8) HighBitSet32 (FatBs.FatBsb.SectorsPerCluster);
+  SectorsPerClusterAlignment = (UINT8)HighBitSet32 (FatBs.FatBsb.SectorsPerCluster);
   if (SectorsPerClusterAlignment > MAX_SECTORS_PER_CLUSTER_ALIGNMENT) {
     return EFI_UNSUPPORTED;
   }
@@ -271,6 +276,7 @@ FatOpenDevice (
       ) {
     return EFI_UNSUPPORTED;
   }
+
   //
   // Initialize fields the volume information for this FatType
   //
@@ -278,6 +284,7 @@ FatOpenDevice (
     if (FatBs.FatBsb.RootEntries == 0) {
       return EFI_UNSUPPORTED;
     }
+
     //
     // Unpack fat12, fat16 info
     //
@@ -289,32 +296,33 @@ FatOpenDevice (
     if ((SectorsPerFat == 0 || FatBs.FatBse.Fat32Bse.FsVersion != 0) || (FatBs.FatBse.Fat32Bse.ExtendedFlags & 0x80)) {
       return EFI_UNSUPPORTED;
     }
+
     //
     // Unpack fat32 info
     //
     Volume->RootCluster = FatBs.FatBse.Fat32Bse.RootDirFirstCluster;
   }
 
-  Volume->NumFats           = FatBs.FatBsb.NumFats;
+  Volume->NumFats = FatBs.FatBsb.NumFats;
   //
   // Compute some fat locations
   //
-  BlockSize                 = FatBs.FatBsb.SectorSize;
-  RootDirSectors            = ((Volume->RootEntries * sizeof (FAT_DIRECTORY_ENTRY)) + (BlockSize - 1)) / BlockSize;
+  BlockSize = FatBs.FatBsb.SectorSize;
+  RootDirSectors = ((Volume->RootEntries * sizeof (FAT_DIRECTORY_ENTRY)) + (BlockSize - 1)) / BlockSize;
 
-  FatLba                    = FatBs.FatBsb.ReservedSectors;
-  RootLba                   = FatBs.FatBsb.NumFats * SectorsPerFat + FatLba;
-  FirstClusterLba           = RootLba + RootDirSectors;
+  FatLba  = FatBs.FatBsb.ReservedSectors;
+  RootLba = FatBs.FatBsb.NumFats * SectorsPerFat + FatLba;
+  FirstClusterLba = RootLba + RootDirSectors;
 
-  Volume->FatPos            = FatLba * BlockSize;
-  Volume->FatSize           = SectorsPerFat * BlockSize;
+  Volume->FatPos  = FatLba * BlockSize;
+  Volume->FatSize = SectorsPerFat * BlockSize;
 
-  Volume->VolumeSize        = LShiftU64 (Sectors, BlockAlignment);
-  Volume->RootPos           = LShiftU64 (RootLba, BlockAlignment);
-  Volume->FirstClusterPos   = LShiftU64 (FirstClusterLba, BlockAlignment);
-  Volume->MaxCluster        = (Sectors - FirstClusterLba) >> SectorsPerClusterAlignment;
-  Volume->ClusterAlignment  = (UINT8)(BlockAlignment + SectorsPerClusterAlignment);
-  Volume->ClusterSize       = (UINTN)1 << (Volume->ClusterAlignment);
+  Volume->VolumeSize = LShiftU64 (Sectors, BlockAlignment);
+  Volume->RootPos    = LShiftU64 (RootLba, BlockAlignment);
+  Volume->FirstClusterPos = LShiftU64 (FirstClusterLba, BlockAlignment);
+  Volume->MaxCluster = (Sectors - FirstClusterLba) >> SectorsPerClusterAlignment;
+  Volume->ClusterAlignment = (UINT8)(BlockAlignment + SectorsPerClusterAlignment);
+  Volume->ClusterSize = (UINTN)1 << (Volume->ClusterAlignment);
 
   //
   // If this is not a fat32, determine if it's a fat16 or fat12
@@ -329,17 +337,19 @@ FatOpenDevice (
     // fat12 & fat16 fat-entries are 2 bytes
     //
     Volume->FatEntrySize = sizeof (UINT16);
-    DirtyMask            = FAT16_DIRTY_MASK;
+    DirtyMask = FAT16_DIRTY_MASK;
   } else {
     if (Volume->MaxCluster < FAT_MAX_FAT16_CLUSTER) {
       return EFI_VOLUME_CORRUPTED;
     }
+
     //
     // fat32 fat-entries are 4 bytes
     //
     Volume->FatEntrySize = sizeof (UINT32);
-    DirtyMask            = FAT32_DIRTY_MASK;
+    DirtyMask = FAT32_DIRTY_MASK;
   }
+
   //
   // Get the DirtyValue and NotDirtyValue
   // We should keep the initial value as the NotDirtyValue
@@ -353,6 +363,7 @@ FatOpenDevice (
 
     Volume->DirtyValue = Volume->NotDirtyValue & DirtyMask;
   }
+
   //
   // If present, read the fat hint info
   //
@@ -369,14 +380,16 @@ FatOpenDevice (
       }
     }
   }
+
   //
   // Just make up a FreeInfo.NextCluster for use by allocate cluster
   //
   if (FAT_MIN_CLUSTER > Volume->FatInfoSector.FreeInfo.NextCluster ||
-     Volume->FatInfoSector.FreeInfo.NextCluster > Volume->MaxCluster + 1
-     ) {
+      Volume->FatInfoSector.FreeInfo.NextCluster > Volume->MaxCluster + 1
+      ) {
     Volume->FatInfoSector.FreeInfo.NextCluster = FAT_MIN_CLUSTER;
   }
+
   //
   // We are now defining FAT Type
   //
