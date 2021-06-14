@@ -39,7 +39,7 @@
 EFI_STATUS
 EFIAPI
 TryRunningQemuKernel (
-  VOID
-  );
+                      VOID
+                      );
 
 #endif // _PLATFORM_BM_H_

@@ -28,26 +28,49 @@ typedef enum {
   PsciMethodHvc,
 } PSCI_METHOD;
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 PSCI_METHOD
 DiscoverPsciMethod (
   VOID
   )
 {
-  VOID                            *DeviceTreeBase;
-  INT32                           Node, Prev;
-  INT32                           Len;
-  CONST CHAR8                     *Compatible;
-  CONST CHAR8                     *CompatibleItem;
-  CONST VOID                      *Prop;
+  VOID         *DeviceTreeBase;
+  INT32        Node, Prev;
+  INT32        Len;
+  CONST CHAR8  *Compatible;
+  CONST CHAR8  *CompatibleItem;
+  CONST VOID   *Prop;
 
-  DeviceTreeBase = (VOID*)(UINTN)PcdGet64 (PcdDeviceTreeInitialBaseAddress);
+  DeviceTreeBase = (VOID *)(UINTN)PcdGet64 (PcdDeviceTreeInitialBaseAddress);
   ASSERT (fdt_check_header (DeviceTreeBase) == 0);
 
   //
   // Enumerate all FDT nodes looking for the PSCI node and capture the method
   //
-  for (Prev = 0;; Prev = Node) {
+  for (Prev = 0; ; Prev = Node) {
     Node = fdt_next_node (DeviceTreeBase, Prev, NULL);
     if (Node < 0) {
       break;
@@ -62,16 +85,18 @@ DiscoverPsciMethod (
     // Iterate over the NULL-separated items in the compatible string
     //
     for (CompatibleItem = Compatible; CompatibleItem < Compatible + Len;
-      CompatibleItem += 1 + AsciiStrLen (CompatibleItem)) {
-
+         CompatibleItem += 1 + AsciiStrLen (CompatibleItem)) {
       if (AsciiStrCmp (CompatibleItem, "arm,psci-0.2") != 0) {
         continue;
       }
 
       Prop = fdt_getprop (DeviceTreeBase, Node, "method", NULL);
       if (!Prop) {
-        DEBUG ((DEBUG_ERROR, "%a: Missing PSCI method property\n",
-          __FUNCTION__));
+        DEBUG ((
+          DEBUG_ERROR,
+          "%a: Missing PSCI method property\n",
+          __FUNCTION__
+          ));
         return PsciMethodUnknown;
       }
 
@@ -80,39 +105,67 @@ DiscoverPsciMethod (
       } else if (AsciiStrnCmp (Prop, "smc", 3) == 0) {
         return PsciMethodSmc;
       } else {
-        DEBUG ((DEBUG_ERROR, "%a: Unknown PSCI method \"%a\"\n", __FUNCTION__,
-          Prop));
+        DEBUG ((
+          DEBUG_ERROR,
+          "%a: Unknown PSCI method \"%a\"\n",
+          __FUNCTION__,
+          Prop
+          ));
         return PsciMethodUnknown;
       }
     }
   }
+
   return PsciMethodUnknown;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 VOID
 PerformPsciAction (
   IN  UINTN     Arg0
   )
 {
-  ARM_SMC_ARGS ArmSmcArgs;
-  ARM_HVC_ARGS ArmHvcArgs;
+  ARM_SMC_ARGS  ArmSmcArgs;
+  ARM_HVC_ARGS  ArmHvcArgs;
 
   ArmSmcArgs.Arg0 = Arg0;
   ArmHvcArgs.Arg0 = Arg0;
 
   switch (DiscoverPsciMethod ()) {
-  case PsciMethodHvc:
-    ArmCallHvc (&ArmHvcArgs);
-    break;
+    case PsciMethodHvc:
+      ArmCallHvc (&ArmHvcArgs);
+      break;
 
-  case PsciMethodSmc:
-    ArmCallSmc (&ArmSmcArgs);
-    break;
+    case PsciMethodSmc:
+      ArmCallSmc (&ArmSmcArgs);
+      break;
 
-  default:
-    DEBUG ((DEBUG_ERROR, "%a: no PSCI method defined\n", __FUNCTION__));
-    ASSERT (FALSE);
+    default:
+      DEBUG ((DEBUG_ERROR, "%a: no PSCI method defined\n", __FUNCTION__));
+      ASSERT (FALSE);
   }
 }
 
@@ -210,23 +263,23 @@ ResetSystem (
   )
 {
   switch (ResetType) {
-  case EfiResetWarm:
-    ResetWarm ();
-    break;
+    case EfiResetWarm:
+      ResetWarm ();
+      break;
 
-  case EfiResetCold:
-    ResetCold ();
-    break;
+    case EfiResetCold:
+      ResetCold ();
+      break;
 
-  case EfiResetShutdown:
-    ResetShutdown ();
-    return;
+    case EfiResetShutdown:
+      ResetShutdown ();
+      return;
 
-  case EfiResetPlatformSpecific:
-    ResetPlatformSpecific (DataSize, ResetData);
-    return;
+    case EfiResetPlatformSpecific:
+      ResetPlatformSpecific (DataSize, ResetData);
+      return;
 
-  default:
-    return;
+    default:
+      return;
   }
 }
