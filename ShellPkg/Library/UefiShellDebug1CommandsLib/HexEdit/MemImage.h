@@ -19,9 +19,9 @@
   @retval EFI_LOAD_ERROR    A load error occurred.
 **/
 EFI_STATUS
-HMemImageInit (
-  VOID
-  );
+  HMemImageInit (
+                 VOID
+                 );
 
 /**
   Backup function for HDiskImage. Only a few fields need to be backup.
@@ -30,9 +30,9 @@ HMemImageInit (
   @retval EFI_SUCCESS       The operation was successful.
 **/
 EFI_STATUS
-HMemImageBackup (
-  VOID
-  );
+  HMemImageBackup (
+                   VOID
+                   );
 
 /**
   Set FileName field in HFileImage.

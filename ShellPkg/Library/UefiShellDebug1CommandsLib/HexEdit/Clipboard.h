@@ -19,9 +19,9 @@
   @param[in] EFI_LOAD_ERROR   A load error occurred.
 **/
 EFI_STATUS
-HClipBoardInit (
-  VOID
-  );
+  HClipBoardInit (
+                  VOID
+                  );
 
 /**
   Initialization function for HDiskImage.
@@ -30,9 +30,9 @@ HClipBoardInit (
   @param[in] EFI_LOAD_ERROR   A load error occurred.
 **/
 EFI_STATUS
-HClipBoardCleanup (
-  VOID
-  );
+  HClipBoardCleanup (
+                     VOID
+                     );
 
 /**
   Set a buffer into the clipboard.

@@ -19,9 +19,9 @@
   @param EFI_OUT_OF_RESOURCES   A memory allocation failed.
 **/
 EFI_STATUS
-FileBufferInit (
-  VOID
-  );
+  FileBufferInit (
+                  VOID
+                  );
 
 /**
   Cleanup function for FileBuffer.
@@ -29,9 +29,9 @@ FileBufferInit (
   @retval EFI_SUCCESS   The cleanup was successful.
 **/
 EFI_STATUS
-FileBufferCleanup (
-  VOID
-  );
+  FileBufferCleanup (
+                     VOID
+                     );
 
 /**
   Refresh the screen with whats in the buffer.
@@ -40,9 +40,9 @@ FileBufferCleanup (
   @retval EFI_LOAD_ERROR  There was an error finding what to write.
 **/
 EFI_STATUS
-FileBufferRefresh (
-  VOID
-  );
+  FileBufferRefresh (
+                     VOID
+                     );
 
 /**
   Dispatch input to different handler
@@ -60,7 +60,7 @@ FileBufferRefresh (
 **/
 EFI_STATUS
 FileBufferHandleInput (
-  IN CONST EFI_INPUT_KEY * Key
+  IN CONST EFI_INPUT_KEY *Key
   );
 
 /**
@@ -74,9 +74,9 @@ FileBufferHandleInput (
   @retval EFI_SUCCESS           The backup operation was successful.
 **/
 EFI_STATUS
-FileBufferBackup (
-  VOID
-  );
+  FileBufferBackup (
+                    VOID
+                    );
 
 /**
   Set the cursor position according to FileBuffer.DisplayPosition.
@@ -84,9 +84,9 @@ FileBufferBackup (
   @retval EFI_SUCCESS           The operation was successful.
 **/
 EFI_STATUS
-FileBufferRestorePosition (
-  VOID
-  );
+  FileBufferRestorePosition (
+                             VOID
+                             );
 
 /**
   Set FileName field in FileBuffer.
@@ -167,9 +167,9 @@ FileBufferCutLine (
   @retval EFI_OUT_OF_RESOURCES    A memory allocation failed.
 **/
 EFI_STATUS
-FileBufferPasteLine (
-  VOID
-  );
+  FileBufferPasteLine (
+                       VOID
+                       );
 
 /**
   Search string from current position on in file
@@ -233,8 +233,8 @@ FileBufferAdjustMousePosition (
   Set the modified state to TRUE.
 **/
 VOID
-FileBufferSetModified (
-  VOID
-  );
+  FileBufferSetModified (
+                         VOID
+                         );
 
 #endif

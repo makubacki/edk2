@@ -11,7 +11,7 @@
 
 #define HANDLE_PARSING_HII_GUID \
   { \
-  0xb8969637, 0x81de, 0x43af, { 0xbc, 0x9a, 0x24, 0xd9, 0x89, 0x13, 0xf2, 0xf6 } \
+    0xb8969637, 0x81de, 0x43af, { 0xbc, 0x9a, 0x24, 0xd9, 0x89, 0x13, 0xf2, 0xf6 } \
   }
 
 #define SHELL_DEBUG1_HII_GUID \
@@ -21,7 +21,7 @@
 
 #define SHELL_DRIVER1_HII_GUID \
   { \
-  0xaf0b742, 0x63ec, 0x45bd, {0x8d, 0xb6, 0x71, 0xad, 0x7f, 0x2f, 0xe8, 0xe8} \
+    0xaf0b742, 0x63ec, 0x45bd, { 0x8d, 0xb6, 0x71, 0xad, 0x7f, 0x2f, 0xe8, 0xe8 } \
   }
 
 #define SHELL_INSTALL1_HII_GUID \
@@ -66,20 +66,20 @@
 
 #define SHELL_BCFG_HII_GUID \
   { \
-    0x5f5f605d, 0x1583, 0x4a2d, {0xa6, 0xb2, 0xeb, 0x12, 0xda, 0xb4, 0xa2, 0xb6 } \
+    0x5f5f605d, 0x1583, 0x4a2d, { 0xa6, 0xb2, 0xeb, 0x12, 0xda, 0xb4, 0xa2, 0xb6 } \
   }
 
-extern EFI_GUID gHandleParsingHiiGuid;
-extern EFI_GUID gShellDebug1HiiGuid;
-extern EFI_GUID gShellDriver1HiiGuid;
-extern EFI_GUID gShellInstall1HiiGuid;
-extern EFI_GUID gShellLevel1HiiGuid;
-extern EFI_GUID gShellLevel2HiiGuid;
-extern EFI_GUID gShellLevel3HiiGuid;
-extern EFI_GUID gShellNetwork1HiiGuid;
-extern EFI_GUID gShellNetwork2HiiGuid;
-extern EFI_GUID gShellTftpHiiGuid;
-extern EFI_GUID gShellHttpHiiGuid;
-extern EFI_GUID gShellBcfgHiiGuid;
+extern EFI_GUID  gHandleParsingHiiGuid;
+extern EFI_GUID  gShellDebug1HiiGuid;
+extern EFI_GUID  gShellDriver1HiiGuid;
+extern EFI_GUID  gShellInstall1HiiGuid;
+extern EFI_GUID  gShellLevel1HiiGuid;
+extern EFI_GUID  gShellLevel2HiiGuid;
+extern EFI_GUID  gShellLevel3HiiGuid;
+extern EFI_GUID  gShellNetwork1HiiGuid;
+extern EFI_GUID  gShellNetwork2HiiGuid;
+extern EFI_GUID  gShellTftpHiiGuid;
+extern EFI_GUID  gShellHttpHiiGuid;
+extern EFI_GUID  gShellBcfgHiiGuid;
 
 #endif

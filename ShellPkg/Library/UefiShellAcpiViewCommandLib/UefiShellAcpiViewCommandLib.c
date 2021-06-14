@@ -25,20 +25,20 @@
 #include "AcpiView.h"
 #include "AcpiViewConfig.h"
 
-CONST CHAR16 gShellAcpiViewFileName[] = L"ShellCommand";
-EFI_HII_HANDLE gShellAcpiViewHiiHandle = NULL;
+CONST CHAR16    gShellAcpiViewFileName[] = L"ShellCommand";
+EFI_HII_HANDLE  gShellAcpiViewHiiHandle  = NULL;
 
 /**
   An array of acpiview command line parameters.
 **/
-STATIC CONST SHELL_PARAM_ITEM ParamList[] = {
-  {L"-q", TypeFlag},
-  {L"-d", TypeFlag},
-  {L"-h", TypeFlag},
-  {L"-l", TypeFlag},
-  {L"-s", TypeValue},
-  {L"-r", TypeValue},
-  {NULL, TypeMax}
+STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
+  { L"-q", TypeFlag   },
+  { L"-d", TypeFlag   },
+  { L"-h", TypeFlag   },
+  { L"-l", TypeFlag   },
+  { L"-s", TypeValue  },
+  { L"-r", TypeValue  },
+  { NULL,  TypeMax    }
 };
 
 /**
@@ -46,30 +46,44 @@ STATIC CONST SHELL_PARAM_ITEM ParamList[] = {
 */
 STATIC
 CONST
-ACPI_TABLE_PARSER ParserList[] = {
-  {EFI_ACPI_6_3_ARM_ERROR_SOURCE_TABLE_SIGNATURE, ParseAcpiAest},
-  {EFI_ACPI_6_2_BOOT_GRAPHICS_RESOURCE_TABLE_SIGNATURE, ParseAcpiBgrt},
-  {EFI_ACPI_6_2_DEBUG_PORT_2_TABLE_SIGNATURE, ParseAcpiDbg2},
-  {EFI_ACPI_6_2_DIFFERENTIATED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE,
-   ParseAcpiDsdt},
-  {EFI_ACPI_6_3_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE, ParseAcpiFacs},
-  {EFI_ACPI_6_2_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE, ParseAcpiFadt},
-  {EFI_ACPI_6_2_GENERIC_TIMER_DESCRIPTION_TABLE_SIGNATURE, ParseAcpiGtdt},
-  {EFI_ACPI_6_3_HETEROGENEOUS_MEMORY_ATTRIBUTE_TABLE_SIGNATURE, ParseAcpiHmat},
-  {EFI_ACPI_6_2_IO_REMAPPING_TABLE_SIGNATURE, ParseAcpiIort},
-  {EFI_ACPI_6_2_MULTIPLE_APIC_DESCRIPTION_TABLE_SIGNATURE, ParseAcpiMadt},
-  {EFI_ACPI_6_2_PCI_EXPRESS_MEMORY_MAPPED_CONFIGURATION_SPACE_BASE_ADDRESS_DESCRIPTION_TABLE_SIGNATURE,
-   ParseAcpiMcfg},
-  {EFI_ACPI_6_2_PLATFORM_COMMUNICATIONS_CHANNEL_TABLE_SIGNATURE,
-   ParseAcpiPcct},
-  {EFI_ACPI_6_2_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_STRUCTURE_SIGNATURE,
-   ParseAcpiPptt},
-  {RSDP_TABLE_INFO, ParseAcpiRsdp},
-  {EFI_ACPI_6_2_SYSTEM_LOCALITY_INFORMATION_TABLE_SIGNATURE, ParseAcpiSlit},
-  {EFI_ACPI_6_2_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE_SIGNATURE, ParseAcpiSpcr},
-  {EFI_ACPI_6_2_SYSTEM_RESOURCE_AFFINITY_TABLE_SIGNATURE, ParseAcpiSrat},
-  {EFI_ACPI_6_2_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE, ParseAcpiSsdt},
-  {EFI_ACPI_6_2_EXTENDED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE, ParseAcpiXsdt}
+ACPI_TABLE_PARSER  ParserList[] = {
+  { EFI_ACPI_6_3_ARM_ERROR_SOURCE_TABLE_SIGNATURE,
+    ParseAcpiAest },
+  { EFI_ACPI_6_2_BOOT_GRAPHICS_RESOURCE_TABLE_SIGNATURE,
+    ParseAcpiBgrt },
+  { EFI_ACPI_6_2_DEBUG_PORT_2_TABLE_SIGNATURE,
+    ParseAcpiDbg2 },
+  { EFI_ACPI_6_2_DIFFERENTIATED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE,
+    ParseAcpiDsdt },
+  { EFI_ACPI_6_3_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE,
+    ParseAcpiFacs },
+  { EFI_ACPI_6_2_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE,
+    ParseAcpiFadt },
+  { EFI_ACPI_6_2_GENERIC_TIMER_DESCRIPTION_TABLE_SIGNATURE,
+    ParseAcpiGtdt },
+  { EFI_ACPI_6_3_HETEROGENEOUS_MEMORY_ATTRIBUTE_TABLE_SIGNATURE,
+    ParseAcpiHmat },
+  { EFI_ACPI_6_2_IO_REMAPPING_TABLE_SIGNATURE,
+    ParseAcpiIort },
+  { EFI_ACPI_6_2_MULTIPLE_APIC_DESCRIPTION_TABLE_SIGNATURE,
+    ParseAcpiMadt },
+  { EFI_ACPI_6_2_PCI_EXPRESS_MEMORY_MAPPED_CONFIGURATION_SPACE_BASE_ADDRESS_DESCRIPTION_TABLE_SIGNATURE,
+    ParseAcpiMcfg },
+  { EFI_ACPI_6_2_PLATFORM_COMMUNICATIONS_CHANNEL_TABLE_SIGNATURE,
+    ParseAcpiPcct },
+  { EFI_ACPI_6_2_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_STRUCTURE_SIGNATURE,
+    ParseAcpiPptt },
+  { RSDP_TABLE_INFO,
+    ParseAcpiRsdp },
+  { EFI_ACPI_6_2_SYSTEM_LOCALITY_INFORMATION_TABLE_SIGNATURE,
+    ParseAcpiSlit },
+  { EFI_ACPI_6_2_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE_SIGNATURE,
+    ParseAcpiSpcr },
+  { EFI_ACPI_6_2_SYSTEM_RESOURCE_AFFINITY_TABLE_SIGNATURE,
+    ParseAcpiSrat },
+  { EFI_ACPI_6_2_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE,
+    ParseAcpiSsdt },
+  { EFI_ACPI_6_2_EXTENDED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE,                                           ParseAcpiXsdt  }
 };
 
 /**
@@ -86,11 +100,11 @@ EFI_STATUS
 RegisterAllParsers (
   )
 {
-  EFI_STATUS Status;
-  UINTN Count;
+  EFI_STATUS  Status;
+  UINTN       Count;
 
   Status = EFI_SUCCESS;
-  Count = sizeof (ParserList) / sizeof (ParserList[0]);
+  Count  = sizeof (ParserList) / sizeof (ParserList[0]);
 
   while (Count-- != 0) {
     Status = RegisterParser (
@@ -101,6 +115,7 @@ RegisterAllParsers (
       return Status;
     }
   }
+
   return Status;
 }
 
@@ -116,14 +131,14 @@ RegisterAllParsers (
 UINTN
 EFIAPI
 ShellDumpBufferToFile (
-  IN CONST CHAR16* FileNameBuffer,
-  IN CONST VOID*   Buffer,
+  IN CONST CHAR16 *FileNameBuffer,
+  IN CONST VOID *Buffer,
   IN CONST UINTN   BufferSize
   )
 {
-  EFI_STATUS          Status;
-  SHELL_FILE_HANDLE   DumpFileHandle;
-  UINTN               TransferBytes;
+  EFI_STATUS         Status;
+  SHELL_FILE_HANDLE  DumpFileHandle;
+  UINTN              TransferBytes;
 
   Status = ShellOpenFileByName (
              FileNameBuffer,
@@ -134,8 +149,8 @@ ShellDumpBufferToFile (
 
   if (EFI_ERROR (Status)) {
     ShellPrintHiiEx (
-      -1,
-      -1,
+      - 1,
+      - 1,
       NULL,
       STRING_TOKEN (STR_GEN_READONLY_MEDIA),
       gShellAcpiViewHiiHandle,
@@ -148,7 +163,7 @@ ShellDumpBufferToFile (
   Status = ShellWriteFile (
              DumpFileHandle,
              &TransferBytes,
-             (VOID *) Buffer
+             (VOID *)Buffer
              );
 
   if (EFI_ERROR (Status)) {
@@ -167,7 +182,7 @@ ShellDumpBufferToFile (
 
   @return The string pointer to the file name.
 **/
-CONST CHAR16*
+CONST CHAR16 *
 EFIAPI
 ShellCommandGetManFileNameAcpiView (
   VOID
@@ -190,30 +205,30 @@ SHELL_STATUS
 EFIAPI
 ShellCommandRunAcpiView (
   IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE* SystemTable
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
   EFI_STATUS         Status;
   SHELL_STATUS       ShellStatus;
-  LIST_ENTRY*        Package;
-  CHAR16*            ProblemParam;
+  LIST_ENTRY         *Package;
+  CHAR16             *ProblemParam;
   SHELL_FILE_HANDLE  TmpDumpFileHandle;
-  CONST CHAR16*      MandatoryTableSpecStr;
-  CONST CHAR16*      SelectedTableName;
+  CONST CHAR16       *MandatoryTableSpecStr;
+  CONST CHAR16       *SelectedTableName;
 
   // Set configuration defaults
   AcpiConfigSetDefaults ();
 
   ShellStatus = SHELL_SUCCESS;
-  Package = NULL;
+  Package     = NULL;
   TmpDumpFileHandle = NULL;
 
   Status = ShellCommandLineParse (ParamList, &Package, &ProblemParam, TRUE);
   if (EFI_ERROR (Status)) {
     if (Status == EFI_VOLUME_CORRUPTED && ProblemParam != NULL) {
       ShellPrintHiiEx (
-        -1,
-        -1,
+        - 1,
+        - 1,
         NULL,
         STRING_TOKEN (STR_GEN_PROBLEM),
         gShellAcpiViewHiiHandle,
@@ -224,12 +239,13 @@ ShellCommandRunAcpiView (
     } else {
       Print (L"acpiview: Error processing input parameter(s)\n");
     }
+
     ShellStatus = SHELL_INVALID_PARAMETER;
   } else {
     if (ShellCommandLineGetCount (Package) > 1) {
       ShellPrintHiiEx (
-        -1,
-        -1,
+        - 1,
+        - 1,
         NULL,
         STRING_TOKEN (STR_GEN_TOO_MANY),
         gShellAcpiViewHiiHandle,
@@ -238,8 +254,8 @@ ShellCommandRunAcpiView (
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else if (ShellCommandLineGetFlag (Package, L"-?")) {
       ShellPrintHiiEx (
-        -1,
-        -1,
+        - 1,
+        - 1,
         NULL,
         STRING_TOKEN (STR_GET_HELP_ACPIVIEW),
         gShellAcpiViewHiiHandle,
@@ -248,8 +264,8 @@ ShellCommandRunAcpiView (
     } else if (ShellCommandLineGetFlag (Package, L"-s") &&
                ShellCommandLineGetValue (Package, L"-s") == NULL) {
       ShellPrintHiiEx (
-        -1,
-        -1,
+        - 1,
+        - 1,
         NULL,
         STRING_TOKEN (STR_GEN_NO_VALUE),
         gShellAcpiViewHiiHandle,
@@ -260,8 +276,8 @@ ShellCommandRunAcpiView (
     } else if (ShellCommandLineGetFlag (Package, L"-r") &&
                ShellCommandLineGetValue (Package, L"-r") == NULL) {
       ShellPrintHiiEx (
-        -1,
-        -1,
+        - 1,
+        - 1,
         NULL,
         STRING_TOKEN (STR_GEN_NO_VALUE),
         gShellAcpiViewHiiHandle,
@@ -272,8 +288,8 @@ ShellCommandRunAcpiView (
     } else if ((ShellCommandLineGetFlag (Package, L"-s") &&
                 ShellCommandLineGetFlag (Package, L"-l"))) {
       ShellPrintHiiEx (
-        -1,
-        -1,
+        - 1,
+        - 1,
         NULL,
         STRING_TOKEN (STR_GEN_TOO_MANY),
         gShellAcpiViewHiiHandle,
@@ -282,17 +298,17 @@ ShellCommandRunAcpiView (
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else if (ShellCommandLineGetFlag (Package, L"-d") &&
                !ShellCommandLineGetFlag (Package, L"-s")) {
-        ShellPrintHiiEx (
-          -1,
-          -1,
-          NULL,
-          STRING_TOKEN (STR_GEN_MISSING_OPTION),
-          gShellAcpiViewHiiHandle,
-          L"acpiview",
-          L"-s",
-          L"-d"
-          );
-        ShellStatus = SHELL_INVALID_PARAMETER;
+      ShellPrintHiiEx (
+        - 1,
+        - 1,
+        NULL,
+        STRING_TOKEN (STR_GEN_MISSING_OPTION),
+        gShellAcpiViewHiiHandle,
+        L"acpiview",
+        L"-s",
+        L"-d"
+        );
+      ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
       // Turn on colour highlighting if requested
       SetColourHighlighting (ShellCommandLineGetFlag (Package, L"-h"));
@@ -316,9 +332,9 @@ ShellCommandRunAcpiView (
           SelectAcpiTable (SelectedTableName);
           SetReportOption (ReportSelected);
 
-          if (ShellCommandLineGetFlag (Package, L"-d"))  {
+          if (ShellCommandLineGetFlag (Package, L"-d")) {
             // Create a temporary file to check if the media is writable.
-            CHAR16 FileNameBuffer[MAX_FILE_NAME_LEN];
+            CHAR16  FileNameBuffer[MAX_FILE_NAME_LEN];
             SetReportOption (ReportDumpBinFile);
 
             UnicodeSPrint (
@@ -340,8 +356,8 @@ ShellCommandRunAcpiView (
               ShellStatus = SHELL_INVALID_PARAMETER;
               TmpDumpFileHandle = NULL;
               ShellPrintHiiEx (
-                -1,
-                -1,
+                - 1,
+                - 1,
                 NULL,
                 STRING_TOKEN (STR_GEN_READONLY_MEDIA),
                 gShellAcpiViewHiiHandle,
@@ -349,6 +365,7 @@ ShellCommandRunAcpiView (
                 );
               goto Done;
             }
+
             // Delete Temporary file.
             ShellDeleteFile (&TmpDumpFileHandle);
           } // -d
@@ -367,6 +384,7 @@ Done:
   if (Package != NULL) {
     ShellCommandLineFreeVarList (Package);
   }
+
   return ShellStatus;
 }
 
@@ -389,7 +407,8 @@ UefiShellAcpiViewCommandLibConstructor (
   IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  EFI_STATUS Status;
+  EFI_STATUS  Status;
+
   gShellAcpiViewHiiHandle = NULL;
 
   // Check Shell Profile Debug1 bit of the profiles mask
@@ -412,6 +431,7 @@ UefiShellAcpiViewCommandLibConstructor (
   if (gShellAcpiViewHiiHandle == NULL) {
     return EFI_DEVICE_ERROR;
   }
+
   // Install our Shell command handler
   ShellCommandRegisterCommandName (
     L"acpiview",
@@ -443,5 +463,6 @@ UefiShellAcpiViewCommandLibDestructor (
   if (gShellAcpiViewHiiHandle != NULL) {
     HiiRemovePackages (gShellAcpiViewHiiHandle);
   }
+
   return EFI_SUCCESS;
 }

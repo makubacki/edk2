@@ -18,9 +18,9 @@
   @retval EFI_SUCCESS     The operation was successful.
 **/
 EFI_STATUS
-HFileImageInit (
-  VOID
-  );
+  HFileImageInit (
+                  VOID
+                  );
 
 /**
   Cleanup function for HFileImage.
@@ -28,9 +28,9 @@ HFileImageInit (
   @retval EFI_SUCCESS           The operation was successful.
 **/
 EFI_STATUS
-HFileImageCleanup (
-  VOID
-  );
+  HFileImageCleanup (
+                     VOID
+                     );
 
 /**
   Backup function for HFileImage. Only a few fields need to be backup.
@@ -40,9 +40,9 @@ HFileImageCleanup (
   @retval EFI_OUT_OF_RESOURCES  A memory allocation failed.
 **/
 EFI_STATUS
-HFileImageBackup (
-  VOID
-  );
+  HFileImageBackup (
+                    VOID
+                    );
 
 /**
   Read a file from disk into HBufferImage.

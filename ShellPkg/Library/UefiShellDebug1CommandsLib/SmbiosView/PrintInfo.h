@@ -22,12 +22,12 @@ extern UINT8  SmbiosMinorVersion;
 //
 // SHOW_ALL: WaitEnter() not wait input.
 //
-#define SHOW_ALL          0x04
-#define SHOW_STATISTICS   0x05
+#define SHOW_ALL         0x04
+#define SHOW_STATISTICS  0x05
 
-#define AS_UINT16(pData)  (*((UINT16 *) pData))
-#define AS_UINT32(pData)  (*((UINT32 *) pData))
-#define AS_UINT64(pData)  (*((UINT64 *) pData))
+#define AS_UINT16(pData)  (*((UINT16 *)pData))
+#define AS_UINT32(pData)  (*((UINT32 *)pData))
+#define AS_UINT64(pData)  (*((UINT64 *)pData))
 
 /**
   Print the info of EPS(Entry Point Structure).
@@ -438,4 +438,5 @@ DisplayProcessorArchitectureType (
   IN UINT8 Key,
   IN UINT8 Option
   );
+
 #endif

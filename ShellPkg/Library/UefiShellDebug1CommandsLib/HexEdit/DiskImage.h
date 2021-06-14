@@ -19,9 +19,9 @@
   @retval EFI_LOAD_ERROR  A load error occurred.
 **/
 EFI_STATUS
-HDiskImageInit (
-  VOID
-  );
+  HDiskImageInit (
+                  VOID
+                  );
 
 /**
   Cleanup function for HDiskImage.
@@ -29,9 +29,9 @@ HDiskImageInit (
   @retval EFI_SUCCESS           The operation was successful.
 **/
 EFI_STATUS
-HDiskImageCleanup (
-  VOID
-  );
+  HDiskImageCleanup (
+                     VOID
+                     );
 
 /**
   Backup function for HDiskImage. Only a few fields need to be backup.
@@ -41,9 +41,9 @@ HDiskImageCleanup (
   @retval EFI_OUT_OF_RESOURCES  gST->ConOut of resources.
 **/
 EFI_STATUS
-HDiskImageBackup (
-  VOID
-  );
+  HDiskImageBackup (
+                    VOID
+                    );
 
 /**
   Read a disk from disk into HBufferImage.

@@ -18,9 +18,9 @@
   @retval EFI_LOAD_ERROR          A load error occurred.
 **/
 EFI_STATUS
-MainEditorInit (
-  VOID
-  );
+  MainEditorInit (
+                  VOID
+                  );
 
 /**
   The cleanup function for MainEditor.
@@ -29,17 +29,17 @@ MainEditorInit (
   @retval EFI_LOAD_ERROR          A load error occurred.
 **/
 EFI_STATUS
-MainEditorCleanup (
-  VOID
-  );
+  MainEditorCleanup (
+                     VOID
+                     );
 
 /**
   Refresh the main editor component.
 **/
 VOID
-MainEditorRefresh (
-  VOID
-  );
+  MainEditorRefresh (
+                     VOID
+                     );
 
 /**
   Handle user key input. This routes to other functions for the actions.
@@ -49,9 +49,9 @@ MainEditorRefresh (
   @retval EFI_OUT_OF_RESOURCES    A memory allocation failed.
 **/
 EFI_STATUS
-MainEditorKeyInput (
-  VOID
-  );
+  MainEditorKeyInput (
+                      VOID
+                      );
 
 /**
   Backup function for MainEditor
@@ -59,8 +59,8 @@ MainEditorKeyInput (
   @retval EFI_SUCCESS The operation was successful.
 **/
 EFI_STATUS
-MainEditorBackup (
-  VOID
-  );
+  MainEditorBackup (
+                    VOID
+                    );
 
 #endif

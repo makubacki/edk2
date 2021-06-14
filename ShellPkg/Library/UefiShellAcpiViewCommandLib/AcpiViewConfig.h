@@ -16,8 +16,8 @@
 BOOLEAN
 EFIAPI
 GetColourHighlighting (
-  VOID
-  );
+                       VOID
+                       );
 
 /**
   This function sets the colour highlighting status.
@@ -38,8 +38,8 @@ SetColourHighlighting (
 BOOLEAN
 EFIAPI
 GetConsistencyChecking (
-  VOID
-  );
+                        VOID
+                        );
 
 /**
   This function sets the consistency checking status.
@@ -60,8 +60,8 @@ SetConsistencyChecking (
 BOOLEAN
 EFIAPI
 GetMandatoryTableValidate (
-  VOID
-  );
+                           VOID
+                           );
 
 /**
   This function sets the ACPI table requirements validation flag.
@@ -83,8 +83,8 @@ SetMandatoryTableValidate (
 UINTN
 EFIAPI
 GetMandatoryTableSpec (
-  VOID
-  );
+                       VOID
+                       );
 
 /**
   This function sets the identifier of specification to validate ACPI table
@@ -117,8 +117,8 @@ typedef enum {
 EREPORT_OPTION
 EFIAPI
 GetReportOption (
-  VOID
-  );
+                 VOID
+                 );
 
 /**
   This function sets the report options.
@@ -136,9 +136,9 @@ SetReportOption (
   ACPI table is to be examined by the AcpiView code.
 **/
 typedef struct {
-  UINT32              Type;    ///< 32bit signature of the selected ACPI table.
-  CONST CHAR16*       Name;    ///< User friendly name of the selected ACPI table.
-  BOOLEAN             Found;   ///< The selected table has been found in the system.
+  UINT32          Type;        ///< 32bit signature of the selected ACPI table.
+  CONST CHAR16    *Name;       ///< User friendly name of the selected ACPI table.
+  BOOLEAN         Found;       ///< The selected table has been found in the system.
 } SELECTED_ACPI_TABLE;
 
 /**
@@ -149,7 +149,7 @@ typedef struct {
 VOID
 EFIAPI
 GetSelectedAcpiTable (
-  OUT SELECTED_ACPI_TABLE** SelectedAcpiTable
+  OUT SELECTED_ACPI_TABLE **SelectedAcpiTable
   );
 
 /**
@@ -162,7 +162,7 @@ GetSelectedAcpiTable (
 VOID
 EFIAPI
 SelectAcpiTable (
-  CONST CHAR16* TableName
+  CONST CHAR16 *TableName
   );
 
 /**
@@ -171,7 +171,7 @@ SelectAcpiTable (
 VOID
 EFIAPI
 AcpiConfigSetDefaults (
-  VOID
-  );
+                       VOID
+                       );
 
 #endif // ACPI_VIEW_CONFIG_H_
