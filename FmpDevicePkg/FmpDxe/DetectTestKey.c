@@ -76,6 +76,7 @@ DetectTestKey (
       //
       break;
     }
+
     //
     // Read key length stored in big endian format
     //
@@ -100,10 +101,12 @@ DetectTestKey (
       TestKeyUsed = TRUE;
       break;
     }
+
     if (!Sha256Update (HashContext, PublicKeyDataXdr, PublicKeyDataLength)) {
       TestKeyUsed = TRUE;
       break;
     }
+
     if (!Sha256Final (HashContext, Digest)) {
       TestKeyUsed = TRUE;
       break;
@@ -121,7 +124,7 @@ DetectTestKey (
     // Point to start of next key
     //
     PublicKeyDataXdr += PublicKeyDataLength;
-    PublicKeyDataXdr = (UINT8 *)ALIGN_POINTER (PublicKeyDataXdr, sizeof (UINT32));
+    PublicKeyDataXdr  = (UINT8 *)ALIGN_POINTER (PublicKeyDataXdr, sizeof (UINT32));
   }
 
   //

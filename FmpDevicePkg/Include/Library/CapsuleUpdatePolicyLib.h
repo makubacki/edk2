@@ -81,8 +81,8 @@ CheckSystemEnvironment (
 BOOLEAN
 EFIAPI
 IsLowestSupportedVersionCheckRequired (
-  VOID
-  );
+                                       VOID
+                                       );
 
 /**
   Determines if the FMP device should be locked when the event specified by
@@ -97,7 +97,7 @@ IsLowestSupportedVersionCheckRequired (
 BOOLEAN
 EFIAPI
 IsLockFmpDeviceAtLockEventGuidRequired (
-  VOID
-  );
+                                        VOID
+                                        );
 
 #endif
