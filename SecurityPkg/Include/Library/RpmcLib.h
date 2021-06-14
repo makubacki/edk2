@@ -36,8 +36,7 @@ RequestMonotonicCounter (
 EFI_STATUS
 EFIAPI
 IncrementMonotonicCounter (
-  VOID
-  );
+                           VOID
+                           );
 
 #endif
-

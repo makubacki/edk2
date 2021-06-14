@@ -125,7 +125,7 @@ SetVariableCheckHandlerMor (
 EFI_STATUS
 EFIAPI
 MorLockDriverInit (
-  VOID
-  );
+                   VOID
+                   );
 
 #endif

@@ -18,13 +18,13 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // UEFI TCG2 library definition bit of the BIOS TPM Management Flags
 //
 // BIT0 is reserved
-#define TCG2_BIOS_TPM_MANAGEMENT_FLAG_PP_REQUIRED_FOR_CLEAR               BIT1
+#define TCG2_BIOS_TPM_MANAGEMENT_FLAG_PP_REQUIRED_FOR_CLEAR  BIT1
 // BIT2 is reserved
-#define TCG2_LIB_PP_FLAG_RESET_TRACK                                      BIT3
-#define TCG2_BIOS_TPM_MANAGEMENT_FLAG_PP_REQUIRED_FOR_TURN_ON             BIT4
-#define TCG2_BIOS_TPM_MANAGEMENT_FLAG_PP_REQUIRED_FOR_TURN_OFF            BIT5
-#define TCG2_BIOS_TPM_MANAGEMENT_FLAG_PP_REQUIRED_FOR_CHANGE_EPS          BIT6
-#define TCG2_BIOS_TPM_MANAGEMENT_FLAG_PP_REQUIRED_FOR_CHANGE_PCRS         BIT7
+#define TCG2_LIB_PP_FLAG_RESET_TRACK                               BIT3
+#define TCG2_BIOS_TPM_MANAGEMENT_FLAG_PP_REQUIRED_FOR_TURN_ON      BIT4
+#define TCG2_BIOS_TPM_MANAGEMENT_FLAG_PP_REQUIRED_FOR_TURN_OFF     BIT5
+#define TCG2_BIOS_TPM_MANAGEMENT_FLAG_PP_REQUIRED_FOR_CHANGE_EPS   BIT6
+#define TCG2_BIOS_TPM_MANAGEMENT_FLAG_PP_REQUIRED_FOR_CHANGE_PCRS  BIT7
 
 //
 // UEFI TCG2 library definition bit of the BIOS Information Flags
@@ -71,8 +71,8 @@ Tcg2PhysicalPresenceLibProcessRequest (
 BOOLEAN
 EFIAPI
 Tcg2PhysicalPresenceLibNeedUserConfirm (
-  VOID
-  );
+                                        VOID
+                                        );
 
 /**
   Return TPM2 ManagementFlags set by PP interface.
@@ -82,8 +82,8 @@ Tcg2PhysicalPresenceLibNeedUserConfirm (
 UINT32
 EFIAPI
 Tcg2PhysicalPresenceLibGetManagementFlags (
-  VOID
-  );
+                                           VOID
+                                           );
 
 /**
   The handler for TPM physical presence function:
