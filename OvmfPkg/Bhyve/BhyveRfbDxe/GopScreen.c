@@ -22,16 +22,38 @@ Abstract:
 #include "Gop.h"
 #include <Library/FrameBufferBltLib.h>
 
+EFI_EVENT  mGopScreenExitBootServicesEvent;
 
-EFI_EVENT               mGopScreenExitBootServicesEvent;
+GOP_MODE_DATA  mGopModeData[] = {
+  { 0,    0,    32,   0 },     // Filled in with user-spec'd resolution
+  { 1024, 768,  32,   0 },
+  { 800,  600,  32,   0 },
+  { 640,  480,  32,   0 }
+};
 
-GOP_MODE_DATA mGopModeData[] = {
-    { 0,     0,    32, 0 },    // Filled in with user-spec'd resolution
-    { 1024,  768,  32, 0 },
-    { 800,   600,  32, 0 },
-    { 640,   480,  32, 0 }
-    };
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 VOID
 BhyveGopCompleteModeInfo (
@@ -42,24 +64,28 @@ BhyveGopCompleteModeInfo (
   Info->Version = 0;
   if (ModeData->ColorDepth == 8) {
     Info->PixelFormat = PixelBitMask;
-    Info->PixelInformation.RedMask = PIXEL_RED_MASK;
-    Info->PixelInformation.GreenMask = PIXEL_GREEN_MASK;
-    Info->PixelInformation.BlueMask = PIXEL_BLUE_MASK;
+    Info->PixelInformation.RedMask      = PIXEL_RED_MASK;
+    Info->PixelInformation.GreenMask    = PIXEL_GREEN_MASK;
+    Info->PixelInformation.BlueMask     = PIXEL_BLUE_MASK;
     Info->PixelInformation.ReservedMask = 0;
   } else if (ModeData->ColorDepth == 24) {
     Info->PixelFormat = PixelBitMask;
-    Info->PixelInformation.RedMask = PIXEL24_RED_MASK;
-    Info->PixelInformation.GreenMask = PIXEL24_GREEN_MASK;
-    Info->PixelInformation.BlueMask = PIXEL24_BLUE_MASK;
+    Info->PixelInformation.RedMask      = PIXEL24_RED_MASK;
+    Info->PixelInformation.GreenMask    = PIXEL24_GREEN_MASK;
+    Info->PixelInformation.BlueMask     = PIXEL24_BLUE_MASK;
     Info->PixelInformation.ReservedMask = 0;
   } else if (ModeData->ColorDepth == 32) {
-    DEBUG ((DEBUG_INFO, "%dx%d PixelBlueGreenRedReserved8BitPerColor\n",
-     ModeData->HorizontalResolution, ModeData->VerticalResolution));
+    DEBUG ((
+      DEBUG_INFO,
+      "%dx%d PixelBlueGreenRedReserved8BitPerColor\n",
+      ModeData->HorizontalResolution,
+      ModeData->VerticalResolution
+      ));
     Info->PixelFormat = PixelBlueGreenRedReserved8BitPerColor;
   }
+
   Info->PixelsPerScanLine = Info->HorizontalResolution;
 }
-
 
 /**
   Returns information for an available graphics mode that the graphics device
@@ -91,7 +117,7 @@ EmuGopQuerytMode (
 
   Private = GOP_PRIVATE_DATA_FROM_THIS (This);
 
-  if (Info == NULL || SizeOfInfo == NULL || (UINTN) ModeNumber >= This->Mode->MaxMode) {
+  if (Info == NULL || SizeOfInfo == NULL || (UINTN)ModeNumber >= This->Mode->MaxMode) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -108,11 +134,9 @@ EmuGopQuerytMode (
   (*Info)->VerticalResolution   = ModeData->VerticalResolution;
   (*Info)->PixelFormat = PixelBitMask;
   (*Info)->PixelsPerScanLine = (*Info)->HorizontalResolution;
-  BhyveGopCompleteModeInfo(ModeData, *Info);
+  BhyveGopCompleteModeInfo (ModeData, *Info);
   return EFI_SUCCESS;
 }
-
-
 
 /**
   Set the video device into the specified mode and clears the visible portions of
@@ -127,8 +151,31 @@ EmuGopQuerytMode (
 
 **/
 
-FRAME_BUFFER_CONFIGURE *fbconf;
+FRAME_BUFFER_CONFIGURE  *fbconf;
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EFIAPI
 EmuGopSetMode (
@@ -136,19 +183,20 @@ EmuGopSetMode (
   IN  UINT32                        ModeNumber
   )
 {
-  GOP_PRIVATE_DATA                *Private;
-  GOP_MODE_DATA                   *ModeData;
-  EFI_GRAPHICS_OUTPUT_BLT_PIXEL   Fill;
+  GOP_PRIVATE_DATA                      *Private;
+  GOP_MODE_DATA                         *ModeData;
+  EFI_GRAPHICS_OUTPUT_BLT_PIXEL         Fill;
   EFI_GRAPHICS_OUTPUT_MODE_INFORMATION  *Info;
 
-  UINTN confsize = 0;
+  UINTN  confsize = 0;
+
   fbconf = NULL;
 
   Private = GOP_PRIVATE_DATA_FROM_THIS (This);
 
   if (ModeNumber >= This->Mode->MaxMode) {
     // Tell bhyve that we are switching out of vesa
-    BhyveSetGraphicsMode(Private, 0, 0, 0);
+    BhyveSetGraphicsMode (Private, 0, 0, 0);
     return EFI_UNSUPPORTED;
   }
 
@@ -157,15 +205,15 @@ EmuGopSetMode (
   ModeData = &Private->ModeData[ModeNumber];
   This->Mode->Mode = ModeNumber;
   Private->GraphicsOutput.Mode->Info->HorizontalResolution = ModeData->HorizontalResolution;
-  Private->GraphicsOutput.Mode->Info->VerticalResolution = ModeData->VerticalResolution;
-  Private->GraphicsOutput.Mode->Info->PixelsPerScanLine = ModeData->HorizontalResolution;
+  Private->GraphicsOutput.Mode->Info->VerticalResolution   = ModeData->VerticalResolution;
+  Private->GraphicsOutput.Mode->Info->PixelsPerScanLine    = ModeData->HorizontalResolution;
 
   Info = This->Mode->Info;
-  BhyveGopCompleteModeInfo(ModeData, Info);
+  BhyveGopCompleteModeInfo (ModeData, Info);
 
   This->Mode->Info->HorizontalResolution = ModeData->HorizontalResolution;
-  This->Mode->Info->VerticalResolution = ModeData->VerticalResolution;
-  This->Mode->SizeOfInfo = sizeof(EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
+  This->Mode->Info->VerticalResolution   = ModeData->VerticalResolution;
+  This->Mode->SizeOfInfo = sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
   This->Mode->FrameBufferBase = Private->GraphicsOutput.Mode->FrameBufferBase;
 
   /*
@@ -173,20 +221,36 @@ EmuGopSetMode (
                                 * ((ModeData->ColorDepth + 7) / 8);
   */
   This->Mode->FrameBufferSize = Private->FbSize;
-  DEBUG ((DEBUG_INFO, "BHYVE GOP FrameBufferBase: 0x%x, FrameBufferSize: 0x%x\n", This->Mode->FrameBufferBase, This->Mode->FrameBufferSize));
+  DEBUG ((
+    DEBUG_INFO,
+    "BHYVE GOP FrameBufferBase: 0x%x, FrameBufferSize: 0x%x\n",
+    This->Mode->FrameBufferBase,
+    This->Mode->FrameBufferSize
+    ));
 
-  BhyveSetGraphicsMode(Private, (UINT16)ModeData->HorizontalResolution, (UINT16)ModeData->VerticalResolution, (UINT16)ModeData->ColorDepth);
-
-  RETURN_STATUS ret = FrameBufferBltConfigure (
-    (VOID*)(UINTN) This->Mode->FrameBufferBase,
-    This->Mode->Info, fbconf, &confsize
+  BhyveSetGraphicsMode (
+    Private,
+    (UINT16)ModeData->HorizontalResolution,
+    (UINT16)ModeData->VerticalResolution,
+    (UINT16)ModeData->ColorDepth
     );
+
+  RETURN_STATUS  ret = FrameBufferBltConfigure (
+                         (VOID *)(UINTN)This->Mode->FrameBufferBase,
+                         This->Mode->Info,
+                         fbconf,
+                         &confsize
+                         );
+
   if (ret == EFI_BUFFER_TOO_SMALL || ret == EFI_INVALID_PARAMETER) {
-          fbconf = AllocatePool(confsize);
-          ret = FrameBufferBltConfigure(
-                         (VOID*)(UINTN)This->Mode->FrameBufferBase,
-                         This->Mode->Info, fbconf, &confsize);
-          ASSERT(ret == EFI_SUCCESS);
+    fbconf = AllocatePool (confsize);
+    ret    = FrameBufferBltConfigure (
+               (VOID *)(UINTN)This->Mode->FrameBufferBase,
+               This->Mode->Info,
+               fbconf,
+               &confsize
+               );
+    ASSERT (ret == EFI_SUCCESS);
   }
 
   Fill.Red   = 0;
@@ -206,8 +270,6 @@ EmuGopSetMode (
           );
   return EFI_SUCCESS;
 }
-
-
 
 /**
   Blt a rectangle of pixels on the graphics screen. Blt stands for BLock Transfer.
@@ -233,7 +295,7 @@ EFI_STATUS
 EFIAPI
 EmuGopBlt (
   IN  EFI_GRAPHICS_OUTPUT_PROTOCOL            *This,
-  IN  EFI_GRAPHICS_OUTPUT_BLT_PIXEL           *BltBuffer,   OPTIONAL
+  IN  EFI_GRAPHICS_OUTPUT_BLT_PIXEL           *BltBuffer, OPTIONAL
   IN  EFI_GRAPHICS_OUTPUT_BLT_OPERATION       BltOperation,
   IN  UINTN                                   SourceX,
   IN  UINTN                                   SourceY,
@@ -244,8 +306,8 @@ EmuGopBlt (
   IN  UINTN                                   Delta         OPTIONAL
   )
 {
-  EFI_TPL           OriginalTPL;
-  EFI_STATUS        Status;
+  EFI_TPL     OriginalTPL;
+  EFI_STATUS  Status;
 
   if ((UINT32)BltOperation >= EfiGraphicsOutputBltOperationMax) {
     return EFI_INVALID_PARAMETER;
@@ -263,34 +325,33 @@ EmuGopBlt (
   OriginalTPL = gBS->RaiseTPL (TPL_NOTIFY);
 
   switch (BltOperation) {
-  case EfiBltVideoToBltBuffer:
-  case EfiBltBufferToVideo:
-  case EfiBltVideoFill:
-  case EfiBltVideoToVideo:
-    Status = FrameBufferBlt (
-     fbconf,
-      BltBuffer,
-      BltOperation,
-      SourceX,
-      SourceY,
-      DestinationX,
-      DestinationY,
-      Width,
-      Height,
-      Delta
-      );
-    break;
+    case EfiBltVideoToBltBuffer:
+    case EfiBltBufferToVideo:
+    case EfiBltVideoFill:
+    case EfiBltVideoToVideo:
+      Status = FrameBufferBlt (
+                 fbconf,
+                 BltBuffer,
+                 BltOperation,
+                 SourceX,
+                 SourceY,
+                 DestinationX,
+                 DestinationY,
+                 Width,
+                 Height,
+                 Delta
+                 );
+      break;
 
-  default:
-    Status = EFI_INVALID_PARAMETER;
-    ASSERT (FALSE);
+    default:
+      Status = EFI_INVALID_PARAMETER;
+      ASSERT (FALSE);
   }
 
   gBS->RestoreTPL (OriginalTPL);
 
   return Status;
 }
-
 
 //
 // Construction and Destruction functions
@@ -302,14 +363,14 @@ EmuGopConstructor (
   )
 {
   // Set mode 0 to be the requested resolution
-  mGopModeData[0].HorizontalResolution = PcdGet32 ( PcdVideoHorizontalResolution);
-  mGopModeData[0].VerticalResolution = PcdGet32 ( PcdVideoVerticalResolution );
+  mGopModeData[0].HorizontalResolution = PcdGet32 (PcdVideoHorizontalResolution);
+  mGopModeData[0].VerticalResolution   = PcdGet32 (PcdVideoVerticalResolution);
 
   Private->ModeData = mGopModeData;
 
-  Private->GraphicsOutput.QueryMode      = EmuGopQuerytMode;
-  Private->GraphicsOutput.SetMode        = EmuGopSetMode;
-  Private->GraphicsOutput.Blt            = EmuGopBlt;
+  Private->GraphicsOutput.QueryMode = EmuGopQuerytMode;
+  Private->GraphicsOutput.SetMode   = EmuGopSetMode;
+  Private->GraphicsOutput.Blt = EmuGopBlt;
 
   //
   // Allocate buffer for Graphics Output Protocol mode information
@@ -318,32 +379,53 @@ EmuGopConstructor (
   if (Private->GraphicsOutput.Mode == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
+
   Private->GraphicsOutput.Mode->Info = AllocatePool (sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION));
   if (Private->GraphicsOutput.Mode->Info == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
-
   DEBUG ((DEBUG_INFO, "BHYVE Gop Constructor\n"));
 
-  Private->GraphicsOutput.Mode->MaxMode = sizeof(mGopModeData) / sizeof(GOP_MODE_DATA);
+  Private->GraphicsOutput.Mode->MaxMode = sizeof (mGopModeData) / sizeof (GOP_MODE_DATA);
   //
   // Till now, we have no idea about the window size.
   //
   Private->GraphicsOutput.Mode->Mode = GRAPHICS_OUTPUT_INVALID_MODE_NUMBER;
   Private->GraphicsOutput.Mode->Info->Version = 0;
   Private->GraphicsOutput.Mode->Info->HorizontalResolution = 0;
-  Private->GraphicsOutput.Mode->Info->VerticalResolution = 0;
+  Private->GraphicsOutput.Mode->Info->VerticalResolution   = 0;
   Private->GraphicsOutput.Mode->Info->PixelFormat = PixelBitMask;
   Private->GraphicsOutput.Mode->SizeOfInfo = sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
-  Private->GraphicsOutput.Mode->FrameBufferBase = (EFI_PHYSICAL_ADDRESS) Private->FbAddr;
+  Private->GraphicsOutput.Mode->FrameBufferBase = (EFI_PHYSICAL_ADDRESS)Private->FbAddr;
   Private->GraphicsOutput.Mode->FrameBufferSize = Private->FbSize;
 
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
 
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 EFI_STATUS
 EmuGopDestructor (
   GOP_PRIVATE_DATA     *Private
@@ -356,6 +438,7 @@ EmuGopDestructor (
     if (Private->GraphicsOutput.Mode->Info != NULL) {
       FreePool (Private->GraphicsOutput.Mode->Info);
     }
+
     FreePool (Private->GraphicsOutput.Mode);
     Private->GraphicsOutput.Mode = NULL;
   }
@@ -363,13 +446,36 @@ EmuGopDestructor (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
 
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 EFIAPI
 ShutdownGopEvent (
   IN EFI_EVENT  Event,
   IN VOID       *Context
   )
+
 /*++
 
 Routine Description:
@@ -390,4 +496,3 @@ Returns:
 {
   EmuGopDestructor (Context);
 }
-

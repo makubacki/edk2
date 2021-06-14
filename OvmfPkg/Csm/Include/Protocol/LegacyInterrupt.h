@@ -13,10 +13,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #ifndef _EFI_LEGACY_INTERRUPT_H_
 #define _EFI_LEGACY_INTERRUPT_H_
 
-
 #define EFI_LEGACY_INTERRUPT_PROTOCOL_GUID \
   { \
-    0x31ce593d, 0x108a, 0x485d, {0xad, 0xb2, 0x78, 0xf2, 0x1f, 0x29, 0x66, 0xbe } \
+    0x31ce593d, 0x108a, 0x485d, { 0xad, 0xb2, 0x78, 0xf2, 0x1f, 0x29, 0x66, 0xbe } \
   }
 
 typedef struct _EFI_LEGACY_INTERRUPT_PROTOCOL EFI_LEGACY_INTERRUPT_PROTOCOL;
@@ -97,26 +96,26 @@ EFI_STATUS
 
 struct _EFI_LEGACY_INTERRUPT_PROTOCOL {
   ///
-  ///   Gets the number of PIRQs supported.
+  /// Gets the number of PIRQs supported.
   ///
-  EFI_LEGACY_INTERRUPT_GET_NUMBER_PIRQS GetNumberPirqs;
+  EFI_LEGACY_INTERRUPT_GET_NUMBER_PIRQS    GetNumberPirqs;
 
   ///
   /// Gets the PCI bus, device, and function that is associated with this protocol.
   ///
-  EFI_LEGACY_INTERRUPT_GET_LOCATION     GetLocation;
+  EFI_LEGACY_INTERRUPT_GET_LOCATION        GetLocation;
 
   ///
   /// Reads the indicated PIRQ register.
   ///
-  EFI_LEGACY_INTERRUPT_READ_PIRQ        ReadPirq;
+  EFI_LEGACY_INTERRUPT_READ_PIRQ           ReadPirq;
 
   ///
   /// Writes to the indicated PIRQ register.
   ///
-  EFI_LEGACY_INTERRUPT_WRITE_PIRQ       WritePirq;
+  EFI_LEGACY_INTERRUPT_WRITE_PIRQ          WritePirq;
 };
 
-extern EFI_GUID gEfiLegacyInterruptProtocolGuid;
+extern EFI_GUID  gEfiLegacyInterruptProtocolGuid;
 
 #endif

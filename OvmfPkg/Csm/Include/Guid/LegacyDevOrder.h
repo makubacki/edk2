@@ -16,24 +16,24 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 ///
 #define EFI_LEGACY_DEV_ORDER_VARIABLE_GUID \
   { \
-  0xa56074db, 0x65fe, 0x45f7, {0xbd, 0x21, 0x2d, 0x2b, 0xdd, 0x8e, 0x96, 0x52} \
+    0xa56074db, 0x65fe, 0x45f7, { 0xbd, 0x21, 0x2d, 0x2b, 0xdd, 0x8e, 0x96, 0x52 } \
   }
 
 typedef UINT8 BBS_TYPE;
 
 #pragma pack(1)
 typedef struct {
-  BBS_TYPE  BbsType;
+  BBS_TYPE    BbsType;
   ///
   /// Length = sizeof (UINT16) + sizeof (Data)
   ///
-  UINT16    Length;
-  UINT16    Data[1];
+  UINT16      Length;
+  UINT16      Data[1];
 } LEGACY_DEV_ORDER_ENTRY;
 #pragma pack()
 
-#define VAR_LEGACY_DEV_ORDER L"LegacyDevOrder"
+#define VAR_LEGACY_DEV_ORDER  L"LegacyDevOrder"
 
-extern EFI_GUID gEfiLegacyDevOrderVariableGuid;
+extern EFI_GUID  gEfiLegacyDevOrderVariableGuid;
 
 #endif

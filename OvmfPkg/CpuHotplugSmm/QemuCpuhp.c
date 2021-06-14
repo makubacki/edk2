@@ -19,13 +19,36 @@
 
 #include "QemuCpuhp.h"
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 UINT32
 QemuCpuhpReadCommandData2 (
   IN CONST EFI_MM_CPU_IO_PROTOCOL *MmCpuIo
   )
 {
-  UINT32     CommandData2;
-  EFI_STATUS Status;
+  UINT32      CommandData2;
+  EFI_STATUS  Status;
 
   CommandData2 = 0;
   Status = MmCpuIo->Io.Read (
@@ -40,40 +63,88 @@ QemuCpuhpReadCommandData2 (
     ASSERT (FALSE);
     CpuDeadLoop ();
   }
+
   return CommandData2;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 UINT8
 QemuCpuhpReadCpuStatus (
   IN CONST EFI_MM_CPU_IO_PROTOCOL *MmCpuIo
   )
 {
-  UINT8      CpuStatus;
-  EFI_STATUS Status;
+  UINT8       CpuStatus;
+  EFI_STATUS  Status;
 
   CpuStatus = 0;
-  Status = MmCpuIo->Io.Read (
-                         MmCpuIo,
-                         MM_IO_UINT8,
-                         ICH9_CPU_HOTPLUG_BASE + QEMU_CPUHP_R_CPU_STAT,
-                         1,
-                         &CpuStatus
-                         );
+  Status    = MmCpuIo->Io.Read (
+                            MmCpuIo,
+                            MM_IO_UINT8,
+                            ICH9_CPU_HOTPLUG_BASE + QEMU_CPUHP_R_CPU_STAT,
+                            1,
+                            &CpuStatus
+                            );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a: %r\n", __FUNCTION__, Status));
     ASSERT (FALSE);
     CpuDeadLoop ();
   }
+
   return CpuStatus;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 UINT32
 QemuCpuhpReadCommandData (
   IN CONST EFI_MM_CPU_IO_PROTOCOL *MmCpuIo
   )
 {
-  UINT32     CommandData;
-  EFI_STATUS Status;
+  UINT32      CommandData;
+  EFI_STATUS  Status;
 
   CommandData = 0;
   Status = MmCpuIo->Io.Read (
@@ -88,16 +159,40 @@ QemuCpuhpReadCommandData (
     ASSERT (FALSE);
     CpuDeadLoop ();
   }
+
   return CommandData;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 QemuCpuhpWriteCpuSelector (
   IN CONST EFI_MM_CPU_IO_PROTOCOL *MmCpuIo,
   IN UINT32                       Selector
   )
 {
-  EFI_STATUS Status;
+  EFI_STATUS  Status;
 
   Status = MmCpuIo->Io.Write (
                          MmCpuIo,
@@ -113,13 +208,36 @@ QemuCpuhpWriteCpuSelector (
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 QemuCpuhpWriteCpuStatus (
   IN CONST EFI_MM_CPU_IO_PROTOCOL *MmCpuIo,
   IN UINT8                        CpuStatus
   )
 {
-  EFI_STATUS Status;
+  EFI_STATUS  Status;
 
   Status = MmCpuIo->Io.Write (
                          MmCpuIo,
@@ -135,13 +253,36 @@ QemuCpuhpWriteCpuStatus (
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 QemuCpuhpWriteCommand (
   IN CONST EFI_MM_CPU_IO_PROTOCOL *MmCpuIo,
   IN UINT8                        Command
   )
 {
-  EFI_STATUS Status;
+  EFI_STATUS  Status;
 
   Status = MmCpuIo->Io.Write (
                          MmCpuIo,
@@ -216,23 +357,23 @@ QemuCpuhpCollectApicIds (
   OUT UINT32                       *ToUnplugCount
   )
 {
-  UINT32 CurrentSelector;
+  UINT32  CurrentSelector;
 
   if (PossibleCpuCount == 0 || ApicIdCount == 0) {
     return EFI_INVALID_PARAMETER;
   }
 
-  *PluggedCount = 0;
+  *PluggedCount  = 0;
   *ToUnplugCount = 0;
 
   CurrentSelector = 0;
   do {
-    UINT32  PendingSelector;
-    UINT8   CpuStatus;
-    APIC_ID *ExtendIds;
-    UINT32  *ExtendSels;
-    UINT32  *ExtendCount;
-    APIC_ID NewApicId;
+    UINT32   PendingSelector;
+    UINT8    CpuStatus;
+    APIC_ID  *ExtendIds;
+    UINT32   *ExtendSels;
+    UINT32   *ExtendCount;
+    APIC_ID  NewApicId;
 
     //
     // Write CurrentSelector (which is valid) to the CPU selector register.
@@ -241,7 +382,7 @@ QemuCpuhpCollectApicIds (
     // - Other register accesses will be permitted.
     //
     // - The QEMU_CPUHP_CMD_GET_PENDING command will start scanning for a CPU
-    //   with pending events at CurrentSelector (inclusive).
+    // with pending events at CurrentSelector (inclusive).
     //
     QemuCpuhpWriteCpuSelector (MmCpuIo, CurrentSelector);
     //
@@ -249,20 +390,27 @@ QemuCpuhpCollectApicIds (
     // (independently of each other):
     //
     // - If there is a CPU with pending events, starting at CurrentSelector
-    //   (inclusive), the CPU selector will be updated to that CPU. Note that
-    //   the scanning in QEMU may wrap around, because we must never clear the
-    //   event bits.
+    // (inclusive), the CPU selector will be updated to that CPU. Note that
+    // the scanning in QEMU may wrap around, because we must never clear the
+    // event bits.
     //
     // - The QEMU_CPUHP_RW_CMD_DATA register will return the (possibly updated)
-    //   CPU selector value.
+    // CPU selector value.
     //
     QemuCpuhpWriteCommand (MmCpuIo, QEMU_CPUHP_CMD_GET_PENDING);
     PendingSelector = QemuCpuhpReadCommandData (MmCpuIo);
     if (PendingSelector < CurrentSelector) {
-      DEBUG ((DEBUG_VERBOSE, "%a: CurrentSelector=%u PendingSelector=%u: "
-        "wrap-around\n", __FUNCTION__, CurrentSelector, PendingSelector));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "%a: CurrentSelector=%u PendingSelector=%u: "
+        "wrap-around\n",
+        __FUNCTION__,
+        CurrentSelector,
+        PendingSelector
+        ));
       break;
     }
+
     CurrentSelector = PendingSelector;
 
     //
@@ -276,14 +424,23 @@ QemuCpuhpCollectApicIds (
       //
       if ((CpuStatus & QEMU_CPUHP_STAT_ENABLED) == 0 ||
           (CpuStatus & QEMU_CPUHP_STAT_FW_REMOVE) != 0) {
-        DEBUG ((DEBUG_ERROR, "%a: CurrentSelector=%u CpuStatus=0x%x: "
-          "inconsistent CPU status\n", __FUNCTION__, CurrentSelector,
-          CpuStatus));
+        DEBUG ((
+          DEBUG_ERROR,
+          "%a: CurrentSelector=%u CpuStatus=0x%x: "
+          "inconsistent CPU status\n",
+          __FUNCTION__,
+          CurrentSelector,
+          CpuStatus
+          ));
         return EFI_PROTOCOL_ERROR;
       }
 
-      DEBUG ((DEBUG_VERBOSE, "%a: CurrentSelector=%u: insert\n", __FUNCTION__,
-        CurrentSelector));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "%a: CurrentSelector=%u: insert\n",
+        __FUNCTION__,
+        CurrentSelector
+        ));
 
       ExtendIds   = PluggedApicIds;
       ExtendSels  = NULL;
@@ -293,14 +450,23 @@ QemuCpuhpCollectApicIds (
       // "fw_remove" event guarantees "enabled".
       //
       if ((CpuStatus & QEMU_CPUHP_STAT_ENABLED) == 0) {
-        DEBUG ((DEBUG_ERROR, "%a: CurrentSelector=%u CpuStatus=0x%x: "
-          "inconsistent CPU status\n", __FUNCTION__, CurrentSelector,
-          CpuStatus));
+        DEBUG ((
+          DEBUG_ERROR,
+          "%a: CurrentSelector=%u CpuStatus=0x%x: "
+          "inconsistent CPU status\n",
+          __FUNCTION__,
+          CurrentSelector,
+          CpuStatus
+          ));
         return EFI_PROTOCOL_ERROR;
       }
 
-      DEBUG ((DEBUG_VERBOSE, "%a: CurrentSelector=%u: fw_remove\n",
-        __FUNCTION__, CurrentSelector));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "%a: CurrentSelector=%u: fw_remove\n",
+        __FUNCTION__,
+        CurrentSelector
+        ));
 
       ExtendIds   = ToUnplugApicIds;
       ExtendSels  = ToUnplugSelectors;
@@ -309,15 +475,23 @@ QemuCpuhpCollectApicIds (
       //
       // Let the OSPM deal with the "remove" event.
       //
-      DEBUG ((DEBUG_VERBOSE, "%a: CurrentSelector=%u: remove (ignored)\n",
-        __FUNCTION__, CurrentSelector));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "%a: CurrentSelector=%u: remove (ignored)\n",
+        __FUNCTION__,
+        CurrentSelector
+        ));
 
       ExtendIds   = NULL;
       ExtendSels  = NULL;
       ExtendCount = NULL;
     } else {
-      DEBUG ((DEBUG_VERBOSE, "%a: CurrentSelector=%u: no event\n",
-        __FUNCTION__, CurrentSelector));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "%a: CurrentSelector=%u: no event\n",
+        __FUNCTION__,
+        CurrentSelector
+        ));
       break;
     }
 
@@ -334,15 +508,22 @@ QemuCpuhpCollectApicIds (
         DEBUG ((DEBUG_ERROR, "%a: APIC ID array too small\n", __FUNCTION__));
         return EFI_BUFFER_TOO_SMALL;
       }
+
       QemuCpuhpWriteCommand (MmCpuIo, QEMU_CPUHP_CMD_GET_ARCH_ID);
       NewApicId = QemuCpuhpReadCommandData (MmCpuIo);
-      DEBUG ((DEBUG_VERBOSE, "%a: ApicId=" FMT_APIC_ID "\n", __FUNCTION__,
-        NewApicId));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "%a: ApicId=" FMT_APIC_ID "\n",
+        __FUNCTION__,
+        NewApicId
+        ));
       if (ExtendSels != NULL) {
         ExtendSels[(*ExtendCount)] = CurrentSelector;
       }
+
       ExtendIds[(*ExtendCount)++] = NewApicId;
     }
+
     //
     // We've processed the CPU with (known) pending events, but we must never
     // clear events. Therefore we need to advance past this CPU manually;
@@ -352,7 +533,12 @@ QemuCpuhpCollectApicIds (
     CurrentSelector++;
   } while (CurrentSelector < PossibleCpuCount);
 
-  DEBUG ((DEBUG_VERBOSE, "%a: PluggedCount=%u ToUnplugCount=%u\n",
-    __FUNCTION__, *PluggedCount, *ToUnplugCount));
+  DEBUG ((
+    DEBUG_VERBOSE,
+    "%a: PluggedCount=%u ToUnplugCount=%u\n",
+    __FUNCTION__,
+    *PluggedCount,
+    *ToUnplugCount
+    ));
   return EFI_SUCCESS;
 }

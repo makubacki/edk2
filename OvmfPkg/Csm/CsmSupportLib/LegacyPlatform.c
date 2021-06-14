@@ -9,52 +9,52 @@
 
 #include "LegacyPlatform.h"
 
-EFI_SETUP_BBS_MAP mSetupBbsMap[] = {
-  { 1, 2,     1, 1 },     // ATA HardDrive
-  { 2, 3,     1, 1 },     // ATAPI CDROM
-  { 3, 0x80,  2, 0 },     // PXE
-  { 4, 1,     0, 6 },     // USB Floppy
-  { 4, 2,     0, 6 },     // USB HDD
-  { 4, 3,     0, 6 },     // USB CD
-  { 4, 1,     0, 0 },     // USB ZIP Bugbug since Class/SubClass code is uninitialized
-  { 4, 2,     0, 0 }      // USB ZIP Bugbug since Class/SubClass code is uninitialized
+EFI_SETUP_BBS_MAP  mSetupBbsMap[] = {
+  { 1, 2,    1, 1 },      // ATA HardDrive
+  { 2, 3,    1, 1 },      // ATAPI CDROM
+  { 3, 0x80, 2, 0 },      // PXE
+  { 4, 1,    0, 6 },      // USB Floppy
+  { 4, 2,    0, 6 },      // USB HDD
+  { 4, 3,    0, 6 },      // USB CD
+  { 4, 1,    0, 0 },      // USB ZIP Bugbug since Class/SubClass code is uninitialized
+  { 4, 2,    0, 0 }       // USB ZIP Bugbug since Class/SubClass code is uninitialized
 };
 
 //
 // Global variables for System ROMs
 //
 #define SYSTEM_ROM_FILE_GUID \
-{ 0x1547B4F3, 0x3E8A, 0x4FEF, { 0x81, 0xC8, 0x32, 0x8E, 0xD6, 0x47, 0xAB, 0x1A } }
+  { 0x1547B4F3, 0x3E8A, 0x4FEF, { 0x81, 0xC8, 0x32, 0x8E, 0xD6, 0x47, 0xAB, 0x1A } }
 
 #define NULL_ROM_FILE_GUID \
-{ 0x00000000, 0x0000, 0x0000, { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } }
+  { 0x00000000, 0x0000, 0x0000, { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } }
 
-SYSTEM_ROM_TABLE mSystemRomTable[] = {
-  { SYSTEM_ROM_FILE_GUID,  1 },
-  { NULL_ROM_FILE_GUID,    0 }
+SYSTEM_ROM_TABLE  mSystemRomTable[] = {
+  { SYSTEM_ROM_FILE_GUID, 1 },
+  { NULL_ROM_FILE_GUID,   0 }
 };
 
 EFI_HANDLE  mVgaHandles[0x20];
 EFI_HANDLE  mDiskHandles[0x20];
 EFI_HANDLE  mIsaHandles[0x20];
 
-EFI_LEGACY_IRQ_PRIORITY_TABLE_ENTRY IrqPriorityTable[MAX_IRQ_PRIORITY_ENTRIES] = {
-  {0x0B,0},
-  {0x09,0},
-  {0x0A,0},
-  {0x05,0},
-  {0x07,0},
-  {0x00,0},
-  {0x00,0}
+EFI_LEGACY_IRQ_PRIORITY_TABLE_ENTRY  IrqPriorityTable[MAX_IRQ_PRIORITY_ENTRIES] = {
+  { 0x0B, 0 },
+  { 0x09, 0 },
+  { 0x0A, 0 },
+  { 0x05, 0 },
+  { 0x07, 0 },
+  { 0x00, 0 },
+  { 0x00, 0 }
 };
 
 //
 // PIRQ Table
 // - Slot numbering will be used to update the bus number and determine bridge
-//   to check to get bus number.  The Slot number - 1 is an index into a decode
-//   table to get the bridge information.
+// to check to get bus number.  The Slot number - 1 is an index into a decode
+// table to get the bridge information.
 //
-EFI_LEGACY_PIRQ_TABLE PirqTableHead = {
+EFI_LEGACY_PIRQ_TABLE  PirqTableHead = {
   {
     EFI_LEGACY_PIRQ_TABLE_SIGNATURE, // UINT32  Signature
     0x00,             // UINT8   MinorVersion
@@ -73,20 +73,20 @@ EFI_LEGACY_PIRQ_TABLE PirqTableHead = {
     0x00,             // UINT8   Checksum
   },
   {
-    //           -- Pin 1 --   -- Pin 2 --   -- Pin 3 --   -- Pin 4 --
+    // -- Pin 1 --   -- Pin 2 --   -- Pin 3 --   -- Pin 4 --
     // Bus  Dev   Reg   Map     Reg   Map     Reg   Map     Reg   Map
     //
-    {0x00,0x08,{{0x60,0xDEB8},{0x61,0xDEB8},{0x62,0xDEB8},{0x63,0xDEB8}},0x00,0x00},
-    {0x00,0x10,{{0x61,0xDEB8},{0x62,0xDEB8},{0x63,0xDEB8},{0x60,0xDEB8}},0x01,0x00},
-    {0x00,0x18,{{0x62,0xDEB8},{0x63,0xDEB8},{0x60,0xDEB8},{0x61,0xDEB8}},0x02,0x00},
-    {0x00,0x20,{{0x63,0xDEB8},{0x60,0xDEB8},{0x61,0xDEB8},{0x62,0xDEB8}},0x03,0x00},
-    {0x00,0x28,{{0x60,0xDEB8},{0x61,0xDEB8},{0x62,0xDEB8},{0x63,0xDEB8}},0x04,0x00},
-    {0x00,0x30,{{0x61,0xDEB8},{0x62,0xDEB8},{0x63,0xDEB8},{0x60,0xDEB8}},0x05,0x00},
+    { 0x00, 0x08, { { 0x60, 0xDEB8 }, { 0x61, 0xDEB8 }, { 0x62, 0xDEB8 }, { 0x63, 0xDEB8 } }, 0x00, 0x00 },
+    { 0x00, 0x10, { { 0x61, 0xDEB8 }, { 0x62, 0xDEB8 }, { 0x63, 0xDEB8 }, { 0x60, 0xDEB8 } }, 0x01, 0x00 },
+    { 0x00, 0x18, { { 0x62, 0xDEB8 }, { 0x63, 0xDEB8 }, { 0x60, 0xDEB8 }, { 0x61, 0xDEB8 } }, 0x02, 0x00 },
+    { 0x00, 0x20, { { 0x63, 0xDEB8 }, { 0x60, 0xDEB8 }, { 0x61, 0xDEB8 }, { 0x62, 0xDEB8 } }, 0x03, 0x00 },
+    { 0x00, 0x28, { { 0x60, 0xDEB8 }, { 0x61, 0xDEB8 }, { 0x62, 0xDEB8 }, { 0x63, 0xDEB8 } }, 0x04, 0x00 },
+    { 0x00, 0x30, { { 0x61, 0xDEB8 }, { 0x62, 0xDEB8 }, { 0x63, 0xDEB8 }, { 0x60, 0xDEB8 } }, 0x05, 0x00 },
   }
 };
 
-LEGACY_BIOS_PLATFORM_INSTANCE       mPrivateData;
-EFI_HANDLE                          mImageHandle = NULL;
+LEGACY_BIOS_PLATFORM_INSTANCE  mPrivateData;
+EFI_HANDLE                     mImageHandle = NULL;
 
 /**
   Return the handles and assorted information for the specified PCI Class code
@@ -108,26 +108,26 @@ FindAllDeviceTypes (
   IN       BOOLEAN               DeviceFlags
   )
 {
-  UINTN                       HandleCount;
-  EFI_HANDLE                  *HandleBuffer;
-  UINTN                       Index;
-  UINTN                       StartIndex;
-  PCI_TYPE00                  PciConfigHeader;
-  EFI_PCI_IO_PROTOCOL         *PciIo;
-  EFI_LEGACY_BIOS_PROTOCOL    *LegacyBios;
-  UINTN                       Flags;
-  EFI_STATUS                  Status;
-  UINTN                       Index2;
+  UINTN                     HandleCount;
+  EFI_HANDLE                *HandleBuffer;
+  UINTN                     Index;
+  UINTN                     StartIndex;
+  PCI_TYPE00                PciConfigHeader;
+  EFI_PCI_IO_PROTOCOL       *PciIo;
+  EFI_LEGACY_BIOS_PROTOCOL  *LegacyBios;
+  UINTN                     Flags;
+  EFI_STATUS                Status;
+  UINTN                     Index2;
 
   //
   // Get legacy BIOS protocol as it is required to deal with Option ROMs.
   //
   StartIndex = *DeviceIndex;
-  Status = gBS->LocateProtocol (
-                  &gEfiLegacyBiosProtocolGuid,
-                  NULL,
-                  (VOID**)&LegacyBios
-                  );
+  Status     = gBS->LocateProtocol (
+                      &gEfiLegacyBiosProtocolGuid,
+                      NULL,
+                      (VOID **)&LegacyBios
+                      );
   ASSERT_EFI_ERROR (Status);
 
   //
@@ -144,7 +144,7 @@ FindAllDeviceTypes (
     gBS->HandleProtocol (
            HandleBuffer[Index],
            &gEfiPciIoProtocolGuid,
-           (VOID**)&PciIo
+           (VOID **)&PciIo
            );
     PciIo->Pci.Read (
                  PciIo,
@@ -154,8 +154,8 @@ FindAllDeviceTypes (
                  &PciConfigHeader
                  );
     for (Index2 = 0; PciClasses[Index2].Class != 0xff; Index2++) {
-        if ((PciConfigHeader.Hdr.ClassCode[2] == PciClasses[Index2].Class) &&
-            (PciConfigHeader.Hdr.ClassCode[1] == PciClasses[Index2].SubClass)) {
+      if ((PciConfigHeader.Hdr.ClassCode[2] == PciClasses[Index2].Class) &&
+          (PciConfigHeader.Hdr.ClassCode[1] == PciClasses[Index2].SubClass)) {
         LegacyBios->CheckPciRom (
                       LegacyBios,
                       HandleBuffer[Index],
@@ -167,19 +167,19 @@ FindAllDeviceTypes (
         //
         // Verify that results of OPROM check match request.
         // The two valid requests are:
-        //   DeviceFlags = 0 require a valid legacy ROM
-        //   DeviceFlags = 1 require either no ROM or a valid legacy ROM
+        // DeviceFlags = 0 require a valid legacy ROM
+        // DeviceFlags = 1 require either no ROM or a valid legacy ROM
         //
         if (
             ((DeviceFlags != 0) && (Flags == NO_ROM)) ||
             ((Flags & (ROM_FOUND | VALID_LEGACY_ROM)) == (ROM_FOUND | VALID_LEGACY_ROM))
-           ) {
+            ) {
           DeviceTable->Handle = HandleBuffer[Index];
           DeviceTable->Vid    = PciConfigHeader.Hdr.VendorId;
           DeviceTable->Did    = PciConfigHeader.Hdr.DeviceId;
           DeviceTable->SvId   = PciConfigHeader.Device.SubsystemVendorID;
           DeviceTable->SysId  = PciConfigHeader.Device.SubsystemID;
-          ++ *DeviceIndex;
+          ++*DeviceIndex;
           DeviceTable++;
         }
       }
@@ -229,20 +229,20 @@ GetSelectedVgaDeviceInfo (
   OUT EFI_HANDLE                *VgaHandle
   )
 {
-  EFI_STATUS                Status;
-  UINTN                     HandleCount;
-  EFI_HANDLE                *HandleBuffer;
-  UINTN                     Index;
-  EFI_PCI_IO_PROTOCOL       *PciIo;
-  PCI_TYPE00                Pci;
-  UINT8                     MinBus;
-  UINT8                     MaxBus;
-  UINTN                     Segment;
-  UINTN                     Bus;
-  UINTN                     Device;
-  UINTN                     Function;
-  UINTN                     SelectedAddress;
-  UINTN                     CurrentAddress;
+  EFI_STATUS           Status;
+  UINTN                HandleCount;
+  EFI_HANDLE           *HandleBuffer;
+  UINTN                Index;
+  EFI_PCI_IO_PROTOCOL  *PciIo;
+  PCI_TYPE00           Pci;
+  UINT8                MinBus;
+  UINT8                MaxBus;
+  UINTN                Segment;
+  UINTN                Bus;
+  UINTN                Device;
+  UINTN                Function;
+  UINTN                SelectedAddress;
+  UINTN                CurrentAddress;
 
   //
   // Initialize return to 'not found' state
@@ -253,9 +253,9 @@ GetSelectedVgaDeviceInfo (
   // Initialize variable states.  This is important for selecting the VGA
   // device if multiple devices exist behind a single bridge.
   //
-  HandleCount = 0;
-  HandleBuffer = NULL;
-  SelectedAddress = PCI_LIB_ADDRESS(0xff, 0x1f, 0x7, 0);
+  HandleCount     = 0;
+  HandleBuffer    = NULL;
+  SelectedAddress = PCI_LIB_ADDRESS (0xff, 0x1f, 0x7, 0);
 
   //
   // The bus range to search for a VGA device in.
@@ -265,7 +265,7 @@ GetSelectedVgaDeviceInfo (
   //
   // Start to check all the pci io to find all possible VGA device
   //
-  HandleCount = 0;
+  HandleCount  = 0;
   HandleBuffer = NULL;
   Status = gBS->LocateHandleBuffer (
                   ByProtocol,
@@ -279,13 +279,13 @@ GetSelectedVgaDeviceInfo (
   }
 
   for (Index = 0; Index < HandleCount; Index++) {
-    Status = gBS->HandleProtocol (HandleBuffer[Index], &gEfiPciIoProtocolGuid, (VOID**)&PciIo);
+    Status = gBS->HandleProtocol (HandleBuffer[Index], &gEfiPciIoProtocolGuid, (VOID **)&PciIo);
     if (!EFI_ERROR (Status)) {
       //
       // Determine if this is in the correct bus range.
       //
       Status = PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
-      if (EFI_ERROR(Status) || (Bus < MinBus || Bus > MaxBus)) {
+      if (EFI_ERROR (Status) || (Bus < MinBus || Bus > MaxBus)) {
         continue;
       }
 
@@ -293,12 +293,12 @@ GetSelectedVgaDeviceInfo (
       // Read device information.
       //
       Status = PciIo->Pci.Read (
-                        PciIo,
-                        EfiPciIoWidthUint32,
-                        0,
-                        sizeof (Pci) / sizeof (UINT32),
-                        &Pci
-                        );
+                            PciIo,
+                            EfiPciIoWidthUint32,
+                            0,
+                            sizeof (Pci) / sizeof (UINT32),
+                            &Pci
+                            );
       if (EFI_ERROR (Status)) {
         continue;
       }
@@ -309,7 +309,9 @@ GetSelectedVgaDeviceInfo (
       if (!IS_PCI_VGA (&Pci)) {
         continue;
       }
-      DEBUG ((DEBUG_INFO,
+
+      DEBUG ((
+        DEBUG_INFO,
         "PCI VGA: 0x%04x:0x%04x\n",
         Pci.Hdr.VendorId,
         Pci.Hdr.DeviceId
@@ -319,7 +321,7 @@ GetSelectedVgaDeviceInfo (
       // Currently we use the lowest numbered bus/device/function if multiple
       // devices are found in the target bus range.
       //
-      CurrentAddress = PCI_LIB_ADDRESS(Bus, Device, Function, 0);
+      CurrentAddress = PCI_LIB_ADDRESS (Bus, Device, Function, 0);
       if (CurrentAddress < SelectedAddress) {
         SelectedAddress = CurrentAddress;
         *VgaHandle = HandleBuffer[Index];
@@ -329,7 +331,6 @@ GetSelectedVgaDeviceInfo (
 
   FreePool (HandleBuffer);
 }
-
 
 /**
   Returns a buffer of handles for the requested subfunction.
@@ -357,34 +358,34 @@ GetPlatformHandle (
   OUT VOID                                        **AdditionalData OPTIONAL
   )
 {
-  DEVICE_STRUCTURE    LocalDevice[0x40];
-  UINT32              LocalIndex;
-  UINT32              Index;
-  DEVICE_STRUCTURE    TempDevice;
-  EFI_STATUS          Status;
-  EFI_PCI_IO_PROTOCOL *PciIo;
-  UINTN               Segment;
-  UINTN               Bus;
-  UINTN               Device;
-  UINTN               Function;
-  HDD_INFO            *HddInfo;
-  PCI_TYPE00          PciConfigHeader;
-  UINT32              HddIndex;
-  EFI_HANDLE          IdeHandle;
+  DEVICE_STRUCTURE          LocalDevice[0x40];
+  UINT32                    LocalIndex;
+  UINT32                    Index;
+  DEVICE_STRUCTURE          TempDevice;
+  EFI_STATUS                Status;
+  EFI_PCI_IO_PROTOCOL       *PciIo;
+  UINTN                     Segment;
+  UINTN                     Bus;
+  UINTN                     Device;
+  UINTN                     Function;
+  HDD_INFO                  *HddInfo;
+  PCI_TYPE00                PciConfigHeader;
+  UINT32                    HddIndex;
+  EFI_HANDLE                IdeHandle;
   EFI_LEGACY_BIOS_PROTOCOL  *LegacyBios;
-  PCI_CLASS_RECORD    ClassLists[10];
-  UINTN               PriorityIndex;
+  PCI_CLASS_RECORD          ClassLists[10];
+  UINTN                     PriorityIndex;
 
-  static BOOLEAN      bConnected = FALSE;
+  static BOOLEAN  bConnected = FALSE;
 
-  LocalIndex  = 0x00;
-  HddInfo     = NULL;
-  HddIndex    = 0;
+  LocalIndex = 0x00;
+  HddInfo    = NULL;
+  HddIndex   = 0;
 
   Status = gBS->LocateProtocol (
                   &gEfiLegacyBiosProtocolGuid,
                   NULL,
-                  (VOID**)&LegacyBios
+                  (VOID **)&LegacyBios
                   );
 
   //
@@ -400,9 +401,9 @@ GetPlatformHandle (
       *HandleCount  = (mVgaHandles[0] != NULL) ? 1 : 0;
       return EFI_SUCCESS;
     case EfiGetPlatformIdeHandle:
-      IdeHandle  = NULL;
+      IdeHandle = NULL;
       if (AdditionalData != NULL) {
-        HddInfo = (HDD_INFO *) *AdditionalData;
+        HddInfo = (HDD_INFO *)*AdditionalData;
       }
 
       //
@@ -417,7 +418,7 @@ GetPlatformHandle (
       ClassLists[3].Class    = PCI_CLASS_MASS_STORAGE;
       ClassLists[3].SubClass = PCI_CLASS_MASS_STORAGE_SATADPA;
       ClassLists[4].Class    = 0xff;
-      FindAllDeviceTypes (ClassLists, LocalDevice, (UINT16 *) &LocalIndex, TRUE);
+      FindAllDeviceTypes (ClassLists, LocalDevice, (UINT16 *)&LocalIndex, TRUE);
       if (LocalIndex == 0) {
         return EFI_NOT_FOUND;
       }
@@ -464,6 +465,7 @@ GetPlatformHandle (
       for (Index = 0; Index < LocalIndex; Index++) {
         mDiskHandles[Index] = LocalDevice[Index].Handle;
       }
+
       *HandleBuffer = &mDiskHandles[0];
       *HandleCount  = LocalIndex;
 
@@ -481,7 +483,7 @@ GetPlatformHandle (
           Status = gBS->HandleProtocol (
                           LocalDevice[Index].Handle,
                           &gEfiPciIoProtocolGuid,
-                          (VOID **) &PciIo
+                          (VOID **)&PciIo
                           );
           PciIo->Pci.Read (
                        PciIo,
@@ -503,14 +505,14 @@ GetPlatformHandle (
             // Be sure to only fill out correct information based on platform
             // configuration.
             //
-            HddInfo[HddIndex].Status        |= HDD_PRIMARY;
-            HddInfo[HddIndex].Bus           = (UINT32)Bus;
-            HddInfo[HddIndex].Device        = (UINT32)Device;
-            HddInfo[HddIndex].Function      = (UINT32)Function;
-            HddInfo[HddIndex + 1].Status    |= HDD_SECONDARY;
-            HddInfo[HddIndex + 1].Bus       = (UINT32)Bus;
-            HddInfo[HddIndex + 1].Device    = (UINT32)Device;
-            HddInfo[HddIndex + 1].Function  = (UINT32)Function;
+            HddInfo[HddIndex].Status      |= HDD_PRIMARY;
+            HddInfo[HddIndex].Bus          = (UINT32)Bus;
+            HddInfo[HddIndex].Device       = (UINT32)Device;
+            HddInfo[HddIndex].Function     = (UINT32)Function;
+            HddInfo[HddIndex + 1].Status  |= HDD_SECONDARY;
+            HddInfo[HddIndex + 1].Bus      = (UINT32)Bus;
+            HddInfo[HddIndex + 1].Device   = (UINT32)Device;
+            HddInfo[HddIndex + 1].Function = (UINT32)Function;
 
             //
             // Primary controller data
@@ -527,8 +529,9 @@ GetPlatformHandle (
               HddInfo[HddIndex].HddIrq = 14;
               HddInfo[HddIndex].CommandBaseAddress = 0x1f0;
               HddInfo[HddIndex].ControlBaseAddress = 0x3f6;
-              HddInfo[HddIndex].BusMasterAddress = 0;
+              HddInfo[HddIndex].BusMasterAddress   = 0;
             }
+
             HddIndex++;
 
             //
@@ -546,24 +549,26 @@ GetPlatformHandle (
               HddInfo[HddIndex].HddIrq = 15;
               HddInfo[HddIndex].CommandBaseAddress = 0x170;
               HddInfo[HddIndex].ControlBaseAddress = 0x376;
-              HddInfo[HddIndex].BusMasterAddress = 0;
+              HddInfo[HddIndex].BusMasterAddress   = 0;
             }
+
             HddIndex++;
           }
         }
       }
+
       return EFI_SUCCESS;
     case EfiGetPlatformIsaBusHandle:
-      ClassLists[0].Class    = (UINT8) PCI_CLASS_BRIDGE;
-      ClassLists[0].SubClass = (UINT8) PCI_CLASS_BRIDGE_ISA_PDECODE;
-      ClassLists[1].Class    = (UINT8) PCI_CLASS_BRIDGE;
-      ClassLists[1].SubClass = (UINT8) PCI_CLASS_BRIDGE_ISA;
+      ClassLists[0].Class    = (UINT8)PCI_CLASS_BRIDGE;
+      ClassLists[0].SubClass = (UINT8)PCI_CLASS_BRIDGE_ISA_PDECODE;
+      ClassLists[1].Class    = (UINT8)PCI_CLASS_BRIDGE;
+      ClassLists[1].SubClass = (UINT8)PCI_CLASS_BRIDGE_ISA;
       ClassLists[2].Class    = 0xff;
 
       //
       // Locate all found block io devices
       //
-      FindAllDeviceTypes (ClassLists, LocalDevice, (UINT16 *) (&LocalIndex), TRUE);
+      FindAllDeviceTypes (ClassLists, LocalDevice, (UINT16 *)(&LocalIndex), TRUE);
       if (LocalIndex == 0) {
         return EFI_NOT_FOUND;
       }
@@ -573,9 +578,9 @@ GetPlatformHandle (
       //
       for (Index = 0; Index < LocalIndex; Index++) {
         if (LocalDevice[Index].Vid == V_INTEL_VENDOR_ID) {
-          TempDevice          = LocalDevice[0];
-          LocalDevice[0]      = LocalDevice[Index];
-          LocalDevice[Index]  = TempDevice;
+          TempDevice         = LocalDevice[0];
+          LocalDevice[0]     = LocalDevice[Index];
+          LocalDevice[Index] = TempDevice;
         }
       }
 
@@ -585,13 +590,14 @@ GetPlatformHandle (
       for (Index = 0; Index < LocalIndex; Index++) {
         mIsaHandles[Index] = LocalDevice[Index].Handle;
       }
+
       *HandleBuffer = &mIsaHandles[0];
       *HandleCount  = LocalIndex;
       return EFI_SUCCESS;
     case EfiGetPlatformUsbHandle:
     default:
       return EFI_UNSUPPORTED;
-  };
+  }
 }
 
 /**
@@ -616,10 +622,10 @@ PlatformHooks (
   IN       EFI_LEGACY_BIOS_PLATFORM_PROTOCOL     *This,
   IN       EFI_GET_PLATFORM_HOOK_MODE            Mode,
   IN       UINT16                                Type,
-     OUT   EFI_HANDLE                            DeviceHandle, OPTIONAL
+  OUT   EFI_HANDLE                            DeviceHandle, OPTIONAL
   IN OUT   UINTN                                 *Shadowaddress, OPTIONAL
   IN       EFI_COMPATIBILITY16_TABLE             *Compatibility16Table, OPTIONAL
-     OUT   VOID                                  **AdditionalData OPTIONAL
+  OUT   VOID                                  **AdditionalData OPTIONAL
   )
 {
   EFI_IA32_REGISTER_SET     Regs;
@@ -631,7 +637,7 @@ PlatformHooks (
       Status = gBS->LocateProtocol (
                       &gEfiLegacyBiosProtocolGuid,
                       NULL,
-                      (VOID**)&LegacyBios
+                      (VOID **)&LegacyBios
                       );
 
       //
@@ -639,14 +645,14 @@ PlatformHooks (
       //
       Regs.H.AH = 0x00;
       Regs.H.AL = 0x03;
-      Status = LegacyBios->Int86 (LegacyBios, 0x10, &Regs);
+      Status    = LegacyBios->Int86 (LegacyBios, 0x10, &Regs);
       return Status;
     case EfiPlatformHookShadowServiceRoms:
       return EFI_SUCCESS;
     case EfiPlatformHookAfterRomInit:
     default:
       return EFI_UNSUPPORTED;
-  };
+  }
 }
 
 /**
@@ -680,15 +686,15 @@ GetRoutingTable (
   OUT UINTN                                       *IrqPriorityTableEntries OPTIONAL
   )
 {
-  UINT16                        PTableSize;
-  UINT32                        Index;
-  UINT8                         Bus;
-  UINT8                         Device;
-  UINT8                         Function;
-  UINT8                         Checksum;
-  UINT8                         *Ptr;
-  EFI_STATUS                    Status;
-  EFI_LEGACY_INTERRUPT_PROTOCOL *LegacyInterrupt;
+  UINT16                         PTableSize;
+  UINT32                         Index;
+  UINT8                          Bus;
+  UINT8                          Device;
+  UINT8                          Function;
+  UINT8                          Checksum;
+  UINT8                          *Ptr;
+  EFI_STATUS                     Status;
+  EFI_LEGACY_INTERRUPT_PROTOCOL  *LegacyInterrupt;
 
   Checksum = 0;
 
@@ -699,7 +705,7 @@ GetRoutingTable (
     Status = gBS->LocateProtocol (
                     &gEfiLegacyInterruptProtocolGuid,
                     NULL,
-                    (VOID**)&LegacyInterrupt
+                    (VOID **)&LegacyInterrupt
                     );
     ASSERT_EFI_ERROR (Status);
     LegacyInterrupt->GetLocation (
@@ -713,35 +719,36 @@ GetRoutingTable (
     // Update fields in $PIR table header
     //
     PirqTableHead.PirqTable.TableSize = PTableSize;
-    PirqTableHead.PirqTable.Bus       = Bus;
-    PirqTableHead.PirqTable.DevFun    = (UINT8) ((Device << 3) + Function);
-    Ptr = (UINT8 *) (&PirqTableHead);
+    PirqTableHead.PirqTable.Bus    = Bus;
+    PirqTableHead.PirqTable.DevFun = (UINT8)((Device << 3) + Function);
+    Ptr = (UINT8 *)(&PirqTableHead);
 
     //
     // Calculate checksum.
     //
     for (Index = 0; Index < PTableSize; Index++) {
-      Checksum = (UINT8) (Checksum + (UINT8) *Ptr);
+      Checksum = (UINT8)(Checksum + (UINT8)*Ptr);
       Ptr += 1;
     }
-    Checksum                          = (UINT8) (0x00 - Checksum);
-    PirqTableHead.PirqTable.Checksum  = Checksum;
+
+    Checksum = (UINT8)(0x00 - Checksum);
+    PirqTableHead.PirqTable.Checksum = Checksum;
 
     //
     // Update return values.
     //
-    *LocalPirqTable                   = (VOID *) (&PirqTableHead);
-    *PirqTableSize                    = PTableSize;
+    *LocalPirqTable = (VOID *)(&PirqTableHead);
+    *PirqTableSize  = PTableSize;
   }
 
   //
   // More items to return.
   //
-  *RoutingTable         = PirqTableHead.IrqRoutingEntry;
-  *RoutingTableEntries  = MAX_IRQ_ROUTING_ENTRIES;
+  *RoutingTable = PirqTableHead.IrqRoutingEntry;
+  *RoutingTableEntries = MAX_IRQ_ROUTING_ENTRIES;
   if (LocalIrqPriorityTable != NULL) {
-    *LocalIrqPriorityTable    = IrqPriorityTable;
-    *IrqPriorityTableEntries  = MAX_IRQ_PRIORITY_ENTRIES;
+    *LocalIrqPriorityTable   = IrqPriorityTable;
+    *IrqPriorityTableEntries = MAX_IRQ_PRIORITY_ENTRIES;
   }
 
   return EFI_SUCCESS;
@@ -777,8 +784,8 @@ GetPlatformInfo (
   IN  UINT16                                      LegacyOffset
   )
 {
-  EFI_STATUS                    Status;
-  UINTN                         Index;
+  EFI_STATUS  Status;
+  UINTN       Index;
 
   switch (Mode) {
     case EfiGetPlatformBinarySystemRom:
@@ -791,11 +798,12 @@ GetPlatformInfo (
                    EFI_SECTION_RAW,
                    0,
                    Table,
-                   (UINTN *) TableSize
+                   (UINTN *)TableSize
                    );
         if (EFI_ERROR (Status)) {
           continue;
         }
+
         return EFI_SUCCESS;
       }
 
@@ -808,7 +816,7 @@ GetPlatformInfo (
     case EfiGetPlatformPciExpressBase:
     default:
       return EFI_UNSUPPORTED;
-  };
+  }
 }
 
 /**
@@ -835,29 +843,29 @@ TranslatePirq (
   IN        UINTN                                       PciDevice,
   IN        UINTN                                       PciFunction,
   IN  OUT   UINT8                                       *Pirq,
-      OUT   UINT8                                       *PciIrq
+  OUT   UINT8                                       *PciIrq
   )
 {
-  EFI_LEGACY_INTERRUPT_PROTOCOL      *LegacyInterrupt;
-  EFI_STATUS                         Status;
-  UINTN                              Index;
-  UINTN                              Index1;
-  UINT8                              LocalPirq;
-  UINT8                              PirqData;
-  UINT8                              MatchData;
+  EFI_LEGACY_INTERRUPT_PROTOCOL  *LegacyInterrupt;
+  EFI_STATUS                     Status;
+  UINTN                          Index;
+  UINTN                          Index1;
+  UINT8                          LocalPirq;
+  UINT8                          PirqData;
+  UINT8                          MatchData;
 
   Status = gBS->LocateProtocol (
                   &gEfiLegacyInterruptProtocolGuid,
                   NULL,
-                  (VOID**)&LegacyInterrupt
+                  (VOID **)&LegacyInterrupt
                   );
   ASSERT_EFI_ERROR (Status);
-  LocalPirq = (UINT8) (*Pirq);
+  LocalPirq = (UINT8)(*Pirq);
 
   for (Index = 0; Index < MAX_IRQ_ROUTING_ENTRIES; Index++) {
     if ((PirqTableHead.IrqRoutingEntry[Index].Bus == PciBus) &&
         (PirqTableHead.IrqRoutingEntry[Index].Device == PciDevice)) {
-      LocalPirq = (UINT8) (PirqTableHead.IrqRoutingEntry[Index].PirqEntry[LocalPirq].Pirq & 0x0f);
+      LocalPirq = (UINT8)(PirqTableHead.IrqRoutingEntry[Index].PirqEntry[LocalPirq].Pirq & 0x0f);
       if (LocalPirq > 4) {
         LocalPirq -= 4;
       }
@@ -880,11 +888,10 @@ TranslatePirq (
         }
 
         if (PirqData == 0) {
-
           //
           // No unused interrupts, so start reusing them.
           //
-          MatchData = (UINT8) (~MatchData);
+          MatchData = (UINT8)(~MatchData);
         }
       }
 
@@ -895,7 +902,6 @@ TranslatePirq (
 
   return EFI_SUCCESS;
 }
-
 
 /**
   Attempt to legacy boot the BootOption. If the EFI contexted has been
@@ -922,36 +928,36 @@ PrepareToBoot (
   IN  VOID                                        *EfiToLegacy16BootTable
   )
 {
-  BBS_TABLE                           *LocalBbsTable;
-  EFI_TO_COMPATIBILITY16_BOOT_TABLE   *Legacy16BootTable;
-  DEVICE_PRODUCER_DATA_HEADER         *SioPtr;
-  UINT16                              DevicePathType;
-  UINT16                              Index;
-  UINT16                              Priority;
+  BBS_TABLE                          *LocalBbsTable;
+  EFI_TO_COMPATIBILITY16_BOOT_TABLE  *Legacy16BootTable;
+  DEVICE_PRODUCER_DATA_HEADER        *SioPtr;
+  UINT16                             DevicePathType;
+  UINT16                             Index;
+  UINT16                             Priority;
 
   //
   // Initialize values
   //
   Priority = 0;
-  Legacy16BootTable = (EFI_TO_COMPATIBILITY16_BOOT_TABLE*) EfiToLegacy16BootTable;
+  Legacy16BootTable = (EFI_TO_COMPATIBILITY16_BOOT_TABLE *)EfiToLegacy16BootTable;
 
   //
   // Set how Gate A20 is gated by hardware
   //
-  SioPtr                  = &Legacy16BootTable->SioData;
+  SioPtr = &Legacy16BootTable->SioData;
   SioPtr->Flags.A20Kybd   = 1;
   SioPtr->Flags.A20Port90 = 1;
   SioPtr->MousePresent    = 1;
 
-  LocalBbsTable           = BbsTable;
+  LocalBbsTable = BbsTable;
 
   //
   // There are 2 cases that must be covered.
   // Case 1: Booting to a legacy OS - BbsDevicePath is non-NULL.
   // Case 2: Booting to an EFI aware OS - BbsDevicePath is NULL.
-  //         We need to perform the PrepareToBoot function to assign
-  //         drive numbers to HDD devices to allow the shell or EFI
-  //         to access them.
+  // We need to perform the PrepareToBoot function to assign
+  // drive numbers to HDD devices to allow the shell or EFI
+  // to access them.
   //
   if (BbsDevicePath != NULL) {
     DevicePathType = BbsDevicePath->DeviceType;
@@ -967,7 +973,7 @@ PrepareToBoot (
         (LocalBbsTable[Index].BootPriority != BBS_IGNORE_ENTRY) &&
         (LocalBbsTable[Index].BootPriority != BBS_LOWEST_PRIORITY) &&
         (Priority <= LocalBbsTable[Index].BootPriority)) {
-      Priority = (UINT16) (LocalBbsTable[Index].BootPriority + 1);
+      Priority = (UINT16)(LocalBbsTable[Index].BootPriority + 1);
     }
   }
 
@@ -983,6 +989,7 @@ PrepareToBoot (
           ++Priority;
         }
       }
+
       break;
     case BBS_BEV_DEVICE:
       for (Index = 0; Index < Legacy16BootTable->NumberBbsEntries; Index++) {
@@ -993,13 +1000,14 @@ PrepareToBoot (
           ++Priority;
         }
       }
+
       break;
     case BBS_USB:
     case BBS_PCMCIA:
     case BBS_UNKNOWN:
     default:
       break;
-  };
+  }
 
   //
   // Set priority for rest of devices
@@ -1014,7 +1022,6 @@ PrepareToBoot (
   return EFI_SUCCESS;
 }
 
-
 /**
   Initialize Legacy Platform support
 
@@ -1026,8 +1033,8 @@ LegacyBiosPlatformInstall (
   VOID
   )
 {
-  EFI_STATUS                           Status;
-  LEGACY_BIOS_PLATFORM_INSTANCE        *Private;
+  EFI_STATUS                     Status;
+  LEGACY_BIOS_PLATFORM_INSTANCE  *Private;
 
   mImageHandle = gImageHandle;
   Private = &mPrivateData;
@@ -1038,11 +1045,11 @@ LegacyBiosPlatformInstall (
   Private->Signature = LEGACY_BIOS_PLATFORM_INSTANCE_SIGNATURE;
   Private->LegacyBiosPlatform.GetPlatformInfo   = GetPlatformInfo;
   Private->LegacyBiosPlatform.GetPlatformHandle = GetPlatformHandle;
-  Private->LegacyBiosPlatform.SmmInit           = SmmInit;
-  Private->LegacyBiosPlatform.PlatformHooks     = PlatformHooks;
-  Private->LegacyBiosPlatform.GetRoutingTable   = GetRoutingTable;
-  Private->LegacyBiosPlatform.TranslatePirq     = TranslatePirq;
-  Private->LegacyBiosPlatform.PrepareToBoot     = PrepareToBoot;
+  Private->LegacyBiosPlatform.SmmInit = SmmInit;
+  Private->LegacyBiosPlatform.PlatformHooks   = PlatformHooks;
+  Private->LegacyBiosPlatform.GetRoutingTable = GetRoutingTable;
+  Private->LegacyBiosPlatform.TranslatePirq   = TranslatePirq;
+  Private->LegacyBiosPlatform.PrepareToBoot   = PrepareToBoot;
   Private->ImageHandle = gImageHandle;
 
   //
@@ -1057,4 +1064,3 @@ LegacyBiosPlatformInstall (
                   );
   return Status;
 }
-

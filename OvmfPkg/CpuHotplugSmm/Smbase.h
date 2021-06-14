@@ -32,9 +32,9 @@ SmbaseReleasePostSmmPen (
   );
 
 VOID
-SmbaseInstallFirstSmiHandler (
-  VOID
-  );
+  SmbaseInstallFirstSmiHandler (
+                                VOID
+                                );
 
 EFI_STATUS
 SmbaseRelocate (

@@ -24,25 +24,26 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // initialized as a 16 bit free running counter that generates an interrupt(IRQ0)
 // each time the counter rolls over.
 //
-//   65536 counts
+// 65536 counts
 // ---------------- * 1,000,000 uS/S = 54925.4 uS = 549254 * 100 ns
-//   1,193,182 Hz
+// 1,193,182 Hz
 //
 
 //
 // The maximum tick duration for 8254 timer
 //
-#define MAX_TIMER_TICK_DURATION     549254
+#define MAX_TIMER_TICK_DURATION  549254
 //
 // The default timer tick duration is set to 10 ms = 100000 100 ns units
 //
-#define DEFAULT_TIMER_TICK_DURATION 100000
-#define TIMER_CONTROL_PORT          0x43
-#define TIMER0_COUNT_PORT           0x40
+#define DEFAULT_TIMER_TICK_DURATION  100000
+#define TIMER_CONTROL_PORT           0x43
+#define TIMER0_COUNT_PORT            0x40
 
 //
 // Function Prototypes
 //
+
 /**
   Initialize the Timer Architectural Protocol driver
 

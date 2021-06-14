@@ -9,7 +9,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "LegacyBiosInterface.h"
 
-BOOLEAN mIdeDataBuiltFlag = FALSE;
+BOOLEAN  mIdeDataBuiltFlag = FALSE;
 
 /**
   Collect IDE Inquiry data from the IDE disks
@@ -54,9 +54,9 @@ LegacyBiosBuildIdeData (
   // to hang. In LegacyBoot this function is also called before EFI drivers
   // are disconnected.
   // Cases covered
-  //    GetBbsInfo invoked in BDS. Both invocations in LegacyBoot ignored.
-  //    GetBbsInfo not invoked in BDS. First invocation of this function
-  //       proceeds normally and second via GetBbsInfo ignored.
+  // GetBbsInfo invoked in BDS. Both invocations in LegacyBoot ignored.
+  // GetBbsInfo not invoked in BDS. First invocation of this function
+  // proceeds normally and second via GetBbsInfo ignored.
   //
   PciDevicePath = NULL;
   LocalHddInfo  = *HddInfo;
@@ -66,7 +66,7 @@ LegacyBiosBuildIdeData (
                                           0,
                                           &HandleBuffer,
                                           &HandleCount,
-                                          (VOID *) &LocalHddInfo
+                                          (VOID *)&LocalHddInfo
                                           );
   if (!EFI_ERROR (Status)) {
     IdeController = HandleBuffer[0];
@@ -75,10 +75,10 @@ LegacyBiosBuildIdeData (
     //
     if (Flag != 0) {
       gBS->DisconnectController (
-            IdeController,
-            NULL,
-            NULL
-            );
+             IdeController,
+             NULL,
+             NULL
+             );
     }
 
     gBS->ConnectController (IdeController, NULL, NULL, FALSE);
@@ -88,13 +88,13 @@ LegacyBiosBuildIdeData (
     // And GetIdeHandle will switch to Legacy mode, if required.
     //
     Private->LegacyBiosPlatform->GetPlatformHandle (
-                                  Private->LegacyBiosPlatform,
-                                  EfiGetPlatformIdeHandle,
-                                  0,
-                                  &HandleBuffer,
-                                  &HandleCount,
-                                  (VOID *) &LocalHddInfo
-                                  );
+                                   Private->LegacyBiosPlatform,
+                                   EfiGetPlatformIdeHandle,
+                                   0,
+                                   &HandleBuffer,
+                                   &HandleCount,
+                                   (VOID *)&LocalHddInfo
+                                   );
   }
 
   mIdeDataBuiltFlag = TRUE;
@@ -103,30 +103,30 @@ LegacyBiosBuildIdeData (
   // Get Identity command from all drives
   //
   gBS->LocateHandleBuffer (
-        ByProtocol,
-        &gEfiDiskInfoProtocolGuid,
-        NULL,
-        &HandleCount,
-        &HandleBuffer
-        );
+         ByProtocol,
+         &gEfiDiskInfoProtocolGuid,
+         NULL,
+         &HandleCount,
+         &HandleBuffer
+         );
 
-  Private->IdeDriveCount = (UINT8) HandleCount;
+  Private->IdeDriveCount = (UINT8)HandleCount;
   for (Index = 0; Index < HandleCount; Index++) {
     Status = gBS->HandleProtocol (
                     HandleBuffer[Index],
                     &gEfiDiskInfoProtocolGuid,
-                    (VOID **) &DiskInfo
+                    (VOID **)&DiskInfo
                     );
     ASSERT_EFI_ERROR (Status);
 
     if (CompareGuid (&DiskInfo->Interface, &gEfiDiskInfoIdeInterfaceGuid)) {
       //
-      //  Locate which PCI device
+      // Locate which PCI device
       //
       Status = gBS->HandleProtocol (
                       HandleBuffer[Index],
                       &gEfiDevicePathProtocolGuid,
-                      (VOID *) &DevicePath
+                      (VOID *)&DevicePath
                       );
       ASSERT_EFI_ERROR (Status);
 
@@ -134,12 +134,13 @@ LegacyBiosBuildIdeData (
       while (!IsDevicePathEnd (DevicePathNode)) {
         TempDevicePathNode = NextDevicePathNode (DevicePathNode);
         if ((DevicePathType (DevicePathNode) == HARDWARE_DEVICE_PATH) &&
-              ( DevicePathSubType (DevicePathNode) == HW_PCI_DP) &&
-              ( DevicePathType(TempDevicePathNode) == MESSAGING_DEVICE_PATH) &&
-              ( DevicePathSubType(TempDevicePathNode) == MSG_ATAPI_DP) ) {
-          PciDevicePath = (PCI_DEVICE_PATH *) DevicePathNode;
+            (DevicePathSubType (DevicePathNode) == HW_PCI_DP) &&
+            (DevicePathType (TempDevicePathNode) == MESSAGING_DEVICE_PATH) &&
+            (DevicePathSubType (TempDevicePathNode) == MSG_ATAPI_DP)) {
+          PciDevicePath = (PCI_DEVICE_PATH *)DevicePathNode;
           break;
         }
+
         DevicePathNode = NextDevicePathNode (DevicePathNode);
       }
 
@@ -192,9 +193,9 @@ LegacyBiosBuildIdeData (
                              &InquiryDataSize
                              );
         if (Status == EFI_BUFFER_TOO_SMALL) {
-          InquiryData = (UINT8 *) AllocatePool (
-                                  InquiryDataSize
-                                  );
+          InquiryData = (UINT8 *)AllocatePool (
+                                   InquiryDataSize
+                                   );
           if (InquiryData != NULL) {
             Status = DiskInfo->Inquiry (
                                  DiskInfo,
@@ -227,6 +228,7 @@ LegacyBiosBuildIdeData (
               LocalHddInfo[PciIndex + IdeChannel].Status |= HDD_SLAVE_ATAPI_ZIPDISK;
             }
           }
+
           FreePool (InquiryData);
         } else {
           if (IdeDevice == 0) {
@@ -246,7 +248,6 @@ LegacyBiosBuildIdeData (
   return EFI_SUCCESS;
 }
 
-
 /**
   If the IDE channel is in compatibility (legacy) mode, remove all
   PCI I/O BAR addresses from the controller.
@@ -260,10 +261,10 @@ InitLegacyIdeController (
   IN EFI_HANDLE                        IdeController
   )
 {
-  EFI_PCI_IO_PROTOCOL               *PciIo;
-  UINT32                            IOBarClear;
-  EFI_STATUS                        Status;
-  PCI_TYPE00                        PciData;
+  EFI_PCI_IO_PROTOCOL  *PciIo;
+  UINT32               IOBarClear;
+  EFI_STATUS           Status;
+  PCI_TYPE00           PciData;
 
   //
   // If the IDE channel is in compatibility (legacy) mode, remove all
@@ -277,12 +278,12 @@ InitLegacyIdeController (
                   (VOID **)&PciIo
                   );
   if (EFI_ERROR (Status)) {
-    return ;
+    return;
   }
 
   Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint8, 0, sizeof (PciData), &PciData);
   if (EFI_ERROR (Status)) {
-    return ;
+    return;
   }
 
   //
@@ -290,7 +291,7 @@ InitLegacyIdeController (
   //
   if ((PciData.Hdr.ClassCode[2] != PCI_CLASS_MASS_STORAGE) ||
       (PciData.Hdr.ClassCode[1] != PCI_CLASS_MASS_STORAGE_IDE)) {
-    return ;
+    return;
   }
 
   //
@@ -301,10 +302,11 @@ InitLegacyIdeController (
     PciIo->Pci.Write (PciIo, EfiPciIoWidthUint32, 0x10, 1, &IOBarClear);
     PciIo->Pci.Write (PciIo, EfiPciIoWidthUint32, 0x14, 1, &IOBarClear);
   }
+
   if ((PciData.Hdr.ClassCode[0] & IDE_PI_REGISTER_SNE) == 0) {
     PciIo->Pci.Write (PciIo, EfiPciIoWidthUint32, 0x18, 1, &IOBarClear);
     PciIo->Pci.Write (PciIo, EfiPciIoWidthUint32, 0x1C, 1, &IOBarClear);
   }
 
-  return ;
+  return;
 }
