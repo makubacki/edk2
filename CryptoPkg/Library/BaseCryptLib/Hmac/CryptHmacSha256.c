@@ -25,7 +25,7 @@ HmacSha256New (
   //
   // Allocates & Initializes HMAC_CTX Context by OpenSSL HMAC_CTX_new()
   //
-  return (VOID *) HMAC_CTX_new ();
+  return (VOID *)HMAC_CTX_new ();
 }
 
 /**
@@ -75,7 +75,7 @@ HmacSha256SetKey (
     return FALSE;
   }
 
-  if (HMAC_Init_ex ((HMAC_CTX *)HmacSha256Context, Key, (UINT32) KeySize, EVP_sha256(), NULL) != 1) {
+  if (HMAC_Init_ex ((HMAC_CTX *)HmacSha256Context, Key, (UINT32)KeySize, EVP_sha256 (), NULL) != 1) {
     return FALSE;
   }
 
@@ -208,6 +208,7 @@ HmacSha256Final (
   if (HMAC_Final ((HMAC_CTX *)HmacSha256Context, HmacValue, &Length) != 1) {
     return FALSE;
   }
+
   if (HMAC_CTX_reset ((HMAC_CTX *)HmacSha256Context) != 1) {
     return FALSE;
   }

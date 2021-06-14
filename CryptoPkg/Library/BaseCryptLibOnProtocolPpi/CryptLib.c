@@ -34,7 +34,7 @@
     if (CryptoServices != NULL && CryptoServices->Function != NULL) {  \
       return (CryptoServices->Function) Args;                          \
     }                                                                  \
-    CryptoServiceNotAvailable (#Function);                             \
+    CryptoServiceNotAvailable (# Function);                             \
     return ErrorReturnValue;                                           \
   } while (FALSE);
 
@@ -56,7 +56,7 @@
       (CryptoServices->Function) Args;                                 \
       return;                                                          \
     }                                                                  \
-    CryptoServiceNotAvailable (#Function);                             \
+    CryptoServiceNotAvailable (# Function);                             \
     return;                                                            \
   } while (FALSE);
 
@@ -95,328 +95,332 @@ CryptoServiceNotAvailable (
   ASSERT_EFI_ERROR (EFI_UNSUPPORTED);
 }
 
-//=====================================================================================
-//    One-Way Cryptographic Hash Primitives
-//=====================================================================================
+// =====================================================================================
+// One-Way Cryptographic Hash Primitives
+// =====================================================================================
 
 #ifdef ENABLE_MD5_DEPRECATED_INTERFACES
-/**
-  Retrieves the size, in bytes, of the context buffer required for MD5 hash operations.
 
-  If this interface is not supported, then return zero.
+  /**
+    Retrieves the size, in bytes, of the context buffer required for MD5 hash operations.
 
-  @return  The size, in bytes, of the context buffer required for MD5 hash operations.
-  @retval  0   This interface is not supported.
+    If this interface is not supported, then return zero.
 
-**/
-UINTN
-EFIAPI
-Md5GetContextSize (
+    @return  The size, in bytes, of the context buffer required for MD5 hash operations.
+    @retval  0   This interface is not supported.
+
+  **/
+  UINTN
+  EFIAPI
+  Md5GetContextSize (
   VOID
   )
-{
-  CALL_CRYPTO_SERVICE (Md5GetContextSize, (), 0);
-}
+  {
+    CALL_CRYPTO_SERVICE (Md5GetContextSize, (), 0);
+  }
 
-/**
-  Initializes user-supplied memory pointed by Md5Context as MD5 hash context for
-  subsequent use.
+  /**
+    Initializes user-supplied memory pointed by Md5Context as MD5 hash context for
+    subsequent use.
 
-  If Md5Context is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Md5Context is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[out]  Md5Context  Pointer to MD5 context being initialized.
+    @param[out]  Md5Context  Pointer to MD5 context being initialized.
 
-  @retval TRUE   MD5 context initialization succeeded.
-  @retval FALSE  MD5 context initialization failed.
-  @retval FALSE  This interface is not supported.
+    @retval TRUE   MD5 context initialization succeeded.
+    @retval FALSE  MD5 context initialization failed.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-Md5Init (
+  **/
+  BOOLEAN
+  EFIAPI
+  Md5Init (
   OUT  VOID  *Md5Context
   )
-{
-  CALL_CRYPTO_SERVICE (Md5Init, (Md5Context), FALSE);
-}
+  {
+    CALL_CRYPTO_SERVICE (Md5Init, (Md5Context), FALSE);
+  }
 
-/**
-  Makes a copy of an existing MD5 context.
+  /**
+    Makes a copy of an existing MD5 context.
 
-  If Md5Context is NULL, then return FALSE.
-  If NewMd5Context is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Md5Context is NULL, then return FALSE.
+    If NewMd5Context is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in]  Md5Context     Pointer to MD5 context being copied.
-  @param[out] NewMd5Context  Pointer to new MD5 context.
+    @param[in]  Md5Context     Pointer to MD5 context being copied.
+    @param[out] NewMd5Context  Pointer to new MD5 context.
 
-  @retval TRUE   MD5 context copy succeeded.
-  @retval FALSE  MD5 context copy failed.
-  @retval FALSE  This interface is not supported.
+    @retval TRUE   MD5 context copy succeeded.
+    @retval FALSE  MD5 context copy failed.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-Md5Duplicate (
+  **/
+  BOOLEAN
+  EFIAPI
+  Md5Duplicate (
   IN   CONST VOID  *Md5Context,
   OUT  VOID        *NewMd5Context
   )
-{
-  CALL_CRYPTO_SERVICE (Md5Duplicate, (Md5Context, NewMd5Context), FALSE);
-}
+  {
+    CALL_CRYPTO_SERVICE (Md5Duplicate, (Md5Context, NewMd5Context), FALSE);
+  }
 
-/**
-  Digests the input data and updates MD5 context.
+  /**
+    Digests the input data and updates MD5 context.
 
-  This function performs MD5 digest on a data buffer of the specified size.
-  It can be called multiple times to compute the digest of long or discontinuous data streams.
-  MD5 context should be already correctly initialized by Md5Init(), and should not be finalized
-  by Md5Final(). Behavior with invalid context is undefined.
+    This function performs MD5 digest on a data buffer of the specified size.
+    It can be called multiple times to compute the digest of long or discontinuous data streams.
+    MD5 context should be already correctly initialized by Md5Init(), and should not be finalized
+    by Md5Final(). Behavior with invalid context is undefined.
 
-  If Md5Context is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Md5Context is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in, out]  Md5Context  Pointer to the MD5 context.
-  @param[in]       Data        Pointer to the buffer containing the data to be hashed.
-  @param[in]       DataSize    Size of Data buffer in bytes.
+    @param[in, out]  Md5Context  Pointer to the MD5 context.
+    @param[in]       Data        Pointer to the buffer containing the data to be hashed.
+    @param[in]       DataSize    Size of Data buffer in bytes.
 
-  @retval TRUE   MD5 data digest succeeded.
-  @retval FALSE  MD5 data digest failed.
-  @retval FALSE  This interface is not supported.
+    @retval TRUE   MD5 data digest succeeded.
+    @retval FALSE  MD5 data digest failed.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-Md5Update (
+  **/
+  BOOLEAN
+  EFIAPI
+  Md5Update (
   IN OUT  VOID        *Md5Context,
   IN      CONST VOID  *Data,
   IN      UINTN       DataSize
   )
-{
-  CALL_CRYPTO_SERVICE (Md5Update, (Md5Context, Data, DataSize), FALSE);
-}
+  {
+    CALL_CRYPTO_SERVICE (Md5Update, (Md5Context, Data, DataSize), FALSE);
+  }
 
-/**
-  Completes computation of the MD5 digest value.
+  /**
+    Completes computation of the MD5 digest value.
 
-  This function completes MD5 hash computation and retrieves the digest value into
-  the specified memory. After this function has been called, the MD5 context cannot
-  be used again.
-  MD5 context should be already correctly initialized by Md5Init(), and should not be
-  finalized by Md5Final(). Behavior with invalid MD5 context is undefined.
+    This function completes MD5 hash computation and retrieves the digest value into
+    the specified memory. After this function has been called, the MD5 context cannot
+    be used again.
+    MD5 context should be already correctly initialized by Md5Init(), and should not be
+    finalized by Md5Final(). Behavior with invalid MD5 context is undefined.
 
-  If Md5Context is NULL, then return FALSE.
-  If HashValue is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Md5Context is NULL, then return FALSE.
+    If HashValue is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in, out]  Md5Context  Pointer to the MD5 context.
-  @param[out]      HashValue   Pointer to a buffer that receives the MD5 digest
-                               value (16 bytes).
+    @param[in, out]  Md5Context  Pointer to the MD5 context.
+    @param[out]      HashValue   Pointer to a buffer that receives the MD5 digest
+                                 value (16 bytes).
 
-  @retval TRUE   MD5 digest computation succeeded.
-  @retval FALSE  MD5 digest computation failed.
-  @retval FALSE  This interface is not supported.
+    @retval TRUE   MD5 digest computation succeeded.
+    @retval FALSE  MD5 digest computation failed.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-Md5Final (
+  **/
+  BOOLEAN
+  EFIAPI
+  Md5Final (
   IN OUT  VOID   *Md5Context,
   OUT     UINT8  *HashValue
   )
-{
-  CALL_CRYPTO_SERVICE (Md5Final, (Md5Context, HashValue), FALSE);
-}
+  {
+    CALL_CRYPTO_SERVICE (Md5Final, (Md5Context, HashValue), FALSE);
+  }
 
-/**
-  Computes the MD5 message digest of a input data buffer.
+  /**
+    Computes the MD5 message digest of a input data buffer.
 
-  This function performs the MD5 message digest of a given data buffer, and places
-  the digest value into the specified memory.
+    This function performs the MD5 message digest of a given data buffer, and places
+    the digest value into the specified memory.
 
-  If this interface is not supported, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in]   Data        Pointer to the buffer containing the data to be hashed.
-  @param[in]   DataSize    Size of Data buffer in bytes.
-  @param[out]  HashValue   Pointer to a buffer that receives the MD5 digest
-                           value (16 bytes).
+    @param[in]   Data        Pointer to the buffer containing the data to be hashed.
+    @param[in]   DataSize    Size of Data buffer in bytes.
+    @param[out]  HashValue   Pointer to a buffer that receives the MD5 digest
+                             value (16 bytes).
 
-  @retval TRUE   MD5 digest computation succeeded.
-  @retval FALSE  MD5 digest computation failed.
-  @retval FALSE  This interface is not supported.
+    @retval TRUE   MD5 digest computation succeeded.
+    @retval FALSE  MD5 digest computation failed.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-Md5HashAll (
+  **/
+  BOOLEAN
+  EFIAPI
+  Md5HashAll (
   IN   CONST VOID  *Data,
   IN   UINTN       DataSize,
   OUT  UINT8       *HashValue
   )
-{
-  CALL_CRYPTO_SERVICE (Md5HashAll, (Data, DataSize, HashValue), FALSE);
-}
+  {
+    CALL_CRYPTO_SERVICE (Md5HashAll, (Data, DataSize, HashValue), FALSE);
+  }
+
 #endif
 
 #ifndef DISABLE_SHA1_DEPRECATED_INTERFACES
-/**
-  Retrieves the size, in bytes, of the context buffer required for SHA-1 hash operations.
 
-  If this interface is not supported, then return zero.
+  /**
+    Retrieves the size, in bytes, of the context buffer required for SHA-1 hash operations.
 
-  @return  The size, in bytes, of the context buffer required for SHA-1 hash operations.
-  @retval  0   This interface is not supported.
+    If this interface is not supported, then return zero.
 
-**/
-UINTN
-EFIAPI
-Sha1GetContextSize (
+    @return  The size, in bytes, of the context buffer required for SHA-1 hash operations.
+    @retval  0   This interface is not supported.
+
+  **/
+  UINTN
+  EFIAPI
+  Sha1GetContextSize (
   VOID
   )
-{
-  CALL_CRYPTO_SERVICE (Sha1GetContextSize, (), 0);
-}
+  {
+    CALL_CRYPTO_SERVICE (Sha1GetContextSize, (), 0);
+  }
 
-/**
-  Initializes user-supplied memory pointed by Sha1Context as SHA-1 hash context for
-  subsequent use.
+  /**
+    Initializes user-supplied memory pointed by Sha1Context as SHA-1 hash context for
+    subsequent use.
 
-  If Sha1Context is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Sha1Context is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[out]  Sha1Context  Pointer to SHA-1 context being initialized.
+    @param[out]  Sha1Context  Pointer to SHA-1 context being initialized.
 
-  @retval TRUE   SHA-1 context initialization succeeded.
-  @retval FALSE  SHA-1 context initialization failed.
-  @retval FALSE  This interface is not supported.
+    @retval TRUE   SHA-1 context initialization succeeded.
+    @retval FALSE  SHA-1 context initialization failed.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-Sha1Init (
+  **/
+  BOOLEAN
+  EFIAPI
+  Sha1Init (
   OUT  VOID  *Sha1Context
   )
-{
-  CALL_CRYPTO_SERVICE (Sha1Init, (Sha1Context), FALSE);
-}
+  {
+    CALL_CRYPTO_SERVICE (Sha1Init, (Sha1Context), FALSE);
+  }
 
-/**
-  Makes a copy of an existing SHA-1 context.
+  /**
+    Makes a copy of an existing SHA-1 context.
 
-  If Sha1Context is NULL, then return FALSE.
-  If NewSha1Context is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Sha1Context is NULL, then return FALSE.
+    If NewSha1Context is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in]  Sha1Context     Pointer to SHA-1 context being copied.
-  @param[out] NewSha1Context  Pointer to new SHA-1 context.
+    @param[in]  Sha1Context     Pointer to SHA-1 context being copied.
+    @param[out] NewSha1Context  Pointer to new SHA-1 context.
 
-  @retval TRUE   SHA-1 context copy succeeded.
-  @retval FALSE  SHA-1 context copy failed.
-  @retval FALSE  This interface is not supported.
+    @retval TRUE   SHA-1 context copy succeeded.
+    @retval FALSE  SHA-1 context copy failed.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-Sha1Duplicate (
+  **/
+  BOOLEAN
+  EFIAPI
+  Sha1Duplicate (
   IN   CONST VOID  *Sha1Context,
   OUT  VOID        *NewSha1Context
   )
-{
-  CALL_CRYPTO_SERVICE (Sha1Duplicate, (Sha1Context, NewSha1Context), FALSE);
-}
+  {
+    CALL_CRYPTO_SERVICE (Sha1Duplicate, (Sha1Context, NewSha1Context), FALSE);
+  }
 
-/**
-  Digests the input data and updates SHA-1 context.
+  /**
+    Digests the input data and updates SHA-1 context.
 
-  This function performs SHA-1 digest on a data buffer of the specified size.
-  It can be called multiple times to compute the digest of long or discontinuous data streams.
-  SHA-1 context should be already correctly initialized by Sha1Init(), and should not be finalized
-  by Sha1Final(). Behavior with invalid context is undefined.
+    This function performs SHA-1 digest on a data buffer of the specified size.
+    It can be called multiple times to compute the digest of long or discontinuous data streams.
+    SHA-1 context should be already correctly initialized by Sha1Init(), and should not be finalized
+    by Sha1Final(). Behavior with invalid context is undefined.
 
-  If Sha1Context is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Sha1Context is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in, out]  Sha1Context  Pointer to the SHA-1 context.
-  @param[in]       Data         Pointer to the buffer containing the data to be hashed.
-  @param[in]       DataSize     Size of Data buffer in bytes.
+    @param[in, out]  Sha1Context  Pointer to the SHA-1 context.
+    @param[in]       Data         Pointer to the buffer containing the data to be hashed.
+    @param[in]       DataSize     Size of Data buffer in bytes.
 
-  @retval TRUE   SHA-1 data digest succeeded.
-  @retval FALSE  SHA-1 data digest failed.
-  @retval FALSE  This interface is not supported.
+    @retval TRUE   SHA-1 data digest succeeded.
+    @retval FALSE  SHA-1 data digest failed.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-Sha1Update (
+  **/
+  BOOLEAN
+  EFIAPI
+  Sha1Update (
   IN OUT  VOID        *Sha1Context,
   IN      CONST VOID  *Data,
   IN      UINTN       DataSize
   )
-{
-  CALL_CRYPTO_SERVICE (Sha1Update, (Sha1Context, Data, DataSize), FALSE);
-}
+  {
+    CALL_CRYPTO_SERVICE (Sha1Update, (Sha1Context, Data, DataSize), FALSE);
+  }
 
-/**
-  Completes computation of the SHA-1 digest value.
+  /**
+    Completes computation of the SHA-1 digest value.
 
-  This function completes SHA-1 hash computation and retrieves the digest value into
-  the specified memory. After this function has been called, the SHA-1 context cannot
-  be used again.
-  SHA-1 context should be already correctly initialized by Sha1Init(), and should not be
-  finalized by Sha1Final(). Behavior with invalid SHA-1 context is undefined.
+    This function completes SHA-1 hash computation and retrieves the digest value into
+    the specified memory. After this function has been called, the SHA-1 context cannot
+    be used again.
+    SHA-1 context should be already correctly initialized by Sha1Init(), and should not be
+    finalized by Sha1Final(). Behavior with invalid SHA-1 context is undefined.
 
-  If Sha1Context is NULL, then return FALSE.
-  If HashValue is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Sha1Context is NULL, then return FALSE.
+    If HashValue is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in, out]  Sha1Context  Pointer to the SHA-1 context.
-  @param[out]      HashValue    Pointer to a buffer that receives the SHA-1 digest
-                                value (20 bytes).
+    @param[in, out]  Sha1Context  Pointer to the SHA-1 context.
+    @param[out]      HashValue    Pointer to a buffer that receives the SHA-1 digest
+                                  value (20 bytes).
 
-  @retval TRUE   SHA-1 digest computation succeeded.
-  @retval FALSE  SHA-1 digest computation failed.
-  @retval FALSE  This interface is not supported.
+    @retval TRUE   SHA-1 digest computation succeeded.
+    @retval FALSE  SHA-1 digest computation failed.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-Sha1Final (
+  **/
+  BOOLEAN
+  EFIAPI
+  Sha1Final (
   IN OUT  VOID   *Sha1Context,
   OUT     UINT8  *HashValue
   )
-{
-  CALL_CRYPTO_SERVICE (Sha1Final, (Sha1Context, HashValue), FALSE);
-}
+  {
+    CALL_CRYPTO_SERVICE (Sha1Final, (Sha1Context, HashValue), FALSE);
+  }
 
-/**
-  Computes the SHA-1 message digest of a input data buffer.
+  /**
+    Computes the SHA-1 message digest of a input data buffer.
 
-  This function performs the SHA-1 message digest of a given data buffer, and places
-  the digest value into the specified memory.
+    This function performs the SHA-1 message digest of a given data buffer, and places
+    the digest value into the specified memory.
 
-  If this interface is not supported, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in]   Data        Pointer to the buffer containing the data to be hashed.
-  @param[in]   DataSize    Size of Data buffer in bytes.
-  @param[out]  HashValue   Pointer to a buffer that receives the SHA-1 digest
-                           value (20 bytes).
+    @param[in]   Data        Pointer to the buffer containing the data to be hashed.
+    @param[in]   DataSize    Size of Data buffer in bytes.
+    @param[out]  HashValue   Pointer to a buffer that receives the SHA-1 digest
+                             value (20 bytes).
 
-  @retval TRUE   SHA-1 digest computation succeeded.
-  @retval FALSE  SHA-1 digest computation failed.
-  @retval FALSE  This interface is not supported.
+    @retval TRUE   SHA-1 digest computation succeeded.
+    @retval FALSE  SHA-1 digest computation failed.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-Sha1HashAll (
+  **/
+  BOOLEAN
+  EFIAPI
+  Sha1HashAll (
   IN   CONST VOID  *Data,
   IN   UINTN       DataSize,
   OUT  UINT8       *HashValue
   )
-{
-  CALL_CRYPTO_SERVICE (Sha1HashAll, (Data, DataSize, HashValue), FALSE);
-}
+  {
+    CALL_CRYPTO_SERVICE (Sha1HashAll, (Data, DataSize, HashValue), FALSE);
+  }
+
 #endif
 
 /**
@@ -1015,9 +1019,9 @@ Sm3HashAll (
   CALL_CRYPTO_SERVICE (Sm3HashAll, (Data, DataSize, HashValue), FALSE);
 }
 
-//=====================================================================================
-//    MAC (Message Authentication Code) Primitive
-//=====================================================================================
+// =====================================================================================
+// MAC (Message Authentication Code) Primitive
+// =====================================================================================
 
 /**
   Allocates and initializes one HMAC_CTX context for subsequent HMAC-SHA256 use.
@@ -1165,9 +1169,9 @@ HmacSha256Final (
   CALL_CRYPTO_SERVICE (HmacSha256Final, (HmacSha256Context, HmacValue), FALSE);
 }
 
-//=====================================================================================
-//    Symmetric Cryptography Primitive
-//=====================================================================================
+// =====================================================================================
+// Symmetric Cryptography Primitive
+// =====================================================================================
 
 /**
   Retrieves the size, in bytes, of the context buffer required for AES operations.
@@ -1304,9 +1308,9 @@ AesCbcDecrypt (
   CALL_CRYPTO_SERVICE (AesCbcDecrypt, (AesContext, Input, InputSize, Ivec, Output), FALSE);
 }
 
-//=====================================================================================
-//    Asymmetric Cryptography Primitive
-//=====================================================================================
+// =====================================================================================
+// Asymmetric Cryptography Primitive
+// =====================================================================================
 
 /**
   Allocates and initializes one RSA context for subsequent use.
@@ -1744,7 +1748,7 @@ EFIAPI
 X509GetCommonName (
   IN      CONST UINT8  *Cert,
   IN      UINTN        CertSize,
-  OUT     CHAR8        *CommonName,  OPTIONAL
+  OUT     CHAR8        *CommonName, OPTIONAL
   IN OUT  UINTN        *CommonNameSize
   )
 {
@@ -1782,7 +1786,7 @@ EFIAPI
 X509GetOrganizationName (
   IN      CONST UINT8   *Cert,
   IN      UINTN         CertSize,
-  OUT     CHAR8         *NameBuffer,  OPTIONAL
+  OUT     CHAR8         *NameBuffer, OPTIONAL
   IN OUT  UINTN         *NameBufferSize
   )
 {
@@ -2013,7 +2017,11 @@ Pkcs5HashPassword (
   OUT UINT8        *OutKey
   )
 {
-  CALL_CRYPTO_SERVICE (Pkcs5HashPassword, (PasswordLength, Password, SaltLength, Salt, IterationCount, DigestSize, KeyLength, OutKey), FALSE);
+  CALL_CRYPTO_SERVICE (
+    Pkcs5HashPassword,
+    (PasswordLength, Password, SaltLength, Salt, IterationCount, DigestSize, KeyLength, OutKey),
+    FALSE
+    );
 }
 
 /**
@@ -2052,13 +2060,17 @@ Pkcs1v2Encrypt (
   IN   UINTN        PublicKeySize,
   IN   UINT8        *InData,
   IN   UINTN        InDataSize,
-  IN   CONST UINT8  *PrngSeed,  OPTIONAL
-  IN   UINTN        PrngSeedSize,  OPTIONAL
+  IN   CONST UINT8  *PrngSeed, OPTIONAL
+  IN   UINTN        PrngSeedSize, OPTIONAL
   OUT  UINT8        **EncryptedData,
   OUT  UINTN        *EncryptedDataSize
   )
 {
-  CALL_CRYPTO_SERVICE (Pkcs1v2Encrypt, (PublicKey, PublicKeySize, InData, InDataSize, PrngSeed, PrngSeedSize, EncryptedData, EncryptedDataSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    Pkcs1v2Encrypt,
+    (PublicKey, PublicKeySize, InData, InDataSize, PrngSeed, PrngSeedSize, EncryptedData, EncryptedDataSize),
+    FALSE
+    );
 }
 
 /**
@@ -2151,7 +2163,11 @@ Pkcs7GetCertificatesList (
   OUT UINTN        *UnchainLength
   )
 {
-  CALL_CRYPTO_SERVICE (Pkcs7GetCertificatesList, (P7Data, P7Length, SignerChainCerts, ChainLength, UnchainCerts, UnchainLength), FALSE);
+  CALL_CRYPTO_SERVICE (
+    Pkcs7GetCertificatesList,
+    (P7Data, P7Length, SignerChainCerts, ChainLength, UnchainCerts, UnchainLength),
+    FALSE
+    );
 }
 
 /**
@@ -2195,7 +2211,11 @@ Pkcs7Sign (
   OUT  UINTN        *SignedDataSize
   )
 {
-  CALL_CRYPTO_SERVICE (Pkcs7Sign, (PrivateKey, PrivateKeySize, KeyPassword, InData, InDataSize, SignCert, OtherCerts, SignedData, SignedDataSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    Pkcs7Sign,
+    (PrivateKey, PrivateKeySize, KeyPassword, InData, InDataSize, SignCert, OtherCerts, SignedData, SignedDataSize),
+    FALSE
+    );
 }
 
 /**
@@ -2276,9 +2296,12 @@ VerifyEKUsInPkcs7Signature (
   IN  BOOLEAN       RequireAllPresent
   )
 {
-  CALL_CRYPTO_SERVICE (VerifyEKUsInPkcs7Signature, (Pkcs7Signature, SignatureSize, RequiredEKUs, RequiredEKUsSize, RequireAllPresent), FALSE);
+  CALL_CRYPTO_SERVICE (
+    VerifyEKUsInPkcs7Signature,
+    (Pkcs7Signature, SignatureSize, RequiredEKUs, RequiredEKUsSize, RequireAllPresent),
+    FALSE
+    );
 }
-
 
 /**
   Extracts the attached content from a PKCS#7 signed data if existed. The input signed
@@ -2383,9 +2406,9 @@ ImageTimestampVerify (
   CALL_CRYPTO_SERVICE (ImageTimestampVerify, (AuthData, DataSize, TsaCert, CertSize, SigningTime), FALSE);
 }
 
-//=====================================================================================
-//    DH Key Exchange Primitive
-//=====================================================================================
+// =====================================================================================
+// DH Key Exchange Primitive
+// =====================================================================================
 
 /**
   Allocates and Initializes one Diffie-Hellman Context for subsequent use.
@@ -2566,9 +2589,9 @@ DhComputeKey (
   CALL_CRYPTO_SERVICE (DhComputeKey, (DhContext, PeerPublicKey, PeerPublicKeySize, Key, KeySize), FALSE);
 }
 
-//=====================================================================================
-//    Pseudo-Random Generation Primitive
-//=====================================================================================
+// =====================================================================================
+// Pseudo-Random Generation Primitive
+// =====================================================================================
 
 /**
   Sets up the seed value for the pseudorandom number generator.
@@ -2622,9 +2645,9 @@ RandomBytes (
   CALL_CRYPTO_SERVICE (RandomBytes, (Output, Size), FALSE);
 }
 
-//=====================================================================================
-//    Key Derivation Function Primitive
-//=====================================================================================
+// =====================================================================================
+// Key Derivation Function Primitive
+// =====================================================================================
 
 /**
   Derive key data using HMAC-SHA256 based KDF.
@@ -2806,7 +2829,7 @@ TlsDoHandshake (
   IN     VOID                     *Tls,
   IN     UINT8                    *BufferIn, OPTIONAL
   IN     UINTN                    BufferInSize, OPTIONAL
-     OUT UINT8                    *BufferOut, OPTIONAL
+  OUT UINT8                    *BufferOut, OPTIONAL
   IN OUT UINTN                    *BufferOutSize
   )
 {
@@ -2844,7 +2867,7 @@ TlsHandleAlert (
   IN     VOID                     *Tls,
   IN     UINT8                    *BufferIn, OPTIONAL
   IN     UINTN                    BufferInSize, OPTIONAL
-     OUT UINT8                    *BufferOut, OPTIONAL
+  OUT UINT8                    *BufferOut, OPTIONAL
   IN OUT UINTN                    *BufferOutSize
   )
 {

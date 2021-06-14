@@ -53,7 +53,7 @@ RandomSeed (
   // NOTE: A cryptographic PRNG must be seeded with unpredictable data.
   //
   if (Seed != NULL) {
-    RAND_seed (Seed, (UINT32) SeedSize);
+    RAND_seed (Seed, (UINT32)SeedSize);
   } else {
     //
     // Retrieve current time.
@@ -104,7 +104,7 @@ RandomBytes (
   //
   // Generate random data.
   //
-  if (RAND_bytes (Output, (UINT32) Size) != 1) {
+  if (RAND_bytes (Output, (UINT32)Size) != 1) {
     return FALSE;
   }
 
