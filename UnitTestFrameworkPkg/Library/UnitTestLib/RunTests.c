@@ -16,6 +16,29 @@ STATIC UNIT_TEST_FRAMEWORK_HANDLE  mFrameworkHandle = NULL;
 
 BASE_LIBRARY_JUMP_BUFFER  gUnitTestJumpBuffer;
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 UNIT_TEST_FRAMEWORK_HANDLE
 GetActiveFrameworkHandle (
   VOID
@@ -25,6 +48,29 @@ GetActiveFrameworkHandle (
   return mFrameworkHandle;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 RunTestSuite (
@@ -39,7 +85,7 @@ RunTestSuite (
     return EFI_INVALID_PARAMETER;
   }
 
-  TestEntry       = NULL;
+  TestEntry = NULL;
   ParentFramework = (UNIT_TEST_FRAMEWORK *)Suite->ParentFramework;
 
   DEBUG ((DEBUG_VERBOSE, "---------------------------------------------------------\n"));
@@ -54,9 +100,9 @@ RunTestSuite (
   // Iterate all tests within the suite
   //
   for (TestEntry = (UNIT_TEST_LIST_ENTRY *)GetFirstNode (&(Suite->TestCaseList));
-       (LIST_ENTRY*)TestEntry != &(Suite->TestCaseList);
+       (LIST_ENTRY *)TestEntry != &(Suite->TestCaseList);
        TestEntry = (UNIT_TEST_LIST_ENTRY *)GetNextNode (&(Suite->TestCaseList), (LIST_ENTRY *)TestEntry)) {
-    Test                         = &TestEntry->UT;
+    Test = &TestEntry->UT;
     ParentFramework->CurrentTest = Test;
 
     DEBUG ((DEBUG_VERBOSE, "*********************************************************\n"));
@@ -81,13 +127,13 @@ RunTestSuite (
         if (Test->Prerequisite (Test->Context) != UNIT_TEST_PASSED) {
           DEBUG ((DEBUG_ERROR, "Prerequisite Not Met\n"));
           Test->Result = UNIT_TEST_ERROR_PREREQUISITE_NOT_MET;
-          ParentFramework->CurrentTest  = NULL;
+          ParentFramework->CurrentTest = NULL;
           continue;
         }
       } else {
         DEBUG ((DEBUG_ERROR, "Prerequisite Not Met\n"));
         Test->Result = UNIT_TEST_ERROR_PREREQUISITE_NOT_MET;
-        ParentFramework->CurrentTest  = NULL;
+        ParentFramework->CurrentTest = NULL;
         continue;
       }
     }
@@ -166,8 +212,8 @@ RunAllTestSuites (
   // Iterate all suites
   //
   for (Suite = (UNIT_TEST_SUITE_LIST_ENTRY *)GetFirstNode (&Framework->TestSuiteList);
-    (LIST_ENTRY *)Suite != &Framework->TestSuiteList;
-    Suite = (UNIT_TEST_SUITE_LIST_ENTRY *)GetNextNode (&Framework->TestSuiteList, (LIST_ENTRY *)Suite)) {
+       (LIST_ENTRY *)Suite != &Framework->TestSuiteList;
+       Suite = (UNIT_TEST_SUITE_LIST_ENTRY *)GetNextNode (&Framework->TestSuiteList, (LIST_ENTRY *)Suite)) {
     Status = RunTestSuite (&(Suite->UTS));
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_ERROR, "Test Suite Failed with Error.  %r\n", Status));

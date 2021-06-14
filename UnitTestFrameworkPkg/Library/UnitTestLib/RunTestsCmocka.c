@@ -22,6 +22,29 @@
 
 STATIC UNIT_TEST_FRAMEWORK_HANDLE  mFrameworkHandle = NULL;
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 UNIT_TEST_FRAMEWORK_HANDLE
 GetActiveFrameworkHandle (
   VOID
@@ -36,6 +59,29 @@ GetActiveFrameworkHandle (
 //
 UNIT_TEST_SUITE  *mActiveUnitTestSuite = NULL;
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 void
 CmockaUnitTestFunctionRunner (
   void **state
@@ -59,6 +105,29 @@ CmockaUnitTestFunctionRunner (
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 int
 CmockaUnitTestSetupFunctionRunner (
   void **state
@@ -87,6 +156,29 @@ CmockaUnitTestSetupFunctionRunner (
   return (int)Result;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 int
 CmockaUnitTestTeardownFunctionRunner (
   void **state
@@ -112,10 +204,10 @@ CmockaUnitTestTeardownFunctionRunner (
   // stdout and stderr in their xml format
   //
   if (UnitTest->Log != NULL) {
-    print_message("UnitTest: %s - %s\n", UnitTest->Name, UnitTest->Description);
-    print_message("Log Output Start\n");
-    print_message("%s", UnitTest->Log);
-    print_message("Log Output End\n");
+    print_message ("UnitTest: %s - %s\n", UnitTest->Name, UnitTest->Description);
+    print_message ("Log Output Start\n");
+    print_message ("%s", UnitTest->Log);
+    print_message ("Log Output End\n");
   }
 
   //
@@ -124,14 +216,38 @@ CmockaUnitTestTeardownFunctionRunner (
   return 0;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 int
 CmockaUnitTestSuiteSetupFunctionRunner (
   void **state
   )
 {
   if (mActiveUnitTestSuite == NULL) {
-    return -1;
+    return - 1;
   }
+
   if (mActiveUnitTestSuite->Setup == NULL) {
     return 0;
   }
@@ -143,14 +259,38 @@ CmockaUnitTestSuiteSetupFunctionRunner (
   return 0;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 int
 CmockaUnitTestSuiteTeardownFunctionRunner (
   void **state
   )
 {
   if (mActiveUnitTestSuite == NULL) {
-    return -1;
+    return - 1;
   }
+
   if (mActiveUnitTestSuite->Teardown == NULL) {
     return 0;
   }
@@ -162,6 +302,29 @@ CmockaUnitTestSuiteTeardownFunctionRunner (
   return 0;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 RunTestSuite (
@@ -173,7 +336,7 @@ RunTestSuite (
   struct CMUnitTest     *Tests;
   UINTN                 Index;
 
-  TestEntry       = NULL;
+  TestEntry = NULL;
 
   if (Suite == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -196,14 +359,15 @@ RunTestSuite (
   for (TestEntry = (UNIT_TEST_LIST_ENTRY *)GetFirstNode (&(Suite->TestCaseList));
        (LIST_ENTRY *)TestEntry != &(Suite->TestCaseList);
        TestEntry = (UNIT_TEST_LIST_ENTRY *)GetNextNode (&(Suite->TestCaseList), (LIST_ENTRY *)TestEntry)) {
-    UnitTest                   = &TestEntry->UT;
-    Tests[Index].name          = UnitTest->Description;
+    UnitTest = &TestEntry->UT;
+    Tests[Index].name = UnitTest->Description;
     Tests[Index].test_func     = CmockaUnitTestFunctionRunner;
     Tests[Index].setup_func    = CmockaUnitTestSetupFunctionRunner;
     Tests[Index].teardown_func = CmockaUnitTestTeardownFunctionRunner;
     Tests[Index].initial_state = UnitTest;
     Index++;
   }
+
   ASSERT (Index == Suite->NumTests);
 
   //
@@ -254,17 +418,17 @@ RunAllTestSuites (
     return EFI_INVALID_PARAMETER;
   }
 
-  DEBUG((DEBUG_VERBOSE, "---------------------------------------------------------\n"));
-  DEBUG((DEBUG_VERBOSE, "------------     RUNNING ALL TEST SUITES   --------------\n"));
-  DEBUG((DEBUG_VERBOSE, "---------------------------------------------------------\n"));
+  DEBUG ((DEBUG_VERBOSE, "---------------------------------------------------------\n"));
+  DEBUG ((DEBUG_VERBOSE, "------------     RUNNING ALL TEST SUITES   --------------\n"));
+  DEBUG ((DEBUG_VERBOSE, "---------------------------------------------------------\n"));
   mFrameworkHandle = FrameworkHandle;
 
   //
   // Iterate all suites
   //
   for (Suite = (UNIT_TEST_SUITE_LIST_ENTRY *)GetFirstNode (&Framework->TestSuiteList);
-    (LIST_ENTRY *)Suite != &Framework->TestSuiteList;
-    Suite = (UNIT_TEST_SUITE_LIST_ENTRY *)GetNextNode (&Framework->TestSuiteList, (LIST_ENTRY *)Suite)) {
+       (LIST_ENTRY *)Suite != &Framework->TestSuiteList;
+       Suite = (UNIT_TEST_SUITE_LIST_ENTRY *)GetNextNode (&Framework->TestSuiteList, (LIST_ENTRY *)Suite)) {
     Status = RunTestSuite (&(Suite->UTS));
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_ERROR, "Test Suite Failed with Error.  %r\n", Status));

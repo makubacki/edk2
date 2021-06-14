@@ -15,6 +15,29 @@
 
 extern BASE_LIBRARY_JUMP_BUFFER  gUnitTestJumpBuffer;
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 EFI_STATUS
 AddUnitTestFailure (
@@ -40,6 +63,29 @@ AddUnitTestFailure (
   return EFI_SUCCESS;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 STATIC
 VOID
 EFIAPI
@@ -120,6 +166,7 @@ UnitTestAssertTrue (
       Description
       );
   }
+
   return Expression;
 }
 
@@ -166,6 +213,7 @@ UnitTestAssertFalse (
       Description
       );
   }
+
   return !Expression;
 }
 
@@ -214,7 +262,8 @@ UnitTestAssertNotEfiError (
       Status
       );
   }
-  return !EFI_ERROR( Status );
+
+  return !EFI_ERROR (Status);
 }
 
 /**
@@ -271,6 +320,7 @@ UnitTestAssertEqual (
       ValueB
       );
   }
+
   return (ValueA == ValueB);
 }
 
@@ -312,7 +362,7 @@ UnitTestAssertMemEqual (
   IN CONST CHAR8  *DescriptionB
   )
 {
-  if (CompareMem(BufferA, BufferB, Length) != 0) {
+  if (CompareMem (BufferA, BufferB, Length) != 0) {
     UT_LOG_ERROR (
       "[ASSERT FAIL] %a:%d: Value %a != %a for length %d bytes!\n",
       FileName,
@@ -332,6 +382,7 @@ UnitTestAssertMemEqual (
       );
     return FALSE;
   }
+
   return TRUE;
 }
 
@@ -389,6 +440,7 @@ UnitTestAssertNotEqual (
       ValueB
       );
   }
+
   return (ValueA != ValueB);
 }
 
@@ -442,6 +494,7 @@ UnitTestAssertStatusEqual (
       Expected
       );
   }
+
   return (Status == Expected);
 }
 
@@ -490,6 +543,7 @@ UnitTestAssertNotNull (
       PointerName
       );
   }
+
   return (Pointer != NULL);
 }
 
@@ -536,6 +590,7 @@ UnitTestExpectAssertFailure (
   if (ResultStatus != NULL) {
     *ResultStatus = UnitTestStatus;
   }
+
   if (UnitTestStatus == UNIT_TEST_PASSED) {
     UT_LOG_INFO (
       "[ASSERT PASS] %a:%d: UT_EXPECT_ASSERT_FAILURE(%a) detected expected assert\n",
@@ -544,6 +599,7 @@ UnitTestExpectAssertFailure (
       FunctionCall
       );
   }
+
   if (UnitTestStatus == UNIT_TEST_SKIPPED) {
     UT_LOG_WARNING (
       "[ASSERT WARN] %a:%d: UT_EXPECT_ASSERT_FAILURE(%a) disabled\n",
@@ -552,6 +608,7 @@ UnitTestExpectAssertFailure (
       FunctionCall
       );
   }
+
   if (UnitTestStatus == UNIT_TEST_ERROR_TEST_FAILED) {
     UT_LOG_ERROR (
       "[ASSERT FAIL] %a:%d: Function call (%a) did not ASSERT()!\n",
@@ -567,5 +624,6 @@ UnitTestExpectAssertFailure (
       FunctionCall
       );
   }
+
   return (UnitTestStatus != UNIT_TEST_ERROR_TEST_FAILED);
 }
