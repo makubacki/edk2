@@ -293,7 +293,7 @@ Udp6CreateService (
 
   ZeroMem (Udp6Service, sizeof (UDP6_SERVICE_DATA));
 
-  Udp6Service->Signature        = UDP6_SERVICE_DATA_SIGNATURE;
+  Udp6Service->Signature = UDP6_SERVICE_DATA_SIGNATURE;
   Udp6Service->ServiceBinding   = mUdp6ServiceBinding;
   Udp6Service->ImageHandle      = ImageHandle;
   Udp6Service->ControllerHandle = ControllerHandle;
@@ -317,10 +317,10 @@ Udp6CreateService (
     &mIp6IoDefaultIpConfigData,
     sizeof (EFI_IP6_CONFIG_DATA)
     );
-  OpenData.RcvdContext           = (VOID *) Udp6Service;
-  OpenData.SndContext            = NULL;
-  OpenData.PktRcvdNotify         = Udp6DgramRcvd;
-  OpenData.PktSentNotify         = Udp6DgramSent;
+  OpenData.RcvdContext   = (VOID *)Udp6Service;
+  OpenData.SndContext    = NULL;
+  OpenData.PktRcvdNotify = Udp6DgramRcvd;
+  OpenData.PktSentNotify = Udp6DgramSent;
 
   //
   // Configure and start the IpIo.
@@ -370,7 +370,6 @@ ON_ERROR:
   return Status;
 }
 
-
 /**
   Clean the Udp service context data.
 
@@ -396,7 +395,6 @@ Udp6CleanService (
   ZeroMem (Udp6Service, sizeof (UDP6_SERVICE_DATA));
 }
 
-
 /**
   This function checks and times out the I/O datagrams listed in the
   UDP6_SERVICE_DATA which is specified by the input parameter Context.
@@ -421,7 +419,7 @@ Udp6CheckTimeout (
   LIST_ENTRY          *NextEntry;
   UDP6_RXDATA_WRAP    *Wrap;
 
-  Udp6Service = (UDP6_SERVICE_DATA *) Context;
+  Udp6Service = (UDP6_SERVICE_DATA *)Context;
   NET_CHECK_SIGNATURE (Udp6Service, UDP6_SERVICE_DATA_SIGNATURE);
 
   NET_LIST_FOR_EACH (Entry, &Udp6Service->ChildrenList) {
@@ -448,14 +446,13 @@ Udp6CheckTimeout (
         //
         // Remove this RxData if it timeouts.
         //
-        Udp6RecycleRxDataWrap (NULL, (VOID *) Wrap);
+        Udp6RecycleRxDataWrap (NULL, (VOID *)Wrap);
       } else {
         Wrap->TimeoutTick -= UDP6_TIMEOUT_INTERVAL / 10;
       }
     }
   }
 }
-
 
 /**
   This function initializes the new created udp instance.
@@ -500,7 +497,6 @@ Udp6InitInstance (
   Instance->InDestroy   = FALSE;
 }
 
-
 /**
   This function cleans the udp instance.
 
@@ -516,7 +512,6 @@ Udp6CleanInstance (
   NetMapClean (&Instance->RxTokens);
   NetMapClean (&Instance->TxTokens);
 }
-
 
 /**
   This function finds the udp instance by the specified <Address, Port> pair.
@@ -572,7 +567,6 @@ Udp6FindInstanceByPort (
   return FALSE;
 }
 
-
 /**
   This function tries to bind the udp instance according to the configured port
   allocation strategy.
@@ -604,7 +598,6 @@ Udp6Bind (
   StationAddress = &ConfigData->StationAddress;
 
   if (ConfigData->StationPort != 0) {
-
     if (!ConfigData->AllowDuplicatePort &&
         Udp6FindInstanceByPort (InstanceList, StationAddress, ConfigData->StationPort)
         ) {
@@ -623,11 +616,9 @@ Udp6Bind (
       //
       ConfigData->StationPort = mUdp6RandomPort;
     } else {
-
       StartPort = mUdp6RandomPort;
 
       while (Udp6FindInstanceByPort (InstanceList, StationAddress, mUdp6RandomPort)) {
-
         mUdp6RandomPort++;
         if (mUdp6RandomPort == 0) {
           mUdp6RandomPort = UDP6_PORT_KNOWN;
@@ -649,9 +640,9 @@ Udp6Bind (
       mUdp6RandomPort = UDP6_PORT_KNOWN;
     }
   }
+
   return EFI_SUCCESS;
 }
-
 
 /**
   This function is used to check whether the NewConfigData has any un-reconfigurable
@@ -692,11 +683,10 @@ Udp6IsReconfigurable (
 
   if (!EFI_IP6_EQUAL (&NewConfigData->StationAddress, &OldConfigData->StationAddress)) {
     //
-    //  The StationAddress is not the same.
+    // The StationAddress is not the same.
     //
     return FALSE;
   }
-
 
   if (!EFI_IP6_EQUAL (&NewConfigData->RemoteAddress, &OldConfigData->RemoteAddress)) {
     //
@@ -720,7 +710,6 @@ Udp6IsReconfigurable (
   return TRUE;
 }
 
-
 /**
   This function builds the Ip6 configdata from the Udp6ConfigData.
 
@@ -739,16 +728,15 @@ Udp6BuildIp6ConfigData (
     &mIp6IoDefaultIpConfigData,
     sizeof (EFI_IP6_CONFIG_DATA)
     );
-  Ip6ConfigData->DefaultProtocol      = EFI_IP_PROTO_UDP;
-  Ip6ConfigData->AcceptPromiscuous    = Udp6ConfigData->AcceptPromiscuous;
+  Ip6ConfigData->DefaultProtocol   = EFI_IP_PROTO_UDP;
+  Ip6ConfigData->AcceptPromiscuous = Udp6ConfigData->AcceptPromiscuous;
   IP6_COPY_ADDRESS (&Ip6ConfigData->StationAddress, &Udp6ConfigData->StationAddress);
   IP6_COPY_ADDRESS (&Ip6ConfigData->DestinationAddress, &Udp6ConfigData->RemoteAddress);
   //
   // Use the -1 magic number to disable the receiving process of the ip instance.
   //
-  Ip6ConfigData->ReceiveTimeout    = (UINT32) (-1);
+  Ip6ConfigData->ReceiveTimeout = (UINT32)(- 1);
 }
-
 
 /**
   This function validates the TxToken. It returns the error code according to the spec.
@@ -791,7 +779,6 @@ Udp6ValidateTxToken (
   EFI_UDP6_CONFIG_DATA    *ConfigData;
   EFI_UDP6_SESSION_DATA   *UdpSessionData;
 
-
   if (TxToken->Event == NULL) {
     return EFI_INVALID_PARAMETER;
   }
@@ -804,7 +791,6 @@ Udp6ValidateTxToken (
 
   TotalLen = 0;
   for (Index = 0; Index < TxData->FragmentCount; Index++) {
-
     if ((TxData->FragmentTable[Index].FragmentBuffer == NULL) ||
         (TxData->FragmentTable[Index].FragmentLength == 0)
         ) {
@@ -829,7 +815,6 @@ Udp6ValidateTxToken (
   UdpSessionData = TxData->UdpSessionData;
 
   if (UdpSessionData != NULL) {
-
     if ((UdpSessionData->DestinationPort == 0) && (ConfigData->RemotePort == 0)) {
       //
       // Ambiguous; no available DestinationPort for this token.
@@ -870,7 +855,6 @@ Udp6ValidateTxToken (
   return EFI_SUCCESS;
 }
 
-
 /**
   This function checks whether the specified Token duplicates the one in the Map.
 
@@ -895,8 +879,8 @@ Udp6TokenExist (
   EFI_UDP6_COMPLETION_TOKEN  *Token;
   EFI_UDP6_COMPLETION_TOKEN  *TokenInItem;
 
-  Token       = (EFI_UDP6_COMPLETION_TOKEN *) Context;
-  TokenInItem = (EFI_UDP6_COMPLETION_TOKEN *) Item->Key;
+  Token = (EFI_UDP6_COMPLETION_TOKEN *)Context;
+  TokenInItem = (EFI_UDP6_COMPLETION_TOKEN *)Item->Key;
 
   if ((Token == TokenInItem) || (Token->Event == TokenInItem->Event)) {
     //
@@ -908,7 +892,6 @@ Udp6TokenExist (
 
   return EFI_SUCCESS;
 }
-
 
 /**
   This function calculates the checksum for the Packet, utilizing the pre-calculated
@@ -929,14 +912,13 @@ Udp6Checksum (
 {
   UINT16  Checksum;
 
-  Checksum  = NetbufChecksum (Packet);
-  Checksum  = NetAddChecksum (Checksum, HeadSum);
+  Checksum = NetbufChecksum (Packet);
+  Checksum = NetAddChecksum (Checksum, HeadSum);
 
-  Checksum  = NetAddChecksum (Checksum, HTONS ((UINT16) Packet->TotalSize));
-  Checksum  = (UINT16) (~Checksum);
+  Checksum = NetAddChecksum (Checksum, HTONS ((UINT16)Packet->TotalSize));
+  Checksum = (UINT16)(~Checksum);
   return Checksum;
 }
-
 
 /**
   This function removes the specified Token from the TokenMap.
@@ -959,7 +941,7 @@ Udp6RemoveToken (
   //
   // Find the Token first.
   //
-  Item = NetMapFindKey (TokenMap, (VOID *) Token);
+  Item = NetMapFindKey (TokenMap, (VOID *)Token);
 
   if (Item != NULL) {
     //
@@ -969,9 +951,9 @@ Udp6RemoveToken (
 
     return EFI_SUCCESS;
   }
+
   return EFI_NOT_FOUND;
 }
-
 
 /**
   This function is the packet transmitting notify function registered to the IpIo
@@ -1001,8 +983,8 @@ Udp6DgramSent (
 
   ASSERT (Context != NULL && NotifyData != NULL);
 
-  Instance = (UDP6_INSTANCE_DATA *) Context;
-  Token    = (EFI_UDP6_COMPLETION_TOKEN *) NotifyData;
+  Instance = (UDP6_INSTANCE_DATA *)Context;
+  Token    = (EFI_UDP6_COMPLETION_TOKEN *)NotifyData;
 
   if (Udp6RemoveToken (&Instance->TxTokens, Token) == EFI_SUCCESS) {
     //
@@ -1013,7 +995,6 @@ Udp6DgramSent (
     DispatchDpc ();
   }
 }
-
 
 /**
   This function processes the received datagram passed up by the IpIo layer.
@@ -1048,16 +1029,15 @@ Udp6DgramRcvd (
   // IpIo only passes received packets with Status EFI_SUCCESS or EFI_ICMP_ERROR.
   //
   if (Status == EFI_SUCCESS) {
-
     //
     // Demultiplex the received datagram.
     //
-    Udp6Demultiplex ((UDP6_SERVICE_DATA *) Context, NetSession, Packet);
+    Udp6Demultiplex ((UDP6_SERVICE_DATA *)Context, NetSession, Packet);
   } else {
     //
     // Handle the ICMP6 Error packet.
     //
-    Udp6IcmpHandler ((UDP6_SERVICE_DATA *) Context, IcmpError, NetSession, Packet);
+    Udp6IcmpHandler ((UDP6_SERVICE_DATA *)Context, IcmpError, NetSession, Packet);
   }
 
   //
@@ -1066,7 +1046,6 @@ Udp6DgramRcvd (
   //
   DispatchDpc ();
 }
-
 
 /**
   This function removes the multicast group specified by Arg from the Map.
@@ -1121,7 +1100,6 @@ Udp6LeaveGroup (
   return EFI_SUCCESS;
 }
 
-
 /**
   This function cancel the token specified by Arg in the Map.
 
@@ -1161,15 +1139,15 @@ Udp6CancelTokens (
     // will invoke Udp6DgramSent, the token will be signaled and this Item will
     // be removed from the Map there.
     //
-    Packet  = (NET_BUF *) (Item->Value);
-    IpIo    = (IP_IO *) (*((UINTN *) &Packet->ProtoData[0]));
+    Packet = (NET_BUF *)(Item->Value);
+    IpIo   = (IP_IO *)(*((UINTN *)&Packet->ProtoData[0]));
 
     IpIoCancelTxToken (IpIo, Packet);
   } else {
     //
     // The token is a receive token. Abort it and remove it from the Map.
     //
-    TokenToCancel = (EFI_UDP6_COMPLETION_TOKEN *) Item->Key;
+    TokenToCancel = (EFI_UDP6_COMPLETION_TOKEN *)Item->Key;
     NetMapRemoveItem (Map, Item, NULL);
 
     TokenToCancel->Status = EFI_ABORTED;
@@ -1182,7 +1160,6 @@ Udp6CancelTokens (
 
   return EFI_SUCCESS;
 }
-
 
 /**
   This function removes all the Wrap datas in the RcvdDgramQue.
@@ -1206,11 +1183,9 @@ Udp6FlushRcvdDgram (
     //
     // The Wrap will be removed from the RcvdDgramQue by this function call.
     //
-    Udp6RecycleRxDataWrap (NULL, (VOID *) Wrap);
+    Udp6RecycleRxDataWrap (NULL, (VOID *)Wrap);
   }
 }
-
-
 
 /**
   Cancel Udp6 tokens from the Udp6 instance.
@@ -1259,14 +1234,14 @@ Udp6InstanceCancelToken (
     return EFI_NOT_FOUND;
   }
 
-  ASSERT ((Token != NULL) ||
-          ((0 == NetMapGetCount (&Instance->TxTokens)) &&
-          (0 == NetMapGetCount (&Instance->RxTokens)))
-          );
+  ASSERT (
+    (Token != NULL) ||
+    ((0 == NetMapGetCount (&Instance->TxTokens)) &&
+     (0 == NetMapGetCount (&Instance->RxTokens)))
+    );
 
   return EFI_SUCCESS;
 }
-
 
 /**
   This function checks if the received udp datagram matches with the Instance.
@@ -1339,7 +1314,6 @@ Udp6MatchDgram (
   return FALSE;
 }
 
-
 /**
   This function removes the Wrap specified by Context and release relevant resources.
 
@@ -1356,7 +1330,7 @@ Udp6RecycleRxDataWrap (
 {
   UDP6_RXDATA_WRAP  *Wrap;
 
-  Wrap = (UDP6_RXDATA_WRAP *) Context;
+  Wrap = (UDP6_RXDATA_WRAP *)Context;
 
   //
   // Remove the Wrap from the list it belongs to.
@@ -1375,7 +1349,6 @@ Udp6RecycleRxDataWrap (
 
   FreePool (Wrap);
 }
-
 
 /**
   This function wraps the Packet into RxData.
@@ -1397,21 +1370,23 @@ Udp6WrapRxData (
   IN EFI_UDP6_RECEIVE_DATA  *RxData
   )
 {
-  EFI_STATUS            Status;
-  UDP6_RXDATA_WRAP      *Wrap;
+  EFI_STATUS        Status;
+  UDP6_RXDATA_WRAP  *Wrap;
 
   //
   // Allocate buffer for the Wrap.
   //
-  Wrap = AllocateZeroPool (sizeof (UDP6_RXDATA_WRAP) +
-         (Packet->BlockOpNum - 1) * sizeof (EFI_UDP6_FRAGMENT_DATA));
+  Wrap = AllocateZeroPool (
+           sizeof (UDP6_RXDATA_WRAP) +
+           (Packet->BlockOpNum - 1) * sizeof (EFI_UDP6_FRAGMENT_DATA)
+           );
   if (Wrap == NULL) {
     return NULL;
   }
 
   InitializeListHead (&Wrap->Link);
 
-  CopyMem (&Wrap->RxData, RxData, sizeof(EFI_UDP6_RECEIVE_DATA));
+  CopyMem (&Wrap->RxData, RxData, sizeof (EFI_UDP6_RECEIVE_DATA));
   //
   // Create the Recycle event.
   //
@@ -1427,12 +1402,11 @@ Udp6WrapRxData (
     return NULL;
   }
 
-  Wrap->Packet      = Packet;
+  Wrap->Packet = Packet;
   Wrap->TimeoutTick = Instance->ConfigData.ReceiveTimeout;
 
   return Wrap;
 }
-
 
 /**
   This function enqueues the received datagram into the instances' receiving queues.
@@ -1490,7 +1464,6 @@ Udp6EnqueueDgram (
   return Enqueued;
 }
 
-
 /**
   This function delivers the received datagrams to the specified instance.
 
@@ -1511,7 +1484,6 @@ Udp6InstanceDeliverDgram (
   if (!IsListEmpty (&Instance->RcvdDgramQue) &&
       !NetMapIsEmpty (&Instance->RxTokens)
       ) {
-
     Wrap = NET_LIST_HEAD (&Instance->RcvdDgramQue, UDP6_RXDATA_WRAP, Link);
 
     if (NET_BUF_SHARED (Wrap->Packet)) {
@@ -1530,21 +1502,21 @@ Udp6InstanceDeliverDgram (
 
     NetListRemoveHead (&Instance->RcvdDgramQue);
 
-    Token = (EFI_UDP6_COMPLETION_TOKEN *) NetMapRemoveHead (&Instance->RxTokens, NULL);
+    Token = (EFI_UDP6_COMPLETION_TOKEN *)NetMapRemoveHead (&Instance->RxTokens, NULL);
 
     //
     // Build the FragmentTable and set the FragmentCount in RxData.
     //
-    RxData                = &Wrap->RxData;
+    RxData = &Wrap->RxData;
     RxData->FragmentCount = Wrap->Packet->BlockOpNum;
 
     NetbufBuildExt (
       Wrap->Packet,
-      (NET_FRAGMENT *) RxData->FragmentTable,
+      (NET_FRAGMENT *)RxData->FragmentTable,
       &RxData->FragmentCount
       );
 
-    Token->Status        = EFI_SUCCESS;
+    Token->Status = EFI_SUCCESS;
     Token->Packet.RxData = &Wrap->RxData;
 
     OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
@@ -1554,7 +1526,6 @@ Udp6InstanceDeliverDgram (
     gBS->SignalEvent (Token->Event);
   }
 }
-
 
 /**
   This function delivers the datagrams enqueued in the instances.
@@ -1587,7 +1558,6 @@ Udp6DeliverDgram (
   }
 }
 
-
 /**
   This function demultiplexes the received udp datagram to the appropriate instances.
 
@@ -1605,7 +1575,7 @@ Udp6Demultiplex (
   IN NET_BUF               *Packet
   )
 {
-  EFI_UDP_HEADER        *Udp6Header;
+  EFI_UDP_HEADER         *Udp6Header;
   UINT16                 HeadSum;
   EFI_UDP6_RECEIVE_DATA  RxData;
   EFI_UDP6_SESSION_DATA  *Udp6Session;
@@ -1619,7 +1589,7 @@ Udp6Demultiplex (
   //
   // Get the datagram header from the packet buffer.
   //
-  Udp6Header = (EFI_UDP_HEADER *) NetbufGetByte (Packet, 0, NULL);
+  Udp6Header = (EFI_UDP_HEADER *)NetbufGetByte (Packet, 0, NULL);
   ASSERT (Udp6Header != NULL);
   if (Udp6Header == NULL) {
     NetbufFree (Packet);
@@ -1646,8 +1616,8 @@ Udp6Demultiplex (
     }
   }
 
-  Udp6Session                  = &RxData.UdpSession;
-  Udp6Session->SourcePort      = NTOHS (Udp6Header->SrcPort);
+  Udp6Session = &RxData.UdpSession;
+  Udp6Session->SourcePort = NTOHS (Udp6Header->SrcPort);
   Udp6Session->DestinationPort = NTOHS (Udp6Header->DstPort);
 
   IP6_COPY_ADDRESS (&Udp6Session->SourceAddress, &NetSession->Source);
@@ -1658,7 +1628,7 @@ Udp6Demultiplex (
   //
   NetbufTrim (Packet, UDP6_HEADER_SIZE, TRUE);
 
-  RxData.DataLength = (UINT32) Packet->TotalSize;
+  RxData.DataLength = (UINT32)Packet->TotalSize;
 
   //
   // Try to enqueue this datagram into the instances.
@@ -1684,7 +1654,6 @@ Udp6Demultiplex (
     Udp6DeliverDgram (Udp6Service);
   }
 }
-
 
 /**
   This function builds and sends out a icmp port unreachable message.
@@ -1721,14 +1690,13 @@ Udp6SendPortUnreach (
   //
   if (NetSession->IpVersion == IP_VERSION_6) {
     if (NetIp6IsUnspecifiedAddr (&NetSession->Dest.v6) ||
-      IP6_IS_MULTICAST (&NetSession->Dest.v6)
-      ) {
+        IP6_IS_MULTICAST (&NetSession->Dest.v6)
+        ) {
       goto EXIT;
     }
   }
 
-
-  IpSender    = IpIoFindSender (&IpIo, NetSession->IpVersion, &NetSession->Dest);
+  IpSender = IpIoFindSender (&IpIo, NetSession->IpVersion, &NetSession->Dest);
 
   //
   // Get the Ipv6 Mode Data.
@@ -1759,11 +1727,12 @@ Udp6SendPortUnreach (
   if (EFI_ERROR (Status)) {
     goto EXIT;
   }
+
   //
   // The ICMP6 packet length, includes whole invoking packet and ICMP6 error header.
   //
   Len = NetSession->IpHdrLen +
-        NTOHS(((EFI_UDP_HEADER *) Udp6Header)->Length) +
+        NTOHS (((EFI_UDP_HEADER *)Udp6Header)->Length) +
         sizeof (IP6_ICMP_ERROR_HEAD);
 
   //
@@ -1784,7 +1753,7 @@ Udp6SendPortUnreach (
   //
   // Allocate space for the IP6_ICMP_ERROR_HEAD.
   //
-  IcmpErrHdr = (IP6_ICMP_ERROR_HEAD *) NetbufAllocSpace (Packet, Len, FALSE);
+  IcmpErrHdr = (IP6_ICMP_ERROR_HEAD *)NetbufAllocSpace (Packet, Len, FALSE);
   ASSERT (IcmpErrHdr != NULL);
   if (IcmpErrHdr == NULL) {
     goto EXIT;
@@ -1796,7 +1765,7 @@ Udp6SendPortUnreach (
   IcmpErrHdr->Head.Type     = ICMP_V6_DEST_UNREACHABLE;
   IcmpErrHdr->Head.Code     = ICMP_V6_PORT_UNREACHABLE;
   IcmpErrHdr->Head.Checksum = 0;
-  IcmpErrHdr->Fourth        = 0;
+  IcmpErrHdr->Fourth = 0;
 
   //
   // Copy as much of invoking Packet as possible without the ICMPv6 packet
@@ -1804,8 +1773,8 @@ Udp6SendPortUnreach (
   // the length of EFI_IP6_HEADER, so when using the length of IP6_ICMP_ERROR_HEAD
   // for pointer movement that fact should be considered.
   //
-  Ptr = (VOID *) &IcmpErrHdr->Head;
-  Ptr = (UINT8 *) (UINTN) ((UINTN) Ptr + sizeof (IP6_ICMP_ERROR_HEAD) - sizeof (EFI_IP6_HEADER));
+  Ptr = (VOID *)&IcmpErrHdr->Head;
+  Ptr = (UINT8 *)(UINTN)((UINTN)Ptr + sizeof (IP6_ICMP_ERROR_HEAD) - sizeof (EFI_IP6_HEADER));
   CopyMem (Ptr, NetSession->IpHdr.Ip6Hdr, NetSession->IpHdrLen);
   CopyMem (
     Ptr + NetSession->IpHdrLen,
@@ -1821,9 +1790,9 @@ Udp6SendPortUnreach (
   //
   // Fill the override data.
   //
-  Override.Ip6OverrideData.FlowLabel     = 0;
-  Override.Ip6OverrideData.HopLimit      = 255;
-  Override.Ip6OverrideData.Protocol      = IP6_ICMP;
+  Override.Ip6OverrideData.FlowLabel = 0;
+  Override.Ip6OverrideData.HopLimit  = 255;
+  Override.Ip6OverrideData.Protocol  = IP6_ICMP;
 
   //
   // Send out this icmp packet.
@@ -1837,7 +1806,6 @@ EXIT:
     FreePool (Ip6ModeData);
   }
 }
-
 
 /**
   This function handles the received Icmp Error message and de-multiplexes it to the
@@ -1868,7 +1836,7 @@ Udp6IcmpHandler (
     return;
   }
 
-  Udp6Header = (EFI_UDP_HEADER *) NetbufGetByte (Packet, 0, NULL);
+  Udp6Header = (EFI_UDP_HEADER *)NetbufGetByte (Packet, 0, NULL);
   ASSERT (Udp6Header != NULL);
   if (Udp6Header == NULL) {
     NetbufFree (Packet);
@@ -1878,7 +1846,7 @@ Udp6IcmpHandler (
   IP6_COPY_ADDRESS (&Udp6Session.SourceAddress, &NetSession->Source);
   IP6_COPY_ADDRESS (&Udp6Session.DestinationAddress, &NetSession->Dest);
 
-  Udp6Session.SourcePort      = NTOHS (Udp6Header->DstPort);
+  Udp6Session.SourcePort = NTOHS (Udp6Header->DstPort);
   Udp6Session.DestinationPort = NTOHS (Udp6Header->SrcPort);
 
   NET_LIST_FOR_EACH (Entry, &Udp6Service->ChildrenList) {
@@ -1913,7 +1881,6 @@ Udp6IcmpHandler (
   NetbufFree (Packet);
 }
 
-
 /**
   This function reports the received ICMP error.
 
@@ -1938,7 +1905,7 @@ Udp6ReportIcmpError (
     //
     // Try to get a RxToken from the RxTokens map.
     //
-    Token = (EFI_UDP6_COMPLETION_TOKEN *) NetMapRemoveHead (&Instance->RxTokens, NULL);
+    Token = (EFI_UDP6_COMPLETION_TOKEN *)NetMapRemoveHead (&Instance->RxTokens, NULL);
 
     if (Token != NULL) {
       //
@@ -1954,7 +1921,6 @@ Udp6ReportIcmpError (
     }
   }
 }
-
 
 /**
   This function is a dummy ext-free function for the NET_BUF created for the output
@@ -1992,12 +1958,11 @@ Udp6MapMultiCastAddr (
 
   ASSERT (Map != NULL);
   NET_LIST_FOR_EACH (Entry, &Map->Used) {
-    Item  = NET_LIST_USER_STRUCT (Entry, NET_MAP_ITEM, Link);
-    Addr  = (EFI_IPv6_ADDRESS *) Item->Key;
+    Item = NET_LIST_USER_STRUCT (Entry, NET_MAP_ITEM, Link);
+    Addr = (EFI_IPv6_ADDRESS *)Item->Key;
     if (EFI_IP6_EQUAL (Addr, Key)) {
       return Item;
     }
   }
   return NULL;
 }
-

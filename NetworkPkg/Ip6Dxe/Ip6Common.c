@@ -143,10 +143,10 @@ Ip6CreateInterfaceID (
   IN OUT IP6_SERVICE         *IpSb
   )
 {
-  UINT8                      InterfaceId[8];
-  UINT8                      Byte;
-  EFI_MAC_ADDRESS            *MacAddr;
-  UINT32                     AddrLen;
+  UINT8            InterfaceId[8];
+  UINT8            Byte;
+  EFI_MAC_ADDRESS  *MacAddr;
+  UINT32           AddrLen;
 
   NET_CHECK_SIGNATURE (IpSb, IP6_SERVICE_SIGNATURE);
 
@@ -171,7 +171,7 @@ Ip6CreateInterfaceID (
   InterfaceId[4] = 0xFE;
   CopyMem (&InterfaceId[5], &MacAddr->Addr[3], 3);
 
-  Byte = (UINT8) (InterfaceId[0] & IP6_U_BIT);
+  Byte = (UINT8)(InterfaceId[0] & IP6_U_BIT);
   if (Byte == IP6_U_BIT) {
     InterfaceId[0] &= ~IP6_U_BIT;
   } else {
@@ -344,8 +344,8 @@ Ip6DestroyChildEntryByAddr (
   EFI_IPv6_ADDRESS              *Address;
 
   Instance = NET_LIST_USER_STRUCT_S (Entry, IP6_PROTOCOL, Link, IP6_PROTOCOL_SIGNATURE);
-  ServiceBinding = ((IP6_DESTROY_CHILD_BY_ADDR_CALLBACK_CONTEXT*) Context)->ServiceBinding;
-  Address = ((IP6_DESTROY_CHILD_BY_ADDR_CALLBACK_CONTEXT*) Context)->Address;
+  ServiceBinding = ((IP6_DESTROY_CHILD_BY_ADDR_CALLBACK_CONTEXT *)Context)->ServiceBinding;
+  Address = ((IP6_DESTROY_CHILD_BY_ADDR_CALLBACK_CONTEXT *)Context)->Address;
 
   if ((Instance->State == IP6_STATE_CONFIGED) && EFI_IP6_EQUAL (&Instance->ConfigData.StationAddress, Address)) {
     return ServiceBinding->DestroyChild (ServiceBinding, Instance->Handle);
@@ -368,7 +368,7 @@ Ip6DestroyInstanceByAddress (
   IN EFI_IPv6_ADDRESS  *Address
   )
 {
-  LIST_ENTRY                    *List;
+  LIST_ENTRY                                  *List;
   IP6_DESTROY_CHILD_BY_ADDR_CALLBACK_CONTEXT  Context;
 
   NET_CHECK_SIGNATURE (IpSb, IP6_SERVICE_SIGNATURE);
@@ -416,11 +416,11 @@ Ip6RemoveAddr (
   IN UINT8             PrefixLength
   )
 {
-  EFI_STATUS           Status;
-  LIST_ENTRY           *Entry;
-  LIST_ENTRY           *Next;
-  IP6_ADDRESS_INFO     *AddrInfo;
-  EFI_IPv6_ADDRESS     SnMCastAddr;
+  EFI_STATUS        Status;
+  LIST_ENTRY        *Entry;
+  LIST_ENTRY        *Next;
+  IP6_ADDRESS_INFO  *AddrInfo;
+  EFI_IPv6_ADDRESS  SnMCastAddr;
 
   if (IsListEmpty (AddressList) || *AddressCount < 1 || PrefixLength > IP6_PREFIX_MAX) {
     return EFI_INVALID_PARAMETER;
@@ -471,8 +471,8 @@ Ip6IsSNMulticastAddr (
   IN EFI_IPv6_ADDRESS *Ip6
   )
 {
-  EFI_IPv6_ADDRESS    Sn;
-  BOOLEAN             Flag;
+  EFI_IPv6_ADDRESS  Sn;
+  BOOLEAN           Flag;
 
   Ip6CreateSNMulticastAddr (Ip6, &Sn);
   Flag = FALSE;
@@ -507,10 +507,10 @@ Ip6IsOneOfSetAddress (
   OUT IP6_ADDRESS_INFO      **AddressInfo OPTIONAL
   )
 {
-  LIST_ENTRY                *Entry;
-  LIST_ENTRY                *Entry2;
-  IP6_INTERFACE             *IpIf;
-  IP6_ADDRESS_INFO          *TmpAddressInfo;
+  LIST_ENTRY        *Entry;
+  LIST_ENTRY        *Entry2;
+  IP6_INTERFACE     *IpIf;
+  IP6_ADDRESS_INFO  *TmpAddressInfo;
 
   //
   // Check link-local address first
@@ -566,7 +566,7 @@ Ip6IsValidLinkAddress (
   IN  EFI_MAC_ADDRESS  *LinkAddress
   )
 {
-  UINT32               Index;
+  UINT32  Index;
 
   //
   // TODO: might be updated later to be more acceptable.
@@ -595,24 +595,24 @@ Ip6CopyAddressByPrefix (
   IN  UINT8            PrefixLength
   )
 {
-  UINT8 Byte;
-  UINT8 Bit;
-  UINT8 Mask;
+  UINT8  Byte;
+  UINT8  Bit;
+  UINT8  Mask;
 
   ASSERT (Dest != NULL && Src != NULL);
   ASSERT (PrefixLength <= IP6_PREFIX_MAX);
 
-  Byte = (UINT8) (PrefixLength / 8);
-  Bit  = (UINT8) (PrefixLength % 8);
+  Byte = (UINT8)(PrefixLength / 8);
+  Bit  = (UINT8)(PrefixLength % 8);
 
   ZeroMem (Dest, sizeof (EFI_IPv6_ADDRESS));
 
   CopyMem (Dest, Src, Byte);
 
   if (Bit > 0) {
-    Mask = (UINT8) (0xFF << (8 - Bit));
+    Mask = (UINT8)(0xFF << (8 - Bit));
     ASSERT (Byte < 16);
-    Dest->Addr[Byte] = (UINT8) (Src->Addr[Byte] & Mask);
+    Dest->Addr[Byte] = (UINT8)(Src->Addr[Byte] & Mask);
   }
 }
 
@@ -637,7 +637,7 @@ Ip6GetMulticastMac (
   OUT EFI_MAC_ADDRESS              *Mac
   )
 {
-  EFI_IP_ADDRESS        EfiIp;
+  EFI_IP_ADDRESS  EfiIp;
 
   IP6_COPY_ADDRESS (&EfiIp.v6, Multicast);
 
@@ -664,4 +664,3 @@ Ip6NtohHead (
 
   return Head;
 }
-

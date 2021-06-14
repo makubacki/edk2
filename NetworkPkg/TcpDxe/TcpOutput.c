@@ -41,11 +41,10 @@ TcpRcvWinOld (
   OldWin = 0;
 
   if (TCP_SEQ_GT (Tcb->RcvWl2 + Tcb->RcvWnd, Tcb->RcvNxt)) {
-
     OldWin = TCP_SUB_SEQ (
-              Tcb->RcvWl2 + Tcb->RcvWnd,
-              Tcb->RcvNxt
-              );
+               Tcb->RcvWl2 + Tcb->RcvWnd,
+               Tcb->RcvNxt
+               );
   }
 
   return OldWin;
@@ -72,11 +71,11 @@ TcpRcvWinNow (
   Sk = Tcb->Sk;
   ASSERT (Sk != NULL);
 
-  OldWin    = TcpRcvWinOld (Tcb);
+  OldWin = TcpRcvWinOld (Tcb);
 
-  Win       = SockGetFreeSpace (Sk, SOCK_RCV_BUF);
+  Win = SockGetFreeSpace (Sk, SOCK_RCV_BUF);
 
-  Increase  = 0;
+  Increase = 0;
   if (Win > OldWin) {
     Increase = Win - OldWin;
   }
@@ -87,7 +86,6 @@ TcpRcvWinNow (
   // half of the receive buffer.
   //
   if ((Increase > Tcb->SndMss) || (2 * Increase >= GET_RCV_BUFFSIZE (Sk))) {
-
     return Win;
   }
 
@@ -116,17 +114,15 @@ TcpComputeWnd (
   // RFC requires that initial window not be scaled
   //
   if (Syn) {
-
     Wnd = GET_RCV_BUFFSIZE (Tcb->Sk);
   } else {
-
-    Wnd         = TcpRcvWinNow (Tcb);
+    Wnd = TcpRcvWinNow (Tcb);
 
     Tcb->RcvWnd = Wnd;
   }
 
   Wnd = MIN (Wnd >> Tcb->RcvWndScale, 0xffff);
-  return NTOHS ((UINT16) Wnd);
+  return NTOHS ((UINT16)Wnd);
 }
 
 /**
@@ -142,8 +138,8 @@ TcpGetMaxSndNxt (
   IN TCP_CB *Tcb
   )
 {
-  LIST_ENTRY      *Entry;
-  NET_BUF         *Nbuf;
+  LIST_ENTRY  *Entry;
+  NET_BUF     *Nbuf;
 
   if (IsListEmpty (&Tcb->SndQue)) {
     return Tcb->SndNxt;
@@ -192,7 +188,6 @@ TcpDataToSend (
   Limit = Tcb->SndWl2 + Tcb->SndWnd;
 
   if (TCP_SEQ_GT (Limit, Tcb->SndUna + Tcb->CWnd)) {
-
     Limit = Tcb->SndUna + Tcb->CWnd;
   }
 
@@ -206,15 +201,15 @@ TcpDataToSend (
   // buffer. The later can be non-zero if the peer shrinks
   // its advertised window.
   //
-  Left  = GET_SND_DATASIZE (Sk) + TCP_SUB_SEQ (TcpGetMaxSndNxt (Tcb), Tcb->SndNxt);
+  Left = GET_SND_DATASIZE (Sk) + TCP_SUB_SEQ (TcpGetMaxSndNxt (Tcb), Tcb->SndNxt);
 
-  Len   = MIN (Win, Left);
+  Len = MIN (Win, Left);
 
   if (Len > Tcb->SndMss) {
     Len = Tcb->SndMss;
   }
 
-  if ((Force != 0)|| (Len == 0 && Left == 0)) {
+  if ((Force != 0) || (Len == 0 && Left == 0)) {
     return Len;
   }
 
@@ -231,14 +226,12 @@ TcpDataToSend (
   // expecting an ACK, or the Nagle algorithm is disabled.
   //
   if ((Len == Tcb->SndMss) || (2 * Len >= Tcb->SndWndMax)) {
-
     return Len;
   }
 
   if ((Len == Left) &&
       ((Tcb->SndNxt == Tcb->SndUna) || TCP_FLG_ON (Tcb->CtrlFlag, TCP_CTRL_NO_NAGLE))
       ) {
-
     return Len;
   }
 
@@ -248,11 +241,10 @@ TcpDataToSend (
   //
 SetPersistTimer:
   if (!TCP_TIMER_ON (Tcb->EnabledTimer, TCP_TIMER_REXMIT)) {
-
     DEBUG (
       (EFI_D_WARN,
-      "TcpDataToSend: enter persistent state for TCB %p\n",
-      Tcb)
+       "TcpDataToSend: enter persistent state for TCB %p\n",
+       Tcb)
       );
 
     if (!Tcb->ProbeTimerOn) {
@@ -289,19 +281,17 @@ TcpTransmitSegment (
   ASSERT ((Nbuf != NULL) && (Nbuf->Tcp == NULL));
 
   if (TcpVerifySegment (Nbuf) == 0) {
-    return -1;
+    return - 1;
   }
 
   DataLen = Nbuf->TotalSize;
 
-  Seg     = TCPSEG_NETBUF (Nbuf);
-  Syn     = TCP_FLG_ON (Seg->Flag, TCP_FLG_SYN);
+  Seg = TCPSEG_NETBUF (Nbuf);
+  Syn = TCP_FLG_ON (Seg->Flag, TCP_FLG_SYN);
 
   if (Syn) {
-
     Len = TcpSynBuildOption (Tcb, Nbuf);
   } else {
-
     Len = TcpBuildOption (Tcb, Nbuf);
   }
 
@@ -309,24 +299,24 @@ TcpTransmitSegment (
 
   Len += sizeof (TCP_HEAD);
 
-  Head = (TCP_HEAD *) NetbufAllocSpace (
-                        Nbuf,
-                        sizeof (TCP_HEAD),
-                        NET_BUF_HEAD
-                        );
+  Head = (TCP_HEAD *)NetbufAllocSpace (
+                       Nbuf,
+                       sizeof (TCP_HEAD),
+                       NET_BUF_HEAD
+                       );
 
   ASSERT (Head != NULL);
 
-  Nbuf->Tcp       = Head;
+  Nbuf->Tcp = Head;
 
-  Head->SrcPort   = Tcb->LocalEnd.Port;
-  Head->DstPort   = Tcb->RemoteEnd.Port;
-  Head->Seq       = NTOHL (Seg->Seq);
-  Head->Ack       = NTOHL (Tcb->RcvNxt);
-  Head->HeadLen   = (UINT8) (Len >> 2);
-  Head->Res       = 0;
-  Head->Wnd       = TcpComputeWnd (Tcb, Syn);
-  Head->Checksum  = 0;
+  Head->SrcPort  = Tcb->LocalEnd.Port;
+  Head->DstPort  = Tcb->RemoteEnd.Port;
+  Head->Seq      = NTOHL (Seg->Seq);
+  Head->Ack      = NTOHL (Tcb->RcvNxt);
+  Head->HeadLen  = (UINT8)(Len >> 2);
+  Head->Res      = 0;
+  Head->Wnd      = TcpComputeWnd (Tcb, Syn);
+  Head->Checksum = 0;
 
   //
   // Check whether to set the PSH flag.
@@ -337,12 +327,9 @@ TcpTransmitSegment (
     if (TCP_FLG_ON (Tcb->CtrlFlag, TCP_CTRL_SND_PSH) &&
         TCP_SEQ_BETWEEN (Seg->Seq, Tcb->SndPsh, Seg->End)
         ) {
-
       TCP_SET_FLG (Seg->Flag, TCP_FLG_PSH);
       TCP_CLEAR_FLG (Tcb->CtrlFlag, TCP_CTRL_SND_PSH);
-
     } else if ((Seg->End == Tcb->SndNxt) && (GET_SND_DATASIZE (Tcb->Sk) == 0)) {
-
       TCP_SET_FLG (Seg->Flag, TCP_FLG_PSH);
     }
   }
@@ -353,25 +340,24 @@ TcpTransmitSegment (
   TCP_CLEAR_FLG (Seg->Flag, TCP_FLG_URG);
 
   if (TCP_FLG_ON (Tcb->CtrlFlag, TCP_CTRL_SND_URG) && TCP_SEQ_LEQ (Seg->Seq, Tcb->SndUp)) {
-
     TCP_SET_FLG (Seg->Flag, TCP_FLG_URG);
 
     if (TCP_SEQ_LT (Tcb->SndUp, Seg->End)) {
-
-      Seg->Urg = (UINT16) TCP_SUB_SEQ (Tcb->SndUp, Seg->Seq);
+      Seg->Urg = (UINT16)TCP_SUB_SEQ (Tcb->SndUp, Seg->Seq);
     } else {
-
-      Seg->Urg = (UINT16) MIN (
-                            TCP_SUB_SEQ (Tcb->SndUp,
-                            Seg->Seq),
-                            0xffff
-                            );
+      Seg->Urg = (UINT16)MIN (
+                           TCP_SUB_SEQ (
+                             Tcb->SndUp,
+                             Seg->Seq
+                             ),
+                           0xffff
+                           );
     }
   }
 
-  Head->Flag      = Seg->Flag;
-  Head->Urg       = NTOHS (Seg->Urg);
-  Head->Checksum  = TcpChecksum (Nbuf, Tcb->HeadSum);
+  Head->Flag     = Seg->Flag;
+  Head->Urg      = NTOHS (Seg->Urg);
+  Head->Checksum = TcpChecksum (Nbuf, Tcb->HeadSum);
 
   //
   // Update the TCP session's control information.
@@ -406,33 +392,32 @@ TcpGetSegmentSndQue (
   IN UINT32    Len
   )
 {
-  LIST_ENTRY      *Head;
-  LIST_ENTRY      *Cur;
-  NET_BUF         *Node;
-  TCP_SEG         *Seg;
-  NET_BUF         *Nbuf;
-  TCP_SEQNO       End;
-  UINT8           *Data;
-  UINT8           Flag;
-  INT32           Offset;
-  INT32           CopyLen;
+  LIST_ENTRY  *Head;
+  LIST_ENTRY  *Cur;
+  NET_BUF     *Node;
+  TCP_SEG     *Seg;
+  NET_BUF     *Nbuf;
+  TCP_SEQNO   End;
+  UINT8       *Data;
+  UINT8       Flag;
+  INT32       Offset;
+  INT32       CopyLen;
 
   ASSERT ((Tcb != NULL) && TCP_SEQ_LEQ (Seq, Tcb->SndNxt) && (Len > 0));
 
   //
   // Find the segment that contains the Seq.
   //
-  Head  = &Tcb->SndQue;
+  Head = &Tcb->SndQue;
 
-  Node  = NULL;
-  Seg   = NULL;
+  Node = NULL;
+  Seg  = NULL;
 
   NET_LIST_FOR_EACH (Cur, Head) {
-    Node  = NET_LIST_USER_STRUCT (Cur, NET_BUF, List);
-    Seg   = TCPSEG_NETBUF (Node);
+    Node = NET_LIST_USER_STRUCT (Cur, NET_BUF, List);
+    Seg  = TCPSEG_NETBUF (Node);
 
     if (TCP_SEQ_LT (Seq, Seg->End) && TCP_SEQ_LEQ (Seg->Seq, Seq)) {
-
       break;
     }
   }
@@ -449,7 +434,6 @@ TcpGetSegmentSndQue (
       TCP_SEQ_LEQ (Seg->End, Seg->Seq + Len) &&
       !NET_BUF_SHARED (Node)
       ) {
-
     NET_GET_REF (Node);
     return Node;
   }
@@ -465,8 +449,8 @@ TcpGetSegmentSndQue (
 
   NetbufReserve (Nbuf, TCP_MAX_HEAD);
 
-  Flag  = Seg->Flag;
-  End   = Seg->End;
+  Flag = Seg->Flag;
+  End  = Seg->End;
 
   if (TCP_SEQ_LT (Seq + Len, Seg->End)) {
     End = Seq + Len;
@@ -482,13 +466,10 @@ TcpGetSegmentSndQue (
   // one byte less.
   //
   if (TCP_FLG_ON (Seg->Flag, TCP_FLG_SYN)) {
-
     if (TCP_SEQ_LT (Seg->Seq, Seq)) {
-
       TCP_CLEAR_FLG (Flag, TCP_FLG_SYN);
       Offset--;
     } else {
-
       CopyLen--;
     }
   }
@@ -498,12 +479,9 @@ TcpGetSegmentSndQue (
   // and if it is out of the range, clear the flag.
   //
   if (TCP_FLG_ON (Seg->Flag, TCP_FLG_FIN)) {
-
     if (Seg->End == End) {
-
       CopyLen--;
     } else {
-
       TCP_CLEAR_FLG (Flag, TCP_FLG_FIN);
     }
   }
@@ -517,16 +495,16 @@ TcpGetSegmentSndQue (
     Data = NetbufAllocSpace (Nbuf, CopyLen, NET_BUF_TAIL);
     ASSERT (Data != NULL);
 
-    if ((INT32) NetbufCopy (Node, Offset, CopyLen, Data) != CopyLen) {
+    if ((INT32)NetbufCopy (Node, Offset, CopyLen, Data) != CopyLen) {
       goto OnError;
     }
   }
 
   CopyMem (TCPSEG_NETBUF (Nbuf), Seg, sizeof (TCP_SEG));
 
-  TCPSEG_NETBUF (Nbuf)->Seq   = Seq;
-  TCPSEG_NETBUF (Nbuf)->End   = End;
-  TCPSEG_NETBUF (Nbuf)->Flag  = Flag;
+  TCPSEG_NETBUF (Nbuf)->Seq  = Seq;
+  TCPSEG_NETBUF (Nbuf)->End  = End;
+  TCPSEG_NETBUF (Nbuf)->Flag = Flag;
 
   return Nbuf;
 
@@ -552,9 +530,9 @@ TcpGetSegmentSock (
   IN UINT32    Len
   )
 {
-  NET_BUF *Nbuf;
-  UINT8   *Data;
-  UINT32  DataGet;
+  NET_BUF  *Nbuf;
+  UINT8    *Data;
+  UINT32   DataGet;
 
   ASSERT ((Tcb != NULL) && (Tcb->Sk != NULL));
 
@@ -563,8 +541,8 @@ TcpGetSegmentSock (
   if (Nbuf == NULL) {
     DEBUG (
       (EFI_D_ERROR,
-      "TcpGetSegmentSock: failed to allocate a netbuf for TCB %p\n",
-      Tcb)
+       "TcpGetSegmentSock: failed to allocate a netbuf for TCB %p\n",
+       Tcb)
       );
 
     return NULL;
@@ -592,7 +570,6 @@ TcpGetSegmentSock (
   InsertTailList (&(Tcb->SndQue), &(Nbuf->List));
 
   if (DataGet != 0) {
-
     SockDataSent (Tcb->Sk, DataGet);
   }
 
@@ -617,7 +594,7 @@ TcpGetSegment (
   IN UINT32    Len
   )
 {
-  NET_BUF *Nbuf;
+  NET_BUF  *Nbuf;
 
   ASSERT (Tcb != NULL);
 
@@ -625,10 +602,8 @@ TcpGetSegment (
   // Compare the SndNxt with the max sequence number sent.
   //
   if ((Len != 0) && TCP_SEQ_LT (Seq, TcpGetMaxSndNxt (Tcb))) {
-
     Nbuf = TcpGetSegmentSndQue (Tcb, Seq, Len);
   } else {
-
     Nbuf = TcpGetSegmentSock (Tcb, Seq, Len);
   }
 
@@ -656,8 +631,8 @@ TcpRetransmit (
   IN TCP_SEQNO Seq
   )
 {
-  NET_BUF *Nbuf;
-  UINT32  Len;
+  NET_BUF  *Nbuf;
+  UINT32   Len;
 
   //
   // Compute the maximum length of retransmission. It is
@@ -669,28 +644,30 @@ TcpRetransmit (
 
   //
   // Handle the Window Retraction if TCP window scale is enabled according to RFC7323:
-  //   On first retransmission, or if the sequence number is out of
-  //   window by less than 2^Rcv.Wind.Shift, then do normal
-  //   retransmission(s) without regard to the receiver window as long
-  //   as the original segment was in window when it was sent.
+  // On first retransmission, or if the sequence number is out of
+  // window by less than 2^Rcv.Wind.Shift, then do normal
+  // retransmission(s) without regard to the receiver window as long
+  // as the original segment was in window when it was sent.
   //
   if ((Tcb->SndWndScale != 0) &&
-      (TCP_SEQ_GT (Seq, Tcb->RetxmitSeqMax) || TCP_SEQ_BETWEEN (Tcb->SndWl2 + Tcb->SndWnd, Seq, Tcb->SndWl2 + Tcb->SndWnd + (1 << Tcb->SndWndScale)))) {
+      (TCP_SEQ_GT (
+         Seq,
+         Tcb->RetxmitSeqMax
+         ) ||
+       TCP_SEQ_BETWEEN (Tcb->SndWl2 + Tcb->SndWnd, Seq, Tcb->SndWl2 + Tcb->SndWnd + (1 << Tcb->SndWndScale)))) {
     Len = TCP_SUB_SEQ (Tcb->SndNxt, Seq);
     DEBUG (
       (EFI_D_WARN,
-      "TcpRetransmit: retransmission without regard to the receiver window for TCB %p\n",
-      Tcb)
+       "TcpRetransmit: retransmission without regard to the receiver window for TCB %p\n",
+       Tcb)
       );
-
   } else if (TCP_SEQ_GEQ (Tcb->SndWl2 + Tcb->SndWnd, Seq)) {
     Len = TCP_SUB_SEQ (Tcb->SndWl2 + Tcb->SndWnd, Seq);
-
   } else {
     DEBUG (
       (EFI_D_WARN,
-      "TcpRetransmit: retransmission cancelled because send window too small for TCB %p\n",
-      Tcb)
+       "TcpRetransmit: retransmission cancelled because send window too small for TCB %p\n",
+       Tcb)
       );
 
     return 0;
@@ -700,7 +677,7 @@ TcpRetransmit (
 
   Nbuf = TcpGetSegmentSndQue (Tcb, Seq, Len);
   if (Nbuf == NULL) {
-    return -1;
+    return - 1;
   }
 
   if (TcpVerifySegment (Nbuf) == 0) {
@@ -732,7 +709,7 @@ OnError:
     NetbufFree (Nbuf);
   }
 
-  return -1;
+  return - 1;
 }
 
 /**
@@ -749,13 +726,14 @@ TcpCheckSndQue (
   IN LIST_ENTRY     *Head
   )
 {
-  LIST_ENTRY      *Entry;
-  NET_BUF         *Nbuf;
-  TCP_SEQNO       Seq;
+  LIST_ENTRY  *Entry;
+  NET_BUF     *Nbuf;
+  TCP_SEQNO   Seq;
 
   if (IsListEmpty (Head)) {
     return 1;
   }
+
   //
   // Initialize the Seq.
   //
@@ -800,20 +778,19 @@ TcpToSendData (
   IN     INTN   Force
   )
 {
-  UINT32    Len;
-  INTN      Sent;
-  UINT8     Flag;
-  NET_BUF   *Nbuf;
-  TCP_SEG   *Seg;
-  TCP_SEQNO Seq;
-  TCP_SEQNO End;
+  UINT32     Len;
+  INTN       Sent;
+  UINT8      Flag;
+  NET_BUF    *Nbuf;
+  TCP_SEG    *Seg;
+  TCP_SEQNO  Seq;
+  TCP_SEQNO  End;
 
   ASSERT ((Tcb != NULL) && (Tcb->Sk != NULL) && (Tcb->State != TCP_LISTEN));
 
   Sent = 0;
 
   if ((Tcb->State == TCP_CLOSED) || TCP_FLG_ON (Tcb->CtrlFlag, TCP_CTRL_FIN_SENT)) {
-
     return 0;
   }
 
@@ -821,14 +798,13 @@ TcpToSendData (
     //
     // Compute how much data can be sent
     //
-    Len   = TcpDataToSend (Tcb, Force);
-    Seq   = Tcb->SndNxt;
+    Len = TcpDataToSend (Tcb, Force);
+    Seq = Tcb->SndNxt;
 
     ASSERT ((Tcb->State) < (ARRAY_SIZE (mTcpOutFlag)));
-    Flag  = mTcpOutFlag[Tcb->State];
+    Flag = mTcpOutFlag[Tcb->State];
 
     if ((Flag & TCP_FLG_SYN) != 0) {
-
       Seq = Tcb->Iss;
       Len = 0;
     }
@@ -846,8 +822,8 @@ TcpToSendData (
     if (Nbuf == NULL) {
       DEBUG (
         (EFI_D_ERROR,
-        "TcpToSendData: failed to get a segment for TCB %p\n",
-        Tcb)
+         "TcpToSendData: failed to get a segment for TCB %p\n",
+         Tcb)
         );
 
       goto OnError;
@@ -872,12 +848,12 @@ TcpToSendData (
       if ((TcpGetMaxSndNxt (Tcb) == Tcb->SndNxt) &&
           (GET_SND_DATASIZE (Tcb->Sk) == 0) &&
           TCP_SEQ_LT (End + 1, Tcb->SndWnd + Tcb->SndWl2)
-            ) {
+          ) {
         DEBUG (
           (EFI_D_NET,
-          "TcpToSendData: send FIN to peer for TCB %p in state %s\n",
-          Tcb,
-          mTcpStateName[Tcb->State])
+           "TcpToSendData: send FIN to peer for TCB %p in state %s\n",
+           Tcb,
+           mTcpStateName[Tcb->State])
           );
 
         End++;
@@ -893,8 +869,8 @@ TcpToSendData (
     if (TcpVerifySegment (Nbuf) == 0 || TcpCheckSndQue (&Tcb->SndQue) == 0) {
       DEBUG (
         (EFI_D_ERROR,
-        "TcpToSendData: discard a broken segment for TCB %p\n",
-        Tcb)
+         "TcpToSendData: discard a broken segment for TCB %p\n",
+         Tcb)
         );
       goto OnError;
     }
@@ -905,8 +881,8 @@ TcpToSendData (
     if (Seg->End == Seg->Seq) {
       DEBUG (
         (EFI_D_WARN,
-        "TcpToSendData: created a empty segment for TCB %p, free it now\n",
-        Tcb)
+         "TcpToSendData: created a empty segment for TCB %p, free it now\n",
+         Tcb)
         );
 
       goto OnError;
@@ -916,7 +892,7 @@ TcpToSendData (
       NetbufTrim (Nbuf, (Nbuf->Tcp->HeadLen << 2), NET_BUF_HEAD);
       Nbuf->Tcp = NULL;
 
-      if ((Flag & TCP_FLG_FIN) != 0)  {
+      if ((Flag & TCP_FLG_FIN) != 0) {
         TCP_SET_FLG (Tcb->CtrlFlag, TCP_CTRL_FIN_SENT);
       }
 
@@ -957,19 +933,17 @@ TcpToSendData (
     // Karn's algorithm requires not to update RTT when in loss.
     //
     if ((Tcb->CongestState == TCP_CONGEST_OPEN) && !TCP_FLG_ON (Tcb->CtrlFlag, TCP_CTRL_RTT_ON)) {
-
       DEBUG (
         (EFI_D_NET,
-        "TcpToSendData: set RTT measure sequence %d for TCB %p\n",
-        Seq,
-        Tcb)
+         "TcpToSendData: set RTT measure sequence %d for TCB %p\n",
+         Seq,
+         Tcb)
         );
 
       TCP_SET_FLG (Tcb->CtrlFlag, TCP_CTRL_RTT_ON);
       Tcb->RttSeq     = Seq;
       Tcb->RttMeasure = 0;
     }
-
   } while (Len == Tcb->SndMss);
 
   return Sent;
@@ -993,8 +967,8 @@ TcpSendAck (
   IN OUT TCP_CB *Tcb
   )
 {
-  NET_BUF *Nbuf;
-  TCP_SEG *Seg;
+  NET_BUF  *Nbuf;
+  TCP_SEG  *Seg;
 
   Nbuf = NetbufAlloc (TCP_MAX_HEAD);
 
@@ -1004,7 +978,7 @@ TcpSendAck (
 
   NetbufReserve (Nbuf, TCP_MAX_HEAD);
 
-  Seg       = TCPSEG_NETBUF (Nbuf);
+  Seg = TCPSEG_NETBUF (Nbuf);
   Seg->Seq  = Tcb->SndNxt;
   Seg->End  = Tcb->SndNxt;
   Seg->Flag = TCP_FLG_ACK;
@@ -1031,14 +1005,14 @@ TcpSendZeroProbe (
   IN OUT TCP_CB *Tcb
   )
 {
-  NET_BUF *Nbuf;
-  TCP_SEG *Seg;
+  NET_BUF  *Nbuf;
+  TCP_SEG  *Seg;
   INTN     Result;
 
   Nbuf = NetbufAlloc (TCP_MAX_HEAD);
 
   if (Nbuf == NULL) {
-    return -1;
+    return - 1;
   }
 
   NetbufReserve (Nbuf, TCP_MAX_HEAD);
@@ -1047,12 +1021,12 @@ TcpSendZeroProbe (
   // SndNxt-1 is out of window. The peer should respond
   // with an ACK.
   //
-  Seg       = TCPSEG_NETBUF (Nbuf);
+  Seg = TCPSEG_NETBUF (Nbuf);
   Seg->Seq  = Tcb->SndNxt - 1;
   Seg->End  = Tcb->SndNxt - 1;
   Seg->Flag = TCP_FLG_ACK;
 
-  Result    = TcpTransmitSegment (Tcb, Nbuf);
+  Result = TcpTransmitSegment (Tcb, Nbuf);
   NetbufFree (Nbuf);
 
   return Result;
@@ -1069,13 +1043,13 @@ TcpToSendAck (
   IN OUT TCP_CB *Tcb
   )
 {
-  UINT32 TcpNow;
+  UINT32  TcpNow;
 
   //
   // Generally, TCP should send a delayed ACK unless:
-  //   1. ACK at least every other FULL sized segment received.
-  //   2. Packets received out of order.
-  //   3. Receiving window is open.
+  // 1. ACK at least every other FULL sized segment received.
+  // 2. Packets received out of order.
+  // 3. Receiving window is open.
   //
   if (TCP_FLG_ON (Tcb->CtrlFlag, TCP_CTRL_ACK_NOW) || (Tcb->DelayedAck >= 1)) {
     TcpSendAck (Tcb);
@@ -1091,8 +1065,8 @@ TcpToSendAck (
 
   DEBUG (
     (EFI_D_NET,
-    "TcpToSendAck: scheduled a delayed ACK for TCB %p\n",
-    Tcb)
+     "TcpToSendAck: scheduled a delayed ACK for TCB %p\n",
+     Tcb)
     );
 
   //
@@ -1140,10 +1114,10 @@ TcpSendReset (
   Nbuf = NetbufAlloc (TCP_MAX_HEAD);
 
   if (Nbuf == NULL) {
-    return -1;
+    return - 1;
   }
 
-  Nhead = (TCP_HEAD *) NetbufAllocSpace (
+  Nhead = (TCP_HEAD *)NetbufAllocSpace (
                         Nbuf,
                         sizeof (TCP_HEAD),
                         NET_BUF_TAIL
@@ -1159,25 +1133,23 @@ TcpSendReset (
   // is associated with it, otherwise derive from the Tcb.
   //
   if (Tcb == NULL) {
-
     if (TCP_FLG_ON (Head->Flag, TCP_FLG_ACK)) {
-      Nhead->Seq  = Head->Ack;
-      Nhead->Ack  = 0;
+      Nhead->Seq = Head->Ack;
+      Nhead->Ack = 0;
     } else {
       Nhead->Seq = 0;
       TCP_SET_FLG (Nhead->Flag, TCP_FLG_ACK);
       Nhead->Ack = HTONL (NTOHL (Head->Seq) + Len);
     }
   } else {
-
-    Nhead->Seq  = HTONL (Tcb->SndNxt);
-    Nhead->Ack  = HTONL (Tcb->RcvNxt);
+    Nhead->Seq = HTONL (Tcb->SndNxt);
+    Nhead->Ack = HTONL (Tcb->RcvNxt);
     TCP_SET_FLG (Nhead->Flag, TCP_FLG_ACK);
   }
 
   Nhead->SrcPort  = Head->DstPort;
   Nhead->DstPort  = Head->SrcPort;
-  Nhead->HeadLen  = (UINT8) (sizeof (TCP_HEAD) >> 2);
+  Nhead->HeadLen  = (UINT8)(sizeof (TCP_HEAD) >> 2);
   Nhead->Res      = 0;
   Nhead->Wnd      = HTONS (0xFFFF);
   Nhead->Checksum = 0;
@@ -1222,9 +1194,9 @@ TcpVerifySegment (
 
   NET_CHECK_SIGNATURE (Nbuf, NET_BUF_SIGNATURE);
 
-  Seg   = TCPSEG_NETBUF (Nbuf);
-  Len   = Nbuf->TotalSize;
-  Head  = Nbuf->Tcp;
+  Seg  = TCPSEG_NETBUF (Nbuf);
+  Len  = Nbuf->TotalSize;
+  Head = Nbuf->Tcp;
 
   if (Head != NULL) {
     if (Head->Flag != Seg->Flag) {
@@ -1248,4 +1220,3 @@ TcpVerifySegment (
 
   return 1;
 }
-

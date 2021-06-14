@@ -62,7 +62,7 @@
 //
 // Driver Version
 //
-#define HTTP_DRIVER_VERSION 0xa
+#define HTTP_DRIVER_VERSION  0xa
 
 //
 // Protocol instances
@@ -70,8 +70,8 @@
 extern EFI_DRIVER_BINDING_PROTOCOL  gHttpDxeIp4DriverBinding;
 extern EFI_DRIVER_BINDING_PROTOCOL  gHttpDxeIp6DriverBinding;
 
-extern EFI_COMPONENT_NAME2_PROTOCOL gHttpDxeComponentName2;
-extern EFI_COMPONENT_NAME_PROTOCOL  gHttpDxeComponentName;
+extern EFI_COMPONENT_NAME2_PROTOCOL  gHttpDxeComponentName2;
+extern EFI_COMPONENT_NAME_PROTOCOL   gHttpDxeComponentName;
 
 extern EFI_HTTP_UTILITIES_PROTOCOL  *mHttpUtilities;
 
@@ -85,9 +85,9 @@ extern EFI_HTTP_UTILITIES_PROTOCOL  *mHttpUtilities;
 #include "HttpDns.h"
 
 typedef struct {
-  EFI_SERVICE_BINDING_PROTOCOL  *ServiceBinding;
-  UINTN                         NumberOfChildren;
-  EFI_HANDLE                    *ChildHandleBuffer;
+  EFI_SERVICE_BINDING_PROTOCOL    *ServiceBinding;
+  UINTN                           NumberOfChildren;
+  EFI_HANDLE                      *ChildHandleBuffer;
 } HTTP_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT;
 
 /**

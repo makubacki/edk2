@@ -43,9 +43,9 @@ TlsConfigurationSetData (
   IN     UINTN                           DataSize
   )
 {
-  EFI_STATUS                Status;
-  TLS_INSTANCE              *Instance;
-  EFI_TPL                   OldTpl;
+  EFI_STATUS    Status;
+  TLS_INSTANCE  *Instance;
+  EFI_TPL       OldTpl;
 
   Status = EFI_SUCCESS;
 
@@ -58,20 +58,20 @@ TlsConfigurationSetData (
   Instance = TLS_INSTANCE_FROM_CONFIGURATION (This);
 
   switch (DataType) {
-  case EfiTlsConfigDataTypeCACertificate:
-    Status = TlsSetCaCertificate (Instance->TlsConn, Data, DataSize);
-    break;
-  case EfiTlsConfigDataTypeHostPublicCert:
-    Status = TlsSetHostPublicCert (Instance->TlsConn, Data, DataSize);
-    break;
-  case EfiTlsConfigDataTypeHostPrivateKey:
-    Status = TlsSetHostPrivateKey (Instance->TlsConn, Data, DataSize);
-    break;
-  case EfiTlsConfigDataTypeCertRevocationList:
-    Status = TlsSetCertRevocationList (Data, DataSize);
-    break;
-  default:
-     Status = EFI_UNSUPPORTED;
+    case EfiTlsConfigDataTypeCACertificate:
+      Status = TlsSetCaCertificate (Instance->TlsConn, Data, DataSize);
+      break;
+    case EfiTlsConfigDataTypeHostPublicCert:
+      Status = TlsSetHostPublicCert (Instance->TlsConn, Data, DataSize);
+      break;
+    case EfiTlsConfigDataTypeHostPrivateKey:
+      Status = TlsSetHostPrivateKey (Instance->TlsConn, Data, DataSize);
+      break;
+    case EfiTlsConfigDataTypeCertRevocationList:
+      Status = TlsSetCertRevocationList (Data, DataSize);
+      break;
+    default:
+      Status = EFI_UNSUPPORTED;
   }
 
   gBS->RestoreTPL (OldTpl);
@@ -109,10 +109,10 @@ TlsConfigurationGetData (
   IN OUT UINTN                           *DataSize
   )
 {
-  EFI_STATUS                Status;
-  TLS_INSTANCE              *Instance;
+  EFI_STATUS    Status;
+  TLS_INSTANCE  *Instance;
 
-  EFI_TPL                   OldTpl;
+  EFI_TPL  OldTpl;
 
   Status = EFI_SUCCESS;
 
@@ -125,23 +125,22 @@ TlsConfigurationGetData (
   Instance = TLS_INSTANCE_FROM_CONFIGURATION (This);
 
   switch (DataType) {
-  case EfiTlsConfigDataTypeCACertificate:
-    Status = TlsGetCaCertificate (Instance->TlsConn, Data, DataSize);
-    break;
-  case EfiTlsConfigDataTypeHostPublicCert:
-    Status = TlsGetHostPublicCert (Instance->TlsConn, Data, DataSize);
-    break;
-  case EfiTlsConfigDataTypeHostPrivateKey:
-    Status = TlsGetHostPrivateKey (Instance->TlsConn, Data, DataSize);
-    break;
-  case EfiTlsConfigDataTypeCertRevocationList:
-    Status = TlsGetCertRevocationList (Data, DataSize);
-    break;
-  default:
-    Status = EFI_UNSUPPORTED;
+    case EfiTlsConfigDataTypeCACertificate:
+      Status = TlsGetCaCertificate (Instance->TlsConn, Data, DataSize);
+      break;
+    case EfiTlsConfigDataTypeHostPublicCert:
+      Status = TlsGetHostPublicCert (Instance->TlsConn, Data, DataSize);
+      break;
+    case EfiTlsConfigDataTypeHostPrivateKey:
+      Status = TlsGetHostPrivateKey (Instance->TlsConn, Data, DataSize);
+      break;
+    case EfiTlsConfigDataTypeCertRevocationList:
+      Status = TlsGetCertRevocationList (Data, DataSize);
+      break;
+    default:
+      Status = EFI_UNSUPPORTED;
   }
 
   gBS->RestoreTPL (OldTpl);
   return Status;
 }
-

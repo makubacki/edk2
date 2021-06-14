@@ -6,7 +6,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
-
 #include "Udp4Impl.h"
 
 UINT16  mUdp4RandomPort;
@@ -246,7 +245,6 @@ Udp4SendPortUnreach (
   IN VOID                  *Udp4Header
   );
 
-
 /**
   Create the Udp service context data.
 
@@ -267,13 +265,13 @@ Udp4CreateService (
   IN     EFI_HANDLE         ControllerHandle
   )
 {
-  EFI_STATUS          Status;
-  IP_IO_OPEN_DATA     OpenData;
-  EFI_IP4_CONFIG_DATA *Ip4ConfigData;
+  EFI_STATUS           Status;
+  IP_IO_OPEN_DATA      OpenData;
+  EFI_IP4_CONFIG_DATA  *Ip4ConfigData;
 
   ZeroMem (Udp4Service, sizeof (UDP4_SERVICE_DATA));
 
-  Udp4Service->Signature        = UDP4_SERVICE_DATA_SIGNATURE;
+  Udp4Service->Signature = UDP4_SERVICE_DATA_SIGNATURE;
   Udp4Service->ServiceBinding   = mUdp4ServiceBinding;
   Udp4Service->ImageHandle      = ImageHandle;
   Udp4Service->ControllerHandle = ControllerHandle;
@@ -295,10 +293,10 @@ Udp4CreateService (
   Ip4ConfigData = &OpenData.IpConfigData.Ip4CfgData;
   CopyMem (Ip4ConfigData, &mIp4IoDefaultIpConfigData, sizeof (EFI_IP4_CONFIG_DATA));
   Ip4ConfigData->AcceptBroadcast = TRUE;
-  OpenData.RcvdContext           = (VOID *) Udp4Service;
-  OpenData.SndContext            = NULL;
-  OpenData.PktRcvdNotify         = Udp4DgramRcvd;
-  OpenData.PktSentNotify         = Udp4DgramSent;
+  OpenData.RcvdContext   = (VOID *)Udp4Service;
+  OpenData.SndContext    = NULL;
+  OpenData.PktRcvdNotify = Udp4DgramRcvd;
+  OpenData.PktSentNotify = Udp4DgramSent;
 
   //
   // Configure and start the IpIo.
@@ -347,7 +345,6 @@ ON_ERROR:
   return Status;
 }
 
-
 /**
   Clean the Udp service context data.
 
@@ -375,7 +372,6 @@ Udp4CleanService (
   IpIoDestroy (Udp4Service->IpIo);
 }
 
-
 /**
   This function checks and timeouts the I/O datagrams holding by the corresponding
   service context.
@@ -399,7 +395,7 @@ Udp4CheckTimeout (
   LIST_ENTRY          *NextEntry;
   UDP4_RXDATA_WRAP    *Wrap;
 
-  Udp4Service = (UDP4_SERVICE_DATA *) Context;
+  Udp4Service = (UDP4_SERVICE_DATA *)Context;
   NET_CHECK_SIGNATURE (Udp4Service, UDP4_SERVICE_DATA_SIGNATURE);
 
   NET_LIST_FOR_EACH (Entry, &Udp4Service->ChildrenList) {
@@ -429,14 +425,13 @@ Udp4CheckTimeout (
         //
         // Remove this RxData if it timeouts.
         //
-        Udp4RecycleRxDataWrap (NULL, (VOID *) Wrap);
+        Udp4RecycleRxDataWrap (NULL, (VOID *)Wrap);
       } else {
         Wrap->TimeoutTick -= (UDP4_TIMEOUT_INTERVAL / 10);
       }
     }
   }
 }
-
 
 /**
   This function initializes the new created udp instance.
@@ -481,7 +476,6 @@ Udp4InitInstance (
   Instance->InDestroy   = FALSE;
 }
 
-
 /**
   This function cleans the udp instance.
 
@@ -497,7 +491,6 @@ Udp4CleanInstance (
   NetMapClean (&Instance->RxTokens);
   NetMapClean (&Instance->TxTokens);
 }
-
 
 /**
   This function finds the udp instance by the specified <Address, Port> pair.
@@ -538,7 +531,7 @@ Udp4FindInstanceByPort (
     }
 
     if (EFI_IP4_EQUAL (&ConfigData->StationAddress, Address) &&
-      (ConfigData->StationPort == Port)) {
+        (ConfigData->StationPort == Port)) {
       //
       // if both the address and the port are the same, return TRUE.
       //
@@ -551,7 +544,6 @@ Udp4FindInstanceByPort (
   //
   return FALSE;
 }
-
 
 /**
   This function tries to bind the udp instance according to the configured port
@@ -585,9 +577,8 @@ Udp4Bind (
   StationAddress = &ConfigData->StationAddress;
 
   if (ConfigData->StationPort != 0) {
-
     if (!ConfigData->AllowDuplicatePort &&
-      Udp4FindInstanceByPort (InstanceList, StationAddress, ConfigData->StationPort)) {
+        Udp4FindInstanceByPort (InstanceList, StationAddress, ConfigData->StationPort)) {
       //
       // Do not allow duplicate port and the port is already used by other instance.
       //
@@ -604,11 +595,9 @@ Udp4Bind (
       //
       ConfigData->StationPort = mUdp4RandomPort;
     } else {
-
       StartPort = mUdp4RandomPort;
 
-      while (Udp4FindInstanceByPort(InstanceList, StationAddress, mUdp4RandomPort)) {
-
+      while (Udp4FindInstanceByPort (InstanceList, StationAddress, mUdp4RandomPort)) {
         mUdp4RandomPort++;
         if (mUdp4RandomPort == 0) {
           mUdp4RandomPort = UDP4_PORT_KNOWN;
@@ -633,7 +622,6 @@ Udp4Bind (
 
   return EFI_SUCCESS;
 }
-
 
 /**
   This function is used to check whether the NewConfigData has any un-reconfigurable
@@ -674,7 +662,6 @@ Udp4IsReconfigurable (
   }
 
   if (!NewConfigData->AcceptPromiscuous) {
-
     if (NewConfigData->UseDefaultAddress != OldConfigData->UseDefaultAddress) {
       //
       // The NewConfigData differs to the old one on the UseDefaultAddress.
@@ -716,7 +703,6 @@ Udp4IsReconfigurable (
   return TRUE;
 }
 
-
 /**
   This function builds the Ip4 configdata from the Udp4ConfigData.
 
@@ -742,9 +728,8 @@ Udp4BuildIp4ConfigData (
   //
   // use the -1 magic number to disable the receiving process of the ip instance.
   //
-  Ip4ConfigData->ReceiveTimeout    = (UINT32) (-1);
+  Ip4ConfigData->ReceiveTimeout = (UINT32)(- 1);
 }
-
 
 /**
   This function validates the TxToken, it returns the error code according to the spec.
@@ -798,9 +783,8 @@ Udp4ValidateTxToken (
 
   TotalLen = 0;
   for (Index = 0; Index < TxData->FragmentCount; Index++) {
-
     if ((TxData->FragmentTable[Index].FragmentBuffer == NULL) ||
-      (TxData->FragmentTable[Index].FragmentLength == 0)) {
+        (TxData->FragmentTable[Index].FragmentLength == 0)) {
       //
       // if the FragmentBuffer is NULL or the FragmentLeng is zero.
       //
@@ -822,8 +806,8 @@ Udp4ValidateTxToken (
     CopyMem (&GatewayAddress, TxData->GatewayAddress, sizeof (IP4_ADDR));
 
     if (!Instance->ConfigData.UseDefaultAddress &&
-        (EFI_NTOHL(Instance->ConfigData.SubnetMask) != 0) &&
-        !NetIp4IsUnicast (NTOHL (GatewayAddress), EFI_NTOHL(Instance->ConfigData.SubnetMask))) {
+        (EFI_NTOHL (Instance->ConfigData.SubnetMask) != 0) &&
+        !NetIp4IsUnicast (NTOHL (GatewayAddress), EFI_NTOHL (Instance->ConfigData.SubnetMask))) {
       //
       // The specified GatewayAddress is not a unicast IPv4 address while it's not 0.
       //
@@ -835,13 +819,12 @@ Udp4ValidateTxToken (
   UdpSessionData = TxData->UdpSessionData;
 
   if (UdpSessionData != NULL) {
-
     CopyMem (&SourceAddress, &UdpSessionData->SourceAddress, sizeof (IP4_ADDR));
 
     if ((SourceAddress != 0) &&
         !Instance->ConfigData.UseDefaultAddress &&
-        (EFI_NTOHL(Instance->ConfigData.SubnetMask) != 0) &&
-        !NetIp4IsUnicast (HTONL (SourceAddress), EFI_NTOHL(Instance->ConfigData.SubnetMask))) {
+        (EFI_NTOHL (Instance->ConfigData.SubnetMask) != 0) &&
+        !NetIp4IsUnicast (HTONL (SourceAddress), EFI_NTOHL (Instance->ConfigData.SubnetMask))) {
       //
       // Check whether SourceAddress is a valid IPv4 address in case it's not zero.
       // The configured station address is used if SourceAddress is zero.
@@ -877,7 +860,6 @@ Udp4ValidateTxToken (
   return EFI_SUCCESS;
 }
 
-
 /**
   This function checks whether the specified Token duplicates with the one in the Map.
 
@@ -902,8 +884,8 @@ Udp4TokenExist (
   EFI_UDP4_COMPLETION_TOKEN  *Token;
   EFI_UDP4_COMPLETION_TOKEN  *TokenInItem;
 
-  Token       = (EFI_UDP4_COMPLETION_TOKEN*) Context;
-  TokenInItem = (EFI_UDP4_COMPLETION_TOKEN*) Item->Key;
+  Token = (EFI_UDP4_COMPLETION_TOKEN *)Context;
+  TokenInItem = (EFI_UDP4_COMPLETION_TOKEN *)Item->Key;
 
   if ((Token == TokenInItem) || (Token->Event == TokenInItem->Event)) {
     //
@@ -915,7 +897,6 @@ Udp4TokenExist (
 
   return EFI_SUCCESS;
 }
-
 
 /**
   This function calculates the checksum for the Packet, utilizing the pre-calculated
@@ -936,14 +917,13 @@ Udp4Checksum (
 {
   UINT16  Checksum;
 
-  Checksum  = NetbufChecksum (Packet);
-  Checksum  = NetAddChecksum (Checksum, HeadSum);
+  Checksum = NetbufChecksum (Packet);
+  Checksum = NetAddChecksum (Checksum, HeadSum);
 
-  Checksum  = NetAddChecksum (Checksum, HTONS ((UINT16) Packet->TotalSize));
+  Checksum = NetAddChecksum (Checksum, HTONS ((UINT16)Packet->TotalSize));
 
   return (UINT16) ~Checksum;
 }
-
 
 /**
   This function removes the specified Token from the TokenMap.
@@ -966,7 +946,7 @@ Udp4RemoveToken (
   //
   // Find the Token first.
   //
-  Item = NetMapFindKey (TokenMap, (VOID *) Token);
+  Item = NetMapFindKey (TokenMap, (VOID *)Token);
 
   if (Item != NULL) {
     //
@@ -979,7 +959,6 @@ Udp4RemoveToken (
 
   return EFI_NOT_FOUND;
 }
-
 
 /**
   This function is the packet transmitting notify function registered to the IpIo
@@ -1004,8 +983,8 @@ Udp4DgramSent (
   UDP4_INSTANCE_DATA         *Instance;
   EFI_UDP4_COMPLETION_TOKEN  *Token;
 
-  Instance = (UDP4_INSTANCE_DATA *) Context;
-  Token    = (EFI_UDP4_COMPLETION_TOKEN *) NotifyData;
+  Instance = (UDP4_INSTANCE_DATA *)Context;
+  Token    = (EFI_UDP4_COMPLETION_TOKEN *)NotifyData;
 
   if (Udp4RemoveToken (&Instance->TxTokens, Token) == EFI_SUCCESS) {
     //
@@ -1016,7 +995,6 @@ Udp4DgramSent (
     DispatchDpc ();
   }
 }
-
 
 /**
   This function processes the received datagram passed up by the IpIo layer.
@@ -1049,12 +1027,12 @@ Udp4DgramRcvd (
     //
     // Demultiplex the received datagram.
     //
-    Udp4Demultiplex ((UDP4_SERVICE_DATA *) Context, NetSession, Packet);
+    Udp4Demultiplex ((UDP4_SERVICE_DATA *)Context, NetSession, Packet);
   } else {
     //
     // Handle the ICMP_ERROR packet.
     //
-    Udp4IcmpHandler ((UDP4_SERVICE_DATA *) Context, IcmpError, NetSession, Packet);
+    Udp4IcmpHandler ((UDP4_SERVICE_DATA *)Context, IcmpError, NetSession, Packet);
   }
 
   //
@@ -1063,7 +1041,6 @@ Udp4DgramRcvd (
   //
   DispatchDpc ();
 }
-
 
 /**
   This function removes the multicast group specified by Arg from the Map.
@@ -1113,7 +1090,6 @@ Udp4LeaveGroup (
   return EFI_SUCCESS;
 }
 
-
 /**
   This function cancels the token specified by Arg in the Map. This is a callback
   used by Udp4InstanceCancelToken().
@@ -1153,15 +1129,15 @@ Udp4CancelTokens (
     // will invoke Udp4DgramSent, the token will be signaled and this Item will
     // be removed from the Map there.
     //
-    Packet = (NET_BUF *) (Item->Value);
-    IpIo   = (IP_IO *) (*((UINTN *) &Packet->ProtoData[0]));
+    Packet = (NET_BUF *)(Item->Value);
+    IpIo   = (IP_IO *)(*((UINTN *)&Packet->ProtoData[0]));
 
     IpIoCancelTxToken (IpIo, Packet);
   } else {
     //
     // The token is a receive token. Abort it and remove it from the Map.
     //
-    TokenToCancel = (EFI_UDP4_COMPLETION_TOKEN *) Item->Key;
+    TokenToCancel = (EFI_UDP4_COMPLETION_TOKEN *)Item->Key;
     NetMapRemoveItem (Map, Item, NULL);
 
     TokenToCancel->Status = EFI_ABORTED;
@@ -1174,7 +1150,6 @@ Udp4CancelTokens (
 
   return EFI_SUCCESS;
 }
-
 
 /**
   This function removes all the Wrap datas in the RcvdDgramQue.
@@ -1198,11 +1173,9 @@ Udp4FlushRcvdDgram (
     //
     // The Wrap will be removed from the RcvdDgramQue by this function call.
     //
-    Udp4RecycleRxDataWrap (NULL, (VOID *) Wrap);
+    Udp4RecycleRxDataWrap (NULL, (VOID *)Wrap);
   }
 }
-
-
 
 /**
   Cancel Udp4 tokens from the Udp4 instance.
@@ -1250,12 +1223,13 @@ Udp4InstanceCancelToken (
     return EFI_NOT_FOUND;
   }
 
-  ASSERT ((Token != NULL) || ((0 == NetMapGetCount (&Instance->TxTokens))
-    && (0 == NetMapGetCount (&Instance->RxTokens))));
+  ASSERT (
+    (Token != NULL) || (  (0 == NetMapGetCount (&Instance->TxTokens))
+                       && (0 == NetMapGetCount (&Instance->RxTokens)))
+    );
 
   return EFI_SUCCESS;
 }
-
 
 /**
   This function matches the received udp datagram with the Instance.
@@ -1325,7 +1299,7 @@ Udp4MatchDgram (
   }
 
   if (IP4_IS_MULTICAST (NTOHL (Destination)) &&
-      NetMapFindKey (&Instance->McastIps, (VOID *) (UINTN) Destination) != NULL
+      NetMapFindKey (&Instance->McastIps, (VOID *)(UINTN)Destination) != NULL
       ) {
     //
     // It's a multicast packet and the multicast address is accepted by this instance.
@@ -1335,7 +1309,6 @@ Udp4MatchDgram (
 
   return FALSE;
 }
-
 
 /**
   This function removes the Wrap specified by Context and release relevant resources.
@@ -1353,7 +1326,7 @@ Udp4RecycleRxDataWrap (
 {
   UDP4_RXDATA_WRAP  *Wrap;
 
-  Wrap = (UDP4_RXDATA_WRAP *) Context;
+  Wrap = (UDP4_RXDATA_WRAP *)Context;
 
   //
   // Remove the Wrap from the list it belongs to.
@@ -1372,7 +1345,6 @@ Udp4RecycleRxDataWrap (
 
   FreePool (Wrap);
 }
-
 
 /**
   This function wraps the Packet and the RxData.
@@ -1393,14 +1365,16 @@ Udp4WrapRxData (
   IN EFI_UDP4_RECEIVE_DATA  *RxData
   )
 {
-  EFI_STATUS            Status;
-  UDP4_RXDATA_WRAP      *Wrap;
+  EFI_STATUS        Status;
+  UDP4_RXDATA_WRAP  *Wrap;
 
   //
   // Allocate buffer for the Wrap.
   //
-  Wrap = AllocatePool (sizeof (UDP4_RXDATA_WRAP) +
-         (Packet->BlockOpNum - 1) * sizeof (EFI_UDP4_FRAGMENT_DATA));
+  Wrap = AllocatePool (
+           sizeof (UDP4_RXDATA_WRAP) +
+           (Packet->BlockOpNum - 1) * sizeof (EFI_UDP4_FRAGMENT_DATA)
+           );
   if (Wrap == NULL) {
     return NULL;
   }
@@ -1424,12 +1398,11 @@ Udp4WrapRxData (
     return NULL;
   }
 
-  Wrap->Packet      = Packet;
+  Wrap->Packet = Packet;
   Wrap->TimeoutTick = Instance->ConfigData.ReceiveTimeout;
 
   return Wrap;
 }
-
 
 /**
   This function enqueues the received datagram into the instances' receiving queues.
@@ -1487,7 +1460,6 @@ Udp4EnqueueDgram (
   return Enqueued;
 }
 
-
 /**
   This function delivers the received datagrams for the specified instance.
 
@@ -1507,7 +1479,6 @@ Udp4InstanceDeliverDgram (
 
   if (!IsListEmpty (&Instance->RcvdDgramQue) &&
       !NetMapIsEmpty (&Instance->RxTokens)) {
-
     Wrap = NET_LIST_HEAD (&Instance->RcvdDgramQue, UDP4_RXDATA_WRAP, Link);
 
     if (NET_BUF_SHARED (Wrap->Packet)) {
@@ -1526,21 +1497,21 @@ Udp4InstanceDeliverDgram (
 
     NetListRemoveHead (&Instance->RcvdDgramQue);
 
-    Token = (EFI_UDP4_COMPLETION_TOKEN *) NetMapRemoveHead (&Instance->RxTokens, NULL);
+    Token = (EFI_UDP4_COMPLETION_TOKEN *)NetMapRemoveHead (&Instance->RxTokens, NULL);
 
     //
     // Build the FragmentTable and set the FragmentCount in RxData.
     //
-    RxData                = &Wrap->RxData;
+    RxData = &Wrap->RxData;
     RxData->FragmentCount = Wrap->Packet->BlockOpNum;
 
     NetbufBuildExt (
       Wrap->Packet,
-      (NET_FRAGMENT *) RxData->FragmentTable,
+      (NET_FRAGMENT *)RxData->FragmentTable,
       &RxData->FragmentCount
       );
 
-    Token->Status        = EFI_SUCCESS;
+    Token->Status = EFI_SUCCESS;
     Token->Packet.RxData = &Wrap->RxData;
 
     OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
@@ -1550,7 +1521,6 @@ Udp4InstanceDeliverDgram (
     gBS->SignalEvent (Token->Event);
   }
 }
-
 
 /**
   This function delivers the datagrams enqueued in the instances.
@@ -1583,7 +1553,6 @@ Udp4DeliverDgram (
   }
 }
 
-
 /**
   This function demultiplexes the received udp datagram to the appropriate instances.
 
@@ -1601,7 +1570,7 @@ Udp4Demultiplex (
   IN NET_BUF               *Packet
   )
 {
-  EFI_UDP_HEADER        *Udp4Header;
+  EFI_UDP_HEADER         *Udp4Header;
   UINT16                 HeadSum;
   EFI_UDP4_RECEIVE_DATA  RxData;
   EFI_UDP4_SESSION_DATA  *Udp4Session;
@@ -1615,7 +1584,7 @@ Udp4Demultiplex (
   //
   // Get the datagram header from the packet buffer.
   //
-  Udp4Header = (EFI_UDP_HEADER *) NetbufGetByte (Packet, 0, NULL);
+  Udp4Header = (EFI_UDP_HEADER *)NetbufGetByte (Packet, 0, NULL);
   ASSERT (Udp4Header != NULL);
 
   if (Udp4Header->Checksum != 0) {
@@ -1638,8 +1607,8 @@ Udp4Demultiplex (
     }
   }
 
-  Udp4Session                  = &RxData.UdpSession;
-  Udp4Session->SourcePort      = NTOHS (Udp4Header->SrcPort);
+  Udp4Session = &RxData.UdpSession;
+  Udp4Session->SourcePort = NTOHS (Udp4Header->SrcPort);
   Udp4Session->DestinationPort = NTOHS (Udp4Header->DstPort);
 
   CopyMem (&Udp4Session->SourceAddress, &NetSession->Source, sizeof (EFI_IPv4_ADDRESS));
@@ -1650,7 +1619,7 @@ Udp4Demultiplex (
   //
   NetbufTrim (Packet, UDP4_HEADER_SIZE, TRUE);
 
-  RxData.DataLength = (UINT32) Packet->TotalSize;
+  RxData.DataLength = (UINT32)Packet->TotalSize;
 
   //
   // Try to enqueue this datagram into the instances.
@@ -1676,7 +1645,6 @@ Udp4Demultiplex (
     Udp4DeliverDgram (Udp4Service);
   }
 }
-
 
 /**
   This function builds and sends out a icmp port unreachable message.
@@ -1718,7 +1686,7 @@ Udp4SendPortUnreach (
   // Calculate the required length of the icmp error message.
   //
   Len = sizeof (IP4_ICMP_ERROR_HEAD) + (EFI_IP4_HEADER_LEN (IpHdr) -
-        sizeof (IP4_HEAD)) + ICMP_ERROR_PACKET_LENGTH;
+                                        sizeof (IP4_HEAD)) + ICMP_ERROR_PACKET_LENGTH;
 
   //
   // Allocate buffer for the icmp error message.
@@ -1731,7 +1699,7 @@ Udp4SendPortUnreach (
   //
   // Allocate space for the IP4_ICMP_ERROR_HEAD.
   //
-  IcmpErrHdr = (IP4_ICMP_ERROR_HEAD *) NetbufAllocSpace (Packet, Len, FALSE);
+  IcmpErrHdr = (IP4_ICMP_ERROR_HEAD *)NetbufAllocSpace (Packet, Len, FALSE);
   ASSERT (IcmpErrHdr != NULL);
 
   //
@@ -1740,7 +1708,7 @@ Udp4SendPortUnreach (
   IcmpErrHdr->Head.Type     = ICMP_TYPE_UNREACH;
   IcmpErrHdr->Head.Code     = ICMP_CODE_UNREACH_PORT;
   IcmpErrHdr->Head.Checksum = 0;
-  IcmpErrHdr->Fourth        = 0;
+  IcmpErrHdr->Fourth = 0;
 
   //
   // Copy the IP header of the datagram tragged the error.
@@ -1750,7 +1718,7 @@ Udp4SendPortUnreach (
   //
   // Copy the UDP header.
   //
-  Ptr = (UINT8 *) &IcmpErrHdr->IpHead + EFI_IP4_HEADER_LEN (IpHdr);
+  Ptr = (UINT8 *)&IcmpErrHdr->IpHead + EFI_IP4_HEADER_LEN (IpHdr);
   CopyMem (Ptr, Udp4Header, ICMP_ERROR_PACKET_LENGTH);
 
   //
@@ -1764,7 +1732,7 @@ Udp4SendPortUnreach (
   Override.Ip4OverrideData.DoNotFragment = FALSE;
   Override.Ip4OverrideData.TypeOfService = 0;
   Override.Ip4OverrideData.TimeToLive    = 255;
-  Override.Ip4OverrideData.Protocol      = EFI_IP_PROTO_ICMP;
+  Override.Ip4OverrideData.Protocol = EFI_IP_PROTO_ICMP;
 
   CopyMem (&Override.Ip4OverrideData.SourceAddress, &NetSession->Dest, sizeof (EFI_IPv4_ADDRESS));
   ZeroMem (&Override.Ip4OverrideData.GatewayAddress, sizeof (EFI_IPv4_ADDRESS));
@@ -1776,7 +1744,6 @@ Udp4SendPortUnreach (
 
   NetbufFree (Packet);
 }
-
 
 /**
   This function handles the received Icmp Error message and demultiplexes it to the
@@ -1797,7 +1764,7 @@ Udp4IcmpHandler (
   IN NET_BUF               *Packet
   )
 {
-  EFI_UDP_HEADER        *Udp4Header;
+  EFI_UDP_HEADER         *Udp4Header;
   EFI_UDP4_SESSION_DATA  Udp4Session;
   LIST_ENTRY             *Entry;
   UDP4_INSTANCE_DATA     *Instance;
@@ -1807,13 +1774,13 @@ Udp4IcmpHandler (
     return;
   }
 
-  Udp4Header = (EFI_UDP_HEADER *) NetbufGetByte (Packet, 0, NULL);
+  Udp4Header = (EFI_UDP_HEADER *)NetbufGetByte (Packet, 0, NULL);
   ASSERT (Udp4Header != NULL);
 
   CopyMem (&Udp4Session.SourceAddress, &NetSession->Source, sizeof (EFI_IPv4_ADDRESS));
   CopyMem (&Udp4Session.DestinationAddress, &NetSession->Dest, sizeof (EFI_IPv4_ADDRESS));
 
-  Udp4Session.SourcePort      = NTOHS (Udp4Header->DstPort);
+  Udp4Session.SourcePort = NTOHS (Udp4Header->DstPort);
   Udp4Session.DestinationPort = NTOHS (Udp4Header->SrcPort);
 
   NET_LIST_FOR_EACH (Entry, &Udp4Service->ChildrenList) {
@@ -1848,7 +1815,6 @@ Udp4IcmpHandler (
   NetbufFree (Packet);
 }
 
-
 /**
   This function reports the received ICMP error.
 
@@ -1873,7 +1839,7 @@ Udp4ReportIcmpError (
     //
     // Try to get a RxToken from the RxTokens map.
     //
-    Token = (EFI_UDP4_COMPLETION_TOKEN *) NetMapRemoveHead (&Instance->RxTokens, NULL);
+    Token = (EFI_UDP4_COMPLETION_TOKEN *)NetMapRemoveHead (&Instance->RxTokens, NULL);
 
     if (Token != NULL) {
       //
@@ -1890,7 +1856,6 @@ Udp4ReportIcmpError (
   }
 }
 
-
 /**
   This function is a dummy ext-free function for the NET_BUF created for the output
   udp datagram.
@@ -1905,4 +1870,3 @@ Udp4NetVectorExtFree (
   )
 {
 }
-

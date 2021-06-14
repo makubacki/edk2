@@ -10,7 +10,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 UINT16  mIp4Id;
 
-
 /**
   Prepend an IP4 head to the Packet. It will copy the options and
   build the IP4 header fields. Used for IP4 fragmentation.
@@ -37,15 +36,15 @@ Ip4PrependHead (
   IN     UINT32                 OptLen
   )
 {
-  UINT32                    HeadLen;
-  UINT32                    Len;
-  IP4_HEAD                  *PacketHead;
-  BOOLEAN                   FirstFragment;
+  UINT32    HeadLen;
+  UINT32    Len;
+  IP4_HEAD  *PacketHead;
+  BOOLEAN   FirstFragment;
 
   //
   // Prepend the options: first get the option length, then copy it over.
   //
-  HeadLen       = 0;
+  HeadLen = 0;
   FirstFragment = IP4_FIRST_FRAGMENT (Head->Fragment);
 
   Ip4CopyOption (Option, OptLen, FirstFragment, NULL, &Len);
@@ -53,34 +52,33 @@ Ip4PrependHead (
   HeadLen = IP4_MIN_HEADLEN + Len;
   ASSERT (((Len % 4) == 0) && (HeadLen <= IP4_MAX_HEADLEN));
 
-  PacketHead = (IP4_HEAD *) NetbufAllocSpace (Packet, HeadLen, NET_BUF_HEAD);
+  PacketHead = (IP4_HEAD *)NetbufAllocSpace (Packet, HeadLen, NET_BUF_HEAD);
 
   if (PacketHead == NULL) {
     return EFI_BAD_BUFFER_SIZE;
   }
 
-  Ip4CopyOption (Option, OptLen, FirstFragment, (UINT8 *) (PacketHead + 1), &Len);
+  Ip4CopyOption (Option, OptLen, FirstFragment, (UINT8 *)(PacketHead + 1), &Len);
 
   //
   // Set the head up, convert the host byte order to network byte order
   //
-  PacketHead->Ver       = 4;
-  PacketHead->HeadLen   = (UINT8) (HeadLen >> 2);
-  PacketHead->Tos       = Head->Tos;
-  PacketHead->TotalLen  = HTONS ((UINT16) Packet->TotalSize);
-  PacketHead->Id        = HTONS (Head->Id);
-  PacketHead->Fragment  = HTONS (Head->Fragment);
-  PacketHead->Checksum  = 0;
-  PacketHead->Ttl       = Head->Ttl;
-  PacketHead->Protocol  = Head->Protocol;
-  PacketHead->Src       = HTONL (Head->Src);
-  PacketHead->Dst       = HTONL (Head->Dst);
-  PacketHead->Checksum  = (UINT16) (~NetblockChecksum ((UINT8 *) PacketHead, HeadLen));
+  PacketHead->Ver      = 4;
+  PacketHead->HeadLen  = (UINT8)(HeadLen >> 2);
+  PacketHead->Tos      = Head->Tos;
+  PacketHead->TotalLen = HTONS ((UINT16)Packet->TotalSize);
+  PacketHead->Id = HTONS (Head->Id);
+  PacketHead->Fragment = HTONS (Head->Fragment);
+  PacketHead->Checksum = 0;
+  PacketHead->Ttl = Head->Ttl;
+  PacketHead->Protocol = Head->Protocol;
+  PacketHead->Src = HTONL (Head->Src);
+  PacketHead->Dst = HTONL (Head->Dst);
+  PacketHead->Checksum = (UINT16)(~NetblockChecksum ((UINT8 *)PacketHead, HeadLen));
 
-  Packet->Ip.Ip4        = PacketHead;
+  Packet->Ip.Ip4 = PacketHead;
   return EFI_SUCCESS;
 }
-
 
 /**
   Select an interface to send the packet generated in the IP4 driver
@@ -102,9 +100,9 @@ Ip4SelectInterface (
   IN IP4_ADDR               Src
   )
 {
-  IP4_INTERFACE             *IpIf;
-  IP4_INTERFACE             *Selected;
-  LIST_ENTRY                *Entry;
+  IP4_INTERFACE  *IpIf;
+  IP4_INTERFACE  *Selected;
+  LIST_ENTRY     *Entry;
 
   //
   // Select the interface the Dst is on if one of the connected
@@ -143,7 +141,6 @@ Ip4SelectInterface (
   return Selected;
 }
 
-
 /**
   The default callback function for system generated packet.
   It will free the packet.
@@ -168,7 +165,6 @@ Ip4SysPacketSent (
 {
   NetbufFree (Packet);
 }
-
 
 /**
   Transmit an IP4 packet. The packet comes either from the IP4
@@ -218,18 +214,18 @@ Ip4Output (
   IN VOID                   *Context
   )
 {
-  IP4_INTERFACE             *IpIf;
-  IP4_ROUTE_CACHE_ENTRY     *CacheEntry;
-  IP4_ADDR                  Dest;
-  EFI_STATUS                Status;
-  NET_BUF                   *Fragment;
-  UINT32                    Index;
-  UINT32                    HeadLen;
-  UINT32                    PacketLen;
-  UINT32                    Offset;
-  UINT32                    Mtu;
-  UINT32                    Num;
-  BOOLEAN                   RawData;
+  IP4_INTERFACE          *IpIf;
+  IP4_ROUTE_CACHE_ENTRY  *CacheEntry;
+  IP4_ADDR               Dest;
+  EFI_STATUS             Status;
+  NET_BUF                *Fragment;
+  UINT32                 Index;
+  UINT32                 HeadLen;
+  UINT32                 PacketLen;
+  UINT32                 Offset;
+  UINT32                 Mtu;
+  UINT32                 Num;
+  BOOLEAN                RawData;
 
   //
   // Select an interface/source for system packet, application
@@ -256,12 +252,12 @@ Ip4Output (
   HeadLen = sizeof (IP4_HEAD) + ((OptLen + 3) & (~0x03));
 
   if ((IpInstance != NULL) && IpInstance->ConfigData.RawData) {
-    RawData        = TRUE;
+    RawData = TRUE;
   } else {
-    Head->HeadLen  = (UINT8) (HeadLen >> 2);
-    Head->Id       = mIp4Id++;
-    Head->Ver      = 4;
-    RawData        = FALSE;
+    Head->HeadLen = (UINT8)(HeadLen >> 2);
+    Head->Id  = mIp4Id++;
+    Head->Ver = 4;
+    RawData   = FALSE;
   }
 
   //
@@ -277,7 +273,7 @@ Ip4Output (
              Context
              );
 
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     return Status;
   }
 
@@ -289,7 +285,6 @@ Ip4Output (
     // it is local broadcast.
     //
     GateWay = IP4_ALLONE_ADDRESS;
-
   } else if (IP4_IS_MULTICAST (Dest)) {
     //
     // Set the gateway to the destination if it is an multicast
@@ -297,7 +292,6 @@ Ip4Output (
     // broadcast and multicast.
     //
     GateWay = Head->Dst;
-
   } else if (GateWay == IP4_ALLZERO_ADDRESS) {
     //
     // Route the packet unless overridden, that is, GateWay isn't zero.
@@ -343,8 +337,8 @@ Ip4Output (
     // fragment is NOT sent in this loop. First compute how many
     // fragments there are.
     //
-    Mtu       = (Mtu - HeadLen) & (~0x07);
-    Num       = (Packet->TotalSize + Mtu - 1) / Mtu;
+    Mtu = (Mtu - HeadLen) & (~0x07);
+    Num = (Packet->TotalSize + Mtu - 1) / Mtu;
 
     //
     // Initialize the packet length and Offset. Other than the last
@@ -407,21 +401,21 @@ Ip4Output (
   // consumer's (such as UDP) data in the Callback. But this can't happen.
   // The detailed sequence is:
   // 1. for the packets generated by IP4 driver itself:
-  //    The Callback is Ip4SysPacketSent, which is the same as the
-  //    fragments' callback. Ip4SysPacketSent simply calls NetbufFree
-  //    to release its reference to the packet. So, no problem for
-  //    system packets.
+  // The Callback is Ip4SysPacketSent, which is the same as the
+  // fragments' callback. Ip4SysPacketSent simply calls NetbufFree
+  // to release its reference to the packet. So, no problem for
+  // system packets.
   //
   // 2. for the upper layer's packets (use UDP as an example):
-  //    UDP requests the IP layer to transmit some data which is
-  //    wrapped in an asynchronous token, the token is wrapped
-  //    in IP4_TXTOKEN_WRAP by IP4. IP4 also wrap the user's data
-  //    in a net buffer, which is Packet we get here. IP4_TXTOKEN_WRAP
-  //    is bound with the Packet. It will only be freed when all
-  //    the references to Packet have been released. Upon then, the
-  //    Packet's OnFree callback will release the IP4_TXTOKEN_WRAP,
-  //    and signal the user's recycle event. So, also no problem for
-  //    upper layer's packets.
+  // UDP requests the IP layer to transmit some data which is
+  // wrapped in an asynchronous token, the token is wrapped
+  // in IP4_TXTOKEN_WRAP by IP4. IP4 also wrap the user's data
+  // in a net buffer, which is Packet we get here. IP4_TXTOKEN_WRAP
+  // is bound with the Packet. It will only be freed when all
+  // the references to Packet have been released. Upon then, the
+  // Packet's OnFree callback will release the IP4_TXTOKEN_WRAP,
+  // and signal the user's recycle event. So, also no problem for
+  // upper layer's packets.
   //
   Ip4PrependHead (Packet, Head, Option, OptLen);
   Status = Ip4SendFrame (IpIf, IpInstance, Packet, GateWay, Callback, Context, IpSb);
@@ -436,7 +430,6 @@ ON_ERROR:
   Ip4CancelPacket (IpIf, Packet, Status);
   return Status;
 }
-
 
 /**
   The filter function to find a packet and all its fragments.
@@ -455,13 +448,12 @@ Ip4CancelPacketFragments (
   IN VOID                *Context
   )
 {
-  if ((Frame->Packet == (NET_BUF *) Context) || (Frame->Context == Context)) {
+  if ((Frame->Packet == (NET_BUF *)Context) || (Frame->Context == Context)) {
     return TRUE;
   }
 
   return FALSE;
 }
-
 
 /**
   Cancel the Packet and all its fragments.

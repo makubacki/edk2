@@ -135,9 +135,9 @@ TcpCloneTcb (
 
 **/
 TCP_SEQNO
-TcpGetIss (
-  VOID
-  );
+  TcpGetIss (
+             VOID
+             );
 
 /**
   Get the local mss.
@@ -283,7 +283,6 @@ EFI_STATUS
 TcpInstallDevicePath (
   IN SOCKET *Sock
   );
-
 
 //
 // Functions in TcpOutput.c

@@ -16,10 +16,10 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #define ISCSI_CHAP_AUTH_INFO_GUID \
   { \
-    0x786ec0ac, 0x65ae, 0x4d1b, {0xb1, 0x37, 0xd, 0x11, 0xa, 0x48, 0x37, 0x97} \
+    0x786ec0ac, 0x65ae, 0x4d1b, { 0xb1, 0x37, 0xd, 0x11, 0xa, 0x48, 0x37, 0x97 } \
   }
 
-extern EFI_GUID gIp4IScsiConfigGuid;
-extern EFI_GUID gIScsiCHAPAuthInfoGuid;
+extern EFI_GUID  gIp4IScsiConfigGuid;
+extern EFI_GUID  gIScsiCHAPAuthInfoGuid;
 
 #endif

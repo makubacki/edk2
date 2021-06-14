@@ -6,11 +6,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
-
 #include "Dhcp4Impl.h"
 
 UINT32  mDhcp4DefaultTimeout[4] = { 4, 8, 16, 32 };
-
 
 /**
   Send an initial DISCOVER or REQUEST message according to the
@@ -27,14 +25,14 @@ DhcpInitRequest (
   IN DHCP_SERVICE           *DhcpSb
   )
 {
-  EFI_STATUS                Status;
+  EFI_STATUS  Status;
 
   ASSERT ((DhcpSb->DhcpState == Dhcp4Init) || (DhcpSb->DhcpState == Dhcp4InitReboot));
 
   //
   // Clear initial time to make sure that elapsed-time is set to 0 for first Discover or REQUEST message.
   //
-  DhcpSb->ActiveChild->ElaspedTime= 0;
+  DhcpSb->ActiveChild->ElaspedTime = 0;
 
   if (DhcpSb->DhcpState == Dhcp4Init) {
     DhcpSetState (DhcpSb, Dhcp4Selecting, FALSE);
@@ -57,7 +55,6 @@ DhcpInitRequest (
   return EFI_SUCCESS;
 }
 
-
 /**
   Call user provided callback function, and return the value the
   function returns. If the user doesn't provide a callback, a
@@ -78,12 +75,12 @@ EFI_STATUS
 DhcpCallUser (
   IN  DHCP_SERVICE          *DhcpSb,
   IN  EFI_DHCP4_EVENT       Event,
-  IN  EFI_DHCP4_PACKET      *Packet,      OPTIONAL
+  IN  EFI_DHCP4_PACKET      *Packet, OPTIONAL
   OUT EFI_DHCP4_PACKET      **NewPacket   OPTIONAL
   )
 {
-  EFI_DHCP4_CONFIG_DATA     *Config;
-  EFI_STATUS                Status;
+  EFI_DHCP4_CONFIG_DATA  *Config;
+  EFI_STATUS             Status;
 
   if (NewPacket != NULL) {
     *NewPacket = NULL;
@@ -109,7 +106,7 @@ DhcpCallUser (
   Status = Config->Dhcp4Callback (
                      &DhcpSb->ActiveChild->Dhcp4Protocol,
                      Config->CallbackContext,
-                     (EFI_DHCP4_STATE) DhcpSb->DhcpState,
+                     (EFI_DHCP4_STATE)DhcpSb->DhcpState,
                      Event,
                      Packet,
                      NewPacket
@@ -127,7 +124,6 @@ DhcpCallUser (
   return EFI_ABORTED;
 }
 
-
 /**
   Notify the user about the operation result.
 
@@ -141,16 +137,15 @@ DhcpNotifyUser (
   IN INTN                   Which
   )
 {
-  DHCP_PROTOCOL             *Child;
+  DHCP_PROTOCOL  *Child;
 
   if ((Child = DhcpSb->ActiveChild) == NULL) {
-    return ;
+    return;
   }
 
   if ((Child->CompletionEvent != NULL) &&
       ((Which == DHCP_NOTIFY_COMPLETION) || (Which == DHCP_NOTIFY_ALL))
       ) {
-
     gBS->SignalEvent (Child->CompletionEvent);
     Child->CompletionEvent = NULL;
   }
@@ -158,13 +153,10 @@ DhcpNotifyUser (
   if ((Child->RenewRebindEvent != NULL) &&
       ((Which == DHCP_NOTIFY_RENEWREBIND) || (Which == DHCP_NOTIFY_ALL))
       ) {
-
     gBS->SignalEvent (Child->RenewRebindEvent);
     Child->RenewRebindEvent = NULL;
   }
 }
-
-
 
 /**
   Set the DHCP state. If CallUser is true, it will try to notify
@@ -188,20 +180,17 @@ DhcpSetState (
   IN     BOOLEAN                CallUser
   )
 {
-  EFI_STATUS                Status;
+  EFI_STATUS  Status;
 
   if (CallUser) {
     Status = EFI_SUCCESS;
 
     if (State == Dhcp4Renewing) {
       Status = DhcpCallUser (DhcpSb, Dhcp4EnterRenewing, NULL, NULL);
-
     } else if (State == Dhcp4Rebinding) {
       Status = DhcpCallUser (DhcpSb, Dhcp4EnterRebinding, NULL, NULL);
-
     } else if (State == Dhcp4Bound) {
       Status = DhcpCallUser (DhcpSb, Dhcp4BoundCompleted, NULL, NULL);
-
     }
 
     if (EFI_ERROR (Status)) {
@@ -224,13 +213,12 @@ DhcpSetState (
     DhcpSb->MaxRetries = 4;
   }
 
-  DhcpSb->CurRetry      = 0;
-  DhcpSb->PacketToLive  = 0;
-  DhcpSb->LastTimeout   = 0;
-  DhcpSb->DhcpState     = State;
+  DhcpSb->CurRetry     = 0;
+  DhcpSb->PacketToLive = 0;
+  DhcpSb->LastTimeout  = 0;
+  DhcpSb->DhcpState    = State;
   return EFI_SUCCESS;
 }
-
 
 /**
   Set the retransmit timer for the packet. It will select from either
@@ -244,7 +232,7 @@ DhcpSetTransmitTimer (
   IN OUT DHCP_SERVICE           *DhcpSb
   )
 {
-  UINT32                    *Times;
+  UINT32  *Times;
 
   ASSERT (DhcpSb->MaxRetries > DhcpSb->CurRetry);
 
@@ -298,7 +286,6 @@ DhcpComputeLease (
   }
 }
 
-
 /**
   Configure a UDP IO port to use the acquired lease address.
   DHCP driver needs this port to unicast packet to the server
@@ -318,28 +305,28 @@ DhcpConfigLeaseIoPort (
   IN VOID                   *Context
   )
 {
-  EFI_UDP4_CONFIG_DATA      UdpConfigData;
-  EFI_IPv4_ADDRESS          Subnet;
-  EFI_IPv4_ADDRESS          Gateway;
-  DHCP_SERVICE              *DhcpSb;
-  EFI_STATUS                Status;
-  IP4_ADDR                  Ip;
+  EFI_UDP4_CONFIG_DATA  UdpConfigData;
+  EFI_IPv4_ADDRESS      Subnet;
+  EFI_IPv4_ADDRESS      Gateway;
+  DHCP_SERVICE          *DhcpSb;
+  EFI_STATUS            Status;
+  IP4_ADDR              Ip;
 
-  DhcpSb = (DHCP_SERVICE *) Context;
+  DhcpSb = (DHCP_SERVICE *)Context;
 
-  UdpConfigData.AcceptBroadcast     = FALSE;
-  UdpConfigData.AcceptPromiscuous   = FALSE;
-  UdpConfigData.AcceptAnyPort       = FALSE;
-  UdpConfigData.AllowDuplicatePort  = TRUE;
-  UdpConfigData.TypeOfService       = 0;
-  UdpConfigData.TimeToLive          = 64;
-  UdpConfigData.DoNotFragment       = FALSE;
-  UdpConfigData.ReceiveTimeout      = 1;
-  UdpConfigData.TransmitTimeout     = 0;
+  UdpConfigData.AcceptBroadcast    = FALSE;
+  UdpConfigData.AcceptPromiscuous  = FALSE;
+  UdpConfigData.AcceptAnyPort      = FALSE;
+  UdpConfigData.AllowDuplicatePort = TRUE;
+  UdpConfigData.TypeOfService      = 0;
+  UdpConfigData.TimeToLive      = 64;
+  UdpConfigData.DoNotFragment   = FALSE;
+  UdpConfigData.ReceiveTimeout  = 1;
+  UdpConfigData.TransmitTimeout = 0;
 
-  UdpConfigData.UseDefaultAddress   = FALSE;
-  UdpConfigData.StationPort         = DHCP_CLIENT_PORT;
-  UdpConfigData.RemotePort          = DHCP_SERVER_PORT;
+  UdpConfigData.UseDefaultAddress = FALSE;
+  UdpConfigData.StationPort = DHCP_CLIENT_PORT;
+  UdpConfigData.RemotePort  = DHCP_SERVER_PORT;
 
   Ip = HTONL (DhcpSb->ClientAddr);
   CopyMem (&UdpConfigData.StationAddress, &Ip, sizeof (EFI_IPv4_ADDRESS));
@@ -370,7 +357,6 @@ DhcpConfigLeaseIoPort (
   return EFI_SUCCESS;
 }
 
-
 /**
   Update the lease states when a new lease is acquired. It will not only
   save the acquired the address and lease time, it will also create a UDP
@@ -390,8 +376,8 @@ DhcpLeaseAcquired (
   DhcpSb->ClientAddr = EFI_NTOHL (DhcpSb->Selected->Dhcp4.Header.YourAddr);
 
   if (DhcpSb->Para != NULL) {
-    DhcpSb->Netmask     = DhcpSb->Para->NetMask;
-    DhcpSb->ServerAddr  = DhcpSb->Para->ServerId;
+    DhcpSb->Netmask    = DhcpSb->Para->NetMask;
+    DhcpSb->ServerAddr = DhcpSb->Para->ServerId;
   }
 
   if (DhcpSb->Netmask == 0) {
@@ -426,7 +412,6 @@ DhcpLeaseAcquired (
   return DhcpSetState (DhcpSb, Dhcp4Bound, TRUE);
 }
 
-
 /**
   Clean up the DHCP related states, IoStatus isn't reset.
 
@@ -438,11 +423,11 @@ DhcpCleanLease (
   IN DHCP_SERVICE           *DhcpSb
   )
 {
-  DhcpSb->DhcpState   = Dhcp4Init;
-  DhcpSb->Xid         = DhcpSb->Xid + 1;
-  DhcpSb->ClientAddr  = 0;
-  DhcpSb->Netmask     = 0;
-  DhcpSb->ServerAddr  = 0;
+  DhcpSb->DhcpState = Dhcp4Init;
+  DhcpSb->Xid = DhcpSb->Xid + 1;
+  DhcpSb->ClientAddr = 0;
+  DhcpSb->Netmask    = 0;
+  DhcpSb->ServerAddr = 0;
 
   if (DhcpSb->LastOffer != NULL) {
     FreePool (DhcpSb->LastOffer);
@@ -459,10 +444,10 @@ DhcpCleanLease (
     DhcpSb->Para = NULL;
   }
 
-  DhcpSb->Lease         = 0;
-  DhcpSb->T1            = 0;
-  DhcpSb->T2            = 0;
-  DhcpSb->ExtraRefresh  = FALSE;
+  DhcpSb->Lease = 0;
+  DhcpSb->T1    = 0;
+  DhcpSb->T2    = 0;
+  DhcpSb->ExtraRefresh = FALSE;
 
   if (DhcpSb->LeaseIoPort != NULL) {
     UdpIoFreeIo (DhcpSb->LeaseIoPort);
@@ -474,18 +459,17 @@ DhcpCleanLease (
     DhcpSb->LastPacket = NULL;
   }
 
-  DhcpSb->PacketToLive  = 0;
-  DhcpSb->LastTimeout   = 0;
-  DhcpSb->CurRetry      = 0;
-  DhcpSb->MaxRetries    = 0;
-  DhcpSb->LeaseLife     = 0;
+  DhcpSb->PacketToLive = 0;
+  DhcpSb->LastTimeout  = 0;
+  DhcpSb->CurRetry     = 0;
+  DhcpSb->MaxRetries   = 0;
+  DhcpSb->LeaseLife    = 0;
 
   //
   // Clean active config data.
   //
   DhcpCleanConfigure (&DhcpSb->ActiveConfig);
 }
-
 
 /**
   Select a offer among all the offers collected. If the offer selected is
@@ -502,10 +486,10 @@ DhcpChooseOffer (
   IN DHCP_SERVICE           *DhcpSb
   )
 {
-  EFI_DHCP4_PACKET          *Selected;
-  EFI_DHCP4_PACKET          *NewPacket;
-  EFI_DHCP4_PACKET          *TempPacket;
-  EFI_STATUS                Status;
+  EFI_DHCP4_PACKET  *Selected;
+  EFI_DHCP4_PACKET  *NewPacket;
+  EFI_DHCP4_PACKET  *TempPacket;
+  EFI_STATUS        Status;
 
   ASSERT (DhcpSb->LastOffer != NULL);
 
@@ -524,7 +508,7 @@ DhcpChooseOffer (
   Selected = DhcpSb->LastOffer;
 
   if ((NewPacket != NULL) && !EFI_ERROR (DhcpValidateOptions (NewPacket, NULL))) {
-    TempPacket = (EFI_DHCP4_PACKET *) AllocatePool (NewPacket->Size);
+    TempPacket = (EFI_DHCP4_PACKET *)AllocatePool (NewPacket->Size);
     if (TempPacket != NULL) {
       CopyMem (TempPacket, NewPacket, NewPacket->Size);
       FreePool (Selected);
@@ -534,7 +518,7 @@ DhcpChooseOffer (
 
   DhcpSb->Selected  = Selected;
   DhcpSb->LastOffer = NULL;
-  DhcpSb->Para      = NULL;
+  DhcpSb->Para = NULL;
   DhcpValidateOptions (Selected, &DhcpSb->Para);
 
   //
@@ -565,7 +549,6 @@ DhcpChooseOffer (
   return DhcpSendMessage (DhcpSb, Selected, DhcpSb->Para, DHCP_MSG_REQUEST, NULL);
 }
 
-
 /**
   Terminate the current address acquire. All the allocated resources
   are released. Be careful when calling this function. A rule related
@@ -594,7 +577,6 @@ DhcpEndSession (
   DhcpNotifyUser (DhcpSb, DHCP_NOTIFY_ALL);
 }
 
-
 /**
   Handle packets in DHCP select state.
 
@@ -614,7 +596,7 @@ DhcpHandleSelect (
   IN DHCP_PARAMETER         *Para
   )
 {
-  EFI_STATUS                Status;
+  EFI_STATUS  Status;
 
   Status = EFI_SUCCESS;
 
@@ -646,14 +628,12 @@ DhcpHandleSelect (
     DhcpSb->LastOffer = Packet;
 
     return DhcpChooseOffer (DhcpSb);
-
   } else if (Status == EFI_NOT_READY) {
     if (DhcpSb->LastOffer != NULL) {
       FreePool (DhcpSb->LastOffer);
     }
 
     DhcpSb->LastOffer = Packet;
-
   } else if (Status == EFI_ABORTED) {
     //
     // DhcpInput will end the session upon error return. Remember
@@ -668,7 +648,6 @@ ON_EXIT:
   FreePool (Packet);
   return Status;
 }
-
 
 /**
   Handle packets in DHCP request state.
@@ -689,15 +668,15 @@ DhcpHandleRequest (
   IN DHCP_PARAMETER         *Para
   )
 {
-  EFI_DHCP4_HEADER          *Head;
-  EFI_DHCP4_HEADER          *Selected;
-  EFI_STATUS                Status;
-  UINT8                     *Message;
+  EFI_DHCP4_HEADER  *Head;
+  EFI_DHCP4_HEADER  *Selected;
+  EFI_STATUS        Status;
+  UINT8             *Message;
 
   ASSERT (!DHCP_IS_BOOTP (DhcpSb->Para));
 
-  Head      = &Packet->Dhcp4.Header;
-  Selected  = &DhcpSb->Selected->Dhcp4.Header;
+  Head     = &Packet->Dhcp4.Header;
+  Selected = &DhcpSb->Selected->Dhcp4.Header;
 
   //
   // Ignore the BOOTP message and DHCP messages other than DHCP ACK/NACK.
@@ -706,7 +685,6 @@ DhcpHandleRequest (
       (Para->ServerId != DhcpSb->Para->ServerId) ||
       ((Para->DhcpType != DHCP_MSG_ACK) && (Para->DhcpType != DHCP_MSG_NAK))
       ) {
-
     Status = EFI_SUCCESS;
     goto ON_EXIT;
   }
@@ -727,14 +705,14 @@ DhcpHandleRequest (
   Message = NULL;
 
   if (!EFI_IP4_EQUAL (&Head->YourAddr, &Selected->YourAddr)) {
-    Message = (UINT8 *) "Lease confirmed isn't the same as that in the offer";
+    Message = (UINT8 *)"Lease confirmed isn't the same as that in the offer";
     goto REJECT;
   }
 
   Status = DhcpCallUser (DhcpSb, Dhcp4RcvdAck, Packet, NULL);
 
   if (EFI_ERROR (Status)) {
-    Message = (UINT8 *) "Lease is denied upon received ACK";
+    Message = (UINT8 *)"Lease is denied upon received ACK";
     goto REJECT;
   }
 
@@ -744,7 +722,7 @@ DhcpHandleRequest (
   Status = DhcpLeaseAcquired (DhcpSb);
 
   if (EFI_ERROR (Status)) {
-    Message = (UINT8 *) "Lease is denied upon entering bound";
+    Message = (UINT8 *)"Lease is denied upon entering bound";
     goto REJECT;
   }
 
@@ -761,7 +739,6 @@ ON_EXIT:
   FreePool (Packet);
   return Status;
 }
-
 
 /**
   Handle packets in DHCP renew/rebound state.
@@ -782,14 +759,14 @@ DhcpHandleRenewRebind (
   IN DHCP_PARAMETER         *Para
   )
 {
-  EFI_DHCP4_HEADER          *Head;
-  EFI_DHCP4_HEADER          *Selected;
-  EFI_STATUS                Status;
+  EFI_DHCP4_HEADER  *Head;
+  EFI_DHCP4_HEADER  *Selected;
+  EFI_STATUS        Status;
 
   ASSERT (!DHCP_IS_BOOTP (DhcpSb->Para));
 
-  Head      = &Packet->Dhcp4.Header;
-  Selected  = &DhcpSb->Selected->Dhcp4.Header;
+  Head     = &Packet->Dhcp4.Header;
+  Selected = &DhcpSb->Selected->Dhcp4.Header;
 
   //
   // Ignore the BOOTP message and DHCP messages other than DHCP ACK/NACK
@@ -798,7 +775,6 @@ DhcpHandleRenewRebind (
       (Para->ServerId != DhcpSb->Para->ServerId) ||
       ((Para->DhcpType != DHCP_MSG_ACK) && (Para->DhcpType != DHCP_MSG_NAK))
       ) {
-
     Status = EFI_SUCCESS;
     goto ON_EXIT;
   }
@@ -835,9 +811,9 @@ DhcpHandleRenewRebind (
   DhcpSetState (DhcpSb, Dhcp4Bound, TRUE);
 
   if (DhcpSb->ExtraRefresh != 0) {
-    DhcpSb->ExtraRefresh  = FALSE;
+    DhcpSb->ExtraRefresh = FALSE;
 
-    DhcpSb->IoStatus      = EFI_SUCCESS;
+    DhcpSb->IoStatus = EFI_SUCCESS;
     DhcpNotifyUser (DhcpSb, DHCP_NOTIFY_RENEWREBIND);
   }
 
@@ -845,7 +821,6 @@ ON_EXIT:
   FreePool (Packet);
   return Status;
 }
-
 
 /**
   Handle packets in DHCP reboot state.
@@ -866,8 +841,8 @@ DhcpHandleReboot (
   IN DHCP_PARAMETER         *Para
   )
 {
-  EFI_DHCP4_HEADER          *Head;
-  EFI_STATUS                Status;
+  EFI_DHCP4_HEADER  *Head;
+  EFI_STATUS        Status;
 
   Head = &Packet->Dhcp4.Header;
 
@@ -877,7 +852,6 @@ DhcpHandleReboot (
   if (DHCP_IS_BOOTP (Para) ||
       ((Para->DhcpType != DHCP_MSG_ACK) && (Para->DhcpType != DHCP_MSG_NAK))
       ) {
-
     Status = EFI_SUCCESS;
     goto ON_EXIT;
   }
@@ -888,10 +862,10 @@ DhcpHandleReboot (
   if (Para->DhcpType == DHCP_MSG_NAK) {
     DhcpCallUser (DhcpSb, Dhcp4RcvdNak, Packet, NULL);
 
-    DhcpSb->ClientAddr  = 0;
-    DhcpSb->DhcpState   = Dhcp4Init;
+    DhcpSb->ClientAddr = 0;
+    DhcpSb->DhcpState  = Dhcp4Init;
 
-    Status              = DhcpInitRequest (DhcpSb);
+    Status = DhcpInitRequest (DhcpSb);
     goto ON_EXIT;
   }
 
@@ -917,8 +891,8 @@ DhcpHandleReboot (
     goto ON_EXIT;
   }
 
-  DhcpSb->Selected  = Packet;
-  Status            = DhcpLeaseAcquired (DhcpSb);
+  DhcpSb->Selected = Packet;
+  Status = DhcpLeaseAcquired (DhcpSb);
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -931,7 +905,6 @@ ON_EXIT:
   FreePool (Packet);
   return Status;
 }
-
 
 /**
   Handle the received DHCP packets. This function drives the DHCP
@@ -952,24 +925,24 @@ DhcpInput (
   VOID                      *Context
   )
 {
-  DHCP_SERVICE              *DhcpSb;
-  EFI_DHCP4_HEADER          *Head;
-  EFI_DHCP4_PACKET          *Packet;
-  DHCP_PARAMETER            *Para;
-  EFI_STATUS                Status;
-  UINT32                    Len;
+  DHCP_SERVICE      *DhcpSb;
+  EFI_DHCP4_HEADER  *Head;
+  EFI_DHCP4_PACKET  *Packet;
+  DHCP_PARAMETER    *Para;
+  EFI_STATUS        Status;
+  UINT32            Len;
 
-  Packet  = NULL;
-  DhcpSb  = (DHCP_SERVICE *) Context;
+  Packet = NULL;
+  DhcpSb = (DHCP_SERVICE *)Context;
 
   //
   // Don't restart receive if error occurs or DHCP is destroyed.
   //
   if (EFI_ERROR (IoStatus)) {
-    return ;
+    return;
   } else if (DhcpSb->ServiceState == DHCP_DESTROY) {
     NetbufFree (UdpPacket);
-    return ;
+    return;
   }
 
   ASSERT (UdpPacket != NULL);
@@ -988,16 +961,16 @@ DhcpInput (
   //
   // Copy the DHCP message to a continuous memory block
   //
-  Len     = sizeof (EFI_DHCP4_PACKET) + UdpPacket->TotalSize - sizeof (EFI_DHCP4_HEADER);
-  Packet  = (EFI_DHCP4_PACKET *) AllocatePool (Len);
+  Len    = sizeof (EFI_DHCP4_PACKET) + UdpPacket->TotalSize - sizeof (EFI_DHCP4_HEADER);
+  Packet = (EFI_DHCP4_PACKET *)AllocatePool (Len);
 
   if (Packet == NULL) {
     goto RESTART;
   }
 
-  Packet->Size    = Len;
-  Head            = &Packet->Dhcp4.Header;
-  Packet->Length  = NetbufCopy (UdpPacket, 0, UdpPacket->TotalSize, (UINT8 *) Head);
+  Packet->Size = Len;
+  Head = &Packet->Dhcp4.Header;
+  Packet->Length = NetbufCopy (UdpPacket, 0, UdpPacket->TotalSize, (UINT8 *)Head);
 
   if (Packet->Length != UdpPacket->TotalSize) {
     goto RESTART;
@@ -1019,7 +992,6 @@ DhcpInput (
   if ((Packet->Length > sizeof (EFI_DHCP4_HEADER) + sizeof (UINT32)) &&
       (Packet->Dhcp4.Magik == DHCP_OPTION_MAGIC) &&
       EFI_ERROR (DhcpValidateOptions (Packet, &Para))) {
-
     goto RESTART;
   }
 
@@ -1035,32 +1007,32 @@ DhcpInput (
   Status = EFI_SUCCESS;
 
   switch (DhcpSb->DhcpState) {
-  case Dhcp4Selecting:
-    Status = DhcpHandleSelect (DhcpSb, Packet, Para);
-    break;
+    case Dhcp4Selecting:
+      Status = DhcpHandleSelect (DhcpSb, Packet, Para);
+      break;
 
-  case Dhcp4Requesting:
-    Status = DhcpHandleRequest (DhcpSb, Packet, Para);
-    break;
+    case Dhcp4Requesting:
+      Status = DhcpHandleRequest (DhcpSb, Packet, Para);
+      break;
 
-  case Dhcp4InitReboot:
-  case Dhcp4Init:
-  case Dhcp4Bound:
-    //
-    // Ignore the packet in INITREBOOT, INIT and BOUND states
-    //
-    FreePool (Packet);
-    Status = EFI_SUCCESS;
-    break;
+    case Dhcp4InitReboot:
+    case Dhcp4Init:
+    case Dhcp4Bound:
+      //
+      // Ignore the packet in INITREBOOT, INIT and BOUND states
+      //
+      FreePool (Packet);
+      Status = EFI_SUCCESS;
+      break;
 
-  case Dhcp4Renewing:
-  case Dhcp4Rebinding:
-    Status = DhcpHandleRenewRebind (DhcpSb, Packet, Para);
-    break;
+    case Dhcp4Renewing:
+    case Dhcp4Rebinding:
+      Status = DhcpHandleRenewRebind (DhcpSb, Packet, Para);
+      break;
 
-  case Dhcp4Rebooting:
-    Status = DhcpHandleReboot (DhcpSb, Packet, Para);
-    break;
+    case Dhcp4Rebooting:
+      Status = DhcpHandleReboot (DhcpSb, Packet, Para);
+      break;
   }
 
   if (Para != NULL) {
@@ -1073,7 +1045,7 @@ DhcpInput (
     NetbufFree (UdpPacket);
     UdpIoRecvDatagram (DhcpSb->UdpIo, DhcpInput, DhcpSb, 0);
     DhcpEndSession (DhcpSb, Status);
-    return ;
+    return;
   }
 
 RESTART:
@@ -1111,8 +1083,6 @@ DhcpOnPacketSent (
   NetbufFree (Packet);
 }
 
-
-
 /**
   Build and transmit a DHCP message according to the current states.
   This function implement the Table 5. of RFC 2131. Always transits
@@ -1141,21 +1111,21 @@ DhcpSendMessage (
   IN UINT8                  *Msg
   )
 {
-  EFI_DHCP4_CONFIG_DATA     *Config;
-  EFI_DHCP4_PACKET          *Packet;
-  EFI_DHCP4_PACKET          *NewPacket;
-  EFI_DHCP4_HEADER          *Head;
-  EFI_DHCP4_HEADER          *SeedHead;
-  UDP_IO                    *UdpIo;
-  UDP_END_POINT             EndPoint;
-  NET_BUF                   *Wrap;
-  NET_FRAGMENT              Frag;
-  EFI_STATUS                Status;
-  IP4_ADDR                  IpAddr;
-  UINT8                     *Buf;
-  UINT16                    MaxMsg;
-  UINT32                    Len;
-  UINT32                    Index;
+  EFI_DHCP4_CONFIG_DATA  *Config;
+  EFI_DHCP4_PACKET       *Packet;
+  EFI_DHCP4_PACKET       *NewPacket;
+  EFI_DHCP4_HEADER       *Head;
+  EFI_DHCP4_HEADER       *SeedHead;
+  UDP_IO                 *UdpIo;
+  UDP_END_POINT          EndPoint;
+  NET_BUF                *Wrap;
+  NET_FRAGMENT           Frag;
+  EFI_STATUS             Status;
+  IP4_ADDR               IpAddr;
+  UINT8                  *Buf;
+  UINT16                 MaxMsg;
+  UINT32                 Len;
+  UINT32                 Index;
 
   //
   // Allocate a big enough memory block to hold the DHCP packet
@@ -1163,7 +1133,7 @@ DhcpSendMessage (
   Len = sizeof (EFI_DHCP4_PACKET) + 128 + DhcpSb->UserOptionLen;
 
   if (Msg != NULL) {
-    Len += (UINT32)AsciiStrLen ((CHAR8 *) Msg);
+    Len += (UINT32)AsciiStrLen ((CHAR8 *)Msg);
   }
 
   Packet = AllocatePool (Len);
@@ -1172,14 +1142,14 @@ DhcpSendMessage (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Packet->Size    = Len;
-  Packet->Length  = sizeof (EFI_DHCP4_HEADER) + sizeof (UINT32);
+  Packet->Size   = Len;
+  Packet->Length = sizeof (EFI_DHCP4_HEADER) + sizeof (UINT32);
 
   //
   // Fill in the DHCP header fields
   //
-  Config    = &DhcpSb->ActiveConfig;
-  SeedHead  = NULL;
+  Config   = &DhcpSb->ActiveConfig;
+  SeedHead = NULL;
 
   if (Seed != NULL) {
     SeedHead = &Seed->Dhcp4.Header;
@@ -1188,11 +1158,11 @@ DhcpSendMessage (
   Head = &Packet->Dhcp4.Header;
   ZeroMem (Head, sizeof (EFI_DHCP4_HEADER));
 
-  Head->OpCode       = BOOTP_REQUEST;
-  Head->HwType       = DhcpSb->HwType;
-  Head->HwAddrLen    = DhcpSb->HwLen;
-  Head->Xid          = HTONL (DhcpSb->Xid);
-  Head->Reserved     = HTONS (0x8000);  //Server, broadcast the message please.
+  Head->OpCode    = BOOTP_REQUEST;
+  Head->HwType    = DhcpSb->HwType;
+  Head->HwAddrLen = DhcpSb->HwLen;
+  Head->Xid = HTONL (DhcpSb->Xid);
+  Head->Reserved = HTONS (0x8000);      // Server, broadcast the message please.
 
   EFI_IP4 (Head->ClientAddr) = HTONL (DhcpSb->ClientAddr);
   CopyMem (Head->ClientHwAddr, DhcpSb->Mac.Addr, DhcpSb->HwLen);
@@ -1205,56 +1175,53 @@ DhcpSendMessage (
     //
     Head->Seconds = DhcpSb->LastPacket->Dhcp4.Header.Seconds;
   } else {
-    SetElapsedTime(&Head->Seconds, DhcpSb->ActiveChild);
+    SetElapsedTime (&Head->Seconds, DhcpSb->ActiveChild);
   }
 
   //
   // Append the DHCP message type
   //
   Packet->Dhcp4.Magik = DHCP_OPTION_MAGIC;
-  Buf                 = Packet->Dhcp4.Option;
-  Buf                 = DhcpAppendOption (Buf, DHCP4_TAG_MSG_TYPE, 1, &Type);
+  Buf = Packet->Dhcp4.Option;
+  Buf = DhcpAppendOption (Buf, DHCP4_TAG_MSG_TYPE, 1, &Type);
 
   //
   // Append the serverid option if necessary:
-  //   1. DHCP decline message
-  //   2. DHCP release message
-  //   3. DHCP request to confirm one lease.
+  // 1. DHCP decline message
+  // 2. DHCP release message
+  // 3. DHCP request to confirm one lease.
   //
   if ((Type == DHCP_MSG_DECLINE) || (Type == DHCP_MSG_RELEASE) ||
       ((Type == DHCP_MSG_REQUEST) && (DhcpSb->DhcpState == Dhcp4Requesting))
       ) {
-
     ASSERT ((Para != NULL) && (Para->ServerId != 0));
 
-    IpAddr  = HTONL (Para->ServerId);
-    Buf     = DhcpAppendOption (Buf, DHCP4_TAG_SERVER_ID, 4, (UINT8 *) &IpAddr);
+    IpAddr = HTONL (Para->ServerId);
+    Buf    = DhcpAppendOption (Buf, DHCP4_TAG_SERVER_ID, 4, (UINT8 *)&IpAddr);
   }
 
   //
   // Append the requested IP option if necessary:
-  //   1. DHCP request to use the previously allocated address
-  //   2. DHCP request to confirm one lease
-  //   3. DHCP decline to decline one lease
+  // 1. DHCP request to use the previously allocated address
+  // 2. DHCP request to confirm one lease
+  // 3. DHCP decline to decline one lease
   //
   IpAddr = 0;
 
   if (Type == DHCP_MSG_REQUEST) {
     if (DhcpSb->DhcpState == Dhcp4Rebooting) {
       IpAddr = EFI_IP4 (Config->ClientAddress);
-
     } else if (DhcpSb->DhcpState == Dhcp4Requesting) {
       ASSERT (SeedHead != NULL);
       IpAddr = EFI_IP4 (SeedHead->YourAddr);
     }
-
   } else if (Type == DHCP_MSG_DECLINE) {
     ASSERT (SeedHead != NULL);
     IpAddr = EFI_IP4 (SeedHead->YourAddr);
   }
 
   if (IpAddr != 0) {
-    Buf = DhcpAppendOption (Buf, DHCP4_TAG_REQUEST_IP, 4, (UINT8 *) &IpAddr);
+    Buf = DhcpAppendOption (Buf, DHCP4_TAG_REQUEST_IP, 4, (UINT8 *)&IpAddr);
   }
 
   //
@@ -1263,16 +1230,16 @@ DhcpSendMessage (
   // override the BOOTFILE and SERVER fields in the message head.
   //
   if ((Type != DHCP_MSG_DECLINE) && (Type != DHCP_MSG_RELEASE)) {
-    MaxMsg  = HTONS (0xFF00);
-    Buf     = DhcpAppendOption (Buf, DHCP4_TAG_MAXMSG, 2, (UINT8 *) &MaxMsg);
+    MaxMsg = HTONS (0xFF00);
+    Buf    = DhcpAppendOption (Buf, DHCP4_TAG_MAXMSG, 2, (UINT8 *)&MaxMsg);
   }
 
   //
   // Append the user's message if it isn't NULL
   //
   if (Msg != NULL) {
-    Len     = MIN ((UINT32) AsciiStrLen ((CHAR8 *) Msg), 255);
-    Buf     = DhcpAppendOption (Buf, DHCP4_TAG_MESSAGE, (UINT16) Len, Msg);
+    Len = MIN ((UINT32)AsciiStrLen ((CHAR8 *)Msg), 255);
+    Buf = DhcpAppendOption (Buf, DHCP4_TAG_MESSAGE, (UINT16)Len, Msg);
   }
 
   //
@@ -1299,7 +1266,7 @@ DhcpSendMessage (
   }
 
   *(Buf++) = DHCP4_TAG_EOP;
-  Packet->Length += (UINT32) (Buf - Packet->Dhcp4.Option);
+  Packet->Length += (UINT32)(Buf - Packet->Dhcp4.Option);
 
   //
   // OK, the message is built, call the user to override it.
@@ -1309,10 +1276,8 @@ DhcpSendMessage (
 
   if (Type == DHCP_MSG_DISCOVER) {
     Status = DhcpCallUser (DhcpSb, Dhcp4SendDiscover, Packet, &NewPacket);
-
   } else if (Type == DHCP_MSG_REQUEST) {
     Status = DhcpCallUser (DhcpSb, Dhcp4SendRequest, Packet, &NewPacket);
-
   } else if (Type == DHCP_MSG_DECLINE) {
     Status = DhcpCallUser (DhcpSb, Dhcp4SendDecline, Packet, &NewPacket);
   }
@@ -1339,9 +1304,9 @@ DhcpSendMessage (
   //
   // Wrap it into a netbuf then send it.
   //
-  Frag.Bulk = (UINT8 *) &Packet->Dhcp4.Header;
+  Frag.Bulk = (UINT8 *)&Packet->Dhcp4.Header;
   Frag.Len  = Packet->Length;
-  Wrap      = NetbufFromExt (&Frag, 1, 0, 0, DhcpDummyExtFree, NULL);
+  Wrap = NetbufFromExt (&Frag, 1, 0, 0, DhcpDummyExtFree, NULL);
 
   if (Wrap == NULL) {
     FreePool (Packet);
@@ -1364,14 +1329,14 @@ DhcpSendMessage (
   //
   EndPoint.RemoteAddr.Addr[0] = 0xffffffff;
   EndPoint.LocalAddr.Addr[0]  = 0;
-  EndPoint.RemotePort         = DHCP_SERVER_PORT;
-  EndPoint.LocalPort          = DHCP_CLIENT_PORT;
-  UdpIo                       = DhcpSb->UdpIo;
+  EndPoint.RemotePort = DHCP_SERVER_PORT;
+  EndPoint.LocalPort  = DHCP_CLIENT_PORT;
+  UdpIo = DhcpSb->UdpIo;
 
   if ((DhcpSb->DhcpState == Dhcp4Renewing) || (Type == DHCP_MSG_RELEASE)) {
     EndPoint.RemoteAddr.Addr[0] = DhcpSb->ServerAddr;
     EndPoint.LocalAddr.Addr[0]  = DhcpSb->ClientAddr;
-    UdpIo                       = DhcpSb->LeaseIoPort;
+    UdpIo = DhcpSb->LeaseIoPort;
   }
 
   ASSERT (UdpIo != NULL);
@@ -1392,7 +1357,6 @@ DhcpSendMessage (
 
   return EFI_SUCCESS;
 }
-
 
 /**
   Retransmit a saved packet. Only DISCOVER and REQUEST messages
@@ -1409,11 +1373,11 @@ DhcpRetransmit (
   IN DHCP_SERVICE           *DhcpSb
   )
 {
-  UDP_IO                    *UdpIo;
-  UDP_END_POINT             EndPoint;
-  NET_BUF                   *Wrap;
-  NET_FRAGMENT              Frag;
-  EFI_STATUS                Status;
+  UDP_IO         *UdpIo;
+  UDP_END_POINT  EndPoint;
+  NET_BUF        *Wrap;
+  NET_FRAGMENT   Frag;
+  EFI_STATUS     Status;
 
   ASSERT (DhcpSb->LastPacket != NULL);
 
@@ -1421,15 +1385,15 @@ DhcpRetransmit (
   // For REQUEST message in Dhcp4Requesting state, do not change the secs fields.
   //
   if (DhcpSb->DhcpState != Dhcp4Requesting) {
-    SetElapsedTime(&DhcpSb->LastPacket->Dhcp4.Header.Seconds, DhcpSb->ActiveChild);
+    SetElapsedTime (&DhcpSb->LastPacket->Dhcp4.Header.Seconds, DhcpSb->ActiveChild);
   }
 
   //
   // Wrap it into a netbuf then send it.
   //
-  Frag.Bulk = (UINT8 *) &DhcpSb->LastPacket->Dhcp4.Header;
+  Frag.Bulk = (UINT8 *)&DhcpSb->LastPacket->Dhcp4.Header;
   Frag.Len  = DhcpSb->LastPacket->Length;
-  Wrap      = NetbufFromExt (&Frag, 1, 0, 0, DhcpDummyExtFree, NULL);
+  Wrap = NetbufFromExt (&Frag, 1, 0, 0, DhcpDummyExtFree, NULL);
 
   if (Wrap == NULL) {
     return EFI_OUT_OF_RESOURCES;
@@ -1438,16 +1402,16 @@ DhcpRetransmit (
   //
   // Broadcast the message, unless we know the server address.
   //
-  EndPoint.RemotePort         = DHCP_SERVER_PORT;
-  EndPoint.LocalPort          = DHCP_CLIENT_PORT;
+  EndPoint.RemotePort = DHCP_SERVER_PORT;
+  EndPoint.LocalPort  = DHCP_CLIENT_PORT;
   EndPoint.RemoteAddr.Addr[0] = 0xffffffff;
   EndPoint.LocalAddr.Addr[0]  = 0;
-  UdpIo                       = DhcpSb->UdpIo;
+  UdpIo = DhcpSb->UdpIo;
 
   if (DhcpSb->DhcpState == Dhcp4Renewing) {
     EndPoint.RemoteAddr.Addr[0] = DhcpSb->ServerAddr;
     EndPoint.LocalAddr.Addr[0]  = DhcpSb->ClientAddr;
-    UdpIo                       = DhcpSb->LeaseIoPort;
+    UdpIo = DhcpSb->LeaseIoPort;
   }
 
   ASSERT (UdpIo != NULL);
@@ -1468,7 +1432,6 @@ DhcpRetransmit (
 
   return EFI_SUCCESS;
 }
-
 
 /**
   Each DHCP service has three timer. Two of them are count down timer.
@@ -1488,13 +1451,13 @@ DhcpOnTimerTick (
   IN VOID                   *Context
   )
 {
-  LIST_ENTRY                *Entry;
-  LIST_ENTRY                *Next;
-  DHCP_SERVICE              *DhcpSb;
-  DHCP_PROTOCOL             *Instance;
-  EFI_STATUS                Status;
+  LIST_ENTRY     *Entry;
+  LIST_ENTRY     *Next;
+  DHCP_SERVICE   *DhcpSb;
+  DHCP_PROTOCOL  *Instance;
+  EFI_STATUS     Status;
 
-  DhcpSb   = (DHCP_SERVICE *) Context;
+  DhcpSb   = (DHCP_SERVICE *)Context;
   Instance = DhcpSb->ActiveChild;
 
   //
@@ -1508,15 +1471,13 @@ DhcpOnTimerTick (
   // Check the retransmit timer
   //
   if ((DhcpSb->PacketToLive > 0) && (--DhcpSb->PacketToLive == 0)) {
-
     //
     // Select offer at each timeout if any offer received.
     //
     if (DhcpSb->DhcpState == Dhcp4Selecting && DhcpSb->LastOffer != NULL) {
-
       Status = DhcpChooseOffer (DhcpSb);
 
-      if (EFI_ERROR(Status)) {
+      if (EFI_ERROR (Status)) {
         if (DhcpSb->LastOffer != NULL) {
           FreePool (DhcpSb->LastOffer);
           DhcpSb->LastOffer = NULL;
@@ -1532,9 +1493,7 @@ DhcpOnTimerTick (
       //
       DhcpRetransmit (DhcpSb);
       DhcpSetTransmitTimer (DhcpSb);
-
     } else if (DHCP_CONNECTED (DhcpSb->DhcpState)) {
-
       //
       // Retransmission failed, if the DHCP request is initiated by
       // user, adjust the current state according to the lease life.
@@ -1545,16 +1504,12 @@ DhcpOnTimerTick (
 
         if (DhcpSb->LeaseLife < DhcpSb->T1) {
           Status = DhcpSetState (DhcpSb, Dhcp4Bound, FALSE);
-
         } else if (DhcpSb->LeaseLife < DhcpSb->T2) {
           Status = DhcpSetState (DhcpSb, Dhcp4Renewing, FALSE);
-
         } else if (DhcpSb->LeaseLife < DhcpSb->Lease) {
           Status = DhcpSetState (DhcpSb, Dhcp4Rebinding, FALSE);
-
         } else {
           goto END_SESSION;
-
         }
 
         DhcpSb->IoStatus = EFI_TIMEOUT;
@@ -1577,7 +1532,7 @@ DhcpOnTimerTick (
     // requesting extra renew/rebind. Adjust the state after that.
     //
     if (DhcpSb->ExtraRefresh != 0) {
-      return ;
+      return;
     }
 
     if (DhcpSb->LeaseLife == DhcpSb->Lease) {
@@ -1585,7 +1540,6 @@ DhcpOnTimerTick (
       // Lease expires, end the session
       //
       goto END_SESSION;
-
     } else if (DhcpSb->LeaseLife == DhcpSb->T2) {
       //
       // T2 expires, transit to rebinding then send a REQUEST to any server
@@ -1595,7 +1549,7 @@ DhcpOnTimerTick (
       }
 
       if (Instance != NULL) {
-        Instance->ElaspedTime= 0;
+        Instance->ElaspedTime = 0;
       }
 
       Status = DhcpSendMessage (
@@ -1609,7 +1563,6 @@ DhcpOnTimerTick (
       if (EFI_ERROR (Status)) {
         goto END_SESSION;
       }
-
     } else if (DhcpSb->LeaseLife == DhcpSb->T1) {
       //
       // T1 expires, transit to renewing, then send a REQUEST to the server
@@ -1619,7 +1572,7 @@ DhcpOnTimerTick (
       }
 
       if (Instance != NULL) {
-        Instance->ElaspedTime= 0;
+        Instance->ElaspedTime = 0;
       }
 
       Status = DhcpSendMessage (
@@ -1648,10 +1601,10 @@ ON_EXIT:
     }
   }
 
-  return ;
+  return;
 
 END_SESSION:
   DhcpEndSession (DhcpSb, EFI_TIMEOUT);
 
-  return ;
+  return;
 }
