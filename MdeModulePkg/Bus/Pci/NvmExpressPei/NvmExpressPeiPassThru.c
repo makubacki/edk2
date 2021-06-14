@@ -27,17 +27,17 @@ NvmeCreatePrpList (
   IN     UINTN                               Pages
   )
 {
-  UINTN                   PrpEntryNo;
-  UINTN                   PrpListNo;
-  UINT64                  PrpListBase;
-  VOID                    *PrpListHost;
-  UINTN                   PrpListIndex;
-  UINTN                   PrpEntryIndex;
-  UINT64                  Remainder;
-  EFI_PHYSICAL_ADDRESS    PrpListPhyAddr;
-  UINTN                   Bytes;
-  UINT8                   *PrpEntry;
-  EFI_PHYSICAL_ADDRESS    NewPhyAddr;
+  UINTN                 PrpEntryNo;
+  UINTN                 PrpListNo;
+  UINT64                PrpListBase;
+  VOID                  *PrpListHost;
+  UINTN                 PrpListIndex;
+  UINTN                 PrpEntryIndex;
+  UINT64                Remainder;
+  EFI_PHYSICAL_ADDRESS  PrpListPhyAddr;
+  UINTN                 Bytes;
+  UINT8                 *PrpEntry;
+  EFI_PHYSICAL_ADDRESS  NewPhyAddr;
 
   //
   // The number of Prp Entry in a memory page.
@@ -47,7 +47,7 @@ NvmeCreatePrpList (
   //
   // Calculate total PrpList number.
   //
-  PrpListNo = (UINTN) DivU64x64Remainder ((UINT64)Pages, (UINT64)PrpEntryNo, &Remainder);
+  PrpListNo = (UINTN)DivU64x64Remainder ((UINT64)Pages, (UINT64)PrpEntryNo, &Remainder);
   if (Remainder != 0) {
     PrpListNo += 1;
   }
@@ -62,7 +62,8 @@ NvmeCreatePrpList (
       ));
     return 0;
   }
-  PrpListHost = (VOID *)(UINTN) NVME_PRP_BASE (Private);
+
+  PrpListHost = (VOID *)(UINTN)NVME_PRP_BASE (Private);
 
   Bytes = EFI_PAGES_TO_SIZE (PrpListNo);
   PrpListPhyAddr = (UINT64)(UINTN)(PrpListHost);
@@ -75,19 +76,19 @@ NvmeCreatePrpList (
     PrpListBase = (UINTN)PrpListHost + PrpListIndex * EFI_PAGE_SIZE;
 
     for (PrpEntryIndex = 0; PrpEntryIndex < PrpEntryNo; ++PrpEntryIndex) {
-      PrpEntry = (UINT8 *)(UINTN) (PrpListBase + PrpEntryIndex * sizeof(UINT64));
+      PrpEntry = (UINT8 *)(UINTN)(PrpListBase + PrpEntryIndex * sizeof (UINT64));
       if (PrpEntryIndex != PrpEntryNo - 1) {
         //
         // Fill all PRP entries except of last one.
         //
-        CopyMem (PrpEntry, (VOID *)(UINTN) (&PhysicalAddr), sizeof (UINT64));
+        CopyMem (PrpEntry, (VOID *)(UINTN)(&PhysicalAddr), sizeof (UINT64));
         PhysicalAddr += EFI_PAGE_SIZE;
       } else {
         //
         // Fill last PRP entries with next PRP List pointer.
         //
         NewPhyAddr = (PrpListPhyAddr + (PrpListIndex + 1) * EFI_PAGE_SIZE);
-        CopyMem (PrpEntry, (VOID *)(UINTN) (&NewPhyAddr), sizeof (UINT64));
+        CopyMem (PrpEntry, (VOID *)(UINTN)(&NewPhyAddr), sizeof (UINT64));
       }
     }
   }
@@ -97,8 +98,8 @@ NvmeCreatePrpList (
   //
   PrpListBase = (UINTN)PrpListHost + PrpListIndex * EFI_PAGE_SIZE;
   for (PrpEntryIndex = 0; PrpEntryIndex < ((Remainder != 0) ? Remainder : PrpEntryNo); ++PrpEntryIndex) {
-    PrpEntry = (UINT8 *)(UINTN) (PrpListBase + PrpEntryIndex * sizeof(UINT64));
-    CopyMem (PrpEntry, (VOID *)(UINTN) (&PhysicalAddr), sizeof (UINT64));
+    PrpEntry = (UINT8 *)(UINTN)(PrpListBase + PrpEntryIndex * sizeof (UINT64));
+    CopyMem (PrpEntry, (VOID *)(UINTN)(&PhysicalAddr), sizeof (UINT64));
 
     PhysicalAddr += EFI_PAGE_SIZE;
   }
@@ -202,6 +203,7 @@ NvmeCheckCqStatus (
           DEBUG ((DEBUG_INFO, "Reservation Conflict\n"));
           break;
       }
+
       break;
 
     case 0x1:
@@ -264,6 +266,7 @@ NvmeCheckCqStatus (
           DEBUG ((DEBUG_INFO, "Attempted Write to Read Only Range\n"));
           break;
       }
+
       break;
 
     case 0x2:
@@ -290,6 +293,7 @@ NvmeCheckCqStatus (
           DEBUG ((DEBUG_INFO, "Access Denied\n"));
           break;
       }
+
       break;
 
     default:
@@ -338,21 +342,21 @@ NvmePassThruExecute (
   IN OUT EFI_NVM_EXPRESS_PASS_THRU_COMMAND_PACKET          *Packet
   )
 {
-  EFI_STATUS               Status;
-  NVME_SQ                  *Sq;
-  NVME_CQ                  *Cq;
-  UINT8                    QueueId;
-  UINTN                    SqSize;
-  UINTN                    CqSize;
-  EDKII_IOMMU_OPERATION    MapOp;
-  UINTN                    MapLength;
-  EFI_PHYSICAL_ADDRESS     PhyAddr;
-  VOID                     *MapData;
-  VOID                     *MapMeta;
-  UINT32                   Bytes;
-  UINT32                   Offset;
-  UINT32                   Data32;
-  UINT64                   Timer;
+  EFI_STATUS             Status;
+  NVME_SQ                *Sq;
+  NVME_CQ                *Cq;
+  UINT8                  QueueId;
+  UINTN                  SqSize;
+  UINTN                  CqSize;
+  EDKII_IOMMU_OPERATION  MapOp;
+  UINTN                  MapLength;
+  EFI_PHYSICAL_ADDRESS   PhyAddr;
+  VOID                   *MapData;
+  VOID                   *MapMeta;
+  UINT32                 Bytes;
+  UINT32                 Offset;
+  UINT32                 Data32;
+  UINT64                 Timer;
 
   //
   // Check the data fields in Packet parameter
@@ -389,8 +393,8 @@ NvmePassThruExecute (
   }
 
   QueueId = Packet->QueueType;
-  Sq      = Private->SqBuffer[QueueId] + Private->SqTdbl[QueueId].Sqt;
-  Cq      = Private->CqBuffer[QueueId] + Private->CqHdbl[QueueId].Cqh;
+  Sq = Private->SqBuffer[QueueId] + Private->SqTdbl[QueueId].Sqt;
+  Cq = Private->CqBuffer[QueueId] + Private->CqHdbl[QueueId].Cqh;
   if (QueueId == NVME_ADMIN_QUEUE) {
     SqSize = NVME_ASQ_SIZE + 1;
     CqSize = NVME_ACQ_SIZE + 1;
@@ -413,7 +417,7 @@ NvmePassThruExecute (
   ZeroMem (Sq, sizeof (NVME_SQ));
   Sq->Opc  = (UINT8)Packet->NvmeCmd->Cdw0.Opcode;
   Sq->Fuse = (UINT8)Packet->NvmeCmd->Cdw0.FusedOperation;
-  Sq->Cid  = Private->Cid[QueueId]++;;
+  Sq->Cid  = Private->Cid[QueueId]++;
   Sq->Nsid = Packet->NvmeCmd->Nsid;
 
   //
@@ -464,13 +468,13 @@ NvmePassThruExecute (
 
       if ((Packet->TransferLength != 0) && (Packet->TransferBuffer != NULL)) {
         MapLength = Packet->TransferLength;
-        Status = IoMmuMap (
-                   MapOp,
-                   Packet->TransferBuffer,
-                   &MapLength,
-                   &PhyAddr,
-                   &MapData
-                   );
+        Status    = IoMmuMap (
+                      MapOp,
+                      Packet->TransferBuffer,
+                      &MapLength,
+                      &PhyAddr,
+                      &MapData
+                      );
         if (EFI_ERROR (Status) || (MapLength != Packet->TransferLength)) {
           Status = EFI_OUT_OF_RESOURCES;
           DEBUG ((DEBUG_ERROR, "%a: Fail to map data buffer.\n", __FUNCTION__));
@@ -482,18 +486,19 @@ NvmePassThruExecute (
 
       if((Packet->MetadataLength != 0) && (Packet->MetadataBuffer != NULL)) {
         MapLength = Packet->MetadataLength;
-        Status = IoMmuMap (
-                   MapOp,
-                   Packet->MetadataBuffer,
-                   &MapLength,
-                   &PhyAddr,
-                   &MapMeta
-                   );
+        Status    = IoMmuMap (
+                      MapOp,
+                      Packet->MetadataBuffer,
+                      &MapLength,
+                      &PhyAddr,
+                      &MapMeta
+                      );
         if (EFI_ERROR (Status) || (MapLength != Packet->MetadataLength)) {
           Status = EFI_OUT_OF_RESOURCES;
           DEBUG ((DEBUG_ERROR, "%a: Fail to map meta data buffer.\n", __FUNCTION__));
           goto Exit;
         }
+
         Sq->Mptr = PhyAddr;
       }
     }
@@ -510,18 +515,17 @@ NvmePassThruExecute (
     //
     // Create PrpList for remaining Data Buffer.
     //
-    PhyAddr = (Sq->Prp[0] + EFI_PAGE_SIZE) & ~(EFI_PAGE_SIZE - 1);
+    PhyAddr    = (Sq->Prp[0] + EFI_PAGE_SIZE) & ~(EFI_PAGE_SIZE - 1);
     Sq->Prp[1] = NvmeCreatePrpList (
                    Private,
                    PhyAddr,
-                   EFI_SIZE_TO_PAGES(Offset + Bytes) - 1
+                   EFI_SIZE_TO_PAGES (Offset + Bytes) - 1
                    );
     if (Sq->Prp[1] == 0) {
       Status = EFI_OUT_OF_RESOURCES;
       DEBUG ((DEBUG_ERROR, "%a: Create PRP list fail, Status - %r\n", __FUNCTION__, Status));
       goto Exit;
     }
-
   } else if ((Offset + Bytes) > EFI_PAGE_SIZE) {
     Sq->Prp[1] = (Sq->Prp[0] + EFI_PAGE_SIZE) & ~(EFI_PAGE_SIZE - 1);
   }
@@ -529,18 +533,23 @@ NvmePassThruExecute (
   if (Packet->NvmeCmd->Flags & CDW10_VALID) {
     Sq->Payload.Raw.Cdw10 = Packet->NvmeCmd->Cdw10;
   }
+
   if (Packet->NvmeCmd->Flags & CDW11_VALID) {
     Sq->Payload.Raw.Cdw11 = Packet->NvmeCmd->Cdw11;
   }
+
   if (Packet->NvmeCmd->Flags & CDW12_VALID) {
     Sq->Payload.Raw.Cdw12 = Packet->NvmeCmd->Cdw12;
   }
+
   if (Packet->NvmeCmd->Flags & CDW13_VALID) {
     Sq->Payload.Raw.Cdw13 = Packet->NvmeCmd->Cdw13;
   }
+
   if (Packet->NvmeCmd->Flags & CDW14_VALID) {
     Sq->Payload.Raw.Cdw14 = Packet->NvmeCmd->Cdw14;
   }
+
   if (Packet->NvmeCmd->Flags & CDW15_VALID) {
     Sq->Payload.Raw.Cdw15 = Packet->NvmeCmd->Cdw15;
   }
@@ -552,6 +561,7 @@ NvmePassThruExecute (
   if (Private->SqTdbl[QueueId].Sqt == SqSize) {
     Private->SqTdbl[QueueId].Sqt = 0;
   }
+
   Data32 = ReadUnaligned32 ((UINT32 *)&Private->SqTdbl[QueueId]);
   Status = NVME_SET_SQTDBL (Private, QueueId, &Data32);
   if (EFI_ERROR (Status)) {
@@ -588,6 +598,7 @@ NvmePassThruExecute (
       //
       Status = EFI_TIMEOUT;
     }
+
     goto Exit;
   }
 
@@ -648,7 +659,7 @@ NvmePassThruGetDevicePath (
   OUT EFI_DEVICE_PATH_PROTOCOL               **DevicePath
   )
 {
-  PEI_NVME_CONTROLLER_PRIVATE_DATA         *Private;
+  PEI_NVME_CONTROLLER_PRIVATE_DATA  *Private;
 
   if (This == NULL || DevicePathLength == NULL || DevicePath == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -657,7 +668,7 @@ NvmePassThruGetDevicePath (
   Private = GET_NVME_PEIM_HC_PRIVATE_DATA_FROM_THIS_NVME_PASSTHRU (This);
 
   *DevicePathLength = Private->DevicePathLength;
-  *DevicePath       = AllocateCopyPool (Private->DevicePathLength, Private->DevicePath);
+  *DevicePath = AllocateCopyPool (Private->DevicePathLength, Private->DevicePath);
   if (*DevicePath == NULL) {
     *DevicePathLength = 0;
     return EFI_OUT_OF_RESOURCES;
@@ -709,9 +720,9 @@ NvmePassThruGetNextNameSpace (
   IN OUT UINT32                                *NamespaceId
   )
 {
-  PEI_NVME_CONTROLLER_PRIVATE_DATA         *Private;
-  UINT32                                   DeviceIndex;
-  EFI_STATUS                               Status;
+  PEI_NVME_CONTROLLER_PRIVATE_DATA  *Private;
+  UINT32                            DeviceIndex;
+  EFI_STATUS                        Status;
 
   if (This == NULL || NamespaceId == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -752,13 +763,13 @@ NvmePassThruGetNextNameSpace (
           *NamespaceId = Private->NamespaceInfo[DeviceIndex + 1].NamespaceId;
           Status = EFI_SUCCESS;
         }
+
         break;
       }
     }
   }
 
   return Status;
-
 }
 
 /**
@@ -800,8 +811,8 @@ NvmePassThru (
   IN OUT EFI_NVM_EXPRESS_PASS_THRU_COMMAND_PACKET          *Packet
   )
 {
-  PEI_NVME_CONTROLLER_PRIVATE_DATA         *Private;
-  EFI_STATUS Status;
+  PEI_NVME_CONTROLLER_PRIVATE_DATA  *Private;
+  EFI_STATUS                        Status;
 
   if (This == NULL || Packet == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -812,7 +823,7 @@ NvmePassThru (
   // Check NamespaceId is valid or not.
   //
   if ((NamespaceId > Private->ControllerData->Nn) &&
-      (NamespaceId != (UINT32) -1)) {
+      (NamespaceId != (UINT32)- 1)) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -823,6 +834,4 @@ NvmePassThru (
              );
 
   return Status;
-
 }
-

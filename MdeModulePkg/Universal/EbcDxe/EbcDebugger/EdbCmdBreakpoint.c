@@ -23,7 +23,7 @@ IsEBCBREAK3 (
   IN UINTN            Address
   )
 {
-  if (GET_OPCODE(Address) != OPCODE_BREAK) {
+  if (GET_OPCODE (Address) != OPCODE_BREAK) {
     return FALSE;
   }
 
@@ -119,10 +119,10 @@ DebuggerBreakpointAdd (
   CopyMem (
     &DebuggerPrivate->DebuggerBreakpointContext[DebuggerPrivate->DebuggerBreakpointCount].OldInstruction,
     (VOID *)Address,
-    sizeof(UINT16)
+    sizeof (UINT16)
     );
 
-  DebuggerPrivate->DebuggerBreakpointCount ++;
+  DebuggerPrivate->DebuggerBreakpointCount++;
 
   //
   // Done
@@ -147,7 +147,7 @@ DebuggerBreakpointDel (
   IN UINTN                     Index
   )
 {
-  UINTN    BpIndex;
+  UINTN  BpIndex;
 
   if ((Index >= EFI_DEBUGGER_BREAKPOINT_MAX) ||
       (Index >= DebuggerPrivate->DebuggerBreakpointCount)) {
@@ -160,12 +160,13 @@ DebuggerBreakpointDel (
   for (BpIndex = Index; BpIndex < DebuggerPrivate->DebuggerBreakpointCount - 1; BpIndex++) {
     DebuggerPrivate->DebuggerBreakpointContext[BpIndex] = DebuggerPrivate->DebuggerBreakpointContext[BpIndex + 1];
   }
+
   ZeroMem (
     &DebuggerPrivate->DebuggerBreakpointContext[BpIndex],
-    sizeof(DebuggerPrivate->DebuggerBreakpointContext[BpIndex])
+    sizeof (DebuggerPrivate->DebuggerBreakpointContext[BpIndex])
     );
 
-  DebuggerPrivate->DebuggerBreakpointCount --;
+  DebuggerPrivate->DebuggerBreakpointCount--;
 
   //
   // Done
@@ -253,7 +254,7 @@ DebuggerBreakpointList (
   IN OUT EFI_SYSTEM_CONTEXT        SystemContext
   )
 {
-  UINTN Index;
+  UINTN  Index;
 
   //
   // Check breakpoint cound
@@ -273,8 +274,8 @@ DebuggerBreakpointList (
   EDBPrint (L"Breakpoint :\n");
   EDBPrint (L" Index   Address            Status\n");
   EDBPrint (L"======= ================== ========\n");
-//EDBPrint (L"   1    0xFFFFFFFF00000000    *\n");
-//EDBPrint (L"  12    0x00000000FFFFFFFF\n");
+  // EDBPrint (L"   1    0xFFFFFFFF00000000    *\n");
+  // EDBPrint (L"  12    0x00000000FFFFFFFF\n");
   for (Index = 0; Index < DebuggerPrivate->DebuggerBreakpointCount; Index++) {
     //
     // Print the breakpoint
@@ -313,8 +314,8 @@ DebuggerBreakpointSet (
   IN OUT EFI_SYSTEM_CONTEXT        SystemContext
   )
 {
-  UINTN      Address;
-  EFI_STATUS Status;
+  UINTN       Address;
+  EFI_STATUS  Status;
 
   if (CommandArg == NULL) {
     EDBPrint (L"BreakpointSet Argument error!\n");
@@ -327,7 +328,7 @@ DebuggerBreakpointSet (
   Status = Symboltoi (CommandArg, &Address);
   if (EFI_ERROR (Status)) {
     if (Status == EFI_NOT_FOUND) {
-      Address = Xtoi(CommandArg);
+      Address = Xtoi (CommandArg);
     } else {
       //
       // Something wrong, let Symboltoi print error info.
@@ -341,7 +342,7 @@ DebuggerBreakpointSet (
   // Add breakpoint
   //
   Status = DebuggerBreakpointAdd (DebuggerPrivate, Address);
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     EDBPrint (L"BreakpointSet error!\n");
   }
 
@@ -371,8 +372,8 @@ DebuggerBreakpointClear (
   IN OUT EFI_SYSTEM_CONTEXT        SystemContext
   )
 {
-  UINTN      Index;
-  EFI_STATUS Status;
+  UINTN       Index;
+  EFI_STATUS  Status;
 
   if (CommandArg == NULL) {
     EDBPrint (L"BreakpointClear Argument error!\n");
@@ -384,7 +385,7 @@ DebuggerBreakpointClear (
     // delete all breakpoint
     //
     DebuggerPrivate->DebuggerBreakpointCount = 0;
-    ZeroMem (DebuggerPrivate->DebuggerBreakpointContext, sizeof(DebuggerPrivate->DebuggerBreakpointContext));
+    ZeroMem (DebuggerPrivate->DebuggerBreakpointContext, sizeof (DebuggerPrivate->DebuggerBreakpointContext));
     EDBPrint (L"All the Breakpoint is cleared\n");
     return EFI_DEBUG_CONTINUE;
   }
@@ -392,8 +393,8 @@ DebuggerBreakpointClear (
   //
   // Get breakpoint index
   //
-  Index = Atoi(CommandArg);
-  if (Index == (UINTN) -1) {
+  Index = Atoi (CommandArg);
+  if (Index == (UINTN)- 1) {
     EDBPrint (L"BreakpointClear Argument error!\n");
     return EFI_DEBUG_CONTINUE;
   }
@@ -408,7 +409,7 @@ DebuggerBreakpointClear (
   // Delete breakpoint
   //
   Status = DebuggerBreakpointDel (DebuggerPrivate, Index);
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     EDBPrint (L"BreakpointClear error!\n");
   }
 
@@ -438,8 +439,8 @@ DebuggerBreakpointDisable (
   IN OUT EFI_SYSTEM_CONTEXT        SystemContext
   )
 {
-  UINTN      Index;
-  EFI_STATUS Status;
+  UINTN       Index;
+  EFI_STATUS  Status;
 
   if (CommandArg == NULL) {
     EDBPrint (L"BreakpointDisable Argument error!\n");
@@ -453,6 +454,7 @@ DebuggerBreakpointDisable (
     for (Index = 0; Index < DebuggerPrivate->DebuggerBreakpointCount; Index++) {
       Status = DebuggerBreakpointDis (DebuggerPrivate, Index);
     }
+
     EDBPrint (L"All the Breakpoint is disabled\n");
     return EFI_DEBUG_CONTINUE;
   }
@@ -460,8 +462,8 @@ DebuggerBreakpointDisable (
   //
   // Get breakpoint index
   //
-  Index = Atoi(CommandArg);
-  if (Index == (UINTN) -1) {
+  Index = Atoi (CommandArg);
+  if (Index == (UINTN)- 1) {
     EDBPrint (L"BreakpointDisable Argument error!\n");
     return EFI_DEBUG_CONTINUE;
   }
@@ -470,7 +472,7 @@ DebuggerBreakpointDisable (
   // Disable breakpoint
   //
   Status = DebuggerBreakpointDis (DebuggerPrivate, Index);
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     EDBPrint (L"BreakpointDisable error!\n");
   }
 
@@ -499,8 +501,8 @@ DebuggerBreakpointEnable (
   IN OUT EFI_SYSTEM_CONTEXT        SystemContext
   )
 {
-  UINTN      Index;
-  EFI_STATUS Status;
+  UINTN       Index;
+  EFI_STATUS  Status;
 
   if (CommandArg == NULL) {
     EDBPrint (L"BreakpointEnable Argument error!\n");
@@ -514,6 +516,7 @@ DebuggerBreakpointEnable (
     for (Index = 0; Index < DebuggerPrivate->DebuggerBreakpointCount; Index++) {
       Status = DebuggerBreakpointEn (DebuggerPrivate, Index);
     }
+
     EDBPrint (L"All the Breakpoint is enabled\n");
     return EFI_DEBUG_CONTINUE;
   }
@@ -521,8 +524,8 @@ DebuggerBreakpointEnable (
   //
   // Get breakpoint index
   //
-  Index = Atoi(CommandArg);
-  if (Index == (UINTN) -1) {
+  Index = Atoi (CommandArg);
+  if (Index == (UINTN)- 1) {
     EDBPrint (L"BreakpointEnable Argument error!\n");
     return EFI_DEBUG_CONTINUE;
   }
@@ -531,7 +534,7 @@ DebuggerBreakpointEnable (
   // Enable breakpoint
   //
   Status = DebuggerBreakpointEn (DebuggerPrivate, Index);
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     EDBPrint (L"BreakpointEnable error!\n");
   }
 

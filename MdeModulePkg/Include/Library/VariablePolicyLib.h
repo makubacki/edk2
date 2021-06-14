@@ -33,7 +33,6 @@ RegisterVariablePolicy (
   IN CONST VARIABLE_POLICY_ENTRY    *NewPolicy
   );
 
-
 /**
   This API function checks to see whether the parameters to SetVariable would
   be allowed according to the current variable policies.
@@ -63,7 +62,6 @@ ValidateSetVariable (
   IN  VOID                         *Data
   );
 
-
 /**
   This API function disables the variable policy enforcement. If it's
   already been called once, will return EFI_ALREADY_STARTED.
@@ -78,9 +76,8 @@ ValidateSetVariable (
 EFI_STATUS
 EFIAPI
 DisableVariablePolicy (
-  VOID
-  );
-
+                       VOID
+                       );
 
 /**
   This API function will dump the entire contents of the variable policy table.
@@ -105,7 +102,6 @@ DumpVariablePolicy (
   IN OUT  UINT32        *Size
   );
 
-
 /**
   This API function returns whether or not the policy engine is
   currently being enforced.
@@ -118,9 +114,8 @@ DumpVariablePolicy (
 BOOLEAN
 EFIAPI
 IsVariablePolicyEnabled (
-  VOID
-  );
-
+                         VOID
+                         );
 
 /**
   This API function locks the interface so that no more policy updates
@@ -133,9 +128,8 @@ IsVariablePolicyEnabled (
 EFI_STATUS
 EFIAPI
 LockVariablePolicy (
-  VOID
-  );
-
+                    VOID
+                    );
 
 /**
   This API function returns whether or not the policy interface is locked
@@ -149,9 +143,8 @@ LockVariablePolicy (
 BOOLEAN
 EFIAPI
 IsVariablePolicyInterfaceLocked (
-  VOID
-  );
-
+                                 VOID
+                                 );
 
 /**
   This helper function initializes the library and sets
@@ -173,7 +166,6 @@ InitVariablePolicyLib (
   IN  EFI_GET_VARIABLE    GetVariableHelper
   );
 
-
 /**
   This helper function returns whether or not the library is currently initialized.
 
@@ -184,9 +176,8 @@ InitVariablePolicyLib (
 BOOLEAN
 EFIAPI
 IsVariablePolicyLibInitialized (
-  VOID
-  );
-
+                                VOID
+                                );
 
 /**
   This helper function tears down  the library.
@@ -200,8 +191,7 @@ IsVariablePolicyLibInitialized (
 EFI_STATUS
 EFIAPI
 DeinitVariablePolicyLib (
-  VOID
-  );
-
+                         VOID
+                         );
 
 #endif // _VARIABLE_POLICY_LIB_H_

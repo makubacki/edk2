@@ -34,7 +34,7 @@ LockBoxGetSmmCommProtocol (
   VOID
   )
 {
-  EFI_STATUS    Status;
+  EFI_STATUS  Status;
 
   //
   // If the protocol has been got previously, return it.
@@ -51,6 +51,7 @@ LockBoxGetSmmCommProtocol (
   if (EFI_ERROR (Status)) {
     mLockBoxSmmCommProtocol = NULL;
   }
+
   return mLockBoxSmmCommProtocol;
 }
 
@@ -65,12 +66,12 @@ LockBoxGetSmmCommBuffer (
   VOID
   )
 {
-  EFI_STATUS                                Status;
-  UINTN                                     MinimalSizeNeeded;
-  EDKII_PI_SMM_COMMUNICATION_REGION_TABLE   *PiSmmCommunicationRegionTable;
-  UINT32                                    Index;
-  EFI_MEMORY_DESCRIPTOR                     *Entry;
-  UINTN                                     Size;
+  EFI_STATUS                               Status;
+  UINTN                                    MinimalSizeNeeded;
+  EDKII_PI_SMM_COMMUNICATION_REGION_TABLE  *PiSmmCommunicationRegionTable;
+  UINT32                                   Index;
+  EFI_MEMORY_DESCRIPTOR                    *Entry;
+  UINTN                                    Size;
 
   //
   // If the buffer has been got previously, return it.
@@ -81,37 +82,49 @@ LockBoxGetSmmCommBuffer (
 
   MinimalSizeNeeded = sizeof (EFI_GUID) +
                       sizeof (UINTN) +
-                      MAX (sizeof (EFI_SMM_LOCK_BOX_PARAMETER_SAVE),
-                           MAX (sizeof (EFI_SMM_LOCK_BOX_PARAMETER_SET_ATTRIBUTES),
-                                MAX (sizeof (EFI_SMM_LOCK_BOX_PARAMETER_UPDATE),
-                                     MAX (sizeof (EFI_SMM_LOCK_BOX_PARAMETER_RESTORE),
-                                          sizeof (EFI_SMM_LOCK_BOX_PARAMETER_RESTORE_ALL_IN_PLACE)))));
+                      MAX (
+                        sizeof (EFI_SMM_LOCK_BOX_PARAMETER_SAVE),
+                        MAX (
+                          sizeof (EFI_SMM_LOCK_BOX_PARAMETER_SET_ATTRIBUTES),
+                          MAX (
+                            sizeof (EFI_SMM_LOCK_BOX_PARAMETER_UPDATE),
+                            MAX (
+                              sizeof (EFI_SMM_LOCK_BOX_PARAMETER_RESTORE),
+                              sizeof (EFI_SMM_LOCK_BOX_PARAMETER_RESTORE_ALL_IN_PLACE)
+                              )
+                            )
+                          )
+                        );
 
   Status = EfiGetSystemConfigurationTable (
              &gEdkiiPiSmmCommunicationRegionTableGuid,
-             (VOID **) &PiSmmCommunicationRegionTable
+             (VOID **)&PiSmmCommunicationRegionTable
              );
   if (EFI_ERROR (Status)) {
     mLockBoxSmmCommBuffer = NULL;
     return mLockBoxSmmCommBuffer;
   }
+
   ASSERT (PiSmmCommunicationRegionTable != NULL);
-  Entry = (EFI_MEMORY_DESCRIPTOR *) (PiSmmCommunicationRegionTable + 1);
-  Size = 0;
+  Entry = (EFI_MEMORY_DESCRIPTOR *)(PiSmmCommunicationRegionTable + 1);
+  Size  = 0;
   for (Index = 0; Index < PiSmmCommunicationRegionTable->NumberOfEntries; Index++) {
     if (Entry->Type == EfiConventionalMemory) {
-      Size = EFI_PAGES_TO_SIZE ((UINTN) Entry->NumberOfPages);
+      Size = EFI_PAGES_TO_SIZE ((UINTN)Entry->NumberOfPages);
       if (Size >= MinimalSizeNeeded) {
         break;
       }
     }
-    Entry = (EFI_MEMORY_DESCRIPTOR *) ((UINT8 *) Entry + PiSmmCommunicationRegionTable->DescriptorSize);
+
+    Entry = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)Entry + PiSmmCommunicationRegionTable->DescriptorSize);
   }
+
   if (Index >= PiSmmCommunicationRegionTable->NumberOfEntries) {
     mLockBoxSmmCommBuffer = NULL;
   } else {
-    mLockBoxSmmCommBuffer = (UINT8 *) (UINTN) Entry->PhysicalStart;
+    mLockBoxSmmCommBuffer = (UINT8 *)(UINTN)Entry->PhysicalStart;
   }
+
   return mLockBoxSmmCommBuffer;
 }
 
@@ -138,13 +151,14 @@ SaveLockBox (
   IN  UINTN                       Length
   )
 {
-  EFI_STATUS                      Status;
-  EFI_SMM_COMMUNICATION_PROTOCOL  *SmmCommunication;
-  EFI_SMM_LOCK_BOX_PARAMETER_SAVE *LockBoxParameterSave;
-  EFI_SMM_COMMUNICATE_HEADER      *CommHeader;
-  UINT8                           TempCommBuffer[sizeof(EFI_GUID) + sizeof(UINTN) + sizeof(EFI_SMM_LOCK_BOX_PARAMETER_SAVE)];
-  UINT8                           *CommBuffer;
-  UINTN                           CommSize;
+  EFI_STATUS                       Status;
+  EFI_SMM_COMMUNICATION_PROTOCOL   *SmmCommunication;
+  EFI_SMM_LOCK_BOX_PARAMETER_SAVE  *LockBoxParameterSave;
+  EFI_SMM_COMMUNICATE_HEADER       *CommHeader;
+  UINT8                            TempCommBuffer[sizeof (EFI_GUID) + sizeof (UINTN) +
+                                                  sizeof (EFI_SMM_LOCK_BOX_PARAMETER_SAVE)];
+  UINT8  *CommBuffer;
+  UINTN  CommSize;
 
   DEBUG ((DEBUG_INFO, "SmmLockBoxDxeLib SaveLockBox - Enter\n"));
 
@@ -167,27 +181,28 @@ SaveLockBox (
   if (CommBuffer == NULL) {
     CommBuffer = &TempCommBuffer[0];
   }
+
   CommHeader = (EFI_SMM_COMMUNICATE_HEADER *)&CommBuffer[0];
-  CopyMem (&CommHeader->HeaderGuid, &gEfiSmmLockBoxCommunicationGuid, sizeof(gEfiSmmLockBoxCommunicationGuid));
-  CommHeader->MessageLength = sizeof(*LockBoxParameterSave);
+  CopyMem (&CommHeader->HeaderGuid, &gEfiSmmLockBoxCommunicationGuid, sizeof (gEfiSmmLockBoxCommunicationGuid));
+  CommHeader->MessageLength = sizeof (*LockBoxParameterSave);
 
   LockBoxParameterSave = (EFI_SMM_LOCK_BOX_PARAMETER_SAVE *)&CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data)];
-  LockBoxParameterSave->Header.Command    = EFI_SMM_LOCK_BOX_COMMAND_SAVE;
-  LockBoxParameterSave->Header.DataLength = sizeof(*LockBoxParameterSave);
-  LockBoxParameterSave->Header.ReturnStatus = (UINT64)-1;
-  CopyMem (&LockBoxParameterSave->Guid, Guid, sizeof(*Guid));
-  LockBoxParameterSave->Buffer     = (EFI_PHYSICAL_ADDRESS)(UINTN)Buffer;
-  LockBoxParameterSave->Length     = (UINT64)Length;
+  LockBoxParameterSave->Header.Command      = EFI_SMM_LOCK_BOX_COMMAND_SAVE;
+  LockBoxParameterSave->Header.DataLength   = sizeof (*LockBoxParameterSave);
+  LockBoxParameterSave->Header.ReturnStatus = (UINT64)- 1;
+  CopyMem (&LockBoxParameterSave->Guid, Guid, sizeof (*Guid));
+  LockBoxParameterSave->Buffer = (EFI_PHYSICAL_ADDRESS)(UINTN)Buffer;
+  LockBoxParameterSave->Length = (UINT64)Length;
 
   //
   // Send command
   //
-  CommSize = sizeof(EFI_GUID) + sizeof(UINTN) + sizeof(EFI_SMM_LOCK_BOX_PARAMETER_SAVE);
-  Status = SmmCommunication->Communicate (
-                               SmmCommunication,
-                               &CommBuffer[0],
-                               &CommSize
-                               );
+  CommSize = sizeof (EFI_GUID) + sizeof (UINTN) + sizeof (EFI_SMM_LOCK_BOX_PARAMETER_SAVE);
+  Status   = SmmCommunication->Communicate (
+                                 SmmCommunication,
+                                 &CommBuffer[0],
+                                 &CommSize
+                                 );
   ASSERT_EFI_ERROR (Status);
 
   Status = (EFI_STATUS)LockBoxParameterSave->Header.ReturnStatus;
@@ -220,13 +235,14 @@ SetLockBoxAttributes (
   IN  UINT64                      Attributes
   )
 {
-  EFI_STATUS                                Status;
-  EFI_SMM_COMMUNICATION_PROTOCOL            *SmmCommunication;
-  EFI_SMM_LOCK_BOX_PARAMETER_SET_ATTRIBUTES *LockBoxParameterSetAttributes;
-  EFI_SMM_COMMUNICATE_HEADER                *CommHeader;
-  UINT8                                     TempCommBuffer[sizeof(EFI_GUID) + sizeof(UINTN) + sizeof(EFI_SMM_LOCK_BOX_PARAMETER_SET_ATTRIBUTES)];
-  UINT8                                     *CommBuffer;
-  UINTN                                     CommSize;
+  EFI_STATUS                                 Status;
+  EFI_SMM_COMMUNICATION_PROTOCOL             *SmmCommunication;
+  EFI_SMM_LOCK_BOX_PARAMETER_SET_ATTRIBUTES  *LockBoxParameterSetAttributes;
+  EFI_SMM_COMMUNICATE_HEADER                 *CommHeader;
+  UINT8                                      TempCommBuffer[sizeof (EFI_GUID) + sizeof (UINTN) +
+                                                            sizeof (EFI_SMM_LOCK_BOX_PARAMETER_SET_ATTRIBUTES)];
+  UINT8  *CommBuffer;
+  UINTN  CommSize;
 
   DEBUG ((DEBUG_INFO, "SmmLockBoxDxeLib SetLockBoxAttributes - Enter\n"));
 
@@ -250,26 +266,28 @@ SetLockBoxAttributes (
   if (CommBuffer == NULL) {
     CommBuffer = &TempCommBuffer[0];
   }
-  CommHeader = (EFI_SMM_COMMUNICATE_HEADER *)&CommBuffer[0];
-  CopyMem (&CommHeader->HeaderGuid, &gEfiSmmLockBoxCommunicationGuid, sizeof(gEfiSmmLockBoxCommunicationGuid));
-  CommHeader->MessageLength = sizeof(*LockBoxParameterSetAttributes);
 
-  LockBoxParameterSetAttributes = (EFI_SMM_LOCK_BOX_PARAMETER_SET_ATTRIBUTES *)&CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data)];
-  LockBoxParameterSetAttributes->Header.Command    = EFI_SMM_LOCK_BOX_COMMAND_SET_ATTRIBUTES;
-  LockBoxParameterSetAttributes->Header.DataLength = sizeof(*LockBoxParameterSetAttributes);
-  LockBoxParameterSetAttributes->Header.ReturnStatus = (UINT64)-1;
-  CopyMem (&LockBoxParameterSetAttributes->Guid, Guid, sizeof(*Guid));
+  CommHeader = (EFI_SMM_COMMUNICATE_HEADER *)&CommBuffer[0];
+  CopyMem (&CommHeader->HeaderGuid, &gEfiSmmLockBoxCommunicationGuid, sizeof (gEfiSmmLockBoxCommunicationGuid));
+  CommHeader->MessageLength = sizeof (*LockBoxParameterSetAttributes);
+
+  LockBoxParameterSetAttributes =
+    (EFI_SMM_LOCK_BOX_PARAMETER_SET_ATTRIBUTES *)&CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data)];
+  LockBoxParameterSetAttributes->Header.Command      = EFI_SMM_LOCK_BOX_COMMAND_SET_ATTRIBUTES;
+  LockBoxParameterSetAttributes->Header.DataLength   = sizeof (*LockBoxParameterSetAttributes);
+  LockBoxParameterSetAttributes->Header.ReturnStatus = (UINT64)- 1;
+  CopyMem (&LockBoxParameterSetAttributes->Guid, Guid, sizeof (*Guid));
   LockBoxParameterSetAttributes->Attributes = (UINT64)Attributes;
 
   //
   // Send command
   //
-  CommSize = sizeof(EFI_GUID) + sizeof(UINTN) + sizeof(EFI_SMM_LOCK_BOX_PARAMETER_SET_ATTRIBUTES);
-  Status = SmmCommunication->Communicate (
-                               SmmCommunication,
-                               &CommBuffer[0],
-                               &CommSize
-                               );
+  CommSize = sizeof (EFI_GUID) + sizeof (UINTN) + sizeof (EFI_SMM_LOCK_BOX_PARAMETER_SET_ATTRIBUTES);
+  Status   = SmmCommunication->Communicate (
+                                 SmmCommunication,
+                                 &CommBuffer[0],
+                                 &CommSize
+                                 );
   ASSERT_EFI_ERROR (Status);
 
   Status = (EFI_STATUS)LockBoxParameterSetAttributes->Header.ReturnStatus;
@@ -310,13 +328,14 @@ UpdateLockBox (
   IN  UINTN                       Length
   )
 {
-  EFI_STATUS                        Status;
-  EFI_SMM_COMMUNICATION_PROTOCOL    *SmmCommunication;
-  EFI_SMM_LOCK_BOX_PARAMETER_UPDATE *LockBoxParameterUpdate;
-  EFI_SMM_COMMUNICATE_HEADER        *CommHeader;
-  UINT8                             TempCommBuffer[sizeof(EFI_GUID) + sizeof(UINTN) + sizeof(EFI_SMM_LOCK_BOX_PARAMETER_UPDATE)];
-  UINT8                             *CommBuffer;
-  UINTN                             CommSize;
+  EFI_STATUS                         Status;
+  EFI_SMM_COMMUNICATION_PROTOCOL     *SmmCommunication;
+  EFI_SMM_LOCK_BOX_PARAMETER_UPDATE  *LockBoxParameterUpdate;
+  EFI_SMM_COMMUNICATE_HEADER         *CommHeader;
+  UINT8                              TempCommBuffer[sizeof (EFI_GUID) + sizeof (UINTN) +
+                                                    sizeof (EFI_SMM_LOCK_BOX_PARAMETER_UPDATE)];
+  UINT8  *CommBuffer;
+  UINTN  CommSize;
 
   DEBUG ((DEBUG_INFO, "SmmLockBoxDxeLib UpdateLockBox - Enter\n"));
 
@@ -339,15 +358,17 @@ UpdateLockBox (
   if (CommBuffer == NULL) {
     CommBuffer = &TempCommBuffer[0];
   }
-  CommHeader = (EFI_SMM_COMMUNICATE_HEADER *)&CommBuffer[0];
-  CopyMem (&CommHeader->HeaderGuid, &gEfiSmmLockBoxCommunicationGuid, sizeof(gEfiSmmLockBoxCommunicationGuid));
-  CommHeader->MessageLength = sizeof(*LockBoxParameterUpdate);
 
-  LockBoxParameterUpdate = (EFI_SMM_LOCK_BOX_PARAMETER_UPDATE *)(UINTN)&CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data)];
-  LockBoxParameterUpdate->Header.Command    = EFI_SMM_LOCK_BOX_COMMAND_UPDATE;
-  LockBoxParameterUpdate->Header.DataLength = sizeof(*LockBoxParameterUpdate);
-  LockBoxParameterUpdate->Header.ReturnStatus = (UINT64)-1;
-  CopyMem (&LockBoxParameterUpdate->Guid, Guid, sizeof(*Guid));
+  CommHeader = (EFI_SMM_COMMUNICATE_HEADER *)&CommBuffer[0];
+  CopyMem (&CommHeader->HeaderGuid, &gEfiSmmLockBoxCommunicationGuid, sizeof (gEfiSmmLockBoxCommunicationGuid));
+  CommHeader->MessageLength = sizeof (*LockBoxParameterUpdate);
+
+  LockBoxParameterUpdate =
+    (EFI_SMM_LOCK_BOX_PARAMETER_UPDATE *)(UINTN)&CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data)];
+  LockBoxParameterUpdate->Header.Command      = EFI_SMM_LOCK_BOX_COMMAND_UPDATE;
+  LockBoxParameterUpdate->Header.DataLength   = sizeof (*LockBoxParameterUpdate);
+  LockBoxParameterUpdate->Header.ReturnStatus = (UINT64)- 1;
+  CopyMem (&LockBoxParameterUpdate->Guid, Guid, sizeof (*Guid));
   LockBoxParameterUpdate->Offset = (UINT64)Offset;
   LockBoxParameterUpdate->Buffer = (EFI_PHYSICAL_ADDRESS)(UINTN)Buffer;
   LockBoxParameterUpdate->Length = (UINT64)Length;
@@ -355,12 +376,12 @@ UpdateLockBox (
   //
   // Send command
   //
-  CommSize = sizeof(EFI_GUID) + sizeof(UINTN) + sizeof(EFI_SMM_LOCK_BOX_PARAMETER_UPDATE);
-  Status = SmmCommunication->Communicate (
-                               SmmCommunication,
-                               &CommBuffer[0],
-                               &CommSize
-                               );
+  CommSize = sizeof (EFI_GUID) + sizeof (UINTN) + sizeof (EFI_SMM_LOCK_BOX_PARAMETER_UPDATE);
+  Status   = SmmCommunication->Communicate (
+                                 SmmCommunication,
+                                 &CommBuffer[0],
+                                 &CommSize
+                                 );
   ASSERT_EFI_ERROR (Status);
 
   Status = (EFI_STATUS)LockBoxParameterUpdate->Header.ReturnStatus;
@@ -399,13 +420,14 @@ RestoreLockBox (
   IN  OUT UINTN                   *Length  OPTIONAL
   )
 {
-  EFI_STATUS                         Status;
-  EFI_SMM_COMMUNICATION_PROTOCOL     *SmmCommunication;
-  EFI_SMM_LOCK_BOX_PARAMETER_RESTORE *LockBoxParameterRestore;
-  EFI_SMM_COMMUNICATE_HEADER         *CommHeader;
-  UINT8                              TempCommBuffer[sizeof(EFI_GUID) + sizeof(UINTN) + sizeof(EFI_SMM_LOCK_BOX_PARAMETER_RESTORE)];
-  UINT8                              *CommBuffer;
-  UINTN                              CommSize;
+  EFI_STATUS                          Status;
+  EFI_SMM_COMMUNICATION_PROTOCOL      *SmmCommunication;
+  EFI_SMM_LOCK_BOX_PARAMETER_RESTORE  *LockBoxParameterRestore;
+  EFI_SMM_COMMUNICATE_HEADER          *CommHeader;
+  UINT8                               TempCommBuffer[sizeof (EFI_GUID) + sizeof (UINTN) +
+                                                     sizeof (EFI_SMM_LOCK_BOX_PARAMETER_RESTORE)];
+  UINT8  *CommBuffer;
+  UINTN  CommSize;
 
   DEBUG ((DEBUG_INFO, "SmmLockBoxDxeLib RestoreLockBox - Enter\n"));
 
@@ -430,15 +452,17 @@ RestoreLockBox (
   if (CommBuffer == NULL) {
     CommBuffer = &TempCommBuffer[0];
   }
-  CommHeader = (EFI_SMM_COMMUNICATE_HEADER *)&CommBuffer[0];
-  CopyMem (&CommHeader->HeaderGuid, &gEfiSmmLockBoxCommunicationGuid, sizeof(gEfiSmmLockBoxCommunicationGuid));
-  CommHeader->MessageLength = sizeof(*LockBoxParameterRestore);
 
-  LockBoxParameterRestore = (EFI_SMM_LOCK_BOX_PARAMETER_RESTORE *)&CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data)];
-  LockBoxParameterRestore->Header.Command    = EFI_SMM_LOCK_BOX_COMMAND_RESTORE;
-  LockBoxParameterRestore->Header.DataLength = sizeof(*LockBoxParameterRestore);
-  LockBoxParameterRestore->Header.ReturnStatus = (UINT64)-1;
-  CopyMem (&LockBoxParameterRestore->Guid, Guid, sizeof(*Guid));
+  CommHeader = (EFI_SMM_COMMUNICATE_HEADER *)&CommBuffer[0];
+  CopyMem (&CommHeader->HeaderGuid, &gEfiSmmLockBoxCommunicationGuid, sizeof (gEfiSmmLockBoxCommunicationGuid));
+  CommHeader->MessageLength = sizeof (*LockBoxParameterRestore);
+
+  LockBoxParameterRestore =
+    (EFI_SMM_LOCK_BOX_PARAMETER_RESTORE *)&CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data)];
+  LockBoxParameterRestore->Header.Command      = EFI_SMM_LOCK_BOX_COMMAND_RESTORE;
+  LockBoxParameterRestore->Header.DataLength   = sizeof (*LockBoxParameterRestore);
+  LockBoxParameterRestore->Header.ReturnStatus = (UINT64)- 1;
+  CopyMem (&LockBoxParameterRestore->Guid, Guid, sizeof (*Guid));
   LockBoxParameterRestore->Buffer = (EFI_PHYSICAL_ADDRESS)(UINTN)Buffer;
   if (Length != NULL) {
     LockBoxParameterRestore->Length = (EFI_PHYSICAL_ADDRESS)*Length;
@@ -449,12 +473,12 @@ RestoreLockBox (
   //
   // Send command
   //
-  CommSize = sizeof(EFI_GUID) + sizeof(UINTN) + sizeof(EFI_SMM_LOCK_BOX_PARAMETER_RESTORE);
-  Status = SmmCommunication->Communicate (
-                               SmmCommunication,
-                               &CommBuffer[0],
-                               &CommSize
-                               );
+  CommSize = sizeof (EFI_GUID) + sizeof (UINTN) + sizeof (EFI_SMM_LOCK_BOX_PARAMETER_RESTORE);
+  Status   = SmmCommunication->Communicate (
+                                 SmmCommunication,
+                                 &CommBuffer[0],
+                                 &CommSize
+                                 );
   ASSERT_EFI_ERROR (Status);
 
   if (Length != NULL) {
@@ -484,13 +508,16 @@ RestoreAllLockBoxInPlace (
   VOID
   )
 {
-  EFI_STATUS                                      Status;
-  EFI_SMM_COMMUNICATION_PROTOCOL                  *SmmCommunication;
-  EFI_SMM_LOCK_BOX_PARAMETER_RESTORE_ALL_IN_PLACE *LockBoxParameterRestoreAllInPlace;
-  EFI_SMM_COMMUNICATE_HEADER                      *CommHeader;
-  UINT8                                           TempCommBuffer[sizeof(EFI_GUID) + sizeof(UINTN) + sizeof(EFI_SMM_LOCK_BOX_PARAMETER_RESTORE_ALL_IN_PLACE)];
-  UINT8                                           *CommBuffer;
-  UINTN                                           CommSize;
+  EFI_STATUS                                       Status;
+  EFI_SMM_COMMUNICATION_PROTOCOL                   *SmmCommunication;
+  EFI_SMM_LOCK_BOX_PARAMETER_RESTORE_ALL_IN_PLACE  *LockBoxParameterRestoreAllInPlace;
+  EFI_SMM_COMMUNICATE_HEADER                       *CommHeader;
+  UINT8                                            TempCommBuffer[sizeof (EFI_GUID) + sizeof (UINTN) +
+                                                                  sizeof (
+                                                                                                          EFI_SMM_LOCK_BOX_PARAMETER_RESTORE_ALL_IN_PLACE)
+  ];
+  UINT8  *CommBuffer;
+  UINTN  CommSize;
 
   DEBUG ((DEBUG_INFO, "SmmLockBoxDxeLib RestoreAllLockBoxInPlace - Enter\n"));
 
@@ -506,24 +533,26 @@ RestoreAllLockBoxInPlace (
   if (CommBuffer == NULL) {
     CommBuffer = &TempCommBuffer[0];
   }
-  CommHeader = (EFI_SMM_COMMUNICATE_HEADER *)&CommBuffer[0];
-  CopyMem (&CommHeader->HeaderGuid, &gEfiSmmLockBoxCommunicationGuid, sizeof(gEfiSmmLockBoxCommunicationGuid));
-  CommHeader->MessageLength = sizeof(*LockBoxParameterRestoreAllInPlace);
 
-  LockBoxParameterRestoreAllInPlace = (EFI_SMM_LOCK_BOX_PARAMETER_RESTORE_ALL_IN_PLACE *)&CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data)];
-  LockBoxParameterRestoreAllInPlace->Header.Command    = EFI_SMM_LOCK_BOX_COMMAND_RESTORE_ALL_IN_PLACE;
-  LockBoxParameterRestoreAllInPlace->Header.DataLength = sizeof(*LockBoxParameterRestoreAllInPlace);
-  LockBoxParameterRestoreAllInPlace->Header.ReturnStatus = (UINT64)-1;
+  CommHeader = (EFI_SMM_COMMUNICATE_HEADER *)&CommBuffer[0];
+  CopyMem (&CommHeader->HeaderGuid, &gEfiSmmLockBoxCommunicationGuid, sizeof (gEfiSmmLockBoxCommunicationGuid));
+  CommHeader->MessageLength = sizeof (*LockBoxParameterRestoreAllInPlace);
+
+  LockBoxParameterRestoreAllInPlace =
+    (EFI_SMM_LOCK_BOX_PARAMETER_RESTORE_ALL_IN_PLACE *)&CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data)];
+  LockBoxParameterRestoreAllInPlace->Header.Command      = EFI_SMM_LOCK_BOX_COMMAND_RESTORE_ALL_IN_PLACE;
+  LockBoxParameterRestoreAllInPlace->Header.DataLength   = sizeof (*LockBoxParameterRestoreAllInPlace);
+  LockBoxParameterRestoreAllInPlace->Header.ReturnStatus = (UINT64)- 1;
 
   //
   // Send command
   //
-  CommSize = sizeof(EFI_GUID) + sizeof(UINTN) + sizeof(EFI_SMM_LOCK_BOX_PARAMETER_RESTORE_ALL_IN_PLACE);
-  Status = SmmCommunication->Communicate (
-                               SmmCommunication,
-                               &CommBuffer[0],
-                               &CommSize
-                               );
+  CommSize = sizeof (EFI_GUID) + sizeof (UINTN) + sizeof (EFI_SMM_LOCK_BOX_PARAMETER_RESTORE_ALL_IN_PLACE);
+  Status   = SmmCommunication->Communicate (
+                                 SmmCommunication,
+                                 &CommBuffer[0],
+                                 &CommSize
+                                 );
   ASSERT_EFI_ERROR (Status);
 
   Status = (EFI_STATUS)LockBoxParameterRestoreAllInPlace->Header.ReturnStatus;
@@ -535,4 +564,3 @@ RestoreAllLockBoxInPlace (
   //
   return Status;
 }
-

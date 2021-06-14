@@ -6,7 +6,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
-
 #ifndef _BDS_MODULE_H_
 #define _BDS_MODULE_H_
 
@@ -37,17 +36,15 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 /// HII specific Vendor Device Path definition.
 ///
 typedef struct {
-  VENDOR_DEVICE_PATH             VendorDevicePath;
-  EFI_DEVICE_PATH_PROTOCOL       End;
+  VENDOR_DEVICE_PATH          VendorDevicePath;
+  EFI_DEVICE_PATH_PROTOCOL    End;
 } HII_VENDOR_DEVICE_PATH;
 
 #pragma pack()
 
-
 //
-//The interface functions related to the Setup Browser Reset Reminder feature
+// The interface functions related to the Setup Browser Reset Reminder feature
 //
-
 
 /**
   Record the info that a reset is required.
@@ -57,10 +54,8 @@ typedef struct {
 VOID
 EFIAPI
 EnableResetRequired (
-  VOID
-  );
-
-
+                     VOID
+                     );
 
 /**
   Check whether platform policy enables the reset reminder feature. The default is enabled.
@@ -69,8 +64,8 @@ EnableResetRequired (
 BOOLEAN
 EFIAPI
 IsResetReminderFeatureEnable (
-  VOID
-  );
+                              VOID
+                              );
 
 /**
   Check if the user changed any option setting that needs a system reset to be effective.
@@ -79,8 +74,8 @@ IsResetReminderFeatureEnable (
 BOOLEAN
 EFIAPI
 IsResetRequired (
-  VOID
-  );
+                 VOID
+                 );
 
 /**
   Check whether a reset is needed, and finish the reset reminder feature.
@@ -91,7 +86,7 @@ IsResetRequired (
 VOID
 EFIAPI
 SetupResetReminder (
-  VOID
-  );
+                    VOID
+                    );
 
 #endif

@@ -12,7 +12,7 @@
 //
 // NVM Express Driver Binding Protocol Instance
 //
-EFI_DRIVER_BINDING_PROTOCOL gUfsHcDriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  gUfsHcDriverBinding = {
   UfsHcDriverBindingSupported,
   UfsHcDriverBindingStart,
   UfsHcDriverBindingStop,
@@ -24,7 +24,7 @@ EFI_DRIVER_BINDING_PROTOCOL gUfsHcDriverBinding = {
 //
 // Template for Ufs host controller private data.
 //
-UFS_HOST_CONTROLLER_PRIVATE_DATA gUfsHcTemplate = {
+UFS_HOST_CONTROLLER_PRIVATE_DATA  gUfsHcTemplate = {
   UFS_HC_PRIVATE_DATA_SIGNATURE,  // Signature
   {                               // UfsHcProtocol
     UfsHcGetMmioBar,
@@ -54,14 +54,14 @@ EFI_STATUS
 EFIAPI
 UfsHcGetMmioBar (
   IN     EDKII_UFS_HOST_CONTROLLER_PROTOCOL *This,
-     OUT UINTN                              *MmioBar
+  OUT UINTN                              *MmioBar
   )
 {
-  UFS_HOST_CONTROLLER_PRIVATE_DATA  *Private;
-  EFI_PCI_IO_PROTOCOL               *PciIo;
-  EFI_STATUS                        Status;
-  UINT8                             BarIndex;
-  EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *BarDesc;
+  UFS_HOST_CONTROLLER_PRIVATE_DATA   *Private;
+  EFI_PCI_IO_PROTOCOL                *PciIo;
+  EFI_STATUS                         Status;
+  UINT8                              BarIndex;
+  EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR  *BarDesc;
 
   if ((This == NULL) || (MmioBar == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -76,7 +76,7 @@ UfsHcGetMmioBar (
                     PciIo,
                     BarIndex,
                     NULL,
-                    (VOID**) &BarDesc
+                    (VOID **)&BarDesc
                     );
   if (EFI_ERROR (Status)) {
     return Status;
@@ -115,22 +115,30 @@ UfsHcMap (
   IN     EDKII_UFS_HOST_CONTROLLER_OPERATION  Operation,
   IN     VOID                                 *HostAddress,
   IN OUT UINTN                                *NumberOfBytes,
-     OUT EFI_PHYSICAL_ADDRESS                 *DeviceAddress,
-     OUT VOID                                 **Mapping
+  OUT EFI_PHYSICAL_ADDRESS                 *DeviceAddress,
+  OUT VOID                                 **Mapping
   )
 {
   UFS_HOST_CONTROLLER_PRIVATE_DATA  *Private;
   EFI_PCI_IO_PROTOCOL               *PciIo;
   EFI_STATUS                        Status;
 
-  if ((This == NULL) || (HostAddress == NULL) || (NumberOfBytes == NULL) || (DeviceAddress == NULL) || (Mapping == NULL)) {
+  if ((This == NULL) || (HostAddress == NULL) || (NumberOfBytes == NULL) || (DeviceAddress == NULL) ||
+      (Mapping == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
 
   Private = UFS_HOST_CONTROLLER_PRIVATE_DATA_FROM_UFSHC (This);
   PciIo   = Private->PciIo;
 
-  Status  = PciIo->Map (PciIo, (EFI_PCI_IO_PROTOCOL_OPERATION)Operation, HostAddress, NumberOfBytes, DeviceAddress, Mapping);
+  Status = PciIo->Map (
+                    PciIo,
+                    (EFI_PCI_IO_PROTOCOL_OPERATION)Operation,
+                    HostAddress,
+                    NumberOfBytes,
+                    DeviceAddress,
+                    Mapping
+                    );
   return Status;
 }
 
@@ -162,7 +170,7 @@ UfsHcUnmap (
   Private = UFS_HOST_CONTROLLER_PRIVATE_DATA_FROM_UFSHC (This);
   PciIo   = Private->PciIo;
 
-  Status  = PciIo->Unmap (PciIo, Mapping);
+  Status = PciIo->Unmap (PciIo, Mapping);
   return Status;
 }
 
@@ -193,7 +201,7 @@ UfsHcAllocateBuffer (
   IN     EFI_ALLOCATE_TYPE                  Type,
   IN     EFI_MEMORY_TYPE                    MemoryType,
   IN     UINTN                              Pages,
-     OUT VOID                               **HostAddress,
+  OUT VOID                               **HostAddress,
   IN     UINT64                             Attributes
   )
 {
@@ -208,7 +216,7 @@ UfsHcAllocateBuffer (
   Private = UFS_HOST_CONTROLLER_PRIVATE_DATA_FROM_UFSHC (This);
   PciIo   = Private->PciIo;
 
-  Status  = PciIo->AllocateBuffer (PciIo, Type, MemoryType, Pages, HostAddress, Attributes);
+  Status = PciIo->AllocateBuffer (PciIo, Type, MemoryType, Pages, HostAddress, Attributes);
   return Status;
 }
 
@@ -243,7 +251,7 @@ UfsHcFreeBuffer (
   Private = UFS_HOST_CONTROLLER_PRIVATE_DATA_FROM_UFSHC (This);
   PciIo   = Private->PciIo;
 
-  Status  = PciIo->FreeBuffer (PciIo, Pages, HostAddress);
+  Status = PciIo->FreeBuffer (PciIo, Pages, HostAddress);
   return Status;
 }
 
@@ -271,7 +279,7 @@ UfsHcFlush (
   Private = UFS_HOST_CONTROLLER_PRIVATE_DATA_FROM_UFSHC (This);
   PciIo   = Private->PciIo;
 
-  Status  = PciIo->Flush (PciIo);
+  Status = PciIo->Flush (PciIo);
   return Status;
 }
 
@@ -312,7 +320,7 @@ UfsHcMmioRead (
   PciIo    = Private->PciIo;
   BarIndex = Private->BarIndex;
 
-  Status   = PciIo->Mem.Read (PciIo, (EFI_PCI_IO_PROTOCOL_WIDTH)Width, BarIndex, Offset, Count, Buffer);
+  Status = PciIo->Mem.Read (PciIo, (EFI_PCI_IO_PROTOCOL_WIDTH)Width, BarIndex, Offset, Count, Buffer);
 
   return Status;
 }
@@ -354,7 +362,7 @@ UfsHcMmioWrite (
   PciIo    = Private->PciIo;
   BarIndex = Private->BarIndex;
 
-  Status   = PciIo->Mem.Write (PciIo, (EFI_PCI_IO_PROTOCOL_WIDTH)Width, BarIndex, Offset, Count, Buffer);
+  Status = PciIo->Mem.Write (PciIo, (EFI_PCI_IO_PROTOCOL_WIDTH)Width, BarIndex, Offset, Count, Buffer);
 
   return Status;
 }
@@ -415,9 +423,9 @@ UfsHcDriverBindingSupported (
   EFI_PCI_IO_PROTOCOL       *PciIo;
   PCI_TYPE00                PciData;
 
-  PciIo            = NULL;
+  PciIo = NULL;
   ParentDevicePath = NULL;
-  UfsHcFound       = FALSE;
+  UfsHcFound = FALSE;
 
   //
   // UfsHcDxe is a device driver, and should ingore the
@@ -426,7 +434,7 @@ UfsHcDriverBindingSupported (
   Status = gBS->OpenProtocol (
                   Controller,
                   &gEfiDevicePathProtocolGuid,
-                  (VOID *) &ParentDevicePath,
+                  (VOID *)&ParentDevicePath,
                   This->DriverBindingHandle,
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
@@ -437,15 +445,16 @@ UfsHcDriverBindingSupported (
     //
     return Status;
   }
+
   //
   // Close the protocol because we don't use it here
   //
   gBS->CloseProtocol (
-        Controller,
-        &gEfiDevicePathProtocolGuid,
-        This->DriverBindingHandle,
-        Controller
-        );
+         Controller,
+         &gEfiDevicePathProtocolGuid,
+         This->DriverBindingHandle,
+         Controller
+         );
 
   //
   // Now test the EfiPciIoProtocol
@@ -453,7 +462,7 @@ UfsHcDriverBindingSupported (
   Status = gBS->OpenProtocol (
                   Controller,
                   &gEfiPciIoProtocolGuid,
-                  (VOID **) &PciIo,
+                  (VOID **)&PciIo,
                   This->DriverBindingHandle,
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
@@ -461,6 +470,7 @@ UfsHcDriverBindingSupported (
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   //
   // Now further check the PCI header: Base class (offset 0x0B) and
   // Sub Class (offset 0x0A). This controller should be an UFS controller
@@ -474,28 +484,30 @@ UfsHcDriverBindingSupported (
                         );
   if (EFI_ERROR (Status)) {
     gBS->CloseProtocol (
-          Controller,
-          &gEfiPciIoProtocolGuid,
-          This->DriverBindingHandle,
-          Controller
-          );
+           Controller,
+           &gEfiPciIoProtocolGuid,
+           This->DriverBindingHandle,
+           Controller
+           );
     return EFI_UNSUPPORTED;
   }
+
   //
   // Since we already got the PciData, we can close protocol to avoid to carry it on for multiple exit points.
   //
   gBS->CloseProtocol (
-        Controller,
-        &gEfiPciIoProtocolGuid,
-        This->DriverBindingHandle,
-        Controller
-        );
+         Controller,
+         &gEfiPciIoProtocolGuid,
+         This->DriverBindingHandle,
+         Controller
+         );
 
   //
   // Examine UFS Host Controller PCI Configuration table fields
   //
   if (PciData.Hdr.ClassCode[2] == PCI_CLASS_MASS_STORAGE) {
-    if (PciData.Hdr.ClassCode[1] == 0x09 ) { //UFS Controller Subclass
+    if (PciData.Hdr.ClassCode[1] == 0x09 ) {
+      // UFS Controller Subclass
       UfsHcFound = TRUE;
     }
   }
@@ -506,7 +518,6 @@ UfsHcDriverBindingSupported (
 
   return Status;
 }
-
 
 /**
   Starts a device controller or a bus controller.
@@ -551,12 +562,12 @@ UfsHcDriverBindingStart (
   IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath
   )
 {
-  EFI_STATUS                        Status;
-  EFI_PCI_IO_PROTOCOL               *PciIo;
-  UFS_HOST_CONTROLLER_PRIVATE_DATA  *Private;
-  UINT64                            Supports;
-  UINT8                             BarIndex;
-  EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *BarDesc;
+  EFI_STATUS                         Status;
+  EFI_PCI_IO_PROTOCOL                *PciIo;
+  UFS_HOST_CONTROLLER_PRIVATE_DATA   *Private;
+  UINT64                             Supports;
+  UINT8                              BarIndex;
+  EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR  *BarDesc;
 
   PciIo    = NULL;
   Private  = NULL;
@@ -569,7 +580,7 @@ UfsHcDriverBindingStart (
   Status = gBS->OpenProtocol (
                   Controller,
                   &gEfiPciIoProtocolGuid,
-                  (VOID **) &PciIo,
+                  (VOID **)&PciIo,
                   This->DriverBindingHandle,
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
@@ -577,9 +588,9 @@ UfsHcDriverBindingStart (
   //
   // Status == 0 - A normal execution flow, SUCCESS and the program proceeds.
   // Status == ALREADY_STARTED - A non-zero Status code returned. It indicates
-  //           that the protocol has been opened and should be treated as a
-  //           normal condition and the program proceeds. The Protocol will not
-  //           opened 'again' by this call.
+  // that the protocol has been opened and should be treated as a
+  // normal condition and the program proceeds. The Protocol will not
+  // opened 'again' by this call.
   // Status != ALREADY_STARTED - Error status, terminate program execution
   //
   if (EFI_ERROR (Status)) {
@@ -602,7 +613,7 @@ UfsHcDriverBindingStart (
                       PciIo,
                       BarIndex,
                       NULL,
-                      (VOID**) &BarDesc
+                      (VOID **)&BarDesc
                       );
     if (Status == EFI_UNSUPPORTED) {
       continue;
@@ -656,7 +667,7 @@ UfsHcDriverBindingStart (
                   &Controller,
                   &gEdkiiUfsHostControllerProtocolGuid,
                   EFI_NATIVE_INTERFACE,
-                  (VOID*)&(Private->UfsHc)
+                  (VOID *)&(Private->UfsHc)
                   );
 
 Done:
@@ -672,12 +683,13 @@ Done:
                NULL
                );
     }
+
     gBS->CloseProtocol (
-          Controller,
-          &gEfiPciIoProtocolGuid,
-          This->DriverBindingHandle,
-          Controller
-          );
+           Controller,
+           &gEfiPciIoProtocolGuid,
+           This->DriverBindingHandle,
+           Controller
+           );
     if (Private != NULL) {
       FreePool (Private);
     }
@@ -685,7 +697,6 @@ Done:
 
   return Status;
 }
-
 
 /**
   Stops a device controller or a bus controller.
@@ -732,7 +743,7 @@ UfsHcDriverBindingStop (
   Status = gBS->OpenProtocol (
                   Controller,
                   &gEdkiiUfsHostControllerProtocolGuid,
-                  (VOID **) &UfsHc,
+                  (VOID **)&UfsHc,
                   This->DriverBindingHandle,
                   Controller,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
@@ -794,7 +805,7 @@ UfsHcDriverEntry (
   IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  EFI_STATUS           Status;
+  EFI_STATUS  Status;
 
   Status = EfiLibInstallDriverBindingComponentName2 (
              ImageHandle,

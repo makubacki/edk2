@@ -12,22 +12,22 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // ProtocolRequest - Last LocateHandle request ID
 //
-UINTN mEfiLocateHandleRequest = 0;
+UINTN  mEfiLocateHandleRequest = 0;
 
 //
 // Internal prototypes
 //
 
 typedef struct {
-  EFI_GUID        *Protocol;
-  VOID            *SearchKey;
-  LIST_ENTRY      *Position;
-  PROTOCOL_ENTRY  *ProtEntry;
+  EFI_GUID          *Protocol;
+  VOID              *SearchKey;
+  LIST_ENTRY        *Position;
+  PROTOCOL_ENTRY    *ProtEntry;
 } LOCATE_POSITION;
 
 typedef
-IHANDLE *
-(* CORE_GET_NEXT) (
+IHANDLE*
+(*CORE_GET_NEXT) (
   IN OUT LOCATE_POSITION    *Position,
   OUT VOID                  **Interface
   );
@@ -83,7 +83,6 @@ CoreGetNextLocateByProtocol (
   IN OUT LOCATE_POSITION    *Position,
   OUT VOID                  **Interface
   );
-
 
 /**
   Locates the requested handle(s) and returns them in Buffer.
@@ -113,14 +112,14 @@ CoreLocateHandle (
   OUT EFI_HANDLE              *Buffer
   )
 {
-  EFI_STATUS          Status;
-  LOCATE_POSITION     Position;
-  PROTOCOL_NOTIFY     *ProtNotify;
-  CORE_GET_NEXT       GetNext;
-  UINTN               ResultSize;
-  IHANDLE             *Handle;
-  IHANDLE             **ResultBuffer;
-  VOID                *Interface;
+  EFI_STATUS       Status;
+  LOCATE_POSITION  Position;
+  PROTOCOL_NOTIFY  *ProtNotify;
+  CORE_GET_NEXT    GetNext;
+  UINTN            ResultSize;
+  IHANDLE          *Handle;
+  IHANDLE          **ResultBuffer;
+  VOID             *Interface;
 
   if (BufferSize == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -139,8 +138,8 @@ CoreLocateHandle (
   Position.SearchKey = SearchKey;
   Position.Position  = &gHandleList;
 
-  ResultSize = 0;
-  ResultBuffer = (IHANDLE **) Buffer;
+  ResultSize   = 0;
+  ResultBuffer = (IHANDLE **)Buffer;
   Status = EFI_SUCCESS;
 
   //
@@ -152,44 +151,47 @@ CoreLocateHandle (
   // Get the search function based on type
   //
   switch (SearchType) {
-  case AllHandles:
-    GetNext = CoreGetNextLocateAllHandles;
-    break;
+    case AllHandles:
+      GetNext = CoreGetNextLocateAllHandles;
+      break;
 
-  case ByRegisterNotify:
-    //
-    // Must have SearchKey for locate ByRegisterNotify
-    //
-    if (SearchKey == NULL) {
+    case ByRegisterNotify:
+      //
+      // Must have SearchKey for locate ByRegisterNotify
+      //
+      if (SearchKey == NULL) {
+        Status = EFI_INVALID_PARAMETER;
+        break;
+      }
+
+      GetNext = CoreGetNextLocateByRegisterNotify;
+      break;
+
+    case ByProtocol:
+      GetNext = CoreGetNextLocateByProtocol;
+      if (Protocol == NULL) {
+        Status = EFI_INVALID_PARAMETER;
+        break;
+      }
+
+      //
+      // Look up the protocol entry and set the head pointer
+      //
+      Position.ProtEntry = CoreFindProtocolEntry (Protocol, FALSE);
+      if (Position.ProtEntry == NULL) {
+        Status = EFI_NOT_FOUND;
+        break;
+      }
+
+      Position.Position = &Position.ProtEntry->Protocols;
+      break;
+
+    default:
       Status = EFI_INVALID_PARAMETER;
       break;
-    }
-    GetNext = CoreGetNextLocateByRegisterNotify;
-    break;
-
-  case ByProtocol:
-    GetNext = CoreGetNextLocateByProtocol;
-    if (Protocol == NULL) {
-      Status = EFI_INVALID_PARAMETER;
-      break;
-    }
-    //
-    // Look up the protocol entry and set the head pointer
-    //
-    Position.ProtEntry = CoreFindProtocolEntry (Protocol, FALSE);
-    if (Position.ProtEntry == NULL) {
-      Status = EFI_NOT_FOUND;
-      break;
-    }
-    Position.Position = &Position.ProtEntry->Protocols;
-    break;
-
-  default:
-    Status = EFI_INVALID_PARAMETER;
-    break;
   }
 
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     CoreReleaseProtocolLock ();
     return Status;
   }
@@ -199,7 +201,7 @@ CoreLocateHandle (
   // Enumerate out the matching handles
   //
   mEfiLocateHandleRequest += 1;
-  for (; ;) {
+  for ( ; ;) {
     //
     // Get the next handle.  If no more handles, stop
     //
@@ -212,10 +214,10 @@ CoreLocateHandle (
     // Increase the resulting buffer size, and if this handle
     // fits return it
     //
-    ResultSize += sizeof(Handle);
+    ResultSize += sizeof (Handle);
     if (ResultSize <= *BufferSize) {
-        *ResultBuffer = Handle;
-        ResultBuffer += 1;
+      *ResultBuffer = Handle;
+      ResultBuffer += 1;
     }
   }
 
@@ -236,7 +238,7 @@ CoreLocateHandle (
 
     *BufferSize = ResultSize;
 
-    if (SearchType == ByRegisterNotify && !EFI_ERROR(Status)) {
+    if (SearchType == ByRegisterNotify && !EFI_ERROR (Status)) {
       //
       // If this is a search by register notify and a handle was
       // returned, update the register notification position
@@ -250,8 +252,6 @@ CoreLocateHandle (
   CoreReleaseProtocolLock ();
   return Status;
 }
-
-
 
 /**
   Routine to get the next Handle, when you are searching for all handles.
@@ -270,7 +270,7 @@ CoreGetNextLocateAllHandles (
   OUT VOID                  **Interface
   )
 {
-  IHANDLE     *Handle;
+  IHANDLE  *Handle;
 
   //
   // Next handle
@@ -280,16 +280,14 @@ CoreGetNextLocateAllHandles (
   //
   // If not at the end of the list, get the handle
   //
-  Handle      = NULL;
-  *Interface  = NULL;
+  Handle     = NULL;
+  *Interface = NULL;
   if (Position->Position != &gHandleList) {
     Handle = CR (Position->Position, IHANDLE, AllHandles, EFI_HANDLE_SIGNATURE);
   }
 
   return Handle;
 }
-
-
 
 /**
   Routine to get the next Handle, when you are searching for register protocol
@@ -314,15 +312,15 @@ CoreGetNextLocateByRegisterNotify (
   PROTOCOL_INTERFACE  *Prot;
   LIST_ENTRY          *Link;
 
-  Handle      = NULL;
-  *Interface  = NULL;
+  Handle     = NULL;
+  *Interface = NULL;
   ProtNotify = Position->SearchKey;
 
   //
   // If this is the first request, get the next handle
   //
   if (ProtNotify != NULL) {
-    ASSERT(ProtNotify->Signature == PROTOCOL_NOTIFY_SIGNATURE);
+    ASSERT (ProtNotify->Signature == PROTOCOL_NOTIFY_SIGNATURE);
     Position->SearchKey = NULL;
 
     //
@@ -330,15 +328,14 @@ CoreGetNextLocateByRegisterNotify (
     //
     Link = ProtNotify->Position->ForwardLink;
     if (Link != &ProtNotify->Protocol->Protocols) {
-      Prot = CR (Link, PROTOCOL_INTERFACE, ByProtocol, PROTOCOL_INTERFACE_SIGNATURE);
-      Handle = Prot->Handle;
+      Prot       = CR (Link, PROTOCOL_INTERFACE, ByProtocol, PROTOCOL_INTERFACE_SIGNATURE);
+      Handle     = Prot->Handle;
       *Interface = Prot->Interface;
     }
   }
 
   return Handle;
 }
-
 
 /**
   Routine to get the next Handle, when you are searching for a given protocol.
@@ -361,9 +358,9 @@ CoreGetNextLocateByProtocol (
   LIST_ENTRY          *Link;
   PROTOCOL_INTERFACE  *Prot;
 
-  Handle      = NULL;
-  *Interface  = NULL;
-  for (; ;) {
+  Handle     = NULL;
+  *Interface = NULL;
+  for ( ; ;) {
     //
     // Next entry
     //
@@ -381,8 +378,8 @@ CoreGetNextLocateByProtocol (
     //
     // Get the handle
     //
-    Prot = CR(Link, PROTOCOL_INTERFACE, ByProtocol, PROTOCOL_INTERFACE_SIGNATURE);
-    Handle = Prot->Handle;
+    Prot       = CR (Link, PROTOCOL_INTERFACE, ByProtocol, PROTOCOL_INTERFACE_SIGNATURE);
+    Handle     = Prot->Handle;
     *Interface = Prot->Interface;
 
     //
@@ -397,7 +394,6 @@ CoreGetNextLocateByProtocol (
 
   return Handle;
 }
-
 
 /**
   Locates the handle to a device on the device path that supports the specified protocol.
@@ -423,17 +419,17 @@ CoreLocateDevicePath (
   OUT EFI_HANDLE                    *Device
   )
 {
-  INTN                        SourceSize;
-  INTN                        Size;
-  INTN                        BestMatch;
-  UINTN                       HandleCount;
-  UINTN                       Index;
-  EFI_STATUS                  Status;
-  EFI_HANDLE                  *Handles;
-  EFI_HANDLE                  Handle;
-  EFI_HANDLE                  BestDevice;
-  EFI_DEVICE_PATH_PROTOCOL    *SourcePath;
-  EFI_DEVICE_PATH_PROTOCOL    *TmpDevicePath;
+  INTN                      SourceSize;
+  INTN                      Size;
+  INTN                      BestMatch;
+  UINTN                     HandleCount;
+  UINTN                     Index;
+  EFI_STATUS                Status;
+  EFI_HANDLE                *Handles;
+  EFI_HANDLE                Handle;
+  EFI_HANDLE                BestDevice;
+  EFI_DEVICE_PATH_PROTOCOL  *SourcePath;
+  EFI_DEVICE_PATH_PROTOCOL  *TmpDevicePath;
 
   if (Protocol == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -443,9 +439,9 @@ CoreLocateDevicePath (
     return EFI_INVALID_PARAMETER;
   }
 
-  Handles = NULL;
-  BestDevice = NULL;
-  SourcePath = *DevicePath;
+  Handles       = NULL;
+  BestDevice    = NULL;
+  SourcePath    = *DevicePath;
   TmpDevicePath = SourcePath;
   while (!IsDevicePathEnd (TmpDevicePath)) {
     if (IsDevicePathEndInstance (TmpDevicePath)) {
@@ -455,10 +451,11 @@ CoreLocateDevicePath (
       //
       break;
     }
+
     TmpDevicePath = NextDevicePathNode (TmpDevicePath);
   }
 
-  SourceSize = (UINTN) TmpDevicePath - (UINTN) SourcePath;
+  SourceSize = (UINTN)TmpDevicePath - (UINTN)SourcePath;
 
   //
   // Get a list of all handles that support the requested protocol
@@ -468,7 +465,7 @@ CoreLocateDevicePath (
     return EFI_NOT_FOUND;
   }
 
-  BestMatch = -1;
+  BestMatch = - 1;
   for(Index = 0; Index < HandleCount; Index += 1) {
     Handle = Handles[Index];
     Status = CoreHandleProtocol (Handle, &gEfiDevicePathProtocolGuid, (VOID **)&TmpDevicePath);
@@ -482,9 +479,9 @@ CoreLocateDevicePath (
     //
     // Check if DevicePath is first part of SourcePath
     //
-    Size = GetDevicePathSize (TmpDevicePath) - sizeof(EFI_DEVICE_PATH_PROTOCOL);
+    Size = GetDevicePathSize (TmpDevicePath) - sizeof (EFI_DEVICE_PATH_PROTOCOL);
     ASSERT (Size >= 0);
-    if ((Size <= SourceSize) && CompareMem (SourcePath, TmpDevicePath, (UINTN) Size) == 0) {
+    if ((Size <= SourceSize) && CompareMem (SourcePath, TmpDevicePath, (UINTN)Size) == 0) {
       //
       // If the size is equal to the best match, then we
       // have a duplicate device path for 2 different device
@@ -496,7 +493,7 @@ CoreLocateDevicePath (
       // We've got a match, see if it's the best match so far
       //
       if (Size > BestMatch) {
-        BestMatch = Size;
+        BestMatch  = Size;
         BestDevice = Handle;
       }
     }
@@ -508,22 +505,22 @@ CoreLocateDevicePath (
   // If there wasn't any match, then no parts of the device path was found.
   // Which is strange since there is likely a "root level" device path in the system.
   //
-  if (BestMatch == -1) {
+  if (BestMatch == - 1) {
     return EFI_NOT_FOUND;
   }
 
   if (Device == NULL) {
-    return  EFI_INVALID_PARAMETER;
+    return EFI_INVALID_PARAMETER;
   }
+
   *Device = BestDevice;
 
   //
   // Return the remaining part of the device path
   //
-  *DevicePath = (EFI_DEVICE_PATH_PROTOCOL *) (((UINT8 *) SourcePath) + BestMatch);
+  *DevicePath = (EFI_DEVICE_PATH_PROTOCOL *)(((UINT8 *)SourcePath) + BestMatch);
   return EFI_SUCCESS;
 }
-
 
 /**
   Return the first Protocol Interface that matches the Protocol GUID. If
@@ -549,17 +546,17 @@ CoreLocateProtocol (
   OUT VOID      **Interface
   )
 {
-  EFI_STATUS              Status;
-  LOCATE_POSITION         Position;
-  PROTOCOL_NOTIFY         *ProtNotify;
-  IHANDLE                 *Handle;
+  EFI_STATUS       Status;
+  LOCATE_POSITION  Position;
+  PROTOCOL_NOTIFY  *ProtNotify;
+  IHANDLE          *Handle;
 
   if ((Interface == NULL) || (Protocol == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
 
   *Interface = NULL;
-  Status = EFI_SUCCESS;
+  Status     = EFI_SUCCESS;
 
   //
   // Set initial position
@@ -587,6 +584,7 @@ CoreLocateProtocol (
       Status = EFI_NOT_FOUND;
       goto Done;
     }
+
     Position.Position = &Position.ProtEntry->Protocols;
 
     Handle = CoreGetNextLocateByProtocol (&Position, Interface);
@@ -609,7 +607,6 @@ Done:
   CoreReleaseProtocolLock ();
   return Status;
 }
-
 
 /**
   Function returns an array of handles that support the requested protocol
@@ -643,8 +640,8 @@ CoreLocateHandleBuffer (
   OUT EFI_HANDLE                  **Buffer
   )
 {
-  EFI_STATUS          Status;
-  UINTN               BufferSize;
+  EFI_STATUS  Status;
+  UINTN       BufferSize;
 
   if (NumberHandles == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -654,26 +651,27 @@ CoreLocateHandleBuffer (
     return EFI_INVALID_PARAMETER;
   }
 
-  BufferSize = 0;
+  BufferSize     = 0;
   *NumberHandles = 0;
   *Buffer = NULL;
-  Status = CoreLocateHandle (
-             SearchType,
-             Protocol,
-             SearchKey,
-             &BufferSize,
-             *Buffer
-             );
+  Status  = CoreLocateHandle (
+              SearchType,
+              Protocol,
+              SearchKey,
+              &BufferSize,
+              *Buffer
+              );
   //
   // LocateHandleBuffer() returns incorrect status code if SearchType is
   // invalid.
   //
   // Add code to correctly handle expected errors from CoreLocateHandle().
   //
-  if (EFI_ERROR(Status) && Status != EFI_BUFFER_TOO_SMALL) {
+  if (EFI_ERROR (Status) && Status != EFI_BUFFER_TOO_SMALL) {
     if (Status != EFI_INVALID_PARAMETER) {
       Status = EFI_NOT_FOUND;
     }
+
     return Status;
   }
 
@@ -690,13 +688,10 @@ CoreLocateHandleBuffer (
              *Buffer
              );
 
-  *NumberHandles = BufferSize / sizeof(EFI_HANDLE);
-  if (EFI_ERROR(Status)) {
+  *NumberHandles = BufferSize / sizeof (EFI_HANDLE);
+  if (EFI_ERROR (Status)) {
     *NumberHandles = 0;
   }
 
   return Status;
 }
-
-
-

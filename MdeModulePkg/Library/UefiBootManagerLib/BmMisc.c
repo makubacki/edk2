@@ -41,23 +41,23 @@ BmDelPartMatchInstance (
     return Multi;
   }
 
-  Instance        = GetNextDevicePathInstance (&Multi, &InstanceSize);
-  SingleDpSize    = GetDevicePathSize (Single) - END_DEVICE_PATH_LENGTH;
-  InstanceSize   -= END_DEVICE_PATH_LENGTH;
+  Instance      = GetNextDevicePathInstance (&Multi, &InstanceSize);
+  SingleDpSize  = GetDevicePathSize (Single) - END_DEVICE_PATH_LENGTH;
+  InstanceSize -= END_DEVICE_PATH_LENGTH;
 
   while (Instance != NULL) {
-
     if (CompareMem (Instance, Single, MIN (SingleDpSize, InstanceSize)) != 0) {
       //
       // Append the device path instance which does not match with Single
       //
       TempNewDevicePath = NewDevicePath;
-      NewDevicePath = AppendDevicePathInstance (NewDevicePath, Instance);
+      NewDevicePath     = AppendDevicePathInstance (NewDevicePath, Instance);
       if (TempNewDevicePath != NULL) {
-        FreePool(TempNewDevicePath);
+        FreePool (TempNewDevicePath);
       }
     }
-    FreePool(Instance);
+
+    FreePool (Instance);
     Instance      = GetNextDevicePathInstance (&Multi, &InstanceSize);
     InstanceSize -= END_DEVICE_PATH_LENGTH;
   }
@@ -144,9 +144,8 @@ BmSetMemoryTypeInformationVariable (
   BOOLEAN                      MemoryTypeInformationVariableExists;
   EFI_BOOT_MODE                BootMode;
 
-  MemoryTypeInformationModified       = FALSE;
+  MemoryTypeInformationModified = FALSE;
   MemoryTypeInformationVariableExists = FALSE;
-
 
   BootMode = GetBootModeHob ();
   //
@@ -181,7 +180,7 @@ BmSetMemoryTypeInformationVariable (
   //
   Status = EfiGetSystemConfigurationTable (
              &gEfiMemoryTypeInformationGuid,
-             (VOID **) &CurrentMemoryTypeInformation
+             (VOID **)&CurrentMemoryTypeInformation
              );
   if (EFI_ERROR (Status) || CurrentMemoryTypeInformation == NULL) {
     return;
@@ -199,7 +198,8 @@ BmSetMemoryTypeInformationVariable (
     //
     return;
   }
-  VariableSize                  = GET_GUID_HOB_DATA_SIZE (GuidHob);
+
+  VariableSize = GET_GUID_HOB_DATA_SIZE (GuidHob);
   PreviousMemoryTypeInformation = AllocateCopyPool (VariableSize, GET_GUID_HOB_DATA (GuidHob));
   if (PreviousMemoryTypeInformation == NULL) {
     return;
@@ -213,12 +213,12 @@ BmSetMemoryTypeInformationVariable (
   DEBUG ((EFI_D_INFO, "======  ========  ========  ========\n"));
 
   for (Index = 0; PreviousMemoryTypeInformation[Index].Type != EfiMaxMemoryType; Index++) {
-
     for (Index1 = 0; CurrentMemoryTypeInformation[Index1].Type != EfiMaxMemoryType; Index1++) {
       if (PreviousMemoryTypeInformation[Index].Type == CurrentMemoryTypeInformation[Index1].Type) {
         break;
       }
     }
+
     if (CurrentMemoryTypeInformation[Index1].Type == EfiMaxMemoryType) {
       continue;
     }
@@ -234,8 +234,8 @@ BmSetMemoryTypeInformationVariable (
     //
     // Inconsistent Memory Reserved across bootings may lead to S4 fail
     // Write next varible to 125% * current when the pre-allocated memory is:
-    //  1. More than 150% of needed memory and boot mode is BOOT_WITH_DEFAULT_SETTING
-    //  2. Less than the needed memory
+    // 1. More than 150% of needed memory and boot mode is BOOT_WITH_DEFAULT_SETTING
+    // 2. Less than the needed memory
     //
     if ((Current + (Current >> 1)) < Previous) {
       if (BootMode == BOOT_WITH_DEFAULT_SETTINGS) {
@@ -244,6 +244,7 @@ BmSetMemoryTypeInformationVariable (
     } else if (Current > Previous) {
       Next = Current + (Current >> 2);
     }
+
     if (Next > 0 && Next < 4) {
       Next = 4;
     }
@@ -253,7 +254,14 @@ BmSetMemoryTypeInformationVariable (
       MemoryTypeInformationModified = TRUE;
     }
 
-    DEBUG ((EFI_D_INFO, "  %02x    %08x  %08x  %08x\n", PreviousMemoryTypeInformation[Index].Type, Previous, Current, Next));
+    DEBUG ((
+      EFI_D_INFO,
+      "  %02x    %08x  %08x  %08x\n",
+      PreviousMemoryTypeInformation[Index].Type,
+      Previous,
+      Current,
+      Next
+      ));
   }
 
   //
@@ -286,6 +294,7 @@ BmSetMemoryTypeInformationVariable (
       DEBUG ((EFI_D_ERROR, "Memory Type Information settings cannot be saved. OS S4 may fail!\n"));
     }
   }
+
   FreePool (PreviousMemoryTypeInformation);
 }
 
@@ -351,8 +360,8 @@ BmSetVariableAndReportStatusCodeOnError (
       SetVariableStatus->DataSize   = DataSize;
       SetVariableStatus->SetStatus  = Status;
       SetVariableStatus->Attributes = Attributes;
-      CopyMem (SetVariableStatus + 1,                          VariableName, NameSize);
-      CopyMem (((UINT8 *) (SetVariableStatus + 1)) + NameSize, Data,         DataSize);
+      CopyMem (SetVariableStatus + 1, VariableName, NameSize);
+      CopyMem (((UINT8 *)(SetVariableStatus + 1)) + NameSize, Data, DataSize);
 
       REPORT_STATUS_CODE_EX (
         EFI_ERROR_CODE,
@@ -371,7 +380,6 @@ BmSetVariableAndReportStatusCodeOnError (
   return Status;
 }
 
-
 /**
   Print the device path info.
 
@@ -382,7 +390,7 @@ BmPrintDp (
   EFI_DEVICE_PATH_PROTOCOL            *DevicePath
   )
 {
-  CHAR16                              *Str;
+  CHAR16  *Str;
 
   Str = ConvertDevicePathToText (DevicePath, FALSE, FALSE);
   DEBUG ((EFI_D_INFO, "%s", Str));
@@ -412,7 +420,7 @@ BmCharToUint (
     return (Char - L'A' + 0xA);
   }
 
-  return (UINTN) -1;
+  return (UINTN)- 1;
 }
 
 /**
@@ -428,32 +436,32 @@ EfiBootManagerDispatchDeferredImages (
   VOID
   )
 {
-  EFI_STATUS                         Status;
-  EFI_DEFERRED_IMAGE_LOAD_PROTOCOL   *DeferredImage;
-  UINTN                              HandleCount;
-  EFI_HANDLE                         *Handles;
-  UINTN                              Index;
-  UINTN                              ImageIndex;
-  EFI_DEVICE_PATH_PROTOCOL           *ImageDevicePath;
-  VOID                               *Image;
-  UINTN                              ImageSize;
-  BOOLEAN                            BootOption;
-  EFI_HANDLE                         ImageHandle;
-  UINTN                              ImageCount;
-  UINTN                              LoadCount;
+  EFI_STATUS                        Status;
+  EFI_DEFERRED_IMAGE_LOAD_PROTOCOL  *DeferredImage;
+  UINTN                             HandleCount;
+  EFI_HANDLE                        *Handles;
+  UINTN                             Index;
+  UINTN                             ImageIndex;
+  EFI_DEVICE_PATH_PROTOCOL          *ImageDevicePath;
+  VOID                              *Image;
+  UINTN                             ImageSize;
+  BOOLEAN                           BootOption;
+  EFI_HANDLE                        ImageHandle;
+  UINTN                             ImageCount;
+  UINTN                             LoadCount;
 
   //
   // Find all the deferred image load protocols.
   //
   HandleCount = 0;
-  Handles = NULL;
+  Handles     = NULL;
   Status = gBS->LocateHandleBuffer (
-    ByProtocol,
-    &gEfiDeferredImageLoadProtocolGuid,
-    NULL,
-    &HandleCount,
-    &Handles
-  );
+                  ByProtocol,
+                  &gEfiDeferredImageLoadProtocolGuid,
+                  NULL,
+                  &HandleCount,
+                  &Handles
+                  );
   if (EFI_ERROR (Status)) {
     return EFI_NOT_FOUND;
   }
@@ -461,12 +469,12 @@ EfiBootManagerDispatchDeferredImages (
   ImageCount = 0;
   LoadCount  = 0;
   for (Index = 0; Index < HandleCount; Index++) {
-    Status = gBS->HandleProtocol (Handles[Index], &gEfiDeferredImageLoadProtocolGuid, (VOID **) &DeferredImage);
+    Status = gBS->HandleProtocol (Handles[Index], &gEfiDeferredImageLoadProtocolGuid, (VOID **)&DeferredImage);
     if (EFI_ERROR (Status)) {
       continue;
     }
 
-    for (ImageIndex = 0; ;ImageIndex++) {
+    for (ImageIndex = 0; ; ImageIndex++) {
       //
       // Load all the deferred images in this protocol instance.
       //
@@ -474,25 +482,26 @@ EfiBootManagerDispatchDeferredImages (
                                 DeferredImage,
                                 ImageIndex,
                                 &ImageDevicePath,
-                                (VOID **) &Image,
+                                (VOID **)&Image,
                                 &ImageSize,
                                 &BootOption
                                 );
       if (EFI_ERROR (Status)) {
         break;
       }
+
       ImageCount++;
       //
       // Load and start the image.
       //
       Status = gBS->LoadImage (
-        BootOption,
-        gImageHandle,
-        ImageDevicePath,
-        NULL,
-        0,
-        &ImageHandle
-      );
+                      BootOption,
+                      gImageHandle,
+                      ImageDevicePath,
+                      NULL,
+                      0,
+                      &ImageHandle
+                      );
       if (EFI_ERROR (Status)) {
         //
         // With EFI_SECURITY_VIOLATION retval, the Image was loaded and an ImageHandle was created
@@ -519,6 +528,7 @@ EfiBootManagerDispatchDeferredImages (
       }
     }
   }
+
   if (Handles != NULL) {
     FreePool (Handles);
   }

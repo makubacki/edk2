@@ -11,6 +11,7 @@
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 **/
+
 #ifndef _PRIVILEGE_POLYMORPHIC_H_
 #define _PRIVILEGE_POLYMORPHIC_H_
 
@@ -36,9 +37,9 @@ SecureBootHook (
   @return Others          Some error occurs.
 **/
 EFI_STATUS
-MorLockInit (
-  VOID
-  );
+  MorLockInit (
+               VOID
+               );
 
 /**
   Delayed initialization for MOR Control Lock at EndOfDxe.
@@ -46,9 +47,9 @@ MorLockInit (
   This function performs any operations queued by MorLockInit().
 **/
 VOID
-MorLockInitAtEndOfDxe (
-  VOID
-  );
+  MorLockInitAtEndOfDxe (
+                         VOID
+                         );
 
 /**
   This service is an MOR/MorLock checker handler for the SetVariable().
@@ -87,25 +88,25 @@ SetVariableCheckHandlerMor (
 
 **/
 VOID
-VariableSpeculationBarrier (
-  VOID
-  );
+  VariableSpeculationBarrier (
+                              VOID
+                              );
 
 /**
   Notify the system that the SMM variable driver is ready.
 **/
 VOID
-VariableNotifySmmReady (
-  VOID
-  );
+  VariableNotifySmmReady (
+                          VOID
+                          );
 
 /**
   Notify the system that the SMM variable write driver is ready.
 **/
 VOID
-VariableNotifySmmWriteReady (
-  VOID
-  );
+  VariableNotifySmmWriteReady (
+                               VOID
+                               );
 
 /**
   Variable Driver main entry point. The Variable driver places the 4 EFI
@@ -118,8 +119,8 @@ VariableNotifySmmWriteReady (
 EFI_STATUS
 EFIAPI
 MmVariableServiceInitialize (
-  VOID
-  );
+                             VOID
+                             );
 
 /**
   This function checks if the buffer is valid per processor architecture and
@@ -150,8 +151,8 @@ VariableSmmIsBufferOutsideSmmValid (
                 protocol database
 **/
 BOOLEAN
-VariableHaveTcgProtocols (
-  VOID
-  );
+  VariableHaveTcgProtocols (
+                            VOID
+                            );
 
 #endif

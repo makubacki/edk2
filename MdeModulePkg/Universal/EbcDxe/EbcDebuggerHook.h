@@ -52,9 +52,9 @@ The hook in UnloadImage for EBC Interpreter.
 
 **/
 VOID
-EbcDebuggerHookUnload (
-  VOID
-  );
+  EbcDebuggerHookUnload (
+                         VOID
+                         );
 
 /**
 
@@ -68,7 +68,6 @@ VOID
 EbcDebuggerHookEbcUnloadImage (
   IN EFI_HANDLE                  Handle
   );
-
 
 /**
 
@@ -93,7 +92,6 @@ VOID
 EbcDebuggerHookEbcInterpret (
   IN VM_CONTEXT *VmPtr
   );
-
 
 /**
   The hook in EbcExecute, before ExecuteFunction.
@@ -188,7 +186,6 @@ VOID
 EbcDebuggerHookRETEnd (
   IN VM_CONTEXT *VmPtr
   );
-
 
 /**
 

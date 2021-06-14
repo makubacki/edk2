@@ -8,7 +8,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "PlDebugSupport.h"
 
-IA32_IDT_GATE_DESCRIPTOR  NullDesc = {{0,0}};
+IA32_IDT_GATE_DESCRIPTOR  NullDesc = { { 0, 0 } };
 
 /**
   Get Interrupt Handle from IDT Gate Descriptor.
@@ -23,16 +23,16 @@ GetInterruptHandleFromIdt (
   IN IA32_IDT_GATE_DESCRIPTOR  *IdtGateDecriptor
   )
 {
-  UINTN      InterruptHandle;
+  UINTN  InterruptHandle;
 
   //
   // InterruptHandle  0-15 : OffsetLow
   // InterruptHandle 16-31 : OffsetHigh
   // InterruptHandle 32-63 : OffsetUpper
   //
-  InterruptHandle = ((UINTN) IdtGateDecriptor->Bits.OffsetLow) |
-                    (((UINTN) IdtGateDecriptor->Bits.OffsetHigh)  << 16) |
-                    (((UINTN) IdtGateDecriptor->Bits.OffsetUpper) << 32) ;
+  InterruptHandle = ((UINTN)IdtGateDecriptor->Bits.OffsetLow) |
+                    (((UINTN)IdtGateDecriptor->Bits.OffsetHigh)  << 16) |
+                    (((UINTN)IdtGateDecriptor->Bits.OffsetUpper) << 32);
 
   return InterruptHandle;
 }
@@ -54,7 +54,7 @@ CreateEntryStub (
   OUT VOID                  **Stub
   )
 {
-  UINT8       *StubCopy;
+  UINT8  *StubCopy;
 
   StubCopy = *Stub;
 
@@ -64,20 +64,20 @@ CreateEntryStub (
 
   // The stub code looks like this:
   //
-  //    00000000  6A 00               push    0                       ; push vector number - will be modified before installed
-  //    00000002  E9                  db      0e9h                    ; jump rel32
-  //    00000003  00000000            dd      0                       ; fixed up to relative address of CommonIdtEntry
+  // 00000000  6A 00               push    0                       ; push vector number - will be modified before installed
+  // 00000002  E9                  db      0e9h                    ; jump rel32
+  // 00000003  00000000            dd      0                       ; fixed up to relative address of CommonIdtEntry
   //
 
   //
   // poke in the exception type so the second push pushes the exception type
   //
-  StubCopy[0x1] = (UINT8) ExceptionType;
+  StubCopy[0x1] = (UINT8)ExceptionType;
 
   //
   // fixup the jump target to point to the common entry
   //
-  *(UINT32 *) &StubCopy[0x3] = (UINT32)((UINTN) CommonIdtEntry - (UINTN) &StubCopy[StubSize]);
+  *(UINT32 *)&StubCopy[0x3] = (UINT32)((UINTN)CommonIdtEntry - (UINTN)&StubCopy[StubSize]);
 
   return;
 }

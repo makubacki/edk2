@@ -15,8 +15,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include "VariableParsing.h"
 #include "VariableRuntimeCache.h"
 
-extern VARIABLE_MODULE_GLOBAL   *mVariableModuleGlobal;
-extern VARIABLE_STORE_HEADER    *mNvVariableCache;
+extern VARIABLE_MODULE_GLOBAL  *mVariableModuleGlobal;
+extern VARIABLE_STORE_HEADER   *mNvVariableCache;
 
 /**
   Copies any pending updates to runtime variable caches.
@@ -30,7 +30,7 @@ FlushPendingRuntimeVariableCacheUpdates (
   VOID
   )
 {
-  VARIABLE_RUNTIME_CACHE_CONTEXT    *VariableRuntimeCacheContext;
+  VARIABLE_RUNTIME_CACHE_CONTEXT  *VariableRuntimeCacheContext;
 
   VariableRuntimeCacheContext = &mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext;
 
@@ -44,14 +44,14 @@ FlushPendingRuntimeVariableCacheUpdates (
     if (VariableRuntimeCacheContext->VariableRuntimeHobCache.Store != NULL &&
         mVariableModuleGlobal->VariableGlobal.HobVariableBase > 0) {
       CopyMem (
-        (VOID *) (
-          ((UINT8 *) (UINTN) VariableRuntimeCacheContext->VariableRuntimeHobCache.Store) +
-          VariableRuntimeCacheContext->VariableRuntimeHobCache.PendingUpdateOffset
-          ),
-        (VOID *) (
-          ((UINT8 *) (UINTN) mVariableModuleGlobal->VariableGlobal.HobVariableBase) +
-          VariableRuntimeCacheContext->VariableRuntimeHobCache.PendingUpdateOffset
-          ),
+        (VOID *)(
+                 ((UINT8 *)(UINTN)VariableRuntimeCacheContext->VariableRuntimeHobCache.Store) +
+                 VariableRuntimeCacheContext->VariableRuntimeHobCache.PendingUpdateOffset
+                 ),
+        (VOID *)(
+                 ((UINT8 *)(UINTN)mVariableModuleGlobal->VariableGlobal.HobVariableBase) +
+                 VariableRuntimeCacheContext->VariableRuntimeHobCache.PendingUpdateOffset
+                 ),
         VariableRuntimeCacheContext->VariableRuntimeHobCache.PendingUpdateLength
         );
       VariableRuntimeCacheContext->VariableRuntimeHobCache.PendingUpdateLength = 0;
@@ -59,28 +59,28 @@ FlushPendingRuntimeVariableCacheUpdates (
     }
 
     CopyMem (
-      (VOID *) (
-        ((UINT8 *) (UINTN) VariableRuntimeCacheContext->VariableRuntimeNvCache.Store) +
-        VariableRuntimeCacheContext->VariableRuntimeNvCache.PendingUpdateOffset
-        ),
-      (VOID *) (
-        ((UINT8 *) (UINTN) mNvVariableCache) +
-        VariableRuntimeCacheContext->VariableRuntimeNvCache.PendingUpdateOffset
-        ),
+      (VOID *)(
+               ((UINT8 *)(UINTN)VariableRuntimeCacheContext->VariableRuntimeNvCache.Store) +
+               VariableRuntimeCacheContext->VariableRuntimeNvCache.PendingUpdateOffset
+               ),
+      (VOID *)(
+               ((UINT8 *)(UINTN)mNvVariableCache) +
+               VariableRuntimeCacheContext->VariableRuntimeNvCache.PendingUpdateOffset
+               ),
       VariableRuntimeCacheContext->VariableRuntimeNvCache.PendingUpdateLength
       );
     VariableRuntimeCacheContext->VariableRuntimeNvCache.PendingUpdateLength = 0;
     VariableRuntimeCacheContext->VariableRuntimeNvCache.PendingUpdateOffset = 0;
 
     CopyMem (
-      (VOID *) (
-        ((UINT8 *) (UINTN) VariableRuntimeCacheContext->VariableRuntimeVolatileCache.Store) +
-        VariableRuntimeCacheContext->VariableRuntimeVolatileCache.PendingUpdateOffset
-      ),
-      (VOID *) (
-        ((UINT8 *) (UINTN) mVariableModuleGlobal->VariableGlobal.VolatileVariableBase) +
-        VariableRuntimeCacheContext->VariableRuntimeVolatileCache.PendingUpdateOffset
-        ),
+      (VOID *)(
+               ((UINT8 *)(UINTN)VariableRuntimeCacheContext->VariableRuntimeVolatileCache.Store) +
+               VariableRuntimeCacheContext->VariableRuntimeVolatileCache.PendingUpdateOffset
+               ),
+      (VOID *)(
+               ((UINT8 *)(UINTN)mVariableModuleGlobal->VariableGlobal.VolatileVariableBase) +
+               VariableRuntimeCacheContext->VariableRuntimeVolatileCache.PendingUpdateOffset
+               ),
       VariableRuntimeCacheContext->VariableRuntimeVolatileCache.PendingUpdateLength
       );
     VariableRuntimeCacheContext->VariableRuntimeVolatileCache.PendingUpdateLength = 0;
@@ -131,18 +131,19 @@ SynchronizeRuntimeVariableCache (
   if (*(mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext.PendingUpdate) &&
       VariableRuntimeCache->PendingUpdateLength > 0) {
     VariableRuntimeCache->PendingUpdateLength =
-      (UINT32) (
-        MAX (
-          (UINTN) (VariableRuntimeCache->PendingUpdateOffset + VariableRuntimeCache->PendingUpdateLength),
-          Offset + Length
-        ) - MIN ((UINTN) VariableRuntimeCache->PendingUpdateOffset, Offset)
-      );
+      (UINT32)(
+               MAX (
+                 (UINTN)(VariableRuntimeCache->PendingUpdateOffset + VariableRuntimeCache->PendingUpdateLength),
+                 Offset + Length
+                 ) - MIN ((UINTN)VariableRuntimeCache->PendingUpdateOffset, Offset)
+               );
     VariableRuntimeCache->PendingUpdateOffset =
-      (UINT32) MIN ((UINTN) VariableRuntimeCache->PendingUpdateOffset, Offset);
+      (UINT32)MIN ((UINTN)VariableRuntimeCache->PendingUpdateOffset, Offset);
   } else {
-    VariableRuntimeCache->PendingUpdateLength = (UINT32) Length;
-    VariableRuntimeCache->PendingUpdateOffset = (UINT32) Offset;
+    VariableRuntimeCache->PendingUpdateLength = (UINT32)Length;
+    VariableRuntimeCache->PendingUpdateOffset = (UINT32)Offset;
   }
+
   *(mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext.PendingUpdate) = TRUE;
 
   if (*(mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext.ReadLock) == FALSE) {

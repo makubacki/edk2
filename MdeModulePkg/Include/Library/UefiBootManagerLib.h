@@ -7,7 +7,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
-
 #ifndef _UEFI_BOOT_MANAGER_LIB_H_
 #define _UEFI_BOOT_MANAGER_LIB_H_
 
@@ -30,7 +29,7 @@ typedef enum {
 } EFI_BOOT_MANAGER_LOAD_OPTION_TYPE;
 
 typedef enum {
-  LoadOptionNumberMax = 0x10000,
+  LoadOptionNumberMax        = 0x10000,
   LoadOptionNumberUnassigned = LoadOptionNumberMax
 } EFI_BOOT_MANAGER_LOAD_OPTION_NUMBER;
 
@@ -41,21 +40,21 @@ typedef struct {
   //
   // Data read from UEFI NV variables
   //
-  UINTN                             OptionNumber;       // #### numerical value, could be LoadOptionNumberUnassigned
-  EFI_BOOT_MANAGER_LOAD_OPTION_TYPE OptionType;         // LoadOptionTypeBoot or LoadOptionTypeDriver
-  UINT32                            Attributes;         // Load Option Attributes
-  CHAR16                            *Description;       // Load Option Description
-  EFI_DEVICE_PATH_PROTOCOL          *FilePath;          // Load Option Device Path
-  UINT8                             *OptionalData;      // Load Option optional data to pass into image
-  UINT32                            OptionalDataSize;   // Load Option size of OptionalData
-  EFI_GUID                          VendorGuid;
+  UINTN                                OptionNumber;     // #### numerical value, could be LoadOptionNumberUnassigned
+  EFI_BOOT_MANAGER_LOAD_OPTION_TYPE    OptionType;       // LoadOptionTypeBoot or LoadOptionTypeDriver
+  UINT32                               Attributes;       // Load Option Attributes
+  CHAR16                               *Description;     // Load Option Description
+  EFI_DEVICE_PATH_PROTOCOL             *FilePath;        // Load Option Device Path
+  UINT8                                *OptionalData;    // Load Option optional data to pass into image
+  UINT32                               OptionalDataSize; // Load Option size of OptionalData
+  EFI_GUID                             VendorGuid;
 
   //
   // Used at runtime
   //
-  EFI_STATUS                        Status;             // Status returned from boot attempt gBS->StartImage ()
-  CHAR16                            *ExitData;          // Exit data returned from gBS->StartImage ()
-  UINTN                             ExitDataSize;       // Size of ExitData
+  EFI_STATUS                           Status;          // Status returned from boot attempt gBS->StartImage ()
+  CHAR16                               *ExitData;       // Exit data returned from gBS->StartImage ()
+  UINTN                                ExitDataSize;    // Size of ExitData
 } EFI_BOOT_MANAGER_LOAD_OPTION;
 
 /**
@@ -261,25 +260,25 @@ typedef struct {
   ///
   /// Specifies options about how the key will be processed.
   ///
-  EFI_BOOT_KEY_DATA  KeyData;
+  EFI_BOOT_KEY_DATA    KeyData;
   ///
   /// The CRC-32 which should match the CRC-32 of the entire EFI_LOAD_OPTION to
   /// which BootOption refers. If the CRC-32s do not match this value, then this key
   /// option is ignored.
   ///
-  UINT32             BootOptionCrc;
+  UINT32               BootOptionCrc;
   ///
   /// The Boot#### option which will be invoked if this key is pressed and the boot option
   /// is active (LOAD_OPTION_ACTIVE is set).
   ///
-  UINT16             BootOption;
+  UINT16               BootOption;
   ///
   /// The key codes to compare against those returned by the
   /// EFI_SIMPLE_TEXT_INPUT and EFI_SIMPLE_TEXT_INPUT_EX protocols.
   /// The number of key codes (0-3) is specified by the EFI_KEY_CODE_COUNT field in KeyOptions.
   ///
-  EFI_INPUT_KEY      Keys[3];
-  UINT16             OptionNumber;
+  EFI_INPUT_KEY        Keys[3];
+  UINT16               OptionNumber;
 } EFI_BOOT_MANAGER_KEY_OPTION;
 #pragma pack()
 
@@ -300,12 +299,12 @@ EfiBootManagerStartHotkeyService (
 //
 // Modifier for EfiBootManagerAddKeyOptionVariable and EfiBootManagerDeleteKeyOptionVariable
 //
-#define EFI_BOOT_MANAGER_SHIFT_PRESSED    0x00000001
-#define EFI_BOOT_MANAGER_CONTROL_PRESSED  0x00000002
-#define EFI_BOOT_MANAGER_ALT_PRESSED      0x00000004
-#define EFI_BOOT_MANAGER_LOGO_PRESSED     0x00000008
-#define EFI_BOOT_MANAGER_MENU_KEY_PRESSED 0x00000010
-#define EFI_BOOT_MANAGER_SYS_REQ_PRESSED  0x00000020
+#define EFI_BOOT_MANAGER_SHIFT_PRESSED     0x00000001
+#define EFI_BOOT_MANAGER_CONTROL_PRESSED   0x00000002
+#define EFI_BOOT_MANAGER_ALT_PRESSED       0x00000004
+#define EFI_BOOT_MANAGER_LOGO_PRESSED      0x00000008
+#define EFI_BOOT_MANAGER_MENU_KEY_PRESSED  0x00000010
+#define EFI_BOOT_MANAGER_SYS_REQ_PRESSED   0x00000020
 
 /**
   Add the key option.
@@ -322,7 +321,7 @@ EfiBootManagerStartHotkeyService (
 EFI_STATUS
 EFIAPI
 EfiBootManagerAddKeyOptionVariable (
-  OUT EFI_BOOT_MANAGER_KEY_OPTION *AddedOption,   OPTIONAL
+  OUT EFI_BOOT_MANAGER_KEY_OPTION *AddedOption, OPTIONAL
   IN UINT16                       BootOptionNumber,
   IN UINT32                       Modifier,
   ...
@@ -370,8 +369,8 @@ EfiBootManagerRegisterContinueKeyOption (
 VOID
 EFIAPI
 EfiBootManagerHotkeyBoot (
-  VOID
-  );
+                          VOID
+                          );
 //
 // Boot Manager boot library functions.
 //
@@ -394,8 +393,8 @@ EfiBootManagerHotkeyBoot (
 VOID
 EFIAPI
 EfiBootManagerRefreshAllBootOption (
-  VOID
-  );
+                                    VOID
+                                    );
 
 /**
   Attempt to boot the EFI boot option. This routine sets L"BootCurent" and
@@ -486,7 +485,7 @@ EfiBootManagerGetLoadOptionBuffer (
 **/
 typedef
 VOID
-(EFIAPI *EFI_BOOT_MANAGER_REFRESH_LEGACY_BOOT_OPTION) (
+(EFIAPI *EFI_BOOT_MANAGER_REFRESH_LEGACY_BOOT_OPTION)(
   VOID
   );
 
@@ -495,7 +494,7 @@ VOID
 **/
 typedef
 VOID
-(EFIAPI *EFI_BOOT_MANAGER_LEGACY_BOOT) (
+(EFIAPI *EFI_BOOT_MANAGER_LEGACY_BOOT)(
   IN  EFI_BOOT_MANAGER_LOAD_OPTION  *BootOption
   );
 
@@ -522,8 +521,8 @@ EfiBootManagerRegisterLegacyBootSupport (
            or NULL if the handler wants to use DefaultDescription.
 **/
 typedef
-CHAR16 *
-(EFIAPI *EFI_BOOT_MANAGER_BOOT_DESCRIPTION_HANDLER) (
+CHAR16*
+(EFIAPI *EFI_BOOT_MANAGER_BOOT_DESCRIPTION_HANDLER)(
   IN EFI_HANDLE                  Handle,
   IN CONST CHAR16                *DefaultDescription
   );
@@ -556,8 +555,8 @@ EfiBootManagerRegisterBootDescriptionHandler (
 VOID
 EFIAPI
 EfiBootManagerConnectAll (
-  VOID
-  );
+                          VOID
+                          );
 
 /**
   This function will create all handles associate with every device
@@ -594,9 +593,8 @@ EfiBootManagerConnectDevicePath (
 VOID
 EFIAPI
 EfiBootManagerDisconnectAll (
-  VOID
-  );
-
+                             VOID
+                             );
 
 //
 // Boot Manager console library functions
@@ -623,8 +621,8 @@ typedef enum {
 EFI_STATUS
 EFIAPI
 EfiBootManagerConnectAllDefaultConsoles (
-  VOID
-  );
+                                         VOID
+                                         );
 
 /**
   This function updates the console variable based on ConVarName. It can
@@ -702,29 +700,29 @@ EfiBootManagerConnectVideoController (
 //
 
 typedef struct {
-  EFI_DRIVER_HEALTH_PROTOCOL      *DriverHealth;
+  EFI_DRIVER_HEALTH_PROTOCOL       *DriverHealth;
 
   ///
   /// Driver relative handles
   ///
-  EFI_HANDLE                      DriverHealthHandle;
-  EFI_HANDLE                      ControllerHandle;
-  EFI_HANDLE                      ChildHandle;
+  EFI_HANDLE                       DriverHealthHandle;
+  EFI_HANDLE                       ControllerHandle;
+  EFI_HANDLE                       ChildHandle;
 
   ///
   /// Driver health messages of the specify Driver
   ///
-  EFI_DRIVER_HEALTH_HII_MESSAGE   *MessageList;
+  EFI_DRIVER_HEALTH_HII_MESSAGE    *MessageList;
 
   ///
   /// HII relative handles
   ///
-  EFI_HII_HANDLE                  HiiHandle;
+  EFI_HII_HANDLE                   HiiHandle;
 
   ///
   /// Driver Health status
   ///
-  EFI_DRIVER_HEALTH_STATUS        HealthStatus;
+  EFI_DRIVER_HEALTH_STATUS         HealthStatus;
 } EFI_BOOT_MANAGER_DRIVER_HEALTH_INFO;
 
 /**
@@ -801,7 +799,6 @@ EfiBootManagerIsValidLoadOptionVariableName (
   OUT UINT16                            *OptionNumber OPTIONAL
   );
 
-
 /**
   Dispatch the deferred images that are returned from all DeferredImageLoad instances.
 
@@ -812,6 +809,6 @@ EfiBootManagerIsValidLoadOptionVariableName (
 EFI_STATUS
 EFIAPI
 EfiBootManagerDispatchDeferredImages (
-  VOID
-  );
+                                      VOID
+                                      );
 #endif

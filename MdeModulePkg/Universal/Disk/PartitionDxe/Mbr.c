@@ -36,16 +36,17 @@ PartitionValidMbr (
   IN  EFI_LBA                 LastLba
   )
 {
-  UINT32  StartingLBA;
-  UINT32  EndingLBA;
-  UINT32  NewEndingLBA;
-  INTN    Index1;
-  INTN    Index2;
-  BOOLEAN MbrValid;
+  UINT32   StartingLBA;
+  UINT32   EndingLBA;
+  UINT32   NewEndingLBA;
+  INTN     Index1;
+  INTN     Index2;
+  BOOLEAN  MbrValid;
 
   if (Mbr->Signature != MBR_SIGNATURE) {
     return FALSE;
   }
+
   //
   // The BPB also has this signature, so it can not be used alone.
   //
@@ -61,17 +62,22 @@ PartitionValidMbr (
     if (EndingLBA > LastLba) {
       //
       // Compatibility Errata:
-      //  Some systems try to hide drive space with their INT 13h driver
-      //  This does not hide space from the OS driver. This means the MBR
-      //  that gets created from DOS is smaller than the MBR created from
-      //  a real OS (NT & Win98). This leads to BlockIo->LastBlock being
-      //  wrong on some systems FDISKed by the OS.
+      // Some systems try to hide drive space with their INT 13h driver
+      // This does not hide space from the OS driver. This means the MBR
+      // that gets created from DOS is smaller than the MBR created from
+      // a real OS (NT & Win98). This leads to BlockIo->LastBlock being
+      // wrong on some systems FDISKed by the OS.
       //
       // return FALSE since no block devices on a system are implemented
       // with INT 13h
       //
 
-      DEBUG((EFI_D_INFO, "PartitionValidMbr: Bad MBR partition size EndingLBA(%1x) > LastLBA(%1x)\n", EndingLBA, LastLba));
+      DEBUG ((
+        EFI_D_INFO,
+        "PartitionValidMbr: Bad MBR partition size EndingLBA(%1x) > LastLBA(%1x)\n",
+        EndingLBA,
+        LastLba
+        ));
 
       return FALSE;
     }
@@ -81,7 +87,9 @@ PartitionValidMbr (
         continue;
       }
 
-      NewEndingLBA = UNPACK_UINT32 (Mbr->Partition[Index2].StartingLBA) + UNPACK_UINT32 (Mbr->Partition[Index2].SizeInLBA) - 1;
+      NewEndingLBA = UNPACK_UINT32 (Mbr->Partition[Index2].StartingLBA) + UNPACK_UINT32 (
+                                                                            Mbr->Partition[Index2].SizeInLBA
+                                                                            ) - 1;
       if (NewEndingLBA >= StartingLBA && UNPACK_UINT32 (Mbr->Partition[Index2].StartingLBA) <= EndingLBA) {
         //
         // This region overlaps with the Index1'th region
@@ -90,12 +98,12 @@ PartitionValidMbr (
       }
     }
   }
+
   //
   // None of the regions overlapped so MBR is O.K.
   //
   return MbrValid;
 }
-
 
 /**
   Install child handles if the Handle supports MBR format.
@@ -138,14 +146,14 @@ PartitionInstallMbrChildHandles (
   EFI_LBA                      LastSector;
   EFI_PARTITION_INFO_PROTOCOL  PartitionInfo;
 
-  Found           = EFI_NOT_FOUND;
+  Found = EFI_NOT_FOUND;
 
-  BlockSize   = BlockIo->Media->BlockSize;
-  MediaId     = BlockIo->Media->MediaId;
-  LastSector  = DivU64x32 (
-                  MultU64x32 (BlockIo->Media->LastBlock + 1, BlockSize),
-                  MBR_SIZE
-                  ) - 1;
+  BlockSize  = BlockIo->Media->BlockSize;
+  MediaId    = BlockIo->Media->MediaId;
+  LastSector = DivU64x32 (
+                 MultU64x32 (BlockIo->Media->LastBlock + 1, BlockSize),
+                 MBR_SIZE
+                 ) - 1;
 
   //
   // Ensure the block size can hold the MBR
@@ -170,9 +178,11 @@ PartitionInstallMbrChildHandles (
     Found = Status;
     goto Done;
   }
+
   if (!PartitionValidMbr (Mbr, LastSector)) {
     goto Done;
   }
+
   //
   // We have a valid mbr - add each partition
   //
@@ -183,8 +193,8 @@ PartitionInstallMbrChildHandles (
   ZeroMem (&ParentHdDev, sizeof (ParentHdDev));
   DevicePathNode = DevicePath;
   while (!IsDevicePathEnd (DevicePathNode)) {
-    LastDevicePathNode  = DevicePathNode;
-    DevicePathNode      = NextDevicePathNode (DevicePathNode);
+    LastDevicePathNode = DevicePathNode;
+    DevicePathNode     = NextDevicePathNode (DevicePathNode);
   }
 
   if (LastDevicePathNode != NULL) {
@@ -198,11 +208,11 @@ PartitionInstallMbrChildHandles (
   }
 
   ZeroMem (&HdDev, sizeof (HdDev));
-  HdDev.Header.Type     = MEDIA_DEVICE_PATH;
-  HdDev.Header.SubType  = MEDIA_HARDDRIVE_DP;
+  HdDev.Header.Type    = MEDIA_DEVICE_PATH;
+  HdDev.Header.SubType = MEDIA_HARDDRIVE_DP;
   SetDevicePathNodeLength (&HdDev.Header, sizeof (HdDev));
-  HdDev.MBRType         = MBR_TYPE_PCAT;
-  HdDev.SignatureType   = SIGNATURE_TYPE_MBR;
+  HdDev.MBRType = MBR_TYPE_PCAT;
+  HdDev.SignatureType = SIGNATURE_TYPE_MBR;
 
   if (LastDevicePathNode == NULL) {
     //
@@ -219,9 +229,9 @@ PartitionInstallMbrChildHandles (
       if (Mbr->Partition[Index].OSIndicator == PMBR_GPT_PARTITION) {
         //
         // This is the guard MBR for the GPT. If you ever see a GPT disk with zero partitions you can get here.
-        //  We can not produce an MBR BlockIo for this device as the MBR spans the GPT headers. So formating
-        //  this BlockIo would corrupt the GPT structures and require a recovery that would corrupt the format
-        //  that corrupted the GPT partition.
+        // We can not produce an MBR BlockIo for this device as the MBR spans the GPT headers. So formating
+        // this BlockIo would corrupt the GPT structures and require a recovery that would corrupt the format
+        // that corrupted the GPT partition.
         //
         continue;
       }
@@ -237,23 +247,24 @@ PartitionInstallMbrChildHandles (
       if (Mbr->Partition[Index].OSIndicator == EFI_PARTITION) {
         PartitionInfo.System = 1;
       }
+
       CopyMem (&PartitionInfo.Info.Mbr, &Mbr->Partition[Index], sizeof (MBR_PARTITION_RECORD));
 
       Status = PartitionInstallChildHandle (
-                This,
-                Handle,
-                DiskIo,
-                DiskIo2,
-                BlockIo,
-                BlockIo2,
-                DevicePath,
-                (EFI_DEVICE_PATH_PROTOCOL *) &HdDev,
-                &PartitionInfo,
-                HdDev.PartitionStart,
-                HdDev.PartitionStart + HdDev.PartitionSize - 1,
-                MBR_SIZE,
-                ((Mbr->Partition[Index].OSIndicator == EFI_PARTITION) ? &gEfiPartTypeSystemPartGuid: NULL)
-                );
+                 This,
+                 Handle,
+                 DiskIo,
+                 DiskIo2,
+                 BlockIo,
+                 BlockIo2,
+                 DevicePath,
+                 (EFI_DEVICE_PATH_PROTOCOL *)&HdDev,
+                 &PartitionInfo,
+                 HdDev.PartitionStart,
+                 HdDev.PartitionStart + HdDev.PartitionSize - 1,
+                 MBR_SIZE,
+                 ((Mbr->Partition[Index].OSIndicator == EFI_PARTITION) ? &gEfiPartTypeSystemPartGuid : NULL)
+                 );
 
       if (!EFI_ERROR (Status)) {
         Found = EFI_SUCCESS;
@@ -264,11 +275,10 @@ PartitionInstallMbrChildHandles (
     // It's an extended partition. Follow the extended partition
     // chain to get all the logical drives
     //
-    Index             = 0;
+    Index = 0;
     ExtMbrStartingLba = 0;
 
     do {
-
       Status = DiskIo->ReadDisk (
                          DiskIo,
                          MediaId,
@@ -290,9 +300,11 @@ PartitionInstallMbrChildHandles (
         ExtMbrStartingLba = UNPACK_UINT32 (Mbr->Partition[0].StartingLBA);
         continue;
       }
+
       HdDev.PartitionNumber = ++Index;
-      HdDev.PartitionStart  = UNPACK_UINT32 (Mbr->Partition[0].StartingLBA) + ExtMbrStartingLba + ParentHdDev.PartitionStart;
-      HdDev.PartitionSize   = UNPACK_UINT32 (Mbr->Partition[0].SizeInLBA);
+      HdDev.PartitionStart  = UNPACK_UINT32 (Mbr->Partition[0].StartingLBA) + ExtMbrStartingLba +
+                              ParentHdDev.PartitionStart;
+      HdDev.PartitionSize = UNPACK_UINT32 (Mbr->Partition[0].SizeInLBA);
       if ((HdDev.PartitionStart + HdDev.PartitionSize - 1 >= ParentHdDev.PartitionStart + ParentHdDev.PartitionSize) ||
           (HdDev.PartitionStart <= ParentHdDev.PartitionStart)) {
         break;
@@ -301,7 +313,7 @@ PartitionInstallMbrChildHandles (
       //
       // The signature in EBR(Extended Boot Record) should always be 0.
       //
-      *((UINT32 *) &HdDev.Signature[0]) = 0;
+      *((UINT32 *)&HdDev.Signature[0]) = 0;
 
       ZeroMem (&PartitionInfo, sizeof (EFI_PARTITION_INFO_PROTOCOL));
       PartitionInfo.Revision = EFI_PARTITION_INFO_PROTOCOL_REVISION;
@@ -309,6 +321,7 @@ PartitionInstallMbrChildHandles (
       if (Mbr->Partition[0].OSIndicator == EFI_PARTITION) {
         PartitionInfo.System = 1;
       }
+
       CopyMem (&PartitionInfo.Info.Mbr, &Mbr->Partition[0], sizeof (MBR_PARTITION_RECORD));
 
       Status = PartitionInstallChildHandle (
@@ -319,12 +332,12 @@ PartitionInstallMbrChildHandles (
                  BlockIo,
                  BlockIo2,
                  DevicePath,
-                 (EFI_DEVICE_PATH_PROTOCOL *) &HdDev,
+                 (EFI_DEVICE_PATH_PROTOCOL *)&HdDev,
                  &PartitionInfo,
                  HdDev.PartitionStart - ParentHdDev.PartitionStart,
                  HdDev.PartitionStart - ParentHdDev.PartitionStart + HdDev.PartitionSize - 1,
                  MBR_SIZE,
-                 ((Mbr->Partition[0].OSIndicator == EFI_PARTITION) ? &gEfiPartTypeSystemPartGuid: NULL)
+                 ((Mbr->Partition[0].OSIndicator == EFI_PARTITION) ? &gEfiPartTypeSystemPartGuid : NULL)
                  );
       if (!EFI_ERROR (Status)) {
         Found = EFI_SUCCESS;

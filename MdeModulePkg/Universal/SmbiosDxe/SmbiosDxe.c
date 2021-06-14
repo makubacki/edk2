@@ -14,16 +14,16 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // Since this driver will only ever produce one instance of the
 // protocol you are not required to dynamically allocate the PrivateData.
 //
-SMBIOS_INSTANCE mPrivateData;
+SMBIOS_INSTANCE  mPrivateData;
 
-UINTN mPreAllocatedPages      = 0;
-UINTN mPre64BitAllocatedPages = 0;
+UINTN  mPreAllocatedPages = 0;
+UINTN  mPre64BitAllocatedPages = 0;
 
 //
 // Chassis for SMBIOS entry point structure that is to be installed into EFI system config table.
 //
-SMBIOS_TABLE_ENTRY_POINT *EntryPointStructure    = NULL;
-SMBIOS_TABLE_ENTRY_POINT EntryPointStructureData = {
+SMBIOS_TABLE_ENTRY_POINT  *EntryPointStructure    = NULL;
+SMBIOS_TABLE_ENTRY_POINT  EntryPointStructureData = {
   //
   // AnchorString
   //
@@ -99,8 +99,8 @@ SMBIOS_TABLE_ENTRY_POINT EntryPointStructureData = {
   0
 };
 
-SMBIOS_TABLE_3_0_ENTRY_POINT *Smbios30EntryPointStructure    = NULL;
-SMBIOS_TABLE_3_0_ENTRY_POINT Smbios30EntryPointStructureData = {
+SMBIOS_TABLE_3_0_ENTRY_POINT  *Smbios30EntryPointStructure    = NULL;
+SMBIOS_TABLE_3_0_ENTRY_POINT  Smbios30EntryPointStructureData = {
   //
   // AnchorString _SM3_
   //
@@ -148,6 +148,7 @@ SMBIOS_TABLE_3_0_ENTRY_POINT Smbios30EntryPointStructureData = {
   //
   0
 };
+
 /**
 
   Get the full size of SMBIOS structure including optional strings that follow the formatted structure.
@@ -173,15 +174,15 @@ GetSmbiosStructureSize (
   UINTN  FullSize;
   UINTN  StrLen;
   UINTN  MaxLen;
-  INT8*  CharInStr;
+  INT8   *CharInStr;
 
   if (Size == NULL || NumberOfStrings == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
-  FullSize = Head->Length;
-  CharInStr = (INT8*)Head + Head->Length;
-  *Size = FullSize;
+  FullSize  = Head->Length;
+  CharInStr = (INT8 *)Head + Head->Length;
+  *Size     = FullSize;
   *NumberOfStrings = 0;
   StrLen = 0;
   //
@@ -193,7 +194,7 @@ GetSmbiosStructureSize (
       CharInStr++;
     }
 
-    if (This->MajorVersion < 2 || (This->MajorVersion == 2 && This->MinorVersion < 7)){
+    if (This->MajorVersion < 2 || (This->MajorVersion == 2 && This->MinorVersion < 7)) {
       MaxLen = SMBIOS_STRING_MAX_LENGTH;
     } else if (This->MajorVersion < 3) {
       //
@@ -211,7 +212,7 @@ GetSmbiosStructureSize (
       MaxLen = SMBIOS_3_0_TABLE_MAX_LENGTH;
     }
 
-    for (StrLen = 0 ; StrLen < MaxLen; StrLen++) {
+    for (StrLen = 0; StrLen < MaxLen; StrLen++) {
       if (*(CharInStr+StrLen) == 0) {
         break;
       }
@@ -225,7 +226,7 @@ GetSmbiosStructureSize (
     // forward the pointer
     //
     CharInStr += StrLen;
-    *Size += StrLen;
+    *Size     += StrLen;
     *NumberOfStrings += 1;
   }
 
@@ -254,11 +255,11 @@ CheckSmbiosHandleExistance (
   IN  EFI_SMBIOS_HANDLE    Handle
   )
 {
-  LIST_ENTRY              *Link;
-  SMBIOS_HANDLE_ENTRY     *HandleEntry;
+  LIST_ENTRY           *Link;
+  SMBIOS_HANDLE_ENTRY  *HandleEntry;
 
   for (Link = Head->ForwardLink; Link != Head; Link = Link->ForwardLink) {
-    HandleEntry = SMBIOS_HANDLE_ENTRY_FROM_LINK(Link);
+    HandleEntry = SMBIOS_HANDLE_ENTRY_FROM_LINK (Link);
     if (HandleEntry->SmbiosHandle == Handle) {
       return TRUE;
     }
@@ -307,17 +308,17 @@ GetAvailableSmbiosHandle (
   IN OUT   EFI_SMBIOS_HANDLE     *Handle
   )
 {
-  LIST_ENTRY              *Head;
-  SMBIOS_INSTANCE         *Private;
-  EFI_SMBIOS_HANDLE       MaxSmbiosHandle;
-  EFI_SMBIOS_HANDLE       AvailableHandle;
+  LIST_ENTRY         *Head;
+  SMBIOS_INSTANCE    *Private;
+  EFI_SMBIOS_HANDLE  MaxSmbiosHandle;
+  EFI_SMBIOS_HANDLE  AvailableHandle;
 
-  GetMaxSmbiosHandle(This, &MaxSmbiosHandle);
+  GetMaxSmbiosHandle (This, &MaxSmbiosHandle);
 
   Private = SMBIOS_INSTANCE_FROM_THIS (This);
-  Head = &Private->AllocatedHandleListHead;
+  Head    = &Private->AllocatedHandleListHead;
   for (AvailableHandle = 0; AvailableHandle < MaxSmbiosHandle; AvailableHandle++) {
-    if (!CheckSmbiosHandleExistance(Head, AvailableHandle)) {
+    if (!CheckSmbiosHandleExistance (Head, AvailableHandle)) {
       *Handle = AvailableHandle;
       return EFI_SUCCESS;
     }
@@ -325,7 +326,6 @@ GetAvailableSmbiosHandle (
 
   return EFI_OUT_OF_RESOURCES;
 }
-
 
 /**
   Add an SMBIOS record.
@@ -355,20 +355,20 @@ SmbiosAdd (
   IN EFI_SMBIOS_TABLE_HEADER    *Record
   )
 {
-  VOID                        *Raw;
-  UINTN                       TotalSize;
-  UINTN                       RecordSize;
-  UINTN                       StructureSize;
-  UINTN                       NumberOfStrings;
-  EFI_STATUS                  Status;
-  LIST_ENTRY                  *Head;
-  SMBIOS_INSTANCE             *Private;
-  EFI_SMBIOS_ENTRY            *SmbiosEntry;
-  EFI_SMBIOS_HANDLE           MaxSmbiosHandle;
-  SMBIOS_HANDLE_ENTRY         *HandleEntry;
-  EFI_SMBIOS_RECORD_HEADER    *InternalRecord;
-  BOOLEAN                     Smbios32BitTable;
-  BOOLEAN                     Smbios64BitTable;
+  VOID                      *Raw;
+  UINTN                     TotalSize;
+  UINTN                     RecordSize;
+  UINTN                     StructureSize;
+  UINTN                     NumberOfStrings;
+  EFI_STATUS                Status;
+  LIST_ENTRY                *Head;
+  SMBIOS_INSTANCE           *Private;
+  EFI_SMBIOS_ENTRY          *SmbiosEntry;
+  EFI_SMBIOS_HANDLE         MaxSmbiosHandle;
+  SMBIOS_HANDLE_ENTRY       *HandleEntry;
+  EFI_SMBIOS_RECORD_HEADER  *InternalRecord;
+  BOOLEAN                   Smbios32BitTable;
+  BOOLEAN                   Smbios64BitTable;
 
   if (SmbiosHandle == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -379,7 +379,7 @@ SmbiosAdd (
   // Check whether SmbiosHandle is already in use
   //
   Head = &Private->AllocatedHandleListHead;
-  if (*SmbiosHandle != SMBIOS_HANDLE_PI_RESERVED && CheckSmbiosHandleExistance(Head, *SmbiosHandle)) {
+  if (*SmbiosHandle != SMBIOS_HANDLE_PI_RESERVED && CheckSmbiosHandleExistance (Head, *SmbiosHandle)) {
     return EFI_ALREADY_STARTED;
   }
 
@@ -387,15 +387,15 @@ SmbiosAdd (
   // when SmbiosHandle is 0xFFFE, an available handle will be assigned
   //
   if (*SmbiosHandle == SMBIOS_HANDLE_PI_RESERVED) {
-    Status = GetAvailableSmbiosHandle(This, SmbiosHandle);
-    if (EFI_ERROR(Status)) {
+    Status = GetAvailableSmbiosHandle (This, SmbiosHandle);
+    if (EFI_ERROR (Status)) {
       return Status;
     }
   } else {
     //
     // Check this handle validity
     //
-    GetMaxSmbiosHandle(This, &MaxSmbiosHandle);
+    GetMaxSmbiosHandle (This, &MaxSmbiosHandle);
     if (*SmbiosHandle > MaxSmbiosHandle) {
       return EFI_INVALID_PARAMETER;
     }
@@ -404,8 +404,8 @@ SmbiosAdd (
   //
   // Calculate record size and string number
   //
-  Status = GetSmbiosStructureSize(This, Record, &StructureSize, &NumberOfStrings);
-  if (EFI_ERROR(Status)) {
+  Status = GetSmbiosStructureSize (This, Record, &StructureSize, &NumberOfStrings);
+  if (EFI_ERROR (Status)) {
     return Status;
   }
 
@@ -420,10 +420,20 @@ SmbiosAdd (
     //
     if ((EntryPointStructure != NULL) &&
         (EntryPointStructure->TableLength + StructureSize > SMBIOS_TABLE_MAX_LENGTH)) {
-      DEBUG ((EFI_D_INFO, "SmbiosAdd: Total length exceeds max 32-bit table length with type = %d size = 0x%x\n", Record->Type, StructureSize));
+      DEBUG ((
+        EFI_D_INFO,
+        "SmbiosAdd: Total length exceeds max 32-bit table length with type = %d size = 0x%x\n",
+        Record->Type,
+        StructureSize
+        ));
     } else {
       Smbios32BitTable = TRUE;
-      DEBUG ((EFI_D_INFO, "SmbiosAdd: Smbios type %d with size 0x%x is added to 32-bit table\n", Record->Type, StructureSize));
+      DEBUG ((
+        EFI_D_INFO,
+        "SmbiosAdd: Smbios type %d with size 0x%x is added to 32-bit table\n",
+        Record->Type,
+        StructureSize
+        ));
     }
   }
 
@@ -437,9 +447,19 @@ SmbiosAdd (
     //
     if ((Smbios30EntryPointStructure != NULL) &&
         (Smbios30EntryPointStructure->TableMaximumSize + StructureSize > SMBIOS_3_0_TABLE_MAX_LENGTH)) {
-      DEBUG ((EFI_D_INFO, "SmbiosAdd: Total length exceeds max 64-bit table length with type = %d size = 0x%x\n", Record->Type, StructureSize));
+      DEBUG ((
+        EFI_D_INFO,
+        "SmbiosAdd: Total length exceeds max 64-bit table length with type = %d size = 0x%x\n",
+        Record->Type,
+        StructureSize
+        ));
     } else {
-      DEBUG ((EFI_D_INFO, "SmbiosAdd: Smbios type %d with size 0x%x is added to 64-bit table\n", Record->Type, StructureSize));
+      DEBUG ((
+        EFI_D_INFO,
+        "SmbiosAdd: Smbios type %d with size 0x%x is added to 64-bit table\n",
+        Record->Type,
+        StructureSize
+        ));
       Smbios64BitTable = TRUE;
     }
   }
@@ -459,8 +479,8 @@ SmbiosAdd (
     return Status;
   }
 
-  RecordSize  = sizeof (EFI_SMBIOS_RECORD_HEADER) + StructureSize;
-  TotalSize   = sizeof (EFI_SMBIOS_ENTRY) + RecordSize;
+  RecordSize = sizeof (EFI_SMBIOS_RECORD_HEADER) + StructureSize;
+  TotalSize  = sizeof (EFI_SMBIOS_ENTRY) + RecordSize;
 
   //
   // Allocate internal buffer
@@ -470,7 +490,8 @@ SmbiosAdd (
     EfiReleaseLock (&Private->DataLock);
     return EFI_OUT_OF_RESOURCES;
   }
-  HandleEntry = AllocateZeroPool (sizeof(SMBIOS_HANDLE_ENTRY));
+
+  HandleEntry = AllocateZeroPool (sizeof (SMBIOS_HANDLE_ENTRY));
   if (HandleEntry == NULL) {
     EfiReleaseLock (&Private->DataLock);
     return EFI_OUT_OF_RESOURCES;
@@ -479,33 +500,33 @@ SmbiosAdd (
   //
   // Build Handle Entry and insert into linked list
   //
-  HandleEntry->Signature     = SMBIOS_HANDLE_ENTRY_SIGNATURE;
-  HandleEntry->SmbiosHandle  = *SmbiosHandle;
-  InsertTailList(&Private->AllocatedHandleListHead, &HandleEntry->Link);
+  HandleEntry->Signature    = SMBIOS_HANDLE_ENTRY_SIGNATURE;
+  HandleEntry->SmbiosHandle = *SmbiosHandle;
+  InsertTailList (&Private->AllocatedHandleListHead, &HandleEntry->Link);
 
-  InternalRecord  = (EFI_SMBIOS_RECORD_HEADER *) (SmbiosEntry + 1);
-  Raw     = (VOID *) (InternalRecord + 1);
+  InternalRecord = (EFI_SMBIOS_RECORD_HEADER *)(SmbiosEntry + 1);
+  Raw = (VOID *)(InternalRecord + 1);
 
   //
   // Build internal record Header
   //
-  InternalRecord->Version     = EFI_SMBIOS_RECORD_HEADER_VERSION;
-  InternalRecord->HeaderSize  = (UINT16) sizeof (EFI_SMBIOS_RECORD_HEADER);
-  InternalRecord->RecordSize  = RecordSize;
-  InternalRecord->ProducerHandle = ProducerHandle;
+  InternalRecord->Version         = EFI_SMBIOS_RECORD_HEADER_VERSION;
+  InternalRecord->HeaderSize      = (UINT16)sizeof (EFI_SMBIOS_RECORD_HEADER);
+  InternalRecord->RecordSize      = RecordSize;
+  InternalRecord->ProducerHandle  = ProducerHandle;
   InternalRecord->NumberOfStrings = NumberOfStrings;
   //
   // Insert record into the internal linked list
   //
-  SmbiosEntry->Signature    = EFI_SMBIOS_ENTRY_SIGNATURE;
-  SmbiosEntry->RecordHeader = InternalRecord;
-  SmbiosEntry->RecordSize   = TotalSize;
+  SmbiosEntry->Signature        = EFI_SMBIOS_ENTRY_SIGNATURE;
+  SmbiosEntry->RecordHeader     = InternalRecord;
+  SmbiosEntry->RecordSize       = TotalSize;
   SmbiosEntry->Smbios32BitTable = Smbios32BitTable;
   SmbiosEntry->Smbios64BitTable = Smbios64BitTable;
   InsertTailList (&Private->DataListHead, &SmbiosEntry->Link);
 
   CopyMem (Raw, Record, StructureSize);
-  ((EFI_SMBIOS_TABLE_HEADER*)Raw)->Handle = *SmbiosHandle;
+  ((EFI_SMBIOS_TABLE_HEADER *)Raw)->Handle = *SmbiosHandle;
 
   //
   // Some UEFI drivers (such as network) need some information in SMBIOS table.
@@ -565,7 +586,7 @@ SmbiosUpdateString (
   //
   // Check args validity
   //
-  GetMaxSmbiosHandle(This, &MaxSmbiosHandle);
+  GetMaxSmbiosHandle (This, &MaxSmbiosHandle);
 
   if (*SmbiosHandle > MaxSmbiosHandle) {
     return EFI_INVALID_PARAMETER;
@@ -579,7 +600,7 @@ SmbiosUpdateString (
     return EFI_NOT_FOUND;
   }
 
-  InputStrLen = AsciiStrLen(String);
+  InputStrLen = AsciiStrLen (String);
 
   if (This->MajorVersion < 2 || (This->MajorVersion == 2 && This->MinorVersion < 7)) {
     if (InputStrLen > SMBIOS_STRING_MAX_LENGTH) {
@@ -616,8 +637,8 @@ SmbiosUpdateString (
 
   Head = &Private->DataListHead;
   for (Link = Head->ForwardLink; Link != Head; Link = Link->ForwardLink) {
-    SmbiosEntry = SMBIOS_ENTRY_FROM_LINK(Link);
-    Record = (EFI_SMBIOS_TABLE_HEADER*)(SmbiosEntry->RecordHeader + 1);
+    SmbiosEntry = SMBIOS_ENTRY_FROM_LINK (Link);
+    Record = (EFI_SMBIOS_TABLE_HEADER *)(SmbiosEntry->RecordHeader + 1);
 
     if (Record->Handle == *SmbiosHandle) {
       //
@@ -627,10 +648,11 @@ SmbiosUpdateString (
         EfiReleaseLock (&Private->DataLock);
         return EFI_NOT_FOUND;
       }
+
       //
       // Point to unformed string section
       //
-      StrStart = (CHAR8 *) Record + Record->Length;
+      StrStart = (CHAR8 *)Record + Record->Length;
 
       for (StrIndex = 1, TargetStrOffset = 0; StrIndex < *StringNumber; StrStart++, TargetStrOffset++) {
         //
@@ -657,9 +679,9 @@ SmbiosUpdateString (
       //
       // Now we get the string target
       //
-      TargetStrLen = AsciiStrLen(StrStart);
+      TargetStrLen = AsciiStrLen (StrStart);
       if (InputStrLen == TargetStrLen) {
-        AsciiStrCpyS(StrStart, TargetStrLen + 1, String);
+        AsciiStrCpyS (StrStart, TargetStrLen + 1, String);
         //
         // Some UEFI drivers (such as network) need some information in SMBIOS table.
         // Here we create SMBIOS table and publish it in
@@ -697,7 +719,8 @@ SmbiosUpdateString (
         // 64-bit table is produced, check the valid length.
         //
         if ((Smbios30EntryPointStructure != NULL) &&
-            (Smbios30EntryPointStructure->TableMaximumSize + InputStrLen - TargetStrLen > SMBIOS_3_0_TABLE_MAX_LENGTH)) {
+            (Smbios30EntryPointStructure->TableMaximumSize + InputStrLen - TargetStrLen >
+             SMBIOS_3_0_TABLE_MAX_LENGTH)) {
           DEBUG ((EFI_D_INFO, "SmbiosUpdateString: Total length exceeds max 64-bit table length\n"));
         } else {
           DEBUG ((EFI_D_INFO, "SmbiosUpdateString: New smbios record add to 64-bit table\n"));
@@ -722,33 +745,35 @@ SmbiosUpdateString (
         return EFI_OUT_OF_RESOURCES;
       }
 
-      InternalRecord  = (EFI_SMBIOS_RECORD_HEADER *) (ResizedSmbiosEntry + 1);
-      Raw     = (VOID *) (InternalRecord + 1);
+      InternalRecord = (EFI_SMBIOS_RECORD_HEADER *)(ResizedSmbiosEntry + 1);
+      Raw = (VOID *)(InternalRecord + 1);
 
       //
       // Build internal record Header
       //
-      InternalRecord->Version     = EFI_SMBIOS_RECORD_HEADER_VERSION;
-      InternalRecord->HeaderSize  = (UINT16) sizeof (EFI_SMBIOS_RECORD_HEADER);
-      InternalRecord->RecordSize  = SmbiosEntry->RecordHeader->RecordSize + InputStrLen - TargetStrLen;
-      InternalRecord->ProducerHandle = SmbiosEntry->RecordHeader->ProducerHandle;
+      InternalRecord->Version         = EFI_SMBIOS_RECORD_HEADER_VERSION;
+      InternalRecord->HeaderSize      = (UINT16)sizeof (EFI_SMBIOS_RECORD_HEADER);
+      InternalRecord->RecordSize      = SmbiosEntry->RecordHeader->RecordSize + InputStrLen - TargetStrLen;
+      InternalRecord->ProducerHandle  = SmbiosEntry->RecordHeader->ProducerHandle;
       InternalRecord->NumberOfStrings = SmbiosEntry->RecordHeader->NumberOfStrings;
 
       //
       // Copy SMBIOS structure and optional strings.
       //
       CopyMem (Raw, SmbiosEntry->RecordHeader + 1, Record->Length + TargetStrOffset);
-      CopyMem ((VOID*)((UINTN)Raw + Record->Length + TargetStrOffset), String, InputStrLen + 1);
-      CopyMem ((CHAR8*)((UINTN)Raw + Record->Length + TargetStrOffset + InputStrLen + 1),
-               (CHAR8*)Record + Record->Length + TargetStrOffset + TargetStrLen + 1,
-               SmbiosEntry->RecordHeader->RecordSize - sizeof (EFI_SMBIOS_RECORD_HEADER) - Record->Length - TargetStrOffset - TargetStrLen - 1);
+      CopyMem ((VOID *)((UINTN)Raw + Record->Length + TargetStrOffset), String, InputStrLen + 1);
+      CopyMem (
+        (CHAR8 *)((UINTN)Raw + Record->Length + TargetStrOffset + InputStrLen + 1),
+        (CHAR8 *)Record + Record->Length + TargetStrOffset + TargetStrLen + 1,
+        SmbiosEntry->RecordHeader->RecordSize - sizeof (EFI_SMBIOS_RECORD_HEADER) - Record->Length - TargetStrOffset - TargetStrLen - 1
+        );
 
       //
       // Insert new record
       //
-      ResizedSmbiosEntry->Signature    = EFI_SMBIOS_ENTRY_SIGNATURE;
-      ResizedSmbiosEntry->RecordHeader = InternalRecord;
-      ResizedSmbiosEntry->RecordSize   = NewEntrySize;
+      ResizedSmbiosEntry->Signature        = EFI_SMBIOS_ENTRY_SIGNATURE;
+      ResizedSmbiosEntry->RecordHeader     = InternalRecord;
+      ResizedSmbiosEntry->RecordSize       = NewEntrySize;
       ResizedSmbiosEntry->Smbios32BitTable = SmbiosEntry->Smbios32BitTable;
       ResizedSmbiosEntry->Smbios64BitTable = SmbiosEntry->Smbios64BitTable;
       InsertTailList (Link->ForwardLink, &ResizedSmbiosEntry->Link);
@@ -756,8 +781,8 @@ SmbiosUpdateString (
       //
       // Remove old record
       //
-      RemoveEntryList(Link);
-      FreePool(SmbiosEntry);
+      RemoveEntryList (Link);
+      FreePool (SmbiosEntry);
       //
       // Some UEFI drivers (such as network) need some information in SMBIOS table.
       // Here we create SMBIOS table and publish it in
@@ -791,19 +816,19 @@ SmbiosRemove (
   IN EFI_SMBIOS_HANDLE           SmbiosHandle
   )
 {
-  LIST_ENTRY                 *Link;
-  LIST_ENTRY                 *Head;
-  EFI_STATUS                 Status;
-  EFI_SMBIOS_HANDLE          MaxSmbiosHandle;
-  SMBIOS_INSTANCE            *Private;
-  EFI_SMBIOS_ENTRY           *SmbiosEntry;
-  SMBIOS_HANDLE_ENTRY        *HandleEntry;
-  EFI_SMBIOS_TABLE_HEADER    *Record;
+  LIST_ENTRY               *Link;
+  LIST_ENTRY               *Head;
+  EFI_STATUS               Status;
+  EFI_SMBIOS_HANDLE        MaxSmbiosHandle;
+  SMBIOS_INSTANCE          *Private;
+  EFI_SMBIOS_ENTRY         *SmbiosEntry;
+  SMBIOS_HANDLE_ENTRY      *HandleEntry;
+  EFI_SMBIOS_TABLE_HEADER  *Record;
 
   //
   // Check args validity
   //
-  GetMaxSmbiosHandle(This, &MaxSmbiosHandle);
+  GetMaxSmbiosHandle (This, &MaxSmbiosHandle);
 
   if (SmbiosHandle > MaxSmbiosHandle) {
     return EFI_INVALID_PARAMETER;
@@ -820,25 +845,26 @@ SmbiosRemove (
 
   Head = &Private->DataListHead;
   for (Link = Head->ForwardLink; Link != Head; Link = Link->ForwardLink) {
-    SmbiosEntry = SMBIOS_ENTRY_FROM_LINK(Link);
-    Record = (EFI_SMBIOS_TABLE_HEADER*)(SmbiosEntry->RecordHeader + 1);
+    SmbiosEntry = SMBIOS_ENTRY_FROM_LINK (Link);
+    Record = (EFI_SMBIOS_TABLE_HEADER *)(SmbiosEntry->RecordHeader + 1);
     if (Record->Handle == SmbiosHandle) {
       //
       // Remove specified smobios record from DataList
       //
-      RemoveEntryList(Link);
+      RemoveEntryList (Link);
       //
       // Remove this handle from AllocatedHandleList
       //
       Head = &Private->AllocatedHandleListHead;
       for (Link = Head->ForwardLink; Link != Head; Link = Link->ForwardLink) {
-        HandleEntry = SMBIOS_HANDLE_ENTRY_FROM_LINK(Link);
+        HandleEntry = SMBIOS_HANDLE_ENTRY_FROM_LINK (Link);
         if (HandleEntry->SmbiosHandle == SmbiosHandle) {
-          RemoveEntryList(Link);
-          FreePool(HandleEntry);
+          RemoveEntryList (Link);
+          FreePool (HandleEntry);
           break;
         }
       }
+
       //
       // Some UEFI drivers (such as network) need some information in SMBIOS table.
       // Here we create SMBIOS table and publish it in
@@ -848,14 +874,16 @@ SmbiosRemove (
       if (SmbiosEntry->Smbios32BitTable) {
         DEBUG ((EFI_D_INFO, "SmbiosRemove: remove from 32-bit table\n"));
       }
+
       if (SmbiosEntry->Smbios64BitTable) {
         DEBUG ((EFI_D_INFO, "SmbiosRemove: remove from 64-bit table\n"));
       }
+
       //
       // Update the whole SMBIOS table again based on which table the removed SMBIOS record is in.
       //
       SmbiosTableConstruction (SmbiosEntry->Smbios32BitTable, SmbiosEntry->Smbios64BitTable);
-      FreePool(SmbiosEntry);
+      FreePool (SmbiosEntry);
       EfiReleaseLock (&Private->DataLock);
       return EFI_SUCCESS;
     }
@@ -866,7 +894,6 @@ SmbiosRemove (
   //
   EfiReleaseLock (&Private->DataLock);
   return EFI_INVALID_PARAMETER;
-
 }
 
 /**
@@ -892,7 +919,7 @@ EFIAPI
 SmbiosGetNext (
   IN CONST EFI_SMBIOS_PROTOCOL      *This,
   IN OUT EFI_SMBIOS_HANDLE          *SmbiosHandle,
-  IN EFI_SMBIOS_TYPE                *Type,          OPTIONAL
+  IN EFI_SMBIOS_TYPE                *Type, OPTIONAL
   OUT EFI_SMBIOS_TABLE_HEADER       **Record,
   OUT EFI_HANDLE                    *ProducerHandle OPTIONAL
   )
@@ -910,10 +937,10 @@ SmbiosGetNext (
 
   StartPointFound = FALSE;
   Private = SMBIOS_INSTANCE_FROM_THIS (This);
-  Head = &Private->DataListHead;
+  Head    = &Private->DataListHead;
   for (Link = Head->ForwardLink; Link != Head; Link = Link->ForwardLink) {
-    SmbiosEntry = SMBIOS_ENTRY_FROM_LINK(Link);
-    SmbiosTableHeader = (EFI_SMBIOS_TABLE_HEADER*)(SmbiosEntry->RecordHeader + 1);
+    SmbiosEntry = SMBIOS_ENTRY_FROM_LINK (Link);
+    SmbiosTableHeader = (EFI_SMBIOS_TABLE_HEADER *)(SmbiosEntry->RecordHeader + 1);
 
     //
     // If SmbiosHandle is 0xFFFE, the first matched SMBIOS record handle will be returned
@@ -924,10 +951,11 @@ SmbiosGetNext (
       }
 
       *SmbiosHandle = SmbiosTableHeader->Handle;
-      *Record =SmbiosTableHeader;
+      *Record = SmbiosTableHeader;
       if (ProducerHandle != NULL) {
         *ProducerHandle = SmbiosEntry->RecordHeader->ProducerHandle;
       }
+
       return EFI_SUCCESS;
     }
 
@@ -956,7 +984,6 @@ SmbiosGetNext (
 
   *SmbiosHandle = SMBIOS_HANDLE_PI_RESERVED;
   return EFI_NOT_FOUND;
-
 }
 
 /**
@@ -1000,7 +1027,7 @@ GetNextSmbiosRecord (
     Head = &(*CurrentSmbiosEntry)->Link;
   }
 
-  Link  = Head->ForwardLink;
+  Link = Head->ForwardLink;
 
   if (Link == &Private->DataListHead) {
     //
@@ -1009,8 +1036,8 @@ GetNextSmbiosRecord (
     return EFI_NOT_FOUND;
   }
 
-  SmbiosEntry = SMBIOS_ENTRY_FROM_LINK(Link);
-  SmbiosTableHeader = (EFI_SMBIOS_TABLE_HEADER*)(SmbiosEntry->RecordHeader + 1);
+  SmbiosEntry = SMBIOS_ENTRY_FROM_LINK (Link);
+  SmbiosTableHeader = (EFI_SMBIOS_TABLE_HEADER *)(SmbiosEntry->RecordHeader + 1);
   *Record = SmbiosTableHeader;
   *CurrentSmbiosEntry = SmbiosEntry;
   return EFI_SUCCESS;
@@ -1043,8 +1070,8 @@ SmbiosCreateTable (
   EFI_SMBIOS_TABLE_END_STRUCTURE  EndStructure;
   EFI_SMBIOS_ENTRY                *CurrentSmbiosEntry;
 
-  Status            = EFI_SUCCESS;
-  BufferPointer     = NULL;
+  Status = EFI_SUCCESS;
+  BufferPointer = NULL;
 
   if (EntryPointStructure == NULL) {
     //
@@ -1053,9 +1080,10 @@ SmbiosCreateTable (
     // Allocate memory (below 4GB).
     //
     DEBUG ((EFI_D_INFO, "SmbiosCreateTable: Initialize 32-bit entry point structure\n"));
-    EntryPointStructureData.MajorVersion  = mPrivateData.Smbios.MajorVersion;
-    EntryPointStructureData.MinorVersion  = mPrivateData.Smbios.MinorVersion;
-    EntryPointStructureData.SmbiosBcdRevision = (UINT8) ((PcdGet16 (PcdSmbiosVersion) >> 4) & 0xf0) | (UINT8) (PcdGet16 (PcdSmbiosVersion) & 0x0f);
+    EntryPointStructureData.MajorVersion = mPrivateData.Smbios.MajorVersion;
+    EntryPointStructureData.MinorVersion = mPrivateData.Smbios.MinorVersion;
+    EntryPointStructureData.SmbiosBcdRevision =
+      (UINT8)((PcdGet16 (PcdSmbiosVersion) >> 4) & 0xf0) | (UINT8)(PcdGet16 (PcdSmbiosVersion) & 0x0f);
     PhysicalAddress = 0xffffffff;
     Status = gBS->AllocatePages (
                     AllocateMaxAddress,
@@ -1071,12 +1099,12 @@ SmbiosCreateTable (
                       EFI_SIZE_TO_PAGES (sizeof (SMBIOS_TABLE_ENTRY_POINT)),
                       &PhysicalAddress
                       );
-     if (EFI_ERROR (Status)) {
+      if (EFI_ERROR (Status)) {
         return EFI_OUT_OF_RESOURCES;
       }
     }
 
-    EntryPointStructure = (SMBIOS_TABLE_ENTRY_POINT *) (UINTN) PhysicalAddress;
+    EntryPointStructure = (SMBIOS_TABLE_ENTRY_POINT *)(UINTN)PhysicalAddress;
 
     CopyMem (
       EntryPointStructure,
@@ -1094,8 +1122,8 @@ SmbiosCreateTable (
   // Make some statistics about all the structures
   //
   EntryPointStructure->NumberOfSmbiosStructures = 0;
-  EntryPointStructure->TableLength              = 0;
-  EntryPointStructure->MaxStructureSize         = 0;
+  EntryPointStructure->TableLength = 0;
+  EntryPointStructure->MaxStructureSize = 0;
 
   //
   // Calculate EPS Table Length
@@ -1105,48 +1133,51 @@ SmbiosCreateTable (
     Status = GetNextSmbiosRecord (SmbiosProtocol, &CurrentSmbiosEntry, &SmbiosRecord);
 
     if ((Status == EFI_SUCCESS) && (CurrentSmbiosEntry->Smbios32BitTable)) {
-      GetSmbiosStructureSize(SmbiosProtocol, SmbiosRecord, &RecordSize, &NumOfStr);
+      GetSmbiosStructureSize (SmbiosProtocol, SmbiosRecord, &RecordSize, &NumOfStr);
       //
       // Record NumberOfSmbiosStructures, TableLength and MaxStructureSize
       //
       EntryPointStructure->NumberOfSmbiosStructures++;
-      EntryPointStructure->TableLength = (UINT16) (EntryPointStructure->TableLength + RecordSize);
+      EntryPointStructure->TableLength = (UINT16)(EntryPointStructure->TableLength + RecordSize);
       if (RecordSize > EntryPointStructure->MaxStructureSize) {
-        EntryPointStructure->MaxStructureSize = (UINT16) RecordSize;
+        EntryPointStructure->MaxStructureSize = (UINT16)RecordSize;
       }
     }
-  } while (!EFI_ERROR(Status));
+  } while (!EFI_ERROR (Status));
 
   //
   // Create End-Of-Table structure
   //
-  GetMaxSmbiosHandle(SmbiosProtocol, &SmbiosHandle);
-  EndStructure.Header.Type = SMBIOS_TYPE_END_OF_TABLE;
-  EndStructure.Header.Length = (UINT8) sizeof (EFI_SMBIOS_TABLE_HEADER);
+  GetMaxSmbiosHandle (SmbiosProtocol, &SmbiosHandle);
+  EndStructure.Header.Type   = SMBIOS_TYPE_END_OF_TABLE;
+  EndStructure.Header.Length = (UINT8)sizeof (EFI_SMBIOS_TABLE_HEADER);
   EndStructure.Header.Handle = SmbiosHandle;
-  EndStructure.Tailing[0] = 0;
-  EndStructure.Tailing[1] = 0;
+  EndStructure.Tailing[0]    = 0;
+  EndStructure.Tailing[1]    = 0;
   EntryPointStructure->NumberOfSmbiosStructures++;
-  EntryPointStructure->TableLength = (UINT16) (EntryPointStructure->TableLength + sizeof (EndStructure));
+  EntryPointStructure->TableLength = (UINT16)(EntryPointStructure->TableLength + sizeof (EndStructure));
   if (sizeof (EndStructure) > EntryPointStructure->MaxStructureSize) {
-    EntryPointStructure->MaxStructureSize = (UINT16) sizeof (EndStructure);
+    EntryPointStructure->MaxStructureSize = (UINT16)sizeof (EndStructure);
   }
 
-  if (EFI_SIZE_TO_PAGES ((UINT32) EntryPointStructure->TableLength) > mPreAllocatedPages) {
+  if (EFI_SIZE_TO_PAGES ((UINT32)EntryPointStructure->TableLength) > mPreAllocatedPages) {
     //
     // If new SMBIOS table size exceeds the previous allocated page,
     // it is time to re-allocate memory (below 4GB).
     //
-    DEBUG ((EFI_D_INFO, "%a() re-allocate SMBIOS 32-bit table\n",
-      __FUNCTION__));
+    DEBUG ((
+      EFI_D_INFO,
+      "%a() re-allocate SMBIOS 32-bit table\n",
+      __FUNCTION__
+      ));
     if (EntryPointStructure->TableAddress != 0) {
       //
       // Free the previous allocated page
       //
       FreePages (
-            (VOID*)(UINTN)EntryPointStructure->TableAddress,
-            mPreAllocatedPages
-            );
+        (VOID *)(UINTN)EntryPointStructure->TableAddress,
+        mPreAllocatedPages
+        );
       EntryPointStructure->TableAddress = 0;
       mPreAllocatedPages = 0;
     }
@@ -1163,7 +1194,7 @@ SmbiosCreateTable (
       EntryPointStructure->TableAddress = 0;
       return EFI_OUT_OF_RESOURCES;
     } else {
-      EntryPointStructure->TableAddress = (UINT32) PhysicalAddress;
+      EntryPointStructure->TableAddress = (UINT32)PhysicalAddress;
       mPreAllocatedPages = EFI_SIZE_TO_PAGES (EntryPointStructure->TableLength);
     }
   }
@@ -1172,17 +1203,17 @@ SmbiosCreateTable (
   // Assemble the tables
   //
   ASSERT (EntryPointStructure->TableAddress != 0);
-  BufferPointer = (UINT8 *) (UINTN) EntryPointStructure->TableAddress;
+  BufferPointer = (UINT8 *)(UINTN)EntryPointStructure->TableAddress;
   CurrentSmbiosEntry = NULL;
   do {
     Status = GetNextSmbiosRecord (SmbiosProtocol, &CurrentSmbiosEntry, &SmbiosRecord);
 
     if ((Status == EFI_SUCCESS) && (CurrentSmbiosEntry->Smbios32BitTable)) {
-      GetSmbiosStructureSize(SmbiosProtocol, SmbiosRecord, &RecordSize, &NumOfStr);
+      GetSmbiosStructureSize (SmbiosProtocol, SmbiosRecord, &RecordSize, &NumOfStr);
       CopyMem (BufferPointer, SmbiosRecord, RecordSize);
       BufferPointer = BufferPointer + RecordSize;
     }
-  } while (!EFI_ERROR(Status));
+  } while (!EFI_ERROR (Status));
 
   //
   // Assemble End-Of-Table structure
@@ -1196,9 +1227,9 @@ SmbiosCreateTable (
   EntryPointStructure->EntryPointStructureChecksum = 0;
 
   EntryPointStructure->IntermediateChecksum =
-    CalculateCheckSum8 ((UINT8 *) EntryPointStructure + 0x10, EntryPointStructure->EntryPointLength - 0x10);
+    CalculateCheckSum8 ((UINT8 *)EntryPointStructure + 0x10, EntryPointStructure->EntryPointLength - 0x10);
   EntryPointStructure->EntryPointStructureChecksum =
-    CalculateCheckSum8 ((UINT8 *) EntryPointStructure, EntryPointStructure->EntryPointLength);
+    CalculateCheckSum8 ((UINT8 *)EntryPointStructure, EntryPointStructure->EntryPointLength);
 
   //
   // Returns the pointer
@@ -1235,8 +1266,8 @@ SmbiosCreate64BitTable (
   EFI_SMBIOS_TABLE_END_STRUCTURE  EndStructure;
   EFI_SMBIOS_ENTRY                *CurrentSmbiosEntry;
 
-  Status            = EFI_SUCCESS;
-  BufferPointer     = NULL;
+  Status = EFI_SUCCESS;
+  BufferPointer = NULL;
 
   if (Smbios30EntryPointStructure == NULL) {
     //
@@ -1245,9 +1276,9 @@ SmbiosCreate64BitTable (
     // Allocate memory at any address.
     //
     DEBUG ((EFI_D_INFO, "SmbiosCreateTable: Initialize 64-bit entry point structure\n"));
-    Smbios30EntryPointStructureData.MajorVersion  = mPrivateData.Smbios.MajorVersion;
-    Smbios30EntryPointStructureData.MinorVersion  = mPrivateData.Smbios.MinorVersion;
-    Smbios30EntryPointStructureData.DocRev        = PcdGet8 (PcdSmbiosDocRev);
+    Smbios30EntryPointStructureData.MajorVersion = mPrivateData.Smbios.MajorVersion;
+    Smbios30EntryPointStructureData.MinorVersion = mPrivateData.Smbios.MinorVersion;
+    Smbios30EntryPointStructureData.DocRev = PcdGet8 (PcdSmbiosDocRev);
     Status = gBS->AllocatePages (
                     AllocateAnyPages,
                     EfiRuntimeServicesData,
@@ -1259,7 +1290,7 @@ SmbiosCreate64BitTable (
       return EFI_OUT_OF_RESOURCES;
     }
 
-    Smbios30EntryPointStructure = (SMBIOS_TABLE_3_0_ENTRY_POINT *) (UINTN) PhysicalAddress;
+    Smbios30EntryPointStructure = (SMBIOS_TABLE_3_0_ENTRY_POINT *)(UINTN)PhysicalAddress;
 
     CopyMem (
       Smbios30EntryPointStructure,
@@ -1282,40 +1313,45 @@ SmbiosCreate64BitTable (
     Status = GetNextSmbiosRecord (SmbiosProtocol, &CurrentSmbiosEntry, &SmbiosRecord);
 
     if ((Status == EFI_SUCCESS) && (CurrentSmbiosEntry->Smbios64BitTable)) {
-      GetSmbiosStructureSize(SmbiosProtocol, SmbiosRecord, &RecordSize, &NumOfStr);
+      GetSmbiosStructureSize (SmbiosProtocol, SmbiosRecord, &RecordSize, &NumOfStr);
       //
       // Record TableMaximumSize
       //
-      Smbios30EntryPointStructure->TableMaximumSize = (UINT32) (Smbios30EntryPointStructure->TableMaximumSize + RecordSize);
+      Smbios30EntryPointStructure->TableMaximumSize =
+        (UINT32)(Smbios30EntryPointStructure->TableMaximumSize + RecordSize);
     }
-  } while (!EFI_ERROR(Status));
+  } while (!EFI_ERROR (Status));
 
   //
   // Create End-Of-Table structure
   //
-  GetMaxSmbiosHandle(SmbiosProtocol, &SmbiosHandle);
-  EndStructure.Header.Type = SMBIOS_TYPE_END_OF_TABLE;
-  EndStructure.Header.Length = (UINT8) sizeof (EFI_SMBIOS_TABLE_HEADER);
+  GetMaxSmbiosHandle (SmbiosProtocol, &SmbiosHandle);
+  EndStructure.Header.Type   = SMBIOS_TYPE_END_OF_TABLE;
+  EndStructure.Header.Length = (UINT8)sizeof (EFI_SMBIOS_TABLE_HEADER);
   EndStructure.Header.Handle = SmbiosHandle;
-  EndStructure.Tailing[0] = 0;
-  EndStructure.Tailing[1] = 0;
-  Smbios30EntryPointStructure->TableMaximumSize = (UINT32) (Smbios30EntryPointStructure->TableMaximumSize + sizeof (EndStructure));
+  EndStructure.Tailing[0]    = 0;
+  EndStructure.Tailing[1]    = 0;
+  Smbios30EntryPointStructure->TableMaximumSize =
+    (UINT32)(Smbios30EntryPointStructure->TableMaximumSize + sizeof (EndStructure));
 
   if (EFI_SIZE_TO_PAGES (Smbios30EntryPointStructure->TableMaximumSize) > mPre64BitAllocatedPages) {
     //
     // If new SMBIOS table size exceeds the previous allocated page,
     // it is time to re-allocate memory at anywhere.
     //
-    DEBUG ((EFI_D_INFO, "%a() re-allocate SMBIOS 64-bit table\n",
-      __FUNCTION__));
+    DEBUG ((
+      EFI_D_INFO,
+      "%a() re-allocate SMBIOS 64-bit table\n",
+      __FUNCTION__
+      ));
     if (Smbios30EntryPointStructure->TableAddress != 0) {
       //
       // Free the previous allocated page
       //
       FreePages (
-            (VOID*)(UINTN)Smbios30EntryPointStructure->TableAddress,
-            mPre64BitAllocatedPages
-            );
+        (VOID *)(UINTN)Smbios30EntryPointStructure->TableAddress,
+        mPre64BitAllocatedPages
+        );
       Smbios30EntryPointStructure->TableAddress = 0;
       mPre64BitAllocatedPages = 0;
     }
@@ -1340,7 +1376,7 @@ SmbiosCreate64BitTable (
   // Assemble the tables
   //
   ASSERT (Smbios30EntryPointStructure->TableAddress != 0);
-  BufferPointer = (UINT8 *) (UINTN) Smbios30EntryPointStructure->TableAddress;
+  BufferPointer = (UINT8 *)(UINTN)Smbios30EntryPointStructure->TableAddress;
   CurrentSmbiosEntry = NULL;
   do {
     Status = GetNextSmbiosRecord (SmbiosProtocol, &CurrentSmbiosEntry, &SmbiosRecord);
@@ -1349,11 +1385,11 @@ SmbiosCreate64BitTable (
       //
       // This record can be added to 64-bit table
       //
-      GetSmbiosStructureSize(SmbiosProtocol, SmbiosRecord, &RecordSize, &NumOfStr);
+      GetSmbiosStructureSize (SmbiosProtocol, SmbiosRecord, &RecordSize, &NumOfStr);
       CopyMem (BufferPointer, SmbiosRecord, RecordSize);
       BufferPointer = BufferPointer + RecordSize;
     }
-  } while (!EFI_ERROR(Status));
+  } while (!EFI_ERROR (Status));
 
   //
   // Assemble End-Of-Table structure
@@ -1365,7 +1401,7 @@ SmbiosCreate64BitTable (
   //
   Smbios30EntryPointStructure->EntryPointStructureChecksum = 0;
   Smbios30EntryPointStructure->EntryPointStructureChecksum =
-    CalculateCheckSum8 ((UINT8 *) Smbios30EntryPointStructure, Smbios30EntryPointStructure->EntryPointLength);
+    CalculateCheckSum8 ((UINT8 *)Smbios30EntryPointStructure, Smbios30EntryPointStructure->EntryPointLength);
 
   //
   // Returns the pointer
@@ -1394,14 +1430,14 @@ SmbiosTableConstruction (
   EFI_STATUS  Status;
 
   if (Smbios32BitTable) {
-    Status = SmbiosCreateTable ((VOID **) &Eps);
+    Status = SmbiosCreateTable ((VOID **)&Eps);
     if (!EFI_ERROR (Status)) {
       gBS->InstallConfigurationTable (&gEfiSmbiosTableGuid, Eps);
     }
   }
 
   if (Smbios64BitTable) {
-    Status = SmbiosCreate64BitTable ((VOID **) &Eps64Bit);
+    Status = SmbiosCreate64BitTable ((VOID **)&Eps64Bit);
     if (!EFI_ERROR (Status)) {
       gBS->InstallConfigurationTable (&gEfiSmbios3TableGuid, Eps64Bit);
     }
@@ -1426,15 +1462,15 @@ SmbiosDriverEntryPoint (
   IN EFI_SYSTEM_TABLE     *SystemTable
   )
 {
-  EFI_STATUS            Status;
+  EFI_STATUS  Status;
 
-  mPrivateData.Signature                = SMBIOS_INSTANCE_SIGNATURE;
-  mPrivateData.Smbios.Add               = SmbiosAdd;
-  mPrivateData.Smbios.UpdateString      = SmbiosUpdateString;
-  mPrivateData.Smbios.Remove            = SmbiosRemove;
-  mPrivateData.Smbios.GetNext           = SmbiosGetNext;
-  mPrivateData.Smbios.MajorVersion      = (UINT8) (PcdGet16 (PcdSmbiosVersion) >> 8);
-  mPrivateData.Smbios.MinorVersion      = (UINT8) (PcdGet16 (PcdSmbiosVersion) & 0x00ff);
+  mPrivateData.Signature  = SMBIOS_INSTANCE_SIGNATURE;
+  mPrivateData.Smbios.Add = SmbiosAdd;
+  mPrivateData.Smbios.UpdateString = SmbiosUpdateString;
+  mPrivateData.Smbios.Remove  = SmbiosRemove;
+  mPrivateData.Smbios.GetNext = SmbiosGetNext;
+  mPrivateData.Smbios.MajorVersion = (UINT8)(PcdGet16 (PcdSmbiosVersion) >> 8);
+  mPrivateData.Smbios.MinorVersion = (UINT8)(PcdGet16 (PcdSmbiosVersion) & 0x00ff);
 
   InitializeListHead (&mPrivateData.DataListHead);
   InitializeListHead (&mPrivateData.AllocatedHandleListHead);

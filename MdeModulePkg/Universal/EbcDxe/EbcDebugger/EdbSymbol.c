@@ -48,7 +48,7 @@ EdbLoadSymbolSingleEntry (
   //
   // Print Debug info
   //
-  if (sizeof (UINTN) == sizeof(UINT64)) {
+  if (sizeof (UINTN) == sizeof (UINT64)) {
     DEBUG ((DEBUG_ERROR, "  Symbol: %a, Address: 0x%016lx (%d)\n", Name, (UINT64)Address, (UINTN)Type));
   } else {
     DEBUG ((DEBUG_ERROR, "  Symbol: %a, Address: 0x%08x (%d)\n", Name, Address, (UINTN)Type));
@@ -57,11 +57,12 @@ EdbLoadSymbolSingleEntry (
   //
   // Fill the entry - name, RVA, type
   //
-  AsciiStrnCpyS (Entry->Name, sizeof(Entry->Name), Name, sizeof(Entry->Name) - 1);
+  AsciiStrnCpyS (Entry->Name, sizeof (Entry->Name), Name, sizeof (Entry->Name) - 1);
   if (ObjName != NULL) {
-    AsciiStrnCpyS (Entry->ObjName, sizeof(Entry->ObjName), ObjName, sizeof(Entry->ObjName) - 1);
+    AsciiStrnCpyS (Entry->ObjName, sizeof (Entry->ObjName), ObjName, sizeof (Entry->ObjName) - 1);
   }
-  Entry->Rva = Address % EFI_DEBUGGER_DEFAULT_LINK_IMAGEBASE;
+
+  Entry->Rva  = Address % EFI_DEBUGGER_DEFAULT_LINK_IMAGEBASE;
   Entry->Type = Type;
 
   //
@@ -167,20 +168,19 @@ EdbLoadSymbolEntryByIec (
   IN VOID                        *Buffer
   )
 {
-  CHAR8                      *LineBuffer;
-  CHAR8                      *FieldBuffer;
-  EDB_EBC_MAP_PARSE_STATE    MapParseState;
-  EDB_EBC_SYMBOL_PARSE_STATE SymbolParseState;
-  CHAR8                      *Name;
-  CHAR8                      *ObjName;
-  UINTN                      Address;
-  EFI_DEBUGGER_SYMBOL_TYPE   Type;
-
+  CHAR8                       *LineBuffer;
+  CHAR8                       *FieldBuffer;
+  EDB_EBC_MAP_PARSE_STATE     MapParseState;
+  EDB_EBC_SYMBOL_PARSE_STATE  SymbolParseState;
+  CHAR8                       *Name;
+  CHAR8                       *ObjName;
+  UINTN                       Address;
+  EFI_DEBUGGER_SYMBOL_TYPE    Type;
 
   //
   // Begin to parse the Buffer
   //
-  LineBuffer = AsciiStrGetNewTokenLine (Buffer, "\n\r");
+  LineBuffer    = AsciiStrGetNewTokenLine (Buffer, "\n\r");
   MapParseState = EdbEbcMapParseStateUninitialized;
   //
   // Check each line
@@ -191,10 +191,10 @@ EdbLoadSymbolEntryByIec (
     //
     // Init entry value
     //
-    Name = NULL;
+    Name    = NULL;
     ObjName = NULL;
     Address = 0;
-    Type = EfiDebuggerSymbolTypeMax;
+    Type    = EfiDebuggerSymbolTypeMax;
     //
     // Check each field
     //
@@ -203,6 +203,7 @@ EdbLoadSymbolEntryByIec (
         FieldBuffer = AsciiStrGetNextTokenField (" ");
         continue;
       }
+
       //
       // check "Address"
       //
@@ -210,6 +211,7 @@ EdbLoadSymbolEntryByIec (
         MapParseState = EdbEbcMapParseStateSymbolStart;
         break;
       }
+
       //
       // check "Static"
       //
@@ -224,6 +226,7 @@ EdbLoadSymbolEntryByIec (
         //
         break;
       }
+
       if (AsciiStrCmp (FieldBuffer, "entry") == 0) {
         //
         // Skip entry point
@@ -235,126 +238,132 @@ EdbLoadSymbolEntryByIec (
       // Now we start to parse this line for Name, Address, and Object
       //
       switch (SymbolParseState) {
-      case  EdbEbcSymbolParseStateUninitialized:
-        //
-        // Get the Address
-        //
-        SymbolParseState = EdbEbcSymbolParseStateReadyForName;
-        break;
-      case  EdbEbcSymbolParseStateReadyForName:
-        //
-        // Get the Name
-        //
-        if (AsciiStrnCmp (FieldBuffer, "___safe_se_handler", AsciiStrLen ("___safe_se_handler")) == 0) {
+        case EdbEbcSymbolParseStateUninitialized:
           //
-          // skip SeHandler
+          // Get the Address
           //
-          MapParseState = EdbEbcMapParseStateSeHandlerSymbol;
-          goto ExitFieldParse;
-        } else if (AsciiStrnCmp (FieldBuffer, "varbss_init", AsciiStrLen ("varbss_init")) == 0) {
-          //
-          // check VarbssInit
-          //
-          MapParseState = EdbEbcMapParseStateVarbssInitSymbol;
-//          goto ExitFieldParse;
-          Name = FieldBuffer;
-          SymbolParseState = EdbEbcSymbolParseStateReadyForRVA;
-        } else if (AsciiStrnCmp (FieldBuffer, "Crt", AsciiStrLen ("Crt")) == 0) {
-          //
-          // check Crt
-          //
-          MapParseState = EdbEbcMapParseStateCrtSymbol;
-//          goto ExitFieldParse;
-          Name = FieldBuffer;
-          SymbolParseState = EdbEbcSymbolParseStateReadyForRVA;
-        } else {
-          //
-          // Now, it is normal function
-          //
-          switch (MapParseState) {
-          case EdbEbcMapParseStateSeHandlerSymbol:
-            MapParseState = EdbEbcMapParseStateFunctionSymbol;
-            break;
-          case EdbEbcMapParseStateCrtSymbol:
-            MapParseState = EdbEbcMapParseStateVariableSymbol;
-            break;
-          case EdbEbcMapParseStateFunctionSymbol:
-          case EdbEbcMapParseStateVariableSymbol:
-          case EdbEbcMapParseStateStaticFunctionSymbol:
-            break;
-          default:
-            ASSERT (FALSE);
-            break;
-          }
-          Name = FieldBuffer;
-          SymbolParseState = EdbEbcSymbolParseStateReadyForRVA;
-        }
-        break;
-      case  EdbEbcSymbolParseStateReadyForRVA:
-        //
-        // Get the RVA
-        //
-        Address = AsciiXtoi (FieldBuffer);
-        SymbolParseState = EdbEbcSymbolParseStateReadyForType;
-        break;
-      case  EdbEbcSymbolParseStateReadyForType:
-        //
-        // Get the Type. This is optional, only for "f".
-        //
-        if (AsciiStrCmp (FieldBuffer, "f") == 0) {
-          SymbolParseState = EdbEbcSymbolParseStateReadyForObject;
-          switch (MapParseState) {
-          case EdbEbcMapParseStateFunctionSymbol:
-          case EdbEbcMapParseStateVarbssInitSymbol:
-            Type = EfiDebuggerSymbolFunction;
-            break;
-          case EdbEbcMapParseStateStaticFunctionSymbol:
-            Type = EfiDebuggerSymbolStaticFunction;
-            break;
-          default:
-            ASSERT (FALSE);
-            break;
-          }
+          SymbolParseState = EdbEbcSymbolParseStateReadyForName;
           break;
-        }
+        case EdbEbcSymbolParseStateReadyForName:
+          //
+          // Get the Name
+          //
+          if (AsciiStrnCmp (FieldBuffer, "___safe_se_handler", AsciiStrLen ("___safe_se_handler")) == 0) {
+            //
+            // skip SeHandler
+            //
+            MapParseState = EdbEbcMapParseStateSeHandlerSymbol;
+            goto ExitFieldParse;
+          } else if (AsciiStrnCmp (FieldBuffer, "varbss_init", AsciiStrLen ("varbss_init")) == 0) {
+            //
+            // check VarbssInit
+            //
+            MapParseState = EdbEbcMapParseStateVarbssInitSymbol;
+            // goto ExitFieldParse;
+            Name = FieldBuffer;
+            SymbolParseState = EdbEbcSymbolParseStateReadyForRVA;
+          } else if (AsciiStrnCmp (FieldBuffer, "Crt", AsciiStrLen ("Crt")) == 0) {
+            //
+            // check Crt
+            //
+            MapParseState = EdbEbcMapParseStateCrtSymbol;
+            // goto ExitFieldParse;
+            Name = FieldBuffer;
+            SymbolParseState = EdbEbcSymbolParseStateReadyForRVA;
+          } else {
+            //
+            // Now, it is normal function
+            //
+            switch (MapParseState) {
+              case EdbEbcMapParseStateSeHandlerSymbol:
+                MapParseState = EdbEbcMapParseStateFunctionSymbol;
+                break;
+              case EdbEbcMapParseStateCrtSymbol:
+                MapParseState = EdbEbcMapParseStateVariableSymbol;
+                break;
+              case EdbEbcMapParseStateFunctionSymbol:
+              case EdbEbcMapParseStateVariableSymbol:
+              case EdbEbcMapParseStateStaticFunctionSymbol:
+                break;
+              default:
+                ASSERT (FALSE);
+                break;
+            }
+
+            Name = FieldBuffer;
+            SymbolParseState = EdbEbcSymbolParseStateReadyForRVA;
+          }
+
+          break;
+        case EdbEbcSymbolParseStateReadyForRVA:
+          //
+          // Get the RVA
+          //
+          Address = AsciiXtoi (FieldBuffer);
+          SymbolParseState = EdbEbcSymbolParseStateReadyForType;
+          break;
+        case EdbEbcSymbolParseStateReadyForType:
+          //
+          // Get the Type. This is optional, only for "f".
+          //
+          if (AsciiStrCmp (FieldBuffer, "f") == 0) {
+            SymbolParseState = EdbEbcSymbolParseStateReadyForObject;
+            switch (MapParseState) {
+              case EdbEbcMapParseStateFunctionSymbol:
+              case EdbEbcMapParseStateVarbssInitSymbol:
+                Type = EfiDebuggerSymbolFunction;
+                break;
+              case EdbEbcMapParseStateStaticFunctionSymbol:
+                Type = EfiDebuggerSymbolStaticFunction;
+                break;
+              default:
+                ASSERT (FALSE);
+                break;
+            }
+
+            break;
+          }
+
         //
         // Else it should be Object.
         // let it bypass here
         //
-      case  EdbEbcSymbolParseStateReadyForObject:
-        switch (Type) {
-        case EfiDebuggerSymbolTypeMax:
-          switch (MapParseState) {
-          case EdbEbcMapParseStateVariableSymbol:
-          case EdbEbcMapParseStateCrtSymbol:
-            Type = EfiDebuggerSymbolGlobalVariable;
-            break;
-          case EdbEbcMapParseStateSeHandlerSymbol:
-            //
-            // do nothing here
-            //
-            break;
-          default:
-            ASSERT (FALSE);
-            break;
+        case EdbEbcSymbolParseStateReadyForObject:
+          switch (Type) {
+            case EfiDebuggerSymbolTypeMax:
+              switch (MapParseState) {
+                case EdbEbcMapParseStateVariableSymbol:
+                case EdbEbcMapParseStateCrtSymbol:
+                  Type = EfiDebuggerSymbolGlobalVariable;
+                  break;
+                case EdbEbcMapParseStateSeHandlerSymbol:
+                  //
+                  // do nothing here
+                  //
+                  break;
+                default:
+                  ASSERT (FALSE);
+                  break;
+              }
+
+              break;
+            case EfiDebuggerSymbolFunction:
+            case EfiDebuggerSymbolStaticFunction:
+              break;
+            default:
+              ASSERT (FALSE);
+              break;
           }
-          break;
-        case EfiDebuggerSymbolFunction:
-        case EfiDebuggerSymbolStaticFunction:
+
+          //
+          // Get the Object
+          //
+          ObjName = FieldBuffer;
+          SymbolParseState = EdbEbcSymbolParseStateUninitialized;
           break;
         default:
           ASSERT (FALSE);
           break;
-        }
-        //
-        // Get the Object
-        //
-        ObjName = FieldBuffer;
-        SymbolParseState = EdbEbcSymbolParseStateUninitialized;
-        break;
-      default:
-        ASSERT (FALSE);
-        break;
       }
 
       //
@@ -428,7 +437,7 @@ EdbFindSymbolFile (
   IN OUT UINTN                   *Index OPTIONAL
   )
 {
-  UINTN ObjectIndex;
+  UINTN  ObjectIndex;
 
   //
   // Check each Object
@@ -441,6 +450,7 @@ EdbFindSymbolFile (
       if (Index != NULL) {
         *Index = ObjectIndex;
       }
+
       return &DebuggerPrivate->DebuggerSymbolContext.Object[ObjectIndex];
     }
   }
@@ -471,16 +481,16 @@ EbdFindSymbolAddress (
   OUT EFI_DEBUGGER_SYMBOL_ENTRY  **RetEntry
   )
 {
-  UINTN                      Index;
-  UINTN                      SubIndex;
-  UINTN                      CandidateLowerAddress;
-  UINTN                      CandidateUpperAddress;
-  EFI_DEBUGGER_SYMBOL_OBJECT *Object;
-  EFI_DEBUGGER_SYMBOL_ENTRY  *Entry;
-  EFI_DEBUGGER_SYMBOL_ENTRY  *LowEntry;
-  EFI_DEBUGGER_SYMBOL_ENTRY  *UpperEntry;
-  EFI_DEBUGGER_SYMBOL_OBJECT *LowObject;
-  EFI_DEBUGGER_SYMBOL_OBJECT *UpperObject;
+  UINTN                       Index;
+  UINTN                       SubIndex;
+  UINTN                       CandidateLowerAddress;
+  UINTN                       CandidateUpperAddress;
+  EFI_DEBUGGER_SYMBOL_OBJECT  *Object;
+  EFI_DEBUGGER_SYMBOL_ENTRY   *Entry;
+  EFI_DEBUGGER_SYMBOL_ENTRY   *LowEntry;
+  EFI_DEBUGGER_SYMBOL_ENTRY   *UpperEntry;
+  EFI_DEBUGGER_SYMBOL_OBJECT  *LowObject;
+  EFI_DEBUGGER_SYMBOL_OBJECT  *UpperObject;
 
   if ((Type < 0) || (Type >= EdbMatchSymbolTypeMax)) {
     return 0;
@@ -490,10 +500,10 @@ EbdFindSymbolAddress (
   // Init
   //
   CandidateLowerAddress = 0;
-  CandidateUpperAddress = (UINTN)-1;
-  LowEntry = NULL;
-  UpperEntry = NULL;
-  LowObject = NULL;
+  CandidateUpperAddress = (UINTN)- 1;
+  LowEntry    = NULL;
+  UpperEntry  = NULL;
+  LowObject   = NULL;
   UpperObject = NULL;
 
   //
@@ -504,6 +514,7 @@ EbdFindSymbolAddress (
     if (Object->EntryCount == 0) {
       continue;
     }
+
     //
     // Go through each entry
     //
@@ -519,7 +530,7 @@ EbdFindSymbolAddress (
           //
           if (CandidateLowerAddress < Entry->Rva + Object->BaseAddress) {
             CandidateLowerAddress = Entry->Rva + Object->BaseAddress;
-            LowEntry = Entry;
+            LowEntry  = Entry;
             LowObject = Object;
           }
         } else {
@@ -528,16 +539,18 @@ EbdFindSymbolAddress (
           //
           if (CandidateUpperAddress > Entry->Rva + Object->BaseAddress) {
             CandidateUpperAddress = Entry->Rva + Object->BaseAddress;
-            UpperEntry = Entry;
+            UpperEntry  = Entry;
             UpperObject = Object;
           }
         }
+
         continue;
       }
+
       //
       // address match, return directly
       //
-      *RetEntry = Entry;
+      *RetEntry  = Entry;
       *RetObject = Object;
       return Address;
     }
@@ -557,7 +570,7 @@ EbdFindSymbolAddress (
       //
       // return nearest lower address
       //
-      *RetEntry = LowEntry;
+      *RetEntry  = LowEntry;
       *RetObject = LowObject;
       return CandidateLowerAddress;
     }
@@ -573,7 +586,7 @@ EbdFindSymbolAddress (
       //
       // return nearest upper address
       //
-      *RetEntry = UpperEntry;
+      *RetEntry  = UpperEntry;
       *RetObject = UpperObject;
       return CandidateUpperAddress;
     }
@@ -601,13 +614,13 @@ EdbUnloadSymbol (
   IN CHAR16                      *FileName
   )
 {
-  EFI_DEBUGGER_SYMBOL_OBJECT *Object;
-  UINTN                      ObjectIndex;
-  UINTN                      Index;
-  EFI_DEBUGGER_SYMBOL_ENTRY  *OldEntry;
-  UINTN                      OldEntryCount;
-  UINTN                      MaxEntryCount;
-  VOID                       **OldSourceBuffer;
+  EFI_DEBUGGER_SYMBOL_OBJECT  *Object;
+  UINTN                       ObjectIndex;
+  UINTN                       Index;
+  EFI_DEBUGGER_SYMBOL_ENTRY   *OldEntry;
+  UINTN                       OldEntryCount;
+  UINTN                       MaxEntryCount;
+  VOID                        **OldSourceBuffer;
 
   //
   // Find Symbol
@@ -621,33 +634,34 @@ EdbUnloadSymbol (
   //
   // Record old data
   //
-  Object = DebuggerPrivate->DebuggerSymbolContext.Object;
+  Object   = DebuggerPrivate->DebuggerSymbolContext.Object;
   OldEntry = Object->Entry;
   OldSourceBuffer = Object->SourceBuffer;
-  MaxEntryCount = Object->MaxEntryCount;
-  OldEntryCount = Object->EntryCount;
+  MaxEntryCount   = Object->MaxEntryCount;
+  OldEntryCount   = Object->EntryCount;
 
   //
   // Remove the matched Object
   //
   for (Index = ObjectIndex; Index < DebuggerPrivate->DebuggerSymbolContext.ObjectCount - 1; Index++) {
-    CopyMem (&Object[Index], &Object[Index + 1], sizeof(EFI_DEBUGGER_SYMBOL_OBJECT));
+    CopyMem (&Object[Index], &Object[Index + 1], sizeof (EFI_DEBUGGER_SYMBOL_OBJECT));
   }
-  ZeroMem (&Object[Index], sizeof(Object[Index]));
+
+  ZeroMem (&Object[Index], sizeof (Object[Index]));
 
   //
   // Move old data to new place
   //
   Object[Index].Entry = OldEntry;
-  Object[Index].SourceBuffer = OldSourceBuffer;
+  Object[Index].SourceBuffer  = OldSourceBuffer;
   Object[Index].MaxEntryCount = MaxEntryCount;
-  DebuggerPrivate->DebuggerSymbolContext.ObjectCount --;
+  DebuggerPrivate->DebuggerSymbolContext.ObjectCount--;
 
   //
   // Clean old entry data
   //
   for (Index = 0; Index < OldEntryCount; Index++) {
-    ZeroMem (&OldEntry[Index], sizeof(OldEntry[Index]));
+    ZeroMem (&OldEntry[Index], sizeof (OldEntry[Index]));
   }
 
   //
@@ -681,8 +695,8 @@ EdbLoadSymbol (
   IN VOID                        *Buffer
   )
 {
-  EFI_DEBUGGER_SYMBOL_OBJECT *Object;
-  EFI_STATUS                 Status;
+  EFI_DEBUGGER_SYMBOL_OBJECT  *Object;
+  EFI_STATUS                  Status;
 
   //
   // Check duplicated File
@@ -690,7 +704,7 @@ EdbLoadSymbol (
   Object = EdbFindSymbolFile (DebuggerPrivate, FileName, NULL);
   if (Object != NULL) {
     Status = EdbUnloadSymbol (DebuggerPrivate, FileName);
-    if (EFI_ERROR(Status)) {
+    if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_ERROR, "Unload Duplicated Symbol File Error!\n"));
       return Status;
     }
@@ -712,7 +726,7 @@ EdbLoadSymbol (
   //
   // Init Object
   //
-  Object->EntryCount = 0;
+  Object->EntryCount    = 0;
   Object->MaxEntryCount = EFI_DEBUGGER_SYMBOL_ENTRY_MAX;
 
   //
@@ -727,14 +741,18 @@ EdbLoadSymbol (
   //
   // Fill Object value
   //
-  StrnCpyS (Object->Name, sizeof(Object->Name) / sizeof(CHAR16),
-            FileName, (sizeof(Object->Name) / sizeof(CHAR16)) - 1);
+  StrnCpyS (
+    Object->Name,
+    sizeof (Object->Name) / sizeof (CHAR16),
+    FileName,
+    (sizeof (Object->Name) / sizeof (CHAR16)) - 1
+    );
   Object->BaseAddress = 0;
 
   //
   // Increase the object count
   //
-  DebuggerPrivate->DebuggerSymbolContext.ObjectCount ++;
+  DebuggerPrivate->DebuggerSymbolContext.ObjectCount++;
 
   return EFI_SUCCESS;
 }
@@ -754,22 +772,22 @@ GetPdbPath (
   VOID *ImageBase
   )
 {
-  CHAR8                           *PdbPath;
-  UINT32                          DirCount;
-  EFI_IMAGE_DOS_HEADER            *DosHdr;
-  EFI_IMAGE_OPTIONAL_HEADER_UNION *NtHdr;
-  EFI_IMAGE_OPTIONAL_HEADER32     *OptionalHdr32;
-  EFI_IMAGE_OPTIONAL_HEADER64     *OptionalHdr64;
-  EFI_IMAGE_DATA_DIRECTORY        *DirectoryEntry;
-  EFI_IMAGE_DEBUG_DIRECTORY_ENTRY *DebugEntry;
-  VOID                            *CodeViewEntryPointer;
+  CHAR8                            *PdbPath;
+  UINT32                           DirCount;
+  EFI_IMAGE_DOS_HEADER             *DosHdr;
+  EFI_IMAGE_OPTIONAL_HEADER_UNION  *NtHdr;
+  EFI_IMAGE_OPTIONAL_HEADER32      *OptionalHdr32;
+  EFI_IMAGE_OPTIONAL_HEADER64      *OptionalHdr64;
+  EFI_IMAGE_DATA_DIRECTORY         *DirectoryEntry;
+  EFI_IMAGE_DEBUG_DIRECTORY_ENTRY  *DebugEntry;
+  VOID                             *CodeViewEntryPointer;
 
   //
   // Init value
   //
-  CodeViewEntryPointer  = NULL;
-  PdbPath               = NULL;
-  DosHdr                = ImageBase;
+  CodeViewEntryPointer = NULL;
+  PdbPath = NULL;
+  DosHdr  = ImageBase;
 
   //
   // Check magic
@@ -777,7 +795,8 @@ GetPdbPath (
   if (DosHdr->e_magic != EFI_IMAGE_DOS_SIGNATURE) {
     return NULL;
   }
-  NtHdr           = (EFI_IMAGE_OPTIONAL_HEADER_UNION *) ((UINT8 *) DosHdr + DosHdr->e_lfanew);
+
+  NtHdr = (EFI_IMAGE_OPTIONAL_HEADER_UNION *)((UINT8 *)DosHdr + DosHdr->e_lfanew);
   //
   // Check Machine, filter for EBC
   //
@@ -793,39 +812,43 @@ GetPdbPath (
   // EBC spec says PE32+, but implementation uses PE32. So check dynamically here.
   //
   if (NtHdr->Pe32.OptionalHeader.Magic == EFI_IMAGE_NT_OPTIONAL_HDR32_MAGIC) {
-    OptionalHdr32   = (VOID *) &NtHdr->Pe32.OptionalHeader;
-    DirectoryEntry  = (EFI_IMAGE_DATA_DIRECTORY *) &(OptionalHdr32->DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_DEBUG]);
+    OptionalHdr32  = (VOID *)&NtHdr->Pe32.OptionalHeader;
+    DirectoryEntry = (EFI_IMAGE_DATA_DIRECTORY *)&(OptionalHdr32->DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_DEBUG]);
   } else if (NtHdr->Pe32Plus.OptionalHeader.Magic == EFI_IMAGE_NT_OPTIONAL_HDR64_MAGIC) {
-    OptionalHdr64   = (VOID *) &NtHdr->Pe32Plus.OptionalHeader;
-    DirectoryEntry  = (EFI_IMAGE_DATA_DIRECTORY *) &(OptionalHdr64->DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_DEBUG]);
+    OptionalHdr64  = (VOID *)&NtHdr->Pe32Plus.OptionalHeader;
+    DirectoryEntry = (EFI_IMAGE_DATA_DIRECTORY *)&(OptionalHdr64->DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_DEBUG]);
   } else {
     return NULL;
   }
+
   if (DirectoryEntry->VirtualAddress == 0) {
     return NULL;
   }
+
   //
   // Go through DirectoryEntry
   //
   for (DirCount = 0;
        (DirCount < DirectoryEntry->Size / sizeof (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY)) && CodeViewEntryPointer == NULL;
        DirCount++
-      ) {
-    DebugEntry = (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY *) (DirectoryEntry->VirtualAddress + (UINTN) ImageBase + DirCount * sizeof (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY));
+       ) {
+    DebugEntry =
+      (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY *)(DirectoryEntry->VirtualAddress + (UINTN)ImageBase + DirCount *
+                                          sizeof (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY));
     if (DebugEntry->Type == EFI_IMAGE_DEBUG_TYPE_CODEVIEW) {
       //
       // Match DebugEntry, only CODEVIEW_SIGNATURE_NB10 and CODEVIEW_SIGNATURE_RSDS are supported.
       //
-      CodeViewEntryPointer = (VOID *) ((UINTN) DebugEntry->RVA + (UINTN) ImageBase);
-      switch (*(UINT32 *) CodeViewEntryPointer) {
-      case CODEVIEW_SIGNATURE_NB10:
-        PdbPath = (CHAR8 *) CodeViewEntryPointer + sizeof (EFI_IMAGE_DEBUG_CODEVIEW_NB10_ENTRY);
-        break;
-      case CODEVIEW_SIGNATURE_RSDS:
-        PdbPath = (CHAR8 *) CodeViewEntryPointer + sizeof (EFI_IMAGE_DEBUG_CODEVIEW_RSDS_ENTRY);
-        break;
-      default:
-        break;
+      CodeViewEntryPointer = (VOID *)((UINTN)DebugEntry->RVA + (UINTN)ImageBase);
+      switch (*(UINT32 *)CodeViewEntryPointer) {
+        case CODEVIEW_SIGNATURE_NB10:
+          PdbPath = (CHAR8 *)CodeViewEntryPointer + sizeof (EFI_IMAGE_DEBUG_CODEVIEW_NB10_ENTRY);
+          break;
+        case CODEVIEW_SIGNATURE_RSDS:
+          PdbPath = (CHAR8 *)CodeViewEntryPointer + sizeof (EFI_IMAGE_DEBUG_CODEVIEW_RSDS_ENTRY);
+          break;
+        default:
+          break;
       }
     }
   }
@@ -853,10 +876,10 @@ MatchPdbAndMap (
   IN CHAR16  *MapFileName
   )
 {
-  UINTN   PdbNameSize;
-  UINTN   MapNameSize;
-  CHAR8   *PurePdbFileName;
-  UINTN   Index;
+  UINTN  PdbNameSize;
+  UINTN  MapNameSize;
+  CHAR8  *PurePdbFileName;
+  UINTN  Index;
 
   //
   // remove dir name
@@ -867,6 +890,7 @@ MatchPdbAndMap (
       PurePdbFileName = &PdbFileName[Index + 1];
     }
   }
+
   PdbFileName = PurePdbFileName;
 
   //
@@ -895,9 +919,9 @@ MatchPdbAndMap (
 // BUGBUG: work-around start
 //
 typedef struct {
-  EFI_DEBUG_IMAGE_INFO  *EfiDebugImageInfoTable;
-  volatile UINT32       UpdateStatus;
-  UINT32                TableSize;
+  EFI_DEBUG_IMAGE_INFO    *EfiDebugImageInfoTable;
+  volatile UINT32         UpdateStatus;
+  UINT32                  TableSize;
 } EFI_DEBUG_IMAGE_INFO_TABLE_HEADER_OLD;
 
 EFI_DEBUG_IMAGE_INFO_TABLE_HEADER  mDebugImageInfoTableHeader;
@@ -935,22 +959,26 @@ EdbFixDebugImageInfoTable (
   IN OUT EFI_DEBUG_IMAGE_INFO_TABLE_HEADER **DebugImageInfoTableHeader
   )
 {
-  mDebugImageInfoTableHeader.EfiDebugImageInfoTable = ((EFI_DEBUG_IMAGE_INFO_TABLE_HEADER_OLD *)(*DebugImageInfoTableHeader))->EfiDebugImageInfoTable;
-  mDebugImageInfoTableHeader.UpdateStatus           = ((EFI_DEBUG_IMAGE_INFO_TABLE_HEADER_OLD *)(*DebugImageInfoTableHeader))->UpdateStatus;
-  mDebugImageInfoTableHeader.TableSize              = ((EFI_DEBUG_IMAGE_INFO_TABLE_HEADER_OLD *)(*DebugImageInfoTableHeader))->TableSize;
+  mDebugImageInfoTableHeader.EfiDebugImageInfoTable =
+    ((EFI_DEBUG_IMAGE_INFO_TABLE_HEADER_OLD *)(*DebugImageInfoTableHeader))->EfiDebugImageInfoTable;
+  mDebugImageInfoTableHeader.UpdateStatus =
+    ((EFI_DEBUG_IMAGE_INFO_TABLE_HEADER_OLD *)(*DebugImageInfoTableHeader))->UpdateStatus;
+  mDebugImageInfoTableHeader.TableSize =
+    ((EFI_DEBUG_IMAGE_INFO_TABLE_HEADER_OLD *)(*DebugImageInfoTableHeader))->TableSize;
 
   if ((*DebugImageInfoTableHeader)->UpdateStatus > 3) {
     *DebugImageInfoTableHeader = &mDebugImageInfoTableHeader;
-    return ;
+    return;
   }
 
   if ((*DebugImageInfoTableHeader)->TableSize % (EFI_PAGE_SIZE / (sizeof (VOID *))) != 0) {
     *DebugImageInfoTableHeader = &mDebugImageInfoTableHeader;
-    return ;
+    return;
   }
 
-  return ;
+  return;
 }
+
 //
 // BUGBUG: work-around end
 //
@@ -974,13 +1002,13 @@ EdbPatchSymbolRVA (
   IN EDB_EBC_IMAGE_RVA_SEARCH_TYPE SearchType
   )
 {
-  EFI_STATUS            Status;
-  UINTN                 ImageNumber;
-  EFI_DEBUG_IMAGE_INFO  *ImageTable;
-  CHAR8                 *PdbPath;
-  VOID                  *ImageBase;
-  VOID                  *CandidateImageBase;
-  EFI_DEBUGGER_SYMBOL_OBJECT *Object;
+  EFI_STATUS                  Status;
+  UINTN                       ImageNumber;
+  EFI_DEBUG_IMAGE_INFO        *ImageTable;
+  CHAR8                       *PdbPath;
+  VOID                        *ImageBase;
+  VOID                        *CandidateImageBase;
+  EFI_DEBUGGER_SYMBOL_OBJECT  *Object;
 
   if (SearchType < 0 || SearchType >= EdbEbcImageRvaSearchTypeMax) {
     return EFI_INVALID_PARAMETER;
@@ -1000,13 +1028,14 @@ EdbPatchSymbolRVA (
   if (mDebuggerPrivate.DebugImageInfoTableHeader == NULL) {
     Status = EfiGetSystemConfigurationTable (
                &gEfiDebugImageInfoTableGuid,
-               (VOID **) &mDebuggerPrivate.DebugImageInfoTableHeader
+               (VOID **)&mDebuggerPrivate.DebugImageInfoTableHeader
                );
     if (EFI_ERROR (Status)) {
       EDBPrint (L"DebugImageInfoTable not found!\n");
       return Status;
     }
   }
+
   DEBUG ((DEBUG_ERROR, "DebugImageInfoTableHeader: %x\n", mDebuggerPrivate.DebugImageInfoTableHeader));
 
   //
@@ -1021,25 +1050,28 @@ EdbPatchSymbolRVA (
   // Go through DebugImageInfoTable for each Image
   //
   CandidateImageBase = NULL;
-  ImageTable  = mDebuggerPrivate.DebugImageInfoTableHeader->EfiDebugImageInfoTable;
+  ImageTable = mDebuggerPrivate.DebugImageInfoTableHeader->EfiDebugImageInfoTable;
   for (ImageNumber = 0; ImageNumber < mDebuggerPrivate.DebugImageInfoTableHeader->TableSize; ImageNumber++) {
     if (ImageTable[ImageNumber].NormalImage == NULL) {
       continue;
     }
+
     ImageBase = ImageTable[ImageNumber].NormalImage->LoadedImageProtocolInstance->ImageBase;
     //
     // Get PDB path
     //
-    PdbPath   = GetPdbPath (ImageBase);
+    PdbPath = GetPdbPath (ImageBase);
     if (PdbPath == NULL) {
       continue;
     }
+
     //
     // Check PDB name
     //
     if (!MatchPdbAndMap (PdbPath, FileName)) {
       continue;
     }
+
     DEBUG ((DEBUG_ERROR, "ImageBase: %x\n", ImageBase));
 
     //
@@ -1066,6 +1098,7 @@ EdbPatchSymbolRVA (
     if (CandidateImageBase == NULL) {
       return EFI_NOT_FOUND;
     }
+
     //
     // Assign base address and return
     //
@@ -1096,10 +1129,10 @@ MatchObjAndCod (
   IN CHAR16  *CodFileName
   )
 {
-  UINTN   ObjNameSize;
-  UINTN   CodNameSize;
-  CHAR8   *PureObjFileName;
-  UINTN   Index;
+  UINTN  ObjNameSize;
+  UINTN  CodNameSize;
+  CHAR8  *PureObjFileName;
+  UINTN  Index;
 
   //
   // remove library name
@@ -1111,6 +1144,7 @@ MatchObjAndCod (
       break;
     }
   }
+
   ObjFileName = PureObjFileName;
 
   //
@@ -1171,23 +1205,23 @@ EdbLoadCodBySymbolByIec (
   OUT UINTN                      *FuncOffset
   )
 {
-  CHAR8                      *LineBuffer;
-  CHAR8                      *FieldBuffer;
-  VOID                       *BufferStart;
-  VOID                       *BufferEnd;
-  UINTN                      Offset;
-  EDB_EBC_COD_PARSE_STATE    CodParseState;
-  CHAR8                      Char[2];
+  CHAR8                    *LineBuffer;
+  CHAR8                    *FieldBuffer;
+  VOID                     *BufferStart;
+  VOID                     *BufferEnd;
+  UINTN                    Offset;
+  EDB_EBC_COD_PARSE_STATE  CodParseState;
+  CHAR8                    Char[2];
 
   //
   // Init
   //
-  Char[0] = 9;
-  Char[1] = 0;
-  LineBuffer = AsciiStrGetNewTokenLine (Buffer, "\n\r");
-  Offset = (UINTN)-1;
-  BufferStart = NULL;
-  BufferEnd = NULL;
+  Char[0]       = 9;
+  Char[1]       = 0;
+  LineBuffer    = AsciiStrGetNewTokenLine (Buffer, "\n\r");
+  Offset        = (UINTN)- 1;
+  BufferStart   = NULL;
+  BufferEnd     = NULL;
   CodParseState = EdbEbcCodParseStateUninitialized;
 
   //
@@ -1195,97 +1229,99 @@ EdbLoadCodBySymbolByIec (
   //
   while (LineBuffer != NULL) {
     switch (CodParseState) {
-    case EdbEbcCodParseStateUninitialized:
-      //
-      // check mark_begin, begin to check line after this match
-      //
-      if (AsciiStrCmp (LineBuffer, "; mark_begin;") == 0) {
-        CodParseState = EdbEbcCodParseStateSymbolInitialized;
-      }
-      LineBuffer = AsciiStrGetNextTokenLine ("\n\r");
-      PatchForAsciiStrTokenBefore (LineBuffer, '\n');
-      break;
+      case EdbEbcCodParseStateUninitialized:
+        //
+        // check mark_begin, begin to check line after this match
+        //
+        if (AsciiStrCmp (LineBuffer, "; mark_begin;") == 0) {
+          CodParseState = EdbEbcCodParseStateSymbolInitialized;
+        }
 
-    case EdbEbcCodParseStateSymbolInitialized:
-      //
-      // check mark_end, not check line after this match
-      //
-      if (AsciiStrCmp (LineBuffer, "; mark_end;") == 0) {
-        CodParseState = EdbEbcCodParseStateUninitialized;
         LineBuffer = AsciiStrGetNextTokenLine ("\n\r");
         PatchForAsciiStrTokenBefore (LineBuffer, '\n');
         break;
-      }
 
-      //
-      // not check this line if the first char is as follows
-      //
-      if ((*LineBuffer == 0)   ||
-          (*LineBuffer == '$') ||
-          (*LineBuffer == ';') ||
-          (*LineBuffer == '_') ||
-          (*LineBuffer == ' ')) {
+      case EdbEbcCodParseStateSymbolInitialized:
+        //
+        // check mark_end, not check line after this match
+        //
+        if (AsciiStrCmp (LineBuffer, "; mark_end;") == 0) {
+          CodParseState = EdbEbcCodParseStateUninitialized;
+          LineBuffer    = AsciiStrGetNextTokenLine ("\n\r");
+          PatchForAsciiStrTokenBefore (LineBuffer, '\n');
+          break;
+        }
+
+        //
+        // not check this line if the first char is as follows
+        //
+        if ((*LineBuffer == 0)   ||
+            (*LineBuffer == '$') ||
+            (*LineBuffer == ';') ||
+            (*LineBuffer == '_') ||
+            (*LineBuffer == ' ')) {
+          LineBuffer = AsciiStrGetNextTokenLine ("\n\r");
+          PatchForAsciiStrTokenBefore (LineBuffer, '\n');
+          break;
+        }
+
+        //
+        // get function name, function name is followed by char 0x09.
+        //
+        FieldBuffer = AsciiStrGetNewTokenField (LineBuffer, Char);
+        ASSERT (FieldBuffer != NULL);
+        if (AsciiStriCmp (FieldBuffer, Name) == 0) {
+          BufferStart   = FieldBuffer;
+          CodParseState = EdbEbcCodParseStateSymbolStart;
+        }
+
+        PatchForAsciiStrTokenAfter (FieldBuffer, 0x9);
+
+        //
+        // Get next line
+        //
         LineBuffer = AsciiStrGetNextTokenLine ("\n\r");
         PatchForAsciiStrTokenBefore (LineBuffer, '\n');
         break;
-      }
 
-      //
-      // get function name, function name is followed by char 0x09.
-      //
-      FieldBuffer = AsciiStrGetNewTokenField (LineBuffer, Char);
-      ASSERT (FieldBuffer != NULL);
-      if (AsciiStriCmp (FieldBuffer, Name) == 0) {
-        BufferStart = FieldBuffer;
-        CodParseState = EdbEbcCodParseStateSymbolStart;
-      }
-      PatchForAsciiStrTokenAfter (FieldBuffer, 0x9);
-
-      //
-      // Get next line
-      //
-      LineBuffer = AsciiStrGetNextTokenLine ("\n\r");
-      PatchForAsciiStrTokenBefore (LineBuffer, '\n');
-      break;
-
-    case EdbEbcCodParseStateSymbolStart:
-      //
-      // check mark_end, if this match, means the function is found successfully.
-      //
-      if (AsciiStrCmp (LineBuffer, "; mark_end;") == 0) {
-        CodParseState = EdbEbcCodParseStateSymbolEnd;
+      case EdbEbcCodParseStateSymbolStart:
         //
-        // prepare CodeBufferSize, FuncOffset, and FuncStart to return
+        // check mark_end, if this match, means the function is found successfully.
         //
-        BufferEnd = LineBuffer + sizeof("; mark_end;") - 1;
-        *CodeBufferSize = (UINTN)BufferEnd - (UINTN)BufferStart;
-        *FuncOffset = Offset;
-        PatchForAsciiStrTokenAfter (LineBuffer, '\n');
-        return BufferStart;
-      }
+        if (AsciiStrCmp (LineBuffer, "; mark_end;") == 0) {
+          CodParseState = EdbEbcCodParseStateSymbolEnd;
+          //
+          // prepare CodeBufferSize, FuncOffset, and FuncStart to return
+          //
+          BufferEnd = LineBuffer + sizeof ("; mark_end;") - 1;
+          *CodeBufferSize = (UINTN)BufferEnd - (UINTN)BufferStart;
+          *FuncOffset     = Offset;
+          PatchForAsciiStrTokenAfter (LineBuffer, '\n');
+          return BufferStart;
+        }
 
-      //
-      // Get function offset
-      //
-      if ((Offset == (UINTN)-1) &&
-          (*LineBuffer == ' ')) {
-        FieldBuffer = AsciiStrGetNewTokenField (LineBuffer + 2, " ");
-        Offset = AsciiXtoi (FieldBuffer);
-        PatchForAsciiStrTokenAfter (FieldBuffer, ' ');
-      }
+        //
+        // Get function offset
+        //
+        if ((Offset == (UINTN)- 1) &&
+            (*LineBuffer == ' ')) {
+          FieldBuffer = AsciiStrGetNewTokenField (LineBuffer + 2, " ");
+          Offset = AsciiXtoi (FieldBuffer);
+          PatchForAsciiStrTokenAfter (FieldBuffer, ' ');
+        }
 
-      //
-      // Get next line
-      //
-      LineBuffer = AsciiStrGetNextTokenLine ("\n\r");
-      PatchForAsciiStrTokenBefore (LineBuffer, '\n');
-      break;
+        //
+        // Get next line
+        //
+        LineBuffer = AsciiStrGetNextTokenLine ("\n\r");
+        PatchForAsciiStrTokenBefore (LineBuffer, '\n');
+        break;
 
-    case EdbEbcCodParseStateSymbolEnd:
-      break;
+      case EdbEbcCodParseStateSymbolEnd:
+        break;
 
-    default:
-      break;
+      default:
+        break;
     }
   }
 
@@ -1342,7 +1378,7 @@ EdbFindCodeFromObject (
   IN CHAR16                      *FileName
   )
 {
-  UINTN                      EntryIndex;
+  UINTN  EntryIndex;
 
   //
   // Go througn each Entry in this Object
@@ -1355,18 +1391,21 @@ EdbFindCodeFromObject (
         (Object->Entry[EntryIndex].Type != EfiDebuggerSymbolStaticFunction)) {
       continue;
     }
+
     //
     // Skip match varbss_init function, because they has no source code
     //
-    if (AsciiStrnCmp (Object->Entry[EntryIndex].Name, "varbss_init", sizeof("varbss_init") - 1) == 0) {
+    if (AsciiStrnCmp (Object->Entry[EntryIndex].Name, "varbss_init", sizeof ("varbss_init") - 1) == 0) {
       continue;
     }
+
     //
     // check the name
     //
     if (!MatchObjAndCod (Object->Entry[EntryIndex].ObjName, FileName)) {
       continue;
     }
+
     //
     // found it, return source buffer
     //
@@ -1403,11 +1442,11 @@ EdbLoadCode (
   IN VOID                        *Buffer
   )
 {
-  EFI_DEBUGGER_SYMBOL_OBJECT *Object;
-  UINTN                      ObjectIndex;
-  UINTN                      EntryIndex;
-  VOID                       *SourceBuffer;
-  EFI_STATUS                 Status;
+  EFI_DEBUGGER_SYMBOL_OBJECT  *Object;
+  UINTN                       ObjectIndex;
+  UINTN                       EntryIndex;
+  VOID                        *SourceBuffer;
+  EFI_STATUS                  Status;
 
   //
   // Find Symbol
@@ -1426,12 +1465,13 @@ EdbLoadCode (
       // unnload duplicated code
       //
       Status = EdbUnloadCode (DebuggerPrivate, MapFileName, FileName, &SourceBuffer);
-      if (EFI_ERROR(Status)) {
+      if (EFI_ERROR (Status)) {
         DEBUG ((DEBUG_ERROR, "Unload Duplicated Code File Error!\n"));
         return Status;
       }
+
       Status = EdbDeleteCodeBuffer (DebuggerPrivate, MapFileName, FileName, SourceBuffer);
-      if (EFI_ERROR(Status)) {
+      if (EFI_ERROR (Status)) {
         DEBUG ((DEBUG_ERROR, "Delete Duplicated Code File Error!\n"));
         return Status;
       }
@@ -1449,18 +1489,21 @@ EdbLoadCode (
         (Object->Entry[EntryIndex].Type != EfiDebuggerSymbolStaticFunction)) {
       continue;
     }
+
     //
     // skip varbss_init
     //
-    if (AsciiStrnCmp (Object->Entry[EntryIndex].Name, "varbss_init", sizeof("varbss_init") - 1) == 0) {
+    if (AsciiStrnCmp (Object->Entry[EntryIndex].Name, "varbss_init", sizeof ("varbss_init") - 1) == 0) {
       continue;
     }
+
     //
     // Check the name
     //
     if (!MatchObjAndCod (Object->Entry[EntryIndex].ObjName, FileName)) {
       continue;
     }
+
     //
     // load code for this symbol
     //
@@ -1482,8 +1525,13 @@ EdbLoadCode (
   for (EntryIndex = 0; EntryIndex < Object->EntryCount; EntryIndex++) {
     if (Object->Entry[EntryIndex].CodBuffer != NULL) {
       *((UINT8 *)Object->Entry[EntryIndex].CodBuffer + Object->Entry[EntryIndex].CodBufferSize) = 0;
-      DEBUG ((DEBUG_ERROR, "  CodeSymbol: %a, FuncOffset: 0x05%x\n", Object->Entry[EntryIndex].Name, Object->Entry[EntryIndex].FuncOffsetBase));
-//      DEBUG ((DEBUG_ERROR, "  [CODE]:\n%a\n", Object->Entry[EntryIndex].CodBuffer));
+      DEBUG ((
+        DEBUG_ERROR,
+        "  CodeSymbol: %a, FuncOffset: 0x05%x\n",
+        Object->Entry[EntryIndex].Name,
+        Object->Entry[EntryIndex].FuncOffsetBase
+        ));
+      // DEBUG ((DEBUG_ERROR, "  [CODE]:\n%a\n", Object->Entry[EntryIndex].CodBuffer));
     }
   }
 
@@ -1513,9 +1561,9 @@ EdbUnloadCode (
   OUT VOID                       **Buffer
   )
 {
-  EFI_DEBUGGER_SYMBOL_OBJECT *Object;
-  UINTN                      ObjectIndex;
-  UINTN                      EntryIndex;
+  EFI_DEBUGGER_SYMBOL_OBJECT  *Object;
+  UINTN                       ObjectIndex;
+  UINTN                       EntryIndex;
 
   //
   // Find Symbol
@@ -1543,19 +1591,22 @@ EdbUnloadCode (
         (Object->Entry[EntryIndex].Type != EfiDebuggerSymbolStaticFunction)) {
       continue;
     }
-    if (AsciiStrnCmp (Object->Entry[EntryIndex].Name, "varbss_init", sizeof("varbss_init") - 1) == 0) {
+
+    if (AsciiStrnCmp (Object->Entry[EntryIndex].Name, "varbss_init", sizeof ("varbss_init") - 1) == 0) {
       continue;
     }
+
     if (!MatchObjAndCod (Object->Entry[EntryIndex].ObjName, FileName)) {
       continue;
     }
+
     //
     // clean up the buffer
     //
-    Object->Entry[EntryIndex].CodBuffer = NULL;
-    Object->Entry[EntryIndex].CodBufferSize = 0;
+    Object->Entry[EntryIndex].CodBuffer      = NULL;
+    Object->Entry[EntryIndex].CodBufferSize  = 0;
     Object->Entry[EntryIndex].FuncOffsetBase = 0;
-    Object->Entry[EntryIndex].SourceBuffer = NULL;
+    Object->Entry[EntryIndex].SourceBuffer   = NULL;
   }
 
   //
@@ -1586,8 +1637,8 @@ EdbAddCodeBuffer (
   IN     VOID                      *SourceBuffer
   )
 {
-  UINTN                      Index;
-  EFI_DEBUGGER_SYMBOL_OBJECT *Object;
+  UINTN                       Index;
+  EFI_DEBUGGER_SYMBOL_OBJECT  *Object;
 
   //
   // Find Symbol
@@ -1602,8 +1653,8 @@ EdbAddCodeBuffer (
   // Add it to last entry
   //
   for (Index = 0; Object->SourceBuffer[Index] != NULL; Index++) {
-    ;
   }
+
   Object->SourceBuffer[Index] = SourceBuffer;
 
   return EFI_SUCCESS;
@@ -1629,8 +1680,8 @@ EdbDeleteCodeBuffer (
   IN     VOID                      *SourceBuffer
   )
 {
-  UINTN                      Index;
-  EFI_DEBUGGER_SYMBOL_OBJECT *Object;
+  UINTN                       Index;
+  EFI_DEBUGGER_SYMBOL_OBJECT  *Object;
 
   //
   // Find Symbol
@@ -1665,6 +1716,7 @@ EdbDeleteCodeBuffer (
   for (Index = Index + 1; Object->SourceBuffer[Index] != NULL; Index++) {
     Object->SourceBuffer[Index - 1] = Object->SourceBuffer[Index];
   }
+
   Object->SourceBuffer[Index - 1] = NULL;
 
   return EFI_SUCCESS;
@@ -1738,25 +1790,25 @@ EdbGetLineNumberAndOffsetFromThisLine (
   CHAR8  *LineBuffer;
   CHAR8  *FieldBuffer;
 
-  LineNumber = (UINTN)-1;
+  LineNumber = (UINTN)- 1;
   LineBuffer = Line;
-  *Offset = (UINTN)-1;
+  *Offset    = (UINTN)- 1;
 
   while (LineBuffer != NULL) {
     //
     // Check candidate
     //
     if (*LineBuffer != ' ') {
-      return (UINTN)-1;
+      return (UINTN)- 1;
     }
 
     //
     // Get Offset
     //
     if (*(LineBuffer + 2) != ' ') {
-      if (*Offset == (UINTN)-1) {
+      if (*Offset == (UINTN)- 1) {
         FieldBuffer = AsciiStrGetNewTokenField (LineBuffer + 2, " ");
-        *Offset = AsciiXtoi (FieldBuffer);
+        *Offset     = AsciiXtoi (FieldBuffer);
         PatchForAsciiStrTokenAfter (FieldBuffer, ' ');
       }
     }
@@ -1779,6 +1831,7 @@ EdbGetLineNumberAndOffsetFromThisLine (
       PatchForAsciiStrTokenBefore (LineBuffer, '\n');
       continue;
     }
+
     //
     // 3. line number
     //
@@ -1801,7 +1854,7 @@ EdbGetLineNumberAndOffsetFromThisLine (
     return LineNumber;
   }
 
-  return (UINTN)-1;
+  return (UINTN)- 1;
 }
 
 typedef enum {
@@ -1836,12 +1889,12 @@ EdbGetLineNumberFromCode (
   UINTN  CandidateOffset;
 
   if (SearchType < 0 || SearchType >= EdbEbcLineSearchTypeMax) {
-    return (UINTN)-1;
+    return (UINTN)- 1;
   }
 
-  LineNumber = (UINTN)-1;
-  CandidateLineNumber = (UINTN)-1;
-  CandidateOffset = (UINTN)-1;
+  LineNumber = (UINTN)- 1;
+  CandidateLineNumber = (UINTN)- 1;
+  CandidateOffset     = (UINTN)- 1;
   LineBuffer = AsciiStrGetNewTokenLine (Entry->CodBuffer, "\n");
   while (LineBuffer != NULL) {
     if (*LineBuffer != ' ') {
@@ -1868,7 +1921,7 @@ EdbGetLineNumberFromCode (
           if (CandidateLineNumber != LineNumber) {
             return CandidateLineNumber;
           } else {
-            return (UINTN)-1;
+            return (UINTN)- 1;
           }
         } else {
           //
@@ -1899,12 +1952,12 @@ EdbGetLineNumberFromCode (
       if (CandidateLineNumber != LineNumber) {
         return LineNumber;
       } else {
-        return (UINTN)-1;
+        return (UINTN)- 1;
       }
     }
 
     CandidateLineNumber = LineNumber;
-    CandidateOffset = Offset;
+    CandidateOffset     = Offset;
 
     LineBuffer = AsciiStrGetNextTokenLine ("\n");
     PatchForAsciiStrTokenBefore (LineBuffer, '\n');
@@ -1919,7 +1972,7 @@ EdbGetLineNumberFromCode (
     }
   }
 
-  return (UINTN)-1;
+  return (UINTN)- 1;
 }
 
 /**
@@ -1945,7 +1998,7 @@ EdbGetSourceStrFromCodeByLine (
   VOID   *FuncStart;
   UINTN  Number;
 
-  FuncStart = NULL;
+  FuncStart  = NULL;
   LineBuffer = AsciiStrGetNewTokenLine (Entry->CodBuffer, "\n");
   while (LineBuffer != NULL) {
     if (*LineBuffer != ';') {
@@ -1957,6 +2010,7 @@ EdbGetSourceStrFromCodeByLine (
         PatchForAsciiStrTokenAfter (LineBuffer, '\n');
         return FuncStart;
       }
+
       LineBuffer = AsciiStrGetNextTokenLine ("\n");
       PatchForAsciiStrTokenBefore (LineBuffer, '\n');
       continue;
@@ -2012,7 +2066,7 @@ EdbGetSourceStrFromCode (
   // Only search the last line, then display
   //
   LineNumber = EdbGetLineNumberFromCode (Entry, FuncOffset, EdbEbcLineSearchTypeLast);
-  if (LineNumber == (UINTN)-1) {
+  if (LineNumber == (UINTN)- 1) {
     return NULL;
   }
 
@@ -2036,21 +2090,21 @@ EdbPrintSource (
   IN BOOLEAN   IsPrint
   )
 {
-  UINTN                      SymbolAddress;
-  EFI_DEBUGGER_SYMBOL_OBJECT *RetObject;
-  EFI_DEBUGGER_SYMBOL_ENTRY  *RetEntry;
-  UINTN                      FuncOffset;
-  UINT8                      *FuncStart;
-  UINT8                      *FuncEnd;
-  UINT8                      *FuncIndex;
-  CHAR8                      Buffer[EFI_DEBUG_MAX_PRINT_BUFFER];
-  UINTN                      BufferSize;
+  UINTN                       SymbolAddress;
+  EFI_DEBUGGER_SYMBOL_OBJECT  *RetObject;
+  EFI_DEBUGGER_SYMBOL_ENTRY   *RetEntry;
+  UINTN                       FuncOffset;
+  UINT8                       *FuncStart;
+  UINT8                       *FuncEnd;
+  UINT8                       *FuncIndex;
+  CHAR8                       Buffer[EFI_DEBUG_MAX_PRINT_BUFFER];
+  UINTN                       BufferSize;
 
   //
   // need we display symbol
   //
   if (!mDebuggerPrivate.DebuggerSymbolContext.DisplaySymbol) {
-    return 0 ;
+    return 0;
   }
 
   //
@@ -2063,7 +2117,7 @@ EdbPrintSource (
                     &RetEntry
                     );
   if (SymbolAddress == 0 || RetEntry == NULL) {
-    return 0 ;
+    return 0;
   }
 
   FuncOffset = Address - SymbolAddress + RetEntry->FuncOffsetBase;
@@ -2071,9 +2125,9 @@ EdbPrintSource (
   //
   // Get Func String
   //
-  FuncStart = EdbGetSourceStrFromCode (RetEntry, FuncOffset, (VOID**) &FuncEnd);
+  FuncStart = EdbGetSourceStrFromCode (RetEntry, FuncOffset, (VOID **)&FuncEnd);
   if (FuncStart == NULL) {
-    return 0 ;
+    return 0;
   }
 
   //
@@ -2096,15 +2150,17 @@ EdbPrintSource (
       } else {
         BufferSize = EFI_DEBUG_MAX_PRINT_BUFFER - 3;
       }
+
       if (BufferSize != 0) {
         CopyMem (Buffer, FuncStart, BufferSize);
       }
+
       Buffer[BufferSize] = 0;
       EDBPrint (L"%a\n", Buffer);
       FuncStart = FuncIndex + 1;
       FuncIndex = FuncStart;
     } else {
-      FuncIndex ++;
+      FuncIndex++;
     }
   }
 
@@ -2113,7 +2169,7 @@ EdbPrintSource (
   //
   *(UINT8 *)FuncEnd = '\n';
 
-  return 1 ;
+  return 1;
 }
 
 /**
@@ -2135,7 +2191,7 @@ GetMapfileAndSymbol (
   CHAR16  *Ch;
 
   *MapfileName = NULL;
-  *SymbolName = Symbol;
+  *SymbolName  = Symbol;
 
   for (Ch = Symbol; *Ch != 0; Ch++) {
     //
@@ -2149,7 +2205,7 @@ GetMapfileAndSymbol (
     }
   }
 
-  return ;
+  return;
 }
 
 /**
@@ -2194,6 +2250,7 @@ Symboltoi (
     if ((MapfileName != NULL) && (StriCmp (Object[ObjectIndex].Name, MapfileName) != 0)) {
       continue;
     }
+
     //
     // Go through each entry
     //

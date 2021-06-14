@@ -14,14 +14,13 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // Advance the byte and bit to the next bit, adjust byte accordingly.
 //
 #define USB_NEXT_BIT(Byte, Bit)   \
-          do {                \
-            (Bit)++;          \
-            if ((Bit) > 7) {  \
-              (Byte)++;       \
-              (Bit) = 0;      \
-            }                 \
-          } while (0)
-
+  do {                \
+    (Bit)++;          \
+    if ((Bit) > 7) {  \
+      (Byte)++;       \
+      (Bit) = 0;      \
+    }                 \
+  } while (0)
 
 //
 // Common interface used by usb bus enumeration process.
@@ -94,7 +93,7 @@ EFI_STATUS
   @return The endpoint descriptor or NULL.
 
 **/
-USB_ENDPOINT_DESC*
+USB_ENDPOINT_DESC *
 UsbGetEndpointDesc (
   IN USB_INTERFACE        *UsbIf,
   IN UINT8                EpAddr
@@ -194,4 +193,5 @@ UsbRootHubEnumeration (
   IN EFI_EVENT            Event,
   IN VOID                 *Context
   );
+
 #endif

@@ -21,16 +21,16 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 typedef
 EFI_STATUS
-(EFIAPI *INTERNAL_VAR_CHECK_FUNCTION) (
+(EFIAPI *INTERNAL_VAR_CHECK_FUNCTION)(
   IN VAR_CHECK_VARIABLE_PROPERTY    *Propery,
   IN UINTN                          DataSize,
   IN VOID                           *Data
   );
 
 typedef struct {
-  CHAR16                        *Name;
-  VAR_CHECK_VARIABLE_PROPERTY   VariableProperty;
-  INTERNAL_VAR_CHECK_FUNCTION   CheckFunction;
+  CHAR16                         *Name;
+  VAR_CHECK_VARIABLE_PROPERTY    VariableProperty;
+  INTERNAL_VAR_CHECK_FUNCTION    CheckFunction;
 } UEFI_DEFINED_VARIABLE_ENTRY;
 
 /**
@@ -56,36 +56,42 @@ InternalVarCheckLoadOption (
   CHAR16                    *Description;
   EFI_DEVICE_PATH_PROTOCOL  *FilePathList;
 
-  FilePathListLength = *((UINT16 *) ((UINTN) Data + sizeof (UINT32)));
+  FilePathListLength = *((UINT16 *)((UINTN)Data + sizeof (UINT32)));
 
   //
   // Check Description
   //
-  Description = (CHAR16 *) ((UINTN) Data + sizeof (UINT32) + sizeof (UINT16));
-  while (Description < (CHAR16 *) ((UINTN) Data + DataSize)) {
+  Description = (CHAR16 *)((UINTN)Data + sizeof (UINT32) + sizeof (UINT16));
+  while (Description < (CHAR16 *)((UINTN)Data + DataSize)) {
     if (*Description == L'\0') {
       break;
     }
+
     Description++;
   }
-  if ((UINTN) Description >= ((UINTN) Data + DataSize)) {
+
+  if ((UINTN)Description >= ((UINTN)Data + DataSize)) {
     return EFI_INVALID_PARAMETER;
   }
+
   Description++;
 
   //
   // Check FilePathList
   //
-  FilePathList = (EFI_DEVICE_PATH_PROTOCOL *) Description;
-  if ((UINTN) FilePathList > (MAX_ADDRESS - FilePathListLength)) {
+  FilePathList = (EFI_DEVICE_PATH_PROTOCOL *)Description;
+  if ((UINTN)FilePathList > (MAX_ADDRESS - FilePathListLength)) {
     return EFI_INVALID_PARAMETER;
   }
-  if (((UINTN) FilePathList + FilePathListLength) > ((UINTN) Data + DataSize)) {
+
+  if (((UINTN)FilePathList + FilePathListLength) > ((UINTN)Data + DataSize)) {
     return EFI_INVALID_PARAMETER;
   }
+
   if (FilePathListLength < sizeof (EFI_DEVICE_PATH_PROTOCOL)) {
     return EFI_INVALID_PARAMETER;
   }
+
   if (!IsDevicePathValid (FilePathList, FilePathListLength)) {
     return EFI_INVALID_PARAMETER;
   }
@@ -138,9 +144,10 @@ InternalVarCheckDevicePath (
   IN VOID                           *Data
   )
 {
-  if (!IsDevicePathValid ((EFI_DEVICE_PATH_PROTOCOL *) Data, DataSize)) {
+  if (!IsDevicePathValid ((EFI_DEVICE_PATH_PROTOCOL *)Data, DataSize)) {
     return EFI_INVALID_PARAMETER;
   }
+
   return EFI_SUCCESS;
 }
 
@@ -163,18 +170,21 @@ InternalVarCheckAsciiString (
   IN VOID                           *Data
   )
 {
-  CHAR8     *String;
-  UINTN     Index;
+  CHAR8  *String;
+  UINTN  Index;
 
-  String = (CHAR8 *) Data;
+  String = (CHAR8 *)Data;
   if (String[DataSize - 1] == '\0') {
     return EFI_SUCCESS;
   } else {
-    for (Index = 1; Index < DataSize && (String[DataSize - 1 - Index] != '\0'); Index++);
+    for (Index = 1; Index < DataSize && (String[DataSize - 1 - Index] != '\0'); Index++) {
+    }
+
     if (Index == DataSize) {
       return EFI_INVALID_PARAMETER;
     }
   }
+
   return EFI_SUCCESS;
 }
 
@@ -200,6 +210,7 @@ InternalVarCheckSizeArray (
   if ((DataSize % VariablePropery->MinSize) != 0) {
     return EFI_INVALID_PARAMETER;
   }
+
   return EFI_SUCCESS;
 }
 
@@ -211,7 +222,7 @@ InternalVarCheckSizeArray (
 // only permit the creation of variables with a UEFI Specification-defined
 // VendorGuid when these variables are documented in the UEFI Specification.
 //
-UEFI_DEFINED_VARIABLE_ENTRY mGlobalVariableList[] = {
+UEFI_DEFINED_VARIABLE_ENTRY  mGlobalVariableList[] = {
   {
     EFI_LANG_CODES_VARIABLE_NAME,
     {
@@ -555,7 +566,7 @@ UEFI_DEFINED_VARIABLE_ENTRY mGlobalVariableList[] = {
   },
 };
 
-UEFI_DEFINED_VARIABLE_ENTRY mGlobalVariableList2[] = {
+UEFI_DEFINED_VARIABLE_ENTRY  mGlobalVariableList2[] = {
   {
     L"Boot####",
     {
@@ -616,7 +627,7 @@ UEFI_DEFINED_VARIABLE_ENTRY mGlobalVariableList2[] = {
 //
 // EFI_IMAGE_SECURITY_DATABASE_GUID
 //
-UEFI_DEFINED_VARIABLE_ENTRY mImageSecurityVariableList[] = {
+UEFI_DEFINED_VARIABLE_ENTRY  mImageSecurityVariableList[] = {
   {
     EFI_IMAGE_SECURITY_DATABASE,
     {
@@ -655,7 +666,7 @@ UEFI_DEFINED_VARIABLE_ENTRY mImageSecurityVariableList[] = {
 //
 // EFI_HARDWARE_ERROR_VARIABLE
 //
-UEFI_DEFINED_VARIABLE_ENTRY mHwErrRecVariable = {
+UEFI_DEFINED_VARIABLE_ENTRY  mHwErrRecVariable = {
   L"HwErrRec####",
   {
     VAR_CHECK_VARIABLE_PROPERTY_REVISION,
@@ -667,7 +678,7 @@ UEFI_DEFINED_VARIABLE_ENTRY mHwErrRecVariable = {
   NULL
 };
 
-EFI_GUID *mUefiDefinedGuid[] = {
+EFI_GUID  *mUefiDefinedGuid[] = {
   &gEfiGlobalVariableGuid,
   &gEfiImageSecurityDatabaseGuid,
   &gEfiHardwareErrorVariableGuid
@@ -693,7 +704,7 @@ VarCheckUefiIsHexaDecimalDigitCharacter (
   IN CHAR16             Char
   )
 {
-  return (BOOLEAN) ((Char >= L'0' && Char <= L'9') || (Char >= L'A' && Char <= L'F'));
+  return (BOOLEAN)((Char >= L'0' && Char <= L'9') || (Char >= L'A' && Char <= L'F'));
 }
 
 /**
@@ -719,7 +730,7 @@ IsHwErrRecVariable (
 {
   if (!CompareGuid (VendorGuid, &gEfiHardwareErrorVariableGuid) ||
       (StrLen (VariableName) != StrLen (L"HwErrRec####")) ||
-      (StrnCmp(VariableName, L"HwErrRec", StrLen (L"HwErrRec")) != 0) ||
+      (StrnCmp (VariableName, L"HwErrRec", StrLen (L"HwErrRec")) != 0) ||
       !VarCheckUefiIsHexaDecimalDigitCharacter (VariableName[0x8]) ||
       !VarCheckUefiIsHexaDecimalDigitCharacter (VariableName[0x9]) ||
       !VarCheckUefiIsHexaDecimalDigitCharacter (VariableName[0xA]) ||
@@ -747,8 +758,8 @@ GetUefiDefinedVarCheckFunction (
   OUT VAR_CHECK_VARIABLE_PROPERTY   **VariableProperty
   )
 {
-  UINTN     Index;
-  UINTN     NameLength;
+  UINTN  Index;
+  UINTN  NameLength;
 
   if (CompareGuid (VendorGuid, &gEfiGlobalVariableGuid)) {
     //
@@ -806,11 +817,11 @@ SetVariableCheckHandlerUefiDefined (
   IN VOID       *Data
   )
 {
-  EFI_STATUS                    Status;
-  UINTN                         Index;
-  VAR_CHECK_VARIABLE_PROPERTY   Property;
-  VAR_CHECK_VARIABLE_PROPERTY   *VarCheckProperty;
-  INTERNAL_VAR_CHECK_FUNCTION   VarCheckFunction;
+  EFI_STATUS                   Status;
+  UINTN                        Index;
+  VAR_CHECK_VARIABLE_PROPERTY  Property;
+  VAR_CHECK_VARIABLE_PROPERTY  *VarCheckProperty;
+  INTERNAL_VAR_CHECK_FUNCTION  VarCheckFunction;
 
   if ((((Attributes & EFI_VARIABLE_APPEND_WRITE) == 0) && (DataSize == 0)) || (Attributes == 0)) {
     //
@@ -836,7 +847,13 @@ SetVariableCheckHandlerUefiDefined (
         // only permit the creation of variables with a UEFI Specification-defined
         // VendorGuid when these variables are documented in the UEFI Specification.
         //
-        DEBUG ((EFI_D_INFO, "UEFI Variable Check fail %r - %s not in %g namespace\n", EFI_INVALID_PARAMETER, VariableName, VendorGuid));
+        DEBUG ((
+          EFI_D_INFO,
+          "UEFI Variable Check fail %r - %s not in %g namespace\n",
+          EFI_INVALID_PARAMETER,
+          VariableName,
+          VendorGuid
+          ));
         return EFI_INVALID_PARAMETER;
       }
     }
@@ -872,7 +889,7 @@ VariablePropertySetUefiDefined (
   VOID
   )
 {
-  UINTN     Index;
+  UINTN  Index;
 
   //
   // EFI_GLOBAL_VARIABLE
@@ -884,6 +901,7 @@ VariablePropertySetUefiDefined (
       &mGlobalVariableList[Index].VariableProperty
       );
   }
+
   for (Index = 0; Index < sizeof (mGlobalVariableList2)/sizeof (mGlobalVariableList2[0]); Index++) {
     VarCheckLibVariablePropertySet (
       mGlobalVariableList2[Index].Name,

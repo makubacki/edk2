@@ -21,7 +21,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 ///
 #define PEI_USB_HOST_CONTROLLER_PPI_GUID \
   { \
-    0x652b38a9, 0x77f4, 0x453f, { 0x89, 0xd5, 0xe7, 0xbd, 0xc3, 0x52, 0xfc, 0x53} \
+    0x652b38a9, 0x77f4, 0x453f, { 0x89, 0xd5, 0xe7, 0xbd, 0xc3, 0x52, 0xfc, 0x53 } \
   }
 
 ///
@@ -236,15 +236,14 @@ EFI_STATUS
 /// Specification for more information on these interfaces.
 ///
 struct _PEI_USB_HOST_CONTROLLER_PPI {
-  PEI_USB_HOST_CONTROLLER_CONTROL_TRANSFER            ControlTransfer;
-  PEI_USB_HOST_CONTROLLER_BULK_TRANSFER               BulkTransfer;
-  PEI_USB_HOST_CONTROLLER_GET_ROOTHUB_PORT_NUMBER     GetRootHubPortNumber;
-  PEI_USB_HOST_CONTROLLER_GET_ROOTHUB_PORT_STATUS     GetRootHubPortStatus;
-  PEI_USB_HOST_CONTROLLER_SET_ROOTHUB_PORT_FEATURE    SetRootHubPortFeature;
-  PEI_USB_HOST_CONTROLLER_CLEAR_ROOTHUB_PORT_FEATURE  ClearRootHubPortFeature;
+  PEI_USB_HOST_CONTROLLER_CONTROL_TRANSFER              ControlTransfer;
+  PEI_USB_HOST_CONTROLLER_BULK_TRANSFER                 BulkTransfer;
+  PEI_USB_HOST_CONTROLLER_GET_ROOTHUB_PORT_NUMBER       GetRootHubPortNumber;
+  PEI_USB_HOST_CONTROLLER_GET_ROOTHUB_PORT_STATUS       GetRootHubPortStatus;
+  PEI_USB_HOST_CONTROLLER_SET_ROOTHUB_PORT_FEATURE      SetRootHubPortFeature;
+  PEI_USB_HOST_CONTROLLER_CLEAR_ROOTHUB_PORT_FEATURE    ClearRootHubPortFeature;
 };
 
-extern EFI_GUID gPeiUsbHostControllerPpiGuid;
+extern EFI_GUID  gPeiUsbHostControllerPpiGuid;
 
 #endif
-

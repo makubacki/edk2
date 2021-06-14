@@ -43,8 +43,8 @@ IsBufferOutsideMmValid (
 
 **/
 EFI_STATUS
-FirmwarePerformanceCommonEntryPoint (
-  VOID
-  );
+  FirmwarePerformanceCommonEntryPoint (
+                                       VOID
+                                       );
 
 #endif // _FW_PERF_COMMON_H_

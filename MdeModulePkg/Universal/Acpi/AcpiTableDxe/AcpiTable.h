@@ -9,7 +9,6 @@
 #ifndef _ACPI_TABLE_H_
 #define _ACPI_TABLE_H_
 
-
 #include <PiDxe.h>
 
 #include <Protocol/AcpiTable.h>
@@ -35,10 +34,10 @@
 //
 // Great than or equal to 2.0.
 //
-#define ACPI_TABLE_VERSION_GTE_2_0 (EFI_ACPI_TABLE_VERSION_2_0  | \
-                                    EFI_ACPI_TABLE_VERSION_3_0  | \
-                                    EFI_ACPI_TABLE_VERSION_4_0  | \
-                                    EFI_ACPI_TABLE_VERSION_5_0)
+#define ACPI_TABLE_VERSION_GTE_2_0  (EFI_ACPI_TABLE_VERSION_2_0  | \
+                                     EFI_ACPI_TABLE_VERSION_3_0  | \
+                                     EFI_ACPI_TABLE_VERSION_4_0  | \
+                                     EFI_ACPI_TABLE_VERSION_5_0)
 
 //
 // Private Driver Data
@@ -46,30 +45,30 @@
 //
 // ACPI Table Linked List Signature.
 //
-#define EFI_ACPI_TABLE_LIST_SIGNATURE SIGNATURE_32 ('E', 'A', 'T', 'L')
+#define EFI_ACPI_TABLE_LIST_SIGNATURE  SIGNATURE_32 ('E', 'A', 'T', 'L')
 
 //
 // ACPI Table Linked List Entry definition.
 //
-//  Signature must be set to EFI_ACPI_TABLE_LIST_SIGNATURE
-//  Link is the linked list data.
-//  Version is the versions of the ACPI tables that this table belongs in.
-//  Table is a pointer to the table.
-//  TableSize is the size of the table
-//  Handle is used to identify a particular table.
-//  PoolAllocation carries the allocation type:
-//    FALSE: Table points to EFI_SIZE_TO_PAGES(TableSize) pages allocated using
-//           gBS->AllocatePages ()
-//    TRUE:  Table points to TableSize bytes allocated using gBS->AllocatePool ()
+// Signature must be set to EFI_ACPI_TABLE_LIST_SIGNATURE
+// Link is the linked list data.
+// Version is the versions of the ACPI tables that this table belongs in.
+// Table is a pointer to the table.
+// TableSize is the size of the table
+// Handle is used to identify a particular table.
+// PoolAllocation carries the allocation type:
+// FALSE: Table points to EFI_SIZE_TO_PAGES(TableSize) pages allocated using
+// gBS->AllocatePages ()
+// TRUE:  Table points to TableSize bytes allocated using gBS->AllocatePool ()
 //
 typedef struct {
-  UINT32                  Signature;
-  LIST_ENTRY              Link;
-  EFI_ACPI_TABLE_VERSION  Version;
-  EFI_ACPI_COMMON_HEADER  *Table;
-  UINTN                   TableSize;
-  UINTN                   Handle;
-  BOOLEAN                 PoolAllocation;
+  UINT32                    Signature;
+  LIST_ENTRY                Link;
+  EFI_ACPI_TABLE_VERSION    Version;
+  EFI_ACPI_COMMON_HEADER    *Table;
+  UINTN                     TableSize;
+  UINTN                     Handle;
+  BOOLEAN                   PoolAllocation;
 } EFI_ACPI_TABLE_LIST;
 
 //
@@ -80,7 +79,7 @@ typedef struct {
 //
 // The maximum number of tables this driver supports
 //
-#define EFI_ACPI_MAX_NUM_TABLES 20
+#define EFI_ACPI_MAX_NUM_TABLES  20
 
 //
 // Protocol private structure definition
@@ -94,36 +93,37 @@ typedef struct {
 // ACPI support protocol instance data structure
 //
 typedef struct {
-  UINTN                                         Signature;
-  EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER  *Rsdp1;                 // Pointer to RSD_PTR structure
-  EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER  *Rsdp3;                 // Pointer to RSD_PTR structure
-  EFI_ACPI_DESCRIPTION_HEADER                   *Rsdt1;                 // Pointer to RSDT table header
-  EFI_ACPI_DESCRIPTION_HEADER                   *Rsdt3;                 // Pointer to RSDT table header
-  EFI_ACPI_DESCRIPTION_HEADER                   *Xsdt;                  // Pointer to XSDT table header
-  EFI_ACPI_1_0_FIXED_ACPI_DESCRIPTION_TABLE     *Fadt1;                 // Pointer to FADT table header
-  EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE     *Fadt3;                 // Pointer to FADT table header
-  EFI_ACPI_1_0_FIRMWARE_ACPI_CONTROL_STRUCTURE  *Facs1;                 // Pointer to FACS table header
-  EFI_ACPI_3_0_FIRMWARE_ACPI_CONTROL_STRUCTURE  *Facs3;                 // Pointer to FACS table header
-  EFI_ACPI_DESCRIPTION_HEADER                   *Dsdt1;                 // Pointer to DSDT table header
-  EFI_ACPI_DESCRIPTION_HEADER                   *Dsdt3;                 // Pointer to DSDT table header
-  LIST_ENTRY                                    TableList;
-  UINTN                                         NumberOfTableEntries1;  // Number of ACPI 1.0 tables
-  UINTN                                         NumberOfTableEntries3;  // Number of ACPI 3.0 tables
-  UINTN                                         CurrentHandle;
-  EFI_ACPI_TABLE_PROTOCOL                       AcpiTableProtocol;
-  EFI_ACPI_SDT_PROTOCOL                         AcpiSdtProtocol;
-  LIST_ENTRY                                    NotifyList;
+  UINTN                                           Signature;
+  EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER    *Rsdp1;               // Pointer to RSD_PTR structure
+  EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER    *Rsdp3;               // Pointer to RSD_PTR structure
+  EFI_ACPI_DESCRIPTION_HEADER                     *Rsdt1;               // Pointer to RSDT table header
+  EFI_ACPI_DESCRIPTION_HEADER                     *Rsdt3;               // Pointer to RSDT table header
+  EFI_ACPI_DESCRIPTION_HEADER                     *Xsdt;                // Pointer to XSDT table header
+  EFI_ACPI_1_0_FIXED_ACPI_DESCRIPTION_TABLE       *Fadt1;               // Pointer to FADT table header
+  EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE       *Fadt3;               // Pointer to FADT table header
+  EFI_ACPI_1_0_FIRMWARE_ACPI_CONTROL_STRUCTURE    *Facs1;               // Pointer to FACS table header
+  EFI_ACPI_3_0_FIRMWARE_ACPI_CONTROL_STRUCTURE    *Facs3;               // Pointer to FACS table header
+  EFI_ACPI_DESCRIPTION_HEADER                     *Dsdt1;               // Pointer to DSDT table header
+  EFI_ACPI_DESCRIPTION_HEADER                     *Dsdt3;               // Pointer to DSDT table header
+  LIST_ENTRY                                      TableList;
+  UINTN                                           NumberOfTableEntries1; // Number of ACPI 1.0 tables
+  UINTN                                           NumberOfTableEntries3; // Number of ACPI 3.0 tables
+  UINTN                                           CurrentHandle;
+  EFI_ACPI_TABLE_PROTOCOL                         AcpiTableProtocol;
+  EFI_ACPI_SDT_PROTOCOL                           AcpiSdtProtocol;
+  LIST_ENTRY                                      NotifyList;
 } EFI_ACPI_TABLE_INSTANCE;
 
 //
 // ACPI table protocol instance containing record macro
 //
 #define EFI_ACPI_TABLE_INSTANCE_FROM_THIS(a) \
-  CR (a, \
-      EFI_ACPI_TABLE_INSTANCE, \
-      AcpiTableProtocol, \
-      EFI_ACPI_TABLE_SIGNATURE \
-      )
+  CR ( \
+    a, \
+    EFI_ACPI_TABLE_INSTANCE, \
+    AcpiTableProtocol, \
+    EFI_ACPI_TABLE_SIGNATURE \
+    )
 
 //
 // Protocol Constructor functions
@@ -143,7 +143,6 @@ EFI_STATUS
 AcpiTableAcpiTableConstructor (
   EFI_ACPI_TABLE_INSTANCE                 *AcpiTableInstance
   );
-
 
 /**
   Entry point of the ACPI table driver.
@@ -231,7 +230,7 @@ SdtAcpiTableAcpiSdtConstructor (
 //
 // export PrivateData symbol, because we need that in AcpiSdtProtol implementation
 //
-extern EFI_HANDLE                mHandle;
-extern EFI_ACPI_TABLE_INSTANCE   *mPrivateData;
+extern EFI_HANDLE               mHandle;
+extern EFI_ACPI_TABLE_INSTANCE  *mPrivateData;
 
 #endif

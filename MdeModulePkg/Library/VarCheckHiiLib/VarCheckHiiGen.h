@@ -104,18 +104,18 @@ VarCheckParseHiiDatabase (
 
 **/
 VOID
-VarCheckHiiGenFromFv (
-  VOID
-  );
+  VarCheckHiiGenFromFv (
+                        VOID
+                        );
 
 /**
   Generate from Hii Database.
 
 **/
 VOID
-VarCheckHiiGenFromHiiDatabase (
-  VOID
-  );
+  VarCheckHiiGenFromHiiDatabase (
+                                 VOID
+                                 );
 
 /**
   Generate VarCheckHiiBin from Hii Database and FV.
@@ -124,7 +124,7 @@ VarCheckHiiGenFromHiiDatabase (
 VOID
 EFIAPI
 VarCheckHiiGen (
-  VOID
-  );
+                VOID
+                );
 
 #endif

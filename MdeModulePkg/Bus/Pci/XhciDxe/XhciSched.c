@@ -19,28 +19,28 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
   @return Created URB or NULL.
 
 **/
-URB*
+URB *
 XhcCreateCmdTrb (
   IN USB_XHCI_INSTANCE  *Xhc,
   IN TRB_TEMPLATE       *CmdTrb
   )
 {
-  URB    *Urb;
+  URB  *Urb;
 
   Urb = AllocateZeroPool (sizeof (URB));
   if (Urb == NULL) {
     return NULL;
   }
 
-  Urb->Signature  = XHC_URB_SIG;
+  Urb->Signature = XHC_URB_SIG;
 
-  Urb->Ring       = &Xhc->CmdRing;
+  Urb->Ring = &Xhc->CmdRing;
   XhcSyncTrsRing (Xhc, Urb->Ring);
-  Urb->TrbNum     = 1;
-  Urb->TrbStart   = Urb->Ring->RingEnqueue;
+  Urb->TrbNum   = 1;
+  Urb->TrbStart = Urb->Ring->RingEnqueue;
   CopyMem (Urb->TrbStart, CmdTrb, sizeof (TRB_TEMPLATE));
   Urb->TrbStart->CycleBit = Urb->Ring->RingPCS & BIT0;
-  Urb->TrbEnd             = Urb->TrbStart;
+  Urb->TrbEnd = Urb->TrbStart;
 
   return Urb;
 }
@@ -69,8 +69,8 @@ XhcCmdTransfer (
   OUT TRB_TEMPLATE          **EvtTrb
   )
 {
-  EFI_STATUS      Status;
-  URB             *Urb;
+  EFI_STATUS  Status;
+  URB         *Urb;
 
   //
   // Validate the parameters
@@ -128,7 +128,7 @@ ON_EXIT:
   @return Created URB or NULL
 
 **/
-URB*
+URB *
 XhcCreateUrb (
   IN USB_XHCI_INSTANCE                  *Xhc,
   IN UINT8                              BusAddr,
@@ -143,9 +143,9 @@ XhcCreateUrb (
   IN VOID                               *Context
   )
 {
-  USB_ENDPOINT                  *Ep;
-  EFI_STATUS                    Status;
-  URB                           *Urb;
+  USB_ENDPOINT  *Ep;
+  EFI_STATUS    Status;
+  URB           *Urb;
 
   Urb = AllocateZeroPool (sizeof (URB));
   if (Urb == NULL) {
@@ -155,13 +155,13 @@ XhcCreateUrb (
   Urb->Signature = XHC_URB_SIG;
   InitializeListHead (&Urb->UrbList);
 
-  Ep            = &Urb->Ep;
+  Ep = &Urb->Ep;
   Ep->BusAddr   = BusAddr;
   Ep->EpAddr    = (UINT8)(EpAddr & 0x0F);
   Ep->Direction = ((EpAddr & 0x80) != 0) ? EfiUsbDataIn : EfiUsbDataOut;
   Ep->DevSpeed  = DevSpeed;
   Ep->MaxPacket = MaxPacket;
-  Ep->Type      = Type;
+  Ep->Type = Type;
 
   Urb->Request  = Request;
   Urb->Data     = Data;
@@ -219,19 +219,19 @@ XhcCreateTransferTrb (
   IN URB                        *Urb
   )
 {
-  VOID                          *OutputContext;
-  TRANSFER_RING                 *EPRing;
-  UINT8                         EPType;
-  UINT8                         SlotId;
-  UINT8                         Dci;
-  TRB                           *TrbStart;
-  UINTN                         TotalLen;
-  UINTN                         Len;
-  UINTN                         TrbNum;
-  EFI_PCI_IO_PROTOCOL_OPERATION MapOp;
-  EFI_PHYSICAL_ADDRESS          PhyAddr;
-  VOID                          *Map;
-  EFI_STATUS                    Status;
+  VOID                           *OutputContext;
+  TRANSFER_RING                  *EPRing;
+  UINT8                          EPType;
+  UINT8                          SlotId;
+  UINT8                          Dci;
+  TRB                            *TrbStart;
+  UINTN                          TotalLen;
+  UINTN                          Len;
+  UINTN                          TrbNum;
+  EFI_PCI_IO_PROTOCOL_OPERATION  MapOp;
+  EFI_PHYSICAL_ADDRESS           PhyAddr;
+  VOID                           *Map;
+  EFI_STATUS                     Status;
 
   SlotId = XhcBusDevAddrToSlotId (Xhc, Urb->Ep.BusAddr);
   if (SlotId == 0) {
@@ -244,37 +244,37 @@ XhcCreateTransferTrb (
   Urb->Completed = 0;
   Urb->Result    = EFI_USB_NOERROR;
 
-  Dci       = XhcEndpointToDci (Urb->Ep.EpAddr, (UINT8)(Urb->Ep.Direction));
+  Dci = XhcEndpointToDci (Urb->Ep.EpAddr, (UINT8)(Urb->Ep.Direction));
   ASSERT (Dci < 32);
-  EPRing    = (TRANSFER_RING *)(UINTN) Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1];
-  Urb->Ring = EPRing;
+  EPRing        = (TRANSFER_RING *)(UINTN)Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1];
+  Urb->Ring     = EPRing;
   OutputContext = Xhc->UsbDevContext[SlotId].OutputContext;
   if (Xhc->HcCParams.Data.Csz == 0) {
-    EPType  = (UINT8) ((DEVICE_CONTEXT *)OutputContext)->EP[Dci-1].EPType;
+    EPType = (UINT8)((DEVICE_CONTEXT *)OutputContext)->EP[Dci-1].EPType;
   } else {
-    EPType  = (UINT8) ((DEVICE_CONTEXT_64 *)OutputContext)->EP[Dci-1].EPType;
+    EPType = (UINT8)((DEVICE_CONTEXT_64 *)OutputContext)->EP[Dci-1].EPType;
   }
 
   //
   // No need to remap.
   //
   if ((Urb->Data != NULL) && (Urb->DataMap == NULL)) {
-    if (((UINT8) (Urb->Ep.Direction)) == EfiUsbDataIn) {
+    if (((UINT8)(Urb->Ep.Direction)) == EfiUsbDataIn) {
       MapOp = EfiPciIoOperationBusMasterWrite;
     } else {
       MapOp = EfiPciIoOperationBusMasterRead;
     }
 
-    Len = Urb->DataLen;
-    Status  = Xhc->PciIo->Map (Xhc->PciIo, MapOp, Urb->Data, &Len, &PhyAddr, &Map);
+    Len    = Urb->DataLen;
+    Status = Xhc->PciIo->Map (Xhc->PciIo, MapOp, Urb->Data, &Len, &PhyAddr, &Map);
 
     if (EFI_ERROR (Status) || (Len != Urb->DataLen)) {
       DEBUG ((EFI_D_ERROR, "XhcCreateTransferTrb: Fail to map Urb->Data.\n"));
       return EFI_OUT_OF_RESOURCES;
     }
 
-    Urb->DataPhy  = (VOID *) ((UINTN) PhyAddr);
-    Urb->DataMap  = Map;
+    Urb->DataPhy = (VOID *)((UINTN)PhyAddr);
+    Urb->DataMap = Map;
   }
 
   //
@@ -289,15 +289,15 @@ XhcCreateTransferTrb (
       //
       TrbStart = (TRB *)(UINTN)EPRing->RingEnqueue;
       TrbStart->TrbCtrSetup.bmRequestType = Urb->Request->RequestType;
-      TrbStart->TrbCtrSetup.bRequest      = Urb->Request->Request;
-      TrbStart->TrbCtrSetup.wValue        = Urb->Request->Value;
-      TrbStart->TrbCtrSetup.wIndex        = Urb->Request->Index;
-      TrbStart->TrbCtrSetup.wLength       = Urb->Request->Length;
-      TrbStart->TrbCtrSetup.Length        = 8;
-      TrbStart->TrbCtrSetup.IntTarget     = 0;
-      TrbStart->TrbCtrSetup.IOC           = 1;
-      TrbStart->TrbCtrSetup.IDT           = 1;
-      TrbStart->TrbCtrSetup.Type          = TRB_TYPE_SETUP_STAGE;
+      TrbStart->TrbCtrSetup.bRequest  = Urb->Request->Request;
+      TrbStart->TrbCtrSetup.wValue    = Urb->Request->Value;
+      TrbStart->TrbCtrSetup.wIndex    = Urb->Request->Index;
+      TrbStart->TrbCtrSetup.wLength   = Urb->Request->Length;
+      TrbStart->TrbCtrSetup.Length    = 8;
+      TrbStart->TrbCtrSetup.IntTarget = 0;
+      TrbStart->TrbCtrSetup.IOC  = 1;
+      TrbStart->TrbCtrSetup.IDT  = 1;
+      TrbStart->TrbCtrSetup.Type = TRB_TYPE_SETUP_STAGE;
       if (Urb->DataLen > 0) {
         if (Urb->Ep.Direction == EfiUsbDataIn) {
           TrbStart->TrbCtrSetup.TRT = 3;
@@ -310,6 +310,7 @@ XhcCreateTransferTrb (
       } else {
         TrbStart->TrbCtrSetup.TRT = 0;
       }
+
       //
       // Update the cycle bit
       //
@@ -322,16 +323,16 @@ XhcCreateTransferTrb (
       if (Urb->DataLen > 0) {
         XhcSyncTrsRing (Xhc, EPRing);
         TrbStart = (TRB *)(UINTN)EPRing->RingEnqueue;
-        TrbStart->TrbCtrData.TRBPtrLo  = XHC_LOW_32BIT(Urb->DataPhy);
-        TrbStart->TrbCtrData.TRBPtrHi  = XHC_HIGH_32BIT(Urb->DataPhy);
-        TrbStart->TrbCtrData.Length    = (UINT32) Urb->DataLen;
+        TrbStart->TrbCtrData.TRBPtrLo  = XHC_LOW_32BIT (Urb->DataPhy);
+        TrbStart->TrbCtrData.TRBPtrHi  = XHC_HIGH_32BIT (Urb->DataPhy);
+        TrbStart->TrbCtrData.Length    = (UINT32)Urb->DataLen;
         TrbStart->TrbCtrData.TDSize    = 0;
         TrbStart->TrbCtrData.IntTarget = 0;
-        TrbStart->TrbCtrData.ISP       = 1;
-        TrbStart->TrbCtrData.IOC       = 1;
-        TrbStart->TrbCtrData.IDT       = 0;
-        TrbStart->TrbCtrData.CH        = 0;
-        TrbStart->TrbCtrData.Type      = TRB_TYPE_DATA_STAGE;
+        TrbStart->TrbCtrData.ISP  = 1;
+        TrbStart->TrbCtrData.IOC  = 1;
+        TrbStart->TrbCtrData.IDT  = 0;
+        TrbStart->TrbCtrData.CH   = 0;
+        TrbStart->TrbCtrData.Type = TRB_TYPE_DATA_STAGE;
         if (Urb->Ep.Direction == EfiUsbDataIn) {
           TrbStart->TrbCtrData.DIR = 1;
         } else if (Urb->Ep.Direction == EfiUsbDataOut) {
@@ -339,12 +340,14 @@ XhcCreateTransferTrb (
         } else {
           TrbStart->TrbCtrData.DIR = 0;
         }
+
         //
         // Update the cycle bit
         //
         TrbStart->TrbCtrData.CycleBit = EPRing->RingPCS & BIT0;
         Urb->TrbNum++;
       }
+
       //
       // For control transfer, create STATUS_STAGE_TRB.
       // Get the pointer to next TRB for status stage use
@@ -352,9 +355,9 @@ XhcCreateTransferTrb (
       XhcSyncTrsRing (Xhc, EPRing);
       TrbStart = (TRB *)(UINTN)EPRing->RingEnqueue;
       TrbStart->TrbCtrStatus.IntTarget = 0;
-      TrbStart->TrbCtrStatus.IOC       = 1;
-      TrbStart->TrbCtrStatus.CH        = 0;
-      TrbStart->TrbCtrStatus.Type      = TRB_TYPE_STATUS_STAGE;
+      TrbStart->TrbCtrStatus.IOC  = 1;
+      TrbStart->TrbCtrStatus.CH   = 0;
+      TrbStart->TrbCtrStatus.Type = TRB_TYPE_STATUS_STAGE;
       if (Urb->Ep.Direction == EfiUsbDataIn) {
         TrbStart->TrbCtrStatus.DIR = 0;
       } else if (Urb->Ep.Direction == EfiUsbDataOut) {
@@ -362,6 +365,7 @@ XhcCreateTransferTrb (
       } else {
         TrbStart->TrbCtrStatus.DIR = 0;
       }
+
       //
       // Update the cycle bit
       //
@@ -387,15 +391,16 @@ XhcCreateTransferTrb (
         } else {
           Len = 0x10000;
         }
+
         TrbStart = (TRB *)(UINTN)EPRing->RingEnqueue;
-        TrbStart->TrbNormal.TRBPtrLo  = XHC_LOW_32BIT((UINT8 *) Urb->DataPhy + TotalLen);
-        TrbStart->TrbNormal.TRBPtrHi  = XHC_HIGH_32BIT((UINT8 *) Urb->DataPhy + TotalLen);
-        TrbStart->TrbNormal.Length    = (UINT32) Len;
+        TrbStart->TrbNormal.TRBPtrLo  = XHC_LOW_32BIT ((UINT8 *)Urb->DataPhy + TotalLen);
+        TrbStart->TrbNormal.TRBPtrHi  = XHC_HIGH_32BIT ((UINT8 *)Urb->DataPhy + TotalLen);
+        TrbStart->TrbNormal.Length    = (UINT32)Len;
         TrbStart->TrbNormal.TDSize    = 0;
         TrbStart->TrbNormal.IntTarget = 0;
-        TrbStart->TrbNormal.ISP       = 1;
-        TrbStart->TrbNormal.IOC       = 1;
-        TrbStart->TrbNormal.Type      = TRB_TYPE_NORMAL;
+        TrbStart->TrbNormal.ISP  = 1;
+        TrbStart->TrbNormal.IOC  = 1;
+        TrbStart->TrbNormal.Type = TRB_TYPE_NORMAL;
         //
         // Update the cycle bit
         //
@@ -422,15 +427,16 @@ XhcCreateTransferTrb (
         } else {
           Len = 0x10000;
         }
+
         TrbStart = (TRB *)(UINTN)EPRing->RingEnqueue;
-        TrbStart->TrbNormal.TRBPtrLo  = XHC_LOW_32BIT((UINT8 *) Urb->DataPhy + TotalLen);
-        TrbStart->TrbNormal.TRBPtrHi  = XHC_HIGH_32BIT((UINT8 *) Urb->DataPhy + TotalLen);
-        TrbStart->TrbNormal.Length    = (UINT32) Len;
+        TrbStart->TrbNormal.TRBPtrLo  = XHC_LOW_32BIT ((UINT8 *)Urb->DataPhy + TotalLen);
+        TrbStart->TrbNormal.TRBPtrHi  = XHC_HIGH_32BIT ((UINT8 *)Urb->DataPhy + TotalLen);
+        TrbStart->TrbNormal.Length    = (UINT32)Len;
         TrbStart->TrbNormal.TDSize    = 0;
         TrbStart->TrbNormal.IntTarget = 0;
-        TrbStart->TrbNormal.ISP       = 1;
-        TrbStart->TrbNormal.IOC       = 1;
-        TrbStart->TrbNormal.Type      = TRB_TYPE_NORMAL;
+        TrbStart->TrbNormal.ISP  = 1;
+        TrbStart->TrbNormal.IOC  = 1;
+        TrbStart->TrbNormal.Type = TRB_TYPE_NORMAL;
         //
         // Update the cycle bit
         //
@@ -446,14 +452,13 @@ XhcCreateTransferTrb (
       break;
 
     default:
-      DEBUG ((EFI_D_INFO, "Not supported EPType 0x%x!\n",EPType));
+      DEBUG ((EFI_D_INFO, "Not supported EPType 0x%x!\n", EPType));
       ASSERT (FALSE);
       break;
   }
 
   return EFI_SUCCESS;
 }
-
 
 /**
   Initialize the XHCI host controller for schedule.
@@ -500,8 +505,8 @@ XhcInitSched (
   // The Device Context Base Address Array shall contain MaxSlotsEn + 1 entries.
   // Software shall set Device Context Base Address Array entries for unallocated Device Slots to '0'.
   //
-  Entries = (Xhc->MaxSlotsEn + 1) * sizeof(UINT64);
-  Dcbaa = UsbHcAllocateMem (Xhc->MemPool, Entries);
+  Entries = (Xhc->MaxSlotsEn + 1) * sizeof (UINT64);
+  Dcbaa   = UsbHcAllocateMem (Xhc->MemPool, Entries);
   ASSERT (Dcbaa != NULL);
   ZeroMem (Dcbaa, Entries);
 
@@ -510,7 +515,7 @@ XhcInitSched (
   // System software shall allocate the Scratchpad Buffer(s) before placing the xHC in to Run
   // mode (Run/Stop(R/S) ='1').
   //
-  MaxScratchpadBufs      = ((Xhc->HcSParams2.Data.ScratchBufHi) << 5) | (Xhc->HcSParams2.Data.ScratchBufLo);
+  MaxScratchpadBufs = ((Xhc->HcSParams2.Data.ScratchBufHi) << 5) | (Xhc->HcSParams2.Data.ScratchBufLo);
   Xhc->MaxScratchpadBufs = MaxScratchpadBufs;
   ASSERT (MaxScratchpadBufs <= 1023);
   if (MaxScratchpadBufs != 0) {
@@ -529,14 +534,14 @@ XhcInitSched (
     Xhc->ScratchEntry = ScratchEntry;
 
     ScratchPhy = 0;
-    Status = UsbHcAllocateAlignedPages (
-               Xhc->PciIo,
-               EFI_SIZE_TO_PAGES (MaxScratchpadBufs * sizeof (UINT64)),
-               Xhc->PageSize,
-               (VOID **) &ScratchBuf,
-               &ScratchPhy,
-               &Xhc->ScratchMap
-               );
+    Status     = UsbHcAllocateAlignedPages (
+                   Xhc->PciIo,
+                   EFI_SIZE_TO_PAGES (MaxScratchpadBufs * sizeof (UINT64)),
+                   Xhc->PageSize,
+                   (VOID **)&ScratchBuf,
+                   &ScratchPhy,
+                   &Xhc->ScratchMap
+                   );
     ASSERT_EFI_ERROR (Status);
 
     ZeroMem (ScratchBuf, MaxScratchpadBufs * sizeof (UINT64));
@@ -551,9 +556,9 @@ XhcInitSched (
                  Xhc->PciIo,
                  EFI_SIZE_TO_PAGES (Xhc->PageSize),
                  Xhc->PageSize,
-                 (VOID **) &ScratchEntry[Index],
+                 (VOID **)&ScratchEntry[Index],
                  &ScratchEntryPhy,
-                 (VOID **) &ScratchEntryMap[Index]
+                 (VOID **)&ScratchEntryMap[Index]
                  );
       ASSERT_EFI_ERROR (Status);
       ZeroMem ((VOID *)(UINTN)ScratchEntry[Index], Xhc->PageSize);
@@ -562,11 +567,12 @@ XhcInitSched (
       //
       *ScratchBuf++ = ScratchEntryPhy;
     }
+
     //
     // The Scratchpad Buffer Array contains pointers to the Scratchpad Buffers. Entry 0 of the
     // Device Context Base Address Array points to the Scratchpad Buffer Array.
     //
-    *(UINT64 *)Dcbaa = (UINT64)(UINTN) ScratchPhy;
+    *(UINT64 *)Dcbaa = (UINT64)(UINTN)ScratchPhy;
   }
 
   //
@@ -579,7 +585,7 @@ XhcInitSched (
   // So divide it to two 32-bytes width register access.
   //
   DcbaaPhy = UsbHcGetPciAddrForHostAddr (Xhc->MemPool, Dcbaa, Entries);
-  XhcWriteOpReg (Xhc, XHC_DCBAAP_OFFSET, XHC_LOW_32BIT(DcbaaPhy));
+  XhcWriteOpReg (Xhc, XHC_DCBAAP_OFFSET, XHC_LOW_32BIT (DcbaaPhy));
   XhcWriteOpReg (Xhc, XHC_DCBAAP_OFFSET + 4, XHC_HIGH_32BIT (DcbaaPhy));
 
   DEBUG ((EFI_D_INFO, "XhcInitSched:DCBAA=0x%x\n", (UINT64)(UINTN)Xhc->DCBAA));
@@ -596,15 +602,19 @@ XhcInitSched (
   // Transfer Ring it checks for a Cycle bit transition. If a transition detected, the ring is empty.
   // So we set RCS as inverted PCS init value to let Command Ring empty
   //
-  CmdRing  = (UINT64)(UINTN)Xhc->CmdRing.RingSeg0;
-  CmdRingPhy = UsbHcGetPciAddrForHostAddr (Xhc->MemPool, (VOID *)(UINTN) CmdRing, sizeof (TRB_TEMPLATE) * CMD_RING_TRB_NUMBER);
+  CmdRing    = (UINT64)(UINTN)Xhc->CmdRing.RingSeg0;
+  CmdRingPhy = UsbHcGetPciAddrForHostAddr (
+                 Xhc->MemPool,
+                 (VOID *)(UINTN)CmdRing,
+                 sizeof (TRB_TEMPLATE) * CMD_RING_TRB_NUMBER
+                 );
   ASSERT ((CmdRingPhy & 0x3F) == 0);
   CmdRingPhy |= XHC_CRCR_RCS;
   //
   // Some 3rd party XHCI external cards don't support single 64-bytes width register access,
   // So divide it to two 32-bytes width register access.
   //
-  XhcWriteOpReg (Xhc, XHC_CRCR_OFFSET, XHC_LOW_32BIT(CmdRingPhy));
+  XhcWriteOpReg (Xhc, XHC_CRCR_OFFSET, XHC_LOW_32BIT (CmdRingPhy));
   XhcWriteOpReg (Xhc, XHC_CRCR_OFFSET + 4, XHC_HIGH_32BIT (CmdRingPhy));
 
   //
@@ -621,9 +631,13 @@ XhcInitSched (
   // Allocate EventRing for Cmd, Ctrl, Bulk, Interrupt, AsynInterrupt transfer
   //
   CreateEventRing (Xhc, &Xhc->EventRing);
-  DEBUG ((DEBUG_INFO, "XhcInitSched: Created CMD ring [%p~%p) EVENT ring [%p~%p)\n",
-    Xhc->CmdRing.RingSeg0,        (UINTN)Xhc->CmdRing.RingSeg0 + sizeof (TRB_TEMPLATE) * CMD_RING_TRB_NUMBER,
-    Xhc->EventRing.EventRingSeg0, (UINTN)Xhc->EventRing.EventRingSeg0 + sizeof (TRB_TEMPLATE) * EVENT_RING_TRB_NUMBER
+  DEBUG ((
+    DEBUG_INFO,
+    "XhcInitSched: Created CMD ring [%p~%p) EVENT ring [%p~%p)\n",
+    Xhc->CmdRing.RingSeg0,
+    (UINTN)Xhc->CmdRing.RingSeg0 + sizeof (TRB_TEMPLATE) * CMD_RING_TRB_NUMBER,
+    Xhc->EventRing.EventRingSeg0,
+    (UINTN)Xhc->EventRing.EventRingSeg0 + sizeof (TRB_TEMPLATE) * EVENT_RING_TRB_NUMBER
     ));
 }
 
@@ -648,15 +662,16 @@ XhcRecoverHaltedEndpoint (
   IN  URB                 *Urb
   )
 {
-  EFI_STATUS                  Status;
-  UINT8                       Dci;
-  UINT8                       SlotId;
+  EFI_STATUS  Status;
+  UINT8       Dci;
+  UINT8       SlotId;
 
   Status = EFI_SUCCESS;
   SlotId = XhcBusDevAddrToSlotId (Xhc, Urb->Ep.BusAddr);
   if (SlotId == 0) {
     return EFI_DEVICE_ERROR;
   }
+
   Dci = XhcEndpointToDci (Urb->Ep.EpAddr, (UINT8)(Urb->Ep.Direction));
   ASSERT (Dci < 32);
 
@@ -665,8 +680,8 @@ XhcRecoverHaltedEndpoint (
   //
   // 1) Send Reset endpoint command to transit from halt to stop state
   //
-  Status = XhcResetEndpoint(Xhc, SlotId, Dci);
-  if (EFI_ERROR(Status)) {
+  Status = XhcResetEndpoint (Xhc, SlotId, Dci);
+  if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "XhcRecoverHaltedEndpoint: Reset Endpoint Failed, Status = %r\n", Status));
     goto Done;
   }
@@ -674,8 +689,8 @@ XhcRecoverHaltedEndpoint (
   //
   // 2)Set dequeue pointer
   //
-  Status = XhcSetTrDequeuePointer(Xhc, SlotId, Dci, Urb);
-  if (EFI_ERROR(Status)) {
+  Status = XhcSetTrDequeuePointer (Xhc, SlotId, Dci, Urb);
+  if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "XhcRecoverHaltedEndpoint: Set Transfer Ring Dequeue Pointer Failed, Status = %r\n", Status));
     goto Done;
   }
@@ -710,15 +725,16 @@ XhcDequeueTrbFromEndpoint (
   IN  URB                 *Urb
   )
 {
-  EFI_STATUS                  Status;
-  UINT8                       Dci;
-  UINT8                       SlotId;
+  EFI_STATUS  Status;
+  UINT8       Dci;
+  UINT8       SlotId;
 
   Status = EFI_SUCCESS;
   SlotId = XhcBusDevAddrToSlotId (Xhc, Urb->Ep.BusAddr);
   if (SlotId == 0) {
     return EFI_DEVICE_ERROR;
   }
+
   Dci = XhcEndpointToDci (Urb->Ep.EpAddr, (UINT8)(Urb->Ep.Direction));
   ASSERT (Dci < 32);
 
@@ -727,8 +743,8 @@ XhcDequeueTrbFromEndpoint (
   //
   // 1) Send Stop endpoint command to stop xHC from executing of the TDs on the endpoint
   //
-  Status = XhcStopEndpoint(Xhc, SlotId, Dci, Urb);
-  if (EFI_ERROR(Status)) {
+  Status = XhcStopEndpoint (Xhc, SlotId, Dci, Urb);
+  if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "XhcDequeueTrbFromEndpoint: Stop Endpoint Failed, Status = %r\n", Status));
     goto Done;
   }
@@ -743,11 +759,20 @@ XhcDequeueTrbFromEndpoint (
     // but finished just before stopping endpoint.
     //
     Status = EFI_ALREADY_STARTED;
-    DEBUG ((DEBUG_INFO, "XhcDequeueTrbFromEndpoint: Pending URB is finished: Length Actual/Expect = %d/%d!\n", Urb->Completed, Urb->DataLen));
+    DEBUG ((
+      DEBUG_INFO,
+      "XhcDequeueTrbFromEndpoint: Pending URB is finished: Length Actual/Expect = %d/%d!\n",
+      Urb->Completed,
+      Urb->DataLen
+      ));
   } else {
-    Status = XhcSetTrDequeuePointer(Xhc, SlotId, Dci, Urb);
+    Status = XhcSetTrDequeuePointer (Xhc, SlotId, Dci, Urb);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "XhcDequeueTrbFromEndpoint: Set Transfer Ring Dequeue Pointer Failed, Status = %r\n", Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "XhcDequeueTrbFromEndpoint: Set Transfer Ring Dequeue Pointer Failed, Status = %r\n",
+        Status
+        ));
       goto Done;
     }
   }
@@ -783,15 +808,15 @@ CreateEventRing (
   ASSERT (EventRing != NULL);
 
   Size = sizeof (TRB_TEMPLATE) * EVENT_RING_TRB_NUMBER;
-  Buf = UsbHcAllocateMem (Xhc->MemPool, Size);
+  Buf  = UsbHcAllocateMem (Xhc->MemPool, Size);
   ASSERT (Buf != NULL);
-  ASSERT (((UINTN) Buf & 0x3F) == 0);
+  ASSERT (((UINTN)Buf & 0x3F) == 0);
   ZeroMem (Buf, Size);
 
   EventRing->EventRingSeg0    = Buf;
   EventRing->TrbNumber        = EVENT_RING_TRB_NUMBER;
-  EventRing->EventRingDequeue = (TRB_TEMPLATE *) EventRing->EventRingSeg0;
-  EventRing->EventRingEnqueue = (TRB_TEMPLATE *) EventRing->EventRingSeg0;
+  EventRing->EventRingDequeue = (TRB_TEMPLATE *)EventRing->EventRingSeg0;
+  EventRing->EventRingEnqueue = (TRB_TEMPLATE *)EventRing->EventRingSeg0;
 
   DequeuePhy = UsbHcGetPciAddrForHostAddr (Xhc->MemPool, Buf, Size);
 
@@ -802,12 +827,12 @@ CreateEventRing (
   EventRing->EventRingCCS = 1;
 
   Size = sizeof (EVENT_RING_SEG_TABLE_ENTRY) * ERST_NUMBER;
-  Buf = UsbHcAllocateMem (Xhc->MemPool, Size);
+  Buf  = UsbHcAllocateMem (Xhc->MemPool, Size);
   ASSERT (Buf != NULL);
-  ASSERT (((UINTN) Buf & 0x3F) == 0);
+  ASSERT (((UINTN)Buf & 0x3F) == 0);
   ZeroMem (Buf, Size);
 
-  ERSTBase              = (EVENT_RING_SEG_TABLE_ENTRY *) Buf;
+  ERSTBase = (EVENT_RING_SEG_TABLE_ENTRY *)Buf;
   EventRing->ERSTBase   = ERSTBase;
   ERSTBase->PtrLo       = XHC_LOW_32BIT (DequeuePhy);
   ERSTBase->PtrHi       = XHC_HIGH_32BIT (DequeuePhy);
@@ -832,12 +857,12 @@ CreateEventRing (
   XhcWriteRuntimeReg (
     Xhc,
     XHC_ERDP_OFFSET,
-    XHC_LOW_32BIT((UINT64)(UINTN)DequeuePhy)
+    XHC_LOW_32BIT ((UINT64)(UINTN)DequeuePhy)
     );
   XhcWriteRuntimeReg (
     Xhc,
     XHC_ERDP_OFFSET + 4,
-    XHC_HIGH_32BIT((UINT64)(UINTN)DequeuePhy)
+    XHC_HIGH_32BIT ((UINT64)(UINTN)DequeuePhy)
     );
   //
   // Program the Interrupter Event Ring Segment Table Base Address (ERSTBA) register(5.5.2.3.2)
@@ -848,12 +873,12 @@ CreateEventRing (
   XhcWriteRuntimeReg (
     Xhc,
     XHC_ERSTBA_OFFSET,
-    XHC_LOW_32BIT((UINT64)(UINTN)ERSTPhy)
+    XHC_LOW_32BIT ((UINT64)(UINTN)ERSTPhy)
     );
   XhcWriteRuntimeReg (
     Xhc,
     XHC_ERSTBA_OFFSET + 4,
-    XHC_HIGH_32BIT((UINT64)(UINTN)ERSTPhy)
+    XHC_HIGH_32BIT ((UINT64)(UINTN)ERSTPhy)
     );
   //
   // Need set IMAN IE bit to enble the ring interrupt
@@ -882,28 +907,28 @@ CreateTransferRing (
 
   Buf = UsbHcAllocateMem (Xhc->MemPool, sizeof (TRB_TEMPLATE) * TrbNum);
   ASSERT (Buf != NULL);
-  ASSERT (((UINTN) Buf & 0x3F) == 0);
+  ASSERT (((UINTN)Buf & 0x3F) == 0);
   ZeroMem (Buf, sizeof (TRB_TEMPLATE) * TrbNum);
 
-  TransferRing->RingSeg0     = Buf;
-  TransferRing->TrbNumber    = TrbNum;
-  TransferRing->RingEnqueue  = (TRB_TEMPLATE *) TransferRing->RingSeg0;
-  TransferRing->RingDequeue  = (TRB_TEMPLATE *) TransferRing->RingSeg0;
-  TransferRing->RingPCS      = 1;
+  TransferRing->RingSeg0    = Buf;
+  TransferRing->TrbNumber   = TrbNum;
+  TransferRing->RingEnqueue = (TRB_TEMPLATE *)TransferRing->RingSeg0;
+  TransferRing->RingDequeue = (TRB_TEMPLATE *)TransferRing->RingSeg0;
+  TransferRing->RingPCS     = 1;
   //
   // 4.9.2 Transfer Ring Management
   // To form a ring (or circular queue) a Link TRB may be inserted at the end of a ring to
   // point to the first TRB in the ring.
   //
-  EndTrb        = (LINK_TRB *) ((UINTN)Buf + sizeof (TRB_TEMPLATE) * (TrbNum - 1));
-  EndTrb->Type  = TRB_TYPE_LINK;
+  EndTrb = (LINK_TRB *)((UINTN)Buf + sizeof (TRB_TEMPLATE) * (TrbNum - 1));
+  EndTrb->Type = TRB_TYPE_LINK;
   PhyAddr = UsbHcGetPciAddrForHostAddr (Xhc->MemPool, Buf, sizeof (TRB_TEMPLATE) * TrbNum);
   EndTrb->PtrLo = XHC_LOW_32BIT (PhyAddr);
   EndTrb->PtrHi = XHC_HIGH_32BIT (PhyAddr);
   //
   // Toggle Cycle (TC). When set to '1', the xHC shall toggle its interpretation of the Cycle bit.
   //
-  EndTrb->TC    = 1;
+  EndTrb->TC = 1;
   //
   // Set Cycle bit as other TRB PCS init value
   //
@@ -922,7 +947,7 @@ EFIAPI
 XhcFreeEventRing (
   IN  USB_XHCI_INSTANCE   *Xhc,
   IN  EVENT_RING          *EventRing
-)
+  )
 {
   if(EventRing->EventRingSeg0 == NULL) {
     return EFI_SUCCESS;
@@ -951,8 +976,8 @@ XhcFreeSched (
   IN USB_XHCI_INSTANCE    *Xhc
   )
 {
-  UINT32                  Index;
-  UINT64                  *ScratchEntry;
+  UINT32  Index;
+  UINT64  *ScratchEntry;
 
   if (Xhc->ScratchBuf != NULL) {
     ScratchEntry = Xhc->ScratchEntry;
@@ -960,12 +985,23 @@ XhcFreeSched (
       //
       // Free Scratchpad Buffers
       //
-      UsbHcFreeAlignedPages (Xhc->PciIo, (VOID*)(UINTN)ScratchEntry[Index], EFI_SIZE_TO_PAGES (Xhc->PageSize), (VOID *) Xhc->ScratchEntryMap[Index]);
+      UsbHcFreeAlignedPages (
+        Xhc->PciIo,
+        (VOID *)(UINTN)ScratchEntry[Index],
+        EFI_SIZE_TO_PAGES (Xhc->PageSize),
+        (VOID *)Xhc->ScratchEntryMap[Index]
+        );
     }
+
     //
     // Free Scratchpad Buffer Array
     //
-    UsbHcFreeAlignedPages (Xhc->PciIo, Xhc->ScratchBuf, EFI_SIZE_TO_PAGES (Xhc->MaxScratchpadBufs * sizeof (UINT64)), Xhc->ScratchMap);
+    UsbHcFreeAlignedPages (
+      Xhc->PciIo,
+      Xhc->ScratchBuf,
+      EFI_SIZE_TO_PAGES (Xhc->MaxScratchpadBufs * sizeof (UINT64)),
+      Xhc->ScratchMap
+      );
     FreePool (Xhc->ScratchEntryMap);
     FreePool (Xhc->ScratchEntry);
   }
@@ -975,10 +1011,10 @@ XhcFreeSched (
     Xhc->CmdRing.RingSeg0 = NULL;
   }
 
-  XhcFreeEventRing (Xhc,&Xhc->EventRing);
+  XhcFreeEventRing (Xhc, &Xhc->EventRing);
 
   if (Xhc->DCBAA != NULL) {
-    UsbHcFreeMem (Xhc->MemPool, Xhc->DCBAA, (Xhc->MaxSlotsEn + 1) * sizeof(UINT64));
+    UsbHcFreeMem (Xhc->MemPool, Xhc->DCBAA, (Xhc->MaxSlotsEn + 1) * sizeof (UINT64));
     Xhc->DCBAA = NULL;
   }
 
@@ -1009,25 +1045,27 @@ IsTransferRingTrb (
   IN  URB                 *Urb
   )
 {
-  LINK_TRB      *LinkTrb;
-  TRB_TEMPLATE  *CheckedTrb;
-  UINTN         Index;
-  EFI_PHYSICAL_ADDRESS PhyAddr;
+  LINK_TRB              *LinkTrb;
+  TRB_TEMPLATE          *CheckedTrb;
+  UINTN                 Index;
+  EFI_PHYSICAL_ADDRESS  PhyAddr;
 
   CheckedTrb = Urb->TrbStart;
   for (Index = 0; Index < Urb->TrbNum; Index++) {
     if (Trb == CheckedTrb) {
       return TRUE;
     }
+
     CheckedTrb++;
     //
     // If the checked TRB is the link TRB at the end of the transfer ring,
     // recircle it to the head of the ring.
     //
     if (CheckedTrb->Type == TRB_TYPE_LINK) {
-      LinkTrb = (LINK_TRB *) CheckedTrb;
-      PhyAddr = (EFI_PHYSICAL_ADDRESS)(LinkTrb->PtrLo | LShiftU64 ((UINT64) LinkTrb->PtrHi, 32));
-      CheckedTrb = (TRB_TEMPLATE *)(UINTN) UsbHcGetHostAddrForPciAddr (Xhc->MemPool, (VOID *)(UINTN) PhyAddr, sizeof (TRB_TEMPLATE));
+      LinkTrb    = (LINK_TRB *)CheckedTrb;
+      PhyAddr    = (EFI_PHYSICAL_ADDRESS)(LinkTrb->PtrLo | LShiftU64 ((UINT64)LinkTrb->PtrHi, 32));
+      CheckedTrb =
+        (TRB_TEMPLATE *)(UINTN)UsbHcGetHostAddrForPciAddr (Xhc->MemPool, (VOID *)(UINTN)PhyAddr, sizeof (TRB_TEMPLATE));
       ASSERT (CheckedTrb == Urb->Ring->RingSeg0);
     }
   }
@@ -1053,9 +1091,9 @@ IsAsyncIntTrb (
   OUT URB                 **Urb
   )
 {
-  LIST_ENTRY              *Entry;
-  LIST_ENTRY              *Next;
-  URB                     *CheckedUrb;
+  LIST_ENTRY  *Entry;
+  LIST_ENTRY  *Next;
+  URB         *CheckedUrb;
 
   BASE_LIST_FOR_EACH_SAFE (Entry, Next, &Xhc->AsyncIntTransfers) {
     CheckedUrb = EFI_LIST_CONTAINER (Entry, URB, UrbList);
@@ -1067,7 +1105,6 @@ IsAsyncIntTrb (
 
   return FALSE;
 }
-
 
 /**
   Check the URB's execution result and update the URB's
@@ -1085,17 +1122,17 @@ XhcCheckUrbResult (
   IN  URB                 *Urb
   )
 {
-  EVT_TRB_TRANSFER        *EvtTrb;
-  TRB_TEMPLATE            *TRBPtr;
-  UINTN                   Index;
-  UINT8                   TRBType;
-  EFI_STATUS              Status;
-  URB                     *AsyncUrb;
-  URB                     *CheckedUrb;
-  UINT64                  XhcDequeue;
-  UINT32                  High;
-  UINT32                  Low;
-  EFI_PHYSICAL_ADDRESS    PhyAddr;
+  EVT_TRB_TRANSFER      *EvtTrb;
+  TRB_TEMPLATE          *TRBPtr;
+  UINTN                 Index;
+  UINT8                 TRBType;
+  EFI_STATUS            Status;
+  URB                   *AsyncUrb;
+  URB                   *CheckedUrb;
+  UINT64                XhcDequeue;
+  UINT32                High;
+  UINT32                Low;
+  EFI_PHYSICAL_ADDRESS  PhyAddr;
 
   ASSERT ((Xhc != NULL) && (Urb != NULL));
 
@@ -1136,8 +1173,9 @@ XhcCheckUrbResult (
     //
     // Need convert pci device address to host address
     //
-    PhyAddr = (EFI_PHYSICAL_ADDRESS)(EvtTrb->TRBPtrLo | LShiftU64 ((UINT64) EvtTrb->TRBPtrHi, 32));
-    TRBPtr = (TRB_TEMPLATE *)(UINTN) UsbHcGetHostAddrForPciAddr (Xhc->MemPool, (VOID *)(UINTN) PhyAddr, sizeof (TRB_TEMPLATE));
+    PhyAddr = (EFI_PHYSICAL_ADDRESS)(EvtTrb->TRBPtrLo | LShiftU64 ((UINT64)EvtTrb->TRBPtrHi, 32));
+    TRBPtr  =
+      (TRB_TEMPLATE *)(UINTN)UsbHcGetHostAddrForPciAddr (Xhc->MemPool, (VOID *)(UINTN)PhyAddr, sizeof (TRB_TEMPLATE));
 
     //
     // Update the status of URB including the pending URB, the URB that is currently checked,
@@ -1159,25 +1197,25 @@ XhcCheckUrbResult (
       case TRB_COMPLETION_STALL_ERROR:
         CheckedUrb->Result  |= EFI_USB_ERR_STALL;
         CheckedUrb->Finished = TRUE;
-        DEBUG ((EFI_D_ERROR, "XhcCheckUrbResult: STALL_ERROR! Completecode = %x\n",EvtTrb->Completecode));
+        DEBUG ((EFI_D_ERROR, "XhcCheckUrbResult: STALL_ERROR! Completecode = %x\n", EvtTrb->Completecode));
         goto EXIT;
 
       case TRB_COMPLETION_BABBLE_ERROR:
         CheckedUrb->Result  |= EFI_USB_ERR_BABBLE;
         CheckedUrb->Finished = TRUE;
-        DEBUG ((EFI_D_ERROR, "XhcCheckUrbResult: BABBLE_ERROR! Completecode = %x\n",EvtTrb->Completecode));
+        DEBUG ((EFI_D_ERROR, "XhcCheckUrbResult: BABBLE_ERROR! Completecode = %x\n", EvtTrb->Completecode));
         goto EXIT;
 
       case TRB_COMPLETION_DATA_BUFFER_ERROR:
         CheckedUrb->Result  |= EFI_USB_ERR_BUFFER;
         CheckedUrb->Finished = TRUE;
-        DEBUG ((EFI_D_ERROR, "XhcCheckUrbResult: ERR_BUFFER! Completecode = %x\n",EvtTrb->Completecode));
+        DEBUG ((EFI_D_ERROR, "XhcCheckUrbResult: ERR_BUFFER! Completecode = %x\n", EvtTrb->Completecode));
         goto EXIT;
 
       case TRB_COMPLETION_USB_TRANSACTION_ERROR:
         CheckedUrb->Result  |= EFI_USB_ERR_TIMEOUT;
         CheckedUrb->Finished = TRUE;
-        DEBUG ((EFI_D_ERROR, "XhcCheckUrbResult: TRANSACTION_ERROR! Completecode = %x\n",EvtTrb->Completecode));
+        DEBUG ((EFI_D_ERROR, "XhcCheckUrbResult: TRANSACTION_ERROR! Completecode = %x\n", EvtTrb->Completecode));
         goto EXIT;
 
       case TRB_COMPLETION_STOPPED:
@@ -1196,17 +1234,17 @@ XhcCheckUrbResult (
           DEBUG ((EFI_D_VERBOSE, "XhcCheckUrbResult: short packet happens!\n"));
         }
 
-        TRBType = (UINT8) (TRBPtr->Type);
+        TRBType = (UINT8)(TRBPtr->Type);
         if ((TRBType == TRB_TYPE_DATA_STAGE) ||
             (TRBType == TRB_TYPE_NORMAL) ||
             (TRBType == TRB_TYPE_ISOCH)) {
-          CheckedUrb->Completed += (((TRANSFER_TRB_NORMAL*)TRBPtr)->Length - EvtTrb->Length);
+          CheckedUrb->Completed += (((TRANSFER_TRB_NORMAL *)TRBPtr)->Length - EvtTrb->Length);
         }
 
         break;
 
       default:
-        DEBUG ((EFI_D_ERROR, "Transfer Default Error Occur! Completecode = 0x%x!\n",EvtTrb->Completecode));
+        DEBUG ((EFI_D_ERROR, "Transfer Default Error Occur! Completecode = 0x%x!\n", EvtTrb->Completecode));
         CheckedUrb->Result  |= EFI_USB_ERR_TIMEOUT;
         CheckedUrb->Finished = TRUE;
         goto EXIT;
@@ -1239,7 +1277,7 @@ EXIT:
   //
   Low  = XhcReadRuntimeReg (Xhc, XHC_ERDP_OFFSET);
   High = XhcReadRuntimeReg (Xhc, XHC_ERDP_OFFSET + 4);
-  XhcDequeue = (UINT64)(LShiftU64((UINT64)High, 32) | Low);
+  XhcDequeue = (UINT64)(LShiftU64 ((UINT64)High, 32) | Low);
 
   PhyAddr = UsbHcGetPciAddrForHostAddr (Xhc->MemPool, Xhc->EventRing.EventRingDequeue, sizeof (TRB_TEMPLATE));
 
@@ -1254,7 +1292,6 @@ EXIT:
 
   return Urb->Finished;
 }
-
 
 /**
   Execute the transfer by polling the URB. This is a synchronous operation.
@@ -1278,16 +1315,16 @@ XhcExecTransfer (
   IN  UINTN               Timeout
   )
 {
-  EFI_STATUS              Status;
-  UINT8                   SlotId;
-  UINT8                   Dci;
-  BOOLEAN                 Finished;
-  EFI_EVENT               TimeoutEvent;
-  BOOLEAN                 IndefiniteTimeout;
+  EFI_STATUS  Status;
+  UINT8       SlotId;
+  UINT8       Dci;
+  BOOLEAN     Finished;
+  EFI_EVENT   TimeoutEvent;
+  BOOLEAN     IndefiniteTimeout;
 
-  Status            = EFI_SUCCESS;
-  Finished          = FALSE;
-  TimeoutEvent      = NULL;
+  Status       = EFI_SUCCESS;
+  Finished     = FALSE;
+  TimeoutEvent = NULL;
   IndefiniteTimeout = FALSE;
 
   if (CmdTransfer) {
@@ -1298,7 +1335,8 @@ XhcExecTransfer (
     if (SlotId == 0) {
       return EFI_DEVICE_ERROR;
     }
-    Dci  = XhcEndpointToDci (Urb->Ep.EpAddr, (UINT8)(Urb->Ep.Direction));
+
+    Dci = XhcEndpointToDci (Urb->Ep.EpAddr, (UINT8)(Urb->Ep.Direction));
     ASSERT (Dci < 32);
   }
 
@@ -1319,9 +1357,11 @@ XhcExecTransfer (
     goto DONE;
   }
 
-  Status = gBS->SetTimer (TimeoutEvent,
-                          TimerRelative,
-                          EFI_TIMER_PERIOD_MILLISECONDS(Timeout));
+  Status = gBS->SetTimer (
+                  TimeoutEvent,
+                  TimerRelative,
+                  EFI_TIMER_PERIOD_MILLISECONDS (Timeout)
+                  );
 
   if (EFI_ERROR (Status)) {
     goto DONE;
@@ -1335,17 +1375,18 @@ RINGDOORBELL:
     if (Finished) {
       break;
     }
+
     gBS->Stall (XHC_1_MICROSECOND);
-  } while (IndefiniteTimeout || EFI_ERROR(gBS->CheckEvent (TimeoutEvent)));
+  } while (IndefiniteTimeout || EFI_ERROR (gBS->CheckEvent (TimeoutEvent)));
 
 DONE:
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     Urb->Result = EFI_USB_ERR_NOTEXECUTE;
   } else if (!Finished) {
     Urb->Result = EFI_USB_ERR_TIMEOUT;
-    Status      = EFI_TIMEOUT;
+    Status = EFI_TIMEOUT;
   } else if (Urb->Result != EFI_USB_NOERROR) {
-    Status      = EFI_DEVICE_ERROR;
+    Status = EFI_DEVICE_ERROR;
   }
 
   if (TimeoutEvent != NULL) {
@@ -1420,10 +1461,10 @@ XhciDelAllAsyncIntTransfers (
   IN USB_XHCI_INSTANCE    *Xhc
   )
 {
-  LIST_ENTRY              *Entry;
-  LIST_ENTRY              *Next;
-  URB                     *Urb;
-  EFI_STATUS              Status;
+  LIST_ENTRY  *Entry;
+  LIST_ENTRY  *Next;
+  URB         *Urb;
+  EFI_STATUS  Status;
 
   BASE_LIST_FOR_EACH_SAFE (Entry, Next, &Xhc->AsyncIntTransfers) {
     Urb = EFI_LIST_CONTAINER (Entry, URB, UrbList);
@@ -1471,8 +1512,8 @@ XhciInsertAsyncIntTransfer (
   IN VOID                               *Context
   )
 {
-  VOID      *Data;
-  URB       *Urb;
+  VOID  *Data;
+  URB   *Urb;
 
   Data = AllocateZeroPool (DataLen);
   if (Data == NULL) {
@@ -1521,13 +1562,14 @@ XhcUpdateAsyncRequest (
   IN URB                      *Urb
   )
 {
-  EFI_STATUS    Status;
+  EFI_STATUS  Status;
 
   if (Urb->Result == EFI_USB_NOERROR) {
     Status = XhcCreateTransferTrb (Xhc, Urb);
     if (EFI_ERROR (Status)) {
       return;
     }
+
     Status = RingIntTransferDoorBell (Xhc, Urb);
     if (EFI_ERROR (Status)) {
       return;
@@ -1552,12 +1594,12 @@ XhcFlushAsyncIntMap (
   IN  URB                 *Urb
   )
 {
-  EFI_STATUS                    Status;
-  EFI_PHYSICAL_ADDRESS          PhyAddr;
-  EFI_PCI_IO_PROTOCOL_OPERATION MapOp;
-  EFI_PCI_IO_PROTOCOL           *PciIo;
-  UINTN                         Len;
-  VOID                          *Map;
+  EFI_STATUS                     Status;
+  EFI_PHYSICAL_ADDRESS           PhyAddr;
+  EFI_PCI_IO_PROTOCOL_OPERATION  MapOp;
+  EFI_PCI_IO_PROTOCOL            *PciIo;
+  UINTN                          Len;
+  VOID                           *Map;
 
   PciIo = Xhc->PciIo;
   Len   = Urb->DataLen;
@@ -1582,8 +1624,8 @@ XhcFlushAsyncIntMap (
     goto ON_ERROR;
   }
 
-  Urb->DataPhy  = (VOID *) ((UINTN) PhyAddr);
-  Urb->DataMap  = Map;
+  Urb->DataPhy = (VOID *)((UINTN)PhyAddr);
+  Urb->DataMap = Map;
   return EFI_SUCCESS;
 
 ON_ERROR:
@@ -1604,18 +1646,18 @@ XhcMonitorAsyncRequests (
   IN VOID                 *Context
   )
 {
-  USB_XHCI_INSTANCE       *Xhc;
-  LIST_ENTRY              *Entry;
-  LIST_ENTRY              *Next;
-  UINT8                   *ProcBuf;
-  URB                     *Urb;
-  UINT8                   SlotId;
-  EFI_STATUS              Status;
-  EFI_TPL                 OldTpl;
+  USB_XHCI_INSTANCE  *Xhc;
+  LIST_ENTRY         *Entry;
+  LIST_ENTRY         *Next;
+  UINT8              *ProcBuf;
+  URB                *Urb;
+  UINT8              SlotId;
+  EFI_STATUS         Status;
+  EFI_TPL            OldTpl;
 
   OldTpl = gBS->RaiseTPL (XHC_TPL);
 
-  Xhc    = (USB_XHCI_INSTANCE*) Context;
+  Xhc = (USB_XHCI_INSTANCE *)Context;
 
   BASE_LIST_FOR_EACH_SAFE (Entry, Next, &Xhc->AsyncIntTransfers) {
     Urb = EFI_LIST_CONTAINER (Entry, URB, UrbList);
@@ -1685,7 +1727,7 @@ XhcMonitorAsyncRequests (
       // his callback. Some drivers may has a lower TPL restriction.
       //
       gBS->RestoreTPL (OldTpl);
-      (Urb->Callback) (ProcBuf, Urb->Completed, Urb->Context, Urb->Result);
+      (Urb->Callback)(ProcBuf, Urb->Completed, Urb->Context, Urb->Result);
       OldTpl = gBS->RaiseTPL (XHC_TPL);
     }
 
@@ -1719,16 +1761,18 @@ XhcPollPortStatusChange (
   IN  EFI_USB_PORT_STATUS   *PortState
   )
 {
-  EFI_STATUS        Status;
-  UINT8             Speed;
-  UINT8             SlotId;
-  UINT8             Retries;
-  USB_DEV_ROUTE     RouteChart;
+  EFI_STATUS     Status;
+  UINT8          Speed;
+  UINT8          SlotId;
+  UINT8          Retries;
+  USB_DEV_ROUTE  RouteChart;
 
-  Status = EFI_SUCCESS;
+  Status  = EFI_SUCCESS;
   Retries = XHC_INIT_DEVICE_SLOT_RETRIES;
 
-  if ((PortState->PortChangeStatus & (USB_PORT_STAT_C_CONNECTION | USB_PORT_STAT_C_ENABLE | USB_PORT_STAT_C_OVERCURRENT | USB_PORT_STAT_C_RESET)) == 0) {
+  if ((PortState->PortChangeStatus &
+       (USB_PORT_STAT_C_CONNECTION | USB_PORT_STAT_C_ENABLE | USB_PORT_STAT_C_OVERCURRENT | USB_PORT_STAT_C_RESET)) ==
+      0) {
     return EFI_SUCCESS;
   }
 
@@ -1738,12 +1782,15 @@ XhcPollPortStatusChange (
     RouteChart.Route.TierNum     = 1;
   } else {
     if(Port < 14) {
-      RouteChart.Route.RouteString = ParentRouteChart.Route.RouteString | (Port << (4 * (ParentRouteChart.Route.TierNum - 1)));
+      RouteChart.Route.RouteString = ParentRouteChart.Route.RouteString |
+                                     (Port << (4 * (ParentRouteChart.Route.TierNum - 1)));
     } else {
-      RouteChart.Route.RouteString = ParentRouteChart.Route.RouteString | (15 << (4 * (ParentRouteChart.Route.TierNum - 1)));
+      RouteChart.Route.RouteString = ParentRouteChart.Route.RouteString |
+                                     (15 << (4 * (ParentRouteChart.Route.TierNum - 1)));
     }
-    RouteChart.Route.RootPortNum   = ParentRouteChart.Route.RootPortNum;
-    RouteChart.Route.TierNum       = ParentRouteChart.Route.TierNum + 1;
+
+    RouteChart.Route.RootPortNum = ParentRouteChart.Route.RootPortNum;
+    RouteChart.Route.TierNum     = ParentRouteChart.Route.TierNum + 1;
   }
 
   SlotId = XhcRouteStringToSlotId (Xhc, RouteChart);
@@ -1796,7 +1843,6 @@ XhcPollPortStatusChange (
   return Status;
 }
 
-
 /**
   Calculate the device context index by endpoint address and direction.
 
@@ -1812,15 +1858,16 @@ XhcEndpointToDci (
   IN  UINT8                   Direction
   )
 {
-  UINT8 Index;
+  UINT8  Index;
 
   if (EpAddr == 0) {
     return 1;
   } else {
-    Index = (UINT8) (2 * EpAddr);
+    Index = (UINT8)(2 * EpAddr);
     if (Direction == EfiUsbDataIn) {
       Index += 1;
     }
+
     return Index;
   }
 }
@@ -1907,8 +1954,8 @@ XhcSyncEventRing (
   IN EVENT_RING           *EvtRing
   )
 {
-  UINTN               Index;
-  TRB_TEMPLATE        *EvtTrb1;
+  UINTN         Index;
+  TRB_TEMPLATE  *EvtTrb1;
 
   ASSERT (EvtRing != NULL);
 
@@ -1925,7 +1972,7 @@ XhcSyncEventRing (
 
     EvtTrb1++;
 
-    if ((UINTN)EvtTrb1 >= ((UINTN) EvtRing->EventRingSeg0 + sizeof (TRB_TEMPLATE) * EvtRing->TrbNumber)) {
+    if ((UINTN)EvtTrb1 >= ((UINTN)EvtRing->EventRingSeg0 + sizeof (TRB_TEMPLATE) * EvtRing->TrbNumber)) {
       EvtTrb1 = EvtRing->EventRingSeg0;
       EvtRing->EventRingCCS = (EvtRing->EventRingCCS) ? 0 : 1;
     }
@@ -1956,8 +2003,8 @@ XhcSyncTrsRing (
   IN TRANSFER_RING        *TrsRing
   )
 {
-  UINTN               Index;
-  TRB_TEMPLATE        *TrsTrb;
+  UINTN         Index;
+  TRB_TEMPLATE  *TrsTrb;
 
   ASSERT (TrsRing != NULL);
   //
@@ -1970,18 +2017,19 @@ XhcSyncTrsRing (
     if (TrsTrb->CycleBit != (TrsRing->RingPCS & BIT0)) {
       break;
     }
+
     TrsTrb++;
-    if ((UINT8) TrsTrb->Type == TRB_TYPE_LINK) {
-      ASSERT (((LINK_TRB*)TrsTrb)->TC != 0);
+    if ((UINT8)TrsTrb->Type == TRB_TYPE_LINK) {
+      ASSERT (((LINK_TRB *)TrsTrb)->TC != 0);
       //
       // set cycle bit in Link TRB as normal
       //
-      ((LINK_TRB*)TrsTrb)->CycleBit = TrsRing->RingPCS & BIT0;
+      ((LINK_TRB *)TrsTrb)->CycleBit = TrsRing->RingPCS & BIT0;
       //
       // Toggle PCS maintained by software
       //
       TrsRing->RingPCS = (TrsRing->RingPCS & BIT0) ? 0 : 1;
-      TrsTrb = (TRB_TEMPLATE *) TrsRing->RingSeg0;  // Use host address
+      TrsTrb = (TRB_TEMPLATE *)TrsRing->RingSeg0;   // Use host address
     }
   }
 
@@ -1998,8 +2046,8 @@ XhcSyncTrsRing (
   TrsTrb->Parameter2 = 0;
   TrsTrb->Status     = 0;
   TrsTrb->RsvdZ1     = 0;
-  TrsTrb->Type       = 0;
-  TrsTrb->Control    = 0;
+  TrsTrb->Type    = 0;
+  TrsTrb->Control = 0;
 
   return EFI_SUCCESS;
 }
@@ -2035,7 +2083,8 @@ XhcCheckNewEvent (
   //
   // If the dequeue pointer is beyond the ring, then roll-back it to the begining of the ring.
   //
-  if ((UINTN)EvtRing->EventRingDequeue >= ((UINTN) EvtRing->EventRingSeg0 + sizeof (TRB_TEMPLATE) * EvtRing->TrbNumber)) {
+  if ((UINTN)EvtRing->EventRingDequeue >=
+      ((UINTN)EvtRing->EventRingSeg0 + sizeof (TRB_TEMPLATE) * EvtRing->TrbNumber)) {
     EvtRing->EventRingDequeue = EvtRing->EventRingSeg0;
   }
 
@@ -2084,8 +2133,8 @@ RingIntTransferDoorBell (
   IN  URB                 *Urb
   )
 {
-  UINT8                SlotId;
-  UINT8                Dci;
+  UINT8  SlotId;
+  UINT8  Dci;
 
   SlotId = XhcBusDevAddrToSlotId (Xhc, Urb->Ep.BusAddr);
   Dci    = XhcEndpointToDci (Urb->Ep.EpAddr, (UINT8)(Urb->Ep.Direction));
@@ -2133,24 +2182,25 @@ XhcInitializeDeviceSlot (
   CmdTrb.Type     = TRB_TYPE_EN_SLOT;
 
   Status = XhcCmdTransfer (
-              Xhc,
-              (TRB_TEMPLATE *) (UINTN) &CmdTrb,
-              XHC_GENERIC_TIMEOUT,
-              (TRB_TEMPLATE **) (UINTN) &EvtTrb
-              );
+             Xhc,
+             (TRB_TEMPLATE *)(UINTN)&CmdTrb,
+             XHC_GENERIC_TIMEOUT,
+             (TRB_TEMPLATE **)(UINTN)&EvtTrb
+             );
   if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "XhcInitializeDeviceSlot: Enable Slot Failed, Status = %r\n", Status));
     return Status;
   }
+
   ASSERT (EvtTrb->SlotId <= Xhc->MaxSlotsEn);
   DEBUG ((EFI_D_INFO, "Enable Slot Successfully, The Slot ID = 0x%x\n", EvtTrb->SlotId));
   SlotId = (UINT8)EvtTrb->SlotId;
   ASSERT (SlotId != 0);
 
   ZeroMem (&Xhc->UsbDevContext[SlotId], sizeof (USB_DEV_CONTEXT));
-  Xhc->UsbDevContext[SlotId].Enabled                 = TRUE;
-  Xhc->UsbDevContext[SlotId].SlotId                  = SlotId;
-  Xhc->UsbDevContext[SlotId].RouteString.Dword       = RouteChart.Dword;
+  Xhc->UsbDevContext[SlotId].Enabled = TRUE;
+  Xhc->UsbDevContext[SlotId].SlotId  = SlotId;
+  Xhc->UsbDevContext[SlotId].RouteString.Dword = RouteChart.Dword;
   Xhc->UsbDevContext[SlotId].ParentRouteString.Dword = ParentRouteChart.Dword;
 
   //
@@ -2159,23 +2209,23 @@ XhcInitializeDeviceSlot (
   //
   InputContext = UsbHcAllocateMem (Xhc->MemPool, sizeof (INPUT_CONTEXT));
   ASSERT (InputContext != NULL);
-  ASSERT (((UINTN) InputContext & 0x3F) == 0);
+  ASSERT (((UINTN)InputContext & 0x3F) == 0);
   ZeroMem (InputContext, sizeof (INPUT_CONTEXT));
 
-  Xhc->UsbDevContext[SlotId].InputContext = (VOID *) InputContext;
+  Xhc->UsbDevContext[SlotId].InputContext = (VOID *)InputContext;
 
   //
   // 2) Initialize the Input Control Context (6.2.5.1) of the Input Context by setting the A0 and A1
-  //    flags to '1'. These flags indicate that the Slot Context and the Endpoint 0 Context of the Input
-  //    Context are affected by the command.
+  // flags to '1'. These flags indicate that the Slot Context and the Endpoint 0 Context of the Input
+  // Context are affected by the command.
   //
   InputContext->InputControlContext.Dword2 |= (BIT0 | BIT1);
 
   //
   // 3) Initialize the Input Slot Context data structure
   //
-  InputContext->Slot.RouteString    = RouteChart.Route.RouteString;
-  InputContext->Slot.Speed          = DeviceSpeed + 1;
+  InputContext->Slot.RouteString = RouteChart.Route.RouteString;
+  InputContext->Slot.Speed = DeviceSpeed + 1;
   InputContext->Slot.ContextEntries = 1;
   InputContext->Slot.RootHubPortNum = RouteChart.Route.RootPortNum;
 
@@ -2183,10 +2233,10 @@ XhcInitializeDeviceSlot (
     //
     // The device is behind of hub device.
     //
-    ParentSlotId = XhcRouteStringToSlotId(Xhc, ParentRouteChart);
+    ParentSlotId = XhcRouteStringToSlotId (Xhc, ParentRouteChart);
     ASSERT (ParentSlotId != 0);
     //
-    //if the Full/Low device attached to a High Speed Hub, Init the TTPortNum and TTHubSlotId field of slot context
+    // if the Full/Low device attached to a High Speed Hub, Init the TTPortNum and TTHubSlotId field of slot context
     //
     ParentDeviceContext = (DEVICE_CONTEXT *)Xhc->UsbDevContext[ParentSlotId].OutputContext;
     if ((ParentDeviceContext->Slot.TTPortNum == 0) &&
@@ -2219,7 +2269,7 @@ XhcInitializeDeviceSlot (
   //
   EndpointTransferRing = AllocateZeroPool (sizeof (TRANSFER_RING));
   Xhc->UsbDevContext[SlotId].EndpointTransferRing[0] = EndpointTransferRing;
-  CreateTransferRing(Xhc, TR_RING_TRB_NUMBER, (TRANSFER_RING *)Xhc->UsbDevContext[SlotId].EndpointTransferRing[0]);
+  CreateTransferRing (Xhc, TR_RING_TRB_NUMBER, (TRANSFER_RING *)Xhc->UsbDevContext[SlotId].EndpointTransferRing[0]);
   //
   // 5) Initialize the Input default control Endpoint 0 Context (6.2.3).
   //
@@ -2232,16 +2282,17 @@ XhcInitializeDeviceSlot (
   } else {
     InputContext->EP[0].MaxPacketSize = 8;
   }
+
   //
   // Initial value of Average TRB Length for Control endpoints would be 8B, Interrupt endpoints
   // 1KB, and Bulk and Isoch endpoints 3KB.
   //
   InputContext->EP[0].AverageTRBLength = 8;
   InputContext->EP[0].MaxBurstSize     = 0;
-  InputContext->EP[0].Interval         = 0;
-  InputContext->EP[0].MaxPStreams      = 0;
-  InputContext->EP[0].Mult             = 0;
-  InputContext->EP[0].CErr             = 3;
+  InputContext->EP[0].Interval    = 0;
+  InputContext->EP[0].MaxPStreams = 0;
+  InputContext->EP[0].Mult = 0;
+  InputContext->EP[0].CErr = 3;
 
   //
   // Init the DCS(dequeue cycle state) as the transfer ring's CCS
@@ -2259,23 +2310,23 @@ XhcInitializeDeviceSlot (
   //
   OutputContext = UsbHcAllocateMem (Xhc->MemPool, sizeof (DEVICE_CONTEXT));
   ASSERT (OutputContext != NULL);
-  ASSERT (((UINTN) OutputContext & 0x3F) == 0);
+  ASSERT (((UINTN)OutputContext & 0x3F) == 0);
   ZeroMem (OutputContext, sizeof (DEVICE_CONTEXT));
 
   Xhc->UsbDevContext[SlotId].OutputContext = OutputContext;
   //
   // 7) Load the appropriate (Device Slot ID) entry in the Device Context Base Address Array (5.4.6) with
-  //    a pointer to the Output Device Context data structure (6.2.1).
+  // a pointer to the Output Device Context data structure (6.2.1).
   //
   PhyAddr = UsbHcGetPciAddrForHostAddr (Xhc->MemPool, OutputContext, sizeof (DEVICE_CONTEXT));
   //
   // Fill DCBAA with PCI device address
   //
-  Xhc->DCBAA[SlotId] = (UINT64) (UINTN) PhyAddr;
+  Xhc->DCBAA[SlotId] = (UINT64)(UINTN)PhyAddr;
 
   //
   // 8) Issue an Address Device Command for the Device Slot, where the command points to the Input
-  //    Context data structure described above.
+  // Context data structure described above.
   //
   // Delay 10ms to meet TRSTRCY delay requirement in usb 2.0 spec chapter 7.1.7.5 before sending SetAddress() request
   // to device.
@@ -2290,12 +2341,12 @@ XhcInitializeDeviceSlot (
   CmdTrbAddr.SlotId   = Xhc->UsbDevContext[SlotId].SlotId;
   Status = XhcCmdTransfer (
              Xhc,
-             (TRB_TEMPLATE *) (UINTN) &CmdTrbAddr,
+             (TRB_TEMPLATE *)(UINTN)&CmdTrbAddr,
              XHC_GENERIC_TIMEOUT,
-             (TRB_TEMPLATE **) (UINTN) &EvtTrb
+             (TRB_TEMPLATE **)(UINTN)&EvtTrb
              );
   if (!EFI_ERROR (Status)) {
-    DeviceAddress = (UINT8) ((DEVICE_CONTEXT *) OutputContext)->Slot.DeviceAddress;
+    DeviceAddress = (UINT8)((DEVICE_CONTEXT *)OutputContext)->Slot.DeviceAddress;
     DEBUG ((EFI_D_INFO, "    Address %d assigned successfully\n", DeviceAddress));
     Xhc->UsbDevContext[SlotId].XhciDevAddr = DeviceAddress;
   } else {
@@ -2346,24 +2397,25 @@ XhcInitializeDeviceSlot64 (
   CmdTrb.Type     = TRB_TYPE_EN_SLOT;
 
   Status = XhcCmdTransfer (
-              Xhc,
-              (TRB_TEMPLATE *) (UINTN) &CmdTrb,
-              XHC_GENERIC_TIMEOUT,
-              (TRB_TEMPLATE **) (UINTN) &EvtTrb
-              );
+             Xhc,
+             (TRB_TEMPLATE *)(UINTN)&CmdTrb,
+             XHC_GENERIC_TIMEOUT,
+             (TRB_TEMPLATE **)(UINTN)&EvtTrb
+             );
   if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "XhcInitializeDeviceSlot64: Enable Slot Failed, Status = %r\n", Status));
     return Status;
   }
+
   ASSERT (EvtTrb->SlotId <= Xhc->MaxSlotsEn);
   DEBUG ((EFI_D_INFO, "Enable Slot Successfully, The Slot ID = 0x%x\n", EvtTrb->SlotId));
   SlotId = (UINT8)EvtTrb->SlotId;
   ASSERT (SlotId != 0);
 
   ZeroMem (&Xhc->UsbDevContext[SlotId], sizeof (USB_DEV_CONTEXT));
-  Xhc->UsbDevContext[SlotId].Enabled                 = TRUE;
-  Xhc->UsbDevContext[SlotId].SlotId                  = SlotId;
-  Xhc->UsbDevContext[SlotId].RouteString.Dword       = RouteChart.Dword;
+  Xhc->UsbDevContext[SlotId].Enabled = TRUE;
+  Xhc->UsbDevContext[SlotId].SlotId  = SlotId;
+  Xhc->UsbDevContext[SlotId].RouteString.Dword = RouteChart.Dword;
   Xhc->UsbDevContext[SlotId].ParentRouteString.Dword = ParentRouteChart.Dword;
 
   //
@@ -2372,23 +2424,23 @@ XhcInitializeDeviceSlot64 (
   //
   InputContext = UsbHcAllocateMem (Xhc->MemPool, sizeof (INPUT_CONTEXT_64));
   ASSERT (InputContext != NULL);
-  ASSERT (((UINTN) InputContext & 0x3F) == 0);
+  ASSERT (((UINTN)InputContext & 0x3F) == 0);
   ZeroMem (InputContext, sizeof (INPUT_CONTEXT_64));
 
-  Xhc->UsbDevContext[SlotId].InputContext = (VOID *) InputContext;
+  Xhc->UsbDevContext[SlotId].InputContext = (VOID *)InputContext;
 
   //
   // 2) Initialize the Input Control Context (6.2.5.1) of the Input Context by setting the A0 and A1
-  //    flags to '1'. These flags indicate that the Slot Context and the Endpoint 0 Context of the Input
-  //    Context are affected by the command.
+  // flags to '1'. These flags indicate that the Slot Context and the Endpoint 0 Context of the Input
+  // Context are affected by the command.
   //
   InputContext->InputControlContext.Dword2 |= (BIT0 | BIT1);
 
   //
   // 3) Initialize the Input Slot Context data structure
   //
-  InputContext->Slot.RouteString    = RouteChart.Route.RouteString;
-  InputContext->Slot.Speed          = DeviceSpeed + 1;
+  InputContext->Slot.RouteString = RouteChart.Route.RouteString;
+  InputContext->Slot.Speed = DeviceSpeed + 1;
   InputContext->Slot.ContextEntries = 1;
   InputContext->Slot.RootHubPortNum = RouteChart.Route.RootPortNum;
 
@@ -2396,10 +2448,10 @@ XhcInitializeDeviceSlot64 (
     //
     // The device is behind of hub device.
     //
-    ParentSlotId = XhcRouteStringToSlotId(Xhc, ParentRouteChart);
+    ParentSlotId = XhcRouteStringToSlotId (Xhc, ParentRouteChart);
     ASSERT (ParentSlotId != 0);
     //
-    //if the Full/Low device attached to a High Speed Hub, Init the TTPortNum and TTHubSlotId field of slot context
+    // if the Full/Low device attached to a High Speed Hub, Init the TTPortNum and TTHubSlotId field of slot context
     //
     ParentDeviceContext = (DEVICE_CONTEXT_64 *)Xhc->UsbDevContext[ParentSlotId].OutputContext;
     if ((ParentDeviceContext->Slot.TTPortNum == 0) &&
@@ -2432,7 +2484,7 @@ XhcInitializeDeviceSlot64 (
   //
   EndpointTransferRing = AllocateZeroPool (sizeof (TRANSFER_RING));
   Xhc->UsbDevContext[SlotId].EndpointTransferRing[0] = EndpointTransferRing;
-  CreateTransferRing(Xhc, TR_RING_TRB_NUMBER, (TRANSFER_RING *)Xhc->UsbDevContext[SlotId].EndpointTransferRing[0]);
+  CreateTransferRing (Xhc, TR_RING_TRB_NUMBER, (TRANSFER_RING *)Xhc->UsbDevContext[SlotId].EndpointTransferRing[0]);
   //
   // 5) Initialize the Input default control Endpoint 0 Context (6.2.3).
   //
@@ -2445,16 +2497,17 @@ XhcInitializeDeviceSlot64 (
   } else {
     InputContext->EP[0].MaxPacketSize = 8;
   }
+
   //
   // Initial value of Average TRB Length for Control endpoints would be 8B, Interrupt endpoints
   // 1KB, and Bulk and Isoch endpoints 3KB.
   //
   InputContext->EP[0].AverageTRBLength = 8;
   InputContext->EP[0].MaxBurstSize     = 0;
-  InputContext->EP[0].Interval         = 0;
-  InputContext->EP[0].MaxPStreams      = 0;
-  InputContext->EP[0].Mult             = 0;
-  InputContext->EP[0].CErr             = 3;
+  InputContext->EP[0].Interval    = 0;
+  InputContext->EP[0].MaxPStreams = 0;
+  InputContext->EP[0].Mult = 0;
+  InputContext->EP[0].CErr = 3;
 
   //
   // Init the DCS(dequeue cycle state) as the transfer ring's CCS
@@ -2472,30 +2525,31 @@ XhcInitializeDeviceSlot64 (
   //
   OutputContext = UsbHcAllocateMem (Xhc->MemPool, sizeof (DEVICE_CONTEXT_64));
   ASSERT (OutputContext != NULL);
-  ASSERT (((UINTN) OutputContext & 0x3F) == 0);
+  ASSERT (((UINTN)OutputContext & 0x3F) == 0);
   ZeroMem (OutputContext, sizeof (DEVICE_CONTEXT_64));
 
   Xhc->UsbDevContext[SlotId].OutputContext = OutputContext;
   //
   // 7) Load the appropriate (Device Slot ID) entry in the Device Context Base Address Array (5.4.6) with
-  //    a pointer to the Output Device Context data structure (6.2.1).
+  // a pointer to the Output Device Context data structure (6.2.1).
   //
   PhyAddr = UsbHcGetPciAddrForHostAddr (Xhc->MemPool, OutputContext, sizeof (DEVICE_CONTEXT_64));
   //
   // Fill DCBAA with PCI device address
   //
-  Xhc->DCBAA[SlotId] = (UINT64) (UINTN) PhyAddr;
+  Xhc->DCBAA[SlotId] = (UINT64)(UINTN)PhyAddr;
 
   //
   // 8) Issue an Address Device Command for the Device Slot, where the command points to the Input
-  //    Context data structure described above.
+  // Context data structure described above.
   //
   // Delay 10ms to meet TRSTRCY delay requirement in usb 2.0 spec chapter 7.1.7.5 before sending SetAddress() request
   // to device.
   //
   gBS->Stall (XHC_RESET_RECOVERY_DELAY);
   ZeroMem (&CmdTrbAddr, sizeof (CmdTrbAddr));
-  PhyAddr = UsbHcGetPciAddrForHostAddr (Xhc->MemPool, Xhc->UsbDevContext[SlotId].InputContext, sizeof (INPUT_CONTEXT_64));
+  PhyAddr =
+    UsbHcGetPciAddrForHostAddr (Xhc->MemPool, Xhc->UsbDevContext[SlotId].InputContext, sizeof (INPUT_CONTEXT_64));
   CmdTrbAddr.PtrLo    = XHC_LOW_32BIT (PhyAddr);
   CmdTrbAddr.PtrHi    = XHC_HIGH_32BIT (PhyAddr);
   CmdTrbAddr.CycleBit = 1;
@@ -2503,12 +2557,12 @@ XhcInitializeDeviceSlot64 (
   CmdTrbAddr.SlotId   = Xhc->UsbDevContext[SlotId].SlotId;
   Status = XhcCmdTransfer (
              Xhc,
-             (TRB_TEMPLATE *) (UINTN) &CmdTrbAddr,
+             (TRB_TEMPLATE *)(UINTN)&CmdTrbAddr,
              XHC_GENERIC_TIMEOUT,
-             (TRB_TEMPLATE **) (UINTN) &EvtTrb
+             (TRB_TEMPLATE **)(UINTN)&EvtTrb
              );
   if (!EFI_ERROR (Status)) {
-    DeviceAddress = (UINT8) ((DEVICE_CONTEXT_64 *) OutputContext)->Slot.DeviceAddress;
+    DeviceAddress = (UINT8)((DEVICE_CONTEXT_64 *)OutputContext)->Slot.DeviceAddress;
     DEBUG ((EFI_D_INFO, "    Address %d assigned successfully\n", DeviceAddress));
     Xhc->UsbDevContext[SlotId].XhciDevAddr = DeviceAddress;
   } else {
@@ -2518,7 +2572,6 @@ XhcInitializeDeviceSlot64 (
 
   return Status;
 }
-
 
 /**
   Disable the specified device slot.
@@ -2572,14 +2625,15 @@ XhcDisableSlotCmd (
   CmdTrbDisSlot.SlotId   = SlotId;
   Status = XhcCmdTransfer (
              Xhc,
-             (TRB_TEMPLATE *) (UINTN) &CmdTrbDisSlot,
+             (TRB_TEMPLATE *)(UINTN)&CmdTrbDisSlot,
              XHC_GENERIC_TIMEOUT,
-             (TRB_TEMPLATE **) (UINTN) &EvtTrb
+             (TRB_TEMPLATE **)(UINTN)&EvtTrb
              );
   if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "XhcDisableSlotCmd: Disable Slot Command Failed, Status = %r\n", Status));
     return Status;
   }
+
   //
   // Free the slot's device context entry
   //
@@ -2594,6 +2648,7 @@ XhcDisableSlotCmd (
       if (RingSeg != NULL) {
         UsbHcFreeMem (Xhc->MemPool, RingSeg, sizeof (TRB_TEMPLATE) * TR_RING_TRB_NUMBER);
       }
+
       FreePool (Xhc->UsbDevContext[SlotId].EndpointTransferRing[Index]);
       Xhc->UsbDevContext[SlotId].EndpointTransferRing[Index] = NULL;
     }
@@ -2616,6 +2671,7 @@ XhcDisableSlotCmd (
   if (Xhc->UsbDevContext[SlotId].OutputContext != NULL) {
     UsbHcFreeMem (Xhc->MemPool, Xhc->UsbDevContext[SlotId].OutputContext, sizeof (DEVICE_CONTEXT));
   }
+
   //
   // Doesn't zero the entry because XhcAsyncInterruptTransfer() may be invoked to remove the established
   // asynchronous interrupt pipe after the device is disabled. It needs the device address mapping info to
@@ -2679,14 +2735,15 @@ XhcDisableSlotCmd64 (
   CmdTrbDisSlot.SlotId   = SlotId;
   Status = XhcCmdTransfer (
              Xhc,
-             (TRB_TEMPLATE *) (UINTN) &CmdTrbDisSlot,
+             (TRB_TEMPLATE *)(UINTN)&CmdTrbDisSlot,
              XHC_GENERIC_TIMEOUT,
-             (TRB_TEMPLATE **) (UINTN) &EvtTrb
+             (TRB_TEMPLATE **)(UINTN)&EvtTrb
              );
   if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "XhcDisableSlotCmd: Disable Slot Command Failed, Status = %r\n", Status));
     return Status;
   }
+
   //
   // Free the slot's device context entry
   //
@@ -2701,6 +2758,7 @@ XhcDisableSlotCmd64 (
       if (RingSeg != NULL) {
         UsbHcFreeMem (Xhc->MemPool, RingSeg, sizeof (TRB_TEMPLATE) * TR_RING_TRB_NUMBER);
       }
+
       FreePool (Xhc->UsbDevContext[SlotId].EndpointTransferRing[Index]);
       Xhc->UsbDevContext[SlotId].EndpointTransferRing[Index] = NULL;
     }
@@ -2721,8 +2779,9 @@ XhcDisableSlotCmd64 (
   }
 
   if (Xhc->UsbDevContext[SlotId].OutputContext != NULL) {
-     UsbHcFreeMem (Xhc->MemPool, Xhc->UsbDevContext[SlotId].OutputContext, sizeof (DEVICE_CONTEXT_64));
+    UsbHcFreeMem (Xhc->MemPool, Xhc->UsbDevContext[SlotId].OutputContext, sizeof (DEVICE_CONTEXT_64));
   }
+
   //
   // Doesn't zero the entry because XhcAsyncInterruptTransfer() may be invoked to remove the established
   // asynchronous interrupt pipe after the device is disabled. It needs the device address mapping info to
@@ -2756,16 +2815,16 @@ XhcInitializeEndpointContext (
   IN USB_INTERFACE_DESCRIPTOR   *IfDesc
   )
 {
-  USB_ENDPOINT_DESCRIPTOR       *EpDesc;
-  UINTN                         NumEp;
-  UINTN                         EpIndex;
-  UINT8                         EpAddr;
-  UINT8                         Direction;
-  UINT8                         Dci;
-  UINT8                         MaxDci;
-  EFI_PHYSICAL_ADDRESS          PhyAddr;
-  UINT8                         Interval;
-  TRANSFER_RING                 *EndpointTransferRing;
+  USB_ENDPOINT_DESCRIPTOR  *EpDesc;
+  UINTN                    NumEp;
+  UINTN                    EpIndex;
+  UINT8                    EpAddr;
+  UINT8                    Direction;
+  UINT8                    Dci;
+  UINT8                    MaxDci;
+  EFI_PHYSICAL_ADDRESS     PhyAddr;
+  UINT8                    Interval;
+  TRANSFER_RING            *EndpointTransferRing;
 
   MaxDci = 0;
 
@@ -2815,14 +2874,20 @@ XhcInitializeEndpointContext (
 
         InputContext->EP[Dci-1].AverageTRBLength = 0x1000;
         if (Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1] == NULL) {
-          EndpointTransferRing = AllocateZeroPool(sizeof (TRANSFER_RING));
-          Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1] = (VOID *) EndpointTransferRing;
-          CreateTransferRing(Xhc, TR_RING_TRB_NUMBER, (TRANSFER_RING *)Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1]);
-          DEBUG ((DEBUG_INFO, "Endpoint[%x]: Created BULK ring [%p~%p)\n",
-                  EpDesc->EndpointAddress,
-                  EndpointTransferRing->RingSeg0,
-                  (UINTN) EndpointTransferRing->RingSeg0 + TR_RING_TRB_NUMBER * sizeof (TRB_TEMPLATE)
-                  ));
+          EndpointTransferRing = AllocateZeroPool (sizeof (TRANSFER_RING));
+          Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1] = (VOID *)EndpointTransferRing;
+          CreateTransferRing (
+            Xhc,
+            TR_RING_TRB_NUMBER,
+            (TRANSFER_RING *)Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1]
+            );
+          DEBUG ((
+            DEBUG_INFO,
+            "Endpoint[%x]: Created BULK ring [%p~%p)\n",
+            EpDesc->EndpointAddress,
+            EndpointTransferRing->RingSeg0,
+            (UINTN)EndpointTransferRing->RingSeg0 + TR_RING_TRB_NUMBER * sizeof (TRB_TEMPLATE)
+            ));
         }
 
         break;
@@ -2834,6 +2899,7 @@ XhcInitializeEndpointContext (
           InputContext->EP[Dci-1].CErr   = 0;
           InputContext->EP[Dci-1].EPType = ED_ISOCH_OUT;
         }
+
         //
         // Get the bInterval from descriptor and init the the interval field of endpoint context.
         // Refer to XHCI 1.1 spec section 6.2.3.6.
@@ -2862,6 +2928,7 @@ XhcInitializeEndpointContext (
           InputContext->EP[Dci-1].CErr   = 3;
           InputContext->EP[Dci-1].EPType = ED_INTERRUPT_OUT;
         }
+
         InputContext->EP[Dci-1].AverageTRBLength = 0x1000;
         InputContext->EP[Dci-1].MaxESITPayload   = EpDesc->MaxPacketSize;
         //
@@ -2873,37 +2940,47 @@ XhcInitializeEndpointContext (
           // Calculate through the bInterval field of Endpoint descriptor.
           //
           ASSERT (Interval != 0);
-          InputContext->EP[Dci-1].Interval = (UINT32)HighBitSet32((UINT32)Interval) + 3;
+          InputContext->EP[Dci-1].Interval = (UINT32)HighBitSet32 ((UINT32)Interval) + 3;
         } else if ((DeviceSpeed == EFI_USB_SPEED_HIGH) || (DeviceSpeed == EFI_USB_SPEED_SUPER)) {
           Interval = EpDesc->Interval;
           ASSERT (Interval >= 1 && Interval <= 16);
           //
           // Refer to XHCI 1.0 spec section 6.2.3.6, table 61
           //
-          InputContext->EP[Dci-1].Interval         = Interval - 1;
+          InputContext->EP[Dci-1].Interval = Interval - 1;
           InputContext->EP[Dci-1].AverageTRBLength = 0x1000;
           InputContext->EP[Dci-1].MaxESITPayload   = 0x0002;
           InputContext->EP[Dci-1].MaxBurstSize     = 0x0;
-          InputContext->EP[Dci-1].CErr             = 3;
+          InputContext->EP[Dci-1].CErr = 3;
         }
 
         if (Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1] == NULL) {
-          EndpointTransferRing = AllocateZeroPool(sizeof (TRANSFER_RING));
-          Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1] = (VOID *) EndpointTransferRing;
-          CreateTransferRing(Xhc, TR_RING_TRB_NUMBER, (TRANSFER_RING *)Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1]);
-          DEBUG ((DEBUG_INFO, "Endpoint[%x]: Created INT ring [%p~%p)\n",
-                  EpDesc->EndpointAddress,
-                  EndpointTransferRing->RingSeg0,
-                  (UINTN) EndpointTransferRing->RingSeg0 + TR_RING_TRB_NUMBER * sizeof (TRB_TEMPLATE)
-                  ));
+          EndpointTransferRing = AllocateZeroPool (sizeof (TRANSFER_RING));
+          Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1] = (VOID *)EndpointTransferRing;
+          CreateTransferRing (
+            Xhc,
+            TR_RING_TRB_NUMBER,
+            (TRANSFER_RING *)Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1]
+            );
+          DEBUG ((
+            DEBUG_INFO,
+            "Endpoint[%x]: Created INT ring [%p~%p)\n",
+            EpDesc->EndpointAddress,
+            EndpointTransferRing->RingSeg0,
+            (UINTN)EndpointTransferRing->RingSeg0 + TR_RING_TRB_NUMBER * sizeof (TRB_TEMPLATE)
+            ));
         }
+
         break;
 
       case USB_ENDPOINT_CONTROL:
         //
         // Do not support control transfer now.
         //
-        DEBUG ((EFI_D_INFO, "XhcInitializeEndpointContext: Unsupport Control EP found, Transfer ring is not allocated.\n"));
+        DEBUG ((
+          EFI_D_INFO,
+          "XhcInitializeEndpointContext: Unsupport Control EP found, Transfer ring is not allocated.\n"
+          ));
       default:
         DEBUG ((EFI_D_INFO, "XhcInitializeEndpointContext: Unknown EP found, Transfer ring is not allocated.\n"));
         EpDesc = (USB_ENDPOINT_DESCRIPTOR *)((UINTN)EpDesc + EpDesc->Length);
@@ -2916,7 +2993,8 @@ XhcInitializeEndpointContext (
                 sizeof (TRB_TEMPLATE) * TR_RING_TRB_NUMBER
                 );
     PhyAddr &= ~((EFI_PHYSICAL_ADDRESS)0x0F);
-    PhyAddr |= (EFI_PHYSICAL_ADDRESS)((TRANSFER_RING *)(UINTN)Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1])->RingPCS;
+    PhyAddr |=
+      (EFI_PHYSICAL_ADDRESS)((TRANSFER_RING *)(UINTN)Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1])->RingPCS;
     InputContext->EP[Dci-1].PtrLo = XHC_LOW_32BIT (PhyAddr);
     InputContext->EP[Dci-1].PtrHi = XHC_HIGH_32BIT (PhyAddr);
 
@@ -2948,16 +3026,16 @@ XhcInitializeEndpointContext64 (
   IN USB_INTERFACE_DESCRIPTOR   *IfDesc
   )
 {
-  USB_ENDPOINT_DESCRIPTOR       *EpDesc;
-  UINTN                         NumEp;
-  UINTN                         EpIndex;
-  UINT8                         EpAddr;
-  UINT8                         Direction;
-  UINT8                         Dci;
-  UINT8                         MaxDci;
-  EFI_PHYSICAL_ADDRESS          PhyAddr;
-  UINT8                         Interval;
-  TRANSFER_RING                 *EndpointTransferRing;
+  USB_ENDPOINT_DESCRIPTOR  *EpDesc;
+  UINTN                    NumEp;
+  UINTN                    EpIndex;
+  UINT8                    EpAddr;
+  UINT8                    Direction;
+  UINT8                    Dci;
+  UINT8                    MaxDci;
+  EFI_PHYSICAL_ADDRESS     PhyAddr;
+  UINT8                    Interval;
+  TRANSFER_RING            *EndpointTransferRing;
 
   MaxDci = 0;
 
@@ -3007,14 +3085,20 @@ XhcInitializeEndpointContext64 (
 
         InputContext->EP[Dci-1].AverageTRBLength = 0x1000;
         if (Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1] == NULL) {
-          EndpointTransferRing = AllocateZeroPool(sizeof (TRANSFER_RING));
-          Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1] = (VOID *) EndpointTransferRing;
-          CreateTransferRing(Xhc, TR_RING_TRB_NUMBER, (TRANSFER_RING *)Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1]);
-          DEBUG ((DEBUG_INFO, "Endpoint64[%x]: Created BULK ring [%p~%p)\n",
-                  EpDesc->EndpointAddress,
-                  EndpointTransferRing->RingSeg0,
-                  (UINTN) EndpointTransferRing->RingSeg0 + TR_RING_TRB_NUMBER * sizeof (TRB_TEMPLATE)
-                  ));
+          EndpointTransferRing = AllocateZeroPool (sizeof (TRANSFER_RING));
+          Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1] = (VOID *)EndpointTransferRing;
+          CreateTransferRing (
+            Xhc,
+            TR_RING_TRB_NUMBER,
+            (TRANSFER_RING *)Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1]
+            );
+          DEBUG ((
+            DEBUG_INFO,
+            "Endpoint64[%x]: Created BULK ring [%p~%p)\n",
+            EpDesc->EndpointAddress,
+            EndpointTransferRing->RingSeg0,
+            (UINTN)EndpointTransferRing->RingSeg0 + TR_RING_TRB_NUMBER * sizeof (TRB_TEMPLATE)
+            ));
         }
 
         break;
@@ -3026,6 +3110,7 @@ XhcInitializeEndpointContext64 (
           InputContext->EP[Dci-1].CErr   = 0;
           InputContext->EP[Dci-1].EPType = ED_ISOCH_OUT;
         }
+
         //
         // Get the bInterval from descriptor and init the the interval field of endpoint context.
         // Refer to XHCI 1.1 spec section 6.2.3.6.
@@ -3043,7 +3128,10 @@ XhcInitializeEndpointContext64 (
         //
         // Do not support isochronous transfer now.
         //
-        DEBUG ((EFI_D_INFO, "XhcInitializeEndpointContext64: Unsupport ISO EP found, Transfer ring is not allocated.\n"));
+        DEBUG ((
+          EFI_D_INFO,
+          "XhcInitializeEndpointContext64: Unsupport ISO EP found, Transfer ring is not allocated.\n"
+          ));
         EpDesc = (USB_ENDPOINT_DESCRIPTOR *)((UINTN)EpDesc + EpDesc->Length);
         continue;
       case USB_ENDPOINT_INTERRUPT:
@@ -3054,6 +3142,7 @@ XhcInitializeEndpointContext64 (
           InputContext->EP[Dci-1].CErr   = 3;
           InputContext->EP[Dci-1].EPType = ED_INTERRUPT_OUT;
         }
+
         InputContext->EP[Dci-1].AverageTRBLength = 0x1000;
         InputContext->EP[Dci-1].MaxESITPayload   = EpDesc->MaxPacketSize;
         //
@@ -3065,37 +3154,47 @@ XhcInitializeEndpointContext64 (
           // Calculate through the bInterval field of Endpoint descriptor.
           //
           ASSERT (Interval != 0);
-          InputContext->EP[Dci-1].Interval = (UINT32)HighBitSet32((UINT32)Interval) + 3;
+          InputContext->EP[Dci-1].Interval = (UINT32)HighBitSet32 ((UINT32)Interval) + 3;
         } else if ((DeviceSpeed == EFI_USB_SPEED_HIGH) || (DeviceSpeed == EFI_USB_SPEED_SUPER)) {
           Interval = EpDesc->Interval;
           ASSERT (Interval >= 1 && Interval <= 16);
           //
           // Refer to XHCI 1.0 spec section 6.2.3.6, table 61
           //
-          InputContext->EP[Dci-1].Interval         = Interval - 1;
+          InputContext->EP[Dci-1].Interval = Interval - 1;
           InputContext->EP[Dci-1].AverageTRBLength = 0x1000;
           InputContext->EP[Dci-1].MaxESITPayload   = 0x0002;
           InputContext->EP[Dci-1].MaxBurstSize     = 0x0;
-          InputContext->EP[Dci-1].CErr             = 3;
+          InputContext->EP[Dci-1].CErr = 3;
         }
 
         if (Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1] == NULL) {
-          EndpointTransferRing = AllocateZeroPool(sizeof (TRANSFER_RING));
-          Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1] = (VOID *) EndpointTransferRing;
-          CreateTransferRing(Xhc, TR_RING_TRB_NUMBER, (TRANSFER_RING *)Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1]);
-          DEBUG ((DEBUG_INFO, "Endpoint64[%x]: Created INT ring [%p~%p)\n",
-                  EpDesc->EndpointAddress,
-                  EndpointTransferRing->RingSeg0,
-                  (UINTN) EndpointTransferRing->RingSeg0 + TR_RING_TRB_NUMBER * sizeof (TRB_TEMPLATE)
-                  ));
+          EndpointTransferRing = AllocateZeroPool (sizeof (TRANSFER_RING));
+          Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1] = (VOID *)EndpointTransferRing;
+          CreateTransferRing (
+            Xhc,
+            TR_RING_TRB_NUMBER,
+            (TRANSFER_RING *)Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1]
+            );
+          DEBUG ((
+            DEBUG_INFO,
+            "Endpoint64[%x]: Created INT ring [%p~%p)\n",
+            EpDesc->EndpointAddress,
+            EndpointTransferRing->RingSeg0,
+            (UINTN)EndpointTransferRing->RingSeg0 + TR_RING_TRB_NUMBER * sizeof (TRB_TEMPLATE)
+            ));
         }
+
         break;
 
       case USB_ENDPOINT_CONTROL:
         //
         // Do not support control transfer now.
         //
-        DEBUG ((EFI_D_INFO, "XhcInitializeEndpointContext64: Unsupport Control EP found, Transfer ring is not allocated.\n"));
+        DEBUG ((
+          EFI_D_INFO,
+          "XhcInitializeEndpointContext64: Unsupport Control EP found, Transfer ring is not allocated.\n"
+          ));
       default:
         DEBUG ((EFI_D_INFO, "XhcInitializeEndpointContext64: Unknown EP found, Transfer ring is not allocated.\n"));
         EpDesc = (USB_ENDPOINT_DESCRIPTOR *)((UINTN)EpDesc + EpDesc->Length);
@@ -3108,7 +3207,8 @@ XhcInitializeEndpointContext64 (
                 sizeof (TRB_TEMPLATE) * TR_RING_TRB_NUMBER
                 );
     PhyAddr &= ~((EFI_PHYSICAL_ADDRESS)0x0F);
-    PhyAddr |= (EFI_PHYSICAL_ADDRESS)((TRANSFER_RING *)(UINTN)Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1])->RingPCS;
+    PhyAddr |=
+      (EFI_PHYSICAL_ADDRESS)((TRANSFER_RING *)(UINTN)Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1])->RingPCS;
     InputContext->EP[Dci-1].PtrLo = XHC_LOW_32BIT (PhyAddr);
     InputContext->EP[Dci-1].PtrHi = XHC_HIGH_32BIT (PhyAddr);
 
@@ -3138,17 +3238,18 @@ XhcSetConfigCmd (
   IN USB_CONFIG_DESCRIPTOR    *ConfigDesc
   )
 {
-  EFI_STATUS                  Status;
-  USB_INTERFACE_DESCRIPTOR    *IfDesc;
-  UINT8                       Index;
-  UINT8                       Dci;
-  UINT8                       MaxDci;
-  EFI_PHYSICAL_ADDRESS        PhyAddr;
+  EFI_STATUS                Status;
+  USB_INTERFACE_DESCRIPTOR  *IfDesc;
+  UINT8                     Index;
+  UINT8                     Dci;
+  UINT8                     MaxDci;
+  EFI_PHYSICAL_ADDRESS      PhyAddr;
 
   CMD_TRB_CONFIG_ENDPOINT     CmdTrbCfgEP;
   INPUT_CONTEXT               *InputContext;
   DEVICE_CONTEXT              *OutputContext;
   EVT_TRB_COMMAND_COMPLETION  *EvtTrb;
+
   //
   // 4.6.6 Configure Endpoint
   //
@@ -3181,7 +3282,7 @@ XhcSetConfigCmd (
   }
 
   InputContext->InputControlContext.Dword2 |= BIT0;
-  InputContext->Slot.ContextEntries         = MaxDci;
+  InputContext->Slot.ContextEntries = MaxDci;
   //
   // configure endpoint
   //
@@ -3195,9 +3296,9 @@ XhcSetConfigCmd (
   DEBUG ((EFI_D_INFO, "Configure Endpoint\n"));
   Status = XhcCmdTransfer (
              Xhc,
-             (TRB_TEMPLATE *) (UINTN) &CmdTrbCfgEP,
+             (TRB_TEMPLATE *)(UINTN)&CmdTrbCfgEP,
              XHC_GENERIC_TIMEOUT,
-             (TRB_TEMPLATE **) (UINTN) &EvtTrb
+             (TRB_TEMPLATE **)(UINTN)&EvtTrb
              );
   if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "XhcSetConfigCmd: Config Endpoint Failed, Status = %r\n", Status));
@@ -3228,17 +3329,18 @@ XhcSetConfigCmd64 (
   IN USB_CONFIG_DESCRIPTOR    *ConfigDesc
   )
 {
-  EFI_STATUS                  Status;
-  USB_INTERFACE_DESCRIPTOR    *IfDesc;
-  UINT8                       Index;
-  UINT8                       Dci;
-  UINT8                       MaxDci;
-  EFI_PHYSICAL_ADDRESS        PhyAddr;
+  EFI_STATUS                Status;
+  USB_INTERFACE_DESCRIPTOR  *IfDesc;
+  UINT8                     Index;
+  UINT8                     Dci;
+  UINT8                     MaxDci;
+  EFI_PHYSICAL_ADDRESS      PhyAddr;
 
   CMD_TRB_CONFIG_ENDPOINT     CmdTrbCfgEP;
   INPUT_CONTEXT_64            *InputContext;
   DEVICE_CONTEXT_64           *OutputContext;
   EVT_TRB_COMMAND_COMPLETION  *EvtTrb;
+
   //
   // 4.6.6 Configure Endpoint
   //
@@ -3271,12 +3373,12 @@ XhcSetConfigCmd64 (
   }
 
   InputContext->InputControlContext.Dword2 |= BIT0;
-  InputContext->Slot.ContextEntries         = MaxDci;
+  InputContext->Slot.ContextEntries = MaxDci;
   //
   // configure endpoint
   //
   ZeroMem (&CmdTrbCfgEP, sizeof (CmdTrbCfgEP));
-  PhyAddr  = UsbHcGetPciAddrForHostAddr (Xhc->MemPool, InputContext, sizeof (INPUT_CONTEXT_64));
+  PhyAddr = UsbHcGetPciAddrForHostAddr (Xhc->MemPool, InputContext, sizeof (INPUT_CONTEXT_64));
   CmdTrbCfgEP.PtrLo    = XHC_LOW_32BIT (PhyAddr);
   CmdTrbCfgEP.PtrHi    = XHC_HIGH_32BIT (PhyAddr);
   CmdTrbCfgEP.CycleBit = 1;
@@ -3285,9 +3387,9 @@ XhcSetConfigCmd64 (
   DEBUG ((EFI_D_INFO, "Configure Endpoint\n"));
   Status = XhcCmdTransfer (
              Xhc,
-             (TRB_TEMPLATE *) (UINTN) &CmdTrbCfgEP,
+             (TRB_TEMPLATE *)(UINTN)&CmdTrbCfgEP,
              XHC_GENERIC_TIMEOUT,
-             (TRB_TEMPLATE **) (UINTN) &EvtTrb
+             (TRB_TEMPLATE **)(UINTN)&EvtTrb
              );
   if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "XhcSetConfigCmd64: Config Endpoint Failed, Status = %r\n", Status));
@@ -3319,9 +3421,9 @@ XhcStopEndpoint (
   IN URB                    *PendingUrb  OPTIONAL
   )
 {
-  EFI_STATUS                    Status;
-  EVT_TRB_COMMAND_COMPLETION    *EvtTrb;
-  CMD_TRB_STOP_ENDPOINT         CmdTrbStopED;
+  EFI_STATUS                  Status;
+  EVT_TRB_COMMAND_COMPLETION  *EvtTrb;
+  CMD_TRB_STOP_ENDPOINT       CmdTrbStopED;
 
   DEBUG ((EFI_D_INFO, "XhcStopEndpoint: Slot = 0x%x, Dci = 0x%x\n", SlotId, Dci));
 
@@ -3341,8 +3443,8 @@ XhcStopEndpoint (
   //
   // Reset the URB result from Timeout to NoError.
   // The USB result will be:
-  //   changed to Timeout when Stop/StopInvalidLength Transfer Event is received, or
-  //   remain NoError when Success/ShortPacket Transfer Event is received.
+  // changed to Timeout when Stop/StopInvalidLength Transfer Event is received, or
+  // remain NoError when Success/ShortPacket Transfer Event is received.
   //
   if (PendingUrb != NULL) {
     PendingUrb->Result = EFI_USB_NOERROR;
@@ -3358,11 +3460,11 @@ XhcStopEndpoint (
   CmdTrbStopED.SlotId   = SlotId;
   Status = XhcCmdTransfer (
              Xhc,
-             (TRB_TEMPLATE *) (UINTN) &CmdTrbStopED,
+             (TRB_TEMPLATE *)(UINTN)&CmdTrbStopED,
              XHC_GENERIC_TIMEOUT,
-             (TRB_TEMPLATE **) (UINTN) &EvtTrb
+             (TRB_TEMPLATE **)(UINTN)&EvtTrb
              );
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "XhcStopEndpoint: Stop Endpoint Failed, Status = %r\n", Status));
   }
 
@@ -3406,11 +3508,11 @@ XhcResetEndpoint (
   CmdTrbResetED.SlotId   = SlotId;
   Status = XhcCmdTransfer (
              Xhc,
-             (TRB_TEMPLATE *) (UINTN) &CmdTrbResetED,
+             (TRB_TEMPLATE *)(UINTN)&CmdTrbResetED,
              XHC_GENERIC_TIMEOUT,
-             (TRB_TEMPLATE **) (UINTN) &EvtTrb
+             (TRB_TEMPLATE **)(UINTN)&EvtTrb
              );
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "XhcResetEndpoint: Reset Endpoint Failed, Status = %r\n", Status));
   }
 
@@ -3459,11 +3561,11 @@ XhcSetTrDequeuePointer (
   CmdSetTRDeq.SlotId   = SlotId;
   Status = XhcCmdTransfer (
              Xhc,
-             (TRB_TEMPLATE *) (UINTN) &CmdSetTRDeq,
+             (TRB_TEMPLATE *)(UINTN)&CmdSetTRDeq,
              XHC_GENERIC_TIMEOUT,
-             (TRB_TEMPLATE **) (UINTN) &EvtTrb
+             (TRB_TEMPLATE **)(UINTN)&EvtTrb
              );
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "XhcSetTrDequeuePointer: Set TR Dequeue Pointer Failed, Status = %r\n", Status));
   }
 
@@ -3492,19 +3594,19 @@ XhcSetInterface (
   IN EFI_USB_DEVICE_REQUEST   *Request
   )
 {
-  EFI_STATUS                  Status;
-  USB_INTERFACE_DESCRIPTOR    *IfDescActive;
-  USB_INTERFACE_DESCRIPTOR    *IfDescSet;
-  USB_INTERFACE_DESCRIPTOR    *IfDesc;
-  USB_ENDPOINT_DESCRIPTOR     *EpDesc;
-  UINTN                       NumEp;
-  UINTN                       EpIndex;
-  UINT8                       EpAddr;
-  UINT8                       Direction;
-  UINT8                       Dci;
-  UINT8                       MaxDci;
-  EFI_PHYSICAL_ADDRESS        PhyAddr;
-  VOID                        *RingSeg;
+  EFI_STATUS                Status;
+  USB_INTERFACE_DESCRIPTOR  *IfDescActive;
+  USB_INTERFACE_DESCRIPTOR  *IfDescSet;
+  USB_INTERFACE_DESCRIPTOR  *IfDesc;
+  USB_ENDPOINT_DESCRIPTOR   *EpDesc;
+  UINTN                     NumEp;
+  UINTN                     EpIndex;
+  UINT8                     EpAddr;
+  UINT8                     Direction;
+  UINT8                     Dci;
+  UINT8                     MaxDci;
+  EFI_PHYSICAL_ADDRESS      PhyAddr;
+  VOID                      *RingSeg;
 
   CMD_TRB_CONFIG_ENDPOINT     CmdTrbCfgEP;
   INPUT_CONTEXT               *InputContext;
@@ -3533,18 +3635,18 @@ XhcSetInterface (
   MaxDci = 0;
 
   IfDescActive = NULL;
-  IfDescSet = NULL;
+  IfDescSet    = NULL;
 
   IfDesc = (USB_INTERFACE_DESCRIPTOR *)(ConfigDesc + 1);
-  while ((UINTN) IfDesc < ((UINTN) ConfigDesc + ConfigDesc->TotalLength)) {
+  while ((UINTN)IfDesc < ((UINTN)ConfigDesc + ConfigDesc->TotalLength)) {
     if ((IfDesc->DescriptorType == USB_DESC_TYPE_INTERFACE) && (IfDesc->Length >= sizeof (USB_INTERFACE_DESCRIPTOR))) {
-      if (IfDesc->InterfaceNumber == (UINT8) Request->Index) {
+      if (IfDesc->InterfaceNumber == (UINT8)Request->Index) {
         if (IfDesc->AlternateSetting == Xhc->UsbDevContext[SlotId].ActiveAlternateSetting[IfDesc->InterfaceNumber]) {
           //
           // Find out the active interface descriptor.
           //
           IfDescActive = IfDesc;
-        } else if (IfDesc->AlternateSetting == (UINT8) Request->Value) {
+        } else if (IfDesc->AlternateSetting == (UINT8)Request->Value) {
           //
           // Find out the interface descriptor to set.
           //
@@ -3552,6 +3654,7 @@ XhcSetInterface (
         }
       }
     }
+
     IfDesc = (USB_INTERFACE_DESCRIPTOR *)((UINTN)IfDesc + IfDesc->Length);
   }
 
@@ -3570,8 +3673,8 @@ XhcSetInterface (
   //
 
   if ((IfDescActive != NULL) && (IfDescSet != NULL)) {
-    NumEp = IfDescActive->NumEndpoints;
-    EpDesc = (USB_ENDPOINT_DESCRIPTOR *) (IfDescActive + 1);
+    NumEp  = IfDescActive->NumEndpoints;
+    EpDesc = (USB_ENDPOINT_DESCRIPTOR *)(IfDescActive + 1);
     for (EpIndex = 0; EpIndex < NumEp; EpIndex++) {
       while (EpDesc->DescriptorType != USB_DESC_TYPE_ENDPOINT) {
         EpDesc = (USB_ENDPOINT_DESCRIPTOR *)((UINTN)EpDesc + EpDesc->Length);
@@ -3582,14 +3685,15 @@ XhcSetInterface (
         continue;
       }
 
-      EpAddr    = (UINT8) (EpDesc->EndpointAddress & 0x0F);
-      Direction = (UINT8) ((EpDesc->EndpointAddress & 0x80) ? EfiUsbDataIn : EfiUsbDataOut);
+      EpAddr    = (UINT8)(EpDesc->EndpointAddress & 0x0F);
+      Direction = (UINT8)((EpDesc->EndpointAddress & 0x80) ? EfiUsbDataIn : EfiUsbDataOut);
 
       Dci = XhcEndpointToDci (EpAddr, Direction);
       ASSERT (Dci < 32);
       if (Dci > MaxDci) {
         MaxDci = Dci;
       }
+
       //
       // XHCI 4.3.6 - Setting Alternate Interfaces
       // 1) Stop any Running Transfer Rings affected by the Alternate Interface setting.
@@ -3598,6 +3702,7 @@ XhcSetInterface (
       if (EFI_ERROR (Status)) {
         return Status;
       }
+
       //
       // XHCI 4.3.6 - Setting Alternate Interfaces
       // 2) Free Transfer Rings of all endpoints that will be affected by the Alternate Interface setting.
@@ -3607,6 +3712,7 @@ XhcSetInterface (
         if (RingSeg != NULL) {
           UsbHcFreeMem (Xhc->MemPool, RingSeg, sizeof (TRB_TEMPLATE) * TR_RING_TRB_NUMBER);
         }
+
         FreePool (Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci - 1]);
         Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci - 1] = NULL;
       }
@@ -3630,9 +3736,9 @@ XhcSetInterface (
     //
     // XHCI 4.3.6 - Setting Alternate Interfaces
     // 4) For each endpoint enabled by the Configure Endpoint Command:
-    //   a. Allocate a Transfer Ring.
-    //   b. Initialize the Transfer Ring Segment(s) by clearing all fields of all TRBs to '0'.
-    //   c. Initialize the Endpoint Context data structure.
+    // a. Allocate a Transfer Ring.
+    // b. Initialize the Transfer Ring Segment(s) by clearing all fields of all TRBs to '0'.
+    // c. Initialize the Endpoint Context data structure.
     //
     Dci = XhcInitializeEndpointContext (Xhc, SlotId, DeviceSpeed, InputContext, IfDescSet);
     if (Dci > MaxDci) {
@@ -3640,7 +3746,7 @@ XhcSetInterface (
     }
 
     InputContext->InputControlContext.Dword2 |= BIT0;
-    InputContext->Slot.ContextEntries         = MaxDci;
+    InputContext->Slot.ContextEntries = MaxDci;
     //
     // XHCI 4.3.6 - Setting Alternate Interfaces
     // 5) Issue and successfully complete a Configure Endpoint Command.
@@ -3655,9 +3761,9 @@ XhcSetInterface (
     DEBUG ((EFI_D_INFO, "SetInterface: Configure Endpoint\n"));
     Status = XhcCmdTransfer (
                Xhc,
-               (TRB_TEMPLATE *) (UINTN) &CmdTrbCfgEP,
+               (TRB_TEMPLATE *)(UINTN)&CmdTrbCfgEP,
                XHC_GENERIC_TIMEOUT,
-               (TRB_TEMPLATE **) (UINTN) &EvtTrb
+               (TRB_TEMPLATE **)(UINTN)&EvtTrb
                );
     if (EFI_ERROR (Status)) {
       DEBUG ((EFI_D_ERROR, "SetInterface: Config Endpoint Failed, Status = %r\n", Status));
@@ -3665,7 +3771,7 @@ XhcSetInterface (
       //
       // Update the active AlternateSetting.
       //
-      Xhc->UsbDevContext[SlotId].ActiveAlternateSetting[(UINT8) Request->Index] = (UINT8) Request->Value;
+      Xhc->UsbDevContext[SlotId].ActiveAlternateSetting[(UINT8)Request->Index] = (UINT8)Request->Value;
     }
   }
 
@@ -3694,19 +3800,19 @@ XhcSetInterface64 (
   IN EFI_USB_DEVICE_REQUEST   *Request
   )
 {
-  EFI_STATUS                  Status;
-  USB_INTERFACE_DESCRIPTOR    *IfDescActive;
-  USB_INTERFACE_DESCRIPTOR    *IfDescSet;
-  USB_INTERFACE_DESCRIPTOR    *IfDesc;
-  USB_ENDPOINT_DESCRIPTOR     *EpDesc;
-  UINTN                       NumEp;
-  UINTN                       EpIndex;
-  UINT8                       EpAddr;
-  UINT8                       Direction;
-  UINT8                       Dci;
-  UINT8                       MaxDci;
-  EFI_PHYSICAL_ADDRESS        PhyAddr;
-  VOID                        *RingSeg;
+  EFI_STATUS                Status;
+  USB_INTERFACE_DESCRIPTOR  *IfDescActive;
+  USB_INTERFACE_DESCRIPTOR  *IfDescSet;
+  USB_INTERFACE_DESCRIPTOR  *IfDesc;
+  USB_ENDPOINT_DESCRIPTOR   *EpDesc;
+  UINTN                     NumEp;
+  UINTN                     EpIndex;
+  UINT8                     EpAddr;
+  UINT8                     Direction;
+  UINT8                     Dci;
+  UINT8                     MaxDci;
+  EFI_PHYSICAL_ADDRESS      PhyAddr;
+  VOID                      *RingSeg;
 
   CMD_TRB_CONFIG_ENDPOINT     CmdTrbCfgEP;
   INPUT_CONTEXT_64            *InputContext;
@@ -3735,18 +3841,18 @@ XhcSetInterface64 (
   MaxDci = 0;
 
   IfDescActive = NULL;
-  IfDescSet = NULL;
+  IfDescSet    = NULL;
 
   IfDesc = (USB_INTERFACE_DESCRIPTOR *)(ConfigDesc + 1);
-  while ((UINTN) IfDesc < ((UINTN) ConfigDesc + ConfigDesc->TotalLength)) {
+  while ((UINTN)IfDesc < ((UINTN)ConfigDesc + ConfigDesc->TotalLength)) {
     if ((IfDesc->DescriptorType == USB_DESC_TYPE_INTERFACE) && (IfDesc->Length >= sizeof (USB_INTERFACE_DESCRIPTOR))) {
-      if (IfDesc->InterfaceNumber == (UINT8) Request->Index) {
+      if (IfDesc->InterfaceNumber == (UINT8)Request->Index) {
         if (IfDesc->AlternateSetting == Xhc->UsbDevContext[SlotId].ActiveAlternateSetting[IfDesc->InterfaceNumber]) {
           //
           // Find out the active interface descriptor.
           //
           IfDescActive = IfDesc;
-        } else if (IfDesc->AlternateSetting == (UINT8) Request->Value) {
+        } else if (IfDesc->AlternateSetting == (UINT8)Request->Value) {
           //
           // Find out the interface descriptor to set.
           //
@@ -3754,6 +3860,7 @@ XhcSetInterface64 (
         }
       }
     }
+
     IfDesc = (USB_INTERFACE_DESCRIPTOR *)((UINTN)IfDesc + IfDesc->Length);
   }
 
@@ -3772,8 +3879,8 @@ XhcSetInterface64 (
   //
 
   if ((IfDescActive != NULL) && (IfDescSet != NULL)) {
-    NumEp = IfDescActive->NumEndpoints;
-    EpDesc = (USB_ENDPOINT_DESCRIPTOR *) (IfDescActive + 1);
+    NumEp  = IfDescActive->NumEndpoints;
+    EpDesc = (USB_ENDPOINT_DESCRIPTOR *)(IfDescActive + 1);
     for (EpIndex = 0; EpIndex < NumEp; EpIndex++) {
       while (EpDesc->DescriptorType != USB_DESC_TYPE_ENDPOINT) {
         EpDesc = (USB_ENDPOINT_DESCRIPTOR *)((UINTN)EpDesc + EpDesc->Length);
@@ -3784,14 +3891,15 @@ XhcSetInterface64 (
         continue;
       }
 
-      EpAddr    = (UINT8) (EpDesc->EndpointAddress & 0x0F);
-      Direction = (UINT8) ((EpDesc->EndpointAddress & 0x80) ? EfiUsbDataIn : EfiUsbDataOut);
+      EpAddr    = (UINT8)(EpDesc->EndpointAddress & 0x0F);
+      Direction = (UINT8)((EpDesc->EndpointAddress & 0x80) ? EfiUsbDataIn : EfiUsbDataOut);
 
       Dci = XhcEndpointToDci (EpAddr, Direction);
       ASSERT (Dci < 32);
       if (Dci > MaxDci) {
         MaxDci = Dci;
       }
+
       //
       // XHCI 4.3.6 - Setting Alternate Interfaces
       // 1) Stop any Running Transfer Rings affected by the Alternate Interface setting.
@@ -3800,6 +3908,7 @@ XhcSetInterface64 (
       if (EFI_ERROR (Status)) {
         return Status;
       }
+
       //
       // XHCI 4.3.6 - Setting Alternate Interfaces
       // 2) Free Transfer Rings of all endpoints that will be affected by the Alternate Interface setting.
@@ -3809,6 +3918,7 @@ XhcSetInterface64 (
         if (RingSeg != NULL) {
           UsbHcFreeMem (Xhc->MemPool, RingSeg, sizeof (TRB_TEMPLATE) * TR_RING_TRB_NUMBER);
         }
+
         FreePool (Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci - 1]);
         Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci - 1] = NULL;
       }
@@ -3832,9 +3942,9 @@ XhcSetInterface64 (
     //
     // XHCI 4.3.6 - Setting Alternate Interfaces
     // 4) For each endpoint enabled by the Configure Endpoint Command:
-    //   a. Allocate a Transfer Ring.
-    //   b. Initialize the Transfer Ring Segment(s) by clearing all fields of all TRBs to '0'.
-    //   c. Initialize the Endpoint Context data structure.
+    // a. Allocate a Transfer Ring.
+    // b. Initialize the Transfer Ring Segment(s) by clearing all fields of all TRBs to '0'.
+    // c. Initialize the Endpoint Context data structure.
     //
     Dci = XhcInitializeEndpointContext64 (Xhc, SlotId, DeviceSpeed, InputContext, IfDescSet);
     if (Dci > MaxDci) {
@@ -3842,7 +3952,7 @@ XhcSetInterface64 (
     }
 
     InputContext->InputControlContext.Dword2 |= BIT0;
-    InputContext->Slot.ContextEntries         = MaxDci;
+    InputContext->Slot.ContextEntries = MaxDci;
     //
     // XHCI 4.3.6 - Setting Alternate Interfaces
     // 5) Issue and successfully complete a Configure Endpoint Command.
@@ -3857,9 +3967,9 @@ XhcSetInterface64 (
     DEBUG ((EFI_D_INFO, "SetInterface64: Configure Endpoint\n"));
     Status = XhcCmdTransfer (
                Xhc,
-               (TRB_TEMPLATE *) (UINTN) &CmdTrbCfgEP,
+               (TRB_TEMPLATE *)(UINTN)&CmdTrbCfgEP,
                XHC_GENERIC_TIMEOUT,
-               (TRB_TEMPLATE **) (UINTN) &EvtTrb
+               (TRB_TEMPLATE **)(UINTN)&EvtTrb
                );
     if (EFI_ERROR (Status)) {
       DEBUG ((EFI_D_ERROR, "SetInterface64: Config Endpoint Failed, Status = %r\n", Status));
@@ -3867,7 +3977,7 @@ XhcSetInterface64 (
       //
       // Update the active AlternateSetting.
       //
-      Xhc->UsbDevContext[SlotId].ActiveAlternateSetting[(UINT8) Request->Index] = (UINT8) Request->Value;
+      Xhc->UsbDevContext[SlotId].ActiveAlternateSetting[(UINT8)Request->Index] = (UINT8)Request->Value;
     }
   }
 
@@ -3907,7 +4017,7 @@ XhcEvaluateContext (
   ZeroMem (InputContext, sizeof (INPUT_CONTEXT));
 
   InputContext->InputControlContext.Dword2 |= BIT1;
-  InputContext->EP[0].MaxPacketSize         = MaxPacketSize;
+  InputContext->EP[0].MaxPacketSize = MaxPacketSize;
 
   ZeroMem (&CmdTrbEvalu, sizeof (CmdTrbEvalu));
   PhyAddr = UsbHcGetPciAddrForHostAddr (Xhc->MemPool, InputContext, sizeof (INPUT_CONTEXT));
@@ -3919,13 +4029,14 @@ XhcEvaluateContext (
   DEBUG ((EFI_D_INFO, "Evaluate context\n"));
   Status = XhcCmdTransfer (
              Xhc,
-             (TRB_TEMPLATE *) (UINTN) &CmdTrbEvalu,
+             (TRB_TEMPLATE *)(UINTN)&CmdTrbEvalu,
              XHC_GENERIC_TIMEOUT,
-             (TRB_TEMPLATE **) (UINTN) &EvtTrb
+             (TRB_TEMPLATE **)(UINTN)&EvtTrb
              );
   if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "XhcEvaluateContext: Evaluate Context Failed, Status = %r\n", Status));
   }
+
   return Status;
 }
 
@@ -3962,7 +4073,7 @@ XhcEvaluateContext64 (
   ZeroMem (InputContext, sizeof (INPUT_CONTEXT_64));
 
   InputContext->InputControlContext.Dword2 |= BIT1;
-  InputContext->EP[0].MaxPacketSize         = MaxPacketSize;
+  InputContext->EP[0].MaxPacketSize = MaxPacketSize;
 
   ZeroMem (&CmdTrbEvalu, sizeof (CmdTrbEvalu));
   PhyAddr = UsbHcGetPciAddrForHostAddr (Xhc->MemPool, InputContext, sizeof (INPUT_CONTEXT_64));
@@ -3974,16 +4085,16 @@ XhcEvaluateContext64 (
   DEBUG ((EFI_D_INFO, "Evaluate context\n"));
   Status = XhcCmdTransfer (
              Xhc,
-             (TRB_TEMPLATE *) (UINTN) &CmdTrbEvalu,
+             (TRB_TEMPLATE *)(UINTN)&CmdTrbEvalu,
              XHC_GENERIC_TIMEOUT,
-             (TRB_TEMPLATE **) (UINTN) &EvtTrb
+             (TRB_TEMPLATE **)(UINTN)&EvtTrb
              );
   if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "XhcEvaluateContext64: Evaluate Context Failed, Status = %r\n", Status));
   }
+
   return Status;
 }
-
 
 /**
   Evaluate the slot context for hub device through XHCI's Configure_Endpoint cmd.
@@ -4027,7 +4138,7 @@ XhcConfigHubContext (
   //
   // Copy the slot context from OutputContext to Input context
   //
-  CopyMem(&(InputContext->Slot), &(OutputContext->Slot), sizeof (SLOT_CONTEXT));
+  CopyMem (&(InputContext->Slot), &(OutputContext->Slot), sizeof (SLOT_CONTEXT));
   InputContext->Slot.Hub     = 1;
   InputContext->Slot.PortNum = PortNum;
   InputContext->Slot.TTT     = TTT;
@@ -4042,14 +4153,15 @@ XhcConfigHubContext (
   CmdTrbCfgEP.SlotId   = Xhc->UsbDevContext[SlotId].SlotId;
   DEBUG ((EFI_D_INFO, "Configure Hub Slot Context\n"));
   Status = XhcCmdTransfer (
-              Xhc,
-              (TRB_TEMPLATE *) (UINTN) &CmdTrbCfgEP,
-              XHC_GENERIC_TIMEOUT,
-              (TRB_TEMPLATE **) (UINTN) &EvtTrb
-              );
+             Xhc,
+             (TRB_TEMPLATE *)(UINTN)&CmdTrbCfgEP,
+             XHC_GENERIC_TIMEOUT,
+             (TRB_TEMPLATE **)(UINTN)&EvtTrb
+             );
   if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "XhcConfigHubContext: Config Endpoint Failed, Status = %r\n", Status));
   }
+
   return Status;
 }
 
@@ -4095,7 +4207,7 @@ XhcConfigHubContext64 (
   //
   // Copy the slot context from OutputContext to Input context
   //
-  CopyMem(&(InputContext->Slot), &(OutputContext->Slot), sizeof (SLOT_CONTEXT_64));
+  CopyMem (&(InputContext->Slot), &(OutputContext->Slot), sizeof (SLOT_CONTEXT_64));
   InputContext->Slot.Hub     = 1;
   InputContext->Slot.PortNum = PortNum;
   InputContext->Slot.TTT     = TTT;
@@ -4110,15 +4222,14 @@ XhcConfigHubContext64 (
   CmdTrbCfgEP.SlotId   = Xhc->UsbDevContext[SlotId].SlotId;
   DEBUG ((EFI_D_INFO, "Configure Hub Slot Context\n"));
   Status = XhcCmdTransfer (
-              Xhc,
-              (TRB_TEMPLATE *) (UINTN) &CmdTrbCfgEP,
-              XHC_GENERIC_TIMEOUT,
-              (TRB_TEMPLATE **) (UINTN) &EvtTrb
-              );
+             Xhc,
+             (TRB_TEMPLATE *)(UINTN)&CmdTrbCfgEP,
+             XHC_GENERIC_TIMEOUT,
+             (TRB_TEMPLATE **)(UINTN)&EvtTrb
+             );
   if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "XhcConfigHubContext64: Config Endpoint Failed, Status = %r\n", Status));
   }
+
   return Status;
 }
-
-

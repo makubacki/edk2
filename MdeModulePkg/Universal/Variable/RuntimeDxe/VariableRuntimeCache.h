@@ -20,9 +20,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 EFI_STATUS
-FlushPendingRuntimeVariableCacheUpdates (
-  VOID
-  );
+  FlushPendingRuntimeVariableCacheUpdates (
+                                           VOID
+                                           );
 
 /**
   Synchronizes the runtime variable caches with all pending updates outside runtime.

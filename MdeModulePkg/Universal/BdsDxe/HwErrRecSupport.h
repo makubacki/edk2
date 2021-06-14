@@ -19,8 +19,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 VOID
-InitializeHwErrRecSupport (
-  VOID
-  );
+  InitializeHwErrRecSupport (
+                             VOID
+                             );
 
 #endif

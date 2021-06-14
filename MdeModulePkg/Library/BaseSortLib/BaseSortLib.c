@@ -45,17 +45,17 @@ QuickSortWorker (
   IN VOID                               *Buffer
   )
 {
-  VOID        *Pivot;
-  UINTN       LoopCount;
-  UINTN       NextSwapLocation;
+  VOID   *Pivot;
+  UINTN  LoopCount;
+  UINTN  NextSwapLocation;
 
-  ASSERT(BufferToSort     != NULL);
-  ASSERT(CompareFunction  != NULL);
-  ASSERT(Buffer  != NULL);
+  ASSERT (BufferToSort     != NULL);
+  ASSERT (CompareFunction  != NULL);
+  ASSERT (Buffer  != NULL);
 
-  if ( Count < 2
-    || ElementSize  < 1
-   ){
+  if (  Count < 2
+     || ElementSize  < 1
+        ) {
     return;
   }
 
@@ -64,26 +64,30 @@ QuickSortWorker (
   //
   // pick a pivot (we choose last element)
   //
-  Pivot = ((UINT8*)BufferToSort+((Count-1)*ElementSize));
+  Pivot = ((UINT8 *)BufferToSort+((Count-1)*ElementSize));
 
   //
   // Now get the pivot such that all on "left" are below it
   // and everything "right" are above it
   //
   for ( LoopCount = 0
-      ; LoopCount < Count -1
-      ; LoopCount++
-     ){
+        ; LoopCount < Count -1
+        ; LoopCount++
+        ) {
     //
     // if the element is less than the pivot
     //
-    if (CompareFunction((VOID*)((UINT8*)BufferToSort+((LoopCount)*ElementSize)),Pivot) <= 0){
+    if (CompareFunction ((VOID *)((UINT8 *)BufferToSort+((LoopCount)*ElementSize)), Pivot) <= 0) {
       //
       // swap
       //
-      CopyMem (Buffer, (UINT8*)BufferToSort+(NextSwapLocation*ElementSize), ElementSize);
-      CopyMem ((UINT8*)BufferToSort+(NextSwapLocation*ElementSize), (UINT8*)BufferToSort+((LoopCount)*ElementSize), ElementSize);
-      CopyMem ((UINT8*)BufferToSort+((LoopCount)*ElementSize), Buffer, ElementSize);
+      CopyMem (Buffer, (UINT8 *)BufferToSort+(NextSwapLocation*ElementSize), ElementSize);
+      CopyMem (
+        (UINT8 *)BufferToSort+(NextSwapLocation*ElementSize),
+        (UINT8 *)BufferToSort+((LoopCount)*ElementSize),
+        ElementSize
+        );
+      CopyMem ((UINT8 *)BufferToSort+((LoopCount)*ElementSize), Buffer, ElementSize);
 
       //
       // increment NextSwapLocation
@@ -91,36 +95,41 @@ QuickSortWorker (
       NextSwapLocation++;
     }
   }
+
   //
   // swap pivot to it's final position (NextSwapLocaiton)
   //
   CopyMem (Buffer, Pivot, ElementSize);
-  CopyMem (Pivot, (UINT8*)BufferToSort+(NextSwapLocation*ElementSize), ElementSize);
-  CopyMem ((UINT8*)BufferToSort+(NextSwapLocation*ElementSize), Buffer, ElementSize);
+  CopyMem (Pivot, (UINT8 *)BufferToSort+(NextSwapLocation*ElementSize), ElementSize);
+  CopyMem ((UINT8 *)BufferToSort+(NextSwapLocation*ElementSize), Buffer, ElementSize);
 
   //
   // Now recurse on 2 paritial lists.  neither of these will have the 'pivot' element
   // IE list is sorted left half, pivot element, sorted right half...
   //
   if (NextSwapLocation >= 2) {
-    QuickSortWorker(
+    QuickSortWorker (
       BufferToSort,
       NextSwapLocation,
       ElementSize,
       CompareFunction,
-      Buffer);
+      Buffer
+      );
   }
 
   if ((Count - NextSwapLocation - 1) >= 2) {
-    QuickSortWorker(
+    QuickSortWorker (
       (UINT8 *)BufferToSort + (NextSwapLocation+1) * ElementSize,
       Count - NextSwapLocation - 1,
       ElementSize,
       CompareFunction,
-      Buffer);
+      Buffer
+      );
   }
+
   return;
 }
+
 /**
   Function to perform a Quick Sort alogrithm on a buffer of comparable elements.
 
@@ -150,20 +159,21 @@ PerformQuickSort (
 {
   VOID  *Buffer;
 
-  ASSERT(BufferToSort     != NULL);
-  ASSERT(CompareFunction  != NULL);
+  ASSERT (BufferToSort     != NULL);
+  ASSERT (CompareFunction  != NULL);
 
-  Buffer = AllocateZeroPool(ElementSize);
-  ASSERT(Buffer != NULL);
+  Buffer = AllocateZeroPool (ElementSize);
+  ASSERT (Buffer != NULL);
 
-  QuickSortWorker(
+  QuickSortWorker (
     BufferToSort,
     Count,
     ElementSize,
     CompareFunction,
-    Buffer);
+    Buffer
+    );
 
-  FreePool(Buffer);
+  FreePool (Buffer);
   return;
 }
 
@@ -182,7 +192,7 @@ DevicePathCompare (
   IN  CONST VOID             *Buffer2
   )
 {
-  ASSERT(FALSE);
+  ASSERT (FALSE);
   return 0;
 }
 
@@ -201,10 +211,9 @@ StringNoCaseCompare (
   IN  CONST VOID             *Buffer2
   )
 {
-  ASSERT(FALSE);
+  ASSERT (FALSE);
   return 0;
 }
-
 
 /**
   Not supported in Base version.
@@ -221,8 +230,6 @@ StringCompare (
   IN  CONST VOID                *Buffer2
   )
 {
-  ASSERT(FALSE);
+  ASSERT (FALSE);
   return 0;
 }
-
-

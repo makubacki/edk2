@@ -37,14 +37,14 @@ SerialStatusCodeReportWorker (
   IN EFI_STATUS_CODE_DATA     *Data OPTIONAL
   )
 {
-  CHAR8           *Filename;
-  CHAR8           *Description;
-  CHAR8           *Format;
-  CHAR8           Buffer[MAX_DEBUG_MESSAGE_LENGTH];
-  UINT32          ErrorLevel;
-  UINT32          LineNumber;
-  UINTN           CharCount;
-  BASE_LIST       Marker;
+  CHAR8      *Filename;
+  CHAR8      *Description;
+  CHAR8      *Format;
+  CHAR8      Buffer[MAX_DEBUG_MESSAGE_LENGTH];
+  UINT32     ErrorLevel;
+  UINT32     LineNumber;
+  UINTN      CharCount;
+  BASE_LIST  Marker;
 
   Buffer[0] = '\0';
 
@@ -122,7 +122,7 @@ SerialStatusCodeReportWorker (
                   );
   } else if (Data != NULL &&
              CompareGuid (&Data->Type, &gEfiStatusCodeDataTypeStringGuid) &&
-             ((EFI_STATUS_CODE_STRING_DATA *) Data)->StringType == EfiStringAscii) {
+             ((EFI_STATUS_CODE_STRING_DATA *)Data)->StringType == EfiStringAscii) {
     //
     // EFI_STATUS_CODE_STRING_DATA
     //
@@ -130,7 +130,7 @@ SerialStatusCodeReportWorker (
                   Buffer,
                   sizeof (Buffer),
                   "%a",
-                  ((EFI_STATUS_CODE_STRING_DATA *) Data)->String.Ascii
+                  ((EFI_STATUS_CODE_STRING_DATA *)Data)->String.Ascii
                   );
   } else {
     //
@@ -149,7 +149,7 @@ SerialStatusCodeReportWorker (
   //
   // Call SerialPort Lib function to do print.
   //
-  SerialPortWrite ((UINT8 *) Buffer, CharCount);
+  SerialPortWrite ((UINT8 *)Buffer, CharCount);
 
   //
   // If register an unregister function of gEfiEventExitBootServicesGuid,
@@ -158,9 +158,8 @@ SerialStatusCodeReportWorker (
   //
   if ((CodeType & EFI_STATUS_CODE_TYPE_MASK) == EFI_PROGRESS_CODE &&
       Value == (EFI_SOFTWARE_EFI_BOOT_SERVICE | EFI_SW_BS_PC_EXIT_BOOT_SERVICES)) {
-    UnregisterSerialBootTimeHandlers();
+    UnregisterSerialBootTimeHandlers ();
   }
 
   return EFI_SUCCESS;
 }
-

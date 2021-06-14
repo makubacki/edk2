@@ -21,8 +21,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 OemHookStatusCodeInitialize (
-  VOID
-  );
+                             VOID
+                             );
 
 /**
   Report status code to OEM device.
@@ -70,4 +70,3 @@ OemHookStatusCodeReport (
   );
 
 #endif // __OEM_HOOK_STATUSCODE_LIB__
-

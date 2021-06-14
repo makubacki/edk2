@@ -7,7 +7,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
-
 #ifndef __PLATFORM_BOOT_MANAGER_LIB_H_
 #define __PLATFORM_BOOT_MANAGER_LIB_H_
 #include <Library/UefiBootManagerLib.h>
@@ -23,8 +22,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 VOID
 EFIAPI
 PlatformBootManagerBeforeConsole (
-  VOID
-  );
+                                  VOID
+                                  );
 
 /**
   Do the platform specific action after the console is connected.
@@ -39,8 +38,8 @@ PlatformBootManagerBeforeConsole (
 VOID
 EFIAPI
 PlatformBootManagerAfterConsole (
-  VOID
-  );
+                                 VOID
+                                 );
 
 /**
   This function is called each second during the boot manager waits the timeout.
@@ -63,7 +62,7 @@ PlatformBootManagerWaitCallback (
 VOID
 EFIAPI
 PlatformBootManagerUnableToBoot (
-  VOID
-  );
+                                 VOID
+                                 );
 
 #endif

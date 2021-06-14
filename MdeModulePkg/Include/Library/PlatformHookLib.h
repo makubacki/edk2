@@ -25,8 +25,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 RETURN_STATUS
 EFIAPI
 PlatformHookSerialPortInitialize (
-  VOID
-  );
+                                  VOID
+                                  );
 
 #endif // __PLATFORM_HOOK_LIB__
-

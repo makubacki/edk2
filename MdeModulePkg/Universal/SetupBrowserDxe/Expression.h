@@ -29,27 +29,27 @@ GetConditionalExpressionCount (
 
 **/
 VOID
-ResetCurrentExpressionStack (
-  VOID
-  );
+  ResetCurrentExpressionStack (
+                               VOID
+                               );
 
 /**
   Reset stack pointer to begin of the stack.
 
 **/
 VOID
-ResetMapExpressionListStack (
-  VOID
-  );
+  ResetMapExpressionListStack (
+                               VOID
+                               );
 
 /**
   Reset stack pointer to begin of the stack.
 
 **/
 VOID
-ResetScopeStack (
-  VOID
-  );
+  ResetScopeStack (
+                   VOID
+                   );
 
 /**
   Push an Operand onto the Stack
@@ -218,6 +218,7 @@ EvaluateExpression (
   IN FORM_BROWSER_FORM     *Form,
   IN OUT FORM_EXPRESSION   *Expression
   );
+
 /**
   Return the result of the expression list. Check the expression list and
   return the highest priority express result.

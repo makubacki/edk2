@@ -36,9 +36,9 @@
   for transferring into long mode in IA32 PEI.
 **/
 VOID
-SaveLongModeContext (
-  VOID
-  );
+  SaveLongModeContext (
+                       VOID
+                       );
 
 /**
   Whether the platform supports capsules that persist across reset. Note that
@@ -49,9 +49,9 @@ SaveLongModeContext (
           FALSE otherwise
 **/
 BOOLEAN
-IsPersistAcrossResetCapsuleSupported (
-  VOID
-  );
+  IsPersistAcrossResetCapsuleSupported (
+                                        VOID
+                                        );
 
 /**
   Writes Back a range of data cache lines covering a set of capsules in memory.

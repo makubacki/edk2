@@ -22,9 +22,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 PlatformHookBeforeSmmDispatch (
-  VOID
-  );
-
+                               VOID
+                               );
 
 /**
   Performs platform specific tasks after invoking registered SMI handlers.
@@ -38,7 +37,7 @@ PlatformHookBeforeSmmDispatch (
 EFI_STATUS
 EFIAPI
 PlatformHookAfterSmmDispatch (
-  VOID
-  );
+                              VOID
+                              );
 
 #endif

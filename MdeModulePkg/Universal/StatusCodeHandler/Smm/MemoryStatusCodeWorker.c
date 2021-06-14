@@ -22,15 +22,20 @@ MemoryStatusCodeInitializeWorker (
   VOID
   )
 {
-  EFI_STATUS                        Status;
+  EFI_STATUS  Status;
 
   //
   // Allocate MM memory status code pool.
   //
-  mMmMemoryStatusCodeTable = (RUNTIME_MEMORY_STATUSCODE_HEADER *)AllocateZeroPool (sizeof (RUNTIME_MEMORY_STATUSCODE_HEADER) + PcdGet16 (PcdStatusCodeMemorySize) * 1024);
+  mMmMemoryStatusCodeTable =
+    (RUNTIME_MEMORY_STATUSCODE_HEADER *)AllocateZeroPool (
+                                          sizeof (RUNTIME_MEMORY_STATUSCODE_HEADER) +
+                                          PcdGet16 (PcdStatusCodeMemorySize) * 1024
+                                          );
   ASSERT (mMmMemoryStatusCodeTable != NULL);
 
-  mMmMemoryStatusCodeTable->MaxRecordsNumber = (PcdGet16 (PcdStatusCodeMemorySize) * 1024) / sizeof (MEMORY_STATUSCODE_RECORD);
+  mMmMemoryStatusCodeTable->MaxRecordsNumber = (PcdGet16 (PcdStatusCodeMemorySize) * 1024) /
+                                               sizeof (MEMORY_STATUSCODE_RECORD);
   Status = gMmst->MmInstallConfigurationTable (
                     gMmst,
                     &gMemoryStatusCodeRecordGuid,
@@ -39,7 +44,6 @@ MemoryStatusCodeInitializeWorker (
                     );
   return Status;
 }
-
 
 /**
   Report status code into runtime memory. If the runtime pool is full, roll back to the
@@ -69,12 +73,12 @@ MemoryStatusCodeReportWorker (
   IN EFI_STATUS_CODE_DATA               *Data OPTIONAL
   )
 {
-  MEMORY_STATUSCODE_RECORD              *Record;
+  MEMORY_STATUSCODE_RECORD  *Record;
 
   //
   // Locate current record buffer.
   //
-  Record = (MEMORY_STATUSCODE_RECORD *) (mMmMemoryStatusCodeTable + 1);
+  Record = (MEMORY_STATUSCODE_RECORD *)(mMmMemoryStatusCodeTable + 1);
   Record = &Record[mMmMemoryStatusCodeTable->RecordIndex++];
 
   //
@@ -102,6 +106,3 @@ MemoryStatusCodeReportWorker (
 
   return EFI_SUCCESS;
 }
-
-
-

@@ -67,17 +67,17 @@ WaitForSingleEvent (
       // Set the timer event
       //
       gBS->SetTimer (
-            TimerEvent,
-            TimerRelative,
-            Timeout
-            );
+             TimerEvent,
+             TimerRelative,
+             Timeout
+             );
 
       //
       // Wait for the original event or the timer
       //
       WaitList[0] = Event;
       WaitList[1] = TimerEvent;
-      Status      = gBS->WaitForEvent (2, WaitList, &Index);
+      Status = gBS->WaitForEvent (2, WaitList, &Index);
       gBS->CloseEvent (TimerEvent);
 
       //
@@ -125,7 +125,7 @@ ConMoveCursorBackward (
   if (*Column == 0) {
     (*Column) = LineLength - 1;
     //
-    //   if (*Row > 0) {
+    // if (*Row > 0) {
     //
     (*Row)--;
     //
@@ -170,8 +170,8 @@ ConMoveCursorForward (
   }
 }
 
-CHAR16 mBackupSpace[EFI_DEBUG_INPUS_BUFFER_SIZE];
-CHAR16 mInputBufferHistory[EFI_DEBUG_INPUS_BUFFER_SIZE];
+CHAR16  mBackupSpace[EFI_DEBUG_INPUS_BUFFER_SIZE];
+CHAR16  mInputBufferHistory[EFI_DEBUG_INPUS_BUFFER_SIZE];
 
 /**
 
@@ -190,31 +190,31 @@ Input (
   IN UINTN     StrLength
   )
 {
-  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL     *ConOut;
-  EFI_SIMPLE_TEXT_INPUT_PROTOCOL      *ConIn;
-  BOOLEAN       Done;
-  UINTN         Column;
-  UINTN         Row;
-  UINTN         StartColumn;
-  UINTN         Update;
-  UINTN         Delete;
-  UINTN         Len;
-  UINTN         StrPos;
-  UINTN         Index;
-  UINTN         LineLength;
-  UINTN         TotalRow;
-  UINTN         SkipLength;
-  UINTN         OutputLength;
-  UINTN         TailRow;
-  UINTN         TailColumn;
-  EFI_INPUT_KEY Key;
-  BOOLEAN       InsertMode;
-  BOOLEAN       NeedAdjust;
-  UINTN         SubIndex;
-  CHAR16        *CommandStr;
+  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL  *ConOut;
+  EFI_SIMPLE_TEXT_INPUT_PROTOCOL   *ConIn;
+  BOOLEAN                          Done;
+  UINTN                            Column;
+  UINTN                            Row;
+  UINTN                            StartColumn;
+  UINTN                            Update;
+  UINTN                            Delete;
+  UINTN                            Len;
+  UINTN                            StrPos;
+  UINTN                            Index;
+  UINTN                            LineLength;
+  UINTN                            TotalRow;
+  UINTN                            SkipLength;
+  UINTN                            OutputLength;
+  UINTN                            TailRow;
+  UINTN                            TailColumn;
+  EFI_INPUT_KEY                    Key;
+  BOOLEAN                          InsertMode;
+  BOOLEAN                          NeedAdjust;
+  UINTN                            SubIndex;
+  CHAR16                           *CommandStr;
 
   ConOut = gST->ConOut;
-  ConIn = gST->ConIn;
+  ConIn  = gST->ConIn;
 
   ASSERT (ConOut != NULL);
   ASSERT (ConIn != NULL);
@@ -223,32 +223,34 @@ Input (
   if (Prompt != NULL) {
     ConOut->OutputString (ConOut, Prompt);
   }
+
   //
   // Read a line from the console
   //
-  Len           = 0;
-  StrPos        = 0;
-  OutputLength  = 0;
-  Update        = 0;
-  Delete        = 0;
-  InsertMode    = TRUE;
-  NeedAdjust    = FALSE;
+  Len    = 0;
+  StrPos = 0;
+  OutputLength = 0;
+  Update     = 0;
+  Delete     = 0;
+  InsertMode = TRUE;
+  NeedAdjust = FALSE;
 
   //
   // If buffer is not large enough to hold a CHAR16, do nothing.
   //
   if (StrLength < 1) {
-    return ;
+    return;
   }
+
   //
   // Get the screen setting and the current cursor location
   //
   StartColumn = ConOut->Mode->CursorColumn;
-  Column      = StartColumn;
-  Row         = ConOut->Mode->CursorRow;
+  Column = StartColumn;
+  Row    = ConOut->Mode->CursorRow;
   ConOut->QueryMode (ConOut, ConOut->Mode->Mode, &LineLength, &TotalRow);
   if (LineLength == 0) {
-    return ;
+    return;
   }
 
   SetMem (InStr, StrLength * sizeof (CHAR16), 0);
@@ -261,205 +263,222 @@ Input (
     ConIn->ReadKeyStroke (ConIn, &Key);
 
     switch (Key.UnicodeChar) {
-    case CHAR_CARRIAGE_RETURN:
-      //
-      // All done, print a newline at the end of the string
-      //
-      TailRow     = Row + (Len - StrPos + Column) / LineLength;
-      TailColumn  = (Len - StrPos + Column) % LineLength;
-      Done        = TRUE;
-      break;
+      case CHAR_CARRIAGE_RETURN:
+        //
+        // All done, print a newline at the end of the string
+        //
+        TailRow    = Row + (Len - StrPos + Column) / LineLength;
+        TailColumn = (Len - StrPos + Column) % LineLength;
+        Done = TRUE;
+        break;
 
-    case CHAR_BACKSPACE:
-      if (StrPos != 0) {
-        //
-        // If not move back beyond string beginning, move all characters behind
-        // the current position one character forward
-        //
-        StrPos -= 1;
-        Update  = StrPos;
-        Delete  = 1;
-        CopyMem (InStr + StrPos, InStr + StrPos + 1, sizeof (CHAR16) * (Len - StrPos));
-
-        //
-        // Adjust the current column and row
-        //
-        ConMoveCursorBackward (LineLength, &Column, &Row);
-
-        NeedAdjust = TRUE;
-      }
-      break;
-
-    default:
-      if (Key.UnicodeChar >= ' ') {
-        //
-        // If we are at the buffer's end, drop the key
-        //
-        if (Len == StrLength - 1 && (InsertMode || StrPos == Len)) {
-          break;
-        }
-        //
-        // If in insert mode, move all characters behind the current position
-        // one character backward to make space for this character. Then store
-        // the character.
-        //
-        if (InsertMode) {
-          for (Index = Len; Index > StrPos; Index -= 1) {
-            InStr[Index] = InStr[Index - 1];
-          }
-        }
-
-        InStr[StrPos] = Key.UnicodeChar;
-        Update        = StrPos;
-
-        StrPos += 1;
-        OutputLength = 1;
-      }
-      break;
-
-    case 0:
-      switch (Key.ScanCode) {
-      case SCAN_DELETE:
-        //
-        // Move characters behind current position one character forward
-        //
-        if (Len != 0) {
+      case CHAR_BACKSPACE:
+        if (StrPos != 0) {
+          //
+          // If not move back beyond string beginning, move all characters behind
+          // the current position one character forward
+          //
+          StrPos -= 1;
           Update  = StrPos;
           Delete  = 1;
           CopyMem (InStr + StrPos, InStr + StrPos + 1, sizeof (CHAR16) * (Len - StrPos));
 
+          //
+          // Adjust the current column and row
+          //
+          ConMoveCursorBackward (LineLength, &Column, &Row);
+
           NeedAdjust = TRUE;
         }
+
         break;
 
-      case SCAN_LEFT:
-        //
-        // Adjust current cursor position
-        //
-        if (StrPos != 0) {
-          StrPos -= 1;
-          ConMoveCursorBackward (LineLength, &Column, &Row);
-        }
-        break;
+      default:
+        if (Key.UnicodeChar >= ' ') {
+          //
+          // If we are at the buffer's end, drop the key
+          //
+          if (Len == StrLength - 1 && (InsertMode || StrPos == Len)) {
+            break;
+          }
 
-      case SCAN_RIGHT:
-        //
-        // Adjust current cursor position
-        //
-        if (StrPos < Len) {
+          //
+          // If in insert mode, move all characters behind the current position
+          // one character backward to make space for this character. Then store
+          // the character.
+          //
+          if (InsertMode) {
+            for (Index = Len; Index > StrPos; Index -= 1) {
+              InStr[Index] = InStr[Index - 1];
+            }
+          }
+
+          InStr[StrPos] = Key.UnicodeChar;
+          Update = StrPos;
+
           StrPos += 1;
-          ConMoveCursorForward (LineLength, TotalRow, &Column, &Row);
+          OutputLength = 1;
         }
+
         break;
 
-      case SCAN_HOME:
-        //
-        // Move current cursor position to the beginning of the command line
-        //
-        Row -= (StrPos + StartColumn) / LineLength;
-        Column  = StartColumn;
-        StrPos  = 0;
-        break;
+      case 0:
+        switch (Key.ScanCode) {
+          case SCAN_DELETE:
+            //
+            // Move characters behind current position one character forward
+            //
+            if (Len != 0) {
+              Update = StrPos;
+              Delete = 1;
+              CopyMem (InStr + StrPos, InStr + StrPos + 1, sizeof (CHAR16) * (Len - StrPos));
 
-      case SCAN_END:
-        //
-        // Move current cursor position to the end of the command line
-        //
-        TailRow     = Row + (Len - StrPos + Column) / LineLength;
-        TailColumn  = (Len - StrPos + Column) % LineLength;
-        Row         = TailRow;
-        Column      = TailColumn;
-        StrPos      = Len;
-        break;
+              NeedAdjust = TRUE;
+            }
 
-      case SCAN_ESC:
-        //
-        // Prepare to clear the current command line
-        //
-        InStr[0]  = 0;
-        Update    = 0;
-        Delete    = Len;
-        Row -= (StrPos + StartColumn) / LineLength;
-        Column        = StartColumn;
-        OutputLength  = 0;
+            break;
 
-        NeedAdjust = TRUE;
-        break;
+          case SCAN_LEFT:
+            //
+            // Adjust current cursor position
+            //
+            if (StrPos != 0) {
+              StrPos -= 1;
+              ConMoveCursorBackward (LineLength, &Column, &Row);
+            }
 
-      case SCAN_INSERT:
-        //
-        // Toggle the SEnvInsertMode flag
-        //
-        InsertMode = (BOOLEAN)!InsertMode;
-        break;
+            break;
 
-      case SCAN_UP:
-      case SCAN_DOWN:
-        //
-        // show history
-        //
-        CopyMem (InStr, mInputBufferHistory, StrLength * sizeof(CHAR16));
-        StrPos       = StrLen (mInputBufferHistory);
-        Update       = 0;
-        Delete       = 0;
-        OutputLength = 0;
+          case SCAN_RIGHT:
+            //
+            // Adjust current cursor position
+            //
+            if (StrPos < Len) {
+              StrPos += 1;
+              ConMoveCursorForward (LineLength, TotalRow, &Column, &Row);
+            }
 
-        TailRow      = Row + (StrPos + StartColumn) / LineLength;
-        TailColumn   = (StrPos + StartColumn) % LineLength;
-        Row          = TailRow;
-        Column       = TailColumn;
-        NeedAdjust   = FALSE;
+            break;
 
-        ConOut->SetCursorPosition (ConOut, StartColumn, Row);
-        for (SubIndex = 0; SubIndex < EFI_DEBUG_INPUS_BUFFER_SIZE - (StartColumn - EFI_DEBUG_PROMPT_COLUMN); SubIndex++) {
-          mBackupSpace[SubIndex] = L' ';
+          case SCAN_HOME:
+            //
+            // Move current cursor position to the beginning of the command line
+            //
+            Row   -= (StrPos + StartColumn) / LineLength;
+            Column = StartColumn;
+            StrPos = 0;
+            break;
+
+          case SCAN_END:
+            //
+            // Move current cursor position to the end of the command line
+            //
+            TailRow    = Row + (Len - StrPos + Column) / LineLength;
+            TailColumn = (Len - StrPos + Column) % LineLength;
+            Row    = TailRow;
+            Column = TailColumn;
+            StrPos = Len;
+            break;
+
+          case SCAN_ESC:
+            //
+            // Prepare to clear the current command line
+            //
+            InStr[0] = 0;
+            Update   = 0;
+            Delete   = Len;
+            Row   -= (StrPos + StartColumn) / LineLength;
+            Column = StartColumn;
+            OutputLength = 0;
+
+            NeedAdjust = TRUE;
+            break;
+
+          case SCAN_INSERT:
+            //
+            // Toggle the SEnvInsertMode flag
+            //
+            InsertMode = (BOOLEAN) !InsertMode;
+            break;
+
+          case SCAN_UP:
+          case SCAN_DOWN:
+            //
+            // show history
+            //
+            CopyMem (InStr, mInputBufferHistory, StrLength * sizeof (CHAR16));
+            StrPos = StrLen (mInputBufferHistory);
+            Update = 0;
+            Delete = 0;
+            OutputLength = 0;
+
+            TailRow    = Row + (StrPos + StartColumn) / LineLength;
+            TailColumn = (StrPos + StartColumn) % LineLength;
+            Row        = TailRow;
+            Column     = TailColumn;
+            NeedAdjust = FALSE;
+
+            ConOut->SetCursorPosition (ConOut, StartColumn, Row);
+            for (SubIndex = 0;
+                 SubIndex < EFI_DEBUG_INPUS_BUFFER_SIZE - (StartColumn - EFI_DEBUG_PROMPT_COLUMN);
+                 SubIndex++) {
+              mBackupSpace[SubIndex] = L' ';
+            }
+
+            EDBPrint (mBackupSpace);
+            SetMem (
+              mBackupSpace,
+              (EFI_DEBUG_INPUS_BUFFER_SIZE - (StartColumn - EFI_DEBUG_PROMPT_COLUMN)) * sizeof (CHAR16),
+              0
+              );
+
+            ConOut->SetCursorPosition (ConOut, StartColumn, Row);
+            Len = StrPos;
+
+            break;
+
+          case SCAN_F1:
+          case SCAN_F2:
+          case SCAN_F3:
+          case SCAN_F4:
+          case SCAN_F5:
+          case SCAN_F6:
+          case SCAN_F7:
+          case SCAN_F8:
+          case SCAN_F9:
+          case SCAN_F10:
+          case SCAN_F11:
+          case SCAN_F12:
+            CommandStr = GetCommandNameByKey (Key);
+            if (CommandStr != NULL) {
+              StrnCpyS (InStr, StrLength, CommandStr, StrLength - 1);
+              return;
+            }
+
+            break;
         }
-        EDBPrint (mBackupSpace);
-        SetMem (mBackupSpace, (EFI_DEBUG_INPUS_BUFFER_SIZE - (StartColumn - EFI_DEBUG_PROMPT_COLUMN)) * sizeof(CHAR16), 0);
-
-        ConOut->SetCursorPosition (ConOut, StartColumn, Row);
-        Len = StrPos;
-
-        break;
-
-      case SCAN_F1:
-      case SCAN_F2:
-      case SCAN_F3:
-      case SCAN_F4:
-      case SCAN_F5:
-      case SCAN_F6:
-      case SCAN_F7:
-      case SCAN_F8:
-      case SCAN_F9:
-      case SCAN_F10:
-      case SCAN_F11:
-      case SCAN_F12:
-        CommandStr = GetCommandNameByKey (Key);
-        if (CommandStr != NULL) {
-          StrnCpyS (InStr, StrLength, CommandStr, StrLength - 1);
-          return ;
-        }
-        break;
-      }
     }
 
     if (Done) {
       break;
     }
+
     //
     // If we need to update the output do so now
     //
-    if (Update != -1) {
+    if (Update != - 1) {
       if (NeedAdjust) {
         ConOut->SetCursorPosition (ConOut, Column, Row);
         for (SubIndex = 0; SubIndex < EFI_DEBUG_INPUS_BUFFER_SIZE - (Column - EFI_DEBUG_PROMPT_COLUMN); SubIndex++) {
           mBackupSpace[SubIndex] = L' ';
         }
+
         EDBPrint (mBackupSpace);
-        SetMem (mBackupSpace, (EFI_DEBUG_INPUS_BUFFER_SIZE - (Column - EFI_DEBUG_PROMPT_COLUMN)) * sizeof(CHAR16), 0);
+        SetMem (mBackupSpace, (EFI_DEBUG_INPUS_BUFFER_SIZE - (Column - EFI_DEBUG_PROMPT_COLUMN)) * sizeof (CHAR16), 0);
         ConOut->SetCursorPosition (ConOut, Column, Row);
         NeedAdjust = FALSE;
       }
+
       EDBPrint (InStr + Update);
       Len = StrLen (InStr);
 
@@ -471,7 +490,7 @@ Input (
         StrPos = Len;
       }
 
-      Update = (UINTN) -1;
+      Update = (UINTN)- 1;
 
       //
       // After using print to reflect newly updates, if we're not using
@@ -482,8 +501,8 @@ Input (
         //
         // Calulate row and column of the tail of current string
         //
-        TailRow     = Row + (Len - StrPos + Column + OutputLength) / LineLength;
-        TailColumn  = (Len - StrPos + Column + OutputLength) % LineLength;
+        TailRow    = Row + (Len - StrPos + Column + OutputLength) / LineLength;
+        TailColumn = (Len - StrPos + Column + OutputLength) % LineLength;
 
         //
         // If the tail of string reaches screen end, screen rolls up, so if
@@ -492,9 +511,10 @@ Input (
         // (if we are recalling commands using UPPER and DOWN key, and if the
         // old command is too long to fit the screen, TailColumn must be 79.
         //
-        if (TailColumn == 0 && TailRow >= TotalRow && (UINTN) Row != TailRow) {
+        if (TailColumn == 0 && TailRow >= TotalRow && (UINTN)Row != TailRow) {
           Row--;
         }
+
         //
         // Calculate the cursor position after current operation. If cursor
         // reaches line end, update both row and column, otherwise, only
@@ -504,7 +524,7 @@ Input (
           SkipLength = OutputLength - (LineLength - Column);
 
           Row += SkipLength / LineLength + 1;
-          if ((UINTN) Row > TotalRow - 1) {
+          if ((UINTN)Row > TotalRow - 1) {
             Row = TotalRow - 1;
           }
 
@@ -516,18 +536,19 @@ Input (
 
       Delete = 0;
     }
+
     //
     // Set the cursor position for this key
     //
     SetCursorPosition (ConOut, Column, Row, LineLength, TotalRow, InStr, StrPos, Len);
   } while (!Done);
 
-  CopyMem (mInputBufferHistory, InStr, StrLength * sizeof(CHAR16));
+  CopyMem (mInputBufferHistory, InStr, StrLength * sizeof (CHAR16));
 
   //
   // Return the data to the caller
   //
-  return ;
+  return;
 }
 
 /**
@@ -564,12 +585,12 @@ SetCursorPosition (
   Backup = 0;
   if (Row >= 0) {
     ConOut->SetCursorPosition (ConOut, Column, Row);
-    return ;
+    return;
   }
 
   if (Len - StrPos > Column * Row) {
-    Backup                          = *(Str + StrPos + Column * Row);
-    *(Str + StrPos + Column * Row)  = 0;
+    Backup = *(Str + StrPos + Column * Row);
+    *(Str + StrPos + Column * Row) = 0;
   }
 
   EDBPrint (L"%s", Str + StrPos);
@@ -591,9 +612,9 @@ SetPageBreak (
   VOID
   )
 {
-  EFI_INPUT_KEY Key;
-  CHAR16        Str[3];
-  BOOLEAN       OmitPrint;
+  EFI_INPUT_KEY  Key;
+  CHAR16         Str[3];
+  BOOLEAN        OmitPrint;
 
   //
   // Check
@@ -608,10 +629,10 @@ SetPageBreak (
   //
   // Wait for user input
   //
-  Str[0]  = ' ';
-  Str[1]  = 0;
-  Str[2]  = 0;
-  for (;;) {
+  Str[0] = ' ';
+  Str[1] = 0;
+  Str[2] = 0;
+  for ( ; ;) {
     WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
     gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
 
@@ -632,6 +653,7 @@ SetPageBreak (
       gST->ConOut->OutputString (gST->ConOut, L"\r\n");
       break;
     }
+
     //
     // Echo input
     //
@@ -669,9 +691,9 @@ EDBPrint (
   ...
   )
 {
-  UINTN   Return;
-  VA_LIST Marker;
-  CHAR16  Buffer[EFI_DEBUG_MAX_PRINT_BUFFER];
+  UINTN    Return;
+  VA_LIST  Marker;
+  CHAR16   Buffer[EFI_DEBUG_MAX_PRINT_BUFFER];
 
   VA_START (Marker, Format);
   Return = UnicodeVSPrint (Buffer, sizeof (Buffer), Format, Marker);
@@ -707,8 +729,8 @@ EDBSPrint (
   ...
   )
 {
-  UINTN   Return;
-  VA_LIST Marker;
+  UINTN    Return;
+  VA_LIST  Marker;
 
   ASSERT (BufferSize > 0);
 
@@ -741,13 +763,13 @@ EDBSPrintWithOffset (
   ...
   )
 {
-  UINTN   Return;
-  VA_LIST Marker;
+  UINTN    Return;
+  VA_LIST  Marker;
 
-  ASSERT (BufferSize - (Offset * sizeof(CHAR16)) > 0);
+  ASSERT (BufferSize - (Offset * sizeof (CHAR16)) > 0);
 
   VA_START (Marker, Format);
-  Return = UnicodeVSPrint (Buffer + Offset, (UINTN)(BufferSize - (Offset * sizeof(CHAR16))), Format, Marker);
+  Return = UnicodeVSPrint (Buffer + Offset, (UINTN)(BufferSize - (Offset * sizeof (CHAR16))), Format, Marker);
   VA_END (Marker);
 
   return Return;

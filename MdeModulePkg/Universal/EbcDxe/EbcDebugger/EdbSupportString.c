@@ -27,29 +27,32 @@ Xtoi (
 
   ASSERT (Str != NULL);
 
-  MaxVal = (UINTN) -1 >> 4;
+  MaxVal = (UINTN)- 1 >> 4;
   //
   // skip preceeding white space
   //
   while (*Str != '\0' && *Str == ' ') {
     Str += 1;
   }
+
   //
   // skip preceeding zeros
   //
   while (*Str != '\0' && *Str == '0') {
     Str += 1;
   }
+
   //
   // skip preceeding white space
   //
   if (*Str != '\0' && (*Str == 'x' || *Str == 'X')) {
     Str += 1;
   }
+
   //
   // convert hex digits
   //
-  RetVal = 0;
+  RetVal   = 0;
   TempChar = *(Str++);
   while (TempChar != '\0') {
     if (TempChar >= 'a' && TempChar <= 'f') {
@@ -58,7 +61,7 @@ Xtoi (
 
     if ((TempChar >= '0' && TempChar <= '9') || (TempChar >= 'A' && TempChar <= 'F')) {
       if (RetVal > MaxVal) {
-        return (UINTN) -1;
+        return (UINTN)- 1;
       }
 
       RetVal = (RetVal << 4) | (TempChar - (TempChar >= 'A' ? 'A' - 10 : '0'));
@@ -91,29 +94,32 @@ LXtoi (
 
   ASSERT (Str != NULL);
 
-  MaxVal = RShiftU64 ((UINT64) -1, 4);
+  MaxVal = RShiftU64 ((UINT64)- 1, 4);
   //
   // skip preceeding white space
   //
   while (*Str != '\0' && *Str == ' ') {
     Str += 1;
   }
+
   //
   // skip preceeding zeros
   //
   while (*Str != '\0' && *Str == '0') {
     Str += 1;
   }
+
   //
   // skip preceeding white space
   //
   if (*Str != '\0' && (*Str == 'x' || *Str == 'X')) {
     Str += 1;
   }
+
   //
   // convert hex digits
   //
-  RetVal = 0;
+  RetVal   = 0;
   TempChar = *(Str++);
   while (TempChar != '\0') {
     if (TempChar >= 'a' && TempChar <= 'f') {
@@ -122,7 +128,7 @@ LXtoi (
 
     if ((TempChar >= '0' && TempChar <= '9') || (TempChar >= 'A' && TempChar <= 'F')) {
       if (RetVal > MaxVal) {
-        return (UINT64) -1;
+        return (UINT64)- 1;
       }
 
       RetVal = LShiftU64 (RetVal, 4);
@@ -157,23 +163,24 @@ Atoi (
 
   ASSERT (Str != NULL);
 
-  MaxVal = (UINTN) -1 / 10;
-  ResteVal = (UINTN) -1 % 10;
+  MaxVal   = (UINTN)- 1 / 10;
+  ResteVal = (UINTN)- 1 % 10;
   //
   // skip preceeding white space
   //
   while (*Str != '\0' && *Str == ' ') {
     Str += 1;
   }
+
   //
   // convert digits
   //
-  RetVal = 0;
+  RetVal   = 0;
   TempChar = *(Str++);
   while (TempChar != '\0') {
     if (TempChar >= '0' && TempChar <= '9') {
-      if (RetVal > MaxVal || (RetVal == MaxVal && TempChar - '0' > (INTN) ResteVal)) {
-        return (UINTN) -1;
+      if (RetVal > MaxVal || (RetVal == MaxVal && TempChar - '0' > (INTN)ResteVal)) {
+        return (UINTN)- 1;
       }
 
       RetVal = (RetVal * 10) + TempChar - '0';
@@ -200,35 +207,38 @@ AsciiXtoi (
   CHAR8  *Str
   )
 {
-  UINTN   RetVal;
-  CHAR8   TempChar;
-  UINTN   MaxVal;
+  UINTN  RetVal;
+  CHAR8  TempChar;
+  UINTN  MaxVal;
 
   ASSERT (Str != NULL);
 
-  MaxVal = (UINTN) -1 >> 4;
+  MaxVal = (UINTN)- 1 >> 4;
   //
   // skip preceeding white space
   //
   while (*Str != '\0' && *Str == ' ') {
     Str += 1;
   }
+
   //
   // skip preceeding zeros
   //
   while (*Str != '\0' && *Str == '0') {
     Str += 1;
   }
+
   //
   // skip preceeding white space
   //
   if (*Str != '\0' && (*Str == 'x' || *Str == 'X')) {
     Str += 1;
   }
+
   //
   // convert hex digits
   //
-  RetVal = 0;
+  RetVal   = 0;
   TempChar = *(Str++);
   while (TempChar != '\0') {
     if (TempChar >= 'a' && TempChar <= 'f') {
@@ -237,7 +247,7 @@ AsciiXtoi (
 
     if ((TempChar >= '0' && TempChar <= '9') || (TempChar >= 'A' && TempChar <= 'F')) {
       if (RetVal > MaxVal) {
-        return (UINTN) -1;
+        return (UINTN)- 1;
       }
 
       RetVal = (RetVal << 4) | (TempChar - (TempChar >= 'A' ? 'A' - 10 : '0'));
@@ -264,30 +274,31 @@ AsciiAtoi (
   CHAR8  *Str
   )
 {
-  UINTN   RetVal;
-  CHAR8   TempChar;
-  UINTN   MaxVal;
-  UINTN   ResteVal;
+  UINTN  RetVal;
+  CHAR8  TempChar;
+  UINTN  MaxVal;
+  UINTN  ResteVal;
 
   ASSERT (Str != NULL);
 
-  MaxVal = (UINTN) -1 / 10;
-  ResteVal = (UINTN) -1 % 10;
+  MaxVal   = (UINTN)- 1 / 10;
+  ResteVal = (UINTN)- 1 % 10;
   //
   // skip preceeding white space
   //
   while (*Str != '\0' && *Str == ' ') {
     Str += 1;
   }
+
   //
   // convert digits
   //
-  RetVal = 0;
+  RetVal   = 0;
   TempChar = *(Str++);
   while (TempChar != '\0') {
     if (TempChar >= '0' && TempChar <= '9') {
-      if (RetVal > MaxVal || (RetVal == MaxVal && TempChar - '0' > (INTN) ResteVal)) {
-        return (UINTN) -1;
+      if (RetVal > MaxVal || (RetVal == MaxVal && TempChar - '0' > (INTN)ResteVal)) {
+        return (UINTN)- 1;
       }
 
       RetVal = (RetVal * 10) + TempChar - '0';
@@ -300,7 +311,6 @@ AsciiAtoi (
 
   return RetVal;
 }
-
 
 /**
   Compare the Unicode and Ascii string pointed by String to the string pointed by String2.
@@ -326,7 +336,7 @@ StrCmpUnicodeAndAscii (
       break;
     }
 
-    String += 1;
+    String  += 1;
     String2 += 1;
   }
 
@@ -406,11 +416,11 @@ StrEndWith (
 {
   CHAR16  *Temp;
 
-  if ((Str == NULL) || (SubStr == NULL) || (StrLen(Str) < StrLen(SubStr))) {
+  if ((Str == NULL) || (SubStr == NULL) || (StrLen (Str) < StrLen (SubStr))) {
     return FALSE;
   }
 
-  Temp = Str + StrLen(Str) - StrLen(SubStr);
+  Temp = Str + StrLen (Str) - StrLen (SubStr);
 
   //
   // Compare
@@ -434,20 +444,20 @@ StrDuplicate (
   IN CHAR16   *Src
   )
 {
-  CHAR16      *Dest;
-  UINTN       Size;
+  CHAR16  *Dest;
+  UINTN   Size;
 
-  Size = (StrLen(Src) + 1) * sizeof(CHAR16);
+  Size = (StrLen (Src) + 1) * sizeof (CHAR16);
   Dest = AllocateZeroPool (Size);
   if (Dest != NULL) {
     CopyMem (Dest, Src, Size);
   }
+
   return Dest;
 }
 
-
-CHAR16  *mLineBuffer          = NULL;
-CHAR16  *mFieldBuffer         = NULL;
+CHAR16  *mLineBuffer  = NULL;
+CHAR16  *mFieldBuffer = NULL;
 
 /**
 
@@ -470,8 +480,8 @@ StrSpn (
 
   Count = 0;
 
-  for (Str1 = String; *Str1 != L'\0'; Str1 ++) {
-    for (Str2 = CharSet; *Str2 != L'\0'; Str2 ++) {
+  for (Str1 = String; *Str1 != L'\0'; Str1++) {
+    for (Str2 = CharSet; *Str2 != L'\0'; Str2++) {
       if (*Str1 == *Str2) {
         break;
       }
@@ -481,7 +491,7 @@ StrSpn (
       return Count;
     }
 
-    Count ++;
+    Count++;
   }
 
   return Count;
@@ -506,10 +516,10 @@ StrBrk (
   CHAR16  *Str1;
   CHAR16  *Str2;
 
-  for (Str1 = String; *Str1 != L'\0'; Str1 ++) {
-    for (Str2 = CharSet; *Str2 != L'\0'; Str2 ++) {
+  for (Str1 = String; *Str1 != L'\0'; Str1++) {
+    for (Str2 = CharSet; *Str2 != L'\0'; Str2++) {
       if (*Str1 == *Str2) {
-        return (CHAR16 *) Str1;
+        return (CHAR16 *)Str1;
       }
     }
   }
@@ -549,7 +559,7 @@ StrTokenLine (
   End = StrBrk (Begin, CharSet);
   if ((End != NULL) && (*End != L'\0')) {
     *End = L'\0';
-    End ++;
+    End++;
   }
 
   mLineBuffer = End;
@@ -574,7 +584,6 @@ StrTokenField (
   CHAR16  *Begin;
   CHAR16  *End;
 
-
   Begin = (String == NULL) ? mFieldBuffer : String;
   if (Begin == NULL) {
     return NULL;
@@ -588,7 +597,7 @@ StrTokenField (
   End = StrBrk (Begin, CharSet);
   if ((End != NULL) && (*End != L'\0')) {
     *End = L'\0';
-    End ++;
+    End++;
   }
 
   mFieldBuffer = End;
@@ -678,19 +687,20 @@ PatchForStrTokenAfter (
   IN CHAR16    Patch
   )
 {
-  CHAR16 *Str;
+  CHAR16  *Str;
 
   if (Buffer == NULL) {
-    return ;
+    return;
   }
 
   Str = Buffer;
   while (*Str != 0) {
-    Str ++;
+    Str++;
   }
+
   *Str = Patch;
 
-  while (*(Str ++) != '\0') {
+  while (*(Str++) != '\0') {
     if (*Str == 0) {
       *Str = Patch;
     } else {
@@ -698,7 +708,7 @@ PatchForStrTokenAfter (
     }
   }
 
-  return ;
+  return;
 }
 
 /**
@@ -715,14 +725,14 @@ PatchForStrTokenBefore (
   IN CHAR16    Patch
   )
 {
-  CHAR16 *Str;
+  CHAR16  *Str;
 
   if (Buffer == NULL) {
-    return ;
+    return;
   }
 
   Str = Buffer;
-  while (*(Str --) != '\0') {
+  while (*(Str--) != '\0') {
     if ((*Str == 0) || (*Str == Patch)) {
       *Str = Patch;
     } else {
@@ -730,11 +740,11 @@ PatchForStrTokenBefore (
     }
   }
 
-  return ;
+  return;
 }
 
-CHAR8  *mAsciiLineBuffer          = NULL;
-CHAR8  *mAsciiFieldBuffer         = NULL;
+CHAR8  *mAsciiLineBuffer  = NULL;
+CHAR8  *mAsciiFieldBuffer = NULL;
 
 /**
 
@@ -751,14 +761,14 @@ AsciiStrSpn (
   IN CHAR8                       *CharSet
   )
 {
-  UINTN   Count;
+  UINTN  Count;
   CHAR8  *Str1;
   CHAR8  *Str2;
 
   Count = 0;
 
-  for (Str1 = String; *Str1 != '\0'; Str1 ++) {
-    for (Str2 = CharSet; *Str2 != '\0'; Str2 ++) {
+  for (Str1 = String; *Str1 != '\0'; Str1++) {
+    for (Str2 = CharSet; *Str2 != '\0'; Str2++) {
       if (*Str1 == *Str2) {
         break;
       }
@@ -768,7 +778,7 @@ AsciiStrSpn (
       return Count;
     }
 
-    Count ++;
+    Count++;
   }
 
   return Count;
@@ -792,10 +802,10 @@ AsciiStrBrk (
   CHAR8  *Str1;
   CHAR8  *Str2;
 
-  for (Str1 = String; *Str1 != '\0'; Str1 ++) {
-    for (Str2 = CharSet; *Str2 != '\0'; Str2 ++) {
+  for (Str1 = String; *Str1 != '\0'; Str1++) {
+    for (Str2 = CharSet; *Str2 != '\0'; Str2++) {
       if (*Str1 == *Str2) {
-        return (CHAR8 *) Str1;
+        return (CHAR8 *)Str1;
       }
     }
   }
@@ -835,7 +845,7 @@ AsciiStrTokenLine (
   End = AsciiStrBrk (Begin, CharSet);
   if ((End != NULL) && (*End != '\0')) {
     *End = '\0';
-    End ++;
+    End++;
   }
 
   mAsciiLineBuffer = End;
@@ -860,7 +870,6 @@ AsciiStrTokenField (
   CHAR8  *Begin;
   CHAR8  *End;
 
-
   Begin = (String == NULL) ? mAsciiFieldBuffer : String;
   if (Begin == NULL) {
     return NULL;
@@ -874,7 +883,7 @@ AsciiStrTokenField (
   End = AsciiStrBrk (Begin, CharSet);
   if ((End != NULL) && (*End != '\0')) {
     *End = '\0';
-    End ++;
+    End++;
   }
 
   mAsciiFieldBuffer = End;
@@ -964,19 +973,20 @@ PatchForAsciiStrTokenAfter (
   IN CHAR8    Patch
   )
 {
-  CHAR8 *Str;
+  CHAR8  *Str;
 
   if (Buffer == NULL) {
-    return ;
+    return;
   }
 
   Str = Buffer;
   while (*Str != 0) {
-    Str ++;
+    Str++;
   }
+
   *Str = Patch;
 
-  while (*(Str ++) != '\0') {
+  while (*(Str++) != '\0') {
     if (*Str == 0) {
       *Str = Patch;
     } else {
@@ -984,7 +994,7 @@ PatchForAsciiStrTokenAfter (
     }
   }
 
-  return ;
+  return;
 }
 
 /**
@@ -1001,14 +1011,14 @@ PatchForAsciiStrTokenBefore (
   IN CHAR8    Patch
   )
 {
-  CHAR8 *Str;
+  CHAR8  *Str;
 
   if (Buffer == NULL) {
-    return ;
+    return;
   }
 
   Str = Buffer;
-  while (*(Str --) != '\0') {
+  while (*(Str--) != '\0') {
     if ((*Str == 0) || (*Str == Patch)) {
       *Str = Patch;
     } else {
@@ -1016,5 +1026,5 @@ PatchForAsciiStrTokenBefore (
     }
   }
 
-  return ;
+  return;
 }

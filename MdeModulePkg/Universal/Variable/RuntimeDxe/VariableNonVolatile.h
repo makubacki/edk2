@@ -18,9 +18,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 UINTN
-GetNonVolatileMaxVariableSize (
-  VOID
-  );
+  GetNonVolatileMaxVariableSize (
+                                 VOID
+                                 );
 
 /**
   Init emulated non-volatile variable store.
@@ -60,8 +60,8 @@ InitRealNonVolatileVariableStore (
 
 **/
 EFI_STATUS
-InitNonVolatileVariableStore (
-  VOID
-  );
+  InitNonVolatileVariableStore (
+                                VOID
+                                );
 
 #endif

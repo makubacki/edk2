@@ -6,7 +6,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
-
 #ifndef __PEI_IOMMU_H__
 #define __PEI_IOMMU_H__
 
@@ -17,8 +16,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 //
 // Include protocol for common definition
-//   EDKII_IOMMU_ACCESS_xxx
-//   EDKII_IOMMU_OPERATION
+// EDKII_IOMMU_ACCESS_xxx
+// EDKII_IOMMU_OPERATION
 //
 #include <Protocol/IoMmu.h>
 
@@ -26,21 +25,21 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // IOMMU Ppi GUID value
 //
 #define EDKII_IOMMU_PPI_GUID \
-    { \
-      0x70b0af26, 0xf847, 0x4bb6, { 0xaa, 0xb9, 0xcd, 0xe8, 0x4f, 0xc6, 0x14, 0x31 } \
-    }
+  { \
+    0x70b0af26, 0xf847, 0x4bb6, { 0xaa, 0xb9, 0xcd, 0xe8, 0x4f, 0xc6, 0x14, 0x31 } \
+  }
 
 //
 // Forward reference for pure ANSI compatability
 //
-typedef struct _EDKII_IOMMU_PPI  EDKII_IOMMU_PPI;
+typedef struct _EDKII_IOMMU_PPI EDKII_IOMMU_PPI;
 
 //
 // Revision The revision to which the IOMMU interface adheres.
-//          All future revisions must be backwards compatible.
-//          If a future version is not back wards compatible it is not the same GUID.
+// All future revisions must be backwards compatible.
+// If a future version is not back wards compatible it is not the same GUID.
 //
-#define EDKII_IOMMU_PPI_REVISION 0x00010000
+#define EDKII_IOMMU_PPI_REVISION  0x00010000
 
 /**
   Set IOMMU attribute for a system memory.
@@ -185,17 +184,17 @@ EFI_STATUS
 /// IOMMU PPI structure.
 ///
 struct _EDKII_IOMMU_PPI {
-  UINT64                              Revision;
-  EDKII_PEI_IOMMU_SET_ATTRIBUTE       SetAttribute;
-  EDKII_PEI_IOMMU_MAP                 Map;
-  EDKII_PEI_IOMMU_UNMAP               Unmap;
-  EDKII_PEI_IOMMU_ALLOCATE_BUFFER     AllocateBuffer;
-  EDKII_PEI_IOMMU_FREE_BUFFER         FreeBuffer;
+  UINT64                             Revision;
+  EDKII_PEI_IOMMU_SET_ATTRIBUTE      SetAttribute;
+  EDKII_PEI_IOMMU_MAP                Map;
+  EDKII_PEI_IOMMU_UNMAP              Unmap;
+  EDKII_PEI_IOMMU_ALLOCATE_BUFFER    AllocateBuffer;
+  EDKII_PEI_IOMMU_FREE_BUFFER        FreeBuffer;
 };
 
 ///
 /// IOMMU PPI GUID variable.
 ///
-extern EFI_GUID gEdkiiIoMmuPpiGuid;
+extern EFI_GUID  gEdkiiIoMmuPpiGuid;
 
 #endif

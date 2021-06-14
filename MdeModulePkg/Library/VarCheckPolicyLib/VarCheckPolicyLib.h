@@ -20,8 +20,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 VarCheckPolicyLibCommonConstructor (
-  VOID
-  );
+                                    VOID
+                                    );
 
 /**
   This function is wrapper function to validate the buffer.

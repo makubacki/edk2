@@ -14,9 +14,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 VOID
-InitializePciDevicePool (
-  VOID
-  );
+  InitializePciDevicePool (
+                           VOID
+                           );
 
 /**
   Insert a root bridge into PCI device pool.
@@ -206,7 +206,6 @@ GetRootBridgeByHandle (
   EFI_HANDLE RootBridgeHandle
   );
 
-
 /**
   Judge whether Pci device existed.
 
@@ -248,7 +247,6 @@ PCI_IO_DEVICE *
 LocateVgaDevice (
   IN PCI_IO_DEVICE        *Bridge
   );
-
 
 /**
   Destroy a pci device node.

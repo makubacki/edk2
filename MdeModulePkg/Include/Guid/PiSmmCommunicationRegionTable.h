@@ -8,8 +8,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #ifndef _PI_SMM_COMMUNICATION_REGION_TABLE_H_
 #define _PI_SMM_COMMUNICATION_REGION_TABLE_H_
 
-#define EDKII_PI_SMM_COMMUNICATION_REGION_TABLE_GUID {\
-  0x4e28ca50, 0xd582, 0x44ac, {0xa1, 0x1f, 0xe3, 0xd5, 0x65, 0x26, 0xdb, 0x34} \
+#define EDKII_PI_SMM_COMMUNICATION_REGION_TABLE_GUID  { \
+    0x4e28ca50, 0xd582, 0x44ac, { 0xa1, 0x1f, 0xe3, 0xd5, 0x65, 0x26, 0xdb, 0x34 } \
 }
 
 //
@@ -33,25 +33,25 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // 2) Change type to be EfiReservedMemoryType before use.
 // 3) Use it.
 // 4) Restore type be EfiConventional.
-//    The step 2) must be performed as an atomic transaction, if there might be conflict during runtime.
-//    For example, on IA-32/x64 platforms, this can be done using the CMPXCHG CPU instruction.
-//    If there is guarantee on no conflict during boot time, these steps can be skipped.
-//    For example, DXE, UEFI driver and UEFI application runs in sequence.
+// The step 2) must be performed as an atomic transaction, if there might be conflict during runtime.
+// For example, on IA-32/x64 platforms, this can be done using the CMPXCHG CPU instruction.
+// If there is guarantee on no conflict during boot time, these steps can be skipped.
+// For example, DXE, UEFI driver and UEFI application runs in sequence.
 //
 // For example, FPDT driver can use this communication buffer to get SMM
 // performance data in SMM. Profile driver can use this communication buffer
 // to get SMM profile data in SMM.
 //
 typedef struct {
-  UINT32                Version;
-  UINT32                NumberOfEntries;
-  UINT32                DescriptorSize;
-  UINT32                Reserved;
-//EFI_MEMORY_DESCRIPTOR Entry[1];
+  UINT32    Version;
+  UINT32    NumberOfEntries;
+  UINT32    DescriptorSize;
+  UINT32    Reserved;
+  // EFI_MEMORY_DESCRIPTOR Entry[1];
 } EDKII_PI_SMM_COMMUNICATION_REGION_TABLE;
 
 #define EDKII_PI_SMM_COMMUNICATION_REGION_TABLE_VERSION  0x00000001
 
-extern EFI_GUID gEdkiiPiSmmCommunicationRegionTableGuid;
+extern EFI_GUID  gEdkiiPiSmmCommunicationRegionTableGuid;
 
 #endif

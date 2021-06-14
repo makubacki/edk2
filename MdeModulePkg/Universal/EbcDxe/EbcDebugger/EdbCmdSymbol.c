@@ -22,14 +22,14 @@ GetFileNameFromFullPath (
   IN CHAR16   *FullPath
   )
 {
-  CHAR16   *FileName;
-  CHAR16   *TempFileName;
+  CHAR16  *FileName;
+  CHAR16  *TempFileName;
 
-  FileName = FullPath;
+  FileName     = FullPath;
   TempFileName = StrGetNewTokenLine (FullPath, L"\\");
 
   while (TempFileName != NULL) {
-    FileName = TempFileName;
+    FileName     = TempFileName;
     TempFileName = StrGetNextTokenLine (L"\\");
     PatchForStrTokenBefore (TempFileName, L'\\');
   }
@@ -51,7 +51,7 @@ GetDirNameFromFullPath (
   IN CHAR16   *FullPath
   )
 {
-  CHAR16   *FileName;
+  CHAR16  *FileName;
 
   FileName = GetFileNameFromFullPath (FullPath);
   if (FileName != FullPath) {
@@ -80,9 +80,9 @@ ConstructFullPath (
   IN UINTN    Size
   )
 {
-  UINTN DirPathSize;
+  UINTN  DirPathSize;
 
-  DirPathSize = StrLen(DirPath);
+  DirPathSize = StrLen (DirPath);
   *(DirPath + DirPathSize) = L'\\';
   StrnCatS (DirPath, DirPathSize + Size + 1, FilePath, Size);
 
@@ -91,7 +91,7 @@ ConstructFullPath (
   return DirPath;
 }
 
-CHAR16 *mSymbolTypeStr[] = {
+CHAR16  *mSymbolTypeStr[] = {
   L"( F)",
   L"(SF)",
   L"(GV)",
@@ -116,7 +116,7 @@ EdbSymbolTypeToStr (
     return L"(?)";
   }
 
-  return mSymbolTypeStr [Type];
+  return mSymbolTypeStr[Type];
 }
 
 /**
@@ -135,15 +135,15 @@ DebuggerDisplaySymbolAccrodingToAddress (
   IN     EFI_DEBUGGER_PRIVATE_DATA *DebuggerPrivate
   )
 {
-  EFI_DEBUGGER_SYMBOL_OBJECT *Object;
-  EFI_DEBUGGER_SYMBOL_ENTRY  *Entry;
-  UINTN                      CandidateAddress;
+  EFI_DEBUGGER_SYMBOL_OBJECT  *Object;
+  EFI_DEBUGGER_SYMBOL_ENTRY   *Entry;
+  UINTN                       CandidateAddress;
 
   //
   // Find the nearest symbol address
   //
   CandidateAddress = EbdFindSymbolAddress (Address, EdbMatchSymbolTypeNearestAddress, &Object, &Entry);
-  if (CandidateAddress == 0 || CandidateAddress == (UINTN) -1 || Entry == NULL) {
+  if (CandidateAddress == 0 || CandidateAddress == (UINTN)- 1 || Entry == NULL) {
     EDBPrint (L"Symbole at Address not found!\n");
     return EFI_DEBUG_CONTINUE;
   } else if (Address != CandidateAddress) {
@@ -154,10 +154,10 @@ DebuggerDisplaySymbolAccrodingToAddress (
   // Display symbol
   //
   EDBPrint (L"Symbol File Name: %s\n", Object->Name);
-  if (sizeof(UINTN) == sizeof(UINT64)) {
+  if (sizeof (UINTN) == sizeof (UINT64)) {
     EDBPrint (L"        Address      Type  Symbol\n");
     EDBPrint (L"  ================== ==== ========\n");
-//  EDBPrint (L"  0xFFFFFFFF00000000 ( F) TestMain\n");
+    // EDBPrint (L"  0xFFFFFFFF00000000 ( F) TestMain\n");
     EDBPrint (
       L"  0x%016lx %s %a\n",
       (UINT64)Entry->Rva + Object->BaseAddress,
@@ -167,7 +167,7 @@ DebuggerDisplaySymbolAccrodingToAddress (
   } else {
     EDBPrint (L"   Address   Type  Symbol\n");
     EDBPrint (L"  ========== ==== ========\n");
-//  EDBPrint (L"  0xFFFF0000 ( F) TestMain\n");
+    // EDBPrint (L"  0xFFFF0000 ( F) TestMain\n");
     EDBPrint (
       L"  0x%08x %s %a\n",
       Entry->Rva + Object->BaseAddress,
@@ -200,10 +200,10 @@ DebuggerDisplaySymbolAccrodingToName (
   IN     EFI_DEBUGGER_PRIVATE_DATA *DebuggerPrivate
   )
 {
-  UINTN                      Index;
-  UINTN                      SubIndex;
-  EFI_DEBUGGER_SYMBOL_OBJECT *Object;
-  EFI_DEBUGGER_SYMBOL_ENTRY  *Entry;
+  UINTN                       Index;
+  UINTN                       SubIndex;
+  EFI_DEBUGGER_SYMBOL_OBJECT  *Object;
+  EFI_DEBUGGER_SYMBOL_ENTRY   *Entry;
 
   if (DebuggerPrivate->DebuggerSymbolContext.ObjectCount == 0) {
     EDBPrint (L"No Symbol File!\n");
@@ -234,15 +234,16 @@ DebuggerDisplaySymbolAccrodingToName (
       EDBPrint (L"No Symbol!\n");
       continue;
     }
+
     Entry = Object->Entry;
-    if (sizeof(UINTN) == sizeof(UINT64)) {
+    if (sizeof (UINTN) == sizeof (UINT64)) {
       EDBPrint (L"        Address      Type  Symbol\n");
       EDBPrint (L"  ================== ==== ========\n");
-//    EDBPrint (L"  0xFFFFFFFF00000000 ( F) TestMain (EbcTest.obj)\n");
+      // EDBPrint (L"  0xFFFFFFFF00000000 ( F) TestMain (EbcTest.obj)\n");
     } else {
       EDBPrint (L"   Address   Type  Symbol\n");
       EDBPrint (L"  ========== ==== ========\n");
-//    EDBPrint (L"  0xFFFF0000 ( F) TestMain (EbcTest.obj)\n");
+      // EDBPrint (L"  0xFFFF0000 ( F) TestMain (EbcTest.obj)\n");
     }
 
     //
@@ -264,7 +265,7 @@ DebuggerDisplaySymbolAccrodingToName (
         }
       }
 
-      if (sizeof(UINTN) == sizeof(UINT64)) {
+      if (sizeof (UINTN) == sizeof (UINT64)) {
         EDBPrint (
           L"  0x%016lx %s %a (%a)\n",
           (UINT64)Entry->Rva + Object->BaseAddress,
@@ -310,14 +311,14 @@ DebuggerListSymbol (
   IN OUT EFI_SYSTEM_CONTEXT        SystemContext
   )
 {
-  CHAR16                     *SymbolFileName;
-  CHAR16                     *SymbolName;
-  CHAR16                     *CommandStr;
-  UINTN                      Address;
+  CHAR16  *SymbolFileName;
+  CHAR16  *SymbolName;
+  CHAR16  *CommandStr;
+  UINTN   Address;
 
   SymbolFileName = NULL;
-  SymbolName = NULL;
-  CommandStr = CommandArg;
+  SymbolName     = NULL;
+  CommandStr     = CommandArg;
 
   //
   // display symbol according to address
@@ -341,10 +342,11 @@ DebuggerListSymbol (
         return EFI_DEBUG_CONTINUE;
       } else {
         SymbolFileName = CommandStr;
-        CommandStr = StrGetNextTokenLine (L" ");
+        CommandStr     = StrGetNextTokenLine (L" ");
       }
     }
   }
+
   //
   // Get SymbolName
   //
@@ -360,6 +362,7 @@ DebuggerListSymbol (
       }
     }
   }
+
   if (CommandStr != NULL) {
     EDBPrint (L"Argument error!\n");
     return EFI_DEBUG_CONTINUE;
@@ -391,16 +394,16 @@ DebuggerLoadSymbol (
   IN OUT EFI_SYSTEM_CONTEXT        SystemContext
   )
 {
-  UINTN      BufferSize;
-  VOID       *Buffer;
-  EFI_STATUS Status;
-  CHAR16     *FileName;
-  CHAR16     *CommandArg2;
-  BOOLEAN    IsLoadCode;
-  CHAR16     *DirName;
-  CHAR16     CodFile[EFI_DEBUGGER_SYMBOL_NAME_MAX];
-  CHAR16     *CodFileName;
-  UINTN      Index;
+  UINTN       BufferSize;
+  VOID        *Buffer;
+  EFI_STATUS  Status;
+  CHAR16      *FileName;
+  CHAR16      *CommandArg2;
+  BOOLEAN     IsLoadCode;
+  CHAR16      *DirName;
+  CHAR16      CodFile[EFI_DEBUGGER_SYMBOL_NAME_MAX];
+  CHAR16      *CodFileName;
+  UINTN       Index;
 
   //
   // Check the argument
@@ -409,7 +412,8 @@ DebuggerLoadSymbol (
     EDBPrint (L"SymbolFile not found!\n");
     return EFI_DEBUG_CONTINUE;
   }
-  IsLoadCode = FALSE;
+
+  IsLoadCode  = FALSE;
   CommandArg2 = StrGetNextTokenLine (L" ");
   if (CommandArg2 != NULL) {
     if (StriCmp (CommandArg2, L"a") == 0) {
@@ -424,6 +428,7 @@ DebuggerLoadSymbol (
     EDBPrint (L"SymbolFile name error!\n");
     return EFI_DEBUG_CONTINUE;
   }
+
   if (StriCmp (CommandArg + (StrLen (CommandArg) - 4), L".map") != 0) {
     EDBPrint (L"SymbolFile name error!\n");
     return EFI_DEBUG_CONTINUE;
@@ -433,7 +438,7 @@ DebuggerLoadSymbol (
   // Read MAP file to memory
   //
   Status = ReadFileToBuffer (DebuggerPrivate, CommandArg, &BufferSize, &Buffer, TRUE);
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     EDBPrint (L"SymbolFile read error!\n");
     return EFI_DEBUG_CONTINUE;
   }
@@ -443,18 +448,19 @@ DebuggerLoadSymbol (
   // Load Symbol
   //
   Status = EdbLoadSymbol (DebuggerPrivate, FileName, BufferSize, Buffer);
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     EDBPrint (L"LoadSymbol error!\n");
     gBS->FreePool (Buffer);
     return EFI_DEBUG_CONTINUE;
   }
+
   gBS->FreePool (Buffer);
 
   //
   // Patch Symbol for RVA
   //
   Status = EdbPatchSymbolRVA (DebuggerPrivate, FileName, EdbEbcImageRvaSearchTypeLast);
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     EDBPrint (L"PatchSymbol RVA  - %r! Using the RVA in symbol file.\n", Status);
   } else {
     DEBUG ((DEBUG_ERROR, "PatchSymbol RVA successfully!\n"));
@@ -468,9 +474,9 @@ DebuggerLoadSymbol (
   // load each cod file
   //
   DirName = GetDirNameFromFullPath (CommandArg);
-  ZeroMem (CodFile, sizeof(CodFile));
+  ZeroMem (CodFile, sizeof (CodFile));
   if (StrCmp (DirName, L"") != 0) {
-    StrCpyS (CodFile, sizeof(CodFile), DirName);
+    StrCpyS (CodFile, sizeof (CodFile), DirName);
   } else {
     DirName = L"\\";
   }
@@ -481,16 +487,23 @@ DebuggerLoadSymbol (
   Index = 0;
   CodFileName = GetFileNameUnderDir (DebuggerPrivate, DirName, L".cod", &Index);
   while (CodFileName != NULL) {
-    ZeroMem (CodFile, sizeof(CodFile));
+    ZeroMem (CodFile, sizeof (CodFile));
     if (StrCmp (DirName, L"\\") != 0) {
-      StrCpyS (CodFile, sizeof(CodFile), DirName);
+      StrCpyS (CodFile, sizeof (CodFile), DirName);
     }
 
     //
     // read cod file to memory
     //
-    Status = ReadFileToBuffer (DebuggerPrivate, ConstructFullPath (CodFile, CodFileName, EFI_DEBUGGER_SYMBOL_NAME_MAX - StrLen (CodFile) - 2), &BufferSize, &Buffer, FALSE);
-    if (EFI_ERROR(Status)) {
+    Status =
+      ReadFileToBuffer (
+        DebuggerPrivate,
+        ConstructFullPath (CodFile, CodFileName, EFI_DEBUGGER_SYMBOL_NAME_MAX - StrLen (CodFile) - 2),
+        &BufferSize,
+        &Buffer,
+        FALSE
+        );
+    if (EFI_ERROR (Status)) {
       EDBPrint (L"CodeFile read error!\n");
       CodFileName = GetFileNameUnderDir (DebuggerPrivate, DirName, L".cod", &Index);
       continue;
@@ -550,13 +563,13 @@ DebuggerUnloadSymbol (
   IN OUT EFI_SYSTEM_CONTEXT        SystemContext
   )
 {
-  EFI_STATUS Status;
-  CHAR16     *FileName;
-  CHAR16     *DirName;
-  CHAR16     CodFile[EFI_DEBUGGER_SYMBOL_NAME_MAX];
-  CHAR16     *CodFileName;
-  UINTN      Index;
-  VOID       *BufferPtr;
+  EFI_STATUS  Status;
+  CHAR16      *FileName;
+  CHAR16      *DirName;
+  CHAR16      CodFile[EFI_DEBUGGER_SYMBOL_NAME_MAX];
+  CHAR16      *CodFileName;
+  UINTN       Index;
+  VOID        *BufferPtr;
 
   //
   // Check the argument
@@ -572,9 +585,9 @@ DebuggerUnloadSymbol (
   // Unload Code
   //
   DirName = GetDirNameFromFullPath (CommandArg);
-  ZeroMem (CodFile, sizeof(CodFile));
+  ZeroMem (CodFile, sizeof (CodFile));
   if (StrCmp (DirName, L"") != 0) {
-    StrCpyS (CodFile, sizeof(CodFile), DirName);
+    StrCpyS (CodFile, sizeof (CodFile), DirName);
   } else {
     DirName = L"\\";
   }
@@ -585,9 +598,9 @@ DebuggerUnloadSymbol (
   Index = 0;
   CodFileName = GetFileNameUnderDir (DebuggerPrivate, DirName, L".cod", &Index);
   while (CodFileName != NULL) {
-    ZeroMem (CodFile, sizeof(CodFile));
+    ZeroMem (CodFile, sizeof (CodFile));
     if (StrCmp (DirName, L"\\") != 0) {
-      StrCpyS (CodFile, sizeof(CodFile), DirName);
+      StrCpyS (CodFile, sizeof (CodFile), DirName);
     }
 
     //
@@ -620,7 +633,7 @@ DebuggerUnloadSymbol (
   // Unload Symbol
   //
   Status = EdbUnloadSymbol (DebuggerPrivate, FileName);
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     EDBPrint (L"UnloadSymbol error!\n");
   }
 
@@ -686,12 +699,12 @@ DebuggerLoadCode (
   IN OUT EFI_SYSTEM_CONTEXT        SystemContext
   )
 {
-  UINTN      BufferSize;
-  VOID       *Buffer;
-  EFI_STATUS Status;
-  CHAR16     *CommandArg2;
-  CHAR16     *FileName;
-  CHAR16     *MapFileName;
+  UINTN       BufferSize;
+  VOID        *Buffer;
+  EFI_STATUS  Status;
+  CHAR16      *CommandArg2;
+  CHAR16      *FileName;
+  CHAR16      *MapFileName;
 
   //
   // Check the argument
@@ -700,6 +713,7 @@ DebuggerLoadCode (
     EDBPrint (L"CodeFile not found!\n");
     return EFI_DEBUG_CONTINUE;
   }
+
   CommandArg2 = StrGetNextTokenLine (L" ");
   if (CommandArg2 == NULL) {
     EDBPrint (L"SymbolFile not found!\n");
@@ -710,14 +724,17 @@ DebuggerLoadCode (
     EDBPrint (L"CodeFile name error!\n");
     return EFI_DEBUG_CONTINUE;
   }
+
   if (StriCmp (CommandArg + (StrLen (CommandArg) - 4), L".cod") != 0) {
     EDBPrint (L"CodeFile name error!\n");
     return EFI_DEBUG_CONTINUE;
   }
+
   if (StrLen (CommandArg2) <= 4) {
     EDBPrint (L"SymbolFile name error!\n");
     return EFI_DEBUG_CONTINUE;
   }
+
   if (StriCmp (CommandArg2 + (StrLen (CommandArg2) - 4), L".map") != 0) {
     EDBPrint (L"SymbolFile name error!\n");
     return EFI_DEBUG_CONTINUE;
@@ -727,12 +744,12 @@ DebuggerLoadCode (
   // read cod file to memory
   //
   Status = ReadFileToBuffer (DebuggerPrivate, CommandArg, &BufferSize, &Buffer, TRUE);
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     EDBPrint (L"CodeFile read error!\n");
     return EFI_DEBUG_CONTINUE;
   }
 
-  FileName = GetFileNameFromFullPath (CommandArg);
+  FileName    = GetFileNameFromFullPath (CommandArg);
   MapFileName = GetFileNameFromFullPath (CommandArg2);
   //
   // Load Code
@@ -780,11 +797,11 @@ DebuggerUnloadCode (
   IN OUT EFI_SYSTEM_CONTEXT        SystemContext
   )
 {
-  CHAR16     *CommandArg2;
-  CHAR16     *FileName;
-  CHAR16     *MapFileName;
-  EFI_STATUS Status;
-  VOID       *BufferPtr;
+  CHAR16      *CommandArg2;
+  CHAR16      *FileName;
+  CHAR16      *MapFileName;
+  EFI_STATUS  Status;
+  VOID        *BufferPtr;
 
   //
   // Check the argument
@@ -793,13 +810,14 @@ DebuggerUnloadCode (
     EDBPrint (L"CodeFile not found!\n");
     return EFI_DEBUG_CONTINUE;
   }
+
   CommandArg2 = StrGetNextTokenLine (L" ");
   if (CommandArg2 == NULL) {
     EDBPrint (L"SymbolFile not found!\n");
     return EFI_DEBUG_CONTINUE;
   }
 
-  FileName = GetFileNameFromFullPath (CommandArg);
+  FileName    = GetFileNameFromFullPath (CommandArg);
   MapFileName = GetFileNameFromFullPath (CommandArg2);
 
   //

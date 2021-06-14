@@ -18,55 +18,54 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 extern UINT8  FrontPageVfrBin[];
 
-extern EFI_FORM_BROWSER2_PROTOCOL      *gFormBrowser2;
+extern EFI_FORM_BROWSER2_PROTOCOL  *gFormBrowser2;
 
-
-#define SMBIOS_TYPE4_CPU_SOCKET_POPULATED BIT6
+#define SMBIOS_TYPE4_CPU_SOCKET_POPULATED  BIT6
 
 //
 // This is the VFR compiler generated header file which defines the
 // string identifiers.
 //
-#define PRINTABLE_LANGUAGE_NAME_STRING_ID     0x0001
+#define PRINTABLE_LANGUAGE_NAME_STRING_ID  0x0001
 
 //
 // These are defined as the same with vfr file
 //
-#define FRONT_PAGE_FORM_ID             0x1000
+#define FRONT_PAGE_FORM_ID  0x1000
 
-#define LABEL_FRANTPAGE_INFORMATION    0x1000
-#define LABEL_END                      0xffff
+#define LABEL_FRANTPAGE_INFORMATION  0x1000
+#define LABEL_END                    0xffff
 
 #define FRONT_PAGE_FORMSET_GUID \
   { \
-    0x9e0c30bc, 0x3f06, 0x4ba6, {0x82, 0x88, 0x9, 0x17, 0x9b, 0x85, 0x5d, 0xbe} \
+    0x9e0c30bc, 0x3f06, 0x4ba6, { 0x82, 0x88, 0x9, 0x17, 0x9b, 0x85, 0x5d, 0xbe } \
   }
 
 #define FRONT_PAGE_CALLBACK_DATA_SIGNATURE  SIGNATURE_32 ('F', 'P', 'C', 'B')
 
 typedef struct {
-  UINTN                           Signature;
+  UINTN                             Signature;
 
   //
   // HII relative handles
   //
-  EFI_HII_HANDLE                  HiiHandle;
-  EFI_HANDLE                      DriverHandle;
-  EFI_STRING_ID                   *LanguageToken;
+  EFI_HII_HANDLE                    HiiHandle;
+  EFI_HANDLE                        DriverHandle;
+  EFI_STRING_ID                     *LanguageToken;
 
   //
   // Produced protocols
   //
-  EFI_HII_CONFIG_ACCESS_PROTOCOL  ConfigAccess;
+  EFI_HII_CONFIG_ACCESS_PROTOCOL    ConfigAccess;
 } FRONT_PAGE_CALLBACK_DATA;
 
-
 #define EFI_FP_CALLBACK_DATA_FROM_THIS(a) \
-  CR (a, \
-      FRONT_PAGE_CALLBACK_DATA, \
-      ConfigAccess, \
-      FRONT_PAGE_CALLBACK_DATA_SIGNATURE \
-      )
+  CR ( \
+    a, \
+    FRONT_PAGE_CALLBACK_DATA, \
+    ConfigAccess, \
+    FRONT_PAGE_CALLBACK_DATA_SIGNATURE \
+    )
 
 /**
   This function allows a caller to extract the current configuration for one
@@ -160,9 +159,9 @@ FrontPageCallback (
 
 **/
 EFI_STATUS
-InitializeFrontPage (
-  VOID
-  );
+  InitializeFrontPage (
+                       VOID
+                       );
 
 /**
   Acquire the string associated with the ProducerGuid and return it.
@@ -210,4 +209,3 @@ ExtractDevicePathFromHiiHandle (
   );
 
 #endif // _FRONT_PAGE_H_
-

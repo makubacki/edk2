@@ -14,34 +14,34 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // Global to avoid infinite reentrance of memory allocation when updating
 // page table attributes, which may need allocate pages for new PDE/PTE.
 //
-GLOBAL_REMOVE_IF_UNREFERENCED BOOLEAN mOnGuarding = FALSE;
+GLOBAL_REMOVE_IF_UNREFERENCED BOOLEAN  mOnGuarding = FALSE;
 
 //
 // Pointer to table tracking the Guarded memory with bitmap, in which  '1'
 // is used to indicate memory guarded. '0' might be free memory or Guard
 // page itself, depending on status of memory adjacent to it.
 //
-GLOBAL_REMOVE_IF_UNREFERENCED UINT64 mGuardedMemoryMap = 0;
+GLOBAL_REMOVE_IF_UNREFERENCED UINT64  mGuardedMemoryMap = 0;
 
 //
 // Current depth level of map table pointed by mGuardedMemoryMap.
 // mMapLevel must be initialized at least by 1. It will be automatically
 // updated according to the address of memory just tracked.
 //
-GLOBAL_REMOVE_IF_UNREFERENCED UINTN mMapLevel = 1;
+GLOBAL_REMOVE_IF_UNREFERENCED UINTN  mMapLevel = 1;
 
 //
 // Shift and mask for each level of map table
 //
-GLOBAL_REMOVE_IF_UNREFERENCED UINTN mLevelShift[GUARDED_HEAP_MAP_TABLE_DEPTH]
-                                    = GUARDED_HEAP_MAP_TABLE_DEPTH_SHIFTS;
-GLOBAL_REMOVE_IF_UNREFERENCED UINTN mLevelMask[GUARDED_HEAP_MAP_TABLE_DEPTH]
-                                    = GUARDED_HEAP_MAP_TABLE_DEPTH_MASKS;
+GLOBAL_REMOVE_IF_UNREFERENCED UINTN  mLevelShift[GUARDED_HEAP_MAP_TABLE_DEPTH]
+  = GUARDED_HEAP_MAP_TABLE_DEPTH_SHIFTS;
+GLOBAL_REMOVE_IF_UNREFERENCED UINTN  mLevelMask[GUARDED_HEAP_MAP_TABLE_DEPTH]
+  = GUARDED_HEAP_MAP_TABLE_DEPTH_MASKS;
 
 //
 // Used for promoting freed but not used pages.
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_PHYSICAL_ADDRESS mLastPromotedPage = BASE_4GB;
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_PHYSICAL_ADDRESS  mLastPromotedPage = BASE_4GB;
 
 /**
   Set corresponding bits in bitmap table to 1 according to the address.
@@ -60,24 +60,24 @@ SetBits (
   IN UINT64                  *BitMap
   )
 {
-  UINTN           Lsbs;
-  UINTN           Qwords;
-  UINTN           Msbs;
-  UINTN           StartBit;
-  UINTN           EndBit;
+  UINTN  Lsbs;
+  UINTN  Qwords;
+  UINTN  Msbs;
+  UINTN  StartBit;
+  UINTN  EndBit;
 
-  StartBit  = (UINTN)GUARDED_HEAP_MAP_ENTRY_BIT_INDEX (Address);
-  EndBit    = (StartBit + BitNumber - 1) % GUARDED_HEAP_MAP_ENTRY_BITS;
+  StartBit = (UINTN)GUARDED_HEAP_MAP_ENTRY_BIT_INDEX (Address);
+  EndBit   = (StartBit + BitNumber - 1) % GUARDED_HEAP_MAP_ENTRY_BITS;
 
   if ((StartBit + BitNumber) >= GUARDED_HEAP_MAP_ENTRY_BITS) {
-    Msbs    = (GUARDED_HEAP_MAP_ENTRY_BITS - StartBit) %
-              GUARDED_HEAP_MAP_ENTRY_BITS;
-    Lsbs    = (EndBit + 1) % GUARDED_HEAP_MAP_ENTRY_BITS;
-    Qwords  = (BitNumber - Msbs) / GUARDED_HEAP_MAP_ENTRY_BITS;
+    Msbs = (GUARDED_HEAP_MAP_ENTRY_BITS - StartBit) %
+           GUARDED_HEAP_MAP_ENTRY_BITS;
+    Lsbs   = (EndBit + 1) % GUARDED_HEAP_MAP_ENTRY_BITS;
+    Qwords = (BitNumber - Msbs) / GUARDED_HEAP_MAP_ENTRY_BITS;
   } else {
-    Msbs    = BitNumber;
-    Lsbs    = 0;
-    Qwords  = 0;
+    Msbs   = BitNumber;
+    Lsbs   = 0;
+    Qwords = 0;
   }
 
   if (Msbs > 0) {
@@ -86,8 +86,11 @@ SetBits (
   }
 
   if (Qwords > 0) {
-    SetMem64 ((VOID *)BitMap, Qwords * GUARDED_HEAP_MAP_ENTRY_BYTES,
-              (UINT64)-1);
+    SetMem64 (
+      (VOID *)BitMap,
+      Qwords * GUARDED_HEAP_MAP_ENTRY_BYTES,
+      (UINT64)- 1
+      );
     BitMap += Qwords;
   }
 
@@ -113,24 +116,24 @@ ClearBits (
   IN UINT64                  *BitMap
   )
 {
-  UINTN           Lsbs;
-  UINTN           Qwords;
-  UINTN           Msbs;
-  UINTN           StartBit;
-  UINTN           EndBit;
+  UINTN  Lsbs;
+  UINTN  Qwords;
+  UINTN  Msbs;
+  UINTN  StartBit;
+  UINTN  EndBit;
 
-  StartBit  = (UINTN)GUARDED_HEAP_MAP_ENTRY_BIT_INDEX (Address);
-  EndBit    = (StartBit + BitNumber - 1) % GUARDED_HEAP_MAP_ENTRY_BITS;
+  StartBit = (UINTN)GUARDED_HEAP_MAP_ENTRY_BIT_INDEX (Address);
+  EndBit   = (StartBit + BitNumber - 1) % GUARDED_HEAP_MAP_ENTRY_BITS;
 
   if ((StartBit + BitNumber) >= GUARDED_HEAP_MAP_ENTRY_BITS) {
-    Msbs    = (GUARDED_HEAP_MAP_ENTRY_BITS - StartBit) %
-              GUARDED_HEAP_MAP_ENTRY_BITS;
-    Lsbs    = (EndBit + 1) % GUARDED_HEAP_MAP_ENTRY_BITS;
-    Qwords  = (BitNumber - Msbs) / GUARDED_HEAP_MAP_ENTRY_BITS;
+    Msbs = (GUARDED_HEAP_MAP_ENTRY_BITS - StartBit) %
+           GUARDED_HEAP_MAP_ENTRY_BITS;
+    Lsbs   = (EndBit + 1) % GUARDED_HEAP_MAP_ENTRY_BITS;
+    Qwords = (BitNumber - Msbs) / GUARDED_HEAP_MAP_ENTRY_BITS;
   } else {
-    Msbs    = BitNumber;
-    Lsbs    = 0;
-    Qwords  = 0;
+    Msbs   = BitNumber;
+    Lsbs   = 0;
+    Qwords = 0;
   }
 
   if (Msbs > 0) {
@@ -168,16 +171,16 @@ GetBits (
   IN UINT64                  *BitMap
   )
 {
-  UINTN           StartBit;
-  UINTN           EndBit;
-  UINTN           Lsbs;
-  UINTN           Msbs;
-  UINT64          Result;
+  UINTN   StartBit;
+  UINTN   EndBit;
+  UINTN   Lsbs;
+  UINTN   Msbs;
+  UINT64  Result;
 
   ASSERT (BitNumber <= GUARDED_HEAP_MAP_ENTRY_BITS);
 
-  StartBit  = (UINTN)GUARDED_HEAP_MAP_ENTRY_BIT_INDEX (Address);
-  EndBit    = (StartBit + BitNumber - 1) % GUARDED_HEAP_MAP_ENTRY_BITS;
+  StartBit = (UINTN)GUARDED_HEAP_MAP_ENTRY_BIT_INDEX (Address);
+  EndBit   = (StartBit + BitNumber - 1) % GUARDED_HEAP_MAP_ENTRY_BITS;
 
   if ((StartBit + BitNumber) > GUARDED_HEAP_MAP_ENTRY_BITS) {
     Msbs = GUARDED_HEAP_MAP_ENTRY_BITS - StartBit;
@@ -190,10 +193,10 @@ GetBits (
   if (StartBit == 0 && BitNumber == GUARDED_HEAP_MAP_ENTRY_BITS) {
     Result = *BitMap;
   } else {
-    Result    = RShiftU64((*BitMap), StartBit) & (LShiftU64(1, Msbs) - 1);
+    Result = RShiftU64 ((*BitMap), StartBit) & (LShiftU64 (1, Msbs) - 1);
     if (Lsbs > 0) {
-      BitMap  += 1;
-      Result  |= LShiftU64 ((*BitMap) & (LShiftU64 (1, Lsbs) - 1), Msbs);
+      BitMap += 1;
+      Result |= LShiftU64 ((*BitMap) & (LShiftU64 (1, Lsbs) - 1), Msbs);
     }
   }
 
@@ -217,13 +220,13 @@ FindGuardedMemoryMap (
   OUT UINT64                  **BitMap
   )
 {
-  UINTN                   Level;
-  UINT64                  *GuardMap;
-  UINT64                  MapMemory;
-  UINTN                   Index;
-  UINTN                   Size;
-  UINTN                   BitsToUnitEnd;
-  EFI_STATUS              Status;
+  UINTN       Level;
+  UINT64      *GuardMap;
+  UINT64      MapMemory;
+  UINTN       Index;
+  UINTN       Size;
+  UINTN       BitsToUnitEnd;
+  EFI_STATUS  Status;
 
   MapMemory = 0;
 
@@ -236,17 +239,16 @@ FindGuardedMemoryMap (
            Address,
            mLevelShift[GUARDED_HEAP_MAP_TABLE_DEPTH - mMapLevel - 1]
            ) != 0) {
-
     if (mGuardedMemoryMap != 0) {
       Size = (mLevelMask[GUARDED_HEAP_MAP_TABLE_DEPTH - mMapLevel - 1] + 1)
              * GUARDED_HEAP_MAP_ENTRY_BYTES;
       Status = CoreInternalAllocatePages (
-                  AllocateAnyPages,
-                  EfiBootServicesData,
-                  EFI_SIZE_TO_PAGES (Size),
-                  &MapMemory,
-                  FALSE
-                  );
+                 AllocateAnyPages,
+                 EfiBootServicesData,
+                 EFI_SIZE_TO_PAGES (Size),
+                 &MapMemory,
+                 FALSE
+                 );
       ASSERT_EFI_ERROR (Status);
       ASSERT (MapMemory != 0);
 
@@ -257,28 +259,26 @@ FindGuardedMemoryMap (
     }
 
     mMapLevel++;
-
   }
 
   GuardMap = &mGuardedMemoryMap;
   for (Level = GUARDED_HEAP_MAP_TABLE_DEPTH - mMapLevel;
        Level < GUARDED_HEAP_MAP_TABLE_DEPTH;
        ++Level) {
-
     if (*GuardMap == 0) {
       if (!AllocMapUnit) {
         GuardMap = NULL;
         break;
       }
 
-      Size = (mLevelMask[Level] + 1) * GUARDED_HEAP_MAP_ENTRY_BYTES;
+      Size   = (mLevelMask[Level] + 1) * GUARDED_HEAP_MAP_ENTRY_BYTES;
       Status = CoreInternalAllocatePages (
-                  AllocateAnyPages,
-                  EfiBootServicesData,
-                  EFI_SIZE_TO_PAGES (Size),
-                  &MapMemory,
-                  FALSE
-                  );
+                 AllocateAnyPages,
+                 EfiBootServicesData,
+                 EFI_SIZE_TO_PAGES (Size),
+                 &MapMemory,
+                 FALSE
+                 );
       ASSERT_EFI_ERROR (Status);
       ASSERT (MapMemory != 0);
 
@@ -286,14 +286,13 @@ FindGuardedMemoryMap (
       *GuardMap = MapMemory;
     }
 
-    Index     = (UINTN)RShiftU64 (Address, mLevelShift[Level]);
-    Index     &= mLevelMask[Level];
-    GuardMap  = (UINT64 *)(UINTN)((*GuardMap) + Index * sizeof (UINT64));
-
+    Index    = (UINTN)RShiftU64 (Address, mLevelShift[Level]);
+    Index   &= mLevelMask[Level];
+    GuardMap = (UINT64 *)(UINTN)((*GuardMap) + Index * sizeof (UINT64));
   }
 
   BitsToUnitEnd = GUARDED_HEAP_MAP_BITS - GUARDED_HEAP_MAP_BIT_INDEX (Address);
-  *BitMap       = GuardMap;
+  *BitMap = GuardMap;
 
   return BitsToUnitEnd;
 }
@@ -313,9 +312,9 @@ SetGuardedMemoryBits (
   IN UINTN                   NumberOfPages
   )
 {
-  UINT64            *BitMap;
-  UINTN             Bits;
-  UINTN             BitsToUnitEnd;
+  UINT64  *BitMap;
+  UINTN   Bits;
+  UINTN   BitsToUnitEnd;
 
   while (NumberOfPages > 0) {
     BitsToUnitEnd = FindGuardedMemoryMap (Address, TRUE, &BitMap);
@@ -325,13 +324,13 @@ SetGuardedMemoryBits (
       // Cross map unit
       Bits = BitsToUnitEnd;
     } else {
-      Bits  = NumberOfPages;
+      Bits = NumberOfPages;
     }
 
     SetBits (Address, Bits, BitMap);
 
     NumberOfPages -= Bits;
-    Address       += EFI_PAGES_TO_SIZE (Bits);
+    Address += EFI_PAGES_TO_SIZE (Bits);
   }
 }
 
@@ -350,9 +349,9 @@ ClearGuardedMemoryBits (
   IN UINTN                   NumberOfPages
   )
 {
-  UINT64            *BitMap;
-  UINTN             Bits;
-  UINTN             BitsToUnitEnd;
+  UINT64  *BitMap;
+  UINTN   Bits;
+  UINTN   BitsToUnitEnd;
 
   while (NumberOfPages > 0) {
     BitsToUnitEnd = FindGuardedMemoryMap (Address, TRUE, &BitMap);
@@ -362,13 +361,13 @@ ClearGuardedMemoryBits (
       // Cross map unit
       Bits = BitsToUnitEnd;
     } else {
-      Bits  = NumberOfPages;
+      Bits = NumberOfPages;
     }
 
     ClearBits (Address, Bits, BitMap);
 
     NumberOfPages -= Bits;
-    Address       += EFI_PAGES_TO_SIZE (Bits);
+    Address += EFI_PAGES_TO_SIZE (Bits);
   }
 }
 
@@ -386,11 +385,11 @@ GetGuardedMemoryBits (
   IN UINTN                   NumberOfPages
   )
 {
-  UINT64            *BitMap;
-  UINTN             Bits;
-  UINT64            Result;
-  UINTN             Shift;
-  UINTN             BitsToUnitEnd;
+  UINT64  *BitMap;
+  UINTN   Bits;
+  UINT64  Result;
+  UINTN   Shift;
+  UINTN   BitsToUnitEnd;
 
   ASSERT (NumberOfPages <= GUARDED_HEAP_MAP_ENTRY_BITS);
 
@@ -401,18 +400,18 @@ GetGuardedMemoryBits (
 
     if (NumberOfPages > BitsToUnitEnd) {
       // Cross map unit
-      Bits  = BitsToUnitEnd;
+      Bits = BitsToUnitEnd;
     } else {
-      Bits  = NumberOfPages;
+      Bits = NumberOfPages;
     }
 
     if (BitMap != NULL) {
       Result |= LShiftU64 (GetBits (Address, Bits, BitMap), Shift);
     }
 
-    Shift         += Bits;
+    Shift += Bits;
     NumberOfPages -= Bits;
-    Address       += EFI_PAGES_TO_SIZE (Bits);
+    Address += EFI_PAGES_TO_SIZE (Bits);
   }
 
   return Result;
@@ -431,19 +430,20 @@ GetGuardMapBit (
   IN EFI_PHYSICAL_ADDRESS    Address
   )
 {
-  UINT64        *GuardMap;
+  UINT64  *GuardMap;
 
   FindGuardedMemoryMap (Address, FALSE, &GuardMap);
   if (GuardMap != NULL) {
-    if (RShiftU64 (*GuardMap,
-                   GUARDED_HEAP_MAP_ENTRY_BIT_INDEX (Address)) & 1) {
+    if (RShiftU64 (
+          *GuardMap,
+          GUARDED_HEAP_MAP_ENTRY_BIT_INDEX (Address)
+          ) & 1) {
       return 1;
     }
   }
 
   return 0;
 }
-
 
 /**
   Check to see if the page at the given address is a Guard page or not.
@@ -459,7 +459,7 @@ IsGuardPage (
   IN EFI_PHYSICAL_ADDRESS    Address
   )
 {
-  UINT64        BitMap;
+  UINT64  BitMap;
 
   //
   // There must be at least one guarded page before and/or after given
@@ -469,7 +469,6 @@ IsGuardPage (
   BitMap = GetGuardedMemoryBits (Address - EFI_PAGE_SIZE, 3);
   return ((BitMap == BIT0) || (BitMap == BIT2) || (BitMap == (BIT2 | BIT0)));
 }
-
 
 /**
   Check to see if the page at the given address is guarded or not.
@@ -503,7 +502,7 @@ SetGuardPage (
   IN  EFI_PHYSICAL_ADDRESS      BaseAddress
   )
 {
-  EFI_STATUS      Status;
+  EFI_STATUS  Status;
 
   if (gCpu == NULL) {
     return;
@@ -538,8 +537,8 @@ UnsetGuardPage (
   IN  EFI_PHYSICAL_ADDRESS      BaseAddress
   )
 {
-  UINT64          Attributes;
-  EFI_STATUS      Status;
+  UINT64      Attributes;
+  EFI_STATUS  Status;
 
   if (gCpu == NULL) {
     return;
@@ -588,8 +587,8 @@ IsMemoryTypeToGuard (
   IN UINT8                  PageOrPool
   )
 {
-  UINT64 TestBit;
-  UINT64 ConfigBit;
+  UINT64  TestBit;
+  UINT64  ConfigBit;
 
   if (AllocateType == AllocateAddress) {
     return FALSE;
@@ -604,17 +603,17 @@ IsMemoryTypeToGuard (
   } else if (PageOrPool == GUARD_HEAP_TYPE_PAGE) {
     ConfigBit = PcdGet64 (PcdHeapGuardPageType);
   } else {
-    ConfigBit = (UINT64)-1;
+    ConfigBit = (UINT64)- 1;
   }
 
   if ((UINT32)MemoryType >= MEMORY_TYPE_OS_RESERVED_MIN) {
     TestBit = BIT63;
-  } else if ((UINT32) MemoryType >= MEMORY_TYPE_OEM_RESERVED_MIN) {
+  } else if ((UINT32)MemoryType >= MEMORY_TYPE_OEM_RESERVED_MIN) {
     TestBit = BIT62;
   } else if (MemoryType < EfiMaxMemoryType) {
     TestBit = LShiftU64 (1, MemoryType);
   } else if (MemoryType == EfiMaxMemoryType) {
-    TestBit = (UINT64)-1;
+    TestBit = (UINT64)- 1;
   } else {
     TestBit = 0;
   }
@@ -636,8 +635,11 @@ IsPoolTypeToGuard (
   IN EFI_MEMORY_TYPE        MemoryType
   )
 {
-  return IsMemoryTypeToGuard (MemoryType, AllocateAnyPages,
-                              GUARD_HEAP_TYPE_POOL);
+  return IsMemoryTypeToGuard (
+           MemoryType,
+           AllocateAnyPages,
+           GUARD_HEAP_TYPE_POOL
+           );
 }
 
 /**
@@ -687,7 +689,7 @@ SetGuardForMemory (
   IN UINTN                  NumberOfPages
   )
 {
-  EFI_PHYSICAL_ADDRESS    GuardPage;
+  EFI_PHYSICAL_ADDRESS  GuardPage;
 
   //
   // Set tail Guard
@@ -733,16 +735,16 @@ UnsetGuardForMemory (
   //
   // Head Guard must be one page before, if any.
   //
-  //          MSB-> 1     0 <-LSB
-  //          -------------------
-  //  Head Guard -> 0     1 -> Don't free Head Guard  (shared Guard)
-  //  Head Guard -> 0     0 -> Free Head Guard either (not shared Guard)
-  //                1     X -> Don't free first page  (need a new Guard)
-  //                           (it'll be turned into a Guard page later)
-  //          -------------------
-  //      Start -> -1    -2
+  // MSB-> 1     0 <-LSB
+  // -------------------
+  // Head Guard -> 0     1 -> Don't free Head Guard  (shared Guard)
+  // Head Guard -> 0     0 -> Free Head Guard either (not shared Guard)
+  // 1     X -> Don't free first page  (need a new Guard)
+  // (it'll be turned into a Guard page later)
+  // -------------------
+  // Start -> -1    -2
   //
-  GuardPage = Memory - EFI_PAGES_TO_SIZE (1);
+  GuardPage   = Memory - EFI_PAGES_TO_SIZE (1);
   GuardBitmap = GetGuardedMemoryBits (Memory - EFI_PAGES_TO_SIZE (2), 2);
   if ((GuardBitmap & BIT1) == 0) {
     //
@@ -766,16 +768,16 @@ UnsetGuardForMemory (
   //
   // Tail Guard must be the page after this memory block to free, if any.
   //
-  //   MSB-> 1     0 <-LSB
-  //  --------------------
-  //         1     0 <- Tail Guard -> Don't free Tail Guard  (shared Guard)
-  //         0     0 <- Tail Guard -> Free Tail Guard either (not shared Guard)
-  //         X     1               -> Don't free last page   (need a new Guard)
-  //                                 (it'll be turned into a Guard page later)
-  //  --------------------
-  //        +1    +0 <- End
+  // MSB-> 1     0 <-LSB
+  // --------------------
+  // 1     0 <- Tail Guard -> Don't free Tail Guard  (shared Guard)
+  // 0     0 <- Tail Guard -> Free Tail Guard either (not shared Guard)
+  // X     1               -> Don't free last page   (need a new Guard)
+  // (it'll be turned into a Guard page later)
+  // --------------------
+  // +1    +0 <- End
   //
-  GuardPage = Memory + EFI_PAGES_TO_SIZE (NumberOfPages);
+  GuardPage   = Memory + EFI_PAGES_TO_SIZE (NumberOfPages);
   GuardBitmap = GetGuardedMemoryBits (GuardPage, 2);
   if ((GuardBitmap & BIT0) == 0) {
     //
@@ -799,7 +801,7 @@ UnsetGuardForMemory (
   //
   // No matter what, we just clear the mark of the Guarded memory.
   //
-  ClearGuardedMemoryBits(Memory, NumberOfPages);
+  ClearGuardedMemoryBits (Memory, NumberOfPages);
 }
 
 /**
@@ -831,7 +833,7 @@ AdjustMemoryS (
   // make sure alignment of the returned pool address.
   //
   if ((PcdGet8 (PcdHeapGuardPropertyMask) & BIT7) == 0) {
-    SizeRequested = ALIGN_VALUE(SizeRequested, 8);
+    SizeRequested = ALIGN_VALUE (SizeRequested, 8);
   }
 
   Target = Start + Size - SizeRequested;
@@ -896,17 +898,17 @@ AdjustMemoryF (
   //
   // Head Guard must be one page before, if any.
   //
-  //          MSB-> 1     0 <-LSB
-  //          -------------------
-  //  Head Guard -> 0     1 -> Don't free Head Guard  (shared Guard)
-  //  Head Guard -> 0     0 -> Free Head Guard either (not shared Guard)
-  //                1     X -> Don't free first page  (need a new Guard)
-  //                           (it'll be turned into a Guard page later)
-  //          -------------------
-  //      Start -> -1    -2
+  // MSB-> 1     0 <-LSB
+  // -------------------
+  // Head Guard -> 0     1 -> Don't free Head Guard  (shared Guard)
+  // Head Guard -> 0     0 -> Free Head Guard either (not shared Guard)
+  // 1     X -> Don't free first page  (need a new Guard)
+  // (it'll be turned into a Guard page later)
+  // -------------------
+  // Start -> -1    -2
   //
   MemoryToTest = Start - EFI_PAGES_TO_SIZE (2);
-  GuardBitmap = GetGuardedMemoryBits (MemoryToTest, 2);
+  GuardBitmap  = GetGuardedMemoryBits (MemoryToTest, 2);
   if ((GuardBitmap & BIT1) == 0) {
     //
     // Head Guard exists.
@@ -916,7 +918,7 @@ AdjustMemoryF (
       // If the head Guard is not a tail Guard of adjacent memory block,
       // free it; otherwise, keep it.
       //
-      Start       -= EFI_PAGES_TO_SIZE (1);
+      Start -= EFI_PAGES_TO_SIZE (1);
       PagesToFree += 1;
     }
   } else {
@@ -924,24 +926,24 @@ AdjustMemoryF (
     // No Head Guard, and pages before memory to free are still in Guard. It's a
     // partial free case. We need to keep one page to be a tail Guard.
     //
-    Start       += EFI_PAGES_TO_SIZE (1);
+    Start += EFI_PAGES_TO_SIZE (1);
     PagesToFree -= 1;
   }
 
   //
   // Tail Guard must be the page after this memory block to free, if any.
   //
-  //   MSB-> 1     0 <-LSB
-  //  --------------------
-  //         1     0 <- Tail Guard -> Don't free Tail Guard  (shared Guard)
-  //         0     0 <- Tail Guard -> Free Tail Guard either (not shared Guard)
-  //         X     1               -> Don't free last page   (need a new Guard)
-  //                                 (it'll be turned into a Guard page later)
-  //  --------------------
-  //        +1    +0 <- End
+  // MSB-> 1     0 <-LSB
+  // --------------------
+  // 1     0 <- Tail Guard -> Don't free Tail Guard  (shared Guard)
+  // 0     0 <- Tail Guard -> Free Tail Guard either (not shared Guard)
+  // X     1               -> Don't free last page   (need a new Guard)
+  // (it'll be turned into a Guard page later)
+  // --------------------
+  // +1    +0 <- End
   //
   MemoryToTest = Start + EFI_PAGES_TO_SIZE (PagesToFree);
-  GuardBitmap = GetGuardedMemoryBits (MemoryToTest, 2);
+  GuardBitmap  = GetGuardedMemoryBits (MemoryToTest, 2);
   if ((GuardBitmap & BIT0) == 0) {
     //
     // Tail Guard exists.
@@ -961,8 +963,8 @@ AdjustMemoryF (
     PagesToFree -= 1;
   }
 
-  *Memory         = Start;
-  *NumberOfPages  = PagesToFree;
+  *Memory = Start;
+  *NumberOfPages = PagesToFree;
 }
 
 /**
@@ -991,7 +993,7 @@ AdjustMemoryA (
 
   if (!IsGuardPage (*Memory - EFI_PAGE_SIZE)) {
     // No head Guard, add one.
-    *Memory        -= EFI_PAGE_SIZE;
+    *Memory -= EFI_PAGE_SIZE;
     *NumberOfPages += 1;
   }
 }
@@ -1103,17 +1105,17 @@ SetAllGuardPages (
   VOID
   )
 {
-  UINTN     Entries[GUARDED_HEAP_MAP_TABLE_DEPTH];
-  UINTN     Shifts[GUARDED_HEAP_MAP_TABLE_DEPTH];
-  UINTN     Indices[GUARDED_HEAP_MAP_TABLE_DEPTH];
-  UINT64    Tables[GUARDED_HEAP_MAP_TABLE_DEPTH];
-  UINT64    Addresses[GUARDED_HEAP_MAP_TABLE_DEPTH];
-  UINT64    TableEntry;
-  UINT64    Address;
-  UINT64    GuardPage;
-  INTN      Level;
-  UINTN     Index;
-  BOOLEAN   OnGuarding;
+  UINTN    Entries[GUARDED_HEAP_MAP_TABLE_DEPTH];
+  UINTN    Shifts[GUARDED_HEAP_MAP_TABLE_DEPTH];
+  UINTN    Indices[GUARDED_HEAP_MAP_TABLE_DEPTH];
+  UINT64   Tables[GUARDED_HEAP_MAP_TABLE_DEPTH];
+  UINT64   Addresses[GUARDED_HEAP_MAP_TABLE_DEPTH];
+  UINT64   TableEntry;
+  UINT64   Address;
+  UINT64   GuardPage;
+  INTN     Level;
+  UINTN    Index;
+  BOOLEAN  OnGuarding;
 
   if (mGuardedMemoryMap == 0 ||
       mMapLevel == 0 ||
@@ -1124,43 +1126,37 @@ SetAllGuardPages (
   CopyMem (Entries, mLevelMask, sizeof (Entries));
   CopyMem (Shifts, mLevelShift, sizeof (Shifts));
 
-  SetMem (Tables, sizeof(Tables), 0);
-  SetMem (Addresses, sizeof(Addresses), 0);
-  SetMem (Indices, sizeof(Indices), 0);
+  SetMem (Tables, sizeof (Tables), 0);
+  SetMem (Addresses, sizeof (Addresses), 0);
+  SetMem (Indices, sizeof (Indices), 0);
 
-  Level         = GUARDED_HEAP_MAP_TABLE_DEPTH - mMapLevel;
+  Level = GUARDED_HEAP_MAP_TABLE_DEPTH - mMapLevel;
   Tables[Level] = mGuardedMemoryMap;
-  Address       = 0;
-  OnGuarding    = FALSE;
+  Address    = 0;
+  OnGuarding = FALSE;
 
   DEBUG_CODE (
     DumpGuardedMemoryBitmap ();
-  );
+    );
 
   while (TRUE) {
     if (Indices[Level] > Entries[Level]) {
       Tables[Level] = 0;
-      Level        -= 1;
+      Level -= 1;
     } else {
-
-      TableEntry  = ((UINT64 *)(UINTN)(Tables[Level]))[Indices[Level]];
-      Address     = Addresses[Level];
+      TableEntry = ((UINT64 *)(UINTN)(Tables[Level]))[Indices[Level]];
+      Address    = Addresses[Level];
 
       if (TableEntry == 0) {
-
         OnGuarding = FALSE;
-
       } else if (Level < GUARDED_HEAP_MAP_TABLE_DEPTH - 1) {
-
-        Level            += 1;
-        Tables[Level]     = TableEntry;
-        Addresses[Level]  = Address;
-        Indices[Level]    = 0;
+        Level += 1;
+        Tables[Level]    = TableEntry;
+        Addresses[Level] = Address;
+        Indices[Level]   = 0;
 
         continue;
-
       } else {
-
         Index = 0;
         while (Index < GUARDED_HEAP_MAP_ENTRY_BITS) {
           if ((TableEntry & 1) == 1) {
@@ -1169,6 +1165,7 @@ SetAllGuardPages (
             } else {
               GuardPage = Address - EFI_PAGE_SIZE;
             }
+
             OnGuarding = TRUE;
           } else {
             if (OnGuarding) {
@@ -1176,6 +1173,7 @@ SetAllGuardPages (
             } else {
               GuardPage = 0;
             }
+
             OnGuarding = FALSE;
           }
 
@@ -1189,7 +1187,7 @@ SetAllGuardPages (
 
           TableEntry = RShiftU64 (TableEntry, 1);
           Address   += EFI_PAGE_SIZE;
-          Index     += 1;
+          Index += 1;
         }
       }
     }
@@ -1200,8 +1198,7 @@ SetAllGuardPages (
 
     Indices[Level] += 1;
     Address = (Level == 0) ? 0 : Addresses[Level - 1];
-    Addresses[Level] = Address | LShiftU64(Indices[Level], Shifts[Level]);
-
+    Addresses[Level] = Address | LShiftU64 (Indices[Level], Shifts[Level]);
   }
 }
 
@@ -1217,11 +1214,11 @@ GetLastGuardedFreePageAddress (
   OUT EFI_PHYSICAL_ADDRESS      *Address
   )
 {
-  EFI_PHYSICAL_ADDRESS    AddressGranularity;
-  EFI_PHYSICAL_ADDRESS    BaseAddress;
-  UINTN                   Level;
-  UINT64                  Map;
-  INTN                    Index;
+  EFI_PHYSICAL_ADDRESS  AddressGranularity;
+  EFI_PHYSICAL_ADDRESS  BaseAddress;
+  UINTN                 Level;
+  UINT64                Map;
+  INTN                  Index;
 
   ASSERT (mMapLevel >= 1);
 
@@ -1235,7 +1232,7 @@ GetLastGuardedFreePageAddress (
     //
     // Find the non-NULL entry at largest index.
     //
-    for (Index = (INTN)mLevelMask[Level]; Index >= 0 ; --Index) {
+    for (Index = (INTN)mLevelMask[Level]; Index >= 0; --Index) {
       if (((UINT64 *)(UINTN)Map)[Index] != 0) {
         BaseAddress += MultU64x32 (AddressGranularity, (UINT32)Index);
         Map = ((UINT64 *)(UINTN)Map)[Index];
@@ -1287,7 +1284,7 @@ GuardFreedPages (
   IN  UINTN                   Pages
   )
 {
-  EFI_STATUS      Status;
+  EFI_STATUS  Status;
 
   //
   // Legacy memory lower than 1MB might be accessed with no allocation. Leave
@@ -1322,6 +1319,7 @@ GuardFreedPages (
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_WARN, "Failed to guard freed pages: %p (%lu)\n", BaseAddress, (UINT64)Pages));
     }
+
     mOnGuarding = FALSE;
   }
 }
@@ -1355,17 +1353,17 @@ GuardAllFreedPages (
   VOID
   )
 {
-  UINTN     Entries[GUARDED_HEAP_MAP_TABLE_DEPTH];
-  UINTN     Shifts[GUARDED_HEAP_MAP_TABLE_DEPTH];
-  UINTN     Indices[GUARDED_HEAP_MAP_TABLE_DEPTH];
-  UINT64    Tables[GUARDED_HEAP_MAP_TABLE_DEPTH];
-  UINT64    Addresses[GUARDED_HEAP_MAP_TABLE_DEPTH];
-  UINT64    TableEntry;
-  UINT64    Address;
-  UINT64    GuardPage;
-  INTN      Level;
-  UINT64    BitIndex;
-  UINTN     GuardPageNumber;
+  UINTN   Entries[GUARDED_HEAP_MAP_TABLE_DEPTH];
+  UINTN   Shifts[GUARDED_HEAP_MAP_TABLE_DEPTH];
+  UINTN   Indices[GUARDED_HEAP_MAP_TABLE_DEPTH];
+  UINT64  Tables[GUARDED_HEAP_MAP_TABLE_DEPTH];
+  UINT64  Addresses[GUARDED_HEAP_MAP_TABLE_DEPTH];
+  UINT64  TableEntry;
+  UINT64  Address;
+  UINT64  GuardPage;
+  INTN    Level;
+  UINT64  BitIndex;
+  UINTN   GuardPageNumber;
 
   if (mGuardedMemoryMap == 0 ||
       mMapLevel == 0 ||
@@ -1376,43 +1374,44 @@ GuardAllFreedPages (
   CopyMem (Entries, mLevelMask, sizeof (Entries));
   CopyMem (Shifts, mLevelShift, sizeof (Shifts));
 
-  SetMem (Tables, sizeof(Tables), 0);
-  SetMem (Addresses, sizeof(Addresses), 0);
-  SetMem (Indices, sizeof(Indices), 0);
+  SetMem (Tables, sizeof (Tables), 0);
+  SetMem (Addresses, sizeof (Addresses), 0);
+  SetMem (Indices, sizeof (Indices), 0);
 
-  Level           = GUARDED_HEAP_MAP_TABLE_DEPTH - mMapLevel;
-  Tables[Level]   = mGuardedMemoryMap;
-  Address         = 0;
-  GuardPage       = (UINT64)-1;
+  Level = GUARDED_HEAP_MAP_TABLE_DEPTH - mMapLevel;
+  Tables[Level] = mGuardedMemoryMap;
+  Address   = 0;
+  GuardPage = (UINT64)- 1;
   GuardPageNumber = 0;
 
   while (TRUE) {
     if (Indices[Level] > Entries[Level]) {
       Tables[Level] = 0;
-      Level        -= 1;
+      Level -= 1;
     } else {
-      TableEntry  = ((UINT64 *)(UINTN)(Tables[Level]))[Indices[Level]];
-      Address     = Addresses[Level];
+      TableEntry = ((UINT64 *)(UINTN)(Tables[Level]))[Indices[Level]];
+      Address    = Addresses[Level];
 
       if (Level < GUARDED_HEAP_MAP_TABLE_DEPTH - 1) {
-        Level            += 1;
-        Tables[Level]     = TableEntry;
-        Addresses[Level]  = Address;
-        Indices[Level]    = 0;
+        Level += 1;
+        Tables[Level]    = TableEntry;
+        Addresses[Level] = Address;
+        Indices[Level]   = 0;
 
         continue;
       } else {
         BitIndex = 1;
         while (BitIndex != 0) {
           if ((TableEntry & BitIndex) != 0) {
-            if (GuardPage == (UINT64)-1) {
+            if (GuardPage == (UINT64)- 1) {
               GuardPage = Address;
             }
+
             ++GuardPageNumber;
           } else if (GuardPageNumber > 0) {
             GuardFreedPages (GuardPage, GuardPageNumber);
             GuardPageNumber = 0;
-            GuardPage       = (UINT64)-1;
+            GuardPage = (UINT64)- 1;
           }
 
           if (TableEntry == 0) {
@@ -1432,7 +1431,6 @@ GuardAllFreedPages (
     Indices[Level] += 1;
     Address = (Level == 0) ? 0 : Addresses[Level - 1];
     Addresses[Level] = Address | LShiftU64 (Indices[Level], Shifts[Level]);
-
   }
 
   //
@@ -1461,9 +1459,9 @@ MergeGuardPages (
   IN EFI_PHYSICAL_ADDRESS       MaxAddress
   )
 {
-  EFI_PHYSICAL_ADDRESS        EndAddress;
-  UINT64                      Bitmap;
-  INTN                        Pages;
+  EFI_PHYSICAL_ADDRESS  EndAddress;
+  UINT64                Bitmap;
+  INTN                  Pages;
 
   if (!IsHeapGuardEnabled (GUARD_HEAP_TYPE_FREED) ||
       MemoryMapEntry->Type >= EfiMemoryMappedIO) {
@@ -1515,10 +1513,10 @@ PromoteGuardedFreePages (
   OUT EFI_PHYSICAL_ADDRESS      *EndAddress
   )
 {
-  EFI_STATUS              Status;
-  UINTN                   AvailablePages;
-  UINT64                  Bitmap;
-  EFI_PHYSICAL_ADDRESS    Start;
+  EFI_STATUS            Status;
+  UINTN                 AvailablePages;
+  UINT64                Bitmap;
+  EFI_PHYSICAL_ADDRESS  Start;
 
   if (!IsHeapGuardEnabled (GUARD_HEAP_TYPE_FREED)) {
     return FALSE;
@@ -1528,8 +1526,8 @@ PromoteGuardedFreePages (
   // Similar to memory allocation service, always search the freed pages in
   // descending direction.
   //
-  Start           = mLastPromotedPage;
-  AvailablePages  = 0;
+  Start = mLastPromotedPage;
+  AvailablePages = 0;
   while (AvailablePages == 0) {
     Start -= EFI_PAGES_TO_SIZE (GUARDED_HEAP_MAP_ENTRY_BITS);
     //
@@ -1565,14 +1563,14 @@ PromoteGuardedFreePages (
       // operation; otherwise infinite loops could be caused.
       //
       mOnGuarding = TRUE;
-      Status = gCpu->SetMemoryAttributes (gCpu, Start, EFI_PAGES_TO_SIZE(AvailablePages), 0);
+      Status = gCpu->SetMemoryAttributes (gCpu, Start, EFI_PAGES_TO_SIZE (AvailablePages), 0);
       ASSERT_EFI_ERROR (Status);
       mOnGuarding = FALSE;
     }
 
     mLastPromotedPage = Start;
     *StartAddress     = Start;
-    *EndAddress       = Start + EFI_PAGES_TO_SIZE (AvailablePages) - 1;
+    *EndAddress = Start + EFI_PAGES_TO_SIZE (AvailablePages) - 1;
     return TRUE;
   }
 
@@ -1618,7 +1616,7 @@ Uint64ToBinString (
   OUT CHAR8       *BinString
   )
 {
-  UINTN Index;
+  UINTN  Index;
 
   if (BinString == NULL) {
     return;
@@ -1628,6 +1626,7 @@ Uint64ToBinString (
     BinString[Index - 1] = '0' + (Value & 1);
     Value = RShiftU64 (Value, 1);
   }
+
   BinString[64] = '\0';
 }
 
@@ -1640,18 +1639,18 @@ DumpGuardedMemoryBitmap (
   VOID
   )
 {
-  UINTN     Entries[GUARDED_HEAP_MAP_TABLE_DEPTH];
-  UINTN     Shifts[GUARDED_HEAP_MAP_TABLE_DEPTH];
-  UINTN     Indices[GUARDED_HEAP_MAP_TABLE_DEPTH];
-  UINT64    Tables[GUARDED_HEAP_MAP_TABLE_DEPTH];
-  UINT64    Addresses[GUARDED_HEAP_MAP_TABLE_DEPTH];
-  UINT64    TableEntry;
-  UINT64    Address;
-  INTN      Level;
-  UINTN     RepeatZero;
-  CHAR8     String[GUARDED_HEAP_MAP_ENTRY_BITS + 1];
-  CHAR8     *Ruler1;
-  CHAR8     *Ruler2;
+  UINTN   Entries[GUARDED_HEAP_MAP_TABLE_DEPTH];
+  UINTN   Shifts[GUARDED_HEAP_MAP_TABLE_DEPTH];
+  UINTN   Indices[GUARDED_HEAP_MAP_TABLE_DEPTH];
+  UINT64  Tables[GUARDED_HEAP_MAP_TABLE_DEPTH];
+  UINT64  Addresses[GUARDED_HEAP_MAP_TABLE_DEPTH];
+  UINT64  TableEntry;
+  UINT64  Address;
+  INTN    Level;
+  UINTN   RepeatZero;
+  CHAR8   String[GUARDED_HEAP_MAP_ENTRY_BITS + 1];
+  CHAR8   *Ruler1;
+  CHAR8   *Ruler2;
 
   if (!IsHeapGuardEnabled (GUARD_HEAP_TYPE_ALL)) {
     return;
@@ -1666,70 +1665,65 @@ DumpGuardedMemoryBitmap (
   Ruler1 = "               3               2               1               0";
   Ruler2 = "FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210";
 
-  DEBUG ((HEAP_GUARD_DEBUG_LEVEL, "============================="
-                                  " Guarded Memory Bitmap "
-                                  "==============================\r\n"));
+  DEBUG ((
+    HEAP_GUARD_DEBUG_LEVEL,
+    "============================="
+    " Guarded Memory Bitmap "
+    "==============================\r\n"
+    ));
   DEBUG ((HEAP_GUARD_DEBUG_LEVEL, "                  %a\r\n", Ruler1));
   DEBUG ((HEAP_GUARD_DEBUG_LEVEL, "                  %a\r\n", Ruler2));
 
   CopyMem (Entries, mLevelMask, sizeof (Entries));
   CopyMem (Shifts, mLevelShift, sizeof (Shifts));
 
-  SetMem (Indices, sizeof(Indices), 0);
-  SetMem (Tables, sizeof(Tables), 0);
-  SetMem (Addresses, sizeof(Addresses), 0);
+  SetMem (Indices, sizeof (Indices), 0);
+  SetMem (Tables, sizeof (Tables), 0);
+  SetMem (Addresses, sizeof (Addresses), 0);
 
-  Level         = GUARDED_HEAP_MAP_TABLE_DEPTH - mMapLevel;
+  Level = GUARDED_HEAP_MAP_TABLE_DEPTH - mMapLevel;
   Tables[Level] = mGuardedMemoryMap;
-  Address       = 0;
-  RepeatZero    = 0;
+  Address    = 0;
+  RepeatZero = 0;
 
   while (TRUE) {
     if (Indices[Level] > Entries[Level]) {
-
       Tables[Level] = 0;
-      Level        -= 1;
-      RepeatZero    = 0;
+      Level -= 1;
+      RepeatZero = 0;
 
       DEBUG ((
         HEAP_GUARD_DEBUG_LEVEL,
         "========================================="
         "=========================================\r\n"
         ));
-
     } else {
-
-      TableEntry  = ((UINT64 *)(UINTN)Tables[Level])[Indices[Level]];
-      Address     = Addresses[Level];
+      TableEntry = ((UINT64 *)(UINTN)Tables[Level])[Indices[Level]];
+      Address    = Addresses[Level];
 
       if (TableEntry == 0) {
-
         if (Level == GUARDED_HEAP_MAP_TABLE_DEPTH - 1) {
           if (RepeatZero == 0) {
-            Uint64ToBinString(TableEntry, String);
+            Uint64ToBinString (TableEntry, String);
             DEBUG ((HEAP_GUARD_DEBUG_LEVEL, "%016lx: %a\r\n", Address, String));
           } else if (RepeatZero == 1) {
             DEBUG ((HEAP_GUARD_DEBUG_LEVEL, "...             : ...\r\n"));
           }
+
           RepeatZero += 1;
         }
-
       } else if (Level < GUARDED_HEAP_MAP_TABLE_DEPTH - 1) {
-
-        Level            += 1;
-        Tables[Level]     = TableEntry;
-        Addresses[Level]  = Address;
-        Indices[Level]    = 0;
-        RepeatZero        = 0;
+        Level += 1;
+        Tables[Level]    = TableEntry;
+        Addresses[Level] = Address;
+        Indices[Level]   = 0;
+        RepeatZero = 0;
 
         continue;
-
       } else {
-
         RepeatZero = 0;
-        Uint64ToBinString(TableEntry, String);
+        Uint64ToBinString (TableEntry, String);
         DEBUG ((HEAP_GUARD_DEBUG_LEVEL, "%016lx: %a\r\n", Address, String));
-
       }
     }
 
@@ -1739,8 +1733,6 @@ DumpGuardedMemoryBitmap (
 
     Indices[Level] += 1;
     Address = (Level == 0) ? 0 : Addresses[Level - 1];
-    Addresses[Level] = Address | LShiftU64(Indices[Level], Shifts[Level]);
-
+    Addresses[Level] = Address | LShiftU64 (Indices[Level], Shifts[Level]);
   }
 }
-

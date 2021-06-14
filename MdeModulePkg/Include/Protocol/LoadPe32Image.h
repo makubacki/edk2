@@ -12,13 +12,13 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define __LOAD_PE32_IMAGE_H__
 
 #define PE32_IMAGE_PROTOCOL_GUID  \
-  {0x5cb5c776,0x60d5,0x45ee,{0x88,0x3c,0x45,0x27,0x8,0xcd,0x74,0x3f }}
+  { 0x5cb5c776, 0x60d5, 0x45ee, { 0x88, 0x3c, 0x45, 0x27, 0x8, 0xcd, 0x74, 0x3f } }
 
 #define EFI_LOAD_PE_IMAGE_ATTRIBUTE_NONE                                 0x00
 #define EFI_LOAD_PE_IMAGE_ATTRIBUTE_RUNTIME_REGISTRATION                 0x01
 #define EFI_LOAD_PE_IMAGE_ATTRIBUTE_DEBUG_IMAGE_INFO_TABLE_REGISTRATION  0x02
 
-typedef struct _EFI_PE32_IMAGE_PROTOCOL   EFI_PE32_IMAGE_PROTOCOL;
+typedef struct _EFI_PE32_IMAGE_PROTOCOL EFI_PE32_IMAGE_PROTOCOL;
 
 /**
 
@@ -87,11 +87,10 @@ EFI_STATUS
   );
 
 struct _EFI_PE32_IMAGE_PROTOCOL {
-  LOAD_PE_IMAGE     LoadPeImage;
-  UNLOAD_PE_IMAGE   UnLoadPeImage;
+  LOAD_PE_IMAGE      LoadPeImage;
+  UNLOAD_PE_IMAGE    UnLoadPeImage;
 };
 
-extern EFI_GUID gEfiLoadPeImageProtocolGuid;
+extern EFI_GUID  gEfiLoadPeImageProtocolGuid;
 
 #endif
-

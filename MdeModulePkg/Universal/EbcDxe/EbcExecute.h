@@ -14,14 +14,13 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // Macros to check and set alignment
 //
-#define ASSERT_ALIGNED(addr, size)  ASSERT (!((UINT32) (addr) & (size - 1)))
-#define IS_ALIGNED(addr, size)      !((UINT32) (addr) & (size - 1))
+#define ASSERT_ALIGNED(addr, size)  ASSERT (!((UINT32)(addr) & (size - 1)))
+#define IS_ALIGNED(addr, size)      !((UINT32)(addr) & (size - 1))
 
 //
 // Debug macro
 //
-#define EBCMSG(s) gST->ConOut->OutputString (gST->ConOut, s)
-
+#define EBCMSG(s)  gST->ConOut->OutputString (gST->ConOut, s)
 
 /**
   Execute an EBC image from an entry point or from a published protocol.
@@ -37,8 +36,6 @@ EbcExecute (
   IN VM_CONTEXT *VmPtr
   );
 
-
-
 /**
   Returns the version of the EBC virtual machine.
 
@@ -46,9 +43,9 @@ EbcExecute (
 
 **/
 UINT64
-GetVmVersion (
-  VOID
-  );
+  GetVmVersion (
+                VOID
+                );
 
 /**
   Writes UINTN data to memory address.

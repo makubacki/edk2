@@ -23,7 +23,13 @@ NvmeDumpStatus (
 {
   DEBUG ((EFI_D_VERBOSE, "Dump NVMe Completion Entry Status from [0x%x]:\n", Cq));
 
-  DEBUG ((EFI_D_VERBOSE, "  SQ Identifier : [0x%x], Phase Tag : [%d], Cmd Identifier : [0x%x]\n", Cq->Sqid, Cq->Pt, Cq->Cid));
+  DEBUG ((
+    EFI_D_VERBOSE,
+    "  SQ Identifier : [0x%x], Phase Tag : [%d], Cmd Identifier : [0x%x]\n",
+    Cq->Sqid,
+    Cq->Pt,
+    Cq->Cid
+    ));
 
   DEBUG ((EFI_D_VERBOSE, "  NVMe Cmd Execution Result - "));
 
@@ -97,6 +103,7 @@ NvmeDumpStatus (
           DEBUG ((EFI_D_VERBOSE, "Reservation Conflict\n"));
           break;
       }
+
       break;
 
     case 0x1:
@@ -159,6 +166,7 @@ NvmeDumpStatus (
           DEBUG ((EFI_D_VERBOSE, "Attempted Write to Read Only Range\n"));
           break;
       }
+
       break;
 
     case 0x2:
@@ -185,6 +193,7 @@ NvmeDumpStatus (
           DEBUG ((EFI_D_VERBOSE, "Access Denied\n"));
           break;
       }
+
       break;
 
     default:
@@ -206,24 +215,24 @@ NvmeDumpStatus (
   @retval The pointer to the first PRP List of the PRP lists.
 
 **/
-VOID*
+VOID *
 NvmeCreatePrpList (
   IN     EFI_PCI_IO_PROTOCOL          *PciIo,
   IN     EFI_PHYSICAL_ADDRESS         PhysicalAddr,
   IN     UINTN                        Pages,
-     OUT VOID                         **PrpListHost,
+  OUT VOID                         **PrpListHost,
   IN OUT UINTN                        *PrpListNo,
-     OUT VOID                         **Mapping
+  OUT VOID                         **Mapping
   )
 {
-  UINTN                       PrpEntryNo;
-  UINT64                      PrpListBase;
-  UINTN                       PrpListIndex;
-  UINTN                       PrpEntryIndex;
-  UINT64                      Remainder;
-  EFI_PHYSICAL_ADDRESS        PrpListPhyAddr;
-  UINTN                       Bytes;
-  EFI_STATUS                  Status;
+  UINTN                 PrpEntryNo;
+  UINT64                PrpListBase;
+  UINTN                 PrpListIndex;
+  UINTN                 PrpEntryIndex;
+  UINT64                Remainder;
+  EFI_PHYSICAL_ADDRESS  PrpListPhyAddr;
+  UINTN                 Bytes;
+  EFI_STATUS            Status;
 
   //
   // The number of Prp Entry in a memory page.
@@ -257,7 +266,7 @@ NvmeCreatePrpList (
     return NULL;
   }
 
-  Bytes = EFI_PAGES_TO_SIZE (*PrpListNo);
+  Bytes  = EFI_PAGES_TO_SIZE (*PrpListNo);
   Status = PciIo->Map (
                     PciIo,
                     EfiPciIoOperationBusMasterCommonBuffer,
@@ -271,44 +280,45 @@ NvmeCreatePrpList (
     DEBUG ((EFI_D_ERROR, "NvmeCreatePrpList: create PrpList failure!\n"));
     goto EXIT;
   }
+
   //
   // Fill all PRP lists except of last one.
   //
   ZeroMem (*PrpListHost, Bytes);
   for (PrpListIndex = 0; PrpListIndex < *PrpListNo - 1; ++PrpListIndex) {
-    PrpListBase = *(UINT64*)PrpListHost + PrpListIndex * EFI_PAGE_SIZE;
+    PrpListBase = *(UINT64 *)PrpListHost + PrpListIndex * EFI_PAGE_SIZE;
 
     for (PrpEntryIndex = 0; PrpEntryIndex < PrpEntryNo; ++PrpEntryIndex) {
       if (PrpEntryIndex != PrpEntryNo - 1) {
         //
         // Fill all PRP entries except of last one.
         //
-        *((UINT64*)(UINTN)PrpListBase + PrpEntryIndex) = PhysicalAddr;
+        *((UINT64 *)(UINTN)PrpListBase + PrpEntryIndex) = PhysicalAddr;
         PhysicalAddr += EFI_PAGE_SIZE;
       } else {
         //
         // Fill last PRP entries with next PRP List pointer.
         //
-        *((UINT64*)(UINTN)PrpListBase + PrpEntryIndex) = PrpListPhyAddr + (PrpListIndex + 1) * EFI_PAGE_SIZE;
+        *((UINT64 *)(UINTN)PrpListBase + PrpEntryIndex) = PrpListPhyAddr + (PrpListIndex + 1) * EFI_PAGE_SIZE;
       }
     }
   }
+
   //
   // Fill last PRP list.
   //
-  PrpListBase = *(UINT64*)PrpListHost + PrpListIndex * EFI_PAGE_SIZE;
+  PrpListBase = *(UINT64 *)PrpListHost + PrpListIndex * EFI_PAGE_SIZE;
   for (PrpEntryIndex = 0; PrpEntryIndex < Remainder; ++PrpEntryIndex) {
-    *((UINT64*)(UINTN)PrpListBase + PrpEntryIndex) = PhysicalAddr;
+    *((UINT64 *)(UINTN)PrpListBase + PrpEntryIndex) = PhysicalAddr;
     PhysicalAddr += EFI_PAGE_SIZE;
   }
 
-  return (VOID*)(UINTN)PrpListPhyAddr;
+  return (VOID *)(UINTN)PrpListPhyAddr;
 
 EXIT:
   PciIo->FreeBuffer (PciIo, *PrpListNo, *PrpListHost);
   return NULL;
 }
-
 
 /**
   Aborts the asynchronous PassThru requests.
@@ -325,15 +335,15 @@ AbortAsyncPassThruTasks (
   IN NVME_CONTROLLER_PRIVATE_DATA    *Private
   )
 {
-  EFI_PCI_IO_PROTOCOL                *PciIo;
-  LIST_ENTRY                         *Link;
-  LIST_ENTRY                         *NextLink;
-  NVME_BLKIO2_SUBTASK                *Subtask;
-  NVME_BLKIO2_REQUEST                *BlkIo2Request;
-  NVME_PASS_THRU_ASYNC_REQ           *AsyncRequest;
-  EFI_BLOCK_IO2_TOKEN                *Token;
-  EFI_TPL                            OldTpl;
-  EFI_STATUS                         Status;
+  EFI_PCI_IO_PROTOCOL       *PciIo;
+  LIST_ENTRY                *Link;
+  LIST_ENTRY                *NextLink;
+  NVME_BLKIO2_SUBTASK       *Subtask;
+  NVME_BLKIO2_REQUEST       *BlkIo2Request;
+  NVME_PASS_THRU_ASYNC_REQ  *AsyncRequest;
+  EFI_BLOCK_IO2_TOKEN       *Token;
+  EFI_TPL                   OldTpl;
+  EFI_STATUS                Status;
 
   PciIo  = Private->PciIo;
   OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
@@ -344,15 +354,16 @@ AbortAsyncPassThruTasks (
   for (Link = GetFirstNode (&Private->UnsubmittedSubtasks);
        !IsNull (&Private->UnsubmittedSubtasks, Link);
        Link = NextLink) {
-    NextLink      = GetNextNode (&Private->UnsubmittedSubtasks, Link);
-    Subtask       = NVME_BLKIO2_SUBTASK_FROM_LINK (Link);
+    NextLink = GetNextNode (&Private->UnsubmittedSubtasks, Link);
+    Subtask  = NVME_BLKIO2_SUBTASK_FROM_LINK (Link);
     BlkIo2Request = Subtask->BlockIo2Request;
-    Token         = BlkIo2Request->Token;
+    Token = BlkIo2Request->Token;
 
     BlkIo2Request->UnsubmittedSubtaskNum--;
     if (Subtask->IsLast) {
       BlkIo2Request->LastSubtaskSubmitted = TRUE;
     }
+
     Token->TransactionStatus = EFI_ABORTED;
 
     RemoveEntryList (Link);
@@ -366,18 +377,21 @@ AbortAsyncPassThruTasks (
   for (Link = GetFirstNode (&Private->AsyncPassThruQueue);
        !IsNull (&Private->AsyncPassThruQueue, Link);
        Link = NextLink) {
-    NextLink = GetNextNode (&Private->AsyncPassThruQueue, Link);
+    NextLink     = GetNextNode (&Private->AsyncPassThruQueue, Link);
     AsyncRequest = NVME_PASS_THRU_ASYNC_REQ_FROM_THIS (Link);
 
     if (AsyncRequest->MapData != NULL) {
       PciIo->Unmap (PciIo, AsyncRequest->MapData);
     }
+
     if (AsyncRequest->MapMeta != NULL) {
       PciIo->Unmap (PciIo, AsyncRequest->MapMeta);
     }
+
     if (AsyncRequest->MapPrpList != NULL) {
       PciIo->Unmap (PciIo, AsyncRequest->MapPrpList);
     }
+
     if (AsyncRequest->PrpListHost != NULL) {
       PciIo->FreeBuffer (
                PciIo,
@@ -402,7 +416,6 @@ AbortAsyncPassThruTasks (
 
   return Status;
 }
-
 
 /**
   Sends an NVM Express Command Packet to an NVM Express controller or namespace. This function supports
@@ -492,31 +505,31 @@ NvmExpressPassThru (
   // EFI_NVM_EXPRESS_PASS_THRU_ATTRIBUTES_PHYSICAL set is an illegal
   // configuration.
   //
-  Attributes  = This->Mode->Attributes;
+  Attributes = This->Mode->Attributes;
   if ((Attributes & (EFI_NVM_EXPRESS_PASS_THRU_ATTRIBUTES_PHYSICAL |
-    EFI_NVM_EXPRESS_PASS_THRU_ATTRIBUTES_LOGICAL)) == 0) {
+                     EFI_NVM_EXPRESS_PASS_THRU_ATTRIBUTES_LOGICAL)) == 0) {
     return EFI_INVALID_PARAMETER;
   }
 
   //
   // Buffer alignment check for TransferBuffer & MetadataBuffer.
   //
-  IoAlign     = This->Mode->IoAlign;
-  if (IoAlign > 0 && (((UINTN) Packet->TransferBuffer & (IoAlign - 1)) != 0)) {
+  IoAlign = This->Mode->IoAlign;
+  if (IoAlign > 0 && (((UINTN)Packet->TransferBuffer & (IoAlign - 1)) != 0)) {
     return EFI_INVALID_PARAMETER;
   }
 
-  if (IoAlign > 0 && (((UINTN) Packet->MetadataBuffer & (IoAlign - 1)) != 0)) {
+  if (IoAlign > 0 && (((UINTN)Packet->MetadataBuffer & (IoAlign - 1)) != 0)) {
     return EFI_INVALID_PARAMETER;
   }
 
-  Private     = NVME_CONTROLLER_PRIVATE_DATA_FROM_PASS_THRU (This);
+  Private = NVME_CONTROLLER_PRIVATE_DATA_FROM_PASS_THRU (This);
 
   //
   // Check NamespaceId is valid or not.
   //
   if ((NamespaceId > Private->ControllerData->Nn) &&
-      (NamespaceId != (UINT32) -1)) {
+      (NamespaceId != (UINT32)- 1)) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -538,10 +551,10 @@ NvmExpressPassThru (
   MapPrpList  = NULL;
   PrpListHost = NULL;
   PrpListNo   = 0;
-  Prp         = NULL;
-  TimerEvent  = NULL;
-  Status      = EFI_SUCCESS;
-  QueueSize   = MIN (NVME_ASYNC_CSQ_SIZE, Private->Cap.Mqes) + 1;
+  Prp = NULL;
+  TimerEvent = NULL;
+  Status     = EFI_SUCCESS;
+  QueueSize  = MIN (NVME_ASYNC_CSQ_SIZE, Private->Cap.Mqes) + 1;
 
   if (Packet->QueueType == NVME_ADMIN_QUEUE) {
     QueueId = 0;
@@ -560,8 +573,9 @@ NvmExpressPassThru (
       }
     }
   }
-  Sq  = Private->SqBuffer[QueueId] + Private->SqTdbl[QueueId].Sqt;
-  Cq  = Private->CqBuffer[QueueId] + Private->CqHdbl[QueueId].Cqh;
+
+  Sq = Private->SqBuffer[QueueId] + Private->SqTdbl[QueueId].Sqt;
+  Cq = Private->CqBuffer[QueueId] + Private->CqHdbl[QueueId].Cqh;
 
   if (Packet->NvmeCmd->Nsid != NamespaceId) {
     return EFI_INVALID_PARAMETER;
@@ -613,14 +627,14 @@ NvmExpressPassThru (
 
     if ((Packet->TransferLength != 0) && (Packet->TransferBuffer != NULL)) {
       MapLength = Packet->TransferLength;
-      Status = PciIo->Map (
-                        PciIo,
-                        Flag,
-                        Packet->TransferBuffer,
-                        &MapLength,
-                        &PhyAddr,
-                        &MapData
-                        );
+      Status    = PciIo->Map (
+                           PciIo,
+                           Flag,
+                           Packet->TransferBuffer,
+                           &MapLength,
+                           &PhyAddr,
+                           &MapData
+                           );
       if (EFI_ERROR (Status) || (Packet->TransferLength != MapLength)) {
         return EFI_OUT_OF_RESOURCES;
       }
@@ -631,14 +645,14 @@ NvmExpressPassThru (
 
     if((Packet->MetadataLength != 0) && (Packet->MetadataBuffer != NULL)) {
       MapLength = Packet->MetadataLength;
-      Status = PciIo->Map (
-                        PciIo,
-                        Flag,
-                        Packet->MetadataBuffer,
-                        &MapLength,
-                        &PhyAddr,
-                        &MapMeta
-                        );
+      Status    = PciIo->Map (
+                           PciIo,
+                           Flag,
+                           Packet->MetadataBuffer,
+                           &MapLength,
+                           &PhyAddr,
+                           &MapMeta
+                           );
       if (EFI_ERROR (Status) || (Packet->MetadataLength != MapLength)) {
         PciIo->Unmap (
                  PciIo,
@@ -647,9 +661,11 @@ NvmExpressPassThru (
 
         return EFI_OUT_OF_RESOURCES;
       }
+
       Sq->Mptr = PhyAddr;
     }
   }
+
   //
   // If the buffer size spans more than two memory pages (page size as defined in CC.Mps),
   // then build a PRP list in the second PRP submission queue entry.
@@ -662,7 +678,14 @@ NvmExpressPassThru (
     // Create PrpList for remaining data buffer.
     //
     PhyAddr = (Sq->Prp[0] + EFI_PAGE_SIZE) & ~(EFI_PAGE_SIZE - 1);
-    Prp = NvmeCreatePrpList (PciIo, PhyAddr, EFI_SIZE_TO_PAGES(Offset + Bytes) - 1, &PrpListHost, &PrpListNo, &MapPrpList);
+    Prp     = NvmeCreatePrpList (
+                PciIo,
+                PhyAddr,
+                EFI_SIZE_TO_PAGES (Offset + Bytes) - 1,
+                &PrpListHost,
+                &PrpListNo,
+                &MapPrpList
+                );
     if (Prp == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
       goto EXIT;
@@ -676,24 +699,31 @@ NvmExpressPassThru (
   if(Packet->NvmeCmd->Flags & CDW2_VALID) {
     Sq->Rsvd2 = (UINT64)Packet->NvmeCmd->Cdw2;
   }
+
   if(Packet->NvmeCmd->Flags & CDW3_VALID) {
     Sq->Rsvd2 |= LShiftU64 ((UINT64)Packet->NvmeCmd->Cdw3, 32);
   }
+
   if(Packet->NvmeCmd->Flags & CDW10_VALID) {
     Sq->Payload.Raw.Cdw10 = Packet->NvmeCmd->Cdw10;
   }
+
   if(Packet->NvmeCmd->Flags & CDW11_VALID) {
     Sq->Payload.Raw.Cdw11 = Packet->NvmeCmd->Cdw11;
   }
+
   if(Packet->NvmeCmd->Flags & CDW12_VALID) {
     Sq->Payload.Raw.Cdw12 = Packet->NvmeCmd->Cdw12;
   }
+
   if(Packet->NvmeCmd->Flags & CDW13_VALID) {
     Sq->Payload.Raw.Cdw13 = Packet->NvmeCmd->Cdw13;
   }
+
   if(Packet->NvmeCmd->Flags & CDW14_VALID) {
     Sq->Payload.Raw.Cdw14 = Packet->NvmeCmd->Cdw14;
   }
+
   if(Packet->NvmeCmd->Flags & CDW15_VALID) {
     Sq->Payload.Raw.Cdw15 = Packet->NvmeCmd->Cdw15;
   }
@@ -707,15 +737,16 @@ NvmExpressPassThru (
   } else {
     Private->SqTdbl[QueueId].Sqt ^= 1;
   }
-  Data = ReadUnaligned32 ((UINT32*)&Private->SqTdbl[QueueId]);
+
+  Data   = ReadUnaligned32 ((UINT32 *)&Private->SqTdbl[QueueId]);
   Status = PciIo->Mem.Write (
-               PciIo,
-               EfiPciIoWidthUint32,
-               NVME_BAR,
-               NVME_SQTDBL_OFFSET(QueueId, Private->Cap.Dstrd),
-               1,
-               &Data
-               );
+                        PciIo,
+                        EfiPciIoWidthUint32,
+                        NVME_BAR,
+                        NVME_SQTDBL_OFFSET (QueueId, Private->Cap.Dstrd),
+                        1,
+                        &Data
+                        );
 
   if (EFI_ERROR (Status)) {
     goto EXIT;
@@ -732,15 +763,15 @@ NvmExpressPassThru (
       goto EXIT;
     }
 
-    AsyncRequest->Signature     = NVME_PASS_THRU_ASYNC_REQ_SIG;
-    AsyncRequest->Packet        = Packet;
-    AsyncRequest->CommandId     = Sq->Cid;
-    AsyncRequest->CallerEvent   = Event;
-    AsyncRequest->MapData       = MapData;
-    AsyncRequest->MapMeta       = MapMeta;
-    AsyncRequest->MapPrpList    = MapPrpList;
-    AsyncRequest->PrpListNo     = PrpListNo;
-    AsyncRequest->PrpListHost   = PrpListHost;
+    AsyncRequest->Signature   = NVME_PASS_THRU_ASYNC_REQ_SIG;
+    AsyncRequest->Packet      = Packet;
+    AsyncRequest->CommandId   = Sq->Cid;
+    AsyncRequest->CallerEvent = Event;
+    AsyncRequest->MapData     = MapData;
+    AsyncRequest->MapMeta     = MapMeta;
+    AsyncRequest->MapPrpList  = MapPrpList;
+    AsyncRequest->PrpListNo   = PrpListNo;
+    AsyncRequest->PrpListHost = PrpListHost;
 
     OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
     InsertTailList (&Private->AsyncPassThruQueue, &AsyncRequest->Link);
@@ -760,9 +791,9 @@ NvmExpressPassThru (
     goto EXIT;
   }
 
-  Status = gBS->SetTimer(TimerEvent, TimerRelative, Packet->CommandTimeout);
+  Status = gBS->SetTimer (TimerEvent, TimerRelative, Packet->CommandTimeout);
 
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     goto EXIT;
   }
 
@@ -788,14 +819,15 @@ NvmExpressPassThru (
       //
       // Dump every completion entry status for debugging.
       //
-      DEBUG_CODE_BEGIN();
-        NvmeDumpStatus(Cq);
-      DEBUG_CODE_END();
+      DEBUG_CODE_BEGIN ();
+      NvmeDumpStatus (Cq);
+      DEBUG_CODE_END ();
     }
+
     //
     // Copy the Respose Queue entry for this command to the callers response buffer
     //
-    CopyMem(Packet->NvmeCompletion, Cq, sizeof(EFI_NVM_EXPRESS_COMPLETION));
+    CopyMem (Packet->NvmeCompletion, Cq, sizeof (EFI_NVM_EXPRESS_COMPLETION));
   } else {
     //
     // Timeout occurs for an NVMe command. Reset the controller to abort the
@@ -840,16 +872,16 @@ NvmExpressPassThru (
     Private->Pt[QueueId] ^= 1;
   }
 
-  Data = ReadUnaligned32 ((UINT32*)&Private->CqHdbl[QueueId]);
+  Data = ReadUnaligned32 ((UINT32 *)&Private->CqHdbl[QueueId]);
   PreviousStatus = Status;
   Status = PciIo->Mem.Write (
-               PciIo,
-               EfiPciIoWidthUint32,
-               NVME_BAR,
-               NVME_CQHDBL_OFFSET(QueueId, Private->Cap.Dstrd),
-               1,
-               &Data
-               );
+                        PciIo,
+                        EfiPciIoWidthUint32,
+                        NVME_BAR,
+                        NVME_CQHDBL_OFFSET (QueueId, Private->Cap.Dstrd),
+                        1,
+                        &Data
+                        );
   // The return status of PciIo->Mem.Write should not override
   // previous status if previous status contains error.
   Status = EFI_ERROR (PreviousStatus) ? PreviousStatus : Status;
@@ -892,6 +924,7 @@ EXIT:
   if (TimerEvent != NULL) {
     gBS->CloseEvent (TimerEvent);
   }
+
   return Status;
 }
 
@@ -935,17 +968,17 @@ NvmExpressGetNextNamespace (
   IN OUT UINT32                                      *NamespaceId
   )
 {
-  NVME_CONTROLLER_PRIVATE_DATA     *Private;
-  NVME_ADMIN_NAMESPACE_DATA        *NamespaceData;
-  UINT32                           NextNamespaceId;
-  EFI_STATUS                       Status;
+  NVME_CONTROLLER_PRIVATE_DATA  *Private;
+  NVME_ADMIN_NAMESPACE_DATA     *NamespaceData;
+  UINT32                        NextNamespaceId;
+  EFI_STATUS                    Status;
 
   if ((This == NULL) || (NamespaceId == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
 
   NamespaceData = NULL;
-  Status        = EFI_NOT_FOUND;
+  Status = EFI_NOT_FOUND;
 
   Private = NVME_CONTROLLER_PRIVATE_DATA_FROM_PASS_THRU (This);
   //
@@ -966,7 +999,7 @@ NvmExpressGetNextNamespace (
     }
 
     Status = NvmeIdentifyNamespace (Private, NextNamespaceId, NamespaceData);
-    if (EFI_ERROR(Status)) {
+    if (EFI_ERROR (Status)) {
       goto Done;
     }
 
@@ -990,7 +1023,7 @@ NvmExpressGetNextNamespace (
     }
 
     Status = NvmeIdentifyNamespace (Private, NextNamespaceId, NamespaceData);
-    if (EFI_ERROR(Status)) {
+    if (EFI_ERROR (Status)) {
       goto Done;
     }
 
@@ -999,7 +1032,7 @@ NvmExpressGetNextNamespace (
 
 Done:
   if (NamespaceData != NULL) {
-    FreePool(NamespaceData);
+    FreePool (NamespaceData);
   }
 
   return Status;
@@ -1034,11 +1067,11 @@ EFIAPI
 NvmExpressGetNamespace (
   IN     EFI_NVM_EXPRESS_PASS_THRU_PROTOCOL          *This,
   IN     EFI_DEVICE_PATH_PROTOCOL                    *DevicePath,
-     OUT UINT32                                      *NamespaceId
+  OUT UINT32                                      *NamespaceId
   )
 {
-  NVME_NAMESPACE_DEVICE_PATH       *Node;
-  NVME_CONTROLLER_PRIVATE_DATA     *Private;
+  NVME_NAMESPACE_DEVICE_PATH    *Node;
+  NVME_CONTROLLER_PRIVATE_DATA  *Private;
 
   if ((This == NULL) || (DevicePath == NULL) || (NamespaceId == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -1052,7 +1085,7 @@ NvmExpressGetNamespace (
   Private = NVME_CONTROLLER_PRIVATE_DATA_FROM_PASS_THRU (This);
 
   if (DevicePath->SubType == MSG_NVME_NAMESPACE_DP) {
-    if (DevicePathNodeLength(DevicePath) != sizeof(NVME_NAMESPACE_DEVICE_PATH)) {
+    if (DevicePathNodeLength (DevicePath) != sizeof (NVME_NAMESPACE_DEVICE_PATH)) {
       return EFI_NOT_FOUND;
     }
 
@@ -1060,7 +1093,7 @@ NvmExpressGetNamespace (
     // Check NamespaceId in the device path node is valid or not.
     //
     if ((Node->NamespaceId == 0) ||
-      (Node->NamespaceId > Private->ControllerData->Nn)) {
+        (Node->NamespaceId > Private->ControllerData->Nn)) {
       return EFI_NOT_FOUND;
     }
 
@@ -1111,10 +1144,10 @@ NvmExpressBuildDevicePath (
   IN OUT EFI_DEVICE_PATH_PROTOCOL                    **DevicePath
   )
 {
-  NVME_NAMESPACE_DEVICE_PATH     *Node;
-  NVME_CONTROLLER_PRIVATE_DATA   *Private;
-  EFI_STATUS                     Status;
-  NVME_ADMIN_NAMESPACE_DATA      *NamespaceData;
+  NVME_NAMESPACE_DEVICE_PATH    *Node;
+  NVME_CONTROLLER_PRIVATE_DATA  *Private;
+  EFI_STATUS                    Status;
+  NVME_ADMIN_NAMESPACE_DATA     *NamespaceData;
 
   //
   // Validate parameters
@@ -1130,7 +1163,7 @@ NvmExpressBuildDevicePath (
   // Check NamespaceId is valid or not.
   //
   if ((NamespaceId == 0) ||
-    (NamespaceId > Private->ControllerData->Nn)) {
+      (NamespaceId > Private->ControllerData->Nn)) {
     return EFI_NOT_FOUND;
   }
 
@@ -1142,13 +1175,13 @@ NvmExpressBuildDevicePath (
   Node->Header.Type    = MESSAGING_DEVICE_PATH;
   Node->Header.SubType = MSG_NVME_NAMESPACE_DP;
   SetDevicePathNodeLength (&Node->Header, sizeof (NVME_NAMESPACE_DEVICE_PATH));
-  Node->NamespaceId    = NamespaceId;
+  Node->NamespaceId = NamespaceId;
 
   //
   // Allocate a buffer for Identify Namespace data.
   //
   NamespaceData = NULL;
-  NamespaceData = AllocateZeroPool(sizeof (NVME_ADMIN_NAMESPACE_DATA));
+  NamespaceData = AllocateZeroPool (sizeof (NVME_ADMIN_NAMESPACE_DATA));
   if(NamespaceData == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Exit;
@@ -1163,7 +1196,7 @@ NvmExpressBuildDevicePath (
              (VOID *)NamespaceData
              );
 
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     goto Exit;
   }
 
@@ -1182,4 +1215,3 @@ Exit:
 
   return Status;
 }
-

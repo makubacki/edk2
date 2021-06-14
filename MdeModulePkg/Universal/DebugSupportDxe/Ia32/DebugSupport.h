@@ -21,8 +21,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/BaseLib.h>
 
-#define NUM_IDT_ENTRIES                 0x78
-#define SYSTEM_TIMER_VECTOR             0x68
+#define NUM_IDT_ENTRIES      0x78
+#define SYSTEM_TIMER_VECTOR  0x68
 
 typedef
 VOID
@@ -32,20 +32,22 @@ VOID
 
 typedef
 VOID
-(EFIAPI *CALLBACK_FUNC) (
+(EFIAPI *CALLBACK_FUNC)(
   );
 
 typedef struct {
-  IA32_IDT_GATE_DESCRIPTOR  OrigDesc;
-  DEBUG_PROC                OrigVector;
-  IA32_IDT_GATE_DESCRIPTOR  NewDesc;
-  DEBUG_PROC                StubEntry;
-  CALLBACK_FUNC             RegisteredCallback;
+  IA32_IDT_GATE_DESCRIPTOR    OrigDesc;
+  DEBUG_PROC                  OrigVector;
+  IA32_IDT_GATE_DESCRIPTOR    NewDesc;
+  DEBUG_PROC                  StubEntry;
+  CALLBACK_FUNC               RegisteredCallback;
 } IDT_ENTRY;
 
-extern UINT8                     InterruptEntryStub[];
-extern UINT32                    StubSize;
-extern VOID                      (*OrigVector) (VOID);
+extern UINT8   InterruptEntryStub[];
+extern UINT32  StubSize;
+extern VOID    (*OrigVector) (
+  VOID
+  );
 extern IDT_ENTRY                 *IdtEntryTable;
 extern IA32_IDT_GATE_DESCRIPTOR  NullDesc;
 
@@ -54,9 +56,9 @@ extern IA32_IDT_GATE_DESCRIPTOR  NullDesc;
 
 **/
 VOID
-CommonIdtEntry (
-  VOID
-  );
+  CommonIdtEntry (
+                  VOID
+                  );
 
 /**
   Check whether FXSTOR is supported
@@ -66,9 +68,9 @@ CommonIdtEntry (
 
 **/
 BOOLEAN
-FxStorSupport (
-  VOID
-  );
+  FxStorSupport (
+                 VOID
+                 );
 
 /**
   Encodes an IDT descriptor with the given physical address.
@@ -79,8 +81,8 @@ FxStorSupport (
 **/
 VOID
 Vect2Desc (
-  IA32_IDT_GATE_DESCRIPTOR * DestDesc,
-  VOID (*Vector) (VOID)
+  IA32_IDT_GATE_DESCRIPTOR *DestDesc,
+  VOID (*Vector)(VOID)
   );
 
 /**
@@ -96,9 +98,9 @@ Vect2Desc (
 
 **/
 EFI_STATUS
-PlInitializeDebugSupportDriver (
-  VOID
-  );
+  PlInitializeDebugSupportDriver (
+                                  VOID
+                                  );
 
 /**
   This is the callback that is written to the LoadedImage protocol instance

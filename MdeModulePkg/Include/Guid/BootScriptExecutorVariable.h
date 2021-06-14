@@ -14,7 +14,7 @@
 
 #define EFI_BOOT_SCRIPT_EXECUTOR_VARIABLE_GUID \
   { \
-    0x3079818c, 0x46d4, 0x4a73, {0xae, 0xf3, 0xe3, 0xe4, 0x6c, 0xf1, 0xee, 0xdb} \
+    0x3079818c, 0x46d4, 0x4a73, { 0xae, 0xf3, 0xe3, 0xe4, 0x6c, 0xf1, 0xee, 0xdb } \
   }
 
 //
@@ -23,20 +23,20 @@
 #pragma pack(1)
 
 typedef struct {
-  EFI_PHYSICAL_ADDRESS  BootScriptExecutorEntrypoint;
+  EFI_PHYSICAL_ADDRESS    BootScriptExecutorEntrypoint;
 } BOOT_SCRIPT_EXECUTOR_VARIABLE;
 
 #pragma pack()
 
 #define BOOT_SCRIPT_EXECUTOR_VARIABLE_NAME  L"BootScriptExecutorVariable"
 
-extern EFI_GUID gEfiBootScriptExecutorVariableGuid;
+extern EFI_GUID  gEfiBootScriptExecutorVariableGuid;
 
 #define EFI_BOOT_SCRIPT_EXECUTOR_CONTEXT_GUID \
   { \
-    0x79cb58c4, 0xac51, 0x442f, {0xaf, 0xd7, 0x98, 0xe4, 0x7d, 0x2e, 0x99, 0x8} \
+    0x79cb58c4, 0xac51, 0x442f, { 0xaf, 0xd7, 0x98, 0xe4, 0x7d, 0x2e, 0x99, 0x8 } \
   }
 
-extern EFI_GUID gEfiBootScriptExecutorContextGuid;
+extern EFI_GUID  gEfiBootScriptExecutorContextGuid;
 
 #endif

@@ -16,8 +16,8 @@
   @retval EFI_SUCCESS   The constructor always returns EFI_SUCCESS.
 **/
 EFI_STATUS
-MmSmiHandlerProfileLibInitialization (
-  VOID
-  );
+  MmSmiHandlerProfileLibInitialization (
+                                        VOID
+                                        );
 
 #endif //_SMM_SMI_HANDLER_PROFILE_LIB_H_

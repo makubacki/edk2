@@ -30,7 +30,6 @@ UsbHcGetCapability (
   OUT UINT8               *Is64BitCapable
   );
 
-
 /**
   Get the root hub port state.
 
@@ -231,7 +230,6 @@ UsbHcSyncInterruptTransfer (
   OUT UINT32                              *UsbResult
   );
 
-
 /**
   Open the USB host controller protocol BY_CHILD.
 
@@ -271,8 +269,8 @@ UsbCloseHostProtoByChild (
 
 **/
 EFI_TPL
-UsbGetCurrentTpl (
-  VOID
-  );
+  UsbGetCurrentTpl (
+                    VOID
+                    );
 
 #endif

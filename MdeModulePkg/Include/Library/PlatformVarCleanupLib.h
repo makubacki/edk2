@@ -26,8 +26,8 @@ typedef enum {
 VAR_ERROR_FLAG
 EFIAPI
 GetLastBootVarErrorFlag (
-  VOID
-  );
+                         VOID
+                         );
 
 /**
   Platform variable cleanup.
@@ -53,4 +53,3 @@ PlatformVarCleanup (
   );
 
 #endif
-

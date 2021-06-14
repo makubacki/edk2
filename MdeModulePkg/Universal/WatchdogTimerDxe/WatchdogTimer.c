@@ -37,7 +37,6 @@ EFI_WATCHDOG_TIMER_NOTIFY  mWatchdogTimerNotifyFunction = NULL;
 //
 EFI_EVENT  mWatchdogTimerEvent;
 
-
 /**
   Notification function that is called if the watchdog timer is fired.
 
@@ -60,7 +59,10 @@ WatchdogTimerDriverExpires (
   IN VOID         *Context
   )
 {
-  REPORT_STATUS_CODE (EFI_ERROR_CODE | EFI_ERROR_MINOR, (EFI_COMPUTING_UNIT_HOST_PROCESSOR | EFI_CU_HP_EC_TIMER_EXPIRED));
+  REPORT_STATUS_CODE (
+    EFI_ERROR_CODE | EFI_ERROR_MINOR,
+    (EFI_COMPUTING_UNIT_HOST_PROCESSOR | EFI_CU_HP_EC_TIMER_EXPIRED)
+    );
 
   //
   // If a notification function has been registered, then call it
@@ -76,7 +78,6 @@ WatchdogTimerDriverExpires (
   //
   gRT->ResetSystem (EfiResetCold, EFI_TIMEOUT, 0, NULL);
 }
-
 
 /**
   Registers a handler that is to be invoked when the watchdog timer fires.
@@ -115,6 +116,7 @@ WatchdogTimerDriverRegisterHandler (
   if (NotifyFunction == NULL && mWatchdogTimerNotifyFunction == NULL) {
     return EFI_INVALID_PARAMETER;
   }
+
   //
   // If NotifyFunction is not NULL, and a handler is already registered,
   // return EFI_ALREADY_STARTED.

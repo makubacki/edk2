@@ -33,7 +33,7 @@
 //
 // Define the maximum message length
 //
-#define MAX_DEBUG_MESSAGE_LENGTH 0x100
+#define MAX_DEBUG_MESSAGE_LENGTH  0x100
 
 extern RUNTIME_MEMORY_STATUSCODE_HEADER  *mRtMemoryStatusCodeTable;
 
@@ -44,10 +44,9 @@ extern RUNTIME_MEMORY_STATUSCODE_HEADER  *mRtMemoryStatusCodeTable;
 
 **/
 EFI_STATUS
-EfiSerialStatusCodeInitializeWorker (
-  VOID
-  );
-
+  EfiSerialStatusCodeInitializeWorker (
+                                       VOID
+                                       );
 
 /**
   Convert status code value and extended data to readable ASCII string, send string to serial I/O device.
@@ -86,9 +85,9 @@ SerialStatusCodeReportWorker (
 
 **/
 EFI_STATUS
-RtMemoryStatusCodeInitializeWorker (
-  VOID
-  );
+  RtMemoryStatusCodeInitializeWorker (
+                                      VOID
+                                      );
 
 /**
   Report status code into runtime memory. If the runtime pool is full, roll back to the
@@ -126,7 +125,7 @@ RtMemoryStatusCodeReportWorker (
 VOID
 EFIAPI
 UnregisterSerialBootTimeHandlers (
-  VOID
-  );
+                                  VOID
+                                  );
 
 #endif

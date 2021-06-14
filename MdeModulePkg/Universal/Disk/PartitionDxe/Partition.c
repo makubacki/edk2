@@ -10,13 +10,12 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
-
 #include "Partition.h"
 
 //
 // Partition Driver Global Variables.
 //
-EFI_DRIVER_BINDING_PROTOCOL gPartitionDriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  gPartitionDriverBinding = {
   PartitionDriverBindingSupported,
   PartitionDriverBindingStart,
   PartitionDriverBindingStop,
@@ -42,9 +41,9 @@ EFI_DRIVER_BINDING_PROTOCOL gPartitionDriverBinding = {
 // 3. MBR
 // 4. no partiton found
 // Note: UDF is using a same method as booting from CD-ROM, so put it along
-//        with CD-ROM check.
+// with CD-ROM check.
 //
-PARTITION_DETECT_ROUTINE mPartitionDetectRoutineTable[] = {
+PARTITION_DETECT_ROUTINE  mPartitionDetectRoutineTable[] = {
   PartitionInstallGptChildHandles,
   PartitionInstallUdfChildHandles,
   PartitionInstallMbrChildHandles,
@@ -92,10 +91,10 @@ PartitionDriverBindingSupported (
       // If RemainingDevicePath isn't the End of Device Path Node,
       // check its validation
       //
-      Node = (EFI_DEV_PATH *) RemainingDevicePath;
+      Node = (EFI_DEV_PATH *)RemainingDevicePath;
       if (Node->DevPath.Type != MEDIA_DEVICE_PATH ||
-        Node->DevPath.SubType != MEDIA_HARDDRIVE_DP ||
-        DevicePathNodeLength (&Node->DevPath) != sizeof (HARDDRIVE_DEVICE_PATH)) {
+          Node->DevPath.SubType != MEDIA_HARDDRIVE_DP ||
+          DevicePathNodeLength (&Node->DevPath) != sizeof (HARDDRIVE_DEVICE_PATH)) {
         return EFI_UNSUPPORTED;
       }
     }
@@ -107,7 +106,7 @@ PartitionDriverBindingSupported (
   Status = gBS->OpenProtocol (
                   ControllerHandle,
                   &gEfiDiskIoProtocolGuid,
-                  (VOID **) &DiskIo,
+                  (VOID **)&DiskIo,
                   This->DriverBindingHandle,
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
@@ -115,9 +114,11 @@ PartitionDriverBindingSupported (
   if (Status == EFI_ALREADY_STARTED) {
     return EFI_SUCCESS;
   }
+
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
   //
   // Close the I/O Abstraction(s) used to perform the supported test
   //
@@ -134,7 +135,7 @@ PartitionDriverBindingSupported (
   Status = gBS->OpenProtocol (
                   ControllerHandle,
                   &gEfiDevicePathProtocolGuid,
-                  (VOID **) &ParentDevicePath,
+                  (VOID **)&ParentDevicePath,
                   This->DriverBindingHandle,
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
@@ -151,11 +152,11 @@ PartitionDriverBindingSupported (
   // Close protocol, don't use device path protocol in the Support() function
   //
   gBS->CloseProtocol (
-        ControllerHandle,
-        &gEfiDevicePathProtocolGuid,
-        This->DriverBindingHandle,
-        ControllerHandle
-        );
+         ControllerHandle,
+         &gEfiDevicePathProtocolGuid,
+         This->DriverBindingHandle,
+         ControllerHandle
+         );
 
   //
   // Open the IO Abstraction(s) needed to perform the supported test
@@ -207,7 +208,7 @@ PartitionDriverBindingStart (
   EFI_TPL                   OldTpl;
 
   BlockIo2 = NULL;
-  OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
+  OldTpl   = gBS->RaiseTPL (TPL_CALLBACK);
   //
   // Check RemainingDevicePath validation
   //
@@ -229,7 +230,7 @@ PartitionDriverBindingStart (
   Status = gBS->OpenProtocol (
                   ControllerHandle,
                   &gEfiBlockIoProtocolGuid,
-                  (VOID **) &BlockIo,
+                  (VOID **)&BlockIo,
                   This->DriverBindingHandle,
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
@@ -241,7 +242,7 @@ PartitionDriverBindingStart (
   Status = gBS->OpenProtocol (
                   ControllerHandle,
                   &gEfiBlockIo2ProtocolGuid,
-                  (VOID **) &BlockIo2,
+                  (VOID **)&BlockIo2,
                   This->DriverBindingHandle,
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
@@ -256,7 +257,7 @@ PartitionDriverBindingStart (
   Status = gBS->OpenProtocol (
                   ControllerHandle,
                   &gEfiDevicePathProtocolGuid,
-                  (VOID **) &ParentDevicePath,
+                  (VOID **)&ParentDevicePath,
                   This->DriverBindingHandle,
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
@@ -271,18 +272,18 @@ PartitionDriverBindingStart (
   Status = gBS->OpenProtocol (
                   ControllerHandle,
                   &gEfiDiskIoProtocolGuid,
-                  (VOID **) &DiskIo,
+                  (VOID **)&DiskIo,
                   This->DriverBindingHandle,
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
   if (EFI_ERROR (Status) && Status != EFI_ALREADY_STARTED) {
     gBS->CloseProtocol (
-          ControllerHandle,
-          &gEfiDevicePathProtocolGuid,
-          This->DriverBindingHandle,
-          ControllerHandle
-          );
+           ControllerHandle,
+           &gEfiDevicePathProtocolGuid,
+           This->DriverBindingHandle,
+           ControllerHandle
+           );
     goto Exit;
   }
 
@@ -291,7 +292,7 @@ PartitionDriverBindingStart (
   Status = gBS->OpenProtocol (
                   ControllerHandle,
                   &gEfiDiskIo2ProtocolGuid,
-                  (VOID **) &DiskIo2,
+                  (VOID **)&DiskIo2,
                   This->DriverBindingHandle,
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
@@ -303,7 +304,7 @@ PartitionDriverBindingStart (
   //
   // Try to read blocks when there's media or it is removable physical partition.
   //
-  Status       = EFI_UNSUPPORTED;
+  Status = EFI_UNSUPPORTED;
   MediaPresent = BlockIo->Media->MediaPresent;
   if (BlockIo->Media->MediaPresent ||
       (BlockIo->Media->RemovableMedia && !BlockIo->Media->LogicalPartition)) {
@@ -314,21 +315,23 @@ PartitionDriverBindingStart (
     //
     Routine = &mPartitionDetectRoutineTable[0];
     while (*Routine != NULL) {
-      Status = (*Routine) (
-                   This,
-                   ControllerHandle,
-                   DiskIo,
-                   DiskIo2,
-                   BlockIo,
-                   BlockIo2,
-                   ParentDevicePath
-                   );
+      Status = (*Routine)(
+  This,
+  ControllerHandle,
+  DiskIo,
+  DiskIo2,
+  BlockIo,
+  BlockIo2,
+  ParentDevicePath
+  );
       if (!EFI_ERROR (Status) || Status == EFI_MEDIA_CHANGED || Status == EFI_NO_MEDIA) {
         break;
       }
+
       Routine++;
     }
   }
+
   //
   // In the case that the driver is already started (OpenStatus == EFI_ALREADY_STARTED),
   // the DevicePathProtocol and the DiskIoProtocol are not actually opened by the
@@ -346,11 +349,11 @@ PartitionDriverBindingStart (
       Status != EFI_MEDIA_CHANGED &&
       !(MediaPresent && Status == EFI_NO_MEDIA)) {
     gBS->CloseProtocol (
-          ControllerHandle,
-          &gEfiDiskIoProtocolGuid,
-          This->DriverBindingHandle,
-          ControllerHandle
-          );
+           ControllerHandle,
+           &gEfiDiskIoProtocolGuid,
+           This->DriverBindingHandle,
+           ControllerHandle
+           );
     //
     // Close Parent DiskIo2 if has.
     //
@@ -362,11 +365,11 @@ PartitionDriverBindingStart (
            );
 
     gBS->CloseProtocol (
-          ControllerHandle,
-          &gEfiDevicePathProtocolGuid,
-          This->DriverBindingHandle,
-          ControllerHandle
-          );
+           ControllerHandle,
+           &gEfiDevicePathProtocolGuid,
+           This->DriverBindingHandle,
+           ControllerHandle
+           );
   }
 
 Exit:
@@ -408,7 +411,7 @@ PartitionDriverBindingStop (
 
   BlockIo  = NULL;
   BlockIo2 = NULL;
-  Private = NULL;
+  Private  = NULL;
 
   if (NumberOfChildren == 0) {
     //
@@ -417,7 +420,7 @@ PartitionDriverBindingStop (
     // bus driver. Hence, additional check is needed here.
     //
     if (HasChildren (ControllerHandle)) {
-      DEBUG((EFI_D_ERROR, "PartitionDriverBindingStop: Still has child.\n"));
+      DEBUG ((EFI_D_ERROR, "PartitionDriverBindingStop: Still has child.\n"));
       return EFI_DEVICE_ERROR;
     }
 
@@ -425,11 +428,11 @@ PartitionDriverBindingStop (
     // Close the bus driver
     //
     gBS->CloseProtocol (
-          ControllerHandle,
-          &gEfiDiskIoProtocolGuid,
-          This->DriverBindingHandle,
-          ControllerHandle
-          );
+           ControllerHandle,
+           &gEfiDiskIoProtocolGuid,
+           This->DriverBindingHandle,
+           ControllerHandle
+           );
     //
     // Close Parent BlockIO2 if has.
     //
@@ -441,11 +444,11 @@ PartitionDriverBindingStop (
            );
 
     gBS->CloseProtocol (
-          ControllerHandle,
-          &gEfiDevicePathProtocolGuid,
-          This->DriverBindingHandle,
-          ControllerHandle
-          );
+           ControllerHandle,
+           &gEfiDevicePathProtocolGuid,
+           This->DriverBindingHandle,
+           ControllerHandle
+           );
     return EFI_SUCCESS;
   }
 
@@ -454,7 +457,7 @@ PartitionDriverBindingStop (
     gBS->OpenProtocol (
            ChildHandleBuffer[Index],
            &gEfiBlockIoProtocolGuid,
-           (VOID **) &BlockIo,
+           (VOID **)&BlockIo,
            This->DriverBindingHandle,
            ControllerHandle,
            EFI_OPEN_PROTOCOL_GET_PROTOCOL
@@ -465,12 +468,11 @@ PartitionDriverBindingStop (
     gBS->OpenProtocol (
            ChildHandleBuffer[Index],
            &gEfiBlockIo2ProtocolGuid,
-           (VOID **) &BlockIo2,
+           (VOID **)&BlockIo2,
            This->DriverBindingHandle,
            ControllerHandle,
            EFI_OPEN_PROTOCOL_GET_PROTOCOL
            );
-
 
     Private = PARTITION_DEVICE_FROM_BLOCK_IO_THIS (BlockIo);
     if (Private->InStop) {
@@ -480,13 +482,14 @@ PartitionDriverBindingStop (
       //
       break;
     }
+
     Private->InStop = TRUE;
 
     BlockIo->FlushBlocks (BlockIo);
 
     if (BlockIo2 != NULL) {
       Status = BlockIo2->FlushBlocksEx (BlockIo2, NULL);
-      DEBUG((EFI_D_ERROR, "PartitionDriverBindingStop: FlushBlocksEx returned with %r\n", Status));
+      DEBUG ((EFI_D_ERROR, "PartitionDriverBindingStop: FlushBlocksEx returned with %r\n", Status));
     } else {
       Status = EFI_SUCCESS;
     }
@@ -518,33 +521,33 @@ PartitionDriverBindingStop (
       //
       if (Status != EFI_MEDIA_CHANGED) {
         Status = gBS->UninstallMultipleProtocolInterfaces (
-                         ChildHandleBuffer[Index],
-                         &gEfiDevicePathProtocolGuid,
-                         Private->DevicePath,
-                         &gEfiBlockIoProtocolGuid,
-                         &Private->BlockIo,
-                         &gEfiBlockIo2ProtocolGuid,
-                         &Private->BlockIo2,
-                         &gEfiPartitionInfoProtocolGuid,
-                         &Private->PartitionInfo,
-                         TypeGuid,
-                         NULL,
-                         NULL
-                         );
+                        ChildHandleBuffer[Index],
+                        &gEfiDevicePathProtocolGuid,
+                        Private->DevicePath,
+                        &gEfiBlockIoProtocolGuid,
+                        &Private->BlockIo,
+                        &gEfiBlockIo2ProtocolGuid,
+                        &Private->BlockIo2,
+                        &gEfiPartitionInfoProtocolGuid,
+                        &Private->PartitionInfo,
+                        TypeGuid,
+                        NULL,
+                        NULL
+                        );
       }
     } else {
       Status = gBS->UninstallMultipleProtocolInterfaces (
-                       ChildHandleBuffer[Index],
-                       &gEfiDevicePathProtocolGuid,
-                       Private->DevicePath,
-                       &gEfiBlockIoProtocolGuid,
-                       &Private->BlockIo,
-                       &gEfiPartitionInfoProtocolGuid,
-                       &Private->PartitionInfo,
-                       TypeGuid,
-                       NULL,
-                       NULL
-                       );
+                      ChildHandleBuffer[Index],
+                      &gEfiDevicePathProtocolGuid,
+                      Private->DevicePath,
+                      &gEfiBlockIoProtocolGuid,
+                      &Private->BlockIo,
+                      &gEfiPartitionInfoProtocolGuid,
+                      &Private->PartitionInfo,
+                      TypeGuid,
+                      NULL,
+                      NULL
+                      );
     }
 
     if (EFI_ERROR (Status)) {
@@ -552,7 +555,7 @@ PartitionDriverBindingStop (
       gBS->OpenProtocol (
              ControllerHandle,
              &gEfiDiskIoProtocolGuid,
-             (VOID **) &DiskIo,
+             (VOID **)&DiskIo,
              This->DriverBindingHandle,
              ChildHandleBuffer[Index],
              EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
@@ -577,7 +580,6 @@ PartitionDriverBindingStop (
   return EFI_SUCCESS;
 }
 
-
 /**
   Reset the Block Device.
 
@@ -601,9 +603,9 @@ PartitionReset (
   Private = PARTITION_DEVICE_FROM_BLOCK_IO_THIS (This);
 
   return Private->ParentBlockIo->Reset (
-                                  Private->ParentBlockIo,
-                                  ExtendedVerification
-                                  );
+                                   Private->ParentBlockIo,
+                                   ExtendedVerification
+                                   );
 }
 
 /**
@@ -626,8 +628,8 @@ ProbeMediaStatus (
   IN EFI_STATUS              DefaultStatus
   )
 {
-  EFI_STATUS                 Status;
-  UINT8                      Buffer[1];
+  EFI_STATUS  Status;
+  UINT8       Buffer[1];
 
   //
   // Read 1 byte from offset 0 to check if the MediaId is still valid.
@@ -635,10 +637,11 @@ ProbeMediaStatus (
   // allocate a buffer from the pool. The destination buffer for the
   // data is in the stack.
   //
-  Status = DiskIo->ReadDisk (DiskIo, MediaId, 0, 1, (VOID*)Buffer);
+  Status = DiskIo->ReadDisk (DiskIo, MediaId, 0, 1, (VOID *)Buffer);
   if ((Status == EFI_NO_MEDIA) || (Status == EFI_MEDIA_CHANGED)) {
     return Status;
   }
+
   return DefaultStatus;
 }
 
@@ -684,6 +687,7 @@ PartitionReadBlocks (
   if (Offset + BufferSize > Private->End) {
     return ProbeMediaStatus (Private->DiskIo, MediaId, EFI_INVALID_PARAMETER);
   }
+
   //
   // Because some kinds of partition have different block size from their parent
   // device, we call the Disk IO protocol on the parent device, not the Block IO
@@ -735,6 +739,7 @@ PartitionWriteBlocks (
   if (Offset + BufferSize > Private->End) {
     return ProbeMediaStatus (Private->DiskIo, MediaId, EFI_INVALID_PARAMETER);
   }
+
   //
   // Because some kinds of partition have different block size from their parent
   // device, we call the Disk IO protocol on the parent device, not the Block IO
@@ -742,7 +747,6 @@ PartitionWriteBlocks (
   //
   return Private->DiskIo->WriteDisk (Private->DiskIo, MediaId, Offset, BufferSize, Buffer);
 }
-
 
 /**
   Flush the parent Block Device.
@@ -787,8 +791,8 @@ ProbeMediaStatusEx (
   IN EFI_STATUS              DefaultStatus
   )
 {
-  EFI_STATUS                 Status;
-  UINT8                      Buffer[1];
+  EFI_STATUS  Status;
+  UINT8       Buffer[1];
 
   //
   // Read 1 byte from offset 0 to check if the MediaId is still valid.
@@ -796,10 +800,11 @@ ProbeMediaStatusEx (
   // allocate a buffer from the pool. The destination buffer for the
   // data is in the stack.
   //
-  Status = DiskIo2->ReadDiskEx (DiskIo2, MediaId, 0, NULL, 1, (VOID*)Buffer);
+  Status = DiskIo2->ReadDiskEx (DiskIo2, MediaId, 0, NULL, 1, (VOID *)Buffer);
   if ((Status == EFI_NO_MEDIA) || (Status == EFI_MEDIA_CHANGED)) {
     return Status;
   }
+
   return DefaultStatus;
 }
 
@@ -844,9 +849,9 @@ PartitionOnAccessComplete (
   IN VOID                      *Context
   )
 {
-  PARTITION_ACCESS_TASK   *Task;
+  PARTITION_ACCESS_TASK  *Task;
 
-  Task = (PARTITION_ACCESS_TASK *) Context;
+  Task = (PARTITION_ACCESS_TASK *)Context;
 
   gBS->CloseEvent (Event);
 
@@ -868,8 +873,8 @@ PartitionCreateAccessTask (
   IN EFI_BLOCK_IO2_TOKEN    *Token
   )
 {
-  EFI_STATUS                Status;
-  PARTITION_ACCESS_TASK     *Task;
+  EFI_STATUS             Status;
+  PARTITION_ACCESS_TASK  *Task;
 
   Task = AllocatePool (sizeof (*Task));
   if (Task == NULL) {
@@ -1035,7 +1040,8 @@ PartitionWriteBlocksEx (
       return EFI_OUT_OF_RESOURCES;
     }
 
-    Status =  Private->DiskIo2->WriteDiskEx (Private->DiskIo2, MediaId, Offset, &Task->DiskIo2Token, BufferSize, Buffer);
+    Status =
+      Private->DiskIo2->WriteDiskEx (Private->DiskIo2, MediaId, Offset, &Task->DiskIo2Token, BufferSize, Buffer);
     if (EFI_ERROR (Status)) {
       gBS->CloseEvent (Task->DiskIo2Token.Event);
       FreePool (Task);
@@ -1043,6 +1049,7 @@ PartitionWriteBlocksEx (
   } else {
     Status = Private->DiskIo2->WriteDiskEx (Private->DiskIo2, MediaId, Offset, NULL, BufferSize, Buffer);
   }
+
   return Status;
 }
 
@@ -1095,9 +1102,9 @@ PartitionFlushBlocksEx (
   } else {
     Status = Private->DiskIo2->FlushDiskEx (Private->DiskIo2, NULL);
   }
+
   return Status;
 }
-
 
 /**
   Create a child handle for a logical block device that represents the
@@ -1147,69 +1154,69 @@ PartitionInstallChildHandle (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Private->Signature        = PARTITION_PRIVATE_DATA_SIGNATURE;
+  Private->Signature = PARTITION_PRIVATE_DATA_SIGNATURE;
 
-  Private->Start            = MultU64x32 (Start, ParentBlockIo->Media->BlockSize);
-  Private->End              = MultU64x32 (End + 1, ParentBlockIo->Media->BlockSize);
+  Private->Start = MultU64x32 (Start, ParentBlockIo->Media->BlockSize);
+  Private->End   = MultU64x32 (End + 1, ParentBlockIo->Media->BlockSize);
 
-  Private->BlockSize        = BlockSize;
-  Private->ParentBlockIo    = ParentBlockIo;
-  Private->ParentBlockIo2   = ParentBlockIo2;
-  Private->DiskIo           = ParentDiskIo;
-  Private->DiskIo2          = ParentDiskIo2;
+  Private->BlockSize      = BlockSize;
+  Private->ParentBlockIo  = ParentBlockIo;
+  Private->ParentBlockIo2 = ParentBlockIo2;
+  Private->DiskIo  = ParentDiskIo;
+  Private->DiskIo2 = ParentDiskIo2;
 
   //
   // Set the BlockIO into Private Data.
   //
   Private->BlockIo.Revision = ParentBlockIo->Revision;
 
-  Private->BlockIo.Media    = &Private->Media;
+  Private->BlockIo.Media = &Private->Media;
   CopyMem (Private->BlockIo.Media, ParentBlockIo->Media, sizeof (EFI_BLOCK_IO_MEDIA));
 
-  Private->BlockIo.Reset        = PartitionReset;
-  Private->BlockIo.ReadBlocks   = PartitionReadBlocks;
-  Private->BlockIo.WriteBlocks  = PartitionWriteBlocks;
-  Private->BlockIo.FlushBlocks  = PartitionFlushBlocks;
+  Private->BlockIo.Reset = PartitionReset;
+  Private->BlockIo.ReadBlocks  = PartitionReadBlocks;
+  Private->BlockIo.WriteBlocks = PartitionWriteBlocks;
+  Private->BlockIo.FlushBlocks = PartitionFlushBlocks;
 
   //
   // Set the BlockIO2 into Private Data.
   //
   if (Private->DiskIo2 != NULL) {
     ASSERT (Private->ParentBlockIo2 != NULL);
-    Private->BlockIo2.Media    = &Private->Media2;
+    Private->BlockIo2.Media = &Private->Media2;
     CopyMem (Private->BlockIo2.Media, ParentBlockIo2->Media, sizeof (EFI_BLOCK_IO_MEDIA));
 
-    Private->BlockIo2.Reset          = PartitionResetEx;
-    Private->BlockIo2.ReadBlocksEx   = PartitionReadBlocksEx;
-    Private->BlockIo2.WriteBlocksEx  = PartitionWriteBlocksEx;
-    Private->BlockIo2.FlushBlocksEx  = PartitionFlushBlocksEx;
+    Private->BlockIo2.Reset = PartitionResetEx;
+    Private->BlockIo2.ReadBlocksEx  = PartitionReadBlocksEx;
+    Private->BlockIo2.WriteBlocksEx = PartitionWriteBlocksEx;
+    Private->BlockIo2.FlushBlocksEx = PartitionFlushBlocksEx;
   }
 
-  Private->Media.IoAlign   = 0;
+  Private->Media.IoAlign = 0;
   Private->Media.LogicalPartition = TRUE;
   Private->Media.LastBlock = DivU64x32 (
                                MultU64x32 (
                                  End - Start + 1,
                                  ParentBlockIo->Media->BlockSize
                                  ),
-                                BlockSize
+                               BlockSize
                                ) - 1;
 
-  Private->Media.BlockSize = (UINT32) BlockSize;
+  Private->Media.BlockSize = (UINT32)BlockSize;
 
-  Private->Media2.IoAlign   = 0;
+  Private->Media2.IoAlign = 0;
   Private->Media2.LogicalPartition = TRUE;
   Private->Media2.LastBlock = Private->Media.LastBlock;
-  Private->Media2.BlockSize = (UINT32) BlockSize;
+  Private->Media2.BlockSize = (UINT32)BlockSize;
 
   //
   // Per UEFI Spec, LowestAlignedLba, LogicalBlocksPerPhysicalBlock and OptimalTransferLengthGranularity must be 0
-  //  for logical partitions.
+  // for logical partitions.
   //
   if (Private->BlockIo.Revision >= EFI_BLOCK_IO_PROTOCOL_REVISION2) {
-    Private->Media.LowestAlignedLba               = 0;
-    Private->Media.LogicalBlocksPerPhysicalBlock  = 0;
-    Private->Media2.LowestAlignedLba              = 0;
+    Private->Media.LowestAlignedLba = 0;
+    Private->Media.LogicalBlocksPerPhysicalBlock = 0;
+    Private->Media2.LowestAlignedLba = 0;
     Private->Media2.LogicalBlocksPerPhysicalBlock = 0;
     if (Private->BlockIo.Revision >= EFI_BLOCK_IO_PROTOCOL_REVISION3) {
       Private->Media.OptimalTransferLengthGranularity  = 0;
@@ -1217,7 +1224,7 @@ PartitionInstallChildHandle (
     }
   }
 
-  Private->DevicePath     = AppendDevicePathNode (ParentDevicePath, DevicePathNode);
+  Private->DevicePath = AppendDevicePathNode (ParentDevicePath, DevicePathNode);
 
   if (Private->DevicePath == NULL) {
     FreePool (Private);
@@ -1230,7 +1237,7 @@ PartitionInstallChildHandle (
   CopyMem (&Private->PartitionInfo, PartitionInfo, sizeof (EFI_PARTITION_INFO_PROTOCOL));
 
   if (TypeGuid != NULL) {
-    CopyGuid(&(Private->TypeGuid), TypeGuid);
+    CopyGuid (&(Private->TypeGuid), TypeGuid);
   } else {
     ZeroMem ((VOID *)&(Private->TypeGuid), sizeof (EFI_GUID));
   }
@@ -1276,7 +1283,7 @@ PartitionInstallChildHandle (
     Status = gBS->OpenProtocol (
                     ParentHandle,
                     &gEfiDiskIoProtocolGuid,
-                    (VOID **) &ParentDiskIo,
+                    (VOID **)&ParentDiskIo,
                     This->DriverBindingHandle,
                     Private->Handle,
                     EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
@@ -1298,7 +1305,6 @@ PartitionInstallChildHandle (
   return Status;
 }
 
-
 /**
   The user Entry Point for module Partition. The user code starts with this function.
 
@@ -1316,7 +1322,7 @@ InitializePartition (
   IN EFI_SYSTEM_TABLE     *SystemTable
   )
 {
-  EFI_STATUS              Status;
+  EFI_STATUS  Status;
 
   //
   // Install driver model protocol(s).
@@ -1331,10 +1337,8 @@ InitializePartition (
              );
   ASSERT_EFI_ERROR (Status);
 
-
   return Status;
 }
-
 
 /**
   Test to see if there is any child on ControllerHandle.
@@ -1368,8 +1372,8 @@ HasChildren (
       break;
     }
   }
+
   FreePool (OpenInfoBuffer);
 
-  return (BOOLEAN) (Index < EntryCount);
+  return (BOOLEAN)(Index < EntryCount);
 }
-

@@ -53,13 +53,13 @@ GetCommandNameByKey (
 // Definition for Command Table
 //
 #define EDB_COMMAND_DEFINE(func) \
-EFI_DEBUG_STATUS \
-func ( \
-  IN     CHAR16                    *CommandArg, \
-  IN     EFI_DEBUGGER_PRIVATE_DATA *DebuggerPrivate, \
-  IN     EFI_EXCEPTION_TYPE        ExceptionType, \
-  IN OUT EFI_SYSTEM_CONTEXT        SystemContext \
-  )
+  EFI_DEBUG_STATUS \
+  func ( \
+    IN     CHAR16                    *CommandArg, \
+    IN     EFI_DEBUGGER_PRIVATE_DATA *DebuggerPrivate, \
+    IN     EFI_EXCEPTION_TYPE        ExceptionType, \
+    IN OUT EFI_SYSTEM_CONTEXT        SystemContext \
+    )
 
 EDB_COMMAND_DEFINE (DebuggerCallStack);
 EDB_COMMAND_DEFINE (DebuggerInstructionBranch);

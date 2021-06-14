@@ -35,7 +35,7 @@ PciEnumerator (
   Status = gBS->OpenProtocol (
                   HostBridgeHandle,
                   &gEfiPciHostBridgeResourceAllocationProtocolGuid,
-                  (VOID **) &PciResAlloc,
+                  (VOID **)&PciResAlloc,
                   gPciBusDriverBinding.DriverBindingHandle,
                   Controller,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
@@ -117,22 +117,22 @@ PciRootBridgeEnumerator (
   IN PCI_IO_DEVICE                                     *RootBridgeDev
   )
 {
-  EFI_STATUS                        Status;
-  EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *Configuration;
-  EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *Configuration1;
-  EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *Configuration2;
-  EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *Configuration3;
-  UINT8                             SubBusNumber;
-  UINT8                             StartBusNumber;
-  UINT8                             PaddedBusRange;
-  EFI_HANDLE                        RootBridgeHandle;
-  UINT8                             Desc;
-  UINT64                            AddrLen;
-  UINT64                            AddrRangeMin;
+  EFI_STATUS                         Status;
+  EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR  *Configuration;
+  EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR  *Configuration1;
+  EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR  *Configuration2;
+  EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR  *Configuration3;
+  UINT8                              SubBusNumber;
+  UINT8                              StartBusNumber;
+  UINT8                              PaddedBusRange;
+  EFI_HANDLE                         RootBridgeHandle;
+  UINT8                              Desc;
+  UINT64                             AddrLen;
+  UINT64                             AddrRangeMin;
 
-  SubBusNumber    = 0;
-  StartBusNumber  = 0;
-  PaddedBusRange  = 0;
+  SubBusNumber   = 0;
+  StartBusNumber = 0;
+  PaddedBusRange = 0;
 
   //
   // Get the root bridge handle
@@ -151,7 +151,7 @@ PciRootBridgeEnumerator (
   Status = PciResAlloc->StartBusEnumeration (
                           PciResAlloc,
                           RootBridgeHandle,
-                          (VOID **) &Configuration
+                          (VOID **)&Configuration
                           );
 
   if (EFI_ERROR (Status)) {
@@ -161,6 +161,7 @@ PciRootBridgeEnumerator (
   if (Configuration == NULL || Configuration->Desc == ACPI_END_TAG_DESCRIPTOR) {
     return EFI_INVALID_PARAMETER;
   }
+
   RootBridgeDev->BusNumberRanges = Configuration;
 
   //
@@ -173,6 +174,7 @@ PciRootBridgeEnumerator (
         Configuration2 = Configuration3;
       }
     }
+
     //
     // All other fields other than AddrRangeMin and AddrLen are ignored in a descriptor,
     // so only need to swap these two fields.
@@ -191,7 +193,7 @@ PciRootBridgeEnumerator (
   //
   // Get the bus number to start with
   //
-  StartBusNumber = (UINT8) (Configuration->AddrRangeMin);
+  StartBusNumber = (UINT8)(Configuration->AddrRangeMin);
 
   //
   // Initialize the subordinate bus number
@@ -204,22 +206,21 @@ PciRootBridgeEnumerator (
   ResetAllPpbBusNumber (
     RootBridgeDev,
     StartBusNumber
-  );
+    );
 
   //
   // Assign bus number
   //
   Status = PciScanBus (
-            RootBridgeDev,
-            StartBusNumber,
-            &SubBusNumber,
-            &PaddedBusRange
-            );
+             RootBridgeDev,
+             StartBusNumber,
+             &SubBusNumber,
+             &PaddedBusRange
+             );
 
   if (EFI_ERROR (Status)) {
     return Status;
   }
-
 
   //
   // Assign max bus number scanned
@@ -237,6 +238,7 @@ PciRootBridgeEnumerator (
   while (Configuration->AddrRangeMin + Configuration->AddrLen - 1 < SubBusNumber) {
     Configuration++;
   }
+
   AddrLen = Configuration->AddrLen;
   Configuration->AddrLen = SubBusNumber - Configuration->AddrRangeMin + 1;
 
@@ -281,8 +283,8 @@ ProcessOptionRom (
   IN UINT64        MaxLength
   )
 {
-  LIST_ENTRY      *CurrentLink;
-  PCI_IO_DEVICE   *Temp;
+  LIST_ENTRY     *CurrentLink;
+  PCI_IO_DEVICE  *Temp;
 
   //
   // Go through bridges to reach all devices
@@ -291,7 +293,6 @@ ProcessOptionRom (
   while (CurrentLink != NULL && CurrentLink != &Bridge->ChildList) {
     Temp = PCI_IO_DEVICE_FROM_LINK (CurrentLink);
     if (!IsListEmpty (&Temp->ChildList)) {
-
       //
       // Go further to process the option rom under this bridge
       //
@@ -299,7 +300,6 @@ ProcessOptionRom (
     }
 
     if (Temp->RomSize != 0 && Temp->RomSize <= MaxLength) {
-
       //
       // Load and process the option rom
       //
@@ -328,20 +328,20 @@ PciAssignBusNumber (
   OUT UINT8                             *SubBusNumber
   )
 {
-  EFI_STATUS                      Status;
-  PCI_TYPE00                      Pci;
-  UINT8                           Device;
-  UINT8                           Func;
-  UINT64                          Address;
-  UINTN                           SecondBus;
-  UINT16                          Register;
-  UINT8                           Register8;
-  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL *PciRootBridgeIo;
+  EFI_STATUS                       Status;
+  PCI_TYPE00                       Pci;
+  UINT8                            Device;
+  UINT8                            Func;
+  UINT64                           Address;
+  UINTN                            SecondBus;
+  UINT16                           Register;
+  UINT8                            Register8;
+  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL  *PciRootBridgeIo;
 
   PciRootBridgeIo = Bridge->PciRootBridgeIo;
 
-  SecondBus       = 0;
-  Register        = 0;
+  SecondBus = 0;
+  Register  = 0;
 
   *SubBusNumber = StartBusNumber;
 
@@ -350,17 +350,16 @@ PciAssignBusNumber (
   //
   for (Device = 0; Device <= PCI_MAX_DEVICE; Device++) {
     for (Func = 0; Func <= PCI_MAX_FUNC; Func++) {
-
       //
       // Check to see whether a pci device is present
       //
       Status = PciDevicePresent (
-                PciRootBridgeIo,
-                &Pci,
-                StartBusNumber,
-                Device,
-                Func
-                );
+                 PciRootBridgeIo,
+                 &Pci,
+                 StartBusNumber,
+                 Device,
+                 Func
+                 );
 
       if (EFI_ERROR (Status) && Func == 0) {
         //
@@ -371,7 +370,6 @@ PciAssignBusNumber (
 
       if (!EFI_ERROR (Status)   &&
           (IS_PCI_BRIDGE (&Pci) || IS_CARDBUS_BRIDGE (&Pci))) {
-
         //
         // Reserved one bus for cardbus bridge
         //
@@ -379,11 +377,12 @@ PciAssignBusNumber (
         if (EFI_ERROR (Status)) {
           return Status;
         }
+
         SecondBus = *SubBusNumber;
 
-        Register  = (UINT16) ((SecondBus << 8) | (UINT16) StartBusNumber);
+        Register = (UINT16)((SecondBus << 8) | (UINT16)StartBusNumber);
 
-        Address   = EFI_PCI_ADDRESS (StartBusNumber, Device, Func, 0x18);
+        Address = EFI_PCI_ADDRESS (StartBusNumber, Device, Func, 0x18);
 
         Status = PciRootBridgeIo->Pci.Write (
                                         PciRootBridgeIo,
@@ -397,32 +396,31 @@ PciAssignBusNumber (
         // Initialize SubBusNumber to SecondBus
         //
         Address = EFI_PCI_ADDRESS (StartBusNumber, Device, Func, 0x1A);
-        Status = PciRootBridgeIo->Pci.Write (
-                                        PciRootBridgeIo,
-                                        EfiPciWidthUint8,
-                                        Address,
-                                        1,
-                                        SubBusNumber
-                                        );
+        Status  = PciRootBridgeIo->Pci.Write (
+                                         PciRootBridgeIo,
+                                         EfiPciWidthUint8,
+                                         Address,
+                                         1,
+                                         SubBusNumber
+                                         );
         //
         // If it is PPB, resursively search down this bridge
         //
         if (IS_PCI_BRIDGE (&Pci)) {
-
           Register8 = 0xFF;
-          Status = PciRootBridgeIo->Pci.Write (
-                                          PciRootBridgeIo,
-                                          EfiPciWidthUint8,
-                                          Address,
-                                          1,
-                                          &Register8
-                                          );
+          Status    = PciRootBridgeIo->Pci.Write (
+                                             PciRootBridgeIo,
+                                             EfiPciWidthUint8,
+                                             Address,
+                                             1,
+                                             &Register8
+                                             );
 
           Status = PciAssignBusNumber (
-                    Bridge,
-                    (UINT8) (SecondBus),
-                    SubBusNumber
-                    );
+                     Bridge,
+                     (UINT8)(SecondBus),
+                     SubBusNumber
+                     );
 
           if (EFI_ERROR (Status)) {
             return EFI_DEVICE_ERROR;
@@ -441,11 +439,9 @@ PciAssignBusNumber (
                                         1,
                                         SubBusNumber
                                         );
-
       }
 
       if (Func == 0 && !IS_PCI_MULTI_FUNC (&Pci)) {
-
         //
         // Skip sub functions, this is not a multi function device
         //
@@ -478,8 +474,8 @@ DetermineRootBridgeAttributes (
   EFI_STATUS  Status;
   EFI_HANDLE  RootBridgeHandle;
 
-  Attributes        = 0;
-  RootBridgeHandle  = RootBridgeDev->Handle;
+  Attributes = 0;
+  RootBridgeHandle = RootBridgeDev->Handle;
 
   //
   // Get root bridge attribute by calling into pci host bridge resource allocation protocol
@@ -527,10 +523,10 @@ GetMaxOptionRomSize (
   IN PCI_IO_DEVICE   *Bridge
   )
 {
-  LIST_ENTRY      *CurrentLink;
-  PCI_IO_DEVICE   *Temp;
-  UINT32          MaxOptionRomSize;
-  UINT32          TempOptionRomSize;
+  LIST_ENTRY     *CurrentLink;
+  PCI_IO_DEVICE  *Temp;
+  UINT32         MaxOptionRomSize;
+  UINT32         TempOptionRomSize;
 
   MaxOptionRomSize = 0;
 
@@ -541,7 +537,6 @@ GetMaxOptionRomSize (
   while (CurrentLink != NULL && CurrentLink != &Bridge->ChildList) {
     Temp = PCI_IO_DEVICE_FROM_LINK (CurrentLink);
     if (!IsListEmpty (&Temp->ChildList)) {
-
       //
       // Get max option rom size under this bridge
       //
@@ -554,9 +549,7 @@ GetMaxOptionRomSize (
       if (Temp->RomSize > TempOptionRomSize) {
         TempOptionRomSize = Temp->RomSize;
       }
-
     } else {
-
       //
       // For devices get the rom size directly
       //
@@ -591,14 +584,13 @@ PciHostBridgeDeviceAttribute (
   IN EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL *PciResAlloc
   )
 {
-  EFI_HANDLE    RootBridgeHandle;
-  PCI_IO_DEVICE *RootBridgeDev;
-  EFI_STATUS    Status;
+  EFI_HANDLE     RootBridgeHandle;
+  PCI_IO_DEVICE  *RootBridgeDev;
+  EFI_STATUS     Status;
 
   RootBridgeHandle = NULL;
 
   while (PciResAlloc->GetNextRootBridge (PciResAlloc, &RootBridgeHandle) == EFI_SUCCESS) {
-
     //
     // Get RootBridg Device by handle
     //
@@ -615,7 +607,6 @@ PciHostBridgeDeviceAttribute (
     if (EFI_ERROR (Status)) {
       return Status;
     }
-
   }
 
   return EFI_SUCCESS;
@@ -642,58 +633,57 @@ GetResourceAllocationStatus (
   OUT UINT64  *PMem64ResStatus
   )
 {
-  UINT8                             *Temp;
-  UINT64                            ResStatus;
-  EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *ACPIAddressDesc;
+  UINT8                              *Temp;
+  UINT64                             ResStatus;
+  EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR  *ACPIAddressDesc;
 
-  Temp = (UINT8 *) AcpiConfig;
+  Temp = (UINT8 *)AcpiConfig;
 
   while (*Temp == ACPI_ADDRESS_SPACE_DESCRIPTOR) {
-
-    ACPIAddressDesc       = (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *) Temp;
+    ACPIAddressDesc = (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *)Temp;
     ResStatus = ACPIAddressDesc->AddrTranslationOffset;
 
     switch (ACPIAddressDesc->ResType) {
-    case 0:
-      if (ACPIAddressDesc->AddrSpaceGranularity == 32) {
-        if (ACPIAddressDesc->SpecificFlag == 0x06) {
-          //
-          // Pmem32
-          //
-          *PMem32ResStatus = ResStatus;
-        } else {
-          //
-          // Mem32
-          //
-          *Mem32ResStatus = ResStatus;
+      case 0:
+        if (ACPIAddressDesc->AddrSpaceGranularity == 32) {
+          if (ACPIAddressDesc->SpecificFlag == 0x06) {
+            //
+            // Pmem32
+            //
+            *PMem32ResStatus = ResStatus;
+          } else {
+            //
+            // Mem32
+            //
+            *Mem32ResStatus = ResStatus;
+          }
         }
-      }
 
-      if (ACPIAddressDesc->AddrSpaceGranularity == 64) {
-        if (ACPIAddressDesc->SpecificFlag == 0x06) {
-          //
-          // PMem64
-          //
-          *PMem64ResStatus = ResStatus;
-        } else {
-          //
-          // Mem64
-          //
-          *Mem64ResStatus = ResStatus;
+        if (ACPIAddressDesc->AddrSpaceGranularity == 64) {
+          if (ACPIAddressDesc->SpecificFlag == 0x06) {
+            //
+            // PMem64
+            //
+            *PMem64ResStatus = ResStatus;
+          } else {
+            //
+            // Mem64
+            //
+            *Mem64ResStatus = ResStatus;
+          }
         }
-      }
 
-      break;
+        break;
 
-    case 1:
-      //
-      // Io
-      //
-      *IoResStatus = ResStatus;
-      break;
+      case 1:
+        //
+        // Io
+        //
+        *IoResStatus = ResStatus;
+        break;
 
-    default:
-      break;
+      default:
+        break;
     }
 
     Temp += sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR);
@@ -714,14 +704,14 @@ RejectPciDevice (
   IN PCI_IO_DEVICE       *PciDevice
   )
 {
-  PCI_IO_DEVICE   *Bridge;
-  PCI_IO_DEVICE   *Temp;
-  LIST_ENTRY      *CurrentLink;
+  PCI_IO_DEVICE  *Bridge;
+  PCI_IO_DEVICE  *Temp;
+  LIST_ENTRY     *CurrentLink;
 
   //
   // Remove the padding resource from a bridge
   //
-  if ( IS_PCI_BRIDGE(&PciDevice->Pci) &&
+  if ( IS_PCI_BRIDGE (&PciDevice->Pci) &&
        PciDevice->ResourcePaddingDescriptors != NULL ) {
     FreePool (PciDevice->ResourcePaddingDescriptors);
     PciDevice->ResourcePaddingDescriptors = NULL;
@@ -755,7 +745,7 @@ RejectPciDevice (
   //
   // Remove the device
   //
-  Bridge      = PciDevice->Parent;
+  Bridge = PciDevice->Parent;
   CurrentLink = Bridge->ChildList.ForwardLink;
   while (CurrentLink != NULL && CurrentLink != &Bridge->ChildList) {
     Temp = PCI_IO_DEVICE_FROM_LINK (CurrentLink);
@@ -785,7 +775,7 @@ IsRejectiveDevice (
   IN  PCI_RESOURCE_NODE   *PciResNode
   )
 {
-  PCI_IO_DEVICE *Temp;
+  PCI_IO_DEVICE  *Temp;
 
   Temp = PciResNode->PciDev;
 
@@ -839,9 +829,8 @@ GetLargerConsumerDevice (
     return PciResNode1;
   }
 
-  if ((IS_PCI_BRIDGE(&(PciResNode2->PciDev->Pci)) || (PciResNode2->PciDev->Parent == NULL)) \
-       && (PciResNode2->ResourceUsage != PciResUsagePadding) )
-  {
+  if (  (IS_PCI_BRIDGE (&(PciResNode2->PciDev->Pci)) || (PciResNode2->PciDev->Parent == NULL)) \
+     && (PciResNode2->ResourceUsage != PciResUsagePadding)) {
     return PciResNode1;
   }
 
@@ -856,7 +845,6 @@ GetLargerConsumerDevice (
   return PciResNode2;
 }
 
-
 /**
   Get the max resource consumer in the host resource pool.
 
@@ -870,16 +858,15 @@ GetMaxResourceConsumerDevice (
   IN  PCI_RESOURCE_NODE   *ResPool
   )
 {
-  PCI_RESOURCE_NODE *Temp;
-  LIST_ENTRY        *CurrentLink;
-  PCI_RESOURCE_NODE *PciResNode;
-  PCI_RESOURCE_NODE *PPBResNode;
+  PCI_RESOURCE_NODE  *Temp;
+  LIST_ENTRY         *CurrentLink;
+  PCI_RESOURCE_NODE  *PciResNode;
+  PCI_RESOURCE_NODE  *PPBResNode;
 
-  PciResNode  = NULL;
+  PciResNode = NULL;
 
   CurrentLink = ResPool->ChildList.ForwardLink;
   while (CurrentLink != NULL && CurrentLink != &ResPool->ChildList) {
-
     Temp = RESOURCE_NODE_FROM_LINK (CurrentLink);
 
     if (!IsRejectiveDevice (Temp)) {
@@ -887,11 +874,10 @@ GetMaxResourceConsumerDevice (
       continue;
     }
 
-    if ((IS_PCI_BRIDGE (&(Temp->PciDev->Pci)) || (Temp->PciDev->Parent == NULL)) \
-          && (Temp->ResourceUsage != PciResUsagePadding))
-    {
-      PPBResNode  = GetMaxResourceConsumerDevice (Temp);
-      PciResNode  = GetLargerConsumerDevice (PciResNode, PPBResNode);
+    if (  (IS_PCI_BRIDGE (&(Temp->PciDev->Pci)) || (Temp->PciDev->Parent == NULL)) \
+       && (Temp->ResourceUsage != PciResUsagePadding)) {
+      PPBResNode = GetMaxResourceConsumerDevice (Temp);
+      PciResNode = GetLargerConsumerDevice (PciResNode, PPBResNode);
     } else {
       PciResNode = GetLargerConsumerDevice (PciResNode, Temp);
     }
@@ -934,37 +920,36 @@ PciHostBridgeAdjustAllocation (
   IN  UINT64              PMem64ResStatus
   )
 {
-  BOOLEAN                               AllocationAjusted;
-  PCI_RESOURCE_NODE                     *PciResNode;
-  PCI_RESOURCE_NODE                     *ResPool[5];
-  PCI_IO_DEVICE                         *RemovedPciDev[5];
-  UINT64                                ResStatus[5];
-  UINTN                                 RemovedPciDevNum;
-  UINTN                                 DevIndex;
-  UINTN                                 ResType;
-  EFI_STATUS                            Status;
-  EFI_RESOURCE_ALLOC_FAILURE_ERROR_DATA_PAYLOAD AllocFailExtendedData;
+  BOOLEAN                                        AllocationAjusted;
+  PCI_RESOURCE_NODE                              *PciResNode;
+  PCI_RESOURCE_NODE                              *ResPool[5];
+  PCI_IO_DEVICE                                  *RemovedPciDev[5];
+  UINT64                                         ResStatus[5];
+  UINTN                                          RemovedPciDevNum;
+  UINTN                                          DevIndex;
+  UINTN                                          ResType;
+  EFI_STATUS                                     Status;
+  EFI_RESOURCE_ALLOC_FAILURE_ERROR_DATA_PAYLOAD  AllocFailExtendedData;
 
   PciResNode = NULL;
   ZeroMem (RemovedPciDev, 5 * sizeof (PCI_IO_DEVICE *));
-  RemovedPciDevNum  = 0;
+  RemovedPciDevNum = 0;
 
-  ResPool[0]        = IoPool;
-  ResPool[1]        = Mem32Pool;
-  ResPool[2]        = PMem32Pool;
-  ResPool[3]        = Mem64Pool;
-  ResPool[4]        = PMem64Pool;
+  ResPool[0] = IoPool;
+  ResPool[1] = Mem32Pool;
+  ResPool[2] = PMem32Pool;
+  ResPool[3] = Mem64Pool;
+  ResPool[4] = PMem64Pool;
 
-  ResStatus[0]      = IoResStatus;
-  ResStatus[1]      = Mem32ResStatus;
-  ResStatus[2]      = PMem32ResStatus;
-  ResStatus[3]      = Mem64ResStatus;
-  ResStatus[4]      = PMem64ResStatus;
+  ResStatus[0] = IoResStatus;
+  ResStatus[1] = Mem32ResStatus;
+  ResStatus[2] = PMem32ResStatus;
+  ResStatus[3] = Mem64ResStatus;
+  ResStatus[4] = PMem64ResStatus;
 
   AllocationAjusted = FALSE;
 
   for (ResType = 0; ResType < 5; ResType++) {
-
     if (ResStatus[ResType] == EFI_RESOURCE_SATISFIED) {
       continue;
     }
@@ -1005,7 +990,9 @@ PciHostBridgeAdjustAllocation (
       DEBUG ((
         EFI_D_ERROR,
         "PciBus: [%02x|%02x|%02x] was rejected due to resource confliction.\n",
-        PciResNode->PciDev->BusNumber, PciResNode->PciDev->DeviceNumber, PciResNode->PciDev->FunctionNumber
+        PciResNode->PciDev->BusNumber,
+        PciResNode->PciDev->DeviceNumber,
+        PciResNode->PciDev->FunctionNumber
         ));
 
       //
@@ -1015,24 +1002,25 @@ PciHostBridgeAdjustAllocation (
       // Have no way to get ReqRes, AllocRes & Bar here
       //
       ZeroMem (&AllocFailExtendedData, sizeof (AllocFailExtendedData));
-      AllocFailExtendedData.DevicePathSize = (UINT16) sizeof (EFI_DEVICE_PATH_PROTOCOL);
-      AllocFailExtendedData.DevicePath     = (UINT8 *) PciResNode->PciDev->DevicePath;
-      AllocFailExtendedData.Bar            = PciResNode->Bar;
+      AllocFailExtendedData.DevicePathSize = (UINT16)sizeof (EFI_DEVICE_PATH_PROTOCOL);
+      AllocFailExtendedData.DevicePath     = (UINT8 *)PciResNode->PciDev->DevicePath;
+      AllocFailExtendedData.Bar = PciResNode->Bar;
 
       REPORT_STATUS_CODE_WITH_EXTENDED_DATA (
-            EFI_PROGRESS_CODE,
-            EFI_IO_BUS_PCI | EFI_IOB_EC_RESOURCE_CONFLICT,
-            (VOID *) &AllocFailExtendedData,
-            sizeof (AllocFailExtendedData)
-            );
+        EFI_PROGRESS_CODE,
+        EFI_IO_BUS_PCI | EFI_IOB_EC_RESOURCE_CONFLICT,
+        (VOID *)&AllocFailExtendedData,
+        sizeof (AllocFailExtendedData)
+        );
 
       //
       // Add it to the array and indicate at least a device has been rejected
       //
       RemovedPciDev[RemovedPciDevNum++] = PciResNode->PciDev;
-      AllocationAjusted                 = TRUE;
+      AllocationAjusted = TRUE;
     }
   }
+
   //
   // End for
   //
@@ -1071,16 +1059,16 @@ ConstructAcpiResourceRequestor (
   OUT VOID              **Config
   )
 {
-  UINT8                             NumConfig;
-  UINT8                             Aperture;
-  UINT8                             *Configuration;
-  EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *Ptr;
-  EFI_ACPI_END_TAG_DESCRIPTOR       *PtrEnd;
+  UINT8                              NumConfig;
+  UINT8                              Aperture;
+  UINT8                              *Configuration;
+  EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR  *Ptr;
+  EFI_ACPI_END_TAG_DESCRIPTOR        *PtrEnd;
 
   NumConfig = 0;
   Aperture  = 0;
 
-  *Config  = NULL;
+  *Config = NULL;
 
   //
   // if there is io request, add to the io aperture
@@ -1123,47 +1111,48 @@ ConstructAcpiResourceRequestor (
   }
 
   if (NumConfig != 0) {
-
     //
     // If there is at least one type of resource request,
     // allocate a acpi resource node
     //
-    Configuration = AllocateZeroPool (sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) * NumConfig + sizeof (EFI_ACPI_END_TAG_DESCRIPTOR));
+    Configuration =
+      AllocateZeroPool (sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) * NumConfig + sizeof (EFI_ACPI_END_TAG_DESCRIPTOR));
     if (Configuration == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
 
-    Ptr = (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *) Configuration;
+    Ptr = (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *)Configuration;
 
     //
     // Deal with io aperture
     //
     if ((Aperture & 0x01) != 0) {
-      Ptr->Desc     = ACPI_ADDRESS_SPACE_DESCRIPTOR;
-      Ptr->Len      = (UINT16) (sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) - 3);
+      Ptr->Desc = ACPI_ADDRESS_SPACE_DESCRIPTOR;
+      Ptr->Len  = (UINT16)(sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) - 3);
       //
       // Io
       //
-      Ptr->ResType  = ACPI_ADDRESS_SPACE_TYPE_IO;
+      Ptr->ResType = ACPI_ADDRESS_SPACE_TYPE_IO;
       //
       // non ISA range
       //
       Ptr->SpecificFlag = 1;
-      Ptr->AddrLen      = IoNode->Length;
+      Ptr->AddrLen = IoNode->Length;
       Ptr->AddrRangeMax = IoNode->Alignment;
 
       Ptr++;
     }
+
     //
     // Deal with mem32 aperture
     //
     if ((Aperture & 0x02) != 0) {
-      Ptr->Desc     = ACPI_ADDRESS_SPACE_DESCRIPTOR;
-      Ptr->Len      = (UINT16) (sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) - 3);
+      Ptr->Desc = ACPI_ADDRESS_SPACE_DESCRIPTOR;
+      Ptr->Len  = (UINT16)(sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) - 3);
       //
       // Mem
       //
-      Ptr->ResType  = ACPI_ADDRESS_SPACE_TYPE_MEM;
+      Ptr->ResType = ACPI_ADDRESS_SPACE_TYPE_MEM;
       //
       // Nonprefechable
       //
@@ -1172,7 +1161,7 @@ ConstructAcpiResourceRequestor (
       // 32 bit
       //
       Ptr->AddrSpaceGranularity = 32;
-      Ptr->AddrLen      = Mem32Node->Length;
+      Ptr->AddrLen = Mem32Node->Length;
       Ptr->AddrRangeMax = Mem32Node->Alignment;
 
       Ptr++;
@@ -1182,12 +1171,12 @@ ConstructAcpiResourceRequestor (
     // Deal with Pmem32 aperture
     //
     if ((Aperture & 0x04) != 0) {
-      Ptr->Desc     = ACPI_ADDRESS_SPACE_DESCRIPTOR;
-      Ptr->Len      = (UINT16) (sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) - 3);
+      Ptr->Desc = ACPI_ADDRESS_SPACE_DESCRIPTOR;
+      Ptr->Len  = (UINT16)(sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) - 3);
       //
       // Mem
       //
-      Ptr->ResType  = ACPI_ADDRESS_SPACE_TYPE_MEM;
+      Ptr->ResType = ACPI_ADDRESS_SPACE_TYPE_MEM;
       //
       // prefechable
       //
@@ -1196,21 +1185,22 @@ ConstructAcpiResourceRequestor (
       // 32 bit
       //
       Ptr->AddrSpaceGranularity = 32;
-      Ptr->AddrLen      = PMem32Node->Length;
+      Ptr->AddrLen = PMem32Node->Length;
       Ptr->AddrRangeMax = PMem32Node->Alignment;
 
       Ptr++;
     }
+
     //
     // Deal with mem64 aperture
     //
     if ((Aperture & 0x08) != 0) {
-      Ptr->Desc     = ACPI_ADDRESS_SPACE_DESCRIPTOR;
-      Ptr->Len      = (UINT16) (sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) - 3);
+      Ptr->Desc = ACPI_ADDRESS_SPACE_DESCRIPTOR;
+      Ptr->Len  = (UINT16)(sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) - 3);
       //
       // Mem
       //
-      Ptr->ResType  = ACPI_ADDRESS_SPACE_TYPE_MEM;
+      Ptr->ResType = ACPI_ADDRESS_SPACE_TYPE_MEM;
       //
       // nonprefechable
       //
@@ -1219,21 +1209,22 @@ ConstructAcpiResourceRequestor (
       // 64 bit
       //
       Ptr->AddrSpaceGranularity = 64;
-      Ptr->AddrLen      = Mem64Node->Length;
+      Ptr->AddrLen = Mem64Node->Length;
       Ptr->AddrRangeMax = Mem64Node->Alignment;
 
       Ptr++;
     }
+
     //
     // Deal with Pmem64 aperture
     //
     if ((Aperture & 0x10) != 0) {
-      Ptr->Desc     = ACPI_ADDRESS_SPACE_DESCRIPTOR;
-      Ptr->Len      = (UINT16) (sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) - 3);
+      Ptr->Desc = ACPI_ADDRESS_SPACE_DESCRIPTOR;
+      Ptr->Len  = (UINT16)(sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) - 3);
       //
       // Mem
       //
-      Ptr->ResType  = ACPI_ADDRESS_SPACE_TYPE_MEM;
+      Ptr->ResType = ACPI_ADDRESS_SPACE_TYPE_MEM;
       //
       // prefechable
       //
@@ -1242,7 +1233,7 @@ ConstructAcpiResourceRequestor (
       // 64 bit
       //
       Ptr->AddrSpaceGranularity = 64;
-      Ptr->AddrLen      = PMem64Node->Length;
+      Ptr->AddrLen = PMem64Node->Length;
       Ptr->AddrRangeMax = PMem64Node->Alignment;
 
       Ptr++;
@@ -1251,13 +1242,11 @@ ConstructAcpiResourceRequestor (
     //
     // put the checksum
     //
-    PtrEnd            = (EFI_ACPI_END_TAG_DESCRIPTOR *) Ptr;
+    PtrEnd = (EFI_ACPI_END_TAG_DESCRIPTOR *)Ptr;
 
-    PtrEnd->Desc      = ACPI_END_TAG_DESCRIPTOR;
-    PtrEnd->Checksum  = 0;
-
+    PtrEnd->Desc     = ACPI_END_TAG_DESCRIPTOR;
+    PtrEnd->Checksum = 0;
   } else {
-
     //
     // If there is no resource request
     //
@@ -1266,9 +1255,9 @@ ConstructAcpiResourceRequestor (
       return EFI_OUT_OF_RESOURCES;
     }
 
-    PtrEnd            = (EFI_ACPI_END_TAG_DESCRIPTOR *) (Configuration);
-    PtrEnd->Desc      = ACPI_END_TAG_DESCRIPTOR;
-    PtrEnd->Checksum  = 0;
+    PtrEnd = (EFI_ACPI_END_TAG_DESCRIPTOR *)(Configuration);
+    PtrEnd->Desc     = ACPI_END_TAG_DESCRIPTOR;
+    PtrEnd->Checksum = 0;
   }
 
   *Config = Configuration;
@@ -1297,9 +1286,9 @@ GetResourceBase (
   OUT UINT64  *PMem64Base
   )
 {
-  UINT8                             *Temp;
-  EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *Ptr;
-  UINT64                            ResStatus;
+  UINT8                              *Temp;
+  EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR  *Ptr;
+  UINT64                             ResStatus;
 
   ASSERT (Config != NULL);
 
@@ -1309,58 +1298,57 @@ GetResourceBase (
   *Mem64Base  = 0xFFFFFFFFFFFFFFFFULL;
   *PMem64Base = 0xFFFFFFFFFFFFFFFFULL;
 
-  Temp        = (UINT8 *) Config;
+  Temp = (UINT8 *)Config;
 
   while (*Temp == ACPI_ADDRESS_SPACE_DESCRIPTOR) {
-
-    Ptr       = (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *) Temp;
+    Ptr = (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *)Temp;
     ResStatus = Ptr->AddrTranslationOffset;
 
     if (ResStatus == EFI_RESOURCE_SATISFIED) {
-
       switch (Ptr->ResType) {
-
-      //
-      // Memory type aperture
-      //
-      case 0:
-
         //
-        // Check to see the granularity
+        // Memory type aperture
         //
-        if (Ptr->AddrSpaceGranularity == 32) {
-          if ((Ptr->SpecificFlag & 0x06) != 0) {
-            *PMem32Base = Ptr->AddrRangeMin;
-          } else {
-            *Mem32Base = Ptr->AddrRangeMin;
+        case 0:
+
+          //
+          // Check to see the granularity
+          //
+          if (Ptr->AddrSpaceGranularity == 32) {
+            if ((Ptr->SpecificFlag & 0x06) != 0) {
+              *PMem32Base = Ptr->AddrRangeMin;
+            } else {
+              *Mem32Base = Ptr->AddrRangeMin;
+            }
           }
-        }
 
-        if (Ptr->AddrSpaceGranularity == 64) {
-          if ((Ptr->SpecificFlag & 0x06) != 0) {
-            *PMem64Base = Ptr->AddrRangeMin;
-          } else {
-            *Mem64Base = Ptr->AddrRangeMin;
+          if (Ptr->AddrSpaceGranularity == 64) {
+            if ((Ptr->SpecificFlag & 0x06) != 0) {
+              *PMem64Base = Ptr->AddrRangeMin;
+            } else {
+              *Mem64Base = Ptr->AddrRangeMin;
+            }
           }
-        }
-        break;
 
-      case 1:
+          break;
 
-        //
-        // Io type aperture
-        //
-        *IoBase = Ptr->AddrRangeMin;
-        break;
+        case 1:
 
-      default:
-        break;
+          //
+          // Io type aperture
+          //
+          *IoBase = Ptr->AddrRangeMin;
+          break;
 
+        default:
+          break;
       }
+
       //
       // End switch
       //
     }
+
     //
     // End for
     //
@@ -1383,25 +1371,25 @@ PciBridgeEnumerator (
   IN PCI_IO_DEVICE                                     *BridgeDev
   )
 {
-  UINT8               SubBusNumber;
-  UINT8               StartBusNumber;
-  EFI_PCI_IO_PROTOCOL *PciIo;
-  EFI_STATUS          Status;
+  UINT8                SubBusNumber;
+  UINT8                StartBusNumber;
+  EFI_PCI_IO_PROTOCOL  *PciIo;
+  EFI_STATUS           Status;
 
-  SubBusNumber    = 0;
-  StartBusNumber  = 0;
-  PciIo           = &(BridgeDev->PciIo);
-  Status          = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint8, 0x19, 1, &StartBusNumber);
+  SubBusNumber   = 0;
+  StartBusNumber = 0;
+  PciIo  = &(BridgeDev->PciIo);
+  Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint8, 0x19, 1, &StartBusNumber);
 
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   Status = PciAssignBusNumber (
-            BridgeDev,
-            StartBusNumber,
-            &SubBusNumber
-            );
+             BridgeDev,
+             StartBusNumber,
+             &SubBusNumber
+             );
 
   if (EFI_ERROR (Status)) {
     return Status;
@@ -1426,7 +1414,6 @@ PciBridgeEnumerator (
   }
 
   return EFI_SUCCESS;
-
 }
 
 /**
@@ -1443,17 +1430,17 @@ PciBridgeResourceAllocator (
   IN PCI_IO_DEVICE  *Bridge
   )
 {
-  PCI_RESOURCE_NODE *IoBridge;
-  PCI_RESOURCE_NODE *Mem32Bridge;
-  PCI_RESOURCE_NODE *PMem32Bridge;
-  PCI_RESOURCE_NODE *Mem64Bridge;
-  PCI_RESOURCE_NODE *PMem64Bridge;
-  UINT64            IoBase;
-  UINT64            Mem32Base;
-  UINT64            PMem32Base;
-  UINT64            Mem64Base;
-  UINT64            PMem64Base;
-  EFI_STATUS        Status;
+  PCI_RESOURCE_NODE  *IoBridge;
+  PCI_RESOURCE_NODE  *Mem32Bridge;
+  PCI_RESOURCE_NODE  *PMem32Bridge;
+  PCI_RESOURCE_NODE  *Mem64Bridge;
+  PCI_RESOURCE_NODE  *PMem64Bridge;
+  UINT64             IoBase;
+  UINT64             Mem32Base;
+  UINT64             PMem32Base;
+  UINT64             Mem64Base;
+  UINT64             PMem64Base;
+  EFI_STATUS         Status;
 
   IoBridge = CreateResourceNode (
                Bridge,
@@ -1615,7 +1602,6 @@ GetResourceBaseFromBridge (
   *PMem64Base = gAllOne;
 
   if (IS_PCI_BRIDGE (&Bridge->Pci)) {
-
     if (Bridge->PciBar[PPB_IO_RANGE].Length > 0) {
       *IoBase = Bridge->PciBar[PPB_IO_RANGE].BaseAddress;
     }
@@ -1633,7 +1619,6 @@ GetResourceBaseFromBridge (
     } else {
       *PMem64Base = gAllOne;
     }
-
   }
 
   if (IS_CARDBUS_BRIDGE (&Bridge->Pci)) {
@@ -1739,13 +1724,13 @@ NotifyPhase (
   EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PHASE       Phase
   )
 {
-  EFI_HANDLE                      HostBridgeHandle;
-  EFI_HANDLE                      RootBridgeHandle;
-  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL *PciRootBridgeIo;
-  EFI_STATUS                      Status;
+  EFI_HANDLE                       HostBridgeHandle;
+  EFI_HANDLE                       RootBridgeHandle;
+  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL  *PciRootBridgeIo;
+  EFI_STATUS                       Status;
 
-  HostBridgeHandle  = NULL;
-  RootBridgeHandle  = NULL;
+  HostBridgeHandle = NULL;
+  RootBridgeHandle = NULL;
   if (gPciPlatformProtocol != NULL) {
     //
     // Get Host Bridge Handle.
@@ -1758,7 +1743,7 @@ NotifyPhase (
     Status = gBS->HandleProtocol (
                     RootBridgeHandle,
                     &gEfiPciRootBridgeIoProtocolGuid,
-                    (VOID **) &PciRootBridgeIo
+                    (VOID **)&PciRootBridgeIo
                     );
 
     if (EFI_ERROR (Status)) {
@@ -1776,7 +1761,7 @@ NotifyPhase (
                             Phase,
                             ChipsetEntry
                             );
-  } else if (gPciOverrideProtocol != NULL){
+  } else if (gPciOverrideProtocol != NULL) {
     //
     // Get Host Bridge Handle.
     //
@@ -1788,7 +1773,7 @@ NotifyPhase (
     Status = gBS->HandleProtocol (
                     RootBridgeHandle,
                     &gEfiPciRootBridgeIoProtocolGuid,
-                    (VOID **) &PciRootBridgeIo
+                    (VOID **)&PciRootBridgeIo
                     );
 
     if (EFI_ERROR (Status)) {
@@ -1823,7 +1808,6 @@ NotifyPhase (
                             Phase,
                             ChipsetExit
                             );
-
   } else if (gPciOverrideProtocol != NULL) {
     //
     // Call PlatformPci::PhaseNotify() if the protocol is present.
@@ -1889,7 +1873,7 @@ PreprocessController (
   Status = gBS->OpenProtocol (
                   HostBridgeHandle,
                   &gEfiPciHostBridgeResourceAllocationProtocolGuid,
-                  (VOID **) &PciResAlloc,
+                  (VOID **)&PciResAlloc,
                   NULL,
                   NULL,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
@@ -1906,12 +1890,12 @@ PreprocessController (
     Bridge = Bridge->Parent;
   }
 
-  RootBridgeHandle                      = Bridge->Handle;
+  RootBridgeHandle = Bridge->Handle;
 
-  RootBridgePciAddress.Register         = 0;
-  RootBridgePciAddress.Function         = Func;
-  RootBridgePciAddress.Device           = Device;
-  RootBridgePciAddress.Bus              = Bus;
+  RootBridgePciAddress.Register = 0;
+  RootBridgePciAddress.Function = Func;
+  RootBridgePciAddress.Device   = Device;
+  RootBridgePciAddress.Bus = Bus;
   RootBridgePciAddress.ExtendedRegister = 0;
 
   if (gPciPlatformProtocol != NULL) {
@@ -2002,25 +1986,25 @@ PreprocessController (
 EFI_STATUS
 EFIAPI
 PciHotPlugRequestNotify (
-  IN EFI_PCI_HOTPLUG_REQUEST_PROTOCOL * This,
+  IN EFI_PCI_HOTPLUG_REQUEST_PROTOCOL *This,
   IN EFI_PCI_HOTPLUG_OPERATION        Operation,
   IN EFI_HANDLE                       Controller,
-  IN EFI_DEVICE_PATH_PROTOCOL         * RemainingDevicePath OPTIONAL,
+  IN EFI_DEVICE_PATH_PROTOCOL         *RemainingDevicePath OPTIONAL,
   IN OUT UINT8                        *NumberOfChildren,
-  IN OUT EFI_HANDLE                   * ChildHandleBuffer
+  IN OUT EFI_HANDLE                   *ChildHandleBuffer
   )
 {
-  PCI_IO_DEVICE       *Bridge;
-  PCI_IO_DEVICE       *Temp;
-  EFI_PCI_IO_PROTOCOL *PciIo;
-  UINTN               Index;
-  EFI_HANDLE          RootBridgeHandle;
-  EFI_STATUS          Status;
+  PCI_IO_DEVICE        *Bridge;
+  PCI_IO_DEVICE        *Temp;
+  EFI_PCI_IO_PROTOCOL  *PciIo;
+  UINTN                Index;
+  EFI_HANDLE           RootBridgeHandle;
+  EFI_STATUS           Status;
 
   //
   // Check input parameter validity
   //
-  if ((Controller == NULL) || (NumberOfChildren == NULL)){
+  if ((Controller == NULL) || (NumberOfChildren == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -2028,7 +2012,7 @@ PciHotPlugRequestNotify (
     return EFI_INVALID_PARAMETER;
   }
 
-  if (Operation == EfiPciHotPlugRequestAdd){
+  if (Operation == EfiPciHotPlugRequestAdd) {
     if (ChildHandleBuffer == NULL) {
       return EFI_INVALID_PARAMETER;
     }
@@ -2041,7 +2025,7 @@ PciHotPlugRequestNotify (
   Status = gBS->OpenProtocol (
                   Controller,
                   &gEfiPciIoProtocolGuid,
-                  (VOID **) &PciIo,
+                  (VOID **)&PciIo,
                   gPciBusDriverBinding.DriverBindingHandle,
                   Controller,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
@@ -2078,7 +2062,6 @@ PciHotPlugRequestNotify (
     }
 
     if (IsListEmpty (&Bridge->ChildList)) {
-
       Status = PciBridgeEnumerator (Bridge);
 
       if (EFI_ERROR (Status)) {
@@ -2087,25 +2070,23 @@ PciHotPlugRequestNotify (
     }
 
     Status = StartPciDevicesOnBridge (
-              RootBridgeHandle,
-              Bridge,
-              RemainingDevicePath,
-              NumberOfChildren,
-              ChildHandleBuffer
-              );
+               RootBridgeHandle,
+               Bridge,
+               RemainingDevicePath,
+               NumberOfChildren,
+               ChildHandleBuffer
+               );
 
     return Status;
   }
 
   if (Operation == EfiPciHotplugRequestRemove) {
-
     if (*NumberOfChildren == 0) {
       //
       // Remove all devices on the bridge
       //
       RemoveAllPciDeviceOnBridge (RootBridgeHandle, Bridge);
       return EFI_SUCCESS;
-
     }
 
     for (Index = 0; Index < *NumberOfChildren; Index++) {
@@ -2117,8 +2098,8 @@ PciHotPlugRequestNotify (
       if (EFI_ERROR (Status)) {
         return Status;
       }
-
     }
+
     //
     // End for
     //
@@ -2142,10 +2123,10 @@ SearchHostBridgeHandle (
   IN EFI_HANDLE RootBridgeHandle
   )
 {
-  EFI_HANDLE                      HostBridgeHandle;
-  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL *PciRootBridgeIo;
-  UINTN                           Index;
-  EFI_STATUS                      Status;
+  EFI_HANDLE                       HostBridgeHandle;
+  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL  *PciRootBridgeIo;
+  UINTN                            Index;
+  EFI_STATUS                       Status;
 
   //
   // Get the rootbridge Io protocol to find the host bridge handle
@@ -2153,7 +2134,7 @@ SearchHostBridgeHandle (
   Status = gBS->OpenProtocol (
                   RootBridgeHandle,
                   &gEfiPciRootBridgeIoProtocolGuid,
-                  (VOID **) &PciRootBridgeIo,
+                  (VOID **)&PciRootBridgeIo,
                   gPciBusDriverBinding.DriverBindingHandle,
                   RootBridgeHandle,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
@@ -2188,7 +2169,7 @@ AddHostBridgeEnumerator (
   IN EFI_HANDLE HostBridgeHandle
   )
 {
-  UINTN Index;
+  UINTN  Index;
 
   if (HostBridgeHandle == NULL) {
     return EFI_ABORTED;
@@ -2207,4 +2188,3 @@ AddHostBridgeEnumerator (
 
   return EFI_SUCCESS;
 }
-

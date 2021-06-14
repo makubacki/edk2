@@ -13,7 +13,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // USB Keyboard Driver Global Variables
 //
-EFI_DRIVER_BINDING_PROTOCOL gUsbKeyboardDriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  gUsbKeyboardDriverBinding = {
   USBKeyboardDriverBindingSupported,
   USBKeyboardDriverBindingStart,
   USBKeyboardDriverBindingStop,
@@ -41,7 +41,7 @@ USBKeyboardDriverBindingEntryPoint (
   IN EFI_SYSTEM_TABLE     *SystemTable
   )
 {
-  EFI_STATUS              Status;
+  EFI_STATUS  Status;
 
   Status = EfiLibInstallDriverBindingComponentName2 (
              ImageHandle,
@@ -75,8 +75,8 @@ USBKeyboardDriverBindingSupported (
   IN EFI_DEVICE_PATH_PROTOCOL       *RemainingDevicePath
   )
 {
-  EFI_STATUS          Status;
-  EFI_USB_IO_PROTOCOL *UsbIo;
+  EFI_STATUS           Status;
+  EFI_USB_IO_PROTOCOL  *UsbIo;
 
   //
   // Check if USB I/O Protocol is attached on the controller handle.
@@ -84,7 +84,7 @@ USBKeyboardDriverBindingSupported (
   Status = gBS->OpenProtocol (
                   Controller,
                   &gEfiUsbIoProtocolGuid,
-                  (VOID **) &UsbIo,
+                  (VOID **)&UsbIo,
                   This->DriverBindingHandle,
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
@@ -138,17 +138,17 @@ USBKeyboardDriverBindingStart (
   IN EFI_DEVICE_PATH_PROTOCOL       *RemainingDevicePath
   )
 {
-  EFI_STATUS                    Status;
-  EFI_USB_IO_PROTOCOL           *UsbIo;
-  USB_KB_DEV                    *UsbKeyboardDevice;
-  UINT8                         EndpointNumber;
-  EFI_USB_ENDPOINT_DESCRIPTOR   EndpointDescriptor;
-  UINT8                         Index;
-  UINT8                         EndpointAddr;
-  UINT8                         PollingInterval;
-  UINT8                         PacketSize;
-  BOOLEAN                       Found;
-  EFI_TPL                       OldTpl;
+  EFI_STATUS                   Status;
+  EFI_USB_IO_PROTOCOL          *UsbIo;
+  USB_KB_DEV                   *UsbKeyboardDevice;
+  UINT8                        EndpointNumber;
+  EFI_USB_ENDPOINT_DESCRIPTOR  EndpointDescriptor;
+  UINT8                        Index;
+  UINT8                        EndpointAddr;
+  UINT8                        PollingInterval;
+  UINT8                        PacketSize;
+  BOOLEAN                      Found;
+  EFI_TPL                      OldTpl;
 
   OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
   //
@@ -157,7 +157,7 @@ USBKeyboardDriverBindingStart (
   Status = gBS->OpenProtocol (
                   Controller,
                   &gEfiUsbIoProtocolGuid,
-                  (VOID **) &UsbIo,
+                  (VOID **)&UsbIo,
                   This->DriverBindingHandle,
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
@@ -175,7 +175,7 @@ USBKeyboardDriverBindingStart (
   Status = gBS->OpenProtocol (
                   Controller,
                   &gEfiDevicePathProtocolGuid,
-                  (VOID **) &UsbKeyboardDevice->DevicePath,
+                  (VOID **)&UsbKeyboardDevice->DevicePath,
                   This->DriverBindingHandle,
                   Controller,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
@@ -184,6 +184,7 @@ USBKeyboardDriverBindingStart (
   if (EFI_ERROR (Status)) {
     goto ErrorExit;
   }
+
   //
   // Report that the USB keyboard is being enabled
   //
@@ -219,7 +220,6 @@ USBKeyboardDriverBindingStart (
   //
   Found = FALSE;
   for (Index = 0; Index < EndpointNumber; Index++) {
-
     UsbIo->UsbGetEndpointDescriptor (
              UsbIo,
              Index,
@@ -231,7 +231,7 @@ USBKeyboardDriverBindingStart (
       //
       // We only care interrupt endpoint here
       //
-      CopyMem(&UsbKeyboardDevice->IntEndpointDescriptor, &EndpointDescriptor, sizeof(EndpointDescriptor));
+      CopyMem (&UsbKeyboardDevice->IntEndpointDescriptor, &EndpointDescriptor, sizeof (EndpointDescriptor));
       Found = TRUE;
       break;
     }
@@ -258,13 +258,13 @@ USBKeyboardDriverBindingStart (
     UsbKeyboardDevice->DevicePath
     );
 
-  UsbKeyboardDevice->Signature                  = USB_KB_DEV_SIGNATURE;
-  UsbKeyboardDevice->SimpleInput.Reset          = USBKeyboardReset;
-  UsbKeyboardDevice->SimpleInput.ReadKeyStroke  = USBKeyboardReadKeyStroke;
+  UsbKeyboardDevice->Signature = USB_KB_DEV_SIGNATURE;
+  UsbKeyboardDevice->SimpleInput.Reset = USBKeyboardReset;
+  UsbKeyboardDevice->SimpleInput.ReadKeyStroke = USBKeyboardReadKeyStroke;
 
-  UsbKeyboardDevice->SimpleInputEx.Reset               = USBKeyboardResetEx;
-  UsbKeyboardDevice->SimpleInputEx.ReadKeyStrokeEx     = USBKeyboardReadKeyStrokeEx;
-  UsbKeyboardDevice->SimpleInputEx.SetState            = USBKeyboardSetState;
+  UsbKeyboardDevice->SimpleInputEx.Reset = USBKeyboardResetEx;
+  UsbKeyboardDevice->SimpleInputEx.ReadKeyStrokeEx = USBKeyboardReadKeyStrokeEx;
+  UsbKeyboardDevice->SimpleInputEx.SetState = USBKeyboardSetState;
   UsbKeyboardDevice->SimpleInputEx.RegisterKeyNotify   = USBKeyboardRegisterKeyNotify;
   UsbKeyboardDevice->SimpleInputEx.UnregisterKeyNotify = USBKeyboardUnregisterKeyNotify;
 
@@ -280,6 +280,7 @@ USBKeyboardDriverBindingStart (
   if (!EFI_ERROR (Status)) {
     Status = gBS->SetTimer (UsbKeyboardDevice->TimerEvent, TimerPeriodic, KEYBOARD_TIMER_INTERVAL);
   }
+
   if (EFI_ERROR (Status)) {
     goto ErrorExit;
   }
@@ -341,24 +342,23 @@ USBKeyboardDriverBindingStart (
   Status = InitKeyboardLayout (UsbKeyboardDevice);
   if (EFI_ERROR (Status)) {
     gBS->UninstallMultipleProtocolInterfaces (
-      Controller,
-      &gEfiSimpleTextInProtocolGuid,
-      &UsbKeyboardDevice->SimpleInput,
-      &gEfiSimpleTextInputExProtocolGuid,
-      &UsbKeyboardDevice->SimpleInputEx,
-      NULL
-      );
+           Controller,
+           &gEfiSimpleTextInProtocolGuid,
+           &UsbKeyboardDevice->SimpleInput,
+           &gEfiSimpleTextInputExProtocolGuid,
+           &UsbKeyboardDevice->SimpleInputEx,
+           NULL
+           );
     goto ErrorExit;
   }
-
 
   //
   // Reset USB Keyboard Device exhaustively.
   //
   Status = UsbKeyboardDevice->SimpleInputEx.Reset (
-                                            &UsbKeyboardDevice->SimpleInputEx,
-                                            TRUE
-                                            );
+                                              &UsbKeyboardDevice->SimpleInputEx,
+                                              TRUE
+                                              );
   if (EFI_ERROR (Status)) {
     gBS->UninstallMultipleProtocolInterfaces (
            Controller,
@@ -376,7 +376,7 @@ USBKeyboardDriverBindingStart (
   //
   EndpointAddr    = UsbKeyboardDevice->IntEndpointDescriptor.EndpointAddress;
   PollingInterval = UsbKeyboardDevice->IntEndpointDescriptor.Interval;
-  PacketSize      = (UINT8) (UsbKeyboardDevice->IntEndpointDescriptor.MaxPacketSize);
+  PacketSize = (UINT8)(UsbKeyboardDevice->IntEndpointDescriptor.MaxPacketSize);
 
   Status = UsbIo->UsbAsyncInterruptTransfer (
                     UsbIo,
@@ -419,30 +419,36 @@ USBKeyboardDriverBindingStart (
   gBS->RestoreTPL (OldTpl);
   return EFI_SUCCESS;
 
-//
-// Error handler
-//
+  //
+  // Error handler
+  //
 ErrorExit:
   if (UsbKeyboardDevice != NULL) {
     if (UsbKeyboardDevice->TimerEvent != NULL) {
       gBS->CloseEvent (UsbKeyboardDevice->TimerEvent);
     }
+
     if (UsbKeyboardDevice->SimpleInput.WaitForKey != NULL) {
       gBS->CloseEvent (UsbKeyboardDevice->SimpleInput.WaitForKey);
     }
+
     if (UsbKeyboardDevice->SimpleInputEx.WaitForKeyEx != NULL) {
       gBS->CloseEvent (UsbKeyboardDevice->SimpleInputEx.WaitForKeyEx);
     }
+
     if (UsbKeyboardDevice->KeyNotifyProcessEvent != NULL) {
       gBS->CloseEvent (UsbKeyboardDevice->KeyNotifyProcessEvent);
     }
+
     if (UsbKeyboardDevice->KeyboardLayoutEvent != NULL) {
       ReleaseKeyboardLayoutResources (UsbKeyboardDevice);
       gBS->CloseEvent (UsbKeyboardDevice->KeyboardLayoutEvent);
     }
+
     FreePool (UsbKeyboardDevice);
     UsbKeyboardDevice = NULL;
   }
+
   gBS->CloseProtocol (
          Controller,
          &gEfiUsbIoProtocolGuid,
@@ -454,9 +460,7 @@ ErrorExit1:
   gBS->RestoreTPL (OldTpl);
 
   return Status;
-
 }
-
 
 /**
   Stop the USB keyboard device handled by this driver.
@@ -482,14 +486,14 @@ USBKeyboardDriverBindingStop (
   IN  EFI_HANDLE                     *ChildHandleBuffer
   )
 {
-  EFI_STATUS                     Status;
-  EFI_SIMPLE_TEXT_INPUT_PROTOCOL *SimpleInput;
-  USB_KB_DEV                     *UsbKeyboardDevice;
+  EFI_STATUS                      Status;
+  EFI_SIMPLE_TEXT_INPUT_PROTOCOL  *SimpleInput;
+  USB_KB_DEV                      *UsbKeyboardDevice;
 
   Status = gBS->OpenProtocol (
                   Controller,
                   &gEfiSimpleTextInProtocolGuid,
-                  (VOID **) &SimpleInput,
+                  (VOID **)&SimpleInput,
                   This->DriverBindingHandle,
                   Controller,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
@@ -594,7 +598,7 @@ USBKeyboardDriverBindingStop (
 EFI_STATUS
 USBKeyboardReadKeyStrokeWorker (
   IN OUT USB_KB_DEV                 *UsbKeyboardDevice,
-     OUT EFI_KEY_DATA               *KeyData
+  OUT EFI_KEY_DATA               *KeyData
   )
 {
   if (KeyData == NULL) {
@@ -634,8 +638,8 @@ USBKeyboardReset (
   IN  BOOLEAN                          ExtendedVerification
   )
 {
-  EFI_STATUS          Status;
-  USB_KB_DEV          *UsbKeyboardDevice;
+  EFI_STATUS  Status;
+  USB_KB_DEV  *UsbKeyboardDevice;
 
   UsbKeyboardDevice = USB_KB_DEV_FROM_THIS (This);
 
@@ -676,7 +680,6 @@ USBKeyboardReset (
   return EFI_SUCCESS;
 }
 
-
 /**
   Reads the next keystroke from the input device.
 
@@ -697,9 +700,9 @@ USBKeyboardReadKeyStroke (
   OUT EFI_INPUT_KEY                    *Key
   )
 {
-  USB_KB_DEV   *UsbKeyboardDevice;
-  EFI_STATUS   Status;
-  EFI_KEY_DATA KeyData;
+  USB_KB_DEV    *UsbKeyboardDevice;
+  EFI_STATUS    Status;
+  EFI_KEY_DATA  KeyData;
 
   UsbKeyboardDevice = USB_KB_DEV_FROM_THIS (This);
 
@@ -713,21 +716,23 @@ USBKeyboardReadKeyStroke (
     if (EFI_ERROR (Status)) {
       return Status;
     }
+
     //
     // SimpleTextIn Protocol doesn't support partial keystroke;
     //
     if (KeyData.Key.ScanCode == CHAR_NULL && KeyData.Key.UnicodeChar == SCAN_NULL) {
       continue;
     }
+
     //
     // Translate the CTRL-Alpha characters to their corresponding control value
     // (ctrl-a = 0x0001 through ctrl-Z = 0x001A)
     //
     if ((KeyData.KeyState.KeyShiftState & (EFI_LEFT_CONTROL_PRESSED | EFI_RIGHT_CONTROL_PRESSED)) != 0) {
       if (KeyData.Key.UnicodeChar >= L'a' && KeyData.Key.UnicodeChar <= L'z') {
-        KeyData.Key.UnicodeChar = (CHAR16) (KeyData.Key.UnicodeChar - L'a' + 1);
+        KeyData.Key.UnicodeChar = (CHAR16)(KeyData.Key.UnicodeChar - L'a' + 1);
       } else if (KeyData.Key.UnicodeChar >= L'A' && KeyData.Key.UnicodeChar <= L'Z') {
-        KeyData.Key.UnicodeChar = (CHAR16) (KeyData.Key.UnicodeChar - L'A' + 1);
+        KeyData.Key.UnicodeChar = (CHAR16)(KeyData.Key.UnicodeChar - L'A' + 1);
       }
     }
 
@@ -735,7 +740,6 @@ USBKeyboardReadKeyStroke (
     return EFI_SUCCESS;
   }
 }
-
 
 /**
   Event notification function registered for EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL.WaitForKeyEx
@@ -752,11 +756,11 @@ USBKeyboardWaitForKey (
   IN  VOID                    *Context
   )
 {
-  USB_KB_DEV  *UsbKeyboardDevice;
-  EFI_KEY_DATA KeyData;
-  EFI_TPL      OldTpl;
+  USB_KB_DEV    *UsbKeyboardDevice;
+  EFI_KEY_DATA  KeyData;
+  EFI_TPL       OldTpl;
 
-  UsbKeyboardDevice = (USB_KB_DEV *) Context;
+  UsbKeyboardDevice = (USB_KB_DEV *)Context;
 
   //
   // Enter critical section
@@ -782,9 +786,11 @@ USBKeyboardWaitForKey (
       Dequeue (&UsbKeyboardDevice->EfiKeyQueue, &KeyData, sizeof (EFI_KEY_DATA));
       continue;
     }
+
     gBS->SignalEvent (Event);
     break;
   }
+
   //
   // Leave critical section and return
   //
@@ -804,12 +810,12 @@ USBKeyboardTimerHandler (
   IN  VOID                      *Context
   )
 {
-  EFI_STATUS                    Status;
-  USB_KB_DEV                    *UsbKeyboardDevice;
-  UINT8                         KeyCode;
-  EFI_KEY_DATA                  KeyData;
+  EFI_STATUS    Status;
+  USB_KB_DEV    *UsbKeyboardDevice;
+  UINT8         KeyCode;
+  EFI_KEY_DATA  KeyData;
 
-  UsbKeyboardDevice = (USB_KB_DEV *) Context;
+  UsbKeyboardDevice = (USB_KB_DEV *)Context;
 
   //
   // Fetch raw data from the USB keyboard buffer,
@@ -817,7 +823,7 @@ USBKeyboardTimerHandler (
   //
   Status = USBParseKey (UsbKeyboardDevice, &KeyCode);
   if (EFI_ERROR (Status)) {
-    return ;
+    return;
   }
 
   //
@@ -825,7 +831,7 @@ USBKeyboardTimerHandler (
   //
   Status = UsbKeyCodeToEfiInputKey (UsbKeyboardDevice, KeyCode, &KeyData);
   if (EFI_ERROR (Status)) {
-    return ;
+    return;
   }
 
   //
@@ -848,12 +854,13 @@ KbdFreeNotifyList (
   IN OUT LIST_ENTRY           *NotifyList
   )
 {
-  KEYBOARD_CONSOLE_IN_EX_NOTIFY *NotifyNode;
-  LIST_ENTRY                    *Link;
+  KEYBOARD_CONSOLE_IN_EX_NOTIFY  *NotifyNode;
+  LIST_ENTRY                     *Link;
 
   if (NotifyList == NULL) {
     return EFI_INVALID_PARAMETER;
   }
+
   while (!IsListEmpty (NotifyList)) {
     Link = GetFirstNode (NotifyList);
     NotifyNode = CR (Link, KEYBOARD_CONSOLE_IN_EX_NOTIFY, NotifyEntry, USB_KB_CONSOLE_IN_EX_NOTIFY_SIGNATURE);
@@ -894,6 +901,7 @@ IsKeyRegistered (
       RegsiteredData->KeyState.KeyShiftState != InputData->KeyState.KeyShiftState) {
     return FALSE;
   }
+
   if (RegsiteredData->KeyState.KeyToggleState != 0 &&
       RegsiteredData->KeyState.KeyToggleState != InputData->KeyState.KeyToggleState) {
     return FALSE;
@@ -905,6 +913,7 @@ IsKeyRegistered (
 //
 // Simple Text Input Ex protocol functions
 //
+
 /**
   Resets the input device hardware.
 
@@ -934,8 +943,8 @@ USBKeyboardResetEx (
   IN BOOLEAN                            ExtendedVerification
   )
 {
-  EFI_STATUS                Status;
-  USB_KB_DEV                *UsbKeyboardDevice;
+  EFI_STATUS  Status;
+  USB_KB_DEV  *UsbKeyboardDevice;
 
   UsbKeyboardDevice = TEXT_INPUT_EX_USB_KB_DEV_FROM_THIS (This);
 
@@ -948,7 +957,6 @@ USBKeyboardResetEx (
   UsbKeyboardDevice->KeyState.KeyToggleState = EFI_TOGGLE_STATE_VALID;
 
   return EFI_SUCCESS;
-
 }
 
 /**
@@ -972,7 +980,7 @@ USBKeyboardReadKeyStrokeEx (
   OUT EFI_KEY_DATA                      *KeyData
   )
 {
-  USB_KB_DEV                        *UsbKeyboardDevice;
+  USB_KB_DEV  *UsbKeyboardDevice;
 
   if (KeyData == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -981,7 +989,6 @@ USBKeyboardReadKeyStrokeEx (
   UsbKeyboardDevice = TEXT_INPUT_EX_USB_KB_DEV_FROM_THIS (This);
 
   return USBKeyboardReadKeyStrokeWorker (UsbKeyboardDevice, KeyData);
-
 }
 
 /**
@@ -1005,7 +1012,7 @@ USBKeyboardSetState (
   IN EFI_KEY_TOGGLE_STATE               *KeyToggleState
   )
 {
-  USB_KB_DEV                        *UsbKeyboardDevice;
+  USB_KB_DEV  *UsbKeyboardDevice;
 
   if (KeyToggleState == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -1022,20 +1029,23 @@ USBKeyboardSetState (
   // Update the status light
   //
 
-  UsbKeyboardDevice->ScrollOn   = FALSE;
-  UsbKeyboardDevice->NumLockOn  = FALSE;
-  UsbKeyboardDevice->CapsOn     = FALSE;
+  UsbKeyboardDevice->ScrollOn  = FALSE;
+  UsbKeyboardDevice->NumLockOn = FALSE;
+  UsbKeyboardDevice->CapsOn    = FALSE;
   UsbKeyboardDevice->IsSupportPartialKey = FALSE;
 
   if ((*KeyToggleState & EFI_SCROLL_LOCK_ACTIVE) == EFI_SCROLL_LOCK_ACTIVE) {
     UsbKeyboardDevice->ScrollOn = TRUE;
   }
+
   if ((*KeyToggleState & EFI_NUM_LOCK_ACTIVE) == EFI_NUM_LOCK_ACTIVE) {
     UsbKeyboardDevice->NumLockOn = TRUE;
   }
+
   if ((*KeyToggleState & EFI_CAPS_LOCK_ACTIVE) == EFI_CAPS_LOCK_ACTIVE) {
     UsbKeyboardDevice->CapsOn = TRUE;
   }
+
   if ((*KeyToggleState & EFI_KEY_STATE_EXPOSED) == EFI_KEY_STATE_EXPOSED) {
     UsbKeyboardDevice->IsSupportPartialKey = TRUE;
   }
@@ -1045,7 +1055,6 @@ USBKeyboardSetState (
   UsbKeyboardDevice->KeyState.KeyToggleState = *KeyToggleState;
 
   return EFI_SUCCESS;
-
 }
 
 /**
@@ -1076,11 +1085,11 @@ USBKeyboardRegisterKeyNotify (
   OUT VOID                               **NotifyHandle
   )
 {
-  USB_KB_DEV                        *UsbKeyboardDevice;
-  KEYBOARD_CONSOLE_IN_EX_NOTIFY     *NewNotify;
-  LIST_ENTRY                        *Link;
-  LIST_ENTRY                        *NotifyList;
-  KEYBOARD_CONSOLE_IN_EX_NOTIFY     *CurrentNotify;
+  USB_KB_DEV                     *UsbKeyboardDevice;
+  KEYBOARD_CONSOLE_IN_EX_NOTIFY  *NewNotify;
+  LIST_ENTRY                     *Link;
+  LIST_ENTRY                     *NotifyList;
+  KEYBOARD_CONSOLE_IN_EX_NOTIFY  *CurrentNotify;
 
   if (KeyData == NULL || NotifyHandle == NULL || KeyNotificationFunction == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -1113,21 +1122,19 @@ USBKeyboardRegisterKeyNotify (
   //
   // Allocate resource to save the notification function
   //
-  NewNotify = (KEYBOARD_CONSOLE_IN_EX_NOTIFY *) AllocateZeroPool (sizeof (KEYBOARD_CONSOLE_IN_EX_NOTIFY));
+  NewNotify = (KEYBOARD_CONSOLE_IN_EX_NOTIFY *)AllocateZeroPool (sizeof (KEYBOARD_CONSOLE_IN_EX_NOTIFY));
   if (NewNotify == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
-  NewNotify->Signature         = USB_KB_CONSOLE_IN_EX_NOTIFY_SIGNATURE;
+  NewNotify->Signature = USB_KB_CONSOLE_IN_EX_NOTIFY_SIGNATURE;
   NewNotify->KeyNotificationFn = KeyNotificationFunction;
   CopyMem (&NewNotify->KeyData, KeyData, sizeof (EFI_KEY_DATA));
   InsertTailList (&UsbKeyboardDevice->NotifyList, &NewNotify->NotifyEntry);
 
-
   *NotifyHandle = NewNotify;
 
   return EFI_SUCCESS;
-
 }
 
 /**
@@ -1147,10 +1154,10 @@ USBKeyboardUnregisterKeyNotify (
   IN VOID                               *NotificationHandle
   )
 {
-  USB_KB_DEV                        *UsbKeyboardDevice;
-  KEYBOARD_CONSOLE_IN_EX_NOTIFY     *CurrentNotify;
-  LIST_ENTRY                        *Link;
-  LIST_ENTRY                        *NotifyList;
+  USB_KB_DEV                     *UsbKeyboardDevice;
+  KEYBOARD_CONSOLE_IN_EX_NOTIFY  *CurrentNotify;
+  LIST_ENTRY                     *Link;
+  LIST_ENTRY                     *NotifyList;
 
   if (NotificationHandle == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -1201,15 +1208,15 @@ KeyNotifyProcessHandler (
   IN  VOID                      *Context
   )
 {
-  EFI_STATUS                    Status;
-  USB_KB_DEV                    *UsbKeyboardDevice;
-  EFI_KEY_DATA                  KeyData;
-  LIST_ENTRY                    *Link;
-  LIST_ENTRY                    *NotifyList;
-  KEYBOARD_CONSOLE_IN_EX_NOTIFY *CurrentNotify;
-  EFI_TPL                       OldTpl;
+  EFI_STATUS                     Status;
+  USB_KB_DEV                     *UsbKeyboardDevice;
+  EFI_KEY_DATA                   KeyData;
+  LIST_ENTRY                     *Link;
+  LIST_ENTRY                     *NotifyList;
+  KEYBOARD_CONSOLE_IN_EX_NOTIFY  *CurrentNotify;
+  EFI_TPL                        OldTpl;
 
-  UsbKeyboardDevice = (USB_KB_DEV *) Context;
+  UsbKeyboardDevice = (USB_KB_DEV *)Context;
 
   //
   // Invoke notification functions.
@@ -1228,6 +1235,7 @@ KeyNotifyProcessHandler (
     if (EFI_ERROR (Status)) {
       break;
     }
+
     for (Link = GetFirstNode (NotifyList); !IsNull (NotifyList, Link); Link = GetNextNode (NotifyList, Link)) {
       CurrentNotify = CR (Link, KEYBOARD_CONSOLE_IN_EX_NOTIFY, NotifyEntry, USB_KB_CONSOLE_IN_EX_NOTIFY_SIGNATURE);
       if (IsKeyRegistered (&CurrentNotify->KeyData, &KeyData)) {
@@ -1236,4 +1244,3 @@ KeyNotifyProcessHandler (
     }
   }
 }
-

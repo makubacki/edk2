@@ -19,9 +19,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 BootLogoEnableLogo (
-  VOID
-  );
-
+                    VOID
+                    );
 
 /**
   Use SystemTable ConOut to turn on video based Simple Text Out consoles. The
@@ -33,8 +32,8 @@ BootLogoEnableLogo (
 EFI_STATUS
 EFIAPI
 BootLogoDisableLogo (
-  VOID
-  );
+                     VOID
+                     );
 
 /**
 

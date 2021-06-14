@@ -11,18 +11,18 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "Ps2Mouse.h"
 
-#define PS2_PACKET_LENGTH       3
-#define PS2_SYNC_MASK           0xc
-#define PS2_SYNC_BYTE           0x8
+#define PS2_PACKET_LENGTH  3
+#define PS2_SYNC_MASK      0xc
+#define PS2_SYNC_BYTE      0x8
 
 #define IS_PS2_SYNC_BYTE(byte)  ((byte & PS2_SYNC_MASK) == PS2_SYNC_BYTE)
 
-#define PS2_READ_BYTE_ONE       0
-#define PS2_READ_DATA_BYTE      1
-#define PS2_PROCESS_PACKET      2
+#define PS2_READ_BYTE_ONE   0
+#define PS2_READ_DATA_BYTE  1
+#define PS2_PROCESS_PACKET  2
 
-#define TIMEOUT                 50000
-#define BAT_TIMEOUT             500000
+#define TIMEOUT      50000
+#define BAT_TIMEOUT  500000
 
 //
 // 8042 I/O Port
@@ -42,31 +42,31 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define ENABLE_KB       0xae
 #define WRITE_AUX_DEV   0xd4
 
-#define CMD_SYS_FLAG    0x04
-#define CMD_KB_STS      0x10
-#define CMD_KB_DIS      0x10
-#define CMD_KB_EN       0x0
+#define CMD_SYS_FLAG  0x04
+#define CMD_KB_STS    0x10
+#define CMD_KB_DIS    0x10
+#define CMD_KB_EN     0x0
 
 //
 // 8042 Auxiliary Device Command
 //
-#define SETSF1_CMD  0xe6
-#define SETSF2_CMD  0xe7
-#define SETRE_CMD   0xe8
-#define READ_CMD    0xeb
-#define SETRM_CMD   0xf0
-#define SETSR_CMD   0xf3
-#define ENABLE_CMD  0xf4
-#define DISABLE_CMD 0xf5
-#define RESET_CMD   0xff
+#define SETSF1_CMD   0xe6
+#define SETSF2_CMD   0xe7
+#define SETRE_CMD    0xe8
+#define READ_CMD     0xeb
+#define SETRM_CMD    0xf0
+#define SETSR_CMD    0xf3
+#define ENABLE_CMD   0xf4
+#define DISABLE_CMD  0xf5
+#define RESET_CMD    0xff
 
 //
 // return code
 //
-#define PS2_ACK       0xfa
-#define PS2_RESEND    0xfe
-#define PS2MOUSE_BAT1 0xaa
-#define PS2MOUSE_BAT2 0x0
+#define PS2_ACK        0xfa
+#define PS2_RESEND     0xfe
+#define PS2MOUSE_BAT1  0xaa
+#define PS2MOUSE_BAT2  0x0
 
 //
 // Keyboard Controller Status
@@ -78,41 +78,41 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 ///
 /// General Time Out
 ///
-#define KBC_TIM   0x40
+#define KBC_TIM  0x40
 ///
 /// Output buffer for auxiliary device (PS/2):
-///    0 - Holds keyboard data
-///    1 - Holds data for auxiliary device
+/// 0 - Holds keyboard data
+/// 1 - Holds data for auxiliary device
 ///
 #define KBC_AUXB  0x20
 ///
 /// Keyboard lock status:
-///    0 - keyboard locked
-///    1 - keyboard free
+/// 0 - keyboard locked
+/// 1 - keyboard free
 ///
 #define KBC_KEYL  0x10
 ///
 /// Command/Data:
-///    0 - data byte written via port 60h
-///    1 - command byte written via port 64h
+/// 0 - data byte written via port 60h
+/// 1 - command byte written via port 64h
 ///
 #define KBC_CD  0x08
 ///
 /// System Flag:
-///    0 - power-on reset
-///    1 - self-test successful
+/// 0 - power-on reset
+/// 1 - self-test successful
 ///
 #define KBC_SYSF  0x04
 ///
 /// Input Buffer Status :
-///    0 - input buffer empty
-///    1 - CPU data in input buffer
+/// 0 - input buffer empty
+/// 1 - CPU data in input buffer
 ///
 #define KBC_INPB  0x02
 ///
 /// Output Buffer Status :
-///    0 - output buffer empty
-///    1 - keyboard controller data in output buffer
+/// 0 - output buffer empty
+/// 1 - keyboard controller data in output buffer
 ///
 #define KBC_OUTB  0x01
 
@@ -123,9 +123,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
   @return others       Fail to do keyboard self testing.
 **/
 EFI_STATUS
-KbcSelfTest (
-  VOID
-  );
+  KbcSelfTest (
+               VOID
+               );
 
 /**
   Issue command to enable keyboard AUX functionality.
@@ -133,9 +133,9 @@ KbcSelfTest (
   @return Status of command issuing.
 **/
 EFI_STATUS
-KbcEnableAux (
-  VOID
-  );
+  KbcEnableAux (
+                VOID
+                );
 
 /**
   Issue command to disable keyboard AUX functionality.
@@ -143,9 +143,9 @@ KbcEnableAux (
   @return Status of command issuing.
 **/
 EFI_STATUS
-KbcDisableAux (
-  VOID
-  );
+  KbcDisableAux (
+                 VOID
+                 );
 
 /**
   Issue command to enable keyboard.
@@ -153,9 +153,9 @@ KbcDisableAux (
   @return Status of command issuing.
 **/
 EFI_STATUS
-KbcEnableKb (
-  VOID
-  );
+  KbcEnableKb (
+               VOID
+               );
 
 /**
   Issue command to disable keyboard.
@@ -163,9 +163,9 @@ KbcEnableKb (
   @return Status of command issuing.
 **/
 EFI_STATUS
-KbcDisableKb (
-  VOID
-  );
+  KbcDisableKb (
+                VOID
+                );
 
 /**
   Issue command to check keyboard status.
@@ -185,9 +185,9 @@ CheckKbStatus (
   @return Status of command issuing.
 **/
 EFI_STATUS
-PS2MouseReset (
-  VOID
-  );
+  PS2MouseReset (
+                 VOID
+                 );
 
 /**
   Issue command to set mouse's sample rate
@@ -231,9 +231,9 @@ PS2MouseSetScaling (
   @return Status of command issuing.
 **/
 EFI_STATUS
-PS2MouseEnable (
-  VOID
-  );
+  PS2MouseEnable (
+                  VOID
+                  );
 
 /**
   Get mouse packet . Only care first 3 bytes
@@ -268,6 +268,7 @@ PS2MouseRead (
 //
 // 8042 I/O function
 //
+
 /**
   I/O work flow of outing 8042 command.
 
@@ -355,9 +356,9 @@ Out8042AuxData (
   @retval EFI_NOT_READY Keyboard controller is not ready
 **/
 EFI_STATUS
-CheckForInput (
-  VOID
-  );
+  CheckForInput (
+                 VOID
+                 );
 
 /**
   I/O work flow to wait input buffer empty in given time.
@@ -386,4 +387,3 @@ WaitOutputFull (
   );
 
 #endif
-

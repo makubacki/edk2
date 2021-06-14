@@ -17,7 +17,7 @@
 //
 #define EDKII_DEBUG_PPI_GUID \
   { \
-    0x999e699c, 0xb013, 0x475e, {0xb1, 0x7b, 0xf3, 0xa8, 0xae, 0x5c, 0x48, 0x75} \
+    0x999e699c, 0xb013, 0x475e, { 0xb1, 0x7b, 0xf3, 0xa8, 0xae, 0x5c, 0x48, 0x75 } \
   }
 
 ///
@@ -65,11 +65,10 @@ VOID
 /// This PPI contains a set of services to print message to debug output device
 ///
 struct _EDKII_DEBUG_PPI {
-  EDKII_DEBUG_BPRINT                DebugBPrint;
-  EDKII_DEBUG_ASSERT                DebugAssert;
+  EDKII_DEBUG_BPRINT    DebugBPrint;
+  EDKII_DEBUG_ASSERT    DebugAssert;
 };
 
-extern EFI_GUID gEdkiiDebugPpiGuid;
+extern EFI_GUID  gEdkiiDebugPpiGuid;
 
 #endif
-

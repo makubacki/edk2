@@ -15,10 +15,10 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // GUID for Performance measurement Protocol
 //
 #define PERFORMANCE_MEASUREMENT_PROTOCOL_GUID \
-  { 0xc85d06be, 0x5f75, 0x48ce, {0xa8, 0x0f, 0x12, 0x36, 0xba, 0x3b, 0x87, 0xb1 } }
+  { 0xc85d06be, 0x5f75, 0x48ce, { 0xa8, 0x0f, 0x12, 0x36, 0xba, 0x3b, 0x87, 0xb1 } }
 
 #define SMM_PERFORMANCE_MEASUREMENT_PROTOCOL_GUID \
-  { 0xd56b6d73, 0x1a7b, 0x4015, {0x9b, 0xb4, 0x7b, 0x07, 0x17, 0x29, 0xed, 0x24 } }
+  { 0xd56b6d73, 0x1a7b, 0x4015, { 0x9b, 0xb4, 0x7b, 0x07, 0x17, 0x29, 0xed, 0x24 } }
 
 typedef struct _EDKII_PERFORMANCE_MEASUREMENT_PROTOCOL EDKII_PERFORMANCE_MEASUREMENT_PROTOCOL;
 
@@ -53,20 +53,25 @@ typedef enum {
 typedef
 EFI_STATUS
 (EFIAPI *CREATE_PERFORMANCE_MEASUREMENT)(
-  IN CONST VOID                        *CallerIdentifier, OPTIONAL
-  IN CONST VOID                        *Guid,     OPTIONAL
-  IN CONST CHAR8                       *String,   OPTIONAL
-  IN       UINT64                      TimeStamp, OPTIONAL
-  IN       UINT64                      Address,   OPTIONAL
+  IN CONST VOID                        *CallerIdentifier,
+  OPTIONAL
+  IN CONST VOID                        *Guid,
+  OPTIONAL
+  IN CONST CHAR8                       *String,
+  OPTIONAL
+  IN       UINT64                      TimeStamp,
+  OPTIONAL
+  IN       UINT64                      Address,
+  OPTIONAL
   IN       UINT32                      Identifier,
   IN       PERF_MEASUREMENT_ATTRIBUTE  Attribute
   );
 
 struct _EDKII_PERFORMANCE_MEASUREMENT_PROTOCOL {
-  CREATE_PERFORMANCE_MEASUREMENT CreatePerformanceMeasurement;
+  CREATE_PERFORMANCE_MEASUREMENT    CreatePerformanceMeasurement;
 };
 
-extern EFI_GUID gEdkiiPerformanceMeasurementProtocolGuid;
-extern EFI_GUID gEdkiiSmmPerformanceMeasurementProtocolGuid;
+extern EFI_GUID  gEdkiiPerformanceMeasurementProtocolGuid;
+extern EFI_GUID  gEdkiiSmmPerformanceMeasurementProtocolGuid;
 
 #endif // _PERFORMANCE_MEASUREMENT_H_

@@ -15,8 +15,8 @@
 
 #pragma pack(1)
 typedef struct {
-  CHAR16 NullTerminator;
-  GUID   ResetSubtype;
+  CHAR16    NullTerminator;
+  GUID      ResetSubtype;
 } RESET_UTILITY_GUID_SPECIFIC_RESET_DATA;
 #pragma pack()
 
@@ -110,8 +110,8 @@ GetResetPlatformSpecificGuid (
   IN CONST VOID  *ResetData
   )
 {
-  UINTN          ResetDataStringSize;
-  GUID           *ResetSubtypeGuid;
+  UINTN  ResetDataStringSize;
+  GUID   *ResetSubtypeGuid;
 
   //
   // Make sure parameters are valid
@@ -135,6 +135,7 @@ GetResetPlatformSpecificGuid (
     DEBUG ((DEBUG_VERBOSE, "%a - Detected reset subtype %g...\n", __FUNCTION__, ResetSubtypeGuid));
     return ResetSubtypeGuid;
   }
+
   return NULL;
 }
 
@@ -192,12 +193,14 @@ BuildResetData (
   if (ResetDataSize == NULL) {
     return RETURN_INVALID_PARAMETER;
   }
+
   //
   // If extra data is indicated, but pointer is NULL.
   //
   if (ExtraDataSize > 0 && ExtraData == NULL) {
     return RETURN_INVALID_PARAMETER;
   }
+
   //
   // If extra data is indicated, but no subtype GUID is supplied.
   //
@@ -229,6 +232,7 @@ BuildResetData (
     *ResetDataSize = ResetDataBufferSize;
     return RETURN_BUFFER_TOO_SMALL;
   }
+
   *ResetDataSize = ResetDataBufferSize;
   if (ResetData == NULL) {
     return RETURN_INVALID_PARAMETER;
@@ -244,6 +248,7 @@ BuildResetData (
     CopyMem (Data, ResetSubtype, sizeof (GUID));
     Data += sizeof (GUID);
   }
+
   if (ExtraDataSize > 0) {
     CopyMem (Data, ExtraData, ExtraDataSize);
   }
