@@ -11,9 +11,9 @@
 #include "IdeController.h"
 
 ///
-///  EFI_DRIVER_BINDING_PROTOCOL instance
+/// EFI_DRIVER_BINDING_PROTOCOL instance
 ///
-EFI_DRIVER_BINDING_PROTOCOL gIdeControllerDriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  gIdeControllerDriverBinding = {
   IdeControllerSupported,
   IdeControllerStart,
   IdeControllerStop,
@@ -23,7 +23,7 @@ EFI_DRIVER_BINDING_PROTOCOL gIdeControllerDriverBinding = {
 };
 
 ///
-///  EFI_IDE_CONTROLLER_PROVATE_DATA Template
+/// EFI_IDE_CONTROLLER_PROVATE_DATA Template
 ///
 EFI_IDE_CONTROLLER_INIT_PROTOCOL  gEfiIdeControllerInit = {
   IdeInitGetChannelInfo,
@@ -37,7 +37,7 @@ EFI_IDE_CONTROLLER_INIT_PROTOCOL  gEfiIdeControllerInit = {
 };
 
 ///
-///  EFI_ATA_COLLECTIVE_MODE Template
+/// EFI_ATA_COLLECTIVE_MODE Template
 ///
 EFI_ATA_COLLECTIVE_MODE  gEfiAtaCollectiveModeTemplate = {
   {
@@ -114,10 +114,10 @@ IdeControllerSupported (
   IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath
   )
 {
-  EFI_STATUS                Status;
-  EFI_PCI_IO_PROTOCOL       *PciIo;
-  UINT8                     PciClass;
-  UINT8                     PciSubClass;
+  EFI_STATUS           Status;
+  EFI_PCI_IO_PROTOCOL  *PciIo;
+  UINT8                PciClass;
+  UINT8                PciSubClass;
 
   //
   // Attempt to Open PCI I/O Protocol
@@ -125,7 +125,7 @@ IdeControllerSupported (
   Status = gBS->OpenProtocol (
                   Controller,
                   &gEfiPciIoProtocolGuid,
-                  (VOID **) &PciIo,
+                  (VOID **)&PciIo,
                   This->DriverBindingHandle,
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
@@ -169,11 +169,11 @@ IdeControllerSupported (
 
 Done:
   gBS->CloseProtocol (
-        Controller,
-        &gEfiPciIoProtocolGuid,
-        This->DriverBindingHandle,
-        Controller
-        );
+         Controller,
+         &gEfiPciIoProtocolGuid,
+         This->DriverBindingHandle,
+         Controller
+         );
 
   return Status;
 }
@@ -208,7 +208,7 @@ IdeControllerStart (
   Status = gBS->OpenProtocol (
                   Controller,
                   &gEfiPciIoProtocolGuid,
-                  (VOID **) &PciIo,
+                  (VOID **)&PciIo,
                   This->DriverBindingHandle,
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
@@ -216,9 +216,9 @@ IdeControllerStart (
   //
   // Status == EFI_SUCCESS - A normal execution flow, SUCCESS and the program proceeds.
   // Status == ALREADY_STARTED - A non-zero Status code returned. It indicates
-  //           that the protocol has been opened and should be treated as a
-  //           normal condition and the program proceeds. The Protocol will not
-  //           opened 'again' by this call.
+  // that the protocol has been opened and should be treated as a
+  // normal condition and the program proceeds. The Protocol will not
+  // opened 'again' by this call.
   // Status != ALREADY_STARTED - Error status, terminate program execution
   //
   if (EFI_ERROR (Status)) {
@@ -230,7 +230,8 @@ IdeControllerStart (
   //
   return gBS->InstallMultipleProtocolInterfaces (
                 &Controller,
-                &gEfiIdeControllerInitProtocolGuid, &gEfiIdeControllerInit,
+                &gEfiIdeControllerInitProtocolGuid,
+                &gEfiIdeControllerInit,
                 NULL
                 );
 }
@@ -264,13 +265,13 @@ IdeControllerStop (
   Status = gBS->OpenProtocol (
                   Controller,
                   &gEfiIdeControllerInitProtocolGuid,
-                  (VOID **) &IdeControllerInit,
+                  (VOID **)&IdeControllerInit,
                   This->DriverBindingHandle,
                   Controller,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
   if (EFI_ERROR (Status)) {
-     return EFI_UNSUPPORTED;
+    return EFI_UNSUPPORTED;
   }
 
   //
@@ -285,7 +286,8 @@ IdeControllerStop (
   //
   Status = gBS->UninstallMultipleProtocolInterfaces (
                   Controller,
-                  &gEfiIdeControllerInitProtocolGuid, &gEfiIdeControllerInit,
+                  &gEfiIdeControllerInitProtocolGuid,
+                  &gEfiIdeControllerInit,
                   NULL
                   );
   if (EFI_ERROR (Status)) {
@@ -306,6 +308,7 @@ IdeControllerStop (
 //
 // Interface functions of IDE_CONTROLLER_INIT protocol
 //
+
 /**
   Returns the information about the specified IDE channel.
 
