@@ -36,7 +36,7 @@ JsonValueInitArray (
   VOID
   )
 {
-  return (EDKII_JSON_VALUE)json_array();
+  return (EDKII_JSON_VALUE)json_array ();
 }
 
 /**
@@ -58,7 +58,7 @@ JsonValueInitObject (
   VOID
   )
 {
-  return (EDKII_JSON_VALUE)json_object();
+  return (EDKII_JSON_VALUE)json_object ();
 }
 
 /**
@@ -86,7 +86,7 @@ JsonValueInitAsciiString (
   IN    CONST CHAR8    *String
   )
 {
-  UINTN    Index;
+  UINTN  Index;
 
   if (String == NULL) {
     return NULL;
@@ -127,8 +127,8 @@ JsonValueInitUnicodeString (
   IN    CHAR16    *String
   )
 {
-  EFI_STATUS    Status;
-  CHAR8         *Utf8Str;
+  EFI_STATUS  Status;
+  CHAR8       *Utf8Str;
 
   if (String == NULL) {
     return NULL;
@@ -201,7 +201,7 @@ JsonValueInitNull (
   VOID
   )
 {
-  return (EDKII_JSON_VALUE)json_null();
+  return (EDKII_JSON_VALUE)json_null ();
 }
 
 /**
@@ -230,7 +230,7 @@ JsonValueFree (
   IN    EDKII_JSON_VALUE    Json
   )
 {
-  json_decref((json_t *)Json);
+  json_decref ((json_t *)Json);
 }
 
 /**
@@ -256,7 +256,7 @@ JsonValueClone (
   IN    EDKII_JSON_VALUE    Json
   )
 {
-  return (EDKII_JSON_VALUE)json_deep_copy ((json_t *) Json);
+  return (EDKII_JSON_VALUE)json_deep_copy ((json_t *)Json);
 }
 
 /**
@@ -274,7 +274,7 @@ JsonValueIsArray (
   IN    EDKII_JSON_VALUE    Json
   )
 {
-  return json_is_array ((json_t *) Json);
+  return json_is_array ((json_t *)Json);
 }
 
 /**
@@ -292,7 +292,7 @@ JsonValueIsObject (
   IN    EDKII_JSON_VALUE    Json
   )
 {
-  return json_is_object ((json_t *) Json);
+  return json_is_object ((json_t *)Json);
 }
 
 /**
@@ -311,7 +311,7 @@ JsonValueIsString (
   IN    EDKII_JSON_VALUE    Json
   )
 {
-  return json_is_string ((json_t *) Json);
+  return json_is_string ((json_t *)Json);
 }
 
 /**
@@ -329,7 +329,7 @@ JsonValueIsNumber (
   IN    EDKII_JSON_VALUE    Json
   )
 {
-  return json_is_integer ((json_t *) Json);
+  return json_is_integer ((json_t *)Json);
 }
 
 /**
@@ -347,7 +347,7 @@ JsonValueIsBoolean (
   IN    EDKII_JSON_VALUE    Json
   )
 {
-  return json_is_boolean ((json_t *) Json);
+  return json_is_boolean ((json_t *)Json);
 }
 
 /**
@@ -365,7 +365,7 @@ JsonValueIsNull (
   IN    EDKII_JSON_VALUE    Json
   )
 {
-  return json_is_null ((json_t *) Json);
+  return json_is_null ((json_t *)Json);
 }
 
 /**
@@ -430,10 +430,10 @@ JsonValueGetAsciiString (
   IN    EDKII_JSON_VALUE    Json
   )
 {
-  CONST CHAR8    *AsciiStr;
-  UINTN          Index;
+  CONST CHAR8  *AsciiStr;
+  UINTN        Index;
 
-  AsciiStr = json_string_value ((json_t *) Json);
+  AsciiStr = json_string_value ((json_t *)Json);
   if (AsciiStr == NULL) {
     return NULL;
   }
@@ -461,22 +461,22 @@ JsonValueGetAsciiString (
   @retval      Return the associated Unicode string in JSON value or NULL.
 
 **/
-CHAR16*
+CHAR16 *
 EFIAPI
 JsonValueGetUnicodeString (
   IN    EDKII_JSON_VALUE    Json
   )
 {
-  EFI_STATUS     Status;
-  CONST CHAR8    *Utf8Str;
-  CHAR16         *Ucs2Str;
+  EFI_STATUS   Status;
+  CONST CHAR8  *Utf8Str;
+  CHAR16       *Ucs2Str;
 
-  Utf8Str = json_string_value ((json_t *) Json);
+  Utf8Str = json_string_value ((json_t *)Json);
   if (Utf8Str == NULL) {
     return NULL;
   }
 
-  Status = UTF8StrToUCS2 ((CHAR8*)Utf8Str, &Ucs2Str);
+  Status = UTF8StrToUCS2 ((CHAR8 *)Utf8Str, &Ucs2Str);
   if (EFI_ERROR (Status)) {
     return NULL;
   }
@@ -506,7 +506,7 @@ JsonValueGetNumber (
     return 0;
   }
 
-  return json_integer_value ((json_t *) Json);
+  return json_integer_value ((json_t *)Json);
 }
 
 /**
@@ -531,7 +531,7 @@ JsonValueGetBoolean (
     return FALSE;
   }
 
-  return json_is_true ((json_t *) Json);
+  return json_is_true ((json_t *)Json);
 }
 
 /**
@@ -544,7 +544,7 @@ JsonValueGetBoolean (
   @retval      Return the associated Ascii string in JSON value or NULL on errors.
 
 **/
-CONST CHAR8*
+CONST CHAR8 *
 EFIAPI
 JsonValueGetString (
   IN    EDKII_JSON_VALUE    Json
@@ -568,7 +568,7 @@ JsonObjectSize (
   IN    EDKII_JSON_OBJECT    JsonObject
   )
 {
-  return json_object_size ((json_t *) JsonObject);
+  return json_object_size ((json_t *)JsonObject);
 }
 
 /**
@@ -584,24 +584,23 @@ JsonObjectSize (
                JsonObj is not an JSON object, key count is zero or on other errors.
 
 **/
-CHAR8**
+CHAR8 **
 JsonObjectGetKeys (
   IN    EDKII_JSON_OBJECT    JsonObj,
   OUT   UINTN                *KeyCount
   )
 {
-
-  UINTN               Index;
-  CONST CHAR8         **KeyArray;
-  CONST CHAR8         *Key;
-  EDKII_JSON_VALUE    Value;
+  UINTN             Index;
+  CONST CHAR8       **KeyArray;
+  CONST CHAR8       *Key;
+  EDKII_JSON_VALUE  Value;
 
   if (JsonObj == NULL || KeyCount == NULL) {
     return NULL;
   }
 
   Index = 0;
-  json_object_foreach(JsonObj, Key, Value) {
+  json_object_foreach (JsonObj, Key, Value) {
     Index++;
   }
   if (Index == 0) {
@@ -610,7 +609,7 @@ JsonObjectGetKeys (
   }
 
   *KeyCount = Index;
-  KeyArray = (CONST CHAR8 **) AllocateZeroPool (*KeyCount * sizeof (CHAR8 *));
+  KeyArray  = (CONST CHAR8 **)AllocateZeroPool (*KeyCount * sizeof (CHAR8 *));
   if (KeyArray == NULL) {
     return NULL;
   }
@@ -618,7 +617,7 @@ JsonObjectGetKeys (
   Key   = NULL;
   Value = NULL;
   Index = 0;
-  json_object_foreach((json_t *) JsonObj, Key, Value) {
+  json_object_foreach ((json_t *)JsonObj, Key, Value) {
     KeyArray[Index] = Key;
     Index++;
   }
@@ -678,7 +677,7 @@ JsonObjectSetValue (
   IN    EDKII_JSON_VALUE     Json
   )
 {
-  if (json_object_set ((json_t *) JsonObj, Key, (json_t *) Json) != 0) {
+  if (json_object_set ((json_t *)JsonObj, Key, (json_t *)Json) != 0) {
     return EFI_ABORTED;
   } else {
     return EFI_SUCCESS;
@@ -700,7 +699,7 @@ JsonArrayCount (
   IN    EDKII_JSON_ARRAY    JsonArray
   )
 {
-  return json_array_size ((json_t *) JsonArray);
+  return json_array_size ((json_t *)JsonArray);
 }
 
 /**
@@ -726,7 +725,7 @@ JsonArrayGetValue (
   IN    UINTN               Index
   )
 {
-  return (EDKII_JSON_VALUE)json_array_get ((json_t *) JsonArray, Index);
+  return (EDKII_JSON_VALUE)json_array_get ((json_t *)JsonArray, Index);
 }
 
 /**
@@ -749,7 +748,7 @@ JsonArrayAppendValue (
   IN    EDKII_JSON_VALUE    Json
   )
 {
-  if (json_array_append ((json_t *) JsonArray, (json_t *) Json) != 0) {
+  if (json_array_append ((json_t *)JsonArray, (json_t *)Json) != 0) {
     return EFI_ABORTED;
   } else {
     return EFI_SUCCESS;
@@ -777,7 +776,7 @@ JsonArrayRemoveValue (
   IN    UINTN               Index
   )
 {
-  if (json_array_remove ((json_t *) JsonArray, Index) != 0) {
+  if (json_array_remove ((json_t *)JsonArray, Index) != 0) {
     return EFI_ABORTED;
   } else {
     return EFI_SUCCESS;
@@ -813,10 +812,11 @@ JsonDumpString (
   IN    UINTN               Flags
   )
 {
-    if (JsonValue == NULL) {
-      return NULL;
-    }
-    return json_dumps((json_t *)JsonValue, Flags);
+  if (JsonValue == NULL) {
+    return NULL;
+  }
+
+  return json_dumps ((json_t *)JsonValue, Flags);
 }
 
 /**
@@ -837,12 +837,12 @@ JsonDumpString (
 EDKII_JSON_VALUE
 EFIAPI
 JsonLoadString (
-  IN    CONST CHAR8*    String
+  IN    CONST CHAR8 *String
   )
 {
-  json_error_t    JsonError;
+  json_error_t  JsonError;
 
-  return (EDKII_JSON_VALUE) json_loads ((const char *)String, 0, &JsonError);
+  return (EDKII_JSON_VALUE)json_loads ((const char *)String, 0, &JsonError);
 }
 
 /**
@@ -873,7 +873,7 @@ JsonLoadBuffer (
   IN OUT EDKII_JSON_ERROR  *Error
   )
 {
-  return json_loadb(Buffer, BufferLen, Flags, (json_error_t *)Error);
+  return json_loadb (Buffer, BufferLen, Flags, (json_error_t *)Error);
 }
 
 /**
@@ -947,7 +947,7 @@ JsonObjectIteratorValue (
   IN VOID *Iterator
   )
 {
-  return json_object_iter_value(Iterator);
+  return json_object_iter_value (Iterator);
 }
 
 /**
@@ -964,7 +964,7 @@ JsonObjectIteratorNext (
   IN VOID             *Iterator
   )
 {
-  return json_object_iter_next(JsonValue, Iterator);
+  return json_object_iter_next (JsonValue, Iterator);
 }
 
 /**

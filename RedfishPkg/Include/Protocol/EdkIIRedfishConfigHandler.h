@@ -14,20 +14,20 @@
 typedef struct _EDKII_REDFISH_CONFIG_HANDLER_PROTOCOL EDKII_REDFISH_CONFIG_HANDLER_PROTOCOL;
 
 #define EDKII_REDFISH_CONFIG_HANDLER_PROTOCOL_GUID \
-    {  \
-      0xbc0fe6bb, 0x2cc9, 0x463e, { 0x90, 0x82, 0xfa, 0x11, 0x76, 0xfc, 0x67, 0xde }  \
-    }
+  {  \
+    0xbc0fe6bb, 0x2cc9, 0x463e, { 0x90, 0x82, 0xfa, 0x11, 0x76, 0xfc, 0x67, 0xde }  \
+  }
 
 typedef struct {
-  EFI_HANDLE        RedfishServiceRestExHandle; ///< REST EX EFI handle associated with this Redfish service.
-  UINTN             RedfishServiceVersion;      ///< Redfish service version.
-  CHAR16            *RedfishServiceLocation;    ///< Redfish service location.
-  CHAR16            *RedfishServiceUuid;        ///< Redfish service UUID.
-  CHAR16            *RedfishServiceOs;          ///< Redfish service OS.
-  CHAR16            *RedfishServiceOsVersion;   ///< Redfish service OS version.
-  CHAR16            *RedfishServiceProduct;     ///< Redfish service product name.
-  CHAR16            *RedfishServiceProductVer;  ///< Redfish service product version.
-  BOOLEAN           RedfishServiceUseHttps;     ///< Redfish service uses HTTPS.
+  EFI_HANDLE    RedfishServiceRestExHandle;     ///< REST EX EFI handle associated with this Redfish service.
+  UINTN         RedfishServiceVersion;          ///< Redfish service version.
+  CHAR16        *RedfishServiceLocation;        ///< Redfish service location.
+  CHAR16        *RedfishServiceUuid;            ///< Redfish service UUID.
+  CHAR16        *RedfishServiceOs;              ///< Redfish service OS.
+  CHAR16        *RedfishServiceOsVersion;       ///< Redfish service OS version.
+  CHAR16        *RedfishServiceProduct;         ///< Redfish service product name.
+  CHAR16        *RedfishServiceProductVer;      ///< Redfish service product version.
+  BOOLEAN       RedfishServiceUseHttps;         ///< Redfish service uses HTTPS.
 } REDFISH_CONFIG_SERVICE_INFORMATION;
 
 /**
@@ -47,7 +47,7 @@ typedef struct {
 **/
 typedef
 EFI_STATUS
-(EFIAPI *EDKII_REDFISH_CONFIG_HANDLER_PROTOCOL_INIT) (
+(EFIAPI *EDKII_REDFISH_CONFIG_HANDLER_PROTOCOL_INIT)(
   IN  EDKII_REDFISH_CONFIG_HANDLER_PROTOCOL *This,
   IN  REDFISH_CONFIG_SERVICE_INFORMATION  *RedfishServiceinfo
   );
@@ -63,16 +63,15 @@ EFI_STATUS
 **/
 typedef
 EFI_STATUS
-(EFIAPI *EDKII_REDFISH_CONFIG_HANDLER_PROTOCOL_STOP) (
+(EFIAPI *EDKII_REDFISH_CONFIG_HANDLER_PROTOCOL_STOP)(
   IN     EDKII_REDFISH_CONFIG_HANDLER_PROTOCOL    *This
   );
 
 struct _EDKII_REDFISH_CONFIG_HANDLER_PROTOCOL {
-  EDKII_REDFISH_CONFIG_HANDLER_PROTOCOL_INIT      Init;
-  EDKII_REDFISH_CONFIG_HANDLER_PROTOCOL_STOP      Stop;
+  EDKII_REDFISH_CONFIG_HANDLER_PROTOCOL_INIT    Init;
+  EDKII_REDFISH_CONFIG_HANDLER_PROTOCOL_STOP    Stop;
 };
 
-
-extern EFI_GUID gdkIIRedfishConfigHandlerProtocolGuid;
+extern EFI_GUID  gdkIIRedfishConfigHandlerProtocolGuid;
 
 #endif

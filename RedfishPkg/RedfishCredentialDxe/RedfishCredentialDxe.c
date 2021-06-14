@@ -10,7 +10,7 @@
 
 #include <RedfishCredentialDxe.h>
 
-EDKII_REDFISH_CREDENTIAL_PROTOCOL mRedfishCredentialProtocol = {
+EDKII_REDFISH_CREDENTIAL_PROTOCOL  mRedfishCredentialProtocol = {
   RedfishCredentialGetAuthInfo,
   RedfishCredentialStopService
 };
@@ -89,7 +89,7 @@ RedfishCredentialGetAuthInfo (
     return EFI_INVALID_PARAMETER;
   }
 
-  return LibCredentialGetAuthInfo (This, AuthMethod, UserId,Password);
+  return LibCredentialGetAuthInfo (This, AuthMethod, UserId, Password);
 }
 
 /**
