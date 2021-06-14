@@ -17,7 +17,7 @@
 UINT8
 EFIAPI
 GetDebugPrintDeviceEnable (
-  VOID
-  );
+                           VOID
+                           );
 
 #endif

@@ -23,8 +23,8 @@
 UINT32
 EFIAPI
 SecPlatformInit (
-  VOID
-  );
+                 VOID
+                 );
 
 /**
   This function loads Microcode.
