@@ -29,7 +29,7 @@ MmMemLibInternalCalculateMaximumSupportAddress (
   VOID
   )
 {
-  UINT8        PhysicalAddressBits;
+  UINT8  PhysicalAddressBits;
 
   PhysicalAddressBits = 36;
 
@@ -67,4 +67,3 @@ MmMemLibInternalFreeMmramRanges (
 {
   // Not implemented for AARCH64.
 }
-

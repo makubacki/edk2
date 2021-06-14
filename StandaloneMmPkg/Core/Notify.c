@@ -25,7 +25,7 @@ MmNotifyProtocol (
   LIST_ENTRY       *Link;
 
   ProtEntry = Prot->Protocol;
-  for (Link=ProtEntry->Notify.ForwardLink; Link != &ProtEntry->Notify; Link=Link->ForwardLink) {
+  for (Link = ProtEntry->Notify.ForwardLink; Link != &ProtEntry->Notify; Link = Link->ForwardLink) {
     ProtNotify = CR (Link, PROTOCOL_NOTIFY, Link, PROTOCOL_NOTIFY_SIGNATURE);
     ProtNotify->Function (&ProtEntry->ProtocolID, Prot->Interface, Prot->Handle);
   }
@@ -55,7 +55,6 @@ MmRemoveInterfaceFromProtocol (
 
   Prot = MmFindProtocolInterface (Handle, Protocol, Interface);
   if (Prot != NULL) {
-
     ProtEntry = Prot->Protocol;
 
     //
@@ -114,9 +113,9 @@ MmRegisterProtocolNotify (
     //
     // Get the protocol entry per Protocol
     //
-    ProtEntry = MmFindProtocolEntry ((EFI_GUID *) Protocol, FALSE);
+    ProtEntry = MmFindProtocolEntry ((EFI_GUID *)Protocol, FALSE);
     if (ProtEntry != NULL) {
-      ProtNotify = (PROTOCOL_NOTIFY * )*Registration;
+      ProtNotify = (PROTOCOL_NOTIFY *)*Registration;
       for (Link = ProtEntry->Notify.ForwardLink;
            Link != &ProtEntry->Notify;
            Link = Link->ForwardLink) {
@@ -134,6 +133,7 @@ MmRegisterProtocolNotify (
         }
       }
     }
+
     //
     // If the registration is not found
     //
@@ -145,7 +145,7 @@ MmRegisterProtocolNotify (
   //
   // Get the protocol entry to add the notification too
   //
-  ProtEntry = MmFindProtocolEntry ((EFI_GUID *) Protocol, TRUE);
+  ProtEntry = MmFindProtocolEntry ((EFI_GUID *)Protocol, TRUE);
   if (ProtEntry != NULL) {
     //
     // Find whether notification already exist
@@ -153,11 +153,9 @@ MmRegisterProtocolNotify (
     for (Link = ProtEntry->Notify.ForwardLink;
          Link != &ProtEntry->Notify;
          Link = Link->ForwardLink) {
-
       ProtNotify = CR (Link, PROTOCOL_NOTIFY, Link, PROTOCOL_NOTIFY_SIGNATURE);
       if (CompareGuid (&ProtNotify->Protocol->ProtocolID, Protocol) &&
           (ProtNotify->Function == Function)) {
-
         //
         // Notification already exist
         //
@@ -173,8 +171,8 @@ MmRegisterProtocolNotify (
     ProtNotify = AllocatePool (sizeof (PROTOCOL_NOTIFY));
     if (ProtNotify != NULL) {
       ProtNotify->Signature = PROTOCOL_NOTIFY_SIGNATURE;
-      ProtNotify->Protocol = ProtEntry;
-      ProtNotify->Function = Function;
+      ProtNotify->Protocol  = ProtEntry;
+      ProtNotify->Function  = Function;
       //
       // Start at the ending
       //
@@ -193,5 +191,6 @@ MmRegisterProtocolNotify (
     *Registration = ProtNotify;
     Status = EFI_SUCCESS;
   }
+
   return Status;
 }

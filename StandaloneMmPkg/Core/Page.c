@@ -16,7 +16,7 @@
 
 LIST_ENTRY  mMmMemoryMap = INITIALIZE_LIST_HEAD_VARIABLE (mMmMemoryMap);
 
-UINTN mMapKey;
+UINTN  mMapKey;
 
 /**
   Internal Function. Allocate n pages from given free page node.
@@ -43,10 +43,11 @@ InternalAllocPagesOnOneNode (
   if (Top > Pages->NumberOfPages) {
     Top = Pages->NumberOfPages;
   }
+
   Bottom = Top - NumberOfPages;
 
   if (Top < Pages->NumberOfPages) {
-    Node = (FREE_PAGE_LIST*)((UINTN)Pages + EFI_PAGES_TO_SIZE (Top));
+    Node = (FREE_PAGE_LIST *)((UINTN)Pages + EFI_PAGES_TO_SIZE (Top));
     Node->NumberOfPages = Pages->NumberOfPages - Top;
     InsertHeadList (&Pages->Link, &Node->Link);
   }
@@ -87,7 +88,8 @@ InternalAllocMaxAddress (
       return InternalAllocPagesOnOneNode (Pages, NumberOfPages, MaxAddress);
     }
   }
-  return (UINTN)(-1);
+
+  return (UINTN)(- 1);
 }
 
 /**
@@ -116,15 +118,17 @@ InternalAllocAddress (
   }
 
   EndAddress = Address + EFI_PAGES_TO_SIZE (NumberOfPages);
-  for (Node = FreePageList->BackLink; Node!= FreePageList; Node = Node->BackLink) {
+  for (Node = FreePageList->BackLink; Node != FreePageList; Node = Node->BackLink) {
     Pages = BASE_CR (Node, FREE_PAGE_LIST, Link);
     if ((UINTN)Pages <= Address) {
       if ((UINTN)Pages + EFI_PAGES_TO_SIZE (Pages->NumberOfPages) < EndAddress) {
         break;
       }
+
       return InternalAllocPagesOnOneNode (Pages, NumberOfPages, EndAddress);
     }
   }
+
   return ~Address;
 }
 
@@ -160,7 +164,7 @@ MmInternalAllocatePages (
     return EFI_INVALID_PARAMETER;
   }
 
-  if (NumberOfPages > TRUNCATE_TO_PAGES ((UINTN)-1) + 1) {
+  if (NumberOfPages > TRUNCATE_TO_PAGES ((UINTN)- 1) + 1) {
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -170,16 +174,17 @@ MmInternalAllocatePages (
   RequestedAddress = (UINTN)*Memory;
   switch (Type) {
     case AllocateAnyPages:
-      RequestedAddress = (UINTN)(-1);
+      RequestedAddress = (UINTN)(- 1);
     case AllocateMaxAddress:
       *Memory = InternalAllocMaxAddress (
                   &mMmMemoryMap,
                   NumberOfPages,
                   RequestedAddress
                   );
-      if (*Memory == (UINTN)-1) {
+      if (*Memory == (UINTN)- 1) {
         return EFI_OUT_OF_RESOURCES;
       }
+
       break;
     case AllocateAddress:
       *Memory = InternalAllocAddress (
@@ -190,10 +195,12 @@ MmInternalAllocatePages (
       if (*Memory != RequestedAddress) {
         return EFI_NOT_FOUND;
       }
+
       break;
     default:
       return EFI_INVALID_PARAMETER;
   }
+
   return EFI_SUCCESS;
 }
 
@@ -245,13 +252,15 @@ InternalMergeNodes (
 
   Next = BASE_CR (First->Link.ForwardLink, FREE_PAGE_LIST, Link);
   ASSERT (
-    TRUNCATE_TO_PAGES ((UINTN)Next - (UINTN)First) >= First->NumberOfPages);
+    TRUNCATE_TO_PAGES ((UINTN)Next - (UINTN)First) >= First->NumberOfPages
+    );
 
   if (TRUNCATE_TO_PAGES ((UINTN)Next - (UINTN)First) == First->NumberOfPages) {
     First->NumberOfPages += Next->NumberOfPages;
     RemoveEntryList (&Next->Link);
     Next = First;
   }
+
   return Next;
 }
 
@@ -281,12 +290,13 @@ MmInternalFreePages (
   }
 
   Pages = NULL;
-  Node = mMmMemoryMap.ForwardLink;
+  Node  = mMmMemoryMap.ForwardLink;
   while (Node != &mMmMemoryMap) {
     Pages = BASE_CR (Node, FREE_PAGE_LIST, Link);
     if (Memory < (UINTN)Pages) {
       break;
     }
+
     Node = Node->ForwardLink;
   }
 
@@ -302,7 +312,7 @@ MmInternalFreePages (
     }
   }
 
-  Pages = (FREE_PAGE_LIST*)(UINTN)Memory;
+  Pages = (FREE_PAGE_LIST *)(UINTN)Memory;
   Pages->NumberOfPages = NumberOfPages;
   InsertTailList (Node, &Pages->Link);
 

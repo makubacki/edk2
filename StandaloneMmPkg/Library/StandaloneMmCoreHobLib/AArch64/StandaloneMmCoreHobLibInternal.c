@@ -19,9 +19,32 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // Cache copy of HobList pointer.
 //
-extern VOID *gHobList;
+extern VOID  *gHobList;
 
-EFI_HOB_HANDOFF_INFO_TABLE*
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
+EFI_HOB_HANDOFF_INFO_TABLE *
 HobConstructor (
   IN VOID   *EfiMemoryBegin,
   IN UINTN  EfiMemoryLength,
@@ -35,16 +58,16 @@ HobConstructor (
   Hob    = EfiFreeMemoryBottom;
   HobEnd = (EFI_HOB_GENERIC_HEADER *)(Hob+1);
 
-  Hob->Header.HobType     = EFI_HOB_TYPE_HANDOFF;
-  Hob->Header.HobLength   = sizeof (EFI_HOB_HANDOFF_INFO_TABLE);
-  Hob->Header.Reserved    = 0;
+  Hob->Header.HobType   = EFI_HOB_TYPE_HANDOFF;
+  Hob->Header.HobLength = sizeof (EFI_HOB_HANDOFF_INFO_TABLE);
+  Hob->Header.Reserved  = 0;
 
-  HobEnd->HobType     = EFI_HOB_TYPE_END_OF_HOB_LIST;
-  HobEnd->HobLength   = sizeof (EFI_HOB_GENERIC_HEADER);
-  HobEnd->Reserved    = 0;
+  HobEnd->HobType   = EFI_HOB_TYPE_END_OF_HOB_LIST;
+  HobEnd->HobLength = sizeof (EFI_HOB_GENERIC_HEADER);
+  HobEnd->Reserved  = 0;
 
-  Hob->Version             = EFI_HOB_HANDOFF_TABLE_VERSION;
-  Hob->BootMode            = BOOT_WITH_FULL_CONFIGURATION;
+  Hob->Version  = EFI_HOB_HANDOFF_TABLE_VERSION;
+  Hob->BootMode = BOOT_WITH_FULL_CONFIGURATION;
 
   Hob->EfiMemoryTop        = (UINTN)EfiMemoryBegin + EfiMemoryLength;
   Hob->EfiMemoryBottom     = (UINTN)EfiMemoryBegin;

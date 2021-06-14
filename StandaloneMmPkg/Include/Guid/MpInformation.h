@@ -19,17 +19,17 @@
 
 #define MP_INFORMATION_GUID \
   { \
-    0xba33f15d, 0x4000, 0x45c1, {0x8e, 0x88, 0xf9, 0x16, 0x92, 0xd4, 0x57, 0xe3}  \
+    0xba33f15d, 0x4000, 0x45c1, { 0x8e, 0x88, 0xf9, 0x16, 0x92, 0xd4, 0x57, 0xe3 }  \
   }
 
 #pragma pack(1)
 typedef struct {
-  UINT64                     NumberOfProcessors;
-  UINT64                     NumberOfEnabledProcessors;
-  EFI_PROCESSOR_INFORMATION  ProcessorInfoBuffer[];
+  UINT64                       NumberOfProcessors;
+  UINT64                       NumberOfEnabledProcessors;
+  EFI_PROCESSOR_INFORMATION    ProcessorInfoBuffer[];
 } MP_INFORMATION_HOB_DATA;
 #pragma pack()
 
-extern EFI_GUID gMpInformationHobGuid;
+extern EFI_GUID  gMpInformationHobGuid;
 
 #endif

@@ -13,8 +13,8 @@
 // mProtocolDatabase     - A list of all protocols in the system.  (simple list for now)
 // gHandleList           - A list of all the handles in the system
 //
-LIST_ENTRY  mProtocolDatabase  = INITIALIZE_LIST_HEAD_VARIABLE (mProtocolDatabase);
-LIST_ENTRY  gHandleList        = INITIALIZE_LIST_HEAD_VARIABLE (gHandleList);
+LIST_ENTRY  mProtocolDatabase = INITIALIZE_LIST_HEAD_VARIABLE (mProtocolDatabase);
+LIST_ENTRY  gHandleList = INITIALIZE_LIST_HEAD_VARIABLE (gHandleList);
 
 /**
   Check whether a handle is a valid EFI_HANDLE
@@ -36,9 +36,11 @@ MmValidateHandle (
   if (Handle == NULL) {
     return EFI_INVALID_PARAMETER;
   }
+
   if (Handle->Signature != EFI_HANDLE_SIGNATURE) {
     return EFI_INVALID_PARAMETER;
   }
+
   return EFI_SUCCESS;
 }
 
@@ -57,9 +59,9 @@ MmFindProtocolEntry (
   IN BOOLEAN    Create
   )
 {
-  LIST_ENTRY          *Link;
-  PROTOCOL_ENTRY      *Item;
-  PROTOCOL_ENTRY      *ProtEntry;
+  LIST_ENTRY      *Link;
+  PROTOCOL_ENTRY  *Item;
+  PROTOCOL_ENTRY  *ProtEntry;
 
   //
   // Search the database for the matching GUID
@@ -69,7 +71,6 @@ MmFindProtocolEntry (
   for (Link = mProtocolDatabase.ForwardLink;
        Link != &mProtocolDatabase;
        Link = Link->ForwardLink) {
-
     Item = CR (Link, PROTOCOL_ENTRY, AllEntries, PROTOCOL_ENTRY_SIGNATURE);
     if (CompareGuid (&Item->ProtocolID, Protocol)) {
       //
@@ -85,7 +86,7 @@ MmFindProtocolEntry (
   // allocate a new entry
   //
   if ((ProtEntry == NULL) && Create) {
-    ProtEntry = AllocatePool (sizeof(PROTOCOL_ENTRY));
+    ProtEntry = AllocatePool (sizeof (PROTOCOL_ENTRY));
     if (ProtEntry != NULL) {
       //
       // Initialize new protocol entry structure
@@ -101,6 +102,7 @@ MmFindProtocolEntry (
       InsertTailList (&mProtocolDatabase, &ProtEntry->AllEntries);
     }
   }
+
   return ProtEntry;
 }
 
@@ -137,7 +139,7 @@ MmFindProtocolInterface (
     //
     // Look at each protocol interface for any matches
     //
-    for (Link = Handle->Protocols.ForwardLink; Link != &Handle->Protocols; Link=Link->ForwardLink) {
+    for (Link = Handle->Protocols.ForwardLink; Link != &Handle->Protocols; Link = Link->ForwardLink) {
       //
       // If this protocol interface matches, remove it
       //
@@ -145,9 +147,11 @@ MmFindProtocolInterface (
       if (Prot->Interface == Interface && Prot->Protocol == ProtEntry) {
         break;
       }
+
       Prot = NULL;
     }
   }
+
   return Prot;
 }
 
@@ -233,7 +237,7 @@ MmInstallProtocolInterfaceNotify (
   DEBUG ((DEBUG_LOAD | DEBUG_INFO, "MmInstallProtocolInterface: %g %p\n", Protocol, Interface));
 
   Status = EFI_OUT_OF_RESOURCES;
-  Prot = NULL;
+  Prot   = NULL;
   Handle = NULL;
 
   if (*UserHandle != NULL) {
@@ -298,8 +302,8 @@ MmInstallProtocolInterfaceNotify (
   // Initialize the protocol interface structure
   //
   Prot->Signature = PROTOCOL_INTERFACE_SIGNATURE;
-  Prot->Handle = Handle;
-  Prot->Protocol = ProtEntry;
+  Prot->Handle    = Handle;
+  Prot->Protocol  = ProtEntry;
   Prot->Interface = Interface;
 
   //
@@ -320,6 +324,7 @@ MmInstallProtocolInterfaceNotify (
   if (Notify) {
     MmNotifyProtocol (Prot);
   }
+
   Status = EFI_SUCCESS;
 
 Done:
@@ -336,6 +341,7 @@ Done:
       FreePool (Prot);
     }
   }
+
   return Status;
 }
 
@@ -416,6 +422,7 @@ MmUninstallProtocolInterface (
     RemoveEntryList (&Handle->AllHandles);
     FreePool (Handle);
   }
+
   return Status;
 }
 
@@ -457,6 +464,7 @@ MmGetProtocolInterface (
       return Prot;
     }
   }
+
   return NULL;
 }
 
