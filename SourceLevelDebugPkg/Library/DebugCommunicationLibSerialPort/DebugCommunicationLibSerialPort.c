@@ -55,10 +55,10 @@ DebugPortInitialize (
   IN DEBUG_PORT_CONTINUE  Function
   )
 {
-  RETURN_STATUS      Status;
+  RETURN_STATUS  Status;
 
   Status = SerialPortInitialize ();
-  if (RETURN_ERROR(Status)) {
+  if (RETURN_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "Debug Serial Port: Initialization failed!\n"));
   }
 
@@ -151,4 +151,3 @@ DebugPortPollBuffer (
 {
   return SerialPortPoll ();
 }
-
