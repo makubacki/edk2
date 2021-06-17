@@ -37,6 +37,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Guid/SystemNvDataGuid.h>
 #include <Guid/FaultTolerantWrite.h>
 #include <Guid/VarErrorFlag.h>
+#include <Guid/VariableFlashInfo.h>
 
 #include "PrivilegePolymorphic.h"
 
@@ -125,6 +126,21 @@ typedef struct {
   CHAR8           Lang[ISO_639_2_ENTRY_SIZE + 1];
   EFI_FIRMWARE_VOLUME_BLOCK_PROTOCOL *FvbInstance;
 } VARIABLE_MODULE_GLOBAL;
+
+/**
+  Get the HOB that contains variable flash information.
+
+  @param[out] VariableFlashInfo   Pointer to a pointer to set to the variable flash information structure.
+
+  @retval EFI_SUCCESS             Variable flash information was found successfully.
+  @retval EFI_INVALID_PARAMETER   The VariableFlashInfo pointer given is NULL.
+  @retval EFI_NOT_FOUND           Variable flash information could not be found.
+
+**/
+EFI_STATUS
+GetVariableFlashInfo (
+  OUT VARIABLE_FLASH_INFO       **VariableFlashInfo
+  );
 
 /**
   Flush the HOB variable to flash.

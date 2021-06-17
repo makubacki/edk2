@@ -1044,8 +1044,10 @@ SmmFtwNotificationEvent (
   EFI_PHYSICAL_ADDRESS                    VariableStoreBase;
   EFI_SMM_FIRMWARE_VOLUME_BLOCK_PROTOCOL  *FvbProtocol;
   EFI_SMM_FAULT_TOLERANT_WRITE_PROTOCOL   *FtwProtocol;
+  VARIABLE_FLASH_INFO                     *VariableFlashInfo;
   EFI_PHYSICAL_ADDRESS                    NvStorageVariableBase;
   UINTN                                   FtwMaxBlockSize;
+  UINT32                                  NvStorageVariableSize;
 
   if (mVariableModuleGlobal->FvbInstance != NULL) {
     return EFI_SUCCESS;
@@ -1059,13 +1061,20 @@ SmmFtwNotificationEvent (
     return Status;
   }
 
+  Status = GetVariableFlashInfo (&VariableFlashInfo);
+  if (!EFI_ERROR (Status)) {
+    NvStorageVariableBase = VariableFlashInfo->StorageBase;
+    NvStorageVariableSize = VariableFlashInfo->StorageSize;
+  } else {
+    NvStorageVariableBase = NV_STORAGE_VARIABLE_BASE;
+    NvStorageVariableSize = PcdGet32 (PcdFlashNvStorageVariableSize);
+  }
+  VariableStoreBase = NvStorageVariableBase + mNvFvHeaderCache->HeaderLength;
+
   Status = FtwProtocol->GetMaxBlockSize (FtwProtocol, &FtwMaxBlockSize);
   if (!EFI_ERROR (Status)) {
-    ASSERT (PcdGet32 (PcdFlashNvStorageVariableSize) <= FtwMaxBlockSize);
+    ASSERT (NvStorageVariableSize <= FtwMaxBlockSize);
   }
-
-  NvStorageVariableBase = NV_STORAGE_VARIABLE_BASE;
-  VariableStoreBase = NvStorageVariableBase + mNvFvHeaderCache->HeaderLength;
 
   //
   // Let NonVolatileVariableBase point to flash variable store base directly after FTW ready.

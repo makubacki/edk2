@@ -134,6 +134,7 @@ InitRealNonVolatileVariableStore (
 {
   EFI_FIRMWARE_VOLUME_HEADER            *FvHeader;
   VARIABLE_STORE_HEADER                 *VariableStore;
+  VARIABLE_FLASH_INFO                   *VariableFlashInfo;
   UINT32                                VariableStoreLength;
   EFI_HOB_GUID_TYPE                     *GuidHob;
   EFI_PHYSICAL_ADDRESS                  NvStorageBase;
@@ -150,18 +151,24 @@ InitRealNonVolatileVariableStore (
 
   mVariableModuleGlobal->FvbInstance = NULL;
 
+  Status = GetVariableFlashInfo (&VariableFlashInfo);
+  if (!EFI_ERROR (Status)) {
+    NvStorageBase = VariableFlashInfo->StorageBase;
+    NvStorageSize = VariableFlashInfo->StorageSize;
+  } else {
+    NvStorageBase = NV_STORAGE_VARIABLE_BASE;
+    NvStorageSize = PcdGet32 (PcdFlashNvStorageVariableSize);
+  }
+  ASSERT (NvStorageBase != 0);
+
   //
   // Allocate runtime memory used for a memory copy of the FLASH region.
   // Keep the memory and the FLASH in sync as updates occur.
   //
-  NvStorageSize = PcdGet32 (PcdFlashNvStorageVariableSize);
   NvStorageData = AllocateRuntimeZeroPool (NvStorageSize);
   if (NvStorageData == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
-
-  NvStorageBase = NV_STORAGE_VARIABLE_BASE;
-  ASSERT (NvStorageBase != 0);
 
   //
   // Copy NV storage data to the memory buffer.
