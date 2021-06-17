@@ -547,6 +547,30 @@ GetHobVariableStore (
 }
 
 /**
+  Produces the variable flash information HOB.
+
+  @param[in] StorageSize    The size in bytes of the non-volatile variable range on the flash device.
+  @param[in] StorageBase    The base address of the non-volatile variable range on the flash device.
+
+**/
+VOID
+ProduceVariableStoreInfoHob (
+  IN  UINT32                     StorageSize,
+  IN  UINT64                     StorageBase
+  )
+{
+  VARIABLE_FLASH_INFO            *VariableFlashInfo;
+
+  VariableFlashInfo = (VARIABLE_FLASH_INFO *)BuildGuidHob (&gVariableFlashInfoHobGuid, sizeof (VARIABLE_FLASH_INFO));
+  ASSERT (VariableFlashInfo != NULL);
+
+  if (VariableFlashInfo != NULL) {
+    VariableFlashInfo->StorageSize = StorageSize;
+    VariableFlashInfo->StorageBase = StorageBase;
+  }
+}
+
+/**
   Return the variable store header and the store info based on the Index.
 
   @param Type       The type of the variable store.
@@ -590,6 +614,12 @@ GetVariableStore (
                                                 PcdGet32 (PcdFlashNvStorageVariableBase)
                                                );
         ASSERT (NvStorageBase != 0);
+
+        //
+        // Publish the variable store flash information for later boot
+        // stages to consume.
+        //
+        ProduceVariableStoreInfoHob (NvStorageSize, NvStorageBase);
 
         //
         // First let FvHeader point to NV storage base.

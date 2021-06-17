@@ -54,6 +54,8 @@
   ## SOMETIMES_CONSUMES   ## HOB
   ## CONSUMES             ## GUID # Dependence
   gEdkiiFaultTolerantWriteGuid
+  ## SOMETIMES_PRODUCES   ## HOB
+  gVariableFlashInfoHobGuid
 
 [Ppis]
   gEfiPeiReadOnlyVariable2PpiGuid   ## PRODUCES
