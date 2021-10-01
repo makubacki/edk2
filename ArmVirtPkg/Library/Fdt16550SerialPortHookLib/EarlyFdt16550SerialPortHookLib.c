@@ -37,8 +37,8 @@ STATIC
 EFI_STATUS
 EFIAPI
 GetSerialConsolePortAddress (
-  IN  CONST VOID    *Fdt,
-  OUT       UINT64  *SerialConsoleAddress
+  IN  CONST VOID   *Fdt,
+  OUT       UINT64 *SerialConsoleAddress
   )
 {
   CONST CHAR8   *Prop;
@@ -83,6 +83,7 @@ GetSerialConsolePortAddress (
     if (Path == NULL) {
       return EFI_NOT_FOUND;
     }
+
     SerialConsoleNode = fdt_path_offset (Fdt, Path);
   }
 
@@ -115,9 +116,9 @@ PlatformHookSerialPortInitialize (
   VOID
   )
 {
-  RETURN_STATUS   Status;
-  VOID            *DeviceTreeBase;
-  UINT64          SerialConsoleAddress;
+  RETURN_STATUS  Status;
+  VOID           *DeviceTreeBase;
+  UINT64         SerialConsoleAddress;
 
   if (PcdGet64 (PcdSerialRegisterBase) != 0) {
     return RETURN_SUCCESS;
