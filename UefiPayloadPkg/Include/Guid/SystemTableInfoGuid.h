@@ -12,7 +12,7 @@
 ///
 /// System Table Information GUID
 ///
-extern EFI_GUID gUefiSystemTableInfoGuid;
+extern EFI_GUID  gUefiSystemTableInfoGuid;
 
 typedef struct {
   UINT8     Revision;

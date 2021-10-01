@@ -14,7 +14,7 @@
 #include <Library/PciSegmentInfoLib.h>
 #include <Library/DebugLib.h>
 
-STATIC PCI_SEGMENT_INFO mPciSegment0 = {
+STATIC PCI_SEGMENT_INFO  mPciSegment0 = {
   0,  // Segment number
   0,  // To be fixed later
   0,  // Start bus number
@@ -33,7 +33,7 @@ STATIC PCI_SEGMENT_INFO mPciSegment0 = {
 PCI_SEGMENT_INFO *
 EFIAPI
 GetPciSegmentInfo (
-  UINTN  *Count
+  UINTN *Count
   )
 {
   EFI_HOB_GUID_TYPE  *GuidHob;
@@ -51,9 +51,10 @@ GetPciSegmentInfo (
     GuidHob = GetFirstGuidHob (&gUefiAcpiBoardInfoGuid);
     ASSERT (GuidHob != NULL);
 
-    AcpiBoardInfo = (ACPI_BOARD_INFO *) GET_GUID_HOB_DATA (GuidHob);
+    AcpiBoardInfo = (ACPI_BOARD_INFO *)GET_GUID_HOB_DATA (GuidHob);
     mPciSegment0.BaseAddress = AcpiBoardInfo->PcieBaseAddress;
   }
+
   *Count = 1;
   return &mPciSegment0;
 }
