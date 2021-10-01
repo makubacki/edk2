@@ -9,7 +9,6 @@
 #ifndef __PEI_REPORT_STATUS_CODE_ROUTER_H__
 #define __PEI_REPORT_STATUS_CODE_ROUTER_H__
 
-
 #include <Ppi/ReportStatusCodeHandler.h>
 #include <Ppi/StatusCode.h>
 
@@ -90,14 +89,12 @@ Unregister (
 EFI_STATUS
 EFIAPI
 ReportDispatcher (
-  IN CONST EFI_PEI_SERVICES         **PeiServices,
-  IN EFI_STATUS_CODE_TYPE           CodeType,
-  IN EFI_STATUS_CODE_VALUE          Value,
-  IN UINT32                         Instance,
-  IN CONST EFI_GUID                 *CallerId OPTIONAL,
-  IN CONST EFI_STATUS_CODE_DATA     *Data OPTIONAL
+  IN CONST EFI_PEI_SERVICES     **PeiServices,
+  IN EFI_STATUS_CODE_TYPE       CodeType,
+  IN EFI_STATUS_CODE_VALUE      Value,
+  IN UINT32                     Instance,
+  IN CONST EFI_GUID             *CallerId OPTIONAL,
+  IN CONST EFI_STATUS_CODE_DATA *Data OPTIONAL
   );
 
 #endif
-
-

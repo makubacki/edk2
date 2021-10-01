@@ -10,14 +10,13 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #ifndef _EFI_USBMASS_IMPL_H_
 #define _EFI_USBMASS_IMPL_H_
 
-#define  USB_MASS_SIGNATURE    SIGNATURE_32 ('U', 's', 'b', 'M')
+#define  USB_MASS_SIGNATURE  SIGNATURE_32 ('U', 's', 'b', 'M')
 
 #define USB_MASS_DEVICE_FROM_BLOCK_IO(a) \
         CR (a, USB_MASS_DEVICE, BlockIo, USB_MASS_SIGNATURE)
 
 #define USB_MASS_DEVICE_FROM_DISK_INFO(a) \
         CR (a, USB_MASS_DEVICE, DiskInfo, USB_MASS_SIGNATURE)
-
 
 extern EFI_COMPONENT_NAME_PROTOCOL   gUsbMassStorageComponentName;
 extern EFI_COMPONENT_NAME2_PROTOCOL  gUsbMassStorageComponentName2;
@@ -40,9 +39,9 @@ extern EFI_COMPONENT_NAME2_PROTOCOL  gUsbMassStorageComponentName2;
 EFI_STATUS
 EFIAPI
 USBMassDriverBindingSupported (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   Controller,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  Controller,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath
   );
 
 /**
@@ -66,9 +65,9 @@ USBMassDriverBindingSupported (
 EFI_STATUS
 EFIAPI
 USBMassDriverBindingStart (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   Controller,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  Controller,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath
   );
 
 /**
@@ -116,8 +115,8 @@ USBMassDriverBindingStop (
 EFI_STATUS
 EFIAPI
 UsbMassReset (
-  IN EFI_BLOCK_IO_PROTOCOL    *This,
-  IN BOOLEAN                  ExtendedVerification
+  IN EFI_BLOCK_IO_PROTOCOL *This,
+  IN BOOLEAN               ExtendedVerification
   );
 
 /**
@@ -147,11 +146,11 @@ UsbMassReset (
 EFI_STATUS
 EFIAPI
 UsbMassReadBlocks (
-  IN EFI_BLOCK_IO_PROTOCOL    *This,
-  IN UINT32                   MediaId,
-  IN EFI_LBA                  Lba,
-  IN UINTN                    BufferSize,
-  OUT VOID                    *Buffer
+  IN EFI_BLOCK_IO_PROTOCOL *This,
+  IN UINT32                MediaId,
+  IN EFI_LBA               Lba,
+  IN UINTN                 BufferSize,
+  OUT VOID                 *Buffer
   );
 
 /**
@@ -182,11 +181,11 @@ UsbMassReadBlocks (
 EFI_STATUS
 EFIAPI
 UsbMassWriteBlocks (
-  IN EFI_BLOCK_IO_PROTOCOL    *This,
-  IN UINT32                   MediaId,
-  IN EFI_LBA                  Lba,
-  IN UINTN                    BufferSize,
-  IN VOID                     *Buffer
+  IN EFI_BLOCK_IO_PROTOCOL *This,
+  IN UINT32                MediaId,
+  IN EFI_LBA               Lba,
+  IN UINTN                 BufferSize,
+  IN VOID                  *Buffer
   );
 
 /**
@@ -206,7 +205,7 @@ UsbMassWriteBlocks (
 EFI_STATUS
 EFIAPI
 UsbMassFlushBlocks (
-  IN EFI_BLOCK_IO_PROTOCOL  *This
+  IN EFI_BLOCK_IO_PROTOCOL *This
   );
 
 //
@@ -250,11 +249,10 @@ UsbMassFlushBlocks (
 EFI_STATUS
 EFIAPI
 UsbMassStorageGetDriverName (
-  IN  EFI_COMPONENT_NAME_PROTOCOL  *This,
-  IN  CHAR8                        *Language,
-  OUT CHAR16                       **DriverName
+  IN  EFI_COMPONENT_NAME_PROTOCOL *This,
+  IN  CHAR8                       *Language,
+  OUT CHAR16                      **DriverName
   );
-
 
 /**
   Retrieves a Unicode string that is the user readable name of the controller
@@ -317,11 +315,11 @@ UsbMassStorageGetDriverName (
 EFI_STATUS
 EFIAPI
 UsbMassStorageGetControllerName (
-  IN  EFI_COMPONENT_NAME_PROTOCOL                     *This,
-  IN  EFI_HANDLE                                      ControllerHandle,
-  IN  EFI_HANDLE                                      ChildHandle        OPTIONAL,
-  IN  CHAR8                                           *Language,
-  OUT CHAR16                                          **ControllerName
+  IN  EFI_COMPONENT_NAME_PROTOCOL *This,
+  IN  EFI_HANDLE                  ControllerHandle,
+  IN  EFI_HANDLE                  ChildHandle        OPTIONAL,
+  IN  CHAR8                       *Language,
+  OUT CHAR16                      **ControllerName
   );
 
 #endif

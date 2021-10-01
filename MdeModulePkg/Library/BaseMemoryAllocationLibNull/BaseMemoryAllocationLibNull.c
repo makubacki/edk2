@@ -7,12 +7,10 @@
 
 **/
 
-
 #include <Uefi/UefiBaseType.h>
 
 #include <Library/DebugLib.h>
 #include <Library/MemoryAllocationLib.h>
-
 
 /**
   Allocates one or more 4KB pages of type EfiBootServicesData.
@@ -30,7 +28,7 @@
 VOID *
 EFIAPI
 AllocatePages (
-  IN UINTN  Pages
+  IN UINTN Pages
   )
 {
   ASSERT (FALSE);
@@ -53,7 +51,7 @@ AllocatePages (
 VOID *
 EFIAPI
 AllocateRuntimePages (
-  IN UINTN  Pages
+  IN UINTN Pages
   )
 {
   ASSERT (FALSE);
@@ -76,7 +74,7 @@ AllocateRuntimePages (
 VOID *
 EFIAPI
 AllocateReservedPages (
-  IN UINTN  Pages
+  IN UINTN Pages
   )
 {
   ASSERT (FALSE);
@@ -103,8 +101,8 @@ AllocateReservedPages (
 VOID
 EFIAPI
 FreePages (
-  IN VOID   *Buffer,
-  IN UINTN  Pages
+  IN VOID  *Buffer,
+  IN UINTN Pages
   )
 {
   ASSERT (FALSE);
@@ -132,8 +130,8 @@ FreePages (
 VOID *
 EFIAPI
 AllocateAlignedPages (
-  IN UINTN  Pages,
-  IN UINTN  Alignment
+  IN UINTN Pages,
+  IN UINTN Alignment
   )
 {
   ASSERT (FALSE);
@@ -162,8 +160,8 @@ AllocateAlignedPages (
 VOID *
 EFIAPI
 AllocateAlignedRuntimePages (
-  IN UINTN  Pages,
-  IN UINTN  Alignment
+  IN UINTN Pages,
+  IN UINTN Alignment
   )
 {
   ASSERT (FALSE);
@@ -192,8 +190,8 @@ AllocateAlignedRuntimePages (
 VOID *
 EFIAPI
 AllocateAlignedReservedPages (
-  IN UINTN  Pages,
-  IN UINTN  Alignment
+  IN UINTN Pages,
+  IN UINTN Alignment
   )
 {
   ASSERT (FALSE);
@@ -220,8 +218,8 @@ AllocateAlignedReservedPages (
 VOID
 EFIAPI
 FreeAlignedPages (
-  IN VOID   *Buffer,
-  IN UINTN  Pages
+  IN VOID  *Buffer,
+  IN UINTN Pages
   )
 {
   ASSERT (FALSE);
@@ -242,7 +240,7 @@ FreeAlignedPages (
 VOID *
 EFIAPI
 AllocatePool (
-  IN UINTN  AllocationSize
+  IN UINTN AllocationSize
   )
 {
   ASSERT (FALSE);
@@ -264,7 +262,7 @@ AllocatePool (
 VOID *
 EFIAPI
 AllocateRuntimePool (
-  IN UINTN  AllocationSize
+  IN UINTN AllocationSize
   )
 {
   ASSERT (FALSE);
@@ -286,7 +284,7 @@ AllocateRuntimePool (
 VOID *
 EFIAPI
 AllocateReservedPool (
-  IN UINTN  AllocationSize
+  IN UINTN AllocationSize
   )
 {
   ASSERT (FALSE);
@@ -309,7 +307,7 @@ AllocateReservedPool (
 VOID *
 EFIAPI
 AllocateZeroPool (
-  IN UINTN  AllocationSize
+  IN UINTN AllocationSize
   )
 {
   ASSERT (FALSE);
@@ -332,7 +330,7 @@ AllocateZeroPool (
 VOID *
 EFIAPI
 AllocateRuntimeZeroPool (
-  IN UINTN  AllocationSize
+  IN UINTN AllocationSize
   )
 {
   ASSERT (FALSE);
@@ -355,7 +353,7 @@ AllocateRuntimeZeroPool (
 VOID *
 EFIAPI
 AllocateReservedZeroPool (
-  IN UINTN  AllocationSize
+  IN UINTN AllocationSize
   )
 {
   ASSERT (FALSE);
@@ -382,8 +380,8 @@ AllocateReservedZeroPool (
 VOID *
 EFIAPI
 AllocateCopyPool (
-  IN UINTN       AllocationSize,
-  IN CONST VOID  *Buffer
+  IN UINTN      AllocationSize,
+  IN CONST VOID *Buffer
   )
 {
   ASSERT (FALSE);
@@ -410,8 +408,8 @@ AllocateCopyPool (
 VOID *
 EFIAPI
 AllocateRuntimeCopyPool (
-  IN UINTN       AllocationSize,
-  IN CONST VOID  *Buffer
+  IN UINTN      AllocationSize,
+  IN CONST VOID *Buffer
   )
 {
   ASSERT (FALSE);
@@ -438,8 +436,8 @@ AllocateRuntimeCopyPool (
 VOID *
 EFIAPI
 AllocateReservedCopyPool (
-  IN UINTN       AllocationSize,
-  IN CONST VOID  *Buffer
+  IN UINTN      AllocationSize,
+  IN CONST VOID *Buffer
   )
 {
   ASSERT (FALSE);
@@ -470,9 +468,9 @@ AllocateReservedCopyPool (
 VOID *
 EFIAPI
 ReallocatePool (
-  IN UINTN  OldSize,
-  IN UINTN  NewSize,
-  IN VOID   *OldBuffer  OPTIONAL
+  IN UINTN OldSize,
+  IN UINTN NewSize,
+  IN VOID  *OldBuffer  OPTIONAL
   )
 {
   ASSERT (FALSE);
@@ -503,9 +501,9 @@ ReallocatePool (
 VOID *
 EFIAPI
 ReallocateRuntimePool (
-  IN UINTN  OldSize,
-  IN UINTN  NewSize,
-  IN VOID   *OldBuffer  OPTIONAL
+  IN UINTN OldSize,
+  IN UINTN NewSize,
+  IN VOID  *OldBuffer  OPTIONAL
   )
 {
   ASSERT (FALSE);
@@ -536,9 +534,9 @@ ReallocateRuntimePool (
 VOID *
 EFIAPI
 ReallocateReservedPool (
-  IN UINTN  OldSize,
-  IN UINTN  NewSize,
-  IN VOID   *OldBuffer  OPTIONAL
+  IN UINTN OldSize,
+  IN UINTN NewSize,
+  IN VOID  *OldBuffer  OPTIONAL
   )
 {
   ASSERT (FALSE);
@@ -562,7 +560,7 @@ ReallocateReservedPool (
 VOID
 EFIAPI
 FreePool (
-  IN VOID   *Buffer
+  IN VOID *Buffer
   )
 {
   ASSERT (FALSE);

@@ -26,8 +26,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 AuthVariableLibInitialize (
-  IN  AUTH_VAR_LIB_CONTEXT_IN   *AuthVarLibContextIn,
-  OUT AUTH_VAR_LIB_CONTEXT_OUT  *AuthVarLibContextOut
+  IN  AUTH_VAR_LIB_CONTEXT_IN  *AuthVarLibContextIn,
+  OUT AUTH_VAR_LIB_CONTEXT_OUT *AuthVarLibContextOut
   )
 {
   //
@@ -59,11 +59,11 @@ AuthVariableLibInitialize (
 EFI_STATUS
 EFIAPI
 AuthVariableLibProcessVariable (
-  IN CHAR16         *VariableName,
-  IN EFI_GUID       *VendorGuid,
-  IN VOID           *Data,
-  IN UINTN          DataSize,
-  IN UINT32         Attributes
+  IN CHAR16   *VariableName,
+  IN EFI_GUID *VendorGuid,
+  IN VOID     *Data,
+  IN UINTN    DataSize,
+  IN UINT32   Attributes
   )
 {
   ASSERT (FALSE);

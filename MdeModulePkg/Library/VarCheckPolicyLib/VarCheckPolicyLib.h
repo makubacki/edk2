@@ -35,8 +35,8 @@ VarCheckPolicyLibCommonConstructor (
 BOOLEAN
 EFIAPI
 VarCheckPolicyIsBufferOutsideValid (
-  IN EFI_PHYSICAL_ADDRESS  Buffer,
-  IN UINT64                Length
+  IN EFI_PHYSICAL_ADDRESS Buffer,
+  IN UINT64               Length
   );
 
 #endif // _VAR_CHECK_POLICY_LIB_H_

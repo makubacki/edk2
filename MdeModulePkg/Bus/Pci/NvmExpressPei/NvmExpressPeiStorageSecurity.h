@@ -24,8 +24,8 @@
 EFI_STATUS
 EFIAPI
 NvmeStorageSecurityGetDeviceNo (
-  IN  EDKII_PEI_STORAGE_SECURITY_CMD_PPI    *This,
-  OUT UINTN                                 *NumberofDevices
+  IN  EDKII_PEI_STORAGE_SECURITY_CMD_PPI *This,
+  OUT UINTN                              *NumberofDevices
   );
 
 /**
@@ -56,10 +56,10 @@ NvmeStorageSecurityGetDeviceNo (
 EFI_STATUS
 EFIAPI
 NvmeStorageSecurityGetDevicePath (
-  IN  EDKII_PEI_STORAGE_SECURITY_CMD_PPI  *This,
-  IN  UINTN                               DeviceIndex,
-  OUT UINTN                               *DevicePathLength,
-  OUT EFI_DEVICE_PATH_PROTOCOL            **DevicePath
+  IN  EDKII_PEI_STORAGE_SECURITY_CMD_PPI *This,
+  IN  UINTN                              DeviceIndex,
+  OUT UINTN                              *DevicePathLength,
+  OUT EFI_DEVICE_PATH_PROTOCOL           **DevicePath
   );
 
 /**
@@ -151,14 +151,14 @@ NvmeStorageSecurityGetDevicePath (
 EFI_STATUS
 EFIAPI
 NvmeStorageSecurityReceiveData (
-  IN  EDKII_PEI_STORAGE_SECURITY_CMD_PPI  *This,
-  IN  UINTN                               DeviceIndex,
-  IN  UINT64                              Timeout,
-  IN  UINT8                               SecurityProtocolId,
-  IN  UINT16                              SecurityProtocolSpecificData,
-  IN  UINTN                               PayloadBufferSize,
-  OUT VOID                                *PayloadBuffer,
-  OUT UINTN                               *PayloadTransferSize
+  IN  EDKII_PEI_STORAGE_SECURITY_CMD_PPI *This,
+  IN  UINTN                              DeviceIndex,
+  IN  UINT64                             Timeout,
+  IN  UINT8                              SecurityProtocolId,
+  IN  UINT16                             SecurityProtocolSpecificData,
+  IN  UINTN                              PayloadBufferSize,
+  OUT VOID                               *PayloadBuffer,
+  OUT UINTN                              *PayloadTransferSize
   );
 
 /**
@@ -228,13 +228,13 @@ NvmeStorageSecurityReceiveData (
 EFI_STATUS
 EFIAPI
 NvmeStorageSecuritySendData (
-  IN EDKII_PEI_STORAGE_SECURITY_CMD_PPI  *This,
-  IN UINTN                               DeviceIndex,
-  IN UINT64                              Timeout,
-  IN UINT8                               SecurityProtocolId,
-  IN UINT16                              SecurityProtocolSpecificData,
-  IN UINTN                               PayloadBufferSize,
-  IN VOID                                *PayloadBuffer
+  IN EDKII_PEI_STORAGE_SECURITY_CMD_PPI *This,
+  IN UINTN                              DeviceIndex,
+  IN UINT64                             Timeout,
+  IN UINT8                              SecurityProtocolId,
+  IN UINT16                             SecurityProtocolSpecificData,
+  IN UINTN                              PayloadBufferSize,
+  IN VOID                               *PayloadBuffer
   );
 
 #endif

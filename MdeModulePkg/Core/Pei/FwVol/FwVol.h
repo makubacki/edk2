@@ -14,18 +14,16 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define GET_OCCUPIED_SIZE(ActualSize, Alignment) \
   ((ActualSize) + (((Alignment) - ((ActualSize) & ((Alignment) - 1))) & ((Alignment) - 1)))
 
-
 #define PEI_FW_VOL_SIGNATURE  SIGNATURE_32('P','F','W','V')
 
 typedef struct {
-  UINTN                         Signature;
-  BOOLEAN                       IsFfs3Fv;
-  EFI_PEI_FIRMWARE_VOLUME_PPI   Fv;
+  UINTN                          Signature;
+  BOOLEAN                        IsFfs3Fv;
+  EFI_PEI_FIRMWARE_VOLUME_PPI    Fv;
 } PEI_FW_VOL_INSTANCE;
 
 #define PEI_FW_VOL_INSTANCE_FROM_FV_THIS(a) \
   CR(a, PEI_FW_VOL_INSTANCE, Fv, PEI_FW_VOL_SIGNATURE)
-
 
 /**
   Process a firmware volume and create a volume handle.
@@ -147,10 +145,10 @@ PeiFfsFvPpiFindFileByName (
 EFI_STATUS
 EFIAPI
 PeiFfsFvPpiFindSectionByType (
-  IN  CONST EFI_PEI_FIRMWARE_VOLUME_PPI    *This,
-  IN        EFI_SECTION_TYPE               SearchType,
-  IN        EFI_PEI_FILE_HANDLE            FileHandle,
-  OUT VOID                                 **SectionData
+  IN  CONST EFI_PEI_FIRMWARE_VOLUME_PPI *This,
+  IN        EFI_SECTION_TYPE            SearchType,
+  IN        EFI_PEI_FILE_HANDLE         FileHandle,
+  OUT VOID                              **SectionData
   );
 
 /**
@@ -179,12 +177,12 @@ PeiFfsFvPpiFindSectionByType (
 EFI_STATUS
 EFIAPI
 PeiFfsFvPpiFindSectionByType2 (
-  IN  CONST EFI_PEI_FIRMWARE_VOLUME_PPI    *This,
-  IN        EFI_SECTION_TYPE               SearchType,
-  IN        UINTN                          SearchInstance,
-  IN        EFI_PEI_FILE_HANDLE            FileHandle,
-  OUT VOID                                 **SectionData,
-  OUT UINT32                               *AuthenticationStatus
+  IN  CONST EFI_PEI_FIRMWARE_VOLUME_PPI *This,
+  IN        EFI_SECTION_TYPE            SearchType,
+  IN        UINTN                       SearchInstance,
+  IN        EFI_PEI_FILE_HANDLE         FileHandle,
+  OUT VOID                              **SectionData,
+  OUT UINT32                            *AuthenticationStatus
   );
 
 /**
@@ -209,9 +207,9 @@ PeiFfsFvPpiFindSectionByType2 (
 EFI_STATUS
 EFIAPI
 PeiFfsFvPpiGetFileInfo (
-  IN  CONST EFI_PEI_FIRMWARE_VOLUME_PPI   *This,
-  IN        EFI_PEI_FILE_HANDLE           FileHandle,
-  OUT       EFI_FV_FILE_INFO              *FileInfo
+  IN  CONST EFI_PEI_FIRMWARE_VOLUME_PPI *This,
+  IN        EFI_PEI_FILE_HANDLE         FileHandle,
+  OUT       EFI_FV_FILE_INFO            *FileInfo
   );
 
 /**
@@ -236,9 +234,9 @@ PeiFfsFvPpiGetFileInfo (
 EFI_STATUS
 EFIAPI
 PeiFfsFvPpiGetFileInfo2 (
-  IN  CONST EFI_PEI_FIRMWARE_VOLUME_PPI   *This,
-  IN        EFI_PEI_FILE_HANDLE           FileHandle,
-  OUT       EFI_FV_FILE_INFO2             *FileInfo
+  IN  CONST EFI_PEI_FIRMWARE_VOLUME_PPI *This,
+  IN        EFI_PEI_FILE_HANDLE         FileHandle,
+  OUT       EFI_FV_FILE_INFO2           *FileInfo
   );
 
 /**
@@ -258,9 +256,9 @@ PeiFfsFvPpiGetFileInfo2 (
 EFI_STATUS
 EFIAPI
 PeiFfsFvPpiGetVolumeInfo (
-  IN  CONST  EFI_PEI_FIRMWARE_VOLUME_PPI   *This,
-  IN  EFI_PEI_FV_HANDLE                    FvHandle,
-  OUT EFI_FV_INFO                          *VolumeInfo
+  IN  CONST  EFI_PEI_FIRMWARE_VOLUME_PPI *This,
+  IN  EFI_PEI_FV_HANDLE                  FvHandle,
+  OUT EFI_FV_INFO                        *VolumeInfo
   );
 
 /**
@@ -273,7 +271,7 @@ PeiFfsFvPpiGetVolumeInfo (
 **/
 PEI_CORE_FV_HANDLE *
 FvHandleToCoreHandle (
-  IN EFI_PEI_FV_HANDLE  FvHandle
+  IN EFI_PEI_FV_HANDLE FvHandle
   );
 
 /**
@@ -295,8 +293,8 @@ FvHandleToCoreHandle (
 **/
 EFI_STATUS
 FindFileEx (
-  IN  CONST EFI_PEI_FV_HANDLE        FvHandle,
-  IN  CONST EFI_GUID                 *FileName,   OPTIONAL
+  IN  CONST EFI_PEI_FV_HANDLE FvHandle,
+  IN  CONST EFI_GUID *FileName, OPTIONAL
   IN        EFI_FV_FILETYPE          SearchType,
   IN OUT    EFI_PEI_FILE_HANDLE      *FileHandle,
   IN OUT    EFI_PEI_FILE_HANDLE      *AprioriFile  OPTIONAL
@@ -321,8 +319,8 @@ FindFileEx (
 **/
 EFI_STATUS
 AddUnknownFormatFvInfo (
-  IN PEI_CORE_INSTANCE                  *PrivateData,
-  IN EFI_PEI_FIRMWARE_VOLUME_INFO2_PPI  *FvInfo2Ppi
+  IN PEI_CORE_INSTANCE                 *PrivateData,
+  IN EFI_PEI_FIRMWARE_VOLUME_INFO2_PPI *FvInfo2Ppi
   );
 
 /**
@@ -364,9 +362,9 @@ FindUnknownFormatFvInfo (
 EFI_STATUS
 EFIAPI
 ThirdPartyFvPpiNotifyCallback (
-  IN EFI_PEI_SERVICES              **PeiServices,
-  IN EFI_PEI_NOTIFY_DESCRIPTOR     *NotifyDescriptor,
-  IN VOID                          *Ppi
+  IN EFI_PEI_SERVICES          **PeiServices,
+  IN EFI_PEI_NOTIFY_DESCRIPTOR *NotifyDescriptor,
+  IN VOID                      *Ppi
   );
 
 #endif

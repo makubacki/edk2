@@ -33,8 +33,8 @@
 **/
 BOOLEAN
 IsBufferOutsideMmValid (
-  IN EFI_PHYSICAL_ADDRESS  Buffer,
-  IN UINT64                Length
+  IN EFI_PHYSICAL_ADDRESS Buffer,
+  IN UINT64               Length
   )
 {
   return SmmIsBufferOutsideSmmValid (Buffer, Length);
@@ -53,8 +53,8 @@ IsBufferOutsideMmValid (
 EFI_STATUS
 EFIAPI
 FirmwarePerformanceSmmEntryPoint (
-  IN EFI_HANDLE          ImageHandle,
-  IN EFI_SYSTEM_TABLE    *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
   return FirmwarePerformanceCommonEntryPoint ();

@@ -54,10 +54,10 @@
 RETURN_STATUS
 EFIAPI
 LzmaUefiDecompressGetInfo (
-  IN  CONST VOID  *Source,
-  IN  UINT32      SourceSize,
-  OUT UINT32      *DestinationSize,
-  OUT UINT32      *ScratchSize
+  IN  CONST VOID *Source,
+  IN  UINT32     SourceSize,
+  OUT UINT32     *DestinationSize,
+  OUT UINT32     *ScratchSize
   );
 
 /**
@@ -85,11 +85,10 @@ LzmaUefiDecompressGetInfo (
 RETURN_STATUS
 EFIAPI
 LzmaUefiDecompress (
-  IN CONST VOID  *Source,
-  IN UINTN       SourceSize,
-  IN OUT VOID    *Destination,
-  IN OUT VOID    *Scratch
+  IN CONST VOID *Source,
+  IN UINTN      SourceSize,
+  IN OUT VOID   *Destination,
+  IN OUT VOID   *Scratch
   );
 
 #endif
-

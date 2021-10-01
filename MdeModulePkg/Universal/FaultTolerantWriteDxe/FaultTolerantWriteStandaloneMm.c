@@ -27,8 +27,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 **/
 BOOLEAN
 FtwSmmIsBufferOutsideSmmValid (
-  IN EFI_PHYSICAL_ADDRESS  Buffer,
-  IN UINT64                Length
+  IN EFI_PHYSICAL_ADDRESS Buffer,
+  IN UINT64               Length
   )
 {
   return TRUE;
@@ -51,8 +51,8 @@ FtwSmmIsBufferOutsideSmmValid (
 **/
 UINT32
 FtwCalculateCrc32 (
-  IN  VOID                         *Buffer,
-  IN  UINTN                        Length
+  IN  VOID  *Buffer,
+  IN  UINTN Length
   )
 {
   return CalculateCrc32 (Buffer, Length);
@@ -82,8 +82,8 @@ FtwNotifySmmReady (
 EFI_STATUS
 EFIAPI
 StandaloneMmFaultTolerantWriteInitialize (
-  IN EFI_HANDLE            ImageHandle,
-  IN EFI_MM_SYSTEM_TABLE   *MmSystemTable
+  IN EFI_HANDLE          ImageHandle,
+  IN EFI_MM_SYSTEM_TABLE *MmSystemTable
   )
 {
   return MmFaultTolerantWriteInitialize ();

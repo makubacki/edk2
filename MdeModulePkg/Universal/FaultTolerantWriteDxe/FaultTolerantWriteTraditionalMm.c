@@ -27,8 +27,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 **/
 BOOLEAN
 FtwSmmIsBufferOutsideSmmValid (
-  IN EFI_PHYSICAL_ADDRESS  Buffer,
-  IN UINT64                Length
+  IN EFI_PHYSICAL_ADDRESS Buffer,
+  IN UINT64               Length
   )
 {
   return SmmIsBufferOutsideSmmValid (Buffer, Length);
@@ -52,12 +52,12 @@ FtwSmmIsBufferOutsideSmmValid (
 **/
 UINT32
 FtwCalculateCrc32 (
-  IN  VOID                         *Buffer,
-  IN  UINTN                        Length
+  IN  VOID  *Buffer,
+  IN  UINTN Length
   )
 {
-  EFI_STATUS    Status;
-  UINT32        ReturnValue;
+  EFI_STATUS  Status;
+  UINT32      ReturnValue;
 
   Status = gBS->CalculateCrc32 (Buffer, Length, &ReturnValue);
   ASSERT_EFI_ERROR (Status);
@@ -73,16 +73,16 @@ FtwNotifySmmReady (
   VOID
   )
 {
-  EFI_HANDLE          FtwHandle;
-  EFI_STATUS          Status;
+  EFI_HANDLE  FtwHandle;
+  EFI_STATUS  Status;
 
   FtwHandle = NULL;
-  Status = gBS->InstallProtocolInterface (
-                  &FtwHandle,
-                  &gEfiSmmFaultTolerantWriteProtocolGuid,
-                  EFI_NATIVE_INTERFACE,
-                  NULL
-                  );
+  Status    = gBS->InstallProtocolInterface (
+                     &FtwHandle,
+                     &gEfiSmmFaultTolerantWriteProtocolGuid,
+                     EFI_NATIVE_INTERFACE,
+                     NULL
+                     );
   ASSERT_EFI_ERROR (Status);
 }
 
@@ -100,8 +100,8 @@ FtwNotifySmmReady (
 EFI_STATUS
 EFIAPI
 SmmFaultTolerantWriteInitialize (
-  IN EFI_HANDLE            ImageHandle,
-  IN EFI_SYSTEM_TABLE      *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
   return MmFaultTolerantWriteInitialize ();

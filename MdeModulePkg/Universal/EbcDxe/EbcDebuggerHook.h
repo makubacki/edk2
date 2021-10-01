@@ -27,9 +27,9 @@
 **/
 EFI_STATUS
 EbcDebugSignalException (
-  IN EFI_EXCEPTION_TYPE                   ExceptionType,
-  IN EXCEPTION_FLAGS                      ExceptionFlags,
-  IN VM_CONTEXT                           *VmPtr
+  IN EFI_EXCEPTION_TYPE ExceptionType,
+  IN EXCEPTION_FLAGS    ExceptionFlags,
+  IN VM_CONTEXT         *VmPtr
   );
 
 /**
@@ -42,8 +42,8 @@ EbcDebugSignalException (
 **/
 VOID
 EbcDebuggerHookInit (
-  IN EFI_HANDLE                  Handle,
-  IN EFI_DEBUG_SUPPORT_PROTOCOL  *EbcDebugProtocol
+  IN EFI_HANDLE                 Handle,
+  IN EFI_DEBUG_SUPPORT_PROTOCOL *EbcDebugProtocol
   );
 
 /**
@@ -66,9 +66,8 @@ EbcDebuggerHookUnload (
 **/
 VOID
 EbcDebuggerHookEbcUnloadImage (
-  IN EFI_HANDLE                  Handle
+  IN EFI_HANDLE Handle
   );
-
 
 /**
 
@@ -93,7 +92,6 @@ VOID
 EbcDebuggerHookEbcInterpret (
   IN VM_CONTEXT *VmPtr
   );
-
 
 /**
   The hook in EbcExecute, before ExecuteFunction.
@@ -188,7 +186,6 @@ VOID
 EbcDebuggerHookRETEnd (
   IN VM_CONTEXT *VmPtr
   );
-
 
 /**
 

@@ -22,8 +22,8 @@
 **/
 VOID
 EbcDebuggerHookInit (
-  IN EFI_HANDLE                  Handle,
-  IN EFI_DEBUG_SUPPORT_PROTOCOL  *EbcDebugProtocol
+  IN EFI_HANDLE                 Handle,
+  IN EFI_DEBUG_SUPPORT_PROTOCOL *EbcDebugProtocol
   )
 {
   return;
@@ -52,7 +52,7 @@ EbcDebuggerHookUnload (
 **/
 VOID
 EbcDebuggerHookEbcUnloadImage (
-  IN EFI_HANDLE                  Handle
+  IN EFI_HANDLE Handle
   )
 {
   return;

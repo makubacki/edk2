@@ -41,8 +41,8 @@
 EFI_STATUS
 EFIAPI
 DisplayUpdateProgress (
-  IN UINTN                                Completion,
-  IN EFI_GRAPHICS_OUTPUT_BLT_PIXEL_UNION  *Color       OPTIONAL
+  IN UINTN                               Completion,
+  IN EFI_GRAPHICS_OUTPUT_BLT_PIXEL_UNION *Color       OPTIONAL
   );
 
 #endif

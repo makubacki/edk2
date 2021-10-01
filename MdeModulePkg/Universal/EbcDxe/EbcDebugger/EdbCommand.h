@@ -30,8 +30,8 @@ typedef enum {
 **/
 EFI_DEBUGGER_COMMAND
 MatchDebuggerCommand (
-  IN CHAR16    *CommandName,
-  IN CHAR16    **CommandArg
+  IN CHAR16 *CommandName,
+  IN CHAR16 **CommandArg
   );
 
 /**

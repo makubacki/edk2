@@ -39,8 +39,8 @@
 EFI_STATUS
 EFIAPI
 GetDebugMask (
-  IN EFI_DEBUG_MASK_PROTOCOL  *This,
-  IN OUT UINTN                *CurrentDebugMask
+  IN EFI_DEBUG_MASK_PROTOCOL *This,
+  IN OUT UINTN               *CurrentDebugMask
   );
 
 /**
@@ -59,8 +59,8 @@ GetDebugMask (
 EFI_STATUS
 EFIAPI
 SetDebugMask (
-  IN EFI_DEBUG_MASK_PROTOCOL  *This,
-  IN UINTN                    NewDebugMask
+  IN EFI_DEBUG_MASK_PROTOCOL *This,
+  IN UINTN                   NewDebugMask
   );
 
 ///
@@ -78,7 +78,7 @@ EFI_DEBUG_MASK_PROTOCOL  mDebugMaskProtocol = {
 /// This variable prevents the EFI Variable Services from being called fort
 /// every DEBUG() macro.
 ///
-BOOLEAN           mGlobalErrorLevelInitialized = FALSE;
+BOOLEAN  mGlobalErrorLevelInitialized = FALSE;
 
 ///
 /// Global variable that contains the current debug error level mask for the
@@ -90,7 +90,7 @@ BOOLEAN           mGlobalErrorLevelInitialized = FALSE;
 /// Debug Mask Protocol SetDebugMask() service is called, then that overrides
 /// the PcdDebugPrintErrorLevel and the EFI Variable setting.
 ///
-UINT32            mDebugPrintErrorLevel        = 0;
+UINT32  mDebugPrintErrorLevel = 0;
 
 ///
 /// Global variable that is used to cache a pointer to the EFI System Table
@@ -98,7 +98,7 @@ UINT32            mDebugPrintErrorLevel        = 0;
 /// the global debug print error level mask value.  The UefiBootServicesTableLib
 /// is not used to prevent a circular dependency between these libraries.
 ///
-EFI_SYSTEM_TABLE  *mSystemTable                         = NULL;
+EFI_SYSTEM_TABLE  *mSystemTable = NULL;
 
 /**
   The constructor function caches the PCI Express Base Address and creates a
@@ -114,11 +114,11 @@ EFI_SYSTEM_TABLE  *mSystemTable                         = NULL;
 EFI_STATUS
 EFIAPI
 DxeDebugPrintErrorLevelLibConstructor (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  EFI_STATUS                  Status;
+  EFI_STATUS  Status;
 
   //
   // Initialize the error level mask from PCD setting.
@@ -131,7 +131,8 @@ DxeDebugPrintErrorLevelLibConstructor (
   mSystemTable = SystemTable;
   Status = SystemTable->BootServices->InstallMultipleProtocolInterfaces (
                                         &ImageHandle,
-                                        &gEfiDebugMaskProtocolGuid, &mDebugMaskProtocol,
+                                        &gEfiDebugMaskProtocolGuid,
+                                        &mDebugMaskProtocol,
                                         NULL
                                         );
 
@@ -161,8 +162,8 @@ DxeDebugPrintErrorLevelLibConstructor (
 EFI_STATUS
 EFIAPI
 DxeDebugPrintErrorLevelLibDestructor (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
   //
@@ -170,7 +171,8 @@ DxeDebugPrintErrorLevelLibDestructor (
   //
   return SystemTable->BootServices->UninstallMultipleProtocolInterfaces (
                                       ImageHandle,
-                                      &gEfiDebugMaskProtocolGuid, &mDebugMaskProtocol,
+                                      &gEfiDebugMaskProtocolGuid,
+                                      &mDebugMaskProtocol,
                                       NULL
                                       );
 }
@@ -219,14 +221,14 @@ GetDebugPrintErrorLevel (
       // Attempt to retrieve the global debug print error level mask from the
       // EFI Variable
       //
-      Size = sizeof (GlobalErrorLevel);
+      Size   = sizeof (GlobalErrorLevel);
       Status = mSystemTable->RuntimeServices->GetVariable (
-                                       DEBUG_MASK_VARIABLE_NAME,
-                                       &gEfiGenericVariableGuid,
-                                       NULL,
-                                       &Size,
-                                       &GlobalErrorLevel
-                                       );
+                                                DEBUG_MASK_VARIABLE_NAME,
+                                                &gEfiGenericVariableGuid,
+                                                NULL,
+                                                &Size,
+                                                &GlobalErrorLevel
+                                                );
       if (Status != EFI_NOT_AVAILABLE_YET) {
         //
         // If EFI Variable Services are available, then set a flag so the EFI
@@ -274,7 +276,7 @@ GetDebugPrintErrorLevel (
 BOOLEAN
 EFIAPI
 SetDebugPrintErrorLevel (
-  UINT32  ErrorLevel
+  UINT32 ErrorLevel
   )
 {
   EFI_STATUS  Status;
@@ -296,14 +298,14 @@ SetDebugPrintErrorLevel (
       // Attempt to store the global debug print error level mask in an EFI Variable
       //
       GlobalErrorLevel = (UINTN)ErrorLevel;
-      Size = sizeof (GlobalErrorLevel);
+      Size   = sizeof (GlobalErrorLevel);
       Status = mSystemTable->RuntimeServices->SetVariable (
-                                       DEBUG_MASK_VARIABLE_NAME,
-                                       &gEfiGenericVariableGuid,
-                                       (EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS),
-                                       Size,
-                                       &GlobalErrorLevel
-                                       );
+                                                DEBUG_MASK_VARIABLE_NAME,
+                                                &gEfiGenericVariableGuid,
+                                                (EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS),
+                                                Size,
+                                                &GlobalErrorLevel
+                                                );
       if (!EFI_ERROR (Status)) {
         //
         // If the EFI Variable was updated, then update the mask value for this
@@ -315,6 +317,7 @@ SetDebugPrintErrorLevel (
       }
     }
   }
+
   //
   // Return FALSE since the EFI Variable could not be updated.
   //
@@ -339,8 +342,8 @@ SetDebugPrintErrorLevel (
 EFI_STATUS
 EFIAPI
 GetDebugMask (
-  IN EFI_DEBUG_MASK_PROTOCOL  *This,
-  IN OUT UINTN                *CurrentDebugMask
+  IN EFI_DEBUG_MASK_PROTOCOL *This,
+  IN OUT UINTN               *CurrentDebugMask
   )
 {
   if (CurrentDebugMask == NULL) {
@@ -370,8 +373,8 @@ GetDebugMask (
 EFI_STATUS
 EFIAPI
 SetDebugMask (
-  IN EFI_DEBUG_MASK_PROTOCOL  *This,
-  IN UINTN                    NewDebugMask
+  IN EFI_DEBUG_MASK_PROTOCOL *This,
+  IN UINTN                   NewDebugMask
   )
 {
   //

@@ -24,10 +24,10 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/CacheMaintenanceLib.h>
 #include <Library/PeCoffLib.h>
 
-
 //
 // Function Prototypes
 //
+
 /**
   Calculate CRC32 for target data.
 
@@ -43,9 +43,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 RuntimeDriverCalculateCrc32 (
-  IN  VOID    *Data,
-  IN  UINTN   DataSize,
-  OUT UINT32  *CrcOut
+  IN  VOID   *Data,
+  IN  UINTN  DataSize,
+  OUT UINT32 *CrcOut
   );
 
 /**
@@ -65,8 +65,8 @@ RuntimeDriverCalculateCrc32 (
 EFI_STATUS
 EFIAPI
 RuntimeDriverConvertPointer (
-  IN     UINTN  DebugDisposition,
-  IN OUT VOID   **ConvertAddress
+  IN     UINTN DebugDisposition,
+  IN OUT VOID  **ConvertAddress
   );
 
 /**
@@ -91,10 +91,10 @@ RuntimeDriverConvertPointer (
 EFI_STATUS
 EFIAPI
 RuntimeDriverSetVirtualAddressMap (
-  IN UINTN                  MemoryMapSize,
-  IN UINTN                  DescriptorSize,
-  IN UINT32                 DescriptorVersion,
-  IN EFI_MEMORY_DESCRIPTOR  *VirtualMap
+  IN UINTN                 MemoryMapSize,
+  IN UINTN                 DescriptorSize,
+  IN UINT32                DescriptorVersion,
+  IN EFI_MEMORY_DESCRIPTOR *VirtualMap
   );
 
 /**
@@ -112,8 +112,8 @@ RuntimeDriverSetVirtualAddressMap (
 EFI_STATUS
 EFIAPI
 RuntimeDriverInitialize (
-  IN EFI_HANDLE                            ImageHandle,
-  IN EFI_SYSTEM_TABLE                      *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 #endif

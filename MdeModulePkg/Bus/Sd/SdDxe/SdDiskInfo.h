@@ -28,9 +28,9 @@
 EFI_STATUS
 EFIAPI
 SdDiskInfoInquiry (
-  IN     EFI_DISK_INFO_PROTOCOL  *This,
-  IN OUT VOID                    *InquiryData,
-  IN OUT UINT32                  *InquiryDataSize
+  IN     EFI_DISK_INFO_PROTOCOL *This,
+  IN OUT VOID                   *InquiryData,
+  IN OUT UINT32                 *InquiryDataSize
   );
 
 /**
@@ -54,9 +54,9 @@ SdDiskInfoInquiry (
 EFI_STATUS
 EFIAPI
 SdDiskInfoIdentify (
-  IN     EFI_DISK_INFO_PROTOCOL  *This,
-  IN OUT VOID                    *IdentifyData,
-  IN OUT UINT32                  *IdentifyDataSize
+  IN     EFI_DISK_INFO_PROTOCOL *This,
+  IN OUT VOID                   *IdentifyData,
+  IN OUT UINT32                 *IdentifyDataSize
   );
 
 /**
@@ -79,10 +79,10 @@ SdDiskInfoIdentify (
 EFI_STATUS
 EFIAPI
 SdDiskInfoSenseData (
-  IN     EFI_DISK_INFO_PROTOCOL  *This,
-  IN OUT VOID                    *SenseData,
-  IN OUT UINT32                  *SenseDataSize,
-  OUT    UINT8                   *SenseDataNumber
+  IN     EFI_DISK_INFO_PROTOCOL *This,
+  IN OUT VOID                   *SenseData,
+  IN OUT UINT32                 *SenseDataSize,
+  OUT    UINT8                  *SenseDataNumber
   );
 
 /**
@@ -101,9 +101,9 @@ SdDiskInfoSenseData (
 EFI_STATUS
 EFIAPI
 SdDiskInfoWhichIde (
-  IN  EFI_DISK_INFO_PROTOCOL  *This,
-  OUT UINT32                  *IdeChannel,
-  OUT UINT32                  *IdeDevice
+  IN  EFI_DISK_INFO_PROTOCOL *This,
+  OUT UINT32                 *IdeChannel,
+  OUT UINT32                 *IdeDevice
   );
 
 #endif

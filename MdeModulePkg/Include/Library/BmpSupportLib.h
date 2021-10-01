@@ -45,12 +45,12 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 RETURN_STATUS
 EFIAPI
 TranslateBmpToGopBlt (
-  IN     VOID                           *BmpImage,
-  IN     UINTN                          BmpImageSize,
-  IN OUT EFI_GRAPHICS_OUTPUT_BLT_PIXEL  **GopBlt,
-  IN OUT UINTN                          *GopBltSize,
-  OUT    UINTN                          *PixelHeight,
-  OUT    UINTN                          *PixelWidth
+  IN     VOID                          *BmpImage,
+  IN     UINTN                         BmpImageSize,
+  IN OUT EFI_GRAPHICS_OUTPUT_BLT_PIXEL **GopBlt,
+  IN OUT UINTN                         *GopBltSize,
+  OUT    UINTN                         *PixelHeight,
+  OUT    UINTN                         *PixelWidth
   );
 
 /**
@@ -79,11 +79,11 @@ TranslateBmpToGopBlt (
 RETURN_STATUS
 EFIAPI
 TranslateGopBltToBmp (
-  IN     EFI_GRAPHICS_OUTPUT_BLT_PIXEL  *GopBlt,
-  IN     UINT32                         PixelHeight,
-  IN     UINT32                         PixelWidth,
-  IN OUT VOID                           **BmpImage,
-  IN OUT UINT32                         *BmpImageSize
+  IN     EFI_GRAPHICS_OUTPUT_BLT_PIXEL *GopBlt,
+  IN     UINT32                        PixelHeight,
+  IN     UINT32                        PixelWidth,
+  IN OUT VOID                          **BmpImage,
+  IN OUT UINT32                        *BmpImageSize
   );
 
 #endif

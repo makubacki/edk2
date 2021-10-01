@@ -24,12 +24,11 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 **/
 EFI_STATUS
 UsbHcGetCapability (
-  IN  USB_BUS             *UsbBus,
-  OUT UINT8               *MaxSpeed,
-  OUT UINT8               *NumOfPort,
-  OUT UINT8               *Is64BitCapable
+  IN  USB_BUS *UsbBus,
+  OUT UINT8   *MaxSpeed,
+  OUT UINT8   *NumOfPort,
+  OUT UINT8   *Is64BitCapable
   );
-
 
 /**
   Get the root hub port state.
@@ -106,17 +105,17 @@ UsbHcClearRootHubPortFeature (
 **/
 EFI_STATUS
 UsbHcControlTransfer (
-  IN  USB_BUS                             *UsbBus,
-  IN  UINT8                               DevAddr,
-  IN  UINT8                               DevSpeed,
-  IN  UINTN                               MaxPacket,
-  IN  EFI_USB_DEVICE_REQUEST              *Request,
-  IN  EFI_USB_DATA_DIRECTION              Direction,
-  IN  OUT VOID                            *Data,
-  IN  OUT UINTN                           *DataLength,
-  IN  UINTN                               TimeOut,
-  IN  EFI_USB2_HC_TRANSACTION_TRANSLATOR  *Translator,
-  OUT UINT32                              *UsbResult
+  IN  USB_BUS                            *UsbBus,
+  IN  UINT8                              DevAddr,
+  IN  UINT8                              DevSpeed,
+  IN  UINTN                              MaxPacket,
+  IN  EFI_USB_DEVICE_REQUEST             *Request,
+  IN  EFI_USB_DATA_DIRECTION             Direction,
+  IN  OUT VOID                           *Data,
+  IN  OUT UINTN                          *DataLength,
+  IN  UINTN                              TimeOut,
+  IN  EFI_USB2_HC_TRANSACTION_TRANSLATOR *Translator,
+  OUT UINT32                             *UsbResult
   );
 
 /**
@@ -143,18 +142,18 @@ UsbHcControlTransfer (
 **/
 EFI_STATUS
 UsbHcBulkTransfer (
-  IN  USB_BUS                             *UsbBus,
-  IN  UINT8                               DevAddr,
-  IN  UINT8                               EpAddr,
-  IN  UINT8                               DevSpeed,
-  IN  UINTN                               MaxPacket,
-  IN  UINT8                               BufferNum,
-  IN  OUT VOID                            *Data[EFI_USB_MAX_BULK_BUFFER_NUM],
-  IN  OUT UINTN                           *DataLength,
-  IN  OUT UINT8                           *DataToggle,
-  IN  UINTN                               TimeOut,
-  IN  EFI_USB2_HC_TRANSACTION_TRANSLATOR  *Translator,
-  OUT UINT32                              *UsbResult
+  IN  USB_BUS                            *UsbBus,
+  IN  UINT8                              DevAddr,
+  IN  UINT8                              EpAddr,
+  IN  UINT8                              DevSpeed,
+  IN  UINTN                              MaxPacket,
+  IN  UINT8                              BufferNum,
+  IN  OUT VOID                           *Data[EFI_USB_MAX_BULK_BUFFER_NUM],
+  IN  OUT UINTN                          *DataLength,
+  IN  OUT UINT8                          *DataToggle,
+  IN  UINTN                              TimeOut,
+  IN  EFI_USB2_HC_TRANSACTION_TRANSLATOR *Translator,
+  OUT UINT32                             *UsbResult
   );
 
 /**
@@ -181,18 +180,18 @@ UsbHcBulkTransfer (
 **/
 EFI_STATUS
 UsbHcAsyncInterruptTransfer (
-  IN  USB_BUS                             *UsbBus,
-  IN  UINT8                               DevAddr,
-  IN  UINT8                               EpAddr,
-  IN  UINT8                               DevSpeed,
-  IN  UINTN                               MaxPacket,
-  IN  BOOLEAN                             IsNewTransfer,
-  IN OUT UINT8                            *DataToggle,
-  IN  UINTN                               PollingInterval,
-  IN  UINTN                               DataLength,
-  IN  EFI_USB2_HC_TRANSACTION_TRANSLATOR  *Translator,
-  IN  EFI_ASYNC_USB_TRANSFER_CALLBACK     Callback,
-  IN  VOID                                *Context OPTIONAL
+  IN  USB_BUS                            *UsbBus,
+  IN  UINT8                              DevAddr,
+  IN  UINT8                              EpAddr,
+  IN  UINT8                              DevSpeed,
+  IN  UINTN                              MaxPacket,
+  IN  BOOLEAN                            IsNewTransfer,
+  IN OUT UINT8                           *DataToggle,
+  IN  UINTN                              PollingInterval,
+  IN  UINTN                              DataLength,
+  IN  EFI_USB2_HC_TRANSACTION_TRANSLATOR *Translator,
+  IN  EFI_ASYNC_USB_TRANSFER_CALLBACK    Callback,
+  IN  VOID                               *Context OPTIONAL
   );
 
 /**
@@ -218,19 +217,18 @@ UsbHcAsyncInterruptTransfer (
 **/
 EFI_STATUS
 UsbHcSyncInterruptTransfer (
-  IN  USB_BUS                             *UsbBus,
-  IN  UINT8                               DevAddr,
-  IN  UINT8                               EpAddr,
-  IN  UINT8                               DevSpeed,
-  IN  UINTN                               MaxPacket,
-  IN OUT VOID                             *Data,
-  IN OUT UINTN                            *DataLength,
-  IN OUT UINT8                            *DataToggle,
-  IN  UINTN                               TimeOut,
-  IN  EFI_USB2_HC_TRANSACTION_TRANSLATOR  *Translator,
-  OUT UINT32                              *UsbResult
+  IN  USB_BUS                            *UsbBus,
+  IN  UINT8                              DevAddr,
+  IN  UINT8                              EpAddr,
+  IN  UINT8                              DevSpeed,
+  IN  UINTN                              MaxPacket,
+  IN OUT VOID                            *Data,
+  IN OUT UINTN                           *DataLength,
+  IN OUT UINT8                           *DataToggle,
+  IN  UINTN                              TimeOut,
+  IN  EFI_USB2_HC_TRANSACTION_TRANSLATOR *Translator,
+  OUT UINT32                             *UsbResult
   );
-
 
 /**
   Open the USB host controller protocol BY_CHILD.
@@ -243,8 +241,8 @@ UsbHcSyncInterruptTransfer (
 **/
 EFI_STATUS
 UsbOpenHostProtoByChild (
-  IN USB_BUS              *Bus,
-  IN EFI_HANDLE           Child
+  IN USB_BUS    *Bus,
+  IN EFI_HANDLE Child
   );
 
 /**
@@ -258,8 +256,8 @@ UsbOpenHostProtoByChild (
 **/
 VOID
 UsbCloseHostProtoByChild (
-  IN USB_BUS              *Bus,
-  IN EFI_HANDLE           Child
+  IN USB_BUS    *Bus,
+  IN EFI_HANDLE Child
   );
 
 /**

@@ -44,8 +44,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 WaitForTick (
-  IN EFI_METRONOME_ARCH_PROTOCOL  *This,
-  IN UINT32                       TickNumber
+  IN EFI_METRONOME_ARCH_PROTOCOL *This,
+  IN UINT32                      TickNumber
   );
 
 #endif

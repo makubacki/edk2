@@ -47,11 +47,11 @@ typedef enum {
 EFI_STATUS
 EFIAPI
 RegisterNonDiscoverableMmioDevice (
-  IN      NON_DISCOVERABLE_DEVICE_TYPE      Type,
-  IN      NON_DISCOVERABLE_DEVICE_DMA_TYPE  DmaType,
-  IN      NON_DISCOVERABLE_DEVICE_INIT      InitFunc,
-  IN OUT  EFI_HANDLE                        *Handle OPTIONAL,
-  IN      UINTN                             NumMmioResources,
+  IN      NON_DISCOVERABLE_DEVICE_TYPE     Type,
+  IN      NON_DISCOVERABLE_DEVICE_DMA_TYPE DmaType,
+  IN      NON_DISCOVERABLE_DEVICE_INIT     InitFunc,
+  IN OUT  EFI_HANDLE                       *Handle OPTIONAL,
+  IN      UINTN                            NumMmioResources,
   ...
   );
 

@@ -22,13 +22,13 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 **/
 VOID
 PciRomAddImageMapping (
-  IN  EFI_HANDLE  ImageHandle,
-  IN  UINTN       Seg,
-  IN  UINT8       Bus,
-  IN  UINT8       Dev,
-  IN  UINT8       Func,
-  IN  VOID        *RomImage,
-  IN  UINT64      RomSize
+  IN  EFI_HANDLE ImageHandle,
+  IN  UINTN      Seg,
+  IN  UINT8      Bus,
+  IN  UINT8      Dev,
+  IN  UINT8      Func,
+  IN  VOID       *RomImage,
+  IN  UINT64     RomSize
   );
 
 /**
@@ -42,7 +42,7 @@ PciRomAddImageMapping (
 **/
 BOOLEAN
 PciRomGetImageMapping (
-  IN  PCI_IO_DEVICE                       *PciIoDevice
+  IN  PCI_IO_DEVICE *PciIoDevice
   );
 
 #endif

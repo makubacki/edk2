@@ -49,11 +49,11 @@ EfiLibDeleteVariable (
 **/
 UINTN
 EfiDevicePathInstanceCount (
-  IN EFI_DEVICE_PATH_PROTOCOL      *DevicePath
+  IN EFI_DEVICE_PATH_PROTOCOL *DevicePath
   )
 {
-  UINTN Count;
-  UINTN Size;
+  UINTN  Count;
+  UINTN  Size;
 
   Count = 0;
   while (GetNextDevicePathInstance (&DevicePath, &Size) != NULL) {
@@ -76,7 +76,7 @@ EfiDevicePathInstanceCount (
 **/
 UINT16 *
 EfiLibStrFromDatahub (
-  IN EFI_DEVICE_PATH_PROTOCOL                 *DevPath
+  IN EFI_DEVICE_PATH_PROTOCOL *DevPath
   )
 {
   return NULL;

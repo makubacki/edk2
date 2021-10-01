@@ -46,11 +46,10 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define STACK_SIZE      0x20000
 #define BSP_STORE_SIZE  0x4000
 
-
 //
 // This PPI is installed to indicate the end of the PEI usage of memory
 //
-extern CONST EFI_PEI_PPI_DESCRIPTOR gEndOfPeiSignalPpi;
+extern CONST EFI_PEI_PPI_DESCRIPTOR  gEndOfPeiSignalPpi;
 
 /**
    This function installs the PPIs that require permanent memory.
@@ -66,9 +65,9 @@ extern CONST EFI_PEI_PPI_DESCRIPTOR gEndOfPeiSignalPpi;
 EFI_STATUS
 EFIAPI
 InstallIplPermanentMemoryPpis (
-  IN EFI_PEI_SERVICES           **PeiServices,
-  IN EFI_PEI_NOTIFY_DESCRIPTOR  *NotifyDescriptor,
-  IN VOID                       *Ppi
+  IN EFI_PEI_SERVICES          **PeiServices,
+  IN EFI_PEI_NOTIFY_DESCRIPTOR *NotifyDescriptor,
+  IN VOID                      *Ppi
   );
 
 /**
@@ -82,7 +81,6 @@ EFI_PEI_FILE_HANDLE
 DxeIplFindDxeCore (
   VOID
   );
-
 
 /**
    Main entry point to last PEIM
@@ -103,8 +101,6 @@ DxeLoadCore (
   IN EFI_PEI_HOB_POINTERS  HobList
   );
 
-
-
 /**
    Transfers control to DxeCore.
 
@@ -118,11 +114,9 @@ DxeLoadCore (
 **/
 VOID
 HandOffToDxeCore (
-  IN EFI_PHYSICAL_ADDRESS   DxeCoreEntryPoint,
-  IN EFI_PEI_HOB_POINTERS   HobList
+  IN EFI_PHYSICAL_ADDRESS DxeCoreEntryPoint,
+  IN EFI_PEI_HOB_POINTERS HobList
   );
-
-
 
 /**
    Updates the Stack HOB passed to DXE phase.
@@ -136,8 +130,8 @@ HandOffToDxeCore (
 **/
 VOID
 UpdateStackHob (
-  IN EFI_PHYSICAL_ADDRESS        BaseAddress,
-  IN UINT64                      Length
+  IN EFI_PHYSICAL_ADDRESS BaseAddress,
+  IN UINT64               Length
   );
 
 /**
@@ -203,7 +197,6 @@ CustomGuidedSectionExtract (
   OUT       UINTN                                 *OutputSize,
   OUT       UINT32                                *AuthenticationStatus
   );
-
 
 /**
    Decompresses a section to the output buffer.

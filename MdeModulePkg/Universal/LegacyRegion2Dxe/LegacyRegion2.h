@@ -40,11 +40,11 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 LegacyRegion2Decode (
-  IN  EFI_LEGACY_REGION2_PROTOCOL  *This,
-  IN  UINT32                       Start,
-  IN  UINT32                       Length,
-  OUT UINT32                       *Granularity,
-  IN  BOOLEAN                      *On
+  IN  EFI_LEGACY_REGION2_PROTOCOL *This,
+  IN  UINT32                      Start,
+  IN  UINT32                      Length,
+  OUT UINT32                      *Granularity,
+  IN  BOOLEAN                     *On
   );
 
 /**
@@ -104,10 +104,10 @@ LegacyRegion2Lock (
 EFI_STATUS
 EFIAPI
 LegacyRegion2BootLock (
-  IN EFI_LEGACY_REGION2_PROTOCOL          *This,
-  IN  UINT32                              Start,
-  IN  UINT32                              Length,
-  OUT UINT32                              *Granularity
+  IN EFI_LEGACY_REGION2_PROTOCOL *This,
+  IN  UINT32                     Start,
+  IN  UINT32                     Length,
+  OUT UINT32                     *Granularity
   );
 
 /**
@@ -133,10 +133,10 @@ LegacyRegion2BootLock (
 EFI_STATUS
 EFIAPI
 LegacyRegion2Unlock (
-  IN  EFI_LEGACY_REGION2_PROTOCOL  *This,
-  IN  UINT32                       Start,
-  IN  UINT32                       Length,
-  OUT UINT32                       *Granularity
+  IN  EFI_LEGACY_REGION2_PROTOCOL *This,
+  IN  UINT32                      Start,
+  IN  UINT32                      Length,
+  OUT UINT32                      *Granularity
   );
 
 /**
@@ -161,9 +161,9 @@ LegacyRegion2Unlock (
 EFI_STATUS
 EFIAPI
 LegacyRegionGetInfo (
-  IN  EFI_LEGACY_REGION2_PROTOCOL   *This,
-  OUT UINT32                        *DescriptorCount,
-  OUT EFI_LEGACY_REGION_DESCRIPTOR  **Descriptor
+  IN  EFI_LEGACY_REGION2_PROTOCOL  *This,
+  OUT UINT32                       *DescriptorCount,
+  OUT EFI_LEGACY_REGION_DESCRIPTOR **Descriptor
   );
 
 #endif

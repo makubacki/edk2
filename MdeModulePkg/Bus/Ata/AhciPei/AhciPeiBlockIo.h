@@ -14,7 +14,7 @@
 //
 // ATA hard disk device for EFI_PEI_BLOCK_DEVICE_TYPE
 //
-#define EDKII_PEI_BLOCK_DEVICE_TYPE_ATA_HARD_DISK     8
+#define EDKII_PEI_BLOCK_DEVICE_TYPE_ATA_HARD_DISK  8
 
 /**
   Gets the count of block I/O devices that one specific block driver detects.
@@ -35,9 +35,9 @@
 EFI_STATUS
 EFIAPI
 AhciBlockIoGetDeviceNo (
-  IN  EFI_PEI_SERVICES               **PeiServices,
-  IN  EFI_PEI_RECOVERY_BLOCK_IO_PPI  *This,
-  OUT UINTN                          *NumberBlockDevices
+  IN  EFI_PEI_SERVICES              **PeiServices,
+  IN  EFI_PEI_RECOVERY_BLOCK_IO_PPI *This,
+  OUT UINTN                         *NumberBlockDevices
   );
 
 /**
@@ -84,10 +84,10 @@ AhciBlockIoGetDeviceNo (
 EFI_STATUS
 EFIAPI
 AhciBlockIoGetMediaInfo (
-  IN  EFI_PEI_SERVICES               **PeiServices,
-  IN  EFI_PEI_RECOVERY_BLOCK_IO_PPI  *This,
-  IN  UINTN                          DeviceIndex,
-  OUT EFI_PEI_BLOCK_IO_MEDIA         *MediaInfo
+  IN  EFI_PEI_SERVICES              **PeiServices,
+  IN  EFI_PEI_RECOVERY_BLOCK_IO_PPI *This,
+  IN  UINTN                         DeviceIndex,
+  OUT EFI_PEI_BLOCK_IO_MEDIA        *MediaInfo
   );
 
 /**
@@ -127,12 +127,12 @@ AhciBlockIoGetMediaInfo (
 EFI_STATUS
 EFIAPI
 AhciBlockIoReadBlocks (
-  IN  EFI_PEI_SERVICES               **PeiServices,
-  IN  EFI_PEI_RECOVERY_BLOCK_IO_PPI  *This,
-  IN  UINTN                          DeviceIndex,
-  IN  EFI_PEI_LBA                    StartLBA,
-  IN  UINTN                          BufferSize,
-  OUT VOID                           *Buffer
+  IN  EFI_PEI_SERVICES              **PeiServices,
+  IN  EFI_PEI_RECOVERY_BLOCK_IO_PPI *This,
+  IN  UINTN                         DeviceIndex,
+  IN  EFI_PEI_LBA                   StartLBA,
+  IN  UINTN                         BufferSize,
+  OUT VOID                          *Buffer
   );
 
 /**
@@ -154,9 +154,9 @@ AhciBlockIoReadBlocks (
 EFI_STATUS
 EFIAPI
 AhciBlockIoGetDeviceNo2 (
-  IN  EFI_PEI_SERVICES                **PeiServices,
-  IN  EFI_PEI_RECOVERY_BLOCK_IO2_PPI  *This,
-  OUT UINTN                           *NumberBlockDevices
+  IN  EFI_PEI_SERVICES               **PeiServices,
+  IN  EFI_PEI_RECOVERY_BLOCK_IO2_PPI *This,
+  OUT UINTN                          *NumberBlockDevices
   );
 
 /**
@@ -203,10 +203,10 @@ AhciBlockIoGetDeviceNo2 (
 EFI_STATUS
 EFIAPI
 AhciBlockIoGetMediaInfo2 (
-  IN  EFI_PEI_SERVICES                **PeiServices,
-  IN  EFI_PEI_RECOVERY_BLOCK_IO2_PPI  *This,
-  IN  UINTN                           DeviceIndex,
-  OUT EFI_PEI_BLOCK_IO2_MEDIA         *MediaInfo
+  IN  EFI_PEI_SERVICES               **PeiServices,
+  IN  EFI_PEI_RECOVERY_BLOCK_IO2_PPI *This,
+  IN  UINTN                          DeviceIndex,
+  OUT EFI_PEI_BLOCK_IO2_MEDIA        *MediaInfo
   );
 
 /**
@@ -246,12 +246,12 @@ AhciBlockIoGetMediaInfo2 (
 EFI_STATUS
 EFIAPI
 AhciBlockIoReadBlocks2 (
-  IN  EFI_PEI_SERVICES                **PeiServices,
-  IN  EFI_PEI_RECOVERY_BLOCK_IO2_PPI  *This,
-  IN  UINTN                           DeviceIndex,
-  IN  EFI_PEI_LBA                     StartLBA,
-  IN  UINTN                           BufferSize,
-  OUT VOID                            *Buffer
+  IN  EFI_PEI_SERVICES               **PeiServices,
+  IN  EFI_PEI_RECOVERY_BLOCK_IO2_PPI *This,
+  IN  UINTN                          DeviceIndex,
+  IN  EFI_PEI_LBA                    StartLBA,
+  IN  UINTN                          BufferSize,
+  OUT VOID                           *Buffer
   );
 
 #endif
