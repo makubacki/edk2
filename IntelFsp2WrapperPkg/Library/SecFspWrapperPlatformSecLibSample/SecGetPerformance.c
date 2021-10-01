@@ -34,9 +34,9 @@
 EFI_STATUS
 EFIAPI
 SecGetPerformance (
-  IN CONST EFI_PEI_SERVICES          **PeiServices,
-  IN       PEI_SEC_PERFORMANCE_PPI   *This,
-  OUT      FIRMWARE_SEC_PERFORMANCE  *Performance
+  IN CONST EFI_PEI_SERVICES         **PeiServices,
+  IN       PEI_SEC_PERFORMANCE_PPI  *This,
+  OUT      FIRMWARE_SEC_PERFORMANCE *Performance
   )
 {
   UINT32      Size;
@@ -53,7 +53,7 @@ SecGetPerformance (
                              &gTopOfTemporaryRamPpiGuid,
                              0,
                              NULL,
-                             (VOID **) &TopOfTemporaryRamPpi
+                             (VOID **)&TopOfTemporaryRamPpi
                              );
   if (EFI_ERROR (Status)) {
     return EFI_NOT_FOUND;
@@ -72,12 +72,12 @@ SecGetPerformance (
   // |  TSC[31:00]  |
   // |--------------|
   //
-  TopOfTemporaryRam = (UINT32)(UINTN)TopOfTemporaryRamPpi - sizeof(UINT32);
-  TopOfTemporaryRam -= sizeof(UINT32) * 2;
-  Count             = *(UINT32 *) (UINTN) (TopOfTemporaryRam - sizeof (UINT32));
-  Size              = Count * sizeof (UINT64);
+  TopOfTemporaryRam  = (UINT32)(UINTN)TopOfTemporaryRamPpi - sizeof (UINT32);
+  TopOfTemporaryRam -= sizeof (UINT32) * 2;
+  Count = *(UINT32 *)(UINTN)(TopOfTemporaryRam - sizeof (UINT32));
+  Size  = Count * sizeof (UINT64);
 
-  Ticker = *(UINT64 *) (UINTN) (TopOfTemporaryRam - sizeof (UINT32) - Size - sizeof (UINT32) * 2);
+  Ticker = *(UINT64 *)(UINTN)(TopOfTemporaryRam - sizeof (UINT32) - Size - sizeof (UINT32) * 2);
   Performance->ResetEnd = GetTimeInNanoSecond (Ticker);
 
   return EFI_SUCCESS;
