@@ -80,25 +80,25 @@
 ///
 /// Library class public defines
 ///
-typedef  VOID*   REDFISH_SERVICE;
-typedef  VOID*   REDFISH_PAYLOAD;
+typedef  VOID  *REDFISH_SERVICE;
+typedef  VOID  *REDFISH_PAYLOAD;
 
 ///
 /// Library class public structures/unions
 ///
 typedef struct {
-  EFI_HTTP_STATUS_CODE  *StatusCode;
-  UINTN                 HeaderCount;
-  EFI_HTTP_HEADER       *Headers;
-  REDFISH_PAYLOAD       Payload;
+  EFI_HTTP_STATUS_CODE    *StatusCode;
+  UINTN                   HeaderCount;
+  EFI_HTTP_HEADER         *Headers;
+  REDFISH_PAYLOAD         Payload;
 } REDFISH_RESPONSE;
 
 ///
 /// Odata type-name mapping structure.
 ///
 typedef struct {
-  CONST CHAR8    OdataTypeName [ODATA_TYPE_NAME_MAX_SIZE];
-  CONST CHAR8    OdataType [ODATA_TYPE_MAX_SIZE];
+  CONST CHAR8    OdataTypeName[ODATA_TYPE_NAME_MAX_SIZE];
+  CONST CHAR8    OdataType[ODATA_TYPE_MAX_SIZE];
 } REDFISH_ODATA_TYPE_MAPPING;
 
 /**
@@ -117,7 +117,7 @@ typedef struct {
 REDFISH_SERVICE
 EFIAPI
 RedfishCreateService (
-  IN  REDFISH_CONFIG_SERVICE_INFORMATION   *RedfishConfigServiceInfo
+  IN  REDFISH_CONFIG_SERVICE_INFORMATION *RedfishConfigServiceInfo
   );
 
 /**
@@ -129,7 +129,7 @@ RedfishCreateService (
 VOID
 EFIAPI
 RedfishCleanupService (
-  IN REDFISH_SERVICE   RedfishService
+  IN REDFISH_SERVICE RedfishService
   );
 
 /**
@@ -150,8 +150,8 @@ RedfishCleanupService (
 REDFISH_PAYLOAD
 EFIAPI
 RedfishCreatePayload (
-  IN EDKII_JSON_VALUE           Value,
-  IN REDFISH_SERVICE            RedfishService
+  IN EDKII_JSON_VALUE Value,
+  IN REDFISH_SERVICE  RedfishService
   );
 
 /**
@@ -163,7 +163,7 @@ RedfishCreatePayload (
 VOID
 EFIAPI
 RedfishCleanupPayload (
-  IN REDFISH_PAYLOAD          Payload
+  IN REDFISH_PAYLOAD Payload
   );
 
 /**
@@ -180,7 +180,7 @@ RedfishCleanupPayload (
 EDKII_JSON_VALUE
 EFIAPI
 RedfishJsonInPayload (
-  IN REDFISH_PAYLOAD          Payload
+  IN REDFISH_PAYLOAD Payload
   );
 
 /**
@@ -205,9 +205,9 @@ RedfishJsonInPayload (
 CHAR8 *
 EFIAPI
 RedfishBuildPathWithSystemUuid (
-  IN CONST CHAR8    *RedPath,
-  IN BOOLEAN        FromSmbios,
-  IN CHAR8          *IdString OPTIONAL
+  IN CONST CHAR8 *RedPath,
+  IN BOOLEAN     FromSmbios,
+  IN CHAR8       *IdString OPTIONAL
   );
 
 /**
@@ -236,9 +236,9 @@ RedfishBuildPathWithSystemUuid (
 EFI_STATUS
 EFIAPI
 RedfishGetByService (
-  IN     REDFISH_SERVICE      RedfishService,
-  IN     CONST CHAR8          *RedPath,
-  OUT    REDFISH_RESPONSE     *RedResponse
+  IN     REDFISH_SERVICE  RedfishService,
+  IN     CONST CHAR8      *RedPath,
+  OUT    REDFISH_RESPONSE *RedResponse
   );
 
 /**
@@ -266,9 +266,9 @@ RedfishGetByService (
 EFI_STATUS
 EFIAPI
 RedfishGetByUri (
-  IN     REDFISH_SERVICE      RedfishService,
-  IN     CONST CHAR8          *Uri,
-  OUT    REDFISH_RESPONSE     *RedResponse
+  IN     REDFISH_SERVICE  RedfishService,
+  IN     CONST CHAR8      *Uri,
+  OUT    REDFISH_RESPONSE *RedResponse
   );
 
 /**
@@ -300,9 +300,9 @@ RedfishGetByUri (
 EFI_STATUS
 EFIAPI
 RedfishGetByPayload (
-  IN     REDFISH_PAYLOAD          Payload,
-  IN     CONST CHAR8              *RedPath,
-  OUT    REDFISH_RESPONSE         *RedResponse
+  IN     REDFISH_PAYLOAD  Payload,
+  IN     CONST CHAR8      *RedPath,
+  OUT    REDFISH_RESPONSE *RedResponse
   );
 
 /**
@@ -338,10 +338,10 @@ RedfishGetByPayload (
 EFI_STATUS
 EFIAPI
 RedfishPatchToUri (
-  IN     REDFISH_SERVICE            RedfishService,
-  IN     CONST CHAR8                *Uri,
-  IN     CONST CHAR8                *Content,
-  OUT    REDFISH_RESPONSE           *RedResponse
+  IN     REDFISH_SERVICE  RedfishService,
+  IN     CONST CHAR8      *Uri,
+  IN     CONST CHAR8      *Content,
+  OUT    REDFISH_RESPONSE *RedResponse
   );
 
 /**
@@ -375,9 +375,9 @@ RedfishPatchToUri (
 EFI_STATUS
 EFIAPI
 RedfishPatchToPayload (
-  IN     REDFISH_PAYLOAD          Target,
-  IN     REDFISH_PAYLOAD          Payload,
-  OUT    REDFISH_RESPONSE         *RedResponse
+  IN     REDFISH_PAYLOAD  Target,
+  IN     REDFISH_PAYLOAD  Payload,
+  OUT    REDFISH_RESPONSE *RedResponse
   );
 
 /**
@@ -410,9 +410,9 @@ RedfishPatchToPayload (
 EFI_STATUS
 EFIAPI
 RedfishPostToPayload (
-  IN     REDFISH_PAYLOAD          Target,
-  IN     REDFISH_PAYLOAD          Payload,
-  OUT    REDFISH_RESPONSE         *RedResponse
+  IN     REDFISH_PAYLOAD  Target,
+  IN     REDFISH_PAYLOAD  Payload,
+  OUT    REDFISH_RESPONSE *RedResponse
   );
 
 /**
@@ -445,9 +445,9 @@ RedfishPostToPayload (
 EFI_STATUS
 EFIAPI
 RedfishDeleteByUri (
-  IN     REDFISH_SERVICE            RedfishService,
-  IN     CONST CHAR8                *Uri,
-  OUT    REDFISH_RESPONSE           *RedResponse
+  IN     REDFISH_SERVICE  RedfishService,
+  IN     CONST CHAR8      *Uri,
+  OUT    REDFISH_RESPONSE *RedResponse
   );
 
 /**
@@ -469,8 +469,9 @@ RedfishDumpJsonStringFractions (
 **/
 VOID
 RedfishDumpPayload (
-  IN REDFISH_PAYLOAD       Payload
+  IN REDFISH_PAYLOAD Payload
   );
+
 /**
   Dump text in JSON value.
 
@@ -479,8 +480,9 @@ RedfishDumpPayload (
 **/
 VOID
 RedfishDumpJson (
-  IN EDKII_JSON_VALUE  JsonValue
+  IN EDKII_JSON_VALUE JsonValue
   );
+
 /**
   This function will cleanup the HTTP header and Redfish payload resources.
 
@@ -492,10 +494,10 @@ RedfishDumpJson (
 **/
 VOID
 RedfishFreeResponse (
-  IN EFI_HTTP_STATUS_CODE  *StatusCode,
-  IN UINTN                 HeaderCount,
-  IN EFI_HTTP_HEADER       *Headers,
-  IN REDFISH_PAYLOAD       Payload
+  IN EFI_HTTP_STATUS_CODE *StatusCode,
+  IN UINTN                HeaderCount,
+  IN EFI_HTTP_HEADER      *Headers,
+  IN REDFISH_PAYLOAD      Payload
   );
 
 /**
@@ -511,10 +513,10 @@ RedfishFreeResponse (
 **/
 BOOLEAN
 RedfishIsValidOdataType (
-  IN REDFISH_PAYLOAD              Payload,
-  IN CONST CHAR8                  *OdataTypeName,
-  IN REDFISH_ODATA_TYPE_MAPPING   *OdataTypeMappingList,
-  IN UINTN                        OdataTypeMappingListSize
+  IN REDFISH_PAYLOAD            Payload,
+  IN CONST CHAR8                *OdataTypeName,
+  IN REDFISH_ODATA_TYPE_MAPPING *OdataTypeMappingList,
+  IN UINTN                      OdataTypeMappingListSize
   );
 
 /**
@@ -528,7 +530,8 @@ RedfishIsValidOdataType (
 BOOLEAN
 RedfishIsPayloadCollection (
   IN REDFISH_PAYLOAD Payload
-);
+  );
+
 /**
   Get collection size.
 
@@ -539,10 +542,11 @@ RedfishIsPayloadCollection (
   @return EFI_INVALID_PARAMETER    The payload is not a collection.
 **/
 EFI_STATUS
-RedfishGetCollectionSize(
+RedfishGetCollectionSize (
   IN REDFISH_PAYLOAD Payload,
-  IN UINTN *CollectionSize
-);
+  IN UINTN           *CollectionSize
+  );
+
 /**
   Get Redfish payload of collection member
 
@@ -555,8 +559,8 @@ RedfishGetCollectionSize(
 REDFISH_PAYLOAD
 RedfishGetPayloadByIndex (
   IN REDFISH_PAYLOAD Payload,
-  IN UINTN  Index
-);
+  IN UINTN           Index
+  );
 
 /**
   Check and return Redfish resource of the given Redpath.
@@ -569,10 +573,10 @@ RedfishGetPayloadByIndex (
 **/
 EFI_STATUS
 RedfishCheckIfRedpathExist (
-  IN REDFISH_SERVICE RedfishService,
-  IN CHAR8 *Redpath,
+  IN REDFISH_SERVICE  RedfishService,
+  IN CHAR8            *Redpath,
   IN REDFISH_RESPONSE *Response OPTIONAL
-);
+  );
 
 /**
   This function returns the string of Redfish service version.
@@ -584,9 +588,9 @@ RedfishCheckIfRedpathExist (
 
 **/
 EFI_STATUS
-RedfishGetServiceVersion(
+RedfishGetServiceVersion (
   IN  REDFISH_SERVICE RedfishService,
-  OUT CHAR8 **ServiceVersionStr
+  OUT CHAR8           **ServiceVersionStr
   );
 
 /**
@@ -608,4 +612,5 @@ RedfishBuildRedpathUseId (
   IN  CHAR8 *Id,
   OUT CHAR8 **Redpath
   );
+
 #endif

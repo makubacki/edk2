@@ -13,6 +13,7 @@
 //
 // EFI Component Name Functions
 //
+
 /**
   Retrieves a Unicode string that is the user-readable name of the EFI Driver.
 
@@ -38,9 +39,9 @@
 EFI_STATUS
 EFIAPI
 RedfishDiscoverComponentNameGetDriverName (
-  IN  EFI_COMPONENT_NAME_PROTOCOL  *This,
-  IN  CHAR8                        *Language,
-  OUT CHAR16                       **DriverName
+  IN  EFI_COMPONENT_NAME_PROTOCOL *This,
+  IN  CHAR8                       *Language,
+  OUT CHAR16                      **DriverName
   );
 
 /**
@@ -86,13 +87,12 @@ RedfishDiscoverComponentNameGetDriverName (
 EFI_STATUS
 EFIAPI
 RedfishDiscoverComponentNameGetControllerName (
-  IN  EFI_COMPONENT_NAME_PROTOCOL  *This,
-  IN  EFI_HANDLE                    ControllerHandle,
-  IN  EFI_HANDLE                    ChildHandle        OPTIONAL,
-  IN  CHAR8                         *Language,
-  OUT CHAR16                        **ControllerName
+  IN  EFI_COMPONENT_NAME_PROTOCOL *This,
+  IN  EFI_HANDLE                  ControllerHandle,
+  IN  EFI_HANDLE                  ChildHandle        OPTIONAL,
+  IN  CHAR8                       *Language,
+  OUT CHAR16                      **ControllerName
   );
-
 
 ///
 /// Component Name Protocol instance
@@ -109,8 +109,8 @@ EFI_COMPONENT_NAME_PROTOCOL  gRedfishDiscoverComponentName = {
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
 EFI_COMPONENT_NAME2_PROTOCOL  gRedfishDiscoverComponentName2 = {
-  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)     RedfishDiscoverComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) RedfishDiscoverComponentNameGetControllerName,
+  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)RedfishDiscoverComponentNameGetDriverName,
+  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)RedfishDiscoverComponentNameGetControllerName,
   "en"
 };
 
@@ -118,12 +118,12 @@ EFI_COMPONENT_NAME2_PROTOCOL  gRedfishDiscoverComponentName2 = {
 /// Table of driver names
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
-EFI_UNICODE_STRING_TABLE mRedfishDiscoverDriverNameTable[] = {
+EFI_UNICODE_STRING_TABLE  mRedfishDiscoverDriverNameTable[] = {
   { "eng;en", (CHAR16 *)L"Redfish Discover UEFI Driver" },
-  { NULL, NULL }
+  { NULL,     NULL                                      }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE *gRedfishDiscoverControllerNameTable = NULL;
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  *gRedfishDiscoverControllerNameTable = NULL;
 
 /**
   Retrieves a Unicode string that is the user-readable name of the EFI Driver.
@@ -150,9 +150,9 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE *gRedfishDiscoverControll
 EFI_STATUS
 EFIAPI
 RedfishDiscoverComponentNameGetDriverName (
-  IN  EFI_COMPONENT_NAME_PROTOCOL  *This,
-  IN  CHAR8                        *Language,
-  OUT CHAR16                       **DriverName
+  IN  EFI_COMPONENT_NAME_PROTOCOL *This,
+  IN  CHAR8                       *Language,
+  OUT CHAR16                      **DriverName
   )
 {
   return LookupUnicodeString2 (
@@ -207,11 +207,11 @@ RedfishDiscoverComponentNameGetDriverName (
 EFI_STATUS
 EFIAPI
 RedfishDiscoverComponentNameGetControllerName (
-  IN  EFI_COMPONENT_NAME_PROTOCOL  *This,
-  IN  EFI_HANDLE                    ControllerHandle,
-  IN  EFI_HANDLE                    ChildHandle        OPTIONAL,
-  IN  CHAR8                         *Language,
-  OUT CHAR16                        **ControllerName
+  IN  EFI_COMPONENT_NAME_PROTOCOL *This,
+  IN  EFI_HANDLE                  ControllerHandle,
+  IN  EFI_HANDLE                  ChildHandle        OPTIONAL,
+  IN  CHAR8                       *Language,
+  OUT CHAR16                      **ControllerName
   )
 {
   return EFI_UNSUPPORTED;
