@@ -22,8 +22,8 @@
 EFI_STATUS
 EFIAPI
 WaitForTick (
-  IN EFI_METRONOME_ARCH_PROTOCOL  *This,
-  IN UINT32                       TickNumber
+  IN EFI_METRONOME_ARCH_PROTOCOL *This,
+  IN UINT32                      TickNumber
   );
 
 /**
@@ -49,11 +49,10 @@ WaitForTick (
   installed.  All consumers must treat this as a read-only field.
 
 **/
-EFI_METRONOME_ARCH_PROTOCOL gMetronome = {
+EFI_METRONOME_ARCH_PROTOCOL  gMetronome = {
   WaitForTick,
   FixedPcdGet32 (PcdMetronomeTickPeriod)
 };
-
 
 /**
   The WaitForTick() function waits for the number of ticks specified by
@@ -80,8 +79,8 @@ EFI_METRONOME_ARCH_PROTOCOL gMetronome = {
 EFI_STATUS
 EFIAPI
 WaitForTick (
-  IN EFI_METRONOME_ARCH_PROTOCOL  *This,
-  IN UINT32                       TickNumber
+  IN EFI_METRONOME_ARCH_PROTOCOL *This,
+  IN UINT32                      TickNumber
   )
 {
   //
@@ -93,10 +92,7 @@ WaitForTick (
   return EFI_SUCCESS;
 }
 
-
 EFI_HANDLE  gMetronomeHandle = NULL;
-
-
 
 /**
   Initialize the state information for the CPU Architectural Protocol
@@ -112,8 +108,8 @@ EFI_HANDLE  gMetronomeHandle = NULL;
 EFI_STATUS
 EFIAPI
 MetronomeInitialize (
-  IN EFI_HANDLE         ImageHandle,
-  IN EFI_SYSTEM_TABLE   *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
   EFI_STATUS  Status;
@@ -124,11 +120,11 @@ MetronomeInitialize (
 
   Status = gBS->InstallMultipleProtocolInterfaces (
                   &gMetronomeHandle,
-                  &gEfiMetronomeArchProtocolGuid,   &gMetronome,
+                  &gEfiMetronomeArchProtocolGuid,
+                  &gMetronome,
                   NULL
                   );
   ASSERT_EFI_ERROR (Status);
 
   return Status;
 }
-
