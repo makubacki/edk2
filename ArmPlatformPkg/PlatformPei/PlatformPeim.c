@@ -28,8 +28,8 @@
 EFI_STATUS
 EFIAPI
 InitializePlatformPeim (
-  IN       EFI_PEI_FILE_HANDLE  FileHandle,
-  IN CONST EFI_PEI_SERVICES     **PeiServices
+  IN       EFI_PEI_FILE_HANDLE FileHandle,
+  IN CONST EFI_PEI_SERVICES    **PeiServices
   );
 
 EFI_STATUS
@@ -72,12 +72,12 @@ Returns:
 EFI_STATUS
 EFIAPI
 InitializePlatformPeim (
-  IN       EFI_PEI_FILE_HANDLE  FileHandle,
-  IN CONST EFI_PEI_SERVICES     **PeiServices
+  IN       EFI_PEI_FILE_HANDLE FileHandle,
+  IN CONST EFI_PEI_SERVICES    **PeiServices
   )
 {
-  EFI_STATUS                    Status;
-  EFI_BOOT_MODE                 BootMode;
+  EFI_STATUS     Status;
+  EFI_BOOT_MODE  BootMode;
 
   DEBUG ((EFI_D_LOAD | EFI_D_INFO, "Platform PEIM Loaded\n"));
 

@@ -6,6 +6,7 @@
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
+
 #ifndef __PREPEICORE_H_
 #define __PREPEICORE_H_
 
@@ -21,31 +22,34 @@
 
 VOID
 CreatePpiList (
-  OUT UINTN                   *PpiListSize,
-  OUT EFI_PEI_PPI_DESCRIPTOR  **PpiList
+  OUT UINTN                  *PpiListSize,
+  OUT EFI_PEI_PPI_DESCRIPTOR **PpiList
   );
 
 EFI_STATUS
 EFIAPI
 PrePeiCoreTemporaryRamSupport (
-  IN CONST EFI_PEI_SERVICES   **PeiServices,
-  IN EFI_PHYSICAL_ADDRESS     TemporaryMemoryBase,
-  IN EFI_PHYSICAL_ADDRESS     PermanentMemoryBase,
-  IN UINTN                    CopySize
+  IN CONST EFI_PEI_SERVICES **PeiServices,
+  IN EFI_PHYSICAL_ADDRESS   TemporaryMemoryBase,
+  IN EFI_PHYSICAL_ADDRESS   PermanentMemoryBase,
+  IN UINTN                  CopySize
   );
 
 VOID
 SecSwitchStack (
-  INTN    StackDelta
+  INTN StackDelta
   );
 
 // Vector Table for Pei Phase
-VOID  PeiVectorTable (VOID);
+VOID
+PeiVectorTable (
+  VOID
+  );
 
 VOID
 EFIAPI
 PrimaryMain (
-  IN  EFI_PEI_CORE_ENTRY_POINT  PeiCoreEntryPoint
+  IN  EFI_PEI_CORE_ENTRY_POINT PeiCoreEntryPoint
   );
 
 /*
@@ -66,7 +70,7 @@ SecondaryMain (
 VOID
 PeiCommonExceptionEntry (
   IN UINT32 Entry,
-  IN UINTN LR
+  IN UINTN  LR
   );
 
 #endif

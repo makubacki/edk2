@@ -48,13 +48,13 @@
 RETURN_STATUS
 EFIAPI
 PL011UartInitializePort (
-  IN     UINTN               UartBase,
-  IN     UINT32              UartClkInHz,
-  IN OUT UINT64              *BaudRate,
-  IN OUT UINT32              *ReceiveFifoDepth,
-  IN OUT EFI_PARITY_TYPE     *Parity,
-  IN OUT UINT8               *DataBits,
-  IN OUT EFI_STOP_BITS_TYPE  *StopBits
+  IN     UINTN              UartBase,
+  IN     UINT32             UartClkInHz,
+  IN OUT UINT64             *BaudRate,
+  IN OUT UINT32             *ReceiveFifoDepth,
+  IN OUT EFI_PARITY_TYPE    *Parity,
+  IN OUT UINT8              *DataBits,
+  IN OUT EFI_STOP_BITS_TYPE *StopBits
   );
 
 /**
@@ -87,8 +87,8 @@ PL011UartInitializePort (
 RETURN_STATUS
 EFIAPI
 PL011UartSetControl (
-  IN UINTN   UartBase,
-  IN UINT32  Control
+  IN UINTN  UartBase,
+  IN UINT32 Control
   );
 
 /**
@@ -127,8 +127,8 @@ PL011UartSetControl (
 RETURN_STATUS
 EFIAPI
 PL011UartGetControl (
-  IN UINTN     UartBase,
-  OUT UINT32  *Control
+  IN UINTN   UartBase,
+  OUT UINT32 *Control
   );
 
 /**
@@ -144,9 +144,9 @@ PL011UartGetControl (
 UINTN
 EFIAPI
 PL011UartWrite (
-  IN  UINTN       UartBase,
-  IN  UINT8       *Buffer,
-  IN  UINTN       NumberOfBytes
+  IN  UINTN UartBase,
+  IN  UINT8 *Buffer,
+  IN  UINTN NumberOfBytes
   );
 
 /**
@@ -162,9 +162,9 @@ PL011UartWrite (
 UINTN
 EFIAPI
 PL011UartRead (
-  IN  UINTN       UartBase,
-  OUT UINT8       *Buffer,
-  IN  UINTN       NumberOfBytes
+  IN  UINTN UartBase,
+  OUT UINT8 *Buffer,
+  IN  UINTN NumberOfBytes
   );
 
 /**
@@ -177,7 +177,7 @@ PL011UartRead (
 BOOLEAN
 EFIAPI
 PL011UartPoll (
-  IN  UINTN       UartBase
+  IN  UINTN UartBase
   );
 
 #endif
