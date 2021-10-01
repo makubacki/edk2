@@ -9,7 +9,7 @@
 
 #include "TlsImpl.h"
 
-EFI_SERVICE_BINDING_PROTOCOL mTlsServiceBinding = {
+EFI_SERVICE_BINDING_PROTOCOL  mTlsServiceBinding = {
   TlsServiceBindingCreateChild,
   TlsServiceBindingDestroyChild
 };
@@ -22,7 +22,7 @@ EFI_SERVICE_BINDING_PROTOCOL mTlsServiceBinding = {
 **/
 VOID
 TlsCleanInstance (
-  IN TLS_INSTANCE           *Instance
+  IN TLS_INSTANCE *Instance
   )
 {
   if (Instance != NULL) {
@@ -46,11 +46,11 @@ TlsCleanInstance (
 **/
 EFI_STATUS
 TlsCreateInstance (
-  IN  TLS_SERVICE         *Service,
-  OUT TLS_INSTANCE        **Instance
+  IN  TLS_SERVICE  *Service,
+  OUT TLS_INSTANCE **Instance
   )
 {
-  TLS_INSTANCE            *TlsInstance;
+  TLS_INSTANCE  *TlsInstance;
 
   *Instance = NULL;
 
@@ -82,7 +82,7 @@ TlsCreateInstance (
 **/
 VOID
 TlsCleanService (
-  IN TLS_SERVICE     *Service
+  IN TLS_SERVICE *Service
   )
 {
   if (Service != NULL) {
@@ -106,11 +106,11 @@ TlsCleanService (
 **/
 EFI_STATUS
 TlsCreateService (
-  IN  EFI_HANDLE            Image,
-  OUT TLS_SERVICE           **Service
+  IN  EFI_HANDLE  Image,
+  OUT TLS_SERVICE **Service
   )
 {
-  TLS_SERVICE            *TlsService;
+  TLS_SERVICE  *TlsService;
 
   ASSERT (Service != NULL);
 
@@ -127,11 +127,11 @@ TlsCreateService (
   //
   // Initialize TLS Service Data
   //
-  TlsService->Signature        = TLS_SERVICE_SIGNATURE;
+  TlsService->Signature = TLS_SERVICE_SIGNATURE;
   CopyMem (&TlsService->ServiceBinding, &mTlsServiceBinding, sizeof (TlsService->ServiceBinding));
-  TlsService->TlsChildrenNum   = 0;
+  TlsService->TlsChildrenNum = 0;
   InitializeListHead (&TlsService->TlsChildrenList);
-  TlsService->ImageHandle      = Image;
+  TlsService->ImageHandle = Image;
 
   *Service = TlsService;
 
@@ -150,15 +150,15 @@ TlsCreateService (
 EFI_STATUS
 EFIAPI
 TlsUnload (
-  IN EFI_HANDLE  ImageHandle
+  IN EFI_HANDLE ImageHandle
   )
 {
-  EFI_STATUS                      Status;
-  UINTN                           HandleNum;
-  EFI_HANDLE                      *HandleBuffer;
-  UINT32                          Index;
-  EFI_SERVICE_BINDING_PROTOCOL    *ServiceBinding;
-  TLS_SERVICE                     *TlsService;
+  EFI_STATUS                    Status;
+  UINTN                         HandleNum;
+  EFI_HANDLE                    *HandleBuffer;
+  UINT32                        Index;
+  EFI_SERVICE_BINDING_PROTOCOL  *ServiceBinding;
+  TLS_SERVICE                   *TlsService;
 
   HandleBuffer   = NULL;
   ServiceBinding = NULL;
@@ -185,7 +185,7 @@ TlsUnload (
     Status = gBS->OpenProtocol (
                     HandleBuffer[Index],
                     &gEfiTlsServiceBindingProtocolGuid,
-                    (VOID **) &ServiceBinding,
+                    (VOID **)&ServiceBinding,
                     ImageHandle,
                     NULL,
                     EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL
@@ -201,7 +201,8 @@ TlsUnload (
     //
     Status = gBS->UninstallMultipleProtocolInterfaces (
                     HandleBuffer[Index],
-                    &gEfiTlsServiceBindingProtocolGuid, ServiceBinding,
+                    &gEfiTlsServiceBindingProtocolGuid,
+                    ServiceBinding,
                     NULL
                     );
     if (EFI_ERROR (Status)) {
@@ -232,13 +233,13 @@ TlsUnload (
 EFI_STATUS
 EFIAPI
 TlsDriverEntryPoint (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  EFI_STATUS             Status;
+  EFI_STATUS  Status;
 
-  TLS_SERVICE            *TlsService;
+  TLS_SERVICE  *TlsService;
 
   //
   // Create TLS Service
@@ -308,14 +309,14 @@ ON_CLEAN_SERVICE:
 EFI_STATUS
 EFIAPI
 TlsServiceBindingCreateChild (
-  IN EFI_SERVICE_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                    *ChildHandle
+  IN EFI_SERVICE_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                   *ChildHandle
   )
 {
-  TLS_SERVICE         *TlsService;
-  TLS_INSTANCE        *TlsInstance;
-  EFI_STATUS           Status;
-  EFI_TPL              OldTpl;
+  TLS_SERVICE   *TlsService;
+  TLS_INSTANCE  *TlsInstance;
+  EFI_STATUS    Status;
+  EFI_TPL       OldTpl;
 
   if ((This == NULL) || (ChildHandle == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -402,17 +403,17 @@ ON_ERROR:
 EFI_STATUS
 EFIAPI
 TlsServiceBindingDestroyChild (
-  IN EFI_SERVICE_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                    ChildHandle
+  IN EFI_SERVICE_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                   ChildHandle
   )
 {
-  TLS_SERVICE                    *TlsService;
-  TLS_INSTANCE                   *TlsInstance;
+  TLS_SERVICE   *TlsService;
+  TLS_INSTANCE  *TlsInstance;
 
-  EFI_TLS_PROTOCOL               *Tls;
-  EFI_TLS_CONFIGURATION_PROTOCOL *TlsConfig;
-  EFI_STATUS                     Status;
-  EFI_TPL                        OldTpl;
+  EFI_TLS_PROTOCOL                *Tls;
+  EFI_TLS_CONFIGURATION_PROTOCOL  *TlsConfig;
+  EFI_STATUS                      Status;
+  EFI_TPL                         OldTpl;
 
   if ((This == NULL) || (ChildHandle == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -426,7 +427,7 @@ TlsServiceBindingDestroyChild (
   Status = gBS->OpenProtocol (
                   ChildHandle,
                   &gEfiTlsProtocolGuid,
-                  (VOID **) &Tls,
+                  (VOID **)&Tls,
                   TlsService->ImageHandle,
                   NULL,
                   EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL
@@ -441,7 +442,7 @@ TlsServiceBindingDestroyChild (
   Status = gBS->OpenProtocol (
                   ChildHandle,
                   &gEfiTlsConfigurationProtocolGuid,
-                  (VOID **) &TlsConfig,
+                  (VOID **)&TlsConfig,
                   TlsService->ImageHandle,
                   NULL,
                   EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL
@@ -450,7 +451,7 @@ TlsServiceBindingDestroyChild (
     return Status;
   }
 
-  TlsInstance  = TLS_INSTANCE_FROM_PROTOCOL (Tls);
+  TlsInstance = TLS_INSTANCE_FROM_PROTOCOL (Tls);
 
   if (TlsInstance->Service != TlsService) {
     return EFI_INVALID_PARAMETER;
@@ -488,4 +489,3 @@ TlsServiceBindingDestroyChild (
 
   return EFI_SUCCESS;
 }
-

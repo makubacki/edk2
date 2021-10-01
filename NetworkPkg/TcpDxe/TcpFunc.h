@@ -72,9 +72,9 @@ TcpInitTcbPeer (
 **/
 BOOLEAN
 TcpFindTcbByPeer (
-  IN EFI_IP_ADDRESS  *Addr,
-  IN TCP_PORTNO      Port,
-  IN UINT8           Version
+  IN EFI_IP_ADDRESS *Addr,
+  IN TCP_PORTNO     Port,
+  IN UINT8          Version
   );
 
 /**
@@ -93,12 +93,12 @@ TcpFindTcbByPeer (
 **/
 TCP_CB *
 TcpLocateTcb (
-  IN TCP_PORTNO      LocalPort,
-  IN EFI_IP_ADDRESS  *LocalIp,
-  IN TCP_PORTNO      RemotePort,
-  IN EFI_IP_ADDRESS  *RemoteIp,
-  IN UINT8           Version,
-  IN BOOLEAN         Syn
+  IN TCP_PORTNO     LocalPort,
+  IN EFI_IP_ADDRESS *LocalIp,
+  IN TCP_PORTNO     RemotePort,
+  IN EFI_IP_ADDRESS *RemoteIp,
+  IN UINT8          Version,
+  IN BOOLEAN        Syn
   );
 
 /**
@@ -149,7 +149,7 @@ TcpGetIss (
 **/
 UINT16
 TcpGetRcvMss (
-  IN SOCKET  *Sock
+  IN SOCKET *Sock
   );
 
 /**
@@ -205,7 +205,7 @@ TcpFormatNetbuf (
 **/
 VOID
 TcpOnAppConnect (
-  IN OUT TCP_CB  *Tcb
+  IN OUT TCP_CB *Tcb
   );
 
 /**
@@ -283,7 +283,6 @@ EFI_STATUS
 TcpInstallDevicePath (
   IN SOCKET *Sock
   );
-
 
 //
 // Functions in TcpOutput.c
@@ -429,12 +428,12 @@ TcpSendZeroProbe (
 **/
 INTN
 TcpSendReset (
-  IN TCP_CB          *Tcb,
-  IN TCP_HEAD        *Head,
-  IN INT32           Len,
-  IN EFI_IP_ADDRESS  *Local,
-  IN EFI_IP_ADDRESS  *Remote,
-  IN UINT8           Version
+  IN TCP_CB         *Tcb,
+  IN TCP_HEAD       *Head,
+  IN INT32          Len,
+  IN EFI_IP_ADDRESS *Local,
+  IN EFI_IP_ADDRESS *Remote,
+  IN UINT8          Version
   );
 
 /**
@@ -469,11 +468,11 @@ TcpVerifySegment (
 **/
 VOID
 TcpIcmpInput (
-  IN NET_BUF         *Nbuf,
-  IN UINT8           IcmpErr,
-  IN EFI_IP_ADDRESS  *Src,
-  IN EFI_IP_ADDRESS  *Dst,
-  IN UINT8           Version
+  IN NET_BUF        *Nbuf,
+  IN UINT8          IcmpErr,
+  IN EFI_IP_ADDRESS *Src,
+  IN EFI_IP_ADDRESS *Dst,
+  IN UINT8          Version
   );
 
 /**
@@ -493,10 +492,10 @@ TcpIcmpInput (
 **/
 INTN
 TcpInput (
-  IN NET_BUF         *Nbuf,
-  IN EFI_IP_ADDRESS  *Src,
-  IN EFI_IP_ADDRESS  *Dst,
-  IN UINT8           Version
+  IN NET_BUF        *Nbuf,
+  IN EFI_IP_ADDRESS *Src,
+  IN EFI_IP_ADDRESS *Dst,
+  IN UINT8          Version
   );
 
 //
@@ -609,11 +608,11 @@ TcpSetKeepaliveTimer (
 VOID
 EFIAPI
 TcpRxCallback (
-  IN EFI_STATUS                       Status,
-  IN UINT8                            IcmpErr,
-  IN EFI_NET_SESSION_DATA             *NetSession,
-  IN NET_BUF                          *Pkt,
-  IN VOID                             *Context    OPTIONAL
+  IN EFI_STATUS           Status,
+  IN UINT8                IcmpErr,
+  IN EFI_NET_SESSION_DATA *NetSession,
+  IN NET_BUF              *Pkt,
+  IN VOID                 *Context    OPTIONAL
   );
 
 /**
@@ -631,11 +630,11 @@ TcpRxCallback (
 **/
 INTN
 TcpSendIpPacket (
-  IN TCP_CB          *Tcb,
-  IN NET_BUF         *Nbuf,
-  IN EFI_IP_ADDRESS  *Src,
-  IN EFI_IP_ADDRESS  *Dest,
-  IN UINT8           Version
+  IN TCP_CB         *Tcb,
+  IN NET_BUF        *Nbuf,
+  IN EFI_IP_ADDRESS *Src,
+  IN EFI_IP_ADDRESS *Dest,
+  IN UINT8          Version
   );
 
 /**
@@ -658,9 +657,9 @@ TcpSendIpPacket (
 **/
 EFI_STATUS
 Tcp6RefreshNeighbor (
-  IN TCP_CB          *Tcb,
-  IN EFI_IP_ADDRESS  *Neighbor,
-  IN UINT32          Timeout
+  IN TCP_CB         *Tcb,
+  IN EFI_IP_ADDRESS *Neighbor,
+  IN UINT32         Timeout
   );
 
 //
@@ -685,9 +684,9 @@ Tcp6RefreshNeighbor (
 **/
 EFI_STATUS
 TcpDispatcher (
-  IN SOCKET                  *Sock,
-  IN UINT8                   Request,
-  IN VOID                    *Data    OPTIONAL
+  IN SOCKET *Sock,
+  IN UINT8  Request,
+  IN VOID   *Data    OPTIONAL
   );
 
 #endif

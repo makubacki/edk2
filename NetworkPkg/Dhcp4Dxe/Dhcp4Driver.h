@@ -9,9 +9,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #ifndef __EFI_DHCP4_DRIVER_H__
 #define __EFI_DHCP4_DRIVER_H__
 
-extern EFI_COMPONENT_NAME_PROTOCOL  gDhcp4ComponentName;
-extern EFI_COMPONENT_NAME2_PROTOCOL gDhcp4ComponentName2;
-extern EFI_UNICODE_STRING_TABLE     *gDhcpControllerNameTable;
+extern EFI_COMPONENT_NAME_PROTOCOL   gDhcp4ComponentName;
+extern EFI_COMPONENT_NAME2_PROTOCOL  gDhcp4ComponentName2;
+extern EFI_UNICODE_STRING_TABLE      *gDhcpControllerNameTable;
 
 /**
   Test to see if this driver supports ControllerHandle. This service
@@ -34,9 +34,9 @@ extern EFI_UNICODE_STRING_TABLE     *gDhcpControllerNameTable;
 EFI_STATUS
 EFIAPI
 Dhcp4DriverBindingSupported (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   );
 
 /**
@@ -60,9 +60,9 @@ Dhcp4DriverBindingSupported (
 EFI_STATUS
 EFIAPI
 Dhcp4DriverBindingStart (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   );
 
 /**
@@ -86,10 +86,10 @@ Dhcp4DriverBindingStart (
 EFI_STATUS
 EFIAPI
 Dhcp4DriverBindingStop (
-  IN  EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN  EFI_HANDLE                   ControllerHandle,
-  IN  UINTN                        NumberOfChildren,
-  IN  EFI_HANDLE                   *ChildHandleBuffer
+  IN  EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN  EFI_HANDLE                  ControllerHandle,
+  IN  UINTN                       NumberOfChildren,
+  IN  EFI_HANDLE                  *ChildHandleBuffer
   );
 
 /**
@@ -114,8 +114,8 @@ Dhcp4DriverBindingStop (
 EFI_STATUS
 EFIAPI
 Dhcp4ServiceBindingCreateChild (
-  IN EFI_SERVICE_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                    *ChildHandle
+  IN EFI_SERVICE_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                   *ChildHandle
   );
 
 /**
@@ -139,8 +139,8 @@ Dhcp4ServiceBindingCreateChild (
 EFI_STATUS
 EFIAPI
 Dhcp4ServiceBindingDestroyChild (
-  IN EFI_SERVICE_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                    ChildHandle
+  IN EFI_SERVICE_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                   ChildHandle
   );
 
 #endif

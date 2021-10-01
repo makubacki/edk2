@@ -28,22 +28,22 @@
 
 #include "Udp6Driver.h"
 
-extern EFI_COMPONENT_NAME2_PROTOCOL   gUdp6ComponentName2;
-extern EFI_COMPONENT_NAME_PROTOCOL    gUdp6ComponentName;
-extern EFI_UNICODE_STRING_TABLE       *gUdp6ControllerNameTable;
-extern EFI_SERVICE_BINDING_PROTOCOL   mUdp6ServiceBinding;
-extern EFI_UDP6_PROTOCOL              mUdp6Protocol;
-extern UINT16                         mUdp6RandomPort;
+extern EFI_COMPONENT_NAME2_PROTOCOL  gUdp6ComponentName2;
+extern EFI_COMPONENT_NAME_PROTOCOL   gUdp6ComponentName;
+extern EFI_UNICODE_STRING_TABLE      *gUdp6ControllerNameTable;
+extern EFI_SERVICE_BINDING_PROTOCOL  mUdp6ServiceBinding;
+extern EFI_UDP6_PROTOCOL             mUdp6Protocol;
+extern UINT16                        mUdp6RandomPort;
 
 //
 // Define time out 50 milliseconds
 //
-#define UDP6_TIMEOUT_INTERVAL (50 * TICKS_PER_MS)
-#define UDP6_HEADER_SIZE      sizeof (EFI_UDP_HEADER)
-#define UDP6_MAX_DATA_SIZE    65507
-#define UDP6_PORT_KNOWN       1024
+#define UDP6_TIMEOUT_INTERVAL  (50 * TICKS_PER_MS)
+#define UDP6_HEADER_SIZE       sizeof (EFI_UDP_HEADER)
+#define UDP6_MAX_DATA_SIZE     65507
+#define UDP6_PORT_KNOWN        1024
 
-#define UDP6_SERVICE_DATA_SIGNATURE SIGNATURE_32 ('U', 'd', 'p', '6')
+#define UDP6_SERVICE_DATA_SIGNATURE   SIGNATURE_32 ('U', 'd', 'p', '6')
 #define UDP6_INSTANCE_DATA_SIGNATURE  SIGNATURE_32 ('U', 'd', 'p', 'S')
 
 #define UDP6_SERVICE_DATA_FROM_THIS(a) \
@@ -65,47 +65,47 @@ extern UINT16                         mUdp6RandomPort;
 // Udp6 service contest data
 //
 typedef struct _UDP6_SERVICE_DATA {
-  UINT32                        Signature;
-  EFI_SERVICE_BINDING_PROTOCOL  ServiceBinding;
-  EFI_HANDLE                    ImageHandle;
-  EFI_HANDLE                    ControllerHandle;
-  LIST_ENTRY                    ChildrenList;
-  UINTN                         ChildrenNumber;
-  IP_IO                         *IpIo;
-  EFI_EVENT                     TimeoutEvent;
- } UDP6_SERVICE_DATA;
+  UINT32                          Signature;
+  EFI_SERVICE_BINDING_PROTOCOL    ServiceBinding;
+  EFI_HANDLE                      ImageHandle;
+  EFI_HANDLE                      ControllerHandle;
+  LIST_ENTRY                      ChildrenList;
+  UINTN                           ChildrenNumber;
+  IP_IO                           *IpIo;
+  EFI_EVENT                       TimeoutEvent;
+} UDP6_SERVICE_DATA;
 
 typedef struct _UDP6_INSTANCE_DATA {
-  UINT32                Signature;
-  LIST_ENTRY            Link;
-  UDP6_SERVICE_DATA     *Udp6Service;
-  EFI_UDP6_PROTOCOL     Udp6Proto;
-  EFI_UDP6_CONFIG_DATA  ConfigData;
-  EFI_HANDLE            ChildHandle;
-  BOOLEAN               Configured;
-  BOOLEAN               IsNoMapping;
-  NET_MAP               TxTokens;
-  NET_MAP               RxTokens;
-  NET_MAP               McastIps;
-  LIST_ENTRY            RcvdDgramQue;
-  LIST_ENTRY            DeliveredDgramQue;
-  UINT16                HeadSum;
-  EFI_STATUS            IcmpError;
-  IP_IO_IP_INFO         *IpInfo;
-  BOOLEAN               InDestroy;
+  UINT32                  Signature;
+  LIST_ENTRY              Link;
+  UDP6_SERVICE_DATA       *Udp6Service;
+  EFI_UDP6_PROTOCOL       Udp6Proto;
+  EFI_UDP6_CONFIG_DATA    ConfigData;
+  EFI_HANDLE              ChildHandle;
+  BOOLEAN                 Configured;
+  BOOLEAN                 IsNoMapping;
+  NET_MAP                 TxTokens;
+  NET_MAP                 RxTokens;
+  NET_MAP                 McastIps;
+  LIST_ENTRY              RcvdDgramQue;
+  LIST_ENTRY              DeliveredDgramQue;
+  UINT16                  HeadSum;
+  EFI_STATUS              IcmpError;
+  IP_IO_IP_INFO           *IpInfo;
+  BOOLEAN                 InDestroy;
 } UDP6_INSTANCE_DATA;
 
 typedef struct _UDP6_RXDATA_WRAP {
-  LIST_ENTRY             Link;
-  NET_BUF                *Packet;
-  UINT32                 TimeoutTick;
-  EFI_UDP6_RECEIVE_DATA  RxData;
+  LIST_ENTRY               Link;
+  NET_BUF                  *Packet;
+  UINT32                   TimeoutTick;
+  EFI_UDP6_RECEIVE_DATA    RxData;
 } UDP6_RXDATA_WRAP;
 
 typedef struct {
-  EFI_SERVICE_BINDING_PROTOCOL  *ServiceBinding;
-  UINTN                         NumberOfChildren;
-  EFI_HANDLE                    *ChildHandleBuffer;
+  EFI_SERVICE_BINDING_PROTOCOL    *ServiceBinding;
+  UINTN                           NumberOfChildren;
+  EFI_HANDLE                      *ChildHandleBuffer;
 } UDP6_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT;
 
 /**
@@ -116,7 +116,7 @@ typedef struct {
 **/
 VOID
 Udp6CleanService (
-  IN OUT UDP6_SERVICE_DATA  *Udp6Service
+  IN OUT UDP6_SERVICE_DATA *Udp6Service
   );
 
 /**
@@ -134,9 +134,9 @@ Udp6CleanService (
 **/
 EFI_STATUS
 Udp6CreateService (
-  IN UDP6_SERVICE_DATA  *Udp6Service,
-  IN EFI_HANDLE         ImageHandle,
-  IN EFI_HANDLE         ControllerHandle
+  IN UDP6_SERVICE_DATA *Udp6Service,
+  IN EFI_HANDLE        ImageHandle,
+  IN EFI_HANDLE        ControllerHandle
   );
 
 /**
@@ -147,7 +147,7 @@ Udp6CreateService (
 **/
 VOID
 Udp6CleanInstance (
-  IN OUT UDP6_INSTANCE_DATA  *Instance
+  IN OUT UDP6_INSTANCE_DATA *Instance
   );
 
 /**
@@ -159,8 +159,8 @@ Udp6CleanInstance (
 **/
 VOID
 Udp6InitInstance (
-  IN UDP6_SERVICE_DATA       *Udp6Service,
-  IN OUT UDP6_INSTANCE_DATA  *Instance
+  IN UDP6_SERVICE_DATA      *Udp6Service,
+  IN OUT UDP6_INSTANCE_DATA *Instance
   );
 
 /**
@@ -171,7 +171,7 @@ Udp6InitInstance (
 **/
 VOID
 Udp6ReportIcmpError (
-  IN UDP6_INSTANCE_DATA  *Instance
+  IN UDP6_INSTANCE_DATA *Instance
   );
 
 /**
@@ -202,11 +202,11 @@ Udp6ReportIcmpError (
 EFI_STATUS
 EFIAPI
 Udp6GetModeData (
-  IN  EFI_UDP6_PROTOCOL                *This,
-  OUT EFI_UDP6_CONFIG_DATA             *Udp6ConfigData OPTIONAL,
-  OUT EFI_IP6_MODE_DATA                *Ip6ModeData    OPTIONAL,
-  OUT EFI_MANAGED_NETWORK_CONFIG_DATA  *MnpConfigData  OPTIONAL,
-  OUT EFI_SIMPLE_NETWORK_MODE          *SnpModeData    OPTIONAL
+  IN  EFI_UDP6_PROTOCOL               *This,
+  OUT EFI_UDP6_CONFIG_DATA            *Udp6ConfigData OPTIONAL,
+  OUT EFI_IP6_MODE_DATA               *Ip6ModeData    OPTIONAL,
+  OUT EFI_MANAGED_NETWORK_CONFIG_DATA *MnpConfigData  OPTIONAL,
+  OUT EFI_SIMPLE_NETWORK_MODE         *SnpModeData    OPTIONAL
   );
 
 /**
@@ -249,8 +249,8 @@ Udp6GetModeData (
 EFI_STATUS
 EFIAPI
 Udp6Configure (
-  IN EFI_UDP6_PROTOCOL     *This,
-  IN EFI_UDP6_CONFIG_DATA  *UdpConfigData OPTIONAL
+  IN EFI_UDP6_PROTOCOL    *This,
+  IN EFI_UDP6_CONFIG_DATA *UdpConfigData OPTIONAL
   );
 
 /**
@@ -306,8 +306,8 @@ Udp6Configure (
 EFI_STATUS
 EFIAPI
 Udp6Transmit (
-  IN EFI_UDP6_PROTOCOL          *This,
-  IN EFI_UDP6_COMPLETION_TOKEN  *Token
+  IN EFI_UDP6_PROTOCOL         *This,
+  IN EFI_UDP6_COMPLETION_TOKEN *Token
   );
 
 /**
@@ -342,8 +342,8 @@ Udp6Transmit (
 EFI_STATUS
 EFIAPI
 Udp6Receive (
-  IN EFI_UDP6_PROTOCOL          *This,
-  IN EFI_UDP6_COMPLETION_TOKEN  *Token
+  IN EFI_UDP6_PROTOCOL         *This,
+  IN EFI_UDP6_COMPLETION_TOKEN *Token
   );
 
 /**
@@ -372,8 +372,8 @@ Udp6Receive (
 EFI_STATUS
 EFIAPI
 Udp6Cancel (
-  IN EFI_UDP6_PROTOCOL          *This,
-  IN EFI_UDP6_COMPLETION_TOKEN  *Token OPTIONAL
+  IN EFI_UDP6_PROTOCOL         *This,
+  IN EFI_UDP6_COMPLETION_TOKEN *Token OPTIONAL
   );
 
 /**
@@ -392,7 +392,7 @@ Udp6Cancel (
 EFI_STATUS
 EFIAPI
 Udp6Poll (
-  IN EFI_UDP6_PROTOCOL  *This
+  IN EFI_UDP6_PROTOCOL *This
   );
 
 /**
@@ -423,9 +423,9 @@ Udp6Poll (
 EFI_STATUS
 EFIAPI
 Udp6Groups (
-  IN EFI_UDP6_PROTOCOL  *This,
-  IN BOOLEAN            JoinFlag,
-  IN EFI_IPv6_ADDRESS   *MulticastAddress OPTIONAL
+  IN EFI_UDP6_PROTOCOL *This,
+  IN BOOLEAN           JoinFlag,
+  IN EFI_IPv6_ADDRESS  *MulticastAddress OPTIONAL
   );
 
 /**
@@ -445,8 +445,8 @@ Udp6Groups (
 **/
 EFI_STATUS
 Udp6Bind (
-  IN LIST_ENTRY            *InstanceList,
-  IN EFI_UDP6_CONFIG_DATA  *ConfigData
+  IN LIST_ENTRY           *InstanceList,
+  IN EFI_UDP6_CONFIG_DATA *ConfigData
   );
 
 /**
@@ -458,8 +458,8 @@ Udp6Bind (
 **/
 VOID
 Udp6BuildIp6ConfigData (
-  IN EFI_UDP6_CONFIG_DATA      *Udp6ConfigData,
-  IN OUT EFI_IP6_CONFIG_DATA   *Ip6ConfigData
+  IN EFI_UDP6_CONFIG_DATA    *Udp6ConfigData,
+  IN OUT EFI_IP6_CONFIG_DATA *Ip6ConfigData
   );
 
 /**
@@ -478,9 +478,9 @@ Udp6BuildIp6ConfigData (
 EFI_STATUS
 EFIAPI
 Udp6TokenExist (
-  IN NET_MAP       *Map,
-  IN NET_MAP_ITEM  *Item,
-  IN VOID          *Context
+  IN NET_MAP      *Map,
+  IN NET_MAP_ITEM *Item,
+  IN VOID         *Context
   );
 
 /**
@@ -495,8 +495,8 @@ Udp6TokenExist (
 **/
 EFI_STATUS
 Udp6RemoveToken (
-  IN NET_MAP                    *TokenMap,
-  IN EFI_UDP6_COMPLETION_TOKEN  *Token
+  IN NET_MAP                   *TokenMap,
+  IN EFI_UDP6_COMPLETION_TOKEN *Token
   );
 
 /**
@@ -513,8 +513,8 @@ Udp6RemoveToken (
 **/
 BOOLEAN
 Udp6IsReconfigurable (
-  IN EFI_UDP6_CONFIG_DATA  *OldConfigData,
-  IN EFI_UDP6_CONFIG_DATA  *NewConfigData
+  IN EFI_UDP6_CONFIG_DATA *OldConfigData,
+  IN EFI_UDP6_CONFIG_DATA *NewConfigData
   );
 
 /**
@@ -534,9 +534,9 @@ Udp6IsReconfigurable (
 EFI_STATUS
 EFIAPI
 Udp6LeaveGroup (
-  IN NET_MAP       *Map,
-  IN NET_MAP_ITEM  *Item,
-  IN VOID          *Arg OPTIONAL
+  IN NET_MAP      *Map,
+  IN NET_MAP_ITEM *Item,
+  IN VOID         *Arg OPTIONAL
   );
 
 /**
@@ -570,8 +570,8 @@ Udp6LeaveGroup (
 **/
 EFI_STATUS
 Udp6ValidateTxToken (
-  IN UDP6_INSTANCE_DATA         *Instance,
-  IN EFI_UDP6_COMPLETION_TOKEN  *TxToken
+  IN UDP6_INSTANCE_DATA        *Instance,
+  IN EFI_UDP6_COMPLETION_TOKEN *TxToken
   );
 
 /**
@@ -584,7 +584,7 @@ Udp6ValidateTxToken (
 VOID
 EFIAPI
 Udp6NetVectorExtFree (
-  IN VOID  *Context
+  IN VOID *Context
   );
 
 /**
@@ -612,7 +612,7 @@ Udp6Checksum (
 **/
 VOID
 Udp6InstanceDeliverDgram (
-  IN UDP6_INSTANCE_DATA  *Instance
+  IN UDP6_INSTANCE_DATA *Instance
   );
 
 /**
@@ -629,8 +629,8 @@ Udp6InstanceDeliverDgram (
 **/
 EFI_STATUS
 Udp6InstanceCancelToken (
-  IN UDP6_INSTANCE_DATA         *Instance,
-  IN EFI_UDP6_COMPLETION_TOKEN  *Token OPTIONAL
+  IN UDP6_INSTANCE_DATA        *Instance,
+  IN EFI_UDP6_COMPLETION_TOKEN *Token OPTIONAL
   );
 
 /**
@@ -641,8 +641,7 @@ Udp6InstanceCancelToken (
 **/
 VOID
 Udp6FlushRcvdDgram (
-  IN UDP6_INSTANCE_DATA  *Instance
+  IN UDP6_INSTANCE_DATA *Instance
   );
 
 #endif
-

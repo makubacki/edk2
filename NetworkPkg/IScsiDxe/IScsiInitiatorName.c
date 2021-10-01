@@ -8,11 +8,10 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "IScsiImpl.h"
 
-EFI_ISCSI_INITIATOR_NAME_PROTOCOL gIScsiInitiatorName = {
+EFI_ISCSI_INITIATOR_NAME_PROTOCOL  gIScsiInitiatorName = {
   IScsiGetInitiatorName,
   IScsiSetInitiatorName
 };
-
 
 /**
   Retrieves the current set value of iSCSI Initiator Name.
@@ -42,9 +41,9 @@ EFI_ISCSI_INITIATOR_NAME_PROTOCOL gIScsiInitiatorName = {
 EFI_STATUS
 EFIAPI
 IScsiGetInitiatorName (
-  IN     EFI_ISCSI_INITIATOR_NAME_PROTOCOL  *This,
-  IN OUT UINTN                              *BufferSize,
-  OUT    VOID                               *Buffer
+  IN     EFI_ISCSI_INITIATOR_NAME_PROTOCOL *This,
+  IN OUT UINTN                             *BufferSize,
+  OUT    VOID                              *Buffer
   )
 {
   EFI_STATUS  Status;
@@ -63,7 +62,6 @@ IScsiGetInitiatorName (
 
   return Status;
 }
-
 
 /**
   Sets the iSSI Initiator Name.
@@ -95,9 +93,9 @@ IScsiGetInitiatorName (
 EFI_STATUS
 EFIAPI
 IScsiSetInitiatorName (
-  IN     EFI_ISCSI_INITIATOR_NAME_PROTOCOL  *This,
-  IN OUT UINTN                              *BufferSize,
-  IN     VOID                               *Buffer
+  IN     EFI_ISCSI_INITIATOR_NAME_PROTOCOL *This,
+  IN OUT UINTN                             *BufferSize,
+  IN     VOID                              *Buffer
   )
 {
   EFI_STATUS  Status;
@@ -110,10 +108,11 @@ IScsiSetInitiatorName (
     *BufferSize = ISCSI_NAME_MAX_SIZE;
     return EFI_INVALID_PARAMETER;
   }
+
   //
   // Only support iqn iSCSI names.
   //
-  Status = IScsiNormalizeName ((CHAR8 *) Buffer, *BufferSize - 1);
+  Status = IScsiNormalizeName ((CHAR8 *)Buffer, *BufferSize - 1);
   if (EFI_ERROR (Status)) {
     return Status;
   }

@@ -14,49 +14,47 @@ typedef struct _ISCSI_DRIVER_DATA ISCSI_DRIVER_DATA;
 ///
 /// IPv4 Device Path Node Length
 ///
-#define IP4_NODE_LEN_NEW_VERSIONS    27
+#define IP4_NODE_LEN_NEW_VERSIONS  27
 
 ///
 /// IPv6 Device Path Node Length
 ///
-#define IP6_NODE_LEN_OLD_VERSIONS    43
-#define IP6_NODE_LEN_NEW_VERSIONS    60
+#define IP6_NODE_LEN_OLD_VERSIONS  43
+#define IP6_NODE_LEN_NEW_VERSIONS  60
 
 ///
 /// The ignored field StaticIpAddress's offset in old IPv6 Device Path
 ///
-#define IP6_OLD_IPADDRESS_OFFSET      42
-
+#define IP6_OLD_IPADDRESS_OFFSET  42
 
 #pragma pack(1)
 typedef struct _ISCSI_SESSION_CONFIG_NVDATA {
-  UINT16            TargetPort;
-  UINT8             Enabled;
-  UINT8             IpMode;
+  UINT16              TargetPort;
+  UINT8               Enabled;
+  UINT8               IpMode;
 
-  EFI_IP_ADDRESS    LocalIp;
-  EFI_IPv4_ADDRESS  SubnetMask;
-  EFI_IP_ADDRESS    Gateway;
+  EFI_IP_ADDRESS      LocalIp;
+  EFI_IPv4_ADDRESS    SubnetMask;
+  EFI_IP_ADDRESS      Gateway;
 
-  BOOLEAN           InitiatorInfoFromDhcp;
-  BOOLEAN           TargetInfoFromDhcp;
+  BOOLEAN             InitiatorInfoFromDhcp;
+  BOOLEAN             TargetInfoFromDhcp;
 
-  CHAR8             TargetName[ISCSI_NAME_MAX_SIZE];
-  EFI_IP_ADDRESS    TargetIp;
-  UINT8             PrefixLength;
-  UINT8             BootLun[8];
+  CHAR8               TargetName[ISCSI_NAME_MAX_SIZE];
+  EFI_IP_ADDRESS      TargetIp;
+  UINT8               PrefixLength;
+  UINT8               BootLun[8];
 
-  UINT16            ConnectTimeout; ///< timeout value in milliseconds.
-  UINT8             ConnectRetryCount;
-  UINT8             IsId[6];
+  UINT16              ConnectTimeout; ///< timeout value in milliseconds.
+  UINT8               ConnectRetryCount;
+  UINT8               IsId[6];
 
-  BOOLEAN           RedirectFlag;
-  UINT16            OriginalTargetPort;     // The port of proxy/virtual target.
-  EFI_IP_ADDRESS    OriginalTargetIp;       // The address of proxy/virtual target.
+  BOOLEAN             RedirectFlag;
+  UINT16              OriginalTargetPort;   // The port of proxy/virtual target.
+  EFI_IP_ADDRESS      OriginalTargetIp;     // The address of proxy/virtual target.
 
-  BOOLEAN           DnsMode;  // Flag indicate whether the Target address is expressed as URL format.
-  CHAR8             TargetUrl[ISCSI_TARGET_URI_MAX_SIZE];
-
+  BOOLEAN             DnsMode; // Flag indicate whether the Target address is expressed as URL format.
+  CHAR8               TargetUrl[ISCSI_TARGET_URI_MAX_SIZE];
 } ISCSI_SESSION_CONFIG_NVDATA;
 #pragma pack()
 
@@ -71,7 +69,7 @@ typedef struct _ISCSI_SESSION_CONFIG_NVDATA {
 **/
 UINT8
 IScsiGetSubnetMaskPrefixLength (
-  IN EFI_IPv4_ADDRESS  *SubnetMask
+  IN EFI_IPv4_ADDRESS *SubnetMask
   );
 
 /**
@@ -86,8 +84,8 @@ IScsiGetSubnetMaskPrefixLength (
 **/
 EFI_STATUS
 IScsiAsciiStrToLun (
-  IN  CHAR8  *Str,
-  OUT UINT8  *Lun
+  IN  CHAR8 *Str,
+  OUT UINT8 *Lun
   );
 
 /**
@@ -99,8 +97,8 @@ IScsiAsciiStrToLun (
 **/
 VOID
 IScsiLunToUnicodeStr (
-  IN UINT8    *Lun,
-  OUT CHAR16  *String
+  IN UINT8   *Lun,
+  OUT CHAR16 *String
   );
 
 /**
@@ -114,10 +112,10 @@ IScsiLunToUnicodeStr (
 **/
 VOID
 IScsiMacAddrToStr (
-  IN  EFI_MAC_ADDRESS  *Mac,
-  IN  UINT32           Len,
-  IN  UINT16           VlanId,
-  OUT CHAR16           *Str
+  IN  EFI_MAC_ADDRESS *Mac,
+  IN  UINT32          Len,
+  IN  UINT16          VlanId,
+  OUT CHAR16          *Str
   );
 
 /**
@@ -134,9 +132,9 @@ IScsiMacAddrToStr (
 **/
 EFI_STATUS
 IScsiAsciiStrToIp (
-  IN  CHAR8             *Str,
-  IN  UINT8             IpMode,
-  OUT EFI_IP_ADDRESS    *Ip
+  IN  CHAR8          *Str,
+  IN  UINT8          IpMode,
+  OUT EFI_IP_ADDRESS *Ip
   );
 
 /**
@@ -185,7 +183,6 @@ IScsiHexToBin (
   IN     CHAR8  *HexStr
   );
 
-
 /**
   Convert the decimal-constant string or hex-constant string into a numerical value.
 
@@ -196,7 +193,7 @@ IScsiHexToBin (
 **/
 UINTN
 IScsiNetNtoi (
-  IN     CHAR8  *Str
+  IN     CHAR8 *Str
   );
 
 /**
@@ -208,8 +205,8 @@ IScsiNetNtoi (
 **/
 VOID
 IScsiGenRandom (
-  IN OUT UINT8  *Rand,
-  IN     UINTN  RandLength
+  IN OUT UINT8 *Rand,
+  IN     UINTN RandLength
   );
 
 /**
@@ -225,8 +222,8 @@ IScsiGenRandom (
 **/
 EFI_STATUS
 IScsiAddNic (
-  IN EFI_HANDLE  Controller,
-  IN EFI_HANDLE  Image
+  IN EFI_HANDLE Controller,
+  IN EFI_HANDLE Image
   );
 
 /**
@@ -241,7 +238,7 @@ IScsiAddNic (
 **/
 EFI_STATUS
 IScsiRemoveNic (
-  IN EFI_HANDLE  Controller
+  IN EFI_HANDLE Controller
   );
 
 /**
@@ -255,7 +252,7 @@ IScsiRemoveNic (
 **/
 EFI_STATUS
 IScsiCreateAttempts (
-  IN UINTN            AttemptNum
+  IN UINTN AttemptNum
   );
 
 /**
@@ -269,7 +266,7 @@ IScsiCreateAttempts (
 **/
 EFI_STATUS
 IScsiCreateKeywords (
-  IN UINTN            KeywordNum
+  IN UINTN KeywordNum
   );
 
 /**
@@ -292,9 +289,8 @@ IScsiCleanAttemptVariable (
 **/
 ISCSI_NIC_INFO *
 IScsiGetNicInfoByIndex (
-  IN UINT8      NicIndex
+  IN UINT8 NicIndex
   );
-
 
 /**
   Get the NIC's PCI location and return it according to the composited
@@ -310,10 +306,10 @@ IScsiGetNicInfoByIndex (
 **/
 UINT16
 IScsiGetNICPciLocation (
-  IN EFI_HANDLE  Controller,
-  OUT UINTN      *Bus,
-  OUT UINTN      *Device,
-  OUT UINTN      *Function
+  IN EFI_HANDLE Controller,
+  OUT UINTN     *Bus,
+  OUT UINTN     *Device,
+  OUT UINTN     *Function
   );
 
 /**
@@ -331,9 +327,9 @@ IScsiGetNICPciLocation (
 **/
 VOID *
 IScsiGetVariableAndSize (
-  IN  CHAR16              *Name,
-  IN  EFI_GUID            *VendorGuid,
-  OUT UINTN               *VariableSize
+  IN  CHAR16   *Name,
+  IN  EFI_GUID *VendorGuid,
+  OUT UINTN    *VariableSize
   );
 
 /**
@@ -348,8 +344,8 @@ IScsiGetVariableAndSize (
 **/
 ISCSI_DRIVER_DATA *
 IScsiCreateDriverData (
-  IN EFI_HANDLE  Image,
-  IN EFI_HANDLE  Controller
+  IN EFI_HANDLE Image,
+  IN EFI_HANDLE Controller
   );
 
 /**
@@ -363,7 +359,7 @@ IScsiCreateDriverData (
 **/
 EFI_STATUS
 IScsiCleanDriverData (
-  IN ISCSI_DRIVER_DATA  *Private
+  IN ISCSI_DRIVER_DATA *Private
   );
 
 /**
@@ -378,8 +374,8 @@ IScsiCleanDriverData (
 **/
 BOOLEAN
 IScsiDhcpIsConfigured (
-  IN EFI_HANDLE  Controller,
-  IN UINT8       IpVersion
+  IN EFI_HANDLE Controller,
+  IN UINT8      IpVersion
   );
 
 /**
@@ -393,7 +389,7 @@ IScsiDhcpIsConfigured (
 **/
 BOOLEAN
 IScsiDnsIsConfigured (
-  IN EFI_HANDLE  Controller
+  IN EFI_HANDLE Controller
   );
 
 /**
@@ -408,7 +404,7 @@ IScsiDnsIsConfigured (
 **/
 EFI_STATUS
 IScsiGetConfigData (
-  IN ISCSI_DRIVER_DATA  *Private
+  IN ISCSI_DRIVER_DATA *Private
   );
 
 /**
@@ -422,7 +418,7 @@ IScsiGetConfigData (
 **/
 EFI_DEVICE_PATH_PROTOCOL *
 IScsiGetTcpConnDevicePath (
-  IN ISCSI_SESSION      *Session
+  IN ISCSI_SESSION *Session
   );
 
 /**
@@ -435,8 +431,8 @@ IScsiGetTcpConnDevicePath (
 VOID
 EFIAPI
 IScsiOnExitBootService (
-  IN EFI_EVENT  Event,
-  IN VOID       *Context
+  IN EFI_EVENT Event,
+  IN VOID      *Context
   );
 
 /**
@@ -465,8 +461,9 @@ IScsiOnExitBootService (
 EFI_STATUS
 EFIAPI
 IScsiTestManagedDevice (
-  IN  EFI_HANDLE       ControllerHandle,
-  IN  EFI_HANDLE       DriverBindingHandle,
-  IN  EFI_GUID         *ProtocolGuid
+  IN  EFI_HANDLE ControllerHandle,
+  IN  EFI_HANDLE DriverBindingHandle,
+  IN  EFI_GUID   *ProtocolGuid
   );
+
 #endif

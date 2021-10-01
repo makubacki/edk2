@@ -9,7 +9,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include "ArpDriver.h"
 #include "ArpImpl.h"
 
-EFI_DRIVER_BINDING_PROTOCOL gArpDriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  gArpDriverBinding = {
   ArpDriverBindingSupported,
   ArpDriverBindingStart,
   ArpDriverBindingStop,
@@ -17,7 +17,6 @@ EFI_DRIVER_BINDING_PROTOCOL gArpDriverBinding = {
   NULL,
   NULL
 };
-
 
 /**
   Create and initialize the arp service context data.
@@ -37,9 +36,9 @@ EFI_DRIVER_BINDING_PROTOCOL gArpDriverBinding = {
 **/
 EFI_STATUS
 ArpCreateService (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_HANDLE        ControllerHandle,
-  IN OUT ARP_SERVICE_DATA  *ArpService
+  IN EFI_HANDLE           ImageHandle,
+  IN EFI_HANDLE           ControllerHandle,
+  IN OUT ARP_SERVICE_DATA *ArpService
   )
 {
   EFI_STATUS  Status;
@@ -65,7 +64,7 @@ ArpCreateService (
   //
   // Save the handles.
   //
-  ArpService->ImageHandle      = ImageHandle;
+  ArpService->ImageHandle = ImageHandle;
   ArpService->ControllerHandle = ControllerHandle;
 
   //
@@ -117,14 +116,14 @@ ArpCreateService (
   //
   ArpService->MnpConfigData.ReceivedQueueTimeoutValue = 0;
   ArpService->MnpConfigData.TransmitQueueTimeoutValue = 0;
-  ArpService->MnpConfigData.ProtocolTypeFilter        = ARP_ETHER_PROTO_TYPE;
-  ArpService->MnpConfigData.EnableUnicastReceive      = TRUE;
-  ArpService->MnpConfigData.EnableMulticastReceive    = FALSE;
-  ArpService->MnpConfigData.EnableBroadcastReceive    = TRUE;
-  ArpService->MnpConfigData.EnablePromiscuousReceive  = FALSE;
-  ArpService->MnpConfigData.FlushQueuesOnReset        = TRUE;
-  ArpService->MnpConfigData.EnableReceiveTimestamps   = FALSE;
-  ArpService->MnpConfigData.DisableBackgroundPolling  = FALSE;
+  ArpService->MnpConfigData.ProtocolTypeFilter       = ARP_ETHER_PROTO_TYPE;
+  ArpService->MnpConfigData.EnableUnicastReceive     = TRUE;
+  ArpService->MnpConfigData.EnableMulticastReceive   = FALSE;
+  ArpService->MnpConfigData.EnableBroadcastReceive   = TRUE;
+  ArpService->MnpConfigData.EnablePromiscuousReceive = FALSE;
+  ArpService->MnpConfigData.FlushQueuesOnReset       = TRUE;
+  ArpService->MnpConfigData.EnableReceiveTimestamps  = FALSE;
+  ArpService->MnpConfigData.DisableBackgroundPolling = FALSE;
 
   //
   // Configure the Mnp child.
@@ -176,7 +175,6 @@ ERROR_EXIT:
   return Status;
 }
 
-
 /**
   Clean the arp service context data.
 
@@ -188,7 +186,7 @@ ERROR_EXIT:
 **/
 VOID
 ArpCleanService (
-  IN OUT ARP_SERVICE_DATA  *ArpService
+  IN OUT ARP_SERVICE_DATA *ArpService
   )
 {
   NET_CHECK_SIGNATURE (ArpService, ARP_SERVICE_DATA_SIGNATURE);
@@ -226,7 +224,7 @@ ArpCleanService (
     //
     // Destroy the mnp child.
     //
-    NetLibDestroyServiceChild(
+    NetLibDestroyServiceChild (
       ArpService->ControllerHandle,
       ArpService->ImageHandle,
       &gEfiManagedNetworkServiceBindingProtocolGuid,
@@ -248,19 +246,19 @@ ArpCleanService (
 EFI_STATUS
 EFIAPI
 ArpDestroyChildEntryInHandleBuffer (
-  IN LIST_ENTRY         *Entry,
-  IN VOID               *Context
+  IN LIST_ENTRY *Entry,
+  IN VOID       *Context
   )
 {
   ARP_INSTANCE_DATA             *Instance;
   EFI_SERVICE_BINDING_PROTOCOL  *ServiceBinding;
 
-  if (Entry == NULL || Context == NULL) {
+  if ((Entry == NULL) || (Context == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
 
   Instance = NET_LIST_USER_STRUCT_S (Entry, ARP_INSTANCE_DATA, List, ARP_INSTANCE_DATA_SIGNATURE);
-  ServiceBinding    = (EFI_SERVICE_BINDING_PROTOCOL *) Context;
+  ServiceBinding = (EFI_SERVICE_BINDING_PROTOCOL *)Context;
 
   return ServiceBinding->DestroyChild (ServiceBinding, Instance->Handle);
 }
@@ -297,9 +295,9 @@ ArpDestroyChildEntryInHandleBuffer (
 EFI_STATUS
 EFIAPI
 ArpDriverBindingSupported (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   )
 {
   EFI_STATUS  Status;
@@ -333,7 +331,6 @@ ArpDriverBindingSupported (
 
   return Status;
 }
-
 
 /**
   Start this driver on ControllerHandle.
@@ -369,9 +366,9 @@ ArpDriverBindingSupported (
 EFI_STATUS
 EFIAPI
 ArpDriverBindingStart (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   )
 {
   EFI_STATUS        Status;
@@ -380,7 +377,7 @@ ArpDriverBindingStart (
   //
   // Allocate a zero pool for ArpService.
   //
-  ArpService = AllocateZeroPool (sizeof(ARP_SERVICE_DATA));
+  ArpService = AllocateZeroPool (sizeof (ARP_SERVICE_DATA));
   if (ArpService == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -427,7 +424,6 @@ ERROR:
   return Status;
 }
 
-
 /**
   Stop this driver on ControllerHandle.
 
@@ -460,10 +456,10 @@ ERROR:
 EFI_STATUS
 EFIAPI
 ArpDriverBindingStop (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN UINTN                        NumberOfChildren,
-  IN EFI_HANDLE                   *ChildHandleBuffer
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN UINTN                       NumberOfChildren,
+  IN EFI_HANDLE                  *ChildHandleBuffer
   )
 {
   EFI_STATUS                    Status;
@@ -502,7 +498,7 @@ ArpDriverBindingStop (
     //
     // NumberOfChildren is not zero, destroy all the ARP children instances.
     //
-    List = &ArpService->ChildrenList;
+    List   = &ArpService->ChildrenList;
     Status = NetDestroyLinkList (
                List,
                ArpDestroyChildEntryInHandleBuffer,
@@ -557,8 +553,8 @@ ArpDriverBindingStop (
 EFI_STATUS
 EFIAPI
 ArpServiceBindingCreateChild (
-  IN EFI_SERVICE_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                    *ChildHandle
+  IN EFI_SERVICE_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                   *ChildHandle
   )
 {
   EFI_STATUS         Status;
@@ -576,7 +572,7 @@ ArpServiceBindingCreateChild (
   //
   // Allocate memory for the instance context data.
   //
-  Instance = AllocateZeroPool (sizeof(ARP_INSTANCE_DATA));
+  Instance = AllocateZeroPool (sizeof (ARP_INSTANCE_DATA));
   if (Instance == NULL) {
     DEBUG ((EFI_D_ERROR, "ArpSBCreateChild: Failed to allocate memory for Instance.\n"));
 
@@ -615,7 +611,7 @@ ArpServiceBindingCreateChild (
   Status = gBS->OpenProtocol (
                   ArpService->MnpChildHandle,
                   &gEfiManagedNetworkProtocolGuid,
-                  (VOID **) &Mnp,
+                  (VOID **)&Mnp,
                   gArpDriverBinding.DriverBindingHandle,
                   Instance->Handle,
                   EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
@@ -637,7 +633,6 @@ ArpServiceBindingCreateChild (
 ERROR:
 
   if (EFI_ERROR (Status)) {
-
     gBS->CloseProtocol (
            ArpService->MnpChildHandle,
            &gEfiManagedNetworkProtocolGuid,
@@ -661,7 +656,6 @@ ERROR:
   return Status;
 }
 
-
 /**
   Destroys a child handle with a protocol installed on it.
 
@@ -684,8 +678,8 @@ ERROR:
 EFI_STATUS
 EFIAPI
 ArpServiceBindingDestroyChild (
-  IN EFI_SERVICE_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                    ChildHandle
+  IN EFI_SERVICE_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                   ChildHandle
   )
 {
   EFI_STATUS         Status;
@@ -746,8 +740,11 @@ ArpServiceBindingDestroyChild (
                   NULL
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_ERROR, "ArpSBDestroyChild: Failed to uninstall the arp protocol, %r.\n",
-      Status));
+    DEBUG ((
+      EFI_D_ERROR,
+      "ArpSBDestroyChild: Failed to uninstall the arp protocol, %r.\n",
+      Status
+      ));
 
     Instance->InDestroy = FALSE;
     return Status;
@@ -795,8 +792,8 @@ ArpServiceBindingDestroyChild (
 EFI_STATUS
 EFIAPI
 ArpDriverEntryPoint (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
   return EfiLibInstallDriverBindingComponentName2 (
@@ -808,4 +805,3 @@ ArpDriverEntryPoint (
            &gArpComponentName2
            );
 }
-

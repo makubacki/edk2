@@ -9,11 +9,10 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #ifndef _ISCSI_DHCP6_H_
 #define _ISCSI_DHCP6_H_
 
-#define ISCSI_ROOT_PATH_ID                   "iscsi:"
-#define ISCSI_ROOT_PATH_FIELD_DELIMITER      ':'
-#define ISCSI_ROOT_PATH_ADDR_START_DELIMITER '['
-#define ISCSI_ROOT_PATH_ADDR_END_DELIMITER   ']'
-
+#define ISCSI_ROOT_PATH_ID                    "iscsi:"
+#define ISCSI_ROOT_PATH_FIELD_DELIMITER       ':'
+#define ISCSI_ROOT_PATH_ADDR_START_DELIMITER  '['
+#define ISCSI_ROOT_PATH_ADDR_END_DELIMITER    ']'
 
 /**
   Extract the Root Path option and get the required target information from
@@ -33,8 +32,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 **/
 EFI_STATUS
 IScsiDhcp6ExtractRootPath (
-  IN     CHAR8                        *RootPath,
-  IN     UINT16                       Length,
+  IN     CHAR8                       *RootPath,
+  IN     UINT16                      Length,
   IN OUT ISCSI_ATTEMPT_CONFIG_NVDATA *ConfigData
   );
 

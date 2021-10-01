@@ -29,9 +29,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 QueueDpc (
-  IN EFI_TPL            DpcTpl,
-  IN EFI_DPC_PROCEDURE  DpcProcedure,
-  IN VOID               *DpcContext    OPTIONAL
+  IN EFI_TPL           DpcTpl,
+  IN EFI_DPC_PROCEDURE DpcProcedure,
+  IN VOID              *DpcContext    OPTIONAL
   );
 
 /**

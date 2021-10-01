@@ -35,9 +35,9 @@
 EFI_STATUS
 EFIAPI
 WifiMgrDxeComponentNameGetDriverName (
-  IN EFI_COMPONENT_NAME2_PROTOCOL  *This,
-  IN  CHAR8                        *Language,
-  OUT CHAR16                       **DriverName
+  IN EFI_COMPONENT_NAME2_PROTOCOL *This,
+  IN  CHAR8                       *Language,
+  OUT CHAR16                      **DriverName
   );
 
 /**
@@ -83,11 +83,11 @@ WifiMgrDxeComponentNameGetDriverName (
 EFI_STATUS
 EFIAPI
 WifiMgrDxeComponentNameGetControllerName (
-  IN  EFI_COMPONENT_NAME2_PROTOCOL  *This,
-  IN  EFI_HANDLE                    ControllerHandle,
-  IN  EFI_HANDLE                    ChildHandle        OPTIONAL,
-  IN  CHAR8                         *Language,
-  OUT CHAR16                        **ControllerName
+  IN  EFI_COMPONENT_NAME2_PROTOCOL *This,
+  IN  EFI_HANDLE                   ControllerHandle,
+  IN  EFI_HANDLE                   ChildHandle        OPTIONAL,
+  IN  CHAR8                        *Language,
+  OUT CHAR16                       **ControllerName
   );
 
 #endif

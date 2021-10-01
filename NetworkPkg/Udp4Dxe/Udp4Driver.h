@@ -35,9 +35,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 Udp4DriverBindingSupported (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath  OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath  OPTIONAL
   );
 
 /**
@@ -61,9 +61,9 @@ Udp4DriverBindingSupported (
 EFI_STATUS
 EFIAPI
 Udp4DriverBindingStart (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath  OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath  OPTIONAL
   );
 
 /**
@@ -87,10 +87,10 @@ Udp4DriverBindingStart (
 EFI_STATUS
 EFIAPI
 Udp4DriverBindingStop (
-  IN  EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN  EFI_HANDLE                   ControllerHandle,
-  IN  UINTN                        NumberOfChildren,
-  IN  EFI_HANDLE                   *ChildHandleBuffer
+  IN  EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN  EFI_HANDLE                  ControllerHandle,
+  IN  UINTN                       NumberOfChildren,
+  IN  EFI_HANDLE                  *ChildHandleBuffer
   );
 
 /**
@@ -115,8 +115,8 @@ Udp4DriverBindingStop (
 EFI_STATUS
 EFIAPI
 Udp4ServiceBindingCreateChild (
-  IN EFI_SERVICE_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                    *ChildHandle
+  IN EFI_SERVICE_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                   *ChildHandle
   );
 
 /**
@@ -140,9 +140,8 @@ Udp4ServiceBindingCreateChild (
 EFI_STATUS
 EFIAPI
 Udp4ServiceBindingDestroyChild (
-  IN EFI_SERVICE_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                    ChildHandle
+  IN EFI_SERVICE_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                   ChildHandle
   );
 
 #endif
-

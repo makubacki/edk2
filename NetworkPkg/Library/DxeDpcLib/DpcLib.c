@@ -27,8 +27,8 @@ EFI_DPC_PROTOCOL  *mDpc;
 EFI_STATUS
 EFIAPI
 DpcLibConstructor (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
   EFI_STATUS  Status;
@@ -60,9 +60,9 @@ DpcLibConstructor (
 EFI_STATUS
 EFIAPI
 QueueDpc (
-  IN EFI_TPL            DpcTpl,
-  IN EFI_DPC_PROCEDURE  DpcProcedure,
-  IN VOID               *DpcContext    OPTIONAL
+  IN EFI_TPL           DpcTpl,
+  IN EFI_DPC_PROCEDURE DpcProcedure,
+  IN VOID              *DpcContext    OPTIONAL
   )
 {
   //

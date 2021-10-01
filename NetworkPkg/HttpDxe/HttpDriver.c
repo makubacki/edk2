@@ -10,12 +10,12 @@
 
 #include "HttpDriver.h"
 
-EFI_HTTP_UTILITIES_PROTOCOL *mHttpUtilities = NULL;
+EFI_HTTP_UTILITIES_PROTOCOL  *mHttpUtilities = NULL;
 
 ///
 /// Driver Binding Protocol instance
 ///
-EFI_DRIVER_BINDING_PROTOCOL gHttpDxeIp4DriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  gHttpDxeIp4DriverBinding = {
   HttpDxeIp4DriverBindingSupported,
   HttpDxeIp4DriverBindingStart,
   HttpDxeIp4DriverBindingStop,
@@ -24,7 +24,7 @@ EFI_DRIVER_BINDING_PROTOCOL gHttpDxeIp4DriverBinding = {
   NULL
 };
 
-EFI_DRIVER_BINDING_PROTOCOL gHttpDxeIp6DriverBinding = {
+EFI_DRIVER_BINDING_PROTOCOL  gHttpDxeIp6DriverBinding = {
   HttpDxeIp6DriverBindingSupported,
   HttpDxeIp6DriverBindingStart,
   HttpDxeIp6DriverBindingStop,
@@ -32,7 +32,6 @@ EFI_DRIVER_BINDING_PROTOCOL gHttpDxeIp6DriverBinding = {
   NULL,
   NULL
 };
-
 
 /**
   Create a HTTP driver service binding private instance.
@@ -47,11 +46,11 @@ EFI_DRIVER_BINDING_PROTOCOL gHttpDxeIp6DriverBinding = {
 **/
 EFI_STATUS
 HttpCreateService (
-  IN  EFI_HANDLE            Controller,
-  OUT HTTP_SERVICE          **ServiceData
+  IN  EFI_HANDLE   Controller,
+  OUT HTTP_SERVICE **ServiceData
   )
 {
-  HTTP_SERVICE     *HttpService;
+  HTTP_SERVICE  *HttpService;
 
   ASSERT (ServiceData != NULL);
   *ServiceData = NULL;
@@ -62,10 +61,10 @@ HttpCreateService (
   }
 
   HttpService->Signature = HTTP_SERVICE_SIGNATURE;
-  HttpService->ServiceBinding.CreateChild = HttpServiceBindingCreateChild;
+  HttpService->ServiceBinding.CreateChild  = HttpServiceBindingCreateChild;
   HttpService->ServiceBinding.DestroyChild = HttpServiceBindingDestroyChild;
   HttpService->ControllerHandle = Controller;
-  HttpService->ChildrenNumber = 0;
+  HttpService->ChildrenNumber   = 0;
   InitializeListHead (&HttpService->ChildrenList);
 
   *ServiceData = HttpService;
@@ -82,14 +81,14 @@ HttpCreateService (
 **/
 VOID
 HttpCleanService (
-  IN HTTP_SERVICE     *HttpService,
-  IN BOOLEAN          UsingIpv6
+  IN HTTP_SERVICE *HttpService,
+  IN BOOLEAN      UsingIpv6
   )
 {
-
   if (HttpService == NULL) {
-    return ;
+    return;
   }
+
   if (!UsingIpv6) {
     if (HttpService->Tcp4ChildHandle != NULL) {
       gBS->CloseProtocol (
@@ -127,7 +126,6 @@ HttpCleanService (
       HttpService->Tcp6ChildHandle = NULL;
     }
   }
-
 }
 
 /**
@@ -141,21 +139,21 @@ HttpCleanService (
 VOID
 EFIAPI
 HttpUtilitiesInstalledCallback (
-  IN EFI_EVENT  Event,
-  IN VOID       *Context
+  IN EFI_EVENT Event,
+  IN VOID      *Context
   )
 {
   gBS->LocateProtocol (
          &gEfiHttpUtilitiesProtocolGuid,
          NULL,
-         (VOID **) &mHttpUtilities
+         (VOID **)&mHttpUtilities
          );
 
   //
   // Close the event if Http utilities protocol is located.
   //
-  if (mHttpUtilities != NULL && Event != NULL) {
-     gBS->CloseEvent (Event);
+  if ((mHttpUtilities != NULL) && (Event != NULL)) {
+    gBS->CloseEvent (Event);
   }
 }
 
@@ -174,17 +172,17 @@ HttpUtilitiesInstalledCallback (
 EFI_STATUS
 EFIAPI
 HttpDxeDriverEntryPoint (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  EFI_STATUS     Status;
-  VOID           *Registration;
+  EFI_STATUS  Status;
+  VOID        *Registration;
 
   gBS->LocateProtocol (
          &gEfiHttpUtilitiesProtocolGuid,
          NULL,
-         (VOID **) &mHttpUtilities
+         (VOID **)&mHttpUtilities
          );
 
   if (mHttpUtilities == NULL) {
@@ -230,6 +228,7 @@ HttpDxeDriverEntryPoint (
       &gHttpDxeComponentName2
       );
   }
+
   return Status;
 }
 
@@ -247,8 +246,8 @@ HttpDxeDriverEntryPoint (
 EFI_STATUS
 EFIAPI
 HttpDestroyChildEntryInHandleBuffer (
-  IN LIST_ENTRY         *Entry,
-  IN VOID               *Context
+  IN LIST_ENTRY *Entry,
+  IN VOID       *Context
   )
 {
   HTTP_PROTOCOL                 *HttpInstance;
@@ -256,14 +255,14 @@ HttpDestroyChildEntryInHandleBuffer (
   UINTN                         NumberOfChildren;
   EFI_HANDLE                    *ChildHandleBuffer;
 
-  if (Entry == NULL || Context == NULL) {
+  if ((Entry == NULL) || (Context == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
 
-  HttpInstance = NET_LIST_USER_STRUCT_S (Entry, HTTP_PROTOCOL, Link, HTTP_PROTOCOL_SIGNATURE);
-  ServiceBinding    = ((HTTP_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *) Context)->ServiceBinding;
-  NumberOfChildren  = ((HTTP_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *) Context)->NumberOfChildren;
-  ChildHandleBuffer = ((HTTP_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *) Context)->ChildHandleBuffer;
+  HttpInstance      = NET_LIST_USER_STRUCT_S (Entry, HTTP_PROTOCOL, Link, HTTP_PROTOCOL_SIGNATURE);
+  ServiceBinding    = ((HTTP_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ServiceBinding;
+  NumberOfChildren  = ((HTTP_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->NumberOfChildren;
+  ChildHandleBuffer = ((HTTP_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ChildHandleBuffer;
 
   if (!NetIsInHandleBuffer (HttpInstance->Handle, NumberOfChildren, ChildHandleBuffer)) {
     return EFI_SUCCESS;
@@ -289,14 +288,14 @@ HttpDestroyChildEntryInHandleBuffer (
 EFI_STATUS
 EFIAPI
 HttpDxeSupported (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL,
-  IN UINT8                        IpVersion
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL,
+  IN UINT8                       IpVersion
   )
 {
-  EFI_STATUS                      Status;
-  EFI_GUID                        *TcpServiceBindingProtocolGuid;
+  EFI_STATUS  Status;
+  EFI_GUID    *TcpServiceBindingProtocolGuid;
 
   if (IpVersion == IP_VERSION_4) {
     TcpServiceBindingProtocolGuid = &gEfiTcp4ServiceBindingProtocolGuid;
@@ -305,13 +304,13 @@ HttpDxeSupported (
   }
 
   Status = gBS->OpenProtocol (
-                ControllerHandle,
-                TcpServiceBindingProtocolGuid,
-                NULL,
-                This->DriverBindingHandle,
-                ControllerHandle,
-                EFI_OPEN_PROTOCOL_TEST_PROTOCOL
-                );
+                  ControllerHandle,
+                  TcpServiceBindingProtocolGuid,
+                  NULL,
+                  This->DriverBindingHandle,
+                  ControllerHandle,
+                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                  );
 
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
@@ -339,17 +338,17 @@ HttpDxeSupported (
 EFI_STATUS
 EFIAPI
 HttpDxeStart (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL,
-  IN UINT8                        IpVersion
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL,
+  IN UINT8                       IpVersion
   )
 {
-  EFI_STATUS                      Status;
-  EFI_SERVICE_BINDING_PROTOCOL    *ServiceBinding;
-  HTTP_SERVICE                    *HttpService;
-  VOID                            *Interface;
-  BOOLEAN                         UsingIpv6;
+  EFI_STATUS                    Status;
+  EFI_SERVICE_BINDING_PROTOCOL  *ServiceBinding;
+  HTTP_SERVICE                  *HttpService;
+  VOID                          *Interface;
+  BOOLEAN                       UsingIpv6;
 
   UsingIpv6 = FALSE;
 
@@ -359,7 +358,7 @@ HttpDxeStart (
   Status = gBS->OpenProtocol (
                   ControllerHandle,
                   &gEfiHttpServiceBindingProtocolGuid,
-                  (VOID **) &ServiceBinding,
+                  (VOID **)&ServiceBinding,
                   This->DriverBindingHandle,
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
@@ -420,11 +419,9 @@ HttpDxeStart (
       if (EFI_ERROR (Status)) {
         goto ON_ERROR;
       }
-
     } else {
       return EFI_ALREADY_STARTED;
     }
-
   } else {
     UsingIpv6 = TRUE;
     HttpService->Ip6DriverBindingHandle = This->DriverBindingHandle;
@@ -456,11 +453,9 @@ HttpDxeStart (
       if (EFI_ERROR (Status)) {
         goto ON_ERROR;
       }
-
     } else {
       return EFI_ALREADY_STARTED;
     }
-
   }
 
   return EFI_SUCCESS;
@@ -469,14 +464,12 @@ ON_ERROR:
 
   if (HttpService != NULL) {
     HttpCleanService (HttpService, UsingIpv6);
-    if (HttpService->Tcp4ChildHandle == NULL && HttpService->Tcp6ChildHandle == NULL) {
+    if ((HttpService->Tcp4ChildHandle == NULL) && (HttpService->Tcp6ChildHandle == NULL)) {
       FreePool (HttpService);
     }
   }
 
   return Status;
-
-
 }
 
 /**
@@ -498,20 +491,20 @@ ON_ERROR:
 EFI_STATUS
 EFIAPI
 HttpDxeStop (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN UINTN                        NumberOfChildren,
-  IN EFI_HANDLE                   *ChildHandleBuffer,
-  IN UINT8                        IpVersion
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN UINTN                       NumberOfChildren,
+  IN EFI_HANDLE                  *ChildHandleBuffer,
+  IN UINT8                       IpVersion
   )
 {
-  EFI_HANDLE                                 NicHandle;
-  EFI_STATUS                                 Status;
-  EFI_SERVICE_BINDING_PROTOCOL               *ServiceBinding;
-  HTTP_SERVICE                               *HttpService;
-  LIST_ENTRY                                 *List;
-  HTTP_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT   Context;
-  BOOLEAN                                    UsingIpv6;
+  EFI_HANDLE                                NicHandle;
+  EFI_STATUS                                Status;
+  EFI_SERVICE_BINDING_PROTOCOL              *ServiceBinding;
+  HTTP_SERVICE                              *HttpService;
+  LIST_ENTRY                                *List;
+  HTTP_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT  Context;
+  BOOLEAN                                   UsingIpv6;
 
   //
   // HTTP driver opens TCP4(6) child, So, Controller is a TCP4(6)
@@ -533,14 +526,13 @@ HttpDxeStop (
   Status = gBS->OpenProtocol (
                   NicHandle,
                   &gEfiHttpServiceBindingProtocolGuid,
-                  (VOID **) &ServiceBinding,
+                  (VOID **)&ServiceBinding,
                   This->DriverBindingHandle,
                   NicHandle,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
 
   if (!EFI_ERROR (Status)) {
-
     HttpService = HTTP_SERVICE_FROM_PROTOCOL (ServiceBinding);
 
     if (NumberOfChildren != 0) {
@@ -558,10 +550,9 @@ HttpDxeStop (
                  NULL
                  );
     } else {
-
       HttpCleanService (HttpService, UsingIpv6);
 
-      if (HttpService->Tcp4ChildHandle == NULL && HttpService->Tcp6ChildHandle == NULL) {
+      if ((HttpService->Tcp4ChildHandle == NULL) && (HttpService->Tcp6ChildHandle == NULL)) {
         gBS->UninstallProtocolInterface (
                NicHandle,
                &gEfiHttpServiceBindingProtocolGuid,
@@ -569,12 +560,12 @@ HttpDxeStop (
                );
         FreePool (HttpService);
       }
+
       Status = EFI_SUCCESS;
     }
   }
 
   return Status;
-
 }
 
 /**
@@ -622,9 +613,9 @@ HttpDxeStop (
 EFI_STATUS
 EFIAPI
 HttpDxeIp4DriverBindingSupported (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   )
 {
   return HttpDxeSupported (
@@ -674,9 +665,9 @@ HttpDxeIp4DriverBindingSupported (
 EFI_STATUS
 EFIAPI
 HttpDxeIp4DriverBindingStart (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   )
 {
   return HttpDxeStart (
@@ -716,10 +707,10 @@ HttpDxeIp4DriverBindingStart (
 EFI_STATUS
 EFIAPI
 HttpDxeIp4DriverBindingStop (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN UINTN                        NumberOfChildren,
-  IN EFI_HANDLE                   *ChildHandleBuffer OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN UINTN                       NumberOfChildren,
+  IN EFI_HANDLE                  *ChildHandleBuffer OPTIONAL
   )
 {
   return HttpDxeStop (
@@ -776,9 +767,9 @@ HttpDxeIp4DriverBindingStop (
 EFI_STATUS
 EFIAPI
 HttpDxeIp6DriverBindingSupported (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   )
 {
   return HttpDxeSupported (
@@ -787,7 +778,6 @@ HttpDxeIp6DriverBindingSupported (
            RemainingDevicePath,
            IP_VERSION_6
            );
-
 }
 
 /**
@@ -829,9 +819,9 @@ HttpDxeIp6DriverBindingSupported (
 EFI_STATUS
 EFIAPI
 HttpDxeIp6DriverBindingStart (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   )
 {
   return HttpDxeStart (
@@ -871,10 +861,10 @@ HttpDxeIp6DriverBindingStart (
 EFI_STATUS
 EFIAPI
 HttpDxeIp6DriverBindingStop (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN UINTN                        NumberOfChildren,
-  IN EFI_HANDLE                   *ChildHandleBuffer OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN UINTN                       NumberOfChildren,
+  IN EFI_HANDLE                  *ChildHandleBuffer OPTIONAL
   )
 {
   return HttpDxeStop (
@@ -885,6 +875,7 @@ HttpDxeIp6DriverBindingStop (
            IP_VERSION_6
            );
 }
+
 /**
   Creates a child handle and installs a protocol.
 
@@ -907,14 +898,14 @@ HttpDxeIp6DriverBindingStop (
 EFI_STATUS
 EFIAPI
 HttpServiceBindingCreateChild (
-  IN EFI_SERVICE_BINDING_PROTOCOL  *This,
-  IN OUT EFI_HANDLE                *ChildHandle
+  IN EFI_SERVICE_BINDING_PROTOCOL *This,
+  IN OUT EFI_HANDLE               *ChildHandle
   )
 {
-  HTTP_SERVICE         *HttpService;
-  HTTP_PROTOCOL        *HttpInstance;
-  EFI_STATUS           Status;
-  EFI_TPL              OldTpl;
+  HTTP_SERVICE   *HttpService;
+  HTTP_PROTOCOL  *HttpInstance;
+  EFI_STATUS     Status;
+  EFI_TPL        OldTpl;
 
   if ((This == NULL) || (ChildHandle == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -928,7 +919,7 @@ HttpServiceBindingCreateChild (
 
   HttpInstance->Signature = HTTP_PROTOCOL_SIGNATURE;
   HttpInstance->Service   = HttpService;
-  HttpInstance->Method = HttpMethodMax;
+  HttpInstance->Method    = HttpMethodMax;
 
   CopyMem (&HttpInstance->Http, &mEfiHttpTemplate, sizeof (HttpInstance->Http));
   NetMapInit (&HttpInstance->TxTokens);
@@ -948,7 +939,7 @@ HttpServiceBindingCreateChild (
     goto ON_ERROR;
   }
 
-  HttpInstance->Handle    = *ChildHandle;
+  HttpInstance->Handle = *ChildHandle;
 
   //
   // Add it to the HTTP service's child list.
@@ -990,15 +981,15 @@ ON_ERROR:
 EFI_STATUS
 EFIAPI
 HttpServiceBindingDestroyChild (
-  IN EFI_SERVICE_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                    ChildHandle
+  IN EFI_SERVICE_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                   ChildHandle
   )
 {
-  HTTP_SERVICE             *HttpService;
-  HTTP_PROTOCOL            *HttpInstance;
-  EFI_HTTP_PROTOCOL        *Http;
-  EFI_STATUS                Status;
-  EFI_TPL                   OldTpl;
+  HTTP_SERVICE       *HttpService;
+  HTTP_PROTOCOL      *HttpInstance;
+  EFI_HTTP_PROTOCOL  *Http;
+  EFI_STATUS         Status;
+  EFI_TPL            OldTpl;
 
   if ((This == NULL) || (ChildHandle == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -1008,7 +999,7 @@ HttpServiceBindingDestroyChild (
   Status = gBS->OpenProtocol (
                   ChildHandle,
                   &gEfiHttpProtocolGuid,
-                  (VOID **) &Http,
+                  (VOID **)&Http,
                   NULL,
                   NULL,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
