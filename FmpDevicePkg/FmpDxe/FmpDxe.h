@@ -45,18 +45,18 @@
 ///
 ///
 ///
-#define FIRMWARE_MANAGEMENT_PRIVATE_DATA_SIGNATURE SIGNATURE_32 ('f','m','p','p')
+#define FIRMWARE_MANAGEMENT_PRIVATE_DATA_SIGNATURE  SIGNATURE_32 ('f','m','p','p')
 
 typedef struct {
-  UINTN                                        Signature;
-  EFI_HANDLE                                   Handle;
-  EFI_FIRMWARE_MANAGEMENT_PROTOCOL             Fmp;
-  BOOLEAN                                      DescriptorPopulated;
-  EFI_FIRMWARE_IMAGE_DESCRIPTOR                Descriptor;
-  CHAR16                                       *ImageIdName;
-  CHAR16                                       *VersionName;
-  BOOLEAN                                      RuntimeVersionSupported;
-  EFI_EVENT                                    FmpDeviceLockEvent;
+  UINTN                               Signature;
+  EFI_HANDLE                          Handle;
+  EFI_FIRMWARE_MANAGEMENT_PROTOCOL    Fmp;
+  BOOLEAN                             DescriptorPopulated;
+  EFI_FIRMWARE_IMAGE_DESCRIPTOR       Descriptor;
+  CHAR16                              *ImageIdName;
+  CHAR16                              *VersionName;
+  BOOLEAN                             RuntimeVersionSupported;
+  EFI_EVENT                           FmpDeviceLockEvent;
   //
   // Indicates if an attempt has been made to lock a
   // FLASH storage device by calling FmpDeviceLock().
@@ -64,14 +64,14 @@ typedef struct {
   // so this variable is set to TRUE even if FmpDeviceLock()
   // returns an error.
   //
-  BOOLEAN                                      FmpDeviceLocked;
-  VOID                                         *FmpDeviceContext;
-  CHAR16                                       *VersionVariableName;
-  CHAR16                                       *LsvVariableName;
-  CHAR16                                       *LastAttemptStatusVariableName;
-  CHAR16                                       *LastAttemptVersionVariableName;
-  CHAR16                                       *FmpStateVariableName;
-  BOOLEAN                                      DependenciesSatisfied;
+  BOOLEAN                             FmpDeviceLocked;
+  VOID                                *FmpDeviceContext;
+  CHAR16                              *VersionVariableName;
+  CHAR16                              *LsvVariableName;
+  CHAR16                              *LastAttemptStatusVariableName;
+  CHAR16                              *LastAttemptVersionVariableName;
+  CHAR16                              *FmpStateVariableName;
+  BOOLEAN                             DependenciesSatisfied;
 } FIRMWARE_MANAGEMENT_PRIVATE_DATA;
 
 ///
@@ -141,14 +141,14 @@ DetectTestKey (
 EFI_STATUS
 EFIAPI
 GetTheImageInfo (
-  IN     EFI_FIRMWARE_MANAGEMENT_PROTOCOL  *This,
-  IN OUT UINTN                             *ImageInfoSize,
-  IN OUT EFI_FIRMWARE_IMAGE_DESCRIPTOR     *ImageInfo,
-  OUT    UINT32                            *DescriptorVersion,
-  OUT    UINT8                             *DescriptorCount,
-  OUT    UINTN                             *DescriptorSize,
-  OUT    UINT32                            *PackageVersion,
-  OUT    CHAR16                            **PackageVersionName
+  IN     EFI_FIRMWARE_MANAGEMENT_PROTOCOL *This,
+  IN OUT UINTN                            *ImageInfoSize,
+  IN OUT EFI_FIRMWARE_IMAGE_DESCRIPTOR    *ImageInfo,
+  OUT    UINT32                           *DescriptorVersion,
+  OUT    UINT8                            *DescriptorCount,
+  OUT    UINTN                            *DescriptorSize,
+  OUT    UINT32                           *PackageVersion,
+  OUT    CHAR16                           **PackageVersionName
   );
 
 /**
@@ -177,12 +177,11 @@ GetTheImageInfo (
 EFI_STATUS
 EFIAPI
 GetTheImage (
-  IN     EFI_FIRMWARE_MANAGEMENT_PROTOCOL  *This,
-  IN     UINT8                             ImageIndex,
-  IN OUT VOID                              *Image,
-  IN OUT UINTN                             *ImageSize
+  IN     EFI_FIRMWARE_MANAGEMENT_PROTOCOL *This,
+  IN     UINT8                            ImageIndex,
+  IN OUT VOID                             *Image,
+  IN OUT UINTN                            *ImageSize
   );
-
 
 /**
   Checks if the firmware image is valid for the device.
@@ -208,11 +207,11 @@ GetTheImage (
 EFI_STATUS
 EFIAPI
 CheckTheImage (
-  IN  EFI_FIRMWARE_MANAGEMENT_PROTOCOL  *This,
-  IN  UINT8                             ImageIndex,
-  IN  CONST VOID                        *Image,
-  IN  UINTN                             ImageSize,
-  OUT UINT32                            *ImageUpdatable
+  IN  EFI_FIRMWARE_MANAGEMENT_PROTOCOL *This,
+  IN  UINT8                            ImageIndex,
+  IN  CONST VOID                       *Image,
+  IN  UINTN                            ImageSize,
+  OUT UINT32                           *ImageUpdatable
   );
 
 /**
@@ -264,13 +263,13 @@ CheckTheImage (
 EFI_STATUS
 EFIAPI
 SetTheImage (
-  IN  EFI_FIRMWARE_MANAGEMENT_PROTOCOL               *This,
-  IN  UINT8                                          ImageIndex,
-  IN  CONST VOID                                     *Image,
-  IN  UINTN                                          ImageSize,
-  IN  CONST VOID                                     *VendorCode,
-  IN  EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS  Progress,
-  OUT CHAR16                                         **AbortReason
+  IN  EFI_FIRMWARE_MANAGEMENT_PROTOCOL              *This,
+  IN  UINT8                                         ImageIndex,
+  IN  CONST VOID                                    *Image,
+  IN  UINTN                                         ImageSize,
+  IN  CONST VOID                                    *VendorCode,
+  IN  EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS Progress,
+  OUT CHAR16                                        **AbortReason
   );
 
 /**
@@ -308,12 +307,12 @@ SetTheImage (
 EFI_STATUS
 EFIAPI
 GetPackageInfo (
-  IN  EFI_FIRMWARE_MANAGEMENT_PROTOCOL  *This,
-  OUT UINT32                            *PackageVersion,
-  OUT CHAR16                            **PackageVersionName,
-  OUT UINT32                            *PackageVersionNameMaxLen,
-  OUT UINT64                            *AttributesSupported,
-  OUT UINT64                            *AttributesSetting
+  IN  EFI_FIRMWARE_MANAGEMENT_PROTOCOL *This,
+  OUT UINT32                           *PackageVersion,
+  OUT CHAR16                           **PackageVersionName,
+  OUT UINT32                           *PackageVersionNameMaxLen,
+  OUT UINT64                           *AttributesSupported,
+  OUT UINT64                           *AttributesSetting
   );
 
 /**
@@ -350,12 +349,12 @@ GetPackageInfo (
 EFI_STATUS
 EFIAPI
 SetPackageInfo (
-  IN EFI_FIRMWARE_MANAGEMENT_PROTOCOL  *This,
-  IN CONST VOID                        *Image,
-  IN UINTN                             ImageSize,
-  IN CONST VOID                        *VendorCode,
-  IN UINT32                            PackageVersion,
-  IN CONST CHAR16                      *PackageVersionName
+  IN EFI_FIRMWARE_MANAGEMENT_PROTOCOL *This,
+  IN CONST VOID                       *Image,
+  IN UINTN                            ImageSize,
+  IN CONST VOID                       *VendorCode,
+  IN UINT32                           PackageVersion,
+  IN CONST CHAR16                     *PackageVersionName
   );
 
 #endif

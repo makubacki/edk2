@@ -22,10 +22,10 @@
 #pragma pack(1)
 
 typedef struct {
-  UINT32  Signature;
-  UINT32  HeaderSize;
-  UINT32  FwVersion;
-  UINT32  LowestSupportedVersion;
+  UINT32    Signature;
+  UINT32    HeaderSize;
+  UINT32    FwVersion;
+  UINT32    LowestSupportedVersion;
 } FMP_PAYLOAD_HEADER;
 
 #pragma pack()
@@ -34,7 +34,7 @@ typedef struct {
 /// Identifier is used to make sure the data in the header is for this structure
 /// and version.  If the structure changes update the last digit.
 ///
-#define FMP_PAYLOAD_HEADER_SIGNATURE SIGNATURE_32 ('M', 'S', 'S', '1')
+#define FMP_PAYLOAD_HEADER_SIGNATURE  SIGNATURE_32 ('M', 'S', 'S', '1')
 
 /**
   Returns the FMP Payload Header size in bytes.
@@ -52,23 +52,24 @@ typedef struct {
 EFI_STATUS
 EFIAPI
 GetFmpPayloadHeaderSize (
-  IN  CONST VOID   *Header,
-  IN  CONST UINTN  FmpPayloadSize,
-  OUT UINT32       *Size
+  IN  CONST VOID  *Header,
+  IN  CONST UINTN FmpPayloadSize,
+  OUT UINT32      *Size
   )
 {
   FMP_PAYLOAD_HEADER  *FmpPayloadHeader;
 
   FmpPayloadHeader = NULL;
 
-  if (Header == NULL || Size == NULL) {
+  if ((Header == NULL) || (Size == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
 
   FmpPayloadHeader = (FMP_PAYLOAD_HEADER *)Header;
-  if ((UINTN)FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) < (UINTN)FmpPayloadHeader ||
-      (UINTN)FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) >= (UINTN)FmpPayloadHeader + FmpPayloadSize ||
-      FmpPayloadHeader->HeaderSize < sizeof (FMP_PAYLOAD_HEADER)) {
+  if (((UINTN)FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) < (UINTN)FmpPayloadHeader) ||
+      ((UINTN)FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) >= (UINTN)FmpPayloadHeader + FmpPayloadSize) ||
+      (FmpPayloadHeader->HeaderSize < sizeof (FMP_PAYLOAD_HEADER)))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -97,23 +98,24 @@ GetFmpPayloadHeaderSize (
 EFI_STATUS
 EFIAPI
 GetFmpPayloadHeaderVersion (
-  IN  CONST VOID   *Header,
-  IN  CONST UINTN  FmpPayloadSize,
-  OUT UINT32       *Version
+  IN  CONST VOID  *Header,
+  IN  CONST UINTN FmpPayloadSize,
+  OUT UINT32      *Version
   )
 {
   FMP_PAYLOAD_HEADER  *FmpPayloadHeader;
 
   FmpPayloadHeader = NULL;
 
-  if (Header == NULL || Version == NULL) {
+  if ((Header == NULL) || (Version == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
 
   FmpPayloadHeader = (FMP_PAYLOAD_HEADER *)Header;
-  if ((UINTN)FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) < (UINTN)FmpPayloadHeader ||
-      (UINTN)FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) >= (UINTN)FmpPayloadHeader + FmpPayloadSize ||
-      FmpPayloadHeader->HeaderSize < sizeof (FMP_PAYLOAD_HEADER)) {
+  if (((UINTN)FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) < (UINTN)FmpPayloadHeader) ||
+      ((UINTN)FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) >= (UINTN)FmpPayloadHeader + FmpPayloadSize) ||
+      (FmpPayloadHeader->HeaderSize < sizeof (FMP_PAYLOAD_HEADER)))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -142,23 +144,24 @@ GetFmpPayloadHeaderVersion (
 EFI_STATUS
 EFIAPI
 GetFmpPayloadHeaderLowestSupportedVersion (
-  IN  CONST VOID    *Header,
-  IN  CONST UINTN   FmpPayloadSize,
-  OUT UINT32        *LowestSupportedVersion
+  IN  CONST VOID  *Header,
+  IN  CONST UINTN FmpPayloadSize,
+  OUT UINT32      *LowestSupportedVersion
   )
 {
   FMP_PAYLOAD_HEADER  *FmpPayloadHeader;
 
   FmpPayloadHeader = NULL;
 
-  if (Header == NULL || LowestSupportedVersion == NULL) {
+  if ((Header == NULL) || (LowestSupportedVersion == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
 
   FmpPayloadHeader = (FMP_PAYLOAD_HEADER *)Header;
-  if ((UINTN)FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) < (UINTN)FmpPayloadHeader ||
-      (UINTN)FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) >= (UINTN)FmpPayloadHeader + FmpPayloadSize ||
-      FmpPayloadHeader->HeaderSize < sizeof (FMP_PAYLOAD_HEADER)) {
+  if (((UINTN)FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) < (UINTN)FmpPayloadHeader) ||
+      ((UINTN)FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) >= (UINTN)FmpPayloadHeader + FmpPayloadSize) ||
+      (FmpPayloadHeader->HeaderSize < sizeof (FMP_PAYLOAD_HEADER)))
+  {
     return EFI_INVALID_PARAMETER;
   }
 

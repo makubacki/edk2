@@ -43,13 +43,12 @@ EDKII_CAPSULE_UPDATE_POLICY_PROTOCOL  mCapsuleUpdatePolicy = {
 EFI_STATUS
 EFIAPI
 CapsuleUpdatePolicyCheckSystemPower (
-  IN  EDKII_CAPSULE_UPDATE_POLICY_PROTOCOL  *This,
-  OUT BOOLEAN                               *Good
+  IN  EDKII_CAPSULE_UPDATE_POLICY_PROTOCOL *This,
+  OUT BOOLEAN                              *Good
   )
 {
   return CheckSystemPower (Good);
 }
-
 
 /**
   Determines if the system thermal state supports a capsule update.
@@ -68,8 +67,8 @@ CapsuleUpdatePolicyCheckSystemPower (
 EFI_STATUS
 EFIAPI
 CapsuleUpdatePolicyCheckSystemThermal (
-  IN  EDKII_CAPSULE_UPDATE_POLICY_PROTOCOL  *This,
-  OUT BOOLEAN                               *Good
+  IN  EDKII_CAPSULE_UPDATE_POLICY_PROTOCOL *This,
+  OUT BOOLEAN                              *Good
   )
 {
   return CheckSystemThermal (Good);
@@ -92,8 +91,8 @@ CapsuleUpdatePolicyCheckSystemThermal (
 EFI_STATUS
 EFIAPI
 CapsuleUpdatePolicyCheckSystemEnvironment (
-  IN  EDKII_CAPSULE_UPDATE_POLICY_PROTOCOL  *This,
-  OUT BOOLEAN                               *Good
+  IN  EDKII_CAPSULE_UPDATE_POLICY_PROTOCOL *This,
+  OUT BOOLEAN                              *Good
   )
 {
   return CheckSystemEnvironment (Good);
@@ -114,7 +113,7 @@ CapsuleUpdatePolicyCheckSystemEnvironment (
 BOOLEAN
 EFIAPI
 CapsuleUpdatePolicyIsLowestSupportedVersionCheckRequired (
-  IN  EDKII_CAPSULE_UPDATE_POLICY_PROTOCOL  *This
+  IN  EDKII_CAPSULE_UPDATE_POLICY_PROTOCOL *This
   )
 {
   return IsLowestSupportedVersionCheckRequired ();
@@ -135,7 +134,7 @@ CapsuleUpdatePolicyIsLowestSupportedVersionCheckRequired (
 BOOLEAN
 EFIAPI
 CapsuleUpdatePolicyIsLockFmpDeviceAtLockEventGuidRequired (
-  IN  EDKII_CAPSULE_UPDATE_POLICY_PROTOCOL  *This
+  IN  EDKII_CAPSULE_UPDATE_POLICY_PROTOCOL *This
   )
 {
   return IsLockFmpDeviceAtLockEventGuidRequired ();
@@ -155,16 +154,17 @@ CapsuleUpdatePolicyIsLockFmpDeviceAtLockEventGuidRequired (
 EFI_STATUS
 EFIAPI
 CapsuleUpdatePolicyInitialize (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  EFI_STATUS Status;
+  EFI_STATUS  Status;
 
   ASSERT_PROTOCOL_ALREADY_INSTALLED (NULL, &gEdkiiCapsuleUpdatePolicyProtocolGuid);
   Status = gBS->InstallMultipleProtocolInterfaces (
                   &mHandle,
-                  &gEdkiiCapsuleUpdatePolicyProtocolGuid, &mCapsuleUpdatePolicy,
+                  &gEdkiiCapsuleUpdatePolicyProtocolGuid,
+                  &mCapsuleUpdatePolicy,
                   NULL
                   );
   ASSERT_EFI_ERROR (Status);

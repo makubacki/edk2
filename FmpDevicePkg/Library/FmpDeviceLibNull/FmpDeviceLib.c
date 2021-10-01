@@ -35,7 +35,7 @@
 EFI_STATUS
 EFIAPI
 RegisterFmpInstaller (
-  IN FMP_DEVICE_LIB_REGISTER_FMP_INSTALLER  Function
+  IN FMP_DEVICE_LIB_REGISTER_FMP_INSTALLER Function
   )
 {
   return EFI_UNSUPPORTED;
@@ -63,7 +63,7 @@ RegisterFmpInstaller (
 EFI_STATUS
 EFIAPI
 RegisterFmpUninstaller (
-  IN FMP_DEVICE_LIB_REGISTER_FMP_UNINSTALLER  Function
+  IN FMP_DEVICE_LIB_REGISTER_FMP_UNINSTALLER Function
   )
 {
   return EFI_UNSUPPORTED;
@@ -96,8 +96,8 @@ RegisterFmpUninstaller (
 EFI_STATUS
 EFIAPI
 FmpDeviceSetContext (
-  IN EFI_HANDLE  Handle,
-  IN OUT VOID    **Context
+  IN EFI_HANDLE Handle,
+  IN OUT VOID   **Context
   )
 {
   return EFI_UNSUPPORTED;
@@ -125,12 +125,13 @@ FmpDeviceSetContext (
 EFI_STATUS
 EFIAPI
 FmpDeviceGetSize (
-  OUT UINTN  *Size
+  OUT UINTN *Size
   )
 {
   if (Size == NULL) {
     return EFI_INVALID_PARAMETER;
   }
+
   *Size = 0;
   return EFI_SUCCESS;
 }
@@ -155,7 +156,7 @@ FmpDeviceGetSize (
 EFI_STATUS
 EFIAPI
 FmpDeviceGetImageTypeIdGuidPtr (
-  OUT EFI_GUID  **Guid
+  OUT EFI_GUID **Guid
   )
 {
   return EFI_UNSUPPORTED;
@@ -184,13 +185,14 @@ FmpDeviceGetImageTypeIdGuidPtr (
 EFI_STATUS
 EFIAPI
 FmpDeviceGetAttributes (
-  OUT UINT64    *Supported,
-  OUT UINT64    *Setting
+  OUT UINT64 *Supported,
+  OUT UINT64 *Setting
   )
 {
-  if (Supported == NULL || Setting == NULL) {
+  if ((Supported == NULL) || (Setting == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
+
   *Supported = 0;
   *Setting   = 0;
   return EFI_SUCCESS;
@@ -227,7 +229,7 @@ FmpDeviceGetAttributes (
 EFI_STATUS
 EFIAPI
 FmpDeviceGetLowestSupportedVersion (
-  OUT UINT32  *LowestSupportedVersion
+  OUT UINT32 *LowestSupportedVersion
   )
 {
   return EFI_UNSUPPORTED;
@@ -262,12 +264,13 @@ FmpDeviceGetLowestSupportedVersion (
 EFI_STATUS
 EFIAPI
 FmpDeviceGetVersionString (
-  OUT CHAR16  **VersionString
+  OUT CHAR16 **VersionString
   )
 {
   if (VersionString == NULL) {
     return EFI_INVALID_PARAMETER;
   }
+
   *VersionString = NULL;
   return EFI_UNSUPPORTED;
 }
@@ -301,7 +304,7 @@ FmpDeviceGetVersionString (
 EFI_STATUS
 EFIAPI
 FmpDeviceGetVersion (
-  OUT UINT32  *Version
+  OUT UINT32 *Version
   )
 {
   return EFI_UNSUPPORTED;
@@ -330,7 +333,7 @@ FmpDeviceGetVersion (
 EFI_STATUS
 EFIAPI
 FmpDeviceGetHardwareInstance (
-  OUT UINT64  *HardwareInstance
+  OUT UINT64 *HardwareInstance
   )
 {
   return EFI_UNSUPPORTED;
@@ -369,8 +372,8 @@ FmpDeviceGetHardwareInstance (
 EFI_STATUS
 EFIAPI
 FmpDeviceGetImage (
-  OUT    VOID   *Image,
-  IN OUT UINTN  *ImageSize
+  OUT    VOID  *Image,
+  IN OUT UINTN *ImageSize
   )
 {
   return EFI_UNSUPPORTED;
@@ -403,9 +406,9 @@ FmpDeviceGetImage (
 EFI_STATUS
 EFIAPI
 FmpDeviceCheckImage (
-  IN  CONST VOID  *Image,
-  IN  UINTN       ImageSize,
-  OUT UINT32      *ImageUpdatable
+  IN  CONST VOID *Image,
+  IN  UINTN      ImageSize,
+  OUT UINT32     *ImageUpdatable
   )
 {
   UINT32  LastAttemptStatus;
@@ -451,10 +454,10 @@ FmpDeviceCheckImage (
 EFI_STATUS
 EFIAPI
 FmpDeviceCheckImageWithStatus (
-  IN  CONST VOID  *Image,
-  IN  UINTN       ImageSize,
-  OUT UINT32      *ImageUpdatable,
-  OUT UINT32      *LastAttemptStatus
+  IN  CONST VOID *Image,
+  IN  UINTN      ImageSize,
+  OUT UINT32     *ImageUpdatable,
+  OUT UINT32     *LastAttemptStatus
   )
 {
   *LastAttemptStatus = LAST_ATTEMPT_STATUS_SUCCESS;
@@ -517,25 +520,25 @@ FmpDeviceCheckImageWithStatus (
 EFI_STATUS
 EFIAPI
 FmpDeviceSetImage (
-  IN  CONST VOID                                     *Image,
-  IN  UINTN                                          ImageSize,
-  IN  CONST VOID                                     *VendorCode,       OPTIONAL
-  IN  EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS  Progress,          OPTIONAL
+  IN  CONST VOID *Image,
+  IN  UINTN ImageSize,
+  IN  CONST VOID *VendorCode, OPTIONAL
+  IN  EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS  Progress, OPTIONAL
   IN  UINT32                                         CapsuleFwVersion,
   OUT CHAR16                                         **AbortReason
   )
 {
   UINT32  LastAttemptStatus;
 
-  return  FmpDeviceSetImageWithStatus (
-            Image,
-            ImageSize,
-            VendorCode,
-            Progress,
-            CapsuleFwVersion,
-            AbortReason,
-            &LastAttemptStatus
-            );
+  return FmpDeviceSetImageWithStatus (
+           Image,
+           ImageSize,
+           VendorCode,
+           Progress,
+           CapsuleFwVersion,
+           AbortReason,
+           &LastAttemptStatus
+           );
 }
 
 /**
@@ -604,10 +607,10 @@ FmpDeviceSetImage (
 EFI_STATUS
 EFIAPI
 FmpDeviceSetImageWithStatus (
-  IN  CONST VOID                                     *Image,
-  IN  UINTN                                          ImageSize,
-  IN  CONST VOID                                     *VendorCode,       OPTIONAL
-  IN  EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS  Progress,          OPTIONAL
+  IN  CONST VOID *Image,
+  IN  UINTN ImageSize,
+  IN  CONST VOID *VendorCode, OPTIONAL
+  IN  EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS  Progress, OPTIONAL
   IN  UINT32                                         CapsuleFwVersion,
   OUT CHAR16                                         **AbortReason,
   OUT UINT32                                         *LastAttemptStatus
