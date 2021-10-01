@@ -21,7 +21,7 @@ Method to produce the Unit Test run results
 EFI_STATUS
 EFIAPI
 OutputUnitTestFrameworkReport (
-  IN UNIT_TEST_FRAMEWORK_HANDLE  FrameworkHandle
+  IN UNIT_TEST_FRAMEWORK_HANDLE FrameworkHandle
   );
 
 #endif

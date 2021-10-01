@@ -21,7 +21,7 @@
 BOOLEAN
 EFIAPI
 DoesCacheExist (
-  IN UNIT_TEST_FRAMEWORK_HANDLE  FrameworkHandle
+  IN UNIT_TEST_FRAMEWORK_HANDLE FrameworkHandle
   )
 {
   return FALSE;
@@ -43,8 +43,8 @@ DoesCacheExist (
 EFI_STATUS
 EFIAPI
 SaveUnitTestCache (
-  IN UNIT_TEST_FRAMEWORK_HANDLE  FrameworkHandle,
-  IN UNIT_TEST_SAVE_HEADER       *SaveData
+  IN UNIT_TEST_FRAMEWORK_HANDLE FrameworkHandle,
+  IN UNIT_TEST_SAVE_HEADER      *SaveData
   )
 {
   return EFI_UNSUPPORTED;
@@ -67,8 +67,8 @@ SaveUnitTestCache (
 EFI_STATUS
 EFIAPI
 LoadUnitTestCache (
-  IN  UNIT_TEST_FRAMEWORK_HANDLE  FrameworkHandle,
-  OUT UNIT_TEST_SAVE_HEADER       **SaveData
+  IN  UNIT_TEST_FRAMEWORK_HANDLE FrameworkHandle,
+  OUT UNIT_TEST_SAVE_HEADER      **SaveData
   )
 {
   return EFI_UNSUPPORTED;

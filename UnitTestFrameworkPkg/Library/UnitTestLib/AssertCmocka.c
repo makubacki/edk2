@@ -39,16 +39,16 @@
 BOOLEAN
 EFIAPI
 UnitTestAssertTrue (
-  IN BOOLEAN      Expression,
-  IN CONST CHAR8  *FunctionName,
-  IN UINTN        LineNumber,
-  IN CONST CHAR8  *FileName,
-  IN CONST CHAR8  *Description
+  IN BOOLEAN     Expression,
+  IN CONST CHAR8 *FunctionName,
+  IN UINTN       LineNumber,
+  IN CONST CHAR8 *FileName,
+  IN CONST CHAR8 *Description
   )
 {
   CHAR8  TempStr[MAX_STRING_SIZE];
 
-  snprintf (TempStr, sizeof(TempStr), "UT_ASSERT_TRUE(%s:%x)", Description, Expression);
+  snprintf (TempStr, sizeof (TempStr), "UT_ASSERT_TRUE(%s:%x)", Description, Expression);
   _assert_true (Expression, TempStr, FileName, (INT32)LineNumber);
 
   return Expression;
@@ -75,16 +75,16 @@ UnitTestAssertTrue (
 BOOLEAN
 EFIAPI
 UnitTestAssertFalse (
-  IN BOOLEAN      Expression,
-  IN CONST CHAR8  *FunctionName,
-  IN UINTN        LineNumber,
-  IN CONST CHAR8  *FileName,
-  IN CONST CHAR8  *Description
+  IN BOOLEAN     Expression,
+  IN CONST CHAR8 *FunctionName,
+  IN UINTN       LineNumber,
+  IN CONST CHAR8 *FileName,
+  IN CONST CHAR8 *Description
   )
 {
   CHAR8  TempStr[MAX_STRING_SIZE];
 
-  snprintf (TempStr, sizeof(TempStr), "UT_ASSERT_FALSE(%s:%x)", Description, Expression);
+  snprintf (TempStr, sizeof (TempStr), "UT_ASSERT_FALSE(%s:%x)", Description, Expression);
   _assert_true (!Expression, TempStr, FileName, (INT32)LineNumber);
 
   return !Expression;
@@ -111,16 +111,16 @@ UnitTestAssertFalse (
 BOOLEAN
 EFIAPI
 UnitTestAssertNotEfiError (
-  IN EFI_STATUS   Status,
-  IN CONST CHAR8  *FunctionName,
-  IN UINTN        LineNumber,
-  IN CONST CHAR8  *FileName,
-  IN CONST CHAR8  *Description
+  IN EFI_STATUS  Status,
+  IN CONST CHAR8 *FunctionName,
+  IN UINTN       LineNumber,
+  IN CONST CHAR8 *FileName,
+  IN CONST CHAR8 *Description
   )
 {
   CHAR8  TempStr[MAX_STRING_SIZE];
 
-  snprintf (TempStr, sizeof(TempStr), "UT_ASSERT_NOT_EFI_ERROR(%s:%p)", Description, (void *)Status);
+  snprintf (TempStr, sizeof (TempStr), "UT_ASSERT_NOT_EFI_ERROR(%s:%p)", Description, (void *)Status);
   _assert_true (!EFI_ERROR (Status), TempStr, FileName, (INT32)LineNumber);
 
   return !EFI_ERROR (Status);
@@ -150,18 +150,18 @@ UnitTestAssertNotEfiError (
 BOOLEAN
 EFIAPI
 UnitTestAssertEqual (
-  IN UINT64       ValueA,
-  IN UINT64       ValueB,
-  IN CONST CHAR8  *FunctionName,
-  IN UINTN        LineNumber,
-  IN CONST CHAR8  *FileName,
-  IN CONST CHAR8  *DescriptionA,
-  IN CONST CHAR8  *DescriptionB
+  IN UINT64      ValueA,
+  IN UINT64      ValueB,
+  IN CONST CHAR8 *FunctionName,
+  IN UINTN       LineNumber,
+  IN CONST CHAR8 *FileName,
+  IN CONST CHAR8 *DescriptionA,
+  IN CONST CHAR8 *DescriptionB
   )
 {
   CHAR8  TempStr[MAX_STRING_SIZE];
 
-  snprintf (TempStr, sizeof(TempStr), "UT_ASSERT_EQUAL(%s:%llx, %s:%llx)", DescriptionA, ValueA, DescriptionB, ValueB);
+  snprintf (TempStr, sizeof (TempStr), "UT_ASSERT_EQUAL(%s:%llx, %s:%llx)", DescriptionA, ValueA, DescriptionB, ValueB);
   _assert_true ((ValueA == ValueB), TempStr, FileName, (INT32)LineNumber);
 
   return (ValueA == ValueB);
@@ -195,22 +195,22 @@ UnitTestAssertEqual (
 BOOLEAN
 EFIAPI
 UnitTestAssertMemEqual (
-  IN VOID         *BufferA,
-  IN VOID         *BufferB,
-  IN UINTN        Length,
-  IN CONST CHAR8  *FunctionName,
-  IN UINTN        LineNumber,
-  IN CONST CHAR8  *FileName,
-  IN CONST CHAR8  *DescriptionA,
-  IN CONST CHAR8  *DescriptionB
+  IN VOID        *BufferA,
+  IN VOID        *BufferB,
+  IN UINTN       Length,
+  IN CONST CHAR8 *FunctionName,
+  IN UINTN       LineNumber,
+  IN CONST CHAR8 *FileName,
+  IN CONST CHAR8 *DescriptionA,
+  IN CONST CHAR8 *DescriptionB
   )
 {
   CHAR8    TempStr[MAX_STRING_SIZE];
   BOOLEAN  Result;
 
-  Result = (CompareMem(BufferA, BufferB, Length) == 0);
+  Result = (CompareMem (BufferA, BufferB, Length) == 0);
 
-  snprintf (TempStr, sizeof(TempStr), "UT_ASSERT_MEM_EQUAL(%s:%p, %s:%p)", DescriptionA, BufferA, DescriptionB, BufferB);
+  snprintf (TempStr, sizeof (TempStr), "UT_ASSERT_MEM_EQUAL(%s:%p, %s:%p)", DescriptionA, BufferA, DescriptionB, BufferB);
   _assert_true (Result, TempStr, FileName, (INT32)LineNumber);
 
   return Result;
@@ -240,18 +240,18 @@ UnitTestAssertMemEqual (
 BOOLEAN
 EFIAPI
 UnitTestAssertNotEqual (
-  IN UINT64       ValueA,
-  IN UINT64       ValueB,
-  IN CONST CHAR8  *FunctionName,
-  IN UINTN        LineNumber,
-  IN CONST CHAR8  *FileName,
-  IN CONST CHAR8  *DescriptionA,
-  IN CONST CHAR8  *DescriptionB
+  IN UINT64      ValueA,
+  IN UINT64      ValueB,
+  IN CONST CHAR8 *FunctionName,
+  IN UINTN       LineNumber,
+  IN CONST CHAR8 *FileName,
+  IN CONST CHAR8 *DescriptionA,
+  IN CONST CHAR8 *DescriptionB
   )
 {
   CHAR8  TempStr[MAX_STRING_SIZE];
 
-  snprintf (TempStr, sizeof(TempStr), "UT_ASSERT_NOT_EQUAL(%s:%llx, %s:%llx)", DescriptionA, ValueA, DescriptionB, ValueB);
+  snprintf (TempStr, sizeof (TempStr), "UT_ASSERT_NOT_EQUAL(%s:%llx, %s:%llx)", DescriptionA, ValueA, DescriptionB, ValueB);
   _assert_true ((ValueA != ValueB), TempStr, FileName, (INT32)LineNumber);
 
   return (ValueA != ValueB);
@@ -280,17 +280,17 @@ UnitTestAssertNotEqual (
 BOOLEAN
 EFIAPI
 UnitTestAssertStatusEqual (
-  IN EFI_STATUS   Status,
-  IN EFI_STATUS   Expected,
-  IN CONST CHAR8  *FunctionName,
-  IN UINTN        LineNumber,
-  IN CONST CHAR8  *FileName,
-  IN CONST CHAR8  *Description
+  IN EFI_STATUS  Status,
+  IN EFI_STATUS  Expected,
+  IN CONST CHAR8 *FunctionName,
+  IN UINTN       LineNumber,
+  IN CONST CHAR8 *FileName,
+  IN CONST CHAR8 *Description
   )
 {
   CHAR8  TempStr[MAX_STRING_SIZE];
 
-  snprintf (TempStr, sizeof(TempStr), "UT_ASSERT_STATUS_EQUAL(%s:%p)", Description, (VOID *)Status);
+  snprintf (TempStr, sizeof (TempStr), "UT_ASSERT_STATUS_EQUAL(%s:%p)", Description, (VOID *)Status);
   _assert_true ((Status == Expected), TempStr, FileName, (INT32)LineNumber);
 
   return (Status == Expected);
@@ -319,16 +319,16 @@ UnitTestAssertStatusEqual (
 BOOLEAN
 EFIAPI
 UnitTestAssertNotNull (
-  IN VOID         *Pointer,
-  IN CONST CHAR8  *FunctionName,
-  IN UINTN        LineNumber,
-  IN CONST CHAR8  *FileName,
-  IN CONST CHAR8  *PointerName
+  IN VOID        *Pointer,
+  IN CONST CHAR8 *FunctionName,
+  IN UINTN       LineNumber,
+  IN CONST CHAR8 *FileName,
+  IN CONST CHAR8 *PointerName
   )
 {
   CHAR8  TempStr[MAX_STRING_SIZE];
 
-  snprintf (TempStr, sizeof(TempStr), "UT_ASSERT_NOT_NULL(%s:%p)", PointerName, Pointer);
+  snprintf (TempStr, sizeof (TempStr), "UT_ASSERT_NOT_NULL(%s:%p)", PointerName, Pointer);
   _assert_true ((Pointer != NULL), TempStr, FileName, (INT32)LineNumber);
 
   return (Pointer != NULL);
@@ -366,12 +366,12 @@ UnitTestAssertNotNull (
 BOOLEAN
 EFIAPI
 UnitTestExpectAssertFailure (
-  IN  UNIT_TEST_STATUS  UnitTestStatus,
-  IN  CONST CHAR8       *FunctionName,
-  IN  UINTN             LineNumber,
-  IN  CONST CHAR8       *FileName,
-  IN  CONST CHAR8       *FunctionCall,
-  OUT UNIT_TEST_STATUS  *ResultStatus  OPTIONAL
+  IN  UNIT_TEST_STATUS UnitTestStatus,
+  IN  CONST CHAR8      *FunctionName,
+  IN  UINTN            LineNumber,
+  IN  CONST CHAR8      *FileName,
+  IN  CONST CHAR8      *FunctionCall,
+  OUT UNIT_TEST_STATUS *ResultStatus  OPTIONAL
   )
 {
   CHAR8  TempStr[MAX_STRING_SIZE];
@@ -379,6 +379,7 @@ UnitTestExpectAssertFailure (
   if (ResultStatus != NULL) {
     *ResultStatus = UnitTestStatus;
   }
+
   if (UnitTestStatus == UNIT_TEST_PASSED) {
     UT_LOG_INFO (
       "[ASSERT PASS] %a:%d: UT_EXPECT_ASSERT_FAILURE(%a) detected expected assert\n",
@@ -387,6 +388,7 @@ UnitTestExpectAssertFailure (
       FunctionCall
       );
   }
+
   if (UnitTestStatus == UNIT_TEST_SKIPPED) {
     UT_LOG_WARNING (
       "[ASSERT WARN] %a:%d: UT_EXPECT_ASSERT_FAILURE(%a) disabled\n",
@@ -395,9 +397,11 @@ UnitTestExpectAssertFailure (
       FunctionCall
       );
   }
+
   if (UnitTestStatus == UNIT_TEST_ERROR_TEST_FAILED) {
-    snprintf (TempStr, sizeof(TempStr), "UT_EXPECT_ASSERT_FAILURE(%s) did not trigger ASSERT()", FunctionCall);
+    snprintf (TempStr, sizeof (TempStr), "UT_EXPECT_ASSERT_FAILURE(%s) did not trigger ASSERT()", FunctionCall);
     _assert_true (FALSE, TempStr, FileName, (INT32)LineNumber);
   }
+
   return (UnitTestStatus != UNIT_TEST_ERROR_TEST_FAILED);
 }

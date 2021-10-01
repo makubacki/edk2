@@ -19,8 +19,8 @@
 #define UNIT_TEST_MAX_LOG_BUFFER                SIZE_16KB
 
 struct _UNIT_TEST_LOG_PREFIX_STRING {
-  UNIT_TEST_STATUS  LogLevel;
-  CHAR8             *String;
+  UNIT_TEST_STATUS    LogLevel;
+  CHAR8               *String;
 };
 
 struct _UNIT_TEST_LOG_PREFIX_STRING  mLogPrefixStrings[] = {
@@ -35,9 +35,9 @@ struct _UNIT_TEST_LOG_PREFIX_STRING  mLogPrefixStrings[] = {
 //
 
 STATIC
-CONST CHAR8*
+CONST CHAR8 *
 GetStringForStatusLogPrefix (
-  IN UINTN  LogLevel
+  IN UINTN LogLevel
   )
 {
   UINTN  Index;
@@ -50,14 +50,15 @@ GetStringForStatusLogPrefix (
       break;
     }
   }
+
   return Result;
 }
 
 STATIC
 EFI_STATUS
 AddStringToUnitTestLog (
-  IN OUT UNIT_TEST    *UnitTest,
-  IN     CONST CHAR8  *String
+  IN OUT UNIT_TEST   *UnitTest,
+  IN     CONST CHAR8 *String
   )
 {
   EFI_STATUS  Status;
@@ -65,7 +66,7 @@ AddStringToUnitTestLog (
   //
   // Make sure that you're cooking with gas.
   //
-  if (UnitTest == NULL || String == NULL) {
+  if ((UnitTest == NULL) || (String == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -86,7 +87,7 @@ AddStringToUnitTestLog (
              String,
              UNIT_TEST_MAX_SINGLE_LOG_STRING_LENGTH
              );
-  if(EFI_ERROR (Status)) {
+  if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Failed to add unit test log string.  Status = %r\n", Status));
     return Status;
   }
@@ -108,8 +109,8 @@ AddStringToUnitTestLog (
 VOID
 EFIAPI
 UnitTestLogInit (
-  IN OUT UNIT_TEST  *Test,
-  IN     UINT8      *Buffer,     OPTIONAL
+  IN OUT UNIT_TEST *Test,
+  IN     UINT8 *Buffer, OPTIONAL
   IN     UINTN      BufferSize   OPTIONAL
   )
 {
@@ -129,14 +130,14 @@ UnitTestLogInit (
   }
 
   //
-  //check again to make sure allocate worked
+  // check again to make sure allocate worked
   //
-  if(Test->Log == NULL) {
+  if (Test->Log == NULL) {
     DEBUG ((DEBUG_ERROR, "Failed to allocate memory for the log\n"));
     return;
   }
 
-  if((Buffer != NULL) && (BufferSize > 0) && (BufferSize <= UNIT_TEST_MAX_LOG_BUFFER)) {
+  if ((Buffer != NULL) && (BufferSize > 0) && (BufferSize <= UNIT_TEST_MAX_LOG_BUFFER)) {
     CopyMem (Test->Log, Buffer, BufferSize);
   }
 }
@@ -153,8 +154,8 @@ UnitTestLogInit (
 VOID
 EFIAPI
 UnitTestLog (
-  IN  UINTN        ErrorLevel,
-  IN  CONST CHAR8  *Format,
+  IN  UINTN       ErrorLevel,
+  IN  CONST CHAR8 *Format,
   ...
   )
 {

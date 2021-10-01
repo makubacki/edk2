@@ -30,9 +30,9 @@ BASE_LIBRARY_JUMP_BUFFER  *gUnitTestExpectAssertFailureJumpBuffer = NULL;
 VOID
 EFIAPI
 UnitTestDebugAssert (
-  IN CONST CHAR8  *FileName,
-  IN UINTN        LineNumber,
-  IN CONST CHAR8  *Description
+  IN CONST CHAR8 *FileName,
+  IN UINTN       LineNumber,
+  IN CONST CHAR8 *Description
   )
 {
   CHAR8  Message[256];
@@ -41,9 +41,9 @@ UnitTestDebugAssert (
     UT_LOG_INFO ("Detected expected ASSERT: %a(%d): %a\n", FileName, LineNumber, Description);
     LongJump (gUnitTestExpectAssertFailureJumpBuffer, 1);
   } else {
-    AsciiStrCpyS (Message, sizeof(Message), "Detected unexpected ASSERT(");
-    AsciiStrCatS (Message, sizeof(Message), Description);
-    AsciiStrCatS (Message, sizeof(Message), ")");
+    AsciiStrCpyS (Message, sizeof (Message), "Detected unexpected ASSERT(");
+    AsciiStrCatS (Message, sizeof (Message), Description);
+    AsciiStrCatS (Message, sizeof (Message), ")");
     UnitTestAssertTrue (FALSE, "", LineNumber, FileName, Message);
   }
 }

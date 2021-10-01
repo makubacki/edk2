@@ -14,7 +14,7 @@
 VOID
 EFIAPI
 ReportPrint (
-  IN CONST CHAR8  *Format,
+  IN CONST CHAR8 *Format,
   ...
   )
 {
@@ -29,12 +29,13 @@ ReportPrint (
   } else {
     gST->ConOut->OutputString (gST->ConOut, String);
   }
+
   VA_END (Marker);
 }
 
 VOID
 ReportOutput (
-  IN CONST CHAR8  *Output
+  IN CONST CHAR8 *Output
   )
 {
   CHAR8  AsciiString[128];

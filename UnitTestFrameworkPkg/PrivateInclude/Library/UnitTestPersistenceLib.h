@@ -14,7 +14,7 @@
 
 #include <UnitTestFrameworkTypes.h>
 
-#define UNIT_TEST_PERSISTENCE_LIB_VERSION   1
+#define UNIT_TEST_PERSISTENCE_LIB_VERSION  1
 
 /**
   Determines whether a persistence cache already exists for
@@ -29,7 +29,7 @@
 BOOLEAN
 EFIAPI
 DoesCacheExist (
-  IN UNIT_TEST_FRAMEWORK_HANDLE  FrameworkHandle
+  IN UNIT_TEST_FRAMEWORK_HANDLE FrameworkHandle
   );
 
 /**
@@ -48,8 +48,8 @@ DoesCacheExist (
 EFI_STATUS
 EFIAPI
 SaveUnitTestCache (
-  IN UNIT_TEST_FRAMEWORK_HANDLE  FrameworkHandle,
-  IN UNIT_TEST_SAVE_HEADER       *SaveData
+  IN UNIT_TEST_FRAMEWORK_HANDLE FrameworkHandle,
+  IN UNIT_TEST_SAVE_HEADER      *SaveData
   );
 
 /**
@@ -69,8 +69,8 @@ SaveUnitTestCache (
 EFI_STATUS
 EFIAPI
 LoadUnitTestCache (
-  IN  UNIT_TEST_FRAMEWORK_HANDLE  FrameworkHandle,
-  OUT UNIT_TEST_SAVE_HEADER       **SaveData
+  IN  UNIT_TEST_FRAMEWORK_HANDLE FrameworkHandle,
+  OUT UNIT_TEST_SAVE_HEADER      **SaveData
   );
 
 #endif

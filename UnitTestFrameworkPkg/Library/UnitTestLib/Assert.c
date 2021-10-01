@@ -18,15 +18,15 @@ extern BASE_LIBRARY_JUMP_BUFFER  gUnitTestJumpBuffer;
 STATIC
 EFI_STATUS
 AddUnitTestFailure (
-  IN OUT UNIT_TEST     *UnitTest,
-  IN     CONST CHAR8   *FailureMessage,
-  IN     FAILURE_TYPE  FailureType
+  IN OUT UNIT_TEST    *UnitTest,
+  IN     CONST CHAR8  *FailureMessage,
+  IN     FAILURE_TYPE FailureType
   )
 {
   //
   // Make sure that you're cooking with gas.
   //
-  if (UnitTest == NULL || FailureMessage == NULL) {
+  if ((UnitTest == NULL) || (FailureMessage == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -44,8 +44,8 @@ STATIC
 VOID
 EFIAPI
 UnitTestLogFailure (
-  IN FAILURE_TYPE  FailureType,
-  IN CONST CHAR8   *Format,
+  IN FAILURE_TYPE FailureType,
+  IN CONST CHAR8  *Format,
   ...
   )
 {
@@ -98,11 +98,11 @@ UnitTestLogFailure (
 BOOLEAN
 EFIAPI
 UnitTestAssertTrue (
-  IN BOOLEAN      Expression,
-  IN CONST CHAR8  *FunctionName,
-  IN UINTN        LineNumber,
-  IN CONST CHAR8  *FileName,
-  IN CONST CHAR8  *Description
+  IN BOOLEAN     Expression,
+  IN CONST CHAR8 *FunctionName,
+  IN UINTN       LineNumber,
+  IN CONST CHAR8 *FileName,
+  IN CONST CHAR8 *Description
   )
 {
   if (!Expression) {
@@ -120,6 +120,7 @@ UnitTestAssertTrue (
       Description
       );
   }
+
   return Expression;
 }
 
@@ -144,11 +145,11 @@ UnitTestAssertTrue (
 BOOLEAN
 EFIAPI
 UnitTestAssertFalse (
-  IN BOOLEAN      Expression,
-  IN CONST CHAR8  *FunctionName,
-  IN UINTN        LineNumber,
-  IN CONST CHAR8  *FileName,
-  IN CONST CHAR8  *Description
+  IN BOOLEAN     Expression,
+  IN CONST CHAR8 *FunctionName,
+  IN UINTN       LineNumber,
+  IN CONST CHAR8 *FileName,
+  IN CONST CHAR8 *Description
   )
 {
   if (Expression) {
@@ -166,6 +167,7 @@ UnitTestAssertFalse (
       Description
       );
   }
+
   return !Expression;
 }
 
@@ -190,11 +192,11 @@ UnitTestAssertFalse (
 BOOLEAN
 EFIAPI
 UnitTestAssertNotEfiError (
-  IN EFI_STATUS   Status,
-  IN CONST CHAR8  *FunctionName,
-  IN UINTN        LineNumber,
-  IN CONST CHAR8  *FileName,
-  IN CONST CHAR8  *Description
+  IN EFI_STATUS  Status,
+  IN CONST CHAR8 *FunctionName,
+  IN UINTN       LineNumber,
+  IN CONST CHAR8 *FileName,
+  IN CONST CHAR8 *Description
   )
 {
   if (EFI_ERROR (Status)) {
@@ -214,7 +216,8 @@ UnitTestAssertNotEfiError (
       Status
       );
   }
-  return !EFI_ERROR( Status );
+
+  return !EFI_ERROR (Status);
 }
 
 /**
@@ -241,13 +244,13 @@ UnitTestAssertNotEfiError (
 BOOLEAN
 EFIAPI
 UnitTestAssertEqual (
-  IN UINT64       ValueA,
-  IN UINT64       ValueB,
-  IN CONST CHAR8  *FunctionName,
-  IN UINTN        LineNumber,
-  IN CONST CHAR8  *FileName,
-  IN CONST CHAR8  *DescriptionA,
-  IN CONST CHAR8  *DescriptionB
+  IN UINT64      ValueA,
+  IN UINT64      ValueB,
+  IN CONST CHAR8 *FunctionName,
+  IN UINTN       LineNumber,
+  IN CONST CHAR8 *FileName,
+  IN CONST CHAR8 *DescriptionA,
+  IN CONST CHAR8 *DescriptionB
   )
 {
   if (ValueA != ValueB) {
@@ -271,6 +274,7 @@ UnitTestAssertEqual (
       ValueB
       );
   }
+
   return (ValueA == ValueB);
 }
 
@@ -302,17 +306,17 @@ UnitTestAssertEqual (
 BOOLEAN
 EFIAPI
 UnitTestAssertMemEqual (
-  IN VOID         *BufferA,
-  IN VOID         *BufferB,
-  IN UINTN        Length,
-  IN CONST CHAR8  *FunctionName,
-  IN UINTN        LineNumber,
-  IN CONST CHAR8  *FileName,
-  IN CONST CHAR8  *DescriptionA,
-  IN CONST CHAR8  *DescriptionB
+  IN VOID        *BufferA,
+  IN VOID        *BufferB,
+  IN UINTN       Length,
+  IN CONST CHAR8 *FunctionName,
+  IN UINTN       LineNumber,
+  IN CONST CHAR8 *FileName,
+  IN CONST CHAR8 *DescriptionA,
+  IN CONST CHAR8 *DescriptionB
   )
 {
-  if (CompareMem(BufferA, BufferB, Length) != 0) {
+  if (CompareMem (BufferA, BufferB, Length) != 0) {
     UT_LOG_ERROR (
       "[ASSERT FAIL] %a:%d: Value %a != %a for length %d bytes!\n",
       FileName,
@@ -332,6 +336,7 @@ UnitTestAssertMemEqual (
       );
     return FALSE;
   }
+
   return TRUE;
 }
 
@@ -359,13 +364,13 @@ UnitTestAssertMemEqual (
 BOOLEAN
 EFIAPI
 UnitTestAssertNotEqual (
-  IN UINT64       ValueA,
-  IN UINT64       ValueB,
-  IN CONST CHAR8  *FunctionName,
-  IN UINTN        LineNumber,
-  IN CONST CHAR8  *FileName,
-  IN CONST CHAR8  *DescriptionA,
-  IN CONST CHAR8  *DescriptionB
+  IN UINT64      ValueA,
+  IN UINT64      ValueB,
+  IN CONST CHAR8 *FunctionName,
+  IN UINTN       LineNumber,
+  IN CONST CHAR8 *FileName,
+  IN CONST CHAR8 *DescriptionA,
+  IN CONST CHAR8 *DescriptionB
   )
 {
   if (ValueA == ValueB) {
@@ -389,6 +394,7 @@ UnitTestAssertNotEqual (
       ValueB
       );
   }
+
   return (ValueA != ValueB);
 }
 
@@ -415,12 +421,12 @@ UnitTestAssertNotEqual (
 BOOLEAN
 EFIAPI
 UnitTestAssertStatusEqual (
-  IN EFI_STATUS   Status,
-  IN EFI_STATUS   Expected,
-  IN CONST CHAR8  *FunctionName,
-  IN UINTN        LineNumber,
-  IN CONST CHAR8  *FileName,
-  IN CONST CHAR8  *Description
+  IN EFI_STATUS  Status,
+  IN EFI_STATUS  Expected,
+  IN CONST CHAR8 *FunctionName,
+  IN UINTN       LineNumber,
+  IN CONST CHAR8 *FileName,
+  IN CONST CHAR8 *Description
   )
 {
   if (Status != Expected) {
@@ -442,6 +448,7 @@ UnitTestAssertStatusEqual (
       Expected
       );
   }
+
   return (Status == Expected);
 }
 
@@ -468,11 +475,11 @@ UnitTestAssertStatusEqual (
 BOOLEAN
 EFIAPI
 UnitTestAssertNotNull (
-  IN VOID         *Pointer,
-  IN CONST CHAR8  *FunctionName,
-  IN UINTN        LineNumber,
-  IN CONST CHAR8  *FileName,
-  IN CONST CHAR8  *PointerName
+  IN VOID        *Pointer,
+  IN CONST CHAR8 *FunctionName,
+  IN UINTN       LineNumber,
+  IN CONST CHAR8 *FileName,
+  IN CONST CHAR8 *PointerName
   )
 {
   if (Pointer == NULL) {
@@ -490,6 +497,7 @@ UnitTestAssertNotNull (
       PointerName
       );
   }
+
   return (Pointer != NULL);
 }
 
@@ -525,17 +533,18 @@ UnitTestAssertNotNull (
 BOOLEAN
 EFIAPI
 UnitTestExpectAssertFailure (
-  IN  UNIT_TEST_STATUS  UnitTestStatus,
-  IN  CONST CHAR8       *FunctionName,
-  IN  UINTN             LineNumber,
-  IN  CONST CHAR8       *FileName,
-  IN  CONST CHAR8       *FunctionCall,
-  OUT UNIT_TEST_STATUS  *ResultStatus  OPTIONAL
+  IN  UNIT_TEST_STATUS UnitTestStatus,
+  IN  CONST CHAR8      *FunctionName,
+  IN  UINTN            LineNumber,
+  IN  CONST CHAR8      *FileName,
+  IN  CONST CHAR8      *FunctionCall,
+  OUT UNIT_TEST_STATUS *ResultStatus  OPTIONAL
   )
 {
   if (ResultStatus != NULL) {
     *ResultStatus = UnitTestStatus;
   }
+
   if (UnitTestStatus == UNIT_TEST_PASSED) {
     UT_LOG_INFO (
       "[ASSERT PASS] %a:%d: UT_EXPECT_ASSERT_FAILURE(%a) detected expected assert\n",
@@ -544,6 +553,7 @@ UnitTestExpectAssertFailure (
       FunctionCall
       );
   }
+
   if (UnitTestStatus == UNIT_TEST_SKIPPED) {
     UT_LOG_WARNING (
       "[ASSERT WARN] %a:%d: UT_EXPECT_ASSERT_FAILURE(%a) disabled\n",
@@ -552,6 +562,7 @@ UnitTestExpectAssertFailure (
       FunctionCall
       );
   }
+
   if (UnitTestStatus == UNIT_TEST_ERROR_TEST_FAILED) {
     UT_LOG_ERROR (
       "[ASSERT FAIL] %a:%d: Function call (%a) did not ASSERT()!\n",
@@ -567,5 +578,6 @@ UnitTestExpectAssertFailure (
       FunctionCall
       );
   }
+
   return (UnitTestStatus != UNIT_TEST_ERROR_TEST_FAILED);
 }

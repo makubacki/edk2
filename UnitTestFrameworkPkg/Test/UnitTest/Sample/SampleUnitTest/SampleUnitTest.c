@@ -46,7 +46,7 @@ VOID     *mSampleGlobalTestPointer = NULL;
 UNIT_TEST_STATUS
 EFIAPI
 MakeSureThatPointerIsNull (
-  IN UNIT_TEST_CONTEXT  Context
+  IN UNIT_TEST_CONTEXT Context
   )
 {
   UT_ASSERT_EQUAL ((UINTN)mSampleGlobalTestPointer, (UINTN)NULL);
@@ -78,7 +78,7 @@ MakeSureThatPointerIsNull (
 VOID
 EFIAPI
 ClearThePointer (
-  IN UNIT_TEST_CONTEXT  Context
+  IN UNIT_TEST_CONTEXT Context
   )
 {
   mSampleGlobalTestPointer = NULL;
@@ -103,7 +103,7 @@ ClearThePointer (
 UNIT_TEST_STATUS
 EFIAPI
 OnePlusOneShouldEqualTwo (
-  IN UNIT_TEST_CONTEXT  Context
+  IN UNIT_TEST_CONTEXT Context
   )
 {
   UINTN  A;
@@ -137,7 +137,7 @@ OnePlusOneShouldEqualTwo (
 UNIT_TEST_STATUS
 EFIAPI
 GlobalBooleanShouldBeChangeable (
-  IN UNIT_TEST_CONTEXT  Context
+  IN UNIT_TEST_CONTEXT Context
   )
 {
   mSampleGlobalTestBoolean = TRUE;
@@ -168,7 +168,7 @@ GlobalBooleanShouldBeChangeable (
 UNIT_TEST_STATUS
 EFIAPI
 GlobalPointerShouldBeChangeable (
-  IN UNIT_TEST_CONTEXT  Context
+  IN UNIT_TEST_CONTEXT Context
   )
 {
   //
@@ -229,7 +229,7 @@ TestSuiteDisableAsserts (
 UNIT_TEST_STATUS
 EFIAPI
 MacroUtAssertTrue (
-  IN UNIT_TEST_CONTEXT  Context
+  IN UNIT_TEST_CONTEXT Context
   )
 {
   UINT64  Result;
@@ -266,7 +266,7 @@ MacroUtAssertTrue (
 UNIT_TEST_STATUS
 EFIAPI
 MacroUtAssertFalse (
-  IN UNIT_TEST_CONTEXT  Context
+  IN UNIT_TEST_CONTEXT Context
   )
 {
   UINT64  Result;
@@ -303,7 +303,7 @@ MacroUtAssertFalse (
 UNIT_TEST_STATUS
 EFIAPI
 MacroUtAssertEqual (
-  IN UNIT_TEST_CONTEXT  Context
+  IN UNIT_TEST_CONTEXT Context
   )
 {
   UINT64  Result;
@@ -340,7 +340,7 @@ MacroUtAssertEqual (
 UNIT_TEST_STATUS
 EFIAPI
 MacroUtAssertMemEqual (
-  IN UNIT_TEST_CONTEXT  Context
+  IN UNIT_TEST_CONTEXT Context
   )
 {
   CHAR8  *String1;
@@ -376,7 +376,7 @@ MacroUtAssertMemEqual (
 UNIT_TEST_STATUS
 EFIAPI
 MacroUtAssertNotEqual (
-  IN UNIT_TEST_CONTEXT  Context
+  IN UNIT_TEST_CONTEXT Context
   )
 {
   UINT64  Result;
@@ -413,7 +413,7 @@ MacroUtAssertNotEqual (
 UNIT_TEST_STATUS
 EFIAPI
 MacroUtAssertNotEfiError (
-  IN UNIT_TEST_CONTEXT  Context
+  IN UNIT_TEST_CONTEXT Context
   )
 {
   //
@@ -447,7 +447,7 @@ MacroUtAssertNotEfiError (
 UNIT_TEST_STATUS
 EFIAPI
 MacroUtAssertStatusEqual (
-  IN UNIT_TEST_CONTEXT  Context
+  IN UNIT_TEST_CONTEXT Context
   )
 {
   //
@@ -476,7 +476,7 @@ MacroUtAssertStatusEqual (
 UNIT_TEST_STATUS
 EFIAPI
 MacroUtAssertNotNull (
-  IN UNIT_TEST_CONTEXT  Context
+  IN UNIT_TEST_CONTEXT Context
   )
 {
   UINT64  Result;
@@ -507,7 +507,7 @@ MacroUtAssertNotNull (
 UNIT_TEST_STATUS
 EFIAPI
 MacroUtExpectAssertFailure (
-  IN UNIT_TEST_CONTEXT  Context
+  IN UNIT_TEST_CONTEXT Context
   )
 {
   //
@@ -543,7 +543,7 @@ MacroUtExpectAssertFailure (
 UNIT_TEST_STATUS
 EFIAPI
 MacroUtLogError (
-  IN UNIT_TEST_CONTEXT  Context
+  IN UNIT_TEST_CONTEXT Context
   )
 {
   //
@@ -572,7 +572,7 @@ MacroUtLogError (
 UNIT_TEST_STATUS
 EFIAPI
 MacroUtLogWarning (
-  IN UNIT_TEST_CONTEXT  Context
+  IN UNIT_TEST_CONTEXT Context
   )
 {
   //
@@ -601,7 +601,7 @@ MacroUtLogWarning (
 UNIT_TEST_STATUS
 EFIAPI
 MacroUtLogInfo (
-  IN UNIT_TEST_CONTEXT  Context
+  IN UNIT_TEST_CONTEXT Context
   )
 {
   //
@@ -630,7 +630,7 @@ MacroUtLogInfo (
 UNIT_TEST_STATUS
 EFIAPI
 MacroUtLogVerbose (
-  IN UNIT_TEST_CONTEXT  Context
+  IN UNIT_TEST_CONTEXT Context
   )
 {
   //
@@ -664,14 +664,14 @@ UefiTestMain (
 
   Framework = NULL;
 
-  DEBUG(( DEBUG_INFO, "%a v%a\n", UNIT_TEST_NAME, UNIT_TEST_VERSION ));
+  DEBUG ((DEBUG_INFO, "%a v%a\n", UNIT_TEST_NAME, UNIT_TEST_VERSION));
 
   //
   // Start setting up the test framework for running the tests.
   //
   Status = InitUnitTestFramework (&Framework, UNIT_TEST_NAME, gEfiCallerBaseName, UNIT_TEST_VERSION);
   if (EFI_ERROR (Status)) {
-    DEBUG((DEBUG_ERROR, "Failed in InitUnitTestFramework. Status = %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "Failed in InitUnitTestFramework. Status = %r\n", Status));
     goto EXIT;
   }
 
@@ -684,6 +684,7 @@ UefiTestMain (
     Status = EFI_OUT_OF_RESOURCES;
     goto EXIT;
   }
+
   AddTestCase (SimpleMathTests, "Adding 1 to 1 should produce 2", "Addition", OnePlusOneShouldEqualTwo, NULL, NULL, NULL);
 
   //
@@ -695,6 +696,7 @@ UefiTestMain (
     Status = EFI_OUT_OF_RESOURCES;
     goto EXIT;
   }
+
   AddTestCase (GlobalVarTests, "You should be able to change a global BOOLEAN", "Boolean", GlobalBooleanShouldBeChangeable, NULL, NULL, NULL);
   AddTestCase (GlobalVarTests, "You should be able to change a global pointer", "Pointer", GlobalPointerShouldBeChangeable, MakeSureThatPointerIsNull, ClearThePointer, NULL);
 
@@ -707,19 +709,20 @@ UefiTestMain (
     Status = EFI_OUT_OF_RESOURCES;
     goto EXIT;
   }
-  AddTestCase (MacroTestsAssertsEnabled, "Test UT_ASSERT_TRUE() macro",           "MacroUtAssertTrue",          MacroUtAssertTrue,          NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsEnabled, "Test UT_ASSERT_FALSE() macro",          "MacroUtAssertFalse",         MacroUtAssertFalse,         NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsEnabled, "Test UT_ASSERT_EQUAL() macro",          "MacroUtAssertEqual",         MacroUtAssertEqual,         NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsEnabled, "Test UT_ASSERT_MEM_EQUAL() macro",      "MacroUtAssertMemEqual",      MacroUtAssertMemEqual,      NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsEnabled, "Test UT_ASSERT_NOT_EQUAL() macro",      "MacroUtAssertNotEqual",      MacroUtAssertNotEqual,      NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsEnabled, "Test UT_ASSERT_NOT_EFI_ERROR() macro",  "MacroUtAssertNotEfiError",   MacroUtAssertNotEfiError,   NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsEnabled, "Test UT_ASSERT_STATUS_EQUAL() macro",   "MacroUtAssertStatusEqual",   MacroUtAssertStatusEqual,   NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsEnabled, "Test UT_ASSERT_NOT_NULL() macro",       "MacroUtAssertNotNull",       MacroUtAssertNotNull,       NULL, NULL, NULL);
+
+  AddTestCase (MacroTestsAssertsEnabled, "Test UT_ASSERT_TRUE() macro", "MacroUtAssertTrue", MacroUtAssertTrue, NULL, NULL, NULL);
+  AddTestCase (MacroTestsAssertsEnabled, "Test UT_ASSERT_FALSE() macro", "MacroUtAssertFalse", MacroUtAssertFalse, NULL, NULL, NULL);
+  AddTestCase (MacroTestsAssertsEnabled, "Test UT_ASSERT_EQUAL() macro", "MacroUtAssertEqual", MacroUtAssertEqual, NULL, NULL, NULL);
+  AddTestCase (MacroTestsAssertsEnabled, "Test UT_ASSERT_MEM_EQUAL() macro", "MacroUtAssertMemEqual", MacroUtAssertMemEqual, NULL, NULL, NULL);
+  AddTestCase (MacroTestsAssertsEnabled, "Test UT_ASSERT_NOT_EQUAL() macro", "MacroUtAssertNotEqual", MacroUtAssertNotEqual, NULL, NULL, NULL);
+  AddTestCase (MacroTestsAssertsEnabled, "Test UT_ASSERT_NOT_EFI_ERROR() macro", "MacroUtAssertNotEfiError", MacroUtAssertNotEfiError, NULL, NULL, NULL);
+  AddTestCase (MacroTestsAssertsEnabled, "Test UT_ASSERT_STATUS_EQUAL() macro", "MacroUtAssertStatusEqual", MacroUtAssertStatusEqual, NULL, NULL, NULL);
+  AddTestCase (MacroTestsAssertsEnabled, "Test UT_ASSERT_NOT_NULL() macro", "MacroUtAssertNotNull", MacroUtAssertNotNull, NULL, NULL, NULL);
   AddTestCase (MacroTestsAssertsEnabled, "Test UT_EXPECT_ASSERT_FAILURE() macro", "MacroUtExpectAssertFailure", MacroUtExpectAssertFailure, NULL, NULL, NULL);
 
-  AddTestCase (MacroTestsAssertsEnabled, "Test UT_LOG_ERROR() macro",   "MacroUtLogError",   MacroUtLogError,   NULL, NULL, NULL);
+  AddTestCase (MacroTestsAssertsEnabled, "Test UT_LOG_ERROR() macro", "MacroUtLogError", MacroUtLogError, NULL, NULL, NULL);
   AddTestCase (MacroTestsAssertsEnabled, "Test UT_LOG_WARNING() macro", "MacroUtLogWarning", MacroUtLogWarning, NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsEnabled, "Test UT_LOG_INFO() macro",    "MacroUtLogInfo",    MacroUtLogInfo,    NULL, NULL, NULL);
+  AddTestCase (MacroTestsAssertsEnabled, "Test UT_LOG_INFO() macro", "MacroUtLogInfo", MacroUtLogInfo, NULL, NULL, NULL);
   AddTestCase (MacroTestsAssertsEnabled, "Test UT_LOG_VERBOSE() macro", "MacroUtLogVerbose", MacroUtLogVerbose, NULL, NULL, NULL);
 
   //
@@ -731,19 +734,20 @@ UefiTestMain (
     Status = EFI_OUT_OF_RESOURCES;
     goto EXIT;
   }
-  AddTestCase (MacroTestsAssertsDisabled, "Test UT_ASSERT_TRUE() macro",           "MacroUtAssertTrue",          MacroUtAssertTrue,          NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsDisabled, "Test UT_ASSERT_FALSE() macro",          "MacroUtAssertFalse",         MacroUtAssertFalse,         NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsDisabled, "Test UT_ASSERT_EQUAL() macro",          "MacroUtAssertEqual",         MacroUtAssertEqual,         NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsDisabled, "Test UT_ASSERT_MEM_EQUAL() macro",      "MacroUtAssertMemEqual",      MacroUtAssertMemEqual,      NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsDisabled, "Test UT_ASSERT_NOT_EQUAL() macro",      "MacroUtAssertNotEqual",      MacroUtAssertNotEqual,      NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsDisabled, "Test UT_ASSERT_NOT_EFI_ERROR() macro",  "MacroUtAssertNotEfiError",   MacroUtAssertNotEfiError,   NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsDisabled, "Test UT_ASSERT_STATUS_EQUAL() macro",   "MacroUtAssertStatusEqual",   MacroUtAssertStatusEqual,   NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsDisabled, "Test UT_ASSERT_NOT_NULL() macro",       "MacroUtAssertNotNull",       MacroUtAssertNotNull,       NULL, NULL, NULL);
+
+  AddTestCase (MacroTestsAssertsDisabled, "Test UT_ASSERT_TRUE() macro", "MacroUtAssertTrue", MacroUtAssertTrue, NULL, NULL, NULL);
+  AddTestCase (MacroTestsAssertsDisabled, "Test UT_ASSERT_FALSE() macro", "MacroUtAssertFalse", MacroUtAssertFalse, NULL, NULL, NULL);
+  AddTestCase (MacroTestsAssertsDisabled, "Test UT_ASSERT_EQUAL() macro", "MacroUtAssertEqual", MacroUtAssertEqual, NULL, NULL, NULL);
+  AddTestCase (MacroTestsAssertsDisabled, "Test UT_ASSERT_MEM_EQUAL() macro", "MacroUtAssertMemEqual", MacroUtAssertMemEqual, NULL, NULL, NULL);
+  AddTestCase (MacroTestsAssertsDisabled, "Test UT_ASSERT_NOT_EQUAL() macro", "MacroUtAssertNotEqual", MacroUtAssertNotEqual, NULL, NULL, NULL);
+  AddTestCase (MacroTestsAssertsDisabled, "Test UT_ASSERT_NOT_EFI_ERROR() macro", "MacroUtAssertNotEfiError", MacroUtAssertNotEfiError, NULL, NULL, NULL);
+  AddTestCase (MacroTestsAssertsDisabled, "Test UT_ASSERT_STATUS_EQUAL() macro", "MacroUtAssertStatusEqual", MacroUtAssertStatusEqual, NULL, NULL, NULL);
+  AddTestCase (MacroTestsAssertsDisabled, "Test UT_ASSERT_NOT_NULL() macro", "MacroUtAssertNotNull", MacroUtAssertNotNull, NULL, NULL, NULL);
   AddTestCase (MacroTestsAssertsDisabled, "Test UT_EXPECT_ASSERT_FAILURE() macro", "MacroUtExpectAssertFailure", MacroUtExpectAssertFailure, NULL, NULL, NULL);
 
-  AddTestCase (MacroTestsAssertsDisabled, "Test UT_LOG_ERROR() macro",   "MacroUtLogError",   MacroUtLogError,   NULL, NULL, NULL);
+  AddTestCase (MacroTestsAssertsDisabled, "Test UT_LOG_ERROR() macro", "MacroUtLogError", MacroUtLogError, NULL, NULL, NULL);
   AddTestCase (MacroTestsAssertsDisabled, "Test UT_LOG_WARNING() macro", "MacroUtLogWarning", MacroUtLogWarning, NULL, NULL, NULL);
-  AddTestCase (MacroTestsAssertsDisabled, "Test UT_LOG_INFO() macro",    "MacroUtLogInfo",    MacroUtLogInfo,    NULL, NULL, NULL);
+  AddTestCase (MacroTestsAssertsDisabled, "Test UT_LOG_INFO() macro", "MacroUtLogInfo", MacroUtLogInfo, NULL, NULL, NULL);
   AddTestCase (MacroTestsAssertsDisabled, "Test UT_LOG_VERBOSE() macro", "MacroUtLogVerbose", MacroUtLogVerbose, NULL, NULL, NULL);
 
   //
@@ -765,8 +769,8 @@ EXIT:
 EFI_STATUS
 EFIAPI
 PeiEntryPoint (
-  IN EFI_PEI_FILE_HANDLE     FileHandle,
-  IN CONST EFI_PEI_SERVICES  **PeiServices
+  IN EFI_PEI_FILE_HANDLE    FileHandle,
+  IN CONST EFI_PEI_SERVICES **PeiServices
   )
 {
   return UefiTestMain ();
@@ -779,8 +783,8 @@ PeiEntryPoint (
 EFI_STATUS
 EFIAPI
 DxeEntryPoint (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
   return UefiTestMain ();
@@ -791,7 +795,7 @@ DxeEntryPoint (
 **/
 int
 main (
-  int argc,
+  int  argc,
   char *argv[]
   )
 {
