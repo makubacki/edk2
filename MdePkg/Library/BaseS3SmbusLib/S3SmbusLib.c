@@ -9,7 +9,6 @@
 
 **/
 
-
 #include <Base.h>
 
 #include <Library/DebugLib.h>
@@ -36,18 +35,18 @@
 **/
 VOID
 InternalSaveSmBusExecToBootScript (
-  IN     EFI_SMBUS_OPERATION        SmbusOperation,
-  IN     UINTN                      SmBusAddress,
-  IN     UINTN                      Length,
-  IN OUT VOID                       *Buffer
+  IN     EFI_SMBUS_OPERATION SmbusOperation,
+  IN     UINTN               SmBusAddress,
+  IN     UINTN               Length,
+  IN OUT VOID                *Buffer
   )
 {
-  RETURN_STATUS                Status;
+  RETURN_STATUS  Status;
 
   Status = S3BootScriptSaveSmbusExecute (
              SmBusAddress,
              SmbusOperation,
-            &Length,
+             &Length,
              Buffer
              );
   ASSERT (Status == RETURN_SUCCESS);
@@ -74,8 +73,8 @@ InternalSaveSmBusExecToBootScript (
 VOID
 EFIAPI
 S3SmBusQuickRead (
-  IN  UINTN                     SmBusAddress,
-  OUT RETURN_STATUS             *Status       OPTIONAL
+  IN  UINTN         SmBusAddress,
+  OUT RETURN_STATUS *Status       OPTIONAL
   )
 {
   SmBusQuickRead (SmBusAddress, Status);
@@ -104,8 +103,8 @@ S3SmBusQuickRead (
 VOID
 EFIAPI
 S3SmBusQuickWrite (
-  IN  UINTN                     SmBusAddress,
-  OUT RETURN_STATUS             *Status       OPTIONAL
+  IN  UINTN         SmBusAddress,
+  OUT RETURN_STATUS *Status       OPTIONAL
   )
 {
   SmBusQuickWrite (SmBusAddress, Status);
@@ -136,11 +135,11 @@ S3SmBusQuickWrite (
 UINT8
 EFIAPI
 S3SmBusReceiveByte (
-  IN  UINTN          SmBusAddress,
-  OUT RETURN_STATUS  *Status        OPTIONAL
+  IN  UINTN         SmBusAddress,
+  OUT RETURN_STATUS *Status        OPTIONAL
   )
 {
-  UINT8   Byte;
+  UINT8  Byte;
 
   Byte = SmBusReceiveByte (SmBusAddress, Status);
 
@@ -173,12 +172,12 @@ S3SmBusReceiveByte (
 UINT8
 EFIAPI
 S3SmBusSendByte (
-  IN  UINTN          SmBusAddress,
-  IN  UINT8          Value,
-  OUT RETURN_STATUS  *Status        OPTIONAL
+  IN  UINTN         SmBusAddress,
+  IN  UINT8         Value,
+  OUT RETURN_STATUS *Status        OPTIONAL
   )
 {
-  UINT8   Byte;
+  UINT8  Byte;
 
   Byte = SmBusSendByte (SmBusAddress, Value, Status);
 
@@ -209,11 +208,11 @@ S3SmBusSendByte (
 UINT8
 EFIAPI
 S3SmBusReadDataByte (
-  IN  UINTN          SmBusAddress,
-  OUT RETURN_STATUS  *Status        OPTIONAL
+  IN  UINTN         SmBusAddress,
+  OUT RETURN_STATUS *Status        OPTIONAL
   )
 {
-  UINT8   Byte;
+  UINT8  Byte;
 
   Byte = SmBusReadDataByte (SmBusAddress, Status);
 
@@ -246,12 +245,12 @@ S3SmBusReadDataByte (
 UINT8
 EFIAPI
 S3SmBusWriteDataByte (
-  IN  UINTN          SmBusAddress,
-  IN  UINT8          Value,
-  OUT RETURN_STATUS  *Status        OPTIONAL
+  IN  UINTN         SmBusAddress,
+  IN  UINT8         Value,
+  OUT RETURN_STATUS *Status        OPTIONAL
   )
 {
-  UINT8   Byte;
+  UINT8  Byte;
 
   Byte = SmBusWriteDataByte (SmBusAddress, Value, Status);
 
@@ -282,8 +281,8 @@ S3SmBusWriteDataByte (
 UINT16
 EFIAPI
 S3SmBusReadDataWord (
-  IN  UINTN          SmBusAddress,
-  OUT RETURN_STATUS  *Status        OPTIONAL
+  IN  UINTN         SmBusAddress,
+  OUT RETURN_STATUS *Status        OPTIONAL
   )
 {
   UINT16  Word;
@@ -319,9 +318,9 @@ S3SmBusReadDataWord (
 UINT16
 EFIAPI
 S3SmBusWriteDataWord (
-  IN  UINTN          SmBusAddress,
-  IN  UINT16         Value,
-  OUT RETURN_STATUS  *Status        OPTIONAL
+  IN  UINTN         SmBusAddress,
+  IN  UINT16        Value,
+  OUT RETURN_STATUS *Status        OPTIONAL
   )
 {
   UINT16  Word;
@@ -357,9 +356,9 @@ S3SmBusWriteDataWord (
 UINT16
 EFIAPI
 S3SmBusProcessCall (
-  IN  UINTN          SmBusAddress,
-  IN  UINT16         Value,
-  OUT RETURN_STATUS  *Status        OPTIONAL
+  IN  UINTN         SmBusAddress,
+  IN  UINT16        Value,
+  OUT RETURN_STATUS *Status        OPTIONAL
   )
 {
   UINT16  Word;
@@ -398,12 +397,12 @@ S3SmBusProcessCall (
 UINTN
 EFIAPI
 S3SmBusReadBlock (
-  IN  UINTN          SmBusAddress,
-  OUT VOID           *Buffer,
-  OUT RETURN_STATUS  *Status        OPTIONAL
+  IN  UINTN         SmBusAddress,
+  OUT VOID          *Buffer,
+  OUT RETURN_STATUS *Status        OPTIONAL
   )
 {
-  UINTN   Length;
+  UINTN  Length;
 
   Length = SmBusReadBlock (SmBusAddress, Buffer, Status);
 
@@ -437,9 +436,9 @@ S3SmBusReadBlock (
 UINTN
 EFIAPI
 S3SmBusWriteBlock (
-  IN  UINTN          SmBusAddress,
-  OUT VOID           *Buffer,
-  OUT RETURN_STATUS  *Status        OPTIONAL
+  IN  UINTN         SmBusAddress,
+  OUT VOID          *Buffer,
+  OUT RETURN_STATUS *Status        OPTIONAL
   )
 {
   UINTN  Length;
@@ -479,13 +478,13 @@ S3SmBusWriteBlock (
 UINTN
 EFIAPI
 S3SmBusBlockProcessCall (
-  IN  UINTN          SmBusAddress,
-  IN  VOID           *WriteBuffer,
-  OUT VOID           *ReadBuffer,
-  OUT RETURN_STATUS  *Status        OPTIONAL
+  IN  UINTN         SmBusAddress,
+  IN  VOID          *WriteBuffer,
+  OUT VOID          *ReadBuffer,
+  OUT RETURN_STATUS *Status        OPTIONAL
   )
 {
-  UINTN   Length;
+  UINTN  Length;
 
   Length = SmBusBlockProcessCall (SmBusAddress, WriteBuffer, ReadBuffer, Status);
 

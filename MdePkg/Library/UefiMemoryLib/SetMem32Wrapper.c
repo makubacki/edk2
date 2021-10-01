@@ -40,9 +40,9 @@
 VOID *
 EFIAPI
 SetMem32 (
-  OUT VOID   *Buffer,
-  IN UINTN   Length,
-  IN UINT32  Value
+  OUT VOID  *Buffer,
+  IN UINTN  Length,
+  IN UINT32 Value
   )
 {
   if (Length == 0) {

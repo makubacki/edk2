@@ -12,10 +12,10 @@
 #define __PCI_SEGMENT_INFO_LIB__
 
 typedef struct {
-  UINT16               SegmentNumber;   ///< Segment number.
-  UINT64               BaseAddress;     ///< ECAM Base address.
-  UINT8                StartBusNumber;  ///< Start BUS number, for verifying the PCI Segment address.
-  UINT8                EndBusNumber;    ///< End BUS number, for verifying the PCI Segment address.
+  UINT16    SegmentNumber;              ///< Segment number.
+  UINT64    BaseAddress;                ///< ECAM Base address.
+  UINT8     StartBusNumber;             ///< Start BUS number, for verifying the PCI Segment address.
+  UINT8     EndBusNumber;               ///< End BUS number, for verifying the PCI Segment address.
 } PCI_SEGMENT_INFO;
 
 /**
@@ -30,7 +30,7 @@ typedef struct {
 PCI_SEGMENT_INFO *
 EFIAPI
 GetPciSegmentInfo (
-  UINTN  *Count
+  UINTN *Count
   );
 
 #endif

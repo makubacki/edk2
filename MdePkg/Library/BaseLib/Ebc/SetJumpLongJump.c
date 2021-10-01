@@ -30,7 +30,7 @@ RETURNS_TWICE
 UINTN
 EFIAPI
 SetJump (
-  OUT      BASE_LIBRARY_JUMP_BUFFER  *JumpBuffer
+  OUT      BASE_LIBRARY_JUMP_BUFFER *JumpBuffer
   )
 {
   InternalAssertJumpBuffer (JumpBuffer);
@@ -51,8 +51,8 @@ SetJump (
 VOID
 EFIAPI
 InternalLongJump (
-  IN      BASE_LIBRARY_JUMP_BUFFER  *JumpBuffer,
-  IN      UINTN                     Value
+  IN      BASE_LIBRARY_JUMP_BUFFER *JumpBuffer,
+  IN      UINTN                    Value
   )
 {
   //

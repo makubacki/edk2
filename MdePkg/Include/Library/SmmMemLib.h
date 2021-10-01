@@ -25,8 +25,8 @@
 BOOLEAN
 EFIAPI
 SmmIsBufferOutsideSmmValid (
-  IN EFI_PHYSICAL_ADDRESS  Buffer,
-  IN UINT64                Length
+  IN EFI_PHYSICAL_ADDRESS Buffer,
+  IN UINT64               Length
   );
 
 /**
@@ -49,9 +49,9 @@ SmmIsBufferOutsideSmmValid (
 EFI_STATUS
 EFIAPI
 SmmCopyMemToSmram (
-  OUT VOID       *DestinationBuffer,
-  IN CONST VOID  *SourceBuffer,
-  IN UINTN       Length
+  OUT VOID      *DestinationBuffer,
+  IN CONST VOID *SourceBuffer,
+  IN UINTN      Length
   );
 
 /**
@@ -74,9 +74,9 @@ SmmCopyMemToSmram (
 EFI_STATUS
 EFIAPI
 SmmCopyMemFromSmram (
-  OUT VOID       *DestinationBuffer,
-  IN CONST VOID  *SourceBuffer,
-  IN UINTN       Length
+  OUT VOID      *DestinationBuffer,
+  IN CONST VOID *SourceBuffer,
+  IN UINTN      Length
   );
 
 /**
@@ -100,9 +100,9 @@ SmmCopyMemFromSmram (
 EFI_STATUS
 EFIAPI
 SmmCopyMem (
-  OUT VOID       *DestinationBuffer,
-  IN CONST VOID  *SourceBuffer,
-  IN UINTN       Length
+  OUT VOID      *DestinationBuffer,
+  IN CONST VOID *SourceBuffer,
+  IN UINTN      Length
   );
 
 /**
@@ -124,9 +124,9 @@ SmmCopyMem (
 EFI_STATUS
 EFIAPI
 SmmSetMem (
-  OUT VOID  *Buffer,
-  IN UINTN  Length,
-  IN UINT8  Value
+  OUT VOID *Buffer,
+  IN UINTN Length,
+  IN UINT8 Value
   );
 
 #endif

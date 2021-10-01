@@ -33,9 +33,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 VOID *
 EFIAPI
 CopyMem (
-  OUT VOID       *DestinationBuffer,
-  IN CONST VOID  *SourceBuffer,
-  IN UINTN       Length
+  OUT VOID      *DestinationBuffer,
+  IN CONST VOID *SourceBuffer,
+  IN UINTN      Length
   );
 
 /**
@@ -55,9 +55,9 @@ CopyMem (
 VOID *
 EFIAPI
 SetMem (
-  OUT VOID  *Buffer,
-  IN UINTN  Length,
-  IN UINT8  Value
+  OUT VOID *Buffer,
+  IN UINTN Length,
+  IN UINT8 Value
   );
 
 /**
@@ -82,9 +82,9 @@ SetMem (
 VOID *
 EFIAPI
 SetMem16 (
-  OUT VOID   *Buffer,
-  IN UINTN   Length,
-  IN UINT16  Value
+  OUT VOID  *Buffer,
+  IN UINTN  Length,
+  IN UINT16 Value
   );
 
 /**
@@ -109,9 +109,9 @@ SetMem16 (
 VOID *
 EFIAPI
 SetMem32 (
-  OUT VOID   *Buffer,
-  IN UINTN   Length,
-  IN UINT32  Value
+  OUT VOID  *Buffer,
+  IN UINTN  Length,
+  IN UINT32 Value
   );
 
 /**
@@ -136,9 +136,9 @@ SetMem32 (
 VOID *
 EFIAPI
 SetMem64 (
-  OUT VOID   *Buffer,
-  IN UINTN   Length,
-  IN UINT64  Value
+  OUT VOID  *Buffer,
+  IN UINTN  Length,
+  IN UINT64 Value
   );
 
 /**
@@ -163,9 +163,9 @@ SetMem64 (
 VOID *
 EFIAPI
 SetMemN (
-  OUT VOID  *Buffer,
-  IN UINTN  Length,
-  IN UINTN  Value
+  OUT VOID *Buffer,
+  IN UINTN Length,
+  IN UINTN Value
   );
 
 /**
@@ -185,8 +185,8 @@ SetMemN (
 VOID *
 EFIAPI
 ZeroMem (
-  OUT VOID  *Buffer,
-  IN UINTN  Length
+  OUT VOID *Buffer,
+  IN UINTN Length
   );
 
 /**
@@ -214,9 +214,9 @@ ZeroMem (
 INTN
 EFIAPI
 CompareMem (
-  IN CONST VOID  *DestinationBuffer,
-  IN CONST VOID  *SourceBuffer,
-  IN UINTN       Length
+  IN CONST VOID *DestinationBuffer,
+  IN CONST VOID *SourceBuffer,
+  IN UINTN      Length
   );
 
 /**
@@ -241,9 +241,9 @@ CompareMem (
 VOID *
 EFIAPI
 ScanMem8 (
-  IN CONST VOID  *Buffer,
-  IN UINTN       Length,
-  IN UINT8       Value
+  IN CONST VOID *Buffer,
+  IN UINTN      Length,
+  IN UINT8      Value
   );
 
 /**
@@ -270,9 +270,9 @@ ScanMem8 (
 VOID *
 EFIAPI
 ScanMem16 (
-  IN CONST VOID  *Buffer,
-  IN UINTN       Length,
-  IN UINT16      Value
+  IN CONST VOID *Buffer,
+  IN UINTN      Length,
+  IN UINT16     Value
   );
 
 /**
@@ -299,9 +299,9 @@ ScanMem16 (
 VOID *
 EFIAPI
 ScanMem32 (
-  IN CONST VOID  *Buffer,
-  IN UINTN       Length,
-  IN UINT32      Value
+  IN CONST VOID *Buffer,
+  IN UINTN      Length,
+  IN UINT32     Value
   );
 
 /**
@@ -328,9 +328,9 @@ ScanMem32 (
 VOID *
 EFIAPI
 ScanMem64 (
-  IN CONST VOID  *Buffer,
-  IN UINTN       Length,
-  IN UINT64      Value
+  IN CONST VOID *Buffer,
+  IN UINTN      Length,
+  IN UINT64     Value
   );
 
 /**
@@ -357,9 +357,9 @@ ScanMem64 (
 VOID *
 EFIAPI
 ScanMemN (
-  IN CONST VOID  *Buffer,
-  IN UINTN       Length,
-  IN UINTN       Value
+  IN CONST VOID *Buffer,
+  IN UINTN      Length,
+  IN UINTN      Value
   );
 
 /**
@@ -380,8 +380,8 @@ ScanMemN (
 GUID *
 EFIAPI
 CopyGuid (
-  OUT GUID       *DestinationGuid,
-  IN CONST GUID  *SourceGuid
+  OUT GUID      *DestinationGuid,
+  IN CONST GUID *SourceGuid
   );
 
 /**
@@ -403,8 +403,8 @@ CopyGuid (
 BOOLEAN
 EFIAPI
 CompareGuid (
-  IN CONST GUID  *Guid1,
-  IN CONST GUID  *Guid2
+  IN CONST GUID *Guid1,
+  IN CONST GUID *Guid2
   );
 
 /**
@@ -432,9 +432,9 @@ CompareGuid (
 VOID *
 EFIAPI
 ScanGuid (
-  IN CONST VOID  *Buffer,
-  IN UINTN       Length,
-  IN CONST GUID  *Guid
+  IN CONST VOID *Buffer,
+  IN UINTN      Length,
+  IN CONST GUID *Guid
   );
 
 /**
@@ -454,7 +454,7 @@ ScanGuid (
 BOOLEAN
 EFIAPI
 IsZeroGuid (
-  IN CONST GUID  *Guid
+  IN CONST GUID *Guid
   );
 
 /**
@@ -476,8 +476,8 @@ IsZeroGuid (
 BOOLEAN
 EFIAPI
 IsZeroBuffer (
-  IN CONST VOID  *Buffer,
-  IN UINTN       Length
+  IN CONST VOID *Buffer,
+  IN UINTN      Length
   );
 
 #endif

@@ -26,7 +26,7 @@
 //
 // Cache copy of the DXE Services Table
 //
-EFI_DXE_SERVICES  *gDS      = NULL;
+EFI_DXE_SERVICES  *gDS = NULL;
 
 /**
   The constructor function caches the pointer of DXE Services Table.
@@ -45,8 +45,8 @@ EFI_DXE_SERVICES  *gDS      = NULL;
 EFI_STATUS
 EFIAPI
 DxeServicesTableLibConstructor (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
   EFI_STATUS  Status;
@@ -54,7 +54,7 @@ DxeServicesTableLibConstructor (
   //
   // Cache copy of the DXE Services Table
   //
-  Status = EfiGetSystemConfigurationTable (&gEfiDxeServicesTableGuid, (VOID **) &gDS);
+  Status = EfiGetSystemConfigurationTable (&gEfiDxeServicesTableGuid, (VOID **)&gDS);
   ASSERT_EFI_ERROR (Status);
   ASSERT (gDS != NULL);
 

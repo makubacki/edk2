@@ -11,7 +11,7 @@
 #include <Library/MmServicesTableLib.h>
 #include <Library/DebugLib.h>
 
-EFI_MM_SYSTEM_TABLE   *gMmst             = NULL;
+EFI_MM_SYSTEM_TABLE  *gMmst = NULL;
 
 /**
   The constructor function caches the pointer of the MM Services Table.
@@ -25,8 +25,8 @@ EFI_MM_SYSTEM_TABLE   *gMmst             = NULL;
 EFI_STATUS
 EFIAPI
 StandaloneMmServicesTableLibConstructor (
-  IN EFI_HANDLE           ImageHandle,
-  IN EFI_MM_SYSTEM_TABLE  *MmSystemTable
+  IN EFI_HANDLE          ImageHandle,
+  IN EFI_MM_SYSTEM_TABLE *MmSystemTable
   )
 {
   gMmst = MmSystemTable;

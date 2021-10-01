@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 #include "BaseLibInternals.h"
 
 /**
@@ -30,8 +27,8 @@
 VOID
 EFIAPI
 LongJump (
-  IN      BASE_LIBRARY_JUMP_BUFFER  *JumpBuffer,
-  IN      UINTN                     Value
+  IN      BASE_LIBRARY_JUMP_BUFFER *JumpBuffer,
+  IN      UINTN                    Value
   )
 {
   InternalAssertJumpBuffer (JumpBuffer);

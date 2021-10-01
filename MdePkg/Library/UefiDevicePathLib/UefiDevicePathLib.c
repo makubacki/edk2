@@ -13,7 +13,6 @@
 
 **/
 
-
 #include "UefiDevicePathLib.h"
 
 /**
@@ -32,7 +31,7 @@
 UINTN
 EFIAPI
 GetDevicePathSize (
-  IN CONST EFI_DEVICE_PATH_PROTOCOL  *DevicePath
+  IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath
   )
 {
   return UefiDevicePathLibGetDevicePathSize (DevicePath);
@@ -57,7 +56,7 @@ GetDevicePathSize (
 EFI_DEVICE_PATH_PROTOCOL *
 EFIAPI
 DuplicateDevicePath (
-  IN CONST EFI_DEVICE_PATH_PROTOCOL  *DevicePath
+  IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath
   )
 {
   return UefiDevicePathLibDuplicateDevicePath (DevicePath);
@@ -90,7 +89,7 @@ DuplicateDevicePath (
 EFI_DEVICE_PATH_PROTOCOL *
 EFIAPI
 AppendDevicePath (
-  IN CONST EFI_DEVICE_PATH_PROTOCOL  *FirstDevicePath,  OPTIONAL
+  IN CONST EFI_DEVICE_PATH_PROTOCOL *FirstDevicePath, OPTIONAL
   IN CONST EFI_DEVICE_PATH_PROTOCOL  *SecondDevicePath  OPTIONAL
   )
 {
@@ -128,7 +127,7 @@ AppendDevicePath (
 EFI_DEVICE_PATH_PROTOCOL *
 EFIAPI
 AppendDevicePathNode (
-  IN CONST EFI_DEVICE_PATH_PROTOCOL  *DevicePath,     OPTIONAL
+  IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath, OPTIONAL
   IN CONST EFI_DEVICE_PATH_PROTOCOL  *DevicePathNode  OPTIONAL
   )
 {
@@ -161,7 +160,7 @@ AppendDevicePathNode (
 EFI_DEVICE_PATH_PROTOCOL *
 EFIAPI
 AppendDevicePathInstance (
-  IN CONST EFI_DEVICE_PATH_PROTOCOL  *DevicePath,        OPTIONAL
+  IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath, OPTIONAL
   IN CONST EFI_DEVICE_PATH_PROTOCOL  *DevicePathInstance OPTIONAL
   )
 {
@@ -199,8 +198,8 @@ AppendDevicePathInstance (
 EFI_DEVICE_PATH_PROTOCOL *
 EFIAPI
 GetNextDevicePathInstance (
-  IN OUT EFI_DEVICE_PATH_PROTOCOL    **DevicePath,
-  OUT UINTN                          *Size
+  IN OUT EFI_DEVICE_PATH_PROTOCOL **DevicePath,
+  OUT UINTN                       *Size
   )
 {
   return UefiDevicePathLibGetNextDevicePathInstance (DevicePath, Size);
@@ -228,9 +227,9 @@ GetNextDevicePathInstance (
 EFI_DEVICE_PATH_PROTOCOL *
 EFIAPI
 CreateDeviceNode (
-  IN UINT8                           NodeType,
-  IN UINT8                           NodeSubType,
-  IN UINT16                          NodeLength
+  IN UINT8  NodeType,
+  IN UINT8  NodeSubType,
+  IN UINT16 NodeLength
   )
 {
   return UefiDevicePathLibCreateDeviceNode (NodeType, NodeSubType, NodeLength);
@@ -254,7 +253,7 @@ CreateDeviceNode (
 BOOLEAN
 EFIAPI
 IsDevicePathMultiInstance (
-  IN CONST EFI_DEVICE_PATH_PROTOCOL  *DevicePath
+  IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath
   )
 {
   return UefiDevicePathLibIsDevicePathMultiInstance (DevicePath);
@@ -278,9 +277,9 @@ IsDevicePathMultiInstance (
 CHAR16 *
 EFIAPI
 ConvertDeviceNodeToText (
-  IN CONST EFI_DEVICE_PATH_PROTOCOL  *DeviceNode,
-  IN BOOLEAN                         DisplayOnly,
-  IN BOOLEAN                         AllowShortcuts
+  IN CONST EFI_DEVICE_PATH_PROTOCOL *DeviceNode,
+  IN BOOLEAN                        DisplayOnly,
+  IN BOOLEAN                        AllowShortcuts
   )
 {
   return UefiDevicePathLibConvertDeviceNodeToText (DeviceNode, DisplayOnly, AllowShortcuts);
@@ -304,9 +303,9 @@ ConvertDeviceNodeToText (
 CHAR16 *
 EFIAPI
 ConvertDevicePathToText (
-  IN CONST EFI_DEVICE_PATH_PROTOCOL   *DevicePath,
-  IN BOOLEAN                          DisplayOnly,
-  IN BOOLEAN                          AllowShortcuts
+  IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
+  IN BOOLEAN                        DisplayOnly,
+  IN BOOLEAN                        AllowShortcuts
   )
 {
   return UefiDevicePathLibConvertDevicePathToText (DevicePath, DisplayOnly, AllowShortcuts);

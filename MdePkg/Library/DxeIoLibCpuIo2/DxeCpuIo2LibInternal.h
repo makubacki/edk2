@@ -20,7 +20,6 @@
 #include <Library/DebugLib.h>
 #include <Library/BaseLib.h>
 
-
 /**
   Reads registers in the EFI CPU I/O space.
 
@@ -40,8 +39,8 @@
 UINT64
 EFIAPI
 IoReadWorker (
-  IN      UINTN                      Port,
-  IN      EFI_CPU_IO_PROTOCOL_WIDTH  Width
+  IN      UINTN                     Port,
+  IN      EFI_CPU_IO_PROTOCOL_WIDTH Width
   );
 
 /**
@@ -64,9 +63,9 @@ IoReadWorker (
 UINT64
 EFIAPI
 IoWriteWorker (
-  IN      UINTN                      Port,
-  IN      EFI_CPU_IO_PROTOCOL_WIDTH  Width,
-  IN      UINT64                     Data
+  IN      UINTN                     Port,
+  IN      EFI_CPU_IO_PROTOCOL_WIDTH Width,
+  IN      UINT64                    Data
   );
 
 /**
@@ -88,10 +87,10 @@ IoWriteWorker (
 VOID
 EFIAPI
 IoReadFifoWorker (
-  IN      UINTN                      Port,
-  IN      EFI_CPU_IO_PROTOCOL_WIDTH  Width,
-  IN      UINTN                      Count,
-  IN      VOID                       *Buffer
+  IN      UINTN                     Port,
+  IN      EFI_CPU_IO_PROTOCOL_WIDTH Width,
+  IN      UINTN                     Count,
+  IN      VOID                      *Buffer
   );
 
 /**
@@ -113,10 +112,10 @@ IoReadFifoWorker (
 VOID
 EFIAPI
 IoWriteFifoWorker (
-  IN      UINTN                      Port,
-  IN      EFI_CPU_IO_PROTOCOL_WIDTH  Width,
-  IN      UINTN                      Count,
-  IN      VOID                       *Buffer
+  IN      UINTN                     Port,
+  IN      EFI_CPU_IO_PROTOCOL_WIDTH Width,
+  IN      UINTN                     Count,
+  IN      VOID                      *Buffer
   );
 
 /**

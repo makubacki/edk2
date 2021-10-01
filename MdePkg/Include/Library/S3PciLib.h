@@ -25,7 +25,7 @@
   @return The encoded PCI address.
 
 **/
-#define S3_PCI_LIB_ADDRESS(Bus,Device,Function,Register)   \
+#define S3_PCI_LIB_ADDRESS(Bus, Device, Function, Register)   \
   (((Register) & 0xfff) | (((Function) & 0x07) << 12) | (((Device) & 0x1f) << 15) | (((Bus) & 0xff) << 20))
 
 /**
@@ -46,7 +46,7 @@
 UINT8
 EFIAPI
 S3PciRead8 (
-  IN UINTN  Address
+  IN UINTN Address
   );
 
 /**
@@ -69,8 +69,8 @@ S3PciRead8 (
 UINT8
 EFIAPI
 S3PciWrite8 (
-  IN UINTN  Address,
-  IN UINT8  Value
+  IN UINTN Address,
+  IN UINT8 Value
   );
 
 /**
@@ -96,8 +96,8 @@ S3PciWrite8 (
 UINT8
 EFIAPI
 S3PciOr8 (
-  IN UINTN  Address,
-  IN UINT8  OrData
+  IN UINTN Address,
+  IN UINT8 OrData
   );
 
 /**
@@ -123,8 +123,8 @@ S3PciOr8 (
 UINT8
 EFIAPI
 S3PciAnd8 (
-  IN UINTN  Address,
-  IN UINT8  AndData
+  IN UINTN Address,
+  IN UINT8 AndData
   );
 
 /**
@@ -153,9 +153,9 @@ S3PciAnd8 (
 UINT8
 EFIAPI
 S3PciAndThenOr8 (
-  IN UINTN  Address,
-  IN UINT8  AndData,
-  IN UINT8  OrData
+  IN UINTN Address,
+  IN UINT8 AndData,
+  IN UINT8 OrData
   );
 
 /**
@@ -183,9 +183,9 @@ S3PciAndThenOr8 (
 UINT8
 EFIAPI
 S3PciBitFieldRead8 (
-  IN UINTN  Address,
-  IN UINTN  StartBit,
-  IN UINTN  EndBit
+  IN UINTN Address,
+  IN UINTN StartBit,
+  IN UINTN EndBit
   );
 
 /**
@@ -216,10 +216,10 @@ S3PciBitFieldRead8 (
 UINT8
 EFIAPI
 S3PciBitFieldWrite8 (
-  IN UINTN  Address,
-  IN UINTN  StartBit,
-  IN UINTN  EndBit,
-  IN UINT8  Value
+  IN UINTN Address,
+  IN UINTN StartBit,
+  IN UINTN EndBit,
+  IN UINT8 Value
   );
 
 /**
@@ -253,10 +253,10 @@ S3PciBitFieldWrite8 (
 UINT8
 EFIAPI
 S3PciBitFieldOr8 (
-  IN UINTN  Address,
-  IN UINTN  StartBit,
-  IN UINTN  EndBit,
-  IN UINT8  OrData
+  IN UINTN Address,
+  IN UINTN StartBit,
+  IN UINTN EndBit,
+  IN UINT8 OrData
   );
 
 /**
@@ -290,10 +290,10 @@ S3PciBitFieldOr8 (
 UINT8
 EFIAPI
 S3PciBitFieldAnd8 (
-  IN UINTN  Address,
-  IN UINTN  StartBit,
-  IN UINTN  EndBit,
-  IN UINT8  AndData
+  IN UINTN Address,
+  IN UINTN StartBit,
+  IN UINTN EndBit,
+  IN UINT8 AndData
   );
 
 /**
@@ -330,11 +330,11 @@ S3PciBitFieldAnd8 (
 UINT8
 EFIAPI
 S3PciBitFieldAndThenOr8 (
-  IN UINTN  Address,
-  IN UINTN  StartBit,
-  IN UINTN  EndBit,
-  IN UINT8  AndData,
-  IN UINT8  OrData
+  IN UINTN Address,
+  IN UINTN StartBit,
+  IN UINTN EndBit,
+  IN UINT8 AndData,
+  IN UINT8 OrData
   );
 
 /**
@@ -357,7 +357,7 @@ S3PciBitFieldAndThenOr8 (
 UINT16
 EFIAPI
 S3PciRead16 (
-  IN UINTN  Address
+  IN UINTN Address
   );
 
 /**
@@ -381,8 +381,8 @@ S3PciRead16 (
 UINT16
 EFIAPI
 S3PciWrite16 (
-  IN UINTN   Address,
-  IN UINT16  Value
+  IN UINTN  Address,
+  IN UINT16 Value
   );
 
 /**
@@ -409,8 +409,8 @@ S3PciWrite16 (
 UINT16
 EFIAPI
 S3PciOr16 (
-  IN UINTN   Address,
-  IN UINT16  OrData
+  IN UINTN  Address,
+  IN UINT16 OrData
   );
 
 /**
@@ -437,8 +437,8 @@ S3PciOr16 (
 UINT16
 EFIAPI
 S3PciAnd16 (
-  IN UINTN   Address,
-  IN UINT16  AndData
+  IN UINTN  Address,
+  IN UINT16 AndData
   );
 
 /**
@@ -468,9 +468,9 @@ S3PciAnd16 (
 UINT16
 EFIAPI
 S3PciAndThenOr16 (
-  IN UINTN   Address,
-  IN UINT16  AndData,
-  IN UINT16  OrData
+  IN UINTN  Address,
+  IN UINT16 AndData,
+  IN UINT16 OrData
   );
 
 /**
@@ -499,9 +499,9 @@ S3PciAndThenOr16 (
 UINT16
 EFIAPI
 S3PciBitFieldRead16 (
-  IN UINTN  Address,
-  IN UINTN  StartBit,
-  IN UINTN  EndBit
+  IN UINTN Address,
+  IN UINTN StartBit,
+  IN UINTN EndBit
   );
 
 /**
@@ -533,10 +533,10 @@ S3PciBitFieldRead16 (
 UINT16
 EFIAPI
 S3PciBitFieldWrite16 (
-  IN UINTN   Address,
-  IN UINTN   StartBit,
-  IN UINTN   EndBit,
-  IN UINT16  Value
+  IN UINTN  Address,
+  IN UINTN  StartBit,
+  IN UINTN  EndBit,
+  IN UINT16 Value
   );
 
 /**
@@ -571,10 +571,10 @@ S3PciBitFieldWrite16 (
 UINT16
 EFIAPI
 S3PciBitFieldOr16 (
-  IN UINTN   Address,
-  IN UINTN   StartBit,
-  IN UINTN   EndBit,
-  IN UINT16  OrData
+  IN UINTN  Address,
+  IN UINTN  StartBit,
+  IN UINTN  EndBit,
+  IN UINT16 OrData
   );
 
 /**
@@ -609,10 +609,10 @@ S3PciBitFieldOr16 (
 UINT16
 EFIAPI
 S3PciBitFieldAnd16 (
-  IN UINTN   Address,
-  IN UINTN   StartBit,
-  IN UINTN   EndBit,
-  IN UINT16  AndData
+  IN UINTN  Address,
+  IN UINTN  StartBit,
+  IN UINTN  EndBit,
+  IN UINT16 AndData
   );
 
 /**
@@ -650,11 +650,11 @@ S3PciBitFieldAnd16 (
 UINT16
 EFIAPI
 S3PciBitFieldAndThenOr16 (
-  IN UINTN   Address,
-  IN UINTN   StartBit,
-  IN UINTN   EndBit,
-  IN UINT16  AndData,
-  IN UINT16  OrData
+  IN UINTN  Address,
+  IN UINTN  StartBit,
+  IN UINTN  EndBit,
+  IN UINT16 AndData,
+  IN UINT16 OrData
   );
 
 /**
@@ -677,7 +677,7 @@ S3PciBitFieldAndThenOr16 (
 UINT32
 EFIAPI
 S3PciRead32 (
-  IN UINTN  Address
+  IN UINTN Address
   );
 
 /**
@@ -701,8 +701,8 @@ S3PciRead32 (
 UINT32
 EFIAPI
 S3PciWrite32 (
-  IN UINTN   Address,
-  IN UINT32  Value
+  IN UINTN  Address,
+  IN UINT32 Value
   );
 
 /**
@@ -729,8 +729,8 @@ S3PciWrite32 (
 UINT32
 EFIAPI
 S3PciOr32 (
-  IN UINTN   Address,
-  IN UINT32  OrData
+  IN UINTN  Address,
+  IN UINT32 OrData
   );
 
 /**
@@ -757,8 +757,8 @@ S3PciOr32 (
 UINT32
 EFIAPI
 S3PciAnd32 (
-  IN UINTN   Address,
-  IN UINT32  AndData
+  IN UINTN  Address,
+  IN UINT32 AndData
   );
 
 /**
@@ -788,9 +788,9 @@ S3PciAnd32 (
 UINT32
 EFIAPI
 S3PciAndThenOr32 (
-  IN UINTN   Address,
-  IN UINT32  AndData,
-  IN UINT32  OrData
+  IN UINTN  Address,
+  IN UINT32 AndData,
+  IN UINT32 OrData
   );
 
 /**
@@ -819,9 +819,9 @@ S3PciAndThenOr32 (
 UINT32
 EFIAPI
 S3PciBitFieldRead32 (
-  IN UINTN  Address,
-  IN UINTN  StartBit,
-  IN UINTN  EndBit
+  IN UINTN Address,
+  IN UINTN StartBit,
+  IN UINTN EndBit
   );
 
 /**
@@ -853,10 +853,10 @@ S3PciBitFieldRead32 (
 UINT32
 EFIAPI
 S3PciBitFieldWrite32 (
-  IN UINTN   Address,
-  IN UINTN   StartBit,
-  IN UINTN   EndBit,
-  IN UINT32  Value
+  IN UINTN  Address,
+  IN UINTN  StartBit,
+  IN UINTN  EndBit,
+  IN UINT32 Value
   );
 
 /**
@@ -891,10 +891,10 @@ S3PciBitFieldWrite32 (
 UINT32
 EFIAPI
 S3PciBitFieldOr32 (
-  IN UINTN   Address,
-  IN UINTN   StartBit,
-  IN UINTN   EndBit,
-  IN UINT32  OrData
+  IN UINTN  Address,
+  IN UINTN  StartBit,
+  IN UINTN  EndBit,
+  IN UINT32 OrData
   );
 
 /**
@@ -929,10 +929,10 @@ S3PciBitFieldOr32 (
 UINT32
 EFIAPI
 S3PciBitFieldAnd32 (
-  IN UINTN   Address,
-  IN UINTN   StartBit,
-  IN UINTN   EndBit,
-  IN UINT32  AndData
+  IN UINTN  Address,
+  IN UINTN  StartBit,
+  IN UINTN  EndBit,
+  IN UINT32 AndData
   );
 
 /**
@@ -970,11 +970,11 @@ S3PciBitFieldAnd32 (
 UINT32
 EFIAPI
 S3PciBitFieldAndThenOr32 (
-  IN UINTN   Address,
-  IN UINTN   StartBit,
-  IN UINTN   EndBit,
-  IN UINT32  AndData,
-  IN UINT32  OrData
+  IN UINTN  Address,
+  IN UINTN  StartBit,
+  IN UINTN  EndBit,
+  IN UINT32 AndData,
+  IN UINT32 OrData
   );
 
 /**
@@ -1004,9 +1004,9 @@ S3PciBitFieldAndThenOr32 (
 UINTN
 EFIAPI
 S3PciReadBuffer (
-  IN  UINTN  StartAddress,
-  IN  UINTN  Size,
-  OUT VOID   *Buffer
+  IN  UINTN StartAddress,
+  IN  UINTN Size,
+  OUT VOID  *Buffer
   );
 
 /**
@@ -1037,9 +1037,9 @@ S3PciReadBuffer (
 UINTN
 EFIAPI
 S3PciWriteBuffer (
-  IN UINTN  StartAddress,
-  IN UINTN  Size,
-  IN VOID   *Buffer
+  IN UINTN StartAddress,
+  IN UINTN Size,
+  IN VOID  *Buffer
   );
 
 #endif

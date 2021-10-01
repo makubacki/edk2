@@ -23,7 +23,7 @@
 PCI_SEGMENT_INFO *
 EFIAPI
 GetPciSegmentInfo (
-  UINTN  *Count
+  UINTN *Count
   )
 {
   ASSERT (FALSE);

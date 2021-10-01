@@ -7,15 +7,14 @@
 
 **/
 
-
 #include <Uefi.h>
 
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/DebugLib.h>
 
 EFI_HANDLE         gImageHandle = NULL;
-EFI_SYSTEM_TABLE   *gST         = NULL;
-EFI_BOOT_SERVICES  *gBS         = NULL;
+EFI_SYSTEM_TABLE   *gST = NULL;
+EFI_BOOT_SERVICES  *gBS = NULL;
 
 /**
   The constructor function caches the pointer of Boot Services Table.
@@ -34,8 +33,8 @@ EFI_BOOT_SERVICES  *gBS         = NULL;
 EFI_STATUS
 EFIAPI
 UefiBootServicesTableLibConstructor (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
   //

@@ -30,8 +30,8 @@ EFI_RUNTIME_SERVICES  *gRT = NULL;
 EFI_STATUS
 EFIAPI
 UefiRuntimeServicesTableLibConstructor (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
   //

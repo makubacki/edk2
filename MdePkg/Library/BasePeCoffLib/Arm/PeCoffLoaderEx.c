@@ -10,7 +10,6 @@
 #include "BasePeCoffLibInternals.h"
 #include <Library/BaseLib.h>
 
-
 /**
   Pass in a pointer to an ARM MOVT or MOVW immediate instruciton and
   return the immediate data encoded in the instruction.
@@ -43,7 +42,6 @@ ThumbMovtImmediateAddress (
   return Address;
 }
 
-
 /**
   Update an ARM MOVT or MOVW immediate instruction immediate data.
 
@@ -59,7 +57,7 @@ ThumbMovtImmediatePatch (
   UINT16  Patch;
 
   // First 16-bit chunk of instruciton
-  Patch  = ((Address >> 12) & 0x000f);            // imm4
+  Patch  = ((Address >> 12) & 0x000f);             // imm4
   Patch |= (((Address & BIT11) != 0) ? BIT10 : 0); // i
   // Mask out instruction bits and or in address
   *(Instruction) = (*Instruction & ~0x040f) | Patch;
@@ -71,8 +69,6 @@ ThumbMovtImmediatePatch (
   Instruction++;
   *Instruction = (*Instruction & ~0x70ff) | Patch;
 }
-
-
 
 /**
   Pass in a pointer to an ARM MOVW/MOVT instruciton pair and
@@ -97,7 +93,6 @@ ThumbMovwMovtImmediateAddress (
   return (ThumbMovtImmediateAddress (Top) << 16) + ThumbMovtImmediateAddress (Word);
 }
 
-
 /**
   Update an ARM MOVW/MOVT immediate instruction instruction pair.
 
@@ -120,8 +115,6 @@ ThumbMovwMovtImmediatePatch (
   ThumbMovtImmediatePatch (Top, (UINT16)(Address >> 16));
 }
 
-
-
 /**
   Performs an ARM-based specific relocation fixup and is a no-op on other
   instruction sets.
@@ -136,36 +129,36 @@ ThumbMovwMovtImmediatePatch (
 **/
 RETURN_STATUS
 PeCoffLoaderRelocateImageEx (
-  IN UINT16      *Reloc,
-  IN OUT CHAR8   *Fixup,
-  IN OUT CHAR8   **FixupData,
-  IN UINT64      Adjust
+  IN UINT16    *Reloc,
+  IN OUT CHAR8 *Fixup,
+  IN OUT CHAR8 **FixupData,
+  IN UINT64    Adjust
   )
 {
-  UINT16      *Fixup16;
-  UINT32      FixupVal;
+  UINT16  *Fixup16;
+  UINT32  FixupVal;
 
-  Fixup16   = (UINT16 *) Fixup;
+  Fixup16 = (UINT16 *)Fixup;
 
   switch ((*Reloc) >> 12) {
+    case EFI_IMAGE_REL_BASED_ARM_MOV32T:
+      FixupVal = ThumbMovwMovtImmediateAddress (Fixup16) + (UINT32)Adjust;
+      ThumbMovwMovtImmediatePatch (Fixup16, FixupVal);
 
-  case EFI_IMAGE_REL_BASED_ARM_MOV32T:
-    FixupVal = ThumbMovwMovtImmediateAddress (Fixup16) + (UINT32)Adjust;
-    ThumbMovwMovtImmediatePatch (Fixup16, FixupVal);
+      if (*FixupData != NULL) {
+        *FixupData = ALIGN_POINTER (*FixupData, sizeof (UINT64));
+        // Fixup16 is not aligned so we must copy it. Thumb instructions are streams of 16 bytes.
+        CopyMem (*FixupData, Fixup16, sizeof (UINT64));
+        *FixupData = *FixupData + sizeof (UINT64);
+      }
 
-    if (*FixupData != NULL) {
-      *FixupData = ALIGN_POINTER(*FixupData, sizeof(UINT64));
-      // Fixup16 is not aligned so we must copy it. Thumb instructions are streams of 16 bytes.
-      CopyMem (*FixupData, Fixup16, sizeof (UINT64));
-      *FixupData = *FixupData + sizeof(UINT64);
-    }
-    break;
+      break;
 
-  case EFI_IMAGE_REL_BASED_ARM_MOV32A:
-     ASSERT (FALSE);
-     // break omitted - ARM instruction encoding not implemented
-  default:
-    return RETURN_UNSUPPORTED;
+    case EFI_IMAGE_REL_BASED_ARM_MOV32A:
+      ASSERT (FALSE);
+    // break omitted - ARM instruction encoding not implemented
+    default:
+      return RETURN_UNSUPPORTED;
   }
 
   return RETURN_SUCCESS;
@@ -184,7 +177,7 @@ PeCoffLoaderRelocateImageEx (
 **/
 BOOLEAN
 PeCoffLoaderImageFormatSupported (
-  IN  UINT16  Machine
+  IN  UINT16 Machine
   )
 {
   if ((Machine == IMAGE_FILE_MACHINE_ARMTHUMB_MIXED) || (Machine ==  IMAGE_FILE_MACHINE_EBC)) {
@@ -209,10 +202,10 @@ PeCoffLoaderImageFormatSupported (
 **/
 RETURN_STATUS
 PeHotRelocateImageEx (
-  IN UINT16      *Reloc,
-  IN OUT CHAR8   *Fixup,
-  IN OUT CHAR8   **FixupData,
-  IN UINT64      Adjust
+  IN UINT16    *Reloc,
+  IN OUT CHAR8 *Fixup,
+  IN OUT CHAR8 **FixupData,
+  IN UINT64    Adjust
   )
 {
   UINT16  *Fixup16;
@@ -221,24 +214,23 @@ PeHotRelocateImageEx (
   Fixup16 = (UINT16 *)Fixup;
 
   switch ((*Reloc) >> 12) {
+    case EFI_IMAGE_REL_BASED_ARM_MOV32T:
+      *FixupData = ALIGN_POINTER (*FixupData, sizeof (UINT64));
+      if (*(UINT64 *)(*FixupData) == ReadUnaligned64 ((UINT64 *)Fixup16)) {
+        FixupVal = ThumbMovwMovtImmediateAddress (Fixup16) + (UINT32)Adjust;
+        ThumbMovwMovtImmediatePatch (Fixup16, FixupVal);
+      }
 
-  case EFI_IMAGE_REL_BASED_ARM_MOV32T:
-    *FixupData  = ALIGN_POINTER (*FixupData, sizeof (UINT64));
-    if (*(UINT64 *) (*FixupData) == ReadUnaligned64 ((UINT64 *)Fixup16)) {
-      FixupVal = ThumbMovwMovtImmediateAddress (Fixup16) + (UINT32)Adjust;
-      ThumbMovwMovtImmediatePatch (Fixup16, FixupVal);
-    }
-    *FixupData = *FixupData + sizeof(UINT64);
-    break;
+      *FixupData = *FixupData + sizeof (UINT64);
+      break;
 
-  case EFI_IMAGE_REL_BASED_ARM_MOV32A:
-    ASSERT (FALSE);
+    case EFI_IMAGE_REL_BASED_ARM_MOV32A:
+      ASSERT (FALSE);
     // break omitted - ARM instruction encoding not implemented
-  default:
-    DEBUG ((EFI_D_ERROR, "PeHotRelocateEx:unknown fixed type\n"));
-    return RETURN_UNSUPPORTED;
+    default:
+      DEBUG ((EFI_D_ERROR, "PeHotRelocateEx:unknown fixed type\n"));
+      return RETURN_UNSUPPORTED;
   }
 
   return RETURN_SUCCESS;
 }
-

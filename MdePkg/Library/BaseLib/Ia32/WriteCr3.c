@@ -20,7 +20,7 @@
 UINTN
 EFIAPI
 AsmWriteCr3 (
-  UINTN  Value
+  UINTN Value
   )
 {
   _asm {
@@ -28,4 +28,3 @@ AsmWriteCr3 (
     mov     cr3, eax
   }
 }
-

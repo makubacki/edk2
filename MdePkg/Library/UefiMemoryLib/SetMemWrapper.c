@@ -36,9 +36,9 @@
 VOID *
 EFIAPI
 SetMem (
-  OUT VOID  *Buffer,
-  IN UINTN  Length,
-  IN UINT8  Value
+  OUT VOID *Buffer,
+  IN UINTN Length,
+  IN UINT8 Value
   )
 {
   if (Length == 0) {
@@ -72,9 +72,9 @@ SetMem (
 VOID *
 EFIAPI
 SetMemN (
-  OUT VOID  *Buffer,
-  IN UINTN  Length,
-  IN UINTN  Value
+  OUT VOID *Buffer,
+  IN UINTN Length,
+  IN UINTN Value
   )
 {
   if (sizeof (UINTN) == sizeof (UINT64)) {

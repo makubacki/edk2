@@ -34,16 +34,15 @@
 BOOLEAN
 EFIAPI
 CodeTypeToPostCode (
-  IN  EFI_STATUS_CODE_TYPE   CodeType,
-  IN  EFI_STATUS_CODE_VALUE  Value,
-  OUT UINT8                  *PostCode
+  IN  EFI_STATUS_CODE_TYPE  CodeType,
+  IN  EFI_STATUS_CODE_VALUE Value,
+  OUT UINT8                 *PostCode
   )
 {
   ASSERT (PostCode != NULL);
 
   return FALSE;
 }
-
 
 /**
   Extracts ASSERT() information from a status code structure.
@@ -81,17 +80,16 @@ CodeTypeToPostCode (
 BOOLEAN
 EFIAPI
 ReportStatusCodeExtractAssertInfo (
-  IN EFI_STATUS_CODE_TYPE        CodeType,
-  IN EFI_STATUS_CODE_VALUE       Value,
-  IN CONST EFI_STATUS_CODE_DATA  *Data,
-  OUT CHAR8                      **Filename,
-  OUT CHAR8                      **Description,
-  OUT UINT32                     *LineNumber
+  IN EFI_STATUS_CODE_TYPE       CodeType,
+  IN EFI_STATUS_CODE_VALUE      Value,
+  IN CONST EFI_STATUS_CODE_DATA *Data,
+  OUT CHAR8                     **Filename,
+  OUT CHAR8                     **Description,
+  OUT UINT32                    *LineNumber
   )
 {
   return FALSE;
 }
-
 
 /**
   Extracts DEBUG() information from a status code structure.
@@ -125,10 +123,10 @@ ReportStatusCodeExtractAssertInfo (
 BOOLEAN
 EFIAPI
 ReportStatusCodeExtractDebugInfo (
-  IN CONST EFI_STATUS_CODE_DATA  *Data,
-  OUT UINT32                     *ErrorLevel,
-  OUT BASE_LIST                  *Marker,
-  OUT CHAR8                      **Format
+  IN CONST EFI_STATUS_CODE_DATA *Data,
+  OUT UINT32                    *ErrorLevel,
+  OUT BASE_LIST                 *Marker,
+  OUT CHAR8                     **Format
   )
 {
   ASSERT (Data       != NULL);
@@ -138,7 +136,6 @@ ReportStatusCodeExtractDebugInfo (
 
   return FALSE;
 }
-
 
 /**
   Reports a status code.
@@ -164,13 +161,12 @@ ReportStatusCodeExtractDebugInfo (
 EFI_STATUS
 EFIAPI
 ReportStatusCode (
-  IN EFI_STATUS_CODE_TYPE   Type,
-  IN EFI_STATUS_CODE_VALUE  Value
+  IN EFI_STATUS_CODE_TYPE  Type,
+  IN EFI_STATUS_CODE_VALUE Value
   )
 {
   return EFI_SUCCESS;
 }
-
 
 /**
   Reports a status code with a Device Path Protocol as the extended data.
@@ -203,16 +199,15 @@ ReportStatusCode (
 EFI_STATUS
 EFIAPI
 ReportStatusCodeWithDevicePath (
-  IN EFI_STATUS_CODE_TYPE            Type,
-  IN EFI_STATUS_CODE_VALUE           Value,
-  IN CONST EFI_DEVICE_PATH_PROTOCOL  *DevicePath
+  IN EFI_STATUS_CODE_TYPE           Type,
+  IN EFI_STATUS_CODE_VALUE          Value,
+  IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath
   )
 {
   ASSERT (DevicePath != NULL);
 
   return EFI_SUCCESS;
 }
-
 
 /**
   Reports a status code with an extended data buffer.
@@ -250,17 +245,16 @@ ReportStatusCodeWithDevicePath (
 EFI_STATUS
 EFIAPI
 ReportStatusCodeWithExtendedData (
-  IN EFI_STATUS_CODE_TYPE   Type,
-  IN EFI_STATUS_CODE_VALUE  Value,
-  IN CONST VOID             *ExtendedData,
-  IN UINTN                  ExtendedDataSize
+  IN EFI_STATUS_CODE_TYPE  Type,
+  IN EFI_STATUS_CODE_VALUE Value,
+  IN CONST VOID            *ExtendedData,
+  IN UINTN                 ExtendedDataSize
   )
 {
   ASSERT (ExtendedData     != NULL);
   ASSERT (ExtendedDataSize != 0);
   return EFI_SUCCESS;
 }
-
 
 /**
   Reports a status code with full parameters.
@@ -306,18 +300,17 @@ ReportStatusCodeWithExtendedData (
 EFI_STATUS
 EFIAPI
 ReportStatusCodeEx (
-  IN EFI_STATUS_CODE_TYPE   Type,
-  IN EFI_STATUS_CODE_VALUE  Value,
-  IN UINT32                 Instance,
-  IN CONST EFI_GUID         *CallerId          OPTIONAL,
-  IN CONST EFI_GUID         *ExtendedDataGuid  OPTIONAL,
-  IN CONST VOID             *ExtendedData      OPTIONAL,
-  IN UINTN                  ExtendedDataSize
+  IN EFI_STATUS_CODE_TYPE  Type,
+  IN EFI_STATUS_CODE_VALUE Value,
+  IN UINT32                Instance,
+  IN CONST EFI_GUID        *CallerId          OPTIONAL,
+  IN CONST EFI_GUID        *ExtendedDataGuid  OPTIONAL,
+  IN CONST VOID            *ExtendedData      OPTIONAL,
+  IN UINTN                 ExtendedDataSize
   )
 {
   return EFI_SUCCESS;
 }
-
 
 /**
   Returns TRUE if status codes of type EFI_PROGRESS_CODE are enabled
@@ -340,7 +333,6 @@ ReportProgressCodeEnabled (
   return FALSE;
 }
 
-
 /**
   Returns TRUE if status codes of type EFI_ERROR_CODE are enabled
 
@@ -362,7 +354,6 @@ ReportErrorCodeEnabled (
   return FALSE;
 }
 
-
 /**
   Returns TRUE if status codes of type EFI_DEBUG_CODE are enabled
 
@@ -383,4 +374,3 @@ ReportDebugCodeEnabled (
 {
   return FALSE;
 }
-

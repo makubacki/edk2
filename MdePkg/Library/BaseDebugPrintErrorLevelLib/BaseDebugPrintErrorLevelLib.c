@@ -42,7 +42,7 @@ GetDebugPrintErrorLevel (
 BOOLEAN
 EFIAPI
 SetDebugPrintErrorLevel (
-  UINT32  ErrorLevel
+  UINT32 ErrorLevel
   )
 {
   //

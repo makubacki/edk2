@@ -6,9 +6,6 @@
 
 **/
 
-
-
-
 #include "BaseLibInternals.h"
 
 /**
@@ -25,7 +22,7 @@
 VOID
 EFIAPI
 InternalAssertJumpBuffer (
-  IN      BASE_LIBRARY_JUMP_BUFFER  *JumpBuffer
+  IN      BASE_LIBRARY_JUMP_BUFFER *JumpBuffer
   )
 {
   ASSERT (JumpBuffer != NULL);

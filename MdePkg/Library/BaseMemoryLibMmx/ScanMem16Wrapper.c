@@ -43,9 +43,9 @@
 VOID *
 EFIAPI
 ScanMem16 (
-  IN CONST VOID  *Buffer,
-  IN UINTN       Length,
-  IN UINT16      Value
+  IN CONST VOID *Buffer,
+  IN UINTN      Length,
+  IN UINT16     Value
   )
 {
   if (Length == 0) {
@@ -57,5 +57,5 @@ ScanMem16 (
   ASSERT ((Length - 1) <= (MAX_ADDRESS - (UINTN)Buffer));
   ASSERT ((Length & (sizeof (Value) - 1)) == 0);
 
-  return (VOID*)InternalMemScanMem16 (Buffer, Length / sizeof (Value), Value);
+  return (VOID *)InternalMemScanMem16 (Buffer, Length / sizeof (Value), Value);
 }

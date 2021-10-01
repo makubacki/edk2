@@ -13,12 +13,11 @@
 
 **/
 
-
 #include "UefiDevicePathLib.h"
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_DEVICE_PATH_UTILITIES_PROTOCOL *mDevicePathLibDevicePathUtilities = NULL;
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_DEVICE_PATH_TO_TEXT_PROTOCOL   *mDevicePathLibDevicePathToText    = NULL;
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_DEVICE_PATH_FROM_TEXT_PROTOCOL *mDevicePathLibDevicePathFromText  = NULL;
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_DEVICE_PATH_UTILITIES_PROTOCOL  *mDevicePathLibDevicePathUtilities = NULL;
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_DEVICE_PATH_TO_TEXT_PROTOCOL    *mDevicePathLibDevicePathToText    = NULL;
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_DEVICE_PATH_FROM_TEXT_PROTOCOL  *mDevicePathLibDevicePathFromText  = NULL;
 
 /**
   The constructor function caches the pointer to DevicePathUtilites protocol,
@@ -37,16 +36,16 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_DEVICE_PATH_FROM_TEXT_PROTOCOL *mDevicePathLib
 EFI_STATUS
 EFIAPI
 UefiDevicePathLibOptionalDevicePathProtocolConstructor (
-  IN      EFI_HANDLE                ImageHandle,
-  IN      EFI_SYSTEM_TABLE          *SystemTable
+  IN      EFI_HANDLE       ImageHandle,
+  IN      EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  EFI_STATUS                        Status;
+  EFI_STATUS  Status;
 
   Status = gBS->LocateProtocol (
                   &gEfiDevicePathUtilitiesProtocolGuid,
                   NULL,
-                  (VOID**) &mDevicePathLibDevicePathUtilities
+                  (VOID **)&mDevicePathLibDevicePathUtilities
                   );
   ASSERT_EFI_ERROR (Status);
   ASSERT (mDevicePathLibDevicePathUtilities != NULL);
@@ -69,7 +68,7 @@ UefiDevicePathLibOptionalDevicePathProtocolConstructor (
 UINTN
 EFIAPI
 GetDevicePathSize (
-  IN CONST EFI_DEVICE_PATH_PROTOCOL  *DevicePath
+  IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath
   )
 {
   if (mDevicePathLibDevicePathUtilities != NULL) {
@@ -98,7 +97,7 @@ GetDevicePathSize (
 EFI_DEVICE_PATH_PROTOCOL *
 EFIAPI
 DuplicateDevicePath (
-  IN CONST EFI_DEVICE_PATH_PROTOCOL  *DevicePath
+  IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath
   )
 {
   if (mDevicePathLibDevicePathUtilities != NULL) {
@@ -135,7 +134,7 @@ DuplicateDevicePath (
 EFI_DEVICE_PATH_PROTOCOL *
 EFIAPI
 AppendDevicePath (
-  IN CONST EFI_DEVICE_PATH_PROTOCOL  *FirstDevicePath,  OPTIONAL
+  IN CONST EFI_DEVICE_PATH_PROTOCOL *FirstDevicePath, OPTIONAL
   IN CONST EFI_DEVICE_PATH_PROTOCOL  *SecondDevicePath  OPTIONAL
   )
 {
@@ -177,7 +176,7 @@ AppendDevicePath (
 EFI_DEVICE_PATH_PROTOCOL *
 EFIAPI
 AppendDevicePathNode (
-  IN CONST EFI_DEVICE_PATH_PROTOCOL  *DevicePath,     OPTIONAL
+  IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath, OPTIONAL
   IN CONST EFI_DEVICE_PATH_PROTOCOL  *DevicePathNode  OPTIONAL
   )
 {
@@ -214,7 +213,7 @@ AppendDevicePathNode (
 EFI_DEVICE_PATH_PROTOCOL *
 EFIAPI
 AppendDevicePathInstance (
-  IN CONST EFI_DEVICE_PATH_PROTOCOL  *DevicePath,        OPTIONAL
+  IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath, OPTIONAL
   IN CONST EFI_DEVICE_PATH_PROTOCOL  *DevicePathInstance OPTIONAL
   )
 {
@@ -256,8 +255,8 @@ AppendDevicePathInstance (
 EFI_DEVICE_PATH_PROTOCOL *
 EFIAPI
 GetNextDevicePathInstance (
-  IN OUT EFI_DEVICE_PATH_PROTOCOL    **DevicePath,
-  OUT UINTN                          *Size
+  IN OUT EFI_DEVICE_PATH_PROTOCOL **DevicePath,
+  OUT UINTN                       *Size
   )
 {
   if (mDevicePathLibDevicePathUtilities != NULL) {
@@ -289,9 +288,9 @@ GetNextDevicePathInstance (
 EFI_DEVICE_PATH_PROTOCOL *
 EFIAPI
 CreateDeviceNode (
-  IN UINT8                           NodeType,
-  IN UINT8                           NodeSubType,
-  IN UINT16                          NodeLength
+  IN UINT8  NodeType,
+  IN UINT8  NodeSubType,
+  IN UINT16 NodeLength
   )
 {
   if (mDevicePathLibDevicePathUtilities != NULL) {
@@ -319,7 +318,7 @@ CreateDeviceNode (
 BOOLEAN
 EFIAPI
 IsDevicePathMultiInstance (
-  IN CONST EFI_DEVICE_PATH_PROTOCOL  *DevicePath
+  IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath
   )
 {
   if (mDevicePathLibDevicePathUtilities != NULL) {
@@ -338,15 +337,16 @@ IsDevicePathMultiInstance (
 **/
 VOID *
 UefiDevicePathLibLocateProtocol (
-  EFI_GUID                         *ProtocolGuid
+  EFI_GUID *ProtocolGuid
   )
 {
-  EFI_STATUS Status;
-  VOID       *Protocol;
+  EFI_STATUS  Status;
+  VOID        *Protocol;
+
   Status = gBS->LocateProtocol (
                   ProtocolGuid,
                   NULL,
-                  (VOID**) &Protocol
+                  (VOID **)&Protocol
                   );
   if (EFI_ERROR (Status)) {
     return NULL;
@@ -373,14 +373,15 @@ UefiDevicePathLibLocateProtocol (
 CHAR16 *
 EFIAPI
 ConvertDeviceNodeToText (
-  IN CONST EFI_DEVICE_PATH_PROTOCOL  *DeviceNode,
-  IN BOOLEAN                         DisplayOnly,
-  IN BOOLEAN                         AllowShortcuts
+  IN CONST EFI_DEVICE_PATH_PROTOCOL *DeviceNode,
+  IN BOOLEAN                        DisplayOnly,
+  IN BOOLEAN                        AllowShortcuts
   )
 {
   if (mDevicePathLibDevicePathToText == NULL) {
     mDevicePathLibDevicePathToText = UefiDevicePathLibLocateProtocol (&gEfiDevicePathToTextProtocolGuid);
   }
+
   if (mDevicePathLibDevicePathToText != NULL) {
     return mDevicePathLibDevicePathToText->ConvertDeviceNodeToText (DeviceNode, DisplayOnly, AllowShortcuts);
   }
@@ -406,14 +407,15 @@ ConvertDeviceNodeToText (
 CHAR16 *
 EFIAPI
 ConvertDevicePathToText (
-  IN CONST EFI_DEVICE_PATH_PROTOCOL   *DevicePath,
-  IN BOOLEAN                          DisplayOnly,
-  IN BOOLEAN                          AllowShortcuts
+  IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
+  IN BOOLEAN                        DisplayOnly,
+  IN BOOLEAN                        AllowShortcuts
   )
 {
   if (mDevicePathLibDevicePathToText == NULL) {
     mDevicePathLibDevicePathToText = UefiDevicePathLibLocateProtocol (&gEfiDevicePathToTextProtocolGuid);
   }
+
   if (mDevicePathLibDevicePathToText != NULL) {
     return mDevicePathLibDevicePathToText->ConvertDevicePathToText (DevicePath, DisplayOnly, AllowShortcuts);
   }
@@ -441,6 +443,7 @@ ConvertTextToDeviceNode (
   if (mDevicePathLibDevicePathFromText == NULL) {
     mDevicePathLibDevicePathFromText = UefiDevicePathLibLocateProtocol (&gEfiDevicePathFromTextProtocolGuid);
   }
+
   if (mDevicePathLibDevicePathFromText != NULL) {
     return mDevicePathLibDevicePathFromText->ConvertTextToDeviceNode (TextDeviceNode);
   }
@@ -469,10 +472,10 @@ ConvertTextToDevicePath (
   if (mDevicePathLibDevicePathFromText == NULL) {
     mDevicePathLibDevicePathFromText = UefiDevicePathLibLocateProtocol (&gEfiDevicePathFromTextProtocolGuid);
   }
+
   if (mDevicePathLibDevicePathFromText != NULL) {
     return mDevicePathLibDevicePathFromText->ConvertTextToDevicePath (TextDevicePath);
   }
 
   return UefiDevicePathLibConvertTextToDevicePath (TextDevicePath);
 }
-

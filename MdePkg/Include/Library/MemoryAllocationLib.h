@@ -30,7 +30,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 VOID *
 EFIAPI
 AllocatePages (
-  IN UINTN  Pages
+  IN UINTN Pages
   );
 
 /**
@@ -49,7 +49,7 @@ AllocatePages (
 VOID *
 EFIAPI
 AllocateRuntimePages (
-  IN UINTN  Pages
+  IN UINTN Pages
   );
 
 /**
@@ -68,7 +68,7 @@ AllocateRuntimePages (
 VOID *
 EFIAPI
 AllocateReservedPages (
-  IN UINTN  Pages
+  IN UINTN Pages
   );
 
 /**
@@ -91,8 +91,8 @@ AllocateReservedPages (
 VOID
 EFIAPI
 FreePages (
-  IN VOID   *Buffer,
-  IN UINTN  Pages
+  IN VOID  *Buffer,
+  IN UINTN Pages
   );
 
 /**
@@ -116,8 +116,8 @@ FreePages (
 VOID *
 EFIAPI
 AllocateAlignedPages (
-  IN UINTN  Pages,
-  IN UINTN  Alignment
+  IN UINTN Pages,
+  IN UINTN Alignment
   );
 
 /**
@@ -141,8 +141,8 @@ AllocateAlignedPages (
 VOID *
 EFIAPI
 AllocateAlignedRuntimePages (
-  IN UINTN  Pages,
-  IN UINTN  Alignment
+  IN UINTN Pages,
+  IN UINTN Alignment
   );
 
 /**
@@ -166,8 +166,8 @@ AllocateAlignedRuntimePages (
 VOID *
 EFIAPI
 AllocateAlignedReservedPages (
-  IN UINTN  Pages,
-  IN UINTN  Alignment
+  IN UINTN Pages,
+  IN UINTN Alignment
   );
 
 /**
@@ -190,8 +190,8 @@ AllocateAlignedReservedPages (
 VOID
 EFIAPI
 FreeAlignedPages (
-  IN VOID   *Buffer,
-  IN UINTN  Pages
+  IN VOID  *Buffer,
+  IN UINTN Pages
   );
 
 /**
@@ -209,7 +209,7 @@ FreeAlignedPages (
 VOID *
 EFIAPI
 AllocatePool (
-  IN UINTN  AllocationSize
+  IN UINTN AllocationSize
   );
 
 /**
@@ -227,7 +227,7 @@ AllocatePool (
 VOID *
 EFIAPI
 AllocateRuntimePool (
-  IN UINTN  AllocationSize
+  IN UINTN AllocationSize
   );
 
 /**
@@ -245,7 +245,7 @@ AllocateRuntimePool (
 VOID *
 EFIAPI
 AllocateReservedPool (
-  IN UINTN  AllocationSize
+  IN UINTN AllocationSize
   );
 
 /**
@@ -264,7 +264,7 @@ AllocateReservedPool (
 VOID *
 EFIAPI
 AllocateZeroPool (
-  IN UINTN  AllocationSize
+  IN UINTN AllocationSize
   );
 
 /**
@@ -283,7 +283,7 @@ AllocateZeroPool (
 VOID *
 EFIAPI
 AllocateRuntimeZeroPool (
-  IN UINTN  AllocationSize
+  IN UINTN AllocationSize
   );
 
 /**
@@ -302,7 +302,7 @@ AllocateRuntimeZeroPool (
 VOID *
 EFIAPI
 AllocateReservedZeroPool (
-  IN UINTN  AllocationSize
+  IN UINTN AllocationSize
   );
 
 /**
@@ -325,8 +325,8 @@ AllocateReservedZeroPool (
 VOID *
 EFIAPI
 AllocateCopyPool (
-  IN UINTN       AllocationSize,
-  IN CONST VOID  *Buffer
+  IN UINTN      AllocationSize,
+  IN CONST VOID *Buffer
   );
 
 /**
@@ -349,8 +349,8 @@ AllocateCopyPool (
 VOID *
 EFIAPI
 AllocateRuntimeCopyPool (
-  IN UINTN       AllocationSize,
-  IN CONST VOID  *Buffer
+  IN UINTN      AllocationSize,
+  IN CONST VOID *Buffer
   );
 
 /**
@@ -373,8 +373,8 @@ AllocateRuntimeCopyPool (
 VOID *
 EFIAPI
 AllocateReservedCopyPool (
-  IN UINTN       AllocationSize,
-  IN CONST VOID  *Buffer
+  IN UINTN      AllocationSize,
+  IN CONST VOID *Buffer
   );
 
 /**
@@ -401,9 +401,9 @@ AllocateReservedCopyPool (
 VOID *
 EFIAPI
 ReallocatePool (
-  IN UINTN  OldSize,
-  IN UINTN  NewSize,
-  IN VOID   *OldBuffer  OPTIONAL
+  IN UINTN OldSize,
+  IN UINTN NewSize,
+  IN VOID  *OldBuffer  OPTIONAL
   );
 
 /**
@@ -430,9 +430,9 @@ ReallocatePool (
 VOID *
 EFIAPI
 ReallocateRuntimePool (
-  IN UINTN  OldSize,
-  IN UINTN  NewSize,
-  IN VOID   *OldBuffer  OPTIONAL
+  IN UINTN OldSize,
+  IN UINTN NewSize,
+  IN VOID  *OldBuffer  OPTIONAL
   );
 
 /**
@@ -459,9 +459,9 @@ ReallocateRuntimePool (
 VOID *
 EFIAPI
 ReallocateReservedPool (
-  IN UINTN  OldSize,
-  IN UINTN  NewSize,
-  IN VOID   *OldBuffer  OPTIONAL
+  IN UINTN OldSize,
+  IN UINTN NewSize,
+  IN VOID  *OldBuffer  OPTIONAL
   );
 
 /**
@@ -481,7 +481,7 @@ ReallocateReservedPool (
 VOID
 EFIAPI
 FreePool (
-  IN VOID   *Buffer
+  IN VOID *Buffer
   );
 
 #endif

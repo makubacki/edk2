@@ -30,7 +30,7 @@
   @return The encoded PCI address.
 
 **/
-#define S3_BOOT_SCRIPT_LIB_PCI_ADDRESS(Bus,Device,Function,Register)   \
+#define S3_BOOT_SCRIPT_LIB_PCI_ADDRESS(Bus, Device, Function, Register)   \
   (UINT64) ( \
   (((UINTN) Bus) << 24) | \
   (((UINTN) Device) << 16) | \
@@ -72,10 +72,10 @@ typedef enum {
 RETURN_STATUS
 EFIAPI
 S3BootScriptSaveIoWrite (
-  IN  S3_BOOT_SCRIPT_LIB_WIDTH  Width,
-  IN  UINT64                    Address,
-  IN  UINTN                     Count,
-  IN  VOID                      *Buffer
+  IN  S3_BOOT_SCRIPT_LIB_WIDTH Width,
+  IN  UINT64                   Address,
+  IN  UINTN                    Count,
+  IN  VOID                     *Buffer
   );
 
 /**
@@ -95,10 +95,10 @@ S3BootScriptSaveIoWrite (
 RETURN_STATUS
 EFIAPI
 S3BootScriptSaveIoReadWrite (
-  IN  S3_BOOT_SCRIPT_LIB_WIDTH  Width,
-  IN  UINT64                    Address,
-  IN  VOID                      *Data,
-  IN  VOID                      *DataMask
+  IN  S3_BOOT_SCRIPT_LIB_WIDTH Width,
+  IN  UINT64                   Address,
+  IN  VOID                     *Data,
+  IN  VOID                     *DataMask
   );
 
 /**
@@ -116,10 +116,10 @@ S3BootScriptSaveIoReadWrite (
 RETURN_STATUS
 EFIAPI
 S3BootScriptSaveMemWrite (
-  IN  S3_BOOT_SCRIPT_LIB_WIDTH  Width,
-  IN  UINT64                    Address,
-  IN  UINTN                     Count,
-  IN  VOID                      *Buffer
+  IN  S3_BOOT_SCRIPT_LIB_WIDTH Width,
+  IN  UINT64                   Address,
+  IN  UINTN                    Count,
+  IN  VOID                     *Buffer
   );
 
 /**
@@ -139,10 +139,10 @@ S3BootScriptSaveMemWrite (
 RETURN_STATUS
 EFIAPI
 S3BootScriptSaveMemReadWrite (
-  IN  S3_BOOT_SCRIPT_LIB_WIDTH  Width,
-  IN  UINT64                    Address,
-  IN  VOID                      *Data,
-  IN  VOID                      *DataMask
+  IN  S3_BOOT_SCRIPT_LIB_WIDTH Width,
+  IN  UINT64                   Address,
+  IN  VOID                     *Data,
+  IN  VOID                     *DataMask
   );
 
 /**
@@ -160,10 +160,10 @@ S3BootScriptSaveMemReadWrite (
 RETURN_STATUS
 EFIAPI
 S3BootScriptSavePciCfgWrite (
-  IN  S3_BOOT_SCRIPT_LIB_WIDTH  Width,
-  IN  UINT64                    Address,
-  IN  UINTN                     Count,
-  IN  VOID                      *Buffer
+  IN  S3_BOOT_SCRIPT_LIB_WIDTH Width,
+  IN  UINT64                   Address,
+  IN  UINTN                    Count,
+  IN  VOID                     *Buffer
   );
 
 /**
@@ -181,10 +181,10 @@ S3BootScriptSavePciCfgWrite (
 RETURN_STATUS
 EFIAPI
 S3BootScriptSavePciCfgReadWrite (
-  IN  S3_BOOT_SCRIPT_LIB_WIDTH  Width,
-  IN  UINT64                    Address,
-  IN  VOID                      *Data,
-  IN  VOID                      *DataMask
+  IN  S3_BOOT_SCRIPT_LIB_WIDTH Width,
+  IN  UINT64                   Address,
+  IN  VOID                     *Data,
+  IN  VOID                     *DataMask
   );
 
 /**
@@ -203,11 +203,11 @@ S3BootScriptSavePciCfgReadWrite (
 RETURN_STATUS
 EFIAPI
 S3BootScriptSavePciCfg2Write (
-  IN S3_BOOT_SCRIPT_LIB_WIDTH  Width,
-  IN UINT16                    Segment,
-  IN UINT64                    Address,
-  IN UINTN                     Count,
-  IN VOID                      *Buffer
+  IN S3_BOOT_SCRIPT_LIB_WIDTH Width,
+  IN UINT16                   Segment,
+  IN UINT64                   Address,
+  IN UINTN                    Count,
+  IN VOID                     *Buffer
   );
 
 /**
@@ -226,11 +226,11 @@ S3BootScriptSavePciCfg2Write (
 RETURN_STATUS
 EFIAPI
 S3BootScriptSavePciCfg2ReadWrite (
-  IN S3_BOOT_SCRIPT_LIB_WIDTH  Width,
-  IN UINT16                    Segment,
-  IN UINT64                    Address,
-  IN VOID                      *Data,
-  IN VOID                      *DataMask
+  IN S3_BOOT_SCRIPT_LIB_WIDTH Width,
+  IN UINT16                   Segment,
+  IN UINT64                   Address,
+  IN VOID                     *Data,
+  IN VOID                     *DataMask
   );
 
 /**
@@ -252,10 +252,10 @@ S3BootScriptSavePciCfg2ReadWrite (
 RETURN_STATUS
 EFIAPI
 S3BootScriptSaveSmbusExecute (
-  IN  UINTN                SmBusAddress,
-  IN  EFI_SMBUS_OPERATION  Operation,
-  IN  UINTN                *Length,
-  IN  VOID                 *Buffer
+  IN  UINTN               SmBusAddress,
+  IN  EFI_SMBUS_OPERATION Operation,
+  IN  UINTN               *Length,
+  IN  VOID                *Buffer
   );
 
 /**
@@ -270,7 +270,7 @@ S3BootScriptSaveSmbusExecute (
 RETURN_STATUS
 EFIAPI
 S3BootScriptSaveStall (
-  IN  UINTN  Duration
+  IN  UINTN Duration
   );
 
 /**
@@ -287,8 +287,8 @@ S3BootScriptSaveStall (
 RETURN_STATUS
 EFIAPI
 S3BootScriptSaveDispatch2 (
-  IN  VOID  *EntryPoint,
-  IN  VOID  *Context
+  IN  VOID *EntryPoint,
+  IN  VOID *Context
   );
 
 /**
@@ -331,12 +331,12 @@ S3BootScriptSaveDispatch (
 RETURN_STATUS
 EFIAPI
 S3BootScriptSaveMemPoll (
-  IN  S3_BOOT_SCRIPT_LIB_WIDTH  Width,
-  IN  UINT64                    Address,
-  IN  VOID                      *BitMask,
-  IN  VOID                      *BitValue,
-  IN  UINTN                     Duration,
-  IN  UINT64                    LoopTimes
+  IN  S3_BOOT_SCRIPT_LIB_WIDTH Width,
+  IN  UINT64                   Address,
+  IN  VOID                     *BitMask,
+  IN  VOID                     *BitValue,
+  IN  UINTN                    Duration,
+  IN  UINT64                   LoopTimes
   );
 
 /**
@@ -354,9 +354,10 @@ S3BootScriptSaveMemPoll (
 RETURN_STATUS
 EFIAPI
 S3BootScriptSaveInformation (
-  IN  UINT32  InformationLength,
-  IN  VOID    *Information
+  IN  UINT32 InformationLength,
+  IN  VOID   *Information
   );
+
 /**
   Adds a record for I/O reads the I/O location and continues when the exit criteria
    is satisfied, or after a defined duration.
@@ -379,11 +380,11 @@ S3BootScriptSaveInformation (
 RETURN_STATUS
 EFIAPI
 S3BootScriptSaveIoPoll (
-  IN S3_BOOT_SCRIPT_LIB_WIDTH       Width,
-  IN UINT64                     Address,
-  IN VOID                      *Data,
-  IN VOID                      *DataMask,
-  IN UINT64                     Delay
+  IN S3_BOOT_SCRIPT_LIB_WIDTH Width,
+  IN UINT64                   Address,
+  IN VOID                     *Data,
+  IN VOID                     *DataMask,
+  IN UINT64                   Delay
   );
 
 /**
@@ -409,12 +410,13 @@ S3BootScriptSaveIoPoll (
 RETURN_STATUS
 EFIAPI
 S3BootScriptSavePciPoll (
-   IN S3_BOOT_SCRIPT_LIB_WIDTH   Width,
-   IN UINT64                     Address,
-   IN VOID                      *Data,
-   IN VOID                      *DataMask,
-   IN UINT64                     Delay
+  IN S3_BOOT_SCRIPT_LIB_WIDTH Width,
+  IN UINT64                   Address,
+  IN VOID                     *Data,
+  IN VOID                     *DataMask,
+  IN UINT64                   Delay
   );
+
 /**
   Adds a record for PCI configuration space reads and continues when the exit criteria
   is satisfied, or after a defined duration.
@@ -444,13 +446,14 @@ S3BootScriptSavePciPoll (
 RETURN_STATUS
 EFIAPI
 S3BootScriptSavePci2Poll (
-   IN S3_BOOT_SCRIPT_LIB_WIDTH      Width,
-   IN UINT16                        Segment,
-   IN UINT64                        Address,
-   IN VOID                         *Data,
-   IN VOID                         *DataMask,
-   IN UINT64                        Delay
+  IN S3_BOOT_SCRIPT_LIB_WIDTH Width,
+  IN UINT16                   Segment,
+  IN UINT64                   Address,
+  IN VOID                     *Data,
+  IN VOID                     *DataMask,
+  IN UINT64                   Delay
   );
+
 /**
   Save ASCII string information specified by Buffer to boot script with opcode
   EFI_BOOT_SCRIPT_INFORMATION_OPCODE.
@@ -466,7 +469,7 @@ S3BootScriptSavePci2Poll (
 RETURN_STATUS
 EFIAPI
 S3BootScriptSaveInformationAsciiString (
-  IN  CONST CHAR8  *String
+  IN  CONST CHAR8 *String
   );
 
 /**
@@ -493,7 +496,7 @@ S3BootScriptSaveInformationAsciiString (
   @return the base address of the new copy of the boot script table.
 
 **/
-UINT8*
+UINT8 *
 EFIAPI
 S3BootScriptCloseTable (
   VOID
@@ -511,6 +514,7 @@ EFIAPI
 S3BootScriptExecute (
   VOID
   );
+
 /**
   Move the last boot script entry to the position
 
@@ -535,9 +539,10 @@ S3BootScriptExecute (
 RETURN_STATUS
 EFIAPI
 S3BootScriptMoveLastOpcode (
-  IN     BOOLEAN                        BeforeOrAfter,
-  IN OUT VOID                         **Position OPTIONAL
+  IN     BOOLEAN BeforeOrAfter,
+  IN OUT VOID    **Position OPTIONAL
   );
+
 /**
   Find a label within the boot script table and, if not present, optionally create it.
 
@@ -565,11 +570,12 @@ S3BootScriptMoveLastOpcode (
 RETURN_STATUS
 EFIAPI
 S3BootScriptLabel (
-  IN       BOOLEAN                      BeforeOrAfter,
-  IN       BOOLEAN                      CreateIfNotFound,
-  IN OUT   VOID                       **Position OPTIONAL,
-  IN CONST CHAR8                       *Label
+  IN       BOOLEAN BeforeOrAfter,
+  IN       BOOLEAN CreateIfNotFound,
+  IN OUT   VOID    **Position OPTIONAL,
+  IN CONST CHAR8   *Label
   );
+
 /**
   Compare two positions in the boot script table and return their relative position.
   @param  Position1             The positions in the boot script table to compare
@@ -587,9 +593,9 @@ S3BootScriptLabel (
 RETURN_STATUS
 EFIAPI
 S3BootScriptCompare (
-  IN  UINT8                       *Position1,
-  IN  UINT8                       *Position2,
-  OUT UINTN                       *RelativePosition
+  IN  UINT8 *Position1,
+  IN  UINT8 *Position2,
+  OUT UINTN *RelativePosition
   );
 
 #endif
