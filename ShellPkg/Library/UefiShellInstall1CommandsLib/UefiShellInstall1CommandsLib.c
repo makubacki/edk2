@@ -22,18 +22,18 @@
 EFI_STATUS
 EFIAPI
 ShellInstall1CommandsLibConstructor (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
   //
   // check our bit of the profiles mask
   //
-  if ((PcdGet8(PcdShellProfileMask) & BIT2) == 0) {
+  if ((PcdGet8 (PcdShellProfileMask) & BIT2) == 0) {
     return (EFI_SUCCESS);
   }
 
-  return (BcfgLibraryRegisterBcfgCommand(ImageHandle, SystemTable, L"Install1"));
+  return (BcfgLibraryRegisterBcfgCommand (ImageHandle, SystemTable, L"Install1"));
 }
 
 /**
@@ -45,9 +45,9 @@ ShellInstall1CommandsLibConstructor (
 EFI_STATUS
 EFIAPI
 ShellInstall1CommandsLibDestructor (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  return (BcfgLibraryUnregisterBcfgCommand(ImageHandle, SystemTable));
+  return (BcfgLibraryUnregisterBcfgCommand (ImageHandle, SystemTable));
 }

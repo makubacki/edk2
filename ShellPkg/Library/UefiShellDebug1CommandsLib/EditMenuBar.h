@@ -22,7 +22,6 @@
 #define SCAN_CONTROL_W  23
 #define SCAN_CONTROL_Z  26
 
-
 typedef
 EFI_STATUS
 (*MENU_ITEM_FUNCTION) (
@@ -30,9 +29,9 @@ EFI_STATUS
   );
 
 typedef struct _EDITOR_MENU_ITEM {
-  EFI_STRING_ID           NameToken;
-  CHAR16                  FunctionKeyToken;
-  MENU_ITEM_FUNCTION  Function;
+  EFI_STRING_ID         NameToken;
+  CHAR16                FunctionKeyToken;
+  MENU_ITEM_FUNCTION    Function;
 } EDITOR_MENU_ITEM;
 
 /**
@@ -45,7 +44,7 @@ typedef struct _EDITOR_MENU_ITEM {
 **/
 EFI_STATUS
 MenuBarInit (
-  IN CONST EDITOR_MENU_ITEM  *Items
+  IN CONST EDITOR_MENU_ITEM *Items
   );
 
 /**
@@ -57,7 +56,7 @@ MenuBarInit (
 **/
 EFI_STATUS
 ControlHotKeyInit (
-  IN MENU_ITEM_FUNCTION  *Items
+  IN MENU_ITEM_FUNCTION *Items
   );
 
 /**
@@ -93,7 +92,7 @@ MenuBarRefresh (
 **/
 EFI_STATUS
 MenuBarDispatchFunctionKey (
-  IN CONST EFI_INPUT_KEY   *Key
+  IN CONST EFI_INPUT_KEY *Key
   );
 
 /**
@@ -107,7 +106,7 @@ MenuBarDispatchFunctionKey (
 **/
 EFI_STATUS
 MenuBarDispatchControlHotKey (
-  IN CONST EFI_KEY_DATA   *KeyData
+  IN CONST EFI_KEY_DATA *KeyData
   );
 
 #endif

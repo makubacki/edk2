@@ -24,9 +24,9 @@
 EFI_STATUS
 EFIAPI
 BcfgLibraryRegisterBcfgCommand (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable,
-  IN CONST CHAR16      *Name
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable,
+  IN CONST CHAR16     *Name
   );
 
 /**
@@ -38,9 +38,8 @@ BcfgLibraryRegisterBcfgCommand (
 EFI_STATUS
 EFIAPI
 BcfgLibraryUnregisterBcfgCommand (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 #endif
-

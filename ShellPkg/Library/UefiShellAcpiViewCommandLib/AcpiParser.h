@@ -51,7 +51,7 @@ BOOLEAN
 EFIAPI
 VerifyChecksum (
   IN BOOLEAN Log,
-  IN UINT8*  Ptr,
+  IN UINT8   *Ptr,
   IN UINT32  Length
   );
 
@@ -64,7 +64,7 @@ VerifyChecksum (
 VOID
 EFIAPI
 DumpRaw (
-  IN UINT8* Ptr,
+  IN UINT8  *Ptr,
   IN UINT32 Length
   );
 
@@ -77,8 +77,8 @@ DumpRaw (
 VOID
 EFIAPI
 DumpUint8 (
-  IN CONST CHAR16* Format,
-  IN UINT8*        Ptr
+  IN CONST CHAR16 *Format,
+  IN UINT8        *Ptr
   );
 
 /**
@@ -90,8 +90,8 @@ DumpUint8 (
 VOID
 EFIAPI
 DumpUint16 (
-  IN CONST CHAR16* Format,
-  IN UINT8*        Ptr
+  IN CONST CHAR16 *Format,
+  IN UINT8        *Ptr
   );
 
 /**
@@ -103,8 +103,8 @@ DumpUint16 (
 VOID
 EFIAPI
 DumpUint32 (
-  IN CONST CHAR16* Format,
-  IN UINT8*        Ptr
+  IN CONST CHAR16 *Format,
+  IN UINT8        *Ptr
   );
 
 /**
@@ -116,8 +116,8 @@ DumpUint32 (
 VOID
 EFIAPI
 DumpUint64 (
-  IN CONST CHAR16* Format,
-  IN UINT8*        Ptr
+  IN CONST CHAR16 *Format,
+  IN UINT8        *Ptr
   );
 
 /**
@@ -132,8 +132,8 @@ DumpUint64 (
 VOID
 EFIAPI
 Dump3Chars (
-  IN CONST CHAR16* Format OPTIONAL,
-  IN UINT8*        Ptr
+  IN CONST CHAR16 *Format OPTIONAL,
+  IN UINT8        *Ptr
   );
 
 /**
@@ -148,8 +148,8 @@ Dump3Chars (
 VOID
 EFIAPI
 Dump4Chars (
-  IN CONST CHAR16* Format OPTIONAL,
-  IN UINT8*        Ptr
+  IN CONST CHAR16 *Format OPTIONAL,
+  IN UINT8        *Ptr
   );
 
 /**
@@ -164,8 +164,8 @@ Dump4Chars (
 VOID
 EFIAPI
 Dump6Chars (
-  IN CONST CHAR16* Format OPTIONAL,
-  IN UINT8*        Ptr
+  IN CONST CHAR16 *Format OPTIONAL,
+  IN UINT8        *Ptr
   );
 
 /**
@@ -180,8 +180,8 @@ Dump6Chars (
 VOID
 EFIAPI
 Dump8Chars (
-  IN CONST CHAR16* Format OPTIONAL,
-  IN UINT8*        Ptr
+  IN CONST CHAR16 *Format OPTIONAL,
+  IN UINT8        *Ptr
   );
 
 /**
@@ -196,8 +196,8 @@ Dump8Chars (
 VOID
 EFIAPI
 Dump12Chars (
-  IN CONST CHAR16* Format OPTIONAL,
-  IN       UINT8*  Ptr
+  IN CONST CHAR16 *Format OPTIONAL,
+  IN       UINT8  *Ptr
   );
 
 /**
@@ -215,8 +215,8 @@ Dump12Chars (
 VOID
 EFIAPI
 PrintFieldName (
-  IN UINT32         Indent,
-  IN CONST CHAR16*  FieldName
+  IN UINT32       Indent,
+  IN CONST CHAR16 *FieldName
   );
 
 /**
@@ -226,7 +226,7 @@ PrintFieldName (
                       the 'Format' member of ACPI_PARSER.
   @param [in] Ptr     Pointer to the start of the buffer.
 **/
-typedef VOID (EFIAPI *FNPTR_PRINT_FORMATTER)(CONST CHAR16* Format, UINT8* Ptr);
+typedef VOID (EFIAPI *FNPTR_PRINT_FORMATTER)(CONST CHAR16 *Format, UINT8 *Ptr);
 
 /**
   This function pointer is the template for validating an ACPI table field.
@@ -236,7 +236,7 @@ typedef VOID (EFIAPI *FNPTR_PRINT_FORMATTER)(CONST CHAR16* Format, UINT8* Ptr);
                       the 'Context' member of the ACPI_PARSER.
                       e.g. this could be a pointer to the ACPI table header.
 **/
-typedef VOID (EFIAPI *FNPTR_FIELD_VALIDATOR)(UINT8* Ptr, VOID* Context);
+typedef VOID (EFIAPI *FNPTR_FIELD_VALIDATOR)(UINT8 *Ptr, VOID *Context);
 
 /**
   The ACPI_PARSER structure describes the fields of an ACPI table and
@@ -258,46 +258,45 @@ typedef VOID (EFIAPI *FNPTR_FIELD_VALIDATOR)(UINT8* Ptr, VOID* Context);
   representing the field data.
 **/
 typedef struct AcpiParser {
-
   /// String describing the ACPI table field
   /// (Field column from ACPI table spec)
-  CONST CHAR16*         NameStr;
+  CONST CHAR16             *NameStr;
 
   /// The length of the field.
   /// (Byte Length column from ACPI table spec)
-  UINT32                Length;
+  UINT32                   Length;
 
   /// The offset of the field from the start of the table.
   /// (Byte Offset column from ACPI table spec)
-  UINT32                Offset;
+  UINT32                   Offset;
 
   /// Optional Print() style format string for tracing the data. If not
   /// used this must be set to NULL.
-  CONST CHAR16*         Format;
+  CONST CHAR16             *Format;
 
   /// Optional pointer to a print formatter function which
   /// is typically used to trace complex field information.
   /// If not used this must be set to NULL.
   /// The Format string is passed to the PrintFormatter function
   /// but may be ignored by the implementation code.
-  FNPTR_PRINT_FORMATTER PrintFormatter;
+  FNPTR_PRINT_FORMATTER    PrintFormatter;
 
   /// Optional pointer which may be set to request the parser to update
   /// a pointer to the field data. If unused this must be set to NULL.
-  VOID**                ItemPtr;
+  VOID                     **ItemPtr;
 
   /// Optional pointer to a field validator function.
   /// The function should directly report any appropriate error or warning
   /// and invoke the appropriate counter update function.
   /// If not used this parameter must be set to NULL.
-  FNPTR_FIELD_VALIDATOR FieldValidator;
+  FNPTR_FIELD_VALIDATOR    FieldValidator;
 
   /// Optional pointer to context specific information,
   /// which the Field Validator function can use to determine
   /// additional information about the ACPI table and make
   /// decisions about the field being validated.
   /// e.g. this could be a pointer to the ACPI table header
-  VOID*                 Context;
+  VOID                     *Context;
 } ACPI_PARSER;
 
 /**
@@ -306,23 +305,23 @@ typedef struct AcpiParser {
 **/
 typedef struct AcpiDescriptionHeaderInfo {
   /// ACPI table signature
-  UINT32* Signature;
+  UINT32    *Signature;
   /// Length of the ACPI table
-  UINT32* Length;
+  UINT32    *Length;
   /// Revision
-  UINT8*  Revision;
+  UINT8     *Revision;
   /// Checksum
-  UINT8*  Checksum;
+  UINT8     *Checksum;
   /// OEM Id - length is 6 bytes
-  UINT8*  OemId;
+  UINT8     *OemId;
   /// OEM table Id
-  UINT64* OemTableId;
+  UINT64    *OemTableId;
   /// OEM revision Id
-  UINT32* OemRevision;
+  UINT32    *OemRevision;
   /// Creator Id
-  UINT32* CreatorId;
+  UINT32    *CreatorId;
   /// Creator revision
-  UINT32* CreatorRevision;
+  UINT32    *CreatorRevision;
 } ACPI_DESCRIPTION_HEADER_INFO;
 
 /**
@@ -354,13 +353,13 @@ typedef struct AcpiDescriptionHeaderInfo {
 UINT32
 EFIAPI
 ParseAcpi (
-  IN BOOLEAN            Trace,
-  IN UINT32             Indent,
-  IN CONST CHAR8*       AsciiName OPTIONAL,
-  IN UINT8*             Ptr,
-  IN UINT32             Length,
-  IN CONST ACPI_PARSER* Parser,
-  IN UINT32             ParserItems
+  IN BOOLEAN           Trace,
+  IN UINT32            Indent,
+  IN CONST CHAR8       *AsciiName OPTIONAL,
+  IN UINT8             *Ptr,
+  IN UINT32            Length,
+  IN CONST ACPI_PARSER *Parser,
+  IN UINT32            ParserItems
   );
 
 /**
@@ -369,7 +368,7 @@ ParseAcpi (
   @param [in] Parser The name of the ACPI_PARSER array describing the
               ACPI table fields.
 **/
-#define PARSER_PARAMS(Parser) Parser, sizeof (Parser) / sizeof (Parser[0])
+#define PARSER_PARAMS(Parser)  Parser, sizeof (Parser) / sizeof (Parser[0])
 
 /**
   This is a helper macro for describing the ACPI header fields.
@@ -408,9 +407,9 @@ ParseAcpi (
 UINT32
 EFIAPI
 DumpGasStruct (
-  IN UINT8*        Ptr,
-  IN UINT32        Indent,
-  IN UINT32        Length
+  IN UINT8  *Ptr,
+  IN UINT32 Indent,
+  IN UINT32 Length
   );
 
 /**
@@ -422,8 +421,8 @@ DumpGasStruct (
 VOID
 EFIAPI
 DumpGas (
-  IN CONST CHAR16* Format OPTIONAL,
-  IN UINT8*        Ptr
+  IN CONST CHAR16 *Format OPTIONAL,
+  IN UINT8        *Ptr
   );
 
 /**
@@ -436,7 +435,7 @@ DumpGas (
 UINT32
 EFIAPI
 DumpAcpiHeader (
-  IN UINT8* Ptr
+  IN UINT8 *Ptr
   );
 
 /**
@@ -455,10 +454,10 @@ DumpAcpiHeader (
 UINT32
 EFIAPI
 ParseAcpiHeader (
-  IN  UINT8*         Ptr,
-  OUT CONST UINT32** Signature,
-  OUT CONST UINT32** Length,
-  OUT CONST UINT8**  Revision
+  IN  UINT8        *Ptr,
+  OUT CONST UINT32 **Signature,
+  OUT CONST UINT32 **Length,
+  OUT CONST UINT8  **Revision
   );
 
 /**
@@ -477,7 +476,7 @@ VOID
 EFIAPI
 ParseAcpiAest (
   IN BOOLEAN Trace,
-  IN UINT8*  Ptr,
+  IN UINT8   *Ptr,
   IN UINT32  AcpiTableLength,
   IN UINT8   AcpiTableRevision
   );
@@ -498,7 +497,7 @@ VOID
 EFIAPI
 ParseAcpiBgrt (
   IN BOOLEAN Trace,
-  IN UINT8*  Ptr,
+  IN UINT8   *Ptr,
   IN UINT32  AcpiTableLength,
   IN UINT8   AcpiTableRevision
   );
@@ -519,7 +518,7 @@ VOID
 EFIAPI
 ParseAcpiDbg2 (
   IN BOOLEAN Trace,
-  IN UINT8*  Ptr,
+  IN UINT8   *Ptr,
   IN UINT32  AcpiTableLength,
   IN UINT8   AcpiTableRevision
   );
@@ -540,7 +539,7 @@ VOID
 EFIAPI
 ParseAcpiDsdt (
   IN BOOLEAN Trace,
-  IN UINT8*  Ptr,
+  IN UINT8   *Ptr,
   IN UINT32  AcpiTableLength,
   IN UINT8   AcpiTableRevision
   );
@@ -561,7 +560,7 @@ VOID
 EFIAPI
 ParseAcpiFacs (
   IN BOOLEAN Trace,
-  IN UINT8*  Ptr,
+  IN UINT8   *Ptr,
   IN UINT32  AcpiTableLength,
   IN UINT8   AcpiTableRevision
   );
@@ -582,7 +581,7 @@ VOID
 EFIAPI
 ParseAcpiFadt (
   IN BOOLEAN Trace,
-  IN UINT8*  Ptr,
+  IN UINT8   *Ptr,
   IN UINT32  AcpiTableLength,
   IN UINT8   AcpiTableRevision
   );
@@ -607,7 +606,7 @@ VOID
 EFIAPI
 ParseAcpiGtdt (
   IN BOOLEAN Trace,
-  IN UINT8*  Ptr,
+  IN UINT8   *Ptr,
   IN UINT32  AcpiTableLength,
   IN UINT8   AcpiTableRevision
   );
@@ -633,7 +632,7 @@ VOID
 EFIAPI
 ParseAcpiHmat (
   IN BOOLEAN Trace,
-  IN UINT8*  Ptr,
+  IN UINT8   *Ptr,
   IN UINT32  AcpiTableLength,
   IN UINT8   AcpiTableRevision
   );
@@ -662,7 +661,7 @@ VOID
 EFIAPI
 ParseAcpiIort (
   IN BOOLEAN Trace,
-  IN UINT8*  Ptr,
+  IN UINT8   *Ptr,
   IN UINT32  AcpiTableLength,
   IN UINT8   AcpiTableRevision
   );
@@ -691,7 +690,7 @@ VOID
 EFIAPI
 ParseAcpiMadt (
   IN BOOLEAN Trace,
-  IN UINT8*  Ptr,
+  IN UINT8   *Ptr,
   IN UINT32  AcpiTableLength,
   IN UINT8   AcpiTableRevision
   );
@@ -712,7 +711,7 @@ VOID
 EFIAPI
 ParseAcpiMcfg (
   IN BOOLEAN Trace,
-  IN UINT8*  Ptr,
+  IN UINT8   *Ptr,
   IN UINT32  AcpiTableLength,
   IN UINT8   AcpiTableRevision
   );
@@ -734,7 +733,7 @@ VOID
 EFIAPI
 ParseAcpiPcct (
   IN BOOLEAN Trace,
-  IN UINT8*  Ptr,
+  IN UINT8   *Ptr,
   IN UINT32  AcpiTableLength,
   IN UINT8   AcpiTableRevision
   );
@@ -755,7 +754,7 @@ VOID
 EFIAPI
 ParseAcpiPptt (
   IN BOOLEAN Trace,
-  IN UINT8*  Ptr,
+  IN UINT8   *Ptr,
   IN UINT32  AcpiTableLength,
   IN UINT8   AcpiTableRevision
   );
@@ -778,7 +777,7 @@ VOID
 EFIAPI
 ParseAcpiRsdp (
   IN BOOLEAN Trace,
-  IN UINT8*  Ptr,
+  IN UINT8   *Ptr,
   IN UINT32  AcpiTableLength,
   IN UINT8   AcpiTableRevision
   );
@@ -802,7 +801,7 @@ VOID
 EFIAPI
 ParseAcpiSlit (
   IN BOOLEAN Trace,
-  IN UINT8*  Ptr,
+  IN UINT8   *Ptr,
   IN UINT32  AcpiTableLength,
   IN UINT8   AcpiTableRevision
   );
@@ -823,7 +822,7 @@ VOID
 EFIAPI
 ParseAcpiSpcr (
   IN BOOLEAN Trace,
-  IN UINT8*  Ptr,
+  IN UINT8   *Ptr,
   IN UINT32  AcpiTableLength,
   IN UINT8   AcpiTableRevision
   );
@@ -850,7 +849,7 @@ VOID
 EFIAPI
 ParseAcpiSrat (
   IN BOOLEAN Trace,
-  IN UINT8*  Ptr,
+  IN UINT8   *Ptr,
   IN UINT32  AcpiTableLength,
   IN UINT8   AcpiTableRevision
   );
@@ -871,7 +870,7 @@ VOID
 EFIAPI
 ParseAcpiSsdt (
   IN BOOLEAN Trace,
-  IN UINT8*  Ptr,
+  IN UINT8   *Ptr,
   IN UINT32  AcpiTableLength,
   IN UINT8   AcpiTableRevision
   );
@@ -891,7 +890,7 @@ VOID
 EFIAPI
 ParseAcpiXsdt (
   IN BOOLEAN Trace,
-  IN UINT8*  Ptr,
+  IN UINT8   *Ptr,
   IN UINT32  AcpiTableLength,
   IN UINT8   AcpiTableRevision
   );

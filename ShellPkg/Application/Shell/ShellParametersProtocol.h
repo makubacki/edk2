@@ -38,8 +38,8 @@ typedef enum {
 **/
 EFI_STATUS
 CreatePopulateInstallShellParametersProtocol (
-  IN OUT EFI_SHELL_PARAMETERS_PROTOCOL  **NewShellParameters,
-  IN OUT BOOLEAN                        *RootShellInstance
+  IN OUT EFI_SHELL_PARAMETERS_PROTOCOL **NewShellParameters,
+  IN OUT BOOLEAN                       *RootShellInstance
   );
 
 /**
@@ -56,7 +56,7 @@ CreatePopulateInstallShellParametersProtocol (
 **/
 EFI_STATUS
 CleanUpShellParametersProtocol (
-  IN OUT EFI_SHELL_PARAMETERS_PROTOCOL  *NewShellParameters
+  IN OUT EFI_SHELL_PARAMETERS_PROTOCOL *NewShellParameters
   );
 
 /**
@@ -75,12 +75,12 @@ CleanUpShellParametersProtocol (
   @retval   EFI_OUT_OF_RESOURCES        a memory allocation failed.
 **/
 EFI_STATUS
-UpdateArgcArgv(
-  IN OUT EFI_SHELL_PARAMETERS_PROTOCOL  *ShellParameters,
-  IN CONST CHAR16                       *NewCommandLine,
-  IN SHELL_OPERATION_TYPES              Type,
-  OUT CHAR16                            ***OldArgv,
-  OUT UINTN                             *OldArgc
+UpdateArgcArgv (
+  IN OUT EFI_SHELL_PARAMETERS_PROTOCOL *ShellParameters,
+  IN CONST CHAR16                      *NewCommandLine,
+  IN SHELL_OPERATION_TYPES             Type,
+  OUT CHAR16                           ***OldArgv,
+  OUT UINTN                            *OldArgc
   );
 
 /**
@@ -93,19 +93,19 @@ UpdateArgcArgv(
   @param[in] OldArgc                    pointer to old number of items in Argv list
 **/
 VOID
-RestoreArgcArgv(
-  IN OUT EFI_SHELL_PARAMETERS_PROTOCOL  *ShellParameters,
-  IN CHAR16                             ***OldArgv,
-  IN UINTN                              *OldArgc
+RestoreArgcArgv (
+  IN OUT EFI_SHELL_PARAMETERS_PROTOCOL *ShellParameters,
+  IN CHAR16                            ***OldArgv,
+  IN UINTN                             *OldArgc
   );
 
 typedef struct {
-  EFI_SIMPLE_TEXT_INPUT_PROTOCOL        *ConIn;
-  EFI_HANDLE                            ConInHandle;
-  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL       *ConOut;
-  EFI_HANDLE                            ConOutHandle;
-  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL       *ErrOut;
-  EFI_HANDLE                            ErrOutHandle;
+  EFI_SIMPLE_TEXT_INPUT_PROTOCOL     *ConIn;
+  EFI_HANDLE                         ConInHandle;
+  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL    *ConOut;
+  EFI_HANDLE                         ConOutHandle;
+  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL    *ErrOut;
+  EFI_HANDLE                         ErrOutHandle;
 } SYSTEM_TABLE_INFO;
 
 /**
@@ -126,13 +126,13 @@ typedef struct {
   @retval   EFI_OUT_OF_RESOURCES        A memory allocation failed.
 **/
 EFI_STATUS
-UpdateStdInStdOutStdErr(
-  IN OUT EFI_SHELL_PARAMETERS_PROTOCOL  *ShellParameters,
-  IN CHAR16                             *NewCommandLine,
-  OUT SHELL_FILE_HANDLE                 *OldStdIn,
-  OUT SHELL_FILE_HANDLE                 *OldStdOut,
-  OUT SHELL_FILE_HANDLE                 *OldStdErr,
-  OUT SYSTEM_TABLE_INFO                 *SystemTableInfo
+UpdateStdInStdOutStdErr (
+  IN OUT EFI_SHELL_PARAMETERS_PROTOCOL *ShellParameters,
+  IN CHAR16                            *NewCommandLine,
+  OUT SHELL_FILE_HANDLE                *OldStdIn,
+  OUT SHELL_FILE_HANDLE                *OldStdOut,
+  OUT SHELL_FILE_HANDLE                *OldStdErr,
+  OUT SYSTEM_TABLE_INFO                *SystemTableInfo
   );
 
 /**
@@ -147,11 +147,11 @@ UpdateStdInStdOutStdErr(
 **/
 EFI_STATUS
 RestoreStdInStdOutStdErr (
-  IN OUT EFI_SHELL_PARAMETERS_PROTOCOL  *ShellParameters,
-  IN  SHELL_FILE_HANDLE                 *OldStdIn,
-  IN  SHELL_FILE_HANDLE                 *OldStdOut,
-  IN  SHELL_FILE_HANDLE                 *OldStdErr,
-  IN  SYSTEM_TABLE_INFO                 *SystemTableInfo
+  IN OUT EFI_SHELL_PARAMETERS_PROTOCOL *ShellParameters,
+  IN  SHELL_FILE_HANDLE                *OldStdIn,
+  IN  SHELL_FILE_HANDLE                *OldStdOut,
+  IN  SHELL_FILE_HANDLE                *OldStdErr,
+  IN  SYSTEM_TABLE_INFO                *SystemTableInfo
   );
 
 /**
@@ -172,7 +172,7 @@ RestoreStdInStdOutStdErr (
   @return EFI_OUT_OF_RESOURCES  a memory allocation failed.
 **/
 EFI_STATUS
-ParseCommandLineToArgs(
+ParseCommandLineToArgs (
   IN CONST CHAR16 *CommandLine,
   IN BOOLEAN      StripQuotation,
   IN OUT CHAR16   ***Argv,
@@ -200,12 +200,11 @@ ParseCommandLineToArgs(
   @return   EFI_NOT_FOUND         A closing " could not be found on the specified string
 **/
 EFI_STATUS
-GetNextParameter(
-  IN OUT CHAR16   **Walker,
-  IN OUT CHAR16   **TempParameter,
-  IN CONST UINTN  Length,
-  IN BOOLEAN      StripQuotation
+GetNextParameter (
+  IN OUT CHAR16  **Walker,
+  IN OUT CHAR16  **TempParameter,
+  IN CONST UINTN Length,
+  IN BOOLEAN     StripQuotation
   );
 
 #endif //_SHELL_PARAMETERS_PROTOCOL_PROVIDER_HEADER_
-

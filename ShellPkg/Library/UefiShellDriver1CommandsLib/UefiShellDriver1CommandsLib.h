@@ -57,9 +57,8 @@
 #include <Library/PeCoffGetEntryPointLib.h>
 #include <Library/HandleParsingLib.h>
 
-
-extern        EFI_HII_HANDLE                    gShellDriver1HiiHandle;
-extern        BOOLEAN                           gInReconnect;
+extern        EFI_HII_HANDLE  gShellDriver1HiiHandle;
+extern        BOOLEAN         gInReconnect;
 
 /**
   Function for 'connect' command.
@@ -70,8 +69,8 @@ extern        BOOLEAN                           gInReconnect;
 SHELL_STATUS
 EFIAPI
 ShellCommandRunConnect (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -83,8 +82,8 @@ ShellCommandRunConnect (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunDevices (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -96,8 +95,8 @@ ShellCommandRunDevices (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunOpenInfo (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -109,8 +108,8 @@ ShellCommandRunOpenInfo (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunDevTree (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -122,8 +121,8 @@ ShellCommandRunDevTree (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunDh (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -135,8 +134,8 @@ ShellCommandRunDh (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunDisconnect (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -148,8 +147,8 @@ ShellCommandRunDisconnect (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunDrivers (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -161,8 +160,8 @@ ShellCommandRunDrivers (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunDrvCfg (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -174,8 +173,8 @@ ShellCommandRunDrvCfg (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunDrvDiag (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -187,8 +186,8 @@ ShellCommandRunDrvDiag (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunReconnect (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -200,8 +199,8 @@ ShellCommandRunReconnect (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunUnload (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -216,7 +215,4 @@ ShellConnectFromDevPaths (
   IN CONST CHAR16 *Key
   );
 
-
-
 #endif
-

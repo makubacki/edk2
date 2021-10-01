@@ -56,7 +56,7 @@ HMoveCurrentLine (
 **/
 EFI_STATUS
 HFreeLines (
-  IN LIST_ENTRY   *ListHead,
+  IN LIST_ENTRY       *ListHead,
   IN HEFI_EDITOR_LINE *Lines
   );
 

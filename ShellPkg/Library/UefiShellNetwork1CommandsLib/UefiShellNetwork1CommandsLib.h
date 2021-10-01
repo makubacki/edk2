@@ -38,7 +38,7 @@
 #include <Library/DevicePathLib.h>
 #include <Library/PrintLib.h>
 
-extern EFI_HII_HANDLE gShellNetwork1HiiHandle;
+extern EFI_HII_HANDLE  gShellNetwork1HiiHandle;
 
 /**
   Function for 'ping' command.
@@ -49,8 +49,8 @@ extern EFI_HII_HANDLE gShellNetwork1HiiHandle;
 SHELL_STATUS
 EFIAPI
 ShellCommandRunPing (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -62,9 +62,8 @@ ShellCommandRunPing (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunIfconfig (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 #endif
-

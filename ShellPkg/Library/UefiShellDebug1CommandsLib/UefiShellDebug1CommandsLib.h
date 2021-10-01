@@ -51,8 +51,7 @@
 #include <Library/PrintLib.h>
 #include <Library/HandleParsingLib.h>
 
-
-extern        EFI_HII_HANDLE                    gShellDebug1HiiHandle;
+extern        EFI_HII_HANDLE  gShellDebug1HiiHandle;
 
 /**
   Function returns a system configuration table that is stored in the
@@ -79,8 +78,8 @@ GetSystemConfigurationTable (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunSetSize (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -92,8 +91,8 @@ ShellCommandRunSetSize (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunComp (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -105,8 +104,8 @@ ShellCommandRunComp (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunMode (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -118,8 +117,8 @@ ShellCommandRunMode (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunMemMap (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -131,8 +130,8 @@ ShellCommandRunMemMap (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunEfiCompress (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -144,8 +143,8 @@ ShellCommandRunEfiCompress (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunEfiDecompress (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -157,8 +156,8 @@ ShellCommandRunEfiDecompress (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunDmem (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -170,8 +169,8 @@ ShellCommandRunDmem (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunLoadPciRom (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -183,8 +182,8 @@ ShellCommandRunLoadPciRom (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunMm (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -196,8 +195,8 @@ ShellCommandRunMm (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunSetVar (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -209,8 +208,8 @@ ShellCommandRunSetVar (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunSerMode (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -222,8 +221,8 @@ ShellCommandRunSerMode (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunBcfg (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -235,8 +234,8 @@ ShellCommandRunBcfg (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunPci (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -248,8 +247,8 @@ ShellCommandRunPci (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunSmbiosView (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -261,8 +260,8 @@ ShellCommandRunSmbiosView (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunDmpStore (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -274,8 +273,8 @@ ShellCommandRunDmpStore (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunDblk (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -287,8 +286,8 @@ ShellCommandRunDblk (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunEdit (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -300,8 +299,8 @@ ShellCommandRunEdit (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunHexEdit (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**

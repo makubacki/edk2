@@ -92,14 +92,14 @@ HBufferImageBackup (
 **/
 EFI_STATUS
 HBufferImageRead (
-  IN CONST CHAR16                   *FileName,
-  IN CONST CHAR16                   *DiskName,
-  IN UINTN                          DiskOffset,
-  IN UINTN                          DiskSize,
-  IN UINTN                          MemOffset,
-  IN UINTN                          MemSize,
-  IN EDIT_FILE_TYPE                 BufferType,
-  IN BOOLEAN                        Recover
+  IN CONST CHAR16   *FileName,
+  IN CONST CHAR16   *DiskName,
+  IN UINTN          DiskOffset,
+  IN UINTN          DiskSize,
+  IN UINTN          MemOffset,
+  IN UINTN          MemSize,
+  IN EDIT_FILE_TYPE BufferType,
+  IN BOOLEAN        Recover
   );
 
 /**
@@ -117,13 +117,13 @@ HBufferImageRead (
 **/
 EFI_STATUS
 HBufferImageSave (
-  IN CHAR16                         *FileName,
-  IN CHAR16                         *DiskName,
-  IN UINTN                          DiskOffset,
-  IN UINTN                          DiskSize,
-  IN UINTN                          MemOffset,
-  IN UINTN                          MemSize,
-  IN EDIT_FILE_TYPE                 BufferType
+  IN CHAR16         *FileName,
+  IN CHAR16         *DiskName,
+  IN UINTN          DiskOffset,
+  IN UINTN          DiskSize,
+  IN UINTN          MemOffset,
+  IN UINTN          MemSize,
+  IN EDIT_FILE_TYPE BufferType
   );
 
 /**
@@ -135,11 +135,10 @@ HBufferImageSave (
 **/
 VOID
 HBufferImageMovePosition (
-  IN UINTN    NewFilePosRow,
-  IN UINTN    NewFilePosCol,
-  IN BOOLEAN  HighBits
+  IN UINTN   NewFilePosRow,
+  IN UINTN   NewFilePosCol,
+  IN BOOLEAN HighBits
   );
-
 
 /**
   Create a new line and append it to the line list.
@@ -177,9 +176,9 @@ HBufferImageFree (
 **/
 EFI_STATUS
 HBufferImageDeleteCharacterFromBuffer (
-  IN  UINTN         Pos,
-  IN  UINTN         Count,
-  OUT UINT8         *DeleteBuffer
+  IN  UINTN Pos,
+  IN  UINTN Count,
+  OUT UINT8 *DeleteBuffer
   );
 
 /**
@@ -193,9 +192,9 @@ HBufferImageDeleteCharacterFromBuffer (
 **/
 EFI_STATUS
 HBufferImageAddCharacterToBuffer (
-  IN  UINTN          Pos,
-  IN  UINTN          Count,
-  IN  UINT8          *AddBuffer
+  IN  UINTN Pos,
+  IN  UINTN Count,
+  IN  UINT8 *AddBuffer
   );
 
 /**
@@ -209,8 +208,8 @@ HBufferImageAddCharacterToBuffer (
 **/
 EFI_STATUS
 HBufferImageBufferToList (
-  IN VOID   *Buffer,
-  IN UINTN  Bytes
+  IN VOID  *Buffer,
+  IN UINTN Bytes
   );
 
 /**
@@ -223,8 +222,8 @@ HBufferImageBufferToList (
 **/
 EFI_STATUS
 HBufferImageListToBuffer (
-  IN VOID   *Buffer,
-  IN UINTN  Bytes
+  IN VOID  *Buffer,
+  IN UINTN Bytes
   );
 
 /**

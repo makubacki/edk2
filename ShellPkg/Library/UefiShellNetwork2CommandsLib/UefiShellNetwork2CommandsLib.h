@@ -27,7 +27,7 @@
 #include <Library/HiiLib.h>
 #include <Library/NetLib.h>
 
-extern EFI_HII_HANDLE gShellNetwork2HiiHandle;
+extern EFI_HII_HANDLE  gShellNetwork2HiiHandle;
 
 /**
   Function for 'ping6' command.
@@ -42,8 +42,8 @@ extern EFI_HII_HANDLE gShellNetwork2HiiHandle;
 SHELL_STATUS
 EFIAPI
 ShellCommandRunPing6 (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -59,9 +59,8 @@ ShellCommandRunPing6 (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunIfconfig6 (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 #endif
-

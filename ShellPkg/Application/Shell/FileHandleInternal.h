@@ -18,9 +18,9 @@
 **/
 VOID
 MoveCursorBackward (
-  IN     UINTN                   LineLength,
-  IN OUT UINTN                   *Column,
-  IN OUT UINTN                   *Row
+  IN     UINTN LineLength,
+  IN OUT UINTN *Column,
+  IN OUT UINTN *Row
   );
 
 /**
@@ -33,10 +33,10 @@ MoveCursorBackward (
 **/
 VOID
 MoveCursorForward (
-  IN     UINTN                   LineLength,
-  IN     UINTN                   TotalRow,
-  IN OUT UINTN                   *Column,
-  IN OUT UINTN                   *Row
+  IN     UINTN LineLength,
+  IN     UINTN TotalRow,
+  IN OUT UINTN *Column,
+  IN OUT UINTN *Row
   );
 
 /**
@@ -56,4 +56,3 @@ PrintCommandHistory (
   );
 
 #endif //_FILE_HANDLE_INTERNAL_HEADER_
-

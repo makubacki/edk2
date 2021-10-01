@@ -32,7 +32,7 @@
 #include <Library/HiiLib.h>
 #include <Library/FileHandleLib.h>
 
-extern EFI_HII_HANDLE gShellLevel3HiiHandle;
+extern EFI_HII_HANDLE  gShellLevel3HiiHandle;
 
 /**
   Function for 'type' command.
@@ -43,8 +43,8 @@ extern EFI_HII_HANDLE gShellLevel3HiiHandle;
 SHELL_STATUS
 EFIAPI
 ShellCommandRunType (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -56,8 +56,8 @@ ShellCommandRunType (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunTouch (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -69,8 +69,8 @@ ShellCommandRunTouch (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunVer (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -82,8 +82,8 @@ ShellCommandRunVer (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunAlias (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -95,8 +95,8 @@ ShellCommandRunAlias (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunCls (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -108,8 +108,8 @@ ShellCommandRunCls (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunEcho (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -121,8 +121,8 @@ ShellCommandRunEcho (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunPause (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -134,8 +134,8 @@ ShellCommandRunPause (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunGetMtc (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -147,9 +147,8 @@ ShellCommandRunGetMtc (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunHelp (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 #endif
-

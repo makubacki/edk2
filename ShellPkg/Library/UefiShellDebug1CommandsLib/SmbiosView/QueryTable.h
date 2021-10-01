@@ -12,11 +12,11 @@
 
 #include <IndustryStandard/SmBios.h>
 
-#define QUERY_TABLE_UNFOUND 0xFF
+#define QUERY_TABLE_UNFOUND  0xFF
 
 typedef struct TABLE_ITEM {
-  UINT16  Key;
-  CHAR16  *Info;
+  UINT16    Key;
+  CHAR16    *Info;
 } TABLE_ITEM;
 
 //
@@ -59,11 +59,11 @@ typedef struct TABLE_ITEM {
 **/
 UINT8
 QueryTable (
-  IN  TABLE_ITEM    *Table,
-  IN  UINTN         Number,
-  IN  UINT8         Key,
-  IN  OUT CHAR16    *Info,
-  IN  UINTN         InfoLen
+  IN  TABLE_ITEM *Table,
+  IN  UINTN      Number,
+  IN  UINT8      Key,
+  IN  OUT CHAR16 *Info,
+  IN  UINTN      InfoLen
   );
 
 /**
@@ -109,7 +109,7 @@ DisplayBaseBoardFeatureFlags (
   @param[in] Option         The optional information.
 **/
 VOID
-DisplayBaseBoardBoardType(
+DisplayBaseBoardBoardType (
   IN UINT8 Type,
   IN UINT8 Option
   );
@@ -184,7 +184,7 @@ DisplayProcessorUpgrade (
 VOID
 DisplayProcessorCharacteristics (
   IN UINT16 Type,
-  IN UINT8 Option
+  IN UINT8  Option
   );
 
 /**
@@ -231,8 +231,8 @@ DisplayMcInterleaveSupport (
 **/
 VOID
 DisplayMcMemorySpeeds (
-  IN UINT16  Speed,
-  IN UINT8   Option
+  IN UINT16 Speed,
+  IN UINT8  Option
   );
 
 /**
@@ -255,8 +255,8 @@ DisplayMemoryModuleVoltage (
 **/
 VOID
 DisplayMmMemoryType (
-  IN UINT16  Type,
-  IN UINT8   Option
+  IN UINT16 Type,
+  IN UINT8  Option
   );
 
 /**
@@ -279,8 +279,8 @@ DisplayMmErrorStatus (
 **/
 VOID
 DisplayCacheSRAMType (
-  IN UINT16  Type,
-  IN UINT8   Option
+  IN UINT16 Type,
+  IN UINT8  Option
   );
 
 /**
@@ -459,8 +459,8 @@ DisplaySELVarDataFormatType (
 **/
 VOID
 DisplayPostResultsBitmapDw1 (
-  IN UINT32  Key,
-  IN UINT8   Option
+  IN UINT32 Key,
+  IN UINT8  Option
   );
 
 /**
@@ -471,8 +471,8 @@ DisplayPostResultsBitmapDw1 (
 **/
 VOID
 DisplayPostResultsBitmapDw2 (
-  IN UINT32  Key,
-  IN UINT8   Option
+  IN UINT32 Key,
+  IN UINT8  Option
   );
 
 /**
@@ -483,8 +483,8 @@ DisplayPostResultsBitmapDw2 (
 **/
 VOID
 DisplaySELSysManagementTypes (
-  IN UINT32  SMType,
-  IN UINT8   Option
+  IN UINT32 SMType,
+  IN UINT8  Option
   );
 
 /**
@@ -555,8 +555,8 @@ DisplayMemoryDeviceType (
 **/
 VOID
 DisplayMemoryDeviceTypeDetail (
-  IN UINT16  Para,
-  IN UINT8   Option
+  IN UINT16 Para,
+  IN UINT8  Option
   );
 
 /**
@@ -567,8 +567,8 @@ DisplayMemoryDeviceTypeDetail (
 **/
 VOID
 DisplayMemoryDeviceMemoryTechnology (
-  IN UINT8  Para,
-  IN UINT8  Option
+  IN UINT8 Para,
+  IN UINT8 Option
   );
 
 /**
@@ -579,8 +579,8 @@ DisplayMemoryDeviceMemoryTechnology (
 **/
 VOID
 DisplayMemoryDeviceMemoryOperatingModeCapability (
-  IN UINT16  Para,
-  IN UINT8   Option
+  IN UINT16 Para,
+  IN UINT8  Option
   );
 
 /**
@@ -639,8 +639,8 @@ DisplayPointingDeviceType (
 **/
 VOID
 DisplayPointingDeviceInterface (
-  IN UINT8   Interface,
-  IN UINT8   Option
+  IN UINT8 Interface,
+  IN UINT8 Option
   );
 
 /**

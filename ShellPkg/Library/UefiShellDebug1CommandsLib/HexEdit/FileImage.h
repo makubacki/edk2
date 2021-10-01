@@ -56,8 +56,8 @@ HFileImageBackup (
 **/
 EFI_STATUS
 HFileImageRead (
-  IN CONST CHAR16  *FileName,
-  IN BOOLEAN Recover
+  IN CONST CHAR16 *FileName,
+  IN BOOLEAN      Recover
   );
 
 /**
