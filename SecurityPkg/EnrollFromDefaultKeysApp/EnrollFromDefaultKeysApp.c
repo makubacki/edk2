@@ -33,12 +33,12 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 UefiMain (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  EFI_STATUS Status;
-  UINT8      SetupMode;
+  EFI_STATUS  Status;
+  UINT8       SetupMode;
 
   Status = GetSetupMode (&SetupMode);
   if (EFI_ERROR (Status)) {
@@ -92,6 +92,7 @@ UefiMain (
       "Please do it manually, otherwise system can be easily compromised\n"
       );
   }
+
   return 0;
 
 clearKEK:

@@ -19,7 +19,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 UINT32
 EFIAPI
 Tpm2GetHashMaskFromAlgo (
-  IN EFI_GUID  *HashGuid
+  IN EFI_GUID *HashGuid
   );
 
 /**
