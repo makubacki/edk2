@@ -40,11 +40,11 @@
 ///  Internal structure used by Redfish Config DXE driver.
 ///
 typedef struct {
-  UINT32        CallerId;  ///< Caller ID used to indicate Redfish Config Handler
-                           ///< has been initiated
-  EFI_HANDLE    Image;     ///< Image handle of Redfish Config Driver
-  EFI_EVENT     Event;     ///< Event for the notification of EFI_REDFISH_CONFIG_HANDLER_PROTOCOL
-  REDFISH_CONFIG_SERVICE_INFORMATION RedfishServiceInfo; /// Redfish Service information discovered
+  UINT32                                CallerId;           ///< Caller ID used to indicate Redfish Config Handler
+                                                            ///< has been initiated
+  EFI_HANDLE                            Image;              ///< Image handle of Redfish Config Driver
+  EFI_EVENT                             Event;              ///< Event for the notification of EFI_REDFISH_CONFIG_HANDLER_PROTOCOL
+  REDFISH_CONFIG_SERVICE_INFORMATION    RedfishServiceInfo; /// Redfish Service information discovered
 } REDFISH_CONFIG_DRIVER_DATA;
 
 /**
@@ -57,7 +57,7 @@ typedef struct {
 **/
 EFI_STATUS
 RedfishConfigDriverCommonUnload (
-  IN EFI_HANDLE  ImageHandle
+  IN EFI_HANDLE ImageHandle
   );
 
 /**
@@ -72,8 +72,8 @@ RedfishConfigDriverCommonUnload (
 **/
 EFI_STATUS
 RedfishConfigCommonInit (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -86,7 +86,7 @@ RedfishConfigCommonInit (
 EFI_STATUS
 RedfishConfigCommonStop (
   VOID
-);
+  );
 
 /**
   Callback function executed when a Redfish Config Handler Protocol is installed

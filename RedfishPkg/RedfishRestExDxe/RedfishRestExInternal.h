@@ -50,7 +50,7 @@
 EFI_STATUS
 RedfishCheckHttpReceiveStatus (
   IN RESTEX_INSTANCE *Instance,
-  IN EFI_STATUS HttpIoReceiveStatus
+  IN EFI_STATUS      HttpIoReceiveStatus
   );
 
 /**
@@ -76,10 +76,10 @@ RedfishCheckHttpReceiveStatus (
 **/
 EFI_STATUS
 RedfishHttpAddExpectation (
-  IN EFI_REST_EX_PROTOCOL   *This,
-  IN EFI_HTTP_MESSAGE       *RequestMessage,
-  IN EFI_HTTP_HEADER        **PreservedRequestHeaders,
-  IN BOOLEAN                *ItsWrite
+  IN EFI_REST_EX_PROTOCOL *This,
+  IN EFI_HTTP_MESSAGE     *RequestMessage,
+  IN EFI_HTTP_HEADER      **PreservedRequestHeaders,
+  IN BOOLEAN              *ItsWrite
   );
 
 /**
@@ -104,9 +104,9 @@ RedfishHttpAddExpectation (
 EFI_STATUS
 EFIAPI
 RedfishRestExSendReceive (
-  IN      EFI_REST_EX_PROTOCOL   *This,
-  IN      EFI_HTTP_MESSAGE       *RequestMessage,
-  OUT     EFI_HTTP_MESSAGE       *ResponseMessage
+  IN      EFI_REST_EX_PROTOCOL *This,
+  IN      EFI_HTTP_MESSAGE     *RequestMessage,
+  OUT     EFI_HTTP_MESSAGE     *ResponseMessage
   );
 
 /**
@@ -134,8 +134,8 @@ RedfishRestExSendReceive (
 EFI_STATUS
 EFIAPI
 RedfishRestExGetServiceTime (
-  IN      EFI_REST_EX_PROTOCOL   *This,
-  OUT     EFI_TIME               *Time
+  IN      EFI_REST_EX_PROTOCOL *This,
+  OUT     EFI_TIME             *Time
   );
 
 /**
@@ -172,8 +172,8 @@ RedfishRestExGetServiceTime (
 EFI_STATUS
 EFIAPI
 RedfishRestExGetService (
-  IN   EFI_REST_EX_PROTOCOL      *This,
-  OUT  EFI_REST_EX_SERVICE_INFO  **RestExServiceInfo
+  IN   EFI_REST_EX_PROTOCOL     *This,
+  OUT  EFI_REST_EX_SERVICE_INFO **RestExServiceInfo
   );
 
 /**
@@ -205,8 +205,8 @@ RedfishRestExGetService (
 EFI_STATUS
 EFIAPI
 RedfishRestExGetModeData (
-  IN  EFI_REST_EX_PROTOCOL      *This,
-  OUT EFI_REST_EX_CONFIG_DATA   *RestExConfigData
+  IN  EFI_REST_EX_PROTOCOL    *This,
+  OUT EFI_REST_EX_CONFIG_DATA *RestExConfigData
   );
 
 /**
@@ -281,10 +281,10 @@ RedfishRestExConfigure (
 EFI_STATUS
 EFIAPI
 RedfishRestExAyncSendReceive (
-  IN      EFI_REST_EX_PROTOCOL   *This,
-  IN      EFI_HTTP_MESSAGE       *RequestMessage OPTIONAL,
-  IN      EFI_REST_EX_TOKEN      *RestExToken,
-  IN      UINTN                  *TimeOutInMilliSeconds OPTIONAL
+  IN      EFI_REST_EX_PROTOCOL *This,
+  IN      EFI_HTTP_MESSAGE     *RequestMessage OPTIONAL,
+  IN      EFI_REST_EX_TOKEN    *RestExToken,
+  IN      UINTN                *TimeOutInMilliSeconds OPTIONAL
   );
 
 /**
@@ -316,10 +316,11 @@ RedfishRestExAyncSendReceive (
 EFI_STATUS
 EFIAPI
 RedfishRestExEventService (
-  IN      EFI_REST_EX_PROTOCOL   *This,
-  IN      EFI_HTTP_MESSAGE       *RequestMessage OPTIONAL,
-  IN      EFI_REST_EX_TOKEN      *RestExToken
+  IN      EFI_REST_EX_PROTOCOL *This,
+  IN      EFI_HTTP_MESSAGE     *RequestMessage OPTIONAL,
+  IN      EFI_REST_EX_TOKEN    *RestExToken
   );
+
 /**
   Create a new TLS session becuase the previous on is closed.
   status.
@@ -332,9 +333,8 @@ RedfishRestExEventService (
 **/
 EFI_STATUS
 ResetHttpTslSession (
-  IN   RESTEX_INSTANCE  *Instance
-);
-
+  IN   RESTEX_INSTANCE *Instance
+  );
 
 /**
   Callback function which provided by user to remove one node in NetDestroyLinkList process.
@@ -349,8 +349,8 @@ ResetHttpTslSession (
 EFI_STATUS
 EFIAPI
 RestExDestroyChildEntryInHandleBuffer (
-  IN LIST_ENTRY         *Entry,
-  IN VOID               *Context
+  IN LIST_ENTRY *Entry,
+  IN VOID       *Context
   );
 
 /**
@@ -361,7 +361,7 @@ RestExDestroyChildEntryInHandleBuffer (
 **/
 VOID
 RestExDestroyInstance (
-  IN RESTEX_INSTANCE         *Instance
+  IN RESTEX_INSTANCE *Instance
   );
 
 /**
@@ -376,10 +376,9 @@ RestExDestroyInstance (
 **/
 EFI_STATUS
 RestExCreateInstance (
-  IN  RESTEX_SERVICE         *Service,
-  OUT RESTEX_INSTANCE        **Instance
+  IN  RESTEX_SERVICE  *Service,
+  OUT RESTEX_INSTANCE **Instance
   );
-
 
 /**
   Release all the resource used the RestEx service binding instance.
@@ -389,7 +388,7 @@ RestExCreateInstance (
 **/
 VOID
 RestExDestroyService (
-  IN RESTEX_SERVICE     *RestExSb
+  IN RESTEX_SERVICE *RestExSb
   );
 
 /**
@@ -407,9 +406,9 @@ RestExDestroyService (
 **/
 EFI_STATUS
 RestExCreateService (
-  IN     EFI_HANDLE            Controller,
-  IN     EFI_HANDLE            Image,
-  OUT    RESTEX_SERVICE        **Service
+  IN     EFI_HANDLE     Controller,
+  IN     EFI_HANDLE     Image,
+  OUT    RESTEX_SERVICE **Service
   );
 
 /**
@@ -426,8 +425,8 @@ RestExCreateService (
 EFI_STATUS
 EFIAPI
 RedfishRestExDriverEntryPoint (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -475,9 +474,9 @@ RedfishRestExDriverEntryPoint (
 EFI_STATUS
 EFIAPI
 RedfishRestExDriverBindingSupported (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   );
 
 /**
@@ -518,9 +517,9 @@ RedfishRestExDriverBindingSupported (
 EFI_STATUS
 EFIAPI
 RedfishRestExDriverBindingStart (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   );
 
 /**
@@ -552,10 +551,10 @@ RedfishRestExDriverBindingStart (
 EFI_STATUS
 EFIAPI
 RedfishRestExDriverBindingStop (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN UINTN                        NumberOfChildren,
-  IN EFI_HANDLE                   *ChildHandleBuffer OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN UINTN                       NumberOfChildren,
+  IN EFI_HANDLE                  *ChildHandleBuffer OPTIONAL
   );
 
 /**
@@ -580,8 +579,8 @@ RedfishRestExDriverBindingStop (
 EFI_STATUS
 EFIAPI
 RedfishRestExServiceBindingCreateChild (
-  IN EFI_SERVICE_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                    *ChildHandle
+  IN EFI_SERVICE_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                   *ChildHandle
   );
 
 /**
@@ -605,7 +604,8 @@ RedfishRestExServiceBindingCreateChild (
 EFI_STATUS
 EFIAPI
 RedfishRestExServiceBindingDestroyChild (
-  IN EFI_SERVICE_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                    ChildHandle
+  IN EFI_SERVICE_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                   ChildHandle
   );
+
 #endif

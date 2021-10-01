@@ -10,7 +10,7 @@
 
 #include <RedfishCredentialDxe.h>
 
-EDKII_REDFISH_CREDENTIAL_PROTOCOL mRedfishCredentialProtocol = {
+EDKII_REDFISH_CREDENTIAL_PROTOCOL  mRedfishCredentialProtocol = {
   RedfishCredentialGetAuthInfo,
   RedfishCredentialStopService
 };
@@ -24,8 +24,8 @@ EDKII_REDFISH_CREDENTIAL_PROTOCOL mRedfishCredentialProtocol = {
 VOID
 EFIAPI
 RedfishCredentialExitBootServicesEventNotify (
-  IN  EFI_EVENT  Event,
-  OUT VOID       *Context
+  IN  EFI_EVENT Event,
+  OUT VOID      *Context
   )
 {
   LibCredentialExitBootServicesNotify ((EDKII_REDFISH_CREDENTIAL_PROTOCOL *)Context);
@@ -40,8 +40,8 @@ RedfishCredentialExitBootServicesEventNotify (
 VOID
 EFIAPI
 RedfishCredentialEndOfDxeEventNotify (
-  IN  EFI_EVENT  Event,
-  OUT VOID       *Context
+  IN  EFI_EVENT Event,
+  OUT VOID      *Context
   )
 {
   LibCredentialEndOfDxeNotify ((EDKII_REDFISH_CREDENTIAL_PROTOCOL *)Context);
@@ -79,17 +79,17 @@ RedfishCredentialEndOfDxeEventNotify (
 EFI_STATUS
 EFIAPI
 RedfishCredentialGetAuthInfo (
-  IN  EDKII_REDFISH_CREDENTIAL_PROTOCOL    *This,
-  OUT EDKII_REDFISH_AUTH_METHOD            *AuthMethod,
-  OUT CHAR8                                **UserId,
-  OUT CHAR8                                **Password
+  IN  EDKII_REDFISH_CREDENTIAL_PROTOCOL *This,
+  OUT EDKII_REDFISH_AUTH_METHOD         *AuthMethod,
+  OUT CHAR8                             **UserId,
+  OUT CHAR8                             **Password
   )
 {
-  if (This == NULL || AuthMethod == NULL || UserId == NULL || Password == NULL) {
+  if ((This == NULL) || (AuthMethod == NULL) || (UserId == NULL) || (Password == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
 
-  return LibCredentialGetAuthInfo (This, AuthMethod, UserId,Password);
+  return LibCredentialGetAuthInfo (This, AuthMethod, UserId, Password);
 }
 
 /**
@@ -112,7 +112,7 @@ RedfishCredentialGetAuthInfo (
 EFI_STATUS
 EFIAPI
 RedfishCredentialStopService (
-  IN     EDKII_REDFISH_CREDENTIAL_PROTOCOL    *This,
+  IN     EDKII_REDFISH_CREDENTIAL_PROTOCOL          *This,
   IN     EDKII_REDFISH_CREDENTIAL_STOP_SERVICE_TYPE ServiceStopType
   )
 {
@@ -135,8 +135,8 @@ RedfishCredentialStopService (
 EFI_STATUS
 EFIAPI
 RedfishCredentialDxeDriverEntryPoint (
-  IN EFI_HANDLE         ImageHandle,
-  IN EFI_SYSTEM_TABLE   *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
   EFI_STATUS  Status;
