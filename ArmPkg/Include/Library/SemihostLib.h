@@ -17,12 +17,12 @@
  *
  */
 
-#define SEMIHOST_FILE_MODE_READ     (0 << 2)
-#define SEMIHOST_FILE_MODE_WRITE    (1 << 2)
-#define SEMIHOST_FILE_MODE_APPEND   (2 << 2)
-#define SEMIHOST_FILE_MODE_UPDATE   (1 << 1)
-#define SEMIHOST_FILE_MODE_BINARY   (1 << 0)
-#define SEMIHOST_FILE_MODE_ASCII    (0 << 0)
+#define SEMIHOST_FILE_MODE_READ    (0 << 2)
+#define SEMIHOST_FILE_MODE_WRITE   (1 << 2)
+#define SEMIHOST_FILE_MODE_APPEND  (2 << 2)
+#define SEMIHOST_FILE_MODE_UPDATE  (1 << 1)
+#define SEMIHOST_FILE_MODE_BINARY  (1 << 0)
+#define SEMIHOST_FILE_MODE_ASCII   (0 << 0)
 
 BOOLEAN
 SemihostConnectionSupported (
@@ -38,33 +38,33 @@ SemihostFileOpen (
 
 RETURN_STATUS
 SemihostFileSeek (
-  IN UINTN  FileHandle,
-  IN UINTN  Offset
+  IN UINTN FileHandle,
+  IN UINTN Offset
   );
 
 RETURN_STATUS
 SemihostFileRead (
-  IN     UINTN  FileHandle,
-  IN OUT UINTN  *Length,
-  OUT    VOID   *Buffer
+  IN     UINTN FileHandle,
+  IN OUT UINTN *Length,
+  OUT    VOID  *Buffer
   );
 
 RETURN_STATUS
 SemihostFileWrite (
-  IN     UINTN  FileHandle,
-  IN OUT UINTN  *Length,
-  IN     VOID   *Buffer
+  IN     UINTN FileHandle,
+  IN OUT UINTN *Length,
+  IN     VOID  *Buffer
   );
 
 RETURN_STATUS
 SemihostFileClose (
-  IN UINTN  FileHandle
+  IN UINTN FileHandle
   );
 
 RETURN_STATUS
 SemihostFileLength (
-  IN  UINTN  FileHandle,
-  OUT UINTN  *Length
+  IN  UINTN FileHandle,
+  OUT UINTN *Length
   );
 
 /**
@@ -81,10 +81,10 @@ SemihostFileLength (
 
 **/
 RETURN_STATUS
-SemihostFileTmpName(
-  OUT  VOID   *Buffer,
-  IN   UINT8  Identifier,
-  IN   UINTN  Length
+SemihostFileTmpName (
+  OUT  VOID  *Buffer,
+  IN   UINT8 Identifier,
+  IN   UINTN Length
   );
 
 RETURN_STATUS
@@ -104,9 +104,9 @@ SemihostFileRemove (
 
 **/
 RETURN_STATUS
-SemihostFileRename(
-  IN  CHAR8  *FileName,
-  IN  CHAR8  *NewFileName
+SemihostFileRename (
+  IN  CHAR8 *FileName,
+  IN  CHAR8 *NewFileName
   );
 
 CHAR8

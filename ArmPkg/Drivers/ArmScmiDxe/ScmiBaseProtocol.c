@@ -30,8 +30,8 @@
 STATIC
 EFI_STATUS
 BaseGetVersion (
-  IN  SCMI_BASE_PROTOCOL  *This,
-  OUT UINT32              *Version
+  IN  SCMI_BASE_PROTOCOL *This,
+  OUT UINT32             *Version
   )
 {
   return ScmiGetProtocolVersion (ScmiProtocolIdBase, Version);
@@ -50,8 +50,8 @@ BaseGetVersion (
 STATIC
 EFI_STATUS
 BaseGetTotalProtocols (
-  IN  SCMI_BASE_PROTOCOL  *This,
-  OUT UINT32              *TotalProtocols
+  IN  SCMI_BASE_PROTOCOL *This,
+  OUT UINT32             *TotalProtocols
   )
 {
   EFI_STATUS  Status;
@@ -82,8 +82,8 @@ BaseGetTotalProtocols (
 STATIC
 EFI_STATUS
 BaseDiscoverVendorDetails (
-  IN  SCMI_MESSAGE_ID_BASE  MessageId,
-  OUT UINT8                 VendorIdentifier[SCMI_MAX_STR_LEN]
+  IN  SCMI_MESSAGE_ID_BASE MessageId,
+  OUT UINT8                VendorIdentifier[SCMI_MAX_STR_LEN]
   )
 {
   EFI_STATUS    Status;
@@ -106,9 +106,9 @@ BaseDiscoverVendorDetails (
   }
 
   AsciiStrCpyS (
-    (CHAR8*)VendorIdentifier,
+    (CHAR8 *)VendorIdentifier,
     SCMI_MAX_STR_LEN,
-    (CONST CHAR8*)ReturnValues
+    (CONST CHAR8 *)ReturnValues
     );
 
   return EFI_SUCCESS;
@@ -128,8 +128,8 @@ BaseDiscoverVendorDetails (
 STATIC
 EFI_STATUS
 BaseDiscoverVendor (
-  IN  SCMI_BASE_PROTOCOL  *This,
-  OUT UINT8               VendorIdentifier[SCMI_MAX_STR_LEN]
+  IN  SCMI_BASE_PROTOCOL *This,
+  OUT UINT8              VendorIdentifier[SCMI_MAX_STR_LEN]
   )
 {
   return BaseDiscoverVendorDetails (
@@ -151,8 +151,8 @@ BaseDiscoverVendor (
 **/
 EFI_STATUS
 BaseDiscoverSubVendor (
-  IN  SCMI_BASE_PROTOCOL  *This,
-  OUT UINT8               VendorIdentifier[SCMI_MAX_STR_LEN]
+  IN  SCMI_BASE_PROTOCOL *This,
+  OUT UINT8              VendorIdentifier[SCMI_MAX_STR_LEN]
   )
 {
   return BaseDiscoverVendorDetails (
@@ -174,8 +174,8 @@ BaseDiscoverSubVendor (
 STATIC
 EFI_STATUS
 BaseDiscoverImplVersion (
-  IN  SCMI_BASE_PROTOCOL  *This,
-  OUT UINT32              *ImplementationVersion
+  IN  SCMI_BASE_PROTOCOL *This,
+  OUT UINT32             *ImplementationVersion
   )
 {
   EFI_STATUS    Status;
@@ -219,9 +219,9 @@ BaseDiscoverImplVersion (
 STATIC
 EFI_STATUS
 BaseDiscoverListProtocols (
-  IN     SCMI_BASE_PROTOCOL  *This,
-  IN OUT UINT32              *ProtocolListSize,
-  OUT    UINT8               *ProtocolList
+  IN     SCMI_BASE_PROTOCOL *This,
+  IN OUT UINT32             *ProtocolListSize,
+  OUT    UINT8              *ProtocolList
   )
 {
   EFI_STATUS          Status;
@@ -256,7 +256,6 @@ BaseDiscoverListProtocols (
   Skip = 0;
 
   while (Skip < TotalProtocols) {
-
     *MessageParams = Skip;
 
     // Note PayloadLength is a IN/OUT parameter.
@@ -265,7 +264,7 @@ BaseDiscoverListProtocols (
     Status = ScmiCommandExecute (
                &Cmd,
                &PayloadLength,
-               (UINT32**)&DiscoverList
+               (UINT32 **)&DiscoverList
                );
     if (EFI_ERROR (Status)) {
       return Status;
@@ -282,7 +281,7 @@ BaseDiscoverListProtocols (
 }
 
 // Instance of the SCMI Base protocol.
-STATIC CONST SCMI_BASE_PROTOCOL BaseProtocol = {
+STATIC CONST SCMI_BASE_PROTOCOL  BaseProtocol = {
   BaseGetVersion,
   BaseGetTotalProtocols,
   BaseDiscoverVendor,
@@ -300,7 +299,7 @@ STATIC CONST SCMI_BASE_PROTOCOL BaseProtocol = {
 **/
 EFI_STATUS
 ScmiBaseProtocolInit (
-  IN OUT EFI_HANDLE* Handle
+  IN OUT EFI_HANDLE *Handle
   )
 {
   return gBS->InstallMultipleProtocolInterfaces (
