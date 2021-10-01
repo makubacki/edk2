@@ -43,7 +43,7 @@ RsaNew (
 VOID
 EFIAPI
 RsaFree (
-  IN  VOID  *RsaContext
+  IN  VOID *RsaContext
   )
 {
   //
@@ -77,10 +77,10 @@ RsaFree (
 BOOLEAN
 EFIAPI
 RsaSetKey (
-  IN OUT  VOID         *RsaContext,
-  IN      RSA_KEY_TAG  KeyTag,
-  IN      CONST UINT8  *BigNumber,
-  IN      UINTN        BnSize
+  IN OUT  VOID        *RsaContext,
+  IN      RSA_KEY_TAG KeyTag,
+  IN      CONST UINT8 *BigNumber,
+  IN      UINTN       BnSize
   )
 {
   ASSERT (FALSE);
@@ -109,11 +109,11 @@ RsaSetKey (
 BOOLEAN
 EFIAPI
 RsaPkcs1Verify (
-  IN  VOID         *RsaContext,
-  IN  CONST UINT8  *MessageHash,
-  IN  UINTN        HashSize,
-  IN  CONST UINT8  *Signature,
-  IN  UINTN        SigSize
+  IN  VOID        *RsaContext,
+  IN  CONST UINT8 *MessageHash,
+  IN  UINTN       HashSize,
+  IN  CONST UINT8 *Signature,
+  IN  UINTN       SigSize
   )
 {
   ASSERT (FALSE);

@@ -33,14 +33,14 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 BOOLEAN
 EFIAPI
 Pkcs5HashPassword (
-  IN  UINTN        PasswordLength,
-  IN  CONST CHAR8  *Password,
-  IN  UINTN        SaltLength,
-  IN  CONST UINT8  *Salt,
-  IN  UINTN        IterationCount,
-  IN  UINTN        DigestSize,
-  IN  UINTN        KeyLength,
-  OUT UINT8        *OutKey
+  IN  UINTN       PasswordLength,
+  IN  CONST CHAR8 *Password,
+  IN  UINTN       SaltLength,
+  IN  CONST UINT8 *Salt,
+  IN  UINTN       IterationCount,
+  IN  UINTN       DigestSize,
+  IN  UINTN       KeyLength,
+  OUT UINT8       *OutKey
   )
 {
   ASSERT (FALSE);

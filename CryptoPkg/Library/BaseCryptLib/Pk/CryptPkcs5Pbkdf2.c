@@ -38,14 +38,14 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 BOOLEAN
 EFIAPI
 Pkcs5HashPassword (
-  IN  UINTN        PasswordLength,
-  IN  CONST CHAR8  *Password,
-  IN  UINTN        SaltLength,
-  IN  CONST UINT8  *Salt,
-  IN  UINTN        IterationCount,
-  IN  UINTN        DigestSize,
-  IN  UINTN        KeyLength,
-  OUT UINT8        *OutKey
+  IN  UINTN       PasswordLength,
+  IN  CONST CHAR8 *Password,
+  IN  UINTN       SaltLength,
+  IN  CONST UINT8 *Salt,
+  IN  UINTN       IterationCount,
+  IN  UINTN       DigestSize,
+  IN  UINTN       KeyLength,
+  OUT UINT8       *OutKey
   )
 {
   CONST EVP_MD  *HashAlg;
@@ -58,25 +58,28 @@ Pkcs5HashPassword (
   if ((Password == NULL) || (Salt == NULL) || (OutKey == NULL)) {
     return FALSE;
   }
+
   if ((PasswordLength == 0) || (PasswordLength > INT_MAX) ||
       (SaltLength == 0) || (SaltLength > INT_MAX) ||
       (KeyLength == 0) || (KeyLength > INT_MAX) ||
-      (IterationCount < 1) || (IterationCount > INT_MAX)) {
+      (IterationCount < 1) || (IterationCount > INT_MAX))
+  {
     return FALSE;
   }
+
   //
   // Make sure the digest algorithm is supported.
   //
   switch (DigestSize) {
-  case SHA1_DIGEST_SIZE:
-    HashAlg = EVP_sha1();
-    break;
-  case SHA256_DIGEST_SIZE:
-    HashAlg = EVP_sha256();
-    break;
-  default:
-    return FALSE;
-    break;
+    case SHA1_DIGEST_SIZE:
+      HashAlg = EVP_sha1 ();
+      break;
+    case SHA256_DIGEST_SIZE:
+      HashAlg = EVP_sha256 ();
+      break;
+    default:
+      return FALSE;
+      break;
   }
 
   //

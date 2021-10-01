@@ -47,8 +47,8 @@ GetCryptoServices (
 EFI_STATUS
 EFIAPI
 SmmCryptLibConstructor (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
   EFI_STATUS  Status;
@@ -59,8 +59,8 @@ SmmCryptLibConstructor (
                     NULL,
                     (VOID **)&mSmmCryptoProtocol
                     );
-  if (EFI_ERROR (Status) || mSmmCryptoProtocol == NULL) {
-    DEBUG((DEBUG_ERROR, "[SmmCryptLib] Failed to locate Crypto SMM Protocol. Status = %r\n", Status));
+  if (EFI_ERROR (Status) || (mSmmCryptoProtocol == NULL)) {
+    DEBUG ((DEBUG_ERROR, "[SmmCryptLib] Failed to locate Crypto SMM Protocol. Status = %r\n", Status));
     ASSERT_EFI_ERROR (Status);
     ASSERT (mSmmCryptoProtocol != NULL);
     mSmmCryptoProtocol = NULL;
@@ -69,7 +69,7 @@ SmmCryptLibConstructor (
 
   Version = mSmmCryptoProtocol->GetVersion ();
   if (Version < EDKII_CRYPTO_VERSION) {
-    DEBUG((DEBUG_ERROR, "[SmmCryptLib] Crypto SMM Protocol unsupported version %d\n", Version));
+    DEBUG ((DEBUG_ERROR, "[SmmCryptLib] Crypto SMM Protocol unsupported version %d\n", Version));
     ASSERT (Version >= EDKII_CRYPTO_VERSION);
     mSmmCryptoProtocol = NULL;
     return EFI_NOT_FOUND;

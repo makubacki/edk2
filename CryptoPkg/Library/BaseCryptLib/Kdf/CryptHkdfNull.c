@@ -28,14 +28,14 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 BOOLEAN
 EFIAPI
 HkdfSha256ExtractAndExpand (
-  IN   CONST UINT8  *Key,
-  IN   UINTN        KeySize,
-  IN   CONST UINT8  *Salt,
-  IN   UINTN        SaltSize,
-  IN   CONST UINT8  *Info,
-  IN   UINTN        InfoSize,
-  OUT  UINT8        *Out,
-  IN   UINTN        OutSize
+  IN   CONST UINT8 *Key,
+  IN   UINTN       KeySize,
+  IN   CONST UINT8 *Salt,
+  IN   UINTN       SaltSize,
+  IN   CONST UINT8 *Info,
+  IN   UINTN       InfoSize,
+  OUT  UINT8       *Out,
+  IN   UINTN       OutSize
   )
 {
   ASSERT (FALSE);

@@ -41,9 +41,9 @@ AesGetContextSize (
 BOOLEAN
 EFIAPI
 AesInit (
-  OUT  VOID         *AesContext,
-  IN   CONST UINT8  *Key,
-  IN   UINTN        KeyLength
+  OUT  VOID        *AesContext,
+  IN   CONST UINT8 *Key,
+  IN   UINTN       KeyLength
   )
 {
   ASSERT (FALSE);
@@ -67,11 +67,11 @@ AesInit (
 BOOLEAN
 EFIAPI
 AesCbcEncrypt (
-  IN   VOID         *AesContext,
-  IN   CONST UINT8  *Input,
-  IN   UINTN        InputSize,
-  IN   CONST UINT8  *Ivec,
-  OUT  UINT8        *Output
+  IN   VOID        *AesContext,
+  IN   CONST UINT8 *Input,
+  IN   UINTN       InputSize,
+  IN   CONST UINT8 *Ivec,
+  OUT  UINT8       *Output
   )
 {
   ASSERT (FALSE);
@@ -95,11 +95,11 @@ AesCbcEncrypt (
 BOOLEAN
 EFIAPI
 AesCbcDecrypt (
-  IN   VOID         *AesContext,
-  IN   CONST UINT8  *Input,
-  IN   UINTN        InputSize,
-  IN   CONST UINT8  *Ivec,
-  OUT  UINT8        *Output
+  IN   VOID        *AesContext,
+  IN   CONST UINT8 *Input,
+  IN   UINTN       InputSize,
+  IN   CONST UINT8 *Ivec,
+  OUT  UINT8       *Output
   )
 {
   ASSERT (FALSE);

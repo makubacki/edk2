@@ -71,7 +71,7 @@ HashApiGetContextSize (
 BOOLEAN
 EFIAPI
 HashApiInit (
-  OUT HASH_API_CONTEXT  HashContext
+  OUT HASH_API_CONTEXT HashContext
   )
 {
   switch (PcdGet32 (PcdHashApiLibPolicy)) {
@@ -114,8 +114,8 @@ HashApiInit (
 BOOLEAN
 EFIAPI
 HashApiDuplicate (
-  IN  HASH_API_CONTEXT  HashContext,
-  OUT HASH_API_CONTEXT  NewHashContext
+  IN  HASH_API_CONTEXT HashContext,
+  OUT HASH_API_CONTEXT NewHashContext
   )
 {
   switch (PcdGet32 (PcdHashApiLibPolicy)) {
@@ -159,9 +159,9 @@ HashApiDuplicate (
 BOOLEAN
 EFIAPI
 HashApiUpdate (
-  IN HASH_API_CONTEXT  HashContext,
-  IN VOID              *DataToHash,
-  IN UINTN             DataToHashLen
+  IN HASH_API_CONTEXT HashContext,
+  IN VOID             *DataToHash,
+  IN UINTN            DataToHashLen
   )
 {
   switch (PcdGet32 (PcdHashApiLibPolicy)) {
@@ -204,8 +204,8 @@ HashApiUpdate (
 BOOLEAN
 EFIAPI
 HashApiFinal (
-  IN  HASH_API_CONTEXT  HashContext,
-  OUT UINT8             *Digest
+  IN  HASH_API_CONTEXT HashContext,
+  OUT UINT8            *Digest
   )
 {
   switch (PcdGet32 (PcdHashApiLibPolicy)) {
@@ -249,9 +249,9 @@ HashApiFinal (
 BOOLEAN
 EFIAPI
 HashApiHashAll (
-  IN  CONST VOID  *DataToHash,
-  IN  UINTN       DataToHashLen,
-  OUT UINT8       *Digest
+  IN  CONST VOID *DataToHash,
+  IN  UINTN      DataToHashLen,
+  OUT UINT8      *Digest
   )
 {
   switch (PcdGet32 (PcdHashApiLibPolicy)) {

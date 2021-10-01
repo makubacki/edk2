@@ -40,7 +40,7 @@ Sha384GetContextSize (
 BOOLEAN
 EFIAPI
 Sha384Init (
-  OUT  VOID  *Sha384Context
+  OUT  VOID *Sha384Context
   )
 {
   ASSERT (FALSE);
@@ -61,8 +61,8 @@ Sha384Init (
 BOOLEAN
 EFIAPI
 Sha384Duplicate (
-  IN   CONST VOID  *Sha384Context,
-  OUT  VOID        *NewSha384Context
+  IN   CONST VOID *Sha384Context,
+  OUT  VOID       *NewSha384Context
   )
 {
   ASSERT (FALSE);
@@ -84,9 +84,9 @@ Sha384Duplicate (
 BOOLEAN
 EFIAPI
 Sha384Update (
-  IN OUT  VOID        *Sha384Context,
-  IN      CONST VOID  *Data,
-  IN      UINTN       DataSize
+  IN OUT  VOID       *Sha384Context,
+  IN      CONST VOID *Data,
+  IN      UINTN      DataSize
   )
 {
   ASSERT (FALSE);
@@ -108,8 +108,8 @@ Sha384Update (
 BOOLEAN
 EFIAPI
 Sha384Final (
-  IN OUT  VOID   *Sha384Context,
-  OUT     UINT8  *HashValue
+  IN OUT  VOID  *Sha384Context,
+  OUT     UINT8 *HashValue
   )
 {
   ASSERT (FALSE);
@@ -132,9 +132,9 @@ Sha384Final (
 BOOLEAN
 EFIAPI
 Sha384HashAll (
-  IN   CONST VOID  *Data,
-  IN   UINTN       DataSize,
-  OUT  UINT8       *HashValue
+  IN   CONST VOID *Data,
+  IN   UINTN      DataSize,
+  OUT  UINT8      *HashValue
   )
 {
   ASSERT (FALSE);
@@ -173,7 +173,7 @@ Sha512GetContextSize (
 BOOLEAN
 EFIAPI
 Sha512Init (
-  OUT  VOID  *Sha512Context
+  OUT  VOID *Sha512Context
   )
 {
   ASSERT (FALSE);
@@ -194,8 +194,8 @@ Sha512Init (
 BOOLEAN
 EFIAPI
 Sha512Duplicate (
-  IN   CONST VOID  *Sha512Context,
-  OUT  VOID        *NewSha512Context
+  IN   CONST VOID *Sha512Context,
+  OUT  VOID       *NewSha512Context
   )
 {
   ASSERT (FALSE);
@@ -217,9 +217,9 @@ Sha512Duplicate (
 BOOLEAN
 EFIAPI
 Sha512Update (
-  IN OUT  VOID        *Sha512Context,
-  IN      CONST VOID  *Data,
-  IN      UINTN       DataSize
+  IN OUT  VOID       *Sha512Context,
+  IN      CONST VOID *Data,
+  IN      UINTN      DataSize
   )
 {
   ASSERT (FALSE);
@@ -241,8 +241,8 @@ Sha512Update (
 BOOLEAN
 EFIAPI
 Sha512Final (
-  IN OUT  VOID   *Sha512Context,
-  OUT     UINT8  *HashValue
+  IN OUT  VOID  *Sha512Context,
+  OUT     UINT8 *HashValue
   )
 {
   ASSERT (FALSE);
@@ -265,9 +265,9 @@ Sha512Final (
 BOOLEAN
 EFIAPI
 Sha512HashAll (
-  IN   CONST VOID  *Data,
-  IN   UINTN       DataSize,
-  OUT  UINT8       *HashValue
+  IN   CONST VOID *Data,
+  IN   UINTN      DataSize,
+  OUT  UINT8      *HashValue
   )
 {
   ASSERT (FALSE);

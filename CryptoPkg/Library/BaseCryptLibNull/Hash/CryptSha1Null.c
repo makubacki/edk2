@@ -8,7 +8,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "InternalCryptLib.h"
 
-
 /**
   Retrieves the size, in bytes, of the context buffer required for SHA-1 hash operations.
 
@@ -43,7 +42,7 @@ Sha1GetContextSize (
 BOOLEAN
 EFIAPI
 Sha1Init (
-  OUT  VOID  *Sha1Context
+  OUT  VOID *Sha1Context
   )
 {
   ASSERT (FALSE);
@@ -66,8 +65,8 @@ Sha1Init (
 BOOLEAN
 EFIAPI
 Sha1Duplicate (
-  IN   CONST VOID  *Sha1Context,
-  OUT  VOID        *NewSha1Context
+  IN   CONST VOID *Sha1Context,
+  OUT  VOID       *NewSha1Context
   )
 {
   ASSERT (FALSE);
@@ -96,9 +95,9 @@ Sha1Duplicate (
 BOOLEAN
 EFIAPI
 Sha1Update (
-  IN OUT  VOID        *Sha1Context,
-  IN      CONST VOID  *Data,
-  IN      UINTN       DataSize
+  IN OUT  VOID       *Sha1Context,
+  IN      CONST VOID *Data,
+  IN      UINTN      DataSize
   )
 {
   ASSERT (FALSE);
@@ -128,8 +127,8 @@ Sha1Update (
 BOOLEAN
 EFIAPI
 Sha1Final (
-  IN OUT  VOID   *Sha1Context,
-  OUT     UINT8  *HashValue
+  IN OUT  VOID  *Sha1Context,
+  OUT     UINT8 *HashValue
   )
 {
   ASSERT (FALSE);
@@ -157,9 +156,9 @@ Sha1Final (
 BOOLEAN
 EFIAPI
 Sha1HashAll (
-  IN   CONST VOID  *Data,
-  IN   UINTN       DataSize,
-  OUT  UINT8       *HashValue
+  IN   CONST VOID *Data,
+  IN   UINTN      DataSize,
+  OUT  UINT8      *HashValue
   )
 {
   ASSERT (FALSE);

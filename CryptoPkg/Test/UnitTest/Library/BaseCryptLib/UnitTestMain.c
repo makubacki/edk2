@@ -8,7 +8,6 @@
 **/
 #include "TestBaseCryptLib.h"
 
-
 /**
   Initialize the unit test framework, suite, and unit tests for the
   sample unit tests and run the unit tests.
@@ -26,8 +25,8 @@ UefiTestMain (
   EFI_STATUS                  Status;
   UNIT_TEST_FRAMEWORK_HANDLE  Framework;
 
-  DEBUG(( DEBUG_INFO, "%a v%a\n", UNIT_TEST_NAME, UNIT_TEST_VERSION ));
-  CreateUnitTest(UNIT_TEST_NAME, UNIT_TEST_VERSION, &Framework);
+  DEBUG ((DEBUG_INFO, "%a v%a\n", UNIT_TEST_NAME, UNIT_TEST_VERSION));
+  CreateUnitTest (UNIT_TEST_NAME, UNIT_TEST_VERSION, &Framework);
 
   //
   // Execute the tests.
@@ -47,8 +46,8 @@ UefiTestMain (
 EFI_STATUS
 EFIAPI
 PeiEntryPoint (
-  IN EFI_PEI_FILE_HANDLE     FileHandle,
-  IN CONST EFI_PEI_SERVICES  **PeiServices
+  IN EFI_PEI_FILE_HANDLE    FileHandle,
+  IN CONST EFI_PEI_SERVICES **PeiServices
   )
 {
   return UefiTestMain ();
@@ -61,8 +60,8 @@ PeiEntryPoint (
 EFI_STATUS
 EFIAPI
 DxeEntryPoint (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
   return UefiTestMain ();
@@ -73,7 +72,7 @@ DxeEntryPoint (
 **/
 int
 main (
-  int argc,
+  int  argc,
   char *argv[]
   )
 {

@@ -9,7 +9,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "InternalCryptLib.h"
 
-
 /**
   Sets up the seed value for the pseudorandom number generator.
 
@@ -26,8 +25,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 BOOLEAN
 EFIAPI
 RandomSeed (
-  IN  CONST  UINT8  *Seed  OPTIONAL,
-  IN  UINTN         SeedSize
+  IN  CONST  UINT8 *Seed  OPTIONAL,
+  IN  UINTN        SeedSize
   )
 {
   ASSERT (FALSE);
@@ -48,8 +47,8 @@ RandomSeed (
 BOOLEAN
 EFIAPI
 RandomBytes (
-  OUT  UINT8  *Output,
-  IN   UINTN  Size
+  OUT  UINT8 *Output,
+  IN   UINTN Size
   )
 {
   ASSERT (FALSE);

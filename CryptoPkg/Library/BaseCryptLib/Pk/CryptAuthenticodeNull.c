@@ -32,12 +32,12 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 BOOLEAN
 EFIAPI
 AuthenticodeVerify (
-  IN  CONST UINT8  *AuthData,
-  IN  UINTN        DataSize,
-  IN  CONST UINT8  *TrustedCert,
-  IN  UINTN        CertSize,
-  IN  CONST UINT8  *ImageHash,
-  IN  UINTN        HashSize
+  IN  CONST UINT8 *AuthData,
+  IN  UINTN       DataSize,
+  IN  CONST UINT8 *TrustedCert,
+  IN  UINTN       CertSize,
+  IN  CONST UINT8 *ImageHash,
+  IN  UINTN       HashSize
   )
 {
   ASSERT (FALSE);

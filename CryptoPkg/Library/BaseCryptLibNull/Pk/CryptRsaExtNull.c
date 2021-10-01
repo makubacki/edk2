@@ -31,10 +31,10 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 BOOLEAN
 EFIAPI
 RsaGetKey (
-  IN OUT  VOID         *RsaContext,
-  IN      RSA_KEY_TAG  KeyTag,
-  OUT     UINT8        *BigNumber,
-  IN OUT  UINTN        *BnSize
+  IN OUT  VOID        *RsaContext,
+  IN      RSA_KEY_TAG KeyTag,
+  OUT     UINT8       *BigNumber,
+  IN OUT  UINTN       *BnSize
   )
 {
   ASSERT (FALSE);
@@ -57,10 +57,10 @@ RsaGetKey (
 BOOLEAN
 EFIAPI
 RsaGenerateKey (
-  IN OUT  VOID         *RsaContext,
-  IN      UINTN        ModulusLength,
-  IN      CONST UINT8  *PublicExponent,
-  IN      UINTN        PublicExponentSize
+  IN OUT  VOID        *RsaContext,
+  IN      UINTN       ModulusLength,
+  IN      CONST UINT8 *PublicExponent,
+  IN      UINTN       PublicExponentSize
   )
 {
   ASSERT (FALSE);
@@ -80,7 +80,7 @@ RsaGenerateKey (
 BOOLEAN
 EFIAPI
 RsaCheckKey (
-  IN  VOID  *RsaContext
+  IN  VOID *RsaContext
   )
 {
   ASSERT (FALSE);
@@ -105,15 +105,13 @@ RsaCheckKey (
 BOOLEAN
 EFIAPI
 RsaPkcs1Sign (
-  IN      VOID         *RsaContext,
-  IN      CONST UINT8  *MessageHash,
-  IN      UINTN        HashSize,
-  OUT     UINT8        *Signature,
-  IN OUT  UINTN        *SigSize
+  IN      VOID        *RsaContext,
+  IN      CONST UINT8 *MessageHash,
+  IN      UINTN       HashSize,
+  OUT     UINT8       *Signature,
+  IN OUT  UINTN       *SigSize
   )
 {
   ASSERT (FALSE);
   return FALSE;
 }
-
-

@@ -24,9 +24,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 BOOLEAN
 EFIAPI
 X509ConstructCertificate (
-  IN   CONST UINT8  *Cert,
-  IN   UINTN        CertSize,
-  OUT  UINT8        **SingleX509Cert
+  IN   CONST UINT8 *Cert,
+  IN   UINTN       CertSize,
+  OUT  UINT8       **SingleX509Cert
   )
 {
   ASSERT (FALSE);
@@ -55,8 +55,8 @@ X509ConstructCertificate (
 BOOLEAN
 EFIAPI
 X509ConstructCertificateStackV (
-  IN OUT  UINT8    **X509Stack,
-  IN      VA_LIST  Args
+  IN OUT  UINT8   **X509Stack,
+  IN      VA_LIST Args
   )
 {
   ASSERT (FALSE);
@@ -81,7 +81,7 @@ X509ConstructCertificateStackV (
 BOOLEAN
 EFIAPI
 X509ConstructCertificateStack (
-  IN OUT  UINT8  **X509Stack,
+  IN OUT  UINT8 **X509Stack,
   ...
   )
 {
@@ -100,7 +100,7 @@ X509ConstructCertificateStack (
 VOID
 EFIAPI
 X509Free (
-  IN  VOID  *X509Cert
+  IN  VOID *X509Cert
   )
 {
   ASSERT (FALSE);
@@ -117,7 +117,7 @@ X509Free (
 VOID
 EFIAPI
 X509StackFree (
-  IN  VOID  *X509Stack
+  IN  VOID *X509Stack
   )
 {
   ASSERT (FALSE);
@@ -141,10 +141,10 @@ X509StackFree (
 BOOLEAN
 EFIAPI
 X509GetSubjectName (
-  IN      CONST UINT8  *Cert,
-  IN      UINTN        CertSize,
-  OUT     UINT8        *CertSubject,
-  IN OUT  UINTN        *SubjectSize
+  IN      CONST UINT8 *Cert,
+  IN      UINTN       CertSize,
+  OUT     UINT8       *CertSubject,
+  IN OUT  UINTN       *SubjectSize
   )
 {
   ASSERT (FALSE);
@@ -173,9 +173,9 @@ X509GetSubjectName (
 RETURN_STATUS
 EFIAPI
 X509GetCommonName (
-  IN      CONST UINT8  *Cert,
-  IN      UINTN        CertSize,
-  OUT     CHAR8        *CommonName,  OPTIONAL
+  IN      CONST UINT8 *Cert,
+  IN      UINTN CertSize,
+  OUT     CHAR8 *CommonName, OPTIONAL
   IN OUT  UINTN        *CommonNameSize
   )
 {
@@ -205,9 +205,9 @@ X509GetCommonName (
 RETURN_STATUS
 EFIAPI
 X509GetOrganizationName (
-  IN      CONST UINT8   *Cert,
-  IN      UINTN         CertSize,
-  OUT     CHAR8         *NameBuffer,  OPTIONAL
+  IN      CONST UINT8 *Cert,
+  IN      UINTN CertSize,
+  OUT     CHAR8 *NameBuffer, OPTIONAL
   IN OUT  UINTN         *NameBufferSize
   )
 {
@@ -232,9 +232,9 @@ X509GetOrganizationName (
 BOOLEAN
 EFIAPI
 RsaGetPublicKeyFromX509 (
-  IN   CONST UINT8  *Cert,
-  IN   UINTN        CertSize,
-  OUT  VOID         **RsaContext
+  IN   CONST UINT8 *Cert,
+  IN   UINTN       CertSize,
+  OUT  VOID        **RsaContext
   )
 {
   ASSERT (FALSE);
@@ -257,10 +257,10 @@ RsaGetPublicKeyFromX509 (
 BOOLEAN
 EFIAPI
 X509VerifyCert (
-  IN  CONST UINT8  *Cert,
-  IN  UINTN        CertSize,
-  IN  CONST UINT8  *CACert,
-  IN  UINTN        CACertSize
+  IN  CONST UINT8 *Cert,
+  IN  UINTN       CertSize,
+  IN  CONST UINT8 *CACert,
+  IN  UINTN       CACertSize
   )
 {
   ASSERT (FALSE);
@@ -283,10 +283,10 @@ X509VerifyCert (
 BOOLEAN
 EFIAPI
 X509GetTBSCert (
-  IN  CONST UINT8  *Cert,
-  IN  UINTN        CertSize,
-  OUT UINT8        **TBSCert,
-  OUT UINTN        *TBSCertSize
+  IN  CONST UINT8 *Cert,
+  IN  UINTN       CertSize,
+  OUT UINT8       **TBSCert,
+  OUT UINTN       *TBSCertSize
   )
 {
   ASSERT (FALSE);

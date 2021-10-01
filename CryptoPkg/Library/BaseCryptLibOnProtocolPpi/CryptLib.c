@@ -88,335 +88,339 @@ GetCryptoServices (
 static
 VOID
 CryptoServiceNotAvailable (
-  IN CONST CHAR8  *FunctionName
+  IN CONST CHAR8 *FunctionName
   )
 {
   DEBUG ((DEBUG_ERROR, "[%a] Function %a is not available\n", gEfiCallerBaseName, FunctionName));
   ASSERT_EFI_ERROR (EFI_UNSUPPORTED);
 }
 
-//=====================================================================================
+// =====================================================================================
 //    One-Way Cryptographic Hash Primitives
-//=====================================================================================
+// =====================================================================================
 
 #ifdef ENABLE_MD5_DEPRECATED_INTERFACES
-/**
-  Retrieves the size, in bytes, of the context buffer required for MD5 hash operations.
 
-  If this interface is not supported, then return zero.
+  /**
+    Retrieves the size, in bytes, of the context buffer required for MD5 hash operations.
 
-  @return  The size, in bytes, of the context buffer required for MD5 hash operations.
-  @retval  0   This interface is not supported.
+    If this interface is not supported, then return zero.
 
-**/
-UINTN
-EFIAPI
-Md5GetContextSize (
+    @return  The size, in bytes, of the context buffer required for MD5 hash operations.
+    @retval  0   This interface is not supported.
+
+  **/
+  UINTN
+  EFIAPI
+  Md5GetContextSize (
   VOID
   )
-{
-  CALL_CRYPTO_SERVICE (Md5GetContextSize, (), 0);
-}
+  {
+    CALL_CRYPTO_SERVICE (Md5GetContextSize, (), 0);
+  }
 
-/**
-  Initializes user-supplied memory pointed by Md5Context as MD5 hash context for
-  subsequent use.
+  /**
+    Initializes user-supplied memory pointed by Md5Context as MD5 hash context for
+    subsequent use.
 
-  If Md5Context is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Md5Context is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[out]  Md5Context  Pointer to MD5 context being initialized.
+    @param[out]  Md5Context  Pointer to MD5 context being initialized.
 
-  @retval TRUE   MD5 context initialization succeeded.
-  @retval FALSE  MD5 context initialization failed.
-  @retval FALSE  This interface is not supported.
+    @retval TRUE   MD5 context initialization succeeded.
+    @retval FALSE  MD5 context initialization failed.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-Md5Init (
-  OUT  VOID  *Md5Context
+  **/
+  BOOLEAN
+  EFIAPI
+  Md5Init (
+  OUT  VOID *Md5Context
   )
-{
-  CALL_CRYPTO_SERVICE (Md5Init, (Md5Context), FALSE);
-}
+  {
+    CALL_CRYPTO_SERVICE (Md5Init, (Md5Context), FALSE);
+  }
 
-/**
-  Makes a copy of an existing MD5 context.
+  /**
+    Makes a copy of an existing MD5 context.
 
-  If Md5Context is NULL, then return FALSE.
-  If NewMd5Context is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Md5Context is NULL, then return FALSE.
+    If NewMd5Context is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in]  Md5Context     Pointer to MD5 context being copied.
-  @param[out] NewMd5Context  Pointer to new MD5 context.
+    @param[in]  Md5Context     Pointer to MD5 context being copied.
+    @param[out] NewMd5Context  Pointer to new MD5 context.
 
-  @retval TRUE   MD5 context copy succeeded.
-  @retval FALSE  MD5 context copy failed.
-  @retval FALSE  This interface is not supported.
+    @retval TRUE   MD5 context copy succeeded.
+    @retval FALSE  MD5 context copy failed.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-Md5Duplicate (
-  IN   CONST VOID  *Md5Context,
-  OUT  VOID        *NewMd5Context
+  **/
+  BOOLEAN
+  EFIAPI
+  Md5Duplicate (
+  IN   CONST VOID *Md5Context,
+  OUT  VOID       *NewMd5Context
   )
-{
-  CALL_CRYPTO_SERVICE (Md5Duplicate, (Md5Context, NewMd5Context), FALSE);
-}
+  {
+    CALL_CRYPTO_SERVICE (Md5Duplicate, (Md5Context, NewMd5Context), FALSE);
+  }
 
-/**
-  Digests the input data and updates MD5 context.
+  /**
+    Digests the input data and updates MD5 context.
 
-  This function performs MD5 digest on a data buffer of the specified size.
-  It can be called multiple times to compute the digest of long or discontinuous data streams.
-  MD5 context should be already correctly initialized by Md5Init(), and should not be finalized
-  by Md5Final(). Behavior with invalid context is undefined.
+    This function performs MD5 digest on a data buffer of the specified size.
+    It can be called multiple times to compute the digest of long or discontinuous data streams.
+    MD5 context should be already correctly initialized by Md5Init(), and should not be finalized
+    by Md5Final(). Behavior with invalid context is undefined.
 
-  If Md5Context is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Md5Context is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in, out]  Md5Context  Pointer to the MD5 context.
-  @param[in]       Data        Pointer to the buffer containing the data to be hashed.
-  @param[in]       DataSize    Size of Data buffer in bytes.
+    @param[in, out]  Md5Context  Pointer to the MD5 context.
+    @param[in]       Data        Pointer to the buffer containing the data to be hashed.
+    @param[in]       DataSize    Size of Data buffer in bytes.
 
-  @retval TRUE   MD5 data digest succeeded.
-  @retval FALSE  MD5 data digest failed.
-  @retval FALSE  This interface is not supported.
+    @retval TRUE   MD5 data digest succeeded.
+    @retval FALSE  MD5 data digest failed.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-Md5Update (
-  IN OUT  VOID        *Md5Context,
-  IN      CONST VOID  *Data,
-  IN      UINTN       DataSize
+  **/
+  BOOLEAN
+  EFIAPI
+  Md5Update (
+  IN OUT  VOID       *Md5Context,
+  IN      CONST VOID *Data,
+  IN      UINTN      DataSize
   )
-{
-  CALL_CRYPTO_SERVICE (Md5Update, (Md5Context, Data, DataSize), FALSE);
-}
+  {
+    CALL_CRYPTO_SERVICE (Md5Update, (Md5Context, Data, DataSize), FALSE);
+  }
 
-/**
-  Completes computation of the MD5 digest value.
+  /**
+    Completes computation of the MD5 digest value.
 
-  This function completes MD5 hash computation and retrieves the digest value into
-  the specified memory. After this function has been called, the MD5 context cannot
-  be used again.
-  MD5 context should be already correctly initialized by Md5Init(), and should not be
-  finalized by Md5Final(). Behavior with invalid MD5 context is undefined.
+    This function completes MD5 hash computation and retrieves the digest value into
+    the specified memory. After this function has been called, the MD5 context cannot
+    be used again.
+    MD5 context should be already correctly initialized by Md5Init(), and should not be
+    finalized by Md5Final(). Behavior with invalid MD5 context is undefined.
 
-  If Md5Context is NULL, then return FALSE.
-  If HashValue is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Md5Context is NULL, then return FALSE.
+    If HashValue is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in, out]  Md5Context  Pointer to the MD5 context.
-  @param[out]      HashValue   Pointer to a buffer that receives the MD5 digest
-                               value (16 bytes).
+    @param[in, out]  Md5Context  Pointer to the MD5 context.
+    @param[out]      HashValue   Pointer to a buffer that receives the MD5 digest
+                                 value (16 bytes).
 
-  @retval TRUE   MD5 digest computation succeeded.
-  @retval FALSE  MD5 digest computation failed.
-  @retval FALSE  This interface is not supported.
+    @retval TRUE   MD5 digest computation succeeded.
+    @retval FALSE  MD5 digest computation failed.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-Md5Final (
-  IN OUT  VOID   *Md5Context,
-  OUT     UINT8  *HashValue
+  **/
+  BOOLEAN
+  EFIAPI
+  Md5Final (
+  IN OUT  VOID  *Md5Context,
+  OUT     UINT8 *HashValue
   )
-{
-  CALL_CRYPTO_SERVICE (Md5Final, (Md5Context, HashValue), FALSE);
-}
+  {
+    CALL_CRYPTO_SERVICE (Md5Final, (Md5Context, HashValue), FALSE);
+  }
 
-/**
-  Computes the MD5 message digest of a input data buffer.
+  /**
+    Computes the MD5 message digest of a input data buffer.
 
-  This function performs the MD5 message digest of a given data buffer, and places
-  the digest value into the specified memory.
+    This function performs the MD5 message digest of a given data buffer, and places
+    the digest value into the specified memory.
 
-  If this interface is not supported, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in]   Data        Pointer to the buffer containing the data to be hashed.
-  @param[in]   DataSize    Size of Data buffer in bytes.
-  @param[out]  HashValue   Pointer to a buffer that receives the MD5 digest
-                           value (16 bytes).
+    @param[in]   Data        Pointer to the buffer containing the data to be hashed.
+    @param[in]   DataSize    Size of Data buffer in bytes.
+    @param[out]  HashValue   Pointer to a buffer that receives the MD5 digest
+                             value (16 bytes).
 
-  @retval TRUE   MD5 digest computation succeeded.
-  @retval FALSE  MD5 digest computation failed.
-  @retval FALSE  This interface is not supported.
+    @retval TRUE   MD5 digest computation succeeded.
+    @retval FALSE  MD5 digest computation failed.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-Md5HashAll (
-  IN   CONST VOID  *Data,
-  IN   UINTN       DataSize,
-  OUT  UINT8       *HashValue
+  **/
+  BOOLEAN
+  EFIAPI
+  Md5HashAll (
+  IN   CONST VOID *Data,
+  IN   UINTN      DataSize,
+  OUT  UINT8      *HashValue
   )
-{
-  CALL_CRYPTO_SERVICE (Md5HashAll, (Data, DataSize, HashValue), FALSE);
-}
+  {
+    CALL_CRYPTO_SERVICE (Md5HashAll, (Data, DataSize, HashValue), FALSE);
+  }
+
 #endif
 
 #ifndef DISABLE_SHA1_DEPRECATED_INTERFACES
-/**
-  Retrieves the size, in bytes, of the context buffer required for SHA-1 hash operations.
 
-  If this interface is not supported, then return zero.
+  /**
+    Retrieves the size, in bytes, of the context buffer required for SHA-1 hash operations.
 
-  @return  The size, in bytes, of the context buffer required for SHA-1 hash operations.
-  @retval  0   This interface is not supported.
+    If this interface is not supported, then return zero.
 
-**/
-UINTN
-EFIAPI
-Sha1GetContextSize (
+    @return  The size, in bytes, of the context buffer required for SHA-1 hash operations.
+    @retval  0   This interface is not supported.
+
+  **/
+  UINTN
+  EFIAPI
+  Sha1GetContextSize (
   VOID
   )
-{
-  CALL_CRYPTO_SERVICE (Sha1GetContextSize, (), 0);
-}
+  {
+    CALL_CRYPTO_SERVICE (Sha1GetContextSize, (), 0);
+  }
 
-/**
-  Initializes user-supplied memory pointed by Sha1Context as SHA-1 hash context for
-  subsequent use.
+  /**
+    Initializes user-supplied memory pointed by Sha1Context as SHA-1 hash context for
+    subsequent use.
 
-  If Sha1Context is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Sha1Context is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[out]  Sha1Context  Pointer to SHA-1 context being initialized.
+    @param[out]  Sha1Context  Pointer to SHA-1 context being initialized.
 
-  @retval TRUE   SHA-1 context initialization succeeded.
-  @retval FALSE  SHA-1 context initialization failed.
-  @retval FALSE  This interface is not supported.
+    @retval TRUE   SHA-1 context initialization succeeded.
+    @retval FALSE  SHA-1 context initialization failed.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-Sha1Init (
-  OUT  VOID  *Sha1Context
+  **/
+  BOOLEAN
+  EFIAPI
+  Sha1Init (
+  OUT  VOID *Sha1Context
   )
-{
-  CALL_CRYPTO_SERVICE (Sha1Init, (Sha1Context), FALSE);
-}
+  {
+    CALL_CRYPTO_SERVICE (Sha1Init, (Sha1Context), FALSE);
+  }
 
-/**
-  Makes a copy of an existing SHA-1 context.
+  /**
+    Makes a copy of an existing SHA-1 context.
 
-  If Sha1Context is NULL, then return FALSE.
-  If NewSha1Context is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Sha1Context is NULL, then return FALSE.
+    If NewSha1Context is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in]  Sha1Context     Pointer to SHA-1 context being copied.
-  @param[out] NewSha1Context  Pointer to new SHA-1 context.
+    @param[in]  Sha1Context     Pointer to SHA-1 context being copied.
+    @param[out] NewSha1Context  Pointer to new SHA-1 context.
 
-  @retval TRUE   SHA-1 context copy succeeded.
-  @retval FALSE  SHA-1 context copy failed.
-  @retval FALSE  This interface is not supported.
+    @retval TRUE   SHA-1 context copy succeeded.
+    @retval FALSE  SHA-1 context copy failed.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-Sha1Duplicate (
-  IN   CONST VOID  *Sha1Context,
-  OUT  VOID        *NewSha1Context
+  **/
+  BOOLEAN
+  EFIAPI
+  Sha1Duplicate (
+  IN   CONST VOID *Sha1Context,
+  OUT  VOID       *NewSha1Context
   )
-{
-  CALL_CRYPTO_SERVICE (Sha1Duplicate, (Sha1Context, NewSha1Context), FALSE);
-}
+  {
+    CALL_CRYPTO_SERVICE (Sha1Duplicate, (Sha1Context, NewSha1Context), FALSE);
+  }
 
-/**
-  Digests the input data and updates SHA-1 context.
+  /**
+    Digests the input data and updates SHA-1 context.
 
-  This function performs SHA-1 digest on a data buffer of the specified size.
-  It can be called multiple times to compute the digest of long or discontinuous data streams.
-  SHA-1 context should be already correctly initialized by Sha1Init(), and should not be finalized
-  by Sha1Final(). Behavior with invalid context is undefined.
+    This function performs SHA-1 digest on a data buffer of the specified size.
+    It can be called multiple times to compute the digest of long or discontinuous data streams.
+    SHA-1 context should be already correctly initialized by Sha1Init(), and should not be finalized
+    by Sha1Final(). Behavior with invalid context is undefined.
 
-  If Sha1Context is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Sha1Context is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in, out]  Sha1Context  Pointer to the SHA-1 context.
-  @param[in]       Data         Pointer to the buffer containing the data to be hashed.
-  @param[in]       DataSize     Size of Data buffer in bytes.
+    @param[in, out]  Sha1Context  Pointer to the SHA-1 context.
+    @param[in]       Data         Pointer to the buffer containing the data to be hashed.
+    @param[in]       DataSize     Size of Data buffer in bytes.
 
-  @retval TRUE   SHA-1 data digest succeeded.
-  @retval FALSE  SHA-1 data digest failed.
-  @retval FALSE  This interface is not supported.
+    @retval TRUE   SHA-1 data digest succeeded.
+    @retval FALSE  SHA-1 data digest failed.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-Sha1Update (
-  IN OUT  VOID        *Sha1Context,
-  IN      CONST VOID  *Data,
-  IN      UINTN       DataSize
+  **/
+  BOOLEAN
+  EFIAPI
+  Sha1Update (
+  IN OUT  VOID       *Sha1Context,
+  IN      CONST VOID *Data,
+  IN      UINTN      DataSize
   )
-{
-  CALL_CRYPTO_SERVICE (Sha1Update, (Sha1Context, Data, DataSize), FALSE);
-}
+  {
+    CALL_CRYPTO_SERVICE (Sha1Update, (Sha1Context, Data, DataSize), FALSE);
+  }
 
-/**
-  Completes computation of the SHA-1 digest value.
+  /**
+    Completes computation of the SHA-1 digest value.
 
-  This function completes SHA-1 hash computation and retrieves the digest value into
-  the specified memory. After this function has been called, the SHA-1 context cannot
-  be used again.
-  SHA-1 context should be already correctly initialized by Sha1Init(), and should not be
-  finalized by Sha1Final(). Behavior with invalid SHA-1 context is undefined.
+    This function completes SHA-1 hash computation and retrieves the digest value into
+    the specified memory. After this function has been called, the SHA-1 context cannot
+    be used again.
+    SHA-1 context should be already correctly initialized by Sha1Init(), and should not be
+    finalized by Sha1Final(). Behavior with invalid SHA-1 context is undefined.
 
-  If Sha1Context is NULL, then return FALSE.
-  If HashValue is NULL, then return FALSE.
-  If this interface is not supported, then return FALSE.
+    If Sha1Context is NULL, then return FALSE.
+    If HashValue is NULL, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in, out]  Sha1Context  Pointer to the SHA-1 context.
-  @param[out]      HashValue    Pointer to a buffer that receives the SHA-1 digest
-                                value (20 bytes).
+    @param[in, out]  Sha1Context  Pointer to the SHA-1 context.
+    @param[out]      HashValue    Pointer to a buffer that receives the SHA-1 digest
+                                  value (20 bytes).
 
-  @retval TRUE   SHA-1 digest computation succeeded.
-  @retval FALSE  SHA-1 digest computation failed.
-  @retval FALSE  This interface is not supported.
+    @retval TRUE   SHA-1 digest computation succeeded.
+    @retval FALSE  SHA-1 digest computation failed.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-Sha1Final (
-  IN OUT  VOID   *Sha1Context,
-  OUT     UINT8  *HashValue
+  **/
+  BOOLEAN
+  EFIAPI
+  Sha1Final (
+  IN OUT  VOID  *Sha1Context,
+  OUT     UINT8 *HashValue
   )
-{
-  CALL_CRYPTO_SERVICE (Sha1Final, (Sha1Context, HashValue), FALSE);
-}
+  {
+    CALL_CRYPTO_SERVICE (Sha1Final, (Sha1Context, HashValue), FALSE);
+  }
 
-/**
-  Computes the SHA-1 message digest of a input data buffer.
+  /**
+    Computes the SHA-1 message digest of a input data buffer.
 
-  This function performs the SHA-1 message digest of a given data buffer, and places
-  the digest value into the specified memory.
+    This function performs the SHA-1 message digest of a given data buffer, and places
+    the digest value into the specified memory.
 
-  If this interface is not supported, then return FALSE.
+    If this interface is not supported, then return FALSE.
 
-  @param[in]   Data        Pointer to the buffer containing the data to be hashed.
-  @param[in]   DataSize    Size of Data buffer in bytes.
-  @param[out]  HashValue   Pointer to a buffer that receives the SHA-1 digest
-                           value (20 bytes).
+    @param[in]   Data        Pointer to the buffer containing the data to be hashed.
+    @param[in]   DataSize    Size of Data buffer in bytes.
+    @param[out]  HashValue   Pointer to a buffer that receives the SHA-1 digest
+                             value (20 bytes).
 
-  @retval TRUE   SHA-1 digest computation succeeded.
-  @retval FALSE  SHA-1 digest computation failed.
-  @retval FALSE  This interface is not supported.
+    @retval TRUE   SHA-1 digest computation succeeded.
+    @retval FALSE  SHA-1 digest computation failed.
+    @retval FALSE  This interface is not supported.
 
-**/
-BOOLEAN
-EFIAPI
-Sha1HashAll (
-  IN   CONST VOID  *Data,
-  IN   UINTN       DataSize,
-  OUT  UINT8       *HashValue
+  **/
+  BOOLEAN
+  EFIAPI
+  Sha1HashAll (
+  IN   CONST VOID *Data,
+  IN   UINTN      DataSize,
+  OUT  UINT8      *HashValue
   )
-{
-  CALL_CRYPTO_SERVICE (Sha1HashAll, (Data, DataSize, HashValue), FALSE);
-}
+  {
+    CALL_CRYPTO_SERVICE (Sha1HashAll, (Data, DataSize, HashValue), FALSE);
+  }
+
 #endif
 
 /**
@@ -449,7 +453,7 @@ Sha256GetContextSize (
 BOOLEAN
 EFIAPI
 Sha256Init (
-  OUT  VOID  *Sha256Context
+  OUT  VOID *Sha256Context
   )
 {
   CALL_CRYPTO_SERVICE (Sha256Init, (Sha256Context), FALSE);
@@ -473,8 +477,8 @@ Sha256Init (
 BOOLEAN
 EFIAPI
 Sha256Duplicate (
-  IN   CONST VOID  *Sha256Context,
-  OUT  VOID        *NewSha256Context
+  IN   CONST VOID *Sha256Context,
+  OUT  VOID       *NewSha256Context
   )
 {
   CALL_CRYPTO_SERVICE (Sha256Duplicate, (Sha256Context, NewSha256Context), FALSE);
@@ -501,9 +505,9 @@ Sha256Duplicate (
 BOOLEAN
 EFIAPI
 Sha256Update (
-  IN OUT  VOID        *Sha256Context,
-  IN      CONST VOID  *Data,
-  IN      UINTN       DataSize
+  IN OUT  VOID       *Sha256Context,
+  IN      CONST VOID *Data,
+  IN      UINTN      DataSize
   )
 {
   CALL_CRYPTO_SERVICE (Sha256Update, (Sha256Context, Data, DataSize), FALSE);
@@ -532,8 +536,8 @@ Sha256Update (
 BOOLEAN
 EFIAPI
 Sha256Final (
-  IN OUT  VOID   *Sha256Context,
-  OUT     UINT8  *HashValue
+  IN OUT  VOID  *Sha256Context,
+  OUT     UINT8 *HashValue
   )
 {
   CALL_CRYPTO_SERVICE (Sha256Final, (Sha256Context, HashValue), FALSE);
@@ -560,9 +564,9 @@ Sha256Final (
 BOOLEAN
 EFIAPI
 Sha256HashAll (
-  IN   CONST VOID  *Data,
-  IN   UINTN       DataSize,
-  OUT  UINT8       *HashValue
+  IN   CONST VOID *Data,
+  IN   UINTN      DataSize,
+  OUT  UINT8      *HashValue
   )
 {
   CALL_CRYPTO_SERVICE (Sha256HashAll, (Data, DataSize, HashValue), FALSE);
@@ -598,7 +602,7 @@ Sha384GetContextSize (
 BOOLEAN
 EFIAPI
 Sha384Init (
-  OUT  VOID  *Sha384Context
+  OUT  VOID *Sha384Context
   )
 {
   CALL_CRYPTO_SERVICE (Sha384Init, (Sha384Context), FALSE);
@@ -622,8 +626,8 @@ Sha384Init (
 BOOLEAN
 EFIAPI
 Sha384Duplicate (
-  IN   CONST VOID  *Sha384Context,
-  OUT  VOID        *NewSha384Context
+  IN   CONST VOID *Sha384Context,
+  OUT  VOID       *NewSha384Context
   )
 {
   CALL_CRYPTO_SERVICE (Sha384Duplicate, (Sha384Context, NewSha384Context), FALSE);
@@ -650,9 +654,9 @@ Sha384Duplicate (
 BOOLEAN
 EFIAPI
 Sha384Update (
-  IN OUT  VOID        *Sha384Context,
-  IN      CONST VOID  *Data,
-  IN      UINTN       DataSize
+  IN OUT  VOID       *Sha384Context,
+  IN      CONST VOID *Data,
+  IN      UINTN      DataSize
   )
 {
   CALL_CRYPTO_SERVICE (Sha384Update, (Sha384Context, Data, DataSize), FALSE);
@@ -681,8 +685,8 @@ Sha384Update (
 BOOLEAN
 EFIAPI
 Sha384Final (
-  IN OUT  VOID   *Sha384Context,
-  OUT     UINT8  *HashValue
+  IN OUT  VOID  *Sha384Context,
+  OUT     UINT8 *HashValue
   )
 {
   CALL_CRYPTO_SERVICE (Sha384Final, (Sha384Context, HashValue), FALSE);
@@ -709,9 +713,9 @@ Sha384Final (
 BOOLEAN
 EFIAPI
 Sha384HashAll (
-  IN   CONST VOID  *Data,
-  IN   UINTN       DataSize,
-  OUT  UINT8       *HashValue
+  IN   CONST VOID *Data,
+  IN   UINTN      DataSize,
+  OUT  UINT8      *HashValue
   )
 {
   CALL_CRYPTO_SERVICE (Sha384HashAll, (Data, DataSize, HashValue), FALSE);
@@ -747,7 +751,7 @@ Sha512GetContextSize (
 BOOLEAN
 EFIAPI
 Sha512Init (
-  OUT  VOID  *Sha512Context
+  OUT  VOID *Sha512Context
   )
 {
   CALL_CRYPTO_SERVICE (Sha512Init, (Sha512Context), FALSE);
@@ -771,8 +775,8 @@ Sha512Init (
 BOOLEAN
 EFIAPI
 Sha512Duplicate (
-  IN   CONST VOID  *Sha512Context,
-  OUT  VOID        *NewSha512Context
+  IN   CONST VOID *Sha512Context,
+  OUT  VOID       *NewSha512Context
   )
 {
   CALL_CRYPTO_SERVICE (Sha512Duplicate, (Sha512Context, NewSha512Context), FALSE);
@@ -799,9 +803,9 @@ Sha512Duplicate (
 BOOLEAN
 EFIAPI
 Sha512Update (
-  IN OUT  VOID        *Sha512Context,
-  IN      CONST VOID  *Data,
-  IN      UINTN       DataSize
+  IN OUT  VOID       *Sha512Context,
+  IN      CONST VOID *Data,
+  IN      UINTN      DataSize
   )
 {
   CALL_CRYPTO_SERVICE (Sha512Update, (Sha512Context, Data, DataSize), FALSE);
@@ -830,8 +834,8 @@ Sha512Update (
 BOOLEAN
 EFIAPI
 Sha512Final (
-  IN OUT  VOID   *Sha512Context,
-  OUT     UINT8  *HashValue
+  IN OUT  VOID  *Sha512Context,
+  OUT     UINT8 *HashValue
   )
 {
   CALL_CRYPTO_SERVICE (Sha512Final, (Sha512Context, HashValue), FALSE);
@@ -858,9 +862,9 @@ Sha512Final (
 BOOLEAN
 EFIAPI
 Sha512HashAll (
-  IN   CONST VOID  *Data,
-  IN   UINTN       DataSize,
-  OUT  UINT8       *HashValue
+  IN   CONST VOID *Data,
+  IN   UINTN      DataSize,
+  OUT  UINT8      *HashValue
   )
 {
   CALL_CRYPTO_SERVICE (Sha512HashAll, (Data, DataSize, HashValue), FALSE);
@@ -896,7 +900,7 @@ Sm3GetContextSize (
 BOOLEAN
 EFIAPI
 Sm3Init (
-  OUT  VOID  *Sm3Context
+  OUT  VOID *Sm3Context
   )
 {
   CALL_CRYPTO_SERVICE (Sm3Init, (Sm3Context), FALSE);
@@ -920,8 +924,8 @@ Sm3Init (
 BOOLEAN
 EFIAPI
 Sm3Duplicate (
-  IN   CONST VOID  *Sm3Context,
-  OUT  VOID        *NewSm3Context
+  IN   CONST VOID *Sm3Context,
+  OUT  VOID       *NewSm3Context
   )
 {
   CALL_CRYPTO_SERVICE (Sm3Duplicate, (Sm3Context, NewSm3Context), FALSE);
@@ -948,9 +952,9 @@ Sm3Duplicate (
 BOOLEAN
 EFIAPI
 Sm3Update (
-  IN OUT  VOID        *Sm3Context,
-  IN      CONST VOID  *Data,
-  IN      UINTN       DataSize
+  IN OUT  VOID       *Sm3Context,
+  IN      CONST VOID *Data,
+  IN      UINTN      DataSize
   )
 {
   CALL_CRYPTO_SERVICE (Sm3Update, (Sm3Context, Data, DataSize), FALSE);
@@ -979,8 +983,8 @@ Sm3Update (
 BOOLEAN
 EFIAPI
 Sm3Final (
-  IN OUT  VOID   *Sm3Context,
-  OUT     UINT8  *HashValue
+  IN OUT  VOID  *Sm3Context,
+  OUT     UINT8 *HashValue
   )
 {
   CALL_CRYPTO_SERVICE (Sm3Final, (Sm3Context, HashValue), FALSE);
@@ -1007,17 +1011,17 @@ Sm3Final (
 BOOLEAN
 EFIAPI
 Sm3HashAll (
-  IN   CONST VOID  *Data,
-  IN   UINTN       DataSize,
-  OUT  UINT8       *HashValue
+  IN   CONST VOID *Data,
+  IN   UINTN      DataSize,
+  OUT  UINT8      *HashValue
   )
 {
   CALL_CRYPTO_SERVICE (Sm3HashAll, (Data, DataSize, HashValue), FALSE);
 }
 
-//=====================================================================================
+// =====================================================================================
 //    MAC (Message Authentication Code) Primitive
-//=====================================================================================
+// =====================================================================================
 
 /**
   Allocates and initializes one HMAC_CTX context for subsequent HMAC-SHA256 use.
@@ -1044,7 +1048,7 @@ HmacSha256New (
 VOID
 EFIAPI
 HmacSha256Free (
-  IN  VOID  *HmacSha256Ctx
+  IN  VOID *HmacSha256Ctx
   )
 {
   CALL_VOID_CRYPTO_SERVICE (HmacSha256Free, (HmacSha256Ctx));
@@ -1069,9 +1073,9 @@ HmacSha256Free (
 BOOLEAN
 EFIAPI
 HmacSha256SetKey (
-  OUT  VOID         *HmacSha256Context,
-  IN   CONST UINT8  *Key,
-  IN   UINTN        KeySize
+  OUT  VOID        *HmacSha256Context,
+  IN   CONST UINT8 *Key,
+  IN   UINTN       KeySize
   )
 {
   CALL_CRYPTO_SERVICE (HmacSha256SetKey, (HmacSha256Context, Key, KeySize), FALSE);
@@ -1095,8 +1099,8 @@ HmacSha256SetKey (
 BOOLEAN
 EFIAPI
 HmacSha256Duplicate (
-  IN   CONST VOID  *HmacSha256Context,
-  OUT  VOID        *NewHmacSha256Context
+  IN   CONST VOID *HmacSha256Context,
+  OUT  VOID       *NewHmacSha256Context
   )
 {
   CALL_CRYPTO_SERVICE (HmacSha256Duplicate, (HmacSha256Context, NewHmacSha256Context), FALSE);
@@ -1125,9 +1129,9 @@ HmacSha256Duplicate (
 BOOLEAN
 EFIAPI
 HmacSha256Update (
-  IN OUT  VOID        *HmacSha256Context,
-  IN      CONST VOID  *Data,
-  IN      UINTN       DataSize
+  IN OUT  VOID       *HmacSha256Context,
+  IN      CONST VOID *Data,
+  IN      UINTN      DataSize
   )
 {
   CALL_CRYPTO_SERVICE (HmacSha256Update, (HmacSha256Context, Data, DataSize), FALSE);
@@ -1158,16 +1162,16 @@ HmacSha256Update (
 BOOLEAN
 EFIAPI
 HmacSha256Final (
-  IN OUT  VOID   *HmacSha256Context,
-  OUT     UINT8  *HmacValue
+  IN OUT  VOID  *HmacSha256Context,
+  OUT     UINT8 *HmacValue
   )
 {
   CALL_CRYPTO_SERVICE (HmacSha256Final, (HmacSha256Context, HmacValue), FALSE);
 }
 
-//=====================================================================================
+// =====================================================================================
 //    Symmetric Cryptography Primitive
-//=====================================================================================
+// =====================================================================================
 
 /**
   Retrieves the size, in bytes, of the context buffer required for AES operations.
@@ -1212,9 +1216,9 @@ AesGetContextSize (
 BOOLEAN
 EFIAPI
 AesInit (
-  OUT  VOID         *AesContext,
-  IN   CONST UINT8  *Key,
-  IN   UINTN        KeyLength
+  OUT  VOID        *AesContext,
+  IN   CONST UINT8 *Key,
+  IN   UINTN       KeyLength
   )
 {
   CALL_CRYPTO_SERVICE (AesInit, (AesContext, Key, KeyLength), FALSE);
@@ -1252,11 +1256,11 @@ AesInit (
 BOOLEAN
 EFIAPI
 AesCbcEncrypt (
-  IN   VOID         *AesContext,
-  IN   CONST UINT8  *Input,
-  IN   UINTN        InputSize,
-  IN   CONST UINT8  *Ivec,
-  OUT  UINT8        *Output
+  IN   VOID        *AesContext,
+  IN   CONST UINT8 *Input,
+  IN   UINTN       InputSize,
+  IN   CONST UINT8 *Ivec,
+  OUT  UINT8       *Output
   )
 {
   CALL_CRYPTO_SERVICE (AesCbcEncrypt, (AesContext, Input, InputSize, Ivec, Output), FALSE);
@@ -1294,19 +1298,19 @@ AesCbcEncrypt (
 BOOLEAN
 EFIAPI
 AesCbcDecrypt (
-  IN   VOID         *AesContext,
-  IN   CONST UINT8  *Input,
-  IN   UINTN        InputSize,
-  IN   CONST UINT8  *Ivec,
-  OUT  UINT8        *Output
+  IN   VOID        *AesContext,
+  IN   CONST UINT8 *Input,
+  IN   UINTN       InputSize,
+  IN   CONST UINT8 *Ivec,
+  OUT  UINT8       *Output
   )
 {
   CALL_CRYPTO_SERVICE (AesCbcDecrypt, (AesContext, Input, InputSize, Ivec, Output), FALSE);
 }
 
-//=====================================================================================
+// =====================================================================================
 //    Asymmetric Cryptography Primitive
-//=====================================================================================
+// =====================================================================================
 
 /**
   Allocates and initializes one RSA context for subsequent use.
@@ -1335,7 +1339,7 @@ RsaNew (
 VOID
 EFIAPI
 RsaFree (
-  IN  VOID  *RsaContext
+  IN  VOID *RsaContext
   )
 {
   CALL_VOID_CRYPTO_SERVICE (RsaFree, (RsaContext));
@@ -1366,10 +1370,10 @@ RsaFree (
 BOOLEAN
 EFIAPI
 RsaSetKey (
-  IN OUT  VOID         *RsaContext,
-  IN      RSA_KEY_TAG  KeyTag,
-  IN      CONST UINT8  *BigNumber,
-  IN      UINTN        BnSize
+  IN OUT  VOID        *RsaContext,
+  IN      RSA_KEY_TAG KeyTag,
+  IN      CONST UINT8 *BigNumber,
+  IN      UINTN       BnSize
   )
 {
   CALL_CRYPTO_SERVICE (RsaSetKey, (RsaContext, KeyTag, BigNumber, BnSize), FALSE);
@@ -1406,10 +1410,10 @@ RsaSetKey (
 BOOLEAN
 EFIAPI
 RsaGetKey (
-  IN OUT  VOID         *RsaContext,
-  IN      RSA_KEY_TAG  KeyTag,
-  OUT     UINT8        *BigNumber,
-  IN OUT  UINTN        *BnSize
+  IN OUT  VOID        *RsaContext,
+  IN      RSA_KEY_TAG KeyTag,
+  OUT     UINT8       *BigNumber,
+  IN OUT  UINTN       *BnSize
   )
 {
   CALL_CRYPTO_SERVICE (RsaGetKey, (RsaContext, KeyTag, BigNumber, BnSize), FALSE);
@@ -1441,10 +1445,10 @@ RsaGetKey (
 BOOLEAN
 EFIAPI
 RsaGenerateKey (
-  IN OUT  VOID         *RsaContext,
-  IN      UINTN        ModulusLength,
-  IN      CONST UINT8  *PublicExponent,
-  IN      UINTN        PublicExponentSize
+  IN OUT  VOID        *RsaContext,
+  IN      UINTN       ModulusLength,
+  IN      CONST UINT8 *PublicExponent,
+  IN      UINTN       PublicExponentSize
   )
 {
   CALL_CRYPTO_SERVICE (RsaGenerateKey, (RsaContext, ModulusLength, PublicExponent, PublicExponentSize), FALSE);
@@ -1474,7 +1478,7 @@ RsaGenerateKey (
 BOOLEAN
 EFIAPI
 RsaCheckKey (
-  IN  VOID  *RsaContext
+  IN  VOID *RsaContext
   )
 {
   CALL_CRYPTO_SERVICE (RsaCheckKey, (RsaContext), FALSE);
@@ -1510,11 +1514,11 @@ RsaCheckKey (
 BOOLEAN
 EFIAPI
 RsaPkcs1Sign (
-  IN      VOID         *RsaContext,
-  IN      CONST UINT8  *MessageHash,
-  IN      UINTN        HashSize,
-  OUT     UINT8        *Signature,
-  IN OUT  UINTN        *SigSize
+  IN      VOID        *RsaContext,
+  IN      CONST UINT8 *MessageHash,
+  IN      UINTN       HashSize,
+  OUT     UINT8       *Signature,
+  IN OUT  UINTN       *SigSize
   )
 {
   CALL_CRYPTO_SERVICE (RsaPkcs1Sign, (RsaContext, MessageHash, HashSize, Signature, SigSize), FALSE);
@@ -1542,11 +1546,11 @@ RsaPkcs1Sign (
 BOOLEAN
 EFIAPI
 RsaPkcs1Verify (
-  IN  VOID         *RsaContext,
-  IN  CONST UINT8  *MessageHash,
-  IN  UINTN        HashSize,
-  IN  CONST UINT8  *Signature,
-  IN  UINTN        SigSize
+  IN  VOID        *RsaContext,
+  IN  CONST UINT8 *MessageHash,
+  IN  UINTN       HashSize,
+  IN  CONST UINT8 *Signature,
+  IN  UINTN       SigSize
   )
 {
   CALL_CRYPTO_SERVICE (RsaPkcs1Verify, (RsaContext, MessageHash, HashSize, Signature, SigSize), FALSE);
@@ -1573,13 +1577,13 @@ RsaPkcs1Verify (
 BOOLEAN
 EFIAPI
 RsaPssVerify (
-  IN  VOID         *RsaContext,
-  IN  CONST UINT8  *Message,
-  IN  UINTN        MsgSize,
-  IN  CONST UINT8  *Signature,
-  IN  UINTN        SigSize,
-  IN  UINT16       DigestLen,
-  IN  UINT16       SaltLen
+  IN  VOID        *RsaContext,
+  IN  CONST UINT8 *Message,
+  IN  UINTN       MsgSize,
+  IN  CONST UINT8 *Signature,
+  IN  UINTN       SigSize,
+  IN  UINT16      DigestLen,
+  IN  UINT16      SaltLen
   )
 {
   CALL_CRYPTO_SERVICE (RsaPssVerify, (RsaContext, Message, MsgSize, Signature, SigSize, DigestLen, SaltLen), FALSE);
@@ -1618,13 +1622,13 @@ RsaPssVerify (
 BOOLEAN
 EFIAPI
 RsaPssSign (
-  IN      VOID         *RsaContext,
-  IN      CONST UINT8  *Message,
-  IN      UINTN        MsgSize,
-  IN      UINT16       DigestLen,
-  IN      UINT16       SaltLen,
-  OUT     UINT8        *Signature,
-  IN OUT  UINTN        *SigSize
+  IN      VOID        *RsaContext,
+  IN      CONST UINT8 *Message,
+  IN      UINTN       MsgSize,
+  IN      UINT16      DigestLen,
+  IN      UINT16      SaltLen,
+  OUT     UINT8       *Signature,
+  IN OUT  UINTN       *SigSize
   )
 {
   CALL_CRYPTO_SERVICE (RsaPssSign, (RsaContext, Message, MsgSize, DigestLen, SaltLen, Signature, SigSize), FALSE);
@@ -1652,10 +1656,10 @@ RsaPssSign (
 BOOLEAN
 EFIAPI
 RsaGetPrivateKeyFromPem (
-  IN   CONST UINT8  *PemData,
-  IN   UINTN        PemSize,
-  IN   CONST CHAR8  *Password,
-  OUT  VOID         **RsaContext
+  IN   CONST UINT8 *PemData,
+  IN   UINTN       PemSize,
+  IN   CONST CHAR8 *Password,
+  OUT  VOID        **RsaContext
   )
 {
   CALL_CRYPTO_SERVICE (RsaGetPrivateKeyFromPem, (PemData, PemSize, Password, RsaContext), FALSE);
@@ -1682,9 +1686,9 @@ RsaGetPrivateKeyFromPem (
 BOOLEAN
 EFIAPI
 RsaGetPublicKeyFromX509 (
-  IN   CONST UINT8  *Cert,
-  IN   UINTN        CertSize,
-  OUT  VOID         **RsaContext
+  IN   CONST UINT8 *Cert,
+  IN   UINTN       CertSize,
+  OUT  VOID        **RsaContext
   )
 {
   CALL_CRYPTO_SERVICE (RsaGetPublicKeyFromX509, (Cert, CertSize, RsaContext), FALSE);
@@ -1712,10 +1716,10 @@ RsaGetPublicKeyFromX509 (
 BOOLEAN
 EFIAPI
 X509GetSubjectName (
-  IN      CONST UINT8  *Cert,
-  IN      UINTN        CertSize,
-  OUT     UINT8        *CertSubject,
-  IN OUT  UINTN        *SubjectSize
+  IN      CONST UINT8 *Cert,
+  IN      UINTN       CertSize,
+  OUT     UINT8       *CertSubject,
+  IN OUT  UINTN       *SubjectSize
   )
 {
   CALL_CRYPTO_SERVICE (X509GetSubjectName, (Cert, CertSize, CertSubject, SubjectSize), FALSE);
@@ -1750,9 +1754,9 @@ X509GetSubjectName (
 RETURN_STATUS
 EFIAPI
 X509GetCommonName (
-  IN      CONST UINT8  *Cert,
-  IN      UINTN        CertSize,
-  OUT     CHAR8        *CommonName,  OPTIONAL
+  IN      CONST UINT8 *Cert,
+  IN      UINTN CertSize,
+  OUT     CHAR8 *CommonName, OPTIONAL
   IN OUT  UINTN        *CommonNameSize
   )
 {
@@ -1788,9 +1792,9 @@ X509GetCommonName (
 RETURN_STATUS
 EFIAPI
 X509GetOrganizationName (
-  IN      CONST UINT8   *Cert,
-  IN      UINTN         CertSize,
-  OUT     CHAR8         *NameBuffer,  OPTIONAL
+  IN      CONST UINT8 *Cert,
+  IN      UINTN CertSize,
+  OUT     CHAR8 *NameBuffer, OPTIONAL
   IN OUT  UINTN         *NameBufferSize
   )
 {
@@ -1818,10 +1822,10 @@ X509GetOrganizationName (
 BOOLEAN
 EFIAPI
 X509VerifyCert (
-  IN  CONST UINT8  *Cert,
-  IN  UINTN        CertSize,
-  IN  CONST UINT8  *CACert,
-  IN  UINTN        CACertSize
+  IN  CONST UINT8 *Cert,
+  IN  UINTN       CertSize,
+  IN  CONST UINT8 *CACert,
+  IN  UINTN       CACertSize
   )
 {
   CALL_CRYPTO_SERVICE (X509VerifyCert, (Cert, CertSize, CACert, CACertSize), FALSE);
@@ -1846,9 +1850,9 @@ X509VerifyCert (
 BOOLEAN
 EFIAPI
 X509ConstructCertificate (
-  IN   CONST UINT8  *Cert,
-  IN   UINTN        CertSize,
-  OUT  UINT8        **SingleX509Cert
+  IN   CONST UINT8 *Cert,
+  IN   UINTN       CertSize,
+  OUT  UINT8       **SingleX509Cert
   )
 {
   CALL_CRYPTO_SERVICE (X509ConstructCertificate, (Cert, CertSize, SingleX509Cert), FALSE);
@@ -1876,7 +1880,7 @@ X509ConstructCertificate (
 BOOLEAN
 EFIAPI
 X509ConstructCertificateStack (
-  IN OUT  UINT8  **X509Stack,
+  IN OUT  UINT8 **X509Stack,
   ...
   )
 {
@@ -1911,8 +1915,8 @@ X509ConstructCertificateStack (
 BOOLEAN
 EFIAPI
 X509ConstructCertificateStackV (
-  IN OUT  UINT8    **X509Stack,
-  IN      VA_LIST  Args
+  IN OUT  UINT8   **X509Stack,
+  IN      VA_LIST Args
   )
 {
   CALL_CRYPTO_SERVICE (X509ConstructCertificateStackV, (X509Stack, Args), FALSE);
@@ -1929,7 +1933,7 @@ X509ConstructCertificateStackV (
 VOID
 EFIAPI
 X509Free (
-  IN  VOID  *X509Cert
+  IN  VOID *X509Cert
   )
 {
   CALL_VOID_CRYPTO_SERVICE (X509Free, (X509Cert));
@@ -1946,7 +1950,7 @@ X509Free (
 VOID
 EFIAPI
 X509StackFree (
-  IN  VOID  *X509Stack
+  IN  VOID *X509Stack
   )
 {
   CALL_VOID_CRYPTO_SERVICE (X509StackFree, (X509Stack));
@@ -1972,10 +1976,10 @@ X509StackFree (
 BOOLEAN
 EFIAPI
 X509GetTBSCert (
-  IN  CONST UINT8  *Cert,
-  IN  UINTN        CertSize,
-  OUT UINT8        **TBSCert,
-  OUT UINTN        *TBSCertSize
+  IN  CONST UINT8 *Cert,
+  IN  UINTN       CertSize,
+  OUT UINT8       **TBSCert,
+  OUT UINTN       *TBSCertSize
   )
 {
   CALL_CRYPTO_SERVICE (X509GetTBSCert, (Cert, CertSize, TBSCert, TBSCertSize), FALSE);
@@ -2011,14 +2015,14 @@ X509GetTBSCert (
 BOOLEAN
 EFIAPI
 Pkcs5HashPassword (
-  IN  UINTN        PasswordLength,
-  IN  CONST CHAR8  *Password,
-  IN  UINTN        SaltLength,
-  IN  CONST UINT8  *Salt,
-  IN  UINTN        IterationCount,
-  IN  UINTN        DigestSize,
-  IN  UINTN        KeyLength,
-  OUT UINT8        *OutKey
+  IN  UINTN       PasswordLength,
+  IN  CONST CHAR8 *Password,
+  IN  UINTN       SaltLength,
+  IN  CONST UINT8 *Salt,
+  IN  UINTN       IterationCount,
+  IN  UINTN       DigestSize,
+  IN  UINTN       KeyLength,
+  OUT UINT8       *OutKey
   )
 {
   CALL_CRYPTO_SERVICE (Pkcs5HashPassword, (PasswordLength, Password, SaltLength, Salt, IterationCount, DigestSize, KeyLength, OutKey), FALSE);
@@ -2056,12 +2060,12 @@ Pkcs5HashPassword (
 BOOLEAN
 EFIAPI
 Pkcs1v2Encrypt (
-  IN   CONST UINT8  *PublicKey,
-  IN   UINTN        PublicKeySize,
-  IN   UINT8        *InData,
-  IN   UINTN        InDataSize,
-  IN   CONST UINT8  *PrngSeed,  OPTIONAL
-  IN   UINTN        PrngSeedSize,  OPTIONAL
+  IN   CONST UINT8 *PublicKey,
+  IN   UINTN PublicKeySize,
+  IN   UINT8 *InData,
+  IN   UINTN InDataSize,
+  IN   CONST UINT8 *PrngSeed, OPTIONAL
+  IN   UINTN        PrngSeedSize, OPTIONAL
   OUT  UINT8        **EncryptedData,
   OUT  UINTN        *EncryptedDataSize
   )
@@ -2098,12 +2102,12 @@ Pkcs1v2Encrypt (
 BOOLEAN
 EFIAPI
 Pkcs7GetSigners (
-  IN  CONST UINT8  *P7Data,
-  IN  UINTN        P7Length,
-  OUT UINT8        **CertStack,
-  OUT UINTN        *StackLength,
-  OUT UINT8        **TrustedCert,
-  OUT UINTN        *CertLength
+  IN  CONST UINT8 *P7Data,
+  IN  UINTN       P7Length,
+  OUT UINT8       **CertStack,
+  OUT UINTN       *StackLength,
+  OUT UINT8       **TrustedCert,
+  OUT UINTN       *CertLength
   )
 {
   CALL_CRYPTO_SERVICE (Pkcs7GetSigners, (P7Data, P7Length, CertStack, StackLength, TrustedCert, CertLength), FALSE);
@@ -2120,7 +2124,7 @@ Pkcs7GetSigners (
 VOID
 EFIAPI
 Pkcs7FreeSigners (
-  IN  UINT8        *Certs
+  IN  UINT8 *Certs
   )
 {
   CALL_VOID_CRYPTO_SERVICE (Pkcs7FreeSigners, (Certs));
@@ -2151,12 +2155,12 @@ Pkcs7FreeSigners (
 BOOLEAN
 EFIAPI
 Pkcs7GetCertificatesList (
-  IN  CONST UINT8  *P7Data,
-  IN  UINTN        P7Length,
-  OUT UINT8        **SignerChainCerts,
-  OUT UINTN        *ChainLength,
-  OUT UINT8        **UnchainCerts,
-  OUT UINTN        *UnchainLength
+  IN  CONST UINT8 *P7Data,
+  IN  UINTN       P7Length,
+  OUT UINT8       **SignerChainCerts,
+  OUT UINTN       *ChainLength,
+  OUT UINT8       **UnchainCerts,
+  OUT UINTN       *UnchainLength
   )
 {
   CALL_CRYPTO_SERVICE (Pkcs7GetCertificatesList, (P7Data, P7Length, SignerChainCerts, ChainLength, UnchainCerts, UnchainLength), FALSE);
@@ -2192,15 +2196,15 @@ Pkcs7GetCertificatesList (
 BOOLEAN
 EFIAPI
 Pkcs7Sign (
-  IN   CONST UINT8  *PrivateKey,
-  IN   UINTN        PrivateKeySize,
-  IN   CONST UINT8  *KeyPassword,
-  IN   UINT8        *InData,
-  IN   UINTN        InDataSize,
-  IN   UINT8        *SignCert,
-  IN   UINT8        *OtherCerts      OPTIONAL,
-  OUT  UINT8        **SignedData,
-  OUT  UINTN        *SignedDataSize
+  IN   CONST UINT8 *PrivateKey,
+  IN   UINTN       PrivateKeySize,
+  IN   CONST UINT8 *KeyPassword,
+  IN   UINT8       *InData,
+  IN   UINTN       InDataSize,
+  IN   UINT8       *SignCert,
+  IN   UINT8       *OtherCerts      OPTIONAL,
+  OUT  UINT8       **SignedData,
+  OUT  UINTN       *SignedDataSize
   )
 {
   CALL_CRYPTO_SERVICE (Pkcs7Sign, (PrivateKey, PrivateKeySize, KeyPassword, InData, InDataSize, SignCert, OtherCerts, SignedData, SignedDataSize), FALSE);
@@ -2231,12 +2235,12 @@ Pkcs7Sign (
 BOOLEAN
 EFIAPI
 Pkcs7Verify (
-  IN  CONST UINT8  *P7Data,
-  IN  UINTN        P7Length,
-  IN  CONST UINT8  *TrustedCert,
-  IN  UINTN        CertLength,
-  IN  CONST UINT8  *InData,
-  IN  UINTN        DataLength
+  IN  CONST UINT8 *P7Data,
+  IN  UINTN       P7Length,
+  IN  CONST UINT8 *TrustedCert,
+  IN  UINTN       CertLength,
+  IN  CONST UINT8 *InData,
+  IN  UINTN       DataLength
   )
 {
   CALL_CRYPTO_SERVICE (Pkcs7Verify, (P7Data, P7Length, TrustedCert, CertLength, InData, DataLength), FALSE);
@@ -2277,16 +2281,15 @@ Pkcs7Verify (
 RETURN_STATUS
 EFIAPI
 VerifyEKUsInPkcs7Signature (
-  IN  CONST UINT8   *Pkcs7Signature,
-  IN  CONST UINT32  SignatureSize,
-  IN  CONST CHAR8   *RequiredEKUs[],
-  IN  CONST UINT32  RequiredEKUsSize,
-  IN  BOOLEAN       RequireAllPresent
+  IN  CONST UINT8  *Pkcs7Signature,
+  IN  CONST UINT32 SignatureSize,
+  IN  CONST CHAR8  *RequiredEKUs[],
+  IN  CONST UINT32 RequiredEKUsSize,
+  IN  BOOLEAN      RequireAllPresent
   )
 {
   CALL_CRYPTO_SERVICE (VerifyEKUsInPkcs7Signature, (Pkcs7Signature, SignatureSize, RequiredEKUs, RequiredEKUsSize, RequireAllPresent), FALSE);
 }
-
 
 /**
   Extracts the attached content from a PKCS#7 signed data if existed. The input signed
@@ -2311,10 +2314,10 @@ VerifyEKUsInPkcs7Signature (
 BOOLEAN
 EFIAPI
 Pkcs7GetAttachedContent (
-  IN  CONST UINT8  *P7Data,
-  IN  UINTN        P7Length,
-  OUT VOID         **Content,
-  OUT UINTN        *ContentSize
+  IN  CONST UINT8 *P7Data,
+  IN  UINTN       P7Length,
+  OUT VOID        **Content,
+  OUT UINTN       *ContentSize
   )
 {
   CALL_CRYPTO_SERVICE (Pkcs7GetAttachedContent, (P7Data, P7Length, Content, ContentSize), FALSE);
@@ -2347,12 +2350,12 @@ Pkcs7GetAttachedContent (
 BOOLEAN
 EFIAPI
 AuthenticodeVerify (
-  IN  CONST UINT8  *AuthData,
-  IN  UINTN        DataSize,
-  IN  CONST UINT8  *TrustedCert,
-  IN  UINTN        CertSize,
-  IN  CONST UINT8  *ImageHash,
-  IN  UINTN        HashSize
+  IN  CONST UINT8 *AuthData,
+  IN  UINTN       DataSize,
+  IN  CONST UINT8 *TrustedCert,
+  IN  UINTN       CertSize,
+  IN  CONST UINT8 *ImageHash,
+  IN  UINTN       HashSize
   )
 {
   CALL_CRYPTO_SERVICE (AuthenticodeVerify, (AuthData, DataSize, TrustedCert, CertSize, ImageHash, HashSize), FALSE);
@@ -2381,19 +2384,19 @@ AuthenticodeVerify (
 BOOLEAN
 EFIAPI
 ImageTimestampVerify (
-  IN  CONST UINT8  *AuthData,
-  IN  UINTN        DataSize,
-  IN  CONST UINT8  *TsaCert,
-  IN  UINTN        CertSize,
-  OUT EFI_TIME     *SigningTime
+  IN  CONST UINT8 *AuthData,
+  IN  UINTN       DataSize,
+  IN  CONST UINT8 *TsaCert,
+  IN  UINTN       CertSize,
+  OUT EFI_TIME    *SigningTime
   )
 {
   CALL_CRYPTO_SERVICE (ImageTimestampVerify, (AuthData, DataSize, TsaCert, CertSize, SigningTime), FALSE);
 }
 
-//=====================================================================================
+// =====================================================================================
 //    DH Key Exchange Primitive
-//=====================================================================================
+// =====================================================================================
 
 /**
   Allocates and Initializes one Diffie-Hellman Context for subsequent use.
@@ -2423,7 +2426,7 @@ DhNew (
 VOID
 EFIAPI
 DhFree (
-  IN  VOID  *DhContext
+  IN  VOID *DhContext
   )
 {
   CALL_VOID_CRYPTO_SERVICE (DhFree, (DhContext));
@@ -2456,10 +2459,10 @@ DhFree (
 BOOLEAN
 EFIAPI
 DhGenerateParameter (
-  IN OUT  VOID   *DhContext,
-  IN      UINTN  Generator,
-  IN      UINTN  PrimeLength,
-  OUT     UINT8  *Prime
+  IN OUT  VOID  *DhContext,
+  IN      UINTN Generator,
+  IN      UINTN PrimeLength,
+  OUT     UINT8 *Prime
   )
 {
   CALL_CRYPTO_SERVICE (DhGenerateParameter, (DhContext, Generator, PrimeLength, Prime), FALSE);
@@ -2491,10 +2494,10 @@ DhGenerateParameter (
 BOOLEAN
 EFIAPI
 DhSetParameter (
-  IN OUT  VOID         *DhContext,
-  IN      UINTN        Generator,
-  IN      UINTN        PrimeLength,
-  IN      CONST UINT8  *Prime
+  IN OUT  VOID        *DhContext,
+  IN      UINTN       Generator,
+  IN      UINTN       PrimeLength,
+  IN      CONST UINT8 *Prime
   )
 {
   CALL_CRYPTO_SERVICE (DhSetParameter, (DhContext, Generator, PrimeLength, Prime), FALSE);
@@ -2527,9 +2530,9 @@ DhSetParameter (
 BOOLEAN
 EFIAPI
 DhGenerateKey (
-  IN OUT  VOID   *DhContext,
-  OUT     UINT8  *PublicKey,
-  IN OUT  UINTN  *PublicKeySize
+  IN OUT  VOID  *DhContext,
+  OUT     UINT8 *PublicKey,
+  IN OUT  UINTN *PublicKeySize
   )
 {
   CALL_CRYPTO_SERVICE (DhGenerateKey, (DhContext, PublicKey, PublicKeySize), FALSE);
@@ -2564,19 +2567,19 @@ DhGenerateKey (
 BOOLEAN
 EFIAPI
 DhComputeKey (
-  IN OUT  VOID         *DhContext,
-  IN      CONST UINT8  *PeerPublicKey,
-  IN      UINTN        PeerPublicKeySize,
-  OUT     UINT8        *Key,
-  IN OUT  UINTN        *KeySize
+  IN OUT  VOID        *DhContext,
+  IN      CONST UINT8 *PeerPublicKey,
+  IN      UINTN       PeerPublicKeySize,
+  OUT     UINT8       *Key,
+  IN OUT  UINTN       *KeySize
   )
 {
   CALL_CRYPTO_SERVICE (DhComputeKey, (DhContext, PeerPublicKey, PeerPublicKeySize, Key, KeySize), FALSE);
 }
 
-//=====================================================================================
+// =====================================================================================
 //    Pseudo-Random Generation Primitive
-//=====================================================================================
+// =====================================================================================
 
 /**
   Sets up the seed value for the pseudorandom number generator.
@@ -2599,8 +2602,8 @@ DhComputeKey (
 BOOLEAN
 EFIAPI
 RandomSeed (
-  IN  CONST  UINT8  *Seed  OPTIONAL,
-  IN  UINTN         SeedSize
+  IN  CONST  UINT8 *Seed  OPTIONAL,
+  IN  UINTN        SeedSize
   )
 {
   CALL_CRYPTO_SERVICE (RandomSeed, (Seed, SeedSize), FALSE);
@@ -2623,16 +2626,16 @@ RandomSeed (
 BOOLEAN
 EFIAPI
 RandomBytes (
-  OUT  UINT8  *Output,
-  IN   UINTN  Size
+  OUT  UINT8 *Output,
+  IN   UINTN Size
   )
 {
   CALL_CRYPTO_SERVICE (RandomBytes, (Output, Size), FALSE);
 }
 
-//=====================================================================================
+// =====================================================================================
 //    Key Derivation Function Primitive
-//=====================================================================================
+// =====================================================================================
 
 /**
   Derive key data using HMAC-SHA256 based KDF.
@@ -2653,14 +2656,14 @@ RandomBytes (
 BOOLEAN
 EFIAPI
 HkdfSha256ExtractAndExpand (
-  IN   CONST UINT8  *Key,
-  IN   UINTN        KeySize,
-  IN   CONST UINT8  *Salt,
-  IN   UINTN        SaltSize,
-  IN   CONST UINT8  *Info,
-  IN   UINTN        InfoSize,
-  OUT  UINT8        *Out,
-  IN   UINTN        OutSize
+  IN   CONST UINT8 *Key,
+  IN   UINTN       KeySize,
+  IN   CONST UINT8 *Salt,
+  IN   UINTN       SaltSize,
+  IN   CONST UINT8 *Info,
+  IN   UINTN       InfoSize,
+  OUT  UINT8       *Out,
+  IN   UINTN       OutSize
   )
 {
   CALL_CRYPTO_SERVICE (HkdfSha256ExtractAndExpand, (Key, KeySize, Salt, SaltSize, Info, InfoSize, Out, OutSize), FALSE);
@@ -2695,7 +2698,7 @@ TlsInitialize (
 VOID
 EFIAPI
 TlsCtxFree (
-  IN   VOID                  *TlsCtx
+  IN   VOID *TlsCtx
   )
 {
   CALL_VOID_CRYPTO_SERVICE (TlsCtxFree, (TlsCtx));
@@ -2715,8 +2718,8 @@ TlsCtxFree (
 VOID *
 EFIAPI
 TlsCtxNew (
-  IN     UINT8                    MajorVer,
-  IN     UINT8                    MinorVer
+  IN     UINT8 MajorVer,
+  IN     UINT8 MinorVer
   )
 {
   CALL_CRYPTO_SERVICE (TlsCtxNew, (MajorVer, MinorVer), NULL);
@@ -2734,7 +2737,7 @@ TlsCtxNew (
 VOID
 EFIAPI
 TlsFree (
-  IN     VOID                     *Tls
+  IN     VOID *Tls
   )
 {
   CALL_VOID_CRYPTO_SERVICE (TlsFree, (Tls));
@@ -2756,7 +2759,7 @@ TlsFree (
 VOID *
 EFIAPI
 TlsNew (
-  IN     VOID                     *TlsCtx
+  IN     VOID *TlsCtx
   )
 {
   CALL_CRYPTO_SERVICE (TlsNew, (TlsCtx), NULL);
@@ -2776,7 +2779,7 @@ TlsNew (
 BOOLEAN
 EFIAPI
 TlsInHandshake (
-  IN     VOID                     *Tls
+  IN     VOID *Tls
   )
 {
   CALL_CRYPTO_SERVICE (TlsInHandshake, (Tls), FALSE);
@@ -2811,10 +2814,10 @@ TlsInHandshake (
 EFI_STATUS
 EFIAPI
 TlsDoHandshake (
-  IN     VOID                     *Tls,
-  IN     UINT8                    *BufferIn, OPTIONAL
+  IN     VOID *Tls,
+  IN     UINT8 *BufferIn, OPTIONAL
   IN     UINTN                    BufferInSize, OPTIONAL
-     OUT UINT8                    *BufferOut, OPTIONAL
+  OUT UINT8                    *BufferOut, OPTIONAL
   IN OUT UINTN                    *BufferOutSize
   )
 {
@@ -2849,10 +2852,10 @@ TlsDoHandshake (
 EFI_STATUS
 EFIAPI
 TlsHandleAlert (
-  IN     VOID                     *Tls,
-  IN     UINT8                    *BufferIn, OPTIONAL
+  IN     VOID *Tls,
+  IN     UINT8 *BufferIn, OPTIONAL
   IN     UINTN                    BufferInSize, OPTIONAL
-     OUT UINT8                    *BufferOut, OPTIONAL
+  OUT UINT8                    *BufferOut, OPTIONAL
   IN OUT UINTN                    *BufferOutSize
   )
 {
@@ -2880,9 +2883,9 @@ TlsHandleAlert (
 EFI_STATUS
 EFIAPI
 TlsCloseNotify (
-  IN     VOID                     *Tls,
-  IN OUT UINT8                    *Buffer,
-  IN OUT UINTN                    *BufferSize
+  IN     VOID  *Tls,
+  IN OUT UINT8 *Buffer,
+  IN OUT UINTN *BufferSize
   )
 {
   CALL_CRYPTO_SERVICE (TlsCloseNotify, (Tls, Buffer, BufferSize), EFI_UNSUPPORTED);
@@ -2905,9 +2908,9 @@ TlsCloseNotify (
 INTN
 EFIAPI
 TlsCtrlTrafficOut (
-  IN     VOID                     *Tls,
-  IN OUT VOID                     *Buffer,
-  IN     UINTN                    BufferSize
+  IN     VOID  *Tls,
+  IN OUT VOID  *Buffer,
+  IN     UINTN BufferSize
   )
 {
   CALL_CRYPTO_SERVICE (TlsCtrlTrafficOut, (Tls, Buffer, BufferSize), 0);
@@ -2930,9 +2933,9 @@ TlsCtrlTrafficOut (
 INTN
 EFIAPI
 TlsCtrlTrafficIn (
-  IN     VOID                     *Tls,
-  IN     VOID                     *Buffer,
-  IN     UINTN                    BufferSize
+  IN     VOID  *Tls,
+  IN     VOID  *Buffer,
+  IN     UINTN BufferSize
   )
 {
   CALL_CRYPTO_SERVICE (TlsCtrlTrafficIn, (Tls, Buffer, BufferSize), 0);
@@ -2956,9 +2959,9 @@ TlsCtrlTrafficIn (
 INTN
 EFIAPI
 TlsRead (
-  IN     VOID                     *Tls,
-  IN OUT VOID                     *Buffer,
-  IN     UINTN                    BufferSize
+  IN     VOID  *Tls,
+  IN OUT VOID  *Buffer,
+  IN     UINTN BufferSize
   )
 {
   CALL_CRYPTO_SERVICE (TlsRead, (Tls, Buffer, BufferSize), 0);
@@ -2982,9 +2985,9 @@ TlsRead (
 INTN
 EFIAPI
 TlsWrite (
-  IN     VOID                     *Tls,
-  IN     VOID                     *Buffer,
-  IN     UINTN                    BufferSize
+  IN     VOID  *Tls,
+  IN     VOID  *Buffer,
+  IN     UINTN BufferSize
   )
 {
   CALL_CRYPTO_SERVICE (TlsWrite, (Tls, Buffer, BufferSize), 0);
@@ -3007,9 +3010,9 @@ TlsWrite (
 EFI_STATUS
 EFIAPI
 TlsSetVersion (
-  IN     VOID                     *Tls,
-  IN     UINT8                    MajorVer,
-  IN     UINT8                    MinorVer
+  IN     VOID  *Tls,
+  IN     UINT8 MajorVer,
+  IN     UINT8 MinorVer
   )
 {
   CALL_CRYPTO_SERVICE (TlsSetVersion, (Tls, MajorVer, MinorVer), EFI_UNSUPPORTED);
@@ -3031,8 +3034,8 @@ TlsSetVersion (
 EFI_STATUS
 EFIAPI
 TlsSetConnectionEnd (
-  IN     VOID                     *Tls,
-  IN     BOOLEAN                  IsServer
+  IN     VOID    *Tls,
+  IN     BOOLEAN IsServer
   )
 {
   CALL_CRYPTO_SERVICE (TlsSetConnectionEnd, (Tls, IsServer), EFI_UNSUPPORTED);
@@ -3059,9 +3062,9 @@ TlsSetConnectionEnd (
 EFI_STATUS
 EFIAPI
 TlsSetCipherList (
-  IN     VOID                     *Tls,
-  IN     UINT16                   *CipherId,
-  IN     UINTN                    CipherNum
+  IN     VOID   *Tls,
+  IN     UINT16 *CipherId,
+  IN     UINTN  CipherNum
   )
 {
   CALL_CRYPTO_SERVICE (TlsSetCipherList, (Tls, CipherId, CipherNum), EFI_UNSUPPORTED);
@@ -3082,7 +3085,7 @@ TlsSetCipherList (
 EFI_STATUS
 EFIAPI
 TlsSetCompressionMethod (
-  IN     UINT8                    CompMethod
+  IN     UINT8 CompMethod
   )
 {
   CALL_CRYPTO_SERVICE (TlsSetCompressionMethod, (CompMethod), EFI_UNSUPPORTED);
@@ -3100,8 +3103,8 @@ TlsSetCompressionMethod (
 VOID
 EFIAPI
 TlsSetVerify (
-  IN     VOID                     *Tls,
-  IN     UINT32                   VerifyMode
+  IN     VOID   *Tls,
+  IN     UINT32 VerifyMode
   )
 {
   CALL_VOID_CRYPTO_SERVICE (TlsSetVerify, (Tls, VerifyMode));
@@ -3122,9 +3125,9 @@ TlsSetVerify (
 EFI_STATUS
 EFIAPI
 TlsSetVerifyHost (
-  IN     VOID                     *Tls,
-  IN     UINT32                   Flags,
-  IN     CHAR8                    *HostName
+  IN     VOID   *Tls,
+  IN     UINT32 Flags,
+  IN     CHAR8  *HostName
   )
 {
   CALL_CRYPTO_SERVICE (TlsSetVerifyHost, (Tls, Flags, HostName), EFI_UNSUPPORTED);
@@ -3148,9 +3151,9 @@ TlsSetVerifyHost (
 EFI_STATUS
 EFIAPI
 TlsSetSessionId (
-  IN     VOID                     *Tls,
-  IN     UINT8                    *SessionId,
-  IN     UINT16                   SessionIdLen
+  IN     VOID   *Tls,
+  IN     UINT8  *SessionId,
+  IN     UINT16 SessionIdLen
   )
 {
   CALL_CRYPTO_SERVICE (TlsSetSessionId, (Tls, SessionId, SessionIdLen), EFI_UNSUPPORTED);
@@ -3176,9 +3179,9 @@ TlsSetSessionId (
 EFI_STATUS
 EFIAPI
 TlsSetCaCertificate (
-  IN     VOID                     *Tls,
-  IN     VOID                     *Data,
-  IN     UINTN                    DataSize
+  IN     VOID  *Tls,
+  IN     VOID  *Data,
+  IN     UINTN DataSize
   )
 {
   CALL_CRYPTO_SERVICE (TlsSetCaCertificate, (Tls, Data, DataSize), EFI_UNSUPPORTED);
@@ -3204,9 +3207,9 @@ TlsSetCaCertificate (
 EFI_STATUS
 EFIAPI
 TlsSetHostPublicCert (
-  IN     VOID                     *Tls,
-  IN     VOID                     *Data,
-  IN     UINTN                    DataSize
+  IN     VOID  *Tls,
+  IN     VOID  *Data,
+  IN     UINTN DataSize
   )
 {
   CALL_CRYPTO_SERVICE (TlsSetHostPublicCert, (Tls, Data, DataSize), EFI_UNSUPPORTED);
@@ -3231,9 +3234,9 @@ TlsSetHostPublicCert (
 EFI_STATUS
 EFIAPI
 TlsSetHostPrivateKey (
-  IN     VOID                     *Tls,
-  IN     VOID                     *Data,
-  IN     UINTN                    DataSize
+  IN     VOID  *Tls,
+  IN     VOID  *Data,
+  IN     UINTN DataSize
   )
 {
   CALL_CRYPTO_SERVICE (TlsSetHostPrivateKey, (Tls, Data, DataSize), EFI_UNSUPPORTED);
@@ -3256,8 +3259,8 @@ TlsSetHostPrivateKey (
 EFI_STATUS
 EFIAPI
 TlsSetCertRevocationList (
-  IN     VOID                     *Data,
-  IN     UINTN                    DataSize
+  IN     VOID  *Data,
+  IN     UINTN DataSize
   )
 {
   CALL_CRYPTO_SERVICE (TlsSetCertRevocationList, (Data, DataSize), EFI_UNSUPPORTED);
@@ -3279,7 +3282,7 @@ TlsSetCertRevocationList (
 UINT16
 EFIAPI
 TlsGetVersion (
-  IN     VOID                     *Tls
+  IN     VOID *Tls
   )
 {
   CALL_CRYPTO_SERVICE (TlsGetVersion, (Tls), 0);
@@ -3301,7 +3304,7 @@ TlsGetVersion (
 UINT8
 EFIAPI
 TlsGetConnectionEnd (
-  IN     VOID                     *Tls
+  IN     VOID *Tls
   )
 {
   CALL_CRYPTO_SERVICE (TlsGetConnectionEnd, (Tls), 0);
@@ -3324,8 +3327,8 @@ TlsGetConnectionEnd (
 EFI_STATUS
 EFIAPI
 TlsGetCurrentCipher (
-  IN     VOID                     *Tls,
-  IN OUT UINT16                   *CipherId
+  IN     VOID   *Tls,
+  IN OUT UINT16 *CipherId
   )
 {
   CALL_CRYPTO_SERVICE (TlsGetCurrentCipher, (Tls, CipherId), EFI_UNSUPPORTED);
@@ -3350,8 +3353,8 @@ TlsGetCurrentCipher (
 EFI_STATUS
 EFIAPI
 TlsGetCurrentCompressionId (
-  IN     VOID                     *Tls,
-  IN OUT UINT8                    *CompressionId
+  IN     VOID  *Tls,
+  IN OUT UINT8 *CompressionId
   )
 {
   CALL_CRYPTO_SERVICE (TlsGetCurrentCompressionId, (Tls, CompressionId), EFI_UNSUPPORTED);
@@ -3373,7 +3376,7 @@ TlsGetCurrentCompressionId (
 UINT32
 EFIAPI
 TlsGetVerify (
-  IN     VOID                     *Tls
+  IN     VOID *Tls
   )
 {
   CALL_CRYPTO_SERVICE (TlsGetVerify, (Tls), 0);
@@ -3397,9 +3400,9 @@ TlsGetVerify (
 EFI_STATUS
 EFIAPI
 TlsGetSessionId (
-  IN     VOID                     *Tls,
-  IN OUT UINT8                    *SessionId,
-  IN OUT UINT16                   *SessionIdLen
+  IN     VOID   *Tls,
+  IN OUT UINT8  *SessionId,
+  IN OUT UINT16 *SessionIdLen
   )
 {
   CALL_CRYPTO_SERVICE (TlsGetSessionId, (Tls, SessionId, SessionIdLen), EFI_UNSUPPORTED);
@@ -3419,8 +3422,8 @@ TlsGetSessionId (
 VOID
 EFIAPI
 TlsGetClientRandom (
-  IN     VOID                     *Tls,
-  IN OUT UINT8                    *ClientRandom
+  IN     VOID  *Tls,
+  IN OUT UINT8 *ClientRandom
   )
 {
   CALL_VOID_CRYPTO_SERVICE (TlsGetClientRandom, (Tls, ClientRandom));
@@ -3440,8 +3443,8 @@ TlsGetClientRandom (
 VOID
 EFIAPI
 TlsGetServerRandom (
-  IN     VOID                     *Tls,
-  IN OUT UINT8                    *ServerRandom
+  IN     VOID  *Tls,
+  IN OUT UINT8 *ServerRandom
   )
 {
   CALL_VOID_CRYPTO_SERVICE (TlsGetServerRandom, (Tls, ServerRandom));
@@ -3464,8 +3467,8 @@ TlsGetServerRandom (
 EFI_STATUS
 EFIAPI
 TlsGetKeyMaterial (
-  IN     VOID                     *Tls,
-  IN OUT UINT8                    *KeyMaterial
+  IN     VOID  *Tls,
+  IN OUT UINT8 *KeyMaterial
   )
 {
   CALL_CRYPTO_SERVICE (TlsGetKeyMaterial, (Tls, KeyMaterial), EFI_UNSUPPORTED);
@@ -3490,9 +3493,9 @@ TlsGetKeyMaterial (
 EFI_STATUS
 EFIAPI
 TlsGetCaCertificate (
-  IN     VOID                     *Tls,
-  OUT    VOID                     *Data,
-  IN OUT UINTN                    *DataSize
+  IN     VOID  *Tls,
+  OUT    VOID  *Data,
+  IN OUT UINTN *DataSize
   )
 {
   CALL_CRYPTO_SERVICE (TlsGetCaCertificate, (Tls, Data, DataSize), EFI_UNSUPPORTED);
@@ -3518,9 +3521,9 @@ TlsGetCaCertificate (
 EFI_STATUS
 EFIAPI
 TlsGetHostPublicCert (
-  IN     VOID                     *Tls,
-  OUT    VOID                     *Data,
-  IN OUT UINTN                    *DataSize
+  IN     VOID  *Tls,
+  OUT    VOID  *Data,
+  IN OUT UINTN *DataSize
   )
 {
   CALL_CRYPTO_SERVICE (TlsGetHostPublicCert, (Tls, Data, DataSize), EFI_UNSUPPORTED);
@@ -3545,9 +3548,9 @@ TlsGetHostPublicCert (
 EFI_STATUS
 EFIAPI
 TlsGetHostPrivateKey (
-  IN     VOID                     *Tls,
-  OUT    VOID                     *Data,
-  IN OUT UINTN                    *DataSize
+  IN     VOID  *Tls,
+  OUT    VOID  *Data,
+  IN OUT UINTN *DataSize
   )
 {
   CALL_CRYPTO_SERVICE (TlsGetHostPrivateKey, (Tls, Data, DataSize), EFI_UNSUPPORTED);
@@ -3571,8 +3574,8 @@ TlsGetHostPrivateKey (
 EFI_STATUS
 EFIAPI
 TlsGetCertRevocationList (
-  OUT    VOID                     *Data,
-  IN OUT UINTN                    *DataSize
+  OUT    VOID  *Data,
+  IN OUT UINTN *DataSize
   )
 {
   CALL_CRYPTO_SERVICE (TlsGetCertRevocationList, (Data, DataSize), EFI_UNSUPPORTED);

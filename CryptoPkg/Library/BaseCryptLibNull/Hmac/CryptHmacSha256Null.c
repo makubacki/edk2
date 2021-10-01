@@ -37,7 +37,7 @@ HmacSha256New (
 VOID
 EFIAPI
 HmacSha256Free (
-  IN  VOID  *HmacSha256Ctx
+  IN  VOID *HmacSha256Ctx
   )
 {
   ASSERT (FALSE);
@@ -60,9 +60,9 @@ HmacSha256Free (
 BOOLEAN
 EFIAPI
 HmacSha256SetKey (
-  OUT  VOID         *HmacSha256Context,
-  IN   CONST UINT8  *Key,
-  IN   UINTN        KeySize
+  OUT  VOID        *HmacSha256Context,
+  IN   CONST UINT8 *Key,
+  IN   UINTN       KeySize
   )
 {
   ASSERT (FALSE);
@@ -83,8 +83,8 @@ HmacSha256SetKey (
 BOOLEAN
 EFIAPI
 HmacSha256Duplicate (
-  IN   CONST VOID  *HmacSha256Context,
-  OUT  VOID        *NewHmacSha256Context
+  IN   CONST VOID *HmacSha256Context,
+  OUT  VOID       *NewHmacSha256Context
   )
 {
   ASSERT (FALSE);
@@ -106,9 +106,9 @@ HmacSha256Duplicate (
 BOOLEAN
 EFIAPI
 HmacSha256Update (
-  IN OUT  VOID        *HmacSha256Context,
-  IN      CONST VOID  *Data,
-  IN      UINTN       DataSize
+  IN OUT  VOID       *HmacSha256Context,
+  IN      CONST VOID *Data,
+  IN      UINTN      DataSize
   )
 {
   ASSERT (FALSE);
@@ -130,8 +130,8 @@ HmacSha256Update (
 BOOLEAN
 EFIAPI
 HmacSha256Final (
-  IN OUT  VOID   *HmacSha256Context,
-  OUT     UINT8  *HmacValue
+  IN OUT  VOID  *HmacSha256Context,
+  OUT     UINT8 *HmacValue
   )
 {
   ASSERT (FALSE);

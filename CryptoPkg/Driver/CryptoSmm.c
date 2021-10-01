@@ -25,8 +25,8 @@ extern CONST EDKII_CRYPTO_PROTOCOL  mEdkiiCrypto;
 EFI_STATUS
 EFIAPI
 CryptoSmmEntry (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
   EFI_HANDLE  Handle;
@@ -36,6 +36,6 @@ CryptoSmmEntry (
                   &Handle,
                   &gEdkiiSmmCryptoProtocolGuid,
                   EFI_NATIVE_INTERFACE,
-                  (EDKII_CRYPTO_PROTOCOL *) &mEdkiiCrypto
+                  (EDKII_CRYPTO_PROTOCOL *)&mEdkiiCrypto
                   );
 }
