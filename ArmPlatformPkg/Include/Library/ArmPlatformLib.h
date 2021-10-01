@@ -102,7 +102,7 @@ ArmPlatformPeiBootAction (
 **/
 RETURN_STATUS
 ArmPlatformInitialize (
-  IN  UINTN                     MpId
+  IN  UINTN MpId
   );
 
 /**
@@ -117,7 +117,7 @@ ArmPlatformInitialize (
 **/
 VOID
 ArmPlatformGetVirtualMemoryMap (
-  OUT ARM_MEMORY_REGION_DESCRIPTOR** VirtualMemoryMap
+  OUT ARM_MEMORY_REGION_DESCRIPTOR **VirtualMemoryMap
   );
 
 /**
@@ -132,8 +132,8 @@ ArmPlatformGetVirtualMemoryMap (
 **/
 VOID
 ArmPlatformGetPlatformPpiList (
-  OUT UINTN                   *PpiListSize,
-  OUT EFI_PEI_PPI_DESCRIPTOR  **PpiList
+  OUT UINTN                  *PpiListSize,
+  OUT EFI_PEI_PPI_DESCRIPTOR **PpiList
   );
 
 #endif

@@ -36,7 +36,7 @@ LcdIdentify (
 **/
 EFI_STATUS
 LcdInitialize (
-  EFI_PHYSICAL_ADDRESS  FrameBaseAddress
+  EFI_PHYSICAL_ADDRESS FrameBaseAddress
   )
 {
   return EFI_SUCCESS;
@@ -52,7 +52,7 @@ LcdInitialize (
 **/
 EFI_STATUS
 LcdSetMode (
-  IN UINT32  ModeNumber
+  IN UINT32 ModeNumber
   )
 {
   return EFI_SUCCESS;
