@@ -15,7 +15,7 @@
 #ifndef __ANDROID_FASTBOOT_TRANSPORT_H__
 #define __ANDROID_FASTBOOT_TRANSPORT_H__
 
-extern EFI_GUID gAndroidFastbootTransportProtocolGuid;
+extern EFI_GUID  gAndroidFastbootTransportProtocolGuid;
 
 /*
   Set up the transport system for use by Fastboot.
@@ -60,7 +60,7 @@ EFI_STATUS
 */
 typedef
 EFI_STATUS
-(* FASTBOOT_TRANSPORT_STOP) (
+(*FASTBOOT_TRANSPORT_STOP) (
   VOID
   );
 
@@ -86,7 +86,7 @@ EFI_STATUS
 typedef
 EFI_STATUS
 (*FASTBOOT_TRANSPORT_SEND) (
-  IN        UINTN      BufferSize,
+  IN        UINTN     BufferSize,
   IN  CONST VOID      *Buffer,
   IN        EFI_EVENT *FatalErrorEvent
   );
@@ -111,15 +111,15 @@ EFI_STATUS
 typedef
 EFI_STATUS
 (*FASTBOOT_TRANSPORT_RECEIVE) (
-  OUT UINTN  *BufferSize,
+  OUT UINTN *BufferSize,
   OUT VOID  **Buffer
   );
 
 typedef struct _FASTBOOT_TRANSPORT_PROTOCOL {
-  FASTBOOT_TRANSPORT_START                     Start;
-  FASTBOOT_TRANSPORT_STOP                      Stop;
-  FASTBOOT_TRANSPORT_SEND                      Send;
-  FASTBOOT_TRANSPORT_RECEIVE                   Receive;
+  FASTBOOT_TRANSPORT_START      Start;
+  FASTBOOT_TRANSPORT_STOP       Stop;
+  FASTBOOT_TRANSPORT_SEND       Send;
+  FASTBOOT_TRANSPORT_RECEIVE    Receive;
 } FASTBOOT_TRANSPORT_PROTOCOL;
 
 #endif

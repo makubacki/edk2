@@ -12,8 +12,6 @@
 #ifndef __GDB_TIMER_LIB__
 #define __GDB_TIMER_LIB__
 
-
-
 /**
   Setup all the hardware needed for the debug agents timer.
 
@@ -26,7 +24,6 @@ DebugAgentTimerIntialize (
   VOID
   );
 
-
 /**
   Set the period for the debug agent timer. Zero means disable the timer.
 
@@ -36,9 +33,8 @@ DebugAgentTimerIntialize (
 VOID
 EFIAPI
 DebugAgentTimerSetPeriod (
-  IN  UINT32  TimerPeriodMilliseconds
+  IN  UINT32 TimerPeriodMilliseconds
   );
-
 
 /**
   Perform End Of Interrupt for the debug agent timer. This is called in the
@@ -52,5 +48,3 @@ DebugAgentTimerEndOfInterrupt (
   );
 
 #endif
-
-
