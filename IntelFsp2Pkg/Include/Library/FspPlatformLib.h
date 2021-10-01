@@ -16,7 +16,7 @@
 EFI_HOB_RESOURCE_DESCRIPTOR *
 EFIAPI
 FspGetResourceDescriptorByOwner (
-  IN EFI_GUID   *OwnerGuid
+  IN EFI_GUID *OwnerGuid
   );
 
 /**
@@ -28,10 +28,9 @@ FspGetResourceDescriptorByOwner (
 VOID
 EFIAPI
 FspGetSystemMemorySize (
-  IN OUT UINT64              *LowMemoryLength,
-  IN OUT UINT64              *HighMemoryLength
+  IN OUT UINT64 *LowMemoryLength,
+  IN OUT UINT64 *HighMemoryLength
   );
-
 
 /**
   Set a new stack frame for the continuation function.
@@ -61,7 +60,7 @@ FspSiliconInitDone (
 VOID
 EFIAPI
 FspMemoryInitDone (
-  IN OUT VOID   **HobListPtr
+  IN OUT VOID **HobListPtr
   );
 
 /**
