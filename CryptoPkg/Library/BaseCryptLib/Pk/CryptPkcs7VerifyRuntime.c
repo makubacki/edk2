@@ -27,13 +27,12 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 BOOLEAN
 EFIAPI
 Pkcs7GetAttachedContent (
-  IN  CONST UINT8  *P7Data,
-  IN  UINTN        P7Length,
-  OUT VOID         **Content,
-  OUT UINTN        *ContentSize
+  IN  CONST UINT8 *P7Data,
+  IN  UINTN       P7Length,
+  OUT VOID        **Content,
+  OUT UINTN       *ContentSize
   )
 {
   ASSERT (FALSE);
   return FALSE;
 }
-

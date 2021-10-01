@@ -12,7 +12,7 @@
 #ifndef __HASH_API_LIB_H_
 #define __HASH_API_LIB_H_
 
-typedef VOID  *HASH_API_CONTEXT;
+typedef VOID *HASH_API_CONTEXT;
 
 /**
   Retrieves the size, in bytes, of the context buffer required for hash operations.
@@ -36,7 +36,7 @@ HashApiGetContextSize (
 BOOLEAN
 EFIAPI
 HashApiInit (
-  OUT HASH_API_CONTEXT  HashContext
+  OUT HASH_API_CONTEXT HashContext
   );
 
 /**
@@ -51,8 +51,8 @@ HashApiInit (
 BOOLEAN
 EFIAPI
 HashApiDuplicate (
-  IN  HASH_API_CONTEXT  HashContext,
-  OUT HASH_API_CONTEXT  NewHashContext
+  IN  HASH_API_CONTEXT HashContext,
+  OUT HASH_API_CONTEXT NewHashContext
   );
 
 /**
@@ -68,9 +68,9 @@ HashApiDuplicate (
 BOOLEAN
 EFIAPI
 HashApiUpdate (
-  IN HASH_API_CONTEXT  HashContext,
-  IN VOID              *DataToHash,
-  IN UINTN             DataToHashLen
+  IN HASH_API_CONTEXT HashContext,
+  IN VOID             *DataToHash,
+  IN UINTN            DataToHashLen
   );
 
 /**
@@ -85,8 +85,8 @@ HashApiUpdate (
 BOOLEAN
 EFIAPI
 HashApiFinal (
-  IN  HASH_API_CONTEXT  HashContext,
-  OUT UINT8             *Digest
+  IN  HASH_API_CONTEXT HashContext,
+  OUT UINT8            *Digest
   );
 
 /**
@@ -102,9 +102,9 @@ HashApiFinal (
 BOOLEAN
 EFIAPI
 HashApiHashAll (
-  IN  CONST VOID  *DataToHash,
-  IN  UINTN       DataToHashLen,
-  OUT UINT8       *Digest
+  IN  CONST VOID *DataToHash,
+  IN  UINTN      DataToHashLen,
+  OUT UINT8      *Digest
   );
 
 #endif

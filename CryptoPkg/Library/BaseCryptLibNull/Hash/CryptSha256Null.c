@@ -39,7 +39,7 @@ Sha256GetContextSize (
 BOOLEAN
 EFIAPI
 Sha256Init (
-  OUT  VOID  *Sha256Context
+  OUT  VOID *Sha256Context
   )
 {
   ASSERT (FALSE);
@@ -62,8 +62,8 @@ Sha256Init (
 BOOLEAN
 EFIAPI
 Sha256Duplicate (
-  IN   CONST VOID  *Sha256Context,
-  OUT  VOID        *NewSha256Context
+  IN   CONST VOID *Sha256Context,
+  OUT  VOID       *NewSha256Context
   )
 {
   ASSERT (FALSE);
@@ -91,9 +91,9 @@ Sha256Duplicate (
 BOOLEAN
 EFIAPI
 Sha256Update (
-  IN OUT  VOID        *Sha256Context,
-  IN      CONST VOID  *Data,
-  IN      UINTN       DataSize
+  IN OUT  VOID       *Sha256Context,
+  IN      CONST VOID *Data,
+  IN      UINTN      DataSize
   )
 {
   ASSERT (FALSE);
@@ -123,8 +123,8 @@ Sha256Update (
 BOOLEAN
 EFIAPI
 Sha256Final (
-  IN OUT  VOID   *Sha256Context,
-  OUT     UINT8  *HashValue
+  IN OUT  VOID  *Sha256Context,
+  OUT     UINT8 *HashValue
   )
 {
   ASSERT (FALSE);
@@ -152,9 +152,9 @@ Sha256Final (
 BOOLEAN
 EFIAPI
 Sha256HashAll (
-  IN   CONST VOID  *Data,
-  IN   UINTN       DataSize,
-  OUT  UINT8       *HashValue
+  IN   CONST VOID *Data,
+  IN   UINTN      DataSize,
+  OUT  UINT8      *HashValue
   )
 {
   ASSERT (FALSE);

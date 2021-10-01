@@ -34,12 +34,12 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 BOOLEAN
 EFIAPI
 Pkcs7GetSigners (
-  IN  CONST UINT8  *P7Data,
-  IN  UINTN        P7Length,
-  OUT UINT8        **CertStack,
-  OUT UINTN        *StackLength,
-  OUT UINT8        **TrustedCert,
-  OUT UINTN        *CertLength
+  IN  CONST UINT8 *P7Data,
+  IN  UINTN       P7Length,
+  OUT UINT8       **CertStack,
+  OUT UINTN       *StackLength,
+  OUT UINT8       **TrustedCert,
+  OUT UINTN       *CertLength
   )
 {
   ASSERT (FALSE);
@@ -57,7 +57,7 @@ Pkcs7GetSigners (
 VOID
 EFIAPI
 Pkcs7FreeSigners (
-  IN  UINT8        *Certs
+  IN  UINT8 *Certs
   )
 {
   ASSERT (FALSE);
@@ -88,12 +88,12 @@ Pkcs7FreeSigners (
 BOOLEAN
 EFIAPI
 Pkcs7GetCertificatesList (
-  IN  CONST UINT8  *P7Data,
-  IN  UINTN        P7Length,
-  OUT UINT8        **SignerChainCerts,
-  OUT UINTN        *ChainLength,
-  OUT UINT8        **UnchainCerts,
-  OUT UINTN        *UnchainLength
+  IN  CONST UINT8 *P7Data,
+  IN  UINTN       P7Length,
+  OUT UINT8       **SignerChainCerts,
+  OUT UINTN       *ChainLength,
+  OUT UINT8       **UnchainCerts,
+  OUT UINTN       *UnchainLength
   )
 {
   ASSERT (FALSE);
@@ -121,12 +121,12 @@ Pkcs7GetCertificatesList (
 BOOLEAN
 EFIAPI
 Pkcs7Verify (
-  IN  CONST UINT8  *P7Data,
-  IN  UINTN        P7Length,
-  IN  CONST UINT8  *TrustedCert,
-  IN  UINTN        CertLength,
-  IN  CONST UINT8  *InData,
-  IN  UINTN        DataLength
+  IN  CONST UINT8 *P7Data,
+  IN  UINTN       P7Length,
+  IN  CONST UINT8 *TrustedCert,
+  IN  UINTN       CertLength,
+  IN  CONST UINT8 *InData,
+  IN  UINTN       DataLength
   )
 {
   ASSERT (FALSE);
@@ -152,10 +152,10 @@ Pkcs7Verify (
 BOOLEAN
 EFIAPI
 Pkcs7GetAttachedContent (
-  IN  CONST UINT8  *P7Data,
-  IN  UINTN        P7Length,
-  OUT VOID         **Content,
-  OUT UINTN        *ContentSize
+  IN  CONST UINT8 *P7Data,
+  IN  UINTN       P7Length,
+  OUT VOID        **Content,
+  OUT UINTN       *ContentSize
   )
 {
   ASSERT (FALSE);

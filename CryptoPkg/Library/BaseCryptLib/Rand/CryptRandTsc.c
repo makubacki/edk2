@@ -30,8 +30,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 BOOLEAN
 EFIAPI
 RandomSeed (
-  IN  CONST  UINT8  *Seed  OPTIONAL,
-  IN  UINTN         SeedSize
+  IN  CONST  UINT8 *Seed  OPTIONAL,
+  IN  UINTN        SeedSize
   )
 {
   CHAR8  DefaultSeed[128];
@@ -53,7 +53,7 @@ RandomSeed (
   // NOTE: A cryptographic PRNG must be seeded with unpredictable data.
   //
   if (Seed != NULL) {
-    RAND_seed (Seed, (UINT32) SeedSize);
+    RAND_seed (Seed, (UINT32)SeedSize);
   } else {
     //
     // Retrieve current time.
@@ -90,21 +90,21 @@ RandomSeed (
 BOOLEAN
 EFIAPI
 RandomBytes (
-  OUT  UINT8  *Output,
-  IN   UINTN  Size
+  OUT  UINT8 *Output,
+  IN   UINTN Size
   )
 {
   //
   // Check input parameters.
   //
-  if (Output == NULL || Size > INT_MAX) {
+  if ((Output == NULL) || (Size > INT_MAX)) {
     return FALSE;
   }
 
   //
   // Generate random data.
   //
-  if (RAND_bytes (Output, (UINT32) Size) != 1) {
+  if (RAND_bytes (Output, (UINT32)Size) != 1) {
     return FALSE;
   }
 

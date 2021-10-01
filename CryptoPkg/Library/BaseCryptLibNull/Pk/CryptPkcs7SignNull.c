@@ -37,18 +37,17 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 BOOLEAN
 EFIAPI
 Pkcs7Sign (
-  IN   CONST UINT8  *PrivateKey,
-  IN   UINTN        PrivateKeySize,
-  IN   CONST UINT8  *KeyPassword,
-  IN   UINT8        *InData,
-  IN   UINTN        InDataSize,
-  IN   UINT8        *SignCert,
-  IN   UINT8        *OtherCerts      OPTIONAL,
-  OUT  UINT8        **SignedData,
-  OUT  UINTN        *SignedDataSize
+  IN   CONST UINT8 *PrivateKey,
+  IN   UINTN       PrivateKeySize,
+  IN   CONST UINT8 *KeyPassword,
+  IN   UINT8       *InData,
+  IN   UINTN       InDataSize,
+  IN   UINT8       *SignCert,
+  IN   UINT8       *OtherCerts      OPTIONAL,
+  OUT  UINT8       **SignedData,
+  OUT  UINTN       *SignedDataSize
   )
 {
   ASSERT (FALSE);
   return FALSE;
 }
-

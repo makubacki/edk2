@@ -32,13 +32,13 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 BOOLEAN
 EFIAPI
 RsaPssVerify (
-  IN  VOID         *RsaContext,
-  IN  CONST UINT8  *Message,
-  IN  UINTN        MsgSize,
-  IN  CONST UINT8  *Signature,
-  IN  UINTN        SigSize,
-  IN  UINT16       DigestLen,
-  IN  UINT16       SaltLen
+  IN  VOID        *RsaContext,
+  IN  CONST UINT8 *Message,
+  IN  UINTN       MsgSize,
+  IN  CONST UINT8 *Signature,
+  IN  UINTN       SigSize,
+  IN  UINT16      DigestLen,
+  IN  UINT16      SaltLen
   )
 {
   ASSERT (FALSE);

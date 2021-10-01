@@ -24,7 +24,7 @@ Sha384GetContextSize (
   //
   // Retrieves OpenSSL SHA-384 Context Size
   //
-  return (UINTN) (sizeof (SHA512_CTX));
+  return (UINTN)(sizeof (SHA512_CTX));
 }
 
 /**
@@ -42,7 +42,7 @@ Sha384GetContextSize (
 BOOLEAN
 EFIAPI
 Sha384Init (
-  OUT  VOID  *Sha384Context
+  OUT  VOID *Sha384Context
   )
 {
   //
@@ -55,7 +55,7 @@ Sha384Init (
   //
   // OpenSSL SHA-384 Context Initialization
   //
-  return (BOOLEAN) (SHA384_Init ((SHA512_CTX *) Sha384Context));
+  return (BOOLEAN)(SHA384_Init ((SHA512_CTX *)Sha384Context));
 }
 
 /**
@@ -76,14 +76,14 @@ Sha384Init (
 BOOLEAN
 EFIAPI
 Sha384Duplicate (
-  IN   CONST VOID  *Sha384Context,
-  OUT  VOID        *NewSha384Context
+  IN   CONST VOID *Sha384Context,
+  OUT  VOID       *NewSha384Context
   )
 {
   //
   // Check input parameters.
   //
-  if (Sha384Context == NULL || NewSha384Context == NULL) {
+  if ((Sha384Context == NULL) || (NewSha384Context == NULL)) {
     return FALSE;
   }
 
@@ -113,9 +113,9 @@ Sha384Duplicate (
 BOOLEAN
 EFIAPI
 Sha384Update (
-  IN OUT  VOID        *Sha384Context,
-  IN      CONST VOID  *Data,
-  IN      UINTN       DataSize
+  IN OUT  VOID       *Sha384Context,
+  IN      CONST VOID *Data,
+  IN      UINTN      DataSize
   )
 {
   //
@@ -128,14 +128,14 @@ Sha384Update (
   //
   // Check invalid parameters, in case that only DataLength was checked in OpenSSL
   //
-  if (Data == NULL && DataSize != 0) {
+  if ((Data == NULL) && (DataSize != 0)) {
     return FALSE;
   }
 
   //
   // OpenSSL SHA-384 Hash Update
   //
-  return (BOOLEAN) (SHA384_Update ((SHA512_CTX *) Sha384Context, Data, DataSize));
+  return (BOOLEAN)(SHA384_Update ((SHA512_CTX *)Sha384Context, Data, DataSize));
 }
 
 /**
@@ -161,21 +161,21 @@ Sha384Update (
 BOOLEAN
 EFIAPI
 Sha384Final (
-  IN OUT  VOID   *Sha384Context,
-  OUT     UINT8  *HashValue
+  IN OUT  VOID  *Sha384Context,
+  OUT     UINT8 *HashValue
   )
 {
   //
   // Check input parameters.
   //
-  if (Sha384Context == NULL || HashValue == NULL) {
+  if ((Sha384Context == NULL) || (HashValue == NULL)) {
     return FALSE;
   }
 
   //
   // OpenSSL SHA-384 Hash Finalization
   //
-  return (BOOLEAN) (SHA384_Final (HashValue, (SHA512_CTX *) Sha384Context));
+  return (BOOLEAN)(SHA384_Final (HashValue, (SHA512_CTX *)Sha384Context));
 }
 
 /**
@@ -199,9 +199,9 @@ Sha384Final (
 BOOLEAN
 EFIAPI
 Sha384HashAll (
-  IN   CONST VOID  *Data,
-  IN   UINTN       DataSize,
-  OUT  UINT8       *HashValue
+  IN   CONST VOID *Data,
+  IN   UINTN      DataSize,
+  OUT  UINT8      *HashValue
   )
 {
   //
@@ -210,7 +210,8 @@ Sha384HashAll (
   if (HashValue == NULL) {
     return FALSE;
   }
-  if (Data == NULL && DataSize != 0) {
+
+  if ((Data == NULL) && (DataSize != 0)) {
     return FALSE;
   }
 
@@ -239,7 +240,7 @@ Sha512GetContextSize (
   //
   // Retrieves OpenSSL SHA-512 Context Size
   //
-  return (UINTN) (sizeof (SHA512_CTX));
+  return (UINTN)(sizeof (SHA512_CTX));
 }
 
 /**
@@ -257,7 +258,7 @@ Sha512GetContextSize (
 BOOLEAN
 EFIAPI
 Sha512Init (
-  OUT  VOID  *Sha512Context
+  OUT  VOID *Sha512Context
   )
 {
   //
@@ -270,7 +271,7 @@ Sha512Init (
   //
   // OpenSSL SHA-512 Context Initialization
   //
-  return (BOOLEAN) (SHA512_Init ((SHA512_CTX *) Sha512Context));
+  return (BOOLEAN)(SHA512_Init ((SHA512_CTX *)Sha512Context));
 }
 
 /**
@@ -291,14 +292,14 @@ Sha512Init (
 BOOLEAN
 EFIAPI
 Sha512Duplicate (
-  IN   CONST VOID  *Sha512Context,
-  OUT  VOID        *NewSha512Context
+  IN   CONST VOID *Sha512Context,
+  OUT  VOID       *NewSha512Context
   )
 {
   //
   // Check input parameters.
   //
-  if (Sha512Context == NULL || NewSha512Context == NULL) {
+  if ((Sha512Context == NULL) || (NewSha512Context == NULL)) {
     return FALSE;
   }
 
@@ -328,9 +329,9 @@ Sha512Duplicate (
 BOOLEAN
 EFIAPI
 Sha512Update (
-  IN OUT  VOID        *Sha512Context,
-  IN      CONST VOID  *Data,
-  IN      UINTN       DataSize
+  IN OUT  VOID       *Sha512Context,
+  IN      CONST VOID *Data,
+  IN      UINTN      DataSize
   )
 {
   //
@@ -343,14 +344,14 @@ Sha512Update (
   //
   // Check invalid parameters, in case that only DataLength was checked in OpenSSL
   //
-  if (Data == NULL && DataSize != 0) {
+  if ((Data == NULL) && (DataSize != 0)) {
     return FALSE;
   }
 
   //
   // OpenSSL SHA-512 Hash Update
   //
-  return (BOOLEAN) (SHA512_Update ((SHA512_CTX *) Sha512Context, Data, DataSize));
+  return (BOOLEAN)(SHA512_Update ((SHA512_CTX *)Sha512Context, Data, DataSize));
 }
 
 /**
@@ -376,21 +377,21 @@ Sha512Update (
 BOOLEAN
 EFIAPI
 Sha512Final (
-  IN OUT  VOID   *Sha512Context,
-  OUT     UINT8  *HashValue
+  IN OUT  VOID  *Sha512Context,
+  OUT     UINT8 *HashValue
   )
 {
   //
   // Check input parameters.
   //
-  if (Sha512Context == NULL || HashValue == NULL) {
+  if ((Sha512Context == NULL) || (HashValue == NULL)) {
     return FALSE;
   }
 
   //
   // OpenSSL SHA-512 Hash Finalization
   //
-  return (BOOLEAN) (SHA384_Final (HashValue, (SHA512_CTX *) Sha512Context));
+  return (BOOLEAN)(SHA384_Final (HashValue, (SHA512_CTX *)Sha512Context));
 }
 
 /**
@@ -414,9 +415,9 @@ Sha512Final (
 BOOLEAN
 EFIAPI
 Sha512HashAll (
-  IN   CONST VOID  *Data,
-  IN   UINTN       DataSize,
-  OUT  UINT8       *HashValue
+  IN   CONST VOID *Data,
+  IN   UINTN      DataSize,
+  OUT  UINT8      *HashValue
   )
 {
   //
@@ -425,7 +426,8 @@ Sha512HashAll (
   if (HashValue == NULL) {
     return FALSE;
   }
-  if (Data == NULL && DataSize != 0) {
+
+  if ((Data == NULL) && (DataSize != 0)) {
     return FALSE;
   }
 

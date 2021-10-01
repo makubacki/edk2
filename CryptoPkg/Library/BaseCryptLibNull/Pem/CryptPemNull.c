@@ -27,10 +27,10 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 BOOLEAN
 EFIAPI
 RsaGetPrivateKeyFromPem (
-  IN   CONST UINT8  *PemData,
-  IN   UINTN        PemSize,
-  IN   CONST CHAR8  *Password,
-  OUT  VOID         **RsaContext
+  IN   CONST UINT8 *PemData,
+  IN   UINTN       PemSize,
+  IN   CONST CHAR8 *Password,
+  OUT  VOID        **RsaContext
   )
 {
   ASSERT (FALSE);

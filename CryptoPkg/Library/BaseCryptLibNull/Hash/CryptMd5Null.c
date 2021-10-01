@@ -9,7 +9,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "InternalCryptLib.h"
 
-
 /**
   Retrieves the size, in bytes, of the context buffer required for MD5 hash operations.
 
@@ -26,7 +25,6 @@ Md5GetContextSize (
   return 0;
 }
 
-
 /**
   Initializes user-supplied memory pointed by Md5Context as MD5 hash context for
   subsequent use.
@@ -42,7 +40,7 @@ Md5GetContextSize (
 BOOLEAN
 EFIAPI
 Md5Init (
-  OUT  VOID  *Md5Context
+  OUT  VOID *Md5Context
   )
 {
   ASSERT (FALSE);
@@ -65,8 +63,8 @@ Md5Init (
 BOOLEAN
 EFIAPI
 Md5Duplicate (
-  IN   CONST VOID  *Md5Context,
-  OUT  VOID        *NewMd5Context
+  IN   CONST VOID *Md5Context,
+  OUT  VOID       *NewMd5Context
   )
 {
   ASSERT (FALSE);
@@ -94,9 +92,9 @@ Md5Duplicate (
 BOOLEAN
 EFIAPI
 Md5Update (
-  IN OUT  VOID        *Md5Context,
-  IN      CONST VOID  *Data,
-  IN      UINTN       DataSize
+  IN OUT  VOID       *Md5Context,
+  IN      CONST VOID *Data,
+  IN      UINTN      DataSize
   )
 {
   ASSERT (FALSE);
@@ -126,8 +124,8 @@ Md5Update (
 BOOLEAN
 EFIAPI
 Md5Final (
-  IN OUT  VOID   *Md5Context,
-  OUT     UINT8  *HashValue
+  IN OUT  VOID  *Md5Context,
+  OUT     UINT8 *HashValue
   )
 {
   ASSERT (FALSE);
@@ -154,12 +152,12 @@ value (16 bytes).
 **/
 BOOLEAN
 EFIAPI
-Md5HashAll(
-  IN   CONST VOID  *Data,
-  IN   UINTN       DataSize,
-  OUT  UINT8       *HashValue
-)
+Md5HashAll (
+  IN   CONST VOID *Data,
+  IN   UINTN      DataSize,
+  OUT  UINT8      *HashValue
+  )
 {
-  ASSERT(FALSE);
+  ASSERT (FALSE);
   return FALSE;
 }

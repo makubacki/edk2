@@ -24,7 +24,7 @@ Sm3GetContextSize (
   //
   // Retrieves Openssl SM3 Context Size
   //
-  return (UINTN) (sizeof (SM3_CTX));
+  return (UINTN)(sizeof (SM3_CTX));
 }
 
 /**
@@ -42,7 +42,7 @@ Sm3GetContextSize (
 BOOLEAN
 EFIAPI
 Sm3Init (
-  OUT  VOID  *Sm3Context
+  OUT  VOID *Sm3Context
   )
 {
   //
@@ -55,7 +55,7 @@ Sm3Init (
   //
   // Openssl SM3 Context Initialization
   //
-  sm3_init ((SM3_CTX *) Sm3Context);
+  sm3_init ((SM3_CTX *)Sm3Context);
   return TRUE;
 }
 
@@ -77,14 +77,14 @@ Sm3Init (
 BOOLEAN
 EFIAPI
 Sm3Duplicate (
-  IN   CONST VOID  *Sm3Context,
-  OUT  VOID        *NewSm3Context
+  IN   CONST VOID *Sm3Context,
+  OUT  VOID       *NewSm3Context
   )
 {
   //
   // Check input parameters.
   //
-  if (Sm3Context == NULL || NewSm3Context == NULL) {
+  if ((Sm3Context == NULL) || (NewSm3Context == NULL)) {
     return FALSE;
   }
 
@@ -114,9 +114,9 @@ Sm3Duplicate (
 BOOLEAN
 EFIAPI
 Sm3Update (
-  IN OUT  VOID        *Sm3Context,
-  IN      CONST VOID  *Data,
-  IN      UINTN       DataSize
+  IN OUT  VOID       *Sm3Context,
+  IN      CONST VOID *Data,
+  IN      UINTN      DataSize
   )
 {
   //
@@ -129,14 +129,14 @@ Sm3Update (
   //
   // Check invalid parameters, in case that only DataLength was checked in Openssl
   //
-  if (Data == NULL && DataSize != 0) {
+  if ((Data == NULL) && (DataSize != 0)) {
     return FALSE;
   }
 
   //
   // Openssl SM3 Hash Update
   //
-  sm3_update ((SM3_CTX *) Sm3Context, Data, DataSize);
+  sm3_update ((SM3_CTX *)Sm3Context, Data, DataSize);
 
   return TRUE;
 }
@@ -164,21 +164,21 @@ Sm3Update (
 BOOLEAN
 EFIAPI
 Sm3Final (
-  IN OUT  VOID   *Sm3Context,
-  OUT     UINT8  *HashValue
+  IN OUT  VOID  *Sm3Context,
+  OUT     UINT8 *HashValue
   )
 {
   //
   // Check input parameters.
   //
-  if (Sm3Context == NULL || HashValue == NULL) {
+  if ((Sm3Context == NULL) || (HashValue == NULL)) {
     return FALSE;
   }
 
   //
   // Openssl SM3 Hash Finalization
   //
-  sm3_final (HashValue, (SM3_CTX *) Sm3Context);
+  sm3_final (HashValue, (SM3_CTX *)Sm3Context);
 
   return TRUE;
 }
@@ -204,12 +204,12 @@ Sm3Final (
 BOOLEAN
 EFIAPI
 Sm3HashAll (
-  IN   CONST VOID  *Data,
-  IN   UINTN       DataSize,
-  OUT  UINT8       *HashValue
+  IN   CONST VOID *Data,
+  IN   UINTN      DataSize,
+  OUT  UINT8      *HashValue
   )
 {
-  SM3_CTX Ctx;
+  SM3_CTX  Ctx;
 
   //
   // Check input parameters.
@@ -217,18 +217,19 @@ Sm3HashAll (
   if (HashValue == NULL) {
     return FALSE;
   }
-  if (Data == NULL && DataSize != 0) {
+
+  if ((Data == NULL) && (DataSize != 0)) {
     return FALSE;
   }
 
   //
   // SM3 Hash Computation.
   //
-  sm3_init(&Ctx);
+  sm3_init (&Ctx);
 
-  sm3_update(&Ctx, Data, DataSize);
+  sm3_update (&Ctx, Data, DataSize);
 
-  sm3_final(HashValue, &Ctx);
+  sm3_final (HashValue, &Ctx);
 
   return TRUE;
 }

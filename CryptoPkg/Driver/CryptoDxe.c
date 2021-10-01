@@ -25,14 +25,14 @@ extern CONST EDKII_CRYPTO_PROTOCOL  mEdkiiCrypto;
 EFI_STATUS
 EFIAPI
 CryptoDxeEntry (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  return gBS->InstallMultipleProtocolInterfaces(
+  return gBS->InstallMultipleProtocolInterfaces (
                 &ImageHandle,
                 &gEdkiiCryptoProtocolGuid,
-                (EDKII_CRYPTO_PROTOCOL *) &mEdkiiCrypto,
+                (EDKII_CRYPTO_PROTOCOL *)&mEdkiiCrypto,
                 NULL
                 );
 }

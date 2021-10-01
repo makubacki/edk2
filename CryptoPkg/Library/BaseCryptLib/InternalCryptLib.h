@@ -23,8 +23,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <openssl/opensslv.h>
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
-#define OBJ_get0_data(o) ((o)->data)
-#define OBJ_length(o) ((o)->length)
+  #define OBJ_get0_data(o)  ((o)->data)
+  #define OBJ_length(o)     ((o)->length)
 #endif
 
 /**
@@ -52,11 +52,11 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 **/
 BOOLEAN
 WrapPkcs7Data (
-  IN  CONST UINT8  *P7Data,
-  IN  UINTN        P7Length,
-  OUT BOOLEAN      *WrapFlag,
-  OUT UINT8        **WrapData,
-  OUT UINTN        *WrapDataSize
+  IN  CONST UINT8 *P7Data,
+  IN  UINTN       P7Length,
+  OUT BOOLEAN     *WrapFlag,
+  OUT UINT8       **WrapData,
+  OUT UINTN       *WrapDataSize
   );
 
 #endif

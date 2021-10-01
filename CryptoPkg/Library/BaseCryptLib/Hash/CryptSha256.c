@@ -24,7 +24,7 @@ Sha256GetContextSize (
   //
   // Retrieves OpenSSL SHA-256 Context Size
   //
-  return (UINTN) (sizeof (SHA256_CTX));
+  return (UINTN)(sizeof (SHA256_CTX));
 }
 
 /**
@@ -42,7 +42,7 @@ Sha256GetContextSize (
 BOOLEAN
 EFIAPI
 Sha256Init (
-  OUT  VOID  *Sha256Context
+  OUT  VOID *Sha256Context
   )
 {
   //
@@ -55,7 +55,7 @@ Sha256Init (
   //
   // OpenSSL SHA-256 Context Initialization
   //
-  return (BOOLEAN) (SHA256_Init ((SHA256_CTX *) Sha256Context));
+  return (BOOLEAN)(SHA256_Init ((SHA256_CTX *)Sha256Context));
 }
 
 /**
@@ -74,14 +74,14 @@ Sha256Init (
 BOOLEAN
 EFIAPI
 Sha256Duplicate (
-  IN   CONST VOID  *Sha256Context,
-  OUT  VOID        *NewSha256Context
+  IN   CONST VOID *Sha256Context,
+  OUT  VOID       *NewSha256Context
   )
 {
   //
   // Check input parameters.
   //
-  if (Sha256Context == NULL || NewSha256Context == NULL) {
+  if ((Sha256Context == NULL) || (NewSha256Context == NULL)) {
     return FALSE;
   }
 
@@ -111,9 +111,9 @@ Sha256Duplicate (
 BOOLEAN
 EFIAPI
 Sha256Update (
-  IN OUT  VOID        *Sha256Context,
-  IN      CONST VOID  *Data,
-  IN      UINTN       DataSize
+  IN OUT  VOID       *Sha256Context,
+  IN      CONST VOID *Data,
+  IN      UINTN      DataSize
   )
 {
   //
@@ -126,14 +126,14 @@ Sha256Update (
   //
   // Check invalid parameters, in case that only DataLength was checked in OpenSSL
   //
-  if (Data == NULL && DataSize != 0) {
+  if ((Data == NULL) && (DataSize != 0)) {
     return FALSE;
   }
 
   //
   // OpenSSL SHA-256 Hash Update
   //
-  return (BOOLEAN) (SHA256_Update ((SHA256_CTX *) Sha256Context, Data, DataSize));
+  return (BOOLEAN)(SHA256_Update ((SHA256_CTX *)Sha256Context, Data, DataSize));
 }
 
 /**
@@ -159,21 +159,21 @@ Sha256Update (
 BOOLEAN
 EFIAPI
 Sha256Final (
-  IN OUT  VOID   *Sha256Context,
-  OUT     UINT8  *HashValue
+  IN OUT  VOID  *Sha256Context,
+  OUT     UINT8 *HashValue
   )
 {
   //
   // Check input parameters.
   //
-  if (Sha256Context == NULL || HashValue == NULL) {
+  if ((Sha256Context == NULL) || (HashValue == NULL)) {
     return FALSE;
   }
 
   //
   // OpenSSL SHA-256 Hash Finalization
   //
-  return (BOOLEAN) (SHA256_Final (HashValue, (SHA256_CTX *) Sha256Context));
+  return (BOOLEAN)(SHA256_Final (HashValue, (SHA256_CTX *)Sha256Context));
 }
 
 /**
@@ -197,9 +197,9 @@ Sha256Final (
 BOOLEAN
 EFIAPI
 Sha256HashAll (
-  IN   CONST VOID  *Data,
-  IN   UINTN       DataSize,
-  OUT  UINT8       *HashValue
+  IN   CONST VOID *Data,
+  IN   UINTN      DataSize,
+  OUT  UINT8      *HashValue
   )
 {
   //
@@ -208,7 +208,8 @@ Sha256HashAll (
   if (HashValue == NULL) {
     return FALSE;
   }
-  if (Data == NULL && DataSize != 0) {
+
+  if ((Data == NULL) && (DataSize != 0)) {
     return FALSE;
   }
 

@@ -39,7 +39,7 @@ Sm3GetContextSize (
 BOOLEAN
 EFIAPI
 Sm3Init (
-  OUT  VOID  *Sm3Context
+  OUT  VOID *Sm3Context
   )
 {
   ASSERT (FALSE);
@@ -64,8 +64,8 @@ Sm3Init (
 BOOLEAN
 EFIAPI
 Sm3Duplicate (
-  IN   CONST VOID  *Sm3Context,
-  OUT  VOID        *NewSm3Context
+  IN   CONST VOID *Sm3Context,
+  OUT  VOID       *NewSm3Context
   )
 {
   ASSERT (FALSE);
@@ -93,9 +93,9 @@ Sm3Duplicate (
 BOOLEAN
 EFIAPI
 Sm3Update (
-  IN OUT  VOID        *Sm3Context,
-  IN      CONST VOID  *Data,
-  IN      UINTN       DataSize
+  IN OUT  VOID       *Sm3Context,
+  IN      CONST VOID *Data,
+  IN      UINTN      DataSize
   )
 {
   ASSERT (FALSE);
@@ -125,8 +125,8 @@ Sm3Update (
 BOOLEAN
 EFIAPI
 Sm3Final (
-  IN OUT  VOID   *Sm3Context,
-  OUT     UINT8  *HashValue
+  IN OUT  VOID  *Sm3Context,
+  OUT     UINT8 *HashValue
   )
 {
   ASSERT (FALSE);
@@ -154,9 +154,9 @@ Sm3Final (
 BOOLEAN
 EFIAPI
 Sm3HashAll (
-  IN   CONST VOID  *Data,
-  IN   UINTN       DataSize,
-  OUT  UINT8       *HashValue
+  IN   CONST VOID *Data,
+  IN   UINTN      DataSize,
+  OUT  UINT8      *HashValue
   )
 {
   ASSERT (FALSE);

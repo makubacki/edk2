@@ -37,7 +37,7 @@ DhNew (
 VOID
 EFIAPI
 DhFree (
-  IN  VOID  *DhContext
+  IN  VOID *DhContext
   )
 {
   ASSERT (FALSE);
@@ -59,10 +59,10 @@ DhFree (
 BOOLEAN
 EFIAPI
 DhGenerateParameter (
-  IN OUT  VOID   *DhContext,
-  IN      UINTN  Generator,
-  IN      UINTN  PrimeLength,
-  OUT     UINT8  *Prime
+  IN OUT  VOID  *DhContext,
+  IN      UINTN Generator,
+  IN      UINTN PrimeLength,
+  OUT     UINT8 *Prime
   )
 {
   ASSERT (FALSE);
@@ -85,10 +85,10 @@ DhGenerateParameter (
 BOOLEAN
 EFIAPI
 DhSetParameter (
-  IN OUT  VOID         *DhContext,
-  IN      UINTN        Generator,
-  IN      UINTN        PrimeLength,
-  IN      CONST UINT8  *Prime
+  IN OUT  VOID        *DhContext,
+  IN      UINTN       Generator,
+  IN      UINTN       PrimeLength,
+  IN      CONST UINT8 *Prime
   )
 {
   ASSERT (FALSE);
@@ -111,9 +111,9 @@ DhSetParameter (
 BOOLEAN
 EFIAPI
 DhGenerateKey (
-  IN OUT  VOID   *DhContext,
-  OUT     UINT8  *PublicKey,
-  IN OUT  UINTN  *PublicKeySize
+  IN OUT  VOID  *DhContext,
+  OUT     UINT8 *PublicKey,
+  IN OUT  UINTN *PublicKeySize
   )
 {
   ASSERT (FALSE);
@@ -138,11 +138,11 @@ DhGenerateKey (
 BOOLEAN
 EFIAPI
 DhComputeKey (
-  IN OUT  VOID         *DhContext,
-  IN      CONST UINT8  *PeerPublicKey,
-  IN      UINTN        PeerPublicKeySize,
-  OUT     UINT8        *Key,
-  IN OUT  UINTN        *KeySize
+  IN OUT  VOID        *DhContext,
+  IN      CONST UINT8 *PeerPublicKey,
+  IN      UINTN       PeerPublicKeySize,
+  OUT     UINT8       *Key,
+  IN OUT  UINTN       *KeySize
   )
 {
   ASSERT (FALSE);

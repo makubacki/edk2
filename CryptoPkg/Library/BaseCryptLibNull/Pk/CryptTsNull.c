@@ -30,11 +30,11 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 BOOLEAN
 EFIAPI
 ImageTimestampVerify (
-  IN  CONST UINT8  *AuthData,
-  IN  UINTN        DataSize,
-  IN  CONST UINT8  *TsaCert,
-  IN  UINTN        CertSize,
-  OUT EFI_TIME     *SigningTime
+  IN  CONST UINT8 *AuthData,
+  IN  UINTN       DataSize,
+  IN  CONST UINT8 *TsaCert,
+  IN  UINTN       CertSize,
+  OUT EFI_TIME    *SigningTime
   )
 {
   ASSERT (FALSE);
