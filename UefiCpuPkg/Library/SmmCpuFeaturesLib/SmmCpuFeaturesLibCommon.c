@@ -34,8 +34,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // MSRs required for configuration of SMM Code Access Check
 //
-#define SMM_FEATURES_LIB_IA32_MCA_CAP              0x17D
-#define   SMM_CODE_ACCESS_CHK_BIT                  BIT58
+#define SMM_FEATURES_LIB_IA32_MCA_CAP  0x17D
+#define   SMM_CODE_ACCESS_CHK_BIT      BIT58
 
 //
 // Set default value to assume SMRR is not supported
@@ -86,7 +86,7 @@ CpuFeaturesLibInitialization (
   AsmCpuid (CPUID_VERSION_INFO, &RegEax, NULL, NULL, &RegEdx);
   FamilyId = (RegEax >> 8) & 0xf;
   ModelId  = (RegEax >> 4) & 0xf;
-  if (FamilyId == 0x06 || FamilyId == 0x0f) {
+  if ((FamilyId == 0x06) || (FamilyId == 0x0f)) {
     ModelId = ModelId | ((RegEax >> 12) & 0xf0);
   }
 
@@ -110,7 +110,7 @@ CpuFeaturesLibInitialization (
   // SMRR Physical Base and SMM Physical Mask MSRs are not available.
   //
   if (FamilyId == 0x06) {
-    if (ModelId == 0x1C || ModelId == 0x26 || ModelId == 0x27 || ModelId == 0x35 || ModelId == 0x36) {
+    if ((ModelId == 0x1C) || (ModelId == 0x26) || (ModelId == 0x27) || (ModelId == 0x35) || (ModelId == 0x36)) {
       mSmrrSupported = FALSE;
     }
   }
@@ -123,7 +123,7 @@ CpuFeaturesLibInitialization (
   // Processor Family MSRs
   //
   if (FamilyId == 0x06) {
-    if (ModelId == 0x17 || ModelId == 0x0f) {
+    if ((ModelId == 0x17) || (ModelId == 0x0f)) {
       mSmrrPhysBaseMsr = SMM_FEATURES_LIB_IA32_CORE_SMRR_PHYSBASE;
       mSmrrPhysMaskMsr = SMM_FEATURES_LIB_IA32_CORE_SMRR_PHYSMASK;
     }
@@ -188,10 +188,10 @@ CpuFeaturesLibInitialization (
 VOID
 EFIAPI
 SmmCpuFeaturesInitializeProcessor (
-  IN UINTN                      CpuIndex,
-  IN BOOLEAN                    IsMonarch,
-  IN EFI_PROCESSOR_INFORMATION  *ProcessorInfo,
-  IN CPU_HOT_PLUG_DATA          *CpuHotPlugData
+  IN UINTN                     CpuIndex,
+  IN BOOLEAN                   IsMonarch,
+  IN EFI_PROCESSOR_INFORMATION *ProcessorInfo,
+  IN CPU_HOT_PLUG_DATA         *CpuHotPlugData
   )
 {
   SMRAM_SAVE_STATE_MAP  *CpuState;
@@ -216,7 +216,7 @@ SmmCpuFeaturesInitializeProcessor (
   // accessing SMRR base/mask MSRs.  If Lock(BIT0) of MSR_FEATURE_CONTROL MSR(0x3A)
   // is set, then the MSR is locked and can not be modified.
   //
-  if (mSmrrSupported && mSmrrPhysBaseMsr == SMM_FEATURES_LIB_IA32_CORE_SMRR_PHYSBASE) {
+  if (mSmrrSupported && (mSmrrPhysBaseMsr == SMM_FEATURES_LIB_IA32_CORE_SMRR_PHYSBASE)) {
     FeatureControl = AsmReadMsr64 (SMM_FEATURES_LIB_IA32_FEATURE_CONTROL);
     if ((FeatureControl & BIT3) == 0) {
       if ((FeatureControl & BIT0) == 0) {
@@ -242,7 +242,8 @@ SmmCpuFeaturesInitializeProcessor (
     //
     if ((CpuHotPlugData->SmrrSize < SIZE_4KB) ||
         (CpuHotPlugData->SmrrSize != GetPowerOfTwo32 (CpuHotPlugData->SmrrSize)) ||
-        ((CpuHotPlugData->SmrrBase & ~(CpuHotPlugData->SmrrSize - 1)) != CpuHotPlugData->SmrrBase)) {
+        ((CpuHotPlugData->SmrrBase & ~(CpuHotPlugData->SmrrSize - 1)) != CpuHotPlugData->SmrrBase))
+    {
       //
       // Print message and halt if CPU is Monarch
       //
@@ -263,7 +264,7 @@ SmmCpuFeaturesInitializeProcessor (
   AsmCpuid (CPUID_VERSION_INFO, &RegEax, NULL, NULL, &RegEdx);
   FamilyId = (RegEax >> 8) & 0xf;
   ModelId  = (RegEax >> 4) & 0xf;
-  if (FamilyId == 0x06 || FamilyId == 0x0f) {
+  if ((FamilyId == 0x06) || (FamilyId == 0x0f)) {
     ModelId = ModelId | ((RegEax >> 12) & 0xf0);
   }
 
@@ -276,10 +277,11 @@ SmmCpuFeaturesInitializeProcessor (
   // Intel(R) Core(TM) Processor Family MSRs.
   //
   if (FamilyId == 0x06) {
-    if (ModelId == 0x3C || ModelId == 0x45 || ModelId == 0x46 ||
-        ModelId == 0x3D || ModelId == 0x47 || ModelId == 0x4E || ModelId == 0x4F ||
-        ModelId == 0x3F || ModelId == 0x56 || ModelId == 0x57 || ModelId == 0x5C ||
-        ModelId == 0x8C) {
+    if ((ModelId == 0x3C) || (ModelId == 0x45) || (ModelId == 0x46) ||
+        (ModelId == 0x3D) || (ModelId == 0x47) || (ModelId == 0x4E) || (ModelId == 0x4F) ||
+        (ModelId == 0x3F) || (ModelId == 0x56) || (ModelId == 0x57) || (ModelId == 0x5C) ||
+        (ModelId == 0x8C))
+    {
       //
       // Check to see if the CPU supports the SMM Code Access Check feature
       // Do not access this MSR unless the CPU supports the SmmRegFeatureControl
@@ -330,10 +332,10 @@ SmmCpuFeaturesInitializeProcessor (
 UINT64
 EFIAPI
 SmmCpuFeaturesHookReturnFromSmm (
-  IN UINTN                 CpuIndex,
-  IN SMRAM_SAVE_STATE_MAP  *CpuState,
-  IN UINT64                NewInstructionPointer32,
-  IN UINT64                NewInstructionPointer
+  IN UINTN                CpuIndex,
+  IN SMRAM_SAVE_STATE_MAP *CpuState,
+  IN UINT64               NewInstructionPointer32,
+  IN UINT64               NewInstructionPointer
   )
 {
   return 0;
@@ -382,7 +384,7 @@ SmmCpuFeaturesDisableSmrr (
   )
 {
   if (mSmrrSupported && mNeedConfigureMtrrs) {
-    AsmWriteMsr64 (mSmrrPhysMaskMsr, AsmReadMsr64(mSmrrPhysMaskMsr) & ~EFI_MSR_SMRR_PHYS_MASK_VALID);
+    AsmWriteMsr64 (mSmrrPhysMaskMsr, AsmReadMsr64 (mSmrrPhysMaskMsr) & ~EFI_MSR_SMRR_PHYS_MASK_VALID);
   }
 }
 
@@ -397,7 +399,7 @@ SmmCpuFeaturesReenableSmrr (
   )
 {
   if (mSmrrSupported && mNeedConfigureMtrrs) {
-    AsmWriteMsr64 (mSmrrPhysMaskMsr, AsmReadMsr64(mSmrrPhysMaskMsr) | EFI_MSR_SMRR_PHYS_MASK_VALID);
+    AsmWriteMsr64 (mSmrrPhysMaskMsr, AsmReadMsr64 (mSmrrPhysMaskMsr) | EFI_MSR_SMRR_PHYS_MASK_VALID);
   }
 }
 
@@ -411,7 +413,7 @@ SmmCpuFeaturesReenableSmrr (
 VOID
 EFIAPI
 SmmCpuFeaturesRendezvousEntry (
-  IN UINTN  CpuIndex
+  IN UINTN CpuIndex
   )
 {
   //
@@ -433,7 +435,7 @@ SmmCpuFeaturesRendezvousEntry (
 VOID
 EFIAPI
 SmmCpuFeaturesRendezvousExit (
-  IN UINTN  CpuIndex
+  IN UINTN CpuIndex
   )
 {
 }
@@ -454,13 +456,14 @@ SmmCpuFeaturesRendezvousExit (
 BOOLEAN
 EFIAPI
 SmmCpuFeaturesIsSmmRegisterSupported (
-  IN UINTN         CpuIndex,
-  IN SMM_REG_NAME  RegName
+  IN UINTN        CpuIndex,
+  IN SMM_REG_NAME RegName
   )
 {
-  if (mSmmFeatureControlSupported && RegName == SmmRegFeatureControl) {
+  if (mSmmFeatureControlSupported && (RegName == SmmRegFeatureControl)) {
     return TRUE;
   }
+
   return FALSE;
 }
 
@@ -479,13 +482,14 @@ SmmCpuFeaturesIsSmmRegisterSupported (
 UINT64
 EFIAPI
 SmmCpuFeaturesGetSmmRegister (
-  IN UINTN         CpuIndex,
-  IN SMM_REG_NAME  RegName
+  IN UINTN        CpuIndex,
+  IN SMM_REG_NAME RegName
   )
 {
-  if (mSmmFeatureControlSupported && RegName == SmmRegFeatureControl) {
+  if (mSmmFeatureControlSupported && (RegName == SmmRegFeatureControl)) {
     return AsmReadMsr64 (SMM_FEATURES_LIB_SMM_FEATURE_CONTROL);
   }
+
   return 0;
 }
 
@@ -503,12 +507,12 @@ SmmCpuFeaturesGetSmmRegister (
 VOID
 EFIAPI
 SmmCpuFeaturesSetSmmRegister (
-  IN UINTN         CpuIndex,
-  IN SMM_REG_NAME  RegName,
-  IN UINT64        Value
+  IN UINTN        CpuIndex,
+  IN SMM_REG_NAME RegName,
+  IN UINT64       Value
   )
 {
-  if (mSmmFeatureControlSupported && RegName == SmmRegFeatureControl) {
+  if (mSmmFeatureControlSupported && (RegName == SmmRegFeatureControl)) {
     AsmWriteMsr64 (SMM_FEATURES_LIB_SMM_FEATURE_CONTROL, Value);
   }
 }
@@ -534,10 +538,10 @@ SmmCpuFeaturesSetSmmRegister (
 EFI_STATUS
 EFIAPI
 SmmCpuFeaturesReadSaveStateRegister (
-  IN  UINTN                        CpuIndex,
-  IN  EFI_SMM_SAVE_STATE_REGISTER  Register,
-  IN  UINTN                        Width,
-  OUT VOID                         *Buffer
+  IN  UINTN                       CpuIndex,
+  IN  EFI_SMM_SAVE_STATE_REGISTER Register,
+  IN  UINTN                       Width,
+  OUT VOID                        *Buffer
   )
 {
   return EFI_UNSUPPORTED;
@@ -562,10 +566,10 @@ SmmCpuFeaturesReadSaveStateRegister (
 EFI_STATUS
 EFIAPI
 SmmCpuFeaturesWriteSaveStateRegister (
-  IN UINTN                        CpuIndex,
-  IN EFI_SMM_SAVE_STATE_REGISTER  Register,
-  IN UINTN                        Width,
-  IN CONST VOID                   *Buffer
+  IN UINTN                       CpuIndex,
+  IN EFI_SMM_SAVE_STATE_REGISTER Register,
+  IN UINTN                       Width,
+  IN CONST VOID                  *Buffer
   )
 {
   return EFI_UNSUPPORTED;
@@ -605,9 +609,8 @@ SmmCpuFeaturesCompleteSmmReadyToLock (
 VOID *
 EFIAPI
 SmmCpuFeaturesAllocatePageTableMemory (
-  IN UINTN           Pages
+  IN UINTN Pages
   )
 {
   return NULL;
 }
-

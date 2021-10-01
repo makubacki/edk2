@@ -27,9 +27,9 @@
 BOOLEAN
 EFIAPI
 MonitorMwaitSupport (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData  OPTIONAL
+  IN UINTN                            ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID                             *ConfigData  OPTIONAL
   )
 {
   return (CpuInfo->CpuIdVersionInfoEcx.Bits.MONITOR == 1);
@@ -55,9 +55,9 @@ MonitorMwaitSupport (
 RETURN_STATUS
 EFIAPI
 MonitorMwaitInitialize (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN UINTN ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   )
 {
@@ -70,7 +70,8 @@ MonitorMwaitInitialize (
       IS_GOLDMONT_PROCESSOR (CpuInfo->DisplayFamily, CpuInfo->DisplayModel) ||
       IS_SILVERMONT_PROCESSOR (CpuInfo->DisplayFamily, CpuInfo->DisplayModel) ||
       IS_PENTIUM_4_PROCESSOR (CpuInfo->DisplayFamily, CpuInfo->DisplayModel) ||
-      IS_CORE_PROCESSOR (CpuInfo->DisplayFamily, CpuInfo->DisplayModel)) {
+      IS_CORE_PROCESSOR (CpuInfo->DisplayFamily, CpuInfo->DisplayModel))
+  {
     if (CpuInfo->ProcessorInfo.Location.Thread != 0) {
       return RETURN_SUCCESS;
     }

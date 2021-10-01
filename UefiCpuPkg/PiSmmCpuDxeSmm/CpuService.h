@@ -77,9 +77,9 @@ SmmSwitchBsp (
 EFI_STATUS
 EFIAPI
 SmmAddProcessor (
-  IN CONST EFI_SMM_CPU_SERVICE_PROTOCOL  *This,
-  IN       UINT64                        ProcessorId,
-  OUT      UINTN                         *ProcessorNumber
+  IN CONST EFI_SMM_CPU_SERVICE_PROTOCOL *This,
+  IN       UINT64                       ProcessorId,
+  OUT      UINTN                        *ProcessorNumber
   );
 
 /**
@@ -97,8 +97,8 @@ SmmAddProcessor (
 EFI_STATUS
 EFIAPI
 SmmRemoveProcessor (
-  IN CONST EFI_SMM_CPU_SERVICE_PROTOCOL  *This,
-  IN       UINTN                         ProcessorNumber
+  IN CONST EFI_SMM_CPU_SERVICE_PROTOCOL *This,
+  IN       UINTN                        ProcessorNumber
   );
 
 /**
@@ -139,9 +139,9 @@ SmmWhoAmI (
 EFI_STATUS
 EFIAPI
 SmmRegisterExceptionHandler (
-  IN EFI_SMM_CPU_SERVICE_PROTOCOL  *This,
-  IN EFI_EXCEPTION_TYPE            ExceptionType,
-  IN EFI_CPU_INTERRUPT_HANDLER     InterruptHandler
+  IN EFI_SMM_CPU_SERVICE_PROTOCOL *This,
+  IN EFI_EXCEPTION_TYPE           ExceptionType,
+  IN EFI_CPU_INTERRUPT_HANDLER    InterruptHandler
   );
 
 //
@@ -169,7 +169,7 @@ SmmCpuUpdate (
 **/
 EFI_STATUS
 InitializeSmmCpuServices (
-  IN EFI_HANDLE  Handle
+  IN EFI_HANDLE Handle
   );
 
 #endif

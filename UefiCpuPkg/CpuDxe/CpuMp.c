@@ -9,8 +9,8 @@
 #include "CpuDxe.h"
 #include "CpuMp.h"
 
-EFI_HANDLE     mMpServiceHandle       = NULL;
-UINTN          mNumberOfProcessors    = 1;
+EFI_HANDLE  mMpServiceHandle    = NULL;
+UINTN       mNumberOfProcessors = 1;
 
 EFI_MP_SERVICES_PROTOCOL  mMpServicesTemplate = {
   GetNumberOfProcessors,
@@ -61,9 +61,9 @@ EFI_MP_SERVICES_PROTOCOL  mMpServicesTemplate = {
 EFI_STATUS
 EFIAPI
 GetNumberOfProcessors (
-  IN  EFI_MP_SERVICES_PROTOCOL  *This,
-  OUT UINTN                     *NumberOfProcessors,
-  OUT UINTN                     *NumberOfEnabledProcessors
+  IN  EFI_MP_SERVICES_PROTOCOL *This,
+  OUT UINTN                    *NumberOfProcessors,
+  OUT UINTN                    *NumberOfEnabledProcessors
   )
 {
   if ((NumberOfProcessors == NULL) || (NumberOfEnabledProcessors == NULL)) {
@@ -105,9 +105,9 @@ GetNumberOfProcessors (
 EFI_STATUS
 EFIAPI
 GetProcessorInfo (
-  IN  EFI_MP_SERVICES_PROTOCOL   *This,
-  IN  UINTN                      ProcessorNumber,
-  OUT EFI_PROCESSOR_INFORMATION  *ProcessorInfoBuffer
+  IN  EFI_MP_SERVICES_PROTOCOL  *This,
+  IN  UINTN                     ProcessorNumber,
+  OUT EFI_PROCESSOR_INFORMATION *ProcessorInfoBuffer
   )
 {
   return MpInitLibGetProcessorInfo (ProcessorNumber, ProcessorInfoBuffer, NULL);
@@ -252,13 +252,13 @@ GetProcessorInfo (
 EFI_STATUS
 EFIAPI
 StartupAllAPs (
-  IN  EFI_MP_SERVICES_PROTOCOL  *This,
-  IN  EFI_AP_PROCEDURE          Procedure,
-  IN  BOOLEAN                   SingleThread,
-  IN  EFI_EVENT                 WaitEvent               OPTIONAL,
-  IN  UINTN                     TimeoutInMicroseconds,
-  IN  VOID                      *ProcedureArgument      OPTIONAL,
-  OUT UINTN                     **FailedCpuList         OPTIONAL
+  IN  EFI_MP_SERVICES_PROTOCOL *This,
+  IN  EFI_AP_PROCEDURE         Procedure,
+  IN  BOOLEAN                  SingleThread,
+  IN  EFI_EVENT                WaitEvent               OPTIONAL,
+  IN  UINTN                    TimeoutInMicroseconds,
+  IN  VOID                     *ProcedureArgument      OPTIONAL,
+  OUT UINTN                    **FailedCpuList         OPTIONAL
   )
 {
   return MpInitLibStartupAllAPs (
@@ -360,13 +360,13 @@ StartupAllAPs (
 EFI_STATUS
 EFIAPI
 StartupThisAP (
-  IN  EFI_MP_SERVICES_PROTOCOL  *This,
-  IN  EFI_AP_PROCEDURE          Procedure,
-  IN  UINTN                     ProcessorNumber,
-  IN  EFI_EVENT                 WaitEvent               OPTIONAL,
-  IN  UINTN                     TimeoutInMicroseconds,
-  IN  VOID                      *ProcedureArgument      OPTIONAL,
-  OUT BOOLEAN                   *Finished               OPTIONAL
+  IN  EFI_MP_SERVICES_PROTOCOL *This,
+  IN  EFI_AP_PROCEDURE         Procedure,
+  IN  UINTN                    ProcessorNumber,
+  IN  EFI_EVENT                WaitEvent               OPTIONAL,
+  IN  UINTN                    TimeoutInMicroseconds,
+  IN  VOID                     *ProcedureArgument      OPTIONAL,
+  OUT BOOLEAN                  *Finished               OPTIONAL
   )
 {
   return MpInitLibStartupThisAP (
@@ -417,9 +417,9 @@ StartupThisAP (
 EFI_STATUS
 EFIAPI
 SwitchBSP (
-  IN EFI_MP_SERVICES_PROTOCOL  *This,
-  IN  UINTN                    ProcessorNumber,
-  IN  BOOLEAN                  EnableOldBSP
+  IN EFI_MP_SERVICES_PROTOCOL *This,
+  IN  UINTN                   ProcessorNumber,
+  IN  BOOLEAN                 EnableOldBSP
   )
 {
   return MpInitLibSwitchBSP (ProcessorNumber, EnableOldBSP);
@@ -469,10 +469,10 @@ SwitchBSP (
 EFI_STATUS
 EFIAPI
 EnableDisableAP (
-  IN  EFI_MP_SERVICES_PROTOCOL  *This,
-  IN  UINTN                     ProcessorNumber,
-  IN  BOOLEAN                   EnableAP,
-  IN  UINT32                    *HealthFlag OPTIONAL
+  IN  EFI_MP_SERVICES_PROTOCOL *This,
+  IN  UINTN                    ProcessorNumber,
+  IN  BOOLEAN                  EnableAP,
+  IN  UINT32                   *HealthFlag OPTIONAL
   )
 {
   return MpInitLibEnableDisableAP (ProcessorNumber, EnableAP, HealthFlag);
@@ -505,11 +505,11 @@ EnableDisableAP (
 EFI_STATUS
 EFIAPI
 WhoAmI (
-  IN EFI_MP_SERVICES_PROTOCOL  *This,
-  OUT UINTN                    *ProcessorNumber
+  IN EFI_MP_SERVICES_PROTOCOL *This,
+  OUT UINTN                   *ProcessorNumber
   )
 {
-  return MpInitLibWhoAmI (ProcessorNumber);;
+  return MpInitLibWhoAmI (ProcessorNumber);
 }
 
 /**
@@ -562,7 +562,7 @@ CollectBistDataFromHob (
       // does not have BSP's APIC ID
       //
       BspCpuInstance.CpuLocation = GetApicId ();
-      BspCpuInstance.InfoRecord.IA32HealthFlags.Uint32  = SecPlatformInformation->IA32HealthFlags.Uint32;
+      BspCpuInstance.InfoRecord.IA32HealthFlags.Uint32 = SecPlatformInformation->IA32HealthFlags.Uint32;
       CpuInstance = &BspCpuInstance;
     } else {
       DEBUG ((DEBUG_INFO, "Does not find any HOB stored CPU BIST information!\n"));
@@ -583,6 +583,7 @@ CollectBistDataFromHob (
         BistData = CpuInstance[CpuInstanceNumber].InfoRecord.IA32HealthFlags;
       }
     }
+
     if (BistData.Uint32 != 0) {
       //
       // Report Status Code that self test is failed
@@ -628,9 +629,9 @@ InitializeExceptionStackSwitchHandlers (
   IN OUT VOID *Buffer
   )
 {
-  CPU_EXCEPTION_INIT_DATA           *EssData;
-  IA32_DESCRIPTOR                   Idtr;
-  EFI_STATUS                        Status;
+  CPU_EXCEPTION_INIT_DATA  *EssData;
+  IA32_DESCRIPTOR          Idtr;
+  EFI_STATUS               Status;
 
   EssData = Buffer;
   //
@@ -638,7 +639,7 @@ InitializeExceptionStackSwitchHandlers (
   // the AP's IDT is the same as BSP's IDT either.
   //
   AsmReadIdtr (&Idtr);
-  EssData->Ia32.IdtTable = (VOID *)Idtr.Base;
+  EssData->Ia32.IdtTable     = (VOID *)Idtr.Base;
   EssData->Ia32.IdtTableSize = Idtr.Limit + 1;
   Status = InitializeCpuExceptionHandlersEx (NULL, EssData);
   ASSERT_EFI_ERROR (Status);
@@ -656,19 +657,19 @@ InitializeMpExceptionStackSwitchHandlers (
   VOID
   )
 {
-  UINTN                           Index;
-  UINTN                           Bsp;
-  UINTN                           ExceptionNumber;
-  UINTN                           OldGdtSize;
-  UINTN                           NewGdtSize;
-  UINTN                           NewStackSize;
-  IA32_DESCRIPTOR                 Gdtr;
-  CPU_EXCEPTION_INIT_DATA         EssData;
-  UINT8                           *GdtBuffer;
-  UINT8                           *StackTop;
+  UINTN                    Index;
+  UINTN                    Bsp;
+  UINTN                    ExceptionNumber;
+  UINTN                    OldGdtSize;
+  UINTN                    NewGdtSize;
+  UINTN                    NewStackSize;
+  IA32_DESCRIPTOR          Gdtr;
+  CPU_EXCEPTION_INIT_DATA  EssData;
+  UINT8                    *GdtBuffer;
+  UINT8                    *StackTop;
 
   ExceptionNumber = FixedPcdGetSize (PcdCpuStackSwitchExceptionList);
-  NewStackSize = FixedPcdGet32 (PcdCpuKnownGoodStackSize) * ExceptionNumber;
+  NewStackSize    = FixedPcdGet32 (PcdCpuKnownGoodStackSize) * ExceptionNumber;
 
   StackTop = AllocateRuntimeZeroPool (NewStackSize * mNumberOfProcessors);
   ASSERT (StackTop != NULL);
@@ -681,14 +682,14 @@ InitializeMpExceptionStackSwitchHandlers (
   EssData.Ia32.Revision = CPU_EXCEPTION_INIT_DATA_REV;
   EssData.Ia32.InitDefaultHandlers = FALSE;
 
-  EssData.Ia32.StackSwitchExceptions = FixedPcdGetPtr(PcdCpuStackSwitchExceptionList);
+  EssData.Ia32.StackSwitchExceptions = FixedPcdGetPtr (PcdCpuStackSwitchExceptionList);
   EssData.Ia32.StackSwitchExceptionNumber = ExceptionNumber;
-  EssData.Ia32.KnownGoodStackSize = FixedPcdGet32(PcdCpuKnownGoodStackSize);
+  EssData.Ia32.KnownGoodStackSize = FixedPcdGet32 (PcdCpuKnownGoodStackSize);
 
   //
   // Initialize Gdtr to suppress incorrect compiler/analyzer warnings.
   //
-  Gdtr.Base = 0;
+  Gdtr.Base  = 0;
   Gdtr.Limit = 0;
   MpInitLibWhoAmI (&Bsp);
   for (Index = 0; Index < mNumberOfProcessors; ++Index) {
@@ -749,19 +750,21 @@ InitializeMpExceptionStackSwitchHandlers (
     //
     // Make sure GDT table alignment
     //
-    EssData.Ia32.GdtTable = ALIGN_POINTER(GdtBuffer, sizeof (IA32_TSS_DESCRIPTOR));
+    EssData.Ia32.GdtTable = ALIGN_POINTER (GdtBuffer, sizeof (IA32_TSS_DESCRIPTOR));
     NewGdtSize -= ((UINT8 *)EssData.Ia32.GdtTable - GdtBuffer);
     EssData.Ia32.GdtTableSize = NewGdtSize;
 
     EssData.Ia32.ExceptionTssDesc = ((UINT8 *)EssData.Ia32.GdtTable + OldGdtSize);
-    EssData.Ia32.ExceptionTss = ((UINT8 *)EssData.Ia32.GdtTable + OldGdtSize +
-                                 EssData.Ia32.ExceptionTssDescSize);
+    EssData.Ia32.ExceptionTss     = ((UINT8 *)EssData.Ia32.GdtTable + OldGdtSize +
+                                     EssData.Ia32.ExceptionTssDescSize);
 
     EssData.Ia32.KnownGoodStackTop = (UINTN)StackTop;
-    DEBUG ((DEBUG_INFO,
-            "Exception stack top[cpu%lu]: 0x%lX\n",
-            (UINT64)(UINTN)Index,
-            (UINT64)(UINTN)StackTop));
+    DEBUG ((
+      DEBUG_INFO,
+      "Exception stack top[cpu%lu]: 0x%lX\n",
+      (UINT64)(UINTN)Index,
+      (UINT64)(UINTN)StackTop
+      ));
 
     if (Index == Bsp) {
       InitializeExceptionStackSwitchHandlers (&EssData);
@@ -776,7 +779,7 @@ InitializeMpExceptionStackSwitchHandlers (
         );
     }
 
-    StackTop  -= NewStackSize;
+    StackTop -= NewStackSize;
   }
 }
 
@@ -815,9 +818,9 @@ InitializeMpSupport (
   VOID
   )
 {
-  EFI_STATUS     Status;
-  UINTN          NumberOfProcessors;
-  UINTN          NumberOfEnabledProcessors;
+  EFI_STATUS  Status;
+  UINTN       NumberOfProcessors;
+  UINTN       NumberOfEnabledProcessors;
 
   //
   // Wakeup APs to do initialization
@@ -841,9 +844,9 @@ InitializeMpSupport (
 
   Status = gBS->InstallMultipleProtocolInterfaces (
                   &mMpServiceHandle,
-                  &gEfiMpServiceProtocolGuid,  &mMpServicesTemplate,
+                  &gEfiMpServiceProtocolGuid,
+                  &mMpServicesTemplate,
                   NULL
                   );
   ASSERT_EFI_ERROR (Status);
 }
-

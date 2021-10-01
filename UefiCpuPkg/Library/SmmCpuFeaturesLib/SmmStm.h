@@ -21,7 +21,7 @@
 **/
 VOID
 StmGen4GPageTable (
-  IN UINTN              PageTableBase
+  IN UINTN PageTableBase
   );
 
 /**
@@ -44,7 +44,6 @@ EFIAPI
 SmmStmExceptionHandler (
   IN OUT STM_PROTECTION_EXCEPTION_STACK_FRAME Context
   );
-
 
 /**
 
@@ -93,8 +92,8 @@ LoadMonitor (
 EFI_STATUS
 EFIAPI
 AddPiResource (
-  IN  STM_RSC  *ResourceList,
-  IN  UINT32    NumEntries OPTIONAL
+  IN  STM_RSC *ResourceList,
+  IN  UINT32  NumEntries OPTIONAL
   );
 
 /**
@@ -113,8 +112,8 @@ AddPiResource (
 EFI_STATUS
 EFIAPI
 DeletePiResource (
-  IN  STM_RSC    *ResourceList,
-  IN  UINT32      NumEntries OPTIONAL
+  IN  STM_RSC *ResourceList,
+  IN  UINT32  NumEntries OPTIONAL
   );
 
 /**
@@ -174,6 +173,6 @@ GetStmResource (
 VOID
 EFIAPI
 SmmCpuFeaturesLibStmSmiEntryFixupAddress (
- );
+  );
 
 #endif

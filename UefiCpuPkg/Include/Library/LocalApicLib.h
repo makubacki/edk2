@@ -38,7 +38,7 @@ GetLocalApicBaseAddress (
 VOID
 EFIAPI
 SetLocalApicBaseAddress (
-  IN UINTN                BaseAddress
+  IN UINTN BaseAddress
   );
 
 /**
@@ -69,7 +69,7 @@ GetApicMode (
 VOID
 EFIAPI
 SetApicMode (
-  IN UINTN  ApicMode
+  IN UINTN ApicMode
   );
 
 /**
@@ -120,8 +120,8 @@ GetApicVersion (
 VOID
 EFIAPI
 SendFixedIpi (
-  IN UINT32          ApicId,
-  IN UINT8           Vector
+  IN UINT32 ApicId,
+  IN UINT8  Vector
   );
 
 /**
@@ -134,7 +134,7 @@ SendFixedIpi (
 VOID
 EFIAPI
 SendFixedIpiAllExcludingSelf (
-  IN UINT8           Vector
+  IN UINT8 Vector
   );
 
 /**
@@ -147,7 +147,7 @@ SendFixedIpiAllExcludingSelf (
 VOID
 EFIAPI
 SendSmiIpi (
-  IN UINT32          ApicId
+  IN UINT32 ApicId
   );
 
 /**
@@ -171,7 +171,7 @@ SendSmiIpiAllExcludingSelf (
 VOID
 EFIAPI
 SendInitIpi (
-  IN UINT32          ApicId
+  IN UINT32 ApicId
   );
 
 /**
@@ -200,8 +200,8 @@ SendInitIpiAllExcludingSelf (
 VOID
 EFIAPI
 SendInitSipiSipi (
-  IN UINT32          ApicId,
-  IN UINT32          StartupRoutine
+  IN UINT32 ApicId,
+  IN UINT32 StartupRoutine
   );
 
 /**
@@ -218,7 +218,7 @@ SendInitSipiSipi (
 VOID
 EFIAPI
 SendInitSipiSipiAllExcludingSelf (
-  IN UINT32          StartupRoutine
+  IN UINT32 StartupRoutine
   );
 
 /**
@@ -232,7 +232,7 @@ SendInitSipiSipiAllExcludingSelf (
 VOID
 EFIAPI
 InitializeLocalApicSoftwareEnable (
-  IN BOOLEAN  Enable
+  IN BOOLEAN Enable
   );
 
 /**
@@ -312,9 +312,9 @@ InitializeApicTimer (
 VOID
 EFIAPI
 GetApicTimerState (
-  OUT UINTN    *DivideValue  OPTIONAL,
-  OUT BOOLEAN  *PeriodicMode  OPTIONAL,
-  OUT UINT8    *Vector  OPTIONAL
+  OUT UINTN   *DivideValue  OPTIONAL,
+  OUT BOOLEAN *PeriodicMode  OPTIONAL,
+  OUT UINT8   *Vector  OPTIONAL
   );
 
 /**
@@ -399,10 +399,10 @@ GetApicMsiAddress (
 UINT64
 EFIAPI
 GetApicMsiValue (
-  IN UINT8    Vector,
-  IN UINTN    DeliveryMode,
-  IN BOOLEAN  LevelTriggered,
-  IN BOOLEAN  AssertionLevel
+  IN UINT8   Vector,
+  IN UINTN   DeliveryMode,
+  IN BOOLEAN LevelTriggered,
+  IN BOOLEAN AssertionLevel
   );
 
 /**
@@ -420,10 +420,10 @@ GetApicMsiValue (
 VOID
 EFIAPI
 GetProcessorLocationByApicId (
-  IN  UINT32  InitialApicId,
-  OUT UINT32  *Package  OPTIONAL,
-  OUT UINT32  *Core    OPTIONAL,
-  OUT UINT32  *Thread  OPTIONAL
+  IN  UINT32 InitialApicId,
+  OUT UINT32 *Package  OPTIONAL,
+  OUT UINT32 *Core    OPTIONAL,
+  OUT UINT32 *Thread  OPTIONAL
   );
 
 /**
@@ -445,13 +445,13 @@ GetProcessorLocationByApicId (
 VOID
 EFIAPI
 GetProcessorLocation2ByApicId (
-  IN  UINT32  InitialApicId,
-  OUT UINT32  *Package  OPTIONAL,
-  OUT UINT32  *Die      OPTIONAL,
-  OUT UINT32  *Tile     OPTIONAL,
-  OUT UINT32  *Module   OPTIONAL,
-  OUT UINT32  *Core     OPTIONAL,
-  OUT UINT32  *Thread   OPTIONAL
+  IN  UINT32 InitialApicId,
+  OUT UINT32 *Package  OPTIONAL,
+  OUT UINT32 *Die      OPTIONAL,
+  OUT UINT32 *Tile     OPTIONAL,
+  OUT UINT32 *Module   OPTIONAL,
+  OUT UINT32 *Core     OPTIONAL,
+  OUT UINT32 *Thread   OPTIONAL
   );
-#endif
 
+#endif
