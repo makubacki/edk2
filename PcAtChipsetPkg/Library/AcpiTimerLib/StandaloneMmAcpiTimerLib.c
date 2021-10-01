@@ -23,8 +23,8 @@
 EFI_STATUS
 EFIAPI
 StandaloneMmAcpiTimerLibConstructor (
-  IN EFI_HANDLE           ImageHandle,
-  IN EFI_MM_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE          ImageHandle,
+  IN EFI_MM_SYSTEM_TABLE *SystemTable
   )
 {
   return CommonAcpiTimerLibConstructor ();
