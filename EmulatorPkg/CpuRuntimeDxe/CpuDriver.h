@@ -10,7 +10,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #ifndef _CPU_ARCHITECTURAL_PROTOCOL_DRIVER_H_
 #define _CPU_ARCHITECTURAL_PROTOCOL_DRIVER_H_
 
-
 #include <PiDxe.h>
 #include <IndustryStandard/SmBios.h>
 
@@ -32,25 +31,22 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/UefiLib.h>
 #include <Library/PcdLib.h>
 
-
-
 //
 // Internal Data Structures
 //
-#define CPU_ARCH_PROT_PRIVATE_SIGNATURE SIGNATURE_32 ('c', 'a', 'p', 'd')
+#define CPU_ARCH_PROT_PRIVATE_SIGNATURE  SIGNATURE_32 ('c', 'a', 'p', 'd')
 
 typedef struct {
-  UINTN                 Signature;
-  EFI_HANDLE            Handle;
+  UINTN                    Signature;
+  EFI_HANDLE               Handle;
 
-  EFI_CPU_ARCH_PROTOCOL Cpu;
-  EFI_CPU_IO2_PROTOCOL  CpuIo;
+  EFI_CPU_ARCH_PROTOCOL    Cpu;
+  EFI_CPU_IO2_PROTOCOL     CpuIo;
 
   //
   // Local Data for CPU interface goes here
   //
-  BOOLEAN               InterruptState;
-
+  BOOLEAN                  InterruptState;
 } CPU_ARCH_PROTOCOL_PRIVATE;
 
 #define CPU_ARCH_PROTOCOL_PRIVATE_DATA_FROM_THIS(a) \
@@ -60,8 +56,6 @@ typedef struct {
       CPU_ARCH_PROT_PRIVATE_SIGNATURE \
       )
 
-
-
 typedef enum {
   CPU_STATE_IDLE,
   CPU_STATE_BLOCKED,
@@ -70,134 +64,128 @@ typedef enum {
   CPU_STATE_FINISHED
 } PROCESSOR_STATE;
 
-
 //
 // Define Individual Processor Data block.
 //
 typedef struct {
-  EFI_PROCESSOR_INFORMATION   Info;
-  EFI_AP_PROCEDURE            Procedure;
-  VOID                        *Parameter;
-  VOID                        *StateLock;
-  VOID                        *ProcedureLock;
-  PROCESSOR_STATE             State;
-  EFI_EVENT                   CheckThisAPEvent;
+  EFI_PROCESSOR_INFORMATION    Info;
+  EFI_AP_PROCEDURE             Procedure;
+  VOID                         *Parameter;
+  VOID                         *StateLock;
+  VOID                         *ProcedureLock;
+  PROCESSOR_STATE              State;
+  EFI_EVENT                    CheckThisAPEvent;
 } PROCESSOR_DATA_BLOCK;
-
 
 //
 // Define MP data block which consumes individual processor block.
 //
 typedef struct {
-  UINTN                       NumberOfProcessors;
-  UINTN                       NumberOfEnabledProcessors;
-  EFI_EVENT                   CheckAllAPsEvent;
-  EFI_EVENT                   WaitEvent;
-  UINTN                       FinishCount;
-  UINTN                       StartCount;
-  EFI_AP_PROCEDURE            Procedure;
-  VOID                        *ProcedureArgument;
-  BOOLEAN                     SingleThread;
-  UINTN                       StartedNumber;
-  PROCESSOR_DATA_BLOCK        *ProcessorData;
-  UINTN                       Timeout;
-  UINTN                       *FailedList;
-  UINTN                       FailedListIndex;
-  BOOLEAN                     TimeoutActive;
+  UINTN                   NumberOfProcessors;
+  UINTN                   NumberOfEnabledProcessors;
+  EFI_EVENT               CheckAllAPsEvent;
+  EFI_EVENT               WaitEvent;
+  UINTN                   FinishCount;
+  UINTN                   StartCount;
+  EFI_AP_PROCEDURE        Procedure;
+  VOID                    *ProcedureArgument;
+  BOOLEAN                 SingleThread;
+  UINTN                   StartedNumber;
+  PROCESSOR_DATA_BLOCK    *ProcessorData;
+  UINTN                   Timeout;
+  UINTN                   *FailedList;
+  UINTN                   FailedListIndex;
+  BOOLEAN                 TimeoutActive;
 } MP_SYSTEM_DATA;
-
-
-
-
 
 EFI_STATUS
 EFIAPI
 CpuMemoryServiceRead (
-  IN  EFI_CPU_IO2_PROTOCOL              *This,
-  IN  EFI_CPU_IO_PROTOCOL_WIDTH         Width,
-  IN  UINT64                            Address,
-  IN  UINTN                             Count,
-  IN  OUT VOID                          *Buffer
+  IN  EFI_CPU_IO2_PROTOCOL      *This,
+  IN  EFI_CPU_IO_PROTOCOL_WIDTH Width,
+  IN  UINT64                    Address,
+  IN  UINTN                     Count,
+  IN  OUT VOID                  *Buffer
   );
 
 EFI_STATUS
 EFIAPI
 CpuMemoryServiceWrite (
-  IN EFI_CPU_IO2_PROTOCOL               *This,
-  IN  EFI_CPU_IO_PROTOCOL_WIDTH         Width,
-  IN  UINT64                            Address,
-  IN  UINTN                             Count,
-  IN  OUT VOID                          *Buffer
+  IN EFI_CPU_IO2_PROTOCOL       *This,
+  IN  EFI_CPU_IO_PROTOCOL_WIDTH Width,
+  IN  UINT64                    Address,
+  IN  UINTN                     Count,
+  IN  OUT VOID                  *Buffer
   );
 
 EFI_STATUS
 EFIAPI
 CpuIoServiceRead (
-  IN EFI_CPU_IO2_PROTOCOL               *This,
-  IN  EFI_CPU_IO_PROTOCOL_WIDTH         Width,
-  IN  UINT64                            UserAddress,
-  IN  UINTN                             Count,
-  IN  OUT VOID                          *UserBuffer
+  IN EFI_CPU_IO2_PROTOCOL       *This,
+  IN  EFI_CPU_IO_PROTOCOL_WIDTH Width,
+  IN  UINT64                    UserAddress,
+  IN  UINTN                     Count,
+  IN  OUT VOID                  *UserBuffer
   );
 
 EFI_STATUS
 EFIAPI
 CpuIoServiceWrite (
-  IN EFI_CPU_IO2_PROTOCOL               *This,
-  IN  EFI_CPU_IO_PROTOCOL_WIDTH         Width,
-  IN  UINT64                            UserAddress,
-  IN  UINTN                             Count,
-  IN  OUT VOID                          *UserBuffer
+  IN EFI_CPU_IO2_PROTOCOL       *This,
+  IN  EFI_CPU_IO_PROTOCOL_WIDTH Width,
+  IN  UINT64                    UserAddress,
+  IN  UINTN                     Count,
+  IN  OUT VOID                  *UserBuffer
   );
 
 EFI_STATUS
 EFIAPI
 InitializeCpu (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 EFI_STATUS
 EFIAPI
 EmuFlushCpuDataCache (
-  IN EFI_CPU_ARCH_PROTOCOL  *This,
-  IN EFI_PHYSICAL_ADDRESS   Start,
-  IN UINT64                 Length,
-  IN EFI_CPU_FLUSH_TYPE     FlushType
+  IN EFI_CPU_ARCH_PROTOCOL *This,
+  IN EFI_PHYSICAL_ADDRESS  Start,
+  IN UINT64                Length,
+  IN EFI_CPU_FLUSH_TYPE    FlushType
   );
 
 EFI_STATUS
 EFIAPI
 EmuEnableInterrupt (
-  IN EFI_CPU_ARCH_PROTOCOL  *This
+  IN EFI_CPU_ARCH_PROTOCOL *This
   );
 
 EFI_STATUS
 EFIAPI
 EmuDisableInterrupt (
-  IN EFI_CPU_ARCH_PROTOCOL  *This
+  IN EFI_CPU_ARCH_PROTOCOL *This
   );
 
 EFI_STATUS
 EFIAPI
 EmuGetInterruptState (
-  IN EFI_CPU_ARCH_PROTOCOL  *This,
-  OUT BOOLEAN               *State
+  IN EFI_CPU_ARCH_PROTOCOL *This,
+  OUT BOOLEAN              *State
   );
 
 EFI_STATUS
 EFIAPI
 EmuInit (
-  IN EFI_CPU_ARCH_PROTOCOL  *This,
-  IN EFI_CPU_INIT_TYPE      InitType
+  IN EFI_CPU_ARCH_PROTOCOL *This,
+  IN EFI_CPU_INIT_TYPE     InitType
   );
 
 EFI_STATUS
 EFIAPI
 EmuRegisterInterruptHandler (
-  IN EFI_CPU_ARCH_PROTOCOL      *This,
-  IN EFI_EXCEPTION_TYPE         InterruptType,
-  IN EFI_CPU_INTERRUPT_HANDLER  InterruptHandler
+  IN EFI_CPU_ARCH_PROTOCOL     *This,
+  IN EFI_EXCEPTION_TYPE        InterruptType,
+  IN EFI_CPU_INTERRUPT_HANDLER InterruptHandler
   );
 
 EFI_STATUS
@@ -212,10 +200,10 @@ EmuGetTimerValue (
 EFI_STATUS
 EFIAPI
 EmuSetMemoryAttributes (
-  IN EFI_CPU_ARCH_PROTOCOL  *This,
-  IN EFI_PHYSICAL_ADDRESS   BaseAddress,
-  IN UINT64                 Length,
-  IN UINT64                 Attributes
+  IN EFI_CPU_ARCH_PROTOCOL *This,
+  IN EFI_PHYSICAL_ADDRESS  BaseAddress,
+  IN UINT64                Length,
+  IN UINT64                Attributes
   );
 
 EFI_STATUS
@@ -226,11 +214,10 @@ CpuMpServicesInit (
 EFI_STATUS
 EFIAPI
 CpuMpServicesWhoAmI (
-  IN EFI_MP_SERVICES_PROTOCOL  *This,
-  OUT UINTN                    *ProcessorNumber
+  IN EFI_MP_SERVICES_PROTOCOL *This,
+  OUT UINTN                   *ProcessorNumber
   );
 
 extern EFI_MP_SERVICES_PROTOCOL  mMpServicesTemplate;
-
 
 #endif

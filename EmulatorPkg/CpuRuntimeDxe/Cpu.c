@@ -11,7 +11,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 UINT64  mTimerPeriod;
 
-CPU_ARCH_PROTOCOL_PRIVATE mCpuTemplate = {
+CPU_ARCH_PROTOCOL_PRIVATE  mCpuTemplate = {
   CPU_ARCH_PROT_PRIVATE_SIGNATURE,
   NULL,
   {
@@ -39,16 +39,16 @@ CPU_ARCH_PROTOCOL_PRIVATE mCpuTemplate = {
   TRUE
 };
 
-#define EFI_CPU_DATA_MAXIMUM_LENGTH 0x100
+#define EFI_CPU_DATA_MAXIMUM_LENGTH  0x100
 
-SMBIOS_TABLE_TYPE4 mCpuSmbiosType4 = {
-  { EFI_SMBIOS_TYPE_PROCESSOR_INFORMATION, sizeof (SMBIOS_TABLE_TYPE4), 0},
+SMBIOS_TABLE_TYPE4  mCpuSmbiosType4 = {
+  { EFI_SMBIOS_TYPE_PROCESSOR_INFORMATION, sizeof (SMBIOS_TABLE_TYPE4), 0 },
   1,                    // Socket String
   ProcessorOther,       // ProcessorType;          ///< The enumeration value from PROCESSOR_TYPE_DATA.
   ProcessorFamilyOther, // ProcessorFamily;        ///< The enumeration value from PROCESSOR_FAMILY_DATA.
   2,                    // ProcessorManufacture String;
   {                     // ProcessorId;
-    {  // PROCESSOR_SIGNATURE
+    {    // PROCESSOR_SIGNATURE
       0, //  ProcessorSteppingId:4;
       0, //  ProcessorModel:     4;
       0, //  ProcessorFamily:    4;
@@ -58,7 +58,7 @@ SMBIOS_TABLE_TYPE4 mCpuSmbiosType4 = {
       0, //  ProcessorXFamily:   8;
       0, //  ProcessorReserved2: 4;
     },
-    {  // PROCESSOR_FEATURE_FLAGS
+    {    // PROCESSOR_FEATURE_FLAGS
       0, //  ProcessorFpu       :1;
       0, //  ProcessorVme       :1;
       0, //  ProcessorDe        :1;
@@ -93,7 +93,7 @@ SMBIOS_TABLE_TYPE4 mCpuSmbiosType4 = {
     }
   },
   3,                    // ProcessorVersion String;
-  {                     // Voltage;
+  {     // Voltage;
     1,  // ProcessorVoltageCapability5V        :1;
     1,  // ProcessorVoltageCapability3_3V      :1;
     1,  // ProcessorVoltageCapability2_9V      :1;
@@ -119,7 +119,7 @@ SMBIOS_TABLE_TYPE4 mCpuSmbiosType4 = {
   0,                      // ProcessorFamily2;
 };
 
-CHAR8 *mCpuSmbiosType4Strings[] = {
+CHAR8  *mCpuSmbiosType4Strings[] = {
   "Socket",
   "http://www.tianocore.org/edk2/",
   "Emulated Processor",
@@ -128,7 +128,6 @@ CHAR8 *mCpuSmbiosType4Strings[] = {
   "1.0",
   NULL
 };
-
 
 /**
   Create SMBIOS record.
@@ -163,14 +162,14 @@ LogSmbiosData (
   IN  CHAR8                   **StringPack
   )
 {
-  EFI_STATUS                Status;
-  EFI_SMBIOS_PROTOCOL       *Smbios;
-  EFI_SMBIOS_HANDLE         SmbiosHandle;
-  EFI_SMBIOS_TABLE_HEADER   *Record;
-  UINTN                     Index;
-  UINTN                     StringSize;
-  UINTN                     Size;
-  CHAR8                     *Str;
+  EFI_STATUS               Status;
+  EFI_SMBIOS_PROTOCOL      *Smbios;
+  EFI_SMBIOS_HANDLE        SmbiosHandle;
+  EFI_SMBIOS_TABLE_HEADER  *Record;
+  UINTN                    Index;
+  UINTN                    StringSize;
+  UINTN                    Size;
+  CHAR8                    *Str;
 
   //
   // Locate Smbios protocol.
@@ -190,10 +189,12 @@ LogSmbiosData (
       StringSize = AsciiStrSize (StringPack[Index]);
       Size += StringSize;
     }
+
     if (StringPack[0] == NULL) {
       // At least a double null is required
       Size += 1;
     }
+
     // Don't forget the terminating double null
     Size += 1;
   }
@@ -203,6 +204,7 @@ LogSmbiosData (
   if (Record == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
+
   CopyMem (Record, Template, Template->Length);
 
   // Append string pack
@@ -212,6 +214,7 @@ LogSmbiosData (
     CopyMem (Str, StringPack[Index], StringSize);
     Str += StringSize;
   }
+
   *Str = 0;
 
   SmbiosHandle = SMBIOS_HANDLE_PI_RESERVED;
@@ -227,17 +230,14 @@ LogSmbiosData (
   return Status;
 }
 
-
-
-
 VOID
 CpuUpdateSmbios (
-  IN UINTN  MaxCpus
+  IN UINTN MaxCpus
   )
 {
-  mCpuSmbiosType4.CoreCount        = (UINT8) MaxCpus;
-  mCpuSmbiosType4.EnabledCoreCount = (UINT8) MaxCpus;
-  mCpuSmbiosType4.ThreadCount      = (UINT8) MaxCpus;
+  mCpuSmbiosType4.CoreCount = (UINT8)MaxCpus;
+  mCpuSmbiosType4.EnabledCoreCount = (UINT8)MaxCpus;
+  mCpuSmbiosType4.ThreadCount = (UINT8)MaxCpus;
   //
   // The value of 1234 is fake value for CPU frequency
   //
@@ -245,17 +245,16 @@ CpuUpdateSmbios (
   LogSmbiosData ((EFI_SMBIOS_TABLE_HEADER *)&mCpuSmbiosType4, mCpuSmbiosType4Strings);
 }
 
-
 //
 // Service routines for the driver
 //
 EFI_STATUS
 EFIAPI
 EmuFlushCpuDataCache (
-  IN EFI_CPU_ARCH_PROTOCOL  *This,
-  IN EFI_PHYSICAL_ADDRESS   Start,
-  IN UINT64                 Length,
-  IN EFI_CPU_FLUSH_TYPE     FlushType
+  IN EFI_CPU_ARCH_PROTOCOL *This,
+  IN EFI_PHYSICAL_ADDRESS  Start,
+  IN UINT64                Length,
+  IN EFI_CPU_FLUSH_TYPE    FlushType
   )
 {
   if (FlushType == EfiCpuFlushTypeWriteBackInvalidate) {
@@ -265,6 +264,7 @@ EmuFlushCpuDataCache (
     //
     return EFI_SUCCESS;
   }
+
   //
   // Other flush types are not supported by Emu emulator
   //
@@ -274,12 +274,12 @@ EmuFlushCpuDataCache (
 EFI_STATUS
 EFIAPI
 EmuEnableInterrupt (
-  IN EFI_CPU_ARCH_PROTOCOL  *This
+  IN EFI_CPU_ARCH_PROTOCOL *This
   )
 {
-  CPU_ARCH_PROTOCOL_PRIVATE *Private;
+  CPU_ARCH_PROTOCOL_PRIVATE  *Private;
 
-  Private                 = CPU_ARCH_PROTOCOL_PRIVATE_DATA_FROM_THIS (This);
+  Private = CPU_ARCH_PROTOCOL_PRIVATE_DATA_FROM_THIS (This);
   Private->InterruptState = TRUE;
   gEmuThunk->EnableInterrupt ();
   return EFI_SUCCESS;
@@ -288,12 +288,12 @@ EmuEnableInterrupt (
 EFI_STATUS
 EFIAPI
 EmuDisableInterrupt (
-  IN EFI_CPU_ARCH_PROTOCOL  *This
+  IN EFI_CPU_ARCH_PROTOCOL *This
   )
 {
-  CPU_ARCH_PROTOCOL_PRIVATE *Private;
+  CPU_ARCH_PROTOCOL_PRIVATE  *Private;
 
-  Private                 = CPU_ARCH_PROTOCOL_PRIVATE_DATA_FROM_THIS (This);
+  Private = CPU_ARCH_PROTOCOL_PRIVATE_DATA_FROM_THIS (This);
   Private->InterruptState = FALSE;
   gEmuThunk->DisableInterrupt ();
   return EFI_SUCCESS;
@@ -302,11 +302,11 @@ EmuDisableInterrupt (
 EFI_STATUS
 EFIAPI
 EmuGetInterruptState (
-  IN EFI_CPU_ARCH_PROTOCOL  *This,
-  OUT BOOLEAN               *State
+  IN EFI_CPU_ARCH_PROTOCOL *This,
+  OUT BOOLEAN              *State
   )
 {
-  CPU_ARCH_PROTOCOL_PRIVATE *Private;
+  CPU_ARCH_PROTOCOL_PRIVATE  *Private;
 
   if (State == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -320,8 +320,8 @@ EmuGetInterruptState (
 EFI_STATUS
 EFIAPI
 EmuInit (
-  IN EFI_CPU_ARCH_PROTOCOL  *This,
-  IN EFI_CPU_INIT_TYPE      InitType
+  IN EFI_CPU_ARCH_PROTOCOL *This,
+  IN EFI_CPU_INIT_TYPE     InitType
   )
 {
   return EFI_UNSUPPORTED;
@@ -330,17 +330,18 @@ EmuInit (
 EFI_STATUS
 EFIAPI
 EmuRegisterInterruptHandler (
-  IN EFI_CPU_ARCH_PROTOCOL      *This,
-  IN EFI_EXCEPTION_TYPE         InterruptType,
-  IN EFI_CPU_INTERRUPT_HANDLER  InterruptHandler
+  IN EFI_CPU_ARCH_PROTOCOL     *This,
+  IN EFI_EXCEPTION_TYPE        InterruptType,
+  IN EFI_CPU_INTERRUPT_HANDLER InterruptHandler
   )
 {
   //
   // Do parameter checking for EFI spec conformance
   //
-  if (InterruptType < 0 || InterruptType > 0xff) {
+  if ((InterruptType < 0) || (InterruptType > 0xff)) {
     return EFI_UNSUPPORTED;
   }
+
   //
   // Do nothing for Emu emulation
   //
@@ -373,14 +374,13 @@ EmuGetTimerValue (
   return EFI_SUCCESS;
 }
 
-
 EFI_STATUS
 EFIAPI
 EmuSetMemoryAttributes (
-  IN EFI_CPU_ARCH_PROTOCOL  *This,
-  IN EFI_PHYSICAL_ADDRESS   BaseAddress,
-  IN UINT64                 Length,
-  IN UINT64                 Attributes
+  IN EFI_CPU_ARCH_PROTOCOL *This,
+  IN EFI_PHYSICAL_ADDRESS  BaseAddress,
+  IN UINT64                Length,
+  IN UINT64                Attributes
   )
 {
   //
@@ -396,9 +396,6 @@ EmuSetMemoryAttributes (
   return EFI_UNSUPPORTED;
 }
 
-
-
-
 /**
   Callback function for idle events.
 
@@ -410,25 +407,24 @@ EmuSetMemoryAttributes (
 VOID
 EFIAPI
 IdleLoopEventCallback (
-  IN EFI_EVENT                Event,
-  IN VOID                     *Context
+  IN EFI_EVENT Event,
+  IN VOID      *Context
   )
 {
   gEmuThunk->CpuSleep ();
 }
 
-
 EFI_STATUS
 EFIAPI
 InitializeCpu (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  EFI_STATUS    Status;
-  UINT64        Frequency;
-  EFI_EVENT     IdleLoopEvent;
-  UINTN         MaxCpu;
+  EFI_STATUS  Status;
+  UINT64      Frequency;
+  EFI_EVENT   IdleLoopEvent;
+  UINTN       MaxCpu;
 
   //
   // Retrieve the frequency of the performance counter in Hz.
@@ -444,7 +440,6 @@ InitializeCpu (
 
   CpuUpdateSmbios (MaxCpu);
 
-
   Status = gBS->CreateEventEx (
                   EVT_NOTIFY_SIGNAL,
                   TPL_NOTIFY,
@@ -455,11 +450,12 @@ InitializeCpu (
                   );
   ASSERT_EFI_ERROR (Status);
 
-
   Status = gBS->InstallMultipleProtocolInterfaces (
                   &mCpuTemplate.Handle,
-                  &gEfiCpuArchProtocolGuid,   &mCpuTemplate.Cpu,
-                  &gEfiCpuIo2ProtocolGuid,    &mCpuTemplate.CpuIo,
+                  &gEfiCpuArchProtocolGuid,
+                  &mCpuTemplate.Cpu,
+                  &gEfiCpuIo2ProtocolGuid,
+                  &mCpuTemplate.CpuIo,
                   NULL
                   );
   ASSERT_EFI_ERROR (Status);

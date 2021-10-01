@@ -13,19 +13,19 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 EmuSimpleFileSystemComponentNameGetDriverName (
-  IN  EFI_COMPONENT_NAME_PROTOCOL  *This,
-  IN  CHAR8                        *Language,
-  OUT CHAR16                       **DriverName
+  IN  EFI_COMPONENT_NAME_PROTOCOL *This,
+  IN  CHAR8                       *Language,
+  OUT CHAR16                      **DriverName
   );
 
 EFI_STATUS
 EFIAPI
 EmuSimpleFileSystemComponentNameGetControllerName (
-  IN  EFI_COMPONENT_NAME_PROTOCOL                                        *This,
-  IN  EFI_HANDLE                                                         ControllerHandle,
-  IN  EFI_HANDLE                                                         ChildHandle        OPTIONAL,
-  IN  CHAR8                                                              *Language,
-  OUT CHAR16                                                             **ControllerName
+  IN  EFI_COMPONENT_NAME_PROTOCOL *This,
+  IN  EFI_HANDLE                  ControllerHandle,
+  IN  EFI_HANDLE                  ChildHandle        OPTIONAL,
+  IN  CHAR8                       *Language,
+  OUT CHAR16                      **ControllerName
   );
 
 //
@@ -43,7 +43,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gEmuSimpleFileSystem
   "en"
 };
 
-EFI_UNICODE_STRING_TABLE mEmuSimpleFileSystemDriverNameTable[] = {
+EFI_UNICODE_STRING_TABLE  mEmuSimpleFileSystemDriverNameTable[] = {
   {
     "eng;en",
     L"Emu Simple File System Driver"
@@ -96,20 +96,19 @@ EFI_UNICODE_STRING_TABLE mEmuSimpleFileSystemDriverNameTable[] = {
 EFI_STATUS
 EFIAPI
 EmuSimpleFileSystemComponentNameGetDriverName (
-  IN  EFI_COMPONENT_NAME_PROTOCOL  *This,
-  IN  CHAR8                        *Language,
-  OUT CHAR16                       **DriverName
+  IN  EFI_COMPONENT_NAME_PROTOCOL *This,
+  IN  CHAR8                       *Language,
+  OUT CHAR16                      **DriverName
   )
 {
   return LookupUnicodeString2 (
-          Language,
-          This->SupportedLanguages,
-          mEmuSimpleFileSystemDriverNameTable,
-          DriverName,
-          (BOOLEAN)(This == &gEmuSimpleFileSystemComponentName)
-          );
+           Language,
+           This->SupportedLanguages,
+           mEmuSimpleFileSystemDriverNameTable,
+           DriverName,
+           (BOOLEAN)(This == &gEmuSimpleFileSystemComponentName)
+           );
 }
-
 
 /**
   Retrieves a Unicode string that is the user readable name of the controller
@@ -182,16 +181,16 @@ EmuSimpleFileSystemComponentNameGetDriverName (
 EFI_STATUS
 EFIAPI
 EmuSimpleFileSystemComponentNameGetControllerName (
-  IN  EFI_COMPONENT_NAME_PROTOCOL                                        *This,
-  IN  EFI_HANDLE                                                         ControllerHandle,
-  IN  EFI_HANDLE                                                         ChildHandle        OPTIONAL,
-  IN  CHAR8                                                              *Language,
-  OUT CHAR16                                                             **ControllerName
+  IN  EFI_COMPONENT_NAME_PROTOCOL *This,
+  IN  EFI_HANDLE                  ControllerHandle,
+  IN  EFI_HANDLE                  ChildHandle        OPTIONAL,
+  IN  CHAR8                       *Language,
+  OUT CHAR16                      **ControllerName
   )
 {
-  EFI_STATUS                        Status;
-  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL   *SimpleFileSystem;
-  EMU_SIMPLE_FILE_SYSTEM_PRIVATE    *Private;
+  EFI_STATUS                       Status;
+  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL  *SimpleFileSystem;
+  EMU_SIMPLE_FILE_SYSTEM_PRIVATE   *Private;
 
   //
   // This is a device driver, so ChildHandle must be NULL.
@@ -211,13 +210,14 @@ EmuSimpleFileSystemComponentNameGetControllerName (
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
+
   //
   // Get our context back
   //
   Status = gBS->OpenProtocol (
                   ControllerHandle,
                   &gEfiSimpleFileSystemProtocolGuid,
-                  (VOID**)&SimpleFileSystem,
+                  (VOID **)&SimpleFileSystem,
                   gEmuSimpleFileSystemDriverBinding.DriverBindingHandle,
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
@@ -229,10 +229,10 @@ EmuSimpleFileSystemComponentNameGetControllerName (
   Private = EMU_SIMPLE_FILE_SYSTEM_PRIVATE_DATA_FROM_THIS (SimpleFileSystem);
 
   return LookupUnicodeString2 (
-          Language,
-          This->SupportedLanguages,
-          Private->ControllerNameTable,
-          ControllerName,
-          (BOOLEAN)(This == &gEmuSimpleFileSystemComponentName)
-          );
+           Language,
+           This->SupportedLanguages,
+           Private->ControllerNameTable,
+           ControllerName,
+           (BOOLEAN)(This == &gEmuSimpleFileSystemComponentName)
+           );
 }
