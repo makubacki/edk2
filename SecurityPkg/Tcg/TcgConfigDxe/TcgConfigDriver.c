@@ -24,15 +24,15 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 TcgConfigDriverEntryPoint (
-  IN EFI_HANDLE          ImageHandle,
-  IN EFI_SYSTEM_TABLE    *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  EFI_STATUS                Status;
-  TCG_CONFIG_PRIVATE_DATA   *PrivateData;
-  EFI_TCG_PROTOCOL          *TcgProtocol;
+  EFI_STATUS               Status;
+  TCG_CONFIG_PRIVATE_DATA  *PrivateData;
+  EFI_TCG_PROTOCOL         *TcgProtocol;
 
-  if (!CompareGuid (PcdGetPtr(PcdTpmInstanceGuid), &gEfiTpmDeviceInstanceTpm12Guid)){
+  if (!CompareGuid (PcdGetPtr (PcdTpmInstanceGuid), &gEfiTpmDeviceInstanceTpm12Guid)) {
     DEBUG ((EFI_D_ERROR, "No TPM12 instance required!\n"));
     return EFI_UNSUPPORTED;
   }
@@ -43,7 +43,7 @@ TcgConfigDriverEntryPoint (
     return Status;
   }
 
-  Status = gBS->LocateProtocol (&gEfiTcgProtocolGuid, NULL, (VOID **) &TcgProtocol);
+  Status = gBS->LocateProtocol (&gEfiTcgProtocolGuid, NULL, (VOID **)&TcgProtocol);
   if (EFI_ERROR (Status)) {
     TcgProtocol = NULL;
   }
@@ -120,16 +120,16 @@ ErrorExit:
 EFI_STATUS
 EFIAPI
 TcgConfigDriverUnload (
-  IN EFI_HANDLE  ImageHandle
+  IN EFI_HANDLE ImageHandle
   )
 {
-  EFI_STATUS                  Status;
-  TCG_CONFIG_PRIVATE_DATA   *PrivateData;
+  EFI_STATUS               Status;
+  TCG_CONFIG_PRIVATE_DATA  *PrivateData;
 
   Status = gBS->HandleProtocol (
                   ImageHandle,
                   &gEfiCallerIdGuid,
-                  (VOID **) &PrivateData
+                  (VOID **)&PrivateData
                   );
   if (EFI_ERROR (Status)) {
     return Status;

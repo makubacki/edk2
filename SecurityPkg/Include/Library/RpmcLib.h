@@ -23,7 +23,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 RequestMonotonicCounter (
-  OUT UINT32  *CounterValue
+  OUT UINT32 *CounterValue
   );
 
 /**
@@ -40,4 +40,3 @@ IncrementMonotonicCounter (
   );
 
 #endif
-

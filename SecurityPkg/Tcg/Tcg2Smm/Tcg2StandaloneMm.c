@@ -40,8 +40,8 @@ Tcg2NotifyMmReady (
 **/
 BOOLEAN
 IsBufferOutsideMmValid (
-  IN EFI_PHYSICAL_ADDRESS  Buffer,
-  IN UINT64                Length
+  IN EFI_PHYSICAL_ADDRESS Buffer,
+  IN UINT64               Length
   )
 {
   return MmIsBufferOutsideMmValid (Buffer, Length);
@@ -63,8 +63,8 @@ IsBufferOutsideMmValid (
 EFI_STATUS
 EFIAPI
 InitializeTcgStandaloneMm (
-  IN EFI_HANDLE                  ImageHandle,
-  IN EFI_MM_SYSTEM_TABLE         *SystemTable
+  IN EFI_HANDLE          ImageHandle,
+  IN EFI_MM_SYSTEM_TABLE *SystemTable
   )
 {
   return InitializeTcgCommon ();

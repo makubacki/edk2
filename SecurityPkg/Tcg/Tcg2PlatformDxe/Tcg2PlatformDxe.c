@@ -26,12 +26,12 @@
 VOID
 EFIAPI
 SmmReadyToLockEventCallBack (
-  IN EFI_EVENT  Event,
-  IN VOID       *Context
+  IN EFI_EVENT Event,
+  IN VOID      *Context
   )
 {
-  EFI_STATUS   Status;
-  VOID         *Interface;
+  EFI_STATUS  Status;
+  VOID        *Interface;
 
   //
   // Try to locate it because EfiCreateProtocolNotifyEvent will trigger it once when registration.
@@ -43,7 +43,7 @@ SmmReadyToLockEventCallBack (
                   &Interface
                   );
   if (EFI_ERROR (Status)) {
-    return ;
+    return;
   }
 
   ConfigureTpmPlatformHierarchy ();
@@ -64,8 +64,8 @@ SmmReadyToLockEventCallBack (
 EFI_STATUS
 EFIAPI
 Tcg2PlatformDxeEntryPoint (
-  IN    EFI_HANDLE                  ImageHandle,
-  IN    EFI_SYSTEM_TABLE            *SystemTable
+  IN    EFI_HANDLE       ImageHandle,
+  IN    EFI_SYSTEM_TABLE *SystemTable
   )
 {
   VOID       *Registration;

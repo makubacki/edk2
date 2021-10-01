@@ -22,7 +22,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 Tpm12Startup (
-  IN TPM_STARTUP_TYPE          TpmSt
+  IN TPM_STARTUP_TYPE TpmSt
   );
 
 /**
@@ -52,26 +52,26 @@ Tpm12ForceClear (
 #pragma pack(1)
 
 typedef struct {
-  UINT16                            sizeOfSelect;
-  UINT8                             pcrSelect[3];
+  UINT16    sizeOfSelect;
+  UINT8     pcrSelect[3];
 } TPM12_PCR_SELECTION;
 
 typedef struct {
-  TPM12_PCR_SELECTION               pcrSelection;
-  TPM_LOCALITY_SELECTION            localityAtRelease;
-  TPM_COMPOSITE_HASH                digestAtRelease;
+  TPM12_PCR_SELECTION       pcrSelection;
+  TPM_LOCALITY_SELECTION    localityAtRelease;
+  TPM_COMPOSITE_HASH        digestAtRelease;
 } TPM12_PCR_INFO_SHORT;
 
 typedef struct {
-  TPM_STRUCTURE_TAG               tag;
-  TPM_NV_INDEX                    nvIndex;
-  TPM12_PCR_INFO_SHORT            pcrInfoRead;
-  TPM12_PCR_INFO_SHORT            pcrInfoWrite;
-  TPM_NV_ATTRIBUTES               permission;
-  BOOLEAN                         bReadSTClear;
-  BOOLEAN                         bWriteSTClear;
-  BOOLEAN                         bWriteDefine;
-  UINT32                          dataSize;
+  TPM_STRUCTURE_TAG       tag;
+  TPM_NV_INDEX            nvIndex;
+  TPM12_PCR_INFO_SHORT    pcrInfoRead;
+  TPM12_PCR_INFO_SHORT    pcrInfoWrite;
+  TPM_NV_ATTRIBUTES       permission;
+  BOOLEAN                 bReadSTClear;
+  BOOLEAN                 bWriteSTClear;
+  BOOLEAN                 bWriteDefine;
+  UINT32                  dataSize;
 } TPM12_NV_DATA_PUBLIC;
 
 #pragma pack()
@@ -88,8 +88,8 @@ typedef struct {
 EFI_STATUS
 EFIAPI
 Tpm12NvDefineSpace (
-  IN TPM12_NV_DATA_PUBLIC  *PubInfo,
-  IN TPM_ENCAUTH           *EncAuth
+  IN TPM12_NV_DATA_PUBLIC *PubInfo,
+  IN TPM_ENCAUTH          *EncAuth
   );
 
 /**
@@ -106,10 +106,10 @@ Tpm12NvDefineSpace (
 EFI_STATUS
 EFIAPI
 Tpm12NvReadValue (
-  IN TPM_NV_INDEX   NvIndex,
-  IN UINT32         Offset,
-  IN OUT UINT32     *DataSize,
-  OUT UINT8         *Data
+  IN TPM_NV_INDEX NvIndex,
+  IN UINT32       Offset,
+  IN OUT UINT32   *DataSize,
+  OUT UINT8       *Data
   );
 
 /**
@@ -126,10 +126,10 @@ Tpm12NvReadValue (
 EFI_STATUS
 EFIAPI
 Tpm12NvWriteValue (
-  IN TPM_NV_INDEX   NvIndex,
-  IN UINT32         Offset,
-  IN UINT32         DataSize,
-  IN UINT8          *Data
+  IN TPM_NV_INDEX NvIndex,
+  IN UINT32       Offset,
+  IN UINT32       DataSize,
+  IN UINT8        *Data
   );
 
 /**
@@ -148,9 +148,9 @@ Extend a TPM PCR.
 EFI_STATUS
 EFIAPI
 Tpm12Extend (
-  IN  TPM_DIGEST    *DigestToExtend,
-  IN  TPM_PCRINDEX  PcrIndex,
-  OUT TPM_DIGEST    *NewPcrValue
+  IN  TPM_DIGEST   *DigestToExtend,
+  IN  TPM_PCRINDEX PcrIndex,
+  OUT TPM_DIGEST   *NewPcrValue
   );
 
 /**
@@ -167,7 +167,7 @@ Send TSC_PhysicalPresence command to TPM.
 EFI_STATUS
 EFIAPI
 Tpm12PhysicalPresence (
-  IN      TPM_PHYSICAL_PRESENCE     PhysicalPresence
+  IN      TPM_PHYSICAL_PRESENCE PhysicalPresence
   );
 
 /**
@@ -199,7 +199,7 @@ Get TPM capability permanent flags.
 EFI_STATUS
 EFIAPI
 Tpm12GetCapabilityFlagPermanent (
-  OUT TPM_PERMANENT_FLAGS  *TpmPermanentFlags
+  OUT TPM_PERMANENT_FLAGS *TpmPermanentFlags
   );
 
 /**
@@ -214,6 +214,7 @@ Get TPM capability volatile flags.
 EFI_STATUS
 EFIAPI
 Tpm12GetCapabilityFlagVolatile (
-  OUT TPM_STCLEAR_FLAGS                 *VolatileFlags
+  OUT TPM_STCLEAR_FLAGS *VolatileFlags
   );
+
 #endif

@@ -20,7 +20,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include <Ppi/EndOfPeiPhase.h>
 
-#define MAX_NEW_AUTHORIZATION_SIZE        SHA512_DIGEST_SIZE
+#define MAX_NEW_AUTHORIZATION_SIZE  SHA512_DIGEST_SIZE
 
 /**
   This function handles PlatformInit task at the end of PEI
@@ -36,19 +36,19 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 PlatformInitEndOfPei (
-  IN CONST EFI_PEI_SERVICES     **PeiServices,
-  IN EFI_PEI_NOTIFY_DESCRIPTOR  *NotifyDescriptor,
-  IN VOID                       *Ppi
+  IN CONST EFI_PEI_SERVICES    **PeiServices,
+  IN EFI_PEI_NOTIFY_DESCRIPTOR *NotifyDescriptor,
+  IN VOID                      *Ppi
   )
 {
-  VOID *TcgEventLog;
+  VOID  *TcgEventLog;
 
   //
   // Try to get TcgEventLog in S3 to see if S3 error is reported.
   //
-  TcgEventLog = GetFirstGuidHob(&gTcgEventEntryHobGuid);
+  TcgEventLog = GetFirstGuidHob (&gTcgEventEntryHobGuid);
   if (TcgEventLog == NULL) {
-    TcgEventLog = GetFirstGuidHob(&gTcgEvent2EntryHobGuid);
+    TcgEventLog = GetFirstGuidHob (&gTcgEvent2EntryHobGuid);
   }
 
   if (TcgEventLog == NULL) {
@@ -85,15 +85,15 @@ static EFI_PEI_NOTIFY_DESCRIPTOR  mEndOfPeiNotifyList = {
 EFI_STATUS
 EFIAPI
 Tcg2PlatformPeiEntryPoint (
-  IN       EFI_PEI_FILE_HANDLE  FileHandle,
-  IN CONST EFI_PEI_SERVICES     **PeiServices
+  IN       EFI_PEI_FILE_HANDLE FileHandle,
+  IN CONST EFI_PEI_SERVICES    **PeiServices
   )
 {
-  EFI_STATUS               Status;
-  EFI_BOOT_MODE            BootMode;
+  EFI_STATUS     Status;
+  EFI_BOOT_MODE  BootMode;
 
   Status = PeiServicesGetBootMode (&BootMode);
-  ASSERT_EFI_ERROR(Status);
+  ASSERT_EFI_ERROR (Status);
 
   if (BootMode != BOOT_ON_S3_RESUME) {
     return EFI_SUCCESS;
