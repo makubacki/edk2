@@ -22,8 +22,8 @@ extern UINT8  SmbiosMinorVersion;
 //
 // SHOW_ALL: WaitEnter() not wait input.
 //
-#define SHOW_ALL          0x04
-#define SHOW_STATISTICS   0x05
+#define SHOW_ALL         0x04
+#define SHOW_STATISTICS  0x05
 
 #define AS_UINT16(pData)  (*((UINT16 *) pData))
 #define AS_UINT32(pData)  (*((UINT32 *) pData))
@@ -37,8 +37,8 @@ extern UINT8  SmbiosMinorVersion;
 **/
 VOID
 SmbiosPrintEPSInfo (
-  IN  SMBIOS_TABLE_ENTRY_POINT  *SmbiosTable,
-  IN  UINT8                     Option
+  IN  SMBIOS_TABLE_ENTRY_POINT *SmbiosTable,
+  IN  UINT8                    Option
   );
 
 /**
@@ -49,8 +49,8 @@ SmbiosPrintEPSInfo (
 **/
 VOID
 Smbios64BitPrintEPSInfo (
-  IN  SMBIOS_TABLE_3_0_ENTRY_POINT  *SmbiosTable,
-  IN  UINT8                         Option
+  IN  SMBIOS_TABLE_3_0_ENTRY_POINT *SmbiosTable,
+  IN  UINT8                        Option
   );
 
 /**
@@ -65,8 +65,8 @@ Smbios64BitPrintEPSInfo (
 **/
 EFI_STATUS
 SmbiosPrintStructure (
-  IN  SMBIOS_STRUCTURE_POINTER  *Struct,
-  IN  UINT8                     Option
+  IN  SMBIOS_STRUCTURE_POINTER *Struct,
+  IN  UINT8                    Option
   );
 
 /**
@@ -77,8 +77,8 @@ SmbiosPrintStructure (
 **/
 VOID
 DisplayBiosCharacteristics (
-  IN UINT64  Chara,
-  IN UINT8   Option
+  IN UINT64 Chara,
+  IN UINT8  Option
   );
 
 /**
@@ -274,7 +274,7 @@ Bits 2:0 Cache Level
 VOID
 DisplayCacheConfiguration (
   IN UINT16 CacheConfiguration,
-  IN UINT8 Option
+  IN UINT8  Option
   );
 
 /**
@@ -288,9 +288,9 @@ DisplayCacheConfiguration (
 **/
 VOID
 DisplaySystemSlotId (
-  IN UINT16  SlotId,
-  IN UINT8   SlotType,
-  IN UINT8   Option
+  IN UINT16 SlotId,
+  IN UINT8  SlotType,
+  IN UINT8  Option
   );
 
 /**
@@ -308,8 +308,8 @@ DisplaySystemSlotId (
 **/
 VOID
 DisplaySBDSManufactureDate (
-  IN UINT16  Date,
-  IN UINT8   Option
+  IN UINT16 Date,
+  IN UINT8  Option
   );
 
 /**
@@ -387,8 +387,8 @@ DisplayHardwareSecuritySettings (
 **/
 VOID
 DisplayOBRAConnections (
-  IN UINT8   Connections,
-  IN UINT8   Option
+  IN UINT8 Connections,
+  IN UINT8 Option
   );
 
 /**
@@ -411,8 +411,8 @@ DisplaySystemBootStatus (
 **/
 VOID
 DisplaySPSCharacteristics (
-  IN UINT16  Characteristics,
-  IN UINT8   Option
+  IN UINT16 Characteristics,
+  IN UINT8  Option
   );
 
 /**
@@ -423,8 +423,8 @@ DisplaySPSCharacteristics (
 **/
 VOID
 DisplayTpmDeviceCharacteristics (
-  IN UINT64  Chara,
-  IN UINT8   Option
+  IN UINT64 Chara,
+  IN UINT8  Option
   );
 
 /**
@@ -438,4 +438,5 @@ DisplayProcessorArchitectureType (
   IN UINT8 Key,
   IN UINT8 Option
   );
+
 #endif

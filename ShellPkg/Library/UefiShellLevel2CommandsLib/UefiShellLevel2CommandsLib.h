@@ -42,8 +42,8 @@
 #include <Library/SortLib.h>
 #include <Library/FileHandleLib.h>
 
-extern CONST  CHAR16                            mFileName[];
-extern        EFI_HII_HANDLE                    gShellLevel2HiiHandle;
+extern CONST  CHAR16          mFileName[];
+extern        EFI_HII_HANDLE  gShellLevel2HiiHandle;
 
 /**
   Function for 'attrib' command.
@@ -54,8 +54,8 @@ extern        EFI_HII_HANDLE                    gShellLevel2HiiHandle;
 SHELL_STATUS
 EFIAPI
 ShellCommandRunAttrib (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -67,8 +67,8 @@ ShellCommandRunAttrib (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunDate (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -80,8 +80,8 @@ ShellCommandRunDate (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunTime (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -93,8 +93,8 @@ ShellCommandRunTime (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunLoad (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -106,8 +106,8 @@ ShellCommandRunLoad (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunLs (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -119,8 +119,8 @@ ShellCommandRunLs (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunMap (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -132,8 +132,8 @@ ShellCommandRunMap (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunReset (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -145,8 +145,8 @@ ShellCommandRunReset (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunTimeZone (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -158,8 +158,8 @@ ShellCommandRunTimeZone (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunSet (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -171,8 +171,8 @@ ShellCommandRunSet (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunMkDir (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -184,8 +184,8 @@ ShellCommandRunMkDir (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunCd (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -197,8 +197,8 @@ ShellCommandRunCd (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunCp (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -210,8 +210,8 @@ ShellCommandRunCp (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunParse (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -223,8 +223,8 @@ ShellCommandRunParse (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunRm (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -236,8 +236,8 @@ ShellCommandRunRm (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunMv (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -256,9 +256,9 @@ ShellCommandRunMv (
   @retval NULL            a fully qualified path could not be discovered.
   @retval other           pointer to a fuly qualified path.
 **/
-CHAR16*
-GetFullyQualifiedPath(
-  IN CONST CHAR16* Path
+CHAR16 *
+GetFullyQualifiedPath (
+  IN CONST CHAR16 *Path
   );
 
 /**
@@ -285,7 +285,7 @@ VerifyIntermediateDirectories (
 
 **/
 INTN
-StrniCmp(
+StrniCmp (
   IN CONST CHAR16 *Source,
   IN CONST CHAR16 *Target,
   IN CONST UINTN  Count
@@ -303,8 +303,8 @@ StrniCmp(
 **/
 EFI_STATUS
 ShellLevel2StripQuotes (
-  IN  CONST CHAR16     *OriginalString,
-  OUT CHAR16           **CleanString
+  IN  CONST CHAR16 *OriginalString,
+  OUT CHAR16       **CleanString
   );
 
 /**
@@ -316,8 +316,8 @@ ShellLevel2StripQuotes (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunVol (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -334,7 +334,7 @@ ShellCommandRunVol (
   @retval SHELL_SUCCESS   The source file was copied to the destination
 **/
 SHELL_STATUS
-CopySingleFile(
+CopySingleFile (
   IN CONST CHAR16 *Source,
   IN CONST CHAR16 *Dest,
   OUT VOID        **Resp,
@@ -354,10 +354,9 @@ CopySingleFile(
   @retval SHELL_DEVICE_ERROR  A device error occurred reading this Node.
 **/
 SHELL_STATUS
-CascadeDelete(
-  IN EFI_SHELL_FILE_INFO  *Node,
-  IN CONST BOOLEAN        Quiet
+CascadeDelete (
+  IN EFI_SHELL_FILE_INFO *Node,
+  IN CONST BOOLEAN       Quiet
   );
 
 #endif
-

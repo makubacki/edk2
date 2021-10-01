@@ -62,9 +62,9 @@ HMemImageSetMemOffsetSize (
 **/
 EFI_STATUS
 HMemImageRead (
-  IN UINTN     Offset,
-  IN UINTN     Size,
-  IN BOOLEAN   Recover
+  IN UINTN   Offset,
+  IN UINTN   Size,
+  IN BOOLEAN Recover
   );
 
 /**

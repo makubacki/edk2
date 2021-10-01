@@ -38,56 +38,59 @@
 EFI_STATUS
 EFIAPI
 ShellCEntryLib (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
   INTN                           ReturnFromMain;
-  EFI_SHELL_PARAMETERS_PROTOCOL *EfiShellParametersProtocol;
-  EFI_SHELL_INTERFACE           *EfiShellInterface;
-  EFI_STATUS                    Status;
+  EFI_SHELL_PARAMETERS_PROTOCOL  *EfiShellParametersProtocol;
+  EFI_SHELL_INTERFACE            *EfiShellInterface;
+  EFI_STATUS                     Status;
 
   ReturnFromMain = -1;
   EfiShellParametersProtocol = NULL;
   EfiShellInterface = NULL;
 
-  Status = SystemTable->BootServices->OpenProtocol(ImageHandle,
-                             &gEfiShellParametersProtocolGuid,
-                             (VOID **)&EfiShellParametersProtocol,
-                             ImageHandle,
-                             NULL,
-                             EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                            );
-  if (!EFI_ERROR(Status)) {
+  Status = SystemTable->BootServices->OpenProtocol (
+                                        ImageHandle,
+                                        &gEfiShellParametersProtocolGuid,
+                                        (VOID **)&EfiShellParametersProtocol,
+                                        ImageHandle,
+                                        NULL,
+                                        EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                                        );
+  if (!EFI_ERROR (Status)) {
     //
     // use shell 2.0 interface
     //
     ReturnFromMain = ShellAppMain (
                        EfiShellParametersProtocol->Argc,
                        EfiShellParametersProtocol->Argv
-                      );
+                       );
   } else {
     //
     // try to get shell 1.0 interface instead.
     //
-    Status = SystemTable->BootServices->OpenProtocol(ImageHandle,
-                               &gEfiShellInterfaceGuid,
-                               (VOID **)&EfiShellInterface,
-                               ImageHandle,
-                               NULL,
-                               EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                              );
-    if (!EFI_ERROR(Status)) {
+    Status = SystemTable->BootServices->OpenProtocol (
+                                          ImageHandle,
+                                          &gEfiShellInterfaceGuid,
+                                          (VOID **)&EfiShellInterface,
+                                          ImageHandle,
+                                          NULL,
+                                          EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                                          );
+    if (!EFI_ERROR (Status)) {
       //
       // use shell 1.0 interface
       //
       ReturnFromMain = ShellAppMain (
                          EfiShellInterface->Argc,
                          EfiShellInterface->Argv
-                        );
+                         );
     } else {
-      ASSERT(FALSE);
+      ASSERT (FALSE);
     }
   }
+
   return ReturnFromMain;
 }

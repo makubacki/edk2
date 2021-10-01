@@ -39,7 +39,7 @@
   @retval EFI_NOT_FOUND         There is no help text available for Command.
 **/
 EFI_STATUS
-ProcessManFile(
+ProcessManFile (
   IN CONST CHAR16 *ManFileName,
   IN CONST CHAR16 *Command,
   IN CONST CHAR16 *Sections OPTIONAL,
@@ -66,13 +66,12 @@ ProcessManFile(
                                 an allocated buffer.
 **/
 EFI_STATUS
-ManFileFindSections(
-  IN SHELL_FILE_HANDLE  Handle,
-  IN CONST CHAR16       *Sections,
-  OUT CHAR16            **HelpText,
-  OUT UINTN             *HelpSize,
-  IN BOOLEAN            Ascii
+ManFileFindSections (
+  IN SHELL_FILE_HANDLE Handle,
+  IN CONST CHAR16      *Sections,
+  OUT CHAR16           **HelpText,
+  OUT UINTN            *HelpSize,
+  IN BOOLEAN           Ascii
   );
 
 #endif //_SHELL_MAN_FILE_PARSER_HEADER_
-

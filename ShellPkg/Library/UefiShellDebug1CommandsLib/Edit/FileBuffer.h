@@ -60,7 +60,7 @@ FileBufferRefresh (
 **/
 EFI_STATUS
 FileBufferHandleInput (
-  IN CONST EFI_INPUT_KEY * Key
+  IN CONST EFI_INPUT_KEY *Key
   );
 
 /**
@@ -182,8 +182,8 @@ FileBufferPasteLine (
 **/
 EFI_STATUS
 FileBufferSearch (
-  IN CONST CHAR16  *Str,
-  IN CONST UINTN Offset
+  IN CONST CHAR16 *Str,
+  IN CONST UINTN  Offset
   );
 
 /**
@@ -199,8 +199,8 @@ FileBufferSearch (
 **/
 EFI_STATUS
 FileBufferReplace (
-  IN CONST CHAR16   *Replace,
-  IN CONST UINTN    SearchLen
+  IN CONST CHAR16 *Replace,
+  IN CONST UINTN  SearchLen
   );
 
 /**

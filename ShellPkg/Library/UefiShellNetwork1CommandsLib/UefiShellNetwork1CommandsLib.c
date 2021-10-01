@@ -7,15 +7,15 @@
 **/
 #include "UefiShellNetwork1CommandsLib.h"
 
-CONST CHAR16 gShellNetwork1FileName[] = L"ShellCommands";
-EFI_HII_HANDLE gShellNetwork1HiiHandle = NULL;
+CONST CHAR16    gShellNetwork1FileName[] = L"ShellCommands";
+EFI_HII_HANDLE  gShellNetwork1HiiHandle  = NULL;
 
 /**
   return the file name of the help text file if not using HII.
 
   @return The string pointer to the file name.
 **/
-CONST CHAR16*
+CONST CHAR16 *
 EFIAPI
 ShellCommandGetManFileNameNetwork1 (
   VOID
@@ -38,8 +38,8 @@ ShellCommandGetManFileNameNetwork1 (
 EFI_STATUS
 EFIAPI
 ShellNetwork1CommandsLibConstructor (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
   gShellNetwork1HiiHandle = NULL;
@@ -47,7 +47,7 @@ ShellNetwork1CommandsLibConstructor (
   //
   // check our bit of the profiles mask
   //
-  if ((PcdGet8(PcdShellProfileMask) & BIT3) == 0) {
+  if ((PcdGet8 (PcdShellProfileMask) & BIT3) == 0) {
     return (EFI_SUCCESS);
   }
 
@@ -55,11 +55,12 @@ ShellNetwork1CommandsLibConstructor (
   if (gShellNetwork1HiiHandle == NULL) {
     return (EFI_DEVICE_ERROR);
   }
+
   //
   // install our shell command handlers
   //
-  ShellCommandRegisterCommandName(L"ping",    ShellCommandRunPing     , ShellCommandGetManFileNameNetwork1, 0, L"network1", TRUE , gShellNetwork1HiiHandle, STRING_TOKEN(STR_GET_HELP_PING));
-  ShellCommandRegisterCommandName(L"ifconfig",ShellCommandRunIfconfig , ShellCommandGetManFileNameNetwork1, 0, L"network1", TRUE , gShellNetwork1HiiHandle, STRING_TOKEN(STR_GET_HELP_IFCONFIG));
+  ShellCommandRegisterCommandName (L"ping", ShellCommandRunPing, ShellCommandGetManFileNameNetwork1, 0, L"network1", TRUE, gShellNetwork1HiiHandle, STRING_TOKEN (STR_GET_HELP_PING));
+  ShellCommandRegisterCommandName (L"ifconfig", ShellCommandRunIfconfig, ShellCommandGetManFileNameNetwork1, 0, L"network1", TRUE, gShellNetwork1HiiHandle, STRING_TOKEN (STR_GET_HELP_IFCONFIG));
 
   return (EFI_SUCCESS);
 }
@@ -73,12 +74,13 @@ ShellNetwork1CommandsLibConstructor (
 EFI_STATUS
 EFIAPI
 ShellNetwork1CommandsLibDestructor (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
   if (gShellNetwork1HiiHandle != NULL) {
-    HiiRemovePackages(gShellNetwork1HiiHandle);
+    HiiRemovePackages (gShellNetwork1HiiHandle);
   }
+
   return (EFI_SUCCESS);
 }

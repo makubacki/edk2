@@ -44,12 +44,12 @@ StatusBarCleanup (
 **/
 EFI_STATUS
 StatusBarRefresh (
-  IN BOOLEAN  EditorFirst,
-  IN UINTN    LastRow,
-  IN UINTN    LastCol,
-  IN UINTN    FileRow,
-  IN UINTN    FileCol,
-  IN BOOLEAN  InsertMode
+  IN BOOLEAN EditorFirst,
+  IN UINTN   LastRow,
+  IN UINTN   LastCol,
+  IN UINTN   FileRow,
+  IN UINTN   FileCol,
+  IN BOOLEAN InsertMode
   );
 
 /**
@@ -70,7 +70,7 @@ StatusBarSetStatusString (
 
   @return The string that is used.
 **/
-CONST CHAR16*
+CONST CHAR16 *
 StatusBarGetString (
   VOID
   );
@@ -79,7 +79,7 @@ StatusBarGetString (
   Function to set the need refresh boolean to TRUE.
 **/
 VOID
-StatusBarSetRefresh(
+StatusBarSetRefresh (
   VOID
   );
 
@@ -89,7 +89,7 @@ StatusBarSetRefresh(
   @retval TRUE    The status bar needs to be refreshed.
 **/
 BOOLEAN
-StatusBarGetRefresh(
+StatusBarGetRefresh (
   VOID
   );
 

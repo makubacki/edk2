@@ -57,7 +57,7 @@ HClipBoardSet (
 **/
 UINTN
 HClipBoardGet (
-  OUT UINT8  **Buffer
+  OUT UINT8 **Buffer
   );
 
 #endif

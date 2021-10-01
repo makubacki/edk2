@@ -21,9 +21,9 @@
 UINTN
 EFIAPI
 ShellDumpBufferToFile (
-  IN CONST CHAR16* FileNameBuffer,
-  IN CONST VOID*   Buffer,
-  IN CONST UINTN   BufferSize
+  IN CONST CHAR16 *FileNameBuffer,
+  IN CONST VOID   *Buffer,
+  IN CONST UINTN  BufferSize
   );
 
 /**
@@ -39,8 +39,8 @@ ShellDumpBufferToFile (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunAcpiView (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 #endif // UEFI_SHELL_ACPIVIEW_COMMAND_LIB_H_

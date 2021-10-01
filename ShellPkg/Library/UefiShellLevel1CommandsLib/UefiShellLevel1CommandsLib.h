@@ -33,7 +33,7 @@
 #include <Library/HiiLib.h>
 #include <Library/FileHandleLib.h>
 
-extern        EFI_HII_HANDLE                    gShellLevel1HiiHandle;
+extern        EFI_HII_HANDLE  gShellLevel1HiiHandle;
 
 /**
   Function for 'stall' command.
@@ -44,8 +44,8 @@ extern        EFI_HII_HANDLE                    gShellLevel1HiiHandle;
 SHELL_STATUS
 EFIAPI
 ShellCommandRunStall (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -57,8 +57,8 @@ ShellCommandRunStall (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunExit (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -70,8 +70,8 @@ ShellCommandRunExit (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunEndIf (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -83,8 +83,8 @@ ShellCommandRunEndIf (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunFor (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -96,8 +96,8 @@ ShellCommandRunFor (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunEndFor (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -109,8 +109,8 @@ ShellCommandRunEndFor (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunIf (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -122,8 +122,8 @@ ShellCommandRunIf (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunGoto (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -135,10 +135,9 @@ ShellCommandRunGoto (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunShift (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
-
 
 /**
   Function for 'else' command.
@@ -149,8 +148,8 @@ ShellCommandRunShift (
 SHELL_STATUS
 EFIAPI
 ShellCommandRunElse (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 ///
@@ -189,15 +188,14 @@ LIST_ENTRY *
 **/
 BOOLEAN
 MoveToTag (
-  IN CONST LIST_MANIP_FUNC      Function,
-  IN CONST CHAR16               *DecrementerTag,
-  IN CONST CHAR16               *IncrementerTag,
-  IN CONST CHAR16               *Label OPTIONAL,
-  IN OUT SCRIPT_FILE            *ScriptFile,
-  IN CONST BOOLEAN              MovePast,
-  IN CONST BOOLEAN              FindOnly,
-  IN CONST BOOLEAN              WrapAroundScript
+  IN CONST LIST_MANIP_FUNC Function,
+  IN CONST CHAR16          *DecrementerTag,
+  IN CONST CHAR16          *IncrementerTag,
+  IN CONST CHAR16          *Label OPTIONAL,
+  IN OUT SCRIPT_FILE       *ScriptFile,
+  IN CONST BOOLEAN         MovePast,
+  IN CONST BOOLEAN         FindOnly,
+  IN CONST BOOLEAN         WrapAroundScript
   );
 
 #endif
-

@@ -23,11 +23,10 @@
 **/
 EFI_STATUS
 Compress (
-  IN      VOID    *SrcBuffer,
-  IN      UINT64  SrcSize,
-  IN      VOID    *DstBuffer,
-  IN OUT  UINT64  *DstSize
+  IN      VOID   *SrcBuffer,
+  IN      UINT64 SrcSize,
+  IN      VOID   *DstBuffer,
+  IN OUT  UINT64 *DstSize
   );
 
 #endif
-
