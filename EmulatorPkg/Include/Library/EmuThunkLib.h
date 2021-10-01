@@ -10,9 +10,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include <Protocol/EmuThunk.h>
 
-
-extern EMU_THUNK_PROTOCOL   *gEmuThunk;
-
+extern EMU_THUNK_PROTOCOL  *gEmuThunk;
 
 /**
   Serach the EMU IO Thunk database for a matching EMU IO Thunk
@@ -28,9 +26,8 @@ extern EMU_THUNK_PROTOCOL   *gEmuThunk;
 EMU_IO_THUNK_PROTOCOL *
 EFIAPI
 GetIoThunkInstance (
-  IN  EFI_GUID  *Protocol,
-  IN  UINTN     Instance
+  IN  EFI_GUID *Protocol,
+  IN  UINTN    Instance
   );
-
 
 #endif

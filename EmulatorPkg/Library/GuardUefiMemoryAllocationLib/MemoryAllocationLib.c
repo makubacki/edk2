@@ -15,9 +15,7 @@
 
 **/
 
-
 #include <Uefi.h>
-
 
 #include <Library/MemoryAllocationLib.h>
 #include <Library/UefiBootServicesTableLib.h>
@@ -40,8 +38,8 @@
 **/
 VOID *
 InternalAllocatePages (
-  IN EFI_MEMORY_TYPE  MemoryType,
-  IN UINTN            Pages
+  IN EFI_MEMORY_TYPE MemoryType,
+  IN UINTN           Pages
   )
 {
   EFI_STATUS            Status;
@@ -70,7 +68,7 @@ InternalAllocatePages (
 VOID *
 EFIAPI
 AllocatePages (
-  IN UINTN  Pages
+  IN UINTN Pages
   )
 {
   return InternalAllocatePages (EfiBootServicesData, Pages);
@@ -92,7 +90,7 @@ AllocatePages (
 VOID *
 EFIAPI
 AllocateRuntimePages (
-  IN UINTN  Pages
+  IN UINTN Pages
   )
 {
   return InternalAllocatePages (EfiRuntimeServicesData, Pages);
@@ -114,7 +112,7 @@ AllocateRuntimePages (
 VOID *
 EFIAPI
 AllocateReservedPages (
-  IN UINTN  Pages
+  IN UINTN Pages
   )
 {
   return InternalAllocatePages (EfiReservedMemoryType, Pages);
@@ -140,18 +138,18 @@ AllocateReservedPages (
 VOID
 EFIAPI
 FreePages (
-  IN VOID   *Buffer,
-  IN UINTN  Pages
+  IN VOID  *Buffer,
+  IN UINTN Pages
   )
 {
-  EFI_STATUS    Status;
+  EFI_STATUS  Status;
 
   ASSERT (Pages != 0);
   if (!gEmuThunk->Free (Buffer)) {
     // The Free thunk will not free memory allocated in emulated EFI memory.
     // The assmuption is this was allocated directly by EFI. We need this as some
     // times protocols or EFI BootServices can return dynamically allocated buffers.
-    Status = gBS->FreePages ((EFI_PHYSICAL_ADDRESS) (UINTN) Buffer, Pages);
+    Status = gBS->FreePages ((EFI_PHYSICAL_ADDRESS)(UINTN)Buffer, Pages);
     ASSERT_EFI_ERROR (Status);
   }
 }
@@ -175,17 +173,17 @@ FreePages (
 **/
 VOID *
 InternalAllocateAlignedPages (
-  IN EFI_MEMORY_TYPE  MemoryType,
-  IN UINTN            Pages,
-  IN UINTN            Alignment
+  IN EFI_MEMORY_TYPE MemoryType,
+  IN UINTN           Pages,
+  IN UINTN           Alignment
   )
 {
-  EFI_STATUS            Status;
-  VOID                  *Memory;
-  UINTN                 AlignedMemory;
-  UINTN                 AlignmentMask;
-  UINTN                 UnalignedPages;
-  UINTN                 RealPages;
+  EFI_STATUS  Status;
+  VOID        *Memory;
+  UINTN       AlignedMemory;
+  UINTN       AlignmentMask;
+  UINTN       UnalignedPages;
+  UINTN       RealPages;
 
   //
   // Alignment must be a power of two or zero.
@@ -195,12 +193,13 @@ InternalAllocateAlignedPages (
   if (Pages == 0) {
     return NULL;
   }
+
   if (Alignment > EFI_PAGE_SIZE) {
     //
     // Caculate the total number of pages since alignment is larger than page size.
     //
-    AlignmentMask  = Alignment - 1;
-    RealPages      = Pages + EFI_SIZE_TO_PAGES (Alignment);
+    AlignmentMask = Alignment - 1;
+    RealPages     = Pages + EFI_SIZE_TO_PAGES (Alignment);
     //
     // Make sure that Pages plus EFI_SIZE_TO_PAGES (Alignment) does not overflow.
     //
@@ -210,15 +209,17 @@ InternalAllocateAlignedPages (
     if (Memory != NULL) {
       return NULL;
     }
-    AlignedMemory  = ((UINTN) Memory + AlignmentMask) & ~AlignmentMask;
-    UnalignedPages = EFI_SIZE_TO_PAGES (AlignedMemory - (UINTN) Memory);
+
+    AlignedMemory  = ((UINTN)Memory + AlignmentMask) & ~AlignmentMask;
+    UnalignedPages = EFI_SIZE_TO_PAGES (AlignedMemory - (UINTN)Memory);
     if (UnalignedPages > 0) {
       //
       // Free first unaligned page(s).
       //
       FreePages (Memory, UnalignedPages);
     }
-    Memory         = (VOID *) (AlignedMemory + EFI_PAGES_TO_SIZE (Pages));
+
+    Memory = (VOID *)(AlignedMemory + EFI_PAGES_TO_SIZE (Pages));
     UnalignedPages = RealPages - Pages - UnalignedPages;
     if (UnalignedPages > 0) {
       //
@@ -234,9 +235,11 @@ InternalAllocateAlignedPages (
     if (Memory != NULL) {
       return NULL;
     }
-    AlignedMemory  = (UINTN) Memory;
+
+    AlignedMemory = (UINTN)Memory;
   }
-  return (VOID *) AlignedMemory;
+
+  return (VOID *)AlignedMemory;
 }
 
 /**
@@ -259,8 +262,8 @@ InternalAllocateAlignedPages (
 VOID *
 EFIAPI
 AllocateAlignedPages (
-  IN UINTN  Pages,
-  IN UINTN  Alignment
+  IN UINTN Pages,
+  IN UINTN Alignment
   )
 {
   return InternalAllocateAlignedPages (EfiBootServicesData, Pages, Alignment);
@@ -286,8 +289,8 @@ AllocateAlignedPages (
 VOID *
 EFIAPI
 AllocateAlignedRuntimePages (
-  IN UINTN  Pages,
-  IN UINTN  Alignment
+  IN UINTN Pages,
+  IN UINTN Alignment
   )
 {
   return InternalAllocateAlignedPages (EfiRuntimeServicesData, Pages, Alignment);
@@ -313,8 +316,8 @@ AllocateAlignedRuntimePages (
 VOID *
 EFIAPI
 AllocateAlignedReservedPages (
-  IN UINTN  Pages,
-  IN UINTN  Alignment
+  IN UINTN Pages,
+  IN UINTN Alignment
   )
 {
   return InternalAllocateAlignedPages (EfiReservedMemoryType, Pages, Alignment);
@@ -340,8 +343,8 @@ AllocateAlignedReservedPages (
 VOID
 EFIAPI
 FreeAlignedPages (
-  IN VOID   *Buffer,
-  IN UINTN  Pages
+  IN VOID  *Buffer,
+  IN UINTN Pages
   )
 {
   FreePages (Buffer, Pages);
@@ -362,8 +365,8 @@ FreeAlignedPages (
 **/
 VOID *
 InternalAllocatePool (
-  IN EFI_MEMORY_TYPE  MemoryType,
-  IN UINTN            AllocationSize
+  IN EFI_MEMORY_TYPE MemoryType,
+  IN UINTN           AllocationSize
   )
 {
   return gEmuThunk->Malloc (AllocationSize);
@@ -384,7 +387,7 @@ InternalAllocatePool (
 VOID *
 EFIAPI
 AllocatePool (
-  IN UINTN  AllocationSize
+  IN UINTN AllocationSize
   )
 {
   return InternalAllocatePool (EfiBootServicesData, AllocationSize);
@@ -405,7 +408,7 @@ AllocatePool (
 VOID *
 EFIAPI
 AllocateRuntimePool (
-  IN UINTN  AllocationSize
+  IN UINTN AllocationSize
   )
 {
   return InternalAllocatePool (EfiRuntimeServicesData, AllocationSize);
@@ -426,7 +429,7 @@ AllocateRuntimePool (
 VOID *
 EFIAPI
 AllocateReservedPool (
-  IN UINTN  AllocationSize
+  IN UINTN AllocationSize
   )
 {
   return InternalAllocatePool (EfiReservedMemoryType, AllocationSize);
@@ -448,8 +451,8 @@ AllocateReservedPool (
 **/
 VOID *
 InternalAllocateZeroPool (
-  IN EFI_MEMORY_TYPE  PoolType,
-  IN UINTN            AllocationSize
+  IN EFI_MEMORY_TYPE PoolType,
+  IN UINTN           AllocationSize
   )
 {
   VOID  *Memory;
@@ -458,6 +461,7 @@ InternalAllocateZeroPool (
   if (Memory != NULL) {
     Memory = ZeroMem (Memory, AllocationSize);
   }
+
   return Memory;
 }
 
@@ -477,7 +481,7 @@ InternalAllocateZeroPool (
 VOID *
 EFIAPI
 AllocateZeroPool (
-  IN UINTN  AllocationSize
+  IN UINTN AllocationSize
   )
 {
   return InternalAllocateZeroPool (EfiBootServicesData, AllocationSize);
@@ -499,7 +503,7 @@ AllocateZeroPool (
 VOID *
 EFIAPI
 AllocateRuntimeZeroPool (
-  IN UINTN  AllocationSize
+  IN UINTN AllocationSize
   )
 {
   return InternalAllocateZeroPool (EfiRuntimeServicesData, AllocationSize);
@@ -521,7 +525,7 @@ AllocateRuntimeZeroPool (
 VOID *
 EFIAPI
 AllocateReservedZeroPool (
-  IN UINTN  AllocationSize
+  IN UINTN AllocationSize
   )
 {
   return InternalAllocateZeroPool (EfiReservedMemoryType, AllocationSize);
@@ -546,20 +550,21 @@ AllocateReservedZeroPool (
 **/
 VOID *
 InternalAllocateCopyPool (
-  IN EFI_MEMORY_TYPE  PoolType,
-  IN UINTN            AllocationSize,
-  IN CONST VOID       *Buffer
+  IN EFI_MEMORY_TYPE PoolType,
+  IN UINTN           AllocationSize,
+  IN CONST VOID      *Buffer
   )
 {
   VOID  *Memory;
 
   ASSERT (Buffer != NULL);
-  ASSERT (AllocationSize <= (MAX_ADDRESS - (UINTN) Buffer + 1));
+  ASSERT (AllocationSize <= (MAX_ADDRESS - (UINTN)Buffer + 1));
 
   Memory = InternalAllocatePool (PoolType, AllocationSize);
   if (Memory != NULL) {
-     Memory = CopyMem (Memory, Buffer, AllocationSize);
+    Memory = CopyMem (Memory, Buffer, AllocationSize);
   }
+
   return Memory;
 }
 
@@ -583,8 +588,8 @@ InternalAllocateCopyPool (
 VOID *
 EFIAPI
 AllocateCopyPool (
-  IN UINTN       AllocationSize,
-  IN CONST VOID  *Buffer
+  IN UINTN      AllocationSize,
+  IN CONST VOID *Buffer
   )
 {
   return InternalAllocateCopyPool (EfiBootServicesData, AllocationSize, Buffer);
@@ -610,8 +615,8 @@ AllocateCopyPool (
 VOID *
 EFIAPI
 AllocateRuntimeCopyPool (
-  IN UINTN       AllocationSize,
-  IN CONST VOID  *Buffer
+  IN UINTN      AllocationSize,
+  IN CONST VOID *Buffer
   )
 {
   return InternalAllocateCopyPool (EfiRuntimeServicesData, AllocationSize, Buffer);
@@ -637,8 +642,8 @@ AllocateRuntimeCopyPool (
 VOID *
 EFIAPI
 AllocateReservedCopyPool (
-  IN UINTN       AllocationSize,
-  IN CONST VOID  *Buffer
+  IN UINTN      AllocationSize,
+  IN CONST VOID *Buffer
   )
 {
   return InternalAllocateCopyPool (EfiReservedMemoryType, AllocationSize, Buffer);
@@ -668,19 +673,20 @@ AllocateReservedCopyPool (
 **/
 VOID *
 InternalReallocatePool (
-  IN EFI_MEMORY_TYPE  PoolType,
-  IN UINTN            OldSize,
-  IN UINTN            NewSize,
-  IN VOID             *OldBuffer  OPTIONAL
+  IN EFI_MEMORY_TYPE PoolType,
+  IN UINTN           OldSize,
+  IN UINTN           NewSize,
+  IN VOID            *OldBuffer  OPTIONAL
   )
 {
   VOID  *NewBuffer;
 
   NewBuffer = InternalAllocateZeroPool (PoolType, NewSize);
-  if (NewBuffer != NULL && OldBuffer != NULL) {
+  if ((NewBuffer != NULL) && (OldBuffer != NULL)) {
     CopyMem (NewBuffer, OldBuffer, MIN (OldSize, NewSize));
     FreePool (OldBuffer);
   }
+
   return NewBuffer;
 }
 
@@ -708,9 +714,9 @@ InternalReallocatePool (
 VOID *
 EFIAPI
 ReallocatePool (
-  IN UINTN  OldSize,
-  IN UINTN  NewSize,
-  IN VOID   *OldBuffer  OPTIONAL
+  IN UINTN OldSize,
+  IN UINTN NewSize,
+  IN VOID  *OldBuffer  OPTIONAL
   )
 {
   return InternalReallocatePool (EfiBootServicesData, OldSize, NewSize, OldBuffer);
@@ -740,9 +746,9 @@ ReallocatePool (
 VOID *
 EFIAPI
 ReallocateRuntimePool (
-  IN UINTN  OldSize,
-  IN UINTN  NewSize,
-  IN VOID   *OldBuffer  OPTIONAL
+  IN UINTN OldSize,
+  IN UINTN NewSize,
+  IN VOID  *OldBuffer  OPTIONAL
   )
 {
   return InternalReallocatePool (EfiRuntimeServicesData, OldSize, NewSize, OldBuffer);
@@ -772,9 +778,9 @@ ReallocateRuntimePool (
 VOID *
 EFIAPI
 ReallocateReservedPool (
-  IN UINTN  OldSize,
-  IN UINTN  NewSize,
-  IN VOID   *OldBuffer  OPTIONAL
+  IN UINTN OldSize,
+  IN UINTN NewSize,
+  IN VOID  *OldBuffer  OPTIONAL
   )
 {
   return InternalReallocatePool (EfiReservedMemoryType, OldSize, NewSize, OldBuffer);
@@ -797,10 +803,10 @@ ReallocateReservedPool (
 VOID
 EFIAPI
 FreePool (
-  IN VOID   *Buffer
+  IN VOID *Buffer
   )
 {
-  EFI_STATUS    Status;
+  EFI_STATUS  Status;
 
   if (!gEmuThunk->Free (Buffer)) {
     // The Free thunk will not free memory allocated in emulated EFI memory.
@@ -810,4 +816,3 @@ FreePool (
     ASSERT_EFI_ERROR (Status);
   }
 }
-
