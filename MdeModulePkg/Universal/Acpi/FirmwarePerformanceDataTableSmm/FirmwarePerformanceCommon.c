@@ -33,16 +33,16 @@
 #include <Library/SynchronizationLib.h>
 #include "FirmwarePerformanceCommon.h"
 
-SMM_BOOT_PERFORMANCE_TABLE    *mMmBootPerformanceTable = NULL;
+SMM_BOOT_PERFORMANCE_TABLE  *mMmBootPerformanceTable = NULL;
 
-EFI_MM_RSC_HANDLER_PROTOCOL   *mRscHandlerProtocol    = NULL;
-UINT64                        mSuspendStartTime       = 0;
-BOOLEAN                       mS3SuspendLockBoxSaved  = FALSE;
-UINT32                        mBootRecordSize = 0;
-UINT8                         *mBootRecordBuffer = NULL;
+EFI_MM_RSC_HANDLER_PROTOCOL  *mRscHandlerProtocol   = NULL;
+UINT64                       mSuspendStartTime      = 0;
+BOOLEAN                      mS3SuspendLockBoxSaved = FALSE;
+UINT32                       mBootRecordSize    = 0;
+UINT8                        *mBootRecordBuffer = NULL;
 
-SPIN_LOCK                     mMmFpdtLock;
-BOOLEAN                       mMmramIsOutOfResource = FALSE;
+SPIN_LOCK  mMmFpdtLock;
+BOOLEAN    mMmramIsOutOfResource = FALSE;
 
 /**
   Report status code listener for MM. This is used to record the performance
@@ -87,25 +87,26 @@ FpdtStatusCodeListenerMm (
   //
   // Collect one or more Boot records in boot time
   //
-  if (Data != NULL && CompareGuid (&Data->Type, &gEdkiiFpdtExtendedFirmwarePerformanceGuid)) {
+  if ((Data != NULL) && CompareGuid (&Data->Type, &gEdkiiFpdtExtendedFirmwarePerformanceGuid)) {
     AcquireSpinLock (&mMmFpdtLock);
     //
     // Get the boot performance data.
     //
     CopyMem (&mMmBootPerformanceTable, Data + 1, Data->Size);
-    mBootRecordBuffer = ((UINT8 *) (mMmBootPerformanceTable)) + sizeof (SMM_BOOT_PERFORMANCE_TABLE);
+    mBootRecordBuffer = ((UINT8 *)(mMmBootPerformanceTable)) + sizeof (SMM_BOOT_PERFORMANCE_TABLE);
 
     ReleaseSpinLock (&mMmFpdtLock);
     return EFI_SUCCESS;
   }
 
-  if (Data != NULL && CompareGuid (&Data->Type, &gEfiFirmwarePerformanceGuid)) {
+  if ((Data != NULL) && CompareGuid (&Data->Type, &gEfiFirmwarePerformanceGuid)) {
     DEBUG ((DEBUG_ERROR, "FpdtStatusCodeListenerMm: Performance data reported through gEfiFirmwarePerformanceGuid will not be collected by FirmwarePerformanceDataTableMm\n"));
     return EFI_UNSUPPORTED;
   }
 
   if ((Value != PcdGet32 (PcdProgressCodeS3SuspendStart)) &&
-      (Value != PcdGet32 (PcdProgressCodeS3SuspendEnd))) {
+      (Value != PcdGet32 (PcdProgressCodeS3SuspendEnd)))
+  {
     return EFI_UNSUPPORTED;
   }
 
@@ -196,13 +197,13 @@ FpdtSmiHandler (
   //
   // If input is invalid, stop processing this SMI
   //
-  if (CommBuffer == NULL || CommBufferSize == NULL) {
+  if ((CommBuffer == NULL) || (CommBufferSize == NULL)) {
     return EFI_SUCCESS;
   }
 
   TempCommBufferSize = *CommBufferSize;
 
-  if(TempCommBufferSize < sizeof (SMM_BOOT_RECORD_COMMUNICATE)) {
+  if (TempCommBufferSize < sizeof (SMM_BOOT_RECORD_COMMUNICATE)) {
     return EFI_SUCCESS;
   }
 
@@ -211,27 +212,28 @@ FpdtSmiHandler (
     return EFI_SUCCESS;
   }
 
-  SmmCommData = (SMM_BOOT_RECORD_COMMUNICATE*)CommBuffer;
+  SmmCommData = (SMM_BOOT_RECORD_COMMUNICATE *)CommBuffer;
 
   Status = EFI_SUCCESS;
 
   switch (SmmCommData->Function) {
-    case SMM_FPDT_FUNCTION_GET_BOOT_RECORD_SIZE :
+    case SMM_FPDT_FUNCTION_GET_BOOT_RECORD_SIZE:
       if (mMmBootPerformanceTable != NULL) {
         mBootRecordSize = mMmBootPerformanceTable->Header.Length - sizeof (SMM_BOOT_PERFORMANCE_TABLE);
       }
+
       SmmCommData->BootRecordSize = mBootRecordSize;
       break;
 
-    case SMM_FPDT_FUNCTION_GET_BOOT_RECORD_DATA :
+    case SMM_FPDT_FUNCTION_GET_BOOT_RECORD_DATA:
       Status = EFI_UNSUPPORTED;
       break;
 
-    case SMM_FPDT_FUNCTION_GET_BOOT_RECORD_DATA_BY_OFFSET :
+    case SMM_FPDT_FUNCTION_GET_BOOT_RECORD_DATA_BY_OFFSET:
       BootRecordOffset = SmmCommData->BootRecordOffset;
       BootRecordData   = SmmCommData->BootRecordData;
       BootRecordSize   = SmmCommData->BootRecordSize;
-      if (BootRecordData == NULL || BootRecordOffset >= mBootRecordSize) {
+      if ((BootRecordData == NULL) || (BootRecordOffset >= mBootRecordSize)) {
         Status = EFI_INVALID_PARAMETER;
         break;
       }
@@ -242,6 +244,7 @@ FpdtSmiHandler (
       if (BootRecordSize > mBootRecordSize - BootRecordOffset) {
         BootRecordSize = mBootRecordSize - BootRecordOffset;
       }
+
       SmmCommData->BootRecordSize = BootRecordSize;
       if (!IsBufferOutsideMmValid ((UINTN)BootRecordData, BootRecordSize)) {
         DEBUG ((DEBUG_ERROR, "FpdtSmiHandler: MM Data buffer in MMRAM or overflow!\n"));
@@ -250,10 +253,10 @@ FpdtSmiHandler (
       }
 
       CopyMem (
-       (UINT8*)BootRecordData,
-       mBootRecordBuffer + BootRecordOffset,
-       BootRecordSize
-       );
+        (UINT8 *)BootRecordData,
+        mBootRecordBuffer + BootRecordOffset,
+        BootRecordSize
+        );
       break;
 
     default:
@@ -277,8 +280,8 @@ FirmwarePerformanceCommonEntryPoint (
   VOID
   )
 {
-  EFI_STATUS                Status;
-  EFI_HANDLE                Handle;
+  EFI_STATUS  Status;
+  EFI_HANDLE  Handle;
 
   //
   // Initialize spin lock
@@ -291,7 +294,7 @@ FirmwarePerformanceCommonEntryPoint (
   Status = gMmst->MmLocateProtocol (
                     &gEfiMmRscHandlerProtocolGuid,
                     NULL,
-                    (VOID **) &mRscHandlerProtocol
+                    (VOID **)&mRscHandlerProtocol
                     );
   ASSERT_EFI_ERROR (Status);
 

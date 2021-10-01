@@ -19,7 +19,7 @@
 #include <Library/SortLib.h>
 #include <Library/DevicePathLib.h>
 
-STATIC EFI_UNICODE_COLLATION_PROTOCOL   *mUnicodeCollation = NULL;
+STATIC EFI_UNICODE_COLLATION_PROTOCOL  *mUnicodeCollation = NULL;
 
 #define USL_FREE_NON_NULL(Pointer)  \
 {                                     \
@@ -61,17 +61,18 @@ QuickSortWorker (
   IN VOID                               *Buffer
   )
 {
-  VOID        *Pivot;
-  UINTN       LoopCount;
-  UINTN       NextSwapLocation;
+  VOID   *Pivot;
+  UINTN  LoopCount;
+  UINTN  NextSwapLocation;
 
-  ASSERT(BufferToSort     != NULL);
-  ASSERT(CompareFunction  != NULL);
-  ASSERT(Buffer  != NULL);
+  ASSERT (BufferToSort     != NULL);
+  ASSERT (CompareFunction  != NULL);
+  ASSERT (Buffer  != NULL);
 
-  if ( Count < 2
-    || ElementSize  < 1
-   ){
+  if (  (Count < 2)
+     || (ElementSize  < 1)
+        )
+  {
     return;
   }
 
@@ -80,26 +81,27 @@ QuickSortWorker (
   //
   // pick a pivot (we choose last element)
   //
-  Pivot = ((UINT8*)BufferToSort+((Count-1)*ElementSize));
+  Pivot = ((UINT8 *)BufferToSort+((Count-1)*ElementSize));
 
   //
   // Now get the pivot such that all on "left" are below it
   // and everything "right" are above it
   //
   for ( LoopCount = 0
-      ; LoopCount < Count -1
-      ; LoopCount++
-     ){
+        ; LoopCount < Count -1
+        ; LoopCount++
+        )
+  {
     //
     // if the element is less than the pivot
     //
-    if (CompareFunction((VOID*)((UINT8*)BufferToSort+((LoopCount)*ElementSize)),Pivot) <= 0){
+    if (CompareFunction ((VOID *)((UINT8 *)BufferToSort+((LoopCount)*ElementSize)), Pivot) <= 0) {
       //
       // swap
       //
-      CopyMem (Buffer, (UINT8*)BufferToSort+(NextSwapLocation*ElementSize), ElementSize);
-      CopyMem ((UINT8*)BufferToSort+(NextSwapLocation*ElementSize), (UINT8*)BufferToSort+((LoopCount)*ElementSize), ElementSize);
-      CopyMem ((UINT8*)BufferToSort+((LoopCount)*ElementSize), Buffer, ElementSize);
+      CopyMem (Buffer, (UINT8 *)BufferToSort+(NextSwapLocation*ElementSize), ElementSize);
+      CopyMem ((UINT8 *)BufferToSort+(NextSwapLocation*ElementSize), (UINT8 *)BufferToSort+((LoopCount)*ElementSize), ElementSize);
+      CopyMem ((UINT8 *)BufferToSort+((LoopCount)*ElementSize), Buffer, ElementSize);
 
       //
       // increment NextSwapLocation
@@ -107,37 +109,41 @@ QuickSortWorker (
       NextSwapLocation++;
     }
   }
+
   //
   // swap pivot to it's final position (NextSwapLocaiton)
   //
   CopyMem (Buffer, Pivot, ElementSize);
-  CopyMem (Pivot, (UINT8*)BufferToSort+(NextSwapLocation*ElementSize), ElementSize);
-  CopyMem ((UINT8*)BufferToSort+(NextSwapLocation*ElementSize), Buffer, ElementSize);
+  CopyMem (Pivot, (UINT8 *)BufferToSort+(NextSwapLocation*ElementSize), ElementSize);
+  CopyMem ((UINT8 *)BufferToSort+(NextSwapLocation*ElementSize), Buffer, ElementSize);
 
   //
   // Now recurse on 2 paritial lists.  neither of these will have the 'pivot' element
   // IE list is sorted left half, pivot element, sorted right half...
   //
   if (NextSwapLocation >= 2) {
-    QuickSortWorker(
+    QuickSortWorker (
       BufferToSort,
       NextSwapLocation,
       ElementSize,
       CompareFunction,
-      Buffer);
+      Buffer
+      );
   }
 
   if ((Count - NextSwapLocation - 1) >= 2) {
-    QuickSortWorker(
+    QuickSortWorker (
       (UINT8 *)BufferToSort + (NextSwapLocation+1) * ElementSize,
       Count - NextSwapLocation - 1,
       ElementSize,
       CompareFunction,
-      Buffer);
+      Buffer
+      );
   }
 
   return;
 }
+
 /**
   Function to perform a Quick Sort alogrithm on a buffer of comparable elements.
 
@@ -167,20 +173,21 @@ PerformQuickSort (
 {
   VOID  *Buffer;
 
-  ASSERT(BufferToSort     != NULL);
-  ASSERT(CompareFunction  != NULL);
+  ASSERT (BufferToSort     != NULL);
+  ASSERT (CompareFunction  != NULL);
 
-  Buffer = AllocateZeroPool(ElementSize);
-  ASSERT(Buffer != NULL);
+  Buffer = AllocateZeroPool (ElementSize);
+  ASSERT (Buffer != NULL);
 
-  QuickSortWorker(
+  QuickSortWorker (
     BufferToSort,
     Count,
     ElementSize,
     CompareFunction,
-    Buffer);
+    Buffer
+    );
 
-  FreePool(Buffer);
+  FreePool (Buffer);
   return;
 }
 
@@ -208,8 +215,8 @@ DevicePathCompare (
   EFI_STATUS                Status;
   INTN                      RetVal;
 
-  DevicePath1 = *(EFI_DEVICE_PATH_PROTOCOL**)Buffer1;
-  DevicePath2 = *(EFI_DEVICE_PATH_PROTOCOL**)Buffer2;
+  DevicePath1 = *(EFI_DEVICE_PATH_PROTOCOL **)Buffer1;
+  DevicePath2 = *(EFI_DEVICE_PATH_PROTOCOL **)Buffer2;
 
   if (DevicePath1 == NULL) {
     if (DevicePath2 == NULL) {
@@ -224,37 +231,41 @@ DevicePathCompare (
   }
 
   if (mUnicodeCollation == NULL) {
-    Status = gBS->LocateProtocol(
-      &gEfiUnicodeCollation2ProtocolGuid,
-      NULL,
-      (VOID**)&mUnicodeCollation);
+    Status = gBS->LocateProtocol (
+                    &gEfiUnicodeCollation2ProtocolGuid,
+                    NULL,
+                    (VOID **)&mUnicodeCollation
+                    );
 
-    ASSERT_EFI_ERROR(Status);
+    ASSERT_EFI_ERROR (Status);
   }
 
-  TextPath1 = ConvertDevicePathToText(
-    DevicePath1,
-    FALSE,
-    FALSE);
+  TextPath1 = ConvertDevicePathToText (
+                DevicePath1,
+                FALSE,
+                FALSE
+                );
 
-  TextPath2 = ConvertDevicePathToText(
-    DevicePath2,
-    FALSE,
-    FALSE);
+  TextPath2 = ConvertDevicePathToText (
+                DevicePath2,
+                FALSE,
+                FALSE
+                );
 
   if (TextPath1 == NULL) {
     RetVal = -1;
   } else if (TextPath2 == NULL) {
     RetVal = 1;
   } else {
-    RetVal = mUnicodeCollation->StriColl(
-      mUnicodeCollation,
-      TextPath1,
-      TextPath2);
+    RetVal = mUnicodeCollation->StriColl (
+                                  mUnicodeCollation,
+                                  TextPath1,
+                                  TextPath2
+                                  );
   }
 
-  USL_FREE_NON_NULL(TextPath1);
-  USL_FREE_NON_NULL(TextPath2);
+  USL_FREE_NON_NULL (TextPath1);
+  USL_FREE_NON_NULL (TextPath2);
 
   return (RetVal);
 }
@@ -276,22 +287,24 @@ StringNoCaseCompare (
   IN  CONST VOID             *Buffer2
   )
 {
-  EFI_STATUS                Status;
-  if (mUnicodeCollation == NULL) {
-    Status = gBS->LocateProtocol(
-      &gEfiUnicodeCollation2ProtocolGuid,
-      NULL,
-      (VOID**)&mUnicodeCollation);
+  EFI_STATUS  Status;
 
-    ASSERT_EFI_ERROR(Status);
+  if (mUnicodeCollation == NULL) {
+    Status = gBS->LocateProtocol (
+                    &gEfiUnicodeCollation2ProtocolGuid,
+                    NULL,
+                    (VOID **)&mUnicodeCollation
+                    );
+
+    ASSERT_EFI_ERROR (Status);
   }
 
-  return (mUnicodeCollation->StriColl(
-    mUnicodeCollation,
-    *(CHAR16**)Buffer1,
-    *(CHAR16**)Buffer2));
+  return (mUnicodeCollation->StriColl (
+                               mUnicodeCollation,
+                               *(CHAR16 **)Buffer1,
+                               *(CHAR16 **)Buffer2
+                               ));
 }
-
 
 /**
   Function to compare 2 strings.
@@ -310,7 +323,8 @@ StringCompare (
   IN  CONST VOID                *Buffer2
   )
 {
-  return (StrCmp(
-    *(CHAR16**)Buffer1,
-    *(CHAR16**)Buffer2));
+  return (StrCmp (
+            *(CHAR16 **)Buffer1,
+            *(CHAR16 **)Buffer2
+            ));
 }
