@@ -36,10 +36,10 @@ typedef struct FRAME_BUFFER_CONFIGURE FRAME_BUFFER_CONFIGURE;
 RETURN_STATUS
 EFIAPI
 FrameBufferBltConfigure (
-  IN      VOID                                  *FrameBuffer,
-  IN      EFI_GRAPHICS_OUTPUT_MODE_INFORMATION  *FrameBufferInfo,
-  IN OUT  FRAME_BUFFER_CONFIGURE                *Configure,
-  IN OUT  UINTN                                 *ConfigureSize
+  IN      VOID                                 *FrameBuffer,
+  IN      EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *FrameBufferInfo,
+  IN OUT  FRAME_BUFFER_CONFIGURE               *Configure,
+  IN OUT  UINTN                                *ConfigureSize
   );
 
 /**
@@ -72,8 +72,8 @@ FrameBufferBltConfigure (
 RETURN_STATUS
 EFIAPI
 FrameBufferBlt (
-  IN     FRAME_BUFFER_CONFIGURE             *Configure,
-  IN OUT EFI_GRAPHICS_OUTPUT_BLT_PIXEL      *BltBuffer, OPTIONAL
+  IN     FRAME_BUFFER_CONFIGURE *Configure,
+  IN OUT EFI_GRAPHICS_OUTPUT_BLT_PIXEL *BltBuffer, OPTIONAL
   IN     EFI_GRAPHICS_OUTPUT_BLT_OPERATION  BltOperation,
   IN     UINTN                              SourceX,
   IN     UINTN                              SourceY,

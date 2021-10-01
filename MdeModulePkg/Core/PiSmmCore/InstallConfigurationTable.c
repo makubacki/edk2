@@ -8,7 +8,7 @@
 
 #include "PiSmmCore.h"
 
-#define CONFIG_TABLE_SIZE_INCREASED 0x10
+#define CONFIG_TABLE_SIZE_INCREASED  0x10
 
 UINTN  mSmmSystemTableAllocateSize = 0;
 
@@ -32,10 +32,10 @@ UINTN  mSmmSystemTableAllocateSize = 0;
 EFI_STATUS
 EFIAPI
 SmmInstallConfigurationTable (
-  IN  CONST EFI_SMM_SYSTEM_TABLE2  *SystemTable,
-  IN  CONST EFI_GUID               *Guid,
-  IN  VOID                         *Table,
-  IN  UINTN                        TableSize
+  IN  CONST EFI_SMM_SYSTEM_TABLE2 *SystemTable,
+  IN  CONST EFI_GUID              *Guid,
+  IN  VOID                        *Table,
+  IN  UINTN                       TableSize
   )
 {
   UINTN                    Index;
@@ -86,7 +86,6 @@ SmmInstallConfigurationTable (
       &(ConfigurationTable[Index + 1]),
       (gSmmCoreSmst.NumberOfTableEntries - Index) * sizeof (EFI_CONFIGURATION_TABLE)
       );
-
   } else {
     //
     // No matching GUIDs were found, so this is an add operation.

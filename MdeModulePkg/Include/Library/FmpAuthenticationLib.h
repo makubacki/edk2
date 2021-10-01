@@ -6,7 +6,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
-
 #ifndef __FMP_AUTHENTICATION_LIB_H__
 #define __FMP_AUTHENTICATION_LIB_H__
 
@@ -50,11 +49,10 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 RETURN_STATUS
 EFIAPI
 AuthenticateFmpImage (
-  IN EFI_FIRMWARE_IMAGE_AUTHENTICATION  *Image,
-  IN UINTN                              ImageSize,
-  IN CONST UINT8                        *PublicKeyData,
-  IN UINTN                              PublicKeyDataLength
+  IN EFI_FIRMWARE_IMAGE_AUTHENTICATION *Image,
+  IN UINTN                             ImageSize,
+  IN CONST UINT8                       *PublicKeyData,
+  IN UINTN                             PublicKeyDataLength
   );
 
 #endif
-

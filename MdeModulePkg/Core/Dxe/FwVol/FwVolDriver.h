@@ -10,40 +10,39 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #ifndef __FW_VOL_DRIVER_H_
 #define __FW_VOL_DRIVER_H_
 
-
-#define FV2_DEVICE_SIGNATURE SIGNATURE_32 ('_', 'F', 'V', '2')
+#define FV2_DEVICE_SIGNATURE  SIGNATURE_32 ('_', 'F', 'V', '2')
 
 //
 // Used to track all non-deleted files
 //
 typedef struct {
-  LIST_ENTRY                      Link;
-  EFI_FFS_FILE_HEADER             *FfsHeader;
-  UINTN                           StreamHandle;
-  BOOLEAN                         FileCached;
+  LIST_ENTRY             Link;
+  EFI_FFS_FILE_HEADER    *FfsHeader;
+  UINTN                  StreamHandle;
+  BOOLEAN                FileCached;
 } FFS_FILE_LIST_ENTRY;
 
 typedef struct {
-  UINTN                                   Signature;
-  EFI_FIRMWARE_VOLUME_BLOCK_PROTOCOL      *Fvb;
-  EFI_HANDLE                              Handle;
-  EFI_FIRMWARE_VOLUME2_PROTOCOL           Fv;
+  UINTN                                 Signature;
+  EFI_FIRMWARE_VOLUME_BLOCK_PROTOCOL    *Fvb;
+  EFI_HANDLE                            Handle;
+  EFI_FIRMWARE_VOLUME2_PROTOCOL         Fv;
 
-  EFI_FIRMWARE_VOLUME_HEADER              *FwVolHeader;
-  UINT8                                   *CachedFv;
-  UINT8                                   *EndOfCachedFv;
+  EFI_FIRMWARE_VOLUME_HEADER            *FwVolHeader;
+  UINT8                                 *CachedFv;
+  UINT8                                 *EndOfCachedFv;
 
-  FFS_FILE_LIST_ENTRY                     *LastKey;
+  FFS_FILE_LIST_ENTRY                   *LastKey;
 
-  LIST_ENTRY                              FfsFileListHeader;
+  LIST_ENTRY                            FfsFileListHeader;
 
-  UINT32                                  AuthenticationStatus;
-  UINT8                                   ErasePolarity;
-  BOOLEAN                                 IsFfs3Fv;
-  BOOLEAN                                 IsMemoryMapped;
+  UINT32                                AuthenticationStatus;
+  UINT8                                 ErasePolarity;
+  BOOLEAN                               IsFfs3Fv;
+  BOOLEAN                               IsMemoryMapped;
 } FV_DEVICE;
 
-#define FV_DEVICE_FROM_THIS(a) CR(a, FV_DEVICE, Fv, FV2_DEVICE_SIGNATURE)
+#define FV_DEVICE_FROM_THIS(a)  CR(a, FV_DEVICE, Fv, FV2_DEVICE_SIGNATURE)
 
 /**
   Retrieves attributes, insures positive polarity of attribute bits, returns
@@ -62,7 +61,6 @@ FvGetVolumeAttributes (
   OUT       EFI_FV_ATTRIBUTES             *Attributes
   );
 
-
 /**
   Sets current attributes for volume
 
@@ -76,10 +74,9 @@ FvGetVolumeAttributes (
 EFI_STATUS
 EFIAPI
 FvSetVolumeAttributes (
-  IN     CONST EFI_FIRMWARE_VOLUME2_PROTOCOL  *This,
-  IN OUT       EFI_FV_ATTRIBUTES              *Attributes
+  IN     CONST EFI_FIRMWARE_VOLUME2_PROTOCOL *This,
+  IN OUT       EFI_FV_ATTRIBUTES             *Attributes
   );
-
 
 /**
   Given the input key, search for the next matching file in the volume.
@@ -138,8 +135,6 @@ FvGetNextFile (
   OUT        UINTN                         *Size
   );
 
-
-
 /**
   Locates a file in the firmware volume and
   copies it to the supplied buffer.
@@ -192,7 +187,6 @@ FvReadFile (
   OUT      UINT32                        *AuthenticationStatus
   );
 
-
 /**
   Locates a section in a given FFS File and
   copies it to the supplied buffer (not including section header).
@@ -224,15 +218,14 @@ FvReadFile (
 EFI_STATUS
 EFIAPI
 FvReadFileSection (
-  IN CONST  EFI_FIRMWARE_VOLUME2_PROTOCOL  *This,
-  IN CONST  EFI_GUID                       *NameGuid,
-  IN        EFI_SECTION_TYPE               SectionType,
-  IN        UINTN                          SectionInstance,
-  IN OUT    VOID                           **Buffer,
-  IN OUT    UINTN                          *BufferSize,
-  OUT       UINT32                         *AuthenticationStatus
+  IN CONST  EFI_FIRMWARE_VOLUME2_PROTOCOL *This,
+  IN CONST  EFI_GUID                      *NameGuid,
+  IN        EFI_SECTION_TYPE              SectionType,
+  IN        UINTN                         SectionInstance,
+  IN OUT    VOID                          **Buffer,
+  IN OUT    UINTN                         *BufferSize,
+  OUT       UINT32                        *AuthenticationStatus
   );
-
 
 /**
   Writes one or more files to the firmware volume.
@@ -258,12 +251,11 @@ FvReadFileSection (
 EFI_STATUS
 EFIAPI
 FvWriteFile (
-  IN CONST EFI_FIRMWARE_VOLUME2_PROTOCOL  *This,
-  IN       UINT32                         NumberOfFiles,
-  IN       EFI_FV_WRITE_POLICY            WritePolicy,
-  IN       EFI_FV_WRITE_FILE_DATA         *FileData
+  IN CONST EFI_FIRMWARE_VOLUME2_PROTOCOL *This,
+  IN       UINT32                        NumberOfFiles,
+  IN       EFI_FV_WRITE_POLICY           WritePolicy,
+  IN       EFI_FV_WRITE_FILE_DATA        *FileData
   );
-
 
 /**
   Return information of type InformationType for the requested firmware
@@ -281,13 +273,11 @@ FvWriteFile (
 EFI_STATUS
 EFIAPI
 FvGetVolumeInfo (
-  IN  CONST EFI_FIRMWARE_VOLUME2_PROTOCOL       *This,
-  IN  CONST EFI_GUID                            *InformationType,
-  IN OUT UINTN                                  *BufferSize,
-  OUT VOID                                      *Buffer
+  IN  CONST EFI_FIRMWARE_VOLUME2_PROTOCOL *This,
+  IN  CONST EFI_GUID                      *InformationType,
+  IN OUT UINTN                            *BufferSize,
+  OUT VOID                                *Buffer
   );
-
-
 
 /**
   Set information of type InformationType for the requested firmware
@@ -305,13 +295,11 @@ FvGetVolumeInfo (
 EFI_STATUS
 EFIAPI
 FvSetVolumeInfo (
-  IN  CONST EFI_FIRMWARE_VOLUME2_PROTOCOL       *This,
-  IN  CONST EFI_GUID                            *InformationType,
-  IN  UINTN                                     BufferSize,
-  IN CONST  VOID                                *Buffer
+  IN  CONST EFI_FIRMWARE_VOLUME2_PROTOCOL *This,
+  IN  CONST EFI_GUID                      *InformationType,
+  IN  UINTN                               BufferSize,
+  IN CONST  VOID                          *Buffer
   );
-
-
 
 /**
   Check if a block of buffer is erased.
@@ -326,11 +314,10 @@ FvSetVolumeInfo (
 **/
 BOOLEAN
 IsBufferErased (
-  IN UINT8    ErasePolarity,
-  IN VOID     *InBuffer,
-  IN UINTN    BufferSize
+  IN UINT8 ErasePolarity,
+  IN VOID  *InBuffer,
+  IN UINTN BufferSize
   );
-
 
 /**
   Get the FFS file state by checking the highest bit set in the header's state field.
@@ -343,10 +330,9 @@ IsBufferErased (
 **/
 EFI_FFS_FILE_STATE
 GetFileState (
-  IN UINT8                ErasePolarity,
-  IN EFI_FFS_FILE_HEADER  *FfsHeader
+  IN UINT8               ErasePolarity,
+  IN EFI_FFS_FILE_HEADER *FfsHeader
   );
-
 
 /**
   Set the FFS file state.
@@ -359,8 +345,8 @@ GetFileState (
 **/
 VOID
 SetFileState (
-  IN UINT8                State,
-  IN EFI_FFS_FILE_HEADER  *FfsHeader
+  IN UINT8               State,
+  IN EFI_FFS_FILE_HEADER *FfsHeader
   );
 
 /**
@@ -376,11 +362,10 @@ SetFileState (
 **/
 BOOLEAN
 IsValidFfsHeader (
-  IN UINT8                ErasePolarity,
-  IN EFI_FFS_FILE_HEADER  *FfsHeader,
-  OUT EFI_FFS_FILE_STATE  *FileState
+  IN UINT8               ErasePolarity,
+  IN EFI_FFS_FILE_HEADER *FfsHeader,
+  OUT EFI_FFS_FILE_STATE *FileState
   );
-
 
 /**
   Check if it's a valid FFS file.
@@ -395,8 +380,8 @@ IsValidFfsHeader (
 **/
 BOOLEAN
 IsValidFfsFile (
-  IN UINT8                ErasePolarity,
-  IN EFI_FFS_FILE_HEADER  *FfsHeader
+  IN UINT8               ErasePolarity,
+  IN EFI_FFS_FILE_HEADER *FfsHeader
   );
 
 #endif

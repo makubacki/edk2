@@ -25,8 +25,8 @@ extern EFI_SMM_SYSTEM_TABLE2  gSmmCoreSmst;
 EFI_STATUS
 EFIAPI
 SmmCoreSmmServicesTableLibConstructor (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
   gSmst = &gSmmCoreSmst;

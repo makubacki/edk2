@@ -37,12 +37,12 @@
 EFI_STATUS
 EFIAPI
 SmmCoreUpdateProfile (
-  IN PHYSICAL_ADDRESS       CallerAddress,
-  IN MEMORY_PROFILE_ACTION  Action,
-  IN EFI_MEMORY_TYPE        MemoryType, // Valid for AllocatePages/AllocatePool
-  IN UINTN                  Size,       // Valid for AllocatePages/FreePages/AllocatePool
-  IN VOID                   *Buffer,
-  IN CHAR8                  *ActionString OPTIONAL
+  IN PHYSICAL_ADDRESS      CallerAddress,
+  IN MEMORY_PROFILE_ACTION Action,
+  IN EFI_MEMORY_TYPE       MemoryType,  // Valid for AllocatePages/AllocatePool
+  IN UINTN                 Size,        // Valid for AllocatePages/FreePages/AllocatePool
+  IN VOID                  *Buffer,
+  IN CHAR8                 *ActionString OPTIONAL
   );
 
 #endif

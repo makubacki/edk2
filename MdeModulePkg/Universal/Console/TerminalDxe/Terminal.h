@@ -10,7 +10,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #ifndef _TERMINAL_H_
 #define _TERMINAL_H_
 
-
 #include <Uefi.h>
 
 #include <Guid/GlobalVariable.h>
@@ -36,44 +35,43 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/PcdLib.h>
 #include <Library/BaseLib.h>
 
-
-#define RAW_FIFO_MAX_NUMBER 255
-#define FIFO_MAX_NUMBER     128
+#define RAW_FIFO_MAX_NUMBER  255
+#define FIFO_MAX_NUMBER      128
 
 typedef struct {
-  UINT8 Head;
-  UINT8 Tail;
-  UINT8 Data[RAW_FIFO_MAX_NUMBER + 1];
+  UINT8    Head;
+  UINT8    Tail;
+  UINT8    Data[RAW_FIFO_MAX_NUMBER + 1];
 } RAW_DATA_FIFO;
 
 typedef struct {
-  UINT8   Head;
-  UINT8   Tail;
-  UINT16  Data[FIFO_MAX_NUMBER + 1];
+  UINT8     Head;
+  UINT8     Tail;
+  UINT16    Data[FIFO_MAX_NUMBER + 1];
 } UNICODE_FIFO;
 
 typedef struct {
-  UINT8         Head;
-  UINT8         Tail;
-  EFI_INPUT_KEY Data[FIFO_MAX_NUMBER + 1];
+  UINT8            Head;
+  UINT8            Tail;
+  EFI_INPUT_KEY    Data[FIFO_MAX_NUMBER + 1];
 } EFI_KEY_FIFO;
 
 typedef struct {
-  UINTN   Columns;
-  UINTN   Rows;
+  UINTN    Columns;
+  UINTN    Rows;
 } TERMINAL_CONSOLE_MODE_DATA;
 
-#define KEYBOARD_TIMER_INTERVAL         200000  // 0.02s
+#define KEYBOARD_TIMER_INTERVAL  200000         // 0.02s
 
 #define TERMINAL_DEV_SIGNATURE  SIGNATURE_32 ('t', 'm', 'n', 'l')
 
-#define TERMINAL_CONSOLE_IN_EX_NOTIFY_SIGNATURE SIGNATURE_32 ('t', 'm', 'e', 'n')
+#define TERMINAL_CONSOLE_IN_EX_NOTIFY_SIGNATURE  SIGNATURE_32 ('t', 'm', 'e', 'n')
 
 typedef struct _TERMINAL_CONSOLE_IN_EX_NOTIFY {
-  UINTN                                 Signature;
-  EFI_KEY_DATA                          KeyData;
-  EFI_KEY_NOTIFY_FUNCTION               KeyNotificationFn;
-  LIST_ENTRY                            NotifyEntry;
+  UINTN                      Signature;
+  EFI_KEY_DATA               KeyData;
+  EFI_KEY_NOTIFY_FUNCTION    KeyNotificationFn;
+  LIST_ENTRY                 NotifyEntry;
 } TERMINAL_CONSOLE_IN_EX_NOTIFY;
 
 typedef enum {
@@ -89,27 +87,27 @@ typedef enum {
 } TERMINAL_TYPE;
 
 typedef struct {
-  UINTN                               Signature;
-  EFI_HANDLE                          Handle;
-  TERMINAL_TYPE                       TerminalType;
-  EFI_SERIAL_IO_PROTOCOL              *SerialIo;
-  EFI_DEVICE_PATH_PROTOCOL            *DevicePath;
-  EFI_SIMPLE_TEXT_INPUT_PROTOCOL      SimpleInput;
-  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL     SimpleTextOutput;
-  EFI_SIMPLE_TEXT_OUTPUT_MODE         SimpleTextOutputMode;
-  TERMINAL_CONSOLE_MODE_DATA          *TerminalConsoleModeData;
-  UINTN                               SerialInTimeOut;
-  RAW_DATA_FIFO                       *RawFiFo;
-  UNICODE_FIFO                        *UnicodeFiFo;
-  EFI_KEY_FIFO                        *EfiKeyFiFo;
-  EFI_KEY_FIFO                        *EfiKeyFiFoForNotify;
-  EFI_UNICODE_STRING_TABLE            *ControllerNameTable;
-  EFI_EVENT                           TimerEvent;
-  EFI_EVENT                           TwoSecondTimeOut;
-  UINT32                              InputState;
-  UINT32                              ResetState;
-  UINT16                              TtyEscapeStr[3];
-  INTN                                TtyEscapeIndex;
+  UINTN                              Signature;
+  EFI_HANDLE                         Handle;
+  TERMINAL_TYPE                      TerminalType;
+  EFI_SERIAL_IO_PROTOCOL             *SerialIo;
+  EFI_DEVICE_PATH_PROTOCOL           *DevicePath;
+  EFI_SIMPLE_TEXT_INPUT_PROTOCOL     SimpleInput;
+  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL    SimpleTextOutput;
+  EFI_SIMPLE_TEXT_OUTPUT_MODE        SimpleTextOutputMode;
+  TERMINAL_CONSOLE_MODE_DATA         *TerminalConsoleModeData;
+  UINTN                              SerialInTimeOut;
+  RAW_DATA_FIFO                      *RawFiFo;
+  UNICODE_FIFO                       *UnicodeFiFo;
+  EFI_KEY_FIFO                       *EfiKeyFiFo;
+  EFI_KEY_FIFO                       *EfiKeyFiFoForNotify;
+  EFI_UNICODE_STRING_TABLE           *ControllerNameTable;
+  EFI_EVENT                          TimerEvent;
+  EFI_EVENT                          TwoSecondTimeOut;
+  UINT32                             InputState;
+  UINT32                             ResetState;
+  UINT16                             TtyEscapeStr[3];
+  INTN                               TtyEscapeIndex;
 
   //
   // Esc could not be output to the screen by user,
@@ -118,57 +116,57 @@ typedef struct {
   // This boolean is used by the terminal driver only
   // to indicate whether the Esc could be sent or not.
   //
-  BOOLEAN                             OutputEscChar;
-  EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL   SimpleInputEx;
-  LIST_ENTRY                          NotifyList;
-  EFI_EVENT                           KeyNotifyProcessEvent;
+  BOOLEAN                              OutputEscChar;
+  EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL    SimpleInputEx;
+  LIST_ENTRY                           NotifyList;
+  EFI_EVENT                            KeyNotifyProcessEvent;
 } TERMINAL_DEV;
 
-#define INPUT_STATE_DEFAULT               0x00
-#define INPUT_STATE_ESC                   0x01
-#define INPUT_STATE_CSI                   0x02
-#define INPUT_STATE_LEFTOPENBRACKET       0x04
-#define INPUT_STATE_O                     0x08
-#define INPUT_STATE_2                     0x10
-#define INPUT_STATE_LEFTOPENBRACKET_TTY   0x20
-#define INPUT_STATE_1                     0x40
-#define INPUT_STATE_LEFTOPENBRACKET_2ND   0x80
+#define INPUT_STATE_DEFAULT              0x00
+#define INPUT_STATE_ESC                  0x01
+#define INPUT_STATE_CSI                  0x02
+#define INPUT_STATE_LEFTOPENBRACKET      0x04
+#define INPUT_STATE_O                    0x08
+#define INPUT_STATE_2                    0x10
+#define INPUT_STATE_LEFTOPENBRACKET_TTY  0x20
+#define INPUT_STATE_1                    0x40
+#define INPUT_STATE_LEFTOPENBRACKET_2ND  0x80
 
-#define RESET_STATE_DEFAULT               0x00
-#define RESET_STATE_ESC_R                 0x01
-#define RESET_STATE_ESC_R_ESC_R           0x02
+#define RESET_STATE_DEFAULT      0x00
+#define RESET_STATE_ESC_R        0x01
+#define RESET_STATE_ESC_R_ESC_R  0x02
 
-#define TERMINAL_CON_IN_DEV_FROM_THIS(a)  CR (a, TERMINAL_DEV, SimpleInput, TERMINAL_DEV_SIGNATURE)
-#define TERMINAL_CON_OUT_DEV_FROM_THIS(a) CR (a, TERMINAL_DEV, SimpleTextOutput, TERMINAL_DEV_SIGNATURE)
+#define TERMINAL_CON_IN_DEV_FROM_THIS(a)     CR (a, TERMINAL_DEV, SimpleInput, TERMINAL_DEV_SIGNATURE)
+#define TERMINAL_CON_OUT_DEV_FROM_THIS(a)    CR (a, TERMINAL_DEV, SimpleTextOutput, TERMINAL_DEV_SIGNATURE)
 #define TERMINAL_CON_IN_EX_DEV_FROM_THIS(a)  CR (a, TERMINAL_DEV, SimpleInputEx, TERMINAL_DEV_SIGNATURE)
 
 typedef union {
-  UINT8 Utf8_1;
-  UINT8 Utf8_2[2];
-  UINT8 Utf8_3[3];
+  UINT8    Utf8_1;
+  UINT8    Utf8_2[2];
+  UINT8    Utf8_3[3];
 } UTF8_CHAR;
 
-#define LEFTOPENBRACKET           0x5b  // '['
-#define ACAP                      0x41
-#define BCAP                      0x42
-#define CCAP                      0x43
-#define DCAP                      0x44
+#define LEFTOPENBRACKET  0x5b           // '['
+#define ACAP             0x41
+#define BCAP             0x42
+#define CCAP             0x43
+#define DCAP             0x44
 
-#define BACKSPACE                 8
-#define ESC                       27
-#define CSI                       0x9B
-#define DEL                       127
-#define BRIGHT_CONTROL_OFFSET     2
-#define FOREGROUND_CONTROL_OFFSET 6
-#define BACKGROUND_CONTROL_OFFSET 11
-#define ROW_OFFSET                2
-#define COLUMN_OFFSET             5
-#define FW_BACK_OFFSET            2
+#define BACKSPACE                  8
+#define ESC                        27
+#define CSI                        0x9B
+#define DEL                        127
+#define BRIGHT_CONTROL_OFFSET      2
+#define FOREGROUND_CONTROL_OFFSET  6
+#define BACKGROUND_CONTROL_OFFSET  11
+#define ROW_OFFSET                 2
+#define COLUMN_OFFSET              5
+#define FW_BACK_OFFSET             2
 
 typedef struct {
-  UINT16  Unicode;
-  CHAR8   PcAnsi;
-  CHAR8   Ascii;
+  UINT16    Unicode;
+  CHAR8     PcAnsi;
+  CHAR8     Ascii;
 } UNICODE_TO_CHAR;
 
 //
@@ -191,8 +189,8 @@ extern EFI_COMPONENT_NAME2_PROTOCOL  gTerminalComponentName2;
 EFI_STATUS
 EFIAPI
 InitializeTerminal (
-  IN EFI_HANDLE         ImageHandle,
-  IN EFI_SYSTEM_TABLE   *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -210,10 +208,9 @@ InitializeTerminal (
 EFI_STATUS
 EFIAPI
 TerminalConInReset (
-  IN  EFI_SIMPLE_TEXT_INPUT_PROTOCOL    *This,
-  IN  BOOLEAN                           ExtendedVerification
+  IN  EFI_SIMPLE_TEXT_INPUT_PROTOCOL *This,
+  IN  BOOLEAN                        ExtendedVerification
   );
-
 
 /**
   Implements EFI_SIMPLE_TEXT_INPUT_PROTOCOL.ReadKeyStroke().
@@ -231,8 +228,8 @@ TerminalConInReset (
 EFI_STATUS
 EFIAPI
 TerminalConInReadKeyStroke (
-  IN  EFI_SIMPLE_TEXT_INPUT_PROTOCOL  *This,
-  OUT EFI_INPUT_KEY                   *Key
+  IN  EFI_SIMPLE_TEXT_INPUT_PROTOCOL *This,
+  OUT EFI_INPUT_KEY                  *Key
   );
 
 /**
@@ -251,8 +248,8 @@ TerminalConInReadKeyStroke (
 **/
 BOOLEAN
 IsKeyRegistered (
-  IN EFI_KEY_DATA  *RegsiteredData,
-  IN EFI_KEY_DATA  *InputData
+  IN EFI_KEY_DATA *RegsiteredData,
+  IN EFI_KEY_DATA *InputData
   );
 
 /**
@@ -266,8 +263,8 @@ IsKeyRegistered (
 VOID
 EFIAPI
 TerminalConInWaitForKeyEx (
-  IN  EFI_EVENT       Event,
-  IN  VOID            *Context
+  IN  EFI_EVENT Event,
+  IN  VOID      *Context
   );
 
 //
@@ -288,8 +285,8 @@ TerminalConInWaitForKeyEx (
 EFI_STATUS
 EFIAPI
 TerminalConInResetEx (
-  IN EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL  *This,
-  IN BOOLEAN                            ExtendedVerification
+  IN EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL *This,
+  IN BOOLEAN                           ExtendedVerification
   );
 
 /**
@@ -333,8 +330,8 @@ TerminalConInReadKeyStrokeEx (
 EFI_STATUS
 EFIAPI
 TerminalConInSetState (
-  IN EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL  *This,
-  IN EFI_KEY_TOGGLE_STATE               *KeyToggleState
+  IN EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL *This,
+  IN EFI_KEY_TOGGLE_STATE              *KeyToggleState
   );
 
 /**
@@ -362,10 +359,10 @@ TerminalConInSetState (
 EFI_STATUS
 EFIAPI
 TerminalConInRegisterKeyNotify (
-  IN EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL  *This,
-  IN EFI_KEY_DATA                       *KeyData,
-  IN EFI_KEY_NOTIFY_FUNCTION            KeyNotificationFunction,
-  OUT VOID                              **NotifyHandle
+  IN EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL *This,
+  IN EFI_KEY_DATA                      *KeyData,
+  IN EFI_KEY_NOTIFY_FUNCTION           KeyNotificationFunction,
+  OUT VOID                             **NotifyHandle
   );
 
 /**
@@ -384,8 +381,8 @@ TerminalConInRegisterKeyNotify (
 EFI_STATUS
 EFIAPI
 TerminalConInUnregisterKeyNotify (
-  IN EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL  *This,
-  IN VOID                               *NotificationHandle
+  IN EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL *This,
+  IN VOID                              *NotificationHandle
   );
 
 /**
@@ -399,8 +396,8 @@ TerminalConInUnregisterKeyNotify (
 VOID
 EFIAPI
 TerminalConInWaitForKey (
-  IN  EFI_EVENT     Event,
-  IN  VOID          *Context
+  IN  EFI_EVENT Event,
+  IN  VOID      *Context
   );
 
 /**
@@ -421,8 +418,8 @@ TerminalConInWaitForKey (
 EFI_STATUS
 EFIAPI
 TerminalConOutReset (
-  IN  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL    *This,
-  IN  BOOLEAN                            ExtendedVerification
+  IN  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This,
+  IN  BOOLEAN                         ExtendedVerification
   );
 
 /**
@@ -444,8 +441,8 @@ TerminalConOutReset (
 EFI_STATUS
 EFIAPI
 TerminalConOutOutputString (
-  IN   EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL  *This,
-  IN  CHAR16                            *WString
+  IN   EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This,
+  IN  CHAR16                           *WString
   );
 
 /**
@@ -465,8 +462,8 @@ TerminalConOutOutputString (
 EFI_STATUS
 EFIAPI
 TerminalConOutTestString (
-  IN  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL  *This,
-  IN  CHAR16                           *WString
+  IN  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This,
+  IN  CHAR16                          *WString
   );
 
 /**
@@ -489,10 +486,10 @@ TerminalConOutTestString (
 EFI_STATUS
 EFIAPI
 TerminalConOutQueryMode (
-  IN  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL  *This,
-  IN  UINTN                            ModeNumber,
-  OUT UINTN                            *Columns,
-  OUT UINTN                            *Rows
+  IN  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This,
+  IN  UINTN                           ModeNumber,
+  OUT UINTN                           *Columns,
+  OUT UINTN                           *Rows
   );
 
 /**
@@ -512,8 +509,8 @@ TerminalConOutQueryMode (
 EFI_STATUS
 EFIAPI
 TerminalConOutSetMode (
-  IN  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL  *This,
-  IN  UINTN                            ModeNumber
+  IN  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This,
+  IN  UINTN                           ModeNumber
   );
 
 /**
@@ -531,8 +528,8 @@ TerminalConOutSetMode (
 EFI_STATUS
 EFIAPI
 TerminalConOutSetAttribute (
-  IN  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL  *This,
-  IN  UINTN                            Attribute
+  IN  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This,
+  IN  UINTN                           Attribute
   );
 
 /**
@@ -550,7 +547,7 @@ TerminalConOutSetAttribute (
 EFI_STATUS
 EFIAPI
 TerminalConOutClearScreen (
-  IN  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL  *This
+  IN  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This
   );
 
 /**
@@ -569,9 +566,9 @@ TerminalConOutClearScreen (
 EFI_STATUS
 EFIAPI
 TerminalConOutSetCursorPosition (
-  IN  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL  *This,
-  IN  UINTN                            Column,
-  IN  UINTN                            Row
+  IN  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This,
+  IN  UINTN                           Column,
+  IN  UINTN                           Row
   );
 
 /**
@@ -589,8 +586,8 @@ TerminalConOutSetCursorPosition (
 EFI_STATUS
 EFIAPI
 TerminalConOutEnableCursor (
-  IN  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL  *This,
-  IN  BOOLEAN                          Visible
+  IN  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This,
+  IN  BOOLEAN                         Visible
   );
 
 /**
@@ -609,9 +606,9 @@ TerminalConOutEnableCursor (
 EFI_STATUS
 EFIAPI
 TerminalDriverBindingSupported (
-  IN EFI_DRIVER_BINDING_PROTOCOL    *This,
-  IN EFI_HANDLE                     ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL       *RemainingDevicePath
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath
   );
 
 /**
@@ -633,11 +630,10 @@ TerminalDriverBindingSupported (
 EFI_STATUS
 EFIAPI
 TerminalDriverBindingStart (
-  IN EFI_DRIVER_BINDING_PROTOCOL    *This,
-  IN EFI_HANDLE                     Controller,
-  IN EFI_DEVICE_PATH_PROTOCOL       *RemainingDevicePath
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  Controller,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath
   );
-
 
 /**
   Stop this driver on Controller by closing Simple Text In, Simple Text
@@ -657,10 +653,10 @@ TerminalDriverBindingStart (
 EFI_STATUS
 EFIAPI
 TerminalDriverBindingStop (
-  IN  EFI_DRIVER_BINDING_PROTOCOL    *This,
-  IN  EFI_HANDLE                     Controller,
-  IN  UINTN                          NumberOfChildren,
-  IN  EFI_HANDLE                     *ChildHandleBuffer
+  IN  EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN  EFI_HANDLE                  Controller,
+  IN  UINTN                       NumberOfChildren,
+  IN  EFI_HANDLE                  *ChildHandleBuffer
   );
 
 /**
@@ -674,7 +670,7 @@ TerminalDriverBindingStop (
 **/
 EFI_STATUS
 TerminalFreeNotifyList (
-  IN OUT LIST_ENTRY           *ListHead
+  IN OUT LIST_ENTRY *ListHead
   );
 
 /**
@@ -719,11 +715,10 @@ TerminalFreeNotifyList (
 EFI_STATUS
 EFIAPI
 TerminalComponentNameGetDriverName (
-  IN  EFI_COMPONENT_NAME_PROTOCOL  *This,
-  IN  CHAR8                        *Language,
-  OUT CHAR16                       **DriverName
+  IN  EFI_COMPONENT_NAME_PROTOCOL *This,
+  IN  CHAR8                       *Language,
+  OUT CHAR16                      **DriverName
   );
-
 
 /**
   Retrieves a Unicode string that is the user readable name of the controller
@@ -796,13 +791,12 @@ TerminalComponentNameGetDriverName (
 EFI_STATUS
 EFIAPI
 TerminalComponentNameGetControllerName (
-  IN  EFI_COMPONENT_NAME_PROTOCOL                     *This,
-  IN  EFI_HANDLE                                      ControllerHandle,
-  IN  EFI_HANDLE                                      ChildHandle        OPTIONAL,
-  IN  CHAR8                                           *Language,
-  OUT CHAR16                                          **ControllerName
+  IN  EFI_COMPONENT_NAME_PROTOCOL *This,
+  IN  EFI_HANDLE                  ControllerHandle,
+  IN  EFI_HANDLE                  ChildHandle        OPTIONAL,
+  IN  CHAR8                       *Language,
+  OUT CHAR16                      **ControllerName
   );
-
 
 //
 // internal functions
@@ -820,7 +814,7 @@ TerminalComponentNameGetControllerName (
 **/
 EFI_STATUS
 TerminalConInCheckForKey (
-  IN  EFI_SIMPLE_TEXT_INPUT_PROTOCOL  *This
+  IN  EFI_SIMPLE_TEXT_INPUT_PROTOCOL *This
   );
 
 /**
@@ -834,8 +828,8 @@ TerminalConInCheckForKey (
 **/
 VOID
 TerminalUpdateConsoleDevVariable (
-  IN CHAR16                    *VariableName,
-  IN EFI_DEVICE_PATH_PROTOCOL  *ParentDevicePath
+  IN CHAR16                   *VariableName,
+  IN EFI_DEVICE_PATH_PROTOCOL *ParentDevicePath
   );
 
 /**
@@ -847,8 +841,8 @@ TerminalUpdateConsoleDevVariable (
 **/
 VOID
 TerminalRemoveConsoleDevVariable (
-  IN CHAR16                    *VariableName,
-  IN EFI_DEVICE_PATH_PROTOCOL  *ParentDevicePath
+  IN CHAR16                   *VariableName,
+  IN EFI_DEVICE_PATH_PROTOCOL *ParentDevicePath
   );
 
 /**
@@ -866,9 +860,9 @@ TerminalRemoveConsoleDevVariable (
 **/
 EFI_STATUS
 SetTerminalDevicePath (
-  IN  TERMINAL_TYPE               TerminalType,
-  IN  EFI_DEVICE_PATH_PROTOCOL    *ParentDevicePath,
-  OUT EFI_DEVICE_PATH_PROTOCOL    **TerminalDevicePath
+  IN  TERMINAL_TYPE            TerminalType,
+  IN  EFI_DEVICE_PATH_PROTOCOL *ParentDevicePath,
+  OUT EFI_DEVICE_PATH_PROTOCOL **TerminalDevicePath
   );
 
 /**
@@ -885,8 +879,8 @@ SetTerminalDevicePath (
 **/
 EFI_STATUS
 GetOneKeyFromSerial (
-  EFI_SERIAL_IO_PROTOCOL  *SerialIo,
-  UINT8                   *Input
+  EFI_SERIAL_IO_PROTOCOL *SerialIo,
+  UINT8                  *Input
   );
 
 /**
@@ -902,8 +896,8 @@ GetOneKeyFromSerial (
 **/
 BOOLEAN
 RawFiFoInsertOneKey (
-  TERMINAL_DEV  *TerminalDevice,
-  UINT8         Input
+  TERMINAL_DEV *TerminalDevice,
+  UINT8        Input
   );
 
 /**
@@ -918,8 +912,8 @@ RawFiFoInsertOneKey (
 **/
 BOOLEAN
 RawFiFoRemoveOneKey (
-  TERMINAL_DEV  *TerminalDevice,
-  UINT8         *Output
+  TERMINAL_DEV *TerminalDevice,
+  UINT8        *Output
   );
 
 /**
@@ -933,7 +927,7 @@ RawFiFoRemoveOneKey (
 **/
 BOOLEAN
 IsRawFiFoEmpty (
-  TERMINAL_DEV  *TerminalDevice
+  TERMINAL_DEV *TerminalDevice
   );
 
 /**
@@ -947,7 +941,7 @@ IsRawFiFoEmpty (
 **/
 BOOLEAN
 IsRawFiFoFull (
-  TERMINAL_DEV  *TerminalDevice
+  TERMINAL_DEV *TerminalDevice
   );
 
 /**
@@ -963,8 +957,8 @@ IsRawFiFoFull (
 **/
 BOOLEAN
 EfiKeyFiFoForNotifyInsertOneKey (
-  EFI_KEY_FIFO                  *EfiKeyFiFo,
-  EFI_INPUT_KEY                 *Input
+  EFI_KEY_FIFO  *EfiKeyFiFo,
+  EFI_INPUT_KEY *Input
   );
 
 /**
@@ -979,8 +973,8 @@ EfiKeyFiFoForNotifyInsertOneKey (
 **/
 BOOLEAN
 EfiKeyFiFoForNotifyRemoveOneKey (
-  EFI_KEY_FIFO                  *EfiKeyFiFo,
-  EFI_INPUT_KEY                 *Output
+  EFI_KEY_FIFO  *EfiKeyFiFo,
+  EFI_INPUT_KEY *Output
   );
 
 /**
@@ -994,7 +988,7 @@ EfiKeyFiFoForNotifyRemoveOneKey (
 **/
 BOOLEAN
 IsEfiKeyFiFoForNotifyEmpty (
-  IN EFI_KEY_FIFO               *EfiKeyFiFo
+  IN EFI_KEY_FIFO *EfiKeyFiFo
   );
 
 /**
@@ -1008,7 +1002,7 @@ IsEfiKeyFiFoForNotifyEmpty (
 **/
 BOOLEAN
 IsEfiKeyFiFoForNotifyFull (
-  EFI_KEY_FIFO                  *EfiKeyFiFo
+  EFI_KEY_FIFO *EfiKeyFiFo
   );
 
 /**
@@ -1024,8 +1018,8 @@ IsEfiKeyFiFoForNotifyFull (
 **/
 BOOLEAN
 EfiKeyFiFoInsertOneKey (
-  TERMINAL_DEV      *TerminalDevice,
-  EFI_INPUT_KEY     *Key
+  TERMINAL_DEV  *TerminalDevice,
+  EFI_INPUT_KEY *Key
   );
 
 /**
@@ -1055,7 +1049,7 @@ EfiKeyFiFoRemoveOneKey (
 **/
 BOOLEAN
 IsEfiKeyFiFoEmpty (
-  TERMINAL_DEV  *TerminalDevice
+  TERMINAL_DEV *TerminalDevice
   );
 
 /**
@@ -1069,7 +1063,7 @@ IsEfiKeyFiFoEmpty (
 **/
 BOOLEAN
 IsEfiKeyFiFoFull (
-  TERMINAL_DEV  *TerminalDevice
+  TERMINAL_DEV *TerminalDevice
   );
 
 /**
@@ -1085,8 +1079,8 @@ IsEfiKeyFiFoFull (
 **/
 BOOLEAN
 UnicodeFiFoInsertOneKey (
-  TERMINAL_DEV      *TerminalDevice,
-  UINT16            Input
+  TERMINAL_DEV *TerminalDevice,
+  UINT16       Input
   );
 
 /**
@@ -1100,8 +1094,8 @@ UnicodeFiFoInsertOneKey (
 **/
 VOID
 UnicodeFiFoRemoveOneKey (
-  TERMINAL_DEV  *TerminalDevice,
-  UINT16        *Output
+  TERMINAL_DEV *TerminalDevice,
+  UINT16       *Output
   );
 
 /**
@@ -1115,7 +1109,7 @@ UnicodeFiFoRemoveOneKey (
 **/
 BOOLEAN
 IsUnicodeFiFoEmpty (
-  TERMINAL_DEV  *TerminalDevice
+  TERMINAL_DEV *TerminalDevice
   );
 
 /**
@@ -1129,9 +1123,8 @@ IsUnicodeFiFoEmpty (
 **/
 BOOLEAN
 IsUnicodeFiFoFull (
-  TERMINAL_DEV  *TerminalDevice
+  TERMINAL_DEV *TerminalDevice
   );
-
 
 /**
   Translate raw data into Unicode (according to different encode), and
@@ -1142,7 +1135,7 @@ IsUnicodeFiFoFull (
 **/
 VOID
 TranslateRawDataToEfiKey (
-  IN  TERMINAL_DEV      *TerminalDevice
+  IN  TERMINAL_DEV *TerminalDevice
   );
 
 //
@@ -1158,7 +1151,7 @@ TranslateRawDataToEfiKey (
 **/
 VOID
 AnsiRawDataToUnicode (
-  IN  TERMINAL_DEV    *TerminalDevice
+  IN  TERMINAL_DEV *TerminalDevice
   );
 
 /**
@@ -1248,7 +1241,7 @@ Putty function key map:
 **/
 VOID
 UnicodeToEfiKey (
-  IN  TERMINAL_DEV    *TerminalDevice
+  IN  TERMINAL_DEV *TerminalDevice
   );
 
 /**
@@ -1264,8 +1257,8 @@ UnicodeToEfiKey (
 **/
 EFI_STATUS
 AnsiTestString (
-  IN  TERMINAL_DEV    *TerminalDevice,
-  IN  CHAR16          *WString
+  IN  TERMINAL_DEV *TerminalDevice,
+  IN  CHAR16       *WString
   );
 
 //
@@ -1281,7 +1274,7 @@ AnsiTestString (
 **/
 VOID
 VTUTF8RawDataToUnicode (
-  IN  TERMINAL_DEV    *VtUtf8Device
+  IN  TERMINAL_DEV *VtUtf8Device
   );
 
 /**
@@ -1295,8 +1288,8 @@ VTUTF8RawDataToUnicode (
 **/
 EFI_STATUS
 VTUTF8TestString (
-  IN  TERMINAL_DEV    *TerminalDevice,
-  IN  CHAR16          *WString
+  IN  TERMINAL_DEV *TerminalDevice,
+  IN  CHAR16       *WString
   );
 
 /**
@@ -1317,9 +1310,9 @@ VTUTF8TestString (
 **/
 VOID
 UnicodeToUtf8 (
-  IN  CHAR16      Unicode,
-  OUT UTF8_CHAR   *Utf8Char,
-  OUT UINT8       *ValidBytes
+  IN  CHAR16    Unicode,
+  OUT UTF8_CHAR *Utf8Char,
+  OUT UINT8     *ValidBytes
   );
 
 /**
@@ -1333,9 +1326,9 @@ UnicodeToUtf8 (
 **/
 VOID
 GetOneValidUtf8Char (
-  IN  TERMINAL_DEV      *Utf8Device,
-  OUT UTF8_CHAR         *Utf8Char,
-  OUT UINT8             *ValidBytes
+  IN  TERMINAL_DEV *Utf8Device,
+  OUT UTF8_CHAR    *Utf8Char,
+  OUT UINT8        *ValidBytes
   );
 
 /**
@@ -1355,9 +1348,9 @@ GetOneValidUtf8Char (
 **/
 VOID
 Utf8ToUnicode (
-  IN  UTF8_CHAR       Utf8Char,
-  IN  UINT8           ValidBytes,
-  OUT CHAR16          *UnicodeChar
+  IN  UTF8_CHAR Utf8Char,
+  IN  UINT8     ValidBytes,
+  OUT CHAR16    *UnicodeChar
   );
 
 //
@@ -1378,8 +1371,8 @@ Utf8ToUnicode (
 **/
 BOOLEAN
 TerminalIsValidTextGraphics (
-  IN  CHAR16  Graphic,
-  OUT CHAR8   *PcAnsi, OPTIONAL
+  IN  CHAR16 Graphic,
+  OUT CHAR8 *PcAnsi, OPTIONAL
   OUT CHAR8   *Ascii OPTIONAL
   );
 
@@ -1394,7 +1387,7 @@ TerminalIsValidTextGraphics (
 **/
 BOOLEAN
 TerminalIsValidAscii (
-  IN  CHAR16  Ascii
+  IN  CHAR16 Ascii
   );
 
 /**
@@ -1408,7 +1401,7 @@ TerminalIsValidAscii (
 **/
 BOOLEAN
 TerminalIsValidEfiCntlChar (
-  IN  CHAR16  CharC
+  IN  CHAR16 CharC
   );
 
 /**
@@ -1425,7 +1418,7 @@ TerminalIsValidEfiCntlChar (
 **/
 BOOLEAN
 IsHotPlugDevice (
-  IN  EFI_DEVICE_PATH_PROTOCOL    *DevicePath
+  IN  EFI_DEVICE_PATH_PROTOCOL *DevicePath
   );
 
 /**
@@ -1437,10 +1430,9 @@ IsHotPlugDevice (
 VOID
 EFIAPI
 TerminalConInTimerHandler (
-  IN EFI_EVENT            Event,
-  IN VOID                 *Context
+  IN EFI_EVENT Event,
+  IN VOID      *Context
   );
-
 
 /**
   Process key notify.
@@ -1451,8 +1443,8 @@ TerminalConInTimerHandler (
 VOID
 EFIAPI
 KeyNotifyProcessHandler (
-  IN  EFI_EVENT                 Event,
-  IN  VOID                      *Context
+  IN  EFI_EVENT Event,
+  IN  VOID      *Context
   );
 
 #endif

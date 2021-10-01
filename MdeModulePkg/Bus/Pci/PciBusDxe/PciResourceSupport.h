@@ -17,18 +17,18 @@ typedef enum {
 #define PCI_RESOURCE_SIGNATURE  SIGNATURE_32 ('p', 'c', 'r', 'c')
 
 typedef struct {
-  UINT32              Signature;
-  LIST_ENTRY          Link;
-  LIST_ENTRY          ChildList;
-  PCI_IO_DEVICE       *PciDev;
-  UINT64              Alignment;
-  UINT64              Offset;
-  UINT8               Bar;
-  PCI_BAR_TYPE        ResType;
-  UINT64              Length;
-  BOOLEAN             Reserved;
-  PCI_RESOURCE_USAGE  ResourceUsage;
-  BOOLEAN             Virtual;
+  UINT32                Signature;
+  LIST_ENTRY            Link;
+  LIST_ENTRY            ChildList;
+  PCI_IO_DEVICE         *PciDev;
+  UINT64                Alignment;
+  UINT64                Offset;
+  UINT8                 Bar;
+  PCI_BAR_TYPE          ResType;
+  UINT64                Length;
+  BOOLEAN               Reserved;
+  PCI_RESOURCE_USAGE    ResourceUsage;
+  BOOLEAN               Virtual;
 } PCI_RESOURCE_NODE;
 
 #define RESOURCE_NODE_FROM_LINK(a) \
@@ -43,8 +43,8 @@ typedef struct {
 **/
 VOID
 SkipVGAAperture (
-  OUT UINT64   *Start,
-  IN  UINT64   Length
+  OUT UINT64 *Start,
+  IN  UINT64 Length
   );
 
 /**
@@ -56,8 +56,8 @@ SkipVGAAperture (
 **/
 VOID
 SkipIsaAliasAperture (
-  OUT UINT64   *Start,
-  IN  UINT64   Length
+  OUT UINT64 *Start,
+  IN  UINT64 Length
   );
 
 /**
@@ -70,8 +70,8 @@ SkipIsaAliasAperture (
 **/
 VOID
 InsertResourceNode (
-  IN OUT PCI_RESOURCE_NODE   *Bridge,
-  IN     PCI_RESOURCE_NODE   *ResNode
+  IN OUT PCI_RESOURCE_NODE *Bridge,
+  IN     PCI_RESOURCE_NODE *ResNode
   );
 
 /**
@@ -94,9 +94,9 @@ InsertResourceNode (
 **/
 VOID
 MergeResourceTree (
-  IN PCI_RESOURCE_NODE   *Dst,
-  IN PCI_RESOURCE_NODE   *Res,
-  IN BOOLEAN             TypeMerge
+  IN PCI_RESOURCE_NODE *Dst,
+  IN PCI_RESOURCE_NODE *Res,
+  IN BOOLEAN           TypeMerge
   );
 
 /**
@@ -108,7 +108,7 @@ MergeResourceTree (
 **/
 VOID
 CalculateApertureIo16 (
-  IN PCI_RESOURCE_NODE    *Bridge
+  IN PCI_RESOURCE_NODE *Bridge
   );
 
 /**
@@ -120,7 +120,7 @@ CalculateApertureIo16 (
 **/
 VOID
 CalculateResourceAperture (
-  IN PCI_RESOURCE_NODE    *Bridge
+  IN PCI_RESOURCE_NODE *Bridge
   );
 
 /**
@@ -160,12 +160,12 @@ GetResourceFromDevice (
 **/
 PCI_RESOURCE_NODE *
 CreateResourceNode (
-  IN PCI_IO_DEVICE         *PciDev,
-  IN UINT64                Length,
-  IN UINT64                Alignment,
-  IN UINT8                 Bar,
-  IN PCI_BAR_TYPE          ResType,
-  IN PCI_RESOURCE_USAGE    ResUsage
+  IN PCI_IO_DEVICE      *PciDev,
+  IN UINT64             Length,
+  IN UINT64             Alignment,
+  IN UINT8              Bar,
+  IN PCI_BAR_TYPE       ResType,
+  IN PCI_RESOURCE_USAGE ResUsage
   );
 
 /**
@@ -184,12 +184,12 @@ CreateResourceNode (
 **/
 PCI_RESOURCE_NODE *
 CreateVfResourceNode (
-  IN PCI_IO_DEVICE         *PciDev,
-  IN UINT64                Length,
-  IN UINT64                Alignment,
-  IN UINT8                 Bar,
-  IN PCI_BAR_TYPE          ResType,
-  IN PCI_RESOURCE_USAGE    ResUsage
+  IN PCI_IO_DEVICE      *PciDev,
+  IN UINT64             Length,
+  IN UINT64             Alignment,
+  IN UINT8              Bar,
+  IN PCI_BAR_TYPE       ResType,
+  IN PCI_RESOURCE_USAGE ResUsage
   );
 
 /**
@@ -341,9 +341,9 @@ ProgramPpbApperture (
 **/
 VOID
 ProgramUpstreamBridgeForRom (
-  IN PCI_IO_DEVICE   *PciDevice,
-  IN UINT32          OptionRomBase,
-  IN BOOLEAN         Enable
+  IN PCI_IO_DEVICE *PciDevice,
+  IN UINT32        OptionRomBase,
+  IN BOOLEAN       Enable
   );
 
 /**
@@ -357,7 +357,7 @@ ProgramUpstreamBridgeForRom (
 **/
 BOOLEAN
 ResourceRequestExisted (
-  IN PCI_RESOURCE_NODE    *Bridge
+  IN PCI_RESOURCE_NODE *Bridge
   );
 
 /**
@@ -370,8 +370,8 @@ ResourceRequestExisted (
 **/
 VOID
 InitializeResourcePool (
-  IN OUT PCI_RESOURCE_NODE   *ResourcePool,
-  IN     PCI_BAR_TYPE        ResourceType
+  IN OUT PCI_RESOURCE_NODE *ResourcePool,
+  IN     PCI_BAR_TYPE      ResourceType
   );
 
 /**
@@ -398,12 +398,12 @@ DestroyResourceTree (
 **/
 VOID
 ResourcePaddingForCardBusBridge (
-  IN PCI_IO_DEVICE        *PciDev,
-  IN PCI_RESOURCE_NODE    *IoNode,
-  IN PCI_RESOURCE_NODE    *Mem32Node,
-  IN PCI_RESOURCE_NODE    *PMem32Node,
-  IN PCI_RESOURCE_NODE    *Mem64Node,
-  IN PCI_RESOURCE_NODE    *PMem64Node
+  IN PCI_IO_DEVICE     *PciDev,
+  IN PCI_RESOURCE_NODE *IoNode,
+  IN PCI_RESOURCE_NODE *Mem32Node,
+  IN PCI_RESOURCE_NODE *PMem32Node,
+  IN PCI_RESOURCE_NODE *Mem64Node,
+  IN PCI_RESOURCE_NODE *PMem64Node
   );
 
 /**
@@ -432,12 +432,12 @@ ProgramP2C (
 **/
 VOID
 ApplyResourcePadding (
-  IN PCI_IO_DEVICE         *PciDev,
-  IN PCI_RESOURCE_NODE     *IoNode,
-  IN PCI_RESOURCE_NODE     *Mem32Node,
-  IN PCI_RESOURCE_NODE     *PMem32Node,
-  IN PCI_RESOURCE_NODE     *Mem64Node,
-  IN PCI_RESOURCE_NODE     *PMem64Node
+  IN PCI_IO_DEVICE     *PciDev,
+  IN PCI_RESOURCE_NODE *IoNode,
+  IN PCI_RESOURCE_NODE *Mem32Node,
+  IN PCI_RESOURCE_NODE *PMem32Node,
+  IN PCI_RESOURCE_NODE *Mem64Node,
+  IN PCI_RESOURCE_NODE *PMem64Node
   );
 
 /**
@@ -450,7 +450,7 @@ ApplyResourcePadding (
 **/
 VOID
 GetResourcePaddingPpb (
-  IN  PCI_IO_DEVICE                  *PciIoDevice
+  IN  PCI_IO_DEVICE *PciIoDevice
   );
 
 #endif

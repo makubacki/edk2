@@ -8,7 +8,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "PlDebugSupport.h"
 
-IA32_IDT_GATE_DESCRIPTOR  NullDesc = {{0}};
+IA32_IDT_GATE_DESCRIPTOR  NullDesc = {
+  { 0 }
+};
 
 /**
   Get Interrupt Handle from IDT Gate Descriptor.
@@ -20,17 +22,17 @@ IA32_IDT_GATE_DESCRIPTOR  NullDesc = {{0}};
 **/
 UINTN
 GetInterruptHandleFromIdt (
-  IN IA32_IDT_GATE_DESCRIPTOR  *IdtGateDescriptor
+  IN IA32_IDT_GATE_DESCRIPTOR *IdtGateDescriptor
   )
 {
-  UINTN      InterruptHandle;
+  UINTN  InterruptHandle;
 
   //
   // InterruptHandle  0-15 : OffsetLow
   // InterruptHandle 16-31 : OffsetHigh
   //
-  ((UINT16 *) &InterruptHandle)[0] = (UINT16) IdtGateDescriptor->Bits.OffsetLow;
-  ((UINT16 *) &InterruptHandle)[1] = (UINT16) IdtGateDescriptor->Bits.OffsetHigh;
+  ((UINT16 *)&InterruptHandle)[0] = (UINT16)IdtGateDescriptor->Bits.OffsetLow;
+  ((UINT16 *)&InterruptHandle)[1] = (UINT16)IdtGateDescriptor->Bits.OffsetHigh;
 
   return InterruptHandle;
 }
@@ -48,11 +50,11 @@ GetInterruptHandleFromIdt (
 **/
 VOID
 CreateEntryStub (
-  IN EFI_EXCEPTION_TYPE     ExceptionType,
-  OUT VOID                  **Stub
+  IN EFI_EXCEPTION_TYPE ExceptionType,
+  OUT VOID              **Stub
   )
 {
-  UINT8       *StubCopy;
+  UINT8  *StubCopy;
 
   StubCopy = *Stub;
 
@@ -72,14 +74,14 @@ CreateEntryStub (
   //
   // poke in the exception type so the second push pushes the exception type
   //
-  StubCopy[0x0c] = (UINT8) ExceptionType;
+  StubCopy[0x0c] = (UINT8)ExceptionType;
 
   //
   // fixup the jump target to point to the common entry
   //
-  *(UINT32 *) &StubCopy[0x0e] = (UINT32) CommonIdtEntry - (UINT32) &StubCopy[StubSize];
+  *(UINT32 *)&StubCopy[0x0e] = (UINT32)CommonIdtEntry - (UINT32)&StubCopy[StubSize];
 
-  return ;
+  return;
 }
 
 /**

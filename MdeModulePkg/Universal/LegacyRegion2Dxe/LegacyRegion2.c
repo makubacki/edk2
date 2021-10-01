@@ -14,7 +14,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include <LegacyRegion2.h>
 
-EFI_HANDLE   mLegacyRegion2Handle = NULL;
+EFI_HANDLE  mLegacyRegion2Handle = NULL;
 
 EFI_LEGACY_REGION2_PROTOCOL  mLegacyRegion2 = {
   LegacyRegion2Decode,
@@ -51,11 +51,11 @@ EFI_LEGACY_REGION2_PROTOCOL  mLegacyRegion2 = {
 EFI_STATUS
 EFIAPI
 LegacyRegion2Decode (
-  IN  EFI_LEGACY_REGION2_PROTOCOL  *This,
-  IN  UINT32                       Start,
-  IN  UINT32                       Length,
-  OUT UINT32                       *Granularity,
-  IN  BOOLEAN                      *On
+  IN  EFI_LEGACY_REGION2_PROTOCOL *This,
+  IN  UINT32                      Start,
+  IN  UINT32                      Length,
+  OUT UINT32                      *Granularity,
+  IN  BOOLEAN                     *On
   )
 {
   if ((Start < 0xC0000) || ((Start + Length - 1) > 0xFFFFF)) {
@@ -133,10 +133,10 @@ LegacyRegion2Lock (
 EFI_STATUS
 EFIAPI
 LegacyRegion2BootLock (
-  IN  EFI_LEGACY_REGION2_PROTOCOL         *This,
-  IN  UINT32                              Start,
-  IN  UINT32                              Length,
-  OUT UINT32                              *Granularity
+  IN  EFI_LEGACY_REGION2_PROTOCOL *This,
+  IN  UINT32                      Start,
+  IN  UINT32                      Length,
+  OUT UINT32                      *Granularity
   )
 {
   if ((Start < 0xC0000) || ((Start + Length - 1) > 0xFFFFF)) {
@@ -169,10 +169,10 @@ LegacyRegion2BootLock (
 EFI_STATUS
 EFIAPI
 LegacyRegion2Unlock (
-  IN  EFI_LEGACY_REGION2_PROTOCOL  *This,
-  IN  UINT32                       Start,
-  IN  UINT32                       Length,
-  OUT UINT32                       *Granularity
+  IN  EFI_LEGACY_REGION2_PROTOCOL *This,
+  IN  UINT32                      Start,
+  IN  UINT32                      Length,
+  OUT UINT32                      *Granularity
   )
 {
   if ((Start < 0xC0000) || ((Start + Length - 1) > 0xFFFFF)) {
@@ -206,9 +206,9 @@ LegacyRegion2Unlock (
 EFI_STATUS
 EFIAPI
 LegacyRegionGetInfo (
-  IN  EFI_LEGACY_REGION2_PROTOCOL   *This,
-  OUT UINT32                        *DescriptorCount,
-  OUT EFI_LEGACY_REGION_DESCRIPTOR  **Descriptor
+  IN  EFI_LEGACY_REGION2_PROTOCOL  *This,
+  OUT UINT32                       *DescriptorCount,
+  OUT EFI_LEGACY_REGION_DESCRIPTOR **Descriptor
   )
 {
   return EFI_UNSUPPORTED;
@@ -226,8 +226,8 @@ LegacyRegionGetInfo (
 EFI_STATUS
 EFIAPI
 LegacyRegion2Install (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
   EFI_STATUS  Status;
@@ -242,7 +242,8 @@ LegacyRegion2Install (
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
                   &mLegacyRegion2Handle,
-                  &gEfiLegacyRegion2ProtocolGuid, &mLegacyRegion2,
+                  &gEfiLegacyRegion2ProtocolGuid,
+                  &mLegacyRegion2,
                   NULL
                   );
   ASSERT_EFI_ERROR (Status);

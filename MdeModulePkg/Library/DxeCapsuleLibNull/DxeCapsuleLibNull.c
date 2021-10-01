@@ -85,7 +85,6 @@ ProcessCapsules (
   return EFI_UNSUPPORTED;
 }
 
-
 /**
   This routine is called to check if CapsuleOnDisk flag in OsIndications Variable
   is enabled.
@@ -96,7 +95,7 @@ ProcessCapsules (
 **/
 BOOLEAN
 EFIAPI
-CoDCheckCapsuleOnDiskFlag(
+CoDCheckCapsuleOnDiskFlag (
   VOID
   )
 {
@@ -111,7 +110,7 @@ CoDCheckCapsuleOnDiskFlag(
 **/
 EFI_STATUS
 EFIAPI
-CoDClearCapsuleOnDiskFlag(
+CoDClearCapsuleOnDiskFlag (
   VOID
   )
 {
@@ -142,8 +141,8 @@ CoDClearCapsuleOnDiskFlag(
 **/
 EFI_STATUS
 EFIAPI
-CoDRelocateCapsule(
-  UINTN     MaxRetry
+CoDRelocateCapsule (
+  UINTN MaxRetry
   )
 {
   return EFI_UNSUPPORTED;
@@ -163,7 +162,7 @@ CoDRelocateCapsule(
 EFI_STATUS
 EFIAPI
 CoDRemoveTempFile (
-  UINTN    MaxRetry
+  UINTN MaxRetry
   )
 {
   return EFI_UNSUPPORTED;

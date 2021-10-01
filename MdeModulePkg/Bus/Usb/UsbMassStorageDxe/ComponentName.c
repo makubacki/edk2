@@ -20,17 +20,16 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gUsbMassStorageCompon
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL gUsbMassStorageComponentName2 = {
-  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) UsbMassStorageGetDriverName,
-  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) UsbMassStorageGetControllerName,
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gUsbMassStorageComponentName2 = {
+  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)UsbMassStorageGetDriverName,
+  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)UsbMassStorageGetControllerName,
   "en"
 };
 
-
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
-mUsbMassStorageDriverNameTable[] = {
-  {"eng;en", L"Usb Mass Storage Driver"},
-  {NULL,  NULL}
+  mUsbMassStorageDriverNameTable[] = {
+  { "eng;en", L"Usb Mass Storage Driver" },
+  { NULL,     NULL                       }
 };
 
 /**
@@ -70,9 +69,9 @@ mUsbMassStorageDriverNameTable[] = {
 EFI_STATUS
 EFIAPI
 UsbMassStorageGetDriverName (
-  IN  EFI_COMPONENT_NAME_PROTOCOL  *This,
-  IN  CHAR8                        *Language,
-  OUT CHAR16                       **DriverName
+  IN  EFI_COMPONENT_NAME_PROTOCOL *This,
+  IN  CHAR8                       *Language,
+  OUT CHAR16                      **DriverName
   )
 {
   return LookupUnicodeString2 (
@@ -145,11 +144,11 @@ UsbMassStorageGetDriverName (
 EFI_STATUS
 EFIAPI
 UsbMassStorageGetControllerName (
-  IN  EFI_COMPONENT_NAME_PROTOCOL                     *This,
-  IN  EFI_HANDLE                                      ControllerHandle,
-  IN  EFI_HANDLE                                      ChildHandle        OPTIONAL,
-  IN  CHAR8                                           *Language,
-  OUT CHAR16                                          **ControllerName
+  IN  EFI_COMPONENT_NAME_PROTOCOL *This,
+  IN  EFI_HANDLE                  ControllerHandle,
+  IN  EFI_HANDLE                  ChildHandle        OPTIONAL,
+  IN  CHAR8                       *Language,
+  OUT CHAR16                      **ControllerName
   )
 {
   return EFI_UNSUPPORTED;

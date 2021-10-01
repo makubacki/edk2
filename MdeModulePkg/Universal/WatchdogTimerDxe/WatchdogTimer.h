@@ -9,8 +9,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #ifndef _WATCHDOG_TIMER_H_
 #define _WATCHDOG_TIMER_H_
 
-
-
 #include <Uefi.h>
 #include <Library/DebugLib.h>
 #include <Library/UefiDriverEntryPoint.h>
@@ -18,7 +16,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
 #include <Protocol/WatchdogTimer.h>
-
 
 /**
   Registers a handler that is to be invoked when the watchdog timer fires.
@@ -46,8 +43,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 WatchdogTimerDriverRegisterHandler (
-  IN EFI_WATCHDOG_TIMER_ARCH_PROTOCOL  *This,
-  IN EFI_WATCHDOG_TIMER_NOTIFY         NotifyFunction
+  IN EFI_WATCHDOG_TIMER_ARCH_PROTOCOL *This,
+  IN EFI_WATCHDOG_TIMER_NOTIFY        NotifyFunction
   );
 
 /**
@@ -71,8 +68,8 @@ WatchdogTimerDriverRegisterHandler (
 EFI_STATUS
 EFIAPI
 WatchdogTimerDriverSetTimerPeriod (
-  IN EFI_WATCHDOG_TIMER_ARCH_PROTOCOL  *This,
-  IN UINT64                            TimerPeriod
+  IN EFI_WATCHDOG_TIMER_ARCH_PROTOCOL *This,
+  IN UINT64                           TimerPeriod
   );
 
 /**
@@ -95,8 +92,8 @@ WatchdogTimerDriverSetTimerPeriod (
 EFI_STATUS
 EFIAPI
 WatchdogTimerDriverGetTimerPeriod (
-  IN EFI_WATCHDOG_TIMER_ARCH_PROTOCOL  *This,
-  IN UINT64                            *TimerPeriod
+  IN EFI_WATCHDOG_TIMER_ARCH_PROTOCOL *This,
+  IN UINT64                           *TimerPeriod
   );
 
 #endif

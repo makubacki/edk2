@@ -25,28 +25,25 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 PeiGetBootMode (
-  IN  CONST EFI_PEI_SERVICES  **PeiServices,
-  IN  OUT   EFI_BOOT_MODE     *BootMode
+  IN  CONST EFI_PEI_SERVICES **PeiServices,
+  IN  OUT   EFI_BOOT_MODE    *BootMode
   )
 {
-  PEI_CORE_INSTANCE             *PrivateData;
-  EFI_HOB_HANDOFF_INFO_TABLE    *HandOffHob;
-
+  PEI_CORE_INSTANCE           *PrivateData;
+  EFI_HOB_HANDOFF_INFO_TABLE  *HandOffHob;
 
   if (BootMode == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
-  PrivateData = PEI_CORE_INSTANCE_FROM_PS_THIS(PeiServices);
+  PrivateData = PEI_CORE_INSTANCE_FROM_PS_THIS (PeiServices);
 
-  HandOffHob  = (PrivateData->HobList.HandoffInformationTable);
+  HandOffHob = (PrivateData->HobList.HandoffInformationTable);
 
-  *BootMode   = HandOffHob->BootMode;
-
+  *BootMode = HandOffHob->BootMode;
 
   return EFI_SUCCESS;
 }
-
 
 /**
   This service enables PEIMs to update the boot mode variable.
@@ -61,20 +58,18 @@ PeiGetBootMode (
 EFI_STATUS
 EFIAPI
 PeiSetBootMode (
-  IN CONST EFI_PEI_SERVICES  **PeiServices,
-  IN EFI_BOOT_MODE           BootMode
+  IN CONST EFI_PEI_SERVICES **PeiServices,
+  IN EFI_BOOT_MODE          BootMode
   )
 {
-  PEI_CORE_INSTANCE                    *PrivateData;
-  EFI_HOB_HANDOFF_INFO_TABLE    *HandOffHob;
+  PEI_CORE_INSTANCE           *PrivateData;
+  EFI_HOB_HANDOFF_INFO_TABLE  *HandOffHob;
 
+  PrivateData = PEI_CORE_INSTANCE_FROM_PS_THIS (PeiServices);
 
-  PrivateData = PEI_CORE_INSTANCE_FROM_PS_THIS(PeiServices);
-
-  HandOffHob  = (PrivateData->HobList.HandoffInformationTable);
+  HandOffHob = (PrivateData->HobList.HandoffInformationTable);
 
   HandOffHob->BootMode = BootMode;
-
 
   return EFI_SUCCESS;
 }

@@ -11,6 +11,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // Lock Stuff
 //
+
 /**
   Initialize a basic mutual exclusion lock.   Each lock
   provides mutual exclusion access at it's task priority
@@ -26,7 +27,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 **/
 EFI_STATUS
 CoreAcquireLockOrFail (
-  IN EFI_LOCK  *Lock
+  IN EFI_LOCK *Lock
   )
 {
   ASSERT (Lock != NULL);
@@ -45,8 +46,6 @@ CoreAcquireLockOrFail (
   return EFI_SUCCESS;
 }
 
-
-
 /**
   Raising to the task priority level of the mutual exclusion
   lock, and then acquires ownership of the lock.
@@ -58,7 +57,7 @@ CoreAcquireLockOrFail (
 **/
 VOID
 CoreAcquireLock (
-  IN EFI_LOCK  *Lock
+  IN EFI_LOCK *Lock
   )
 {
   ASSERT (Lock != NULL);
@@ -67,8 +66,6 @@ CoreAcquireLock (
   Lock->OwnerTpl = CoreRaiseTpl (Lock->Tpl);
   Lock->Lock     = EfiLockAcquired;
 }
-
-
 
 /**
   Releases ownership of the mutual exclusion lock, and
@@ -81,10 +78,10 @@ CoreAcquireLock (
 **/
 VOID
 CoreReleaseLock (
-  IN EFI_LOCK  *Lock
+  IN EFI_LOCK *Lock
   )
 {
-  EFI_TPL Tpl;
+  EFI_TPL  Tpl;
 
   ASSERT (Lock != NULL);
   ASSERT (Lock->Lock == EfiLockAcquired);
@@ -95,6 +92,3 @@ CoreReleaseLock (
 
   CoreRestoreTpl (Tpl);
 }
-
-
-

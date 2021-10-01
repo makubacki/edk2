@@ -36,13 +36,12 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // Driver Binding Externs
 //
-extern EFI_DRIVER_BINDING_PROTOCOL  gConPlatformTextInDriverBinding;
-extern EFI_COMPONENT_NAME_PROTOCOL  gConPlatformComponentName;
-extern EFI_COMPONENT_NAME2_PROTOCOL gConPlatformComponentName2;
-extern EFI_DRIVER_BINDING_PROTOCOL  gConPlatformTextOutDriverBinding;
-extern EFI_COMPONENT_NAME_PROTOCOL  gConPlatformComponentName;
-extern EFI_COMPONENT_NAME2_PROTOCOL gConPlatformComponentName2;
-
+extern EFI_DRIVER_BINDING_PROTOCOL   gConPlatformTextInDriverBinding;
+extern EFI_COMPONENT_NAME_PROTOCOL   gConPlatformComponentName;
+extern EFI_COMPONENT_NAME2_PROTOCOL  gConPlatformComponentName2;
+extern EFI_DRIVER_BINDING_PROTOCOL   gConPlatformTextOutDriverBinding;
+extern EFI_COMPONENT_NAME_PROTOCOL   gConPlatformComponentName;
+extern EFI_COMPONENT_NAME2_PROTOCOL  gConPlatformComponentName2;
 
 typedef enum {
   Check,
@@ -63,9 +62,9 @@ typedef enum {
 **/
 EFI_STATUS
 ConPlatformDriverBindingSupported (
-  IN  EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN  EFI_HANDLE                   ControllerHandle,
-  IN  EFI_GUID                     *ProtocolGuid
+  IN  EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN  EFI_HANDLE                  ControllerHandle,
+  IN  EFI_GUID                    *ProtocolGuid
   );
 
 /**
@@ -83,9 +82,9 @@ ConPlatformDriverBindingSupported (
 EFI_STATUS
 EFIAPI
 ConPlatformTextInDriverBindingSupported (
-  IN  EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN  EFI_HANDLE                   Handle,
-  IN  EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath  OPTIONAL
+  IN  EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN  EFI_HANDLE                  Handle,
+  IN  EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath  OPTIONAL
   );
 
 /**
@@ -103,9 +102,9 @@ ConPlatformTextInDriverBindingSupported (
 EFI_STATUS
 EFIAPI
 ConPlatformTextOutDriverBindingSupported (
-  IN  EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN  EFI_HANDLE                   Handle,
-  IN  EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath  OPTIONAL
+  IN  EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN  EFI_HANDLE                  Handle,
+  IN  EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath  OPTIONAL
   );
 
 /**
@@ -129,9 +128,9 @@ ConPlatformTextOutDriverBindingSupported (
 EFI_STATUS
 EFIAPI
 ConPlatformTextInDriverBindingStart (
-  IN  EFI_DRIVER_BINDING_PROTOCOL   *This,
-  IN  EFI_HANDLE                    Handle,
-  IN  EFI_DEVICE_PATH_PROTOCOL      *RemainingDevicePath
+  IN  EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN  EFI_HANDLE                  Handle,
+  IN  EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath
   );
 
 /**
@@ -156,9 +155,9 @@ ConPlatformTextInDriverBindingStart (
 EFI_STATUS
 EFIAPI
 ConPlatformTextOutDriverBindingStart (
-  IN  EFI_DRIVER_BINDING_PROTOCOL   *This,
-  IN  EFI_HANDLE                    Handle,
-  IN  EFI_DEVICE_PATH_PROTOCOL      *RemainingDevicePath
+  IN  EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN  EFI_HANDLE                  Handle,
+  IN  EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath
   );
 
 /**
@@ -178,10 +177,10 @@ ConPlatformTextOutDriverBindingStart (
 EFI_STATUS
 EFIAPI
 ConPlatformTextInDriverBindingStop (
-  IN  EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN  EFI_HANDLE                   Handle,
-  IN  UINTN                        NumberOfChildren,
-  IN  EFI_HANDLE                   *ChildHandleBuffer
+  IN  EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN  EFI_HANDLE                  Handle,
+  IN  UINTN                       NumberOfChildren,
+  IN  EFI_HANDLE                  *ChildHandleBuffer
   );
 
 /**
@@ -201,10 +200,10 @@ ConPlatformTextInDriverBindingStop (
 EFI_STATUS
 EFIAPI
 ConPlatformTextOutDriverBindingStop (
-  IN  EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN  EFI_HANDLE                   Handle,
-  IN  UINTN                        NumberOfChildren,
-  IN  EFI_HANDLE                   *ChildHandleBuffer
+  IN  EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN  EFI_HANDLE                  Handle,
+  IN  UINTN                       NumberOfChildren,
+  IN  EFI_HANDLE                  *ChildHandleBuffer
   );
 
 /**
@@ -217,9 +216,9 @@ ConPlatformTextOutDriverBindingStop (
 **/
 VOID
 ConPlatformUnInstallProtocol (
-  IN  EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN  EFI_HANDLE                   Handle,
-  IN  EFI_GUID                     *ProtocolGuid
+  IN  EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN  EFI_HANDLE                  Handle,
+  IN  EFI_GUID                    *ProtocolGuid
   );
 
 /**
@@ -235,7 +234,7 @@ ConPlatformUnInstallProtocol (
 **/
 VOID *
 ConPlatformGetVariable (
-  IN  CHAR16              *Name
+  IN  CHAR16 *Name
   );
 
 /**
@@ -261,10 +260,10 @@ ConPlatformGetVariable (
 **/
 EFI_STATUS
 ConPlatformMatchDevicePaths (
-  IN  EFI_DEVICE_PATH_PROTOCOL  *Multi,
-  IN  EFI_DEVICE_PATH_PROTOCOL  *Single,
-  OUT EFI_DEVICE_PATH_PROTOCOL  **NewDevicePath OPTIONAL,
-  IN  BOOLEAN                   Delete
+  IN  EFI_DEVICE_PATH_PROTOCOL *Multi,
+  IN  EFI_DEVICE_PATH_PROTOCOL *Single,
+  OUT EFI_DEVICE_PATH_PROTOCOL **NewDevicePath OPTIONAL,
+  IN  BOOLEAN                  Delete
   );
 
 /**
@@ -290,6 +289,7 @@ ConPlatformUpdateDeviceVariable (
 //
 // EFI Component Name Functions
 //
+
 /**
   Retrieves a Unicode string that is the user readable name of the driver.
 
@@ -327,11 +327,10 @@ ConPlatformUpdateDeviceVariable (
 EFI_STATUS
 EFIAPI
 ConPlatformComponentNameGetDriverName (
-  IN  EFI_COMPONENT_NAME_PROTOCOL  *This,
-  IN  CHAR8                        *Language,
-  OUT CHAR16                       **DriverName
+  IN  EFI_COMPONENT_NAME_PROTOCOL *This,
+  IN  CHAR8                       *Language,
+  OUT CHAR16                      **DriverName
   );
-
 
 /**
   Retrieves a Unicode string that is the user readable name of the controller
@@ -394,11 +393,11 @@ ConPlatformComponentNameGetDriverName (
 EFI_STATUS
 EFIAPI
 ConPlatformComponentNameGetControllerName (
-  IN  EFI_COMPONENT_NAME_PROTOCOL                     *This,
-  IN  EFI_HANDLE                                      ControllerHandle,
-  IN  EFI_HANDLE                                      ChildHandle        OPTIONAL,
-  IN  CHAR8                                           *Language,
-  OUT CHAR16                                          **ControllerName
+  IN  EFI_COMPONENT_NAME_PROTOCOL *This,
+  IN  EFI_HANDLE                  ControllerHandle,
+  IN  EFI_HANDLE                  ChildHandle        OPTIONAL,
+  IN  CHAR8                       *Language,
+  OUT CHAR16                      **ControllerName
   );
 
 /**
@@ -413,7 +412,7 @@ ConPlatformComponentNameGetControllerName (
 **/
 BOOLEAN
 ConPlatformUpdateGopCandidate (
-  IN  EFI_DEVICE_PATH_PROTOCOL    *DevicePath
+  IN  EFI_DEVICE_PATH_PROTOCOL *DevicePath
   );
 
 #endif

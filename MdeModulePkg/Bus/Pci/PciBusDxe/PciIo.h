@@ -17,7 +17,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 **/
 VOID
 InitializePciIoInstance (
-  IN PCI_IO_DEVICE               *PciIoDevice
+  IN PCI_IO_DEVICE *PciIoDevice
   );
 
 /**
@@ -37,12 +37,12 @@ InitializePciIoInstance (
 **/
 EFI_STATUS
 PciIoVerifyBarAccess (
-  IN PCI_IO_DEVICE                   *PciIoDevice,
-  IN UINT8                           BarIndex,
-  IN PCI_BAR_TYPE                    Type,
-  IN IN EFI_PCI_IO_PROTOCOL_WIDTH    Width,
-  IN IN UINTN                        Count,
-  IN UINT64                          *Offset
+  IN PCI_IO_DEVICE                *PciIoDevice,
+  IN UINT8                        BarIndex,
+  IN PCI_BAR_TYPE                 Type,
+  IN IN EFI_PCI_IO_PROTOCOL_WIDTH Width,
+  IN IN UINTN                     Count,
+  IN UINT64                       *Offset
   );
 
 /**
@@ -60,10 +60,10 @@ PciIoVerifyBarAccess (
 **/
 EFI_STATUS
 PciIoVerifyConfigAccess (
-  IN PCI_IO_DEVICE              *PciIoDevice,
-  IN EFI_PCI_IO_PROTOCOL_WIDTH  Width,
-  IN UINTN                      Count,
-  IN UINT64                     *Offset
+  IN PCI_IO_DEVICE             *PciIoDevice,
+  IN EFI_PCI_IO_PROTOCOL_WIDTH Width,
+  IN UINTN                     Count,
+  IN UINT64                    *Offset
   );
 
 /**
@@ -91,14 +91,14 @@ PciIoVerifyConfigAccess (
 EFI_STATUS
 EFIAPI
 PciIoPollMem (
-  IN  EFI_PCI_IO_PROTOCOL        *This,
-  IN  EFI_PCI_IO_PROTOCOL_WIDTH  Width,
-  IN  UINT8                      BarIndex,
-  IN  UINT64                     Offset,
-  IN  UINT64                     Mask,
-  IN  UINT64                     Value,
-  IN  UINT64                     Delay,
-  OUT UINT64                     *Result
+  IN  EFI_PCI_IO_PROTOCOL       *This,
+  IN  EFI_PCI_IO_PROTOCOL_WIDTH Width,
+  IN  UINT8                     BarIndex,
+  IN  UINT64                    Offset,
+  IN  UINT64                    Mask,
+  IN  UINT64                    Value,
+  IN  UINT64                    Delay,
+  OUT UINT64                    *Result
   );
 
 /**
@@ -126,14 +126,14 @@ PciIoPollMem (
 EFI_STATUS
 EFIAPI
 PciIoPollIo (
-  IN  EFI_PCI_IO_PROTOCOL        *This,
-  IN  EFI_PCI_IO_PROTOCOL_WIDTH  Width,
-  IN  UINT8                      BarIndex,
-  IN  UINT64                     Offset,
-  IN  UINT64                     Mask,
-  IN  UINT64                     Value,
-  IN  UINT64                     Delay,
-  OUT UINT64                     *Result
+  IN  EFI_PCI_IO_PROTOCOL       *This,
+  IN  EFI_PCI_IO_PROTOCOL_WIDTH Width,
+  IN  UINT8                     BarIndex,
+  IN  UINT64                    Offset,
+  IN  UINT64                    Mask,
+  IN  UINT64                    Value,
+  IN  UINT64                    Delay,
+  OUT UINT64                    *Result
   );
 
 /**
@@ -159,12 +159,12 @@ PciIoPollIo (
 EFI_STATUS
 EFIAPI
 PciIoMemRead (
-  IN     EFI_PCI_IO_PROTOCOL        *This,
-  IN     EFI_PCI_IO_PROTOCOL_WIDTH  Width,
-  IN     UINT8                      BarIndex,
-  IN     UINT64                     Offset,
-  IN     UINTN                      Count,
-  IN OUT VOID                       *Buffer
+  IN     EFI_PCI_IO_PROTOCOL       *This,
+  IN     EFI_PCI_IO_PROTOCOL_WIDTH Width,
+  IN     UINT8                     BarIndex,
+  IN     UINT64                    Offset,
+  IN     UINTN                     Count,
+  IN OUT VOID                      *Buffer
   );
 
 /**
@@ -190,12 +190,12 @@ PciIoMemRead (
 EFI_STATUS
 EFIAPI
 PciIoMemWrite (
-  IN     EFI_PCI_IO_PROTOCOL        *This,
-  IN     EFI_PCI_IO_PROTOCOL_WIDTH  Width,
-  IN     UINT8                      BarIndex,
-  IN     UINT64                     Offset,
-  IN     UINTN                      Count,
-  IN OUT VOID                       *Buffer
+  IN     EFI_PCI_IO_PROTOCOL       *This,
+  IN     EFI_PCI_IO_PROTOCOL_WIDTH Width,
+  IN     UINT8                     BarIndex,
+  IN     UINT64                    Offset,
+  IN     UINTN                     Count,
+  IN OUT VOID                      *Buffer
   );
 
 /**
@@ -221,12 +221,12 @@ PciIoMemWrite (
 EFI_STATUS
 EFIAPI
 PciIoIoRead (
-  IN     EFI_PCI_IO_PROTOCOL        *This,
-  IN     EFI_PCI_IO_PROTOCOL_WIDTH  Width,
-  IN     UINT8                      BarIndex,
-  IN     UINT64                     Offset,
-  IN     UINTN                      Count,
-  IN OUT VOID                       *Buffer
+  IN     EFI_PCI_IO_PROTOCOL       *This,
+  IN     EFI_PCI_IO_PROTOCOL_WIDTH Width,
+  IN     UINT8                     BarIndex,
+  IN     UINT64                    Offset,
+  IN     UINTN                     Count,
+  IN OUT VOID                      *Buffer
   );
 
 /**
@@ -252,12 +252,12 @@ PciIoIoRead (
 EFI_STATUS
 EFIAPI
 PciIoIoWrite (
-  IN     EFI_PCI_IO_PROTOCOL        *This,
-  IN     EFI_PCI_IO_PROTOCOL_WIDTH  Width,
-  IN     UINT8                      BarIndex,
-  IN     UINT64                     Offset,
-  IN     UINTN                      Count,
-  IN OUT VOID                       *Buffer
+  IN     EFI_PCI_IO_PROTOCOL       *This,
+  IN     EFI_PCI_IO_PROTOCOL_WIDTH Width,
+  IN     UINT8                     BarIndex,
+  IN     UINT64                    Offset,
+  IN     UINTN                     Count,
+  IN OUT VOID                      *Buffer
   );
 
 /**
@@ -281,11 +281,11 @@ PciIoIoWrite (
 EFI_STATUS
 EFIAPI
 PciIoConfigRead (
-  IN     EFI_PCI_IO_PROTOCOL        *This,
-  IN     EFI_PCI_IO_PROTOCOL_WIDTH  Width,
-  IN     UINT32                     Offset,
-  IN     UINTN                      Count,
-  IN OUT VOID                       *Buffer
+  IN     EFI_PCI_IO_PROTOCOL       *This,
+  IN     EFI_PCI_IO_PROTOCOL_WIDTH Width,
+  IN     UINT32                    Offset,
+  IN     UINTN                     Count,
+  IN OUT VOID                      *Buffer
   );
 
 /**
@@ -309,11 +309,11 @@ PciIoConfigRead (
 EFI_STATUS
 EFIAPI
 PciIoConfigWrite (
-  IN     EFI_PCI_IO_PROTOCOL        *This,
-  IN     EFI_PCI_IO_PROTOCOL_WIDTH  Width,
-  IN     UINT32                     Offset,
-  IN     UINTN                      Count,
-  IN OUT VOID                       *Buffer
+  IN     EFI_PCI_IO_PROTOCOL       *This,
+  IN     EFI_PCI_IO_PROTOCOL_WIDTH Width,
+  IN     UINT32                    Offset,
+  IN     UINTN                     Count,
+  IN OUT VOID                      *Buffer
   );
 
 /**
@@ -347,13 +347,13 @@ PciIoConfigWrite (
 EFI_STATUS
 EFIAPI
 PciIoCopyMem (
-  IN EFI_PCI_IO_PROTOCOL              *This,
-  IN     EFI_PCI_IO_PROTOCOL_WIDTH    Width,
-  IN     UINT8                        DestBarIndex,
-  IN     UINT64                       DestOffset,
-  IN     UINT8                        SrcBarIndex,
-  IN     UINT64                       SrcOffset,
-  IN     UINTN                        Count
+  IN EFI_PCI_IO_PROTOCOL           *This,
+  IN     EFI_PCI_IO_PROTOCOL_WIDTH Width,
+  IN     UINT8                     DestBarIndex,
+  IN     UINT64                    DestOffset,
+  IN     UINT8                     SrcBarIndex,
+  IN     UINT64                    SrcOffset,
+  IN     UINTN                     Count
   );
 
 /**
@@ -378,12 +378,12 @@ PciIoCopyMem (
 EFI_STATUS
 EFIAPI
 PciIoMap (
-  IN     EFI_PCI_IO_PROTOCOL            *This,
-  IN     EFI_PCI_IO_PROTOCOL_OPERATION  Operation,
-  IN     VOID                           *HostAddress,
-  IN OUT UINTN                          *NumberOfBytes,
-  OUT    EFI_PHYSICAL_ADDRESS           *DeviceAddress,
-  OUT    VOID                           **Mapping
+  IN     EFI_PCI_IO_PROTOCOL           *This,
+  IN     EFI_PCI_IO_PROTOCOL_OPERATION Operation,
+  IN     VOID                          *HostAddress,
+  IN OUT UINTN                         *NumberOfBytes,
+  OUT    EFI_PHYSICAL_ADDRESS          *DeviceAddress,
+  OUT    VOID                          **Mapping
   );
 
 /**
@@ -399,8 +399,8 @@ PciIoMap (
 EFI_STATUS
 EFIAPI
 PciIoUnmap (
-  IN  EFI_PCI_IO_PROTOCOL  *This,
-  IN  VOID                 *Mapping
+  IN  EFI_PCI_IO_PROTOCOL *This,
+  IN  VOID                *Mapping
   );
 
 /**
@@ -426,12 +426,12 @@ PciIoUnmap (
 EFI_STATUS
 EFIAPI
 PciIoAllocateBuffer (
-  IN  EFI_PCI_IO_PROTOCOL   *This,
-  IN  EFI_ALLOCATE_TYPE     Type,
-  IN  EFI_MEMORY_TYPE       MemoryType,
-  IN  UINTN                 Pages,
-  OUT VOID                  **HostAddress,
-  IN  UINT64                Attributes
+  IN  EFI_PCI_IO_PROTOCOL *This,
+  IN  EFI_ALLOCATE_TYPE   Type,
+  IN  EFI_MEMORY_TYPE     MemoryType,
+  IN  UINTN               Pages,
+  OUT VOID                **HostAddress,
+  IN  UINT64              Attributes
   );
 
 /**
@@ -449,9 +449,9 @@ PciIoAllocateBuffer (
 EFI_STATUS
 EFIAPI
 PciIoFreeBuffer (
-  IN  EFI_PCI_IO_PROTOCOL   *This,
-  IN  UINTN                 Pages,
-  IN  VOID                  *HostAddress
+  IN  EFI_PCI_IO_PROTOCOL *This,
+  IN  UINTN               Pages,
+  IN  VOID                *HostAddress
   );
 
 /**
@@ -468,7 +468,7 @@ PciIoFreeBuffer (
 EFI_STATUS
 EFIAPI
 PciIoFlush (
-  IN  EFI_PCI_IO_PROTOCOL  *This
+  IN  EFI_PCI_IO_PROTOCOL *This
   );
 
 /**
@@ -487,11 +487,11 @@ PciIoFlush (
 EFI_STATUS
 EFIAPI
 PciIoGetLocation (
-  IN  EFI_PCI_IO_PROTOCOL  *This,
-  OUT UINTN                *Segment,
-  OUT UINTN                *Bus,
-  OUT UINTN                *Device,
-  OUT UINTN                *Function
+  IN  EFI_PCI_IO_PROTOCOL *This,
+  OUT UINTN               *Segment,
+  OUT UINTN               *Bus,
+  OUT UINTN               *Device,
+  OUT UINTN               *Function
   );
 
 /**
@@ -508,9 +508,9 @@ PciIoGetLocation (
 **/
 BOOLEAN
 CheckBarType (
-  IN PCI_IO_DEVICE          *PciIoDevice,
-  IN UINT8                  BarIndex,
-  IN PCI_BAR_TYPE           BarType
+  IN PCI_IO_DEVICE *PciIoDevice,
+  IN UINT8         BarIndex,
+  IN PCI_BAR_TYPE  BarType
   );
 
 /**
@@ -526,9 +526,9 @@ CheckBarType (
 **/
 EFI_STATUS
 ModifyRootBridgeAttributes (
-  IN  PCI_IO_DEVICE                            *PciIoDevice,
-  IN  UINT64                                   Attributes,
-  IN  EFI_PCI_IO_PROTOCOL_ATTRIBUTE_OPERATION  Operation
+  IN  PCI_IO_DEVICE                           *PciIoDevice,
+  IN  UINT64                                  Attributes,
+  IN  EFI_PCI_IO_PROTOCOL_ATTRIBUTE_OPERATION Operation
   );
 
 /**
@@ -543,8 +543,8 @@ ModifyRootBridgeAttributes (
 **/
 EFI_STATUS
 SupportPaletteSnoopAttributes (
-  IN PCI_IO_DEVICE                            *PciIoDevice,
-  IN EFI_PCI_IO_PROTOCOL_ATTRIBUTE_OPERATION  Operation
+  IN PCI_IO_DEVICE                           *PciIoDevice,
+  IN EFI_PCI_IO_PROTOCOL_ATTRIBUTE_OPERATION Operation
   );
 
 /**
@@ -569,10 +569,10 @@ SupportPaletteSnoopAttributes (
 EFI_STATUS
 EFIAPI
 PciIoAttributes (
-  IN EFI_PCI_IO_PROTOCOL                       * This,
-  IN  EFI_PCI_IO_PROTOCOL_ATTRIBUTE_OPERATION  Operation,
-  IN  UINT64                                   Attributes,
-  OUT UINT64                                   *Result OPTIONAL
+  IN EFI_PCI_IO_PROTOCOL                      *This,
+  IN  EFI_PCI_IO_PROTOCOL_ATTRIBUTE_OPERATION Operation,
+  IN  UINT64                                  Attributes,
+  OUT UINT64                                  *Result OPTIONAL
   );
 
 /**
@@ -600,9 +600,9 @@ PciIoAttributes (
 EFI_STATUS
 EFIAPI
 PciIoGetBarAttributes (
-  IN EFI_PCI_IO_PROTOCOL             * This,
-  IN  UINT8                          BarIndex,
-  OUT UINT64                         *Supports, OPTIONAL
+  IN EFI_PCI_IO_PROTOCOL *This,
+  IN  UINT8 BarIndex,
+  OUT UINT64 *Supports, OPTIONAL
   OUT VOID                           **Resources OPTIONAL
   );
 
@@ -633,13 +633,12 @@ PciIoGetBarAttributes (
 EFI_STATUS
 EFIAPI
 PciIoSetBarAttributes (
-  IN EFI_PCI_IO_PROTOCOL              *This,
-  IN     UINT64                       Attributes,
-  IN     UINT8                        BarIndex,
-  IN OUT UINT64                       *Offset,
-  IN OUT UINT64                       *Length
+  IN EFI_PCI_IO_PROTOCOL *This,
+  IN     UINT64          Attributes,
+  IN     UINT8           BarIndex,
+  IN OUT UINT64          *Offset,
+  IN OUT UINT64          *Length
   );
-
 
 /**
   Test whether two Pci devices has same parent bridge.
@@ -653,8 +652,8 @@ PciIoSetBarAttributes (
 **/
 BOOLEAN
 PciDevicesOnTheSamePath (
-  IN PCI_IO_DEVICE        *PciDevice1,
-  IN PCI_IO_DEVICE        *PciDevice2
+  IN PCI_IO_DEVICE *PciDevice1,
+  IN PCI_IO_DEVICE *PciDevice2
   );
 
 #endif

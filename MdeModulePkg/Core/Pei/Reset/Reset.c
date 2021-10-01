@@ -23,7 +23,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 PeiResetSystem (
-  IN CONST EFI_PEI_SERVICES  **PeiServices
+  IN CONST EFI_PEI_SERVICES **PeiServices
   )
 {
   EFI_STATUS         Status;
@@ -59,7 +59,7 @@ PeiResetSystem (
   //
   // No reset PPIs are available yet.
   //
-  return  EFI_NOT_AVAILABLE_YET;
+  return EFI_NOT_AVAILABLE_YET;
 }
 
 /**
@@ -78,10 +78,10 @@ PeiResetSystem (
 VOID
 EFIAPI
 PeiResetSystem2 (
-  IN EFI_RESET_TYPE  ResetType,
-  IN EFI_STATUS      ResetStatus,
-  IN UINTN           DataSize,
-  IN VOID            *ResetData OPTIONAL
+  IN EFI_RESET_TYPE ResetType,
+  IN EFI_STATUS     ResetStatus,
+  IN UINTN          DataSize,
+  IN VOID           *ResetData OPTIONAL
   )
 {
   EFI_STATUS          Status;

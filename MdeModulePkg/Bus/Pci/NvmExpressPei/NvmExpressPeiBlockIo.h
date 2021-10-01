@@ -14,9 +14,9 @@
 //
 // Nvme device for EFI_PEI_BLOCK_DEVICE_TYPE
 //
-#define EDKII_PEI_BLOCK_DEVICE_TYPE_NVME    7
+#define EDKII_PEI_BLOCK_DEVICE_TYPE_NVME  7
 
-#define NVME_READ_MAX_RETRY                 3
+#define NVME_READ_MAX_RETRY  3
 
 /**
   Gets the count of block I/O devices that one specific block driver detects.
@@ -37,9 +37,9 @@
 EFI_STATUS
 EFIAPI
 NvmeBlockIoPeimGetDeviceNo (
-  IN  EFI_PEI_SERVICES               **PeiServices,
-  IN  EFI_PEI_RECOVERY_BLOCK_IO_PPI  *This,
-  OUT UINTN                          *NumberBlockDevices
+  IN  EFI_PEI_SERVICES              **PeiServices,
+  IN  EFI_PEI_RECOVERY_BLOCK_IO_PPI *This,
+  OUT UINTN                         *NumberBlockDevices
   );
 
 /**
@@ -86,10 +86,10 @@ NvmeBlockIoPeimGetDeviceNo (
 EFI_STATUS
 EFIAPI
 NvmeBlockIoPeimGetMediaInfo (
-  IN  EFI_PEI_SERVICES               **PeiServices,
-  IN  EFI_PEI_RECOVERY_BLOCK_IO_PPI  *This,
-  IN  UINTN                          DeviceIndex,
-  OUT EFI_PEI_BLOCK_IO_MEDIA         *MediaInfo
+  IN  EFI_PEI_SERVICES              **PeiServices,
+  IN  EFI_PEI_RECOVERY_BLOCK_IO_PPI *This,
+  IN  UINTN                         DeviceIndex,
+  OUT EFI_PEI_BLOCK_IO_MEDIA        *MediaInfo
   );
 
 /**
@@ -129,12 +129,12 @@ NvmeBlockIoPeimGetMediaInfo (
 EFI_STATUS
 EFIAPI
 NvmeBlockIoPeimReadBlocks (
-  IN  EFI_PEI_SERVICES               **PeiServices,
-  IN  EFI_PEI_RECOVERY_BLOCK_IO_PPI  *This,
-  IN  UINTN                          DeviceIndex,
-  IN  EFI_PEI_LBA                    StartLBA,
-  IN  UINTN                          BufferSize,
-  OUT VOID                           *Buffer
+  IN  EFI_PEI_SERVICES              **PeiServices,
+  IN  EFI_PEI_RECOVERY_BLOCK_IO_PPI *This,
+  IN  UINTN                         DeviceIndex,
+  IN  EFI_PEI_LBA                   StartLBA,
+  IN  UINTN                         BufferSize,
+  OUT VOID                          *Buffer
   );
 
 /**
@@ -156,9 +156,9 @@ NvmeBlockIoPeimReadBlocks (
 EFI_STATUS
 EFIAPI
 NvmeBlockIoPeimGetDeviceNo2 (
-  IN  EFI_PEI_SERVICES                **PeiServices,
-  IN  EFI_PEI_RECOVERY_BLOCK_IO2_PPI  *This,
-  OUT UINTN                           *NumberBlockDevices
+  IN  EFI_PEI_SERVICES               **PeiServices,
+  IN  EFI_PEI_RECOVERY_BLOCK_IO2_PPI *This,
+  OUT UINTN                          *NumberBlockDevices
   );
 
 /**
@@ -205,10 +205,10 @@ NvmeBlockIoPeimGetDeviceNo2 (
 EFI_STATUS
 EFIAPI
 NvmeBlockIoPeimGetMediaInfo2 (
-  IN  EFI_PEI_SERVICES                **PeiServices,
-  IN  EFI_PEI_RECOVERY_BLOCK_IO2_PPI  *This,
-  IN  UINTN                           DeviceIndex,
-  OUT EFI_PEI_BLOCK_IO2_MEDIA         *MediaInfo
+  IN  EFI_PEI_SERVICES               **PeiServices,
+  IN  EFI_PEI_RECOVERY_BLOCK_IO2_PPI *This,
+  IN  UINTN                          DeviceIndex,
+  OUT EFI_PEI_BLOCK_IO2_MEDIA        *MediaInfo
   );
 
 /**
@@ -248,12 +248,12 @@ NvmeBlockIoPeimGetMediaInfo2 (
 EFI_STATUS
 EFIAPI
 NvmeBlockIoPeimReadBlocks2 (
-  IN  EFI_PEI_SERVICES                **PeiServices,
-  IN  EFI_PEI_RECOVERY_BLOCK_IO2_PPI  *This,
-  IN  UINTN                           DeviceIndex,
-  IN  EFI_PEI_LBA                     StartLBA,
-  IN  UINTN                           BufferSize,
-  OUT VOID                            *Buffer
+  IN  EFI_PEI_SERVICES               **PeiServices,
+  IN  EFI_PEI_RECOVERY_BLOCK_IO2_PPI *This,
+  IN  UINTN                          DeviceIndex,
+  IN  EFI_PEI_LBA                    StartLBA,
+  IN  UINTN                          BufferSize,
+  OUT VOID                           *Buffer
   );
 
 #endif

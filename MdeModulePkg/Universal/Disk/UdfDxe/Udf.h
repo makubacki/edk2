@@ -51,9 +51,9 @@
     ((UDF_EXTENDED_FILE_ENTRY *)(_Ptr))->IcbTag.FileType)
 
 typedef enum {
-  UdfFileEntryDirectory = 4,
+  UdfFileEntryDirectory    = 4,
   UdfFileEntryStandardFile = 5,
-  UdfFileEntrySymlink = 12,
+  UdfFileEntrySymlink      = 12,
 } UDF_FILE_ENTRY_TYPE;
 
 #define HIDDEN_FILE     (1 << 0)
@@ -120,12 +120,12 @@ typedef enum {
 #define IS_VALID_COMPRESSION_ID(_CompId) \
   ((BOOLEAN)((_CompId) == 8 || (_CompId) == 16))
 
-#define UDF_STANDARD_IDENTIFIER_LENGTH   5
+#define UDF_STANDARD_IDENTIFIER_LENGTH  5
 
 #pragma pack(1)
 
 typedef struct {
-  UINT8 StandardIdentifier[UDF_STANDARD_IDENTIFIER_LENGTH];
+  UINT8    StandardIdentifier[UDF_STANDARD_IDENTIFIER_LENGTH];
 } UDF_STANDARD_IDENTIFIER;
 
 #pragma pack()
@@ -137,174 +137,174 @@ typedef enum {
 } UDF_READ_FILE_FLAGS;
 
 typedef struct {
-  VOID                 *FileData;
-  UDF_READ_FILE_FLAGS  Flags;
-  UINT64               FileDataSize;
-  UINT64               FilePosition;
-  UINT64               FileSize;
-  UINT64               ReadLength;
+  VOID                   *FileData;
+  UDF_READ_FILE_FLAGS    Flags;
+  UINT64                 FileDataSize;
+  UINT64                 FilePosition;
+  UINT64                 FileSize;
+  UINT64                 ReadLength;
 } UDF_READ_FILE_INFO;
 
 #pragma pack(1)
 
 typedef struct {
-  UINT16          TypeAndTimezone;
-  INT16           Year;
-  UINT8           Month;
-  UINT8           Day;
-  UINT8           Hour;
-  UINT8           Minute;
-  UINT8           Second;
-  UINT8           Centiseconds;
-  UINT8           HundredsOfMicroseconds;
-  UINT8           Microseconds;
+  UINT16    TypeAndTimezone;
+  INT16     Year;
+  UINT8     Month;
+  UINT8     Day;
+  UINT8     Hour;
+  UINT8     Minute;
+  UINT8     Second;
+  UINT8     Centiseconds;
+  UINT8     HundredsOfMicroseconds;
+  UINT8     Microseconds;
 } UDF_TIMESTAMP;
 
 typedef struct {
-  UDF_DESCRIPTOR_TAG                 DescriptorTag;
-  UINT32                             PrevAllocationExtentDescriptor;
-  UINT32                             LengthOfAllocationDescriptors;
+  UDF_DESCRIPTOR_TAG    DescriptorTag;
+  UINT32                PrevAllocationExtentDescriptor;
+  UINT32                LengthOfAllocationDescriptors;
 } UDF_ALLOCATION_EXTENT_DESCRIPTOR;
 
 typedef struct {
-  UINT8                   StructureType;
-  UINT8                   StandardIdentifier[UDF_STANDARD_IDENTIFIER_LENGTH];
-  UINT8                   StructureVersion;
-  UINT8                   Reserved;
-  UINT8                   StructureData[2040];
+  UINT8    StructureType;
+  UINT8    StandardIdentifier[UDF_STANDARD_IDENTIFIER_LENGTH];
+  UINT8    StructureVersion;
+  UINT8    Reserved;
+  UINT8    StructureData[2040];
 } UDF_VOLUME_DESCRIPTOR;
 
 typedef struct {
-  UDF_DESCRIPTOR_TAG             DescriptorTag;
-  UDF_TIMESTAMP                  RecordingDateTime;
-  UINT32                         IntegrityType;
-  UDF_EXTENT_AD                  NextIntegrityExtent;
-  UINT8                          LogicalVolumeContentsUse[32];
-  UINT32                         NumberOfPartitions;
-  UINT32                         LengthOfImplementationUse;
-  UINT8                          Data[0];
+  UDF_DESCRIPTOR_TAG    DescriptorTag;
+  UDF_TIMESTAMP         RecordingDateTime;
+  UINT32                IntegrityType;
+  UDF_EXTENT_AD         NextIntegrityExtent;
+  UINT8                 LogicalVolumeContentsUse[32];
+  UINT32                NumberOfPartitions;
+  UINT32                LengthOfImplementationUse;
+  UINT8                 Data[0];
 } UDF_LOGICAL_VOLUME_INTEGRITY;
 
 typedef struct {
-  UDF_DESCRIPTOR_TAG         DescriptorTag;
-  UINT32                     VolumeDescriptorSequenceNumber;
-  UINT16                     PartitionFlags;
-  UINT16                     PartitionNumber;
-  UDF_ENTITY_ID              PartitionContents;
-  UINT8                      PartitionContentsUse[128];
-  UINT32                     AccessType;
-  UINT32                     PartitionStartingLocation;
-  UINT32                     PartitionLength;
-  UDF_ENTITY_ID              ImplementationIdentifier;
-  UINT8                      ImplementationUse[128];
-  UINT8                      Reserved[156];
+  UDF_DESCRIPTOR_TAG    DescriptorTag;
+  UINT32                VolumeDescriptorSequenceNumber;
+  UINT16                PartitionFlags;
+  UINT16                PartitionNumber;
+  UDF_ENTITY_ID         PartitionContents;
+  UINT8                 PartitionContentsUse[128];
+  UINT32                AccessType;
+  UINT32                PartitionStartingLocation;
+  UINT32                PartitionLength;
+  UDF_ENTITY_ID         ImplementationIdentifier;
+  UINT8                 ImplementationUse[128];
+  UINT8                 Reserved[156];
 } UDF_PARTITION_DESCRIPTOR;
 
 typedef struct {
-  UDF_DESCRIPTOR_TAG              DescriptorTag;
-  UDF_TIMESTAMP                   RecordingDateAndTime;
-  UINT16                          InterchangeLevel;
-  UINT16                          MaximumInterchangeLevel;
-  UINT32                          CharacterSetList;
-  UINT32                          MaximumCharacterSetList;
-  UINT32                          FileSetNumber;
-  UINT32                          FileSetDescriptorNumber;
-  UDF_CHAR_SPEC                   LogicalVolumeIdentifierCharacterSet;
-  UINT8                           LogicalVolumeIdentifier[128];
-  UDF_CHAR_SPEC                   FileSetCharacterSet;
-  UINT8                           FileSetIdentifier[32];
-  UINT8                           CopyrightFileIdentifier[32];
-  UINT8                           AbstractFileIdentifier[32];
-  UDF_LONG_ALLOCATION_DESCRIPTOR  RootDirectoryIcb;
-  UDF_ENTITY_ID                   DomainIdentifier;
-  UDF_LONG_ALLOCATION_DESCRIPTOR  NextExtent;
-  UDF_LONG_ALLOCATION_DESCRIPTOR  SystemStreamDirectoryIcb;
-  UINT8                           Reserved[32];
+  UDF_DESCRIPTOR_TAG                DescriptorTag;
+  UDF_TIMESTAMP                     RecordingDateAndTime;
+  UINT16                            InterchangeLevel;
+  UINT16                            MaximumInterchangeLevel;
+  UINT32                            CharacterSetList;
+  UINT32                            MaximumCharacterSetList;
+  UINT32                            FileSetNumber;
+  UINT32                            FileSetDescriptorNumber;
+  UDF_CHAR_SPEC                     LogicalVolumeIdentifierCharacterSet;
+  UINT8                             LogicalVolumeIdentifier[128];
+  UDF_CHAR_SPEC                     FileSetCharacterSet;
+  UINT8                             FileSetIdentifier[32];
+  UINT8                             CopyrightFileIdentifier[32];
+  UINT8                             AbstractFileIdentifier[32];
+  UDF_LONG_ALLOCATION_DESCRIPTOR    RootDirectoryIcb;
+  UDF_ENTITY_ID                     DomainIdentifier;
+  UDF_LONG_ALLOCATION_DESCRIPTOR    NextExtent;
+  UDF_LONG_ALLOCATION_DESCRIPTOR    SystemStreamDirectoryIcb;
+  UINT8                             Reserved[32];
 } UDF_FILE_SET_DESCRIPTOR;
 
 typedef struct {
-  UINT32                            ExtentLength;
-  UINT32                            ExtentPosition;
+  UINT32    ExtentLength;
+  UINT32    ExtentPosition;
 } UDF_SHORT_ALLOCATION_DESCRIPTOR;
 
 typedef struct {
-  UDF_DESCRIPTOR_TAG               DescriptorTag;
-  UINT16                           FileVersionNumber;
-  UINT8                            FileCharacteristics;
-  UINT8                            LengthOfFileIdentifier;
-  UDF_LONG_ALLOCATION_DESCRIPTOR   Icb;
-  UINT16                           LengthOfImplementationUse;
-  UINT8                            Data[0];
+  UDF_DESCRIPTOR_TAG                DescriptorTag;
+  UINT16                            FileVersionNumber;
+  UINT8                             FileCharacteristics;
+  UINT8                             LengthOfFileIdentifier;
+  UDF_LONG_ALLOCATION_DESCRIPTOR    Icb;
+  UINT16                            LengthOfImplementationUse;
+  UINT8                             Data[0];
 } UDF_FILE_IDENTIFIER_DESCRIPTOR;
 
 typedef struct {
-  UINT32        PriorRecordNumberOfDirectEntries;
-  UINT16        StrategyType;
-  UINT16        StrategyParameter;
-  UINT16        MaximumNumberOfEntries;
-  UINT8         Reserved;
-  UINT8         FileType;
-  UDF_LB_ADDR   ParentIcbLocation;
-  UINT16        Flags;
+  UINT32         PriorRecordNumberOfDirectEntries;
+  UINT16         StrategyType;
+  UINT16         StrategyParameter;
+  UINT16         MaximumNumberOfEntries;
+  UINT8          Reserved;
+  UINT8          FileType;
+  UDF_LB_ADDR    ParentIcbLocation;
+  UINT16         Flags;
 } UDF_ICB_TAG;
 
 typedef struct {
-  UDF_DESCRIPTOR_TAG              DescriptorTag;
-  UDF_ICB_TAG                     IcbTag;
-  UINT32                          Uid;
-  UINT32                          Gid;
-  UINT32                          Permissions;
-  UINT16                          FileLinkCount;
-  UINT8                           RecordFormat;
-  UINT8                           RecordDisplayAttributes;
-  UINT32                          RecordLength;
-  UINT64                          InformationLength;
-  UINT64                          LogicalBlocksRecorded;
-  UDF_TIMESTAMP                   AccessTime;
-  UDF_TIMESTAMP                   ModificationTime;
-  UDF_TIMESTAMP                   AttributeTime;
-  UINT32                          CheckPoint;
-  UDF_LONG_ALLOCATION_DESCRIPTOR  ExtendedAttributeIcb;
-  UDF_ENTITY_ID                   ImplementationIdentifier;
-  UINT64                          UniqueId;
-  UINT32                          LengthOfExtendedAttributes;
-  UINT32                          LengthOfAllocationDescriptors;
-  UINT8                           Data[0]; // L_EA + L_AD
+  UDF_DESCRIPTOR_TAG                DescriptorTag;
+  UDF_ICB_TAG                       IcbTag;
+  UINT32                            Uid;
+  UINT32                            Gid;
+  UINT32                            Permissions;
+  UINT16                            FileLinkCount;
+  UINT8                             RecordFormat;
+  UINT8                             RecordDisplayAttributes;
+  UINT32                            RecordLength;
+  UINT64                            InformationLength;
+  UINT64                            LogicalBlocksRecorded;
+  UDF_TIMESTAMP                     AccessTime;
+  UDF_TIMESTAMP                     ModificationTime;
+  UDF_TIMESTAMP                     AttributeTime;
+  UINT32                            CheckPoint;
+  UDF_LONG_ALLOCATION_DESCRIPTOR    ExtendedAttributeIcb;
+  UDF_ENTITY_ID                     ImplementationIdentifier;
+  UINT64                            UniqueId;
+  UINT32                            LengthOfExtendedAttributes;
+  UINT32                            LengthOfAllocationDescriptors;
+  UINT8                             Data[0]; // L_EA + L_AD
 } UDF_FILE_ENTRY;
 
 typedef struct {
-  UDF_DESCRIPTOR_TAG              DescriptorTag;
-  UDF_ICB_TAG                     IcbTag;
-  UINT32                          Uid;
-  UINT32                          Gid;
-  UINT32                          Permissions;
-  UINT16                          FileLinkCount;
-  UINT8                           RecordFormat;
-  UINT8                           RecordDisplayAttributes;
-  UINT32                          RecordLength;
-  UINT64                          InformationLength;
-  UINT64                          ObjectSize;
-  UINT64                          LogicalBlocksRecorded;
-  UDF_TIMESTAMP                   AccessTime;
-  UDF_TIMESTAMP                   ModificationTime;
-  UDF_TIMESTAMP                   CreationTime;
-  UDF_TIMESTAMP                   AttributeTime;
-  UINT32                          CheckPoint;
-  UINT32                          Reserved;
-  UDF_LONG_ALLOCATION_DESCRIPTOR  ExtendedAttributeIcb;
-  UDF_LONG_ALLOCATION_DESCRIPTOR  StreamDirectoryIcb;
-  UDF_ENTITY_ID                   ImplementationIdentifier;
-  UINT64                          UniqueId;
-  UINT32                          LengthOfExtendedAttributes;
-  UINT32                          LengthOfAllocationDescriptors;
-  UINT8                           Data[0]; // L_EA + L_AD
+  UDF_DESCRIPTOR_TAG                DescriptorTag;
+  UDF_ICB_TAG                       IcbTag;
+  UINT32                            Uid;
+  UINT32                            Gid;
+  UINT32                            Permissions;
+  UINT16                            FileLinkCount;
+  UINT8                             RecordFormat;
+  UINT8                             RecordDisplayAttributes;
+  UINT32                            RecordLength;
+  UINT64                            InformationLength;
+  UINT64                            ObjectSize;
+  UINT64                            LogicalBlocksRecorded;
+  UDF_TIMESTAMP                     AccessTime;
+  UDF_TIMESTAMP                     ModificationTime;
+  UDF_TIMESTAMP                     CreationTime;
+  UDF_TIMESTAMP                     AttributeTime;
+  UINT32                            CheckPoint;
+  UINT32                            Reserved;
+  UDF_LONG_ALLOCATION_DESCRIPTOR    ExtendedAttributeIcb;
+  UDF_LONG_ALLOCATION_DESCRIPTOR    StreamDirectoryIcb;
+  UDF_ENTITY_ID                     ImplementationIdentifier;
+  UINT64                            UniqueId;
+  UINT32                            LengthOfExtendedAttributes;
+  UINT32                            LengthOfAllocationDescriptors;
+  UINT8                             Data[0]; // L_EA + L_AD
 } UDF_EXTENDED_FILE_ENTRY;
 
 typedef struct {
-  UINT8                ComponentType;
-  UINT8                LengthOfComponentIdentifier;
-  UINT16               ComponentFileVersionNumber;
-  UINT8                ComponentIdentifier[0];
+  UINT8     ComponentType;
+  UINT8     LengthOfComponentIdentifier;
+  UINT16    ComponentFileVersionNumber;
+  UINT8     ComponentIdentifier[0];
 } UDF_PATH_COMPONENT;
 
 #pragma pack()
@@ -313,25 +313,25 @@ typedef struct {
 // UDF filesystem driver's private data
 //
 typedef struct {
-  UINT64                         MainVdsStartLocation;
-  UDF_LOGICAL_VOLUME_DESCRIPTOR  LogicalVolDesc;
-  UDF_PARTITION_DESCRIPTOR       PartitionDesc;
-  UDF_FILE_SET_DESCRIPTOR        FileSetDesc;
-  UINTN                          FileEntrySize;
+  UINT64                           MainVdsStartLocation;
+  UDF_LOGICAL_VOLUME_DESCRIPTOR    LogicalVolDesc;
+  UDF_PARTITION_DESCRIPTOR         PartitionDesc;
+  UDF_FILE_SET_DESCRIPTOR          FileSetDesc;
+  UINTN                            FileEntrySize;
 } UDF_VOLUME_INFO;
 
 typedef struct {
-  VOID                            *FileEntry;
-  UDF_FILE_IDENTIFIER_DESCRIPTOR  *FileIdentifierDesc;
+  VOID                              *FileEntry;
+  UDF_FILE_IDENTIFIER_DESCRIPTOR    *FileIdentifierDesc;
 } UDF_FILE_INFO;
 
 typedef struct {
-  VOID                      *DirectoryData;
-  UINT64                    DirectoryLength;
-  UINT64                    FidOffset;
+  VOID      *DirectoryData;
+  UINT64    DirectoryLength;
+  UINT64    FidOffset;
 } UDF_READ_DIRECTORY_INFO;
 
-#define PRIVATE_UDF_FILE_DATA_SIGNATURE SIGNATURE_32 ('U', 'd', 'f', 'f')
+#define PRIVATE_UDF_FILE_DATA_SIGNATURE  SIGNATURE_32 ('U', 'd', 'f', 'f')
 
 #define PRIVATE_UDF_FILE_DATA_FROM_THIS(a) \
   CR ( \
@@ -342,20 +342,20 @@ typedef struct {
       )
 
 typedef struct {
-  UINTN                            Signature;
-  BOOLEAN                          IsRootDirectory;
-  UDF_FILE_INFO                    *Root;
-  UDF_FILE_INFO                    File;
-  UDF_READ_DIRECTORY_INFO          ReadDirInfo;
-  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL  *SimpleFs;
-  EFI_FILE_PROTOCOL                FileIo;
-  CHAR16                           AbsoluteFileName[UDF_PATH_LENGTH];
-  CHAR16                           FileName[UDF_FILENAME_LENGTH];
-  UINT64                           FileSize;
-  UINT64                           FilePosition;
+  UINTN                              Signature;
+  BOOLEAN                            IsRootDirectory;
+  UDF_FILE_INFO                      *Root;
+  UDF_FILE_INFO                      File;
+  UDF_READ_DIRECTORY_INFO            ReadDirInfo;
+  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL    *SimpleFs;
+  EFI_FILE_PROTOCOL                  FileIo;
+  CHAR16                             AbsoluteFileName[UDF_PATH_LENGTH];
+  CHAR16                             FileName[UDF_FILENAME_LENGTH];
+  UINT64                             FileSize;
+  UINT64                             FilePosition;
 } PRIVATE_UDF_FILE_DATA;
 
-#define PRIVATE_UDF_SIMPLE_FS_DATA_SIGNATURE SIGNATURE_32 ('U', 'd', 'f', 's')
+#define PRIVATE_UDF_SIMPLE_FS_DATA_SIGNATURE  SIGNATURE_32 ('U', 'd', 'f', 's')
 
 #define PRIVATE_UDF_SIMPLE_FS_DATA_FROM_THIS(a) \
   CR ( \
@@ -366,14 +366,14 @@ typedef struct {
       )
 
 typedef struct {
-  UINTN                            Signature;
-  EFI_BLOCK_IO_PROTOCOL            *BlockIo;
-  EFI_DISK_IO_PROTOCOL             *DiskIo;
-  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL  SimpleFs;
-  UDF_VOLUME_INFO                  Volume;
-  UDF_FILE_INFO                    Root;
-  UINTN                            OpenFiles;
-  EFI_HANDLE                       Handle;
+  UINTN                              Signature;
+  EFI_BLOCK_IO_PROTOCOL              *BlockIo;
+  EFI_DISK_IO_PROTOCOL               *DiskIo;
+  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL    SimpleFs;
+  UDF_VOLUME_INFO                    Volume;
+  UDF_FILE_INFO                      Root;
+  UINTN                              OpenFiles;
+  EFI_HANDLE                         Handle;
 } PRIVATE_UDF_SIMPLE_FS_DATA;
 
 //
@@ -405,8 +405,8 @@ extern EFI_COMPONENT_NAME2_PROTOCOL  gUdfComponentName2;
 EFI_STATUS
 EFIAPI
 UdfOpenVolume (
-  IN   EFI_SIMPLE_FILE_SYSTEM_PROTOCOL  *This,
-  OUT  EFI_FILE_PROTOCOL                **Root
+  IN   EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *This,
+  OUT  EFI_FILE_PROTOCOL               **Root
   );
 
 /**
@@ -432,11 +432,11 @@ UdfOpenVolume (
 EFI_STATUS
 EFIAPI
 UdfOpen (
-  IN   EFI_FILE_PROTOCOL  *This,
-  OUT  EFI_FILE_PROTOCOL  **NewHandle,
-  IN   CHAR16             *FileName,
-  IN   UINT64             OpenMode,
-  IN   UINT64             Attributes
+  IN   EFI_FILE_PROTOCOL *This,
+  OUT  EFI_FILE_PROTOCOL **NewHandle,
+  IN   CHAR16            *FileName,
+  IN   UINT64            OpenMode,
+  IN   UINT64            Attributes
   );
 
 /**
@@ -456,9 +456,9 @@ UdfOpen (
 EFI_STATUS
 EFIAPI
 UdfRead (
-  IN      EFI_FILE_PROTOCOL  *This,
-  IN OUT  UINTN              *BufferSize,
-  OUT     VOID               *Buffer
+  IN      EFI_FILE_PROTOCOL *This,
+  IN OUT  UINTN             *BufferSize,
+  OUT     VOID              *Buffer
   );
 
 /**
@@ -488,7 +488,7 @@ UdfClose (
 EFI_STATUS
 EFIAPI
 UdfDelete (
-  IN EFI_FILE_PROTOCOL  *This
+  IN EFI_FILE_PROTOCOL *This
   );
 
 /**
@@ -512,9 +512,9 @@ UdfDelete (
 EFI_STATUS
 EFIAPI
 UdfWrite (
-  IN      EFI_FILE_PROTOCOL  *This,
-  IN OUT  UINTN              *BufferSize,
-  IN      VOID               *Buffer
+  IN      EFI_FILE_PROTOCOL *This,
+  IN OUT  UINTN             *BufferSize,
+  IN      VOID              *Buffer
   );
 
 /**
@@ -530,8 +530,8 @@ UdfWrite (
 EFI_STATUS
 EFIAPI
 UdfGetPosition (
-  IN   EFI_FILE_PROTOCOL  *This,
-  OUT  UINT64             *Position
+  IN   EFI_FILE_PROTOCOL *This,
+  OUT  UINT64            *Position
   );
 
 /**
@@ -547,8 +547,8 @@ UdfGetPosition (
 EFI_STATUS
 EFIAPI
 UdfSetPosition (
-  IN EFI_FILE_PROTOCOL  *This,
-  IN UINT64             Position
+  IN EFI_FILE_PROTOCOL *This,
+  IN UINT64            Position
   );
 
 /**
@@ -580,10 +580,10 @@ UdfSetPosition (
 EFI_STATUS
 EFIAPI
 UdfGetInfo (
-  IN      EFI_FILE_PROTOCOL  *This,
-  IN      EFI_GUID           *InformationType,
-  IN OUT  UINTN              *BufferSize,
-  OUT     VOID               *Buffer
+  IN      EFI_FILE_PROTOCOL *This,
+  IN      EFI_GUID          *InformationType,
+  IN OUT  UINTN             *BufferSize,
+  OUT     VOID              *Buffer
   );
 
 /**
@@ -606,10 +606,10 @@ UdfGetInfo (
 EFI_STATUS
 EFIAPI
 UdfSetInfo (
-  IN EFI_FILE_PROTOCOL  *This,
-  IN EFI_GUID           *InformationType,
-  IN UINTN              BufferSize,
-  IN VOID               *Buffer
+  IN EFI_FILE_PROTOCOL *This,
+  IN EFI_GUID          *InformationType,
+  IN UINTN             BufferSize,
+  IN VOID              *Buffer
   );
 
 /**
@@ -649,9 +649,9 @@ UdfFlush (
 **/
 EFI_STATUS
 ReadUdfVolumeInformation (
-  IN   EFI_BLOCK_IO_PROTOCOL  *BlockIo,
-  IN   EFI_DISK_IO_PROTOCOL   *DiskIo,
-  OUT  UDF_VOLUME_INFO        *Volume
+  IN   EFI_BLOCK_IO_PROTOCOL *BlockIo,
+  IN   EFI_DISK_IO_PROTOCOL  *DiskIo,
+  OUT  UDF_VOLUME_INFO       *Volume
   );
 
 /**
@@ -672,10 +672,10 @@ ReadUdfVolumeInformation (
 **/
 EFI_STATUS
 FindRootDirectory (
-  IN   EFI_BLOCK_IO_PROTOCOL  *BlockIo,
-  IN   EFI_DISK_IO_PROTOCOL   *DiskIo,
-  IN   UDF_VOLUME_INFO        *Volume,
-  OUT  UDF_FILE_INFO          *File
+  IN   EFI_BLOCK_IO_PROTOCOL *BlockIo,
+  IN   EFI_DISK_IO_PROTOCOL  *DiskIo,
+  IN   UDF_VOLUME_INFO       *Volume,
+  OUT  UDF_FILE_INFO         *File
   );
 
 /**
@@ -697,11 +697,11 @@ FindRootDirectory (
 **/
 EFI_STATUS
 FindFileEntry (
-  IN   EFI_BLOCK_IO_PROTOCOL           *BlockIo,
-  IN   EFI_DISK_IO_PROTOCOL            *DiskIo,
-  IN   UDF_VOLUME_INFO                 *Volume,
-  IN   UDF_LONG_ALLOCATION_DESCRIPTOR  *Icb,
-  OUT  VOID                            **FileEntry
+  IN   EFI_BLOCK_IO_PROTOCOL          *BlockIo,
+  IN   EFI_DISK_IO_PROTOCOL           *DiskIo,
+  IN   UDF_VOLUME_INFO                *Volume,
+  IN   UDF_LONG_ALLOCATION_DESCRIPTOR *Icb,
+  OUT  VOID                           **FileEntry
   );
 
 /**
@@ -726,14 +726,14 @@ FindFileEntry (
 **/
 EFI_STATUS
 FindFile (
-  IN   EFI_BLOCK_IO_PROTOCOL           *BlockIo,
-  IN   EFI_DISK_IO_PROTOCOL            *DiskIo,
-  IN   UDF_VOLUME_INFO                 *Volume,
-  IN   CHAR16                          *FilePath,
-  IN   UDF_FILE_INFO                   *Root,
-  IN   UDF_FILE_INFO                   *Parent,
-  IN   UDF_LONG_ALLOCATION_DESCRIPTOR  *Icb,
-  OUT  UDF_FILE_INFO                   *File
+  IN   EFI_BLOCK_IO_PROTOCOL          *BlockIo,
+  IN   EFI_DISK_IO_PROTOCOL           *DiskIo,
+  IN   UDF_VOLUME_INFO                *Volume,
+  IN   CHAR16                         *FilePath,
+  IN   UDF_FILE_INFO                  *Root,
+  IN   UDF_FILE_INFO                  *Parent,
+  IN   UDF_LONG_ALLOCATION_DESCRIPTOR *Icb,
+  OUT  UDF_FILE_INFO                  *File
   );
 
 /**
@@ -759,13 +759,13 @@ FindFile (
 **/
 EFI_STATUS
 ReadDirectoryEntry (
-  IN      EFI_BLOCK_IO_PROTOCOL           *BlockIo,
-  IN      EFI_DISK_IO_PROTOCOL            *DiskIo,
-  IN      UDF_VOLUME_INFO                 *Volume,
-  IN      UDF_LONG_ALLOCATION_DESCRIPTOR  *ParentIcb,
-  IN      VOID                            *FileEntryData,
-  IN OUT  UDF_READ_DIRECTORY_INFO         *ReadDirInfo,
-  OUT     UDF_FILE_IDENTIFIER_DESCRIPTOR  **FoundFid
+  IN      EFI_BLOCK_IO_PROTOCOL          *BlockIo,
+  IN      EFI_DISK_IO_PROTOCOL           *DiskIo,
+  IN      UDF_VOLUME_INFO                *Volume,
+  IN      UDF_LONG_ALLOCATION_DESCRIPTOR *ParentIcb,
+  IN      VOID                           *FileEntryData,
+  IN OUT  UDF_READ_DIRECTORY_INFO        *ReadDirInfo,
+  OUT     UDF_FILE_IDENTIFIER_DESCRIPTOR **FoundFid
   );
 
 /**
@@ -790,9 +790,9 @@ ReadDirectoryEntry (
 **/
 EFI_STATUS
 GetFileNameFromFid (
-  IN   UDF_FILE_IDENTIFIER_DESCRIPTOR  *FileIdentifierDesc,
-  IN   UINTN                           CharMax,
-  OUT  CHAR16                          *FileName
+  IN   UDF_FILE_IDENTIFIER_DESCRIPTOR *FileIdentifierDesc,
+  IN   UINTN                          CharMax,
+  OUT  CHAR16                         *FileName
   );
 
 /**
@@ -822,12 +822,12 @@ GetFileNameFromFid (
 **/
 EFI_STATUS
 ResolveSymlink (
-  IN   EFI_BLOCK_IO_PROTOCOL  *BlockIo,
-  IN   EFI_DISK_IO_PROTOCOL   *DiskIo,
-  IN   UDF_VOLUME_INFO        *Volume,
-  IN   UDF_FILE_INFO          *Parent,
-  IN   VOID                   *FileEntryData,
-  OUT  UDF_FILE_INFO          *File
+  IN   EFI_BLOCK_IO_PROTOCOL *BlockIo,
+  IN   EFI_DISK_IO_PROTOCOL  *DiskIo,
+  IN   UDF_VOLUME_INFO       *Volume,
+  IN   UDF_FILE_INFO         *Parent,
+  IN   VOID                  *FileEntryData,
+  OUT  UDF_FILE_INFO         *File
   );
 
 /**
@@ -861,11 +861,11 @@ CleanupFileInformation (
 **/
 EFI_STATUS
 GetFileSize (
-  IN   EFI_BLOCK_IO_PROTOCOL  *BlockIo,
-  IN   EFI_DISK_IO_PROTOCOL   *DiskIo,
-  IN   UDF_VOLUME_INFO        *Volume,
-  IN   UDF_FILE_INFO          *File,
-  OUT  UINT64                 *Size
+  IN   EFI_BLOCK_IO_PROTOCOL *BlockIo,
+  IN   EFI_DISK_IO_PROTOCOL  *DiskIo,
+  IN   UDF_VOLUME_INFO       *Volume,
+  IN   UDF_FILE_INFO         *File,
+  OUT  UINT64                *Size
   );
 
 /**
@@ -887,11 +887,11 @@ GetFileSize (
 **/
 EFI_STATUS
 SetFileInfo (
-  IN      UDF_FILE_INFO  *File,
-  IN      UINT64         FileSize,
-  IN      CHAR16         *FileName,
-  IN OUT  UINTN          *BufferSize,
-  OUT     VOID           *Buffer
+  IN      UDF_FILE_INFO *File,
+  IN      UINT64        FileSize,
+  IN      CHAR16        *FileName,
+  IN OUT  UINTN         *BufferSize,
+  OUT     VOID          *Buffer
   );
 
 /**
@@ -916,9 +916,9 @@ SetFileInfo (
 **/
 EFI_STATUS
 GetVolumeLabel (
-  IN   UDF_VOLUME_INFO  *Volume,
-  IN   UINTN            CharMax,
-  OUT  CHAR16           *String
+  IN   UDF_VOLUME_INFO *Volume,
+  IN   UINTN           CharMax,
+  OUT  CHAR16          *String
   );
 
 /**
@@ -947,11 +947,11 @@ GetVolumeLabel (
 **/
 EFI_STATUS
 GetVolumeSize (
-  IN   EFI_BLOCK_IO_PROTOCOL  *BlockIo,
-  IN   EFI_DISK_IO_PROTOCOL   *DiskIo,
-  IN   UDF_VOLUME_INFO        *Volume,
-  OUT  UINT64                 *VolumeSize,
-  OUT  UINT64                 *FreeSpaceSize
+  IN   EFI_BLOCK_IO_PROTOCOL *BlockIo,
+  IN   EFI_DISK_IO_PROTOCOL  *DiskIo,
+  IN   UDF_VOLUME_INFO       *Volume,
+  OUT  UINT64                *VolumeSize,
+  OUT  UINT64                *FreeSpaceSize
   );
 
 /**
@@ -977,14 +977,14 @@ GetVolumeSize (
 **/
 EFI_STATUS
 ReadFileData (
-  IN      EFI_BLOCK_IO_PROTOCOL  *BlockIo,
-  IN      EFI_DISK_IO_PROTOCOL   *DiskIo,
-  IN      UDF_VOLUME_INFO        *Volume,
-  IN      UDF_FILE_INFO          *File,
-  IN      UINT64                 FileSize,
-  IN OUT  UINT64                 *FilePosition,
-  IN OUT  VOID                   *Buffer,
-  IN OUT  UINT64                 *BufferSize
+  IN      EFI_BLOCK_IO_PROTOCOL *BlockIo,
+  IN      EFI_DISK_IO_PROTOCOL  *DiskIo,
+  IN      UDF_VOLUME_INFO       *Volume,
+  IN      UDF_FILE_INFO         *File,
+  IN      UINT64                FileSize,
+  IN OUT  UINT64                *FilePosition,
+  IN OUT  VOID                  *Buffer,
+  IN OUT  UINT64                *BufferSize
   );
 
 /**
@@ -999,8 +999,8 @@ ReadFileData (
 **/
 EFI_STATUS
 SupportUdfFileSystem (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle
   );
 
 /**
@@ -1013,7 +1013,7 @@ SupportUdfFileSystem (
 **/
 CHAR16 *
 MangleFileName (
-  IN CHAR16        *FileName
+  IN CHAR16 *FileName
   );
 
 /**
@@ -1033,9 +1033,9 @@ MangleFileName (
 EFI_STATUS
 EFIAPI
 UdfDriverBindingSupported (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath
   );
 
 /**
@@ -1056,9 +1056,9 @@ UdfDriverBindingSupported (
 EFI_STATUS
 EFIAPI
 UdfDriverBindingStart (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath
   );
 
 /**
@@ -1078,15 +1078,16 @@ UdfDriverBindingStart (
 EFI_STATUS
 EFIAPI
 UdfDriverBindingStop (
-  IN  EFI_DRIVER_BINDING_PROTOCOL   *This,
-  IN  EFI_HANDLE                    ControllerHandle,
-  IN  UINTN                         NumberOfChildren,
-  IN  EFI_HANDLE                    *ChildHandleBuffer
+  IN  EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN  EFI_HANDLE                  ControllerHandle,
+  IN  UINTN                       NumberOfChildren,
+  IN  EFI_HANDLE                  *ChildHandleBuffer
   );
 
 //
 // EFI Component Name Functions
 //
+
 /**
   Retrieves a Unicode string that is the user readable name of the driver.
 
@@ -1129,9 +1130,9 @@ UdfDriverBindingStop (
 EFI_STATUS
 EFIAPI
 UdfComponentNameGetDriverName (
-  IN  EFI_COMPONENT_NAME_PROTOCOL  *This,
-  IN  CHAR8                        *Language,
-  OUT CHAR16                       **DriverName
+  IN  EFI_COMPONENT_NAME_PROTOCOL *This,
+  IN  CHAR8                       *Language,
+  OUT CHAR16                      **DriverName
   );
 
 /**
@@ -1205,11 +1206,11 @@ UdfComponentNameGetDriverName (
 EFI_STATUS
 EFIAPI
 UdfComponentNameGetControllerName (
-  IN   EFI_COMPONENT_NAME_PROTOCOL  *This,
-  IN   EFI_HANDLE                   ControllerHandle,
-  IN   EFI_HANDLE                   ChildHandle OPTIONAL,
-  IN   CHAR8                        *Language,
-  OUT  CHAR16                       **ControllerName
+  IN   EFI_COMPONENT_NAME_PROTOCOL *This,
+  IN   EFI_HANDLE                  ControllerHandle,
+  IN   EFI_HANDLE                  ChildHandle OPTIONAL,
+  IN   CHAR8                       *Language,
+  OUT  CHAR16                      **ControllerName
   );
 
 #endif // _UDF_H_

@@ -23,13 +23,14 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 **/
 VOID
 CoreInternalWaitForTick (
-  IN UINT64  Counter
+  IN UINT64 Counter
   )
 {
   while (RShiftU64 (Counter, 32) > 0) {
     gMetronome->WaitForTick (gMetronome, 0xffffffff);
     Counter -= 0xffffffff;
   }
+
   gMetronome->WaitForTick (gMetronome, (UINT32)Counter);
 }
 
@@ -46,7 +47,7 @@ CoreInternalWaitForTick (
 EFI_STATUS
 EFIAPI
 CoreStall (
-  IN UINTN            Microseconds
+  IN UINTN Microseconds
   )
 {
   UINT64  Counter;
@@ -61,7 +62,7 @@ CoreStall (
   // Counter = Microseconds * 10 / gMetronome->TickPeriod
   // 0x1999999999999999 = (2^64 - 1) / 10
   //
-  if ((UINT64) Microseconds > 0x1999999999999999ULL) {
+  if ((UINT64)Microseconds > 0x1999999999999999ULL) {
     //
     // Microseconds is too large to multiple by 10 first.  Perform the divide
     // operation first and loop 10 times to avoid 64-bit math overflow.
@@ -100,6 +101,7 @@ CoreStall (
       //
       Counter++;
     }
+
     CoreInternalWaitForTick (Counter);
   }
 

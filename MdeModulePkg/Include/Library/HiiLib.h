@@ -53,8 +53,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_HII_HANDLE
 EFIAPI
 HiiAddPackages (
-  IN CONST EFI_GUID    *PackageListGuid,
-  IN       EFI_HANDLE  DeviceHandle  OPTIONAL,
+  IN CONST EFI_GUID   *PackageListGuid,
+  IN       EFI_HANDLE DeviceHandle  OPTIONAL,
   ...
   )
 ;
@@ -71,7 +71,7 @@ HiiAddPackages (
 VOID
 EFIAPI
 HiiRemovePackages (
-  IN      EFI_HII_HANDLE      HiiHandle
+  IN      EFI_HII_HANDLE HiiHandle
   )
 ;
 
@@ -116,8 +116,8 @@ HiiRemovePackages (
 EFI_STRING_ID
 EFIAPI
 HiiSetString (
-  IN EFI_HII_HANDLE    HiiHandle,
-  IN EFI_STRING_ID     StringId,            OPTIONAL
+  IN EFI_HII_HANDLE HiiHandle,
+  IN EFI_STRING_ID StringId, OPTIONAL
   IN CONST EFI_STRING  String,
   IN CONST CHAR8       *SupportedLanguages  OPTIONAL
   )
@@ -142,9 +142,9 @@ HiiSetString (
 EFI_STRING
 EFIAPI
 HiiGetString (
-  IN EFI_HII_HANDLE  HiiHandle,
-  IN EFI_STRING_ID   StringId,
-  IN CONST CHAR8     *Language  OPTIONAL
+  IN EFI_HII_HANDLE HiiHandle,
+  IN EFI_STRING_ID  StringId,
+  IN CONST CHAR8    *Language  OPTIONAL
   );
 
 /**
@@ -183,10 +183,10 @@ HiiGetString (
 EFI_STRING
 EFIAPI
 HiiGetStringEx (
-  IN EFI_HII_HANDLE  HiiHandle,
-  IN EFI_STRING_ID   StringId,
-  IN CONST CHAR8     *Language  OPTIONAL,
-  IN BOOLEAN         TryBestLanguage
+  IN EFI_HII_HANDLE HiiHandle,
+  IN EFI_STRING_ID  StringId,
+  IN CONST CHAR8    *Language  OPTIONAL,
+  IN BOOLEAN        TryBestLanguage
   );
 
 /**
@@ -219,9 +219,9 @@ HiiGetStringEx (
 EFI_STRING
 EFIAPI
 HiiGetPackageString (
-  IN CONST EFI_GUID  *PackageListGuid,
-  IN EFI_STRING_ID   StringId,
-  IN CONST CHAR8     *Language  OPTIONAL
+  IN CONST EFI_GUID *PackageListGuid,
+  IN EFI_STRING_ID  StringId,
+  IN CONST CHAR8    *Language  OPTIONAL
   )
 ;
 
@@ -248,7 +248,7 @@ HiiGetPackageString (
 EFI_HII_HANDLE *
 EFIAPI
 HiiGetHiiHandles (
-  IN CONST EFI_GUID  *PackageListGuid  OPTIONAL
+  IN CONST EFI_GUID *PackageListGuid  OPTIONAL
   )
 ;
 
@@ -269,10 +269,10 @@ HiiGetHiiHandles (
 **/
 EFI_STATUS
 EFIAPI
-HiiGetFormSetFromHiiHandle(
-  IN  EFI_HII_HANDLE     Handle,
-  OUT EFI_IFR_FORM_SET   **Buffer,
-  OUT UINTN              *BufferSize
+HiiGetFormSetFromHiiHandle (
+  IN  EFI_HII_HANDLE   Handle,
+  OUT EFI_IFR_FORM_SET **Buffer,
+  OUT UINTN            *BufferSize
   );
 
 /**
@@ -296,7 +296,7 @@ HiiGetFormSetFromHiiHandle(
 CHAR8 *
 EFIAPI
 HiiGetSupportedLanguages (
-  IN EFI_HII_HANDLE           HiiHandle
+  IN EFI_HII_HANDLE HiiHandle
   )
 ;
 
@@ -332,8 +332,8 @@ HiiGetSupportedLanguages (
 EFI_STRING
 EFIAPI
 HiiConstructConfigHdr (
-  IN CONST EFI_GUID  *Guid,  OPTIONAL
-  IN CONST CHAR16    *Name,  OPTIONAL
+  IN CONST EFI_GUID *Guid, OPTIONAL
+  IN CONST CHAR16    *Name, OPTIONAL
   IN EFI_HANDLE      DriverHandle
   );
 
@@ -356,7 +356,7 @@ HiiConstructConfigHdr (
 BOOLEAN
 EFIAPI
 HiiSetToDefaults (
-  IN CONST EFI_STRING  Request,  OPTIONAL
+  IN CONST EFI_STRING Request, OPTIONAL
   IN UINT16            DefaultId
   );
 
@@ -377,7 +377,7 @@ HiiSetToDefaults (
 BOOLEAN
 EFIAPI
 HiiValidateSettings (
-  IN CONST EFI_STRING  Request  OPTIONAL
+  IN CONST EFI_STRING Request  OPTIONAL
   );
 
 /**
@@ -396,8 +396,8 @@ HiiValidateSettings (
 BOOLEAN
 EFIAPI
 HiiIsConfigHdrMatch (
-  IN CONST EFI_STRING  ConfigHdr,
-  IN CONST EFI_GUID    *Guid,     OPTIONAL
+  IN CONST EFI_STRING ConfigHdr,
+  IN CONST EFI_GUID *Guid, OPTIONAL
   IN CONST CHAR16      *Name      OPTIONAL
   );
 
@@ -419,8 +419,8 @@ HiiIsConfigHdrMatch (
 BOOLEAN
 EFIAPI
 HiiGetBrowserData (
-  IN CONST EFI_GUID  *VariableGuid,  OPTIONAL
-  IN CONST CHAR16    *VariableName,  OPTIONAL
+  IN CONST EFI_GUID *VariableGuid, OPTIONAL
+  IN CONST CHAR16    *VariableName, OPTIONAL
   IN UINTN           BufferSize,
   OUT UINT8          *Buffer
   );
@@ -449,7 +449,7 @@ HiiGetBrowserData (
 BOOLEAN
 EFIAPI
 HiiSetBrowserData (
-  IN CONST EFI_GUID  *VariableGuid, OPTIONAL
+  IN CONST EFI_GUID *VariableGuid, OPTIONAL
   IN CONST CHAR16    *VariableName, OPTIONAL
   IN UINTN           BufferSize,
   IN CONST UINT8     *Buffer,
@@ -521,7 +521,7 @@ HiiAllocateOpCodeHandle (
 VOID
 EFIAPI
 HiiFreeOpCodeHandle (
-  VOID  *OpCodeHandle
+  VOID *OpCodeHandle
   );
 
 /**
@@ -541,9 +541,9 @@ HiiFreeOpCodeHandle (
 UINT8 *
 EFIAPI
 HiiCreateRawOpCodes (
-  IN VOID   *OpCodeHandle,
-  IN UINT8  *RawBuffer,
-  IN UINTN  RawBufferSize
+  IN VOID  *OpCodeHandle,
+  IN UINT8 *RawBuffer,
+  IN UINTN RawBufferSize
   );
 
 /**
@@ -560,7 +560,7 @@ HiiCreateRawOpCodes (
 UINT8 *
 EFIAPI
 HiiCreateEndOpCode (
-  IN VOID  *OpCodeHandle
+  IN VOID *OpCodeHandle
   );
 
 /**
@@ -583,11 +583,11 @@ HiiCreateEndOpCode (
 UINT8 *
 EFIAPI
 HiiCreateOneOfOptionOpCode (
-  IN VOID    *OpCodeHandle,
-  IN UINT16  StringId,
-  IN UINT8   Flags,
-  IN UINT8   Type,
-  IN UINT64  Value
+  IN VOID   *OpCodeHandle,
+  IN UINT16 StringId,
+  IN UINT8  Flags,
+  IN UINT8  Type,
+  IN UINT64 Value
   );
 
 /**
@@ -608,10 +608,10 @@ HiiCreateOneOfOptionOpCode (
 UINT8 *
 EFIAPI
 HiiCreateDefaultOpCode (
-  IN VOID    *OpCodeHandle,
-  IN UINT16  DefaultId,
-  IN UINT8   Type,
-  IN UINT64  Value
+  IN VOID   *OpCodeHandle,
+  IN UINT16 DefaultId,
+  IN UINT8  Type,
+  IN UINT64 Value
   );
 
 /**
@@ -640,9 +640,9 @@ HiiCreateDefaultOpCode (
 UINT8 *
 EFIAPI
 HiiCreateGuidOpCode (
-  IN VOID            *OpCodeHandle,
-  IN CONST EFI_GUID  *Guid,
-  IN CONST VOID      *GuidOpCode,    OPTIONAL
+  IN VOID *OpCodeHandle,
+  IN CONST EFI_GUID *Guid,
+  IN CONST VOID *GuidOpCode, OPTIONAL
   IN UINTN           OpCodeSize
   );
 
@@ -666,12 +666,12 @@ HiiCreateGuidOpCode (
 UINT8 *
 EFIAPI
 HiiCreateActionOpCode (
-  IN VOID             *OpCodeHandle,
-  IN EFI_QUESTION_ID  QuestionId,
-  IN EFI_STRING_ID    Prompt,
-  IN EFI_STRING_ID    Help,
-  IN UINT8            QuestionFlags,
-  IN EFI_STRING_ID    QuestionConfig
+  IN VOID            *OpCodeHandle,
+  IN EFI_QUESTION_ID QuestionId,
+  IN EFI_STRING_ID   Prompt,
+  IN EFI_STRING_ID   Help,
+  IN UINT8           QuestionFlags,
+  IN EFI_STRING_ID   QuestionConfig
   );
 
 /**
@@ -695,11 +695,11 @@ HiiCreateActionOpCode (
 UINT8 *
 EFIAPI
 HiiCreateSubTitleOpCode (
-  IN VOID           *OpCodeHandle,
-  IN EFI_STRING_ID  Prompt,
-  IN EFI_STRING_ID  Help,
-  IN UINT8          Flags,
-  IN UINT8          Scope
+  IN VOID          *OpCodeHandle,
+  IN EFI_STRING_ID Prompt,
+  IN EFI_STRING_ID Help,
+  IN UINT8         Flags,
+  IN UINT8         Scope
   );
 
 /**
@@ -722,12 +722,12 @@ HiiCreateSubTitleOpCode (
 UINT8 *
 EFIAPI
 HiiCreateGotoOpCode (
-  IN VOID             *OpCodeHandle,
-  IN EFI_FORM_ID      FormId,
-  IN EFI_STRING_ID    Prompt,
-  IN EFI_STRING_ID    Help,
-  IN UINT8            QuestionFlags,
-  IN EFI_QUESTION_ID  QuestionId
+  IN VOID            *OpCodeHandle,
+  IN EFI_FORM_ID     FormId,
+  IN EFI_STRING_ID   Prompt,
+  IN EFI_STRING_ID   Help,
+  IN UINT8           QuestionFlags,
+  IN EFI_QUESTION_ID QuestionId
   );
 
 /**
@@ -762,14 +762,14 @@ HiiCreateGotoOpCode (
 UINT8 *
 EFIAPI
 HiiCreateGotoExOpCode (
-  IN VOID             *OpCodeHandle,
-  IN EFI_FORM_ID      RefFormId,
-  IN EFI_STRING_ID    Prompt,
-  IN EFI_STRING_ID    Help,
-  IN UINT8            QuestionFlags,
-  IN EFI_QUESTION_ID  QuestionId,
-  IN EFI_QUESTION_ID  RefQuestionId,
-  IN EFI_GUID         *RefFormSetId,    OPTIONAL
+  IN VOID *OpCodeHandle,
+  IN EFI_FORM_ID RefFormId,
+  IN EFI_STRING_ID Prompt,
+  IN EFI_STRING_ID Help,
+  IN UINT8 QuestionFlags,
+  IN EFI_QUESTION_ID QuestionId,
+  IN EFI_QUESTION_ID RefQuestionId,
+  IN EFI_GUID *RefFormSetId, OPTIONAL
   IN EFI_STRING_ID    RefDevicePath
   );
 
@@ -799,15 +799,15 @@ HiiCreateGotoExOpCode (
 UINT8 *
 EFIAPI
 HiiCreateCheckBoxOpCode (
-  IN VOID             *OpCodeHandle,
-  IN EFI_QUESTION_ID  QuestionId,
-  IN EFI_VARSTORE_ID  VarStoreId,
-  IN UINT16           VarOffset,
-  IN EFI_STRING_ID    Prompt,
-  IN EFI_STRING_ID    Help,
-  IN UINT8            QuestionFlags,
-  IN UINT8            CheckBoxFlags,
-  IN VOID             *DefaultsOpCodeHandle  OPTIONAL
+  IN VOID            *OpCodeHandle,
+  IN EFI_QUESTION_ID QuestionId,
+  IN EFI_VARSTORE_ID VarStoreId,
+  IN UINT16          VarOffset,
+  IN EFI_STRING_ID   Prompt,
+  IN EFI_STRING_ID   Help,
+  IN UINT8           QuestionFlags,
+  IN UINT8           CheckBoxFlags,
+  IN VOID            *DefaultsOpCodeHandle  OPTIONAL
   );
 
 /**
@@ -839,18 +839,18 @@ HiiCreateCheckBoxOpCode (
 UINT8 *
 EFIAPI
 HiiCreateNumericOpCode (
-  IN VOID             *OpCodeHandle,
-  IN EFI_QUESTION_ID  QuestionId,
-  IN EFI_VARSTORE_ID  VarStoreId,
-  IN UINT16           VarOffset,
-  IN EFI_STRING_ID    Prompt,
-  IN EFI_STRING_ID    Help,
-  IN UINT8            QuestionFlags,
-  IN UINT8            NumericFlags,
-  IN UINT64           Minimum,
-  IN UINT64           Maximum,
-  IN UINT64           Step,
-  IN VOID             *DefaultsOpCodeHandle  OPTIONAL
+  IN VOID            *OpCodeHandle,
+  IN EFI_QUESTION_ID QuestionId,
+  IN EFI_VARSTORE_ID VarStoreId,
+  IN UINT16          VarOffset,
+  IN EFI_STRING_ID   Prompt,
+  IN EFI_STRING_ID   Help,
+  IN UINT8           QuestionFlags,
+  IN UINT8           NumericFlags,
+  IN UINT64          Minimum,
+  IN UINT64          Maximum,
+  IN UINT64          Step,
+  IN VOID            *DefaultsOpCodeHandle  OPTIONAL
   );
 
 /**
@@ -881,17 +881,17 @@ HiiCreateNumericOpCode (
 UINT8 *
 EFIAPI
 HiiCreateStringOpCode (
-  IN VOID             *OpCodeHandle,
-  IN EFI_QUESTION_ID  QuestionId,
-  IN EFI_VARSTORE_ID  VarStoreId,
-  IN UINT16           VarOffset,
-  IN EFI_STRING_ID    Prompt,
-  IN EFI_STRING_ID    Help,
-  IN UINT8            QuestionFlags,
-  IN UINT8            StringFlags,
-  IN UINT8            MinSize,
-  IN UINT8            MaxSize,
-  IN VOID             *DefaultsOpCodeHandle  OPTIONAL
+  IN VOID            *OpCodeHandle,
+  IN EFI_QUESTION_ID QuestionId,
+  IN EFI_VARSTORE_ID VarStoreId,
+  IN UINT16          VarOffset,
+  IN EFI_STRING_ID   Prompt,
+  IN EFI_STRING_ID   Help,
+  IN UINT8           QuestionFlags,
+  IN UINT8           StringFlags,
+  IN UINT8           MinSize,
+  IN UINT8           MaxSize,
+  IN VOID            *DefaultsOpCodeHandle  OPTIONAL
   );
 
 /**
@@ -921,16 +921,16 @@ HiiCreateStringOpCode (
 UINT8 *
 EFIAPI
 HiiCreateOneOfOpCode (
-  IN VOID             *OpCodeHandle,
-  IN EFI_QUESTION_ID  QuestionId,
-  IN EFI_VARSTORE_ID  VarStoreId,
-  IN UINT16           VarOffset,
-  IN EFI_STRING_ID    Prompt,
-  IN EFI_STRING_ID    Help,
-  IN UINT8            QuestionFlags,
-  IN UINT8            OneOfFlags,
-  IN VOID             *OptionsOpCodeHandle,
-  IN VOID             *DefaultsOpCodeHandle  OPTIONAL
+  IN VOID            *OpCodeHandle,
+  IN EFI_QUESTION_ID QuestionId,
+  IN EFI_VARSTORE_ID VarStoreId,
+  IN UINT16          VarOffset,
+  IN EFI_STRING_ID   Prompt,
+  IN EFI_STRING_ID   Help,
+  IN UINT8           QuestionFlags,
+  IN UINT8           OneOfFlags,
+  IN VOID            *OptionsOpCodeHandle,
+  IN VOID            *DefaultsOpCodeHandle  OPTIONAL
   );
 
 /**
@@ -962,18 +962,18 @@ HiiCreateOneOfOpCode (
 UINT8 *
 EFIAPI
 HiiCreateOrderedListOpCode (
-  IN VOID             *OpCodeHandle,
-  IN EFI_QUESTION_ID  QuestionId,
-  IN EFI_VARSTORE_ID  VarStoreId,
-  IN UINT16           VarOffset,
-  IN EFI_STRING_ID    Prompt,
-  IN EFI_STRING_ID    Help,
-  IN UINT8            QuestionFlags,
-  IN UINT8            OrderedListFlags,
-  IN UINT8            DataType,
-  IN UINT8            MaxContainers,
-  IN VOID             *OptionsOpCodeHandle,
-  IN VOID             *DefaultsOpCodeHandle  OPTIONAL
+  IN VOID            *OpCodeHandle,
+  IN EFI_QUESTION_ID QuestionId,
+  IN EFI_VARSTORE_ID VarStoreId,
+  IN UINT16          VarOffset,
+  IN EFI_STRING_ID   Prompt,
+  IN EFI_STRING_ID   Help,
+  IN UINT8           QuestionFlags,
+  IN UINT8           OrderedListFlags,
+  IN UINT8           DataType,
+  IN UINT8           MaxContainers,
+  IN VOID            *OptionsOpCodeHandle,
+  IN VOID            *DefaultsOpCodeHandle  OPTIONAL
   );
 
 /**
@@ -993,10 +993,10 @@ HiiCreateOrderedListOpCode (
 UINT8 *
 EFIAPI
 HiiCreateTextOpCode (
-  IN VOID           *OpCodeHandle,
-  IN EFI_STRING_ID  Prompt,
-  IN EFI_STRING_ID  Help,
-  IN EFI_STRING_ID  TextTwo
+  IN VOID          *OpCodeHandle,
+  IN EFI_STRING_ID Prompt,
+  IN EFI_STRING_ID Help,
+  IN EFI_STRING_ID TextTwo
   );
 
 /**
@@ -1027,10 +1027,10 @@ HiiCreateTextOpCode (
 UINT8 *
 EFIAPI
 HiiCreateDateOpCode (
-  IN VOID             *OpCodeHandle,
-  IN EFI_QUESTION_ID  QuestionId,
-  IN EFI_VARSTORE_ID  VarStoreId,   OPTIONAL
-  IN UINT16           VarOffset,    OPTIONAL
+  IN VOID *OpCodeHandle,
+  IN EFI_QUESTION_ID QuestionId,
+  IN EFI_VARSTORE_ID VarStoreId, OPTIONAL
+  IN UINT16           VarOffset, OPTIONAL
   IN EFI_STRING_ID    Prompt,
   IN EFI_STRING_ID    Help,
   IN UINT8            QuestionFlags,
@@ -1066,10 +1066,10 @@ HiiCreateDateOpCode (
 UINT8 *
 EFIAPI
 HiiCreateTimeOpCode (
-  IN VOID             *OpCodeHandle,
-  IN EFI_QUESTION_ID  QuestionId,
-  IN EFI_VARSTORE_ID  VarStoreId,   OPTIONAL
-  IN UINT16           VarOffset,    OPTIONAL
+  IN VOID *OpCodeHandle,
+  IN EFI_QUESTION_ID QuestionId,
+  IN EFI_VARSTORE_ID VarStoreId, OPTIONAL
+  IN UINT16           VarOffset, OPTIONAL
   IN EFI_STRING_ID    Prompt,
   IN EFI_STRING_ID    Help,
   IN UINT8            QuestionFlags,
@@ -1137,8 +1137,8 @@ HiiCreateTimeOpCode (
 EFI_STATUS
 EFIAPI
 HiiUpdateForm (
-  IN EFI_HII_HANDLE  HiiHandle,
-  IN EFI_GUID        *FormSetGuid,        OPTIONAL
+  IN EFI_HII_HANDLE HiiHandle,
+  IN EFI_GUID *FormSetGuid, OPTIONAL
   IN EFI_FORM_ID     FormId,
   IN VOID            *StartOpCodeHandle,
   IN VOID            *EndOpCodeHandle     OPTIONAL

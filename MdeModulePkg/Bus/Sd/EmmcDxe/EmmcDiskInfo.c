@@ -27,14 +27,14 @@
 EFI_STATUS
 EFIAPI
 EmmcDiskInfoInquiry (
-  IN     EFI_DISK_INFO_PROTOCOL  *This,
-  IN OUT VOID                    *InquiryData,
-  IN OUT UINT32                  *InquiryDataSize
+  IN     EFI_DISK_INFO_PROTOCOL *This,
+  IN OUT VOID                   *InquiryData,
+  IN OUT UINT32                 *InquiryDataSize
   )
 {
-  EFI_STATUS        Status;
-  EMMC_PARTITION    *Partition;
-  EMMC_DEVICE       *Device;
+  EFI_STATUS      Status;
+  EMMC_PARTITION  *Partition;
+  EMMC_DEVICE     *Device;
 
   Partition = EMMC_PARTITION_DATA_FROM_DISKINFO (This);
   Device    = Partition->Device;
@@ -72,9 +72,9 @@ EmmcDiskInfoInquiry (
 EFI_STATUS
 EFIAPI
 EmmcDiskInfoIdentify (
-  IN     EFI_DISK_INFO_PROTOCOL  *This,
-  IN OUT VOID                    *IdentifyData,
-  IN OUT UINT32                  *IdentifyDataSize
+  IN     EFI_DISK_INFO_PROTOCOL *This,
+  IN OUT VOID                   *IdentifyData,
+  IN OUT UINT32                 *IdentifyDataSize
   )
 {
   return EFI_NOT_FOUND;
@@ -100,10 +100,10 @@ EmmcDiskInfoIdentify (
 EFI_STATUS
 EFIAPI
 EmmcDiskInfoSenseData (
-  IN     EFI_DISK_INFO_PROTOCOL  *This,
-  IN OUT VOID                    *SenseData,
-  IN OUT UINT32                  *SenseDataSize,
-  OUT    UINT8                   *SenseDataNumber
+  IN     EFI_DISK_INFO_PROTOCOL *This,
+  IN OUT VOID                   *SenseData,
+  IN OUT UINT32                 *SenseDataSize,
+  OUT    UINT8                  *SenseDataNumber
   )
 {
   return EFI_NOT_FOUND;
@@ -125,9 +125,9 @@ EmmcDiskInfoSenseData (
 EFI_STATUS
 EFIAPI
 EmmcDiskInfoWhichIde (
-  IN  EFI_DISK_INFO_PROTOCOL  *This,
-  OUT UINT32                  *IdeChannel,
-  OUT UINT32                  *IdeDevice
+  IN  EFI_DISK_INFO_PROTOCOL *This,
+  OUT UINT32                 *IdeChannel,
+  OUT UINT32                 *IdeDevice
   )
 {
   return EFI_UNSUPPORTED;

@@ -52,11 +52,10 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 XhciComponentNameGetDriverName (
-  IN  EFI_COMPONENT_NAME_PROTOCOL  *This,
-  IN  CHAR8                        *Language,
-  OUT CHAR16                       **DriverName
+  IN  EFI_COMPONENT_NAME_PROTOCOL *This,
+  IN  CHAR8                       *Language,
+  OUT CHAR16                      **DriverName
   );
-
 
 /**
   Retrieves a Unicode string that is the user readable name of the controller
@@ -129,12 +128,11 @@ XhciComponentNameGetDriverName (
 EFI_STATUS
 EFIAPI
 XhciComponentNameGetControllerName (
-  IN  EFI_COMPONENT_NAME_PROTOCOL  *This,
-  IN  EFI_HANDLE                   ControllerHandle,
-  IN  EFI_HANDLE                   ChildHandle OPTIONAL,
-  IN  CHAR8                        *Language,
-  OUT CHAR16                       **ControllerName
+  IN  EFI_COMPONENT_NAME_PROTOCOL *This,
+  IN  EFI_HANDLE                  ControllerHandle,
+  IN  EFI_HANDLE                  ChildHandle OPTIONAL,
+  IN  CHAR8                       *Language,
+  OUT CHAR16                      **ControllerName
   );
 
 #endif
-

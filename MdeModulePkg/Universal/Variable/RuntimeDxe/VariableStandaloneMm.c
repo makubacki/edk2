@@ -24,8 +24,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 **/
 BOOLEAN
 VariableSmmIsBufferOutsideSmmValid (
-  IN EFI_PHYSICAL_ADDRESS  Buffer,
-  IN UINT64                Length
+  IN EFI_PHYSICAL_ADDRESS Buffer,
+  IN UINT64               Length
   )
 {
   return TRUE;
@@ -63,8 +63,8 @@ VariableNotifySmmWriteReady (
 EFI_STATUS
 EFIAPI
 VariableServiceInitialize (
-  IN EFI_HANDLE                           ImageHandle,
-  IN EFI_MM_SYSTEM_TABLE                  *MmSystemTable
+  IN EFI_HANDLE          ImageHandle,
+  IN EFI_MM_SYSTEM_TABLE *MmSystemTable
   )
 {
   return MmVariableServiceInitialize ();

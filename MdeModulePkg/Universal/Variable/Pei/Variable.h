@@ -47,6 +47,7 @@ typedef struct {
 //
 // Functions
 //
+
 /**
   Provide the functionality of the variable services.
 
@@ -61,8 +62,8 @@ typedef struct {
 EFI_STATUS
 EFIAPI
 PeimInitializeVariableServices (
-  IN       EFI_PEI_FILE_HANDLE       FileHandle,
-  IN CONST EFI_PEI_SERVICES          **PeiServices
+  IN       EFI_PEI_FILE_HANDLE FileHandle,
+  IN CONST EFI_PEI_SERVICES    **PeiServices
   );
 
 /**

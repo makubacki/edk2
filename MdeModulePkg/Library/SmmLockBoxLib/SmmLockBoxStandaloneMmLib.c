@@ -24,8 +24,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 SmmLockBoxStandaloneMmConstructor (
-  IN EFI_HANDLE           ImageHandle,
-  IN EFI_MM_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE          ImageHandle,
+  IN EFI_MM_SYSTEM_TABLE *SystemTable
   )
 {
   return SmmLockBoxMmConstructor ();
@@ -45,8 +45,8 @@ SmmLockBoxStandaloneMmConstructor (
 EFI_STATUS
 EFIAPI
 SmmLockBoxStandaloneMmDestructor (
-  IN EFI_HANDLE             ImageHandle,
-  IN EFI_MM_SYSTEM_TABLE    *SystemTable
+  IN EFI_HANDLE          ImageHandle,
+  IN EFI_MM_SYSTEM_TABLE *SystemTable
   )
 {
   return SmmLockBoxMmDestructor ();

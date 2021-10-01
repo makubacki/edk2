@@ -25,17 +25,17 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include "InternalVarCheckStructure.h"
 #include "VarCheckHiiGen.h"
 
-//#define DUMP_VAR_CHECK_HII
-//#define DUMP_HII_DATA
+// #define DUMP_VAR_CHECK_HII
+// #define DUMP_HII_DATA
 
 typedef struct {
-  UINT8     HiiOpCode;
-  CHAR8     *HiiOpCodeStr;
+  UINT8    HiiOpCode;
+  CHAR8    *HiiOpCodeStr;
 } VAR_CHECK_HII_OPCODE_STRING;
 
 typedef struct {
-  UINT8     PackageType;
-  CHAR8     *PackageTypeStr;
+  UINT8    PackageType;
+  CHAR8    *PackageTypeStr;
 } VAR_CHECK_HII_PACKAGE_TYPE_STRING;
 
 /**
@@ -47,11 +47,11 @@ typedef struct {
 **/
 VOID
 DumpVarCheckHii (
-  IN VOID   *VarCheckHiiBin,
-  IN UINTN  VarCheckHiiBinSize
+  IN VOID  *VarCheckHiiBin,
+  IN UINTN VarCheckHiiBinSize
   );
 
-extern VAR_CHECK_HII_VARIABLE_HEADER    *mVarCheckHiiBin;
-extern UINTN                            mVarCheckHiiBinSize;
+extern VAR_CHECK_HII_VARIABLE_HEADER  *mVarCheckHiiBin;
+extern UINTN                          mVarCheckHiiBinSize;
 
 #endif

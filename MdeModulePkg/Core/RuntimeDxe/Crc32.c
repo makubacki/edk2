@@ -12,7 +12,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
-
 #include <Uefi.h>
 #include <Library/BaseLib.h>
 
@@ -31,12 +30,12 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 RuntimeDriverCalculateCrc32 (
-  IN  VOID    *Data,
-  IN  UINTN   DataSize,
-  OUT UINT32  *CrcOut
+  IN  VOID   *Data,
+  IN  UINTN  DataSize,
+  OUT UINT32 *CrcOut
   )
 {
-  if (Data == NULL || DataSize == 0 || CrcOut == NULL) {
+  if ((Data == NULL) || (DataSize == 0) || (CrcOut == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
 

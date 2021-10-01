@@ -9,7 +9,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include "DxeMain.h"
 #include "FwVolDriver.h"
 
-
 /**
   Retrieves attributes, insures positive polarity of attribute bits, returns
   resulting attributes in output parameter.
@@ -27,10 +26,10 @@ FvGetVolumeAttributes (
   OUT       EFI_FV_ATTRIBUTES             *Attributes
   )
 {
-  EFI_STATUS                                Status;
-  FV_DEVICE                                 *FvDevice;
-  EFI_FIRMWARE_VOLUME_BLOCK_PROTOCOL        *Fvb;
-  EFI_FVB_ATTRIBUTES_2                      FvbAttributes;
+  EFI_STATUS                          Status;
+  FV_DEVICE                           *FvDevice;
+  EFI_FIRMWARE_VOLUME_BLOCK_PROTOCOL  *Fvb;
+  EFI_FVB_ATTRIBUTES_2                FvbAttributes;
 
   FvDevice = FV_DEVICE_FROM_THIS (This);
   Fvb = FvDevice->Fvb;
@@ -50,8 +49,6 @@ FvGetVolumeAttributes (
   return Status;
 }
 
-
-
 /**
   Sets current attributes for volume
 
@@ -65,13 +62,12 @@ FvGetVolumeAttributes (
 EFI_STATUS
 EFIAPI
 FvSetVolumeAttributes (
-  IN     CONST EFI_FIRMWARE_VOLUME2_PROTOCOL  *This,
-  IN OUT       EFI_FV_ATTRIBUTES              *Attributes
+  IN     CONST EFI_FIRMWARE_VOLUME2_PROTOCOL *This,
+  IN OUT       EFI_FV_ATTRIBUTES             *Attributes
   )
 {
   return EFI_UNSUPPORTED;
 }
-
 
 /**
   Return information of type InformationType for the requested firmware
@@ -89,16 +85,14 @@ FvSetVolumeAttributes (
 EFI_STATUS
 EFIAPI
 FvGetVolumeInfo (
-  IN  CONST EFI_FIRMWARE_VOLUME2_PROTOCOL       *This,
-  IN  CONST EFI_GUID                            *InformationType,
-  IN OUT UINTN                                  *BufferSize,
-  OUT VOID                                      *Buffer
+  IN  CONST EFI_FIRMWARE_VOLUME2_PROTOCOL *This,
+  IN  CONST EFI_GUID                      *InformationType,
+  IN OUT UINTN                            *BufferSize,
+  OUT VOID                                *Buffer
   )
 {
   return EFI_UNSUPPORTED;
 }
-
-
 
 /**
   Set information of type InformationType for the requested firmware
@@ -116,14 +110,11 @@ FvGetVolumeInfo (
 EFI_STATUS
 EFIAPI
 FvSetVolumeInfo (
-  IN  CONST EFI_FIRMWARE_VOLUME2_PROTOCOL       *This,
-  IN  CONST EFI_GUID                            *InformationType,
-  IN  UINTN                                     BufferSize,
-  IN CONST  VOID                                *Buffer
+  IN  CONST EFI_FIRMWARE_VOLUME2_PROTOCOL *This,
+  IN  CONST EFI_GUID                      *InformationType,
+  IN  UINTN                               BufferSize,
+  IN CONST  VOID                          *Buffer
   )
 {
   return EFI_UNSUPPORTED;
 }
-
-
-

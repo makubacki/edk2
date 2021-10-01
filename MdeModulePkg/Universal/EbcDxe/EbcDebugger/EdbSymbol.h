@@ -67,10 +67,10 @@ EbdFindSymbolAddress (
 **/
 EFI_STATUS
 EdbLoadSymbol (
-  IN EFI_DEBUGGER_PRIVATE_DATA   *DebuggerPrivate,
-  IN CHAR16                      *FileName,
-  IN UINTN                       BufferSize,
-  IN VOID                        *Buffer
+  IN EFI_DEBUGGER_PRIVATE_DATA *DebuggerPrivate,
+  IN CHAR16                    *FileName,
+  IN UINTN                     BufferSize,
+  IN VOID                      *Buffer
   );
 
 /**
@@ -85,8 +85,8 @@ EdbLoadSymbol (
 **/
 EFI_STATUS
 EdbUnloadSymbol (
-  IN EFI_DEBUGGER_PRIVATE_DATA   *DebuggerPrivate,
-  IN CHAR16                      *FileName
+  IN EFI_DEBUGGER_PRIVATE_DATA *DebuggerPrivate,
+  IN CHAR16                    *FileName
   );
 
 /**
@@ -123,11 +123,11 @@ EdbPatchSymbolRVA (
 **/
 EFI_STATUS
 EdbLoadCode (
-  IN EFI_DEBUGGER_PRIVATE_DATA   *DebuggerPrivate,
-  IN CHAR16                      *MapFileName,
-  IN CHAR16                      *FileName,
-  IN UINTN                       BufferSize,
-  IN VOID                        *Buffer
+  IN EFI_DEBUGGER_PRIVATE_DATA *DebuggerPrivate,
+  IN CHAR16                    *MapFileName,
+  IN CHAR16                    *FileName,
+  IN UINTN                     BufferSize,
+  IN VOID                      *Buffer
   );
 
 /**
@@ -144,10 +144,10 @@ EdbLoadCode (
 **/
 EFI_STATUS
 EdbUnloadCode (
-  IN EFI_DEBUGGER_PRIVATE_DATA   *DebuggerPrivate,
-  IN CHAR16                      *MapFileName,
-  IN CHAR16                      *FileName,
-  OUT VOID                       **Buffer
+  IN EFI_DEBUGGER_PRIVATE_DATA *DebuggerPrivate,
+  IN CHAR16                    *MapFileName,
+  IN CHAR16                    *FileName,
+  OUT VOID                     **Buffer
   );
 
 /**
@@ -219,8 +219,8 @@ FindSymbolStr (
 **/
 UINTN
 EdbPrintSource (
-  IN UINTN     Address,
-  IN BOOLEAN   IsPrint
+  IN UINTN   Address,
+  IN BOOLEAN IsPrint
   );
 
 /**
@@ -237,8 +237,8 @@ EdbPrintSource (
 **/
 EFI_STATUS
 Symboltoi (
-  IN CHAR16   *Symbol,
-  OUT UINTN   *Address
+  IN CHAR16 *Symbol,
+  OUT UINTN *Address
   );
 
 #endif

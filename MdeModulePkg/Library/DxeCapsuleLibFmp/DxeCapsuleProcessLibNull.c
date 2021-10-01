@@ -24,7 +24,7 @@
 EFI_STATUS
 EFIAPI
 UpdateImageProgress (
-  IN UINTN  Completion
+  IN UINTN Completion
   )
 {
   return EFI_SUCCESS;

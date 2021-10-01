@@ -20,8 +20,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // Debug macro
 //
-#define EBCMSG(s) gST->ConOut->OutputString (gST->ConOut, s)
-
+#define EBCMSG(s)  gST->ConOut->OutputString (gST->ConOut, s)
 
 /**
   Execute an EBC image from an entry point or from a published protocol.
@@ -36,8 +35,6 @@ EFI_STATUS
 EbcExecute (
   IN VM_CONTEXT *VmPtr
   );
-
-
 
 /**
   Returns the version of the EBC virtual machine.
@@ -75,9 +72,9 @@ GetVmVersion (
 **/
 EFI_STATUS
 VmWriteMemN (
-  IN VM_CONTEXT   *VmPtr,
-  IN UINTN        Addr,
-  IN UINTN        Data
+  IN VM_CONTEXT *VmPtr,
+  IN UINTN      Addr,
+  IN UINTN      Data
   );
 
 /**
@@ -105,9 +102,9 @@ VmWriteMemN (
 **/
 EFI_STATUS
 VmWriteMem64 (
-  IN VM_CONTEXT   *VmPtr,
-  IN UINTN        Addr,
-  IN UINT64       Data
+  IN VM_CONTEXT *VmPtr,
+  IN UINTN      Addr,
+  IN UINT64     Data
   );
 
 /**

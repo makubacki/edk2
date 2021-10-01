@@ -49,12 +49,12 @@
 RETURN_STATUS
 EFIAPI
 AuthenticateFmpImage (
-  IN EFI_FIRMWARE_IMAGE_AUTHENTICATION  *Image,
-  IN UINTN                              ImageSize,
-  IN CONST UINT8                        *PublicKeyData,
-  IN UINTN                              PublicKeyDataLength
+  IN EFI_FIRMWARE_IMAGE_AUTHENTICATION *Image,
+  IN UINTN                             ImageSize,
+  IN CONST UINT8                       *PublicKeyData,
+  IN UINTN                             PublicKeyDataLength
   )
 {
-  ASSERT(FALSE);
+  ASSERT (FALSE);
   return RETURN_UNSUPPORTED;
 }

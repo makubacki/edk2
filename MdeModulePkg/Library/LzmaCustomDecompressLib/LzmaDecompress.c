@@ -11,13 +11,12 @@
 #include "Sdk/C/7zVersion.h"
 #include "Sdk/C/LzmaDec.h"
 
-#define SCRATCH_BUFFER_REQUEST_SIZE SIZE_64KB
+#define SCRATCH_BUFFER_REQUEST_SIZE  SIZE_64KB
 
-typedef struct
-{
-  ISzAlloc Functions;
-  VOID     *Buffer;
-  UINTN    BufferSize;
+typedef struct {
+  ISzAlloc    Functions;
+  VOID        *Buffer;
+  UINTN       BufferSize;
 } ISzAllocWithData;
 
 /**
@@ -31,17 +30,17 @@ typedef struct
 VOID *
 SzAlloc (
   CONST ISzAlloc *P,
-  size_t Size
+  size_t         Size
   )
 {
-  VOID *Addr;
-  ISzAllocWithData *Private;
+  VOID              *Addr;
+  ISzAllocWithData  *Private;
 
-  Private = (ISzAllocWithData*) P;
+  Private = (ISzAllocWithData *)P;
 
   if (Private->BufferSize >= Size) {
     Addr = Private->Buffer;
-    Private->Buffer = (VOID*) ((UINT8*)Addr + Size);
+    Private->Buffer      = (VOID *)((UINT8 *)Addr + Size);
     Private->BufferSize -= Size;
     return Addr;
   } else {
@@ -59,7 +58,7 @@ SzAlloc (
 VOID
 SzFree (
   CONST ISzAlloc *P,
-  VOID *Address
+  VOID           *Address
   )
 {
   //
@@ -69,7 +68,7 @@ SzFree (
   //
 }
 
-#define LZMA_HEADER_SIZE (LZMA_PROPS_SIZE + 8)
+#define LZMA_HEADER_SIZE  (LZMA_PROPS_SIZE + 8)
 
 /**
   Get the size of the uncompressed buffer by parsing EncodeData header.
@@ -79,17 +78,18 @@ SzFree (
   @return The size of the uncompressed buffer.
 **/
 UINT64
-GetDecodedSizeOfBuf(
+GetDecodedSizeOfBuf (
   UINT8 *EncodedData
   )
 {
-  UINT64 DecodedSize;
-  INTN   Index;
+  UINT64  DecodedSize;
+  INTN    Index;
 
   /* Parse header */
   DecodedSize = 0;
-  for (Index = LZMA_PROPS_SIZE + 7; Index >= LZMA_PROPS_SIZE; Index--)
-    DecodedSize = LShiftU64(DecodedSize, 8) + EncodedData[Index];
+  for (Index = LZMA_PROPS_SIZE + 7; Index >= LZMA_PROPS_SIZE; Index--) {
+    DecodedSize = LShiftU64 (DecodedSize, 8) + EncodedData[Index];
+  }
 
   return DecodedSize;
 }
@@ -135,23 +135,23 @@ GetDecodedSizeOfBuf(
 RETURN_STATUS
 EFIAPI
 LzmaUefiDecompressGetInfo (
-  IN  CONST VOID  *Source,
-  IN  UINT32      SourceSize,
-  OUT UINT32      *DestinationSize,
-  OUT UINT32      *ScratchSize
+  IN  CONST VOID *Source,
+  IN  UINT32     SourceSize,
+  OUT UINT32     *DestinationSize,
+  OUT UINT32     *ScratchSize
   )
 {
   UInt64  DecodedSize;
 
-  ASSERT(SourceSize >= LZMA_HEADER_SIZE);
+  ASSERT (SourceSize >= LZMA_HEADER_SIZE);
 
-  DecodedSize = GetDecodedSizeOfBuf((UINT8*)Source);
+  DecodedSize = GetDecodedSizeOfBuf ((UINT8 *)Source);
   if (DecodedSize > MAX_UINT32) {
     return RETURN_UNSUPPORTED;
   }
 
   *DestinationSize = (UINT32)DecodedSize;
-  *ScratchSize = SCRATCH_BUFFER_REQUEST_SIZE;
+  *ScratchSize     = SCRATCH_BUFFER_REQUEST_SIZE;
   return RETURN_SUCCESS;
 }
 
@@ -180,10 +180,10 @@ LzmaUefiDecompressGetInfo (
 RETURN_STATUS
 EFIAPI
 LzmaUefiDecompress (
-  IN CONST VOID  *Source,
-  IN UINTN       SourceSize,
-  IN OUT VOID    *Destination,
-  IN OUT VOID    *Scratch
+  IN CONST VOID *Source,
+  IN UINTN      SourceSize,
+  IN OUT VOID   *Destination,
+  IN OUT VOID   *Scratch
   )
 {
   SRes              LzmaResult;
@@ -192,25 +192,25 @@ LzmaUefiDecompress (
   SizeT             EncodedDataSize;
   ISzAllocWithData  AllocFuncs;
 
-  AllocFuncs.Functions.Alloc  = SzAlloc;
-  AllocFuncs.Functions.Free   = SzFree;
-  AllocFuncs.Buffer           = Scratch;
-  AllocFuncs.BufferSize       = SCRATCH_BUFFER_REQUEST_SIZE;
+  AllocFuncs.Functions.Alloc = SzAlloc;
+  AllocFuncs.Functions.Free  = SzFree;
+  AllocFuncs.Buffer     = Scratch;
+  AllocFuncs.BufferSize = SCRATCH_BUFFER_REQUEST_SIZE;
 
-  DecodedBufSize = (SizeT)GetDecodedSizeOfBuf((UINT8*)Source);
-  EncodedDataSize = (SizeT) (SourceSize - LZMA_HEADER_SIZE);
+  DecodedBufSize  = (SizeT)GetDecodedSizeOfBuf ((UINT8 *)Source);
+  EncodedDataSize = (SizeT)(SourceSize - LZMA_HEADER_SIZE);
 
-  LzmaResult = LzmaDecode(
-    Destination,
-    &DecodedBufSize,
-    (Byte*)((UINT8*)Source + LZMA_HEADER_SIZE),
-    &EncodedDataSize,
-    Source,
-    LZMA_PROPS_SIZE,
-    LZMA_FINISH_END,
-    &Status,
-    &(AllocFuncs.Functions)
-    );
+  LzmaResult = LzmaDecode (
+                 Destination,
+                 &DecodedBufSize,
+                 (Byte *)((UINT8 *)Source + LZMA_HEADER_SIZE),
+                 &EncodedDataSize,
+                 Source,
+                 LZMA_PROPS_SIZE,
+                 LZMA_FINISH_END,
+                 &Status,
+                 &(AllocFuncs.Functions)
+                 );
 
   if (LzmaResult == SZ_OK) {
     return RETURN_SUCCESS;
@@ -218,4 +218,3 @@ LzmaUefiDecompress (
     return RETURN_INVALID_PARAMETER;
   }
 }
-
