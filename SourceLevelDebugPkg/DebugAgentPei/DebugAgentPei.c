@@ -27,11 +27,11 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 DebugAgentPeiInitialize (
-  IN EFI_PEI_FILE_HANDLE     FileHandle,
-  IN CONST EFI_PEI_SERVICES  **PeiServices
+  IN EFI_PEI_FILE_HANDLE    FileHandle,
+  IN CONST EFI_PEI_SERVICES **PeiServices
   )
 {
-  EFI_STATUS                 Status;
+  EFI_STATUS  Status;
 
   Status = EFI_UNSUPPORTED;
   InitializeDebugAgent (DEBUG_AGENT_INIT_PEI, &Status, NULL);
