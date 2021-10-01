@@ -18,37 +18,37 @@
 #pragma pack(1)
 
 typedef struct {
-  UINT32 Reserved1;
-  UINT32 ChannelStatus;
-  UINT64 Reserved2;
-  UINT32 Flags;
-  UINT32 Length;
-  UINT32 MessageHeader;
+  UINT32    Reserved1;
+  UINT32    ChannelStatus;
+  UINT64    Reserved2;
+  UINT32    Flags;
+  UINT32    Length;
+  UINT32    MessageHeader;
 
   // NOTE: Since EDK2 does not allow flexible array member [] we declare
   // here array of 1 element length. However below is used as a variable
   // length array.
-  UINT32 Payload[1];    // size less object gives offset to payload.
+  UINT32    Payload[1]; // size less object gives offset to payload.
 } MTL_MAILBOX;
 
 #pragma pack()
 
 // Channel Type, Low-priority, and High-priority
 typedef enum {
-  MTL_CHANNEL_TYPE_LOW = 0,
+  MTL_CHANNEL_TYPE_LOW  = 0,
   MTL_CHANNEL_TYPE_HIGH = 1
 } MTL_CHANNEL_TYPE;
 
 typedef struct {
-  UINT64 PhysicalAddress;
-  UINT32 ModifyMask;
-  UINT32 PreserveMask;
+  UINT64    PhysicalAddress;
+  UINT32    ModifyMask;
+  UINT32    PreserveMask;
 } MTL_DOORBELL;
 
 typedef struct {
-  MTL_CHANNEL_TYPE ChannelType;
-  MTL_MAILBOX      * CONST MailBox;
-  MTL_DOORBELL     DoorBell;
+  MTL_CHANNEL_TYPE           ChannelType;
+  MTL_MAILBOX      *CONST    MailBox;
+  MTL_DOORBELL               DoorBell;
 } MTL_CHANNEL;
 
 /** Wait until channel is free.
@@ -61,8 +61,8 @@ typedef struct {
 **/
 EFI_STATUS
 MtlWaitUntilChannelFree (
-  IN MTL_CHANNEL  *Channel,
-  IN UINTN        TimeOutInMicroSeconds
+  IN MTL_CHANNEL *Channel,
+  IN UINTN       TimeOutInMicroSeconds
   );
 
 /** Return the address of the message payload.
@@ -71,9 +71,9 @@ MtlWaitUntilChannelFree (
 
   @retval UINT32*      Pointer to the payload.
 **/
-UINT32*
+UINT32 *
 MtlGetChannelPayload (
-  IN MTL_CHANNEL  *Channel
+  IN MTL_CHANNEL *Channel
   );
 
 /** Return pointer to a channel for the requested channel type.
@@ -89,8 +89,8 @@ MtlGetChannelPayload (
 **/
 EFI_STATUS
 MtlGetChannel (
-  IN  MTL_CHANNEL_TYPE  ChannelType,
-  OUT MTL_CHANNEL       **Channel
+  IN  MTL_CHANNEL_TYPE ChannelType,
+  OUT MTL_CHANNEL      **Channel
   );
 
 /** Mark the channel busy and ring the doorbell.
@@ -105,9 +105,9 @@ MtlGetChannel (
 **/
 EFI_STATUS
 MtlSendMessage (
-  IN  MTL_CHANNEL  *Channel,
-  IN  UINT32       MessageHeader,
-  OUT UINT32       PayloadLength
+  IN  MTL_CHANNEL *Channel,
+  IN  UINT32      MessageHeader,
+  OUT UINT32      PayloadLength
   );
 
 /** Wait for a response on a channel.
@@ -122,10 +122,9 @@ MtlSendMessage (
 **/
 EFI_STATUS
 MtlReceiveMessage (
-  IN  MTL_CHANNEL  *Channel,
-  OUT UINT32       *MessageHeader,
-  OUT UINT32       *PayloadLength
+  IN  MTL_CHANNEL *Channel,
+  OUT UINT32      *MessageHeader,
+  OUT UINT32      *PayloadLength
   );
 
-#endif  /* ARM_MTL_LIB_H_ */
-
+#endif /* ARM_MTL_LIB_H_ */

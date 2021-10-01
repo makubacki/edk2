@@ -35,7 +35,7 @@
 **/
 EFI_STATUS
 EnableQuietBoot (
-  IN  EFI_GUID  *LogoFile
+  IN  EFI_GUID *LogoFile
   );
 
 /**

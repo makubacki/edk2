@@ -21,8 +21,8 @@
 **/
 EFI_STATUS
 MtlWaitUntilChannelFree (
-  IN MTL_CHANNEL  *Channel,
-  IN UINTN        TimeOutInMicroSeconds
+  IN MTL_CHANNEL *Channel,
+  IN UINTN       TimeOutInMicroSeconds
   )
 {
   return EFI_UNSUPPORTED;
@@ -34,9 +34,9 @@ MtlWaitUntilChannelFree (
 
   @retval UINT32*      Pointer to the payload.
 **/
-UINT32*
+UINT32 *
 MtlGetChannelPayload (
-  IN  MTL_CHANNEL  *Channel
+  IN  MTL_CHANNEL *Channel
   )
 {
   ASSERT (FALSE);
@@ -56,8 +56,8 @@ MtlGetChannelPayload (
 **/
 EFI_STATUS
 MtlGetChannel (
-  IN  MTL_CHANNEL_TYPE  ChannelType,
-  OUT MTL_CHANNEL       **Channel
+  IN  MTL_CHANNEL_TYPE ChannelType,
+  OUT MTL_CHANNEL      **Channel
   )
 {
   return EFI_UNSUPPORTED;
@@ -74,9 +74,9 @@ MtlGetChannel (
 **/
 EFI_STATUS
 MtlSendMessage (
-  IN  MTL_CHANNEL  *Channel,
-  IN  UINT32       MessageHeader,
-  OUT UINT32       PayloadLength
+  IN  MTL_CHANNEL *Channel,
+  IN  UINT32      MessageHeader,
+  OUT UINT32      PayloadLength
   )
 {
   return EFI_UNSUPPORTED;
@@ -93,9 +93,9 @@ MtlSendMessage (
 **/
 EFI_STATUS
 MtlReceiveMessage (
-  IN  MTL_CHANNEL  *Channel,
-  OUT UINT32       *MessageHeader,
-  OUT UINT32       *PayloadLength
+  IN  MTL_CHANNEL *Channel,
+  OUT UINT32      *MessageHeader,
+  OUT UINT32      *PayloadLength
   )
 {
   return EFI_UNSUPPORTED;

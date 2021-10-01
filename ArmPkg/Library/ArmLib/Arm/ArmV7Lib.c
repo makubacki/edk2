@@ -20,10 +20,10 @@
 
 VOID
 ArmV7DataCacheOperation (
-  IN  ARM_V7_CACHE_OPERATION  DataCacheOperation
+  IN  ARM_V7_CACHE_OPERATION DataCacheOperation
   )
 {
-  UINTN     SavedInterruptState;
+  UINTN  SavedInterruptState;
 
   SavedInterruptState = ArmGetInterruptState ();
   ArmDisableInterrupts ();
@@ -114,7 +114,7 @@ ArmHasCcidx (
   VOID
   )
 {
-  UINTN Mmfr4;
+  UINTN  Mmfr4;
 
   Mmfr4 = ArmReadIdMmfr4 ();
   return (((Mmfr4 >> 24) & 0xF) == 1) ? TRUE : FALSE;

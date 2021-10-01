@@ -44,11 +44,11 @@ VolumeOpen (
 **/
 EFI_STATUS
 FileOpen (
-  IN  EFI_FILE  *This,
-  OUT EFI_FILE  **NewHandle,
-  IN  CHAR16    *FileName,
-  IN  UINT64    OpenMode,
-  IN  UINT64    Attributes
+  IN  EFI_FILE *This,
+  OUT EFI_FILE **NewHandle,
+  IN  CHAR16   *FileName,
+  IN  UINT64   OpenMode,
+  IN  UINT64   Attributes
   );
 
 /**
@@ -63,7 +63,7 @@ FileOpen (
 **/
 EFI_STATUS
 FileClose (
-  IN EFI_FILE  *This
+  IN EFI_FILE *This
   );
 
 /**
@@ -102,9 +102,9 @@ FileDelete (
 **/
 EFI_STATUS
 FileRead (
-  IN     EFI_FILE  *This,
-  IN OUT UINTN     *BufferSize,
-  OUT    VOID      *Buffer
+  IN     EFI_FILE *This,
+  IN OUT UINTN    *BufferSize,
+  OUT    VOID     *Buffer
   );
 
 /**
@@ -145,8 +145,8 @@ FileWrite (
 **/
 EFI_STATUS
 FileGetPosition (
-  IN  EFI_FILE    *File,
-  OUT UINT64      *Position
+  IN  EFI_FILE *File,
+  OUT UINT64   *Position
   );
 
 /**
@@ -191,10 +191,10 @@ FileSetPosition (
 **/
 EFI_STATUS
 FileGetInfo (
-  IN     EFI_FILE  *This,
-  IN     EFI_GUID  *InformationType,
-  IN OUT UINTN     *BufferSize,
-  OUT    VOID      *Buffer
+  IN     EFI_FILE *This,
+  IN     EFI_GUID *InformationType,
+  IN OUT UINTN    *BufferSize,
+  OUT    VOID     *Buffer
   );
 
 /**
@@ -231,10 +231,10 @@ FileGetInfo (
 **/
 EFI_STATUS
 FileSetInfo (
-  IN EFI_FILE  *This,
-  IN EFI_GUID  *InformationType,
-  IN UINTN     BufferSize,
-  IN VOID      *Buffer
+  IN EFI_FILE *This,
+  IN EFI_GUID *InformationType,
+  IN UINTN    BufferSize,
+  IN VOID     *Buffer
   );
 
 EFI_STATUS
@@ -243,4 +243,3 @@ FileFlush (
   );
 
 #endif // SEMIHOST_FS_H_
-

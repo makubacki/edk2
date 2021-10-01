@@ -16,52 +16,52 @@
 EFI_STATUS
 EFIAPI
 ArmConfigureMmu (
-  IN  ARM_MEMORY_REGION_DESCRIPTOR  *MemoryTable,
-  OUT VOID                          **TranslationTableBase OPTIONAL,
-  OUT UINTN                         *TranslationTableSize  OPTIONAL
+  IN  ARM_MEMORY_REGION_DESCRIPTOR *MemoryTable,
+  OUT VOID                         **TranslationTableBase OPTIONAL,
+  OUT UINTN                        *TranslationTableSize  OPTIONAL
   );
 
 EFI_STATUS
 EFIAPI
 ArmSetMemoryRegionNoExec (
-  IN  EFI_PHYSICAL_ADDRESS      BaseAddress,
-  IN  UINT64                    Length
+  IN  EFI_PHYSICAL_ADDRESS BaseAddress,
+  IN  UINT64               Length
   );
 
 EFI_STATUS
 EFIAPI
 ArmClearMemoryRegionNoExec (
-  IN  EFI_PHYSICAL_ADDRESS      BaseAddress,
-  IN  UINT64                    Length
+  IN  EFI_PHYSICAL_ADDRESS BaseAddress,
+  IN  UINT64               Length
   );
 
 EFI_STATUS
 EFIAPI
 ArmSetMemoryRegionReadOnly (
-  IN  EFI_PHYSICAL_ADDRESS      BaseAddress,
-  IN  UINT64                    Length
+  IN  EFI_PHYSICAL_ADDRESS BaseAddress,
+  IN  UINT64               Length
   );
 
 EFI_STATUS
 EFIAPI
 ArmClearMemoryRegionReadOnly (
-  IN  EFI_PHYSICAL_ADDRESS      BaseAddress,
-  IN  UINT64                    Length
+  IN  EFI_PHYSICAL_ADDRESS BaseAddress,
+  IN  UINT64               Length
   );
 
 VOID
 EFIAPI
 ArmReplaceLiveTranslationEntry (
-  IN  UINT64  *Entry,
-  IN  UINT64  Value,
-  IN  UINT64  RegionStart
+  IN  UINT64 *Entry,
+  IN  UINT64 Value,
+  IN  UINT64 RegionStart
   );
 
 EFI_STATUS
 ArmSetMemoryAttributes (
-  IN EFI_PHYSICAL_ADDRESS      BaseAddress,
-  IN UINT64                    Length,
-  IN UINT64                    Attributes
+  IN EFI_PHYSICAL_ADDRESS BaseAddress,
+  IN UINT64               Length,
+  IN UINT64               Attributes
   );
 
 #endif // ARM_MMU_LIB_H_
