@@ -18,7 +18,7 @@
 VOID
 EFIAPI
 UpdateFspmUpdData (
-  IN OUT VOID        *FspUpdRgnPtr
+  IN OUT VOID *FspUpdRgnPtr
   );
 
 /**
@@ -30,7 +30,7 @@ UpdateFspmUpdData (
 VOID
 EFIAPI
 UpdateFspsUpdData (
-  IN OUT VOID        *FspUpdRgnPtr
+  IN OUT VOID *FspUpdRgnPtr
   );
 
 /**
@@ -74,7 +74,7 @@ GetS3MemoryInfo (
 VOID
 EFIAPI
 CallFspWrapperResetSystem (
-  IN UINT32    FspStatusResetType
+  IN UINT32 FspStatusResetType
   );
 
 #endif

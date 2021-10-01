@@ -21,7 +21,7 @@
 FSP_INFO_HEADER *
 EFIAPI
 FspFindFspHeader (
-  IN EFI_PHYSICAL_ADDRESS  FlashFvFspBase
+  IN EFI_PHYSICAL_ADDRESS FlashFvFspBase
   );
 
 /**
@@ -48,8 +48,8 @@ CallFspNotifyPhase (
 EFI_STATUS
 EFIAPI
 CallFspMemoryInit (
-  IN VOID                       *FspmUpdDataPtr,
-  OUT VOID                      **HobListPtr
+  IN VOID  *FspmUpdDataPtr,
+  OUT VOID **HobListPtr
   );
 
 /**
@@ -62,7 +62,7 @@ CallFspMemoryInit (
 EFI_STATUS
 EFIAPI
 CallTempRamExit (
-  IN VOID                       *TempRamExitParam
+  IN VOID *TempRamExitParam
   );
 
 /**
@@ -75,7 +75,7 @@ CallTempRamExit (
 EFI_STATUS
 EFIAPI
 CallFspSiliconInit (
-  IN VOID                       *FspsUpdDataPtr
+  IN VOID *FspsUpdDataPtr
   );
 
 #endif
