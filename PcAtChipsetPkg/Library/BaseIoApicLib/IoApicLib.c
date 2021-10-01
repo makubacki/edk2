@@ -32,7 +32,7 @@
 UINT32
 EFIAPI
 IoApicRead (
-  IN UINTN  Index
+  IN UINTN Index
   )
 {
   ASSERT (Index < 0x100);
@@ -53,8 +53,8 @@ IoApicRead (
 UINT32
 EFIAPI
 IoApicWrite (
-  IN UINTN   Index,
-  IN UINT32  Value
+  IN UINTN  Index,
+  IN UINT32 Value
   )
 {
   ASSERT (Index < 0x100);
@@ -74,8 +74,8 @@ IoApicWrite (
 VOID
 EFIAPI
 IoApicEnableInterrupt (
-  IN UINTN    Irq,
-  IN BOOLEAN  Enable
+  IN UINTN   Irq,
+  IN BOOLEAN Enable
   )
 {
   IO_APIC_VERSION_REGISTER         Version;
@@ -86,7 +86,7 @@ IoApicEnableInterrupt (
   ASSERT (Irq <= Version.Bits.MaximumRedirectionEntry);
 
   Entry.Uint32.Low = IoApicRead (IO_APIC_REDIRECTION_TABLE_ENTRY_INDEX + Irq * 2);
-  Entry.Bits.Mask = Enable ? 0 : 1;
+  Entry.Bits.Mask  = Enable ? 0 : 1;
   IoApicWrite (IO_APIC_REDIRECTION_TABLE_ENTRY_INDEX + Irq * 2, Entry.Uint32.Low);
 }
 
@@ -121,11 +121,11 @@ IoApicEnableInterrupt (
 VOID
 EFIAPI
 IoApicConfigureInterrupt (
-  IN UINTN    Irq,
-  IN UINTN    Vector,
-  IN UINTN    DeliveryMode,
-  IN BOOLEAN  LevelTriggered,
-  IN BOOLEAN  AssertionLevel
+  IN UINTN   Irq,
+  IN UINTN   Vector,
+  IN UINTN   DeliveryMode,
+  IN BOOLEAN LevelTriggered,
+  IN BOOLEAN AssertionLevel
   )
 {
   IO_APIC_VERSION_REGISTER         Version;
@@ -137,13 +137,13 @@ IoApicConfigureInterrupt (
   ASSERT (Vector <= 0xFF);
   ASSERT (DeliveryMode < 8 && DeliveryMode != 6 && DeliveryMode != 3);
 
-  Entry.Uint32.Low = IoApicRead (IO_APIC_REDIRECTION_TABLE_ENTRY_INDEX + Irq * 2);
-  Entry.Bits.Vector          = (UINT8)Vector;
+  Entry.Uint32.Low  = IoApicRead (IO_APIC_REDIRECTION_TABLE_ENTRY_INDEX + Irq * 2);
+  Entry.Bits.Vector = (UINT8)Vector;
   Entry.Bits.DeliveryMode    = (UINT32)DeliveryMode;
   Entry.Bits.DestinationMode = 0;
-  Entry.Bits.Polarity        = AssertionLevel ? 0 : 1;
-  Entry.Bits.TriggerMode     = LevelTriggered ? 1 : 0;
-  Entry.Bits.Mask            = 1;
+  Entry.Bits.Polarity    = AssertionLevel ? 0 : 1;
+  Entry.Bits.TriggerMode = LevelTriggered ? 1 : 0;
+  Entry.Bits.Mask = 1;
   IoApicWrite (IO_APIC_REDIRECTION_TABLE_ENTRY_INDEX + Irq * 2, Entry.Uint32.Low);
 
   Entry.Uint32.High = IoApicRead (IO_APIC_REDIRECTION_TABLE_ENTRY_INDEX + Irq * 2 + 1);

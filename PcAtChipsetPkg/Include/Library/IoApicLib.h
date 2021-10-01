@@ -8,6 +8,7 @@
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
+
 #ifndef __IO_APIC_LIB_H__
 #define __IO_APIC_LIB_H__
 
@@ -23,7 +24,7 @@
 UINT32
 EFIAPI
 IoApicRead (
-  IN UINTN  Index
+  IN UINTN Index
   );
 
 /**
@@ -39,8 +40,8 @@ IoApicRead (
 UINT32
 EFIAPI
 IoApicWrite (
-  IN UINTN   Index,
-  IN UINT32  Value
+  IN UINTN  Index,
+  IN UINT32 Value
   );
 
 /**
@@ -55,8 +56,8 @@ IoApicWrite (
 VOID
 EFIAPI
 IoApicEnableInterrupt (
-  IN UINTN    Irq,
-  IN BOOLEAN  Enable
+  IN UINTN   Irq,
+  IN BOOLEAN Enable
   );
 
 /**
@@ -90,10 +91,11 @@ IoApicEnableInterrupt (
 VOID
 EFIAPI
 IoApicConfigureInterrupt (
-  IN UINTN    Irq,
-  IN UINTN    Vector,
-  IN UINTN    DeliveryMode,
-  IN BOOLEAN  LevelTriggered,
-  IN BOOLEAN  AssertionLevel
+  IN UINTN   Irq,
+  IN UINTN   Vector,
+  IN UINTN   DeliveryMode,
+  IN BOOLEAN LevelTriggered,
+  IN BOOLEAN AssertionLevel
   );
+
 #endif

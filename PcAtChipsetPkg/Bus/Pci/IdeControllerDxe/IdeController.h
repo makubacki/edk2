@@ -26,24 +26,25 @@
 //
 // Global Variables definitions
 //
-extern EFI_DRIVER_BINDING_PROTOCOL  gIdeControllerDriverBinding;
-extern EFI_COMPONENT_NAME_PROTOCOL  gIdeControllerComponentName;
-extern EFI_COMPONENT_NAME2_PROTOCOL gIdeControllerComponentName2;
+extern EFI_DRIVER_BINDING_PROTOCOL   gIdeControllerDriverBinding;
+extern EFI_COMPONENT_NAME_PROTOCOL   gIdeControllerComponentName;
+extern EFI_COMPONENT_NAME2_PROTOCOL  gIdeControllerComponentName2;
 
 ///
 /// Supports 2 channel max
 ///
-#define ICH_IDE_MAX_CHANNEL 0x02
+#define ICH_IDE_MAX_CHANNEL  0x02
 
 ///
 /// Supports 2 devices max
 ///
-#define ICH_IDE_MAX_DEVICES 0x02
-#define ICH_IDE_ENUMER_ALL  FALSE
+#define ICH_IDE_MAX_DEVICES  0x02
+#define ICH_IDE_ENUMER_ALL   FALSE
 
 //
 // Driver binding functions declaration
 //
+
 /**
   Register Driver Binding protocol for this driver.
 
@@ -58,9 +59,9 @@ extern EFI_COMPONENT_NAME2_PROTOCOL gIdeControllerComponentName2;
 EFI_STATUS
 EFIAPI
 IdeControllerSupported (
-  IN EFI_DRIVER_BINDING_PROTOCOL       *This,
-  IN EFI_HANDLE                        Controller,
-  IN EFI_DEVICE_PATH_PROTOCOL          *RemainingDevicePath
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  Controller,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath
   )
 ;
 
@@ -80,9 +81,9 @@ IdeControllerSupported (
 EFI_STATUS
 EFIAPI
 IdeControllerStart (
-  IN EFI_DRIVER_BINDING_PROTOCOL        *This,
-  IN EFI_HANDLE                         Controller,
-  IN EFI_DEVICE_PATH_PROTOCOL           *RemainingDevicePath
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  Controller,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath
   )
 ;
 
@@ -100,16 +101,17 @@ IdeControllerStart (
 EFI_STATUS
 EFIAPI
 IdeControllerStop (
-  IN  EFI_DRIVER_BINDING_PROTOCOL       *This,
-  IN  EFI_HANDLE                        Controller,
-  IN  UINTN                             NumberOfChildren,
-  IN  EFI_HANDLE                        *ChildHandleBuffer
+  IN  EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN  EFI_HANDLE                  Controller,
+  IN  UINTN                       NumberOfChildren,
+  IN  EFI_HANDLE                  *ChildHandleBuffer
   )
 ;
 
 //
 // IDE controller init functions declaration
 //
+
 /**
   Returns the information about the specified IDE channel.
 
@@ -183,9 +185,9 @@ IdeInitGetChannelInfo (
 EFI_STATUS
 EFIAPI
 IdeInitNotifyPhase (
-  IN  EFI_IDE_CONTROLLER_INIT_PROTOCOL  *This,
-  IN  EFI_IDE_CONTROLLER_ENUM_PHASE     Phase,
-  IN  UINT8                             Channel
+  IN  EFI_IDE_CONTROLLER_INIT_PROTOCOL *This,
+  IN  EFI_IDE_CONTROLLER_ENUM_PHASE    Phase,
+  IN  UINT8                            Channel
   )
 ;
 
@@ -231,10 +233,10 @@ IdeInitNotifyPhase (
 EFI_STATUS
 EFIAPI
 IdeInitSubmitData (
-  IN  EFI_IDE_CONTROLLER_INIT_PROTOCOL  *This,
-  IN  UINT8                             Channel,
-  IN  UINT8                             Device,
-  IN  EFI_IDENTIFY_DATA                 *IdentifyData
+  IN  EFI_IDE_CONTROLLER_INIT_PROTOCOL *This,
+  IN  UINT8                            Channel,
+  IN  UINT8                            Device,
+  IN  EFI_IDENTIFY_DATA                *IdentifyData
   )
 ;
 
@@ -281,10 +283,10 @@ IdeInitSubmitData (
 EFI_STATUS
 EFIAPI
 IdeInitDisqualifyMode (
-  IN  EFI_IDE_CONTROLLER_INIT_PROTOCOL  *This,
-  IN  UINT8                             Channel,
-  IN  UINT8                             Device,
-  IN  EFI_ATA_COLLECTIVE_MODE           *BadModes
+  IN  EFI_IDE_CONTROLLER_INIT_PROTOCOL *This,
+  IN  UINT8                            Channel,
+  IN  UINT8                            Device,
+  IN  EFI_ATA_COLLECTIVE_MODE          *BadModes
   )
 ;
 
@@ -345,10 +347,10 @@ IdeInitDisqualifyMode (
 EFI_STATUS
 EFIAPI
 IdeInitCalculateMode (
-  IN  EFI_IDE_CONTROLLER_INIT_PROTOCOL  *This,
-  IN  UINT8                             Channel,
-  IN  UINT8                             Device,
-  OUT EFI_ATA_COLLECTIVE_MODE           **SupportedModes
+  IN  EFI_IDE_CONTROLLER_INIT_PROTOCOL *This,
+  IN  UINT8                            Channel,
+  IN  UINT8                            Device,
+  OUT EFI_ATA_COLLECTIVE_MODE          **SupportedModes
   )
 ;
 
@@ -378,16 +380,17 @@ IdeInitCalculateMode (
 EFI_STATUS
 EFIAPI
 IdeInitSetTiming (
-  IN  EFI_IDE_CONTROLLER_INIT_PROTOCOL  *This,
-  IN  UINT8                             Channel,
-  IN  UINT8                             Device,
-  IN  EFI_ATA_COLLECTIVE_MODE           *Modes
+  IN  EFI_IDE_CONTROLLER_INIT_PROTOCOL *This,
+  IN  UINT8                            Channel,
+  IN  UINT8                            Device,
+  IN  EFI_ATA_COLLECTIVE_MODE          *Modes
   )
 ;
 
 //
 // Forward reference declaration
 //
+
 /**
   Retrieves a Unicode string that is the user readable name of the EFI Driver.
 
@@ -412,9 +415,9 @@ IdeInitSetTiming (
 EFI_STATUS
 EFIAPI
 IdeControllerComponentNameGetDriverName (
-  IN  EFI_COMPONENT_NAME_PROTOCOL  *This,
-  IN  CHAR8                        *Language,
-  OUT CHAR16                       **DriverName
+  IN  EFI_COMPONENT_NAME_PROTOCOL *This,
+  IN  CHAR8                       *Language,
+  OUT CHAR16                      **DriverName
   )
 ;
 
@@ -461,11 +464,11 @@ IdeControllerComponentNameGetDriverName (
 EFI_STATUS
 EFIAPI
 IdeControllerComponentNameGetControllerName (
-  IN  EFI_COMPONENT_NAME_PROTOCOL                     *This,
-  IN  EFI_HANDLE                                      ControllerHandle,
-  IN  EFI_HANDLE                                      ChildHandle        OPTIONAL,
-  IN  CHAR8                                           *Language,
-  OUT CHAR16                                          **ControllerName
+  IN  EFI_COMPONENT_NAME_PROTOCOL *This,
+  IN  EFI_HANDLE                  ControllerHandle,
+  IN  EFI_HANDLE                  ChildHandle        OPTIONAL,
+  IN  CHAR8                       *Language,
+  OUT CHAR16                      **ControllerName
   )
 ;
 
