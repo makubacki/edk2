@@ -27,8 +27,8 @@
 BOOLEAN
 EFIAPI
 MmIsBufferOutsideMmValid (
-  IN EFI_PHYSICAL_ADDRESS  Buffer,
-  IN UINT64                Length
+  IN EFI_PHYSICAL_ADDRESS Buffer,
+  IN UINT64               Length
   );
 
 /**
@@ -51,9 +51,9 @@ MmIsBufferOutsideMmValid (
 EFI_STATUS
 EFIAPI
 MmCopyMemToMmram (
-  OUT VOID       *DestinationBuffer,
-  IN CONST VOID  *SourceBuffer,
-  IN UINTN       Length
+  OUT VOID      *DestinationBuffer,
+  IN CONST VOID *SourceBuffer,
+  IN UINTN      Length
   );
 
 /**
@@ -76,9 +76,9 @@ MmCopyMemToMmram (
 EFI_STATUS
 EFIAPI
 MmCopyMemFromMmram (
-  OUT VOID       *DestinationBuffer,
-  IN CONST VOID  *SourceBuffer,
-  IN UINTN       Length
+  OUT VOID      *DestinationBuffer,
+  IN CONST VOID *SourceBuffer,
+  IN UINTN      Length
   );
 
 /**
@@ -102,9 +102,9 @@ MmCopyMemFromMmram (
 EFI_STATUS
 EFIAPI
 MmCopyMem (
-  OUT VOID       *DestinationBuffer,
-  IN CONST VOID  *SourceBuffer,
-  IN UINTN       Length
+  OUT VOID      *DestinationBuffer,
+  IN CONST VOID *SourceBuffer,
+  IN UINTN      Length
   );
 
 /**
@@ -126,9 +126,9 @@ MmCopyMem (
 EFI_STATUS
 EFIAPI
 MmSetMem (
-  OUT VOID  *Buffer,
-  IN UINTN  Length,
-  IN UINT8  Value
+  OUT VOID *Buffer,
+  IN UINTN Length,
+  IN UINT8 Value
   );
 
 #endif

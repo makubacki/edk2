@@ -32,9 +32,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 FfsFindNextFile (
-  IN EFI_FV_FILETYPE             SearchType,
-  IN EFI_FIRMWARE_VOLUME_HEADER  *FwVolHeader,
-  IN OUT EFI_FFS_FILE_HEADER     **FileHeader
+  IN EFI_FV_FILETYPE            SearchType,
+  IN EFI_FIRMWARE_VOLUME_HEADER *FwVolHeader,
+  IN OUT EFI_FFS_FILE_HEADER    **FileHeader
   );
 
 /**
@@ -73,10 +73,10 @@ FfsFindSection (
 EFI_STATUS
 EFIAPI
 FindFfsSectionInSections (
-  IN  VOID                             *Sections,
-  IN  UINTN                            SizeOfSections,
-  IN  EFI_SECTION_TYPE                 SectionType,
-  OUT EFI_COMMON_SECTION_HEADER        **FoundSection
+  IN  VOID                      *Sections,
+  IN  UINTN                     SizeOfSections,
+  IN  EFI_SECTION_TYPE          SectionType,
+  OUT EFI_COMMON_SECTION_HEADER **FoundSection
   );
 
 /**
@@ -95,10 +95,10 @@ FindFfsSectionInSections (
 EFI_STATUS
 EFIAPI
 FfsFindSectionData (
-  IN EFI_SECTION_TYPE              SectionType,
-  IN EFI_FFS_FILE_HEADER           *FfsFileHeader,
-  OUT VOID                         **SectionData,
-  OUT UINTN                        *SectionDataSize
+  IN EFI_SECTION_TYPE    SectionType,
+  IN EFI_FFS_FILE_HEADER *FfsFileHeader,
+  OUT VOID               **SectionData,
+  OUT UINTN              *SectionDataSize
   );
 
 #endif
