@@ -1,4 +1,3 @@
-
 /** @file
   Driver Binding functions declaration for XenPvBlk driver.
 
@@ -53,9 +52,9 @@
 EFI_STATUS
 EFIAPI
 XenPvBlkDxeDriverBindingSupported (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   );
 
 /**
@@ -96,9 +95,9 @@ XenPvBlkDxeDriverBindingSupported (
 EFI_STATUS
 EFIAPI
 XenPvBlkDxeDriverBindingStart (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   );
 
 /**
@@ -130,8 +129,8 @@ XenPvBlkDxeDriverBindingStart (
 EFI_STATUS
 EFIAPI
 XenPvBlkDxeDriverBindingStop (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN  EFI_HANDLE                  ControllerHandle,
-  IN  UINTN                       NumberOfChildren,
-  IN  EFI_HANDLE                  *ChildHandleBuffer OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN  EFI_HANDLE                 ControllerHandle,
+  IN  UINTN                      NumberOfChildren,
+  IN  EFI_HANDLE                 *ChildHandleBuffer OPTIONAL
   );

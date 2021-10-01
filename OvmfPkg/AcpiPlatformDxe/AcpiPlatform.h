@@ -13,8 +13,8 @@
 #include <Protocol/PciIo.h>     // EFI_PCI_IO_PROTOCOL
 
 typedef struct {
-  EFI_PCI_IO_PROTOCOL *PciIo;
-  UINT64              PciAttributes;
+  EFI_PCI_IO_PROTOCOL    *PciIo;
+  UINT64                 PciAttributes;
 } ORIGINAL_ATTRIBUTES;
 
 typedef struct S3_CONTEXT S3_CONTEXT;
@@ -22,13 +22,13 @@ typedef struct S3_CONTEXT S3_CONTEXT;
 EFI_STATUS
 EFIAPI
 InstallQemuFwCfgTables (
-  IN   EFI_ACPI_TABLE_PROTOCOL       *AcpiProtocol
+  IN   EFI_ACPI_TABLE_PROTOCOL *AcpiProtocol
   );
 
 EFI_STATUS
 EFIAPI
 InstallAcpiTables (
-  IN   EFI_ACPI_TABLE_PROTOCOL       *AcpiTable
+  IN   EFI_ACPI_TABLE_PROTOCOL *AcpiTable
   );
 
 VOID
@@ -69,4 +69,3 @@ TransferS3ContextToBootScript (
   );
 
 #endif
-

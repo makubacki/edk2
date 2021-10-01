@@ -51,9 +51,9 @@ XenHypercallIsAvailable (
 INTN
 EFIAPI
 XenHypercall2 (
-  IN     UINTN  HypercallID,
-  IN OUT INTN   Arg1,
-  IN OUT INTN   Arg2
+  IN     UINTN HypercallID,
+  IN OUT INTN  Arg1,
+  IN OUT INTN  Arg2
   );
 
 /**
@@ -82,7 +82,7 @@ INTN
 EFIAPI
 XenHypercallMemoryOp (
   IN     UINTN Operation,
-  IN OUT VOID *Arguments
+  IN OUT VOID  *Arguments
   );
 
 /**

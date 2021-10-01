@@ -22,25 +22,25 @@ Abstract:
 EFI_STATUS
 EFIAPI
 EmuGopComponentNameGetDriverName (
-  IN  EFI_COMPONENT_NAME_PROTOCOL  *This,
-  IN  CHAR8                        *Language,
-  OUT CHAR16                       **DriverName
+  IN  EFI_COMPONENT_NAME_PROTOCOL *This,
+  IN  CHAR8                       *Language,
+  OUT CHAR16                      **DriverName
   );
 
 EFI_STATUS
 EFIAPI
 EmuGopComponentNameGetControllerName (
-  IN  EFI_COMPONENT_NAME_PROTOCOL                     *This,
-  IN  EFI_HANDLE                                      ControllerHandle,
-  IN  EFI_HANDLE                                      ChildHandle        OPTIONAL,
-  IN  CHAR8                                           *Language,
-  OUT CHAR16                                          **ControllerName
+  IN  EFI_COMPONENT_NAME_PROTOCOL *This,
+  IN  EFI_HANDLE                  ControllerHandle,
+  IN  EFI_HANDLE                  ChildHandle        OPTIONAL,
+  IN  CHAR8                       *Language,
+  OUT CHAR16                      **ControllerName
   );
 
 //
 // EFI Component Name Protocol
 //
-EFI_COMPONENT_NAME_PROTOCOL     gEmuGopComponentName = {
+EFI_COMPONENT_NAME_PROTOCOL  gEmuGopComponentName = {
   EmuGopComponentNameGetDriverName,
   EmuGopComponentNameGetControllerName,
   "eng"
@@ -49,18 +49,16 @@ EFI_COMPONENT_NAME_PROTOCOL     gEmuGopComponentName = {
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL gEmuGopComponentName2 = {
-  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) EmuGopComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) EmuGopComponentNameGetControllerName,
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gEmuGopComponentName2 = {
+  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)EmuGopComponentNameGetDriverName,
+  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)EmuGopComponentNameGetControllerName,
   "en"
 };
 
-
-EFI_UNICODE_STRING_TABLE mEmuGopDriverNameTable[] = {
+EFI_UNICODE_STRING_TABLE  mEmuGopDriverNameTable[] = {
   { "eng", L"Emulator GOP Driver" },
-  { NULL , NULL }
+  { NULL,  NULL                   }
 };
-
 
 /**
   Retrieves a Unicode string that is the user readable name of the driver.
@@ -104,9 +102,9 @@ EFI_UNICODE_STRING_TABLE mEmuGopDriverNameTable[] = {
 EFI_STATUS
 EFIAPI
 EmuGopComponentNameGetDriverName (
-  IN  EFI_COMPONENT_NAME_PROTOCOL  *This,
-  IN  CHAR8                        *Language,
-  OUT CHAR16                       **DriverName
+  IN  EFI_COMPONENT_NAME_PROTOCOL *This,
+  IN  CHAR8                       *Language,
+  OUT CHAR16                      **DriverName
   )
 {
   return LookupUnicodeString2 (
@@ -117,7 +115,6 @@ EmuGopComponentNameGetDriverName (
            (BOOLEAN)(This == &gEmuGopComponentName)
            );
 }
-
 
 /**
   Retrieves a Unicode string that is the user readable name of the controller
@@ -190,11 +187,11 @@ EmuGopComponentNameGetDriverName (
 EFI_STATUS
 EFIAPI
 EmuGopComponentNameGetControllerName (
-  IN  EFI_COMPONENT_NAME_PROTOCOL                     *This,
-  IN  EFI_HANDLE                                      ControllerHandle,
-  IN  EFI_HANDLE                                      ChildHandle        OPTIONAL,
-  IN  CHAR8                                           *Language,
-  OUT CHAR16                                          **ControllerName
+  IN  EFI_COMPONENT_NAME_PROTOCOL *This,
+  IN  EFI_HANDLE                  ControllerHandle,
+  IN  EFI_HANDLE                  ChildHandle        OPTIONAL,
+  IN  CHAR8                       *Language,
+  OUT CHAR16                      **ControllerName
   )
 {
   return EFI_UNSUPPORTED;

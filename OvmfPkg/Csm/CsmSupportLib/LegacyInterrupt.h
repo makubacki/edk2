@@ -20,23 +20,22 @@
 #include <Library/UefiBootServicesTableLib.h>
 #include <OvmfPlatforms.h>
 
-
-#define LEGACY_INT_BUS  0
+#define LEGACY_INT_BUS        0
 #define LEGACY_INT_DEV_PIIX4  0x01
 #define LEGACY_INT_DEV_Q35    0x1f
-#define LEGACY_INT_FUNC 0
+#define LEGACY_INT_FUNC       0
 
-#define PIRQN           0x00  // PIRQ Null
-#define PIRQA           0x60
-#define PIRQB           0x61
-#define PIRQC           0x62
-#define PIRQD           0x63
-#define PIRQE           0x68
-#define PIRQF           0x69
-#define PIRQG           0x6A
-#define PIRQH           0x6B
+#define PIRQN  0x00           // PIRQ Null
+#define PIRQA  0x60
+#define PIRQB  0x61
+#define PIRQC  0x62
+#define PIRQD  0x63
+#define PIRQE  0x68
+#define PIRQF  0x69
+#define PIRQG  0x6A
+#define PIRQH  0x6B
 
-#define MAX_PIRQ_NUMBER 8
+#define MAX_PIRQ_NUMBER  8
 
 /**
   Return the number of PIRQs supported by this chipset.
@@ -50,8 +49,8 @@
 EFI_STATUS
 EFIAPI
 GetNumberPirqs (
-  IN  EFI_LEGACY_INTERRUPT_PROTOCOL  *This,
-  OUT UINT8                          *NumberPirqs
+  IN  EFI_LEGACY_INTERRUPT_PROTOCOL *This,
+  OUT UINT8                         *NumberPirqs
   );
 
 /**
@@ -69,10 +68,10 @@ GetNumberPirqs (
 EFI_STATUS
 EFIAPI
 GetLocation (
-  IN  EFI_LEGACY_INTERRUPT_PROTOCOL  *This,
-  OUT UINT8                          *Bus,
-  OUT UINT8                          *Device,
-  OUT UINT8                          *Function
+  IN  EFI_LEGACY_INTERRUPT_PROTOCOL *This,
+  OUT UINT8                         *Bus,
+  OUT UINT8                         *Device,
+  OUT UINT8                         *Function
   );
 
 /**
@@ -89,9 +88,9 @@ GetLocation (
 EFI_STATUS
 EFIAPI
 ReadPirq (
-  IN  EFI_LEGACY_INTERRUPT_PROTOCOL  *This,
-  IN  UINT8                          PirqNumber,
-  OUT UINT8                          *PirqData
+  IN  EFI_LEGACY_INTERRUPT_PROTOCOL *This,
+  IN  UINT8                         PirqNumber,
+  OUT UINT8                         *PirqData
   );
 
 /**
@@ -108,10 +107,9 @@ ReadPirq (
 EFI_STATUS
 EFIAPI
 WritePirq (
-  IN  EFI_LEGACY_INTERRUPT_PROTOCOL  *This,
-  IN  UINT8                          PirqNumber,
-  IN  UINT8                          PirqData
+  IN  EFI_LEGACY_INTERRUPT_PROTOCOL *This,
+  IN  UINT8                         PirqNumber,
+  IN  UINT8                         PirqData
   );
 
 #endif
-

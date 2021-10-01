@@ -22,8 +22,8 @@
 #include <IndustryStandard/Acpi.h>
 
 typedef struct {
-  EFI_PCI_IO_PROTOCOL *PciIo;
-  UINT64              PciAttributes;
+  EFI_PCI_IO_PROTOCOL    *PciIo;
+  UINT64                 PciAttributes;
 } ORIGINAL_ATTRIBUTES;
 
 typedef struct S3_CONTEXT S3_CONTEXT;
@@ -31,31 +31,31 @@ typedef struct S3_CONTEXT S3_CONTEXT;
 EFI_STATUS
 EFIAPI
 InstallAcpiTable (
-  IN   EFI_ACPI_TABLE_PROTOCOL       *AcpiProtocol,
-  IN   VOID                          *AcpiTableBuffer,
-  IN   UINTN                         AcpiTableBufferSize,
-  OUT  UINTN                         *TableKey
+  IN   EFI_ACPI_TABLE_PROTOCOL *AcpiProtocol,
+  IN   VOID                    *AcpiTableBuffer,
+  IN   UINTN                   AcpiTableBufferSize,
+  OUT  UINTN                   *TableKey
   );
 
 EFI_STATUS
 EFIAPI
-BhyveInstallAcpiTable(
-  IN   EFI_ACPI_TABLE_PROTOCOL       *AcpiProtocol,
-  IN   VOID                          *AcpiTableBuffer,
-  IN   UINTN                         AcpiTableBufferSize,
-  OUT  UINTN                         *TableKey
+BhyveInstallAcpiTable (
+  IN   EFI_ACPI_TABLE_PROTOCOL *AcpiProtocol,
+  IN   VOID                    *AcpiTableBuffer,
+  IN   UINTN                   AcpiTableBufferSize,
+  OUT  UINTN                   *TableKey
   );
 
 EFI_STATUS
 EFIAPI
 InstallXenTables (
-  IN   EFI_ACPI_TABLE_PROTOCOL       *AcpiProtocol
+  IN   EFI_ACPI_TABLE_PROTOCOL *AcpiProtocol
   );
 
 EFI_STATUS
 EFIAPI
 InstallAcpiTables (
-  IN   EFI_ACPI_TABLE_PROTOCOL       *AcpiTable
+  IN   EFI_ACPI_TABLE_PROTOCOL *AcpiTable
   );
 
 VOID

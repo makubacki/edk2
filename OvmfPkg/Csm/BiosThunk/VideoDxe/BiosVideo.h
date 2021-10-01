@@ -42,88 +42,88 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // position of RGB in the frame buffer is specified in the VBE Mode information
 //
 typedef struct {
-  UINT8 Position; // Position of the color
-  UINT8 Mask;     // The number of bits expressed as a mask
+  UINT8    Position; // Position of the color
+  UINT8    Mask;     // The number of bits expressed as a mask
 } BIOS_VIDEO_COLOR_PLACEMENT;
 
 //
 // BIOS Graphics Output Graphical Mode Data
 //
 typedef struct {
-  UINT16                      VbeModeNumber;
-  UINT16                      BytesPerScanLine;
-  VOID                        *LinearFrameBuffer;
-  UINTN                       FrameBufferSize;
-  UINT32                      HorizontalResolution;
-  UINT32                      VerticalResolution;
-  UINT32                      ColorDepth;
-  UINT32                      RefreshRate;
-  UINT32                      BitsPerPixel;
-  BIOS_VIDEO_COLOR_PLACEMENT  Red;
-  BIOS_VIDEO_COLOR_PLACEMENT  Green;
-  BIOS_VIDEO_COLOR_PLACEMENT  Blue;
-  BIOS_VIDEO_COLOR_PLACEMENT  Reserved;
-  EFI_GRAPHICS_PIXEL_FORMAT   PixelFormat;
-  EFI_PIXEL_BITMASK           PixelBitMask;
+  UINT16                        VbeModeNumber;
+  UINT16                        BytesPerScanLine;
+  VOID                          *LinearFrameBuffer;
+  UINTN                         FrameBufferSize;
+  UINT32                        HorizontalResolution;
+  UINT32                        VerticalResolution;
+  UINT32                        ColorDepth;
+  UINT32                        RefreshRate;
+  UINT32                        BitsPerPixel;
+  BIOS_VIDEO_COLOR_PLACEMENT    Red;
+  BIOS_VIDEO_COLOR_PLACEMENT    Green;
+  BIOS_VIDEO_COLOR_PLACEMENT    Blue;
+  BIOS_VIDEO_COLOR_PLACEMENT    Reserved;
+  EFI_GRAPHICS_PIXEL_FORMAT     PixelFormat;
+  EFI_PIXEL_BITMASK             PixelBitMask;
 } BIOS_VIDEO_MODE_DATA;
 
 //
 // BIOS video child handle private data Structure
 //
-#define BIOS_VIDEO_DEV_SIGNATURE    SIGNATURE_32 ('B', 'V', 'M', 'p')
+#define BIOS_VIDEO_DEV_SIGNATURE  SIGNATURE_32 ('B', 'V', 'M', 'p')
 
 typedef struct {
-  UINTN                                       Signature;
-  EFI_HANDLE                                  Handle;
+  UINTN                                          Signature;
+  EFI_HANDLE                                     Handle;
 
   //
   // Consumed Protocols
   //
-  EFI_PCI_IO_PROTOCOL                         *PciIo;
-  EFI_LEGACY_BIOS_PROTOCOL                    *LegacyBios;
+  EFI_PCI_IO_PROTOCOL                            *PciIo;
+  EFI_LEGACY_BIOS_PROTOCOL                       *LegacyBios;
 
   //
   // Produced Protocols
   //
-  EFI_GRAPHICS_OUTPUT_PROTOCOL                GraphicsOutput;
-  EFI_EDID_DISCOVERED_PROTOCOL                EdidDiscovered;
-  EFI_EDID_ACTIVE_PROTOCOL                    EdidActive;
-  EFI_VGA_MINI_PORT_PROTOCOL                  VgaMiniPort;
+  EFI_GRAPHICS_OUTPUT_PROTOCOL                   GraphicsOutput;
+  EFI_EDID_DISCOVERED_PROTOCOL                   EdidDiscovered;
+  EFI_EDID_ACTIVE_PROTOCOL                       EdidActive;
+  EFI_VGA_MINI_PORT_PROTOCOL                     VgaMiniPort;
 
   //
   // General fields
   //
-  BOOLEAN                                     VgaCompatible;
-  BOOLEAN                                     ProduceGraphicsOutput;
+  BOOLEAN                                        VgaCompatible;
+  BOOLEAN                                        ProduceGraphicsOutput;
 
   //
   // Graphics Output Protocol related fields
   //
-  BOOLEAN                                     HardwareNeedsStarting;
-  UINTN                                       CurrentMode;
-  UINTN                                       MaxMode;
-  BIOS_VIDEO_MODE_DATA                        *ModeData;
-  UINT8                                       *LineBuffer;
-  EFI_GRAPHICS_OUTPUT_BLT_PIXEL               *VbeFrameBuffer;
-  UINT8                                       *VgaFrameBuffer;
+  BOOLEAN                                        HardwareNeedsStarting;
+  UINTN                                          CurrentMode;
+  UINTN                                          MaxMode;
+  BIOS_VIDEO_MODE_DATA                           *ModeData;
+  UINT8                                          *LineBuffer;
+  EFI_GRAPHICS_OUTPUT_BLT_PIXEL                  *VbeFrameBuffer;
+  UINT8                                          *VgaFrameBuffer;
 
   //
   // VESA Bios Extensions related fields
   //
-  UINTN                                       NumberOfPagesBelow1MB;     // Number of 4KB pages in PagesBelow1MB
-  EFI_PHYSICAL_ADDRESS                        PagesBelow1MB;             // Buffer for all VBE Information Blocks
-  VESA_BIOS_EXTENSIONS_INFORMATION_BLOCK      *VbeInformationBlock;      // 0x200 bytes.  Must be allocated below 1MB
-  VESA_BIOS_EXTENSIONS_MODE_INFORMATION_BLOCK *VbeModeInformationBlock;  // 0x100 bytes.  Must be allocated below 1MB
-  VESA_BIOS_EXTENSIONS_EDID_DATA_BLOCK        *VbeEdidDataBlock;         // 0x80  bytes.  Must be allocated below 1MB
-  VESA_BIOS_EXTENSIONS_CRTC_INFORMATION_BLOCK *VbeCrtcInformationBlock;  // 59 bytes.  Must be allocated below 1MB
-  UINTN                                       VbeSaveRestorePages;       // Number of 4KB pages in VbeSaveRestoreBuffer
-  EFI_PHYSICAL_ADDRESS                        VbeSaveRestoreBuffer;      // Must be allocated below 1MB
+  UINTN                                          NumberOfPagesBelow1MB;    // Number of 4KB pages in PagesBelow1MB
+  EFI_PHYSICAL_ADDRESS                           PagesBelow1MB;            // Buffer for all VBE Information Blocks
+  VESA_BIOS_EXTENSIONS_INFORMATION_BLOCK         *VbeInformationBlock;     // 0x200 bytes.  Must be allocated below 1MB
+  VESA_BIOS_EXTENSIONS_MODE_INFORMATION_BLOCK    *VbeModeInformationBlock; // 0x100 bytes.  Must be allocated below 1MB
+  VESA_BIOS_EXTENSIONS_EDID_DATA_BLOCK           *VbeEdidDataBlock;        // 0x80  bytes.  Must be allocated below 1MB
+  VESA_BIOS_EXTENSIONS_CRTC_INFORMATION_BLOCK    *VbeCrtcInformationBlock; // 59 bytes.  Must be allocated below 1MB
+  UINTN                                          VbeSaveRestorePages;      // Number of 4KB pages in VbeSaveRestoreBuffer
+  EFI_PHYSICAL_ADDRESS                           VbeSaveRestoreBuffer;     // Must be allocated below 1MB
   //
   // Status code
   //
-  EFI_DEVICE_PATH_PROTOCOL                    *GopDevicePath;
+  EFI_DEVICE_PATH_PROTOCOL                       *GopDevicePath;
 
-  EFI_EVENT                                   ExitBootServicesEvent;
+  EFI_EVENT                                      ExitBootServicesEvent;
 } BIOS_VIDEO_DEV;
 
 #define BIOS_VIDEO_DEV_FROM_PCI_IO_THIS(a)           CR (a, BIOS_VIDEO_DEV, PciIo, BIOS_VIDEO_DEV_SIGNATURE)
@@ -159,11 +159,10 @@ extern EFI_COMPONENT_NAME2_PROTOCOL  gBiosVideoComponentName2;
 EFI_STATUS
 EFIAPI
 BiosVideoDriverBindingSupported (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   Controller,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  Controller,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath
   );
-
 
 /**
   Install Graphics Output Protocol onto VGA device handles.
@@ -179,11 +178,10 @@ BiosVideoDriverBindingSupported (
 EFI_STATUS
 EFIAPI
 BiosVideoDriverBindingStart (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   Controller,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  Controller,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath
   );
-
 
 /**
   Stop.
@@ -200,10 +198,10 @@ BiosVideoDriverBindingStart (
 EFI_STATUS
 EFIAPI
 BiosVideoDriverBindingStop (
-  IN  EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN  EFI_HANDLE                   Controller,
-  IN  UINTN                        NumberOfChildren,
-  IN  EFI_HANDLE                   *ChildHandleBuffer
+  IN  EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN  EFI_HANDLE                  Controller,
+  IN  UINTN                       NumberOfChildren,
+  IN  EFI_HANDLE                  *ChildHandleBuffer
   );
 
 //
@@ -220,9 +218,8 @@ BiosVideoDriverBindingStop (
 **/
 EFI_STATUS
 BiosVideoCheckForVbe (
-  IN OUT BIOS_VIDEO_DEV  *BiosVideoPrivate
+  IN OUT BIOS_VIDEO_DEV *BiosVideoPrivate
   );
-
 
 /**
   Check for VGA device.
@@ -234,11 +231,8 @@ BiosVideoCheckForVbe (
 **/
 EFI_STATUS
 BiosVideoCheckForVga (
-  IN OUT BIOS_VIDEO_DEV  *BiosVideoPrivate
+  IN OUT BIOS_VIDEO_DEV *BiosVideoPrivate
   );
-
-
-
 
 /**
   Release resource for BIOS video instance.
@@ -248,7 +242,7 @@ BiosVideoCheckForVga (
 **/
 VOID
 BiosVideoDeviceReleaseResource (
-  BIOS_VIDEO_DEV  *BiosVideoPrivate
+  BIOS_VIDEO_DEV *BiosVideoPrivate
   );
 
 //
@@ -276,12 +270,11 @@ BiosVideoDeviceReleaseResource (
 EFI_STATUS
 EFIAPI
 BiosVideoGraphicsOutputQueryMode (
-  IN  EFI_GRAPHICS_OUTPUT_PROTOCOL          *This,
-  IN  UINT32                                ModeNumber,
-  OUT UINTN                                 *SizeOfInfo,
-  OUT EFI_GRAPHICS_OUTPUT_MODE_INFORMATION  **Info
+  IN  EFI_GRAPHICS_OUTPUT_PROTOCOL         *This,
+  IN  UINT32                               ModeNumber,
+  OUT UINTN                                *SizeOfInfo,
+  OUT EFI_GRAPHICS_OUTPUT_MODE_INFORMATION **Info
   );
-
 
 /**
   Graphics Output protocol interface to set video mode.
@@ -298,10 +291,9 @@ BiosVideoGraphicsOutputQueryMode (
 EFI_STATUS
 EFIAPI
 BiosVideoGraphicsOutputSetMode (
-  IN  EFI_GRAPHICS_OUTPUT_PROTOCOL * This,
+  IN  EFI_GRAPHICS_OUTPUT_PROTOCOL *This,
   IN  UINT32                       ModeNumber
   );
-
 
 /**
   Graphics Output protocol instance to block transfer for VBE device.
@@ -333,8 +325,8 @@ BiosVideoGraphicsOutputSetMode (
 EFI_STATUS
 EFIAPI
 BiosVideoGraphicsOutputVbeBlt (
-  IN  EFI_GRAPHICS_OUTPUT_PROTOCOL       *This,
-  IN  EFI_GRAPHICS_OUTPUT_BLT_PIXEL      *BltBuffer, OPTIONAL
+  IN  EFI_GRAPHICS_OUTPUT_PROTOCOL *This,
+  IN  EFI_GRAPHICS_OUTPUT_BLT_PIXEL *BltBuffer, OPTIONAL
   IN  EFI_GRAPHICS_OUTPUT_BLT_OPERATION  BltOperation,
   IN  UINTN                              SourceX,
   IN  UINTN                              SourceY,
@@ -344,7 +336,6 @@ BiosVideoGraphicsOutputVbeBlt (
   IN  UINTN                              Height,
   IN  UINTN                              Delta
   );
-
 
 /**
   Graphics Output protocol instance to block transfer for VGA device.
@@ -376,8 +367,8 @@ BiosVideoGraphicsOutputVbeBlt (
 EFI_STATUS
 EFIAPI
 BiosVideoGraphicsOutputVgaBlt (
-  IN  EFI_GRAPHICS_OUTPUT_PROTOCOL       *This,
-  IN  EFI_GRAPHICS_OUTPUT_BLT_PIXEL      *BltBuffer, OPTIONAL
+  IN  EFI_GRAPHICS_OUTPUT_PROTOCOL *This,
+  IN  EFI_GRAPHICS_OUTPUT_BLT_PIXEL *BltBuffer, OPTIONAL
   IN  EFI_GRAPHICS_OUTPUT_BLT_OPERATION  BltOperation,
   IN  UINTN                              SourceX,
   IN  UINTN                              SourceY,
@@ -405,8 +396,8 @@ BiosVideoGraphicsOutputVgaBlt (
 EFI_STATUS
 EFIAPI
 BiosVideoVgaMiniPortSetMode (
-  IN  EFI_VGA_MINI_PORT_PROTOCOL  *This,
-  IN  UINTN                       ModeNumber
+  IN  EFI_VGA_MINI_PORT_PROTOCOL *This,
+  IN  UINTN                      ModeNumber
   );
 
 /**
@@ -426,43 +417,43 @@ BiosVideoNotifyExitBootServices (
 //
 // Standard VGA Definitions
 //
-#define VGA_HORIZONTAL_RESOLUTION                         640
-#define VGA_VERTICAL_RESOLUTION                           480
-#define VGA_NUMBER_OF_BIT_PLANES                          4
-#define VGA_PIXELS_PER_BYTE                               8
-#define VGA_BYTES_PER_SCAN_LINE                           (VGA_HORIZONTAL_RESOLUTION / VGA_PIXELS_PER_BYTE)
-#define VGA_BYTES_PER_BIT_PLANE                           (VGA_VERTICAL_RESOLUTION * VGA_BYTES_PER_SCAN_LINE)
+#define VGA_HORIZONTAL_RESOLUTION  640
+#define VGA_VERTICAL_RESOLUTION    480
+#define VGA_NUMBER_OF_BIT_PLANES   4
+#define VGA_PIXELS_PER_BYTE        8
+#define VGA_BYTES_PER_SCAN_LINE    (VGA_HORIZONTAL_RESOLUTION / VGA_PIXELS_PER_BYTE)
+#define VGA_BYTES_PER_BIT_PLANE    (VGA_VERTICAL_RESOLUTION * VGA_BYTES_PER_SCAN_LINE)
 
-#define VGA_GRAPHICS_CONTROLLER_ADDRESS_REGISTER          0x3ce
-#define VGA_GRAPHICS_CONTROLLER_DATA_REGISTER             0x3cf
+#define VGA_GRAPHICS_CONTROLLER_ADDRESS_REGISTER  0x3ce
+#define VGA_GRAPHICS_CONTROLLER_DATA_REGISTER     0x3cf
 
-#define VGA_GRAPHICS_CONTROLLER_SET_RESET_REGISTER        0x00
+#define VGA_GRAPHICS_CONTROLLER_SET_RESET_REGISTER  0x00
 
-#define VGA_GRAPHICS_CONTROLLER_ENABLE_SET_RESET_REGISTER 0x01
+#define VGA_GRAPHICS_CONTROLLER_ENABLE_SET_RESET_REGISTER  0x01
 
-#define VGA_GRAPHICS_CONTROLLER_COLOR_COMPARE_REGISTER    0x02
+#define VGA_GRAPHICS_CONTROLLER_COLOR_COMPARE_REGISTER  0x02
 
-#define VGA_GRAPHICS_CONTROLLER_DATA_ROTATE_REGISTER      0x03
-#define VGA_GRAPHICS_CONTROLLER_FUNCTION_REPLACE          0x00
-#define VGA_GRAPHICS_CONTROLLER_FUNCTION_AND              0x08
-#define VGA_GRAPHICS_CONTROLLER_FUNCTION_OR               0x10
-#define VGA_GRAPHICS_CONTROLLER_FUNCTION_XOR              0x18
+#define VGA_GRAPHICS_CONTROLLER_DATA_ROTATE_REGISTER  0x03
+#define VGA_GRAPHICS_CONTROLLER_FUNCTION_REPLACE      0x00
+#define VGA_GRAPHICS_CONTROLLER_FUNCTION_AND          0x08
+#define VGA_GRAPHICS_CONTROLLER_FUNCTION_OR           0x10
+#define VGA_GRAPHICS_CONTROLLER_FUNCTION_XOR          0x18
 
 #define VGA_GRAPHICS_CONTROLLER_READ_MAP_SELECT_REGISTER  0x04
 
-#define VGA_GRAPHICS_CONTROLLER_MODE_REGISTER             0x05
-#define VGA_GRAPHICS_CONTROLLER_READ_MODE_0               0x00
-#define VGA_GRAPHICS_CONTROLLER_READ_MODE_1               0x08
-#define VGA_GRAPHICS_CONTROLLER_WRITE_MODE_0              0x00
-#define VGA_GRAPHICS_CONTROLLER_WRITE_MODE_1              0x01
-#define VGA_GRAPHICS_CONTROLLER_WRITE_MODE_2              0x02
-#define VGA_GRAPHICS_CONTROLLER_WRITE_MODE_3              0x03
+#define VGA_GRAPHICS_CONTROLLER_MODE_REGISTER  0x05
+#define VGA_GRAPHICS_CONTROLLER_READ_MODE_0    0x00
+#define VGA_GRAPHICS_CONTROLLER_READ_MODE_1    0x08
+#define VGA_GRAPHICS_CONTROLLER_WRITE_MODE_0   0x00
+#define VGA_GRAPHICS_CONTROLLER_WRITE_MODE_1   0x01
+#define VGA_GRAPHICS_CONTROLLER_WRITE_MODE_2   0x02
+#define VGA_GRAPHICS_CONTROLLER_WRITE_MODE_3   0x03
 
-#define VGA_GRAPHICS_CONTROLLER_MISCELLANEOUS_REGISTER    0x06
+#define VGA_GRAPHICS_CONTROLLER_MISCELLANEOUS_REGISTER  0x06
 
 #define VGA_GRAPHICS_CONTROLLER_COLOR_DONT_CARE_REGISTER  0x07
 
-#define VGA_GRAPHICS_CONTROLLER_BIT_MASK_REGISTER         0x08
+#define VGA_GRAPHICS_CONTROLLER_BIT_MASK_REGISTER  0x08
 
 /**
   Install child handles if the Handle supports MBR format.
@@ -480,12 +471,12 @@ BiosVideoNotifyExitBootServices (
 **/
 EFI_STATUS
 BiosVideoChildHandleInstall (
-  IN  EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN  EFI_HANDLE                   ParentHandle,
-  IN  EFI_PCI_IO_PROTOCOL          *ParentPciIo,
-  IN  EFI_LEGACY_BIOS_PROTOCOL     *ParentLegacyBios,
-  IN  EFI_DEVICE_PATH_PROTOCOL     *ParentDevicePath,
-  IN  EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath
+  IN  EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN  EFI_HANDLE                  ParentHandle,
+  IN  EFI_PCI_IO_PROTOCOL         *ParentPciIo,
+  IN  EFI_LEGACY_BIOS_PROTOCOL    *ParentLegacyBios,
+  IN  EFI_DEVICE_PATH_PROTOCOL    *ParentDevicePath,
+  IN  EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath
   );
 
 /**
@@ -500,9 +491,9 @@ BiosVideoChildHandleInstall (
 **/
 EFI_STATUS
 BiosVideoChildHandleUninstall (
-  EFI_DRIVER_BINDING_PROTOCOL    *This,
-  EFI_HANDLE                     Controller,
-  EFI_HANDLE                     Handle
+  EFI_DRIVER_BINDING_PROTOCOL *This,
+  EFI_HANDLE                  Controller,
+  EFI_HANDLE                  Handle
   );
 
 /**
@@ -513,7 +504,7 @@ BiosVideoChildHandleUninstall (
 **/
 VOID
 BiosVideoDeviceReleaseResource (
-  BIOS_VIDEO_DEV  *BiosVideoPrivate
+  BIOS_VIDEO_DEV *BiosVideoPrivate
   );
 
 /**
@@ -527,6 +518,7 @@ BiosVideoDeviceReleaseResource (
 **/
 BOOLEAN
 HasChildHandle (
-  IN EFI_HANDLE  Controller
+  IN EFI_HANDLE Controller
   );
+
 #endif

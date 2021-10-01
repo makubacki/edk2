@@ -12,25 +12,24 @@
 //
 // Handle for the Legacy Interrupt Protocol instance produced by this driver
 //
-STATIC EFI_HANDLE mLegacyInterruptHandle = NULL;
+STATIC EFI_HANDLE  mLegacyInterruptHandle = NULL;
 
 //
 // Legacy Interrupt Device number (0x01 on piix4, 0x1f on q35/mch)
 //
-STATIC UINT8      mLegacyInterruptDevice;
+STATIC UINT8  mLegacyInterruptDevice;
 
 //
 // The Legacy Interrupt Protocol instance produced by this driver
 //
-STATIC EFI_LEGACY_INTERRUPT_PROTOCOL mLegacyInterrupt = {
+STATIC EFI_LEGACY_INTERRUPT_PROTOCOL  mLegacyInterrupt = {
   GetNumberPirqs,
   GetLocation,
   ReadPirq,
   WritePirq
 };
 
-STATIC UINT8 PirqReg[MAX_PIRQ_NUMBER] = { PIRQA, PIRQB, PIRQC, PIRQD, PIRQE, PIRQF, PIRQG, PIRQH };
-
+STATIC UINT8  PirqReg[MAX_PIRQ_NUMBER] = { PIRQA, PIRQB, PIRQC, PIRQD, PIRQE, PIRQF, PIRQG, PIRQH };
 
 /**
   Return the number of PIRQs supported by this chipset.
@@ -44,15 +43,14 @@ STATIC UINT8 PirqReg[MAX_PIRQ_NUMBER] = { PIRQA, PIRQB, PIRQC, PIRQD, PIRQE, PIR
 EFI_STATUS
 EFIAPI
 GetNumberPirqs (
-  IN  EFI_LEGACY_INTERRUPT_PROTOCOL  *This,
-  OUT UINT8                          *NumberPirqs
+  IN  EFI_LEGACY_INTERRUPT_PROTOCOL *This,
+  OUT UINT8                         *NumberPirqs
   )
 {
   *NumberPirqs = MAX_PIRQ_NUMBER;
 
   return EFI_SUCCESS;
 }
-
 
 /**
   Return PCI location of this device.
@@ -69,10 +67,10 @@ GetNumberPirqs (
 EFI_STATUS
 EFIAPI
 GetLocation (
-  IN  EFI_LEGACY_INTERRUPT_PROTOCOL  *This,
-  OUT UINT8                          *Bus,
-  OUT UINT8                          *Device,
-  OUT UINT8                          *Function
+  IN  EFI_LEGACY_INTERRUPT_PROTOCOL *This,
+  OUT UINT8                         *Bus,
+  OUT UINT8                         *Device,
+  OUT UINT8                         *Function
   )
 {
   *Bus      = LEGACY_INT_BUS;
@@ -81,7 +79,6 @@ GetLocation (
 
   return EFI_SUCCESS;
 }
-
 
 /**
   Builds the PCI configuration address for the register specified by PirqNumber
@@ -92,15 +89,15 @@ GetLocation (
 **/
 UINTN
 GetAddress (
-  UINT8  PirqNumber
+  UINT8 PirqNumber
   )
 {
-  return PCI_LIB_ADDRESS(
-          LEGACY_INT_BUS,
-          mLegacyInterruptDevice,
-          LEGACY_INT_FUNC,
-          PirqReg[PirqNumber]
-          );
+  return PCI_LIB_ADDRESS (
+           LEGACY_INT_BUS,
+           mLegacyInterruptDevice,
+           LEGACY_INT_FUNC,
+           PirqReg[PirqNumber]
+           );
 }
 
 /**
@@ -117,9 +114,9 @@ GetAddress (
 EFI_STATUS
 EFIAPI
 ReadPirq (
-  IN  EFI_LEGACY_INTERRUPT_PROTOCOL  *This,
-  IN  UINT8                          PirqNumber,
-  OUT UINT8                          *PirqData
+  IN  EFI_LEGACY_INTERRUPT_PROTOCOL *This,
+  IN  UINT8                         PirqNumber,
+  OUT UINT8                         *PirqData
   )
 {
   if (PirqNumber >= MAX_PIRQ_NUMBER) {
@@ -127,11 +124,10 @@ ReadPirq (
   }
 
   *PirqData = PciRead8 (GetAddress (PirqNumber));
-  *PirqData = (UINT8) (*PirqData & 0x7f);
+  *PirqData = (UINT8)(*PirqData & 0x7f);
 
   return EFI_SUCCESS;
 }
-
 
 /**
   Write the given PIRQ register
@@ -147,9 +143,9 @@ ReadPirq (
 EFI_STATUS
 EFIAPI
 WritePirq (
-  IN  EFI_LEGACY_INTERRUPT_PROTOCOL  *This,
-  IN  UINT8                          PirqNumber,
-  IN  UINT8                          PirqData
+  IN  EFI_LEGACY_INTERRUPT_PROTOCOL *This,
+  IN  UINT8                         PirqNumber,
+  IN  UINT8                         PirqData
   )
 {
   if (PirqNumber >= MAX_PIRQ_NUMBER) {
@@ -159,7 +155,6 @@ WritePirq (
   PciWrite8 (GetAddress (PirqNumber), PirqData);
   return EFI_SUCCESS;
 }
-
 
 /**
   Initialize Legacy Interrupt support
@@ -178,7 +173,7 @@ LegacyInterruptInstall (
   //
   // Make sure the Legacy Interrupt Protocol is not already installed in the system
   //
-  ASSERT_PROTOCOL_ALREADY_INSTALLED(NULL, &gEfiLegacyInterruptProtocolGuid);
+  ASSERT_PROTOCOL_ALREADY_INSTALLED (NULL, &gEfiLegacyInterruptProtocolGuid);
 
   //
   // Query Host Bridge DID to determine platform type, then set device number
@@ -192,8 +187,12 @@ LegacyInterruptInstall (
       mLegacyInterruptDevice = LEGACY_INT_DEV_Q35;
       break;
     default:
-      DEBUG ((DEBUG_ERROR, "%a: Unknown Host Bridge Device ID: 0x%04x\n",
-        __FUNCTION__, HostBridgeDevId));
+      DEBUG ((
+        DEBUG_ERROR,
+        "%a: Unknown Host Bridge Device ID: 0x%04x\n",
+        __FUNCTION__,
+        HostBridgeDevId
+        ));
       ASSERT (FALSE);
       return EFI_UNSUPPORTED;
   }
@@ -207,8 +206,7 @@ LegacyInterruptInstall (
                   &mLegacyInterrupt,
                   NULL
                   );
-  ASSERT_EFI_ERROR(Status);
+  ASSERT_EFI_ERROR (Status);
 
   return Status;
 }
-

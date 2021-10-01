@@ -18,26 +18,26 @@
 STATIC
 VOID
 EpochToEfiTime (
-  IN  UINTN     EpochSeconds,
-  OUT EFI_TIME  *Time
+  IN  UINTN    EpochSeconds,
+  OUT EFI_TIME *Time
   )
 {
-  UINTN         a;
-  UINTN         b;
-  UINTN         c;
-  UINTN         d;
-  UINTN         g;
-  UINTN         j;
-  UINTN         m;
-  UINTN         y;
-  UINTN         da;
-  UINTN         db;
-  UINTN         dc;
-  UINTN         dg;
-  UINTN         hh;
-  UINTN         mm;
-  UINTN         ss;
-  UINTN         J;
+  UINTN  a;
+  UINTN  b;
+  UINTN  c;
+  UINTN  d;
+  UINTN  g;
+  UINTN  j;
+  UINTN  m;
+  UINTN  y;
+  UINTN  da;
+  UINTN  db;
+  UINTN  dc;
+  UINTN  dg;
+  UINTN  hh;
+  UINTN  mm;
+  UINTN  ss;
+  UINTN  J;
 
   J  = (EpochSeconds / 86400) + 2440588;
   j  = J + 32044;
@@ -60,14 +60,13 @@ EpochToEfiTime (
   ss = EpochSeconds % 60;
   a  = (EpochSeconds - ss) / 60;
   mm = a % 60;
-  b = (a - mm) / 60;
+  b  = (a - mm) / 60;
   hh = b % 24;
 
-  Time->Hour        = hh;
-  Time->Minute      = mm;
-  Time->Second      = ss;
-  Time->Nanosecond  = 0;
-
+  Time->Hour       = hh;
+  Time->Minute     = mm;
+  Time->Second     = ss;
+  Time->Nanosecond = 0;
 }
 
 /**
@@ -86,8 +85,8 @@ EpochToEfiTime (
 EFI_STATUS
 EFIAPI
 LibGetTime (
-  OUT EFI_TIME                *Time,
-  OUT  EFI_TIME_CAPABILITIES  *Capabilities
+  OUT EFI_TIME               *Time,
+  OUT  EFI_TIME_CAPABILITIES *Capabilities
   )
 {
   ASSERT (Time != NULL);
@@ -97,7 +96,7 @@ LibGetTime (
   // as Xen's timekeeping uses a shared info page which cannot be shared
   // between UEFI and the OS
   //
-  EpochToEfiTime(1421770011, Time);
+  EpochToEfiTime (1421770011, Time);
 
   return EFI_SUCCESS;
 }
@@ -115,12 +114,11 @@ LibGetTime (
 EFI_STATUS
 EFIAPI
 LibSetTime (
-  IN EFI_TIME                *Time
+  IN EFI_TIME *Time
   )
 {
   return EFI_DEVICE_ERROR;
 }
-
 
 /**
   Returns the current wakeup alarm clock setting.
@@ -138,9 +136,9 @@ LibSetTime (
 EFI_STATUS
 EFIAPI
 LibGetWakeupTime (
-  OUT BOOLEAN     *Enabled,
-  OUT BOOLEAN     *Pending,
-  OUT EFI_TIME    *Time
+  OUT BOOLEAN  *Enabled,
+  OUT BOOLEAN  *Pending,
+  OUT EFI_TIME *Time
   )
 {
   return EFI_UNSUPPORTED;
@@ -162,8 +160,8 @@ LibGetWakeupTime (
 EFI_STATUS
 EFIAPI
 LibSetWakeupTime (
-  IN BOOLEAN      Enabled,
-  OUT EFI_TIME    *Time
+  IN BOOLEAN   Enabled,
+  OUT EFI_TIME *Time
   )
 {
   return EFI_UNSUPPORTED;
@@ -182,8 +180,8 @@ LibSetWakeupTime (
 EFI_STATUS
 EFIAPI
 LibRtcInitialize (
-  IN EFI_HANDLE                            ImageHandle,
-  IN EFI_SYSTEM_TABLE                      *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
   return EFI_SUCCESS;

@@ -12,14 +12,14 @@
 #pragma pack(1)
 
 typedef struct {
-  UINT32               Signature;
-  UINT32               SubPageBuffer;
-  UINT32               SubPageRemaining;
+  UINT32    Signature;
+  UINT32    SubPageBuffer;
+  UINT32    SubPageRemaining;
 } LOCK_BOX_GLOBAL;
 
-#define LOCK_BOX_GLOBAL_SIGNATURE SIGNATURE_32('L', 'B', 'G', 'S')
+#define LOCK_BOX_GLOBAL_SIGNATURE  SIGNATURE_32('L', 'B', 'G', 'S')
 
-extern LOCK_BOX_GLOBAL *mLockBoxGlobal;
+extern LOCK_BOX_GLOBAL  *mLockBoxGlobal;
 
 #pragma pack()
 
@@ -40,15 +40,13 @@ extern LOCK_BOX_GLOBAL *mLockBoxGlobal;
 VOID *
 EFIAPI
 AllocateAcpiNvsPool (
-  IN UINTN  AllocationSize
+  IN UINTN AllocationSize
   );
-
 
 RETURN_STATUS
 EFIAPI
 LockBoxLibInitialize (
   VOID
   );
-
 
 #endif

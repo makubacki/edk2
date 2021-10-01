@@ -22,17 +22,16 @@
 #include <Library/VirtioMmioDeviceLib.h>
 #include <Library/MemoryAllocationLib.h>
 
-#define VIRTIO_MMIO_DEVICE_SIGNATURE  SIGNATURE_32 ('V', 'M', 'I', 'O')
+#define VIRTIO_MMIO_DEVICE_SIGNATURE     SIGNATURE_32 ('V', 'M', 'I', 'O')
 #define VIRTIO_MMIO_DEVICE_VERSION_0_95  1
 #define VIRTIO_MMIO_DEVICE_VERSION_1_00  2
 
-
 typedef struct {
-  UINT32                 Signature;
-  UINT32                 Version;
-  UINT16                 QueueNum;
-  VIRTIO_DEVICE_PROTOCOL VirtioDevice;
-  PHYSICAL_ADDRESS       BaseAddress;
+  UINT32                    Signature;
+  UINT32                    Version;
+  UINT16                    QueueNum;
+  VIRTIO_DEVICE_PROTOCOL    VirtioDevice;
+  PHYSICAL_ADDRESS          BaseAddress;
 } VIRTIO_MMIO_DEVICE;
 
 #define VIRTIO_MMIO_DEVICE_FROM_VIRTIO_DEVICE(Device) \
@@ -46,20 +45,20 @@ typedef struct {
 EFI_STATUS
 EFIAPI
 VirtioMmioDeviceRead (
-  IN  VIRTIO_DEVICE_PROTOCOL    *This,
-  IN  UINTN                     FieldOFfset,
-  IN  UINTN                     FieldSize,
-  IN  UINTN                     BufferSize,
-  OUT VOID*                     Buffer
+  IN  VIRTIO_DEVICE_PROTOCOL *This,
+  IN  UINTN                  FieldOFfset,
+  IN  UINTN                  FieldSize,
+  IN  UINTN                  BufferSize,
+  OUT VOID                   *Buffer
   );
 
 EFI_STATUS
 EFIAPI
 VirtioMmioDeviceWrite (
-  IN  VIRTIO_DEVICE_PROTOCOL    *This,
-  IN  UINTN                     FieldOffset,
-  IN  UINTN                     FieldSize,
-  IN  UINT64                    Value
+  IN  VIRTIO_DEVICE_PROTOCOL *This,
+  IN  UINTN                  FieldOffset,
+  IN  UINTN                  FieldSize,
+  IN  UINT64                 Value
   );
 
 EFI_STATUS
@@ -72,106 +71,106 @@ VirtioMmioGetDeviceFeatures (
 EFI_STATUS
 EFIAPI
 VirtioMmioGetQueueSize (
-  IN  VIRTIO_DEVICE_PROTOCOL  *This,
-  OUT UINT16                  *QueueNumMax
+  IN  VIRTIO_DEVICE_PROTOCOL *This,
+  OUT UINT16                 *QueueNumMax
   );
 
 EFI_STATUS
 EFIAPI
 VirtioMmioGetDeviceStatus (
-  IN  VIRTIO_DEVICE_PROTOCOL  *This,
-  OUT UINT8                   *DeviceStatus
+  IN  VIRTIO_DEVICE_PROTOCOL *This,
+  OUT UINT8                  *DeviceStatus
   );
 
 EFI_STATUS
 EFIAPI
 VirtioMmioSetQueueSize (
   IN VIRTIO_DEVICE_PROTOCOL *This,
-  IN UINT16                  QueueSize
+  IN UINT16                 QueueSize
   );
 
 EFI_STATUS
 EFIAPI
 VirtioMmioSetDeviceStatus (
   IN VIRTIO_DEVICE_PROTOCOL *This,
-  IN UINT8                   DeviceStatus
+  IN UINT8                  DeviceStatus
   );
 
 EFI_STATUS
 EFIAPI
 VirtioMmioSetQueueNotify (
   IN VIRTIO_DEVICE_PROTOCOL *This,
-  IN UINT16                  QueueNotify
+  IN UINT16                 QueueNotify
   );
 
 EFI_STATUS
 EFIAPI
 VirtioMmioSetQueueSel (
   IN VIRTIO_DEVICE_PROTOCOL *This,
-  IN UINT16                  Sel
+  IN UINT16                 Sel
   );
 
 EFI_STATUS
 EFIAPI
 VirtioMmioSetQueueAddress (
-  IN VIRTIO_DEVICE_PROTOCOL  *This,
-  IN VRING                   *Ring,
-  IN UINT64                  RingBaseShift
+  IN VIRTIO_DEVICE_PROTOCOL *This,
+  IN VRING                  *Ring,
+  IN UINT64                 RingBaseShift
   );
 
 EFI_STATUS
 EFIAPI
 VirtioMmioSetQueueAlignment (
   IN VIRTIO_DEVICE_PROTOCOL *This,
-  IN UINT32                  Alignment
+  IN UINT32                 Alignment
   );
 
 EFI_STATUS
 EFIAPI
 VirtioMmioSetPageSize (
   IN VIRTIO_DEVICE_PROTOCOL *This,
-  IN UINT32                  PageSize
+  IN UINT32                 PageSize
   );
 
 EFI_STATUS
 EFIAPI
 VirtioMmioSetGuestFeatures (
   IN VIRTIO_DEVICE_PROTOCOL *This,
-  IN UINT64                  Features
+  IN UINT64                 Features
   );
 
 EFI_STATUS
 EFIAPI
 VirtioMmioAllocateSharedPages (
-  IN  VIRTIO_DEVICE_PROTOCOL        *This,
-  IN  UINTN                         NumPages,
-  OUT VOID                          **HostAddress
+  IN  VIRTIO_DEVICE_PROTOCOL *This,
+  IN  UINTN                  NumPages,
+  OUT VOID                   **HostAddress
   );
 
 VOID
 EFIAPI
 VirtioMmioFreeSharedPages (
-  IN  VIRTIO_DEVICE_PROTOCOL        *This,
-  IN  UINTN                         NumPages,
-  IN  VOID                          *HostAddress
+  IN  VIRTIO_DEVICE_PROTOCOL *This,
+  IN  UINTN                  NumPages,
+  IN  VOID                   *HostAddress
   );
 
 EFI_STATUS
 EFIAPI
 VirtioMmioMapSharedBuffer (
-  IN      VIRTIO_DEVICE_PROTOCOL        *This,
-  IN      VIRTIO_MAP_OPERATION          Operation,
-  IN      VOID                          *HostAddress,
-  IN OUT  UINTN                         *NumberOfBytes,
-  OUT     EFI_PHYSICAL_ADDRESS          *DeviceAddress,
-  OUT     VOID                          **Mapping
+  IN      VIRTIO_DEVICE_PROTOCOL *This,
+  IN      VIRTIO_MAP_OPERATION   Operation,
+  IN      VOID                   *HostAddress,
+  IN OUT  UINTN                  *NumberOfBytes,
+  OUT     EFI_PHYSICAL_ADDRESS   *DeviceAddress,
+  OUT     VOID                   **Mapping
   );
 
 EFI_STATUS
 EFIAPI
 VirtioMmioUnmapSharedBuffer (
-  IN  VIRTIO_DEVICE_PROTOCOL        *This,
-  IN  VOID                          *Mapping
+  IN  VIRTIO_DEVICE_PROTOCOL *This,
+  IN  VOID                   *Mapping
   );
 
 #endif // _VIRTIO_MMIO_DEVICE_INTERNAL_H_

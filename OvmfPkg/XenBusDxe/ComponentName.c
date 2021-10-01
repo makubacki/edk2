@@ -14,7 +14,7 @@
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
 EFI_COMPONENT_NAME_PROTOCOL  gXenBusDxeComponentName = {
-  (EFI_COMPONENT_NAME_GET_DRIVER_NAME)    XenBusDxeComponentNameGetDriverName,
+  (EFI_COMPONENT_NAME_GET_DRIVER_NAME)XenBusDxeComponentNameGetDriverName,
   (EFI_COMPONENT_NAME_GET_CONTROLLER_NAME)XenBusDxeComponentNameGetControllerName,
   "eng"
 };
@@ -33,18 +33,18 @@ EFI_COMPONENT_NAME2_PROTOCOL  gXenBusDxeComponentName2 = {
 /// Table of driver names
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
-EFI_UNICODE_STRING_TABLE mXenBusDxeDriverNameTable[] = {
+EFI_UNICODE_STRING_TABLE  mXenBusDxeDriverNameTable[] = {
   { "eng;en", (CHAR16 *)L"XenBus Bus Driver" },
-  { NULL, NULL }
+  { NULL,     NULL                           }
 };
 
 ///
 /// Table of controller names
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
-EFI_UNICODE_STRING_TABLE mXenBusDxeControllerNameTable[] = {
+EFI_UNICODE_STRING_TABLE  mXenBusDxeControllerNameTable[] = {
   { "eng;en", (CHAR16 *)L"XenBus Controller" },
-  { NULL, NULL }
+  { NULL,     NULL                           }
 };
 
 /**
@@ -72,9 +72,9 @@ EFI_UNICODE_STRING_TABLE mXenBusDxeControllerNameTable[] = {
 EFI_STATUS
 EFIAPI
 XenBusDxeComponentNameGetDriverName (
-  IN EFI_COMPONENT_NAME2_PROTOCOL  *This,
-  IN  CHAR8                        *Language,
-  OUT CHAR16                       **DriverName
+  IN EFI_COMPONENT_NAME2_PROTOCOL *This,
+  IN  CHAR8                       *Language,
+  OUT CHAR16                      **DriverName
   )
 {
   return LookupUnicodeString2 (
@@ -129,11 +129,11 @@ XenBusDxeComponentNameGetDriverName (
 EFI_STATUS
 EFIAPI
 XenBusDxeComponentNameGetControllerName (
-  IN  EFI_COMPONENT_NAME2_PROTOCOL  *This,
-  IN  EFI_HANDLE                    ControllerHandle,
-  IN  EFI_HANDLE                    ChildHandle        OPTIONAL,
-  IN  CHAR8                         *Language,
-  OUT CHAR16                        **ControllerName
+  IN  EFI_COMPONENT_NAME2_PROTOCOL *This,
+  IN  EFI_HANDLE                   ControllerHandle,
+  IN  EFI_HANDLE                   ChildHandle        OPTIONAL,
+  IN  CHAR8                        *Language,
+  OUT CHAR16                       **ControllerName
   )
 {
   EFI_STATUS  Status;

@@ -9,7 +9,6 @@
 #include "PiDxe.h"
 #include <Library/PlatformFvbLib.h>
 
-
 /**
   This function will be called following a call to the
   EFI_FIRMWARE_VOLUME_BLOCK2_PROTOCOL Read function.
@@ -35,7 +34,6 @@ PlatformFvbDataRead (
 {
 }
 
-
 /**
   This function will be called following a call to the
   EFI_FIRMWARE_VOLUME_BLOCK_PROTOCOL Write function.
@@ -59,7 +57,6 @@ PlatformFvbDataWritten (
 {
 }
 
-
 /**
   This function will be called following a call to the
   EFI_FIRMWARE_VOLUME_BLOCK2_PROTOCOL Erase function.
@@ -75,9 +72,7 @@ VOID
 EFIAPI
 PlatformFvbBlocksErased (
   IN CONST  EFI_FIRMWARE_VOLUME_BLOCK2_PROTOCOL *This,
-  IN  VA_LIST       List
+  IN  VA_LIST                                   List
   )
 {
 }
-
-

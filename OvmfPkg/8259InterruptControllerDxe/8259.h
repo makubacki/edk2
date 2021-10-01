@@ -22,11 +22,11 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 // 8259 Hardware definitions
 
-#define LEGACY_MODE_BASE_VECTOR_MASTER                    0x08
-#define LEGACY_MODE_BASE_VECTOR_SLAVE                     0x70
+#define LEGACY_MODE_BASE_VECTOR_MASTER  0x08
+#define LEGACY_MODE_BASE_VECTOR_SLAVE   0x70
 
-#define PROTECTED_MODE_BASE_VECTOR_MASTER                 0x68
-#define PROTECTED_MODE_BASE_VECTOR_SLAVE                  0x70
+#define PROTECTED_MODE_BASE_VECTOR_MASTER  0x68
+#define PROTECTED_MODE_BASE_VECTOR_SLAVE   0x70
 
 #define LEGACY_8259_CONTROL_REGISTER_MASTER               0x20
 #define LEGACY_8259_MASK_REGISTER_MASTER                  0x21
@@ -35,7 +35,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define LEGACY_8259_EDGE_LEVEL_TRIGGERED_REGISTER_MASTER  0x4D0
 #define LEGACY_8259_EDGE_LEVEL_TRIGGERED_REGISTER_SLAVE   0x4D1
 
-#define LEGACY_8259_EOI                                   0x20
+#define LEGACY_8259_EOI  0x20
 
 // Protocol Function Prototypes
 
@@ -53,9 +53,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 Interrupt8259SetVectorBase (
-  IN EFI_LEGACY_8259_PROTOCOL  *This,
-  IN UINT8                     MasterBase,
-  IN UINT8                     SlaveBase
+  IN EFI_LEGACY_8259_PROTOCOL *This,
+  IN UINT8                    MasterBase,
+  IN UINT8                    SlaveBase
   );
 
 /**
@@ -74,8 +74,8 @@ Interrupt8259SetVectorBase (
 EFI_STATUS
 EFIAPI
 Interrupt8259GetMask (
-  IN  EFI_LEGACY_8259_PROTOCOL  *This,
-  OUT UINT16                    *LegacyMask, OPTIONAL
+  IN  EFI_LEGACY_8259_PROTOCOL *This,
+  OUT UINT16 *LegacyMask, OPTIONAL
   OUT UINT16                    *LegacyEdgeLevel, OPTIONAL
   OUT UINT16                    *ProtectedMask, OPTIONAL
   OUT UINT16                    *ProtectedEdgeLevel OPTIONAL
@@ -97,8 +97,8 @@ Interrupt8259GetMask (
 EFI_STATUS
 EFIAPI
 Interrupt8259SetMask (
-  IN EFI_LEGACY_8259_PROTOCOL  *This,
-  IN UINT16                    *LegacyMask, OPTIONAL
+  IN EFI_LEGACY_8259_PROTOCOL *This,
+  IN UINT16 *LegacyMask, OPTIONAL
   IN UINT16                    *LegacyEdgeLevel, OPTIONAL
   IN UINT16                    *ProtectedMask, OPTIONAL
   IN UINT16                    *ProtectedEdgeLevel OPTIONAL
@@ -119,9 +119,9 @@ Interrupt8259SetMask (
 EFI_STATUS
 EFIAPI
 Interrupt8259SetMode (
-  IN EFI_LEGACY_8259_PROTOCOL  *This,
-  IN EFI_8259_MODE             Mode,
-  IN UINT16                    *Mask, OPTIONAL
+  IN EFI_LEGACY_8259_PROTOCOL *This,
+  IN EFI_8259_MODE Mode,
+  IN UINT16 *Mask, OPTIONAL
   IN UINT16                    *EdgeLevel OPTIONAL
   );
 
@@ -139,9 +139,9 @@ Interrupt8259SetMode (
 EFI_STATUS
 EFIAPI
 Interrupt8259GetVector (
-  IN  EFI_LEGACY_8259_PROTOCOL  *This,
-  IN  EFI_8259_IRQ              Irq,
-  OUT UINT8                     *Vector
+  IN  EFI_LEGACY_8259_PROTOCOL *This,
+  IN  EFI_8259_IRQ             Irq,
+  OUT UINT8                    *Vector
   );
 
 /**
@@ -158,9 +158,9 @@ Interrupt8259GetVector (
 EFI_STATUS
 EFIAPI
 Interrupt8259EnableIrq (
-  IN EFI_LEGACY_8259_PROTOCOL  *This,
-  IN EFI_8259_IRQ              Irq,
-  IN BOOLEAN                   LevelTriggered
+  IN EFI_LEGACY_8259_PROTOCOL *This,
+  IN EFI_8259_IRQ             Irq,
+  IN BOOLEAN                  LevelTriggered
   );
 
 /**
@@ -176,8 +176,8 @@ Interrupt8259EnableIrq (
 EFI_STATUS
 EFIAPI
 Interrupt8259DisableIrq (
-  IN EFI_LEGACY_8259_PROTOCOL  *This,
-  IN EFI_8259_IRQ              Irq
+  IN EFI_LEGACY_8259_PROTOCOL *This,
+  IN EFI_8259_IRQ             Irq
   );
 
 /**
@@ -193,9 +193,9 @@ Interrupt8259DisableIrq (
 EFI_STATUS
 EFIAPI
 Interrupt8259GetInterruptLine (
-  IN  EFI_LEGACY_8259_PROTOCOL  *This,
-  IN  EFI_HANDLE                PciHandle,
-  OUT UINT8                     *Vector
+  IN  EFI_LEGACY_8259_PROTOCOL *This,
+  IN  EFI_HANDLE               PciHandle,
+  OUT UINT8                    *Vector
   );
 
 /**
@@ -211,8 +211,8 @@ Interrupt8259GetInterruptLine (
 EFI_STATUS
 EFIAPI
 Interrupt8259EndOfInterrupt (
-  IN  EFI_LEGACY_8259_PROTOCOL  *This,
-  IN  EFI_8259_IRQ              Irq
+  IN  EFI_LEGACY_8259_PROTOCOL *This,
+  IN  EFI_8259_IRQ             Irq
   );
 
 #endif

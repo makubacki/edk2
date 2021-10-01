@@ -39,7 +39,7 @@ STATIC
 EFI_STATUS
 EFIAPI
 SmmAccess2DxeOpen (
-  IN EFI_SMM_ACCESS2_PROTOCOL  *This
+  IN EFI_SMM_ACCESS2_PROTOCOL *This
   )
 {
   return SmramAccessOpen (&This->LockState, &This->OpenState);
@@ -63,7 +63,7 @@ STATIC
 EFI_STATUS
 EFIAPI
 SmmAccess2DxeClose (
-  IN EFI_SMM_ACCESS2_PROTOCOL  *This
+  IN EFI_SMM_ACCESS2_PROTOCOL *This
   )
 {
   return SmramAccessClose (&This->LockState, &This->OpenState);
@@ -84,7 +84,7 @@ STATIC
 EFI_STATUS
 EFIAPI
 SmmAccess2DxeLock (
-  IN EFI_SMM_ACCESS2_PROTOCOL  *This
+  IN EFI_SMM_ACCESS2_PROTOCOL *This
   )
 {
   return SmramAccessLock (&This->LockState, &This->OpenState);
@@ -109,19 +109,23 @@ STATIC
 EFI_STATUS
 EFIAPI
 SmmAccess2DxeGetCapabilities (
-  IN CONST EFI_SMM_ACCESS2_PROTOCOL  *This,
-  IN OUT UINTN                       *SmramMapSize,
-  IN OUT EFI_SMRAM_DESCRIPTOR        *SmramMap
+  IN CONST EFI_SMM_ACCESS2_PROTOCOL *This,
+  IN OUT UINTN                      *SmramMapSize,
+  IN OUT EFI_SMRAM_DESCRIPTOR       *SmramMap
   )
 {
-  return SmramAccessGetCapabilities (This->LockState, This->OpenState,
-           SmramMapSize, SmramMap);
+  return SmramAccessGetCapabilities (
+           This->LockState,
+           This->OpenState,
+           SmramMapSize,
+           SmramMap
+           );
 }
 
 //
 // LockState and OpenState will be filled in by the entry point.
 //
-STATIC EFI_SMM_ACCESS2_PROTOCOL mAccess2 = {
+STATIC EFI_SMM_ACCESS2_PROTOCOL  mAccess2 = {
   &SmmAccess2DxeOpen,
   &SmmAccess2DxeClose,
   &SmmAccess2DxeLock,
@@ -152,7 +156,10 @@ SmmAccess2DxeEntryPoint (
   //
   InitQ35SmramAtDefaultSmbase ();
 
-  return gBS->InstallMultipleProtocolInterfaces (&ImageHandle,
-                &gEfiSmmAccess2ProtocolGuid, &mAccess2,
-                NULL);
+  return gBS->InstallMultipleProtocolInterfaces (
+                &ImageHandle,
+                &gEfiSmmAccess2ProtocolGuid,
+                &mAccess2,
+                NULL
+                );
 }
