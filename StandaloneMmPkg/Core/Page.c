@@ -16,7 +16,7 @@
 
 LIST_ENTRY  mMmMemoryMap = INITIALIZE_LIST_HEAD_VARIABLE (mMmMemoryMap);
 
-UINTN mMapKey;
+UINTN  mMapKey;
 
 /**
   Internal Function. Allocate n pages from given free page node.
@@ -30,9 +30,9 @@ UINTN mMapKey;
 **/
 UINTN
 InternalAllocPagesOnOneNode (
-  IN OUT FREE_PAGE_LIST  *Pages,
-  IN     UINTN           NumberOfPages,
-  IN     UINTN           MaxAddress
+  IN OUT FREE_PAGE_LIST *Pages,
+  IN     UINTN          NumberOfPages,
+  IN     UINTN          MaxAddress
   )
 {
   UINTN           Top;
@@ -43,10 +43,11 @@ InternalAllocPagesOnOneNode (
   if (Top > Pages->NumberOfPages) {
     Top = Pages->NumberOfPages;
   }
+
   Bottom = Top - NumberOfPages;
 
   if (Top < Pages->NumberOfPages) {
-    Node = (FREE_PAGE_LIST*)((UINTN)Pages + EFI_PAGES_TO_SIZE (Top));
+    Node = (FREE_PAGE_LIST *)((UINTN)Pages + EFI_PAGES_TO_SIZE (Top));
     Node->NumberOfPages = Pages->NumberOfPages - Top;
     InsertHeadList (&Pages->Link, &Node->Link);
   }
@@ -72,9 +73,9 @@ InternalAllocPagesOnOneNode (
 **/
 UINTN
 InternalAllocMaxAddress (
-  IN OUT LIST_ENTRY  *FreePageList,
-  IN     UINTN       NumberOfPages,
-  IN     UINTN       MaxAddress
+  IN OUT LIST_ENTRY *FreePageList,
+  IN     UINTN      NumberOfPages,
+  IN     UINTN      MaxAddress
   )
 {
   LIST_ENTRY      *Node;
@@ -82,11 +83,13 @@ InternalAllocMaxAddress (
 
   for (Node = FreePageList->BackLink; Node != FreePageList; Node = Node->BackLink) {
     Pages = BASE_CR (Node, FREE_PAGE_LIST, Link);
-    if (Pages->NumberOfPages >= NumberOfPages &&
-        (UINTN)Pages + EFI_PAGES_TO_SIZE (NumberOfPages) - 1 <= MaxAddress) {
+    if ((Pages->NumberOfPages >= NumberOfPages) &&
+        ((UINTN)Pages + EFI_PAGES_TO_SIZE (NumberOfPages) - 1 <= MaxAddress))
+    {
       return InternalAllocPagesOnOneNode (Pages, NumberOfPages, MaxAddress);
     }
   }
+
   return (UINTN)(-1);
 }
 
@@ -102,9 +105,9 @@ InternalAllocMaxAddress (
 **/
 UINTN
 InternalAllocAddress (
-  IN OUT LIST_ENTRY  *FreePageList,
-  IN     UINTN       NumberOfPages,
-  IN     UINTN       Address
+  IN OUT LIST_ENTRY *FreePageList,
+  IN     UINTN      NumberOfPages,
+  IN     UINTN      Address
   )
 {
   UINTN           EndAddress;
@@ -116,15 +119,17 @@ InternalAllocAddress (
   }
 
   EndAddress = Address + EFI_PAGES_TO_SIZE (NumberOfPages);
-  for (Node = FreePageList->BackLink; Node!= FreePageList; Node = Node->BackLink) {
+  for (Node = FreePageList->BackLink; Node != FreePageList; Node = Node->BackLink) {
     Pages = BASE_CR (Node, FREE_PAGE_LIST, Link);
     if ((UINTN)Pages <= Address) {
       if ((UINTN)Pages + EFI_PAGES_TO_SIZE (Pages->NumberOfPages) < EndAddress) {
         break;
       }
+
       return InternalAllocPagesOnOneNode (Pages, NumberOfPages, EndAddress);
     }
   }
+
   return ~Address;
 }
 
@@ -147,16 +152,17 @@ InternalAllocAddress (
 EFI_STATUS
 EFIAPI
 MmInternalAllocatePages (
-  IN  EFI_ALLOCATE_TYPE     Type,
-  IN  EFI_MEMORY_TYPE       MemoryType,
-  IN  UINTN                 NumberOfPages,
-  OUT EFI_PHYSICAL_ADDRESS  *Memory
+  IN  EFI_ALLOCATE_TYPE    Type,
+  IN  EFI_MEMORY_TYPE      MemoryType,
+  IN  UINTN                NumberOfPages,
+  OUT EFI_PHYSICAL_ADDRESS *Memory
   )
 {
   UINTN  RequestedAddress;
 
-  if (MemoryType != EfiRuntimeServicesCode &&
-      MemoryType != EfiRuntimeServicesData) {
+  if ((MemoryType != EfiRuntimeServicesCode) &&
+      (MemoryType != EfiRuntimeServicesData))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -180,6 +186,7 @@ MmInternalAllocatePages (
       if (*Memory == (UINTN)-1) {
         return EFI_OUT_OF_RESOURCES;
       }
+
       break;
     case AllocateAddress:
       *Memory = InternalAllocAddress (
@@ -190,10 +197,12 @@ MmInternalAllocatePages (
       if (*Memory != RequestedAddress) {
         return EFI_NOT_FOUND;
       }
+
       break;
     default:
       return EFI_INVALID_PARAMETER;
   }
+
   return EFI_SUCCESS;
 }
 
@@ -216,10 +225,10 @@ MmInternalAllocatePages (
 EFI_STATUS
 EFIAPI
 MmAllocatePages (
-  IN  EFI_ALLOCATE_TYPE     Type,
-  IN  EFI_MEMORY_TYPE       MemoryType,
-  IN  UINTN                 NumberOfPages,
-  OUT EFI_PHYSICAL_ADDRESS  *Memory
+  IN  EFI_ALLOCATE_TYPE    Type,
+  IN  EFI_MEMORY_TYPE      MemoryType,
+  IN  UINTN                NumberOfPages,
+  OUT EFI_PHYSICAL_ADDRESS *Memory
   )
 {
   EFI_STATUS  Status;
@@ -238,20 +247,22 @@ MmAllocatePages (
 **/
 FREE_PAGE_LIST *
 InternalMergeNodes (
-  IN FREE_PAGE_LIST  *First
+  IN FREE_PAGE_LIST *First
   )
 {
   FREE_PAGE_LIST  *Next;
 
   Next = BASE_CR (First->Link.ForwardLink, FREE_PAGE_LIST, Link);
   ASSERT (
-    TRUNCATE_TO_PAGES ((UINTN)Next - (UINTN)First) >= First->NumberOfPages);
+    TRUNCATE_TO_PAGES ((UINTN)Next - (UINTN)First) >= First->NumberOfPages
+    );
 
   if (TRUNCATE_TO_PAGES ((UINTN)Next - (UINTN)First) == First->NumberOfPages) {
     First->NumberOfPages += Next->NumberOfPages;
     RemoveEntryList (&Next->Link);
     Next = First;
   }
+
   return Next;
 }
 
@@ -269,8 +280,8 @@ InternalMergeNodes (
 EFI_STATUS
 EFIAPI
 MmInternalFreePages (
-  IN EFI_PHYSICAL_ADDRESS  Memory,
-  IN UINTN                 NumberOfPages
+  IN EFI_PHYSICAL_ADDRESS Memory,
+  IN UINTN                NumberOfPages
   )
 {
   LIST_ENTRY      *Node;
@@ -281,17 +292,19 @@ MmInternalFreePages (
   }
 
   Pages = NULL;
-  Node = mMmMemoryMap.ForwardLink;
+  Node  = mMmMemoryMap.ForwardLink;
   while (Node != &mMmMemoryMap) {
     Pages = BASE_CR (Node, FREE_PAGE_LIST, Link);
     if (Memory < (UINTN)Pages) {
       break;
     }
+
     Node = Node->ForwardLink;
   }
 
-  if (Node != &mMmMemoryMap &&
-      Memory + EFI_PAGES_TO_SIZE (NumberOfPages) > (UINTN)Pages) {
+  if ((Node != &mMmMemoryMap) &&
+      (Memory + EFI_PAGES_TO_SIZE (NumberOfPages) > (UINTN)Pages))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -302,7 +315,7 @@ MmInternalFreePages (
     }
   }
 
-  Pages = (FREE_PAGE_LIST*)(UINTN)Memory;
+  Pages = (FREE_PAGE_LIST *)(UINTN)Memory;
   Pages->NumberOfPages = NumberOfPages;
   InsertTailList (Node, &Pages->Link);
 
@@ -333,8 +346,8 @@ MmInternalFreePages (
 EFI_STATUS
 EFIAPI
 MmFreePages (
-  IN EFI_PHYSICAL_ADDRESS  Memory,
-  IN UINTN                 NumberOfPages
+  IN EFI_PHYSICAL_ADDRESS Memory,
+  IN UINTN                NumberOfPages
   )
 {
   EFI_STATUS  Status;
@@ -354,10 +367,10 @@ MmFreePages (
 **/
 VOID
 MmAddMemoryRegion (
-  IN  EFI_PHYSICAL_ADDRESS  MemBase,
-  IN  UINT64                MemLength,
-  IN  EFI_MEMORY_TYPE       Type,
-  IN  UINT64                Attributes
+  IN  EFI_PHYSICAL_ADDRESS MemBase,
+  IN  UINT64               MemLength,
+  IN  EFI_MEMORY_TYPE      Type,
+  IN  UINT64               Attributes
   )
 {
   UINTN  AlignedMemBase;

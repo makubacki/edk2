@@ -25,8 +25,8 @@
 **/
 VOID
 MmInitializeMemoryServices (
-  IN UINTN                 MmramRangeCount,
-  IN EFI_MMRAM_DESCRIPTOR  *MmramRanges
+  IN UINTN                MmramRangeCount,
+  IN EFI_MMRAM_DESCRIPTOR *MmramRanges
   );
 
 #endif
