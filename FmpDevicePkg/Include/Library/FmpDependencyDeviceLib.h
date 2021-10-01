@@ -28,8 +28,8 @@
 EFI_STATUS
 EFIAPI
 SaveFmpDependency (
-  IN EFI_FIRMWARE_IMAGE_DEP  *Depex,
-  IN UINT32                  DepexSize
+  IN EFI_FIRMWARE_IMAGE_DEP *Depex,
+  IN UINT32                 DepexSize
   );
 
 /**
@@ -42,10 +42,10 @@ SaveFmpDependency (
   @retval  NULL
 
 **/
-EFI_FIRMWARE_IMAGE_DEP*
+EFI_FIRMWARE_IMAGE_DEP *
 EFIAPI
 GetFmpDependency (
-  OUT UINT32  *DepexSize
+  OUT UINT32 *DepexSize
   );
 
 #endif

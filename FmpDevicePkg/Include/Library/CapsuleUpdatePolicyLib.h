@@ -27,7 +27,7 @@
 EFI_STATUS
 EFIAPI
 CheckSystemPower (
-  OUT BOOLEAN  *Good
+  OUT BOOLEAN *Good
   );
 
 /**
@@ -46,7 +46,7 @@ CheckSystemPower (
 EFI_STATUS
 EFIAPI
 CheckSystemThermal (
-  OUT BOOLEAN   *Good
+  OUT BOOLEAN *Good
   );
 
 /**
@@ -65,7 +65,7 @@ CheckSystemThermal (
 EFI_STATUS
 EFIAPI
 CheckSystemEnvironment (
-  OUT BOOLEAN   *Good
+  OUT BOOLEAN *Good
   );
 
 /**

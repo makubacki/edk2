@@ -37,8 +37,8 @@
 EFI_STATUS
 EFIAPI
 CapsuleUpdatePolicyCheckSystemPower (
-  IN  EDKII_CAPSULE_UPDATE_POLICY_PROTOCOL  *This,
-  OUT BOOLEAN                               *Good
+  IN  EDKII_CAPSULE_UPDATE_POLICY_PROTOCOL *This,
+  OUT BOOLEAN                              *Good
   );
 
 /**
@@ -58,8 +58,8 @@ CapsuleUpdatePolicyCheckSystemPower (
 EFI_STATUS
 EFIAPI
 CapsuleUpdatePolicyCheckSystemThermal (
-  IN  EDKII_CAPSULE_UPDATE_POLICY_PROTOCOL  *This,
-  OUT BOOLEAN                               *Good
+  IN  EDKII_CAPSULE_UPDATE_POLICY_PROTOCOL *This,
+  OUT BOOLEAN                              *Good
   );
 
 /**
@@ -79,8 +79,8 @@ CapsuleUpdatePolicyCheckSystemThermal (
 EFI_STATUS
 EFIAPI
 CapsuleUpdatePolicyCheckSystemEnvironment (
-  IN  EDKII_CAPSULE_UPDATE_POLICY_PROTOCOL  *This,
-  OUT BOOLEAN                               *Good
+  IN  EDKII_CAPSULE_UPDATE_POLICY_PROTOCOL *This,
+  OUT BOOLEAN                              *Good
   );
 
 /**
@@ -98,7 +98,7 @@ CapsuleUpdatePolicyCheckSystemEnvironment (
 BOOLEAN
 EFIAPI
 CapsuleUpdatePolicyIsLowestSupportedVersionCheckRequired (
-  IN  EDKII_CAPSULE_UPDATE_POLICY_PROTOCOL  *This
+  IN  EDKII_CAPSULE_UPDATE_POLICY_PROTOCOL *This
   );
 
 /**
@@ -116,7 +116,7 @@ CapsuleUpdatePolicyIsLowestSupportedVersionCheckRequired (
 BOOLEAN
 EFIAPI
 CapsuleUpdatePolicyIsLockFmpDeviceAtLockEventGuidRequired (
-  IN  EDKII_CAPSULE_UPDATE_POLICY_PROTOCOL  *This
+  IN  EDKII_CAPSULE_UPDATE_POLICY_PROTOCOL *This
   );
 
 /**
@@ -133,8 +133,8 @@ CapsuleUpdatePolicyIsLockFmpDeviceAtLockEventGuidRequired (
 EFI_STATUS
 EFIAPI
 CapsuleUpdatePolicyInitialize (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 #endif

@@ -31,9 +31,9 @@
 EFI_STATUS
 EFIAPI
 GetFmpPayloadHeaderSize (
-  IN  CONST VOID   *Header,
-  IN  CONST UINTN  FmpPayloadSize,
-  OUT UINT32       *Size
+  IN  CONST VOID  *Header,
+  IN  CONST UINTN FmpPayloadSize,
+  OUT UINT32      *Size
   );
 
 /**
@@ -53,9 +53,9 @@ GetFmpPayloadHeaderSize (
 EFI_STATUS
 EFIAPI
 GetFmpPayloadHeaderVersion (
-  IN  CONST VOID   *Header,
-  IN  CONST UINTN  FmpPayloadSize,
-  OUT UINT32       *Version
+  IN  CONST VOID  *Header,
+  IN  CONST UINTN FmpPayloadSize,
+  OUT UINT32      *Version
   );
 
 /**
@@ -75,9 +75,9 @@ GetFmpPayloadHeaderVersion (
 EFI_STATUS
 EFIAPI
 GetFmpPayloadHeaderLowestSupportedVersion (
-  IN  CONST VOID    *Header,
-  IN  CONST UINTN   FmpPayloadSize,
-  OUT UINT32        *LowestSupportedVersion
+  IN  CONST VOID  *Header,
+  IN  CONST UINTN FmpPayloadSize,
+  OUT UINT32      *LowestSupportedVersion
   );
 
 #endif
