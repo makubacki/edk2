@@ -35,9 +35,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 HttpBootDxeComponentNameGetDriverName (
-  IN EFI_COMPONENT_NAME2_PROTOCOL  *This,
-  IN  CHAR8                        *Language,
-  OUT CHAR16                       **DriverName
+  IN EFI_COMPONENT_NAME2_PROTOCOL *This,
+  IN  CHAR8                       *Language,
+  OUT CHAR16                      **DriverName
   );
 
 /**
@@ -83,11 +83,11 @@ HttpBootDxeComponentNameGetDriverName (
 EFI_STATUS
 EFIAPI
 HttpBootDxeComponentNameGetControllerName (
-  IN  EFI_COMPONENT_NAME2_PROTOCOL  *This,
-  IN  EFI_HANDLE                    ControllerHandle,
-  IN  EFI_HANDLE                    ChildHandle        OPTIONAL,
-  IN  CHAR8                         *Language,
-  OUT CHAR16                        **ControllerName
+  IN  EFI_COMPONENT_NAME2_PROTOCOL *This,
+  IN  EFI_HANDLE                   ControllerHandle,
+  IN  EFI_HANDLE                   ChildHandle        OPTIONAL,
+  IN  CHAR8                        *Language,
+  OUT CHAR16                       **ControllerName
   );
 
 #endif

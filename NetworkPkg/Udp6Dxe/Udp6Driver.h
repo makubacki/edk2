@@ -59,9 +59,9 @@
 EFI_STATUS
 EFIAPI
 Udp6DriverBindingSupported (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath  OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath  OPTIONAL
   );
 
 /**
@@ -86,9 +86,9 @@ Udp6DriverBindingSupported (
 EFI_STATUS
 EFIAPI
 Udp6DriverBindingStart (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath  OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath  OPTIONAL
   );
 
 /**
@@ -114,10 +114,10 @@ Udp6DriverBindingStart (
 EFI_STATUS
 EFIAPI
 Udp6DriverBindingStop (
-  IN  EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN  EFI_HANDLE                   ControllerHandle,
-  IN  UINTN                        NumberOfChildren,
-  IN  EFI_HANDLE                   *ChildHandleBuffer OPTIONAL
+  IN  EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN  EFI_HANDLE                  ControllerHandle,
+  IN  UINTN                       NumberOfChildren,
+  IN  EFI_HANDLE                  *ChildHandleBuffer OPTIONAL
   );
 
 /**
@@ -142,8 +142,8 @@ Udp6DriverBindingStop (
 EFI_STATUS
 EFIAPI
 Udp6ServiceBindingCreateChild (
-  IN EFI_SERVICE_BINDING_PROTOCOL  *This,
-  IN OUT EFI_HANDLE                *ChildHandle
+  IN EFI_SERVICE_BINDING_PROTOCOL *This,
+  IN OUT EFI_HANDLE               *ChildHandle
   );
 
 /**
@@ -168,9 +168,8 @@ Udp6ServiceBindingCreateChild (
 EFI_STATUS
 EFIAPI
 Udp6ServiceBindingDestroyChild (
-  IN EFI_SERVICE_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                    ChildHandle
+  IN EFI_SERVICE_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                   ChildHandle
   );
 
 #endif
-

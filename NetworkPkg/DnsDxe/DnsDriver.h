@@ -15,84 +15,84 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 ///
 /// Dns service block
 ///
-typedef struct _DNS_DRIVER_DATA  DNS_DRIVER_DATA;
+typedef struct _DNS_DRIVER_DATA DNS_DRIVER_DATA;
 
 ///
 /// Dns service block
 ///
-typedef struct _DNS_SERVICE  DNS_SERVICE;
+typedef struct _DNS_SERVICE DNS_SERVICE;
 
 ///
 /// Dns instance block
 ///
 typedef struct _DNS_INSTANCE DNS_INSTANCE;
 
-#define DNS_SERVICE_SIGNATURE    SIGNATURE_32 ('D', 'N', 'S', 'S')
+#define DNS_SERVICE_SIGNATURE  SIGNATURE_32 ('D', 'N', 'S', 'S')
 
-#define DNS_INSTANCE_SIGNATURE   SIGNATURE_32 ('D', 'N', 'S', 'I')
+#define DNS_INSTANCE_SIGNATURE  SIGNATURE_32 ('D', 'N', 'S', 'I')
 
 struct _DNS_DRIVER_DATA {
-  EFI_EVENT                     Timer; /// Ticking timer for DNS cache update.
+  EFI_EVENT     Timer;                 /// Ticking timer for DNS cache update.
 
-  LIST_ENTRY                    Dns4CacheList;
-  LIST_ENTRY                    Dns4ServerList;
+  LIST_ENTRY    Dns4CacheList;
+  LIST_ENTRY    Dns4ServerList;
 
-  LIST_ENTRY                    Dns6CacheList;
-  LIST_ENTRY                    Dns6ServerList;
+  LIST_ENTRY    Dns6CacheList;
+  LIST_ENTRY    Dns6ServerList;
 };
 
 struct _DNS_SERVICE {
-  UINT32                        Signature;
-  EFI_SERVICE_BINDING_PROTOCOL  ServiceBinding;
+  UINT32                          Signature;
+  EFI_SERVICE_BINDING_PROTOCOL    ServiceBinding;
 
-  UINT16                        Dns4ChildrenNum;
-  LIST_ENTRY                    Dns4ChildrenList;
+  UINT16                          Dns4ChildrenNum;
+  LIST_ENTRY                      Dns4ChildrenList;
 
-  UINT16                        Dns6ChildrenNum;
-  LIST_ENTRY                    Dns6ChildrenList;
+  UINT16                          Dns6ChildrenNum;
+  LIST_ENTRY                      Dns6ChildrenList;
 
-  EFI_HANDLE                    ControllerHandle;
-  EFI_HANDLE                    ImageHandle;
+  EFI_HANDLE                      ControllerHandle;
+  EFI_HANDLE                      ImageHandle;
 
-  EFI_EVENT                     TimerToGetMap;
+  EFI_EVENT                       TimerToGetMap;
 
-  EFI_EVENT                     Timer; /// Ticking timer for packet retransmission.
+  EFI_EVENT                       Timer; /// Ticking timer for packet retransmission.
 
-  UINT8                         IpVersion;
-  UDP_IO                        *ConnectUdp;
+  UINT8                           IpVersion;
+  UDP_IO                          *ConnectUdp;
 };
 
 struct _DNS_INSTANCE {
-  UINT32                        Signature;
-  LIST_ENTRY                    Link;
+  UINT32                  Signature;
+  LIST_ENTRY              Link;
 
-  EFI_DNS4_PROTOCOL             Dns4;
-  EFI_DNS6_PROTOCOL             Dns6;
+  EFI_DNS4_PROTOCOL       Dns4;
+  EFI_DNS6_PROTOCOL       Dns6;
 
-  INTN                          State;
-  BOOLEAN                       InDestroy;
+  INTN                    State;
+  BOOLEAN                 InDestroy;
 
-  DNS_SERVICE                   *Service;
-  EFI_HANDLE                    ChildHandle;
+  DNS_SERVICE             *Service;
+  EFI_HANDLE              ChildHandle;
 
-  EFI_DNS4_CONFIG_DATA          Dns4CfgData;
-  EFI_DNS6_CONFIG_DATA          Dns6CfgData;
+  EFI_DNS4_CONFIG_DATA    Dns4CfgData;
+  EFI_DNS6_CONFIG_DATA    Dns6CfgData;
 
-  EFI_IP_ADDRESS                SessionDnsServer;
+  EFI_IP_ADDRESS          SessionDnsServer;
 
-  NET_MAP                       Dns4TxTokens;
-  NET_MAP                       Dns6TxTokens;
+  NET_MAP                 Dns4TxTokens;
+  NET_MAP                 Dns6TxTokens;
 
-  UDP_IO                        *UdpIo;
+  UDP_IO                  *UdpIo;
 };
 
 typedef struct {
-  EFI_SERVICE_BINDING_PROTOCOL  *ServiceBinding;
-  UINTN                         NumberOfChildren;
-  EFI_HANDLE                    *ChildHandleBuffer;
+  EFI_SERVICE_BINDING_PROTOCOL    *ServiceBinding;
+  UINTN                           NumberOfChildren;
+  EFI_HANDLE                      *ChildHandleBuffer;
 } DNS_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT;
 
-extern DNS_DRIVER_DATA          *mDriverData;
+extern DNS_DRIVER_DATA  *mDriverData;
 
 #define DNS_SERVICE_FROM_THIS(a)   \
   CR (a, DNS_SERVICE, ServiceBinding, DNS_SERVICE_SIGNATURE)
@@ -103,7 +103,6 @@ extern DNS_DRIVER_DATA          *mDriverData;
 #define DNS_INSTANCE_FROM_THIS_PROTOCOL6(a)  \
   CR (a, DNS_INSTANCE, Dns6, DNS_INSTANCE_SIGNATURE)
 
-
 /**
   Destroy the DNS instance and recycle the resources.
 
@@ -112,7 +111,7 @@ extern DNS_DRIVER_DATA          *mDriverData;
 **/
 VOID
 DnsDestroyInstance (
-  IN DNS_INSTANCE         *Instance
+  IN DNS_INSTANCE *Instance
   );
 
 /**
@@ -127,8 +126,8 @@ DnsDestroyInstance (
 **/
 EFI_STATUS
 DnsCreateInstance (
-  IN  DNS_SERVICE         *Service,
-  OUT DNS_INSTANCE        **Instance
+  IN  DNS_SERVICE  *Service,
+  OUT DNS_INSTANCE **Instance
   );
 
 /**
@@ -144,8 +143,8 @@ DnsCreateInstance (
 EFI_STATUS
 EFIAPI
 DnsDestroyChildEntryInHandleBuffer (
-  IN LIST_ENTRY         *Entry,
-  IN VOID               *Context
+  IN LIST_ENTRY *Entry,
+  IN VOID       *Context
   );
 
 /**
@@ -163,8 +162,8 @@ DnsDestroyChildEntryInHandleBuffer (
 EFI_STATUS
 EFIAPI
 DnsConfigNullUdp (
-  IN UDP_IO                 *UdpIo,
-  IN VOID                   *Context
+  IN UDP_IO *UdpIo,
+  IN VOID   *Context
   );
 
 /**
@@ -175,7 +174,7 @@ DnsConfigNullUdp (
 **/
 VOID
 DnsDestroyService (
-  IN DNS_SERVICE     *DnsSb
+  IN DNS_SERVICE *DnsSb
   );
 
 /**
@@ -197,10 +196,10 @@ DnsDestroyService (
 **/
 EFI_STATUS
 DnsCreateService (
-  IN     EFI_HANDLE            Controller,
-  IN     EFI_HANDLE            Image,
-  IN     UINT8                 IpVersion,
-     OUT DNS_SERVICE           **Service
+  IN     EFI_HANDLE Controller,
+  IN     EFI_HANDLE Image,
+  IN     UINT8      IpVersion,
+  OUT DNS_SERVICE   **Service
   );
 
 /**
@@ -215,7 +214,7 @@ DnsCreateService (
 EFI_STATUS
 EFIAPI
 DnsUnload (
-  IN EFI_HANDLE  ImageHandle
+  IN EFI_HANDLE ImageHandle
   );
 
 /**
@@ -232,8 +231,8 @@ DnsUnload (
 EFI_STATUS
 EFIAPI
 DnsDriverEntryPoint (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 /**
@@ -281,9 +280,9 @@ DnsDriverEntryPoint (
 EFI_STATUS
 EFIAPI
 Dns4DriverBindingSupported (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   );
 
 /**
@@ -324,9 +323,9 @@ Dns4DriverBindingSupported (
 EFI_STATUS
 EFIAPI
 Dns4DriverBindingStart (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   );
 
 /**
@@ -358,10 +357,10 @@ Dns4DriverBindingStart (
 EFI_STATUS
 EFIAPI
 Dns4DriverBindingStop (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN UINTN                        NumberOfChildren,
-  IN EFI_HANDLE                   *ChildHandleBuffer OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN UINTN                       NumberOfChildren,
+  IN EFI_HANDLE                  *ChildHandleBuffer OPTIONAL
   );
 
 /**
@@ -409,9 +408,9 @@ Dns4DriverBindingStop (
 EFI_STATUS
 EFIAPI
 Dns6DriverBindingSupported (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   );
 
 /**
@@ -452,9 +451,9 @@ Dns6DriverBindingSupported (
 EFI_STATUS
 EFIAPI
 Dns6DriverBindingStart (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   );
 
 /**
@@ -486,10 +485,10 @@ Dns6DriverBindingStart (
 EFI_STATUS
 EFIAPI
 Dns6DriverBindingStop (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN UINTN                        NumberOfChildren,
-  IN EFI_HANDLE                   *ChildHandleBuffer OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN UINTN                       NumberOfChildren,
+  IN EFI_HANDLE                  *ChildHandleBuffer OPTIONAL
   );
 
 /**
@@ -514,8 +513,8 @@ Dns6DriverBindingStop (
 EFI_STATUS
 EFIAPI
 Dns4ServiceBindingCreateChild (
-  IN EFI_SERVICE_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                    *ChildHandle
+  IN EFI_SERVICE_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                   *ChildHandle
   );
 
 /**
@@ -539,8 +538,8 @@ Dns4ServiceBindingCreateChild (
 EFI_STATUS
 EFIAPI
 Dns4ServiceBindingDestroyChild (
-  IN EFI_SERVICE_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                    ChildHandle
+  IN EFI_SERVICE_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                   ChildHandle
   );
 
 /**
@@ -565,8 +564,8 @@ Dns4ServiceBindingDestroyChild (
 EFI_STATUS
 EFIAPI
 Dns6ServiceBindingCreateChild (
-  IN EFI_SERVICE_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                    *ChildHandle
+  IN EFI_SERVICE_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                   *ChildHandle
   );
 
 /**
@@ -590,9 +589,8 @@ Dns6ServiceBindingCreateChild (
 EFI_STATUS
 EFIAPI
 Dns6ServiceBindingDestroyChild (
-  IN EFI_SERVICE_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                    ChildHandle
+  IN EFI_SERVICE_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                   ChildHandle
   );
-
 
 #endif

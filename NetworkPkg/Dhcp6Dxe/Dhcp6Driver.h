@@ -13,9 +13,9 @@
 
 #include <Protocol/ServiceBinding.h>
 
-extern EFI_COMPONENT_NAME_PROTOCOL  gDhcp6ComponentName;
-extern EFI_COMPONENT_NAME2_PROTOCOL gDhcp6ComponentName2;
-extern EFI_UNICODE_STRING_TABLE     *gDhcp6ControllerNameTable;
+extern EFI_COMPONENT_NAME_PROTOCOL   gDhcp6ComponentName;
+extern EFI_COMPONENT_NAME2_PROTOCOL  gDhcp6ComponentName2;
+extern EFI_UNICODE_STRING_TABLE      *gDhcp6ControllerNameTable;
 
 /**
   Test to see if this driver supports ControllerHandle. This service
@@ -38,9 +38,9 @@ extern EFI_UNICODE_STRING_TABLE     *gDhcp6ControllerNameTable;
 EFI_STATUS
 EFIAPI
 Dhcp6DriverBindingSupported (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   );
 
 /**
@@ -64,9 +64,9 @@ Dhcp6DriverBindingSupported (
 EFI_STATUS
 EFIAPI
 Dhcp6DriverBindingStart (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   );
 
 /**
@@ -90,10 +90,10 @@ Dhcp6DriverBindingStart (
 EFI_STATUS
 EFIAPI
 Dhcp6DriverBindingStop (
-  IN  EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN  EFI_HANDLE                   ControllerHandle,
-  IN  UINTN                        NumberOfChildren,
-  IN  EFI_HANDLE                   *ChildHandleBuffer      OPTIONAL
+  IN  EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN  EFI_HANDLE                  ControllerHandle,
+  IN  UINTN                       NumberOfChildren,
+  IN  EFI_HANDLE                  *ChildHandleBuffer      OPTIONAL
   );
 
 /**
@@ -118,8 +118,8 @@ Dhcp6DriverBindingStop (
 EFI_STATUS
 EFIAPI
 Dhcp6ServiceBindingCreateChild (
-  IN     EFI_SERVICE_BINDING_PROTOCOL  *This,
-  IN OUT EFI_HANDLE                    *ChildHandle
+  IN     EFI_SERVICE_BINDING_PROTOCOL *This,
+  IN OUT EFI_HANDLE                   *ChildHandle
   );
 
 /**
@@ -143,8 +143,8 @@ Dhcp6ServiceBindingCreateChild (
 EFI_STATUS
 EFIAPI
 Dhcp6ServiceBindingDestroyChild (
-  IN EFI_SERVICE_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                    ChildHandle
+  IN EFI_SERVICE_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                   ChildHandle
   );
 
 #endif

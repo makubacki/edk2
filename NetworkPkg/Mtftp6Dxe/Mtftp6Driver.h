@@ -13,9 +13,9 @@
 
 #include <Protocol/ServiceBinding.h>
 
-extern EFI_COMPONENT_NAME_PROTOCOL  gMtftp6ComponentName;
-extern EFI_COMPONENT_NAME2_PROTOCOL gMtftp6ComponentName2;
-extern EFI_UNICODE_STRING_TABLE     *gMtftp6ControllerNameTable;
+extern EFI_COMPONENT_NAME_PROTOCOL   gMtftp6ComponentName;
+extern EFI_COMPONENT_NAME2_PROTOCOL  gMtftp6ComponentName2;
+extern EFI_UNICODE_STRING_TABLE      *gMtftp6ControllerNameTable;
 
 /**
   Test to see if this driver supports Controller. This service
@@ -37,9 +37,9 @@ extern EFI_UNICODE_STRING_TABLE     *gMtftp6ControllerNameTable;
 EFI_STATUS
 EFIAPI
 Mtftp6DriverBindingSupported (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   Controller,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  Controller,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath
   );
 
 /**
@@ -63,9 +63,9 @@ Mtftp6DriverBindingSupported (
 EFI_STATUS
 EFIAPI
 Mtftp6DriverBindingStart (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   Controller,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  Controller,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath
   );
 
 /**

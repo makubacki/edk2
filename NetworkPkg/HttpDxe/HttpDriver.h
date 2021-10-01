@@ -63,7 +63,7 @@
 //
 // Driver Version
 //
-#define HTTP_DRIVER_VERSION 0xa
+#define HTTP_DRIVER_VERSION  0xa
 
 //
 // Protocol instances
@@ -71,8 +71,8 @@
 extern EFI_DRIVER_BINDING_PROTOCOL  gHttpDxeIp4DriverBinding;
 extern EFI_DRIVER_BINDING_PROTOCOL  gHttpDxeIp6DriverBinding;
 
-extern EFI_COMPONENT_NAME2_PROTOCOL gHttpDxeComponentName2;
-extern EFI_COMPONENT_NAME_PROTOCOL  gHttpDxeComponentName;
+extern EFI_COMPONENT_NAME2_PROTOCOL  gHttpDxeComponentName2;
+extern EFI_COMPONENT_NAME_PROTOCOL   gHttpDxeComponentName;
 
 extern EFI_HTTP_UTILITIES_PROTOCOL  *mHttpUtilities;
 
@@ -86,9 +86,9 @@ extern EFI_HTTP_UTILITIES_PROTOCOL  *mHttpUtilities;
 #include "HttpDns.h"
 
 typedef struct {
-  EFI_SERVICE_BINDING_PROTOCOL  *ServiceBinding;
-  UINTN                         NumberOfChildren;
-  EFI_HANDLE                    *ChildHandleBuffer;
+  EFI_SERVICE_BINDING_PROTOCOL    *ServiceBinding;
+  UINTN                           NumberOfChildren;
+  EFI_HANDLE                      *ChildHandleBuffer;
 } HTTP_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT;
 
 /**
@@ -136,9 +136,9 @@ typedef struct {
 EFI_STATUS
 EFIAPI
 HttpDxeIp4DriverBindingSupported (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   );
 
 /**
@@ -179,9 +179,9 @@ HttpDxeIp4DriverBindingSupported (
 EFI_STATUS
 EFIAPI
 HttpDxeIp4DriverBindingStart (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   );
 
 /**
@@ -213,10 +213,10 @@ HttpDxeIp4DriverBindingStart (
 EFI_STATUS
 EFIAPI
 HttpDxeIp4DriverBindingStop (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN  EFI_HANDLE                  ControllerHandle,
-  IN  UINTN                       NumberOfChildren,
-  IN  EFI_HANDLE                  *ChildHandleBuffer OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN  EFI_HANDLE                 ControllerHandle,
+  IN  UINTN                      NumberOfChildren,
+  IN  EFI_HANDLE                 *ChildHandleBuffer OPTIONAL
   );
 
 /**
@@ -264,9 +264,9 @@ HttpDxeIp4DriverBindingStop (
 EFI_STATUS
 EFIAPI
 HttpDxeIp6DriverBindingSupported (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   );
 
 /**
@@ -308,9 +308,9 @@ HttpDxeIp6DriverBindingSupported (
 EFI_STATUS
 EFIAPI
 HttpDxeIp6DriverBindingStart (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   );
 
 /**
@@ -342,10 +342,10 @@ HttpDxeIp6DriverBindingStart (
 EFI_STATUS
 EFIAPI
 HttpDxeIp6DriverBindingStop (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN UINTN                        NumberOfChildren,
-  IN EFI_HANDLE                   *ChildHandleBuffer OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN UINTN                       NumberOfChildren,
+  IN EFI_HANDLE                  *ChildHandleBuffer OPTIONAL
   );
 
 /**
@@ -370,8 +370,8 @@ HttpDxeIp6DriverBindingStop (
 EFI_STATUS
 EFIAPI
 HttpServiceBindingCreateChild (
-  IN EFI_SERVICE_BINDING_PROTOCOL  *This,
-  IN OUT EFI_HANDLE                *ChildHandle
+  IN EFI_SERVICE_BINDING_PROTOCOL *This,
+  IN OUT EFI_HANDLE               *ChildHandle
   );
 
 /**
@@ -393,8 +393,8 @@ HttpServiceBindingCreateChild (
 EFI_STATUS
 EFIAPI
 HttpServiceBindingDestroyChild (
-  IN EFI_SERVICE_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                    ChildHandle
+  IN EFI_SERVICE_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                   ChildHandle
   );
 
 #endif

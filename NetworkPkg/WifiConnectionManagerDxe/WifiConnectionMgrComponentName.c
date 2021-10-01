@@ -9,15 +9,15 @@
 
 #include "WifiConnectionMgrDxe.h"
 
-extern EFI_GUID mEfiWifiMgrPrivateGuid;
+extern EFI_GUID  mEfiWifiMgrPrivateGuid;
 
 ///
 /// Component Name Protocol instance
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
 EFI_COMPONENT_NAME_PROTOCOL  gWifiMgrDxeComponentName = {
-  (EFI_COMPONENT_NAME_GET_DRIVER_NAME)     WifiMgrDxeComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME_GET_CONTROLLER_NAME) WifiMgrDxeComponentNameGetControllerName,
+  (EFI_COMPONENT_NAME_GET_DRIVER_NAME)WifiMgrDxeComponentNameGetDriverName,
+  (EFI_COMPONENT_NAME_GET_CONTROLLER_NAME)WifiMgrDxeComponentNameGetControllerName,
   "eng"
 };
 
@@ -35,7 +35,7 @@ EFI_COMPONENT_NAME2_PROTOCOL  gWifiMgrDxeComponentName2 = {
 /// Table of driver names
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
-EFI_UNICODE_STRING_TABLE mWifiMgrDxeDriverNameTable[] = {
+EFI_UNICODE_STRING_TABLE  mWifiMgrDxeDriverNameTable[] = {
   {
     "eng;en",
     L"UEFI WiFi Connection Manager"
@@ -50,7 +50,7 @@ EFI_UNICODE_STRING_TABLE mWifiMgrDxeDriverNameTable[] = {
 /// Table of controller names
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
-EFI_UNICODE_STRING_TABLE mWifiMgrDxeControllerNameTable[] = {
+EFI_UNICODE_STRING_TABLE  mWifiMgrDxeControllerNameTable[] = {
   {
     "eng;en",
     L"UEFI WiFi Connection Manager Controller"
@@ -86,9 +86,9 @@ EFI_UNICODE_STRING_TABLE mWifiMgrDxeControllerNameTable[] = {
 EFI_STATUS
 EFIAPI
 WifiMgrDxeComponentNameGetDriverName (
-  IN EFI_COMPONENT_NAME2_PROTOCOL  *This,
-  IN  CHAR8                        *Language,
-  OUT CHAR16                       **DriverName
+  IN EFI_COMPONENT_NAME2_PROTOCOL *This,
+  IN  CHAR8                       *Language,
+  OUT CHAR16                      **DriverName
   )
 {
   return LookupUnicodeString2 (
@@ -143,20 +143,20 @@ WifiMgrDxeComponentNameGetDriverName (
 EFI_STATUS
 EFIAPI
 WifiMgrDxeComponentNameGetControllerName (
-  IN  EFI_COMPONENT_NAME2_PROTOCOL  *This,
-  IN  EFI_HANDLE                    ControllerHandle,
-  IN  EFI_HANDLE                    ChildHandle        OPTIONAL,
-  IN  CHAR8                         *Language,
-  OUT CHAR16                        **ControllerName
+  IN  EFI_COMPONENT_NAME2_PROTOCOL *This,
+  IN  EFI_HANDLE                   ControllerHandle,
+  IN  EFI_HANDLE                   ChildHandle        OPTIONAL,
+  IN  CHAR8                        *Language,
+  OUT CHAR16                       **ControllerName
   )
 {
-  EFI_STATUS                   Status;
-  WIFI_MGR_PRIVATE_PROTOCOL    *WifiMgrPrivate;
+  EFI_STATUS                 Status;
+  WIFI_MGR_PRIVATE_PROTOCOL  *WifiMgrPrivate;
 
   //
   // ChildHandle must be NULL for a Device Driver
   //
-  if (ControllerHandle == NULL || ChildHandle != NULL) {
+  if ((ControllerHandle == NULL) || (ChildHandle != NULL)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -166,7 +166,7 @@ WifiMgrDxeComponentNameGetControllerName (
   Status = gBS->OpenProtocol (
                   ControllerHandle,
                   &mEfiWifiMgrPrivateGuid,
-                  (VOID **) &WifiMgrPrivate,
+                  (VOID **)&WifiMgrPrivate,
                   NULL,
                   NULL,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL

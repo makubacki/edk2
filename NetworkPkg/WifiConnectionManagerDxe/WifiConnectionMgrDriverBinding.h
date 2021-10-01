@@ -56,9 +56,9 @@
 EFI_STATUS
 EFIAPI
 WifiMgrDxeDriverBindingSupported (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   );
 
 /**
@@ -99,9 +99,9 @@ WifiMgrDxeDriverBindingSupported (
 EFI_STATUS
 EFIAPI
 WifiMgrDxeDriverBindingStart (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   );
 
 /**
@@ -133,10 +133,10 @@ WifiMgrDxeDriverBindingStart (
 EFI_STATUS
 EFIAPI
 WifiMgrDxeDriverBindingStop (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN  EFI_HANDLE                  ControllerHandle,
-  IN  UINTN                       NumberOfChildren,
-  IN  EFI_HANDLE                  *ChildHandleBuffer OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN  EFI_HANDLE                 ControllerHandle,
+  IN  UINTN                      NumberOfChildren,
+  IN  EFI_HANDLE                 *ChildHandleBuffer OPTIONAL
   );
 
 #endif

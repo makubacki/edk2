@@ -10,8 +10,8 @@
 #ifndef __EFI_PXEBC_DRIVER_H__
 #define __EFI_PXEBC_DRIVER_H__
 
-extern EFI_COMPONENT_NAME_PROTOCOL  gPxeBcComponentName;
-extern EFI_COMPONENT_NAME2_PROTOCOL gPxeBcComponentName2;
+extern EFI_COMPONENT_NAME_PROTOCOL   gPxeBcComponentName;
+extern EFI_COMPONENT_NAME2_PROTOCOL  gPxeBcComponentName2;
 
 /**
   Test to see if this driver supports ControllerHandle. This service
@@ -33,9 +33,9 @@ extern EFI_COMPONENT_NAME2_PROTOCOL gPxeBcComponentName2;
 EFI_STATUS
 EFIAPI
 PxeBcIp4DriverBindingSupported (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   );
 
 /**
@@ -59,11 +59,10 @@ PxeBcIp4DriverBindingSupported (
 EFI_STATUS
 EFIAPI
 PxeBcIp4DriverBindingStart (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   );
-
 
 /**
   Stop this driver on ControllerHandle. This service is called by the
@@ -87,10 +86,10 @@ PxeBcIp4DriverBindingStart (
 EFI_STATUS
 EFIAPI
 PxeBcIp4DriverBindingStop (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN UINTN                        NumberOfChildren,
-  IN EFI_HANDLE                   *ChildHandleBuffer
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN UINTN                       NumberOfChildren,
+  IN EFI_HANDLE                  *ChildHandleBuffer
   );
 
 /**
@@ -113,9 +112,9 @@ PxeBcIp4DriverBindingStop (
 EFI_STATUS
 EFIAPI
 PxeBcIp6DriverBindingSupported (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   );
 
 /**
@@ -139,9 +138,9 @@ PxeBcIp6DriverBindingSupported (
 EFI_STATUS
 EFIAPI
 PxeBcIp6DriverBindingStart (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   );
 
 /**
@@ -166,10 +165,10 @@ PxeBcIp6DriverBindingStart (
 EFI_STATUS
 EFIAPI
 PxeBcIp6DriverBindingStop (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN UINTN                        NumberOfChildren,
-  IN EFI_HANDLE                   *ChildHandleBuffer
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN UINTN                       NumberOfChildren,
+  IN EFI_HANDLE                  *ChildHandleBuffer
   );
-#endif
 
+#endif

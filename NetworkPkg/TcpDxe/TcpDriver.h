@@ -10,29 +10,29 @@
 #ifndef _TCP_DRIVER_H_
 #define _TCP_DRIVER_H_
 
-#define TCP_DRIVER_SIGNATURE   SIGNATURE_32 ('T', 'C', 'P', 'D')
+#define TCP_DRIVER_SIGNATURE  SIGNATURE_32 ('T', 'C', 'P', 'D')
 
-#define TCP_PORT_KNOWN         1024
-#define TCP_PORT_USER_RESERVED 65535
+#define TCP_PORT_KNOWN          1024
+#define TCP_PORT_USER_RESERVED  65535
 
 typedef struct _TCP_HEARTBEAT_TIMER {
-  EFI_EVENT  TimerEvent;
-  INTN       RefCnt;
+  EFI_EVENT    TimerEvent;
+  INTN         RefCnt;
 } TCP_HEARTBEAT_TIMER;
 
 typedef struct _TCP_SERVICE_DATA {
-  UINT32                        Signature;
-  EFI_HANDLE                    ControllerHandle;
-  EFI_HANDLE                    DriverBindingHandle;
-  UINT8                         IpVersion;
-  IP_IO                         *IpIo;
-  EFI_SERVICE_BINDING_PROTOCOL  ServiceBinding;
-  LIST_ENTRY                    SocketList;
+  UINT32                          Signature;
+  EFI_HANDLE                      ControllerHandle;
+  EFI_HANDLE                      DriverBindingHandle;
+  UINT8                           IpVersion;
+  IP_IO                           *IpIo;
+  EFI_SERVICE_BINDING_PROTOCOL    ServiceBinding;
+  LIST_ENTRY                      SocketList;
 } TCP_SERVICE_DATA;
 
 typedef struct _TCP_PROTO_DATA {
-  TCP_SERVICE_DATA  *TcpService;
-  TCP_CB            *TcpPcb;
+  TCP_SERVICE_DATA    *TcpService;
+  TCP_CB              *TcpPcb;
 } TCP_PROTO_DATA;
 
 #define TCP_SERVICE_FROM_THIS(a) \
@@ -60,8 +60,8 @@ typedef struct _TCP_PROTO_DATA {
 EFI_STATUS
 EFIAPI
 TcpDriverEntryPoint (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 //
@@ -84,9 +84,9 @@ TcpDriverEntryPoint (
 EFI_STATUS
 EFIAPI
 Tcp4DriverBindingSupported (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   );
 
 /**
@@ -106,9 +106,9 @@ Tcp4DriverBindingSupported (
 EFI_STATUS
 EFIAPI
 Tcp4DriverBindingStart (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   );
 
 /**
@@ -129,10 +129,10 @@ Tcp4DriverBindingStart (
 EFI_STATUS
 EFIAPI
 Tcp4DriverBindingStop (
-  IN  EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN  EFI_HANDLE                   ControllerHandle,
-  IN  UINTN                        NumberOfChildren,
-  IN  EFI_HANDLE                   *ChildHandleBuffer OPTIONAL
+  IN  EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN  EFI_HANDLE                  ControllerHandle,
+  IN  UINTN                       NumberOfChildren,
+  IN  EFI_HANDLE                  *ChildHandleBuffer OPTIONAL
   );
 
 /**
@@ -151,9 +151,9 @@ Tcp4DriverBindingStop (
 EFI_STATUS
 EFIAPI
 Tcp6DriverBindingSupported (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   );
 
 /**
@@ -173,9 +173,9 @@ Tcp6DriverBindingSupported (
 EFI_STATUS
 EFIAPI
 Tcp6DriverBindingStart (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                  ControllerHandle,
+  IN EFI_DEVICE_PATH_PROTOCOL    *RemainingDevicePath OPTIONAL
   );
 
 /**
@@ -196,10 +196,10 @@ Tcp6DriverBindingStart (
 EFI_STATUS
 EFIAPI
 Tcp6DriverBindingStop (
-  IN  EFI_DRIVER_BINDING_PROTOCOL  *This,
-  IN  EFI_HANDLE                   ControllerHandle,
-  IN  UINTN                        NumberOfChildren,
-  IN  EFI_HANDLE                   *ChildHandleBuffer OPTIONAL
+  IN  EFI_DRIVER_BINDING_PROTOCOL *This,
+  IN  EFI_HANDLE                  ControllerHandle,
+  IN  UINTN                       NumberOfChildren,
+  IN  EFI_HANDLE                  *ChildHandleBuffer OPTIONAL
   );
 
 /**
@@ -214,8 +214,8 @@ Tcp6DriverBindingStop (
 **/
 EFI_STATUS
 TcpCreateSocketCallback (
-  IN SOCKET  *This,
-  IN VOID    *Context
+  IN SOCKET *This,
+  IN VOID   *Context
   );
 
 /**
@@ -227,8 +227,8 @@ TcpCreateSocketCallback (
 **/
 VOID
 TcpDestroySocketCallback (
-  IN SOCKET  *This,
-  IN VOID    *Context
+  IN SOCKET *This,
+  IN VOID   *Context
   );
 
 //
@@ -258,8 +258,8 @@ TcpDestroySocketCallback (
 EFI_STATUS
 EFIAPI
 TcpServiceBindingCreateChild (
-  IN     EFI_SERVICE_BINDING_PROTOCOL  *This,
-  IN OUT EFI_HANDLE                    *ChildHandle
+  IN     EFI_SERVICE_BINDING_PROTOCOL *This,
+  IN OUT EFI_HANDLE                   *ChildHandle
   );
 
 /**
@@ -283,8 +283,8 @@ TcpServiceBindingCreateChild (
 EFI_STATUS
 EFIAPI
 TcpServiceBindingDestroyChild (
-  IN EFI_SERVICE_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                    ChildHandle
+  IN EFI_SERVICE_BINDING_PROTOCOL *This,
+  IN EFI_HANDLE                   ChildHandle
   );
 
 #endif

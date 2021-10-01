@@ -26,7 +26,7 @@
     gBS->SignalEvent ((Token)->Event); \
   } while (0)
 
-#define SOCK_HEADER_SPACE (60 + 60 + 72)
+#define SOCK_HEADER_SPACE  (60 + 60 + 72)
 
 /**
   Process the TCP send data, buffer the tcp txdata and append
@@ -41,8 +41,8 @@
 **/
 EFI_STATUS
 SockProcessTcpSndData (
-  IN SOCKET   *Sock,
-  IN VOID     *TcpTxData
+  IN SOCKET *Sock,
+  IN VOID   *TcpTxData
   );
 
 /**
@@ -84,8 +84,8 @@ SockConnFlush (
 **/
 EFI_STATUS
 SockCancelToken (
-  IN     SOCK_COMPLETION_TOKEN  *Token,
-  IN OUT LIST_ENTRY             *SpecifiedTokenList
+  IN     SOCK_COMPLETION_TOKEN *Token,
+  IN OUT LIST_ENTRY            *SpecifiedTokenList
   );
 
 /**

@@ -21,16 +21,16 @@
 EFI_STATUS
 EFIAPI
 TlsAuthConfigDxeUnload (
-  IN EFI_HANDLE  ImageHandle
+  IN EFI_HANDLE ImageHandle
   )
 {
-  EFI_STATUS                     Status;
-  TLS_AUTH_CONFIG_PRIVATE_DATA   *PrivateData;
+  EFI_STATUS                    Status;
+  TLS_AUTH_CONFIG_PRIVATE_DATA  *PrivateData;
 
   Status = gBS->HandleProtocol (
                   ImageHandle,
                   &gEfiCallerIdGuid,
-                  (VOID **) &PrivateData
+                  (VOID **)&PrivateData
                   );
   if (EFI_ERROR (Status)) {
     return Status;
@@ -64,13 +64,13 @@ TlsAuthConfigDxeUnload (
 EFI_STATUS
 EFIAPI
 TlsAuthConfigDxeDriverEntryPoint (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
   EFI_STATUS  Status;
 
-  TLS_AUTH_CONFIG_PRIVATE_DATA   *PrivateData;
+  TLS_AUTH_CONFIG_PRIVATE_DATA  *PrivateData;
 
   PrivateData = NULL;
 
@@ -125,4 +125,3 @@ ON_ERROR:
 
   return Status;
 }
-
