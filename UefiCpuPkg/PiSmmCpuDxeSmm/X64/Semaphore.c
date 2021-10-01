@@ -9,8 +9,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "PiSmmCpuDxeSmm.h"
 
-X86_ASSEMBLY_PATCH_LABEL gPatchSmmRelocationOriginalAddressPtr32;
-X86_ASSEMBLY_PATCH_LABEL gPatchRebasedFlagAddr32;
+X86_ASSEMBLY_PATCH_LABEL  gPatchSmmRelocationOriginalAddressPtr32;
+X86_ASSEMBLY_PATCH_LABEL  gPatchRebasedFlagAddr32;
 
 UINTN             mSmmRelocationOriginalAddress;
 volatile BOOLEAN  *mRebasedFlag;
@@ -35,14 +35,14 @@ SmmRelocationSemaphoreComplete32 (
 **/
 VOID
 SemaphoreHook (
-  IN UINTN             CpuIndex,
-  IN volatile BOOLEAN  *RebasedFlag
+  IN UINTN            CpuIndex,
+  IN volatile BOOLEAN *RebasedFlag
   )
 {
   SMRAM_SAVE_STATE_MAP  *CpuState;
   UINTN                 TempValue;
 
-  mRebasedFlag       = RebasedFlag;
+  mRebasedFlag = RebasedFlag;
   PatchInstructionX86 (
     gPatchRebasedFlagAddr32,
     (UINT32)(UINTN)mRebasedFlag,

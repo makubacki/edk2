@@ -69,7 +69,7 @@ ClearTopLevelSmiStatus (
 EFI_STATUS
 EFIAPI
 PlatformSmmBspElection (
-  OUT BOOLEAN     *IsBsp
+  OUT BOOLEAN *IsBsp
   )
 {
   return EFI_NOT_READY;

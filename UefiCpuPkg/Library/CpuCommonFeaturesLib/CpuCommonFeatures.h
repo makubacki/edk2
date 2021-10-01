@@ -34,7 +34,7 @@
 VOID *
 EFIAPI
 AesniGetConfigData (
-  IN UINTN  NumberOfProcessors
+  IN UINTN NumberOfProcessors
   );
 
 /**
@@ -56,9 +56,9 @@ AesniGetConfigData (
 BOOLEAN
 EFIAPI
 AesniSupport (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData  OPTIONAL
+  IN UINTN                            ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID                             *ConfigData  OPTIONAL
   );
 
 /**
@@ -81,9 +81,9 @@ AesniSupport (
 RETURN_STATUS
 EFIAPI
 AesniInitialize (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN UINTN ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   );
 
@@ -99,7 +99,7 @@ AesniInitialize (
 VOID *
 EFIAPI
 ClockModulationGetConfigData (
-  IN UINTN  NumberOfProcessors
+  IN UINTN NumberOfProcessors
   );
 
 /**
@@ -121,9 +121,9 @@ ClockModulationGetConfigData (
 BOOLEAN
 EFIAPI
 ClockModulationSupport (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData  OPTIONAL
+  IN UINTN                            ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID                             *ConfigData  OPTIONAL
   );
 
 /**
@@ -146,9 +146,9 @@ ClockModulationSupport (
 RETURN_STATUS
 EFIAPI
 ClockModulationInitialize (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN UINTN ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   );
 
@@ -171,9 +171,9 @@ ClockModulationInitialize (
 BOOLEAN
 EFIAPI
 EistSupport (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData  OPTIONAL
+  IN UINTN                            ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID                             *ConfigData  OPTIONAL
   );
 
 /**
@@ -198,9 +198,9 @@ EistSupport (
 RETURN_STATUS
 EFIAPI
 EistInitialize (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN UINTN ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   );
 
@@ -223,9 +223,9 @@ EistInitialize (
 BOOLEAN
 EFIAPI
 ExecuteDisableSupport (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData  OPTIONAL
+  IN UINTN                            ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID                             *ConfigData  OPTIONAL
   );
 
 /**
@@ -248,9 +248,9 @@ ExecuteDisableSupport (
 RETURN_STATUS
 EFIAPI
 ExecuteDisableInitialize (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN UINTN ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   );
 
@@ -274,9 +274,9 @@ ExecuteDisableInitialize (
 RETURN_STATUS
 EFIAPI
 FastStringsInitialize (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN UINTN ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   );
 
@@ -299,9 +299,9 @@ FastStringsInitialize (
 BOOLEAN
 EFIAPI
 MonitorMwaitSupport (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData  OPTIONAL
+  IN UINTN                            ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID                             *ConfigData  OPTIONAL
   );
 
 /**
@@ -324,9 +324,9 @@ MonitorMwaitSupport (
 RETURN_STATUS
 EFIAPI
 MonitorMwaitInitialize (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN UINTN ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   );
 
@@ -349,9 +349,9 @@ MonitorMwaitInitialize (
 BOOLEAN
 EFIAPI
 VmxSupport (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData  OPTIONAL
+  IN UINTN                            ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID                             *ConfigData  OPTIONAL
   );
 
 /**
@@ -374,9 +374,9 @@ VmxSupport (
 RETURN_STATUS
 EFIAPI
 VmxInitialize (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN UINTN ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   );
 
@@ -399,9 +399,9 @@ VmxInitialize (
 BOOLEAN
 EFIAPI
 LockFeatureControlRegisterSupport (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData  OPTIONAL
+  IN UINTN                            ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID                             *ConfigData  OPTIONAL
   );
 
 /**
@@ -424,9 +424,9 @@ LockFeatureControlRegisterSupport (
 RETURN_STATUS
 EFIAPI
 LockFeatureControlRegisterInitialize (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN UINTN ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   );
 
@@ -449,9 +449,9 @@ LockFeatureControlRegisterInitialize (
 BOOLEAN
 EFIAPI
 SmxSupport (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData  OPTIONAL
+  IN UINTN                            ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID                             *ConfigData  OPTIONAL
   );
 
 /**
@@ -475,9 +475,9 @@ SmxSupport (
 RETURN_STATUS
 EFIAPI
 SmxInitialize (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN UINTN ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   );
 
@@ -500,9 +500,9 @@ SmxInitialize (
 BOOLEAN
 EFIAPI
 LimitCpuidMaxvalSupport (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData  OPTIONAL
+  IN UINTN                            ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID                             *ConfigData  OPTIONAL
   );
 
 /**
@@ -525,9 +525,9 @@ LimitCpuidMaxvalSupport (
 RETURN_STATUS
 EFIAPI
 LimitCpuidMaxvalInitialize (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN UINTN ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   );
 
@@ -550,9 +550,9 @@ LimitCpuidMaxvalInitialize (
 BOOLEAN
 EFIAPI
 MceSupport (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData  OPTIONAL
+  IN UINTN                            ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID                             *ConfigData  OPTIONAL
   );
 
 /**
@@ -575,9 +575,9 @@ MceSupport (
 RETURN_STATUS
 EFIAPI
 MceInitialize (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN UINTN ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   );
 
@@ -600,9 +600,9 @@ MceInitialize (
 BOOLEAN
 EFIAPI
 McaSupport (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData  OPTIONAL
+  IN UINTN                            ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID                             *ConfigData  OPTIONAL
   );
 
 /**
@@ -625,9 +625,9 @@ McaSupport (
 RETURN_STATUS
 EFIAPI
 McaInitialize (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN UINTN ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   );
 
@@ -650,9 +650,9 @@ McaInitialize (
 BOOLEAN
 EFIAPI
 McgCtlSupport (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData  OPTIONAL
+  IN UINTN                            ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID                             *ConfigData  OPTIONAL
   );
 
 /**
@@ -675,9 +675,9 @@ McgCtlSupport (
 RETURN_STATUS
 EFIAPI
 McgCtlInitialize (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN UINTN ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   );
 
@@ -700,9 +700,9 @@ McgCtlInitialize (
 BOOLEAN
 EFIAPI
 PendingBreakSupport (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData  OPTIONAL
+  IN UINTN                            ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID                             *ConfigData  OPTIONAL
   );
 
 /**
@@ -725,9 +725,9 @@ PendingBreakSupport (
 RETURN_STATUS
 EFIAPI
 PendingBreakInitialize (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN UINTN ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   );
 
@@ -750,9 +750,9 @@ PendingBreakInitialize (
 BOOLEAN
 EFIAPI
 C1eSupport (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData  OPTIONAL
+  IN UINTN                            ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID                             *ConfigData  OPTIONAL
   );
 
 /**
@@ -775,9 +775,9 @@ C1eSupport (
 RETURN_STATUS
 EFIAPI
 C1eInitialize (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN UINTN ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   );
 
@@ -793,7 +793,7 @@ C1eInitialize (
 VOID *
 EFIAPI
 X2ApicGetConfigData (
-  IN UINTN  NumberOfProcessors
+  IN UINTN NumberOfProcessors
   );
 
 /**
@@ -817,9 +817,9 @@ X2ApicGetConfigData (
 BOOLEAN
 EFIAPI
 X2ApicSupport (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData  OPTIONAL
+  IN UINTN                            ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID                             *ConfigData  OPTIONAL
   );
 
 /**
@@ -842,9 +842,9 @@ X2ApicSupport (
 RETURN_STATUS
 EFIAPI
 X2ApicInitialize (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN UINTN ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   );
 
@@ -860,7 +860,7 @@ X2ApicInitialize (
 VOID *
 EFIAPI
 PpinGetConfigData (
-  IN UINTN               NumberOfProcessors
+  IN UINTN NumberOfProcessors
   );
 
 /**
@@ -883,9 +883,9 @@ PpinGetConfigData (
 BOOLEAN
 EFIAPI
 PpinSupport (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData  OPTIONAL
+  IN UINTN                            ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID                             *ConfigData  OPTIONAL
   );
 
 /**
@@ -912,9 +912,9 @@ PpinSupport (
 RETURN_STATUS
 EFIAPI
 PpinInitialize (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN UINTN ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   );
 
@@ -938,9 +938,9 @@ PpinInitialize (
 BOOLEAN
 EFIAPI
 LmceSupport (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData  OPTIONAL
+  IN UINTN                            ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID                             *ConfigData  OPTIONAL
   );
 
 /**
@@ -964,9 +964,9 @@ LmceSupport (
 RETURN_STATUS
 EFIAPI
 LmceInitialize (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN UINTN ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   );
 
@@ -982,7 +982,7 @@ LmceInitialize (
 VOID *
 EFIAPI
 ProcTraceGetConfigData (
-  IN UINTN  NumberOfProcessors
+  IN UINTN NumberOfProcessors
   );
 
 /**
@@ -1004,9 +1004,9 @@ ProcTraceGetConfigData (
 BOOLEAN
 EFIAPI
 ProcTraceSupport (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData  OPTIONAL
+  IN UINTN                            ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID                             *ConfigData  OPTIONAL
   );
 
 /**
@@ -1030,9 +1030,9 @@ ProcTraceSupport (
 RETURN_STATUS
 EFIAPI
 ProcTraceInitialize (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN UINTN ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   );
 

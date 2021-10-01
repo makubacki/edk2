@@ -18,7 +18,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/IoLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 
-#define MAX_IO_PORT_ADDRESS   0xFFFF
+#define MAX_IO_PORT_ADDRESS  0xFFFF
 
 /**
   Reads memory-mapped registers.
@@ -62,11 +62,11 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 CpuMemoryServiceRead (
-  IN  EFI_CPU_IO2_PROTOCOL       *This,
-  IN  EFI_CPU_IO_PROTOCOL_WIDTH  Width,
-  IN  UINT64                     Address,
-  IN  UINTN                      Count,
-  OUT VOID                       *Buffer
+  IN  EFI_CPU_IO2_PROTOCOL      *This,
+  IN  EFI_CPU_IO_PROTOCOL_WIDTH Width,
+  IN  UINT64                    Address,
+  IN  UINTN                     Count,
+  OUT VOID                      *Buffer
   );
 
 /**
@@ -111,11 +111,11 @@ CpuMemoryServiceRead (
 EFI_STATUS
 EFIAPI
 CpuMemoryServiceWrite (
-  IN EFI_CPU_IO2_PROTOCOL       *This,
-  IN EFI_CPU_IO_PROTOCOL_WIDTH  Width,
-  IN UINT64                     Address,
-  IN UINTN                      Count,
-  IN VOID                       *Buffer
+  IN EFI_CPU_IO2_PROTOCOL      *This,
+  IN EFI_CPU_IO_PROTOCOL_WIDTH Width,
+  IN UINT64                    Address,
+  IN UINTN                     Count,
+  IN VOID                      *Buffer
   );
 
 /**
@@ -160,11 +160,11 @@ CpuMemoryServiceWrite (
 EFI_STATUS
 EFIAPI
 CpuIoServiceRead (
-  IN  EFI_CPU_IO2_PROTOCOL       *This,
-  IN  EFI_CPU_IO_PROTOCOL_WIDTH  Width,
-  IN  UINT64                     Address,
-  IN  UINTN                      Count,
-  OUT VOID                       *Buffer
+  IN  EFI_CPU_IO2_PROTOCOL      *This,
+  IN  EFI_CPU_IO_PROTOCOL_WIDTH Width,
+  IN  UINT64                    Address,
+  IN  UINTN                     Count,
+  OUT VOID                      *Buffer
   );
 
 /**
@@ -209,11 +209,11 @@ CpuIoServiceRead (
 EFI_STATUS
 EFIAPI
 CpuIoServiceWrite (
-  IN EFI_CPU_IO2_PROTOCOL       *This,
-  IN EFI_CPU_IO_PROTOCOL_WIDTH  Width,
-  IN UINT64                     Address,
-  IN UINTN                      Count,
-  IN VOID                       *Buffer
+  IN EFI_CPU_IO2_PROTOCOL      *This,
+  IN EFI_CPU_IO_PROTOCOL_WIDTH Width,
+  IN UINT64                    Address,
+  IN UINTN                     Count,
+  IN VOID                      *Buffer
   );
 
 #endif

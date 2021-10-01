@@ -57,9 +57,9 @@ InitializeMpSupport (
 EFI_STATUS
 EFIAPI
 GetNumberOfProcessors (
-  IN  EFI_MP_SERVICES_PROTOCOL  *This,
-  OUT UINTN                     *NumberOfProcessors,
-  OUT UINTN                     *NumberOfEnabledProcessors
+  IN  EFI_MP_SERVICES_PROTOCOL *This,
+  OUT UINTN                    *NumberOfProcessors,
+  OUT UINTN                    *NumberOfEnabledProcessors
   );
 
 /**
@@ -91,9 +91,9 @@ GetNumberOfProcessors (
 EFI_STATUS
 EFIAPI
 GetProcessorInfo (
-  IN  EFI_MP_SERVICES_PROTOCOL   *This,
-  IN  UINTN                      ProcessorNumber,
-  OUT EFI_PROCESSOR_INFORMATION  *ProcessorInfoBuffer
+  IN  EFI_MP_SERVICES_PROTOCOL  *This,
+  IN  UINTN                     ProcessorNumber,
+  OUT EFI_PROCESSOR_INFORMATION *ProcessorInfoBuffer
   );
 
 /**
@@ -235,13 +235,13 @@ GetProcessorInfo (
 EFI_STATUS
 EFIAPI
 StartupAllAPs (
-  IN  EFI_MP_SERVICES_PROTOCOL  *This,
-  IN  EFI_AP_PROCEDURE          Procedure,
-  IN  BOOLEAN                   SingleThread,
-  IN  EFI_EVENT                 WaitEvent               OPTIONAL,
-  IN  UINTN                     TimeoutInMicroseconds,
-  IN  VOID                      *ProcedureArgument      OPTIONAL,
-  OUT UINTN                     **FailedCpuList         OPTIONAL
+  IN  EFI_MP_SERVICES_PROTOCOL *This,
+  IN  EFI_AP_PROCEDURE         Procedure,
+  IN  BOOLEAN                  SingleThread,
+  IN  EFI_EVENT                WaitEvent               OPTIONAL,
+  IN  UINTN                    TimeoutInMicroseconds,
+  IN  VOID                     *ProcedureArgument      OPTIONAL,
+  OUT UINTN                    **FailedCpuList         OPTIONAL
   );
 
 /**
@@ -333,13 +333,13 @@ StartupAllAPs (
 EFI_STATUS
 EFIAPI
 StartupThisAP (
-  IN  EFI_MP_SERVICES_PROTOCOL  *This,
-  IN  EFI_AP_PROCEDURE          Procedure,
-  IN  UINTN                     ProcessorNumber,
-  IN  EFI_EVENT                 WaitEvent               OPTIONAL,
-  IN  UINTN                     TimeoutInMicroseconds,
-  IN  VOID                      *ProcedureArgument      OPTIONAL,
-  OUT BOOLEAN                   *Finished               OPTIONAL
+  IN  EFI_MP_SERVICES_PROTOCOL *This,
+  IN  EFI_AP_PROCEDURE         Procedure,
+  IN  UINTN                    ProcessorNumber,
+  IN  EFI_EVENT                WaitEvent               OPTIONAL,
+  IN  UINTN                    TimeoutInMicroseconds,
+  IN  VOID                     *ProcedureArgument      OPTIONAL,
+  OUT BOOLEAN                  *Finished               OPTIONAL
   );
 
 /**
@@ -380,9 +380,9 @@ StartupThisAP (
 EFI_STATUS
 EFIAPI
 SwitchBSP (
-  IN EFI_MP_SERVICES_PROTOCOL  *This,
-  IN  UINTN                    ProcessorNumber,
-  IN  BOOLEAN                  EnableOldBSP
+  IN EFI_MP_SERVICES_PROTOCOL *This,
+  IN  UINTN                   ProcessorNumber,
+  IN  BOOLEAN                 EnableOldBSP
   );
 
 /**
@@ -429,10 +429,10 @@ SwitchBSP (
 EFI_STATUS
 EFIAPI
 EnableDisableAP (
-  IN  EFI_MP_SERVICES_PROTOCOL  *This,
-  IN  UINTN                     ProcessorNumber,
-  IN  BOOLEAN                   EnableAP,
-  IN  UINT32                    *HealthFlag OPTIONAL
+  IN  EFI_MP_SERVICES_PROTOCOL *This,
+  IN  UINTN                    ProcessorNumber,
+  IN  BOOLEAN                  EnableAP,
+  IN  UINT32                   *HealthFlag OPTIONAL
   );
 
 /**
@@ -462,9 +462,8 @@ EnableDisableAP (
 EFI_STATUS
 EFIAPI
 WhoAmI (
-  IN EFI_MP_SERVICES_PROTOCOL  *This,
-  OUT UINTN                    *ProcessorNumber
+  IN EFI_MP_SERVICES_PROTOCOL *This,
+  OUT UINTN                   *ProcessorNumber
   );
 
 #endif // _CPU_MP_H_
-

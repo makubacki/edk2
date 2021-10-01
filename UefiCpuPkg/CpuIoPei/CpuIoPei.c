@@ -43,7 +43,7 @@ EFI_PEI_CPU_IO_PPI  gCpuIoPpi = {
 //
 // PPI Descriptor used to install the CPU I/O PPI
 //
-EFI_PEI_PPI_DESCRIPTOR gPpiList = {
+EFI_PEI_PPI_DESCRIPTOR  gPpiList = {
   (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
   &gEfiPeiCpuIoPpiInstalledGuid,
   NULL
@@ -52,7 +52,7 @@ EFI_PEI_PPI_DESCRIPTOR gPpiList = {
 //
 // Lookup table for increment values based on transfer widths
 //
-UINT8 mInStride[] = {
+UINT8  mInStride[] = {
   1, // EfiPeiCpuIoWidthUint8
   2, // EfiPeiCpuIoWidthUint16
   4, // EfiPeiCpuIoWidthUint32
@@ -70,7 +70,7 @@ UINT8 mInStride[] = {
 //
 // Lookup table for increment values based on transfer widths
 //
-UINT8 mOutStride[] = {
+UINT8  mOutStride[] = {
   1, // EfiPeiCpuIoWidthUint8
   2, // EfiPeiCpuIoWidthUint16
   4, // EfiPeiCpuIoWidthUint32
@@ -103,11 +103,11 @@ UINT8 mOutStride[] = {
 **/
 EFI_STATUS
 CpuIoCheckParameter (
-  IN BOOLEAN                   MmioOperation,
-  IN EFI_PEI_CPU_IO_PPI_WIDTH  Width,
-  IN UINT64                    Address,
-  IN UINTN                     Count,
-  IN VOID                      *Buffer
+  IN BOOLEAN                  MmioOperation,
+  IN EFI_PEI_CPU_IO_PPI_WIDTH Width,
+  IN UINT64                   Address,
+  IN UINTN                    Count,
+  IN VOID                     *Buffer
   )
 {
   UINT64  MaxCount;
@@ -131,14 +131,14 @@ CpuIoCheckParameter (
   // For FIFO type, the target address won't increase during the access,
   // so treat Count as 1
   //
-  if (Width >= EfiPeiCpuIoWidthFifoUint8 && Width <= EfiPeiCpuIoWidthFifoUint64) {
+  if ((Width >= EfiPeiCpuIoWidthFifoUint8) && (Width <= EfiPeiCpuIoWidthFifoUint64)) {
     Count = 1;
   }
 
   //
   // Check to see if Width is in the valid range for I/O Port operations
   //
-  Width = (EFI_PEI_CPU_IO_PPI_WIDTH) (Width & 0x03);
+  Width = (EFI_PEI_CPU_IO_PPI_WIDTH)(Width & 0x03);
   if (!MmioOperation && (Width == EfiPeiCpuIoWidthUint64)) {
     return EFI_INVALID_PARAMETER;
   }
@@ -168,6 +168,7 @@ CpuIoCheckParameter (
     if (MaxCount < (Count - 1)) {
       return EFI_UNSUPPORTED;
     }
+
     if (Address > LShiftU64 (MaxCount - Count + 1, Width)) {
       return EFI_UNSUPPORTED;
     }
@@ -197,12 +198,12 @@ CpuIoCheckParameter (
 EFI_STATUS
 EFIAPI
 CpuMemoryServiceRead (
-  IN  CONST EFI_PEI_SERVICES    **PeiServices,
-  IN  CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN  EFI_PEI_CPU_IO_PPI_WIDTH  Width,
-  IN  UINT64                    Address,
-  IN  UINTN                     Count,
-  OUT VOID                      *Buffer
+  IN  CONST EFI_PEI_SERVICES   **PeiServices,
+  IN  CONST EFI_PEI_CPU_IO_PPI *This,
+  IN  EFI_PEI_CPU_IO_PPI_WIDTH Width,
+  IN  UINT64                   Address,
+  IN  UINTN                    Count,
+  OUT VOID                     *Buffer
   )
 {
   EFI_STATUS                Status;
@@ -220,9 +221,9 @@ CpuMemoryServiceRead (
   //
   // Select loop based on the width of the transfer
   //
-  InStride = mInStride[Width];
+  InStride  = mInStride[Width];
   OutStride = mOutStride[Width];
-  OperationWidth = (EFI_PEI_CPU_IO_PPI_WIDTH) (Width & 0x03);
+  OperationWidth = (EFI_PEI_CPU_IO_PPI_WIDTH)(Width & 0x03);
   Aligned = (BOOLEAN)(((UINTN)Buffer & (mInStride[OperationWidth] - 1)) == 0x00);
   for (Uint8Buffer = Buffer; Count > 0; Address += InStride, Uint8Buffer += OutStride, Count--) {
     if (OperationWidth == EfiPeiCpuIoWidthUint8) {
@@ -247,6 +248,7 @@ CpuMemoryServiceRead (
       }
     }
   }
+
   return EFI_SUCCESS;
 }
 
@@ -271,12 +273,12 @@ CpuMemoryServiceRead (
 EFI_STATUS
 EFIAPI
 CpuMemoryServiceWrite (
-  IN CONST EFI_PEI_SERVICES    **PeiServices,
-  IN CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN EFI_PEI_CPU_IO_PPI_WIDTH  Width,
-  IN UINT64                    Address,
-  IN UINTN                     Count,
-  IN VOID                      *Buffer
+  IN CONST EFI_PEI_SERVICES   **PeiServices,
+  IN CONST EFI_PEI_CPU_IO_PPI *This,
+  IN EFI_PEI_CPU_IO_PPI_WIDTH Width,
+  IN UINT64                   Address,
+  IN UINTN                    Count,
+  IN VOID                     *Buffer
   )
 {
   EFI_STATUS                Status;
@@ -294,9 +296,9 @@ CpuMemoryServiceWrite (
   //
   // Select loop based on the width of the transfer
   //
-  InStride = mInStride[Width];
+  InStride  = mInStride[Width];
   OutStride = mOutStride[Width];
-  OperationWidth = (EFI_PEI_CPU_IO_PPI_WIDTH) (Width & 0x03);
+  OperationWidth = (EFI_PEI_CPU_IO_PPI_WIDTH)(Width & 0x03);
   Aligned = (BOOLEAN)(((UINTN)Buffer & (mInStride[OperationWidth] - 1)) == 0x00);
   for (Uint8Buffer = Buffer; Count > 0; Address += InStride, Uint8Buffer += OutStride, Count--) {
     if (OperationWidth == EfiPeiCpuIoWidthUint8) {
@@ -321,6 +323,7 @@ CpuMemoryServiceWrite (
       }
     }
   }
+
   return EFI_SUCCESS;
 }
 
@@ -345,12 +348,12 @@ CpuMemoryServiceWrite (
 EFI_STATUS
 EFIAPI
 CpuIoServiceRead (
-  IN  CONST EFI_PEI_SERVICES    **PeiServices,
-  IN  CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN  EFI_PEI_CPU_IO_PPI_WIDTH  Width,
-  IN  UINT64                    Address,
-  IN  UINTN                     Count,
-  OUT VOID                      *Buffer
+  IN  CONST EFI_PEI_SERVICES   **PeiServices,
+  IN  CONST EFI_PEI_CPU_IO_PPI *This,
+  IN  EFI_PEI_CPU_IO_PPI_WIDTH Width,
+  IN  UINT64                   Address,
+  IN  UINTN                    Count,
+  OUT VOID                     *Buffer
   )
 {
   EFI_STATUS                Status;
@@ -368,31 +371,31 @@ CpuIoServiceRead (
   //
   // Select loop based on the width of the transfer
   //
-  InStride = mInStride[Width];
+  InStride  = mInStride[Width];
   OutStride = mOutStride[Width];
-  OperationWidth = (EFI_PEI_CPU_IO_PPI_WIDTH) (Width & 0x03);
+  OperationWidth = (EFI_PEI_CPU_IO_PPI_WIDTH)(Width & 0x03);
 
   //
   // Fifo operations supported for (mInStride[Width] == 0)
   //
   if (InStride == 0) {
     switch (OperationWidth) {
-    case EfiPeiCpuIoWidthUint8:
-      IoReadFifo8 ((UINTN)Address, Count, Buffer);
-      return EFI_SUCCESS;
-    case EfiPeiCpuIoWidthUint16:
-      IoReadFifo16 ((UINTN)Address, Count, Buffer);
-      return EFI_SUCCESS;
-    case EfiPeiCpuIoWidthUint32:
-      IoReadFifo32 ((UINTN)Address, Count, Buffer);
-      return EFI_SUCCESS;
-    default:
-      //
-      // The CpuIoCheckParameter call above will ensure that this
-      // path is not taken.
-      //
-      ASSERT (FALSE);
-      break;
+      case EfiPeiCpuIoWidthUint8:
+        IoReadFifo8 ((UINTN)Address, Count, Buffer);
+        return EFI_SUCCESS;
+      case EfiPeiCpuIoWidthUint16:
+        IoReadFifo16 ((UINTN)Address, Count, Buffer);
+        return EFI_SUCCESS;
+      case EfiPeiCpuIoWidthUint32:
+        IoReadFifo32 ((UINTN)Address, Count, Buffer);
+        return EFI_SUCCESS;
+      default:
+        //
+        // The CpuIoCheckParameter call above will ensure that this
+        // path is not taken.
+        //
+        ASSERT (FALSE);
+        break;
     }
   }
 
@@ -439,12 +442,12 @@ CpuIoServiceRead (
 EFI_STATUS
 EFIAPI
 CpuIoServiceWrite (
-  IN CONST EFI_PEI_SERVICES    **PeiServices,
-  IN CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN EFI_PEI_CPU_IO_PPI_WIDTH  Width,
-  IN UINT64                    Address,
-  IN UINTN                     Count,
-  IN VOID                      *Buffer
+  IN CONST EFI_PEI_SERVICES   **PeiServices,
+  IN CONST EFI_PEI_CPU_IO_PPI *This,
+  IN EFI_PEI_CPU_IO_PPI_WIDTH Width,
+  IN UINT64                   Address,
+  IN UINTN                    Count,
+  IN VOID                     *Buffer
   )
 {
   EFI_STATUS                Status;
@@ -465,31 +468,31 @@ CpuIoServiceWrite (
   //
   // Select loop based on the width of the transfer
   //
-  InStride = mInStride[Width];
+  InStride  = mInStride[Width];
   OutStride = mOutStride[Width];
-  OperationWidth = (EFI_PEI_CPU_IO_PPI_WIDTH) (Width & 0x03);
+  OperationWidth = (EFI_PEI_CPU_IO_PPI_WIDTH)(Width & 0x03);
 
   //
   // Fifo operations supported for (mInStride[Width] == 0)
   //
   if (InStride == 0) {
     switch (OperationWidth) {
-    case EfiPeiCpuIoWidthUint8:
-      IoWriteFifo8 ((UINTN)Address, Count, Buffer);
-      return EFI_SUCCESS;
-    case EfiPeiCpuIoWidthUint16:
-      IoWriteFifo16 ((UINTN)Address, Count, Buffer);
-      return EFI_SUCCESS;
-    case EfiPeiCpuIoWidthUint32:
-      IoWriteFifo32 ((UINTN)Address, Count, Buffer);
-      return EFI_SUCCESS;
-    default:
-      //
-      // The CpuIoCheckParameter call above will ensure that this
-      // path is not taken.
-      //
-      ASSERT (FALSE);
-      break;
+      case EfiPeiCpuIoWidthUint8:
+        IoWriteFifo8 ((UINTN)Address, Count, Buffer);
+        return EFI_SUCCESS;
+      case EfiPeiCpuIoWidthUint16:
+        IoWriteFifo16 ((UINTN)Address, Count, Buffer);
+        return EFI_SUCCESS;
+      case EfiPeiCpuIoWidthUint32:
+        IoWriteFifo32 ((UINTN)Address, Count, Buffer);
+        return EFI_SUCCESS;
+      default:
+        //
+        // The CpuIoCheckParameter call above will ensure that this
+        // path is not taken.
+        //
+        ASSERT (FALSE);
+        break;
     }
   }
 
@@ -528,9 +531,9 @@ CpuIoServiceWrite (
 UINT8
 EFIAPI
 CpuIoRead8 (
-  IN CONST EFI_PEI_SERVICES    **PeiServices,
-  IN CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN UINT64                    Address
+  IN CONST EFI_PEI_SERVICES   **PeiServices,
+  IN CONST EFI_PEI_CPU_IO_PPI *This,
+  IN UINT64                   Address
   )
 {
   return IoRead8 ((UINTN)Address);
@@ -550,9 +553,9 @@ CpuIoRead8 (
 UINT16
 EFIAPI
 CpuIoRead16 (
-  IN CONST EFI_PEI_SERVICES    **PeiServices,
-  IN CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN UINT64                    Address
+  IN CONST EFI_PEI_SERVICES   **PeiServices,
+  IN CONST EFI_PEI_CPU_IO_PPI *This,
+  IN UINT64                   Address
   )
 {
   return IoRead16 ((UINTN)Address);
@@ -572,9 +575,9 @@ CpuIoRead16 (
 UINT32
 EFIAPI
 CpuIoRead32 (
-  IN CONST EFI_PEI_SERVICES     **PeiServices,
-  IN CONST EFI_PEI_CPU_IO_PPI   *This,
-  IN UINT64                     Address
+  IN CONST EFI_PEI_SERVICES   **PeiServices,
+  IN CONST EFI_PEI_CPU_IO_PPI *This,
+  IN UINT64                   Address
   )
 {
   return IoRead32 ((UINTN)Address);
@@ -594,9 +597,9 @@ CpuIoRead32 (
 UINT64
 EFIAPI
 CpuIoRead64 (
-  IN CONST EFI_PEI_SERVICES    **PeiServices,
-  IN CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN UINT64                    Address
+  IN CONST EFI_PEI_SERVICES   **PeiServices,
+  IN CONST EFI_PEI_CPU_IO_PPI *This,
+  IN UINT64                   Address
   )
 {
   return IoRead64 ((UINTN)Address);
@@ -615,10 +618,10 @@ CpuIoRead64 (
 VOID
 EFIAPI
 CpuIoWrite8 (
-  IN CONST EFI_PEI_SERVICES    **PeiServices,
-  IN CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN UINT64                    Address,
-  IN UINT8                     Data
+  IN CONST EFI_PEI_SERVICES   **PeiServices,
+  IN CONST EFI_PEI_CPU_IO_PPI *This,
+  IN UINT64                   Address,
+  IN UINT8                    Data
   )
 {
   IoWrite8 ((UINTN)Address, Data);
@@ -637,10 +640,10 @@ CpuIoWrite8 (
 VOID
 EFIAPI
 CpuIoWrite16 (
-  IN CONST EFI_PEI_SERVICES    **PeiServices,
-  IN CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN UINT64                    Address,
-  IN UINT16                    Data
+  IN CONST EFI_PEI_SERVICES   **PeiServices,
+  IN CONST EFI_PEI_CPU_IO_PPI *This,
+  IN UINT64                   Address,
+  IN UINT16                   Data
   )
 {
   IoWrite16 ((UINTN)Address, Data);
@@ -659,10 +662,10 @@ CpuIoWrite16 (
 VOID
 EFIAPI
 CpuIoWrite32 (
-  IN CONST EFI_PEI_SERVICES    **PeiServices,
-  IN CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN UINT64                    Address,
-  IN UINT32                    Data
+  IN CONST EFI_PEI_SERVICES   **PeiServices,
+  IN CONST EFI_PEI_CPU_IO_PPI *This,
+  IN UINT64                   Address,
+  IN UINT32                   Data
   )
 {
   IoWrite32 ((UINTN)Address, Data);
@@ -681,10 +684,10 @@ CpuIoWrite32 (
 VOID
 EFIAPI
 CpuIoWrite64 (
-  IN CONST EFI_PEI_SERVICES    **PeiServices,
-  IN CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN UINT64                    Address,
-  IN UINT64                    Data
+  IN CONST EFI_PEI_SERVICES   **PeiServices,
+  IN CONST EFI_PEI_CPU_IO_PPI *This,
+  IN UINT64                   Address,
+  IN UINT64                   Data
   )
 {
   IoWrite64 ((UINTN)Address, Data);
@@ -704,9 +707,9 @@ CpuIoWrite64 (
 UINT8
 EFIAPI
 CpuMemRead8 (
-  IN CONST EFI_PEI_SERVICES    **PeiServices,
-  IN CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN UINT64                    Address
+  IN CONST EFI_PEI_SERVICES   **PeiServices,
+  IN CONST EFI_PEI_CPU_IO_PPI *This,
+  IN UINT64                   Address
   )
 {
   return MmioRead8 ((UINTN)Address);
@@ -726,9 +729,9 @@ CpuMemRead8 (
 UINT16
 EFIAPI
 CpuMemRead16 (
-  IN CONST EFI_PEI_SERVICES    **PeiServices,
-  IN CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN UINT64                    Address
+  IN CONST EFI_PEI_SERVICES   **PeiServices,
+  IN CONST EFI_PEI_CPU_IO_PPI *This,
+  IN UINT64                   Address
   )
 {
   return MmioRead16 ((UINTN)Address);
@@ -748,9 +751,9 @@ CpuMemRead16 (
 UINT32
 EFIAPI
 CpuMemRead32 (
-  IN CONST EFI_PEI_SERVICES    **PeiServices,
-  IN CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN UINT64                    Address
+  IN CONST EFI_PEI_SERVICES   **PeiServices,
+  IN CONST EFI_PEI_CPU_IO_PPI *This,
+  IN UINT64                   Address
   )
 {
   return MmioRead32 ((UINTN)Address);
@@ -770,9 +773,9 @@ CpuMemRead32 (
 UINT64
 EFIAPI
 CpuMemRead64 (
-  IN CONST EFI_PEI_SERVICES    **PeiServices,
-  IN CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN UINT64                    Address
+  IN CONST EFI_PEI_SERVICES   **PeiServices,
+  IN CONST EFI_PEI_CPU_IO_PPI *This,
+  IN UINT64                   Address
   )
 {
   return MmioRead64 ((UINTN)Address);
@@ -791,10 +794,10 @@ CpuMemRead64 (
 VOID
 EFIAPI
 CpuMemWrite8 (
-  IN CONST EFI_PEI_SERVICES    **PeiServices,
-  IN CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN UINT64                    Address,
-  IN  UINT8                    Data
+  IN CONST EFI_PEI_SERVICES   **PeiServices,
+  IN CONST EFI_PEI_CPU_IO_PPI *This,
+  IN UINT64                   Address,
+  IN  UINT8                   Data
   )
 {
   MmioWrite8 ((UINTN)Address, Data);
@@ -813,10 +816,10 @@ CpuMemWrite8 (
 VOID
 EFIAPI
 CpuMemWrite16 (
-  IN CONST EFI_PEI_SERVICES    **PeiServices,
-  IN CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN UINT64                    Address,
-  IN UINT16                    Data
+  IN CONST EFI_PEI_SERVICES   **PeiServices,
+  IN CONST EFI_PEI_CPU_IO_PPI *This,
+  IN UINT64                   Address,
+  IN UINT16                   Data
   )
 {
   MmioWrite16 ((UINTN)Address, Data);
@@ -835,10 +838,10 @@ CpuMemWrite16 (
 VOID
 EFIAPI
 CpuMemWrite32 (
-  IN CONST EFI_PEI_SERVICES    **PeiServices,
-  IN CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN UINT64                    Address,
-  IN UINT32                    Data
+  IN CONST EFI_PEI_SERVICES   **PeiServices,
+  IN CONST EFI_PEI_CPU_IO_PPI *This,
+  IN UINT64                   Address,
+  IN UINT32                   Data
   )
 {
   MmioWrite32 ((UINTN)Address, Data);
@@ -857,10 +860,10 @@ CpuMemWrite32 (
 VOID
 EFIAPI
 CpuMemWrite64 (
-  IN CONST EFI_PEI_SERVICES    **PeiServices,
-  IN CONST EFI_PEI_CPU_IO_PPI  *This,
-  IN UINT64                    Address,
-  IN UINT64                    Data
+  IN CONST EFI_PEI_SERVICES   **PeiServices,
+  IN CONST EFI_PEI_CPU_IO_PPI *This,
+  IN UINT64                   Address,
+  IN UINT64                   Data
   )
 {
   MmioWrite64 ((UINTN)Address, Data);
@@ -880,8 +883,8 @@ CpuMemWrite64 (
 EFI_STATUS
 EFIAPI
 CpuIoInitialize (
-  IN EFI_PEI_FILE_HANDLE     FileHandle,
-  IN CONST EFI_PEI_SERVICES  **PeiServices
+  IN EFI_PEI_FILE_HANDLE    FileHandle,
+  IN CONST EFI_PEI_SERVICES **PeiServices
   )
 {
   EFI_STATUS  Status;

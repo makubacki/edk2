@@ -31,7 +31,7 @@ GetProcessorMicrocodeSignature (
 VOID
 EFIAPI
 GetProcessorMicrocodeCpuId (
-  EDKII_PEI_MICROCODE_CPU_ID  *MicrocodeCpuId
+  EDKII_PEI_MICROCODE_CPU_ID *MicrocodeCpuId
   );
 
 /**

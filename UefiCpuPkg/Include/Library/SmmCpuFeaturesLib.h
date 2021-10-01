@@ -73,10 +73,10 @@ typedef enum {
 VOID
 EFIAPI
 SmmCpuFeaturesInitializeProcessor (
-  IN UINTN                      CpuIndex,
-  IN BOOLEAN                    IsMonarch,
-  IN EFI_PROCESSOR_INFORMATION  *ProcessorInfo,
-  IN CPU_HOT_PLUG_DATA          *CpuHotPlugData
+  IN UINTN                     CpuIndex,
+  IN BOOLEAN                   IsMonarch,
+  IN EFI_PROCESSOR_INFORMATION *ProcessorInfo,
+  IN CPU_HOT_PLUG_DATA         *CpuHotPlugData
   );
 
 /**
@@ -113,10 +113,10 @@ SmmCpuFeaturesInitializeProcessor (
 UINT64
 EFIAPI
 SmmCpuFeaturesHookReturnFromSmm (
-  IN UINTN                 CpuIndex,
-  IN SMRAM_SAVE_STATE_MAP  *CpuState,
-  IN UINT64                NewInstructionPointer32,
-  IN UINT64                NewInstructionPointer
+  IN UINTN                CpuIndex,
+  IN SMRAM_SAVE_STATE_MAP *CpuState,
+  IN UINT64               NewInstructionPointer32,
+  IN UINT64               NewInstructionPointer
   );
 
 /**
@@ -195,15 +195,15 @@ SmmCpuFeaturesGetSmiHandlerSize (
 VOID
 EFIAPI
 SmmCpuFeaturesInstallSmiHandler (
-  IN UINTN   CpuIndex,
-  IN UINT32  SmBase,
-  IN VOID    *SmiStack,
-  IN UINTN   StackSize,
-  IN UINTN   GdtBase,
-  IN UINTN   GdtSize,
-  IN UINTN   IdtBase,
-  IN UINTN   IdtSize,
-  IN UINT32  Cr3
+  IN UINTN  CpuIndex,
+  IN UINT32 SmBase,
+  IN VOID   *SmiStack,
+  IN UINTN  StackSize,
+  IN UINTN  GdtBase,
+  IN UINTN  GdtSize,
+  IN UINTN  IdtBase,
+  IN UINTN  IdtSize,
+  IN UINT32 Cr3
   );
 
 /**
@@ -250,7 +250,7 @@ SmmCpuFeaturesReenableSmrr (
 VOID
 EFIAPI
 SmmCpuFeaturesRendezvousEntry (
-  IN UINTN  CpuIndex
+  IN UINTN CpuIndex
   );
 
 /**
@@ -263,7 +263,7 @@ SmmCpuFeaturesRendezvousEntry (
 VOID
 EFIAPI
 SmmCpuFeaturesRendezvousExit (
-  IN UINTN  CpuIndex
+  IN UINTN CpuIndex
   );
 
 /**
@@ -282,8 +282,8 @@ SmmCpuFeaturesRendezvousExit (
 BOOLEAN
 EFIAPI
 SmmCpuFeaturesIsSmmRegisterSupported (
-  IN UINTN         CpuIndex,
-  IN SMM_REG_NAME  RegName
+  IN UINTN        CpuIndex,
+  IN SMM_REG_NAME RegName
   );
 
 /**
@@ -301,8 +301,8 @@ SmmCpuFeaturesIsSmmRegisterSupported (
 UINT64
 EFIAPI
 SmmCpuFeaturesGetSmmRegister (
-  IN UINTN         CpuIndex,
-  IN SMM_REG_NAME  RegName
+  IN UINTN        CpuIndex,
+  IN SMM_REG_NAME RegName
   );
 
 /**
@@ -319,9 +319,9 @@ SmmCpuFeaturesGetSmmRegister (
 VOID
 EFIAPI
 SmmCpuFeaturesSetSmmRegister (
-  IN UINTN         CpuIndex,
-  IN SMM_REG_NAME  RegName,
-  IN UINT64        Value
+  IN UINTN        CpuIndex,
+  IN SMM_REG_NAME RegName,
+  IN UINT64       Value
   );
 
 /**
@@ -345,10 +345,10 @@ SmmCpuFeaturesSetSmmRegister (
 EFI_STATUS
 EFIAPI
 SmmCpuFeaturesReadSaveStateRegister (
-  IN  UINTN                        CpuIndex,
-  IN  EFI_SMM_SAVE_STATE_REGISTER  Register,
-  IN  UINTN                        Width,
-  OUT VOID                         *Buffer
+  IN  UINTN                       CpuIndex,
+  IN  EFI_SMM_SAVE_STATE_REGISTER Register,
+  IN  UINTN                       Width,
+  OUT VOID                        *Buffer
   );
 
 /**
@@ -370,10 +370,10 @@ SmmCpuFeaturesReadSaveStateRegister (
 EFI_STATUS
 EFIAPI
 SmmCpuFeaturesWriteSaveStateRegister (
-  IN UINTN                        CpuIndex,
-  IN EFI_SMM_SAVE_STATE_REGISTER  Register,
-  IN UINTN                        Width,
-  IN CONST VOID                   *Buffer
+  IN UINTN                       CpuIndex,
+  IN EFI_SMM_SAVE_STATE_REGISTER Register,
+  IN UINTN                       Width,
+  IN CONST VOID                  *Buffer
   );
 
 /**
@@ -408,7 +408,7 @@ SmmCpuFeaturesCompleteSmmReadyToLock (
 VOID *
 EFIAPI
 SmmCpuFeaturesAllocatePageTableMemory (
-  IN UINTN           Pages
+  IN UINTN Pages
   );
 
 #endif

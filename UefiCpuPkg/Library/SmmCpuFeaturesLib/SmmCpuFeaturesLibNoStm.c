@@ -70,15 +70,15 @@ SmmCpuFeaturesGetSmiHandlerSize (
 VOID
 EFIAPI
 SmmCpuFeaturesInstallSmiHandler (
-  IN UINTN   CpuIndex,
-  IN UINT32  SmBase,
-  IN VOID    *SmiStack,
-  IN UINTN   StackSize,
-  IN UINTN   GdtBase,
-  IN UINTN   GdtSize,
-  IN UINTN   IdtBase,
-  IN UINTN   IdtSize,
-  IN UINT32  Cr3
+  IN UINTN  CpuIndex,
+  IN UINT32 SmBase,
+  IN VOID   *SmiStack,
+  IN UINTN  StackSize,
+  IN UINTN  GdtBase,
+  IN UINTN  GdtSize,
+  IN UINTN  IdtBase,
+  IN UINTN  IdtSize,
+  IN UINT32 Cr3
   )
 {
 }

@@ -24,8 +24,8 @@ volatile BOOLEAN  *mRebasedFlag;
 **/
 VOID
 SemaphoreHook (
-  IN UINTN             CpuIndex,
-  IN volatile BOOLEAN  *RebasedFlag
+  IN UINTN            CpuIndex,
+  IN volatile BOOLEAN *RebasedFlag
   )
 {
   SMRAM_SAVE_STATE_MAP  *CpuState;

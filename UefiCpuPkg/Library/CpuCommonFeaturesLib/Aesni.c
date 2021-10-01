@@ -20,10 +20,10 @@
 VOID *
 EFIAPI
 AesniGetConfigData (
-  IN UINTN  NumberOfProcessors
+  IN UINTN NumberOfProcessors
   )
 {
-  UINT64                            *ConfigData;
+  UINT64  *ConfigData;
 
   ConfigData = AllocateZeroPool (sizeof (UINT64) * NumberOfProcessors);
   ASSERT (ConfigData != NULL);
@@ -49,19 +49,20 @@ AesniGetConfigData (
 BOOLEAN
 EFIAPI
 AesniSupport (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData  OPTIONAL
+  IN UINTN                            ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID                             *ConfigData  OPTIONAL
   )
 {
-  MSR_SANDY_BRIDGE_FEATURE_CONFIG_REGISTER   *MsrFeatureConfig;
+  MSR_SANDY_BRIDGE_FEATURE_CONFIG_REGISTER  *MsrFeatureConfig;
 
   if (CpuInfo->CpuIdVersionInfoEcx.Bits.AESNI == 1) {
-    MsrFeatureConfig = (MSR_SANDY_BRIDGE_FEATURE_CONFIG_REGISTER *) ConfigData;
+    MsrFeatureConfig = (MSR_SANDY_BRIDGE_FEATURE_CONFIG_REGISTER *)ConfigData;
     ASSERT (MsrFeatureConfig != NULL);
     MsrFeatureConfig[ProcessorNumber].Uint64 = AsmReadMsr64 (MSR_SANDY_BRIDGE_FEATURE_CONFIG);
     return TRUE;
   }
+
   return FALSE;
 }
 
@@ -85,13 +86,13 @@ AesniSupport (
 RETURN_STATUS
 EFIAPI
 AesniInitialize (
-  IN UINTN                             ProcessorNumber,
-  IN REGISTER_CPU_FEATURE_INFORMATION  *CpuInfo,
-  IN VOID                              *ConfigData,  OPTIONAL
+  IN UINTN ProcessorNumber,
+  IN REGISTER_CPU_FEATURE_INFORMATION *CpuInfo,
+  IN VOID *ConfigData, OPTIONAL
   IN BOOLEAN                           State
   )
 {
-  MSR_SANDY_BRIDGE_FEATURE_CONFIG_REGISTER   *MsrFeatureConfig;
+  MSR_SANDY_BRIDGE_FEATURE_CONFIG_REGISTER  *MsrFeatureConfig;
 
   //
   // SANDY_BRIDGE, SILVERMONT, XEON_5600, XEON_7, and XEON_PHI have the same MSR index,
@@ -102,7 +103,7 @@ AesniInitialize (
   // programming it.
   //
   if (CpuInfo->ProcessorInfo.Location.Thread == 0) {
-    MsrFeatureConfig = (MSR_SANDY_BRIDGE_FEATURE_CONFIG_REGISTER *) ConfigData;
+    MsrFeatureConfig = (MSR_SANDY_BRIDGE_FEATURE_CONFIG_REGISTER *)ConfigData;
     ASSERT (MsrFeatureConfig != NULL);
     if ((MsrFeatureConfig[ProcessorNumber].Bits.AESConfiguration & BIT0) == 0) {
       CPU_REGISTER_TABLE_WRITE_FIELD (
@@ -115,5 +116,6 @@ AesniInitialize (
         );
     }
   }
+
   return RETURN_SUCCESS;
 }

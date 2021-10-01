@@ -21,7 +21,9 @@ SMM_CPU_PRIVATE_DATA  mSmmCpuPrivateData = {
   NULL,                                         // Pointer to Operation array
   NULL,                                         // Pointer to CpuSaveStateSize array
   NULL,                                         // Pointer to CpuSaveState array
-  { {0} },                                      // SmmReservedSmramRegion
+  {
+    { 0    }
+  },                                            // SmmReservedSmramRegion
   {
     SmmStartupThisAp,                           // SmmCoreEntryContext.SmmStartupThisAp
     0,                                          // SmmCoreEntryContext.CurrentlyExecutingCpu
@@ -35,10 +37,10 @@ SMM_CPU_PRIVATE_DATA  mSmmCpuPrivateData = {
     RegisterSmmEntry                            // SmmConfiguration.RegisterSmmEntry
   },
   NULL,                                         // pointer to Ap Wrapper Func array
-  {NULL, NULL},                                 // List_Entry for Tokens.
+  { NULL, NULL },                               // List_Entry for Tokens.
 };
 
-CPU_HOT_PLUG_DATA mCpuHotPlugData = {
+CPU_HOT_PLUG_DATA  mCpuHotPlugData = {
   CPU_HOT_PLUG_DATA_REVISION_1,                 // Revision
   0,                                            // Array Length of SmBase and APIC ID
   NULL,                                         // Pointer to APIC ID array
@@ -67,7 +69,7 @@ EFI_HANDLE  mSmmCpuHandle = NULL;
 ///
 /// SMM CPU Protocol instance
 ///
-EFI_SMM_CPU_PROTOCOL  mSmmCpu  = {
+EFI_SMM_CPU_PROTOCOL  mSmmCpu = {
   SmmReadSaveState,
   SmmWriteSaveState
 };
@@ -75,60 +77,60 @@ EFI_SMM_CPU_PROTOCOL  mSmmCpu  = {
 ///
 /// SMM Memory Attribute Protocol instance
 ///
-EDKII_SMM_MEMORY_ATTRIBUTE_PROTOCOL  mSmmMemoryAttribute  = {
+EDKII_SMM_MEMORY_ATTRIBUTE_PROTOCOL  mSmmMemoryAttribute = {
   EdkiiSmmGetMemoryAttributes,
   EdkiiSmmSetMemoryAttributes,
   EdkiiSmmClearMemoryAttributes
 };
 
-EFI_CPU_INTERRUPT_HANDLER   mExternalVectorTable[EXCEPTION_VECTOR_NUMBER];
+EFI_CPU_INTERRUPT_HANDLER  mExternalVectorTable[EXCEPTION_VECTOR_NUMBER];
 
 //
 // SMM stack information
 //
-UINTN mSmmStackArrayBase;
-UINTN mSmmStackArrayEnd;
-UINTN mSmmStackSize;
+UINTN  mSmmStackArrayBase;
+UINTN  mSmmStackArrayEnd;
+UINTN  mSmmStackSize;
 
-UINTN mSmmShadowStackSize;
-BOOLEAN mCetSupported = TRUE;
+UINTN    mSmmShadowStackSize;
+BOOLEAN  mCetSupported = TRUE;
 
-UINTN mMaxNumberOfCpus = 1;
-UINTN mNumberOfCpus = 1;
+UINTN  mMaxNumberOfCpus = 1;
+UINTN  mNumberOfCpus    = 1;
 
 //
 // SMM ready to lock flag
 //
-BOOLEAN mSmmReadyToLock = FALSE;
+BOOLEAN  mSmmReadyToLock = FALSE;
 
 //
 // Global used to cache PCD for SMM Code Access Check enable
 //
-BOOLEAN                  mSmmCodeAccessCheckEnable = FALSE;
+BOOLEAN  mSmmCodeAccessCheckEnable = FALSE;
 
 //
 // Global copy of the PcdPteMemoryEncryptionAddressOrMask
 //
-UINT64                   mAddressEncMask = 0;
+UINT64  mAddressEncMask = 0;
 
 //
 // Spin lock used to serialize setting of SMM Code Access Check feature
 //
-SPIN_LOCK                *mConfigSmmCodeAccessCheckLock = NULL;
+SPIN_LOCK  *mConfigSmmCodeAccessCheckLock = NULL;
 
 //
 // Saved SMM ranges information
 //
-EFI_SMRAM_DESCRIPTOR     *mSmmCpuSmramRanges;
-UINTN                    mSmmCpuSmramRangeCount;
+EFI_SMRAM_DESCRIPTOR  *mSmmCpuSmramRanges;
+UINTN                 mSmmCpuSmramRangeCount;
 
-UINT8                    mPhysicalAddressBits;
+UINT8  mPhysicalAddressBits;
 
 //
 // Control register contents saved for SMM S3 resume state initialization.
 //
-UINT32                   mSmmCr0;
-UINT32                   mSmmCr4;
+UINT32  mSmmCr0;
+UINT32  mSmmCr4;
 
 /**
   Initialize IDT to setup exception handlers for SMM.
@@ -139,19 +141,19 @@ InitializeSmmIdt (
   VOID
   )
 {
-  EFI_STATUS               Status;
-  BOOLEAN                  InterruptState;
-  IA32_DESCRIPTOR          DxeIdtr;
+  EFI_STATUS       Status;
+  BOOLEAN          InterruptState;
+  IA32_DESCRIPTOR  DxeIdtr;
 
   //
   // There are 32 (not 255) entries in it since only processor
   // generated exceptions will be handled.
   //
-  gcSmiIdtr.Limit = (sizeof(IA32_IDT_GATE_DESCRIPTOR) * 32) - 1;
+  gcSmiIdtr.Limit = (sizeof (IA32_IDT_GATE_DESCRIPTOR) * 32) - 1;
   //
   // Allocate page aligned IDT, because it might be set as read only.
   //
-  gcSmiIdtr.Base = (UINTN)AllocateCodePages (EFI_SIZE_TO_PAGES(gcSmiIdtr.Limit + 1));
+  gcSmiIdtr.Base = (UINTN)AllocateCodePages (EFI_SIZE_TO_PAGES (gcSmiIdtr.Limit + 1));
   ASSERT (gcSmiIdtr.Base != 0);
   ZeroMem ((VOID *)gcSmiIdtr.Base, gcSmiIdtr.Limit + 1);
 
@@ -173,7 +175,7 @@ InitializeSmmIdt (
   //
   // Restore DXE IDT table and CPU interrupt
   //
-  AsmWriteIdtr ((IA32_DESCRIPTOR *) &DxeIdtr);
+  AsmWriteIdtr ((IA32_DESCRIPTOR *)&DxeIdtr);
   SetInterruptState (InterruptState);
 }
 
@@ -185,19 +187,19 @@ InitializeSmmIdt (
 **/
 VOID
 DumpModuleInfoByIp (
-  IN  UINTN              CallerIpAddress
+  IN  UINTN CallerIpAddress
   )
 {
-  UINTN                                Pe32Data;
-  VOID                                 *PdbPointer;
+  UINTN  Pe32Data;
+  VOID   *PdbPointer;
 
   //
   // Find Image Base
   //
   Pe32Data = PeCoffSearchImageBase (CallerIpAddress);
   if (Pe32Data != 0) {
-    DEBUG ((DEBUG_ERROR, "It is invoked from the instruction before IP(0x%p)", (VOID *) CallerIpAddress));
-    PdbPointer = PeCoffLoaderGetPdbPointer ((VOID *) Pe32Data);
+    DEBUG ((DEBUG_ERROR, "It is invoked from the instruction before IP(0x%p)", (VOID *)CallerIpAddress));
+    PdbPointer = PeCoffLoaderGetPdbPointer ((VOID *)Pe32Data);
     if (PdbPointer != NULL) {
       DEBUG ((DEBUG_ERROR, " in module (%a)\n", PdbPointer));
     }
@@ -221,11 +223,11 @@ DumpModuleInfoByIp (
 EFI_STATUS
 EFIAPI
 SmmReadSaveState (
-  IN CONST EFI_SMM_CPU_PROTOCOL         *This,
-  IN UINTN                              Width,
-  IN EFI_SMM_SAVE_STATE_REGISTER        Register,
-  IN UINTN                              CpuIndex,
-  OUT VOID                              *Buffer
+  IN CONST EFI_SMM_CPU_PROTOCOL  *This,
+  IN UINTN                       Width,
+  IN EFI_SMM_SAVE_STATE_REGISTER Register,
+  IN UINTN                       CpuIndex,
+  OUT VOID                       *Buffer
   )
 {
   EFI_STATUS  Status;
@@ -236,6 +238,7 @@ SmmReadSaveState (
   if ((CpuIndex >= gSmst->NumberOfCpus) || (Buffer == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
+
   //
   // The SpeculationBarrier() call here is to ensure the above check for the
   // CpuIndex has been completed before the execution of subsequent codes.
@@ -252,6 +255,7 @@ SmmReadSaveState (
     if (Width != sizeof (UINT64)) {
       return EFI_INVALID_PARAMETER;
     }
+
     //
     // If the processor is in SMM at the time the SMI occurred,
     // the pseudo register value for EFI_SMM_SAVE_STATE_REGISTER_PROCESSOR_ID is returned in Buffer.
@@ -273,6 +277,7 @@ SmmReadSaveState (
   if (Status == EFI_UNSUPPORTED) {
     Status = ReadSaveStateRegister (CpuIndex, Register, Width, Buffer);
   }
+
   return Status;
 }
 
@@ -293,11 +298,11 @@ SmmReadSaveState (
 EFI_STATUS
 EFIAPI
 SmmWriteSaveState (
-  IN CONST EFI_SMM_CPU_PROTOCOL         *This,
-  IN UINTN                              Width,
-  IN EFI_SMM_SAVE_STATE_REGISTER        Register,
-  IN UINTN                              CpuIndex,
-  IN CONST VOID                         *Buffer
+  IN CONST EFI_SMM_CPU_PROTOCOL  *This,
+  IN UINTN                       Width,
+  IN EFI_SMM_SAVE_STATE_REGISTER Register,
+  IN UINTN                       CpuIndex,
+  IN CONST VOID                  *Buffer
   )
 {
   EFI_STATUS  Status;
@@ -324,9 +329,9 @@ SmmWriteSaveState (
   if (Status == EFI_UNSUPPORTED) {
     Status = WriteSaveStateRegister (CpuIndex, Register, Width, Buffer);
   }
+
   return Status;
 }
-
 
 /**
   C function for SMI handler. To change all processor's SMMBase Register.
@@ -338,8 +343,8 @@ SmmInitHandler (
   VOID
   )
 {
-  UINT32                            ApicId;
-  UINTN                             Index;
+  UINT32  ApicId;
+  UINTN   Index;
 
   //
   // Update SMM IDT entries' code segment and load IDT
@@ -384,6 +389,7 @@ SmmInitHandler (
       return;
     }
   }
+
   ASSERT (FALSE);
 }
 
@@ -427,7 +433,7 @@ SmmRelocateBases (
   gcSmiInitGdtr.Base  = gcSmiGdtr.Base;
   gcSmiInitGdtr.Limit = gcSmiGdtr.Limit;
 
-  U8Ptr = (UINT8*)(UINTN)(SMM_DEFAULT_SMBASE + SMM_HANDLER_OFFSET);
+  U8Ptr = (UINT8 *)(UINTN)(SMM_DEFAULT_SMBASE + SMM_HANDLER_OFFSET);
   CpuStatePtr = (SMRAM_SAVE_STATE_MAP *)(UINTN)(SMM_DEFAULT_SMBASE + SMRAM_SAVE_STATE_MAP_OFFSET);
 
   //
@@ -459,7 +465,8 @@ SmmRelocateBases (
       //
       // Wait for this AP to finish its 1st SMI
       //
-      while (!mRebased[Index]);
+      while (!mRebased[Index]) {
+      }
     } else {
       //
       // BSP will be Relocated later
@@ -477,7 +484,8 @@ SmmRelocateBases (
   //
   // Wait for the BSP to finish its 1st SMI
   //
-  while (!mRebased[BspIndex]);
+  while (!mRebased[BspIndex]) {
+  }
 
   //
   // Restore contents at address 0x38000
@@ -501,9 +509,9 @@ SmmRelocateBases (
 EFI_STATUS
 EFIAPI
 SmmReadyToLockEventNotify (
-  IN CONST EFI_GUID  *Protocol,
-  IN VOID            *Interface,
-  IN EFI_HANDLE      Handle
+  IN CONST EFI_GUID *Protocol,
+  IN VOID           *Interface,
+  IN EFI_HANDLE     Handle
   )
 {
   GetAcpiCpuData ();
@@ -533,28 +541,28 @@ SmmReadyToLockEventNotify (
 EFI_STATUS
 EFIAPI
 PiCpuSmmEntry (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  EFI_STATUS                 Status;
-  EFI_MP_SERVICES_PROTOCOL   *MpServices;
-  UINTN                      NumberOfEnabledProcessors;
-  UINTN                      Index;
-  VOID                       *Buffer;
-  UINTN                      BufferPages;
-  UINTN                      TileCodeSize;
-  UINTN                      TileDataSize;
-  UINTN                      TileSize;
-  UINT8                      *Stacks;
-  VOID                       *Registration;
-  UINT32                     RegEax;
-  UINT32                     RegEbx;
-  UINT32                     RegEcx;
-  UINT32                     RegEdx;
-  UINTN                      FamilyId;
-  UINTN                      ModelId;
-  UINT32                     Cr3;
+  EFI_STATUS                Status;
+  EFI_MP_SERVICES_PROTOCOL  *MpServices;
+  UINTN                     NumberOfEnabledProcessors;
+  UINTN                     Index;
+  VOID                      *Buffer;
+  UINTN                     BufferPages;
+  UINTN                     TileCodeSize;
+  UINTN                     TileDataSize;
+  UINTN                     TileSize;
+  UINT8                     *Stacks;
+  VOID                      *Registration;
+  UINT32                    RegEax;
+  UINT32                    RegEbx;
+  UINT32                    RegEcx;
+  UINT32                    RegEdx;
+  UINTN                     FamilyId;
+  UINTN                     ModelId;
+  UINT32                    Cr3;
 
   //
   // Initialize address fixup
@@ -599,10 +607,10 @@ PiCpuSmmEntry (
   //
   DEBUG_CODE (
     if (FeaturePcdGet (PcdCpuHotPlugSupport)) {
+    ASSERT (FeaturePcdGet (PcdCpuSmmEnableBspElection));
+  }
 
-      ASSERT (FeaturePcdGet (PcdCpuSmmEnableBspElection));
-    }
-  );
+    );
 
   //
   // Save the PcdCpuSmmCodeAccessCheckEnable value into a global variable.
@@ -625,6 +633,7 @@ PiCpuSmmEntry (
   } else {
     mMaxNumberOfCpus = mNumberOfCpus;
   }
+
   gSmmCpuPrivate->SmmCoreEntryContext.NumberOfCpus = mMaxNumberOfCpus;
 
   //
@@ -702,8 +711,8 @@ PiCpuSmmEntry (
   //
   AsmCpuid (CPUID_VERSION_INFO, &RegEax, NULL, NULL, NULL);
   FamilyId = (RegEax >> 8) & 0xf;
-  ModelId = (RegEax >> 4) & 0xf;
-  if (FamilyId == 0x06 || FamilyId == 0x0f) {
+  ModelId  = (RegEax >> 4) & 0xf;
+  if ((FamilyId == 0x06) || (FamilyId == 0x0f)) {
     ModelId = ModelId | ((RegEax >> 12) & 0xf0);
   }
 
@@ -712,6 +721,7 @@ PiCpuSmmEntry (
   if (RegEax >= CPUID_EXTENDED_CPU_SIG) {
     AsmCpuid (CPUID_EXTENDED_CPU_SIG, NULL, NULL, NULL, &RegEdx);
   }
+
   //
   // Determine the mode of the CPU at the time an SMI occurs
   //   Intel(R) 64 and IA-32 Architectures Software Developer's Manual
@@ -721,8 +731,9 @@ PiCpuSmmEntry (
   if ((RegEdx & BIT29) != 0) {
     mSmmSaveStateRegisterLma = EFI_SMM_SAVE_STATE_REGISTER_LMA_64BIT;
   }
+
   if (FamilyId == 0x06) {
-    if (ModelId == 0x17 || ModelId == 0x0f || ModelId == 0x1c) {
+    if ((ModelId == 0x17) || (ModelId == 0x0f) || (ModelId == 0x1c)) {
       mSmmSaveStateRegisterLma = EFI_SMM_SAVE_STATE_REGISTER_LMA_64BIT;
     }
   }
@@ -739,17 +750,18 @@ PiCpuSmmEntry (
         mCetSupported = FALSE;
         PatchInstructionX86 (mPatchCetSupported, mCetSupported, 1);
       }
+
       if (mCetSupported) {
         AsmCpuidEx (CPUID_EXTENDED_STATE, CPUID_EXTENDED_STATE_SUB_LEAF, NULL, &RegEbx, &RegEcx, NULL);
         DEBUG ((DEBUG_INFO, "CPUID[D/1] EBX - 0x%08x, ECX - 0x%08x\n", RegEbx, RegEcx));
         AsmCpuidEx (CPUID_EXTENDED_STATE, 11, &RegEax, NULL, &RegEcx, NULL);
         DEBUG ((DEBUG_INFO, "CPUID[D/11] EAX - 0x%08x, ECX - 0x%08x\n", RegEax, RegEcx));
-        AsmCpuidEx(CPUID_EXTENDED_STATE, 12, &RegEax, NULL, &RegEcx, NULL);
+        AsmCpuidEx (CPUID_EXTENDED_STATE, 12, &RegEax, NULL, &RegEcx, NULL);
         DEBUG ((DEBUG_INFO, "CPUID[D/12] EAX - 0x%08x, ECX - 0x%08x\n", RegEax, RegEcx));
       }
     } else {
       mCetSupported = FALSE;
-      PatchInstructionX86(mPatchCetSupported, mCetSupported, 1);
+      PatchInstructionX86 (mPatchCetSupported, mCetSupported, 1);
     }
   } else {
     mCetSupported = FALSE;
@@ -762,11 +774,11 @@ PiCpuSmmEntry (
   // This size is rounded up to nearest power of 2.
   //
   TileCodeSize = GetSmiHandlerSize ();
-  TileCodeSize = ALIGN_VALUE(TileCodeSize, SIZE_4KB);
+  TileCodeSize = ALIGN_VALUE (TileCodeSize, SIZE_4KB);
   TileDataSize = (SMRAM_SAVE_STATE_MAP_OFFSET - SMM_PSD_OFFSET) + sizeof (SMRAM_SAVE_STATE_MAP);
-  TileDataSize = ALIGN_VALUE(TileDataSize, SIZE_4KB);
-  TileSize = TileDataSize + TileCodeSize - 1;
-  TileSize = 2 * GetPowerOfTwo32 ((UINT32)TileSize);
+  TileDataSize = ALIGN_VALUE (TileDataSize, SIZE_4KB);
+  TileSize     = TileDataSize + TileCodeSize - 1;
+  TileSize     = 2 * GetPowerOfTwo32 ((UINT32)TileSize);
   DEBUG ((EFI_D_INFO, "SMRAM TileSize = 0x%08x (0x%08x, 0x%08x)\n", TileSize, TileCodeSize, TileDataSize));
 
   //
@@ -796,8 +808,9 @@ PiCpuSmmEntry (
   } else {
     Buffer = AllocateAlignedCodePages (BufferPages, SIZE_4KB);
   }
+
   ASSERT (Buffer != NULL);
-  DEBUG ((EFI_D_INFO, "SMRAM SaveState Buffer (0x%08x, 0x%08x)\n", Buffer, EFI_PAGES_TO_SIZE(BufferPages)));
+  DEBUG ((EFI_D_INFO, "SMRAM SaveState Buffer (0x%08x, 0x%08x)\n", Buffer, EFI_PAGES_TO_SIZE (BufferPages)));
 
   //
   // Allocate buffer for pointers to array in  SMM_CPU_PRIVATE_DATA.
@@ -832,8 +845,8 @@ PiCpuSmmEntry (
   // size for each CPU in the platform
   //
   for (Index = 0; Index < mMaxNumberOfCpus; Index++) {
-    mCpuHotPlugData.SmBase[Index]          = (UINTN)Buffer + Index * TileSize - SMM_HANDLER_OFFSET;
-    gSmmCpuPrivate->CpuSaveStateSize[Index] = sizeof(SMRAM_SAVE_STATE_MAP);
+    mCpuHotPlugData.SmBase[Index] = (UINTN)Buffer + Index * TileSize - SMM_HANDLER_OFFSET;
+    gSmmCpuPrivate->CpuSaveStateSize[Index] = sizeof (SMRAM_SAVE_STATE_MAP);
     gSmmCpuPrivate->CpuSaveState[Index]     = (VOID *)(mCpuHotPlugData.SmBase[Index] + SMRAM_SAVE_STATE_MAP_OFFSET);
     gSmmCpuPrivate->Operation[Index] = SmmCpuNone;
 
@@ -842,7 +855,9 @@ PiCpuSmmEntry (
       ASSERT_EFI_ERROR (Status);
       mCpuHotPlugData.ApicId[Index] = gSmmCpuPrivate->ProcessorInfo[Index].ProcessorId;
 
-      DEBUG ((EFI_D_INFO, "CPU[%03x]  APIC ID=%04x  SMBASE=%08x  SaveState=%08x  Size=%08x\n",
+      DEBUG ((
+        EFI_D_INFO,
+        "CPU[%03x]  APIC ID=%04x  SMBASE=%08x  SaveState=%08x  Size=%08x\n",
         Index,
         (UINT32)gSmmCpuPrivate->ProcessorInfo[Index].ProcessorId,
         mCpuHotPlugData.SmBase[Index],
@@ -893,10 +908,10 @@ PiCpuSmmEntry (
     }
   }
 
-  Stacks = (UINT8 *) AllocatePages (gSmmCpuPrivate->SmmCoreEntryContext.NumberOfCpus * (EFI_SIZE_TO_PAGES (mSmmStackSize + mSmmShadowStackSize)));
+  Stacks = (UINT8 *)AllocatePages (gSmmCpuPrivate->SmmCoreEntryContext.NumberOfCpus * (EFI_SIZE_TO_PAGES (mSmmStackSize + mSmmShadowStackSize)));
   ASSERT (Stacks != NULL);
   mSmmStackArrayBase = (UINTN)Stacks;
-  mSmmStackArrayEnd = mSmmStackArrayBase + gSmmCpuPrivate->SmmCoreEntryContext.NumberOfCpus * (mSmmStackSize + mSmmShadowStackSize) - 1;
+  mSmmStackArrayEnd  = mSmmStackArrayBase + gSmmCpuPrivate->SmmCoreEntryContext.NumberOfCpus * (mSmmStackSize + mSmmShadowStackSize) - 1;
 
   DEBUG ((DEBUG_INFO, "Stacks                   - 0x%x\n", Stacks));
   DEBUG ((DEBUG_INFO, "mSmmStackSize            - 0x%x\n", mSmmStackSize));
@@ -910,7 +925,7 @@ PiCpuSmmEntry (
   //
   PatchInstructionX86 (
     gPatchSmmInitStack,
-    (UINTN) (Stacks + mSmmStackSize - sizeof (UINTN)),
+    (UINTN)(Stacks + mSmmStackSize - sizeof (UINTN)),
     sizeof (UINTN)
     );
 
@@ -954,8 +969,8 @@ PiCpuSmmEntry (
       if (FeaturePcdGet (PcdCpuSmmStackGuard)) {
         SetNotPresentPage (
           Cr3,
-          (EFI_PHYSICAL_ADDRESS)(UINTN)Stacks + mSmmStackSize + EFI_PAGES_TO_SIZE(1) + (mSmmStackSize + mSmmShadowStackSize) * Index,
-          EFI_PAGES_TO_SIZE(1)
+          (EFI_PHYSICAL_ADDRESS)(UINTN)Stacks + mSmmStackSize + EFI_PAGES_TO_SIZE (1) + (mSmmStackSize + mSmmShadowStackSize) * Index,
+          EFI_PAGES_TO_SIZE (1)
           );
       }
     }
@@ -974,7 +989,8 @@ PiCpuSmmEntry (
   //
   Status = SystemTable->BootServices->InstallMultipleProtocolInterfaces (
                                         &gSmmCpuPrivate->SmmCpuHandle,
-                                        &gEfiSmmConfigurationProtocolGuid, &gSmmCpuPrivate->SmmConfiguration,
+                                        &gEfiSmmConfigurationProtocolGuid,
+                                        &gSmmCpuPrivate->SmmConfiguration,
                                         NULL
                                         );
   ASSERT_EFI_ERROR (Status);
@@ -1064,17 +1080,17 @@ PiCpuSmmEntry (
 **/
 VOID
 FindSmramInfo (
-  OUT UINT32   *SmrrBase,
-  OUT UINT32   *SmrrSize
+  OUT UINT32 *SmrrBase,
+  OUT UINT32 *SmrrSize
   )
 {
-  EFI_STATUS                        Status;
-  UINTN                             Size;
-  EFI_SMM_ACCESS2_PROTOCOL          *SmmAccess;
-  EFI_SMRAM_DESCRIPTOR              *CurrentSmramRange;
-  UINTN                             Index;
-  UINT64                            MaxSize;
-  BOOLEAN                           Found;
+  EFI_STATUS                Status;
+  UINTN                     Size;
+  EFI_SMM_ACCESS2_PROTOCOL  *SmmAccess;
+  EFI_SMRAM_DESCRIPTOR      *CurrentSmramRange;
+  UINTN                     Index;
+  UINT64                    MaxSize;
+  BOOLEAN                   Found;
 
   //
   // Get SMM Access Protocol
@@ -1085,7 +1101,7 @@ FindSmramInfo (
   //
   // Get SMRAM information
   //
-  Size = 0;
+  Size   = 0;
   Status = SmmAccess->GetCapabilities (SmmAccess, &Size, NULL);
   ASSERT (Status == EFI_BUFFER_TOO_SMALL);
 
@@ -1127,14 +1143,15 @@ FindSmramInfo (
   do {
     Found = FALSE;
     for (Index = 0; Index < mSmmCpuSmramRangeCount; Index++) {
-      if (mSmmCpuSmramRanges[Index].CpuStart < *SmrrBase &&
-          *SmrrBase == (mSmmCpuSmramRanges[Index].CpuStart + mSmmCpuSmramRanges[Index].PhysicalSize)) {
+      if ((mSmmCpuSmramRanges[Index].CpuStart < *SmrrBase) &&
+          (*SmrrBase == (mSmmCpuSmramRanges[Index].CpuStart + mSmmCpuSmramRanges[Index].PhysicalSize)))
+      {
         *SmrrBase = (UINT32)mSmmCpuSmramRanges[Index].CpuStart;
         *SmrrSize = (UINT32)(*SmrrSize + mSmmCpuSmramRanges[Index].PhysicalSize);
-        Found = TRUE;
-      } else if ((*SmrrBase + *SmrrSize) == mSmmCpuSmramRanges[Index].CpuStart && mSmmCpuSmramRanges[Index].PhysicalSize > 0) {
+        Found     = TRUE;
+      } else if (((*SmrrBase + *SmrrSize) == mSmmCpuSmramRanges[Index].CpuStart) && (mSmmCpuSmramRanges[Index].PhysicalSize > 0)) {
         *SmrrSize = (UINT32)(*SmrrSize + mSmmCpuSmramRanges[Index].PhysicalSize);
-        Found = TRUE;
+        Found     = TRUE;
       }
     }
   } while (Found);
@@ -1151,7 +1168,7 @@ SMM Feature Control MSR will be locked after configuration.
 VOID
 EFIAPI
 ConfigSmmCodeAccessCheckOnCurrentProcessor (
-  IN OUT VOID  *Buffer
+  IN OUT VOID *Buffer
   )
 {
   UINTN   CpuIndex;
@@ -1249,6 +1266,7 @@ ConfigSmmCodeAccessCheck (
         //
         continue;
       }
+
       //
       // Acquire Config SMM Code Access Check spin lock.  The AP will release the
       // spin lock when it is done executing ConfigSmmCodeAccessCheckOnCurrentProcessor().
@@ -1293,7 +1311,7 @@ ConfigSmmCodeAccessCheck (
 **/
 VOID *
 AllocatePageTableMemory (
-  IN UINTN           Pages
+  IN UINTN Pages
   )
 {
   VOID  *Buffer;
@@ -1302,6 +1320,7 @@ AllocatePageTableMemory (
   if (Buffer != NULL) {
     return Buffer;
   }
+
   return AllocatePages (Pages);
 }
 
@@ -1314,7 +1333,7 @@ AllocatePageTableMemory (
 **/
 VOID *
 AllocateCodePages (
-  IN UINTN           Pages
+  IN UINTN Pages
   )
 {
   EFI_STATUS            Status;
@@ -1328,7 +1347,8 @@ AllocateCodePages (
   if (EFI_ERROR (Status)) {
     return NULL;
   }
-  return (VOID *) (UINTN) Memory;
+
+  return (VOID *)(UINTN)Memory;
 }
 
 /**
@@ -1343,8 +1363,8 @@ AllocateCodePages (
 **/
 VOID *
 AllocateAlignedCodePages (
-  IN UINTN            Pages,
-  IN UINTN            Alignment
+  IN UINTN Pages,
+  IN UINTN Alignment
   )
 {
   EFI_STATUS            Status;
@@ -1362,23 +1382,25 @@ AllocateAlignedCodePages (
   if (Pages == 0) {
     return NULL;
   }
+
   if (Alignment > EFI_PAGE_SIZE) {
     //
     // Calculate the total number of pages since alignment is larger than page size.
     //
-    AlignmentMask  = Alignment - 1;
-    RealPages      = Pages + EFI_SIZE_TO_PAGES (Alignment);
+    AlignmentMask = Alignment - 1;
+    RealPages     = Pages + EFI_SIZE_TO_PAGES (Alignment);
     //
     // Make sure that Pages plus EFI_SIZE_TO_PAGES (Alignment) does not overflow.
     //
     ASSERT (RealPages > Pages);
 
-    Status         = gSmst->SmmAllocatePages (AllocateAnyPages, EfiRuntimeServicesCode, RealPages, &Memory);
+    Status = gSmst->SmmAllocatePages (AllocateAnyPages, EfiRuntimeServicesCode, RealPages, &Memory);
     if (EFI_ERROR (Status)) {
       return NULL;
     }
-    AlignedMemory  = ((UINTN) Memory + AlignmentMask) & ~AlignmentMask;
-    UnalignedPages = EFI_SIZE_TO_PAGES (AlignedMemory - (UINTN) Memory);
+
+    AlignedMemory  = ((UINTN)Memory + AlignmentMask) & ~AlignmentMask;
+    UnalignedPages = EFI_SIZE_TO_PAGES (AlignedMemory - (UINTN)Memory);
     if (UnalignedPages > 0) {
       //
       // Free first unaligned page(s).
@@ -1386,7 +1408,8 @@ AllocateAlignedCodePages (
       Status = gSmst->SmmFreePages (Memory, UnalignedPages);
       ASSERT_EFI_ERROR (Status);
     }
-    Memory         = AlignedMemory + EFI_PAGES_TO_SIZE (Pages);
+
+    Memory = AlignedMemory + EFI_PAGES_TO_SIZE (Pages);
     UnalignedPages = RealPages - Pages - UnalignedPages;
     if (UnalignedPages > 0) {
       //
@@ -1403,9 +1426,11 @@ AllocateAlignedCodePages (
     if (EFI_ERROR (Status)) {
       return NULL;
     }
-    AlignedMemory  = (UINTN) Memory;
+
+    AlignedMemory = (UINTN)Memory;
   }
-  return (VOID *) AlignedMemory;
+
+  return (VOID *)AlignedMemory;
 }
 
 /**
@@ -1424,6 +1449,7 @@ PerformRemainingTasks (
     if (FeaturePcdGet (PcdCpuSmmProfileEnable)) {
       SmmProfileStart ();
     }
+
     //
     // Create a mix of 2MB and 4KB page table. Update some memory ranges absent and execute-disable.
     //

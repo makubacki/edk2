@@ -19,7 +19,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/MmServicesTableLib.h>
 #include <Library/BaseMemoryLib.h>
 
-#define MAX_IO_PORT_ADDRESS   0xFFFF
+#define MAX_IO_PORT_ADDRESS  0xFFFF
 
 /**
   Reads memory-mapped registers.
@@ -47,11 +47,11 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 CpuMemoryServiceRead (
-  IN  CONST EFI_SMM_CPU_IO2_PROTOCOL  *This,
-  IN  EFI_SMM_IO_WIDTH                Width,
-  IN  UINT64                          Address,
-  IN  UINTN                           Count,
-  OUT VOID                            *Buffer
+  IN  CONST EFI_SMM_CPU_IO2_PROTOCOL *This,
+  IN  EFI_SMM_IO_WIDTH               Width,
+  IN  UINT64                         Address,
+  IN  UINTN                          Count,
+  OUT VOID                           *Buffer
   );
 
 /**
@@ -80,11 +80,11 @@ CpuMemoryServiceRead (
 EFI_STATUS
 EFIAPI
 CpuMemoryServiceWrite (
-  IN CONST EFI_SMM_CPU_IO2_PROTOCOL  *This,
-  IN EFI_SMM_IO_WIDTH                Width,
-  IN UINT64                          Address,
-  IN UINTN                           Count,
-  IN VOID                            *Buffer
+  IN CONST EFI_SMM_CPU_IO2_PROTOCOL *This,
+  IN EFI_SMM_IO_WIDTH               Width,
+  IN UINT64                         Address,
+  IN UINTN                          Count,
+  IN VOID                           *Buffer
   );
 
 /**
@@ -113,11 +113,11 @@ CpuMemoryServiceWrite (
 EFI_STATUS
 EFIAPI
 CpuIoServiceRead (
-  IN  CONST EFI_SMM_CPU_IO2_PROTOCOL  *This,
-  IN  EFI_SMM_IO_WIDTH                Width,
-  IN  UINT64                          Address,
-  IN  UINTN                           Count,
-  OUT VOID                            *Buffer
+  IN  CONST EFI_SMM_CPU_IO2_PROTOCOL *This,
+  IN  EFI_SMM_IO_WIDTH               Width,
+  IN  UINT64                         Address,
+  IN  UINTN                          Count,
+  OUT VOID                           *Buffer
   );
 
 /**
@@ -146,11 +146,11 @@ CpuIoServiceRead (
 EFI_STATUS
 EFIAPI
 CpuIoServiceWrite (
-  IN CONST EFI_SMM_CPU_IO2_PROTOCOL  *This,
-  IN EFI_SMM_IO_WIDTH                Width,
-  IN UINT64                          Address,
-  IN UINTN                           Count,
-  IN VOID                            *Buffer
+  IN CONST EFI_SMM_CPU_IO2_PROTOCOL *This,
+  IN EFI_SMM_IO_WIDTH               Width,
+  IN UINT64                         Address,
+  IN UINTN                          Count,
+  IN VOID                           *Buffer
   );
 
 /**

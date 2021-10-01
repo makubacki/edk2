@@ -16,7 +16,7 @@ EFI_HANDLE  mHandle = NULL;
 //
 // SMM CPU I/O Protocol instance
 //
-EFI_SMM_CPU_IO2_PROTOCOL mSmmCpuIo2 = {
+EFI_SMM_CPU_IO2_PROTOCOL  mSmmCpuIo2 = {
   {
     CpuMemoryServiceRead,
     CpuMemoryServiceWrite
@@ -30,7 +30,7 @@ EFI_SMM_CPU_IO2_PROTOCOL mSmmCpuIo2 = {
 //
 // Lookup table for increment values based on transfer widths
 //
-UINT8 mStride[] = {
+UINT8  mStride[] = {
   1, // SMM_IO_UINT8
   2, // SMM_IO_UINT16
   4, // SMM_IO_UINT32
@@ -56,11 +56,11 @@ UINT8 mStride[] = {
 **/
 EFI_STATUS
 CpuIoCheckParameter (
-  IN BOOLEAN           MmioOperation,
-  IN EFI_SMM_IO_WIDTH  Width,
-  IN UINT64            Address,
-  IN UINTN             Count,
-  IN VOID              *Buffer
+  IN BOOLEAN          MmioOperation,
+  IN EFI_SMM_IO_WIDTH Width,
+  IN UINT64           Address,
+  IN UINTN            Count,
+  IN VOID             *Buffer
   )
 {
   UINT64  MaxCount;
@@ -112,6 +112,7 @@ CpuIoCheckParameter (
     if (MaxCount < (Count - 1)) {
       return EFI_UNSUPPORTED;
     }
+
     if (Address > LShiftU64 (MaxCount - Count + 1, Width)) {
       return EFI_UNSUPPORTED;
     }
@@ -153,11 +154,11 @@ CpuIoCheckParameter (
 EFI_STATUS
 EFIAPI
 CpuMemoryServiceRead (
-  IN  CONST EFI_SMM_CPU_IO2_PROTOCOL  *This,
-  IN  EFI_SMM_IO_WIDTH                Width,
-  IN  UINT64                          Address,
-  IN  UINTN                           Count,
-  OUT VOID                            *Buffer
+  IN  CONST EFI_SMM_CPU_IO2_PROTOCOL *This,
+  IN  EFI_SMM_IO_WIDTH               Width,
+  IN  UINT64                         Address,
+  IN  UINTN                          Count,
+  OUT VOID                           *Buffer
   )
 {
   EFI_STATUS  Status;
@@ -184,6 +185,7 @@ CpuMemoryServiceRead (
       *((UINT64 *)Uint8Buffer) = MmioRead64 ((UINTN)Address);
     }
   }
+
   return EFI_SUCCESS;
 }
 
@@ -213,11 +215,11 @@ CpuMemoryServiceRead (
 EFI_STATUS
 EFIAPI
 CpuMemoryServiceWrite (
-  IN CONST EFI_SMM_CPU_IO2_PROTOCOL  *This,
-  IN EFI_SMM_IO_WIDTH                Width,
-  IN UINT64                          Address,
-  IN UINTN                           Count,
-  IN VOID                            *Buffer
+  IN CONST EFI_SMM_CPU_IO2_PROTOCOL *This,
+  IN EFI_SMM_IO_WIDTH               Width,
+  IN UINT64                         Address,
+  IN UINTN                          Count,
+  IN VOID                           *Buffer
   )
 {
   EFI_STATUS  Status;
@@ -244,6 +246,7 @@ CpuMemoryServiceWrite (
       MmioWrite64 ((UINTN)Address, *((UINT64 *)Uint8Buffer));
     }
   }
+
   return EFI_SUCCESS;
 }
 
@@ -273,11 +276,11 @@ CpuMemoryServiceWrite (
 EFI_STATUS
 EFIAPI
 CpuIoServiceRead (
-  IN  CONST EFI_SMM_CPU_IO2_PROTOCOL  *This,
-  IN  EFI_SMM_IO_WIDTH                Width,
-  IN  UINT64                          Address,
-  IN  UINTN                           Count,
-  OUT VOID                            *Buffer
+  IN  CONST EFI_SMM_CPU_IO2_PROTOCOL *This,
+  IN  EFI_SMM_IO_WIDTH               Width,
+  IN  UINT64                         Address,
+  IN  UINTN                          Count,
+  OUT VOID                           *Buffer
   )
 {
   EFI_STATUS  Status;
@@ -332,11 +335,11 @@ CpuIoServiceRead (
 EFI_STATUS
 EFIAPI
 CpuIoServiceWrite (
-  IN CONST EFI_SMM_CPU_IO2_PROTOCOL  *This,
-  IN EFI_SMM_IO_WIDTH                Width,
-  IN UINT64                          Address,
-  IN UINTN                           Count,
-  IN VOID                            *Buffer
+  IN CONST EFI_SMM_CPU_IO2_PROTOCOL *This,
+  IN EFI_SMM_IO_WIDTH               Width,
+  IN UINT64                         Address,
+  IN UINTN                          Count,
+  IN VOID                           *Buffer
   )
 {
   EFI_STATUS  Status;
