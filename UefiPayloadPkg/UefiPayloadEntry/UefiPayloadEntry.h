@@ -43,15 +43,14 @@
 #define GET_OCCUPIED_SIZE(ActualSize, Alignment) \
   ((ActualSize) + (((Alignment) - ((ActualSize) & ((Alignment) - 1))) & ((Alignment) - 1)))
 
-
-#define E820_RAM       1
-#define E820_RESERVED  2
-#define E820_ACPI      3
-#define E820_NVS       4
-#define E820_UNUSABLE  5
-#define E820_DISABLED  6
-#define E820_PMEM      7
-#define E820_UNDEFINED 8
+#define E820_RAM        1
+#define E820_RESERVED   2
+#define E820_ACPI       3
+#define E820_NVS        4
+#define E820_UNUSABLE   5
+#define E820_DISABLED   6
+#define E820_PMEM       7
+#define E820_UNDEFINED  8
 
 /**
   Auto-generated function that calls the library constructors for all of the module's
@@ -76,8 +75,8 @@ ProcessLibraryConstructorList (
 VOID *
 EFIAPI
 CreateHob (
-  IN  UINT16    HobType,
-  IN  UINT16    HobLength
+  IN  UINT16 HobType,
+  IN  UINT16 HobLength
   );
 
 /**
@@ -90,8 +89,8 @@ CreateHob (
 VOID
 EFIAPI
 UpdateStackHob (
-  IN EFI_PHYSICAL_ADDRESS        BaseAddress,
-  IN UINT64                      Length
+  IN EFI_PHYSICAL_ADDRESS BaseAddress,
+  IN UINT64               Length
   );
 
 /**
@@ -109,13 +108,13 @@ UpdateStackHob (
   @return   The pointer to the handoff HOB table.
 
 **/
-EFI_HOB_HANDOFF_INFO_TABLE*
+EFI_HOB_HANDOFF_INFO_TABLE *
 EFIAPI
 HobConstructor (
-  IN VOID   *EfiMemoryBottom,
-  IN VOID   *EfiMemoryTop,
-  IN VOID   *EfiFreeMemoryBottom,
-  IN VOID   *EfiFreeMemoryTop
+  IN VOID *EfiMemoryBottom,
+  IN VOID *EfiMemoryTop,
+  IN VOID *EfiFreeMemoryBottom,
+  IN VOID *EfiFreeMemoryTop
   );
 
 /**
@@ -128,7 +127,7 @@ HobConstructor (
 **/
 EFI_STATUS
 LoadDxeCore (
-  OUT PHYSICAL_ADDRESS        *DxeCoreEntryPoint
+  OUT PHYSICAL_ADDRESS *DxeCoreEntryPoint
   );
 
 /**
@@ -157,8 +156,8 @@ UniversalLoadDxeCore (
 **/
 VOID
 HandOffToDxeCore (
-  IN EFI_PHYSICAL_ADDRESS   DxeCoreEntryPoint,
-  IN EFI_PEI_HOB_POINTERS   HobList
+  IN EFI_PHYSICAL_ADDRESS DxeCoreEntryPoint,
+  IN EFI_PEI_HOB_POINTERS HobList
   );
 
 EFI_STATUS
@@ -180,9 +179,9 @@ FixUpPcdDatabase (
 **/
 EFI_STATUS
 FileFindSection (
-  IN EFI_FFS_FILE_HEADER        *FileHeader,
-  IN EFI_SECTION_TYPE           SectionType,
-  OUT VOID                      **SectionData
+  IN EFI_FFS_FILE_HEADER *FileHeader,
+  IN EFI_SECTION_TYPE    SectionType,
+  OUT VOID               **SectionData
   );
 
 /**
@@ -200,10 +199,10 @@ FileFindSection (
 **/
 EFI_STATUS
 FvFindFileByTypeGuid (
-  IN  EFI_FIRMWARE_VOLUME_HEADER  *FvHeader,
-  IN  EFI_FV_FILETYPE             FileType,
-  IN  EFI_GUID                    *Guid           OPTIONAL,
-  OUT EFI_FFS_FILE_HEADER         **FileHeader
+  IN  EFI_FIRMWARE_VOLUME_HEADER *FvHeader,
+  IN  EFI_FV_FILETYPE            FileType,
+  IN  EFI_GUID                   *Guid           OPTIONAL,
+  OUT EFI_FFS_FILE_HEADER        **FileHeader
   );
 
 /**
@@ -215,7 +214,7 @@ FvFindFileByTypeGuid (
 **/
 ACPI_BOARD_INFO *
 BuildHobFromAcpi (
-  IN   UINT64                           AcpiTableBase
+  IN   UINT64 AcpiTableBase
   );
 
 #endif
