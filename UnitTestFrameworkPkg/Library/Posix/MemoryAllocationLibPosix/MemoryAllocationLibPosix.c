@@ -26,11 +26,11 @@
 /// aligned allocation.
 ///
 typedef struct {
-  UINT32  Signature;
-  VOID    *AllocatedBufffer;
-  UINTN   TotalPages;
-  VOID    *AlignedBuffer;
-  UINTN   AlignedPages;
+  UINT32    Signature;
+  VOID      *AllocatedBufffer;
+  UINTN     TotalPages;
+  VOID      *AlignedBuffer;
+  UINTN     AlignedPages;
 } PAGE_HEAD;
 
 /**
@@ -49,7 +49,7 @@ typedef struct {
 VOID *
 EFIAPI
 AllocatePages (
-  IN UINTN  Pages
+  IN UINTN Pages
   )
 {
   return AllocateAlignedPages (Pages, SIZE_4KB);
@@ -71,7 +71,7 @@ AllocatePages (
 VOID *
 EFIAPI
 AllocateRuntimePages (
-  IN UINTN  Pages
+  IN UINTN Pages
   )
 {
   return AllocatePages (Pages);
@@ -93,7 +93,7 @@ AllocateRuntimePages (
 VOID *
 EFIAPI
 AllocateReservedPages (
-  IN UINTN  Pages
+  IN UINTN Pages
   )
 {
   return AllocatePages (Pages);
@@ -119,8 +119,8 @@ AllocateReservedPages (
 VOID
 EFIAPI
 FreePages (
-  IN VOID   *Buffer,
-  IN UINTN  Pages
+  IN VOID  *Buffer,
+  IN UINTN Pages
   )
 {
   FreeAlignedPages (Buffer, Pages);
@@ -146,8 +146,8 @@ FreePages (
 **/VOID *
 EFIAPI
 AllocateAlignedPages (
-  IN UINTN  Pages,
-  IN UINTN  Alignment
+  IN UINTN Pages,
+  IN UINTN Alignment
   )
 {
   PAGE_HEAD  PageHead;
@@ -159,25 +159,27 @@ AllocateAlignedPages (
   if (Alignment < SIZE_4KB) {
     Alignment = SIZE_4KB;
   }
-  AlignmentMask  = Alignment - 1;
+
+  AlignmentMask = Alignment - 1;
 
   //
   // We need reserve Alignment pages for PAGE_HEAD, as meta data.
   //
-  PageHead.Signature = PAGE_HEAD_PRIVATE_SIGNATURE;
-  PageHead.TotalPages = Pages + EFI_SIZE_TO_PAGES (Alignment) * 2;
-  PageHead.AlignedPages = Pages;
+  PageHead.Signature        = PAGE_HEAD_PRIVATE_SIGNATURE;
+  PageHead.TotalPages       = Pages + EFI_SIZE_TO_PAGES (Alignment) * 2;
+  PageHead.AlignedPages     = Pages;
   PageHead.AllocatedBufffer = malloc (EFI_PAGES_TO_SIZE (PageHead.TotalPages));
   if (PageHead.AllocatedBufffer == NULL) {
     return NULL;
   }
-  PageHead.AlignedBuffer = (VOID *)(((UINTN) PageHead.AllocatedBufffer + AlignmentMask) & ~AlignmentMask);
-  if ((UINTN)PageHead.AlignedBuffer - (UINTN)PageHead.AllocatedBufffer < sizeof(PAGE_HEAD)) {
+
+  PageHead.AlignedBuffer = (VOID *)(((UINTN)PageHead.AllocatedBufffer + AlignmentMask) & ~AlignmentMask);
+  if ((UINTN)PageHead.AlignedBuffer - (UINTN)PageHead.AllocatedBufffer < sizeof (PAGE_HEAD)) {
     PageHead.AlignedBuffer = (VOID *)((UINTN)PageHead.AlignedBuffer + Alignment);
   }
 
-  PageHeadPtr = (VOID *)((UINTN)PageHead.AlignedBuffer - sizeof(PAGE_HEAD));
-  memcpy (PageHeadPtr, &PageHead, sizeof(PAGE_HEAD));
+  PageHeadPtr = (VOID *)((UINTN)PageHead.AlignedBuffer - sizeof (PAGE_HEAD));
+  memcpy (PageHeadPtr, &PageHead, sizeof (PAGE_HEAD));
 
   return PageHead.AlignedBuffer;
 }
@@ -203,8 +205,8 @@ AllocateAlignedPages (
 VOID *
 EFIAPI
 AllocateAlignedRuntimePages (
-  IN UINTN  Pages,
-  IN UINTN  Alignment
+  IN UINTN Pages,
+  IN UINTN Alignment
   )
 {
   return AllocateAlignedPages (Pages, Alignment);
@@ -231,8 +233,8 @@ AllocateAlignedRuntimePages (
 VOID *
 EFIAPI
 AllocateAlignedReservedPages (
-  IN UINTN  Pages,
-  IN UINTN  Alignment
+  IN UINTN Pages,
+  IN UINTN Alignment
   )
 {
   return AllocateAlignedPages (Pages, Alignment);
@@ -258,8 +260,8 @@ AllocateAlignedReservedPages (
 VOID
 EFIAPI
 FreeAlignedPages (
-  IN VOID   *Buffer,
-  IN UINTN  Pages
+  IN VOID  *Buffer,
+  IN UINTN Pages
   )
 {
   PAGE_HEAD  *PageHeadPtr;
@@ -267,10 +269,11 @@ FreeAlignedPages (
   //
   // NOTE: Partial free is not supported. Just keep it.
   //
-  PageHeadPtr = (VOID *)((UINTN)Buffer - sizeof(PAGE_HEAD));
+  PageHeadPtr = (VOID *)((UINTN)Buffer - sizeof (PAGE_HEAD));
   if (PageHeadPtr->Signature != PAGE_HEAD_PRIVATE_SIGNATURE) {
     return;
   }
+
   if (PageHeadPtr->AlignedPages != Pages) {
     return;
   }
@@ -293,7 +296,7 @@ FreeAlignedPages (
 **/VOID *
 EFIAPI
 AllocatePool (
-  IN UINTN  AllocationSize
+  IN UINTN AllocationSize
   )
 {
   return malloc (AllocationSize);
@@ -314,7 +317,7 @@ AllocatePool (
 VOID *
 EFIAPI
 AllocateRuntimePool (
-  IN UINTN  AllocationSize
+  IN UINTN AllocationSize
   )
 {
   return AllocatePool (AllocationSize);
@@ -335,7 +338,7 @@ AllocateRuntimePool (
 VOID *
 EFIAPI
 AllocateReservedPool (
-  IN UINTN  AllocationSize
+  IN UINTN AllocationSize
   )
 {
   return AllocatePool (AllocationSize);
@@ -357,7 +360,7 @@ AllocateReservedPool (
 VOID *
 EFIAPI
 AllocateZeroPool (
-  IN UINTN  AllocationSize
+  IN UINTN AllocationSize
   )
 {
   VOID  *Buffer;
@@ -366,6 +369,7 @@ AllocateZeroPool (
   if (Buffer == NULL) {
     return NULL;
   }
+
   memset (Buffer, 0, AllocationSize);
   return Buffer;
 }
@@ -386,7 +390,7 @@ AllocateZeroPool (
 VOID *
 EFIAPI
 AllocateRuntimeZeroPool (
-  IN UINTN  AllocationSize
+  IN UINTN AllocationSize
   )
 {
   return AllocateZeroPool (AllocationSize);
@@ -408,7 +412,7 @@ AllocateRuntimeZeroPool (
 VOID *
 EFIAPI
 AllocateReservedZeroPool (
-  IN UINTN  AllocationSize
+  IN UINTN AllocationSize
   )
 {
   return AllocateZeroPool (AllocationSize);
@@ -434,8 +438,8 @@ AllocateReservedZeroPool (
 VOID *
 EFIAPI
 AllocateCopyPool (
-  IN UINTN       AllocationSize,
-  IN CONST VOID  *Buffer
+  IN UINTN      AllocationSize,
+  IN CONST VOID *Buffer
   )
 {
   VOID  *Memory;
@@ -444,6 +448,7 @@ AllocateCopyPool (
   if (Memory == NULL) {
     return NULL;
   }
+
   memcpy (Memory, Buffer, AllocationSize);
   return Memory;
 }
@@ -468,8 +473,8 @@ AllocateCopyPool (
 VOID *
 EFIAPI
 AllocateRuntimeCopyPool (
-  IN UINTN       AllocationSize,
-  IN CONST VOID  *Buffer
+  IN UINTN      AllocationSize,
+  IN CONST VOID *Buffer
   )
 {
   return AllocateCopyPool (AllocationSize, Buffer);
@@ -495,8 +500,8 @@ AllocateRuntimeCopyPool (
 VOID *
 EFIAPI
 AllocateReservedCopyPool (
-  IN UINTN       AllocationSize,
-  IN CONST VOID  *Buffer
+  IN UINTN      AllocationSize,
+  IN CONST VOID *Buffer
   )
 {
   return AllocateCopyPool (AllocationSize, Buffer);
@@ -526,20 +531,22 @@ AllocateReservedCopyPool (
 VOID *
 EFIAPI
 ReallocatePool (
-  IN UINTN  OldSize,
-  IN UINTN  NewSize,
-  IN VOID   *OldBuffer   OPTIONAL
+  IN UINTN OldSize,
+  IN UINTN NewSize,
+  IN VOID  *OldBuffer   OPTIONAL
   )
 {
   VOID  *NewBuffer;
 
   NewBuffer = malloc (NewSize);
-  if (NewBuffer != NULL && OldBuffer != NULL) {
+  if ((NewBuffer != NULL) && (OldBuffer != NULL)) {
     memcpy (NewBuffer, OldBuffer, MIN (OldSize, NewSize));
   }
+
   if (OldBuffer != NULL) {
-    FreePool(OldBuffer);
+    FreePool (OldBuffer);
   }
+
   return NewBuffer;
 }
 
@@ -567,9 +574,9 @@ ReallocatePool (
 VOID *
 EFIAPI
 ReallocateRuntimePool (
-  IN UINTN  OldSize,
-  IN UINTN  NewSize,
-  IN VOID   *OldBuffer   OPTIONAL
+  IN UINTN OldSize,
+  IN UINTN NewSize,
+  IN VOID  *OldBuffer   OPTIONAL
   )
 {
   return ReallocatePool (OldSize, NewSize, OldBuffer);
@@ -599,9 +606,9 @@ ReallocateRuntimePool (
 VOID *
 EFIAPI
 ReallocateReservedPool (
-  IN UINTN  OldSize,
-  IN UINTN  NewSize,
-  IN VOID   *OldBuffer   OPTIONAL
+  IN UINTN OldSize,
+  IN UINTN NewSize,
+  IN VOID  *OldBuffer   OPTIONAL
   )
 {
   return ReallocatePool (OldSize, NewSize, OldBuffer);
@@ -624,7 +631,7 @@ ReallocateReservedPool (
 VOID
 EFIAPI
 FreePool (
-  IN VOID  *Buffer
+  IN VOID *Buffer
   )
 {
   free (Buffer);
