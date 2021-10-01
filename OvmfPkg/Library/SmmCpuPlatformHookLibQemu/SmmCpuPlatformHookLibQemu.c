@@ -75,10 +75,10 @@ ClearTopLevelSmiStatus (
 EFI_STATUS
 EFIAPI
 PlatformSmmBspElection (
-  OUT BOOLEAN     *IsBsp
+  OUT BOOLEAN *IsBsp
   )
 {
-  MSR_IA32_APIC_BASE_REGISTER ApicBaseMsr;
+  MSR_IA32_APIC_BASE_REGISTER  ApicBaseMsr;
 
   ApicBaseMsr.Uint64 = AsmReadMsr64 (MSR_IA32_APIC_BASE);
   *IsBsp = (BOOLEAN)(ApicBaseMsr.Bits.BSP == 1);

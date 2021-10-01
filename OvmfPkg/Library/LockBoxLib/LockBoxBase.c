@@ -28,7 +28,7 @@
 VOID *
 EFIAPI
 AllocateAcpiNvsPool (
-  IN UINTN  AllocationSize
+  IN UINTN AllocationSize
   )
 {
   ASSERT_EFI_ERROR (RETURN_UNSUPPORTED);

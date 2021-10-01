@@ -33,10 +33,10 @@ JumpToKernel (
 VOID
 EFIAPI
 JumpToUefiKernel (
-  EFI_HANDLE ImageHandle,
+  EFI_HANDLE       ImageHandle,
   EFI_SYSTEM_TABLE *SystemTable,
-  VOID *KernelBootParams,
-  VOID *KernelStart
+  VOID             *KernelBootParams,
+  VOID             *KernelStart
   );
 
 VOID
@@ -50,4 +50,3 @@ SetLinuxDescriptorTables (
   );
 
 #endif
-

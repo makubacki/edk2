@@ -33,9 +33,9 @@
 EFI_STATUS
 EFIAPI
 InternalVmgExitHandleVc (
-  IN OUT GHCB                *Ghcb,
-  IN OUT EFI_EXCEPTION_TYPE  *ExceptionType,
-  IN OUT EFI_SYSTEM_CONTEXT  SystemContext
+  IN OUT GHCB               *Ghcb,
+  IN OUT EFI_EXCEPTION_TYPE *ExceptionType,
+  IN OUT EFI_SYSTEM_CONTEXT SystemContext
   );
 
 /**
@@ -47,7 +47,7 @@ InternalVmgExitHandleVc (
 VOID
 EFIAPI
 VmgExitIssueAssert (
-  IN OUT SEV_ES_PER_CPU_DATA  *SevEsData
+  IN OUT SEV_ES_PER_CPU_DATA *SevEsData
   );
 
 #endif

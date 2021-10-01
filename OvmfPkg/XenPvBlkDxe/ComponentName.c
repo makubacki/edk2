@@ -14,7 +14,7 @@
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
 EFI_COMPONENT_NAME_PROTOCOL  gXenPvBlkDxeComponentName = {
-  (EFI_COMPONENT_NAME_GET_DRIVER_NAME)    XenPvBlkDxeComponentNameGetDriverName,
+  (EFI_COMPONENT_NAME_GET_DRIVER_NAME)XenPvBlkDxeComponentNameGetDriverName,
   (EFI_COMPONENT_NAME_GET_CONTROLLER_NAME)XenPvBlkDxeComponentNameGetControllerName,
   "eng"
 };
@@ -33,18 +33,18 @@ EFI_COMPONENT_NAME2_PROTOCOL  gXenPvBlkDxeComponentName2 = {
 /// Table of driver names
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
-EFI_UNICODE_STRING_TABLE mXenPvBlkDxeDriverNameTable[] = {
+EFI_UNICODE_STRING_TABLE  mXenPvBlkDxeDriverNameTable[] = {
   { "eng;en", (CHAR16 *)L"Xen PV Block Driver" },
-  { NULL, NULL }
+  { NULL,     NULL                             }
 };
 
 ///
 /// Table of controller names
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
-EFI_UNICODE_STRING_TABLE mXenPvBlkDxeControllerNameTable[] = {
+EFI_UNICODE_STRING_TABLE  mXenPvBlkDxeControllerNameTable[] = {
   { "eng;en", (CHAR16 *)L"Xen PV Block Device" },
-  { NULL, NULL }
+  { NULL,     NULL                             }
 };
 
 /**
@@ -72,9 +72,9 @@ EFI_UNICODE_STRING_TABLE mXenPvBlkDxeControllerNameTable[] = {
 EFI_STATUS
 EFIAPI
 XenPvBlkDxeComponentNameGetDriverName (
-  IN EFI_COMPONENT_NAME2_PROTOCOL  *This,
-  IN  CHAR8                        *Language,
-  OUT CHAR16                       **DriverName
+  IN EFI_COMPONENT_NAME2_PROTOCOL *This,
+  IN  CHAR8                       *Language,
+  OUT CHAR16                      **DriverName
   )
 {
   return LookupUnicodeString2 (
@@ -129,11 +129,11 @@ XenPvBlkDxeComponentNameGetDriverName (
 EFI_STATUS
 EFIAPI
 XenPvBlkDxeComponentNameGetControllerName (
-  IN  EFI_COMPONENT_NAME2_PROTOCOL  *This,
-  IN  EFI_HANDLE                    ControllerHandle,
-  IN  EFI_HANDLE                    ChildHandle        OPTIONAL,
-  IN  CHAR8                         *Language,
-  OUT CHAR16                        **ControllerName
+  IN  EFI_COMPONENT_NAME2_PROTOCOL *This,
+  IN  EFI_HANDLE                   ControllerHandle,
+  IN  EFI_HANDLE                   ChildHandle        OPTIONAL,
+  IN  CHAR8                        *Language,
+  OUT CHAR16                       **ControllerName
   )
 {
   EFI_STATUS  Status;

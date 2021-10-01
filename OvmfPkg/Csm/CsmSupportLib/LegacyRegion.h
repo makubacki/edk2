@@ -31,19 +31,19 @@
 // Describes Legacy Region blocks and status.
 //
 typedef struct {
-  UINT32  Start;
-  UINT32  Length;
-  BOOLEAN ReadEnabled;
-  BOOLEAN WriteEnabled;
+  UINT32     Start;
+  UINT32     Length;
+  BOOLEAN    ReadEnabled;
+  BOOLEAN    WriteEnabled;
 } LEGACY_MEMORY_SECTION_INFO;
 
 //
 // Provides a map of the PAM registers and bits used to set Read/Write access.
 //
 typedef struct {
-  UINTN   PAMRegPciLibAddress;
-  UINT8   ReadEnableData;
-  UINT8   WriteEnableData;
+  UINTN    PAMRegPciLibAddress;
+  UINT8    ReadEnableData;
+  UINT8    WriteEnableData;
 } PAM_REGISTER_VALUE;
 
 /**
@@ -73,11 +73,11 @@ typedef struct {
 EFI_STATUS
 EFIAPI
 LegacyRegion2Decode (
-  IN  EFI_LEGACY_REGION2_PROTOCOL  *This,
-  IN  UINT32                       Start,
-  IN  UINT32                       Length,
-  OUT UINT32                       *Granularity,
-  IN  BOOLEAN                      *On
+  IN  EFI_LEGACY_REGION2_PROTOCOL *This,
+  IN  UINT32                      Start,
+  IN  UINT32                      Length,
+  OUT UINT32                      *Granularity,
+  IN  BOOLEAN                     *On
   );
 
 /**
@@ -137,10 +137,10 @@ LegacyRegion2Lock (
 EFI_STATUS
 EFIAPI
 LegacyRegion2BootLock (
-  IN EFI_LEGACY_REGION2_PROTOCOL          *This,
-  IN  UINT32                              Start,
-  IN  UINT32                              Length,
-  OUT UINT32                              *Granularity
+  IN EFI_LEGACY_REGION2_PROTOCOL *This,
+  IN  UINT32                     Start,
+  IN  UINT32                     Length,
+  OUT UINT32                     *Granularity
   );
 
 /**
@@ -166,10 +166,10 @@ LegacyRegion2BootLock (
 EFI_STATUS
 EFIAPI
 LegacyRegion2Unlock (
-  IN  EFI_LEGACY_REGION2_PROTOCOL  *This,
-  IN  UINT32                       Start,
-  IN  UINT32                       Length,
-  OUT UINT32                       *Granularity
+  IN  EFI_LEGACY_REGION2_PROTOCOL *This,
+  IN  UINT32                      Start,
+  IN  UINT32                      Length,
+  OUT UINT32                      *Granularity
   );
 
 /**
@@ -194,10 +194,9 @@ LegacyRegion2Unlock (
 EFI_STATUS
 EFIAPI
 LegacyRegionGetInfo (
-  IN  EFI_LEGACY_REGION2_PROTOCOL   *This,
-  OUT UINT32                        *DescriptorCount,
-  OUT EFI_LEGACY_REGION_DESCRIPTOR  **Descriptor
+  IN  EFI_LEGACY_REGION2_PROTOCOL  *This,
+  OUT UINT32                       *DescriptorCount,
+  OUT EFI_LEGACY_REGION_DESCRIPTOR **Descriptor
   );
 
 #endif
-

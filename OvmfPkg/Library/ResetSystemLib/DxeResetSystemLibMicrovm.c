@@ -21,8 +21,8 @@
 EFI_STATUS
 EFIAPI
 DxeResetSystemLibMicrovmConstructor (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
   UINTN                            Address = MICROVM_GED_MMIO_BASE;
@@ -37,8 +37,11 @@ DxeResetSystemLibMicrovmConstructor (
     return RETURN_UNSUPPORTED;
   }
 
-  Status = gDS->SetMemorySpaceAttributes (Address, SIZE_4KB,
-                                          Descriptor.Attributes | EFI_MEMORY_RUNTIME);
+  Status = gDS->SetMemorySpaceAttributes (
+                  Address,
+                  SIZE_4KB,
+                  Descriptor.Attributes | EFI_MEMORY_RUNTIME
+                  );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INFO, "%a: SetMemorySpaceAttributes failed\n", __FUNCTION__));
     return RETURN_UNSUPPORTED;

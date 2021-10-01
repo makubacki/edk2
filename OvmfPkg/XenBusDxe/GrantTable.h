@@ -9,6 +9,7 @@
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
+
 #ifndef __GNTTAB_H__
 #define __GNTTAB_H__
 
@@ -23,7 +24,7 @@
 **/
 VOID
 XenGrantTableInit (
-  IN XENBUS_DEVICE  *Dev
+  IN XENBUS_DEVICE *Dev
   );
 
 /**
@@ -31,7 +32,7 @@ XenGrantTableInit (
 **/
 VOID
 XenGrantTableDeinit (
-  IN XENBUS_DEVICE  *Dev
+  IN XENBUS_DEVICE *Dev
   );
 
 /**
@@ -63,8 +64,8 @@ XenBusGrantAccess (
 EFI_STATUS
 EFIAPI
 XenBusGrantEndAccess (
-  IN XENBUS_PROTOCOL  *This,
-  IN grant_ref_t      Ref
+  IN XENBUS_PROTOCOL *This,
+  IN grant_ref_t     Ref
   );
 
 #endif /* !__GNTTAB_H__ */

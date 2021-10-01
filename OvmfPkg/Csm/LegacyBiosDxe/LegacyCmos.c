@@ -21,7 +21,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 **/
 UINT8
 LegacyReadStandardCmos (
-  IN UINT8  Index
+  IN UINT8 Index
   )
 {
   IoWrite8 (PORT_70, Index);
@@ -39,8 +39,8 @@ LegacyReadStandardCmos (
 **/
 UINT8
 LegacyWriteStandardCmos (
-  IN UINT8  Index,
-  IN UINT8  Value
+  IN UINT8 Index,
+  IN UINT8 Value
   )
 {
   IoWrite8 (PORT_70, Index);
@@ -66,11 +66,11 @@ LegacyCalculateWriteStandardCmosChecksum (
   for (Checksum = 0, Register = 0x10; Register < 0x2e; Register++) {
     Checksum = (UINT16)(Checksum + LegacyReadStandardCmos (Register));
   }
+
   LegacyWriteStandardCmos (CMOS_2E, (UINT8)(Checksum >> 8));
   LegacyWriteStandardCmos (CMOS_2F, (UINT8)(Checksum & 0xff));
   return EFI_SUCCESS;
 }
-
 
 /**
   Fill in the standard CMOS stuff before Legacy16 load
@@ -82,7 +82,7 @@ LegacyCalculateWriteStandardCmosChecksum (
 **/
 EFI_STATUS
 LegacyBiosInitCmos (
-  IN  LEGACY_BIOS_INSTANCE    *Private
+  IN  LEGACY_BIOS_INSTANCE *Private
   )
 {
   UINT32  Size;
@@ -103,7 +103,7 @@ LegacyBiosInitCmos (
 
   Size = 15 * SIZE_1MB;
   if (Private->IntThunk->EfiToLegacy16InitTable.OsMemoryAbove1Mb < (15 * SIZE_1MB)) {
-    Size  = Private->IntThunk->EfiToLegacy16InitTable.OsMemoryAbove1Mb >> 10;
+    Size = Private->IntThunk->EfiToLegacy16InitTable.OsMemoryAbove1Mb >> 10;
   }
 
   LegacyWriteStandardCmos (CMOS_17, (UINT8)(Size & 0xFF));

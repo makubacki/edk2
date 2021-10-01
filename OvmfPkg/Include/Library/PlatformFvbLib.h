@@ -35,7 +35,6 @@ PlatformFvbDataRead (
   IN        UINT8                               *Buffer
   );
 
-
 /**
   This function will be called following a call to the
   EFI_FIRMWARE_VOLUME_BLOCK2_PROTOCOL Write function.
@@ -50,13 +49,12 @@ PlatformFvbDataRead (
 VOID
 EFIAPI
 PlatformFvbDataWritten (
-  IN CONST  EFI_FIRMWARE_VOLUME_BLOCK2_PROTOCOL  *This,
-  IN        EFI_LBA                              Lba,
-  IN        UINTN                                Offset,
-  IN        UINTN                                NumBytes,
-  IN        UINT8                                *Buffer
+  IN CONST  EFI_FIRMWARE_VOLUME_BLOCK2_PROTOCOL *This,
+  IN        EFI_LBA                             Lba,
+  IN        UINTN                               Offset,
+  IN        UINTN                               NumBytes,
+  IN        UINT8                               *Buffer
   );
-
 
 /**
   This function will be called following a call to the
@@ -73,9 +71,7 @@ VOID
 EFIAPI
 PlatformFvbBlocksErased (
   IN CONST  EFI_FIRMWARE_VOLUME_BLOCK2_PROTOCOL *This,
-  IN  VA_LIST       List
+  IN  VA_LIST                                   List
   );
 
-
 #endif
-

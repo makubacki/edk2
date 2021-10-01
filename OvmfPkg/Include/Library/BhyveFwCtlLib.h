@@ -39,9 +39,9 @@
 RETURN_STATUS
 EFIAPI
 BhyveFwCtlGet (
-  IN   CONST CHAR8  *Name,
-  OUT  VOID         *Item,
-  IN OUT  UINTN     *Size
+  IN   CONST CHAR8 *Name,
+  OUT  VOID        *Item,
+  IN OUT  UINTN    *Size
   );
 
 #endif /* _BHYVE_FW_CTL_LIB_ */
