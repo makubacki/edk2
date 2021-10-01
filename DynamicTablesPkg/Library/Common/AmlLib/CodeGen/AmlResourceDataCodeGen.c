@@ -42,14 +42,14 @@ STATIC
 EFI_STATUS
 EFIAPI
 LinkRdNode (
-  IN  AML_DATA_NODE      * RdNode,
-  IN  AML_OBJECT_NODE    * ParentNode,
-  OUT AML_DATA_NODE     ** NewRdNode
+  IN  AML_DATA_NODE      *RdNode,
+  IN  AML_OBJECT_NODE    *ParentNode,
+  OUT AML_DATA_NODE     **NewRdNode
   )
 {
-  EFI_STATUS        Status;
-  EFI_STATUS        Status1;
-  AML_OBJECT_NODE   *BufferOpNode;
+  EFI_STATUS       Status;
+  EFI_STATUS       Status1;
+  AML_OBJECT_NODE  *BufferOpNode;
 
   if (NewRdNode != NULL) {
     *NewRdNode = RdNode;
@@ -71,7 +71,8 @@ LinkRdNode (
                                              );
     if ((BufferOpNode == NULL)                                             ||
         (AmlGetNodeType ((AML_NODE_HANDLE)BufferOpNode) != EAmlNodeObject) ||
-        (!AmlNodeHasOpCode (BufferOpNode, AML_BUFFER_OP, 0))) {
+        (!AmlNodeHasOpCode (BufferOpNode, AML_BUFFER_OP, 0)))
+    {
       ASSERT (0);
       Status = EFI_INVALID_PARAMETER;
       goto error_handler;
@@ -88,7 +89,7 @@ LinkRdNode (
   return Status;
 
 error_handler:
-  Status1 = AmlDeleteTree ((AML_NODE_HEADER*)RdNode);
+  Status1 = AmlDeleteTree ((AML_NODE_HEADER *)RdNode);
   ASSERT_EFI_ERROR (Status1);
   // Return original error.
   return Status;
@@ -140,15 +141,16 @@ AmlCodeGenRdInterrupt (
   OUT AML_DATA_NODE_HANDLE    *NewRdNode  OPTIONAL
   )
 {
-  EFI_STATUS                               Status;
+  EFI_STATUS  Status;
 
-  AML_DATA_NODE                          * RdNode;
-  EFI_ACPI_EXTENDED_INTERRUPT_DESCRIPTOR   RdInterrupt;
-  UINT32                                 * FirstInterrupt;
+  AML_DATA_NODE                           *RdNode;
+  EFI_ACPI_EXTENDED_INTERRUPT_DESCRIPTOR  RdInterrupt;
+  UINT32                                  *FirstInterrupt;
 
   if ((IrqList == NULL) ||
       (IrqCount == 0)   ||
-      ((NameOpNode == NULL) && (NewRdNode == NULL))) {
+      ((NameOpNode == NULL) && (NewRdNode == NULL)))
+  {
     ASSERT (0);
     return EFI_INVALID_PARAMETER;
   }
@@ -158,7 +160,7 @@ AmlCodeGenRdInterrupt (
     ACPI_LARGE_EXTENDED_IRQ_DESCRIPTOR_NAME;
   RdInterrupt.Header.Header.Bits.Type = ACPI_LARGE_ITEM_FLAG;
   RdInterrupt.Header.Length = sizeof (EFI_ACPI_EXTENDED_INTERRUPT_DESCRIPTOR) -
-                                sizeof (ACPI_LARGE_RESOURCE_HEADER);
+                              sizeof (ACPI_LARGE_RESOURCE_HEADER);
 
   // Body
   RdInterrupt.InterruptVectorFlags = (ResourceConsumer ? BIT0 : 0) |
@@ -175,7 +177,7 @@ AmlCodeGenRdInterrupt (
 
   Status = AmlCreateDataNode (
              EAmlNodeDataTypeResourceData,
-             (UINT8*)&RdInterrupt,
+             (UINT8 *)&RdInterrupt,
              sizeof (EFI_ACPI_EXTENDED_INTERRUPT_DESCRIPTOR),
              &RdNode
              );
@@ -190,75 +192,75 @@ AmlCodeGenRdInterrupt (
 // DEPRECATED APIS
 #ifndef DISABLE_NEW_DEPRECATED_INTERFACES
 
-/** DEPRECATED API
+  /** DEPRECATED API
 
-  Add an Interrupt Resource Data node.
+    Add an Interrupt Resource Data node.
 
-  This function creates a Resource Data element corresponding to the
-  "Interrupt ()" ASL function, stores it in an AML Data Node.
+    This function creates a Resource Data element corresponding to the
+    "Interrupt ()" ASL function, stores it in an AML Data Node.
 
-  It then adds it after the input CurrRdNode in the list of resource data
-  element.
+    It then adds it after the input CurrRdNode in the list of resource data
+    element.
 
-  The Resource Data effectively created is an Extended Interrupt Resource
-  Data. See ACPI 6.3 specification, s6.4.3.6 "Extended Interrupt Descriptor"
-  for more information about Extended Interrupt Resource Data.
+    The Resource Data effectively created is an Extended Interrupt Resource
+    Data. See ACPI 6.3 specification, s6.4.3.6 "Extended Interrupt Descriptor"
+    for more information about Extended Interrupt Resource Data.
 
-  The Extended Interrupt contains one single interrupt.
+    The Extended Interrupt contains one single interrupt.
 
-  This function allocates memory to create a data node. It is the caller's
-  responsibility to either:
-   - attach this node to an AML tree;
-   - delete this node.
+    This function allocates memory to create a data node. It is the caller's
+    responsibility to either:
+     - attach this node to an AML tree;
+     - delete this node.
 
-  Note: The _CRS node must be defined using the ASL Name () function.
-        e.g. Name (_CRS, ResourceTemplate () {
-               ...
-             }
+    Note: The _CRS node must be defined using the ASL Name () function.
+          e.g. Name (_CRS, ResourceTemplate () {
+                 ...
+               }
 
-  @ingroup UserApis
+    @ingroup UserApis
 
-  @param  [in]  NameOpCrsNode    NameOp object node defining a "_CRS" object.
-                                 Must have an OpCode=AML_NAME_OP, SubOpCode=0.
-                                 NameOp object nodes are defined in ASL
-                                 using the "Name ()" function.
-  @param  [in]  ResourceConsumer The device consumes the specified interrupt
-                                 or produces it for use by a child device.
-  @param  [in]  EdgeTriggered    The interrupt is edge triggered or
-                                 level triggered.
-  @param  [in]  ActiveLow        The interrupt is active-high or active-low.
-  @param  [in]  Shared           The interrupt can be shared with other
-                                 devices or not (Exclusive).
-  @param  [in]  IrqList          Interrupt list. Must be non-NULL.
-  @param  [in]  IrqCount         Interrupt count. Must be non-zero.
+    @param  [in]  NameOpCrsNode    NameOp object node defining a "_CRS" object.
+                                   Must have an OpCode=AML_NAME_OP, SubOpCode=0.
+                                   NameOp object nodes are defined in ASL
+                                   using the "Name ()" function.
+    @param  [in]  ResourceConsumer The device consumes the specified interrupt
+                                   or produces it for use by a child device.
+    @param  [in]  EdgeTriggered    The interrupt is edge triggered or
+                                   level triggered.
+    @param  [in]  ActiveLow        The interrupt is active-high or active-low.
+    @param  [in]  Shared           The interrupt can be shared with other
+                                   devices or not (Exclusive).
+    @param  [in]  IrqList          Interrupt list. Must be non-NULL.
+    @param  [in]  IrqCount         Interrupt count. Must be non-zero.
 
 
-  @retval EFI_SUCCESS             The function completed successfully.
-  @retval EFI_INVALID_PARAMETER   Invalid parameter.
-  @retval EFI_OUT_OF_RESOURCES    Could not allocate memory.
-**/
-EFI_STATUS
-EFIAPI
-AmlCodeGenCrsAddRdInterrupt (
+    @retval EFI_SUCCESS             The function completed successfully.
+    @retval EFI_INVALID_PARAMETER   Invalid parameter.
+    @retval EFI_OUT_OF_RESOURCES    Could not allocate memory.
+  **/
+  EFI_STATUS
+  EFIAPI
+  AmlCodeGenCrsAddRdInterrupt (
   IN  AML_OBJECT_NODE_HANDLE  NameOpCrsNode,
   IN  BOOLEAN                 ResourceConsumer,
   IN  BOOLEAN                 EdgeTriggered,
   IN  BOOLEAN                 ActiveLow,
   IN  BOOLEAN                 Shared,
-  IN  UINT32                * IrqList,
+  IN  UINT32                *IrqList,
   IN  UINT8                   IrqCount
   )
-{
-  return AmlCodeGenRdInterrupt (
-           ResourceConsumer,
-           EdgeTriggered,
-           ActiveLow,
-           Shared,
-           IrqList,
-           IrqCount,
-           NameOpCrsNode,
-           NULL
-           );
-}
+  {
+    return AmlCodeGenRdInterrupt (
+             ResourceConsumer,
+             EdgeTriggered,
+             ActiveLow,
+             Shared,
+             IrqList,
+             IrqCount,
+             NameOpCrsNode,
+             NULL
+             );
+  }
 
 #endif // DISABLE_NEW_DEPRECATED_INTERFACES

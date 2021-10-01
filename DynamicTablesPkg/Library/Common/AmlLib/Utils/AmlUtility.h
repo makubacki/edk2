@@ -21,7 +21,7 @@
 EFI_STATUS
 EFIAPI
 AcpiPlatformChecksum (
-  IN  EFI_ACPI_DESCRIPTION_HEADER  * AcpiTable
+  IN  EFI_ACPI_DESCRIPTION_HEADER  *AcpiTable
   );
 
 /** Compute the size of a tree/sub-tree.
@@ -35,8 +35,8 @@ AcpiPlatformChecksum (
 EFI_STATUS
 EFIAPI
 AmlComputeSize (
-  IN      CONST AML_NODE_HEADER   * Node,
-  IN  OUT       UINT32            * Size
+  IN      CONST AML_NODE_HEADER   *Node,
+  IN  OUT       UINT32            *Size
   );
 
 /** Set the value contained in an integer node.
@@ -60,9 +60,9 @@ AmlComputeSize (
 EFI_STATUS
 EFIAPI
 AmlNodeSetIntegerValue (
-  IN  AML_OBJECT_NODE   * Node,
+  IN  AML_OBJECT_NODE   *Node,
   IN  UINT64              NewValue,
-  OUT INT8              * ValueWidthDiff
+  OUT INT8              *ValueWidthDiff
   );
 
 /** Propagate information up the tree.
@@ -85,11 +85,10 @@ AmlNodeSetIntegerValue (
 EFI_STATUS
 EFIAPI
 AmlPropagateInformation (
-  IN  AML_NODE_HEADER   * Node,
+  IN  AML_NODE_HEADER   *Node,
   IN  BOOLEAN             IsIncrement,
   IN  UINT32              Diff,
   IN  UINT8               NodeCount
   );
 
 #endif // AML_UTILITY_H_
-
