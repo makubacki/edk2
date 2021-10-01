@@ -20,7 +20,7 @@
 VOID
 EFIAPI
 SetFspGlobalDataPointer (
-  IN FSP_GLOBAL_DATA   *FspData
+  IN FSP_GLOBAL_DATA *FspData
   );
 
 /**
@@ -60,7 +60,7 @@ GetFspApiParameter2 (
 
   @retval FSP entry stack pointer.
 **/
-VOID*
+VOID *
 EFIAPI
 GetFspEntryStack (
   VOID
@@ -75,7 +75,7 @@ GetFspEntryStack (
 VOID
 EFIAPI
 SetFspApiParameter (
-  IN UINT32      Value
+  IN UINT32 Value
   );
 
 /**
@@ -87,7 +87,7 @@ SetFspApiParameter (
 VOID
 EFIAPI
 SetFspApiReturnStatus (
-  IN UINT32  ReturnStatus
+  IN UINT32 ReturnStatus
   );
 
 /**
@@ -99,7 +99,7 @@ SetFspApiReturnStatus (
 VOID
 EFIAPI
 SetFspCoreStackPointer (
-  IN VOID   *NewStackTop
+  IN VOID *NewStackTop
   );
 
 /**
@@ -111,7 +111,7 @@ SetFspCoreStackPointer (
 VOID
 EFIAPI
 SetFspPlatformDataPointer (
-  IN VOID   *PlatformData
+  IN VOID *PlatformData
   );
 
 /**
@@ -134,7 +134,7 @@ GetFspPlatformDataPointer (
 VOID
 EFIAPI
 SetFspUpdDataPointer (
-  IN VOID    *UpdDataPtr
+  IN VOID *UpdDataPtr
   );
 
 /**
@@ -156,7 +156,7 @@ GetFspUpdDataPointer (
 VOID
 EFIAPI
 SetFspMemoryInitUpdDataPointer (
-  IN VOID    *MemoryInitUpdPtr
+  IN VOID *MemoryInitUpdPtr
   );
 
 /**
@@ -178,7 +178,7 @@ GetFspMemoryInitUpdDataPointer (
 VOID
 EFIAPI
 SetFspSiliconInitUpdDataPointer (
-  IN VOID    *SiliconInitUpdPtr
+  IN VOID *SiliconInitUpdPtr
   );
 
 /**
@@ -202,7 +202,7 @@ GetFspSiliconInitUpdDataPointer (
 UINT64
 EFIAPI
 SetFspMeasurePoint (
-  IN UINT8  Id
+  IN UINT8 Id
   );
 
 /**
@@ -268,7 +268,7 @@ GetFspApiCallingIndex (
 VOID
 EFIAPI
 SetFspApiCallingIndex (
-  UINT8  Index
+  UINT8 Index
   );
 
 /**
@@ -282,7 +282,6 @@ GetPhaseStatusCode (
   VOID
   );
 
-
 /**
   This function sets FSP Phase StatusCode.
 
@@ -291,7 +290,7 @@ GetPhaseStatusCode (
 VOID
 EFIAPI
 SetPhaseStatusCode (
-  UINT32  StatusCode
+  UINT32 StatusCode
   );
 
 /**
@@ -303,6 +302,7 @@ SetPhaseStatusCode (
 VOID
 EFIAPI
 FspApiReturnStatusReset (
-  IN UINT32   FspResetType
+  IN UINT32 FspResetType
   );
+
 #endif
