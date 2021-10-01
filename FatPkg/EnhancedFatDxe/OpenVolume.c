@@ -23,8 +23,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 FatOpenVolume (
-  IN  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL  *This,
-  OUT EFI_FILE_PROTOCOL                **File
+  IN  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *This,
+  OUT EFI_FILE_PROTOCOL               **File
   )
 {
   EFI_STATUS  Status;
@@ -41,6 +41,7 @@ FatOpenVolume (
   if (EFI_ERROR (Status)) {
     goto Done;
   }
+
   //
   // Open a new instance to the root
   //
