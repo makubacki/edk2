@@ -36,8 +36,8 @@
 VOID *
 EFIAPI
 ZeroMem (
-  OUT VOID  *Buffer,
-  IN UINTN  Length
+  OUT VOID *Buffer,
+  IN UINTN Length
   )
 {
   if (Length == 0) {

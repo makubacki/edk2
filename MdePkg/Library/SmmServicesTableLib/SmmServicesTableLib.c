@@ -11,7 +11,7 @@
 #include <Library/SmmServicesTableLib.h>
 #include <Library/DebugLib.h>
 
-EFI_SMM_SYSTEM_TABLE2   *gSmst             = NULL;
+EFI_SMM_SYSTEM_TABLE2  *gSmst = NULL;
 
 /**
   The constructor function caches the pointer of SMM Services Table.
@@ -25,8 +25,8 @@ EFI_SMM_SYSTEM_TABLE2   *gSmst             = NULL;
 EFI_STATUS
 EFIAPI
 SmmServicesTableLibConstructor (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
   EFI_STATUS              Status;

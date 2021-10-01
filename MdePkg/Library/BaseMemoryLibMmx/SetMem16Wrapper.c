@@ -40,9 +40,9 @@
 VOID *
 EFIAPI
 SetMem16 (
-  OUT VOID   *Buffer,
-  IN UINTN   Length,
-  IN UINT16  Value
+  OUT VOID  *Buffer,
+  IN UINTN  Length,
+  IN UINT16 Value
   )
 {
   if (Length == 0) {

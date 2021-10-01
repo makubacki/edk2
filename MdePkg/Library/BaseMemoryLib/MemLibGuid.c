@@ -37,17 +37,17 @@
 GUID *
 EFIAPI
 CopyGuid (
-  OUT GUID       *DestinationGuid,
-  IN CONST GUID  *SourceGuid
+  OUT GUID      *DestinationGuid,
+  IN CONST GUID *SourceGuid
   )
 {
   WriteUnaligned64 (
-    (UINT64*)DestinationGuid,
-    ReadUnaligned64 ((CONST UINT64*)SourceGuid)
+    (UINT64 *)DestinationGuid,
+    ReadUnaligned64 ((CONST UINT64 *)SourceGuid)
     );
   WriteUnaligned64 (
-    (UINT64*)DestinationGuid + 1,
-    ReadUnaligned64 ((CONST UINT64*)SourceGuid + 1)
+    (UINT64 *)DestinationGuid + 1,
+    ReadUnaligned64 ((CONST UINT64 *)SourceGuid + 1)
     );
   return DestinationGuid;
 }
@@ -71,8 +71,8 @@ CopyGuid (
 BOOLEAN
 EFIAPI
 CompareGuid (
-  IN CONST GUID  *Guid1,
-  IN CONST GUID  *Guid2
+  IN CONST GUID *Guid1,
+  IN CONST GUID *Guid2
   )
 {
   UINT64  LowPartOfGuid1;
@@ -80,12 +80,12 @@ CompareGuid (
   UINT64  HighPartOfGuid1;
   UINT64  HighPartOfGuid2;
 
-  LowPartOfGuid1  = ReadUnaligned64 ((CONST UINT64*) Guid1);
-  LowPartOfGuid2  = ReadUnaligned64 ((CONST UINT64*) Guid2);
-  HighPartOfGuid1 = ReadUnaligned64 ((CONST UINT64*) Guid1 + 1);
-  HighPartOfGuid2 = ReadUnaligned64 ((CONST UINT64*) Guid2 + 1);
+  LowPartOfGuid1  = ReadUnaligned64 ((CONST UINT64 *)Guid1);
+  LowPartOfGuid2  = ReadUnaligned64 ((CONST UINT64 *)Guid2);
+  HighPartOfGuid1 = ReadUnaligned64 ((CONST UINT64 *)Guid1 + 1);
+  HighPartOfGuid2 = ReadUnaligned64 ((CONST UINT64 *)Guid2 + 1);
 
-  return (BOOLEAN) (LowPartOfGuid1 == LowPartOfGuid2 && HighPartOfGuid1 == HighPartOfGuid2);
+  return (BOOLEAN)(LowPartOfGuid1 == LowPartOfGuid2 && HighPartOfGuid1 == HighPartOfGuid2);
 }
 
 /**
@@ -113,25 +113,27 @@ CompareGuid (
 VOID *
 EFIAPI
 ScanGuid (
-  IN CONST VOID  *Buffer,
-  IN UINTN       Length,
-  IN CONST GUID  *Guid
+  IN CONST VOID *Buffer,
+  IN UINTN      Length,
+  IN CONST GUID *Guid
   )
 {
-  CONST GUID                        *GuidPtr;
+  CONST GUID  *GuidPtr;
 
   ASSERT (((UINTN)Buffer & (sizeof (Guid->Data1) - 1)) == 0);
   ASSERT (Length <= (MAX_ADDRESS - (UINTN)Buffer + 1));
   ASSERT ((Length & (sizeof (*GuidPtr) - 1)) == 0);
 
-  GuidPtr = (GUID*)Buffer;
+  GuidPtr = (GUID *)Buffer;
   Buffer  = GuidPtr + Length / sizeof (*GuidPtr);
-  while (GuidPtr < (CONST GUID*)Buffer) {
+  while (GuidPtr < (CONST GUID *)Buffer) {
     if (CompareGuid (GuidPtr, Guid)) {
-      return (VOID*)GuidPtr;
+      return (VOID *)GuidPtr;
     }
+
     GuidPtr++;
   }
+
   return NULL;
 }
 
@@ -152,14 +154,14 @@ ScanGuid (
 BOOLEAN
 EFIAPI
 IsZeroGuid (
-  IN CONST GUID  *Guid
+  IN CONST GUID *Guid
   )
 {
   UINT64  LowPartOfGuid;
   UINT64  HighPartOfGuid;
 
-  LowPartOfGuid  = ReadUnaligned64 ((CONST UINT64*) Guid);
-  HighPartOfGuid = ReadUnaligned64 ((CONST UINT64*) Guid + 1);
+  LowPartOfGuid  = ReadUnaligned64 ((CONST UINT64 *)Guid);
+  HighPartOfGuid = ReadUnaligned64 ((CONST UINT64 *)Guid + 1);
 
-  return (BOOLEAN) (LowPartOfGuid == 0 && HighPartOfGuid == 0);
+  return (BOOLEAN)(LowPartOfGuid == 0 && HighPartOfGuid == 0);
 }

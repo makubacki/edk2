@@ -35,9 +35,9 @@ typedef enum {
 BOOLEAN
 EFIAPI
 FilterBeforeIoRead (
-  IN FILTER_IO_WIDTH   Width,
-  IN UINTN             Address,
-  IN OUT VOID          *Buffer
+  IN FILTER_IO_WIDTH Width,
+  IN UINTN           Address,
+  IN OUT VOID        *Buffer
   );
 
 /**
@@ -52,10 +52,11 @@ FilterBeforeIoRead (
 VOID
 EFIAPI
 FilterAfterIoRead (
-  IN FILTER_IO_WIDTH  Width,
-  IN UINTN            Address,
-  IN VOID             *Buffer
+  IN FILTER_IO_WIDTH Width,
+  IN UINTN           Address,
+  IN VOID            *Buffer
   );
+
 /**
   Filter IO Write operation before wirte IO port.
   It is used to filter IO operation.
@@ -74,26 +75,26 @@ FilterAfterIoRead (
 BOOLEAN
 EFIAPI
 FilterBeforeIoWrite (
-  IN FILTER_IO_WIDTH  Width,
-  IN UINTN            Address,
-  IN VOID             *Buffer
+  IN FILTER_IO_WIDTH Width,
+  IN UINTN           Address,
+  IN VOID            *Buffer
   );
 
-  /**
-  Trace IO Write operation after wirte IO port.
-  It is used to trace IO operation.
+/**
+Trace IO Write operation after wirte IO port.
+It is used to trace IO operation.
 
-  @param[in]       Width    Signifies the width of the I/O operation.
-  @param[in]       Address  The base address of the I/O operation.
-  @param[in]       Buffer   The source buffer from which to BeforeWrite data.
+@param[in]       Width    Signifies the width of the I/O operation.
+@param[in]       Address  The base address of the I/O operation.
+@param[in]       Buffer   The source buffer from which to BeforeWrite data.
 
 **/
 VOID
 EFIAPI
 FilterAfterIoWrite (
-  IN FILTER_IO_WIDTH  Width,
-  IN UINTN            Address,
-  IN VOID             *Buffer
+  IN FILTER_IO_WIDTH Width,
+  IN UINTN           Address,
+  IN VOID            *Buffer
   );
 
 /**
@@ -113,9 +114,9 @@ FilterAfterIoWrite (
 BOOLEAN
 EFIAPI
 FilterBeforeMmIoRead (
-  IN FILTER_IO_WIDTH  Width,
-  IN UINTN            Address,
-  IN OUT VOID         *Buffer
+  IN FILTER_IO_WIDTH Width,
+  IN UINTN           Address,
+  IN OUT VOID        *Buffer
   );
 
 /**
@@ -129,9 +130,9 @@ FilterBeforeMmIoRead (
 VOID
 EFIAPI
 FilterAfterMmIoRead (
-  IN FILTER_IO_WIDTH  Width,
-  IN UINTN            Address,
-  IN VOID             *Buffer
+  IN FILTER_IO_WIDTH Width,
+  IN UINTN           Address,
+  IN VOID            *Buffer
   );
 
 /**
@@ -151,9 +152,9 @@ FilterAfterMmIoRead (
 BOOLEAN
 EFIAPI
 FilterBeforeMmIoWrite (
-  IN FILTER_IO_WIDTH  Width,
-  IN UINTN            Address,
-  IN VOID             *Buffer
+  IN FILTER_IO_WIDTH Width,
+  IN UINTN           Address,
+  IN VOID            *Buffer
   );
 
 /**
@@ -167,9 +168,9 @@ FilterBeforeMmIoWrite (
 VOID
 EFIAPI
 FilterAfterMmIoWrite (
-  IN FILTER_IO_WIDTH  Width,
-  IN UINTN            Address,
-  IN VOID             *Buffer
+  IN FILTER_IO_WIDTH Width,
+  IN UINTN           Address,
+  IN VOID            *Buffer
   );
 
 /**
@@ -188,8 +189,8 @@ FilterAfterMmIoWrite (
 BOOLEAN
 EFIAPI
 FilterBeforeMsrRead (
-  IN UINT32           Index,
-  IN OUT UINT64       *Value
+  IN UINT32     Index,
+  IN OUT UINT64 *Value
   );
 
 /**
@@ -202,8 +203,8 @@ FilterBeforeMsrRead (
 VOID
 EFIAPI
 FilterAfterMsrRead (
-  IN UINT32            Index,
-  IN UINT64            *Value
+  IN UINT32 Index,
+  IN UINT64 *Value
   );
 
 /**
@@ -222,8 +223,8 @@ FilterAfterMsrRead (
 BOOLEAN
 EFIAPI
 FilterBeforeMsrWrite (
-  IN UINT32           Index,
-  IN UINT64           *Value
+  IN UINT32 Index,
+  IN UINT64 *Value
   );
 
 /**
@@ -236,8 +237,8 @@ FilterBeforeMsrWrite (
 VOID
 EFIAPI
 FilterAfterMsrWrite (
-  IN UINT32            Index,
-  IN UINT64            *Value
+  IN UINT32 Index,
+  IN UINT64 *Value
   );
 
 #endif // REGISTER_FILTER_LIB_H_

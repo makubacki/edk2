@@ -6,7 +6,6 @@
 
 **/
 
-
 #include <Library/RegisterFilterLib.h>
 
 /**
@@ -29,11 +28,11 @@
 UINT64
 EFIAPI
 AsmWriteMsr64 (
-  IN UINT32  Index,
-  IN UINT64  Value
+  IN UINT32 Index,
+  IN UINT64 Value
   )
 {
-  BOOLEAN                           Flag;
+  BOOLEAN  Flag;
 
   Flag = FilterBeforeMsrWrite (Index, &Value);
   if (Flag) {
@@ -44,8 +43,8 @@ AsmWriteMsr64 (
       wrmsr
     }
   }
+
   FilterAfterMsrWrite (Index, &Value);
 
   return Value;
 }
-

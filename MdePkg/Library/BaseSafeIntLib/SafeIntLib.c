@@ -13,11 +13,10 @@
 #include <Library/SafeIntLib.h>
 #include <Library/BaseLib.h>
 
-
 //
 // Magnitude of MIN_INT64 as expressed by a UINT64 number.
 //
-#define MIN_INT64_MAGNITUDE (((UINT64)(- (MIN_INT64 + 1))) + 1)
+#define MIN_INT64_MAGNITUDE  (((UINT64)(- (MIN_INT64 + 1))) + 1)
 
 //
 // Conversion functions
@@ -57,8 +56,8 @@
 RETURN_STATUS
 EFIAPI
 SafeInt8ToUint8 (
-  IN  INT8   Operand,
-  OUT UINT8  *Result
+  IN  INT8  Operand,
+  OUT UINT8 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -69,10 +68,10 @@ SafeInt8ToUint8 (
 
   if (Operand >= 0) {
     *Result = (UINT8)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT8_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -101,8 +100,8 @@ SafeInt8ToUint8 (
 RETURN_STATUS
 EFIAPI
 SafeInt8ToChar8 (
-  IN  INT8   Operand,
-  OUT CHAR8  *Result
+  IN  INT8  Operand,
+  OUT CHAR8 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -113,10 +112,10 @@ SafeInt8ToChar8 (
 
   if (Operand >= 0) {
     *Result = (CHAR8)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = CHAR8_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -145,8 +144,8 @@ SafeInt8ToChar8 (
 RETURN_STATUS
 EFIAPI
 SafeInt8ToUint16 (
-  IN  INT8    Operand,
-  OUT UINT16  *Result
+  IN  INT8   Operand,
+  OUT UINT16 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -157,10 +156,10 @@ SafeInt8ToUint16 (
 
   if (Operand >= 0) {
     *Result = (UINT16)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT16_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -189,8 +188,8 @@ SafeInt8ToUint16 (
 RETURN_STATUS
 EFIAPI
 SafeInt8ToUint32 (
-  IN  INT8    Operand,
-  OUT UINT32  *Result
+  IN  INT8   Operand,
+  OUT UINT32 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -201,10 +200,10 @@ SafeInt8ToUint32 (
 
   if (Operand >= 0) {
     *Result = (UINT32)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT32_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -233,8 +232,8 @@ SafeInt8ToUint32 (
 RETURN_STATUS
 EFIAPI
 SafeInt8ToUintn (
-  IN  INT8   Operand,
-  OUT UINTN  *Result
+  IN  INT8  Operand,
+  OUT UINTN *Result
   )
 {
   RETURN_STATUS  Status;
@@ -245,10 +244,10 @@ SafeInt8ToUintn (
 
   if (Operand >= 0) {
     *Result = (UINTN)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINTN_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -277,8 +276,8 @@ SafeInt8ToUintn (
 RETURN_STATUS
 EFIAPI
 SafeInt8ToUint64 (
-  IN  INT8    Operand,
-  OUT UINT64  *Result
+  IN  INT8   Operand,
+  OUT UINT64 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -289,10 +288,10 @@ SafeInt8ToUint64 (
 
   if (Operand >= 0) {
     *Result = (UINT64)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT64_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -321,8 +320,8 @@ SafeInt8ToUint64 (
 RETURN_STATUS
 EFIAPI
 SafeUint8ToInt8 (
-  IN  UINT8  Operand,
-  OUT INT8   *Result
+  IN  UINT8 Operand,
+  OUT INT8  *Result
   )
 {
   RETURN_STATUS  Status;
@@ -333,10 +332,10 @@ SafeUint8ToInt8 (
 
   if (Operand <= MAX_INT8) {
     *Result = (INT8)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = INT8_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -365,8 +364,8 @@ SafeUint8ToInt8 (
 RETURN_STATUS
 EFIAPI
 SafeUint8ToChar8 (
-  IN  UINT8  Operand,
-  OUT CHAR8  *Result
+  IN  UINT8 Operand,
+  OUT CHAR8 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -377,10 +376,10 @@ SafeUint8ToChar8 (
 
   if (Operand <= MAX_INT8) {
     *Result = (CHAR8)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = CHAR8_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -409,8 +408,8 @@ SafeUint8ToChar8 (
 RETURN_STATUS
 EFIAPI
 SafeInt16ToInt8 (
-  IN  INT16  Operand,
-  OUT INT8   *Result
+  IN  INT16 Operand,
+  OUT INT8  *Result
   )
 {
   RETURN_STATUS  Status;
@@ -421,10 +420,10 @@ SafeInt16ToInt8 (
 
   if ((Operand >= MIN_INT8) && (Operand <= MAX_INT8)) {
     *Result = (INT8)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = INT8_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -453,8 +452,8 @@ SafeInt16ToInt8 (
 RETURN_STATUS
 EFIAPI
 SafeInt16ToChar8 (
-  IN  INT16  Operand,
-  OUT CHAR8  *Result
+  IN  INT16 Operand,
+  OUT CHAR8 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -465,10 +464,10 @@ SafeInt16ToChar8 (
 
   if ((Operand >= 0) && (Operand <= MAX_INT8)) {
     *Result = (CHAR8)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = CHAR8_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -497,8 +496,8 @@ SafeInt16ToChar8 (
 RETURN_STATUS
 EFIAPI
 SafeInt16ToUint8 (
-  IN  INT16  Operand,
-  OUT UINT8  *Result
+  IN  INT16 Operand,
+  OUT UINT8 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -509,10 +508,10 @@ SafeInt16ToUint8 (
 
   if ((Operand >= 0) && (Operand <= MAX_UINT8)) {
     *Result = (UINT8)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT8_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -541,8 +540,8 @@ SafeInt16ToUint8 (
 RETURN_STATUS
 EFIAPI
 SafeInt16ToUint16 (
-  IN  INT16   Operand,
-  OUT UINT16  *Result
+  IN  INT16  Operand,
+  OUT UINT16 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -553,10 +552,10 @@ SafeInt16ToUint16 (
 
   if (Operand >= 0) {
     *Result = (UINT16)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT16_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -585,8 +584,8 @@ SafeInt16ToUint16 (
 RETURN_STATUS
 EFIAPI
 SafeInt16ToUint32 (
-  IN  INT16   Operand,
-  OUT UINT32  *Result
+  IN  INT16  Operand,
+  OUT UINT32 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -597,10 +596,10 @@ SafeInt16ToUint32 (
 
   if (Operand >= 0) {
     *Result = (UINT32)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT32_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -629,8 +628,8 @@ SafeInt16ToUint32 (
 RETURN_STATUS
 EFIAPI
 SafeInt16ToUintn (
-  IN  INT16  Operand,
-  OUT UINTN  *Result
+  IN  INT16 Operand,
+  OUT UINTN *Result
   )
 {
   RETURN_STATUS  Status;
@@ -641,10 +640,10 @@ SafeInt16ToUintn (
 
   if (Operand >= 0) {
     *Result = (UINTN)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINTN_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -673,8 +672,8 @@ SafeInt16ToUintn (
 RETURN_STATUS
 EFIAPI
 SafeInt16ToUint64 (
-  IN  INT16   Operand,
-  OUT UINT64  *Result
+  IN  INT16  Operand,
+  OUT UINT64 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -685,10 +684,10 @@ SafeInt16ToUint64 (
 
   if (Operand >= 0) {
     *Result = (UINT64)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT64_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -717,8 +716,8 @@ SafeInt16ToUint64 (
 RETURN_STATUS
 EFIAPI
 SafeUint16ToInt8 (
-  IN  UINT16  Operand,
-  OUT INT8    *Result
+  IN  UINT16 Operand,
+  OUT INT8   *Result
   )
 {
   RETURN_STATUS  Status;
@@ -729,10 +728,10 @@ SafeUint16ToInt8 (
 
   if (Operand <= MAX_INT8) {
     *Result = (INT8)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = INT8_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -761,8 +760,8 @@ SafeUint16ToInt8 (
 RETURN_STATUS
 EFIAPI
 SafeUint16ToChar8 (
-  IN  UINT16  Operand,
-  OUT CHAR8   *Result
+  IN  UINT16 Operand,
+  OUT CHAR8  *Result
   )
 {
   RETURN_STATUS  Status;
@@ -773,10 +772,10 @@ SafeUint16ToChar8 (
 
   if (Operand <= MAX_INT8) {
     *Result = (INT8)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = CHAR8_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -805,8 +804,8 @@ SafeUint16ToChar8 (
 RETURN_STATUS
 EFIAPI
 SafeUint16ToUint8 (
-  IN  UINT16  Operand,
-  OUT UINT8   *Result
+  IN  UINT16 Operand,
+  OUT UINT8  *Result
   )
 {
   RETURN_STATUS  Status;
@@ -817,10 +816,10 @@ SafeUint16ToUint8 (
 
   if (Operand <= MAX_UINT8) {
     *Result = (UINT8)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT8_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -849,8 +848,8 @@ SafeUint16ToUint8 (
 RETURN_STATUS
 EFIAPI
 SafeUint16ToInt16 (
-  IN  UINT16  Operand,
-  OUT INT16   *Result
+  IN  UINT16 Operand,
+  OUT INT16  *Result
   )
 {
   RETURN_STATUS  Status;
@@ -861,10 +860,10 @@ SafeUint16ToInt16 (
 
   if (Operand <= MAX_INT16) {
     *Result = (INT16)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = INT16_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -893,8 +892,8 @@ SafeUint16ToInt16 (
 RETURN_STATUS
 EFIAPI
 SafeInt32ToInt8 (
-  IN  INT32  Operand,
-  OUT INT8   *Result
+  IN  INT32 Operand,
+  OUT INT8  *Result
   )
 {
   RETURN_STATUS  Status;
@@ -905,10 +904,10 @@ SafeInt32ToInt8 (
 
   if ((Operand >= MIN_INT8) && (Operand <= MAX_INT8)) {
     *Result = (INT8)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = INT8_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -937,8 +936,8 @@ SafeInt32ToInt8 (
 RETURN_STATUS
 EFIAPI
 SafeInt32ToChar8 (
-  IN  INT32  Operand,
-  OUT CHAR8  *Result
+  IN  INT32 Operand,
+  OUT CHAR8 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -949,10 +948,10 @@ SafeInt32ToChar8 (
 
   if ((Operand >= 0) && (Operand <= MAX_INT8)) {
     *Result = (CHAR8)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = CHAR8_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -981,8 +980,8 @@ SafeInt32ToChar8 (
 RETURN_STATUS
 EFIAPI
 SafeInt32ToUint8 (
-  IN  INT32  Operand,
-  OUT UINT8  *Result
+  IN  INT32 Operand,
+  OUT UINT8 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -993,10 +992,10 @@ SafeInt32ToUint8 (
 
   if ((Operand >= 0) && (Operand <= MAX_UINT8)) {
     *Result = (UINT8)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT8_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -1025,8 +1024,8 @@ SafeInt32ToUint8 (
 RETURN_STATUS
 EFIAPI
 SafeInt32ToInt16 (
-  IN  INT32  Operand,
-  OUT INT16  *Result
+  IN  INT32 Operand,
+  OUT INT16 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -1037,10 +1036,10 @@ SafeInt32ToInt16 (
 
   if ((Operand >= MIN_INT16) && (Operand <= MAX_INT16)) {
     *Result = (INT16)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = INT16_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -1069,8 +1068,8 @@ SafeInt32ToInt16 (
 RETURN_STATUS
 EFIAPI
 SafeInt32ToUint16 (
-  IN  INT32   Operand,
-  OUT UINT16  *Result
+  IN  INT32  Operand,
+  OUT UINT16 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -1081,10 +1080,10 @@ SafeInt32ToUint16 (
 
   if ((Operand >= 0) && (Operand <= MAX_UINT16)) {
     *Result = (UINT16)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT16_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -1113,8 +1112,8 @@ SafeInt32ToUint16 (
 RETURN_STATUS
 EFIAPI
 SafeInt32ToUint32 (
-  IN  INT32   Operand,
-  OUT UINT32  *Result
+  IN  INT32  Operand,
+  OUT UINT32 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -1125,10 +1124,10 @@ SafeInt32ToUint32 (
 
   if (Operand >= 0) {
     *Result = (UINT32)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT32_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -1157,8 +1156,8 @@ SafeInt32ToUint32 (
 RETURN_STATUS
 EFIAPI
 SafeInt32ToUint64 (
-  IN  INT32   Operand,
-  OUT UINT64  *Result
+  IN  INT32  Operand,
+  OUT UINT64 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -1169,10 +1168,10 @@ SafeInt32ToUint64 (
 
   if (Operand >= 0) {
     *Result = (UINT64)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT64_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -1201,8 +1200,8 @@ SafeInt32ToUint64 (
 RETURN_STATUS
 EFIAPI
 SafeUint32ToInt8 (
-  IN  UINT32  Operand,
-  OUT INT8    *Result
+  IN  UINT32 Operand,
+  OUT INT8   *Result
   )
 {
   RETURN_STATUS  Status;
@@ -1213,10 +1212,10 @@ SafeUint32ToInt8 (
 
   if (Operand <= MAX_INT8) {
     *Result = (INT8)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = INT8_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -1245,8 +1244,8 @@ SafeUint32ToInt8 (
 RETURN_STATUS
 EFIAPI
 SafeUint32ToChar8 (
-  IN  UINT32  Operand,
-  OUT CHAR8   *Result
+  IN  UINT32 Operand,
+  OUT CHAR8  *Result
   )
 {
   RETURN_STATUS  Status;
@@ -1257,10 +1256,10 @@ SafeUint32ToChar8 (
 
   if (Operand <= MAX_INT8) {
     *Result = (INT8)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = CHAR8_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -1289,8 +1288,8 @@ SafeUint32ToChar8 (
 RETURN_STATUS
 EFIAPI
 SafeUint32ToUint8 (
-  IN  UINT32  Operand,
-  OUT UINT8   *Result
+  IN  UINT32 Operand,
+  OUT UINT8  *Result
   )
 {
   RETURN_STATUS  Status;
@@ -1301,10 +1300,10 @@ SafeUint32ToUint8 (
 
   if (Operand <= MAX_UINT8) {
     *Result = (UINT8)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT8_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -1333,8 +1332,8 @@ SafeUint32ToUint8 (
 RETURN_STATUS
 EFIAPI
 SafeUint32ToInt16 (
-  IN  UINT32  Operand,
-  OUT INT16   *Result
+  IN  UINT32 Operand,
+  OUT INT16  *Result
   )
 {
   RETURN_STATUS  Status;
@@ -1345,10 +1344,10 @@ SafeUint32ToInt16 (
 
   if (Operand <= MAX_INT16) {
     *Result = (INT16)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = INT16_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -1377,8 +1376,8 @@ SafeUint32ToInt16 (
 RETURN_STATUS
 EFIAPI
 SafeUint32ToUint16 (
-  IN  UINT32  Operand,
-  OUT UINT16  *Result
+  IN  UINT32 Operand,
+  OUT UINT16 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -1389,10 +1388,10 @@ SafeUint32ToUint16 (
 
   if (Operand <= MAX_UINT16) {
     *Result = (UINT16)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT16_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -1421,8 +1420,8 @@ SafeUint32ToUint16 (
 RETURN_STATUS
 EFIAPI
 SafeUint32ToInt32 (
-  IN  UINT32  Operand,
-  OUT INT32   *Result
+  IN  UINT32 Operand,
+  OUT INT32  *Result
   )
 {
   RETURN_STATUS  Status;
@@ -1433,10 +1432,10 @@ SafeUint32ToInt32 (
 
   if (Operand <= MAX_INT32) {
     *Result = (INT32)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = INT32_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -1465,8 +1464,8 @@ SafeUint32ToInt32 (
 RETURN_STATUS
 EFIAPI
 SafeIntnToInt8 (
-  IN  INTN  Operand,
-  OUT INT8  *Result
+  IN  INTN Operand,
+  OUT INT8 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -1477,10 +1476,10 @@ SafeIntnToInt8 (
 
   if ((Operand >= MIN_INT8) && (Operand <= MAX_INT8)) {
     *Result = (INT8)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = INT8_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -1509,8 +1508,8 @@ SafeIntnToInt8 (
 RETURN_STATUS
 EFIAPI
 SafeIntnToChar8 (
-  IN  INTN   Operand,
-  OUT CHAR8  *Result
+  IN  INTN  Operand,
+  OUT CHAR8 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -1521,10 +1520,10 @@ SafeIntnToChar8 (
 
   if ((Operand >= 0) && (Operand <= MAX_INT8)) {
     *Result = (CHAR8)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = CHAR8_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -1553,8 +1552,8 @@ SafeIntnToChar8 (
 RETURN_STATUS
 EFIAPI
 SafeIntnToUint8 (
-  IN  INTN   Operand,
-  OUT UINT8  *Result
+  IN  INTN  Operand,
+  OUT UINT8 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -1565,10 +1564,10 @@ SafeIntnToUint8 (
 
   if ((Operand >= 0) && (Operand <= MAX_UINT8)) {
     *Result = (UINT8)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT8_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -1597,8 +1596,8 @@ SafeIntnToUint8 (
 RETURN_STATUS
 EFIAPI
 SafeIntnToInt16 (
-  IN  INTN   Operand,
-  OUT INT16  *Result
+  IN  INTN  Operand,
+  OUT INT16 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -1609,10 +1608,10 @@ SafeIntnToInt16 (
 
   if ((Operand >= MIN_INT16) && (Operand <= MAX_INT16)) {
     *Result = (INT16)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = INT16_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -1641,8 +1640,8 @@ SafeIntnToInt16 (
 RETURN_STATUS
 EFIAPI
 SafeIntnToUint16 (
-  IN  INTN    Operand,
-  OUT UINT16  *Result
+  IN  INTN   Operand,
+  OUT UINT16 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -1653,10 +1652,10 @@ SafeIntnToUint16 (
 
   if ((Operand >= 0) && (Operand <= MAX_UINT16)) {
     *Result = (UINT16)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT16_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -1685,8 +1684,8 @@ SafeIntnToUint16 (
 RETURN_STATUS
 EFIAPI
 SafeIntnToUintn (
-  IN  INTN   Operand,
-  OUT UINTN  *Result
+  IN  INTN  Operand,
+  OUT UINTN *Result
   )
 {
   RETURN_STATUS  Status;
@@ -1697,10 +1696,10 @@ SafeIntnToUintn (
 
   if (Operand >= 0) {
     *Result = (UINTN)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINTN_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -1729,8 +1728,8 @@ SafeIntnToUintn (
 RETURN_STATUS
 EFIAPI
 SafeIntnToUint64 (
-  IN  INTN    Operand,
-  OUT UINT64  *Result
+  IN  INTN   Operand,
+  OUT UINT64 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -1741,10 +1740,10 @@ SafeIntnToUint64 (
 
   if (Operand >= 0) {
     *Result = (UINT64)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT64_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -1773,8 +1772,8 @@ SafeIntnToUint64 (
 RETURN_STATUS
 EFIAPI
 SafeUintnToInt8 (
-  IN  UINTN  Operand,
-  OUT INT8   *Result
+  IN  UINTN Operand,
+  OUT INT8  *Result
   )
 {
   RETURN_STATUS  Status;
@@ -1785,10 +1784,10 @@ SafeUintnToInt8 (
 
   if (Operand <= MAX_INT8) {
     *Result = (INT8)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = INT8_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -1817,8 +1816,8 @@ SafeUintnToInt8 (
 RETURN_STATUS
 EFIAPI
 SafeUintnToChar8 (
-  IN  UINTN  Operand,
-  OUT CHAR8  *Result
+  IN  UINTN Operand,
+  OUT CHAR8 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -1829,10 +1828,10 @@ SafeUintnToChar8 (
 
   if (Operand <= MAX_INT8) {
     *Result = (INT8)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = CHAR8_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -1861,8 +1860,8 @@ SafeUintnToChar8 (
 RETURN_STATUS
 EFIAPI
 SafeUintnToUint8 (
-  IN  UINTN  Operand,
-  OUT UINT8  *Result
+  IN  UINTN Operand,
+  OUT UINT8 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -1873,10 +1872,10 @@ SafeUintnToUint8 (
 
   if (Operand <= MAX_UINT8) {
     *Result = (UINT8)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT8_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -1905,8 +1904,8 @@ SafeUintnToUint8 (
 RETURN_STATUS
 EFIAPI
 SafeUintnToInt16 (
-  IN  UINTN  Operand,
-  OUT INT16  *Result
+  IN  UINTN Operand,
+  OUT INT16 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -1917,10 +1916,10 @@ SafeUintnToInt16 (
 
   if (Operand <= MAX_INT16) {
     *Result = (INT16)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = INT16_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -1949,8 +1948,8 @@ SafeUintnToInt16 (
 RETURN_STATUS
 EFIAPI
 SafeUintnToUint16 (
-  IN  UINTN   Operand,
-  OUT UINT16  *Result
+  IN  UINTN  Operand,
+  OUT UINT16 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -1961,10 +1960,10 @@ SafeUintnToUint16 (
 
   if (Operand <= MAX_UINT16) {
     *Result = (UINT16)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT16_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -1993,8 +1992,8 @@ SafeUintnToUint16 (
 RETURN_STATUS
 EFIAPI
 SafeUintnToInt32 (
-  IN  UINTN  Operand,
-  OUT INT32  *Result
+  IN  UINTN Operand,
+  OUT INT32 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -2005,10 +2004,10 @@ SafeUintnToInt32 (
 
   if (Operand <= MAX_INT32) {
     *Result = (INT32)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = INT32_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -2037,8 +2036,8 @@ SafeUintnToInt32 (
 RETURN_STATUS
 EFIAPI
 SafeUintnToIntn (
-  IN  UINTN  Operand,
-  OUT INTN   *Result
+  IN  UINTN Operand,
+  OUT INTN  *Result
   )
 {
   RETURN_STATUS  Status;
@@ -2049,10 +2048,10 @@ SafeUintnToIntn (
 
   if (Operand <= MAX_INTN) {
     *Result = (INTN)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = INTN_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -2081,8 +2080,8 @@ SafeUintnToIntn (
 RETURN_STATUS
 EFIAPI
 SafeInt64ToInt8 (
-  IN  INT64  Operand,
-  OUT INT8   *Result
+  IN  INT64 Operand,
+  OUT INT8  *Result
   )
 {
   RETURN_STATUS  Status;
@@ -2093,10 +2092,10 @@ SafeInt64ToInt8 (
 
   if ((Operand >= MIN_INT8) && (Operand <= MAX_INT8)) {
     *Result = (INT8)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = INT8_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -2125,8 +2124,8 @@ SafeInt64ToInt8 (
 RETURN_STATUS
 EFIAPI
 SafeInt64ToChar8 (
-  IN  INT64  Operand,
-  OUT CHAR8  *Result
+  IN  INT64 Operand,
+  OUT CHAR8 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -2137,10 +2136,10 @@ SafeInt64ToChar8 (
 
   if ((Operand >= 0) && (Operand <= MAX_INT8)) {
     *Result = (CHAR8)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = CHAR8_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -2169,8 +2168,8 @@ SafeInt64ToChar8 (
 RETURN_STATUS
 EFIAPI
 SafeInt64ToUint8 (
-  IN  INT64  Operand,
-  OUT UINT8  *Result
+  IN  INT64 Operand,
+  OUT UINT8 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -2181,10 +2180,10 @@ SafeInt64ToUint8 (
 
   if ((Operand >= 0) && (Operand <= MAX_UINT8)) {
     *Result = (UINT8)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT8_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -2213,8 +2212,8 @@ SafeInt64ToUint8 (
 RETURN_STATUS
 EFIAPI
 SafeInt64ToInt16 (
-  IN  INT64  Operand,
-  OUT INT16  *Result
+  IN  INT64 Operand,
+  OUT INT16 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -2225,10 +2224,10 @@ SafeInt64ToInt16 (
 
   if ((Operand >= MIN_INT16) && (Operand <= MAX_INT16)) {
     *Result = (INT16)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = INT16_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -2257,8 +2256,8 @@ SafeInt64ToInt16 (
 RETURN_STATUS
 EFIAPI
 SafeInt64ToUint16 (
-  IN  INT64   Operand,
-  OUT UINT16  *Result
+  IN  INT64  Operand,
+  OUT UINT16 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -2269,10 +2268,10 @@ SafeInt64ToUint16 (
 
   if ((Operand >= 0) && (Operand <= MAX_UINT16)) {
     *Result = (UINT16)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT16_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -2301,8 +2300,8 @@ SafeInt64ToUint16 (
 RETURN_STATUS
 EFIAPI
 SafeInt64ToInt32 (
-  IN  INT64  Operand,
-  OUT INT32  *Result
+  IN  INT64 Operand,
+  OUT INT32 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -2313,10 +2312,10 @@ SafeInt64ToInt32 (
 
   if ((Operand >= MIN_INT32) && (Operand <= MAX_INT32)) {
     *Result = (INT32)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = INT32_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -2345,8 +2344,8 @@ SafeInt64ToInt32 (
 RETURN_STATUS
 EFIAPI
 SafeInt64ToUint32 (
-  IN  INT64   Operand,
-  OUT UINT32  *Result
+  IN  INT64  Operand,
+  OUT UINT32 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -2357,10 +2356,10 @@ SafeInt64ToUint32 (
 
   if ((Operand >= 0) && (Operand <= MAX_UINT32)) {
     *Result = (UINT32)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT32_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -2389,8 +2388,8 @@ SafeInt64ToUint32 (
 RETURN_STATUS
 EFIAPI
 SafeInt64ToUint64 (
-  IN  INT64   Operand,
-  OUT UINT64  *Result
+  IN  INT64  Operand,
+  OUT UINT64 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -2401,10 +2400,10 @@ SafeInt64ToUint64 (
 
   if (Operand >= 0) {
     *Result = (UINT64)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT64_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -2433,8 +2432,8 @@ SafeInt64ToUint64 (
 RETURN_STATUS
 EFIAPI
 SafeUint64ToInt8 (
-  IN  UINT64  Operand,
-  OUT INT8    *Result
+  IN  UINT64 Operand,
+  OUT INT8   *Result
   )
 {
   RETURN_STATUS  Status;
@@ -2445,10 +2444,10 @@ SafeUint64ToInt8 (
 
   if (Operand <= MAX_INT8) {
     *Result = (INT8)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = INT8_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -2477,8 +2476,8 @@ SafeUint64ToInt8 (
 RETURN_STATUS
 EFIAPI
 SafeUint64ToChar8 (
-  IN  UINT64  Operand,
-  OUT CHAR8   *Result
+  IN  UINT64 Operand,
+  OUT CHAR8  *Result
   )
 {
   RETURN_STATUS  Status;
@@ -2489,10 +2488,10 @@ SafeUint64ToChar8 (
 
   if (Operand <= MAX_INT8) {
     *Result = (INT8)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = CHAR8_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -2521,8 +2520,8 @@ SafeUint64ToChar8 (
 RETURN_STATUS
 EFIAPI
 SafeUint64ToUint8 (
-  IN  UINT64  Operand,
-  OUT UINT8   *Result
+  IN  UINT64 Operand,
+  OUT UINT8  *Result
   )
 {
   RETURN_STATUS  Status;
@@ -2533,10 +2532,10 @@ SafeUint64ToUint8 (
 
   if (Operand <= MAX_UINT8) {
     *Result = (UINT8)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT8_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -2565,8 +2564,8 @@ SafeUint64ToUint8 (
 RETURN_STATUS
 EFIAPI
 SafeUint64ToInt16 (
-  IN  UINT64  Operand,
-  OUT INT16   *Result
+  IN  UINT64 Operand,
+  OUT INT16  *Result
   )
 {
   RETURN_STATUS  Status;
@@ -2577,10 +2576,10 @@ SafeUint64ToInt16 (
 
   if (Operand <= MAX_INT16) {
     *Result = (INT16)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = INT16_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -2609,8 +2608,8 @@ SafeUint64ToInt16 (
 RETURN_STATUS
 EFIAPI
 SafeUint64ToUint16 (
-  IN  UINT64  Operand,
-  OUT UINT16  *Result
+  IN  UINT64 Operand,
+  OUT UINT16 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -2621,10 +2620,10 @@ SafeUint64ToUint16 (
 
   if (Operand <= MAX_UINT16) {
     *Result = (UINT16)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT16_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -2653,8 +2652,8 @@ SafeUint64ToUint16 (
 RETURN_STATUS
 EFIAPI
 SafeUint64ToInt32 (
-  IN  UINT64  Operand,
-  OUT INT32   *Result
+  IN  UINT64 Operand,
+  OUT INT32  *Result
   )
 {
   RETURN_STATUS  Status;
@@ -2665,10 +2664,10 @@ SafeUint64ToInt32 (
 
   if (Operand <= MAX_INT32) {
     *Result = (INT32)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = INT32_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -2697,8 +2696,8 @@ SafeUint64ToInt32 (
 RETURN_STATUS
 EFIAPI
 SafeUint64ToUint32 (
-  IN  UINT64  Operand,
-  OUT UINT32  *Result
+  IN  UINT64 Operand,
+  OUT UINT32 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -2709,10 +2708,10 @@ SafeUint64ToUint32 (
 
   if (Operand <= MAX_UINT32) {
     *Result = (UINT32)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT32_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -2741,8 +2740,8 @@ SafeUint64ToUint32 (
 RETURN_STATUS
 EFIAPI
 SafeUint64ToIntn (
-  IN  UINT64  Operand,
-  OUT INTN    *Result
+  IN  UINT64 Operand,
+  OUT INTN   *Result
   )
 {
   RETURN_STATUS  Status;
@@ -2753,10 +2752,10 @@ SafeUint64ToIntn (
 
   if (Operand <= MAX_INTN) {
     *Result = (INTN)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = INTN_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -2785,8 +2784,8 @@ SafeUint64ToIntn (
 RETURN_STATUS
 EFIAPI
 SafeUint64ToInt64 (
-  IN  UINT64  Operand,
-  OUT INT64   *Result
+  IN  UINT64 Operand,
+  OUT INT64  *Result
   )
 {
   RETURN_STATUS  Status;
@@ -2797,10 +2796,10 @@ SafeUint64ToInt64 (
 
   if (Operand <= MAX_INT64) {
     *Result = (INT64)Operand;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = INT64_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -2834,9 +2833,9 @@ SafeUint64ToInt64 (
 RETURN_STATUS
 EFIAPI
 SafeUint8Add (
-  IN  UINT8  Augend,
-  IN  UINT8  Addend,
-  OUT UINT8  *Result
+  IN  UINT8 Augend,
+  IN  UINT8 Addend,
+  OUT UINT8 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -2847,10 +2846,10 @@ SafeUint8Add (
 
   if (((UINT8)(Augend + Addend)) >= Augend) {
     *Result = (UINT8)(Augend + Addend);
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT8_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -2880,9 +2879,9 @@ SafeUint8Add (
 RETURN_STATUS
 EFIAPI
 SafeUint16Add (
-  IN  UINT16  Augend,
-  IN  UINT16  Addend,
-  OUT UINT16  *Result
+  IN  UINT16 Augend,
+  IN  UINT16 Addend,
+  OUT UINT16 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -2893,10 +2892,10 @@ SafeUint16Add (
 
   if (((UINT16)(Augend + Addend)) >= Augend) {
     *Result = (UINT16)(Augend + Addend);
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT16_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -2926,9 +2925,9 @@ SafeUint16Add (
 RETURN_STATUS
 EFIAPI
 SafeUint32Add (
-  IN  UINT32  Augend,
-  IN  UINT32  Addend,
-  OUT UINT32  *Result
+  IN  UINT32 Augend,
+  IN  UINT32 Addend,
+  OUT UINT32 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -2939,10 +2938,10 @@ SafeUint32Add (
 
   if ((Augend + Addend) >= Augend) {
     *Result = (Augend + Addend);
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT32_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -2972,9 +2971,9 @@ SafeUint32Add (
 RETURN_STATUS
 EFIAPI
 SafeUint64Add (
-  IN  UINT64  Augend,
-  IN  UINT64  Addend,
-  OUT UINT64  *Result
+  IN  UINT64 Augend,
+  IN  UINT64 Addend,
+  OUT UINT64 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -2985,10 +2984,10 @@ SafeUint64Add (
 
   if ((Augend + Addend) >= Augend) {
     *Result = (Augend + Addend);
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT64_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -3022,9 +3021,9 @@ SafeUint64Add (
 RETURN_STATUS
 EFIAPI
 SafeUint8Sub (
-  IN  UINT8  Minuend,
-  IN  UINT8  Subtrahend,
-  OUT UINT8  *Result
+  IN  UINT8 Minuend,
+  IN  UINT8 Subtrahend,
+  OUT UINT8 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -3035,10 +3034,10 @@ SafeUint8Sub (
 
   if (Minuend >= Subtrahend) {
     *Result = (UINT8)(Minuend - Subtrahend);
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT8_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -3068,9 +3067,9 @@ SafeUint8Sub (
 RETURN_STATUS
 EFIAPI
 SafeUint16Sub (
-  IN  UINT16  Minuend,
-  IN  UINT16  Subtrahend,
-  OUT UINT16  *Result
+  IN  UINT16 Minuend,
+  IN  UINT16 Subtrahend,
+  OUT UINT16 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -3081,10 +3080,10 @@ SafeUint16Sub (
 
   if (Minuend >= Subtrahend) {
     *Result = (UINT16)(Minuend - Subtrahend);
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT16_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -3114,9 +3113,9 @@ SafeUint16Sub (
 RETURN_STATUS
 EFIAPI
 SafeUint32Sub (
-  IN  UINT32  Minuend,
-  IN  UINT32  Subtrahend,
-  OUT UINT32  *Result
+  IN  UINT32 Minuend,
+  IN  UINT32 Subtrahend,
+  OUT UINT32 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -3127,10 +3126,10 @@ SafeUint32Sub (
 
   if (Minuend >= Subtrahend) {
     *Result = (Minuend - Subtrahend);
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT32_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -3160,9 +3159,9 @@ SafeUint32Sub (
 RETURN_STATUS
 EFIAPI
 SafeUint64Sub (
-  IN  UINT64  Minuend,
-  IN  UINT64  Subtrahend,
-  OUT UINT64  *Result
+  IN  UINT64 Minuend,
+  IN  UINT64 Subtrahend,
+  OUT UINT64 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -3173,10 +3172,10 @@ SafeUint64Sub (
 
   if (Minuend >= Subtrahend) {
     *Result = (Minuend - Subtrahend);
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     *Result = UINT64_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   }
 
   return Status;
@@ -3210,9 +3209,9 @@ SafeUint64Sub (
 RETURN_STATUS
 EFIAPI
 SafeUint8Mult (
-  IN  UINT8  Multiplicand,
-  IN  UINT8  Multiplier,
-  OUT UINT8  *Result
+  IN  UINT8 Multiplicand,
+  IN  UINT8 Multiplier,
+  OUT UINT8 *Result
   )
 {
   UINT32  IntermediateResult;
@@ -3246,9 +3245,9 @@ SafeUint8Mult (
 RETURN_STATUS
 EFIAPI
 SafeUint16Mult (
-  IN  UINT16  Multiplicand,
-  IN  UINT16  Multiplier,
-  OUT UINT16  *Result
+  IN  UINT16 Multiplicand,
+  IN  UINT16 Multiplier,
+  OUT UINT16 *Result
   )
 {
   UINT32  IntermediateResult;
@@ -3282,14 +3281,14 @@ SafeUint16Mult (
 RETURN_STATUS
 EFIAPI
 SafeUint32Mult (
-  IN  UINT32  Multiplicand,
-  IN  UINT32  Multiplier,
-  OUT UINT32  *Result
+  IN  UINT32 Multiplicand,
+  IN  UINT32 Multiplier,
+  OUT UINT32 *Result
   )
 {
   UINT64  IntermediateResult;
 
-  IntermediateResult = ((UINT64) Multiplicand) *((UINT64) Multiplier);
+  IntermediateResult = ((UINT64)Multiplicand) *((UINT64)Multiplier);
 
   return SafeUint64ToUint32 (IntermediateResult, Result);
 }
@@ -3318,9 +3317,9 @@ SafeUint32Mult (
 RETURN_STATUS
 EFIAPI
 SafeUint64Mult (
-  IN  UINT64  Multiplicand,
-  IN  UINT64  Multiplier,
-  OUT UINT64  *Result
+  IN  UINT64 Multiplicand,
+  IN  UINT64 Multiplier,
+  OUT UINT64 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -3368,13 +3367,14 @@ SafeUint64Mult (
     DwordD = (UINT32)Multiplier;
 
     *Result = (((UINT64)DwordB) *(UINT64)DwordD);
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   } else {
     //
     // a * c must be 0 or there would be bits set in the high 64-bits
     //
     if ((DwordA == 0) ||
-        (DwordC == 0)) {
+        (DwordC == 0))
+    {
       DwordD = (UINT32)Multiplier;
 
       //
@@ -3401,7 +3401,7 @@ SafeUint64Mult (
 
             if (!RETURN_ERROR (SafeUint64Add (UnsignedResult, ProductBD, &UnsignedResult))) {
               *Result = UnsignedResult;
-              Status = RETURN_SUCCESS;
+              Status  = RETURN_SUCCESS;
             }
           }
         }
@@ -3412,6 +3412,7 @@ SafeUint64Mult (
   if (RETURN_ERROR (Status)) {
     *Result = UINT64_ERROR;
   }
+
   return Status;
 }
 
@@ -3463,9 +3464,9 @@ SafeUint64Mult (
 RETURN_STATUS
 EFIAPI
 SafeInt8Add (
-  IN  INT8  Augend,
-  IN  INT8  Addend,
-  OUT INT8  *Result
+  IN  INT8 Augend,
+  IN  INT8 Addend,
+  OUT INT8 *Result
   )
 {
   return SafeInt32ToInt8 (((INT32)Augend) + ((INT32)Addend), Result);
@@ -3495,9 +3496,9 @@ SafeInt8Add (
 RETURN_STATUS
 EFIAPI
 SafeChar8Add (
-  IN  CHAR8  Augend,
-  IN  CHAR8  Addend,
-  OUT CHAR8  *Result
+  IN  CHAR8 Augend,
+  IN  CHAR8 Addend,
+  OUT CHAR8 *Result
   )
 {
   INT32  Augend32;
@@ -3509,11 +3510,12 @@ SafeChar8Add (
 
   Augend32 = (INT32)Augend;
   Addend32 = (INT32)Addend;
-  if (Augend32 < 0 || Augend32 > MAX_INT8) {
+  if ((Augend32 < 0) || (Augend32 > MAX_INT8)) {
     *Result = CHAR8_ERROR;
     return RETURN_BUFFER_TOO_SMALL;
   }
-  if (Addend32 < 0 || Addend32 > MAX_INT8) {
+
+  if ((Addend32 < 0) || (Addend32 > MAX_INT8)) {
     *Result = CHAR8_ERROR;
     return RETURN_BUFFER_TOO_SMALL;
   }
@@ -3545,9 +3547,9 @@ SafeChar8Add (
 RETURN_STATUS
 EFIAPI
 SafeInt16Add (
-  IN  INT16  Augend,
-  IN  INT16  Addend,
-  OUT INT16  *Result
+  IN  INT16 Augend,
+  IN  INT16 Addend,
+  OUT INT16 *Result
   )
 {
   return SafeInt32ToInt16 (((INT32)Augend) + ((INT32)Addend), Result);
@@ -3577,9 +3579,9 @@ SafeInt16Add (
 RETURN_STATUS
 EFIAPI
 SafeInt32Add (
-  IN  INT32  Augend,
-  IN  INT32  Addend,
-  OUT INT32  *Result
+  IN  INT32 Augend,
+  IN  INT32 Addend,
+  OUT INT32 *Result
   )
 {
   return SafeInt64ToInt32 (((INT64)Augend) + ((INT64)Addend), Result);
@@ -3609,9 +3611,9 @@ SafeInt32Add (
 RETURN_STATUS
 EFIAPI
 SafeInt64Add (
-  IN  INT64  Augend,
-  IN  INT64  Addend,
-  OUT INT64  *Result
+  IN  INT64 Augend,
+  IN  INT64 Addend,
+  OUT INT64 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -3666,12 +3668,13 @@ SafeInt64Add (
   //     0 >= (MIN_INT64 - Addend) > MIN_INT64
   //
   if (((Addend > 0) && (Augend > (MAX_INT64 - Addend))) ||
-      ((Addend < 0) && (Augend < (MIN_INT64 - Addend)))) {
+      ((Addend < 0) && (Augend < (MIN_INT64 - Addend))))
+  {
     *Result = INT64_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   } else {
     *Result = Augend + Addend;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   }
 
   return Status;
@@ -3705,9 +3708,9 @@ SafeInt64Add (
 RETURN_STATUS
 EFIAPI
 SafeInt8Sub (
-  IN  INT8  Minuend,
-  IN  INT8  Subtrahend,
-  OUT INT8  *Result
+  IN  INT8 Minuend,
+  IN  INT8 Subtrahend,
+  OUT INT8 *Result
   )
 {
   return SafeInt32ToInt8 (((INT32)Minuend) - ((INT32)Subtrahend), Result);
@@ -3737,9 +3740,9 @@ SafeInt8Sub (
 RETURN_STATUS
 EFIAPI
 SafeChar8Sub (
-  IN  CHAR8  Minuend,
-  IN  CHAR8  Subtrahend,
-  OUT CHAR8  *Result
+  IN  CHAR8 Minuend,
+  IN  CHAR8 Subtrahend,
+  OUT CHAR8 *Result
   )
 {
   INT32  Minuend32;
@@ -3751,11 +3754,12 @@ SafeChar8Sub (
 
   Minuend32    = (INT32)Minuend;
   Subtrahend32 = (INT32)Subtrahend;
-  if (Minuend32 < 0 || Minuend32 > MAX_INT8) {
+  if ((Minuend32 < 0) || (Minuend32 > MAX_INT8)) {
     *Result = CHAR8_ERROR;
     return RETURN_BUFFER_TOO_SMALL;
   }
-  if (Subtrahend32 < 0 || Subtrahend32 > MAX_INT8) {
+
+  if ((Subtrahend32 < 0) || (Subtrahend32 > MAX_INT8)) {
     *Result = CHAR8_ERROR;
     return RETURN_BUFFER_TOO_SMALL;
   }
@@ -3787,9 +3791,9 @@ SafeChar8Sub (
 RETURN_STATUS
 EFIAPI
 SafeInt16Sub (
-  IN  INT16  Minuend,
-  IN  INT16  Subtrahend,
-  OUT INT16  *Result
+  IN  INT16 Minuend,
+  IN  INT16 Subtrahend,
+  OUT INT16 *Result
   )
 {
   return SafeInt32ToInt16 (((INT32)Minuend) - ((INT32)Subtrahend), Result);
@@ -3819,9 +3823,9 @@ SafeInt16Sub (
 RETURN_STATUS
 EFIAPI
 SafeInt32Sub (
-  IN  INT32  Minuend,
-  IN  INT32  Subtrahend,
-  OUT INT32  *Result
+  IN  INT32 Minuend,
+  IN  INT32 Subtrahend,
+  OUT INT32 *Result
   )
 {
   return SafeInt64ToInt32 (((INT64)Minuend) - ((INT64)Subtrahend), Result);
@@ -3851,9 +3855,9 @@ SafeInt32Sub (
 RETURN_STATUS
 EFIAPI
 SafeInt64Sub (
-  IN  INT64  Minuend,
-  IN  INT64  Subtrahend,
-  OUT INT64  *Result
+  IN  INT64 Minuend,
+  IN  INT64 Subtrahend,
+  OUT INT64 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -3901,12 +3905,13 @@ SafeInt64Sub (
   //     -1 = (MAX_INT64 + MIN_INT64) <= (MAX_INT64 + Subtrahend) < MAX_INT64
   //
   if (((Subtrahend > 0) && (Minuend < (MIN_INT64 + Subtrahend))) ||
-      ((Subtrahend < 0) && (Minuend > (MAX_INT64 + Subtrahend)))) {
+      ((Subtrahend < 0) && (Minuend > (MAX_INT64 + Subtrahend))))
+  {
     *Result = INT64_ERROR;
-    Status = RETURN_BUFFER_TOO_SMALL;
+    Status  = RETURN_BUFFER_TOO_SMALL;
   } else {
     *Result = Minuend - Subtrahend;
-    Status = RETURN_SUCCESS;
+    Status  = RETURN_SUCCESS;
   }
 
   return Status;
@@ -3940,9 +3945,9 @@ SafeInt64Sub (
 RETURN_STATUS
 EFIAPI
 SafeInt8Mult (
-  IN  INT8  Multiplicand,
-  IN  INT8  Multiplier,
-  OUT INT8  *Result
+  IN  INT8 Multiplicand,
+  IN  INT8 Multiplier,
+  OUT INT8 *Result
   )
 {
   return SafeInt32ToInt8 (((INT32)Multiplier) *((INT32)Multiplicand), Result);
@@ -3972,9 +3977,9 @@ SafeInt8Mult (
 RETURN_STATUS
 EFIAPI
 SafeChar8Mult (
-  IN  CHAR8  Multiplicand,
-  IN  CHAR8  Multiplier,
-  OUT CHAR8  *Result
+  IN  CHAR8 Multiplicand,
+  IN  CHAR8 Multiplier,
+  OUT CHAR8 *Result
   )
 {
   INT32  Multiplicand32;
@@ -3986,11 +3991,12 @@ SafeChar8Mult (
 
   Multiplicand32 = (INT32)Multiplicand;
   Multiplier32   = (INT32)Multiplier;
-  if (Multiplicand32 < 0 || Multiplicand32 > MAX_INT8) {
+  if ((Multiplicand32 < 0) || (Multiplicand32 > MAX_INT8)) {
     *Result = CHAR8_ERROR;
     return RETURN_BUFFER_TOO_SMALL;
   }
-  if (Multiplier32 < 0 || Multiplier32 > MAX_INT8) {
+
+  if ((Multiplier32 < 0) || (Multiplier32 > MAX_INT8)) {
     *Result = CHAR8_ERROR;
     return RETURN_BUFFER_TOO_SMALL;
   }
@@ -4022,9 +4028,9 @@ SafeChar8Mult (
 RETURN_STATUS
 EFIAPI
 SafeInt16Mult (
-  IN  INT16  Multiplicand,
-  IN  INT16  Multiplier,
-  OUT INT16  *Result
+  IN  INT16 Multiplicand,
+  IN  INT16 Multiplier,
+  OUT INT16 *Result
   )
 {
   return SafeInt32ToInt16 (((INT32)Multiplicand) *((INT32)Multiplier), Result);
@@ -4054,9 +4060,9 @@ SafeInt16Mult (
 RETURN_STATUS
 EFIAPI
 SafeInt32Mult (
-  IN  INT32  Multiplicand,
-  IN  INT32  Multiplier,
-  OUT INT32  *Result
+  IN  INT32 Multiplicand,
+  IN  INT32 Multiplier,
+  OUT INT32 *Result
   )
 {
   return SafeInt64ToInt32 (MultS64x64 (Multiplicand, Multiplier), Result);
@@ -4086,9 +4092,9 @@ SafeInt32Mult (
 RETURN_STATUS
 EFIAPI
 SafeInt64Mult (
-  IN  INT64  Multiplicand,
-  IN  INT64  Multiplier,
-  OUT INT64  *Result
+  IN  INT64 Multiplicand,
+  IN  INT64 Multiplier,
+  OUT INT64 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -4107,7 +4113,7 @@ SafeInt64Mult (
     //
     // Avoid negating the most negative number.
     //
-    UnsignedMultiplicand = ((UINT64)(- (Multiplicand + 1))) + 1;
+    UnsignedMultiplicand = ((UINT64)(-(Multiplicand + 1))) + 1;
   } else {
     UnsignedMultiplicand = (UINT64)Multiplicand;
   }
@@ -4116,7 +4122,7 @@ SafeInt64Mult (
     //
     // Avoid negating the most negative number.
     //
-    UnsignedMultiplier = ((UINT64)(- (Multiplier + 1))) + 1;
+    UnsignedMultiplier = ((UINT64)(-(Multiplier + 1))) + 1;
   } else {
     UnsignedMultiplier = (UINT64)Multiplier;
   }
@@ -4126,16 +4132,16 @@ SafeInt64Mult (
     if ((Multiplicand < 0) != (Multiplier < 0)) {
       if (UnsignedResult > MIN_INT64_MAGNITUDE) {
         *Result = INT64_ERROR;
-        Status = RETURN_BUFFER_TOO_SMALL;
+        Status  = RETURN_BUFFER_TOO_SMALL;
       } else if (UnsignedResult == MIN_INT64_MAGNITUDE) {
         *Result = MIN_INT64;
       } else {
-        *Result = - ((INT64)UnsignedResult);
+        *Result = -((INT64)UnsignedResult);
       }
     } else {
       if (UnsignedResult > MAX_INT64) {
         *Result = INT64_ERROR;
-        Status = RETURN_BUFFER_TOO_SMALL;
+        Status  = RETURN_BUFFER_TOO_SMALL;
       } else {
         *Result = (INT64)UnsignedResult;
       }
@@ -4143,6 +4149,6 @@ SafeInt64Mult (
   } else {
     *Result = INT64_ERROR;
   }
+
   return Status;
 }
-

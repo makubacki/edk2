@@ -39,8 +39,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 /// Unicode String Table
 ///
 typedef struct {
-  CHAR8   *Language;
-  CHAR16  *UnicodeString;
+  CHAR8     *Language;
+  CHAR16    *UnicodeString;
 } EFI_UNICODE_STRING_TABLE;
 
 ///
@@ -56,9 +56,9 @@ typedef enum {
 /// EFI Lock
 ///
 typedef struct {
-  EFI_TPL         Tpl;
-  EFI_TPL         OwnerTpl;
-  EFI_LOCK_STATE  Lock;
+  EFI_TPL           Tpl;
+  EFI_TPL           OwnerTpl;
+  EFI_LOCK_STATE    Lock;
 } EFI_LOCK;
 
 /**
@@ -71,7 +71,7 @@ typedef struct {
           by Microseconds.
 
 **/
-#define EFI_TIMER_PERIOD_MICROSECONDS(Microseconds) MultU64x32((UINT64)(Microseconds), 10)
+#define EFI_TIMER_PERIOD_MICROSECONDS(Microseconds)  MultU64x32((UINT64)(Microseconds), 10)
 
 /**
   Macro that returns the number of 100 ns units for a specified number of milliseconds.
@@ -83,7 +83,7 @@ typedef struct {
           by Milliseconds.
 
 **/
-#define EFI_TIMER_PERIOD_MILLISECONDS(Milliseconds) MultU64x32((UINT64)(Milliseconds), 10000)
+#define EFI_TIMER_PERIOD_MILLISECONDS(Milliseconds)  MultU64x32((UINT64)(Milliseconds), 10000)
 
 /**
   Macro that returns the number of 100 ns units for a specified number of seconds.
@@ -95,7 +95,7 @@ typedef struct {
           by Seconds.
 
 **/
-#define EFI_TIMER_PERIOD_SECONDS(Seconds)           MultU64x32((UINT64)(Seconds), 10000000)
+#define EFI_TIMER_PERIOD_SECONDS(Seconds)  MultU64x32((UINT64)(Seconds), 10000000)
 
 /**
   Macro that returns the a pointer to the next EFI_MEMORY_DESCRIPTOR in an array
@@ -132,8 +132,8 @@ typedef struct {
 EFI_STATUS
 EFIAPI
 EfiGetSystemConfigurationTable (
-  IN  EFI_GUID  *TableGuid,
-  OUT VOID      **Table
+  IN  EFI_GUID *TableGuid,
+  OUT VOID     **Table
   );
 
 /**
@@ -165,11 +165,11 @@ EfiGetSystemConfigurationTable (
 **/
 EFI_EVENT
 EFIAPI
-EfiCreateProtocolNotifyEvent(
-  IN  EFI_GUID          *ProtocolGuid,
-  IN  EFI_TPL           NotifyTpl,
-  IN  EFI_EVENT_NOTIFY  NotifyFunction,
-  IN  VOID              *NotifyContext,  OPTIONAL
+EfiCreateProtocolNotifyEvent (
+  IN  EFI_GUID *ProtocolGuid,
+  IN  EFI_TPL NotifyTpl,
+  IN  EFI_EVENT_NOTIFY NotifyFunction,
+  IN  VOID *NotifyContext, OPTIONAL
   OUT VOID              **Registration
   );
 
@@ -196,10 +196,10 @@ EfiCreateProtocolNotifyEvent(
 EFI_STATUS
 EFIAPI
 EfiNamedEventListen (
-  IN CONST EFI_GUID    *Name,
-  IN EFI_TPL           NotifyTpl,
-  IN EFI_EVENT_NOTIFY  NotifyFunction,
-  IN CONST VOID        *NotifyContext,  OPTIONAL
+  IN CONST EFI_GUID *Name,
+  IN EFI_TPL NotifyTpl,
+  IN EFI_EVENT_NOTIFY NotifyFunction,
+  IN CONST VOID *NotifyContext, OPTIONAL
   OUT VOID             *Registration OPTIONAL
   );
 
@@ -219,7 +219,7 @@ EfiNamedEventListen (
 EFI_STATUS
 EFIAPI
 EfiNamedEventSignal (
-  IN CONST EFI_GUID  *Name
+  IN CONST EFI_GUID *Name
   );
 
 /**
@@ -252,8 +252,8 @@ EfiEventGroupSignal (
 VOID
 EFIAPI
 EfiEventEmptyFunction (
-  IN EFI_EVENT              Event,
-  IN VOID                   *Context
+  IN EFI_EVENT Event,
+  IN VOID      *Context
   );
 
 /**
@@ -293,8 +293,8 @@ EfiGetCurrentTpl (
 EFI_LOCK *
 EFIAPI
 EfiInitializeLock (
-  IN OUT EFI_LOCK  *Lock,
-  IN EFI_TPL        Priority
+  IN OUT EFI_LOCK *Lock,
+  IN EFI_TPL      Priority
   );
 
 /**
@@ -313,7 +313,6 @@ EfiInitializeLock (
 #define EFI_INITIALIZE_LOCK_VARIABLE(Priority) \
   {Priority, TPL_APPLICATION, EfiLockReleased }
 
-
 /**
   Macro that calls DebugAssert() if an EFI_LOCK structure is not in the locked state.
 
@@ -328,7 +327,7 @@ EfiInitializeLock (
   @param  LockParameter  A pointer to the lock to acquire.
 
 **/
-#if !defined(MDEPKG_NDEBUG)
+#if !defined (MDEPKG_NDEBUG)
   #define ASSERT_LOCKED(LockParameter)                  \
     do {                                                \
       if (DebugAssertEnabled ()) {                      \
@@ -341,7 +340,6 @@ EfiInitializeLock (
 #else
   #define ASSERT_LOCKED(LockParameter)
 #endif
-
 
 /**
   Acquires ownership of a lock.
@@ -359,7 +357,7 @@ EfiInitializeLock (
 VOID
 EFIAPI
 EfiAcquireLock (
-  IN EFI_LOCK  *Lock
+  IN EFI_LOCK *Lock
   );
 
 /**
@@ -381,7 +379,7 @@ EfiAcquireLock (
 EFI_STATUS
 EFIAPI
 EfiAcquireLockOrFail (
-  IN EFI_LOCK  *Lock
+  IN EFI_LOCK *Lock
   );
 
 /**
@@ -400,7 +398,7 @@ EfiAcquireLockOrFail (
 VOID
 EFIAPI
 EfiReleaseLock (
-  IN EFI_LOCK  *Lock
+  IN EFI_LOCK *Lock
   );
 
 /**
@@ -429,9 +427,9 @@ EfiReleaseLock (
 EFI_STATUS
 EFIAPI
 EfiTestManagedDevice (
-  IN CONST EFI_HANDLE       ControllerHandle,
-  IN CONST EFI_HANDLE       DriverBindingHandle,
-  IN CONST EFI_GUID         *ProtocolGuid
+  IN CONST EFI_HANDLE ControllerHandle,
+  IN CONST EFI_HANDLE DriverBindingHandle,
+  IN CONST EFI_GUID   *ProtocolGuid
   );
 
 /**
@@ -456,9 +454,9 @@ EfiTestManagedDevice (
 EFI_STATUS
 EFIAPI
 EfiTestChildHandle (
-  IN CONST EFI_HANDLE       ControllerHandle,
-  IN CONST EFI_HANDLE       ChildHandle,
-  IN CONST EFI_GUID         *ProtocolGuid
+  IN CONST EFI_HANDLE ControllerHandle,
+  IN CONST EFI_HANDLE ChildHandle,
+  IN CONST EFI_GUID   *ProtocolGuid
   );
 
 /**
@@ -512,10 +510,10 @@ IsLanguageSupported (
 EFI_STATUS
 EFIAPI
 LookupUnicodeString (
-  IN CONST CHAR8                     *Language,
-  IN CONST CHAR8                     *SupportedLanguages,
-  IN CONST EFI_UNICODE_STRING_TABLE  *UnicodeStringTable,
-  OUT CHAR16                         **UnicodeString
+  IN CONST CHAR8                    *Language,
+  IN CONST CHAR8                    *SupportedLanguages,
+  IN CONST EFI_UNICODE_STRING_TABLE *UnicodeStringTable,
+  OUT CHAR16                        **UnicodeString
   );
 
 /**
@@ -561,11 +559,11 @@ LookupUnicodeString (
 EFI_STATUS
 EFIAPI
 LookupUnicodeString2 (
-  IN CONST CHAR8                     *Language,
-  IN CONST CHAR8                     *SupportedLanguages,
-  IN CONST EFI_UNICODE_STRING_TABLE  *UnicodeStringTable,
-  OUT CHAR16                         **UnicodeString,
-  IN BOOLEAN                         Iso639Language
+  IN CONST CHAR8                    *Language,
+  IN CONST CHAR8                    *SupportedLanguages,
+  IN CONST EFI_UNICODE_STRING_TABLE *UnicodeStringTable,
+  OUT CHAR16                        **UnicodeString,
+  IN BOOLEAN                        Iso639Language
   );
 
 /**
@@ -604,10 +602,10 @@ LookupUnicodeString2 (
 EFI_STATUS
 EFIAPI
 AddUnicodeString (
-  IN     CONST CHAR8               *Language,
-  IN     CONST CHAR8               *SupportedLanguages,
-  IN OUT EFI_UNICODE_STRING_TABLE  **UnicodeStringTable,
-  IN     CONST CHAR16              *UnicodeString
+  IN     CONST CHAR8              *Language,
+  IN     CONST CHAR8              *SupportedLanguages,
+  IN OUT EFI_UNICODE_STRING_TABLE **UnicodeStringTable,
+  IN     CONST CHAR16             *UnicodeString
   );
 
 /**
@@ -655,11 +653,11 @@ AddUnicodeString (
 EFI_STATUS
 EFIAPI
 AddUnicodeString2 (
-  IN     CONST CHAR8               *Language,
-  IN     CONST CHAR8               *SupportedLanguages,
-  IN OUT EFI_UNICODE_STRING_TABLE  **UnicodeStringTable,
-  IN     CONST CHAR16              *UnicodeString,
-  IN     BOOLEAN                   Iso639Language
+  IN     CONST CHAR8              *Language,
+  IN     CONST CHAR8              *SupportedLanguages,
+  IN OUT EFI_UNICODE_STRING_TABLE **UnicodeStringTable,
+  IN     CONST CHAR16             *UnicodeString,
+  IN     BOOLEAN                  Iso639Language
   );
 
 /**
@@ -677,9 +675,8 @@ AddUnicodeString2 (
 EFI_STATUS
 EFIAPI
 FreeUnicodeStringTable (
-  IN EFI_UNICODE_STRING_TABLE  *UnicodeStringTable
+  IN EFI_UNICODE_STRING_TABLE *UnicodeStringTable
   );
-
 
 /**
   Returns the status whether get the variable success. The function retrieves
@@ -704,10 +701,10 @@ FreeUnicodeStringTable (
 EFI_STATUS
 EFIAPI
 GetVariable2 (
-  IN CONST CHAR16    *Name,
-  IN CONST EFI_GUID  *Guid,
-  OUT VOID           **Value,
-  OUT UINTN          *Size OPTIONAL
+  IN CONST CHAR16   *Name,
+  IN CONST EFI_GUID *Guid,
+  OUT VOID          **Value,
+  OUT UINTN         *Size OPTIONAL
   );
 
 /**
@@ -732,9 +729,9 @@ GetVariable2 (
 EFI_STATUS
 EFIAPI
 GetEfiGlobalVariable2 (
-  IN CONST CHAR16    *Name,
-  OUT VOID           **Value,
-  OUT UINTN          *Size OPTIONAL
+  IN CONST CHAR16 *Name,
+  OUT VOID        **Value,
+  OUT UINTN       *Size OPTIONAL
   );
 
 /** Return the attributes of the variable.
@@ -762,12 +759,12 @@ GetEfiGlobalVariable2 (
 **/
 EFI_STATUS
 EFIAPI
-GetVariable3(
-  IN CONST CHAR16       *Name,
-  IN CONST EFI_GUID     *Guid,
-     OUT VOID           **Value,
-     OUT UINTN          *Size OPTIONAL,
-     OUT UINT32         *Attr OPTIONAL
+GetVariable3 (
+  IN CONST CHAR16   *Name,
+  IN CONST EFI_GUID *Guid,
+  OUT VOID          **Value,
+  OUT UINTN         *Size OPTIONAL,
+  OUT UINT32        *Attr OPTIONAL
   );
 
 /**
@@ -814,8 +811,8 @@ GetVariable3(
 CHAR8 *
 EFIAPI
 GetBestLanguage (
-  IN CONST CHAR8  *SupportedLanguages,
-  IN UINTN        Iso639Language,
+  IN CONST CHAR8 *SupportedLanguages,
+  IN UINTN       Iso639Language,
   ...
   );
 
@@ -840,8 +837,8 @@ GetBestLanguage (
 VOID
 EFIAPI
 CreatePopUp (
-  IN  UINTN          Attribute,
-  OUT EFI_INPUT_KEY  *Key,      OPTIONAL
+  IN  UINTN Attribute,
+  OUT EFI_INPUT_KEY *Key, OPTIONAL
   ...
   );
 
@@ -861,7 +858,7 @@ CreatePopUp (
 UINTN
 EFIAPI
 GetGlyphWidth (
-  IN CHAR16  UnicodeChar
+  IN CHAR16 UnicodeChar
   );
 
 /**
@@ -883,12 +880,13 @@ GetGlyphWidth (
 UINTN
 EFIAPI
 UnicodeStringDisplayLength (
-  IN CONST CHAR16  *String
+  IN CONST CHAR16 *String
   );
 
 //
 // Functions that abstract early Framework contamination of UEFI.
 //
+
 /**
   Create, Signal, and Close the Ready to Boot event using EfiSignalEventReadyToBoot().
 
@@ -939,7 +937,7 @@ EfiSignalEventLegacyBoot (
 EFI_STATUS
 EFIAPI
 EfiCreateEventLegacyBoot (
-  OUT EFI_EVENT  *LegacyBootEvent
+  OUT EFI_EVENT *LegacyBootEvent
   );
 
 /**
@@ -964,9 +962,9 @@ EfiCreateEventLegacyBoot (
 EFI_STATUS
 EFIAPI
 EfiCreateEventLegacyBootEx (
-  IN  EFI_TPL           NotifyTpl,
-  IN  EFI_EVENT_NOTIFY  NotifyFunction,  OPTIONAL
-  IN  VOID              *NotifyContext,  OPTIONAL
+  IN  EFI_TPL NotifyTpl,
+  IN  EFI_EVENT_NOTIFY NotifyFunction, OPTIONAL
+  IN  VOID              *NotifyContext, OPTIONAL
   OUT EFI_EVENT         *LegacyBootEvent
   );
 
@@ -990,7 +988,7 @@ EfiCreateEventLegacyBootEx (
 EFI_STATUS
 EFIAPI
 EfiCreateEventReadyToBoot (
-  OUT EFI_EVENT  *ReadyToBootEvent
+  OUT EFI_EVENT *ReadyToBootEvent
   );
 
 /**
@@ -1015,9 +1013,9 @@ EfiCreateEventReadyToBoot (
 EFI_STATUS
 EFIAPI
 EfiCreateEventReadyToBootEx (
-  IN  EFI_TPL           NotifyTpl,
-  IN  EFI_EVENT_NOTIFY  NotifyFunction,  OPTIONAL
-  IN  VOID              *NotifyContext,  OPTIONAL
+  IN  EFI_TPL NotifyTpl,
+  IN  EFI_EVENT_NOTIFY NotifyFunction, OPTIONAL
+  IN  VOID              *NotifyContext, OPTIONAL
   OUT EFI_EVENT         *ReadyToBootEvent
   );
 
@@ -1040,8 +1038,8 @@ EfiCreateEventReadyToBootEx (
 VOID
 EFIAPI
 EfiInitializeFwVolDevicepathNode (
-  IN OUT MEDIA_FW_VOL_FILEPATH_DEVICE_PATH  *FvDevicePathNode,
-  IN CONST EFI_GUID                         *NameGuid
+  IN OUT MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *FvDevicePathNode,
+  IN CONST EFI_GUID                        *NameGuid
   );
 
 /**
@@ -1065,7 +1063,7 @@ EfiInitializeFwVolDevicepathNode (
 EFI_GUID *
 EFIAPI
 EfiGetNameGuidFromFwVolDevicePathNode (
-  IN CONST MEDIA_FW_VOL_FILEPATH_DEVICE_PATH  *FvDevicePathNode
+  IN CONST MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *FvDevicePathNode
   );
 
 /**
@@ -1091,7 +1089,7 @@ EfiGetNameGuidFromFwVolDevicePathNode (
 UINTN
 EFIAPI
 Print (
-  IN CONST CHAR16  *Format,
+  IN CONST CHAR16 *Format,
   ...
   );
 
@@ -1118,7 +1116,7 @@ Print (
 UINTN
 EFIAPI
 ErrorPrint (
-  IN CONST CHAR16  *Format,
+  IN CONST CHAR16 *Format,
   ...
   );
 
@@ -1144,7 +1142,7 @@ ErrorPrint (
 UINTN
 EFIAPI
 AsciiPrint (
-  IN CONST CHAR8  *Format,
+  IN CONST CHAR8 *Format,
   ...
   );
 
@@ -1170,10 +1168,9 @@ AsciiPrint (
 UINTN
 EFIAPI
 AsciiErrorPrint (
-  IN CONST CHAR8  *Format,
+  IN CONST CHAR8 *Format,
   ...
   );
-
 
 /**
   Prints a formatted Unicode string to a graphics console device specified by
@@ -1218,9 +1215,9 @@ AsciiErrorPrint (
 UINTN
 EFIAPI
 PrintXY (
-  IN UINTN                            PointX,
-  IN UINTN                            PointY,
-  IN EFI_GRAPHICS_OUTPUT_BLT_PIXEL    *ForeGround, OPTIONAL
+  IN UINTN PointX,
+  IN UINTN PointY,
+  IN EFI_GRAPHICS_OUTPUT_BLT_PIXEL *ForeGround, OPTIONAL
   IN EFI_GRAPHICS_OUTPUT_BLT_PIXEL    *BackGround, OPTIONAL
   IN CONST CHAR16                     *Format,
   ...
@@ -1268,14 +1265,13 @@ PrintXY (
 UINTN
 EFIAPI
 AsciiPrintXY (
-  IN UINTN                            PointX,
-  IN UINTN                            PointY,
-  IN EFI_GRAPHICS_OUTPUT_BLT_PIXEL    *ForeGround, OPTIONAL
+  IN UINTN PointX,
+  IN UINTN PointY,
+  IN EFI_GRAPHICS_OUTPUT_BLT_PIXEL *ForeGround, OPTIONAL
   IN EFI_GRAPHICS_OUTPUT_BLT_PIXEL    *BackGround, OPTIONAL
   IN CONST CHAR8                      *Format,
   ...
   );
-
 
 /**
   Installs and completes the initialization of a Driver Binding Protocol instance.
@@ -1302,12 +1298,11 @@ AsciiPrintXY (
 EFI_STATUS
 EFIAPI
 EfiLibInstallDriverBinding (
-  IN CONST EFI_HANDLE             ImageHandle,
-  IN CONST EFI_SYSTEM_TABLE       *SystemTable,
-  IN EFI_DRIVER_BINDING_PROTOCOL  *DriverBinding,
-  IN EFI_HANDLE                   DriverBindingHandle
+  IN CONST EFI_HANDLE            ImageHandle,
+  IN CONST EFI_SYSTEM_TABLE      *SystemTable,
+  IN EFI_DRIVER_BINDING_PROTOCOL *DriverBinding,
+  IN EFI_HANDLE                  DriverBindingHandle
   );
-
 
 /**
   Uninstalls a Driver Binding Protocol instance.
@@ -1324,9 +1319,8 @@ EfiLibInstallDriverBinding (
 EFI_STATUS
 EFIAPI
 EfiLibUninstallDriverBinding (
-  IN EFI_DRIVER_BINDING_PROTOCOL  *DriverBinding
+  IN EFI_DRIVER_BINDING_PROTOCOL *DriverBinding
   );
-
 
 /**
   Installs and completes the initialization of a Driver Binding Protocol instance and
@@ -1357,15 +1351,14 @@ EfiLibUninstallDriverBinding (
 EFI_STATUS
 EFIAPI
 EfiLibInstallAllDriverProtocols (
-  IN CONST EFI_HANDLE                         ImageHandle,
-  IN CONST EFI_SYSTEM_TABLE                   *SystemTable,
-  IN EFI_DRIVER_BINDING_PROTOCOL              *DriverBinding,
-  IN EFI_HANDLE                               DriverBindingHandle,
-  IN CONST EFI_COMPONENT_NAME_PROTOCOL        *ComponentName,       OPTIONAL
+  IN CONST EFI_HANDLE ImageHandle,
+  IN CONST EFI_SYSTEM_TABLE *SystemTable,
+  IN EFI_DRIVER_BINDING_PROTOCOL *DriverBinding,
+  IN EFI_HANDLE DriverBindingHandle,
+  IN CONST EFI_COMPONENT_NAME_PROTOCOL *ComponentName, OPTIONAL
   IN CONST EFI_DRIVER_CONFIGURATION_PROTOCOL  *DriverConfiguration, OPTIONAL
   IN CONST EFI_DRIVER_DIAGNOSTICS_PROTOCOL    *DriverDiagnostics    OPTIONAL
   );
-
 
 /**
   Uninstalls a Driver Binding Protocol instance and optionally uninstalls the
@@ -1386,12 +1379,11 @@ EfiLibInstallAllDriverProtocols (
 EFI_STATUS
 EFIAPI
 EfiLibUninstallAllDriverProtocols (
-  IN EFI_DRIVER_BINDING_PROTOCOL              *DriverBinding,
-  IN CONST EFI_COMPONENT_NAME_PROTOCOL        *ComponentName,       OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *DriverBinding,
+  IN CONST EFI_COMPONENT_NAME_PROTOCOL *ComponentName, OPTIONAL
   IN CONST EFI_DRIVER_CONFIGURATION_PROTOCOL  *DriverConfiguration, OPTIONAL
   IN CONST EFI_DRIVER_DIAGNOSTICS_PROTOCOL    *DriverDiagnostics    OPTIONAL
   );
-
 
 /**
   Installs Driver Binding Protocol with optional Component Name and Component Name 2 Protocols.
@@ -1419,14 +1411,13 @@ EfiLibUninstallAllDriverProtocols (
 EFI_STATUS
 EFIAPI
 EfiLibInstallDriverBindingComponentName2 (
-  IN CONST EFI_HANDLE                         ImageHandle,
-  IN CONST EFI_SYSTEM_TABLE                   *SystemTable,
-  IN EFI_DRIVER_BINDING_PROTOCOL              *DriverBinding,
-  IN EFI_HANDLE                               DriverBindingHandle,
-  IN CONST EFI_COMPONENT_NAME_PROTOCOL        *ComponentName,       OPTIONAL
+  IN CONST EFI_HANDLE ImageHandle,
+  IN CONST EFI_SYSTEM_TABLE *SystemTable,
+  IN EFI_DRIVER_BINDING_PROTOCOL *DriverBinding,
+  IN EFI_HANDLE DriverBindingHandle,
+  IN CONST EFI_COMPONENT_NAME_PROTOCOL *ComponentName, OPTIONAL
   IN CONST EFI_COMPONENT_NAME2_PROTOCOL       *ComponentName2       OPTIONAL
   );
-
 
 /**
   Uninstalls Driver Binding Protocol with optional Component Name and Component Name 2 Protocols.
@@ -1445,11 +1436,10 @@ EfiLibInstallDriverBindingComponentName2 (
 EFI_STATUS
 EFIAPI
 EfiLibUninstallDriverBindingComponentName2 (
-  IN EFI_DRIVER_BINDING_PROTOCOL              *DriverBinding,
-  IN CONST EFI_COMPONENT_NAME_PROTOCOL        *ComponentName,       OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *DriverBinding,
+  IN CONST EFI_COMPONENT_NAME_PROTOCOL *ComponentName, OPTIONAL
   IN CONST EFI_COMPONENT_NAME2_PROTOCOL       *ComponentName2       OPTIONAL
   );
-
 
 /**
   Installs Driver Binding Protocol with optional Component Name, Component Name 2, Driver
@@ -1483,18 +1473,17 @@ EfiLibUninstallDriverBindingComponentName2 (
 EFI_STATUS
 EFIAPI
 EfiLibInstallAllDriverProtocols2 (
-  IN CONST EFI_HANDLE                         ImageHandle,
-  IN CONST EFI_SYSTEM_TABLE                   *SystemTable,
-  IN EFI_DRIVER_BINDING_PROTOCOL              *DriverBinding,
-  IN EFI_HANDLE                               DriverBindingHandle,
-  IN CONST EFI_COMPONENT_NAME_PROTOCOL        *ComponentName,        OPTIONAL
-  IN CONST EFI_COMPONENT_NAME2_PROTOCOL       *ComponentName2,       OPTIONAL
-  IN CONST EFI_DRIVER_CONFIGURATION_PROTOCOL  *DriverConfiguration,  OPTIONAL
+  IN CONST EFI_HANDLE ImageHandle,
+  IN CONST EFI_SYSTEM_TABLE *SystemTable,
+  IN EFI_DRIVER_BINDING_PROTOCOL *DriverBinding,
+  IN EFI_HANDLE DriverBindingHandle,
+  IN CONST EFI_COMPONENT_NAME_PROTOCOL *ComponentName, OPTIONAL
+  IN CONST EFI_COMPONENT_NAME2_PROTOCOL       *ComponentName2, OPTIONAL
+  IN CONST EFI_DRIVER_CONFIGURATION_PROTOCOL  *DriverConfiguration, OPTIONAL
   IN CONST EFI_DRIVER_CONFIGURATION2_PROTOCOL *DriverConfiguration2, OPTIONAL
-  IN CONST EFI_DRIVER_DIAGNOSTICS_PROTOCOL    *DriverDiagnostics,    OPTIONAL
+  IN CONST EFI_DRIVER_DIAGNOSTICS_PROTOCOL    *DriverDiagnostics, OPTIONAL
   IN CONST EFI_DRIVER_DIAGNOSTICS2_PROTOCOL   *DriverDiagnostics2    OPTIONAL
   );
-
 
 /**
   Uninstalls Driver Binding Protocol with optional Component Name, Component Name 2, Driver
@@ -1519,15 +1508,14 @@ EfiLibInstallAllDriverProtocols2 (
 EFI_STATUS
 EFIAPI
 EfiLibUninstallAllDriverProtocols2 (
-  IN EFI_DRIVER_BINDING_PROTOCOL              *DriverBinding,
-  IN CONST EFI_COMPONENT_NAME_PROTOCOL        *ComponentName,        OPTIONAL
-  IN CONST EFI_COMPONENT_NAME2_PROTOCOL       *ComponentName2,       OPTIONAL
-  IN CONST EFI_DRIVER_CONFIGURATION_PROTOCOL  *DriverConfiguration,  OPTIONAL
+  IN EFI_DRIVER_BINDING_PROTOCOL *DriverBinding,
+  IN CONST EFI_COMPONENT_NAME_PROTOCOL *ComponentName, OPTIONAL
+  IN CONST EFI_COMPONENT_NAME2_PROTOCOL       *ComponentName2, OPTIONAL
+  IN CONST EFI_DRIVER_CONFIGURATION_PROTOCOL  *DriverConfiguration, OPTIONAL
   IN CONST EFI_DRIVER_CONFIGURATION2_PROTOCOL *DriverConfiguration2, OPTIONAL
-  IN CONST EFI_DRIVER_DIAGNOSTICS_PROTOCOL    *DriverDiagnostics,    OPTIONAL
+  IN CONST EFI_DRIVER_DIAGNOSTICS_PROTOCOL    *DriverDiagnostics, OPTIONAL
   IN CONST EFI_DRIVER_DIAGNOSTICS2_PROTOCOL   *DriverDiagnostics2    OPTIONAL
   );
-
 
 /**
   Appends a formatted Unicode string to a Null-terminated Unicode string
@@ -1550,10 +1538,10 @@ EfiLibUninstallAllDriverProtocols2 (
   @return         Null-terminated Unicode string is that is the formatted
                   string appended to String.
 **/
-CHAR16*
+CHAR16 *
 EFIAPI
 CatVSPrint (
-  IN  CHAR16  *String, OPTIONAL
+  IN  CHAR16 *String, OPTIONAL
   IN  CONST CHAR16  *FormatString,
   IN  VA_LIST       Marker
   );
@@ -1584,7 +1572,7 @@ CatVSPrint (
 CHAR16 *
 EFIAPI
 CatSPrint (
-  IN  CHAR16  *String, OPTIONAL
+  IN  CHAR16 *String, OPTIONAL
   IN  CONST CHAR16  *FormatString,
   ...
   );
@@ -1615,9 +1603,9 @@ CatSPrint (
 EFI_STATUS
 EFIAPI
 EfiLocateProtocolBuffer (
-  IN  EFI_GUID  *Protocol,
-  OUT UINTN     *NoProtocols,
-  OUT VOID      ***Buffer
+  IN  EFI_GUID *Protocol,
+  OUT UINTN    *NoProtocols,
+  OUT VOID     ***Buffer
   );
 
 /**
@@ -1687,10 +1675,10 @@ EfiLocateProtocolBuffer (
 EFI_STATUS
 EFIAPI
 EfiOpenFileByDevicePath (
-  IN OUT EFI_DEVICE_PATH_PROTOCOL  **FilePath,
-  OUT    EFI_FILE_PROTOCOL         **File,
-  IN     UINT64                    OpenMode,
-  IN     UINT64                    Attributes
+  IN OUT EFI_DEVICE_PATH_PROTOCOL **FilePath,
+  OUT    EFI_FILE_PROTOCOL        **File,
+  IN     UINT64                   OpenMode,
+  IN     UINT64                   Attributes
   );
 
 /**
@@ -1731,8 +1719,8 @@ EfiOpenFileByDevicePath (
 EFI_ACPI_COMMON_HEADER *
 EFIAPI
 EfiLocateNextAcpiTable (
-  IN UINT32                     Signature,
-  IN EFI_ACPI_COMMON_HEADER     *PreviousTable OPTIONAL
+  IN UINT32                 Signature,
+  IN EFI_ACPI_COMMON_HEADER *PreviousTable OPTIONAL
   );
 
 /**
@@ -1755,7 +1743,7 @@ EfiLocateNextAcpiTable (
 EFI_ACPI_COMMON_HEADER *
 EFIAPI
 EfiLocateFirstAcpiTable (
-  IN UINT32                     Signature
+  IN UINT32 Signature
   );
 
 #endif

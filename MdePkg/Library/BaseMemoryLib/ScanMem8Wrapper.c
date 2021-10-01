@@ -41,18 +41,19 @@
 VOID *
 EFIAPI
 ScanMem8 (
-  IN CONST VOID  *Buffer,
-  IN UINTN       Length,
-  IN UINT8       Value
+  IN CONST VOID *Buffer,
+  IN UINTN      Length,
+  IN UINT8      Value
   )
 {
   if (Length == 0) {
     return NULL;
   }
+
   ASSERT (Buffer != NULL);
   ASSERT ((Length - 1) <= (MAX_ADDRESS - (UINTN)Buffer));
 
-  return (VOID*)InternalMemScanMem8 (Buffer, Length, Value);
+  return (VOID *)InternalMemScanMem8 (Buffer, Length, Value);
 }
 
 /**
@@ -79,9 +80,9 @@ ScanMem8 (
 VOID *
 EFIAPI
 ScanMemN (
-  IN CONST VOID  *Buffer,
-  IN UINTN       Length,
-  IN UINTN       Value
+  IN CONST VOID *Buffer,
+  IN UINTN      Length,
+  IN UINTN      Value
   )
 {
   if (sizeof (UINTN) == sizeof (UINT64)) {
@@ -90,4 +91,3 @@ ScanMemN (
     return ScanMem32 (Buffer, Length, (UINT32)Value);
   }
 }
-

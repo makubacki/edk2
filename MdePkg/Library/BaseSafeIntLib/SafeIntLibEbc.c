@@ -35,14 +35,15 @@
 RETURN_STATUS
 EFIAPI
 SafeInt32ToUintn (
-  IN  INT32  Operand,
-  OUT UINTN  *Result
+  IN  INT32 Operand,
+  OUT UINTN *Result
   )
 {
   if (sizeof (UINTN) == sizeof (UINT32)) {
     return SafeInt32ToUint32 (Operand, (UINT32 *)Result);
   }
-  return SafeInt32ToUint64 (Operand, (UINT64 *) Result);
+
+  return SafeInt32ToUint64 (Operand, (UINT64 *)Result);
 }
 
 /**
@@ -68,8 +69,8 @@ SafeInt32ToUintn (
 RETURN_STATUS
 EFIAPI
 SafeUint32ToIntn (
-  IN  UINT32  Operand,
-  OUT INTN    *Result
+  IN  UINT32 Operand,
+  OUT INTN   *Result
   )
 {
   if (Result == NULL) {
@@ -79,6 +80,7 @@ SafeUint32ToIntn (
   if (sizeof (UINTN) == sizeof (UINT32)) {
     return SafeUint32ToInt32 (Operand, (INT32 *)Result);
   }
+
   *Result = Operand;
   return RETURN_SUCCESS;
 }
@@ -106,8 +108,8 @@ SafeUint32ToIntn (
 RETURN_STATUS
 EFIAPI
 SafeIntnToInt32 (
-  IN  INTN   Operand,
-  OUT INT32  *Result
+  IN  INTN  Operand,
+  OUT INT32 *Result
   )
 {
   if (Result == NULL) {
@@ -118,7 +120,8 @@ SafeIntnToInt32 (
     *Result = (INT32)Operand;
     return RETURN_SUCCESS;
   }
-  return SafeInt64ToInt32 ((INT64) Operand, Result);
+
+  return SafeInt64ToInt32 ((INT64)Operand, Result);
 }
 
 /**
@@ -144,8 +147,8 @@ SafeIntnToInt32 (
 RETURN_STATUS
 EFIAPI
 SafeIntnToUint32 (
-  IN  INTN    Operand,
-  OUT UINT32  *Result
+  IN  INTN   Operand,
+  OUT UINT32 *Result
   )
 {
   RETURN_STATUS  Status;
@@ -157,14 +160,15 @@ SafeIntnToUint32 (
   if (sizeof (UINTN) == sizeof (UINT32)) {
     if (Operand >= 0) {
       *Result = (UINT32)Operand;
-      Status = RETURN_SUCCESS;
+      Status  = RETURN_SUCCESS;
     } else {
       *Result = UINT32_ERROR;
-      Status = RETURN_BUFFER_TOO_SMALL;
+      Status  = RETURN_BUFFER_TOO_SMALL;
     }
 
     return Status;
   }
+
   return SafeInt64ToUint32 ((INT64)Operand, Result);
 }
 
@@ -191,8 +195,8 @@ SafeIntnToUint32 (
 RETURN_STATUS
 EFIAPI
 SafeUintnToUint32 (
-  IN  UINTN   Operand,
-  OUT UINT32  *Result
+  IN  UINTN  Operand,
+  OUT UINT32 *Result
   )
 {
   if (Result == NULL) {
@@ -203,6 +207,7 @@ SafeUintnToUint32 (
     *Result = (UINT32)Operand;
     return RETURN_SUCCESS;
   }
+
   return SafeUint64ToUint32 ((UINT64)Operand, Result);
 }
 
@@ -229,8 +234,8 @@ SafeUintnToUint32 (
 RETURN_STATUS
 EFIAPI
 SafeUintnToInt64 (
-  IN  UINTN  Operand,
-  OUT INT64  *Result
+  IN  UINTN Operand,
+  OUT INT64 *Result
   )
 {
   if (Result == NULL) {
@@ -241,6 +246,7 @@ SafeUintnToInt64 (
     *Result = (INT64)Operand;
     return RETURN_SUCCESS;
   }
+
   return SafeUint64ToInt64 ((UINT64)Operand, Result);
 }
 
@@ -267,8 +273,8 @@ SafeUintnToInt64 (
 RETURN_STATUS
 EFIAPI
 SafeInt64ToIntn (
-  IN  INT64  Operand,
-  OUT INTN   *Result
+  IN  INT64 Operand,
+  OUT INTN  *Result
   )
 {
   if (Result == NULL) {
@@ -278,6 +284,7 @@ SafeInt64ToIntn (
   if (sizeof (UINTN) == sizeof (UINT32)) {
     return SafeInt64ToInt32 (Operand, (INT32 *)Result);
   }
+
   *Result = (INTN)Operand;
   return RETURN_SUCCESS;
 }
@@ -305,13 +312,14 @@ SafeInt64ToIntn (
 RETURN_STATUS
 EFIAPI
 SafeInt64ToUintn (
-  IN  INT64  Operand,
-  OUT UINTN  *Result
+  IN  INT64 Operand,
+  OUT UINTN *Result
   )
 {
   if (sizeof (UINTN) == sizeof (UINT32)) {
     return SafeInt64ToUint32 (Operand, (UINT32 *)Result);
   }
+
   return SafeInt64ToUint64 (Operand, (UINT64 *)Result);
 }
 
@@ -338,8 +346,8 @@ SafeInt64ToUintn (
 RETURN_STATUS
 EFIAPI
 SafeUint64ToUintn (
-  IN  UINT64  Operand,
-  OUT UINTN   *Result
+  IN  UINT64 Operand,
+  OUT UINTN  *Result
   )
 {
   if (Result == NULL) {
@@ -347,8 +355,9 @@ SafeUint64ToUintn (
   }
 
   if (sizeof (UINTN) == sizeof (UINT32)) {
-    return SafeUint64ToUint32 ((UINT64) Operand, (UINT32 *)Result);
+    return SafeUint64ToUint32 ((UINT64)Operand, (UINT32 *)Result);
   }
+
   *Result = Operand;
   return RETURN_SUCCESS;
 }
@@ -377,9 +386,9 @@ SafeUint64ToUintn (
 RETURN_STATUS
 EFIAPI
 SafeUintnAdd (
-  IN  UINTN  Augend,
-  IN  UINTN  Addend,
-  OUT UINTN  *Result
+  IN  UINTN Augend,
+  IN  UINTN Addend,
+  OUT UINTN *Result
   )
 {
   RETURN_STATUS  Status;
@@ -391,14 +400,15 @@ SafeUintnAdd (
   if (sizeof (UINTN) == sizeof (UINT32)) {
     if ((UINT32)(Augend + Addend) >= Augend) {
       *Result = (Augend + Addend);
-      Status = RETURN_SUCCESS;
+      Status  = RETURN_SUCCESS;
     } else {
       *Result = UINTN_ERROR;
-      Status = RETURN_BUFFER_TOO_SMALL;
+      Status  = RETURN_BUFFER_TOO_SMALL;
     }
 
     return Status;
   }
+
   return SafeUint64Add ((UINT64)Augend, (UINT64)Addend, (UINT64 *)Result);
 }
 
@@ -426,9 +436,9 @@ SafeUintnAdd (
 RETURN_STATUS
 EFIAPI
 SafeUintnSub (
-  IN  UINTN  Minuend,
-  IN  UINTN  Subtrahend,
-  OUT UINTN  *Result
+  IN  UINTN Minuend,
+  IN  UINTN Subtrahend,
+  OUT UINTN *Result
   )
 {
   RETURN_STATUS  Status;
@@ -440,14 +450,15 @@ SafeUintnSub (
   if (sizeof (UINTN) == sizeof (UINT32)) {
     if (Minuend >= Subtrahend) {
       *Result = (Minuend - Subtrahend);
-      Status = RETURN_SUCCESS;
+      Status  = RETURN_SUCCESS;
     } else {
       *Result = UINTN_ERROR;
-      Status = RETURN_BUFFER_TOO_SMALL;
+      Status  = RETURN_BUFFER_TOO_SMALL;
     }
 
     return Status;
   }
+
   return SafeUint64Sub ((UINT64)Minuend, (UINT64)Subtrahend, (UINT64 *)Result);
 }
 
@@ -475,18 +486,19 @@ SafeUintnSub (
 RETURN_STATUS
 EFIAPI
 SafeUintnMult (
-  IN  UINTN  Multiplicand,
-  IN  UINTN  Multiplier,
-  OUT UINTN  *Result
+  IN  UINTN Multiplicand,
+  IN  UINTN Multiplier,
+  OUT UINTN *Result
   )
 {
   UINT64  IntermediateResult;
 
   if (sizeof (UINTN) == sizeof (UINT32)) {
-    IntermediateResult = ((UINT64) Multiplicand) *((UINT64) Multiplier);
+    IntermediateResult = ((UINT64)Multiplicand) *((UINT64)Multiplier);
 
     return SafeUint64ToUintn (IntermediateResult, Result);
   }
+
   return SafeUint64Mult ((UINT64)Multiplicand, (UINT64)Multiplier, (UINT64 *)Result);
 }
 
@@ -514,14 +526,15 @@ SafeUintnMult (
 RETURN_STATUS
 EFIAPI
 SafeIntnAdd (
-  IN  INTN  Augend,
-  IN  INTN  Addend,
-  OUT INTN  *Result
+  IN  INTN Augend,
+  IN  INTN Addend,
+  OUT INTN *Result
   )
 {
   if (sizeof (UINTN) == sizeof (UINT32)) {
     return SafeInt64ToIntn (((INT64)Augend) + ((INT64)Addend), Result);
   }
+
   return SafeInt64Add ((INT64)Augend, (INT64)Addend, (INT64 *)Result);
 }
 
@@ -549,14 +562,15 @@ SafeIntnAdd (
 RETURN_STATUS
 EFIAPI
 SafeIntnSub (
-  IN  INTN  Minuend,
-  IN  INTN  Subtrahend,
-  OUT INTN  *Result
+  IN  INTN Minuend,
+  IN  INTN Subtrahend,
+  OUT INTN *Result
   )
 {
   if (sizeof (UINTN) == sizeof (UINT32)) {
     return SafeInt64ToIntn (((INT64)Minuend) - ((INT64)Subtrahend), Result);
   }
+
   return SafeInt64Sub ((INT64)Minuend, (INT64)Subtrahend, (INT64 *)Result);
 }
 
@@ -584,14 +598,14 @@ SafeIntnSub (
 RETURN_STATUS
 EFIAPI
 SafeIntnMult (
-  IN  INTN  Multiplicand,
-  IN  INTN  Multiplier,
-  OUT INTN  *Result
+  IN  INTN Multiplicand,
+  IN  INTN Multiplier,
+  OUT INTN *Result
   )
 {
   if (sizeof (UINTN) == sizeof (UINT32)) {
     return SafeInt64ToIntn (((INT64)Multiplicand) *((INT64)Multiplier), Result);
   }
+
   return SafeInt64Mult ((INT64)Multiplicand, (INT64)Multiplier, (INT64 *)Result);
 }
-

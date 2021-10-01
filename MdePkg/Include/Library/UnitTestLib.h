@@ -13,7 +13,7 @@
 ///
 /// Unit Test Status
 ///
-typedef UINT32  UNIT_TEST_STATUS;
+typedef UINT32 UNIT_TEST_STATUS;
 #define UNIT_TEST_PASSED                      (0)
 #define UNIT_TEST_ERROR_PREREQUISITE_NOT_MET  (1)
 #define UNIT_TEST_ERROR_TEST_FAILED           (2)
@@ -34,24 +34,24 @@ typedef UINT32  UNIT_TEST_STATUS;
 /// Unit Test Framework Handle
 ///
 struct UNIT_TEST_FRAMEWORK_OBJECT;
-typedef struct UNIT_TEST_FRAMEWORK_OBJECT  *UNIT_TEST_FRAMEWORK_HANDLE;
+typedef struct UNIT_TEST_FRAMEWORK_OBJECT *UNIT_TEST_FRAMEWORK_HANDLE;
 
 ///
 /// Unit Test Suite Handle
 ///
 struct UNIT_TEST_SUITE_OBJECT;
-typedef struct UNIT_TEST_SUITE_OBJECT  *UNIT_TEST_SUITE_HANDLE;
+typedef struct UNIT_TEST_SUITE_OBJECT *UNIT_TEST_SUITE_HANDLE;
 
 ///
 /// Unit Test Handle
 ///
 struct UNIT_TEST_OBJECT;
-typedef struct UNIT_TEST_OBJECT  *UNIT_TEST_HANDLE;
+typedef struct UNIT_TEST_OBJECT *UNIT_TEST_HANDLE;
 
 ///
 /// Unit Test Context
 ///
-typedef VOID*  UNIT_TEST_CONTEXT;
+typedef VOID *UNIT_TEST_CONTEXT;
 
 /**
   The prototype for a single UnitTest case function.
@@ -186,10 +186,10 @@ VOID
 EFI_STATUS
 EFIAPI
 InitUnitTestFramework (
-  OUT UNIT_TEST_FRAMEWORK_HANDLE  *FrameworkHandle,
-  IN  CHAR8                       *Title,
-  IN  CHAR8                       *ShortTitle,
-  IN  CHAR8                       *VersionString
+  OUT UNIT_TEST_FRAMEWORK_HANDLE *FrameworkHandle,
+  IN  CHAR8                      *Title,
+  IN  CHAR8                      *ShortTitle,
+  IN  CHAR8                      *VersionString
   );
 
 /**
@@ -221,12 +221,12 @@ InitUnitTestFramework (
 EFI_STATUS
 EFIAPI
 CreateUnitTestSuite (
-  OUT UNIT_TEST_SUITE_HANDLE      *SuiteHandle,
-  IN  UNIT_TEST_FRAMEWORK_HANDLE  FrameworkHandle,
-  IN  CHAR8                       *Title,
-  IN  CHAR8                       *Name,
-  IN  UNIT_TEST_SUITE_SETUP       Setup     OPTIONAL,
-  IN  UNIT_TEST_SUITE_TEARDOWN    Teardown  OPTIONAL
+  OUT UNIT_TEST_SUITE_HANDLE     *SuiteHandle,
+  IN  UNIT_TEST_FRAMEWORK_HANDLE FrameworkHandle,
+  IN  CHAR8                      *Title,
+  IN  CHAR8                      *Name,
+  IN  UNIT_TEST_SUITE_SETUP      Setup     OPTIONAL,
+  IN  UNIT_TEST_SUITE_TEARDOWN   Teardown  OPTIONAL
   );
 
 /**
@@ -256,13 +256,13 @@ CreateUnitTestSuite (
 EFI_STATUS
 EFIAPI
 AddTestCase (
-  IN UNIT_TEST_SUITE_HANDLE  SuiteHandle,
-  IN CHAR8                   *Description,
-  IN CHAR8                   *Name,
-  IN UNIT_TEST_FUNCTION      Function,
-  IN UNIT_TEST_PREREQUISITE  Prerequisite  OPTIONAL,
-  IN UNIT_TEST_CLEANUP       CleanUp       OPTIONAL,
-  IN UNIT_TEST_CONTEXT       Context       OPTIONAL
+  IN UNIT_TEST_SUITE_HANDLE SuiteHandle,
+  IN CHAR8                  *Description,
+  IN CHAR8                  *Name,
+  IN UNIT_TEST_FUNCTION     Function,
+  IN UNIT_TEST_PREREQUISITE Prerequisite  OPTIONAL,
+  IN UNIT_TEST_CLEANUP      CleanUp       OPTIONAL,
+  IN UNIT_TEST_CONTEXT      Context       OPTIONAL
   );
 
 /**
@@ -282,7 +282,7 @@ AddTestCase (
 EFI_STATUS
 EFIAPI
 RunAllTestSuites (
-  IN UNIT_TEST_FRAMEWORK_HANDLE  FrameworkHandle
+  IN UNIT_TEST_FRAMEWORK_HANDLE FrameworkHandle
   );
 
 /**
@@ -302,7 +302,7 @@ RunAllTestSuites (
 EFI_STATUS
 EFIAPI
 FreeUnitTestFramework (
-  IN UNIT_TEST_FRAMEWORK_HANDLE  FrameworkHandle
+  IN UNIT_TEST_FRAMEWORK_HANDLE FrameworkHandle
   );
 
 /**
@@ -336,8 +336,8 @@ FreeUnitTestFramework (
 EFI_STATUS
 EFIAPI
 SaveFrameworkState (
-  IN UNIT_TEST_CONTEXT           ContextToSave     OPTIONAL,
-  IN UINTN                       ContextToSaveSize
+  IN UNIT_TEST_CONTEXT ContextToSave     OPTIONAL,
+  IN UINTN             ContextToSaveSize
   );
 
 /**
@@ -512,11 +512,11 @@ SaveFrameworkState (
 BOOLEAN
 EFIAPI
 UnitTestAssertTrue (
-  IN BOOLEAN      Expression,
-  IN CONST CHAR8  *FunctionName,
-  IN UINTN        LineNumber,
-  IN CONST CHAR8  *FileName,
-  IN CONST CHAR8  *Description
+  IN BOOLEAN     Expression,
+  IN CONST CHAR8 *FunctionName,
+  IN UINTN       LineNumber,
+  IN CONST CHAR8 *FileName,
+  IN CONST CHAR8 *Description
   );
 
 /**
@@ -540,11 +540,11 @@ UnitTestAssertTrue (
 BOOLEAN
 EFIAPI
 UnitTestAssertFalse (
-  IN BOOLEAN      Expression,
-  IN CONST CHAR8  *FunctionName,
-  IN UINTN        LineNumber,
-  IN CONST CHAR8  *FileName,
-  IN CONST CHAR8  *Description
+  IN BOOLEAN     Expression,
+  IN CONST CHAR8 *FunctionName,
+  IN UINTN       LineNumber,
+  IN CONST CHAR8 *FileName,
+  IN CONST CHAR8 *Description
   );
 
 /**
@@ -568,11 +568,11 @@ UnitTestAssertFalse (
 BOOLEAN
 EFIAPI
 UnitTestAssertNotEfiError (
-  IN EFI_STATUS   Status,
-  IN CONST CHAR8  *FunctionName,
-  IN UINTN        LineNumber,
-  IN CONST CHAR8  *FileName,
-  IN CONST CHAR8  *Description
+  IN EFI_STATUS  Status,
+  IN CONST CHAR8 *FunctionName,
+  IN UINTN       LineNumber,
+  IN CONST CHAR8 *FileName,
+  IN CONST CHAR8 *Description
   );
 
 /**
@@ -599,13 +599,13 @@ UnitTestAssertNotEfiError (
 BOOLEAN
 EFIAPI
 UnitTestAssertEqual (
-  IN UINT64       ValueA,
-  IN UINT64       ValueB,
-  IN CONST CHAR8  *FunctionName,
-  IN UINTN        LineNumber,
-  IN CONST CHAR8  *FileName,
-  IN CONST CHAR8  *DescriptionA,
-  IN CONST CHAR8  *DescriptionB
+  IN UINT64      ValueA,
+  IN UINT64      ValueB,
+  IN CONST CHAR8 *FunctionName,
+  IN UINTN       LineNumber,
+  IN CONST CHAR8 *FileName,
+  IN CONST CHAR8 *DescriptionA,
+  IN CONST CHAR8 *DescriptionB
   );
 
 /**
@@ -636,14 +636,14 @@ UnitTestAssertEqual (
 BOOLEAN
 EFIAPI
 UnitTestAssertMemEqual (
-  IN VOID         *BufferA,
-  IN VOID         *BufferB,
-  IN UINTN        Length,
-  IN CONST CHAR8  *FunctionName,
-  IN UINTN        LineNumber,
-  IN CONST CHAR8  *FileName,
-  IN CONST CHAR8  *DescriptionA,
-  IN CONST CHAR8  *DescriptionB
+  IN VOID        *BufferA,
+  IN VOID        *BufferB,
+  IN UINTN       Length,
+  IN CONST CHAR8 *FunctionName,
+  IN UINTN       LineNumber,
+  IN CONST CHAR8 *FileName,
+  IN CONST CHAR8 *DescriptionA,
+  IN CONST CHAR8 *DescriptionB
   );
 
 /**
@@ -670,13 +670,13 @@ UnitTestAssertMemEqual (
 BOOLEAN
 EFIAPI
 UnitTestAssertNotEqual (
-  IN UINT64       ValueA,
-  IN UINT64       ValueB,
-  IN CONST CHAR8  *FunctionName,
-  IN UINTN        LineNumber,
-  IN CONST CHAR8  *FileName,
-  IN CONST CHAR8  *DescriptionA,
-  IN CONST CHAR8  *DescriptionB
+  IN UINT64      ValueA,
+  IN UINT64      ValueB,
+  IN CONST CHAR8 *FunctionName,
+  IN UINTN       LineNumber,
+  IN CONST CHAR8 *FileName,
+  IN CONST CHAR8 *DescriptionA,
+  IN CONST CHAR8 *DescriptionB
   );
 
 /**
@@ -702,12 +702,12 @@ UnitTestAssertNotEqual (
 BOOLEAN
 EFIAPI
 UnitTestAssertStatusEqual (
-  IN EFI_STATUS   Status,
-  IN EFI_STATUS   Expected,
-  IN CONST CHAR8  *FunctionName,
-  IN UINTN        LineNumber,
-  IN CONST CHAR8  *FileName,
-  IN CONST CHAR8  *Description
+  IN EFI_STATUS  Status,
+  IN EFI_STATUS  Expected,
+  IN CONST CHAR8 *FunctionName,
+  IN UINTN       LineNumber,
+  IN CONST CHAR8 *FileName,
+  IN CONST CHAR8 *Description
   );
 
 /**
@@ -733,11 +733,11 @@ UnitTestAssertStatusEqual (
 BOOLEAN
 EFIAPI
 UnitTestAssertNotNull (
-  IN VOID         *Pointer,
-  IN CONST CHAR8  *FunctionName,
-  IN UINTN        LineNumber,
-  IN CONST CHAR8  *FileName,
-  IN CONST CHAR8  *PointerName
+  IN VOID        *Pointer,
+  IN CONST CHAR8 *FunctionName,
+  IN UINTN       LineNumber,
+  IN CONST CHAR8 *FileName,
+  IN CONST CHAR8 *PointerName
   );
 
 /**
@@ -772,12 +772,12 @@ UnitTestAssertNotNull (
 BOOLEAN
 EFIAPI
 UnitTestExpectAssertFailure (
-  IN  UNIT_TEST_STATUS  UnitTestStatus,
-  IN  CONST CHAR8       *FunctionName,
-  IN  UINTN             LineNumber,
-  IN  CONST CHAR8       *FileName,
-  IN  CONST CHAR8       *FunctionCall,
-  OUT UNIT_TEST_STATUS  *ResultStatus  OPTIONAL
+  IN  UNIT_TEST_STATUS UnitTestStatus,
+  IN  CONST CHAR8      *FunctionName,
+  IN  UINTN            LineNumber,
+  IN  CONST CHAR8      *FileName,
+  IN  CONST CHAR8      *FunctionCall,
+  OUT UNIT_TEST_STATUS *ResultStatus  OPTIONAL
   );
 
 /**
@@ -836,8 +836,8 @@ UnitTestExpectAssertFailure (
 VOID
 EFIAPI
 UnitTestLog (
-  IN  UINTN        ErrorLevel,
-  IN  CONST CHAR8  *Format,
+  IN  UINTN       ErrorLevel,
+  IN  CONST CHAR8 *Format,
   ...
   );
 

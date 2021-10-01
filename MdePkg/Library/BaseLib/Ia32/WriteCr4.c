@@ -20,7 +20,7 @@
 UINTN
 EFIAPI
 AsmWriteCr4 (
-  UINTN  Value
+  UINTN Value
   )
 {
   _asm {
@@ -30,4 +30,3 @@ AsmWriteCr4 (
     _emit  0xE0
   }
 }
-

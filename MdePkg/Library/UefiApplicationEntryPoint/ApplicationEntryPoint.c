@@ -12,7 +12,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/DebugLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 
-
 /**
   Entry point to UEFI Application.
 
@@ -33,11 +32,11 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 _ModuleEntryPoint (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  EFI_STATUS                 Status;
+  EFI_STATUS  Status;
 
   if (_gUefiDriverRevision != 0) {
     //
@@ -69,7 +68,6 @@ _ModuleEntryPoint (
   return Status;
 }
 
-
 /**
   Invokes the library destructors for all dependent libraries and terminates
   the UEFI Application.
@@ -83,7 +81,7 @@ _ModuleEntryPoint (
 VOID
 EFIAPI
 Exit (
-  IN EFI_STATUS  Status
+  IN EFI_STATUS Status
   )
 
 {
@@ -91,7 +89,6 @@ Exit (
 
   gBS->Exit (gImageHandle, Status, 0, NULL);
 }
-
 
 /**
   Required by the EBC compiler and identical in functionality to _ModuleEntryPoint().
@@ -107,8 +104,8 @@ Exit (
 EFI_STATUS
 EFIAPI
 EfiMain (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
   return _ModuleEntryPoint (ImageHandle, SystemTable);

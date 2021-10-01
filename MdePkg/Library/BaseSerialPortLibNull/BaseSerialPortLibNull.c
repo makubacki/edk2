@@ -6,7 +6,6 @@
 
 **/
 
-
 #include <Base.h>
 #include <Library/SerialPortLib.h>
 
@@ -50,13 +49,12 @@ SerialPortInitialize (
 UINTN
 EFIAPI
 SerialPortWrite (
-  IN UINT8     *Buffer,
-  IN UINTN     NumberOfBytes
-)
+  IN UINT8 *Buffer,
+  IN UINTN NumberOfBytes
+  )
 {
   return 0;
 }
-
 
 /**
   Read data from serial device and save the datas in buffer.
@@ -77,9 +75,9 @@ SerialPortWrite (
 UINTN
 EFIAPI
 SerialPortRead (
-  OUT UINT8     *Buffer,
-  IN  UINTN     NumberOfBytes
-)
+  OUT UINT8 *Buffer,
+  IN  UINTN NumberOfBytes
+  )
 {
   return 0;
 }
@@ -188,4 +186,3 @@ SerialPortSetAttributes (
 {
   return RETURN_UNSUPPORTED;
 }
-

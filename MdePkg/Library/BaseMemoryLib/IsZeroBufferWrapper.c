@@ -38,8 +38,8 @@
 BOOLEAN
 EFIAPI
 IsZeroBuffer (
-  IN CONST VOID  *Buffer,
-  IN UINTN       Length
+  IN CONST VOID *Buffer,
+  IN UINTN      Length
   )
 {
   ASSERT (!(Buffer == NULL && Length > 0));

@@ -39,19 +39,21 @@
 VOID *
 EFIAPI
 CopyMem (
-  OUT VOID       *DestinationBuffer,
-  IN CONST VOID  *SourceBuffer,
-  IN UINTN       Length
+  OUT VOID      *DestinationBuffer,
+  IN CONST VOID *SourceBuffer,
+  IN UINTN      Length
   )
 {
   if (Length == 0) {
     return DestinationBuffer;
   }
+
   ASSERT ((Length - 1) <= (MAX_ADDRESS - (UINTN)DestinationBuffer));
   ASSERT ((Length - 1) <= (MAX_ADDRESS - (UINTN)SourceBuffer));
 
   if (DestinationBuffer == SourceBuffer) {
     return DestinationBuffer;
   }
+
   return InternalMemCopyMem (DestinationBuffer, SourceBuffer, Length);
 }

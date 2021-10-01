@@ -33,9 +33,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 UINT32
 EFIAPI
 PostCode (
-  IN UINT32  Value
+  IN UINT32 Value
   );
-
 
 /**
   Sends a 32-bit value to a POST and associated ASCII string.
@@ -64,10 +63,9 @@ PostCode (
 UINT32
 EFIAPI
 PostCodeWithDescription (
-  IN UINT32       Value,
-  IN CONST CHAR8  *Description  OPTIONAL
+  IN UINT32      Value,
+  IN CONST CHAR8 *Description  OPTIONAL
   );
-
 
 /**
   Returns TRUE if POST Codes are enabled.
@@ -87,7 +85,6 @@ PostCodeEnabled (
   VOID
   );
 
-
 /**
   Returns TRUE if POST code descriptions are enabled.
 
@@ -105,7 +102,6 @@ EFIAPI
 PostCodeDescriptionEnabled (
   VOID
   );
-
 
 /**
   Sends a 32-bit value to a POST card.
@@ -134,7 +130,7 @@ PostCodeDescriptionEnabled (
 
   @return Value        The 32-bit value to write to the POST card.
 **/
-#define POST_CODE_WITH_DESCRIPTION(Value,Description)  \
+#define POST_CODE_WITH_DESCRIPTION(Value, Description)  \
   PostCodeEnabled()                              ?     \
     (PostCodeDescriptionEnabled()                ?     \
       PostCodeWithDescription(Value,Description) :     \

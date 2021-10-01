@@ -56,10 +56,10 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 RETURN_STATUS
 EFIAPI
 UefiDecompressGetInfo (
-  IN  CONST VOID  *Source,
-  IN  UINT32      SourceSize,
-  OUT UINT32      *DestinationSize,
-  OUT UINT32      *ScratchSize
+  IN  CONST VOID *Source,
+  IN  UINT32     SourceSize,
+  OUT UINT32     *DestinationSize,
+  OUT UINT32     *ScratchSize
   );
 
 /**
@@ -94,9 +94,9 @@ UefiDecompressGetInfo (
 RETURN_STATUS
 EFIAPI
 UefiDecompress (
-  IN CONST VOID  *Source,
-  IN OUT VOID    *Destination,
-  IN OUT VOID    *Scratch  OPTIONAL
+  IN CONST VOID *Source,
+  IN OUT VOID   *Destination,
+  IN OUT VOID   *Scratch  OPTIONAL
   );
 
 #endif

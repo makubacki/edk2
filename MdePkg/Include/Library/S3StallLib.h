@@ -26,7 +26,7 @@
 UINTN
 EFIAPI
 S3Stall (
-  IN UINTN  MicroSeconds
+  IN UINTN MicroSeconds
   );
 
 #endif

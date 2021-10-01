@@ -50,10 +50,9 @@ SerialPortInitialize (
 UINTN
 EFIAPI
 SerialPortWrite (
-  IN UINT8     *Buffer,
-  IN UINTN     NumberOfBytes
+  IN UINT8 *Buffer,
+  IN UINTN NumberOfBytes
   );
-
 
 /**
   Read data from serial device and save the datas in buffer.
@@ -74,8 +73,8 @@ SerialPortWrite (
 UINTN
 EFIAPI
 SerialPortRead (
-  OUT UINT8   *Buffer,
-  IN  UINTN   NumberOfBytes
+  OUT UINT8 *Buffer,
+  IN  UINTN NumberOfBytes
   );
 
 /**

@@ -6,9 +6,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
-
 #include <PiDxe.h>
-
 
 #include <Library/DxeCoreEntryPoint.h>
 #include <Library/DebugLib.h>
@@ -17,7 +15,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // Cache copy of HobList pointer.
 //
-VOID *gHobList = NULL;
+VOID  *gHobList = NULL;
 
 /**
   The entry point of PE/COFF Image for the DXE Core.
@@ -34,7 +32,7 @@ VOID *gHobList = NULL;
 VOID
 EFIAPI
 _ModuleEntryPoint (
-  IN VOID  *HobStart
+  IN VOID *HobStart
   )
 {
   //
@@ -50,10 +48,9 @@ _ModuleEntryPoint (
   //
   // Should never return
   //
-  ASSERT(FALSE);
+  ASSERT (FALSE);
   CpuDeadLoop ();
 }
-
 
 /**
   Required by the EBC compiler and identical in functionality to _ModuleEntryPoint().
@@ -66,7 +63,7 @@ _ModuleEntryPoint (
 VOID
 EFIAPI
 EfiMain (
-  IN VOID  *HobStart
+  IN VOID *HobStart
   )
 {
   _ModuleEntryPoint (HobStart);

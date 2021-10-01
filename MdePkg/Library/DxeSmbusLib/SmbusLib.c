@@ -38,8 +38,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 VOID
 EFIAPI
 SmBusQuickRead (
-  IN  UINTN                     SmBusAddress,
-  OUT RETURN_STATUS             *Status       OPTIONAL
+  IN  UINTN         SmBusAddress,
+  OUT RETURN_STATUS *Status       OPTIONAL
   )
 {
   ASSERT (!SMBUS_LIB_PEC (SmBusAddress));
@@ -79,8 +79,8 @@ SmBusQuickRead (
 VOID
 EFIAPI
 SmBusQuickWrite (
-  IN  UINTN                     SmBusAddress,
-  OUT RETURN_STATUS             *Status       OPTIONAL
+  IN  UINTN         SmBusAddress,
+  OUT RETURN_STATUS *Status       OPTIONAL
   )
 {
   ASSERT (!SMBUS_LIB_PEC (SmBusAddress));
@@ -123,11 +123,11 @@ SmBusQuickWrite (
 UINT8
 EFIAPI
 SmBusReceiveByte (
-  IN  UINTN          SmBusAddress,
-  OUT RETURN_STATUS  *Status        OPTIONAL
+  IN  UINTN         SmBusAddress,
+  OUT RETURN_STATUS *Status        OPTIONAL
   )
 {
-  UINT8   Byte;
+  UINT8  Byte;
 
   ASSERT (SMBUS_LIB_COMMAND (SmBusAddress) == 0);
   ASSERT (SMBUS_LIB_LENGTH (SmBusAddress)  == 0);
@@ -171,18 +171,18 @@ SmBusReceiveByte (
 UINT8
 EFIAPI
 SmBusSendByte (
-  IN  UINTN          SmBusAddress,
-  IN  UINT8          Value,
-  OUT RETURN_STATUS  *Status        OPTIONAL
+  IN  UINTN         SmBusAddress,
+  IN  UINT8         Value,
+  OUT RETURN_STATUS *Status        OPTIONAL
   )
 {
-  UINT8   Byte;
+  UINT8  Byte;
 
   ASSERT (SMBUS_LIB_COMMAND (SmBusAddress)   == 0);
   ASSERT (SMBUS_LIB_LENGTH (SmBusAddress)    == 0);
   ASSERT (SMBUS_LIB_RESERVED (SmBusAddress) == 0);
 
-  Byte   = Value;
+  Byte = Value;
   InternalSmBusExec (EfiSmbusSendByte, SmBusAddress, 1, &Byte, Status);
 
   return Value;
@@ -219,11 +219,11 @@ SmBusSendByte (
 UINT8
 EFIAPI
 SmBusReadDataByte (
-  IN  UINTN          SmBusAddress,
-  OUT RETURN_STATUS  *Status        OPTIONAL
+  IN  UINTN         SmBusAddress,
+  OUT RETURN_STATUS *Status        OPTIONAL
   )
 {
-  UINT8   Byte;
+  UINT8  Byte;
 
   ASSERT (SMBUS_LIB_LENGTH (SmBusAddress)    == 0);
   ASSERT (SMBUS_LIB_RESERVED (SmBusAddress) == 0);
@@ -266,12 +266,12 @@ SmBusReadDataByte (
 UINT8
 EFIAPI
 SmBusWriteDataByte (
-  IN  UINTN          SmBusAddress,
-  IN  UINT8          Value,
-  OUT RETURN_STATUS  *Status        OPTIONAL
+  IN  UINTN         SmBusAddress,
+  IN  UINT8         Value,
+  OUT RETURN_STATUS *Status        OPTIONAL
   )
 {
-  UINT8   Byte;
+  UINT8  Byte;
 
   ASSERT (SMBUS_LIB_LENGTH (SmBusAddress)    == 0);
   ASSERT (SMBUS_LIB_RESERVED (SmBusAddress) == 0);
@@ -314,8 +314,8 @@ SmBusWriteDataByte (
 UINT16
 EFIAPI
 SmBusReadDataWord (
-  IN  UINTN          SmBusAddress,
-  OUT RETURN_STATUS  *Status        OPTIONAL
+  IN  UINTN         SmBusAddress,
+  OUT RETURN_STATUS *Status        OPTIONAL
   )
 {
   UINT16  Word;
@@ -362,9 +362,9 @@ SmBusReadDataWord (
 UINT16
 EFIAPI
 SmBusWriteDataWord (
-  IN  UINTN          SmBusAddress,
-  IN  UINT16         Value,
-  OUT RETURN_STATUS  *Status        OPTIONAL
+  IN  UINTN         SmBusAddress,
+  IN  UINT16        Value,
+  OUT RETURN_STATUS *Status        OPTIONAL
   )
 {
   UINT16  Word;
@@ -412,9 +412,9 @@ SmBusWriteDataWord (
 UINT16
 EFIAPI
 SmBusProcessCall (
-  IN  UINTN          SmBusAddress,
-  IN  UINT16         Value,
-  OUT RETURN_STATUS  *Status        OPTIONAL
+  IN  UINTN         SmBusAddress,
+  IN  UINT16        Value,
+  OUT RETURN_STATUS *Status        OPTIONAL
   )
 {
   ASSERT (SMBUS_LIB_LENGTH (SmBusAddress)    == 0);
@@ -463,9 +463,9 @@ SmBusProcessCall (
 UINTN
 EFIAPI
 SmBusReadBlock (
-  IN  UINTN          SmBusAddress,
-  OUT VOID           *Buffer,
-  OUT RETURN_STATUS  *Status        OPTIONAL
+  IN  UINTN         SmBusAddress,
+  OUT VOID          *Buffer,
+  OUT RETURN_STATUS *Status        OPTIONAL
   )
 {
   ASSERT (Buffer != NULL);
@@ -510,9 +510,9 @@ SmBusReadBlock (
 UINTN
 EFIAPI
 SmBusWriteBlock (
-  IN  UINTN          SmBusAddress,
-  OUT VOID           *Buffer,
-  OUT RETURN_STATUS  *Status        OPTIONAL
+  IN  UINTN         SmBusAddress,
+  OUT VOID          *Buffer,
+  OUT RETURN_STATUS *Status        OPTIONAL
   )
 {
   UINTN  Length;
@@ -563,13 +563,13 @@ SmBusWriteBlock (
 UINTN
 EFIAPI
 SmBusBlockProcessCall (
-  IN  UINTN          SmBusAddress,
-  IN  VOID           *WriteBuffer,
-  OUT VOID           *ReadBuffer,
-  OUT RETURN_STATUS  *Status        OPTIONAL
+  IN  UINTN         SmBusAddress,
+  IN  VOID          *WriteBuffer,
+  OUT VOID          *ReadBuffer,
+  OUT RETURN_STATUS *Status        OPTIONAL
   )
 {
-  UINTN   Length;
+  UINTN  Length;
 
   ASSERT (WriteBuffer != NULL);
   ASSERT (ReadBuffer  != NULL);

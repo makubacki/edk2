@@ -43,14 +43,15 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 INTN
 EFIAPI
 CompareMem (
-  IN CONST VOID  *DestinationBuffer,
-  IN CONST VOID  *SourceBuffer,
-  IN UINTN       Length
+  IN CONST VOID *DestinationBuffer,
+  IN CONST VOID *SourceBuffer,
+  IN UINTN      Length
   )
 {
-  if (Length == 0 || DestinationBuffer == SourceBuffer) {
+  if ((Length == 0) || (DestinationBuffer == SourceBuffer)) {
     return 0;
   }
+
   ASSERT (DestinationBuffer != NULL);
   ASSERT (SourceBuffer != NULL);
   ASSERT ((Length - 1) <= (MAX_ADDRESS - (UINTN)DestinationBuffer));

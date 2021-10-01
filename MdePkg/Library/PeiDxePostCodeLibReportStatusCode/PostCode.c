@@ -7,7 +7,6 @@
 
 **/
 
-
 #include <PiPei.h>
 
 #include <Library/PostCodeLib.h>
@@ -51,13 +50,12 @@
 UINT32
 EFIAPI
 PostCode (
-  IN UINT32  Value
+  IN UINT32 Value
   )
 {
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, POST_CODE_TO_STATUS_CODE_VALUE (Value));
   return Value;
 }
-
 
 /**
   Sends an 32-bit value to a POST and associated ASCII string.
@@ -86,8 +84,8 @@ PostCode (
 UINT32
 EFIAPI
 PostCodeWithDescription (
-  IN UINT32       Value,
-  IN CONST CHAR8  *Description  OPTIONAL
+  IN UINT32      Value,
+  IN CONST CHAR8 *Description  OPTIONAL
   )
 {
   if (Description == NULL) {
@@ -107,7 +105,6 @@ PostCodeWithDescription (
   return Value;
 }
 
-
 /**
   Returns TRUE if POST Codes are enabled.
 
@@ -126,9 +123,8 @@ PostCodeEnabled (
   VOID
   )
 {
-  return (BOOLEAN) ((PcdGet8(PcdPostCodePropertyMask) & POST_CODE_PROPERTY_POST_CODE_ENABLED) != 0);
+  return (BOOLEAN)((PcdGet8 (PcdPostCodePropertyMask) & POST_CODE_PROPERTY_POST_CODE_ENABLED) != 0);
 }
-
 
 /**
   Returns TRUE if POST code descriptions are enabled.
@@ -148,6 +144,5 @@ PostCodeDescriptionEnabled (
   VOID
   )
 {
-  return (BOOLEAN) ((PcdGet8(PcdPostCodePropertyMask) & POST_CODE_PROPERTY_POST_CODE_DESCRIPTION_ENABLED) != 0);
+  return (BOOLEAN)((PcdGet8 (PcdPostCodePropertyMask) & POST_CODE_PROPERTY_POST_CODE_DESCRIPTION_ENABLED) != 0);
 }
-
