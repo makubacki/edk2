@@ -1,3 +1,14 @@
+/** @file
+  [TEMPLATE] - Provide a file description!
+
+  Describe the purpose of the file. Try to make the description as
+  specific to this file as possible. Do not copy/paste the same
+  description between all files in a driver or library.
+
+  Copyright (c) Microsoft Corporation.
+
+**/
+
 #ifndef __FSPTUPD_H__
 #define __FSPTUPD_H__
 

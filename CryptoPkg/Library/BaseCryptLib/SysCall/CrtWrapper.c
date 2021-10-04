@@ -476,6 +476,29 @@ BIO_printf (
   return 0;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 int
 BIO_snprintf (
   char *buf,
@@ -495,6 +518,29 @@ VOID
   VOID
   ) __attribute__ ((__noreturn__));
 
+  /**
+    [TEMPLATE] - Provide a function description!
+
+    Function overview/purpose.
+
+    Anything a caller should be aware of must be noted in the description.
+
+    All parameters must be described. Parameter names must be Pascal case.
+
+    @retval must be used and each unique return code should be clearly
+    described. Providing "Others" is only acceptable if a return code
+    is bubbled up from a function called internal to this function. However,
+    that's usually not helpful. Try to provide explicit values that mean
+    something to the caller.
+
+    Examples:
+    @param[in]      ParameterName         Brief parameter description.
+    @param[out]     ParameterName         Brief parameter description.
+    @param[in,out]  ParameterName         Brief parameter description.
+
+    @retval   EFI_SUCCESS                 Brief return code description.
+
+  **/
   STATIC
   VOID
   EFIAPI
@@ -504,6 +550,29 @@ VOID
   {
   }
 
+  /**
+    [TEMPLATE] - Provide a function description!
+
+    Function overview/purpose.
+
+    Anything a caller should be aware of must be noted in the description.
+
+    All parameters must be described. Parameter names must be Pascal case.
+
+    @retval must be used and each unique return code should be clearly
+    described. Providing "Others" is only acceptable if a return code
+    is bubbled up from a function called internal to this function. However,
+    that's usually not helpful. Try to provide explicit values that mean
+    something to the caller.
+
+    Examples:
+    @param[in]      ParameterName         Brief parameter description.
+    @param[out]     ParameterName         Brief parameter description.
+    @param[in,out]  ParameterName         Brief parameter description.
+
+    @retval   EFI_SUCCESS                 Brief return code description.
+
+  **/
   void
   abort (
   void
@@ -518,6 +587,29 @@ VOID
 
 #else
 
+  /**
+    [TEMPLATE] - Provide a function description!
+
+    Function overview/purpose.
+
+    Anything a caller should be aware of must be noted in the description.
+
+    All parameters must be described. Parameter names must be Pascal case.
+
+    @retval must be used and each unique return code should be clearly
+    described. Providing "Others" is only acceptable if a return code
+    is bubbled up from a function called internal to this function. However,
+    that's usually not helpful. Try to provide explicit values that mean
+    something to the caller.
+
+    Examples:
+    @param[in]      ParameterName         Brief parameter description.
+    @param[out]     ParameterName         Brief parameter description.
+    @param[in,out]  ParameterName         Brief parameter description.
+
+    @retval   EFI_SUCCESS                 Brief return code description.
+
+  **/
   void
   abort (
   void
@@ -528,6 +620,29 @@ VOID
 
 #endif
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 int
 fclose (
   FILE *f
@@ -536,6 +651,29 @@ fclose (
   return 0;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 FILE *
 fopen (
   const char *c,
@@ -545,6 +683,29 @@ fopen (
   return NULL;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 size_t
 fread (
   void *b,
@@ -556,6 +717,29 @@ fread (
   return 0;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 uid_t
 getuid (
   void
@@ -564,6 +748,29 @@ getuid (
   return 0;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 uid_t
 geteuid (
   void
@@ -572,6 +779,29 @@ geteuid (
   return 0;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 gid_t
 getgid (
   void
@@ -580,6 +810,29 @@ getgid (
   return 0;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 gid_t
 getegid (
   void
@@ -588,6 +841,29 @@ getegid (
   return 0;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 int
 printf (
   char const *fmt,

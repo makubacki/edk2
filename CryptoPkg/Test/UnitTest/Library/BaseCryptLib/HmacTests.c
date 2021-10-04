@@ -110,6 +110,29 @@ typedef struct {
 // HMAC_TEST_CONTEXT       mHmacSha1TestCtx   = {SHA1_DIGEST_SIZE,   HmacSha1New,   HmacSha1SetKey,   HmacSha1Update,   HmacSha1Final,   HmacSha1Key,   sizeof(HmacSha1Key),   HmacSha1Digest};
 HMAC_TEST_CONTEXT  mHmacSha256TestCtx = { SHA256_DIGEST_SIZE, HmacSha256New, HmacSha256SetKey, HmacSha256Update, HmacSha256Final, HmacSha256Key, sizeof (HmacSha256Key), HmacSha256Digest };
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 UNIT_TEST_STATUS
 EFIAPI
 TestVerifyHmacPreReq (
@@ -127,6 +150,29 @@ TestVerifyHmacPreReq (
   return UNIT_TEST_PASSED;
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 VOID
 EFIAPI
 TestVerifyHmacCleanUp (
@@ -141,6 +187,29 @@ TestVerifyHmacCleanUp (
   }
 }
 
+/**
+  [TEMPLATE] - Provide a function description!
+
+  Function overview/purpose.
+
+  Anything a caller should be aware of must be noted in the description.
+
+  All parameters must be described. Parameter names must be Pascal case.
+
+  @retval must be used and each unique return code should be clearly
+  described. Providing "Others" is only acceptable if a return code
+  is bubbled up from a function called internal to this function. However,
+  that's usually not helpful. Try to provide explicit values that mean
+  something to the caller.
+
+  Examples:
+  @param[in]      ParameterName         Brief parameter description.
+  @param[out]     ParameterName         Brief parameter description.
+  @param[in,out]  ParameterName         Brief parameter description.
+
+  @retval   EFI_SUCCESS                 Brief return code description.
+
+**/
 UNIT_TEST_STATUS
 EFIAPI
 TestVerifyHmac (
