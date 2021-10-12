@@ -274,7 +274,7 @@ SMBIOS_MISC_TABLE_FUNCTION (MiscBiosVendor) {
       DEBUG_ERROR,
       "[%a]:[%dL] Smbios Type00 Table Log Failed! %r \n",
       __FUNCTION__,
-      __LINE__,
+      DEBUG_LINE_NUMBER,
       Status
       ));
   }

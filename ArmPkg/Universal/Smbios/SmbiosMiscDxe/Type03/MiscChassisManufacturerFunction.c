@@ -180,7 +180,7 @@ SMBIOS_MISC_TABLE_FUNCTION (MiscChassisManufacturer) {
       DEBUG_ERROR,
       "[%a]:[%dL] Smbios Type03 Table Log Failed! %r \n",
       __FUNCTION__,
-      __LINE__,
+      DEBUG_LINE_NUMBER,
       Status
       ));
   }

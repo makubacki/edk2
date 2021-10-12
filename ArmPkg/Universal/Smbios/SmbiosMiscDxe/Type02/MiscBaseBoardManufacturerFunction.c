@@ -206,7 +206,7 @@ SMBIOS_MISC_TABLE_FUNCTION (MiscBaseBoardManufacturer) {
       DEBUG_ERROR,
       "[%a]:[%dL] Smbios Type02 Table Log Failed! %r \n",
       __FUNCTION__,
-      __LINE__,
+      DEBUG_LINE_NUMBER,
       Status
       ));
   }
