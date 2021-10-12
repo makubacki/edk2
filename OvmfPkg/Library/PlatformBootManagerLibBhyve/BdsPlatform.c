@@ -655,7 +655,7 @@ PrepareLpcBridgeDevicePath (
     DEBUG ((
       DEBUG_INFO,
       "BdsPlatform.c+%d: COM%d DevPath: %s\n",
-      __LINE__,
+      DEBUG_LINE_NUMBER,
       gPnp16550ComPortDeviceNode.UID + 1,
       DevPathStr
       ));
