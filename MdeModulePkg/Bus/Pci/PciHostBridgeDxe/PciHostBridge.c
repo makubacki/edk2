@@ -956,7 +956,7 @@ NotifyPhase (
                 DEBUG_ERROR,
                 "[%a:%d] Translation %lx is not aligned to %lx!\n",
                 __FUNCTION__,
-                __LINE__,
+                DEBUG_LINE_NUMBER,
                 Translation,
                 Alignment
                 ));
