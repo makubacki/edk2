@@ -435,7 +435,7 @@ SyslogBuildPacket (
            NETDEBUG_LEVEL_TRACE,
            "Tcp",
            __FILE__,
-           __LINE__,
+           DEBUG_LINE_NUMBER,
            NetDebugASPrint ("State transit to %a\n", Name)
          )
 
