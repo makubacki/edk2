@@ -42,12 +42,18 @@ FindContextBufferInModuleBuffers (
 
   DEBUG ((DEBUG_INFO, "    %a %a - Entry.\n", _DBGMSGID_, __FUNCTION__));
 
-  if ((HandlerGuid == NULL) || (ModuleContextBuffers == NULL) || (ContextBuffer == NULL)) {
+  if ((HandlerGuid == NULL) || (ModuleContextBuffers == NULL) ||
+      (ContextBuffer == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
   for (Index = 0; Index < ModuleContextBuffers->BufferCount; Index++) {
-    if (CompareGuid (&ModuleContextBuffers->Buffer[Index].HandlerGuid, HandlerGuid)) {
+    if (CompareGuid (
+          &ModuleContextBuffers->Buffer[Index].HandlerGuid,
+          HandlerGuid
+          ))
+    {
       *ContextBuffer = &ModuleContextBuffers->Buffer[Index];
       return EFI_SUCCESS;
     }
@@ -117,7 +123,11 @@ GetModuleContextBuffers (
       }
 
       if (GuidSearchType == ByModuleGuid) {
-        if (CompareGuid (&PrmConfigProtocol->ModuleContextBuffers.ModuleGuid, Guid)) {
+        if (CompareGuid (
+              &PrmConfigProtocol->ModuleContextBuffers.ModuleGuid,
+              Guid
+              ))
+        {
           DEBUG ((
             DEBUG_INFO,
             "      %a %a: Found a PRM configuration protocol for PRM module %g.\n",
@@ -130,7 +140,11 @@ GetModuleContextBuffers (
           return EFI_SUCCESS;
         }
       } else {
-        Status = FindContextBufferInModuleBuffers (Guid, &PrmConfigProtocol->ModuleContextBuffers, &PrmContextBuffer);
+        Status = FindContextBufferInModuleBuffers (
+                   Guid,
+                   &PrmConfigProtocol->ModuleContextBuffers,
+                   &PrmContextBuffer
+                   );
         if (!EFI_ERROR (Status)) {
           *PrmModuleContextBuffers = &PrmConfigProtocol->ModuleContextBuffers;
           return EFI_SUCCESS;
@@ -185,7 +199,11 @@ GetContextBuffer (
   *PrmContextBuffer = NULL;
 
   if (PrmModuleContextBuffers == NULL) {
-    Status = GetModuleContextBuffers (ByHandlerGuid, PrmHandlerGuid, &ContextBuffers);
+    Status = GetModuleContextBuffers (
+               ByHandlerGuid,
+               PrmHandlerGuid,
+               &ContextBuffers
+               );
     if (EFI_ERROR (Status)) {
       return EFI_NOT_FOUND;
     }
@@ -193,7 +211,11 @@ GetContextBuffer (
     ContextBuffers = PrmModuleContextBuffers;
   }
 
-  Status = FindContextBufferInModuleBuffers (PrmHandlerGuid, ContextBuffers, PrmContextBuffer);
+  Status = FindContextBufferInModuleBuffers (
+             PrmHandlerGuid,
+             ContextBuffers,
+             PrmContextBuffer
+             );
 
   return Status;
 }

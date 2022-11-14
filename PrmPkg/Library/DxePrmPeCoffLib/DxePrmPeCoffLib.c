@@ -75,12 +75,17 @@ GetPrmModuleExportDescriptorTable (
   // The export name pointer table and export ordinal table form two parallel arrays associated by index.
   //
   CurrentImageAddress    = PeCoffLoaderImageContext->ImageAddress;
-  ExportAddressTable     = (UINT32 *)((UINTN)CurrentImageAddress + ImageExportDirectory->AddressOfFunctions);
-  ExportNamePointerTable = (UINT32 *)((UINTN)CurrentImageAddress + ImageExportDirectory->AddressOfNames);
-  OrdinalTable           = (UINT16 *)((UINTN)CurrentImageAddress + ImageExportDirectory->AddressOfNameOrdinals);
+  ExportAddressTable     = (UINT32 *)((UINTN)CurrentImageAddress +
+                                      ImageExportDirectory->AddressOfFunctions);
+  ExportNamePointerTable = (UINT32 *)((UINTN)CurrentImageAddress +
+                                      ImageExportDirectory->AddressOfNames);
+  OrdinalTable           = (UINT16 *)((UINTN)CurrentImageAddress +
+                                      ImageExportDirectory->
+                                        AddressOfNameOrdinals);
 
   for (Index = 0; Index < ImageExportDirectory->NumberOfNames; Index++) {
-    CurrentExportName = (CONST CHAR8 *)((UINTN)CurrentImageAddress + ExportNamePointerTable[Index]);
+    CurrentExportName = (CONST CHAR8 *)((UINTN)CurrentImageAddress +
+                                        ExportNamePointerTable[Index]);
     DEBUG ((
       DEBUG_INFO,
       "  %a %a: Export Name[0x%x] - %a.\n",
@@ -104,15 +109,34 @@ GetPrmModuleExportDescriptorTable (
         __FUNCTION__,
         PrmModuleExportDescriptorOrdinal
         ));
-      if (PrmModuleExportDescriptorOrdinal >= ImageExportDirectory->NumberOfFunctions) {
-        DEBUG ((DEBUG_ERROR, "%a %a: The PRM Module Export Descriptor ordinal value is invalid.\n", _DBGMSGID_, __FUNCTION__));
+      if (PrmModuleExportDescriptorOrdinal >=
+          ImageExportDirectory->NumberOfFunctions)
+      {
+        DEBUG ((
+          DEBUG_ERROR,
+          "%a %a: The PRM Module Export Descriptor ordinal value is invalid.\n",
+          _DBGMSGID_,
+          __FUNCTION__
+          ));
         return EFI_NOT_FOUND;
       }
 
-      TempExportDescriptor = (PRM_MODULE_EXPORT_DESCRIPTOR_STRUCT *)((UINTN)CurrentImageAddress + ExportAddressTable[PrmModuleExportDescriptorOrdinal]);
-      if (TempExportDescriptor->Header.Signature == PRM_MODULE_EXPORT_DESCRIPTOR_SIGNATURE) {
+      TempExportDescriptor =
+        (PRM_MODULE_EXPORT_DESCRIPTOR_STRUCT *)((UINTN)CurrentImageAddress +
+                                                ExportAddressTable[
+                                                                                                                    PrmModuleExportDescriptorOrdinal
+                                                ]);
+      if (TempExportDescriptor->Header.Signature ==
+          PRM_MODULE_EXPORT_DESCRIPTOR_SIGNATURE)
+      {
         *ExportDescriptor = TempExportDescriptor;
-        DEBUG ((DEBUG_INFO, "  %a %a: PRM Module Export Descriptor found at 0x%x.\n", _DBGMSGID_, __FUNCTION__, (UINTN)ExportDescriptor));
+        DEBUG ((
+          DEBUG_INFO,
+          "  %a %a: PRM Module Export Descriptor found at 0x%x.\n",
+          _DBGMSGID_,
+          __FUNCTION__,
+          (UINTN)ExportDescriptor
+          ));
       } else {
         DEBUG ((
           DEBUG_INFO,
@@ -123,7 +147,12 @@ GetPrmModuleExportDescriptorTable (
           ));
       }
 
-      DEBUG ((DEBUG_INFO, "  %a %a: Exiting export iteration since export descriptor found.\n", _DBGMSGID_, __FUNCTION__));
+      DEBUG ((
+        DEBUG_INFO,
+        "  %a %a: Exiting export iteration since export descriptor found.\n",
+        _DBGMSGID_,
+        __FUNCTION__
+        ));
       return EFI_SUCCESS;
     }
   }
@@ -160,7 +189,9 @@ GetExportDirectoryInPeCoffImage (
   EFI_IMAGE_DATA_DIRECTORY             *DirectoryEntry;
   EFI_IMAGE_EXPORT_DIRECTORY           *ExportDirectory;
 
-  if ((Image == NULL) || (PeCoffLoaderImageContext == NULL) || (ImageExportDirectory == NULL)) {
+  if ((Image == NULL) || (PeCoffLoaderImageContext == NULL) ||
+      (ImageExportDirectory == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -201,14 +232,21 @@ GetExportDirectoryInPeCoffImage (
 
   OptionalHeaderPtrUnion.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)(
                                                            (UINTN)Image +
-                                                           PeCoffLoaderImageContext->PeCoffHeaderOffset
+                                                           PeCoffLoaderImageContext
+                                                             ->
+                                                             PeCoffHeaderOffset
                                                            );
 
   //
   // Check the PE/COFF Header Signature. Determine if the image is valid and/or a TE image.
   //
   if (OptionalHeaderPtrUnion.Pe32->Signature != EFI_IMAGE_NT_SIGNATURE) {
-    DEBUG ((DEBUG_ERROR, "%a %a: The PE signature is not valid for the current image.\n", _DBGMSGID_, __FUNCTION__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a %a: The PE signature is not valid for the current image.\n",
+      _DBGMSGID_,
+      __FUNCTION__
+      ));
     return EFI_UNSUPPORTED;
   }
 
@@ -216,34 +254,69 @@ GetExportDirectoryInPeCoffImage (
     //
     // Use the PE32 offset to get the Export Directory Entry
     //
-    NumberOfRvaAndSizes = OptionalHeaderPtrUnion.Pe32->OptionalHeader.NumberOfRvaAndSizes;
-    DirectoryEntry      = (EFI_IMAGE_DATA_DIRECTORY *)&(OptionalHeaderPtrUnion.Pe32->OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_EXPORT]);
-  } else if (OptionalHeaderPtrUnion.Pe32->OptionalHeader.Magic == EFI_IMAGE_NT_OPTIONAL_HDR64_MAGIC) {
+    NumberOfRvaAndSizes =
+      OptionalHeaderPtrUnion.Pe32->OptionalHeader.NumberOfRvaAndSizes;
+    DirectoryEntry =
+      (EFI_IMAGE_DATA_DIRECTORY *)&(OptionalHeaderPtrUnion.Pe32->OptionalHeader.
+                                      DataDirectory[
+                                                                                                                 EFI_IMAGE_DIRECTORY_ENTRY_EXPORT
+                                    ]);
+  } else if (OptionalHeaderPtrUnion.Pe32->OptionalHeader.Magic ==
+             EFI_IMAGE_NT_OPTIONAL_HDR64_MAGIC)
+  {
     //
     // Use the PE32+ offset get the Export Directory Entry
     //
-    NumberOfRvaAndSizes = OptionalHeaderPtrUnion.Pe32Plus->OptionalHeader.NumberOfRvaAndSizes;
-    DirectoryEntry      = (EFI_IMAGE_DATA_DIRECTORY *)&(OptionalHeaderPtrUnion.Pe32Plus->OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_EXPORT]);
+    NumberOfRvaAndSizes =
+      OptionalHeaderPtrUnion.Pe32Plus->OptionalHeader.NumberOfRvaAndSizes;
+    DirectoryEntry =
+      (EFI_IMAGE_DATA_DIRECTORY *)&(OptionalHeaderPtrUnion.Pe32Plus->
+                                      OptionalHeader.DataDirectory[
+                                                                                                                     EFI_IMAGE_DIRECTORY_ENTRY_EXPORT
+                                    ]);
   } else {
     return EFI_UNSUPPORTED;
   }
 
-  if ((NumberOfRvaAndSizes <= EFI_IMAGE_DIRECTORY_ENTRY_EXPORT) || (DirectoryEntry->VirtualAddress == 0)) {
+  if ((NumberOfRvaAndSizes <= EFI_IMAGE_DIRECTORY_ENTRY_EXPORT) ||
+      (DirectoryEntry->VirtualAddress == 0))
+  {
     //
     // The export directory is not present
     //
     return EFI_NOT_FOUND;
-  } else if (((UINT32)(~0) - DirectoryEntry->VirtualAddress) < DirectoryEntry->Size) {
+  } else if (((UINT32)(~0) - DirectoryEntry->VirtualAddress) <
+             DirectoryEntry->Size)
+  {
     //
     // The directory address overflows
     //
-    DEBUG ((DEBUG_ERROR, "%a %a: The export directory entry in this image results in overflow.\n", _DBGMSGID_, __FUNCTION__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a %a: The export directory entry in this image results in overflow.\n",
+      _DBGMSGID_,
+      __FUNCTION__
+      ));
     return EFI_UNSUPPORTED;
   } else {
-    DEBUG ((DEBUG_INFO, "%a %a: Export Directory Entry found in the image at 0x%x.\n", _DBGMSGID_, __FUNCTION__, (UINTN)OptionalHeaderPtrUnion.Pe32));
-    DEBUG ((DEBUG_INFO, "  %a %a: Directory Entry Virtual Address = 0x%x.\n", _DBGMSGID_, __FUNCTION__, DirectoryEntry->VirtualAddress));
+    DEBUG ((
+      DEBUG_INFO,
+      "%a %a: Export Directory Entry found in the image at 0x%x.\n",
+      _DBGMSGID_,
+      __FUNCTION__,
+      (UINTN)OptionalHeaderPtrUnion.Pe32
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "  %a %a: Directory Entry Virtual Address = 0x%x.\n",
+      _DBGMSGID_,
+      __FUNCTION__,
+      DirectoryEntry->VirtualAddress
+      ));
 
-    ExportDirectory = (EFI_IMAGE_EXPORT_DIRECTORY *)((UINTN)Image + DirectoryEntry->VirtualAddress);
+    ExportDirectory = (EFI_IMAGE_EXPORT_DIRECTORY *)((UINTN)Image +
+                                                     DirectoryEntry->
+                                                       VirtualAddress);
     DEBUG ((
       DEBUG_INFO,
       "  %a %a: Export Directory Table found successfully at 0x%x. Name address = 0x%x. Name = %a.\n",
@@ -289,7 +362,9 @@ GetImageVersionInPeCoffImage (
 
   DEBUG ((DEBUG_INFO, "    %a %a - Entry.\n", _DBGMSGID_, __FUNCTION__));
 
-  if ((Image == NULL) || (PeCoffLoaderImageContext == NULL) || (ImageMajorVersion == NULL) || (ImageMinorVersion == NULL)) {
+  if ((Image == NULL) || (PeCoffLoaderImageContext == NULL) ||
+      (ImageMajorVersion == NULL) || (ImageMinorVersion == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -327,13 +402,20 @@ GetImageVersionInPeCoffImage (
 
   OptionalHeaderPtrUnion.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)(
                                                            (UINTN)Image +
-                                                           PeCoffLoaderImageContext->PeCoffHeaderOffset
+                                                           PeCoffLoaderImageContext
+                                                             ->
+                                                             PeCoffHeaderOffset
                                                            );
   //
   // Check the PE/COFF Header Signature. Determine if the image is valid and/or a TE image.
   //
   if (OptionalHeaderPtrUnion.Pe32->Signature != EFI_IMAGE_NT_SIGNATURE) {
-    DEBUG ((DEBUG_ERROR, "%a %a: The PE signature is not valid for the current image.\n", _DBGMSGID_, __FUNCTION__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a %a: The PE signature is not valid for the current image.\n",
+      _DBGMSGID_,
+      __FUNCTION__
+      ));
     return EFI_UNSUPPORTED;
   }
 
@@ -341,18 +423,34 @@ GetImageVersionInPeCoffImage (
     //
     // Use the PE32 offset to get the Export Directory Entry
     //
-    *ImageMajorVersion = OptionalHeaderPtrUnion.Pe32->OptionalHeader.MajorImageVersion;
-    *ImageMinorVersion = OptionalHeaderPtrUnion.Pe32->OptionalHeader.MinorImageVersion;
+    *ImageMajorVersion =
+      OptionalHeaderPtrUnion.Pe32->OptionalHeader.MajorImageVersion;
+    *ImageMinorVersion =
+      OptionalHeaderPtrUnion.Pe32->OptionalHeader.MinorImageVersion;
   } else {
     //
     // Use the PE32+ offset to get the Export Directory Entry
     //
-    *ImageMajorVersion = OptionalHeaderPtrUnion.Pe32Plus->OptionalHeader.MajorImageVersion;
-    *ImageMinorVersion = OptionalHeaderPtrUnion.Pe32Plus->OptionalHeader.MinorImageVersion;
+    *ImageMajorVersion =
+      OptionalHeaderPtrUnion.Pe32Plus->OptionalHeader.MajorImageVersion;
+    *ImageMinorVersion =
+      OptionalHeaderPtrUnion.Pe32Plus->OptionalHeader.MinorImageVersion;
   }
 
-  DEBUG ((DEBUG_INFO, "      %a %a - Image Major Version: 0x%02x.\n", _DBGMSGID_, __FUNCTION__, *ImageMajorVersion));
-  DEBUG ((DEBUG_INFO, "      %a %a - Image Minor Version: 0x%02x.\n", _DBGMSGID_, __FUNCTION__, *ImageMinorVersion));
+  DEBUG ((
+    DEBUG_INFO,
+    "      %a %a - Image Major Version: 0x%02x.\n",
+    _DBGMSGID_,
+    __FUNCTION__,
+    *ImageMajorVersion
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "      %a %a - Image Minor Version: 0x%02x.\n",
+    _DBGMSGID_,
+    __FUNCTION__,
+    *ImageMinorVersion
+    ));
 
   return EFI_SUCCESS;
 }
@@ -386,29 +484,53 @@ GetExportEntryAddress (
   UINT16       *OrdinalTable;
   CONST CHAR8  *ExportNameTablePointerName;
 
-  if ((ExportName == NULL) || (ImageBaseAddress == 0) || (ImageExportDirectory == NULL) || (ExportPhysicalAddress == NULL)) {
+  if ((ExportName == NULL) || (ImageBaseAddress == 0) ||
+      (ImageExportDirectory == NULL) || (ExportPhysicalAddress == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
   *ExportPhysicalAddress = 0;
 
-  ExportAddressTable     = (UINT32 *)((UINTN)ImageBaseAddress + ImageExportDirectory->AddressOfFunctions);
-  ExportNamePointerTable = (UINT32 *)((UINTN)ImageBaseAddress + ImageExportDirectory->AddressOfNames);
-  OrdinalTable           = (UINT16 *)((UINTN)ImageBaseAddress + ImageExportDirectory->AddressOfNameOrdinals);
+  ExportAddressTable     = (UINT32 *)((UINTN)ImageBaseAddress +
+                                      ImageExportDirectory->AddressOfFunctions);
+  ExportNamePointerTable = (UINT32 *)((UINTN)ImageBaseAddress +
+                                      ImageExportDirectory->AddressOfNames);
+  OrdinalTable           = (UINT16 *)((UINTN)ImageBaseAddress +
+                                      ImageExportDirectory->
+                                        AddressOfNameOrdinals);
 
-  for (ExportNameIndex = 0; ExportNameIndex < ImageExportDirectory->NumberOfNames; ExportNameIndex++) {
-    ExportNameTablePointerName = (CONST CHAR8 *)((UINTN)ImageBaseAddress + ExportNamePointerTable[ExportNameIndex]);
+  for (ExportNameIndex = 0; ExportNameIndex <
+       ImageExportDirectory->NumberOfNames; ExportNameIndex++)
+  {
+    ExportNameTablePointerName = (CONST CHAR8 *)((UINTN)ImageBaseAddress +
+                                                 ExportNamePointerTable[
+                                                                                                 ExportNameIndex
+                                                 ]);
 
-    if (AsciiStrnCmp (ExportName, ExportNameTablePointerName, PRM_HANDLER_NAME_MAXIMUM_LENGTH) == 0) {
+    if (AsciiStrnCmp (
+          ExportName,
+          ExportNameTablePointerName,
+          PRM_HANDLER_NAME_MAXIMUM_LENGTH
+          ) == 0)
+    {
       CurrentExportOrdinal = OrdinalTable[ExportNameIndex];
 
       ASSERT (CurrentExportOrdinal < ImageExportDirectory->NumberOfFunctions);
       if (CurrentExportOrdinal >= ImageExportDirectory->NumberOfFunctions) {
-        DEBUG ((DEBUG_ERROR, "  %a %a: The export ordinal value is invalid.\n", _DBGMSGID_, __FUNCTION__));
+        DEBUG ((
+          DEBUG_ERROR,
+          "  %a %a: The export ordinal value is invalid.\n",
+          _DBGMSGID_,
+          __FUNCTION__
+          ));
         break;
       }
 
-      *ExportPhysicalAddress = (EFI_PHYSICAL_ADDRESS)((UINTN)ImageBaseAddress + ExportAddressTable[CurrentExportOrdinal]);
+      *ExportPhysicalAddress = (EFI_PHYSICAL_ADDRESS)((UINTN)ImageBaseAddress +
+                                                      ExportAddressTable[
+                                                                                                  CurrentExportOrdinal
+                                                      ]);
       return EFI_SUCCESS;
     }
   }

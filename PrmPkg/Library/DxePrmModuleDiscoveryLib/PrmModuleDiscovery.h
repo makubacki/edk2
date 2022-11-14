@@ -12,7 +12,8 @@
 
 #include <PrmModuleImageContext.h>
 
-#define PRM_MODULE_IMAGE_CONTEXT_LIST_ENTRY_SIGNATURE  SIGNATURE_32('P','R','M','E')
+#define PRM_MODULE_IMAGE_CONTEXT_LIST_ENTRY_SIGNATURE  \
+  SIGNATURE_32('P','R','M','E')
 
 #pragma pack(push, 1)
 

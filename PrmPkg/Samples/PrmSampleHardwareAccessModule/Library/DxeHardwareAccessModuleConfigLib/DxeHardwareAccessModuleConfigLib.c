@@ -73,7 +73,10 @@ HardwareAccessModuleConfigLibConstructor (
     goto Done;
   }
 
-  CopyGuid (&PrmConfigProtocol->ModuleContextBuffers.ModuleGuid, &mPrmModuleGuid);
+  CopyGuid (
+    &PrmConfigProtocol->ModuleContextBuffers.ModuleGuid,
+    &mPrmModuleGuid
+    );
 
   // Populate the Runtime MMIO Ranges structure
   RuntimeMmioRanges->Count                        = 1;

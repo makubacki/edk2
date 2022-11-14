@@ -58,8 +58,15 @@ GetNextPrmModuleEntry (
     ForwardLink = GetFirstNode (&mPrmModuleList);
   } else {
     CurrentListEntry = NULL;
-    CurrentListEntry = CR (*ModuleImageContext, PRM_MODULE_IMAGE_CONTEXT_LIST_ENTRY, Context, PRM_MODULE_IMAGE_CONTEXT_LIST_ENTRY_SIGNATURE);
-    if ((CurrentListEntry == NULL) || (CurrentListEntry->Signature != PRM_MODULE_IMAGE_CONTEXT_LIST_ENTRY_SIGNATURE)) {
+    CurrentListEntry = CR (
+                         *ModuleImageContext,
+                         PRM_MODULE_IMAGE_CONTEXT_LIST_ENTRY,
+                         Context,
+                         PRM_MODULE_IMAGE_CONTEXT_LIST_ENTRY_SIGNATURE
+                         );
+    if ((CurrentListEntry == NULL) || (CurrentListEntry->Signature !=
+                                       PRM_MODULE_IMAGE_CONTEXT_LIST_ENTRY_SIGNATURE))
+    {
       return EFI_INVALID_PARAMETER;
     }
 
@@ -71,8 +78,14 @@ GetNextPrmModuleEntry (
     }
   }
 
-  ForwardListEntry = BASE_CR (ForwardLink, PRM_MODULE_IMAGE_CONTEXT_LIST_ENTRY, Link);
-  if (ForwardListEntry->Signature == PRM_MODULE_IMAGE_CONTEXT_LIST_ENTRY_SIGNATURE) {
+  ForwardListEntry = BASE_CR (
+                       ForwardLink,
+                       PRM_MODULE_IMAGE_CONTEXT_LIST_ENTRY,
+                       Link
+                       );
+  if (ForwardListEntry->Signature ==
+      PRM_MODULE_IMAGE_CONTEXT_LIST_ENTRY_SIGNATURE)
+  {
     *ModuleImageContext = &ForwardListEntry->Context;
     return EFI_SUCCESS;
   }
@@ -96,7 +109,9 @@ CreateNewPrmModuleImageContextListEntry (
 
   DEBUG ((DEBUG_INFO, "%a %a - Entry.\n", _DBGMSGID_, __FUNCTION__));
 
-  PrmModuleImageContextListEntry = AllocateZeroPool (sizeof (*PrmModuleImageContextListEntry));
+  PrmModuleImageContextListEntry = AllocateZeroPool (
+                                     sizeof (*PrmModuleImageContextListEntry)
+                                     );
   if (PrmModuleImageContextListEntry == NULL) {
     return NULL;
   }
@@ -110,7 +125,8 @@ CreateNewPrmModuleImageContextListEntry (
     sizeof (*PrmModuleImageContextListEntry)
     ));
 
-  PrmModuleImageContextListEntry->Signature = PRM_MODULE_IMAGE_CONTEXT_LIST_ENTRY_SIGNATURE;
+  PrmModuleImageContextListEntry->Signature =
+    PRM_MODULE_IMAGE_CONTEXT_LIST_ENTRY_SIGNATURE;
 
   return PrmModuleImageContextListEntry;
 }
@@ -137,7 +153,8 @@ IsAddressInMmram (
 
   for (Index = 0; Index < MmramRangeCount; Index++) {
     if ((Address >= MmramRanges[Index].CpuStart) &&
-        (Address < (MmramRanges[Index].CpuStart + MmramRanges[Index].PhysicalSize)))
+        (Address < (MmramRanges[Index].CpuStart +
+                    MmramRanges[Index].PhysicalSize)))
     {
       return TRUE;
     }
@@ -203,7 +220,12 @@ DiscoverPrmModules (
                   &HandleBuffer
                   );
   if (EFI_ERROR (Status) && (HandleCount == 0)) {
-    DEBUG ((DEBUG_ERROR, "%a %a: No LoadedImageProtocol instances found!\n", _DBGMSGID_, __FUNCTION__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a %a: No LoadedImageProtocol instances found!\n",
+      _DBGMSGID_,
+      __FUNCTION__
+      ));
     return EFI_NOT_FOUND;
   }
 
@@ -241,16 +263,28 @@ DiscoverPrmModules (
       continue;
     }
 
-    if (IsAddressInMmram ((EFI_PHYSICAL_ADDRESS)(UINTN)(LoadedImageProtocol->ImageBase), MmramRanges, MmramRangeCount)) {
+    if (IsAddressInMmram (
+          (EFI_PHYSICAL_ADDRESS)(UINTN)(LoadedImageProtocol->ImageBase),
+          MmramRanges,
+          MmramRangeCount
+          ))
+    {
       continue;
     }
 
     ZeroMem (&TempPrmModuleImageContext, sizeof (TempPrmModuleImageContext));
-    TempPrmModuleImageContext.PeCoffImageContext.Handle    = LoadedImageProtocol->ImageBase;
-    TempPrmModuleImageContext.PeCoffImageContext.ImageRead = PeCoffLoaderImageReadFromMemory;
+    TempPrmModuleImageContext.PeCoffImageContext.Handle =
+      LoadedImageProtocol->ImageBase;
+    TempPrmModuleImageContext.PeCoffImageContext.ImageRead =
+      PeCoffLoaderImageReadFromMemory;
 
-    Status = PeCoffLoaderGetImageInfo (&TempPrmModuleImageContext.PeCoffImageContext);
-    if (EFI_ERROR (Status) || (TempPrmModuleImageContext.PeCoffImageContext.ImageError != IMAGE_ERROR_SUCCESS)) {
+    Status = PeCoffLoaderGetImageInfo (
+               &TempPrmModuleImageContext.PeCoffImageContext
+               );
+    if (EFI_ERROR (Status) ||
+        (TempPrmModuleImageContext.PeCoffImageContext.ImageError !=
+         IMAGE_ERROR_SUCCESS))
+    {
       DEBUG ((
         DEBUG_WARN,
         "%a %a: ImageHandle 0x%016lx is not a valid PE/COFF image. It cannot be considered a PRM module.\n",
@@ -282,7 +316,9 @@ DiscoverPrmModules (
                &TempPrmModuleImageContext.PeCoffImageContext,
                &TempPrmModuleImageContext.ExportDescriptor
                );
-    if (EFI_ERROR (Status) || (TempPrmModuleImageContext.ExportDescriptor == NULL)) {
+    if (EFI_ERROR (Status) || (TempPrmModuleImageContext.ExportDescriptor ==
+                               NULL))
+    {
       continue;
     }
 
@@ -302,9 +338,15 @@ DiscoverPrmModules (
       sizeof (PrmModuleImageContextListEntry->Context)
       );
     InsertTailList (&mPrmModuleList, &PrmModuleImageContextListEntry->Link);
-    PrmHandlerCount += TempPrmModuleImageContext.ExportDescriptor->Header.NumberPrmHandlers;
+    PrmHandlerCount +=
+      TempPrmModuleImageContext.ExportDescriptor->Header.NumberPrmHandlers;
     PrmModuleCount++;
-    DEBUG ((DEBUG_INFO, "%a %a: New PRM Module inserted into list to be processed.\n", _DBGMSGID_, __FUNCTION__));
+    DEBUG ((
+      DEBUG_INFO,
+      "%a %a: New PRM Module inserted into list to be processed.\n",
+      _DBGMSGID_,
+      __FUNCTION__
+      ));
   }
 
   if (HandlerCount != NULL) {
@@ -350,8 +392,13 @@ PrmModuleDiscoveryLibDestructor (
 
   Link = GetFirstNode (&mPrmModuleList);
   while (!IsNull (&mPrmModuleList, Link)) {
-    ListEntry = CR (Link, PRM_MODULE_IMAGE_CONTEXT_LIST_ENTRY, Link, PRM_MODULE_IMAGE_CONTEXT_LIST_ENTRY_SIGNATURE);
-    NextLink  = GetNextNode (&mPrmModuleList, Link);
+    ListEntry = CR (
+                  Link,
+                  PRM_MODULE_IMAGE_CONTEXT_LIST_ENTRY,
+                  Link,
+                  PRM_MODULE_IMAGE_CONTEXT_LIST_ENTRY_SIGNATURE
+                  );
+    NextLink = GetNextNode (&mPrmModuleList, Link);
 
     RemoveEntryList (Link);
     FreePool (ListEntry);

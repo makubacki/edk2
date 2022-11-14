@@ -22,7 +22,8 @@
 //
 
 // {2e4f2d13-6240-4ed0-a401-c723fbdc34e8}
-#define CHECK_PARAM_BUFFER_PRM_HANDLER_GUID  {0x2e4f2d13, 0x6240, 0x4ed0, {0xa4, 0x01, 0xc7, 0x23, 0xfb, 0xdc, 0x34, 0xe8}}
+#define CHECK_PARAM_BUFFER_PRM_HANDLER_GUID  \
+  {0x2e4f2d13, 0x6240, 0x4ed0, {0xa4, 0x01, 0xc7, 0x23, 0xfb, 0xdc, 0x34, 0xe8}}
 
 /**
   A sample Platform Runtime Mechanism (PRM) handler.
@@ -55,7 +56,10 @@ PRM_HANDLER_EXPORT (CheckParamBufferPrmHandler) {
 // Register the PRM export information for this PRM Module
 //
 PRM_MODULE_EXPORT (
-  PRM_HANDLER_EXPORT_ENTRY (CHECK_PARAM_BUFFER_PRM_HANDLER_GUID, CheckParamBufferPrmHandler)
+  PRM_HANDLER_EXPORT_ENTRY (
+    CHECK_PARAM_BUFFER_PRM_HANDLER_GUID,
+    CheckParamBufferPrmHandler
+    )
   );
 
 /**

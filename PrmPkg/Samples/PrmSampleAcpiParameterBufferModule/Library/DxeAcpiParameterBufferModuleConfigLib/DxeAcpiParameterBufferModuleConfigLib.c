@@ -72,7 +72,9 @@ AcpiParameterBufferModuleConfigLibConstructor (
   }
 
   // Allocate the ACPI Parameter Buffer Descriptor structure for a single PRM handler
-  AcpiParamBufferDescriptor = AllocateZeroPool (sizeof (*AcpiParamBufferDescriptor));
+  AcpiParamBufferDescriptor = AllocateZeroPool (
+                                sizeof (*AcpiParamBufferDescriptor)
+                                );
   ASSERT (AcpiParamBufferDescriptor != NULL);
   if (AcpiParamBufferDescriptor == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
@@ -87,15 +89,24 @@ AcpiParameterBufferModuleConfigLibConstructor (
     goto Done;
   }
 
-  CopyGuid (&PrmConfigProtocol->ModuleContextBuffers.ModuleGuid, &mPrmModuleGuid);
+  CopyGuid (
+    &PrmConfigProtocol->ModuleContextBuffers.ModuleGuid,
+    &mPrmModuleGuid
+    );
 
   // Populate the ACPI Parameter Buffer Descriptor structure
-  CopyGuid (&AcpiParamBufferDescriptor->HandlerGuid, &mCheckParamBufferPrmHandlerGuid);
-  AcpiParamBufferDescriptor->AcpiParameterBufferAddress = (UINT64)(UINTN)AcpiParameterBuffer;
+  CopyGuid (
+    &AcpiParamBufferDescriptor->HandlerGuid,
+    &mCheckParamBufferPrmHandlerGuid
+    );
+  AcpiParamBufferDescriptor->AcpiParameterBufferAddress =
+    (UINT64)(UINTN)AcpiParameterBuffer;
 
   // Populate the PRM Module Context Buffers structure
-  PrmConfigProtocol->ModuleContextBuffers.AcpiParameterBufferDescriptorCount = 1;
-  PrmConfigProtocol->ModuleContextBuffers.AcpiParameterBufferDescriptors     = AcpiParamBufferDescriptor;
+  PrmConfigProtocol->ModuleContextBuffers.AcpiParameterBufferDescriptorCount =
+    1;
+  PrmConfigProtocol->ModuleContextBuffers.AcpiParameterBufferDescriptors =
+    AcpiParamBufferDescriptor;
 
   //
   // Install the PRM Configuration Protocol for this module. This indicates the configuration

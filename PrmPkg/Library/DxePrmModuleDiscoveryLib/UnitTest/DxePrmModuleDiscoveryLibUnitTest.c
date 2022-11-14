@@ -79,7 +79,10 @@ PrmModuleImageContextListEntrySignatureShouldBeValid (
 
   ListEntry = CreateNewPrmModuleImageContextListEntry ();
 
-  UT_ASSERT_TRUE (ListEntry->Signature == PRM_MODULE_IMAGE_CONTEXT_LIST_ENTRY_SIGNATURE);
+  UT_ASSERT_TRUE (
+    ListEntry->Signature ==
+    PRM_MODULE_IMAGE_CONTEXT_LIST_ENTRY_SIGNATURE
+    );
 
   if (ListEntry != NULL) {
     FreePool (ListEntry);
@@ -110,7 +113,11 @@ PrmModuleImageContextListEntryImageContextShouldBeZeroed (
   ListEntry = CreateNewPrmModuleImageContextListEntry ();
 
   ZeroMem (&ImageContext, sizeof (ImageContext));
-  UT_ASSERT_MEM_EQUAL (&ListEntry->Context, &ImageContext, sizeof (ImageContext));
+  UT_ASSERT_MEM_EQUAL (
+    &ListEntry->Context,
+    &ImageContext,
+    sizeof (ImageContext)
+    );
 
   if (ListEntry != NULL) {
     FreePool (ListEntry);
@@ -146,9 +153,18 @@ main (
   //
   // Start setting up the test framework for running the tests.
   //
-  Status = InitUnitTestFramework (&Framework, UNIT_TEST_NAME, gEfiCallerBaseName, UNIT_TEST_VERSION);
+  Status = InitUnitTestFramework (
+             &Framework,
+             UNIT_TEST_NAME,
+             gEfiCallerBaseName,
+             UNIT_TEST_VERSION
+             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in InitUnitTestFramework. Status = %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed in InitUnitTestFramework. Status = %r\n",
+      Status
+      ));
     goto EXIT;
   }
 
@@ -161,7 +177,10 @@ main (
               NULL
               );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in CreateUnitTestSuite for PrmModuleDiscoveryLib.CreateNewPrmModuleImageContextListEntry\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed in CreateUnitTestSuite for PrmModuleDiscoveryLib.CreateNewPrmModuleImageContextListEntry\n"
+      ));
     Status = EFI_OUT_OF_RESOURCES;
     goto EXIT;
   }

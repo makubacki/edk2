@@ -57,7 +57,13 @@ PopulateStaticDataBuffer (
   //
   StaticDataBuffer->Policy1Enabled = TRUE;
   StaticDataBuffer->Policy2Enabled = FALSE;
-  SetMem (StaticDataBuffer->SomeValueArray, ARRAY_SIZE (StaticDataBuffer->SomeValueArray), 'D');
+  SetMem (
+    StaticDataBuffer->SomeValueArray,
+    ARRAY_SIZE (
+      StaticDataBuffer->SomeValueArray
+      ),
+    'D'
+    );
 
   return EFI_SUCCESS;
 }
@@ -90,7 +96,8 @@ GetStaticDataBuffer (
   //
   // Length of the data buffer = Buffer Header Size + Buffer Data Size
   //
-  DataBufferLength = sizeof (PRM_DATA_BUFFER_HEADER) + sizeof (STATIC_DATA_SAMPLE_CONTEXT_BUFFER_MODULE);
+  DataBufferLength = sizeof (PRM_DATA_BUFFER_HEADER) +
+                     sizeof (STATIC_DATA_SAMPLE_CONTEXT_BUFFER_MODULE);
 
   DataBuffer = AllocateRuntimeZeroPool (DataBufferLength);
   if (DataBuffer == NULL) {
@@ -103,7 +110,9 @@ GetStaticDataBuffer (
   DataBuffer->Header.Signature = PRM_DATA_BUFFER_HEADER_SIGNATURE;
   DataBuffer->Header.Length    = (UINT32)DataBufferLength;
 
-  Status = PopulateStaticDataBuffer ((STATIC_DATA_SAMPLE_CONTEXT_BUFFER_MODULE *)&DataBuffer->Data[0]);
+  Status = PopulateStaticDataBuffer (
+             (STATIC_DATA_SAMPLE_CONTEXT_BUFFER_MODULE *)&DataBuffer->Data[0]
+             );
   ASSERT_EFI_ERROR (Status);
 
   *StaticDataBuffer = DataBuffer;
@@ -172,7 +181,10 @@ ContextBufferModuleConfigLibConstructor (
     goto Done;
   }
 
-  CopyGuid (&PrmContextBuffer->HandlerGuid, &mCheckStaticDataBufferPrmHandlerGuid);
+  CopyGuid (
+    &PrmContextBuffer->HandlerGuid,
+    &mCheckStaticDataBufferPrmHandlerGuid
+    );
   PrmContextBuffer->Signature        = PRM_CONTEXT_BUFFER_SIGNATURE;
   PrmContextBuffer->Version          = PRM_CONTEXT_BUFFER_INTERFACE_VERSION;
   PrmContextBuffer->StaticDataBuffer = StaticDataBuffer;
@@ -184,7 +196,10 @@ ContextBufferModuleConfigLibConstructor (
     goto Done;
   }
 
-  CopyGuid (&PrmConfigProtocol->ModuleContextBuffers.ModuleGuid, &mPrmModuleGuid);
+  CopyGuid (
+    &PrmConfigProtocol->ModuleContextBuffers.ModuleGuid,
+    &mPrmModuleGuid
+    );
   PrmConfigProtocol->ModuleContextBuffers.BufferCount = 1;
   PrmConfigProtocol->ModuleContextBuffers.Buffer      = PrmContextBuffer;
 

@@ -24,13 +24,16 @@
 //
 
 // {2120cd3c-848b-4d8f-abbb-4b74ce64ac89}
-#define MSR_ACCESS_MICROCODE_SIGNATURE_PRM_HANDLER_GUID  {0x2120cd3c, 0x848b, 0x4d8f, {0xab, 0xbb, 0x4b, 0x74, 0xce, 0x64, 0xac, 0x89}}
+#define MSR_ACCESS_MICROCODE_SIGNATURE_PRM_HANDLER_GUID  \
+  {0x2120cd3c, 0x848b, 0x4d8f, {0xab, 0xbb, 0x4b, 0x74, 0xce, 0x64, 0xac, 0x89}}
 
 // {ea0935a7-506b-4159-bbbb-48deeecb6f58}
-#define MSR_ACCESS_MTRR_DUMP_PRM_HANDLER_GUID  {0xea0935a7, 0x506b, 0x4159, {0xbb, 0xbb, 0x48, 0xde, 0xee, 0xcb, 0x6f, 0x58}}
+#define MSR_ACCESS_MTRR_DUMP_PRM_HANDLER_GUID  \
+  {0xea0935a7, 0x506b, 0x4159, {0xbb, 0xbb, 0x48, 0xde, 0xee, 0xcb, 0x6f, 0x58}}
 
 // {1bd1bda9-909a-4614-9699-25ec0c2783f7}
-#define MMIO_ACCESS_HPET_PRM_HANDLER_GUID  {0x1bd1bda9, 0x909a, 0x4614, {0x96, 0x99, 0x25, 0xec, 0x0c, 0x27, 0x83, 0xf7}}
+#define MMIO_ACCESS_HPET_PRM_HANDLER_GUID  \
+  {0x1bd1bda9, 0x909a, 0x4614, {0x96, 0x99, 0x25, 0xec, 0x0c, 0x27, 0x83, 0xf7}}
 
 //
 // BEGIN: MtrrLib internal library globals and function prototypes here for testing
@@ -138,7 +141,8 @@ AccessAllMtrrs (
   UINT32         VariableMtrrCount;
 
   MTRR_MEMORY_RANGE  Ranges[
-                            MTRR_NUMBER_OF_FIXED_MTRR * sizeof (UINT64) + 2 * ARRAY_SIZE (Mtrrs->Variables.Mtrr) + 1
+                            MTRR_NUMBER_OF_FIXED_MTRR * sizeof (UINT64) + 2 *
+                            ARRAY_SIZE (Mtrrs->Variables.Mtrr) + 1
   ];
   MTRR_MEMORY_RANGE  RawVariableRanges[ARRAY_SIZE (Mtrrs->Variables.Mtrr)];
 
@@ -172,7 +176,12 @@ AccessAllMtrrs (
     &RangeCount
     );
 
-  MtrrLibApplyFixedMtrrs (&Mtrrs->Fixed, Ranges, ARRAY_SIZE (Ranges), &RangeCount);
+  MtrrLibApplyFixedMtrrs (
+    &Mtrrs->Fixed,
+    Ranges,
+    ARRAY_SIZE (Ranges),
+    &RangeCount
+    );
 }
 
 /**
@@ -310,9 +319,18 @@ PRM_HANDLER_EXPORT (MmioAccessHpetPrmHandler) {
 // Register the PRM export information for this PRM Module
 //
 PRM_MODULE_EXPORT (
-  PRM_HANDLER_EXPORT_ENTRY (MSR_ACCESS_MICROCODE_SIGNATURE_PRM_HANDLER_GUID, MsrAccessMicrocodeSignaturePrmHandler),
-  PRM_HANDLER_EXPORT_ENTRY (MSR_ACCESS_MTRR_DUMP_PRM_HANDLER_GUID, MsrAccessMtrrDumpPrmHandler),
-  PRM_HANDLER_EXPORT_ENTRY (MMIO_ACCESS_HPET_PRM_HANDLER_GUID, MmioAccessHpetPrmHandler)
+  PRM_HANDLER_EXPORT_ENTRY (
+    MSR_ACCESS_MICROCODE_SIGNATURE_PRM_HANDLER_GUID,
+    MsrAccessMicrocodeSignaturePrmHandler
+    ),
+  PRM_HANDLER_EXPORT_ENTRY (
+    MSR_ACCESS_MTRR_DUMP_PRM_HANDLER_GUID,
+    MsrAccessMtrrDumpPrmHandler
+    ),
+  PRM_HANDLER_EXPORT_ENTRY (
+    MMIO_ACCESS_HPET_PRM_HANDLER_GUID,
+    MmioAccessHpetPrmHandler
+    )
   );
 
 /**

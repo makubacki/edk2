@@ -48,7 +48,11 @@ InstallPrmSsdt (
     return EFI_INVALID_PARAMETER;
   }
 
-  Status = gBS->LocateProtocol (&gEfiAcpiTableProtocolGuid, NULL, (VOID **)&AcpiTableProtocol);
+  Status = gBS->LocateProtocol (
+                  &gEfiAcpiTableProtocolGuid,
+                  NULL,
+                  (VOID **)&AcpiTableProtocol
+                  );
   if (!EFI_ERROR (Status)) {
     //
     // Discover the SSDT

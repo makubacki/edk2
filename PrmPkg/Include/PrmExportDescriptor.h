@@ -12,9 +12,10 @@
 
 #include <Prm.h>
 
-#define PRM_MODULE_EXPORT_DESCRIPTOR_NAME       PrmModuleExportDescriptor
-#define PRM_MODULE_EXPORT_DESCRIPTOR_SIGNATURE  SIGNATURE_64 ('P', 'R', 'M', '_', 'M', 'E', 'D', 'T')
-#define PRM_MODULE_EXPORT_REVISION              0x0
+#define PRM_MODULE_EXPORT_DESCRIPTOR_NAME        PrmModuleExportDescriptor
+#define PRM_MODULE_EXPORT_DESCRIPTOR_SIGNATURE  \
+                                                 SIGNATURE_64 ('P', 'R', 'M', '_', 'M', 'E', 'D', 'T')
+#define PRM_MODULE_EXPORT_REVISION               0x0
 
 //
 // Platform Runtime Mechanism (PRM) Export Descriptor Structures
@@ -74,7 +75,9 @@ typedef struct {
   @param  VariableArgumentList  A variable argument list of elements that will be included
                                 in the return value of the list count.
 **/
-#define VA_ARG_COUNT(...)  (sizeof((PRM_HANDLER_EXPORT_DESCRIPTOR_STRUCT[]){__VA_ARGS__})/sizeof(PRM_HANDLER_EXPORT_DESCRIPTOR_STRUCT))
+#define VA_ARG_COUNT( \
+                    ...)  \
+  (sizeof((PRM_HANDLER_EXPORT_DESCRIPTOR_STRUCT[]){__VA_ARGS__})/sizeof(PRM_HANDLER_EXPORT_DESCRIPTOR_STRUCT))
 
 /**
   A macro that declares the PRM Module Export Descriptor for a PRM Module.
