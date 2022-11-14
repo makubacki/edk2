@@ -37,7 +37,11 @@ GdbSerialLibDebugPortConstructor (
 {
   EFI_STATUS  Status;
 
-  Status = gBS->LocateProtocol (&gEfiDebugPortProtocolGuid, NULL, (VOID **)&gDebugPort);
+  Status = gBS->LocateProtocol (
+                  &gEfiDebugPortProtocolGuid,
+                  NULL,
+                  (VOID **)&gDebugPort
+                  );
   if (!EFI_ERROR (Status)) {
     gTimeOut = PcdGet32 (PcdGdbMaxPacketRetryCount);
     gDebugPort->Reset (gDebugPort);

@@ -37,7 +37,9 @@ EFI_DEBUG_IMAGE_INFO_TABLE_HEADER  *gDebugImageTableHeader   = NULL;
 EFI_DEBUG_IMAGE_INFO               *gDebugTable              = NULL;
 CHAR8                              gXferLibraryBuffer[2000];
 
-GLOBAL_REMOVE_IF_UNREFERENCED CONST CHAR8  mHexToStr[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+GLOBAL_REMOVE_IF_UNREFERENCED CONST CHAR8  mHexToStr[] = {
+  '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+};
 
 VOID
 EFIAPI
@@ -75,7 +77,8 @@ GdbStubEntry (
   UINTN                       Processor;
   BOOLEAN                     IsaSupported;
 
-  Status = EfiGetSystemConfigurationTable (&gEfiDebugImageInfoTableGuid, (VOID **)&gDebugImageTableHeader);
+  Status = EfiGetSystemConfigurationTable (&gEfiDebugImageInfoTableGuid,
+             (VOID **)&gDebugImageTableHeader);
   if (EFI_ERROR (Status)) {
     gDebugImageTableHeader = NULL;
   }
@@ -119,25 +122,30 @@ GdbStubEntry (
     return EFI_NOT_FOUND;
   }
 
-  Status = DebugSupport->GetMaximumProcessorIndex (DebugSupport, &gMaxProcessorIndex);
+  Status = DebugSupport->GetMaximumProcessorIndex (DebugSupport,
+                           &gMaxProcessorIndex);
   ASSERT_EFI_ERROR (Status);
 
   DEBUG ((DEBUG_INFO, "Debug Support Protocol ISA %x\n", DebugSupport->Isa));
-  DEBUG ((DEBUG_INFO, "Debug Support Protocol Processor Index %d\n", gMaxProcessorIndex));
+  DEBUG ((DEBUG_INFO, "Debug Support Protocol Processor Index %d\n",
+    gMaxProcessorIndex));
 
   // Call processor-specific init routine
   InitializeProcessor ();
 
   for (Processor = 0; Processor <= gMaxProcessorIndex; Processor++) {
     for (Index = 0; Index < MaxEfiException (); Index++) {
-      Status = DebugSupport->RegisterExceptionCallback (DebugSupport, Processor, GdbExceptionHandler, gExceptionType[Index].Exception);
+      Status = DebugSupport->RegisterExceptionCallback (DebugSupport, Processor,
+                               GdbExceptionHandler,
+                               gExceptionType[Index].Exception);
       ASSERT_EFI_ERROR (Status);
     }
 
     //
     // Current edk2 DebugPort is not interrupt context safe so we can not use it
     //
-    Status = DebugSupport->RegisterPeriodicCallback (DebugSupport, Processor, GdbPeriodicCallBack);
+    Status = DebugSupport->RegisterPeriodicCallback (DebugSupport, Processor,
+                             GdbPeriodicCallBack);
     ASSERT_EFI_ERROR (Status);
   }
 
@@ -524,9 +532,12 @@ GdbSendTSignal (
       BreakType = GetBreakpointType (SystemContext, BreakpointDetected);
 
       // INFO: rwatch is not supported due to the way IA32 debug registers work
-      if ((BreakType == DataWrite) || (BreakType == DataRead) || (BreakType == DataReadWrite)) {
+      if ((BreakType == DataWrite) || (BreakType == DataRead) || (BreakType ==
+                                                                  DataReadWrite))
+      {
         // Construct n:r pair
-        DataAddress = GetBreakpointDataAddress (SystemContext, BreakpointDetected);
+        DataAddress = GetBreakpointDataAddress (SystemContext,
+                        BreakpointDetected);
 
         // Assign appropriate buffer to print particular watchpoint type
         if (BreakType == DataWrite) {
@@ -618,7 +629,8 @@ ReadFromMemory (
   }
 
   // 2 = 'm' + ','
-  if (AsciiStrLen (PacketData) - AsciiStrLen (AddressBuffer) - 2 >= MAX_LENGTH_SIZE) {
+  if (AsciiStrLen (PacketData) - AsciiStrLen (AddressBuffer) - 2 >=
+      MAX_LENGTH_SIZE) {
     Print ((CHAR16 *)L"Length is too long\n");
     SendError (GDB_EBADMEMLENGTH);
     return;
@@ -691,7 +703,8 @@ WriteToMemory (
 
   // Check if Message is not too long/short.
   // 3 = 'M' + ',' + ':'
-  MessageLength = (AsciiStrLen (PacketData) - AsciiStrLen (AddressBuffer) - AsciiStrLen (LengthBuffer) - 3);
+  MessageLength = (AsciiStrLen (PacketData) - AsciiStrLen (AddressBuffer) -
+                   AsciiStrLen (LengthBuffer) - 3);
   if (MessageLength != (2*Length)) {
     // Message too long/short. New data is not the right size.
     SendError (GDB_EBADMEMDATASIZE);
@@ -864,7 +877,9 @@ PeCoffLoaderGetDebuggerInfo (
     //
     // DOS image header is present, so read the PE header after the DOS image header.
     //
-    Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)((UINTN)Pe32Data + (UINTN)((DosHdr->e_lfanew) & 0x0ffff));
+    Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)((UINTN)Pe32Data +
+                                          (UINTN)((DosHdr->e_lfanew) &
+                                                  0x0ffff));
   } else {
     //
     // DOS image header is not present, so PE header is at the image base.
@@ -873,15 +888,21 @@ PeCoffLoaderGetDebuggerInfo (
   }
 
   if (Hdr.Te->Signature == EFI_TE_IMAGE_HEADER_SIGNATURE) {
-    if (Hdr.Te->DataDirectory[EFI_TE_IMAGE_DIRECTORY_ENTRY_DEBUG].VirtualAddress != 0) {
-      DirectoryEntry = &Hdr.Te->DataDirectory[EFI_TE_IMAGE_DIRECTORY_ENTRY_DEBUG];
-      TEImageAdjust  = sizeof (EFI_TE_IMAGE_HEADER) - Hdr.Te->StrippedSize;
-      DebugEntry     = (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY *)((UINTN)Hdr.Te +
-                                                           Hdr.Te->DataDirectory[EFI_TE_IMAGE_DIRECTORY_ENTRY_DEBUG].VirtualAddress +
-                                                           TEImageAdjust);
+    if (Hdr.Te->DataDirectory[EFI_TE_IMAGE_DIRECTORY_ENTRY_DEBUG].VirtualAddress
+        != 0) {
+      DirectoryEntry =
+        &Hdr.Te->DataDirectory[EFI_TE_IMAGE_DIRECTORY_ENTRY_DEBUG];
+      TEImageAdjust = sizeof (EFI_TE_IMAGE_HEADER) - Hdr.Te->StrippedSize;
+      DebugEntry    = (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY *)((UINTN)Hdr.Te +
+                                                          Hdr.Te->DataDirectory
+                                                          [
+                                                                                EFI_TE_IMAGE_DIRECTORY_ENTRY_DEBUG
+                                                          ].VirtualAddress +
+                                                          TEImageAdjust);
     }
 
-    SizeOfHeaders = sizeof (EFI_TE_IMAGE_HEADER) + (UINTN)Hdr.Te->BaseOfCode - (UINTN)Hdr.Te->StrippedSize;
+    SizeOfHeaders = sizeof (EFI_TE_IMAGE_HEADER) + (UINTN)Hdr.Te->BaseOfCode -
+                    (UINTN)Hdr.Te->StrippedSize;
 
     // __APPLE__ check this math...
     *DebugBase = ((CHAR8 *)Pe32Data) -  TEImageAdjust;
@@ -920,16 +941,28 @@ PeCoffLoaderGetDebuggerInfo (
       //
       SizeOfHeaders       = Hdr.Pe32->OptionalHeader.SizeOfHeaders;
       NumberOfRvaAndSizes = Hdr.Pe32->OptionalHeader.NumberOfRvaAndSizes;
-      DirectoryEntry      = (EFI_IMAGE_DATA_DIRECTORY *)&(Hdr.Pe32->OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_DEBUG]);
-      DebugEntry          = (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY *)((UINTN)Pe32Data + DirectoryEntry->VirtualAddress);
-    } else if (Hdr.Pe32->OptionalHeader.Magic == EFI_IMAGE_NT_OPTIONAL_HDR64_MAGIC) {
+      DirectoryEntry      =
+        (EFI_IMAGE_DATA_DIRECTORY *)&(Hdr.Pe32->OptionalHeader.DataDirectory[
+                                                                                                  EFI_IMAGE_DIRECTORY_ENTRY_DEBUG
+                                      ]);
+      DebugEntry =
+        (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY *)((UINTN)Pe32Data +
+                                            DirectoryEntry->VirtualAddress);
+    } else if (Hdr.Pe32->OptionalHeader.Magic ==
+               EFI_IMAGE_NT_OPTIONAL_HDR64_MAGIC) {
       //
       // Use PE32+ offset get Debug Directory Entry
       //
       SizeOfHeaders       = Hdr.Pe32Plus->OptionalHeader.SizeOfHeaders;
       NumberOfRvaAndSizes = Hdr.Pe32Plus->OptionalHeader.NumberOfRvaAndSizes;
-      DirectoryEntry      = (EFI_IMAGE_DATA_DIRECTORY *)&(Hdr.Pe32Plus->OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_DEBUG]);
-      DebugEntry          = (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY *)((UINTN)Pe32Data + DirectoryEntry->VirtualAddress);
+      DirectoryEntry      =
+        (EFI_IMAGE_DATA_DIRECTORY *)&(Hdr.Pe32Plus->OptionalHeader.DataDirectory
+                                      [
+                                                            EFI_IMAGE_DIRECTORY_ENTRY_DEBUG
+                                      ]);
+      DebugEntry =
+        (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY *)((UINTN)Pe32Data +
+                                            DirectoryEntry->VirtualAddress);
     }
 
     if (NumberOfRvaAndSizes <= EFI_IMAGE_DIRECTORY_ENTRY_DEBUG) {
@@ -944,18 +977,24 @@ PeCoffLoaderGetDebuggerInfo (
     return NULL;
   }
 
-  for (DirCount = 0; DirCount < DirectoryEntry->Size; DirCount += sizeof (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY), DebugEntry++) {
+  for (DirCount = 0; DirCount < DirectoryEntry->Size; DirCount +=
+         sizeof (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY), DebugEntry++) {
     if (DebugEntry->Type == EFI_IMAGE_DEBUG_TYPE_CODEVIEW) {
       if (DebugEntry->SizeOfData > 0) {
-        CodeViewEntryPointer = (VOID *)((UINTN)DebugEntry->RVA + ((UINTN)Pe32Data) + (UINTN)TEImageAdjust);
+        CodeViewEntryPointer = (VOID *)((UINTN)DebugEntry->RVA +
+                                        ((UINTN)Pe32Data) +
+                                        (UINTN)TEImageAdjust);
         switch (*(UINT32 *)CodeViewEntryPointer) {
           case CODEVIEW_SIGNATURE_NB10:
-            return (VOID *)((CHAR8 *)CodeViewEntryPointer + sizeof (EFI_IMAGE_DEBUG_CODEVIEW_NB10_ENTRY));
+            return (VOID *)((CHAR8 *)CodeViewEntryPointer +
+                            sizeof (EFI_IMAGE_DEBUG_CODEVIEW_NB10_ENTRY));
           case CODEVIEW_SIGNATURE_RSDS:
-            return (VOID *)((CHAR8 *)CodeViewEntryPointer + sizeof (EFI_IMAGE_DEBUG_CODEVIEW_RSDS_ENTRY));
+            return (VOID *)((CHAR8 *)CodeViewEntryPointer +
+                            sizeof (EFI_IMAGE_DEBUG_CODEVIEW_RSDS_ENTRY));
           case CODEVIEW_SIGNATURE_MTOC:
             *DebugBase = (VOID *)(UINTN)((UINTN)DebugBase - SizeOfHeaders);
-            return (VOID *)((CHAR8 *)CodeViewEntryPointer + sizeof (EFI_IMAGE_DEBUG_CODEVIEW_MTOC_ENTRY));
+            return (VOID *)((CHAR8 *)CodeViewEntryPointer +
+                            sizeof (EFI_IMAGE_DEBUG_CODEVIEW_MTOC_ENTRY));
           default:
             break;
         }
@@ -1012,7 +1051,8 @@ QxferLibrary (
 
   if (Offset != gPacketqXferLibraryOffset) {
     SendError (GDB_EINVALIDARG);
-    Print (L"\nqXferLibrary (%d, %d) != %d\n", Offset, Length, gPacketqXferLibraryOffset);
+    Print (L"\nqXferLibrary (%d, %d) != %d\n", Offset, Length,
+      gPacketqXferLibraryOffset);
 
     // Force a retry from the beginning
     gPacketqXferLibraryOffset = 0;
@@ -1021,7 +1061,8 @@ QxferLibrary (
   }
 
   if (Offset == 0) {
-    gPacketqXferLibraryOffset += gXferObjectReadResponse ('m', "<library-list>\n");
+    gPacketqXferLibraryOffset += gXferObjectReadResponse ('m',
+                                   "<library-list>\n");
 
     // The owner of the table may have had to ralloc it so grab a fresh copy every time
     // we assume qXferLibrary will get called over and over again until the entire XML table is
@@ -1032,13 +1073,16 @@ QxferLibrary (
   }
 
   if (gDebugTable != NULL) {
-    for ( ; gEfiDebugImageTableEntry < gDebugImageTableHeader->TableSize; gEfiDebugImageTableEntry++, gDebugTable++) {
+    for ( ; gEfiDebugImageTableEntry < gDebugImageTableHeader->TableSize;
+          gEfiDebugImageTableEntry++, gDebugTable++) {
       if (gDebugTable->NormalImage != NULL) {
-        if ((gDebugTable->NormalImage->ImageInfoType == EFI_DEBUG_IMAGE_INFO_TYPE_NORMAL) &&
+        if ((gDebugTable->NormalImage->ImageInfoType ==
+             EFI_DEBUG_IMAGE_INFO_TYPE_NORMAL) &&
             (gDebugTable->NormalImage->LoadedImageProtocolInstance != NULL))
         {
           Pdb = PeCoffLoaderGetDebuggerInfo (
-                  gDebugTable->NormalImage->LoadedImageProtocolInstance->ImageBase,
+                  gDebugTable->NormalImage->LoadedImageProtocolInstance->
+                    ImageBase,
                   &LoadAddress
                   );
           if (Pdb != NULL) {
@@ -1050,7 +1094,8 @@ QxferLibrary (
                      LoadAddress
                      );
             if ((Size != 0) && (Size != (sizeof (gXferLibraryBuffer) - 1))) {
-              gPacketqXferLibraryOffset += gXferObjectReadResponse ('m', gXferLibraryBuffer);
+              gPacketqXferLibraryOffset += gXferObjectReadResponse ('m',
+                                             gXferLibraryBuffer);
 
               // Update loop variables so we are in the right place when we get back
               gEfiDebugImageTableEntry++;
@@ -1146,20 +1191,24 @@ GdbExceptionHandler (
         // General Query Packets
         if (AsciiStrnCmp (gInBuffer, "qSupported", 10) == 0) {
           // return what we currently support, we don't parse what gdb supports
-          AsciiSPrint (gOutBuffer, MAX_BUF_SIZE, "qXfer:libraries:read+;PacketSize=%d", MAX_BUF_SIZE);
+          AsciiSPrint (gOutBuffer, MAX_BUF_SIZE,
+            "qXfer:libraries:read+;PacketSize=%d", MAX_BUF_SIZE);
           SendPacket (gOutBuffer);
-        } else if (AsciiStrnCmp (gInBuffer, "qXfer:libraries:read::", 22) == 0) {
+        } else if (AsciiStrnCmp (gInBuffer, "qXfer:libraries:read::", 22) ==
+                   0) {
           // ‘qXfer:libraries:read::offset,length
           // gInBuffer[22] is offset string, ++Ptr is length string’
           for (Ptr = &gInBuffer[22]; *Ptr != ','; Ptr++) {
           }
 
           // Not sure if multi-radix support is required. Currently only support decimal
-          QxferLibrary (AsciiStrHexToUintn (&gInBuffer[22]), AsciiStrHexToUintn (++Ptr));
+          QxferLibrary (AsciiStrHexToUintn (&gInBuffer[22]),
+            AsciiStrHexToUintn (++Ptr));
         }
 
         if (AsciiStrnCmp (gInBuffer, "qOffsets", 10) == 0) {
-          AsciiSPrint (gOutBuffer, MAX_BUF_SIZE, "Text=1000;Data=f000;Bss=f000");
+          AsciiSPrint (gOutBuffer, MAX_BUF_SIZE,
+            "Text=1000;Data=f000;Bss=f000");
           SendPacket (gOutBuffer);
         } else {
           // Send empty packet

@@ -32,15 +32,19 @@
 #define MMC_OCR_ACCESS_BYTE    0x1          /* bit[29] */
 #define MMC_OCR_ACCESS_SECTOR  0x2          /* bit[30] */
 
-#define MMC_CSD_GET_CCC(Response)            (Response[2] >> 20)
-#define MMC_CSD_GET_TRANSPEED(Response)      (Response[3] & 0xFF)
-#define MMC_CSD_GET_READBLLEN(Response)      ((Response[2] >> 16) & 0xF)
-#define MMC_CSD_GET_WRITEBLLEN(Response)     ((Response[0] >> 22) & 0xF)
-#define MMC_CSD_GET_FILEFORMAT(Response)     ((Response[0] >> 10) & 0x3)
-#define MMC_CSD_GET_FILEFORMATGRP(Response)  ((Response[0] >> 15) & 0x1)
-#define MMC_CSD_GET_DEVICESIZE(csd)          (((Response[1] >> 30) & 0x3) | ((Response[2] & 0x3FF) << 2))
-#define HC_MMC_CSD_GET_DEVICESIZE(Response)  ((Response[1] >> 16) | ((Response[2] & 0x40) << 16));
-#define MMC_CSD_GET_DEVICESIZEMULT(csd)      ((Response[1] >> 15) & 0x7)
+#define MMC_CSD_GET_CCC(Response)              (Response[2] >> 20)
+#define MMC_CSD_GET_TRANSPEED(Response)        (Response[3] & 0xFF)
+#define MMC_CSD_GET_READBLLEN(Response)        ((Response[2] >> 16) & 0xF)
+#define MMC_CSD_GET_WRITEBLLEN(Response)       ((Response[0] >> 22) & 0xF)
+#define MMC_CSD_GET_FILEFORMAT(Response)       ((Response[0] >> 10) & 0x3)
+#define MMC_CSD_GET_FILEFORMATGRP(Response)    ((Response[0] >> 15) & 0x1)
+#define MMC_CSD_GET_DEVICESIZE( \
+                              csd)          \
+                                               (((Response[1] >> 30) & 0x3) | ((Response[2] & 0x3FF) << 2))
+#define HC_MMC_CSD_GET_DEVICESIZE( \
+                                 Response)  \
+                                               ((Response[1] >> 16) | ((Response[2] & 0x40) << 16));
+#define MMC_CSD_GET_DEVICESIZEMULT(csd)        ((Response[1] >> 15) & 0x7)
 
 #define MMC_R0_READY_FOR_DATA  (1 << 8)
 
@@ -341,8 +345,12 @@ typedef struct _MMC_HOST_INSTANCE {
 } MMC_HOST_INSTANCE;
 
 #define MMC_HOST_INSTANCE_SIGNATURE  SIGNATURE_32('m', 'm', 'c', 'h')
-#define MMC_HOST_INSTANCE_FROM_BLOCK_IO_THIS(a)  CR (a, MMC_HOST_INSTANCE, BlockIo, MMC_HOST_INSTANCE_SIGNATURE)
-#define MMC_HOST_INSTANCE_FROM_LINK(a)           CR (a, MMC_HOST_INSTANCE, Link, MMC_HOST_INSTANCE_SIGNATURE)
+#define MMC_HOST_INSTANCE_FROM_BLOCK_IO_THIS( \
+                                            a)  \
+      CR (a, MMC_HOST_INSTANCE, BlockIo, MMC_HOST_INSTANCE_SIGNATURE)
+#define MMC_HOST_INSTANCE_FROM_LINK( \
+                                   a)           \
+      CR (a, MMC_HOST_INSTANCE, Link, MMC_HOST_INSTANCE_SIGNATURE)
 
 EFI_STATUS
 EFIAPI

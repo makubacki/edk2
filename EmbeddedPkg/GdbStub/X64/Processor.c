@@ -13,20 +13,20 @@
 // Array of exception types that need to be hooked by the debugger
 //
 EFI_EXCEPTION_TYPE_ENTRY  gExceptionType[] = {
-  { EXCEPT_X64_DIVIDE_ERROR,    GDB_SIGFPE  },
-  { EXCEPT_X64_DEBUG,           GDB_SIGTRAP },
-  { EXCEPT_X64_NMI,             GDB_SIGEMT  },
-  { EXCEPT_X64_BREAKPOINT,      GDB_SIGTRAP },
-  { EXCEPT_X64_OVERFLOW,        GDB_SIGSEGV },
-  { EXCEPT_X64_BOUND,           GDB_SIGSEGV },
-  { EXCEPT_X64_INVALID_OPCODE,  GDB_SIGILL  },
-  { EXCEPT_X64_DOUBLE_FAULT,    GDB_SIGEMT  },
-  { EXCEPT_X64_STACK_FAULT,     GDB_SIGSEGV },
-  { EXCEPT_X64_GP_FAULT,        GDB_SIGSEGV },
-  { EXCEPT_X64_PAGE_FAULT,      GDB_SIGSEGV },
-  { EXCEPT_X64_FP_ERROR,        GDB_SIGEMT  },
-  { EXCEPT_X64_ALIGNMENT_CHECK, GDB_SIGEMT  },
-  { EXCEPT_X64_MACHINE_CHECK,   GDB_SIGEMT  }
+  { EXCEPT_X64_DIVIDE_ERROR,    GDB_SIGFPE              },
+  { EXCEPT_X64_DEBUG,           GDB_SIGTRAP             },
+  { EXCEPT_X64_NMI,             GDB_SIGEMT              },
+  { EXCEPT_X64_BREAKPOINT,      GDB_SIGTRAP             },
+  { EXCEPT_X64_OVERFLOW,        GDB_SIGSEGV             },
+  { EXCEPT_X64_BOUND,           GDB_SIGSEGV             },
+  { EXCEPT_X64_INVALID_OPCODE,  GDB_SIGILL              },
+  { EXCEPT_X64_DOUBLE_FAULT,    GDB_SIGEMT              },
+  { EXCEPT_X64_STACK_FAULT,     GDB_SIGSEGV             },
+  { EXCEPT_X64_GP_FAULT,        GDB_SIGSEGV             },
+  { EXCEPT_X64_PAGE_FAULT,      GDB_SIGSEGV             },
+  { EXCEPT_X64_FP_ERROR,        GDB_SIGEMT              },
+  { EXCEPT_X64_ALIGNMENT_CHECK, GDB_SIGEMT              },
+  { EXCEPT_X64_MACHINE_CHECK,   GDB_SIGEMT              }
 };
 
 // The offsets of registers SystemContextX64.
@@ -115,7 +115,8 @@ FindPointerToRegister (
 {
   UINT8  *TempPtr;
 
-  TempPtr = ((UINT8 *)SystemContext.SystemContextX64) + gRegisterOffsets[RegNumber];
+  TempPtr = ((UINT8 *)SystemContext.SystemContextX64) +
+            gRegisterOffsets[RegNumber];
   return (UINTN *)TempPtr;
 }
 
@@ -137,8 +138,14 @@ BasicReadRegister (
 
   RegSize = 0;
   while (RegSize < 64) {
-    *OutBufPtr++ = mHexToStr[((*FindPointerToRegister (SystemContext, RegNumber) >> (RegSize+4)) & 0xf)];
-    *OutBufPtr++ = mHexToStr[((*FindPointerToRegister (SystemContext, RegNumber) >> RegSize) & 0xf)];
+    *OutBufPtr++ = mHexToStr[((*FindPointerToRegister (
+                                  SystemContext,
+                                  RegNumber
+                                  ) >> (RegSize+4)) & 0xf)];
+    *OutBufPtr++ = mHexToStr[((*FindPointerToRegister (
+                                  SystemContext,
+                                  RegNumber
+                                  ) >> RegSize) & 0xf)];
     RegSize      = RegSize + 8;
   }
 
@@ -820,7 +827,13 @@ InsertBreakPoint (
   }
 
   // Write Address, length data at particular DR register
-  Status = EnableDebugRegister (SystemContext, Register, Address, Length, (UINTN)BreakType);
+  Status = EnableDebugRegister (
+             SystemContext,
+             Register,
+             Address,
+             Length,
+             (UINTN)BreakType
+             );
   if (EFI_ERROR (Status)) {
     if (Status == EFI_UNSUPPORTED) {
       Print ((CHAR16 *)L"Not supported\n");
@@ -896,7 +909,13 @@ RemoveBreakPoint (
   }
 
   // Find matching debug register
-  Status = FindMatchingDebugRegister (SystemContext, Address, Length, (UINTN)BreakType, &Register);
+  Status = FindMatchingDebugRegister (
+             SystemContext,
+             Address,
+             Length,
+             (UINTN)BreakType,
+             &Register
+             );
   if (EFI_ERROR (Status)) {
     if (Status == EFI_UNSUPPORTED) {
       Print ((CHAR16 *)L"Not supported.\n");

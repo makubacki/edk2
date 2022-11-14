@@ -164,12 +164,19 @@ FastbootTransportUsbStart (
 
   mReceiveEvent = ReceiveEvent;
 
-  mGetConfigDescriptorResponse.ConfigDescriptor.TotalLength = sizeof (GET_CONFIG_DESCRIPTOR_RESPONSE);
-  Responses                                                 = &mGetConfigDescriptorResponse;
+  mGetConfigDescriptorResponse.ConfigDescriptor.TotalLength =
+    sizeof (GET_CONFIG_DESCRIPTOR_RESPONSE);
+  Responses =
+    &mGetConfigDescriptorResponse;
 
   InitializeListHead (&mPacketList);
 
-  return mUsbDevice->Start (&mDeviceDescriptor, (VOID **)&Responses, DataReceived, DataSent);
+  return mUsbDevice->Start (
+                       &mDeviceDescriptor,
+                       (VOID **)&Responses,
+                       DataReceived,
+                       DataSent
+                       );
 }
 
 /*
@@ -256,7 +263,11 @@ FastbootTransportUsbEntryPoint (
   EFI_STATUS  Status;
 
   // Assume there's only one USB peripheral controller.
-  Status = gBS->LocateProtocol (&gUsbDeviceProtocolGuid, NULL, (VOID **)&mUsbDevice);
+  Status = gBS->LocateProtocol (
+                  &gUsbDeviceProtocolGuid,
+                  NULL,
+                  (VOID **)&mUsbDevice
+                  );
   if (EFI_ERROR (Status)) {
     return Status;
   }

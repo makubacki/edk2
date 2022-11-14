@@ -98,7 +98,9 @@ EfiGetEpochDays (
   y = Time->Year + 4800 - a;
   m = Time->Month + (12*a) - 3;
 
-  JulianDate = Time->Day + ((153*m + 2)/5) + (365*y) + (y/4) - (y/100) + (y/400) - 32045;
+  JulianDate = Time->Day + ((153*m + 2)/5) + (365*y) + (y/4) - (y/100) + (y/
+                                                                          400) -
+               32045;
 
   ASSERT (JulianDate >= EPOCH_JULIAN_DATE);
   EpochDays = JulianDate - EPOCH_JULIAN_DATE;
@@ -125,7 +127,10 @@ EfiTimeToEpoch (
 
   EpochDays = EfiGetEpochDays (Time);
 
-  EpochSeconds = (EpochDays * SEC_PER_DAY) + ((UINTN)Time->Hour * SEC_PER_HOUR) + (Time->Minute * SEC_PER_MIN) + Time->Second;
+  EpochSeconds = (EpochDays * SEC_PER_DAY) + ((UINTN)Time->Hour *
+                                              SEC_PER_HOUR) + (Time->Minute *
+                                                               SEC_PER_MIN) +
+                 Time->Second;
 
   return EpochSeconds;
 }
@@ -197,7 +202,9 @@ IsDayValid (
   IN  EFI_TIME  *Time
   )
 {
-  STATIC CONST INTN  DayOfMonth[12] = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+  STATIC CONST INTN  DayOfMonth[12] = {
+    31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+  };
 
   if ((Time->Day < 1) ||
       (Time->Day > DayOfMonth[Time->Month - 1]) ||

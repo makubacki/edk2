@@ -107,7 +107,10 @@ SubmitRecieveToken (
   mRxData[mNextSubmitIndex].FragmentTable[0].FragmentLength = RX_FRAGMENT_SIZE;
   mRxData[mNextSubmitIndex].FragmentTable[0].FragmentBuffer = FragmentBuffer;
 
-  Status = mTcpConnection->Receive (mTcpConnection, &mReceiveToken[mNextSubmitIndex]);
+  Status = mTcpConnection->Receive (
+                             mTcpConnection,
+                             &mReceiveToken[mNextSubmitIndex]
+                             );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "TCP Receive: %r\n", Status));
     FreePool (FragmentBuffer);
@@ -327,7 +330,10 @@ TcpFastbootTransportStart (
   mReceiveEvent = ReceiveEvent;
   InitializeListHead (&mPacketListHead);
 
-  mTextOut->OutputString (mTextOut, L"Initialising TCP Fastboot transport...\r\n");
+  mTextOut->OutputString (
+              mTextOut,
+              L"Initialising TCP Fastboot transport...\r\n"
+              );
 
   //
   // Open a passive TCP instance
@@ -481,7 +487,13 @@ TcpFastbootTransportStop (
 
     CloseToken.AbortOnClose = FALSE;
 
-    Status = gBS->CreateEvent (0, 0, NULL, NULL, &CloseToken.CompletionToken.Event);
+    Status = gBS->CreateEvent (
+                    0,
+                    0,
+                    NULL,
+                    NULL,
+                    &CloseToken.CompletionToken.Event
+                    );
     ASSERT_EFI_ERROR (Status);
 
     Status = mTcpConnection->Close (mTcpConnection, &CloseToken);
@@ -517,7 +529,10 @@ TcpFastbootTransportStop (
   // Free any data the user didn't pick up
   Entry = (FASTBOOT_TCP_PACKET_LIST *)GetFirstNode (&mPacketListHead);
   while (!IsNull (&mPacketListHead, &Entry->Link)) {
-    NextEntry = (FASTBOOT_TCP_PACKET_LIST *)GetNextNode (&mPacketListHead, &Entry->Link);
+    NextEntry = (FASTBOOT_TCP_PACKET_LIST *)GetNextNode (
+                                              &mPacketListHead,
+                                              &Entry->Link
+                                              );
 
     RemoveEntryList (&Entry->Link);
     if (Entry->Buffer) {

@@ -108,7 +108,10 @@ VirtualKeyboardDriverBindingStart (
   //
   // Allocate the private device structure
   //
-  VirtualKeyboardPrivate = (VIRTUAL_KEYBOARD_DEV *)AllocateZeroPool (sizeof (VIRTUAL_KEYBOARD_DEV));
+  VirtualKeyboardPrivate = (VIRTUAL_KEYBOARD_DEV *)AllocateZeroPool (
+                                                     sizeof (
+                                                                            VIRTUAL_KEYBOARD_DEV)
+                                                     );
   if (VirtualKeyboardPrivate == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;
@@ -126,14 +129,20 @@ VirtualKeyboardDriverBindingStart (
   VirtualKeyboardPrivate->QueueForNotify.Rear  = 0;
 
   VirtualKeyboardPrivate->SimpleTextIn.Reset         = VirtualKeyboardReset;
-  VirtualKeyboardPrivate->SimpleTextIn.ReadKeyStroke = VirtualKeyboardReadKeyStroke;
+  VirtualKeyboardPrivate->SimpleTextIn.ReadKeyStroke =
+    VirtualKeyboardReadKeyStroke;
 
-  VirtualKeyboardPrivate->SimpleTextInputEx.Reset           = VirtualKeyboardResetEx;
-  VirtualKeyboardPrivate->SimpleTextInputEx.ReadKeyStrokeEx = VirtualKeyboardReadKeyStrokeEx;
-  VirtualKeyboardPrivate->SimpleTextInputEx.SetState        = VirtualKeyboardSetState;
+  VirtualKeyboardPrivate->SimpleTextInputEx.Reset =
+    VirtualKeyboardResetEx;
+  VirtualKeyboardPrivate->SimpleTextInputEx.ReadKeyStrokeEx =
+    VirtualKeyboardReadKeyStrokeEx;
+  VirtualKeyboardPrivate->SimpleTextInputEx.SetState =
+    VirtualKeyboardSetState;
 
-  VirtualKeyboardPrivate->SimpleTextInputEx.RegisterKeyNotify   = VirtualKeyboardRegisterKeyNotify;
-  VirtualKeyboardPrivate->SimpleTextInputEx.UnregisterKeyNotify = VirtualKeyboardUnregisterKeyNotify;
+  VirtualKeyboardPrivate->SimpleTextInputEx.RegisterKeyNotify =
+    VirtualKeyboardRegisterKeyNotify;
+  VirtualKeyboardPrivate->SimpleTextInputEx.UnregisterKeyNotify =
+    VirtualKeyboardUnregisterKeyNotify;
   InitializeListHead (&VirtualKeyboardPrivate->NotifyList);
 
   Status = PlatformVirtual->Register ();
@@ -217,7 +226,8 @@ VirtualKeyboardDriverBindingStart (
   // Reset the keyboard device
   //
   Status = VirtualKeyboardPrivate->SimpleTextInputEx.Reset (
-                                                       &VirtualKeyboardPrivate->SimpleTextInputEx,
+                                                       &VirtualKeyboardPrivate->
+                                                         SimpleTextInputEx,
                                                        FALSE
                                                        );
   if (EFI_ERROR (Status)) {
@@ -464,13 +474,15 @@ IsKeyRegistered (
   // these state could be ignored.
   //
   if ((RegsiteredData->KeyState.KeyShiftState != 0) &&
-      (RegsiteredData->KeyState.KeyShiftState != InputData->KeyState.KeyShiftState))
+      (RegsiteredData->KeyState.KeyShiftState !=
+       InputData->KeyState.KeyShiftState))
   {
     return FALSE;
   }
 
   if ((RegsiteredData->KeyState.KeyToggleState != 0) &&
-      (RegsiteredData->KeyState.KeyToggleState != InputData->KeyState.KeyToggleState))
+      (RegsiteredData->KeyState.KeyToggleState !=
+       InputData->KeyState.KeyToggleState))
   {
     return FALSE;
   }
@@ -533,7 +545,9 @@ VirtualKeyboardWaitForKeyEx (
 {
   VIRTUAL_KEYBOARD_DEV  *VirtualKeyboardPrivate;
 
-  VirtualKeyboardPrivate = TEXT_INPUT_EX_VIRTUAL_KEYBOARD_DEV_FROM_THIS (Context);
+  VirtualKeyboardPrivate = TEXT_INPUT_EX_VIRTUAL_KEYBOARD_DEV_FROM_THIS (
+                             Context
+                             );
   VirtualKeyboardWaitForKey (Event, &VirtualKeyboardPrivate->SimpleTextIn);
 }
 
@@ -612,7 +626,8 @@ VirtualKeyboardResetEx (
   VirtualKeyboardPrivate = TEXT_INPUT_EX_VIRTUAL_KEYBOARD_DEV_FROM_THIS (This);
 
   Status = VirtualKeyboardPrivate->SimpleTextIn.Reset (
-                                                  &VirtualKeyboardPrivate->SimpleTextIn,
+                                                  &VirtualKeyboardPrivate->
+                                                    SimpleTextIn,
                                                   ExtendedVerification
                                                   );
   if (EFI_ERROR (Status)) {
@@ -722,7 +737,9 @@ VirtualKeyboardReadKeyStroke (
   //
   // Convert the Ctrl+[a-z] to Ctrl+[1-26]
   //
-  if ((KeyData.KeyState.KeyShiftState & (EFI_LEFT_CONTROL_PRESSED | EFI_RIGHT_CONTROL_PRESSED)) != 0) {
+  if ((KeyData.KeyState.KeyShiftState & (EFI_LEFT_CONTROL_PRESSED |
+                                         EFI_RIGHT_CONTROL_PRESSED)) != 0)
+  {
     if ((KeyData.Key.UnicodeChar >= L'a') &&
         (KeyData.Key.UnicodeChar <= L'z'))
     {
@@ -879,13 +896,17 @@ VirtualKeyboardRegisterKeyNotify (
   // Allocate resource to save the notification function
   //
 
-  NewNotify = (VIRTUAL_KEYBOARD_CONSOLE_IN_EX_NOTIFY *)AllocateZeroPool (sizeof (VIRTUAL_KEYBOARD_CONSOLE_IN_EX_NOTIFY));
+  NewNotify = (VIRTUAL_KEYBOARD_CONSOLE_IN_EX_NOTIFY *)AllocateZeroPool (
+                                                         sizeof (
+                                                                                VIRTUAL_KEYBOARD_CONSOLE_IN_EX_NOTIFY)
+                                                         );
   if (NewNotify == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Exit;
   }
 
-  NewNotify->Signature         = VIRTUAL_KEYBOARD_CONSOLE_IN_EX_NOTIFY_SIGNATURE;
+  NewNotify->Signature =
+    VIRTUAL_KEYBOARD_CONSOLE_IN_EX_NOTIFY_SIGNATURE;
   NewNotify->KeyNotificationFn = KeyNotificationFunction;
   CopyMem (&NewNotify->KeyData, KeyData, sizeof (EFI_KEY_DATA));
   InsertTailList (&VirtualKeyboardPrivate->NotifyList, &NewNotify->NotifyEntry);
@@ -933,7 +954,8 @@ VirtualKeyboardUnregisterKeyNotify (
     return EFI_INVALID_PARAMETER;
   }
 
-  if (((VIRTUAL_KEYBOARD_CONSOLE_IN_EX_NOTIFY *)NotificationHandle)->Signature !=
+  if (((VIRTUAL_KEYBOARD_CONSOLE_IN_EX_NOTIFY *)NotificationHandle)->Signature
+      !=
       VIRTUAL_KEYBOARD_CONSOLE_IN_EX_NOTIFY_SIGNATURE)
   {
     return EFI_INVALID_PARAMETER;

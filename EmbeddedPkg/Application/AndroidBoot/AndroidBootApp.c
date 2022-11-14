@@ -65,7 +65,10 @@ AndroidBootAppEntryPoint (
                   (VOID **)&EfiDevicePathFromTextProtocol
                   );
   ASSERT_EFI_ERROR (Status);
-  DevicePath = (EFI_DEVICE_PATH *)EfiDevicePathFromTextProtocol->ConvertTextToDevicePath (BootPathStr);
+  DevicePath =
+    (EFI_DEVICE_PATH *)EfiDevicePathFromTextProtocol->ConvertTextToDevicePath (
+                                                        BootPathStr
+                                                        );
   ASSERT (DevicePath != NULL);
 
   Status = ValidateAndroidMediaDevicePath (DevicePath);
@@ -97,7 +100,11 @@ AndroidBootAppEntryPoint (
 
   MediaId   = BlockIo->Media->MediaId;
   BlockSize = BlockIo->Media->BlockSize;
-  Buffer    = AllocatePages (EFI_SIZE_TO_PAGES (sizeof (ANDROID_BOOTIMG_HEADER)));
+  Buffer    = AllocatePages (
+                EFI_SIZE_TO_PAGES (
+                  sizeof (ANDROID_BOOTIMG_HEADER)
+                  )
+                );
   if (Buffer == NULL) {
     return EFI_BUFFER_TOO_SMALL;
   }

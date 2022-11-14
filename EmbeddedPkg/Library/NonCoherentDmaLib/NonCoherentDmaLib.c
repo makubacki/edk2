@@ -278,7 +278,10 @@ DmaMap (
       // we only have to add (alignment - 8) worth of padding.
       //
       Map->DoubleBuffer = TRUE;
-      AllocSize         = ALIGN_VALUE (*NumberOfBytes, mCpu->DmaBufferAlignment) +
+      AllocSize         = ALIGN_VALUE (
+                            *NumberOfBytes,
+                            mCpu->DmaBufferAlignment
+                            ) +
                           (mCpu->DmaBufferAlignment - 8);
       Map->BufferAddress = AllocatePool (AllocSize);
       if (Map->BufferAddress == NULL) {
@@ -286,7 +289,10 @@ DmaMap (
         goto FreeMapInfo;
       }
 
-      Buffer         = ALIGN_POINTER (Map->BufferAddress, mCpu->DmaBufferAlignment);
+      Buffer = ALIGN_POINTER (
+                 Map->BufferAddress,
+                 mCpu->DmaBufferAlignment
+                 );
       *DeviceAddress = HostToDeviceAddress (Buffer);
 
       //

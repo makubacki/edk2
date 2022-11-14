@@ -95,7 +95,10 @@ CreateMmcHostInstance (
 
   MmcHostInstance->State = MmcHwInitializationState;
 
-  MmcHostInstance->BlockIo.Media = AllocateCopyPool (sizeof (EFI_BLOCK_IO_MEDIA), &mMmcMediaTemplate);
+  MmcHostInstance->BlockIo.Media = AllocateCopyPool (
+                                     sizeof (EFI_BLOCK_IO_MEDIA),
+                                     &mMmcMediaTemplate
+                                     );
   if (MmcHostInstance->BlockIo.Media == NULL) {
     goto FREE_INSTANCE;
   }
@@ -114,13 +117,18 @@ CreateMmcHostInstance (
     goto FREE_MEDIA;
   }
 
-  DevicePath = (EFI_DEVICE_PATH_PROTOCOL *)AllocatePool (END_DEVICE_PATH_LENGTH);
+  DevicePath = (EFI_DEVICE_PATH_PROTOCOL *)AllocatePool (
+                                             END_DEVICE_PATH_LENGTH
+                                             );
   if (DevicePath == NULL) {
     goto FREE_MEDIA;
   }
 
   SetDevicePathEndNode (DevicePath);
-  MmcHostInstance->DevicePath = AppendDevicePathNode (DevicePath, NewDevicePathNode);
+  MmcHostInstance->DevicePath = AppendDevicePathNode (
+                                  DevicePath,
+                                  NewDevicePathNode
+                                  );
 
   // Publish BlockIO protocol interface
   Status = gBS->InstallMultipleProtocolInterfaces (
@@ -173,7 +181,12 @@ DestroyMmcHostInstance (
   }
 
   if (MmcHostInstance->CardInfo.ECSDData) {
-    FreePages (MmcHostInstance->CardInfo.ECSDData, EFI_SIZE_TO_PAGES (sizeof (ECSD)));
+    FreePages (
+      MmcHostInstance->CardInfo.ECSDData,
+      EFI_SIZE_TO_PAGES (
+        sizeof (ECSD)
+        )
+      );
   }
 
   FreePool (MmcHostInstance);
@@ -333,7 +346,9 @@ MmcDriverBindingStop (
 
   // For each MMC instance
   CurrentLink = mMmcHostPool.ForwardLink;
-  while (CurrentLink != NULL && CurrentLink != &mMmcHostPool && (Status == EFI_SUCCESS)) {
+  while (CurrentLink != NULL && CurrentLink != &mMmcHostPool && (Status ==
+                                                                 EFI_SUCCESS))
+  {
     MmcHostInstance = MMC_HOST_INSTANCE_FROM_LINK (CurrentLink);
     ASSERT (MmcHostInstance != NULL);
 
@@ -371,10 +386,14 @@ CheckCardsCallback (
     MmcHostInstance = MMC_HOST_INSTANCE_FROM_LINK (CurrentLink);
     ASSERT (MmcHostInstance != NULL);
 
-    if (MmcHostInstance->MmcHost->IsCardPresent (MmcHostInstance->MmcHost) == !MmcHostInstance->Initialized) {
+    if (MmcHostInstance->MmcHost->IsCardPresent (MmcHostInstance->MmcHost) ==
+        !MmcHostInstance->Initialized)
+    {
       MmcHostInstance->State                       = MmcHwInitializationState;
-      MmcHostInstance->BlockIo.Media->MediaPresent = !MmcHostInstance->Initialized;
-      MmcHostInstance->Initialized                 = !MmcHostInstance->Initialized;
+      MmcHostInstance->BlockIo.Media->MediaPresent =
+        !MmcHostInstance->Initialized;
+      MmcHostInstance->Initialized =
+        !MmcHostInstance->Initialized;
 
       if (MmcHostInstance->BlockIo.Media->MediaPresent) {
         InitializeMmcDevice (MmcHostInstance);

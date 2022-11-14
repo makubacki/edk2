@@ -59,7 +59,10 @@ MonotonicCounterDriverInitialize (
   EFI_HANDLE  Handle = NULL;
 
   // Make sure the Monotonic Counter Architectural Protocol is not already installed in the system
-  ASSERT_PROTOCOL_ALREADY_INSTALLED (NULL, &gEfiMonotonicCounterArchProtocolGuid);
+  ASSERT_PROTOCOL_ALREADY_INSTALLED (
+    NULL,
+    &gEfiMonotonicCounterArchProtocolGuid
+    );
 
   // Fill in the EFI Boot Services and EFI Runtime Services Monotonic Counter Fields
   gBS->GetNextMonotonicCount     = GetNextMonotonicCount;

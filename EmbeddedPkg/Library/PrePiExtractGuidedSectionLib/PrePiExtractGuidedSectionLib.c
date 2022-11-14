@@ -13,7 +13,8 @@
 #include <Library/PcdLib.h>
 #include <Library/PrePiLib.h>
 
-#define PRE_PI_EXTRACT_GUIDED_SECTION_DATA_GUID  { 0x385A982C, 0x2F49, 0x4043, { 0xA5, 0x1E, 0x49, 0x01, 0x02, 0x5C, 0x8B, 0x6B }}
+#define PRE_PI_EXTRACT_GUIDED_SECTION_DATA_GUID  \
+  { 0x385A982C, 0x2F49, 0x4043, { 0xA5, 0x1E, 0x49, 0x01, 0x02, 0x5C, 0x8B, 0x6B }}
 
 typedef struct {
   UINT32                                     NumberOfExtractHandler;
@@ -77,16 +78,24 @@ ExtractGuidedSectionRegisterHandlers (
   //
   // Check the global table is enough to contain new Handler.
   //
-  if (SavedData->NumberOfExtractHandler >= PcdGet32 (PcdMaximumGuidedExtractHandler)) {
+  if (SavedData->NumberOfExtractHandler >= PcdGet32 (
+                                             PcdMaximumGuidedExtractHandler
+                                             ))
+  {
     return RETURN_OUT_OF_RESOURCES;
   }
 
   //
   // Register new Handler and guid value.
   //
-  CopyGuid (&SavedData->ExtractHandlerGuidTable[SavedData->NumberOfExtractHandler], SectionGuid);
-  SavedData->ExtractDecodeHandlerTable[SavedData->NumberOfExtractHandler]    = DecodeHandler;
-  SavedData->ExtractGetInfoHandlerTable[SavedData->NumberOfExtractHandler++] = GetInfoHandler;
+  CopyGuid (
+    &SavedData->ExtractHandlerGuidTable[SavedData->NumberOfExtractHandler],
+    SectionGuid
+    );
+  SavedData->ExtractDecodeHandlerTable[SavedData->NumberOfExtractHandler] =
+    DecodeHandler;
+  SavedData->ExtractGetInfoHandlerTable[SavedData->NumberOfExtractHandler++] =
+    GetInfoHandler;
 
   return RETURN_SUCCESS;
 }
@@ -131,16 +140,22 @@ ExtractGuidedSectionGetInfo (
   SavedData = GetSavedData ();
 
   if (IS_SECTION2 (InputSection)) {
-    SectionDefinitionGuid = &(((EFI_GUID_DEFINED_SECTION2 *)InputSection)->SectionDefinitionGuid);
+    SectionDefinitionGuid =
+      &(((EFI_GUID_DEFINED_SECTION2 *)InputSection)->SectionDefinitionGuid);
   } else {
-    SectionDefinitionGuid = &(((EFI_GUID_DEFINED_SECTION *)InputSection)->SectionDefinitionGuid);
+    SectionDefinitionGuid =
+      &(((EFI_GUID_DEFINED_SECTION *)InputSection)->SectionDefinitionGuid);
   }
 
   //
   // Search the match registered GetInfo handler for the input guided section.
   //
   for (Index = 0; Index < SavedData->NumberOfExtractHandler; Index++) {
-    if (CompareGuid (&SavedData->ExtractHandlerGuidTable[Index], SectionDefinitionGuid)) {
+    if (CompareGuid (
+          &SavedData->ExtractHandlerGuidTable[Index],
+          SectionDefinitionGuid
+          ))
+    {
       break;
     }
   }
@@ -186,16 +201,22 @@ ExtractGuidedSectionDecode (
   SavedData = GetSavedData ();
 
   if (IS_SECTION2 (InputSection)) {
-    SectionDefinitionGuid = &(((EFI_GUID_DEFINED_SECTION2 *)InputSection)->SectionDefinitionGuid);
+    SectionDefinitionGuid =
+      &(((EFI_GUID_DEFINED_SECTION2 *)InputSection)->SectionDefinitionGuid);
   } else {
-    SectionDefinitionGuid = &(((EFI_GUID_DEFINED_SECTION *)InputSection)->SectionDefinitionGuid);
+    SectionDefinitionGuid =
+      &(((EFI_GUID_DEFINED_SECTION *)InputSection)->SectionDefinitionGuid);
   }
 
   //
   // Search the match registered GetInfo handler for the input guided section.
   //
   for (Index = 0; Index < SavedData->NumberOfExtractHandler; Index++) {
-    if (CompareGuid (&SavedData->ExtractHandlerGuidTable[Index], SectionDefinitionGuid)) {
+    if (CompareGuid (
+          &SavedData->ExtractHandlerGuidTable[Index],
+          SectionDefinitionGuid
+          ))
+    {
       break;
     }
   }
@@ -225,22 +246,41 @@ ExtractGuidedSectionLibConstructor (
   )
 {
   PRE_PI_EXTRACT_GUIDED_SECTION_DATA  SavedData;
-  GUID                                HobGuid = PRE_PI_EXTRACT_GUIDED_SECTION_DATA_GUID;
+  GUID                                HobGuid =
+    PRE_PI_EXTRACT_GUIDED_SECTION_DATA_GUID;
 
   //
   // Allocate global pool space to store the registered handler and its guid value.
   //
-  SavedData.ExtractHandlerGuidTable = (GUID *)AllocatePool (PcdGet32 (PcdMaximumGuidedExtractHandler) * sizeof (GUID));
+  SavedData.ExtractHandlerGuidTable = (GUID *)AllocatePool (
+                                                PcdGet32 (
+                                                  PcdMaximumGuidedExtractHandler
+                                                  ) * sizeof (GUID)
+                                                );
   if (SavedData.ExtractHandlerGuidTable == NULL) {
     return RETURN_OUT_OF_RESOURCES;
   }
 
-  SavedData.ExtractDecodeHandlerTable = (EXTRACT_GUIDED_SECTION_DECODE_HANDLER *)AllocatePool (PcdGet32 (PcdMaximumGuidedExtractHandler) * sizeof (EXTRACT_GUIDED_SECTION_DECODE_HANDLER));
+  SavedData.ExtractDecodeHandlerTable =
+    (EXTRACT_GUIDED_SECTION_DECODE_HANDLER *)AllocatePool (
+                                               PcdGet32 (
+                                                 PcdMaximumGuidedExtractHandler
+                                                 ) *
+                                               sizeof (
+                                                                                                                                                  EXTRACT_GUIDED_SECTION_DECODE_HANDLER)
+                                               );
   if (SavedData.ExtractDecodeHandlerTable == NULL) {
     return RETURN_OUT_OF_RESOURCES;
   }
 
-  SavedData.ExtractGetInfoHandlerTable = (EXTRACT_GUIDED_SECTION_GET_INFO_HANDLER *)AllocatePool (PcdGet32 (PcdMaximumGuidedExtractHandler) * sizeof (EXTRACT_GUIDED_SECTION_GET_INFO_HANDLER));
+  SavedData.ExtractGetInfoHandlerTable =
+    (EXTRACT_GUIDED_SECTION_GET_INFO_HANDLER *)AllocatePool (
+                                                 PcdGet32 (
+                                                   PcdMaximumGuidedExtractHandler
+                                                   ) *
+                                                 sizeof (
+                                                                                                                                                     EXTRACT_GUIDED_SECTION_GET_INFO_HANDLER)
+                                                 );
   if (SavedData.ExtractGetInfoHandlerTable == NULL) {
     return RETURN_OUT_OF_RESOURCES;
   }

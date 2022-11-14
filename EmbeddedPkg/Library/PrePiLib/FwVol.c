@@ -123,9 +123,11 @@ FileHandleToVolume (
   do {
     Hob.Raw = GetNextHob (EFI_HOB_TYPE_FV, Hob.Raw);
     if (Hob.Raw != NULL) {
-      FwVolHeader = (EFI_FIRMWARE_VOLUME_HEADER *)(UINTN)(Hob.FirmwareVolume->BaseAddress);
+      FwVolHeader =
+        (EFI_FIRMWARE_VOLUME_HEADER *)(UINTN)(Hob.FirmwareVolume->BaseAddress);
       if (((UINT64)(UINTN)FileHandle > (UINT64)(UINTN)FwVolHeader) &&   \
-          ((UINT64)(UINTN)FileHandle <= ((UINT64)(UINTN)FwVolHeader + FwVolHeader->FvLength - 1)))
+          ((UINT64)(UINTN)FileHandle <= ((UINT64)(UINTN)FwVolHeader +
+                                         FwVolHeader->FvLength - 1)))
       {
         *VolumeHandle = (EFI_PEI_FV_HANDLE)FwVolHeader;
         return TRUE;
@@ -183,10 +185,14 @@ FindFileEx (
   // start from the FileHeader.
   //
   if ((*FileHeader == NULL) || (FileName != NULL)) {
-    FfsFileHeader = (EFI_FFS_FILE_HEADER *)((UINT8 *)FwVolHeader + FwVolHeader->HeaderLength);
+    FfsFileHeader = (EFI_FFS_FILE_HEADER *)((UINT8 *)FwVolHeader +
+                                            FwVolHeader->HeaderLength);
     if (FwVolHeader->ExtHeaderOffset != 0) {
-      FwVolExHeaderInfo = (EFI_FIRMWARE_VOLUME_EXT_HEADER *)(((UINT8 *)FwVolHeader) + FwVolHeader->ExtHeaderOffset);
-      FfsFileHeader     = (EFI_FFS_FILE_HEADER *)(((UINT8 *)FwVolExHeaderInfo) + FwVolExHeaderInfo->ExtHeaderSize);
+      FwVolExHeaderInfo =
+        (EFI_FIRMWARE_VOLUME_EXT_HEADER *)(((UINT8 *)FwVolHeader) +
+                                           FwVolHeader->ExtHeaderOffset);
+      FfsFileHeader = (EFI_FFS_FILE_HEADER *)(((UINT8 *)FwVolExHeaderInfo) +
+                                              FwVolExHeaderInfo->ExtHeaderSize);
     }
   } else {
     //
@@ -195,7 +201,8 @@ FindFileEx (
     //
     FileLength       = *(UINT32 *)(*FileHeader)->Size & 0x00FFFFFF;
     FileOccupiedSize = GET_OCCUPIED_SIZE (FileLength, 8);
-    FfsFileHeader    = (EFI_FFS_FILE_HEADER *)((UINT8 *)*FileHeader + FileOccupiedSize);
+    FfsFileHeader    = (EFI_FFS_FILE_HEADER *)((UINT8 *)*FileHeader +
+                                               FileOccupiedSize);
   }
 
   // FFS files begin with a header that is aligned on an 8-byte boundary
@@ -213,7 +220,8 @@ FindFileEx (
     switch (FileState) {
       case EFI_FILE_HEADER_INVALID:
         FileOffset   += sizeof (EFI_FFS_FILE_HEADER);
-        FfsFileHeader = (EFI_FFS_FILE_HEADER *)((UINT8 *)FfsFileHeader + sizeof (EFI_FFS_FILE_HEADER));
+        FfsFileHeader = (EFI_FFS_FILE_HEADER *)((UINT8 *)FfsFileHeader +
+                                                sizeof (EFI_FFS_FILE_HEADER));
         break;
 
       case EFI_FILE_DATA_VALID:
@@ -232,7 +240,9 @@ FindFileEx (
             *FileHeader = FfsFileHeader;
             return EFI_SUCCESS;
           }
-        } else if (((SearchType == FfsFileHeader->Type) || (SearchType == EFI_FV_FILETYPE_ALL)) &&
+        } else if (  ((SearchType == FfsFileHeader->Type) || (SearchType ==
+                                                            EFI_FV_FILETYPE_ALL))
+                  &&
                    (FfsFileHeader->Type != EFI_FV_FILETYPE_FFS_PAD))
         {
           *FileHeader = FfsFileHeader;
@@ -240,14 +250,16 @@ FindFileEx (
         }
 
         FileOffset   += FileOccupiedSize;
-        FfsFileHeader = (EFI_FFS_FILE_HEADER *)((UINT8 *)FfsFileHeader + FileOccupiedSize);
+        FfsFileHeader = (EFI_FFS_FILE_HEADER *)((UINT8 *)FfsFileHeader +
+                                                FileOccupiedSize);
         break;
 
       case EFI_FILE_DELETED:
         FileLength       = *(UINT32 *)(FfsFileHeader->Size) & 0x00FFFFFF;
         FileOccupiedSize = GET_OCCUPIED_SIZE (FileLength, 8);
         FileOffset      += FileOccupiedSize;
-        FfsFileHeader    = (EFI_FFS_FILE_HEADER *)((UINT8 *)FfsFileHeader + FileOccupiedSize);
+        FfsFileHeader    = (EFI_FFS_FILE_HEADER *)((UINT8 *)FfsFileHeader +
+                                                   FileOccupiedSize);
         break;
 
       default:
@@ -303,24 +315,32 @@ FfsProcessSection (
 
     if (Section->Type == SectionType) {
       if (IS_SECTION2 (Section)) {
-        *OutputBuffer = (VOID *)((UINT8 *)Section + sizeof (EFI_COMMON_SECTION_HEADER2));
+        *OutputBuffer = (VOID *)((UINT8 *)Section +
+                                 sizeof (EFI_COMMON_SECTION_HEADER2));
       } else {
-        *OutputBuffer = (VOID *)((UINT8 *)Section + sizeof (EFI_COMMON_SECTION_HEADER));
+        *OutputBuffer = (VOID *)((UINT8 *)Section +
+                                 sizeof (EFI_COMMON_SECTION_HEADER));
       }
 
       return EFI_SUCCESS;
-    } else if ((Section->Type == EFI_SECTION_COMPRESSION) || (Section->Type == EFI_SECTION_GUID_DEFINED)) {
+    } else if ((Section->Type == EFI_SECTION_COMPRESSION) || (Section->Type ==
+                                                              EFI_SECTION_GUID_DEFINED))
+    {
       if (Section->Type == EFI_SECTION_COMPRESSION) {
         if (IS_SECTION2 (Section)) {
           CompressionSection2 = (EFI_COMPRESSION_SECTION2 *)Section;
           SectionLength       = SECTION2_SIZE (Section);
 
-          if (CompressionSection2->CompressionType != EFI_STANDARD_COMPRESSION) {
+          if (CompressionSection2->CompressionType !=
+              EFI_STANDARD_COMPRESSION)
+          {
             return EFI_UNSUPPORTED;
           }
 
-          CompressedData       = (CHAR8 *)((EFI_COMPRESSION_SECTION2 *)Section + 1);
-          CompressedDataLength = SectionLength - sizeof (EFI_COMPRESSION_SECTION2);
+          CompressedData       = (CHAR8 *)((EFI_COMPRESSION_SECTION2 *)Section +
+                                           1);
+          CompressedDataLength = SectionLength -
+                                 sizeof (EFI_COMPRESSION_SECTION2);
         } else {
           CompressionSection = (EFI_COMPRESSION_SECTION *)Section;
           SectionLength      = SECTION_SIZE (Section);
@@ -329,8 +349,10 @@ FfsProcessSection (
             return EFI_UNSUPPORTED;
           }
 
-          CompressedData       = (CHAR8 *)((EFI_COMPRESSION_SECTION *)Section + 1);
-          CompressedDataLength = SectionLength - sizeof (EFI_COMPRESSION_SECTION);
+          CompressedData       = (CHAR8 *)((EFI_COMPRESSION_SECTION *)Section +
+                                           1);
+          CompressedDataLength = SectionLength -
+                                 sizeof (EFI_COMPRESSION_SECTION);
         }
 
         Status = UefiDecompressGetInfo (
@@ -359,7 +381,11 @@ FfsProcessSection (
       //
       // Allocate scratch buffer
       //
-      ScratchBuffer = (VOID *)(UINTN)AllocatePages (EFI_SIZE_TO_PAGES (ScratchBufferSize));
+      ScratchBuffer = (VOID *)(UINTN)AllocatePages (
+                                       EFI_SIZE_TO_PAGES (
+                                         ScratchBufferSize
+                                         )
+                                       );
       if (ScratchBuffer == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }
@@ -367,7 +393,11 @@ FfsProcessSection (
       //
       // Allocate destination buffer, extra one page for adjustment
       //
-      DstBuffer = (VOID *)(UINTN)AllocatePages (EFI_SIZE_TO_PAGES (DstBufferSize) + 1);
+      DstBuffer = (VOID *)(UINTN)AllocatePages (
+                                   EFI_SIZE_TO_PAGES (
+                                     DstBufferSize
+                                     ) + 1
+                                   );
       if (DstBuffer == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }
@@ -377,9 +407,11 @@ FfsProcessSection (
       // to make section data at page alignment.
       //
       if (IS_SECTION2 (Section)) {
-        DstBuffer = (UINT8 *)DstBuffer + EFI_PAGE_SIZE - sizeof (EFI_COMMON_SECTION_HEADER2);
+        DstBuffer = (UINT8 *)DstBuffer + EFI_PAGE_SIZE -
+                    sizeof (EFI_COMMON_SECTION_HEADER2);
       } else {
-        DstBuffer = (UINT8 *)DstBuffer + EFI_PAGE_SIZE - sizeof (EFI_COMMON_SECTION_HEADER);
+        DstBuffer = (UINT8 *)DstBuffer + EFI_PAGE_SIZE -
+                    sizeof (EFI_COMMON_SECTION_HEADER);
       }
 
       //
@@ -435,7 +467,8 @@ FfsProcessSection (
     SectionLength = GET_OCCUPIED_SIZE (SectionLength, 4);
     ASSERT (SectionLength != 0);
     ParsedLength += SectionLength;
-    Section       = (EFI_COMMON_SECTION_HEADER *)((UINT8 *)Section + SectionLength);
+    Section       = (EFI_COMMON_SECTION_HEADER *)((UINT8 *)Section +
+                                                  SectionLength);
   }
 
   return EFI_NOT_FOUND;
@@ -537,7 +570,8 @@ FfsFindNextVolume (
     Hob.Raw = GetNextHob (EFI_HOB_TYPE_FV, Hob.Raw);
     if (Hob.Raw != NULL) {
       if (Instance-- == 0) {
-        *VolumeHandle = (EFI_PEI_FV_HANDLE)(UINTN)(Hob.FirmwareVolume->BaseAddress);
+        *VolumeHandle =
+          (EFI_PEI_FV_HANDLE)(UINTN)(Hob.FirmwareVolume->BaseAddress);
         return EFI_SUCCESS;
       }
 
@@ -628,7 +662,9 @@ FfsGetFileInfo (
     return EFI_INVALID_PARAMETER;
   }
 
-  if (((EFI_FIRMWARE_VOLUME_HEADER *)VolumeHandle)->Attributes & EFI_FVB2_ERASE_POLARITY) {
+  if (((EFI_FIRMWARE_VOLUME_HEADER *)VolumeHandle)->Attributes &
+      EFI_FVB2_ERASE_POLARITY)
+  {
     ErasePolarity = 1;
   } else {
     ErasePolarity = 0;
@@ -651,8 +687,9 @@ FfsGetFileInfo (
   CopyMem (&FileInfo->FileName, &FileHeader->Name, sizeof (EFI_GUID));
   FileInfo->FileType       = FileHeader->Type;
   FileInfo->FileAttributes = FileHeader->Attributes;
-  FileInfo->BufferSize     = ((*(UINT32 *)FileHeader->Size) & 0x00FFFFFF) -  sizeof (EFI_FFS_FILE_HEADER);
-  FileInfo->Buffer         = (FileHeader + 1);
+  FileInfo->BufferSize     = ((*(UINT32 *)FileHeader->Size) & 0x00FFFFFF) -
+                             sizeof (EFI_FFS_FILE_HEADER);
+  FileInfo->Buffer = (FileHeader + 1);
   return EFI_SUCCESS;
 }
 
@@ -702,11 +739,21 @@ FfsGetVolumeInfo (
   VolumeInfo->FvAttributes = FwVolHeader.Attributes;
   VolumeInfo->FvStart      = (VOID *)VolumeHandle;
   VolumeInfo->FvSize       = FwVolHeader.FvLength;
-  CopyMem (&VolumeInfo->FvFormat, &FwVolHeader.FileSystemGuid, sizeof (EFI_GUID));
+  CopyMem (
+    &VolumeInfo->FvFormat,
+    &FwVolHeader.FileSystemGuid,
+    sizeof (EFI_GUID)
+    );
 
   if (FwVolHeader.ExtHeaderOffset != 0) {
-    FwVolExHeaderInfo = (EFI_FIRMWARE_VOLUME_EXT_HEADER *)(((UINT8 *)VolumeHandle) + FwVolHeader.ExtHeaderOffset);
-    CopyMem (&VolumeInfo->FvName, &FwVolExHeaderInfo->FvName, sizeof (EFI_GUID));
+    FwVolExHeaderInfo =
+      (EFI_FIRMWARE_VOLUME_EXT_HEADER *)(((UINT8 *)VolumeHandle) +
+                                         FwVolHeader.ExtHeaderOffset);
+    CopyMem (
+      &VolumeInfo->FvName,
+      &FwVolExHeaderInfo->FvName,
+      sizeof (EFI_GUID)
+      );
   }
 
   return EFI_SUCCESS;
@@ -786,7 +833,11 @@ FfsProcessFvFile (
   //
   HobFv2.Raw = GetHobList ();
   while ((HobFv2.Raw = GetNextHob (EFI_HOB_TYPE_FV2, HobFv2.Raw)) != NULL) {
-    if (CompareGuid (&(((EFI_FFS_FILE_HEADER *)FvFileHandle)->Name), &HobFv2.FirmwareVolume2->FileName)) {
+    if (CompareGuid (
+          &(((EFI_FFS_FILE_HEADER *)FvFileHandle)->Name),
+          &HobFv2.FirmwareVolume2->FileName
+          ))
+    {
       //
       // this FILE has been dispatched, it will not be dispatched again.
       //
@@ -799,7 +850,11 @@ FfsProcessFvFile (
   //
   // Find FvImage in FvFile
   //
-  Status = FfsFindSectionData (EFI_SECTION_FIRMWARE_VOLUME_IMAGE, FvFileHandle, (VOID **)&FvImageHandle);
+  Status = FfsFindSectionData (
+             EFI_SECTION_FIRMWARE_VOLUME_IMAGE,
+             FvFileHandle,
+             (VOID **)&FvImageHandle
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -823,7 +878,12 @@ FfsProcessFvFile (
   // Check FvImage
   //
   if ((UINTN)FvImageInfo.FvStart % FvAlignment != 0) {
-    FvBuffer = AllocateAlignedPages (EFI_SIZE_TO_PAGES ((UINT32)FvImageInfo.FvSize), FvAlignment);
+    FvBuffer = AllocateAlignedPages (
+                 EFI_SIZE_TO_PAGES (
+                   (UINT32)FvImageInfo.FvSize
+                   ),
+                 FvAlignment
+                 );
     if (FvBuffer == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -838,7 +898,10 @@ FfsProcessFvFile (
   //
   // Inform HOB consumer phase, i.e. DXE core, the existence of this FV
   //
-  BuildFvHob ((EFI_PHYSICAL_ADDRESS)(UINTN)FvImageInfo.FvStart, FvImageInfo.FvSize);
+  BuildFvHob (
+    (EFI_PHYSICAL_ADDRESS)(UINTN)FvImageInfo.FvStart,
+    FvImageInfo.FvSize
+    );
 
   //
   // Makes the encapsulated volume show up in DXE phase to skip processing of

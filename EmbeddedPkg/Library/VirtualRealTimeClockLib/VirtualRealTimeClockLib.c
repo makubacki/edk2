@@ -96,7 +96,8 @@ LibGetTime (
     EfiSetVariable (
       (CHAR16 *)mEpochVariableName,
       &gEfiCallerIdGuid,
-      EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+      EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+      EFI_VARIABLE_RUNTIME_ACCESS,
       sizeof (EpochSeconds),
       &EpochSeconds
       );
@@ -129,7 +130,8 @@ LibGetTime (
     Status = EfiSetVariable (
                (CHAR16 *)mTimeZoneVariableName,
                &gEfiCallerIdGuid,
-               EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+               EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+               EFI_VARIABLE_RUNTIME_ACCESS,
                Size,
                (VOID *)&(Time->TimeZone)
                );
@@ -183,7 +185,8 @@ LibGetTime (
     Status = EfiSetVariable (
                (CHAR16 *)mDaylightVariableName,
                &gEfiCallerIdGuid,
-               EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+               EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+               EFI_VARIABLE_RUNTIME_ACCESS,
                Size,
                (VOID *)&(Time->Daylight)
                );
@@ -214,7 +217,10 @@ LibGetTime (
   if (Remainder <= 18446744073U) {
     Time->Nanosecond = (UINT32)(MultU64x64 (Remainder, 1000000000U) / Freq);
   } else {
-    DEBUG ((DEBUG_WARN, "LibGetTime: Nanosecond value not set (64-bit overflow).\n"));
+    DEBUG ((
+      DEBUG_WARN,
+      "LibGetTime: Nanosecond value not set (64-bit overflow).\n"
+      ));
   }
 
   if (Capabilities) {
@@ -285,7 +291,8 @@ LibSetTime (
   Status = EfiSetVariable (
              (CHAR16 *)mTimeZoneVariableName,
              &gEfiCallerIdGuid,
-             EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+             EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+             EFI_VARIABLE_RUNTIME_ACCESS,
              sizeof (Time->TimeZone),
              (VOID *)&(Time->TimeZone)
              );
@@ -303,7 +310,8 @@ LibSetTime (
   Status = EfiSetVariable (
              (CHAR16 *)mDaylightVariableName,
              &gEfiCallerIdGuid,
-             EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+             EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+             EFI_VARIABLE_RUNTIME_ACCESS,
              sizeof (Time->Daylight),
              (VOID *)&(Time->Daylight)
              );
@@ -320,7 +328,8 @@ LibSetTime (
   Status = EfiSetVariable (
              (CHAR16 *)mEpochVariableName,
              &gEfiCallerIdGuid,
-             EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+             EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+             EFI_VARIABLE_RUNTIME_ACCESS,
              sizeof (EpochSeconds),
              &EpochSeconds
              );

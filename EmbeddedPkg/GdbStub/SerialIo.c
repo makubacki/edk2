@@ -132,7 +132,14 @@ GdbRead (
   // XX - Count in ASCII
   // SS - check sum
   //
-  Size = AsciiSPrint (Packet, sizeof (Packet), "Fread,%x,%x,%x", FileDescriptor, Buffer, Count);
+  Size = AsciiSPrint (
+           Packet,
+           sizeof (Packet),
+           "Fread,%x,%x,%x",
+           FileDescriptor,
+           Buffer,
+           Count
+           );
   // Packet array is too small if you got this ASSERT
   ASSERT (Size < sizeof (Packet));
 
@@ -214,7 +221,14 @@ GdbWrite (
   // XX - Count in ASCII
   // SS - check sum
   //
-  Size = AsciiSPrint (Packet, sizeof (Packet), "Fwrite,%x,%x,%x", FileDescriptor, Buffer, Count);
+  Size = AsciiSPrint (
+           Packet,
+           sizeof (Packet),
+           "Fwrite,%x,%x,%x",
+           FileDescriptor,
+           Buffer,
+           Count
+           );
   // Packet array is too small if you got this ASSERT
   ASSERT (Size < sizeof (Packet));
 
@@ -504,13 +518,19 @@ GdbInitializeSerialConsole (
   GDB_SERIAL_DEV  *StdErrSerialDev;
 
   // Use the template to make a copy of the Serial Console private data structure.
-  StdOutSerialDev = AllocateCopyPool (sizeof (GDB_SERIAL_DEV), &gdbSerialDevTemplate);
+  StdOutSerialDev = AllocateCopyPool (
+                      sizeof (GDB_SERIAL_DEV),
+                      &gdbSerialDevTemplate
+                      );
   ASSERT (StdOutSerialDev != NULL);
 
   // Fixup pointer after the copy
   StdOutSerialDev->SerialIo.Mode = &StdOutSerialDev->SerialMode;
 
-  StdErrSerialDev = AllocateCopyPool (sizeof (GDB_SERIAL_DEV), &gdbSerialDevTemplate);
+  StdErrSerialDev = AllocateCopyPool (
+                      sizeof (GDB_SERIAL_DEV),
+                      &gdbSerialDevTemplate
+                      );
   ASSERT (StdErrSerialDev != NULL);
 
   // Fixup pointer and modify stuff that is different for StdError

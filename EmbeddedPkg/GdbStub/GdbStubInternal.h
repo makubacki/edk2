@@ -119,7 +119,9 @@ typedef struct {
   INTN                      OutFileDescriptor;
 } GDB_SERIAL_DEV;
 
-#define GDB_SERIAL_DEV_FROM_THIS(a)  CR (a, GDB_SERIAL_DEV, SerialIo, GDB_SERIAL_DEV_SIGNATURE)
+#define GDB_SERIAL_DEV_FROM_THIS( \
+                                a)  \
+  CR (a, GDB_SERIAL_DEV, SerialIo, GDB_SERIAL_DEV_SIGNATURE)
 
 typedef struct {
   EFI_EXCEPTION_TYPE    Exception;

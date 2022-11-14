@@ -117,13 +117,16 @@ LocateAndInstallAcpiFromFvConditional (
           "- Found '%c%c%c%c' ACPI Table\n",
           (((EFI_ACPI_DESCRIPTION_HEADER *)AcpiTable)->Signature & 0xFF),
           ((((EFI_ACPI_DESCRIPTION_HEADER *)AcpiTable)->Signature >> 8) & 0xFF),
-          ((((EFI_ACPI_DESCRIPTION_HEADER *)AcpiTable)->Signature >> 16) & 0xFF),
+          ((((EFI_ACPI_DESCRIPTION_HEADER *)AcpiTable)->Signature >> 16) &
+           0xFF),
           ((((EFI_ACPI_DESCRIPTION_HEADER *)AcpiTable)->Signature >> 24) & 0xFF)
           ));
 
         // Is the ACPI table valid?
         if (CheckAcpiTableFunction) {
-          Valid = CheckAcpiTableFunction ((EFI_ACPI_DESCRIPTION_HEADER *)AcpiTable);
+          Valid = CheckAcpiTableFunction (
+                    (EFI_ACPI_DESCRIPTION_HEADER *)AcpiTable
+                    );
         } else {
           Valid = TRUE;
         }
@@ -273,7 +276,9 @@ AcpiLocateTableBySignature (
     if (!EFI_ERROR (Status)) {
       TableIndex++;
 
-      if (((EFI_ACPI_DESCRIPTION_HEADER *)TempTable)->Signature == TableSignature) {
+      if (((EFI_ACPI_DESCRIPTION_HEADER *)TempTable)->Signature ==
+          TableSignature)
+      {
         *Table = (EFI_ACPI_DESCRIPTION_HEADER *)TempTable;
         *Index = TableIndex;
         break;
@@ -323,12 +328,22 @@ AcpiAmlObjectUpdateInteger (
   ObjectHandle = NULL;
   DataHandle   = NULL;
 
-  Status = AcpiSdtProtocol->FindPath (TableHandle, AsciiObjectPath, &ObjectHandle);
+  Status = AcpiSdtProtocol->FindPath (
+                              TableHandle,
+                              AsciiObjectPath,
+                              &ObjectHandle
+                              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  Status = AcpiSdtProtocol->GetOption (ObjectHandle, 0, &DataType, (VOID *)&Buffer, &BufferSize);
+  Status = AcpiSdtProtocol->GetOption (
+                              ObjectHandle,
+                              0,
+                              &DataType,
+                              (VOID *)&Buffer,
+                              &BufferSize
+                              );
   if (EFI_ERROR (Status)) {
     Status = EFI_NOT_FOUND;
     goto Exit;
@@ -348,12 +363,23 @@ AcpiAmlObjectUpdateInteger (
   Status = AcpiSdtProtocol->GetChild (ObjectHandle, &DataHandle);
   ASSERT_EFI_ERROR (Status);
 
-  Status = AcpiSdtProtocol->GetOption (DataHandle, 0, &DataType, (VOID *)&Buffer, &BufferSize);
+  Status = AcpiSdtProtocol->GetOption (
+                              DataHandle,
+                              0,
+                              &DataType,
+                              (VOID *)&Buffer,
+                              &BufferSize
+                              );
   ASSERT (DataType == EFI_ACPI_DATA_TYPE_OPCODE);
   ASSERT (Buffer != NULL);
 
   if ((Buffer[0] == AML_ZERO_OP) || (Buffer[0] == AML_ONE_OP)) {
-    Status = AcpiSdtProtocol->SetOption (DataHandle, 0, (VOID *)&Value, sizeof (UINT8));
+    Status = AcpiSdtProtocol->SetOption (
+                                DataHandle,
+                                0,
+                                (VOID *)&Value,
+                                sizeof (UINT8)
+                                );
     ASSERT_EFI_ERROR (Status);
   } else {
     //
@@ -382,7 +408,12 @@ AcpiAmlObjectUpdateInteger (
         goto Exit;
     }
 
-    Status = AcpiSdtProtocol->SetOption (DataHandle, 1, (VOID *)&Value, DataSize);
+    Status = AcpiSdtProtocol->SetOption (
+                                DataHandle,
+                                1,
+                                (VOID *)&Value,
+                                DataSize
+                                );
     ASSERT_EFI_ERROR (Status);
   }
 

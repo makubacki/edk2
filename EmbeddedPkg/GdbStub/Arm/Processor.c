@@ -129,7 +129,8 @@ FindPointerToRegister (
   UINT8  *TempPtr;
 
   ASSERT (gRegisterOffsets[RegNumber] < 0xF00);
-  TempPtr = ((UINT8 *)SystemContext.SystemContextArm) + gRegisterOffsets[RegNumber];
+  TempPtr = ((UINT8 *)SystemContext.SystemContextArm) +
+            gRegisterOffsets[RegNumber];
   return (UINT32 *)TempPtr;
 }
 
@@ -158,14 +159,20 @@ BasicReadRegister (
 
   RegSize = 0;
   while (RegSize < 32) {
-    Char = mHexToStr[(UINT8)((*FindPointerToRegister (SystemContext, RegNumber) >> (RegSize+4)) & 0xf)];
+    Char = mHexToStr[(UINT8)((*FindPointerToRegister (
+                                 SystemContext,
+                                 RegNumber
+                                 ) >> (RegSize+4)) & 0xf)];
     if ((Char >= 'A') && (Char <= 'F')) {
       Char = Char - 'A' + 'a';
     }
 
     *OutBufPtr++ = Char;
 
-    Char = mHexToStr[(UINT8)((*FindPointerToRegister (SystemContext, RegNumber) >> RegSize) & 0xf)];
+    Char = mHexToStr[(UINT8)((*FindPointerToRegister (
+                                 SystemContext,
+                                 RegNumber
+                                 ) >> RegSize) & 0xf)];
     if ((Char >= 'A') && (Char <= 'F')) {
       Char = Char - 'A' + 'a';
     }
@@ -372,8 +379,11 @@ typedef struct {
   UINT32        Instruction;
 } ARM_SOFTWARE_BREAKPOINT;
 
-#define ARM_SOFTWARE_BREAKPOINT_SIGNATURE  SIGNATURE_64('A', 'R', 'M', 'B', 'R', 'K', 'P', 'T')
-#define ARM_SOFTWARE_BREAKPOINT_FROM_LINK(a)  CR(a, ARM_SOFTWARE_BREAKPOINT, Link, ARM_SOFTWARE_BREAKPOINT_SIGNATURE)
+#define ARM_SOFTWARE_BREAKPOINT_SIGNATURE  \
+  SIGNATURE_64('A', 'R', 'M', 'B', 'R', 'K', 'P', 'T')
+#define ARM_SOFTWARE_BREAKPOINT_FROM_LINK( \
+                                         a)  \
+  CR(a, ARM_SOFTWARE_BREAKPOINT, Link, ARM_SOFTWARE_BREAKPOINT_SIGNATURE)
 
 LIST_ENTRY  BreakpointList;
 

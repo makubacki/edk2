@@ -27,13 +27,16 @@ InternalAllocatePages (
 
   Hob.Raw = GetHobList ();
 
-  NewTop  = Hob.HandoffInformationTable->EfiFreeMemoryTop & ~(EFI_PHYSICAL_ADDRESS)EFI_PAGE_MASK;
+  NewTop = Hob.HandoffInformationTable->EfiFreeMemoryTop &
+           ~(EFI_PHYSICAL_ADDRESS)EFI_PAGE_MASK;
   NewTop -= Pages * EFI_PAGE_SIZE;
 
   //
   // Verify that there is sufficient memory to satisfy the allocation
   //
-  if (NewTop < (Hob.HandoffInformationTable->EfiFreeMemoryBottom + sizeof (EFI_HOB_MEMORY_ALLOCATION))) {
+  if (NewTop < (Hob.HandoffInformationTable->EfiFreeMemoryBottom +
+                sizeof (EFI_HOB_MEMORY_ALLOCATION)))
+  {
     return NULL;
   }
 

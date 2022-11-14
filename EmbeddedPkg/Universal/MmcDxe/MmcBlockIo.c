@@ -17,7 +17,10 @@ MmcNotifyState (
   )
 {
   MmcHostInstance->State = State;
-  return MmcHostInstance->MmcHost->NotifyState (MmcHostInstance->MmcHost, State);
+  return MmcHostInstance->MmcHost->NotifyState (
+                                     MmcHostInstance->MmcHost,
+                                     State
+                                     );
 }
 
 EFI_STATUS
@@ -44,7 +47,11 @@ MmcGetCardStatus (
     CmdArg = MmcHostInstance->CardInfo.RCA << 16;
     Status = MmcHost->SendCommand (MmcHost, MMC_CMD13, CmdArg);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "MmcGetCardStatus(MMC_CMD13): Error and Status = %r\n", Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "MmcGetCardStatus(MMC_CMD13): Error and Status = %r\n",
+        Status
+        ));
       return Status;
     }
 
@@ -175,7 +182,12 @@ MmcTransferBlock (
     // Read Data
     Status = MmcHost->ReadBlockData (MmcHost, Lba, BufferSize, Buffer);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_BLKIO, "%a(): Error Read Block Data and Status = %r\n", __func__, Status));
+      DEBUG ((
+        DEBUG_BLKIO,
+        "%a(): Error Read Block Data and Status = %r\n",
+        __func__,
+        Status
+        ));
       MmcStopTransmission (MmcHost);
       return Status;
     }
@@ -189,7 +201,12 @@ MmcTransferBlock (
     // Write Data
     Status = MmcHost->WriteBlockData (MmcHost, Lba, BufferSize, Buffer);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_BLKIO, "%a(): Error Write Block Data and Status = %r\n", __func__, Status));
+      DEBUG ((
+        DEBUG_BLKIO,
+        "%a(): Error Write Block Data and Status = %r\n",
+        __func__,
+        Status
+        ));
       MmcStopTransmission (MmcHost);
       return Status;
     }
@@ -287,7 +304,9 @@ MmcIoBlocks (
   }
 
   // All blocks must be within the device
-  if ((Lba + (BufferSize / This->Media->BlockSize)) > (This->Media->LastBlock + 1)) {
+  if ((Lba + (BufferSize / This->Media->BlockSize)) > (This->Media->LastBlock +
+                                                       1))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -296,7 +315,9 @@ MmcIoBlocks (
   }
 
   // Check the alignment
-  if ((This->Media->IoAlign > 2) && (((UINTN)Buffer & (This->Media->IoAlign - 1)) != 0)) {
+  if ((This->Media->IoAlign > 2) && (((UINTN)Buffer & (This->Media->IoAlign -
+                                                       1)) != 0))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -353,9 +374,22 @@ MmcIoBlocks (
       ConsumeSize = BytesRemainingToBeTransfered;
     }
 
-    Status = MmcTransferBlock (This, Cmd, Transfer, MediaId, Lba, ConsumeSize, Buffer);
+    Status = MmcTransferBlock (
+               This,
+               Cmd,
+               Transfer,
+               MediaId,
+               Lba,
+               ConsumeSize,
+               Buffer
+               );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "%a(): Failed to transfer block and Status:%r\n", __func__, Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "%a(): Failed to transfer block and Status:%r\n",
+        __func__,
+        Status
+        ));
     }
 
     RemainingBlock               -= BlockCount;
@@ -379,7 +413,14 @@ MmcReadBlocks (
   OUT VOID                  *Buffer
   )
 {
-  return MmcIoBlocks (This, MMC_IOBLOCKS_READ, MediaId, Lba, BufferSize, Buffer);
+  return MmcIoBlocks (
+           This,
+           MMC_IOBLOCKS_READ,
+           MediaId,
+           Lba,
+           BufferSize,
+           Buffer
+           );
 }
 
 EFI_STATUS
@@ -392,7 +433,14 @@ MmcWriteBlocks (
   IN VOID                   *Buffer
   )
 {
-  return MmcIoBlocks (This, MMC_IOBLOCKS_WRITE, MediaId, Lba, BufferSize, Buffer);
+  return MmcIoBlocks (
+           This,
+           MMC_IOBLOCKS_WRITE,
+           MediaId,
+           Lba,
+           BufferSize,
+           Buffer
+           );
 }
 
 EFI_STATUS

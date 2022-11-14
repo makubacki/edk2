@@ -148,7 +148,8 @@ BootAndroidBootImg (
   // Have to cast to UINTN before casting to EFI_PHYSICAL_ADDRESS in order to
   // appease GCC.
   KernelDevicePath.Node1.StartingAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)Kernel;
-  KernelDevicePath.Node1.EndingAddress   = (EFI_PHYSICAL_ADDRESS)(UINTN)Kernel + KernelSize;
+  KernelDevicePath.Node1.EndingAddress   = (EFI_PHYSICAL_ADDRESS)(UINTN)Kernel +
+                                           KernelSize;
 
   // Initialize Linux command line
   LoadOptions = CatSPrint (NULL, L"%a", KernelArgs);

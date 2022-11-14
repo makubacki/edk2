@@ -64,14 +64,14 @@ STATIC CONST RAMDISK_DEVICE_PATH  mRamdiskDevicePath =
     {
       MEDIA_DEVICE_PATH,
       MEDIA_VENDOR_DP,
-      { sizeof (VENDOR_DEVICE_PATH),       0 }
+      { sizeof (VENDOR_DEVICE_PATH),       0       }
     },
     LINUX_EFI_INITRD_MEDIA_GUID
   },
   {
     END_DEVICE_PATH_TYPE,
     END_ENTIRE_DEVICE_PATH_SUBTYPE,
-    { sizeof (EFI_DEVICE_PATH_PROTOCOL), 0 }
+    { sizeof (EFI_DEVICE_PATH_PROTOCOL), 0       }
   }
 };
 
@@ -669,7 +669,12 @@ AndroidBootImgBoot (
       goto Exit;
     }
 
-    Status = AndroidBootImgUpdateFdt (Buffer, FdtBase, RamdiskData, RamdiskSize);
+    Status = AndroidBootImgUpdateFdt (
+               Buffer,
+               FdtBase,
+               RamdiskData,
+               RamdiskSize
+               );
     if (EFI_ERROR (Status)) {
       goto Exit;
     }

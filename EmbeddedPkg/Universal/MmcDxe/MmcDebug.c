@@ -10,11 +10,12 @@
 
 #if !defined (MDEPKG_NDEBUG)
 CONST CHAR8  *mStrUnit[] = {
-  "100kbit/s", "1Mbit/s", "10Mbit/s", "100MBit/s",
-  "Unknown",   "Unknown", "Unknown",  "Unknown"
+  "100kbit/s", "1Mbit/s",   "10Mbit/s", "100MBit/s",
+  "Unknown",   "Unknown",   "Unknown",  "Unknown"
 };
 CONST CHAR8  *mStrValue[] = {
-  "1.0",     "1.2",     "1.3",     "1.5", "2.0", "2.5", "3.0", "3.5", "4.0", "4.5", "5.0",
+  "1.0",     "1.2",     "1.3",     "1.5",     "2.0", "2.5", "3.0", "3.5", "4.0",
+  "4.5",     "5.0",
   "Unknown", "Unknown", "Unknown", "Unknown"
 };
 #endif
@@ -25,11 +26,27 @@ PrintCID (
   )
 {
   DEBUG ((DEBUG_ERROR, "- PrintCID\n"));
-  DEBUG ((DEBUG_ERROR, "\t- Manufacturing date: %d/%d\n", (Cid[0] >> 8) & 0xF, (Cid[0] >> 12) & 0xFF));
-  DEBUG ((DEBUG_ERROR, "\t- Product serial number: 0x%X%X\n", Cid[1] & 0xFFFFFF, (Cid[0] >> 24) & 0xFF));
+  DEBUG ((
+    DEBUG_ERROR,
+    "\t- Manufacturing date: %d/%d\n",
+    (Cid[0] >> 8) & 0xF,
+    (Cid[0] >> 12) & 0xFF
+    ));
+  DEBUG ((
+    DEBUG_ERROR,
+    "\t- Product serial number: 0x%X%X\n",
+    Cid[1] & 0xFFFFFF,
+    (Cid[0] >> 24) & 0xFF
+    ));
   DEBUG ((DEBUG_ERROR, "\t- Product revision: %d\n", Cid[1] >> 24));
   // DEBUG ((DEBUG_ERROR, "\t- Product name: %s\n", (char*)(Cid + 2)));
-  DEBUG ((DEBUG_ERROR, "\t- OEM ID: %c%c\n", (Cid[3] >> 8) & 0xFF, (Cid[3] >> 16) & 0xFF));
+  DEBUG ((
+    DEBUG_ERROR,
+    "\t- OEM ID: %c%c\n",
+    (Cid[3] >> 8) & 0xFF,
+    (Cid[3] >>
+     16) & 0xFF
+    ));
 }
 
 VOID
@@ -40,24 +57,54 @@ PrintCSD (
   UINTN  Value;
 
   if (((Csd[2] >> 30) & 0x3) == 0) {
-    DEBUG ((DEBUG_ERROR, "- PrintCSD Version 1.01-1.10/Version 2.00/Standard Capacity\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "- PrintCSD Version 1.01-1.10/Version 2.00/Standard Capacity\n"
+      ));
   } else if (((Csd[2] >> 30) & 0x3) == 1) {
     DEBUG ((DEBUG_ERROR, "- PrintCSD Version 2.00/High Capacity\n"));
   } else {
     DEBUG ((DEBUG_ERROR, "- PrintCSD Version Higher than v3.3\n"));
   }
 
-  DEBUG ((DEBUG_ERROR, "\t- Supported card command class: 0x%X\n", MMC_CSD_GET_CCC (Csd)));
-  DEBUG ((DEBUG_ERROR, "\t- Speed: %a %a\n", mStrValue[(MMC_CSD_GET_TRANSPEED (Csd) >> 3) & 0xF], mStrUnit[MMC_CSD_GET_TRANSPEED (Csd) & 7]));
-  DEBUG ((DEBUG_ERROR, "\t- Maximum Read Data Block: %d\n", 2 << (MMC_CSD_GET_READBLLEN (Csd)-1)));
-  DEBUG ((DEBUG_ERROR, "\t- Maximum Write Data Block: %d\n", 2 << (MMC_CSD_GET_WRITEBLLEN (Csd)-1)));
+  DEBUG ((
+    DEBUG_ERROR,
+    "\t- Supported card command class: 0x%X\n",
+    MMC_CSD_GET_CCC (Csd)
+    ));
+  DEBUG ((
+    DEBUG_ERROR,
+    "\t- Speed: %a %a\n",
+    mStrValue[(MMC_CSD_GET_TRANSPEED (
+                 Csd
+                 ) >> 3) & 0xF],
+    mStrUnit[MMC_CSD_GET_TRANSPEED (Csd) & 7]
+    ));
+  DEBUG ((
+    DEBUG_ERROR,
+    "\t- Maximum Read Data Block: %d\n",
+    2 <<
+    (MMC_CSD_GET_READBLLEN (Csd)-1)
+    ));
+  DEBUG ((
+    DEBUG_ERROR,
+    "\t- Maximum Write Data Block: %d\n",
+    2 <<
+    (MMC_CSD_GET_WRITEBLLEN (Csd)-1)
+    ));
 
   if (!MMC_CSD_GET_FILEFORMATGRP (Csd)) {
     Value = MMC_CSD_GET_FILEFORMAT (Csd);
     if (Value == 0) {
-      DEBUG ((DEBUG_ERROR, "\t- Format (0): Hard disk-like file system with partition table\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "\t- Format (0): Hard disk-like file system with partition table\n"
+        ));
     } else if (Value == 1) {
-      DEBUG ((DEBUG_ERROR, "\t- Format (1): DOS FAT (floppy-like) with boot sector only (no partition table)\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "\t- Format (1): DOS FAT (floppy-like) with boot sector only (no partition table)\n"
+        ));
     } else if (Value == 2) {
       DEBUG ((DEBUG_ERROR, "\t- Format (2): Universal File Format\n"));
     } else {
@@ -108,11 +155,23 @@ PrintOCR (
   }
 
   DEBUG ((DEBUG_ERROR, "- PrintOCR Ocr (0x%X)\n", Ocr));
-  DEBUG ((DEBUG_ERROR, "\t- Card operating voltage: %d.%d to %d.%d\n", MinV/10, MinV % 10, MaxV/10, MaxV % 10));
+  DEBUG ((
+    DEBUG_ERROR,
+    "\t- Card operating voltage: %d.%d to %d.%d\n",
+    MinV/10,
+    MinV % 10,
+    MaxV/10,
+    MaxV % 10
+    ));
   if (((Ocr >> 29) & 3) == 0) {
     DEBUG ((DEBUG_ERROR, "\t- AccessMode: Byte Mode\n"));
   } else {
-    DEBUG ((DEBUG_ERROR, "\t- AccessMode: Block Mode (0x%X)\n", ((Ocr >> 29) & 3)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "\t- AccessMode: Block Mode (0x%X)\n",
+      ((Ocr >> 29) &
+       3)
+      ));
   }
 
   if (Ocr & MMC_OCR_POWERUP) {

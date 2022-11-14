@@ -123,7 +123,9 @@ GdbSerialInit (
   //
   // Set communications format
   //
-  OutputData = (UINT8)((DLAB << 7) | ((BreakSet << 6) | ((Parity << 3) | ((StopBits << 2) | Data))));
+  OutputData = (UINT8)((DLAB << 7) | ((BreakSet << 6) | ((Parity << 3) |
+                                                         ((StopBits << 2) |
+                                                          Data))));
   IoWrite8 (gPort + LCR_OFFSET, OutputData);
 
   //
@@ -135,7 +137,8 @@ GdbSerialInit (
   //
   // Switch back to bank 0
   //
-  OutputData = (UINT8)((~DLAB<<7)|((BreakSet<<6)|((Parity<<3)|((StopBits<<2)| Data))));
+  OutputData = (UINT8)((~DLAB<<7)|((BreakSet<<6)|((Parity<<3)|((StopBits<<2)|
+                                                               Data))));
   IoWrite8 (gPort + LCR_OFFSET, OutputData);
 
   // Not sure this is the right place to enable the FIFOs....

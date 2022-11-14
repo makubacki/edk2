@@ -52,8 +52,10 @@ extern EFI_COMPONENT_NAME2_PROTOCOL  gVirtualKeyboardComponentName2;
 //
 // VIRTUAL Keyboard Device Structure
 //
-#define VIRTUAL_KEYBOARD_DEV_SIGNATURE                   SIGNATURE_32 ('V', 'K', 'B', 'D')
-#define VIRTUAL_KEYBOARD_CONSOLE_IN_EX_NOTIFY_SIGNATURE  SIGNATURE_32 ('v', 'k', 'c', 'n')
+#define VIRTUAL_KEYBOARD_DEV_SIGNATURE                   \
+          SIGNATURE_32 ('V', 'K', 'B', 'D')
+#define VIRTUAL_KEYBOARD_CONSOLE_IN_EX_NOTIFY_SIGNATURE  \
+          SIGNATURE_32 ('v', 'k', 'c', 'n')
 
 typedef struct _VIRTUAL_KEYBOARD_CONSOLE_IN_EX_NOTIFY {
   UINTN                      Signature;
@@ -95,7 +97,9 @@ typedef struct {
   EFI_EVENT                            TimerEvent;
 } VIRTUAL_KEYBOARD_DEV;
 
-#define VIRTUAL_KEYBOARD_DEV_FROM_THIS(a)  CR (a, VIRTUAL_KEYBOARD_DEV, SimpleTextIn, VIRTUAL_KEYBOARD_DEV_SIGNATURE)
+#define VIRTUAL_KEYBOARD_DEV_FROM_THIS( \
+                                      a)  \
+  CR (a, VIRTUAL_KEYBOARD_DEV, SimpleTextIn, VIRTUAL_KEYBOARD_DEV_SIGNATURE)
 #define TEXT_INPUT_EX_VIRTUAL_KEYBOARD_DEV_FROM_THIS(a) \
   CR (a, \
       VIRTUAL_KEYBOARD_DEV, \

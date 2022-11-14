@@ -30,7 +30,8 @@ typedef struct {
   UINT8    Daylight;
 } NON_VOLATILE_TIME_SETTINGS;
 
-STATIC CONST CHAR16                mTimeSettingsVariableName[] = L"RtcTimeSettings";
+STATIC CONST CHAR16  mTimeSettingsVariableName[] =
+  L"RtcTimeSettings";
 STATIC NON_VOLATILE_TIME_SETTINGS  mTimeSettings;
 
 /**

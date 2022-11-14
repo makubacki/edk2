@@ -951,7 +951,9 @@ overlay_symbol_update (
     }
 
     /* verify it's a string property (terminated by a single \0) */
-    if ((path_len < 1) || (memchr (path, '\0', path_len) != &path[path_len - 1])) {
+    if ((path_len < 1) || (memchr (path, '\0', path_len) != &path[path_len -
+                                                                  1]))
+    {
       return -FDT_ERR_BADVALUE;
     }
 

@@ -82,7 +82,11 @@ HandleGetVar (
     if (EFI_ERROR (Status)) {
       SEND_LITERAL ("FAILSomething went wrong when looking up the variable");
     } else {
-      mTransport->Send (AsciiStrLen (Response), Response, &mFatalSendErrorEvent);
+      mTransport->Send (
+                    AsciiStrLen (Response),
+                    Response,
+                    &mFatalSendErrorEvent
+                    );
     }
   }
 }
@@ -109,12 +113,20 @@ HandleDownload (
   // Parse out number of data bytes to expect
   mNumDataBytes = AsciiStrHexToUint64 (NumBytesString);
   if (mNumDataBytes == 0) {
-    mTextOut->OutputString (mTextOut, L"ERROR: Fail to get the number of bytes to download.\r\n");
+    mTextOut->OutputString (
+                mTextOut,
+                L"ERROR: Fail to get the number of bytes to download.\r\n"
+                );
     SEND_LITERAL ("FAILFailed to get the number of bytes to download");
     return;
   }
 
-  UnicodeSPrint (OutputString, sizeof (OutputString), L"Downloading %d bytes\r\n", mNumDataBytes);
+  UnicodeSPrint (
+    OutputString,
+    sizeof (OutputString),
+    L"Downloading %d bytes\r\n",
+    mNumDataBytes
+    );
   mTextOut->OutputString (mTextOut, OutputString);
 
   mDataBuffer = AllocatePool (mNumDataBytes);
@@ -145,7 +157,12 @@ HandleFlash (
   CHAR16      OutputString[FASTBOOT_STRING_MAX_LENGTH];
 
   // Build output string
-  UnicodeSPrint (OutputString, sizeof (OutputString), L"Flashing partition %a\r\n", PartitionName);
+  UnicodeSPrint (
+    OutputString,
+    sizeof (OutputString),
+    L"Flashing partition %a\r\n",
+    PartitionName
+    );
   mTextOut->OutputString (mTextOut, OutputString);
 
   if (mDataBuffer == NULL) {
@@ -182,7 +199,12 @@ HandleErase (
   CHAR16      OutputString[FASTBOOT_STRING_MAX_LENGTH];
 
   // Build output string
-  UnicodeSPrint (OutputString, sizeof (OutputString), L"Erasing partition %a\r\n", PartitionName);
+  UnicodeSPrint (
+    OutputString,
+    sizeof (OutputString),
+    L"Erasing partition %a\r\n",
+    PartitionName
+    );
   mTextOut->OutputString (mTextOut, OutputString);
 
   Status = mPlatform->ErasePartition (PartitionName);
@@ -275,7 +297,10 @@ AcceptCmd (
     HandleBoot ();
   } else if (MATCH_CMD_LITERAL ("continue", Command)) {
     SEND_LITERAL ("OKAY");
-    mTextOut->OutputString (mTextOut, L"Received 'continue' command. Exiting Fastboot mode\r\n");
+    mTextOut->OutputString (
+                mTextOut,
+                L"Received 'continue' command. Exiting Fastboot mode\r\n"
+                );
 
     gBS->SignalEvent (mFinishedEvent);
   } else if (MATCH_CMD_LITERAL ("reboot", Command)) {
@@ -396,7 +421,10 @@ DataReady (
     ASSERT (Status == EFI_DEVICE_ERROR);
     // (Put a newline at the beginning as we are probably in the data phase,
     //  so the download progress line, with no '\n' is probably on the console)
-    mTextOut->OutputString (mTextOut, L"\r\nFatal error receiving data. Exiting.\r\n");
+    mTextOut->OutputString (
+                mTextOut,
+                L"\r\nFatal error receiving data. Exiting.\r\n"
+                );
     gBS->SignalEvent (mFinishedEvent);
   }
 }
@@ -411,7 +439,10 @@ FatalErrorNotify (
   IN VOID       *Context
   )
 {
-  mTextOut->OutputString (mTextOut, L"Fatal error sending command response. Exiting.\r\n");
+  mTextOut->OutputString (
+              mTextOut,
+              L"Fatal error sending command response. Exiting.\r\n"
+              );
   gBS->SignalEvent (mFinishedEvent);
 }
 
@@ -437,23 +468,43 @@ FastbootAppEntryPoint (
                   (VOID **)&mTransport
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Fastboot: Couldn't open Fastboot Transport Protocol: %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Fastboot: Couldn't open Fastboot Transport Protocol: %r\n",
+      Status
+      ));
     return Status;
   }
 
-  Status = gBS->LocateProtocol (&gAndroidFastbootPlatformProtocolGuid, NULL, (VOID **)&mPlatform);
+  Status = gBS->LocateProtocol (
+                  &gAndroidFastbootPlatformProtocolGuid,
+                  NULL,
+                  (VOID **)&mPlatform
+                  );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Fastboot: Couldn't open Fastboot Platform Protocol: %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Fastboot: Couldn't open Fastboot Platform Protocol: %r\n",
+      Status
+      ));
     return Status;
   }
 
   Status = mPlatform->Init ();
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Fastboot: Couldn't initialise Fastboot Platform Protocol: %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Fastboot: Couldn't initialise Fastboot Platform Protocol: %r\n",
+      Status
+      ));
     return Status;
   }
 
-  Status = gBS->LocateProtocol (&gEfiSimpleTextOutProtocolGuid, NULL, (VOID **)&mTextOut);
+  Status = gBS->LocateProtocol (
+                  &gEfiSimpleTextOutProtocolGuid,
+                  NULL,
+                  (VOID **)&mTextOut
+                  );
   if (EFI_ERROR (Status)) {
     DEBUG ((
       DEBUG_ERROR,
@@ -463,16 +514,28 @@ FastbootAppEntryPoint (
     return Status;
   }
 
-  Status = gBS->LocateProtocol (&gEfiSimpleTextInProtocolGuid, NULL, (VOID **)&TextIn);
+  Status = gBS->LocateProtocol (
+                  &gEfiSimpleTextInProtocolGuid,
+                  NULL,
+                  (VOID **)&TextIn
+                  );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Fastboot: Couldn't open Text Input Protocol: %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Fastboot: Couldn't open Text Input Protocol: %r\n",
+      Status
+      ));
     return Status;
   }
 
   // Disable watchdog
   Status = gBS->SetWatchdogTimer (0, 0x10000, 0, NULL);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Fastboot: Couldn't disable watchdog timer: %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Fastboot: Couldn't disable watchdog timer: %r\n",
+      Status
+      ));
   }
 
   // Create event for receipt of data from the host
@@ -512,7 +575,8 @@ FastbootAppEntryPoint (
   // Talk to the user
   mTextOut->OutputString (
               mTextOut,
-              L"Android Fastboot mode - version " ANDROID_FASTBOOT_VERSION ". Press RETURN or SPACE key to quit.\r\n"
+              L"Android Fastboot mode - version " ANDROID_FASTBOOT_VERSION
+              ". Press RETURN or SPACE key to quit.\r\n"
               );
 
   // Quit when the user presses any key, or mFinishedEvent is signalled

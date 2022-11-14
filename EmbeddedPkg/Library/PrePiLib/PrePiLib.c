@@ -40,7 +40,9 @@ AllocateCodePages (
   // find the HOB we just created, and change the type to EfiBootServicesCode
   Hob.Raw = GetFirstHob (EFI_HOB_TYPE_MEMORY_ALLOCATION);
   while (Hob.Raw != NULL) {
-    if (Hob.MemoryAllocation->AllocDescriptor.MemoryBaseAddress == (UINTN)Alloc) {
+    if (Hob.MemoryAllocation->AllocDescriptor.MemoryBaseAddress ==
+        (UINTN)Alloc)
+    {
       Hob.MemoryAllocation->AllocDescriptor.MemoryType = EfiBootServicesCode;
       return Alloc;
     }
@@ -78,7 +80,11 @@ LoadPeCoffImage (
   //
   // Allocate Memory for the image
   //
-  Buffer = AllocateCodePages (EFI_SIZE_TO_PAGES ((UINT32)ImageContext.ImageSize));
+  Buffer = AllocateCodePages (
+             EFI_SIZE_TO_PAGES (
+               (UINT32)ImageContext.ImageSize
+               )
+             );
   ASSERT (Buffer != 0);
 
   ImageContext.ImageAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)Buffer;
@@ -103,7 +109,10 @@ LoadPeCoffImage (
   // Flush not needed for all architectures. We could have a processor specific
   // function in this library that does the no-op if needed.
   //
-  InvalidateInstructionCacheRange ((VOID *)(UINTN)*ImageAddress, (UINTN)*ImageSize);
+  InvalidateInstructionCacheRange (
+    (VOID *)(UINTN)*ImageAddress,
+    (UINTN)*ImageSize
+    );
 
   return Status;
 }
@@ -136,7 +145,12 @@ LoadDxeCoreFromFfsFile (
     return Status;
   }
 
-  Status = LoadPeCoffImage (PeCoffImage, &ImageAddress, &ImageSize, &EntryPoint);
+  Status = LoadPeCoffImage (
+             PeCoffImage,
+             &ImageAddress,
+             &ImageSize,
+             &EntryPoint
+             );
   // For NT32 Debug  Status = SecWinNtPeiLoadFile (PeCoffImage, &ImageAddress, &ImageSize, &EntryPoint);
   ASSERT_EFI_ERROR (Status);
 
@@ -146,9 +160,21 @@ LoadDxeCoreFromFfsFile (
   Status = FfsGetFileInfo (FileHandle, &FvFileInfo);
   ASSERT_EFI_ERROR (Status);
 
-  BuildModuleHob (&FvFileInfo.FileName, (EFI_PHYSICAL_ADDRESS)(UINTN)ImageAddress, EFI_SIZE_TO_PAGES ((UINT32)ImageSize) * EFI_PAGE_SIZE, EntryPoint);
+  BuildModuleHob (
+    &FvFileInfo.FileName,
+    (EFI_PHYSICAL_ADDRESS)(UINTN)ImageAddress,
+    EFI_SIZE_TO_PAGES (
+      (UINT32)ImageSize
+      ) * EFI_PAGE_SIZE,
+    EntryPoint
+    );
 
-  DEBUG ((DEBUG_INFO | DEBUG_LOAD, "Loading DxeCore at 0x%10p EntryPoint=0x%10p\n", (VOID *)(UINTN)ImageAddress, (VOID *)(UINTN)EntryPoint));
+  DEBUG ((
+    DEBUG_INFO | DEBUG_LOAD,
+    "Loading DxeCore at 0x%10p EntryPoint=0x%10p\n",
+    (VOID *)(UINTN)ImageAddress,
+    (VOID *)(UINTN)EntryPoint
+    ));
 
   Hob = GetHobList ();
   if (StackSize == 0) {
@@ -166,7 +192,8 @@ LoadDxeCoreFromFfsFile (
     // Compute the top of the stack we were allocated. Pre-allocate a UINTN
     // for safety.
     //
-    TopOfStack = (VOID *)((UINTN)BaseOfStack + EFI_SIZE_TO_PAGES (StackSize) * EFI_PAGE_SIZE - CPU_STACK_ALIGNMENT);
+    TopOfStack = (VOID *)((UINTN)BaseOfStack + EFI_SIZE_TO_PAGES (StackSize) *
+                          EFI_PAGE_SIZE - CPU_STACK_ALIGNMENT);
     TopOfStack = ALIGN_POINTER (TopOfStack, CPU_STACK_ALIGNMENT);
 
     //
@@ -206,10 +233,18 @@ LoadDxeCoreFromFv (
     //
     Status = FfsFindNextVolume (*FvInstance, &VolumeHandle);
     if (!EFI_ERROR (Status)) {
-      Status = FfsFindNextFile (EFI_FV_FILETYPE_DXE_CORE, VolumeHandle, &FileHandle);
+      Status = FfsFindNextFile (
+                 EFI_FV_FILETYPE_DXE_CORE,
+                 VolumeHandle,
+                 &FileHandle
+                 );
     }
   } else {
-    Status = FfsAnyFvFindFirstFile (EFI_FV_FILETYPE_DXE_CORE, &VolumeHandle, &FileHandle);
+    Status = FfsAnyFvFindFirstFile (
+               EFI_FV_FILETYPE_DXE_CORE,
+               &VolumeHandle,
+               &FileHandle
+               );
   }
 
   if (!EFI_ERROR (Status)) {
@@ -229,7 +264,11 @@ DecompressFirstFv (
   EFI_PEI_FV_HANDLE    VolumeHandle;
   EFI_PEI_FILE_HANDLE  FileHandle;
 
-  Status = FfsAnyFvFindFirstFile (EFI_FV_FILETYPE_FIRMWARE_VOLUME_IMAGE, &VolumeHandle, &FileHandle);
+  Status = FfsAnyFvFindFirstFile (
+             EFI_FV_FILETYPE_FIRMWARE_VOLUME_IMAGE,
+             &VolumeHandle,
+             &FileHandle
+             );
   if (!EFI_ERROR (Status)) {
     Status = FfsProcessFvFile (FileHandle);
   }
