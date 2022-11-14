@@ -43,7 +43,7 @@ typedef struct {
 #define   EFI_ACPI_DBG2_PORT_SUBTYPE_SERIAL_FULL_16550                                 \
       0x0000
 #define   \
-    EFI_ACPI_DBG2_PORT_SUBTYPE_SERIAL_16550_SUBSET_COMPATIBLE_WITH_MS_DBGP_SPEC        \
+      EFI_ACPI_DBG2_PORT_SUBTYPE_SERIAL_16550_SUBSET_COMPATIBLE_WITH_MS_DBGP_SPEC      \
       0x0001
 #define   EFI_ACPI_DBG2_PORT_SUBTYPE_SERIAL_ARM_PL011_UART                             \
       0x0003
