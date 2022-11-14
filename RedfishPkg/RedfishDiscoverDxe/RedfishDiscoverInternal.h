@@ -112,7 +112,8 @@ typedef struct {
   // EFI_REDFISH_DISCOVER_PROTOCOL instance installed
   // on this network interface.
   //
-  EFI_HANDLE                                     EfiRedfishDiscoverProtocolHandle; ///< EFI_REDFISH_DISCOVER_PROTOTOCOL instance installed
+  EFI_HANDLE
+                                                 EfiRedfishDiscoverProtocolHandle; ///< EFI_REDFISH_DISCOVER_PROTOTOCOL instance installed
                                                                                    ///< on this network interface.
 } EFI_REDFISH_DISCOVER_NETWORK_INTERFACE_INTERNAL;
 

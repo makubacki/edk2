@@ -181,7 +181,9 @@ parseNode (
 
   tmpIndex = 1;
   while (1) {
-    if ((opChars[tmpIndex] == '=') || (opChars[tmpIndex] == '<') || (opChars[tmpIndex] == '>') || (opChars[tmpIndex] == '~')) {
+    if ((opChars[tmpIndex] == '=') || (opChars[tmpIndex] == '<') ||
+        (opChars[tmpIndex] == '>') || (opChars[tmpIndex] == '~'))
+    {
       tmpIndex++;
       continue;
     }

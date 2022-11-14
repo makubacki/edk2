@@ -15,7 +15,8 @@
 #include <Library/UefiRuntimeServicesTableLib.h>
 
 int   errno            = 0;
-char  errnum_message[] = "We don't support to map errnum to the error message on edk2 Redfish\n";
+char  errnum_message[] =
+  "We don't support to map errnum to the error message on edk2 Redfish\n";
 
 // This is required to keep VC++ happy if you use floating-point
 int  _fltused = 1;
@@ -69,7 +70,8 @@ isspace (
   //
   // <space> ::= [ ]
   //
-  return ((c) == ' ') || ((c) == '\t') || ((c) == '\r') || ((c) == '\n') || ((c) == '\v')  || ((c) == '\f');
+  return ((c) == ' ') || ((c) == '\t') || ((c) == '\r') || ((c) == '\n') ||
+         ((c) == '\v')  || ((c) == '\f');
 }
 
 /**
@@ -727,15 +729,18 @@ time (
   // UTime should now be set to 00:00:00 on Jan 1 of the current year.
   //
   for (Year = 1970, CalTime = 0; Year != Time.Year; Year++) {
-    CalTime = CalTime + (time_t)(CumulativeDays[IsLeap (Year)][13] * SECSPERDAY);
+    CalTime = CalTime + (time_t)(CumulativeDays[IsLeap (Year)][13] *
+                                 SECSPERDAY);
   }
 
   //
   // Add in number of seconds for current Month, Day, Hour, Minute, Seconds, and TimeZone adjustment
   //
   CalTime = CalTime +
-            (time_t)((Time.TimeZone != EFI_UNSPECIFIED_TIMEZONE) ? (Time.TimeZone * 60) : 0) +
-            (time_t)(CumulativeDays[IsLeap (Time.Year)][Time.Month] * SECSPERDAY) +
+            (time_t)((Time.TimeZone != EFI_UNSPECIFIED_TIMEZONE) ?
+                     (Time.TimeZone * 60) : 0) +
+            (time_t)(CumulativeDays[IsLeap (Time.Year)][Time.Month] *
+                     SECSPERDAY) +
             (time_t)(((Time.Day > 0) ? Time.Day - 1 : 0) * SECSPERDAY) +
             (time_t)(Time.Hour * SECSPERHOUR) +
             (time_t)(Time.Minute * 60) +
@@ -893,7 +898,8 @@ CheckFormatingString (
         (FormatStringParamater != '+') &&
         (FormatStringParamater != '*') &&
         (FormatStringParamater != '.') &&
-        !(((UINTN)FormatStringParamater >= (UINTN)'0') && ((UINTN)FormatStringParamater <= (UINTN)'9'))
+        !(((UINTN)FormatStringParamater >= (UINTN)'0') &&
+          ((UINTN)FormatStringParamater <= (UINTN)'9'))
         )
     {
       return FALSE;
@@ -966,7 +972,11 @@ ReplaceUnicodeToAsciiStrFormat (
         //
         // Check if this is the formating string specifier.
         //
-        IsFormatString = CheckFormatingString (FormatString, &FormatStrSpecifier, FormatStrSize);
+        IsFormatString = CheckFormatingString (
+                           FormatString,
+                           &FormatStrSpecifier,
+                           FormatStrSize
+                           );
         if ((FormatStrSpecifier - FormatStrIndex) != 0) {
           CopyMem (
             (VOID *)(TempFormatBuffer + FormatStrIndex),
@@ -1048,7 +1058,13 @@ RedfishAsciiVSPrint (
     return 0;
   }
 
-  LenStrProduced = AsciiVSPrint (StartOfBuffer, BufferSize, (CONST CHAR8 *)TempFormatBuffer, Marker);
+  LenStrProduced = AsciiVSPrint (
+                     StartOfBuffer,
+                     BufferSize,
+                     (CONST
+                      CHAR8 *)TempFormatBuffer,
+                     Marker
+                     );
   FreePool (TempFormatBuffer);
   return LenStrProduced;
 }
@@ -1083,6 +1099,11 @@ RedfishAsciiSPrint (
   UINTN    LenStrProduced;
 
   VA_START (Marker, FormatString);
-  LenStrProduced = RedfishAsciiVSPrint (StartOfBuffer, BufferSize, FormatString, Marker);
+  LenStrProduced = RedfishAsciiVSPrint (
+                     StartOfBuffer,
+                     BufferSize,
+                     FormatString,
+                     Marker
+                     );
   return LenStrProduced;
 }

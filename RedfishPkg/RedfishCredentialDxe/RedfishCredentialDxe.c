@@ -28,7 +28,9 @@ RedfishCredentialExitBootServicesEventNotify (
   OUT VOID       *Context
   )
 {
-  LibCredentialExitBootServicesNotify ((EDKII_REDFISH_CREDENTIAL_PROTOCOL *)Context);
+  LibCredentialExitBootServicesNotify (
+    (EDKII_REDFISH_CREDENTIAL_PROTOCOL *)Context
+    );
 }
 
 /**
@@ -85,7 +87,9 @@ RedfishCredentialGetAuthInfo (
   OUT CHAR8                              **Password
   )
 {
-  if ((This == NULL) || (AuthMethod == NULL) || (UserId == NULL) || (Password == NULL)) {
+  if ((This == NULL) || (AuthMethod == NULL) || (UserId == NULL) || (Password ==
+                                                                     NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 

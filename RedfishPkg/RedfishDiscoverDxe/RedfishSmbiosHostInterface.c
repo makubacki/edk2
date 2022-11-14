@@ -53,7 +53,9 @@ RedfishGetHostInterfaceProtocolData (
       // Check Interface Type, should be Network Host Interface = 40h
       //
       mType42Record = (SMBIOS_TABLE_TYPE42 *)Record;
-      if (mType42Record->InterfaceType == MCHostInterfaceTypeNetworkHostInterface) {
+      if (mType42Record->InterfaceType ==
+          MCHostInterfaceTypeNetworkHostInterface)
+      {
         ASSERT (Record->Length >= 9);
         Offset    = 5;
         RecordTmp = (UINT8 *)Record + Offset;
@@ -67,11 +69,19 @@ RedfishGetHostInterfaceProtocolData (
         //
         // Check Device Type, PCI/PCIe and USB Network Interface v2 is supported.
         //
-        if ((*RecordTmp == REDFISH_HOST_INTERFACE_DEVICE_TYPE_PCI_PCIE_V2) || (*RecordTmp == REDFISH_HOST_INTERFACE_DEVICE_TYPE_USB_V2)) {
+        if ((*RecordTmp == REDFISH_HOST_INTERFACE_DEVICE_TYPE_PCI_PCIE_V2) ||
+            (*RecordTmp == REDFISH_HOST_INTERFACE_DEVICE_TYPE_USB_V2))
+        {
           if (*RecordTmp == REDFISH_HOST_INTERFACE_DEVICE_TYPE_PCI_PCIE_V2) {
-            ASSERT (SpecificDataLen == sizeof (PCI_OR_PCIE_INTERFACE_DEVICE_DESCRIPTOR_V2) + 1);
+            ASSERT (
+              SpecificDataLen ==
+              sizeof (PCI_OR_PCIE_INTERFACE_DEVICE_DESCRIPTOR_V2) + 1
+              );
           } else {
-            ASSERT (SpecificDataLen > sizeof (REDFISH_HOST_INTERFACE_DEVICE_TYPE_USB_V2) + 1);
+            ASSERT (
+              SpecificDataLen >
+              sizeof (REDFISH_HOST_INTERFACE_DEVICE_TYPE_USB_V2) + 1
+              );
           }
 
           *DeviceDescriptor = (REDFISH_INTERFACE_DATA *)RecordTmp;
@@ -98,7 +108,9 @@ RedfishGetHostInterfaceProtocolData (
             // This SMBIOS record is invalid, if the length of protocol specific data for
             // Redfish Over IP protocol is wrong.
             //
-            if ((*(RecordTmp + 90) + sizeof (REDFISH_OVER_IP_PROTOCOL_DATA) - 1) != ProtocolLength) {
+            if ((*(RecordTmp + 90) + sizeof (REDFISH_OVER_IP_PROTOCOL_DATA) -
+                 1) != ProtocolLength)
+            {
               return EFI_SECURITY_VIOLATION;
             }
 

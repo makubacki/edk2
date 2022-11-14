@@ -362,7 +362,11 @@ UTF8StrToUCS2 (
     if ((CompareMem (Utf8Str + Utf8StrIndex, "\\u", 2) == 0) &&
         (Utf8StrLength - Utf8StrIndex >= UNICODE_FORMAT_LEN))
     {
-      Status = GetUCS2CharByFormat (Utf8Str + Utf8StrIndex, Ucs2StrTemp + Ucs2StrIndex);
+      Status = GetUCS2CharByFormat (
+                 Utf8Str + Utf8StrIndex,
+                 Ucs2StrTemp +
+                 Ucs2StrIndex
+                 );
       if (!EFI_ERROR (Status)) {
         Utf8StrIndex += UNICODE_FORMAT_LEN;
         Ucs2StrIndex++;
@@ -374,12 +378,18 @@ UTF8StrToUCS2 (
       }
     } else {
       Utf8BufferSize = GetUTF8SizeForUCS2 (Utf8Str + Utf8StrIndex);
-      if ((Utf8BufferSize == 0) || (Utf8StrLength - Utf8StrIndex < Utf8BufferSize)) {
+      if ((Utf8BufferSize == 0) || (Utf8StrLength - Utf8StrIndex <
+                                    Utf8BufferSize))
+      {
         FreePool (Ucs2StrTemp);
         return EFI_INVALID_PARAMETER;
       }
 
-      Status = UTF8ToUCS2Char (Utf8Str + Utf8StrIndex, Ucs2StrTemp + Ucs2StrIndex);
+      Status = UTF8ToUCS2Char (
+                 Utf8Str + Utf8StrIndex,
+                 Ucs2StrTemp +
+                 Ucs2StrIndex
+                 );
       if (EFI_ERROR (Status)) {
         FreePool (Ucs2StrTemp);
         return EFI_INVALID_PARAMETER;

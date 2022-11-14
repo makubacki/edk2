@@ -193,7 +193,9 @@ EncodeRequestContent (
   VOID        *EncodedPointer;
   UINTN       EncodedLength;
 
-  if ((OriginalContent == NULL) || (EncodedContent == NULL) || (EncodedContentLength == NULL)) {
+  if ((OriginalContent == NULL) || (EncodedContent == NULL) ||
+      (EncodedContentLength == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -302,8 +304,13 @@ RedfishBuildUrl (
     PathLen = StrLen (RelativePath);
   }
 
-  UrlLength = StrLen (HTTPS_FLAG) + StrLen (REDFISH_FIRST_URL) + 1 + StrLen (RedfishConfigServiceInfo->RedfishServiceLocation) + PathLen;
-  Url       = AllocateZeroPool (UrlLength * sizeof (CHAR16));
+  UrlLength = StrLen (HTTPS_FLAG) + StrLen (REDFISH_FIRST_URL) + 1 + StrLen (
+                                                                       RedfishConfigServiceInfo
+                                                                         ->
+                                                                         RedfishServiceLocation
+                                                                       ) +
+              PathLen;
+  Url = AllocateZeroPool (UrlLength * sizeof (CHAR16));
   if (Url == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -320,7 +327,11 @@ RedfishBuildUrl (
     Url = Url + StrLen (HTTPS_FLAG);
   }
 
-  StrCpyS (Url, StrLen (RedfishConfigServiceInfo->RedfishServiceLocation) + 1, RedfishConfigServiceInfo->RedfishServiceLocation);
+  StrCpyS (
+    Url,
+    StrLen (RedfishConfigServiceInfo->RedfishServiceLocation) + 1,
+    RedfishConfigServiceInfo->RedfishServiceLocation
+    );
   Url = Url + StrLen (RedfishConfigServiceInfo->RedfishServiceLocation);
 
   //
@@ -379,11 +390,31 @@ createServiceEnumerator (
   }
 
   if (auth == NULL) {
-    ret = createServiceEnumeratorNoAuth (AsciiHost, rootUri, true, flags, RestEx);
+    ret = createServiceEnumeratorNoAuth (
+            AsciiHost,
+            rootUri,
+            true,
+            flags,
+            RestEx
+            );
   } else if (auth->authType == REDFISH_AUTH_BASIC) {
-    ret = createServiceEnumeratorBasicAuth (AsciiHost, rootUri, auth->authCodes.userPass.username, auth->authCodes.userPass.password, flags, RestEx);
+    ret = createServiceEnumeratorBasicAuth (
+            AsciiHost,
+            rootUri,
+            auth->authCodes.userPass.username,
+            auth->authCodes.userPass.password,
+            flags,
+            RestEx
+            );
   } else if (auth->authType == REDFISH_AUTH_SESSION) {
-    ret = createServiceEnumeratorSessionAuth (AsciiHost, rootUri, auth->authCodes.userPass.username, auth->authCodes.userPass.password, flags, RestEx);
+    ret = createServiceEnumeratorSessionAuth (
+            AsciiHost,
+            rootUri,
+            auth->authCodes.userPass.username,
+            auth->authCodes.userPass.password,
+            flags,
+            RestEx
+            );
   } else {
     goto ON_EXIT;
   }
@@ -433,17 +464,28 @@ getUriFromService (
   //
   // Step 1: Create HTTP request message with 4 headers:
   //
-  HttpIoHeader = HttpIoCreateHeader ((service->sessionToken || service->basicAuthStr) ? 6 : 5);
+  HttpIoHeader = HttpIoCreateHeader (
+                   (service->sessionToken ||
+                    service->basicAuthStr) ? 6 : 5
+                   );
   if (HttpIoHeader == NULL) {
     ret = NULL;
     goto ON_EXIT;
   }
 
   if (service->sessionToken) {
-    Status = HttpIoSetHeader (HttpIoHeader, "X-Auth-Token", service->sessionToken);
+    Status = HttpIoSetHeader (
+               HttpIoHeader,
+               "X-Auth-Token",
+               service->sessionToken
+               );
     ASSERT_EFI_ERROR (Status);
   } else if (service->basicAuthStr) {
-    Status = HttpIoSetHeader (HttpIoHeader, "Authorization", service->basicAuthStr);
+    Status = HttpIoSetHeader (
+               HttpIoHeader,
+               "Authorization",
+               service->basicAuthStr
+               );
     ASSERT_EFI_ERROR (Status);
   }
 
@@ -488,7 +530,11 @@ getUriFromService (
   //
   // Step 4: call RESTEx to get response from REST service.
   //
-  Status = service->RestEx->SendReceive (service->RestEx, RequestMsg, &ResponseMsg);
+  Status = service->RestEx->SendReceive (
+                              service->RestEx,
+                              RequestMsg,
+                              &ResponseMsg
+                              );
   if (EFI_ERROR (Status)) {
     ret = NULL;
     goto ON_EXIT;
@@ -514,14 +560,27 @@ getUriFromService (
     //
     // Check if data is encoded.
     //
-    ContentEncodedHeader = HttpFindHeader (ResponseMsg.HeaderCount, ResponseMsg.Headers, HTTP_HEADER_CONTENT_ENCODING);
+    ContentEncodedHeader = HttpFindHeader (
+                             ResponseMsg.HeaderCount,
+                             ResponseMsg.Headers,
+                             HTTP_HEADER_CONTENT_ENCODING
+                             );
     if (ContentEncodedHeader != NULL) {
       //
       // The content is encoded.
       //
-      Status = DecodeResponseContent (ContentEncodedHeader->FieldValue, &ResponseMsg.Body, &ResponseMsg.BodyLength);
+      Status = DecodeResponseContent (
+                 ContentEncodedHeader->FieldValue,
+                 &ResponseMsg.Body,
+                 &ResponseMsg.BodyLength
+                 );
       if (EFI_ERROR (Status)) {
-        DEBUG ((DEBUG_ERROR, "%a: Failed to decompress the response content %r\n.", __FUNCTION__, Status));
+        DEBUG ((
+          DEBUG_ERROR,
+          "%a: Failed to decompress the response content %r\n.",
+          __FUNCTION__,
+          Status
+          ));
         ret = NULL;
         goto ON_EXIT;
       }
@@ -576,7 +635,9 @@ patchUriFromService (
   CHAR8                  *EncodedContent;
   UINTN                  EncodedContentLen;
 
-  if ((service == NULL) || (uri == NULL) || (content == NULL) || (StatusCode == NULL)) {
+  if ((service == NULL) || (uri == NULL) || (content == NULL) || (StatusCode ==
+                                                                  NULL))
+  {
     return NULL;
   }
 
@@ -592,17 +653,28 @@ patchUriFromService (
   //
   // Step 1: Create HTTP request message with 4 headers:
   //
-  HttpIoHeader = HttpIoCreateHeader ((service->sessionToken || service->basicAuthStr) ? 9 : 8);
+  HttpIoHeader = HttpIoCreateHeader (
+                   (service->sessionToken ||
+                    service->basicAuthStr) ? 9 : 8
+                   );
   if (HttpIoHeader == NULL) {
     ret = NULL;
     goto ON_EXIT;
   }
 
   if (service->sessionToken) {
-    Status = HttpIoSetHeader (HttpIoHeader, "X-Auth-Token", service->sessionToken);
+    Status = HttpIoSetHeader (
+               HttpIoHeader,
+               "X-Auth-Token",
+               service->sessionToken
+               );
     ASSERT_EFI_ERROR (Status);
   } else if (service->basicAuthStr) {
-    Status = HttpIoSetHeader (HttpIoHeader, "Authorization", service->basicAuthStr);
+    Status = HttpIoSetHeader (
+               HttpIoHeader,
+               "Authorization",
+               service->basicAuthStr
+               );
     ASSERT_EFI_ERROR (Status);
   }
 
@@ -654,17 +726,34 @@ patchUriFromService (
   //
   // We currently only support gzip Content-Encoding.
   //
-  Status = EncodeRequestContent ((CHAR8 *)HTTP_CONTENT_ENCODING_GZIP, (CHAR8 *)content, (VOID **)&EncodedContent, &EncodedContentLen);
+  Status = EncodeRequestContent (
+             (CHAR8 *)HTTP_CONTENT_ENCODING_GZIP,
+             (CHAR8 *)content,
+             (VOID **)&EncodedContent,
+             &EncodedContentLen
+             );
   if (Status == EFI_INVALID_PARAMETER) {
     DEBUG ((DEBUG_ERROR, "%a: Error to encode content.\n", __FUNCTION__));
     ret = NULL;
     goto ON_EXIT;
   } else if (Status == EFI_UNSUPPORTED) {
-    DEBUG ((DEBUG_INFO, "No content coding for %a! Use raw data instead.\n", HTTP_CONTENT_ENCODING_GZIP));
-    Status = HttpIoSetHeader (HttpIoHeader, "Content-Encoding", HTTP_CONTENT_ENCODING_IDENTITY);
+    DEBUG ((
+      DEBUG_INFO,
+      "No content coding for %a! Use raw data instead.\n",
+      HTTP_CONTENT_ENCODING_GZIP
+      ));
+    Status = HttpIoSetHeader (
+               HttpIoHeader,
+               "Content-Encoding",
+               HTTP_CONTENT_ENCODING_IDENTITY
+               );
     ASSERT_EFI_ERROR (Status);
   } else {
-    Status = HttpIoSetHeader (HttpIoHeader, "Content-Encoding", HTTP_CONTENT_ENCODING_GZIP);
+    Status = HttpIoSetHeader (
+               HttpIoHeader,
+               "Content-Encoding",
+               HTTP_CONTENT_ENCODING_GZIP
+               );
     ASSERT_EFI_ERROR (Status);
   }
 
@@ -679,7 +768,11 @@ patchUriFromService (
   //
   // Step 4: call RESTEx to get response from REST service.
   //
-  Status = service->RestEx->SendReceive (service->RestEx, RequestMsg, &ResponseMsg);
+  Status = service->RestEx->SendReceive (
+                              service->RestEx,
+                              RequestMsg,
+                              &ResponseMsg
+                              );
   if (EFI_ERROR (Status)) {
     ret = NULL;
     goto ON_EXIT;
@@ -758,7 +851,9 @@ postUriFromService (
 
   ret = NULL;
 
-  if ((service == NULL) || (uri == NULL) || (content == NULL) || (StatusCode == NULL)) {
+  if ((service == NULL) || (uri == NULL) || (content == NULL) || (StatusCode ==
+                                                                  NULL))
+  {
     return NULL;
   }
 
@@ -778,16 +873,27 @@ postUriFromService (
   //
   // Step 1: Create HTTP request message with 4 headers:
   //
-  HttpIoHeader = HttpIoCreateHeader ((service->sessionToken || service->basicAuthStr) ? 8 : 7);
+  HttpIoHeader = HttpIoCreateHeader (
+                   (service->sessionToken ||
+                    service->basicAuthStr) ? 8 : 7
+                   );
   if (HttpIoHeader == NULL) {
     goto ON_EXIT;
   }
 
   if (service->sessionToken) {
-    Status = HttpIoSetHeader (HttpIoHeader, "X-Auth-Token", service->sessionToken);
+    Status = HttpIoSetHeader (
+               HttpIoHeader,
+               "X-Auth-Token",
+               service->sessionToken
+               );
     ASSERT_EFI_ERROR (Status);
   } else if (service->basicAuthStr) {
-    Status = HttpIoSetHeader (HttpIoHeader, "Authorization", service->basicAuthStr);
+    Status = HttpIoSetHeader (
+               HttpIoHeader,
+               "Authorization",
+               service->basicAuthStr
+               );
     ASSERT_EFI_ERROR (Status);
   }
 
@@ -795,7 +901,11 @@ postUriFromService (
     Status = HttpIoSetHeader (HttpIoHeader, "Content-Type", "application/json");
     ASSERT_EFI_ERROR (Status);
   } else {
-    Status = HttpIoSetHeader (HttpIoHeader, "Content-Type", (CHAR8 *)contentType);
+    Status = HttpIoSetHeader (
+               HttpIoHeader,
+               "Content-Type",
+               (CHAR8 *)contentType
+               );
     ASSERT_EFI_ERROR (Status);
   }
 
@@ -848,7 +958,11 @@ postUriFromService (
   //
   // Step 4: call RESTEx to get response from REST service.
   //
-  Status = service->RestEx->SendReceive (service->RestEx, RequestMsg, &ResponseMsg);
+  Status = service->RestEx->SendReceive (
+                              service->RestEx,
+                              RequestMsg,
+                              &ResponseMsg
+                              );
   if (EFI_ERROR (Status)) {
     goto ON_EXIT;
   }
@@ -878,13 +992,22 @@ postUriFromService (
   if ((ResponseMsg.Data.Response->StatusCode == HTTP_STATUS_200_OK) ||
       (ResponseMsg.Data.Response->StatusCode == HTTP_STATUS_204_NO_CONTENT))
   {
-    HttpHeader = HttpFindHeader (ResponseMsg.HeaderCount, ResponseMsg.Headers, "X-Auth-Token");
+    HttpHeader = HttpFindHeader (
+                   ResponseMsg.HeaderCount,
+                   ResponseMsg.Headers,
+                   "X-Auth-Token"
+                   );
     if (HttpHeader != NULL) {
       if (service->sessionToken) {
         free (service->sessionToken);
       }
 
-      service->sessionToken = AllocateCopyPool (AsciiStrSize (HttpHeader->FieldValue), HttpHeader->FieldValue);
+      service->sessionToken = AllocateCopyPool (
+                                AsciiStrSize (
+                                  HttpHeader->FieldValue
+                                  ),
+                                HttpHeader->FieldValue
+                                );
     }
 
     /*
@@ -959,17 +1082,28 @@ deleteUriFromServiceEx (
   //
   // Step 1: Create HTTP request message with 4 headers:
   //
-  HttpIoHeader = HttpIoCreateHeader ((service->sessionToken || service->basicAuthStr) ? 8 : 7);
+  HttpIoHeader = HttpIoCreateHeader (
+                   (service->sessionToken ||
+                    service->basicAuthStr) ? 8 : 7
+                   );
   if (HttpIoHeader == NULL) {
     ret = NULL;
     goto ON_EXIT;
   }
 
   if (service->sessionToken) {
-    Status = HttpIoSetHeader (HttpIoHeader, "X-Auth-Token", service->sessionToken);
+    Status = HttpIoSetHeader (
+               HttpIoHeader,
+               "X-Auth-Token",
+               service->sessionToken
+               );
     ASSERT_EFI_ERROR (Status);
   } else if (service->basicAuthStr) {
-    Status = HttpIoSetHeader (HttpIoHeader, "Authorization", service->basicAuthStr);
+    Status = HttpIoSetHeader (
+               HttpIoHeader,
+               "Authorization",
+               service->basicAuthStr
+               );
     ASSERT_EFI_ERROR (Status);
   }
 
@@ -1034,7 +1168,11 @@ deleteUriFromServiceEx (
   //
   // Step 4: call RESTEx to get response from REST service.
   //
-  Status = service->RestEx->SendReceive (service->RestEx, RequestMsg, &ResponseMsg);
+  Status = service->RestEx->SendReceive (
+                              service->RestEx,
+                              RequestMsg,
+                              &ResponseMsg
+                              );
   if (EFI_ERROR (Status)) {
     ret = NULL;
     goto ON_EXIT;
@@ -1158,7 +1296,9 @@ getPayloadByPath (
   }
 
   root = getRedfishServiceRoot (service, redpath->version, StatusCode);
-  if ((*StatusCode == NULL) || (**StatusCode < HTTP_STATUS_200_OK) || (**StatusCode > HTTP_STATUS_206_PARTIAL_CONTENT)) {
+  if ((*StatusCode == NULL) || (**StatusCode < HTTP_STATUS_200_OK) ||
+      (**StatusCode > HTTP_STATUS_206_PARTIAL_CONTENT))
+  {
     cleanupRedPath (redpath);
     return root;
   }
@@ -1367,7 +1507,13 @@ createServiceEnumeratorBasicAuth (
   redfishService  *ret;
   EFI_STATUS      Status;
 
-  ret = createServiceEnumeratorNoAuth (host, rootUri, false, flags, restProtocol);
+  ret = createServiceEnumeratorNoAuth (
+          host,
+          rootUri,
+          false,
+          flags,
+          restProtocol
+          );
 
   // add basic auth str
   Status = createBasicAuthStr (ret, username, password);
@@ -1404,13 +1550,21 @@ createServiceEnumeratorSessionAuth (
   content    = NULL;
   StatusCode = NULL;
 
-  ret = createServiceEnumeratorNoAuth (host, rootUri, true, flags, restProtocol);
+  ret = createServiceEnumeratorNoAuth (
+          host,
+          rootUri,
+          true,
+          flags,
+          restProtocol
+          );
   if (ret == NULL) {
     return NULL;
   }
 
   payload = getRedfishServiceRoot (ret, NULL, &StatusCode);
-  if ((StatusCode == NULL) || (*StatusCode < HTTP_STATUS_200_OK) || (*StatusCode > HTTP_STATUS_206_PARTIAL_CONTENT)) {
+  if ((StatusCode == NULL) || (*StatusCode < HTTP_STATUS_200_OK) ||
+      (*StatusCode > HTTP_STATUS_206_PARTIAL_CONTENT))
+  {
     if (StatusCode != NULL) {
       FreePool (StatusCode);
     }
@@ -1462,7 +1616,10 @@ createServiceEnumeratorSessionAuth (
     free (content);
   }
 
-  if ((sessionPayload == NULL) || (StatusCode == NULL) || (*StatusCode < HTTP_STATUS_200_OK) || (*StatusCode > HTTP_STATUS_206_PARTIAL_CONTENT)) {
+  if (  (sessionPayload == NULL) || (StatusCode == NULL) || (*StatusCode <
+                                                             HTTP_STATUS_200_OK)
+     || (*StatusCode > HTTP_STATUS_206_PARTIAL_CONTENT))
+  {
     // Failed to create session!
 
     cleanupPayload (links);
@@ -1528,7 +1685,10 @@ getVersions (
     ret = getUriFromService (service, "/redfish", &StatusCode);
   }
 
-  if ((ret == NULL) || (StatusCode == NULL) || (*StatusCode < HTTP_STATUS_200_OK) || (*StatusCode > HTTP_STATUS_206_PARTIAL_CONTENT)) {
+  if ((ret == NULL) || (StatusCode == NULL) || (*StatusCode <
+                                                HTTP_STATUS_200_OK) ||
+      (*StatusCode > HTTP_STATUS_206_PARTIAL_CONTENT))
+  {
     if (ret != NULL) {
       json_decref (ret);
     }

@@ -326,28 +326,41 @@ RedfishServiceDiscoveredCallback (
   }
 
   RedfishDiscoveredToken = (EFI_REDFISH_DISCOVERED_TOKEN *)Context;
-  RedfishInstance        = RedfishDiscoveredToken->DiscoverList.RedfishInstances;
+  RedfishInstance        =
+    RedfishDiscoveredToken->DiscoverList.RedfishInstances;
   //
   // Only pick up the first found Redfish service.
   //
   if (RedfishInstance->Status == EFI_SUCCESS) {
-    gRedfishConfigData.RedfishServiceInfo.RedfishServiceRestExHandle = RedfishInstance->Information.RedfishRestExHandle;
-    gRedfishConfigData.RedfishServiceInfo.RedfishServiceVersion      = RedfishInstance->Information.RedfishVersion;
-    gRedfishConfigData.RedfishServiceInfo.RedfishServiceLocation     = RedfishInstance->Information.Location;
-    gRedfishConfigData.RedfishServiceInfo.RedfishServiceUuid         = RedfishInstance->Information.Uuid;
-    gRedfishConfigData.RedfishServiceInfo.RedfishServiceOs           = RedfishInstance->Information.Os;
-    gRedfishConfigData.RedfishServiceInfo.RedfishServiceOsVersion    = RedfishInstance->Information.OsVersion;
-    gRedfishConfigData.RedfishServiceInfo.RedfishServiceProduct      = RedfishInstance->Information.Product;
-    gRedfishConfigData.RedfishServiceInfo.RedfishServiceProductVer   = RedfishInstance->Information.ProductVer;
-    gRedfishConfigData.RedfishServiceInfo.RedfishServiceUseHttps     = RedfishInstance->Information.UseHttps;
-    gRedfishServiceDiscovered                                        = TRUE;
+    gRedfishConfigData.RedfishServiceInfo.RedfishServiceRestExHandle =
+      RedfishInstance->Information.RedfishRestExHandle;
+    gRedfishConfigData.RedfishServiceInfo.RedfishServiceVersion =
+      RedfishInstance->Information.RedfishVersion;
+    gRedfishConfigData.RedfishServiceInfo.RedfishServiceLocation =
+      RedfishInstance->Information.Location;
+    gRedfishConfigData.RedfishServiceInfo.RedfishServiceUuid =
+      RedfishInstance->Information.Uuid;
+    gRedfishConfigData.RedfishServiceInfo.RedfishServiceOs =
+      RedfishInstance->Information.Os;
+    gRedfishConfigData.RedfishServiceInfo.RedfishServiceOsVersion =
+      RedfishInstance->Information.OsVersion;
+    gRedfishConfigData.RedfishServiceInfo.RedfishServiceProduct =
+      RedfishInstance->Information.Product;
+    gRedfishConfigData.RedfishServiceInfo.RedfishServiceProductVer =
+      RedfishInstance->Information.ProductVer;
+    gRedfishConfigData.RedfishServiceInfo.RedfishServiceUseHttps =
+      RedfishInstance->Information.UseHttps;
+    gRedfishServiceDiscovered = TRUE;
   }
 
   //
   // Invoke RedfishConfigHandlerInstalledCallback to execute
   // the initialization of Redfish Configure Handler instance.
   //
-  RedfishConfigHandlerInstalledCallback (gRedfishConfigData.Event, &gRedfishConfigData);
+  RedfishConfigHandlerInstalledCallback (
+    gRedfishConfigData.Event,
+    &gRedfishConfigData
+    );
 }
 
 /**
@@ -372,7 +385,11 @@ RedfishDiscoverProtocolInstalled (
   EFI_REDFISH_DISCOVER_NETWORK_INTERFACE  *ThisNetworkInterface;
   EFI_REDFISH_DISCOVERED_TOKEN            *ThisRedfishDiscoveredToken;
 
-  DEBUG ((DEBUG_INFO, "%a: New network interface is installed on system by EFI Redfish discover driver.\n", __FUNCTION__));
+  DEBUG ((
+    DEBUG_INFO,
+    "%a: New network interface is installed on system by EFI Redfish discover driver.\n",
+    __FUNCTION__
+    ));
 
   BufferSize = sizeof (EFI_HANDLE);
   Status     = gBS->LocateHandle (
@@ -383,7 +400,11 @@ RedfishDiscoverProtocolInstalled (
                       &HandleBuffer
                       );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: Can't locate handle with EFI_REDFISH_DISCOVER_PROTOCOL installed.\n", __FUNCTION__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: Can't locate handle with EFI_REDFISH_DISCOVER_PROTOCOL installed.\n",
+      __FUNCTION__
+      ));
   }
 
   gRedfishDiscoverActivated = TRUE;
@@ -403,7 +424,11 @@ RedfishDiscoverProtocolInstalled (
     if (EFI_ERROR (Status)) {
       gEfiRedfishDiscoverProtocol = NULL;
       gRedfishDiscoverActivated   = FALSE;
-      DEBUG ((DEBUG_ERROR, "%a: Can't locate EFI_REDFISH_DISCOVER_PROTOCOL.\n", __FUNCTION__));
+      DEBUG ((
+        DEBUG_ERROR,
+        "%a: Can't locate EFI_REDFISH_DISCOVER_PROTOCOL.\n",
+        __FUNCTION__
+        ));
       return;
     }
   }
@@ -422,13 +447,24 @@ RedfishDiscoverProtocolInstalled (
                                           &gNetworkInterfaceInstances
                                           );
   if (EFI_ERROR (Status) || (gNumberOfNetworkInterfaces == 0)) {
-    DEBUG ((DEBUG_ERROR, "%a: No network interfaces found on the handle.\n", __FUNCTION__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: No network interfaces found on the handle.\n",
+      __FUNCTION__
+      ));
     return;
   }
 
-  gRedfishDiscoveredToken = AllocateZeroPool (gNumberOfNetworkInterfaces * sizeof (EFI_REDFISH_DISCOVERED_TOKEN));
+  gRedfishDiscoveredToken = AllocateZeroPool (
+                              gNumberOfNetworkInterfaces *
+                              sizeof (EFI_REDFISH_DISCOVERED_TOKEN)
+                              );
   if (gRedfishDiscoveredToken == NULL) {
-    DEBUG ((DEBUG_ERROR, "%a: Not enough memory for EFI_REDFISH_DISCOVERED_TOKEN.\n", __FUNCTION__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: Not enough memory for EFI_REDFISH_DISCOVERED_TOKEN.\n",
+      __FUNCTION__
+      ));
     return;
   }
 
@@ -437,7 +473,9 @@ RedfishDiscoverProtocolInstalled (
   //
   // Loop to discover Redfish service on each network interface.
   //
-  for (NetworkInterfaceIndex = 0; NetworkInterfaceIndex < gNumberOfNetworkInterfaces; NetworkInterfaceIndex++) {
+  for (NetworkInterfaceIndex = 0; NetworkInterfaceIndex <
+       gNumberOfNetworkInterfaces; NetworkInterfaceIndex++)
+  {
     //
     // Initial this Redfish Discovered Token
     //
@@ -449,11 +487,16 @@ RedfishDiscoverProtocolInstalled (
                     &ThisRedfishDiscoveredToken->Event
                     );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "%a: Failed to create event for Redfish discovered token.\n", __FUNCTION__));
+      DEBUG ((
+        DEBUG_ERROR,
+        "%a: Failed to create event for Redfish discovered token.\n",
+        __FUNCTION__
+        ));
       goto ErrorReturn;
     }
 
-    ThisRedfishDiscoveredToken->Signature                         = REDFISH_DISCOVER_TOKEN_SIGNATURE;
+    ThisRedfishDiscoveredToken->Signature =
+      REDFISH_DISCOVER_TOKEN_SIGNATURE;
     ThisRedfishDiscoveredToken->DiscoverList.NumberOfServiceFound = 0;
     ThisRedfishDiscoveredToken->DiscoverList.RedfishInstances     = NULL;
     //
@@ -506,7 +549,9 @@ RedfishConfigHandlerDriverUnload (
   RedfishConfigStopRedfishDiscovery ();
   if (gRedfishDiscoveredToken != NULL) {
     ThisRedfishDiscoveredToken = gRedfishDiscoveredToken;
-    for (NumberOfNetworkInterfacesIndex = 0; NumberOfNetworkInterfacesIndex < gNumberOfNetworkInterfaces; NumberOfNetworkInterfacesIndex++) {
+    for (NumberOfNetworkInterfacesIndex = 0; NumberOfNetworkInterfacesIndex <
+         gNumberOfNetworkInterfaces; NumberOfNetworkInterfacesIndex++)
+    {
       if (ThisRedfishDiscoveredToken->Event != NULL) {
         gBS->CloseEvent (ThisRedfishDiscoveredToken->Event);
       }
@@ -556,7 +601,11 @@ RedfishConfigHandlerDriverEntryPoint (
                   &gEfiRedfishDiscoverProtocolEvent
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: Fail to create event for the installation of EFI_REDFISH_DISCOVER_PROTOCOL.", __FUNCTION__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: Fail to create event for the installation of EFI_REDFISH_DISCOVER_PROTOCOL.",
+      __FUNCTION__
+      ));
     return Status;
   }
 
@@ -566,7 +615,11 @@ RedfishConfigHandlerDriverEntryPoint (
                   &gEfiRedfishDiscoverRegistration
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: Fail to register event for the installation of EFI_REDFISH_DISCOVER_PROTOCOL.", __FUNCTION__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: Fail to register event for the installation of EFI_REDFISH_DISCOVER_PROTOCOL.",
+      __FUNCTION__
+      ));
     return Status;
   }
 
@@ -593,7 +646,11 @@ RedfishConfigHandlerDriverEntryPoint (
     gExitBootServiceEvent = NULL;
     gBS->CloseEvent (gEfiRedfishDiscoverProtocolEvent);
     gEfiRedfishDiscoverProtocolEvent = NULL;
-    DEBUG ((DEBUG_ERROR, "%a: Fail to install EFI Binding Protocol of EFI Redfish Config driver.", __FUNCTION__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: Fail to install EFI Binding Protocol of EFI Redfish Config driver.",
+      __FUNCTION__
+      ));
     return Status;
   }
 

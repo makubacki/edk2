@@ -92,12 +92,22 @@ RedfishRestExSendReceive (
   }
 
   DEBUG ((DEBUG_INFO, "\nRedfishRestExSendReceive():\n"));
-  DEBUG ((DEBUG_INFO, "*** Perform HTTP Request Method - %d, URL: %s\n", RequestMessage->Data.Request->Method, RequestMessage->Data.Request->Url));
+  DEBUG ((
+    DEBUG_INFO,
+    "*** Perform HTTP Request Method - %d, URL: %s\n",
+    RequestMessage->Data.Request->Method,
+    RequestMessage->Data.Request->Url
+    ));
 
   //
   // Add header "Expect" to server, only for URL write.
   //
-  Status = RedfishHttpAddExpectation (This, RequestMessage, &PreservedRequestHeaders, &ItsWrite);
+  Status = RedfishHttpAddExpectation (
+             This,
+             RequestMessage,
+             &PreservedRequestHeaders,
+             &ItsWrite
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -108,7 +118,11 @@ RedfishRestExSendReceive (
       // Send chunked transfer.
       //
       SendChunkProcess++;
-      CopyMem ((VOID *)&ChunkTransferRequestMessage, (VOID *)RequestMessage, sizeof (EFI_HTTP_MESSAGE));
+      CopyMem (
+        (VOID *)&ChunkTransferRequestMessage,
+        (VOID *)RequestMessage,
+        sizeof (EFI_HTTP_MESSAGE)
+        );
     } else {
       SendNonChunkProcess++;
     }
@@ -137,7 +151,8 @@ ReSendRequest:;
         if (EFI_ERROR (Status)) {
           goto ON_EXIT;
         }
-      } while (SendChunkProcess == HttpIoSendChunkContent || SendChunkProcess == HttpIoSendChunkEndChunk);
+      } while (SendChunkProcess == HttpIoSendChunkContent || SendChunkProcess ==
+               HttpIoSendChunkEndChunk);
     } else {
       //
       // This is the non-chunk transfer, send request header first and then
@@ -145,11 +160,16 @@ ReSendRequest:;
       //
       Status = HttpIoSendRequest (
                  &(Instance->HttpIo),
-                 (SendNonChunkProcess == HttpIoSendNonChunkContent) ? NULL : RequestMessage->Data.Request,
-                 (SendNonChunkProcess == HttpIoSendNonChunkContent) ? 0 : RequestMessage->HeaderCount,
-                 (SendNonChunkProcess == HttpIoSendNonChunkContent) ? NULL : RequestMessage->Headers,
-                 (SendNonChunkProcess == HttpIoSendNonChunkHeaderZeroContent) ? 0 : RequestMessage->BodyLength,
-                 (SendNonChunkProcess == HttpIoSendNonChunkHeaderZeroContent) ? NULL : RequestMessage->Body
+                 (SendNonChunkProcess == HttpIoSendNonChunkContent) ? NULL :
+                 RequestMessage->Data.Request,
+                 (SendNonChunkProcess == HttpIoSendNonChunkContent) ? 0 :
+                 RequestMessage->HeaderCount,
+                 (SendNonChunkProcess == HttpIoSendNonChunkContent) ? NULL :
+                 RequestMessage->Headers,
+                 (SendNonChunkProcess == HttpIoSendNonChunkHeaderZeroContent) ?
+                 0 : RequestMessage->BodyLength,
+                 (SendNonChunkProcess == HttpIoSendNonChunkHeaderZeroContent) ?
+                 NULL : RequestMessage->Body
                  );
     }
   } else {
@@ -219,7 +239,11 @@ ReSendRequest:;
     RequestMessage->HeaderCount--;                     // Minus one header count for "Expect".
   }
 
-  DEBUG ((DEBUG_INFO, "HTTP Response StatusCode - %d:", ResponseData->Response.StatusCode));
+  DEBUG ((
+    DEBUG_INFO,
+    "HTTP Response StatusCode - %d:",
+    ResponseData->Response.StatusCode
+    ));
   if (ResponseData->Response.StatusCode == HTTP_STATUS_200_OK) {
     DEBUG ((DEBUG_INFO, "HTTP_STATUS_200_OK\n"));
 
@@ -228,12 +252,16 @@ ReSendRequest:;
       SendChunkProcess++;
       goto ReSendRequest;
     }
-  } else if (ResponseData->Response.StatusCode == HTTP_STATUS_413_REQUEST_ENTITY_TOO_LARGE) {
+  } else if (ResponseData->Response.StatusCode ==
+             HTTP_STATUS_413_REQUEST_ENTITY_TOO_LARGE)
+  {
     DEBUG ((DEBUG_INFO, "HTTP_STATUS_413_REQUEST_ENTITY_TOO_LARGE\n"));
 
     Status = EFI_BAD_BUFFER_SIZE;
     goto ON_EXIT;
-  } else if (ResponseData->Response.StatusCode == HTTP_STATUS_405_METHOD_NOT_ALLOWED) {
+  } else if (ResponseData->Response.StatusCode ==
+             HTTP_STATUS_405_METHOD_NOT_ALLOWED)
+  {
     DEBUG ((DEBUG_ERROR, "HTTP_STATUS_405_METHOD_NOT_ALLOWED\n"));
 
     Status = EFI_ACCESS_DENIED;
@@ -241,7 +269,10 @@ ReSendRequest:;
   } else if (ResponseData->Response.StatusCode == HTTP_STATUS_400_BAD_REQUEST) {
     DEBUG ((DEBUG_INFO, "HTTP_STATUS_400_BAD_REQUEST\n"));
     if (SendChunkProcess == HttpIoSendChunkHeaderZeroContent) {
-      DEBUG ((DEBUG_INFO, "Bad request may caused by zero length chunk. Try to send all chunks...\n"));
+      DEBUG ((
+        DEBUG_INFO,
+        "Bad request may caused by zero length chunk. Try to send all chunks...\n"
+        ));
       SendChunkProcess++;
       goto ReSendRequest;
     }
@@ -257,7 +288,10 @@ ReSendRequest:;
     }
 
     if (SendNonChunkProcess == HttpIoSendNonChunkHeaderZeroContent) {
-      DEBUG ((DEBUG_INFO, "HTTP_STATUS_100_CONTINUE for non chunk transfer...\n"));
+      DEBUG ((
+        DEBUG_INFO,
+        "HTTP_STATUS_100_CONTINUE for non chunk transfer...\n"
+        ));
       SendNonChunkProcess++;
       goto ReSendRequest;
     }
@@ -288,21 +322,28 @@ ReSendRequest:;
   //
   // Ready to return the StatusCode, Header info and BodyLength.
   //
-  ResponseMessage->Data.Response = AllocateZeroPool (sizeof (EFI_HTTP_RESPONSE_DATA));
+  ResponseMessage->Data.Response = AllocateZeroPool (
+                                     sizeof (EFI_HTTP_RESPONSE_DATA)
+                                     );
   if (ResponseMessage->Data.Response == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ON_EXIT;
   }
 
-  ResponseMessage->Data.Response->StatusCode = ResponseData->Response.StatusCode;
-  ResponseMessage->HeaderCount               = ResponseData->HeaderCount;
-  ResponseMessage->Headers                   = ResponseData->Headers;
+  ResponseMessage->Data.Response->StatusCode =
+    ResponseData->Response.StatusCode;
+  ResponseMessage->HeaderCount = ResponseData->HeaderCount;
+  ResponseMessage->Headers     = ResponseData->Headers;
 
   //
   // Get response message body.
   //
   if (ResponseMessage->HeaderCount > 0) {
-    Status = HttpIoGetContentLength (ResponseMessage->HeaderCount, ResponseMessage->Headers, &ResponseMessage->BodyLength);
+    Status = HttpIoGetContentLength (
+               ResponseMessage->HeaderCount,
+               ResponseMessage->Headers,
+               &ResponseMessage->BodyLength
+               );
     if (EFI_ERROR (Status) && (Status != EFI_NOT_FOUND)) {
       goto ON_EXIT;
     }
@@ -346,7 +387,11 @@ ReSendRequest:;
         while (!IsListEmpty (ChunkListLink)) {
           ThisChunk = (HTTP_IO_CHUNKS *)GetFirstNode (ChunkListLink);
           if (CopyChunkData) {
-            CopyMem (((UINT8 *)ResponseMessage->Body + Index), (UINT8 *)ThisChunk->Data, ThisChunk->Length);
+            CopyMem (
+              ((UINT8 *)ResponseMessage->Body + Index),
+              (UINT8 *)ThisChunk->Data,
+              ThisChunk->Length
+              );
             Index += ThisChunk->Length;
           }
 
@@ -380,13 +425,15 @@ ReSendRequest:;
     //
     TotalReceivedSize = 0;
     while (TotalReceivedSize < ResponseMessage->BodyLength) {
-      ResponseData->BodyLength = ResponseMessage->BodyLength - TotalReceivedSize;
-      ResponseData->Body       = (CHAR8 *)ResponseMessage->Body + TotalReceivedSize;
-      Status                   = HttpIoRecvResponse (
-                                   &(Instance->HttpIo),
-                                   FALSE,
-                                   ResponseData
-                                   );
+      ResponseData->BodyLength = ResponseMessage->BodyLength -
+                                 TotalReceivedSize;
+      ResponseData->Body = (CHAR8 *)ResponseMessage->Body +
+                           TotalReceivedSize;
+      Status = HttpIoRecvResponse (
+                 &(Instance->HttpIo),
+                 FALSE,
+                 ResponseData
+                 );
       if (EFI_ERROR (Status)) {
         goto ON_EXIT;
       }
@@ -509,7 +556,11 @@ RedfishRestExGetService (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  CopyMem (ServiceInfo, &(Instance->Service->RestExServiceInfo), sizeof (EFI_REST_EX_SERVICE_INFO));
+  CopyMem (
+    ServiceInfo,
+    &(Instance->Service->RestExServiceInfo),
+    sizeof (EFI_REST_EX_SERVICE_INFO)
+    );
 
   *RestExServiceInfo = ServiceInfo;
 
@@ -616,8 +667,14 @@ RedfishRestExConfigure (
     HttpIoDestroyIo (&(Instance->HttpIo));
 
     if (Instance->ConfigData != NULL) {
-      if (((EFI_REST_EX_HTTP_CONFIG_DATA *)Instance->ConfigData)->HttpConfigData.AccessPoint.IPv4Node != NULL) {
-        FreePool (((EFI_REST_EX_HTTP_CONFIG_DATA *)Instance->ConfigData)->HttpConfigData.AccessPoint.IPv4Node);
+      if (((EFI_REST_EX_HTTP_CONFIG_DATA *)Instance->ConfigData)->HttpConfigData
+            .AccessPoint.IPv4Node != NULL)
+      {
+        FreePool (
+          ((EFI_REST_EX_HTTP_CONFIG_DATA *)Instance->ConfigData)->HttpConfigData
+            .
+            AccessPoint.IPv4Node
+          );
       }
 
       FreePool (Instance->ConfigData);
@@ -626,42 +683,65 @@ RedfishRestExConfigure (
 
     Instance->State = RESTEX_STATE_UNCONFIGED;
   } else {
-    HttpConfigData = &((EFI_REST_EX_HTTP_CONFIG_DATA *)RestExConfigData)->HttpConfigData;
-    Status         = Instance->HttpIo.Http->Configure (Instance->HttpIo.Http, HttpConfigData);
+    HttpConfigData =
+      &((EFI_REST_EX_HTTP_CONFIG_DATA *)RestExConfigData)->HttpConfigData;
+    Status = Instance->HttpIo.Http->Configure (
+                                      Instance->HttpIo.Http,
+                                      HttpConfigData
+                                      );
     if (EFI_ERROR (Status)) {
       goto ON_EXIT;
     }
 
-    Instance->HttpIo.Timeout = ((EFI_REST_EX_HTTP_CONFIG_DATA *)RestExConfigData)->SendReceiveTimeout;
+    Instance->HttpIo.Timeout =
+      ((EFI_REST_EX_HTTP_CONFIG_DATA *)RestExConfigData)->SendReceiveTimeout;
 
-    Instance->ConfigData = AllocateZeroPool (sizeof (EFI_REST_EX_HTTP_CONFIG_DATA));
+    Instance->ConfigData = AllocateZeroPool (
+                             sizeof (EFI_REST_EX_HTTP_CONFIG_DATA)
+                             );
     if (Instance->ConfigData == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
       goto ON_EXIT;
     }
 
-    CopyMem (Instance->ConfigData, RestExConfigData, sizeof (EFI_REST_EX_HTTP_CONFIG_DATA));
+    CopyMem (
+      Instance->ConfigData,
+      RestExConfigData,
+      sizeof (EFI_REST_EX_HTTP_CONFIG_DATA)
+      );
     if (HttpConfigData->LocalAddressIsIPv6 == TRUE) {
-      ((EFI_REST_EX_HTTP_CONFIG_DATA *)Instance->ConfigData)->HttpConfigData.AccessPoint.IPv6Node = AllocateZeroPool (sizeof (EFI_HTTPv6_ACCESS_POINT));
-      if (((EFI_REST_EX_HTTP_CONFIG_DATA *)Instance->ConfigData)->HttpConfigData.AccessPoint.IPv6Node == NULL) {
+      ((EFI_REST_EX_HTTP_CONFIG_DATA *)Instance->ConfigData)->HttpConfigData.
+        AccessPoint.IPv6Node = AllocateZeroPool (
+                                 sizeof (EFI_HTTPv6_ACCESS_POINT)
+                                 );
+      if (((EFI_REST_EX_HTTP_CONFIG_DATA *)Instance->ConfigData)->HttpConfigData
+            .AccessPoint.IPv6Node == NULL)
+      {
         Status = EFI_OUT_OF_RESOURCES;
         goto ON_EXIT;
       }
 
       CopyMem (
-        ((EFI_REST_EX_HTTP_CONFIG_DATA *)Instance->ConfigData)->HttpConfigData.AccessPoint.IPv6Node,
+        ((EFI_REST_EX_HTTP_CONFIG_DATA *)Instance->ConfigData)->HttpConfigData.
+          AccessPoint.IPv6Node,
         HttpConfigData->AccessPoint.IPv6Node,
         sizeof (EFI_HTTPv6_ACCESS_POINT)
         );
     } else {
-      ((EFI_REST_EX_HTTP_CONFIG_DATA *)Instance->ConfigData)->HttpConfigData.AccessPoint.IPv4Node = AllocateZeroPool (sizeof (EFI_HTTPv4_ACCESS_POINT));
-      if (((EFI_REST_EX_HTTP_CONFIG_DATA *)Instance->ConfigData)->HttpConfigData.AccessPoint.IPv4Node == NULL) {
+      ((EFI_REST_EX_HTTP_CONFIG_DATA *)Instance->ConfigData)->HttpConfigData.
+        AccessPoint.IPv4Node = AllocateZeroPool (
+                                 sizeof (EFI_HTTPv4_ACCESS_POINT)
+                                 );
+      if (((EFI_REST_EX_HTTP_CONFIG_DATA *)Instance->ConfigData)->HttpConfigData
+            .AccessPoint.IPv4Node == NULL)
+      {
         Status = EFI_OUT_OF_RESOURCES;
         goto ON_EXIT;
       }
 
       CopyMem (
-        ((EFI_REST_EX_HTTP_CONFIG_DATA *)Instance->ConfigData)->HttpConfigData.AccessPoint.IPv4Node,
+        ((EFI_REST_EX_HTTP_CONFIG_DATA *)Instance->ConfigData)->HttpConfigData.
+          AccessPoint.IPv4Node,
         HttpConfigData->AccessPoint.IPv4Node,
         sizeof (EFI_HTTPv4_ACCESS_POINT)
         );

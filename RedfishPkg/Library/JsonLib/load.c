@@ -450,8 +450,11 @@ lex_scan_string (
 
           c = lex_get_save (lex, error);
         }
-      } else if ((c == '"') || (c == '\\') || (c == '/') || (c == 'b') || (c == 'f') ||
-                 (c == 'n') || (c == 'r') || (c == 't'))
+      } else if (  (c == '"') || (c == '\\') || (c == '/') || (c == 'b') ||
+                   (c ==
+                    'f')
+                ||
+                   (c == 'n') || (c == 'r') || (c == 't'))
       {
         c = lex_get_save (lex, error);
       } else {
@@ -649,7 +652,9 @@ lex_scan_number (
     goto out;
   }
 
-  if (!(lex->flags & JSON_DECODE_INT_AS_REAL) && (c != '.') && (c != 'E') && (c != 'e')) {
+  if (!(lex->flags & JSON_DECODE_INT_AS_REAL) && (c != '.') && (c != 'E') &&
+      (c != 'e'))
+  {
     json_int_t  intval;
 
     lex_unget_unsave (lex, c);
@@ -755,7 +760,9 @@ lex_scan (
 
   lex_save (lex, c);
 
-  if ((c == '{') || (c == '}') || (c == '[') || (c == ']') || (c == ':') || (c == ',')) {
+  if ((c == '{') || (c == '}') || (c == '[') || (c == ']') || (c == ':') ||
+      (c == ','))
+  {
     lex->token = c;
   } else if (c == '"') {
     lex_scan_string (lex, error);
@@ -876,7 +883,12 @@ parse_object (
     json_t  *value;
 
     if (lex->token != TOKEN_STRING) {
-      error_set (error, lex, json_error_invalid_syntax, "string or '}' expected");
+      error_set (
+        error,
+        lex,
+        json_error_invalid_syntax,
+        "string or '}' expected"
+        );
       goto error;
     }
 
@@ -899,7 +911,12 @@ parse_object (
     if (flags & JSON_REJECT_DUPLICATES) {
       if (json_object_get (object, key)) {
         jsonp_free (key);
-        error_set (error, lex, json_error_duplicate_key, "duplicate object key");
+        error_set (
+          error,
+          lex,
+          json_error_duplicate_key,
+          "duplicate object key"
+          );
         goto error;
       }
     }
@@ -1004,7 +1021,12 @@ parse_value (
 
   lex->depth++;
   if (lex->depth > JSON_PARSER_MAX_DEPTH) {
-    error_set (error, lex, json_error_stack_overflow, "maximum parsing depth reached");
+    error_set (
+      error,
+      lex,
+      json_error_stack_overflow,
+      "maximum parsing depth reached"
+      );
     return NULL;
   }
 

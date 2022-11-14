@@ -213,7 +213,9 @@ RedfishBuildPathWithSystemUuid (
     }
 
     // AsciiStrLen ("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx") = 36
-    BufSize = AsciiStrSize (RedPath) + AsciiStrLen ("XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX");
+    BufSize = AsciiStrSize (RedPath) + AsciiStrLen (
+                                         "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+                                         );
   } else {
     BufSize = AsciiStrSize (RedPath) + AsciiStrLen (IdString);
   }
@@ -269,7 +271,11 @@ RedfishGetByService (
 
   ZeroMem (RedResponse, sizeof (REDFISH_RESPONSE));
 
-  RedResponse->Payload = (REDFISH_PAYLOAD)getPayloadByPath (RedfishService, RedPath, &(RedResponse->StatusCode));
+  RedResponse->Payload = (REDFISH_PAYLOAD)getPayloadByPath (
+                                            RedfishService,
+                                            RedPath,
+                                            &(RedResponse->StatusCode)
+                                            );
 
   //
   // 1. If the returned Payload is NULL, indicates any error happen.
@@ -331,7 +337,11 @@ RedfishGetByUri (
 
   ZeroMem (RedResponse, sizeof (REDFISH_RESPONSE));
 
-  JsonValue            = getUriFromService (RedfishService, Uri, &RedResponse->StatusCode);
+  JsonValue = getUriFromService (
+                RedfishService,
+                Uri,
+                &RedResponse->StatusCode
+                );
   RedResponse->Payload = createRedfishPayload (JsonValue, RedfishService);
 
   //
@@ -396,7 +406,11 @@ RedfishGetByPayload (
 
   ZeroMem (RedResponse, sizeof (REDFISH_RESPONSE));
 
-  RedResponse->Payload = (REDFISH_PAYLOAD)getPayloadForPathString (Payload, RedPath, &(RedResponse->StatusCode));
+  RedResponse->Payload = (REDFISH_PAYLOAD)getPayloadForPathString (
+                                            Payload,
+                                            RedPath,
+                                            &(RedResponse->StatusCode)
+                                            );
 
   //
   // 1. If the returned Payload is NULL, indicates any error happen.
@@ -467,7 +481,9 @@ RedfishPatchToUri (
   Status    = EFI_SUCCESS;
   JsonValue = NULL;
 
-  if ((RedfishService == NULL) || (Uri == NULL) || (Content == NULL) || (RedResponse == NULL)) {
+  if ((RedfishService == NULL) || (Uri == NULL) || (Content == NULL) ||
+      (RedResponse == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -630,7 +646,9 @@ RedfishPostToUri (
   Status    = EFI_SUCCESS;
   JsonValue = NULL;
 
-  if ((RedfishService == NULL) || (Uri == NULL) || (Content == NULL) || (RedResponse == NULL)) {
+  if ((RedfishService == NULL) || (Uri == NULL) || (Content == NULL) ||
+      (RedResponse == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -877,7 +895,9 @@ RedfishDeleteByUriEx (
   Status    = EFI_SUCCESS;
   JsonValue = NULL;
 
-  if ((RedfishService == NULL) || (Content == NULL) || (Uri == NULL) || (RedResponse == NULL)) {
+  if ((RedfishService == NULL) || (Content == NULL) || (Uri == NULL) ||
+      (RedResponse == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1088,20 +1108,35 @@ RedfishIsValidOdataType (
     return FALSE;
   }
 
-  OdataType = JsonObjectGetValue (JsonValueGetObject (JsonValue), "@odata.type");
-  if (!JsonValueIsString (OdataType) || (JsonValueGetAsciiString (OdataType) == NULL)) {
+  OdataType = JsonObjectGetValue (
+                JsonValueGetObject (JsonValue),
+                "@odata.type"
+                );
+  if (!JsonValueIsString (OdataType) || (JsonValueGetAsciiString (OdataType) ==
+                                         NULL))
+  {
     return FALSE;
   }
 
   for (Index = 0; Index < OdataTypeMappingListSize; Index++) {
-    if ((AsciiStrCmp (OdataTypeMappingList[Index].OdataTypeName, OdataTypeName) == 0) &&
-        (AsciiStrCmp (OdataTypeMappingList[Index].OdataType, JsonValueGetAsciiString (OdataType)) == 0))
+    if ((AsciiStrCmp (
+           OdataTypeMappingList[Index].OdataTypeName,
+           OdataTypeName
+           ) == 0) &&
+        (AsciiStrCmp (
+           OdataTypeMappingList[Index].OdataType,
+           JsonValueGetAsciiString (OdataType)
+           ) == 0))
     {
       return TRUE;
     }
   }
 
-  DEBUG ((DEBUG_INFO, "%a: This Odata type is not in the list.\n", __FUNCTION__));
+  DEBUG ((
+    DEBUG_INFO,
+    "%a: This Odata type is not in the list.\n",
+    __FUNCTION__
+    ));
   return FALSE;
 }
 
@@ -1166,9 +1201,14 @@ RedfishGetPayloadByIndex (
   REDFISH_RESPONSE  RedfishResponse;
   REDFISH_PAYLOAD   PayloadReturn;
 
-  PayloadReturn = (VOID *)getPayloadByIndex (Payload, Index, &RedfishResponse.StatusCode);
+  PayloadReturn = (VOID *)getPayloadByIndex (
+                            Payload,
+                            Index,
+                            &RedfishResponse.StatusCode
+                            );
   if ((PayloadReturn == NULL) ||
-      ((*(RedfishResponse.StatusCode) < HTTP_STATUS_200_OK) && (*(RedfishResponse.StatusCode) > HTTP_STATUS_206_PARTIAL_CONTENT)))
+      ((*(RedfishResponse.StatusCode) < HTTP_STATUS_200_OK) &&
+       (*(RedfishResponse.StatusCode) > HTTP_STATUS_206_PARTIAL_CONTENT)))
   {
     return NULL;
   }
@@ -1212,7 +1252,11 @@ RedfishCheckIfRedpathExist (
       TempResponse.Payload
       );
   } else {
-    CopyMem ((VOID *)Response, (VOID *)&TempResponse, sizeof (REDFISH_RESPONSE));
+    CopyMem (
+      (VOID *)Response,
+      (VOID *)&TempResponse,
+      sizeof (REDFISH_RESPONSE)
+      );
   }
 
   return EFI_SUCCESS;

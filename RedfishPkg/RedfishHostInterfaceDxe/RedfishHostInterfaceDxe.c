@@ -51,14 +51,26 @@ RedfishCreateSmbiosTable42 (
   //
   // Get platform Redfish host interface device type descriptor data.
   //
-  Status = RedfishPlatformHostInterfaceDeviceDescriptor (&DeviceType, &DeviceDescriptor);
+  Status = RedfishPlatformHostInterfaceDeviceDescriptor (
+             &DeviceType,
+             &DeviceDescriptor
+             );
   if (EFI_ERROR (Status)) {
     if (Status == EFI_NOT_FOUND) {
-      DEBUG ((DEBUG_ERROR, "%a: No Redfish host interface descriptor is provided on this platform.", __FUNCTION__));
+      DEBUG ((
+        DEBUG_ERROR,
+        "%a: No Redfish host interface descriptor is provided on this platform.",
+        __FUNCTION__
+        ));
       return EFI_NOT_FOUND;
     }
 
-    DEBUG ((DEBUG_ERROR, "%a: Fail to get device descriptor, %r.", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: Fail to get device descriptor, %r.",
+      __FUNCTION__,
+      Status
+      ));
     return Status;
   }
 
@@ -66,12 +78,17 @@ RedfishCreateSmbiosTable42 (
       (DeviceType != REDFISH_HOST_INTERFACE_DEVICE_TYPE_PCI_PCIE_V2)
       )
   {
-    DEBUG ((DEBUG_ERROR, "%a: Only support either protocol type 04h or 05h as Redfish host interface.", __FUNCTION__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: Only support either protocol type 04h or 05h as Redfish host interface.",
+      __FUNCTION__
+      ));
     return EFI_UNSUPPORTED;
   }
 
   if (DeviceType == REDFISH_HOST_INTERFACE_DEVICE_TYPE_PCI_PCIE_V2) {
-    DeviceDataLength = DeviceDescriptor->DeviceDescriptor.PciPcieDeviceV2.Length;
+    DeviceDataLength =
+      DeviceDescriptor->DeviceDescriptor.PciPcieDeviceV2.Length;
   } else {
     DeviceDataLength = DeviceDescriptor->DeviceDescriptor.UsbDeviceV2.Length;
   }
@@ -87,13 +104,20 @@ RedfishCreateSmbiosTable42 (
   CurrentProtocolsDataLength = 0;
   NewProtocolsDataLength     = 0;
   while (TRUE) {
-    Status = RedfishPlatformHostInterfaceProtocolData (&ProtocolRecord, ProtocolCount);
+    Status = RedfishPlatformHostInterfaceProtocolData (
+               &ProtocolRecord,
+               ProtocolCount
+               );
     if (Status == EFI_NOT_FOUND) {
       break;
     }
 
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "%a: Fail to get Redfish host interafce protocol type data.", __FUNCTION__));
+      DEBUG ((
+        DEBUG_ERROR,
+        "%a: Fail to get Redfish host interafce protocol type data.",
+        __FUNCTION__
+        ));
       if (ProtocolRecords != NULL) {
         FreePool (ProtocolRecords);
       }
@@ -105,7 +129,9 @@ RedfishCreateSmbiosTable42 (
       return Status;
     }
 
-    ProtocolDataSize        = sizeof (MC_HOST_INTERFACE_PROTOCOL_RECORD) - sizeof (ProtocolRecord->ProtocolTypeData) + ProtocolRecord->ProtocolTypeDataLen;
+    ProtocolDataSize = sizeof (MC_HOST_INTERFACE_PROTOCOL_RECORD) -
+                       sizeof (ProtocolRecord->ProtocolTypeData) +
+                       ProtocolRecord->ProtocolTypeDataLen;
     NewProtocolsDataLength += ProtocolDataSize;
     if (ProtocolRecords == NULL) {
       ProtocolRecords = AllocateZeroPool (NewProtocolsDataLength);
@@ -114,12 +140,24 @@ RedfishCreateSmbiosTable42 (
         return EFI_OUT_OF_RESOURCES;
       }
 
-      CopyMem ((VOID *)ProtocolRecords, (VOID *)ProtocolRecord, ProtocolDataSize);
+      CopyMem (
+        (VOID *)ProtocolRecords,
+        (VOID *)ProtocolRecord,
+        ProtocolDataSize
+        );
       NewProtocolRecords = ProtocolRecords;
     } else {
-      NewProtocolRecords = ReallocatePool (CurrentProtocolsDataLength, NewProtocolsDataLength, (VOID *)ProtocolRecords);
+      NewProtocolRecords = ReallocatePool (
+                             CurrentProtocolsDataLength,
+                             NewProtocolsDataLength,
+                             (VOID *)ProtocolRecords
+                             );
       if (NewProtocolRecords == NULL) {
-        DEBUG ((DEBUG_ERROR, "%a: Fail to allocate memory for Redfish host interface protocol data.", __FUNCTION__));
+        DEBUG ((
+          DEBUG_ERROR,
+          "%a: Fail to allocate memory for Redfish host interface protocol data.",
+          __FUNCTION__
+          ));
         FreePool (ProtocolRecords);
         FreePool (ProtocolRecord);
         return EFI_OUT_OF_RESOURCES;
@@ -166,7 +204,8 @@ RedfishCreateSmbiosTable42 (
     goto ON_EXIT;
   }
 
-  Type42Record->Hdr.Type   = EFI_SMBIOS_TYPE_MANAGEMENT_CONTROLLER_HOST_INTERFACE;
+  Type42Record->Hdr.Type =
+    EFI_SMBIOS_TYPE_MANAGEMENT_CONTROLLER_HOST_INTERFACE;
   Type42Record->Hdr.Length = sizeof (SMBIOS_TABLE_TYPE42) - 4
                              + DeviceDataLength
                              + 1
@@ -182,7 +221,11 @@ RedfishCreateSmbiosTable42 (
   //
   // Fill in InterfaceTypeSpecificData field
   //
-  CopyMem (Type42Record->InterfaceTypeSpecificData, DeviceDescriptor, DeviceDataLength);
+  CopyMem (
+    Type42Record->InterfaceTypeSpecificData,
+    DeviceDescriptor,
+    DeviceDataLength
+    );
   FreePool (DeviceDescriptor);
   DeviceDescriptor = NULL;
 
@@ -203,7 +246,11 @@ RedfishCreateSmbiosTable42 (
   //
   // 5. Add Redfish interface data record to SMBIOS table 42
   //
-  Status = gBS->LocateProtocol (&gEfiSmbiosProtocolGuid, NULL, (VOID **)&Smbios);
+  Status = gBS->LocateProtocol (
+                  &gEfiSmbiosProtocolGuid,
+                  NULL,
+                  (VOID **)&Smbios
+                  );
   if (EFI_ERROR (Status)) {
     goto ON_EXIT;
   }
@@ -213,7 +260,8 @@ RedfishCreateSmbiosTable42 (
                                              Smbios,
                                              NULL,
                                              &MemArrayMappedAddrSmbiosHandle,
-                                             (EFI_SMBIOS_TABLE_HEADER *)Type42Record
+                                             (EFI_SMBIOS_TABLE_HEADER *)
+                                             Type42Record
                                              );
   DEBUG ((DEBUG_INFO, "RedfishPlatformDxe: Smbios->Add() - %r\n", Status));
   if (EFI_ERROR (Status)) {

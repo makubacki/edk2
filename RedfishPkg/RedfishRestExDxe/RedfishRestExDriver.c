@@ -51,12 +51,25 @@ RestExDestroyChildEntryInHandleBuffer (
     return EFI_INVALID_PARAMETER;
   }
 
-  Instance          = NET_LIST_USER_STRUCT_S (Entry, RESTEX_INSTANCE, Link, RESTEX_INSTANCE_SIGNATURE);
-  ServiceBinding    = ((RESTEX_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ServiceBinding;
-  NumberOfChildren  = ((RESTEX_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->NumberOfChildren;
-  ChildHandleBuffer = ((RESTEX_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ChildHandleBuffer;
+  Instance = NET_LIST_USER_STRUCT_S (
+               Entry,
+               RESTEX_INSTANCE,
+               Link,
+               RESTEX_INSTANCE_SIGNATURE
+               );
+  ServiceBinding =
+    ((RESTEX_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ServiceBinding;
+  NumberOfChildren =
+    ((RESTEX_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->NumberOfChildren;
+  ChildHandleBuffer =
+    ((RESTEX_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ChildHandleBuffer;
 
-  if (!NetIsInHandleBuffer (Instance->ChildHandle, NumberOfChildren, ChildHandleBuffer)) {
+  if (!NetIsInHandleBuffer (
+         Instance->ChildHandle,
+         NumberOfChildren,
+         ChildHandleBuffer
+         ))
+  {
     return EFI_SUCCESS;
   }
 
@@ -111,7 +124,11 @@ RestExCreateInstance (
   RestExIns->InDestroy = FALSE;
   RestExIns->Service   = Service;
 
-  CopyMem (&RestExIns->RestEx, &mRedfishRestExProtocol, sizeof (RestExIns->RestEx));
+  CopyMem (
+    &RestExIns->RestEx,
+    &mRedfishRestExProtocol,
+    sizeof (RestExIns->RestEx)
+    );
 
   //
   // Create a HTTP_IO to access the HTTP service.
@@ -241,13 +258,20 @@ RestExCreateService (
   RestExSb->ControllerHandle = Controller;
   RestExSb->ImageHandle      = Image;
 
-  RestExSb->RestExServiceInfo.EfiRestExServiceInfoV10.EfiRestExServiceInfoHeader.Length                   = sizeof (EFI_REST_EX_SERVICE_INFO);
-  RestExSb->RestExServiceInfo.EfiRestExServiceInfoV10.EfiRestExServiceInfoHeader.RestServiceInfoVer.Major = 1;
-  RestExSb->RestExServiceInfo.EfiRestExServiceInfoV10.EfiRestExServiceInfoHeader.RestServiceInfoVer.Minor = 0;
-  RestExSb->RestExServiceInfo.EfiRestExServiceInfoV10.RestServiceType                                     = EfiRestExServiceRedfish;
-  RestExSb->RestExServiceInfo.EfiRestExServiceInfoV10.RestServiceAccessMode                               = RestExServiceAccessMode (Controller);
-  RestExSb->RestExServiceInfo.EfiRestExServiceInfoV10.RestExConfigType                                    = EfiRestExConfigHttp;
-  RestExSb->RestExServiceInfo.EfiRestExServiceInfoV10.RestExConfigDataLength                              = sizeof (EFI_REST_EX_HTTP_CONFIG_DATA);
+  RestExSb->RestExServiceInfo.EfiRestExServiceInfoV10.EfiRestExServiceInfoHeader
+    .Length = sizeof (EFI_REST_EX_SERVICE_INFO);
+  RestExSb->RestExServiceInfo.EfiRestExServiceInfoV10.EfiRestExServiceInfoHeader
+    .RestServiceInfoVer.Major = 1;
+  RestExSb->RestExServiceInfo.EfiRestExServiceInfoV10.EfiRestExServiceInfoHeader
+    .RestServiceInfoVer.Minor = 0;
+  RestExSb->RestExServiceInfo.EfiRestExServiceInfoV10.RestServiceType
+    = EfiRestExServiceRedfish;
+  RestExSb->RestExServiceInfo.EfiRestExServiceInfoV10.RestServiceAccessMode
+    = RestExServiceAccessMode (Controller);
+  RestExSb->RestExServiceInfo.EfiRestExServiceInfoV10.RestExConfigType
+    = EfiRestExConfigHttp;
+  RestExSb->RestExServiceInfo.EfiRestExServiceInfoV10.RestExConfigDataLength
+    = sizeof (EFI_REST_EX_HTTP_CONFIG_DATA);
 
   Status = gBS->InstallProtocolInterface (
                   &Controller,
@@ -427,7 +451,11 @@ RedfishRestExDriverBindingStart (
     return EFI_ALREADY_STARTED;
   }
 
-  Status = RestExCreateService (ControllerHandle, This->DriverBindingHandle, &RestExSb);
+  Status = RestExCreateService (
+             ControllerHandle,
+             This->DriverBindingHandle,
+             &RestExSb
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }

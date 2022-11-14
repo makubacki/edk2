@@ -179,7 +179,10 @@ getPayloadByNodeName (
     }
   }
 
-  if ((*StatusCode == NULL) || ((**StatusCode >= HTTP_STATUS_200_OK) && (**StatusCode <= HTTP_STATUS_206_PARTIAL_CONTENT))) {
+  if ((*StatusCode == NULL) || ((**StatusCode >= HTTP_STATUS_200_OK) &&
+                                (**StatusCode <=
+                                 HTTP_STATUS_206_PARTIAL_CONTENT)))
+  {
     if (json_is_string (value)) {
       odataId = json_object ();
       json_object_set (odataId, nodeName, value);
@@ -210,9 +213,15 @@ getPayloadByIndex (
   *StatusCode = NULL;
 
   if (isPayloadCollection (payload)) {
-    redfishPayload  *members = getPayloadByNodeName (payload, "Members", StatusCode);
+    redfishPayload  *members = getPayloadByNodeName (
+                                 payload,
+                                 "Members",
+                                 StatusCode
+                                 );
     if (((*StatusCode == NULL) && (members == NULL)) ||
-        ((*StatusCode != NULL) && ((**StatusCode < HTTP_STATUS_200_OK) || (**StatusCode > HTTP_STATUS_206_PARTIAL_CONTENT))))
+        ((*StatusCode != NULL) && ((**StatusCode < HTTP_STATUS_200_OK) ||
+                                   (**StatusCode >
+                                    HTTP_STATUS_206_PARTIAL_CONTENT))))
     {
       return members;
     }
@@ -293,7 +302,9 @@ getPayloadForPath (
   if (redpath->nodeName) {
     ret = getPayloadByNodeName (payload, redpath->nodeName, StatusCode);
     if (((*StatusCode == NULL) && (ret == NULL)) ||
-        ((*StatusCode != NULL) && ((**StatusCode < HTTP_STATUS_200_OK) || (**StatusCode > HTTP_STATUS_206_PARTIAL_CONTENT))))
+        ((*StatusCode != NULL) && ((**StatusCode < HTTP_STATUS_200_OK) ||
+                                   (**StatusCode >
+                                    HTTP_STATUS_206_PARTIAL_CONTENT))))
     {
       //
       // Any error happen, return directly.
@@ -304,7 +315,9 @@ getPayloadForPath (
     ASSERT (redpath->index >= 1);
     ret = getPayloadByIndex (payload, redpath->index - 1, StatusCode);
     if (((*StatusCode == NULL) && (ret == NULL)) ||
-        ((*StatusCode != NULL) && ((**StatusCode < HTTP_STATUS_200_OK) || (**StatusCode > HTTP_STATUS_206_PARTIAL_CONTENT))))
+        ((*StatusCode != NULL) && ((**StatusCode < HTTP_STATUS_200_OK) ||
+                                   (**StatusCode >
+                                    HTTP_STATUS_206_PARTIAL_CONTENT))))
     {
       //
       // Any error happen, return directly.
@@ -312,9 +325,17 @@ getPayloadForPath (
       return ret;
     }
   } else if (redpath->op) {
-    ret = getOpResult (payload, redpath->propName, redpath->op, redpath->value, StatusCode);
+    ret = getOpResult (
+            payload,
+            redpath->propName,
+            redpath->op,
+            redpath->value,
+            StatusCode
+            );
     if (((*StatusCode == NULL) && (ret == NULL)) ||
-        ((*StatusCode != NULL) && ((**StatusCode < HTTP_STATUS_200_OK) || (**StatusCode > HTTP_STATUS_206_PARTIAL_CONTENT))))
+        ((*StatusCode != NULL) && ((**StatusCode < HTTP_STATUS_200_OK) ||
+                                   (**StatusCode >
+                                    HTTP_STATUS_206_PARTIAL_CONTENT))))
     {
       //
       // Any error happen, return directly.
@@ -443,7 +464,14 @@ postContentToPayload (
   }
 
   uri  = strdup (json_string_value (json));
-  json = postUriFromService (target->service, uri, data, dataSize, contentType, StatusCode);
+  json = postUriFromService (
+           target->service,
+           uri,
+           data,
+           dataSize,
+           contentType,
+           StatusCode
+           );
   free (uri);
   if (json == NULL) {
     return NULL;
@@ -473,7 +501,13 @@ postPayload (
   }
 
   content = payloadToString (payload, false);
-  ret     = postContentToPayload (target, content, strlen (content), NULL, StatusCode);
+  ret     = postContentToPayload (
+              target,
+              content,
+              strlen (content),
+              NULL,
+              StatusCode
+              );
   free (content);
   return ret;
 }
@@ -518,7 +552,9 @@ getOpResult (
 
   prop = getPayloadByNodeName (payload, propName, StatusCode);
   if (((*StatusCode == NULL) && (prop == NULL)) ||
-      ((*StatusCode != NULL) && ((**StatusCode < HTTP_STATUS_200_OK) || (**StatusCode > HTTP_STATUS_206_PARTIAL_CONTENT))))
+      ((*StatusCode != NULL) && ((**StatusCode < HTTP_STATUS_200_OK) ||
+                                 (**StatusCode >
+                                  HTTP_STATUS_206_PARTIAL_CONTENT))))
   {
     return prop;
   }
@@ -618,7 +654,9 @@ collectionEvalOp (
   /*Technically getPayloadByIndex would do this, but this optimizes things*/
   members = getPayloadByNodeName (payload, "Members", StatusCode);
   if (((*StatusCode == NULL) && (members == NULL)) ||
-      ((*StatusCode != NULL) && ((**StatusCode < HTTP_STATUS_200_OK) || (**StatusCode > HTTP_STATUS_206_PARTIAL_CONTENT))))
+      ((*StatusCode != NULL) && ((**StatusCode < HTTP_STATUS_200_OK) ||
+                                 (**StatusCode >
+                                  HTTP_STATUS_206_PARTIAL_CONTENT))))
   {
     free (valid);
     return members;
@@ -632,7 +670,9 @@ collectionEvalOp (
 
     tmp = getPayloadByIndex (members, i, StatusCode);
     if (((*StatusCode == NULL) && (tmp == NULL)) ||
-        ((*StatusCode != NULL) && ((**StatusCode < HTTP_STATUS_200_OK) || (**StatusCode > HTTP_STATUS_206_PARTIAL_CONTENT))))
+        ((*StatusCode != NULL) && ((**StatusCode < HTTP_STATUS_200_OK) ||
+                                   (**StatusCode >
+                                    HTTP_STATUS_206_PARTIAL_CONTENT))))
     {
       free (valid);
       return tmp;
@@ -705,7 +745,9 @@ arrayEvalOp (
 
     tmp = getPayloadByIndex (payload, i, StatusCode);
     if (((*StatusCode == NULL) && (tmp == NULL)) ||
-        ((*StatusCode != NULL) && ((**StatusCode < HTTP_STATUS_200_OK) || (**StatusCode > HTTP_STATUS_206_PARTIAL_CONTENT))))
+        ((*StatusCode != NULL) && ((**StatusCode < HTTP_STATUS_200_OK) ||
+                                   (**StatusCode >
+                                    HTTP_STATUS_206_PARTIAL_CONTENT))))
     {
       return tmp;
     }

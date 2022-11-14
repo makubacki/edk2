@@ -143,10 +143,15 @@ RestExLibCreateChild (
           goto ON_ERROR;
       }
 
-      if ((RestExServiceInfo->EfiRestExServiceInfoV10.RestServiceAccessMode != AccessMode) ||
-          (RestExServiceInfo->EfiRestExServiceInfoV10.RestServiceType != ServiceType) ||
-          (RestExServiceInfo->EfiRestExServiceInfoV10.RestExConfigType != ConfigType) ||
-          ((LenOfConfig != REST_EX_CONFIG_DATA_LEN_UNKNOWN) && (RestExServiceInfo->EfiRestExServiceInfoV10.RestExConfigDataLength != LenOfConfig)))
+      if ((RestExServiceInfo->EfiRestExServiceInfoV10.RestServiceAccessMode !=
+           AccessMode) ||
+          (RestExServiceInfo->EfiRestExServiceInfoV10.RestServiceType !=
+           ServiceType) ||
+          (RestExServiceInfo->EfiRestExServiceInfoV10.RestExConfigType !=
+           ConfigType) ||
+          ((LenOfConfig != REST_EX_CONFIG_DATA_LEN_UNKNOWN) &&
+           (RestExServiceInfo->EfiRestExServiceInfoV10.RestExConfigDataLength !=
+            LenOfConfig)))
       {
         goto ON_ERROR;
       }

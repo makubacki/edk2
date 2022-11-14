@@ -93,9 +93,19 @@ RedfishCreateLibredfishService (
   Flags = REDFISH_FLAG_SERVICE_NO_VERSION_DOC;
 
   if (AuthMethod != AuthMethodNone) {
-    Redfish = createServiceEnumerator (RedfishConfigServiceInfo, NULL, &Auth, (unsigned int)Flags);
+    Redfish = createServiceEnumerator (
+                RedfishConfigServiceInfo,
+                NULL,
+                &Auth,
+                (unsigned int)Flags
+                );
   } else {
-    Redfish = createServiceEnumerator (RedfishConfigServiceInfo, NULL, NULL, (unsigned int)Flags);
+    Redfish = createServiceEnumerator (
+                RedfishConfigServiceInfo,
+                NULL,
+                NULL,
+                (unsigned int)Flags
+                );
   }
 
   //
@@ -148,7 +158,11 @@ RedfishGetAuthInfo (
   // Locate Redfish Credential Protocol.
   //
   if (mCredentialProtocol == NULL) {
-    Status = gBS->LocateProtocol (&gEdkIIRedfishCredentialProtocolGuid, NULL, (VOID **)&mCredentialProtocol);
+    Status = gBS->LocateProtocol (
+                    &gEdkIIRedfishCredentialProtocolGuid,
+                    NULL,
+                    (VOID **)&mCredentialProtocol
+                    );
     if (EFI_ERROR (Status)) {
       return EFI_UNSUPPORTED;
     }
@@ -156,9 +170,18 @@ RedfishGetAuthInfo (
 
   ASSERT (mCredentialProtocol != NULL);
 
-  Status = mCredentialProtocol->GetAuthInfo (mCredentialProtocol, AuthMethod, UserId, Password);
+  Status = mCredentialProtocol->GetAuthInfo (
+                                  mCredentialProtocol,
+                                  AuthMethod,
+                                  UserId,
+                                  Password
+                                  );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "RedfishGetAuthInfo: failed to retrieve Redfish credential - %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "RedfishGetAuthInfo: failed to retrieve Redfish credential - %r\n",
+      Status
+      ));
     return Status;
   }
 
@@ -187,7 +210,9 @@ RedfishBuildRedpathUseId (
 {
   UINTN  RedpathSize;
 
-  if ((Redpath == NULL) || (ServiceVerisonStr == NULL) || (Url == NULL) || (Id == NULL)) {
+  if ((Redpath == NULL) || (ServiceVerisonStr == NULL) || (Url == NULL) ||
+      (Id == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -201,6 +226,13 @@ RedfishBuildRedpathUseId (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  AsciiSPrint (*Redpath, RedpathSize, "/%a%a[Id=%a]", ServiceVerisonStr, Url, Id);
+  AsciiSPrint (
+    *Redpath,
+    RedpathSize,
+    "/%a%a[Id=%a]",
+    ServiceVerisonStr,
+    Url,
+    Id
+    );
   return EFI_SUCCESS;
 }

@@ -64,7 +64,9 @@ RestJsonStructureRegister (
   ThisList   = &JsonStructureSupported->NextSupportedRsrcInterp;
   NumberOfNS = 1;
   while (TRUE) {
-    if (ThisList->ForwardLink == &JsonStructureSupported->NextSupportedRsrcInterp) {
+    if (ThisList->ForwardLink ==
+        &JsonStructureSupported->NextSupportedRsrcInterp)
+    {
       break;
     } else {
       ThisList = ThisList->ForwardLink;
@@ -73,29 +75,45 @@ RestJsonStructureRegister (
   }
 
   Instance =
-    (REST_JSON_STRUCTURE_INSTANCE *)AllocateZeroPool (sizeof (REST_JSON_STRUCTURE_INSTANCE) + NumberOfNS * sizeof (EFI_REST_JSON_RESOURCE_TYPE_IDENTIFIER));
+    (REST_JSON_STRUCTURE_INSTANCE *)AllocateZeroPool (
+                                      sizeof (REST_JSON_STRUCTURE_INSTANCE) +
+                                      NumberOfNS *
+                                      sizeof (
+                                                                                                                  EFI_REST_JSON_RESOURCE_TYPE_IDENTIFIER)
+                                      );
   if (Instance == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
   InitializeListHead (&Instance->NextRestJsonStructureInstance);
   Instance->NumberOfNameSpaceToConvert = NumberOfNS;
-  Instance->SupportedRsrcIndentifier   = (EFI_REST_JSON_RESOURCE_TYPE_IDENTIFIER *)((REST_JSON_STRUCTURE_INSTANCE *)Instance + 1);
+  Instance->SupportedRsrcIndentifier   =
+    (EFI_REST_JSON_RESOURCE_TYPE_IDENTIFIER *)((REST_JSON_STRUCTURE_INSTANCE *)
+                                               Instance + 1);
   //
   // Copy supported resource identifer interpreter.
   //
   CloneSupportedInterpId = Instance->SupportedRsrcIndentifier;
   ThisSupportedInterp    = JsonStructureSupported;
   for (Index = 0; Index < NumberOfNS; Index++) {
-    CopyMem ((VOID *)CloneSupportedInterpId, (VOID *)&ThisSupportedInterp->RestResourceInterp, sizeof (EFI_REST_JSON_RESOURCE_TYPE_IDENTIFIER));
-    ThisSupportedInterp = (EFI_REST_JSON_STRUCTURE_SUPPORTED *)ThisSupportedInterp->NextSupportedRsrcInterp.ForwardLink;
+    CopyMem (
+      (VOID *)CloneSupportedInterpId,
+      (VOID *)&ThisSupportedInterp->RestResourceInterp,
+      sizeof (EFI_REST_JSON_RESOURCE_TYPE_IDENTIFIER)
+      );
+    ThisSupportedInterp =
+      (EFI_REST_JSON_STRUCTURE_SUPPORTED *)ThisSupportedInterp->
+        NextSupportedRsrcInterp.ForwardLink;
     CloneSupportedInterpId++;
   }
 
   Instance->JsonToStructure  = ToStructure;
   Instance->StructureToJson  = ToJson;
   Instance->DestroyStructure = DestroyStructure;
-  InsertTailList (&mRestJsonStructureList, &Instance->NextRestJsonStructureInstance);
+  InsertTailList (
+    &mRestJsonStructureList,
+    &Instance->NextRestJsonStructureInstance
+    );
   return EFI_SUCCESS;
 }
 
@@ -151,7 +169,9 @@ InterpreterInstanceToStruct (
     // Check if the namesapce and version is supported by this interpreter.
     //
     ThisSupportedRsrcTypeId = InterpreterInstance->SupportedRsrcIndentifier;
-    for (Index = 0; Index < InterpreterInstance->NumberOfNameSpaceToConvert; Index++) {
+    for (Index = 0; Index < InterpreterInstance->NumberOfNameSpaceToConvert;
+         Index++)
+    {
       if (AsciiStrCmp (
             RsrcTypeIdentifier->NameSpace.ResourceTypeName,
             ThisSupportedRsrcTypeId->NameSpace.ResourceTypeName
@@ -257,7 +277,9 @@ InterpreterEfiStructToInstance (
   //
   Status                  = EFI_UNSUPPORTED;
   ThisSupportedRsrcTypeId = InterpreterInstance->SupportedRsrcIndentifier;
-  for (Index = 0; Index < InterpreterInstance->NumberOfNameSpaceToConvert; Index++) {
+  for (Index = 0; Index < InterpreterInstance->NumberOfNameSpaceToConvert;
+       Index++)
+  {
     if (AsciiStrCmp (
           RsrcTypeIdentifier->NameSpace.ResourceTypeName,
           ThisSupportedRsrcTypeId->NameSpace.ResourceTypeName
@@ -329,7 +351,9 @@ InterpreterInstanceDestoryJsonStruct (
   // Check if the namesapce and version is supported by this interpreter.
   //
   ThisSupportedRsrcTypeId = InterpreterInstance->SupportedRsrcIndentifier;
-  for (Index = 0; Index < InterpreterInstance->NumberOfNameSpaceToConvert; Index++) {
+  for (Index = 0; Index < InterpreterInstance->NumberOfNameSpaceToConvert;
+       Index++)
+  {
     if (AsciiStrCmp (
           RestJSonHeader->JsonRsrcIdentifier.NameSpace.ResourceTypeName,
           ThisSupportedRsrcTypeId->NameSpace.ResourceTypeName
@@ -417,7 +441,9 @@ RestJsonStructureToStruct (
   }
 
   Status   = EFI_SUCCESS;
-  Instance = (REST_JSON_STRUCTURE_INSTANCE *)GetFirstNode (&mRestJsonStructureList);
+  Instance = (REST_JSON_STRUCTURE_INSTANCE *)GetFirstNode (
+                                               &mRestJsonStructureList
+                                               );
   while (TRUE) {
     Status = InterpreterInstanceToStruct (
                This,
@@ -430,12 +456,20 @@ RestJsonStructureToStruct (
       break;
     }
 
-    if (IsNodeAtEnd (&mRestJsonStructureList, &Instance->NextRestJsonStructureInstance)) {
+    if (IsNodeAtEnd (
+          &mRestJsonStructureList,
+          &Instance->NextRestJsonStructureInstance
+          ))
+    {
       Status = EFI_UNSUPPORTED;
       break;
     }
 
-    Instance = (REST_JSON_STRUCTURE_INSTANCE *)GetNextNode (&mRestJsonStructureList, &Instance->NextRestJsonStructureInstance);
+    Instance = (REST_JSON_STRUCTURE_INSTANCE *)GetNextNode (
+                                                 &mRestJsonStructureList,
+                                                 &Instance->
+                                                   NextRestJsonStructureInstance
+                                                 );
   }
 
   return Status;
@@ -471,7 +505,9 @@ RestJsonStructureDestroyStruct (
   }
 
   Status   = EFI_SUCCESS;
-  Instance = (REST_JSON_STRUCTURE_INSTANCE *)GetFirstNode (&mRestJsonStructureList);
+  Instance = (REST_JSON_STRUCTURE_INSTANCE *)GetFirstNode (
+                                               &mRestJsonStructureList
+                                               );
   while (TRUE) {
     Status = InterpreterInstanceDestoryJsonStruct (
                This,
@@ -482,12 +518,20 @@ RestJsonStructureDestroyStruct (
       break;
     }
 
-    if (IsNodeAtEnd (&mRestJsonStructureList, &Instance->NextRestJsonStructureInstance)) {
+    if (IsNodeAtEnd (
+          &mRestJsonStructureList,
+          &Instance->NextRestJsonStructureInstance
+          ))
+    {
       Status = EFI_UNSUPPORTED;
       break;
     }
 
-    Instance = (REST_JSON_STRUCTURE_INSTANCE *)GetNextNode (&mRestJsonStructureList, &Instance->NextRestJsonStructureInstance);
+    Instance = (REST_JSON_STRUCTURE_INSTANCE *)GetNextNode (
+                                                 &mRestJsonStructureList,
+                                                 &Instance->
+                                                   NextRestJsonStructureInstance
+                                                 );
   }
 
   return Status;
@@ -524,7 +568,9 @@ RestJsonStructureToJson (
   }
 
   Status   = EFI_SUCCESS;
-  Instance = (REST_JSON_STRUCTURE_INSTANCE *)GetFirstNode (&mRestJsonStructureList);
+  Instance = (REST_JSON_STRUCTURE_INSTANCE *)GetFirstNode (
+                                               &mRestJsonStructureList
+                                               );
   while (TRUE) {
     Status = InterpreterEfiStructToInstance (
                This,
@@ -536,12 +582,20 @@ RestJsonStructureToJson (
       break;
     }
 
-    if (IsNodeAtEnd (&mRestJsonStructureList, &Instance->NextRestJsonStructureInstance)) {
+    if (IsNodeAtEnd (
+          &mRestJsonStructureList,
+          &Instance->NextRestJsonStructureInstance
+          ))
+    {
       Status = EFI_UNSUPPORTED;
       break;
     }
 
-    Instance = (REST_JSON_STRUCTURE_INSTANCE *)GetNextNode (&mRestJsonStructureList, &Instance->NextRestJsonStructureInstance);
+    Instance = (REST_JSON_STRUCTURE_INSTANCE *)GetNextNode (
+                                                 &mRestJsonStructureList,
+                                                 &Instance->
+                                                   NextRestJsonStructureInstance
+                                                 );
   }
 
   return Status;
@@ -621,11 +675,21 @@ RestJsonStructureUnload (
   //
   // Free memory of REST_JSON_STRUCTURE_INSTANCE instance.
   //
-  Instance = (REST_JSON_STRUCTURE_INSTANCE *)GetFirstNode (&mRestJsonStructureList);
+  Instance = (REST_JSON_STRUCTURE_INSTANCE *)GetFirstNode (
+                                               &mRestJsonStructureList
+                                               );
   do {
     NextInstance = NULL;
-    if (!IsNodeAtEnd (&mRestJsonStructureList, &Instance->NextRestJsonStructureInstance)) {
-      NextInstance = (REST_JSON_STRUCTURE_INSTANCE *)GetNextNode (&mRestJsonStructureList, &Instance->NextRestJsonStructureInstance);
+    if (!IsNodeAtEnd (
+           &mRestJsonStructureList,
+           &Instance->NextRestJsonStructureInstance
+           ))
+    {
+      NextInstance = (REST_JSON_STRUCTURE_INSTANCE *)GetNextNode (
+                                                       &mRestJsonStructureList,
+                                                       &Instance->
+                                                         NextRestJsonStructureInstance
+                                                       );
     }
 
     FreePool ((VOID *)Instance);

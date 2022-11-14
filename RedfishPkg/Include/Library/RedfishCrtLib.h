@@ -27,7 +27,8 @@
 // We dont support double on edk2
 #define HUGE_VAL  0
 
-#if defined (MDE_CPU_X64) || defined (MDE_CPU_AARCH64) || defined (MDE_CPU_RISCV64)
+#if defined (MDE_CPU_X64) || defined (MDE_CPU_AARCH64) || \
+  defined (MDE_CPU_RISCV64)
 //
 // With GCC we would normally use SIXTY_FOUR_BIT_LONG, but MSVC needs
 // SIXTY_FOUR_BIT, because 'long' is 32-bit and only 'long long' is
@@ -513,23 +514,43 @@ time        (
 // Macros that directly map functions to BaseLib, BaseMemoryLib, and DebugLib functions
 //
 #define strcmp  AsciiStrCmp
-#define memcpy(dest, source, count)                   CopyMem(dest,source,(UINTN)(count))
-#define memset(dest, ch, count)                       SetMem(dest,(UINTN)(count),(UINT8)(ch))
-#define memchr(buf, ch, count)                        ScanMem8(buf,(UINTN)(count),(UINT8)ch)
-#define memcmp(buf1, buf2, count)                     (int)(CompareMem(buf1,buf2,(UINTN)(count)))
-#define memmove(dest, source, count)                  CopyMem(dest,source,(UINTN)(count))
-#define strlen(str)                                   (size_t)(AsciiStrnLenS(str,MAX_STRING_SIZE))
-#define strcpy(strDest, strSource)                    AsciiStrCpyS(strDest,(strlen(strSource)+1),strSource)
-#define strncpy(strDest, strSource, count)            AsciiStrnCpyS(strDest,(UINTN)count,strSource,(UINTN)count)
-#define strncpys(strDest, DestLen, strSource, count)  AsciiStrnCpyS(strDest,DestLen,strSource,(UINTN)count)
-#define strcat(strDest, strSource)                    AsciiStrCatS(strDest,(strlen(strSource)+strlen(strDest)+1),strSource)
-#define strchr(str, ch)                               ScanMem8((VOID *)(str),AsciiStrSize(str),(UINT8)ch)
-#define strcasecmp(str1, str2)                        (int)AsciiStriCmp(str1,str2)
-#define strstr(s1, s2)                                AsciiStrStr(s1,s2)
-#define snprintf(buf, len, ...)                       RedfishAsciiSPrint(buf,len,__VA_ARGS__)
-#define vsnprintf(buf, len, format, marker)           RedfishAsciiVSPrint((buf),(len),(format),(marker))
-#define assert(expression)                            ASSERT(expression)
-#define offsetof(type, member)                        OFFSET_OF(type,member)
+#define memcpy(dest, source, \
+               count)             CopyMem(dest,source,(UINTN)(count))
+#define memset(dest, ch, \
+               count)             SetMem(dest,(UINTN)(count),(UINT8)(ch))
+#define memchr(buf, ch, \
+               count)             ScanMem8(buf,(UINTN)(count),(UINT8)ch)
+#define memcmp(buf1, buf2, \
+               count)             (int)(CompareMem(buf1,buf2,(UINTN)(count)))
+#define memmove(dest, source, \
+                count)            CopyMem(dest,source,(UINTN)(count))
+#define strlen( \
+              str)                (size_t)(AsciiStrnLenS(str,MAX_STRING_SIZE))
+#define strcpy(strDest, \
+               strSource)                    \
+                                  AsciiStrCpyS(strDest,(strlen(strSource)+1),strSource)
+#define strncpy(strDest, strSource, \
+                count)            \
+                                  AsciiStrnCpyS(strDest,(UINTN)count,strSource,(UINTN)count)
+#define strncpys(strDest, DestLen, strSource, \
+                 count)  \
+                                  AsciiStrnCpyS(strDest,DestLen,strSource,(UINTN)count)
+#define strcat(strDest, \
+               strSource)                    \
+                                  AsciiStrCatS(strDest,(strlen(strSource)+strlen(strDest)+1),strSource)
+#define strchr(str, \
+               ch)                               \
+                                  ScanMem8((VOID *)(str),AsciiStrSize(str),(UINT8)ch)
+#define strcasecmp(str1, \
+                   str2)          (int)AsciiStriCmp(str1,str2)
+#define strstr(s1, s2)            AsciiStrStr(s1,s2)
+#define snprintf(buf, len, \
+                 ...)             RedfishAsciiSPrint(buf,len,__VA_ARGS__)
+#define vsnprintf(buf, len, format, \
+                  marker)           \
+                                  RedfishAsciiVSPrint((buf),(len),(format),(marker))
+#define assert(expression)        ASSERT(expression)
+#define offsetof(type, member)    OFFSET_OF(type,member)
 
 #define EOF  (-1)
 

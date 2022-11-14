@@ -27,7 +27,11 @@ ResetHttpTslSession (
 {
   EFI_STATUS  Status;
 
-  DEBUG ((DEBUG_INFO, "%a: TCP connection is finished. Could be TSL session closure, reset HTTP instance for the new TLS session.\n", __FUNCTION__));
+  DEBUG ((
+    DEBUG_INFO,
+    "%a: TCP connection is finished. Could be TSL session closure, reset HTTP instance for the new TLS session.\n",
+    __FUNCTION__
+    ));
 
   Status = Instance->HttpIo.Http->Configure (Instance->HttpIo.Http, NULL);
   if (EFI_ERROR (Status)) {
@@ -35,9 +39,17 @@ ResetHttpTslSession (
     return Status;
   }
 
-  Status = Instance->HttpIo.Http->Configure (Instance->HttpIo.Http, &((EFI_REST_EX_HTTP_CONFIG_DATA *)Instance->ConfigData)->HttpConfigData);
+  Status = Instance->HttpIo.Http->Configure (
+                                    Instance->HttpIo.Http,
+                                    &((EFI_REST_EX_HTTP_CONFIG_DATA *)Instance->
+                                        ConfigData)->HttpConfigData
+                                    );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: Error to re-initiate HTTP instance.\n", __FUNCTION__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: Error to re-initiate HTTP instance.\n",
+      __FUNCTION__
+      ));
   }
 
   return Status;
@@ -69,7 +81,11 @@ RedfishCheckHttpReceiveStatus (
     ReturnStatus = EFI_SUCCESS;
   } else if (HttpIoReceiveStatus != EFI_CONNECTION_FIN) {
     if ((Instance->Flags & RESTEX_INSTANCE_FLAGS_TCP_ERROR_RETRY) == 0) {
-      DEBUG ((DEBUG_ERROR, "%a: TCP error, reset HTTP session.\n", __FUNCTION__));
+      DEBUG ((
+        DEBUG_ERROR,
+        "%a: TCP error, reset HTTP session.\n",
+        __FUNCTION__
+        ));
       Instance->Flags |= RESTEX_INSTANCE_FLAGS_TCP_ERROR_RETRY;
       gBS->Stall (500);
       Status = ResetHttpTslSession (Instance);
@@ -83,7 +99,11 @@ RedfishCheckHttpReceiveStatus (
     ReturnStatus = EFI_DEVICE_ERROR;
   } else {
     if ((Instance->Flags & RESTEX_INSTANCE_FLAGS_TLS_RETRY) != 0) {
-      DEBUG ((DEBUG_ERROR, "%a: REST_EX Send and receive fail even with a new TLS session.\n", __FUNCTION__));
+      DEBUG ((
+        DEBUG_ERROR,
+        "%a: REST_EX Send and receive fail even with a new TLS session.\n",
+        __FUNCTION__
+        ));
       ReturnStatus = EFI_DEVICE_ERROR;
     }
 
@@ -100,7 +120,8 @@ RedfishCheckHttpReceiveStatus (
   //
   // Clean TLS new session retry and error try flags.
   //
-  Instance->Flags &= ~(RESTEX_INSTANCE_FLAGS_TLS_RETRY | RESTEX_INSTANCE_FLAGS_TCP_ERROR_RETRY);
+  Instance->Flags &= ~(RESTEX_INSTANCE_FLAGS_TLS_RETRY |
+                       RESTEX_INSTANCE_FLAGS_TCP_ERROR_RETRY);
   return ReturnStatus;
 }
 
@@ -144,7 +165,8 @@ RedfishHttpAddExpectation (
     *PreservedRequestHeaders = RequestMessage->Headers;
   }
 
-  if ((RequestMessage->Data.Request->Method != HttpMethodPut) && (RequestMessage->Data.Request->Method != HttpMethodPost) &&
+  if ((RequestMessage->Data.Request->Method != HttpMethodPut) &&
+      (RequestMessage->Data.Request->Method != HttpMethodPost) &&
       (RequestMessage->Data.Request->Method != HttpMethodPatch))
   {
     return EFI_SUCCESS;
@@ -152,9 +174,20 @@ RedfishHttpAddExpectation (
 
   *ItsWrite = TRUE;
 
-  NewHeaders = AllocateZeroPool ((RequestMessage->HeaderCount + 1) * sizeof (EFI_HTTP_HEADER));
-  CopyMem ((VOID *)NewHeaders, (VOID *)RequestMessage->Headers, RequestMessage->HeaderCount * sizeof (EFI_HTTP_HEADER));
-  HttpSetFieldNameAndValue (NewHeaders + RequestMessage->HeaderCount, HTTP_HEADER_EXPECT, HTTP_EXPECT_100_CONTINUE);
+  NewHeaders = AllocateZeroPool (
+                 (RequestMessage->HeaderCount + 1) *
+                 sizeof (EFI_HTTP_HEADER)
+                 );
+  CopyMem (
+    (VOID *)NewHeaders,
+    (VOID *)RequestMessage->Headers,
+    RequestMessage->HeaderCount * sizeof (EFI_HTTP_HEADER)
+    );
+  HttpSetFieldNameAndValue (
+    NewHeaders + RequestMessage->HeaderCount,
+    HTTP_HEADER_EXPECT,
+    HTTP_EXPECT_100_CONTINUE
+    );
   RequestMessage->HeaderCount++;
   RequestMessage->Headers = NewHeaders;
   return EFI_SUCCESS;

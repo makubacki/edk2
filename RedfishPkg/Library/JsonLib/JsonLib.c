@@ -748,7 +748,11 @@ JsonObjectGetValue (
   IN    CONST CHAR8              *Key
   )
 {
-  return (EDKII_JSON_VALUE)json_object_get ((const json_t *)JsonObj, (const char *)Key);
+  return (EDKII_JSON_VALUE)json_object_get (
+                             (const json_t *)JsonObj,
+                             (const
+                              char *)Key
+                             );
 }
 
 /**
@@ -944,7 +948,11 @@ JsonLoadString (
   IN    EDKII_JSON_ERROR  *Error
   )
 {
-  return (EDKII_JSON_VALUE)json_loads ((const char *)String, Flags, (json_error_t *)Error);
+  return (EDKII_JSON_VALUE)json_loads (
+                             (const char *)String,
+                             Flags,
+                             (json_error_t *)Error
+                             );
 }
 
 /**
