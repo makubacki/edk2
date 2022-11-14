@@ -744,7 +744,11 @@ ProfileGetEntry (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  CopyMem (SectionItem->PtrSection, PtrSection->PtrSection, PtrSection->SecNameLen + 1);
+  CopyMem (
+    SectionItem->PtrSection,
+    PtrSection->PtrSection,
+    PtrSection->SecNameLen + 1
+    );
 
   //
   // EntryName, add a trailing '\0'
@@ -885,9 +889,19 @@ UpdateGetProfileString (
   *EntryValue = NULL;
 
   while (Section != NULL) {
-    if (AsciiStrCmp ((CONST CHAR8 *)Section->PtrSection, (CONST CHAR8 *)SectionName) == 0) {
+    if (AsciiStrCmp (
+          (CONST CHAR8 *)Section->PtrSection,
+          (CONST
+           CHAR8 *)SectionName
+          ) == 0)
+    {
       if (Section->PtrEntry != NULL) {
-        if (AsciiStrCmp ((CONST CHAR8 *)Section->PtrEntry, (CONST CHAR8 *)EntryName) == 0) {
+        if (AsciiStrCmp (
+              (CONST CHAR8 *)Section->PtrEntry,
+              (CONST
+               CHAR8 *)EntryName
+              ) == 0)
+        {
           break;
         }
       }
@@ -1115,7 +1129,9 @@ GetStringFromDataFile (
   INI_PARSING_LIB_CONTEXT  *IniContext;
   EFI_STATUS               Status;
 
-  if ((Context == NULL) || (SectionName == NULL) || (EntryName == NULL) || (EntryValue == NULL)) {
+  if ((Context == NULL) || (SectionName == NULL) || (EntryName == NULL) ||
+      (EntryValue == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1155,7 +1171,9 @@ GetGuidFromDataFile (
   EFI_STATUS     Status;
   RETURN_STATUS  RStatus;
 
-  if ((Context == NULL) || (SectionName == NULL) || (EntryName == NULL) || (Guid == NULL)) {
+  if ((Context == NULL) || (SectionName == NULL) || (EntryName == NULL) ||
+      (Guid == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1201,7 +1219,9 @@ GetDecimalUintnFromDataFile (
   CHAR8       *Value;
   EFI_STATUS  Status;
 
-  if ((Context == NULL) || (SectionName == NULL) || (EntryName == NULL) || (Data == NULL)) {
+  if ((Context == NULL) || (SectionName == NULL) || (EntryName == NULL) ||
+      (Data == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1247,7 +1267,9 @@ GetHexUintnFromDataFile (
   CHAR8       *Value;
   EFI_STATUS  Status;
 
-  if ((Context == NULL) || (SectionName == NULL) || (EntryName == NULL) || (Data == NULL)) {
+  if ((Context == NULL) || (SectionName == NULL) || (EntryName == NULL) ||
+      (Data == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1293,7 +1315,9 @@ GetHexUint64FromDataFile (
   CHAR8       *Value;
   EFI_STATUS  Status;
 
-  if ((Context == NULL) || (SectionName == NULL) || (EntryName == NULL) || (Data == NULL)) {
+  if ((Context == NULL) || (SectionName == NULL) || (EntryName == NULL) ||
+      (Data == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 

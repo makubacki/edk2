@@ -86,7 +86,8 @@ PerformUpdate (
              ConfigData->FirmwareType,
              ConfigData->BaseAddress,
              ConfigData->AddressType,
-             (VOID *)((UINTN)SystemFirmwareImage + (UINTN)ConfigData->ImageOffset),
+             (VOID *)((UINTN)SystemFirmwareImage +
+                      (UINTN)ConfigData->ImageOffset),
              ConfigData->Length,
              Progress,
              StartPercentage,
@@ -193,12 +194,28 @@ UpdateImage (
     return EFI_INVALID_PARAMETER;
   }
 
-  DEBUG ((DEBUG_INFO, "ConfigHeader.NumOfUpdates - 0x%x\n", ConfigHeader.NumOfUpdates));
-  DEBUG ((DEBUG_INFO, "PcdEdkiiSystemFirmwareFileGuid - %g\n", PcdGetPtr (PcdEdkiiSystemFirmwareFileGuid)));
+  DEBUG ((
+    DEBUG_INFO,
+    "ConfigHeader.NumOfUpdates - 0x%x\n",
+    ConfigHeader.NumOfUpdates
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "PcdEdkiiSystemFirmwareFileGuid - %g\n",
+    PcdGetPtr (
+      PcdEdkiiSystemFirmwareFileGuid
+      )
+    ));
 
   TotalSize = 0;
   for (Index = 0; Index < ConfigHeader.NumOfUpdates; Index++) {
-    if (CompareGuid (&ConfigData[Index].FileGuid, PcdGetPtr (PcdEdkiiSystemFirmwareFileGuid))) {
+    if (CompareGuid (
+          &ConfigData[Index].FileGuid,
+          PcdGetPtr (
+            PcdEdkiiSystemFirmwareFileGuid
+            )
+          ))
+    {
       TotalSize = TotalSize + ConfigData[Index].Length;
     }
   }
@@ -207,20 +224,31 @@ UpdateImage (
   Index            = 0;
   UpdateConfigData = ConfigData;
   while (Index < ConfigHeader.NumOfUpdates) {
-    if (CompareGuid (&UpdateConfigData->FileGuid, PcdGetPtr (PcdEdkiiSystemFirmwareFileGuid))) {
-      DEBUG ((DEBUG_INFO, "FileGuid - %g (processing)\n", &UpdateConfigData->FileGuid));
+    if (CompareGuid (
+          &UpdateConfigData->FileGuid,
+          PcdGetPtr (
+            PcdEdkiiSystemFirmwareFileGuid
+            )
+          ))
+    {
+      DEBUG ((
+        DEBUG_INFO,
+        "FileGuid - %g (processing)\n",
+        &UpdateConfigData->FileGuid
+        ));
       StartPercentage = (BytesWritten * 100) / TotalSize;
-      EndPercentage   = ((BytesWritten + UpdateConfigData->Length) * 100) / TotalSize;
-      Status          = PerformUpdate (
-                          SystemFirmwareImage,
-                          SystemFirmwareImageSize,
-                          UpdateConfigData,
-                          LastAttemptVersion,
-                          LastAttemptStatus,
-                          Progress,
-                          StartPercentage,
-                          EndPercentage
-                          );
+      EndPercentage   = ((BytesWritten + UpdateConfigData->Length) * 100) /
+                        TotalSize;
+      Status = PerformUpdate (
+                 SystemFirmwareImage,
+                 SystemFirmwareImageSize,
+                 UpdateConfigData,
+                 LastAttemptVersion,
+                 LastAttemptStatus,
+                 Progress,
+                 StartPercentage,
+                 EndPercentage
+                 );
       //
       // Shall updates be serialized so that if an update is not successfully completed,
       // the remaining updates won't be performed.
@@ -229,7 +257,11 @@ UpdateImage (
         break;
       }
     } else {
-      DEBUG ((DEBUG_INFO, "FileGuid - %g (ignored)\n", &UpdateConfigData->FileGuid));
+      DEBUG ((
+        DEBUG_INFO,
+        "FileGuid - %g (ignored)\n",
+        &UpdateConfigData->FileGuid
+        ));
     }
 
     BytesWritten += UpdateConfigData->Length;
@@ -278,19 +310,45 @@ SystemFirmwareAuthenticatedUpdate (
 
   DEBUG ((DEBUG_INFO, "SystemFirmwareAuthenticatedUpdate...\n"));
 
-  Status = CapsuleAuthenticateSystemFirmware (Image, ImageSize, FALSE, LastAttemptVersion, LastAttemptStatus, &AuthenticatedImage, &AuthenticatedImageSize);
+  Status = CapsuleAuthenticateSystemFirmware (
+             Image,
+             ImageSize,
+             FALSE,
+             LastAttemptVersion,
+             LastAttemptStatus,
+             &AuthenticatedImage,
+             &AuthenticatedImageSize
+             );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INFO, "SystemFirmwareAuthenticateImage - %r\n", Status));
     return Status;
   }
 
   DEBUG ((DEBUG_INFO, "ExtractSystemFirmwareImage ...\n"));
-  ExtractSystemFirmwareImage (AuthenticatedImage, AuthenticatedImageSize, &SystemFirmwareImage, &SystemFirmwareImageSize);
+  ExtractSystemFirmwareImage (
+    AuthenticatedImage,
+    AuthenticatedImageSize,
+    &SystemFirmwareImage,
+    &SystemFirmwareImageSize
+    );
   DEBUG ((DEBUG_INFO, "ExtractConfigImage ...\n"));
-  ExtractConfigImage (AuthenticatedImage, AuthenticatedImageSize, &ConfigImage, &ConfigImageSize);
+  ExtractConfigImage (
+    AuthenticatedImage,
+    AuthenticatedImageSize,
+    &ConfigImage,
+    &ConfigImageSize
+    );
 
   DEBUG ((DEBUG_INFO, "UpdateImage ...\n"));
-  Status = UpdateImage (SystemFirmwareImage, SystemFirmwareImageSize, ConfigImage, ConfigImageSize, LastAttemptVersion, LastAttemptStatus, Progress);
+  Status = UpdateImage (
+             SystemFirmwareImage,
+             SystemFirmwareImageSize,
+             ConfigImage,
+             ConfigImageSize,
+             LastAttemptVersion,
+             LastAttemptStatus,
+             Progress
+             );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INFO, "UpdateImage - %r\n", Status));
     return Status;
@@ -354,7 +412,12 @@ GetNextVariableNameHook (
   IN OUT  EFI_GUID  *VendorGuid
   )
 {
-  DEBUG ((DEBUG_INFO, "GetNextVariableNameHook - %S, %g\n", VariableName, VendorGuid));
+  DEBUG ((
+    DEBUG_INFO,
+    "GetNextVariableNameHook - %S, %g\n",
+    VariableName,
+    VendorGuid
+    ));
   return EFI_NOT_AVAILABLE_YET;
 }
 
@@ -386,7 +449,14 @@ SetVariableHook (
   IN VOID      *Data
   )
 {
-  DEBUG ((DEBUG_INFO, "SetVariableHook - %S, %g, 0x%x (0x%x)\n", VariableName, VendorGuid, Attributes, DataSize));
+  DEBUG ((
+    DEBUG_INFO,
+    "SetVariableHook - %S, %g, 0x%x (0x%x)\n",
+    VariableName,
+    VendorGuid,
+    Attributes,
+    DataSize
+    ));
   return EFI_NOT_AVAILABLE_YET;
 }
 
@@ -492,8 +562,19 @@ FmpSetImage (
     return EFI_INVALID_PARAMETER;
   }
 
-  Status = SystemFirmwareAuthenticatedUpdate ((VOID *)Image, ImageSize, &SystemFmpPrivate->LastAttempt.LastAttemptVersion, &SystemFmpPrivate->LastAttempt.LastAttemptStatus, Progress);
-  DEBUG ((DEBUG_INFO, "SetImage - LastAttempt Version - 0x%x, State - 0x%x\n", SystemFmpPrivate->LastAttempt.LastAttemptVersion, SystemFmpPrivate->LastAttempt.LastAttemptStatus));
+  Status = SystemFirmwareAuthenticatedUpdate (
+             (VOID *)Image,
+             ImageSize,
+             &SystemFmpPrivate->LastAttempt.LastAttemptVersion,
+             &SystemFmpPrivate->LastAttempt.LastAttemptStatus,
+             Progress
+             );
+  DEBUG ((
+    DEBUG_INFO,
+    "SetImage - LastAttempt Version - 0x%x, State - 0x%x\n",
+    SystemFmpPrivate->LastAttempt.LastAttemptVersion,
+    SystemFmpPrivate->LastAttempt.LastAttemptStatus
+    ));
 
   //
   // If NVRAM is updated, we should no longer touch variable services, because
@@ -517,7 +598,8 @@ FmpSetImage (
   VarStatus = gRT->SetVariable (
                      SYSTEM_FMP_LAST_ATTEMPT_VARIABLE_NAME,
                      &gSystemFmpLastAttemptVariableGuid,
-                     EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS,
+                     EFI_VARIABLE_NON_VOLATILE |
+                     EFI_VARIABLE_BOOTSERVICE_ACCESS,
                      sizeof (SystemFmpPrivate->LastAttempt),
                      &SystemFmpPrivate->LastAttempt
                      );
@@ -586,7 +668,11 @@ GetFmpImageDescriptors (
                          &PackageVersionName         // PackageVersionName
                          );
   if (Status != EFI_BUFFER_TOO_SMALL) {
-    DEBUG ((DEBUG_ERROR, "SystemFirmwareUpdateDxe: Unexpected Failure.  Status = %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "SystemFirmwareUpdateDxe: Unexpected Failure.  Status = %r\n",
+      Status
+      ));
     return NULL;
   }
 
@@ -596,7 +682,10 @@ GetFmpImageDescriptors (
   FmpImageInfoBuf = NULL;
   FmpImageInfoBuf = AllocateZeroPool (ImageInfoSize);
   if (FmpImageInfoBuf == NULL) {
-    DEBUG ((DEBUG_ERROR, "SystemFirmwareUpdateDxe: Failed to allocate memory for descriptors.\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "SystemFirmwareUpdateDxe: Failed to allocate memory for descriptors.\n"
+      ));
     return NULL;
   }
 
@@ -624,7 +713,11 @@ GetFmpImageDescriptors (
   }
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "SystemFirmwareUpdateDxe: Failure in GetImageInfo.  Status = %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "SystemFirmwareUpdateDxe: Failure in GetImageInfo.  Status = %r\n",
+      Status
+      ));
     if (FmpImageInfoBuf != NULL) {
       FreePool (FmpImageInfoBuf);
     }
@@ -694,7 +787,9 @@ FindMatchingFmpHandles (
       FmpImageInfoBuf = OriginalFmpImageInfoBuf;
 
       for (Index2 = 0; Index2 < FmpImageInfoCount; Index2++) {
-        for (Index3 = 0; Index3 < mSystemFmpPrivate->DescriptorCount; Index3++) {
+        for (Index3 = 0; Index3 < mSystemFmpPrivate->DescriptorCount;
+             Index3++)
+        {
           MatchFound = CompareGuid (
                          &FmpImageInfoBuf->ImageTypeId,
                          &mSystemFmpPrivate->ImageDescriptor[Index3].ImageTypeId
@@ -711,7 +806,9 @@ FindMatchingFmpHandles (
         //
         // Increment the buffer pointer ahead by the size of the descriptor
         //
-        FmpImageInfoBuf = (EFI_FIRMWARE_IMAGE_DESCRIPTOR *)(((UINT8 *)FmpImageInfoBuf) + DescriptorSize);
+        FmpImageInfoBuf =
+          (EFI_FIRMWARE_IMAGE_DESCRIPTOR *)(((UINT8 *)FmpImageInfoBuf) +
+                                            DescriptorSize);
       }
 
       if (MatchFound) {
@@ -761,7 +858,11 @@ UninstallMatchingSystemFmpProtocols (
                    &gSystemFmpProtocolGuid,
                    &HandleCount
                    );
-  DEBUG ((DEBUG_INFO, "SystemFirmwareUpdateDxe: Found %d matching System FMP instances\n", HandleCount));
+  DEBUG ((
+    DEBUG_INFO,
+    "SystemFirmwareUpdateDxe: Found %d matching System FMP instances\n",
+    HandleCount
+    ));
 
   for (Index = 0; Index < HandleCount; Index++) {
     Status = gBS->HandleProtocol (
@@ -773,14 +874,21 @@ UninstallMatchingSystemFmpProtocols (
       continue;
     }
 
-    DEBUG ((DEBUG_INFO, "SystemFirmwareUpdateDxe: Uninstall SystemFmp produced by another capsule\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "SystemFirmwareUpdateDxe: Uninstall SystemFmp produced by another capsule\n"
+      ));
     Status = gBS->UninstallProtocolInterface (
                     HandleBuffer[Index],
                     &gSystemFmpProtocolGuid,
                     SystemFmp
                     );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "SystemFirmwareUpdateDxe: Failed to uninstall SystemFmp %r.  Exiting.\n", Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "SystemFirmwareUpdateDxe: Failed to uninstall SystemFmp %r.  Exiting.\n",
+        Status
+        ));
       FreePool (HandleBuffer);
       return Status;
     }
@@ -851,14 +959,21 @@ SystemFirmwareUpdateMainDxe (
                    &gEfiFirmwareManagementProtocolGuid,
                    &HandleCount
                    );
-  DEBUG ((DEBUG_INFO, "SystemFirmwareUpdateDxe: Found %d matching FMP instances\n", HandleCount));
+  DEBUG ((
+    DEBUG_INFO,
+    "SystemFirmwareUpdateDxe: Found %d matching FMP instances\n",
+    HandleCount
+    ));
 
   switch (HandleCount) {
     case 0:
       //
       // Install FMP protocol onto a new handle.
       //
-      DEBUG ((DEBUG_INFO, "SystemFirmwareUpdateDxe: Install FMP onto a new handle\n"));
+      DEBUG ((
+        DEBUG_INFO,
+        "SystemFirmwareUpdateDxe: Install FMP onto a new handle\n"
+        ));
       Status = gBS->InstallMultipleProtocolInterfaces (
                       &mSystemFmpPrivate->Handle,
                       &gEfiFirmwareManagementProtocolGuid,
@@ -870,7 +985,10 @@ SystemFirmwareUpdateMainDxe (
       //
       // Install System FMP protocol onto handle with matching FMP Protocol
       //
-      DEBUG ((DEBUG_INFO, "SystemFirmwareUpdateDxe: Install System FMP onto matching FMP handle\n"));
+      DEBUG ((
+        DEBUG_INFO,
+        "SystemFirmwareUpdateDxe: Install System FMP onto matching FMP handle\n"
+        ));
       mSystemFmpPrivate->Handle = HandleBuffer[0];
       Status                    = gBS->InstallMultipleProtocolInterfaces (
                                          &HandleBuffer[0],
@@ -883,7 +1001,10 @@ SystemFirmwareUpdateMainDxe (
       //
       // More than one matching handle is not expected.  Unload driver.
       //
-      DEBUG ((DEBUG_ERROR, "SystemFirmwareUpdateDxe: More than one matching FMP handle.  Unload driver.\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "SystemFirmwareUpdateDxe: More than one matching FMP handle.  Unload driver.\n"
+        ));
       Status = EFI_DEVICE_ERROR;
       break;
   }

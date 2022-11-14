@@ -67,7 +67,9 @@ ParseRecoveryDataFile (
   }
 
   ConfigHeader->NumOfRecovery = Num;
-  *RecoveryArray              = AllocateZeroPool ((sizeof (RECOVERY_CONFIG_DATA) * Num));
+  *RecoveryArray              = AllocateZeroPool (
+                                  (sizeof (RECOVERY_CONFIG_DATA) * Num)
+                                  );
   if (*RecoveryArray == NULL) {
     CloseIniFile (Context);
     return EFI_OUT_OF_RESOURCES;

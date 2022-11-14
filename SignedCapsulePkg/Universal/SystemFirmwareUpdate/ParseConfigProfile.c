@@ -68,7 +68,10 @@ ParseUpdateDataFile (
   }
 
   ConfigHeader->NumOfUpdates = Num;
-  *UpdateArray               = AllocateZeroPool ((sizeof (UPDATE_CONFIG_DATA) * Num));
+  *UpdateArray               = AllocateZeroPool (
+                                 (sizeof (UPDATE_CONFIG_DATA) *
+                                  Num)
+                                 );
   if (*UpdateArray == NULL) {
     CloseIniFile (Context);
     return EFI_OUT_OF_RESOURCES;

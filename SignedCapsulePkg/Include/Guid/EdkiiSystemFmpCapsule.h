@@ -85,7 +85,8 @@
 
 **/
 
-#define EDKII_SYSTEM_FIRMWARE_IMAGE_DESCRIPTOR_SIGNATURE  SIGNATURE_32('S', 'F', 'I', 'D')
+#define EDKII_SYSTEM_FIRMWARE_IMAGE_DESCRIPTOR_SIGNATURE  \
+  SIGNATURE_32('S', 'F', 'I', 'D')
 
 #pragma pack(1)
 typedef struct {

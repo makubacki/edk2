@@ -98,7 +98,12 @@ GetSectionByType (
   UINTN                      SectionSize;
   UINTN                      Instance;
 
-  DEBUG ((DEBUG_INFO, "GetSectionByType - Buffer: 0x%08x - 0x%08x\n", SectionBuffer, SectionBufferSize));
+  DEBUG ((
+    DEBUG_INFO,
+    "GetSectionByType - Buffer: 0x%08x - 0x%08x\n",
+    SectionBuffer,
+    SectionBufferSize
+    ));
 
   //
   // Find Section
@@ -118,23 +123,37 @@ GetSectionByType (
       if (Instance == SectionInstance) {
         *OutSectionBuffer = (UINT8 *)SectionHeader;
         *OutSectionSize   = SectionSize;
-        DEBUG ((DEBUG_INFO, "GetSectionByType - 0x%x - 0x%x\n", *OutSectionBuffer, *OutSectionSize));
+        DEBUG ((
+          DEBUG_INFO,
+          "GetSectionByType - 0x%x - 0x%x\n",
+          *OutSectionBuffer,
+          *OutSectionSize
+          ));
         return TRUE;
       } else {
-        DEBUG ((DEBUG_INFO, "GetSectionByType - find section instance %x\n", Instance));
+        DEBUG ((
+          DEBUG_INFO,
+          "GetSectionByType - find section instance %x\n",
+          Instance
+          ));
         Instance++;
       }
     } else {
       //
       // Skip other section type
       //
-      DEBUG ((DEBUG_INFO, "GetSectionByType - other section type 0x%x\n", SectionHeader->Type));
+      DEBUG ((
+        DEBUG_INFO,
+        "GetSectionByType - other section type 0x%x\n",
+        SectionHeader->Type
+        ));
     }
 
     //
     // Next Section
     //
-    SectionHeader = (EFI_COMMON_SECTION_HEADER *)((UINTN)SectionHeader + ALIGN_VALUE (SectionSize, 4));
+    SectionHeader = (EFI_COMMON_SECTION_HEADER *)((UINTN)SectionHeader +
+                                                  ALIGN_VALUE (SectionSize, 4));
   }
 
   return FALSE;
@@ -171,7 +190,12 @@ GetFfsByName (
   UINTN                           TestLength;
   BOOLEAN                         FvFound;
 
-  DEBUG ((DEBUG_INFO, "GetFfsByName - FV: 0x%08x - 0x%08x\n", (UINTN)FdStart, (UINTN)FdSize));
+  DEBUG ((
+    DEBUG_INFO,
+    "GetFfsByName - FV: 0x%08x - 0x%08x\n",
+    (UINTN)FdStart,
+    (UINTN)FdSize
+    ));
 
   FvFound  = FALSE;
   FvHeader = (EFI_FIRMWARE_VOLUME_HEADER *)FdStart;
@@ -183,10 +207,20 @@ GetFfsByName (
       continue;
     }
 
-    DEBUG ((DEBUG_INFO, "checking FV....0x%08x - 0x%x\n", FvHeader, FvHeader->FvLength));
+    DEBUG ((
+      DEBUG_INFO,
+      "checking FV....0x%08x - 0x%x\n",
+      FvHeader,
+      FvHeader->FvLength
+      ));
     FvFound = TRUE;
     if (FvHeader->FvLength > FvSize) {
-      DEBUG ((DEBUG_ERROR, "GetFfsByName - FvSize: 0x%08x, MaxSize - 0x%08x\n", (UINTN)FvHeader->FvLength, (UINTN)FvSize));
+      DEBUG ((
+        DEBUG_ERROR,
+        "GetFfsByName - FvSize: 0x%08x, MaxSize - 0x%08x\n",
+        (UINTN)FvHeader->FvLength,
+        (UINTN)FvSize
+        ));
       return FALSE;
     }
 
@@ -196,13 +230,20 @@ GetFfsByName (
     // Find FFS
     //
     if (FvHeader->ExtHeaderOffset != 0) {
-      FvExtHeader = (EFI_FIRMWARE_VOLUME_EXT_HEADER *)((UINT8 *)FvHeader + FvHeader->ExtHeaderOffset);
-      FfsHeader   = (EFI_FFS_FILE_HEADER *)((UINT8 *)FvExtHeader + FvExtHeader->ExtHeaderSize);
+      FvExtHeader = (EFI_FIRMWARE_VOLUME_EXT_HEADER *)((UINT8 *)FvHeader +
+                                                       FvHeader->ExtHeaderOffset);
+      FfsHeader   = (EFI_FFS_FILE_HEADER *)((UINT8 *)FvExtHeader +
+                                            FvExtHeader->ExtHeaderSize);
     } else {
-      FfsHeader = (EFI_FFS_FILE_HEADER *)((UINT8 *)FvHeader + FvHeader->HeaderLength);
+      FfsHeader = (EFI_FFS_FILE_HEADER *)((UINT8 *)FvHeader +
+                                          FvHeader->HeaderLength);
     }
 
-    FfsHeader = (EFI_FFS_FILE_HEADER *)((UINTN)FvHeader + ALIGN_VALUE ((UINTN)FfsHeader - (UINTN)FvHeader, 8));
+    FfsHeader = (EFI_FFS_FILE_HEADER *)((UINTN)FvHeader + ALIGN_VALUE (
+                                                            (UINTN)FfsHeader -
+                                                            (UINTN)FvHeader,
+                                                            8
+                                                            ));
 
     while ((UINTN)FfsHeader < (UINTN)FvHeader + FvSize - 1) {
       DEBUG ((DEBUG_INFO, "GetFfsByName - FFS: 0x%08x\n", FfsHeader));
@@ -231,13 +272,21 @@ GetFfsByName (
         //
         // Any other type is not allowed
         //
-        DEBUG ((DEBUG_INFO, "GetFfsByName - other FFS type 0x%x, name %g\n", FfsHeader->Type, &FfsHeader->Name));
+        DEBUG ((
+          DEBUG_INFO,
+          "GetFfsByName - other FFS type 0x%x, name %g\n",
+          FfsHeader->Type,
+          &FfsHeader->Name
+          ));
       }
 
       //
       // Next File
       //
-      FfsHeader = (EFI_FFS_FILE_HEADER *)((UINTN)FfsHeader + ALIGN_VALUE (FfsSize, 8));
+      FfsHeader = (EFI_FFS_FILE_HEADER *)((UINTN)FfsHeader + ALIGN_VALUE (
+                                                               FfsSize,
+                                                               8
+                                                               ));
     }
 
     //
@@ -279,7 +328,14 @@ ExtractDriverFvImage (
   *DriverFvImage     = NULL;
   *DriverFvImageSize = 0;
 
-  Result = GetFfsByName (AuthenticatedImage, AuthenticatedImageSize, &gEdkiiSystemFmpCapsuleDriverFvFileGuid, EFI_FV_FILETYPE_RAW, DriverFvImage, DriverFvImageSize);
+  Result = GetFfsByName (
+             AuthenticatedImage,
+             AuthenticatedImageSize,
+             &gEdkiiSystemFmpCapsuleDriverFvFileGuid,
+             EFI_FV_FILETYPE_RAW,
+             DriverFvImage,
+             DriverFvImageSize
+             );
   if (!Result) {
     return FALSE;
   }
@@ -322,7 +378,14 @@ ExtractConfigImage (
   *ConfigImage     = NULL;
   *ConfigImageSize = 0;
 
-  Result = GetFfsByName (AuthenticatedImage, AuthenticatedImageSize, &gEdkiiSystemFmpCapsuleConfigFileGuid, EFI_FV_FILETYPE_RAW, ConfigImage, ConfigImageSize);
+  Result = GetFfsByName (
+             AuthenticatedImage,
+             AuthenticatedImageSize,
+             &gEdkiiSystemFmpCapsuleConfigFileGuid,
+             EFI_FV_FILETYPE_RAW,
+             ConfigImage,
+             ConfigImageSize
+             );
   if (!Result) {
     return FALSE;
   }
@@ -369,7 +432,12 @@ ExtractAuthenticatedImage (
   VOID                               *PublicKeyData;
   UINTN                              PublicKeyDataLength;
 
-  DEBUG ((DEBUG_INFO, "ExtractAuthenticatedImage - Image: 0x%08x - 0x%08x\n", (UINTN)Image, (UINTN)ImageSize));
+  DEBUG ((
+    DEBUG_INFO,
+    "ExtractAuthenticatedImage - Image: 0x%08x - 0x%08x\n",
+    (UINTN)Image,
+    (UINTN)ImageSize
+    ));
 
   *LastAttemptStatus = LAST_ATTEMPT_STATUS_ERROR_INVALID_FORMAT;
   if ((Image == NULL) || (ImageSize == 0)) {
@@ -382,7 +450,11 @@ ExtractAuthenticatedImage (
     return FALSE;
   }
 
-  if (ImageAuth->AuthInfo.Hdr.dwLength <= OFFSET_OF (WIN_CERTIFICATE_UEFI_GUID, CertData)) {
+  if (ImageAuth->AuthInfo.Hdr.dwLength <= OFFSET_OF (
+                                            WIN_CERTIFICATE_UEFI_GUID,
+                                            CertData
+                                            ))
+  {
     DEBUG ((DEBUG_ERROR, "ExtractAuthenticatedImage - dwLength too small\n"));
     return FALSE;
   }
@@ -392,18 +464,30 @@ ExtractAuthenticatedImage (
     return FALSE;
   }
 
-  if (ImageSize <= sizeof (ImageAuth->MonotonicCount) + ImageAuth->AuthInfo.Hdr.dwLength) {
+  if (ImageSize <= sizeof (ImageAuth->MonotonicCount) +
+      ImageAuth->AuthInfo.Hdr.dwLength)
+  {
     DEBUG ((DEBUG_ERROR, "ExtractAuthenticatedImage - ImageSize too small\n"));
     return FALSE;
   }
 
   if (ImageAuth->AuthInfo.Hdr.wRevision != 0x0200) {
-    DEBUG ((DEBUG_ERROR, "ExtractAuthenticatedImage - wRevision: 0x%02x, expect - 0x%02x\n", (UINTN)ImageAuth->AuthInfo.Hdr.wRevision, (UINTN)0x0200));
+    DEBUG ((
+      DEBUG_ERROR,
+      "ExtractAuthenticatedImage - wRevision: 0x%02x, expect - 0x%02x\n",
+      (UINTN)ImageAuth->AuthInfo.Hdr.wRevision,
+      (UINTN)0x0200
+      ));
     return FALSE;
   }
 
   if (ImageAuth->AuthInfo.Hdr.wCertificateType != WIN_CERT_TYPE_EFI_GUID) {
-    DEBUG ((DEBUG_ERROR, "ExtractAuthenticatedImage - wCertificateType: 0x%02x, expect - 0x%02x\n", (UINTN)ImageAuth->AuthInfo.Hdr.wCertificateType, (UINTN)WIN_CERT_TYPE_EFI_GUID));
+    DEBUG ((
+      DEBUG_ERROR,
+      "ExtractAuthenticatedImage - wCertificateType: 0x%02x, expect - 0x%02x\n",
+      (UINTN)ImageAuth->AuthInfo.Hdr.wCertificateType,
+      (UINTN)WIN_CERT_TYPE_EFI_GUID
+      ));
     return FALSE;
   }
 
@@ -455,11 +539,14 @@ ExtractAuthenticatedImage (
   }
 
   if (AuthenticatedImage != NULL) {
-    *AuthenticatedImage = (UINT8 *)ImageAuth + ImageAuth->AuthInfo.Hdr.dwLength + sizeof (ImageAuth->MonotonicCount);
+    *AuthenticatedImage = (UINT8 *)ImageAuth +
+                          ImageAuth->AuthInfo.Hdr.dwLength +
+                          sizeof (ImageAuth->MonotonicCount);
   }
 
   if (AuthenticatedImageSize != NULL) {
-    *AuthenticatedImageSize = ImageSize - ImageAuth->AuthInfo.Hdr.dwLength - sizeof (ImageAuth->MonotonicCount);
+    *AuthenticatedImageSize = ImageSize - ImageAuth->AuthInfo.Hdr.dwLength -
+                              sizeof (ImageAuth->MonotonicCount);
   }
 
   return TRUE;
@@ -492,7 +579,14 @@ ExtractSystemFirmwareImageFmpInfo (
   *ImageFmpInfo     = NULL;
   *ImageFmpInfoSize = 0;
 
-  Result = GetFfsByName (SystemFirmwareImage, SystemFirmwareImageSize, &gEdkiiSystemFirmwareImageDescriptorFileGuid, EFI_FV_FILETYPE_ALL, (VOID **)ImageFmpInfo, ImageFmpInfoSize);
+  Result = GetFfsByName (
+             SystemFirmwareImage,
+             SystemFirmwareImageSize,
+             &gEdkiiSystemFirmwareImageDescriptorFileGuid,
+             EFI_FV_FILETYPE_ALL,
+             (VOID **)ImageFmpInfo,
+             ImageFmpInfoSize
+             );
   if (!Result) {
     return FALSE;
   }
@@ -506,7 +600,14 @@ ExtractSystemFirmwareImageFmpInfo (
   *ImageFmpInfo     = (VOID *)((UINT8 *)*ImageFmpInfo + FileHeaderSize);
   *ImageFmpInfoSize = *ImageFmpInfoSize - FileHeaderSize;
 
-  Result = GetSectionByType (*ImageFmpInfo, (UINT32)*ImageFmpInfoSize, EFI_SECTION_RAW, 0, (VOID **)ImageFmpInfo, ImageFmpInfoSize);
+  Result = GetSectionByType (
+             *ImageFmpInfo,
+             (UINT32)*ImageFmpInfoSize,
+             EFI_SECTION_RAW,
+             0,
+             (VOID **)ImageFmpInfo,
+             ImageFmpInfoSize
+             );
   if (!Result) {
     return FALSE;
   }
@@ -549,7 +650,14 @@ ExtractSystemFirmwareImage (
   *SystemFirmwareImage     = NULL;
   *SystemFirmwareImageSize = 0;
 
-  Result = GetFfsByName (AuthenticatedImage, AuthenticatedImageSize, &mEdkiiSystemFirmwareFileGuid, EFI_FV_FILETYPE_RAW, SystemFirmwareImage, SystemFirmwareImageSize);
+  Result = GetFfsByName (
+             AuthenticatedImage,
+             AuthenticatedImageSize,
+             &mEdkiiSystemFirmwareFileGuid,
+             EFI_FV_FILETYPE_RAW,
+             SystemFirmwareImage,
+             SystemFirmwareImageSize
+             );
   if (!Result) {
     // no nested FV, just return all data.
     *SystemFirmwareImage     = AuthenticatedImage;
@@ -619,24 +727,50 @@ CapsuleAuthenticateSystemFirmware (
     return EFI_SECURITY_VIOLATION;
   }
 
-  Result = ExtractAuthenticatedImage ((VOID *)Image, ImageSize, LastAttemptStatus, AuthenticatedImage, AuthenticatedImageSize);
+  Result = ExtractAuthenticatedImage (
+             (VOID *)Image,
+             ImageSize,
+             LastAttemptStatus,
+             AuthenticatedImage,
+             AuthenticatedImageSize
+             );
   if (!Result) {
     DEBUG ((DEBUG_INFO, "ExtractAuthenticatedImage - fail\n"));
     return EFI_SECURITY_VIOLATION;
   }
 
-  DEBUG ((DEBUG_INFO, "AuthenticatedImage - 0x%x - 0x%x\n", *AuthenticatedImage, *AuthenticatedImageSize));
+  DEBUG ((
+    DEBUG_INFO,
+    "AuthenticatedImage - 0x%x - 0x%x\n",
+    *AuthenticatedImage,
+    *AuthenticatedImageSize
+    ));
 
-  Result = ExtractSystemFirmwareImage (*AuthenticatedImage, *AuthenticatedImageSize, &SystemFirmwareImage, &SystemFirmwareImageSize);
+  Result = ExtractSystemFirmwareImage (
+             *AuthenticatedImage,
+             *AuthenticatedImageSize,
+             &SystemFirmwareImage,
+             &SystemFirmwareImageSize
+             );
   if (!Result) {
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_ERROR_INVALID_FORMAT;
     DEBUG ((DEBUG_INFO, "ExtractSystemFirmwareImage - fail\n"));
     return EFI_SECURITY_VIOLATION;
   }
 
-  DEBUG ((DEBUG_INFO, "SystemFirmwareImage - 0x%x - 0x%x\n", SystemFirmwareImage, SystemFirmwareImageSize));
+  DEBUG ((
+    DEBUG_INFO,
+    "SystemFirmwareImage - 0x%x - 0x%x\n",
+    SystemFirmwareImage,
+    SystemFirmwareImageSize
+    ));
 
-  Result = ExtractSystemFirmwareImageFmpInfo (SystemFirmwareImage, SystemFirmwareImageSize, &ImageFmpInfo, &ImageFmpInfoSize);
+  Result = ExtractSystemFirmwareImageFmpInfo (
+             SystemFirmwareImage,
+             SystemFirmwareImageSize,
+             &ImageFmpInfo,
+             &ImageFmpInfoSize
+             );
   if (!Result) {
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_ERROR_INVALID_FORMAT;
     DEBUG ((DEBUG_INFO, "ExtractSystemFirmwareImageFmpInfo - fail\n"));
@@ -644,16 +778,38 @@ CapsuleAuthenticateSystemFirmware (
   }
 
   *LastAttemptVersion = ImageFmpInfo->Version;
-  DEBUG ((DEBUG_INFO, "ImageFmpInfo - 0x%x - 0x%x\n", ImageFmpInfo, ImageFmpInfoSize));
+  DEBUG ((
+    DEBUG_INFO,
+    "ImageFmpInfo - 0x%x - 0x%x\n",
+    ImageFmpInfo,
+    ImageFmpInfoSize
+    ));
   DEBUG ((DEBUG_INFO, "NewImage Version - 0x%x\n", ImageFmpInfo->Version));
-  DEBUG ((DEBUG_INFO, "NewImage LowestSupportedImageVersion - 0x%x\n", ImageFmpInfo->LowestSupportedImageVersion));
+  DEBUG ((
+    DEBUG_INFO,
+    "NewImage LowestSupportedImageVersion - 0x%x\n",
+    ImageFmpInfo->LowestSupportedImageVersion
+    ));
 
   CurrentImageFmpInfo     = mImageFmpInfo;
   CurrentImageFmpInfoSize = mImageFmpInfoSize;
 
-  DEBUG ((DEBUG_INFO, "ImageFmpInfo - 0x%x - 0x%x\n", CurrentImageFmpInfo, CurrentImageFmpInfoSize));
-  DEBUG ((DEBUG_INFO, "Current Version - 0x%x\n", CurrentImageFmpInfo->Version));
-  DEBUG ((DEBUG_INFO, "Current LowestSupportedImageVersion - 0x%x\n", CurrentImageFmpInfo->LowestSupportedImageVersion));
+  DEBUG ((
+    DEBUG_INFO,
+    "ImageFmpInfo - 0x%x - 0x%x\n",
+    CurrentImageFmpInfo,
+    CurrentImageFmpInfoSize
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "Current Version - 0x%x\n",
+    CurrentImageFmpInfo->Version
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "Current LowestSupportedImageVersion - 0x%x\n",
+    CurrentImageFmpInfo->LowestSupportedImageVersion
+    ));
 
   if (ForceVersionMatch) {
     if (CurrentImageFmpInfo->Version != ImageFmpInfo->Version) {
@@ -662,7 +818,9 @@ CapsuleAuthenticateSystemFirmware (
       return EFI_SECURITY_VIOLATION;
     }
   } else {
-    if (ImageFmpInfo->Version < CurrentImageFmpInfo->LowestSupportedImageVersion) {
+    if (ImageFmpInfo->Version <
+        CurrentImageFmpInfo->LowestSupportedImageVersion)
+    {
       *LastAttemptStatus = LAST_ATTEMPT_STATUS_ERROR_INCORRECT_VERSION;
       DEBUG ((DEBUG_INFO, "LowestSupportedImageVersion check - fail\n"));
       return EFI_SECURITY_VIOLATION;
@@ -739,7 +897,8 @@ EdkiiSystemCapsuleLibConstructor (
   // Verify Firmware Image Descriptor first
   //
   if ((mImageFmpInfoSize < sizeof (EDKII_SYSTEM_FIRMWARE_IMAGE_DESCRIPTOR)) ||
-      (mImageFmpInfo->Signature != EDKII_SYSTEM_FIRMWARE_IMAGE_DESCRIPTOR_SIGNATURE))
+      (mImageFmpInfo->Signature !=
+       EDKII_SYSTEM_FIRMWARE_IMAGE_DESCRIPTOR_SIGNATURE))
   {
     //
     // SystemFirmwareImageDescriptor is not set.
@@ -757,7 +916,12 @@ EdkiiSystemCapsuleLibConstructor (
     ASSERT (mImageFmpInfo != NULL);
   }
 
-  CopyGuid (&mEdkiiSystemFirmwareFileGuid, PcdGetPtr (PcdEdkiiSystemFirmwareFileGuid));
+  CopyGuid (
+    &mEdkiiSystemFirmwareFileGuid,
+    PcdGetPtr (
+      PcdEdkiiSystemFirmwareFileGuid
+      )
+    );
   //
   // Verify GUID value first
   //

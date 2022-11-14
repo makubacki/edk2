@@ -60,7 +60,15 @@ DispatchSystemFmpImages (
   //
   // Verify
   //
-  Status = CapsuleAuthenticateSystemFirmware (Image, ImageSize, FALSE, LastAttemptVersion, LastAttemptStatus, &AuthenticatedImage, &AuthenticatedImageSize);
+  Status = CapsuleAuthenticateSystemFirmware (
+             Image,
+             ImageSize,
+             FALSE,
+             LastAttemptVersion,
+             LastAttemptStatus,
+             &AuthenticatedImage,
+             &AuthenticatedImageSize
+             );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INFO, "SystemFirmwareAuthenticateImage - %r\n", Status));
     return Status;
@@ -69,13 +77,20 @@ DispatchSystemFmpImages (
   //
   // Get FV
   //
-  Result = ExtractDriverFvImage (AuthenticatedImage, AuthenticatedImageSize, &DispatchFvImage, &DispatchFvImageSize);
+  Result = ExtractDriverFvImage (
+             AuthenticatedImage,
+             AuthenticatedImageSize,
+             &DispatchFvImage,
+             &DispatchFvImageSize
+             );
   if (Result) {
     DEBUG ((DEBUG_INFO, "ExtractDriverFvImage\n"));
     //
     // Dispatch
     //
-    if (((EFI_FIRMWARE_VOLUME_HEADER *)DispatchFvImage)->FvLength == DispatchFvImageSize) {
+    if (((EFI_FIRMWARE_VOLUME_HEADER *)DispatchFvImage)->FvLength ==
+        DispatchFvImageSize)
+    {
       FvImage = AllocatePages (EFI_SIZE_TO_PAGES (DispatchFvImageSize));
       if (FvImage != NULL) {
         CopyMem (FvImage, DispatchFvImage, DispatchFvImageSize);
@@ -173,13 +188,24 @@ FmpSetImage (
   //
   // Process FV
   //
-  Status = DispatchSystemFmpImages ((VOID *)Image, ImageSize, &SystemFmpPrivate->LastAttempt.LastAttemptVersion, &SystemFmpPrivate->LastAttempt.LastAttemptStatus);
-  DEBUG ((DEBUG_INFO, "(Agent)SetImage - LastAttempt Version - 0x%x, State - 0x%x\n", SystemFmpPrivate->LastAttempt.LastAttemptVersion, SystemFmpPrivate->LastAttempt.LastAttemptStatus));
+  Status = DispatchSystemFmpImages (
+             (VOID *)Image,
+             ImageSize,
+             &SystemFmpPrivate->LastAttempt.LastAttemptVersion,
+             &SystemFmpPrivate->LastAttempt.LastAttemptStatus
+             );
+  DEBUG ((
+    DEBUG_INFO,
+    "(Agent)SetImage - LastAttempt Version - 0x%x, State - 0x%x\n",
+    SystemFmpPrivate->LastAttempt.LastAttemptVersion,
+    SystemFmpPrivate->LastAttempt.LastAttemptStatus
+    ));
   if (EFI_ERROR (Status)) {
     VarStatus = gRT->SetVariable (
                        SYSTEM_FMP_LAST_ATTEMPT_VARIABLE_NAME,
                        &gSystemFmpLastAttemptVariableGuid,
-                       EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS,
+                       EFI_VARIABLE_NON_VOLATILE |
+                       EFI_VARIABLE_BOOTSERVICE_ACCESS,
                        sizeof (SystemFmpPrivate->LastAttempt),
                        &SystemFmpPrivate->LastAttempt
                        );
@@ -202,21 +228,38 @@ FmpSetImage (
                     (VOID **)&SystemFmp
                     );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_INFO, "(Agent)SetImage - SystemFmpProtocol - %r\n", Status));
-      SystemFmpPrivate->LastAttempt.LastAttemptStatus = LAST_ATTEMPT_STATUS_ERROR_INVALID_FORMAT;
-      VarStatus                                       = gRT->SetVariable (
-                                                               SYSTEM_FMP_LAST_ATTEMPT_VARIABLE_NAME,
-                                                               &gSystemFmpLastAttemptVariableGuid,
-                                                               EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS,
-                                                               sizeof (SystemFmpPrivate->LastAttempt),
-                                                               &SystemFmpPrivate->LastAttempt
-                                                               );
+      DEBUG ((
+        DEBUG_INFO,
+        "(Agent)SetImage - SystemFmpProtocol - %r\n",
+        Status
+        ));
+      SystemFmpPrivate->LastAttempt.LastAttemptStatus =
+        LAST_ATTEMPT_STATUS_ERROR_INVALID_FORMAT;
+      VarStatus = gRT->SetVariable (
+                         SYSTEM_FMP_LAST_ATTEMPT_VARIABLE_NAME,
+                         &
+                         gSystemFmpLastAttemptVariableGuid,
+                         EFI_VARIABLE_NON_VOLATILE
+                         | EFI_VARIABLE_BOOTSERVICE_ACCESS,
+                         sizeof (
+                                 SystemFmpPrivate->LastAttempt),
+                         &SystemFmpPrivate
+                           ->LastAttempt
+                         );
       DEBUG ((DEBUG_INFO, "(Agent)SetLastAttempt - %r\n", VarStatus));
       return Status;
     }
   }
 
-  return SystemFmp->SetImage (SystemFmp, ImageIndex, Image, ImageSize, VendorCode, Progress, AbortReason);
+  return SystemFmp->SetImage (
+                      SystemFmp,
+                      ImageIndex,
+                      Image,
+                      ImageSize,
+                      VendorCode,
+                      Progress,
+                      AbortReason
+                      );
 }
 
 /**
