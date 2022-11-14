@@ -232,8 +232,8 @@ GetFfsByName (
     if (FvHeader->ExtHeaderOffset != 0) {
       FvExtHeader = (EFI_FIRMWARE_VOLUME_EXT_HEADER *)((UINT8 *)FvHeader +
                                                        FvHeader->ExtHeaderOffset);
-      FfsHeader   = (EFI_FFS_FILE_HEADER *)((UINT8 *)FvExtHeader +
-                                            FvExtHeader->ExtHeaderSize);
+      FfsHeader = (EFI_FFS_FILE_HEADER *)((UINT8 *)FvExtHeader +
+                                          FvExtHeader->ExtHeaderSize);
     } else {
       FfsHeader = (EFI_FFS_FILE_HEADER *)((UINT8 *)FvHeader +
                                           FvHeader->HeaderLength);
