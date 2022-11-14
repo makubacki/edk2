@@ -88,7 +88,7 @@
 #define PL111_IVS  (1 << 11)
 
 #define CLK_SIG_POLARITY( \
-                        hor_res)  \
+                          hor_res)  \
   (UINT32)(PL111_BCD | PL111_IPC | PL111_IHS | PL111_IVS | (((hor_res)-1) << 16))
 
 // Register: PL111_REG_LCD_TIMING_3

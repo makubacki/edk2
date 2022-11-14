@@ -66,8 +66,8 @@ VideoCopyNoHorizontalOverlap (
 
       for ( LineCount = 0; LineCount < Height; LineCount++ ) {
         // Update the start addresses of source & destination using 32bit pointer arithmetic
-        SourceAddr      = (VOID *)((UINT32 *)FrameBufferBase + SourceLine      *
-                                   HorizontalResolution + SourceX);
+        SourceAddr = (VOID *)((UINT32 *)FrameBufferBase + SourceLine      *
+                              HorizontalResolution + SourceX);
         DestinationAddr = (VOID *)((UINT32 *)FrameBufferBase + DestinationLine *
                                    HorizontalResolution + DestinationX);
 
@@ -89,8 +89,8 @@ VideoCopyNoHorizontalOverlap (
 
       for ( LineCount = 0; LineCount < Height; LineCount++ ) {
         // Update the start addresses of source & destination using 16bit pointer arithmetic
-        SourceAddr      = (VOID *)((UINT16 *)FrameBufferBase + SourceLine      *
-                                   HorizontalResolution + SourceX);
+        SourceAddr = (VOID *)((UINT16 *)FrameBufferBase + SourceLine      *
+                              HorizontalResolution + SourceX);
         DestinationAddr = (VOID *)((UINT16 *)FrameBufferBase + DestinationLine *
                                    HorizontalResolution + DestinationX);
 
@@ -497,7 +497,7 @@ BltVideoToBltBuffer (
     // Divide it by the size of a pixel to find out the buffer's horizontal resolution.
     BltBufferHorizontalResolution = (UINT32)(Delta /
                                              sizeof (
-                                                            EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
+                                                     EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
   } else {
     BltBufferHorizontalResolution = Width;
   }
@@ -514,8 +514,8 @@ BltVideoToBltBuffer (
            SourceLine++, DestinationLine++)
       {
         // Calculate the source and target addresses using 32bit pointer arithmetic:
-        SourceAddr      = (VOID *)((UINT32 *)FrameBufferBase + SourceLine      *
-                                   HorizontalResolution          + SourceX);
+        SourceAddr = (VOID *)((UINT32 *)FrameBufferBase + SourceLine      *
+                              HorizontalResolution          + SourceX);
         DestinationAddr = (VOID *)((UINT32 *)BltBuffer       + DestinationLine *
                                    BltBufferHorizontalResolution +
                                    DestinationX);
@@ -548,15 +548,15 @@ BltVideoToBltBuffer (
           Pixel16bit = *SourcePixel16bit;
 
           // Copy the pixel into the new target
-          EfiDestinationPixel->Red   = (UINT8)((Pixel16bit &
-                                                PixelInformation->RedMask) >>
-                                               7);
+          EfiDestinationPixel->Red = (UINT8)((Pixel16bit &
+                                              PixelInformation->RedMask) >>
+                                             7);
           EfiDestinationPixel->Green = (UINT8)((Pixel16bit &
                                                 PixelInformation->GreenMask) >>
                                                2);
-          EfiDestinationPixel->Blue  = (UINT8)((Pixel16bit &
-                                                PixelInformation->BlueMask) <<
-                                               3);
+          EfiDestinationPixel->Blue = (UINT8)((Pixel16bit &
+                                               PixelInformation->BlueMask) <<
+                                              3);
           // EfiDestinationPixel->Reserved = (UINT8) 0;
         }
       }
@@ -586,15 +586,15 @@ BltVideoToBltBuffer (
 
           // Copy the pixel into the new target
           // There is no info for the Reserved byte, so we set it to zero
-          EfiDestinationPixel->Red   = (UINT8)((Pixel16bit &
-                                                PixelInformation->RedMask) >>
-                                               8);
+          EfiDestinationPixel->Red = (UINT8)((Pixel16bit &
+                                              PixelInformation->RedMask) >>
+                                             8);
           EfiDestinationPixel->Green = (UINT8)((Pixel16bit &
                                                 PixelInformation->GreenMask) >>
                                                3);
-          EfiDestinationPixel->Blue  = (UINT8)((Pixel16bit &
-                                                PixelInformation->BlueMask) <<
-                                               3);
+          EfiDestinationPixel->Blue = (UINT8)((Pixel16bit &
+                                               PixelInformation->BlueMask) <<
+                                              3);
           // EfiDestinationPixel->Reserved = (UINT8) 0;
         }
       }
@@ -623,14 +623,14 @@ BltVideoToBltBuffer (
           Pixel16bit = *SourcePixel16bit;
 
           // Copy the pixel into the new target
-          EfiDestinationPixel->Red   = (UINT8)((Pixel16bit &
-                                                PixelInformation->RedMask) >>
-                                               4);
+          EfiDestinationPixel->Red = (UINT8)((Pixel16bit &
+                                              PixelInformation->RedMask) >>
+                                             4);
           EfiDestinationPixel->Green = (UINT8)((Pixel16bit &
                                                 PixelInformation->GreenMask));
-          EfiDestinationPixel->Blue  = (UINT8)((Pixel16bit &
-                                                PixelInformation->BlueMask) <<
-                                               4);
+          EfiDestinationPixel->Blue = (UINT8)((Pixel16bit &
+                                               PixelInformation->BlueMask) <<
+                                              4);
           // EfiDestinationPixel->Reserved = (UINT8) 0;
         }
       }
@@ -697,7 +697,7 @@ BltBufferToVideo (
     // Divide it by the size of a pixel to find out the buffer's horizontal resolution.
     BltBufferHorizontalResolution = (UINT32)(Delta /
                                              sizeof (
-                                                            EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
+                                                     EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
   } else {
     BltBufferHorizontalResolution = Width;
   }
@@ -714,8 +714,8 @@ BltBufferToVideo (
            SourceLine++, DestinationLine++)
       {
         // Calculate the source and target addresses using 32bit pointer arithmetic:
-        SourceAddr      = (VOID *)((UINT32 *)BltBuffer       + SourceLine      *
-                                   BltBufferHorizontalResolution + SourceX);
+        SourceAddr = (VOID *)((UINT32 *)BltBuffer       + SourceLine      *
+                              BltBufferHorizontalResolution + SourceX);
         DestinationAddr = (VOID *)((UINT32 *)FrameBufferBase + DestinationLine *
                                    HorizontalResolution          +
                                    DestinationX);

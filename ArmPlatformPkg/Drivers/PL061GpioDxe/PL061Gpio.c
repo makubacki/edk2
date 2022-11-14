@@ -388,7 +388,7 @@ PL061InstallProtocol (
     // Create the mPL061PlatformGpio
     mPL061PlatformGpio = (PLATFORM_GPIO_CONTROLLER *)AllocateZeroPool (
                                                        sizeof (
-                                                                              PLATFORM_GPIO_CONTROLLER)
+                                                               PLATFORM_GPIO_CONTROLLER)
                                                        + sizeof (GPIO_CONTROLLER)
                                                        );
     if (mPL061PlatformGpio == NULL) {

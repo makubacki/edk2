@@ -46,8 +46,11 @@ CreatePpiList (
   // Copy the Common and Platform PPis in Temporary Memory
   ListBase = PcdGet64 (PcdCPUCoresStackBase);
   CopyMem ((VOID *)ListBase, gCommonPpiTable, sizeof (gCommonPpiTable));
-  CopyMem ((VOID *)(ListBase + sizeof (gCommonPpiTable)), PlatformPpiList,
-    PlatformPpiListSize);
+  CopyMem (
+    (VOID *)(ListBase + sizeof (gCommonPpiTable)),
+    PlatformPpiList,
+    PlatformPpiListSize
+    );
 
   // Set the Terminate flag on the last PPI entry
   LastPpi = (EFI_PEI_PPI_DESCRIPTOR *)ListBase +

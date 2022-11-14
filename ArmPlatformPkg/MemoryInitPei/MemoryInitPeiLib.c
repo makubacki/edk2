@@ -110,7 +110,8 @@ MemoryPeim (
          NextHob.ResourceDescriptor->ResourceLength <= PcdGet64 (
                                                          PcdSystemMemoryBase
                                                          ) + PcdGet64 (
-                                                               PcdSystemMemorySize)))
+                                                               PcdSystemMemorySize
+                                                               )))
     {
       Found = TRUE;
       break;
