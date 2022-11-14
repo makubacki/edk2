@@ -85,7 +85,8 @@ SetFrameworkFingerprint (
   NewFingerprint = (NewFingerprint >> 8) ^ CalculateCrc32 (
                                              Framework->VersionString,
                                              (AsciiStrLen (
-                                                Framework->VersionString) *
+                                                Framework->VersionString
+                                                ) *
                                               sizeof (CHAR8))
                                              );
 

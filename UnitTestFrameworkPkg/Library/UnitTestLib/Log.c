@@ -24,10 +24,10 @@ struct _UNIT_TEST_LOG_PREFIX_STRING {
 };
 
 struct _UNIT_TEST_LOG_PREFIX_STRING  mLogPrefixStrings[] = {
-  { UNIT_TEST_LOG_LEVEL_ERROR,   "[ERROR]       "       },
-  { UNIT_TEST_LOG_LEVEL_WARN,    "[WARNING]     "       },
-  { UNIT_TEST_LOG_LEVEL_INFO,    "[INFO]        "       },
-  { UNIT_TEST_LOG_LEVEL_VERBOSE, "[VERBOSE]     "       }
+  { UNIT_TEST_LOG_LEVEL_ERROR,   "[ERROR]       " },
+  { UNIT_TEST_LOG_LEVEL_WARN,    "[WARNING]     " },
+  { UNIT_TEST_LOG_LEVEL_INFO,    "[INFO]        " },
+  { UNIT_TEST_LOG_LEVEL_VERBOSE, "[VERBOSE]     " }
 };
 
 //

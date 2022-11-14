@@ -34,42 +34,42 @@ struct _UNIT_TEST_FAILURE_TYPE_STRING {
 
 struct _UNIT_TEST_STATUS_STRING  mStatusStrings[] = {
   { UNIT_TEST_PASSED,
-    "PASSED"                                                                                              },
+    "PASSED" },
   { UNIT_TEST_ERROR_PREREQUISITE_NOT_MET,
-    "NOT RUN - PREREQUISITE FAILED"                                                                                                           },
+    "NOT RUN - PREREQUISITE FAILED" },
   { UNIT_TEST_ERROR_TEST_FAILED,
-    "FAILED"                                                                                                                                                                     },
+    "FAILED" },
   { UNIT_TEST_RUNNING,
-    "RUNNING"                                                                                                                                                                                                       },
+    "RUNNING" },
   { UNIT_TEST_PENDING,
-    "PENDING"                                                                                                                                                                                                                                          },
+    "PENDING" },
   { 0,
-    "**UNKNOWN**"                                                                                                                                                                                                                                      }
+    "**UNKNOWN**" }
 };
 
 struct _UNIT_TEST_FAILURE_TYPE_STRING  mFailureTypeStrings[] = {
   { FAILURETYPE_NOFAILURE,
-    "NO FAILURE"                                                                                                                                                                                                                                                 },
+    "NO FAILURE" },
   { FAILURETYPE_OTHER,
-    "OTHER FAILURE"                                                                                                                                                                                                                                                                           },
+    "OTHER FAILURE" },
   { FAILURETYPE_ASSERTTRUE,
-    "ASSERT_TRUE FAILURE"                                                                                                                                                                                                                                                                                                 },
+    "ASSERT_TRUE FAILURE" },
   { FAILURETYPE_ASSERTFALSE,
-    "ASSERT_FALSE FAILURE"                                                                                                                                                                                                                                                                                                                            },
+    "ASSERT_FALSE FAILURE" },
   { FAILURETYPE_ASSERTEQUAL,
-    "ASSERT_EQUAL FAILURE"                                                                                                                                                                                                                                                                                                                                                        },
+    "ASSERT_EQUAL FAILURE" },
   { FAILURETYPE_ASSERTNOTEQUAL,
-    "ASSERT_NOTEQUAL FAILURE"                                                                                                                                                                                                                                                                                                                                                                                 },
+    "ASSERT_NOTEQUAL FAILURE" },
   { FAILURETYPE_ASSERTNOTEFIERROR,
-    "ASSERT_NOTEFIERROR FAILURE"                                                                                                                                                                                                                                                                                                                                                                                                          },
+    "ASSERT_NOTEFIERROR FAILURE" },
   { FAILURETYPE_ASSERTSTATUSEQUAL,
-    "ASSERT_STATUSEQUAL FAILURE"                                                                                                                                                                                                                                                                                                                                                                                                                                      },
+    "ASSERT_STATUSEQUAL FAILURE" },
   { FAILURETYPE_ASSERTNOTNULL,
-    "ASSERT_NOTNULL FAILURE"                                                                                                                                                                                                                                                                                                                                                                                                                                                                      },
+    "ASSERT_NOTNULL FAILURE" },
   { FAILURETYPE_EXPECTASSERT,
-    "EXPECT_ASSERT FAILURE"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   },
+    "EXPECT_ASSERT FAILURE" },
   { 0,
-    "*UNKNOWN* Failure"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       }
+    "*UNKNOWN* Failure" }
 };
 
 //
