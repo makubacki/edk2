@@ -304,7 +304,7 @@ UpdateRegionMappingRecursive (
       } else {
         TranslationTable = (VOID *)(UINTN)(*Entry &
                                            TT_ADDRESS_MASK_BLOCK_ENTRY);
-        NextTableIsLive  = TableIsLive;
+        NextTableIsLive = TableIsLive;
       }
 
       //

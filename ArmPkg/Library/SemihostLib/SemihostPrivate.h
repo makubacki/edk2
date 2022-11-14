@@ -155,24 +155,24 @@ _Semihost_SYS_SYSTEM (
 #define SEMIHOST_SYS_CLOSE(Handle)       _Semihost_SYS_CLOSE(0x02, Handle)
 #define SEMIHOST_SYS_WRITE0(String)      _Semihost_SYS_WRITE0(0x04, String)
 #define SEMIHOST_SYS_WRITEC( \
-                           Character)    _Semihost_SYS_WRITEC(0x03, Character)
+                             Character)  _Semihost_SYS_WRITEC(0x03, Character)
 #define SEMIHOST_SYS_WRITE( \
-                          WriteBlock)    _Semihost_SYS_WRITE(0x05, WriteBlock)
+                            WriteBlock)  _Semihost_SYS_WRITE(0x05, WriteBlock)
 #define SEMIHOST_SYS_READ(ReadBlock)     _Semihost_SYS_READ(0x06, ReadBlock)
 #define SEMIHOST_SYS_READC()             _Semihost_SYS_READC(0x07, 0)
 #define SEMIHOST_SYS_SEEK(SeekBlock)     _Semihost_SYS_SEEK(0x0A, SeekBlock)
 #define SEMIHOST_SYS_FLEN(Handle)        _Semihost_SYS_FLEN(0x0C, Handle)
 #define SEMIHOST_SYS_TMPNAME( \
-                            TmpNameBlock)  \
+                              TmpNameBlock)  \
                                          _Semihost_SYS_TMPNAME(0x0D, TmpNameBlock)
 #define SEMIHOST_SYS_REMOVE( \
-                           RemoveBlock)    \
+                             RemoveBlock)    \
                                          _Semihost_SYS_REMOVE(0x0E, RemoveBlock)
 #define SEMIHOST_SYS_RENAME( \
-                           RenameBlock)    \
+                             RenameBlock)    \
                                          _Semihost_SYS_RENAME(0x0F, RenameBlock)
 #define SEMIHOST_SYS_SYSTEM( \
-                           SystemBlock)    \
+                             SystemBlock)    \
                                          _Semihost_SYS_SYSTEM(0x12, SystemBlock)
 
 #elif defined (__GNUC__) // __CC_ARM
@@ -186,41 +186,41 @@ GccSemihostCall (
   ); // __attribute__ ((interrupt ("SVC")));
 
 #define SEMIHOST_SYS_OPEN( \
-                         OpenBlock)        \
+                           OpenBlock)        \
                                 GccSemihostCall(0x01, (UINTN)(OpenBlock))
 #define SEMIHOST_SYS_CLOSE( \
-                          Handle)          \
+                            Handle)          \
                                 GccSemihostCall(0x02, (UINTN)(Handle))
 #define SEMIHOST_SYS_WRITE0( \
-                           String)         \
+                             String)         \
                                 GccSemihostCall(0x04, (UINTN)(String))
 #define SEMIHOST_SYS_WRITEC( \
-                           Character)      \
+                             Character)      \
                                 GccSemihostCall(0x03, (UINTN)(Character))
 #define SEMIHOST_SYS_WRITE( \
-                          WriteBlock)      \
+                            WriteBlock)      \
                                 GccSemihostCall(0x05, (UINTN)(WriteBlock))
 #define SEMIHOST_SYS_READ( \
-                         ReadBlock)        \
+                           ReadBlock)        \
                                 GccSemihostCall(0x06, (UINTN)(ReadBlock))
-#define SEMIHOST_SYS_READC()    GccSemihostCall(0x07, (UINTN)(0))
+#define SEMIHOST_SYS_READC()  GccSemihostCall(0x07, (UINTN)(0))
 #define SEMIHOST_SYS_SEEK( \
-                         SeekBlock)        \
+                           SeekBlock)        \
                                 GccSemihostCall(0x0A, (UINTN)(SeekBlock))
 #define SEMIHOST_SYS_FLEN( \
-                         Handle)           \
+                           Handle)           \
                                 GccSemihostCall(0x0C, (UINTN)(Handle))
 #define SEMIHOST_SYS_TMPNAME( \
-                            TmpNameBlock)  \
+                              TmpNameBlock)  \
                                 GccSemihostCall(0x0D, (UINTN)(TmpNameBlock))
 #define SEMIHOST_SYS_REMOVE( \
-                           RemoveBlock)    \
+                             RemoveBlock)    \
                                 GccSemihostCall(0x0E, (UINTN)(RemoveBlock))
 #define SEMIHOST_SYS_RENAME( \
-                           RenameBlock)    \
+                             RenameBlock)    \
                                 GccSemihostCall(0x0F, (UINTN)(RenameBlock))
 #define SEMIHOST_SYS_SYSTEM( \
-                           SystemBlock)    \
+                             SystemBlock)    \
                                 GccSemihostCall(0x12, (UINTN)(SystemBlock))
 
 #else // __CC_ARM

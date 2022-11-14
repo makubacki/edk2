@@ -169,9 +169,9 @@ GetNextEntryAttribute (
         }
 
         // Start of the new region
-        *StartGcdRegion     = BaseAddress + (Index * TT_ADDRESS_AT_LEVEL (
-                                                       TableLevel
-                                                       ));
+        *StartGcdRegion = BaseAddress + (Index * TT_ADDRESS_AT_LEVEL (
+                                                   TableLevel
+                                                   ));
         *PrevEntryAttribute = EntryAttribute;
       } else {
         continue;
@@ -202,9 +202,9 @@ GetNextEntryAttribute (
           );
 
         // Start of the new region
-        *StartGcdRegion     = BaseAddress + (Index * TT_ADDRESS_AT_LEVEL (
-                                                       TableLevel
-                                                       ));
+        *StartGcdRegion = BaseAddress + (Index * TT_ADDRESS_AT_LEVEL (
+                                                   TableLevel
+                                                   ));
         *PrevEntryAttribute = INVALID_ENTRY;
       }
     }

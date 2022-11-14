@@ -50,7 +50,7 @@ typedef enum {
 
 // Total of clock devices supported by the SCP, Attr Bits[15:0]
 #define SCMI_CLOCK_PROTOCOL_TOTAL_CLKS( \
-                                      Attr)  \
+                                        Attr)  \
   (Attr & SCMI_CLOCK_PROTOCOL_NUM_CLOCKS_MASK)
 
 #pragma pack(1)

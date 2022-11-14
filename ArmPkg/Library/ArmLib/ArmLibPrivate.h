@@ -36,29 +36,29 @@
 #define INSTRUCTION_CACHE_SIZE_FIELD(x)  (((x) >>  0) & 0x0FFF)
 
 #define DATA_CACHE_SIZE( \
-                       x)           \
+                         x)           \
       (SIZE_FIELD_TO_CACHE_SIZE(DATA_CACHE_SIZE_FIELD(x)))
 #define DATA_CACHE_ASSOCIATIVITY( \
-                                x)  \
+                                  x)  \
       (SIZE_FIELD_TO_CACHE_ASSOCIATIVITY(DATA_CACHE_SIZE_FIELD(x)))
 #define DATA_CACHE_PRESENT( \
-                          x)        \
+                            x)        \
       (SIZE_FIELD_TO_CACHE_PRESENCE(DATA_CACHE_SIZE_FIELD(x)))
 #define DATA_CACHE_LINE_LENGTH( \
-                              x)    \
+                                x)    \
       (SIZE_FIELD_TO_CACHE_LINE_LENGTH(DATA_CACHE_SIZE_FIELD(x)))
 
 #define INSTRUCTION_CACHE_SIZE( \
-                              x)           \
+                                x)           \
       (SIZE_FIELD_TO_CACHE_SIZE(INSTRUCTION_CACHE_SIZE_FIELD(x)))
 #define INSTRUCTION_CACHE_ASSOCIATIVITY( \
-                                       x)  \
+                                         x)  \
       (SIZE_FIELD_TO_CACHE_ASSOCIATIVITY(INSTRUCTION_CACHE_SIZE_FIELD(x)))
 #define INSTRUCTION_CACHE_PRESENT( \
-                                 x)        \
+                                   x)        \
       (SIZE_FIELD_TO_CACHE_PRESENCE(INSTRUCTION_CACHE_SIZE_FIELD(x)))
 #define INSTRUCTION_CACHE_LINE_LENGTH( \
-                                     x)    \
+                                       x)    \
       (SIZE_FIELD_TO_CACHE_LINE_LENGTH(INSTRUCTION_CACHE_SIZE_FIELD(x)))
 
 #define CACHE_TYPE(x)  (((x) >> 25) & 0x0F)

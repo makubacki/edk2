@@ -112,7 +112,7 @@ GetFfsFile (
   FvLength      = FwVolHeader->FvLength;
   FfsFileHeader = (EFI_FFS_FILE_HEADER *)((UINT8 *)FwVolHeader +
                                           FwVolHeader->HeaderLength);
-  FileOffset    = FwVolHeader->HeaderLength;
+  FileOffset = FwVolHeader->HeaderLength;
 
   if (FwVolHeader->Attributes & EFI_FVB2_ERASE_POLARITY) {
     ErasePolarity = 1;

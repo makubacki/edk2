@@ -61,12 +61,12 @@ typedef struct {
 SEMIHOST_DEVICE_PATH  gDevicePath = {
   {
     { HARDWARE_DEVICE_PATH,              HW_VENDOR_DP,
-          { sizeof (VENDOR_DEVICE_PATH),       0 }
+        { sizeof (VENDOR_DEVICE_PATH),       0 }
     },
     EFI_CALLER_ID_GUID
   },
   { END_DEVICE_PATH_TYPE,              END_ENTIRE_DEVICE_PATH_SUBTYPE,
-          { sizeof (EFI_DEVICE_PATH_PROTOCOL), 0 }
+        { sizeof (EFI_DEVICE_PATH_PROTOCOL), 0 }
   }
 };
 
@@ -84,10 +84,10 @@ typedef struct {
 
 #define SEMIHOST_FCB_SIGNATURE  SIGNATURE_32( 'S', 'H', 'F', 'C' )
 #define SEMIHOST_FCB_FROM_THIS( \
-                              a)  \
+                                a)  \
       CR(a, SEMIHOST_FCB, File, SEMIHOST_FCB_SIGNATURE)
 #define SEMIHOST_FCB_FROM_LINK( \
-                              a)  \
+                                a)  \
       CR(a, SEMIHOST_FCB, Link, SEMIHOST_FCB_SIGNATURE);
 
 EFI_HANDLE  gInstallHandle = NULL;

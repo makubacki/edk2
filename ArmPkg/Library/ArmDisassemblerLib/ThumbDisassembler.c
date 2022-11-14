@@ -103,272 +103,272 @@ typedef struct {
 THUMB_INSTRUCTIONS  gOpThumb[] = {
   // Thumb 16-bit instructions
   //          Op       Mask   Format
-  { "ADC",    0x4140,      0xffc0,      DATA_FORMAT5                     }, // ADC <Rndn>, <Rm>
-  { "ADR",    0xa000,      0xf800,      ADR_FORMAT                       }, // ADR <Rd>, <label>
-  { "ADD",    0x1c00,      0xfe00,      DATA_FORMAT2                     },
-  { "ADD",    0x3000,      0xf800,      DATA_FORMAT3                     },
-  { "ADD",    0x1800,      0xfe00,      DATA_FORMAT1                     },
-  { "ADD",    0x4400,      0xff00,      DATA_FORMAT8                     }, // A8.6.9
-  { "ADD",    0xa000,      0xf100,      DATA_FORMAT6_PC                  },
-  { "ADD",    0xa800,      0xf800,      DATA_FORMAT6_SP                  },
-  { "ADD",    0xb000,      0xff80,      DATA_FORMAT7                     },
+  { "ADC",    0x4140, 0xffc0, DATA_FORMAT5                },                // ADC <Rndn>, <Rm>
+  { "ADR",    0xa000, 0xf800, ADR_FORMAT                  },                // ADR <Rd>, <label>
+  { "ADD",    0x1c00, 0xfe00, DATA_FORMAT2                },
+  { "ADD",    0x3000, 0xf800, DATA_FORMAT3                },
+  { "ADD",    0x1800, 0xfe00, DATA_FORMAT1                },
+  { "ADD",    0x4400, 0xff00, DATA_FORMAT8                },                // A8.6.9
+  { "ADD",    0xa000, 0xf100, DATA_FORMAT6_PC             },
+  { "ADD",    0xa800, 0xf800, DATA_FORMAT6_SP             },
+  { "ADD",    0xb000, 0xff80, DATA_FORMAT7                },
 
-  { "AND",    0x4000,      0xffc0,      DATA_FORMAT5                     },
+  { "AND",    0x4000, 0xffc0, DATA_FORMAT5                },
 
-  { "ASR",    0x1000,      0xf800,      DATA_FORMAT4                     },
-  { "ASR",    0x4100,      0xffc0,      DATA_FORMAT5                     },
+  { "ASR",    0x1000, 0xf800, DATA_FORMAT4                },
+  { "ASR",    0x4100, 0xffc0, DATA_FORMAT5                },
 
-  { "B",      0xd000,      0xf000,      CONDITIONAL_BRANCH               },
-  { "B",      0xe000,      0xf800,      UNCONDITIONAL_BRANCH_SHORT       },
-  { "BLX",    0x4780,      0xff80,      BRANCH_EXCHANGE                  },
-  { "BX",     0x4700,      0xff87,      BRANCH_EXCHANGE                  },
+  { "B",      0xd000, 0xf000, CONDITIONAL_BRANCH          },
+  { "B",      0xe000, 0xf800, UNCONDITIONAL_BRANCH_SHORT  },
+  { "BLX",    0x4780, 0xff80, BRANCH_EXCHANGE             },
+  { "BX",     0x4700, 0xff87, BRANCH_EXCHANGE             },
 
-  { "BIC",    0x4380,      0xffc0,      DATA_FORMAT5                     },
-  { "BKPT",   0xdf00,      0xff00,      IMMED_8                          },
-  { "CBZ",    0xb100,      0xfd00,      DATA_CBZ                         },
-  { "CBNZ",   0xb900,      0xfd00,      DATA_CBZ                         },
-  { "CMN",    0x42c0,      0xffc0,      DATA_FORMAT5                     },
+  { "BIC",    0x4380, 0xffc0, DATA_FORMAT5                },
+  { "BKPT",   0xdf00, 0xff00, IMMED_8                     },
+  { "CBZ",    0xb100, 0xfd00, DATA_CBZ                    },
+  { "CBNZ",   0xb900, 0xfd00, DATA_CBZ                    },
+  { "CMN",    0x42c0, 0xffc0, DATA_FORMAT5                },
 
-  { "CMP",    0x2800,      0xf800,      DATA_FORMAT3                     },
-  { "CMP",    0x4280,      0xffc0,      DATA_FORMAT5                     },
-  { "CMP",    0x4500,      0xff00,      DATA_FORMAT8                     },
+  { "CMP",    0x2800, 0xf800, DATA_FORMAT3                },
+  { "CMP",    0x4280, 0xffc0, DATA_FORMAT5                },
+  { "CMP",    0x4500, 0xff00, DATA_FORMAT8                },
 
-  { "CPS",    0xb660,      0xffe8,      CPS_FORMAT                       },
-  { "MOV",    0x4600,      0xff00,      DATA_FORMAT8                     },
-  { "EOR",    0x4040,      0xffc0,      DATA_FORMAT5                     },
+  { "CPS",    0xb660, 0xffe8, CPS_FORMAT                  },
+  { "MOV",    0x4600, 0xff00, DATA_FORMAT8                },
+  { "EOR",    0x4040, 0xffc0, DATA_FORMAT5                },
 
-  { "LDMIA",  0xc800,      0xf800,      LOAD_STORE_MULTIPLE_FORMAT1      },
-  { "LDR",    0x6800,      0xf800,      LOAD_STORE_FORMAT1               }, // LDR <Rt>, [<Rn> {,#<imm>}]
-  { "LDR",    0x5800,      0xfe00,      LOAD_STORE_FORMAT2               }, // STR <Rt>, [<Rn>, <Rm>]
-  { "LDR",    0x4800,      0xf800,      LOAD_STORE_FORMAT3               },
-  { "LDR",    0x9800,      0xf800,      LOAD_STORE_FORMAT4               }, // LDR <Rt>, [SP, #<imm>]
-  { "LDRB",   0x7800,      0xf800,      LOAD_STORE_FORMAT1_B             },
-  { "LDRB",   0x5c00,      0xfe00,      LOAD_STORE_FORMAT2               }, // STR <Rt>, [<Rn>, <Rm>]
-  { "LDRH",   0x8800,      0xf800,      LOAD_STORE_FORMAT1_H             },
-  { "LDRH",   0x7a00,      0xfe00,      LOAD_STORE_FORMAT2               },
-  { "LDRSB",  0x5600,      0xfe00,      LOAD_STORE_FORMAT2               }, // STR <Rt>, [<Rn>, <Rm>]
-  { "LDRSH",  0x5e00,      0xfe00,      LOAD_STORE_FORMAT2               },
+  { "LDMIA",  0xc800, 0xf800, LOAD_STORE_MULTIPLE_FORMAT1 },
+  { "LDR",    0x6800, 0xf800, LOAD_STORE_FORMAT1          },                // LDR <Rt>, [<Rn> {,#<imm>}]
+  { "LDR",    0x5800, 0xfe00, LOAD_STORE_FORMAT2          },                // STR <Rt>, [<Rn>, <Rm>]
+  { "LDR",    0x4800, 0xf800, LOAD_STORE_FORMAT3          },
+  { "LDR",    0x9800, 0xf800, LOAD_STORE_FORMAT4          },                // LDR <Rt>, [SP, #<imm>]
+  { "LDRB",   0x7800, 0xf800, LOAD_STORE_FORMAT1_B        },
+  { "LDRB",   0x5c00, 0xfe00, LOAD_STORE_FORMAT2          },                // STR <Rt>, [<Rn>, <Rm>]
+  { "LDRH",   0x8800, 0xf800, LOAD_STORE_FORMAT1_H        },
+  { "LDRH",   0x7a00, 0xfe00, LOAD_STORE_FORMAT2          },
+  { "LDRSB",  0x5600, 0xfe00, LOAD_STORE_FORMAT2          },                // STR <Rt>, [<Rn>, <Rm>]
+  { "LDRSH",  0x5e00, 0xfe00, LOAD_STORE_FORMAT2          },
 
-  { "MOVS",   0x0000,      0xffc0,      DATA_FORMAT5                     }, // LSL with imm5 == 0 is a MOVS, so this must go before LSL
-  { "LSL",    0x0000,      0xf800,      DATA_FORMAT4                     },
-  { "LSL",    0x4080,      0xffc0,      DATA_FORMAT5                     },
-  { "LSR",    0x0001,      0xf800,      DATA_FORMAT4                     },
-  { "LSR",    0x40c0,      0xffc0,      DATA_FORMAT5                     },
-  { "LSRS",   0x0800,      0xf800,      DATA_FORMAT4                     }, // LSRS <Rd>, <Rm>, #<imm5>
+  { "MOVS",   0x0000, 0xffc0, DATA_FORMAT5                },                // LSL with imm5 == 0 is a MOVS, so this must go before LSL
+  { "LSL",    0x0000, 0xf800, DATA_FORMAT4                },
+  { "LSL",    0x4080, 0xffc0, DATA_FORMAT5                },
+  { "LSR",    0x0001, 0xf800, DATA_FORMAT4                },
+  { "LSR",    0x40c0, 0xffc0, DATA_FORMAT5                },
+  { "LSRS",   0x0800, 0xf800, DATA_FORMAT4                },                // LSRS <Rd>, <Rm>, #<imm5>
 
-  { "MOVS",   0x2000,      0xf800,      DATA_FORMAT3                     },
-  { "MOV",    0x1c00,      0xffc0,      DATA_FORMAT3                     },
-  { "MOV",    0x4600,      0xff00,      DATA_FORMAT8                     },
+  { "MOVS",   0x2000, 0xf800, DATA_FORMAT3                },
+  { "MOV",    0x1c00, 0xffc0, DATA_FORMAT3                },
+  { "MOV",    0x4600, 0xff00, DATA_FORMAT8                },
 
-  { "MUL",    0x4340,      0xffc0,      DATA_FORMAT5                     },
-  { "MVN",    0x41c0,      0xffc0,      DATA_FORMAT5                     },
-  { "NEG",    0x4240,      0xffc0,      DATA_FORMAT5                     },
-  { "ORR",    0x4300,      0xffc0,      DATA_FORMAT5                     },
-  { "POP",    0xbc00,      0xfe00,      POP_FORMAT                       },
-  { "PUSH",   0xb400,      0xfe00,      PUSH_FORMAT                      },
+  { "MUL",    0x4340, 0xffc0, DATA_FORMAT5                },
+  { "MVN",    0x41c0, 0xffc0, DATA_FORMAT5                },
+  { "NEG",    0x4240, 0xffc0, DATA_FORMAT5                },
+  { "ORR",    0x4300, 0xffc0, DATA_FORMAT5                },
+  { "POP",    0xbc00, 0xfe00, POP_FORMAT                  },
+  { "PUSH",   0xb400, 0xfe00, PUSH_FORMAT                 },
 
-  { "REV",    0xba00,      0xffc0,      DATA_FORMAT5                     },
-  { "REV16",  0xba40,      0xffc0,      DATA_FORMAT5                     },
-  { "REVSH",  0xbac0,      0xffc0,      DATA_FORMAT5                     },
+  { "REV",    0xba00, 0xffc0, DATA_FORMAT5                },
+  { "REV16",  0xba40, 0xffc0, DATA_FORMAT5                },
+  { "REVSH",  0xbac0, 0xffc0, DATA_FORMAT5                },
 
-  { "ROR",    0x41c0,      0xffc0,      DATA_FORMAT5                     },
-  { "SBC",    0x4180,      0xffc0,      DATA_FORMAT5                     },
-  { "SETEND", 0xb650,      0xfff0,      ENDIAN_FORMAT                    },
+  { "ROR",    0x41c0, 0xffc0, DATA_FORMAT5                },
+  { "SBC",    0x4180, 0xffc0, DATA_FORMAT5                },
+  { "SETEND", 0xb650, 0xfff0, ENDIAN_FORMAT               },
 
-  { "STMIA",  0xc000,      0xf800,      LOAD_STORE_MULTIPLE_FORMAT1      },
-  { "STR",    0x6000,      0xf800,      LOAD_STORE_FORMAT1               }, // STR  <Rt>, [<Rn> {,#<imm>}]
-  { "STR",    0x5000,      0xfe00,      LOAD_STORE_FORMAT2               }, // STR  <Rt>, [<Rn>, <Rm>]
-  { "STR",    0x9000,      0xf800,      LOAD_STORE_FORMAT4               }, // STR  <Rt>, [SP, #<imm>]
-  { "STRB",   0x7000,      0xf800,      LOAD_STORE_FORMAT1_B             }, // STRB <Rt>, [<Rn>, #<imm5>]
-  { "STRB",   0x5400,      0xfe00,      LOAD_STORE_FORMAT2               }, // STRB <Rt>, [<Rn>, <Rm>]
-  { "STRH",   0x8000,      0xf800,      LOAD_STORE_FORMAT1_H             }, // STRH <Rt>, [<Rn>{,#<imm>}]
-  { "STRH",   0x5200,      0xfe00,      LOAD_STORE_FORMAT2               }, // STRH <Rt>, [<Rn>, <Rm>]
+  { "STMIA",  0xc000, 0xf800, LOAD_STORE_MULTIPLE_FORMAT1 },
+  { "STR",    0x6000, 0xf800, LOAD_STORE_FORMAT1          },                // STR  <Rt>, [<Rn> {,#<imm>}]
+  { "STR",    0x5000, 0xfe00, LOAD_STORE_FORMAT2          },                // STR  <Rt>, [<Rn>, <Rm>]
+  { "STR",    0x9000, 0xf800, LOAD_STORE_FORMAT4          },                // STR  <Rt>, [SP, #<imm>]
+  { "STRB",   0x7000, 0xf800, LOAD_STORE_FORMAT1_B        },                // STRB <Rt>, [<Rn>, #<imm5>]
+  { "STRB",   0x5400, 0xfe00, LOAD_STORE_FORMAT2          },                // STRB <Rt>, [<Rn>, <Rm>]
+  { "STRH",   0x8000, 0xf800, LOAD_STORE_FORMAT1_H        },                // STRH <Rt>, [<Rn>{,#<imm>}]
+  { "STRH",   0x5200, 0xfe00, LOAD_STORE_FORMAT2          },                // STRH <Rt>, [<Rn>, <Rm>]
 
-  { "SUB",    0x1e00,      0xfe00,      DATA_FORMAT2                     },
-  { "SUB",    0x3800,      0xf800,      DATA_FORMAT3                     },
-  { "SUB",    0x1a00,      0xfe00,      DATA_FORMAT1                     },
-  { "SUB",    0xb080,      0xff80,      DATA_FORMAT7                     },
+  { "SUB",    0x1e00, 0xfe00, DATA_FORMAT2                },
+  { "SUB",    0x3800, 0xf800, DATA_FORMAT3                },
+  { "SUB",    0x1a00, 0xfe00, DATA_FORMAT1                },
+  { "SUB",    0xb080, 0xff80, DATA_FORMAT7                },
 
-  { "SBC",    0x4180,      0xffc0,      DATA_FORMAT5                     },
+  { "SBC",    0x4180, 0xffc0, DATA_FORMAT5                },
 
-  { "SWI",    0xdf00,      0xff00,      IMMED_8                          },
-  { "SXTB",   0xb240,      0xffc0,      DATA_FORMAT5                     },
-  { "SXTH",   0xb200,      0xffc0,      DATA_FORMAT5                     },
-  { "TST",    0x4200,      0xffc0,      DATA_FORMAT5                     },
-  { "UXTB",   0xb2c0,      0xffc0,      DATA_FORMAT5                     },
-  { "UXTH",   0xb280,      0xffc0,      DATA_FORMAT5                     },
+  { "SWI",    0xdf00, 0xff00, IMMED_8                     },
+  { "SXTB",   0xb240, 0xffc0, DATA_FORMAT5                },
+  { "SXTH",   0xb200, 0xffc0, DATA_FORMAT5                },
+  { "TST",    0x4200, 0xffc0, DATA_FORMAT5                },
+  { "UXTB",   0xb2c0, 0xffc0, DATA_FORMAT5                },
+  { "UXTH",   0xb280, 0xffc0, DATA_FORMAT5                },
 
-  { "IT",     0xbf00,      0xff00,      IT_BLOCK                         }
+  { "IT",     0xbf00, 0xff00, IT_BLOCK                    }
 };
 
 THUMB_INSTRUCTIONS  gOpThumb2[] = {
   // Instruct  OpCode      OpCode Mask  Addressig Mode
 
-  { "ADR",    0xf2af0000,      0xfbff8000,      ADR_THUMB2                   }, // ADDR <Rd>, <label> ;Needs to go before ADDW
-  { "CMN",    0xf1100f00,      0xfff08f00,      CMN_THUMB2                   }, // CMN <Rn>, #<const> ;Needs to go before ADD
-  { "CMN",    0xeb100f00,      0xfff08f00,      ADD_IMM5_2REG                }, // CMN <Rn>, <Rm> {,<shift> #<const>}
-  { "CMP",    0xf1a00f00,      0xfff08f00,      CMN_THUMB2                   }, // CMP <Rn>, #<const>
-  { "TEQ",    0xf0900f00,      0xfff08f00,      CMN_THUMB2                   }, // CMP <Rn>, #<const>
-  { "TEQ",    0xea900f00,      0xfff08f00,      ADD_IMM5_2REG                }, // CMN <Rn>, <Rm> {,<shift> #<const>}
-  { "TST",    0xf0100f00,      0xfff08f00,      CMN_THUMB2                   }, // CMP <Rn>, #<const>
-  { "TST",    0xea100f00,      0xfff08f00,      ADD_IMM5_2REG                }, // TST <Rn>, <Rm> {,<shift> #<const>}
+  { "ADR",    0xf2af0000, 0xfbff8000, ADR_THUMB2           },                   // ADDR <Rd>, <label> ;Needs to go before ADDW
+  { "CMN",    0xf1100f00, 0xfff08f00, CMN_THUMB2           },                   // CMN <Rn>, #<const> ;Needs to go before ADD
+  { "CMN",    0xeb100f00, 0xfff08f00, ADD_IMM5_2REG        },                   // CMN <Rn>, <Rm> {,<shift> #<const>}
+  { "CMP",    0xf1a00f00, 0xfff08f00, CMN_THUMB2           },                   // CMP <Rn>, #<const>
+  { "TEQ",    0xf0900f00, 0xfff08f00, CMN_THUMB2           },                   // CMP <Rn>, #<const>
+  { "TEQ",    0xea900f00, 0xfff08f00, ADD_IMM5_2REG        },                   // CMN <Rn>, <Rm> {,<shift> #<const>}
+  { "TST",    0xf0100f00, 0xfff08f00, CMN_THUMB2           },                   // CMP <Rn>, #<const>
+  { "TST",    0xea100f00, 0xfff08f00, ADD_IMM5_2REG        },                   // TST <Rn>, <Rm> {,<shift> #<const>}
 
-  { "MOV",    0xf04f0000,      0xfbef8000,      ADD_IMM12_1REG               }, // MOV  <Rd>, #<const>
-  { "MOVW",   0xf2400000,      0xfbe08000,      THUMB2_IMM16                 }, // MOVW <Rd>, #<const>
-  { "MOVT",   0xf2c00000,      0xfbe08000,      THUMB2_IMM16                 }, // MOVT <Rd>, #<const>
+  { "MOV",    0xf04f0000, 0xfbef8000, ADD_IMM12_1REG       },                   // MOV  <Rd>, #<const>
+  { "MOVW",   0xf2400000, 0xfbe08000, THUMB2_IMM16         },                   // MOVW <Rd>, #<const>
+  { "MOVT",   0xf2c00000, 0xfbe08000, THUMB2_IMM16         },                   // MOVT <Rd>, #<const>
 
-  { "ADC",    0xf1400000,      0xfbe08000,      ADD_IMM12                    }, // ADC{S}  <Rd>, <Rn>, #<const>
-  { "ADC",    0xeb400000,      0xffe08000,      ADD_IMM5                     }, // ADC{S}  <Rd>, <Rn>, <Rm> {,<shift> #<const>}
-  { "ADD",    0xf1000000,      0xfbe08000,      ADD_IMM12                    }, // ADD{S}  <Rd>, <Rn>, #<const>
-  { "ADD",    0xeb000000,      0xffe08000,      ADD_IMM5                     }, // ADD{S}  <Rd>, <Rn>, <Rm> {,<shift> #<const>}
-  { "ADDW",   0xf2000000,      0xfbe08000,      ADD_IMM12                    }, // ADDW{S} <Rd>, <Rn>, #<const>
-  { "AND",    0xf0000000,      0xfbe08000,      ADD_IMM12                    }, // AND{S}  <Rd>, <Rn>, #<const>
-  { "AND",    0xea000000,      0xffe08000,      ADD_IMM5                     }, // AND{S}  <Rd>, <Rn>, <Rm> {,<shift> #<const>}
-  { "BIC",    0xf0200000,      0xfbe08000,      ADD_IMM12                    }, // BIC{S}  <Rd>, <Rn>, #<const>
-  { "BIC",    0xea200000,      0xffe08000,      ADD_IMM5                     }, // BIC{S}  <Rd>, <Rn>, <Rm> {,<shift> #<const>}
-  { "EOR",    0xf0800000,      0xfbe08000,      ADD_IMM12                    }, // EOR{S}  <Rd>, <Rn>, #<const>
-  { "EOR",    0xea800000,      0xffe08000,      ADD_IMM5                     }, // EOR{S}  <Rd>, <Rn>, <Rm> {,<shift> #<const>}
-  { "ORN",    0xf0600000,      0xfbe08000,      ADD_IMM12                    }, // ORN{S}  <Rd>, <Rn>, #<const>
-  { "ORN",    0xea600000,      0xffe08000,      ADD_IMM5                     }, // ORN{S}  <Rd>, <Rn>, <Rm> {,<shift> #<const>}
-  { "ORR",    0xf0400000,      0xfbe08000,      ADD_IMM12                    }, // ORR{S}  <Rd>, <Rn>, #<const>
-  { "ORR",    0xea400000,      0xffe08000,      ADD_IMM5                     }, // ORR{S}  <Rd>, <Rn>, <Rm> {,<shift> #<const>}
-  { "RSB",    0xf1c00000,      0xfbe08000,      ADD_IMM12                    }, // RSB{S}  <Rd>, <Rn>, #<const>
-  { "RSB",    0xebc00000,      0xffe08000,      ADD_IMM5                     }, // RSB{S}  <Rd>, <Rn>, <Rm> {,<shift> #<const>}
-  { "SBC",    0xf1600000,      0xfbe08000,      ADD_IMM12                    }, // SBC{S}  <Rd>, <Rn>, #<const>
-  { "SBC",    0xeb600000,      0xffe08000,      ADD_IMM5                     }, // SBC{S}  <Rd>, <Rn>, <Rm> {,<shift> #<const>}
-  { "SUB",    0xf1a00000,      0xfbe08000,      ADD_IMM12                    }, // SUB{S}  <Rd>, <Rn>, #<const>
-  { "SUB",    0xeba00000,      0xffe08000,      ADD_IMM5                     }, // SUB{S}  <Rd>, <Rn>, <Rm> {,<shift> #<const>}
+  { "ADC",    0xf1400000, 0xfbe08000, ADD_IMM12            },                   // ADC{S}  <Rd>, <Rn>, #<const>
+  { "ADC",    0xeb400000, 0xffe08000, ADD_IMM5             },                   // ADC{S}  <Rd>, <Rn>, <Rm> {,<shift> #<const>}
+  { "ADD",    0xf1000000, 0xfbe08000, ADD_IMM12            },                   // ADD{S}  <Rd>, <Rn>, #<const>
+  { "ADD",    0xeb000000, 0xffe08000, ADD_IMM5             },                   // ADD{S}  <Rd>, <Rn>, <Rm> {,<shift> #<const>}
+  { "ADDW",   0xf2000000, 0xfbe08000, ADD_IMM12            },                   // ADDW{S} <Rd>, <Rn>, #<const>
+  { "AND",    0xf0000000, 0xfbe08000, ADD_IMM12            },                   // AND{S}  <Rd>, <Rn>, #<const>
+  { "AND",    0xea000000, 0xffe08000, ADD_IMM5             },                   // AND{S}  <Rd>, <Rn>, <Rm> {,<shift> #<const>}
+  { "BIC",    0xf0200000, 0xfbe08000, ADD_IMM12            },                   // BIC{S}  <Rd>, <Rn>, #<const>
+  { "BIC",    0xea200000, 0xffe08000, ADD_IMM5             },                   // BIC{S}  <Rd>, <Rn>, <Rm> {,<shift> #<const>}
+  { "EOR",    0xf0800000, 0xfbe08000, ADD_IMM12            },                   // EOR{S}  <Rd>, <Rn>, #<const>
+  { "EOR",    0xea800000, 0xffe08000, ADD_IMM5             },                   // EOR{S}  <Rd>, <Rn>, <Rm> {,<shift> #<const>}
+  { "ORN",    0xf0600000, 0xfbe08000, ADD_IMM12            },                   // ORN{S}  <Rd>, <Rn>, #<const>
+  { "ORN",    0xea600000, 0xffe08000, ADD_IMM5             },                   // ORN{S}  <Rd>, <Rn>, <Rm> {,<shift> #<const>}
+  { "ORR",    0xf0400000, 0xfbe08000, ADD_IMM12            },                   // ORR{S}  <Rd>, <Rn>, #<const>
+  { "ORR",    0xea400000, 0xffe08000, ADD_IMM5             },                   // ORR{S}  <Rd>, <Rn>, <Rm> {,<shift> #<const>}
+  { "RSB",    0xf1c00000, 0xfbe08000, ADD_IMM12            },                   // RSB{S}  <Rd>, <Rn>, #<const>
+  { "RSB",    0xebc00000, 0xffe08000, ADD_IMM5             },                   // RSB{S}  <Rd>, <Rn>, <Rm> {,<shift> #<const>}
+  { "SBC",    0xf1600000, 0xfbe08000, ADD_IMM12            },                   // SBC{S}  <Rd>, <Rn>, #<const>
+  { "SBC",    0xeb600000, 0xffe08000, ADD_IMM5             },                   // SBC{S}  <Rd>, <Rn>, <Rm> {,<shift> #<const>}
+  { "SUB",    0xf1a00000, 0xfbe08000, ADD_IMM12            },                   // SUB{S}  <Rd>, <Rn>, #<const>
+  { "SUB",    0xeba00000, 0xffe08000, ADD_IMM5             },                   // SUB{S}  <Rd>, <Rn>, <Rm> {,<shift> #<const>}
 
-  { "ASR",    0xea4f0020,      0xffef8030,      ASR_IMM5                     }, // ARS  <Rd>, <Rm> #<const>} imm3:imm2
-  { "ASR",    0xfa40f000,      0xffe0f0f0,      ASR_3REG                     }, // ARS  <Rd>, <Rn>, <Rm>
-  { "LSR",    0xea4f0010,      0xffef8030,      ASR_IMM5                     }, // LSR  <Rd>, <Rm> #<const>} imm3:imm2
-  { "LSR",    0xfa20f000,      0xffe0f0f0,      ASR_3REG                     }, // LSR  <Rd>, <Rn>, <Rm>
-  { "ROR",    0xea4f0030,      0xffef8030,      ASR_IMM5                     }, // ROR  <Rd>, <Rm> #<const>} imm3:imm2
-  { "ROR",    0xfa60f000,      0xffe0f0f0,      ASR_3REG                     }, // ROR  <Rd>, <Rn>, <Rm>
+  { "ASR",    0xea4f0020, 0xffef8030, ASR_IMM5             },                   // ARS  <Rd>, <Rm> #<const>} imm3:imm2
+  { "ASR",    0xfa40f000, 0xffe0f0f0, ASR_3REG             },                   // ARS  <Rd>, <Rn>, <Rm>
+  { "LSR",    0xea4f0010, 0xffef8030, ASR_IMM5             },                   // LSR  <Rd>, <Rm> #<const>} imm3:imm2
+  { "LSR",    0xfa20f000, 0xffe0f0f0, ASR_3REG             },                   // LSR  <Rd>, <Rn>, <Rm>
+  { "ROR",    0xea4f0030, 0xffef8030, ASR_IMM5             },                   // ROR  <Rd>, <Rm> #<const>} imm3:imm2
+  { "ROR",    0xfa60f000, 0xffe0f0f0, ASR_3REG             },                   // ROR  <Rd>, <Rn>, <Rm>
 
-  { "BFC",    0xf36f0000,      0xffff8010,      BFC_THUMB2                   }, // BFC  <Rd>, #<lsb>, #<width>
-  { "BIC",    0xf3600000,      0xfff08010,      BFC_THUMB2                   }, // BIC  <Rn>, <Rd>, #<lsb>, #<width>
-  { "SBFX",   0xf3400000,      0xfff08010,      BFC_THUMB2                   }, // SBFX <Rn>, <Rd>, #<lsb>, #<width>
-  { "UBFX",   0xf3c00000,      0xfff08010,      BFC_THUMB2                   }, // UBFX <Rn>, <Rd>, #<lsb>, #<width>
+  { "BFC",    0xf36f0000, 0xffff8010, BFC_THUMB2           },                   // BFC  <Rd>, #<lsb>, #<width>
+  { "BIC",    0xf3600000, 0xfff08010, BFC_THUMB2           },                   // BIC  <Rn>, <Rd>, #<lsb>, #<width>
+  { "SBFX",   0xf3400000, 0xfff08010, BFC_THUMB2           },                   // SBFX <Rn>, <Rd>, #<lsb>, #<width>
+  { "UBFX",   0xf3c00000, 0xfff08010, BFC_THUMB2           },                   // UBFX <Rn>, <Rd>, #<lsb>, #<width>
 
-  { "CPD",    0xee000000,      0xff000010,      CPD_THUMB2                   }, // CPD <coproc>,<opc1>,<CRd>,<CRn>,<CRm>,<opc2>
-  { "CPD2",   0xfe000000,      0xff000010,      CPD_THUMB2                   }, // CPD <coproc>,<opc1>,<CRd>,<CRn>,<CRm>,<opc2>
+  { "CPD",    0xee000000, 0xff000010, CPD_THUMB2           },                   // CPD <coproc>,<opc1>,<CRd>,<CRn>,<CRm>,<opc2>
+  { "CPD2",   0xfe000000, 0xff000010, CPD_THUMB2           },                   // CPD <coproc>,<opc1>,<CRd>,<CRn>,<CRm>,<opc2>
 
-  { "MRC",    0xee100000,      0xff100000,      MRC_THUMB2                   }, // MRC  <coproc>,<opc1>,<Rt>,<CRn>,<CRm>,<opc2>
-  { "MRC2",   0xfe100000,      0xff100000,      MRC_THUMB2                   }, // MRC2 <coproc>,<opc1>,<Rt>,<CRn>,<CRm>,<opc2>
-  { "MRRC",   0xec500000,      0xfff00000,      MRRC_THUMB2                  }, // MRRC <coproc>,<opc1>,<Rt>,<Rt2>,<CRm>
-  { "MRRC2",  0xfc500000,      0xfff00000,      MRRC_THUMB2                  }, // MRR2 <coproc>,<opc1>,<Rt>,<Rt2>,<CRm>
+  { "MRC",    0xee100000, 0xff100000, MRC_THUMB2           },                   // MRC  <coproc>,<opc1>,<Rt>,<CRn>,<CRm>,<opc2>
+  { "MRC2",   0xfe100000, 0xff100000, MRC_THUMB2           },                   // MRC2 <coproc>,<opc1>,<Rt>,<CRn>,<CRm>,<opc2>
+  { "MRRC",   0xec500000, 0xfff00000, MRRC_THUMB2          },                   // MRRC <coproc>,<opc1>,<Rt>,<Rt2>,<CRm>
+  { "MRRC2",  0xfc500000, 0xfff00000, MRRC_THUMB2          },                   // MRR2 <coproc>,<opc1>,<Rt>,<Rt2>,<CRm>
 
-  { "MRS",    0xf3ef8000,      0xfffff0ff,      THUMB2_MRS                   }, // MRS  <Rd>, CPSR
-  { "MSR",    0xf3808000,      0xfff0fcff,      THUMB2_MSR                   }, // MSR  CPSR_fs, <Rn>
+  { "MRS",    0xf3ef8000, 0xfffff0ff, THUMB2_MRS           },                   // MRS  <Rd>, CPSR
+  { "MSR",    0xf3808000, 0xfff0fcff, THUMB2_MSR           },                   // MSR  CPSR_fs, <Rn>
 
-  { "CLREX",  0xf3bf8f2f,      0xfffffff,       THUMB2_NO_ARGS               }, // CLREX
+  { "CLREX",  0xf3bf8f2f, 0xfffffff,  THUMB2_NO_ARGS       },                   // CLREX
 
-  { "CLZ",    0xfab0f080,      0xfff0f0f0,      THUMB2_2REGS                 }, // CLZ    <Rd>,<Rm>
-  { "MOV",    0xec4f0000,      0xfff0f0f0,      THUMB2_2REGS                 }, // MOV    <Rd>,<Rm>
-  { "MOVS",   0xec5f0000,      0xfff0f0f0,      THUMB2_2REGS                 }, // MOVS   <Rd>,<Rm>
-  { "RBIT",   0xfb90f0a0,      0xfff0f0f0,      THUMB2_2REGS                 }, // RBIT   <Rd>,<Rm>
-  { "REV",    0xfb90f080,      0xfff0f0f0,      THUMB2_2REGS                 }, // REV    <Rd>,<Rm>
-  { "REV16",  0xfa90f090,      0xfff0f0f0,      THUMB2_2REGS                 }, // REV16  <Rd>,<Rm>
-  { "REVSH",  0xfa90f0b0,      0xfff0f0f0,      THUMB2_2REGS                 }, // REVSH  <Rd>,<Rm>
-  { "RRX",    0xea4f0030,      0xfffff0f0,      THUMB2_2REGS                 }, // RRX    <Rd>,<Rm>
-  { "RRXS",   0xea5f0030,      0xfffff0f0,      THUMB2_2REGS                 }, // RRXS   <Rd>,<Rm>
+  { "CLZ",    0xfab0f080, 0xfff0f0f0, THUMB2_2REGS         },                   // CLZ    <Rd>,<Rm>
+  { "MOV",    0xec4f0000, 0xfff0f0f0, THUMB2_2REGS         },                   // MOV    <Rd>,<Rm>
+  { "MOVS",   0xec5f0000, 0xfff0f0f0, THUMB2_2REGS         },                   // MOVS   <Rd>,<Rm>
+  { "RBIT",   0xfb90f0a0, 0xfff0f0f0, THUMB2_2REGS         },                   // RBIT   <Rd>,<Rm>
+  { "REV",    0xfb90f080, 0xfff0f0f0, THUMB2_2REGS         },                   // REV    <Rd>,<Rm>
+  { "REV16",  0xfa90f090, 0xfff0f0f0, THUMB2_2REGS         },                   // REV16  <Rd>,<Rm>
+  { "REVSH",  0xfa90f0b0, 0xfff0f0f0, THUMB2_2REGS         },                   // REVSH  <Rd>,<Rm>
+  { "RRX",    0xea4f0030, 0xfffff0f0, THUMB2_2REGS         },                   // RRX    <Rd>,<Rm>
+  { "RRXS",   0xea5f0030, 0xfffff0f0, THUMB2_2REGS         },                   // RRXS   <Rd>,<Rm>
 
-  { "MLA",    0xfb000000,      0xfff000f0,      THUMB2_4REGS                 }, // MLA <Rd>, <Rn>, <Rm>, <Ra>
-  { "MLS",    0xfb000010,      0xfff000f0,      THUMB2_4REGS                 }, // MLA <Rd>, <Rn>, <Rm>, <Ra>
+  { "MLA",    0xfb000000, 0xfff000f0, THUMB2_4REGS         },                   // MLA <Rd>, <Rn>, <Rm>, <Ra>
+  { "MLS",    0xfb000010, 0xfff000f0, THUMB2_4REGS         },                   // MLA <Rd>, <Rn>, <Rm>, <Ra>
 
-  { "SMLABB", 0xfb100000,      0xfff000f0,      THUMB2_4REGS                 }, // SMLABB   <Rd>, <Rn>, <Rm>, <Ra>
-  { "SMLABT", 0xfb100010,      0xfff000f0,      THUMB2_4REGS                 }, // SMLABT   <Rd>, <Rn>, <Rm>, <Ra>
-  { "SMLABB", 0xfb100020,      0xfff000f0,      THUMB2_4REGS                 }, // SMLATB   <Rd>, <Rn>, <Rm>, <Ra>
-  { "SMLATT", 0xfb100030,      0xfff000f0,      THUMB2_4REGS                 }, // SMLATT   <Rd>, <Rn>, <Rm>, <Ra>
-  { "SMLAWB", 0xfb300000,      0xfff000f0,      THUMB2_4REGS                 }, // SMLAWB   <Rd>, <Rn>, <Rm>, <Ra>
-  { "SMLAWT", 0xfb300010,      0xfff000f0,      THUMB2_4REGS                 }, // SMLAWT   <Rd>, <Rn>, <Rm>, <Ra>
-  { "SMLSD",  0xfb400000,      0xfff000f0,      THUMB2_4REGS                 }, // SMLSD    <Rd>, <Rn>, <Rm>, <Ra>
-  { "SMLSDX", 0xfb400010,      0xfff000f0,      THUMB2_4REGS                 }, // SMLSDX   <Rd>, <Rn>, <Rm>, <Ra>
-  { "SMMLA",  0xfb500000,      0xfff000f0,      THUMB2_4REGS                 }, // SMMLA    <Rd>, <Rn>, <Rm>, <Ra>
-  { "SMMLAR", 0xfb500010,      0xfff000f0,      THUMB2_4REGS                 }, // SMMLAR   <Rd>, <Rn>, <Rm>, <Ra>
-  { "SMMLS",  0xfb600000,      0xfff000f0,      THUMB2_4REGS                 }, // SMMLS    <Rd>, <Rn>, <Rm>, <Ra>
-  { "SMMLSR", 0xfb600010,      0xfff000f0,      THUMB2_4REGS                 }, // SMMLSR   <Rd>, <Rn>, <Rm>, <Ra>
-  { "USADA8", 0xfb700000,      0xfff000f0,      THUMB2_4REGS                 }, // USADA8   <Rd>, <Rn>, <Rm>, <Ra>
-  { "SMLAD",  0xfb200000,      0xfff000f0,      THUMB2_4REGS                 }, // SMLAD    <Rd>, <Rn>, <Rm>, <Ra>
-  { "SMLADX", 0xfb200010,      0xfff000f0,      THUMB2_4REGS                 }, // SMLADX   <Rd>, <Rn>, <Rm>, <Ra>
+  { "SMLABB", 0xfb100000, 0xfff000f0, THUMB2_4REGS         },                   // SMLABB   <Rd>, <Rn>, <Rm>, <Ra>
+  { "SMLABT", 0xfb100010, 0xfff000f0, THUMB2_4REGS         },                   // SMLABT   <Rd>, <Rn>, <Rm>, <Ra>
+  { "SMLABB", 0xfb100020, 0xfff000f0, THUMB2_4REGS         },                   // SMLATB   <Rd>, <Rn>, <Rm>, <Ra>
+  { "SMLATT", 0xfb100030, 0xfff000f0, THUMB2_4REGS         },                   // SMLATT   <Rd>, <Rn>, <Rm>, <Ra>
+  { "SMLAWB", 0xfb300000, 0xfff000f0, THUMB2_4REGS         },                   // SMLAWB   <Rd>, <Rn>, <Rm>, <Ra>
+  { "SMLAWT", 0xfb300010, 0xfff000f0, THUMB2_4REGS         },                   // SMLAWT   <Rd>, <Rn>, <Rm>, <Ra>
+  { "SMLSD",  0xfb400000, 0xfff000f0, THUMB2_4REGS         },                   // SMLSD    <Rd>, <Rn>, <Rm>, <Ra>
+  { "SMLSDX", 0xfb400010, 0xfff000f0, THUMB2_4REGS         },                   // SMLSDX   <Rd>, <Rn>, <Rm>, <Ra>
+  { "SMMLA",  0xfb500000, 0xfff000f0, THUMB2_4REGS         },                   // SMMLA    <Rd>, <Rn>, <Rm>, <Ra>
+  { "SMMLAR", 0xfb500010, 0xfff000f0, THUMB2_4REGS         },                   // SMMLAR   <Rd>, <Rn>, <Rm>, <Ra>
+  { "SMMLS",  0xfb600000, 0xfff000f0, THUMB2_4REGS         },                   // SMMLS    <Rd>, <Rn>, <Rm>, <Ra>
+  { "SMMLSR", 0xfb600010, 0xfff000f0, THUMB2_4REGS         },                   // SMMLSR   <Rd>, <Rn>, <Rm>, <Ra>
+  { "USADA8", 0xfb700000, 0xfff000f0, THUMB2_4REGS         },                   // USADA8   <Rd>, <Rn>, <Rm>, <Ra>
+  { "SMLAD",  0xfb200000, 0xfff000f0, THUMB2_4REGS         },                   // SMLAD    <Rd>, <Rn>, <Rm>, <Ra>
+  { "SMLADX", 0xfb200010, 0xfff000f0, THUMB2_4REGS         },                   // SMLADX   <Rd>, <Rn>, <Rm>, <Ra>
 
-  { "B",      0xf0008000,      0xf800d000,      B_T3                         }, // B<c> <label>
-  { "B",      0xf0009000,      0xf800d000,      B_T4                         }, // B<c> <label>
-  { "BL",     0xf000d000,      0xf800d000,      B_T4                         }, // BL<c> <label>
-  { "BLX",    0xf000c000,      0xf800d000,      BL_T2                        }, // BLX<c> <label>
+  { "B",      0xf0008000, 0xf800d000, B_T3                 },                   // B<c> <label>
+  { "B",      0xf0009000, 0xf800d000, B_T4                 },                   // B<c> <label>
+  { "BL",     0xf000d000, 0xf800d000, B_T4                 },                   // BL<c> <label>
+  { "BLX",    0xf000c000, 0xf800d000, BL_T2                },                   // BLX<c> <label>
 
-  { "POP",    0xe8bd0000,      0xffff2000,      POP_T2                       }, // POP <registers>
-  { "POP",    0xf85d0b04,      0xffff0fff,      POP_T3                       }, // POP <register>
-  { "PUSH",   0xe8ad0000,      0xffffa000,      POP_T2                       }, // PUSH <registers>
-  { "PUSH",   0xf84d0d04,      0xffff0fff,      POP_T3                       }, // PUSH <register>
-  { "STM",    0xe8800000,      0xffd0a000,      STM_FORMAT                   }, // STM <Rn>{!},<registers>
-  { "STMDB",  0xe9800000,      0xffd0a000,      STM_FORMAT                   }, // STMDB <Rn>{!},<registers>
-  { "LDM",    0xe8900000,      0xffd02000,      STM_FORMAT                   }, // LDM <Rn>{!},<registers>
-  { "LDMDB",  0xe9100000,      0xffd02000,      STM_FORMAT                   }, // LDMDB <Rn>{!},<registers>
+  { "POP",    0xe8bd0000, 0xffff2000, POP_T2               },                   // POP <registers>
+  { "POP",    0xf85d0b04, 0xffff0fff, POP_T3               },                   // POP <register>
+  { "PUSH",   0xe8ad0000, 0xffffa000, POP_T2               },                   // PUSH <registers>
+  { "PUSH",   0xf84d0d04, 0xffff0fff, POP_T3               },                   // PUSH <register>
+  { "STM",    0xe8800000, 0xffd0a000, STM_FORMAT           },                   // STM <Rn>{!},<registers>
+  { "STMDB",  0xe9800000, 0xffd0a000, STM_FORMAT           },                   // STMDB <Rn>{!},<registers>
+  { "LDM",    0xe8900000, 0xffd02000, STM_FORMAT           },                   // LDM <Rn>{!},<registers>
+  { "LDMDB",  0xe9100000, 0xffd02000, STM_FORMAT           },                   // LDMDB <Rn>{!},<registers>
 
-  { "LDR",    0xf8d00000,      0xfff00000,      LDM_REG_IMM12                }, // LDR   <rt>, [<rn>, {, #<imm12>]}
-  { "LDRB",   0xf8900000,      0xfff00000,      LDM_REG_IMM12                }, // LDRB  <rt>, [<rn>, {, #<imm12>]}
-  { "LDRH",   0xf8b00000,      0xfff00000,      LDM_REG_IMM12                }, // LDRH  <rt>, [<rn>, {, #<imm12>]}
-  { "LDRSB",  0xf9900000,      0xfff00000,      LDM_REG_IMM12                }, // LDRSB <rt>, [<rn>, {, #<imm12>]}
-  { "LDRSH",  0xf9b00000,      0xfff00000,      LDM_REG_IMM12                }, // LDRSH <rt>, [<rn>, {, #<imm12>]}
+  { "LDR",    0xf8d00000, 0xfff00000, LDM_REG_IMM12        },                   // LDR   <rt>, [<rn>, {, #<imm12>]}
+  { "LDRB",   0xf8900000, 0xfff00000, LDM_REG_IMM12        },                   // LDRB  <rt>, [<rn>, {, #<imm12>]}
+  { "LDRH",   0xf8b00000, 0xfff00000, LDM_REG_IMM12        },                   // LDRH  <rt>, [<rn>, {, #<imm12>]}
+  { "LDRSB",  0xf9900000, 0xfff00000, LDM_REG_IMM12        },                   // LDRSB <rt>, [<rn>, {, #<imm12>]}
+  { "LDRSH",  0xf9b00000, 0xfff00000, LDM_REG_IMM12        },                   // LDRSH <rt>, [<rn>, {, #<imm12>]}
 
-  { "LDR",    0xf85f0000,      0xff7f0000,      LDM_REG_IMM12_SIGNED         }, // LDR   <Rt>, <label>
-  { "LDRB",   0xf81f0000,      0xff7f0000,      LDM_REG_IMM12_SIGNED         }, // LDRB  <Rt>, <label>
-  { "LDRH",   0xf83f0000,      0xff7f0000,      LDM_REG_IMM12_SIGNED         }, // LDRH  <Rt>, <label>
-  { "LDRSB",  0xf91f0000,      0xff7f0000,      LDM_REG_IMM12_SIGNED         }, // LDRSB <Rt>, <label>
-  { "LDRSH",  0xf93f0000,      0xff7f0000,      LDM_REG_IMM12_SIGNED         }, // LDRSB <Rt>, <label>
+  { "LDR",    0xf85f0000, 0xff7f0000, LDM_REG_IMM12_SIGNED },                   // LDR   <Rt>, <label>
+  { "LDRB",   0xf81f0000, 0xff7f0000, LDM_REG_IMM12_SIGNED },                   // LDRB  <Rt>, <label>
+  { "LDRH",   0xf83f0000, 0xff7f0000, LDM_REG_IMM12_SIGNED },                   // LDRH  <Rt>, <label>
+  { "LDRSB",  0xf91f0000, 0xff7f0000, LDM_REG_IMM12_SIGNED },                   // LDRSB <Rt>, <label>
+  { "LDRSH",  0xf93f0000, 0xff7f0000, LDM_REG_IMM12_SIGNED },                   // LDRSB <Rt>, <label>
 
-  { "LDR",    0xf8500000,      0xfff00fc0,      LDM_REG_INDIRECT_LSL         }, // LDR   <rt>, [<rn>, <rm> {, LSL #<imm2>]}
-  { "LDRB",   0xf8100000,      0xfff00fc0,      LDM_REG_INDIRECT_LSL         }, // LDRB  <rt>, [<rn>, <rm> {, LSL #<imm2>]}
-  { "LDRH",   0xf8300000,      0xfff00fc0,      LDM_REG_INDIRECT_LSL         }, // LDRH  <rt>, [<rn>, <rm> {, LSL #<imm2>]}
-  { "LDRSB",  0xf9100000,      0xfff00fc0,      LDM_REG_INDIRECT_LSL         }, // LDRSB <rt>, [<rn>, <rm> {, LSL #<imm2>]}
-  { "LDRSH",  0xf9300000,      0xfff00fc0,      LDM_REG_INDIRECT_LSL         }, // LDRSH <rt>, [<rn>, <rm> {, LSL #<imm2>]}
+  { "LDR",    0xf8500000, 0xfff00fc0, LDM_REG_INDIRECT_LSL },                   // LDR   <rt>, [<rn>, <rm> {, LSL #<imm2>]}
+  { "LDRB",   0xf8100000, 0xfff00fc0, LDM_REG_INDIRECT_LSL },                   // LDRB  <rt>, [<rn>, <rm> {, LSL #<imm2>]}
+  { "LDRH",   0xf8300000, 0xfff00fc0, LDM_REG_INDIRECT_LSL },                   // LDRH  <rt>, [<rn>, <rm> {, LSL #<imm2>]}
+  { "LDRSB",  0xf9100000, 0xfff00fc0, LDM_REG_INDIRECT_LSL },                   // LDRSB <rt>, [<rn>, <rm> {, LSL #<imm2>]}
+  { "LDRSH",  0xf9300000, 0xfff00fc0, LDM_REG_INDIRECT_LSL },                   // LDRSH <rt>, [<rn>, <rm> {, LSL #<imm2>]}
 
-  { "LDR",    0xf8500800,      0xfff00800,      LDM_REG_IMM8                 }, // LDR    <rt>, [<rn>, {, #<imm8>]}
-  { "LDRBT",  0xf8100e00,      0xfff00f00,      LDM_REG_IMM8                 }, // LDRBT  <rt>, [<rn>, {, #<imm8>]}
-  { "LDRHT",  0xf8300e00,      0xfff00f00,      LDM_REG_IMM8                 }, // LDRHT  <rt>, [<rn>, {, #<imm8>]}
-  { "LDRSB",  0xf9100800,      0xfff00800,      LDM_REG_IMM8                 }, // LDRHT  <rt>, [<rn>, {, #<imm8>]}  {!} form?
-  { "LDRSBT", 0xf9100e00,      0xfff00f00,      LDM_REG_IMM8                 }, // LDRHBT <rt>, [<rn>, {, #<imm8>]}  {!} form?
-  { "LDRSH",  0xf9300800,      0xfff00800,      LDM_REG_IMM8                 }, // LDRSH  <rt>, [<rn>, {, #<imm8>]}
-  { "LDRSHT", 0xf9300e00,      0xfff00f00,      LDM_REG_IMM8                 }, // LDRSHT <rt>, [<rn>, {, #<imm8>]}
-  { "LDRT",   0xf8500e00,      0xfff00f00,      LDM_REG_IMM8                 }, // LDRT   <rt>, [<rn>, {, #<imm8>]}
+  { "LDR",    0xf8500800, 0xfff00800, LDM_REG_IMM8         },                   // LDR    <rt>, [<rn>, {, #<imm8>]}
+  { "LDRBT",  0xf8100e00, 0xfff00f00, LDM_REG_IMM8         },                   // LDRBT  <rt>, [<rn>, {, #<imm8>]}
+  { "LDRHT",  0xf8300e00, 0xfff00f00, LDM_REG_IMM8         },                   // LDRHT  <rt>, [<rn>, {, #<imm8>]}
+  { "LDRSB",  0xf9100800, 0xfff00800, LDM_REG_IMM8         },                   // LDRHT  <rt>, [<rn>, {, #<imm8>]}  {!} form?
+  { "LDRSBT", 0xf9100e00, 0xfff00f00, LDM_REG_IMM8         },                   // LDRHBT <rt>, [<rn>, {, #<imm8>]}  {!} form?
+  { "LDRSH",  0xf9300800, 0xfff00800, LDM_REG_IMM8         },                   // LDRSH  <rt>, [<rn>, {, #<imm8>]}
+  { "LDRSHT", 0xf9300e00, 0xfff00f00, LDM_REG_IMM8         },                   // LDRSHT <rt>, [<rn>, {, #<imm8>]}
+  { "LDRT",   0xf8500e00, 0xfff00f00, LDM_REG_IMM8         },                   // LDRT   <rt>, [<rn>, {, #<imm8>]}
 
-  { "LDRD",   0xe8500000,      0xfe500000,      LDRD_REG_IMM8_SIGNED         }, // LDRD <rt>, <rt2>, [<rn>, {, #<imm8>]}{!}
-  { "LDRD",   0xe8500000,      0xfe500000,      LDRD_REG_IMM8                }, // LDRD <rt>, <rt2>, <label>
+  { "LDRD",   0xe8500000, 0xfe500000, LDRD_REG_IMM8_SIGNED },                   // LDRD <rt>, <rt2>, [<rn>, {, #<imm8>]}{!}
+  { "LDRD",   0xe8500000, 0xfe500000, LDRD_REG_IMM8        },                   // LDRD <rt>, <rt2>, <label>
 
-  { "LDREX",  0xe8500f00,      0xfff00f00,      LDM_REG_IMM8                 }, // LDREX <Rt>, [Rn, {#imm8}]]
-  { "LDREXB", 0xe8d00f4f,      0xfff00fff,      LDREXB                       }, // LDREXB <Rt>, [<Rn>]
-  { "LDREXH", 0xe8d00f5f,      0xfff00fff,      LDREXB                       }, // LDREXH <Rt>, [<Rn>]
+  { "LDREX",  0xe8500f00, 0xfff00f00, LDM_REG_IMM8         },                   // LDREX <Rt>, [Rn, {#imm8}]]
+  { "LDREXB", 0xe8d00f4f, 0xfff00fff, LDREXB               },                   // LDREXB <Rt>, [<Rn>]
+  { "LDREXH", 0xe8d00f5f, 0xfff00fff, LDREXB               },                   // LDREXH <Rt>, [<Rn>]
 
-  { "LDREXD", 0xe8d00f4f,      0xfff00fff,      LDREXD                       }, // LDREXD <Rt>, <Rt2>, [<Rn>]
+  { "LDREXD", 0xe8d00f4f, 0xfff00fff, LDREXD               },                   // LDREXD <Rt>, <Rt2>, [<Rn>]
 
-  { "STR",    0xf8c00000,      0xfff00000,      LDM_REG_IMM12                }, // STR   <rt>, [<rn>, {, #<imm12>]}
-  { "STRB",   0xf8800000,      0xfff00000,      LDM_REG_IMM12                }, // STRB  <rt>, [<rn>, {, #<imm12>]}
-  { "STRH",   0xf8a00000,      0xfff00000,      LDM_REG_IMM12                }, // STRH  <rt>, [<rn>, {, #<imm12>]}
+  { "STR",    0xf8c00000, 0xfff00000, LDM_REG_IMM12        },                   // STR   <rt>, [<rn>, {, #<imm12>]}
+  { "STRB",   0xf8800000, 0xfff00000, LDM_REG_IMM12        },                   // STRB  <rt>, [<rn>, {, #<imm12>]}
+  { "STRH",   0xf8a00000, 0xfff00000, LDM_REG_IMM12        },                   // STRH  <rt>, [<rn>, {, #<imm12>]}
 
-  { "STR",    0xf8400000,      0xfff00fc0,      LDM_REG_INDIRECT_LSL         }, // STR   <rt>, [<rn>, <rm> {, LSL #<imm2>]}
-  { "STRB",   0xf8000000,      0xfff00fc0,      LDM_REG_INDIRECT_LSL         }, // STRB  <rt>, [<rn>, <rm> {, LSL #<imm2>]}
-  { "STRH",   0xf8200000,      0xfff00fc0,      LDM_REG_INDIRECT_LSL         }, // STRH  <rt>, [<rn>, <rm> {, LSL #<imm2>]}
+  { "STR",    0xf8400000, 0xfff00fc0, LDM_REG_INDIRECT_LSL },                   // STR   <rt>, [<rn>, <rm> {, LSL #<imm2>]}
+  { "STRB",   0xf8000000, 0xfff00fc0, LDM_REG_INDIRECT_LSL },                   // STRB  <rt>, [<rn>, <rm> {, LSL #<imm2>]}
+  { "STRH",   0xf8200000, 0xfff00fc0, LDM_REG_INDIRECT_LSL },                   // STRH  <rt>, [<rn>, <rm> {, LSL #<imm2>]}
 
-  { "STR",    0xf8400800,      0xfff00800,      LDM_REG_IMM8                 }, // STR    <rt>, [<rn>, {, #<imm8>]}
-  { "STRH",   0xf8200800,      0xfff00800,      LDM_REG_IMM8                 }, // STRH   <rt>, [<rn>, {, #<imm8>]}
-  { "STRBT",  0xf8000e00,      0xfff00f00,      LDM_REG_IMM8                 }, // STRBT  <rt>, [<rn>, {, #<imm8>]}
-  { "STRHT",  0xf8200e00,      0xfff00f00,      LDM_REG_IMM8                 }, // STRHT  <rt>, [<rn>, {, #<imm8>]}
-  { "STRT",   0xf8400e00,      0xfff00f00,      LDM_REG_IMM8                 }, // STRT   <rt>, [<rn>, {, #<imm8>]}
+  { "STR",    0xf8400800, 0xfff00800, LDM_REG_IMM8         },                   // STR    <rt>, [<rn>, {, #<imm8>]}
+  { "STRH",   0xf8200800, 0xfff00800, LDM_REG_IMM8         },                   // STRH   <rt>, [<rn>, {, #<imm8>]}
+  { "STRBT",  0xf8000e00, 0xfff00f00, LDM_REG_IMM8         },                   // STRBT  <rt>, [<rn>, {, #<imm8>]}
+  { "STRHT",  0xf8200e00, 0xfff00f00, LDM_REG_IMM8         },                   // STRHT  <rt>, [<rn>, {, #<imm8>]}
+  { "STRT",   0xf8400e00, 0xfff00f00, LDM_REG_IMM8         },                   // STRT   <rt>, [<rn>, {, #<imm8>]}
 
-  { "STRD",   0xe8400000,      0xfe500000,      LDRD_REG_IMM8_SIGNED         }, // STRD <rt>, <rt2>, [<rn>, {, #<imm8>]}{!}
+  { "STRD",   0xe8400000, 0xfe500000, LDRD_REG_IMM8_SIGNED },                   // STRD <rt>, <rt2>, [<rn>, {, #<imm8>]}{!}
 
-  { "STREX",  0xe8400f00,      0xfff00f00,      LDM_REG_IMM8                 }, // STREX <Rt>, [Rn, {#imm8}]]
-  { "STREXB", 0xe8c00f4f,      0xfff00fff,      LDREXB                       }, // STREXB <Rd>, <Rt>, [<Rn>]
-  { "STREXH", 0xe8c00f5f,      0xfff00fff,      LDREXB                       }, // STREXH <Rd>, <Rt>, [<Rn>]
+  { "STREX",  0xe8400f00, 0xfff00f00, LDM_REG_IMM8         },                   // STREX <Rt>, [Rn, {#imm8}]]
+  { "STREXB", 0xe8c00f4f, 0xfff00fff, LDREXB               },                   // STREXB <Rd>, <Rt>, [<Rn>]
+  { "STREXH", 0xe8c00f5f, 0xfff00fff, LDREXB               },                   // STREXH <Rd>, <Rt>, [<Rn>]
 
-  { "STREXD", 0xe8d00f4f,      0xfff00fff,      LDREXD                       }, // STREXD <Rd>, <Rt>, <Rt2>, [<Rn>]
+  { "STREXD", 0xe8d00f4f, 0xfff00fff, LDREXD               },                   // STREXD <Rd>, <Rt>, <Rt2>, [<Rn>]
 
-  { "SRSDB",  0xe80dc000,      0xffdffff0,      SRS_FORMAT                   }, // SRSDB<c> SP{!},#<mode>
-  { "SRS",    0xe98dc000,      0xffdffff0,      SRS_FORMAT                   }, // SRS{IA}<c> SP{!},#<mode>
-  { "RFEDB",  0xe810c000,      0xffd0ffff,      RFE_FORMAT                   }, // RFEDB<c> <Rn>{!}
-  { "RFE",    0xe990c000,      0xffd0ffff,      RFE_FORMAT                   } // RFE{IA}<c> <Rn>{!}
+  { "SRSDB",  0xe80dc000, 0xffdffff0, SRS_FORMAT           },                  // SRSDB<c> SP{!},#<mode>
+  { "SRS",    0xe98dc000, 0xffdffff0, SRS_FORMAT           },                  // SRS{IA}<c> SP{!},#<mode>
+  { "RFEDB",  0xe810c000, 0xffd0ffff, RFE_FORMAT           },                  // RFEDB<c> <Rn>{!}
+  { "RFE",    0xe990c000, 0xffd0ffff, RFE_FORMAT           }                   // RFE{IA}<c> <Rn>{!}
 };
 
 CHAR8  *gShiftType[] = {
@@ -1255,10 +1255,10 @@ DisassembleThumbInstruction (
 
         case THUMB2_IMM16:
           // MOVW <Rd>, #<const>   i:imm3:imm8
-          Target  = (OpCode32 & 0xff) | ((OpCode32 >> 4) & 0x700) | ((OpCode &
-                                                                      BIT26) ==
-                                                                     BIT26 ?
-                                                                     BIT11 : 0);
+          Target = (OpCode32 & 0xff) | ((OpCode32 >> 4) & 0x700) | ((OpCode &
+                                                                     BIT26) ==
+                                                                    BIT26 ?
+                                                                    BIT11 : 0);
           Target |= ((OpCode32 >> 4) & 0xf0000);
           AsciiSPrint (
             &Buf[Offset],

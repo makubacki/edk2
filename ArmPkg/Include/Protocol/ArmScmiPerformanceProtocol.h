@@ -62,7 +62,8 @@ typedef struct {
 // Worst case latency in microseconds, Bits[15:0]
 #define PERF_LATENCY_MASK  0xFFFF
 #define SCMI_PERFORMANCE_PROTOCOL_LATENCY( \
-                                         Latency)  (Latency & PERF_LATENCY_MASK)
+                                           Latency)  \
+  (Latency & PERF_LATENCY_MASK)
 
 // Performance protocol performance level.
 typedef  struct {
