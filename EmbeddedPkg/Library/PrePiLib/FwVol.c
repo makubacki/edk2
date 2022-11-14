@@ -241,9 +241,9 @@ FindFileEx (
             return EFI_SUCCESS;
           }
         } else if (  ((SearchType == FfsFileHeader->Type) || (SearchType ==
-                                                            EFI_FV_FILETYPE_ALL))
+                                                              EFI_FV_FILETYPE_ALL))
                   &&
-                   (FfsFileHeader->Type != EFI_FV_FILETYPE_FFS_PAD))
+                     (FfsFileHeader->Type != EFI_FV_FILETYPE_FFS_PAD))
         {
           *FileHeader = FfsFileHeader;
           return EFI_SUCCESS;
@@ -337,8 +337,8 @@ FfsProcessSection (
             return EFI_UNSUPPORTED;
           }
 
-          CompressedData       = (CHAR8 *)((EFI_COMPRESSION_SECTION2 *)Section +
-                                           1);
+          CompressedData = (CHAR8 *)((EFI_COMPRESSION_SECTION2 *)Section +
+                                     1);
           CompressedDataLength = SectionLength -
                                  sizeof (EFI_COMPRESSION_SECTION2);
         } else {
@@ -349,8 +349,8 @@ FfsProcessSection (
             return EFI_UNSUPPORTED;
           }
 
-          CompressedData       = (CHAR8 *)((EFI_COMPRESSION_SECTION *)Section +
-                                           1);
+          CompressedData = (CHAR8 *)((EFI_COMPRESSION_SECTION *)Section +
+                                     1);
           CompressedDataLength = SectionLength -
                                  sizeof (EFI_COMPRESSION_SECTION);
         }

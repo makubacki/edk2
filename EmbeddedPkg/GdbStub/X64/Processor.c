@@ -13,20 +13,20 @@
 // Array of exception types that need to be hooked by the debugger
 //
 EFI_EXCEPTION_TYPE_ENTRY  gExceptionType[] = {
-  { EXCEPT_X64_DIVIDE_ERROR,    GDB_SIGFPE              },
-  { EXCEPT_X64_DEBUG,           GDB_SIGTRAP             },
-  { EXCEPT_X64_NMI,             GDB_SIGEMT              },
-  { EXCEPT_X64_BREAKPOINT,      GDB_SIGTRAP             },
-  { EXCEPT_X64_OVERFLOW,        GDB_SIGSEGV             },
-  { EXCEPT_X64_BOUND,           GDB_SIGSEGV             },
-  { EXCEPT_X64_INVALID_OPCODE,  GDB_SIGILL              },
-  { EXCEPT_X64_DOUBLE_FAULT,    GDB_SIGEMT              },
-  { EXCEPT_X64_STACK_FAULT,     GDB_SIGSEGV             },
-  { EXCEPT_X64_GP_FAULT,        GDB_SIGSEGV             },
-  { EXCEPT_X64_PAGE_FAULT,      GDB_SIGSEGV             },
-  { EXCEPT_X64_FP_ERROR,        GDB_SIGEMT              },
-  { EXCEPT_X64_ALIGNMENT_CHECK, GDB_SIGEMT              },
-  { EXCEPT_X64_MACHINE_CHECK,   GDB_SIGEMT              }
+  { EXCEPT_X64_DIVIDE_ERROR,    GDB_SIGFPE  },
+  { EXCEPT_X64_DEBUG,           GDB_SIGTRAP },
+  { EXCEPT_X64_NMI,             GDB_SIGEMT  },
+  { EXCEPT_X64_BREAKPOINT,      GDB_SIGTRAP },
+  { EXCEPT_X64_OVERFLOW,        GDB_SIGSEGV },
+  { EXCEPT_X64_BOUND,           GDB_SIGSEGV },
+  { EXCEPT_X64_INVALID_OPCODE,  GDB_SIGILL  },
+  { EXCEPT_X64_DOUBLE_FAULT,    GDB_SIGEMT  },
+  { EXCEPT_X64_STACK_FAULT,     GDB_SIGSEGV },
+  { EXCEPT_X64_GP_FAULT,        GDB_SIGSEGV },
+  { EXCEPT_X64_PAGE_FAULT,      GDB_SIGSEGV },
+  { EXCEPT_X64_FP_ERROR,        GDB_SIGEMT  },
+  { EXCEPT_X64_ALIGNMENT_CHECK, GDB_SIGEMT  },
+  { EXCEPT_X64_MACHINE_CHECK,   GDB_SIGEMT  }
 };
 
 // The offsets of registers SystemContextX64.
@@ -146,7 +146,7 @@ BasicReadRegister (
                                   SystemContext,
                                   RegNumber
                                   ) >> RegSize) & 0xf)];
-    RegSize      = RegSize + 8;
+    RegSize = RegSize + 8;
   }
 
   return OutBufPtr;

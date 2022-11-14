@@ -22,16 +22,16 @@
 #define NULL_GAS  \
   { EFI_ACPI_5_0_SYSTEM_MEMORY,  0, 0, EFI_ACPI_5_0_UNDEFINED, 0L }
 #define ARM_GAS8( \
-                Address)   \
+                  Address)   \
       { EFI_ACPI_5_0_SYSTEM_MEMORY,  8, 0, EFI_ACPI_5_0_BYTE,      Address }
 #define ARM_GAS16( \
-                 Address)  \
+                   Address)  \
       { EFI_ACPI_5_0_SYSTEM_MEMORY, 16, 0, EFI_ACPI_5_0_WORD,      Address }
 #define ARM_GAS32( \
-                 Address)  \
+                   Address)  \
       { EFI_ACPI_5_0_SYSTEM_MEMORY, 32, 0, EFI_ACPI_5_0_DWORD,     Address }
 #define ARM_GASN( \
-                Address)   \
+                  Address)   \
       { EFI_ACPI_5_0_SYSTEM_MEMORY,  0, 0, EFI_ACPI_5_0_DWORD,     Address }
 
 //
@@ -103,10 +103,10 @@
 // SBSA Generic Watchdog
 //
 #define EFI_ACPI_5_1_SBSA_GENERIC_WATCHDOG_STRUCTURE_INIT( \
-                                                         RefreshFramePhysicalAddress,                  \
-                                                         ControlFramePhysicalAddress, \
-                                                         WatchdogTimerGSIV, \
-                                                         WatchdogTimerFlags)                                 \
+                                                           RefreshFramePhysicalAddress,                  \
+                                                           ControlFramePhysicalAddress, \
+                                                           WatchdogTimerGSIV, \
+                                                           WatchdogTimerFlags)                                 \
   {                                                                                                     \
     EFI_ACPI_5_1_GTDT_SBSA_GENERIC_WATCHDOG, sizeof(EFI_ACPI_5_1_GTDT_SBSA_GENERIC_WATCHDOG_STRUCTURE), \
     EFI_ACPI_RESERVED_BYTE, RefreshFramePhysicalAddress, ControlFramePhysicalAddress,                   \

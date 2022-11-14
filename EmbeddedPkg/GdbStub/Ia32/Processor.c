@@ -14,20 +14,20 @@
 // {EFI mapping, GDB mapping}
 //
 EFI_EXCEPTION_TYPE_ENTRY  gExceptionType[] = {
-  { EXCEPT_IA32_DIVIDE_ERROR,    GDB_SIGFPE              },
-  { EXCEPT_IA32_DEBUG,           GDB_SIGTRAP             },
-  { EXCEPT_IA32_NMI,             GDB_SIGEMT              },
-  { EXCEPT_IA32_BREAKPOINT,      GDB_SIGTRAP             },
-  { EXCEPT_IA32_OVERFLOW,        GDB_SIGSEGV             },
-  { EXCEPT_IA32_BOUND,           GDB_SIGSEGV             },
-  { EXCEPT_IA32_INVALID_OPCODE,  GDB_SIGILL              },
-  { EXCEPT_IA32_DOUBLE_FAULT,    GDB_SIGEMT              },
-  { EXCEPT_IA32_STACK_FAULT,     GDB_SIGSEGV             },
-  { EXCEPT_IA32_GP_FAULT,        GDB_SIGSEGV             },
-  { EXCEPT_IA32_PAGE_FAULT,      GDB_SIGSEGV             },
-  { EXCEPT_IA32_FP_ERROR,        GDB_SIGEMT              },
-  { EXCEPT_IA32_ALIGNMENT_CHECK, GDB_SIGEMT              },
-  { EXCEPT_IA32_MACHINE_CHECK,   GDB_SIGEMT              }
+  { EXCEPT_IA32_DIVIDE_ERROR,    GDB_SIGFPE  },
+  { EXCEPT_IA32_DEBUG,           GDB_SIGTRAP },
+  { EXCEPT_IA32_NMI,             GDB_SIGEMT  },
+  { EXCEPT_IA32_BREAKPOINT,      GDB_SIGTRAP },
+  { EXCEPT_IA32_OVERFLOW,        GDB_SIGSEGV },
+  { EXCEPT_IA32_BOUND,           GDB_SIGSEGV },
+  { EXCEPT_IA32_INVALID_OPCODE,  GDB_SIGILL  },
+  { EXCEPT_IA32_DOUBLE_FAULT,    GDB_SIGEMT  },
+  { EXCEPT_IA32_STACK_FAULT,     GDB_SIGSEGV },
+  { EXCEPT_IA32_GP_FAULT,        GDB_SIGSEGV },
+  { EXCEPT_IA32_PAGE_FAULT,      GDB_SIGSEGV },
+  { EXCEPT_IA32_FP_ERROR,        GDB_SIGEMT  },
+  { EXCEPT_IA32_ALIGNMENT_CHECK, GDB_SIGEMT  },
+  { EXCEPT_IA32_MACHINE_CHECK,   GDB_SIGEMT  }
 };
 
 // The offsets of registers SystemContext.
@@ -174,7 +174,7 @@ BasicReadRegister (
                                   SystemContext,
                                   RegNumber
                                   ) >> RegSize) & 0xf)];
-    RegSize      = RegSize + 8;
+    RegSize = RegSize + 8;
   }
 
   return OutBufPtr;

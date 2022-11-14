@@ -98,7 +98,7 @@ typedef struct {
 } VIRTUAL_KEYBOARD_DEV;
 
 #define VIRTUAL_KEYBOARD_DEV_FROM_THIS( \
-                                      a)  \
+                                        a)  \
   CR (a, VIRTUAL_KEYBOARD_DEV, SimpleTextIn, VIRTUAL_KEYBOARD_DEV_SIGNATURE)
 #define TEXT_INPUT_EX_VIRTUAL_KEYBOARD_DEV_FROM_THIS(a) \
   CR (a, \

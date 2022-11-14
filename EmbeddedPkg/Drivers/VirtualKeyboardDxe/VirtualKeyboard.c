@@ -110,7 +110,7 @@ VirtualKeyboardDriverBindingStart (
   //
   VirtualKeyboardPrivate = (VIRTUAL_KEYBOARD_DEV *)AllocateZeroPool (
                                                      sizeof (
-                                                                            VIRTUAL_KEYBOARD_DEV)
+                                                             VIRTUAL_KEYBOARD_DEV)
                                                      );
   if (VirtualKeyboardPrivate == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
@@ -898,7 +898,7 @@ VirtualKeyboardRegisterKeyNotify (
 
   NewNotify = (VIRTUAL_KEYBOARD_CONSOLE_IN_EX_NOTIFY *)AllocateZeroPool (
                                                          sizeof (
-                                                                                VIRTUAL_KEYBOARD_CONSOLE_IN_EX_NOTIFY)
+                                                                 VIRTUAL_KEYBOARD_CONSOLE_IN_EX_NOTIFY)
                                                          );
   if (NewNotify == NULL) {
     Status = EFI_OUT_OF_RESOURCES;

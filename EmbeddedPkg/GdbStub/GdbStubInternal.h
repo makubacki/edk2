@@ -120,7 +120,7 @@ typedef struct {
 } GDB_SERIAL_DEV;
 
 #define GDB_SERIAL_DEV_FROM_THIS( \
-                                a)  \
+                                  a)  \
   CR (a, GDB_SERIAL_DEV, SerialIo, GDB_SERIAL_DEV_SIGNATURE)
 
 typedef struct {

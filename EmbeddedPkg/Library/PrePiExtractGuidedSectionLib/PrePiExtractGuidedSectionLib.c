@@ -267,7 +267,7 @@ ExtractGuidedSectionLibConstructor (
                                                  PcdMaximumGuidedExtractHandler
                                                  ) *
                                                sizeof (
-                                                                                                                                                  EXTRACT_GUIDED_SECTION_DECODE_HANDLER)
+                                                       EXTRACT_GUIDED_SECTION_DECODE_HANDLER)
                                                );
   if (SavedData.ExtractDecodeHandlerTable == NULL) {
     return RETURN_OUT_OF_RESOURCES;
@@ -279,7 +279,7 @@ ExtractGuidedSectionLibConstructor (
                                                    PcdMaximumGuidedExtractHandler
                                                    ) *
                                                  sizeof (
-                                                                                                                                                     EXTRACT_GUIDED_SECTION_GET_INFO_HANDLER)
+                                                         EXTRACT_GUIDED_SECTION_GET_INFO_HANDLER)
                                                  );
   if (SavedData.ExtractGetInfoHandlerTable == NULL) {
     return RETURN_OUT_OF_RESOURCES;

@@ -38,33 +38,33 @@ typedef UINT32 MMC_CMD;
 #define MMC_INDX(Index)       ((Index) & 0xFFFF)
 #define MMC_GET_INDX(MmcCmd)  ((MmcCmd) & 0xFFFF)
 
-#define MMC_CMD0          (MMC_INDX(0) | MMC_CMD_NO_CRC_RESPONSE)
+#define MMC_CMD0  (MMC_INDX(0) | MMC_CMD_NO_CRC_RESPONSE)
 #define MMC_CMD1    \
                           (MMC_INDX(1) | MMC_CMD_WAIT_RESPONSE | MMC_CMD_NO_CRC_RESPONSE)
 #define MMC_CMD2    \
                           (MMC_INDX(2) | MMC_CMD_WAIT_RESPONSE | MMC_CMD_LONG_RESPONSE)
-#define MMC_CMD3          (MMC_INDX(3) | MMC_CMD_WAIT_RESPONSE)
+#define MMC_CMD3  (MMC_INDX(3) | MMC_CMD_WAIT_RESPONSE)
 #define MMC_CMD5    \
                           (MMC_INDX(5) | MMC_CMD_WAIT_RESPONSE | MMC_CMD_NO_CRC_RESPONSE)
-#define MMC_CMD6          (MMC_INDX(6) | MMC_CMD_WAIT_RESPONSE)
-#define MMC_CMD7          (MMC_INDX(7) | MMC_CMD_WAIT_RESPONSE)
-#define MMC_CMD8          (MMC_INDX(8) | MMC_CMD_WAIT_RESPONSE)
+#define MMC_CMD6  (MMC_INDX(6) | MMC_CMD_WAIT_RESPONSE)
+#define MMC_CMD7  (MMC_INDX(7) | MMC_CMD_WAIT_RESPONSE)
+#define MMC_CMD8  (MMC_INDX(8) | MMC_CMD_WAIT_RESPONSE)
 #define MMC_CMD9    \
                           (MMC_INDX(9) | MMC_CMD_WAIT_RESPONSE | MMC_CMD_LONG_RESPONSE)
-#define MMC_CMD11         (MMC_INDX(11) | MMC_CMD_WAIT_RESPONSE)
-#define MMC_CMD12         (MMC_INDX(12) | MMC_CMD_WAIT_RESPONSE)
-#define MMC_CMD13         (MMC_INDX(13) | MMC_CMD_WAIT_RESPONSE)
-#define MMC_CMD16         (MMC_INDX(16) | MMC_CMD_WAIT_RESPONSE)
-#define MMC_CMD17         (MMC_INDX(17) | MMC_CMD_WAIT_RESPONSE)
-#define MMC_CMD18         (MMC_INDX(18) | MMC_CMD_WAIT_RESPONSE)
-#define MMC_CMD20         (MMC_INDX(20) | MMC_CMD_WAIT_RESPONSE)
-#define MMC_CMD23         (MMC_INDX(23) | MMC_CMD_WAIT_RESPONSE)
-#define MMC_CMD24         (MMC_INDX(24) | MMC_CMD_WAIT_RESPONSE)
-#define MMC_CMD25         (MMC_INDX(25) | MMC_CMD_WAIT_RESPONSE)
-#define MMC_CMD55         (MMC_INDX(55) | MMC_CMD_WAIT_RESPONSE)
+#define MMC_CMD11  (MMC_INDX(11) | MMC_CMD_WAIT_RESPONSE)
+#define MMC_CMD12  (MMC_INDX(12) | MMC_CMD_WAIT_RESPONSE)
+#define MMC_CMD13  (MMC_INDX(13) | MMC_CMD_WAIT_RESPONSE)
+#define MMC_CMD16  (MMC_INDX(16) | MMC_CMD_WAIT_RESPONSE)
+#define MMC_CMD17  (MMC_INDX(17) | MMC_CMD_WAIT_RESPONSE)
+#define MMC_CMD18  (MMC_INDX(18) | MMC_CMD_WAIT_RESPONSE)
+#define MMC_CMD20  (MMC_INDX(20) | MMC_CMD_WAIT_RESPONSE)
+#define MMC_CMD23  (MMC_INDX(23) | MMC_CMD_WAIT_RESPONSE)
+#define MMC_CMD24  (MMC_INDX(24) | MMC_CMD_WAIT_RESPONSE)
+#define MMC_CMD25  (MMC_INDX(25) | MMC_CMD_WAIT_RESPONSE)
+#define MMC_CMD55  (MMC_INDX(55) | MMC_CMD_WAIT_RESPONSE)
 #define MMC_ACMD41  \
                           (MMC_INDX(41) | MMC_CMD_WAIT_RESPONSE | MMC_CMD_NO_CRC_RESPONSE)
-#define MMC_ACMD51        (MMC_INDX(51) | MMC_CMD_WAIT_RESPONSE)
+#define MMC_ACMD51  (MMC_INDX(51) | MMC_CMD_WAIT_RESPONSE)
 
 // Valid responses for CMD1 in eMMC
 #define EMMC_CMD1_CAPACITY_LESS_THAN_2GB     0x00FF8080 // Capacity <= 2GB, byte addressing used
@@ -177,11 +177,11 @@ struct _EFI_MMC_HOST_PROTOCOL {
 #define MMC_HOST_PROTOCOL_REVISION  0x00010002      // 1.2
 
 #define MMC_HOST_HAS_SETIOS( \
-                           Host)        \
+                             Host)        \
       (Host->Revision >= MMC_HOST_PROTOCOL_REVISION &&                                   \
                                        Host->SetIos != NULL)
 #define MMC_HOST_HAS_ISMULTIBLOCK( \
-                                 Host)  \
+                                   Host)  \
       (Host->Revision >= MMC_HOST_PROTOCOL_REVISION &&                                   \
                                          Host->IsMultiBlock != NULL)
 

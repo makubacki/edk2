@@ -30,8 +30,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gMmcComponentName2 =
 
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
   mMmcDriverNameTable[] = {
-  { "eng;en", L"MMC/SD Card Interface Driver"     },
-  { NULL,     NULL                                }
+  { "eng;en", L"MMC/SD Card Interface Driver" },
+  { NULL,     NULL                            }
 };
 
 /**

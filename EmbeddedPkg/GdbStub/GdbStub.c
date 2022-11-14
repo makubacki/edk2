@@ -77,8 +77,10 @@ GdbStubEntry (
   UINTN                       Processor;
   BOOLEAN                     IsaSupported;
 
-  Status = EfiGetSystemConfigurationTable (&gEfiDebugImageInfoTableGuid,
-             (VOID **)&gDebugImageTableHeader);
+  Status = EfiGetSystemConfigurationTable (
+             &gEfiDebugImageInfoTableGuid,
+             (VOID **)&gDebugImageTableHeader
+             );
   if (EFI_ERROR (Status)) {
     gDebugImageTableHeader = NULL;
   }
@@ -122,30 +124,41 @@ GdbStubEntry (
     return EFI_NOT_FOUND;
   }
 
-  Status = DebugSupport->GetMaximumProcessorIndex (DebugSupport,
-                           &gMaxProcessorIndex);
+  Status = DebugSupport->GetMaximumProcessorIndex (
+                           DebugSupport,
+                           &gMaxProcessorIndex
+                           );
   ASSERT_EFI_ERROR (Status);
 
   DEBUG ((DEBUG_INFO, "Debug Support Protocol ISA %x\n", DebugSupport->Isa));
-  DEBUG ((DEBUG_INFO, "Debug Support Protocol Processor Index %d\n",
-    gMaxProcessorIndex));
+  DEBUG ((
+    DEBUG_INFO,
+    "Debug Support Protocol Processor Index %d\n",
+    gMaxProcessorIndex
+    ));
 
   // Call processor-specific init routine
   InitializeProcessor ();
 
   for (Processor = 0; Processor <= gMaxProcessorIndex; Processor++) {
     for (Index = 0; Index < MaxEfiException (); Index++) {
-      Status = DebugSupport->RegisterExceptionCallback (DebugSupport, Processor,
+      Status = DebugSupport->RegisterExceptionCallback (
+                               DebugSupport,
+                               Processor,
                                GdbExceptionHandler,
-                               gExceptionType[Index].Exception);
+                               gExceptionType[Index].Exception
+                               );
       ASSERT_EFI_ERROR (Status);
     }
 
     //
     // Current edk2 DebugPort is not interrupt context safe so we can not use it
     //
-    Status = DebugSupport->RegisterPeriodicCallback (DebugSupport, Processor,
-                             GdbPeriodicCallBack);
+    Status = DebugSupport->RegisterPeriodicCallback (
+                             DebugSupport,
+                             Processor,
+                             GdbPeriodicCallBack
+                             );
     ASSERT_EFI_ERROR (Status);
   }
 
@@ -536,8 +549,10 @@ GdbSendTSignal (
                                                                   DataReadWrite))
       {
         // Construct n:r pair
-        DataAddress = GetBreakpointDataAddress (SystemContext,
-                        BreakpointDetected);
+        DataAddress = GetBreakpointDataAddress (
+                        SystemContext,
+                        BreakpointDetected
+                        );
 
         // Assign appropriate buffer to print particular watchpoint type
         if (BreakType == DataWrite) {
@@ -630,7 +645,8 @@ ReadFromMemory (
 
   // 2 = 'm' + ','
   if (AsciiStrLen (PacketData) - AsciiStrLen (AddressBuffer) - 2 >=
-      MAX_LENGTH_SIZE) {
+      MAX_LENGTH_SIZE)
+  {
     Print ((CHAR16 *)L"Length is too long\n");
     SendError (GDB_EBADMEMLENGTH);
     return;
@@ -889,14 +905,15 @@ PeCoffLoaderGetDebuggerInfo (
 
   if (Hdr.Te->Signature == EFI_TE_IMAGE_HEADER_SIGNATURE) {
     if (Hdr.Te->DataDirectory[EFI_TE_IMAGE_DIRECTORY_ENTRY_DEBUG].VirtualAddress
-        != 0) {
+        != 0)
+    {
       DirectoryEntry =
         &Hdr.Te->DataDirectory[EFI_TE_IMAGE_DIRECTORY_ENTRY_DEBUG];
       TEImageAdjust = sizeof (EFI_TE_IMAGE_HEADER) - Hdr.Te->StrippedSize;
       DebugEntry    = (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY *)((UINTN)Hdr.Te +
                                                           Hdr.Te->DataDirectory
                                                           [
-                                                                                EFI_TE_IMAGE_DIRECTORY_ENTRY_DEBUG
+                                                           EFI_TE_IMAGE_DIRECTORY_ENTRY_DEBUG
                                                           ].VirtualAddress +
                                                           TEImageAdjust);
     }
@@ -943,13 +960,14 @@ PeCoffLoaderGetDebuggerInfo (
       NumberOfRvaAndSizes = Hdr.Pe32->OptionalHeader.NumberOfRvaAndSizes;
       DirectoryEntry      =
         (EFI_IMAGE_DATA_DIRECTORY *)&(Hdr.Pe32->OptionalHeader.DataDirectory[
-                                                                                                  EFI_IMAGE_DIRECTORY_ENTRY_DEBUG
+                                                                             EFI_IMAGE_DIRECTORY_ENTRY_DEBUG
                                       ]);
       DebugEntry =
         (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY *)((UINTN)Pe32Data +
                                             DirectoryEntry->VirtualAddress);
     } else if (Hdr.Pe32->OptionalHeader.Magic ==
-               EFI_IMAGE_NT_OPTIONAL_HDR64_MAGIC) {
+               EFI_IMAGE_NT_OPTIONAL_HDR64_MAGIC)
+    {
       //
       // Use PE32+ offset get Debug Directory Entry
       //
@@ -958,7 +976,7 @@ PeCoffLoaderGetDebuggerInfo (
       DirectoryEntry      =
         (EFI_IMAGE_DATA_DIRECTORY *)&(Hdr.Pe32Plus->OptionalHeader.DataDirectory
                                       [
-                                                            EFI_IMAGE_DIRECTORY_ENTRY_DEBUG
+                                       EFI_IMAGE_DIRECTORY_ENTRY_DEBUG
                                       ]);
       DebugEntry =
         (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY *)((UINTN)Pe32Data +
@@ -978,7 +996,8 @@ PeCoffLoaderGetDebuggerInfo (
   }
 
   for (DirCount = 0; DirCount < DirectoryEntry->Size; DirCount +=
-         sizeof (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY), DebugEntry++) {
+         sizeof (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY), DebugEntry++)
+  {
     if (DebugEntry->Type == EFI_IMAGE_DEBUG_TYPE_CODEVIEW) {
       if (DebugEntry->SizeOfData > 0) {
         CodeViewEntryPointer = (VOID *)((UINTN)DebugEntry->RVA +
@@ -1051,8 +1070,12 @@ QxferLibrary (
 
   if (Offset != gPacketqXferLibraryOffset) {
     SendError (GDB_EINVALIDARG);
-    Print (L"\nqXferLibrary (%d, %d) != %d\n", Offset, Length,
-      gPacketqXferLibraryOffset);
+    Print (
+      L"\nqXferLibrary (%d, %d) != %d\n",
+      Offset,
+      Length,
+      gPacketqXferLibraryOffset
+      );
 
     // Force a retry from the beginning
     gPacketqXferLibraryOffset = 0;
@@ -1061,8 +1084,10 @@ QxferLibrary (
   }
 
   if (Offset == 0) {
-    gPacketqXferLibraryOffset += gXferObjectReadResponse ('m',
-                                   "<library-list>\n");
+    gPacketqXferLibraryOffset += gXferObjectReadResponse (
+                                   'm',
+                                   "<library-list>\n"
+                                   );
 
     // The owner of the table may have had to ralloc it so grab a fresh copy every time
     // we assume qXferLibrary will get called over and over again until the entire XML table is
@@ -1074,7 +1099,8 @@ QxferLibrary (
 
   if (gDebugTable != NULL) {
     for ( ; gEfiDebugImageTableEntry < gDebugImageTableHeader->TableSize;
-          gEfiDebugImageTableEntry++, gDebugTable++) {
+          gEfiDebugImageTableEntry++, gDebugTable++)
+    {
       if (gDebugTable->NormalImage != NULL) {
         if ((gDebugTable->NormalImage->ImageInfoType ==
              EFI_DEBUG_IMAGE_INFO_TYPE_NORMAL) &&
@@ -1094,8 +1120,10 @@ QxferLibrary (
                      LoadAddress
                      );
             if ((Size != 0) && (Size != (sizeof (gXferLibraryBuffer) - 1))) {
-              gPacketqXferLibraryOffset += gXferObjectReadResponse ('m',
-                                             gXferLibraryBuffer);
+              gPacketqXferLibraryOffset += gXferObjectReadResponse (
+                                             'm',
+                                             gXferLibraryBuffer
+                                             );
 
               // Update loop variables so we are in the right place when we get back
               gEfiDebugImageTableEntry++;
@@ -1191,24 +1219,34 @@ GdbExceptionHandler (
         // General Query Packets
         if (AsciiStrnCmp (gInBuffer, "qSupported", 10) == 0) {
           // return what we currently support, we don't parse what gdb supports
-          AsciiSPrint (gOutBuffer, MAX_BUF_SIZE,
-            "qXfer:libraries:read+;PacketSize=%d", MAX_BUF_SIZE);
+          AsciiSPrint (
+            gOutBuffer,
+            MAX_BUF_SIZE,
+            "qXfer:libraries:read+;PacketSize=%d",
+            MAX_BUF_SIZE
+            );
           SendPacket (gOutBuffer);
         } else if (AsciiStrnCmp (gInBuffer, "qXfer:libraries:read::", 22) ==
-                   0) {
+                   0)
+        {
           // ‘qXfer:libraries:read::offset,length
           // gInBuffer[22] is offset string, ++Ptr is length string’
           for (Ptr = &gInBuffer[22]; *Ptr != ','; Ptr++) {
           }
 
           // Not sure if multi-radix support is required. Currently only support decimal
-          QxferLibrary (AsciiStrHexToUintn (&gInBuffer[22]),
-            AsciiStrHexToUintn (++Ptr));
+          QxferLibrary (
+            AsciiStrHexToUintn (&gInBuffer[22]),
+            AsciiStrHexToUintn (++Ptr)
+            );
         }
 
         if (AsciiStrnCmp (gInBuffer, "qOffsets", 10) == 0) {
-          AsciiSPrint (gOutBuffer, MAX_BUF_SIZE,
-            "Text=1000;Data=f000;Bss=f000");
+          AsciiSPrint (
+            gOutBuffer,
+            MAX_BUF_SIZE,
+            "Text=1000;Data=f000;Bss=f000"
+            );
           SendPacket (gOutBuffer);
         } else {
           // Send empty packet

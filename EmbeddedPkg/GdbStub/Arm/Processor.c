@@ -382,7 +382,7 @@ typedef struct {
 #define ARM_SOFTWARE_BREAKPOINT_SIGNATURE  \
   SIGNATURE_64('A', 'R', 'M', 'B', 'R', 'K', 'P', 'T')
 #define ARM_SOFTWARE_BREAKPOINT_FROM_LINK( \
-                                         a)  \
+                                           a)  \
   CR(a, ARM_SOFTWARE_BREAKPOINT, Link, ARM_SOFTWARE_BREAKPOINT_SIGNATURE)
 
 LIST_ENTRY  BreakpointList;
