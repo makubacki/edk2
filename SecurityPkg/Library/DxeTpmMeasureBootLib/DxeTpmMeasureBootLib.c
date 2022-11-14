@@ -517,7 +517,7 @@ TcgMeasurePeImage (
       HashBase = (UINT8 *)&Hdr.Pe32->OptionalHeader.CheckSum + sizeof (UINT32);
       HashSize =
         (UINTN)(&Hdr.Pe32->OptionalHeader.DataDirectory[
-                                                                EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
+                                                        EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
                 ]) - (UINTN)HashBase;
     } else {
       //
@@ -527,7 +527,7 @@ TcgMeasurePeImage (
                  sizeof (UINT32);
       HashSize =
         (UINTN)(&Hdr.Pe32Plus->OptionalHeader.DataDirectory[
-                                                                    EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
+                                                            EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
                 ]) - (UINTN)HashBase;
     }
 
@@ -548,8 +548,8 @@ TcgMeasurePeImage (
       //
       HashBase =
         (UINT8 *)&Hdr.Pe32->OptionalHeader.DataDirectory[
-                                                                 EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
-                                                                 + 1];
+                                                         EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
+                                                         + 1];
       HashSize = Hdr.Pe32->OptionalHeader.SizeOfHeaders - (UINTN)(HashBase -
                                                                   ImageAddress);
     } else {
@@ -558,8 +558,8 @@ TcgMeasurePeImage (
       //
       HashBase =
         (UINT8 *)&Hdr.Pe32Plus->OptionalHeader.DataDirectory[
-                                                                     EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
-                                                                     + 1];
+                                                             EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
+                                                             + 1];
       HashSize = Hdr.Pe32Plus->OptionalHeader.SizeOfHeaders - (UINTN)(HashBase -
                                                                       ImageAddress);
     }
@@ -677,7 +677,7 @@ TcgMeasurePeImage (
         //
         CertSize =
           Hdr.Pe32->OptionalHeader.DataDirectory[
-                                                         EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
+                                                 EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
           ].Size;
       } else {
         //
@@ -685,7 +685,7 @@ TcgMeasurePeImage (
         //
         CertSize =
           Hdr.Pe32Plus->OptionalHeader.DataDirectory[
-                                                             EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
+                                                     EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
           ].Size;
       }
     }

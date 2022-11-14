@@ -27,8 +27,8 @@
 #include <Library/UnitTestLib.h>
 #include <Library/SecureBootVariableLib.h>
 
-#define UNIT_TEST_APP_NAME       "SecureBootVariableLib Unit Tests"
-#define UNIT_TEST_APP_VERSION    "1.0"
+#define UNIT_TEST_APP_NAME     "SecureBootVariableLib Unit Tests"
+#define UNIT_TEST_APP_VERSION  "1.0"
 #define VAR_AUTH_DESC_SIZE     \
                                  OFFSET_OF (EFI_VARIABLE_AUTHENTICATION_2, AuthInfo) + OFFSET_OF (WIN_CERTIFICATE_UEFI_GUID, CertData)
 

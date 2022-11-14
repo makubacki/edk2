@@ -45,29 +45,29 @@ CONST UINT8  mSha256OidValue[] = {
 EFI_SIGNATURE_ITEM  mSupportSigItem[] = {
   // {SigType,                       SigHeaderSize,   SigDataSize  }
   { EFI_CERT_SHA256_GUID,         0,
-    32                                          },
+    32 },
   { EFI_CERT_RSA2048_GUID,        0,
-    256                                                    },
+    256 },
   { EFI_CERT_RSA2048_SHA256_GUID, 0,
-    256                                                              },
+    256 },
   { EFI_CERT_SHA1_GUID,           0,
-    20                                                                         },
+    20 },
   { EFI_CERT_RSA2048_SHA1_GUID,   0,
-    256                                                                                  },
+    256 },
   { EFI_CERT_X509_GUID,           0,
-    ((UINT32) ~0)                                                                                  },
+    ((UINT32) ~0) },
   { EFI_CERT_SHA224_GUID,         0,
-    28                                                                                                       },
+    28 },
   { EFI_CERT_SHA384_GUID,         0,
-    48                                                                                                                 },
+    48 },
   { EFI_CERT_SHA512_GUID,         0,
-    64                                                                                                                           },
+    64 },
   { EFI_CERT_X509_SHA256_GUID,    0,
-    48                                                                                                                                     },
+    48 },
   { EFI_CERT_X509_SHA384_GUID,    0,
-    64                                                                                                                                               },
+    64 },
   { EFI_CERT_X509_SHA512_GUID,    0,
-    80                                                                                                                                               }
+    80 }
 };
 
 /**
@@ -531,7 +531,7 @@ CheckSignatureListFormat (
       CertData = (EFI_SIGNATURE_DATA *)((UINT8 *)SigList +
                                         sizeof (EFI_SIGNATURE_LIST) +
                                         SigList->SignatureHeaderSize);
-      CertLen  = SigList->SignatureSize - sizeof (EFI_GUID);
+      CertLen = SigList->SignatureSize - sizeof (EFI_GUID);
       if (!RsaGetPublicKeyFromX509 (
              CertData->SignatureData,
              CertLen,
@@ -1083,9 +1083,9 @@ FilterSignatureList (
   while ((*NewDataSize > 0) && (*NewDataSize >=
                                 NewCertList->SignatureListSize))
   {
-    NewCert      = (EFI_SIGNATURE_DATA *)((UINT8 *)NewCertList +
-                                          sizeof (EFI_SIGNATURE_LIST) +
-                                          NewCertList->SignatureHeaderSize);
+    NewCert = (EFI_SIGNATURE_DATA *)((UINT8 *)NewCertList +
+                                     sizeof (EFI_SIGNATURE_LIST) +
+                                     NewCertList->SignatureHeaderSize);
     NewCertCount = (NewCertList->SignatureListSize -
                     sizeof (EFI_SIGNATURE_LIST) -
                     NewCertList->SignatureHeaderSize) /
@@ -1104,9 +1104,9 @@ FilterSignatureList (
               ) &&
             (CertList->SignatureSize == NewCertList->SignatureSize))
         {
-          Cert      = (EFI_SIGNATURE_DATA *)((UINT8 *)CertList +
-                                             sizeof (EFI_SIGNATURE_LIST) +
-                                             CertList->SignatureHeaderSize);
+          Cert = (EFI_SIGNATURE_DATA *)((UINT8 *)CertList +
+                                        sizeof (EFI_SIGNATURE_LIST) +
+                                        CertList->SignatureHeaderSize);
           CertCount = (CertList->SignatureListSize -
                        sizeof (EFI_SIGNATURE_LIST) -
                        CertList->SignatureHeaderSize) /
@@ -1169,8 +1169,8 @@ FilterSignatureList (
                           NewCertList->SignatureHeaderSize + (CopiedCount *
                                                               NewCertList->
                                                                 SignatureSize);
-      CertList                    = (EFI_SIGNATURE_LIST *)(Tail -
-                                                           SignatureListSize);
+      CertList = (EFI_SIGNATURE_LIST *)(Tail -
+                                        SignatureListSize);
       CertList->SignatureListSize = (UINT32)SignatureListSize;
     }
 
@@ -2274,9 +2274,9 @@ VerifyTimeBasedPayload (
     CertList    = (EFI_SIGNATURE_LIST *)Data;
     while ((KekDataSize > 0) && (KekDataSize >= CertList->SignatureListSize)) {
       if (CompareGuid (&CertList->SignatureType, &gEfiCertX509Guid)) {
-        Cert      = (EFI_SIGNATURE_DATA *)((UINT8 *)CertList +
-                                           sizeof (EFI_SIGNATURE_LIST) +
-                                           CertList->SignatureHeaderSize);
+        Cert = (EFI_SIGNATURE_DATA *)((UINT8 *)CertList +
+                                      sizeof (EFI_SIGNATURE_LIST) +
+                                      CertList->SignatureHeaderSize);
         CertCount = (CertList->SignatureListSize - sizeof (EFI_SIGNATURE_LIST) -
                      CertList->SignatureHeaderSize) / CertList->SignatureSize;
         for (Index = 0; Index < CertCount; Index++) {
@@ -2415,10 +2415,10 @@ VerifyTimeBasedPayload (
       }
     }
   } else if (AuthVarType == AuthVarTypePayload) {
-    CertList        = (EFI_SIGNATURE_LIST *)PayloadPtr;
-    Cert            = (EFI_SIGNATURE_DATA *)((UINT8 *)CertList +
-                                             sizeof (EFI_SIGNATURE_LIST) +
-                                             CertList->SignatureHeaderSize);
+    CertList = (EFI_SIGNATURE_LIST *)PayloadPtr;
+    Cert     = (EFI_SIGNATURE_DATA *)((UINT8 *)CertList +
+                                      sizeof (EFI_SIGNATURE_LIST) +
+                                      CertList->SignatureHeaderSize);
     TrustedCert     = Cert->SignatureData;
     TrustedCertSize = CertList->SignatureSize - (sizeof (EFI_SIGNATURE_DATA) -
                                                  1);

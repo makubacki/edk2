@@ -32,11 +32,11 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mOpalDriverNameTable[] =
 {
   { LANGUAGE_RFC_3066_ENGLISH,
-    (CHAR16 *)EFI_DRIVER_NAME_UNICODE                                                   },
+    (CHAR16 *)EFI_DRIVER_NAME_UNICODE },
   { LANGUAGE_ISO_639_2_ENGLISH,
-    (CHAR16 *)EFI_DRIVER_NAME_UNICODE                                                                             },
+    (CHAR16 *)EFI_DRIVER_NAME_UNICODE },
   { 0,
-    0                                                                                                             }
+    0 }
 };
 
 /**

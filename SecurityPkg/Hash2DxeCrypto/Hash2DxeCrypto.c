@@ -123,9 +123,9 @@ EFI_HASH_INFO  mHashInfo[] = {
   { &gEfiHashAlgorithmSha256Guid, sizeof (EFI_SHA256_HASH2),
     Sha256GetContextSize, Sha256Init, Sha256Update, Sha256Final },
   { &gEfiHashAlgorithmSha384Guid, sizeof (EFI_SHA384_HASH2),
-    Sha384GetContextSize,  Sha384Init, Sha384Update, Sha384Final },
+    Sha384GetContextSize, Sha384Init, Sha384Update, Sha384Final },
   { &gEfiHashAlgorithmSha512Guid, sizeof (EFI_SHA512_HASH2),
-    Sha512GetContextSize, Sha512Init,  Sha512Update, Sha512Final },
+    Sha512GetContextSize, Sha512Init, Sha512Update, Sha512Final },
 };
 
 /**

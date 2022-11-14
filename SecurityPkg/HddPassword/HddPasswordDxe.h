@@ -87,7 +87,7 @@ typedef struct _HDD_PASSWORD_DXE_PRIVATE_DATA {
 } HDD_PASSWORD_DXE_PRIVATE_DATA;
 
 #define HDD_PASSWORD_DXE_PRIVATE_FROM_THIS( \
-                                          a)  \
+                                            a)  \
   CR (a, HDD_PASSWORD_DXE_PRIVATE_DATA, ConfigAccess, HDD_PASSWORD_DXE_PRIVATE_SIGNATURE)
 
 #define PASSWORD_SALT_SIZE  32

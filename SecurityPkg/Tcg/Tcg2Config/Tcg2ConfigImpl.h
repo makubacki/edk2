@@ -71,7 +71,7 @@ extern TCG2_CONFIG_PRIVATE_DATA  mTcg2ConfigPrivateDateTemplate;
 extern TCG2_CONFIG_PRIVATE_DATA  *mTcg2ConfigPrivateDate;
 #define TCG2_CONFIG_PRIVATE_DATA_SIGNATURE  SIGNATURE_32 ('T', 'r', 'E', 'D')
 #define TCG2_CONFIG_PRIVATE_DATA_FROM_THIS( \
-                                          a)  \
+                                            a)  \
   CR (a, TCG2_CONFIG_PRIVATE_DATA, ConfigAccess, TCG2_CONFIG_PRIVATE_DATA_SIGNATURE)
 
 #define TPM_HID_PNP_SIZE   8

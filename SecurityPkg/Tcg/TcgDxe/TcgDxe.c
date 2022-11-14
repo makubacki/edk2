@@ -1337,7 +1337,7 @@ InstallAcpiTable (
                                                               &
                                                               mTcgServerAcpiTemplate,
                                                               sizeof (
-                                                                     mTcgServerAcpiTemplate),
+                                                                      mTcgServerAcpiTemplate),
                                                               &TableKey
                                                               );
   }

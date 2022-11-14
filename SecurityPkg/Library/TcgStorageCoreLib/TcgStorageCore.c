@@ -152,7 +152,8 @@ TcgStartPacket (
 
   CreateStruct->CurPacket = (TCG_PACKET *)(CreateStruct->ComPacket->Payload +
                                            SwapBytes32 (
-                                             CreateStruct->ComPacket->LengthBE));
+                                             CreateStruct->ComPacket->LengthBE
+                                             ));
 
   CreateStruct->CurPacket->TperSessionNumberBE = SwapBytes32 (Tsn);
   CreateStruct->CurPacket->HostSessionNumberBE = SwapBytes32 (Hsn);
@@ -569,11 +570,11 @@ TcgAddAtom (
   if ((DataSize == 1) &&
       (ByteOrInt == TCG_ATOM_TYPE_INTEGER) &&
       (  ((SignOrCont != 0) && ((TCG_TOKEN_TINYATOM_SIGNED_MIN_VALUE <=
-                               *(INT8 *)Data) && (*(INT8 *)Data <=
-                                                  TCG_TOKEN_TINYATOM_SIGNED_MAX_VALUE)))
+                                 *(INT8 *)Data) && (*(INT8 *)Data <=
+                                                    TCG_TOKEN_TINYATOM_SIGNED_MAX_VALUE)))
       ||
-       ((SignOrCont == 0) && ((*DataBytes <=
-                               TCG_TOKEN_TINYATOM_UNSIGNED_MAX_VALUE))))
+         ((SignOrCont == 0) && ((*DataBytes <=
+                                 TCG_TOKEN_TINYATOM_UNSIGNED_MAX_VALUE))))
       )
   {
     TinyAtom.TinyAtomBits.IsZero = 0;

@@ -49,8 +49,8 @@ typedef struct {
 } TCG2_EVENT_INFO_STRUCT;
 
 TCG2_EVENT_INFO_STRUCT  mTcg2EventInfo[] = {
-  { &gTcgEventEntryHobGuid,  EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2   },
-  { &gTcgEvent2EntryHobGuid, EFI_TCG2_EVENT_LOG_FORMAT_TCG_2     },
+  { &gTcgEventEntryHobGuid,  EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2 },
+  { &gTcgEvent2EntryHobGuid, EFI_TCG2_EVENT_LOG_FORMAT_TCG_2   },
 };
 
 BOOLEAN              mImageInMemory = FALSE;
@@ -491,7 +491,8 @@ LogHashEvent (
                       &gTcgEvent2EntryHobGuid,
                       sizeof (TcgPcrEvent2->PCRIndex) +
                       sizeof (TcgPcrEvent2->EventType) + GetDigestListSize (
-                                                           DigestList) +
+                                                           DigestList
+                                                           ) +
                       sizeof (TcgPcrEvent2->EventSize) + NewEventHdr->EventSize
                       );
           if (HobData == NULL) {

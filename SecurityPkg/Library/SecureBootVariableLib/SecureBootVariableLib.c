@@ -90,9 +90,9 @@ CreateSigList (
   //
   // Only gEfiCertX509Guid type is supported
   //
-  TmpSigList->SignatureListSize   = (UINT32)SigListSize;
-  TmpSigList->SignatureSize       = (UINT32)(sizeof (EFI_SIGNATURE_DATA) - 1 +
-                                             Size);
+  TmpSigList->SignatureListSize = (UINT32)SigListSize;
+  TmpSigList->SignatureSize     = (UINT32)(sizeof (EFI_SIGNATURE_DATA) - 1 +
+                                           Size);
   TmpSigList->SignatureHeaderSize = 0;
   CopyGuid (&TmpSigList->SignatureType, &gEfiCertX509Guid);
 

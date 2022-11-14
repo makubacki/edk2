@@ -403,7 +403,7 @@ BuildOpalDeviceInfo (
 
     TempDevInfo = (OPAL_DEVICE_LOCKBOX_DATA *)((UINTN)TempDevInfo +
                                                DevInfoLength);
-    TmpDev      = TmpDev->Next;
+    TmpDev = TmpDev->Next;
   }
 
   Status = SaveLockBox (

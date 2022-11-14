@@ -39,7 +39,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #define ALIGNMENT_SIZE  8
 #define ALIGN_SIZE( \
-                  a)  \
+                    a)  \
   (((a) % ALIGNMENT_SIZE) ? ALIGNMENT_SIZE - ((a) % ALIGNMENT_SIZE) : 0)
 
 //

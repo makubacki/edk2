@@ -61,8 +61,8 @@ typedef struct {
 } TCG2_EVENT_INFO_STRUCT;
 
 TCG2_EVENT_INFO_STRUCT  mTcg2EventInfo[] = {
-  { &gTcgEventEntryHobGuid,  EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2     },
-  { &gTcgEvent2EntryHobGuid, EFI_TCG2_EVENT_LOG_FORMAT_TCG_2       },
+  { &gTcgEventEntryHobGuid,  EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2 },
+  { &gTcgEvent2EntryHobGuid, EFI_TCG2_EVENT_LOG_FORMAT_TCG_2   },
 };
 
 #define TCG_EVENT_LOG_AREA_COUNT_MAX  2
@@ -115,15 +115,15 @@ CHAR16  mBootVarName[] = L"BootOrder";
 
 VARIABLE_TYPE  mVariableType[] = {
   { EFI_SECURE_BOOT_MODE_NAME,
-    &gEfiGlobalVariableGuid                      },
+    &gEfiGlobalVariableGuid },
   { EFI_PLATFORM_KEY_NAME,
-    &gEfiGlobalVariableGuid                      },
+    &gEfiGlobalVariableGuid },
   { EFI_KEY_EXCHANGE_KEY_NAME,
-    &gEfiGlobalVariableGuid                      },
+    &gEfiGlobalVariableGuid },
   { EFI_IMAGE_SECURITY_DATABASE,
-    &gEfiImageSecurityDatabaseGuid               },
+    &gEfiImageSecurityDatabaseGuid },
   { EFI_IMAGE_SECURITY_DATABASE1,
-    &gEfiImageSecurityDatabaseGuid               },
+    &gEfiImageSecurityDatabaseGuid },
 };
 
 EFI_HANDLE  mImageHandle;
@@ -754,7 +754,8 @@ DumpEventLog (
 
       TcgPcrEvent2 = (TCG_PCR_EVENT2 *)((UINTN)TcgEfiSpecIdEventStruct +
                                         GetTcgEfiSpecIdEventStructSize (
-                                          TcgEfiSpecIdEventStruct));
+                                          TcgEfiSpecIdEventStruct
+                                          ));
       while ((UINTN)TcgPcrEvent2 <= EventLogLastEntry) {
         DumpEvent2 (TcgPcrEvent2);
         TcgPcrEvent2 = (TCG_PCR_EVENT2 *)((UINTN)TcgPcrEvent2 +
@@ -1358,7 +1359,8 @@ TcgDxeLogHashEvent (
                      &TcgPcrEvent2,
                      sizeof (TcgPcrEvent2.PCRIndex) +
                      sizeof (TcgPcrEvent2.EventType) + GetDigestListBinSize (
-                                                         DigestBuffer) +
+                                                         DigestBuffer
+                                                         ) +
                      sizeof (TcgPcrEvent2.EventSize),
                      NewEventData,
                      NewEventHdr->EventSize
@@ -1771,7 +1773,7 @@ SetupEventLog (
   UINT8                     TempBuf[sizeof (TCG_EfiSpecIDEventStruct) +
                                     sizeof (UINT32) + (HASH_COUNT *
                                                        sizeof (
-                                                                                                                      TCG_EfiSpecIdEventAlgorithmSize))
+                                                               TCG_EfiSpecIdEventAlgorithmSize))
                                     +
                                     sizeof (UINT8)];
   TCG_PCR_EVENT_HDR                SpecIdEvent;

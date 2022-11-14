@@ -79,7 +79,7 @@ FmpAuthenticatedHandlerPkcs7 (
                                                WIN_CERTIFICATE_UEFI_GUID,
                                                CertData
                                                ));
-  P7Data   = Image->AuthInfo.CertData;
+  P7Data = Image->AuthInfo.CertData;
 
   // It is a signature across the variable data and the Monotonic Count value.
   TempBuffer = AllocatePool (ImageSize - Image->AuthInfo.Hdr.dwLength);

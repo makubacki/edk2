@@ -416,7 +416,7 @@ Tpm2PcrRead (
     SendBuffer.PcrSelectionIn.pcrSelections[Index].hash = SwapBytes16 (
                                                             PcrSelectionIn->
                                                               pcrSelections[
-                                                                                                            Index
+                                                                            Index
                                                             ].hash
                                                             );
     SendBuffer.PcrSelectionIn.pcrSelections[Index].sizeofSelect =
@@ -548,13 +548,13 @@ Tpm2PcrRead (
   //
   // PcrValues
   //
-  PcrValuesOut     = (TPML_DIGEST *)((UINT8 *)&RecvBuffer +
-                                     sizeof (TPM2_RESPONSE_HEADER) +
-                                     sizeof (RecvBuffer.PcrUpdateCounter) +
-                                     sizeof (RecvBuffer.PcrSelectionOut.count) +
-                                     sizeof (RecvBuffer.PcrSelectionOut.
-                                               pcrSelections[0]) *
-                                     PcrSelectionOut->count);
+  PcrValuesOut = (TPML_DIGEST *)((UINT8 *)&RecvBuffer +
+                                 sizeof (TPM2_RESPONSE_HEADER) +
+                                 sizeof (RecvBuffer.PcrUpdateCounter) +
+                                 sizeof (RecvBuffer.PcrSelectionOut.count) +
+                                 sizeof (RecvBuffer.PcrSelectionOut.
+                                           pcrSelections[0]) *
+                                 PcrSelectionOut->count);
   PcrValues->count = SwapBytes32 (PcrValuesOut->count);
   //
   // The number of digests in list is not greater than 8 per TPML_DIGEST definition

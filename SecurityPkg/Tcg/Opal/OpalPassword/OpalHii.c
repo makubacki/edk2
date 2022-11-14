@@ -238,14 +238,14 @@ SaveOpalRequest (
       NewVariable = AllocatePool (NewVariableSize);
       ASSERT (NewVariable != NULL);
       CopyMem (NewVariable, Variable, VariableSize);
-      TempVariable         = (OPAL_REQUEST_VARIABLE *)((UINTN)NewVariable +
-                                                       VariableSize);
+      TempVariable = (OPAL_REQUEST_VARIABLE *)((UINTN)NewVariable +
+                                               VariableSize);
       TempVariable->Length = (UINT32)(sizeof (OPAL_REQUEST_VARIABLE) +
                                       DevicePathSize);
       CopyMem (&TempVariable->OpalRequest, &OpalRequest, sizeof (OPAL_REQUEST));
       DevicePathInVariable = (EFI_DEVICE_PATH_PROTOCOL *)((UINTN)TempVariable +
                                                           sizeof (
-                                                                                       OPAL_REQUEST_VARIABLE));
+                                                                  OPAL_REQUEST_VARIABLE));
       CopyMem (DevicePathInVariable, DevicePath, DevicePathSize);
     }
   } else {
@@ -259,7 +259,7 @@ SaveOpalRequest (
     CopyMem (&NewVariable->OpalRequest, &OpalRequest, sizeof (OPAL_REQUEST));
     DevicePathInVariable = (EFI_DEVICE_PATH_PROTOCOL *)((UINTN)NewVariable +
                                                         sizeof (
-                                                                                    OPAL_REQUEST_VARIABLE));
+                                                                OPAL_REQUEST_VARIABLE));
     CopyMem (DevicePathInVariable, DevicePath, DevicePathSize);
   }
 

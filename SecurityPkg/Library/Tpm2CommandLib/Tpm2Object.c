@@ -245,7 +245,8 @@ Tpm2ReadPublic (
       OutPublic->publicArea.parameters.symDetail.algorithm = SwapBytes16 (
                                                                ReadUnaligned16 (
                                                                  (UINT16 *)
-                                                                 Buffer)
+                                                                 Buffer
+                                                                 )
                                                                );
       Buffer += sizeof (UINT16);
       switch (OutPublic->publicArea.parameters.symDetail.algorithm) {
@@ -253,14 +254,16 @@ Tpm2ReadPublic (
           OutPublic->publicArea.parameters.symDetail.keyBits.aes = SwapBytes16 (
                                                                      ReadUnaligned16 (
                                                                        (UINT16 *)
-                                                                       Buffer)
+                                                                       Buffer
+                                                                       )
                                                                      );
           Buffer +=
             sizeof (UINT16);
           OutPublic->publicArea.parameters.symDetail.mode.aes = SwapBytes16 (
                                                                   ReadUnaligned16 (
                                                                     (UINT16 *)
-                                                                    Buffer)
+                                                                    Buffer
+                                                                    )
                                                                   );
           Buffer +=
             sizeof (UINT16);
@@ -269,14 +272,16 @@ Tpm2ReadPublic (
           OutPublic->publicArea.parameters.symDetail.keyBits.SM4 = SwapBytes16 (
                                                                      ReadUnaligned16 (
                                                                        (UINT16 *)
-                                                                       Buffer)
+                                                                       Buffer
+                                                                       )
                                                                      );
           Buffer +=
             sizeof (UINT16);
           OutPublic->publicArea.parameters.symDetail.mode.SM4 = SwapBytes16 (
                                                                   ReadUnaligned16 (
                                                                     (UINT16 *)
-                                                                    Buffer)
+                                                                    Buffer
+                                                                    )
                                                                   );
           Buffer +=
             sizeof (UINT16);
@@ -285,7 +290,8 @@ Tpm2ReadPublic (
           OutPublic->publicArea.parameters.symDetail.keyBits.xor = SwapBytes16 (
                                                                      ReadUnaligned16 (
                                                                        (UINT16 *)
-                                                                       Buffer)
+                                                                       Buffer
+                                                                       )
                                                                      );
           Buffer +=
             sizeof (UINT16);
@@ -332,7 +338,8 @@ Tpm2ReadPublic (
       OutPublic->publicArea.parameters.rsaDetail.scheme.scheme = SwapBytes16 (
                                                                    ReadUnaligned16 (
                                                                      (UINT16 *)
-                                                                     Buffer)
+                                                                     Buffer
+                                                                     )
                                                                    );
       Buffer +=
         sizeof (UINT16);
@@ -365,12 +372,14 @@ Tpm2ReadPublic (
 
       OutPublic->publicArea.parameters.rsaDetail.keyBits = SwapBytes16 (
                                                              ReadUnaligned16 (
-                                                               (UINT16 *)Buffer)
+                                                               (UINT16 *)Buffer
+                                                               )
                                                              );
       Buffer                                             += sizeof (UINT16);
       OutPublic->publicArea.parameters.rsaDetail.exponent = SwapBytes16 (
                                                               ReadUnaligned16 (
-                                                                (UINT16 *)Buffer)
+                                                                (UINT16 *)Buffer
+                                                                )
                                                               );
       Buffer += sizeof (UINT32);
       break;
@@ -409,7 +418,8 @@ Tpm2ReadPublic (
       OutPublic->publicArea.parameters.eccDetail.scheme.scheme = SwapBytes16 (
                                                                    ReadUnaligned16 (
                                                                      (UINT16 *)
-                                                                     Buffer)
+                                                                     Buffer
+                                                                     )
                                                                    );
       Buffer +=
         sizeof (UINT16);
@@ -442,13 +452,15 @@ Tpm2ReadPublic (
 
       OutPublic->publicArea.parameters.eccDetail.curveID = SwapBytes16 (
                                                              ReadUnaligned16 (
-                                                               (UINT16 *)Buffer)
+                                                               (UINT16 *)Buffer
+                                                               )
                                                              );
       Buffer                                               += sizeof (UINT16);
       OutPublic->publicArea.parameters.eccDetail.kdf.scheme = SwapBytes16 (
                                                                 ReadUnaligned16 (
                                                                   (UINT16 *)
-                                                                  Buffer)
+                                                                  Buffer
+                                                                  )
                                                                 );
       Buffer += sizeof (UINT16);
       switch (OutPublic->publicArea.parameters.eccDetail.kdf.scheme) {
@@ -492,7 +504,8 @@ Tpm2ReadPublic (
     case TPM_ALG_KEYEDHASH:
       OutPublic->publicArea.unique.keyedHash.size = SwapBytes16 (
                                                       ReadUnaligned16 (
-                                                        (UINT16 *)Buffer)
+                                                        (UINT16 *)Buffer
+                                                        )
                                                       );
       Buffer += sizeof (UINT16);
       if (OutPublic->publicArea.unique.keyedHash.size > sizeof (TPMU_HA)) {

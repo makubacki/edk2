@@ -202,7 +202,7 @@ extern SECUREBOOT_CONFIG_PRIVATE_DATA  *gSecureBootPrivateData;
 #define SECUREBOOT_CONFIG_PRIVATE_DATA_SIGNATURE  \
   SIGNATURE_32 ('S', 'E', 'C', 'B')
 #define SECUREBOOT_CONFIG_PRIVATE_FROM_THIS( \
-                                           a)  \
+                                             a)  \
   CR (a, SECUREBOOT_CONFIG_PRIVATE_DATA, ConfigAccess, SECUREBOOT_CONFIG_PRIVATE_DATA_SIGNATURE)
 
 //

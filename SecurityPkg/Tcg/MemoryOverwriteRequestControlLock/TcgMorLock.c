@@ -24,9 +24,9 @@ typedef struct {
 
 VARIABLE_TYPE  mMorVariableType[] = {
   { MEMORY_OVERWRITE_REQUEST_VARIABLE_NAME,
-    &gEfiMemoryOverwriteControlDataGuid            },
+    &gEfiMemoryOverwriteControlDataGuid },
   { MEMORY_OVERWRITE_REQUEST_CONTROL_LOCK_NAME,
-    &gEfiMemoryOverwriteRequestControlLockGuid      },
+    &gEfiMemoryOverwriteRequestControlLockGuid },
 };
 
 /**
@@ -47,7 +47,8 @@ IsAnyMorVariable (
   UINTN  Index;
 
   for (Index = 0; Index < sizeof (mMorVariableType)/
-       sizeof (mMorVariableType[0]); Index++) {
+       sizeof (mMorVariableType[0]); Index++)
+  {
     if ((StrCmp (VariableName, mMorVariableType[Index].VariableName) == 0) &&
         (CompareGuid (VendorGuid, mMorVariableType[Index].VendorGuid)))
     {

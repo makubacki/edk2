@@ -1188,12 +1188,14 @@ InstallTcg2ConfigForm (
         Tcg2ConfigInfo.TpmDeviceInterfacePtpFifoSupported = IsPtpFifoSupported (
                                                               (VOID *)(UINTN)
                                                               PcdGet64 (
-                                                                PcdTpmBaseAddress)
+                                                                PcdTpmBaseAddress
+                                                                )
                                                               );
         Tcg2ConfigInfo.TpmDeviceInterfacePtpCrbSupported = IsPtpCrbSupported (
                                                              (VOID *)(UINTN)
                                                              PcdGet64 (
-                                                               PcdTpmBaseAddress)
+                                                               PcdTpmBaseAddress
+                                                               )
                                                              );
         TempBuffer[0] = 0;
         if (Tcg2ConfigInfo.TpmDeviceInterfacePtpFifoSupported) {

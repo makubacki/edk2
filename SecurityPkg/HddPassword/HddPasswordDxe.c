@@ -198,7 +198,7 @@ BuildHddPasswordDeviceInfo (
 
       TempDevInfo = (HDD_PASSWORD_DEVICE_INFO *)((UINTN)TempDevInfo +
                                                  sizeof (
-                                                        HDD_PASSWORD_DEVICE_INFO)
+                                                         HDD_PASSWORD_DEVICE_INFO)
                                                  +
                                                  TempDevInfo->DevicePathLength);
     }

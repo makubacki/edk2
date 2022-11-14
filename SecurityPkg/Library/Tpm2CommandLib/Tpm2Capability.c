@@ -535,7 +535,7 @@ Tpm2GetCapabilityPcrs (
   for (Index = 0; Index < Pcrs->count; Index++) {
     Pcrs->pcrSelections[Index].hash = SwapBytes16 (
                                         TpmCap.data.assignedPCR.pcrSelections[
-                                                                                                Index
+                                                                              Index
                                         ].hash
                                         );
     Pcrs->pcrSelections[Index].sizeofSelect =
