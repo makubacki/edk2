@@ -190,18 +190,33 @@ CalculateUsbDebugPortBar (
     return RETURN_UNSUPPORTED;
   }
 
-  ProgInterface = PciRead8 (PcdGet32 (PcdUsbEhciPciAddress) + PCI_CLASSCODE_OFFSET);
-  SubClassCode  = PciRead8 (PcdGet32 (PcdUsbEhciPciAddress) + PCI_CLASSCODE_OFFSET + 1);
-  BaseCode      = PciRead8 (PcdGet32 (PcdUsbEhciPciAddress) + PCI_CLASSCODE_OFFSET + 2);
+  ProgInterface = PciRead8 (
+                    PcdGet32 (PcdUsbEhciPciAddress) +
+                    PCI_CLASSCODE_OFFSET
+                    );
+  SubClassCode = PciRead8 (
+                   PcdGet32 (PcdUsbEhciPciAddress) +
+                   PCI_CLASSCODE_OFFSET + 1
+                   );
+  BaseCode = PciRead8 (
+               PcdGet32 (PcdUsbEhciPciAddress) +
+               PCI_CLASSCODE_OFFSET + 2
+               );
 
-  if ((ProgInterface != PCI_IF_EHCI) || (SubClassCode != PCI_CLASS_SERIAL_USB) || (BaseCode != PCI_CLASS_SERIAL)) {
+  if ((ProgInterface != PCI_IF_EHCI) || (SubClassCode !=
+                                         PCI_CLASS_SERIAL_USB) || (BaseCode !=
+                                                                   PCI_CLASS_SERIAL))
+  {
     return RETURN_UNSUPPORTED;
   }
 
   //
   // Enable Ehci Host Controller MMIO Space.
   //
-  PciStatus = PciRead16 (PcdGet32 (PcdUsbEhciPciAddress) + PCI_PRIMARY_STATUS_OFFSET);
+  PciStatus = PciRead16 (
+                PcdGet32 (PcdUsbEhciPciAddress) +
+                PCI_PRIMARY_STATUS_OFFSET
+                );
 
   if ((PciStatus & EFI_PCI_STATUS_CAPABILITY) == 0) {
     //
@@ -213,7 +228,10 @@ CalculateUsbDebugPortBar (
   //
   // Get Pointer To Capability List
   //
-  CapabilityPtr = PciRead8 (PcdGet32 (PcdUsbEhciPciAddress) + PCI_CAPBILITY_POINTER_OFFSET);
+  CapabilityPtr = PciRead8 (
+                    PcdGet32 (PcdUsbEhciPciAddress) +
+                    PCI_CAPBILITY_POINTER_OFFSET
+                    );
 
   //
   // Find Capability ID 0xA, Which Is For Debug Port
@@ -224,7 +242,10 @@ CalculateUsbDebugPortBar (
       break;
     }
 
-    CapabilityPtr = PciRead8 (PcdGet32 (PcdUsbEhciPciAddress) + CapabilityPtr + 1);
+    CapabilityPtr = PciRead8 (
+                      PcdGet32 (PcdUsbEhciPciAddress) + CapabilityPtr +
+                      1
+                      );
   }
 
   //
@@ -237,8 +258,14 @@ CalculateUsbDebugPortBar (
   //
   // Get The Base Address Of Debug Port Register In Debug Port Capability Register
   //
-  *DebugPortOffset    = (UINT16)(PciRead16 (PcdGet32 (PcdUsbEhciPciAddress) + CapabilityPtr + 2) & 0x1FFF);
-  *DebugPortBarNumbar = (UINT8)((PciRead16 (PcdGet32 (PcdUsbEhciPciAddress) + CapabilityPtr + 2) >> 13) - 1);
+  *DebugPortOffset    = (UINT16)(PciRead16 (
+                                   PcdGet32 (PcdUsbEhciPciAddress) +
+                                   CapabilityPtr + 2
+                                   ) & 0x1FFF);
+  *DebugPortBarNumbar = (UINT8)((PciRead16 (
+                                   PcdGet32 (PcdUsbEhciPciAddress) +
+                                   CapabilityPtr + 2
+                                   ) >> 13) - 1);
 
   return RETURN_SUCCESS;
 }
@@ -302,9 +329,13 @@ UsbDebugPortIn (
   //
   // Wait for completing the request
   //
-  while ((MmioRead32 ((UINTN)&DebugPortRegister->ControlStatus) & (UINT32)BIT16) == 0) {
-    if ((MmioRead32 ((UINTN)&DebugPortRegister->ControlStatus) & (USB_DEBUG_PORT_OWNER | USB_DEBUG_PORT_IN_USE | USB_DEBUG_PORT_ENABLE))
-        != (USB_DEBUG_PORT_OWNER | USB_DEBUG_PORT_IN_USE | USB_DEBUG_PORT_ENABLE))
+  while ((MmioRead32 ((UINTN)&DebugPortRegister->ControlStatus) &
+          (UINT32)BIT16) == 0)
+  {
+    if ((MmioRead32 ((UINTN)&DebugPortRegister->ControlStatus) &
+         (USB_DEBUG_PORT_OWNER | USB_DEBUG_PORT_IN_USE | USB_DEBUG_PORT_ENABLE))
+        != (USB_DEBUG_PORT_OWNER | USB_DEBUG_PORT_IN_USE |
+            USB_DEBUG_PORT_ENABLE))
     {
       return RETURN_DEVICE_ERROR;
     }
@@ -325,11 +356,14 @@ UsbDebugPortIn (
   //
   // Make sure the received data are not beyond the allowable maximum length - 8 byte
   //
-  if (((MmioRead32 ((UINTN)&DebugPortRegister->ControlStatus)) & 0xF) > USB_DEBUG_PORT_MAX_PACKET_SIZE) {
+  if (((MmioRead32 ((UINTN)&DebugPortRegister->ControlStatus)) & 0xF) >
+      USB_DEBUG_PORT_MAX_PACKET_SIZE)
+  {
     return RETURN_DEVICE_ERROR;
   }
 
-  *Length = (UINT8)(MmioRead32 ((UINTN)&DebugPortRegister->ControlStatus) & 0xF);
+  *Length = (UINT8)(MmioRead32 ((UINTN)&DebugPortRegister->ControlStatus) &
+                    0xF);
   if (*Length > 8) {
     return RETURN_DEVICE_ERROR;
   }
@@ -407,8 +441,10 @@ UsbDebugPortOut (
   // Wait for completing the request
   //
   while ((MmioRead32 ((UINTN)&DebugPortRegister->ControlStatus) & BIT16) == 0) {
-    if ((MmioRead32 ((UINTN)&DebugPortRegister->ControlStatus) & (USB_DEBUG_PORT_OWNER | USB_DEBUG_PORT_IN_USE | USB_DEBUG_PORT_ENABLE))
-        != (USB_DEBUG_PORT_OWNER | USB_DEBUG_PORT_IN_USE | USB_DEBUG_PORT_ENABLE))
+    if ((MmioRead32 ((UINTN)&DebugPortRegister->ControlStatus) &
+         (USB_DEBUG_PORT_OWNER | USB_DEBUG_PORT_IN_USE | USB_DEBUG_PORT_ENABLE))
+        != (USB_DEBUG_PORT_OWNER | USB_DEBUG_PORT_IN_USE |
+            USB_DEBUG_PORT_ENABLE))
     {
       return RETURN_DEVICE_ERROR;
     }
@@ -429,7 +465,9 @@ UsbDebugPortOut (
   //
   // Make sure the sent data are not beyond the allowable maximum length - 8 byte
   //
-  if (((MmioRead32 ((UINTN)&DebugPortRegister->ControlStatus)) & 0xF) > USB_DEBUG_PORT_MAX_PACKET_SIZE) {
+  if (((MmioRead32 ((UINTN)&DebugPortRegister->ControlStatus)) & 0xF) >
+      USB_DEBUG_PORT_MAX_PACKET_SIZE)
+  {
     return RETURN_DEVICE_ERROR;
   }
 
@@ -469,7 +507,15 @@ UsbDebugPortControlTransfer (
   //
   // Setup Phase
   //
-  Status = UsbDebugPortOut (DebugPortRegister, (UINT8 *)SetupPacket, (UINT8)sizeof (USB_DEVICE_REQUEST), SETUP_PID, Addr, Ep, 0);
+  Status = UsbDebugPortOut (
+             DebugPortRegister,
+             (UINT8 *)SetupPacket,
+             (UINT8)sizeof (USB_DEVICE_REQUEST),
+             SETUP_PID,
+             Addr,
+             Ep,
+             0
+             );
   if (RETURN_ERROR (Status)) {
     return Status;
   }
@@ -482,7 +528,15 @@ UsbDebugPortControlTransfer (
       //
       // Get Data From Device
       //
-      Status = UsbDebugPortIn (DebugPortRegister, Data, DataLength, INPUT_PID, Addr, Ep, 1);
+      Status = UsbDebugPortIn (
+                 DebugPortRegister,
+                 Data,
+                 DataLength,
+                 INPUT_PID,
+                 Addr,
+                 Ep,
+                 1
+                 );
       if (RETURN_ERROR (Status)) {
         return Status;
       }
@@ -490,7 +544,15 @@ UsbDebugPortControlTransfer (
       //
       // Send Data To Device
       //
-      Status = UsbDebugPortOut (DebugPortRegister, Data, *DataLength, OUTPUT_PID, Addr, Ep, 1);
+      Status = UsbDebugPortOut (
+                 DebugPortRegister,
+                 Data,
+                 *DataLength,
+                 OUTPUT_PID,
+                 Addr,
+                 Ep,
+                 1
+                 );
       if (RETURN_ERROR (Status)) {
         return Status;
       }
@@ -504,12 +566,28 @@ UsbDebugPortControlTransfer (
     //
     // For READ operation, Data Toggle in Status Phase Should be 1.
     //
-    Status = UsbDebugPortOut (DebugPortRegister, NULL, 0, OUTPUT_PID, Addr, Ep, 1);
+    Status = UsbDebugPortOut (
+               DebugPortRegister,
+               NULL,
+               0,
+               OUTPUT_PID,
+               Addr,
+               Ep,
+               1
+               );
   } else {
     //
     // For WRITE operation, Data Toggle in Status Phase Should be 1.
     //
-    Status = UsbDebugPortIn (DebugPortRegister, ReturnStatus, &Temp, INPUT_PID, Addr, Ep, 1);
+    Status = UsbDebugPortIn (
+               DebugPortRegister,
+               ReturnStatus,
+               &Temp,
+               INPUT_PID,
+               Addr,
+               Ep,
+               1
+               );
   }
 
   return Status;
@@ -542,13 +620,21 @@ NeedReinitializeHardware (
 
   Status = FALSE;
 
-  EhciMemoryBase = 0xFFFFFC00 & PciRead32 (PcdGet32 (PcdUsbEhciPciAddress) + PCI_BASE_ADDRESSREG_OFFSET);
+  EhciMemoryBase = 0xFFFFFC00 & PciRead32 (
+                                  PcdGet32 (PcdUsbEhciPciAddress) +
+                                  PCI_BASE_ADDRESSREG_OFFSET
+                                  );
   if (EhciMemoryBase != Handle->EhciMemoryBase) {
     Handle->EhciMemoryBase = EhciMemoryBase;
     Status                 = TRUE;
   }
 
-  UsbDebugPortMemoryBase = 0xFFFFFC00 & PciRead32 (PcdGet32 (PcdUsbEhciPciAddress) + PCI_BASE_ADDRESSREG_OFFSET + Handle->DebugPortBarNumber * 4);
+  UsbDebugPortMemoryBase = 0xFFFFFC00 & PciRead32 (
+                                          PcdGet32 (
+                                            PcdUsbEhciPciAddress
+                                            ) + PCI_BASE_ADDRESSREG_OFFSET +
+                                          Handle->DebugPortBarNumber * 4
+                                          );
   if (UsbDebugPortMemoryBase != Handle->UsbDebugPortMemoryBase) {
     Handle->UsbDebugPortMemoryBase = UsbDebugPortMemoryBase;
     Status                         = TRUE;
@@ -558,7 +644,10 @@ NeedReinitializeHardware (
   // Enable Ehci Memory Space Access
   //
   PciCmd = PciRead16 (PcdGet32 (PcdUsbEhciPciAddress) + PCI_COMMAND_OFFSET);
-  if (((PciCmd & EFI_PCI_COMMAND_MEMORY_SPACE) == 0) || ((PciCmd & EFI_PCI_COMMAND_BUS_MASTER) == 0)) {
+  if (((PciCmd & EFI_PCI_COMMAND_MEMORY_SPACE) == 0) || ((PciCmd &
+                                                          EFI_PCI_COMMAND_BUS_MASTER)
+                                                         == 0))
+  {
     PciCmd |= EFI_PCI_COMMAND_MEMORY_SPACE | EFI_PCI_COMMAND_BUS_MASTER;
     PciWrite16 (PcdGet32 (PcdUsbEhciPciAddress) + PCI_COMMAND_OFFSET, PciCmd);
     Status = TRUE;
@@ -567,8 +656,11 @@ NeedReinitializeHardware (
   //
   // If the owner and in_use bit is not set, it means system is doing cold/warm boot or EHCI host controller is reset by system software.
   //
-  UsbDebugPortRegister = (USB_DEBUG_PORT_REGISTER *)((UINTN)Handle->UsbDebugPortMemoryBase + Handle->DebugPortOffset);
-  if ((MmioRead32 ((UINTN)&UsbDebugPortRegister->ControlStatus) & (USB_DEBUG_PORT_OWNER | USB_DEBUG_PORT_ENABLE | USB_DEBUG_PORT_IN_USE))
+  UsbDebugPortRegister =
+    (USB_DEBUG_PORT_REGISTER *)((UINTN)Handle->UsbDebugPortMemoryBase +
+                                Handle->DebugPortOffset);
+  if ((MmioRead32 ((UINTN)&UsbDebugPortRegister->ControlStatus) &
+       (USB_DEBUG_PORT_OWNER | USB_DEBUG_PORT_ENABLE | USB_DEBUG_PORT_IN_USE))
       != (USB_DEBUG_PORT_OWNER | USB_DEBUG_PORT_ENABLE | USB_DEBUG_PORT_IN_USE))
   {
     Status = TRUE;
@@ -614,16 +706,20 @@ InitializeUsbDebugHardware (
   UINT8                      DebugPortNumber;
   UINT8                      Length;
 
-  UsbDebugPortRegister = (USB_DEBUG_PORT_REGISTER *)((UINTN)Handle->UsbDebugPortMemoryBase + Handle->DebugPortOffset);
-  UsbHCSParam          = (UINT32 *)((UINTN)Handle->EhciMemoryBase + 0x04);
-  UsbCmd               = (UINT32 *)((UINTN)Handle->EhciMemoryBase + 0x20);
-  UsbStatus            = (UINT32 *)((UINTN)Handle->EhciMemoryBase + 0x24);
+  UsbDebugPortRegister =
+    (USB_DEBUG_PORT_REGISTER *)((UINTN)Handle->UsbDebugPortMemoryBase +
+                                Handle->DebugPortOffset);
+  UsbHCSParam = (UINT32 *)((UINTN)Handle->EhciMemoryBase + 0x04);
+  UsbCmd      = (UINT32 *)((UINTN)Handle->EhciMemoryBase + 0x20);
+  UsbStatus   = (UINT32 *)((UINTN)Handle->EhciMemoryBase + 0x24);
 
   //
   // Check if the debug port is enabled and owned by myself.
   //
-  if (((MmioRead32 ((UINTN)&UsbDebugPortRegister->ControlStatus) & (USB_DEBUG_PORT_OWNER | USB_DEBUG_PORT_IN_USE))
-       != (USB_DEBUG_PORT_OWNER | USB_DEBUG_PORT_IN_USE)) || (Handle->Initialized == USBDBG_RESET))
+  if (((MmioRead32 ((UINTN)&UsbDebugPortRegister->ControlStatus) &
+        (USB_DEBUG_PORT_OWNER | USB_DEBUG_PORT_IN_USE))
+       != (USB_DEBUG_PORT_OWNER | USB_DEBUG_PORT_IN_USE)) ||
+      (Handle->Initialized == USBDBG_RESET))
   {
     DEBUG ((
       DEBUG_INFO,
@@ -654,7 +750,10 @@ InitializeUsbDebugHardware (
     //
     // First get the ownership of port 0.
     //
-    MmioOr32 ((UINTN)&UsbDebugPortRegister->ControlStatus, USB_DEBUG_PORT_OWNER | USB_DEBUG_PORT_IN_USE);
+    MmioOr32 (
+      (UINTN)&UsbDebugPortRegister->ControlStatus,
+      USB_DEBUG_PORT_OWNER | USB_DEBUG_PORT_IN_USE
+      );
 
     MicroSecondDelay (200000);
   }
@@ -662,18 +761,21 @@ InitializeUsbDebugHardware (
   //
   // Find out which port is used as debug port.
   //
-  DebugPortNumber = (UINT8)((MmioRead32 ((UINTN)UsbHCSParam) & 0x00F00000) >> 20);
+  DebugPortNumber = (UINT8)((MmioRead32 ((UINTN)UsbHCSParam) & 0x00F00000) >>
+                            20);
   //
   // Should find a device is connected at debug port
   //
-  PortStatus = (UINT32 *)((UINTN)Handle->EhciMemoryBase + 0x64 + (DebugPortNumber - 1) * 4);
+  PortStatus = (UINT32 *)((UINTN)Handle->EhciMemoryBase + 0x64 +
+                          (DebugPortNumber - 1) * 4);
   if (!(MmioRead32 ((UINTN)PortStatus) & BIT0)) {
     Handle->Initialized = USBDBG_NO_DEV;
     return RETURN_NOT_FOUND;
   }
 
   if ((Handle->Initialized != USBDBG_INIT_DONE) ||
-      ((MmioRead32 ((UINTN)&UsbDebugPortRegister->ControlStatus) & USB_DEBUG_PORT_ENABLE) == 0))
+      ((MmioRead32 ((UINTN)&UsbDebugPortRegister->ControlStatus) &
+        USB_DEBUG_PORT_ENABLE) == 0))
   {
     DEBUG ((DEBUG_INFO, "UsbDbg: Reset the debug port.\n"));
     //
@@ -696,7 +798,10 @@ InitializeUsbDebugHardware (
     //
     // Enable Usb Debug Port Capability
     //
-    MmioOr32 ((UINTN)&UsbDebugPortRegister->ControlStatus, USB_DEBUG_PORT_ENABLE);
+    MmioOr32 (
+      (UINTN)&UsbDebugPortRegister->ControlStatus,
+      USB_DEBUG_PORT_ENABLE
+      );
 
     //
     // initialize the data toggle used by bulk in/out endpoint.
@@ -707,7 +812,14 @@ InitializeUsbDebugHardware (
     //
     // set usb debug device address as 0x7F.
     //
-    Status = UsbDebugPortControlTransfer (UsbDebugPortRegister, &mDebugCommunicationLibUsbSetDebugAddress, 0x0, 0x0, NULL, NULL);
+    Status = UsbDebugPortControlTransfer (
+               UsbDebugPortRegister,
+               &mDebugCommunicationLibUsbSetDebugAddress,
+               0x0,
+               0x0,
+               NULL,
+               NULL
+               );
     if (RETURN_ERROR (Status)) {
       //
       // The device can not work well.
@@ -724,7 +836,14 @@ InitializeUsbDebugHardware (
     //
     // Get debug descriptor.
     //
-    Status = UsbDebugPortControlTransfer (UsbDebugPortRegister, &mDebugCommunicationLibUsbGetDebugDescriptor, 0x7F, 0x0, (UINT8 *)&UsbDebugPortDescriptor, &Length);
+    Status = UsbDebugPortControlTransfer (
+               UsbDebugPortRegister,
+               &mDebugCommunicationLibUsbGetDebugDescriptor,
+               0x7F,
+               0x0,
+               (UINT8 *)&UsbDebugPortDescriptor,
+               &Length
+               );
     if (RETURN_ERROR (Status)) {
       //
       // The device is not a usb debug device.
@@ -747,7 +866,14 @@ InitializeUsbDebugHardware (
     //
     // enable the usb debug feature.
     //
-    Status = UsbDebugPortControlTransfer (UsbDebugPortRegister, &mDebugCommunicationLibUsbSetDebugFeature, 0x7F, 0x0, NULL, NULL);
+    Status = UsbDebugPortControlTransfer (
+               UsbDebugPortRegister,
+               &mDebugCommunicationLibUsbSetDebugFeature,
+               0x7F,
+               0x0,
+               NULL,
+               NULL
+               );
     if (RETURN_ERROR (Status)) {
       //
       // The device can not work well.
@@ -894,7 +1020,10 @@ DebugPortWriteBuffer (
     }
   }
 
-  UsbDebugPortRegister = (USB_DEBUG_PORT_REGISTER *)((UINTN)UsbDebugPortHandle->UsbDebugPortMemoryBase + UsbDebugPortHandle->DebugPortOffset);
+  UsbDebugPortRegister =
+    (USB_DEBUG_PORT_REGISTER *)((UINTN)UsbDebugPortHandle->
+                                  UsbDebugPortMemoryBase
+                                + UsbDebugPortHandle->DebugPortOffset);
 
   while ((Total < NumberOfBytes)) {
     if (NumberOfBytes - Total > USB_DEBUG_PORT_MAX_PACKET_SIZE) {
@@ -903,7 +1032,15 @@ DebugPortWriteBuffer (
       Sent = (UINT8)(NumberOfBytes - Total);
     }
 
-    Status = UsbDebugPortOut (UsbDebugPortRegister, Buffer + Total, Sent, OUTPUT_PID, 0x7F, UsbDebugPortHandle->OutEndpoint, UsbDebugPortHandle->BulkOutToggle);
+    Status = UsbDebugPortOut (
+               UsbDebugPortRegister,
+               Buffer + Total,
+               Sent,
+               OUTPUT_PID,
+               0x7F,
+               UsbDebugPortHandle->OutEndpoint,
+               UsbDebugPortHandle->BulkOutToggle
+               );
 
     if (RETURN_ERROR (Status)) {
       return Total;
@@ -976,7 +1113,10 @@ DebugPortPollBuffer (
     return TRUE;
   }
 
-  UsbDebugPortRegister = (USB_DEBUG_PORT_REGISTER *)((UINTN)UsbDebugPortHandle->UsbDebugPortMemoryBase + UsbDebugPortHandle->DebugPortOffset);
+  UsbDebugPortRegister =
+    (USB_DEBUG_PORT_REGISTER *)((UINTN)UsbDebugPortHandle->
+                                  UsbDebugPortMemoryBase
+                                + UsbDebugPortHandle->DebugPortOffset);
 
   UsbDebugPortRegister->TokenPid = INPUT_PID;
   if (UsbDebugPortHandle->BulkInToggle == 0) {
@@ -1000,9 +1140,13 @@ DebugPortPollBuffer (
   //
   // Wait for completing the request
   //
-  while ((MmioRead32 ((UINTN)&UsbDebugPortRegister->ControlStatus) & (UINT32)BIT16) == 0) {
-    if ((MmioRead32 ((UINTN)&UsbDebugPortRegister->ControlStatus) & (USB_DEBUG_PORT_OWNER | USB_DEBUG_PORT_IN_USE | USB_DEBUG_PORT_ENABLE))
-        != (USB_DEBUG_PORT_OWNER | USB_DEBUG_PORT_IN_USE | USB_DEBUG_PORT_ENABLE))
+  while ((MmioRead32 ((UINTN)&UsbDebugPortRegister->ControlStatus) &
+          (UINT32)BIT16) == 0)
+  {
+    if ((MmioRead32 ((UINTN)&UsbDebugPortRegister->ControlStatus) &
+         (USB_DEBUG_PORT_OWNER | USB_DEBUG_PORT_IN_USE | USB_DEBUG_PORT_ENABLE))
+        != (USB_DEBUG_PORT_OWNER | USB_DEBUG_PORT_IN_USE |
+            USB_DEBUG_PORT_ENABLE))
     {
       return FALSE;
     }
@@ -1012,7 +1156,8 @@ DebugPortPollBuffer (
     return FALSE;
   }
 
-  Length = (UINT8)(MmioRead32 ((UINTN)&UsbDebugPortRegister->ControlStatus) & 0xF);
+  Length = (UINT8)(MmioRead32 ((UINTN)&UsbDebugPortRegister->ControlStatus) &
+                   0xF);
 
   if (Length > 8) {
     return FALSE;
@@ -1070,7 +1215,10 @@ DebugPortInitialize (
   //
   // Validate the PCD PcdDebugPortHandleBufferSize value
   //
-  ASSERT (PcdGet16 (PcdDebugPortHandleBufferSize) == sizeof (USB_DEBUG_PORT_HANDLE));
+  ASSERT (
+    PcdGet16 (PcdDebugPortHandleBufferSize) ==
+    sizeof (USB_DEBUG_PORT_HANDLE)
+    );
 
   if ((Function == NULL) && (Context != NULL)) {
     return (DEBUG_PORT_HANDLE *)Context;
@@ -1078,30 +1226,63 @@ DebugPortInitialize (
 
   ZeroMem (&Handle, sizeof (USB_DEBUG_PORT_HANDLE));
 
-  Status = CalculateUsbDebugPortBar (&Handle.DebugPortOffset, &Handle.DebugPortBarNumber);
+  Status = CalculateUsbDebugPortBar (
+             &Handle.DebugPortOffset,
+             &Handle.DebugPortBarNumber
+             );
   if (RETURN_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "UsbDbg: the pci device pointed by PcdUsbEhciPciAddress is not EHCI host controller or does not support debug port capability!\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "UsbDbg: the pci device pointed by PcdUsbEhciPciAddress is not EHCI host controller or does not support debug port capability!\n"
+      ));
     goto Exit;
   }
 
-  Handle.EhciMemoryBase = 0xFFFFFC00 & PciRead32 (PcdGet32 (PcdUsbEhciPciAddress) + PCI_BASE_ADDRESSREG_OFFSET);
+  Handle.EhciMemoryBase = 0xFFFFFC00 & PciRead32 (
+                                         PcdGet32 (
+                                           PcdUsbEhciPciAddress
+                                           ) + PCI_BASE_ADDRESSREG_OFFSET
+                                         );
 
   if (Handle.EhciMemoryBase == 0) {
     //
     // Usb Debug Port MMIO Space Is Not Enabled. Assumption here that DebugPortBase is zero
     //
-    PciWrite32 (PcdGet32 (PcdUsbEhciPciAddress) + PCI_BASE_ADDRESSREG_OFFSET, PcdGet32 (PcdUsbEhciMemorySpaceBase));
-    Handle.EhciMemoryBase = 0xFFFFFC00 & PciRead32 (PcdGet32 (PcdUsbEhciPciAddress) + PCI_BASE_ADDRESSREG_OFFSET);
+    PciWrite32 (
+      PcdGet32 (PcdUsbEhciPciAddress) + PCI_BASE_ADDRESSREG_OFFSET,
+      PcdGet32 (PcdUsbEhciMemorySpaceBase)
+      );
+    Handle.EhciMemoryBase = 0xFFFFFC00 & PciRead32 (
+                                           PcdGet32 (
+                                             PcdUsbEhciPciAddress
+                                             ) + PCI_BASE_ADDRESSREG_OFFSET
+                                           );
   }
 
-  Handle.UsbDebugPortMemoryBase = 0xFFFFFC00 & PciRead32 (PcdGet32 (PcdUsbEhciPciAddress) + PCI_BASE_ADDRESSREG_OFFSET + Handle.DebugPortBarNumber * 4);
+  Handle.UsbDebugPortMemoryBase = 0xFFFFFC00 & PciRead32 (
+                                                 PcdGet32 (
+                                                   PcdUsbEhciPciAddress
+                                                   ) +
+                                                 PCI_BASE_ADDRESSREG_OFFSET +
+                                                 Handle.DebugPortBarNumber * 4
+                                                 );
 
   if (Handle.UsbDebugPortMemoryBase == 0) {
     //
     // Usb Debug Port MMIO Space Is Not Enabled. Assumption here that DebugPortBase is zero
     //
-    PciWrite32 (PcdGet32 (PcdUsbEhciPciAddress) + PCI_BASE_ADDRESSREG_OFFSET + Handle.DebugPortBarNumber * 4, PcdGet32 (PcdUsbDebugPortMemorySpaceBase));
-    Handle.UsbDebugPortMemoryBase = 0xFFFFFC00 & PciRead32 (PcdGet32 (PcdUsbEhciPciAddress) + PCI_BASE_ADDRESSREG_OFFSET + Handle.DebugPortBarNumber * 4);
+    PciWrite32 (
+      PcdGet32 (PcdUsbEhciPciAddress) + PCI_BASE_ADDRESSREG_OFFSET +
+      Handle.DebugPortBarNumber * 4,
+      PcdGet32 (PcdUsbDebugPortMemorySpaceBase)
+      );
+    Handle.UsbDebugPortMemoryBase = 0xFFFFFC00 & PciRead32 (
+                                                   PcdGet32 (
+                                                     PcdUsbEhciPciAddress
+                                                     ) +
+                                                   PCI_BASE_ADDRESSREG_OFFSET +
+                                                   Handle.DebugPortBarNumber * 4
+                                                   );
   }
 
   Handle.Initialized = USBDBG_RESET;
@@ -1110,7 +1291,10 @@ DebugPortInitialize (
     DEBUG ((DEBUG_ERROR, "UsbDbg: Start EHCI debug port initialization!\n"));
     Status = InitializeUsbDebugHardware (&Handle);
     if (RETURN_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "UsbDbg: Failed, please check if USB debug cable is plugged into EHCI debug port correctly!\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "UsbDbg: Failed, please check if USB debug cable is plugged into EHCI debug port correctly!\n"
+        ));
       goto Exit;
     }
   }
@@ -1120,7 +1304,11 @@ Exit:
   if (Function != NULL) {
     Function (Context, &Handle);
   } else {
-    CopyMem (&mDebugCommunicationLibUsbDebugPortHandle, &Handle, sizeof (USB_DEBUG_PORT_HANDLE));
+    CopyMem (
+      &mDebugCommunicationLibUsbDebugPortHandle,
+      &Handle,
+      sizeof (USB_DEBUG_PORT_HANDLE)
+      );
   }
 
   return (DEBUG_PORT_HANDLE)(UINTN)&mDebugCommunicationLibUsbDebugPortHandle;

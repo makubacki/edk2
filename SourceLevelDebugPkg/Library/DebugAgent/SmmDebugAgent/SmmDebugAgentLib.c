@@ -20,7 +20,8 @@ UINT32                    mTimerCycle;
 UINTN                     mApicTimerDivisor;
 UINT8                     mVector;
 
-CHAR8  mWarningMsgIgnoreSmmEntryBreak[] = "Ignore smmentrybreak setting for SMI issued during DXE debugging!\r\n";
+CHAR8  mWarningMsgIgnoreSmmEntryBreak[] =
+  "Ignore smmentrybreak setting for SMI issued during DXE debugging!\r\n";
 
 /**
   Check if debug agent support multi-processor.
@@ -201,17 +202,24 @@ InitializeDebugAgent (
                         gSmst,
                         &gEfiVectorHandoffTableGuid,
                         (VOID *)&mVectorHandoffInfoDebugAgent[0],
-                        sizeof (EFI_VECTOR_HANDOFF_INFO) * mVectorHandoffInfoCount
+                        sizeof (EFI_VECTOR_HANDOFF_INFO) *
+                        mVectorHandoffInfoCount
                         );
       if (EFI_ERROR (Status)) {
-        DEBUG ((DEBUG_ERROR, "DebugAgent: Cannot install configuration table for persisted vector handoff info!\n"));
+        DEBUG ((
+          DEBUG_ERROR,
+          "DebugAgent: Cannot install configuration table for persisted vector handoff info!\n"
+          ));
         CpuDeadLoop ();
       }
 
       //
       // Check if Debug Agent initialized in DXE phase
       //
-      Status = EfiGetSystemConfigurationTable (&gEfiDebugAgentGuid, (VOID **)&Mailbox);
+      Status = EfiGetSystemConfigurationTable (
+                 &gEfiDebugAgentGuid,
+                 (VOID **)&Mailbox
+                 );
       if ((Status == EFI_SUCCESS) && (Mailbox != NULL)) {
         VerifyMailboxChecksum (Mailbox);
         mMailboxPointer = Mailbox;
@@ -236,7 +244,12 @@ InitializeDebugAgent (
       // Save original IDT entries
       //
       AsmReadIdtr (&IdtDescriptor);
-      CopyMem (&IdtEntry, (VOID *)IdtDescriptor.Base, 33 * sizeof (IA32_IDT_GATE_DESCRIPTOR));
+      CopyMem (
+        &IdtEntry,
+        (VOID *)IdtDescriptor.Base,
+        33 *
+        sizeof (IA32_IDT_GATE_DESCRIPTOR)
+        );
       //
       // Initialized Debug Agent
       //
@@ -245,10 +258,22 @@ InitializeDebugAgent (
       // Initialize Debug Timer hardware and save its frequency
       //
       InitializeDebugTimer (&DebugTimerFrequency, TRUE);
-      UpdateMailboxContent (Mailbox, DEBUG_MAILBOX_DEBUG_TIMER_FREQUENCY, DebugTimerFrequency);
+      UpdateMailboxContent (
+        Mailbox,
+        DEBUG_MAILBOX_DEBUG_TIMER_FREQUENCY,
+        DebugTimerFrequency
+        );
 
-      DebugPortHandle = (UINT64)(UINTN)DebugPortInitialize ((DEBUG_PORT_HANDLE)(UINTN)Mailbox->DebugPortHandle, NULL);
-      UpdateMailboxContent (Mailbox, DEBUG_MAILBOX_DEBUG_PORT_HANDLE_INDEX, DebugPortHandle);
+      DebugPortHandle = (UINT64)(UINTN)DebugPortInitialize (
+                                         (DEBUG_PORT_HANDLE)(UINTN)Mailbox->
+                                           DebugPortHandle,
+                                         NULL
+                                         );
+      UpdateMailboxContent (
+        Mailbox,
+        DEBUG_MAILBOX_DEBUG_PORT_HANDLE_INDEX,
+        DebugPortHandle
+        );
       mMailboxPointer = Mailbox;
       //
       // Trigger one software interrupt to inform HOST
@@ -273,7 +298,12 @@ InitializeDebugAgent (
       //
       // Restore saved IDT entries
       //
-      CopyMem ((VOID *)IdtDescriptor.Base, &IdtEntry, 33 * sizeof (IA32_IDT_GATE_DESCRIPTOR));
+      CopyMem (
+        (VOID *)IdtDescriptor.Base,
+        &IdtEntry,
+        33 *
+        sizeof (IA32_IDT_GATE_DESCRIPTOR)
+        );
 
       break;
 
@@ -339,7 +369,12 @@ InitializeDebugAgent (
       // Restore APIC Timer
       //
       if (mApicTimerRestore) {
-        InitializeApicTimer (mApicTimerDivisor, mTimerCycle, mPeriodicMode, mVector);
+        InitializeApicTimer (
+          mApicTimerDivisor,
+          mTimerCycle,
+          mPeriodicMode,
+          mVector
+          );
         mApicTimerRestore = FALSE;
       }
 
@@ -347,20 +382,26 @@ InitializeDebugAgent (
 
     case DEBUG_AGENT_INIT_THUNK_PEI_IA32TOX64:
       if (Context == NULL) {
-        DEBUG ((DEBUG_ERROR, "DebugAgent: Input parameter Context cannot be NULL!\n"));
+        DEBUG ((
+          DEBUG_ERROR,
+          "DebugAgent: Input parameter Context cannot be NULL!\n"
+          ));
         CpuDeadLoop ();
       } else {
         Ia32Idtr        =  (IA32_DESCRIPTOR *)Context;
         Ia32IdtEntry    = (IA32_IDT_ENTRY *)(Ia32Idtr->Base);
-        MailboxLocation = (UINT64 *)((UINTN)Ia32IdtEntry[DEBUG_MAILBOX_VECTOR].Bits.OffsetLow +
-                                     ((UINTN)Ia32IdtEntry[DEBUG_MAILBOX_VECTOR].Bits.OffsetHigh << 16));
+        MailboxLocation =
+          (UINT64 *)((UINTN)Ia32IdtEntry[DEBUG_MAILBOX_VECTOR].Bits.OffsetLow +
+                     ((UINTN)Ia32IdtEntry[DEBUG_MAILBOX_VECTOR].
+                        Bits.OffsetHigh << 16));
         mMailboxPointer = (DEBUG_AGENT_MAILBOX *)(UINTN)(*MailboxLocation);
         VerifyMailboxChecksum (mMailboxPointer);
         //
         // Get original IDT address and size.
         //
         AsmReadIdtr ((IA32_DESCRIPTOR *)&Idtr);
-        IdtEntryCount = (UINT16)((Idtr.Limit + 1) / sizeof (IA32_IDT_GATE_DESCRIPTOR));
+        IdtEntryCount = (UINT16)((Idtr.Limit + 1) /
+                                 sizeof (IA32_IDT_GATE_DESCRIPTOR));
         if (IdtEntryCount < 33) {
           Idtr.Limit = (UINT16)(sizeof (IA32_IDT_GATE_DESCRIPTOR) * 33 - 1);
           Idtr.Base  = (UINTN)&mIdtEntryTable;
@@ -373,7 +414,11 @@ InitializeDebugAgent (
         // Initialize Debug Timer hardware and save its frequency
         //
         InitializeDebugTimer (&DebugTimerFrequency, TRUE);
-        UpdateMailboxContent (mMailboxPointer, DEBUG_MAILBOX_DEBUG_TIMER_FREQUENCY, DebugTimerFrequency);
+        UpdateMailboxContent (
+          mMailboxPointer,
+          DEBUG_MAILBOX_DEBUG_TIMER_FREQUENCY,
+          DebugTimerFrequency
+          );
         //
         // Enable Debug Timer interrupt and CPU interrupt
         //
@@ -390,7 +435,10 @@ InitializeDebugAgent (
       // Only DEBUG_AGENT_INIT_PREMEM_SEC and DEBUG_AGENT_INIT_POSTMEM_SEC are allowed for this
       // Debug Agent library instance.
       //
-      DEBUG ((DEBUG_ERROR, "Debug Agent: The InitFlag value is not allowed!\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "Debug Agent: The InitFlag value is not allowed!\n"
+        ));
       CpuDeadLoop ();
       break;
   }

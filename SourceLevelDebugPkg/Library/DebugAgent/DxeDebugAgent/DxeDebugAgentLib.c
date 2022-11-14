@@ -64,7 +64,10 @@ InternalConstructorWorker (
     // Check if configuration table is installed or not if GUIDed HOB existed,
     // only when Debug Agent is not linked by DXE Core
     //
-    Status = EfiGetSystemConfigurationTable (&gEfiVectorHandoffTableGuid, (VOID **)&VectorHandoffInfo);
+    Status = EfiGetSystemConfigurationTable (
+               &gEfiVectorHandoffTableGuid,
+               (VOID **)&VectorHandoffInfo
+               );
   }
 
   if ((GuidHob == NULL) || (Status != EFI_SUCCESS)) {
@@ -72,9 +75,15 @@ InternalConstructorWorker (
     // Install configuration table for persisted vector handoff info if GUIDed HOB cannot be found or
     // configuration table does not exist
     //
-    Status = gBS->InstallConfigurationTable (&gEfiVectorHandoffTableGuid, (VOID *)&mVectorHandoffInfoDebugAgent[0]);
+    Status = gBS->InstallConfigurationTable (
+                    &gEfiVectorHandoffTableGuid,
+                    (VOID *)&mVectorHandoffInfoDebugAgent[0]
+                    );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "DebugAgent: Cannot install configuration table for persisted vector handoff info!\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "DebugAgent: Cannot install configuration table for persisted vector handoff info!\n"
+        ));
       CpuDeadLoop ();
     }
   }
@@ -88,11 +97,18 @@ InternalConstructorWorker (
   Status  = gBS->AllocatePages (
                    AllocateAnyPages,
                    EfiACPIMemoryNVS,
-                   EFI_SIZE_TO_PAGES (sizeof (DEBUG_AGENT_MAILBOX) + PcdGet16 (PcdDebugPortHandleBufferSize)),
+                   EFI_SIZE_TO_PAGES (
+                     sizeof (DEBUG_AGENT_MAILBOX) + PcdGet16 (
+                                                      PcdDebugPortHandleBufferSize
+                                                      )
+                     ),
                    &Address
                    );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "DebugAgent: Cannot install configuration table for mailbox!\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "DebugAgent: Cannot install configuration table for mailbox!\n"
+      ));
     CpuDeadLoop ();
   }
 
@@ -105,18 +121,36 @@ InternalConstructorWorker (
   //
   Mailbox = GetMailboxPointer ();
   CopyMem (NewMailbox, Mailbox, sizeof (DEBUG_AGENT_MAILBOX));
-  CopyMem (NewMailbox + 1, (VOID *)(UINTN)Mailbox->DebugPortHandle, PcdGet16 (PcdDebugPortHandleBufferSize));
+  CopyMem (
+    NewMailbox + 1,
+    (VOID *)(UINTN)Mailbox->DebugPortHandle,
+    PcdGet16 (
+      PcdDebugPortHandleBufferSize
+      )
+    );
   //
   // Update Debug Port Handle in new Mailbox
   //
-  UpdateMailboxContent (NewMailbox, DEBUG_MAILBOX_DEBUG_PORT_HANDLE_INDEX, (UINT64)(UINTN)(NewMailbox + 1));
+  UpdateMailboxContent (
+    NewMailbox,
+    DEBUG_MAILBOX_DEBUG_PORT_HANDLE_INDEX,
+    (UINT64)(UINTN)(NewMailbox + 1)
+    );
   mMailboxPointer = NewMailbox;
 
-  DebugTimerInterruptState = SaveAndSetDebugTimerInterrupt (DebugTimerInterruptState);
+  DebugTimerInterruptState = SaveAndSetDebugTimerInterrupt (
+                               DebugTimerInterruptState
+                               );
 
-  Status = gBS->InstallConfigurationTable (&gEfiDebugAgentGuid, (VOID *)mMailboxPointer);
+  Status = gBS->InstallConfigurationTable (
+                  &gEfiDebugAgentGuid,
+                  (VOID *)mMailboxPointer
+                  );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "DebugAgent: Failed to install configuration for mailbox!\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "DebugAgent: Failed to install configuration for mailbox!\n"
+      ));
     CpuDeadLoop ();
   }
 }
@@ -161,7 +195,10 @@ GetMailboxFromConfigurationTable (
   EFI_STATUS           Status;
   DEBUG_AGENT_MAILBOX  *Mailbox;
 
-  Status = EfiGetSystemConfigurationTable (&gEfiDebugAgentGuid, (VOID **)&Mailbox);
+  Status = EfiGetSystemConfigurationTable (
+             &gEfiDebugAgentGuid,
+             (VOID **)&Mailbox
+             );
   if ((Status == EFI_SUCCESS) && (Mailbox != NULL)) {
     VerifyMailboxChecksum (Mailbox);
     return Mailbox;
@@ -264,7 +301,8 @@ SetupDebugAgentEnvironment (
   // Get original IDT address and size.
   //
   AsmReadIdtr ((IA32_DESCRIPTOR *)&Idtr);
-  IdtEntryCount = (UINT16)((Idtr.Limit + 1) / sizeof (IA32_IDT_GATE_DESCRIPTOR));
+  IdtEntryCount = (UINT16)((Idtr.Limit + 1) /
+                           sizeof (IA32_IDT_GATE_DESCRIPTOR));
   if (IdtEntryCount < 33) {
     ZeroMem (&mIdtEntryTable, sizeof (IA32_IDT_GATE_DESCRIPTOR) * 33);
     //
@@ -303,13 +341,28 @@ SetupDebugAgentEnvironment (
   //
   // Initialize Debug Timer hardware and save its initial count and frequency
   //
-  mDebugMpContext.DebugTimerInitCount = InitializeDebugTimer (&DebugTimerFrequency, TRUE);
-  UpdateMailboxContent (mMailboxPointer, DEBUG_MAILBOX_DEBUG_TIMER_FREQUENCY, DebugTimerFrequency);
+  mDebugMpContext.DebugTimerInitCount = InitializeDebugTimer (
+                                          &DebugTimerFrequency,
+                                          TRUE
+                                          );
+  UpdateMailboxContent (
+    mMailboxPointer,
+    DEBUG_MAILBOX_DEBUG_TIMER_FREQUENCY,
+    DebugTimerFrequency
+    );
   //
   // Initialize debug communication port
   //
-  DebugPortHandle = (UINT64)(UINTN)DebugPortInitialize ((VOID *)(UINTN)mMailboxPointer->DebugPortHandle, NULL);
-  UpdateMailboxContent (mMailboxPointer, DEBUG_MAILBOX_DEBUG_PORT_HANDLE_INDEX, DebugPortHandle);
+  DebugPortHandle = (UINT64)(UINTN)DebugPortInitialize (
+                                     (VOID *)(UINTN)mMailboxPointer->
+                                       DebugPortHandle,
+                                     NULL
+                                     );
+  UpdateMailboxContent (
+    mMailboxPointer,
+    DEBUG_MAILBOX_DEBUG_PORT_HANDLE_INDEX,
+    DebugPortHandle
+    );
 
   if (Mailbox == NULL) {
     //
@@ -404,7 +457,10 @@ InitializeDebugAgent (
       // Check if Debug Agent has been initialized before
       //
       if (IsDebugAgentInitialzed ()) {
-        DEBUG ((DEBUG_INFO, "Debug Agent: The former agent will be overwritten by the new one!\n"));
+        DEBUG ((
+          DEBUG_INFO,
+          "Debug Agent: The former agent will be overwritten by the new one!\n"
+          ));
       }
 
       mMultiProcessorDebugSupport = TRUE;
@@ -413,7 +469,10 @@ InitializeDebugAgent (
       //
       AsmReadIdtr (&IdtDescriptor);
       mSaveIdtTableSize = IdtDescriptor.Limit + 1;
-      mSavedIdtTable    = AllocateCopyPool (mSaveIdtTableSize, (VOID *)IdtDescriptor.Base);
+      mSavedIdtTable    = AllocateCopyPool (
+                            mSaveIdtTableSize,
+                            (VOID *)IdtDescriptor.Base
+                            );
       //
       // Check if Debug Agent initialized in DXE phase
       //
@@ -465,7 +524,11 @@ InitializeDebugAgent (
           //
           AsmReadIdtr (&IdtDescriptor);
           IdtDescriptor.Limit = (UINT16)(mSaveIdtTableSize - 1);
-          CopyMem ((VOID *)IdtDescriptor.Base, mSavedIdtTable, mSaveIdtTableSize);
+          CopyMem (
+            (VOID *)IdtDescriptor.Base,
+            mSavedIdtTable,
+            mSaveIdtTableSize
+            );
           AsmWriteIdtr (&IdtDescriptor);
           FreePool (mSavedIdtTable);
           mDebugAgentInitialized = FALSE;
@@ -509,8 +572,10 @@ InitializeDebugAgent (
       if (Context != NULL) {
         Ia32Idtr        =  (IA32_DESCRIPTOR *)Context;
         Ia32IdtEntry    = (IA32_IDT_ENTRY *)(Ia32Idtr->Base);
-        MailboxLocation = (UINT64 *)((UINTN)Ia32IdtEntry[DEBUG_MAILBOX_VECTOR].Bits.OffsetLow +
-                                     ((UINTN)Ia32IdtEntry[DEBUG_MAILBOX_VECTOR].Bits.OffsetHigh << 16));
+        MailboxLocation =
+          (UINT64 *)((UINTN)Ia32IdtEntry[DEBUG_MAILBOX_VECTOR].Bits.OffsetLow +
+                     ((UINTN)Ia32IdtEntry[DEBUG_MAILBOX_VECTOR].
+                        Bits.OffsetHigh << 16));
         Mailbox = (DEBUG_AGENT_MAILBOX *)(UINTN)(*MailboxLocation);
         VerifyMailboxChecksum (Mailbox);
       }
@@ -542,7 +607,10 @@ InitializeDebugAgent (
       // Only DEBUG_AGENT_INIT_PREMEM_SEC and DEBUG_AGENT_INIT_POSTMEM_SEC are allowed for this
       // Debug Agent library instance.
       //
-      DEBUG ((DEBUG_ERROR, "Debug Agent: The InitFlag value is not allowed!\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "Debug Agent: The InitFlag value is not allowed!\n"
+        ));
       CpuDeadLoop ();
       break;
   }

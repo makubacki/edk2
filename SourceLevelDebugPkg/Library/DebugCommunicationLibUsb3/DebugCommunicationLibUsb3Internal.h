@@ -116,9 +116,11 @@
 #define ED_BULK_OUT  2
 #define ED_BULK_IN   6
 
-#define XHC_LOW_32BIT(Addr64)      ((UINT32)(((UINTN)(Addr64)) & 0xFFFFFFFF))
-#define XHC_HIGH_32BIT(Addr64)     ((UINT32)(RShiftU64((UINT64)(UINTN)(Addr64), 32) & 0xFFFFFFFF))
-#define XHC_BIT_IS_SET(Data, Bit)  ((BOOLEAN)(((Data) & (Bit)) == (Bit)))
+#define XHC_LOW_32BIT(Addr64)        ((UINT32)(((UINTN)(Addr64)) & 0xFFFFFFFF))
+#define XHC_HIGH_32BIT( \
+                      Addr64)     \
+                                     ((UINT32)(RShiftU64((UINT64)(UINTN)(Addr64), 32) & 0xFFFFFFFF))
+#define XHC_BIT_IS_SET(Data, Bit)    ((BOOLEAN)(((Data) & (Bit)) == (Bit)))
 
 //
 // Endpoint Type (EP Type).

@@ -17,13 +17,22 @@ UINT16  mString0Desc[] = {
 UINT16  mManufacturerStrDesc[] = {
   //  String Descriptor Type + Length
   (USB_DESC_TYPE_STRING << 8) + MANU_DESC_LEN,
-  'I',                                        'n','t', 'e', 'l'
+  'I',                                        'n', 't', 'e', 'l'
 };
 
 UINT16  mProductStrDesc[] = {
   //  String Descriptor Type + Length
   (USB_DESC_TYPE_STRING << 8) +  PRODUCT_DESC_LEN,
-  'U',                                            'S','B', ' ', '3', '.', '0', ' ', 'D', 'e', 'b', 'u', 'g', ' ', 'C', 'a', 'b', 'l', 'e'
+  'U',                                            'S',
+  'B',                                            ' ',
+  '3',                                            '.',
+  '0',
+  ' ',                                            'D',
+  'e',                                            'b',
+  'u',                                            'g',
+  ' ',                                            'C',
+  'a',                                            'b',
+  'l',                                            'e'
 };
 
 UINT16  mSerialNumberStrDesc[] = {
@@ -177,19 +186,35 @@ ProgramXhciBaseAddress (
   UINT32                High;
   EFI_PHYSICAL_ADDRESS  XhciMmioBase;
 
-  Low           = PciRead32 (PcdGet32 (PcdUsbXhciPciAddress) + PCI_BASE_ADDRESSREG_OFFSET);
-  High          = PciRead32 (PcdGet32 (PcdUsbXhciPciAddress) + PCI_BASE_ADDRESSREG_OFFSET + 4);
+  Low = PciRead32 (
+          PcdGet32 (PcdUsbXhciPciAddress) +
+          PCI_BASE_ADDRESSREG_OFFSET
+          );
+  High = PciRead32 (
+           PcdGet32 (PcdUsbXhciPciAddress) +
+           PCI_BASE_ADDRESSREG_OFFSET + 4
+           );
   XhciMmioBase  = (EFI_PHYSICAL_ADDRESS)(LShiftU64 ((UINT64)High, 32) | Low);
   XhciMmioBase &= XHCI_BASE_ADDRESS_64_BIT_MASK;
 
   if ((XhciMmioBase == 0) || (XhciMmioBase == XHCI_BASE_ADDRESS_64_BIT_MASK)) {
     XhciMmioBase = PcdGet64 (PcdUsbXhciMemorySpaceBase);
-    PciWrite32 (PcdGet32 (PcdUsbXhciPciAddress) + PCI_BASE_ADDRESSREG_OFFSET, XhciMmioBase & 0xFFFFFFFF);
-    PciWrite32 (PcdGet32 (PcdUsbXhciPciAddress) + PCI_BASE_ADDRESSREG_OFFSET + 4, (RShiftU64 (XhciMmioBase, 32) & 0xFFFFFFFF));
+    PciWrite32 (
+      PcdGet32 (PcdUsbXhciPciAddress) + PCI_BASE_ADDRESSREG_OFFSET,
+      XhciMmioBase & 0xFFFFFFFF
+      );
+    PciWrite32 (
+      PcdGet32 (PcdUsbXhciPciAddress) + PCI_BASE_ADDRESSREG_OFFSET +
+      4,
+      (RShiftU64 (XhciMmioBase, 32) & 0xFFFFFFFF)
+      );
   }
 
   PciCmd = PciRead16 (PcdGet32 (PcdUsbXhciPciAddress) + PCI_COMMAND_OFFSET);
-  if (((PciCmd & EFI_PCI_COMMAND_MEMORY_SPACE) == 0) || ((PciCmd & EFI_PCI_COMMAND_BUS_MASTER) == 0)) {
+  if (((PciCmd & EFI_PCI_COMMAND_MEMORY_SPACE) == 0) || ((PciCmd &
+                                                          EFI_PCI_COMMAND_BUS_MASTER)
+                                                         == 0))
+  {
     PciCmd |= EFI_PCI_COMMAND_MEMORY_SPACE | EFI_PCI_COMMAND_BUS_MASTER;
     PciWrite16 (PcdGet32 (PcdUsbXhciPciAddress) + PCI_COMMAND_OFFSET, PciCmd);
   }
@@ -262,11 +287,23 @@ CalculateUsbDebugPortMmioBase (
     goto Done;
   }
 
-  ProgInterface = PciRead8 (PcdGet32 (PcdUsbXhciPciAddress) + PCI_CLASSCODE_OFFSET);
-  SubClassCode  = PciRead8 (PcdGet32 (PcdUsbXhciPciAddress) + PCI_CLASSCODE_OFFSET + 1);
-  BaseCode      = PciRead8 (PcdGet32 (PcdUsbXhciPciAddress) + PCI_CLASSCODE_OFFSET + 2);
+  ProgInterface = PciRead8 (
+                    PcdGet32 (PcdUsbXhciPciAddress) +
+                    PCI_CLASSCODE_OFFSET
+                    );
+  SubClassCode = PciRead8 (
+                   PcdGet32 (PcdUsbXhciPciAddress) +
+                   PCI_CLASSCODE_OFFSET + 1
+                   );
+  BaseCode = PciRead8 (
+               PcdGet32 (PcdUsbXhciPciAddress) +
+               PCI_CLASSCODE_OFFSET + 2
+               );
 
-  if ((ProgInterface != PCI_IF_XHCI) || (SubClassCode != PCI_CLASS_SERIAL_USB) || (BaseCode != PCI_CLASS_SERIAL)) {
+  if ((ProgInterface != PCI_IF_XHCI) || (SubClassCode !=
+                                         PCI_CLASS_SERIAL_USB) || (BaseCode !=
+                                                                   PCI_CLASS_SERIAL))
+  {
     goto Done;
   }
 
@@ -275,7 +312,10 @@ CalculateUsbDebugPortMmioBase (
   //
   // Get capability pointer from HCCPARAMS at offset 0x10
   //
-  CapabilityPointer = Handle->XhciMmioBase + (MmioRead32 ((UINTN)(Handle->XhciMmioBase + XHC_HCCPARAMS_OFFSET)) >> 16) * 4;
+  CapabilityPointer = Handle->XhciMmioBase + (MmioRead32 (
+                                                (UINTN)(Handle->XhciMmioBase +
+                                                        XHC_HCCPARAMS_OFFSET)
+                                                ) >> 16) * 4;
 
   //
   // Search XHCI debug capability
@@ -288,7 +328,9 @@ CalculateUsbDebugPortMmioBase (
       break;
     }
 
-    if ((((Capability & XHC_NEXT_CAPABILITY_MASK) >> 8) & XHC_CAPABILITY_ID_MASK) == 0) {
+    if ((((Capability & XHC_NEXT_CAPABILITY_MASK) >> 8) &
+         XHC_CAPABILITY_ID_MASK) == 0)
+    {
       //
       // Reach the end of capability list, quit
       //
@@ -384,8 +426,10 @@ CreateEventRing (
 
   EventRing->EventRingSeg0    = (EFI_PHYSICAL_ADDRESS)(UINTN)Buf;
   EventRing->TrbNumber        = EVENT_RING_TRB_NUMBER;
-  EventRing->EventRingDequeue = (EFI_PHYSICAL_ADDRESS)(UINTN)EventRing->EventRingSeg0;
-  EventRing->EventRingEnqueue = (EFI_PHYSICAL_ADDRESS)(UINTN)EventRing->EventRingSeg0;
+  EventRing->EventRingDequeue =
+    (EFI_PHYSICAL_ADDRESS)(UINTN)EventRing->EventRingSeg0;
+  EventRing->EventRingEnqueue =
+    (EFI_PHYSICAL_ADDRESS)(UINTN)EventRing->EventRingSeg0;
 
   //
   // Software maintains an Event Ring Consumer Cycle State (CCS) bit, initializing it to '1'
@@ -485,7 +529,8 @@ CreateTransferRing (
   // To form a ring (or circular queue) a Link TRB may be inserted at the end of a ring to
   // point to the first TRB in the ring.
   //
-  EndTrb        = (LINK_TRB *)((UINTN)Buf + sizeof (TRB_TEMPLATE) * (TrbNum - 1));
+  EndTrb        = (LINK_TRB *)((UINTN)Buf + sizeof (TRB_TEMPLATE) * (TrbNum -
+                                                                     1));
   EndTrb->Type  = TRB_TYPE_LINK;
   EndTrb->PtrLo = XHC_LOW_32BIT (Buf);
   EndTrb->PtrHi = XHC_HIGH_32BIT (Buf);
@@ -529,68 +574,95 @@ CreateDebugCapabilityContext (
   ZeroMem (Buf, sizeof (XHC_DC_CONTEXT));
 
   DebugCapabilityContext         = (XHC_DC_CONTEXT *)(UINTN)Buf;
-  Handle->DebugCapabilityContext = (EFI_PHYSICAL_ADDRESS)(UINTN)DebugCapabilityContext;
+  Handle->DebugCapabilityContext =
+    (EFI_PHYSICAL_ADDRESS)(UINTN)DebugCapabilityContext;
 
   //
   // Initialize DbcInfoContext.
   //
-  DebugCapabilityContext->DbcInfoContext.String0Length         = STRING0_DESC_LEN;
+  DebugCapabilityContext->DbcInfoContext.String0Length =
+    STRING0_DESC_LEN;
   DebugCapabilityContext->DbcInfoContext.ManufacturerStrLength = MANU_DESC_LEN;
-  DebugCapabilityContext->DbcInfoContext.ProductStrLength      = PRODUCT_DESC_LEN;
-  DebugCapabilityContext->DbcInfoContext.SerialNumberStrLength = SERIAL_DESC_LEN;
+  DebugCapabilityContext->DbcInfoContext.ProductStrLength      =
+    PRODUCT_DESC_LEN;
+  DebugCapabilityContext->DbcInfoContext.SerialNumberStrLength =
+    SERIAL_DESC_LEN;
 
   //
   // Initialize EpOutContext.
   //
-  DebugCapabilityContext->EpOutContext.CErr             = 0x3;
-  DebugCapabilityContext->EpOutContext.EPType           = ED_BULK_OUT;
-  DebugCapabilityContext->EpOutContext.MaxPacketSize    = XHCI_DEBUG_DEVICE_MAX_PACKET_SIZE;
+  DebugCapabilityContext->EpOutContext.CErr          = 0x3;
+  DebugCapabilityContext->EpOutContext.EPType        = ED_BULK_OUT;
+  DebugCapabilityContext->EpOutContext.MaxPacketSize =
+    XHCI_DEBUG_DEVICE_MAX_PACKET_SIZE;
   DebugCapabilityContext->EpOutContext.AverageTRBLength = 0x1000;
 
   //
   // Initialize EpInContext.
   //
-  DebugCapabilityContext->EpInContext.CErr             = 0x3;
-  DebugCapabilityContext->EpInContext.EPType           = ED_BULK_IN;
-  DebugCapabilityContext->EpInContext.MaxPacketSize    = XHCI_DEBUG_DEVICE_MAX_PACKET_SIZE;
+  DebugCapabilityContext->EpInContext.CErr          = 0x3;
+  DebugCapabilityContext->EpInContext.EPType        = ED_BULK_IN;
+  DebugCapabilityContext->EpInContext.MaxPacketSize =
+    XHCI_DEBUG_DEVICE_MAX_PACKET_SIZE;
   DebugCapabilityContext->EpInContext.AverageTRBLength = 0x1000;
 
   //
   // Update string descriptor address
   //
-  String0Desc = (UINT8 *)AllocateAlignBuffer (STRING0_DESC_LEN + MANU_DESC_LEN + PRODUCT_DESC_LEN + SERIAL_DESC_LEN);
+  String0Desc = (UINT8 *)AllocateAlignBuffer (
+                           STRING0_DESC_LEN + MANU_DESC_LEN +
+                           PRODUCT_DESC_LEN + SERIAL_DESC_LEN
+                           );
   ASSERT (String0Desc != NULL);
-  ZeroMem (String0Desc, STRING0_DESC_LEN + MANU_DESC_LEN + PRODUCT_DESC_LEN + SERIAL_DESC_LEN);
+  ZeroMem (
+    String0Desc,
+    STRING0_DESC_LEN + MANU_DESC_LEN + PRODUCT_DESC_LEN +
+    SERIAL_DESC_LEN
+    );
   CopyMem (String0Desc, mString0Desc, STRING0_DESC_LEN);
-  DebugCapabilityContext->DbcInfoContext.String0DescAddress = (UINT64)(UINTN)String0Desc;
+  DebugCapabilityContext->DbcInfoContext.String0DescAddress =
+    (UINT64)(UINTN)String0Desc;
 
   ManufacturerStrDesc = String0Desc + STRING0_DESC_LEN;
   CopyMem (ManufacturerStrDesc, mManufacturerStrDesc, MANU_DESC_LEN);
-  DebugCapabilityContext->DbcInfoContext.ManufacturerStrDescAddress = (UINT64)(UINTN)ManufacturerStrDesc;
+  DebugCapabilityContext->DbcInfoContext.ManufacturerStrDescAddress =
+    (UINT64)(UINTN)ManufacturerStrDesc;
 
   ProductStrDesc = ManufacturerStrDesc + MANU_DESC_LEN;
   CopyMem (ProductStrDesc, mProductStrDesc, PRODUCT_DESC_LEN);
-  DebugCapabilityContext->DbcInfoContext.ProductStrDescAddress = (UINT64)(UINTN)ProductStrDesc;
+  DebugCapabilityContext->DbcInfoContext.ProductStrDescAddress =
+    (UINT64)(UINTN)ProductStrDesc;
 
   SerialNumberStrDesc = ProductStrDesc + PRODUCT_DESC_LEN;
   CopyMem (SerialNumberStrDesc, mSerialNumberStrDesc, SERIAL_DESC_LEN);
-  DebugCapabilityContext->DbcInfoContext.SerialNumberStrDescAddress = (UINT64)(UINTN)SerialNumberStrDesc;
+  DebugCapabilityContext->DbcInfoContext.SerialNumberStrDescAddress =
+    (UINT64)(UINTN)SerialNumberStrDesc;
 
   //
   // Allocate and initialize the Transfer Ring for the Input Endpoint Context.
   //
   ZeroMem (&Handle->TransferRingIn, sizeof (TRANSFER_RING));
   CreateTransferRing (Handle, TR_RING_TRB_NUMBER, &Handle->TransferRingIn);
-  DebugCapabilityContext->EpInContext.PtrLo = XHC_LOW_32BIT (Handle->TransferRingIn.RingSeg0) | BIT0;
-  DebugCapabilityContext->EpInContext.PtrHi = XHC_HIGH_32BIT (Handle->TransferRingIn.RingSeg0);
+  DebugCapabilityContext->EpInContext.PtrLo = XHC_LOW_32BIT (
+                                                Handle->TransferRingIn.RingSeg0
+                                                ) | BIT0;
+  DebugCapabilityContext->EpInContext.PtrHi = XHC_HIGH_32BIT (
+                                                Handle->TransferRingIn.RingSeg0
+                                                );
 
   //
   // Allocate and initialize the Transfer Ring for the Output Endpoint Context.
   //
   ZeroMem (&Handle->TransferRingOut, sizeof (TRANSFER_RING));
   CreateTransferRing (Handle, TR_RING_TRB_NUMBER, &Handle->TransferRingOut);
-  DebugCapabilityContext->EpOutContext.PtrLo = XHC_LOW_32BIT (Handle->TransferRingOut.RingSeg0) | BIT0;
-  DebugCapabilityContext->EpOutContext.PtrHi = XHC_HIGH_32BIT (Handle->TransferRingOut.RingSeg0);
+  DebugCapabilityContext->EpOutContext.PtrLo = XHC_LOW_32BIT (
+                                                 Handle->TransferRingOut.
+                                                   RingSeg0
+                                                 ) | BIT0;
+  DebugCapabilityContext->EpOutContext.PtrHi = XHC_HIGH_32BIT (
+                                                 Handle->TransferRingOut.
+                                                   RingSeg0
+                                                 );
 
   //
   // Program the Debug Capability Context Pointer (DCCP) register(7.6.8.7)
@@ -629,7 +701,10 @@ XhcDetectDebugCapabilityReady (
     // If first initialization is failed, we will try to enable debug device in the
     // Poll function invoked by timer.
     //
-    TimeOut = DivU64x32 (PcdGet64 (PcdUsbXhciDebugDetectTimeout), XHC_POLL_DELAY) + 1;
+    TimeOut = DivU64x32 (
+                PcdGet64 (PcdUsbXhciDebugDetectTimeout),
+                XHC_POLL_DELAY
+                ) + 1;
   }
 
   do {
@@ -673,11 +748,16 @@ InitializeUsbDebugHardware (
   UINT32                Dcddi1;
 
   XhciOpRegister = Handle->XhciOpRegister;
-  TotalUsb3Port  = MmioRead32 (((UINTN)Handle->XhciMmioBase + XHC_HCSPARAMS1_OFFSET)) >> 24;
+  TotalUsb3Port  = MmioRead32 (
+                     ((UINTN)Handle->XhciMmioBase +
+                      XHC_HCSPARAMS1_OFFSET)
+                     ) >> 24;
 
   if (Handle->Initialized == USB3DBG_NOT_ENABLED) {
     Dcddi1 = XhcReadDebugReg (Handle, XHC_DC_DCDDI1);
-    if (Dcddi1 != (UINT32)((XHCI_DEBUG_DEVICE_VENDOR_ID << 16) | XHCI_DEBUG_DEVICE_PROTOCOL)) {
+    if (Dcddi1 != (UINT32)((XHCI_DEBUG_DEVICE_VENDOR_ID << 16) |
+                           XHCI_DEBUG_DEVICE_PROTOCOL))
+    {
       //
       // The debug capability has been reset by other code, return device error.
       //
@@ -696,7 +776,10 @@ InitializeUsbDebugHardware (
   // Allocate data buffer with max packet size for data read and data poll.
   // Allocate data buffer for data write.
   //
-  Buffer = AllocateAlignBuffer (XHCI_DEBUG_DEVICE_MAX_PACKET_SIZE * 2 + USB3_DEBUG_PORT_WRITE_MAX_PACKET_SIZE);
+  Buffer = AllocateAlignBuffer (
+             XHCI_DEBUG_DEVICE_MAX_PACKET_SIZE * 2 +
+             USB3_DEBUG_PORT_WRITE_MAX_PACKET_SIZE
+             );
   if (Buffer == NULL) {
     //
     // AllocatePages can not still work now, return fail and do not initialize now.
@@ -708,23 +791,30 @@ InitializeUsbDebugHardware (
   // Reset port to get debug device discovered
   //
   for (Index = 0; Index < TotalUsb3Port; Index++) {
-    XhcSetR32Bit ((UINTN)XhciOpRegister + XHC_PORTSC_OFFSET + Index * 0x10, BIT4);
+    XhcSetR32Bit (
+      (UINTN)XhciOpRegister + XHC_PORTSC_OFFSET + Index * 0x10,
+      BIT4
+      );
     MicroSecondDelay (10 * 1000);
   }
 
   //
   // Clear DCE bit and LSE bit in DCCTRL
   //
-  if ((XhcReadDebugReg (Handle, XHC_DC_DCCTRL) & (BIT1|BIT31)) == (BIT1|BIT31)) {
+  if ((XhcReadDebugReg (Handle, XHC_DC_DCCTRL) & (BIT1|BIT31)) == (BIT1|
+                                                                   BIT31))
+  {
     XhcClearDebugRegBit (Handle, XHC_DC_DCCTRL, BIT1|BIT31);
   }
 
   //
   // Construct the buffer for read, poll and write.
   //
-  Handle->UrbIn.Data  = (EFI_PHYSICAL_ADDRESS)(UINTN)Buffer;
-  Handle->Data        = (EFI_PHYSICAL_ADDRESS)(UINTN)Buffer + XHCI_DEBUG_DEVICE_MAX_PACKET_SIZE;
-  Handle->UrbOut.Data = Handle->UrbIn.Data + XHCI_DEBUG_DEVICE_MAX_PACKET_SIZE * 2;
+  Handle->UrbIn.Data = (EFI_PHYSICAL_ADDRESS)(UINTN)Buffer;
+  Handle->Data       = (EFI_PHYSICAL_ADDRESS)(UINTN)Buffer +
+                       XHCI_DEBUG_DEVICE_MAX_PACKET_SIZE;
+  Handle->UrbOut.Data = Handle->UrbIn.Data + XHCI_DEBUG_DEVICE_MAX_PACKET_SIZE *
+                        2;
 
   //
   // Initialize event ring
@@ -755,15 +845,23 @@ InitializeUsbDebugHardware (
     );
 
 Enable:
-  if ((Handle->Initialized == USB3DBG_NOT_ENABLED) && (!Handle->ChangePortPower)) {
+  if ((Handle->Initialized == USB3DBG_NOT_ENABLED) &&
+      (!Handle->ChangePortPower))
+  {
     //
     // If the first time detection is failed, turn port power off and on in order to
     // reset port status this time, then try to check if debug device is ready again.
     //
     for (Index = 0; Index < TotalUsb3Port; Index++) {
-      XhcClearR32Bit ((UINTN)XhciOpRegister + XHC_PORTSC_OFFSET + Index * 0x10, BIT9);
+      XhcClearR32Bit (
+        (UINTN)XhciOpRegister + XHC_PORTSC_OFFSET + Index * 0x10,
+        BIT9
+        );
       MicroSecondDelay (XHC_DEBUG_PORT_ON_OFF_DELAY);
-      XhcSetR32Bit ((UINTN)XhciOpRegister + XHC_PORTSC_OFFSET + Index * 0x10, BIT9);
+      XhcSetR32Bit (
+        (UINTN)XhciOpRegister + XHC_PORTSC_OFFSET + Index * 0x10,
+        BIT9
+        );
       MicroSecondDelay (XHC_DEBUG_PORT_ON_OFF_DELAY);
       Handle->ChangePortPower = TRUE;
     }
@@ -1010,7 +1108,13 @@ DebugPortWriteBuffer (
       Sent = (UINT8)(NumberOfBytes - Total);
     }
 
-    XhcDataTransfer (UsbDebugPortHandle, EfiUsbDataOut, Buffer + Total, &Sent, DATA_TRANSFER_WRITE_TIMEOUT);
+    XhcDataTransfer (
+      UsbDebugPortHandle,
+      EfiUsbDataOut,
+      Buffer + Total,
+      &Sent,
+      DATA_TRANSFER_WRITE_TIMEOUT
+      );
     Total += Sent;
   }
 
@@ -1076,7 +1180,13 @@ DebugPortPollBuffer (
   // Read data as much as we can
   //
   Length = XHCI_DEBUG_DEVICE_MAX_PACKET_SIZE;
-  XhcDataTransfer (UsbDebugPortHandle, EfiUsbDataIn, (VOID *)(UINTN)UsbDebugPortHandle->Data, &Length, DATA_TRANSFER_POLL_TIMEOUT);
+  XhcDataTransfer (
+    UsbDebugPortHandle,
+    EfiUsbDataIn,
+    (VOID *)(UINTN)UsbDebugPortHandle->Data,
+    &Length,
+    DATA_TRANSFER_POLL_TIMEOUT
+    );
 
   if (Length > XHCI_DEBUG_DEVICE_MAX_PACKET_SIZE) {
     return FALSE;
@@ -1129,7 +1239,10 @@ DebugPortInitialize (
   //
   // Validate the PCD PcdDebugPortHandleBufferSize value
   //
-  ASSERT (PcdGet16 (PcdDebugPortHandleBufferSize) == sizeof (USB3_DEBUG_PORT_HANDLE));
+  ASSERT (
+    PcdGet16 (PcdDebugPortHandleBufferSize) ==
+    sizeof (USB3_DEBUG_PORT_HANDLE)
+    );
 
   if ((Function == NULL) && (Context != NULL)) {
     SetUsb3DebugPortInstance ((USB3_DEBUG_PORT_HANDLE *)Context);

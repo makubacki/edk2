@@ -61,7 +61,8 @@ Usb3IoMmuPpiNotify (
 }
 
 EFI_PEI_NOTIFY_DESCRIPTOR  mUsb3IoMmuPpiNotifyDesc = {
-  (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
+  (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK |
+   EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
   &gEdkiiIoMmuPpiGuid,
   Usb3IoMmuPpiNotify
 };
@@ -196,7 +197,11 @@ GetUsb3DebugPortInstanceAddrPtr (
                 sizeof (EFI_PHYSICAL_ADDRESS) + sizeof (USB3_DEBUG_PORT_HANDLE)
                 );
     ASSERT (AddrPtr != NULL);
-    ZeroMem (AddrPtr, sizeof (EFI_PHYSICAL_ADDRESS) + sizeof (USB3_DEBUG_PORT_HANDLE));
+    ZeroMem (
+      AddrPtr,
+      sizeof (EFI_PHYSICAL_ADDRESS) +
+      sizeof (USB3_DEBUG_PORT_HANDLE)
+      );
     Instance              = (USB3_DEBUG_PORT_HANDLE *)(AddrPtr + 1);
     *AddrPtr              = (EFI_PHYSICAL_ADDRESS)(UINTN)Instance;
     Instance->FromHob     = TRUE;

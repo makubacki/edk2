@@ -376,7 +376,10 @@ InstallSerialIo (
                   NULL
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Debug Agent: Failed to install EFI Serial IO Protocol on Debug Port!\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Debug Agent: Failed to install EFI Serial IO Protocol on Debug Port!\n"
+      ));
   }
 }
 
@@ -453,7 +456,9 @@ SerialSetAttributes (
   // SERIAL_PORT_DEFAULT_RECEIVE_FIFO_DEPTH.  The Debug Communication Library may actually be
   // using a larger FIFO, but there is no way to tell.
   //
-  if ((ReceiveFifoDepth == 0) || (ReceiveFifoDepth >= SERIAL_PORT_DEFAULT_RECEIVE_FIFO_DEPTH)) {
+  if ((ReceiveFifoDepth == 0) || (ReceiveFifoDepth >=
+                                  SERIAL_PORT_DEFAULT_RECEIVE_FIFO_DEPTH))
+  {
     mSerialIoMode.ReceiveFifoDepth = SERIAL_PORT_DEFAULT_RECEIVE_FIFO_DEPTH;
   } else {
     return EFI_INVALID_PARAMETER;
@@ -532,7 +537,9 @@ SerialGetControl (
   // Check to see if the Terminal FIFO is empty and
   // check to see if the input buffer in the Debug Communication Library is empty
   //
-  if (!IsDebugTerminalFifoEmpty (&mSerialFifoForTerminal) || DebugPortPollBuffer (Handle)) {
+  if (!IsDebugTerminalFifoEmpty (&mSerialFifoForTerminal) ||
+      DebugPortPollBuffer (Handle))
+  {
     *Control &= ~EFI_SERIAL_INPUT_BUFFER_EMPTY;
   }
 
@@ -690,12 +697,20 @@ SerialRead (
         //
         // Add the debug symbol into Debug FIFO
         //
-        DebugAgentMsgPrint (DEBUG_AGENT_INFO, "Terminal Timer attach symbol received %x", *Data8);
+        DebugAgentMsgPrint (
+          DEBUG_AGENT_INFO,
+          "Terminal Timer attach symbol received %x",
+          *Data8
+          );
         DebugTerminalFifoAdd (&mSerialFifoForDebug, *Data8);
       } else if (*Data8 == DEBUG_STARTING_SYMBOL_NORMAL) {
         Status = ReadRemainingBreakPacket (Handle, &DebugHeader);
         if (Status == EFI_SUCCESS) {
-          DebugAgentMsgPrint (DEBUG_AGENT_INFO, "Terminal Timer break symbol received %x", DebugHeader.Command);
+          DebugAgentMsgPrint (
+            DEBUG_AGENT_INFO,
+            "Terminal Timer break symbol received %x",
+            DebugHeader.Command
+            );
           DebugTerminalFifoAdd (&mSerialFifoForDebug, DebugHeader.Command);
         }
 
@@ -765,7 +780,11 @@ DebugReadBreakFromDebugPort (
     //
     DebugAgentReadBuffer (Handle, Data8, 1, 0);
     if (*Data8 == DEBUG_STARTING_SYMBOL_ATTACH) {
-      DebugAgentMsgPrint (DEBUG_AGENT_INFO, "Debug Timer attach symbol received %x", *Data8);
+      DebugAgentMsgPrint (
+        DEBUG_AGENT_INFO,
+        "Debug Timer attach symbol received %x",
+        *Data8
+        );
       *BreakSymbol = *Data8;
       return EFI_SUCCESS;
     }
@@ -773,7 +792,11 @@ DebugReadBreakFromDebugPort (
     if (*Data8 == DEBUG_STARTING_SYMBOL_NORMAL) {
       Status = ReadRemainingBreakPacket (Handle, &DebugHeader);
       if (Status == EFI_SUCCESS) {
-        DebugAgentMsgPrint (DEBUG_AGENT_INFO, "Debug Timer break symbol received %x", DebugHeader.Command);
+        DebugAgentMsgPrint (
+          DEBUG_AGENT_INFO,
+          "Debug Timer break symbol received %x",
+          DebugHeader.Command
+          );
         *BreakSymbol = DebugHeader.Command;
         return EFI_SUCCESS;
       }

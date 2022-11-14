@@ -130,7 +130,8 @@ typedef struct {
 //
 #define DEBUG_DATA_UPPER_LIMIT  0xff                    // Upper limit for the data size, by the limit of the packet header definition.
 
-#define DEBUG_DATA_MAXIMUM_REAL_DATA  (DEBUG_DATA_UPPER_LIMIT - sizeof (DEBUG_PACKET_HEADER))
+#define DEBUG_DATA_MAXIMUM_REAL_DATA  \
+  (DEBUG_DATA_UPPER_LIMIT - sizeof (DEBUG_PACKET_HEADER))
 
 //
 // Response data for DEBUG_COMMAND_BREAK_CAUSE

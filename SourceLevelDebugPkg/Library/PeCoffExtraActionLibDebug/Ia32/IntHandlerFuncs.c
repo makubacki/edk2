@@ -34,7 +34,10 @@ CheckDebugAgentHandler (
 
   InterruptHandler = IdtEntry[InterruptType].Bits.OffsetLow +
                      (IdtEntry[InterruptType].Bits.OffsetHigh << 16);
-  if ((InterruptHandler >= sizeof (UINT32)) &&  (*(UINT32 *)(InterruptHandler - sizeof (UINT32)) == AGENT_HANDLER_SIGNATURE)) {
+  if ((InterruptHandler >= sizeof (UINT32)) &&  (*(UINT32 *)(InterruptHandler -
+                                                             sizeof (UINT32)) ==
+                                                 AGENT_HANDLER_SIGNATURE))
+  {
     return TRUE;
   } else {
     return FALSE;

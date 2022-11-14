@@ -40,7 +40,12 @@ InitializeDebugTimer (
                            1000000u
                            );
 
-  InitializeApicTimer (ApicTimerDivisor, InitialCount, TRUE, DEBUG_TIMER_VECTOR);
+  InitializeApicTimer (
+    ApicTimerDivisor,
+    InitialCount,
+    TRUE,
+    DEBUG_TIMER_VECTOR
+    );
   //
   // Disable Debug Timer interrupt to avoid it is delivered before Debug Port
   // is initialized
@@ -48,9 +53,19 @@ InitializeDebugTimer (
   DisableApicTimerInterrupt ();
 
   if (DumpFlag) {
-    DEBUG ((DEBUG_INFO, "Debug Timer: FSB Clock    = %d\n", PcdGet32 (PcdFSBClock)));
+    DEBUG ((
+      DEBUG_INFO,
+      "Debug Timer: FSB Clock    = %d\n",
+      PcdGet32 (
+        PcdFSBClock
+        )
+      ));
     DEBUG ((DEBUG_INFO, "Debug Timer: Divisor      = %d\n", ApicTimerDivisor));
-    DEBUG ((DEBUG_INFO, "Debug Timer: Frequency    = %d\n", ApicTimerFrequency));
+    DEBUG ((
+      DEBUG_INFO,
+      "Debug Timer: Frequency    = %d\n",
+      ApicTimerFrequency
+      ));
     DEBUG ((DEBUG_INFO, "Debug Timer: InitialCount = %d\n", InitialCount));
   }
 

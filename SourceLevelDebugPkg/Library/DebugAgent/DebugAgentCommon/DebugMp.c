@@ -8,7 +8,9 @@
 
 #include "DebugAgent.h"
 
-GLOBAL_REMOVE_IF_UNREFERENCED DEBUG_MP_CONTEXT volatile  mDebugMpContext = { 0, 0, 0, { 0 }, { 0 }, 0, 0, 0, 0, FALSE, FALSE };
+GLOBAL_REMOVE_IF_UNREFERENCED DEBUG_MP_CONTEXT volatile  mDebugMpContext = {
+  0, 0, 0, { 0 }, { 0 }, 0, 0, 0, 0, FALSE, FALSE
+};
 
 GLOBAL_REMOVE_IF_UNREFERENCED DEBUG_CPU_DATA volatile  mDebugCpuData = { 0 };
 
@@ -69,7 +71,8 @@ HaltOtherProcessors (
   IN UINT32  CurrentProcessorIndex
   )
 {
-  DebugAgentMsgPrint (DEBUG_AGENT_INFO, "processor[%x]:Try to halt other processors.\n", CurrentProcessorIndex);
+  DebugAgentMsgPrint (DEBUG_AGENT_INFO,
+    "processor[%x]:Try to halt other processors.\n", CurrentProcessorIndex);
   if (!DebugAgentIsBsp (CurrentProcessorIndex)) {
     SetIpiSentByApFlag (TRUE);
   }
@@ -316,7 +319,8 @@ FindNextPendingBreakCpu (
 
   for (Index = 0; Index < DEBUG_CPU_MAX_COUNT / 8; Index++) {
     if (mDebugMpContext.CpuBreakMask[Index] != 0) {
-      return (UINT32)LowBitSet32 (mDebugMpContext.CpuBreakMask[Index]) + Index * 8;
+      return (UINT32)LowBitSet32 (mDebugMpContext.CpuBreakMask[Index]) + Index *
+             8;
     }
   }
 

@@ -27,7 +27,8 @@ IsDrxEnabled (
   IN  UINTN  Dr7
   )
 {
-  return (BOOLEAN)(((Dr7 >> (RegisterIndex * 2)) & (BIT0 | BIT1)) == (BIT0 | BIT1));
+  return (BOOLEAN)(((Dr7 >> (RegisterIndex * 2)) & (BIT0 | BIT1)) == (BIT0 |
+                                                                      BIT1));
 }
 
 /**
@@ -150,7 +151,9 @@ PeCoffLoaderExtraActionCommon (
   //       in the above exception handler
   //
   NewDr7 = AsmReadDr7 () | BIT10; // H/w sets bit 10, some simulators don't
-  if (!IsDrxEnabled (0, NewDr7) && ((AsmReadDr0 () == 0) || (AsmReadDr0 () == Signature))) {
+  if (!IsDrxEnabled (0, NewDr7) && ((AsmReadDr0 () == 0) || (AsmReadDr0 () ==
+                                                             Signature)))
+  {
     //
     // If user changed Dr3 (by setting HW bp in the above exception handler,
     // we will not set Dr0 to 0 in GO/STEP handler because the break cause is not IMAGE_LOAD/_UNLOAD.
@@ -158,7 +161,9 @@ PeCoffLoaderExtraActionCommon (
     AsmWriteDr0 (Dr0);
   }
 
-  if (!IsDrxEnabled (1, NewDr7) && (AsmReadDr1 () == (UINTN)ImageContext->PdbPointer)) {
+  if (!IsDrxEnabled (1, NewDr7) && (AsmReadDr1 () ==
+                                    (UINTN)ImageContext->PdbPointer))
+  {
     AsmWriteDr1 (Dr1);
   }
 
@@ -166,7 +171,9 @@ PeCoffLoaderExtraActionCommon (
     AsmWriteDr2 (Dr2);
   }
 
-  if (!IsDrxEnabled (3, NewDr7) && (AsmReadDr3 () == IO_PORT_BREAKPOINT_ADDRESS)) {
+  if (!IsDrxEnabled (3, NewDr7) && (AsmReadDr3 () ==
+                                    IO_PORT_BREAKPOINT_ADDRESS))
+  {
     AsmWriteDr3 (Dr3);
   }
 

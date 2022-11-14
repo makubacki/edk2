@@ -129,7 +129,8 @@ Usb3MapDmaBuffers (
   Usb3MapOneDmaBuffer (
     PciIo,
     Instance->UrbIn.Data,
-    XHCI_DEBUG_DEVICE_MAX_PACKET_SIZE * 2 + USB3_DEBUG_PORT_WRITE_MAX_PACKET_SIZE
+    XHCI_DEBUG_DEVICE_MAX_PACKET_SIZE * 2 +
+    USB3_DEBUG_PORT_WRITE_MAX_PACKET_SIZE
     );
 
   Usb3MapOneDmaBuffer (
@@ -164,7 +165,8 @@ Usb3MapDmaBuffers (
 
   Usb3MapOneDmaBuffer (
     PciIo,
-    ((XHC_DC_CONTEXT *)(UINTN)Instance->DebugCapabilityContext)->DbcInfoContext.String0DescAddress,
+    ((XHC_DC_CONTEXT *)(UINTN)Instance->DebugCapabilityContext)->DbcInfoContext.
+      String0DescAddress,
     STRING0_DESC_LEN + MANU_DESC_LEN + PRODUCT_DESC_LEN + SERIAL_DESC_LEN
     );
 }
@@ -283,9 +285,16 @@ Usb3PciIoNotify (
                       (VOID **)&PciIo
                       );
       ASSERT_EFI_ERROR (Status);
-      Status = PciIo->GetLocation (PciIo, &PciSegment, &PciBusNumber, &PciDeviceNumber, &PciFunctionNumber);
+      Status = PciIo->GetLocation (
+                        PciIo,
+                        &PciSegment,
+                        &PciBusNumber,
+                        &PciDeviceNumber,
+                        &PciFunctionNumber
+                        );
       ASSERT_EFI_ERROR (Status);
-      PciAddress = (UINT32)((PciBusNumber << 20) | (PciDeviceNumber << 15) | (PciFunctionNumber << 12));
+      PciAddress = (UINT32)((PciBusNumber << 20) | (PciDeviceNumber << 15) |
+                            (PciFunctionNumber << 12));
       if (PciAddress == PcdGet32 (PcdUsbXhciPciAddress)) {
         //
         // Found the PciIo for USB3 debug port.
@@ -460,7 +469,10 @@ DebugCommunicationUsb3DxeConstructor (
     Status  = gBS->AllocatePages (
                      AllocateMaxAddress,
                      EfiACPIMemoryNVS,
-                     EFI_SIZE_TO_PAGES (sizeof (EFI_PHYSICAL_ADDRESS) + sizeof (USB3_DEBUG_PORT_HANDLE)),
+                     EFI_SIZE_TO_PAGES (
+                       sizeof (EFI_PHYSICAL_ADDRESS) +
+                       sizeof (USB3_DEBUG_PORT_HANDLE)
+                       ),
                      &Address
                      );
     if (EFI_ERROR (Status)) {
@@ -468,7 +480,11 @@ DebugCommunicationUsb3DxeConstructor (
     }
 
     AddrPtr = (EFI_PHYSICAL_ADDRESS *)(UINTN)Address;
-    ZeroMem (AddrPtr, sizeof (EFI_PHYSICAL_ADDRESS) + sizeof (USB3_DEBUG_PORT_HANDLE));
+    ZeroMem (
+      AddrPtr,
+      sizeof (EFI_PHYSICAL_ADDRESS) +
+      sizeof (USB3_DEBUG_PORT_HANDLE)
+      );
     Instance = (USB3_DEBUG_PORT_HANDLE *)(AddrPtr + 1);
     CopyMem (Instance, &mUsb3Instance, sizeof (USB3_DEBUG_PORT_HANDLE));
     *AddrPtr = (EFI_PHYSICAL_ADDRESS)(UINTN)Instance;
