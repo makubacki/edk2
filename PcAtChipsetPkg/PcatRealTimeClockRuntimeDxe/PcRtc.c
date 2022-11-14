@@ -327,7 +327,8 @@ PcRtcInit (
   // Set RTC configuration after get original time
   // The value of bit AIE should be reserved.
   //
-  RegisterB.Data = FixedPcdGet8 (PcdInitialValueRtcRegisterB) | (RegisterB.Data & BIT5);
+  RegisterB.Data = FixedPcdGet8 (PcdInitialValueRtcRegisterB) |
+                   (RegisterB.Data & BIT5);
   RtcWrite (RTC_ADDRESS_REGISTER_B, RegisterB.Data);
 
   //
@@ -389,7 +390,8 @@ PcRtcInit (
   Status =  EfiSetVariable (
               L"RTCALARM",
               &gEfiCallerIdGuid,
-              EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
+              EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS |
+              EFI_VARIABLE_NON_VOLATILE,
               sizeof (Time),
               &Time
               );
@@ -613,7 +615,8 @@ PcRtcSetTime (
     Status   = EfiSetVariable (
                  mTimeZoneVariableName,
                  &gEfiCallerIdGuid,
-                 EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
+                 EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS |
+                 EFI_VARIABLE_NON_VOLATILE,
                  sizeof (TimerVar),
                  &TimerVar
                  );
@@ -638,7 +641,13 @@ PcRtcSetTime (
   // Store the century value to RTC before converting to BCD format.
   //
   if (Global->CenturyRtcAddress != 0) {
-    RtcWrite (Global->CenturyRtcAddress, DecimalToBcd8 ((UINT8)(RtcTime.Year / 100)));
+    RtcWrite (
+      Global->CenturyRtcAddress,
+      DecimalToBcd8 (
+        (UINT8)(RtcTime.Year /
+                100)
+        )
+      );
   }
 
   ConvertEfiTimeToRtcTime (&RtcTime, RegisterB);
@@ -898,7 +907,8 @@ PcRtcSetWakeupTime (
   Status =  EfiSetVariable (
               L"RTCALARM",
               &gEfiCallerIdGuid,
-              EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
+              EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS |
+              EFI_VARIABLE_NON_VOLATILE,
               sizeof (RtcTime),
               &RtcTime
               );
@@ -1118,8 +1128,12 @@ RtcTimeFieldsValid (
       (Time->Minute > 59) ||
       (Time->Second > 59) ||
       (Time->Nanosecond > 999999999) ||
-      (!((Time->TimeZone == EFI_UNSPECIFIED_TIMEZONE) || ((Time->TimeZone >= -1440) && (Time->TimeZone <= 1440)))) ||
-      ((Time->Daylight & (~(EFI_TIME_ADJUST_DAYLIGHT | EFI_TIME_IN_DAYLIGHT))) != 0))
+      (!((Time->TimeZone == EFI_UNSPECIFIED_TIMEZONE) || ((Time->TimeZone >=
+                                                           -1440) &&
+                                                          (Time->TimeZone <=
+                                                           1440)))) ||
+      ((Time->Daylight & (~(EFI_TIME_ADJUST_DAYLIGHT |
+                            EFI_TIME_IN_DAYLIGHT))) != 0))
   {
     return EFI_INVALID_PARAMETER;
   }
@@ -1261,10 +1275,13 @@ CompareHMS (
 {
   if ((From->Hour > To->Hour) ||
       ((From->Hour == To->Hour) && (From->Minute > To->Minute)) ||
-      ((From->Hour == To->Hour) && (From->Minute == To->Minute) && (From->Second > To->Second)))
+      ((From->Hour == To->Hour) && (From->Minute == To->Minute) &&
+       (From->Second > To->Second)))
   {
     return 1;
-  } else if ((From->Hour == To->Hour) && (From->Minute == To->Minute) && (From->Second == To->Second)) {
+  } else if ((From->Hour == To->Hour) && (From->Minute == To->Minute) &&
+             (From->Second == To->Second))
+  {
     return 0;
   } else {
     return -1;
@@ -1383,13 +1400,24 @@ PcRtcAcpiTableChangeCallback (
   UINT8       Century;
 
   CenturyRtcAddress = GetCenturyRtcAddress ();
-  if ((CenturyRtcAddress != 0) && (mModuleGlobal.CenturyRtcAddress != CenturyRtcAddress)) {
+  if ((CenturyRtcAddress != 0) && (mModuleGlobal.CenturyRtcAddress !=
+                                   CenturyRtcAddress))
+  {
     mModuleGlobal.CenturyRtcAddress = CenturyRtcAddress;
-    Status                          = PcRtcGetTime (&Time, NULL, &mModuleGlobal);
+    Status                          = PcRtcGetTime (
+                                        &Time,
+                                        NULL,
+                                        &mModuleGlobal
+                                        );
     if (!EFI_ERROR (Status)) {
       Century = (UINT8)(Time.Year / 100);
       Century = DecimalToBcd8 (Century);
-      DEBUG ((DEBUG_INFO, "PcRtc: Write 0x%x to CMOS location 0x%x\n", Century, mModuleGlobal.CenturyRtcAddress));
+      DEBUG ((
+        DEBUG_INFO,
+        "PcRtc: Write 0x%x to CMOS location 0x%x\n",
+        Century,
+        mModuleGlobal.CenturyRtcAddress
+        ));
       RtcWrite (mModuleGlobal.CenturyRtcAddress, Century);
     }
   }

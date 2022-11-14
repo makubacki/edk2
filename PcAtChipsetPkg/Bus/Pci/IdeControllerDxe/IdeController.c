@@ -163,7 +163,9 @@ IdeControllerSupported (
   //
   // Examine Ide PCI Configuration table fields
   //
-  if ((PciClass != PCI_CLASS_MASS_STORAGE) || (PciSubClass != PCI_CLASS_MASS_STORAGE_IDE)) {
+  if ((PciClass != PCI_CLASS_MASS_STORAGE) || (PciSubClass !=
+                                               PCI_CLASS_MASS_STORAGE_IDE))
+  {
     Status = EFI_UNSUPPORTED;
   }
 
@@ -572,7 +574,10 @@ IdeInitCalculateMode (
     return EFI_INVALID_PARAMETER;
   }
 
-  *SupportedModes = AllocateCopyPool (sizeof (EFI_ATA_COLLECTIVE_MODE), &gEfiAtaCollectiveModeTemplate);
+  *SupportedModes = AllocateCopyPool (
+                      sizeof (EFI_ATA_COLLECTIVE_MODE),
+                      &gEfiAtaCollectiveModeTemplate
+                      );
   if (*SupportedModes == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

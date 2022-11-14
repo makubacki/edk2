@@ -53,7 +53,11 @@ InternalGetPerformanceCounterFrequency (
   PerformanceCounterFrequency = NULL;
   GuidHob                     = GetFirstGuidHob (&mFrequencyHobGuid);
   if (GuidHob == NULL) {
-    PerformanceCounterFrequency = (UINT64 *)BuildGuidHob (&mFrequencyHobGuid, sizeof (*PerformanceCounterFrequency));
+    PerformanceCounterFrequency = (UINT64 *)BuildGuidHob (
+                                              &mFrequencyHobGuid,
+                                              sizeof (*
+                                                      PerformanceCounterFrequency)
+                                              );
     ASSERT (PerformanceCounterFrequency != NULL);
     *PerformanceCounterFrequency = InternalCalculateTscFrequency ();
   } else {

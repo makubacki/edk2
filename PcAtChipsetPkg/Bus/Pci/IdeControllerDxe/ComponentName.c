@@ -12,7 +12,8 @@
 //
 /// EFI Component Name Protocol
 ///
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gIdeControllerComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gIdeControllerComponentName = {
   IdeControllerComponentNameGetDriverName,
   IdeControllerComponentNameGetControllerName,
   "eng"
@@ -21,16 +22,19 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gIdeControllerCompone
 //
 /// EFI Component Name 2 Protocol
 ///
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gIdeControllerComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gIdeControllerComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)IdeControllerComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)IdeControllerComponentNameGetControllerName,
+  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)
+  IdeControllerComponentNameGetControllerName,
   "en"
 };
 
 //
 /// Driver Name Strings
 ///
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mIdeControllerDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mIdeControllerDriverNameTable[] = {
   {
     "eng;en",
     (CHAR16 *)L"IDE Controller Init Driver"
@@ -44,7 +48,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mIdeControllerDriverName
 ///
 /// Controller Name Strings
 ///
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mIdeControllerControllerNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mIdeControllerControllerNameTable[] = {
   {
     "eng;en",
     (CHAR16 *)L"PCAT IDE Controller"

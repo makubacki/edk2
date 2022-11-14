@@ -84,7 +84,8 @@ SerialPortInitialize (
   //
   // Set communications format
   //
-  OutputData = (UINT8)((DLAB << 7) | (gBreakSet << 6) | (gParity << 3) | (gStop << 2) | Data);
+  OutputData = (UINT8)((DLAB << 7) | (gBreakSet << 6) | (gParity << 3) |
+                       (gStop << 2) | Data);
   IoWrite8 (gUartBase + LCR_OFFSET, OutputData);
 
   //
@@ -240,7 +241,9 @@ SerialPortSetControl (
   //
   // First determine the parameter is invalid.
   //
-  if ((Control & (~(EFI_SERIAL_REQUEST_TO_SEND | EFI_SERIAL_DATA_TERMINAL_READY))) != 0) {
+  if ((Control & (~(EFI_SERIAL_REQUEST_TO_SEND |
+                    EFI_SERIAL_DATA_TERMINAL_READY))) != 0)
+  {
     return RETURN_UNSUPPORTED;
   }
 
@@ -250,7 +253,9 @@ SerialPortSetControl (
   Mcr  = IoRead8 ((UINT16)gUartBase + MCR_OFFSET);
   Mcr &= (~(MCR_DTRC | MCR_RTS));
 
-  if ((Control & EFI_SERIAL_DATA_TERMINAL_READY) == EFI_SERIAL_DATA_TERMINAL_READY) {
+  if ((Control & EFI_SERIAL_DATA_TERMINAL_READY) ==
+      EFI_SERIAL_DATA_TERMINAL_READY)
+  {
     Mcr |= MCR_DTRC;
   }
 
@@ -463,7 +468,8 @@ SerialPortSetAttributes (
   //
   // Set communications format
   //
-  OutputData = (UINT8)((DLAB << 7) | (gBreakSet << 6) | (LcrParity << 3) | (LcrStop << 2) | LcrData);
+  OutputData = (UINT8)((DLAB << 7) | (gBreakSet << 6) | (LcrParity << 3) |
+                       (LcrStop << 2) | LcrData);
   IoWrite8 (gUartBase + LCR_OFFSET, OutputData);
 
   //
@@ -475,7 +481,8 @@ SerialPortSetAttributes (
   //
   // Switch back to bank 0
   //
-  OutputData = (UINT8)((gBreakSet << 6) | (LcrParity << 3) | (LcrStop << 2) | LcrData);
+  OutputData = (UINT8)((gBreakSet << 6) | (LcrParity << 3) | (LcrStop << 2) |
+                       LcrData);
   IoWrite8 (gUartBase + LCR_OFFSET, OutputData);
 
   return RETURN_SUCCESS;

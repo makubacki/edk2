@@ -29,7 +29,12 @@ ResetCold (
   VOID
   )
 {
-  IoWrite8 ((UINTN)PcdGet64 (PcdResetControlRegister), PcdGet8 (PcdResetControlValueColdReset));
+  IoWrite8 (
+    (UINTN)PcdGet64 (PcdResetControlRegister),
+    PcdGet8 (
+      PcdResetControlValueColdReset
+      )
+    );
 }
 
 /**
@@ -45,7 +50,12 @@ ResetWarm (
   VOID
   )
 {
-  IoWrite8 ((UINTN)PcdGet64 (PcdResetControlRegister), PcdGet8 (PcdResetControlValueColdReset));
+  IoWrite8 (
+    (UINTN)PcdGet64 (PcdResetControlRegister),
+    PcdGet8 (
+      PcdResetControlValueColdReset
+      )
+    );
 }
 
 /**
