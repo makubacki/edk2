@@ -449,8 +449,13 @@ S3PciSegmentBitFieldAndThenOr8 (
 {
   return InternalSavePciSegmentWrite8ValueToBootScript (
            Address,
-           PciSegmentBitFieldAndThenOr8 (Address, StartBit, EndBit, AndData,
-             OrData)
+           PciSegmentBitFieldAndThenOr8 (
+             Address,
+             StartBit,
+             EndBit,
+             AndData,
+             OrData
+             )
            );
 }
 
@@ -850,8 +855,13 @@ S3PciSegmentBitFieldAndThenOr16 (
 {
   return InternalSavePciSegmentWrite16ValueToBootScript (
            Address,
-           PciSegmentBitFieldAndThenOr16 (Address, StartBit, EndBit, AndData,
-             OrData)
+           PciSegmentBitFieldAndThenOr16 (
+             Address,
+             StartBit,
+             EndBit,
+             AndData,
+             OrData
+             )
            );
 }
 
@@ -1251,8 +1261,13 @@ S3PciSegmentBitFieldAndThenOr32 (
 {
   return InternalSavePciSegmentWrite32ValueToBootScript (
            Address,
-           PciSegmentBitFieldAndThenOr32 (Address, StartBit, EndBit, AndData,
-             OrData)
+           PciSegmentBitFieldAndThenOr32 (
+             Address,
+             StartBit,
+             EndBit,
+             AndData,
+             OrData
+             )
            );
 }
 

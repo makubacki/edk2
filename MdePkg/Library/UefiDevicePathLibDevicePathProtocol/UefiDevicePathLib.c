@@ -22,11 +22,11 @@
 #include <Library/PcdLib.h>
 
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_DEVICE_PATH_UTILITIES_PROTOCOL  *
-      mDevicePathLibDevicePathUtilities = NULL;
+  mDevicePathLibDevicePathUtilities = NULL;
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_DEVICE_PATH_TO_TEXT_PROTOCOL    *
-        mDevicePathLibDevicePathToText = NULL;
+  mDevicePathLibDevicePathToText = NULL;
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_DEVICE_PATH_FROM_TEXT_PROTOCOL  *
-        mDevicePathLibDevicePathFromText = NULL;
+  mDevicePathLibDevicePathFromText = NULL;
 
 //
 // Template for an end-of-device path node.

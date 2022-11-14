@@ -166,7 +166,7 @@ typedef union {
 //
 // Hypervisor features
 //
-#define GHCB_HV_FEATURES_SNP    BIT0
+#define GHCB_HV_FEATURES_SNP  BIT0
 #define GHCB_HV_FEATURES_SNP_AP_CREATE                   \
                                 (GHCB_HV_FEATURES_SNP | BIT1)
 #define GHCB_HV_FEATURES_SNP_RESTRICTED_INJECTION        \

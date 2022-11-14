@@ -342,21 +342,21 @@ UnitTestDebugAssert (
   #endif
   #if defined (__clang__) && defined (__FILE_NAME__)
 #define _ASSERT( \
-               Expression)  \
+                 Expression)  \
   UnitTestDebugAssert (__FILE_NAME__, DEBUG_LINE_NUMBER, DEBUG_EXPRESSION_STRING (Expression))
   #else
 #define _ASSERT( \
-               Expression)  \
+                 Expression)  \
   UnitTestDebugAssert (__FILE__, DEBUG_LINE_NUMBER, DEBUG_EXPRESSION_STRING (Expression))
   #endif
 #else
   #if defined (__clang__) && defined (__FILE_NAME__)
 #define _ASSERT( \
-               Expression)  \
+                 Expression)  \
   DebugAssert (__FILE_NAME__, DEBUG_LINE_NUMBER, DEBUG_EXPRESSION_STRING (Expression))
   #else
 #define _ASSERT( \
-               Expression)  \
+                 Expression)  \
   DebugAssert (__FILE__, DEBUG_LINE_NUMBER, DEBUG_EXPRESSION_STRING (Expression))
   #endif
 #endif

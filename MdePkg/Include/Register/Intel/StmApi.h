@@ -542,12 +542,12 @@ typedef struct {
   Values for the DomainType field of #STM_VMCS_DATABASE_REQUEST
   @{
 **/
-#define DOMAIN_UNPROTECTED              0
-#define DOMAIN_DISALLOWED_IO_OUT        BIT0
-#define DOMAIN_DISALLOWED_IO_IN         BIT1
-#define DOMAIN_INTEGRITY                BIT2
-#define DOMAIN_CONFIDENTIALITY          BIT3
-#define DOMAIN_INTEGRITY_PROT_OUT_IN    (DOMAIN_INTEGRITY)
+#define DOMAIN_UNPROTECTED            0
+#define DOMAIN_DISALLOWED_IO_OUT      BIT0
+#define DOMAIN_DISALLOWED_IO_IN       BIT1
+#define DOMAIN_INTEGRITY              BIT2
+#define DOMAIN_CONFIDENTIALITY        BIT3
+#define DOMAIN_INTEGRITY_PROT_OUT_IN  (DOMAIN_INTEGRITY)
 #define DOMAIN_FULLY_PROT_OUT_IN      \
                                         (DOMAIN_CONFIDENTIALITY | DOMAIN_INTEGRITY)
 #define DOMAIN_FULLY_PROT             \
@@ -896,11 +896,11 @@ typedef struct {
   UINT8    Reserved3    : 1;
 } STM_SMM_STATE;
 
-#define TXT_SMM_PSD_OFFSET                            0xfb00
+#define TXT_SMM_PSD_OFFSET  0xfb00
 #define TXT_PROCESSOR_SMM_DESCRIPTOR_SIGNATURE      \
                                                       SIGNATURE_64('T', 'X', 'T', 'P', 'S', 'S', 'I', 'G')
-#define TXT_PROCESSOR_SMM_DESCRIPTOR_VERSION_MAJOR    1
-#define TXT_PROCESSOR_SMM_DESCRIPTOR_VERSION_MINOR    0
+#define TXT_PROCESSOR_SMM_DESCRIPTOR_VERSION_MAJOR  1
+#define TXT_PROCESSOR_SMM_DESCRIPTOR_VERSION_MINOR  0
 
 typedef struct {
   UINT64                              Signature;

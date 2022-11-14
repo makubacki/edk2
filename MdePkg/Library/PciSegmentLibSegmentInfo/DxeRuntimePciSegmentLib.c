@@ -273,11 +273,11 @@ PciSegmentRegisterForRuntimeAccess (
     =
       NewTable;
   mDxeRuntimePciSegmentLibRegistrationTable[
-                                           mDxeRuntimePciSegmentLibNumberOfRuntimeRanges
+                                            mDxeRuntimePciSegmentLibNumberOfRuntimeRanges
   ].PhysicalAddress = Address;
   mDxeRuntimePciSegmentLibRegistrationTable[
-                                           mDxeRuntimePciSegmentLibNumberOfRuntimeRanges
-  ].VirtualAddress  = Address;
+                                            mDxeRuntimePciSegmentLibNumberOfRuntimeRanges
+  ].VirtualAddress = Address;
   mDxeRuntimePciSegmentLibNumberOfRuntimeRanges++;
 
   return RETURN_SUCCESS;
@@ -308,17 +308,17 @@ PciSegmentLibVirtualAddress (
   // See if there is a physical address match at the exact same index as the last address match
   //
   if (mDxeRuntimePciSegmentLibRegistrationTable[
-                                               mDxeRuntimePciSegmentLibLastRuntimeRange
+                                                mDxeRuntimePciSegmentLibLastRuntimeRange
       ].PhysicalAddress == (Address &
                             (
-                                       ~(UINTN)EFI_PAGE_MASK)))
+                             ~(UINTN)EFI_PAGE_MASK)))
   {
     //
     // Convert the physical address to a virtual address and return the virtual address
     //
     return (Address & EFI_PAGE_MASK) +
            mDxeRuntimePciSegmentLibRegistrationTable[
-                                                                                       mDxeRuntimePciSegmentLibLastRuntimeRange
+                                                     mDxeRuntimePciSegmentLibLastRuntimeRange
            ].VirtualAddress;
   }
 

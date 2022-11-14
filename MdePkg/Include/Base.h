@@ -577,7 +577,7 @@ struct _LIST_ENTRY {
   @return The aligned size.
 **/
 #define _INT_SIZE_OF( \
-                    n)  \
+                      n)  \
   ((sizeof (n) + sizeof (UINTN) - 1) &~(sizeof (UINTN) - 1))
 
 #if defined (_M_ARM) || defined (_M_ARM64)
@@ -593,8 +593,8 @@ typedef char *VA_LIST;
 #define VA_ARG(Marker, \
                TYPE)         \
                                 (*(TYPE *) ((Marker += _INT_SIZE_OF (TYPE) + ((-(INTN)Marker) & (sizeof(TYPE) - 1))) - _INT_SIZE_OF (TYPE)))
-#define VA_END(Marker)          (Marker = (VA_LIST) 0)
-#define VA_COPY(Dest, Start)    ((void)((Dest) = (Start)))
+#define VA_END(Marker)        (Marker = (VA_LIST) 0)
+#define VA_COPY(Dest, Start)  ((void)((Dest) = (Start)))
 
 #elif defined (__GNUC__) || defined (__clang__)
 
@@ -732,7 +732,7 @@ typedef UINTN *BASE_LIST;
   @return The size of TYPE in sizeof (UINTN) units rounded up to the nearest UINTN boundary.
 **/
 #define _BASE_INT_SIZE_OF( \
-                         TYPE)  \
+                           TYPE)  \
   ((sizeof (TYPE) + sizeof (UINTN) - 1) / sizeof (UINTN))
 
 /**

@@ -373,12 +373,12 @@ EfiLocateNextAcpiTable (
       //
       return NULL;
     } else if (  (Signature ==
-                EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE) ||
-               (Signature ==
-                EFI_ACPI_2_0_DIFFERENTIATED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE)
+                  EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE) ||
+                 (Signature ==
+                  EFI_ACPI_2_0_DIFFERENTIATED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE)
               ||
-               (Signature ==
-                EFI_ACPI_2_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE))
+                 (Signature ==
+                  EFI_ACPI_2_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE))
     {
       //
       // There is only one FADT/DSDT/FACS table,

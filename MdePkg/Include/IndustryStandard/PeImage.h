@@ -602,9 +602,9 @@ typedef struct {
 
 #define EFI_IMAGE_ORDINAL_FLAG  BIT31                ///< Flag for PE32.
 #define EFI_IMAGE_SNAP_BY_ORDINAL( \
-                                 Ordinal)  \
+                                   Ordinal)  \
                                       ((Ordinal & EFI_IMAGE_ORDINAL_FLAG) != 0)
-#define EFI_IMAGE_ORDINAL(Ordinal)    (Ordinal & 0xffff)
+#define EFI_IMAGE_ORDINAL(Ordinal)  (Ordinal & 0xffff)
 
 ///
 /// Import Directory Table

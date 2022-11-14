@@ -242,17 +242,17 @@ GetPciExpressAddress (
   // See if there is a physical address match at the exact same index as the last address match
   //
   if (mDxeRuntimePciExpressLibRegistrationTable[
-                                               mDxeRuntimePciExpressLibLastRuntimeRange
+                                                mDxeRuntimePciExpressLibLastRuntimeRange
       ].PhysicalAddress == (Address &
                             (
-                                       ~0x00000fff)))
+                             ~0x00000fff)))
   {
     //
     // Convert the physical address to a virtual address and return the virtual address
     //
     return (Address & 0x00000fff) +
            mDxeRuntimePciExpressLibRegistrationTable[
-                                                                             mDxeRuntimePciExpressLibLastRuntimeRange
+                                                     mDxeRuntimePciExpressLibLastRuntimeRange
            ].VirtualAddress;
   }
 
@@ -399,11 +399,11 @@ PciExpressRegisterForRuntimeAccess (
     =
       NewTable;
   mDxeRuntimePciExpressLibRegistrationTable[
-                                           mDxeRuntimePciExpressLibNumberOfRuntimeRanges
+                                            mDxeRuntimePciExpressLibNumberOfRuntimeRanges
   ].PhysicalAddress = Address;
   mDxeRuntimePciExpressLibRegistrationTable[
-                                           mDxeRuntimePciExpressLibNumberOfRuntimeRanges
-  ].VirtualAddress  = Address;
+                                            mDxeRuntimePciExpressLibNumberOfRuntimeRanges
+  ].VirtualAddress = Address;
   mDxeRuntimePciExpressLibNumberOfRuntimeRanges++;
 
   return RETURN_SUCCESS;

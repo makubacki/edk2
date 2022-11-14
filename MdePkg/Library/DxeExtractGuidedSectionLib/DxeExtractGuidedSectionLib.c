@@ -71,11 +71,11 @@ ReallocateExtractHandlerTable (
   mExtractGetInfoHandlerTable = ReallocatePool (
                                   mMaxNumberOfExtractHandler *
                                   sizeof (
-                                                                      EXTRACT_GUIDED_SECTION_GET_INFO_HANDLER),
+                                          EXTRACT_GUIDED_SECTION_GET_INFO_HANDLER),
                                   (mMaxNumberOfExtractHandler +
                                    EXTRACT_HANDLER_TABLE_SIZE) *
                                   sizeof (
-                                                                                                     EXTRACT_GUIDED_SECTION_GET_INFO_HANDLER),
+                                          EXTRACT_GUIDED_SECTION_GET_INFO_HANDLER),
                                   mExtractGetInfoHandlerTable
                                   );
 

@@ -529,7 +529,7 @@ BuildMemoryAllocationHob (
 
 **/
 #define END_OF_HOB_LIST( \
-                       HobStart)  \
+                         HobStart)  \
   (GET_HOB_TYPE (HobStart) == (UINT16)EFI_HOB_TYPE_END_OF_HOB_LIST)
 
 /**

@@ -1270,7 +1270,8 @@ StrToIpv6Address (
 
       if ((CompressStart != ARRAY_SIZE (Address->Addr)) || (AddressIndex ==
                                                             ARRAY_SIZE (
-                                                              Address->Addr)))
+                                                              Address->Addr
+                                                              )))
       {
         //
         // "::" can only appear once.
@@ -1371,10 +1372,12 @@ StrToIpv6Address (
 
   if (((AddressIndex == ARRAY_SIZE (Address->Addr)) && (CompressStart !=
                                                         ARRAY_SIZE (
-                                                          Address->Addr))) ||
+                                                          Address->Addr
+                                                          ))) ||
       ((AddressIndex != ARRAY_SIZE (Address->Addr)) && (CompressStart ==
                                                         ARRAY_SIZE (
-                                                          Address->Addr)))
+                                                          Address->Addr
+                                                          )))
       )
   {
     //
@@ -3468,7 +3471,8 @@ AsciiStrToIpv6Address (
 
       if ((CompressStart != ARRAY_SIZE (Address->Addr)) || (AddressIndex ==
                                                             ARRAY_SIZE (
-                                                              Address->Addr)))
+                                                              Address->Addr
+                                                              )))
       {
         //
         // "::" can only appear once.
@@ -3569,10 +3573,12 @@ AsciiStrToIpv6Address (
 
   if (((AddressIndex == ARRAY_SIZE (Address->Addr)) && (CompressStart !=
                                                         ARRAY_SIZE (
-                                                          Address->Addr))) ||
+                                                          Address->Addr
+                                                          ))) ||
       ((AddressIndex != ARRAY_SIZE (Address->Addr)) && (CompressStart ==
                                                         ARRAY_SIZE (
-                                                          Address->Addr)))
+                                                          Address->Addr
+                                                          )))
       )
   {
     //

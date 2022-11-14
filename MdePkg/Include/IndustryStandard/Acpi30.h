@@ -700,7 +700,7 @@ typedef struct {
 /// "MCFG" PCI Express Memory Mapped Configuration Space Base Address Description Table
 ///
 #define \
-  EFI_ACPI_3_0_PCI_EXPRESS_MEMORY_MAPPED_CONFIGURATION_SPACE_BASE_ADDRESS_DESCRIPTION_TABLE_SIGNATURE        \
+    EFI_ACPI_3_0_PCI_EXPRESS_MEMORY_MAPPED_CONFIGURATION_SPACE_BASE_ADDRESS_DESCRIPTION_TABLE_SIGNATURE      \
   SIGNATURE_32('M', 'C', 'F', 'G')
 
 ///
@@ -719,7 +719,7 @@ typedef struct {
 /// "TCPA" Trusted Computing Platform Alliance Capabilities Table
 ///
 #define \
-  EFI_ACPI_3_0_TRUSTED_COMPUTING_PLATFORM_ALLIANCE_CAPABILITIES_TABLE_SIGNATURE        \
+    EFI_ACPI_3_0_TRUSTED_COMPUTING_PLATFORM_ALLIANCE_CAPABILITIES_TABLE_SIGNATURE      \
   SIGNATURE_32('T', 'C', 'P', 'A')
 
 ///

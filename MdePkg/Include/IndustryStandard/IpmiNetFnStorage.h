@@ -763,13 +763,13 @@ typedef struct {
 #define IPMI_SWID_TERMINAL_REMOTE_CONSOLE_ID  0x47
 
 #define SLAVE_ADDRESS_FROM_GENERATOR_ID( \
-                                       GeneratorId)   \
+                                         GeneratorId)   \
       ((GeneratorId & 0xFF) >> 1)
 #define LUN_FROM_GENERATOR_ID( \
-                             GeneratorId)             \
+                               GeneratorId)             \
       ((GeneratorId >> 8) & 0x03)
 #define CHANNEL_NUMBER_FROM_GENERATOR_ID( \
-                                        GeneratorId)  \
+                                          GeneratorId)  \
       ((GeneratorId >> 12) & 0x0F)
 
 #define IPMI_EVM_REVISION     0x04

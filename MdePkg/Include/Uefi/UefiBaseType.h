@@ -196,7 +196,7 @@ typedef union {
 
 **/
 #define EFI_SIZE_TO_PAGES( \
-                         Size)  \
+                           Size)  \
   (((Size) >> EFI_PAGE_SHIFT) + (((Size) & EFI_PAGE_MASK) ? 1 : 0))
 
 /**
@@ -263,7 +263,7 @@ typedef union {
   ((Machine) == EFI_IMAGE_MACHINE_IA32)
 
 #define EFI_IMAGE_MACHINE_CROSS_TYPE_SUPPORTED( \
-                                              Machine)  \
+                                                Machine)  \
   ((Machine) == EFI_IMAGE_MACHINE_X64)
 
   #elif defined (MDE_CPU_X64)
@@ -272,13 +272,13 @@ typedef union {
   ((Machine) == EFI_IMAGE_MACHINE_X64)
 
 #define EFI_IMAGE_MACHINE_CROSS_TYPE_SUPPORTED( \
-                                              Machine)  \
+                                                Machine)  \
   ((Machine) == EFI_IMAGE_MACHINE_IA32)
 
   #elif defined (MDE_CPU_ARM)
 
 #define EFI_IMAGE_MACHINE_TYPE_SUPPORTED( \
-                                        Machine)  \
+                                          Machine)  \
   ((Machine) == EFI_IMAGE_MACHINE_ARMTHUMB_MIXED)
 
 #define EFI_IMAGE_MACHINE_CROSS_TYPE_SUPPORTED(Machine)  (FALSE)
@@ -310,7 +310,7 @@ typedef union {
 /// It does not make sense to have a PE loader coded in EBC.
 ///
 #define EFI_IMAGE_MACHINE_TYPE_SUPPORTED( \
-                                        Machine)  \
+                                          Machine)  \
   ((Machine) == EFI_IMAGE_MACHINE_EBC)
 
 #define EFI_IMAGE_MACHINE_CROSS_TYPE_SUPPORTED(Machine)  (FALSE)
@@ -321,14 +321,14 @@ typedef union {
 #else
   #if defined (EFI_IMAGE_MACHINE_TYPE_VALUE)
 #define EFI_IMAGE_MACHINE_TYPE_SUPPORTED( \
-                                        Machine)  \
+                                          Machine)  \
   ((Machine) == EFI_IMAGE_MACHINE_TYPE_VALUE)
   #else
 #define EFI_IMAGE_MACHINE_TYPE_SUPPORTED(Machine)  (FALSE)
   #endif
   #if defined (EFI_IMAGE_MACHINE_CROSS_TYPE_VALUE)
 #define EFI_IMAGE_MACHINE_CROSS_TYPE_SUPPORTED( \
-                                              Machine)  \
+                                                Machine)  \
   ((Machine) == EFI_IMAGE_MACHINE_CROSS_TYPE_VALUE)
   #else
 #define EFI_IMAGE_MACHINE_CROSS_TYPE_SUPPORTED(Machine)  (FALSE)

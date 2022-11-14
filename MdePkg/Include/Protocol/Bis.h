@@ -100,7 +100,7 @@ typedef struct {
 ///  by the provided EFI_BIS_DATA*.
 ///
 #define BIS_GET_SIGINFO_COUNT( \
-                             BisDataPtr)  \
+                               BisDataPtr)  \
   ((BisDataPtr)->Length / sizeof (EFI_BIS_SIGNATURE_INFO))
 
 ///
@@ -108,7 +108,7 @@ typedef struct {
 ///  from a given EFI_BIS_DATA*.
 ///
 #define BIS_GET_SIGINFO_ARRAY( \
-                             BisDataPtr)  \
+                               BisDataPtr)  \
   ((EFI_BIS_SIGNATURE_INFO *) (BisDataPtr)->Data)
 
 ///

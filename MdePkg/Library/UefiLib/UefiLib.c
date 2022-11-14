@@ -1038,8 +1038,8 @@ AddUnicodeString (
       //
       NewUnicodeStringTable[NumberOfEntries].UnicodeString = AllocateCopyPool (
                                                                (
-                                                               UnicodeStringLength
-                                                               + 1) *
+                                                                UnicodeStringLength
+                                                                + 1) *
                                                                sizeof (CHAR16),
                                                                UnicodeString
                                                                );
@@ -1264,7 +1264,8 @@ AddUnicodeString2 (
   //
   NewUnicodeStringTable[NumberOfEntries].UnicodeString = AllocateCopyPool (
                                                            StrSize (
-                                                             UnicodeString),
+                                                             UnicodeString
+                                                             ),
                                                            UnicodeString
                                                            );
   if (NewUnicodeStringTable[NumberOfEntries].UnicodeString == NULL) {

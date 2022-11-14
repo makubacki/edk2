@@ -360,7 +360,7 @@ typedef struct {
 
 **/
 #define IS_PCI_VGA( \
-                  _p)  \
+                    _p)  \
   IS_CLASS3 (_p, PCI_CLASS_DISPLAY, PCI_CLASS_DISPLAY_VGA, PCI_IF_VGA_VGA)
 
 /**
@@ -373,7 +373,7 @@ typedef struct {
 
 **/
 #define IS_PCI_8514( \
-                   _p)  \
+                     _p)  \
   IS_CLASS3 (_p, PCI_CLASS_DISPLAY, PCI_CLASS_DISPLAY_VGA, PCI_IF_VGA_8514)
 
 /**
@@ -408,7 +408,7 @@ typedef struct {
 
 **/
 #define IS_PCI_IDE( \
-                  _p)  \
+                    _p)  \
   IS_CLASS2 (_p, PCI_CLASS_MASS_STORAGE, PCI_CLASS_MASS_STORAGE_IDE)
 
 /**
@@ -421,7 +421,7 @@ typedef struct {
 
 **/
 #define IS_PCI_SCSI( \
-                   _p)  \
+                     _p)  \
   IS_CLASS2 (_p, PCI_CLASS_MASS_STORAGE, PCI_CLASS_MASS_STORAGE_SCSI)
 
 /**
@@ -434,7 +434,7 @@ typedef struct {
 
 **/
 #define IS_PCI_RAID( \
-                   _p)  \
+                     _p)  \
   IS_CLASS2 (_p, PCI_CLASS_MASS_STORAGE, PCI_CLASS_MASS_STORAGE_RAID)
 
 /**
@@ -458,7 +458,7 @@ typedef struct {
 
 **/
 #define IS_PCI_P2P( \
-                  _p)  \
+                    _p)  \
   IS_CLASS3 (_p, PCI_CLASS_BRIDGE, PCI_CLASS_BRIDGE_P2P, PCI_IF_BRIDGE_P2P)
 
 /**
@@ -471,7 +471,7 @@ typedef struct {
 
 **/
 #define IS_PCI_P2P_SUB( \
-                      _p)  \
+                        _p)  \
   IS_CLASS3 (_p, PCI_CLASS_BRIDGE, PCI_CLASS_BRIDGE_P2P, PCI_IF_BRIDGE_P2P_SUBTRACTIVE)
 
 /**
@@ -484,7 +484,7 @@ typedef struct {
 
 **/
 #define IS_PCI_16550_SERIAL( \
-                           _p)  \
+                             _p)  \
   IS_CLASS3 (_p, PCI_CLASS_SCC, PCI_SUBCLASS_SERIAL, PCI_IF_16550)
 
 /**
@@ -520,7 +520,7 @@ typedef struct {
 
 **/
 #define IS_PCI_BRIDGE( \
-                     _p)  \
+                       _p)  \
   (((_p)->Hdr.HeaderType & HEADER_LAYOUT_CODE) == (HEADER_TYPE_PCI_TO_PCI_BRIDGE))
 
 /**
@@ -533,7 +533,7 @@ typedef struct {
 
 **/
 #define IS_CARDBUS_BRIDGE( \
-                         _p)  \
+                           _p)  \
   (((_p)->Hdr.HeaderType & HEADER_LAYOUT_CODE) == (HEADER_TYPE_CARDBUS_BRIDGE))
 
 /**
@@ -546,7 +546,7 @@ typedef struct {
 
 **/
 #define IS_PCI_MULTI_FUNC( \
-                         _p)  \
+                           _p)  \
   ((_p)->Hdr.HeaderType & HEADER_TYPE_MULTI_FUNCTION)
 
 ///
@@ -828,11 +828,11 @@ typedef struct {
 #define EFI_ROOT_BRIDGE_LIST                       'eprb'
 #define EFI_PCI_EXPANSION_ROM_HEADER_EFISIGNATURE  0x0EF1       ///< defined in UEFI Spec.
 
-#define PCI_EXPANSION_ROM_HEADER_SIGNATURE             0xaa55
+#define PCI_EXPANSION_ROM_HEADER_SIGNATURE  0xaa55
 #define PCI_DATA_STRUCTURE_SIGNATURE             \
                                                        SIGNATURE_32 ('P', 'C', 'I', 'R')
-#define PCI_CODE_TYPE_PCAT_IMAGE                       0x00
-#define EFI_PCI_EXPANSION_ROM_HEADER_COMPRESSED        0x0001   ///< defined in UEFI spec.
+#define PCI_CODE_TYPE_PCAT_IMAGE                 0x00
+#define EFI_PCI_EXPANSION_ROM_HEADER_COMPRESSED  0x0001         ///< defined in UEFI spec.
 
 ///
 /// Standard PCI Expansion ROM Header

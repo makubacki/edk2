@@ -83,11 +83,11 @@
 #define EV_POSTCODE_INFO_OPROM  "Embedded Option ROM"
 #define OPROM_LEN               (sizeof(EV_POSTCODE_INFO_OPROM) - 1)
 
-#define EV_POSTCODE_INFO_EMBEDDED_UEFI_DRIVER    "Embedded UEFI Driver"
+#define EV_POSTCODE_INFO_EMBEDDED_UEFI_DRIVER  "Embedded UEFI Driver"
 #define EMBEDDED_UEFI_DRIVER_LEN               \
                                                  (sizeof(EV_POSTCODE_INFO_EMBEDDED_UEFI_DRIVER) - 1)
 
-#define FIRMWARE_DEBUGGER_EVENT_STRING    "UEFI Debug Mode"
+#define FIRMWARE_DEBUGGER_EVENT_STRING  "UEFI Debug Mode"
 #define FIRMWARE_DEBUGGER_EVENT_STRING_LEN  \
                                           (sizeof(FIRMWARE_DEBUGGER_EVENT_STRING) - 1)
 

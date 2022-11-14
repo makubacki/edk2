@@ -294,7 +294,7 @@ PeCoffLoaderGetPeHeader (
           Hdr.Pe32->OptionalHeader.NumberOfRvaAndSizes)
       {
         if (Hdr.Pe32->OptionalHeader.DataDirectory[
-                                                  EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
+                                                   EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
             ].Size != 0)
         {
           //
@@ -302,10 +302,10 @@ PeCoffLoaderGetPeHeader (
           //
           if ((UINT32)(~0) -
               Hdr.Pe32->OptionalHeader.DataDirectory[
-                                                                   EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
+                                                     EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
               ].VirtualAddress <
               Hdr.Pe32->OptionalHeader.DataDirectory[
-                                                    EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
+                                                     EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
               ].Size)
           {
             ImageContext->ImageError = IMAGE_ERROR_UNSUPPORTED;
@@ -320,10 +320,10 @@ PeCoffLoaderGetPeHeader (
           Status   = ImageContext->ImageRead (
                                      ImageContext->Handle,
                                      Hdr.Pe32->OptionalHeader.DataDirectory[
-                                                                           EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
+                                                                            EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
                                      ].VirtualAddress +
                                      Hdr.Pe32->OptionalHeader.DataDirectory[
-                                                                           EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
+                                                                            EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
                                      ].Size - 1,
                                      &Size,
                                      &BufferData
@@ -449,7 +449,7 @@ PeCoffLoaderGetPeHeader (
           Hdr.Pe32Plus->OptionalHeader.NumberOfRvaAndSizes)
       {
         if (Hdr.Pe32Plus->OptionalHeader.DataDirectory[
-                                                      EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
+                                                       EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
             ].Size != 0)
         {
           //
@@ -457,10 +457,10 @@ PeCoffLoaderGetPeHeader (
           //
           if ((UINT32)(~0) -
               Hdr.Pe32Plus->OptionalHeader.DataDirectory[
-                                                                       EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
+                                                         EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
               ].VirtualAddress <
               Hdr.Pe32Plus->OptionalHeader.DataDirectory[
-                                                        EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
+                                                         EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
               ].Size)
           {
             ImageContext->ImageError = IMAGE_ERROR_UNSUPPORTED;
@@ -475,10 +475,10 @@ PeCoffLoaderGetPeHeader (
           Status   = ImageContext->ImageRead (
                                      ImageContext->Handle,
                                      Hdr.Pe32Plus->OptionalHeader.DataDirectory[
-                                                                               EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
+                                                                                EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
                                      ].VirtualAddress +
                                      Hdr.Pe32Plus->OptionalHeader.DataDirectory[
-                                                                               EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
+                                                                                EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
                                      ].Size - 1,
                                      &Size,
                                      &BufferData
@@ -752,7 +752,7 @@ PeCoffLoaderGetImageInfo (
       NumberOfRvaAndSizes = Hdr.Pe32->OptionalHeader.NumberOfRvaAndSizes;
       DebugDirectoryEntry =
         (EFI_IMAGE_DATA_DIRECTORY *)&(Hdr.Pe32->OptionalHeader.DataDirectory[
-                                                                                                  EFI_IMAGE_DIRECTORY_ENTRY_DEBUG
+                                                                             EFI_IMAGE_DIRECTORY_ENTRY_DEBUG
                                       ]);
     } else {
       //
@@ -762,7 +762,7 @@ PeCoffLoaderGetImageInfo (
       DebugDirectoryEntry =
         (EFI_IMAGE_DATA_DIRECTORY *)&(Hdr.Pe32Plus->OptionalHeader.DataDirectory
                                       [
-                                                            EFI_IMAGE_DIRECTORY_ENTRY_DEBUG
+                                       EFI_IMAGE_DIRECTORY_ENTRY_DEBUG
                                       ]);
     }
 
@@ -1089,7 +1089,7 @@ PeCoffLoaderRelocateImage (
       NumberOfRvaAndSizes = Hdr.Pe32->OptionalHeader.NumberOfRvaAndSizes;
       RelocDir            =
         &Hdr.Pe32->OptionalHeader.DataDirectory[
-                                                                   EFI_IMAGE_DIRECTORY_ENTRY_BASERELOC
+                                                EFI_IMAGE_DIRECTORY_ENTRY_BASERELOC
         ];
     } else {
       //
@@ -1103,7 +1103,7 @@ PeCoffLoaderRelocateImage (
       NumberOfRvaAndSizes = Hdr.Pe32Plus->OptionalHeader.NumberOfRvaAndSizes;
       RelocDir            =
         &Hdr.Pe32Plus->OptionalHeader.DataDirectory[
-                                                                       EFI_IMAGE_DIRECTORY_ENTRY_BASERELOC
+                                                    EFI_IMAGE_DIRECTORY_ENTRY_BASERELOC
         ];
     }
 
@@ -1612,7 +1612,7 @@ PeCoffLoaderLoadImage (
       NumberOfRvaAndSizes = Hdr.Pe32->OptionalHeader.NumberOfRvaAndSizes;
       DirectoryEntry      =
         (EFI_IMAGE_DATA_DIRECTORY *)&Hdr.Pe32->OptionalHeader.DataDirectory[
-                                                                                                 EFI_IMAGE_DIRECTORY_ENTRY_BASERELOC
+                                                                            EFI_IMAGE_DIRECTORY_ENTRY_BASERELOC
         ];
     } else {
       //
@@ -1621,7 +1621,7 @@ PeCoffLoaderLoadImage (
       NumberOfRvaAndSizes = Hdr.Pe32Plus->OptionalHeader.NumberOfRvaAndSizes;
       DirectoryEntry      =
         (EFI_IMAGE_DATA_DIRECTORY *)&Hdr.Pe32Plus->OptionalHeader.DataDirectory[
-                                                                                                     EFI_IMAGE_DIRECTORY_ENTRY_BASERELOC
+                                                                                EFI_IMAGE_DIRECTORY_ENTRY_BASERELOC
         ];
     }
 
@@ -1758,7 +1758,7 @@ PeCoffLoaderLoadImage (
       NumberOfRvaAndSizes = Hdr.Pe32->OptionalHeader.NumberOfRvaAndSizes;
       DirectoryEntry      =
         (EFI_IMAGE_DATA_DIRECTORY *)&Hdr.Pe32->OptionalHeader.DataDirectory[
-                                                                                                 EFI_IMAGE_DIRECTORY_ENTRY_RESOURCE
+                                                                            EFI_IMAGE_DIRECTORY_ENTRY_RESOURCE
         ];
     } else {
       //
@@ -1767,7 +1767,7 @@ PeCoffLoaderLoadImage (
       NumberOfRvaAndSizes = Hdr.Pe32Plus->OptionalHeader.NumberOfRvaAndSizes;
       DirectoryEntry      =
         (EFI_IMAGE_DATA_DIRECTORY *)&Hdr.Pe32Plus->OptionalHeader.DataDirectory[
-                                                                                                     EFI_IMAGE_DIRECTORY_ENTRY_RESOURCE
+                                                                                EFI_IMAGE_DIRECTORY_ENTRY_RESOURCE
         ];
     }
 
@@ -1836,7 +1836,7 @@ PeCoffLoaderLoadImage (
                                                                      ResourceDirectoryEntry
                                                                        ->u2.s.
                                                                        OffsetToDirectory);
-                Offset            =
+                Offset =
                   ResourceDirectoryEntry->u2.s.OffsetToDirectory +
                   sizeof (EFI_IMAGE_RESOURCE_DIRECTORY) +
                   sizeof (EFI_IMAGE_RESOURCE_DIRECTORY_ENTRY)
@@ -1865,7 +1865,7 @@ PeCoffLoaderLoadImage (
                                                                        ResourceDirectoryEntry
                                                                          ->u2.s.
                                                                          OffsetToDirectory);
-                  Offset            =
+                  Offset =
                     ResourceDirectoryEntry->u2.s.OffsetToDirectory +
                     sizeof (EFI_IMAGE_RESOURCE_DIRECTORY) +
                     sizeof (EFI_IMAGE_RESOURCE_DIRECTORY_ENTRY)
@@ -2093,8 +2093,8 @@ PeCoffLoaderRelocateImageForRuntime (
         return;
       }
 
-      Reloc    = (UINT16 *)((UINT8 *)RelocBase +
-                            sizeof (EFI_IMAGE_BASE_RELOCATION));
+      Reloc = (UINT16 *)((UINT8 *)RelocBase +
+                         sizeof (EFI_IMAGE_BASE_RELOCATION));
       RelocEnd = (UINT16 *)((UINT8 *)RelocBase + RelocBase->SizeOfBlock);
       if ((UINTN)RelocEnd > (UINTN)RelocBaseOrig + RelocDir->Size) {
         return;

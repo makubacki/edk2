@@ -38,7 +38,7 @@
 
 **/
 #define IS_PCI_SATADPA( \
-                      _p)  \
+                        _p)  \
   IS_CLASS2 (_p, PCI_CLASS_MASS_STORAGE, PCI_CLASS_MASS_STORAGE_SATADPA)
 
 ///

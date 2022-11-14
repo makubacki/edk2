@@ -72,7 +72,7 @@ typedef struct {
 
 **/
 #define EFI_TIMER_PERIOD_MICROSECONDS( \
-                                     Microseconds)  \
+                                       Microseconds)  \
   MultU64x32((UINT64)(Microseconds), 10)
 
 /**
@@ -86,7 +86,7 @@ typedef struct {
 
 **/
 #define EFI_TIMER_PERIOD_MILLISECONDS( \
-                                     Milliseconds)  \
+                                       Milliseconds)  \
   MultU64x32((UINT64)(Milliseconds), 10000)
 
 /**
@@ -100,7 +100,7 @@ typedef struct {
 
 **/
 #define EFI_TIMER_PERIOD_SECONDS( \
-                                Seconds)  \
+                                  Seconds)  \
   MultU64x32((UINT64)(Seconds), 10000000)
 
 /**

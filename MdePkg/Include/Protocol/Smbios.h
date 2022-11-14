@@ -116,8 +116,8 @@
                                 SMBIOS_TYPE_INACTIVE
 #define EFI_SMBIOS_TYPE_END_OF_TABLE                          \
                                 SMBIOS_TYPE_END_OF_TABLE
-#define EFI_SMBIOS_OEM_BEGIN    SMBIOS_OEM_BEGIN
-#define EFI_SMBIOS_OEM_END      SMBIOS_OEM_END
+#define EFI_SMBIOS_OEM_BEGIN  SMBIOS_OEM_BEGIN
+#define EFI_SMBIOS_OEM_END    SMBIOS_OEM_END
 
 typedef SMBIOS_TABLE_STRING  EFI_SMBIOS_STRING;
 typedef SMBIOS_TYPE          EFI_SMBIOS_TYPE;
