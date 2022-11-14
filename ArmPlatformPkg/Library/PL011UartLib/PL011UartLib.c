@@ -83,7 +83,8 @@ PL011UartInitializePort (
   HardwareFifoDepth = FixedPcdGet16 (PcdUartDefaultReceiveFifoDepth);
   if (HardwareFifoDepth == 0) {
     UartPid2          = MmioRead32 (UartBase + UARTPID2);
-    HardwareFifoDepth = (PL011_UARTPID2_VER (UartPid2) > PL011_VER_R1P4) ? 32 : 16;
+    HardwareFifoDepth = (PL011_UARTPID2_VER (UartPid2) > PL011_VER_R1P4) ? 32 :
+                        16;
   }
 
   // The PL011 supports a buffer of 1, 16 or 32 chars. Therefore we can accept

@@ -38,7 +38,9 @@ typedef struct {
 
 #define LCD_INSTANCE_SIGNATURE  SIGNATURE_32('l', 'c', 'd', '0')
 
-#define LCD_INSTANCE_FROM_GOP_THIS(a)  CR (a, LCD_INSTANCE, Gop, LCD_INSTANCE_SIGNATURE)
+#define LCD_INSTANCE_FROM_GOP_THIS( \
+                                  a)  \
+  CR (a, LCD_INSTANCE, Gop, LCD_INSTANCE_SIGNATURE)
 
 //
 // Function Prototypes

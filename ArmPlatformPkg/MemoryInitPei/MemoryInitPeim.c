@@ -118,11 +118,20 @@ InitializeMemory (
   if ((FdBase >= SystemMemoryBase) && (FdTop <= SystemMemoryTop)) {
     // Check if there is enough space between the top of the system memory and the top of the
     // firmware to place the UEFI memory (for PEI & DXE phases)
-    if (SystemMemoryTop - FdTop >= FixedPcdGet32 (PcdSystemMemoryUefiRegionSize)) {
-      UefiMemoryBase = SystemMemoryTop - FixedPcdGet32 (PcdSystemMemoryUefiRegionSize);
+    if (SystemMemoryTop - FdTop >= FixedPcdGet32 (
+                                     PcdSystemMemoryUefiRegionSize
+                                     ))
+    {
+      UefiMemoryBase = SystemMemoryTop - FixedPcdGet32 (
+                                           PcdSystemMemoryUefiRegionSize
+                                           );
     } else {
       // Check there is enough space for the UEFI memory
-      ASSERT (SystemMemoryBase + FixedPcdGet32 (PcdSystemMemoryUefiRegionSize) <= FdBase);
+      ASSERT (
+        SystemMemoryBase + FixedPcdGet32 (
+                             PcdSystemMemoryUefiRegionSize
+                             ) <= FdBase
+        );
 
       UefiMemoryBase = FdBase - FixedPcdGet32 (PcdSystemMemoryUefiRegionSize);
     }
@@ -131,14 +140,26 @@ InitializeMemory (
     ASSERT ((FdBase < SystemMemoryBase) || (FdBase >= SystemMemoryTop));
     ASSERT ((FdTop <= SystemMemoryBase) || (FdTop > SystemMemoryTop));
 
-    UefiMemoryBase = SystemMemoryTop - FixedPcdGet32 (PcdSystemMemoryUefiRegionSize);
+    UefiMemoryBase = SystemMemoryTop - FixedPcdGet32 (
+                                         PcdSystemMemoryUefiRegionSize
+                                         );
   }
 
-  Status = PeiServicesInstallPeiMemory (UefiMemoryBase, FixedPcdGet32 (PcdSystemMemoryUefiRegionSize));
+  Status = PeiServicesInstallPeiMemory (
+             UefiMemoryBase,
+             FixedPcdGet32 (
+               PcdSystemMemoryUefiRegionSize
+               )
+             );
   ASSERT_EFI_ERROR (Status);
 
   // Initialize MMU and Memory HOBs (Resource Descriptor HOBs)
-  Status = MemoryPeim (UefiMemoryBase, FixedPcdGet32 (PcdSystemMemoryUefiRegionSize));
+  Status = MemoryPeim (
+             UefiMemoryBase,
+             FixedPcdGet32 (
+               PcdSystemMemoryUefiRegionSize
+               )
+             );
   ASSERT_EFI_ERROR (Status);
 
   return Status;

@@ -42,8 +42,11 @@ PL061Locate (
             + mPL061PlatformGpio->GpioController[Index].InternalGpioCount))
     {
       *ControllerIndex  = Index;
-      *ControllerOffset = Gpio % mPL061PlatformGpio->GpioController[Index].InternalGpioCount;
-      *RegisterBase     = mPL061PlatformGpio->GpioController[Index].RegisterBase;
+      *ControllerOffset = Gpio %
+                          mPL061PlatformGpio->GpioController[Index].
+                            InternalGpioCount;
+      *RegisterBase =
+        mPL061PlatformGpio->GpioController[Index].RegisterBase;
       return EFI_SUCCESS;
     }
   }
@@ -121,7 +124,9 @@ PL061Identify (
   }
 
   for (Index = 0; Index < mPL061PlatformGpio->GpioControllerCount; Index++) {
-    if (mPL061PlatformGpio->GpioController[Index].InternalGpioCount != PL061_GPIO_PINS) {
+    if (mPL061PlatformGpio->GpioController[Index].InternalGpioCount !=
+        PL061_GPIO_PINS)
+    {
       return EFI_INVALID_PARAMETER;
     }
 
@@ -374,18 +379,32 @@ PL061InstallProtocol (
   //
   ASSERT_PROTOCOL_ALREADY_INSTALLED (NULL, &gEmbeddedGpioProtocolGuid);
 
-  Status = gBS->LocateProtocol (&gPlatformGpioProtocolGuid, NULL, (VOID **)&mPL061PlatformGpio);
+  Status = gBS->LocateProtocol (
+                  &gPlatformGpioProtocolGuid,
+                  NULL,
+                  (VOID **)&mPL061PlatformGpio
+                  );
   if (EFI_ERROR (Status) && (Status == EFI_NOT_FOUND)) {
     // Create the mPL061PlatformGpio
-    mPL061PlatformGpio = (PLATFORM_GPIO_CONTROLLER *)AllocateZeroPool (sizeof (PLATFORM_GPIO_CONTROLLER) + sizeof (GPIO_CONTROLLER));
+    mPL061PlatformGpio = (PLATFORM_GPIO_CONTROLLER *)AllocateZeroPool (
+                                                       sizeof (
+                                                                              PLATFORM_GPIO_CONTROLLER)
+                                                       + sizeof (GPIO_CONTROLLER)
+                                                       );
     if (mPL061PlatformGpio == NULL) {
-      DEBUG ((DEBUG_ERROR, "%a: failed to allocate PLATFORM_GPIO_CONTROLLER\n", __func__));
+      DEBUG ((
+        DEBUG_ERROR,
+        "%a: failed to allocate PLATFORM_GPIO_CONTROLLER\n",
+        __func__
+        ));
       return EFI_BAD_BUFFER_SIZE;
     }
 
     mPL061PlatformGpio->GpioCount           = PL061_GPIO_PINS;
     mPL061PlatformGpio->GpioControllerCount = 1;
-    mPL061PlatformGpio->GpioController      = (GPIO_CONTROLLER *)((UINTN)mPL061PlatformGpio + sizeof (PLATFORM_GPIO_CONTROLLER));
+    mPL061PlatformGpio->GpioController      =
+      (GPIO_CONTROLLER *)((UINTN)mPL061PlatformGpio +
+                          sizeof (PLATFORM_GPIO_CONTROLLER));
 
     GpioController                    = mPL061PlatformGpio->GpioController;
     GpioController->RegisterBase      = (UINTN)PcdGet32 (PcdPL061GpioBase);

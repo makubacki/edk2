@@ -63,7 +63,10 @@ SecondaryMain (
 
   ArmMpCoreInfoPpi = PpiList->Ppi;
   ArmCoreCount     = 0;
-  Status           = ArmMpCoreInfoPpi->GetMpCoreInfo (&ArmCoreCount, &ArmCoreInfoTable);
+  Status           = ArmMpCoreInfoPpi->GetMpCoreInfo (
+                                         &ArmCoreCount,
+                                         &ArmCoreInfoTable
+                                         );
   ASSERT_EFI_ERROR (Status);
 
   // Find the core in the ArmCoreTable
@@ -79,7 +82,10 @@ SecondaryMain (
   ASSERT (Index != ArmCoreCount);
 
   // Clear Secondary cores MailBox
-  MmioWrite32 (ArmCoreInfoTable[Index].MailboxClearAddress, ArmCoreInfoTable[Index].MailboxClearValue);
+  MmioWrite32 (
+    ArmCoreInfoTable[Index].MailboxClearAddress,
+    ArmCoreInfoTable[Index].MailboxClearValue
+    );
 
   do {
     ArmCallWFI ();
@@ -88,11 +94,24 @@ SecondaryMain (
     SecondaryEntryAddr = MmioRead32 (ArmCoreInfoTable[Index].MailboxGetAddress);
 
     // Acknowledge the interrupt and send End of Interrupt signal.
-    AcknowledgeInterrupt = ArmGicAcknowledgeInterrupt (PcdGet64 (PcdGicInterruptInterfaceBase), &InterruptId);
+    AcknowledgeInterrupt = ArmGicAcknowledgeInterrupt (
+                             PcdGet64 (
+                               PcdGicInterruptInterfaceBase
+                               ),
+                             &InterruptId
+                             );
     // Check if it is a valid interrupt ID
-    if (InterruptId < ArmGicGetMaxNumInterrupts (PcdGet64 (PcdGicDistributorBase))) {
+    if (InterruptId < ArmGicGetMaxNumInterrupts (
+                        PcdGet64 (
+                          PcdGicDistributorBase
+                          )
+                        ))
+    {
       // Got a valid SGI number hence signal End of Interrupt
-      ArmGicEndOfInterrupt (PcdGet64 (PcdGicInterruptInterfaceBase), AcknowledgeInterrupt);
+      ArmGicEndOfInterrupt (
+        PcdGet64 (PcdGicInterruptInterfaceBase),
+        AcknowledgeInterrupt
+        );
     }
   } while (SecondaryEntryAddr == 0);
 
@@ -124,7 +143,12 @@ PrimaryMain (
   // If ArmVe has not been built as Standalone then we need to wake up the secondary cores
   if (FeaturePcdGet (PcdSendSgiToBringUpSecondaryCores)) {
     // Sending SGI to all the Secondary CPU interfaces
-    ArmGicSendSgiTo (PcdGet64 (PcdGicDistributorBase), ARM_GIC_ICDSGIR_FILTER_EVERYONEELSE, 0x0E, PcdGet32 (PcdGicSgiIntId));
+    ArmGicSendSgiTo (
+      PcdGet64 (PcdGicDistributorBase),
+      ARM_GIC_ICDSGIR_FILTER_EVERYONEELSE,
+      0x0E,
+      PcdGet32 (PcdGicSgiIntId)
+      );
   }
 
   // Adjust the Temporary Ram as the new Ppi List (Common + Platform Ppi Lists) is created at
@@ -139,14 +163,22 @@ PrimaryMain (
   // Note also:  HOBs (pei temp ram) MUST be above stack
   //
   SecCoreData.DataSize               = sizeof (EFI_SEC_PEI_HAND_OFF);
-  SecCoreData.BootFirmwareVolumeBase = (VOID *)(UINTN)PcdGet64 (PcdFvBaseAddress);
+  SecCoreData.BootFirmwareVolumeBase = (VOID *)(UINTN)PcdGet64 (
+                                                        PcdFvBaseAddress
+                                                        );
   SecCoreData.BootFirmwareVolumeSize = PcdGet32 (PcdFvSize);
   SecCoreData.TemporaryRamBase       = (VOID *)TemporaryRamBase; // We run on the primary core (and so we use the first stack)
   SecCoreData.TemporaryRamSize       = TemporaryRamSize;
   SecCoreData.PeiTemporaryRamBase    = SecCoreData.TemporaryRamBase;
-  SecCoreData.PeiTemporaryRamSize    = ALIGN_VALUE (SecCoreData.TemporaryRamSize / 2, CPU_STACK_ALIGNMENT);
-  SecCoreData.StackBase              = (VOID *)((UINTN)SecCoreData.TemporaryRamBase + SecCoreData.PeiTemporaryRamSize);
-  SecCoreData.StackSize              = (TemporaryRamBase + TemporaryRamSize) - (UINTN)SecCoreData.StackBase;
+  SecCoreData.PeiTemporaryRamSize    = ALIGN_VALUE (
+                                         SecCoreData.TemporaryRamSize / 2,
+                                         CPU_STACK_ALIGNMENT
+                                         );
+  SecCoreData.StackBase =
+    (VOID *)((UINTN)SecCoreData.TemporaryRamBase +
+             SecCoreData.PeiTemporaryRamSize);
+  SecCoreData.StackSize = (TemporaryRamBase + TemporaryRamSize) -
+                          (UINTN)SecCoreData.StackBase;
 
   // Jump to PEI core entry point
   PeiCoreEntryPoint (&SecCoreData, PpiList);

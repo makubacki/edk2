@@ -22,7 +22,8 @@
 
 #include "PrePi.h"
 
-#define IS_XIP()  (((UINT64)FixedPcdGet64 (PcdFdBaseAddress) > mSystemMemoryEnd) ||\
+#define IS_XIP()  \
+  (((UINT64)FixedPcdGet64 (PcdFdBaseAddress) > mSystemMemoryEnd) ||                \
                   ((FixedPcdGet64 (PcdFdBaseAddress) + FixedPcdGet32 (PcdFdSize)) <= FixedPcdGet64 (PcdSystemMemoryBase)))
 
 UINT64  mSystemMemoryEnd = FixedPcdGet64 (PcdSystemMemoryBase) +
@@ -72,8 +73,11 @@ PrePiMain (
   // If ensure the FD is either part of the System Memory or totally outside of the System Memory (XIP)
   ASSERT (
     IS_XIP () ||
-    ((FixedPcdGet64 (PcdFdBaseAddress) >= FixedPcdGet64 (PcdSystemMemoryBase)) &&
-     ((UINT64)(FixedPcdGet64 (PcdFdBaseAddress) + FixedPcdGet32 (PcdFdSize)) <= (UINT64)mSystemMemoryEnd))
+    ((FixedPcdGet64 (PcdFdBaseAddress) >= FixedPcdGet64 (
+                                            PcdSystemMemoryBase
+                                            )) &&
+     ((UINT64)(FixedPcdGet64 (PcdFdBaseAddress) + FixedPcdGet32 (PcdFdSize)) <=
+      (UINT64)mSystemMemoryEnd))
     );
 
   // Initialize the architecture specific bits
@@ -105,13 +109,20 @@ PrePiMain (
   PrePeiSetHobList (HobList);
 
   // Initialize MMU and Memory HOBs (Resource Descriptor HOBs)
-  Status = MemoryPeim (UefiMemoryBase, FixedPcdGet32 (PcdSystemMemoryUefiRegionSize));
+  Status = MemoryPeim (
+             UefiMemoryBase,
+             FixedPcdGet32 (
+               PcdSystemMemoryUefiRegionSize
+               )
+             );
   ASSERT_EFI_ERROR (Status);
 
   // Create the Stacks HOB (reserve the memory for all stacks)
   if (ArmIsMpCore ()) {
     StacksSize = PcdGet32 (PcdCPUCorePrimaryStackSize) +
-                 ((FixedPcdGet32 (PcdCoreCount) - 1) * FixedPcdGet32 (PcdCPUCoreSecondaryStackSize));
+                 ((FixedPcdGet32 (PcdCoreCount) - 1) * FixedPcdGet32 (
+                                                         PcdCPUCoreSecondaryStackSize
+                                                         ));
   } else {
     StacksSize = PcdGet32 (PcdCPUCorePrimaryStackSize);
   }
@@ -123,17 +134,27 @@ PrePiMain (
 
   if (ArmIsMpCore ()) {
     // Only MP Core platform need to produce gArmMpCoreInfoPpiGuid
-    Status = GetPlatformPpi (&gArmMpCoreInfoPpiGuid, (VOID **)&ArmMpCoreInfoPpi);
+    Status = GetPlatformPpi (
+               &gArmMpCoreInfoPpiGuid,
+               (VOID **)&ArmMpCoreInfoPpi
+               );
 
     // On MP Core Platform we must implement the ARM MP Core Info PPI (gArmMpCoreInfoPpiGuid)
     ASSERT_EFI_ERROR (Status);
 
     // Build the MP Core Info Table
     ArmCoreCount = 0;
-    Status       = ArmMpCoreInfoPpi->GetMpCoreInfo (&ArmCoreCount, &ArmCoreInfoTable);
+    Status       = ArmMpCoreInfoPpi->GetMpCoreInfo (
+                                       &ArmCoreCount,
+                                       &ArmCoreInfoTable
+                                       );
     if (!EFI_ERROR (Status) && (ArmCoreCount > 0)) {
       // Build MPCore Info HOB
-      BuildGuidDataHob (&gArmMpCoreInfoGuid, ArmCoreInfoTable, sizeof (ARM_CORE_INFO) * ArmCoreCount);
+      BuildGuidDataHob (
+        &gArmMpCoreInfoGuid,
+        ArmCoreInfoTable,
+        sizeof (ARM_CORE_INFO) * ArmCoreCount
+        );
     }
   }
 
@@ -141,7 +162,11 @@ PrePiMain (
   Performance.ResetEnd = GetTimeInNanoSecond (StartTimeStamp);
 
   // Build SEC Performance Data Hob
-  BuildGuidDataHob (&gEfiFirmwarePerformanceGuid, &Performance, sizeof (Performance));
+  BuildGuidDataHob (
+    &gEfiFirmwarePerformanceGuid,
+    &Performance,
+    sizeof (Performance)
+    );
 
   // Set the Boot Mode
   SetBootMode (ArmPlatformGetBootMode ());

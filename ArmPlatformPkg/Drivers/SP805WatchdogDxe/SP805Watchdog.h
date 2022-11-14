@@ -10,13 +10,20 @@
 #define __SP805_WATCHDOG_H__
 
 // SP805 Watchdog Registers
-#define SP805_WDOG_LOAD_REG         ((UINT32)PcdGet32 (PcdSP805WatchdogBase) + 0x000)
-#define SP805_WDOG_CURRENT_REG      ((UINT32)PcdGet32 (PcdSP805WatchdogBase) + 0x004)
-#define SP805_WDOG_CONTROL_REG      ((UINT32)PcdGet32 (PcdSP805WatchdogBase) + 0x008)
-#define SP805_WDOG_INT_CLR_REG      ((UINT32)PcdGet32 (PcdSP805WatchdogBase) + 0x00C)
-#define SP805_WDOG_RAW_INT_STS_REG  ((UINT32)PcdGet32 (PcdSP805WatchdogBase) + 0x010)
-#define SP805_WDOG_MSK_INT_STS_REG  ((UINT32)PcdGet32 (PcdSP805WatchdogBase) + 0x014)
-#define SP805_WDOG_LOCK_REG         ((UINT32)PcdGet32 (PcdSP805WatchdogBase) + 0xC00)
+#define SP805_WDOG_LOAD_REG         \
+      ((UINT32)PcdGet32 (PcdSP805WatchdogBase) + 0x000)
+#define SP805_WDOG_CURRENT_REG      \
+      ((UINT32)PcdGet32 (PcdSP805WatchdogBase) + 0x004)
+#define SP805_WDOG_CONTROL_REG      \
+      ((UINT32)PcdGet32 (PcdSP805WatchdogBase) + 0x008)
+#define SP805_WDOG_INT_CLR_REG      \
+      ((UINT32)PcdGet32 (PcdSP805WatchdogBase) + 0x00C)
+#define SP805_WDOG_RAW_INT_STS_REG  \
+      ((UINT32)PcdGet32 (PcdSP805WatchdogBase) + 0x010)
+#define SP805_WDOG_MSK_INT_STS_REG  \
+      ((UINT32)PcdGet32 (PcdSP805WatchdogBase) + 0x014)
+#define SP805_WDOG_LOCK_REG         \
+      ((UINT32)PcdGet32 (PcdSP805WatchdogBase) + 0xC00)
 
 #define SP805_WDOG_PERIPH_ID0  ((UINT32)PcdGet32 (PcdSP805WatchdogBase) + 0xFE0)
 #define SP805_WDOG_PERIPH_ID1  ((UINT32)PcdGet32 (PcdSP805WatchdogBase) + 0xFE4)

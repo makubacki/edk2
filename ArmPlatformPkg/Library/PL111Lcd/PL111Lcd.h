@@ -61,10 +61,14 @@
 /**********************************************************************/
 
 // Register: PL111_REG_LCD_TIMING_0
-#define HOR_AXIS_PANEL(hbp, hfp, hsw, hor_res)  (UINT32)(((UINT32)(hbp) << 24) | ((UINT32)(hfp) << 16) | ((UINT32)(hsw) << 8) | (((UINT32)((hor_res)/16)-1) << 2))
+#define HOR_AXIS_PANEL(hbp, hfp, hsw, \
+                       hor_res)  \
+  (UINT32)(((UINT32)(hbp) << 24) | ((UINT32)(hfp) << 16) | ((UINT32)(hsw) << 8) | (((UINT32)((hor_res)/16)-1) << 2))
 
 // Register: PL111_REG_LCD_TIMING_1
-#define VER_AXIS_PANEL(vbp, vfp, vsw, ver_res)  (UINT32)(((UINT32)(vbp) << 24) | ((UINT32)(vfp) << 16) | ((UINT32)(vsw) << 10) | ((ver_res)-1))
+#define VER_AXIS_PANEL(vbp, vfp, vsw, \
+                       ver_res)  \
+  (UINT32)(((UINT32)(vbp) << 24) | ((UINT32)(vfp) << 16) | ((UINT32)(vsw) << 10) | ((ver_res)-1))
 
 // Register: PL111_REG_LCD_TIMING_2
 #define PL111_BIT_SHIFT_PCD_HI  27
@@ -83,7 +87,9 @@
 #define PL111_IHS  (1 << 12)
 #define PL111_IVS  (1 << 11)
 
-#define CLK_SIG_POLARITY(hor_res)  (UINT32)(PL111_BCD | PL111_IPC | PL111_IHS | PL111_IVS | (((hor_res)-1) << 16))
+#define CLK_SIG_POLARITY( \
+                        hor_res)  \
+  (UINT32)(PL111_BCD | PL111_IPC | PL111_IHS | PL111_IVS | (((hor_res)-1) << 16))
 
 // Register: PL111_REG_LCD_TIMING_3
 #define PL111_BIT_SHIFT_LEE  16

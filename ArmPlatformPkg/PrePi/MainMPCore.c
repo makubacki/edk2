@@ -25,7 +25,12 @@ PrimaryMain (
   // In some cases, the secondary cores are waiting for an SGI from the next stage boot loader to resume their initialization
   if (!FixedPcdGet32 (PcdSendSgiToBringUpSecondaryCores)) {
     // Sending SGI to all the Secondary CPU interfaces
-    ArmGicSendSgiTo (PcdGet64 (PcdGicDistributorBase), ARM_GIC_ICDSGIR_FILTER_EVERYONEELSE, 0x0E, PcdGet32 (PcdGicSgiIntId));
+    ArmGicSendSgiTo (
+      PcdGet64 (PcdGicDistributorBase),
+      ARM_GIC_ICDSGIR_FILTER_EVERYONEELSE,
+      0x0E,
+      PcdGet32 (PcdGicSgiIntId)
+      );
   }
 
   PrePiMain (UefiMemoryBase, StacksBase, StartTimeStamp);
@@ -62,7 +67,10 @@ SecondaryMain (
   ASSERT_EFI_ERROR (Status);
 
   ArmCoreCount = 0;
-  Status       = ArmMpCoreInfoPpi->GetMpCoreInfo (&ArmCoreCount, &ArmCoreInfoTable);
+  Status       = ArmMpCoreInfoPpi->GetMpCoreInfo (
+                                     &ArmCoreCount,
+                                     &ArmCoreInfoTable
+                                     );
   ASSERT_EFI_ERROR (Status);
 
   // Find the core in the ArmCoreTable
@@ -78,7 +86,10 @@ SecondaryMain (
   ASSERT (Index != ArmCoreCount);
 
   // Clear Secondary cores MailBox
-  MmioWrite32 (ArmCoreInfoTable[Index].MailboxClearAddress, ArmCoreInfoTable[Index].MailboxClearValue);
+  MmioWrite32 (
+    ArmCoreInfoTable[Index].MailboxClearAddress,
+    ArmCoreInfoTable[Index].MailboxClearValue
+    );
 
   do {
     ArmCallWFI ();
@@ -87,11 +98,24 @@ SecondaryMain (
     SecondaryEntryAddr = MmioRead32 (ArmCoreInfoTable[Index].MailboxGetAddress);
 
     // Acknowledge the interrupt and send End of Interrupt signal.
-    AcknowledgeInterrupt = ArmGicAcknowledgeInterrupt (PcdGet64 (PcdGicInterruptInterfaceBase), &InterruptId);
+    AcknowledgeInterrupt = ArmGicAcknowledgeInterrupt (
+                             PcdGet64 (
+                               PcdGicInterruptInterfaceBase
+                               ),
+                             &InterruptId
+                             );
     // Check if it is a valid interrupt ID
-    if (InterruptId < ArmGicGetMaxNumInterrupts (PcdGet64 (PcdGicDistributorBase))) {
+    if (InterruptId < ArmGicGetMaxNumInterrupts (
+                        PcdGet64 (
+                          PcdGicDistributorBase
+                          )
+                        ))
+    {
       // Got a valid SGI number hence signal End of Interrupt
-      ArmGicEndOfInterrupt (PcdGet64 (PcdGicInterruptInterfaceBase), AcknowledgeInterrupt);
+      ArmGicEndOfInterrupt (
+        PcdGet64 (PcdGicInterruptInterfaceBase),
+        AcknowledgeInterrupt
+        );
     }
   } while (SecondaryEntryAddr == 0);
 

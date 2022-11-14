@@ -69,7 +69,11 @@ SerialPortWrite (
   IN UINTN  NumberOfBytes
   )
 {
-  return PL011UartWrite ((UINTN)PcdGet64 (PcdSerialRegisterBase), Buffer, NumberOfBytes);
+  return PL011UartWrite (
+           (UINTN)PcdGet64 (PcdSerialRegisterBase),
+           Buffer,
+           NumberOfBytes
+           );
 }
 
 /**
@@ -89,7 +93,11 @@ SerialPortRead (
   IN  UINTN  NumberOfBytes
   )
 {
-  return PL011UartRead ((UINTN)PcdGet64 (PcdSerialRegisterBase), Buffer, NumberOfBytes);
+  return PL011UartRead (
+           (UINTN)PcdGet64 (PcdSerialRegisterBase),
+           Buffer,
+           NumberOfBytes
+           );
 }
 
 /**

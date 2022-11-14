@@ -43,14 +43,22 @@ PrimaryMain (
   // Note also:  HOBs (pei temp ram) MUST be above stack
   //
   SecCoreData.DataSize               = sizeof (EFI_SEC_PEI_HAND_OFF);
-  SecCoreData.BootFirmwareVolumeBase = (VOID *)(UINTN)PcdGet64 (PcdFvBaseAddress);
+  SecCoreData.BootFirmwareVolumeBase = (VOID *)(UINTN)PcdGet64 (
+                                                        PcdFvBaseAddress
+                                                        );
   SecCoreData.BootFirmwareVolumeSize = PcdGet32 (PcdFvSize);
   SecCoreData.TemporaryRamBase       = (VOID *)TemporaryRamBase; // We run on the primary core (and so we use the first stack)
   SecCoreData.TemporaryRamSize       = TemporaryRamSize;
   SecCoreData.PeiTemporaryRamBase    = SecCoreData.TemporaryRamBase;
-  SecCoreData.PeiTemporaryRamSize    = ALIGN_VALUE (SecCoreData.TemporaryRamSize / 2, CPU_STACK_ALIGNMENT);
-  SecCoreData.StackBase              = (VOID *)((UINTN)SecCoreData.TemporaryRamBase + SecCoreData.PeiTemporaryRamSize);
-  SecCoreData.StackSize              = (TemporaryRamBase + TemporaryRamSize) - (UINTN)SecCoreData.StackBase;
+  SecCoreData.PeiTemporaryRamSize    = ALIGN_VALUE (
+                                         SecCoreData.TemporaryRamSize / 2,
+                                         CPU_STACK_ALIGNMENT
+                                         );
+  SecCoreData.StackBase =
+    (VOID *)((UINTN)SecCoreData.TemporaryRamBase +
+             SecCoreData.PeiTemporaryRamSize);
+  SecCoreData.StackSize = (TemporaryRamBase + TemporaryRamSize) -
+                          (UINTN)SecCoreData.StackBase;
 
   // Jump to PEI core entry point
   (PeiCoreEntryPoint)(&SecCoreData, PpiList);

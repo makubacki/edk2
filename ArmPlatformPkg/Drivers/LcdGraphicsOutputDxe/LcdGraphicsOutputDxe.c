@@ -123,7 +123,8 @@ InitializeDisplay (
   }
 
   // Setup all the relevant mode information
-  Instance->Gop.Mode->SizeOfInfo      = sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
+  Instance->Gop.Mode->SizeOfInfo =
+    sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
   Instance->Gop.Mode->FrameBufferBase = VramBaseAddress;
 
   // Set the flag before changing the mode, to avoid infinite loops
@@ -133,7 +134,11 @@ InitializeDisplay (
   goto EXIT;
 
 EXIT_ERROR_LCD_SHUTDOWN:
-  DEBUG ((DEBUG_ERROR, "InitializeDisplay: ERROR - Can not initialise the display. Exit Status=%r\n", Status));
+  DEBUG ((
+    DEBUG_ERROR,
+    "InitializeDisplay: ERROR - Can not initialise the display. Exit Status=%r\n",
+    Status
+    ));
 
   LcdShutdown ();
 
@@ -172,7 +177,11 @@ LcdGraphicsOutputDxeInitialize (
                   );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "LcdGraphicsOutputDxeInitialize: Can not install the protocol. Exit Status=%r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "LcdGraphicsOutputDxeInitialize: Can not install the protocol. Exit Status=%r\n",
+      Status
+      ));
     goto EXIT;
   }
 
@@ -189,7 +198,11 @@ LcdGraphicsOutputDxeInitialize (
                   );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "LcdGraphicsOutputDxeInitialize: Can not install the ExitBootServicesEvent handler. Exit Status=%r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "LcdGraphicsOutputDxeInitialize: Can not install the ExitBootServicesEvent handler. Exit Status=%r\n",
+      Status
+      ));
     goto EXIT_ERROR_UNINSTALL_PROTOCOL;
   }
 
@@ -265,7 +278,11 @@ LcdGraphicsQueryMode (
       (SizeOfInfo == NULL) ||
       (ModeNumber >= This->Mode->MaxMode))
   {
-    DEBUG ((DEBUG_ERROR, "LcdGraphicsQueryMode: ERROR - For mode number %d : Invalid Parameter.\n", ModeNumber));
+    DEBUG ((
+      DEBUG_ERROR,
+      "LcdGraphicsQueryMode: ERROR - For mode number %d : Invalid Parameter.\n",
+      ModeNumber
+      ));
     Status = EFI_INVALID_PARAMETER;
     goto EXIT;
   }
@@ -314,7 +331,11 @@ LcdGraphicsSetMode (
 
   // Check if this mode is supported
   if (ModeNumber >= This->Mode->MaxMode) {
-    DEBUG ((DEBUG_ERROR, "LcdGraphicsSetMode: ERROR - Unsupported mode number %d .\n", ModeNumber));
+    DEBUG ((
+      DEBUG_ERROR,
+      "LcdGraphicsSetMode: ERROR - Unsupported mode number %d .\n",
+      ModeNumber
+      ));
     Status = EFI_UNSUPPORTED;
     goto EXIT;
   }
@@ -331,7 +352,11 @@ LcdGraphicsSetMode (
   LcdPlatformQueryMode (ModeNumber, &Instance->ModeInfo);
   Status = LcdPlatformGetBpp (ModeNumber, &Bpp);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "LcdGraphicsSetMode: ERROR - Couldn't get bytes per pixel, status: %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "LcdGraphicsSetMode: ERROR - Couldn't get bytes per pixel, status: %r\n",
+      Status
+      ));
     goto EXIT;
   }
 

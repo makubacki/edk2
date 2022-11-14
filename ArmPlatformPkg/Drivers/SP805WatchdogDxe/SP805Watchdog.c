@@ -242,7 +242,12 @@ SP805SetTimerPeriod (
     //
     // WatchdogTicks = (TimerPeriod * SP805_CLOCK_FREQUENCY) / 10 MHz ;
 
-    Ticks64bit = MultU64x32 (TimerPeriod, PcdGet32 (PcdSP805WatchdogClockFrequencyInHz));
+    Ticks64bit = MultU64x32 (
+                   TimerPeriod,
+                   PcdGet32 (
+                     PcdSP805WatchdogClockFrequencyInHz
+                     )
+                   );
     Ticks64bit = DivU64x32 (Ticks64bit, 10 * 1000 * 1000);
 
     // The registers in the SP805 are only 32 bits

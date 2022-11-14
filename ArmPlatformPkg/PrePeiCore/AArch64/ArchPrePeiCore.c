@@ -23,19 +23,44 @@ PeiCommonExceptionEntry (
 
   switch (Entry) {
     case EXCEPT_AARCH64_SYNCHRONOUS_EXCEPTIONS:
-      CharCount = AsciiSPrint (Buffer, sizeof (Buffer), "Synchronous Exception at 0x%X\n\r", LR);
+      CharCount = AsciiSPrint (
+                    Buffer,
+                    sizeof (Buffer),
+                    "Synchronous Exception at 0x%X\n\r",
+                    LR
+                    );
       break;
     case EXCEPT_AARCH64_IRQ:
-      CharCount = AsciiSPrint (Buffer, sizeof (Buffer), "IRQ Exception at 0x%X\n\r", LR);
+      CharCount = AsciiSPrint (
+                    Buffer,
+                    sizeof (Buffer),
+                    "IRQ Exception at 0x%X\n\r",
+                    LR
+                    );
       break;
     case EXCEPT_AARCH64_FIQ:
-      CharCount = AsciiSPrint (Buffer, sizeof (Buffer), "FIQ Exception at 0x%X\n\r", LR);
+      CharCount = AsciiSPrint (
+                    Buffer,
+                    sizeof (Buffer),
+                    "FIQ Exception at 0x%X\n\r",
+                    LR
+                    );
       break;
     case EXCEPT_AARCH64_SERROR:
-      CharCount = AsciiSPrint (Buffer, sizeof (Buffer), "SError/Abort Exception at 0x%X\n\r", LR);
+      CharCount = AsciiSPrint (
+                    Buffer,
+                    sizeof (Buffer),
+                    "SError/Abort Exception at 0x%X\n\r",
+                    LR
+                    );
       break;
     default:
-      CharCount = AsciiSPrint (Buffer, sizeof (Buffer), "Unknown Exception at 0x%X\n\r", LR);
+      CharCount = AsciiSPrint (
+                    Buffer,
+                    sizeof (Buffer),
+                    "Unknown Exception at 0x%X\n\r",
+                    LR
+                    );
       break;
   }
 

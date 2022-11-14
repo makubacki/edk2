@@ -16,7 +16,9 @@
 
 #include "PrePeiCore.h"
 
-CONST EFI_PEI_TEMPORARY_RAM_SUPPORT_PPI  mTemporaryRamSupportPpi = { PrePeiCoreTemporaryRamSupport };
+CONST EFI_PEI_TEMPORARY_RAM_SUPPORT_PPI  mTemporaryRamSupportPpi = {
+  PrePeiCoreTemporaryRamSupport
+};
 
 CONST EFI_PEI_PPI_DESCRIPTOR  gCommonPpiTable[] = {
   {
@@ -44,10 +46,13 @@ CreatePpiList (
   // Copy the Common and Platform PPis in Temporary Memory
   ListBase = PcdGet64 (PcdCPUCoresStackBase);
   CopyMem ((VOID *)ListBase, gCommonPpiTable, sizeof (gCommonPpiTable));
-  CopyMem ((VOID *)(ListBase + sizeof (gCommonPpiTable)), PlatformPpiList, PlatformPpiListSize);
+  CopyMem ((VOID *)(ListBase + sizeof (gCommonPpiTable)), PlatformPpiList,
+    PlatformPpiListSize);
 
   // Set the Terminate flag on the last PPI entry
-  LastPpi         = (EFI_PEI_PPI_DESCRIPTOR *)ListBase + ((sizeof (gCommonPpiTable) + PlatformPpiListSize) / sizeof (EFI_PEI_PPI_DESCRIPTOR)) - 1;
+  LastPpi = (EFI_PEI_PPI_DESCRIPTOR *)ListBase +
+            ((sizeof (gCommonPpiTable) + PlatformPpiListSize) /
+             sizeof (EFI_PEI_PPI_DESCRIPTOR)) - 1;
   LastPpi->Flags |= EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST;
 
   *PpiList     = (EFI_PEI_PPI_DESCRIPTOR *)ListBase;

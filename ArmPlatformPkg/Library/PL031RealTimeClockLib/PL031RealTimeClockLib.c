@@ -82,17 +82,26 @@ InitializePL031 (
   }
 
   // Ensure interrupts are masked. We do not want RTC interrupts in UEFI
-  if ((MmioRead32 (mPL031RtcBase + PL031_RTC_IMSC_IRQ_MASK_SET_CLEAR_REGISTER) & PL031_SET_IRQ_MASK) != 0) {
+  if ((MmioRead32 (mPL031RtcBase + PL031_RTC_IMSC_IRQ_MASK_SET_CLEAR_REGISTER) &
+       PL031_SET_IRQ_MASK) != 0)
+  {
     MmioWrite32 (mPL031RtcBase + PL031_RTC_IMSC_IRQ_MASK_SET_CLEAR_REGISTER, 0);
   }
 
   // Clear any existing interrupts
-  if ((MmioRead32 (mPL031RtcBase + PL031_RTC_RIS_RAW_IRQ_STATUS_REGISTER) & PL031_IRQ_TRIGGERED) == PL031_IRQ_TRIGGERED) {
-    MmioOr32 (mPL031RtcBase + PL031_RTC_ICR_IRQ_CLEAR_REGISTER, PL031_CLEAR_IRQ);
+  if ((MmioRead32 (mPL031RtcBase + PL031_RTC_RIS_RAW_IRQ_STATUS_REGISTER) &
+       PL031_IRQ_TRIGGERED) == PL031_IRQ_TRIGGERED)
+  {
+    MmioOr32 (
+      mPL031RtcBase + PL031_RTC_ICR_IRQ_CLEAR_REGISTER,
+      PL031_CLEAR_IRQ
+      );
   }
 
   // Start the clock counter
-  if ((MmioRead32 (mPL031RtcBase + PL031_RTC_CR_CONTROL_REGISTER) & PL031_RTC_ENABLED) != PL031_RTC_ENABLED) {
+  if ((MmioRead32 (mPL031RtcBase + PL031_RTC_CR_CONTROL_REGISTER) &
+       PL031_RTC_ENABLED) != PL031_RTC_ENABLED)
+  {
     MmioOr32 (mPL031RtcBase + PL031_RTC_CR_CONTROL_REGISTER, PL031_RTC_ENABLED);
   }
 
@@ -325,7 +334,11 @@ LibRtcInitialize (
     return Status;
   }
 
-  Status = gDS->SetMemorySpaceAttributes (mPL031RtcBase, SIZE_4KB, EFI_MEMORY_UC | EFI_MEMORY_RUNTIME);
+  Status = gDS->SetMemorySpaceAttributes (
+                  mPL031RtcBase,
+                  SIZE_4KB,
+                  EFI_MEMORY_UC | EFI_MEMORY_RUNTIME
+                  );
   if (EFI_ERROR (Status)) {
     return Status;
   }

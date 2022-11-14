@@ -35,7 +35,8 @@ LcdIdentify (
   // Check if this is a PL111
   if ((MmioRead8 (PL111_REG_CLCD_PERIPH_ID_0) == PL111_CLCD_PERIPH_ID_0) &&
       (MmioRead8 (PL111_REG_CLCD_PERIPH_ID_1) == PL111_CLCD_PERIPH_ID_1) &&
-      ((MmioRead8 (PL111_REG_CLCD_PERIPH_ID_2) & 0xf) == PL111_CLCD_PERIPH_ID_2) &&
+      ((MmioRead8 (PL111_REG_CLCD_PERIPH_ID_2) & 0xf) ==
+       PL111_CLCD_PERIPH_ID_2) &&
       (MmioRead8 (PL111_REG_CLCD_PERIPH_ID_3) == PL111_CLCD_PERIPH_ID_3) &&
       (MmioRead8 (PL111_REG_CLCD_P_CELL_ID_0) == PL111_CLCD_P_CELL_ID_0) &&
       (MmioRead8 (PL111_REG_CLCD_P_CELL_ID_1) == PL111_CLCD_P_CELL_ID_1) &&

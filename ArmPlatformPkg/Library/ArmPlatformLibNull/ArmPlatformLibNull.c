@@ -106,7 +106,8 @@ PrePeiCoreGetMpCoreInfo (
   )
 {
   if (ArmIsMpCore ()) {
-    *CoreCount    = sizeof (mArmPlatformNullMpCoreInfoTable) / sizeof (ARM_CORE_INFO);
+    *CoreCount = sizeof (mArmPlatformNullMpCoreInfoTable) /
+                 sizeof (ARM_CORE_INFO);
     *ArmCoreTable = mArmPlatformNullMpCoreInfoTable;
     return EFI_SUCCESS;
   } else {
