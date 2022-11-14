@@ -322,7 +322,8 @@ NorFlashPlatformLibConstructor (
       mNorFlashDevices[mNorFlashDeviceCount].DeviceBaseAddress = (UINTN)Base;
       mNorFlashDevices[mNorFlashDeviceCount].RegionBaseAddress = (UINTN)Base;
       mNorFlashDevices[mNorFlashDeviceCount].Size              = (UINTN)Size;
-      mNorFlashDevices[mNorFlashDeviceCount].BlockSize         = KVMTOOL_NOR_BLOCK_SIZE;
+      mNorFlashDevices[mNorFlashDeviceCount].BlockSize         =
+        KVMTOOL_NOR_BLOCK_SIZE;
       mNorFlashDeviceCount++;
     }
   } // for

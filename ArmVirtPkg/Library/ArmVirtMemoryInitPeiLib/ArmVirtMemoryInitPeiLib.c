@@ -37,7 +37,11 @@ InitMmu (
 
   // Note: Because we called PeiServicesInstallPeiMemory() before to call InitMmu() the MMU Page Table resides in
   //      DRAM (even at the top of DRAM as it is the first permanent memory allocation)
-  Status = ArmConfigureMmu (MemoryTable, &TranslationTableBase, &TranslationTableSize);
+  Status = ArmConfigureMmu (
+             MemoryTable,
+             &TranslationTableBase,
+             &TranslationTableSize
+             );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Error: Failed to enable MMU\n"));
   }

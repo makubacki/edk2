@@ -111,7 +111,12 @@ PlatformPeim (
 
         UartBase = fdt64_to_cpu (ReadUnaligned64 (RegProp));
 
-        DEBUG ((DEBUG_INFO, "%a: PL011 UART @ 0x%lx\n", __FUNCTION__, UartBase));
+        DEBUG ((
+          DEBUG_INFO,
+          "%a: PL011 UART @ 0x%lx\n",
+          __FUNCTION__,
+          UartBase
+          ));
 
         *UartHobData = UartBase;
         break;

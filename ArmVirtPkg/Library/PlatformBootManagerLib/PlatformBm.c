@@ -48,7 +48,7 @@ STATIC PLATFORM_SERIAL_CONSOLE  mSerialConsole = {
   // VENDOR_DEVICE_PATH SerialDxe
   //
   {
-    { HARDWARE_DEVICE_PATH,  HW_VENDOR_DP, DP_NODE_LEN (VENDOR_DEVICE_PATH) },
+    { HARDWARE_DEVICE_PATH,  HW_VENDOR_DP,  DP_NODE_LEN (VENDOR_DEVICE_PATH)  },
     EDKII_SERIAL_PORT_LIB_VENDOR_GUID
   },
 
@@ -56,7 +56,7 @@ STATIC PLATFORM_SERIAL_CONSOLE  mSerialConsole = {
   // UART_DEVICE_PATH Uart
   //
   {
-    { MESSAGING_DEVICE_PATH, MSG_UART_DP,  DP_NODE_LEN (UART_DEVICE_PATH)   },
+    { MESSAGING_DEVICE_PATH, MSG_UART_DP,   DP_NODE_LEN (UART_DEVICE_PATH)    },
     0,                                      // Reserved
     FixedPcdGet64 (PcdUartDefaultBaudRate), // BaudRate
     FixedPcdGet8 (PcdUartDefaultDataBits),  // DataBits
@@ -379,7 +379,9 @@ IsVirtioPciRng (
       (RevisionId >= 0x01))
   {
     Virtio10 = TRUE;
-  } else if ((DeviceId >= 0x1000) && (DeviceId <= 0x103F) && (RevisionId == 0x00)) {
+  } else if ((DeviceId >= 0x1000) && (DeviceId <= 0x103F) && (RevisionId ==
+                                                              0x00))
+  {
     Virtio10 = FALSE;
   } else {
     return FALSE;

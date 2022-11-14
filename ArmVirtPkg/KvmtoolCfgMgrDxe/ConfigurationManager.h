@@ -78,7 +78,8 @@ typedef struct PlatformRepositoryInfo {
   ///
   /// List of ACPI tables
   ///
-  CM_STD_OBJ_ACPI_TABLE_INFO               CmAcpiTableList[PLAT_ACPI_TABLE_COUNT];
+  CM_STD_OBJ_ACPI_TABLE_INFO               CmAcpiTableList[PLAT_ACPI_TABLE_COUNT
+  ];
 
   ///
   /// Power management profile information

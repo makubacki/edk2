@@ -193,11 +193,14 @@ ArmVirtGetMemoryMap (
   Index        = 0;
   MemNodeIndex = 0;
   // System DRAM
-  while ((MemNodeIndex < CLOUDHV_MAX_MEM_NODE_NUM) && (CloudHvMemNode[MemNodeIndex].Size != 0)) {
+  while ((MemNodeIndex < CLOUDHV_MAX_MEM_NODE_NUM) &&
+         (CloudHvMemNode[MemNodeIndex].Size != 0))
+  {
     VirtualMemoryTable[Index].PhysicalBase = CloudHvMemNode[MemNodeIndex].Base;
     VirtualMemoryTable[Index].VirtualBase  = CloudHvMemNode[MemNodeIndex].Base;
     VirtualMemoryTable[Index].Length       = CloudHvMemNode[MemNodeIndex].Size;
-    VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_WRITE_BACK;
+    VirtualMemoryTable[Index].Attributes   =
+      ARM_MEMORY_REGION_ATTRIBUTE_WRITE_BACK;
 
     DEBUG ((
       DEBUG_INFO,
@@ -224,9 +227,11 @@ ArmVirtGetMemoryMap (
 
   // Map the FV region as normal executable memory
   VirtualMemoryTable[Index].PhysicalBase = PcdGet64 (PcdFvBaseAddress);
-  VirtualMemoryTable[Index].VirtualBase  = VirtualMemoryTable[Index].PhysicalBase;
-  VirtualMemoryTable[Index].Length       = FixedPcdGet32 (PcdFvSize);
-  VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_WRITE_BACK;
+  VirtualMemoryTable[Index].VirtualBase  =
+    VirtualMemoryTable[Index].PhysicalBase;
+  VirtualMemoryTable[Index].Length     = FixedPcdGet32 (PcdFvSize);
+  VirtualMemoryTable[Index].Attributes =
+    ARM_MEMORY_REGION_ATTRIBUTE_WRITE_BACK;
   Index++;
 
   // Memory mapped for 32bit device (like TPM)

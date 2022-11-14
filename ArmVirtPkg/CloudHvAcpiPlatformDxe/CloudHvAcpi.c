@@ -69,8 +69,9 @@ InstallCloudHvAcpiTables (
     return EFI_INVALID_PARAMETER;
   }
 
-  RsdpPtr         = PcdGet64 (PcdCloudHvAcpiRsdpBaseAddress);
-  XsdtPtr         = ((EFI_ACPI_6_3_ROOT_SYSTEM_DESCRIPTION_POINTER *)RsdpPtr)->XsdtAddress;
+  RsdpPtr = PcdGet64 (PcdCloudHvAcpiRsdpBaseAddress);
+  XsdtPtr =
+    ((EFI_ACPI_6_3_ROOT_SYSTEM_DESCRIPTION_POINTER *)RsdpPtr)->XsdtAddress;
   AcpiTableLength = ((EFI_ACPI_COMMON_HEADER *)XsdtPtr)->Length;
   TableOffset     = sizeof (EFI_ACPI_DESCRIPTION_HEADER);
   DsdtPtr         = NULL;
@@ -99,7 +100,9 @@ InstallCloudHvAcpiTables (
         (EFI_ACPI_6_3_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE ==
          ((EFI_ACPI_COMMON_HEADER *)AcpiTablePtr)->Signature))
     {
-      DsdtPtr = (UINT64 *)((EFI_ACPI_6_3_FIXED_ACPI_DESCRIPTION_TABLE *)AcpiTablePtr)->XDsdt;
+      DsdtPtr =
+        (UINT64 *)((EFI_ACPI_6_3_FIXED_ACPI_DESCRIPTION_TABLE *)AcpiTablePtr)->
+          XDsdt;
     }
 
     TableOffset += sizeof (UINT64);

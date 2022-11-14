@@ -84,7 +84,8 @@ ArmVirtGetMemoryMap (
   VirtualMemoryTable[++Idx].PhysicalBase = PcdGet64 (PcdFvBaseAddress);
   VirtualMemoryTable[Idx].VirtualBase    = VirtualMemoryTable[Idx].PhysicalBase;
   VirtualMemoryTable[Idx].Length         = FixedPcdGet32 (PcdFvSize);
-  VirtualMemoryTable[Idx].Attributes     = ARM_MEMORY_REGION_ATTRIBUTE_WRITE_BACK;
+  VirtualMemoryTable[Idx].Attributes     =
+    ARM_MEMORY_REGION_ATTRIBUTE_WRITE_BACK;
 
   // End of Table
   VirtualMemoryTable[++Idx].PhysicalBase = 0;

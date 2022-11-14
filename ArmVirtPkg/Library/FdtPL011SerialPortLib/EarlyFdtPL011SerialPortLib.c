@@ -108,7 +108,9 @@ SerialPortGetBaseAddress (
         ReceiveFifoDepth = 0; // Use the default value for Fifo depth
         Parity           = (EFI_PARITY_TYPE)FixedPcdGet8 (PcdUartDefaultParity);
         DataBits         = FixedPcdGet8 (PcdUartDefaultDataBits);
-        StopBits         = (EFI_STOP_BITS_TYPE)FixedPcdGet8 (PcdUartDefaultStopBits);
+        StopBits         = (EFI_STOP_BITS_TYPE)FixedPcdGet8 (
+                                                 PcdUartDefaultStopBits
+                                                 );
 
         Status = PL011UartInitializePort (
                    UartBase,

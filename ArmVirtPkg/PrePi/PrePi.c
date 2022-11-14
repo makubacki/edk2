@@ -58,10 +58,18 @@ PrePiMain (
   // modifications we made with the caches and MMU off (such as the applied
   // relocations) don't become invisible once we turn them on.
   //
-  InvalidateDataCacheRange ((VOID *)(UINTN)PcdGet64 (PcdFdBaseAddress), PcdGet32 (PcdFdSize));
+  InvalidateDataCacheRange (
+    (VOID *)(UINTN)PcdGet64 (PcdFdBaseAddress),
+    PcdGet32 (PcdFdSize)
+    );
 
   // Initialize MMU and Memory HOBs (Resource Descriptor HOBs)
-  Status = MemoryPeim (UefiMemoryBase, FixedPcdGet32 (PcdSystemMemoryUefiRegionSize));
+  Status = MemoryPeim (
+             UefiMemoryBase,
+             FixedPcdGet32 (
+               PcdSystemMemoryUefiRegionSize
+               )
+             );
   ASSERT_EFI_ERROR (Status);
 
   // Initialize the Serial Port
