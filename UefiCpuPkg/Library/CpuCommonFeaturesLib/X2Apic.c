@@ -63,7 +63,8 @@ X2ApicSupport (
   //
   // *ConfigData indicates if X2APIC enabled on current processor
   //
-  X2ApicEnabled[ProcessorNumber] = (GetApicMode () == LOCAL_APIC_MODE_X2APIC) ? TRUE : FALSE;
+  X2ApicEnabled[ProcessorNumber] = (GetApicMode () == LOCAL_APIC_MODE_X2APIC) ?
+                                   TRUE : FALSE;
 
   return (CpuInfo->CpuIdVersionInfoEcx.Bits.x2APIC == 1);
 }

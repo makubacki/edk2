@@ -131,7 +131,9 @@ CpuIoCheckParameter (
   // For FIFO type, the target address won't increase during the access,
   // so treat Count as 1
   //
-  if ((Width >= EfiPeiCpuIoWidthFifoUint8) && (Width <= EfiPeiCpuIoWidthFifoUint64)) {
+  if ((Width >= EfiPeiCpuIoWidthFifoUint8) && (Width <=
+                                               EfiPeiCpuIoWidthFifoUint64))
+  {
     Count = 1;
   }
 
@@ -224,8 +226,11 @@ CpuMemoryServiceRead (
   InStride       = mInStride[Width];
   OutStride      = mOutStride[Width];
   OperationWidth = (EFI_PEI_CPU_IO_PPI_WIDTH)(Width & 0x03);
-  Aligned        = (BOOLEAN)(((UINTN)Buffer & (mInStride[OperationWidth] - 1)) == 0x00);
-  for (Uint8Buffer = Buffer; Count > 0; Address += InStride, Uint8Buffer += OutStride, Count--) {
+  Aligned        = (BOOLEAN)(((UINTN)Buffer & (mInStride[OperationWidth] -
+                                               1)) == 0x00);
+  for (Uint8Buffer = Buffer; Count > 0; Address += InStride, Uint8Buffer +=
+         OutStride, Count--)
+  {
     if (OperationWidth == EfiPeiCpuIoWidthUint8) {
       *Uint8Buffer = MmioRead8 ((UINTN)Address);
     } else if (OperationWidth == EfiPeiCpuIoWidthUint16) {
@@ -299,8 +304,11 @@ CpuMemoryServiceWrite (
   InStride       = mInStride[Width];
   OutStride      = mOutStride[Width];
   OperationWidth = (EFI_PEI_CPU_IO_PPI_WIDTH)(Width & 0x03);
-  Aligned        = (BOOLEAN)(((UINTN)Buffer & (mInStride[OperationWidth] - 1)) == 0x00);
-  for (Uint8Buffer = Buffer; Count > 0; Address += InStride, Uint8Buffer += OutStride, Count--) {
+  Aligned        = (BOOLEAN)(((UINTN)Buffer & (mInStride[OperationWidth] -
+                                               1)) == 0x00);
+  for (Uint8Buffer = Buffer; Count > 0; Address += InStride, Uint8Buffer +=
+         OutStride, Count--)
+  {
     if (OperationWidth == EfiPeiCpuIoWidthUint8) {
       MmioWrite8 ((UINTN)Address, *Uint8Buffer);
     } else if (OperationWidth == EfiPeiCpuIoWidthUint16) {
@@ -399,8 +407,11 @@ CpuIoServiceRead (
     }
   }
 
-  Aligned = (BOOLEAN)(((UINTN)Buffer & (mInStride[OperationWidth] - 1)) == 0x00);
-  for (Uint8Buffer = Buffer; Count > 0; Address += InStride, Uint8Buffer += OutStride, Count--) {
+  Aligned = (BOOLEAN)(((UINTN)Buffer & (mInStride[OperationWidth] - 1)) ==
+                      0x00);
+  for (Uint8Buffer = Buffer; Count > 0; Address += InStride, Uint8Buffer +=
+         OutStride, Count--)
+  {
     if (OperationWidth == EfiPeiCpuIoWidthUint8) {
       *Uint8Buffer = IoRead8 ((UINTN)Address);
     } else if (OperationWidth == EfiPeiCpuIoWidthUint16) {
@@ -496,8 +507,11 @@ CpuIoServiceWrite (
     }
   }
 
-  Aligned = (BOOLEAN)(((UINTN)Buffer & (mInStride[OperationWidth] - 1)) == 0x00);
-  for (Uint8Buffer = (UINT8 *)Buffer; Count > 0; Address += InStride, Uint8Buffer += OutStride, Count--) {
+  Aligned = (BOOLEAN)(((UINTN)Buffer & (mInStride[OperationWidth] - 1)) ==
+                      0x00);
+  for (Uint8Buffer = (UINT8 *)Buffer; Count > 0; Address += InStride,
+       Uint8Buffer += OutStride, Count--)
+  {
     if (OperationWidth == EfiPeiCpuIoWidthUint8) {
       IoWrite8 ((UINTN)Address, *Uint8Buffer);
     } else if (OperationWidth == EfiPeiCpuIoWidthUint16) {
@@ -903,7 +917,11 @@ CpuIoInitialize (
     //
     // Shadow completed and running from memory
     //
-    DEBUG ((DEBUG_INFO, "CpuIO PPI has been loaded into memory.  Reinstalled PPI=0x%x\n", &gCpuIoPpi));
+    DEBUG ((
+      DEBUG_INFO,
+      "CpuIO PPI has been loaded into memory.  Reinstalled PPI=0x%x\n",
+      &gCpuIoPpi
+      ));
   } else {
     Status = PeiServicesInstallPpi (&gPpiList);
     ASSERT_EFI_ERROR (Status);

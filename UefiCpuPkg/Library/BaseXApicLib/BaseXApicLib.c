@@ -411,8 +411,9 @@ SendFixedIpiAllExcludingSelf (
   IcrLow.Uint32                    = 0;
   IcrLow.Bits.DeliveryMode         = LOCAL_APIC_DELIVERY_MODE_FIXED;
   IcrLow.Bits.Level                = 1;
-  IcrLow.Bits.DestinationShorthand = LOCAL_APIC_DESTINATION_SHORTHAND_ALL_EXCLUDING_SELF;
-  IcrLow.Bits.Vector               = Vector;
+  IcrLow.Bits.DestinationShorthand =
+    LOCAL_APIC_DESTINATION_SHORTHAND_ALL_EXCLUDING_SELF;
+  IcrLow.Bits.Vector = Vector;
   SendIpi (IcrLow.Uint32, 0);
 }
 
@@ -453,7 +454,8 @@ SendSmiIpiAllExcludingSelf (
   IcrLow.Uint32                    = 0;
   IcrLow.Bits.DeliveryMode         = LOCAL_APIC_DELIVERY_MODE_SMI;
   IcrLow.Bits.Level                = 1;
-  IcrLow.Bits.DestinationShorthand = LOCAL_APIC_DESTINATION_SHORTHAND_ALL_EXCLUDING_SELF;
+  IcrLow.Bits.DestinationShorthand =
+    LOCAL_APIC_DESTINATION_SHORTHAND_ALL_EXCLUDING_SELF;
   SendIpi (IcrLow.Uint32, 0);
 }
 
@@ -494,7 +496,8 @@ SendInitIpiAllExcludingSelf (
   IcrLow.Uint32                    = 0;
   IcrLow.Bits.DeliveryMode         = LOCAL_APIC_DELIVERY_MODE_INIT;
   IcrLow.Bits.Level                = 1;
-  IcrLow.Bits.DestinationShorthand = LOCAL_APIC_DESTINATION_SHORTHAND_ALL_EXCLUDING_SELF;
+  IcrLow.Bits.DestinationShorthand =
+    LOCAL_APIC_DESTINATION_SHORTHAND_ALL_EXCLUDING_SELF;
   SendIpi (IcrLow.Uint32, 0);
 }
 
@@ -563,7 +566,8 @@ SendInitSipiSipiAllExcludingSelf (
   IcrLow.Bits.Vector               = (StartupRoutine >> 12);
   IcrLow.Bits.DeliveryMode         = LOCAL_APIC_DELIVERY_MODE_STARTUP;
   IcrLow.Bits.Level                = 1;
-  IcrLow.Bits.DestinationShorthand = LOCAL_APIC_DESTINATION_SHORTHAND_ALL_EXCLUDING_SELF;
+  IcrLow.Bits.DestinationShorthand =
+    LOCAL_APIC_DESTINATION_SHORTHAND_ALL_EXCLUDING_SELF;
   SendIpi (IcrLow.Uint32, 0);
   if (!StandardSignatureIsAuthenticAMD ()) {
     MicroSecondDelay (200);
@@ -739,7 +743,9 @@ InitializeApicTimer (
     ASSERT (DivideValue == GetPowerOfTwo32 ((UINT32)DivideValue));
     Divisor = (UINT32)((HighBitSet32 ((UINT32)DivideValue) - 1) & 0x7);
 
-    Dcr.Uint32            = ReadLocalApicReg (XAPIC_TIMER_DIVIDE_CONFIGURATION_OFFSET);
+    Dcr.Uint32 = ReadLocalApicReg (
+                   XAPIC_TIMER_DIVIDE_CONFIGURATION_OFFSET
+                   );
     Dcr.Bits.DivideValue1 = (Divisor & 0x3);
     Dcr.Bits.DivideValue2 = (Divisor >> 2);
     WriteLocalApicReg (XAPIC_TIMER_DIVIDE_CONFIGURATION_OFFSET, Dcr.Uint32);
@@ -1084,7 +1090,8 @@ GetProcessorLocationByApicId (
     // Get logical processor count
     //
     AsmCpuid (CPUID_VERSION_INFO, NULL, &VersionInfoEbx.Uint32, NULL, NULL);
-    MaxLogicProcessorsPerPackage = VersionInfoEbx.Bits.MaximumAddressableIdsForLogicalProcessors;
+    MaxLogicProcessorsPerPackage =
+      VersionInfoEbx.Bits.MaximumAddressableIdsForLogicalProcessors;
 
     //
     // Assume single-core processor
@@ -1096,19 +1103,41 @@ GetProcessorLocationByApicId (
     //
     if (StandardSignatureIsAuthenticAMD ()) {
       if (MaxExtendedCpuIdIndex >= CPUID_AMD_PROCESSOR_TOPOLOGY) {
-        AsmCpuid (CPUID_EXTENDED_CPU_SIG, NULL, NULL, &AmdExtendedCpuSigEcx.Uint32, NULL);
+        AsmCpuid (
+          CPUID_EXTENDED_CPU_SIG,
+          NULL,
+          NULL,
+          &AmdExtendedCpuSigEcx.Uint32,
+          NULL
+          );
         if (AmdExtendedCpuSigEcx.Bits.TopologyExtensions != 0) {
           //
           // Account for max possible thread count to decode ApicId
           //
-          AsmCpuid (CPUID_VIR_PHY_ADDRESS_SIZE, NULL, NULL, &AmdVirPhyAddressSizeEcx.Uint32, NULL);
-          MaxLogicProcessorsPerPackage = 1 << AmdVirPhyAddressSizeEcx.Bits.ApicIdCoreIdSize;
+          AsmCpuid (
+            CPUID_VIR_PHY_ADDRESS_SIZE,
+            NULL,
+            NULL,
+            &AmdVirPhyAddressSizeEcx.Uint32,
+            NULL
+            );
+          MaxLogicProcessorsPerPackage = 1 <<
+                                         AmdVirPhyAddressSizeEcx.Bits.
+                                           ApicIdCoreIdSize;
 
           //
           // Get cores per processor package
           //
-          AsmCpuid (CPUID_AMD_PROCESSOR_TOPOLOGY, NULL, &AmdProcessorTopologyEbx.Uint32, NULL, NULL);
-          MaxCoresPerPackage = MaxLogicProcessorsPerPackage / (AmdProcessorTopologyEbx.Bits.ThreadsPerCore + 1);
+          AsmCpuid (
+            CPUID_AMD_PROCESSOR_TOPOLOGY,
+            NULL,
+            &AmdProcessorTopologyEbx.Uint32,
+            NULL,
+            NULL
+            );
+          MaxCoresPerPackage = MaxLogicProcessorsPerPackage /
+                               (AmdProcessorTopologyEbx.Bits.ThreadsPerCore +
+                                1);
         }
       }
     } else {
@@ -1116,14 +1145,25 @@ GetProcessorLocationByApicId (
       // Extract core count based on CACHE information
       //
       if (MaxStandardCpuIdIndex >= CPUID_CACHE_PARAMS) {
-        AsmCpuidEx (CPUID_CACHE_PARAMS, 0, &CacheParamsEax.Uint32, NULL, NULL, NULL);
+        AsmCpuidEx (
+          CPUID_CACHE_PARAMS,
+          0,
+          &CacheParamsEax.Uint32,
+          NULL,
+          NULL,
+          NULL
+          );
         if (CacheParamsEax.Uint32 != 0) {
-          MaxCoresPerPackage = CacheParamsEax.Bits.MaximumAddressableIdsForLogicalProcessors + 1;
+          MaxCoresPerPackage =
+            CacheParamsEax.Bits.MaximumAddressableIdsForLogicalProcessors + 1;
         }
       }
     }
 
-    ThreadBits = (UINTN)(HighBitSet32 (MaxLogicProcessorsPerPackage / MaxCoresPerPackage - 1) + 1);
+    ThreadBits = (UINTN)(HighBitSet32 (
+                           MaxLogicProcessorsPerPackage /
+                           MaxCoresPerPackage - 1
+                           ) + 1);
     CoreBits   = (UINTN)(HighBitSet32 (MaxCoresPerPackage - 1) + 1);
   }
 
@@ -1173,8 +1213,10 @@ GetProcessorLocation2ByApicId (
   UINT32                       MaxStandardCpuIdIndex;
   UINT32                       Index;
   UINTN                        LevelType;
-  UINT32                       Bits[CPUID_V2_EXTENDED_TOPOLOGY_LEVEL_TYPE_DIE + 2];
-  UINT32                       *Location[CPUID_V2_EXTENDED_TOPOLOGY_LEVEL_TYPE_DIE + 2];
+  UINT32                       Bits[CPUID_V2_EXTENDED_TOPOLOGY_LEVEL_TYPE_DIE +
+                                    2];
+  UINT32  *Location[
+                    CPUID_V2_EXTENDED_TOPOLOGY_LEVEL_TYPE_DIE + 2];
 
   for (LevelType = 0; LevelType < ARRAY_SIZE (Bits); LevelType++) {
     Bits[LevelType] = 0;
@@ -1220,7 +1262,10 @@ GetProcessorLocation2ByApicId (
     //
     // first level reported should be SMT.
     //
-    ASSERT ((Index != 0) || (LevelType == CPUID_EXTENDED_TOPOLOGY_LEVEL_TYPE_SMT));
+    ASSERT (
+      (Index != 0) || (LevelType ==
+                       CPUID_EXTENDED_TOPOLOGY_LEVEL_TYPE_SMT)
+      );
     if (LevelType == CPUID_EXTENDED_TOPOLOGY_LEVEL_TYPE_INVALID) {
       break;
     }
@@ -1229,7 +1274,9 @@ GetProcessorLocation2ByApicId (
     Bits[LevelType] = ExtendedTopologyEax.Bits.ApicIdShift;
   }
 
-  for (LevelType = CPUID_EXTENDED_TOPOLOGY_LEVEL_TYPE_CORE; LevelType < ARRAY_SIZE (Bits); LevelType++) {
+  for (LevelType = CPUID_EXTENDED_TOPOLOGY_LEVEL_TYPE_CORE; LevelType <
+       ARRAY_SIZE (Bits); LevelType++)
+  {
     //
     // If there are more levels between level-1 (low-level) and level-2 (high-level), the unknown levels will be ignored
     // and treated as an extension of the last known level (i.e., level-1 in this case).
@@ -1263,7 +1310,8 @@ GetProcessorLocation2ByApicId (
       //
       // Bits[i] - Bits[i-1] holds the number of bits for the next ONE level type.
       //
-      *Location[LevelType] &= (1 << (Bits[LevelType] - Bits[LevelType - 1])) - 1;
+      *Location[LevelType] &= (1 << (Bits[LevelType] - Bits[LevelType - 1])) -
+                              1;
     }
   }
 }

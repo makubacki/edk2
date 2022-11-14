@@ -39,7 +39,11 @@ CommonExceptionHandler (
   IN EFI_SYSTEM_CONTEXT  SystemContext
   )
 {
-  CommonExceptionHandlerWorker (ExceptionType, SystemContext, &mExceptionHandlerData);
+  CommonExceptionHandlerWorker (
+    ExceptionType,
+    SystemContext,
+    &mExceptionHandlerData
+    );
 }
 
 /**
@@ -65,7 +69,10 @@ InitializeCpuExceptionHandlers (
   )
 {
   InitializeSpinLock (&mExceptionHandlerData.DisplayMessageSpinLock);
-  return InitializeCpuExceptionHandlersWorker (VectorInfo, &mExceptionHandlerData);
+  return InitializeCpuExceptionHandlersWorker (
+           VectorInfo,
+           &mExceptionHandlerData
+           );
 }
 
 /**
@@ -98,7 +105,11 @@ RegisterCpuInterruptHandler (
   IN EFI_CPU_INTERRUPT_HANDLER  InterruptHandler
   )
 {
-  return RegisterCpuInterruptHandlerWorker (InterruptType, InterruptHandler, &mExceptionHandlerData);
+  return RegisterCpuInterruptHandlerWorker (
+           InterruptType,
+           InterruptHandler,
+           &mExceptionHandlerData
+           );
 }
 
 /**

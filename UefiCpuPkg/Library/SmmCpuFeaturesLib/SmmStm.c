@@ -149,16 +149,33 @@ SmmCpuFeaturesLibStmConstructor (
       //
       // Allocate MSEG from SMRAM memory
       //
-      mMsegBase = (UINTN)AllocatePages (EFI_SIZE_TO_PAGES (PcdGet32 (PcdCpuMsegSize)));
+      mMsegBase = (UINTN)AllocatePages (
+                           EFI_SIZE_TO_PAGES (
+                             PcdGet32 (
+                               PcdCpuMsegSize
+                               )
+                             )
+                           );
       if (mMsegBase > 0) {
         mMsegSize = ALIGN_VALUE (PcdGet32 (PcdCpuMsegSize), EFI_PAGE_SIZE);
       } else {
-        DEBUG ((DEBUG_ERROR, "Not enough SMRAM resource to allocate MSEG size %08x\n", PcdGet32 (PcdCpuMsegSize)));
+        DEBUG ((
+          DEBUG_ERROR,
+          "Not enough SMRAM resource to allocate MSEG size %08x\n",
+          PcdGet32 (
+            PcdCpuMsegSize
+            )
+          ));
       }
     }
 
     if (mMsegBase > 0) {
-      DEBUG ((DEBUG_INFO, "MsegBase: 0x%08x, MsegSize: 0x%08x\n", mMsegBase, mMsegSize));
+      DEBUG ((
+        DEBUG_INFO,
+        "MsegBase: 0x%08x, MsegSize: 0x%08x\n",
+        mMsegBase,
+        mMsegSize
+        ));
     }
   }
 
@@ -253,15 +270,21 @@ SmmCpuFeaturesInstallSmiHandler (
   UINT32                        RegEdx;
   EFI_PROCESSOR_INFORMATION     ProcessorInfo;
 
-  CopyMem ((VOID *)((UINTN)SmBase + TXT_SMM_PSD_OFFSET), &gcStmPsd, sizeof (gcStmPsd));
-  Psd             = (TXT_PROCESSOR_SMM_DESCRIPTOR *)(VOID *)((UINTN)SmBase + TXT_SMM_PSD_OFFSET);
+  CopyMem (
+    (VOID *)((UINTN)SmBase + TXT_SMM_PSD_OFFSET),
+    &gcStmPsd,
+    sizeof (gcStmPsd)
+    );
+  Psd             = (TXT_PROCESSOR_SMM_DESCRIPTOR *)(VOID *)((UINTN)SmBase +
+                                                             TXT_SMM_PSD_OFFSET);
   Psd->SmmGdtPtr  = GdtBase;
   Psd->SmmGdtSize = (UINT32)GdtSize;
 
   //
   // Initialize values in template before copy
   //
-  gStmSmiStack             = (UINT32)((UINTN)SmiStack + StackSize - sizeof (UINTN));
+  gStmSmiStack             = (UINT32)((UINTN)SmiStack + StackSize -
+                                      sizeof (UINTN));
   gStmSmiCr3               = Cr3;
   gStmSmbase               = SmBase;
   gStmSmiHandlerIdtr.Base  = IdtBase;
@@ -303,10 +326,31 @@ SmmCpuFeaturesInstallSmiHandler (
   Psd->SmmSmiHandlerRsp = (UINTN)SmiStack + StackSize - sizeof (UINTN);
   Psd->SmmCr3           = Cr3;
 
-  DEBUG ((DEBUG_INFO, "CpuSmmStmExceptionStackSize - %x\n", PcdGet32 (PcdCpuSmmStmExceptionStackSize)));
-  DEBUG ((DEBUG_INFO, "Pages - %x\n", EFI_SIZE_TO_PAGES (PcdGet32 (PcdCpuSmmStmExceptionStackSize))));
-  Psd->StmProtectionExceptionHandler.SpeRsp  = (UINT64)(UINTN)AllocatePages (EFI_SIZE_TO_PAGES (PcdGet32 (PcdCpuSmmStmExceptionStackSize)));
-  Psd->StmProtectionExceptionHandler.SpeRsp += EFI_PAGES_TO_SIZE (EFI_SIZE_TO_PAGES (PcdGet32 (PcdCpuSmmStmExceptionStackSize)));
+  DEBUG ((
+    DEBUG_INFO,
+    "CpuSmmStmExceptionStackSize - %x\n",
+    PcdGet32 (
+      PcdCpuSmmStmExceptionStackSize
+      )
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "Pages - %x\n",
+    EFI_SIZE_TO_PAGES (
+      PcdGet32 (
+        PcdCpuSmmStmExceptionStackSize
+        )
+      )
+    ));
+  Psd->StmProtectionExceptionHandler.SpeRsp = (UINT64)(UINTN)AllocatePages (
+                                                               EFI_SIZE_TO_PAGES (
+                                                                 PcdGet32 (
+                                                                   PcdCpuSmmStmExceptionStackSize))
+                                                               );
+  Psd->StmProtectionExceptionHandler.SpeRsp += EFI_PAGES_TO_SIZE (
+                                                 EFI_SIZE_TO_PAGES (PcdGet32 (
+                                                                      PcdCpuSmmStmExceptionStackSize))
+                                                 );
 
   Psd->BiosHwResourceRequirementsPtr = (UINT64)(UINTN)GetStmResource ();
 
@@ -372,7 +416,11 @@ SmmEndOfDxeEventNotify (
   //
   Rsdp = NULL;
   for (Index = 0; Index < gST->NumberOfTableEntries; Index++) {
-    if (CompareGuid (&(gST->ConfigurationTable[Index].VendorGuid), &gEfiAcpi20TableGuid)) {
+    if (CompareGuid (
+          &(gST->ConfigurationTable[Index].VendorGuid),
+          &gEfiAcpi20TableGuid
+          ))
+    {
       //
       // A match was found.
       //
@@ -383,7 +431,11 @@ SmmEndOfDxeEventNotify (
 
   if (Rsdp == NULL) {
     for (Index = 0; Index < gST->NumberOfTableEntries; Index++) {
-      if (CompareGuid (&(gST->ConfigurationTable[Index].VendorGuid), &gEfiAcpi10TableGuid)) {
+      if (CompareGuid (
+            &(gST->ConfigurationTable[Index].VendorGuid),
+            &gEfiAcpi10TableGuid
+            ))
+      {
         //
         // A match was found.
         //
@@ -394,7 +446,9 @@ SmmEndOfDxeEventNotify (
   }
 
   for (Index = 0; Index < gSmst->NumberOfCpus; Index++) {
-    Psd = (TXT_PROCESSOR_SMM_DESCRIPTOR *)((UINTN)gSmst->CpuSaveState[Index] - SMRAM_SAVE_STATE_MAP_OFFSET + TXT_SMM_PSD_OFFSET);
+    Psd = (TXT_PROCESSOR_SMM_DESCRIPTOR *)((UINTN)gSmst->CpuSaveState[Index] -
+                                           SMRAM_SAVE_STATE_MAP_OFFSET +
+                                           TXT_SMM_PSD_OFFSET);
     DEBUG ((DEBUG_INFO, "Index=%d  Psd=%p  Rsdp=%p\n", Index, Psd, Rsdp));
     Psd->AcpiRsdp = (UINT64)(UINTN)Rsdp;
   }
@@ -492,7 +546,8 @@ HandleSingleResource (
       RecordHi   = Record->Mem.Base + Record->Mem.Length;
       if (Resource->Mem.RWXAttributes != Record->Mem.RWXAttributes) {
         if ((ResourceLo == RecordLo) && (ResourceHi == RecordHi)) {
-          Record->Mem.RWXAttributes = Resource->Mem.RWXAttributes | Record->Mem.RWXAttributes;
+          Record->Mem.RWXAttributes = Resource->Mem.RWXAttributes |
+                                      Record->Mem.RWXAttributes;
           return TRUE;
         } else {
           return FALSE;
@@ -508,23 +563,32 @@ HandleSingleResource (
       RecordHi   = (UINT64)Record->Io.Base + (UINT64)Record->Io.Length;
       break;
     case PCI_CFG_RANGE:
-      if ((Resource->PciCfg.OriginatingBusNumber != Record->PciCfg.OriginatingBusNumber) ||
+      if ((Resource->PciCfg.OriginatingBusNumber !=
+           Record->PciCfg.OriginatingBusNumber) ||
           (Resource->PciCfg.LastNodeIndex != Record->PciCfg.LastNodeIndex))
       {
         return FALSE;
       }
 
-      if (CompareMem (Resource->PciCfg.PciDevicePath, Record->PciCfg.PciDevicePath, sizeof (STM_PCI_DEVICE_PATH_NODE) * (Resource->PciCfg.LastNodeIndex + 1)) != 0) {
+      if (CompareMem (
+            Resource->PciCfg.PciDevicePath,
+            Record->PciCfg.PciDevicePath,
+            sizeof (STM_PCI_DEVICE_PATH_NODE) *
+            (Resource->PciCfg.LastNodeIndex + 1)
+            ) != 0)
+      {
         return FALSE;
       }
 
       ResourceLo = (UINT64)Resource->PciCfg.Base;
-      ResourceHi = (UINT64)Resource->PciCfg.Base + (UINT64)Resource->PciCfg.Length;
-      RecordLo   = (UINT64)Record->PciCfg.Base;
-      RecordHi   = (UINT64)Record->PciCfg.Base + (UINT64)Record->PciCfg.Length;
+      ResourceHi = (UINT64)Resource->PciCfg.Base +
+                   (UINT64)Resource->PciCfg.Length;
+      RecordLo = (UINT64)Record->PciCfg.Base;
+      RecordHi = (UINT64)Record->PciCfg.Base + (UINT64)Record->PciCfg.Length;
       if (Resource->PciCfg.RWAttributes != Record->PciCfg.RWAttributes) {
         if ((ResourceLo == RecordLo) && (ResourceHi == RecordHi)) {
-          Record->PciCfg.RWAttributes = Resource->PciCfg.RWAttributes | Record->PciCfg.RWAttributes;
+          Record->PciCfg.RWAttributes = Resource->PciCfg.RWAttributes |
+                                        Record->PciCfg.RWAttributes;
           return TRUE;
         } else {
           return FALSE;
@@ -638,7 +702,8 @@ AddSingleResource (
     Resource->Header.Length
     );
   CopyMem (
-    mStmResourcesPtr + mStmResourceSizeUsed - sizeof (mRscEndNode) + Resource->Header.Length,
+    mStmResourcesPtr + mStmResourceSizeUsed - sizeof (mRscEndNode) +
+    Resource->Header.Length,
     &mRscEndNode,
     sizeof (mRscEndNode)
     );
@@ -726,7 +791,12 @@ ValidateResource (
   Resource = ResourceList;
 
   for (Index = 0; Index < Count; Index++) {
-    DEBUG ((DEBUG_INFO, "ValidateResource (%d) - RscType(%x)\n", Index, Resource->Header.RscType));
+    DEBUG ((
+      DEBUG_INFO,
+      "ValidateResource (%d) - RscType(%x)\n",
+      Index,
+      Resource->Header.RscType
+      ));
     //
     // Validate resource.
     //
@@ -777,13 +847,27 @@ ValidateResource (
         break;
 
       case PCI_CFG_RANGE:
-        DEBUG ((DEBUG_INFO, "ValidateResource - PCI (0x%02x, 0x%08x, 0x%02x, 0x%02x)\n", Resource->PciCfg.OriginatingBusNumber, Resource->PciCfg.LastNodeIndex, Resource->PciCfg.PciDevicePath[0].PciDevice, Resource->PciCfg.PciDevicePath[0].PciFunction));
-        if (Resource->Header.Length != sizeof (STM_RSC_PCI_CFG_DESC) + (sizeof (STM_PCI_DEVICE_PATH_NODE) * Resource->PciCfg.LastNodeIndex)) {
+        DEBUG ((
+          DEBUG_INFO,
+          "ValidateResource - PCI (0x%02x, 0x%08x, 0x%02x, 0x%02x)\n",
+          Resource->PciCfg.OriginatingBusNumber,
+          Resource->PciCfg.LastNodeIndex,
+          Resource->PciCfg.PciDevicePath[0].PciDevice,
+          Resource->PciCfg.PciDevicePath[0].PciFunction
+          ));
+        if (Resource->Header.Length != sizeof (STM_RSC_PCI_CFG_DESC) +
+            (sizeof (STM_PCI_DEVICE_PATH_NODE) *
+             Resource->PciCfg.LastNodeIndex))
+        {
           return FALSE;
         }
 
-        for (SubIndex = 0; SubIndex <= Resource->PciCfg.LastNodeIndex; SubIndex++) {
-          if ((Resource->PciCfg.PciDevicePath[SubIndex].PciDevice > 0x1F) || (Resource->PciCfg.PciDevicePath[SubIndex].PciFunction > 7)) {
+        for (SubIndex = 0; SubIndex <= Resource->PciCfg.LastNodeIndex;
+             SubIndex++)
+        {
+          if ((Resource->PciCfg.PciDevicePath[SubIndex].PciDevice > 0x1F) ||
+              (Resource->PciCfg.PciDevicePath[SubIndex].PciFunction > 7))
+          {
             return FALSE;
           }
         }
@@ -802,7 +886,11 @@ ValidateResource (
         break;
 
       default:
-        DEBUG ((DEBUG_ERROR, "ValidateResource - Unknown RscType(%x)\n", Resource->Header.RscType));
+        DEBUG ((
+          DEBUG_ERROR,
+          "ValidateResource - Unknown RscType(%x)\n",
+          Resource->Header.RscType
+          ));
         return FALSE;
     }
 
@@ -904,7 +992,12 @@ AddPiResource (
     //
     // First time allocation
     //
-    NewResourceSize = EFI_PAGES_TO_SIZE (EFI_SIZE_TO_PAGES (ResourceSize + sizeof (mRscEndNode)));
+    NewResourceSize = EFI_PAGES_TO_SIZE (
+                        EFI_SIZE_TO_PAGES (
+                          ResourceSize +
+                          sizeof (mRscEndNode)
+                          )
+                        );
     DEBUG ((DEBUG_INFO, "Allocate - 0x%08x\n", NewResourceSize));
     Status = gSmst->SmmAllocatePages (
                       AllocateAnyPages,
@@ -933,7 +1026,8 @@ AddPiResource (
     //
     // Need enlarge
     //
-    NewResourceSize = mStmResourceTotalSize + (ResourceSize - mStmResourceSizeAvailable);
+    NewResourceSize = mStmResourceTotalSize + (ResourceSize -
+                                               mStmResourceSizeAvailable);
     NewResourceSize = EFI_PAGES_TO_SIZE (EFI_SIZE_TO_PAGES (NewResourceSize));
     DEBUG ((DEBUG_INFO, "ReAllocate - 0x%08x\n", NewResourceSize));
     Status = gSmst->SmmAllocatePages (
@@ -946,7 +1040,11 @@ AddPiResource (
       return Status;
     }
 
-    CopyMem ((VOID *)(UINTN)NewResource, mStmResourcesPtr, mStmResourceSizeUsed);
+    CopyMem (
+      (VOID *)(UINTN)NewResource,
+      mStmResourcesPtr,
+      mStmResourceSizeUsed
+      );
     mStmResourceSizeAvailable = NewResourceSize - mStmResourceSizeUsed;
 
     gSmst->SmmFreePages (
@@ -1102,19 +1200,34 @@ StmCheckStmImage (
   //
   StmHeader         = (STM_HEADER *)(UINTN)StmImage;
   VmxMiscMsr.Uint64 = AsmReadMsr64 (MSR_IA32_VMX_MISC);
-  if (StmHeader->HwStmHdr.MsegHeaderRevision != VmxMiscMsr.Bits.MsegRevisionIdentifier) {
+  if (StmHeader->HwStmHdr.MsegHeaderRevision !=
+      VmxMiscMsr.Bits.MsegRevisionIdentifier)
+  {
     DEBUG ((DEBUG_ERROR, "STM Image not compatible with CPU\n"));
-    DEBUG ((DEBUG_ERROR, "  StmHeader->HwStmHdr.MsegHeaderRevision = %08x\n", StmHeader->HwStmHdr.MsegHeaderRevision));
-    DEBUG ((DEBUG_ERROR, "  VmxMiscMsr.Bits.MsegRevisionIdentifier = %08x\n", VmxMiscMsr.Bits.MsegRevisionIdentifier));
+    DEBUG ((
+      DEBUG_ERROR,
+      "  StmHeader->HwStmHdr.MsegHeaderRevision = %08x\n",
+      StmHeader->HwStmHdr.MsegHeaderRevision
+      ));
+    DEBUG ((
+      DEBUG_ERROR,
+      "  VmxMiscMsr.Bits.MsegRevisionIdentifier = %08x\n",
+      VmxMiscMsr.Bits.MsegRevisionIdentifier
+      ));
     return FALSE;
   }
 
   //
   // Get Minimal required Mseg size
   //
-  MinMsegSize = (EFI_PAGES_TO_SIZE (EFI_SIZE_TO_PAGES (StmHeader->SwStmHdr.StaticImageSize)) +
+  MinMsegSize = (EFI_PAGES_TO_SIZE (
+                   EFI_SIZE_TO_PAGES (
+                     StmHeader->SwStmHdr.StaticImageSize
+                     )
+                   ) +
                  StmHeader->SwStmHdr.AdditionalDynamicMemorySize +
-                 (StmHeader->SwStmHdr.PerProcDynamicMemorySize + GetVmcsSize () * 2) * gSmst->NumberOfCpus);
+                 (StmHeader->SwStmHdr.PerProcDynamicMemorySize +
+                  GetVmcsSize () * 2) * gSmst->NumberOfCpus);
   if (MinMsegSize < StmImageSize) {
     MinMsegSize = StmImageSize;
   }
@@ -1132,13 +1245,42 @@ StmCheckStmImage (
   // Check if it exceeds MSEG size
   //
   if (MinMsegSize > mMsegSize) {
-    DEBUG ((DEBUG_ERROR, "MSEG too small.  Min MSEG Size = %08x  Current MSEG Size = %08x\n", MinMsegSize, mMsegSize));
-    DEBUG ((DEBUG_ERROR, "  StmHeader->SwStmHdr.StaticImageSize             = %08x\n", StmHeader->SwStmHdr.StaticImageSize));
-    DEBUG ((DEBUG_ERROR, "  StmHeader->SwStmHdr.AdditionalDynamicMemorySize = %08x\n", StmHeader->SwStmHdr.AdditionalDynamicMemorySize));
-    DEBUG ((DEBUG_ERROR, "  StmHeader->SwStmHdr.PerProcDynamicMemorySize    = %08x\n", StmHeader->SwStmHdr.PerProcDynamicMemorySize));
-    DEBUG ((DEBUG_ERROR, "  VMCS Size                                       = %08x\n", GetVmcsSize ()));
-    DEBUG ((DEBUG_ERROR, "  Max CPUs                                        = %08x\n", gSmst->NumberOfCpus));
-    DEBUG ((DEBUG_ERROR, "  StmHeader->HwStmHdr.Cr3Offset                   = %08x\n", StmHeader->HwStmHdr.Cr3Offset));
+    DEBUG ((
+      DEBUG_ERROR,
+      "MSEG too small.  Min MSEG Size = %08x  Current MSEG Size = %08x\n",
+      MinMsegSize,
+      mMsegSize
+      ));
+    DEBUG ((
+      DEBUG_ERROR,
+      "  StmHeader->SwStmHdr.StaticImageSize             = %08x\n",
+      StmHeader->SwStmHdr.StaticImageSize
+      ));
+    DEBUG ((
+      DEBUG_ERROR,
+      "  StmHeader->SwStmHdr.AdditionalDynamicMemorySize = %08x\n",
+      StmHeader->SwStmHdr.AdditionalDynamicMemorySize
+      ));
+    DEBUG ((
+      DEBUG_ERROR,
+      "  StmHeader->SwStmHdr.PerProcDynamicMemorySize    = %08x\n",
+      StmHeader->SwStmHdr.PerProcDynamicMemorySize
+      ));
+    DEBUG ((
+      DEBUG_ERROR,
+      "  VMCS Size                                       = %08x\n",
+      GetVmcsSize ()
+      ));
+    DEBUG ((
+      DEBUG_ERROR,
+      "  Max CPUs                                        = %08x\n",
+      gSmst->NumberOfCpus
+      ));
+    DEBUG ((
+      DEBUG_ERROR,
+      "  StmHeader->HwStmHdr.Cr3Offset                   = %08x\n",
+      StmHeader->HwStmHdr.Cr3Offset
+      ));
     return FALSE;
   }
 
@@ -1270,7 +1412,10 @@ NotifyStmResourceChange (
   TXT_PROCESSOR_SMM_DESCRIPTOR  *Psd;
 
   for (Index = 0; Index < gSmst->NumberOfCpus; Index++) {
-    Psd                                = (TXT_PROCESSOR_SMM_DESCRIPTOR *)((UINTN)gSmst->CpuSaveState[Index] - SMRAM_SAVE_STATE_MAP_OFFSET + TXT_SMM_PSD_OFFSET);
+    Psd =
+      (TXT_PROCESSOR_SMM_DESCRIPTOR *)((UINTN)gSmst->CpuSaveState[Index] -
+                                       SMRAM_SAVE_STATE_MAP_OFFSET +
+                                       TXT_SMM_PSD_OFFSET);
     Psd->BiosHwResourceRequirementsPtr = (UINT64)(UINTN)StmResource;
   }
 

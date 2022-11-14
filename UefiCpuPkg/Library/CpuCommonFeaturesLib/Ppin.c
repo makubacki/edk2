@@ -25,7 +25,10 @@ PpinGetConfigData (
 {
   VOID  *ConfigData;
 
-  ConfigData = AllocateZeroPool (sizeof (MSR_IVY_BRIDGE_PPIN_CTL_REGISTER) * NumberOfProcessors);
+  ConfigData = AllocateZeroPool (
+                 sizeof (MSR_IVY_BRIDGE_PPIN_CTL_REGISTER) *
+                 NumberOfProcessors
+                 );
   ASSERT (ConfigData != NULL);
   return ConfigData;
 }
@@ -74,7 +77,9 @@ PpinSupport (
     if (PlatformInfo.Bits.PPIN_CAP != 0) {
       MsrPpinCtrl = (MSR_IVY_BRIDGE_PPIN_CTL_REGISTER *)ConfigData;
       ASSERT (MsrPpinCtrl != NULL);
-      MsrPpinCtrl[ProcessorNumber].Uint64 = AsmReadMsr64 (MSR_IVY_BRIDGE_PPIN_CTL);
+      MsrPpinCtrl[ProcessorNumber].Uint64 = AsmReadMsr64 (
+                                              MSR_IVY_BRIDGE_PPIN_CTL
+                                              );
       return TRUE;
     }
   }
@@ -124,7 +129,8 @@ PpinInitialize (
   // the current state to return the status.
   //
   if (MsrPpinCtrl[ProcessorNumber].Bits.LockOut != 0) {
-    return MsrPpinCtrl[ProcessorNumber].Bits.Enable_PPIN == State ? RETURN_SUCCESS : RETURN_DEVICE_ERROR;
+    return MsrPpinCtrl[ProcessorNumber].Bits.Enable_PPIN == State ?
+           RETURN_SUCCESS : RETURN_DEVICE_ERROR;
   }
 
   //

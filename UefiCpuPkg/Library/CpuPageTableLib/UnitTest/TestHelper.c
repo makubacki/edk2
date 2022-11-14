@@ -49,8 +49,18 @@ InitGlobalData (
     // bit 51:M is reserved, and should be zero
     //
     if (MemorySpace - 1 < 51) {
-      mValidMaskNoLeaf[Index].Uint64 = BitFieldWrite64 (mValidMaskNoLeaf[Index].Uint64, MemorySpace - 1, 51, 0);
-      mValidMaskLeaf[Index].Uint64   = BitFieldWrite64 (mValidMaskLeaf[Index].Uint64, MemorySpace - 1, 51, 0);
+      mValidMaskNoLeaf[Index].Uint64 = BitFieldWrite64 (
+                                         mValidMaskNoLeaf[Index].Uint64,
+                                         MemorySpace - 1,
+                                         51,
+                                         0
+                                         );
+      mValidMaskLeaf[Index].Uint64 = BitFieldWrite64 (
+                                       mValidMaskLeaf[Index].Uint64,
+                                       MemorySpace - 1,
+                                       51,
+                                       0
+                                       );
     }
   }
 
@@ -67,8 +77,18 @@ InitGlobalData (
   // Handle mask for leaf entry.
   // No need to modification for PTE, since it doesn't have extra reserved bit
   //
-  mValidMaskLeaf[2].Uint64 = BitFieldWrite64 (mValidMaskLeaf[2].Uint64, 13, 20, 0); // bit 13-20 is reserved for PDE
-  mValidMaskLeaf[3].Uint64 = BitFieldWrite64 (mValidMaskLeaf[2].Uint64, 13, 29, 0); // bit 13-29 is reserved for PDPTE
+  mValidMaskLeaf[2].Uint64 = BitFieldWrite64 (
+                               mValidMaskLeaf[2].Uint64,
+                               13,
+                               20,
+                               0
+                               );                                                   // bit 13-20 is reserved for PDE
+  mValidMaskLeaf[3].Uint64 = BitFieldWrite64 (
+                               mValidMaskLeaf[2].Uint64,
+                               13,
+                               29,
+                               0
+                               );                                                   // bit 13-29 is reserved for PDPTE
   mValidMaskLeaf[4].Uint64 = 0;                                                     // for PML4E, no possible to map to page.
   mValidMaskLeaf[5].Uint64 = 0;                                                     // for PML5E, no possible to map to page.
 
@@ -114,18 +134,36 @@ IsPageTableEntryValid (
     return UNIT_TEST_PASSED;
   }
 
-  if ((PagingEntry->Uint64 & mValidMaskLeafFlag[Level].Uint64) == mValidMaskLeafFlag[Level].Uint64) {
+  if ((PagingEntry->Uint64 & mValidMaskLeafFlag[Level].Uint64) ==
+      mValidMaskLeafFlag[Level].Uint64)
+  {
     //
     // It is a Leaf
     //
     if (Level > MaxLeafLevel) {
-      DEBUG ((DEBUG_ERROR, "ERROR: Level %d entry 0x%lx is a leaf entry, but max leaf level is %d \n", Level, PagingEntry->Uint64, MaxLeafLevel));
+      DEBUG ((
+        DEBUG_ERROR,
+        "ERROR: Level %d entry 0x%lx is a leaf entry, but max leaf level is %d \n",
+        Level,
+        PagingEntry->Uint64,
+        MaxLeafLevel
+        ));
       UT_ASSERT_TRUE (Level <= MaxLeafLevel);
     }
 
-    if ((PagingEntry->Uint64 & mValidMaskLeaf[Level].Uint64) != PagingEntry->Uint64) {
-      DEBUG ((DEBUG_ERROR, "ERROR: Level %d Leaf entry is 0x%lx, which reserved bit is set \n", Level, PagingEntry->Uint64));
-      UT_ASSERT_EQUAL ((PagingEntry->Uint64 & mValidMaskLeaf[Level].Uint64), PagingEntry->Uint64);
+    if ((PagingEntry->Uint64 & mValidMaskLeaf[Level].Uint64) !=
+        PagingEntry->Uint64)
+    {
+      DEBUG ((
+        DEBUG_ERROR,
+        "ERROR: Level %d Leaf entry is 0x%lx, which reserved bit is set \n",
+        Level,
+        PagingEntry->Uint64
+        ));
+      UT_ASSERT_EQUAL (
+        (PagingEntry->Uint64 & mValidMaskLeaf[Level].Uint64),
+        PagingEntry->Uint64
+        );
     }
 
     return UNIT_TEST_PASSED;
@@ -135,14 +173,31 @@ IsPageTableEntryValid (
   // Not a leaf
   //
   UT_ASSERT_NOT_EQUAL (Level, 1);
-  if ((PagingEntry->Uint64 & mValidMaskNoLeaf[Level].Uint64) != PagingEntry->Uint64) {
-    DEBUG ((DEBUG_ERROR, "ERROR: Level %d no Leaf entry is 0x%lx, which reserved bit is set \n", Level, PagingEntry->Uint64));
-    UT_ASSERT_EQUAL ((PagingEntry->Uint64 & mValidMaskNoLeaf[Level].Uint64), PagingEntry->Uint64);
+  if ((PagingEntry->Uint64 & mValidMaskNoLeaf[Level].Uint64) !=
+      PagingEntry->Uint64)
+  {
+    DEBUG ((
+      DEBUG_ERROR,
+      "ERROR: Level %d no Leaf entry is 0x%lx, which reserved bit is set \n",
+      Level,
+      PagingEntry->Uint64
+      ));
+    UT_ASSERT_EQUAL (
+      (PagingEntry->Uint64 & mValidMaskNoLeaf[Level].Uint64),
+      PagingEntry->Uint64
+      );
   }
 
-  ChildPageEntry = (IA32_PAGING_ENTRY  *)(UINTN)(((UINTN)(PagingEntry->Pnle.Bits.PageTableBaseAddress)) << 12);
+  ChildPageEntry =
+    (IA32_PAGING_ENTRY  *)(UINTN)(((UINTN)(PagingEntry->Pnle.Bits.
+                                             PageTableBaseAddress)) << 12);
   for (Index = 0; Index < 512; Index++) {
-    Status = IsPageTableEntryValid (&ChildPageEntry[Index], Level-1, MaxLeafLevel, Address + (Index<<(9*(Level-1) + 3)));
+    Status = IsPageTableEntryValid (
+               &ChildPageEntry[Index],
+               Level-1,
+               MaxLeafLevel,
+               Address + (Index<<(9*(Level-1) + 3))
+               );
     if (Status != UNIT_TEST_PASSED) {
       return Status;
     }
@@ -171,7 +226,9 @@ IsPageTableValid (
   UNIT_TEST_STATUS   Status;
   IA32_PAGING_ENTRY  *PagingEntry;
 
-  if ((PagingMode == Paging32bit) || (PagingMode == PagingPae) || (PagingMode >= PagingModeMax)) {
+  if ((PagingMode == Paging32bit) || (PagingMode == PagingPae) || (PagingMode >=
+                                                                   PagingModeMax))
+  {
     //
     // 32bit paging is never supported.
     // PAE paging will be supported later.
@@ -184,7 +241,12 @@ IsPageTableValid (
 
   PagingEntry = (IA32_PAGING_ENTRY *)(UINTN)PageTable;
   for (Index = 0; Index < 512; Index++) {
-    Status = IsPageTableEntryValid (&PagingEntry[Index], MaxLevel, MaxLeafLevel, Index << (9 * MaxLevel + 3));
+    Status = IsPageTableEntryValid (
+               &PagingEntry[Index],
+               MaxLevel,
+               MaxLeafLevel,
+               Index << (9 * MaxLevel + 3)
+               );
     if (Status != UNIT_TEST_PASSED) {
       return Status;
     }
@@ -219,7 +281,9 @@ GetEntryFromSubPageTable (
     return 0;
   }
 
-  if ((PagingEntry->Uint64 & mValidMaskLeafFlag[*Level].Uint64) == mValidMaskLeafFlag[*Level].Uint64) {
+  if ((PagingEntry->Uint64 & mValidMaskLeafFlag[*Level].Uint64) ==
+      mValidMaskLeafFlag[*Level].Uint64)
+  {
     //
     // It is a Leaf
     //
@@ -229,12 +293,19 @@ GetEntryFromSubPageTable (
   //
   // Not a leaf
   //
-  ChildPageEntry = (IA32_PAGING_ENTRY  *)(UINTN)(((UINTN)(PagingEntry->Pnle.Bits.PageTableBaseAddress)) << 12);
-  *Level         = *Level -1;
-  Index          = Address >> (*Level * 9 + 3);
+  ChildPageEntry =
+    (IA32_PAGING_ENTRY  *)(UINTN)(((UINTN)(PagingEntry->Pnle.Bits.
+                                             PageTableBaseAddress)) << 12);
+  *Level = *Level -1;
+  Index  = Address >> (*Level * 9 + 3);
   ASSERT (Index == (Index & ((1<< 9) - 1)));
 
-  return GetEntryFromSubPageTable (&ChildPageEntry[Index], Level, MaxLeafLevel, Address - (Index << (9 * *Level + 3)));
+  return GetEntryFromSubPageTable (
+           &ChildPageEntry[Index],
+           Level,
+           MaxLeafLevel,
+           Address - (Index << (9 * *Level + 3))
+           );
 }
 
 /**
@@ -260,7 +331,9 @@ GetEntryFromPageTable (
   UINT64             Index;
   IA32_PAGING_ENTRY  *PagingEntry;
 
-  if ((PagingMode == Paging32bit) || (PagingMode == PagingPae) || (PagingMode >= PagingModeMax)) {
+  if ((PagingMode == Paging32bit) || (PagingMode == PagingPae) || (PagingMode >=
+                                                                   PagingModeMax))
+  {
     //
     // 32bit paging is never supported.
     // PAE paging will be supported later.
@@ -276,7 +349,12 @@ GetEntryFromPageTable (
   PagingEntry = (IA32_PAGING_ENTRY *)(UINTN)PageTable;
   *Level      = MaxLevel;
 
-  return GetEntryFromSubPageTable (&PagingEntry[Index], Level, MaxLeafLevel, Address - (Index << (9 * MaxLevel + 3)));
+  return GetEntryFromSubPageTable (
+           &PagingEntry[Index],
+           Level,
+           MaxLeafLevel,
+           Address - (Index << (9 * MaxLevel + 3))
+           );
 }
 
 /**

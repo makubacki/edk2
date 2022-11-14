@@ -121,7 +121,10 @@ MpInitLibGetProcessorInfo (
       SecPlatformInformation = GET_GUID_HOB_DATA (GuidHob);
       HealthData->Uint32     = SecPlatformInformation->IA32HealthFlags.Uint32;
     } else {
-      DEBUG ((DEBUG_INFO, "Does not find any HOB stored CPU BIST information!\n"));
+      DEBUG ((
+        DEBUG_INFO,
+        "Does not find any HOB stored CPU BIST information!\n"
+        ));
       HealthData->Uint32 = 0;
     }
   }

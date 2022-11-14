@@ -65,16 +65,32 @@ InitUTContext (
   LocalContext->NumberOfProcessors        = NumberOfProcessors;
   LocalContext->NumberOfEnabledProcessors = NumberOfEnabledProcessors;
 
-  LocalContext->CommonBuffer = AllocatePages (EFI_SIZE_TO_PAGES (NumberOfProcessors * sizeof (*LocalContext->CommonBuffer)));
+  LocalContext->CommonBuffer = AllocatePages (
+                                 EFI_SIZE_TO_PAGES (
+                                   NumberOfProcessors *
+                                   sizeof (*LocalContext->CommonBuffer)
+                                   )
+                                 );
   UT_ASSERT_NOT_NULL (LocalContext->CommonBuffer);
 
   NumberOfDisabledAPs = NumberOfProcessors - NumberOfEnabledProcessors;
   if ((NumberOfDisabledAPs > 0) && (LocalContext->DisabledApNumber == NULL)) {
-    LocalContext->DisabledApNumber = AllocatePages (EFI_SIZE_TO_PAGES (NumberOfDisabledAPs * sizeof (*LocalContext->DisabledApNumber)));
+    LocalContext->DisabledApNumber = AllocatePages (
+                                       EFI_SIZE_TO_PAGES (
+                                         NumberOfDisabledAPs *
+                                         sizeof (*LocalContext->DisabledApNumber)
+                                         )
+                                       );
     UT_ASSERT_NOT_NULL (LocalContext->DisabledApNumber);
-    ZeroMem (LocalContext->DisabledApNumber, NumberOfDisabledAPs * sizeof (*LocalContext->DisabledApNumber));
+    ZeroMem (
+      LocalContext->DisabledApNumber,
+      NumberOfDisabledAPs *
+      sizeof (*LocalContext->DisabledApNumber)
+      );
 
-    for (ProcessorNumber = 0, IndexOfDisabledAPs = 0; ProcessorNumber < LocalContext->NumberOfProcessors; ProcessorNumber++) {
+    for (ProcessorNumber = 0, IndexOfDisabledAPs = 0; ProcessorNumber <
+         LocalContext->NumberOfProcessors; ProcessorNumber++)
+    {
       Status = MpServicesUnitTestGetProcessorInfo (
                  LocalContext->MpServices,
                  ProcessorNumber,
@@ -89,7 +105,12 @@ InitUTContext (
         LocalContext->DisabledApNumber[IndexOfDisabledAPs] = ProcessorNumber;
         IndexOfDisabledAPs++;
 
-        DEBUG ((DEBUG_INFO, "%a: AP(0x%x) is disabled and temporarily enable it.\n", __FUNCTION__, ProcessorNumber));
+        DEBUG ((
+          DEBUG_INFO,
+          "%a: AP(0x%x) is disabled and temporarily enable it.\n",
+          __FUNCTION__,
+          ProcessorNumber
+          ));
         Status = MpServicesUnitTestEnableDisableAP (
                    LocalContext->MpServices,
                    ProcessorNumber,
@@ -148,13 +169,25 @@ CheckUTContext (
 
   if (NumberOfProcessors != LocalContext->NumberOfProcessors) {
     LocalContext->NumberOfProcessors = NumberOfProcessors;
-    DEBUG ((DEBUG_INFO, "%a: New NumberOfProcessors = 0x%x\n", __FUNCTION__, NumberOfProcessors));
+    DEBUG ((
+      DEBUG_INFO,
+      "%a: New NumberOfProcessors = 0x%x\n",
+      __FUNCTION__,
+      NumberOfProcessors
+      ));
   }
 
   if (NumberOfEnabledProcessors != LocalContext->NumberOfProcessors) {
-    DEBUG ((DEBUG_INFO, "%a: New NumberOfEnabledProcessors = 0x%x\n", __FUNCTION__, NumberOfEnabledProcessors));
+    DEBUG ((
+      DEBUG_INFO,
+      "%a: New NumberOfEnabledProcessors = 0x%x\n",
+      __FUNCTION__,
+      NumberOfEnabledProcessors
+      ));
 
-    for (ProcessorNumber = 0; ProcessorNumber < LocalContext->NumberOfProcessors; ProcessorNumber++) {
+    for (ProcessorNumber = 0; ProcessorNumber <
+         LocalContext->NumberOfProcessors; ProcessorNumber++)
+    {
       Status = MpServicesUnitTestGetProcessorInfo (
                  LocalContext->MpServices,
                  ProcessorNumber,
@@ -163,7 +196,12 @@ CheckUTContext (
       ASSERT_EFI_ERROR (Status);
 
       if (!(ProcessorInfoBuffer.StatusFlag & PROCESSOR_ENABLED_BIT)) {
-        DEBUG ((DEBUG_INFO, "%a: AP(0x%x) is disabled unexpectedly and reenable it.\n", __FUNCTION__, ProcessorNumber));
+        DEBUG ((
+          DEBUG_INFO,
+          "%a: AP(0x%x) is disabled unexpectedly and reenable it.\n",
+          __FUNCTION__,
+          ProcessorNumber
+          ));
         Status = MpServicesUnitTestEnableDisableAP (
                    LocalContext->MpServices,
                    ProcessorNumber,
@@ -199,8 +237,11 @@ FreeUTContext (
   ASSERT (LocalContext->MpServices.Ppi != NULL);
 
   if (LocalContext->DisabledApNumber != NULL) {
-    NumberOfDisabledAPs = LocalContext->NumberOfProcessors - LocalContext->NumberOfEnabledProcessors;
-    for (IndexOfDisabledAPs = 0; IndexOfDisabledAPs < NumberOfDisabledAPs; IndexOfDisabledAPs++) {
+    NumberOfDisabledAPs = LocalContext->NumberOfProcessors -
+                          LocalContext->NumberOfEnabledProcessors;
+    for (IndexOfDisabledAPs = 0; IndexOfDisabledAPs < NumberOfDisabledAPs;
+         IndexOfDisabledAPs++)
+    {
       DEBUG ((
         DEBUG_INFO,
         "%a: Disable AP(0x%x) to restore its state.\n",
@@ -217,11 +258,21 @@ FreeUTContext (
       ASSERT_EFI_ERROR (Status);
     }
 
-    FreePages (LocalContext->DisabledApNumber, EFI_SIZE_TO_PAGES (NumberOfDisabledAPs * sizeof (*LocalContext->DisabledApNumber)));
+    FreePages (
+      LocalContext->DisabledApNumber,
+      EFI_SIZE_TO_PAGES (
+        NumberOfDisabledAPs * sizeof (*LocalContext->DisabledApNumber)
+        )
+      );
   }
 
   if (LocalContext->CommonBuffer != NULL) {
-    FreePages (LocalContext->CommonBuffer, EFI_SIZE_TO_PAGES (LocalContext->NumberOfProcessors * sizeof (*LocalContext->CommonBuffer)));
+    FreePages (
+      LocalContext->CommonBuffer,
+      EFI_SIZE_TO_PAGES (
+        LocalContext->NumberOfProcessors * sizeof (*LocalContext->CommonBuffer)
+        )
+      );
   }
 }
 
@@ -241,7 +292,10 @@ StoreCpuNumbers (
 
   LocalContext = (MP_SERVICE_UT_CONTEXT *)Buffer;
 
-  Status = MpServicesUnitTestWhoAmI (LocalContext->MpServices, &ProcessorNumber);
+  Status = MpServicesUnitTestWhoAmI (
+             LocalContext->MpServices,
+             &ProcessorNumber
+             );
   ASSERT_EFI_ERROR (Status);
 
   //
@@ -271,7 +325,10 @@ StoreAPsExecutionOrder (
 
   LocalContext = (MP_SERVICE_UT_CONTEXT *)Buffer;
 
-  Status = MpServicesUnitTestWhoAmI (LocalContext->MpServices, &ProcessorNumber);
+  Status = MpServicesUnitTestWhoAmI (
+             LocalContext->MpServices,
+             &ProcessorNumber
+             );
   ASSERT_EFI_ERROR (Status);
 
   //
@@ -279,7 +336,8 @@ StoreAPsExecutionOrder (
   // Index  00    01    02    03    04    05
   // Value  00    01    03    04    05  ApCounter(5)
   //
-  ApCounter                              = &(LocalContext->CommonBuffer[LocalContext->NumberOfProcessors - 1]);
+  ApCounter =
+    &(LocalContext->CommonBuffer[LocalContext->NumberOfProcessors - 1]);
   LocalContext->CommonBuffer[*ApCounter] = ProcessorNumber;
   (*ApCounter)++;
 }
@@ -330,11 +388,12 @@ RunMpServiceGetNumberOfProcessorsOnAp (
 
   LocalContext = (MP_SERVICE_UT_CONTEXT *)Buffer;
 
-  LocalContext->ApProcedureReturnStatus = MpServicesUnitTestGetNumberOfProcessors (
-                                            LocalContext->MpServices,
-                                            &NumberOfProcessors,
-                                            &NumberOfEnabledProcessors
-                                            );
+  LocalContext->ApProcedureReturnStatus =
+    MpServicesUnitTestGetNumberOfProcessors (
+      LocalContext->MpServices,
+      &NumberOfProcessors,
+      &NumberOfEnabledProcessors
+      );
 }
 
 /**
@@ -479,7 +538,12 @@ TestWhoAmI1 (
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_TRUE (ProcessorNumber < LocalContext->NumberOfProcessors);
 
-  SetMem (LocalContext->CommonBuffer, LocalContext->NumberOfProcessors * sizeof (*LocalContext->CommonBuffer), 0xFF);
+  SetMem (
+    LocalContext->CommonBuffer,
+    LocalContext->NumberOfProcessors *
+    sizeof (*LocalContext->CommonBuffer),
+    0xFF
+    );
   LocalContext->CommonBuffer[ProcessorNumber] = ProcessorNumber;
 
   Status = MpServicesUnitTestStartupAllAPs (
@@ -496,8 +560,13 @@ TestWhoAmI1 (
   // Index  00    01    02    03    04    05
   // Value  00    01    02    03    04    05
   //
-  for (ProcessorIndex = 0; ProcessorIndex < LocalContext->NumberOfProcessors; ProcessorIndex++) {
-    UT_ASSERT_TRUE (LocalContext->CommonBuffer[ProcessorIndex] == ProcessorIndex);
+  for (ProcessorIndex = 0; ProcessorIndex < LocalContext->NumberOfProcessors;
+       ProcessorIndex++)
+  {
+    UT_ASSERT_TRUE (
+      LocalContext->CommonBuffer[ProcessorIndex] ==
+      ProcessorIndex
+      );
   }
 
   return UNIT_TEST_PASSED;
@@ -532,7 +601,10 @@ TestGetNumberOfProcessors1 (
              &NumberOfEnabledProcessors
              );
   UT_ASSERT_NOT_EFI_ERROR (Status);
-  UT_ASSERT_TRUE (NumberOfProcessors > 0 && NumberOfProcessors >= NumberOfEnabledProcessors);
+  UT_ASSERT_TRUE (
+    NumberOfProcessors > 0 && NumberOfProcessors >=
+    NumberOfEnabledProcessors
+    );
 
   return UNIT_TEST_PASSED;
 }
@@ -563,7 +635,8 @@ TestGetNumberOfProcessors2 (
     LocalContext->ApNumber = ApNumber;
     Status                 = MpServicesUnitTestStartupThisAP (
                                LocalContext->MpServices,
-                               (EFI_AP_PROCEDURE)RunMpServiceGetNumberOfProcessorsOnAp,
+                               (EFI_AP_PROCEDURE)
+                               RunMpServiceGetNumberOfProcessorsOnAp,
                                ApNumber,
                                0,
                                (VOID *)LocalContext
@@ -573,7 +646,10 @@ TestGetNumberOfProcessors2 (
       UT_ASSERT_STATUS_EQUAL (Status, EFI_INVALID_PARAMETER);
     } else {
       UT_ASSERT_NOT_EFI_ERROR (Status);
-      UT_ASSERT_STATUS_EQUAL (LocalContext->ApProcedureReturnStatus, EFI_DEVICE_ERROR);
+      UT_ASSERT_STATUS_EQUAL (
+        LocalContext->ApProcedureReturnStatus,
+        EFI_DEVICE_ERROR
+        );
     }
   }
 
@@ -626,9 +702,15 @@ TestGetNumberOfProcessors3 (
       UT_ASSERT_TRUE (NumberOfProcessors == LocalContext->NumberOfProcessors);
 
       if (ApNumber < LocalContext->BspNumber) {
-        UT_ASSERT_TRUE (NumberOfEnabledProcessors == LocalContext->NumberOfProcessors - (ApNumber + 1));
+        UT_ASSERT_TRUE (
+          NumberOfEnabledProcessors ==
+          LocalContext->NumberOfProcessors - (ApNumber + 1)
+          );
       } else {
-        UT_ASSERT_TRUE (NumberOfEnabledProcessors == LocalContext->NumberOfProcessors - ApNumber);
+        UT_ASSERT_TRUE (
+          NumberOfEnabledProcessors ==
+          LocalContext->NumberOfProcessors - ApNumber
+          );
       }
     }
   }
@@ -690,7 +772,9 @@ TestGetProcessorInfo1 (
 
   LocalContext = (MP_SERVICE_UT_CONTEXT *)Context;
 
-  for (ProcessorNumber = 0; ProcessorNumber <= LocalContext->NumberOfProcessors; ProcessorNumber++) {
+  for (ProcessorNumber = 0; ProcessorNumber <= LocalContext->NumberOfProcessors;
+       ProcessorNumber++)
+  {
     Status = MpServicesUnitTestGetProcessorInfo (
                LocalContext->MpServices,
                ProcessorNumber,
@@ -701,12 +785,23 @@ TestGetProcessorInfo1 (
       UT_ASSERT_STATUS_EQUAL (Status, EFI_NOT_FOUND);
     } else {
       UT_ASSERT_NOT_EFI_ERROR (Status);
-      UT_ASSERT_TRUE ((ProcessorInfoBuffer.StatusFlag & (UINT32) ~(PROCESSOR_AS_BSP_BIT|PROCESSOR_ENABLED_BIT|PROCESSOR_HEALTH_STATUS_BIT)) == 0);
+      UT_ASSERT_TRUE (
+        (ProcessorInfoBuffer.StatusFlag &
+         (UINT32) ~(PROCESSOR_AS_BSP_BIT|PROCESSOR_ENABLED_BIT|
+                    PROCESSOR_HEALTH_STATUS_BIT)) == 0
+        );
 
       if (ProcessorNumber == LocalContext->BspNumber) {
-        UT_ASSERT_TRUE ((ProcessorInfoBuffer.StatusFlag & PROCESSOR_AS_BSP_BIT) && (ProcessorInfoBuffer.StatusFlag & PROCESSOR_ENABLED_BIT));
+        UT_ASSERT_TRUE (
+          (ProcessorInfoBuffer.StatusFlag &
+           PROCESSOR_AS_BSP_BIT) && (ProcessorInfoBuffer.StatusFlag &
+                                     PROCESSOR_ENABLED_BIT)
+          );
       } else {
-        UT_ASSERT_TRUE (!(ProcessorInfoBuffer.StatusFlag & PROCESSOR_AS_BSP_BIT));
+        UT_ASSERT_TRUE (
+          !(ProcessorInfoBuffer.StatusFlag &
+            PROCESSOR_AS_BSP_BIT)
+          );
       }
     }
   }
@@ -740,7 +835,8 @@ TestGetProcessorInfo2 (
     LocalContext->ApNumber = ApNumber;
     Status                 = MpServicesUnitTestStartupThisAP (
                                LocalContext->MpServices,
-                               (EFI_AP_PROCEDURE)RunMpServiceGetProcessorInfoOnAp,
+                               (EFI_AP_PROCEDURE)
+                               RunMpServiceGetProcessorInfoOnAp,
                                ApNumber,
                                0,
                                (VOID *)LocalContext
@@ -750,7 +846,10 @@ TestGetProcessorInfo2 (
       UT_ASSERT_STATUS_EQUAL (Status, EFI_INVALID_PARAMETER);
     } else {
       UT_ASSERT_NOT_EFI_ERROR (Status);
-      UT_ASSERT_STATUS_EQUAL (LocalContext->ApProcedureReturnStatus, EFI_DEVICE_ERROR);
+      UT_ASSERT_STATUS_EQUAL (
+        LocalContext->ApProcedureReturnStatus,
+        EFI_DEVICE_ERROR
+        );
     }
   }
 
@@ -863,7 +962,10 @@ TestEnableDisableAP2 (
       UT_ASSERT_STATUS_EQUAL (Status, EFI_INVALID_PARAMETER);
     } else {
       UT_ASSERT_NOT_EFI_ERROR (Status);
-      UT_ASSERT_STATUS_EQUAL (LocalContext->ApProcedureReturnStatus, EFI_DEVICE_ERROR);
+      UT_ASSERT_STATUS_EQUAL (
+        LocalContext->ApProcedureReturnStatus,
+        EFI_DEVICE_ERROR
+        );
     }
   }
 
@@ -903,7 +1005,8 @@ TestEnableDisableAP3 (
                );
     UT_ASSERT_NOT_EFI_ERROR (Status);
 
-    OldHealthFlag = ProcessorInfoBuffer.StatusFlag & PROCESSOR_HEALTH_STATUS_BIT;
+    OldHealthFlag = ProcessorInfoBuffer.StatusFlag &
+                    PROCESSOR_HEALTH_STATUS_BIT;
     NewHealthFlag = OldHealthFlag ^ PROCESSOR_HEALTH_STATUS_BIT;
     Status        = MpServicesUnitTestEnableDisableAP (
                       LocalContext->MpServices,
@@ -923,7 +1026,10 @@ TestEnableDisableAP3 (
                  &ProcessorInfoBuffer
                  );
       UT_ASSERT_NOT_EFI_ERROR (Status);
-      UT_ASSERT_TRUE ((ProcessorInfoBuffer.StatusFlag & PROCESSOR_HEALTH_STATUS_BIT) == NewHealthFlag);
+      UT_ASSERT_TRUE (
+        (ProcessorInfoBuffer.StatusFlag &
+         PROCESSOR_HEALTH_STATUS_BIT) == NewHealthFlag
+        );
 
       Status = MpServicesUnitTestEnableDisableAP (
                  LocalContext->MpServices,
@@ -964,7 +1070,12 @@ TestStartupThisAP1 (
   LocalContext = (MP_SERVICE_UT_CONTEXT *)Context;
 
   for (ApNumber = 0; ApNumber <= LocalContext->NumberOfProcessors; ApNumber++) {
-    SetMem (LocalContext->CommonBuffer, LocalContext->NumberOfProcessors * sizeof (*LocalContext->CommonBuffer), 0xFF);
+    SetMem (
+      LocalContext->CommonBuffer,
+      LocalContext->NumberOfProcessors *
+      sizeof (*LocalContext->CommonBuffer),
+      0xFF
+      );
     Status = MpServicesUnitTestStartupThisAP (
                LocalContext->MpServices,
                (EFI_AP_PROCEDURE)StoreCpuNumbers,
@@ -980,10 +1091,14 @@ TestStartupThisAP1 (
     } else {
       UT_ASSERT_NOT_EFI_ERROR (Status);
 
-      for (ProcessorIndex = 0; ProcessorIndex < LocalContext->NumberOfProcessors; ProcessorIndex++) {
+      for (ProcessorIndex = 0; ProcessorIndex <
+           LocalContext->NumberOfProcessors; ProcessorIndex++)
+      {
         UT_ASSERT_TRUE (
-          ((ProcessorIndex == ApNumber) && (LocalContext->CommonBuffer[ProcessorIndex] == ProcessorIndex)) ||
-          ((ProcessorIndex != ApNumber) && (LocalContext->CommonBuffer[ProcessorIndex] == (UINTN) ~0))
+          ((ProcessorIndex == ApNumber) &&
+           (LocalContext->CommonBuffer[ProcessorIndex] == ProcessorIndex)) ||
+          ((ProcessorIndex != ApNumber) &&
+           (LocalContext->CommonBuffer[ProcessorIndex] == (UINTN) ~0))
           );
       }
     }
@@ -1028,7 +1143,10 @@ TestStartupThisAP2 (
       UT_ASSERT_STATUS_EQUAL (Status, EFI_INVALID_PARAMETER);
     } else {
       UT_ASSERT_NOT_EFI_ERROR (Status);
-      UT_ASSERT_STATUS_EQUAL (LocalContext->ApProcedureReturnStatus, EFI_DEVICE_ERROR);
+      UT_ASSERT_STATUS_EQUAL (
+        LocalContext->ApProcedureReturnStatus,
+        EFI_DEVICE_ERROR
+        );
     }
   }
 
@@ -1164,7 +1282,12 @@ TestStartupAllAPs1 (
 
   LocalContext = (MP_SERVICE_UT_CONTEXT *)Context;
 
-  SetMem (LocalContext->CommonBuffer, LocalContext->NumberOfProcessors * sizeof (*LocalContext->CommonBuffer), 0xFF);
+  SetMem (
+    LocalContext->CommonBuffer,
+    LocalContext->NumberOfProcessors *
+    sizeof (*LocalContext->CommonBuffer),
+    0xFF
+    );
   Status = MpServicesUnitTestStartupAllAPs (
              LocalContext->MpServices,
              (EFI_AP_PROCEDURE)StoreCpuNumbers,
@@ -1174,10 +1297,14 @@ TestStartupAllAPs1 (
              );
   UT_ASSERT_NOT_EFI_ERROR (Status);
 
-  for (ProcessorIndex = 0; ProcessorIndex < LocalContext->NumberOfProcessors; ProcessorIndex++) {
+  for (ProcessorIndex = 0; ProcessorIndex < LocalContext->NumberOfProcessors;
+       ProcessorIndex++)
+  {
     UT_ASSERT_TRUE (
-      ((ProcessorIndex == LocalContext->BspNumber) && (LocalContext->CommonBuffer[ProcessorIndex] == (UINTN) ~0)) ||
-      ((ProcessorIndex != LocalContext->BspNumber) && (LocalContext->CommonBuffer[ProcessorIndex] == ProcessorIndex))
+      ((ProcessorIndex == LocalContext->BspNumber) &&
+       (LocalContext->CommonBuffer[ProcessorIndex] == (UINTN) ~0)) ||
+      ((ProcessorIndex != LocalContext->BspNumber) &&
+       (LocalContext->CommonBuffer[ProcessorIndex] == ProcessorIndex))
       );
   }
 
@@ -1207,7 +1334,11 @@ TestStartupAllAPs2 (
 
   LocalContext = (MP_SERVICE_UT_CONTEXT *)Context;
 
-  ZeroMem (LocalContext->CommonBuffer, LocalContext->NumberOfProcessors * sizeof (*LocalContext->CommonBuffer));
+  ZeroMem (
+    LocalContext->CommonBuffer,
+    LocalContext->NumberOfProcessors *
+    sizeof (*LocalContext->CommonBuffer)
+    );
   Status = MpServicesUnitTestStartupAllAPs (
              LocalContext->MpServices,
              (EFI_AP_PROCEDURE)StoreAPsExecutionOrder,
@@ -1222,11 +1353,20 @@ TestStartupAllAPs2 (
   // Index  00    01    02    03    04    05
   // Value  00    01    03    04    05  ApCounter(5)
   //
-  for (ProcessorIndex = 0; ProcessorIndex < LocalContext->NumberOfProcessors - 2; ProcessorIndex++) {
-    UT_ASSERT_TRUE (LocalContext->CommonBuffer[ProcessorIndex] < LocalContext->CommonBuffer[ProcessorIndex + 1]);
+  for (ProcessorIndex = 0; ProcessorIndex < LocalContext->NumberOfProcessors -
+       2; ProcessorIndex++)
+  {
+    UT_ASSERT_TRUE (
+      LocalContext->CommonBuffer[ProcessorIndex] <
+      LocalContext->CommonBuffer[ProcessorIndex + 1]
+      );
   }
 
-  UT_ASSERT_EQUAL (LocalContext->CommonBuffer[LocalContext->NumberOfProcessors - 1], LocalContext->NumberOfProcessors - 1);
+  UT_ASSERT_EQUAL (
+    LocalContext->CommonBuffer[LocalContext->NumberOfProcessors -
+                               1],
+    LocalContext->NumberOfProcessors - 1
+    );
 
   return UNIT_TEST_PASSED;
 }
@@ -1267,7 +1407,10 @@ TestStartupAllAPs3 (
       UT_ASSERT_STATUS_EQUAL (Status, EFI_INVALID_PARAMETER);
     } else {
       UT_ASSERT_NOT_EFI_ERROR (Status);
-      UT_ASSERT_STATUS_EQUAL (LocalContext->ApProcedureReturnStatus, EFI_DEVICE_ERROR);
+      UT_ASSERT_STATUS_EQUAL (
+        LocalContext->ApProcedureReturnStatus,
+        EFI_DEVICE_ERROR
+        );
     }
   }
 
@@ -1405,7 +1548,9 @@ TestSwitchBSP1 (
 
   LocalContext = (MP_SERVICE_UT_CONTEXT *)Context;
 
-  for (NewBspNumber = 0; NewBspNumber <= LocalContext->NumberOfProcessors; NewBspNumber++) {
+  for (NewBspNumber = 0; NewBspNumber <= LocalContext->NumberOfProcessors;
+       NewBspNumber++)
+  {
     Status = MpServicesUnitTestSwitchBSP (
                LocalContext->MpServices,
                NewBspNumber,
@@ -1419,7 +1564,12 @@ TestSwitchBSP1 (
     } else {
       UT_ASSERT_NOT_EFI_ERROR (Status);
 
-      SetMem (LocalContext->CommonBuffer, LocalContext->NumberOfProcessors * sizeof (*LocalContext->CommonBuffer), 0xFF);
+      SetMem (
+        LocalContext->CommonBuffer,
+        LocalContext->NumberOfProcessors *
+        sizeof (*LocalContext->CommonBuffer),
+        0xFF
+        );
       Status = MpServicesUnitTestStartupAllAPs (
                  LocalContext->MpServices,
                  (EFI_AP_PROCEDURE)StoreCpuNumbers,
@@ -1429,10 +1579,14 @@ TestSwitchBSP1 (
                  );
       UT_ASSERT_NOT_EFI_ERROR (Status);
 
-      for (ProcessorIndex = 0; ProcessorIndex < LocalContext->NumberOfProcessors; ProcessorIndex++) {
+      for (ProcessorIndex = 0; ProcessorIndex <
+           LocalContext->NumberOfProcessors; ProcessorIndex++)
+      {
         UT_ASSERT_TRUE (
-          ((ProcessorIndex == NewBspNumber) && (LocalContext->CommonBuffer[ProcessorIndex] == (UINTN) ~0)) ||
-          ((ProcessorIndex != NewBspNumber) && (LocalContext->CommonBuffer[ProcessorIndex] == ProcessorIndex))
+          ((ProcessorIndex == NewBspNumber) &&
+           (LocalContext->CommonBuffer[ProcessorIndex] == (UINTN) ~0)) ||
+          ((ProcessorIndex != NewBspNumber) &&
+           (LocalContext->CommonBuffer[ProcessorIndex] == ProcessorIndex))
           );
       }
 
@@ -1484,7 +1638,10 @@ TestSwitchBSP2 (
       UT_ASSERT_STATUS_EQUAL (Status, EFI_INVALID_PARAMETER);
     } else {
       UT_ASSERT_NOT_EFI_ERROR (Status);
-      UT_ASSERT_STATUS_EQUAL (LocalContext->ApProcedureReturnStatus, EFI_DEVICE_ERROR);
+      UT_ASSERT_STATUS_EQUAL (
+        LocalContext->ApProcedureReturnStatus,
+        EFI_DEVICE_ERROR
+        );
     }
   }
 
@@ -1513,7 +1670,9 @@ TestSwitchBSP3 (
 
   LocalContext = (MP_SERVICE_UT_CONTEXT *)Context;
 
-  for (NewBspNumber = 0; NewBspNumber < LocalContext->NumberOfProcessors; NewBspNumber++) {
+  for (NewBspNumber = 0; NewBspNumber < LocalContext->NumberOfProcessors;
+       NewBspNumber++)
+  {
     Status = MpServicesUnitTestEnableDisableAP (
                LocalContext->MpServices,
                NewBspNumber,
@@ -1572,7 +1731,9 @@ TestSwitchBSP4 (
 
   LocalContext = (MP_SERVICE_UT_CONTEXT *)Context;
 
-  for (NewBspNumber = 0; NewBspNumber < LocalContext->NumberOfProcessors; NewBspNumber++) {
+  for (NewBspNumber = 0; NewBspNumber < LocalContext->NumberOfProcessors;
+       NewBspNumber++)
+  {
     Status = MpServicesUnitTestSwitchBSP (
                LocalContext->MpServices,
                NewBspNumber,
@@ -1683,94 +1844,340 @@ AddCommonTestCase (
   //
   // Test WhoAmI function
   //
-  Status = CreateUnitTestSuite (&MpServiceWhoAmITestSuite, Framework, "Identify the currently executing processor", "MpServices.WhoAmI", NULL, NULL);
+  Status = CreateUnitTestSuite (
+             &MpServiceWhoAmITestSuite,
+             Framework,
+             "Identify the currently executing processor",
+             "MpServices.WhoAmI",
+             NULL,
+             NULL
+             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in CreateUnitTestSuite for MpServiceWhoAmI Test Suite\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed in CreateUnitTestSuite for MpServiceWhoAmI Test Suite\n"
+      ));
     return Status;
   }
 
-  AddTestCase (MpServiceWhoAmITestSuite, "Test WhoAmI 1", "TestWhoAmI1", TestWhoAmI1, InitUTContext, CheckUTContext, Context);
+  AddTestCase (
+    MpServiceWhoAmITestSuite,
+    "Test WhoAmI 1",
+    "TestWhoAmI1",
+    TestWhoAmI1,
+    InitUTContext,
+    CheckUTContext,
+    Context
+    );
 
   //
   // Test GetNumberOfProcessors function
   //
-  Status = CreateUnitTestSuite (&MpServiceGetNumberOfProcessorsTestSuite, Framework, "Retrieve the number of logical processor", "MpServices.GetNumberOfProcessors", NULL, NULL);
+  Status = CreateUnitTestSuite (
+             &MpServiceGetNumberOfProcessorsTestSuite,
+             Framework,
+             "Retrieve the number of logical processor",
+             "MpServices.GetNumberOfProcessors",
+             NULL,
+             NULL
+             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in CreateUnitTestSuite for MpServiceGetNumberOfProcessors Test Suite\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed in CreateUnitTestSuite for MpServiceGetNumberOfProcessors Test Suite\n"
+      ));
     return Status;
   }
 
-  AddTestCase (MpServiceGetNumberOfProcessorsTestSuite, "Test GetNumberOfProcessors 1", "TestGetNumberOfProcessors1", TestGetNumberOfProcessors1, InitUTContext, CheckUTContext, Context);
-  AddTestCase (MpServiceGetNumberOfProcessorsTestSuite, "Test GetNumberOfProcessors 2", "TestGetNumberOfProcessors2", TestGetNumberOfProcessors2, InitUTContext, CheckUTContext, Context);
-  AddTestCase (MpServiceGetNumberOfProcessorsTestSuite, "Test GetNumberOfProcessors 3", "TestGetNumberOfProcessors3", TestGetNumberOfProcessors3, InitUTContext, CheckUTContext, Context);
+  AddTestCase (
+    MpServiceGetNumberOfProcessorsTestSuite,
+    "Test GetNumberOfProcessors 1",
+    "TestGetNumberOfProcessors1",
+    TestGetNumberOfProcessors1,
+    InitUTContext,
+    CheckUTContext,
+    Context
+    );
+  AddTestCase (
+    MpServiceGetNumberOfProcessorsTestSuite,
+    "Test GetNumberOfProcessors 2",
+    "TestGetNumberOfProcessors2",
+    TestGetNumberOfProcessors2,
+    InitUTContext,
+    CheckUTContext,
+    Context
+    );
+  AddTestCase (
+    MpServiceGetNumberOfProcessorsTestSuite,
+    "Test GetNumberOfProcessors 3",
+    "TestGetNumberOfProcessors3",
+    TestGetNumberOfProcessors3,
+    InitUTContext,
+    CheckUTContext,
+    Context
+    );
 
   //
   // Test GetProcessorInfo function
   //
-  Status = CreateUnitTestSuite (&MpServiceGetProcessorInfoTestSuite, Framework, "Get detailed information on the requested logical processor", "MpServices.GetProcessorInfo", NULL, NULL);
+  Status = CreateUnitTestSuite (
+             &MpServiceGetProcessorInfoTestSuite,
+             Framework,
+             "Get detailed information on the requested logical processor",
+             "MpServices.GetProcessorInfo",
+             NULL,
+             NULL
+             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in CreateUnitTestSuite for MpServiceGetProcessorInfo Test Suite\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed in CreateUnitTestSuite for MpServiceGetProcessorInfo Test Suite\n"
+      ));
     return Status;
   }
 
-  AddTestCase (MpServiceGetProcessorInfoTestSuite, "Test GetProcessorInfo 1", "TestGetProcessorInfo1", TestGetProcessorInfo1, InitUTContext, CheckUTContext, Context);
-  AddTestCase (MpServiceGetProcessorInfoTestSuite, "Test GetProcessorInfo 2", "TestGetProcessorInfo2", TestGetProcessorInfo2, InitUTContext, CheckUTContext, Context);
+  AddTestCase (
+    MpServiceGetProcessorInfoTestSuite,
+    "Test GetProcessorInfo 1",
+    "TestGetProcessorInfo1",
+    TestGetProcessorInfo1,
+    InitUTContext,
+    CheckUTContext,
+    Context
+    );
+  AddTestCase (
+    MpServiceGetProcessorInfoTestSuite,
+    "Test GetProcessorInfo 2",
+    "TestGetProcessorInfo2",
+    TestGetProcessorInfo2,
+    InitUTContext,
+    CheckUTContext,
+    Context
+    );
 
   //
   // Test EnableDisableAP function
   //
-  Status = CreateUnitTestSuite (&MpServiceEnableDisableAPTestSuite, Framework, "Caller enables or disables an AP from this point onward", "MpServices.EnableDisableAP", NULL, NULL);
+  Status = CreateUnitTestSuite (
+             &MpServiceEnableDisableAPTestSuite,
+             Framework,
+             "Caller enables or disables an AP from this point onward",
+             "MpServices.EnableDisableAP",
+             NULL,
+             NULL
+             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in CreateUnitTestSuite for MpServiceEnableDisableAP Test Suite\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed in CreateUnitTestSuite for MpServiceEnableDisableAP Test Suite\n"
+      ));
     return Status;
   }
 
-  AddTestCase (MpServiceEnableDisableAPTestSuite, "Test EnableDisableAP 1", "TestEnableDisableAP1", TestEnableDisableAP1, InitUTContext, CheckUTContext, Context);
-  AddTestCase (MpServiceEnableDisableAPTestSuite, "Test EnableDisableAP 2", "TestEnableDisableAP2", TestEnableDisableAP2, InitUTContext, CheckUTContext, Context);
-  AddTestCase (MpServiceEnableDisableAPTestSuite, "Test EnableDisableAP 3", "TestEnableDisableAP3", TestEnableDisableAP3, InitUTContext, CheckUTContext, Context);
+  AddTestCase (
+    MpServiceEnableDisableAPTestSuite,
+    "Test EnableDisableAP 1",
+    "TestEnableDisableAP1",
+    TestEnableDisableAP1,
+    InitUTContext,
+    CheckUTContext,
+    Context
+    );
+  AddTestCase (
+    MpServiceEnableDisableAPTestSuite,
+    "Test EnableDisableAP 2",
+    "TestEnableDisableAP2",
+    TestEnableDisableAP2,
+    InitUTContext,
+    CheckUTContext,
+    Context
+    );
+  AddTestCase (
+    MpServiceEnableDisableAPTestSuite,
+    "Test EnableDisableAP 3",
+    "TestEnableDisableAP3",
+    TestEnableDisableAP3,
+    InitUTContext,
+    CheckUTContext,
+    Context
+    );
 
   //
   // Test StartupThisAP function
   //
-  Status = CreateUnitTestSuite (&MpServiceStartupThisAPTestSuite, Framework, "Get the requested AP to execute a caller-provided function", "MpServices.StartupThisAP", NULL, NULL);
+  Status = CreateUnitTestSuite (
+             &MpServiceStartupThisAPTestSuite,
+             Framework,
+             "Get the requested AP to execute a caller-provided function",
+             "MpServices.StartupThisAP",
+             NULL,
+             NULL
+             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in CreateUnitTestSuite for MpServiceStartupThisAP Test Suite\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed in CreateUnitTestSuite for MpServiceStartupThisAP Test Suite\n"
+      ));
     return Status;
   }
 
-  AddTestCase (MpServiceStartupThisAPTestSuite, "Test StartupThisAP 1", "TestStartupThisAP1", TestStartupThisAP1, InitUTContext, CheckUTContext, Context);
-  AddTestCase (MpServiceStartupThisAPTestSuite, "Test StartupThisAP 2", "TestStartupThisAP2", TestStartupThisAP2, InitUTContext, CheckUTContext, Context);
-  AddTestCase (MpServiceStartupThisAPTestSuite, "Test StartupThisAP 3", "TestStartupThisAP3", TestStartupThisAP3, InitUTContext, CheckUTContext, Context);
-  AddTestCase (MpServiceStartupThisAPTestSuite, "Test StartupThisAP 4", "TestStartupThisAP4", TestStartupThisAP4, InitUTContext, CheckUTContext, Context);
+  AddTestCase (
+    MpServiceStartupThisAPTestSuite,
+    "Test StartupThisAP 1",
+    "TestStartupThisAP1",
+    TestStartupThisAP1,
+    InitUTContext,
+    CheckUTContext,
+    Context
+    );
+  AddTestCase (
+    MpServiceStartupThisAPTestSuite,
+    "Test StartupThisAP 2",
+    "TestStartupThisAP2",
+    TestStartupThisAP2,
+    InitUTContext,
+    CheckUTContext,
+    Context
+    );
+  AddTestCase (
+    MpServiceStartupThisAPTestSuite,
+    "Test StartupThisAP 3",
+    "TestStartupThisAP3",
+    TestStartupThisAP3,
+    InitUTContext,
+    CheckUTContext,
+    Context
+    );
+  AddTestCase (
+    MpServiceStartupThisAPTestSuite,
+    "Test StartupThisAP 4",
+    "TestStartupThisAP4",
+    TestStartupThisAP4,
+    InitUTContext,
+    CheckUTContext,
+    Context
+    );
 
   //
   // Test StartupAllAPs function
   //
-  Status = CreateUnitTestSuite (&MpServiceStartupAllAPsTestSuite, Framework, "Execute a caller provided function on all enabled APs", "MpServices.StartupAllAPs", NULL, NULL);
+  Status = CreateUnitTestSuite (
+             &MpServiceStartupAllAPsTestSuite,
+             Framework,
+             "Execute a caller provided function on all enabled APs",
+             "MpServices.StartupAllAPs",
+             NULL,
+             NULL
+             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in CreateUnitTestSuite for MpServiceStartupAllAPs Test Suite\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed in CreateUnitTestSuite for MpServiceStartupAllAPs Test Suite\n"
+      ));
     return Status;
   }
 
-  AddTestCase (MpServiceStartupAllAPsTestSuite, "Test StartupAllAPs 1", "TestStartupAllAPs1", TestStartupAllAPs1, InitUTContext, CheckUTContext, Context);
-  AddTestCase (MpServiceStartupAllAPsTestSuite, "Test StartupAllAPs 2", "TestStartupAllAPs2", TestStartupAllAPs2, InitUTContext, CheckUTContext, Context);
-  AddTestCase (MpServiceStartupAllAPsTestSuite, "Test StartupAllAPs 3", "TestStartupAllAPs3", TestStartupAllAPs3, InitUTContext, CheckUTContext, Context);
-  AddTestCase (MpServiceStartupAllAPsTestSuite, "Test StartupAllAPs 4", "TestStartupAllAPs4", TestStartupAllAPs4, InitUTContext, CheckUTContext, Context);
-  AddTestCase (MpServiceStartupAllAPsTestSuite, "Test StartupAllAPs 5", "TestStartupAllAPs5", TestStartupAllAPs5, InitUTContext, CheckUTContext, Context);
+  AddTestCase (
+    MpServiceStartupAllAPsTestSuite,
+    "Test StartupAllAPs 1",
+    "TestStartupAllAPs1",
+    TestStartupAllAPs1,
+    InitUTContext,
+    CheckUTContext,
+    Context
+    );
+  AddTestCase (
+    MpServiceStartupAllAPsTestSuite,
+    "Test StartupAllAPs 2",
+    "TestStartupAllAPs2",
+    TestStartupAllAPs2,
+    InitUTContext,
+    CheckUTContext,
+    Context
+    );
+  AddTestCase (
+    MpServiceStartupAllAPsTestSuite,
+    "Test StartupAllAPs 3",
+    "TestStartupAllAPs3",
+    TestStartupAllAPs3,
+    InitUTContext,
+    CheckUTContext,
+    Context
+    );
+  AddTestCase (
+    MpServiceStartupAllAPsTestSuite,
+    "Test StartupAllAPs 4",
+    "TestStartupAllAPs4",
+    TestStartupAllAPs4,
+    InitUTContext,
+    CheckUTContext,
+    Context
+    );
+  AddTestCase (
+    MpServiceStartupAllAPsTestSuite,
+    "Test StartupAllAPs 5",
+    "TestStartupAllAPs5",
+    TestStartupAllAPs5,
+    InitUTContext,
+    CheckUTContext,
+    Context
+    );
 
   //
   // Test SwitchBSP function
   //
-  Status = CreateUnitTestSuite (&MpServiceSwitchBSPTestSuite, Framework, "Switch the requested AP to be the BSP from that point onward", "MpServices.SwitchBSP", NULL, NULL);
+  Status = CreateUnitTestSuite (
+             &MpServiceSwitchBSPTestSuite,
+             Framework,
+             "Switch the requested AP to be the BSP from that point onward",
+             "MpServices.SwitchBSP",
+             NULL,
+             NULL
+             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in CreateUnitTestSuite for MpServiceSwitchBSP Test Suite\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed in CreateUnitTestSuite for MpServiceSwitchBSP Test Suite\n"
+      ));
     return Status;
   }
 
-  AddTestCase (MpServiceSwitchBSPTestSuite, "Test SwitchBSP 1", "TestSwitchBSP1", TestSwitchBSP1, InitUTContext, CheckUTContext, Context);
-  AddTestCase (MpServiceSwitchBSPTestSuite, "Test SwitchBSP 2", "TestSwitchBSP2", TestSwitchBSP2, InitUTContext, CheckUTContext, Context);
-  AddTestCase (MpServiceSwitchBSPTestSuite, "Test SwitchBSP 3", "TestSwitchBSP3", TestSwitchBSP3, InitUTContext, CheckUTContext, Context);
-  AddTestCase (MpServiceSwitchBSPTestSuite, "Test SwitchBSP 4", "TestSwitchBSP4", TestSwitchBSP4, InitUTContext, FreeUTContext, Context);
+  AddTestCase (
+    MpServiceSwitchBSPTestSuite,
+    "Test SwitchBSP 1",
+    "TestSwitchBSP1",
+    TestSwitchBSP1,
+    InitUTContext,
+    CheckUTContext,
+    Context
+    );
+  AddTestCase (
+    MpServiceSwitchBSPTestSuite,
+    "Test SwitchBSP 2",
+    "TestSwitchBSP2",
+    TestSwitchBSP2,
+    InitUTContext,
+    CheckUTContext,
+    Context
+    );
+  AddTestCase (
+    MpServiceSwitchBSPTestSuite,
+    "Test SwitchBSP 3",
+    "TestSwitchBSP3",
+    TestSwitchBSP3,
+    InitUTContext,
+    CheckUTContext,
+    Context
+    );
+  AddTestCase (
+    MpServiceSwitchBSPTestSuite,
+    "Test SwitchBSP 4",
+    "TestSwitchBSP4",
+    TestSwitchBSP4,
+    InitUTContext,
+    FreeUTContext,
+    Context
+    );
 
   return EFI_SUCCESS;
 }

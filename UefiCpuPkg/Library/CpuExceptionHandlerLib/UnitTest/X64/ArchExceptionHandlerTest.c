@@ -16,8 +16,13 @@ GENERAL_REGISTER  mActualContextAfterException;
 // Rcx in mExpectedContextInHandler is set runtime since Rcx is needed in assembly code.
 // For GP and PF, Rcx is set to FaultParameter. For other exception triggered by INTn, Rcx is set to ExceptionType.
 //
-GENERAL_REGISTER  mExpectedContextInHandler      = { 1, 2, 3, 4, 5, 0, 7, 8, 9, 0xa, 0xb, 0xc, 0xd, 0xe };
-GENERAL_REGISTER  mExpectedContextAfterException = { 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e };
+GENERAL_REGISTER  mExpectedContextInHandler = {
+  1, 2, 3, 4, 5, 0, 7, 8, 9, 0xa, 0xb, 0xc, 0xd, 0xe
+};
+GENERAL_REGISTER  mExpectedContextAfterException = {
+  0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d,
+  0x1e
+};
 
 /**
   Special handler for fault exception.
@@ -92,7 +97,8 @@ AdjustCpuContextHandler (
   // When fault exception happens, eip/rip points to the faulting instruction.
   // For now, olny GP and PF are tested in fault exception.
   //
-  if ((ExceptionType == EXCEPT_IA32_PAGE_FAULT) || (ExceptionType == EXCEPT_IA32_GP_FAULT)) {
+  if ((ExceptionType == EXCEPT_IA32_PAGE_FAULT) || (ExceptionType ==
+                                                    EXCEPT_IA32_GP_FAULT)) {
     AdjustRipForFaultHandler (ExceptionType, SystemContext);
   }
 }
@@ -125,20 +131,34 @@ CompareCpuContext (
   UT_ASSERT_EQUAL (mActualContextInHandler.R14, mExpectedContextInHandler.R14);
   UT_ASSERT_EQUAL (mActualContextInHandler.R15, mExpectedContextInHandler.R15);
 
-  UT_ASSERT_EQUAL (mActualContextAfterException.Rdi, mExpectedContextAfterException.Rdi);
-  UT_ASSERT_EQUAL (mActualContextAfterException.Rsi, mExpectedContextAfterException.Rsi);
-  UT_ASSERT_EQUAL (mActualContextAfterException.Rbx, mExpectedContextAfterException.Rbx);
-  UT_ASSERT_EQUAL (mActualContextAfterException.Rdx, mExpectedContextAfterException.Rdx);
-  UT_ASSERT_EQUAL (mActualContextAfterException.Rcx, mExpectedContextAfterException.Rcx);
-  UT_ASSERT_EQUAL (mActualContextAfterException.Rax, mExpectedContextAfterException.Rax);
-  UT_ASSERT_EQUAL (mActualContextAfterException.R8, mExpectedContextAfterException.R8);
-  UT_ASSERT_EQUAL (mActualContextAfterException.R9, mExpectedContextAfterException.R9);
-  UT_ASSERT_EQUAL (mActualContextAfterException.R10, mExpectedContextAfterException.R10);
-  UT_ASSERT_EQUAL (mActualContextAfterException.R11, mExpectedContextAfterException.R11);
-  UT_ASSERT_EQUAL (mActualContextAfterException.R12, mExpectedContextAfterException.R12);
-  UT_ASSERT_EQUAL (mActualContextAfterException.R13, mExpectedContextAfterException.R13);
-  UT_ASSERT_EQUAL (mActualContextAfterException.R14, mExpectedContextAfterException.R14);
-  UT_ASSERT_EQUAL (mActualContextAfterException.R15, mExpectedContextAfterException.R15);
+  UT_ASSERT_EQUAL (mActualContextAfterException.Rdi,
+    mExpectedContextAfterException.Rdi);
+  UT_ASSERT_EQUAL (mActualContextAfterException.Rsi,
+    mExpectedContextAfterException.Rsi);
+  UT_ASSERT_EQUAL (mActualContextAfterException.Rbx,
+    mExpectedContextAfterException.Rbx);
+  UT_ASSERT_EQUAL (mActualContextAfterException.Rdx,
+    mExpectedContextAfterException.Rdx);
+  UT_ASSERT_EQUAL (mActualContextAfterException.Rcx,
+    mExpectedContextAfterException.Rcx);
+  UT_ASSERT_EQUAL (mActualContextAfterException.Rax,
+    mExpectedContextAfterException.Rax);
+  UT_ASSERT_EQUAL (mActualContextAfterException.R8,
+    mExpectedContextAfterException.R8);
+  UT_ASSERT_EQUAL (mActualContextAfterException.R9,
+    mExpectedContextAfterException.R9);
+  UT_ASSERT_EQUAL (mActualContextAfterException.R10,
+    mExpectedContextAfterException.R10);
+  UT_ASSERT_EQUAL (mActualContextAfterException.R11,
+    mExpectedContextAfterException.R11);
+  UT_ASSERT_EQUAL (mActualContextAfterException.R12,
+    mExpectedContextAfterException.R12);
+  UT_ASSERT_EQUAL (mActualContextAfterException.R13,
+    mExpectedContextAfterException.R13);
+  UT_ASSERT_EQUAL (mActualContextAfterException.R14,
+    mExpectedContextAfterException.R14);
+  UT_ASSERT_EQUAL (mActualContextAfterException.R15,
+    mExpectedContextAfterException.R15);
   return UNIT_TEST_PASSED;
 }
 

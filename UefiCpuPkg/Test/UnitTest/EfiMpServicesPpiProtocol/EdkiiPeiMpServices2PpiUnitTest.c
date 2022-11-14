@@ -27,7 +27,12 @@ MpServicesUnitTestGetMpServices (
   OUT MP_SERVICES  *MpServices
   )
 {
-  return PeiServicesLocatePpi (&gEdkiiPeiMpServices2PpiGuid, 0, NULL, (VOID **)&MpServices->Ppi);
+  return PeiServicesLocatePpi (
+           &gEdkiiPeiMpServices2PpiGuid,
+           0,
+           NULL,
+           (VOID **)&MpServices->Ppi
+           );
 }
 
 /**
@@ -49,7 +54,11 @@ MpServicesUnitTestGetNumberOfProcessors (
   OUT UINTN       *NumberOfEnabledProcessors
   )
 {
-  return MpServices.Ppi->GetNumberOfProcessors (MpServices.Ppi, NumberOfProcessors, NumberOfEnabledProcessors);
+  return MpServices.Ppi->GetNumberOfProcessors (
+                           MpServices.Ppi,
+                           NumberOfProcessors,
+                           NumberOfEnabledProcessors
+                           );
 }
 
 /**
@@ -69,7 +78,11 @@ MpServicesUnitTestGetProcessorInfo (
   OUT EFI_PROCESSOR_INFORMATION  *ProcessorInfoBuffer
   )
 {
-  return MpServices.Ppi->GetProcessorInfo (MpServices.Ppi, ProcessorNumber, ProcessorInfoBuffer);
+  return MpServices.Ppi->GetProcessorInfo (
+                           MpServices.Ppi,
+                           ProcessorNumber,
+                           ProcessorInfoBuffer
+                           );
 }
 
 /**
@@ -97,7 +110,13 @@ MpServicesUnitTestStartupAllAPs (
   IN VOID              *ProcedureArgument
   )
 {
-  return MpServices.Ppi->StartupAllAPs (MpServices.Ppi, Procedure, SingleThread, TimeoutInMicroSeconds, ProcedureArgument);
+  return MpServices.Ppi->StartupAllAPs (
+                           MpServices.Ppi,
+                           Procedure,
+                           SingleThread,
+                           TimeoutInMicroSeconds,
+                           ProcedureArgument
+                           );
 }
 
 /**
@@ -123,7 +142,13 @@ MpServicesUnitTestStartupThisAP (
   IN VOID              *ProcedureArgument
   )
 {
-  return MpServices.Ppi->StartupThisAP (MpServices.Ppi, Procedure, ProcessorNumber, TimeoutInMicroSeconds, ProcedureArgument);
+  return MpServices.Ppi->StartupThisAP (
+                           MpServices.Ppi,
+                           Procedure,
+                           ProcessorNumber,
+                           TimeoutInMicroSeconds,
+                           ProcedureArgument
+                           );
 }
 
 /**
@@ -143,7 +168,11 @@ MpServicesUnitTestSwitchBSP (
   IN BOOLEAN      EnableOldBSP
   )
 {
-  return MpServices.Ppi->SwitchBSP (MpServices.Ppi, ProcessorNumber, EnableOldBSP);
+  return MpServices.Ppi->SwitchBSP (
+                           MpServices.Ppi,
+                           ProcessorNumber,
+                           EnableOldBSP
+                           );
 }
 
 /**
@@ -165,7 +194,12 @@ MpServicesUnitTestEnableDisableAP (
   IN UINT32       *HealthFlag
   )
 {
-  return MpServices.Ppi->EnableDisableAP (MpServices.Ppi, ProcessorNumber, EnableAP, HealthFlag);
+  return MpServices.Ppi->EnableDisableAP (
+                           MpServices.Ppi,
+                           ProcessorNumber,
+                           EnableAP,
+                           HealthFlag
+                           );
 }
 
 /**
@@ -206,7 +240,12 @@ MpServicesUnitTestStartupAllCPUs (
   IN VOID              *ProcedureArgument
   )
 {
-  return MpServices.Ppi->StartupAllCPUs (MpServices.Ppi, Procedure, TimeoutInMicroSeconds, ProcedureArgument);
+  return MpServices.Ppi->StartupAllCPUs (
+                           MpServices.Ppi,
+                           Procedure,
+                           TimeoutInMicroSeconds,
+                           ProcedureArgument
+                           );
 }
 
 /**
@@ -226,7 +265,10 @@ ApInfiniteLoopProcedure (
 
   LocalContext = (MP_SERVICE_UT_CONTEXT *)Buffer;
 
-  Status = MpServicesUnitTestWhoAmI (LocalContext->MpServices, &ProcessorNumber);
+  Status = MpServicesUnitTestWhoAmI (
+             LocalContext->MpServices,
+             &ProcessorNumber
+             );
   ASSERT_EFI_ERROR (Status);
 
   if (ProcessorNumber == LocalContext->BspNumber) {
@@ -283,7 +325,12 @@ TestStartupAllCPUs1 (
 
   LocalContext = (MP_SERVICE_UT_CONTEXT *)Context;
 
-  SetMem (LocalContext->CommonBuffer, LocalContext->NumberOfProcessors * sizeof (*LocalContext->CommonBuffer), 0xFF);
+  SetMem (
+    LocalContext->CommonBuffer,
+    LocalContext->NumberOfProcessors *
+    sizeof (*LocalContext->CommonBuffer),
+    0xFF
+    );
   Status = MpServicesUnitTestStartupAllCPUs (
              LocalContext->MpServices,
              (EFI_AP_PROCEDURE)StoreCpuNumbers,
@@ -292,8 +339,13 @@ TestStartupAllCPUs1 (
              );
   UT_ASSERT_NOT_EFI_ERROR (Status);
 
-  for (ProcessorIndex = 0; ProcessorIndex < LocalContext->NumberOfProcessors; ProcessorIndex++) {
-    UT_ASSERT_TRUE (LocalContext->CommonBuffer[ProcessorIndex] == ProcessorIndex);
+  for (ProcessorIndex = 0; ProcessorIndex < LocalContext->NumberOfProcessors;
+       ProcessorIndex++)
+  {
+    UT_ASSERT_TRUE (
+      LocalContext->CommonBuffer[ProcessorIndex] ==
+      ProcessorIndex
+      );
   }
 
   return UNIT_TEST_PASSED;
@@ -335,7 +387,10 @@ TestStartupAllCPUs2 (
       UT_ASSERT_STATUS_EQUAL (Status, EFI_INVALID_PARAMETER);
     } else {
       UT_ASSERT_NOT_EFI_ERROR (Status);
-      UT_ASSERT_STATUS_EQUAL (LocalContext->ApProcedureReturnStatus, EFI_DEVICE_ERROR);
+      UT_ASSERT_STATUS_EQUAL (
+        LocalContext->ApProcedureReturnStatus,
+        EFI_DEVICE_ERROR
+        );
     }
   }
 
@@ -397,15 +452,49 @@ AddTestCaseOnlyForEdkiiPeiMpServices2Ppi (
   //
   // Test StartupAllCPUs function
   //
-  Status = CreateUnitTestSuite (&MpServiceStartupAllCPUsTestSuite, Framework, "Execute a caller provided function on all enabled CPUs", "MpServices.StartupAllCPUs", NULL, NULL);
+  Status = CreateUnitTestSuite (
+             &MpServiceStartupAllCPUsTestSuite,
+             Framework,
+             "Execute a caller provided function on all enabled CPUs",
+             "MpServices.StartupAllCPUs",
+             NULL,
+             NULL
+             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in CreateUnitTestSuite for MpServiceStartupAllCPUs Test Suite\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed in CreateUnitTestSuite for MpServiceStartupAllCPUs Test Suite\n"
+      ));
     return Status;
   }
 
-  AddTestCase (MpServiceStartupAllCPUsTestSuite, "Test StartupAllCPUs 1", "TestStartupAllCPUs1", TestStartupAllCPUs1, InitUTContext, CheckUTContext, Context);
-  AddTestCase (MpServiceStartupAllCPUsTestSuite, "Test StartupAllCPUs 2", "TestStartupAllCPUs2", TestStartupAllCPUs2, InitUTContext, CheckUTContext, Context);
-  AddTestCase (MpServiceStartupAllCPUsTestSuite, "Test StartupAllCPUs 3", "TestStartupAllCPUs3", TestStartupAllCPUs3, InitUTContext, CheckUTContext, Context);
+  AddTestCase (
+    MpServiceStartupAllCPUsTestSuite,
+    "Test StartupAllCPUs 1",
+    "TestStartupAllCPUs1",
+    TestStartupAllCPUs1,
+    InitUTContext,
+    CheckUTContext,
+    Context
+    );
+  AddTestCase (
+    MpServiceStartupAllCPUsTestSuite,
+    "Test StartupAllCPUs 2",
+    "TestStartupAllCPUs2",
+    TestStartupAllCPUs2,
+    InitUTContext,
+    CheckUTContext,
+    Context
+    );
+  AddTestCase (
+    MpServiceStartupAllCPUsTestSuite,
+    "Test StartupAllCPUs 3",
+    "TestStartupAllCPUs3",
+    TestStartupAllCPUs3,
+    InitUTContext,
+    CheckUTContext,
+    Context
+    );
 
   return EFI_SUCCESS;
 }
@@ -439,9 +528,18 @@ PeiEntryPoint (
   //
   // Start setting up the test framework for running the tests.
   //
-  Status = InitUnitTestFramework (&Framework, UNIT_TEST_NAME, gEfiCallerBaseName, UNIT_TEST_VERSION);
+  Status = InitUnitTestFramework (
+             &Framework,
+             UNIT_TEST_NAME,
+             gEfiCallerBaseName,
+             UNIT_TEST_VERSION
+             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in InitUnitTestFramework. Status = %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed in InitUnitTestFramework. Status = %r\n",
+      Status
+      ));
     goto EXIT;
   }
 
@@ -450,7 +548,11 @@ PeiEntryPoint (
   //
   Status = AddTestCaseOnlyForEdkiiPeiMpServices2Ppi (Framework, &Context);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in AddTestCaseOnlyForEdkiiPeiMpServices2Ppi. Status = %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed in AddTestCaseOnlyForEdkiiPeiMpServices2Ppi. Status = %r\n",
+      Status
+      ));
     goto EXIT;
   }
 

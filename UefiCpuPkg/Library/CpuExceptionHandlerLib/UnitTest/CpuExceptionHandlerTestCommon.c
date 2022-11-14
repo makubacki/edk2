@@ -62,7 +62,8 @@ RestoreRegistersPerCpu (
   AsmWriteIdtr (&(CpuOriginalRegisterBuffer->OriginalIdtr));
   Tr = CpuOriginalRegisterBuffer->Tr;
   if ((Tr != 0) && (Tr < CpuOriginalRegisterBuffer->OriginalGdtr.Limit)) {
-    Tss = (IA32_TSS_DESCRIPTOR *)(CpuOriginalRegisterBuffer->OriginalGdtr.Base + Tr);
+    Tss = (IA32_TSS_DESCRIPTOR *)(CpuOriginalRegisterBuffer->OriginalGdtr.Base +
+                                  Tr);
     if (Tss->Bits.P == 1) {
       //
       // Clear busy bit of TSS before write Tr
@@ -152,7 +153,10 @@ SaveAllCpuRegisters (
   EFI_STATUS           Status;
   UINTN                Index;
 
-  CpuOriginalRegisterBuffer = AllocateZeroPool (mNumberOfProcessors * sizeof (CPU_REGISTER_BUFFER));
+  CpuOriginalRegisterBuffer = AllocateZeroPool (
+                                mNumberOfProcessors *
+                                sizeof (CPU_REGISTER_BUFFER)
+                                );
   ASSERT (CpuOriginalRegisterBuffer != NULL);
 
   for (Index = 0; Index < mNumberOfProcessors; ++Index) {
@@ -286,9 +290,15 @@ GetBspStackBase (
   //
   ASSERT (StackBase != NULL);
   Hob.Raw = GetHobList ();
-  while ((Hob.Raw = GetNextHob (EFI_HOB_TYPE_MEMORY_ALLOCATION, Hob.Raw)) != NULL) {
+  while ((Hob.Raw = GetNextHob (EFI_HOB_TYPE_MEMORY_ALLOCATION, Hob.Raw)) !=
+         NULL)
+  {
     MemoryHob = Hob.MemoryAllocation;
-    if (CompareGuid (&gEfiHobMemoryAllocStackGuid, &MemoryHob->AllocDescriptor.Name)) {
+    if (CompareGuid (
+          &gEfiHobMemoryAllocStackGuid,
+          &MemoryHob->AllocDescriptor.Name
+          ))
+    {
       DEBUG ((
         DEBUG_INFO,
         "%a: Bsp StackBase = 0x%016lx  StackSize = 0x%016lx\n",
@@ -324,7 +334,12 @@ GetStackBasePerAp (
 {
   UINTN  ApTopOfStack;
 
-  ApTopOfStack          = ALIGN_VALUE ((UINTN)&ApTopOfStack, (UINTN)PcdGet32 (PcdCpuApStackSize));
+  ApTopOfStack = ALIGN_VALUE (
+                   (UINTN)&ApTopOfStack,
+                   (UINTN)PcdGet32 (
+                            PcdCpuApStackSize
+                            )
+                   );
   *(UINTN *)ApStackBase = ApTopOfStack - (UINTN)PcdGet32 (PcdCpuApStackSize);
 }
 
@@ -364,7 +379,12 @@ GetAllCpuStackBase (
                (VOID *)&CpuStackBaseBuffer[Index]
                );
     ASSERT_EFI_ERROR (Status);
-    DEBUG ((DEBUG_INFO, "AP[%d] StackBase = 0x%x\n", Index, CpuStackBaseBuffer[Index]));
+    DEBUG ((
+      DEBUG_INFO,
+      "AP[%d] StackBase = 0x%x\n",
+      Index,
+      CpuStackBaseBuffer[Index]
+      ));
   }
 
   return CpuStackBaseBuffer;
@@ -414,7 +434,12 @@ FindPFAddressInPageTable (
   MapCount = 0;
   Status   = PageTableParse (PageTable, PagingMode, NULL, &MapCount);
   ASSERT (Status == RETURN_BUFFER_TOO_SMALL);
-  Map    = AllocatePages (EFI_SIZE_TO_PAGES (MapCount * sizeof (IA32_MAP_ENTRY)));
+  Map = AllocatePages (
+          EFI_SIZE_TO_PAGES (
+            MapCount *
+            sizeof (IA32_MAP_ENTRY)
+            )
+          );
   Status = PageTableParse (PageTable, PagingMode, Map, &MapCount);
   ASSERT (Status == RETURN_SUCCESS);
 
@@ -487,8 +512,15 @@ TestRegisterHandlerForGPAndPF (
   //
   // GP exception.
   //
-  DEBUG ((DEBUG_INFO, "TestCase2: ExceptionType is %d\n", EXCEPT_IA32_GP_FAULT));
-  Status = RegisterCpuInterruptHandler (EXCEPT_IA32_GP_FAULT, AdjustRipForFaultHandler);
+  DEBUG ((
+    DEBUG_INFO,
+    "TestCase2: ExceptionType is %d\n",
+    EXCEPT_IA32_GP_FAULT
+    ));
+  Status = RegisterCpuInterruptHandler (
+             EXCEPT_IA32_GP_FAULT,
+             AdjustRipForFaultHandler
+             );
   UT_ASSERT_EQUAL (Status, EFI_SUCCESS);
 
   TriggerGPException (CR4_RESERVED_BIT);
@@ -500,8 +532,15 @@ TestRegisterHandlerForGPAndPF (
   // PF exception.
   //
   if (FindPFAddressInPageTable (&PFAddress)) {
-    DEBUG ((DEBUG_INFO, "TestCase2: ExceptionType is %d\n", EXCEPT_IA32_PAGE_FAULT));
-    Status = RegisterCpuInterruptHandler (EXCEPT_IA32_PAGE_FAULT, AdjustRipForFaultHandler);
+    DEBUG ((
+      DEBUG_INFO,
+      "TestCase2: ExceptionType is %d\n",
+      EXCEPT_IA32_PAGE_FAULT
+      ));
+    Status = RegisterCpuInterruptHandler (
+               EXCEPT_IA32_PAGE_FAULT,
+               AdjustRipForFaultHandler
+               );
     UT_ASSERT_EQUAL (Status, EFI_SUCCESS);
     TriggerPFException (PFAddress);
 
@@ -604,8 +643,13 @@ InitializeExceptionStackSwitchHandlersPerAp (
   // This may be called twice for each Cpu. Only run InitializeSeparateExceptionStacks
   // if this is the first call or the first call failed because of size too small.
   //
-  if ((CpuSwitchStackData->Status == EFI_NOT_STARTED) || (CpuSwitchStackData->Status == EFI_BUFFER_TOO_SMALL)) {
-    CpuSwitchStackData->Status = InitializeSeparateExceptionStacks (CpuSwitchStackData->Buffer, &CpuSwitchStackData->BufferSize);
+  if ((CpuSwitchStackData->Status == EFI_NOT_STARTED) ||
+      (CpuSwitchStackData->Status == EFI_BUFFER_TOO_SMALL))
+  {
+    CpuSwitchStackData->Status = InitializeSeparateExceptionStacks (
+                                   CpuSwitchStackData->Buffer,
+                                   &CpuSwitchStackData->BufferSize
+                                   );
   }
 }
 
@@ -632,7 +676,10 @@ InitializeMpExceptionStackSwitchHandlers (
   EFI_STATUS                      Status;
   UINT8                           *Buffer;
 
-  SwitchStackData = AllocateZeroPool (mNumberOfProcessors * sizeof (EXCEPTION_STACK_SWITCH_CONTEXT));
+  SwitchStackData = AllocateZeroPool (
+                      mNumberOfProcessors *
+                      sizeof (EXCEPTION_STACK_SWITCH_CONTEXT)
+                      );
   ASSERT (SwitchStackData != NULL);
   for (Index = 0; Index < mNumberOfProcessors; ++Index) {
     //
@@ -641,7 +688,9 @@ InitializeMpExceptionStackSwitchHandlers (
     //
     SwitchStackData[Index].Status = EFI_NOT_STARTED;
     if (Index == BspProcessorNum) {
-      InitializeExceptionStackSwitchHandlersPerAp ((VOID *)&SwitchStackData[Index]);
+      InitializeExceptionStackSwitchHandlersPerAp (
+        (VOID *)&SwitchStackData[Index]
+        );
       continue;
     }
 
@@ -686,7 +735,9 @@ InitializeMpExceptionStackSwitchHandlers (
 
     for (Index = 0; Index < mNumberOfProcessors; ++Index) {
       if (Index == BspProcessorNum) {
-        InitializeExceptionStackSwitchHandlersPerAp ((VOID *)&SwitchStackData[Index]);
+        InitializeExceptionStackSwitchHandlersPerAp (
+          (VOID *)&SwitchStackData[Index]
+          );
         continue;
       }
 
@@ -751,13 +802,20 @@ TestCpuStackGuardInBspAndAp (
   // Get MP Service Protocol
   //
   Status = GetMpServices (&MpServices);
-  Status = MpServicesUnitTestGetNumberOfProcessors (MpServices, &ProcessorNumber, &EnabledProcessorNum);
+  Status = MpServicesUnitTestGetNumberOfProcessors (
+             MpServices,
+             &ProcessorNumber,
+             &EnabledProcessorNum
+             );
   UT_ASSERT_EQUAL (Status, EFI_SUCCESS);
   Status = MpServicesUnitTestWhoAmI (MpServices, &BspProcessorNum);
   UT_ASSERT_EQUAL (Status, EFI_SUCCESS);
   mNumberOfProcessors = ProcessorNumber;
 
-  CpuOriginalRegisterBuffer = SaveAllCpuRegisters (&MpServices, BspProcessorNum);
+  CpuOriginalRegisterBuffer = SaveAllCpuRegisters (
+                                &MpServices,
+                                BspProcessorNum
+                                );
 
   //
   // Initialize Bsp and AP Idt.
@@ -776,16 +834,26 @@ TestCpuStackGuardInBspAndAp (
   //
   // InitializeMpExceptionStackSwitchHandlers and register exception handler.
   //
-  SwitchStackData = InitializeMpExceptionStackSwitchHandlers (MpServices, BspProcessorNum);
-  Status          = RegisterCpuInterruptHandler (EXCEPT_IA32_PAGE_FAULT, CpuStackGuardExceptionHandler);
+  SwitchStackData = InitializeMpExceptionStackSwitchHandlers (
+                      MpServices,
+                      BspProcessorNum
+                      );
+  Status = RegisterCpuInterruptHandler (
+             EXCEPT_IA32_PAGE_FAULT,
+             CpuStackGuardExceptionHandler
+             );
   UT_ASSERT_EQUAL (Status, EFI_SUCCESS);
-  Status = RegisterCpuInterruptHandler (EXCEPT_IA32_DOUBLE_FAULT, AdjustRipForFaultHandler);
+  Status = RegisterCpuInterruptHandler (
+             EXCEPT_IA32_DOUBLE_FAULT,
+             AdjustRipForFaultHandler
+             );
   UT_ASSERT_EQUAL (Status, EFI_SUCCESS);
 
   for (Index = 0; Index < mNumberOfProcessors; Index++) {
     OriginalStackBase = CpuStackBaseBuffer[Index];
-    NewStackTop       = (UINTN)(SwitchStackData[Index].Buffer) + SwitchStackData[Index].BufferSize;
-    NewStackBase      = (UINTN)(SwitchStackData[Index].Buffer);
+    NewStackTop       = (UINTN)(SwitchStackData[Index].Buffer) +
+                        SwitchStackData[Index].BufferSize;
+    NewStackBase = (UINTN)(SwitchStackData[Index].Buffer);
     if (Index == BspProcessorNum) {
       TriggerStackOverflow ();
     } else {
@@ -798,16 +866,31 @@ TestCpuStackGuardInBspAndAp (
         );
     }
 
-    DEBUG ((DEBUG_INFO, "TestCase4: mRspAddress[0] is 0x%x, mRspAddress[1] is 0x%x\n", mRspAddress[0], mRspAddress[1]));
-    UT_ASSERT_TRUE ((mRspAddress[0] >= OriginalStackBase) && (mRspAddress[0] <= (OriginalStackBase + SIZE_4KB)));
-    UT_ASSERT_TRUE ((mRspAddress[1] >= NewStackBase) && (mRspAddress[1] < NewStackTop));
+    DEBUG ((
+      DEBUG_INFO,
+      "TestCase4: mRspAddress[0] is 0x%x, mRspAddress[1] is 0x%x\n",
+      mRspAddress[0],
+      mRspAddress[1]
+      ));
+    UT_ASSERT_TRUE (
+      (mRspAddress[0] >= OriginalStackBase) && (mRspAddress[0] <=
+                                                (OriginalStackBase + SIZE_4KB))
+      );
+    UT_ASSERT_TRUE (
+      (mRspAddress[1] >= NewStackBase) && (mRspAddress[1] <
+                                           NewStackTop)
+      );
   }
 
   Status = RegisterCpuInterruptHandler (EXCEPT_IA32_PAGE_FAULT, NULL);
   UT_ASSERT_EQUAL (Status, EFI_SUCCESS);
   Status = RegisterCpuInterruptHandler (EXCEPT_IA32_DOUBLE_FAULT, NULL);
   UT_ASSERT_EQUAL (Status, EFI_SUCCESS);
-  RestoreAllCpuRegisters (&MpServices, CpuOriginalRegisterBuffer, BspProcessorNum);
+  RestoreAllCpuRegisters (
+    &MpServices,
+    CpuOriginalRegisterBuffer,
+    BspProcessorNum
+    );
   FreePool (SwitchStackData);
   FreePool (CpuOriginalRegisterBuffer);
   FreePool (NewIdtr);
@@ -835,18 +918,60 @@ AddCommonTestCase (
   //
   // Populate the Manual Test Cases.
   //
-  Status = CreateUnitTestSuite (&CpuExceptionLibUnitTestSuite, Framework, "Test CpuExceptionHandlerLib", "CpuExceptionHandlerLib.Manual", NULL, NULL);
+  Status = CreateUnitTestSuite (
+             &CpuExceptionLibUnitTestSuite,
+             Framework,
+             "Test CpuExceptionHandlerLib",
+             "CpuExceptionHandlerLib.Manual",
+             NULL,
+             NULL
+             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in CreateUnitTestSuite for CpuExceptionHandlerLib Test Cases\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed in CreateUnitTestSuite for CpuExceptionHandlerLib Test Cases\n"
+      ));
     Status = EFI_OUT_OF_RESOURCES;
     return Status;
   }
 
-  AddTestCase (CpuExceptionLibUnitTestSuite, "Check if exception handler can be registered/unregistered for no error code exception", "TestRegisterHandlerForNoErrorCodeException", TestRegisterHandlerForNoErrorCodeException, NULL, NULL, NULL);
-  AddTestCase (CpuExceptionLibUnitTestSuite, "Check if exception handler can be registered/unregistered for GP and PF", "TestRegisterHandlerForGPAndPF", TestRegisterHandlerForGPAndPF, NULL, NULL, NULL);
+  AddTestCase (
+    CpuExceptionLibUnitTestSuite,
+    "Check if exception handler can be registered/unregistered for no error code exception",
+    "TestRegisterHandlerForNoErrorCodeException",
+    TestRegisterHandlerForNoErrorCodeException,
+    NULL,
+    NULL,
+    NULL
+    );
+  AddTestCase (
+    CpuExceptionLibUnitTestSuite,
+    "Check if exception handler can be registered/unregistered for GP and PF",
+    "TestRegisterHandlerForGPAndPF",
+    TestRegisterHandlerForGPAndPF,
+    NULL,
+    NULL,
+    NULL
+    );
 
-  AddTestCase (CpuExceptionLibUnitTestSuite, "Check if Cpu Context is consistent before and after exception.", "TestCpuContextConsistency", TestCpuContextConsistency, NULL, NULL, NULL);
-  AddTestCase (CpuExceptionLibUnitTestSuite, "Check if stack overflow is captured by CpuStackGuard in Bsp and AP", "TestCpuStackGuardInBspAndAp", TestCpuStackGuardInBspAndAp, NULL, NULL, NULL);
+  AddTestCase (
+    CpuExceptionLibUnitTestSuite,
+    "Check if Cpu Context is consistent before and after exception.",
+    "TestCpuContextConsistency",
+    TestCpuContextConsistency,
+    NULL,
+    NULL,
+    NULL
+    );
+  AddTestCase (
+    CpuExceptionLibUnitTestSuite,
+    "Check if stack overflow is captured by CpuStackGuard in Bsp and AP",
+    "TestCpuStackGuardInBspAndAp",
+    TestCpuStackGuardInBspAndAp,
+    NULL,
+    NULL,
+    NULL
+    );
 
   return EFI_SUCCESS;
 }

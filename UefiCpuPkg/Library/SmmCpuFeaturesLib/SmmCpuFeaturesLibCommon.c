@@ -110,7 +110,9 @@ SmmCpuFeaturesIsSmmRegisterSupported (
   IN SMM_REG_NAME  RegName
   )
 {
-  if (FeaturePcdGet (PcdSmmFeatureControlEnable) && (RegName == SmmRegFeatureControl)) {
+  if (FeaturePcdGet (PcdSmmFeatureControlEnable) && (RegName ==
+                                                     SmmRegFeatureControl))
+  {
     return TRUE;
   }
 

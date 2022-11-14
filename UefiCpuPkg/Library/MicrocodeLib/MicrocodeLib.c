@@ -50,7 +50,13 @@ GetProcessorMicrocodeCpuId (
 
   PlatformIdMsr.Uint64       = AsmReadMsr64 (MSR_IA32_PLATFORM_ID);
   MicrocodeCpuId->PlatformId = (UINT8)PlatformIdMsr.Bits.PlatformId;
-  AsmCpuid (CPUID_VERSION_INFO, &MicrocodeCpuId->ProcessorSignature, NULL, NULL, NULL);
+  AsmCpuid (
+    CPUID_VERSION_INFO,
+    &MicrocodeCpuId->ProcessorSignature,
+    NULL,
+    NULL,
+    NULL
+    );
 }
 
 /**
@@ -208,7 +214,10 @@ IsValidMicrocode (
   //   the input microcode buffer is so small that even cannot contain the header.
   //   the input microcode buffer is so large that exceeds MAX_ADDRESS.
   //
-  if ((MicrocodeLength < sizeof (CPU_MICROCODE_HEADER)) || (MicrocodeLength > (MAX_ADDRESS - (UINTN)Microcode))) {
+  if ((MicrocodeLength < sizeof (CPU_MICROCODE_HEADER)) || (MicrocodeLength >
+                                                            (MAX_ADDRESS -
+                                                             (UINTN)Microcode)))
+  {
     return FALSE;
   }
 
@@ -251,11 +260,14 @@ IsValidMicrocode (
   //
   // The summation of all DWORDs in microcode should be zero.
   //
-  if (VerifyChecksum && (CalculateSum32 ((UINT32 *)Microcode, TotalSize) != 0)) {
+  if (VerifyChecksum && (CalculateSum32 ((UINT32 *)Microcode, TotalSize) !=
+                         0))
+  {
     return FALSE;
   }
 
-  Sum32 = Microcode->ProcessorSignature.Uint32 + Microcode->ProcessorFlags + Microcode->Checksum;
+  Sum32 = Microcode->ProcessorSignature.Uint32 + Microcode->ProcessorFlags +
+          Microcode->Checksum;
 
   //
   // Check the processor signature and platform ID in the primary header.
@@ -271,19 +283,25 @@ IsValidMicrocode (
   }
 
   ExtendedTableLength = TotalSize - (DataSize + sizeof (CPU_MICROCODE_HEADER));
-  if ((ExtendedTableLength < sizeof (CPU_MICROCODE_EXTENDED_TABLE_HEADER)) || ((ExtendedTableLength % 4) != 0)) {
+  if ((ExtendedTableLength < sizeof (CPU_MICROCODE_EXTENDED_TABLE_HEADER)) ||
+      ((ExtendedTableLength % 4) != 0))
+  {
     return FALSE;
   }
 
   //
   // Extended Table exist, check if the CPU in support list
   //
-  ExtendedTableHeader = (CPU_MICROCODE_EXTENDED_TABLE_HEADER *)((UINTN)(Microcode + 1) + DataSize);
-  if (ExtendedTableHeader->ExtendedSignatureCount > MAX_UINT32 / sizeof (CPU_MICROCODE_EXTENDED_TABLE)) {
+  ExtendedTableHeader =
+    (CPU_MICROCODE_EXTENDED_TABLE_HEADER *)((UINTN)(Microcode + 1) + DataSize);
+  if (ExtendedTableHeader->ExtendedSignatureCount > MAX_UINT32 /
+      sizeof (CPU_MICROCODE_EXTENDED_TABLE))
+  {
     return FALSE;
   }
 
-  if (ExtendedTableHeader->ExtendedSignatureCount * sizeof (CPU_MICROCODE_EXTENDED_TABLE)
+  if (ExtendedTableHeader->ExtendedSignatureCount *
+      sizeof (CPU_MICROCODE_EXTENDED_TABLE)
       > ExtendedTableLength - sizeof (CPU_MICROCODE_EXTENDED_TABLE_HEADER))
   {
     return FALSE;
@@ -292,14 +310,21 @@ IsValidMicrocode (
   //
   // Check the extended table checksum
   //
-  if (VerifyChecksum && (CalculateSum32 ((UINT32 *)ExtendedTableHeader, ExtendedTableLength) != 0)) {
+  if (VerifyChecksum && (CalculateSum32 (
+                           (UINT32 *)ExtendedTableHeader,
+                           ExtendedTableLength
+                           ) != 0))
+  {
     return FALSE;
   }
 
   ExtendedTable = (CPU_MICROCODE_EXTENDED_TABLE *)(ExtendedTableHeader + 1);
-  for (Index = 0; Index < ExtendedTableHeader->ExtendedSignatureCount; Index++) {
+  for (Index = 0; Index < ExtendedTableHeader->ExtendedSignatureCount;
+       Index++)
+  {
     if (VerifyChecksum &&
-        (ExtendedTable[Index].ProcessorSignature.Uint32 + ExtendedTable[Index].ProcessorFlag
+        (ExtendedTable[Index].ProcessorSignature.Uint32 +
+         ExtendedTable[Index].ProcessorFlag
          + ExtendedTable[Index].Checksum != Sum32))
     {
       //

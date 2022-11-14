@@ -68,7 +68,10 @@ VmxInitialize (
   //
   if (IS_SILVERMONT_PROCESSOR (CpuInfo->DisplayFamily, CpuInfo->DisplayModel) ||
       IS_GOLDMONT_PROCESSOR (CpuInfo->DisplayFamily, CpuInfo->DisplayModel) ||
-      IS_GOLDMONT_PLUS_PROCESSOR (CpuInfo->DisplayFamily, CpuInfo->DisplayModel))
+      IS_GOLDMONT_PLUS_PROCESSOR (
+        CpuInfo->DisplayFamily,
+        CpuInfo->DisplayModel
+        ))
   {
     if (CpuInfo->ProcessorInfo.Location.Thread != 0) {
       return RETURN_SUCCESS;
@@ -147,7 +150,10 @@ LockFeatureControlRegisterInitialize (
   //
   if (IS_SILVERMONT_PROCESSOR (CpuInfo->DisplayFamily, CpuInfo->DisplayModel) ||
       IS_GOLDMONT_PROCESSOR (CpuInfo->DisplayFamily, CpuInfo->DisplayModel) ||
-      IS_GOLDMONT_PLUS_PROCESSOR (CpuInfo->DisplayFamily, CpuInfo->DisplayModel))
+      IS_GOLDMONT_PLUS_PROCESSOR (
+        CpuInfo->DisplayFamily,
+        CpuInfo->DisplayModel
+        ))
   {
     if (CpuInfo->ProcessorInfo.Location.Thread != 0) {
       return RETURN_SUCCESS;
@@ -228,7 +234,10 @@ SmxInitialize (
   // core.
   //
   if (IS_GOLDMONT_PROCESSOR (CpuInfo->DisplayFamily, CpuInfo->DisplayModel) ||
-      IS_GOLDMONT_PLUS_PROCESSOR (CpuInfo->DisplayFamily, CpuInfo->DisplayModel))
+      IS_GOLDMONT_PLUS_PROCESSOR (
+        CpuInfo->DisplayFamily,
+        CpuInfo->DisplayModel
+        ))
   {
     if (CpuInfo->ProcessorInfo.Location.Thread != 0) {
       return RETURN_SUCCESS;
@@ -238,7 +247,10 @@ SmxInitialize (
   Status = RETURN_SUCCESS;
 
   if (State && (!IsCpuFeatureInSetting (CPU_FEATURE_VMX))) {
-    DEBUG ((DEBUG_WARN, "Warning :: Can't enable SMX feature when VMX feature not enabled, disable it.\n"));
+    DEBUG ((
+      DEBUG_WARN,
+      "Warning :: Can't enable SMX feature when VMX feature not enabled, disable it.\n"
+      ));
     State  = FALSE;
     Status = RETURN_UNSUPPORTED;
   }

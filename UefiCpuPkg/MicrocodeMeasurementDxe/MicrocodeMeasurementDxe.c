@@ -22,8 +22,10 @@
 #include <Library/MicrocodeLib.h>
 #include <Library/TpmMeasurementLib.h>
 
-#define CPU_MICROCODE_MEASUREMENT_DESCRIPTION                "Microcode Measurement"
-#define CPU_MICROCODE_MEASUREMENT_EVENT_LOG_DESCRIPTION_LEN  sizeof (CPU_MICROCODE_MEASUREMENT_DESCRIPTION)
+#define CPU_MICROCODE_MEASUREMENT_DESCRIPTION                \
+          "Microcode Measurement"
+#define CPU_MICROCODE_MEASUREMENT_EVENT_LOG_DESCRIPTION_LEN  \
+          sizeof (CPU_MICROCODE_MEASUREMENT_DESCRIPTION)
 
 #pragma pack(1)
 typedef struct {
@@ -159,14 +161,18 @@ MeasureMicrocodePatches (
     );
   EventLog.NumberOfMicrocodePatchesMeasured = 0;
   EventLog.SizeOfMicrocodePatchesMeasured   = 0;
-  EventLogSize                              = sizeof (CPU_MICROCODE_MEASUREMENT_EVENT_LOG);
-  Offsets                                   = NULL;
-  TotalMicrocodeSize                        = 0;
-  Count                                     = 0;
+  EventLogSize                              =
+    sizeof (CPU_MICROCODE_MEASUREMENT_EVENT_LOG);
+  Offsets            = NULL;
+  TotalMicrocodeSize = 0;
+  Count              = 0;
 
   GuidHob = GetFirstGuidHob (&gEdkiiMicrocodePatchHobGuid);
   if (NULL == GuidHob) {
-    DEBUG ((DEBUG_ERROR, "ERROR: GetFirstGuidHob (&gEdkiiMicrocodePatchHobGuid) failed.\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "ERROR: GetFirstGuidHob (&gEdkiiMicrocodePatchHobGuid) failed.\n"
+      ));
     return;
   }
 
@@ -174,7 +180,8 @@ MeasureMicrocodePatches (
   DEBUG (
     (DEBUG_INFO,
      "INFO: Got MicrocodePatchHob with microcode patches starting address:0x%x, microcode patches region size:0x%x, processor count:0x%x\n",
-     MicrocodePatchHob->MicrocodePatchAddress, MicrocodePatchHob->MicrocodePatchRegionSize,
+     MicrocodePatchHob->MicrocodePatchAddress,
+     MicrocodePatchHob->MicrocodePatchRegionSize,
      MicrocodePatchHob->ProcessorCount)
     );
 
@@ -187,14 +194,21 @@ MeasureMicrocodePatches (
   RemoveDuplicateAndInvalidOffset (Offsets, &Count);
 
   if (0 == Count) {
-    DEBUG ((DEBUG_INFO, "INFO: No microcode patch is ever applied, skip the measurement of microcode!\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "INFO: No microcode patch is ever applied, skip the measurement of microcode!\n"
+      ));
     FreePool (Offsets);
     return;
   }
 
   for (Index = 0; Index < Count; Index++) {
     TotalMicrocodeSize +=
-      GetMicrocodeLength ((CPU_MICROCODE_HEADER *)((UINTN)(MicrocodePatchHob->MicrocodePatchAddress + Offsets[Index])));
+      GetMicrocodeLength (
+        (CPU_MICROCODE_HEADER *)((UINTN)(MicrocodePatchHob->
+                                           MicrocodePatchAddress +
+                                         Offsets[Index]))
+        );
   }
 
   EventLog.NumberOfMicrocodePatchesMeasured = Count;
@@ -202,7 +216,10 @@ MeasureMicrocodePatches (
 
   MicrocodePatchesBlob = AllocateZeroPool (TotalMicrocodeSize);
   if (NULL == MicrocodePatchesBlob) {
-    DEBUG ((DEBUG_ERROR, "ERROR: AllocateZeroPool to MicrocodePatchesBlob failed!\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "ERROR: AllocateZeroPool to MicrocodePatchesBlob failed!\n"
+      ));
     FreePool (Offsets);
     return;
   }
@@ -211,14 +228,20 @@ MeasureMicrocodePatches (
   for (Index = 0; Index < Count; Index++) {
     CopyMem (
       (VOID *)(MicrocodePatchesBlob + TotalMicrocodeSize),
-      (VOID *)((UINTN)(MicrocodePatchHob->MicrocodePatchAddress + Offsets[Index])),
+      (VOID *)((UINTN)(MicrocodePatchHob->MicrocodePatchAddress +
+                       Offsets[Index])),
       (UINTN)(GetMicrocodeLength (
-                (CPU_MICROCODE_HEADER *)((UINTN)(MicrocodePatchHob->MicrocodePatchAddress +
+                (CPU_MICROCODE_HEADER *)((UINTN)(MicrocodePatchHob->
+                                                   MicrocodePatchAddress +
                                                  Offsets[Index]))
                 ))
       );
     TotalMicrocodeSize +=
-      GetMicrocodeLength ((CPU_MICROCODE_HEADER *)((UINTN)(MicrocodePatchHob->MicrocodePatchAddress + Offsets[Index])));
+      GetMicrocodeLength (
+        (CPU_MICROCODE_HEADER *)((UINTN)(MicrocodePatchHob->
+                                           MicrocodePatchAddress +
+                                         Offsets[Index]))
+        );
   }
 
   Status = TpmMeasureAndLogData (
@@ -238,7 +261,11 @@ MeasureMicrocodePatches (
        TotalMicrocodeSize)
       );
   } else {
-    DEBUG ((DEBUG_ERROR, "ERROR: TpmMeasureAndLogData failed with status %a!\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "ERROR: TpmMeasureAndLogData failed with status %a!\n",
+      Status
+      ));
   }
 
   FreePool (Offsets);

@@ -41,7 +41,9 @@ GetExceptionHandlerData (
   AsmReadIdtr (&IdtDescriptor);
   IdtTable = (IA32_IDT_GATE_DESCRIPTOR *)IdtDescriptor.Base;
 
-  Exception0StubHeader = (EXCEPTION0_STUB_HEADER *)ArchGetIdtHandler (&IdtTable[0]);
+  Exception0StubHeader = (EXCEPTION0_STUB_HEADER *)ArchGetIdtHandler (
+                                                     &IdtTable[0]
+                                                     );
   return Exception0StubHeader->ExceptionHandlerData;
 }
 
@@ -78,7 +80,10 @@ SetExceptionHandlerData (
     sizeof (Exception0StubHeader->ExceptionStubHeader)
     );
   Exception0StubHeader->ExceptionHandlerData = ExceptionHandlerData;
-  ArchUpdateIdtEntry (&IdtTable[0], (UINTN)Exception0StubHeader->ExceptionStubHeader);
+  ArchUpdateIdtEntry (
+    &IdtTable[0],
+    (UINTN)Exception0StubHeader->ExceptionStubHeader
+    );
 }
 
 /**
@@ -97,7 +102,11 @@ CommonExceptionHandler (
   EXCEPTION_HANDLER_DATA  *ExceptionHandlerData;
 
   ExceptionHandlerData = GetExceptionHandlerData ();
-  CommonExceptionHandlerWorker (ExceptionType, SystemContext, ExceptionHandlerData);
+  CommonExceptionHandlerWorker (
+    ExceptionType,
+    SystemContext,
+    ExceptionHandlerData
+    );
 }
 
 /**
@@ -133,7 +142,11 @@ RegisterCpuInterruptHandler (
   EXCEPTION_HANDLER_DATA  *ExceptionHandlerData;
 
   ExceptionHandlerData = GetExceptionHandlerData ();
-  return RegisterCpuInterruptHandlerWorker (InterruptType, InterruptHandler, ExceptionHandlerData);
+  return RegisterCpuInterruptHandlerWorker (
+           InterruptType,
+           InterruptHandler,
+           ExceptionHandlerData
+           );
 }
 
 /**
@@ -164,17 +177,28 @@ InitializeCpuExceptionHandlers (
   EXCEPTION_HANDLER_DATA  *ExceptionHandlerData;
   RESERVED_VECTORS_DATA   *ReservedVectors;
 
-  ReservedVectors = AllocatePool (sizeof (RESERVED_VECTORS_DATA) * CPU_EXCEPTION_NUM);
+  ReservedVectors = AllocatePool (
+                      sizeof (RESERVED_VECTORS_DATA) *
+                      CPU_EXCEPTION_NUM
+                      );
   ASSERT (ReservedVectors != NULL);
 
   ExceptionHandlerData = AllocatePool (sizeof (EXCEPTION_HANDLER_DATA));
   ASSERT (ExceptionHandlerData != NULL);
   ExceptionHandlerData->IdtEntryCount            = CPU_EXCEPTION_NUM;
   ExceptionHandlerData->ReservedVectors          = ReservedVectors;
-  ExceptionHandlerData->ExternalInterruptHandler = AllocateZeroPool (sizeof (EFI_CPU_INTERRUPT_HANDLER) * ExceptionHandlerData->IdtEntryCount);
+  ExceptionHandlerData->ExternalInterruptHandler = AllocateZeroPool (
+                                                     sizeof (
+                                                                            EFI_CPU_INTERRUPT_HANDLER)
+                                                     * ExceptionHandlerData->
+                                                       IdtEntryCount
+                                                     );
   InitializeSpinLock (&ExceptionHandlerData->DisplayMessageSpinLock);
 
-  Status = InitializeCpuExceptionHandlersWorker (VectorInfo, ExceptionHandlerData);
+  Status = InitializeCpuExceptionHandlersWorker (
+             VectorInfo,
+             ExceptionHandlerData
+             );
   if (EFI_ERROR (Status)) {
     FreePool (ReservedVectors);
     FreePool (ExceptionHandlerData);

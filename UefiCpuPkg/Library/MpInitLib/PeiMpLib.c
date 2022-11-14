@@ -35,7 +35,8 @@ NotifyOnS3SmmInitDonePpi (
 // Global function
 //
 EFI_PEI_NOTIFY_DESCRIPTOR  mS3SmmInitDoneNotifyDesc = {
-  EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST,
+  EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK |
+  EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST,
   &gEdkiiS3SmmInitDoneGuid,
   NotifyOnS3SmmInitDonePpi
 };
@@ -108,9 +109,15 @@ GetCpuMpData (
     CpuMpData = GetCpuMpDataFromGuidedHob ();
     ASSERT (CpuMpData != NULL);
   } else {
-    ApTopOfStack = ALIGN_VALUE ((UINTN)&ApTopOfStack, (UINTN)PcdGet32 (PcdCpuApStackSize));
-    ApStackData  = (AP_STACK_DATA *)((UINTN)ApTopOfStack- sizeof (AP_STACK_DATA));
-    CpuMpData    = (CPU_MP_DATA *)ApStackData->MpData;
+    ApTopOfStack = ALIGN_VALUE (
+                     (UINTN)&ApTopOfStack,
+                     (UINTN)PcdGet32 (
+                              PcdCpuApStackSize
+                              )
+                     );
+    ApStackData = (AP_STACK_DATA *)((UINTN)ApTopOfStack-
+                                    sizeof (AP_STACK_DATA));
+    CpuMpData   = (CPU_MP_DATA *)ApStackData->MpData;
   }
 
   return CpuMpData;
@@ -172,8 +179,11 @@ CheckOverlapWithAllocatedBuffer (
     if (Hob.Header->HobType == EFI_HOB_TYPE_MEMORY_ALLOCATION) {
       MemoryHob   = Hob.MemoryAllocation;
       MemoryStart = MemoryHob->AllocDescriptor.MemoryBaseAddress;
-      MemoryEnd   = MemoryHob->AllocDescriptor.MemoryBaseAddress + MemoryHob->AllocDescriptor.MemoryLength;
-      if (!((WakeupBufferStart >= MemoryEnd) || (WakeupBufferEnd <= MemoryStart))) {
+      MemoryEnd   = MemoryHob->AllocDescriptor.MemoryBaseAddress +
+                    MemoryHob->AllocDescriptor.MemoryLength;
+      if (!((WakeupBufferStart >= MemoryEnd) || (WakeupBufferEnd <=
+                                                 MemoryStart)))
+      {
         Overlapped = TRUE;
         break;
       }
@@ -215,7 +225,8 @@ GetWakeupBuffer (
   while (!END_OF_HOB_LIST (Hob)) {
     if (Hob.Header->HobType == EFI_HOB_TYPE_RESOURCE_DESCRIPTOR) {
       if ((Hob.ResourceDescriptor->PhysicalStart < BASE_1MB) &&
-          (Hob.ResourceDescriptor->ResourceType == EFI_RESOURCE_SYSTEM_MEMORY) &&
+          (Hob.ResourceDescriptor->ResourceType ==
+           EFI_RESOURCE_SYSTEM_MEMORY) &&
           ((Hob.ResourceDescriptor->ResourceAttribute &
             (EFI_RESOURCE_ATTRIBUTE_READ_PROTECTED |
              EFI_RESOURCE_ATTRIBUTE_WRITE_PROTECTED |
@@ -226,7 +237,8 @@ GetWakeupBuffer (
         //
         // Need memory under 1MB to be collected here
         //
-        WakeupBufferEnd = Hob.ResourceDescriptor->PhysicalStart + Hob.ResourceDescriptor->ResourceLength;
+        WakeupBufferEnd = Hob.ResourceDescriptor->PhysicalStart +
+                          Hob.ResourceDescriptor->ResourceLength;
         if (ConfidentialComputingGuestHas (CCAttrAmdSevEs) &&
             (WakeupBufferEnd > mSevEsPeiWakeupBuffer))
         {
@@ -245,12 +257,17 @@ GetWakeupBuffer (
           //
           // Wakeup buffer should be aligned on 4KB
           //
-          WakeupBufferStart = (WakeupBufferEnd - WakeupBufferSize) & ~(SIZE_4KB - 1);
+          WakeupBufferStart = (WakeupBufferEnd - WakeupBufferSize) &
+                              ~(SIZE_4KB - 1);
           if (WakeupBufferStart < Hob.ResourceDescriptor->PhysicalStart) {
             break;
           }
 
-          if (CheckOverlapWithAllocatedBuffer (WakeupBufferStart, WakeupBufferEnd)) {
+          if (CheckOverlapWithAllocatedBuffer (
+                WakeupBufferStart,
+                WakeupBufferEnd
+                ))
+          {
             //
             // If this range is overlapped with existing allocated buffer, skip it
             // and find the next range
@@ -308,7 +325,13 @@ AllocateCodeBuffer (
   EFI_STATUS            Status;
   EFI_PHYSICAL_ADDRESS  Address;
 
-  Status = PeiServicesAllocatePages (EfiBootServicesCode, EFI_SIZE_TO_PAGES (BufferSize), &Address);
+  Status = PeiServicesAllocatePages (
+             EfiBootServicesCode,
+             EFI_SIZE_TO_PAGES (
+               BufferSize
+               ),
+             &Address
+             );
   if (EFI_ERROR (Status)) {
     Address = 0;
   }
@@ -384,7 +407,8 @@ BuildMicrocodeCacheHob (
   for (Index = 0; Index < CpuMpData->CpuCount; Index++) {
     if (CpuMpData->CpuData[Index].MicrocodeEntryAddr != 0) {
       MicrocodeHob->ProcessorSpecificPatchOffset[Index] =
-        CpuMpData->CpuData[Index].MicrocodeEntryAddr - CpuMpData->MicrocodePatchAddress;
+        CpuMpData->CpuData[Index].MicrocodeEntryAddr -
+        CpuMpData->MicrocodePatchAddress;
     } else {
       MicrocodeHob->ProcessorSpecificPatchOffset[Index] = MAX_UINT64;
     }
@@ -730,14 +754,20 @@ PlatformShadowMicrocode (
   }
 
   CpuCount       = CpuMpData->CpuCount;
-  MicrocodeCpuId = (EDKII_PEI_MICROCODE_CPU_ID *)AllocateZeroPool (sizeof (EDKII_PEI_MICROCODE_CPU_ID) * CpuCount);
+  MicrocodeCpuId = (EDKII_PEI_MICROCODE_CPU_ID *)AllocateZeroPool (
+                                                   sizeof (
+                                                                          EDKII_PEI_MICROCODE_CPU_ID)
+                                                   * CpuCount
+                                                   );
   if (MicrocodeCpuId == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
   for (Index = 0; Index < CpuMpData->CpuCount; Index++) {
-    MicrocodeCpuId[Index].ProcessorSignature = CpuMpData->CpuData[Index].ProcessorSignature;
-    MicrocodeCpuId[Index].PlatformId         = CpuMpData->CpuData[Index].PlatformId;
+    MicrocodeCpuId[Index].ProcessorSignature =
+      CpuMpData->CpuData[Index].ProcessorSignature;
+    MicrocodeCpuId[Index].PlatformId =
+      CpuMpData->CpuData[Index].PlatformId;
   }
 
   Status = ShadowMicrocodePpi->ShadowMicrocode (

@@ -78,7 +78,11 @@ CpuidCoreClockCalculateTscFrequency (
   //
   // Calculate TSC frequency = (ECX, Core Xtal Frequency) * EBX/EAX
   //
-  TscFrequency = DivU64x32 (MultU64x32 (CoreXtalFrequency, RegEbx) + (UINT64)(RegEax >> 1), RegEax);
+  TscFrequency = DivU64x32 (
+                   MultU64x32 (CoreXtalFrequency, RegEbx) +
+                   (UINT64)(RegEax >> 1),
+                   RegEax
+                   );
 
   return TscFrequency;
 }
@@ -264,7 +268,10 @@ GetTimeInNanoSecond (
   // Time = --------- x 1,000,000,000
   //        Frequency
   //
-  NanoSeconds = MultU64x32 (DivU64x64Remainder (Ticks, Frequency, &Remainder), 1000000000u);
+  NanoSeconds = MultU64x32 (
+                  DivU64x64Remainder (Ticks, Frequency, &Remainder),
+                  1000000000u
+                  );
 
   //
   // Ensure (Remainder * 1,000,000,000) will not overflow 64-bit.
@@ -274,7 +281,11 @@ GetTimeInNanoSecond (
   Shift        = MAX (0, HighBitSet64 (Remainder) - 33);
   Remainder    = RShiftU64 (Remainder, (UINTN)Shift);
   Frequency    = RShiftU64 (Frequency, (UINTN)Shift);
-  NanoSeconds += DivU64x64Remainder (MultU64x32 (Remainder, 1000000000u), Frequency, NULL);
+  NanoSeconds += DivU64x64Remainder (
+                   MultU64x32 (Remainder, 1000000000u),
+                   Frequency,
+                   NULL
+                   );
 
   return NanoSeconds;
 }

@@ -458,7 +458,8 @@ PreSmmCpuRegisterTableWrite (
 
   @note This service could be called by BSP only.
 **/
-#define CPU_REGISTER_TABLE_TEST_THEN_WRITE32(ProcessorNumber, RegisterType, Index, Value)     \
+#define CPU_REGISTER_TABLE_TEST_THEN_WRITE32(ProcessorNumber, RegisterType, \
+                                             Index, Value)     \
   do {                                                                                        \
     CpuRegisterTableTestThenWrite (ProcessorNumber, RegisterType, Index, MAX_UINT32, Value);  \
   } while(FALSE);
@@ -496,7 +497,8 @@ PreSmmCpuRegisterTableWrite (
 
   @note This service could be called by BSP only.
 **/
-#define CPU_REGISTER_TABLE_TEST_THEN_WRITE64(ProcessorNumber, RegisterType, Index, Value)     \
+#define CPU_REGISTER_TABLE_TEST_THEN_WRITE64(ProcessorNumber, RegisterType, \
+                                             Index, Value)     \
   do {                                                                                        \
     CpuRegisterTableTestThenWrite (ProcessorNumber, RegisterType, Index, MAX_UINT64, Value);  \
   } while(FALSE);
@@ -516,7 +518,8 @@ PreSmmCpuRegisterTableWrite (
 
   @note This service could be called by BSP only.
 **/
-#define CPU_REGISTER_TABLE_WRITE_FIELD(ProcessorNumber, RegisterType, Index, Type, Field, Value) \
+#define CPU_REGISTER_TABLE_WRITE_FIELD(ProcessorNumber, RegisterType, Index, \
+                                       Type, Field, Value) \
   do {                                                                                           \
     UINT64  ValueMask;                                                                           \
     ValueMask = MAX_UINT64;                                                                      \
@@ -541,7 +544,8 @@ PreSmmCpuRegisterTableWrite (
 
   @note This service could be called by BSP only.
 **/
-#define CPU_REGISTER_TABLE_TEST_THEN_WRITE_FIELD(ProcessorNumber, RegisterType, Index, Type, Field, Value) \
+#define CPU_REGISTER_TABLE_TEST_THEN_WRITE_FIELD(ProcessorNumber, RegisterType, \
+                                                 Index, Type, Field, Value) \
   do {                                                                                                     \
     UINT64  ValueMask;                                                                                     \
     ValueMask = MAX_UINT64;                                                                                \
@@ -562,7 +566,8 @@ PreSmmCpuRegisterTableWrite (
 
   @note This service could be called by BSP only.
 **/
-#define PRE_SMM_CPU_REGISTER_TABLE_WRITE32(ProcessorNumber, RegisterType, Index, Value)    \
+#define PRE_SMM_CPU_REGISTER_TABLE_WRITE32(ProcessorNumber, RegisterType, Index, \
+                                           Value)    \
   do {                                                                                     \
     PreSmmCpuRegisterTableWrite (ProcessorNumber, RegisterType, Index, MAX_UINT32, Value); \
   } while(FALSE);
@@ -580,7 +585,8 @@ PreSmmCpuRegisterTableWrite (
 
   @note This service could be called by BSP only.
 **/
-#define PRE_SMM_CPU_REGISTER_TABLE_WRITE64(ProcessorNumber, RegisterType, Index, Value)    \
+#define PRE_SMM_CPU_REGISTER_TABLE_WRITE64(ProcessorNumber, RegisterType, Index, \
+                                           Value)    \
   do {                                                                                     \
     PreSmmCpuRegisterTableWrite (ProcessorNumber, RegisterType, Index, MAX_UINT64, Value); \
   } while(FALSE);
@@ -600,7 +606,8 @@ PreSmmCpuRegisterTableWrite (
 
   @note This service could be called by BSP only.
 **/
-#define PRE_SMM_CPU_REGISTER_TABLE_WRITE_FIELD(ProcessorNumber, RegisterType, Index, Type, Field, Value) \
+#define PRE_SMM_CPU_REGISTER_TABLE_WRITE_FIELD(ProcessorNumber, RegisterType, \
+                                               Index, Type, Field, Value) \
   do {                                                                                                   \
     UINT64  ValueMask;                                                                                   \
     ValueMask = MAX_UINT64;                                                                              \

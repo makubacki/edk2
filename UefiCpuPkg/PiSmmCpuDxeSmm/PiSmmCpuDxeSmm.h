@@ -130,7 +130,8 @@ typedef union {
 #define IA32_PG_PMNT    BIT62
 #define IA32_PG_NX      BIT63
 
-#define PAGE_ATTRIBUTE_BITS  (IA32_PG_D | IA32_PG_A | IA32_PG_U | IA32_PG_RW | IA32_PG_P)
+#define PAGE_ATTRIBUTE_BITS  \
+  (IA32_PG_D | IA32_PG_A | IA32_PG_U | IA32_PG_RW | IA32_PG_P)
 //
 // Bits 1, 2, 5, 6 are reserved in the IA32 PAE PDPTE
 // X64 PAE PDPTE does not have such restriction
@@ -217,7 +218,9 @@ typedef struct {
   volatile UINT32    RunningApCount;
 } PROCEDURE_TOKEN;
 
-#define PROCEDURE_TOKEN_FROM_LINK(a)  CR (a, PROCEDURE_TOKEN, Link, PROCEDURE_TOKEN_SIGNATURE)
+#define PROCEDURE_TOKEN_FROM_LINK( \
+                                 a)  \
+  CR (a, PROCEDURE_TOKEN, Link, PROCEDURE_TOKEN_SIGNATURE)
 
 #define TOKEN_BUFFER_SIGNATURE  SIGNATURE_32 ('T', 'K', 'B', 'S')
 
@@ -228,7 +231,9 @@ typedef struct {
   UINT8         *Buffer;
 } TOKEN_BUFFER;
 
-#define TOKEN_BUFFER_FROM_LINK(a)  CR (a, TOKEN_BUFFER, Link, TOKEN_BUFFER_SIGNATURE)
+#define TOKEN_BUFFER_FROM_LINK( \
+                              a)  \
+  CR (a, TOKEN_BUFFER, Link, TOKEN_BUFFER_SIGNATURE)
 
 //
 // Private structure for the SMM CPU module that is stored in DXE Runtime memory

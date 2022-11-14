@@ -107,7 +107,11 @@ AcquirePage (
   //
   // Cut the previous uplink if it exists and wasn't overwritten
   //
-  if ((mPFPageUplink[mPFPageIndex] != NULL) && ((*mPFPageUplink[mPFPageIndex] & ~mAddressEncMask & PHYSICAL_ADDRESS_MASK) == Address)) {
+  if ((mPFPageUplink[mPFPageIndex] != NULL) && ((*mPFPageUplink[mPFPageIndex] &
+                                                 ~mAddressEncMask &
+                                                 PHYSICAL_ADDRESS_MASK) ==
+                                                Address))
+  {
     *mPFPageUplink[mPFPageIndex] = 0;
   }
 
@@ -174,39 +178,51 @@ RestorePageTableAbove4G (
   if ((!Enable5LevelPaging) || ((PageTable[PTIndex] & IA32_PG_P) != 0)) {
     // PML5E
     if (Enable5LevelPaging) {
-      PageTable = (UINT64 *)(UINTN)(PageTable[PTIndex] & ~mAddressEncMask & PHYSICAL_ADDRESS_MASK);
+      PageTable = (UINT64 *)(UINTN)(PageTable[PTIndex] & ~mAddressEncMask &
+                                    PHYSICAL_ADDRESS_MASK);
     }
 
     PTIndex = BitFieldRead64 (PFAddress, 39, 47);
     if ((PageTable[PTIndex] & IA32_PG_P) != 0) {
       // PML4E
-      PageTable = (UINT64 *)(UINTN)(PageTable[PTIndex] & ~mAddressEncMask & PHYSICAL_ADDRESS_MASK);
+      PageTable = (UINT64 *)(UINTN)(PageTable[PTIndex] & ~mAddressEncMask &
+                                    PHYSICAL_ADDRESS_MASK);
       PTIndex   = BitFieldRead64 (PFAddress, 30, 38);
       if ((PageTable[PTIndex] & IA32_PG_P) != 0) {
         // PDPTE
-        PageTable = (UINT64 *)(UINTN)(PageTable[PTIndex] & ~mAddressEncMask & PHYSICAL_ADDRESS_MASK);
+        PageTable = (UINT64 *)(UINTN)(PageTable[PTIndex] & ~mAddressEncMask &
+                                      PHYSICAL_ADDRESS_MASK);
         PTIndex   = BitFieldRead64 (PFAddress, 21, 29);
         // PD
         if ((PageTable[PTIndex] & IA32_PG_PS) != 0) {
           //
           // 2MB page
           //
-          Address = (UINT64)(PageTable[PTIndex] & ~mAddressEncMask & PHYSICAL_ADDRESS_MASK);
-          if ((Address & ~((1ull << 21) - 1)) == ((PFAddress & PHYSICAL_ADDRESS_MASK & ~((1ull << 21) - 1)))) {
+          Address = (UINT64)(PageTable[PTIndex] & ~mAddressEncMask &
+                             PHYSICAL_ADDRESS_MASK);
+          if ((Address & ~((1ull << 21) - 1)) == ((PFAddress &
+                                                   PHYSICAL_ADDRESS_MASK &
+                                                   ~((1ull << 21) - 1))))
+          {
             Existed = TRUE;
           }
         } else {
           //
           // 4KB page
           //
-          PageTable = (UINT64 *)(UINTN)(PageTable[PTIndex] & ~mAddressEncMask& PHYSICAL_ADDRESS_MASK);
+          PageTable = (UINT64 *)(UINTN)(PageTable[PTIndex] & ~mAddressEncMask&
+                                        PHYSICAL_ADDRESS_MASK);
           if (PageTable != 0) {
             //
             // When there is a valid entry to map to 4KB page, need not create a new entry to map 2MB.
             //
             PTIndex = BitFieldRead64 (PFAddress, 12, 20);
-            Address = (UINT64)(PageTable[PTIndex] & ~mAddressEncMask & PHYSICAL_ADDRESS_MASK);
-            if ((Address & ~((1ull << 12) - 1)) == (PFAddress & PHYSICAL_ADDRESS_MASK & ~((1ull << 12) - 1))) {
+            Address = (UINT64)(PageTable[PTIndex] & ~mAddressEncMask &
+                               PHYSICAL_ADDRESS_MASK);
+            if ((Address & ~((1ull << 12) - 1)) == (PFAddress &
+                                                    PHYSICAL_ADDRESS_MASK &
+                                                    ~((1ull << 12) - 1)))
+            {
               Existed = TRUE;
             }
           }
@@ -240,15 +256,18 @@ RestorePageTableAbove4G (
     // PML5E
     if (Enable5LevelPaging) {
       PTIndex   = BitFieldRead64 (PFAddress, 48, 56);
-      PageTable = (UINT64 *)(UINTN)(PageTable[PTIndex] & ~mAddressEncMask & PHYSICAL_ADDRESS_MASK);
+      PageTable = (UINT64 *)(UINTN)(PageTable[PTIndex] & ~mAddressEncMask &
+                                    PHYSICAL_ADDRESS_MASK);
     }
 
     // PML4E
     PTIndex   = BitFieldRead64 (PFAddress, 39, 47);
-    PageTable = (UINT64 *)(UINTN)(PageTable[PTIndex] & ~mAddressEncMask & PHYSICAL_ADDRESS_MASK);
+    PageTable = (UINT64 *)(UINTN)(PageTable[PTIndex] & ~mAddressEncMask &
+                                  PHYSICAL_ADDRESS_MASK);
     // PDPTE
     PTIndex   = BitFieldRead64 (PFAddress, 30, 38);
-    PageTable = (UINT64 *)(UINTN)(PageTable[PTIndex] & ~mAddressEncMask & PHYSICAL_ADDRESS_MASK);
+    PageTable = (UINT64 *)(UINTN)(PageTable[PTIndex] & ~mAddressEncMask &
+                                  PHYSICAL_ADDRESS_MASK);
     // PD
     PTIndex = BitFieldRead64 (PFAddress, 21, 29);
     Address = PageTable[PTIndex] & ~mAddressEncMask & PHYSICAL_ADDRESS_MASK;
@@ -259,18 +278,22 @@ RestorePageTableAbove4G (
       AcquirePage (&PageTable[PTIndex]);
 
       // PTE
-      PageTable = (UINT64 *)(UINTN)(PageTable[PTIndex] & ~mAddressEncMask & PHYSICAL_ADDRESS_MASK);
+      PageTable = (UINT64 *)(UINTN)(PageTable[PTIndex] & ~mAddressEncMask &
+                                    PHYSICAL_ADDRESS_MASK);
       for (Index = 0; Index < 512; Index++) {
         PageTable[Index] = Address | mAddressEncMask | PAGE_ATTRIBUTE_BITS;
         if (!IsAddressValid (Address, &Nx)) {
-          PageTable[Index] = PageTable[Index] & (INTN)(INT32)(~PAGE_ATTRIBUTE_BITS);
+          PageTable[Index] = PageTable[Index] &
+                             (INTN)(INT32)(~PAGE_ATTRIBUTE_BITS);
         }
 
         if (Nx && mXdSupported) {
           PageTable[Index] = PageTable[Index] | IA32_PG_NX;
         }
 
-        if (Address == (PFAddress & PHYSICAL_ADDRESS_MASK & ~((1ull << 12) - 1))) {
+        if (Address == (PFAddress & PHYSICAL_ADDRESS_MASK & ~((1ull << 12) -
+                                                              1)))
+        {
           PTIndex = Index;
         }
 
@@ -284,7 +307,8 @@ RestorePageTableAbove4G (
         //
         // Patch to remove present flag and rw flag.
         //
-        PageTable[PTIndex] = PageTable[PTIndex] & (INTN)(INT32)(~PAGE_ATTRIBUTE_BITS);
+        PageTable[PTIndex] = PageTable[PTIndex] &
+                             (INTN)(INT32)(~PAGE_ATTRIBUTE_BITS);
       }
 
       //

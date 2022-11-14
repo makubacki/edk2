@@ -175,10 +175,14 @@ CollectBistDataFromPpi (
   EFI_SEC_PLATFORM_INFORMATION_RECORD2  *PlatformInformationRecord2;
   EFI_SEC_PLATFORM_INFORMATION_CPU      *CpuInstanceInHob;
 
-  MpInitLibGetNumberOfProcessors (&NumberOfProcessors, &NumberOfEnabledProcessors);
+  MpInitLibGetNumberOfProcessors (
+    &NumberOfProcessors,
+    &NumberOfEnabledProcessors
+    );
 
   BistInformationSize = sizeof (EFI_SEC_PLATFORM_INFORMATION_RECORD2) +
-                        sizeof (EFI_SEC_PLATFORM_INFORMATION_CPU) * NumberOfProcessors;
+                        sizeof (EFI_SEC_PLATFORM_INFORMATION_CPU) *
+                        NumberOfProcessors;
   Status = PeiServicesAllocatePool (
              (UINTN)BistInformationSize,
              (VOID **)&PlatformInformationRecord2
@@ -224,14 +228,20 @@ CollectBistDataFromPpi (
       // and does not have BSP's APIC ID
       //
       BspCpuInstance.CpuLocation                       = GetInitialApicId ();
-      BspCpuInstance.InfoRecord.IA32HealthFlags.Uint32 = SecPlatformInformation->IA32HealthFlags.Uint32;
-      CpuInstance                                      = &BspCpuInstance;
+      BspCpuInstance.InfoRecord.IA32HealthFlags.Uint32 =
+        SecPlatformInformation->IA32HealthFlags.Uint32;
+      CpuInstance = &BspCpuInstance;
     } else {
-      DEBUG ((DEBUG_INFO, "Does not find any stored CPU BIST information from PPI!\n"));
+      DEBUG ((
+        DEBUG_INFO,
+        "Does not find any stored CPU BIST information from PPI!\n"
+        ));
     }
   }
 
-  for (ProcessorNumber = 0; ProcessorNumber < NumberOfProcessors; ProcessorNumber++) {
+  for (ProcessorNumber = 0; ProcessorNumber < NumberOfProcessors;
+       ProcessorNumber++)
+  {
     MpInitLibGetProcessorInfo (ProcessorNumber, &ProcessorInfo, &BistData);
     for (CpuIndex = 0; CpuIndex < NumberOfData; CpuIndex++) {
       ASSERT (CpuInstance != NULL);
@@ -259,8 +269,10 @@ CollectBistDataFromPpi (
       (UINT32)ProcessorInfo.ProcessorId,
       BistData
       ));
-    CpuInstanceInHob                                             = PlatformInformationRecord2->CpuInstance;
-    CpuInstanceInHob[ProcessorNumber].CpuLocation                = (UINT32)ProcessorInfo.ProcessorId;
+    CpuInstanceInHob =
+      PlatformInformationRecord2->CpuInstance;
+    CpuInstanceInHob[ProcessorNumber].CpuLocation =
+      (UINT32)ProcessorInfo.ProcessorId;
     CpuInstanceInHob[ProcessorNumber].InfoRecord.IA32HealthFlags = BistData;
   }
 

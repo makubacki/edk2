@@ -110,7 +110,8 @@ MpInitLibSevEsAPReset (
   Code16 = GetProtectedMode16CS ();
   Code32 = GetProtectedMode32CS ();
 
-  APResetFn = (AP_RESET *)(CpuMpData->WakeupBufferHigh + CpuMpData->AddressMap.SwitchToRealNoNxOffset);
+  APResetFn = (AP_RESET *)(CpuMpData->WakeupBufferHigh +
+                           CpuMpData->AddressMap.SwitchToRealNoNxOffset);
 
   BufferStart = CpuMpData->MpCpuExchangeInfo->BufferStart;
   StackStart  = CpuMpData->SevEsAPResetStackStart -
@@ -218,7 +219,9 @@ SevEsPlaceApHlt (
       // Perform the delayed decrement just before issuing the first
       // VMGEXIT with AP_RESET_HOLD.
       //
-      InterlockedDecrement ((UINT32 *)&CpuMpData->MpCpuExchangeInfo->NumApsExecuting);
+      InterlockedDecrement (
+        (UINT32 *)&CpuMpData->MpCpuExchangeInfo->NumApsExecuting
+        );
     }
 
     Status = CcExitVmgExit (Ghcb, SVM_EXIT_AP_RESET_HOLD, 0, 0);

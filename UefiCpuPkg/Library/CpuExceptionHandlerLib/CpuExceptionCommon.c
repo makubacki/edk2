@@ -55,7 +55,8 @@ CONST CHAR8  *mExceptionNameStr[]    = {
   "#VC - VMM Communication",
 };
 
-#define EXCEPTION_KNOWN_NAME_NUM  (sizeof (mExceptionNameStr) / sizeof (CHAR8 *))
+#define EXCEPTION_KNOWN_NAME_NUM  \
+  (sizeof (mExceptionNameStr) / sizeof (CHAR8 *))
 
 /**
   Get ASCII format string exception name by exception type.
@@ -178,7 +179,8 @@ ReadAndVerifyVectorInfo (
     }
 
     if (VectorInfo->VectorNumber < VectorCount) {
-      ReservedVector[VectorInfo->VectorNumber].Attribute = VectorInfo->Attribute;
+      ReservedVector[VectorInfo->VectorNumber].Attribute =
+        VectorInfo->Attribute;
     }
 
     VectorInfo++;

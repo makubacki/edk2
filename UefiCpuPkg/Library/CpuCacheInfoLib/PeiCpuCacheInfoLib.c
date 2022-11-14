@@ -29,7 +29,12 @@ CpuCacheInfoGetMpServices (
 {
   EFI_STATUS  Status;
 
-  Status = PeiServicesLocatePpi (&gEdkiiPeiMpServices2PpiGuid, 0, NULL, (VOID **)&MpServices->Ppi);
+  Status = PeiServicesLocatePpi (
+             &gEdkiiPeiMpServices2PpiGuid,
+             0,
+             NULL,
+             (VOID **)&MpServices->Ppi
+             );
   ASSERT_EFI_ERROR (Status);
 
   return Status;
@@ -51,7 +56,12 @@ CpuCacheInfoStartupAllCPUs (
 {
   EFI_STATUS  Status;
 
-  Status = MpServices.Ppi->StartupAllCPUs (MpServices.Ppi, Procedure, 0, ProcedureArgument);
+  Status = MpServices.Ppi->StartupAllCPUs (
+                             MpServices.Ppi,
+                             Procedure,
+                             0,
+                             ProcedureArgument
+                             );
   ASSERT_EFI_ERROR (Status);
 }
 
@@ -71,7 +81,11 @@ CpuCacheInfoGetProcessorInfo (
 {
   EFI_STATUS  Status;
 
-  Status = MpServices.Ppi->GetProcessorInfo (MpServices.Ppi, ProcessorNum, ProcessorInfo);
+  Status = MpServices.Ppi->GetProcessorInfo (
+                             MpServices.Ppi,
+                             ProcessorNum,
+                             ProcessorInfo
+                             );
   ASSERT_EFI_ERROR (Status);
 }
 
@@ -112,7 +126,11 @@ CpuCacheInfoGetNumberOfProcessors (
   UINTN       NumberOfProcessor;
   UINTN       NumberOfEnabledProcessor;
 
-  Status = MpServices.Ppi->GetNumberOfProcessors (MpServices.Ppi, &NumberOfProcessor, &NumberOfEnabledProcessor);
+  Status = MpServices.Ppi->GetNumberOfProcessors (
+                             MpServices.Ppi,
+                             &NumberOfProcessor,
+                             &NumberOfEnabledProcessor
+                             );
   ASSERT_EFI_ERROR (Status);
 
   return (UINT32)NumberOfProcessor;

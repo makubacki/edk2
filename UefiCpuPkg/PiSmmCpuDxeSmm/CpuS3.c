@@ -251,7 +251,8 @@ ProgramProcessorRegister (
   //
   // Traverse Register Table of this logical processor
   //
-  RegisterTableEntryHead = (CPU_REGISTER_TABLE_ENTRY *)(UINTN)RegisterTable->RegisterTableEntry;
+  RegisterTableEntryHead =
+    (CPU_REGISTER_TABLE_ENTRY *)(UINTN)RegisterTable->RegisterTableEntry;
 
   for (Index = 0; Index < RegisterTable->TableLength; Index++) {
     RegisterTableEntry = &RegisterTableEntryHead[Index];
@@ -273,7 +274,8 @@ ProgramProcessorRegister (
           CurrentValue = BitFieldRead64 (
                            Value,
                            RegisterTableEntry->ValidBitStart,
-                           RegisterTableEntry->ValidBitStart + RegisterTableEntry->ValidBitLength - 1
+                           RegisterTableEntry->ValidBitStart +
+                           RegisterTableEntry->ValidBitLength - 1
                            );
           if (CurrentValue == RegisterTableEntry->Value) {
             break;
@@ -283,7 +285,8 @@ ProgramProcessorRegister (
         Value = (UINTN)BitFieldWrite64 (
                          Value,
                          RegisterTableEntry->ValidBitStart,
-                         RegisterTableEntry->ValidBitStart + RegisterTableEntry->ValidBitLength - 1,
+                         RegisterTableEntry->ValidBitStart +
+                         RegisterTableEntry->ValidBitLength - 1,
                          RegisterTableEntry->Value
                          );
         ReadWriteCr (RegisterTableEntry->Index, FALSE, &Value);
@@ -302,7 +305,8 @@ ProgramProcessorRegister (
             CurrentValue = BitFieldRead64 (
                              Value,
                              RegisterTableEntry->ValidBitStart,
-                             RegisterTableEntry->ValidBitStart + RegisterTableEntry->ValidBitLength - 1
+                             RegisterTableEntry->ValidBitStart +
+                             RegisterTableEntry->ValidBitLength - 1
                              );
             if (CurrentValue == RegisterTableEntry->Value) {
               break;
@@ -329,7 +333,8 @@ ProgramProcessorRegister (
           AsmMsrBitFieldWrite64 (
             RegisterTableEntry->Index,
             RegisterTableEntry->ValidBitStart,
-            RegisterTableEntry->ValidBitStart + RegisterTableEntry->ValidBitLength - 1,
+            RegisterTableEntry->ValidBitStart +
+            RegisterTableEntry->ValidBitLength - 1,
             RegisterTableEntry->Value
             );
         }
@@ -341,9 +346,13 @@ ProgramProcessorRegister (
       case MemoryMapped:
         AcquireSpinLock (&CpuFlags->MemoryMappedLock);
         MmioBitFieldWrite32 (
-          (UINTN)(RegisterTableEntry->Index | LShiftU64 (RegisterTableEntry->HighIndex, 32)),
+          (UINTN)(RegisterTableEntry->Index | LShiftU64 (
+                                                RegisterTableEntry->HighIndex,
+                                                32
+                                                )),
           RegisterTableEntry->ValidBitStart,
-          RegisterTableEntry->ValidBitStart + RegisterTableEntry->ValidBitLength - 1,
+          RegisterTableEntry->ValidBitStart +
+          RegisterTableEntry->ValidBitLength - 1,
           (UINT32)RegisterTableEntry->Value
           );
         ReleaseSpinLock (&CpuFlags->MemoryMappedLock);
@@ -390,7 +399,8 @@ ProgramProcessorRegister (
             SemaphorePtr       = CpuFlags->CoreSemaphoreCount;
             ThreadCountPerCore = (UINT8 *)(UINTN)CpuStatus->ThreadCountPerCore;
 
-            CurrentCore = ApLocation->Package * CpuStatus->MaxCoreCount + ApLocation->Core;
+            CurrentCore = ApLocation->Package * CpuStatus->MaxCoreCount +
+                          ApLocation->Core;
             //
             // Get Offset info for the first thread in the core which current thread belongs to.
             //
@@ -412,14 +422,18 @@ ProgramProcessorRegister (
             //
             // First Notify ALL THREADs in current Core that this thread is ready.
             //
-            for (ProcessorIndex = 0; ProcessorIndex < CpuStatus->MaxThreadCount; ProcessorIndex++) {
+            for (ProcessorIndex = 0; ProcessorIndex < CpuStatus->MaxThreadCount;
+                 ProcessorIndex++)
+            {
               S3ReleaseSemaphore (&SemaphorePtr[FirstThread + ProcessorIndex]);
             }
 
             //
             // Second, check whether all VALID THREADs (not all threads) in current core are ready.
             //
-            for (ProcessorIndex = 0; ProcessorIndex < ThreadCountPerCore[CurrentCore]; ProcessorIndex++) {
+            for (ProcessorIndex = 0; ProcessorIndex <
+                 ThreadCountPerCore[CurrentCore]; ProcessorIndex++)
+            {
               S3WaitForSemaphore (&SemaphorePtr[CurrentThread]);
             }
 
@@ -427,15 +441,18 @@ ProgramProcessorRegister (
 
           case PackageDepType:
             SemaphorePtr          = CpuFlags->PackageSemaphoreCount;
-            ThreadCountPerPackage = (UINT32 *)(UINTN)CpuStatus->ThreadCountPerPackage;
+            ThreadCountPerPackage =
+              (UINT32 *)(UINTN)CpuStatus->ThreadCountPerPackage;
             //
             // Get Offset info for the first thread in the package which current thread belongs to.
             //
-            FirstThread = ApLocation->Package * CpuStatus->MaxCoreCount * CpuStatus->MaxThreadCount;
+            FirstThread = ApLocation->Package * CpuStatus->MaxCoreCount *
+                          CpuStatus->MaxThreadCount;
             //
             // Get the possible threads count for current package.
             //
-            CurrentThread = FirstThread + CpuStatus->MaxThreadCount * ApLocation->Core + ApLocation->Thread;
+            CurrentThread = FirstThread + CpuStatus->MaxThreadCount *
+                            ApLocation->Core + ApLocation->Thread;
 
             //
             // Different packages may have different valid threads in them. If driver maintail clearly
@@ -452,14 +469,19 @@ ProgramProcessorRegister (
             //
             // First Notify ALL THREADS in current package that this thread is ready.
             //
-            for (ProcessorIndex = 0; ProcessorIndex < CpuStatus->MaxThreadCount * CpuStatus->MaxCoreCount; ProcessorIndex++) {
+            for (ProcessorIndex = 0; ProcessorIndex <
+                 CpuStatus->MaxThreadCount * CpuStatus->MaxCoreCount;
+                 ProcessorIndex++)
+            {
               S3ReleaseSemaphore (&SemaphorePtr[FirstThread + ProcessorIndex]);
             }
 
             //
             // Second, check whether VALID THREADS (not all threads) in current package are ready.
             //
-            for (ProcessorIndex = 0; ProcessorIndex < ThreadCountPerPackage[ApLocation->Package]; ProcessorIndex++) {
+            for (ProcessorIndex = 0; ProcessorIndex <
+                 ThreadCountPerPackage[ApLocation->Package]; ProcessorIndex++)
+            {
               S3WaitForSemaphore (&SemaphorePtr[CurrentThread]);
             }
 
@@ -499,9 +521,11 @@ SetRegister (
   FeatureInitData = &mAcpiCpuData.CpuFeatureInitData;
 
   if (PreSmmRegisterTable) {
-    RegisterTables = (CPU_REGISTER_TABLE *)(UINTN)FeatureInitData->PreSmmInitRegisterTable;
+    RegisterTables =
+      (CPU_REGISTER_TABLE *)(UINTN)FeatureInitData->PreSmmInitRegisterTable;
   } else {
-    RegisterTables = (CPU_REGISTER_TABLE *)(UINTN)FeatureInitData->RegisterTable;
+    RegisterTables =
+      (CPU_REGISTER_TABLE *)(UINTN)FeatureInitData->RegisterTable;
   }
 
   if (RegisterTables == NULL) {
@@ -524,7 +548,8 @@ SetRegister (
   if (FeatureInitData->ApLocation != 0) {
     ProgramProcessorRegister (
       RegisterTable,
-      (EFI_CPU_PHYSICAL_LOCATION *)(UINTN)FeatureInitData->ApLocation + ProcIndex,
+      (EFI_CPU_PHYSICAL_LOCATION *)(UINTN)FeatureInitData->ApLocation +
+      ProcIndex,
       &FeatureInitData->CpuStatus,
       &mCpuFlags
       );
@@ -575,8 +600,16 @@ InitializeAp (
   //
   TopOfStack  = (UINTN)Stack + sizeof (Stack);
   TopOfStack &= ~(UINTN)(CPU_STACK_ALIGNMENT - 1);
-  CopyMem ((VOID *)(UINTN)mApHltLoopCode, mApHltLoopCodeTemplate, sizeof (mApHltLoopCodeTemplate));
-  TransferApToSafeState ((UINTN)mApHltLoopCode, TopOfStack, (UINTN)&mNumberToFinish);
+  CopyMem (
+    (VOID *)(UINTN)mApHltLoopCode,
+    mApHltLoopCodeTemplate,
+    sizeof (mApHltLoopCodeTemplate)
+    );
+  TransferApToSafeState (
+    (UINTN)mApHltLoopCode,
+    TopOfStack,
+    (UINTN)&mNumberToFinish
+    );
 }
 
 /**
@@ -607,26 +640,43 @@ PrepareApStartupVector (
   // Copy AP startup code to startup vector, and then redirect the long jump
   // instructions for mode switching.
   //
-  CopyMem ((VOID *)(UINTN)StartupVector, AddressMap.RendezvousFunnelAddress, AddressMap.Size);
-  *(UINT32 *)(UINTN)(StartupVector + AddressMap.FlatJumpOffset + 3) = (UINT32)(StartupVector + AddressMap.PModeEntryOffset);
+  CopyMem (
+    (VOID *)(UINTN)StartupVector,
+    AddressMap.RendezvousFunnelAddress,
+    AddressMap.Size
+    );
+  *(UINT32 *)(UINTN)(StartupVector + AddressMap.FlatJumpOffset + 3) =
+    (UINT32)(StartupVector + AddressMap.PModeEntryOffset);
   if (AddressMap.LongJumpOffset != 0) {
-    *(UINT32 *)(UINTN)(StartupVector + AddressMap.LongJumpOffset + 2) = (UINT32)(StartupVector + AddressMap.LModeEntryOffset);
+    *(UINT32 *)(UINTN)(StartupVector + AddressMap.LongJumpOffset + 2) =
+      (UINT32)(StartupVector + AddressMap.LModeEntryOffset);
   }
 
   //
   // Get the start address of exchange data between BSP and AP.
   //
-  mExchangeInfo = (MP_CPU_EXCHANGE_INFO *)(UINTN)(StartupVector + AddressMap.Size);
+  mExchangeInfo = (MP_CPU_EXCHANGE_INFO *)(UINTN)(StartupVector +
+                                                  AddressMap.Size);
   ZeroMem ((VOID *)mExchangeInfo, sizeof (MP_CPU_EXCHANGE_INFO));
 
-  CopyMem ((VOID *)(UINTN)&mExchangeInfo->GdtrProfile, (VOID *)(UINTN)mAcpiCpuData.GdtrProfile, sizeof (IA32_DESCRIPTOR));
-  CopyMem ((VOID *)(UINTN)&mExchangeInfo->IdtrProfile, (VOID *)(UINTN)mAcpiCpuData.IdtrProfile, sizeof (IA32_DESCRIPTOR));
+  CopyMem (
+    (VOID *)(UINTN)&mExchangeInfo->GdtrProfile,
+    (VOID *)(UINTN)mAcpiCpuData.GdtrProfile,
+    sizeof (IA32_DESCRIPTOR)
+    );
+  CopyMem (
+    (VOID *)(UINTN)&mExchangeInfo->IdtrProfile,
+    (VOID *)(UINTN)mAcpiCpuData.IdtrProfile,
+    sizeof (IA32_DESCRIPTOR)
+    );
 
-  mExchangeInfo->StackStart                          = (VOID *)(UINTN)mAcpiCpuData.StackAddress;
+  mExchangeInfo->StackStart =
+    (VOID *)(UINTN)mAcpiCpuData.StackAddress;
   mExchangeInfo->StackSize                           = mAcpiCpuData.StackSize;
   mExchangeInfo->BufferStart                         = (UINT32)StartupVector;
   mExchangeInfo->Cr3                                 = (UINT32)(AsmReadCr3 ());
-  mExchangeInfo->InitializeFloatingPointUnitsAddress = (UINTN)InitializeFloatingPointUnits;
+  mExchangeInfo->InitializeFloatingPointUnitsAddress =
+    (UINTN)InitializeFloatingPointUnits;
 }
 
 /**
@@ -734,11 +784,16 @@ RestoreSmmConfigurationInS3 (
     //
     // Need make sure gSmst is correct because below function may use them.
     //
-    gSmst->SmmStartupThisAp      = gSmmCpuPrivate->SmmCoreEntryContext.SmmStartupThisAp;
-    gSmst->CurrentlyExecutingCpu = gSmmCpuPrivate->SmmCoreEntryContext.CurrentlyExecutingCpu;
-    gSmst->NumberOfCpus          = gSmmCpuPrivate->SmmCoreEntryContext.NumberOfCpus;
-    gSmst->CpuSaveStateSize      = gSmmCpuPrivate->SmmCoreEntryContext.CpuSaveStateSize;
-    gSmst->CpuSaveState          = gSmmCpuPrivate->SmmCoreEntryContext.CpuSaveState;
+    gSmst->SmmStartupThisAp =
+      gSmmCpuPrivate->SmmCoreEntryContext.SmmStartupThisAp;
+    gSmst->CurrentlyExecutingCpu =
+      gSmmCpuPrivate->SmmCoreEntryContext.CurrentlyExecutingCpu;
+    gSmst->NumberOfCpus =
+      gSmmCpuPrivate->SmmCoreEntryContext.NumberOfCpus;
+    gSmst->CpuSaveStateSize =
+      gSmmCpuPrivate->SmmCoreEntryContext.CpuSaveStateSize;
+    gSmst->CpuSaveState =
+      gSmmCpuPrivate->SmmCoreEntryContext.CpuSaveState;
 
     //
     // Configure SMM Code Access Check feature if available.
@@ -806,7 +861,11 @@ SmmRestoreCpu (
     //
     // Initialize Debug Agent to support source level debug
     //
-    InitializeDebugAgent (DEBUG_AGENT_INIT_THUNK_PEI_IA32TOX64, (VOID *)&Ia32Idtr, NULL);
+    InitializeDebugAgent (
+      DEBUG_AGENT_INIT_THUNK_PEI_IA32TOX64,
+      (VOID *)&Ia32Idtr,
+      NULL
+      );
   }
 
   //
@@ -839,17 +898,40 @@ SmmRestoreCpu (
   //
   mRestoreSmmConfigurationInS3 = TRUE;
 
-  DEBUG ((DEBUG_INFO, "SMM S3 Return CS                = %x\n", SmmS3ResumeState->ReturnCs));
-  DEBUG ((DEBUG_INFO, "SMM S3 Return Entry Point       = %x\n", SmmS3ResumeState->ReturnEntryPoint));
-  DEBUG ((DEBUG_INFO, "SMM S3 Return Context1          = %x\n", SmmS3ResumeState->ReturnContext1));
-  DEBUG ((DEBUG_INFO, "SMM S3 Return Context2          = %x\n", SmmS3ResumeState->ReturnContext2));
-  DEBUG ((DEBUG_INFO, "SMM S3 Return Stack Pointer     = %x\n", SmmS3ResumeState->ReturnStackPointer));
+  DEBUG ((
+    DEBUG_INFO,
+    "SMM S3 Return CS                = %x\n",
+    SmmS3ResumeState->ReturnCs
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "SMM S3 Return Entry Point       = %x\n",
+    SmmS3ResumeState->ReturnEntryPoint
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "SMM S3 Return Context1          = %x\n",
+    SmmS3ResumeState->ReturnContext1
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "SMM S3 Return Context2          = %x\n",
+    SmmS3ResumeState->ReturnContext2
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "SMM S3 Return Stack Pointer     = %x\n",
+    SmmS3ResumeState->ReturnStackPointer
+    ));
 
   //
   // If SMM is in 32-bit mode, then use SwitchStack() to resume PEI Phase
   //
   if (SmmS3ResumeState->Signature == SMM_S3_RESUME_SMM_32) {
-    DEBUG ((DEBUG_INFO, "Call SwitchStack() to return to S3 Resume in PEI Phase\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "Call SwitchStack() to return to S3 Resume in PEI Phase\n"
+      ));
 
     SwitchStack (
       (SWITCH_STACK_ENTRY_POINT)(UINTN)SmmS3ResumeState->ReturnEntryPoint,
@@ -863,7 +945,10 @@ SmmRestoreCpu (
   // If SMM is in 64-bit mode, then use AsmDisablePaging64() to resume PEI Phase
   //
   if (SmmS3ResumeState->Signature == SMM_S3_RESUME_SMM_64) {
-    DEBUG ((DEBUG_INFO, "Call AsmDisablePaging64() to return to S3 Resume in PEI Phase\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "Call AsmDisablePaging64() to return to S3 Resume in PEI Phase\n"
+      ));
     //
     // Disable interrupt of Debug timer, since new IDT table is for IA32 and will not work in long mode.
     //
@@ -930,10 +1015,16 @@ InitSmmS3ResumeState (
     mSmmS3ResumeState      = SmmS3ResumeState;
     SmmS3ResumeState->Smst = (EFI_PHYSICAL_ADDRESS)(UINTN)gSmst;
 
-    SmmS3ResumeState->SmmS3ResumeEntryPoint = (EFI_PHYSICAL_ADDRESS)(UINTN)SmmRestoreCpu;
+    SmmS3ResumeState->SmmS3ResumeEntryPoint =
+      (EFI_PHYSICAL_ADDRESS)(UINTN)SmmRestoreCpu;
 
     SmmS3ResumeState->SmmS3StackSize = SIZE_32KB;
-    SmmS3ResumeState->SmmS3StackBase = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocatePages (EFI_SIZE_TO_PAGES ((UINTN)SmmS3ResumeState->SmmS3StackSize));
+    SmmS3ResumeState->SmmS3StackBase =
+      (EFI_PHYSICAL_ADDRESS)(UINTN)AllocatePages (
+                                     EFI_SIZE_TO_PAGES (
+                                       (UINTN)SmmS3ResumeState->SmmS3StackSize
+                                       )
+                                     );
     if (SmmS3ResumeState->SmmS3StackBase == 0) {
       SmmS3ResumeState->SmmS3StackSize = 0;
     }
@@ -989,16 +1080,26 @@ CopyRegisterTable (
   UINTN                     Index;
   CPU_REGISTER_TABLE_ENTRY  *RegisterTableEntry;
 
-  CopyMem (DestinationRegisterTableList, SourceRegisterTableList, NumberOfCpus * sizeof (CPU_REGISTER_TABLE));
+  CopyMem (
+    DestinationRegisterTableList,
+    SourceRegisterTableList,
+    NumberOfCpus *
+    sizeof (CPU_REGISTER_TABLE)
+    );
   for (Index = 0; Index < NumberOfCpus; Index++) {
     if (DestinationRegisterTableList[Index].TableLength != 0) {
-      DestinationRegisterTableList[Index].AllocatedSize = DestinationRegisterTableList[Index].TableLength * sizeof (CPU_REGISTER_TABLE_ENTRY);
-      RegisterTableEntry                                = AllocateCopyPool (
-                                                            DestinationRegisterTableList[Index].AllocatedSize,
-                                                            (VOID *)(UINTN)SourceRegisterTableList[Index].RegisterTableEntry
-                                                            );
+      DestinationRegisterTableList[Index].AllocatedSize =
+        DestinationRegisterTableList[Index].TableLength *
+        sizeof (CPU_REGISTER_TABLE_ENTRY);
+      RegisterTableEntry = AllocateCopyPool (
+                             DestinationRegisterTableList
+                             [Index].AllocatedSize,
+                             (VOID *)(UINTN)
+                             SourceRegisterTableList[Index].RegisterTableEntry
+                             );
       ASSERT (RegisterTableEntry != NULL);
-      DestinationRegisterTableList[Index].RegisterTableEntry = (EFI_PHYSICAL_ADDRESS)(UINTN)RegisterTableEntry;
+      DestinationRegisterTableList[Index].RegisterTableEntry =
+        (EFI_PHYSICAL_ADDRESS)(UINTN)RegisterTableEntry;
     }
   }
 }
@@ -1046,19 +1147,38 @@ CopyCpuFeatureInitDatatoSmram (
 {
   CPU_STATUS_INFORMATION  *CpuStatus;
 
-  if (!IsRegisterTableEmpty ((CPU_REGISTER_TABLE *)(UINTN)CpuFeatureInitDataSrc->PreSmmInitRegisterTable, mAcpiCpuData.NumberOfCpus)) {
-    CpuFeatureInitDataDst->PreSmmInitRegisterTable = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocatePool (mAcpiCpuData.NumberOfCpus * sizeof (CPU_REGISTER_TABLE));
+  if (!IsRegisterTableEmpty (
+         (CPU_REGISTER_TABLE *)(UINTN)CpuFeatureInitDataSrc->
+           PreSmmInitRegisterTable,
+         mAcpiCpuData.NumberOfCpus
+         ))
+  {
+    CpuFeatureInitDataDst->PreSmmInitRegisterTable =
+      (EFI_PHYSICAL_ADDRESS)(UINTN)AllocatePool (
+                                     mAcpiCpuData.NumberOfCpus *
+                                     sizeof (CPU_REGISTER_TABLE)
+                                     );
     ASSERT (CpuFeatureInitDataDst->PreSmmInitRegisterTable != 0);
 
     CopyRegisterTable (
-      (CPU_REGISTER_TABLE *)(UINTN)CpuFeatureInitDataDst->PreSmmInitRegisterTable,
-      (CPU_REGISTER_TABLE *)(UINTN)CpuFeatureInitDataSrc->PreSmmInitRegisterTable,
+      (CPU_REGISTER_TABLE *)(UINTN)CpuFeatureInitDataDst->
+        PreSmmInitRegisterTable,
+      (CPU_REGISTER_TABLE *)(UINTN)CpuFeatureInitDataSrc->
+        PreSmmInitRegisterTable,
       mAcpiCpuData.NumberOfCpus
       );
   }
 
-  if (!IsRegisterTableEmpty ((CPU_REGISTER_TABLE *)(UINTN)CpuFeatureInitDataSrc->RegisterTable, mAcpiCpuData.NumberOfCpus)) {
-    CpuFeatureInitDataDst->RegisterTable = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocatePool (mAcpiCpuData.NumberOfCpus * sizeof (CPU_REGISTER_TABLE));
+  if (!IsRegisterTableEmpty (
+         (CPU_REGISTER_TABLE *)(UINTN)CpuFeatureInitDataSrc->RegisterTable,
+         mAcpiCpuData.NumberOfCpus
+         ))
+  {
+    CpuFeatureInitDataDst->RegisterTable =
+      (EFI_PHYSICAL_ADDRESS)(UINTN)AllocatePool (
+                                     mAcpiCpuData.NumberOfCpus *
+                                     sizeof (CPU_REGISTER_TABLE)
+                                     );
     ASSERT (CpuFeatureInitDataDst->RegisterTable != 0);
 
     CopyRegisterTable (
@@ -1069,29 +1189,47 @@ CopyCpuFeatureInitDatatoSmram (
   }
 
   CpuStatus = &CpuFeatureInitDataDst->CpuStatus;
-  CopyMem (CpuStatus, &CpuFeatureInitDataSrc->CpuStatus, sizeof (CPU_STATUS_INFORMATION));
+  CopyMem (
+    CpuStatus,
+    &CpuFeatureInitDataSrc->CpuStatus,
+    sizeof (CPU_STATUS_INFORMATION)
+    );
 
   if (CpuFeatureInitDataSrc->CpuStatus.ThreadCountPerPackage != 0) {
-    CpuStatus->ThreadCountPerPackage = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocateCopyPool (
-                                                                      sizeof (UINT32) * CpuStatus->PackageCount,
-                                                                      (UINT32 *)(UINTN)CpuFeatureInitDataSrc->CpuStatus.ThreadCountPerPackage
-                                                                      );
+    CpuStatus->ThreadCountPerPackage =
+      (EFI_PHYSICAL_ADDRESS)(UINTN)AllocateCopyPool (
+                                     sizeof (
+                                             UINT32) * CpuStatus->PackageCount,
+                                     (UINT32 *)(
+                                                UINTN)CpuFeatureInitDataSrc->
+                                       CpuStatus.ThreadCountPerPackage
+                                     );
     ASSERT (CpuStatus->ThreadCountPerPackage != 0);
   }
 
   if (CpuFeatureInitDataSrc->CpuStatus.ThreadCountPerCore != 0) {
-    CpuStatus->ThreadCountPerCore = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocateCopyPool (
-                                                                   sizeof (UINT8) * (CpuStatus->PackageCount * CpuStatus->MaxCoreCount),
-                                                                   (UINT32 *)(UINTN)CpuFeatureInitDataSrc->CpuStatus.ThreadCountPerCore
-                                                                   );
+    CpuStatus->ThreadCountPerCore =
+      (EFI_PHYSICAL_ADDRESS)(UINTN)AllocateCopyPool (
+                                     sizeof (UINT8)
+                                     * (CpuStatus->PackageCount *
+                                        CpuStatus->MaxCoreCount),
+                                     (UINT32 *)(
+                                                UINTN)CpuFeatureInitDataSrc->
+                                       CpuStatus.ThreadCountPerCore
+                                     );
     ASSERT (CpuStatus->ThreadCountPerCore != 0);
   }
 
   if (CpuFeatureInitDataSrc->ApLocation != 0) {
-    CpuFeatureInitDataDst->ApLocation = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocateCopyPool (
-                                                                       mAcpiCpuData.NumberOfCpus * sizeof (EFI_CPU_PHYSICAL_LOCATION),
-                                                                       (EFI_CPU_PHYSICAL_LOCATION *)(UINTN)CpuFeatureInitDataSrc->ApLocation
-                                                                       );
+    CpuFeatureInitDataDst->ApLocation =
+      (EFI_PHYSICAL_ADDRESS)(UINTN)AllocateCopyPool (
+                                     mAcpiCpuData
+                                       .NumberOfCpus *
+                                     sizeof (EFI_CPU_PHYSICAL_LOCATION),
+                                     (
+                                      EFI_CPU_PHYSICAL_LOCATION *)(UINTN)
+                                     CpuFeatureInitDataSrc->ApLocation
+                                     );
     ASSERT (CpuFeatureInitDataDst->ApLocation != 0);
   }
 }
@@ -1135,20 +1273,40 @@ GetAcpiCpuData (
   //
   CopyMem (&mAcpiCpuData, AcpiCpuData, sizeof (mAcpiCpuData));
 
-  mAcpiCpuData.MtrrTable = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocatePool (sizeof (MTRR_SETTINGS));
+  mAcpiCpuData.MtrrTable = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocatePool (
+                                                          sizeof (MTRR_SETTINGS)
+                                                          );
   ASSERT (mAcpiCpuData.MtrrTable != 0);
 
-  CopyMem ((VOID *)(UINTN)mAcpiCpuData.MtrrTable, (VOID *)(UINTN)AcpiCpuData->MtrrTable, sizeof (MTRR_SETTINGS));
+  CopyMem (
+    (VOID *)(UINTN)mAcpiCpuData.MtrrTable,
+    (VOID *)(UINTN)AcpiCpuData->MtrrTable,
+    sizeof (MTRR_SETTINGS)
+    );
 
-  mAcpiCpuData.GdtrProfile = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocatePool (sizeof (IA32_DESCRIPTOR));
+  mAcpiCpuData.GdtrProfile = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocatePool (
+                                                            sizeof (
+                                                                               IA32_DESCRIPTOR)
+                                                            );
   ASSERT (mAcpiCpuData.GdtrProfile != 0);
 
-  CopyMem ((VOID *)(UINTN)mAcpiCpuData.GdtrProfile, (VOID *)(UINTN)AcpiCpuData->GdtrProfile, sizeof (IA32_DESCRIPTOR));
+  CopyMem (
+    (VOID *)(UINTN)mAcpiCpuData.GdtrProfile,
+    (VOID *)(UINTN)AcpiCpuData->GdtrProfile,
+    sizeof (IA32_DESCRIPTOR)
+    );
 
-  mAcpiCpuData.IdtrProfile = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocatePool (sizeof (IA32_DESCRIPTOR));
+  mAcpiCpuData.IdtrProfile = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocatePool (
+                                                            sizeof (
+                                                                               IA32_DESCRIPTOR)
+                                                            );
   ASSERT (mAcpiCpuData.IdtrProfile != 0);
 
-  CopyMem ((VOID *)(UINTN)mAcpiCpuData.IdtrProfile, (VOID *)(UINTN)AcpiCpuData->IdtrProfile, sizeof (IA32_DESCRIPTOR));
+  CopyMem (
+    (VOID *)(UINTN)mAcpiCpuData.IdtrProfile,
+    (VOID *)(UINTN)AcpiCpuData->IdtrProfile,
+    sizeof (IA32_DESCRIPTOR)
+    );
 
   //
   // Copy AP's GDT, IDT and Machine Check handler into SMRAM.
@@ -1156,18 +1314,26 @@ GetAcpiCpuData (
   Gdtr = (IA32_DESCRIPTOR *)(UINTN)mAcpiCpuData.GdtrProfile;
   Idtr = (IA32_DESCRIPTOR *)(UINTN)mAcpiCpuData.IdtrProfile;
 
-  GdtForAp = AllocatePool ((Gdtr->Limit + 1) + (Idtr->Limit + 1) + mAcpiCpuData.ApMachineCheckHandlerSize);
+  GdtForAp = AllocatePool (
+               (Gdtr->Limit + 1) + (Idtr->Limit + 1) +
+               mAcpiCpuData.ApMachineCheckHandlerSize
+               );
   ASSERT (GdtForAp != NULL);
   IdtForAp                 = (VOID *)((UINTN)GdtForAp + (Gdtr->Limit + 1));
   MachineCheckHandlerForAp = (VOID *)((UINTN)IdtForAp + (Idtr->Limit + 1));
 
   CopyMem (GdtForAp, (VOID *)Gdtr->Base, Gdtr->Limit + 1);
   CopyMem (IdtForAp, (VOID *)Idtr->Base, Idtr->Limit + 1);
-  CopyMem (MachineCheckHandlerForAp, (VOID *)(UINTN)mAcpiCpuData.ApMachineCheckHandlerBase, mAcpiCpuData.ApMachineCheckHandlerSize);
+  CopyMem (
+    MachineCheckHandlerForAp,
+    (VOID *)(UINTN)mAcpiCpuData.ApMachineCheckHandlerBase,
+    mAcpiCpuData.ApMachineCheckHandlerSize
+    );
 
   Gdtr->Base                             = (UINTN)GdtForAp;
   Idtr->Base                             = (UINTN)IdtForAp;
-  mAcpiCpuData.ApMachineCheckHandlerBase = (EFI_PHYSICAL_ADDRESS)(UINTN)MachineCheckHandlerForAp;
+  mAcpiCpuData.ApMachineCheckHandlerBase =
+    (EFI_PHYSICAL_ADDRESS)(UINTN)MachineCheckHandlerForAp;
 
   ZeroMem (&mAcpiCpuData.CpuFeatureInitData, sizeof (CPU_FEATURE_INIT_DATA));
 
@@ -1177,19 +1343,25 @@ GetAcpiCpuData (
     // next ACPI S3 resume, copy the CPU features initialization data into SMRAM,
     // which will be consumed in SmmRestoreCpu during next S3 resume.
     //
-    CopyCpuFeatureInitDatatoSmram (&mAcpiCpuData.CpuFeatureInitData, &AcpiCpuData->CpuFeatureInitData);
+    CopyCpuFeatureInitDatatoSmram (
+      &mAcpiCpuData.CpuFeatureInitData,
+      &AcpiCpuData->CpuFeatureInitData
+      );
 
     CpuStatus = &mAcpiCpuData.CpuFeatureInitData.CpuStatus;
 
     mCpuFlags.CoreSemaphoreCount = AllocateZeroPool (
                                      sizeof (UINT32) * CpuStatus->PackageCount *
-                                     CpuStatus->MaxCoreCount * CpuStatus->MaxThreadCount
+                                     CpuStatus->MaxCoreCount *
+                                     CpuStatus->MaxThreadCount
                                      );
     ASSERT (mCpuFlags.CoreSemaphoreCount != NULL);
 
     mCpuFlags.PackageSemaphoreCount = AllocateZeroPool (
-                                        sizeof (UINT32) * CpuStatus->PackageCount *
-                                        CpuStatus->MaxCoreCount * CpuStatus->MaxThreadCount
+                                        sizeof (UINT32) *
+                                        CpuStatus->PackageCount *
+                                        CpuStatus->MaxCoreCount *
+                                        CpuStatus->MaxThreadCount
                                         );
     ASSERT (mCpuFlags.PackageSemaphoreCount != NULL);
 

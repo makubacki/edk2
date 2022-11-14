@@ -57,14 +57,20 @@ SmmGetProcessorInfo (
     return EFI_INVALID_PARAMETER;
   }
 
-  if (gSmmCpuPrivate->ProcessorInfo[ProcessorNumber].ProcessorId == INVALID_APIC_ID) {
+  if (gSmmCpuPrivate->ProcessorInfo[ProcessorNumber].ProcessorId ==
+      INVALID_APIC_ID)
+  {
     return EFI_NOT_FOUND;
   }
 
   //
   // Fill in processor information
   //
-  CopyMem (ProcessorInfoBuffer, &gSmmCpuPrivate->ProcessorInfo[ProcessorNumber], sizeof (EFI_PROCESSOR_INFORMATION));
+  CopyMem (
+    ProcessorInfoBuffer,
+    &gSmmCpuPrivate->ProcessorInfo[ProcessorNumber],
+    sizeof (EFI_PROCESSOR_INFORMATION)
+    );
   return EFI_SUCCESS;
 }
 
@@ -93,7 +99,9 @@ SmmSwitchBsp (
     return EFI_INVALID_PARAMETER;
   }
 
-  if (gSmmCpuPrivate->ProcessorInfo[ProcessorNumber].ProcessorId == INVALID_APIC_ID) {
+  if (gSmmCpuPrivate->ProcessorInfo[ProcessorNumber].ProcessorId ==
+      INVALID_APIC_ID)
+  {
     return EFI_NOT_FOUND;
   }
 
@@ -207,7 +215,8 @@ SmmRemoveProcessor (
   // Check parameter
   //
   if ((ProcessorNumber >= mMaxNumberOfCpus) ||
-      (gSmmCpuPrivate->ProcessorInfo[ProcessorNumber].ProcessorId == INVALID_APIC_ID))
+      (gSmmCpuPrivate->ProcessorInfo[ProcessorNumber].ProcessorId ==
+       INVALID_APIC_ID))
   {
     return EFI_INVALID_PARAMETER;
   }
@@ -215,7 +224,9 @@ SmmRemoveProcessor (
   //
   // Can't remove BSP
   //
-  if (ProcessorNumber == gSmmCpuPrivate->SmmCoreEntryContext.CurrentlyExecutingCpu) {
+  if (ProcessorNumber ==
+      gSmmCpuPrivate->SmmCoreEntryContext.CurrentlyExecutingCpu)
+  {
     return EFI_UNSUPPORTED;
   }
 
@@ -425,11 +436,15 @@ SmmCpuRendezvous (
   // There are some APs outside SMM, Wait for all avaiable APs to arrive.
   //
   SmmWaitForApArrival ();
-  Status = mSmmMpSyncData->AllApArrivedWithException ? EFI_SUCCESS : EFI_TIMEOUT;
+  Status = mSmmMpSyncData->AllApArrivedWithException ? EFI_SUCCESS :
+           EFI_TIMEOUT;
 
 ON_EXIT:
   if (!mSmmMpSyncData->AllApArrivedWithException) {
-    DEBUG ((DEBUG_INFO, "EdkiiSmmWaitForAllApArrival: Timeout to wait all APs arrival\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "EdkiiSmmWaitForAllApArrival: Timeout to wait all APs arrival\n"
+      ));
   }
 
   return Status;

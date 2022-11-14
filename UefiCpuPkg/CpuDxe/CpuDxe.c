@@ -491,7 +491,13 @@ CpuSetMemoryAttributes (
   //
   // Set memory attribute by page table
   //
-  return AssignMemoryPageAttributes (NULL, BaseAddress, Length, MemoryAttributes, NULL);
+  return AssignMemoryPageAttributes (
+           NULL,
+           BaseAddress,
+           Length,
+           MemoryAttributes,
+           NULL
+           );
 }
 
 /**
@@ -587,13 +593,15 @@ SearchGcdMemorySpaces (
   *EndIndex   = 0;
   for (Index = 0; Index < NumberOfDescriptors; Index++) {
     if ((BaseAddress >= MemorySpaceMap[Index].BaseAddress) &&
-        (BaseAddress < MemorySpaceMap[Index].BaseAddress + MemorySpaceMap[Index].Length))
+        (BaseAddress < MemorySpaceMap[Index].BaseAddress +
+         MemorySpaceMap[Index].Length))
     {
       *StartIndex = Index;
     }
 
     if ((BaseAddress + Length - 1 >= MemorySpaceMap[Index].BaseAddress) &&
-        (BaseAddress + Length - 1 < MemorySpaceMap[Index].BaseAddress + MemorySpaceMap[Index].Length))
+        (BaseAddress + Length - 1 < MemorySpaceMap[Index].BaseAddress +
+         MemorySpaceMap[Index].Length))
     {
       *EndIndex = Index;
       return EFI_SUCCESS;
@@ -667,10 +675,13 @@ SetGcdMemorySpaceAttributes (
       RegionStart = MemorySpaceMap[Index].BaseAddress;
     }
 
-    if (BaseAddress + Length - 1 < MemorySpaceMap[Index].BaseAddress + MemorySpaceMap[Index].Length) {
+    if (BaseAddress + Length - 1 < MemorySpaceMap[Index].BaseAddress +
+        MemorySpaceMap[Index].Length)
+    {
       RegionLength = BaseAddress + Length - RegionStart;
     } else {
-      RegionLength = MemorySpaceMap[Index].BaseAddress + MemorySpaceMap[Index].Length - RegionStart;
+      RegionLength = MemorySpaceMap[Index].BaseAddress +
+                     MemorySpaceMap[Index].Length - RegionStart;
     }
 
     //
@@ -679,7 +690,8 @@ SetGcdMemorySpaceAttributes (
     gDS->SetMemorySpaceAttributes (
            RegionStart,
            RegionLength,
-           (MemorySpaceMap[Index].Attributes & ~EFI_CACHE_ATTRIBUTE_MASK) | (MemorySpaceMap[Index].Capabilities & Attributes)
+           (MemorySpaceMap[Index].Attributes & ~EFI_CACHE_ATTRIBUTE_MASK) |
+           (MemorySpaceMap[Index].Capabilities & Attributes)
            );
   }
 
@@ -786,7 +798,9 @@ RefreshMemoryAttributesFromMtrr (
         (VariableMtrr[Index].Type != MTRR_CACHE_WRITE_BACK) &&
         (VariableMtrr[Index].Type != MTRR_CACHE_UNCACHEABLE))
     {
-      Attributes = GetMemorySpaceAttributeFromMtrrType ((UINT8)VariableMtrr[Index].Type);
+      Attributes = GetMemorySpaceAttributeFromMtrrType (
+                     (UINT8)VariableMtrr[Index].Type
+                     );
       SetGcdMemorySpaceAttributes (
         MemorySpaceMap,
         NumberOfDescriptors,
@@ -846,9 +860,10 @@ RefreshMemoryAttributesFromMtrr (
             Length,
             Attributes
             );
-          BaseAddress = mFixedMtrrTable[Index].BaseAddress + mFixedMtrrTable[Index].Length * SubIndex;
-          Length      = 0;
-          Attributes  = CurrentAttributes;
+          BaseAddress = mFixedMtrrTable[Index].BaseAddress +
+                        mFixedMtrrTable[Index].Length * SubIndex;
+          Length     = 0;
+          Attributes = CurrentAttributes;
         }
       }
 
@@ -934,7 +949,10 @@ InitInterruptDescriptorTable (
   UINTN                     IdtEntryCount;
 
   VectorInfo = NULL;
-  Status     = EfiGetSystemConfigurationTable (&gEfiVectorHandoffTableGuid, (VOID **)&VectorInfoList);
+  Status     = EfiGetSystemConfigurationTable (
+                 &gEfiVectorHandoffTableGuid,
+                 (VOID **)&VectorInfoList
+                 );
   if ((Status == EFI_SUCCESS) && (VectorInfoList != NULL)) {
     VectorInfo = VectorInfoList;
   }
@@ -945,15 +963,23 @@ InitInterruptDescriptorTable (
     //
     // Increase Interrupt Descriptor Table and Copy the old IDT table in
     //
-    IdtTable = AllocateZeroPool (sizeof (IA32_IDT_GATE_DESCRIPTOR) * CPU_INTERRUPT_NUM);
+    IdtTable = AllocateZeroPool (
+                 sizeof (IA32_IDT_GATE_DESCRIPTOR) *
+                 CPU_INTERRUPT_NUM
+                 );
     ASSERT (IdtTable != NULL);
-    CopyMem (IdtTable, (VOID *)IdtDescriptor.Base, sizeof (IA32_IDT_GATE_DESCRIPTOR) * IdtEntryCount);
+    CopyMem (
+      IdtTable,
+      (VOID *)IdtDescriptor.Base,
+      sizeof (IA32_IDT_GATE_DESCRIPTOR) * IdtEntryCount
+      );
 
     //
     // Load Interrupt Descriptor Table
     //
     IdtDescriptor.Base  = (UINTN)IdtTable;
-    IdtDescriptor.Limit = (UINT16)(sizeof (IA32_IDT_GATE_DESCRIPTOR) * CPU_INTERRUPT_NUM - 1);
+    IdtDescriptor.Limit = (UINT16)(sizeof (IA32_IDT_GATE_DESCRIPTOR) *
+                                   CPU_INTERRUPT_NUM - 1);
     AsmWriteIdtr (&IdtDescriptor);
   }
 

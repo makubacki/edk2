@@ -59,7 +59,9 @@ AesniSupport (
   if (CpuInfo->CpuIdVersionInfoEcx.Bits.AESNI == 1) {
     MsrFeatureConfig = (MSR_SANDY_BRIDGE_FEATURE_CONFIG_REGISTER *)ConfigData;
     ASSERT (MsrFeatureConfig != NULL);
-    MsrFeatureConfig[ProcessorNumber].Uint64 = AsmReadMsr64 (MSR_SANDY_BRIDGE_FEATURE_CONFIG);
+    MsrFeatureConfig[ProcessorNumber].Uint64 = AsmReadMsr64 (
+                                                 MSR_SANDY_BRIDGE_FEATURE_CONFIG
+                                                 );
     return TRUE;
   }
 

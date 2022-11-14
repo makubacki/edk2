@@ -9,10 +9,18 @@
 #include "CpuPageTableLibUnitTest.h"
 
 // ----------------------------------------------------------------------- PageMode--TestCount-TestRangeCount---RandomOptions
-static CPU_PAGE_TABLE_LIB_RANDOM_TEST_CONTEXT  mTestContextPaging4Level    = { Paging4Level, 100, 20, ONLY_ONE_ONE_MAPPING|USE_RANDOM_ARRAY };
-static CPU_PAGE_TABLE_LIB_RANDOM_TEST_CONTEXT  mTestContextPaging4Level1GB = { Paging4Level1GB, 100, 20, ONLY_ONE_ONE_MAPPING|USE_RANDOM_ARRAY };
-static CPU_PAGE_TABLE_LIB_RANDOM_TEST_CONTEXT  mTestContextPaging5Level    = { Paging5Level, 100, 20, ONLY_ONE_ONE_MAPPING|USE_RANDOM_ARRAY };
-static CPU_PAGE_TABLE_LIB_RANDOM_TEST_CONTEXT  mTestContextPaging5Level1GB = { Paging5Level1GB, 100, 20, ONLY_ONE_ONE_MAPPING|USE_RANDOM_ARRAY };
+static CPU_PAGE_TABLE_LIB_RANDOM_TEST_CONTEXT  mTestContextPaging4Level = {
+  Paging4Level, 100, 20, ONLY_ONE_ONE_MAPPING|USE_RANDOM_ARRAY
+};
+static CPU_PAGE_TABLE_LIB_RANDOM_TEST_CONTEXT  mTestContextPaging4Level1GB = {
+  Paging4Level1GB, 100, 20, ONLY_ONE_ONE_MAPPING|USE_RANDOM_ARRAY
+};
+static CPU_PAGE_TABLE_LIB_RANDOM_TEST_CONTEXT  mTestContextPaging5Level = {
+  Paging5Level, 100, 20, ONLY_ONE_ONE_MAPPING|USE_RANDOM_ARRAY
+};
+static CPU_PAGE_TABLE_LIB_RANDOM_TEST_CONTEXT  mTestContextPaging5Level1GB = {
+  Paging5Level1GB, 100, 20, ONLY_ONE_ONE_MAPPING|USE_RANDOM_ARRAY
+};
 
 /**
   Check if the input parameters are not supported.
@@ -51,26 +59,37 @@ TestCaseForParameter (
   //
   // If the input linear address is not 4K align, it should return invalid parameter
   //
-  UT_ASSERT_EQUAL (PageTableMap (&PageTable, PagingMode, &Buffer, &PageTableBufferSize, 1, SIZE_4KB, &MapAttribute, &MapMask), RETURN_INVALID_PARAMETER);
+  UT_ASSERT_EQUAL (PageTableMap (&PageTable, PagingMode, &Buffer,
+                     &PageTableBufferSize, 1, SIZE_4KB, &MapAttribute,
+                     &MapMask),
+    RETURN_INVALID_PARAMETER);
 
   //
   // If the input PageTableBufferSize is not 4K align, it should return invalid parameter
   //
   PageTableBufferSize = 10;
-  UT_ASSERT_EQUAL (PageTableMap (&PageTable, PagingMode, &Buffer, &PageTableBufferSize, 0, SIZE_4KB, &MapAttribute, &MapMask), RETURN_INVALID_PARAMETER);
+  UT_ASSERT_EQUAL (PageTableMap (&PageTable, PagingMode, &Buffer,
+                     &PageTableBufferSize, 0, SIZE_4KB, &MapAttribute,
+                     &MapMask),
+    RETURN_INVALID_PARAMETER);
 
   //
   // If the input PagingMode is Paging32bit, it should return invalid parameter
   //
   PageTableBufferSize = 0;
   PagingMode          = Paging32bit;
-  UT_ASSERT_EQUAL (PageTableMap (&PageTable, PagingMode, &Buffer, &PageTableBufferSize, 1, SIZE_4KB, &MapAttribute, &MapMask), RETURN_UNSUPPORTED);
+  UT_ASSERT_EQUAL (PageTableMap (&PageTable, PagingMode, &Buffer,
+                     &PageTableBufferSize, 1, SIZE_4KB, &MapAttribute,
+                     &MapMask),
+    RETURN_UNSUPPORTED);
 
   //
   // If the input MapMask is NULL, it should return invalid parameter
   //
   PagingMode = Paging5Level1GB;
-  UT_ASSERT_EQUAL (PageTableMap (&PageTable, PagingMode, &Buffer, &PageTableBufferSize, 1, SIZE_4KB, &MapAttribute, NULL), RETURN_INVALID_PARAMETER);
+  UT_ASSERT_EQUAL (PageTableMap (&PageTable, PagingMode, &Buffer,
+                     &PageTableBufferSize, 1, SIZE_4KB, &MapAttribute, NULL),
+    RETURN_INVALID_PARAMETER);
 
   return UNIT_TEST_PASSED;
 }
@@ -119,10 +138,12 @@ TestCaseWhichNoNeedExtraSize (
   //
   // Create page table to cover [0, 10M], it should have 5 PTE
   //
-  Status = PageTableMap (&PageTable, PagingMode, Buffer, &PageTableBufferSize, 0, (UINT64)SIZE_2MB * 5, &MapAttribute, &MapMask);
+  Status = PageTableMap (&PageTable, PagingMode, Buffer, &PageTableBufferSize,
+             0, (UINT64)SIZE_2MB * 5, &MapAttribute, &MapMask);
   UT_ASSERT_EQUAL (Status, RETURN_BUFFER_TOO_SMALL);
   Buffer = AllocatePages (EFI_SIZE_TO_PAGES (PageTableBufferSize));
-  Status = PageTableMap (&PageTable, PagingMode, Buffer, &PageTableBufferSize, 0, (UINT64)SIZE_2MB * 5, &MapAttribute, &MapMask);
+  Status = PageTableMap (&PageTable, PagingMode, Buffer, &PageTableBufferSize,
+             0, (UINT64)SIZE_2MB * 5, &MapAttribute, &MapMask);
   UT_ASSERT_EQUAL (Status, RETURN_SUCCESS);
   TestStatus = IsPageTableValid (PageTable, PagingMode);
   if (TestStatus != UNIT_TEST_PASSED) {
@@ -134,7 +155,8 @@ TestCaseWhichNoNeedExtraSize (
   // We assume the fucntion doesn't need to change page table, return success and output BufferSize is 0
   //
   Buffer = NULL;
-  Status = PageTableMap (&PageTable, PagingMode, Buffer, &PageTableBufferSize, 0, (UINT64)SIZE_4KB, &MapAttribute, &MapMask);
+  Status = PageTableMap (&PageTable, PagingMode, Buffer, &PageTableBufferSize,
+             0, (UINT64)SIZE_4KB, &MapAttribute, &MapMask);
   UT_ASSERT_EQUAL (PageTableBufferSize, 0);
   UT_ASSERT_EQUAL (Status, RETURN_SUCCESS);
   TestStatus = IsPageTableValid (PageTable, PagingMode);
@@ -148,7 +170,9 @@ TestCaseWhichNoNeedExtraSize (
   //
   MapMask.Bits.Nx     = 0;
   PageTableBufferSize = 0;
-  Status              = PageTableMap (&PageTable, PagingMode, NULL, &PageTableBufferSize, 0, (UINT64)SIZE_4KB, &MapAttribute, &MapMask);
+  Status              = PageTableMap (&PageTable, PagingMode, NULL,
+                          &PageTableBufferSize, 0, (UINT64)SIZE_4KB,
+                          &MapAttribute, &MapMask);
   UT_ASSERT_EQUAL (Status, RETURN_SUCCESS);
   UT_ASSERT_EQUAL (PageTableBufferSize, 0);
   TestStatus = IsPageTableValid (PageTable, PagingMode);
@@ -164,7 +188,10 @@ TestCaseWhichNoNeedExtraSize (
   MapAttribute.Bits.Accessed = 1;
   MapMask.Bits.Accessed      = 1;
   PageTableBufferSize        = 0;
-  Status                     = PageTableMap (&PageTable, PagingMode, NULL, &PageTableBufferSize, (UINT64)SIZE_2MB, (UINT64)SIZE_2MB, &MapAttribute, &MapMask);
+  Status                     = PageTableMap (&PageTable, PagingMode, NULL,
+                                 &PageTableBufferSize, (UINT64)SIZE_2MB,
+                                 (UINT64)SIZE_2MB, &MapAttribute,
+                                 &MapMask);
   UT_ASSERT_EQUAL (Status, RETURN_SUCCESS);
   UT_ASSERT_EQUAL (PageTableBufferSize, 0);
   TestStatus = IsPageTableValid (PageTable, PagingMode);
@@ -217,10 +244,13 @@ TestCase1Gmapto4K (
   MapAttribute.Bits.Present = 1;
   MapMask.Bits.Present      = 1;
   MapMask.Uint64            = MAX_UINT64;
-  Status                    = PageTableMap (&PageTable, PagingMode, Buffer, &PageTableBufferSize, (UINT64)0, (UINT64)SIZE_1GB, &MapAttribute, &MapMask);
+  Status                    = PageTableMap (&PageTable, PagingMode, Buffer,
+                                &PageTableBufferSize, (UINT64)0,
+                                (UINT64)SIZE_1GB, &MapAttribute, &MapMask);
   UT_ASSERT_EQUAL (Status, RETURN_BUFFER_TOO_SMALL);
   Buffer = AllocatePages (EFI_SIZE_TO_PAGES (PageTableBufferSize));
-  Status = PageTableMap (&PageTable, PagingMode, Buffer, &PageTableBufferSize, (UINT64)0, (UINT64)SIZE_1GB, &MapAttribute, &MapMask);
+  Status = PageTableMap (&PageTable, PagingMode, Buffer, &PageTableBufferSize,
+             (UINT64)0, (UINT64)SIZE_1GB, &MapAttribute, &MapMask);
   UT_ASSERT_EQUAL (Status, RETURN_SUCCESS);
 
   //
@@ -281,11 +311,14 @@ TestCaseManualChangeReadWrite (
   //
   // Create Page table to cover [0,2G], with ReadWrite = 1
   //
-  Status = PageTableMap (&PageTable, PagingMode, Buffer, &PageTableBufferSize, 0, SIZE_2GB, &MapAttribute, &MapMask);
+  Status = PageTableMap (&PageTable, PagingMode, Buffer, &PageTableBufferSize,
+             0, SIZE_2GB, &MapAttribute, &MapMask);
   UT_ASSERT_EQUAL (Status, RETURN_BUFFER_TOO_SMALL);
   BackupPageTableBufferSize = PageTableBufferSize;
-  Buffer                    = AllocatePages (EFI_SIZE_TO_PAGES (PageTableBufferSize));
-  Status                    = PageTableMap (&PageTable, PagingMode, Buffer, &PageTableBufferSize, 0, SIZE_2GB, &MapAttribute, &MapMask);
+  Buffer                    = AllocatePages (EFI_SIZE_TO_PAGES (
+                                               PageTableBufferSize));
+  Status = PageTableMap (&PageTable, PagingMode, Buffer,
+             &PageTableBufferSize, 0, SIZE_2GB, &MapAttribute, &MapMask);
   UT_ASSERT_EQUAL (Status, RETURN_SUCCESS);
   IsPageTableValid (PageTable, PagingMode);
 
@@ -331,7 +364,9 @@ TestCaseManualChangeReadWrite (
   // Call library to change ReadWrite to 0 for [0,2M]
   //
   MapAttribute.Bits.ReadWrite = 0;
-  Status                      = PageTableMap (&PageTable, PagingMode, NULL, &PageTableBufferSize, 0, SIZE_2MB, &MapAttribute, &MapMask);
+  Status                      = PageTableMap (&PageTable, PagingMode, NULL,
+                                  &PageTableBufferSize, 0, SIZE_2MB,
+                                  &MapAttribute, &MapMask);
   UT_ASSERT_EQUAL (Status, RETURN_SUCCESS);
   IsPageTableValid (PageTable, PagingMode);
   MapCount = 0;
@@ -360,7 +395,9 @@ TestCaseManualChangeReadWrite (
   //
   MapAttribute.Bits.ReadWrite = 1;
   PageTableBufferSize         = 0;
-  Status                      = PageTableMap (&PageTable, PagingMode, NULL, &PageTableBufferSize, 0, SIZE_2MB, &MapAttribute, &MapMask);
+  Status                      = PageTableMap (&PageTable, PagingMode, NULL,
+                                  &PageTableBufferSize, 0, SIZE_2MB,
+                                  &MapAttribute, &MapMask);
   UT_ASSERT_EQUAL (Status, RETURN_SUCCESS);
   IsPageTableValid (PageTable, PagingMode);
   MapCount = 0;
@@ -434,10 +471,12 @@ TestCaseManualSizeNotMatch (
   //
   // Create Page table to cover [2M-4K, 4M], with ReadWrite = 1
   //
-  Status = PageTableMap (&PageTable, PagingMode, Buffer, &PageTableBufferSize, SIZE_2MB - SIZE_4KB, SIZE_4KB + SIZE_2MB, &MapAttribute, &MapMask);
+  Status = PageTableMap (&PageTable, PagingMode, Buffer, &PageTableBufferSize,
+             SIZE_2MB - SIZE_4KB, SIZE_4KB + SIZE_2MB, &MapAttribute, &MapMask);
   UT_ASSERT_EQUAL (Status, RETURN_BUFFER_TOO_SMALL);
   Buffer = AllocatePages (EFI_SIZE_TO_PAGES (PageTableBufferSize));
-  Status = PageTableMap (&PageTable, PagingMode, Buffer, &PageTableBufferSize, SIZE_2MB - SIZE_4KB, SIZE_4KB + SIZE_2MB, &MapAttribute, &MapMask);
+  Status = PageTableMap (&PageTable, PagingMode, Buffer, &PageTableBufferSize,
+             SIZE_2MB - SIZE_4KB, SIZE_4KB + SIZE_2MB, &MapAttribute, &MapMask);
   UT_ASSERT_EQUAL (Status, RETURN_SUCCESS);
   IsPageTableValid (PageTable, PagingMode);
 
@@ -460,9 +499,13 @@ TestCaseManualSizeNotMatch (
   // [2M-4K,2M], R/W = 0
   // [2M   ,4M], R/W = 1
   //
-  PagingEntry         = (IA32_PAGING_ENTRY *)(UINTN)PageTable;                                           // Get 4 level entry
-  PagingEntry         = (IA32_PAGING_ENTRY *)(UINTN)(PagingEntry->Pnle.Bits.PageTableBaseAddress << 12); // Get 3 level entry
-  PagingEntry         = (IA32_PAGING_ENTRY *)(UINTN)(PagingEntry->Pnle.Bits.PageTableBaseAddress << 12); // Get 2 level entry
+  PagingEntry = (IA32_PAGING_ENTRY *)(UINTN)PageTable;                                                   // Get 4 level entry
+  PagingEntry =
+    (IA32_PAGING_ENTRY *)(UINTN)(PagingEntry->Pnle.Bits.PageTableBaseAddress <<
+                                 12);                                                                    // Get 3 level entry
+  PagingEntry =
+    (IA32_PAGING_ENTRY *)(UINTN)(PagingEntry->Pnle.Bits.PageTableBaseAddress <<
+                                 12);                                                                    // Get 2 level entry
   PagingEntry->Uint64 = PagingEntry->Uint64 & (~(UINT64)0x2);
   MapCount            = 0;
   Status              = PageTableParse (PageTable, PagingMode, NULL, &MapCount);
@@ -493,7 +536,10 @@ TestCaseManualSizeNotMatch (
   MapAttribute.Bits.ReadWrite            = 1;
   PageTableBufferSize                    = 0;
   MapAttribute.Bits.PageTableBaseAddress = (SIZE_2MB - SIZE_4KB) >> 12;
-  Status                                 = PageTableMap (&PageTable, PagingMode, Buffer, &PageTableBufferSize, SIZE_2MB - SIZE_4KB, SIZE_4KB * 2, &MapAttribute, &MapMask);
+  Status                                 = PageTableMap (&PageTable, PagingMode,
+                                             Buffer, &PageTableBufferSize,
+                                             SIZE_2MB - SIZE_4KB, SIZE_4KB * 2,
+                                             &MapAttribute, &MapMask);
   UT_ASSERT_EQUAL (Status, RETURN_SUCCESS);
   return UNIT_TEST_PASSED;
 }
@@ -540,10 +586,12 @@ TestCaseManualNotMergeEntry (
   //
   // Create Page table to cover [0,4M], and [4M, 1G] is not present
   //
-  Status = PageTableMap (&PageTable, PagingMode, Buffer, &PageTableBufferSize, (UINT64)0, (UINT64)SIZE_2MB * 2, &MapAttribute, &MapMask);
+  Status = PageTableMap (&PageTable, PagingMode, Buffer, &PageTableBufferSize,
+             (UINT64)0, (UINT64)SIZE_2MB * 2, &MapAttribute, &MapMask);
   UT_ASSERT_EQUAL (Status, RETURN_BUFFER_TOO_SMALL);
   Buffer = AllocatePages (EFI_SIZE_TO_PAGES (PageTableBufferSize));
-  Status = PageTableMap (&PageTable, PagingMode, Buffer, &PageTableBufferSize, (UINT64)0, (UINT64)SIZE_2MB * 2, &MapAttribute, &MapMask);
+  Status = PageTableMap (&PageTable, PagingMode, Buffer, &PageTableBufferSize,
+             (UINT64)0, (UINT64)SIZE_2MB * 2, &MapAttribute, &MapMask);
   UT_ASSERT_EQUAL (Status, RETURN_SUCCESS);
   TestStatus = IsPageTableValid (PageTable, PagingMode);
   if (TestStatus != UNIT_TEST_PASSED) {
@@ -555,7 +603,9 @@ TestCaseManualNotMergeEntry (
   // It looks like the chioce is not bad, but sometime, we need to keep some small entry
   //
   PageTableBufferSize = 0;
-  Status              = PageTableMap (&PageTable, PagingMode, NULL, &PageTableBufferSize, (UINT64)0, (UINT64)SIZE_1GB, &MapAttribute, &MapMask);
+  Status              = PageTableMap (&PageTable, PagingMode, NULL,
+                          &PageTableBufferSize, (UINT64)0, (UINT64)SIZE_1GB,
+                          &MapAttribute, &MapMask);
   UT_ASSERT_EQUAL (Status, RETURN_SUCCESS);
   TestStatus = IsPageTableValid (PageTable, PagingMode);
   if (TestStatus != UNIT_TEST_PASSED) {
@@ -564,7 +614,9 @@ TestCaseManualNotMergeEntry (
 
   MapAttribute.Bits.Accessed = 1;
   PageTableBufferSize        = 0;
-  Status                     = PageTableMap (&PageTable, PagingMode, NULL, &PageTableBufferSize, (UINT64)0, (UINT64)SIZE_2MB, &MapAttribute, &MapMask);
+  Status                     = PageTableMap (&PageTable, PagingMode, NULL,
+                                 &PageTableBufferSize, (UINT64)0,
+                                 (UINT64)SIZE_2MB, &MapAttribute, &MapMask);
   //
   // If it didn't use a big 1G entry to cover whole range, only change [0,2M] for some attribute won't need extra memory
   //
@@ -619,10 +671,12 @@ TestCaseManualChangeNx (
   //
   // Create Page table to cover [0,2G], with Nx = 0
   //
-  Status = PageTableMap (&PageTable, PagingMode, Buffer, &PageTableBufferSize, (UINT64)0, (UINT64)SIZE_1GB * 2, &MapAttribute, &MapMask);
+  Status = PageTableMap (&PageTable, PagingMode, Buffer, &PageTableBufferSize,
+             (UINT64)0, (UINT64)SIZE_1GB * 2, &MapAttribute, &MapMask);
   UT_ASSERT_EQUAL (Status, RETURN_BUFFER_TOO_SMALL);
   Buffer = AllocatePages (EFI_SIZE_TO_PAGES (PageTableBufferSize));
-  Status = PageTableMap (&PageTable, PagingMode, Buffer, &PageTableBufferSize, (UINT64)0, (UINT64)SIZE_1GB * 2, &MapAttribute, &MapMask);
+  Status = PageTableMap (&PageTable, PagingMode, Buffer, &PageTableBufferSize,
+             (UINT64)0, (UINT64)SIZE_1GB * 2, &MapAttribute, &MapMask);
   UT_ASSERT_EQUAL (Status, RETURN_SUCCESS);
   TestStatus = IsPageTableValid (PageTable, PagingMode);
   if (TestStatus != UNIT_TEST_PASSED) {
@@ -637,7 +691,8 @@ TestCaseManualChangeNx (
     return TestStatus;
   }
 
-  Map    = AllocatePages (EFI_SIZE_TO_PAGES (MapCount* sizeof (IA32_MAP_ENTRY)));
+  Map = AllocatePages (EFI_SIZE_TO_PAGES (MapCount*
+                         sizeof (IA32_MAP_ENTRY)));
   Status = PageTableParse (PageTable, PagingMode, Map, &MapCount);
   UT_ASSERT_EQUAL (Status, RETURN_SUCCESS);
   UT_ASSERT_EQUAL (MapCount, 1);
@@ -654,7 +709,8 @@ TestCaseManualChangeNx (
   MapCount            = 0;
   Status              = PageTableParse (PageTable, PagingMode, NULL, &MapCount);
   UT_ASSERT_EQUAL (Status, RETURN_BUFFER_TOO_SMALL);
-  Map    = AllocatePages (EFI_SIZE_TO_PAGES (MapCount* sizeof (IA32_MAP_ENTRY)));
+  Map = AllocatePages (EFI_SIZE_TO_PAGES (MapCount*
+                         sizeof (IA32_MAP_ENTRY)));
   Status = PageTableParse (PageTable, PagingMode, Map, &MapCount);
   UT_ASSERT_EQUAL (Status, RETURN_SUCCESS);
   UT_ASSERT_EQUAL (MapCount, 1);
@@ -666,7 +722,8 @@ TestCaseManualChangeNx (
   //
   // Call library to change Nx to 0 for [0,1G]
   //
-  Status = PageTableMap (&PageTable, PagingMode, NULL, &PageTableBufferSize, (UINT64)0, (UINT64)SIZE_1GB, &MapAttribute, &MapMask);
+  Status = PageTableMap (&PageTable, PagingMode, NULL, &PageTableBufferSize,
+             (UINT64)0, (UINT64)SIZE_1GB, &MapAttribute, &MapMask);
   UT_ASSERT_EQUAL (Status, RETURN_SUCCESS);
   TestStatus = IsPageTableValid (PageTable, PagingMode);
   if (TestStatus != UNIT_TEST_PASSED) {
@@ -676,7 +733,8 @@ TestCaseManualChangeNx (
   MapCount = 0;
   Status   = PageTableParse (PageTable, PagingMode, NULL, &MapCount);
   UT_ASSERT_EQUAL (Status, RETURN_BUFFER_TOO_SMALL);
-  Map    = AllocatePages (EFI_SIZE_TO_PAGES (MapCount* sizeof (IA32_MAP_ENTRY)));
+  Map = AllocatePages (EFI_SIZE_TO_PAGES (MapCount*
+                         sizeof (IA32_MAP_ENTRY)));
   Status = PageTableParse (PageTable, PagingMode, Map, &MapCount);
   UT_ASSERT_EQUAL (Status, RETURN_SUCCESS);
 
@@ -723,44 +781,69 @@ UefiTestMain (
   //
   // Start setting up the test framework for running the tests.
   //
-  Status = InitUnitTestFramework (&Framework, UNIT_TEST_APP_NAME, gEfiCallerBaseName, UNIT_TEST_APP_VERSION);
+  Status = InitUnitTestFramework (&Framework, UNIT_TEST_APP_NAME,
+             gEfiCallerBaseName, UNIT_TEST_APP_VERSION);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in InitUnitTestFramework. Status = %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "Failed in InitUnitTestFramework. Status = %r\n",
+      Status));
     goto EXIT;
   }
 
   //
   // Populate the Manual Test Cases.
   //
-  Status = CreateUnitTestSuite (&ManualTestCase, Framework, "Manual Test Cases", "CpuPageTableLib.Manual", NULL, NULL);
+  Status = CreateUnitTestSuite (&ManualTestCase, Framework, "Manual Test Cases",
+             "CpuPageTableLib.Manual", NULL, NULL);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in CreateUnitTestSuite for Manual Test Cases\n"));
+    DEBUG ((DEBUG_ERROR,
+      "Failed in CreateUnitTestSuite for Manual Test Cases\n"));
     Status = EFI_OUT_OF_RESOURCES;
     goto EXIT;
   }
 
-  AddTestCase (ManualTestCase, "Check if the input parameters are not supported.", "Manual Test Case1", TestCaseForParameter, NULL, NULL, NULL);
-  AddTestCase (ManualTestCase, "Check the case that modifying page table doesn't need extra buffer", "Manual Test Case2", TestCaseWhichNoNeedExtraSize, NULL, NULL, NULL);
-  AddTestCase (ManualTestCase, "Check the case to map [0, 1G] to [8K, 1G+8K]", "Manual Test Case3", TestCase1Gmapto4K, NULL, NULL, NULL);
-  AddTestCase (ManualTestCase, "Check won't merge entries", "Manual Test Case4", TestCaseManualNotMergeEntry, NULL, NULL, NULL);
-  AddTestCase (ManualTestCase, "Check if the parent entry has different ReadWrite attribute", "Manual Test Case5", TestCaseManualChangeReadWrite, NULL, NULL, NULL);
-  AddTestCase (ManualTestCase, "Check if the parent entry has different Nx attribute", "Manual Test Case6", TestCaseManualChangeNx, NULL, NULL, NULL);
-  AddTestCase (ManualTestCase, "Check if the needed size is expected", "Manual Test Case7", TestCaseManualSizeNotMatch, NULL, NULL, NULL);
+  AddTestCase (ManualTestCase,
+    "Check if the input parameters are not supported.", "Manual Test Case1",
+    TestCaseForParameter, NULL, NULL, NULL);
+  AddTestCase (ManualTestCase,
+    "Check the case that modifying page table doesn't need extra buffer",
+    "Manual Test Case2", TestCaseWhichNoNeedExtraSize, NULL, NULL, NULL);
+  AddTestCase (ManualTestCase, "Check the case to map [0, 1G] to [8K, 1G+8K]",
+    "Manual Test Case3", TestCase1Gmapto4K, NULL, NULL, NULL);
+  AddTestCase (ManualTestCase, "Check won't merge entries", "Manual Test Case4",
+    TestCaseManualNotMergeEntry, NULL, NULL, NULL);
+  AddTestCase (ManualTestCase,
+    "Check if the parent entry has different ReadWrite attribute",
+    "Manual Test Case5", TestCaseManualChangeReadWrite, NULL, NULL, NULL);
+  AddTestCase (ManualTestCase,
+    "Check if the parent entry has different Nx attribute", "Manual Test Case6",
+    TestCaseManualChangeNx, NULL, NULL, NULL);
+  AddTestCase (ManualTestCase, "Check if the needed size is expected",
+    "Manual Test Case7", TestCaseManualSizeNotMatch, NULL, NULL, NULL);
 
   //
   // Populate the Random Test Cases.
   //
-  Status = CreateUnitTestSuite (&RandomTestCase, Framework, "Random Test Cases", "CpuPageTableLib.Random", NULL, NULL);
+  Status = CreateUnitTestSuite (&RandomTestCase, Framework, "Random Test Cases",
+             "CpuPageTableLib.Random", NULL, NULL);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in CreateUnitTestSuite for Random Test Cases\n"));
+    DEBUG ((DEBUG_ERROR,
+      "Failed in CreateUnitTestSuite for Random Test Cases\n"));
     Status = EFI_OUT_OF_RESOURCES;
     goto EXIT;
   }
 
-  AddTestCase (RandomTestCase, "Random Test for Paging4Level", "Random Test Case1", TestCaseforRandomTest, NULL, NULL, &mTestContextPaging4Level);
-  AddTestCase (RandomTestCase, "Random Test for Paging4Level1G", "Random Test Case2", TestCaseforRandomTest, NULL, NULL, &mTestContextPaging4Level1GB);
-  AddTestCase (RandomTestCase, "Random Test for Paging5Level", "Random Test Case3", TestCaseforRandomTest, NULL, NULL, &mTestContextPaging5Level);
-  AddTestCase (RandomTestCase, "Random Test for Paging5Level1G", "Random Test Case4", TestCaseforRandomTest, NULL, NULL, &mTestContextPaging5Level1GB);
+  AddTestCase (RandomTestCase, "Random Test for Paging4Level",
+    "Random Test Case1", TestCaseforRandomTest, NULL, NULL,
+    &mTestContextPaging4Level);
+  AddTestCase (RandomTestCase, "Random Test for Paging4Level1G",
+    "Random Test Case2", TestCaseforRandomTest, NULL, NULL,
+    &mTestContextPaging4Level1GB);
+  AddTestCase (RandomTestCase, "Random Test for Paging5Level",
+    "Random Test Case3", TestCaseforRandomTest, NULL, NULL,
+    &mTestContextPaging5Level);
+  AddTestCase (RandomTestCase, "Random Test for Paging5Level1G",
+    "Random Test Case4", TestCaseforRandomTest, NULL, NULL,
+    &mTestContextPaging5Level1GB);
 
   //
   // Execute the tests.

@@ -59,7 +59,9 @@ typedef union {
   UINT64    Uint64;
 } IA32_PAGE_NON_LEAF_ENTRY;
 
-#define IA32_PNLE_PAGE_TABLE_BASE_ADDRESS(pa)  ((pa)->Uint64 & IA32_PE_BASE_ADDRESS_MASK_40)
+#define IA32_PNLE_PAGE_TABLE_BASE_ADDRESS( \
+                                         pa)  \
+  ((pa)->Uint64 & IA32_PE_BASE_ADDRESS_MASK_40)
 
 ///
 /// Format of a PML5 Entry (PML5E) that References a PML4 Table
@@ -106,7 +108,9 @@ typedef union {
   } Bits;
   UINT64    Uint64;
 } IA32_PAGE_LEAF_ENTRY_BIG_PAGESIZE;
-#define IA32_PLEB_PAGE_TABLE_BASE_ADDRESS(pa)  ((pa)->Uint64 & IA32_PE_BASE_ADDRESS_MASK_39)
+#define IA32_PLEB_PAGE_TABLE_BASE_ADDRESS( \
+                                         pa)  \
+  ((pa)->Uint64 & IA32_PE_BASE_ADDRESS_MASK_39)
 
 ///
 /// Format of a Page-Directory Entry that Maps a 2-MByte Page
@@ -142,7 +146,9 @@ typedef union {
   } Bits;
   UINT64    Uint64;
 } IA32_PTE_4K;
-#define IA32_PTE4K_PAGE_TABLE_BASE_ADDRESS(pa)  ((pa)->Uint64 & IA32_PE_BASE_ADDRESS_MASK_40)
+#define IA32_PTE4K_PAGE_TABLE_BASE_ADDRESS( \
+                                          pa)  \
+  ((pa)->Uint64 & IA32_PE_BASE_ADDRESS_MASK_40)
 
 ///
 /// Format of a Page-Directory-Pointer-Table Entry (PDPTE) that References a Page Directory (32bit PAE specific)

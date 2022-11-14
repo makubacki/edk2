@@ -562,10 +562,14 @@ CollectBistDataFromHob (
       // does not have BSP's APIC ID
       //
       BspCpuInstance.CpuLocation                       = GetApicId ();
-      BspCpuInstance.InfoRecord.IA32HealthFlags.Uint32 = SecPlatformInformation->IA32HealthFlags.Uint32;
-      CpuInstance                                      = &BspCpuInstance;
+      BspCpuInstance.InfoRecord.IA32HealthFlags.Uint32 =
+        SecPlatformInformation->IA32HealthFlags.Uint32;
+      CpuInstance = &BspCpuInstance;
     } else {
-      DEBUG ((DEBUG_INFO, "Does not find any HOB stored CPU BIST information!\n"));
+      DEBUG ((
+        DEBUG_INFO,
+        "Does not find any HOB stored CPU BIST information!\n"
+        ));
       //
       // Does not find any HOB stored BIST information
       //
@@ -573,10 +577,16 @@ CollectBistDataFromHob (
     }
   }
 
-  for (ProcessorNumber = 0; ProcessorNumber < mNumberOfProcessors; ProcessorNumber++) {
+  for (ProcessorNumber = 0; ProcessorNumber < mNumberOfProcessors;
+       ProcessorNumber++)
+  {
     MpInitLibGetProcessorInfo (ProcessorNumber, &ProcessorInfo, &BistData);
-    for (CpuInstanceNumber = 0; CpuInstanceNumber < NumberOfData; CpuInstanceNumber++) {
-      if (ProcessorInfo.ProcessorId == CpuInstance[CpuInstanceNumber].CpuLocation) {
+    for (CpuInstanceNumber = 0; CpuInstanceNumber < NumberOfData;
+         CpuInstanceNumber++)
+    {
+      if (ProcessorInfo.ProcessorId ==
+          CpuInstance[CpuInstanceNumber].CpuLocation)
+      {
         //
         // Update CPU health status for MP Services Protocol according to BIST data.
         //
@@ -630,8 +640,13 @@ InitializeExceptionStackSwitchHandlers (
   // This may be called twice for each Cpu. Only run InitializeSeparateExceptionStacks
   // if this is the first call or the first call failed because of size too small.
   //
-  if ((SwitchStackData[Index].Status == EFI_NOT_STARTED) || (SwitchStackData[Index].Status == EFI_BUFFER_TOO_SMALL)) {
-    SwitchStackData[Index].Status = InitializeSeparateExceptionStacks (SwitchStackData[Index].Buffer, &SwitchStackData[Index].BufferSize);
+  if ((SwitchStackData[Index].Status == EFI_NOT_STARTED) ||
+      (SwitchStackData[Index].Status == EFI_BUFFER_TOO_SMALL))
+  {
+    SwitchStackData[Index].Status = InitializeSeparateExceptionStacks (
+                                      SwitchStackData[Index].Buffer,
+                                      &SwitchStackData[Index].BufferSize
+                                      );
   }
 }
 
@@ -653,7 +668,10 @@ InitializeMpExceptionStackSwitchHandlers (
   EFI_STATUS                      Status;
   UINT8                           *Buffer;
 
-  SwitchStackData = AllocateZeroPool (mNumberOfProcessors * sizeof (EXCEPTION_STACK_SWITCH_CONTEXT));
+  SwitchStackData = AllocateZeroPool (
+                      mNumberOfProcessors *
+                      sizeof (EXCEPTION_STACK_SWITCH_CONTEXT)
+                      );
   ASSERT (SwitchStackData != NULL);
   for (Index = 0; Index < mNumberOfProcessors; ++Index) {
     //
@@ -728,7 +746,10 @@ InitializeMpExceptionHandlers (
   //
   if (HEAP_GUARD_NONSTOP_MODE || NULL_DETECTION_NONSTOP_MODE) {
     RegisterCpuInterruptHandler (EXCEPT_IA32_DEBUG, DebugExceptionHandler);
-    RegisterCpuInterruptHandler (EXCEPT_IA32_PAGE_FAULT, PageFaultExceptionHandler);
+    RegisterCpuInterruptHandler (
+      EXCEPT_IA32_PAGE_FAULT,
+      PageFaultExceptionHandler
+      );
   }
 
   //
@@ -758,7 +779,10 @@ InitializeMpSupport (
   Status = MpInitLibInitialize ();
   ASSERT_EFI_ERROR (Status);
 
-  MpInitLibGetNumberOfProcessors (&NumberOfProcessors, &NumberOfEnabledProcessors);
+  MpInitLibGetNumberOfProcessors (
+    &NumberOfProcessors,
+    &NumberOfEnabledProcessors
+    );
   mNumberOfProcessors = NumberOfProcessors;
   DEBUG ((DEBUG_INFO, "Detect CPU count: %d\n", mNumberOfProcessors));
 

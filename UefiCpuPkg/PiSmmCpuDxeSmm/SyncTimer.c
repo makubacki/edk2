@@ -33,7 +33,12 @@ InitializeSmmTimer (
 
   TimerFrequency = GetPerformanceCounterProperties (&Start, &End);
   mTimeoutTicker = DivU64x32 (
-                     MultU64x64 (TimerFrequency, PcdGet64 (PcdCpuSmmApSyncTimeout)),
+                     MultU64x64 (
+                       TimerFrequency,
+                       PcdGet64 (
+                         PcdCpuSmmApSyncTimeout
+                         )
+                       ),
                      1000 * 1000
                      );
   if (End < Start) {

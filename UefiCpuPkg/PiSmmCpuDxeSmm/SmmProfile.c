@@ -126,7 +126,11 @@ DisableBTS (
   VOID
   )
 {
-  AsmMsrAnd64 (MSR_DEBUG_CTL, ~((UINT64)(MSR_DEBUG_CTL_BTS | MSR_DEBUG_CTL_TR)));
+  AsmMsrAnd64 (
+    MSR_DEBUG_CTL,
+    ~((UINT64)(MSR_DEBUG_CTL_BTS |
+               MSR_DEBUG_CTL_TR))
+    );
 }
 
 /**
@@ -190,7 +194,10 @@ GetSourceFromDestinationOnBts (
       //
       // Underflow
       //
-      CurrentBTSRecord = (BRANCH_TRACE_RECORD *)((UINTN)mMsrDsArea[CpuIndex]->BTSAbsoluteMaximum - 1);
+      CurrentBTSRecord =
+        (BRANCH_TRACE_RECORD *)((UINTN)mMsrDsArea[CpuIndex]->BTSAbsoluteMaximum
+                                -
+                                1);
       CurrentBTSRecord--;
     }
 
@@ -248,7 +255,8 @@ DebugExceptionHandler (
   // Clear last PF entries
   //
   for (PFEntry = 0; PFEntry < mPFEntryCount[CpuIndex]; PFEntry++) {
-    *mLastPFEntryPointer[CpuIndex][PFEntry] = mLastPFEntryValue[CpuIndex][PFEntry];
+    *mLastPFEntryPointer[CpuIndex][PFEntry] =
+      mLastPFEntryValue[CpuIndex][PFEntry];
   }
 
   //
@@ -282,13 +290,17 @@ IsInSmmRanges (
 {
   UINTN  Index;
 
-  if ((Address >= mCpuHotPlugData.SmrrBase) && (Address < mCpuHotPlugData.SmrrBase + mCpuHotPlugData.SmrrSize)) {
+  if ((Address >= mCpuHotPlugData.SmrrBase) && (Address <
+                                                mCpuHotPlugData.SmrrBase +
+                                                mCpuHotPlugData.SmrrSize))
+  {
     return TRUE;
   }
 
   for (Index = 0; Index < mSmmCpuSmramRangeCount; Index++) {
     if ((Address >= mSmmCpuSmramRanges[Index].CpuStart) &&
-        (Address < mSmmCpuSmramRanges[Index].CpuStart + mSmmCpuSmramRanges[Index].PhysicalSize))
+        (Address < mSmmCpuSmramRanges[Index].CpuStart +
+         mSmmCpuSmramRanges[Index].PhysicalSize))
     {
       return TRUE;
     }
@@ -317,7 +329,11 @@ IsAddressValid (
     // Check configuration
     //
     for (Index = 0; Index < mProtectionMemRangeCount; Index++) {
-      if ((Address >= mProtectionMemRange[Index].Range.Base) && (Address < mProtectionMemRange[Index].Range.Top)) {
+      if ((Address >= mProtectionMemRange[Index].Range.Base) && (Address <
+                                                                 mProtectionMemRange
+                                                                 [Index].Range.
+                                                                   Top))
+      {
         *Nx = mProtectionMemRange[Index].Nx;
         return mProtectionMemRange[Index].Present;
       }
@@ -353,7 +369,9 @@ IsAddressSplit (
     // Check configuration
     //
     for (Index = 0; Index < mSplitMemRangeCount; Index++) {
-      if ((Address >= mSplitMemRange[Index].Base) && (Address < mSplitMemRange[Index].Top)) {
+      if ((Address >= mSplitMemRange[Index].Base) && (Address <
+                                                      mSplitMemRange[Index].Top))
+      {
         return TRUE;
       }
     }
@@ -362,8 +380,12 @@ IsAddressSplit (
       if ((mCpuHotPlugData.SmrrBase - Address) < BASE_2MB) {
         return TRUE;
       }
-    } else if (Address > (mCpuHotPlugData.SmrrBase + mCpuHotPlugData.SmrrSize - BASE_2MB)) {
-      if ((Address - (mCpuHotPlugData.SmrrBase + mCpuHotPlugData.SmrrSize - BASE_2MB)) < BASE_2MB) {
+    } else if (Address > (mCpuHotPlugData.SmrrBase + mCpuHotPlugData.SmrrSize -
+                          BASE_2MB))
+    {
+      if ((Address - (mCpuHotPlugData.SmrrBase + mCpuHotPlugData.SmrrSize -
+                      BASE_2MB)) < BASE_2MB)
+      {
         return TRUE;
       }
     }
@@ -417,30 +439,43 @@ InitProtectedMemRange (
   }
 
   if (NumberOfAddedDescriptors != 0) {
-    TotalSize           = NumberOfAddedDescriptors * sizeof (MEMORY_PROTECTION_RANGE) + sizeof (mProtectionMemRangeTemplate);
-    mProtectionMemRange = (MEMORY_PROTECTION_RANGE *)AllocateZeroPool (TotalSize);
+    TotalSize = NumberOfAddedDescriptors *
+                sizeof (MEMORY_PROTECTION_RANGE) +
+                sizeof (mProtectionMemRangeTemplate);
+    mProtectionMemRange = (MEMORY_PROTECTION_RANGE *)AllocateZeroPool (
+                                                       TotalSize
+                                                       );
     ASSERT (mProtectionMemRange != NULL);
     mProtectionMemRangeCount = TotalSize / sizeof (MEMORY_PROTECTION_RANGE);
 
     //
     // Copy existing ranges.
     //
-    CopyMem (mProtectionMemRange, mProtectionMemRangeTemplate, sizeof (mProtectionMemRangeTemplate));
+    CopyMem (
+      mProtectionMemRange,
+      mProtectionMemRangeTemplate,
+      sizeof (mProtectionMemRangeTemplate)
+      );
 
     //
     // Create split ranges which come from protected ranges.
     //
-    TotalSize      = (TotalSize / sizeof (MEMORY_PROTECTION_RANGE)) * sizeof (MEMORY_RANGE);
+    TotalSize = (TotalSize / sizeof (MEMORY_PROTECTION_RANGE)) *
+                sizeof (MEMORY_RANGE);
     mSplitMemRange = (MEMORY_RANGE *)AllocateZeroPool (TotalSize);
     ASSERT (mSplitMemRange != NULL);
 
     //
     // Create SMM ranges which are set to present and execution-enable.
     //
-    NumberOfProtectRange = sizeof (mProtectionMemRangeTemplate) / sizeof (MEMORY_PROTECTION_RANGE);
+    NumberOfProtectRange = sizeof (mProtectionMemRangeTemplate) /
+                           sizeof (MEMORY_PROTECTION_RANGE);
     for (Index = 0; Index < mSmmCpuSmramRangeCount; Index++) {
-      if ((mSmmCpuSmramRanges[Index].CpuStart >= mProtectionMemRange[0].Range.Base) &&
-          (mSmmCpuSmramRanges[Index].CpuStart + mSmmCpuSmramRanges[Index].PhysicalSize < mProtectionMemRange[0].Range.Top))
+      if ((mSmmCpuSmramRanges[Index].CpuStart >=
+           mProtectionMemRange[0].Range.Base) &&
+          (mSmmCpuSmramRanges[Index].CpuStart +
+           mSmmCpuSmramRanges[Index].PhysicalSize <
+           mProtectionMemRange[0].Range.Top))
       {
         //
         // If the address have been already covered by mCpuHotPlugData.SmrrBase/mCpuHotPlugData.SmrrSiz
@@ -448,10 +483,13 @@ InitProtectedMemRange (
         break;
       }
 
-      mProtectionMemRange[NumberOfProtectRange].Range.Base = mSmmCpuSmramRanges[Index].CpuStart;
-      mProtectionMemRange[NumberOfProtectRange].Range.Top  = mSmmCpuSmramRanges[Index].CpuStart + mSmmCpuSmramRanges[Index].PhysicalSize;
-      mProtectionMemRange[NumberOfProtectRange].Present    = TRUE;
-      mProtectionMemRange[NumberOfProtectRange].Nx         = FALSE;
+      mProtectionMemRange[NumberOfProtectRange].Range.Base =
+        mSmmCpuSmramRanges[Index].CpuStart;
+      mProtectionMemRange[NumberOfProtectRange].Range.Top =
+        mSmmCpuSmramRanges[Index].CpuStart +
+        mSmmCpuSmramRanges[Index].PhysicalSize;
+      mProtectionMemRange[NumberOfProtectRange].Present = TRUE;
+      mProtectionMemRange[NumberOfProtectRange].Nx      = FALSE;
       NumberOfProtectRange++;
     }
 
@@ -459,14 +497,18 @@ InitProtectedMemRange (
     // Create MMIO ranges which are set to present and execution-disable.
     //
     for (Index = 0; Index < NumberOfDescriptors; Index++) {
-      if (MemorySpaceMap[Index].GcdMemoryType != EfiGcdMemoryTypeMemoryMappedIo) {
+      if (MemorySpaceMap[Index].GcdMemoryType !=
+          EfiGcdMemoryTypeMemoryMappedIo)
+      {
         continue;
       }
 
-      mProtectionMemRange[NumberOfProtectRange].Range.Base = MemorySpaceMap[Index].BaseAddress;
-      mProtectionMemRange[NumberOfProtectRange].Range.Top  = MemorySpaceMap[Index].BaseAddress + MemorySpaceMap[Index].Length;
-      mProtectionMemRange[NumberOfProtectRange].Present    = TRUE;
-      mProtectionMemRange[NumberOfProtectRange].Nx         = TRUE;
+      mProtectionMemRange[NumberOfProtectRange].Range.Base =
+        MemorySpaceMap[Index].BaseAddress;
+      mProtectionMemRange[NumberOfProtectRange].Range.Top =
+        MemorySpaceMap[Index].BaseAddress + MemorySpaceMap[Index].Length;
+      mProtectionMemRange[NumberOfProtectRange].Present = TRUE;
+      mProtectionMemRange[NumberOfProtectRange].Nx      = TRUE;
       NumberOfProtectRange++;
     }
 
@@ -488,27 +530,37 @@ InitProtectedMemRange (
     //
     ProtectBaseAddress = mProtectionMemRange[Index].Range.Base;
     ProtectEndAddress  = mProtectionMemRange[Index].Range.Top;
-    if (((ProtectBaseAddress & (SIZE_2MB - 1)) != 0) || ((ProtectEndAddress  & (SIZE_2MB - 1)) != 0)) {
+    if (((ProtectBaseAddress & (SIZE_2MB - 1)) != 0) || ((ProtectEndAddress  &
+                                                          (SIZE_2MB - 1)) != 0))
+    {
       //
       // Check if it is possible to create 4KB-page for not 2MB-aligned range and to create 2MB-page for 2MB-aligned range.
       // A mix of 4KB and 2MB page could save SMRAM space.
       //
       Top2MBAlignedAddress  = ProtectEndAddress & ~(SIZE_2MB - 1);
-      Base2MBAlignedAddress = (ProtectBaseAddress + SIZE_2MB - 1) & ~(SIZE_2MB - 1);
+      Base2MBAlignedAddress = (ProtectBaseAddress + SIZE_2MB - 1) & ~(SIZE_2MB -
+                                                                      1);
       if ((Top2MBAlignedAddress > Base2MBAlignedAddress) &&
           ((Top2MBAlignedAddress - Base2MBAlignedAddress) >= SIZE_2MB))
       {
         //
         // There is an range which could be mapped by 2MB-page.
         //
-        High4KBPageSize = ((ProtectEndAddress + SIZE_2MB - 1) & ~(SIZE_2MB - 1)) - (ProtectEndAddress & ~(SIZE_2MB - 1));
-        Low4KBPageSize  = ((ProtectBaseAddress + SIZE_2MB - 1) & ~(SIZE_2MB - 1)) - (ProtectBaseAddress & ~(SIZE_2MB - 1));
+        High4KBPageSize = ((ProtectEndAddress + SIZE_2MB - 1) & ~(SIZE_2MB -
+                                                                  1)) -
+                          (ProtectEndAddress & ~(SIZE_2MB - 1));
+        Low4KBPageSize = ((ProtectBaseAddress + SIZE_2MB - 1) & ~(SIZE_2MB -
+                                                                  1)) -
+                         (ProtectBaseAddress & ~(SIZE_2MB - 1));
         if (High4KBPageSize != 0) {
           //
           // Add not 2MB-aligned range to be mapped by 4KB-page.
           //
-          mSplitMemRange[NumberOfSpliteRange].Base = ProtectEndAddress & ~(SIZE_2MB - 1);
-          mSplitMemRange[NumberOfSpliteRange].Top  = (ProtectEndAddress + SIZE_2MB - 1) & ~(SIZE_2MB - 1);
+          mSplitMemRange[NumberOfSpliteRange].Base = ProtectEndAddress &
+                                                     ~(SIZE_2MB - 1);
+          mSplitMemRange[NumberOfSpliteRange].Top = (ProtectEndAddress +
+                                                     SIZE_2MB - 1) &
+                                                    ~(SIZE_2MB - 1);
           NumberOfSpliteRange++;
         }
 
@@ -516,16 +568,22 @@ InitProtectedMemRange (
           //
           // Add not 2MB-aligned range to be mapped by 4KB-page.
           //
-          mSplitMemRange[NumberOfSpliteRange].Base = ProtectBaseAddress & ~(SIZE_2MB - 1);
-          mSplitMemRange[NumberOfSpliteRange].Top  = (ProtectBaseAddress + SIZE_2MB - 1) & ~(SIZE_2MB - 1);
+          mSplitMemRange[NumberOfSpliteRange].Base = ProtectBaseAddress &
+                                                     ~(SIZE_2MB - 1);
+          mSplitMemRange[NumberOfSpliteRange].Top = (ProtectBaseAddress +
+                                                     SIZE_2MB - 1) &
+                                                    ~(SIZE_2MB - 1);
           NumberOfSpliteRange++;
         }
       } else {
         //
         // The range could only be mapped by 4KB-page.
         //
-        mSplitMemRange[NumberOfSpliteRange].Base = ProtectBaseAddress & ~(SIZE_2MB - 1);
-        mSplitMemRange[NumberOfSpliteRange].Top  = (ProtectEndAddress + SIZE_2MB - 1) & ~(SIZE_2MB - 1);
+        mSplitMemRange[NumberOfSpliteRange].Base = ProtectBaseAddress &
+                                                   ~(SIZE_2MB - 1);
+        mSplitMemRange[NumberOfSpliteRange].Top = (ProtectEndAddress +
+                                                   SIZE_2MB - 1) & ~(SIZE_2MB -
+                                                                     1);
         NumberOfSpliteRange++;
       }
     }
@@ -535,13 +593,33 @@ InitProtectedMemRange (
 
   DEBUG ((DEBUG_INFO, "SMM Profile Memory Ranges:\n"));
   for (Index = 0; Index < mProtectionMemRangeCount; Index++) {
-    DEBUG ((DEBUG_INFO, "mProtectionMemRange[%d].Base = %lx\n", Index, mProtectionMemRange[Index].Range.Base));
-    DEBUG ((DEBUG_INFO, "mProtectionMemRange[%d].Top  = %lx\n", Index, mProtectionMemRange[Index].Range.Top));
+    DEBUG ((
+      DEBUG_INFO,
+      "mProtectionMemRange[%d].Base = %lx\n",
+      Index,
+      mProtectionMemRange[Index].Range.Base
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "mProtectionMemRange[%d].Top  = %lx\n",
+      Index,
+      mProtectionMemRange[Index].Range.Top
+      ));
   }
 
   for (Index = 0; Index < mSplitMemRangeCount; Index++) {
-    DEBUG ((DEBUG_INFO, "mSplitMemRange[%d].Base = %lx\n", Index, mSplitMemRange[Index].Base));
-    DEBUG ((DEBUG_INFO, "mSplitMemRange[%d].Top  = %lx\n", Index, mSplitMemRange[Index].Top));
+    DEBUG ((
+      DEBUG_INFO,
+      "mSplitMemRange[%d].Base = %lx\n",
+      Index,
+      mSplitMemRange[Index].Base
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "mSplitMemRange[%d].Top  = %lx\n",
+      Index,
+      mSplitMemRange[Index].Top
+      ));
   }
 }
 
@@ -635,8 +713,11 @@ InitPaging (
         continue;
       }
 
-      Pdpt = (UINT64 *)(UINTN)(Pml4[Pml4Index] & ~mAddressEncMask & PHYSICAL_ADDRESS_MASK);
-      for (PdptIndex = 0; PdptIndex < NumberOfPdptEntries; PdptIndex++, Pdpt++) {
+      Pdpt = (UINT64 *)(UINTN)(Pml4[Pml4Index] & ~mAddressEncMask &
+                               PHYSICAL_ADDRESS_MASK);
+      for (PdptIndex = 0; PdptIndex < NumberOfPdptEntries; PdptIndex++,
+           Pdpt++)
+      {
         if ((*Pdpt & IA32_PG_P) == 0) {
           //
           // If PDPT entry does not exist, skip it
@@ -651,7 +732,8 @@ InitPaging (
           continue;
         }
 
-        Pd = (UINT64 *)(UINTN)(*Pdpt & ~mAddressEncMask & PHYSICAL_ADDRESS_MASK);
+        Pd = (UINT64 *)(UINTN)(*Pdpt & ~mAddressEncMask &
+                               PHYSICAL_ADDRESS_MASK);
         if (Pd == 0) {
           continue;
         }
@@ -666,7 +748,8 @@ InitPaging (
 
           Address = (UINTN)LShiftU64 (
                              LShiftU64 (
-                               LShiftU64 ((Pml5Index << 9) + Pml4Index, 9) + PdptIndex,
+                               LShiftU64 ((Pml5Index << 9) + Pml4Index, 9) +
+                               PdptIndex,
                                9
                                ) + PdIndex,
                              21
@@ -686,7 +769,8 @@ InitPaging (
 
             // Split it
             for (PtIndex = 0; PtIndex < SIZE_4KB / sizeof (*Pt); PtIndex++) {
-              Pt[PtIndex] = Address + ((PtIndex << 12) | mAddressEncMask | PAGE_ATTRIBUTE_BITS);
+              Pt[PtIndex] = Address + ((PtIndex << 12) | mAddressEncMask |
+                                       PAGE_ATTRIBUTE_BITS);
             } // end for PT
 
             *Pd = (UINT64)(UINTN)Pt | mAddressEncMask | PAGE_ATTRIBUTE_BITS;
@@ -717,8 +801,11 @@ InitPaging (
         continue;
       }
 
-      Pdpt = (UINT64 *)(UINTN)(Pml4[Pml4Index] & ~mAddressEncMask & PHYSICAL_ADDRESS_MASK);
-      for (PdptIndex = 0; PdptIndex < NumberOfPdptEntries; PdptIndex++, Pdpt++) {
+      Pdpt = (UINT64 *)(UINTN)(Pml4[Pml4Index] & ~mAddressEncMask &
+                               PHYSICAL_ADDRESS_MASK);
+      for (PdptIndex = 0; PdptIndex < NumberOfPdptEntries; PdptIndex++,
+           Pdpt++)
+      {
         if ((*Pdpt & IA32_PG_P) == 0) {
           //
           // If PDPT entry does not exist, skip it
@@ -737,7 +824,8 @@ InitPaging (
           continue;
         }
 
-        Pd = (UINT64 *)(UINTN)(*Pdpt & ~mAddressEncMask & PHYSICAL_ADDRESS_MASK);
+        Pd = (UINT64 *)(UINTN)(*Pdpt & ~mAddressEncMask &
+                               PHYSICAL_ADDRESS_MASK);
         if (Pd == 0) {
           continue;
         }
@@ -752,7 +840,8 @@ InitPaging (
 
           Address = (UINTN)LShiftU64 (
                              LShiftU64 (
-                               LShiftU64 ((Pml5Index << 9) + Pml4Index, 9) + PdptIndex,
+                               LShiftU64 ((Pml5Index << 9) + Pml4Index, 9) +
+                               PdptIndex,
                                9
                                ) + PdIndex,
                              21
@@ -773,12 +862,15 @@ InitPaging (
             }
           } else {
             // 4KB page
-            Pt = (UINT64 *)(UINTN)(*Pd & ~mAddressEncMask & PHYSICAL_ADDRESS_MASK);
+            Pt = (UINT64 *)(UINTN)(*Pd & ~mAddressEncMask &
+                                   PHYSICAL_ADDRESS_MASK);
             if (Pt == 0) {
               continue;
             }
 
-            for (PtIndex = 0; PtIndex < SIZE_4KB / sizeof (*Pt); PtIndex++, Pt++) {
+            for (PtIndex = 0; PtIndex < SIZE_4KB / sizeof (*Pt); PtIndex++,
+                 Pt++)
+            {
               if (!IsAddressValid (Address, &Nx)) {
                 *Pt = *Pt & (INTN)(INT32)(~PAGE_ATTRIBUTE_BITS);
               }
@@ -905,11 +997,17 @@ InitSmmProfileInternal (
   mPFEntryCount = (UINTN *)AllocateZeroPool (sizeof (UINTN) * mMaxNumberOfCpus);
   ASSERT (mPFEntryCount != NULL);
   mLastPFEntryValue = (UINT64 (*)[MAX_PF_ENTRY_COUNT])AllocateZeroPool (
-                                                        sizeof (mLastPFEntryValue[0]) * mMaxNumberOfCpus
+                                                        sizeof (
+                                                               mLastPFEntryValue
+                                                               [0]) *
+                                                        mMaxNumberOfCpus
                                                         );
   ASSERT (mLastPFEntryValue != NULL);
   mLastPFEntryPointer = (UINT64 *(*)[MAX_PF_ENTRY_COUNT])AllocateZeroPool (
-                                                           sizeof (mLastPFEntryPointer[0]) * mMaxNumberOfCpus
+                                                           sizeof (
+                                                                  mLastPFEntryPointer
+                                                                  [0]) *
+                                                           mMaxNumberOfCpus
                                                            );
   ASSERT (mLastPFEntryPointer != NULL);
 
@@ -941,57 +1039,92 @@ InitSmmProfileInternal (
   // Initialize SMM profile data header.
   //
   mSmmProfileBase->HeaderSize     = sizeof (SMM_PROFILE_HEADER);
-  mSmmProfileBase->MaxDataEntries = (UINT64)((mSmmProfileSize - sizeof (SMM_PROFILE_HEADER)) / sizeof (SMM_PROFILE_ENTRY));
-  mSmmProfileBase->MaxDataSize    = MultU64x64 (mSmmProfileBase->MaxDataEntries, sizeof (SMM_PROFILE_ENTRY));
+  mSmmProfileBase->MaxDataEntries = (UINT64)((mSmmProfileSize -
+                                              sizeof (SMM_PROFILE_HEADER)) /
+                                             sizeof (SMM_PROFILE_ENTRY));
+  mSmmProfileBase->MaxDataSize    = MultU64x64 (
+                                      mSmmProfileBase->MaxDataEntries,
+                                      sizeof (SMM_PROFILE_ENTRY)
+                                      );
   mSmmProfileBase->CurDataEntries = 0;
   mSmmProfileBase->CurDataSize    = 0;
   mSmmProfileBase->TsegStart      = mCpuHotPlugData.SmrrBase;
   mSmmProfileBase->TsegSize       = mCpuHotPlugData.SmrrSize;
   mSmmProfileBase->NumSmis        = 0;
-  mSmmProfileBase->NumCpus        = gSmmCpuPrivate->SmmCoreEntryContext.NumberOfCpus;
+  mSmmProfileBase->NumCpus        =
+    gSmmCpuPrivate->SmmCoreEntryContext.NumberOfCpus;
 
   if (mBtsSupported) {
-    mMsrDsArea = (MSR_DS_AREA_STRUCT **)AllocateZeroPool (sizeof (MSR_DS_AREA_STRUCT *) * mMaxNumberOfCpus);
+    mMsrDsArea = (MSR_DS_AREA_STRUCT **)AllocateZeroPool (
+                                          sizeof (MSR_DS_AREA_STRUCT *) *
+                                          mMaxNumberOfCpus
+                                          );
     ASSERT (mMsrDsArea != NULL);
-    mMsrBTSRecord = (BRANCH_TRACE_RECORD **)AllocateZeroPool (sizeof (BRANCH_TRACE_RECORD *) * mMaxNumberOfCpus);
+    mMsrBTSRecord = (BRANCH_TRACE_RECORD **)AllocateZeroPool (
+                                              sizeof (BRANCH_TRACE_RECORD *) *
+                                              mMaxNumberOfCpus
+                                              );
     ASSERT (mMsrBTSRecord != NULL);
-    mMsrPEBSRecord = (PEBS_RECORD **)AllocateZeroPool (sizeof (PEBS_RECORD *) * mMaxNumberOfCpus);
+    mMsrPEBSRecord = (PEBS_RECORD **)AllocateZeroPool (
+                                       sizeof (PEBS_RECORD *) *
+                                       mMaxNumberOfCpus
+                                       );
     ASSERT (mMsrPEBSRecord != NULL);
 
     mMsrDsAreaBase      = (MSR_DS_AREA_STRUCT *)((UINTN)Base + mSmmProfileSize);
     MsrDsAreaSizePerCpu = mMsrDsAreaSize / mMaxNumberOfCpus;
-    mBTSRecordNumber    = (MsrDsAreaSizePerCpu - sizeof (PEBS_RECORD) * PEBS_RECORD_NUMBER - sizeof (MSR_DS_AREA_STRUCT)) / sizeof (BRANCH_TRACE_RECORD);
+    mBTSRecordNumber    = (MsrDsAreaSizePerCpu - sizeof (PEBS_RECORD) *
+                           PEBS_RECORD_NUMBER - sizeof (MSR_DS_AREA_STRUCT)) /
+                          sizeof (BRANCH_TRACE_RECORD);
     for (Index = 0; Index < mMaxNumberOfCpus; Index++) {
-      mMsrDsArea[Index]     = (MSR_DS_AREA_STRUCT *)((UINTN)mMsrDsAreaBase + MsrDsAreaSizePerCpu * Index);
-      mMsrBTSRecord[Index]  = (BRANCH_TRACE_RECORD *)((UINTN)mMsrDsArea[Index] + sizeof (MSR_DS_AREA_STRUCT));
-      mMsrPEBSRecord[Index] = (PEBS_RECORD *)((UINTN)mMsrDsArea[Index] + MsrDsAreaSizePerCpu - sizeof (PEBS_RECORD) * PEBS_RECORD_NUMBER);
+      mMsrDsArea[Index]     = (MSR_DS_AREA_STRUCT *)((UINTN)mMsrDsAreaBase +
+                                                     MsrDsAreaSizePerCpu *
+                                                     Index);
+      mMsrBTSRecord[Index]  = (BRANCH_TRACE_RECORD *)((UINTN)mMsrDsArea[Index] +
+                                                      sizeof (MSR_DS_AREA_STRUCT));
+      mMsrPEBSRecord[Index] = (PEBS_RECORD *)((UINTN)mMsrDsArea[Index] +
+                                              MsrDsAreaSizePerCpu -
+                                              sizeof (PEBS_RECORD) *
+                                              PEBS_RECORD_NUMBER);
 
-      mMsrDsArea[Index]->BTSBufferBase         = (UINTN)mMsrBTSRecord[Index];
-      mMsrDsArea[Index]->BTSIndex              = mMsrDsArea[Index]->BTSBufferBase;
-      mMsrDsArea[Index]->BTSAbsoluteMaximum    = mMsrDsArea[Index]->BTSBufferBase + mBTSRecordNumber * sizeof (BRANCH_TRACE_RECORD) + 1;
-      mMsrDsArea[Index]->BTSInterruptThreshold = mMsrDsArea[Index]->BTSAbsoluteMaximum + 1;
+      mMsrDsArea[Index]->BTSBufferBase = (UINTN)mMsrBTSRecord[Index];
+      mMsrDsArea[Index]->BTSIndex      =
+        mMsrDsArea[Index]->BTSBufferBase;
+      mMsrDsArea[Index]->BTSAbsoluteMaximum =
+        mMsrDsArea[Index]->BTSBufferBase + mBTSRecordNumber *
+        sizeof (BRANCH_TRACE_RECORD) + 1;
+      mMsrDsArea[Index]->BTSInterruptThreshold =
+        mMsrDsArea[Index]->BTSAbsoluteMaximum + 1;
 
-      mMsrDsArea[Index]->PEBSBufferBase         = (UINTN)mMsrPEBSRecord[Index];
-      mMsrDsArea[Index]->PEBSIndex              = mMsrDsArea[Index]->PEBSBufferBase;
-      mMsrDsArea[Index]->PEBSAbsoluteMaximum    = mMsrDsArea[Index]->PEBSBufferBase + PEBS_RECORD_NUMBER * sizeof (PEBS_RECORD) + 1;
-      mMsrDsArea[Index]->PEBSInterruptThreshold = mMsrDsArea[Index]->PEBSAbsoluteMaximum + 1;
+      mMsrDsArea[Index]->PEBSBufferBase = (UINTN)mMsrPEBSRecord[Index];
+      mMsrDsArea[Index]->PEBSIndex      =
+        mMsrDsArea[Index]->PEBSBufferBase;
+      mMsrDsArea[Index]->PEBSAbsoluteMaximum =
+        mMsrDsArea[Index]->PEBSBufferBase + PEBS_RECORD_NUMBER *
+        sizeof (PEBS_RECORD) + 1;
+      mMsrDsArea[Index]->PEBSInterruptThreshold =
+        mMsrDsArea[Index]->PEBSAbsoluteMaximum + 1;
     }
   }
 
   mProtectionMemRange      = mProtectionMemRangeTemplate;
-  mProtectionMemRangeCount = sizeof (mProtectionMemRangeTemplate) / sizeof (MEMORY_PROTECTION_RANGE);
+  mProtectionMemRangeCount = sizeof (mProtectionMemRangeTemplate) /
+                             sizeof (MEMORY_PROTECTION_RANGE);
 
   //
   // Update TSeg entry.
   //
   mProtectionMemRange[0].Range.Base = mCpuHotPlugData.SmrrBase;
-  mProtectionMemRange[0].Range.Top  = mCpuHotPlugData.SmrrBase + mCpuHotPlugData.SmrrSize;
+  mProtectionMemRange[0].Range.Top  = mCpuHotPlugData.SmrrBase +
+                                      mCpuHotPlugData.SmrrSize;
 
   //
   // Update SMM profile entry.
   //
-  mProtectionMemRange[1].Range.Base = (EFI_PHYSICAL_ADDRESS)(UINTN)mSmmProfileBase;
-  mProtectionMemRange[1].Range.Top  = (EFI_PHYSICAL_ADDRESS)(UINTN)mSmmProfileBase + TotalSize;
+  mProtectionMemRange[1].Range.Base =
+    (EFI_PHYSICAL_ADDRESS)(UINTN)mSmmProfileBase;
+  mProtectionMemRange[1].Range.Top =
+    (EFI_PHYSICAL_ADDRESS)(UINTN)mSmmProfileBase + TotalSize;
 
   //
   // Allocate memory reserved for creating 4KB pages.
@@ -1025,10 +1158,19 @@ CheckFeatureSupported (
   UINT32                         RegEdx;
   MSR_IA32_MISC_ENABLE_REGISTER  MiscEnableMsr;
 
-  if ((PcdGet32 (PcdControlFlowEnforcementPropertyMask) != 0) && mCetSupported) {
+  if ((PcdGet32 (PcdControlFlowEnforcementPropertyMask) != 0) &&
+      mCetSupported)
+  {
     AsmCpuid (CPUID_SIGNATURE, &RegEax, NULL, NULL, NULL);
     if (RegEax >= CPUID_STRUCTURED_EXTENDED_FEATURE_FLAGS) {
-      AsmCpuidEx (CPUID_STRUCTURED_EXTENDED_FEATURE_FLAGS, CPUID_STRUCTURED_EXTENDED_FEATURE_FLAGS_SUB_LEAF_INFO, NULL, NULL, &RegEcx, NULL);
+      AsmCpuidEx (
+        CPUID_STRUCTURED_EXTENDED_FEATURE_FLAGS,
+        CPUID_STRUCTURED_EXTENDED_FEATURE_FLAGS_SUB_LEAF_INFO,
+        NULL,
+        NULL,
+        &RegEcx,
+        NULL
+        );
       if ((RegEcx & CPUID_CET_SS) == 0) {
         mCetSupported = FALSE;
         PatchInstructionX86 (mPatchCetSupported, mCetSupported, 1);
@@ -1453,7 +1595,13 @@ SmmProfilePFHandler (
     if (RestoreAddress <= 0xFFFFFFFF) {
       RestorePageTableBelow4G (PageTable, RestoreAddress, CpuIndex, ErrorCode);
     } else {
-      RestorePageTableAbove4G (PageTable, RestoreAddress, CpuIndex, ErrorCode, &IsValidPFAddress);
+      RestorePageTableAbove4G (
+        PageTable,
+        RestoreAddress,
+        CpuIndex,
+        ErrorCode,
+        &IsValidPFAddress
+        );
     }
 
     RestoreAddress += EFI_PAGE_SIZE;
@@ -1481,7 +1629,13 @@ SmmProfilePFHandler (
     //
     SmiCommand = 0xFFFFFFFFFFFFFFFFULL;
     for (Index = 0; Index < gSmst->NumberOfCpus; Index++) {
-      Status = SmmReadSaveState (&mSmmCpu, sizeof (IoInfo), EFI_SMM_SAVE_STATE_REGISTER_IO, Index, &IoInfo);
+      Status = SmmReadSaveState (
+                 &mSmmCpu,
+                 sizeof (IoInfo),
+                 EFI_SMM_SAVE_STATE_REGISTER_IO,
+                 Index,
+                 &IoInfo
+                 );
       if (EFI_ERROR (Status)) {
         continue;
       }
@@ -1525,7 +1679,8 @@ SmmProfilePFHandler (
         //
         // Log the new entry
         //
-        SmmProfileEntry[CurrentEntryNumber].SmiNum      = mSmmProfileBase->NumSmis;
+        SmmProfileEntry[CurrentEntryNumber].SmiNum =
+          mSmmProfileBase->NumSmis;
         SmmProfileEntry[CurrentEntryNumber].ErrorCode   = (UINT64)ErrorCode;
         SmmProfileEntry[CurrentEntryNumber].ApicId      = (UINT64)GetApicId ();
         SmmProfileEntry[CurrentEntryNumber].CpuNum      = (UINT64)CpuIndex;
@@ -1536,7 +1691,10 @@ SmmProfilePFHandler (
         // Update current entry index and data size in the header.
         //
         mSmmProfileBase->CurDataEntries++;
-        mSmmProfileBase->CurDataSize = MultU64x64 (mSmmProfileBase->CurDataEntries, sizeof (SMM_PROFILE_ENTRY));
+        mSmmProfileBase->CurDataSize = MultU64x64 (
+                                         mSmmProfileBase->CurDataEntries,
+                                         sizeof (SMM_PROFILE_ENTRY)
+                                         );
       }
     }
   }
@@ -1563,6 +1721,10 @@ InitIdtr (
 {
   EFI_STATUS  Status;
 
-  Status = SmmRegisterExceptionHandler (&mSmmCpuService, EXCEPT_IA32_DEBUG, DebugExceptionHandler);
+  Status = SmmRegisterExceptionHandler (
+             &mSmmCpuService,
+             EXCEPT_IA32_DEBUG,
+             DebugExceptionHandler
+             );
   ASSERT_EFI_ERROR (Status);
 }

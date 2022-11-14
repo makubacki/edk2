@@ -27,7 +27,10 @@ InitializeBspIdt (
 
   Idtr = AllocateZeroPool (sizeof (IA32_DESCRIPTOR));
   ASSERT (Idtr != NULL);
-  NewIdtTable = AllocateZeroPool (sizeof (IA32_IDT_GATE_DESCRIPTOR) * CPU_INTERRUPT_NUM + sizeof (UINTN));
+  NewIdtTable = AllocateZeroPool (
+                  sizeof (IA32_IDT_GATE_DESCRIPTOR) *
+                  CPU_INTERRUPT_NUM + sizeof (UINTN)
+                  );
   ASSERT (NewIdtTable != NULL);
   //
   // Store original PeiServicePointer before new Idt table
@@ -36,7 +39,8 @@ InitializeBspIdt (
   NewIdtTable  = (UINTN *)((UINTN)NewIdtTable + sizeof (UINTN));
 
   Idtr->Base  = (UINTN)NewIdtTable;
-  Idtr->Limit = (UINT16)(sizeof (IA32_IDT_GATE_DESCRIPTOR) * CPU_INTERRUPT_NUM - 1);
+  Idtr->Limit = (UINT16)(sizeof (IA32_IDT_GATE_DESCRIPTOR) * CPU_INTERRUPT_NUM -
+                         1);
 
   AsmWriteIdtr (Idtr);
   return Idtr;
@@ -61,7 +65,11 @@ MpServicesUnitTestGetNumberOfProcessors (
   OUT UINTN       *NumberOfEnabledProcessors
   )
 {
-  return MpServices.Ppi->GetNumberOfProcessors (MpServices.Ppi, NumberOfProcessors, NumberOfEnabledProcessors);
+  return MpServices.Ppi->GetNumberOfProcessors (
+                           MpServices.Ppi,
+                           NumberOfProcessors,
+                           NumberOfEnabledProcessors
+                           );
 }
 
 /**
@@ -87,7 +95,13 @@ MpServicesUnitTestStartupThisAP (
   IN VOID              *ProcedureArgument
   )
 {
-  return MpServices.Ppi->StartupThisAP (MpServices.Ppi, Procedure, ProcessorNumber, TimeoutInMicroSeconds, ProcedureArgument);
+  return MpServices.Ppi->StartupThisAP (
+                           MpServices.Ppi,
+                           Procedure,
+                           ProcessorNumber,
+                           TimeoutInMicroSeconds,
+                           ProcedureArgument
+                           );
 }
 
 /**
@@ -115,7 +129,13 @@ MpServicesUnitTestStartupAllAPs (
   IN VOID              *ProcedureArgument
   )
 {
-  return MpServices.Ppi->StartupAllAPs (MpServices.Ppi, Procedure, SingleThread, TimeoutInMicroSeconds, ProcedureArgument);
+  return MpServices.Ppi->StartupAllAPs (
+                           MpServices.Ppi,
+                           Procedure,
+                           SingleThread,
+                           TimeoutInMicroSeconds,
+                           ProcedureArgument
+                           );
 }
 
 /**
@@ -149,7 +169,12 @@ GetMpServices (
   OUT MP_SERVICES  *MpServices
   )
 {
-  return PeiServicesLocatePpi (&gEdkiiPeiMpServices2PpiGuid, 0, NULL, (VOID **)&MpServices->Ppi);
+  return PeiServicesLocatePpi (
+           &gEdkiiPeiMpServices2PpiGuid,
+           0,
+           NULL,
+           (VOID **)&MpServices->Ppi
+           );
 }
 
 /**
@@ -178,9 +203,18 @@ PeiEntryPoint (
   //
   // Start setting up the test framework for running the tests.
   //
-  Status = InitUnitTestFramework (&Framework, UNIT_TEST_APP_NAME, gEfiCallerBaseName, UNIT_TEST_APP_VERSION);
+  Status = InitUnitTestFramework (
+             &Framework,
+             UNIT_TEST_APP_NAME,
+             gEfiCallerBaseName,
+             UNIT_TEST_APP_VERSION
+             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in InitUnitTestFramework. Status = %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed in InitUnitTestFramework. Status = %r\n",
+      Status
+      ));
     goto EXIT;
   }
 

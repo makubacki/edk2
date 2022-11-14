@@ -51,7 +51,8 @@ StmGen4GPageTable (
     PageTableBase += SIZE_4KB;
 
     for (SubIndex = 0; SubIndex < SIZE_4KB / sizeof (*Pte); SubIndex++) {
-      *Pte = (((Index << 9) + SubIndex) << 21) | IA32_PG_PS | IA32_PG_RW | IA32_PG_P;
+      *Pte = (((Index << 9) + SubIndex) << 21) | IA32_PG_PS | IA32_PG_RW |
+             IA32_PG_P;
       Pte++;
     }
   }
@@ -83,7 +84,8 @@ SmmStmExceptionHandler (
   //
   // Skip this instruction and continue;
   //
-  Context.X64StackFrame->Rip += Context.X64StackFrame->VmcsExitInstructionLength;
+  Context.X64StackFrame->Rip +=
+    Context.X64StackFrame->VmcsExitInstructionLength;
 
   return 0;
 }

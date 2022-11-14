@@ -154,7 +154,11 @@ GetVariableMtrrCountWorker (
   MSR_IA32_MTRRCAP_REGISTER  MtrrCap;
 
   MtrrCap.Uint64 = AsmReadMsr64 (MSR_IA32_MTRRCAP);
-  ASSERT (MtrrCap.Bits.VCNT <= ARRAY_SIZE (((MTRR_VARIABLE_SETTINGS *)0)->Mtrr));
+  ASSERT (
+    MtrrCap.Bits.VCNT <= ARRAY_SIZE (
+                           ((MTRR_VARIABLE_SETTINGS *)0)->Mtrr
+                           )
+    );
   return MtrrCap.Bits.VCNT;
 }
 
@@ -449,8 +453,10 @@ MtrrGetVariableMtrrWorker (
       VariableSettings->Mtrr[Index].Mask =
         AsmReadMsr64 (MSR_IA32_MTRR_PHYSMASK0 + (Index << 1));
     } else {
-      VariableSettings->Mtrr[Index].Base = MtrrSetting->Variables.Mtrr[Index].Base;
-      VariableSettings->Mtrr[Index].Mask = MtrrSetting->Variables.Mtrr[Index].Mask;
+      VariableSettings->Mtrr[Index].Base =
+        MtrrSetting->Variables.Mtrr[Index].Base;
+      VariableSettings->Mtrr[Index].Mask =
+        MtrrSetting->Variables.Mtrr[Index].Mask;
     }
   }
 
@@ -491,7 +497,10 @@ MtrrLibProgramFixedMtrr (
   //
   // Find the fixed MTRR index to be programmed
   //
-  for (MsrIndex = *LastMsrIndex + 1; MsrIndex < ARRAY_SIZE (mMtrrLibFixedMtrrTable); MsrIndex++) {
+  for (MsrIndex = *LastMsrIndex + 1; MsrIndex < ARRAY_SIZE (
+                                                  mMtrrLibFixedMtrrTable
+                                                  ); MsrIndex++)
+  {
     if ((*Base >= mMtrrLibFixedMtrrTable[MsrIndex].BaseAddress) &&
         (*Base <
          (
@@ -510,14 +519,18 @@ MtrrLibProgramFixedMtrr (
   //
   // Find the begin offset in fixed MTRR and calculate byte offset of left shift
   //
-  if ((((UINT32)*Base - mMtrrLibFixedMtrrTable[MsrIndex].BaseAddress) % mMtrrLibFixedMtrrTable[MsrIndex].Length) != 0) {
+  if ((((UINT32)*Base - mMtrrLibFixedMtrrTable[MsrIndex].BaseAddress) %
+       mMtrrLibFixedMtrrTable[MsrIndex].Length) != 0)
+  {
     //
     // Base address should be aligned to the begin of a certain Fixed MTRR range.
     //
     return RETURN_UNSUPPORTED;
   }
 
-  LeftByteShift = ((UINT32)*Base - mMtrrLibFixedMtrrTable[MsrIndex].BaseAddress) / mMtrrLibFixedMtrrTable[MsrIndex].Length;
+  LeftByteShift = ((UINT32)*Base -
+                   mMtrrLibFixedMtrrTable[MsrIndex].BaseAddress) /
+                  mMtrrLibFixedMtrrTable[MsrIndex].Length;
   ASSERT (LeftByteShift < 8);
 
   //
@@ -534,7 +547,8 @@ MtrrLibProgramFixedMtrr (
       return RETURN_UNSUPPORTED;
     }
 
-    RightByteShift = 8 - LeftByteShift - (UINT32)(*Length) / mMtrrLibFixedMtrrTable[MsrIndex].Length;
+    RightByteShift = 8 - LeftByteShift - (UINT32)(*Length) /
+                     mMtrrLibFixedMtrrTable[MsrIndex].Length;
     //
     // Update SubLength by actual length
     //
@@ -595,13 +609,22 @@ MtrrGetMemoryAttributeInVariableMtrrWorker (
   UINTN   Index;
   UINT32  UsedMtrr;
 
-  ZeroMem (VariableMtrr, sizeof (VARIABLE_MTRR) * ARRAY_SIZE (VariableSettings->Mtrr));
+  ZeroMem (
+    VariableMtrr,
+    sizeof (VARIABLE_MTRR) * ARRAY_SIZE (
+                               VariableSettings->Mtrr
+                               )
+    );
   for (Index = 0, UsedMtrr = 0; Index < VariableMtrrCount; Index++) {
-    if (((MSR_IA32_MTRR_PHYSMASK_REGISTER *)&VariableSettings->Mtrr[Index].Mask)->Bits.V != 0) {
+    if (((MSR_IA32_MTRR_PHYSMASK_REGISTER *)&VariableSettings->Mtrr[Index].Mask)
+          ->Bits.V != 0)
+    {
       VariableMtrr[Index].Msr         = (UINT32)Index;
-      VariableMtrr[Index].BaseAddress = (VariableSettings->Mtrr[Index].Base & MtrrValidAddressMask);
+      VariableMtrr[Index].BaseAddress = (VariableSettings->Mtrr[Index].Base &
+                                         MtrrValidAddressMask);
       VariableMtrr[Index].Length      =
-        ((~(VariableSettings->Mtrr[Index].Mask & MtrrValidAddressMask)) & MtrrValidBitsMask) + 1;
+        ((~(VariableSettings->Mtrr[Index].Mask & MtrrValidAddressMask)) &
+         MtrrValidBitsMask) + 1;
       VariableMtrr[Index].Type  = (VariableSettings->Mtrr[Index].Base & 0x0ff);
       VariableMtrr[Index].Valid = TRUE;
       VariableMtrr[Index].Used  = TRUE;
@@ -638,13 +661,23 @@ MtrrLibGetRawVariableRanges (
   UINTN   Index;
   UINT32  UsedMtrr;
 
-  ZeroMem (VariableMtrr, sizeof (MTRR_MEMORY_RANGE) * ARRAY_SIZE (VariableSettings->Mtrr));
+  ZeroMem (
+    VariableMtrr,
+    sizeof (MTRR_MEMORY_RANGE) * ARRAY_SIZE (
+                                   VariableSettings->Mtrr
+                                   )
+    );
   for (Index = 0, UsedMtrr = 0; Index < VariableMtrrCount; Index++) {
-    if (((MSR_IA32_MTRR_PHYSMASK_REGISTER *)&VariableSettings->Mtrr[Index].Mask)->Bits.V != 0) {
-      VariableMtrr[Index].BaseAddress = (VariableSettings->Mtrr[Index].Base & MtrrValidAddressMask);
+    if (((MSR_IA32_MTRR_PHYSMASK_REGISTER *)&VariableSettings->Mtrr[Index].Mask)
+          ->Bits.V != 0)
+    {
+      VariableMtrr[Index].BaseAddress = (VariableSettings->Mtrr[Index].Base &
+                                         MtrrValidAddressMask);
       VariableMtrr[Index].Length      =
-        ((~(VariableSettings->Mtrr[Index].Mask & MtrrValidAddressMask)) & MtrrValidBitsMask) + 1;
-      VariableMtrr[Index].Type = (MTRR_MEMORY_CACHE_TYPE)(VariableSettings->Mtrr[Index].Base & 0x0ff);
+        ((~(VariableSettings->Mtrr[Index].Mask & MtrrValidAddressMask)) &
+         MtrrValidBitsMask) + 1;
+      VariableMtrr[Index].Type =
+        (MTRR_MEMORY_CACHE_TYPE)(VariableSettings->Mtrr[Index].Base & 0x0ff);
       UsedMtrr++;
     }
   }
@@ -738,7 +771,8 @@ MtrrLibTypeLeftPrecedeRight (
   IN MTRR_MEMORY_CACHE_TYPE  Right
   )
 {
-  return (BOOLEAN)(Left == CacheUncacheable || (Left == CacheWriteThrough && Right == CacheWriteBack));
+  return (BOOLEAN)(Left == CacheUncacheable || (Left == CacheWriteThrough &&
+                                                Right == CacheWriteBack));
 }
 
 /**
@@ -762,12 +796,21 @@ MtrrLibInitializeMtrrMask (
   AsmCpuid (CPUID_EXTENDED_FUNCTION, &MaxExtendedFunction, NULL, NULL, NULL);
 
   if (MaxExtendedFunction >= CPUID_VIR_PHY_ADDRESS_SIZE) {
-    AsmCpuid (CPUID_VIR_PHY_ADDRESS_SIZE, &VirPhyAddressSize.Uint32, NULL, NULL, NULL);
+    AsmCpuid (
+      CPUID_VIR_PHY_ADDRESS_SIZE,
+      &VirPhyAddressSize.Uint32,
+      NULL,
+      NULL,
+      NULL
+      );
   } else {
     VirPhyAddressSize.Bits.PhysicalAddressBits = 36;
   }
 
-  *MtrrValidBitsMask    = LShiftU64 (1, VirPhyAddressSize.Bits.PhysicalAddressBits) - 1;
+  *MtrrValidBitsMask = LShiftU64 (
+                         1,
+                         VirPhyAddressSize.Bits.PhysicalAddressBits
+                         ) - 1;
   *MtrrValidAddressMask = *MtrrValidBitsMask & 0xfffffffffffff000ULL;
 }
 
@@ -829,11 +872,13 @@ MtrrGetMemoryAttributeByAddressWorker (
   UINTN                            Index;
   UINTN                            SubIndex;
   MTRR_MEMORY_CACHE_TYPE           MtrrType;
-  MTRR_MEMORY_RANGE                VariableMtrr[ARRAY_SIZE (MtrrSetting->Variables.Mtrr)];
-  UINT64                           MtrrValidBitsMask;
-  UINT64                           MtrrValidAddressMask;
-  UINT32                           VariableMtrrCount;
-  MTRR_VARIABLE_SETTINGS           VariableSettings;
+  MTRR_MEMORY_RANGE                VariableMtrr[ARRAY_SIZE (
+                                                  MtrrSetting->Variables.Mtrr
+                                                  )];
+  UINT64                  MtrrValidBitsMask;
+  UINT64                  MtrrValidAddressMask;
+  UINT32                  VariableMtrrCount;
+  MTRR_VARIABLE_SETTINGS  VariableSettings;
 
   //
   // Check if MTRR is enabled, if not, return UC as attribute
@@ -870,7 +915,8 @@ MtrrGetMemoryAttributeByAddressWorker (
             FixedMtrr = MtrrSetting->Fixed.Mtrr[Index];
           }
 
-          return (MTRR_MEMORY_CACHE_TYPE)(RShiftU64 (FixedMtrr, SubIndex * 8) & 0xFF);
+          return (MTRR_MEMORY_CACHE_TYPE)(RShiftU64 (FixedMtrr, SubIndex * 8) &
+                                          0xFF);
         }
       }
     }
@@ -896,12 +942,16 @@ MtrrGetMemoryAttributeByAddressWorker (
   for (Index = 0; Index < VariableMtrrCount; Index++) {
     if (VariableMtrr[Index].Length != 0) {
       if ((Address >= VariableMtrr[Index].BaseAddress) &&
-          (Address < VariableMtrr[Index].BaseAddress + VariableMtrr[Index].Length))
+          (Address < VariableMtrr[Index].BaseAddress +
+           VariableMtrr[Index].Length))
       {
         if (MtrrType == CacheInvalid) {
           MtrrType = (MTRR_MEMORY_CACHE_TYPE)VariableMtrr[Index].Type;
         } else {
-          MtrrType = MtrrLibPrecedence (MtrrType, (MTRR_MEMORY_CACHE_TYPE)VariableMtrr[Index].Type);
+          MtrrType = MtrrLibPrecedence (
+                       MtrrType,
+                       (MTRR_MEMORY_CACHE_TYPE)VariableMtrr[Index].Type
+                       );
         }
       }
     }
@@ -1049,7 +1099,12 @@ MtrrLibSetMemoryType (
   //
   // Reserve (-DeltaCount) space
   //
-  CopyMem (&Ranges[EndIndex + 1 - DeltaCount], &Ranges[EndIndex + 1], (*Count - EndIndex - 1) * sizeof (Ranges[0]));
+  CopyMem (
+    &Ranges[EndIndex + 1 - DeltaCount],
+    &Ranges[EndIndex + 1],
+    (*Count -
+     EndIndex - 1) * sizeof (Ranges[0])
+    );
   *Count -= DeltaCount;
 
   if (LengthLeft != 0) {
@@ -1105,8 +1160,11 @@ MtrrLibGetNumberOfTypes (
         TypeCount++;
       }
 
-      if (BaseAddress + Length > Ranges[Index].BaseAddress + Ranges[Index].Length) {
-        Length     -= Ranges[Index].BaseAddress + Ranges[Index].Length - BaseAddress;
+      if (BaseAddress + Length > Ranges[Index].BaseAddress +
+          Ranges[Index].Length)
+      {
+        Length -= Ranges[Index].BaseAddress + Ranges[Index].Length -
+                  BaseAddress;
         BaseAddress = Ranges[Index].BaseAddress + Ranges[Index].Length;
       } else {
         break;
@@ -1347,7 +1405,9 @@ MtrrLibCalculateSubtractivePath (
       break;
     }
 
-    if ((Base < Ranges[Index].BaseAddress) || (Ranges[Index].BaseAddress + Ranges[Index].Length <= Base)) {
+    if ((Base < Ranges[Index].BaseAddress) || (Ranges[Index].BaseAddress +
+                                               Ranges[Index].Length <= Base))
+    {
       continue;
     }
 
@@ -1430,7 +1490,14 @@ MtrrLibCalculateSubtractivePath (
         }
       } else {
         ASSERT (TypeCount == 3);
-        MtrrLibCalculateLeastMtrrs (VertexCount, Vertices, Weight, SubStart, SubStop, TRUE);
+        MtrrLibCalculateLeastMtrrs (
+          VertexCount,
+          Vertices,
+          Weight,
+          SubStart,
+          SubStop,
+          TRUE
+          );
 
         if (Mtrrs == NULL) {
           Weight[M (Start, Stop)] += Vertices[SubStop].Weight;
@@ -1448,7 +1515,8 @@ MtrrLibCalculateSubtractivePath (
                          MtrrCount,
                          Vertices[Pre].Address,
                          Vertices[Cur].Address - Vertices[Pre].Address,
-                         (Pre != Cur - 1) ? LowestPrecedentType : Vertices[Pre].Type
+                         (Pre != Cur - 1) ? LowestPrecedentType :
+                         Vertices[Pre].Type
                          );
               if (RETURN_ERROR (Status)) {
                 return Status;
@@ -1587,7 +1655,8 @@ MtrrLibCalculateMtrrs (
     ));
   ASSERT (VertexCount < MAX_UINT16);
 
-  RequiredScratchSize = VertexCount * sizeof (*Vertices) + VertexCount * VertexCount * sizeof (*Weight);
+  RequiredScratchSize = VertexCount * sizeof (*Vertices) + VertexCount *
+                        VertexCount * sizeof (*Weight);
   if (*ScratchSize < RequiredScratchSize) {
     *ScratchSize = RequiredScratchSize;
     return RETURN_BUFFER_TOO_SMALL;
@@ -1604,7 +1673,12 @@ MtrrLibCalculateMtrrs (
     //
     // Set mandatory weight between vertices to MAX_WEIGHT
     //
-    SetMem (&Weight[M (VertexIndex, VertexIndex + 1)], VertexCount - VertexIndex - 1, MAX_WEIGHT);
+    SetMem (
+      &Weight[M (VertexIndex, VertexIndex + 1)],
+      VertexCount -
+      VertexIndex - 1,
+      MAX_WEIGHT
+      );
 
     // Final result looks like:
     //   00 FF FF FF
@@ -1638,7 +1712,10 @@ MtrrLibCalculateMtrrs (
           break;
         }
 
-        if ((Weight[M (Start, Stop)] == MAX_WEIGHT) && MtrrLibIsPowerOfTwo (Length)) {
+        if ((Weight[M (Start, Stop)] == MAX_WEIGHT) && MtrrLibIsPowerOfTwo (
+                                                         Length
+                                                         ))
+        {
           if (MtrrLibGetNumberOfTypes (
                 Ranges,
                 RangeCount,
@@ -1679,22 +1756,35 @@ MtrrLibCalculateMtrrs (
   }
 
   Status = RETURN_SUCCESS;
-  MtrrLibCalculateLeastMtrrs ((UINT16)VertexCount, Vertices, Weight, 0, (UINT16)VertexCount - 1, FALSE);
+  MtrrLibCalculateLeastMtrrs (
+    (UINT16)VertexCount,
+    Vertices,
+    Weight,
+    0,
+    (UINT16)VertexCount - 1,
+    FALSE
+    );
   Stop = (UINT16)VertexCount - 1;
   while (Stop != 0) {
     Start     = Vertices[Stop].Previous;
     TypeCount = MAX_UINT8;
     Type      = 0;
     if (Weight[M (Start, Stop)] != 0) {
-      TypeCount = MtrrLibGetNumberOfTypes (Ranges, RangeCount, Vertices[Start].Address, Vertices[Stop].Address - Vertices[Start].Address, &Type);
-      Status    = MtrrLibAppendVariableMtrr (
-                    Mtrrs,
-                    MtrrCapacity,
-                    MtrrCount,
+      TypeCount = MtrrLibGetNumberOfTypes (
+                    Ranges,
+                    RangeCount,
                     Vertices[Start].Address,
                     Vertices[Stop].Address - Vertices[Start].Address,
-                    MtrrLibLowestType (Type)
+                    &Type
                     );
+      Status = MtrrLibAppendVariableMtrr (
+                 Mtrrs,
+                 MtrrCapacity,
+                 MtrrCount,
+                 Vertices[Start].Address,
+                 Vertices[Stop].Address - Vertices[Start].Address,
+                 MtrrLibLowestType (Type)
+                 );
       if (RETURN_ERROR (Status)) {
         break;
       }
@@ -1768,18 +1858,21 @@ MtrrLibApplyFixedMtrrs (
   UINT64                  Base;
 
   Base = 0;
-  for (MsrIndex = 0; MsrIndex < ARRAY_SIZE (mMtrrLibFixedMtrrTable); MsrIndex++) {
+  for (MsrIndex = 0; MsrIndex < ARRAY_SIZE (mMtrrLibFixedMtrrTable);
+       MsrIndex++)
+  {
     ASSERT (Base == mMtrrLibFixedMtrrTable[MsrIndex].BaseAddress);
     for (Index = 0; Index < sizeof (UINT64); Index++) {
-      MemoryType = (MTRR_MEMORY_CACHE_TYPE)((UINT8 *)(&Fixed->Mtrr[MsrIndex]))[Index];
-      Status     = MtrrLibSetMemoryType (
-                     Ranges,
-                     RangeCapacity,
-                     RangeCount,
-                     Base,
-                     mMtrrLibFixedMtrrTable[MsrIndex].Length,
-                     MemoryType
-                     );
+      MemoryType =
+        (MTRR_MEMORY_CACHE_TYPE)((UINT8 *)(&Fixed->Mtrr[MsrIndex]))[Index];
+      Status = MtrrLibSetMemoryType (
+                 Ranges,
+                 RangeCapacity,
+                 RangeCount,
+                 Base,
+                 mMtrrLibFixedMtrrTable[MsrIndex].Length,
+                 MemoryType
+                 );
       if (Status == RETURN_OUT_OF_RESOURCES) {
         return Status;
       }
@@ -1826,7 +1919,9 @@ MtrrLibApplyVariableMtrrs (
   // 1. Set WB
   //
   for (Index = 0; Index < VariableMtrrCount; Index++) {
-    if ((VariableMtrr[Index].Length != 0) && (VariableMtrr[Index].Type == CacheWriteBack)) {
+    if ((VariableMtrr[Index].Length != 0) && (VariableMtrr[Index].Type ==
+                                              CacheWriteBack))
+    {
       Status = MtrrLibSetMemoryType (
                  Ranges,
                  RangeCapacity,
@@ -1846,7 +1941,8 @@ MtrrLibApplyVariableMtrrs (
   //
   for (Index = 0; Index < VariableMtrrCount; Index++) {
     if ((VariableMtrr[Index].Length != 0) &&
-        (VariableMtrr[Index].Type != CacheWriteBack) && (VariableMtrr[Index].Type != CacheUncacheable))
+        (VariableMtrr[Index].Type != CacheWriteBack) &&
+        (VariableMtrr[Index].Type != CacheUncacheable))
     {
       Status = MtrrLibSetMemoryType (
                  Ranges,
@@ -1866,7 +1962,9 @@ MtrrLibApplyVariableMtrrs (
   // 3. Set UC
   //
   for (Index = 0; Index < VariableMtrrCount; Index++) {
-    if ((VariableMtrr[Index].Length != 0) && (VariableMtrr[Index].Type == CacheUncacheable)) {
+    if ((VariableMtrr[Index].Length != 0) && (VariableMtrr[Index].Type ==
+                                              CacheUncacheable))
+    {
       Status = MtrrLibSetMemoryType (
                  Ranges,
                  RangeCapacity,
@@ -1904,7 +2002,8 @@ MtrrLibGetCompatibleTypes (
   switch (Ranges[0].Type) {
     case CacheWriteBack:
     case CacheWriteThrough:
-      return (1 << CacheWriteBack) | (1 << CacheWriteThrough) | (1 << CacheUncacheable);
+      return (1 << CacheWriteBack) | (1 << CacheWriteThrough) | (1 <<
+                                                                 CacheUncacheable);
       break;
 
     case CacheWriteCombining:
@@ -2072,8 +2171,12 @@ MtrrLibSetMemoryRanges (
     while (Index < RangeCount) {
       ASSERT (Ranges[Index].BaseAddress == Base0);
       Alignment = MtrrLibBiggestAlignment (Base0, A0);
-      while (Base0 + Alignment <= Ranges[Index].BaseAddress + Ranges[Index].Length) {
-        if ((BiggestScratchSize <= *ScratchSize) && (Ranges[Index].Type != DefaultType)) {
+      while (Base0 + Alignment <= Ranges[Index].BaseAddress +
+             Ranges[Index].Length)
+      {
+        if ((BiggestScratchSize <= *ScratchSize) && (Ranges[Index].Type !=
+                                                     DefaultType))
+        {
           Status = MtrrLibAppendVariableMtrr (
                      VariableMtrr,
                      VariableMtrrCapacity,
@@ -2114,7 +2217,11 @@ MtrrLibSetMemoryRanges (
     //   WB, WT
     //   UC, WB, WT
     //
-    CompatibleTypes = MtrrLibGetCompatibleTypes (&Ranges[Index], RangeCount - Index);
+    CompatibleTypes = MtrrLibGetCompatibleTypes (
+                        &Ranges[Index],
+                        RangeCount -
+                        Index
+                        );
 
     End = Index; // End points to last one that matches the CompatibleTypes.
     while (End + 1 < RangeCount) {
@@ -2126,8 +2233,11 @@ MtrrLibSetMemoryRanges (
     }
 
     Alignment = MtrrLibBiggestAlignment (Base0, A0);
-    Length    = GetPowerOfTwo64 (Ranges[End].BaseAddress + Ranges[End].Length - Base0);
-    Base1     = Base0 + MIN (Alignment, Length);
+    Length    = GetPowerOfTwo64 (
+                  Ranges[End].BaseAddress + Ranges[End].Length -
+                  Base0
+                  );
+    Base1 = Base0 + MIN (Alignment, Length);
 
     //
     // Base1 may not in Ranges[End]. Update End to the range Base1 belongs to.
@@ -2217,7 +2327,14 @@ MtrrLibSetBelow1MBMemoryAttribute (
 
   MsrIndex = (UINT32)-1;
   while ((BaseAddress < BASE_1MB) && (Length != 0)) {
-    Status = MtrrLibProgramFixedMtrr (Type, &BaseAddress, &Length, &MsrIndex, &ClearMask, &OrMask);
+    Status = MtrrLibProgramFixedMtrr (
+               Type,
+               &BaseAddress,
+               &Length,
+               &MsrIndex,
+               &ClearMask,
+               &OrMask
+               );
     if (RETURN_ERROR (Status)) {
       return Status;
     }
@@ -2275,16 +2392,24 @@ MtrrSetMemoryAttributesInMtrrSettings (
   UINT64                  MtrrValidAddressMask;
   MTRR_MEMORY_CACHE_TYPE  DefaultType;
   MTRR_VARIABLE_SETTINGS  VariableSettings;
-  MTRR_MEMORY_RANGE       WorkingRanges[2 * ARRAY_SIZE (MtrrSetting->Variables.Mtrr) + 2];
-  UINTN                   WorkingRangeCount;
-  BOOLEAN                 Modified;
-  MTRR_VARIABLE_SETTING   VariableSetting;
-  UINT32                  OriginalVariableMtrrCount;
-  UINT32                  FirmwareVariableMtrrCount;
-  UINT32                  WorkingVariableMtrrCount;
-  MTRR_MEMORY_RANGE       OriginalVariableMtrr[ARRAY_SIZE (MtrrSetting->Variables.Mtrr)];
-  MTRR_MEMORY_RANGE       WorkingVariableMtrr[ARRAY_SIZE (MtrrSetting->Variables.Mtrr)];
-  BOOLEAN                 VariableSettingModified[ARRAY_SIZE (MtrrSetting->Variables.Mtrr)];
+  MTRR_MEMORY_RANGE       WorkingRanges[2 * ARRAY_SIZE (
+                                              MtrrSetting->Variables.Mtrr
+                                              ) + 2];
+  UINTN                  WorkingRangeCount;
+  BOOLEAN                Modified;
+  MTRR_VARIABLE_SETTING  VariableSetting;
+  UINT32                 OriginalVariableMtrrCount;
+  UINT32                 FirmwareVariableMtrrCount;
+  UINT32                 WorkingVariableMtrrCount;
+  MTRR_MEMORY_RANGE      OriginalVariableMtrr[ARRAY_SIZE (
+                                                MtrrSetting->Variables.Mtrr
+                                                )];
+  MTRR_MEMORY_RANGE  WorkingVariableMtrr[ARRAY_SIZE (
+                                           MtrrSetting->Variables.Mtrr
+                                           )];
+  BOOLEAN  VariableSettingModified[ARRAY_SIZE (
+                                     MtrrSetting->Variables.Mtrr
+                                     )];
 
   UINT64  ClearMasks[ARRAY_SIZE (mMtrrLibFixedMtrrTable)];
   UINT64  OrMasks[ARRAY_SIZE (mMtrrLibFixedMtrrTable)];
@@ -2344,8 +2469,10 @@ MtrrSetMemoryAttributesInMtrrSettings (
     }
 
     if (((Ranges[Index].BaseAddress & ~MtrrValidAddressMask) != 0) ||
-        ((((Ranges[Index].BaseAddress + Ranges[Index].Length) & ~MtrrValidAddressMask) != 0) &&
-         ((Ranges[Index].BaseAddress + Ranges[Index].Length) != MtrrValidBitsMask + 1))
+        ((((Ranges[Index].BaseAddress + Ranges[Index].Length) &
+           ~MtrrValidAddressMask) != 0) &&
+         ((Ranges[Index].BaseAddress + Ranges[Index].Length) !=
+          MtrrValidBitsMask + 1))
         )
     {
       //
@@ -2379,7 +2506,11 @@ MtrrSetMemoryAttributesInMtrrSettings (
     // 2.1. Read all variable MTRRs and convert to Ranges.
     //
     OriginalVariableMtrrCount = GetVariableMtrrCountWorker ();
-    MtrrGetVariableMtrrWorker (MtrrSetting, OriginalVariableMtrrCount, &VariableSettings);
+    MtrrGetVariableMtrrWorker (
+      MtrrSetting,
+      OriginalVariableMtrrCount,
+      &VariableSettings
+      );
     MtrrLibGetRawVariableRanges (
       &VariableSettings,
       OriginalVariableMtrrCount,
@@ -2403,8 +2534,14 @@ MtrrSetMemoryAttributesInMtrrSettings (
                );
     ASSERT_RETURN_ERROR (Status);
 
-    ASSERT (OriginalVariableMtrrCount >= PcdGet32 (PcdCpuNumberOfReservedVariableMtrrs));
-    FirmwareVariableMtrrCount = OriginalVariableMtrrCount - PcdGet32 (PcdCpuNumberOfReservedVariableMtrrs);
+    ASSERT (
+      OriginalVariableMtrrCount >= PcdGet32 (
+                                     PcdCpuNumberOfReservedVariableMtrrs
+                                     )
+      );
+    FirmwareVariableMtrrCount = OriginalVariableMtrrCount - PcdGet32 (
+                                                              PcdCpuNumberOfReservedVariableMtrrs
+                                                              );
     ASSERT (WorkingRangeCount <= 2 * FirmwareVariableMtrrCount + 1);
 
     //
@@ -2478,7 +2615,9 @@ MtrrSetMemoryAttributesInMtrrSettings (
       // 2.5. Remove the [0, 1MB) MTRR if it still exists (not merged with other range)
       //
       for (Index = 0; Index < WorkingVariableMtrrCount; Index++) {
-        if ((WorkingVariableMtrr[Index].BaseAddress == 0) && (WorkingVariableMtrr[Index].Length == SIZE_1MB)) {
+        if ((WorkingVariableMtrr[Index].BaseAddress == 0) &&
+            (WorkingVariableMtrr[Index].Length == SIZE_1MB))
+        {
           ASSERT (WorkingVariableMtrr[Index].Type == CacheUncacheable);
           WorkingVariableMtrrCount--;
           CopyMem (
@@ -2540,14 +2679,19 @@ MtrrSetMemoryAttributesInMtrrSettings (
   for (Index = 0; Index < ARRAY_SIZE (ClearMasks); Index++) {
     if (ClearMasks[Index] != 0) {
       if (MtrrSetting != NULL) {
-        MtrrSetting->Fixed.Mtrr[Index] = (MtrrSetting->Fixed.Mtrr[Index] & ~ClearMasks[Index]) | OrMasks[Index];
+        MtrrSetting->Fixed.Mtrr[Index] = (MtrrSetting->Fixed.Mtrr[Index] &
+                                          ~ClearMasks[Index]) | OrMasks[Index];
       } else {
         if (!MtrrContextValid) {
           MtrrLibPreMtrrChange (&MtrrContext);
           MtrrContextValid = TRUE;
         }
 
-        AsmMsrAndThenOr64 (mMtrrLibFixedMtrrTable[Index].Msr, ~ClearMasks[Index], OrMasks[Index]);
+        AsmMsrAndThenOr64 (
+          mMtrrLibFixedMtrrTable[Index].Msr,
+          ~ClearMasks[Index],
+          OrMasks[Index]
+          );
       }
     }
   }
@@ -2558,16 +2702,22 @@ MtrrSetMemoryAttributesInMtrrSettings (
   for (Index = 0; Index < OriginalVariableMtrrCount; Index++) {
     if (VariableSettingModified[Index]) {
       if (OriginalVariableMtrr[Index].Length != 0) {
-        VariableSetting.Base = (OriginalVariableMtrr[Index].BaseAddress & MtrrValidAddressMask)
+        VariableSetting.Base = (OriginalVariableMtrr[Index].BaseAddress &
+                                MtrrValidAddressMask)
                                | (UINT8)OriginalVariableMtrr[Index].Type;
-        VariableSetting.Mask = ((~(OriginalVariableMtrr[Index].Length - 1)) & MtrrValidAddressMask) | BIT11;
+        VariableSetting.Mask = ((~(OriginalVariableMtrr[Index].Length - 1)) &
+                                MtrrValidAddressMask) | BIT11;
       } else {
         VariableSetting.Base = 0;
         VariableSetting.Mask = 0;
       }
 
       if (MtrrSetting != NULL) {
-        CopyMem (&MtrrSetting->Variables.Mtrr[Index], &VariableSetting, sizeof (VariableSetting));
+        CopyMem (
+          &MtrrSetting->Variables.Mtrr[Index],
+          &VariableSetting,
+          sizeof (VariableSetting)
+          );
       } else {
         if (!MtrrContextValid) {
           MtrrLibPreMtrrChange (&MtrrContext);
@@ -2650,7 +2800,13 @@ MtrrSetMemoryAttributeInMtrrSettings (
   Range.Length      = Length;
   Range.Type        = Attribute;
   ScratchSize       = sizeof (Scratch);
-  return MtrrSetMemoryAttributesInMtrrSettings (MtrrSetting, Scratch, &ScratchSize, &Range, 1);
+  return MtrrSetMemoryAttributesInMtrrSettings (
+           MtrrSetting,
+           Scratch,
+           &ScratchSize,
+           &Range,
+           1
+           );
 }
 
 /**
@@ -2694,7 +2850,12 @@ MtrrSetMemoryAttribute (
   IN MTRR_MEMORY_CACHE_TYPE  Attribute
   )
 {
-  return MtrrSetMemoryAttributeInMtrrSettings (NULL, BaseAddress, Length, Attribute);
+  return MtrrSetMemoryAttributeInMtrrSettings (
+           NULL,
+           BaseAddress,
+           Length,
+           Attribute
+           );
 }
 
 /**
@@ -2890,7 +3051,9 @@ MtrrDebugPrintAllMtrrsWorker (
   UINT32             VariableMtrrCount;
   BOOLEAN            ContainVariableMtrr;
   MTRR_MEMORY_RANGE  Ranges[
-                            ARRAY_SIZE (mMtrrLibFixedMtrrTable) * sizeof (UINT64) + 2 * ARRAY_SIZE (Mtrrs->Variables.Mtrr) + 1
+                            ARRAY_SIZE (mMtrrLibFixedMtrrTable) *
+                            sizeof (UINT64) + 2 * ARRAY_SIZE (
+                                                    Mtrrs->Variables.Mtrr) + 1
   ];
   MTRR_MEMORY_RANGE  RawVariableRanges[ARRAY_SIZE (Mtrrs->Variables.Mtrr)];
 
@@ -2914,7 +3077,12 @@ MtrrDebugPrintAllMtrrsWorker (
   DEBUG ((DEBUG_CACHE, "=============\n"));
   DEBUG ((DEBUG_CACHE, "MTRR Default Type: %016lx\n", Mtrrs->MtrrDefType));
   for (Index = 0; Index < ARRAY_SIZE (mMtrrLibFixedMtrrTable); Index++) {
-    DEBUG ((DEBUG_CACHE, "Fixed MTRR[%02d]   : %016lx\n", Index, Mtrrs->Fixed.Mtrr[Index]));
+    DEBUG ((
+      DEBUG_CACHE,
+      "Fixed MTRR[%02d]   : %016lx\n",
+      Index,
+      Mtrrs->Fixed.Mtrr[Index]
+      ));
   }
 
   ContainVariableMtrr = FALSE;
@@ -2968,7 +3136,12 @@ MtrrDebugPrintAllMtrrsWorker (
     &RangeCount
     );
 
-  MtrrLibApplyFixedMtrrs (&Mtrrs->Fixed, Ranges, ARRAY_SIZE (Ranges), &RangeCount);
+  MtrrLibApplyFixedMtrrs (
+    &Mtrrs->Fixed,
+    Ranges,
+    ARRAY_SIZE (Ranges),
+    &RangeCount
+    );
 
   for (Index = 0; Index < RangeCount; Index++) {
     DEBUG ((

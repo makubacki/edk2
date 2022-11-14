@@ -22,15 +22,18 @@ STATIC REPUBLISH_SEC_PPI_PPI  mEdkiiRepublishSecPpiPpi = {
   RepublishSecPpis
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_SEC_PLATFORM_INFORMATION_PPI  mSecPlatformInformationPostMemoryPpi = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_SEC_PLATFORM_INFORMATION_PPI
+  mSecPlatformInformationPostMemoryPpi = {
   SecPlatformInformationPostMemory
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_TEMPORARY_RAM_DONE_PPI  mSecTemporaryRamDonePostMemoryPpi = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_TEMPORARY_RAM_DONE_PPI
+  mSecTemporaryRamDonePostMemoryPpi = {
   SecTemporaryRamDonePostMemory
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_TEMPORARY_RAM_SUPPORT_PPI  mSecTemporaryRamSupportPostMemoryPpi = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_TEMPORARY_RAM_SUPPORT_PPI
+  mSecTemporaryRamSupportPostMemoryPpi = {
   SecTemporaryRamSupportPostMemory
 };
 
@@ -44,25 +47,29 @@ STATIC EFI_PEI_PPI_DESCRIPTOR  mEdkiiRepublishSecPpiDescriptor = {
   &mEdkiiRepublishSecPpiPpi
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_PPI_DESCRIPTOR  mSecPlatformInformationPostMemoryDescriptor = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_PPI_DESCRIPTOR
+  mSecPlatformInformationPostMemoryDescriptor = {
   (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
   &gEfiSecPlatformInformationPpiGuid,
   &mSecPlatformInformationPostMemoryPpi
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_PPI_DESCRIPTOR  mSecTemporaryRamDonePostMemoryDescriptor = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_PPI_DESCRIPTOR
+  mSecTemporaryRamDonePostMemoryDescriptor = {
   (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
   &gEfiTemporaryRamDonePpiGuid,
   &mSecTemporaryRamDonePostMemoryPpi
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_PPI_DESCRIPTOR  mSecTemporaryRamSupportPostMemoryDescriptor = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_PPI_DESCRIPTOR
+  mSecTemporaryRamSupportPostMemoryDescriptor = {
   (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
   &gEfiTemporaryRamSupportPpiGuid,
   &mSecTemporaryRamSupportPostMemoryPpi
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_PPI_DESCRIPTOR  mSecPerformancePpiDescriptor = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_PPI_DESCRIPTOR
+  mSecPerformancePpiDescriptor = {
   (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
   &gPeiSecPerformancePpiGuid,
   &mSecPerformancePpi
@@ -159,7 +166,8 @@ GetPerformancePostMemory (
     return EFI_NOT_FOUND;
   }
 
-  Performance->ResetEnd = SecPlatformInformationContexHob->FirmwareSecPerformance.ResetEnd;
+  Performance->ResetEnd =
+    SecPlatformInformationContexHob->FirmwareSecPerformance.ResetEnd;
 
   return EFI_SUCCESS;
 }
@@ -277,7 +285,10 @@ RepublishSecPpis (
              );
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "SecPlatformInformation Context HOB could not be created.\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "SecPlatformInformation Context HOB could not be created.\n"
+      ));
     return Status;
   }
 
@@ -293,8 +304,11 @@ RepublishSecPpis (
   if (!EFI_ERROR (Status)) {
     Status = ((PEI_SEC_PERFORMANCE_PPI *)PeiPpi)->GetPerformance (
                                                     GetPeiServicesTablePointer (),
-                                                    (PEI_SEC_PERFORMANCE_PPI *)PeiPpi,
-                                                    &SecPlatformInformationContextHob->FirmwareSecPerformance
+                                                    (PEI_SEC_PERFORMANCE_PPI *)
+                                                    PeiPpi,
+                                                    &
+                                                    SecPlatformInformationContextHob
+                                                      ->FirmwareSecPerformance
                                                     );
     ASSERT_EFI_ERROR (Status);
     if (!EFI_ERROR (Status)) {
@@ -323,10 +337,19 @@ RepublishSecPpis (
       return EFI_NOT_FOUND;
     }
 
-    ZeroMem ((VOID *)&(SecPlatformInformationContextHob->Context), sizeof (SEC_PLATFORM_INFORMATION_CONTEXT));
-    SecPlatformInformationContextHob->Context.PlatformInformationRecord = AllocatePool ((UINTN)SecStructureSize);
-    ASSERT (SecPlatformInformationContextHob->Context.PlatformInformationRecord != NULL);
-    if (SecPlatformInformationContextHob->Context.PlatformInformationRecord == NULL) {
+    ZeroMem (
+      (VOID *)&(SecPlatformInformationContextHob->Context),
+      sizeof (SEC_PLATFORM_INFORMATION_CONTEXT)
+      );
+    SecPlatformInformationContextHob->Context.PlatformInformationRecord =
+      AllocatePool ((UINTN)SecStructureSize);
+    ASSERT (
+      SecPlatformInformationContextHob->Context.PlatformInformationRecord !=
+      NULL
+      );
+    if (SecPlatformInformationContextHob->Context.PlatformInformationRecord ==
+        NULL)
+    {
       return EFI_OUT_OF_RESOURCES;
     }
 
@@ -334,8 +357,13 @@ RepublishSecPpis (
 
     Status = ((EFI_SEC_PLATFORM_INFORMATION_PPI *)PeiPpi)->PlatformInformation (
                                                              GetPeiServicesTablePointer (),
-                                                             &(SecPlatformInformationContextHob->Context.StructureSize),
-                                                             SecPlatformInformationContextHob->Context.PlatformInformationRecord
+                                                             &(
+                                                              SecPlatformInformationContextHob
+                                                                ->Context.
+                                                                StructureSize),
+                                                             SecPlatformInformationContextHob
+                                                               ->Context.
+                                                               PlatformInformationRecord
                                                              );
     ASSERT_EFI_ERROR (Status);
     if (!EFI_ERROR (Status)) {

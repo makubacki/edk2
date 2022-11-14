@@ -23,9 +23,18 @@ CpuCacheInfoPrintCpuCacheInfoTable (
 {
   UINTN  Index;
 
-  DEBUG ((DEBUG_INFO, "+-------+--------------------------------------------------------------------------------------+\n"));
-  DEBUG ((DEBUG_INFO, "| Index | Packge  CoreType  CacheLevel  CacheType  CacheWays (FA|DM) CacheSizeinKB  CacheCount |\n"));
-  DEBUG ((DEBUG_INFO, "+-------+--------------------------------------------------------------------------------------+\n"));
+  DEBUG ((
+    DEBUG_INFO,
+    "+-------+--------------------------------------------------------------------------------------+\n"
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "| Index | Packge  CoreType  CacheLevel  CacheType  CacheWays (FA|DM) CacheSizeinKB  CacheCount |\n"
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "+-------+--------------------------------------------------------------------------------------+\n"
+    ));
 
   for (Index = 0; Index < CpuCacheInfoCount; Index++) {
     DEBUG ((
@@ -44,7 +53,10 @@ CpuCacheInfoPrintCpuCacheInfoTable (
       ));
   }
 
-  DEBUG ((DEBUG_INFO, "+-------+--------------------------------------------------------------------------------------+\n"));
+  DEBUG ((
+    DEBUG_INFO,
+    "+-------+--------------------------------------------------------------------------------------+\n"
+    ));
 }
 
 /**
@@ -111,7 +123,9 @@ CpuCacheInfoGetNumberOfPackages (
 
   PackageCount = 0;
 
-  for (ProcessorIndex = 0; ProcessorIndex < NumberOfProcessors; ProcessorIndex++) {
+  for (ProcessorIndex = 0; ProcessorIndex < NumberOfProcessors;
+       ProcessorIndex++)
+  {
     CurrentPackage = ProcessorInfo[ProcessorIndex].Package;
 
     //
@@ -166,7 +180,9 @@ CpuCacheInfoGetNumberOfCoreTypePerPackage (
   //
   CoreTypeCount = 0;
 
-  for (ProcessorIndex = 0; ProcessorIndex < NumberOfProcessors; ProcessorIndex++) {
+  for (ProcessorIndex = 0; ProcessorIndex < NumberOfProcessors;
+       ProcessorIndex++)
+  {
     CurrentCoreType = ProcessorInfo[ProcessorIndex].CoreType;
 
     if (ProcessorInfo[ProcessorIndex].Package != Package) {
@@ -218,7 +234,8 @@ CpuCacheInfoCollectCoreAndCacheData (
 
   Context        = (COLLECT_CPUID_CACHE_DATA_CONTEXT *)Buffer;
   ProcessorIndex = CpuCacheInfoWhoAmI (Context->MpServices);
-  CacheData      = &Context->CacheData[MAX_NUM_OF_CACHE_PARAMS_LEAF * ProcessorIndex];
+  CacheData      = &Context->CacheData[MAX_NUM_OF_CACHE_PARAMS_LEAF *
+                                       ProcessorIndex];
 
   AsmCpuid (CPUID_SIGNATURE, &CpuidMaxInput, NULL, NULL, NULL);
 
@@ -227,8 +244,16 @@ CpuCacheInfoCollectCoreAndCacheData (
   //
   Context->ProcessorInfo[ProcessorIndex].CoreType = 0;
   if (CpuidMaxInput >= CPUID_HYBRID_INFORMATION) {
-    AsmCpuidEx (CPUID_HYBRID_INFORMATION, CPUID_HYBRID_INFORMATION_MAIN_LEAF, &NativeModelIdAndCoreTypeEax.Uint32, NULL, NULL, NULL);
-    Context->ProcessorInfo[ProcessorIndex].CoreType = (UINT8)NativeModelIdAndCoreTypeEax.Bits.CoreType;
+    AsmCpuidEx (
+      CPUID_HYBRID_INFORMATION,
+      CPUID_HYBRID_INFORMATION_MAIN_LEAF,
+      &NativeModelIdAndCoreTypeEax.Uint32,
+      NULL,
+      NULL,
+      NULL
+      );
+    Context->ProcessorInfo[ProcessorIndex].CoreType =
+      (UINT8)NativeModelIdAndCoreTypeEax.Bits.CoreType;
   }
 
   //
@@ -237,20 +262,38 @@ CpuCacheInfoCollectCoreAndCacheData (
   CacheParamLeafIndex = 0;
 
   while (CacheParamLeafIndex < MAX_NUM_OF_CACHE_PARAMS_LEAF) {
-    AsmCpuidEx (CPUID_CACHE_PARAMS, CacheParamLeafIndex, &CacheParamEax.Uint32, &CacheParamEbx.Uint32, &CacheParamEcx, &CacheParamEdx.Uint32);
+    AsmCpuidEx (
+      CPUID_CACHE_PARAMS,
+      CacheParamLeafIndex,
+      &CacheParamEax.Uint32,
+      &CacheParamEbx.Uint32,
+      &CacheParamEcx,
+      &CacheParamEdx.Uint32
+      );
 
     if (CacheParamEax.Bits.CacheType == 0) {
       break;
     }
 
-    CacheData[CacheParamLeafIndex].CacheLevel            = (UINT8)CacheParamEax.Bits.CacheLevel;
-    CacheData[CacheParamLeafIndex].CacheType             = (UINT8)CacheParamEax.Bits.CacheType;
-    CacheData[CacheParamLeafIndex].CacheWays             = (UINT16)CacheParamEbx.Bits.Ways;
-    CacheData[CacheParamLeafIndex].FullyAssociativeCache = (UINT8)CacheParamEax.Bits.FullyAssociativeCache;
-    CacheData[CacheParamLeafIndex].DirectMappedCache     = (UINT8)(CacheParamEdx.Bits.ComplexCacheIndexing == 0);
-    CacheData[CacheParamLeafIndex].CacheShareBits        = (UINT16)CacheParamEax.Bits.MaximumAddressableIdsForLogicalProcessors;
-    CacheData[CacheParamLeafIndex].CacheSizeinKB         = (CacheParamEbx.Bits.Ways + 1) *
-                                                           (CacheParamEbx.Bits.LinePartitions + 1) * (CacheParamEbx.Bits.LineSize + 1) * (CacheParamEcx + 1) / SIZE_1KB;
+    CacheData[CacheParamLeafIndex].CacheLevel =
+      (UINT8)CacheParamEax.Bits.CacheLevel;
+    CacheData[CacheParamLeafIndex].CacheType =
+      (UINT8)CacheParamEax.Bits.CacheType;
+    CacheData[CacheParamLeafIndex].CacheWays =
+      (UINT16)CacheParamEbx.Bits.Ways;
+    CacheData[CacheParamLeafIndex].FullyAssociativeCache =
+      (UINT8)CacheParamEax.Bits.FullyAssociativeCache;
+    CacheData[CacheParamLeafIndex].DirectMappedCache =
+      (UINT8)(CacheParamEdx.Bits.ComplexCacheIndexing == 0);
+    CacheData[CacheParamLeafIndex].CacheShareBits =
+      (UINT16)CacheParamEax.Bits.MaximumAddressableIdsForLogicalProcessors;
+    CacheData[CacheParamLeafIndex].CacheSizeinKB =
+      (CacheParamEbx.Bits.Ways + 1) *
+      (CacheParamEbx.Bits.
+         LinePartitions + 1) * (CacheParamEbx.Bits.LineSize + 1) *
+      (CacheParamEcx +
+       1) /
+      SIZE_1KB;
 
     CacheParamLeafIndex++;
   }
@@ -297,7 +340,11 @@ CpuCacheInfoCollectCpuCacheInfoData (
   //
   // Get number of Packages and Package ID.
   //
-  NumberOfPackage = CpuCacheInfoGetNumberOfPackages (ProcessorInfo, NumberOfProcessors, Package);
+  NumberOfPackage = CpuCacheInfoGetNumberOfPackages (
+                      ProcessorInfo,
+                      NumberOfProcessors,
+                      Package
+                      );
 
   //
   // Get number of core types for each package and count the total number.
@@ -305,11 +352,20 @@ CpuCacheInfoCollectCpuCacheInfoData (
   //
   TotalNumberOfCoreType = 0;
   for (PackageIndex = 0; PackageIndex < NumberOfPackage; PackageIndex++) {
-    TotalNumberOfCoreType += CpuCacheInfoGetNumberOfCoreTypePerPackage (ProcessorInfo, NumberOfProcessors, Package[PackageIndex]);
+    TotalNumberOfCoreType += CpuCacheInfoGetNumberOfCoreTypePerPackage (
+                               ProcessorInfo,
+                               NumberOfProcessors,
+                               Package[PackageIndex]
+                               );
   }
 
   MaxCacheInfoCount = TotalNumberOfCoreType * MAX_NUM_OF_CACHE_PARAMS_LEAF;
-  LocalCacheInfo    = AllocatePages (EFI_SIZE_TO_PAGES (MaxCacheInfoCount * sizeof (*LocalCacheInfo)));
+  LocalCacheInfo    = AllocatePages (
+                        EFI_SIZE_TO_PAGES (
+                          MaxCacheInfoCount *
+                          sizeof (*LocalCacheInfo)
+                          )
+                        );
   ASSERT (LocalCacheInfo != NULL);
   if (LocalCacheInfo == NULL) {
     return EFI_OUT_OF_RESOURCES;
@@ -317,7 +373,9 @@ CpuCacheInfoCollectCpuCacheInfoData (
 
   LocalCacheInfoCount = 0;
 
-  for (Index = 0; Index < NumberOfProcessors * MAX_NUM_OF_CACHE_PARAMS_LEAF; Index++) {
+  for (Index = 0; Index < NumberOfProcessors * MAX_NUM_OF_CACHE_PARAMS_LEAF;
+       Index++)
+  {
     if (CacheData[Index].CacheSizeinKB == 0) {
       continue;
     }
@@ -325,17 +383,23 @@ CpuCacheInfoCollectCpuCacheInfoData (
     //
     // For the sharing caches, clear their CacheSize.
     //
-    for (NextIndex = Index + 1; NextIndex < NumberOfProcessors * MAX_NUM_OF_CACHE_PARAMS_LEAF; NextIndex++) {
+    for (NextIndex = Index + 1; NextIndex < NumberOfProcessors *
+         MAX_NUM_OF_CACHE_PARAMS_LEAF; NextIndex++)
+    {
       if (CacheData[NextIndex].CacheSizeinKB == 0) {
         continue;
       }
 
       if ((CacheData[Index].CacheLevel == CacheData[NextIndex].CacheLevel) &&
           (CacheData[Index].CacheType == CacheData[NextIndex].CacheType) &&
-          (ProcessorInfo[Index / MAX_NUM_OF_CACHE_PARAMS_LEAF].Package == ProcessorInfo[NextIndex / MAX_NUM_OF_CACHE_PARAMS_LEAF].Package) &&
-          (ProcessorInfo[Index / MAX_NUM_OF_CACHE_PARAMS_LEAF].CoreType == ProcessorInfo[NextIndex / MAX_NUM_OF_CACHE_PARAMS_LEAF].CoreType) &&
-          ((ProcessorInfo[Index / MAX_NUM_OF_CACHE_PARAMS_LEAF].ApicId & ~CacheData[Index].CacheShareBits) ==
-           (ProcessorInfo[NextIndex / MAX_NUM_OF_CACHE_PARAMS_LEAF].ApicId & ~CacheData[NextIndex].CacheShareBits)))
+          (ProcessorInfo[Index / MAX_NUM_OF_CACHE_PARAMS_LEAF].Package ==
+           ProcessorInfo[NextIndex / MAX_NUM_OF_CACHE_PARAMS_LEAF].Package) &&
+          (ProcessorInfo[Index / MAX_NUM_OF_CACHE_PARAMS_LEAF].CoreType ==
+           ProcessorInfo[NextIndex / MAX_NUM_OF_CACHE_PARAMS_LEAF].CoreType) &&
+          ((ProcessorInfo[Index / MAX_NUM_OF_CACHE_PARAMS_LEAF].ApicId &
+            ~CacheData[Index].CacheShareBits) ==
+           (ProcessorInfo[NextIndex / MAX_NUM_OF_CACHE_PARAMS_LEAF].ApicId &
+            ~CacheData[NextIndex].CacheShareBits)))
       {
         CacheData[NextIndex].CacheSizeinKB = 0; // uses the sharing cache
       }
@@ -344,11 +408,19 @@ CpuCacheInfoCollectCpuCacheInfoData (
     //
     // For the cache that already exists in LocalCacheInfo, increase its CacheCount.
     //
-    for (CacheInfoIndex = 0; CacheInfoIndex < LocalCacheInfoCount; CacheInfoIndex++) {
-      if ((LocalCacheInfo[CacheInfoIndex].Package    == ProcessorInfo[Index / MAX_NUM_OF_CACHE_PARAMS_LEAF].Package) &&
-          (LocalCacheInfo[CacheInfoIndex].CoreType   == ProcessorInfo[Index / MAX_NUM_OF_CACHE_PARAMS_LEAF].CoreType) &&
-          (LocalCacheInfo[CacheInfoIndex].CacheLevel == CacheData[Index].CacheLevel) &&
-          (LocalCacheInfo[CacheInfoIndex].CacheType  == CacheData[Index].CacheType))
+    for (CacheInfoIndex = 0; CacheInfoIndex < LocalCacheInfoCount;
+         CacheInfoIndex++)
+    {
+      if ((LocalCacheInfo[CacheInfoIndex].Package    == ProcessorInfo[Index /
+                                                                      MAX_NUM_OF_CACHE_PARAMS_LEAF
+           ].Package) &&
+          (LocalCacheInfo[CacheInfoIndex].CoreType   == ProcessorInfo[Index /
+                                                                      MAX_NUM_OF_CACHE_PARAMS_LEAF
+           ].CoreType) &&
+          (LocalCacheInfo[CacheInfoIndex].CacheLevel ==
+           CacheData[Index].CacheLevel) &&
+          (LocalCacheInfo[CacheInfoIndex].CacheType  ==
+           CacheData[Index].CacheType))
       {
         LocalCacheInfo[CacheInfoIndex].CacheCount++;
         break;
@@ -362,15 +434,23 @@ CpuCacheInfoCollectCpuCacheInfoData (
     if (CacheInfoIndex == LocalCacheInfoCount) {
       ASSERT (LocalCacheInfoCount < MaxCacheInfoCount);
 
-      LocalCacheInfo[LocalCacheInfoCount].Package               = ProcessorInfo[Index / MAX_NUM_OF_CACHE_PARAMS_LEAF].Package;
-      LocalCacheInfo[LocalCacheInfoCount].CoreType              = ProcessorInfo[Index / MAX_NUM_OF_CACHE_PARAMS_LEAF].CoreType;
-      LocalCacheInfo[LocalCacheInfoCount].CacheLevel            = CacheData[Index].CacheLevel;
-      LocalCacheInfo[LocalCacheInfoCount].CacheType             = CacheData[Index].CacheType;
-      LocalCacheInfo[LocalCacheInfoCount].CacheWays             = CacheData[Index].CacheWays;
-      LocalCacheInfo[LocalCacheInfoCount].FullyAssociativeCache = CacheData[Index].FullyAssociativeCache;
-      LocalCacheInfo[LocalCacheInfoCount].DirectMappedCache     = CacheData[Index].DirectMappedCache;
-      LocalCacheInfo[LocalCacheInfoCount].CacheSizeinKB         = CacheData[Index].CacheSizeinKB;
-      LocalCacheInfo[LocalCacheInfoCount].CacheCount            = 1;
+      LocalCacheInfo[LocalCacheInfoCount].Package =
+        ProcessorInfo[Index / MAX_NUM_OF_CACHE_PARAMS_LEAF].Package;
+      LocalCacheInfo[LocalCacheInfoCount].CoreType =
+        ProcessorInfo[Index / MAX_NUM_OF_CACHE_PARAMS_LEAF].CoreType;
+      LocalCacheInfo[LocalCacheInfoCount].CacheLevel =
+        CacheData[Index].CacheLevel;
+      LocalCacheInfo[LocalCacheInfoCount].CacheType =
+        CacheData[Index].CacheType;
+      LocalCacheInfo[LocalCacheInfoCount].CacheWays =
+        CacheData[Index].CacheWays;
+      LocalCacheInfo[LocalCacheInfoCount].FullyAssociativeCache =
+        CacheData[Index].FullyAssociativeCache;
+      LocalCacheInfo[LocalCacheInfoCount].DirectMappedCache =
+        CacheData[Index].DirectMappedCache;
+      LocalCacheInfo[LocalCacheInfoCount].CacheSizeinKB =
+        CacheData[Index].CacheSizeinKB;
+      LocalCacheInfo[LocalCacheInfoCount].CacheCount = 1;
 
       LocalCacheInfoCount++;
     }
@@ -382,8 +462,19 @@ CpuCacheInfoCollectCpuCacheInfoData (
     //
     // Sort LocalCacheInfo array by CPU package ID, core type, cache level and cache type.
     //
-    QuickSort (LocalCacheInfo, LocalCacheInfoCount, sizeof (*LocalCacheInfo), CpuCacheInfoCompare, (VOID *)&SortBuffer);
-    CopyMem (CacheInfo, LocalCacheInfo, sizeof (*CacheInfo) * LocalCacheInfoCount);
+    QuickSort (
+      LocalCacheInfo,
+      LocalCacheInfoCount,
+      sizeof (*LocalCacheInfo),
+      CpuCacheInfoCompare,
+      (VOID *)&SortBuffer
+      );
+    CopyMem (
+      CacheInfo,
+      LocalCacheInfo,
+      sizeof (*CacheInfo) *
+      LocalCacheInfoCount
+      );
     DEBUG_CODE (
       CpuCacheInfoPrintCpuCacheInfoTable (CacheInfo, LocalCacheInfoCount);
       );
@@ -392,7 +483,13 @@ CpuCacheInfoCollectCpuCacheInfoData (
 
   *CacheInfoCount = LocalCacheInfoCount;
 
-  FreePages (LocalCacheInfo, EFI_SIZE_TO_PAGES (MaxCacheInfoCount * sizeof (*LocalCacheInfo)));
+  FreePages (
+    LocalCacheInfo,
+    EFI_SIZE_TO_PAGES (
+      MaxCacheInfoCount *
+      sizeof (*LocalCacheInfo)
+      )
+    );
 
   return Status;
 }
@@ -452,7 +549,12 @@ GetCpuCacheInfo (
   //
   // Initialize COLLECT_CPUID_CACHE_DATA_CONTEXT.ProcessorInfo.
   //
-  Context.ProcessorInfo = AllocatePages (EFI_SIZE_TO_PAGES (NumberOfProcessors * sizeof (*Context.ProcessorInfo)));
+  Context.ProcessorInfo = AllocatePages (
+                            EFI_SIZE_TO_PAGES (
+                              NumberOfProcessors *
+                              sizeof (*Context.ProcessorInfo)
+                              )
+                            );
   ASSERT (Context.ProcessorInfo != NULL);
   if (Context.ProcessorInfo == NULL) {
     return EFI_OUT_OF_RESOURCES;
@@ -465,10 +567,21 @@ GetCpuCacheInfo (
   // by data of each Cache Parameter Leaf of processor 1 ...
   //
   CacheDataCount    = NumberOfProcessors * MAX_NUM_OF_CACHE_PARAMS_LEAF;
-  Context.CacheData = AllocatePages (EFI_SIZE_TO_PAGES (CacheDataCount * sizeof (*Context.CacheData)));
+  Context.CacheData = AllocatePages (
+                        EFI_SIZE_TO_PAGES (
+                          CacheDataCount *
+                          sizeof (*Context.CacheData)
+                          )
+                        );
   ASSERT (Context.CacheData != NULL);
   if (Context.CacheData == NULL) {
-    FreePages (Context.ProcessorInfo, EFI_SIZE_TO_PAGES (NumberOfProcessors * sizeof (*Context.ProcessorInfo)));
+    FreePages (
+      Context.ProcessorInfo,
+      EFI_SIZE_TO_PAGES (
+        NumberOfProcessors *
+        sizeof (*Context.ProcessorInfo)
+        )
+      );
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -477,24 +590,54 @@ GetCpuCacheInfo (
   //
   // Collect Package ID and APIC ID of all processors.
   //
-  for (ProcessorIndex = 0; ProcessorIndex < NumberOfProcessors; ProcessorIndex++) {
-    CpuCacheInfoGetProcessorInfo (Context.MpServices, ProcessorIndex, &ProcessorInfo);
-    Context.ProcessorInfo[ProcessorIndex].Package = ProcessorInfo.Location.Package;
-    Context.ProcessorInfo[ProcessorIndex].ApicId  = (UINT32)ProcessorInfo.ProcessorId;
+  for (ProcessorIndex = 0; ProcessorIndex < NumberOfProcessors;
+       ProcessorIndex++)
+  {
+    CpuCacheInfoGetProcessorInfo (
+      Context.MpServices,
+      ProcessorIndex,
+      &ProcessorInfo
+      );
+    Context.ProcessorInfo[ProcessorIndex].Package =
+      ProcessorInfo.Location.Package;
+    Context.ProcessorInfo[ProcessorIndex].ApicId =
+      (UINT32)ProcessorInfo.ProcessorId;
   }
 
   //
   // Wakeup all processors for CacheData(core type and cache data) collection.
   //
-  CpuCacheInfoStartupAllCPUs (Context.MpServices, CpuCacheInfoCollectCoreAndCacheData, &Context);
+  CpuCacheInfoStartupAllCPUs (
+    Context.MpServices,
+    CpuCacheInfoCollectCoreAndCacheData,
+    &Context
+    );
 
   //
   // Collect CpuCacheInfo data from CacheData.
   //
-  Status = CpuCacheInfoCollectCpuCacheInfoData (Context.CacheData, Context.ProcessorInfo, NumberOfProcessors, CpuCacheInfo, CpuCacheInfoCount);
+  Status = CpuCacheInfoCollectCpuCacheInfoData (
+             Context.CacheData,
+             Context.ProcessorInfo,
+             NumberOfProcessors,
+             CpuCacheInfo,
+             CpuCacheInfoCount
+             );
 
-  FreePages (Context.CacheData, EFI_SIZE_TO_PAGES (CacheDataCount * sizeof (*Context.CacheData)));
-  FreePages (Context.ProcessorInfo, EFI_SIZE_TO_PAGES (NumberOfProcessors * sizeof (*Context.ProcessorInfo)));
+  FreePages (
+    Context.CacheData,
+    EFI_SIZE_TO_PAGES (
+      CacheDataCount *
+      sizeof (*Context.CacheData)
+      )
+    );
+  FreePages (
+    Context.ProcessorInfo,
+    EFI_SIZE_TO_PAGES (
+      NumberOfProcessors *
+      sizeof (*Context.ProcessorInfo)
+      )
+    );
 
   return Status;
 }

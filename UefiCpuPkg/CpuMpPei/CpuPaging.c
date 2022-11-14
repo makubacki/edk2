@@ -53,16 +53,22 @@ typedef struct {
 } PAGE_ATTRIBUTE_TABLE;
 
 PAGE_ATTRIBUTE_TABLE  mPageAttributeTable[] = {
-  { PageNone, 0,          0,                           0,  0 },
-  { Page4K,   SIZE_4KB,   PAGING_4K_ADDRESS_MASK_64,   12, 9 },
-  { Page2M,   SIZE_2MB,   PAGING_2M_ADDRESS_MASK_64,   21, 9 },
-  { Page1G,   SIZE_1GB,   PAGING_1G_ADDRESS_MASK_64,   30, 9 },
-  { Page512G, SIZE_512GB, PAGING_512G_ADDRESS_MASK_64, 39, 9 },
+  { PageNone, 0,          0,                           0,
+    0                            },
+  { Page4K,   SIZE_4KB,   PAGING_4K_ADDRESS_MASK_64,   12,
+    9                                                      },
+  { Page2M,   SIZE_2MB,   PAGING_2M_ADDRESS_MASK_64,   21,
+    9                                                                               },
+  { Page1G,   SIZE_1GB,   PAGING_1G_ADDRESS_MASK_64,   30,
+    9                                                                                                        },
+  { Page512G, SIZE_512GB, PAGING_512G_ADDRESS_MASK_64, 39,
+    9                                                                                                        },
 };
 
 EFI_PEI_NOTIFY_DESCRIPTOR  mPostMemNotifyList[] = {
   {
-    (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
+    (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK |
+     EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
     &gEfiPeiMemoryDiscoveredPpiGuid,
     MemoryDiscoveredPpiNotifyCallback
   }
@@ -190,7 +196,10 @@ GetPageTableEntry (
   AddressEncMask = PcdGet64 (PcdPteMemoryEncryptionAddressOrMask);
   PageTable      = (UINT64 *)(UINTN)(AsmReadCr3 () & PAGING_4K_ADDRESS_MASK_64);
   for (Level = (INTN)GetPageTableTopLevelType (); Level > 0; --Level) {
-    Index  = (UINTN)RShiftU64 (Address, mPageAttributeTable[Level].AddressBitOffset);
+    Index = (UINTN)RShiftU64 (
+                     Address,
+                     mPageAttributeTable[Level].AddressBitOffset
+                     );
     Index &= PAGING_PAE_INDEX_MASK;
 
     //
@@ -283,7 +292,8 @@ SplitPage (
     BaseAddress += mPageAttributeTable[SplitTo].Length;
   }
 
-  (*PageEntry) = (UINT64)(UINTN)NewPageEntry | AddressEncMask | PAGE_ATTRIBUTE_BITS;
+  (*PageEntry) = (UINT64)(UINTN)NewPageEntry | AddressEncMask |
+                 PAGE_ATTRIBUTE_BITS;
 
   return RETURN_SUCCESS;
 }
@@ -437,7 +447,8 @@ CreatePageTable (
   TopLevelPageAttr    = (PAGE_ATTRIBUTE)GetPageTableTopLevelType ();
   PhysicalAddressBits = GetPhysicalAddressWidth ();
   NumberOfEntries     = (UINTN)1 << (PhysicalAddressBits -
-                                     mPageAttributeTable[TopLevelPageAttr].AddressBitOffset);
+                                     mPageAttributeTable[TopLevelPageAttr].
+                                       AddressBitOffset);
 
   PageTable = (UINTN)AllocatePageTableMemory (1);
   if (PageTable == 0) {
@@ -543,7 +554,10 @@ SetupStackGuardPage (
   // One extra page at the bottom of the stack is needed for Guard page.
   //
   if (PcdGet32 (PcdCpuApStackSize) <= EFI_PAGE_SIZE) {
-    DEBUG ((DEBUG_ERROR, "PcdCpuApStackSize is not big enough for Stack Guard!\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "PcdCpuApStackSize is not big enough for Stack Guard!\n"
+      ));
     ASSERT (FALSE);
   }
 
@@ -554,13 +568,16 @@ SetupStackGuardPage (
 
     if (Index == Bsp) {
       Hob.Raw = GetHobList ();
-      while ((Hob.Raw = GetNextHob (EFI_HOB_TYPE_MEMORY_ALLOCATION, Hob.Raw)) != NULL) {
+      while ((Hob.Raw = GetNextHob (EFI_HOB_TYPE_MEMORY_ALLOCATION, Hob.Raw)) !=
+             NULL)
+      {
         if (CompareGuid (
               &gEfiHobMemoryAllocStackGuid,
               &(Hob.MemoryAllocationStack->AllocDescriptor.Name)
               ))
         {
-          StackBase = Hob.MemoryAllocationStack->AllocDescriptor.MemoryBaseAddress;
+          StackBase =
+            Hob.MemoryAllocationStack->AllocDescriptor.MemoryBaseAddress;
           break;
         }
 
@@ -570,7 +587,14 @@ SetupStackGuardPage (
       //
       // Ask AP to return is stack base address.
       //
-      MpInitLibStartupThisAP (GetStackBase, Index, NULL, 0, (VOID *)&StackBase, NULL);
+      MpInitLibStartupThisAP (
+        GetStackBase,
+        Index,
+        NULL,
+        0,
+        (VOID *)&StackBase,
+        NULL
+        );
     }
 
     ASSERT (StackBase != 0);
@@ -648,7 +672,11 @@ MemoryDiscoveredPpiNotifyCallback (
     // Enable #PF exception, so if the code access SPI after disable NEM, it will generate
     // the exception to avoid potential vulnerability.
     //
-    ConvertMemoryPageAttributes (MigratedFvInfo->FvOrgBase, MigratedFvInfo->FvLength, 0);
+    ConvertMemoryPageAttributes (
+      MigratedFvInfo->FvOrgBase,
+      MigratedFvInfo->FvLength,
+      0
+      );
 
     Hob.Raw = GET_NEXT_HOB (Hob);
     Hob.Raw = GetNextGuidHob (&gEdkiiMigratedFvInfoGuid, Hob.Raw);

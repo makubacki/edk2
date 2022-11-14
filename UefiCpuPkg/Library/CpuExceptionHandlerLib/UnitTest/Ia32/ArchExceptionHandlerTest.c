@@ -17,7 +17,9 @@ GENERAL_REGISTER_IA32  mActualContextAfterException;
 // For GP and PF, Ecx is set to FaultParameter. For other exception triggered by INTn, Ecx is set to ExceptionType.
 //
 GENERAL_REGISTER_IA32  mExpectedContextInHandler      = { 1, 2, 3, 4, 5, 0 };
-GENERAL_REGISTER_IA32  mExpectedContextAfterException = { 11, 12, 13, 14, 15, 16 };
+GENERAL_REGISTER_IA32  mExpectedContextAfterException = {
+  11, 12, 13, 14, 15, 16
+};
 
 /**
   Special handler for fault exception.
@@ -77,7 +79,8 @@ AdjustCpuContextHandler (
   // When fault exception happens, eip/rip points to the faulting instruction.
   // For now, olny GP and PF are tested in fault exception.
   //
-  if ((ExceptionType == EXCEPT_IA32_PAGE_FAULT) || (ExceptionType == EXCEPT_IA32_GP_FAULT)) {
+  if ((ExceptionType == EXCEPT_IA32_PAGE_FAULT) || (ExceptionType ==
+                                                    EXCEPT_IA32_GP_FAULT)) {
     AdjustRipForFaultHandler (ExceptionType, SystemContext);
   }
 }
@@ -102,12 +105,18 @@ CompareCpuContext (
   UT_ASSERT_EQUAL (mActualContextInHandler.Ecx, mExpectedContextInHandler.Ecx);
   UT_ASSERT_EQUAL (mActualContextInHandler.Eax, mExpectedContextInHandler.Eax);
 
-  UT_ASSERT_EQUAL (mActualContextAfterException.Edi, mExpectedContextAfterException.Edi);
-  UT_ASSERT_EQUAL (mActualContextAfterException.Esi, mExpectedContextAfterException.Esi);
-  UT_ASSERT_EQUAL (mActualContextAfterException.Ebx, mExpectedContextAfterException.Ebx);
-  UT_ASSERT_EQUAL (mActualContextAfterException.Edx, mExpectedContextAfterException.Edx);
-  UT_ASSERT_EQUAL (mActualContextAfterException.Ecx, mExpectedContextAfterException.Ecx);
-  UT_ASSERT_EQUAL (mActualContextAfterException.Eax, mExpectedContextAfterException.Eax);
+  UT_ASSERT_EQUAL (mActualContextAfterException.Edi,
+    mExpectedContextAfterException.Edi);
+  UT_ASSERT_EQUAL (mActualContextAfterException.Esi,
+    mExpectedContextAfterException.Esi);
+  UT_ASSERT_EQUAL (mActualContextAfterException.Ebx,
+    mExpectedContextAfterException.Ebx);
+  UT_ASSERT_EQUAL (mActualContextAfterException.Edx,
+    mExpectedContextAfterException.Edx);
+  UT_ASSERT_EQUAL (mActualContextAfterException.Ecx,
+    mExpectedContextAfterException.Ecx);
+  UT_ASSERT_EQUAL (mActualContextAfterException.Eax,
+    mExpectedContextAfterException.Eax);
   return UNIT_TEST_PASSED;
 }
 

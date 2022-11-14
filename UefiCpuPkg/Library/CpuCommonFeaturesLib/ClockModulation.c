@@ -30,7 +30,10 @@ ClockModulationGetConfigData (
 {
   UINT32  *ConfigData;
 
-  ConfigData = AllocateZeroPool (sizeof (CLOCK_MODULATION_CONFIG_DATA) * NumberOfProcessors);
+  ConfigData = AllocateZeroPool (
+                 sizeof (CLOCK_MODULATION_CONFIG_DATA) *
+                 NumberOfProcessors
+                 );
   ASSERT (ConfigData != NULL);
   return ConfigData;
 }
@@ -71,7 +74,9 @@ ClockModulationSupport (
       NULL,
       NULL
       );
-    CmConfigData[ProcessorNumber].ClockModulation.Uint64 = AsmReadMsr64 (MSR_IA32_CLOCK_MODULATION);
+    CmConfigData[ProcessorNumber].ClockModulation.Uint64 = AsmReadMsr64 (
+                                                             MSR_IA32_CLOCK_MODULATION
+                                                             );
     return TRUE;
   }
 
@@ -113,9 +118,16 @@ ClockModulationInitialize (
 
   if (State) {
     ClockModulation->Bits.OnDemandClockModulationEnable    = 1;
-    ClockModulation->Bits.OnDemandClockModulationDutyCycle = PcdGet8 (PcdCpuClockModulationDutyCycle) >> 1;
-    if (CmConfigData[ProcessorNumber].ThermalPowerManagementEax.Bits.ECMD == 1) {
-      ClockModulation->Bits.ExtendedOnDemandClockModulationDutyCycle = PcdGet8 (PcdCpuClockModulationDutyCycle) & BIT0;
+    ClockModulation->Bits.OnDemandClockModulationDutyCycle = PcdGet8 (
+                                                               PcdCpuClockModulationDutyCycle
+                                                               ) >> 1;
+    if (CmConfigData[ProcessorNumber].ThermalPowerManagementEax.Bits.ECMD ==
+        1)
+    {
+      ClockModulation->Bits.ExtendedOnDemandClockModulationDutyCycle = PcdGet8 (
+                                                                         PcdCpuClockModulationDutyCycle
+                                                                         ) &
+                                                                       BIT0;
     }
   } else {
     ClockModulation->Bits.OnDemandClockModulationEnable = 0;

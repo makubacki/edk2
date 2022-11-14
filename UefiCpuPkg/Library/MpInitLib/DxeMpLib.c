@@ -261,7 +261,9 @@ CheckAndUpdateApsStatus (
   //
   // Second, check whether pending StartupThisAPs() callings exist.
   //
-  for (ProcessorNumber = 0; ProcessorNumber < CpuMpData->CpuCount; ProcessorNumber++) {
+  for (ProcessorNumber = 0; ProcessorNumber < CpuMpData->CpuCount;
+       ProcessorNumber++)
+  {
     if (CpuMpData->CpuData[ProcessorNumber].WaitEvent == NULL) {
       continue;
     }
@@ -486,7 +488,10 @@ InitMpGlobalData (
     // One extra page at the bottom of the stack is needed for Guard page.
     //
     if (CpuMpData->CpuApStackSize <= EFI_PAGE_SIZE) {
-      DEBUG ((DEBUG_ERROR, "PcdCpuApStackSize is not big enough for Stack Guard!\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "PcdCpuApStackSize is not big enough for Stack Guard!\n"
+        ));
       ASSERT (FALSE);
     }
 
@@ -501,7 +506,8 @@ InitMpGlobalData (
     CpuInfoInHob = (CPU_INFO_IN_HOB *)(UINTN)CpuMpData->CpuInfoInHob;
     for (Index = 0; Index < CpuMpData->CpuCount; ++Index) {
       if ((CpuInfoInHob != NULL) && (CpuInfoInHob[Index].ApTopOfStack != 0)) {
-        StackBase = (UINTN)CpuInfoInHob[Index].ApTopOfStack - CpuMpData->CpuApStackSize;
+        StackBase = (UINTN)CpuInfoInHob[Index].ApTopOfStack -
+                    CpuMpData->CpuApStackSize;
       } else {
         StackBase = CpuMpData->Buffer + Index * CpuMpData->CpuApStackSize;
       }
@@ -884,7 +890,11 @@ MpInitLibSwitchBSP (
   //
   // Locate Timer Arch Protocol
   //
-  Status = gBS->LocateProtocol (&gEfiTimerArchProtocolGuid, NULL, (VOID **)&Timer);
+  Status = gBS->LocateProtocol (
+                  &gEfiTimerArchProtocolGuid,
+                  NULL,
+                  (VOID **)&Timer
+                  );
   if (EFI_ERROR (Status)) {
     Timer = NULL;
   }

@@ -118,8 +118,17 @@ InitializeCpuExceptionHandlers (
   UINTN                           InterruptHandler;
 
   if (VectorInfo != NULL) {
-    SetMem ((VOID *)ReservedVectorData, sizeof (RESERVED_VECTORS_DATA) * CPU_EXCEPTION_NUM, 0xff);
-    Status = ReadAndVerifyVectorInfo (VectorInfo, ReservedVectorData, CPU_EXCEPTION_NUM);
+    SetMem (
+      (VOID *)ReservedVectorData,
+      sizeof (RESERVED_VECTORS_DATA) *
+      CPU_EXCEPTION_NUM,
+      0xff
+      );
+    Status = ReadAndVerifyVectorInfo (
+               VectorInfo,
+               ReservedVectorData,
+               CPU_EXCEPTION_NUM
+               );
     if (EFI_ERROR (Status)) {
       return EFI_INVALID_PARAMETER;
     }
@@ -151,7 +160,9 @@ InitializeCpuExceptionHandlers (
     // supported in this instance
     //
     if (VectorInfo != NULL) {
-      if (ReservedVectorData[Index].Attribute == EFI_VECTOR_HANDOFF_DO_NOT_HOOK) {
+      if (ReservedVectorData[Index].Attribute ==
+          EFI_VECTOR_HANDOFF_DO_NOT_HOOK)
+      {
         continue;
       }
     }
@@ -159,7 +170,8 @@ InitializeCpuExceptionHandlers (
     //
     // Update IDT entry
     //
-    InterruptHandler = TemplateMap.ExceptionStart + Index * TemplateMap.ExceptionStubHeaderSize;
+    InterruptHandler = TemplateMap.ExceptionStart + Index *
+                       TemplateMap.ExceptionStubHeaderSize;
     ArchUpdateIdtEntry (&IdtTable[Index], InterruptHandler);
   }
 

@@ -37,8 +37,9 @@
 #define IA32_PG_PMNT    BIT62
 #define IA32_PG_NX      BIT63
 
-#define PAGE_ATTRIBUTE_BITS             (IA32_PG_D | IA32_PG_A | IA32_PG_U | IA32_PG_RW | IA32_PG_P)
-#define PAGE_ATTRIBUTE_BITS_POST_SPLIT  (IA32_PG_RW | IA32_PG_P)
+#define PAGE_ATTRIBUTE_BITS             \
+                                              (IA32_PG_D | IA32_PG_A | IA32_PG_U | IA32_PG_RW | IA32_PG_P)
+#define PAGE_ATTRIBUTE_BITS_POST_SPLIT        (IA32_PG_RW | IA32_PG_P)
 
 //
 // Bits 1, 2, 5, 6 are reserved in the IA32 PAE PDPTE
@@ -139,7 +140,8 @@ IsInSmm (
   // load its own page table.
   //
   return (InSmm &&
-          mPagingContext.ContextData.X64.PageTableBase != (UINT64)AsmReadCr3 ());
+          mPagingContext.ContextData.X64.PageTableBase !=
+          (UINT64)AsmReadCr3 ());
 }
 
 /**
@@ -183,7 +185,8 @@ GetCurrentPagingContext (
     }
 
     if (Cr0.Bits.WP  != 0) {
-      *Attributes |= PAGE_TABLE_LIB_PAGING_CONTEXT_IA32_X64_ATTRIBUTES_WP_ENABLE;
+      *Attributes |=
+        PAGE_TABLE_LIB_PAGING_CONTEXT_IA32_X64_ATTRIBUTES_WP_ENABLE;
     }
 
     if (Cr4.Bits.PSE != 0) {
@@ -207,12 +210,14 @@ GetCurrentPagingContext (
         MsrEfer.Uint64 = AsmReadMsr64 (MSR_CORE_IA32_EFER);
         if (MsrEfer.Bits.NXE != 0) {
           // XD activated
-          *Attributes |= PAGE_TABLE_LIB_PAGING_CONTEXT_IA32_X64_ATTRIBUTES_XD_ACTIVATED;
+          *Attributes |=
+            PAGE_TABLE_LIB_PAGING_CONTEXT_IA32_X64_ATTRIBUTES_XD_ACTIVATED;
         }
       }
 
       if (RegEdx.Bits.Page1GB != 0) {
-        *Attributes |= PAGE_TABLE_LIB_PAGING_CONTEXT_IA32_X64_ATTRIBUTES_PAGE_1G_SUPPORT;
+        *Attributes |=
+          PAGE_TABLE_LIB_PAGING_CONTEXT_IA32_X64_ATTRIBUTES_PAGE_1G_SUPPORT;
       }
     }
   }
@@ -238,7 +243,9 @@ PageAttributeToLength (
 {
   UINTN  Index;
 
-  for (Index = 0; Index < sizeof (mPageAttributeTable)/sizeof (mPageAttributeTable[0]); Index++) {
+  for (Index = 0; Index < sizeof (mPageAttributeTable)/
+       sizeof (mPageAttributeTable[0]); Index++)
+  {
     if (PageAttribute == mPageAttributeTable[Index].Attribute) {
       return (UINTN)mPageAttributeTable[Index].Length;
     }
@@ -261,7 +268,9 @@ PageAttributeToMask (
 {
   UINTN  Index;
 
-  for (Index = 0; Index < sizeof (mPageAttributeTable)/sizeof (mPageAttributeTable[0]); Index++) {
+  for (Index = 0; Index < sizeof (mPageAttributeTable)/
+       sizeof (mPageAttributeTable[0]); Index++)
+  {
     if (PageAttribute == mPageAttributeTable[Index].Attribute) {
       return (UINTN)mPageAttributeTable[Index].AddressMask;
     }
@@ -308,22 +317,28 @@ GetPageTableEntry (
 
   // Make sure AddressEncMask is contained to smallest supported address field.
   //
-  AddressEncMask = PcdGet64 (PcdPteMemoryEncryptionAddressOrMask) & PAGING_1G_ADDRESS_MASK_64;
+  AddressEncMask = PcdGet64 (PcdPteMemoryEncryptionAddressOrMask) &
+                   PAGING_1G_ADDRESS_MASK_64;
   if (AddressEncMask == 0) {
     AddressEncMask = PcdGet64 (PcdTdxSharedBitMask) & PAGING_1G_ADDRESS_MASK_64;
   }
 
   if (PagingContext->MachineType == IMAGE_FILE_MACHINE_X64) {
-    if ((PagingContext->ContextData.X64.Attributes & PAGE_TABLE_LIB_PAGING_CONTEXT_IA32_X64_ATTRIBUTES_5_LEVEL) != 0) {
-      L5PageTable = (UINT64 *)(UINTN)PagingContext->ContextData.X64.PageTableBase;
+    if ((PagingContext->ContextData.X64.Attributes &
+         PAGE_TABLE_LIB_PAGING_CONTEXT_IA32_X64_ATTRIBUTES_5_LEVEL) != 0)
+    {
+      L5PageTable =
+        (UINT64 *)(UINTN)PagingContext->ContextData.X64.PageTableBase;
       if (L5PageTable[Index5] == 0) {
         *PageAttribute = PageNone;
         return NULL;
       }
 
-      L4PageTable = (UINT64 *)(UINTN)(L5PageTable[Index5] & ~AddressEncMask & PAGING_4K_ADDRESS_MASK_64);
+      L4PageTable = (UINT64 *)(UINTN)(L5PageTable[Index5] & ~AddressEncMask &
+                                      PAGING_4K_ADDRESS_MASK_64);
     } else {
-      L4PageTable = (UINT64 *)(UINTN)PagingContext->ContextData.X64.PageTableBase;
+      L4PageTable =
+        (UINT64 *)(UINTN)PagingContext->ContextData.X64.PageTableBase;
     }
 
     if (L4PageTable[Index4] == 0) {
@@ -331,10 +346,15 @@ GetPageTableEntry (
       return NULL;
     }
 
-    L3PageTable = (UINT64 *)(UINTN)(L4PageTable[Index4] & ~AddressEncMask & PAGING_4K_ADDRESS_MASK_64);
+    L3PageTable = (UINT64 *)(UINTN)(L4PageTable[Index4] & ~AddressEncMask &
+                                    PAGING_4K_ADDRESS_MASK_64);
   } else {
-    ASSERT ((PagingContext->ContextData.Ia32.Attributes & PAGE_TABLE_LIB_PAGING_CONTEXT_IA32_X64_ATTRIBUTES_PAE) != 0);
-    L3PageTable = (UINT64 *)(UINTN)PagingContext->ContextData.Ia32.PageTableBase;
+    ASSERT (
+      (PagingContext->ContextData.Ia32.Attributes &
+       PAGE_TABLE_LIB_PAGING_CONTEXT_IA32_X64_ATTRIBUTES_PAE) != 0
+      );
+    L3PageTable =
+      (UINT64 *)(UINTN)PagingContext->ContextData.Ia32.PageTableBase;
   }
 
   if (L3PageTable[Index3] == 0) {
@@ -348,7 +368,8 @@ GetPageTableEntry (
     return &L3PageTable[Index3];
   }
 
-  L2PageTable = (UINT64 *)(UINTN)(L3PageTable[Index3] & ~AddressEncMask & PAGING_4K_ADDRESS_MASK_64);
+  L2PageTable = (UINT64 *)(UINTN)(L3PageTable[Index3] & ~AddressEncMask &
+                                  PAGING_4K_ADDRESS_MASK_64);
   if (L2PageTable[Index2] == 0) {
     *PageAttribute = PageNone;
     return NULL;
@@ -361,7 +382,8 @@ GetPageTableEntry (
   }
 
   // 4k
-  L1PageTable = (UINT64 *)(UINTN)(L2PageTable[Index2] & ~AddressEncMask & PAGING_4K_ADDRESS_MASK_64);
+  L1PageTable = (UINT64 *)(UINTN)(L2PageTable[Index2] & ~AddressEncMask &
+                                  PAGING_4K_ADDRESS_MASK_64);
   if ((L1PageTable[Index1] == 0) && (Address != 0)) {
     *PageAttribute = PageNone;
     return NULL;
@@ -469,7 +491,9 @@ ConvertPageEntryAttribute (
 
   GetPagingDetails (&PagingContext->ContextData, NULL, &PageAttributes);
 
-  if ((*PageAttributes & PAGE_TABLE_LIB_PAGING_CONTEXT_IA32_X64_ATTRIBUTES_XD_ACTIVATED) != 0) {
+  if ((*PageAttributes &
+       PAGE_TABLE_LIB_PAGING_CONTEXT_IA32_X64_ATTRIBUTES_XD_ACTIVATED) != 0)
+  {
     if ((Attributes & EFI_MEMORY_XP) != 0) {
       switch (PageAction) {
         case PageActionAssign:
@@ -495,7 +519,11 @@ ConvertPageEntryAttribute (
   *PageEntry = NewPageEntry;
   if (CurrentPageEntry != NewPageEntry) {
     *IsModified = TRUE;
-    DEBUG ((DEBUG_VERBOSE, "ConvertPageEntryAttribute 0x%lx", CurrentPageEntry));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "ConvertPageEntryAttribute 0x%lx",
+      CurrentPageEntry
+      ));
     DEBUG ((DEBUG_VERBOSE, "->0x%lx\n", NewPageEntry));
   } else {
     *IsModified = FALSE;
@@ -524,7 +552,9 @@ NeedSplitPage (
 
   PageEntryLength = PageAttributeToLength (PageAttribute);
 
-  if (((BaseAddress & (PageEntryLength - 1)) == 0) && (Length >= PageEntryLength)) {
+  if (((BaseAddress & (PageEntryLength - 1)) == 0) && (Length >=
+                                                       PageEntryLength))
+  {
     return PageNone;
   }
 
@@ -566,7 +596,8 @@ SplitPage (
 
   // Make sure AddressEncMask is contained to smallest supported address field.
   //
-  AddressEncMask = PcdGet64 (PcdPteMemoryEncryptionAddressOrMask) & PAGING_1G_ADDRESS_MASK_64;
+  AddressEncMask = PcdGet64 (PcdPteMemoryEncryptionAddressOrMask) &
+                   PAGING_1G_ADDRESS_MASK_64;
 
   if (PageAttribute == Page2M) {
     //
@@ -582,10 +613,13 @@ SplitPage (
 
       BaseAddress = *PageEntry & ~AddressEncMask & PAGING_2M_ADDRESS_MASK_64;
       for (Index = 0; Index < SIZE_4KB / sizeof (UINT64); Index++) {
-        NewPageEntry[Index] = (BaseAddress + SIZE_4KB * Index) | AddressEncMask | ((*PageEntry) & PAGE_PROGATE_BITS);
+        NewPageEntry[Index] = (BaseAddress + SIZE_4KB * Index) |
+                              AddressEncMask | ((*PageEntry) &
+                                                PAGE_PROGATE_BITS);
       }
 
-      (*PageEntry) = (UINT64)(UINTN)NewPageEntry | AddressEncMask | PAGE_ATTRIBUTE_BITS_POST_SPLIT;
+      (*PageEntry) = (UINT64)(UINTN)NewPageEntry | AddressEncMask |
+                     PAGE_ATTRIBUTE_BITS_POST_SPLIT;
       return RETURN_SUCCESS;
     } else {
       return RETURN_UNSUPPORTED;
@@ -605,10 +639,13 @@ SplitPage (
 
       BaseAddress = *PageEntry & ~AddressEncMask  & PAGING_1G_ADDRESS_MASK_64;
       for (Index = 0; Index < SIZE_4KB / sizeof (UINT64); Index++) {
-        NewPageEntry[Index] = (BaseAddress + SIZE_2MB * Index) | AddressEncMask | IA32_PG_PS | ((*PageEntry) & PAGE_PROGATE_BITS);
+        NewPageEntry[Index] = (BaseAddress + SIZE_2MB * Index) |
+                              AddressEncMask | IA32_PG_PS | ((*PageEntry) &
+                                                             PAGE_PROGATE_BITS);
       }
 
-      (*PageEntry) = (UINT64)(UINTN)NewPageEntry | AddressEncMask | PAGE_ATTRIBUTE_BITS_POST_SPLIT;
+      (*PageEntry) = (UINT64)(UINTN)NewPageEntry | AddressEncMask |
+                     PAGE_ATTRIBUTE_BITS_POST_SPLIT;
       return RETURN_SUCCESS;
     } else {
       return RETURN_UNSUPPORTED;
@@ -752,14 +789,22 @@ ConvertMemoryPageAttributes (
   }
 
   if ((Attributes & ~EFI_MEMORY_ATTRIBUTE_MASK) != 0) {
-    DEBUG ((DEBUG_ERROR, "Attributes(0x%lx) has unsupported bit\n", Attributes));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Attributes(0x%lx) has unsupported bit\n",
+      Attributes
+      ));
     return EFI_UNSUPPORTED;
   }
 
   if (PagingContext == NULL) {
     GetCurrentPagingContext (&CurrentPagingContext);
   } else {
-    CopyMem (&CurrentPagingContext, PagingContext, sizeof (CurrentPagingContext));
+    CopyMem (
+      &CurrentPagingContext,
+      PagingContext,
+      sizeof (CurrentPagingContext)
+      );
   }
 
   switch (CurrentPagingContext.MachineType) {
@@ -773,7 +818,9 @@ ConvertMemoryPageAttributes (
         }
       }
 
-      if ((CurrentPagingContext.ContextData.Ia32.Attributes & PAGE_TABLE_LIB_PAGING_CONTEXT_IA32_X64_ATTRIBUTES_PAE) == 0) {
+      if ((CurrentPagingContext.ContextData.Ia32.Attributes &
+           PAGE_TABLE_LIB_PAGING_CONTEXT_IA32_X64_ATTRIBUTES_PAE) == 0)
+      {
         DEBUG ((DEBUG_ERROR, "Non-PAE Paging!\n"));
         return EFI_UNSUPPORTED;
       }
@@ -820,16 +867,31 @@ ConvertMemoryPageAttributes (
   //
   Status = EFI_SUCCESS;
   while (Length != 0) {
-    PageEntry = GetPageTableEntry (&CurrentPagingContext, BaseAddress, &PageAttribute);
+    PageEntry = GetPageTableEntry (
+                  &CurrentPagingContext,
+                  BaseAddress,
+                  &PageAttribute
+                  );
     if (PageEntry == NULL) {
       Status = RETURN_UNSUPPORTED;
       goto Done;
     }
 
     PageEntryLength = PageAttributeToLength (PageAttribute);
-    SplitAttribute  = NeedSplitPage (BaseAddress, Length, PageEntry, PageAttribute);
+    SplitAttribute  = NeedSplitPage (
+                        BaseAddress,
+                        Length,
+                        PageEntry,
+                        PageAttribute
+                        );
     if (SplitAttribute == PageNone) {
-      ConvertPageEntryAttribute (&CurrentPagingContext, PageEntry, Attributes, PageAction, &IsEntryModified);
+      ConvertPageEntryAttribute (
+        &CurrentPagingContext,
+        PageEntry,
+        Attributes,
+        PageAction,
+        &IsEntryModified
+        );
       if (IsEntryModified) {
         if (IsModified != NULL) {
           *IsModified = TRUE;
@@ -847,7 +909,12 @@ ConvertMemoryPageAttributes (
         goto Done;
       }
 
-      Status = SplitPage (PageEntry, PageAttribute, SplitAttribute, AllocatePagesFunc);
+      Status = SplitPage (
+                 PageEntry,
+                 PageAttribute,
+                 SplitAttribute,
+                 AllocatePagesFunc
+                 );
       if (RETURN_ERROR (Status)) {
         Status = RETURN_UNSUPPORTED;
         goto Done;
@@ -922,7 +989,16 @@ AssignMemoryPageAttributes (
   BOOLEAN        IsSplitted;
 
   //  DEBUG((DEBUG_INFO, "AssignMemoryPageAttributes: 0x%lx - 0x%lx (0x%lx)\n", BaseAddress, Length, Attributes));
-  Status = ConvertMemoryPageAttributes (PagingContext, BaseAddress, Length, Attributes, PageActionAssign, AllocatePagesFunc, &IsSplitted, &IsModified);
+  Status = ConvertMemoryPageAttributes (
+             PagingContext,
+             BaseAddress,
+             Length,
+             Attributes,
+             PageActionAssign,
+             AllocatePagesFunc,
+             &IsSplitted,
+             &IsModified
+             );
   if (!EFI_ERROR (Status)) {
     if ((PagingContext == NULL) && IsModified) {
       //
@@ -1051,7 +1127,11 @@ RefreshGcdMemoryAttributesFromPaging (
     MemorySpaceLength = MemorySpaceMap[Index].Length;
     while (MemorySpaceLength > 0) {
       if (PageLength == 0) {
-        PageEntry = GetPageTableEntry (&PagingContext, BaseAddress, &PageAttribute);
+        PageEntry = GetPageTableEntry (
+                      &PagingContext,
+                      BaseAddress,
+                      &PageAttribute
+                      );
         if (PageEntry == NULL) {
           break;
         }
@@ -1059,9 +1139,12 @@ RefreshGcdMemoryAttributesFromPaging (
         //
         // Note current memory space might start in the middle of a page
         //
-        PageStartAddress = (*PageEntry) & (UINT64)PageAttributeToMask (PageAttribute);
-        PageLength       = PageAttributeToLength (PageAttribute) - (BaseAddress - PageStartAddress);
-        Attributes       = GetAttributesFromPageEntry (PageEntry);
+        PageStartAddress = (*PageEntry) & (UINT64)PageAttributeToMask (
+                                                    PageAttribute
+                                                    );
+        PageLength = PageAttributeToLength (PageAttribute) -
+                     (BaseAddress - PageStartAddress);
+        Attributes = GetAttributesFromPageEntry (PageEntry);
       }
 
       Length = MIN (PageLength, MemorySpaceLength);
@@ -1360,7 +1443,11 @@ PageFaultExceptionHandler (
             // Re-retrieve page entry because above calling might update page
             // table due to table split.
             //
-            PageEntry                              = GetPageTableEntry (&PagingContext, PFAddress, &PageAttribute);
+            PageEntry = GetPageTableEntry (
+                          &PagingContext,
+                          PFAddress,
+                          &PageAttribute
+                          );
             mLastPFEntryPointer[CpuIndex][Index++] = PageEntry;
             mPFEntryCount[CpuIndex]                = Index;
           }
@@ -1408,13 +1495,18 @@ InitializePageTableLib (
 
   GetCurrentPagingContext (&CurrentPagingContext);
 
-  GetPagingDetails (&CurrentPagingContext.ContextData, &PageTableBase, &Attributes);
+  GetPagingDetails (
+    &CurrentPagingContext.ContextData,
+    &PageTableBase,
+    &Attributes
+    );
 
   //
   // Reserve memory of page tables for future uses, if paging is enabled.
   //
   if ((*PageTableBase != 0) &&
-      ((*Attributes & PAGE_TABLE_LIB_PAGING_CONTEXT_IA32_X64_ATTRIBUTES_PAE) != 0))
+      ((*Attributes & PAGE_TABLE_LIB_PAGING_CONTEXT_IA32_X64_ATTRIBUTES_PAE) !=
+       0))
   {
     DisableReadOnlyPageWriteProtect ();
     InitializePageTablePool (1);
@@ -1422,16 +1514,26 @@ InitializePageTableLib (
   }
 
   if (HEAP_GUARD_NONSTOP_MODE || NULL_DETECTION_NONSTOP_MODE) {
-    mPFEntryCount = (UINTN *)AllocateZeroPool (sizeof (UINTN) * mNumberOfProcessors);
+    mPFEntryCount = (UINTN *)AllocateZeroPool (
+                               sizeof (UINTN) *
+                               mNumberOfProcessors
+                               );
     ASSERT (mPFEntryCount != NULL);
 
     mLastPFEntryPointer = (UINT64 *(*)[MAX_PF_ENTRY_COUNT])
-                          AllocateZeroPool (sizeof (mLastPFEntryPointer[0]) * mNumberOfProcessors);
+                          AllocateZeroPool (
+                            sizeof (mLastPFEntryPointer[0]) *
+                            mNumberOfProcessors
+                            );
     ASSERT (mLastPFEntryPointer != NULL);
   }
 
   DEBUG ((DEBUG_INFO, "CurrentPagingContext:\n"));
-  DEBUG ((DEBUG_INFO, "  MachineType   - 0x%x\n", CurrentPagingContext.MachineType));
+  DEBUG ((
+    DEBUG_INFO,
+    "  MachineType   - 0x%x\n",
+    CurrentPagingContext.MachineType
+    ));
   DEBUG ((DEBUG_INFO, "  PageTableBase - 0x%Lx\n", (UINT64)*PageTableBase));
   DEBUG ((DEBUG_INFO, "  Attributes    - 0x%x\n", *Attributes));
 

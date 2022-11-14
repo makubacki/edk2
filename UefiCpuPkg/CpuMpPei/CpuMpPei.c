@@ -445,8 +445,13 @@ InitializeExceptionStackSwitchHandlers (
   // This function may be called twice for each Cpu. Only run InitializeSeparateExceptionStacks
   // if this is the first call or the first call failed because of size too small.
   //
-  if ((SwitchStackData[Index].Status == EFI_NOT_STARTED) || (SwitchStackData[Index].Status == EFI_BUFFER_TOO_SMALL)) {
-    SwitchStackData[Index].Status = InitializeSeparateExceptionStacks (SwitchStackData[Index].Buffer, &SwitchStackData[Index].BufferSize);
+  if ((SwitchStackData[Index].Status == EFI_NOT_STARTED) ||
+      (SwitchStackData[Index].Status == EFI_BUFFER_TOO_SMALL))
+  {
+    SwitchStackData[Index].Status = InitializeSeparateExceptionStacks (
+                                      SwitchStackData[Index].Buffer,
+                                      &SwitchStackData[Index].BufferSize
+                                      );
   }
 }
 
@@ -474,9 +479,18 @@ InitializeMpExceptionStackSwitchHandlers (
   }
 
   MpInitLibGetNumberOfProcessors (&NumberOfProcessors, NULL);
-  SwitchStackData = AllocatePages (EFI_SIZE_TO_PAGES (NumberOfProcessors * sizeof (EXCEPTION_STACK_SWITCH_CONTEXT)));
+  SwitchStackData = AllocatePages (
+                      EFI_SIZE_TO_PAGES (
+                        NumberOfProcessors *
+                        sizeof (EXCEPTION_STACK_SWITCH_CONTEXT)
+                        )
+                      );
   ASSERT (SwitchStackData != NULL);
-  ZeroMem (SwitchStackData, NumberOfProcessors * sizeof (EXCEPTION_STACK_SWITCH_CONTEXT));
+  ZeroMem (
+    SwitchStackData,
+    NumberOfProcessors *
+    sizeof (EXCEPTION_STACK_SWITCH_CONTEXT)
+    );
   for (Index = 0; Index < NumberOfProcessors; ++Index) {
     //
     // Because the procedure may runs multiple times, use the status EFI_NOT_STARTED
@@ -532,7 +546,13 @@ InitializeMpExceptionStackSwitchHandlers (
     }
   }
 
-  FreePages (SwitchStackData, EFI_SIZE_TO_PAGES (NumberOfProcessors * sizeof (EXCEPTION_STACK_SWITCH_CONTEXT)));
+  FreePages (
+    SwitchStackData,
+    EFI_SIZE_TO_PAGES (
+      NumberOfProcessors *
+      sizeof (EXCEPTION_STACK_SWITCH_CONTEXT)
+      )
+    );
 }
 
 /**

@@ -9,12 +9,17 @@
 #include "MtrrLibUnitTest.h"
 
 MTRR_MEMORY_CACHE_TYPE  mMemoryCacheTypes[] = {
-  CacheUncacheable, CacheWriteCombining, CacheWriteThrough, CacheWriteProtected, CacheWriteBack
+  CacheUncacheable, CacheWriteCombining, CacheWriteThrough, CacheWriteProtected,
+  CacheWriteBack
 };
 
 UINT64                           mFixedMtrrsValue[MTRR_NUMBER_OF_FIXED_MTRR];
-MSR_IA32_MTRR_PHYSBASE_REGISTER  mVariableMtrrsPhysBase[MTRR_NUMBER_OF_VARIABLE_MTRR];
-MSR_IA32_MTRR_PHYSMASK_REGISTER  mVariableMtrrsPhysMask[MTRR_NUMBER_OF_VARIABLE_MTRR];
+MSR_IA32_MTRR_PHYSBASE_REGISTER  mVariableMtrrsPhysBase[
+                                                        MTRR_NUMBER_OF_VARIABLE_MTRR
+];
+MSR_IA32_MTRR_PHYSMASK_REGISTER  mVariableMtrrsPhysMask[
+                                                        MTRR_NUMBER_OF_VARIABLE_MTRR
+];
 MSR_IA32_MTRR_DEF_TYPE_REGISTER  mDefTypeMsr;
 MSR_IA32_MTRRCAP_REGISTER        mMtrrCapMsr;
 CPUID_VERSION_INFO_EDX           mCpuidVersionInfoEdx;
@@ -181,7 +186,8 @@ UnitTestMtrrLibAsmReadMsr64 (
   }
 
   if ((MsrIndex >= MSR_IA32_MTRR_PHYSBASE0) &&
-      (MsrIndex <= MSR_IA32_MTRR_PHYSMASK0 + (MTRR_NUMBER_OF_VARIABLE_MTRR << 1)))
+      (MsrIndex <= MSR_IA32_MTRR_PHYSMASK0 + (MTRR_NUMBER_OF_VARIABLE_MTRR <<
+                                              1)))
   {
     if (MsrIndex % 2 == 0) {
       Index = (MsrIndex - MSR_IA32_MTRR_PHYSBASE0) >> 1;
@@ -241,14 +247,17 @@ UnitTestMtrrLibAsmWriteMsr64 (
   }
 
   if ((MsrIndex >= MSR_IA32_MTRR_PHYSBASE0) &&
-      (MsrIndex <= MSR_IA32_MTRR_PHYSMASK0 + (MTRR_NUMBER_OF_VARIABLE_MTRR << 1)))
+      (MsrIndex <= MSR_IA32_MTRR_PHYSMASK0 + (MTRR_NUMBER_OF_VARIABLE_MTRR <<
+                                              1)))
   {
     if (MsrIndex % 2 == 0) {
-      Index                                = (MsrIndex - MSR_IA32_MTRR_PHYSBASE0) >> 1;
+      Index                                = (MsrIndex -
+                                              MSR_IA32_MTRR_PHYSBASE0) >> 1;
       mVariableMtrrsPhysBase[Index].Uint64 = Value;
       return Value;
     } else {
-      Index                                = (MsrIndex - MSR_IA32_MTRR_PHYSMASK0) >> 1;
+      Index                                = (MsrIndex -
+                                              MSR_IA32_MTRR_PHYSMASK0) >> 1;
       mVariableMtrrsPhysMask[Index].Uint64 = Value;
       return Value;
     }
@@ -284,11 +293,16 @@ InitializeMtrrRegs (
 {
   UINT32  Index;
 
-  SetMem (mFixedMtrrsValue, sizeof (mFixedMtrrsValue), SystemParameter->DefaultCacheType);
+  SetMem (
+    mFixedMtrrsValue,
+    sizeof (mFixedMtrrsValue),
+    SystemParameter->DefaultCacheType
+    );
 
   for (Index = 0; Index < ARRAY_SIZE (mVariableMtrrsPhysBase); Index++) {
-    mVariableMtrrsPhysBase[Index].Uint64         = 0;
-    mVariableMtrrsPhysBase[Index].Bits.Type      = SystemParameter->DefaultCacheType;
+    mVariableMtrrsPhysBase[Index].Uint64    = 0;
+    mVariableMtrrsPhysBase[Index].Bits.Type =
+      SystemParameter->DefaultCacheType;
     mVariableMtrrsPhysBase[Index].Bits.Reserved1 = 0;
 
     mVariableMtrrsPhysMask[Index].Uint64         = 0;
@@ -311,8 +325,10 @@ InitializeMtrrRegs (
   mMtrrCapMsr.Bits.Reserved2 = 0;
   mMtrrCapMsr.Bits.Reserved3 = 0;
 
-  mCpuidVersionInfoEdx.Bits.MTRR                      = SystemParameter->MtrrSupported;
-  mCpuidVirPhyAddressSizeEax.Bits.PhysicalAddressBits = SystemParameter->PhysicalAddressBits;
+  mCpuidVersionInfoEdx.Bits.MTRR =
+    SystemParameter->MtrrSupported;
+  mCpuidVirPhyAddressSizeEax.Bits.PhysicalAddressBits =
+    SystemParameter->PhysicalAddressBits;
 
   //
   // Hook BaseLib functions used by MtrrLib that require some emulation.
@@ -373,17 +389,29 @@ CollectTestResult (
 
   *MtrrCount = 0;
   for (Index = 0; Index < VariableMtrrCount; Index++) {
-    if (((MSR_IA32_MTRR_PHYSMASK_REGISTER *)&Mtrrs->Variables.Mtrr[Index].Mask)->Bits.V == 1) {
-      RawMemoryRanges[*MtrrCount].BaseAddress = Mtrrs->Variables.Mtrr[Index].Base & MtrrValidAddressMask;
-      RawMemoryRanges[*MtrrCount].Type        =
-        ((MSR_IA32_MTRR_PHYSBASE_REGISTER *)&Mtrrs->Variables.Mtrr[Index].Base)->Bits.Type;
+    if (((MSR_IA32_MTRR_PHYSMASK_REGISTER *)&Mtrrs->Variables.Mtrr[Index].Mask)
+          ->Bits.V == 1)
+    {
+      RawMemoryRanges[*MtrrCount].BaseAddress =
+        Mtrrs->Variables.Mtrr[Index].Base & MtrrValidAddressMask;
+      RawMemoryRanges[*MtrrCount].Type =
+        ((MSR_IA32_MTRR_PHYSBASE_REGISTER *)&Mtrrs->Variables.Mtrr[Index].Base)
+          ->Bits.Type;
       RawMemoryRanges[*MtrrCount].Length =
-        ((~(Mtrrs->Variables.Mtrr[Index].Mask & MtrrValidAddressMask)) & MtrrValidBitsMask) + 1;
+        ((~(Mtrrs->Variables.Mtrr[Index].Mask & MtrrValidAddressMask)) &
+         MtrrValidBitsMask) + 1;
       (*MtrrCount)++;
     }
   }
 
-  GetEffectiveMemoryRanges (DefaultType, PhysicalAddressBits, RawMemoryRanges, *MtrrCount, Ranges, RangeCount);
+  GetEffectiveMemoryRanges (
+    DefaultType,
+    PhysicalAddressBits,
+    RawMemoryRanges,
+    *MtrrCount,
+    Ranges,
+    RangeCount
+    );
 }
 
 /**
@@ -454,7 +482,8 @@ GenerateRandomMtrrPair (
     RangeBase      = RandomBoundary << BaseShift;
   } while (RangeBase < SIZE_1MB || RangeBase > MaxPhysicalAddress - 1);
 
-  PhysBasePhyMaskValidBitsMask = (MaxPhysicalAddress - 1) & 0xfffffffffffff000ULL;
+  PhysBasePhyMaskValidBitsMask = (MaxPhysicalAddress - 1) &
+                                 0xfffffffffffff000ULL;
 
   PhysBase.Uint64    = 0;
   PhysBase.Bits.Type = CacheType;
@@ -497,8 +526,11 @@ RangesOverlap (
     // 1. range#2.base is in the middle of range#1
     // 2. range#1.base is in the middle of range#2
     //
-    if (  ((Range->BaseAddress <= Ranges[Count].BaseAddress) && (Ranges[Count].BaseAddress < Range->BaseAddress + Range->Length))
-       || ((Ranges[Count].BaseAddress <= Range->BaseAddress) && (Range->BaseAddress < Ranges[Count].BaseAddress + Ranges[Count].Length)))
+    if (  ((Range->BaseAddress <= Ranges[Count].BaseAddress) &&
+           (Ranges[Count].BaseAddress < Range->BaseAddress + Range->Length))
+       || ((Ranges[Count].BaseAddress <= Range->BaseAddress) &&
+           (Range->BaseAddress < Ranges[Count].BaseAddress +
+            Ranges[Count].Length)))
     {
       return TRUE;
     }
@@ -535,34 +567,85 @@ GenerateValidAndConfigurableMtrrPairs (
   // 1. Generate UC, WT, WB in order.
   //
   for (Index = 0; Index < UcCount; Index++) {
-    GenerateRandomMtrrPair (PhysicalAddressBits, CacheUncacheable, NULL, &RawMemoryRanges[Index]);
+    GenerateRandomMtrrPair (
+      PhysicalAddressBits,
+      CacheUncacheable,
+      NULL,
+      &RawMemoryRanges[Index]
+      );
   }
 
   for (Index = UcCount; Index < UcCount + WtCount; Index++) {
-    GenerateRandomMtrrPair (PhysicalAddressBits, CacheWriteThrough, NULL, &RawMemoryRanges[Index]);
+    GenerateRandomMtrrPair (
+      PhysicalAddressBits,
+      CacheWriteThrough,
+      NULL,
+      &RawMemoryRanges[Index]
+      );
   }
 
-  for (Index = UcCount + WtCount; Index < UcCount + WtCount + WbCount; Index++) {
-    GenerateRandomMtrrPair (PhysicalAddressBits, CacheWriteBack, NULL, &RawMemoryRanges[Index]);
+  for (Index = UcCount + WtCount; Index < UcCount + WtCount + WbCount;
+       Index++)
+  {
+    GenerateRandomMtrrPair (
+      PhysicalAddressBits,
+      CacheWriteBack,
+      NULL,
+      &RawMemoryRanges[Index]
+      );
   }
 
   //
   // 2. Generate WP MTRR and DO NOT overlap with WT, WB.
   //
-  for (Index = UcCount + WtCount + WbCount; Index < UcCount + WtCount + WbCount + WpCount; Index++) {
-    GenerateRandomMtrrPair (PhysicalAddressBits, CacheWriteProtected, NULL, &RawMemoryRanges[Index]);
-    while (RangesOverlap (&RawMemoryRanges[Index], &RawMemoryRanges[UcCount], WtCount + WbCount)) {
-      GenerateRandomMtrrPair (PhysicalAddressBits, CacheWriteProtected, NULL, &RawMemoryRanges[Index]);
+  for (Index = UcCount + WtCount + WbCount; Index < UcCount + WtCount +
+       WbCount + WpCount; Index++)
+  {
+    GenerateRandomMtrrPair (
+      PhysicalAddressBits,
+      CacheWriteProtected,
+      NULL,
+      &RawMemoryRanges[Index]
+      );
+    while (RangesOverlap (
+             &RawMemoryRanges[Index],
+             &RawMemoryRanges[UcCount],
+             WtCount + WbCount
+             ))
+    {
+      GenerateRandomMtrrPair (
+        PhysicalAddressBits,
+        CacheWriteProtected,
+        NULL,
+        &RawMemoryRanges[Index]
+        );
     }
   }
 
   //
   // 3. Generate WC MTRR and DO NOT overlap with WT, WB, WP.
   //
-  for (Index = UcCount + WtCount + WbCount + WpCount; Index < UcCount + WtCount + WbCount + WpCount + WcCount; Index++) {
-    GenerateRandomMtrrPair (PhysicalAddressBits, CacheWriteCombining, NULL, &RawMemoryRanges[Index]);
-    while (RangesOverlap (&RawMemoryRanges[Index], &RawMemoryRanges[UcCount], WtCount + WbCount + WpCount)) {
-      GenerateRandomMtrrPair (PhysicalAddressBits, CacheWriteCombining, NULL, &RawMemoryRanges[Index]);
+  for (Index = UcCount + WtCount + WbCount + WpCount; Index < UcCount +
+       WtCount + WbCount + WpCount + WcCount; Index++)
+  {
+    GenerateRandomMtrrPair (
+      PhysicalAddressBits,
+      CacheWriteCombining,
+      NULL,
+      &RawMemoryRanges[Index]
+      );
+    while (RangesOverlap (
+             &RawMemoryRanges[Index],
+             &RawMemoryRanges[UcCount],
+             WtCount + WbCount + WpCount
+             ))
+    {
+      GenerateRandomMtrrPair (
+        PhysicalAddressBits,
+        CacheWriteCombining,
+        NULL,
+        &RawMemoryRanges[Index]
+        );
     }
   }
 }
@@ -707,7 +790,8 @@ AddressInRange (
   IN MTRR_MEMORY_RANGE  Range
   )
 {
-  return (Address >= Range.BaseAddress) && (Address <= Range.BaseAddress + Range.Length - 1);
+  return (Address >= Range.BaseAddress) && (Address <= Range.BaseAddress +
+                                            Range.Length - 1);
 }
 
 /**
@@ -826,8 +910,11 @@ CompactAndExtendEffectiveMtrrMemoryRanges (
 
   NewRangesCountActual = 0;
   NewRangesCountAtMost = *EffectiveMtrrMemoryRangesCount + 2;   // At most with 2 more range entries.
-  NewRanges            = (MTRR_MEMORY_RANGE *)calloc (NewRangesCountAtMost, sizeof (MTRR_MEMORY_RANGE));
-  OldRanges            = *EffectiveMtrrMemoryRanges;
+  NewRanges            = (MTRR_MEMORY_RANGE *)calloc (
+                                                NewRangesCountAtMost,
+                                                sizeof (MTRR_MEMORY_RANGE)
+                                                );
+  OldRanges = *EffectiveMtrrMemoryRanges;
   if (OldRanges[0].BaseAddress > 0) {
     NewRanges[NewRangesCountActual].BaseAddress = 0;
     NewRanges[NewRangesCountActual].Length      = OldRanges[0].BaseAddress;
@@ -844,15 +931,22 @@ CompactAndExtendEffectiveMtrrMemoryRanges (
       CurrentRangeInNewRanges = &NewRanges[NewRangesCountActual - 1];
     }
 
-    if ((CurrentRangeInNewRanges != NULL) && (CurrentRangeInNewRanges->Type == CurrentRangeTypeInOldRanges)) {
+    if ((CurrentRangeInNewRanges != NULL) && (CurrentRangeInNewRanges->Type ==
+                                              CurrentRangeTypeInOldRanges))
+    {
       CurrentRangeInNewRanges->Length += OldRanges[OldRangesIndex].Length;
     } else {
-      NewRanges[NewRangesCountActual].BaseAddress = OldRanges[OldRangesIndex].BaseAddress;
-      NewRanges[NewRangesCountActual].Length     += OldRanges[OldRangesIndex].Length;
-      NewRanges[NewRangesCountActual].Type        = CurrentRangeTypeInOldRanges;
-      while (OldRangesIndex + 1 < *EffectiveMtrrMemoryRangesCount && OldRanges[OldRangesIndex + 1].Type == CurrentRangeTypeInOldRanges) {
+      NewRanges[NewRangesCountActual].BaseAddress =
+        OldRanges[OldRangesIndex].BaseAddress;
+      NewRanges[NewRangesCountActual].Length +=
+        OldRanges[OldRangesIndex].Length;
+      NewRanges[NewRangesCountActual].Type = CurrentRangeTypeInOldRanges;
+      while (OldRangesIndex + 1 < *EffectiveMtrrMemoryRangesCount &&
+             OldRanges[OldRangesIndex + 1].Type == CurrentRangeTypeInOldRanges)
+      {
         OldRangesIndex++;
-        NewRanges[NewRangesCountActual].Length += OldRanges[OldRangesIndex].Length;
+        NewRanges[NewRangesCountActual].Length +=
+          OldRanges[OldRangesIndex].Length;
       }
 
       NewRangesCountActual++;
@@ -866,11 +960,16 @@ CompactAndExtendEffectiveMtrrMemoryRanges (
   CurrentRangeInNewRanges = &NewRanges[NewRangesCountActual - 1];
   if (OldLastRange.BaseAddress + OldLastRange.Length - 1 < MaxAddress) {
     if (CurrentRangeInNewRanges->Type == DefaultType) {
-      CurrentRangeInNewRanges->Length = MaxAddress - CurrentRangeInNewRanges->BaseAddress + 1;
+      CurrentRangeInNewRanges->Length = MaxAddress -
+                                        CurrentRangeInNewRanges->BaseAddress +
+                                        1;
     } else {
-      NewRanges[NewRangesCountActual].BaseAddress = OldLastRange.BaseAddress + OldLastRange.Length;
-      NewRanges[NewRangesCountActual].Length      = MaxAddress - NewRanges[NewRangesCountActual].BaseAddress + 1;
-      NewRanges[NewRangesCountActual].Type        = DefaultType;
+      NewRanges[NewRangesCountActual].BaseAddress = OldLastRange.BaseAddress +
+                                                    OldLastRange.Length;
+      NewRanges[NewRangesCountActual].Length = MaxAddress -
+                                               NewRanges[NewRangesCountActual].
+                                                 BaseAddress + 1;
+      NewRanges[NewRangesCountActual].Type = DefaultType;
       NewRangesCountActual++;
     }
   }
@@ -904,7 +1003,8 @@ CollectEndpoints (
   for (Index = 0; Index < *EndPointCount; Index += 2) {
     RawRangeIndex        = Index >> 1;
     Endpoints[Index]     = RawMemoryRanges[RawRangeIndex].BaseAddress;
-    Endpoints[Index + 1] = RawMemoryRanges[RawRangeIndex].BaseAddress + RawMemoryRanges[RawRangeIndex].Length - 1;
+    Endpoints[Index + 1] = RawMemoryRanges[RawRangeIndex].BaseAddress +
+                           RawMemoryRanges[RawRangeIndex].Length - 1;
   }
 
   qsort (Endpoints, *EndPointCount, sizeof (UINT64), CompareFuncUint64);
@@ -952,48 +1052,93 @@ GetEffectiveMemoryRanges (
   AllEndPointsCount      = RawMemoryRangeCount << 1;
   AllEndPointsInclusive  = calloc (AllEndPointsCount, sizeof (UINT64));
   AllRangePiecesCountMax = RawMemoryRangeCount * 3 + 1;
-  AllRangePieces         = calloc (AllRangePiecesCountMax, sizeof (MTRR_MEMORY_RANGE));
-  CollectEndpoints (AllEndPointsInclusive, &AllEndPointsCount, RawMemoryRanges, RawMemoryRangeCount);
+  AllRangePieces         = calloc (
+                             AllRangePiecesCountMax,
+                             sizeof (MTRR_MEMORY_RANGE)
+                             );
+  CollectEndpoints (
+    AllEndPointsInclusive,
+    &AllEndPointsCount,
+    RawMemoryRanges,
+    RawMemoryRangeCount
+    );
 
-  for (Index = 0, AllRangePiecesCountActual = 0; Index < AllEndPointsCount - 1; Index++) {
-    OverlapBitFlag1     = GetOverlapBitFlag (RawMemoryRanges, RawMemoryRangeCount, AllEndPointsInclusive[Index]);
-    OverlapBitFlag2     = GetOverlapBitFlag (RawMemoryRanges, RawMemoryRangeCount, AllEndPointsInclusive[Index + 1]);
-    OverlapFlagRelation = CheckOverlapBitFlagsRelation (OverlapBitFlag1, OverlapBitFlag2);
+  for (Index = 0, AllRangePiecesCountActual = 0; Index < AllEndPointsCount - 1;
+       Index++)
+  {
+    OverlapBitFlag1 = GetOverlapBitFlag (
+                        RawMemoryRanges,
+                        RawMemoryRangeCount,
+                        AllEndPointsInclusive[Index]
+                        );
+    OverlapBitFlag2 = GetOverlapBitFlag (
+                        RawMemoryRanges,
+                        RawMemoryRangeCount,
+                        AllEndPointsInclusive[Index + 1]
+                        );
+    OverlapFlagRelation = CheckOverlapBitFlagsRelation (
+                            OverlapBitFlag1,
+                            OverlapBitFlag2
+                            );
     switch (OverlapFlagRelation) {
       case 0:   // [1, 2]
-        AllRangePieces[AllRangePiecesCountActual].BaseAddress = AllEndPointsInclusive[Index];
-        AllRangePieces[AllRangePiecesCountActual].Length      = AllEndPointsInclusive[Index + 1] - AllEndPointsInclusive[Index] + 1;
+        AllRangePieces[AllRangePiecesCountActual].BaseAddress =
+          AllEndPointsInclusive[Index];
+        AllRangePieces[AllRangePiecesCountActual].Length =
+          AllEndPointsInclusive[Index + 1] - AllEndPointsInclusive[Index] + 1;
         AllRangePiecesCountActual++;
         break;
       case 1:   // [1, 2)
-        AllRangePieces[AllRangePiecesCountActual].BaseAddress = AllEndPointsInclusive[Index];
-        AllRangePieces[AllRangePiecesCountActual].Length      = (AllEndPointsInclusive[Index + 1] - 1) - AllEndPointsInclusive[Index] + 1;
+        AllRangePieces[AllRangePiecesCountActual].BaseAddress =
+          AllEndPointsInclusive[Index];
+        AllRangePieces[AllRangePiecesCountActual].Length =
+          (AllEndPointsInclusive[Index + 1] - 1) -
+          AllEndPointsInclusive[Index] + 1;
         AllRangePiecesCountActual++;
         break;
       case 2:   // (1, 2]
-        AllRangePieces[AllRangePiecesCountActual].BaseAddress = AllEndPointsInclusive[Index] + 1;
-        AllRangePieces[AllRangePiecesCountActual].Length      = AllEndPointsInclusive[Index + 1] - (AllEndPointsInclusive[Index] + 1) + 1;
+        AllRangePieces[AllRangePiecesCountActual].BaseAddress =
+          AllEndPointsInclusive[Index] + 1;
+        AllRangePieces[AllRangePiecesCountActual].Length =
+          AllEndPointsInclusive[Index + 1] - (AllEndPointsInclusive[Index] +
+                                              1) + 1;
         AllRangePiecesCountActual++;
 
-        if (!IsEndpointInRanges (AllEndPointsInclusive[Index], AllRangePieces, AllRangePiecesCountActual)) {
-          AllRangePieces[AllRangePiecesCountActual].BaseAddress = AllEndPointsInclusive[Index];
-          AllRangePieces[AllRangePiecesCountActual].Length      = 1;
+        if (!IsEndpointInRanges (
+               AllEndPointsInclusive[Index],
+               AllRangePieces,
+               AllRangePiecesCountActual
+               ))
+        {
+          AllRangePieces[AllRangePiecesCountActual].BaseAddress =
+            AllEndPointsInclusive[Index];
+          AllRangePieces[AllRangePiecesCountActual].Length = 1;
           AllRangePiecesCountActual++;
         }
 
         break;
       case 3:   // (1, 2)
-        AllRangePieces[AllRangePiecesCountActual].BaseAddress = AllEndPointsInclusive[Index] + 1;
-        AllRangePieces[AllRangePiecesCountActual].Length      = (AllEndPointsInclusive[Index + 1] - 1) - (AllEndPointsInclusive[Index] + 1) + 1;
+        AllRangePieces[AllRangePiecesCountActual].BaseAddress =
+          AllEndPointsInclusive[Index] + 1;
+        AllRangePieces[AllRangePiecesCountActual].Length =
+          (AllEndPointsInclusive[Index + 1] - 1) -
+          (AllEndPointsInclusive[Index] +
+           1) + 1;
         if (AllRangePieces[AllRangePiecesCountActual].Length == 0) {
           // Only in case 3 can exists Length=0, we should skip such "segment".
           break;
         }
 
         AllRangePiecesCountActual++;
-        if (!IsEndpointInRanges (AllEndPointsInclusive[Index], AllRangePieces, AllRangePiecesCountActual)) {
-          AllRangePieces[AllRangePiecesCountActual].BaseAddress = AllEndPointsInclusive[Index];
-          AllRangePieces[AllRangePiecesCountActual].Length      = 1;
+        if (!IsEndpointInRanges (
+               AllEndPointsInclusive[Index],
+               AllRangePieces,
+               AllRangePiecesCountActual
+               ))
+        {
+          AllRangePieces[AllRangePiecesCountActual].BaseAddress =
+            AllEndPointsInclusive[Index];
+          AllRangePieces[AllRangePiecesCountActual].Length = 1;
           AllRangePiecesCountActual++;
         }
 
@@ -1004,12 +1149,27 @@ GetEffectiveMemoryRanges (
   }
 
   for (Index = 0; Index < AllRangePiecesCountActual; Index++) {
-    DetermineMemoryCacheType (DefaultType, &AllRangePieces[Index], RawMemoryRanges, RawMemoryRangeCount);
+    DetermineMemoryCacheType (
+      DefaultType,
+      &AllRangePieces[Index],
+      RawMemoryRanges,
+      RawMemoryRangeCount
+      );
   }
 
-  CompactAndExtendEffectiveMtrrMemoryRanges (DefaultType, PhysicalAddressBits, &AllRangePieces, &AllRangePiecesCountActual);
+  CompactAndExtendEffectiveMtrrMemoryRanges (
+    DefaultType,
+    PhysicalAddressBits,
+    &AllRangePieces,
+    &AllRangePiecesCountActual
+    );
   ASSERT (*MemoryRangeCount >= AllRangePiecesCountActual);
-  memcpy (MemoryRanges, AllRangePieces, AllRangePiecesCountActual * sizeof (MTRR_MEMORY_RANGE));
+  memcpy (
+    MemoryRanges,
+    AllRangePieces,
+    AllRangePiecesCountActual *
+    sizeof (MTRR_MEMORY_RANGE)
+    );
   *MemoryRangeCount = AllRangePiecesCountActual;
 
   free (AllEndPointsInclusive);

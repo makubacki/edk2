@@ -71,7 +71,8 @@ SmmStmExceptionHandler (
   //
   // Skip this instruction and continue;
   //
-  Context.Ia32StackFrame->Rip += Context.Ia32StackFrame->VmcsExitInstructionLength;
+  Context.Ia32StackFrame->Rip +=
+    Context.Ia32StackFrame->VmcsExitInstructionLength;
 
   return 0;
 }

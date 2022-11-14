@@ -141,7 +141,10 @@ McaInitialize (
   //
   if (IS_ATOM_PROCESSOR (CpuInfo->DisplayFamily, CpuInfo->DisplayModel) ||
       IS_SILVERMONT_PROCESSOR (CpuInfo->DisplayFamily, CpuInfo->DisplayModel) ||
-      IS_SANDY_BRIDGE_PROCESSOR (CpuInfo->DisplayFamily, CpuInfo->DisplayModel) ||
+      IS_SANDY_BRIDGE_PROCESSOR (
+        CpuInfo->DisplayFamily,
+        CpuInfo->DisplayModel
+        ) ||
       IS_SKYLAKE_PROCESSOR (CpuInfo->DisplayFamily, CpuInfo->DisplayModel) ||
       IS_XEON_PHI_PROCESSOR (CpuInfo->DisplayFamily, CpuInfo->DisplayModel) ||
       IS_PENTIUM_4_PROCESSOR (CpuInfo->DisplayFamily, CpuInfo->DisplayModel) ||
@@ -290,7 +293,11 @@ LmceSupport (
 
   McgCap.Uint64 = AsmReadMsr64 (MSR_IA32_MCG_CAP);
   if (ProcessorNumber == 0) {
-    DEBUG ((DEBUG_INFO, "LMCE enable = %x\n", (BOOLEAN)(McgCap.Bits.MCG_LMCE_P != 0)));
+    DEBUG ((
+      DEBUG_INFO,
+      "LMCE enable = %x\n",
+      (BOOLEAN)(McgCap.Bits.MCG_LMCE_P != 0)
+      ));
   }
 
   return (BOOLEAN)(McgCap.Bits.MCG_LMCE_P != 0);

@@ -12,7 +12,9 @@ EFI_PEI_TEMPORARY_RAM_DONE_PPI  gSecTemporaryRamDonePpi = {
   SecTemporaryRamDone
 };
 
-EFI_SEC_PLATFORM_INFORMATION_PPI  mSecPlatformInformationPpi = { SecPlatformInformation };
+EFI_SEC_PLATFORM_INFORMATION_PPI  mSecPlatformInformationPpi = {
+  SecPlatformInformation
+};
 
 EFI_PEI_PPI_DESCRIPTOR  mPeiSecPlatformInformationPpi[] = {
   {
@@ -119,14 +121,16 @@ SecPerformancePpiCallBack (
   FIRMWARE_SEC_PERFORMANCE  Performance;
 
   SecPerf = (PEI_SEC_PERFORMANCE_PPI *)Ppi;
-  Status  = SecPerf->GetPerformance ((CONST EFI_PEI_SERVICES **)PeiServices, SecPerf, &Performance);
+  Status  = SecPerf->GetPerformance ((CONST EFI_PEI_SERVICES **)PeiServices,
+                       SecPerf, &Performance);
   if (!EFI_ERROR (Status)) {
     BuildGuidDataHob (
       &gEfiFirmwarePerformanceGuid,
       &Performance,
       sizeof (FIRMWARE_SEC_PERFORMANCE)
       );
-    DEBUG ((DEBUG_INFO, "FPDT: SEC Performance Hob ResetEnd = %ld\n", Performance.ResetEnd));
+    DEBUG ((DEBUG_INFO, "FPDT: SEC Performance Hob ResetEnd = %ld\n",
+      Performance.ResetEnd));
   }
 
   return Status;
@@ -211,8 +215,10 @@ SecStartup (
 
   IdtTableInStack.PeiService = 0;
   for (Index = 0; Index < SEC_IDT_ENTRY_COUNT; Index++) {
-    ZeroMem ((VOID *)&IdtTableInStack.IdtTable[Index], sizeof (IA32_IDT_GATE_DESCRIPTOR));
-    CopyMem ((VOID *)&IdtTableInStack.IdtTable[Index], (VOID *)&mIdtEntryTemplate, sizeof (UINT64));
+    ZeroMem ((VOID *)&IdtTableInStack.IdtTable[Index],
+      sizeof (IA32_IDT_GATE_DESCRIPTOR));
+    CopyMem ((VOID *)&IdtTableInStack.IdtTable[Index],
+      (VOID *)&mIdtEntryTemplate, sizeof (UINT64));
   }
 
   IdtDescriptor.Base  = (UINTN)&IdtTableInStack.IdtTable;
@@ -231,13 +237,16 @@ SecStartup (
   //
   SecCoreData.DataSize               = (UINT16)sizeof (EFI_SEC_PEI_HAND_OFF);
   SecCoreData.BootFirmwareVolumeBase = BootFirmwareVolume;
-  SecCoreData.BootFirmwareVolumeSize = (UINTN)((EFI_FIRMWARE_VOLUME_HEADER *)BootFirmwareVolume)->FvLength;
-  SecCoreData.TemporaryRamBase       = (VOID *)(UINTN)TempRamBase;
-  SecCoreData.TemporaryRamSize       = SizeOfRam;
-  SecCoreData.PeiTemporaryRamBase    = SecCoreData.TemporaryRamBase;
-  SecCoreData.PeiTemporaryRamSize    = SizeOfRam - PeiStackSize;
-  SecCoreData.StackBase              = (VOID *)(UINTN)(TempRamBase + SecCoreData.PeiTemporaryRamSize);
-  SecCoreData.StackSize              = PeiStackSize;
+  SecCoreData.BootFirmwareVolumeSize =
+    (UINTN)((EFI_FIRMWARE_VOLUME_HEADER *)BootFirmwareVolume)->FvLength;
+  SecCoreData.TemporaryRamBase    = (VOID *)(UINTN)TempRamBase;
+  SecCoreData.TemporaryRamSize    = SizeOfRam;
+  SecCoreData.PeiTemporaryRamBase = SecCoreData.TemporaryRamBase;
+  SecCoreData.PeiTemporaryRamSize = SizeOfRam - PeiStackSize;
+  SecCoreData.StackBase           = (VOID *)(UINTN)(TempRamBase +
+                                                    SecCoreData.
+                                                      PeiTemporaryRamSize);
+  SecCoreData.StackSize           = PeiStackSize;
 
   DEBUG ((
     DEBUG_INFO,
@@ -256,7 +265,8 @@ SecStartup (
   //
   // Initialize Debug Agent to support source level debug in SEC/PEI phases before memory ready.
   //
-  InitializeDebugAgent (DEBUG_AGENT_INIT_PREMEM_SEC, &SecCoreData, SecStartupPhase2);
+  InitializeDebugAgent (DEBUG_AGENT_INIT_PREMEM_SEC, &SecCoreData,
+    SecStartupPhase2);
 
   //
   // Should not come here.
@@ -302,7 +312,8 @@ SecStartupPhase2 (
     Index = 0;
     do {
       if (CompareGuid (PpiList[Index].Guid, &gEfiPeiCoreFvLocationPpiGuid) &&
-          (((EFI_PEI_CORE_FV_LOCATION_PPI *)PpiList[Index].Ppi)->PeiCoreFvLocation != 0)
+          (((EFI_PEI_CORE_FV_LOCATION_PPI *)PpiList[Index].Ppi)->
+             PeiCoreFvLocation != 0)
           )
       {
         //
@@ -310,7 +321,8 @@ SecStartupPhase2 (
         //
         FindAndReportEntryPoints (
           (EFI_FIRMWARE_VOLUME_HEADER *)SecCoreData->BootFirmwareVolumeBase,
-          (EFI_FIRMWARE_VOLUME_HEADER *)((EFI_PEI_CORE_FV_LOCATION_PPI *)PpiList[Index].Ppi)->PeiCoreFvLocation,
+          (EFI_FIRMWARE_VOLUME_HEADER *)((EFI_PEI_CORE_FV_LOCATION_PPI *)PpiList
+                                         [Index].Ppi)->PeiCoreFvLocation,
           &PeiCoreEntryPoint
           );
         if (PeiCoreEntryPoint != NULL) {
@@ -322,7 +334,8 @@ SecStartupPhase2 (
           CpuDeadLoop ();
         }
       }
-    } while ((PpiList[Index++].Flags & EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST) != EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST);
+    } while ((PpiList[Index++].Flags & EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST) !=
+             EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST);
   }
 
   //
@@ -355,15 +368,19 @@ SecStartupPhase2 (
     //
     // Remove the terminal flag from the terminal PPI
     //
-    CopyMem (AllSecPpiList, mPeiSecPlatformInformationPpi, sizeof (mPeiSecPlatformInformationPpi));
-    Index                      = sizeof (mPeiSecPlatformInformationPpi) / sizeof (EFI_PEI_PPI_DESCRIPTOR) - 1;
-    AllSecPpiList[Index].Flags = AllSecPpiList[Index].Flags & (~EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST);
+    CopyMem (AllSecPpiList, mPeiSecPlatformInformationPpi,
+      sizeof (mPeiSecPlatformInformationPpi));
+    Index = sizeof (mPeiSecPlatformInformationPpi) /
+            sizeof (EFI_PEI_PPI_DESCRIPTOR) - 1;
+    AllSecPpiList[Index].Flags = AllSecPpiList[Index].Flags &
+                                 (~EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST);
 
     //
     // Append the platform additional PPI list
     //
     Index += 1;
-    while (((PpiList->Flags & EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST) != EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST)) {
+    while (((PpiList->Flags & EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST) !=
+            EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST)) {
       CopyMem (&AllSecPpiList[Index], PpiList, sizeof (EFI_PEI_PPI_DESCRIPTOR));
       Index++;
       PpiList++;
@@ -382,14 +399,19 @@ SecStartupPhase2 (
     //
     // Adjust PEI TEMP RAM Range.
     //
-    ASSERT (SecCoreData->PeiTemporaryRamSize > Index * sizeof (EFI_PEI_PPI_DESCRIPTOR));
-    SecCoreData->PeiTemporaryRamBase = (VOID *)((UINTN)SecCoreData->PeiTemporaryRamBase + Index * sizeof (EFI_PEI_PPI_DESCRIPTOR));
-    SecCoreData->PeiTemporaryRamSize = SecCoreData->PeiTemporaryRamSize - Index * sizeof (EFI_PEI_PPI_DESCRIPTOR);
+    ASSERT (SecCoreData->PeiTemporaryRamSize > Index *
+      sizeof (EFI_PEI_PPI_DESCRIPTOR));
+    SecCoreData->PeiTemporaryRamBase =
+      (VOID *)((UINTN)SecCoreData->PeiTemporaryRamBase + Index *
+               sizeof (EFI_PEI_PPI_DESCRIPTOR));
+    SecCoreData->PeiTemporaryRamSize = SecCoreData->PeiTemporaryRamSize -
+                                       Index * sizeof (EFI_PEI_PPI_DESCRIPTOR);
     //
     // Adjust the Base and Size to be 8-byte aligned as HOB which has 8byte aligned requirement
     // will be built based on them in PEI phase.
     //
-    SecCoreData->PeiTemporaryRamBase  = (VOID *)(((UINTN)SecCoreData->PeiTemporaryRamBase + 7) & ~0x07);
+    SecCoreData->PeiTemporaryRamBase =
+      (VOID *)(((UINTN)SecCoreData->PeiTemporaryRamBase + 7) & ~0x07);
     SecCoreData->PeiTemporaryRamSize &= ~(UINTN)0x07;
     DEBUG ((
       DEBUG_INFO,

@@ -27,7 +27,11 @@ MpServicesUnitTestGetMpServices (
   OUT MP_SERVICES  *MpServices
   )
 {
-  return gBS->LocateProtocol (&gEfiMpServiceProtocolGuid, NULL, (VOID **)&MpServices->Protocol);
+  return gBS->LocateProtocol (
+                &gEfiMpServiceProtocolGuid,
+                NULL,
+                (VOID **)&MpServices->Protocol
+                );
 }
 
 /**
@@ -49,7 +53,11 @@ MpServicesUnitTestGetNumberOfProcessors (
   OUT UINTN       *NumberOfEnabledProcessors
   )
 {
-  return MpServices.Protocol->GetNumberOfProcessors (MpServices.Protocol, NumberOfProcessors, NumberOfEnabledProcessors);
+  return MpServices.Protocol->GetNumberOfProcessors (
+                                MpServices.Protocol,
+                                NumberOfProcessors,
+                                NumberOfEnabledProcessors
+                                );
 }
 
 /**
@@ -69,7 +77,11 @@ MpServicesUnitTestGetProcessorInfo (
   OUT EFI_PROCESSOR_INFORMATION  *ProcessorInfoBuffer
   )
 {
-  return MpServices.Protocol->GetProcessorInfo (MpServices.Protocol, ProcessorNumber, ProcessorInfoBuffer);
+  return MpServices.Protocol->GetProcessorInfo (
+                                MpServices.Protocol,
+                                ProcessorNumber,
+                                ProcessorInfoBuffer
+                                );
 }
 
 /**
@@ -97,7 +109,15 @@ MpServicesUnitTestStartupAllAPs (
   IN VOID              *ProcedureArgument
   )
 {
-  return MpServices.Protocol->StartupAllAPs (MpServices.Protocol, Procedure, SingleThread, NULL, TimeoutInMicroSeconds, ProcedureArgument, NULL);
+  return MpServices.Protocol->StartupAllAPs (
+                                MpServices.Protocol,
+                                Procedure,
+                                SingleThread,
+                                NULL,
+                                TimeoutInMicroSeconds,
+                                ProcedureArgument,
+                                NULL
+                                );
 }
 
 /**
@@ -123,7 +143,15 @@ MpServicesUnitTestStartupThisAP (
   IN VOID              *ProcedureArgument
   )
 {
-  return MpServices.Protocol->StartupThisAP (MpServices.Protocol, Procedure, ProcessorNumber, NULL, TimeoutInMicroSeconds, ProcedureArgument, NULL);
+  return MpServices.Protocol->StartupThisAP (
+                                MpServices.Protocol,
+                                Procedure,
+                                ProcessorNumber,
+                                NULL,
+                                TimeoutInMicroSeconds,
+                                ProcedureArgument,
+                                NULL
+                                );
 }
 
 /**
@@ -143,7 +171,11 @@ MpServicesUnitTestSwitchBSP (
   IN BOOLEAN      EnableOldBSP
   )
 {
-  return MpServices.Protocol->SwitchBSP (MpServices.Protocol, ProcessorNumber, EnableOldBSP);
+  return MpServices.Protocol->SwitchBSP (
+                                MpServices.Protocol,
+                                ProcessorNumber,
+                                EnableOldBSP
+                                );
 }
 
 /**
@@ -165,7 +197,12 @@ MpServicesUnitTestEnableDisableAP (
   IN UINT32       *HealthFlag
   )
 {
-  return MpServices.Protocol->EnableDisableAP (MpServices.Protocol, ProcessorNumber, EnableAP, HealthFlag);
+  return MpServices.Protocol->EnableDisableAP (
+                                MpServices.Protocol,
+                                ProcessorNumber,
+                                EnableAP,
+                                HealthFlag
+                                );
 }
 
 /**
@@ -215,9 +252,18 @@ DxeEntryPoint (
   //
   // Start setting up the test framework for running the tests.
   //
-  Status = InitUnitTestFramework (&Framework, UNIT_TEST_NAME, gEfiCallerBaseName, UNIT_TEST_VERSION);
+  Status = InitUnitTestFramework (
+             &Framework,
+             UNIT_TEST_NAME,
+             gEfiCallerBaseName,
+             UNIT_TEST_VERSION
+             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in InitUnitTestFramework. Status = %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed in InitUnitTestFramework. Status = %r\n",
+      Status
+      ));
     goto EXIT;
   }
 

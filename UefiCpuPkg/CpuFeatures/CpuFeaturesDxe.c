@@ -66,7 +66,11 @@ SmmConfigurationEventNotify (
   //
   // Make sure this notification is for this handler
   //
-  Status = gBS->LocateProtocol (&gEfiSmmConfigurationProtocolGuid, NULL, (VOID **)&SmmConfiguration);
+  Status = gBS->LocateProtocol (
+                  &gEfiSmmConfigurationProtocolGuid,
+                  NULL,
+                  (VOID **)&SmmConfiguration
+                  );
   if (EFI_ERROR (Status)) {
     return;
   }

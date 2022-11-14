@@ -186,19 +186,28 @@ DetectFeatureScope (
 
   if (Before) {
     if ((CpuFeature->PackageBeforeFeatureBitMask != NULL) &&
-        IsBitMaskMatchCheck (NextCpuFeatureMask, CpuFeature->PackageBeforeFeatureBitMask))
+        IsBitMaskMatchCheck (
+          NextCpuFeatureMask,
+          CpuFeature->PackageBeforeFeatureBitMask
+          ))
     {
       return PackageDepType;
     }
 
     if ((CpuFeature->CoreBeforeFeatureBitMask != NULL) &&
-        IsBitMaskMatchCheck (NextCpuFeatureMask, CpuFeature->CoreBeforeFeatureBitMask))
+        IsBitMaskMatchCheck (
+          NextCpuFeatureMask,
+          CpuFeature->CoreBeforeFeatureBitMask
+          ))
     {
       return CoreDepType;
     }
 
     if ((CpuFeature->ThreadBeforeFeatureBitMask != NULL) &&
-        IsBitMaskMatchCheck (NextCpuFeatureMask, CpuFeature->ThreadBeforeFeatureBitMask))
+        IsBitMaskMatchCheck (
+          NextCpuFeatureMask,
+          CpuFeature->ThreadBeforeFeatureBitMask
+          ))
     {
       return ThreadDepType;
     }
@@ -207,19 +216,28 @@ DetectFeatureScope (
   }
 
   if ((CpuFeature->PackageAfterFeatureBitMask != NULL) &&
-      IsBitMaskMatchCheck (NextCpuFeatureMask, CpuFeature->PackageAfterFeatureBitMask))
+      IsBitMaskMatchCheck (
+        NextCpuFeatureMask,
+        CpuFeature->PackageAfterFeatureBitMask
+        ))
   {
     return PackageDepType;
   }
 
   if ((CpuFeature->CoreAfterFeatureBitMask != NULL) &&
-      IsBitMaskMatchCheck (NextCpuFeatureMask, CpuFeature->CoreAfterFeatureBitMask))
+      IsBitMaskMatchCheck (
+        NextCpuFeatureMask,
+        CpuFeature->CoreAfterFeatureBitMask
+        ))
   {
     return CoreDepType;
   }
 
   if ((CpuFeature->ThreadAfterFeatureBitMask != NULL) &&
-      IsBitMaskMatchCheck (NextCpuFeatureMask, CpuFeature->ThreadAfterFeatureBitMask))
+      IsBitMaskMatchCheck (
+        NextCpuFeatureMask,
+        CpuFeature->ThreadAfterFeatureBitMask
+        ))
   {
     return ThreadDepType;
   }
@@ -245,19 +263,34 @@ DetectNoneNeighborhoodFeatureScope (
 {
   if (Before) {
     if ((CpuFeature->PackageBeforeFeatureBitMask != NULL) &&
-        FindSpecifyFeature (FeatureList, &CpuFeature->Link, FALSE, CpuFeature->PackageBeforeFeatureBitMask))
+        FindSpecifyFeature (
+          FeatureList,
+          &CpuFeature->Link,
+          FALSE,
+          CpuFeature->PackageBeforeFeatureBitMask
+          ))
     {
       return PackageDepType;
     }
 
     if ((CpuFeature->CoreBeforeFeatureBitMask != NULL) &&
-        FindSpecifyFeature (FeatureList, &CpuFeature->Link, FALSE, CpuFeature->CoreBeforeFeatureBitMask))
+        FindSpecifyFeature (
+          FeatureList,
+          &CpuFeature->Link,
+          FALSE,
+          CpuFeature->CoreBeforeFeatureBitMask
+          ))
     {
       return CoreDepType;
     }
 
     if ((CpuFeature->ThreadBeforeFeatureBitMask != NULL) &&
-        FindSpecifyFeature (FeatureList, &CpuFeature->Link, FALSE, CpuFeature->ThreadBeforeFeatureBitMask))
+        FindSpecifyFeature (
+          FeatureList,
+          &CpuFeature->Link,
+          FALSE,
+          CpuFeature->ThreadBeforeFeatureBitMask
+          ))
     {
       return ThreadDepType;
     }
@@ -266,19 +299,34 @@ DetectNoneNeighborhoodFeatureScope (
   }
 
   if ((CpuFeature->PackageAfterFeatureBitMask != NULL) &&
-      FindSpecifyFeature (FeatureList, &CpuFeature->Link, TRUE, CpuFeature->PackageAfterFeatureBitMask))
+      FindSpecifyFeature (
+        FeatureList,
+        &CpuFeature->Link,
+        TRUE,
+        CpuFeature->PackageAfterFeatureBitMask
+        ))
   {
     return PackageDepType;
   }
 
   if ((CpuFeature->CoreAfterFeatureBitMask != NULL) &&
-      FindSpecifyFeature (FeatureList, &CpuFeature->Link, TRUE, CpuFeature->CoreAfterFeatureBitMask))
+      FindSpecifyFeature (
+        FeatureList,
+        &CpuFeature->Link,
+        TRUE,
+        CpuFeature->CoreAfterFeatureBitMask
+        ))
   {
     return CoreDepType;
   }
 
   if ((CpuFeature->ThreadAfterFeatureBitMask != NULL) &&
-      FindSpecifyFeature (FeatureList, &CpuFeature->Link, TRUE, CpuFeature->ThreadAfterFeatureBitMask))
+      FindSpecifyFeature (
+        FeatureList,
+        &CpuFeature->Link,
+        TRUE,
+        CpuFeature->ThreadAfterFeatureBitMask
+        ))
   {
     return ThreadDepType;
   }
@@ -316,8 +364,16 @@ AdjustFeaturesDependence (
   CPU_FEATURE_DEPENDENCE_TYPE  PreDependType;
   CPU_FEATURE_DEPENDENCE_TYPE  CurrentDependType;
 
-  PreDependType     = DetectFeatureScope (PreviousFeature, Before, FindFeature->FeatureMask);
-  CurrentDependType = DetectFeatureScope (CurrentFeature, Before, FindFeature->FeatureMask);
+  PreDependType = DetectFeatureScope (
+                    PreviousFeature,
+                    Before,
+                    FindFeature->FeatureMask
+                    );
+  CurrentDependType = DetectFeatureScope (
+                        CurrentFeature,
+                        Before,
+                        FindFeature->FeatureMask
+                        );
 
   //
   // If previous feature has no dependence with the find featue.
@@ -398,7 +454,13 @@ AdjustEntry (
     PreviousFeature = CPU_FEATURE_ENTRY_FROM_LINK (PreviousEntry);
     FindFeature     = CPU_FEATURE_ENTRY_FROM_LINK (FindEntry);
 
-    if (AdjustFeaturesDependence (PreviousFeature, CurrentFeature, FindFeature, Before)) {
+    if (AdjustFeaturesDependence (
+          PreviousFeature,
+          CurrentFeature,
+          FindFeature,
+          Before
+          ))
+    {
       //
       // Return TRUE means current feature dependence has been cleared and the previous
       // feature dependence has been kept and used. So insert current feature before (or after)
@@ -579,42 +641,66 @@ CheckCpuFeaturesDependency (
     }
 
     if (CpuFeature->ThreadBeforeFeatureBitMask != NULL) {
-      Swapped = InsertToBeforeEntry (FeatureList, CurrentEntry, CpuFeature->ThreadBeforeFeatureBitMask);
+      Swapped = InsertToBeforeEntry (
+                  FeatureList,
+                  CurrentEntry,
+                  CpuFeature->ThreadBeforeFeatureBitMask
+                  );
       if (Swapped) {
         continue;
       }
     }
 
     if (CpuFeature->ThreadAfterFeatureBitMask != NULL) {
-      Swapped = InsertToAfterEntry (FeatureList, CurrentEntry, CpuFeature->ThreadAfterFeatureBitMask);
+      Swapped = InsertToAfterEntry (
+                  FeatureList,
+                  CurrentEntry,
+                  CpuFeature->ThreadAfterFeatureBitMask
+                  );
       if (Swapped) {
         continue;
       }
     }
 
     if (CpuFeature->CoreBeforeFeatureBitMask != NULL) {
-      Swapped = InsertToBeforeEntry (FeatureList, CurrentEntry, CpuFeature->CoreBeforeFeatureBitMask);
+      Swapped = InsertToBeforeEntry (
+                  FeatureList,
+                  CurrentEntry,
+                  CpuFeature->CoreBeforeFeatureBitMask
+                  );
       if (Swapped) {
         continue;
       }
     }
 
     if (CpuFeature->CoreAfterFeatureBitMask != NULL) {
-      Swapped = InsertToAfterEntry (FeatureList, CurrentEntry, CpuFeature->CoreAfterFeatureBitMask);
+      Swapped = InsertToAfterEntry (
+                  FeatureList,
+                  CurrentEntry,
+                  CpuFeature->CoreAfterFeatureBitMask
+                  );
       if (Swapped) {
         continue;
       }
     }
 
     if (CpuFeature->PackageBeforeFeatureBitMask != NULL) {
-      Swapped = InsertToBeforeEntry (FeatureList, CurrentEntry, CpuFeature->PackageBeforeFeatureBitMask);
+      Swapped = InsertToBeforeEntry (
+                  FeatureList,
+                  CurrentEntry,
+                  CpuFeature->PackageBeforeFeatureBitMask
+                  );
       if (Swapped) {
         continue;
       }
     }
 
     if (CpuFeature->PackageAfterFeatureBitMask != NULL) {
-      Swapped = InsertToAfterEntry (FeatureList, CurrentEntry, CpuFeature->PackageAfterFeatureBitMask);
+      Swapped = InsertToAfterEntry (
+                  FeatureList,
+                  CurrentEntry,
+                  CpuFeature->PackageAfterFeatureBitMask
+                  );
       if (Swapped) {
         continue;
       }
@@ -653,7 +739,12 @@ RegisterCpuFeatureWorker (
   Entry           = GetFirstNode (&CpuFeaturesData->FeatureList);
   while (!IsNull (&CpuFeaturesData->FeatureList, Entry)) {
     CpuFeatureEntry = CPU_FEATURE_ENTRY_FROM_LINK (Entry);
-    if (CompareMem (CpuFeature->FeatureMask, CpuFeatureEntry->FeatureMask, CpuFeaturesData->BitMaskSize) == 0) {
+    if (CompareMem (
+          CpuFeature->FeatureMask,
+          CpuFeatureEntry->FeatureMask,
+          CpuFeaturesData->BitMaskSize
+          ) == 0)
+    {
       //
       // If this feature already registered
       //
@@ -694,7 +785,11 @@ RegisterCpuFeatureWorker (
         ASSERT (CpuFeatureEntry->FeatureName != NULL);
       }
 
-      Status = AsciiStrCpyS (CpuFeatureEntry->FeatureName, CPU_FEATURE_NAME_SIZE, CpuFeature->FeatureName);
+      Status = AsciiStrCpyS (
+                 CpuFeatureEntry->FeatureName,
+                 CPU_FEATURE_NAME_SIZE,
+                 CpuFeature->FeatureName
+                 );
       ASSERT_EFI_ERROR (Status);
       FreePool (CpuFeature->FeatureName);
     }
@@ -704,7 +799,8 @@ RegisterCpuFeatureWorker (
         FreePool (CpuFeatureEntry->ThreadBeforeFeatureBitMask);
       }
 
-      CpuFeatureEntry->ThreadBeforeFeatureBitMask = CpuFeature->ThreadBeforeFeatureBitMask;
+      CpuFeatureEntry->ThreadBeforeFeatureBitMask =
+        CpuFeature->ThreadBeforeFeatureBitMask;
     }
 
     if (CpuFeature->ThreadAfterFeatureBitMask != NULL) {
@@ -712,7 +808,8 @@ RegisterCpuFeatureWorker (
         FreePool (CpuFeatureEntry->ThreadAfterFeatureBitMask);
       }
 
-      CpuFeatureEntry->ThreadAfterFeatureBitMask = CpuFeature->ThreadAfterFeatureBitMask;
+      CpuFeatureEntry->ThreadAfterFeatureBitMask =
+        CpuFeature->ThreadAfterFeatureBitMask;
     }
 
     if (CpuFeature->CoreBeforeFeatureBitMask != NULL) {
@@ -720,7 +817,8 @@ RegisterCpuFeatureWorker (
         FreePool (CpuFeatureEntry->CoreBeforeFeatureBitMask);
       }
 
-      CpuFeatureEntry->CoreBeforeFeatureBitMask = CpuFeature->CoreBeforeFeatureBitMask;
+      CpuFeatureEntry->CoreBeforeFeatureBitMask =
+        CpuFeature->CoreBeforeFeatureBitMask;
     }
 
     if (CpuFeature->CoreAfterFeatureBitMask != NULL) {
@@ -728,7 +826,8 @@ RegisterCpuFeatureWorker (
         FreePool (CpuFeatureEntry->CoreAfterFeatureBitMask);
       }
 
-      CpuFeatureEntry->CoreAfterFeatureBitMask = CpuFeature->CoreAfterFeatureBitMask;
+      CpuFeatureEntry->CoreAfterFeatureBitMask =
+        CpuFeature->CoreAfterFeatureBitMask;
     }
 
     if (CpuFeature->PackageBeforeFeatureBitMask != NULL) {
@@ -736,7 +835,8 @@ RegisterCpuFeatureWorker (
         FreePool (CpuFeatureEntry->PackageBeforeFeatureBitMask);
       }
 
-      CpuFeatureEntry->PackageBeforeFeatureBitMask = CpuFeature->PackageBeforeFeatureBitMask;
+      CpuFeatureEntry->PackageBeforeFeatureBitMask =
+        CpuFeature->PackageBeforeFeatureBitMask;
     }
 
     if (CpuFeature->PackageAfterFeatureBitMask != NULL) {
@@ -744,7 +844,8 @@ RegisterCpuFeatureWorker (
         FreePool (CpuFeatureEntry->PackageAfterFeatureBitMask);
       }
 
-      CpuFeatureEntry->PackageAfterFeatureBitMask = CpuFeature->PackageAfterFeatureBitMask;
+      CpuFeatureEntry->PackageAfterFeatureBitMask =
+        CpuFeature->PackageAfterFeatureBitMask;
     }
 
     CpuFeatureEntry->BeforeAll = CpuFeature->BeforeAll;
@@ -877,8 +978,16 @@ RegisterCpuFeature (
     //
     // Code assumes below three PCDs have PCD same buffer size.
     //
-    ASSERT (PcdGetSize (PcdCpuFeaturesSetting) == PcdGetSize (PcdCpuFeaturesCapability));
-    ASSERT (PcdGetSize (PcdCpuFeaturesSetting) == PcdGetSize (PcdCpuFeaturesSupport));
+    ASSERT (
+      PcdGetSize (PcdCpuFeaturesSetting) == PcdGetSize (
+                                              PcdCpuFeaturesCapability
+                                              )
+      );
+    ASSERT (
+      PcdGetSize (PcdCpuFeaturesSetting) == PcdGetSize (
+                                              PcdCpuFeaturesSupport
+                                              )
+      );
     CpuFeaturesData->BitMaskSize = (UINT32)PcdGetSize (PcdCpuFeaturesSetting);
   }
 
@@ -914,19 +1023,53 @@ RegisterCpuFeature (
       AfterAll  = ((Feature & CPU_FEATURE_AFTER_ALL) != 0) ? TRUE : FALSE;
       Feature  &= ~(CPU_FEATURE_BEFORE_ALL | CPU_FEATURE_AFTER_ALL);
       ASSERT (FeatureMask == NULL);
-      SetCpuFeaturesBitMask (&FeatureMask, Feature, CpuFeaturesData->BitMaskSize);
+      SetCpuFeaturesBitMask (
+        &FeatureMask,
+        Feature,
+        CpuFeaturesData->BitMaskSize
+        );
     } else if ((Feature & CPU_FEATURE_THREAD_BEFORE) != 0) {
-      SetCpuFeaturesBitMask (&ThreadBeforeFeatureBitMask, Feature & ~CPU_FEATURE_THREAD_BEFORE, CpuFeaturesData->BitMaskSize);
+      SetCpuFeaturesBitMask (
+        &ThreadBeforeFeatureBitMask,
+        Feature &
+        ~CPU_FEATURE_THREAD_BEFORE,
+        CpuFeaturesData->BitMaskSize
+        );
     } else if ((Feature & CPU_FEATURE_THREAD_AFTER) != 0) {
-      SetCpuFeaturesBitMask (&ThreadAfterFeatureBitMask, Feature & ~CPU_FEATURE_THREAD_AFTER, CpuFeaturesData->BitMaskSize);
+      SetCpuFeaturesBitMask (
+        &ThreadAfterFeatureBitMask,
+        Feature &
+        ~CPU_FEATURE_THREAD_AFTER,
+        CpuFeaturesData->BitMaskSize
+        );
     } else if ((Feature & CPU_FEATURE_CORE_BEFORE) != 0) {
-      SetCpuFeaturesBitMask (&CoreBeforeFeatureBitMask, Feature & ~CPU_FEATURE_CORE_BEFORE, CpuFeaturesData->BitMaskSize);
+      SetCpuFeaturesBitMask (
+        &CoreBeforeFeatureBitMask,
+        Feature &
+        ~CPU_FEATURE_CORE_BEFORE,
+        CpuFeaturesData->BitMaskSize
+        );
     } else if ((Feature & CPU_FEATURE_CORE_AFTER) != 0) {
-      SetCpuFeaturesBitMask (&CoreAfterFeatureBitMask, Feature & ~CPU_FEATURE_CORE_AFTER, CpuFeaturesData->BitMaskSize);
+      SetCpuFeaturesBitMask (
+        &CoreAfterFeatureBitMask,
+        Feature &
+        ~CPU_FEATURE_CORE_AFTER,
+        CpuFeaturesData->BitMaskSize
+        );
     } else if ((Feature & CPU_FEATURE_PACKAGE_BEFORE) != 0) {
-      SetCpuFeaturesBitMask (&PackageBeforeFeatureBitMask, Feature & ~CPU_FEATURE_PACKAGE_BEFORE, CpuFeaturesData->BitMaskSize);
+      SetCpuFeaturesBitMask (
+        &PackageBeforeFeatureBitMask,
+        Feature &
+        ~CPU_FEATURE_PACKAGE_BEFORE,
+        CpuFeaturesData->BitMaskSize
+        );
     } else if ((Feature & CPU_FEATURE_PACKAGE_AFTER) != 0) {
-      SetCpuFeaturesBitMask (&PackageAfterFeatureBitMask, Feature & ~CPU_FEATURE_PACKAGE_AFTER, CpuFeaturesData->BitMaskSize);
+      SetCpuFeaturesBitMask (
+        &PackageAfterFeatureBitMask,
+        Feature &
+        ~CPU_FEATURE_PACKAGE_AFTER,
+        CpuFeaturesData->BitMaskSize
+        );
     }
 
     Feature = VA_ARG (Marker, UINT32);
@@ -952,7 +1095,11 @@ RegisterCpuFeature (
   if (FeatureName != NULL) {
     CpuFeature->FeatureName = AllocatePool (CPU_FEATURE_NAME_SIZE);
     ASSERT (CpuFeature->FeatureName != NULL);
-    Status = AsciiStrCpyS (CpuFeature->FeatureName, CPU_FEATURE_NAME_SIZE, FeatureName);
+    Status = AsciiStrCpyS (
+               CpuFeature->FeatureName,
+               CPU_FEATURE_NAME_SIZE,
+               FeatureName
+               );
     ASSERT_EFI_ERROR (Status);
   }
 
@@ -1012,23 +1159,27 @@ GetAcpiCpuData (
       Status = GetProcessorInformation (Index, &ProcessorInfoBuffer);
       ASSERT_EFI_ERROR (Status);
 
-      RegisterTable[Index].InitialApicId      = (UINT32)ProcessorInfoBuffer.ProcessorId;
+      RegisterTable[Index].InitialApicId =
+        (UINT32)ProcessorInfoBuffer.ProcessorId;
       RegisterTable[Index].TableLength        = 0;
       RegisterTable[Index].AllocatedSize      = 0;
       RegisterTable[Index].RegisterTableEntry = 0;
 
-      RegisterTable[NumberOfCpus + Index].InitialApicId      = (UINT32)ProcessorInfoBuffer.ProcessorId;
+      RegisterTable[NumberOfCpus + Index].InitialApicId =
+        (UINT32)ProcessorInfoBuffer.ProcessorId;
       RegisterTable[NumberOfCpus + Index].TableLength        = 0;
       RegisterTable[NumberOfCpus + Index].AllocatedSize      = 0;
       RegisterTable[NumberOfCpus + Index].RegisterTableEntry = 0;
     }
 
     if (AcpiCpuData->CpuFeatureInitData.RegisterTable == 0) {
-      AcpiCpuData->CpuFeatureInitData.RegisterTable = (EFI_PHYSICAL_ADDRESS)(UINTN)RegisterTable;
+      AcpiCpuData->CpuFeatureInitData.RegisterTable =
+        (EFI_PHYSICAL_ADDRESS)(UINTN)RegisterTable;
     }
 
     if (AcpiCpuData->CpuFeatureInitData.PreSmmInitRegisterTable == 0) {
-      AcpiCpuData->CpuFeatureInitData.PreSmmInitRegisterTable = (EFI_PHYSICAL_ADDRESS)(UINTN)(RegisterTable + NumberOfCpus);
+      AcpiCpuData->CpuFeatureInitData.PreSmmInitRegisterTable =
+        (EFI_PHYSICAL_ADDRESS)(UINTN)(RegisterTable + NumberOfCpus);
     }
   }
 
@@ -1111,9 +1262,15 @@ CpuRegisterTableWriteWorker (
   CpuFeaturesData = GetCpuFeaturesData ();
   if (CpuFeaturesData->RegisterTable == NULL) {
     AcpiCpuData = GetAcpiCpuData ();
-    ASSERT ((AcpiCpuData != NULL) && (AcpiCpuData->CpuFeatureInitData.RegisterTable != 0));
-    CpuFeaturesData->RegisterTable       = (CPU_REGISTER_TABLE *)(UINTN)AcpiCpuData->CpuFeatureInitData.RegisterTable;
-    CpuFeaturesData->PreSmmRegisterTable = (CPU_REGISTER_TABLE *)(UINTN)AcpiCpuData->CpuFeatureInitData.PreSmmInitRegisterTable;
+    ASSERT (
+      (AcpiCpuData != NULL) &&
+      (AcpiCpuData->CpuFeatureInitData.RegisterTable != 0)
+      );
+    CpuFeaturesData->RegisterTable =
+      (CPU_REGISTER_TABLE *)(UINTN)AcpiCpuData->CpuFeatureInitData.RegisterTable;
+    CpuFeaturesData->PreSmmRegisterTable =
+      (CPU_REGISTER_TABLE *)(UINTN)AcpiCpuData->CpuFeatureInitData.
+        PreSmmInitRegisterTable;
   }
 
   if (PreSmmFlag) {
@@ -1122,21 +1279,26 @@ CpuRegisterTableWriteWorker (
     RegisterTable = &CpuFeaturesData->RegisterTable[ProcessorNumber];
   }
 
-  if (RegisterTable->TableLength == RegisterTable->AllocatedSize / sizeof (CPU_REGISTER_TABLE_ENTRY)) {
+  if (RegisterTable->TableLength == RegisterTable->AllocatedSize /
+      sizeof (CPU_REGISTER_TABLE_ENTRY))
+  {
     EnlargeRegisterTable (RegisterTable);
   }
 
   //
   // Append entry in the register table.
   //
-  RegisterTableEntry                                            = (CPU_REGISTER_TABLE_ENTRY *)(UINTN)RegisterTable->RegisterTableEntry;
-  RegisterTableEntry[RegisterTable->TableLength].RegisterType   = RegisterType;
-  RegisterTableEntry[RegisterTable->TableLength].Index          = (UINT32)Index;
-  RegisterTableEntry[RegisterTable->TableLength].HighIndex      = (UINT32)RShiftU64 (Index, 32);
+  RegisterTableEntry =
+    (CPU_REGISTER_TABLE_ENTRY *)(UINTN)RegisterTable->RegisterTableEntry;
+  RegisterTableEntry[RegisterTable->TableLength].RegisterType = RegisterType;
+  RegisterTableEntry[RegisterTable->TableLength].Index        = (UINT32)Index;
+  RegisterTableEntry[RegisterTable->TableLength].HighIndex    =
+    (UINT32)RShiftU64 (Index, 32);
   RegisterTableEntry[RegisterTable->TableLength].ValidBitStart  = ValidBitStart;
-  RegisterTableEntry[RegisterTable->TableLength].ValidBitLength = ValidBitLength;
-  RegisterTableEntry[RegisterTable->TableLength].Value          = Value;
-  RegisterTableEntry[RegisterTable->TableLength].TestThenWrite  = TestThenWrite;
+  RegisterTableEntry[RegisterTable->TableLength].ValidBitLength =
+    ValidBitLength;
+  RegisterTableEntry[RegisterTable->TableLength].Value         = Value;
+  RegisterTableEntry[RegisterTable->TableLength].TestThenWrite = TestThenWrite;
 
   RegisterTable->TableLength++;
 }
@@ -1172,7 +1334,16 @@ CpuRegisterTableWrite (
   Start  = (UINT8)LowBitSet64 (ValueMask);
   End    = (UINT8)HighBitSet64 (ValueMask);
   Length = End - Start + 1;
-  CpuRegisterTableWriteWorker (FALSE, ProcessorNumber, RegisterType, Index, Start, Length, Value, FALSE);
+  CpuRegisterTableWriteWorker (
+    FALSE,
+    ProcessorNumber,
+    RegisterType,
+    Index,
+    Start,
+    Length,
+    Value,
+    FALSE
+    );
 }
 
 /**
@@ -1206,7 +1377,16 @@ CpuRegisterTableTestThenWrite (
   Start  = (UINT8)LowBitSet64 (ValueMask);
   End    = (UINT8)HighBitSet64 (ValueMask);
   Length = End - Start + 1;
-  CpuRegisterTableWriteWorker (FALSE, ProcessorNumber, RegisterType, Index, Start, Length, Value, TRUE);
+  CpuRegisterTableWriteWorker (
+    FALSE,
+    ProcessorNumber,
+    RegisterType,
+    Index,
+    Start,
+    Length,
+    Value,
+    TRUE
+    );
 }
 
 /**
@@ -1240,7 +1420,16 @@ PreSmmCpuRegisterTableWrite (
   Start  = (UINT8)LowBitSet64 (ValueMask);
   End    = (UINT8)HighBitSet64 (ValueMask);
   Length = End - Start + 1;
-  CpuRegisterTableWriteWorker (TRUE, ProcessorNumber, RegisterType, Index, Start, Length, Value, FALSE);
+  CpuRegisterTableWriteWorker (
+    TRUE,
+    ProcessorNumber,
+    RegisterType,
+    Index,
+    Start,
+    Length,
+    Value,
+    FALSE
+    );
 }
 
 /**

@@ -28,7 +28,11 @@ CpuCacheInfoGetMpServices (
 {
   EFI_STATUS  Status;
 
-  Status = gBS->LocateProtocol (&gEfiMpServiceProtocolGuid, NULL, (VOID **)&MpServices->Protocol);
+  Status = gBS->LocateProtocol (
+                  &gEfiMpServiceProtocolGuid,
+                  NULL,
+                  (VOID **)&MpServices->Protocol
+                  );
   ASSERT_EFI_ERROR (Status);
 
   return Status;
@@ -50,7 +54,15 @@ CpuCacheInfoStartupAllCPUs (
 {
   EFI_STATUS  Status;
 
-  Status = MpServices.Protocol->StartupAllAPs (MpServices.Protocol, Procedure, FALSE, NULL, 0, ProcedureArgument, NULL);
+  Status = MpServices.Protocol->StartupAllAPs (
+                                  MpServices.Protocol,
+                                  Procedure,
+                                  FALSE,
+                                  NULL,
+                                  0,
+                                  ProcedureArgument,
+                                  NULL
+                                  );
   if (Status == EFI_NOT_STARTED) {
     //
     // EFI_NOT_STARTED is returned when there is no enabled AP.
@@ -80,7 +92,11 @@ CpuCacheInfoGetProcessorInfo (
 {
   EFI_STATUS  Status;
 
-  Status = MpServices.Protocol->GetProcessorInfo (MpServices.Protocol, ProcessorNum, ProcessorInfo);
+  Status = MpServices.Protocol->GetProcessorInfo (
+                                  MpServices.Protocol,
+                                  ProcessorNum,
+                                  ProcessorInfo
+                                  );
   ASSERT_EFI_ERROR (Status);
 }
 
@@ -121,7 +137,11 @@ CpuCacheInfoGetNumberOfProcessors (
   UINTN       NumberOfProcessor;
   UINTN       NumberOfEnabledProcessor;
 
-  Status = MpServices.Protocol->GetNumberOfProcessors (MpServices.Protocol, &NumberOfProcessor, &NumberOfEnabledProcessor);
+  Status = MpServices.Protocol->GetNumberOfProcessors (
+                                  MpServices.Protocol,
+                                  &NumberOfProcessor,
+                                  &NumberOfEnabledProcessor
+                                  );
   ASSERT_EFI_ERROR (Status);
 
   return (UINT32)NumberOfProcessor;

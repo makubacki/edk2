@@ -174,7 +174,9 @@ CpuMemoryServiceRead (
   // Select loop based on the width of the transfer
   //
   Stride = mStride[Width];
-  for (Uint8Buffer = Buffer; Count > 0; Address += Stride, Uint8Buffer += Stride, Count--) {
+  for (Uint8Buffer = Buffer; Count > 0; Address += Stride, Uint8Buffer +=
+         Stride, Count--)
+  {
     if (Width == SMM_IO_UINT8) {
       *Uint8Buffer = MmioRead8 ((UINTN)Address);
     } else if (Width == SMM_IO_UINT16) {
@@ -235,7 +237,9 @@ CpuMemoryServiceWrite (
   // Select loop based on the width of the transfer
   //
   Stride = mStride[Width];
-  for (Uint8Buffer = Buffer; Count > 0; Address += Stride, Uint8Buffer += Stride, Count--) {
+  for (Uint8Buffer = Buffer; Count > 0; Address += Stride, Uint8Buffer +=
+         Stride, Count--)
+  {
     if (Width == SMM_IO_UINT8) {
       MmioWrite8 ((UINTN)Address, *Uint8Buffer);
     } else if (Width == SMM_IO_UINT16) {
@@ -296,7 +300,9 @@ CpuIoServiceRead (
   // Select loop based on the width of the transfer
   //
   Stride = mStride[Width];
-  for (Uint8Buffer = Buffer; Count > 0; Address += Stride, Uint8Buffer += Stride, Count--) {
+  for (Uint8Buffer = Buffer; Count > 0; Address += Stride, Uint8Buffer +=
+         Stride, Count--)
+  {
     if (Width == SMM_IO_UINT8) {
       *Uint8Buffer = IoRead8 ((UINTN)Address);
     } else if (Width == SMM_IO_UINT16) {
@@ -358,7 +364,9 @@ CpuIoServiceWrite (
   // Select loop based on the width of the transfer
   //
   Stride = mStride[Width];
-  for (Uint8Buffer = (UINT8 *)Buffer; Count > 0; Address += Stride, Uint8Buffer += Stride, Count--) {
+  for (Uint8Buffer = (UINT8 *)Buffer; Count > 0; Address += Stride,
+       Uint8Buffer += Stride, Count--)
+  {
     if (Width == SMM_IO_UINT8) {
       IoWrite8 ((UINTN)Address, *Uint8Buffer);
     } else if (Width == SMM_IO_UINT16) {

@@ -73,22 +73,49 @@ PiSmmCommunicationHandler (
 
   DEBUG ((DEBUG_INFO, "PiSmmCommunicationHandler Enter\n"));
 
-  BufferPtrAddress  = (EFI_PHYSICAL_ADDRESS *)(UINTN)mSmmCommunicationContext.BufferPtrAddress;
+  BufferPtrAddress =
+    (EFI_PHYSICAL_ADDRESS *)(UINTN)mSmmCommunicationContext.BufferPtrAddress;
   CommunicateHeader = (EFI_SMM_COMMUNICATE_HEADER *)(UINTN)*BufferPtrAddress;
-  DEBUG ((DEBUG_INFO, "PiSmmCommunicationHandler CommunicateHeader - %x\n", CommunicateHeader));
+  DEBUG ((
+    DEBUG_INFO,
+    "PiSmmCommunicationHandler CommunicateHeader - %x\n",
+    CommunicateHeader
+    ));
   if (CommunicateHeader == NULL) {
-    DEBUG ((DEBUG_INFO, "PiSmmCommunicationHandler is NULL, needn't to call dispatch function\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "PiSmmCommunicationHandler is NULL, needn't to call dispatch function\n"
+      ));
     Status = EFI_SUCCESS;
   } else {
-    if (!SmmIsBufferOutsideSmmValid ((UINTN)CommunicateHeader, OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data))) {
-      DEBUG ((DEBUG_INFO, "PiSmmCommunicationHandler CommunicateHeader invalid - 0x%x\n", CommunicateHeader));
+    if (!SmmIsBufferOutsideSmmValid (
+           (UINTN)CommunicateHeader,
+           OFFSET_OF (
+             EFI_SMM_COMMUNICATE_HEADER,
+             Data
+             )
+           ))
+    {
+      DEBUG ((
+        DEBUG_INFO,
+        "PiSmmCommunicationHandler CommunicateHeader invalid - 0x%x\n",
+        CommunicateHeader
+        ));
       Status = EFI_SUCCESS;
       goto Done;
     }
 
     CommSize = (UINTN)CommunicateHeader->MessageLength;
-    if (!SmmIsBufferOutsideSmmValid ((UINTN)&CommunicateHeader->Data[0], CommSize)) {
-      DEBUG ((DEBUG_INFO, "PiSmmCommunicationHandler CommunicateData invalid - 0x%x\n", &CommunicateHeader->Data[0]));
+    if (!SmmIsBufferOutsideSmmValid (
+           (UINTN)&CommunicateHeader->Data[0],
+           CommSize
+           ))
+    {
+      DEBUG ((
+        DEBUG_INFO,
+        "PiSmmCommunicationHandler CommunicateData invalid - 0x%x\n",
+        &CommunicateHeader->Data[0]
+        ));
       Status = EFI_SUCCESS;
       goto Done;
     }
@@ -96,7 +123,11 @@ PiSmmCommunicationHandler (
     //
     // Call dispatch function
     //
-    DEBUG ((DEBUG_INFO, "PiSmmCommunicationHandler Data - %x\n", &CommunicateHeader->Data[0]));
+    DEBUG ((
+      DEBUG_INFO,
+      "PiSmmCommunicationHandler Data - %x\n",
+      &CommunicateHeader->Data[0]
+      ));
     Status = gSmst->SmiManage (
                       &CommunicateHeader->HeaderGuid,
                       NULL,
@@ -190,17 +221,30 @@ PiSmmCommunicationSmmEntryPoint (
                                                            );
   ASSERT_EFI_ERROR (Status);
 
-  DEBUG ((DEBUG_INFO, "SmmCommunication SwSmi: %x\n", (UINTN)SmmSwDispatchContext.SwSmiInputValue));
+  DEBUG ((
+    DEBUG_INFO,
+    "SmmCommunication SwSmi: %x\n",
+    (UINTN)SmmSwDispatchContext.SwSmiInputValue
+    ));
 
-  BufferPtrAddress = AllocateAcpiNvsMemoryBelow4G (sizeof (EFI_PHYSICAL_ADDRESS));
+  BufferPtrAddress = AllocateAcpiNvsMemoryBelow4G (
+                       sizeof (EFI_PHYSICAL_ADDRESS)
+                       );
   ASSERT (BufferPtrAddress != NULL);
-  DEBUG ((DEBUG_INFO, "SmmCommunication BufferPtrAddress: 0x%016lx, BufferPtr: 0x%016lx\n", (EFI_PHYSICAL_ADDRESS)(UINTN)BufferPtrAddress, *BufferPtrAddress));
+  DEBUG ((
+    DEBUG_INFO,
+    "SmmCommunication BufferPtrAddress: 0x%016lx, BufferPtr: 0x%016lx\n",
+    (EFI_PHYSICAL_ADDRESS)(UINTN)BufferPtrAddress,
+    *BufferPtrAddress
+    ));
 
   //
   // Save context
   //
-  mSmmCommunicationContext.SwSmiNumber      = (UINT32)SmmSwDispatchContext.SwSmiInputValue;
-  mSmmCommunicationContext.BufferPtrAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)BufferPtrAddress;
+  mSmmCommunicationContext.SwSmiNumber =
+    (UINT32)SmmSwDispatchContext.SwSmiInputValue;
+  mSmmCommunicationContext.BufferPtrAddress =
+    (EFI_PHYSICAL_ADDRESS)(UINTN)BufferPtrAddress;
   SetCommunicationContext ();
 
   return Status;

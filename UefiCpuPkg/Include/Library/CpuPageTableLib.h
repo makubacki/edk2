@@ -32,8 +32,12 @@ typedef union {
 } IA32_MAP_ATTRIBUTE;
 
 #define IA32_MAP_ATTRIBUTE_PAGE_TABLE_BASE_ADDRESS_MASK  0xFFFFFFFFFF000ull
-#define IA32_MAP_ATTRIBUTE_PAGE_TABLE_BASE_ADDRESS(pa)  ((pa)->Uint64 & IA32_MAP_ATTRIBUTE_PAGE_TABLE_BASE_ADDRESS_MASK)
-#define IA32_MAP_ATTRIBUTE_ATTRIBUTES(pa)               ((pa)->Uint64 & ~IA32_MAP_ATTRIBUTE_PAGE_TABLE_BASE_ADDRESS_MASK)
+#define IA32_MAP_ATTRIBUTE_PAGE_TABLE_BASE_ADDRESS( \
+                                                  pa)  \
+      ((pa)->Uint64 & IA32_MAP_ATTRIBUTE_PAGE_TABLE_BASE_ADDRESS_MASK)
+#define IA32_MAP_ATTRIBUTE_ATTRIBUTES( \
+                                     pa)               \
+      ((pa)->Uint64 & ~IA32_MAP_ATTRIBUTE_PAGE_TABLE_BASE_ADDRESS_MASK)
 
 //
 // Below enum follows "4.1.1 Four Paging Modes" in Chapter 4 Paging of SDM Volume 3.

@@ -209,7 +209,8 @@ extern EFI_GUID  gEfiSmmCpuServiceProtocolGuid;
     0xaa00d50b, 0x4911, 0x428f, { 0xb9, 0x1a, 0xa5, 0x9d, 0xdb, 0x13, 0xe2, 0x4c } \
   }
 
-typedef struct _EDKII_SMM_CPU_RENDEZVOUS_PROTOCOL EDKII_SMM_CPU_RENDEZVOUS_PROTOCOL;
+typedef struct _EDKII_SMM_CPU_RENDEZVOUS_PROTOCOL
+EDKII_SMM_CPU_RENDEZVOUS_PROTOCOL;
 
 /**
   Wait for all APs to arrive SMM mode in given timeout constraint.

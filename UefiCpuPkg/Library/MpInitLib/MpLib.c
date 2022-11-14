@@ -398,7 +398,8 @@ SortApicId (
         //
         // Also exchange the StartupApSignal.
         //
-        StartupApSignal                            = CpuMpData->CpuData[Index3].StartupApSignal;
+        StartupApSignal =
+          CpuMpData->CpuData[Index3].StartupApSignal;
         CpuMpData->CpuData[Index3].StartupApSignal =
           CpuMpData->CpuData[Index1].StartupApSignal;
         CpuMpData->CpuData[Index1].StartupApSignal = StartupApSignal;
@@ -575,7 +576,11 @@ CollectProcessorCount (
   //
   SortApicId (CpuMpData);
 
-  DEBUG ((DEBUG_INFO, "MpInitLib: Find %d processors in system.\n", CpuMpData->CpuCount));
+  DEBUG ((
+    DEBUG_INFO,
+    "MpInitLib: Find %d processors in system.\n",
+    CpuMpData->CpuCount
+    ));
 
   return CpuMpData->CpuCount;
 }
@@ -601,7 +606,8 @@ InitializeApData (
   MSR_IA32_PLATFORM_ID_REGISTER  PlatformIdMsr;
   AP_STACK_DATA                  *ApStackData;
 
-  CpuInfoInHob                                = (CPU_INFO_IN_HOB *)(UINTN)CpuMpData->CpuInfoInHob;
+  CpuInfoInHob =
+    (CPU_INFO_IN_HOB *)(UINTN)CpuMpData->CpuInfoInHob;
   CpuInfoInHob[ProcessorNumber].InitialApicId = GetInitialApicId ();
   CpuInfoInHob[ProcessorNumber].ApicId        = GetApicId ();
   CpuInfoInHob[ProcessorNumber].Health        = BistData;
@@ -610,18 +616,23 @@ InitializeApData (
   //
   // AP_STACK_DATA is stored at the top of AP Stack
   //
-  ApStackData         = (AP_STACK_DATA *)((UINTN)ApTopOfStack - sizeof (AP_STACK_DATA));
+  ApStackData         = (AP_STACK_DATA *)((UINTN)ApTopOfStack -
+                                          sizeof (AP_STACK_DATA));
   ApStackData->MpData = CpuMpData;
 
   CpuMpData->CpuData[ProcessorNumber].Waiting    = FALSE;
-  CpuMpData->CpuData[ProcessorNumber].CpuHealthy = (BistData == 0) ? TRUE : FALSE;
+  CpuMpData->CpuData[ProcessorNumber].CpuHealthy = (BistData == 0) ? TRUE :
+                                                   FALSE;
 
   //
   // NOTE: PlatformId is not relevant on AMD platforms.
   //
   if (!StandardSignatureIsAuthenticAMD ()) {
-    PlatformIdMsr.Uint64                           = AsmReadMsr64 (MSR_IA32_PLATFORM_ID);
-    CpuMpData->CpuData[ProcessorNumber].PlatformId = (UINT8)PlatformIdMsr.Bits.PlatformId;
+    PlatformIdMsr.Uint64 = AsmReadMsr64 (
+                             MSR_IA32_PLATFORM_ID
+                             );
+    CpuMpData->CpuData[ProcessorNumber].PlatformId =
+      (UINT8)PlatformIdMsr.Bits.PlatformId;
   }
 
   AsmCpuid (
@@ -683,18 +694,24 @@ ApWakeupFunction (
       //
       // This is first time AP wakeup, get BIST information from AP stack
       //
-      ApTopOfStack = CpuMpData->Buffer + (ProcessorNumber + 1) * CpuMpData->CpuApStackSize;
-      ApStackData  = (AP_STACK_DATA *)((UINTN)ApTopOfStack - sizeof (AP_STACK_DATA));
-      BistData     = (UINT32)ApStackData->Bist;
+      ApTopOfStack = CpuMpData->Buffer + (ProcessorNumber + 1) *
+                     CpuMpData->CpuApStackSize;
+      ApStackData = (AP_STACK_DATA *)((UINTN)ApTopOfStack -
+                                      sizeof (AP_STACK_DATA));
+      BistData    = (UINT32)ApStackData->Bist;
 
       //
       // CpuMpData->CpuData[0].VolatileRegisters is initialized based on BSP environment,
       //   to initialize AP in InitConfig path.
       // NOTE: IDTR.BASE stored in CpuMpData->CpuData[0].VolatileRegisters points to a different IDT shared by all APs.
       //
-      RestoreVolatileRegisters (&CpuMpData->CpuData[0].VolatileRegisters, FALSE);
+      RestoreVolatileRegisters (
+        &CpuMpData->CpuData[0].VolatileRegisters,
+        FALSE
+        );
       InitializeApData (CpuMpData, ProcessorNumber, BistData, ApTopOfStack);
-      ApStartupSignalBuffer = CpuMpData->CpuData[ProcessorNumber].StartupApSignal;
+      ApStartupSignalBuffer =
+        CpuMpData->CpuData[ProcessorNumber].StartupApSignal;
     } else {
       //
       // Execute AP function if AP is ready
@@ -703,7 +720,8 @@ ApWakeupFunction (
       //
       // Clear AP start-up signal when AP waken up
       //
-      ApStartupSignalBuffer = CpuMpData->CpuData[ProcessorNumber].StartupApSignal;
+      ApStartupSignalBuffer =
+        CpuMpData->CpuData[ProcessorNumber].StartupApSignal;
       InterlockedCompareExchange32 (
         (UINT32 *)ApStartupSignalBuffer,
         WAKEUP_AP_SIGNAL,
@@ -719,13 +737,19 @@ ApWakeupFunction (
         // NOTE: IDTR.BASE stored in CpuMpData->CpuData[0].VolatileRegisters points to a
         //   different IDT shared by all APs.
         //
-        RestoreVolatileRegisters (&CpuMpData->CpuData[0].VolatileRegisters, FALSE);
+        RestoreVolatileRegisters (
+          &CpuMpData->CpuData[0].VolatileRegisters,
+          FALSE
+          );
       } else {
         if (CpuMpData->ApLoopMode == ApInHltLoop) {
           //
           // Restore AP's volatile registers saved before AP is halted
           //
-          RestoreVolatileRegisters (&CpuMpData->CpuData[ProcessorNumber].VolatileRegisters, TRUE);
+          RestoreVolatileRegisters (
+            &CpuMpData->CpuData[ProcessorNumber].VolatileRegisters,
+            TRUE
+            );
         } else {
           //
           // The CPU driver might not flush TLB for APs on spot after updating
@@ -737,8 +761,10 @@ ApWakeupFunction (
       }
 
       if (GetApState (&CpuMpData->CpuData[ProcessorNumber]) == CpuStateReady) {
-        Procedure = (EFI_AP_PROCEDURE)CpuMpData->CpuData[ProcessorNumber].ApFunction;
-        Parameter = (VOID *)CpuMpData->CpuData[ProcessorNumber].ApFunctionArgument;
+        Procedure =
+          (EFI_AP_PROCEDURE)CpuMpData->CpuData[ProcessorNumber].ApFunction;
+        Parameter =
+          (VOID *)CpuMpData->CpuData[ProcessorNumber].ApFunctionArgument;
         if (Procedure != NULL) {
           SetApState (&CpuMpData->CpuData[ProcessorNumber], CpuStateBusy);
           //
@@ -757,11 +783,14 @@ ApWakeupFunction (
             GetProcessorNumber (CpuMpData, &ProcessorNumber);
             CpuMpData->CpuData[ProcessorNumber].ApFunction         = 0;
             CpuMpData->CpuData[ProcessorNumber].ApFunctionArgument = 0;
-            ApStartupSignalBuffer                                  = CpuMpData->CpuData[ProcessorNumber].StartupApSignal;
-            CpuInfoInHob[ProcessorNumber].ApTopOfStack             = CpuInfoInHob[CpuMpData->NewBspNumber].ApTopOfStack;
+            ApStartupSignalBuffer                                  =
+              CpuMpData->CpuData[ProcessorNumber].StartupApSignal;
+            CpuInfoInHob[ProcessorNumber].ApTopOfStack =
+              CpuInfoInHob[CpuMpData->NewBspNumber].ApTopOfStack;
           } else {
             if ((CpuInfoInHob[ProcessorNumber].ApicId != GetApicId ()) ||
-                (CpuInfoInHob[ProcessorNumber].InitialApicId != GetInitialApicId ()))
+                (CpuInfoInHob[ProcessorNumber].InitialApicId !=
+                 GetInitialApicId ()))
             {
               if (CurrentApicMode != GetApicMode ()) {
                 //
@@ -775,7 +804,8 @@ ApWakeupFunction (
                 // Re-get the CPU APICID and Initial APICID if they are changed
                 //
                 CpuInfoInHob[ProcessorNumber].ApicId        = GetApicId ();
-                CpuInfoInHob[ProcessorNumber].InitialApicId = GetInitialApicId ();
+                CpuInfoInHob[ProcessorNumber].InitialApicId =
+                  GetInitialApicId ();
               }
             }
           }
@@ -789,7 +819,9 @@ ApWakeupFunction (
       //
       // Save AP volatile registers
       //
-      SaveVolatileRegisters (&CpuMpData->CpuData[ProcessorNumber].VolatileRegisters);
+      SaveVolatileRegisters (
+        &CpuMpData->CpuData[ProcessorNumber].VolatileRegisters
+        );
     }
 
     //
@@ -804,7 +836,9 @@ ApWakeupFunction (
       // performs another INIT-SIPI-SIPI sequence.
       //
       if (!CpuMpData->UseSevEsAPMethod) {
-        InterlockedDecrement ((UINT32 *)&CpuMpData->MpCpuExchangeInfo->NumApsExecuting);
+        InterlockedDecrement (
+          (UINT32 *)&CpuMpData->MpCpuExchangeInfo->NumApsExecuting
+          );
       }
     }
 
@@ -902,11 +936,13 @@ GetApResetVectorSize (
   )
 {
   if (SizeBelow1Mb != NULL) {
-    *SizeBelow1Mb = AddressMap->ModeTransitionOffset + sizeof (MP_CPU_EXCHANGE_INFO);
+    *SizeBelow1Mb = AddressMap->ModeTransitionOffset +
+                    sizeof (MP_CPU_EXCHANGE_INFO);
   }
 
   if (SizeAbove1Mb != NULL) {
-    *SizeAbove1Mb = AddressMap->RendezvousFunnelSize - AddressMap->ModeTransitionOffset;
+    *SizeAbove1Mb = AddressMap->RendezvousFunnelSize -
+                    AddressMap->ModeTransitionOffset;
   }
 }
 
@@ -941,12 +977,14 @@ FillExchangeInfoData (
   ExchangeInfo->ApIndex         = 0;
   ExchangeInfo->NumApsExecuting = 0;
   ExchangeInfo->InitFlag        = (UINTN)CpuMpData->InitFlag;
-  ExchangeInfo->CpuInfo         = (CPU_INFO_IN_HOB *)(UINTN)CpuMpData->CpuInfoInHob;
-  ExchangeInfo->CpuMpData       = CpuMpData;
+  ExchangeInfo->CpuInfo         =
+    (CPU_INFO_IN_HOB *)(UINTN)CpuMpData->CpuInfoInHob;
+  ExchangeInfo->CpuMpData = CpuMpData;
 
   ExchangeInfo->EnableExecuteDisable = IsBspExecuteDisableEnabled ();
 
-  ExchangeInfo->InitializeFloatingPointUnitsAddress = (UINTN)InitializeFloatingPointUnits;
+  ExchangeInfo->InitializeFloatingPointUnitsAddress =
+    (UINTN)InitializeFloatingPointUnits;
 
   //
   // We can check either CPUID(7).ECX[bit16] or check CR4.LA57[bit12]
@@ -958,7 +996,12 @@ FillExchangeInfoData (
   //
   Cr4.UintN                        = AsmReadCr4 ();
   ExchangeInfo->Enable5LevelPaging = (BOOLEAN)(Cr4.Bits.LA57 == 1);
-  DEBUG ((DEBUG_INFO, "%a: 5-Level Paging = %d\n", gEfiCallerBaseName, ExchangeInfo->Enable5LevelPaging));
+  DEBUG ((
+    DEBUG_INFO,
+    "%a: 5-Level Paging = %d\n",
+    gEfiCallerBaseName,
+    ExchangeInfo->Enable5LevelPaging
+    ));
 
   ExchangeInfo->SevEsIsEnabled  = CpuMpData->SevEsIsEnabled;
   ExchangeInfo->SevSnpIsEnabled = CpuMpData->SevSnpIsEnabled;
@@ -997,7 +1040,8 @@ FillExchangeInfoData (
 
   ExchangeInfo->ModeHighMemory = ExchangeInfo->ModeTransitionMemory +
                                  (UINT32)ExchangeInfo->ModeOffset -
-                                 (UINT32)CpuMpData->AddressMap.ModeTransitionOffset;
+                                 (UINT32)CpuMpData->AddressMap.
+                                   ModeTransitionOffset;
   ExchangeInfo->ModeHighSegment = (UINT16)ExchangeInfo->CodeSegment;
 }
 
@@ -1068,9 +1112,13 @@ AllocateResetVectorBelow1Mb (
   UINTN  ApResetStackSize;
 
   if (CpuMpData->WakeupBuffer == (UINTN)-1) {
-    CpuMpData->WakeupBuffer      = GetWakeupBuffer (CpuMpData->BackupBufferSize);
+    CpuMpData->WakeupBuffer = GetWakeupBuffer (
+                                CpuMpData->BackupBufferSize
+                                );
     CpuMpData->MpCpuExchangeInfo = (MP_CPU_EXCHANGE_INFO *)(UINTN)
-                                   (CpuMpData->WakeupBuffer + CpuMpData->BackupBufferSize - sizeof (MP_CPU_EXCHANGE_INFO));
+                                   (CpuMpData->WakeupBuffer +
+                                    CpuMpData->BackupBufferSize -
+                                    sizeof (MP_CPU_EXCHANGE_INFO));
     DEBUG ((
       DEBUG_INFO,
       "AP Vector: 16-bit = %p/%x, ExchangeInfo = %p/%x\n",
@@ -1407,7 +1455,9 @@ CalculateTimeout (
   //
   // Check the potential overflow before calculate the number of ticks for the timeout value.
   //
-  if (DivU64x64Remainder (MAX_UINT64, TimeoutInMicroseconds, NULL) < TimestampCounterFreq) {
+  if (DivU64x64Remainder (MAX_UINT64, TimeoutInMicroseconds, NULL) <
+      TimestampCounterFreq)
+  {
     //
     // Convert microseconds into seconds if direct multiplication overflows
     //
@@ -1415,7 +1465,10 @@ CalculateTimeout (
     //
     // Assertion if the final tick count exceeds MAX_UINT64
     //
-    ASSERT (DivU64x64Remainder (MAX_UINT64, TimeoutInSeconds, NULL) >= TimestampCounterFreq);
+    ASSERT (
+      DivU64x64Remainder (MAX_UINT64, TimeoutInSeconds, NULL) >=
+      TimestampCounterFreq
+      );
     return MultU64x64 (TimestampCounterFreq, TimeoutInSeconds);
   } else {
     //
@@ -1597,7 +1650,9 @@ GetNextWaitingProcessorNumber (
 
   CpuMpData = GetCpuMpData ();
 
-  for (ProcessorNumber = 0; ProcessorNumber < CpuMpData->CpuCount; ProcessorNumber++) {
+  for (ProcessorNumber = 0; ProcessorNumber < CpuMpData->CpuCount;
+       ProcessorNumber++)
+  {
     if (CpuMpData->CpuData[ProcessorNumber].Waiting) {
       *NextProcessorNumber = ProcessorNumber;
       return EFI_SUCCESS;
@@ -1648,7 +1703,12 @@ CheckThisAP (
     //
     // If timeout expires for StartupThisAP(), report timeout.
     //
-    if (CheckTimeout (&CpuData->CurrentTime, &CpuData->TotalTime, CpuData->ExpectedTime)) {
+    if (CheckTimeout (
+          &CpuData->CurrentTime,
+          &CpuData->TotalTime,
+          CpuData->ExpectedTime
+          ))
+    {
       if (CpuData->Finished != NULL) {
         *(CpuData->Finished) = FALSE;
       }
@@ -1694,7 +1754,9 @@ CheckAllAPs (
   //
   // Go through all APs that are responsible for the StartupAllAPs().
   //
-  for (ProcessorNumber = 0; ProcessorNumber < CpuMpData->CpuCount; ProcessorNumber++) {
+  for (ProcessorNumber = 0; ProcessorNumber < CpuMpData->CpuCount;
+       ProcessorNumber++)
+  {
     if (!CpuMpData->CpuData[ProcessorNumber].Waiting) {
       continue;
     }
@@ -1758,7 +1820,9 @@ CheckAllAPs (
 
     ListIndex = 0;
 
-    for (ProcessorNumber = 0; ProcessorNumber < CpuMpData->CpuCount; ProcessorNumber++) {
+    for (ProcessorNumber = 0; ProcessorNumber < CpuMpData->CpuCount;
+         ProcessorNumber++)
+    {
       //
       // Check whether this processor is responsible for StartupAllAPs().
       //
@@ -1832,7 +1896,11 @@ MpInitLibInitialize (
   ASSERT (MaxLogicalProcessorNumber != 0);
 
   AsmGetAddressMap (&AddressMap);
-  GetApResetVectorSize (&AddressMap, &ApResetVectorSizeBelow1Mb, &ApResetVectorSizeAbove1Mb);
+  GetApResetVectorSize (
+    &AddressMap,
+    &ApResetVectorSizeBelow1Mb,
+    &ApResetVectorSizeAbove1Mb
+    );
   ApStackSize = PcdGet32 (PcdCpuApStackSize);
   //
   // ApStackSize must be power of 2
@@ -1855,8 +1923,9 @@ MpInitLibInitialize (
   BufferSize  = ALIGN_VALUE (BufferSize, 8);
   BufferSize += VolatileRegisters.Idtr.Limit + 1;
   BufferSize += sizeof (CPU_MP_DATA);
-  BufferSize += (sizeof (CPU_AP_DATA) + sizeof (CPU_INFO_IN_HOB))* MaxLogicalProcessorNumber;
-  MpBuffer    = AllocatePages (EFI_SIZE_TO_PAGES (BufferSize));
+  BufferSize += (sizeof (CPU_AP_DATA) + sizeof (CPU_INFO_IN_HOB))*
+                MaxLogicalProcessorNumber;
+  MpBuffer = AllocatePages (EFI_SIZE_TO_PAGES (BufferSize));
   ASSERT (MpBuffer != NULL);
   ZeroMem (MpBuffer, BufferSize);
   Buffer = ALIGN_VALUE ((UINTN)MpBuffer, ApStackSize);
@@ -1882,10 +1951,18 @@ MpInitLibInitialize (
   //      CPU_INFO_IN_HOB (N)
   //    +--------------------+
   //
-  MonitorBuffer               = (UINT8 *)(Buffer + ApStackSize * MaxLogicalProcessorNumber);
-  BackupBufferAddr            = (UINTN)MonitorBuffer + MonitorFilterSize * MaxLogicalProcessorNumber;
-  ApIdtBase                   = ALIGN_VALUE (BackupBufferAddr + ApResetVectorSizeBelow1Mb, 8);
-  CpuMpData                   = (CPU_MP_DATA *)(ApIdtBase + VolatileRegisters.Idtr.Limit + 1);
+  MonitorBuffer    = (UINT8 *)(Buffer + ApStackSize *
+                               MaxLogicalProcessorNumber);
+  BackupBufferAddr = (UINTN)MonitorBuffer + MonitorFilterSize *
+                     MaxLogicalProcessorNumber;
+  ApIdtBase = ALIGN_VALUE (
+                BackupBufferAddr +
+                ApResetVectorSizeBelow1Mb,
+                8
+                );
+  CpuMpData                   = (CPU_MP_DATA *)(ApIdtBase +
+                                                VolatileRegisters.Idtr.Limit +
+                                                1);
   CpuMpData->Buffer           = Buffer;
   CpuMpData->CpuApStackSize   = ApStackSize;
   CpuMpData->BackupBuffer     = BackupBufferAddr;
@@ -1896,16 +1973,21 @@ MpInitLibInitialize (
   CpuMpData->WaitEvent        = NULL;
   CpuMpData->SwitchBspFlag    = FALSE;
   CpuMpData->CpuData          = (CPU_AP_DATA *)(CpuMpData + 1);
-  CpuMpData->CpuInfoInHob     = (UINT64)(UINTN)(CpuMpData->CpuData + MaxLogicalProcessorNumber);
+  CpuMpData->CpuInfoInHob     = (UINT64)(UINTN)(CpuMpData->CpuData +
+                                                MaxLogicalProcessorNumber);
   InitializeSpinLock (&CpuMpData->MpLock);
   CpuMpData->SevEsIsEnabled   = ConfidentialComputingGuestHas (CCAttrAmdSevEs);
   CpuMpData->SevSnpIsEnabled  = ConfidentialComputingGuestHas (CCAttrAmdSevSnp);
   CpuMpData->SevEsAPBuffer    = (UINTN)-1;
   CpuMpData->GhcbBase         = PcdGet64 (PcdGhcbBase);
-  CpuMpData->UseSevEsAPMethod = CpuMpData->SevEsIsEnabled && !CpuMpData->SevSnpIsEnabled;
+  CpuMpData->UseSevEsAPMethod = CpuMpData->SevEsIsEnabled &&
+                                !CpuMpData->SevSnpIsEnabled;
 
   if (CpuMpData->SevSnpIsEnabled) {
-    ASSERT ((PcdGet64 (PcdGhcbHypervisorFeatures) & GHCB_HV_FEATURES_SNP_AP_CREATE) == GHCB_HV_FEATURES_SNP_AP_CREATE);
+    ASSERT (
+      (PcdGet64 (PcdGhcbHypervisorFeatures) &
+       GHCB_HV_FEATURES_SNP_AP_CREATE) == GHCB_HV_FEATURES_SNP_AP_CREATE
+      );
   }
 
   //
@@ -1913,7 +1995,8 @@ MpInitLibInitialize (
   // (ApStackSize - (Buffer - (UINTN)MpBuffer)) is the redundant caused by alignment
   //
   ASSERT (
-    (CpuMpData->CpuInfoInHob + sizeof (CPU_INFO_IN_HOB) * MaxLogicalProcessorNumber) ==
+    (CpuMpData->CpuInfoInHob + sizeof (CPU_INFO_IN_HOB) *
+     MaxLogicalProcessorNumber) ==
     (UINTN)MpBuffer + BufferSize - (ApStackSize - Buffer + (UINTN)MpBuffer)
     );
 
@@ -1921,13 +2004,21 @@ MpInitLibInitialize (
   // Duplicate BSP's IDT to APs.
   // All APs share one separate IDT. So AP can get the address of CpuMpData by using IDTR.BASE + IDTR.LIMIT + 1
   //
-  CopyMem ((VOID *)ApIdtBase, (VOID *)VolatileRegisters.Idtr.Base, VolatileRegisters.Idtr.Limit + 1);
+  CopyMem (
+    (VOID *)ApIdtBase,
+    (VOID *)VolatileRegisters.Idtr.Base,
+    VolatileRegisters.Idtr.Limit + 1
+    );
   VolatileRegisters.Idtr.Base = ApIdtBase;
   //
   // Don't pass BSP's TR to APs to avoid AP init failure.
   //
   VolatileRegisters.Tr = 0;
-  CopyMem (&CpuMpData->CpuData[0].VolatileRegisters, &VolatileRegisters, sizeof (VolatileRegisters));
+  CopyMem (
+    &CpuMpData->CpuData[0].VolatileRegisters,
+    &VolatileRegisters,
+    sizeof (VolatileRegisters)
+    );
   //
   // Set BSP basic information
   //
@@ -1935,7 +2026,11 @@ MpInitLibInitialize (
   //
   // Save assembly code information
   //
-  CopyMem (&CpuMpData->AddressMap, &AddressMap, sizeof (MP_ASSEMBLY_ADDRESS_MAP));
+  CopyMem (
+    &CpuMpData->AddressMap,
+    &AddressMap,
+    sizeof (MP_ASSEMBLY_ADDRESS_MAP)
+    );
   //
   // Finally set AP loop mode
   //
@@ -1963,7 +2058,12 @@ MpInitLibInitialize (
     CpuMpData->AddressMap.ModeTransitionOffset,
     ApResetVectorSizeAbove1Mb
     );
-  DEBUG ((DEBUG_INFO, "AP Vector: non-16-bit = %p/%x\n", CpuMpData->WakeupBufferHigh, ApResetVectorSizeAbove1Mb));
+  DEBUG ((
+    DEBUG_INFO,
+    "AP Vector: non-16-bit = %p/%x\n",
+    CpuMpData->WakeupBufferHigh,
+    ApResetVectorSizeAbove1Mb
+    ));
 
   //
   // Enable the local APIC for Virtual Wire Mode.
@@ -1986,10 +2086,12 @@ MpInitLibInitialize (
     CpuMpData->CpuCount        = OldCpuMpData->CpuCount;
     CpuMpData->BspNumber       = OldCpuMpData->BspNumber;
     CpuMpData->CpuInfoInHob    = OldCpuMpData->CpuInfoInHob;
-    CpuInfoInHob               = (CPU_INFO_IN_HOB *)(UINTN)CpuMpData->CpuInfoInHob;
+    CpuInfoInHob               =
+      (CPU_INFO_IN_HOB *)(UINTN)CpuMpData->CpuInfoInHob;
     for (Index = 0; Index < CpuMpData->CpuCount; Index++) {
       InitializeSpinLock (&CpuMpData->CpuData[Index].ApLock);
-      CpuMpData->CpuData[Index].CpuHealthy = (CpuInfoInHob[Index].Health == 0) ? TRUE : FALSE;
+      CpuMpData->CpuData[Index].CpuHealthy = (CpuInfoInHob[Index].Health == 0) ?
+                                             TRUE : FALSE;
       CpuMpData->CpuData[Index].ApFunction = 0;
     }
   }
@@ -2054,7 +2156,12 @@ MpInitLibInitialize (
 
   CpuInfoInHob = (CPU_INFO_IN_HOB *)(UINTN)CpuMpData->CpuInfoInHob;
   for (Index = 0; Index < CpuMpData->CpuCount; Index++) {
-    GetProcessorLocationByApicId (CpuInfoInHob[Index].InitialApicId, NULL, NULL, &ThreadId);
+    GetProcessorLocationByApicId (
+      CpuInfoInHob[Index].InitialApicId,
+      NULL,
+      NULL,
+      &ThreadId
+      );
     if (ThreadId == 0) {
       //
       // MicrocodeDetect() loads microcode in first thread of each core, so,
@@ -2062,7 +2169,9 @@ MpInitLibInitialize (
       //
       ExpectedMicrocodeRevision = 0;
       if (CpuMpData->CpuData[Index].MicrocodeEntryAddr != 0) {
-        ExpectedMicrocodeRevision = ((CPU_MICROCODE_HEADER *)(UINTN)CpuMpData->CpuData[Index].MicrocodeEntryAddr)->UpdateRevision;
+        ExpectedMicrocodeRevision =
+          ((CPU_MICROCODE_HEADER *)(UINTN)CpuMpData->CpuData[Index].
+             MicrocodeEntryAddr)->UpdateRevision;
       }
 
       DEBUG ((
@@ -2139,8 +2248,9 @@ MpInitLibGetProcessorInfo (
     return EFI_NOT_FOUND;
   }
 
-  ProcessorInfoBuffer->ProcessorId = (UINT64)CpuInfoInHob[ProcessorNumber].ApicId;
-  ProcessorInfoBuffer->StatusFlag  = 0;
+  ProcessorInfoBuffer->ProcessorId =
+    (UINT64)CpuInfoInHob[ProcessorNumber].ApicId;
+  ProcessorInfoBuffer->StatusFlag = 0;
   if (ProcessorNumber == CpuMpData->BspNumber) {
     ProcessorInfoBuffer->StatusFlag |= PROCESSOR_AS_BSP_BIT;
   }
@@ -2569,7 +2679,9 @@ StartupAllCPUsWorker (
   // Check whether all enabled APs are idle.
   // If any enabled AP is not idle, return EFI_NOT_READY.
   //
-  for (ProcessorNumber = 0; ProcessorNumber < ProcessorCount; ProcessorNumber++) {
+  for (ProcessorNumber = 0; ProcessorNumber < ProcessorCount;
+       ProcessorNumber++)
+  {
     CpuData = &CpuMpData->CpuData[ProcessorNumber];
     if (ProcessorNumber != CpuMpData->BspNumber) {
       ApState = GetApState (CpuData);
@@ -2593,7 +2705,9 @@ StartupAllCPUsWorker (
   }
 
   CpuMpData->RunningCount = 0;
-  for (ProcessorNumber = 0; ProcessorNumber < ProcessorCount; ProcessorNumber++) {
+  for (ProcessorNumber = 0; ProcessorNumber < ProcessorCount;
+       ProcessorNumber++)
+  {
     CpuData          = &CpuMpData->CpuData[ProcessorNumber];
     CpuData->Waiting = FALSE;
     if (ProcessorNumber != CpuMpData->BspNumber) {
@@ -2622,13 +2736,22 @@ StartupAllCPUsWorker (
   if (!SingleThread) {
     WakeUpAP (CpuMpData, TRUE, 0, Procedure, ProcedureArgument, FALSE);
   } else {
-    for (ProcessorNumber = 0; ProcessorNumber < ProcessorCount; ProcessorNumber++) {
+    for (ProcessorNumber = 0; ProcessorNumber < ProcessorCount;
+         ProcessorNumber++)
+    {
       if (ProcessorNumber == CallerNumber) {
         continue;
       }
 
       if (CpuMpData->CpuData[ProcessorNumber].Waiting) {
-        WakeUpAP (CpuMpData, FALSE, ProcessorNumber, Procedure, ProcedureArgument, TRUE);
+        WakeUpAP (
+          CpuMpData,
+          FALSE,
+          ProcessorNumber,
+          Procedure,
+          ProcedureArgument,
+          TRUE
+          );
         break;
       }
     }
@@ -2744,10 +2867,20 @@ StartupThisAPWorker (
   CpuData               = &CpuMpData->CpuData[ProcessorNumber];
   CpuData->WaitEvent    = WaitEvent;
   CpuData->Finished     = Finished;
-  CpuData->ExpectedTime = CalculateTimeout (TimeoutInMicroseconds, &CpuData->CurrentTime);
-  CpuData->TotalTime    = 0;
+  CpuData->ExpectedTime = CalculateTimeout (
+                            TimeoutInMicroseconds,
+                            &CpuData->CurrentTime
+                            );
+  CpuData->TotalTime = 0;
 
-  WakeUpAP (CpuMpData, FALSE, ProcessorNumber, Procedure, ProcedureArgument, TRUE);
+  WakeUpAP (
+    CpuMpData,
+    FALSE,
+    ProcessorNumber,
+    Procedure,
+    ProcedureArgument,
+    TRUE
+    );
 
   //
   // If WaitEvent is NULL, execute in blocking mode.

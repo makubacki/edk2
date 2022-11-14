@@ -26,10 +26,14 @@ InitializeBspIdt (
 
   Idtr = AllocateZeroPool (sizeof (IA32_DESCRIPTOR));
   ASSERT (Idtr != NULL);
-  NewIdtTable = AllocateZeroPool (sizeof (IA32_IDT_GATE_DESCRIPTOR) * CPU_INTERRUPT_NUM);
+  NewIdtTable = AllocateZeroPool (
+                  sizeof (IA32_IDT_GATE_DESCRIPTOR) *
+                  CPU_INTERRUPT_NUM
+                  );
   ASSERT (NewIdtTable != NULL);
   Idtr->Base  = (UINTN)NewIdtTable;
-  Idtr->Limit = (UINT16)(sizeof (IA32_IDT_GATE_DESCRIPTOR) * CPU_INTERRUPT_NUM - 1);
+  Idtr->Limit = (UINT16)(sizeof (IA32_IDT_GATE_DESCRIPTOR) * CPU_INTERRUPT_NUM -
+                         1);
 
   AsmWriteIdtr (Idtr);
   return Idtr;
@@ -54,7 +58,11 @@ MpServicesUnitTestGetNumberOfProcessors (
   OUT UINTN       *NumberOfEnabledProcessors
   )
 {
-  return MpServices.Protocol->GetNumberOfProcessors (MpServices.Protocol, NumberOfProcessors, NumberOfEnabledProcessors);
+  return MpServices.Protocol->GetNumberOfProcessors (
+                                MpServices.Protocol,
+                                NumberOfProcessors,
+                                NumberOfEnabledProcessors
+                                );
 }
 
 /**
@@ -98,7 +106,15 @@ MpServicesUnitTestStartupThisAP (
   IN VOID              *ProcedureArgument
   )
 {
-  return MpServices.Protocol->StartupThisAP (MpServices.Protocol, Procedure, ProcessorNumber, NULL, TimeoutInMicroSeconds, ProcedureArgument, NULL);
+  return MpServices.Protocol->StartupThisAP (
+                                MpServices.Protocol,
+                                Procedure,
+                                ProcessorNumber,
+                                NULL,
+                                TimeoutInMicroSeconds,
+                                ProcedureArgument,
+                                NULL
+                                );
 }
 
 /**
@@ -126,7 +142,15 @@ MpServicesUnitTestStartupAllAPs (
   IN VOID              *ProcedureArgument
   )
 {
-  return MpServices.Protocol->StartupAllAPs (MpServices.Protocol, Procedure, SingleThread, NULL, TimeoutInMicroSeconds, ProcedureArgument, NULL);
+  return MpServices.Protocol->StartupAllAPs (
+                                MpServices.Protocol,
+                                Procedure,
+                                SingleThread,
+                                NULL,
+                                TimeoutInMicroSeconds,
+                                ProcedureArgument,
+                                NULL
+                                );
 }
 
 /**
@@ -142,7 +166,11 @@ GetMpServices (
   OUT MP_SERVICES  *MpServices
   )
 {
-  return gBS->LocateProtocol (&gEfiMpServiceProtocolGuid, NULL, (VOID **)&MpServices->Protocol);
+  return gBS->LocateProtocol (
+                &gEfiMpServiceProtocolGuid,
+                NULL,
+                (VOID **)&MpServices->Protocol
+                );
 }
 
 /**
@@ -175,9 +203,18 @@ CpuExceptionHandlerTestEntry (
   //
   // Start setting up the test framework for running the tests.
   //
-  Status = InitUnitTestFramework (&Framework, UNIT_TEST_APP_NAME, gEfiCallerBaseName, UNIT_TEST_APP_VERSION);
+  Status = InitUnitTestFramework (
+             &Framework,
+             UNIT_TEST_APP_NAME,
+             gEfiCallerBaseName,
+             UNIT_TEST_APP_VERSION
+             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in InitUnitTestFramework. Status = %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed in InitUnitTestFramework. Status = %r\n",
+      Status
+      ));
     goto EXIT;
   }
 
@@ -190,12 +227,22 @@ CpuExceptionHandlerTestEntry (
   //
   // If HpetTimer driver has been dispatched, disable HpetTimer before Unit Test.
   //
-  gBS->LocateProtocol (&gEfiTimerArchProtocolGuid, NULL, (VOID **)&TimerArchProtocol);
+  gBS->LocateProtocol (
+         &gEfiTimerArchProtocolGuid,
+         NULL,
+         (VOID **)&TimerArchProtocol
+         );
   if (TimerArchProtocol != NULL) {
-    Status = TimerArchProtocol->GetTimerPeriod (TimerArchProtocol, &TimerPeriod);
+    Status = TimerArchProtocol->GetTimerPeriod (
+                                  TimerArchProtocol,
+                                  &TimerPeriod
+                                  );
     ASSERT_EFI_ERROR (Status);
     if (TimerPeriod > 0) {
-      DEBUG ((DEBUG_INFO, "HpetTimer has been dispatched. Disable HpetTimer.\n"));
+      DEBUG ((
+        DEBUG_INFO,
+        "HpetTimer has been dispatched. Disable HpetTimer.\n"
+        ));
       Status = TimerArchProtocol->SetTimerPeriod (TimerArchProtocol, 0);
       ASSERT_EFI_ERROR (Status);
     }
@@ -210,7 +257,10 @@ CpuExceptionHandlerTestEntry (
   // Restore HpetTimer after Unit Test.
   //
   if ((TimerArchProtocol != NULL) && (TimerPeriod > 0)) {
-    DEBUG ((DEBUG_INFO, "Restore HpetTimer after DxeCpuExceptionHandlerLib UnitTest.\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "Restore HpetTimer after DxeCpuExceptionHandlerLib UnitTest.\n"
+      ));
     Status = TimerArchProtocol->SetTimerPeriod (TimerArchProtocol, TimerPeriod);
     ASSERT_EFI_ERROR (Status);
   }

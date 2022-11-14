@@ -77,9 +77,11 @@ FindImageBase (
     // Loop through the FFS file sections within the FFS file
     //
     if (IS_FFS_FILE2 (File)) {
-      EndOfSection = (EFI_PHYSICAL_ADDRESS)(UINTN)((UINT8 *)File + sizeof (EFI_FFS_FILE_HEADER2));
+      EndOfSection = (EFI_PHYSICAL_ADDRESS)(UINTN)((UINT8 *)File +
+                                                   sizeof (EFI_FFS_FILE_HEADER2));
     } else {
-      EndOfSection = (EFI_PHYSICAL_ADDRESS)(UINTN)((UINT8 *)File + sizeof (EFI_FFS_FILE_HEADER));
+      EndOfSection = (EFI_PHYSICAL_ADDRESS)(UINTN)((UINT8 *)File +
+                                                   sizeof (EFI_FFS_FILE_HEADER));
     }
 
     for ( ; ;) {
@@ -106,12 +108,18 @@ FindImageBase (
       //
       // Look for executable sections
       //
-      if ((Section->Type == EFI_SECTION_PE32) || (Section->Type == EFI_SECTION_TE)) {
+      if ((Section->Type == EFI_SECTION_PE32) || (Section->Type ==
+                                                  EFI_SECTION_TE))
+      {
         if (File->Type == FileType) {
           if (IS_SECTION2 (Section)) {
-            *CoreImageBase = (PHYSICAL_ADDRESS)(UINTN)((UINT8 *)Section + sizeof (EFI_COMMON_SECTION_HEADER2));
+            *CoreImageBase = (PHYSICAL_ADDRESS)(UINTN)((UINT8 *)Section +
+                                                       sizeof (
+                                                                                 EFI_COMMON_SECTION_HEADER2));
           } else {
-            *CoreImageBase = (PHYSICAL_ADDRESS)(UINTN)((UINT8 *)Section + sizeof (EFI_COMMON_SECTION_HEADER));
+            *CoreImageBase = (PHYSICAL_ADDRESS)(UINTN)((UINT8 *)Section +
+                                                       sizeof (
+                                                                                 EFI_COMMON_SECTION_HEADER));
           }
         }
 
@@ -155,7 +163,11 @@ FindAndReportEntryPoints (
   //
   // Find SEC Core image base
   //
-  Status = FindImageBase (SecCoreFirmwareVolumePtr, EFI_FV_FILETYPE_SECURITY_CORE, &SecCoreImageBase);
+  Status = FindImageBase (
+             SecCoreFirmwareVolumePtr,
+             EFI_FV_FILETYPE_SECURITY_CORE,
+             &SecCoreImageBase
+             );
   ASSERT_EFI_ERROR (Status);
 
   ZeroMem ((VOID *)&ImageContext, sizeof (PE_COFF_LOADER_IMAGE_CONTEXT));
@@ -163,26 +175,37 @@ FindAndReportEntryPoints (
   // Report SEC Core debug information when remote debug is enabled
   //
   ImageContext.ImageAddress = SecCoreImageBase;
-  ImageContext.PdbPointer   = PeCoffLoaderGetPdbPointer ((VOID *)(UINTN)ImageContext.ImageAddress);
+  ImageContext.PdbPointer   = PeCoffLoaderGetPdbPointer (
+                                (VOID *)(UINTN)ImageContext.ImageAddress
+                                );
   PeCoffLoaderRelocateImageExtraAction (&ImageContext);
 
   //
   // Find PEI Core image base
   //
-  Status = FindImageBase (PeiCoreFirmwareVolumePtr, EFI_FV_FILETYPE_PEI_CORE, &PeiCoreImageBase);
+  Status = FindImageBase (
+             PeiCoreFirmwareVolumePtr,
+             EFI_FV_FILETYPE_PEI_CORE,
+             &PeiCoreImageBase
+             );
   ASSERT_EFI_ERROR (Status);
 
   //
   // Report PEI Core debug information when remote debug is enabled
   //
   ImageContext.ImageAddress = PeiCoreImageBase;
-  ImageContext.PdbPointer   = PeCoffLoaderGetPdbPointer ((VOID *)(UINTN)ImageContext.ImageAddress);
+  ImageContext.PdbPointer   = PeCoffLoaderGetPdbPointer (
+                                (VOID *)(UINTN)ImageContext.ImageAddress
+                                );
   PeCoffLoaderRelocateImageExtraAction (&ImageContext);
 
   //
   // Find PEI Core entry point
   //
-  Status = PeCoffLoaderGetEntryPoint ((VOID *)(UINTN)PeiCoreImageBase, (VOID **)PeiCoreEntryPoint);
+  Status = PeCoffLoaderGetEntryPoint (
+             (VOID *)(UINTN)PeiCoreImageBase,
+             (VOID **)PeiCoreEntryPoint
+             );
   if (EFI_ERROR (Status)) {
     *PeiCoreEntryPoint = 0;
   }

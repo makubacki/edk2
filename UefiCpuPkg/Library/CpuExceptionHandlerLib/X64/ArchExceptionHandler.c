@@ -38,7 +38,8 @@ ArchGetIdtHandler (
   IN IA32_IDT_GATE_DESCRIPTOR  *IdtEntry
   )
 {
-  return IdtEntry->Bits.OffsetLow + (((UINTN)IdtEntry->Bits.OffsetHigh)  << 16) +
+  return IdtEntry->Bits.OffsetLow + (((UINTN)IdtEntry->Bits.OffsetHigh)  <<
+                                     16) +
          (((UINTN)IdtEntry->Bits.OffsetUpper) << 32);
 }
 
@@ -65,22 +66,30 @@ ArchSaveExceptionContext (
   // So when original exception handler returns to the new exception handler (second entry),
   // the Eflags/Cs/Eip/ExceptionData can be used.
   //
-  ReservedVectors[ExceptionType].OldSs         = SystemContext.SystemContextX64->Ss;
-  ReservedVectors[ExceptionType].OldSp         = SystemContext.SystemContextX64->Rsp;
-  ReservedVectors[ExceptionType].OldFlags      = SystemContext.SystemContextX64->Rflags;
-  ReservedVectors[ExceptionType].OldCs         = SystemContext.SystemContextX64->Cs;
-  ReservedVectors[ExceptionType].OldIp         = SystemContext.SystemContextX64->Rip;
-  ReservedVectors[ExceptionType].ExceptionData = SystemContext.SystemContextX64->ExceptionData;
+  ReservedVectors[ExceptionType].OldSs =
+    SystemContext.SystemContextX64->Ss;
+  ReservedVectors[ExceptionType].OldSp =
+    SystemContext.SystemContextX64->Rsp;
+  ReservedVectors[ExceptionType].OldFlags =
+    SystemContext.SystemContextX64->Rflags;
+  ReservedVectors[ExceptionType].OldCs =
+    SystemContext.SystemContextX64->Cs;
+  ReservedVectors[ExceptionType].OldIp =
+    SystemContext.SystemContextX64->Rip;
+  ReservedVectors[ExceptionType].ExceptionData =
+    SystemContext.SystemContextX64->ExceptionData;
   //
   // Clear IF flag to avoid old IDT handler enable interrupt by IRET
   //
-  Eflags.UintN                           = SystemContext.SystemContextX64->Rflags;
+  Eflags.UintN =
+    SystemContext.SystemContextX64->Rflags;
   Eflags.Bits.IF                         = 0;
   SystemContext.SystemContextX64->Rflags = Eflags.UintN;
   //
   // Modify the EIP in stack, then old IDT handler will return to HookAfterStubBegin.
   //
-  SystemContext.SystemContextX64->Rip = (UINTN)ReservedVectors[ExceptionType].HookAfterStubHeaderCode;
+  SystemContext.SystemContextX64->Rip =
+    (UINTN)ReservedVectors[ExceptionType].HookAfterStubHeaderCode;
 }
 
 /**
@@ -99,13 +108,20 @@ ArchRestoreExceptionContext (
 {
   RESERVED_VECTORS_DATA  *ReservedVectors;
 
-  ReservedVectors                               = ExceptionHandlerData->ReservedVectors;
-  SystemContext.SystemContextX64->Ss            = ReservedVectors[ExceptionType].OldSs;
-  SystemContext.SystemContextX64->Rsp           = ReservedVectors[ExceptionType].OldSp;
-  SystemContext.SystemContextX64->Rflags        = ReservedVectors[ExceptionType].OldFlags;
-  SystemContext.SystemContextX64->Cs            = ReservedVectors[ExceptionType].OldCs;
-  SystemContext.SystemContextX64->Rip           = ReservedVectors[ExceptionType].OldIp;
-  SystemContext.SystemContextX64->ExceptionData = ReservedVectors[ExceptionType].ExceptionData;
+  ReservedVectors =
+    ExceptionHandlerData->ReservedVectors;
+  SystemContext.SystemContextX64->Ss =
+    ReservedVectors[ExceptionType].OldSs;
+  SystemContext.SystemContextX64->Rsp =
+    ReservedVectors[ExceptionType].OldSp;
+  SystemContext.SystemContextX64->Rflags =
+    ReservedVectors[ExceptionType].OldFlags;
+  SystemContext.SystemContextX64->Cs =
+    ReservedVectors[ExceptionType].OldCs;
+  SystemContext.SystemContextX64->Rip =
+    ReservedVectors[ExceptionType].OldIp;
+  SystemContext.SystemContextX64->ExceptionData =
+    ReservedVectors[ExceptionType].ExceptionData;
 }
 
 /**
@@ -177,7 +193,8 @@ ArchSetupExceptionStack (
   //    --------------------------------
   //
   AsmReadGdtr (&Gdtr);
-  NeedBufferSize = CPU_STACK_SWITCH_EXCEPTION_NUMBER * CPU_KNOWN_GOOD_STACK_SIZE +
+  NeedBufferSize = CPU_STACK_SWITCH_EXCEPTION_NUMBER *
+                   CPU_KNOWN_GOOD_STACK_SIZE +
                    sizeof (IA32_TSS_DESCRIPTOR) +
                    Gdtr.Limit + 1 + CPU_TSS_DESC_SIZE +
                    CPU_TSS_SIZE;
@@ -193,10 +210,16 @@ ArchSetupExceptionStack (
 
   AsmReadIdtr (&Idtr);
   StackSwitchExceptions = CPU_STACK_SWITCH_EXCEPTION_LIST;
-  StackTop              = (UINTN)Buffer + CPU_STACK_SWITCH_EXCEPTION_NUMBER * CPU_KNOWN_GOOD_STACK_SIZE;
-  NewGdtTable           = ALIGN_POINTER (StackTop, sizeof (IA32_TSS_DESCRIPTOR));
-  TssDesc               = (IA32_TSS_DESCRIPTOR *)((UINTN)NewGdtTable + Gdtr.Limit + 1);
-  Tss                   = (IA32_TASK_STATE_SEGMENT *)((UINTN)TssDesc + CPU_TSS_DESC_SIZE);
+  StackTop              = (UINTN)Buffer + CPU_STACK_SWITCH_EXCEPTION_NUMBER *
+                          CPU_KNOWN_GOOD_STACK_SIZE;
+  NewGdtTable = ALIGN_POINTER (
+                  StackTop,
+                  sizeof (IA32_TSS_DESCRIPTOR)
+                  );
+  TssDesc = (IA32_TSS_DESCRIPTOR *)((UINTN)NewGdtTable +
+                                    Gdtr.Limit + 1);
+  Tss     = (IA32_TASK_STATE_SEGMENT *)((UINTN)TssDesc +
+                                        CPU_TSS_DESC_SIZE);
 
   CopyMem (NewGdtTable, (VOID *)Gdtr.Base, Gdtr.Limit + 1);
   Gdtr.Base  = (UINTN)NewGdtTable;
@@ -418,7 +441,9 @@ DumpImageAndCpuContent (
     // The RIP in SystemContext could not be used
     // if it is page fault with I/D set.
     //
-    DumpModuleImageInfo ((*(UINTN *)(UINTN)SystemContext.SystemContextX64->Rsp));
+    DumpModuleImageInfo (
+      (*(UINTN *)(UINTN)SystemContext.SystemContextX64->Rsp)
+      );
   } else {
     DumpModuleImageInfo (SystemContext.SystemContextX64->Rip);
   }
