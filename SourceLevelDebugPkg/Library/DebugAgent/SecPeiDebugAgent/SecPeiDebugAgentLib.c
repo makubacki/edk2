@@ -226,9 +226,9 @@ GetMailboxPointer (
     //
     // Fix up Debug Port handler and save new mailbox in IDT entry
     //
-    Mailbox         = (DEBUG_AGENT_MAILBOX *)((UINTN)Mailbox +
-                                              ((UINTN)(MailboxLocationInHob) -
-                                               (UINTN)MailboxLocationInIdt));
+    Mailbox = (DEBUG_AGENT_MAILBOX *)((UINTN)Mailbox +
+                                      ((UINTN)(MailboxLocationInHob) -
+                                       (UINTN)MailboxLocationInIdt));
     DebugPortHandle = (UINTN)Mailbox->DebugPortHandle +
                       ((UINTN)(MailboxLocationInHob) -
                        (UINTN)MailboxLocationInIdt);
@@ -497,9 +497,9 @@ InitializeDebugAgent (
           DEBUG_MAILBOX_DEBUG_PORT_HANDLE_INDEX,
           DebugPortHandle
           );
-        Mailbox         = (DEBUG_AGENT_MAILBOX *)((UINTN)Mailbox +
-                                                  DebugAgentContext->
-                                                    StackMigrateOffset);
+        Mailbox = (DEBUG_AGENT_MAILBOX *)((UINTN)Mailbox +
+                                          DebugAgentContext->
+                                            StackMigrateOffset);
         MailboxLocation = (UINT64)(UINTN)Mailbox;
         //
         // Build mailbox location in HOB and fix-up its address

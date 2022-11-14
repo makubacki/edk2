@@ -2683,7 +2683,7 @@ CommandCommunication (
         Status                          = SendDataResponsePacket (
                                             (UINT8 *)&DebugAgentRevision,
                                             (UINT16)sizeof (
-                                                                                                               DEBUG_DATA_RESPONSE_GET_REVISION),
+                                                            DEBUG_DATA_RESPONSE_GET_REVISION),
                                             DebugHeader
                                             );
         break;
@@ -2694,7 +2694,7 @@ CommandCommunication (
         Status                  = SendDataResponsePacket (
                                     (UINT8 *)&Exception,
                                     (UINT16)sizeof (
-                                                                                              DEBUG_DATA_RESPONSE_GET_EXCEPTION),
+                                                    DEBUG_DATA_RESPONSE_GET_EXCEPTION),
                                     DebugHeader
                                     );
         break;

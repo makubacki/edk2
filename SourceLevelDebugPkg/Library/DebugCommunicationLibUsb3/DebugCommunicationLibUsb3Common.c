@@ -17,7 +17,7 @@ UINT16  mString0Desc[] = {
 UINT16  mManufacturerStrDesc[] = {
   //  String Descriptor Type + Length
   (USB_DESC_TYPE_STRING << 8) + MANU_DESC_LEN,
-  'I',                                        'n', 't', 'e', 'l'
+  'I',                                        'n','t', 'e', 'l'
 };
 
 UINT16  mProductStrDesc[] = {
@@ -529,8 +529,8 @@ CreateTransferRing (
   // To form a ring (or circular queue) a Link TRB may be inserted at the end of a ring to
   // point to the first TRB in the ring.
   //
-  EndTrb        = (LINK_TRB *)((UINTN)Buf + sizeof (TRB_TEMPLATE) * (TrbNum -
-                                                                     1));
+  EndTrb = (LINK_TRB *)((UINTN)Buf + sizeof (TRB_TEMPLATE) * (TrbNum -
+                                                              1));
   EndTrb->Type  = TRB_TYPE_LINK;
   EndTrb->PtrLo = XHC_LOW_32BIT (Buf);
   EndTrb->PtrHi = XHC_HIGH_32BIT (Buf);

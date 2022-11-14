@@ -258,10 +258,10 @@ CalculateUsbDebugPortBar (
   //
   // Get The Base Address Of Debug Port Register In Debug Port Capability Register
   //
-  *DebugPortOffset    = (UINT16)(PciRead16 (
-                                   PcdGet32 (PcdUsbEhciPciAddress) +
-                                   CapabilityPtr + 2
-                                   ) & 0x1FFF);
+  *DebugPortOffset = (UINT16)(PciRead16 (
+                                PcdGet32 (PcdUsbEhciPciAddress) +
+                                CapabilityPtr + 2
+                                ) & 0x1FFF);
   *DebugPortBarNumbar = (UINT8)((PciRead16 (
                                    PcdGet32 (PcdUsbEhciPciAddress) +
                                    CapabilityPtr + 2

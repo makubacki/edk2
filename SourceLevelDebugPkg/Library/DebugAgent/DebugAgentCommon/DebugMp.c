@@ -71,8 +71,11 @@ HaltOtherProcessors (
   IN UINT32  CurrentProcessorIndex
   )
 {
-  DebugAgentMsgPrint (DEBUG_AGENT_INFO,
-    "processor[%x]:Try to halt other processors.\n", CurrentProcessorIndex);
+  DebugAgentMsgPrint (
+    DEBUG_AGENT_INFO,
+    "processor[%x]:Try to halt other processors.\n",
+    CurrentProcessorIndex
+    );
   if (!DebugAgentIsBsp (CurrentProcessorIndex)) {
     SetIpiSentByApFlag (TRUE);
   }

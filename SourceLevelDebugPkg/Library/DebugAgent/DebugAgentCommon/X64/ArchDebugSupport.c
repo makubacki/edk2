@@ -117,9 +117,9 @@ SetExceptionHandlerInIdtEntry (
   AsmReadIdtr (&IdtDescriptor);
   IdtEntry = (IA32_IDT_GATE_DESCRIPTOR *)IdtDescriptor.Base;
 
-  IdtEntry[ExceptionNum].Bits.OffsetLow   = (UINT16)(UINTN)ExceptionHandler;
-  IdtEntry[ExceptionNum].Bits.OffsetHigh  = (UINT16)((UINTN)ExceptionHandler >>
-                                                     16);
+  IdtEntry[ExceptionNum].Bits.OffsetLow  = (UINT16)(UINTN)ExceptionHandler;
+  IdtEntry[ExceptionNum].Bits.OffsetHigh = (UINT16)((UINTN)ExceptionHandler >>
+                                                    16);
   IdtEntry[ExceptionNum].Bits.OffsetUpper = (UINT32)((UINTN)ExceptionHandler >>
                                                      32);
 }

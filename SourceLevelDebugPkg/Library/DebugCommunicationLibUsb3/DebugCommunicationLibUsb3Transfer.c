@@ -55,7 +55,8 @@ XhcSyncTrsRing (
       TrsTrb           = (TRB_TEMPLATE *)(UINTN)((TrsTrb->Parameter1 |
                                                   LShiftU64 (
                                                     (UINT64)TrsTrb->Parameter2,
-                                                    32)) & ~0x0F);
+                                                    32
+                                                    )) & ~0x0F);
     }
   }
 
