@@ -213,7 +213,7 @@ PciHostBridgeGetRootBridges (
            UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGES_REVISION) &&
           (GenericHeader->Length >=
            sizeof (
-                                                                      UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGES)))
+                   UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGES)))
       {
         //
         // UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGES structure is used when Revision equals to UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGES_REVISION
@@ -222,7 +222,7 @@ PciHostBridgeGetRootBridges (
           (UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGES *)GET_GUID_HOB_DATA (GuidHob);
         if (PciRootBridgeInfo->Count <= (GET_GUID_HOB_DATA_SIZE (GuidHob) -
                                          sizeof (
-                                                                                   UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGES))
+                                                 UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGES))
             /
             sizeof (UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGE))
         {

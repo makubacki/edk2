@@ -124,8 +124,8 @@ CreateHob (
   ((EFI_HOB_GENERIC_HEADER *)Hob)->HobLength = HobLength;
   ((EFI_HOB_GENERIC_HEADER *)Hob)->Reserved  = 0;
 
-  HobEnd                      = (EFI_HOB_GENERIC_HEADER *)((UINTN)Hob +
-                                                           HobLength);
+  HobEnd = (EFI_HOB_GENERIC_HEADER *)((UINTN)Hob +
+                                      HobLength);
   HandOffHob->EfiEndOfHobList = (EFI_PHYSICAL_ADDRESS)(UINTN)HobEnd;
 
   HobEnd->HobType   = EFI_HOB_TYPE_END_OF_HOB_LIST;

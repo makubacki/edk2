@@ -21,7 +21,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Protocol/PciIo.h>
 
 #define IS_PCI_ISA_PDECODE( \
-                          _p)  \
+                            _p)  \
   IS_CLASS3 (_p, PCI_CLASS_BRIDGE, PCI_CLASS_BRIDGE_ISA_PDECODE, 0)
 
 //

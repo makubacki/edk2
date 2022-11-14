@@ -361,7 +361,7 @@ ParseCbMemTable (
     if ((Range->type == CB_MEM_TABLE) && (Start > 0x1000)) {
       CbMemRoot = (struct  cbmem_root *)(UINTN)(Start + Size -
                                                 DYN_CBMEM_ALIGN_SIZE);
-      Status    = FindCbMemTable (CbMemRoot, TableId, MemTable, MemTableSize);
+      Status = FindCbMemTable (CbMemRoot, TableId, MemTable, MemTableSize);
       if (!EFI_ERROR (Status)) {
         break;
       }
@@ -583,12 +583,12 @@ ParseGfxInfo (
     GfxMode->PixelFormat = PixelBlueGreenRedReserved8BitPerColor;
   }
 
-  GfxMode->PixelInformation.RedMask      = ((1 << CbFbRec->red_mask_size)      -
-                                            1) << CbFbRec->red_mask_pos;
-  GfxMode->PixelInformation.GreenMask    = ((1 << CbFbRec->green_mask_size)    -
-                                            1) << CbFbRec->green_mask_pos;
-  GfxMode->PixelInformation.BlueMask     = ((1 << CbFbRec->blue_mask_size)     -
-                                            1) << CbFbRec->blue_mask_pos;
+  GfxMode->PixelInformation.RedMask = ((1 << CbFbRec->red_mask_size)      -
+                                       1) << CbFbRec->red_mask_pos;
+  GfxMode->PixelInformation.GreenMask = ((1 << CbFbRec->green_mask_size)    -
+                                         1) << CbFbRec->green_mask_pos;
+  GfxMode->PixelInformation.BlueMask = ((1 << CbFbRec->blue_mask_size)     -
+                                        1) << CbFbRec->blue_mask_pos;
   GfxMode->PixelInformation.ReservedMask = ((1 << CbFbRec->reserved_mask_size) -
                                             1) << CbFbRec->reserved_mask_pos;
 

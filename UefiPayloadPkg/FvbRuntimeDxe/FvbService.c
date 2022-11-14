@@ -1020,11 +1020,11 @@ GetInitialVariableData (
   FvHeader      = (EFI_FIRMWARE_VOLUME_HEADER *)ImageData;
   VariableStore = (VARIABLE_STORE_HEADER *)((UINT8 *)ImageData +
                                             FvHeader->HeaderLength);
-  VarEndAddr    = (UINTN)VariableStore + VariableStore->Size;
-  Variable      = (AUTHENTICATED_VARIABLE_HEADER *)HEADER_ALIGN (
-                                                     VariableStore +
-                                                     1
-                                                     );
+  VarEndAddr = (UINTN)VariableStore + VariableStore->Size;
+  Variable   = (AUTHENTICATED_VARIABLE_HEADER *)HEADER_ALIGN (
+                                                  VariableStore +
+                                                  1
+                                                  );
   *VarData = (VOID *)Variable;
   while (((UINTN)Variable < VarEndAddr)) {
     if (Variable->StartId != VARIABLE_DATA) {

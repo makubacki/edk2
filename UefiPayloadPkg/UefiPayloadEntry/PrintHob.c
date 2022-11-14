@@ -761,23 +761,23 @@ PrintBootManagerMenuGuidHob (
 //
 GUID_HOB_PRINT_HANDLE  GuidHobPrintHandleTable[] = {
   { &gUniversalPayloadAcpiTableGuid,         PrintAcpiGuidHob,
-    "gUniversalPayloadAcpiTableGuid(ACPI table Guid)"                          },
+    "gUniversalPayloadAcpiTableGuid(ACPI table Guid)" },
   { &gUniversalPayloadSerialPortInfoGuid,    PrintSerialGuidHob,
-    "gUniversalPayloadSerialPortInfoGuid(Serial Port Info)"                                           },
+    "gUniversalPayloadSerialPortInfoGuid(Serial Port Info)" },
   { &gUniversalPayloadSmbios3TableGuid,      PrintSmbios3GuidHob,
-    "gUniversalPayloadSmbios3TableGuid(SmBios Guid)"                                                                      },
+    "gUniversalPayloadSmbios3TableGuid(SmBios Guid)" },
   { &gUniversalPayloadSmbiosTableGuid,       PrintSmbiosTablGuidHob,
-    "gUniversalPayloadSmbiosTableGuid(SmBios Guid)"                                                                                           },
+    "gUniversalPayloadSmbiosTableGuid(SmBios Guid)" },
   { &gUefiAcpiBoardInfoGuid,                 PrintAcpiBoardInfoGuidHob,
-    "gUefiAcpiBoardInfoGuid(Acpi Guid)"                                                                                                                           },
+    "gUefiAcpiBoardInfoGuid(Acpi Guid)" },
   { &gUniversalPayloadPciRootBridgeInfoGuid, PrintPciRootBridgeInfoGuidHob,
-    "gUniversalPayloadPciRootBridgeInfoGuid(Pci Guid)"                                                                                                                                },
+    "gUniversalPayloadPciRootBridgeInfoGuid(Pci Guid)" },
   { &gEfiMemoryTypeInformationGuid,          PrintMemoryTypeInfoGuidHob,
-    "gEfiMemoryTypeInformationGuid(Memory Type Information Guid)"                                                                                                                                         },
+    "gEfiMemoryTypeInformationGuid(Memory Type Information Guid)" },
   { &gUniversalPayloadExtraDataGuid,         PrintExtraDataGuidHob,
-    "gUniversalPayloadExtraDataGuid(PayLoad Extra Data Guid)"                                                                                                                                                           },
+    "gUniversalPayloadExtraDataGuid(PayLoad Extra Data Guid)" },
   { &gEdkiiBootManagerMenuFileGuid,          PrintBootManagerMenuGuidHob,
-    "gEdkiiBootManagerMenuFileGuid(Boot Manager Menu File Guid)"                                                                                                                                                        }
+    "gEdkiiBootManagerMenuFileGuid(Boot Manager Menu File Guid)" }
 };
 
 /**
@@ -995,25 +995,25 @@ PrintFv3Hob (
 //
 HOB_PRINT_HANDLER_TABLE  mHobHandles[] = {
   { EFI_HOB_TYPE_HANDOFF,             "EFI_HOB_TYPE_HANDOFF",
-    PrintHandOffHob                                                                                                                                                                                      },
+    PrintHandOffHob },
   { EFI_HOB_TYPE_MEMORY_ALLOCATION,   "EFI_HOB_TYPE_MEMORY_ALLOCATION",
-    PrintMemoryAllocationHob                                                                                                                                                                                               },
+    PrintMemoryAllocationHob },
   { EFI_HOB_TYPE_RESOURCE_DESCRIPTOR, "EFI_HOB_TYPE_RESOURCE_DESCRIPTOR",
-    PrintResourceDiscriptorHob                                                                                                                                                                                                              },
+    PrintResourceDiscriptorHob },
   { EFI_HOB_TYPE_GUID_EXTENSION,      "EFI_HOB_TYPE_GUID_EXTENSION",
-    PrintGuidHob                                                                                                                                                                                                                                             },
+    PrintGuidHob },
   { EFI_HOB_TYPE_FV,                  "EFI_HOB_TYPE_FV",
-    PrintFvHob                                                                                                                                                                                                                                                               },
+    PrintFvHob },
   { EFI_HOB_TYPE_CPU,                 "EFI_HOB_TYPE_CPU",
-    PrintCpuHob                                                                                                                                                                                                                                                                              },
+    PrintCpuHob },
   { EFI_HOB_TYPE_MEMORY_POOL,         "EFI_HOB_TYPE_MEMORY_POOL",
-    PrintMemoryPoolHob                                                                                                                                                                                                                                                                                       },
+    PrintMemoryPoolHob },
   { EFI_HOB_TYPE_FV2,                 "EFI_HOB_TYPE_FV2",
-    PrintFv2Hob                                                                                                                                                                                                                                                                                                              },
+    PrintFv2Hob },
   { EFI_HOB_TYPE_UEFI_CAPSULE,        "EFI_HOB_TYPE_UEFI_CAPSULE",
-    PrintCapsuleHob                                                                                                                                                                                                                                                                                                                          },
+    PrintCapsuleHob },
   { EFI_HOB_TYPE_FV3,                 "EFI_HOB_TYPE_FV3",
-    PrintFv3Hob                                                                                                                                                                                                                                                                                                                              }
+    PrintFv3Hob }
 };
 
 /**
@@ -1042,19 +1042,28 @@ PrintHob (
   while (!END_OF_HOB_LIST (Hob)) {
     for (Index = 0; Index < ARRAY_SIZE (mHobHandles); Index++) {
       if (Hob.Header->HobType == mHobHandles[Index].Type) {
-        DEBUG ((DEBUG_INFO,
-          "HOB[%d]: Type = %a, Offset = 0x%p, Length = 0x%x\n", Count,
-          mHobHandles[Index].Name, (Hob.Raw - (UINT8 *)HobStart),
-          Hob.Header->HobLength));
+        DEBUG ((
+          DEBUG_INFO,
+          "HOB[%d]: Type = %a, Offset = 0x%p, Length = 0x%x\n",
+          Count,
+          mHobHandles[Index].Name,
+          (Hob.Raw - (UINT8 *)HobStart),
+          Hob.Header->HobLength
+          ));
         mHobHandles[Index].PrintHandler (Hob.Raw, Hob.Header->HobLength);
         break;
       }
     }
 
     if (Index == ARRAY_SIZE (mHobHandles)) {
-      DEBUG ((DEBUG_INFO, "HOB[%d]: Type = %d, Offset = 0x%p, Length = 0x%x\n",
-        Count, Hob.Header->HobType, (Hob.Raw - (UINT8 *)HobStart),
-        Hob.Header->HobLength));
+      DEBUG ((
+        DEBUG_INFO,
+        "HOB[%d]: Type = %d, Offset = 0x%p, Length = 0x%x\n",
+        Count,
+        Hob.Header->HobType,
+        (Hob.Raw - (UINT8 *)HobStart),
+        Hob.Header->HobLength
+        ));
       DEBUG ((DEBUG_INFO, "   Unkown Hob type\n"));
       PrintHex (Hob.Raw, Hob.Header->HobLength);
     }
@@ -1063,6 +1072,10 @@ PrintHob (
     Hob.Raw = GET_NEXT_HOB (Hob);
   }
 
-  DEBUG ((DEBUG_INFO, "There are totally %d Hobs, the End Hob address is %p\n",
-    Count, Hob.Raw));
+  DEBUG ((
+    DEBUG_INFO,
+    "There are totally %d Hobs, the End Hob address is %p\n",
+    Count,
+    Hob.Raw
+    ));
 }

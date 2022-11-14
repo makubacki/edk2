@@ -161,11 +161,11 @@ GetFvHeaderTemplate (
   FvHeader->FvLength              = FvSize;
   FvHeader->BlockMap[0].NumBlocks = (UINT32)(FvSize /
                                              FvHeader->BlockMap[0].Length);
-  FvHeader->Checksum              = 0;
-  FvHeader->Checksum              = CalculateCheckSum16 (
-                                      (UINT16 *)FvHeader,
-                                      FvHeader->HeaderLength
-                                      );
+  FvHeader->Checksum = 0;
+  FvHeader->Checksum = CalculateCheckSum16 (
+                         (UINT16 *)FvHeader,
+                         FvHeader->HeaderLength
+                         );
 
   return FvHeader;
 }

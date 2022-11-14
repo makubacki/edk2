@@ -135,8 +135,8 @@ Done:
   if (MmCfgHdr != NULL) {
     MmCfgBase =
       (
-                                     EFI_ACPI_MEMORY_MAPPED_ENHANCED_CONFIGURATION_SPACE_BASE_ADDRESS_ALLOCATION_STRUCTURE
-                                     *)((UINT8 *)MmCfgHdr + sizeof (*MmCfgHdr));
+       EFI_ACPI_MEMORY_MAPPED_ENHANCED_CONFIGURATION_SPACE_BASE_ADDRESS_ALLOCATION_STRUCTURE
+       *)((UINT8 *)MmCfgHdr + sizeof (*MmCfgHdr));
     AcpiBoardInfo->PcieBaseAddress = MmCfgBase->BaseAddress;
     AcpiBoardInfo->PcieBaseSize    = (MmCfgBase->EndBusNumber + 1 -
                                       MmCfgBase->StartBusNumber) * 4096 * 32 *
