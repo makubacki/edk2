@@ -116,9 +116,20 @@ RsaSetKey (
   // Retrieve the components from RSA object.
   //
   RsaKey = (RSA *)RsaContext;
-  RSA_get0_key (RsaKey, (const BIGNUM **)&BnN, (const BIGNUM **)&BnE, (const BIGNUM **)&BnD);
+  RSA_get0_key (
+    RsaKey,
+    (const BIGNUM **)&BnN,
+    (const BIGNUM **)&BnE,
+    (const
+     BIGNUM **)&BnD
+    );
   RSA_get0_factors (RsaKey, (const BIGNUM **)&BnP, (const BIGNUM **)&BnQ);
-  RSA_get0_crt_params (RsaKey, (const BIGNUM **)&BnDp, (const BIGNUM **)&BnDq, (const BIGNUM **)&BnQInv);
+  RSA_get0_crt_params (
+    RsaKey,
+    (const BIGNUM **)&BnDp,
+    (const BIGNUM **)&BnDq,
+    (const BIGNUM **)&BnQInv
+    );
 
   //
   // Set RSA Key Components by converting octet string to OpenSSL BN representation.
@@ -162,7 +173,9 @@ RsaSetKey (
           return FALSE;
       }
 
-      if (RSA_set0_key (RsaKey, BN_dup (BnN), BN_dup (BnE), BN_dup (BnD)) == 0) {
+      if (RSA_set0_key (RsaKey, BN_dup (BnN), BN_dup (BnE), BN_dup (BnD)) ==
+          0)
+      {
         return FALSE;
       }
 
@@ -239,7 +252,15 @@ RsaSetKey (
           return FALSE;
       }
 
-      if (RSA_set0_crt_params (RsaKey, BN_dup (BnDp), BN_dup (BnDq), BN_dup (BnQInv)) == 0) {
+      if (RSA_set0_crt_params (
+            RsaKey,
+            BN_dup (BnDp),
+            BN_dup (BnDq),
+            BN_dup (
+              BnQInv
+              )
+            ) == 0)
+      {
         return FALSE;
       }
 

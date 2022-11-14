@@ -85,7 +85,10 @@ AeadAesGcmEncrypt (
       return FALSE;
   }
 
-  if ((TagSize != 12) && (TagSize != 13) && (TagSize != 14) && (TagSize != 15) && (TagSize != 16)) {
+  if ((TagSize != 12) && (TagSize != 13) && (TagSize != 14) && (TagSize !=
+                                                                15) &&
+      (TagSize != 16))
+  {
     return FALSE;
   }
 
@@ -105,7 +108,12 @@ AeadAesGcmEncrypt (
     goto Done;
   }
 
-  RetValue = (BOOLEAN)EVP_CIPHER_CTX_ctrl (Ctx, EVP_CTRL_GCM_SET_IVLEN, (INT32)IvSize, NULL);
+  RetValue = (BOOLEAN)EVP_CIPHER_CTX_ctrl (
+                        Ctx,
+                        EVP_CTRL_GCM_SET_IVLEN,
+                        (INT32)IvSize,
+                        NULL
+                        );
   if (!RetValue) {
     goto Done;
   }
@@ -115,12 +123,24 @@ AeadAesGcmEncrypt (
     goto Done;
   }
 
-  RetValue = (BOOLEAN)EVP_EncryptUpdate (Ctx, NULL, (INT32 *)&TempOutSize, AData, (INT32)ADataSize);
+  RetValue = (BOOLEAN)EVP_EncryptUpdate (
+                        Ctx,
+                        NULL,
+                        (INT32 *)&TempOutSize,
+                        AData,
+                        (INT32)ADataSize
+                        );
   if (!RetValue) {
     goto Done;
   }
 
-  RetValue = (BOOLEAN)EVP_EncryptUpdate (Ctx, DataOut, (INT32 *)&TempOutSize, DataIn, (INT32)DataInSize);
+  RetValue = (BOOLEAN)EVP_EncryptUpdate (
+                        Ctx,
+                        DataOut,
+                        (INT32 *)&TempOutSize,
+                        DataIn,
+                        (INT32)DataInSize
+                        );
   if (!RetValue) {
     goto Done;
   }
@@ -130,7 +150,12 @@ AeadAesGcmEncrypt (
     goto Done;
   }
 
-  RetValue = (BOOLEAN)EVP_CIPHER_CTX_ctrl (Ctx, EVP_CTRL_GCM_GET_TAG, (INT32)TagSize, (VOID *)TagOut);
+  RetValue = (BOOLEAN)EVP_CIPHER_CTX_ctrl (
+                        Ctx,
+                        EVP_CTRL_GCM_GET_TAG,
+                        (INT32)TagSize,
+                        (VOID *)TagOut
+                        );
 
 Done:
   EVP_CIPHER_CTX_free (Ctx);
@@ -218,7 +243,10 @@ AeadAesGcmDecrypt (
       return FALSE;
   }
 
-  if ((TagSize != 12) && (TagSize != 13) && (TagSize != 14) && (TagSize != 15) && (TagSize != 16)) {
+  if ((TagSize != 12) && (TagSize != 13) && (TagSize != 14) && (TagSize !=
+                                                                15) &&
+      (TagSize != 16))
+  {
     return FALSE;
   }
 
@@ -238,7 +266,12 @@ AeadAesGcmDecrypt (
     goto Done;
   }
 
-  RetValue = (BOOLEAN)EVP_CIPHER_CTX_ctrl (Ctx, EVP_CTRL_GCM_SET_IVLEN, (INT32)IvSize, NULL);
+  RetValue = (BOOLEAN)EVP_CIPHER_CTX_ctrl (
+                        Ctx,
+                        EVP_CTRL_GCM_SET_IVLEN,
+                        (INT32)IvSize,
+                        NULL
+                        );
   if (!RetValue) {
     goto Done;
   }
@@ -248,17 +281,34 @@ AeadAesGcmDecrypt (
     goto Done;
   }
 
-  RetValue = (BOOLEAN)EVP_DecryptUpdate (Ctx, NULL, (INT32 *)&TempOutSize, AData, (INT32)ADataSize);
+  RetValue = (BOOLEAN)EVP_DecryptUpdate (
+                        Ctx,
+                        NULL,
+                        (INT32 *)&TempOutSize,
+                        AData,
+                        (INT32)ADataSize
+                        );
   if (!RetValue) {
     goto Done;
   }
 
-  RetValue = (BOOLEAN)EVP_DecryptUpdate (Ctx, DataOut, (INT32 *)&TempOutSize, DataIn, (INT32)DataInSize);
+  RetValue = (BOOLEAN)EVP_DecryptUpdate (
+                        Ctx,
+                        DataOut,
+                        (INT32 *)&TempOutSize,
+                        DataIn,
+                        (INT32)DataInSize
+                        );
   if (!RetValue) {
     goto Done;
   }
 
-  RetValue = (BOOLEAN)EVP_CIPHER_CTX_ctrl (Ctx, EVP_CTRL_GCM_SET_TAG, (INT32)TagSize, (VOID *)Tag);
+  RetValue = (BOOLEAN)EVP_CIPHER_CTX_ctrl (
+                        Ctx,
+                        EVP_CTRL_GCM_SET_TAG,
+                        (INT32)TagSize,
+                        (VOID *)Tag
+                        );
   if (!RetValue) {
     goto Done;
   }

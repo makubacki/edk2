@@ -63,7 +63,8 @@ Pkcs7Sign (
   // Check input parameters.
   //
   if ((PrivateKey == NULL) || (KeyPassword == NULL) || (InData == NULL) ||
-      (SignCert == NULL) || (SignedData == NULL) || (SignedDataSize == NULL) || (InDataSize > INT_MAX))
+      (SignCert == NULL) || (SignedData == NULL) || (SignedDataSize == NULL) ||
+      (InDataSize > INT_MAX))
   {
     return FALSE;
   }

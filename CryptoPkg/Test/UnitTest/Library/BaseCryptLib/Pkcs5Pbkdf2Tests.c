@@ -19,7 +19,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED CONST UINTN  Count        = 2;          // Interat
 GLOBAL_REMOVE_IF_UNREFERENCED CONST UINTN  KeyLen       = 20;         // Length of derived key
 GLOBAL_REMOVE_IF_UNREFERENCED CONST UINT8  DerivedKey[] = {
   // Expected output key
-  0xea, 0x6c, 0x01, 0x4d, 0xc7, 0x2d, 0x6f, 0x8c, 0xcd, 0x1e, 0xd9, 0x2a, 0xce, 0x1d, 0x41, 0xf0,
+  0xea, 0x6c, 0x01, 0x4d, 0xc7, 0x2d, 0x6f, 0x8c, 0xcd, 0x1e, 0xd9, 0x2a, 0xce,
+  0x1d, 0x41, 0xf0,
   0xd8, 0xde, 0x89, 0x57
 };
 
@@ -66,7 +67,8 @@ TEST_DESC  mPkcs5Test[] = {
   //
   // -----Description------------------------------Class----------------------Function-----------------Pre---Post--Context
   //
-  { "TestVerifyPkcs5Pbkdf2()", "CryptoPkg.BaseCryptLib.Pkcs5", TestVerifyPkcs5Pbkdf2, NULL, NULL, NULL },
+  { "TestVerifyPkcs5Pbkdf2()", "CryptoPkg.BaseCryptLib.Pkcs5",
+    TestVerifyPkcs5Pbkdf2, NULL, NULL, NULL },
 };
 
 UINTN  mPkcs5TestNum = ARRAY_SIZE (mPkcs5Test);

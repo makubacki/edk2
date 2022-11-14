@@ -115,7 +115,9 @@ Pkcs7GetAttachedContent (
   //
   // Check input parameter.
   //
-  if ((P7Data == NULL) || (P7Length > INT_MAX) || (Content == NULL) || (ContentSize == NULL)) {
+  if ((P7Data == NULL) || (P7Length > INT_MAX) || (Content == NULL) ||
+      (ContentSize == NULL))
+  {
     return FALSE;
   }
 
@@ -124,7 +126,13 @@ Pkcs7GetAttachedContent (
   SignedData = NULL;
   OctStr     = NULL;
 
-  Status = WrapPkcs7Data (P7Data, P7Length, &Wrapped, &SignedData, &SignedDataSize);
+  Status = WrapPkcs7Data (
+             P7Data,
+             P7Length,
+             &Wrapped,
+             &SignedData,
+             &SignedDataSize
+             );
   if (!Status || (SignedDataSize > INT_MAX)) {
     goto _Exit;
   }

@@ -113,7 +113,12 @@ RsaGetPrivateKeyFromPem (
   //
   // Retrieve RSA Private Key from encrypted PEM data.
   //
-  *RsaContext = PEM_read_bio_RSAPrivateKey (PemBio, NULL, (pem_password_cb *)&PasswordCallback, (void *)Password);
+  *RsaContext = PEM_read_bio_RSAPrivateKey (
+                  PemBio,
+                  NULL,
+                  (pem_password_cb *)&PasswordCallback,
+                  (void *)Password
+                  );
   if (*RsaContext != NULL) {
     Status = TRUE;
   }
@@ -196,7 +201,12 @@ EcGetPrivateKeyFromPem (
   //
   // Retrieve EC Private Key from encrypted PEM data.
   //
-  *EcContext = PEM_read_bio_ECPrivateKey (PemBio, NULL, (pem_password_cb *)&PasswordCallback, (void *)Password);
+  *EcContext = PEM_read_bio_ECPrivateKey (
+                 PemBio,
+                 NULL,
+                 (pem_password_cb *)&PasswordCallback,
+                 (void *)Password
+                 );
   if (*EcContext != NULL) {
     Status = TRUE;
   }

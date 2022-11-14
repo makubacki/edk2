@@ -82,7 +82,12 @@ BaseCryptLibServiceNotEnabled (
   IN CONST CHAR8  *FunctionName
   )
 {
-  DEBUG ((DEBUG_ERROR, "[%a] Function %a() is not enabled\n", gEfiCallerBaseName, FunctionName));
+  DEBUG ((
+    DEBUG_ERROR,
+    "[%a] Function %a() is not enabled\n",
+    gEfiCallerBaseName,
+    FunctionName
+    ));
   ASSERT_EFI_ERROR (EFI_UNSUPPORTED);
 }
 
@@ -100,7 +105,12 @@ BaseCryptLibServiceDeprecated (
   IN CONST CHAR8  *FunctionName
   )
 {
-  DEBUG ((DEBUG_ERROR, "[%a] Function %a() is deprecated and unsupported any longer\n", gEfiCallerBaseName, FunctionName));
+  DEBUG ((
+    DEBUG_ERROR,
+    "[%a] Function %a() is deprecated and unsupported any longer\n",
+    gEfiCallerBaseName,
+    FunctionName
+    ));
   ASSERT_EFI_ERROR (EFI_UNSUPPORTED);
 }
 
@@ -409,7 +419,12 @@ CryptoServiceMd5GetContextSize (
   VOID
   )
 {
-  return CALL_BASECRYPTLIB (Md5.Services.GetContextSize, Md5GetContextSize, (), 0);
+  return CALL_BASECRYPTLIB (
+           Md5.Services.GetContextSize,
+           Md5GetContextSize,
+           (),
+           0
+           );
 }
 
 /**
@@ -457,7 +472,13 @@ CryptoServiceMd5Duplicate (
   OUT  VOID        *NewMd5Context
   )
 {
-  return CALL_BASECRYPTLIB (Md5.Services.Duplicate, Md5Duplicate, (Md5Context, NewMd5Context), FALSE);
+  return CALL_BASECRYPTLIB (
+           Md5.Services.Duplicate,
+           Md5Duplicate,
+           (Md5Context,
+            NewMd5Context),
+           FALSE
+           );
 }
 
 /**
@@ -488,7 +509,13 @@ CryptoServiceMd5Update (
   IN      UINTN       DataSize
   )
 {
-  return CALL_BASECRYPTLIB (Md5.Services.Update, Md5Update, (Md5Context, Data, DataSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           Md5.Services.Update,
+           Md5Update,
+           (Md5Context, Data,
+            DataSize),
+           FALSE
+           );
 }
 
 /**
@@ -520,7 +547,13 @@ CryptoServiceMd5Final (
   OUT     UINT8  *HashValue
   )
 {
-  return CALL_BASECRYPTLIB (Md5.Services.Final, Md5Final, (Md5Context, HashValue), FALSE);
+  return CALL_BASECRYPTLIB (
+           Md5.Services.Final,
+           Md5Final,
+           (Md5Context,
+            HashValue),
+           FALSE
+           );
 }
 
 /**
@@ -549,7 +582,13 @@ CryptoServiceMd5HashAll (
   OUT  UINT8       *HashValue
   )
 {
-  return CALL_BASECRYPTLIB (Md5.Services.HashAll, Md5HashAll, (Data, DataSize, HashValue), FALSE);
+  return CALL_BASECRYPTLIB (
+           Md5.Services.HashAll,
+           Md5HashAll,
+           (Data, DataSize,
+            HashValue),
+           FALSE
+           );
 }
 
 #endif
@@ -722,7 +761,12 @@ CryptoServiceSha1GetContextSize (
   VOID
   )
 {
-  return CALL_BASECRYPTLIB (Sha1.Services.GetContextSize, Sha1GetContextSize, (), 0);
+  return CALL_BASECRYPTLIB (
+           Sha1.Services.GetContextSize,
+           Sha1GetContextSize,
+           (),
+           0
+           );
 }
 
 /**
@@ -770,7 +814,12 @@ CryptoServiceSha1Duplicate (
   OUT  VOID        *NewSha1Context
   )
 {
-  return CALL_BASECRYPTLIB (Sha1.Services.Duplicate, Sha1Duplicate, (Sha1Context, NewSha1Context), FALSE);
+  return CALL_BASECRYPTLIB (
+           Sha1.Services.Duplicate,
+           Sha1Duplicate,
+           (Sha1Context, NewSha1Context),
+           FALSE
+           );
 }
 
 /**
@@ -801,7 +850,13 @@ CryptoServiceSha1Update (
   IN      UINTN       DataSize
   )
 {
-  return CALL_BASECRYPTLIB (Sha1.Services.Update, Sha1Update, (Sha1Context, Data, DataSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           Sha1.Services.Update,
+           Sha1Update,
+           (Sha1Context,
+            Data, DataSize),
+           FALSE
+           );
 }
 
 /**
@@ -833,7 +888,13 @@ CryptoServiceSha1Final (
   OUT     UINT8  *HashValue
   )
 {
-  return CALL_BASECRYPTLIB (Sha1.Services.Final, Sha1Final, (Sha1Context, HashValue), FALSE);
+  return CALL_BASECRYPTLIB (
+           Sha1.Services.Final,
+           Sha1Final,
+           (Sha1Context,
+            HashValue),
+           FALSE
+           );
 }
 
 /**
@@ -862,7 +923,13 @@ CryptoServiceSha1HashAll (
   OUT  UINT8       *HashValue
   )
 {
-  return CALL_BASECRYPTLIB (Sha1.Services.HashAll, Sha1HashAll, (Data, DataSize, HashValue), FALSE);
+  return CALL_BASECRYPTLIB (
+           Sha1.Services.HashAll,
+           Sha1HashAll,
+           (Data, DataSize,
+            HashValue),
+           FALSE
+           );
 }
 
 #endif
@@ -879,7 +946,12 @@ CryptoServiceSha256GetContextSize (
   VOID
   )
 {
-  return CALL_BASECRYPTLIB (Sha256.Services.GetContextSize, Sha256GetContextSize, (), 0);
+  return CALL_BASECRYPTLIB (
+           Sha256.Services.GetContextSize,
+           Sha256GetContextSize,
+           (),
+           0
+           );
 }
 
 /**
@@ -900,7 +972,12 @@ CryptoServiceSha256Init (
   OUT  VOID  *Sha256Context
   )
 {
-  return CALL_BASECRYPTLIB (Sha256.Services.Init, Sha256Init, (Sha256Context), FALSE);
+  return CALL_BASECRYPTLIB (
+           Sha256.Services.Init,
+           Sha256Init,
+           (Sha256Context),
+           FALSE
+           );
 }
 
 /**
@@ -925,7 +1002,12 @@ CryptoServiceSha256Duplicate (
   OUT  VOID        *NewSha256Context
   )
 {
-  return CALL_BASECRYPTLIB (Sha256.Services.Duplicate, Sha256Duplicate, (Sha256Context, NewSha256Context), FALSE);
+  return CALL_BASECRYPTLIB (
+           Sha256.Services.Duplicate,
+           Sha256Duplicate,
+           (Sha256Context, NewSha256Context),
+           FALSE
+           );
 }
 
 /**
@@ -954,7 +1036,12 @@ CryptoServiceSha256Update (
   IN      UINTN       DataSize
   )
 {
-  return CALL_BASECRYPTLIB (Sha256.Services.Update, Sha256Update, (Sha256Context, Data, DataSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           Sha256.Services.Update,
+           Sha256Update,
+           (Sha256Context, Data, DataSize),
+           FALSE
+           );
 }
 
 /**
@@ -984,7 +1071,13 @@ CryptoServiceSha256Final (
   OUT     UINT8  *HashValue
   )
 {
-  return CALL_BASECRYPTLIB (Sha256.Services.Final, Sha256Final, (Sha256Context, HashValue), FALSE);
+  return CALL_BASECRYPTLIB (
+           Sha256.Services.Final,
+           Sha256Final,
+           (Sha256Context,
+            HashValue),
+           FALSE
+           );
 }
 
 /**
@@ -1013,7 +1106,13 @@ CryptoServiceSha256HashAll (
   OUT  UINT8       *HashValue
   )
 {
-  return CALL_BASECRYPTLIB (Sha256.Services.HashAll, Sha256HashAll, (Data, DataSize, HashValue), FALSE);
+  return CALL_BASECRYPTLIB (
+           Sha256.Services.HashAll,
+           Sha256HashAll,
+           (Data,
+            DataSize, HashValue),
+           FALSE
+           );
 }
 
 /**
@@ -1028,7 +1127,12 @@ CryptoServiceSha384GetContextSize (
   VOID
   )
 {
-  return CALL_BASECRYPTLIB (Sha384.Services.GetContextSize, Sha384GetContextSize, (), 0);
+  return CALL_BASECRYPTLIB (
+           Sha384.Services.GetContextSize,
+           Sha384GetContextSize,
+           (),
+           0
+           );
 }
 
 /**
@@ -1049,7 +1153,12 @@ CryptoServiceSha384Init (
   OUT  VOID  *Sha384Context
   )
 {
-  return CALL_BASECRYPTLIB (Sha384.Services.Init, Sha384Init, (Sha384Context), FALSE);
+  return CALL_BASECRYPTLIB (
+           Sha384.Services.Init,
+           Sha384Init,
+           (Sha384Context),
+           FALSE
+           );
 }
 
 /**
@@ -1074,7 +1183,12 @@ CryptoServiceSha384Duplicate (
   OUT  VOID        *NewSha384Context
   )
 {
-  return CALL_BASECRYPTLIB (Sha384.Services.Duplicate, Sha384Duplicate, (Sha384Context, NewSha384Context), FALSE);
+  return CALL_BASECRYPTLIB (
+           Sha384.Services.Duplicate,
+           Sha384Duplicate,
+           (Sha384Context, NewSha384Context),
+           FALSE
+           );
 }
 
 /**
@@ -1103,7 +1217,12 @@ CryptoServiceSha384Update (
   IN      UINTN       DataSize
   )
 {
-  return CALL_BASECRYPTLIB (Sha384.Services.Update, Sha384Update, (Sha384Context, Data, DataSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           Sha384.Services.Update,
+           Sha384Update,
+           (Sha384Context, Data, DataSize),
+           FALSE
+           );
 }
 
 /**
@@ -1133,7 +1252,13 @@ CryptoServiceSha384Final (
   OUT     UINT8  *HashValue
   )
 {
-  return CALL_BASECRYPTLIB (Sha384.Services.Final, Sha384Final, (Sha384Context, HashValue), FALSE);
+  return CALL_BASECRYPTLIB (
+           Sha384.Services.Final,
+           Sha384Final,
+           (Sha384Context,
+            HashValue),
+           FALSE
+           );
 }
 
 /**
@@ -1162,7 +1287,13 @@ CryptoServiceSha384HashAll (
   OUT  UINT8       *HashValue
   )
 {
-  return CALL_BASECRYPTLIB (Sha384.Services.HashAll, Sha384HashAll, (Data, DataSize, HashValue), FALSE);
+  return CALL_BASECRYPTLIB (
+           Sha384.Services.HashAll,
+           Sha384HashAll,
+           (Data,
+            DataSize, HashValue),
+           FALSE
+           );
 }
 
 /**
@@ -1177,7 +1308,12 @@ CryptoServiceSha512GetContextSize (
   VOID
   )
 {
-  return CALL_BASECRYPTLIB (Sha512.Services.GetContextSize, Sha512GetContextSize, (), 0);
+  return CALL_BASECRYPTLIB (
+           Sha512.Services.GetContextSize,
+           Sha512GetContextSize,
+           (),
+           0
+           );
 }
 
 /**
@@ -1198,7 +1334,12 @@ CryptoServiceSha512Init (
   OUT  VOID  *Sha512Context
   )
 {
-  return CALL_BASECRYPTLIB (Sha512.Services.Init, Sha512Init, (Sha512Context), FALSE);
+  return CALL_BASECRYPTLIB (
+           Sha512.Services.Init,
+           Sha512Init,
+           (Sha512Context),
+           FALSE
+           );
 }
 
 /**
@@ -1223,7 +1364,12 @@ CryptoServiceSha512Duplicate (
   OUT  VOID        *NewSha512Context
   )
 {
-  return CALL_BASECRYPTLIB (Sha512.Services.Duplicate, Sha512Duplicate, (Sha512Context, NewSha512Context), FALSE);
+  return CALL_BASECRYPTLIB (
+           Sha512.Services.Duplicate,
+           Sha512Duplicate,
+           (Sha512Context, NewSha512Context),
+           FALSE
+           );
 }
 
 /**
@@ -1252,7 +1398,12 @@ CryptoServiceSha512Update (
   IN      UINTN       DataSize
   )
 {
-  return CALL_BASECRYPTLIB (Sha512.Services.Update, Sha512Update, (Sha512Context, Data, DataSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           Sha512.Services.Update,
+           Sha512Update,
+           (Sha512Context, Data, DataSize),
+           FALSE
+           );
 }
 
 /**
@@ -1282,7 +1433,13 @@ CryptoServiceSha512Final (
   OUT     UINT8  *HashValue
   )
 {
-  return CALL_BASECRYPTLIB (Sha512.Services.Final, Sha512Final, (Sha512Context, HashValue), FALSE);
+  return CALL_BASECRYPTLIB (
+           Sha512.Services.Final,
+           Sha512Final,
+           (Sha512Context,
+            HashValue),
+           FALSE
+           );
 }
 
 /**
@@ -1311,7 +1468,13 @@ CryptoServiceSha512HashAll (
   OUT  UINT8       *HashValue
   )
 {
-  return CALL_BASECRYPTLIB (Sha512.Services.HashAll, Sha512HashAll, (Data, DataSize, HashValue), FALSE);
+  return CALL_BASECRYPTLIB (
+           Sha512.Services.HashAll,
+           Sha512HashAll,
+           (Data,
+            DataSize, HashValue),
+           FALSE
+           );
 }
 
 /**
@@ -1326,7 +1489,12 @@ CryptoServiceSm3GetContextSize (
   VOID
   )
 {
-  return CALL_BASECRYPTLIB (Sm3.Services.GetContextSize, Sm3GetContextSize, (), 0);
+  return CALL_BASECRYPTLIB (
+           Sm3.Services.GetContextSize,
+           Sm3GetContextSize,
+           (),
+           0
+           );
 }
 
 /**
@@ -1372,7 +1540,13 @@ CryptoServiceSm3Duplicate (
   OUT  VOID        *NewSm3Context
   )
 {
-  return CALL_BASECRYPTLIB (Sm3.Services.Duplicate, Sm3Duplicate, (Sm3Context, NewSm3Context), FALSE);
+  return CALL_BASECRYPTLIB (
+           Sm3.Services.Duplicate,
+           Sm3Duplicate,
+           (Sm3Context,
+            NewSm3Context),
+           FALSE
+           );
 }
 
 /**
@@ -1401,7 +1575,13 @@ CryptoServiceSm3Update (
   IN      UINTN       DataSize
   )
 {
-  return CALL_BASECRYPTLIB (Sm3.Services.Update, Sm3Update, (Sm3Context, Data, DataSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           Sm3.Services.Update,
+           Sm3Update,
+           (Sm3Context, Data,
+            DataSize),
+           FALSE
+           );
 }
 
 /**
@@ -1431,7 +1611,13 @@ CryptoServiceSm3Final (
   OUT     UINT8  *HashValue
   )
 {
-  return CALL_BASECRYPTLIB (Sm3.Services.Final, Sm3Final, (Sm3Context, HashValue), FALSE);
+  return CALL_BASECRYPTLIB (
+           Sm3.Services.Final,
+           Sm3Final,
+           (Sm3Context,
+            HashValue),
+           FALSE
+           );
 }
 
 /**
@@ -1460,7 +1646,13 @@ CryptoServiceSm3HashAll (
   OUT  UINT8       *HashValue
   )
 {
-  return CALL_BASECRYPTLIB (Sm3.Services.HashAll, Sm3HashAll, (Data, DataSize, HashValue), FALSE);
+  return CALL_BASECRYPTLIB (
+           Sm3.Services.HashAll,
+           Sm3HashAll,
+           (Data, DataSize,
+            HashValue),
+           FALSE
+           );
 }
 
 // =====================================================================================
@@ -1729,7 +1921,11 @@ CryptoServiceHmacSha256Free (
   IN  VOID  *HmacSha256Ctx
   )
 {
-  CALL_VOID_BASECRYPTLIB (HmacSha256.Services.Free, HmacSha256Free, (HmacSha256Ctx));
+  CALL_VOID_BASECRYPTLIB (
+    HmacSha256.Services.Free,
+    HmacSha256Free,
+    (HmacSha256Ctx)
+    );
 }
 
 /**
@@ -1756,7 +1952,12 @@ CryptoServiceHmacSha256SetKey (
   IN   UINTN        KeySize
   )
 {
-  return CALL_BASECRYPTLIB (HmacSha256.Services.SetKey, HmacSha256SetKey, (HmacSha256Context, Key, KeySize), FALSE);
+  return CALL_BASECRYPTLIB (
+           HmacSha256.Services.SetKey,
+           HmacSha256SetKey,
+           (HmacSha256Context, Key, KeySize),
+           FALSE
+           );
 }
 
 /**
@@ -1781,7 +1982,12 @@ CryptoServiceHmacSha256Duplicate (
   OUT  VOID        *NewHmacSha256Context
   )
 {
-  return CALL_BASECRYPTLIB (HmacSha256.Services.Duplicate, HmacSha256Duplicate, (HmacSha256Context, NewHmacSha256Context), FALSE);
+  return CALL_BASECRYPTLIB (
+           HmacSha256.Services.Duplicate,
+           HmacSha256Duplicate,
+           (HmacSha256Context, NewHmacSha256Context),
+           FALSE
+           );
 }
 
 /**
@@ -1812,7 +2018,12 @@ CryptoServiceHmacSha256Update (
   IN      UINTN       DataSize
   )
 {
-  return CALL_BASECRYPTLIB (HmacSha256.Services.Update, HmacSha256Update, (HmacSha256Context, Data, DataSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           HmacSha256.Services.Update,
+           HmacSha256Update,
+           (HmacSha256Context, Data, DataSize),
+           FALSE
+           );
 }
 
 /**
@@ -1844,7 +2055,12 @@ CryptoServiceHmacSha256Final (
   OUT     UINT8  *HmacValue
   )
 {
-  return CALL_BASECRYPTLIB (HmacSha256.Services.Final, HmacSha256Final, (HmacSha256Context, HmacValue), FALSE);
+  return CALL_BASECRYPTLIB (
+           HmacSha256.Services.Final,
+           HmacSha256Final,
+           (HmacSha256Context, HmacValue),
+           FALSE
+           );
 }
 
 /**
@@ -1877,7 +2093,13 @@ CryptoServiceHmacSha256All (
   OUT  UINT8        *HmacValue
   )
 {
-  return CALL_BASECRYPTLIB (HmacSha256.Services.All, HmacSha256All, (Data, DataSize, Key, KeySize, HmacValue), FALSE);
+  return CALL_BASECRYPTLIB (
+           HmacSha256.Services.All,
+           HmacSha256All,
+           (Data,
+            DataSize, Key, KeySize, HmacValue),
+           FALSE
+           );
 }
 
 /**
@@ -1908,7 +2130,11 @@ CryptoServiceHmacSha384Free (
   IN  VOID  *HmacSha384Ctx
   )
 {
-  CALL_VOID_BASECRYPTLIB (HmacSha384.Services.Free, HmacSha384Free, (HmacSha384Ctx));
+  CALL_VOID_BASECRYPTLIB (
+    HmacSha384.Services.Free,
+    HmacSha384Free,
+    (HmacSha384Ctx)
+    );
 }
 
 /**
@@ -1935,7 +2161,12 @@ CryptoServiceHmacSha384SetKey (
   IN   UINTN        KeySize
   )
 {
-  return CALL_BASECRYPTLIB (HmacSha384.Services.SetKey, HmacSha384SetKey, (HmacSha384Context, Key, KeySize), FALSE);
+  return CALL_BASECRYPTLIB (
+           HmacSha384.Services.SetKey,
+           HmacSha384SetKey,
+           (HmacSha384Context, Key, KeySize),
+           FALSE
+           );
 }
 
 /**
@@ -1960,7 +2191,12 @@ CryptoServiceHmacSha384Duplicate (
   OUT  VOID        *NewHmacSha384Context
   )
 {
-  return CALL_BASECRYPTLIB (HmacSha384.Services.Duplicate, HmacSha256Duplicate, (HmacSha384Context, NewHmacSha384Context), FALSE);
+  return CALL_BASECRYPTLIB (
+           HmacSha384.Services.Duplicate,
+           HmacSha256Duplicate,
+           (HmacSha384Context, NewHmacSha384Context),
+           FALSE
+           );
 }
 
 /**
@@ -1991,7 +2227,12 @@ CryptoServiceHmacSha384Update (
   IN      UINTN       DataSize
   )
 {
-  return CALL_BASECRYPTLIB (HmacSha384.Services.Update, HmacSha384Update, (HmacSha384Context, Data, DataSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           HmacSha384.Services.Update,
+           HmacSha384Update,
+           (HmacSha384Context, Data, DataSize),
+           FALSE
+           );
 }
 
 /**
@@ -2023,7 +2264,12 @@ CryptoServiceHmacSha384Final (
   OUT     UINT8  *HmacValue
   )
 {
-  return CALL_BASECRYPTLIB (HmacSha384.Services.Final, HmacSha384Final, (HmacSha384Context, HmacValue), FALSE);
+  return CALL_BASECRYPTLIB (
+           HmacSha384.Services.Final,
+           HmacSha384Final,
+           (HmacSha384Context, HmacValue),
+           FALSE
+           );
 }
 
 /**
@@ -2056,7 +2302,13 @@ CryptoServiceHmacSha384All (
   OUT  UINT8        *HmacValue
   )
 {
-  return CALL_BASECRYPTLIB (HmacSha384.Services.All, HmacSha384All, (Data, DataSize, Key, KeySize, HmacValue), FALSE);
+  return CALL_BASECRYPTLIB (
+           HmacSha384.Services.All,
+           HmacSha384All,
+           (Data,
+            DataSize, Key, KeySize, HmacValue),
+           FALSE
+           );
 }
 
 // =====================================================================================
@@ -2216,7 +2468,12 @@ CryptoServiceAesGetContextSize (
   VOID
   )
 {
-  return CALL_BASECRYPTLIB (Aes.Services.GetContextSize, AesGetContextSize, (), 0);
+  return CALL_BASECRYPTLIB (
+           Aes.Services.GetContextSize,
+           AesGetContextSize,
+           (),
+           0
+           );
 }
 
 /**
@@ -2249,7 +2506,13 @@ CryptoServiceAesInit (
   IN   UINTN        KeyLength
   )
 {
-  return CALL_BASECRYPTLIB (Aes.Services.Init, AesInit, (AesContext, Key, KeyLength), FALSE);
+  return CALL_BASECRYPTLIB (
+           Aes.Services.Init,
+           AesInit,
+           (AesContext, Key,
+            KeyLength),
+           FALSE
+           );
 }
 
 /**
@@ -2339,7 +2602,13 @@ CryptoServiceAesCbcEncrypt (
   OUT  UINT8        *Output
   )
 {
-  return CALL_BASECRYPTLIB (Aes.Services.CbcEncrypt, AesCbcEncrypt, (AesContext, Input, InputSize, Ivec, Output), FALSE);
+  return CALL_BASECRYPTLIB (
+           Aes.Services.CbcEncrypt,
+           AesCbcEncrypt,
+           (AesContext,
+            Input, InputSize, Ivec, Output),
+           FALSE
+           );
 }
 
 /**
@@ -2381,7 +2650,13 @@ CryptoServiceAesCbcDecrypt (
   OUT  UINT8        *Output
   )
 {
-  return CALL_BASECRYPTLIB (Aes.Services.CbcDecrypt, AesCbcDecrypt, (AesContext, Input, InputSize, Ivec, Output), FALSE);
+  return CALL_BASECRYPTLIB (
+           Aes.Services.CbcDecrypt,
+           AesCbcDecrypt,
+           (AesContext,
+            Input, InputSize, Ivec, Output),
+           FALSE
+           );
 }
 
 /**
@@ -2556,7 +2831,13 @@ CryptoServiceRsaSetKey (
   IN      UINTN        BnSize
   )
 {
-  return CALL_BASECRYPTLIB (Rsa.Services.SetKey, RsaSetKey, (RsaContext, KeyTag, BigNumber, BnSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           Rsa.Services.SetKey,
+           RsaSetKey,
+           (RsaContext, KeyTag,
+            BigNumber, BnSize),
+           FALSE
+           );
 }
 
 /**
@@ -2596,7 +2877,13 @@ CryptoServiceRsaGetKey (
   IN OUT  UINTN        *BnSize
   )
 {
-  return CALL_BASECRYPTLIB (Rsa.Services.GetKey, RsaGetKey, (RsaContext, KeyTag, BigNumber, BnSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           Rsa.Services.GetKey,
+           RsaGetKey,
+           (RsaContext, KeyTag,
+            BigNumber, BnSize),
+           FALSE
+           );
 }
 
 /**
@@ -2631,7 +2918,12 @@ CryptoServiceRsaGenerateKey (
   IN      UINTN        PublicExponentSize
   )
 {
-  return CALL_BASECRYPTLIB (Rsa.Services.GenerateKey, RsaGenerateKey, (RsaContext, ModulusLength, PublicExponent, PublicExponentSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           Rsa.Services.GenerateKey,
+           RsaGenerateKey,
+           (RsaContext, ModulusLength, PublicExponent, PublicExponentSize),
+           FALSE
+           );
 }
 
 /**
@@ -2661,7 +2953,12 @@ CryptoServiceRsaCheckKey (
   IN  VOID  *RsaContext
   )
 {
-  return CALL_BASECRYPTLIB (Rsa.Services.CheckKey, RsaCheckKey, (RsaContext), FALSE);
+  return CALL_BASECRYPTLIB (
+           Rsa.Services.CheckKey,
+           RsaCheckKey,
+           (RsaContext),
+           FALSE
+           );
 }
 
 /**
@@ -2701,7 +2998,13 @@ CryptoServiceRsaPkcs1Sign (
   IN OUT  UINTN        *SigSize
   )
 {
-  return CALL_BASECRYPTLIB (Rsa.Services.Pkcs1Sign, RsaPkcs1Sign, (RsaContext, MessageHash, HashSize, Signature, SigSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           Rsa.Services.Pkcs1Sign,
+           RsaPkcs1Sign,
+           (RsaContext,
+            MessageHash, HashSize, Signature, SigSize),
+           FALSE
+           );
 }
 
 /**
@@ -2733,7 +3036,12 @@ CryptoServiceRsaPkcs1Verify (
   IN  UINTN        SigSize
   )
 {
-  return CALL_BASECRYPTLIB (Rsa.Services.Pkcs1Verify, RsaPkcs1Verify, (RsaContext, MessageHash, HashSize, Signature, SigSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           Rsa.Services.Pkcs1Verify,
+           RsaPkcs1Verify,
+           (RsaContext, MessageHash, HashSize, Signature, SigSize),
+           FALSE
+           );
 }
 
 /**
@@ -2764,7 +3072,12 @@ CryptoServiceRsaGetPrivateKeyFromPem (
   OUT  VOID         **RsaContext
   )
 {
-  return CALL_BASECRYPTLIB (Rsa.Services.GetPrivateKeyFromPem, RsaGetPrivateKeyFromPem, (PemData, PemSize, Password, RsaContext), FALSE);
+  return CALL_BASECRYPTLIB (
+           Rsa.Services.GetPrivateKeyFromPem,
+           RsaGetPrivateKeyFromPem,
+           (PemData, PemSize, Password, RsaContext),
+           FALSE
+           );
 }
 
 /**
@@ -2793,7 +3106,12 @@ CryptoServiceRsaGetPublicKeyFromX509 (
   OUT  VOID         **RsaContext
   )
 {
-  return CALL_BASECRYPTLIB (Rsa.Services.GetPublicKeyFromX509, RsaGetPublicKeyFromX509, (Cert, CertSize, RsaContext), FALSE);
+  return CALL_BASECRYPTLIB (
+           Rsa.Services.GetPublicKeyFromX509,
+           RsaGetPublicKeyFromX509,
+           (Cert, CertSize, RsaContext),
+           FALSE
+           );
 }
 
 /**
@@ -2824,7 +3142,12 @@ CryptoServiceX509GetSubjectName (
   IN OUT  UINTN        *SubjectSize
   )
 {
-  return CALL_BASECRYPTLIB (X509.Services.GetSubjectName, X509GetSubjectName, (Cert, CertSize, CertSubject, SubjectSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           X509.Services.GetSubjectName,
+           X509GetSubjectName,
+           (Cert, CertSize, CertSubject, SubjectSize),
+           FALSE
+           );
 }
 
 /**
@@ -2862,7 +3185,12 @@ CryptoServiceX509GetCommonName (
   IN OUT  UINTN        *CommonNameSize
   )
 {
-  return CALL_BASECRYPTLIB (X509.Services.GetCommonName, X509GetCommonName, (Cert, CertSize, CommonName, CommonNameSize), RETURN_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+           X509.Services.GetCommonName,
+           X509GetCommonName,
+           (Cert, CertSize, CommonName, CommonNameSize),
+           RETURN_UNSUPPORTED
+           );
 }
 
 /**
@@ -2900,7 +3228,12 @@ CryptoServiceX509GetOrganizationName (
   IN OUT  UINTN        *NameBufferSize
   )
 {
-  return CALL_BASECRYPTLIB (X509.Services.GetOrganizationName, X509GetOrganizationName, (Cert, CertSize, NameBuffer, NameBufferSize), RETURN_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+           X509.Services.GetOrganizationName,
+           X509GetOrganizationName,
+           (Cert, CertSize, NameBuffer, NameBufferSize),
+           RETURN_UNSUPPORTED
+           );
 }
 
 /**
@@ -2930,7 +3263,13 @@ CryptoServiceX509VerifyCert (
   IN  UINTN        CACertSize
   )
 {
-  return CALL_BASECRYPTLIB (X509.Services.VerifyCert, X509VerifyCert, (Cert, CertSize, CACert, CACertSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           X509.Services.VerifyCert,
+           X509VerifyCert,
+           (Cert,
+            CertSize, CACert, CACertSize),
+           FALSE
+           );
 }
 
 /**
@@ -2957,7 +3296,12 @@ CryptoServiceX509ConstructCertificate (
   OUT  UINT8        **SingleX509Cert
   )
 {
-  return CALL_BASECRYPTLIB (X509.Services.ConstructCertificate, X509ConstructCertificate, (Cert, CertSize, SingleX509Cert), FALSE);
+  return CALL_BASECRYPTLIB (
+           X509.Services.ConstructCertificate,
+           X509ConstructCertificate,
+           (Cert, CertSize, SingleX509Cert),
+           FALSE
+           );
 }
 
 /**
@@ -2986,7 +3330,12 @@ CryptoServiceX509ConstructCertificateStackV (
   IN      VA_LIST  Args
   )
 {
-  return CALL_BASECRYPTLIB (X509.Services.ConstructCertificateStackV, X509ConstructCertificateStackV, (X509Stack, Args), FALSE);
+  return CALL_BASECRYPTLIB (
+           X509.Services.ConstructCertificateStackV,
+           X509ConstructCertificateStackV,
+           (X509Stack, Args),
+           FALSE
+           );
 }
 
 /**
@@ -3083,7 +3432,13 @@ CryptoServiceX509GetTBSCert (
   OUT UINTN        *TBSCertSize
   )
 {
-  return CALL_BASECRYPTLIB (X509.Services.GetTBSCert, X509GetTBSCert, (Cert, CertSize, TBSCert, TBSCertSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           X509.Services.GetTBSCert,
+           X509GetTBSCert,
+           (Cert,
+            CertSize, TBSCert, TBSCertSize),
+           FALSE
+           );
 }
 
 /**
@@ -3110,7 +3465,13 @@ CryptoServiceX509GetVersion (
   OUT     UINTN        *Version
   )
 {
-  return CALL_BASECRYPTLIB (X509.Services.GetVersion, X509GetVersion, (Cert, CertSize, Version), FALSE);
+  return CALL_BASECRYPTLIB (
+           X509.Services.GetVersion,
+           X509GetVersion,
+           (Cert,
+            CertSize, Version),
+           FALSE
+           );
 }
 
 /**
@@ -3145,7 +3506,12 @@ CryptoServiceX509GetSerialNumber (
   IN OUT  UINTN         *SerialNumberSize
   )
 {
-  return CALL_BASECRYPTLIB (X509.Services.GetSerialNumber, X509GetSerialNumber, (Cert, CertSize, SerialNumber, SerialNumberSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           X509.Services.GetSerialNumber,
+           X509GetSerialNumber,
+           (Cert, CertSize, SerialNumber, SerialNumberSize),
+           FALSE
+           );
 }
 
 /**
@@ -3176,7 +3542,12 @@ CryptoServiceX509GetIssuerName (
   IN OUT  UINTN        *CertIssuerSize
   )
 {
-  return CALL_BASECRYPTLIB (X509.Services.GetIssuerName, X509GetIssuerName, (Cert, CertSize, CertIssuer, CertIssuerSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           X509.Services.GetIssuerName,
+           X509GetIssuerName,
+           (Cert, CertSize, CertIssuer, CertIssuerSize),
+           FALSE
+           );
 }
 
 /**
@@ -3206,7 +3577,12 @@ CryptoServiceX509GetSignatureAlgorithm (
   IN OUT   UINTN       *OidSize
   )
 {
-  return CALL_BASECRYPTLIB (X509.Services.GetSignatureAlgorithm, X509GetSignatureAlgorithm, (Cert, CertSize, Oid, OidSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           X509.Services.GetSignatureAlgorithm,
+           X509GetSignatureAlgorithm,
+           (Cert, CertSize, Oid, OidSize),
+           FALSE
+           );
 }
 
 /**
@@ -3240,7 +3616,13 @@ CryptoServiceX509GetExtensionData (
   IN OUT UINTN        *ExtensionDataSize
   )
 {
-  return CALL_BASECRYPTLIB (X509.Services.GetExtensionData, X509GetExtensionData, (Cert, CertSize, Oid, OidSize, ExtensionData, ExtensionDataSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           X509.Services.GetExtensionData,
+           X509GetExtensionData,
+           (Cert, CertSize, Oid, OidSize, ExtensionData,
+            ExtensionDataSize),
+           FALSE
+           );
 }
 
 /**
@@ -3269,7 +3651,12 @@ CryptoServiceX509GetExtendedKeyUsage (
   IN OUT UINTN        *UsageSize
   )
 {
-  return CALL_BASECRYPTLIB (X509.Services.GetExtendedKeyUsage, X509GetExtendedKeyUsage, (Cert, CertSize, Usage, UsageSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           X509.Services.GetExtendedKeyUsage,
+           X509GetExtendedKeyUsage,
+           (Cert, CertSize, Usage, UsageSize),
+           FALSE
+           );
 }
 
 /**
@@ -3304,7 +3691,13 @@ CryptoServiceX509GetValidity  (
   IN OUT UINTN        *ToSize
   )
 {
-  return CALL_BASECRYPTLIB (X509.Services.GetValidity, X509GetValidity, (Cert, CertSize, From, FromSize, To, ToSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           X509.Services.GetValidity,
+           X509GetValidity,
+           (Cert,
+            CertSize, From, FromSize, To, ToSize),
+           FALSE
+           );
 }
 
 /**
@@ -3338,7 +3731,12 @@ CryptoServiceX509FormatDateTime (
   IN OUT UINTN    *DateTimeSize
   )
 {
-  return CALL_BASECRYPTLIB (X509.Services.FormatDateTime, X509FormatDateTime, (DateTimeStr, DateTime, DateTimeSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           X509.Services.FormatDateTime,
+           X509FormatDateTime,
+           (DateTimeStr, DateTime, DateTimeSize),
+           FALSE
+           );
 }
 
 /**
@@ -3364,7 +3762,12 @@ CryptoServiceX509CompareDateTime (
   IN  CONST VOID  *DateTime2
   )
 {
-  return CALL_BASECRYPTLIB (X509.Services.CompareDateTime, X509CompareDateTime, (DateTime1, DateTime2), FALSE);
+  return CALL_BASECRYPTLIB (
+           X509.Services.CompareDateTime,
+           X509CompareDateTime,
+           (DateTime1, DateTime2),
+           FALSE
+           );
 }
 
 /**
@@ -3386,7 +3789,13 @@ CryptoServiceX509GetKeyUsage (
   OUT   UINTN        *Usage
   )
 {
-  return CALL_BASECRYPTLIB (X509.Services.GetKeyUsage, X509GetKeyUsage, (Cert, CertSize, Usage), FALSE);
+  return CALL_BASECRYPTLIB (
+           X509.Services.GetKeyUsage,
+           X509GetKeyUsage,
+           (Cert,
+            CertSize, Usage),
+           FALSE
+           );
 }
 
 /**
@@ -3414,7 +3823,12 @@ CryptoServiceX509VerifyCertChain (
   IN UINTN        CertChainLength
   )
 {
-  return CALL_BASECRYPTLIB (X509.Services.VerifyCertChain, X509VerifyCertChain, (RootCert, RootCertLength, CertChain, CertChainLength), FALSE);
+  return CALL_BASECRYPTLIB (
+           X509.Services.VerifyCertChain,
+           X509VerifyCertChain,
+           (RootCert, RootCertLength, CertChain, CertChainLength),
+           FALSE
+           );
 }
 
 /**
@@ -3445,7 +3859,13 @@ CryptoServiceX509GetCertFromCertChain (
   OUT UINTN        *CertLength
   )
 {
-  return CALL_BASECRYPTLIB (X509.Services.GetCertFromCertChain, X509GetCertFromCertChain, (CertChain, CertChainLength, CertIndex, Cert, CertLength), FALSE);
+  return CALL_BASECRYPTLIB (
+           X509.Services.GetCertFromCertChain,
+           X509GetCertFromCertChain,
+           (CertChain, CertChainLength, CertIndex, Cert,
+            CertLength),
+           FALSE
+           );
 }
 
 /**
@@ -3468,7 +3888,13 @@ CryptoServiceAsn1GetTag (
   IN     UINT32   Tag
   )
 {
-  return CALL_BASECRYPTLIB (X509.Services.Asn1GetTag, Asn1GetTag, (Ptr, End, Length, Tag), FALSE);
+  return CALL_BASECRYPTLIB (
+           X509.Services.Asn1GetTag,
+           Asn1GetTag,
+           (Ptr, End,
+            Length, Tag),
+           FALSE
+           );
 }
 
 /**
@@ -3498,7 +3924,13 @@ CryptoServiceX509GetExtendedBasicConstraints             (
   UINTN        *BasicConstraintsSize
   )
 {
-  return CALL_BASECRYPTLIB (X509.Services.GetExtendedBasicConstraints, X509GetExtendedBasicConstraints, (Cert, CertSize, BasicConstraints, BasicConstraintsSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           X509.Services.GetExtendedBasicConstraints,
+           X509GetExtendedBasicConstraints,
+           (Cert, CertSize, BasicConstraints,
+            BasicConstraintsSize),
+           FALSE
+           );
 }
 
 /**
@@ -3541,7 +3973,14 @@ CryptoServicePkcs5HashPassword (
   OUT UINT8        *OutKey
   )
 {
-  return CALL_BASECRYPTLIB (Pkcs.Services.Pkcs5HashPassword, Pkcs5HashPassword, (PasswordLength, Password, SaltLength, Salt, IterationCount, DigestSize, KeyLength, OutKey), FALSE);
+  return CALL_BASECRYPTLIB (
+           Pkcs.Services.Pkcs5HashPassword,
+           Pkcs5HashPassword,
+           (PasswordLength, Password, SaltLength, Salt, IterationCount,
+            DigestSize,
+            KeyLength, OutKey),
+           FALSE
+           );
 }
 
 /**
@@ -3586,7 +4025,14 @@ CryptoServicePkcs1v2Encrypt (
   OUT  UINTN        *EncryptedDataSize
   )
 {
-  return CALL_BASECRYPTLIB (Pkcs.Services.Pkcs1v2Encrypt, Pkcs1v2Encrypt, (PublicKey, PublicKeySize, InData, InDataSize, PrngSeed, PrngSeedSize, EncryptedData, EncryptedDataSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           Pkcs.Services.Pkcs1v2Encrypt,
+           Pkcs1v2Encrypt,
+           (PublicKey, PublicKeySize, InData, InDataSize, PrngSeed,
+            PrngSeedSize,
+            EncryptedData, EncryptedDataSize),
+           FALSE
+           );
 }
 
 /**
@@ -3626,7 +4072,12 @@ CryptoServicePkcs7GetSigners (
   OUT UINTN        *CertLength
   )
 {
-  return CALL_BASECRYPTLIB (Pkcs.Services.Pkcs7GetSigners, Pkcs7GetSigners, (P7Data, P7Length, CertStack, StackLength, TrustedCert, CertLength), FALSE);
+  return CALL_BASECRYPTLIB (
+           Pkcs.Services.Pkcs7GetSigners,
+           Pkcs7GetSigners,
+           (P7Data, P7Length, CertStack, StackLength, TrustedCert, CertLength),
+           FALSE
+           );
 }
 
 /**
@@ -3643,7 +4094,11 @@ CryptoServicePkcs7FreeSigners (
   IN  UINT8  *Certs
   )
 {
-  CALL_VOID_BASECRYPTLIB (Pkcs.Services.Pkcs7FreeSigners, Pkcs7FreeSigners, (Certs));
+  CALL_VOID_BASECRYPTLIB (
+    Pkcs.Services.Pkcs7FreeSigners,
+    Pkcs7FreeSigners,
+    (Certs)
+    );
 }
 
 /**
@@ -3679,7 +4134,13 @@ CryptoServicePkcs7GetCertificatesList (
   OUT UINTN        *UnchainLength
   )
 {
-  return CALL_BASECRYPTLIB (Pkcs.Services.Pkcs7GetCertificatesList, Pkcs7GetCertificatesList, (P7Data, P7Length, SignerChainCerts, ChainLength, UnchainCerts, UnchainLength), FALSE);
+  return CALL_BASECRYPTLIB (
+           Pkcs.Services.Pkcs7GetCertificatesList,
+           Pkcs7GetCertificatesList,
+           (P7Data, P7Length, SignerChainCerts, ChainLength,
+            UnchainCerts, UnchainLength),
+           FALSE
+           );
 }
 
 /**
@@ -3723,7 +4184,15 @@ CryptoServicePkcs7Sign (
   OUT  UINTN        *SignedDataSize
   )
 {
-  return CALL_BASECRYPTLIB (Pkcs.Services.Pkcs7Sign, Pkcs7Sign, (PrivateKey, PrivateKeySize, KeyPassword, InData, InDataSize, SignCert, OtherCerts, SignedData, SignedDataSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           Pkcs.Services.Pkcs7Sign,
+           Pkcs7Sign,
+           (PrivateKey,
+            PrivateKeySize, KeyPassword, InData, InDataSize, SignCert,
+            OtherCerts,
+            SignedData, SignedDataSize),
+           FALSE
+           );
 }
 
 /**
@@ -3759,7 +4228,13 @@ CryptoServicePkcs7Verify (
   IN  UINTN        DataLength
   )
 {
-  return CALL_BASECRYPTLIB (Pkcs.Services.Pkcs7Verify, Pkcs7Verify, (P7Data, P7Length, TrustedCert, CertLength, InData, DataLength), FALSE);
+  return CALL_BASECRYPTLIB (
+           Pkcs.Services.Pkcs7Verify,
+           Pkcs7Verify,
+           (P7Data,
+            P7Length, TrustedCert, CertLength, InData, DataLength),
+           FALSE
+           );
 }
 
 /**
@@ -3804,7 +4279,13 @@ CryptoServiceVerifyEKUsInPkcs7Signature (
   IN  BOOLEAN       RequireAllPresent
   )
 {
-  return CALL_BASECRYPTLIB (Pkcs.Services.VerifyEKUsInPkcs7Signature, VerifyEKUsInPkcs7Signature, (Pkcs7Signature, SignatureSize, RequiredEKUs, RequiredEKUsSize, RequireAllPresent), FALSE);
+  return CALL_BASECRYPTLIB (
+           Pkcs.Services.VerifyEKUsInPkcs7Signature,
+           VerifyEKUsInPkcs7Signature,
+           (Pkcs7Signature, SignatureSize, RequiredEKUs,
+            RequiredEKUsSize, RequireAllPresent),
+           FALSE
+           );
 }
 
 /**
@@ -3836,7 +4317,12 @@ CryptoServicePkcs7GetAttachedContent (
   OUT UINTN        *ContentSize
   )
 {
-  return CALL_BASECRYPTLIB (Pkcs.Services.Pkcs7GetAttachedContent, Pkcs7GetAttachedContent, (P7Data, P7Length, Content, ContentSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           Pkcs.Services.Pkcs7GetAttachedContent,
+           Pkcs7GetAttachedContent,
+           (P7Data, P7Length, Content, ContentSize),
+           FALSE
+           );
 }
 
 /**
@@ -3874,7 +4360,13 @@ CryptoServiceAuthenticodeVerify (
   IN  UINTN        HashSize
   )
 {
-  return CALL_BASECRYPTLIB (Pkcs.Services.AuthenticodeVerify, AuthenticodeVerify, (AuthData, DataSize, TrustedCert, CertSize, ImageHash, HashSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           Pkcs.Services.AuthenticodeVerify,
+           AuthenticodeVerify,
+           (AuthData, DataSize, TrustedCert, CertSize, ImageHash,
+            HashSize),
+           FALSE
+           );
 }
 
 /**
@@ -3907,7 +4399,12 @@ CryptoServiceImageTimestampVerify (
   OUT EFI_TIME     *SigningTime
   )
 {
-  return CALL_BASECRYPTLIB (Pkcs.Services.ImageTimestampVerify, ImageTimestampVerify, (AuthData, DataSize, TsaCert, CertSize, SigningTime), FALSE);
+  return CALL_BASECRYPTLIB (
+           Pkcs.Services.ImageTimestampVerify,
+           ImageTimestampVerify,
+           (AuthData, DataSize, TsaCert, CertSize, SigningTime),
+           FALSE
+           );
 }
 
 // =====================================================================================
@@ -3981,7 +4478,12 @@ CryptoServiceDhGenerateParameter (
   OUT     UINT8  *Prime
   )
 {
-  return CALL_BASECRYPTLIB (Dh.Services.GenerateParameter, DhGenerateParameter, (DhContext, Generator, PrimeLength, Prime), FALSE);
+  return CALL_BASECRYPTLIB (
+           Dh.Services.GenerateParameter,
+           DhGenerateParameter,
+           (DhContext, Generator, PrimeLength, Prime),
+           FALSE
+           );
 }
 
 /**
@@ -4016,7 +4518,12 @@ CryptoServiceDhSetParameter (
   IN      CONST UINT8  *Prime
   )
 {
-  return CALL_BASECRYPTLIB (Dh.Services.SetParameter, DhSetParameter, (DhContext, Generator, PrimeLength, Prime), FALSE);
+  return CALL_BASECRYPTLIB (
+           Dh.Services.SetParameter,
+           DhSetParameter,
+           (DhContext, Generator, PrimeLength, Prime),
+           FALSE
+           );
 }
 
 /**
@@ -4051,7 +4558,13 @@ CryptoServiceDhGenerateKey (
   IN OUT  UINTN  *PublicKeySize
   )
 {
-  return CALL_BASECRYPTLIB (Dh.Services.GenerateKey, DhGenerateKey, (DhContext, PublicKey, PublicKeySize), FALSE);
+  return CALL_BASECRYPTLIB (
+           Dh.Services.GenerateKey,
+           DhGenerateKey,
+           (DhContext,
+            PublicKey, PublicKeySize),
+           FALSE
+           );
 }
 
 /**
@@ -4090,7 +4603,13 @@ CryptoServiceDhComputeKey (
   IN OUT  UINTN        *KeySize
   )
 {
-  return CALL_BASECRYPTLIB (Dh.Services.ComputeKey, DhComputeKey, (DhContext, PeerPublicKey, PeerPublicKeySize, Key, KeySize), FALSE);
+  return CALL_BASECRYPTLIB (
+           Dh.Services.ComputeKey,
+           DhComputeKey,
+           (DhContext,
+            PeerPublicKey, PeerPublicKeySize, Key, KeySize),
+           FALSE
+           );
 }
 
 // =====================================================================================
@@ -4122,7 +4641,12 @@ CryptoServiceRandomSeed (
   IN  UINTN         SeedSize
   )
 {
-  return CALL_BASECRYPTLIB (Random.Services.Seed, RandomSeed, (Seed, SeedSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           Random.Services.Seed,
+           RandomSeed,
+           (Seed, SeedSize),
+           FALSE
+           );
 }
 
 /**
@@ -4146,7 +4670,12 @@ CryptoServiceRandomBytes (
   IN   UINTN  Size
   )
 {
-  return CALL_BASECRYPTLIB (Random.Services.Bytes, RandomBytes, (Output, Size), FALSE);
+  return CALL_BASECRYPTLIB (
+           Random.Services.Bytes,
+           RandomBytes,
+           (Output, Size),
+           FALSE
+           );
 }
 
 // =====================================================================================
@@ -4182,7 +4711,13 @@ CryptoServiceHkdfSha256ExtractAndExpand (
   IN   UINTN        OutSize
   )
 {
-  return CALL_BASECRYPTLIB (Hkdf.Services.Sha256ExtractAndExpand, HkdfSha256ExtractAndExpand, (Key, KeySize, Salt, SaltSize, Info, InfoSize, Out, OutSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           Hkdf.Services.Sha256ExtractAndExpand,
+           HkdfSha256ExtractAndExpand,
+           (Key, KeySize, Salt, SaltSize, Info, InfoSize,
+            Out, OutSize),
+           FALSE
+           );
 }
 
 /**
@@ -4210,7 +4745,12 @@ CryptoServiceHkdfSha256Extract (
   UINTN           PrkOutSize
   )
 {
-  return CALL_BASECRYPTLIB (Hkdf.Services.Sha256Extract, HkdfSha256Extract, (Key, KeySize, Salt, SaltSize, PrkOut, PrkOutSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           Hkdf.Services.Sha256Extract,
+           HkdfSha256Extract,
+           (Key, KeySize, Salt, SaltSize, PrkOut, PrkOutSize),
+           FALSE
+           );
 }
 
 /**
@@ -4238,7 +4778,13 @@ CryptoServiceHkdfSha256Expand (
   IN   UINTN        OutSize
   )
 {
-  return CALL_BASECRYPTLIB (Hkdf.Services.Sha256Expand, HkdfSha256Expand, (Prk, PrkSize, Info, InfoSize, Out, OutSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           Hkdf.Services.Sha256Expand,
+           HkdfSha256Expand,
+           (Prk,
+            PrkSize, Info, InfoSize, Out, OutSize),
+           FALSE
+           );
 }
 
 /**
@@ -4270,7 +4816,13 @@ CryptoServiceHkdfSha384ExtractAndExpand (
   IN   UINTN        OutSize
   )
 {
-  return CALL_BASECRYPTLIB (Hkdf.Services.Sha384ExtractAndExpand, HkdfSha384ExtractAndExpand, (Key, KeySize, Salt, SaltSize, Info, InfoSize, Out, OutSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           Hkdf.Services.Sha384ExtractAndExpand,
+           HkdfSha384ExtractAndExpand,
+           (Key, KeySize, Salt, SaltSize, Info, InfoSize,
+            Out, OutSize),
+           FALSE
+           );
 }
 
 /**
@@ -4298,7 +4850,12 @@ CryptoServiceHkdfSha384Extract (
   UINTN           PrkOutSize
   )
 {
-  return CALL_BASECRYPTLIB (Hkdf.Services.Sha384Extract, HkdfSha384Extract, (Key, KeySize, Salt, SaltSize, PrkOut, PrkOutSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           Hkdf.Services.Sha384Extract,
+           HkdfSha384Extract,
+           (Key, KeySize, Salt, SaltSize, PrkOut, PrkOutSize),
+           FALSE
+           );
 }
 
 /**
@@ -4326,7 +4883,13 @@ CryptoServiceHkdfSha384Expand (
   IN   UINTN        OutSize
   )
 {
-  return CALL_BASECRYPTLIB (Hkdf.Services.Sha384Expand, HkdfSha384Expand, (Prk, PrkSize, Info, InfoSize, Out, OutSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           Hkdf.Services.Sha384Expand,
+           HkdfSha384Expand,
+           (Prk,
+            PrkSize, Info, InfoSize, Out, OutSize),
+           FALSE
+           );
 }
 
 /**
@@ -4382,7 +4945,13 @@ CryptoServiceTlsCtxNew (
   IN     UINT8  MinorVer
   )
 {
-  return CALL_BASECRYPTLIB (Tls.Services.CtxNew, TlsCtxNew, (MajorVer, MinorVer), NULL);
+  return CALL_BASECRYPTLIB (
+           Tls.Services.CtxNew,
+           TlsCtxNew,
+           (MajorVer,
+            MinorVer),
+           NULL
+           );
 }
 
 /**
@@ -4442,7 +5011,12 @@ CryptoServiceTlsInHandshake (
   IN     VOID  *Tls
   )
 {
-  return CALL_BASECRYPTLIB (Tls.Services.InHandshake, TlsInHandshake, (Tls), FALSE);
+  return CALL_BASECRYPTLIB (
+           Tls.Services.InHandshake,
+           TlsInHandshake,
+           (Tls),
+           FALSE
+           );
 }
 
 /**
@@ -4481,7 +5055,13 @@ CryptoServiceTlsDoHandshake (
   IN OUT UINTN  *BufferOutSize
   )
 {
-  return CALL_BASECRYPTLIB (Tls.Services.DoHandshake, TlsDoHandshake, (Tls, BufferIn, BufferInSize, BufferOut, BufferOutSize), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+           Tls.Services.DoHandshake,
+           TlsDoHandshake,
+           (Tls,
+            BufferIn, BufferInSize, BufferOut, BufferOutSize),
+           EFI_UNSUPPORTED
+           );
 }
 
 /**
@@ -4519,7 +5099,13 @@ CryptoServiceTlsHandleAlert (
   IN OUT UINTN  *BufferOutSize
   )
 {
-  return CALL_BASECRYPTLIB (Tls.Services.HandleAlert, TlsHandleAlert, (Tls, BufferIn, BufferInSize, BufferOut, BufferOutSize), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+           Tls.Services.HandleAlert,
+           TlsHandleAlert,
+           (Tls,
+            BufferIn, BufferInSize, BufferOut, BufferOutSize),
+           EFI_UNSUPPORTED
+           );
 }
 
 /**
@@ -4548,7 +5134,13 @@ CryptoServiceTlsCloseNotify (
   IN OUT UINTN  *BufferSize
   )
 {
-  return CALL_BASECRYPTLIB (Tls.Services.CloseNotify, TlsCloseNotify, (Tls, Buffer, BufferSize), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+           Tls.Services.CloseNotify,
+           TlsCloseNotify,
+           (Tls,
+            Buffer, BufferSize),
+           EFI_UNSUPPORTED
+           );
 }
 
 /**
@@ -4573,7 +5165,12 @@ CryptoServiceTlsCtrlTrafficOut (
   IN     UINTN  BufferSize
   )
 {
-  return CALL_BASECRYPTLIB (Tls.Services.CtrlTrafficOut, TlsCtrlTrafficOut, (Tls, Buffer, BufferSize), 0);
+  return CALL_BASECRYPTLIB (
+           Tls.Services.CtrlTrafficOut,
+           TlsCtrlTrafficOut,
+           (Tls, Buffer, BufferSize),
+           0
+           );
 }
 
 /**
@@ -4598,7 +5195,13 @@ CryptoServiceTlsCtrlTrafficIn (
   IN     UINTN  BufferSize
   )
 {
-  return CALL_BASECRYPTLIB (Tls.Services.CtrlTrafficIn, TlsCtrlTrafficIn, (Tls, Buffer, BufferSize), 0);
+  return CALL_BASECRYPTLIB (
+           Tls.Services.CtrlTrafficIn,
+           TlsCtrlTrafficIn,
+           (Tls,
+            Buffer, BufferSize),
+           0
+           );
 }
 
 /**
@@ -4624,7 +5227,13 @@ CryptoServiceTlsRead (
   IN     UINTN  BufferSize
   )
 {
-  return CALL_BASECRYPTLIB (Tls.Services.Read, TlsRead, (Tls, Buffer, BufferSize), 0);
+  return CALL_BASECRYPTLIB (
+           Tls.Services.Read,
+           TlsRead,
+           (Tls, Buffer,
+            BufferSize),
+           0
+           );
 }
 
 /**
@@ -4650,7 +5259,13 @@ CryptoServiceTlsWrite (
   IN     UINTN  BufferSize
   )
 {
-  return CALL_BASECRYPTLIB (Tls.Services.Write, TlsWrite, (Tls, Buffer, BufferSize), 0);
+  return CALL_BASECRYPTLIB (
+           Tls.Services.Write,
+           TlsWrite,
+           (Tls, Buffer,
+            BufferSize),
+           0
+           );
 }
 
 /**
@@ -4672,7 +5287,12 @@ CryptoServiceTlsShutdown (
   IN     VOID  *Tls
   )
 {
-  return CALL_BASECRYPTLIB (Tls.Services.Shutdown, TlsShutdown, (Tls), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+           Tls.Services.Shutdown,
+           TlsShutdown,
+           (Tls),
+           EFI_UNSUPPORTED
+           );
 }
 
 /**
@@ -4697,7 +5317,13 @@ CryptoServiceTlsSetVersion (
   IN     UINT8  MinorVer
   )
 {
-  return CALL_BASECRYPTLIB (TlsSet.Services.Version, TlsSetVersion, (Tls, MajorVer, MinorVer), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+           TlsSet.Services.Version,
+           TlsSetVersion,
+           (Tls,
+            MajorVer, MinorVer),
+           EFI_UNSUPPORTED
+           );
 }
 
 /**
@@ -4720,7 +5346,12 @@ CryptoServiceTlsSetConnectionEnd (
   IN     BOOLEAN  IsServer
   )
 {
-  return CALL_BASECRYPTLIB (TlsSet.Services.ConnectionEnd, TlsSetConnectionEnd, (Tls, IsServer), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+           TlsSet.Services.ConnectionEnd,
+           TlsSetConnectionEnd,
+           (Tls, IsServer),
+           EFI_UNSUPPORTED
+           );
 }
 
 /**
@@ -4749,7 +5380,13 @@ CryptoServiceTlsSetCipherList (
   IN     UINTN   CipherNum
   )
 {
-  return CALL_BASECRYPTLIB (TlsSet.Services.CipherList, TlsSetCipherList, (Tls, CipherId, CipherNum), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+           TlsSet.Services.CipherList,
+           TlsSetCipherList,
+           (Tls,
+            CipherId, CipherNum),
+           EFI_UNSUPPORTED
+           );
 }
 
 /**
@@ -4770,7 +5407,12 @@ CryptoServiceTlsSetCompressionMethod (
   IN     UINT8  CompMethod
   )
 {
-  return CALL_BASECRYPTLIB (TlsSet.Services.CompressionMethod, TlsSetCompressionMethod, (CompMethod), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+           TlsSet.Services.CompressionMethod,
+           TlsSetCompressionMethod,
+           (CompMethod),
+           EFI_UNSUPPORTED
+           );
 }
 
 /**
@@ -4789,7 +5431,12 @@ CryptoServiceTlsSetVerify (
   IN     UINT32  VerifyMode
   )
 {
-  CALL_VOID_BASECRYPTLIB (TlsSet.Services.Verify, TlsSetVerify, (Tls, VerifyMode));
+  CALL_VOID_BASECRYPTLIB (
+    TlsSet.Services.Verify,
+    TlsSetVerify,
+    (Tls,
+     VerifyMode)
+    );
 }
 
 /**
@@ -4812,7 +5459,13 @@ CryptoServiceTlsSetVerifyHost (
   IN     CHAR8   *HostName
   )
 {
-  return CALL_BASECRYPTLIB (TlsSet.Services.VerifyHost, TlsSetVerifyHost, (Tls, Flags, HostName), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+           TlsSet.Services.VerifyHost,
+           TlsSetVerifyHost,
+           (Tls,
+            Flags, HostName),
+           EFI_UNSUPPORTED
+           );
 }
 
 /**
@@ -4838,7 +5491,13 @@ CryptoServiceTlsSetSessionId (
   IN     UINT16  SessionIdLen
   )
 {
-  return CALL_BASECRYPTLIB (TlsSet.Services.SessionId, TlsSetSessionId, (Tls, SessionId, SessionIdLen), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+           TlsSet.Services.SessionId,
+           TlsSetSessionId,
+           (Tls,
+            SessionId, SessionIdLen),
+           EFI_UNSUPPORTED
+           );
 }
 
 /**
@@ -4866,7 +5525,12 @@ CryptoServiceTlsSetCaCertificate (
   IN     UINTN  DataSize
   )
 {
-  return CALL_BASECRYPTLIB (TlsSet.Services.CaCertificate, TlsSetCaCertificate, (Tls, Data, DataSize), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+           TlsSet.Services.CaCertificate,
+           TlsSetCaCertificate,
+           (Tls, Data, DataSize),
+           EFI_UNSUPPORTED
+           );
 }
 
 /**
@@ -4894,7 +5558,12 @@ CryptoServiceTlsSetHostPublicCert (
   IN     UINTN  DataSize
   )
 {
-  return CALL_BASECRYPTLIB (TlsSet.Services.HostPublicCert, TlsSetHostPublicCert, (Tls, Data, DataSize), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+           TlsSet.Services.HostPublicCert,
+           TlsSetHostPublicCert,
+           (Tls, Data, DataSize),
+           EFI_UNSUPPORTED
+           );
 }
 
 /**
@@ -4924,7 +5593,12 @@ CryptoServiceTlsSetHostPrivateKeyEx (
   IN     VOID   *Password  OPTIONAL
   )
 {
-  return CALL_BASECRYPTLIB (TlsSet.Services.HostPrivateKeyEx, TlsSetHostPrivateKeyEx, (Tls, Data, DataSize, Password), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+           TlsSet.Services.HostPrivateKeyEx,
+           TlsSetHostPrivateKeyEx,
+           (Tls, Data, DataSize, Password),
+           EFI_UNSUPPORTED
+           );
 }
 
 /**
@@ -4951,7 +5625,12 @@ CryptoServiceTlsSetHostPrivateKey (
   IN     UINTN  DataSize
   )
 {
-  return CALL_BASECRYPTLIB (TlsSet.Services.HostPrivateKey, TlsSetHostPrivateKey, (Tls, Data, DataSize), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+           TlsSet.Services.HostPrivateKey,
+           TlsSetHostPrivateKey,
+           (Tls, Data, DataSize),
+           EFI_UNSUPPORTED
+           );
 }
 
 /**
@@ -4975,7 +5654,12 @@ CryptoServiceTlsSetCertRevocationList (
   IN     UINTN  DataSize
   )
 {
-  return CALL_BASECRYPTLIB (TlsSet.Services.CertRevocationList, TlsSetCertRevocationList, (Data, DataSize), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+           TlsSet.Services.CertRevocationList,
+           TlsSetCertRevocationList,
+           (Data, DataSize),
+           EFI_UNSUPPORTED
+           );
 }
 
 /**
@@ -5003,7 +5687,12 @@ CryptoServiceTlsSetSignatureAlgoList (
   IN     UINTN  DataSize
   )
 {
-  return CALL_BASECRYPTLIB (TlsSet.Services.SignatureAlgoList, TlsSetSignatureAlgoList, (Tls, Data, DataSize), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+           TlsSet.Services.SignatureAlgoList,
+           TlsSetSignatureAlgoList,
+           (Tls, Data, DataSize),
+           EFI_UNSUPPORTED
+           );
 }
 
 /**
@@ -5028,7 +5717,13 @@ CryptoServiceTlsSetEcCurve (
   IN     UINTN  DataSize
   )
 {
-  return CALL_BASECRYPTLIB (TlsSet.Services.EcCurve, TlsSetEcCurve, (Tls, Data, DataSize), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+           TlsSet.Services.EcCurve,
+           TlsSetEcCurve,
+           (Tls, Data,
+            DataSize),
+           EFI_UNSUPPORTED
+           );
 }
 
 /**
@@ -5072,7 +5767,12 @@ CryptoServiceTlsGetConnectionEnd (
   IN     VOID  *Tls
   )
 {
-  return CALL_BASECRYPTLIB (TlsGet.Services.ConnectionEnd, TlsGetConnectionEnd, (Tls), 0);
+  return CALL_BASECRYPTLIB (
+           TlsGet.Services.ConnectionEnd,
+           TlsGetConnectionEnd,
+           (Tls),
+           0
+           );
 }
 
 /**
@@ -5096,7 +5796,12 @@ CryptoServiceTlsGetCurrentCipher (
   IN OUT UINT16  *CipherId
   )
 {
-  return CALL_BASECRYPTLIB (TlsGet.Services.CurrentCipher, TlsGetCurrentCipher, (Tls, CipherId), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+           TlsGet.Services.CurrentCipher,
+           TlsGetCurrentCipher,
+           (Tls, CipherId),
+           EFI_UNSUPPORTED
+           );
 }
 
 /**
@@ -5122,7 +5827,12 @@ CryptoServiceTlsGetCurrentCompressionId (
   IN OUT UINT8  *CompressionId
   )
 {
-  return CALL_BASECRYPTLIB (TlsGet.Services.CurrentCompressionId, TlsGetCurrentCompressionId, (Tls, CompressionId), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+           TlsGet.Services.CurrentCompressionId,
+           TlsGetCurrentCompressionId,
+           (Tls, CompressionId),
+           EFI_UNSUPPORTED
+           );
 }
 
 /**
@@ -5170,7 +5880,13 @@ CryptoServiceTlsGetSessionId (
   IN OUT UINT16  *SessionIdLen
   )
 {
-  return CALL_BASECRYPTLIB (TlsGet.Services.SessionId, TlsGetSessionId, (Tls, SessionId, SessionIdLen), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+           TlsGet.Services.SessionId,
+           TlsGetSessionId,
+           (Tls,
+            SessionId, SessionIdLen),
+           EFI_UNSUPPORTED
+           );
 }
 
 /**
@@ -5191,7 +5907,11 @@ CryptoServiceTlsGetClientRandom (
   IN OUT UINT8  *ClientRandom
   )
 {
-  CALL_VOID_BASECRYPTLIB (TlsGet.Services.ClientRandom, TlsGetClientRandom, (Tls, ClientRandom));
+  CALL_VOID_BASECRYPTLIB (
+    TlsGet.Services.ClientRandom,
+    TlsGetClientRandom,
+    (Tls, ClientRandom)
+    );
 }
 
 /**
@@ -5212,7 +5932,11 @@ CryptoServiceTlsGetServerRandom (
   IN OUT UINT8  *ServerRandom
   )
 {
-  CALL_VOID_BASECRYPTLIB (TlsGet.Services.ServerRandom, TlsGetServerRandom, (Tls, ServerRandom));
+  CALL_VOID_BASECRYPTLIB (
+    TlsGet.Services.ServerRandom,
+    TlsGetServerRandom,
+    (Tls, ServerRandom)
+    );
 }
 
 /**
@@ -5236,7 +5960,12 @@ CryptoServiceTlsGetKeyMaterial (
   IN OUT UINT8  *KeyMaterial
   )
 {
-  return CALL_BASECRYPTLIB (TlsGet.Services.KeyMaterial, TlsGetKeyMaterial, (Tls, KeyMaterial), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+           TlsGet.Services.KeyMaterial,
+           TlsGetKeyMaterial,
+           (Tls, KeyMaterial),
+           EFI_UNSUPPORTED
+           );
 }
 
 /**
@@ -5263,7 +5992,12 @@ CryptoServiceTlsGetCaCertificate (
   IN OUT UINTN  *DataSize
   )
 {
-  return CALL_BASECRYPTLIB (TlsGet.Services.CaCertificate, TlsGetCaCertificate, (Tls, Data, DataSize), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+           TlsGet.Services.CaCertificate,
+           TlsGetCaCertificate,
+           (Tls, Data, DataSize),
+           EFI_UNSUPPORTED
+           );
 }
 
 /**
@@ -5291,7 +6025,12 @@ CryptoServiceTlsGetHostPublicCert (
   IN OUT UINTN  *DataSize
   )
 {
-  return CALL_BASECRYPTLIB (TlsGet.Services.HostPublicCert, TlsGetHostPublicCert, (Tls, Data, DataSize), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+           TlsGet.Services.HostPublicCert,
+           TlsGetHostPublicCert,
+           (Tls, Data, DataSize),
+           EFI_UNSUPPORTED
+           );
 }
 
 /**
@@ -5318,7 +6057,12 @@ CryptoServiceTlsGetHostPrivateKey (
   IN OUT UINTN  *DataSize
   )
 {
-  return CALL_BASECRYPTLIB (TlsGet.Services.HostPrivateKey, TlsGetHostPrivateKey, (Tls, Data, DataSize), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+           TlsGet.Services.HostPrivateKey,
+           TlsGetHostPrivateKey,
+           (Tls, Data, DataSize),
+           EFI_UNSUPPORTED
+           );
 }
 
 /**
@@ -5343,7 +6087,12 @@ CryptoServiceTlsGetCertRevocationList (
   IN OUT UINTN  *DataSize
   )
 {
-  return CALL_BASECRYPTLIB (TlsGet.Services.CertRevocationList, TlsGetCertRevocationList, (Data, DataSize), EFI_UNSUPPORTED);
+  return CALL_BASECRYPTLIB (
+           TlsGet.Services.CertRevocationList,
+           TlsGetCertRevocationList,
+           (Data, DataSize),
+           EFI_UNSUPPORTED
+           );
 }
 
 /**
@@ -5428,7 +6177,13 @@ CryptoServiceRsaPssSign (
   IN OUT  UINTN        *SigSize
   )
 {
-  return CALL_BASECRYPTLIB (RsaPss.Services.Sign, RsaPssSign, (RsaContext, Message, MsgSize, DigestLen, SaltLen, Signature, SigSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           RsaPss.Services.Sign,
+           RsaPssSign,
+           (RsaContext,
+            Message, MsgSize, DigestLen, SaltLen, Signature, SigSize),
+           FALSE
+           );
 }
 
 /**
@@ -5461,7 +6216,13 @@ CryptoServiceRsaPssVerify (
   IN  UINT16       SaltLen
   )
 {
-  return CALL_BASECRYPTLIB (RsaPss.Services.Verify, RsaPssVerify, (RsaContext, Message, MsgSize, Signature, SigSize, DigestLen, SaltLen), FALSE);
+  return CALL_BASECRYPTLIB (
+           RsaPss.Services.Verify,
+           RsaPssVerify,
+           (RsaContext,
+            Message, MsgSize, Signature, SigSize, DigestLen, SaltLen),
+           FALSE
+           );
 }
 
 /**
@@ -5493,7 +6254,13 @@ CryptoServiceParallelHash256HashAll (
   IN       UINTN  CustomByteLen
   )
 {
-  return CALL_BASECRYPTLIB (ParallelHash.Services.HashAll, ParallelHash256HashAll, (Input, InputByteLen, BlockSize, Output, OutputByteLen, Customization, CustomByteLen), FALSE);
+  return CALL_BASECRYPTLIB (
+           ParallelHash.Services.HashAll,
+           ParallelHash256HashAll,
+           (Input, InputByteLen, BlockSize, Output,
+            OutputByteLen, Customization, CustomByteLen),
+           FALSE
+           );
 }
 
 /**
@@ -5537,7 +6304,14 @@ CryptoServiceAeadAesGcmEncrypt (
   OUT  UINTN        *DataOutSize
   )
 {
-  return CALL_BASECRYPTLIB (AeadAesGcm.Services.Encrypt, AeadAesGcmEncrypt, (Key, KeySize, Iv, IvSize, AData, ADataSize, DataIn, DataInSize, TagOut, TagSize, DataOut, DataOutSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           AeadAesGcm.Services.Encrypt,
+           AeadAesGcmEncrypt,
+           (Key, KeySize, Iv, IvSize, AData, ADataSize, DataIn, DataInSize,
+            TagOut,
+            TagSize, DataOut, DataOutSize),
+           FALSE
+           );
 }
 
 /**
@@ -5582,7 +6356,14 @@ CryptoServiceAeadAesGcmDecrypt (
   OUT  UINTN        *DataOutSize
   )
 {
-  return CALL_BASECRYPTLIB (AeadAesGcm.Services.Decrypt, AeadAesGcmDecrypt, (Key, KeySize, Iv, IvSize, AData, ADataSize, DataIn, DataInSize, Tag, TagSize, DataOut, DataOutSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           AeadAesGcm.Services.Decrypt,
+           AeadAesGcmDecrypt,
+           (Key, KeySize, Iv, IvSize, AData, ADataSize, DataIn, DataInSize, Tag,
+            TagSize,
+            DataOut, DataOutSize),
+           FALSE
+           );
 }
 
 // =====================================================================================
@@ -5618,7 +6399,12 @@ CryptoServiceBigNumFromBin (
   IN UINTN        Len
   )
 {
-  return CALL_BASECRYPTLIB (Bn.Services.FromBin, BigNumFromBin, (Buf, Len), NULL);
+  return CALL_BASECRYPTLIB (
+           Bn.Services.FromBin,
+           BigNumFromBin,
+           (Buf, Len),
+           NULL
+           );
 }
 
 /**
@@ -5676,7 +6462,12 @@ CryptoServiceBigNumAdd (
   OUT VOID       *BnRes
   )
 {
-  return CALL_BASECRYPTLIB (Bn.Services.Add, BigNumAdd, (BnA, BnB, BnRes), FALSE);
+  return CALL_BASECRYPTLIB (
+           Bn.Services.Add,
+           BigNumAdd,
+           (BnA, BnB, BnRes),
+           FALSE
+           );
 }
 
 /**
@@ -5699,7 +6490,12 @@ CryptoServiceBigNumSub (
   OUT VOID       *BnRes
   )
 {
-  return CALL_BASECRYPTLIB (Bn.Services.Sub, BigNumSub, (BnA, BnB, BnRes), FALSE);
+  return CALL_BASECRYPTLIB (
+           Bn.Services.Sub,
+           BigNumSub,
+           (BnA, BnB, BnRes),
+           FALSE
+           );
 }
 
 /**
@@ -5722,7 +6518,12 @@ CryptoServiceBigNumMod (
   OUT VOID       *BnRes
   )
 {
-  return CALL_BASECRYPTLIB (Bn.Services.Mod, BigNumMod, (BnA, BnB, BnRes), FALSE);
+  return CALL_BASECRYPTLIB (
+           Bn.Services.Mod,
+           BigNumMod,
+           (BnA, BnB, BnRes),
+           FALSE
+           );
 }
 
 /**
@@ -5747,7 +6548,13 @@ CryptoServiceBigNumExpMod (
   OUT VOID       *BnRes
   )
 {
-  return CALL_BASECRYPTLIB (Bn.Services.ExpMod, BigNumExpMod, (BnA, BnP, BnM, BnRes), FALSE);
+  return CALL_BASECRYPTLIB (
+           Bn.Services.ExpMod,
+           BigNumExpMod,
+           (BnA, BnP, BnM,
+            BnRes),
+           FALSE
+           );
 }
 
 /**
@@ -5770,7 +6577,13 @@ CryptoServiceBigNumInverseMod (
   OUT VOID       *BnRes
   )
 {
-  return CALL_BASECRYPTLIB (Bn.Services.InverseMod, BigNumInverseMod, (BnA, BnM, BnRes), FALSE);
+  return CALL_BASECRYPTLIB (
+           Bn.Services.InverseMod,
+           BigNumInverseMod,
+           (BnA, BnM,
+            BnRes),
+           FALSE
+           );
 }
 
 /**
@@ -5793,7 +6606,12 @@ CryptoServiceBigNumDiv (
   OUT VOID       *BnRes
   )
 {
-  return CALL_BASECRYPTLIB (Bn.Services.Div, BigNumDiv, (BnA, BnB, BnRes), FALSE);
+  return CALL_BASECRYPTLIB (
+           Bn.Services.Div,
+           BigNumDiv,
+           (BnA, BnB, BnRes),
+           FALSE
+           );
 }
 
 /**
@@ -5818,7 +6636,13 @@ CryptoServiceBigNumMulMod (
   OUT VOID       *BnRes
   )
 {
-  return CALL_BASECRYPTLIB (Bn.Services.MulMod, BigNumMulMod, (BnA, BnB, BnM, BnRes), FALSE);
+  return CALL_BASECRYPTLIB (
+           Bn.Services.MulMod,
+           BigNumMulMod,
+           (BnA, BnB, BnM,
+            BnRes),
+           FALSE
+           );
 }
 
 /**
@@ -5963,7 +6787,12 @@ CryptoServiceBigNumRShift (
   OUT VOID       *BnRes
   )
 {
-  return CALL_BASECRYPTLIB (Bn.Services.RShift, BigNumRShift, (Bn, N, BnRes), FALSE);
+  return CALL_BASECRYPTLIB (
+           Bn.Services.RShift,
+           BigNumRShift,
+           (Bn, N, BnRes),
+           FALSE
+           );
 }
 
 /**
@@ -6002,7 +6831,12 @@ CryptoServiceBigNumSqrMod (
   OUT VOID       *BnRes
   )
 {
-  return CALL_BASECRYPTLIB (Bn.Services.SqrMod, BigNumSqrMod, (BnA, BnM, BnRes), FALSE);
+  return CALL_BASECRYPTLIB (
+           Bn.Services.SqrMod,
+           BigNumSqrMod,
+           (BnA, BnM, BnRes),
+           FALSE
+           );
 }
 
 /**
@@ -6051,7 +6885,12 @@ CryptoServiceBigNumSetUint (
   IN UINTN  Val
   )
 {
-  return CALL_BASECRYPTLIB (Bn.Services.SetUint, BigNumSetUint, (Bn, Val), FALSE);
+  return CALL_BASECRYPTLIB (
+           Bn.Services.SetUint,
+           BigNumSetUint,
+           (Bn, Val),
+           FALSE
+           );
 }
 
 /**
@@ -6074,7 +6913,13 @@ CryptoServiceBigNumAddMod (
   OUT VOID       *BnRes
   )
 {
-  return CALL_BASECRYPTLIB (Bn.Services.AddMod, BigNumAddMod, (BnA, BnB, BnM, BnRes), FALSE);
+  return CALL_BASECRYPTLIB (
+           Bn.Services.AddMod,
+           BigNumAddMod,
+           (BnA, BnB, BnM,
+            BnRes),
+           FALSE
+           );
 }
 
 // =====================================================================================
@@ -6098,7 +6943,12 @@ CryptoServiceEcGroupInit (
   IN UINTN  CryptoNid
   )
 {
-  return CALL_BASECRYPTLIB (Ec.Services.GroupInit, EcGroupInit, (CryptoNid), NULL);
+  return CALL_BASECRYPTLIB (
+           Ec.Services.GroupInit,
+           EcGroupInit,
+           (CryptoNid),
+           NULL
+           );
 }
 
 /**
@@ -6125,7 +6975,12 @@ CryptoServiceEcGroupGetCurve (
   IN VOID        *BnCtx
   )
 {
-  return CALL_BASECRYPTLIB (Ec.Services.GroupGetCurve, EcGroupGetCurve, (EcGroup, BnPrime, BnA, BnB, BnCtx), FALSE);
+  return CALL_BASECRYPTLIB (
+           Ec.Services.GroupGetCurve,
+           EcGroupGetCurve,
+           (EcGroup, BnPrime, BnA, BnB, BnCtx),
+           FALSE
+           );
 }
 
 /**
@@ -6147,7 +7002,12 @@ CryptoServiceEcGroupGetOrder (
   OUT VOID  *BnOrder
   )
 {
-  return CALL_BASECRYPTLIB (Ec.Services.GroupGetOrder, EcGroupGetOrder, (EcGroup, BnOrder), FALSE);
+  return CALL_BASECRYPTLIB (
+           Ec.Services.GroupGetOrder,
+           EcGroupGetOrder,
+           (EcGroup, BnOrder),
+           FALSE
+           );
 }
 
 /**
@@ -6179,7 +7039,12 @@ CryptoServiceEcPointInit (
   IN CONST VOID  *EcGroup
   )
 {
-  return CALL_BASECRYPTLIB (Ec.Services.PointInit, EcPointInit, (EcGroup), NULL);
+  return CALL_BASECRYPTLIB (
+           Ec.Services.PointInit,
+           EcPointInit,
+           (EcGroup),
+           NULL
+           );
 }
 
 /**
@@ -6195,7 +7060,12 @@ CryptoServiceEcPointDeInit (
   IN BOOLEAN  Clear
   )
 {
-  CALL_VOID_BASECRYPTLIB (Ec.Services.PointDeInit, EcPointDeInit, (EcPoint, Clear));
+  CALL_VOID_BASECRYPTLIB (
+    Ec.Services.PointDeInit,
+    EcPointDeInit,
+    (EcPoint,
+     Clear)
+    );
 }
 
 /**
@@ -6223,7 +7093,12 @@ CryptoServiceEcPointGetAffineCoordinates (
   IN VOID        *BnCtx
   )
 {
-  return CALL_BASECRYPTLIB (Ec.Services.PointGetAffineCoordinates, EcPointGetAffineCoordinates, (EcGroup, EcPoint, BnX, BnY, BnCtx), FALSE);
+  return CALL_BASECRYPTLIB (
+           Ec.Services.PointGetAffineCoordinates,
+           EcPointGetAffineCoordinates,
+           (EcGroup, EcPoint, BnX, BnY, BnCtx),
+           FALSE
+           );
 }
 
 /**
@@ -6248,7 +7123,12 @@ CryptoServiceEcPointSetAffineCoordinates (
   IN VOID        *BnCtx
   )
 {
-  return CALL_BASECRYPTLIB (Ec.Services.PointSetAffineCoordinates, EcPointSetAffineCoordinates, (EcGroup, EcPoint, BnX, BnY, BnCtx), FALSE);
+  return CALL_BASECRYPTLIB (
+           Ec.Services.PointSetAffineCoordinates,
+           EcPointSetAffineCoordinates,
+           (EcGroup, EcPoint, BnX, BnY, BnCtx),
+           FALSE
+           );
 }
 
 /**
@@ -6273,7 +7153,13 @@ CryptoServiceEcPointAdd (
   IN VOID        *BnCtx
   )
 {
-  return CALL_BASECRYPTLIB (Ec.Services.PointAdd, EcPointAdd, (EcGroup, EcPointResult, EcPointA, EcPointB, BnCtx), FALSE);
+  return CALL_BASECRYPTLIB (
+           Ec.Services.PointAdd,
+           EcPointAdd,
+           (EcGroup,
+            EcPointResult, EcPointA, EcPointB, BnCtx),
+           FALSE
+           );
 }
 
 /**
@@ -6299,7 +7185,13 @@ CryptoServiceEcPointMul (
   IN VOID        *BnCtx
   )
 {
-  return CALL_BASECRYPTLIB (Ec.Services.PointMul, EcPointMul, (EcGroup, EcPointResult, EcPoint, BnPScalar, BnCtx), FALSE);
+  return CALL_BASECRYPTLIB (
+           Ec.Services.PointMul,
+           EcPointMul,
+           (EcGroup,
+            EcPointResult, EcPoint, BnPScalar, BnCtx),
+           FALSE
+           );
 }
 
 /**
@@ -6320,7 +7212,13 @@ CryptoServiceEcPointInvert (
   IN VOID        *BnCtx
   )
 {
-  return CALL_BASECRYPTLIB (Ec.Services.PointInvert, EcPointInvert, (EcGroup, EcPoint, BnCtx), FALSE);
+  return CALL_BASECRYPTLIB (
+           Ec.Services.PointInvert,
+           EcPointInvert,
+           (EcGroup,
+            EcPoint, BnCtx),
+           FALSE
+           );
 }
 
 /**
@@ -6341,7 +7239,12 @@ CryptoServiceEcPointIsOnCurve (
   IN VOID        *BnCtx
   )
 {
-  return CALL_BASECRYPTLIB (Ec.Services.PointIsOnCurve, EcPointIsOnCurve, (EcGroup, EcPoint, BnCtx), FALSE);
+  return CALL_BASECRYPTLIB (
+           Ec.Services.PointIsOnCurve,
+           EcPointIsOnCurve,
+           (EcGroup, EcPoint, BnCtx),
+           FALSE
+           );
 }
 
 /**
@@ -6360,7 +7263,12 @@ CryptoServiceEcPointIsAtInfinity (
   IN CONST VOID  *EcPoint
   )
 {
-  return CALL_BASECRYPTLIB (Ec.Services.PointIsAtInfinity, EcPointIsAtInfinity, (EcGroup, EcPoint), FALSE);
+  return CALL_BASECRYPTLIB (
+           Ec.Services.PointIsAtInfinity,
+           EcPointIsAtInfinity,
+           (EcGroup, EcPoint),
+           FALSE
+           );
 }
 
 /**
@@ -6383,7 +7291,13 @@ CryptoServiceEcPointEqual (
   IN VOID        *BnCtx
   )
 {
-  return CALL_BASECRYPTLIB (Ec.Services.PointEqual, EcPointEqual, (EcGroup, EcPointA, EcPointB, BnCtx), FALSE);
+  return CALL_BASECRYPTLIB (
+           Ec.Services.PointEqual,
+           EcPointEqual,
+           (EcGroup,
+            EcPointA, EcPointB, BnCtx),
+           FALSE
+           );
 }
 
 /**
@@ -6413,7 +7327,12 @@ CryptoServiceEcPointSetCompressedCoordinates (
   IN VOID        *BnCtx
   )
 {
-  return CALL_BASECRYPTLIB (Ec.Services.PointSetCompressedCoordinates, EcPointSetCompressedCoordinates, (EcGroup, EcPoint, BnX, YBit, BnCtx), FALSE);
+  return CALL_BASECRYPTLIB (
+           Ec.Services.PointSetCompressedCoordinates,
+           EcPointSetCompressedCoordinates,
+           (EcGroup, EcPoint, BnX, YBit, BnCtx),
+           FALSE
+           );
 }
 
 // =====================================================================================
@@ -6485,7 +7404,13 @@ CryptoServiceEcGenerateKey (
   IN OUT  UINTN  *PublicKeySize
   )
 {
-  return CALL_BASECRYPTLIB (Ec.Services.GenerateKey, EcGenerateKey, (EcContext, PublicKey, PublicKeySize), FALSE);
+  return CALL_BASECRYPTLIB (
+           Ec.Services.GenerateKey,
+           EcGenerateKey,
+           (EcContext,
+            PublicKey, PublicKeySize),
+           FALSE
+           );
 }
 
 /**
@@ -6510,7 +7435,13 @@ CryptoServiceEcGetPubKey (
   IN OUT  UINTN  *PublicKeySize
   )
 {
-  return CALL_BASECRYPTLIB (Ec.Services.GetPubKey, EcGetPubKey, (EcContext, PublicKey, PublicKeySize), FALSE);
+  return CALL_BASECRYPTLIB (
+           Ec.Services.GetPubKey,
+           EcGetPubKey,
+           (EcContext,
+            PublicKey, PublicKeySize),
+           FALSE
+           );
 }
 
 /**
@@ -6549,7 +7480,12 @@ CryptoServiceEcDhComputeKey (
   IN OUT  UINTN        *KeySize
   )
 {
-  return CALL_BASECRYPTLIB (Ec.Services.DhComputeKey, EcDhComputeKey, (EcContext, PeerPublic, PeerPublicSize, CompressFlag, Key, KeySize), FALSE);
+  return CALL_BASECRYPTLIB (
+           Ec.Services.DhComputeKey,
+           EcDhComputeKey,
+           (EcContext, PeerPublic, PeerPublicSize, CompressFlag, Key, KeySize),
+           FALSE
+           );
 }
 
 /**
@@ -6576,7 +7512,12 @@ CryptoServiceEcGetPublicKeyFromX509 (
   OUT  VOID         **EcContext
   )
 {
-  return CALL_BASECRYPTLIB (Ec.Services.GetPublicKeyFromX509, EcGetPublicKeyFromX509, (Cert, CertSize, EcContext), FALSE);
+  return CALL_BASECRYPTLIB (
+           Ec.Services.GetPublicKeyFromX509,
+           EcGetPublicKeyFromX509,
+           (Cert, CertSize, EcContext),
+           FALSE
+           );
 }
 
 /**
@@ -6605,7 +7546,12 @@ CryptoServiceEcGetPrivateKeyFromPem (
   OUT  VOID         **EcContext
   )
 {
-  return CALL_BASECRYPTLIB (Ec.Services.GetPrivateKeyFromPem, EcGetPrivateKeyFromPem, (PemData, PemSize, Password, EcContext), FALSE);
+  return CALL_BASECRYPTLIB (
+           Ec.Services.GetPrivateKeyFromPem,
+           EcGetPrivateKeyFromPem,
+           (PemData, PemSize, Password, EcContext),
+           FALSE
+           );
 }
 
 /**
@@ -6648,7 +7594,13 @@ CryptoServiceEcDsaSign (
   IN OUT  UINTN        *SigSize
   )
 {
-  return CALL_BASECRYPTLIB (Ec.Services.DsaSign, EcDsaSign, (EcContext, HashNid, MessageHash, HashSize, Signature, SigSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           Ec.Services.DsaSign,
+           EcDsaSign,
+           (EcContext, HashNid,
+            MessageHash, HashSize, Signature, SigSize),
+           FALSE
+           );
 }
 
 /**
@@ -6685,7 +7637,13 @@ CryptoServiceEcDsaVerify (
   IN  UINTN        SigSize
   )
 {
-  return CALL_BASECRYPTLIB (Ec.Services.DsaVerify, EcDsaVerify, (EcContext, HashNid, MessageHash, HashSize, Signature, SigSize), FALSE);
+  return CALL_BASECRYPTLIB (
+           Ec.Services.DsaVerify,
+           EcDsaVerify,
+           (EcContext,
+            HashNid, MessageHash, HashSize, Signature, SigSize),
+           FALSE
+           );
 }
 
 const EDKII_CRYPTO_PROTOCOL  mEdkiiCrypto = {

@@ -45,7 +45,8 @@ HkdfMdExtractAndExpand (
   BOOLEAN       Result;
 
   if ((Key == NULL) || (Salt == NULL) || (Info == NULL) || (Out == NULL) ||
-      (KeySize > INT_MAX) || (SaltSize > INT_MAX) || (InfoSize > INT_MAX) || (OutSize > INT_MAX))
+      (KeySize > INT_MAX) || (SaltSize > INT_MAX) || (InfoSize > INT_MAX) ||
+      (OutSize > INT_MAX))
   {
     return FALSE;
   }
@@ -208,7 +209,10 @@ HkdfMdExpand (
   }
 
   if (Result) {
-    Result = EVP_PKEY_CTX_hkdf_mode (pHkdfCtx, EVP_PKEY_HKDEF_MODE_EXPAND_ONLY) > 0;
+    Result = EVP_PKEY_CTX_hkdf_mode (
+               pHkdfCtx,
+               EVP_PKEY_HKDEF_MODE_EXPAND_ONLY
+               ) > 0;
   }
 
   if (Result) {
@@ -257,7 +261,17 @@ HkdfSha256ExtractAndExpand (
   IN   UINTN        OutSize
   )
 {
-  return HkdfMdExtractAndExpand (EVP_sha256 (), Key, KeySize, Salt, SaltSize, Info, InfoSize, Out, OutSize);
+  return HkdfMdExtractAndExpand (
+           EVP_sha256 (),
+           Key,
+           KeySize,
+           Salt,
+           SaltSize,
+           Info,
+           InfoSize,
+           Out,
+           OutSize
+           );
 }
 
 /**
@@ -321,7 +335,15 @@ HkdfSha256Expand (
   IN   UINTN        OutSize
   )
 {
-  return HkdfMdExpand (EVP_sha256 (), Prk, PrkSize, Info, InfoSize, Out, OutSize);
+  return HkdfMdExpand (
+           EVP_sha256 (),
+           Prk,
+           PrkSize,
+           Info,
+           InfoSize,
+           Out,
+           OutSize
+           );
 }
 
 /**
@@ -353,7 +375,17 @@ HkdfSha384ExtractAndExpand (
   IN   UINTN        OutSize
   )
 {
-  return HkdfMdExtractAndExpand (EVP_sha384 (), Key, KeySize, Salt, SaltSize, Info, InfoSize, Out, OutSize);
+  return HkdfMdExtractAndExpand (
+           EVP_sha384 (),
+           Key,
+           KeySize,
+           Salt,
+           SaltSize,
+           Info,
+           InfoSize,
+           Out,
+           OutSize
+           );
 }
 
 /**
@@ -417,5 +449,13 @@ HkdfSha384Expand (
   IN   UINTN        OutSize
   )
 {
-  return HkdfMdExpand (EVP_sha384 (), Prk, PrkSize, Info, InfoSize, Out, OutSize);
+  return HkdfMdExpand (
+           EVP_sha384 (),
+           Prk,
+           PrkSize,
+           Info,
+           InfoSize,
+           Out,
+           OutSize
+           );
 }

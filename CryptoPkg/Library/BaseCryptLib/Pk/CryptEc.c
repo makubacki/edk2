@@ -204,7 +204,13 @@ EcPointGetAffineCoordinates (
   IN VOID        *BnCtx
   )
 {
-  return (BOOLEAN)EC_POINT_get_affine_coordinates (EcGroup, EcPoint, BnX, BnY, BnCtx);
+  return (BOOLEAN)EC_POINT_get_affine_coordinates (
+                    EcGroup,
+                    EcPoint,
+                    BnX,
+                    BnY,
+                    BnCtx
+                    );
 }
 
 /**
@@ -229,7 +235,13 @@ EcPointSetAffineCoordinates (
   IN VOID        *BnCtx
   )
 {
-  return (BOOLEAN)EC_POINT_set_affine_coordinates (EcGroup, EcPoint, BnX, BnY, BnCtx);
+  return (BOOLEAN)EC_POINT_set_affine_coordinates (
+                    EcGroup,
+                    EcPoint,
+                    BnX,
+                    BnY,
+                    BnCtx
+                    );
 }
 
 /**
@@ -255,7 +267,13 @@ EcPointAdd (
   IN VOID        *BnCtx
   )
 {
-  return (BOOLEAN)EC_POINT_add (EcGroup, EcPointResult, EcPointA, EcPointB, BnCtx);
+  return (BOOLEAN)EC_POINT_add (
+                    EcGroup,
+                    EcPointResult,
+                    EcPointA,
+                    EcPointB,
+                    BnCtx
+                    );
 }
 
 /**
@@ -281,7 +299,14 @@ EcPointMul (
   IN VOID        *BnCtx
   )
 {
-  return (BOOLEAN)EC_POINT_mul (EcGroup, EcPointResult, NULL, EcPoint, BnPScalar, BnCtx);
+  return (BOOLEAN)EC_POINT_mul (
+                    EcGroup,
+                    EcPointResult,
+                    NULL,
+                    EcPoint,
+                    BnPScalar,
+                    BnCtx
+                    );
 }
 
 /**
@@ -395,7 +420,13 @@ EcPointSetCompressedCoordinates (
   IN VOID        *BnCtx
   )
 {
-  return (BOOLEAN)EC_POINT_set_compressed_coordinates (EcGroup, EcPoint, BnX, YBit, BnCtx);
+  return (BOOLEAN)EC_POINT_set_compressed_coordinates (
+                    EcGroup,
+                    EcPoint,
+                    BnX,
+                    YBit,
+                    BnCtx
+                    );
 }
 
 // =====================================================================================
@@ -730,7 +761,14 @@ EcDhComputeKey (
       goto fail;
     }
   } else {
-    if (EC_POINT_set_compressed_coordinates (Group, Point, BnX, *CompressFlag, NULL) != 1) {
+    if (EC_POINT_set_compressed_coordinates (
+          Group,
+          Point,
+          BnX,
+          *CompressFlag,
+          NULL
+          ) != 1)
+    {
       goto fail;
     }
   }

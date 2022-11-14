@@ -218,7 +218,8 @@ IsEkuInCertificate (
     }
 
     if ((Asn1InCert->length == Asn1ToFind->length) &&
-        (CompareMem (Asn1InCert->data, Asn1ToFind->data, Asn1InCert->length) == 0))
+        (CompareMem (Asn1InCert->data, Asn1ToFind->data, Asn1InCert->length) ==
+         0))
     {
       //
       // Found Eku in certificate.
@@ -275,7 +276,9 @@ CheckEKUs (
   Asn1ToFind   = NULL;
   NumEkusFound = 0;
 
-  if ((SignerCert == NULL) || (RequiredEKUs == NULL) || (RequiredEKUsSize == 0)) {
+  if ((SignerCert == NULL) || (RequiredEKUs == NULL) || (RequiredEKUsSize ==
+                                                         0))
+  {
     Status = EFI_INVALID_PARAMETER;
     goto Exit;
   }
@@ -435,7 +438,11 @@ VerifyEKUsInPkcs7Signature (
   //
   // Create the PKCS7 object.
   //
-  Pkcs7 = d2i_PKCS7 (NULL, (const unsigned char **)&Temp, (INT32)SignedDataSize);
+  Pkcs7 = d2i_PKCS7 (
+            NULL,
+            (const unsigned char **)&Temp,
+            (INT32)SignedDataSize
+            );
   if (Pkcs7 == NULL) {
     //
     // Fail to read PKCS7 data.
@@ -501,7 +508,12 @@ VerifyEKUsInPkcs7Signature (
     goto Exit;
   }
 
-  Status = CheckEKUs (SignerCert, RequiredEKUs, RequiredEKUsSize, RequireAllPresent);
+  Status = CheckEKUs (
+             SignerCert,
+             RequiredEKUs,
+             RequiredEKUsSize,
+             RequireAllPresent
+             );
   if (Status != EFI_SUCCESS) {
     goto Exit;
   }

@@ -519,7 +519,13 @@ X509GetCommonName (
   IN OUT  UINTN        *CommonNameSize
   )
 {
-  return InternalX509GetNIDName (Cert, CertSize, NID_commonName, CommonName, CommonNameSize);
+  return InternalX509GetNIDName (
+           Cert,
+           CertSize,
+           NID_commonName,
+           CommonName,
+           CommonNameSize
+           );
 }
 
 /**
@@ -557,7 +563,13 @@ X509GetOrganizationName (
   IN OUT  UINTN        *NameBufferSize
   )
 {
-  return InternalX509GetNIDName (Cert, CertSize, NID_organizationName, NameBuffer, NameBufferSize);
+  return InternalX509GetNIDName (
+           Cert,
+           CertSize,
+           NID_organizationName,
+           NameBuffer,
+           NameBufferSize
+           );
 }
 
 /**
@@ -836,7 +848,13 @@ X509GetTBSCert (
   //
   Temp   = Cert;
   Length = 0;
-  ASN1_get_object (&Temp, (long *)&Length, (int *)&Asn1Tag, (int *)&ObjClass, (long)CertSize);
+  ASN1_get_object (
+    &Temp,
+    (long *)&Length,
+    (int *)&Asn1Tag,
+    (int *)&ObjClass,
+    (long)CertSize
+    );
 
   if (Asn1Tag != V_ASN1_SEQUENCE) {
     return FALSE;
@@ -844,7 +862,13 @@ X509GetTBSCert (
 
   *TBSCert = (UINT8 *)Temp;
 
-  ASN1_get_object (&Temp, (long *)&Length, (int *)&Asn1Tag, (int *)&ObjClass, (long)Length);
+  ASN1_get_object (
+    &Temp,
+    (long *)&Length,
+    (int *)&Asn1Tag,
+    (int *)&ObjClass,
+    (long)Length
+    );
   //
   // Verify the parsed TBSCertificate is one correct SEQUENCE data.
   //
@@ -1294,7 +1318,9 @@ X509GetExtensionData (
   //
   // Check input parameters.
   //
-  if ((Cert == NULL) || (CertSize == 0) || (Oid == NULL) || (OidSize == 0) || (ExtensionDataSize == NULL)) {
+  if ((Cert == NULL) || (CertSize == 0) || (Oid == NULL) || (OidSize == 0) ||
+      (ExtensionDataSize == NULL))
+  {
     return FALSE;
   }
 
@@ -1343,7 +1369,12 @@ X509GetExtensionData (
 
     ObjLength = OBJ_length (Asn1Obj);
     OctLength = ASN1_STRING_length (Asn1Oct);
-    if ((OidSize == ObjLength) && (CompareMem (OBJ_get0_data (Asn1Obj), Oid, OidSize) == 0)) {
+    if ((OidSize == ObjLength) && (CompareMem (
+                                     OBJ_get0_data (Asn1Obj),
+                                     Oid,
+                                     OidSize
+                                     ) == 0))
+    {
       //
       // Extension Found
       //
@@ -1412,7 +1443,14 @@ X509GetExtendedKeyUsage (
 {
   BOOLEAN  Status;
 
-  Status = X509GetExtensionData (Cert, CertSize, mOidExtKeyUsage, sizeof (mOidExtKeyUsage), Usage, UsageSize);
+  Status = X509GetExtensionData (
+             Cert,
+             CertSize,
+             mOidExtKeyUsage,
+             sizeof (mOidExtKeyUsage),
+             Usage,
+             UsageSize
+             );
   return Status;
 }
 
@@ -1458,7 +1496,9 @@ X509GetValidity  (
   //
   // Check input parameters.
   //
-  if ((Cert == NULL) || (FromSize == NULL) || (ToSize == NULL) || (CertSize == 0)) {
+  if ((Cert == NULL) || (FromSize == NULL) || (ToSize == NULL) || (CertSize ==
+                                                                   0))
+  {
     return FALSE;
   }
 
@@ -1749,7 +1789,12 @@ X509VerifyCertChain (
     //
     // Verify CurrentCert with preceding cert;
     //
-    VerifyFlag = X509VerifyCert (CurrentCert, CurrentCertLen, PrecedingCert, PrecedingCertLen);
+    VerifyFlag = X509VerifyCert (
+                   CurrentCert,
+                   CurrentCertLen,
+                   PrecedingCert,
+                   PrecedingCertLen
+                   );
     if (VerifyFlag == FALSE) {
       break;
     }
@@ -1898,7 +1943,13 @@ Asn1GetTag (
   //
   PtrOld = *Ptr;
 
-  ASN1_get_object ((CONST UINT8 **)Ptr, &ObjLength, &ObjTag, &ObjCls, (INT32)(End - (*Ptr)));
+  ASN1_get_object (
+    (CONST UINT8 **)Ptr,
+    &ObjLength,
+    &ObjTag,
+    &ObjCls,
+    (INT32)(End - (*Ptr))
+    );
   if ((ObjTag == (INT32)(Tag & CRYPTO_ASN1_TAG_VALUE_MASK)) &&
       (ObjCls == (INT32)(Tag & CRYPTO_ASN1_TAG_CLASS_MASK)))
   {

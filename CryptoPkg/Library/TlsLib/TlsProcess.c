@@ -88,7 +88,8 @@ TlsDoHandshake (
   Ret               = 1;
 
   if ((TlsConn == NULL) || \
-      (TlsConn->Ssl == NULL) || (TlsConn->InBio == NULL) || (TlsConn->OutBio == NULL) || \
+      (TlsConn->Ssl == NULL) || (TlsConn->InBio == NULL) || (TlsConn->OutBio ==
+                                                             NULL) || \
       (BufferOutSize == NULL) || \
       ((BufferIn == NULL) && (BufferInSize != 0)) || \
       ((BufferIn != NULL) && (BufferInSize == 0)) || \
@@ -129,7 +130,8 @@ TlsDoHandshake (
         "%a SSL_HANDSHAKE_ERROR State=0x%x SSL_ERROR_%a\n",
         __FUNCTION__,
         SSL_get_state (TlsConn->Ssl),
-        Ret == SSL_ERROR_SSL ? "SSL" : Ret == SSL_ERROR_SYSCALL ? "SYSCALL" : "ZERO_RETURN"
+        Ret == SSL_ERROR_SSL ? "SSL" : Ret == SSL_ERROR_SYSCALL ? "SYSCALL" :
+        "ZERO_RETURN"
         ));
       DEBUG_CODE_BEGIN ();
       while (TRUE) {
@@ -160,7 +162,11 @@ TlsDoHandshake (
   }
 
   if (PendingBufferSize > 0) {
-    *BufferOutSize = BIO_read (TlsConn->OutBio, BufferOut, (UINT32)PendingBufferSize);
+    *BufferOutSize = BIO_read (
+                       TlsConn->OutBio,
+                       BufferOut,
+                       (UINT32)PendingBufferSize
+                       );
   } else {
     *BufferOutSize = 0;
   }
@@ -214,7 +220,8 @@ TlsHandleAlert (
   Ret               = 0;
 
   if ((TlsConn == NULL) || \
-      (TlsConn->Ssl == NULL) || (TlsConn->InBio == NULL) || (TlsConn->OutBio == NULL) || \
+      (TlsConn->Ssl == NULL) || (TlsConn->InBio == NULL) || (TlsConn->OutBio ==
+                                                             NULL) || \
       (BufferOutSize == NULL) || \
       ((BufferIn == NULL) && (BufferInSize != 0)) || \
       ((BufferIn != NULL) && (BufferInSize == 0)) || \
@@ -249,7 +256,11 @@ TlsHandleAlert (
   }
 
   if (PendingBufferSize > 0) {
-    *BufferOutSize = BIO_read (TlsConn->OutBio, BufferOut, (UINT32)PendingBufferSize);
+    *BufferOutSize = BIO_read (
+                       TlsConn->OutBio,
+                       BufferOut,
+                       (UINT32)PendingBufferSize
+                       );
   } else {
     *BufferOutSize = 0;
   }
@@ -290,7 +301,8 @@ TlsCloseNotify (
   PendingBufferSize = 0;
 
   if ((TlsConn == NULL) || \
-      (TlsConn->Ssl == NULL) || (TlsConn->InBio == NULL) || (TlsConn->OutBio == NULL) || \
+      (TlsConn->Ssl == NULL) || (TlsConn->InBio == NULL) || (TlsConn->OutBio ==
+                                                             NULL) || \
       (BufferSize == NULL) || \
       ((Buffer == NULL) && (*BufferSize != 0)))
   {

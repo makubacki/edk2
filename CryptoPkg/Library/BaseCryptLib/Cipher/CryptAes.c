@@ -61,7 +61,10 @@ AesInit (
   //
   // Check input parameters.
   //
-  if ((AesContext == NULL) || (Key == NULL) || ((KeyLength != 128) && (KeyLength != 192) && (KeyLength != 256))) {
+  if ((AesContext == NULL) || (Key == NULL) || ((KeyLength != 128) &&
+                                                (KeyLength != 192) &&
+                                                (KeyLength != 256)))
+  {
     return FALSE;
   }
 
@@ -123,7 +126,9 @@ AesCbcEncrypt (
   //
   // Check input parameters.
   //
-  if ((AesContext == NULL) || (Input == NULL) || ((InputSize % AES_BLOCK_SIZE) != 0)) {
+  if ((AesContext == NULL) || (Input == NULL) || ((InputSize %
+                                                   AES_BLOCK_SIZE) != 0))
+  {
     return FALSE;
   }
 
@@ -137,7 +142,14 @@ AesCbcEncrypt (
   //
   // Perform AES data encryption with CBC mode
   //
-  AES_cbc_encrypt (Input, Output, (UINT32)InputSize, AesKey, IvecBuffer, AES_ENCRYPT);
+  AES_cbc_encrypt (
+    Input,
+    Output,
+    (UINT32)InputSize,
+    AesKey,
+    IvecBuffer,
+    AES_ENCRYPT
+    );
 
   return TRUE;
 }
@@ -185,7 +197,9 @@ AesCbcDecrypt (
   //
   // Check input parameters.
   //
-  if ((AesContext == NULL) || (Input == NULL) || ((InputSize % AES_BLOCK_SIZE) != 0)) {
+  if ((AesContext == NULL) || (Input == NULL) || ((InputSize %
+                                                   AES_BLOCK_SIZE) != 0))
+  {
     return FALSE;
   }
 
@@ -199,7 +213,14 @@ AesCbcDecrypt (
   //
   // Perform AES data decryption with CBC mode
   //
-  AES_cbc_encrypt (Input, Output, (UINT32)InputSize, AesKey + 1, IvecBuffer, AES_DECRYPT);
+  AES_cbc_encrypt (
+    Input,
+    Output,
+    (UINT32)InputSize,
+    AesKey + 1,
+    IvecBuffer,
+    AES_DECRYPT
+    );
 
   return TRUE;
 }

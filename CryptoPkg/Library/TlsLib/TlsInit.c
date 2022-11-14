@@ -229,7 +229,10 @@ TlsNew (
   //
   BIO_set_mem_eof_return (TlsConn->OutBio, -1);
 
-  ASSERT (TlsConn->Ssl != NULL && TlsConn->InBio != NULL && TlsConn->OutBio != NULL);
+  ASSERT (
+    TlsConn->Ssl != NULL && TlsConn->InBio != NULL && TlsConn->OutBio !=
+    NULL
+    );
 
   //
   // Connects the InBio and OutBio for the read and write operations.

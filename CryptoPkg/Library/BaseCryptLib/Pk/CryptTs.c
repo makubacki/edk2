@@ -80,9 +80,9 @@ DECLARE_ASN1_FUNCTIONS (
   )
 ASN1_SEQUENCE (TS_ACCURACY) =
 {
-  ASN1_OPT (TS_ACCURACY,     Seconds, ASN1_INTEGER),
-  ASN1_IMP_OPT (TS_ACCURACY, Millis,  ASN1_INTEGER, 0),
-  ASN1_IMP_OPT (TS_ACCURACY, Micros,  ASN1_INTEGER, 1)
+  ASN1_OPT (TS_ACCURACY,     Seconds,     ASN1_INTEGER),
+  ASN1_IMP_OPT (TS_ACCURACY, Millis,      ASN1_INTEGER,     0),
+  ASN1_IMP_OPT (TS_ACCURACY, Micros,      ASN1_INTEGER,     1)
 }
 
 ASN1_SEQUENCE_END (TS_ACCURACY)
@@ -132,16 +132,34 @@ DECLARE_ASN1_FUNCTIONS (
   )
 ASN1_SEQUENCE (TS_TST_INFO) =
 {
-  ASN1_SIMPLE (TS_TST_INFO,              Version,        ASN1_INTEGER),
-  ASN1_SIMPLE (TS_TST_INFO,              Policy,         ASN1_OBJECT),
-  ASN1_SIMPLE (TS_TST_INFO,              MessageImprint, TS_MESSAGE_IMPRINT),
-  ASN1_SIMPLE (TS_TST_INFO,              SerialNumber,   ASN1_INTEGER),
-  ASN1_SIMPLE (TS_TST_INFO,              GenTime,        ASN1_GENERALIZEDTIME),
-  ASN1_OPT (TS_TST_INFO,                 Accuracy,       TS_ACCURACY),
-  ASN1_OPT (TS_TST_INFO,                 Ordering,       ASN1_FBOOLEAN),
-  ASN1_OPT (TS_TST_INFO,                 Nonce,          ASN1_INTEGER),
-  ASN1_EXP_OPT (TS_TST_INFO,             Tsa,            GENERAL_NAME,         0),
-  ASN1_IMP_SEQUENCE_OF_OPT (TS_TST_INFO, Extensions,     X509_EXTENSION,       1)
+  ASN1_SIMPLE (TS_TST_INFO,
+    Version,                                           ASN1_INTEGER),
+  ASN1_SIMPLE (TS_TST_INFO,                          Policy,
+    ASN1_OBJECT),
+  ASN1_SIMPLE (TS_TST_INFO,
+    MessageImprint,                                    TS_MESSAGE_IMPRINT),
+  ASN1_SIMPLE (TS_TST_INFO,
+    SerialNumber,                                      ASN1_INTEGER),
+  ASN1_SIMPLE (TS_TST_INFO,
+    GenTime,                                           ASN1_GENERALIZEDTIME),
+  ASN1_OPT (TS_TST_INFO,
+    Accuracy,                                          TS_ACCURACY),
+  ASN1_OPT (TS_TST_INFO,
+    Ordering,                                          ASN1_FBOOLEAN),
+  ASN1_OPT (TS_TST_INFO,                             Nonce,
+    ASN1_INTEGER),
+  ASN1_EXP_OPT (
+    TS_TST_INFO,
+    Tsa,
+    GENERAL_NAME,
+    0
+    ),
+  ASN1_IMP_SEQUENCE_OF_OPT (
+    TS_TST_INFO,
+    Extensions,
+    X509_EXTENSION,
+    1
+    )
 }
 
 ASN1_SEQUENCE_END (TS_TST_INFO)
@@ -313,7 +331,11 @@ CheckTSTInfo (
   }
 
   if ((MdSize == (UINTN)ASN1_STRING_length (Imprint->HashedMessage)) &&
-      (CompareMem (HashedMsg, ASN1_STRING_get0_data (Imprint->HashedMessage), MdSize) != 0))
+      (CompareMem (
+         HashedMsg,
+         ASN1_STRING_get0_data (Imprint->HashedMessage),
+         MdSize
+         ) != 0))
   {
     goto _Exit;
   }
@@ -423,7 +445,11 @@ TimestampTokenVerify (
   // TimeStamp Token should contain one valid DER-encoded ASN.1 PKCS#7 structure.
   //
   TokenTemp = TSToken;
-  Pkcs7     = d2i_PKCS7 (NULL, (const unsigned char **)&TokenTemp, (int)TokenSize);
+  Pkcs7     = d2i_PKCS7 (
+                NULL,
+                (const unsigned char **)&TokenTemp,
+                (int)TokenSize
+                );
   if (Pkcs7 == NULL) {
     goto _Exit;
   }
@@ -590,8 +616,12 @@ ImageTimestampVerify (
   //
   // Register & Initialize necessary digest algorithms for PKCS#7 Handling.
   //
-  if ((EVP_add_digest (EVP_md5 ()) == 0) || (EVP_add_digest (EVP_sha1 ()) == 0) ||
-      (EVP_add_digest (EVP_sha256 ()) == 0) || ((EVP_add_digest_alias (SN_sha1WithRSAEncryption, SN_sha1WithRSA)) == 0))
+  if ((EVP_add_digest (EVP_md5 ()) == 0) || (EVP_add_digest (EVP_sha1 ()) ==
+                                             0) ||
+      (EVP_add_digest (EVP_sha256 ()) == 0) || ((EVP_add_digest_alias (
+                                                   SN_sha1WithRSAEncryption,
+                                                   SN_sha1WithRSA
+                                                   )) == 0))
   {
     return FALSE;
   }
@@ -662,7 +692,11 @@ ImageTimestampVerify (
     }
 
     if ((OBJ_length (XaObj) != sizeof (mSpcRFC3161OidValue)) ||
-        (CompareMem (OBJ_get0_data (XaObj), mSpcRFC3161OidValue, sizeof (mSpcRFC3161OidValue)) != 0))
+        (CompareMem (
+           OBJ_get0_data (XaObj),
+           mSpcRFC3161OidValue,
+           sizeof (mSpcRFC3161OidValue)
+           ) != 0))
     {
       continue;
     }

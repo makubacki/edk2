@@ -110,7 +110,8 @@ AuthenticodeVerify (
   //       PKCS#7 ContentInfo here.
   //
   SpcIndirectDataOid = OBJ_get0_data (Pkcs7->d.sign->contents->type);
-  if ((OBJ_length (Pkcs7->d.sign->contents->type) != sizeof (mSpcIndirectOidValue)) ||
+  if ((OBJ_length (Pkcs7->d.sign->contents->type) !=
+       sizeof (mSpcIndirectOidValue)) ||
       (CompareMem (
          SpcIndirectDataOid,
          mSpcIndirectOidValue,
@@ -123,7 +124,8 @@ AuthenticodeVerify (
     goto _Exit;
   }
 
-  SpcIndirectDataContent = (UINT8 *)(Pkcs7->d.sign->contents->d.other->value.asn1_string->data);
+  SpcIndirectDataContent =
+    (UINT8 *)(Pkcs7->d.sign->contents->d.other->value.asn1_string->data);
 
   //
   // Retrieve the SEQUENCE data size from ASN.1-encoded SpcIndirectDataContent.
@@ -153,7 +155,8 @@ AuthenticodeVerify (
     // Long Form of Length Encoding (Length > 255, Two Octet)
     //
     ContentSize = (UINTN)(*(UINT8 *)(SpcIndirectDataContent + 2));
-    ContentSize = (ContentSize << 8) + (UINTN)(*(UINT8 *)(SpcIndirectDataContent + 3));
+    ContentSize = (ContentSize << 8) +
+                  (UINTN)(*(UINT8 *)(SpcIndirectDataContent + 3));
     //
     // Skip the SEQUENCE Tag;
     //
@@ -167,7 +170,12 @@ AuthenticodeVerify (
   // defined in Authenticode
   // NOTE: Need to double-check HashLength here!
   //
-  if (CompareMem (SpcIndirectDataContent + ContentSize - HashSize, ImageHash, HashSize) != 0) {
+  if (CompareMem (
+        SpcIndirectDataContent + ContentSize - HashSize,
+        ImageHash,
+        HashSize
+        ) != 0)
+  {
     //
     // Un-matched PE/COFF Hash Value
     //
@@ -177,7 +185,14 @@ AuthenticodeVerify (
   //
   // Verifies the PKCS#7 Signed Data in PE/COFF Authenticode Signature
   //
-  Status = (BOOLEAN)Pkcs7Verify (OrigAuthData, DataSize, TrustedCert, CertSize, SpcIndirectDataContent, ContentSize);
+  Status = (BOOLEAN)Pkcs7Verify (
+                      OrigAuthData,
+                      DataSize,
+                      TrustedCert,
+                      CertSize,
+                      SpcIndirectDataContent,
+                      ContentSize
+                      );
 
 _Exit:
   //

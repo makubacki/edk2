@@ -94,7 +94,12 @@ DhGenerateParameter (
     return FALSE;
   }
 
-  RetVal = (BOOLEAN)DH_generate_parameters_ex (DhContext, (UINT32)PrimeLength, (UINT32)Generator, NULL);
+  RetVal = (BOOLEAN)DH_generate_parameters_ex (
+                      DhContext,
+                      (UINT32)PrimeLength,
+                      (UINT32)Generator,
+                      NULL
+                      );
   if (!RetVal) {
     return FALSE;
   }
@@ -276,7 +281,9 @@ DhComputeKey (
   //
   // Check input parameters.
   //
-  if ((DhContext == NULL) || (PeerPublicKey == NULL) || (KeySize == NULL) || (Key == NULL)) {
+  if ((DhContext == NULL) || (PeerPublicKey == NULL) || (KeySize == NULL) ||
+      (Key == NULL))
+  {
     return FALSE;
   }
 

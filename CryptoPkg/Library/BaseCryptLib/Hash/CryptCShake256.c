@@ -50,7 +50,10 @@ CShake256Init (
   //
   // Check input parameters.
   //
-  if ((CShake256Context == NULL) || (OutputLen == 0) || ((NameLen != 0) && (Name == NULL)) || ((CustomizationLen != 0) && (Customization == NULL))) {
+  if ((CShake256Context == NULL) || (OutputLen == 0) || ((NameLen != 0) &&
+                                                         (Name == NULL)) ||
+      ((CustomizationLen != 0) && (Customization == NULL)))
+  {
     return FALSE;
   }
 
@@ -65,7 +68,8 @@ CShake256Init (
     Status = (BOOLEAN)KeccakInit (
                         (Keccak1600_Ctx *)CShake256Context,
                         '\x1f',
-                        (KECCAK1600_WIDTH - CSHAKE256_SECURITY_STRENGTH * 2) / 8,
+                        (KECCAK1600_WIDTH - CSHAKE256_SECURITY_STRENGTH * 2) /
+                        8,
                         OutputLen
                         );
 
@@ -74,7 +78,8 @@ CShake256Init (
     Status = (BOOLEAN)KeccakInit (
                         (Keccak1600_Ctx *)CShake256Context,
                         '\x04',
-                        (KECCAK1600_WIDTH - CSHAKE256_SECURITY_STRENGTH * 2) / 8,
+                        (KECCAK1600_WIDTH - CSHAKE256_SECURITY_STRENGTH * 2) /
+                        8,
                         OutputLen
                         );
     if (!Status) {
@@ -86,7 +91,11 @@ CShake256Init (
     // Absorb Absorb bytepad(.., rate).
     //
     EncLen = LeftEncode (EncBuf, CSHAKE256_RATE_IN_BYTES);
-    Status = (BOOLEAN)Sha3Update ((Keccak1600_Ctx *)CShake256Context, EncBuf, EncLen);
+    Status = (BOOLEAN)Sha3Update (
+                        (Keccak1600_Ctx *)CShake256Context,
+                        EncBuf,
+                        EncLen
+                        );
     if (!Status) {
       return FALSE;
     }
@@ -97,13 +106,21 @@ CShake256Init (
     // Absorb encode_string(N).
     //
     EncLen = LeftEncode (EncBuf, NameLen * 8);
-    Status = (BOOLEAN)Sha3Update ((Keccak1600_Ctx *)CShake256Context, EncBuf, EncLen);
+    Status = (BOOLEAN)Sha3Update (
+                        (Keccak1600_Ctx *)CShake256Context,
+                        EncBuf,
+                        EncLen
+                        );
     if (!Status) {
       return FALSE;
     }
 
     AbsorbLen += EncLen;
-    Status     = (BOOLEAN)Sha3Update ((Keccak1600_Ctx *)CShake256Context, Name, NameLen);
+    Status     = (BOOLEAN)Sha3Update (
+                            (Keccak1600_Ctx *)CShake256Context,
+                            Name,
+                            NameLen
+                            );
     if (!Status) {
       return FALSE;
     }
@@ -114,13 +131,21 @@ CShake256Init (
     // Absorb encode_string(S).
     //
     EncLen = LeftEncode (EncBuf, CustomizationLen * 8);
-    Status = (BOOLEAN)Sha3Update ((Keccak1600_Ctx *)CShake256Context, EncBuf, EncLen);
+    Status = (BOOLEAN)Sha3Update (
+                        (Keccak1600_Ctx *)CShake256Context,
+                        EncBuf,
+                        EncLen
+                        );
     if (!Status) {
       return FALSE;
     }
 
     AbsorbLen += EncLen;
-    Status     = (BOOLEAN)Sha3Update ((Keccak1600_Ctx *)CShake256Context, Customization, CustomizationLen);
+    Status     = (BOOLEAN)Sha3Update (
+                            (Keccak1600_Ctx *)CShake256Context,
+                            Customization,
+                            CustomizationLen
+                            );
     if (!Status) {
       return FALSE;
     }
@@ -131,7 +156,11 @@ CShake256Init (
     // Absorb zero padding up to rate.
     //
     PadLen = CSHAKE256_RATE_IN_BYTES - AbsorbLen % CSHAKE256_RATE_IN_BYTES;
-    Status = (BOOLEAN)Sha3Update ((Keccak1600_Ctx *)CShake256Context, mZeroPadding, PadLen);
+    Status = (BOOLEAN)Sha3Update (
+                        (Keccak1600_Ctx *)CShake256Context,
+                        mZeroPadding,
+                        PadLen
+                        );
     if (!Status) {
       return FALSE;
     }
@@ -179,7 +208,11 @@ CShake256Update (
     return FALSE;
   }
 
-  return (BOOLEAN)(Sha3Update ((Keccak1600_Ctx *)CShake256Context, Data, DataSize));
+  return (BOOLEAN)(Sha3Update (
+                     (Keccak1600_Ctx *)CShake256Context,
+                     Data,
+                     DataSize
+                     ));
 }
 
 /**
@@ -268,7 +301,14 @@ CShake256HashAll (
     return FALSE;
   }
 
-  Status = CShake256Init (&Ctx, OutputLen, Name, NameLen, Customization, CustomizationLen);
+  Status = CShake256Init (
+             &Ctx,
+             OutputLen,
+             Name,
+             NameLen,
+             Customization,
+             CustomizationLen
+             );
   if (!Status) {
     return FALSE;
   }

@@ -42,7 +42,10 @@ LeftEncode (
   UINT32  Index;
   UINTN   ValueCopy;
 
-  for ( ValueCopy = Value, BlockNum = 0; ValueCopy && (BlockNum < sizeof (UINTN)); ++BlockNum, ValueCopy >>= 8 ) {
+  for ( ValueCopy = Value, BlockNum = 0; ValueCopy && (BlockNum <
+                                                       sizeof (UINTN));
+        ++BlockNum, ValueCopy >>= 8 )
+  {
     //
     // Empty
     //
@@ -86,7 +89,10 @@ RightEncode (
   UINT32  Index;
   UINTN   ValueCopy;
 
-  for (ValueCopy = Value, BlockNum = 0; ValueCopy && (BlockNum < sizeof (UINTN)); ++BlockNum, ValueCopy >>= 8) {
+  for (ValueCopy = Value, BlockNum = 0; ValueCopy && (BlockNum <
+                                                      sizeof (UINTN));
+       ++BlockNum, ValueCopy >>= 8)
+  {
     //
     // Empty
     //

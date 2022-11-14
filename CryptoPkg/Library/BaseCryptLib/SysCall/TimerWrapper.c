@@ -87,15 +87,18 @@ time (
   // UTime should now be set to 00:00:00 on Jan 1 of the current year.
   //
   for (Year = 1970, CalTime = 0; Year != Time.Year; Year++) {
-    CalTime = CalTime + (time_t)(CumulativeDays[IsLeap (Year)][13] * SECSPERDAY);
+    CalTime = CalTime + (time_t)(CumulativeDays[IsLeap (Year)][13] *
+                                 SECSPERDAY);
   }
 
   //
   // Add in number of seconds for current Month, Day, Hour, Minute, Seconds, and TimeZone adjustment
   //
   CalTime = CalTime +
-            (time_t)((Time.TimeZone != EFI_UNSPECIFIED_TIMEZONE) ? (Time.TimeZone * 60) : 0) +
-            (time_t)(CumulativeDays[IsLeap (Time.Year)][Time.Month] * SECSPERDAY) +
+            (time_t)((Time.TimeZone != EFI_UNSPECIFIED_TIMEZONE) ?
+                     (Time.TimeZone * 60) : 0) +
+            (time_t)(CumulativeDays[IsLeap (Time.Year)][Time.Month] *
+                     SECSPERDAY) +
             (time_t)(((Time.Day > 0) ? Time.Day - 1 : 0) * SECSPERDAY) +
             (time_t)(Time.Hour * SECSPERHOUR) +
             (time_t)(Time.Minute * 60) +
@@ -158,7 +161,9 @@ gmtime (
 
   for (MonthNo = 12; MonthNo > 1; MonthNo--) {
     if (DayNo >= CumulativeDays[IsLeap (Year)][MonthNo]) {
-      DayNo = (UINT16)(DayNo - (UINT16)(CumulativeDays[IsLeap (Year)][MonthNo]));
+      DayNo = (UINT16)(DayNo - (UINT16)(CumulativeDays[IsLeap (
+                                                         Year
+                                                         )][MonthNo]));
       break;
     }
   }

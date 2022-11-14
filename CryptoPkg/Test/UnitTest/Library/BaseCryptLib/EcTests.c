@@ -9,7 +9,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include "TestBaseCryptLib.h"
 
 #define EC_CURVE_NUM_SUPPORTED  3
-UINTN  EcCurveList[EC_CURVE_NUM_SUPPORTED]   = { CRYPTO_NID_SECP256R1, CRYPTO_NID_SECP384R1, CRYPTO_NID_SECP521R1 };
+UINTN  EcCurveList[EC_CURVE_NUM_SUPPORTED] = {
+  CRYPTO_NID_SECP256R1, CRYPTO_NID_SECP384R1, CRYPTO_NID_SECP521R1
+};
 UINTN  EcKeyHalfSize[EC_CURVE_NUM_SUPPORTED] = { 32, 48, 66 };
 
 struct Generator {
@@ -219,9 +221,18 @@ TestVerifyEcBasic (
     Point1   = EcPointInit (Group);
     Point2   = EcPointInit (Group);
     PointRes = EcPointInit (Group);
-    BnX      = BigNumFromBin (EcCurveGenerator[CurveCount].X, EcKeyHalfSize[CurveCount]);
-    BnY      = BigNumFromBin (EcCurveGenerator[CurveCount].Y, EcKeyHalfSize[CurveCount]);
-    if ((Point1 == NULL) || (Point2 == NULL) || (PointRes == NULL) || (BnX == NULL) || (BnY == NULL)) {
+    BnX      = BigNumFromBin (
+                 EcCurveGenerator[CurveCount].X,
+                 EcKeyHalfSize[CurveCount]
+                 );
+    BnY = BigNumFromBin (
+            EcCurveGenerator[CurveCount].Y,
+            EcKeyHalfSize[CurveCount]
+            );
+    if ((Point1 == NULL) || (Point2 == NULL) || (PointRes == NULL) || (BnX ==
+                                                                       NULL) ||
+        (BnY == NULL))
+    {
       return UNIT_TEST_ERROR_TEST_FAILED;
     }
 
@@ -340,11 +351,25 @@ TestVerifyEcDh (
     UT_ASSERT_TRUE (Status);
     UT_ASSERT_EQUAL (Public2Length, EcKeyHalfSize[CurveCount] * 2);
 
-    Status = EcDhComputeKey (Ec1, Public2, Public2Length, NULL, Key1, &Key1Length);
+    Status = EcDhComputeKey (
+               Ec1,
+               Public2,
+               Public2Length,
+               NULL,
+               Key1,
+               &Key1Length
+               );
     UT_ASSERT_TRUE (Status);
     UT_ASSERT_EQUAL (Key1Length, EcKeyHalfSize[CurveCount]);
 
-    Status = EcDhComputeKey (Ec2, Public1, Public1Length, NULL, Key2, &Key2Length);
+    Status = EcDhComputeKey (
+               Ec2,
+               Public1,
+               Public1Length,
+               NULL,
+               Key2,
+               &Key2Length
+               );
     UT_ASSERT_TRUE (Status);
     UT_ASSERT_EQUAL (Key2Length, EcKeyHalfSize[CurveCount]);
 
@@ -438,9 +463,15 @@ TEST_DESC  mEcTest[] = {
   //
   // -----Description-----------------Class------------------Function----Pre----Post----Context
   //
-  { "TestVerifyEcBasic()", "CryptoPkg.BaseCryptLib.Ec", TestVerifyEcBasic, TestVerifyEcPreReq, TestVerifyEcCleanUp, NULL },
-  { "TestVerifyEcDh()",    "CryptoPkg.BaseCryptLib.Ec", TestVerifyEcDh,    TestVerifyEcPreReq, TestVerifyEcCleanUp, NULL },
-  { "TestVerifyEcKey()",   "CryptoPkg.BaseCryptLib.Ec", TestVerifyEcKey,   NULL,               NULL,                NULL },
+  { "TestVerifyEcBasic()", "CryptoPkg.BaseCryptLib.Ec",    TestVerifyEcBasic,
+    TestVerifyEcPreReq,    TestVerifyEcCleanUp,
+    NULL                               },
+  { "TestVerifyEcDh()",    "CryptoPkg.BaseCryptLib.Ec",    TestVerifyEcDh,
+    TestVerifyEcPreReq,  TestVerifyEcCleanUp,
+    NULL                                                 },
+  { "TestVerifyEcKey()",   "CryptoPkg.BaseCryptLib.Ec",    TestVerifyEcKey,
+    NULL, NULL,
+    NULL                                                                   },
 };
 
 UINTN  mEcTestNum = ARRAY_SIZE (mEcTest);

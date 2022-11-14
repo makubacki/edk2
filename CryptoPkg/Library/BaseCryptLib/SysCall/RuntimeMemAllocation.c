@@ -24,8 +24,10 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define RT_PAGE_MASK   0x1FF
 #define RT_PAGE_SHIFT  9
 
-#define RT_SIZE_TO_PAGES(a)  (((a) >> RT_PAGE_SHIFT) + (((a) & RT_PAGE_MASK) ? 1 : 0))
-#define RT_PAGES_TO_SIZE(a)  ((a) << RT_PAGE_SHIFT)
+#define RT_SIZE_TO_PAGES( \
+                        a)  \
+                               (((a) >> RT_PAGE_SHIFT) + (((a) & RT_PAGE_MASK) ? 1 : 0))
+#define RT_PAGES_TO_SIZE(a)    ((a) << RT_PAGE_SHIFT)
 
 //
 // Page Flag Definitions
@@ -97,9 +99,11 @@ InitializeScratchMemory (
   // Initialize Internal Page Table for Memory Management
   //
   SetMem (mRTPageTable, ScratchBufferSize, 0xFF);
-  MemorySize = ScratchBufferSize - sizeof (RT_MEMORY_PAGE_TABLE) + sizeof (RT_MEMORY_PAGE_ENTRY);
+  MemorySize = ScratchBufferSize - sizeof (RT_MEMORY_PAGE_TABLE) +
+               sizeof (RT_MEMORY_PAGE_ENTRY);
 
-  mRTPageTable->PageCount           = MemorySize / (RT_PAGE_SIZE + sizeof (RT_MEMORY_PAGE_ENTRY));
+  mRTPageTable->PageCount           = MemorySize / (RT_PAGE_SIZE +
+                                                    sizeof (RT_MEMORY_PAGE_ENTRY));
   mRTPageTable->LastEmptyPageOffset = 0x0;
 
   for (Index = 0; Index < mRTPageTable->PageCount; Index++) {
@@ -108,7 +112,8 @@ InitializeScratchMemory (
   }
 
   mRTPageTable->DataAreaBase = ScratchBuffer + sizeof (RT_MEMORY_PAGE_TABLE) +
-                               (mRTPageTable->PageCount - 1) * sizeof (RT_MEMORY_PAGE_ENTRY);
+                               (mRTPageTable->PageCount - 1) *
+                               sizeof (RT_MEMORY_PAGE_ENTRY);
 
   return EFI_SUCCESS;
 }
@@ -143,12 +148,16 @@ LookupFreeMemRegion (
   //
   // Look up the free memory region with in current memory map table.
   //
-  for (Index = StartPageIndex; Index <= (mRTPageTable->PageCount - ReqPages); ) {
+  for (Index = StartPageIndex; Index <= (mRTPageTable->PageCount - ReqPages);
+       )
+  {
     //
     // Check consecutive ReqPages pages.
     //
     for (SubIndex = 0; SubIndex < ReqPages; SubIndex++) {
-      if ((mRTPageTable->Pages[SubIndex + Index].PageFlag & RT_PAGE_USED) != 0) {
+      if ((mRTPageTable->Pages[SubIndex + Index].PageFlag & RT_PAGE_USED) !=
+          0)
+      {
         break;
       }
     }
@@ -163,7 +172,9 @@ LookupFreeMemRegion (
     //
     // Failed! Skip current free memory pages and adjacent Used pages
     //
-    while ((mRTPageTable->Pages[SubIndex + Index].PageFlag & RT_PAGE_USED) != 0) {
+    while ((mRTPageTable->Pages[SubIndex + Index].PageFlag & RT_PAGE_USED) !=
+           0)
+    {
       SubIndex++;
     }
 
@@ -186,7 +197,9 @@ LookupFreeMemRegion (
     // Check Consecutive ReqPages Pages.
     //
     for (SubIndex = 0; SubIndex < ReqPages; SubIndex++) {
-      if ((mRTPageTable->Pages[SubIndex + Index].PageFlag & RT_PAGE_USED) != 0) {
+      if ((mRTPageTable->Pages[SubIndex + Index].PageFlag & RT_PAGE_USED) !=
+          0)
+      {
         break;
       }
     }
@@ -202,7 +215,8 @@ LookupFreeMemRegion (
     // Failed! Skip current adjacent Used pages
     //
     while ((SubIndex < (StartPageIndex - ReqPages)) &&
-           ((mRTPageTable->Pages[SubIndex + Index].PageFlag & RT_PAGE_USED) != 0))
+           ((mRTPageTable->Pages[SubIndex + Index].PageFlag & RT_PAGE_USED) !=
+            0))
     {
       SubIndex++;
     }
@@ -288,7 +302,11 @@ RuntimeFreeMem (
   UINTN  StartPageIndex;
 
   StartOffset    = (UINTN)Buffer - (UINTN)mRTPageTable->DataAreaBase;
-  StartPageIndex = RT_SIZE_TO_PAGES (mRTPageTable->Pages[RT_SIZE_TO_PAGES (StartOffset)].StartPageOffset);
+  StartPageIndex = RT_SIZE_TO_PAGES (
+                     mRTPageTable->Pages[RT_SIZE_TO_PAGES (
+                                           StartOffset
+                                           )].StartPageOffset
+                     );
 
   while (StartPageIndex < mRTPageTable->PageCount) {
     if (((mRTPageTable->Pages[StartPageIndex].PageFlag & RT_PAGE_USED) != 0) &&
@@ -414,8 +432,12 @@ realloc (
   // Get Original Size of ptr
   //
   StartOffset    = (UINTN)ptr - (UINTN)mRTPageTable->DataAreaBase;
-  StartPageIndex = RT_SIZE_TO_PAGES (mRTPageTable->Pages[RT_SIZE_TO_PAGES (StartOffset)].StartPageOffset);
-  PageCount      = 0;
+  StartPageIndex = RT_SIZE_TO_PAGES (
+                     mRTPageTable->Pages[RT_SIZE_TO_PAGES (
+                                           StartOffset
+                                           )].StartPageOffset
+                     );
+  PageCount = 0;
   while (StartPageIndex < mRTPageTable->PageCount) {
     if (((mRTPageTable->Pages[StartPageIndex].PageFlag & RT_PAGE_USED) != 0) &&
         (mRTPageTable->Pages[StartPageIndex].StartPageOffset == StartOffset))

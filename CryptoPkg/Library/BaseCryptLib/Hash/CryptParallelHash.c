@@ -149,7 +149,8 @@ ParallelHash256HashAll (
   //
   // Calculate block number n.
   //
-  mBlockNum = InputByteLen % mBlockSize == 0 ? InputByteLen / mBlockSize : InputByteLen / mBlockSize + 1;
+  mBlockNum = InputByteLen % mBlockSize == 0 ? InputByteLen / mBlockSize :
+              InputByteLen / mBlockSize + 1;
 
   //
   // Set hash result size of each block in bytes.
@@ -166,11 +167,14 @@ ParallelHash256HashAll (
   //
   // Allocate buffer for combined input (newX), Block completed flag and SpinLock.
   //
-  CombinedInputSize = EncSizeB + EncSizeN + EncSizeL + mBlockNum * mBlockResultSize;
+  CombinedInputSize = EncSizeB + EncSizeN + EncSizeL + mBlockNum *
+                      mBlockResultSize;
   CombinedInput     = AllocateZeroPool (CombinedInputSize);
   mBlockIsCompleted = AllocateZeroPool (mBlockNum * sizeof (BOOLEAN));
   mSpinLockList     = AllocatePool (mBlockNum * sizeof (SPIN_LOCK));
-  if ((CombinedInput == NULL) || (mBlockIsCompleted == NULL) || (mSpinLockList == NULL)) {
+  if ((CombinedInput == NULL) || (mBlockIsCompleted == NULL) ||
+      (mSpinLockList == NULL))
+  {
     ReturnValue = FALSE;
     goto Exit;
   }
@@ -185,7 +189,8 @@ ParallelHash256HashAll (
   //
   mBlockHashResult = CombinedInput + EncSizeB;
   mInput           = (UINT8 *)Input;
-  mLastBlockSize   = InputByteLen % mBlockSize == 0 ? mBlockSize : InputByteLen % mBlockSize;
+  mLastBlockSize   = InputByteLen % mBlockSize == 0 ? mBlockSize :
+                     InputByteLen % mBlockSize;
 
   //
   // Initialize SpinLock for each result block.
@@ -212,7 +217,8 @@ ParallelHash256HashAll (
           AllCompleted = FALSE;
           ReturnValue  = CShake256HashAll (
                            mInput + Index * mBlockSize,
-                           (Index == (mBlockNum - 1)) ? mLastBlockSize : mBlockSize,
+                           (Index == (mBlockNum - 1)) ? mLastBlockSize :
+                           mBlockSize,
                            mBlockResultSize,
                            NULL,
                            0,

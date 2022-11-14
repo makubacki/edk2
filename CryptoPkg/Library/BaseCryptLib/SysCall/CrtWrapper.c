@@ -62,13 +62,30 @@ QuickSortWorker (
     //
     // If the element is less than the pivot
     //
-    if (CompareFunction ((VOID *)((UINT8 *)BufferToSort + ((LoopCount) * ElementSize)), Pivot) <= 0) {
+    if (CompareFunction (
+          (VOID *)((UINT8 *)BufferToSort + ((LoopCount) *
+                                            ElementSize)),
+          Pivot
+          ) <= 0)
+    {
       //
       // Swap
       //
-      CopyMem (Buffer, (UINT8 *)BufferToSort + (NextSwapLocation * ElementSize), ElementSize);
-      CopyMem ((UINT8 *)BufferToSort + (NextSwapLocation * ElementSize), (UINT8 *)BufferToSort + ((LoopCount) * ElementSize), ElementSize);
-      CopyMem ((UINT8 *)BufferToSort + ((LoopCount) * ElementSize), Buffer, ElementSize);
+      CopyMem (
+        Buffer,
+        (UINT8 *)BufferToSort + (NextSwapLocation * ElementSize),
+        ElementSize
+        );
+      CopyMem (
+        (UINT8 *)BufferToSort + (NextSwapLocation * ElementSize),
+        (UINT8 *)BufferToSort + ((LoopCount) * ElementSize),
+        ElementSize
+        );
+      CopyMem (
+        (UINT8 *)BufferToSort + ((LoopCount) * ElementSize),
+        Buffer,
+        ElementSize
+        );
 
       //
       // Increment NextSwapLocation
@@ -81,8 +98,16 @@ QuickSortWorker (
   // Swap pivot to its final position (NextSwapLocation)
   //
   CopyMem (Buffer, Pivot, ElementSize);
-  CopyMem (Pivot, (UINT8 *)BufferToSort + (NextSwapLocation * ElementSize), ElementSize);
-  CopyMem ((UINT8 *)BufferToSort + (NextSwapLocation * ElementSize), Buffer, ElementSize);
+  CopyMem (
+    Pivot,
+    (UINT8 *)BufferToSort + (NextSwapLocation * ElementSize),
+    ElementSize
+    );
+  CopyMem (
+    (UINT8 *)BufferToSort + (NextSwapLocation * ElementSize),
+    Buffer,
+    ElementSize
+    );
 
   //
   // Now recurse on 2 partial lists.  Neither of these will have the 'pivot' element.
@@ -417,7 +442,13 @@ qsort (
   //
   // Re-use PerformQuickSort() function Implementation in EDKII BaseSortLib.
   //
-  QuickSortWorker (base, (UINTN)num, (UINTN)width, (SORT_COMPARE)compare, Buffer);
+  QuickSortWorker (
+    base,
+    (UINTN)num,
+    (UINTN)width,
+    (SORT_COMPARE)compare,
+    Buffer
+    );
 
   free (Buffer);
   return;

@@ -40,7 +40,11 @@ GetCryptoServices (
                 (VOID **)&CryptoPpi
                 );
   if (EFI_ERROR (Status) || (CryptoPpi == NULL)) {
-    DEBUG ((DEBUG_ERROR, "[PeiCryptLib] Failed to locate Crypto PPI. Status = %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "[PeiCryptLib] Failed to locate Crypto PPI. Status = %r\n",
+      Status
+      ));
     ASSERT_EFI_ERROR (Status);
     ASSERT (CryptoPpi != NULL);
     return NULL;
@@ -48,7 +52,11 @@ GetCryptoServices (
 
   Version = CryptoPpi->GetVersion ();
   if (Version < EDKII_CRYPTO_VERSION) {
-    DEBUG ((DEBUG_ERROR, "[PeiCryptLib] Crypto PPI unsupported version %d\n", Version));
+    DEBUG ((
+      DEBUG_ERROR,
+      "[PeiCryptLib] Crypto PPI unsupported version %d\n",
+      Version
+      ));
     ASSERT (Version >= EDKII_CRYPTO_VERSION);
     return NULL;
   }

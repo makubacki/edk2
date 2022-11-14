@@ -22,7 +22,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <openssl/x509v3.h>
 #include <openssl/pkcs7.h>
 
-GLOBAL_REMOVE_IF_UNREFERENCED const UINT8  mOidValue[9] = { 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x07, 0x02 };
+GLOBAL_REMOVE_IF_UNREFERENCED const UINT8  mOidValue[9] = {
+  0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x07, 0x02
+};
 
 /**
   Check input P7Data is a wrapped ContentInfo structure or not. If not construct
@@ -282,7 +284,8 @@ Pkcs7GetSigners (
     return FALSE;
   }
 
-  Status = WrapPkcs7Data (P7Data, P7Length, &Wrapped, &SignedData, &SignedDataSize);
+  Status = WrapPkcs7Data (P7Data, P7Length, &Wrapped, &SignedData,
+             &SignedDataSize);
   if (!Status) {
     return Status;
   }
@@ -528,7 +531,8 @@ Pkcs7GetCertificatesList (
   //
   // Decodes PKCS#7 SignedData
   //
-  Pkcs7 = d2i_PKCS7 (NULL, (const unsigned char **)&NewP7Data, (int)NewP7Length);
+  Pkcs7 = d2i_PKCS7 (NULL, (const unsigned char **)&NewP7Data,
+            (int)NewP7Length);
   if ((Pkcs7 == NULL) || (!PKCS7_type_is_signed (Pkcs7))) {
     goto _Error;
   }
@@ -833,7 +837,8 @@ Pkcs7Verify (
     return FALSE;
   }
 
-  Status = WrapPkcs7Data (P7Data, P7Length, &Wrapped, &SignedData, &SignedDataSize);
+  Status = WrapPkcs7Data (P7Data, P7Length, &Wrapped, &SignedData,
+             &SignedDataSize);
   if (!Status) {
     return Status;
   }
@@ -909,7 +914,8 @@ Pkcs7Verify (
   //
   // Verifies the PKCS#7 signedData structure
   //
-  Status = (BOOLEAN)PKCS7_verify (Pkcs7, NULL, CertStore, DataBio, NULL, PKCS7_BINARY);
+  Status = (BOOLEAN)PKCS7_verify (Pkcs7, NULL, CertStore, DataBio, NULL,
+                      PKCS7_BINARY);
 
 _Exit:
   //

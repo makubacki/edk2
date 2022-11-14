@@ -238,7 +238,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED CONST UINT8  MsgHash[] = {
 //
 // Payload for PKCS#7 Signing & Verification Validation.
 //
-GLOBAL_REMOVE_IF_UNREFERENCED CONST CHAR8  *Payload = "Payload Data for PKCS#7 Signing";
+GLOBAL_REMOVE_IF_UNREFERENCED CONST CHAR8  *Payload =
+  "Payload Data for PKCS#7 Signing";
 
 UNIT_TEST_STATUS
 EFIAPI
@@ -262,7 +263,12 @@ TestVerifyRsaCertPkcs1SignVerify (
   //
   // Retrieve RSA private key from encrypted PEM data.
   //
-  Status = RsaGetPrivateKeyFromPem (TestKeyPem, sizeof (TestKeyPem), PemPass, &RsaPrivKey);
+  Status = RsaGetPrivateKeyFromPem (
+             TestKeyPem,
+             sizeof (TestKeyPem),
+             PemPass,
+             &RsaPrivKey
+             );
   UT_ASSERT_TRUE (Status);
 
   //
@@ -276,27 +282,55 @@ TestVerifyRsaCertPkcs1SignVerify (
   // Generate RSA PKCS#1 Signature.
   //
   SigSize = 0;
-  Status  = RsaPkcs1Sign (RsaPrivKey, MsgHash, SHA1_DIGEST_SIZE, NULL, &SigSize);
+  Status  = RsaPkcs1Sign (
+              RsaPrivKey,
+              MsgHash,
+              SHA1_DIGEST_SIZE,
+              NULL,
+              &SigSize
+              );
   UT_ASSERT_FALSE (Status);
   UT_ASSERT_NOT_EQUAL (SigSize, 0);
 
   Signature = AllocatePool (SigSize);
-  Status    = RsaPkcs1Sign (RsaPrivKey, MsgHash, SHA1_DIGEST_SIZE, Signature, &SigSize);
+  Status    = RsaPkcs1Sign (
+                RsaPrivKey,
+                MsgHash,
+                SHA1_DIGEST_SIZE,
+                Signature,
+                &SigSize
+                );
   UT_ASSERT_TRUE (Status);
 
   //
   // Verify RSA PKCS#1-encoded Signature.
   //
-  Status = RsaPkcs1Verify (RsaPubKey, MsgHash, SHA1_DIGEST_SIZE, Signature, SigSize);
+  Status = RsaPkcs1Verify (
+             RsaPubKey,
+             MsgHash,
+             SHA1_DIGEST_SIZE,
+             Signature,
+             SigSize
+             );
   UT_ASSERT_TRUE (Status);
 
   //
   // X509 Certificate Subject Retrieving.
   //
   SubjectSize = 0;
-  Status      = X509GetSubjectName (TestCert, sizeof (TestCert), NULL, &SubjectSize);
-  Subject     = (UINT8 *)AllocatePool (SubjectSize);
-  Status      = X509GetSubjectName (TestCert, sizeof (TestCert), Subject, &SubjectSize);
+  Status      = X509GetSubjectName (
+                  TestCert,
+                  sizeof (TestCert),
+                  NULL,
+                  &SubjectSize
+                  );
+  Subject = (UINT8 *)AllocatePool (SubjectSize);
+  Status  = X509GetSubjectName (
+              TestCert,
+              sizeof (TestCert),
+              Subject,
+              &SubjectSize
+              );
   UT_ASSERT_TRUE (Status);
 
   //
@@ -304,7 +338,12 @@ TestVerifyRsaCertPkcs1SignVerify (
   //
   CommonNameSize = 64;
   ZeroMem (CommonName, CommonNameSize);
-  ReturnStatus = X509GetCommonName (TestCert, sizeof (TestCert), CommonName, &CommonNameSize);
+  ReturnStatus = X509GetCommonName (
+                   TestCert,
+                   sizeof (TestCert),
+                   CommonName,
+                   &CommonNameSize
+                   );
   UT_ASSERT_NOT_EFI_ERROR (ReturnStatus);
 
   UT_ASSERT_EQUAL (CommonNameSize, 5);
@@ -312,7 +351,12 @@ TestVerifyRsaCertPkcs1SignVerify (
 
   OrgNameSize = 64;
   ZeroMem (OrgName, OrgNameSize);
-  ReturnStatus = X509GetOrganizationName (TestCert, sizeof (TestCert), OrgName, &OrgNameSize);
+  ReturnStatus = X509GetOrganizationName (
+                   TestCert,
+                   sizeof (TestCert),
+                   OrgName,
+                   &OrgNameSize
+                   );
   UT_ASSERT_NOT_EFI_ERROR (ReturnStatus);
 
   UT_ASSERT_EQUAL (OrgNameSize, 10);
@@ -321,7 +365,12 @@ TestVerifyRsaCertPkcs1SignVerify (
   //
   // X509 Certificate Verification.
   //
-  Status = X509VerifyCert (TestCert, sizeof (TestCert), TestCACert, sizeof (TestCACert));
+  Status = X509VerifyCert (
+             TestCert,
+             sizeof (TestCert),
+             TestCACert,
+             sizeof (TestCACert)
+             );
   UT_ASSERT_TRUE (Status);
 
   //
@@ -352,7 +401,11 @@ TestVerifyPkcs7SignVerify (
   //
   // Construct Signer Certificate from RAW data.
   //
-  Status = X509ConstructCertificate (TestCert, sizeof (TestCert), (UINT8 **)&SignCert);
+  Status = X509ConstructCertificate (
+             TestCert,
+             sizeof (TestCert),
+             (UINT8 **)&SignCert
+             );
   UT_ASSERT_TRUE (Status);
   UT_ASSERT_NOT_NULL (SignCert);
 
@@ -399,7 +452,8 @@ TEST_DESC  mRsaCertTest[] = {
   //
   // -----Description--------------------------------------Class----------------------Function-----------------Pre---Post--Context
   //
-  { "TestVerifyRsaCertPkcs1SignVerify()", "CryptoPkg.BaseCryptLib.RsaCert", TestVerifyRsaCertPkcs1SignVerify, NULL, NULL, NULL },
+  { "TestVerifyRsaCertPkcs1SignVerify()", "CryptoPkg.BaseCryptLib.RsaCert",
+    TestVerifyRsaCertPkcs1SignVerify, NULL, NULL, NULL },
 };
 
 UINTN  mRsaCertTestNum = ARRAY_SIZE (mRsaCertTest);
@@ -408,7 +462,8 @@ TEST_DESC  mPkcs7Test[] = {
   //
   // -----Description--------------------------------------Class----------------------Function-----------------Pre---Post--Context
   //
-  { "TestVerifyPkcs7SignVerify()", "CryptoPkg.BaseCryptLib.Pkcs7", TestVerifyPkcs7SignVerify, NULL, NULL, NULL },
+  { "TestVerifyPkcs7SignVerify()", "CryptoPkg.BaseCryptLib.Pkcs7",
+    TestVerifyPkcs7SignVerify, NULL, NULL, NULL },
 };
 
 UINTN  mPkcs7TestNum = ARRAY_SIZE (mPkcs7Test);

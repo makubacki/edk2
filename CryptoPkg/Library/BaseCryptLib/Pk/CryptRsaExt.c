@@ -189,7 +189,9 @@ RsaGenerateKey (
   //
   // Check input parameters.
   //
-  if ((RsaContext == NULL) || (ModulusLength > INT_MAX) || (PublicExponentSize > INT_MAX)) {
+  if ((RsaContext == NULL) || (ModulusLength > INT_MAX) || (PublicExponentSize >
+                                                            INT_MAX))
+  {
     return FALSE;
   }
 
@@ -210,7 +212,13 @@ RsaGenerateKey (
     }
   }
 
-  if (RSA_generate_key_ex ((RSA *)RsaContext, (UINT32)ModulusLength, KeyE, NULL) == 1) {
+  if (RSA_generate_key_ex (
+        (RSA *)RsaContext,
+        (UINT32)ModulusLength,
+        KeyE,
+        NULL
+        ) == 1)
+  {
     RetVal = TRUE;
   }
 

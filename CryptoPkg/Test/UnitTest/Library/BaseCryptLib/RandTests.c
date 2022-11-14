@@ -32,7 +32,11 @@ TestVerifyPrngGeneration (
     Status = RandomBytes (RandomBuffer, RANDOM_NUMBER_SIZE);
     UT_ASSERT_TRUE (Status);
 
-    Status = (CompareMem (PreviousRandomBuffer, RandomBuffer, RANDOM_NUMBER_SIZE) == 0);
+    Status = (CompareMem (
+                PreviousRandomBuffer,
+                RandomBuffer,
+                RANDOM_NUMBER_SIZE
+                ) == 0);
     UT_ASSERT_FALSE (Status);
 
     CopyMem (PreviousRandomBuffer, RandomBuffer, RANDOM_NUMBER_SIZE);
@@ -45,7 +49,8 @@ TEST_DESC  mPrngTest[] = {
   //
   // -----Description--------------------------------Class--------------------Function----------------Pre---Post--Context
   //
-  { "TestVerifyPrngGeneration()", "CryptoPkg.BaseCryptLib.Prng", TestVerifyPrngGeneration, NULL, NULL, NULL },
+  { "TestVerifyPrngGeneration()", "CryptoPkg.BaseCryptLib.Prng",
+    TestVerifyPrngGeneration, NULL, NULL, NULL },
 };
 
 UINTN  mPrngTestNum = ARRAY_SIZE (mPrngTest);

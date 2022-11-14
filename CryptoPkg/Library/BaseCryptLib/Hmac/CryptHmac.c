@@ -77,7 +77,14 @@ HmacMdSetKey (
     return FALSE;
   }
 
-  if (HMAC_Init_ex ((HMAC_CTX *)HmacMdContext, Key, (UINT32)KeySize, Md, NULL) != 1) {
+  if (HMAC_Init_ex (
+        (HMAC_CTX *)HmacMdContext,
+        Key,
+        (UINT32)KeySize,
+        Md,
+        NULL
+        ) != 1)
+  {
     return FALSE;
   }
 
@@ -111,7 +118,9 @@ HmacMdDuplicate (
     return FALSE;
   }
 
-  if (HMAC_CTX_copy ((HMAC_CTX *)NewHmacMdContext, (HMAC_CTX *)HmacMdContext) != 1) {
+  if (HMAC_CTX_copy ((HMAC_CTX *)NewHmacMdContext, (HMAC_CTX *)HmacMdContext) !=
+      1)
+  {
     return FALSE;
   }
 

@@ -106,7 +106,8 @@ TEST_DESC  mAeadAesGcmTest[] = {
   //
   // -----Description--------------------------------------Class----------------------Function---------------------------------Pre---------------------Post---------Context
   //
-  { "TestVerifyAeadAesGcm()", "CryptoPkg.BaseCryptLib.AeadAesGcm", TestVerifyAeadAesGcm, NULL, NULL, NULL },
+  { "TestVerifyAeadAesGcm()", "CryptoPkg.BaseCryptLib.AeadAesGcm",
+    TestVerifyAeadAesGcm, NULL, NULL, NULL },
 };
 
 UINTN  mAeadAesGcmTestNum = ARRAY_SIZE (mAeadAesGcmTest);

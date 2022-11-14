@@ -91,7 +91,12 @@ CryptoServiceNotAvailable (
   IN CONST CHAR8  *FunctionName
   )
 {
-  DEBUG ((DEBUG_ERROR, "[%a] Function %a is not available\n", gEfiCallerBaseName, FunctionName));
+  DEBUG ((
+    DEBUG_ERROR,
+    "[%a] Function %a is not available\n",
+    gEfiCallerBaseName,
+    FunctionName
+    ));
   ASSERT_EFI_ERROR (EFI_UNSUPPORTED);
 }
 
@@ -481,7 +486,11 @@ Sha256Duplicate (
   OUT  VOID        *NewSha256Context
   )
 {
-  CALL_CRYPTO_SERVICE (Sha256Duplicate, (Sha256Context, NewSha256Context), FALSE);
+  CALL_CRYPTO_SERVICE (
+    Sha256Duplicate,
+    (Sha256Context, NewSha256Context),
+    FALSE
+    );
 }
 
 /**
@@ -630,7 +639,11 @@ Sha384Duplicate (
   OUT  VOID        *NewSha384Context
   )
 {
-  CALL_CRYPTO_SERVICE (Sha384Duplicate, (Sha384Context, NewSha384Context), FALSE);
+  CALL_CRYPTO_SERVICE (
+    Sha384Duplicate,
+    (Sha384Context, NewSha384Context),
+    FALSE
+    );
 }
 
 /**
@@ -779,7 +792,11 @@ Sha512Duplicate (
   OUT  VOID        *NewSha512Context
   )
 {
-  CALL_CRYPTO_SERVICE (Sha512Duplicate, (Sha512Context, NewSha512Context), FALSE);
+  CALL_CRYPTO_SERVICE (
+    Sha512Duplicate,
+    (Sha512Context, NewSha512Context),
+    FALSE
+    );
 }
 
 /**
@@ -899,7 +916,12 @@ ParallelHash256HashAll (
   IN       UINTN  CustomByteLen
   )
 {
-  CALL_CRYPTO_SERVICE (ParallelHash256HashAll, (Input, InputByteLen, BlockSize, Output, OutputByteLen, Customization, CustomByteLen), FALSE);
+  CALL_CRYPTO_SERVICE (
+    ParallelHash256HashAll,
+    (Input, InputByteLen, BlockSize,
+     Output, OutputByteLen, Customization, CustomByteLen),
+    FALSE
+    );
 }
 
 /**
@@ -1110,7 +1132,11 @@ HmacSha256SetKey (
   IN   UINTN        KeySize
   )
 {
-  CALL_CRYPTO_SERVICE (HmacSha256SetKey, (HmacSha256Context, Key, KeySize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    HmacSha256SetKey,
+    (HmacSha256Context, Key, KeySize),
+    FALSE
+    );
 }
 
 /**
@@ -1135,7 +1161,12 @@ HmacSha256Duplicate (
   OUT  VOID        *NewHmacSha256Context
   )
 {
-  CALL_CRYPTO_SERVICE (HmacSha256Duplicate, (HmacSha256Context, NewHmacSha256Context), FALSE);
+  CALL_CRYPTO_SERVICE (
+    HmacSha256Duplicate,
+    (HmacSha256Context,
+     NewHmacSha256Context),
+    FALSE
+    );
 }
 
 /**
@@ -1166,7 +1197,11 @@ HmacSha256Update (
   IN      UINTN       DataSize
   )
 {
-  CALL_CRYPTO_SERVICE (HmacSha256Update, (HmacSha256Context, Data, DataSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    HmacSha256Update,
+    (HmacSha256Context, Data, DataSize),
+    FALSE
+    );
 }
 
 /**
@@ -1231,7 +1266,11 @@ HmacSha256All (
   OUT  UINT8        *HmacValue
   )
 {
-  CALL_CRYPTO_SERVICE (HmacSha256All, (Data, DataSize, Key, KeySize, HmacValue), FALSE);
+  CALL_CRYPTO_SERVICE (
+    HmacSha256All,
+    (Data, DataSize, Key, KeySize, HmacValue),
+    FALSE
+    );
 }
 
 /**
@@ -1289,7 +1328,11 @@ HmacSha384SetKey (
   IN   UINTN        KeySize
   )
 {
-  CALL_CRYPTO_SERVICE (HmacSha384SetKey, (HmacSha384Context, Key, KeySize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    HmacSha384SetKey,
+    (HmacSha384Context, Key, KeySize),
+    FALSE
+    );
 }
 
 /**
@@ -1314,7 +1357,12 @@ HmacSha384Duplicate (
   OUT  VOID        *NewHmacSha384Context
   )
 {
-  CALL_CRYPTO_SERVICE (HmacSha384Duplicate, (HmacSha384Context, NewHmacSha384Context), FALSE);
+  CALL_CRYPTO_SERVICE (
+    HmacSha384Duplicate,
+    (HmacSha384Context,
+     NewHmacSha384Context),
+    FALSE
+    );
 }
 
 /**
@@ -1345,7 +1393,11 @@ HmacSha384Update (
   IN      UINTN       DataSize
   )
 {
-  CALL_CRYPTO_SERVICE (HmacSha384Update, (HmacSha384Context, Data, DataSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    HmacSha384Update,
+    (HmacSha384Context, Data, DataSize),
+    FALSE
+    );
 }
 
 /**
@@ -1410,7 +1462,11 @@ HmacSha384All (
   OUT  UINT8        *HmacValue
   )
 {
-  CALL_CRYPTO_SERVICE (HmacSha384All, (Data, DataSize, Key, KeySize, HmacValue), FALSE);
+  CALL_CRYPTO_SERVICE (
+    HmacSha384All,
+    (Data, DataSize, Key, KeySize, HmacValue),
+    FALSE
+    );
 }
 
 // =====================================================================================
@@ -1507,7 +1563,12 @@ AesCbcEncrypt (
   OUT  UINT8        *Output
   )
 {
-  CALL_CRYPTO_SERVICE (AesCbcEncrypt, (AesContext, Input, InputSize, Ivec, Output), FALSE);
+  CALL_CRYPTO_SERVICE (
+    AesCbcEncrypt,
+    (AesContext, Input, InputSize, Ivec,
+     Output),
+    FALSE
+    );
 }
 
 /**
@@ -1549,7 +1610,12 @@ AesCbcDecrypt (
   OUT  UINT8        *Output
   )
 {
-  CALL_CRYPTO_SERVICE (AesCbcDecrypt, (AesContext, Input, InputSize, Ivec, Output), FALSE);
+  CALL_CRYPTO_SERVICE (
+    AesCbcDecrypt,
+    (AesContext, Input, InputSize, Ivec,
+     Output),
+    FALSE
+    );
 }
 
 // =====================================================================================
@@ -1597,7 +1663,12 @@ AeadAesGcmEncrypt (
   OUT  UINTN        *DataOutSize
   )
 {
-  CALL_CRYPTO_SERVICE (AeadAesGcmEncrypt, (Key, KeySize, Iv, IvSize, AData, ADataSize, DataIn, DataInSize, TagOut, TagSize, DataOut, DataOutSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    AeadAesGcmEncrypt,
+    (Key, KeySize, Iv, IvSize, AData,
+     ADataSize, DataIn, DataInSize, TagOut, TagSize, DataOut, DataOutSize),
+    FALSE
+    );
 }
 
 /**
@@ -1642,7 +1713,12 @@ AeadAesGcmDecrypt (
   OUT  UINTN        *DataOutSize
   )
 {
-  CALL_CRYPTO_SERVICE (AeadAesGcmDecrypt, (Key, KeySize, Iv, IvSize, AData, ADataSize, DataIn, DataInSize, Tag, TagSize, DataOut, DataOutSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    AeadAesGcmDecrypt,
+    (Key, KeySize, Iv, IvSize, AData,
+     ADataSize, DataIn, DataInSize, Tag, TagSize, DataOut, DataOutSize),
+    FALSE
+    );
 }
 
 // =====================================================================================
@@ -1713,7 +1789,11 @@ RsaSetKey (
   IN      UINTN        BnSize
   )
 {
-  CALL_CRYPTO_SERVICE (RsaSetKey, (RsaContext, KeyTag, BigNumber, BnSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    RsaSetKey,
+    (RsaContext, KeyTag, BigNumber, BnSize),
+    FALSE
+    );
 }
 
 /**
@@ -1753,7 +1833,11 @@ RsaGetKey (
   IN OUT  UINTN        *BnSize
   )
 {
-  CALL_CRYPTO_SERVICE (RsaGetKey, (RsaContext, KeyTag, BigNumber, BnSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    RsaGetKey,
+    (RsaContext, KeyTag, BigNumber, BnSize),
+    FALSE
+    );
 }
 
 /**
@@ -1788,7 +1872,12 @@ RsaGenerateKey (
   IN      UINTN        PublicExponentSize
   )
 {
-  CALL_CRYPTO_SERVICE (RsaGenerateKey, (RsaContext, ModulusLength, PublicExponent, PublicExponentSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    RsaGenerateKey,
+    (RsaContext, ModulusLength,
+     PublicExponent, PublicExponentSize),
+    FALSE
+    );
 }
 
 /**
@@ -1858,7 +1947,12 @@ RsaPkcs1Sign (
   IN OUT  UINTN        *SigSize
   )
 {
-  CALL_CRYPTO_SERVICE (RsaPkcs1Sign, (RsaContext, MessageHash, HashSize, Signature, SigSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    RsaPkcs1Sign,
+    (RsaContext, MessageHash, HashSize,
+     Signature, SigSize),
+    FALSE
+    );
 }
 
 /**
@@ -1890,7 +1984,12 @@ RsaPkcs1Verify (
   IN  UINTN        SigSize
   )
 {
-  CALL_CRYPTO_SERVICE (RsaPkcs1Verify, (RsaContext, MessageHash, HashSize, Signature, SigSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    RsaPkcs1Verify,
+    (RsaContext, MessageHash, HashSize,
+     Signature, SigSize),
+    FALSE
+    );
 }
 
 /**
@@ -1923,7 +2022,12 @@ RsaPssVerify (
   IN  UINT16       SaltLen
   )
 {
-  CALL_CRYPTO_SERVICE (RsaPssVerify, (RsaContext, Message, MsgSize, Signature, SigSize, DigestLen, SaltLen), FALSE);
+  CALL_CRYPTO_SERVICE (
+    RsaPssVerify,
+    (RsaContext, Message, MsgSize, Signature,
+     SigSize, DigestLen, SaltLen),
+    FALSE
+    );
 }
 
 /**
@@ -1968,7 +2072,12 @@ RsaPssSign (
   IN OUT  UINTN        *SigSize
   )
 {
-  CALL_CRYPTO_SERVICE (RsaPssSign, (RsaContext, Message, MsgSize, DigestLen, SaltLen, Signature, SigSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    RsaPssSign,
+    (RsaContext, Message, MsgSize, DigestLen,
+     SaltLen, Signature, SigSize),
+    FALSE
+    );
 }
 
 /**
@@ -1999,7 +2108,12 @@ RsaGetPrivateKeyFromPem (
   OUT  VOID         **RsaContext
   )
 {
-  CALL_CRYPTO_SERVICE (RsaGetPrivateKeyFromPem, (PemData, PemSize, Password, RsaContext), FALSE);
+  CALL_CRYPTO_SERVICE (
+    RsaGetPrivateKeyFromPem,
+    (PemData, PemSize, Password,
+     RsaContext),
+    FALSE
+    );
 }
 
 /**
@@ -2028,7 +2142,11 @@ RsaGetPublicKeyFromX509 (
   OUT  VOID         **RsaContext
   )
 {
-  CALL_CRYPTO_SERVICE (RsaGetPublicKeyFromX509, (Cert, CertSize, RsaContext), FALSE);
+  CALL_CRYPTO_SERVICE (
+    RsaGetPublicKeyFromX509,
+    (Cert, CertSize, RsaContext),
+    FALSE
+    );
 }
 
 /**
@@ -2059,7 +2177,12 @@ X509GetSubjectName (
   IN OUT  UINTN        *SubjectSize
   )
 {
-  CALL_CRYPTO_SERVICE (X509GetSubjectName, (Cert, CertSize, CertSubject, SubjectSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    X509GetSubjectName,
+    (Cert, CertSize, CertSubject,
+     SubjectSize),
+    FALSE
+    );
 }
 
 /**
@@ -2097,7 +2220,12 @@ X509GetCommonName (
   IN OUT  UINTN        *CommonNameSize
   )
 {
-  CALL_CRYPTO_SERVICE (X509GetCommonName, (Cert, CertSize, CommonName, CommonNameSize), RETURN_UNSUPPORTED);
+  CALL_CRYPTO_SERVICE (
+    X509GetCommonName,
+    (Cert, CertSize, CommonName,
+     CommonNameSize),
+    RETURN_UNSUPPORTED
+    );
 }
 
 /**
@@ -2135,7 +2263,12 @@ X509GetOrganizationName (
   IN OUT  UINTN        *NameBufferSize
   )
 {
-  CALL_CRYPTO_SERVICE (X509GetOrganizationName, (Cert, CertSize, NameBuffer, NameBufferSize), RETURN_UNSUPPORTED);
+  CALL_CRYPTO_SERVICE (
+    X509GetOrganizationName,
+    (Cert, CertSize, NameBuffer,
+     NameBufferSize),
+    RETURN_UNSUPPORTED
+    );
 }
 
 /**
@@ -2165,7 +2298,11 @@ X509VerifyCert (
   IN  UINTN        CACertSize
   )
 {
-  CALL_CRYPTO_SERVICE (X509VerifyCert, (Cert, CertSize, CACert, CACertSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    X509VerifyCert,
+    (Cert, CertSize, CACert, CACertSize),
+    FALSE
+    );
 }
 
 /**
@@ -2192,7 +2329,12 @@ X509ConstructCertificate (
   OUT  UINT8        **SingleX509Cert
   )
 {
-  CALL_CRYPTO_SERVICE (X509ConstructCertificate, (Cert, CertSize, SingleX509Cert), FALSE);
+  CALL_CRYPTO_SERVICE (
+    X509ConstructCertificate,
+    (Cert, CertSize,
+     SingleX509Cert),
+    FALSE
+    );
 }
 
 /**
@@ -2256,7 +2398,11 @@ X509ConstructCertificateStackV (
   IN      VA_LIST  Args
   )
 {
-  CALL_CRYPTO_SERVICE (X509ConstructCertificateStackV, (X509Stack, Args), FALSE);
+  CALL_CRYPTO_SERVICE (
+    X509ConstructCertificateStackV,
+    (X509Stack, Args),
+    FALSE
+    );
 }
 
 /**
@@ -2319,7 +2465,11 @@ X509GetTBSCert (
   OUT UINTN        *TBSCertSize
   )
 {
-  CALL_CRYPTO_SERVICE (X509GetTBSCert, (Cert, CertSize, TBSCert, TBSCertSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    X509GetTBSCert,
+    (Cert, CertSize, TBSCert, TBSCertSize),
+    FALSE
+    );
 }
 
 /**
@@ -2381,7 +2531,12 @@ X509GetSerialNumber (
   IN OUT  UINTN         *SerialNumberSize
   )
 {
-  CALL_CRYPTO_SERVICE (X509GetSerialNumber, (Cert, CertSize, SerialNumber, SerialNumberSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    X509GetSerialNumber,
+    (Cert, CertSize, SerialNumber,
+     SerialNumberSize),
+    FALSE
+    );
 }
 
 /**
@@ -2412,7 +2567,12 @@ X509GetIssuerName (
   IN OUT  UINTN        *CertIssuerSize
   )
 {
-  CALL_CRYPTO_SERVICE (X509GetIssuerName, (Cert, CertSize, CertIssuer, CertIssuerSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    X509GetIssuerName,
+    (Cert, CertSize, CertIssuer,
+     CertIssuerSize),
+    FALSE
+    );
 }
 
 /**
@@ -2442,7 +2602,12 @@ X509GetSignatureAlgorithm (
   IN OUT   UINTN       *OidSize
   )
 {
-  CALL_CRYPTO_SERVICE (X509GetSignatureAlgorithm, (Cert, CertSize, Oid, OidSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    X509GetSignatureAlgorithm,
+    (Cert, CertSize, Oid,
+     OidSize),
+    FALSE
+    );
 }
 
 /**
@@ -2476,7 +2641,12 @@ X509GetExtensionData (
   IN OUT UINTN        *ExtensionDataSize
   )
 {
-  CALL_CRYPTO_SERVICE (X509GetExtensionData, (Cert, CertSize, Oid, OidSize, ExtensionData, ExtensionDataSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    X509GetExtensionData,
+    (Cert, CertSize, Oid, OidSize,
+     ExtensionData, ExtensionDataSize),
+    FALSE
+    );
 }
 
 /**
@@ -2505,7 +2675,12 @@ X509GetExtendedKeyUsage (
   IN OUT UINTN        *UsageSize
   )
 {
-  CALL_CRYPTO_SERVICE (X509GetExtendedKeyUsage, (Cert, CertSize, Usage, UsageSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    X509GetExtendedKeyUsage,
+    (Cert, CertSize, Usage,
+     UsageSize),
+    FALSE
+    );
 }
 
 /**
@@ -2540,7 +2715,12 @@ X509GetValidity  (
   IN OUT UINTN        *ToSize
   )
 {
-  CALL_CRYPTO_SERVICE (X509GetValidity, (Cert, CertSize, From, FromSize, To, ToSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    X509GetValidity,
+    (Cert, CertSize, From, FromSize, To,
+     ToSize),
+    FALSE
+    );
 }
 
 /**
@@ -2574,7 +2754,12 @@ X509FormatDateTime (
   IN OUT UINTN     *DateTimeSize
   )
 {
-  CALL_CRYPTO_SERVICE (X509FormatDateTime, (DateTimeStr, DateTime, DateTimeSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    X509FormatDateTime,
+    (DateTimeStr, DateTime,
+     DateTimeSize),
+    FALSE
+    );
 }
 
 /**
@@ -2650,7 +2835,12 @@ X509VerifyCertChain (
   IN UINTN        CertChainLength
   )
 {
-  CALL_CRYPTO_SERVICE (X509VerifyCertChain, (RootCert, RootCertLength, CertChain, CertChainLength), FALSE);
+  CALL_CRYPTO_SERVICE (
+    X509VerifyCertChain,
+    (RootCert, RootCertLength,
+     CertChain, CertChainLength),
+    FALSE
+    );
 }
 
 /**
@@ -2681,7 +2871,12 @@ X509GetCertFromCertChain (
   OUT UINTN        *CertLength
   )
 {
-  CALL_CRYPTO_SERVICE (X509GetCertFromCertChain, (CertChain, CertChainLength, CertIndex, Cert, CertLength), FALSE);
+  CALL_CRYPTO_SERVICE (
+    X509GetCertFromCertChain,
+    (CertChain, CertChainLength,
+     CertIndex, Cert, CertLength),
+    FALSE
+    );
 }
 
 /**
@@ -2734,7 +2929,12 @@ X509GetExtendedBasicConstraints             (
   UINTN        *BasicConstraintsSize
   )
 {
-  CALL_CRYPTO_SERVICE (X509GetExtendedBasicConstraints, (Cert, CertSize, BasicConstraints, BasicConstraintsSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    X509GetExtendedBasicConstraints,
+    (Cert, CertSize,
+     BasicConstraints, BasicConstraintsSize),
+    FALSE
+    );
 }
 
 /**
@@ -2777,7 +2977,12 @@ Pkcs5HashPassword (
   OUT UINT8        *OutKey
   )
 {
-  CALL_CRYPTO_SERVICE (Pkcs5HashPassword, (PasswordLength, Password, SaltLength, Salt, IterationCount, DigestSize, KeyLength, OutKey), FALSE);
+  CALL_CRYPTO_SERVICE (
+    Pkcs5HashPassword,
+    (PasswordLength, Password, SaltLength,
+     Salt, IterationCount, DigestSize, KeyLength, OutKey),
+    FALSE
+    );
 }
 
 /**
@@ -2822,7 +3027,12 @@ Pkcs1v2Encrypt (
   OUT  UINTN        *EncryptedDataSize
   )
 {
-  CALL_CRYPTO_SERVICE (Pkcs1v2Encrypt, (PublicKey, PublicKeySize, InData, InDataSize, PrngSeed, PrngSeedSize, EncryptedData, EncryptedDataSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    Pkcs1v2Encrypt,
+    (PublicKey, PublicKeySize, InData,
+     InDataSize, PrngSeed, PrngSeedSize, EncryptedData, EncryptedDataSize),
+    FALSE
+    );
 }
 
 /**
@@ -2862,7 +3072,12 @@ Pkcs7GetSigners (
   OUT UINTN        *CertLength
   )
 {
-  CALL_CRYPTO_SERVICE (Pkcs7GetSigners, (P7Data, P7Length, CertStack, StackLength, TrustedCert, CertLength), FALSE);
+  CALL_CRYPTO_SERVICE (
+    Pkcs7GetSigners,
+    (P7Data, P7Length, CertStack,
+     StackLength, TrustedCert, CertLength),
+    FALSE
+    );
 }
 
 /**
@@ -2915,7 +3130,12 @@ Pkcs7GetCertificatesList (
   OUT UINTN        *UnchainLength
   )
 {
-  CALL_CRYPTO_SERVICE (Pkcs7GetCertificatesList, (P7Data, P7Length, SignerChainCerts, ChainLength, UnchainCerts, UnchainLength), FALSE);
+  CALL_CRYPTO_SERVICE (
+    Pkcs7GetCertificatesList,
+    (P7Data, P7Length,
+     SignerChainCerts, ChainLength, UnchainCerts, UnchainLength),
+    FALSE
+    );
 }
 
 /**
@@ -2959,7 +3179,12 @@ Pkcs7Sign (
   OUT  UINTN        *SignedDataSize
   )
 {
-  CALL_CRYPTO_SERVICE (Pkcs7Sign, (PrivateKey, PrivateKeySize, KeyPassword, InData, InDataSize, SignCert, OtherCerts, SignedData, SignedDataSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    Pkcs7Sign,
+    (PrivateKey, PrivateKeySize, KeyPassword,
+     InData, InDataSize, SignCert, OtherCerts, SignedData, SignedDataSize),
+    FALSE
+    );
 }
 
 /**
@@ -2995,7 +3220,12 @@ Pkcs7Verify (
   IN  UINTN        DataLength
   )
 {
-  CALL_CRYPTO_SERVICE (Pkcs7Verify, (P7Data, P7Length, TrustedCert, CertLength, InData, DataLength), FALSE);
+  CALL_CRYPTO_SERVICE (
+    Pkcs7Verify,
+    (P7Data, P7Length, TrustedCert, CertLength,
+     InData, DataLength),
+    FALSE
+    );
 }
 
 /**
@@ -3040,7 +3270,12 @@ VerifyEKUsInPkcs7Signature (
   IN  BOOLEAN       RequireAllPresent
   )
 {
-  CALL_CRYPTO_SERVICE (VerifyEKUsInPkcs7Signature, (Pkcs7Signature, SignatureSize, RequiredEKUs, RequiredEKUsSize, RequireAllPresent), FALSE);
+  CALL_CRYPTO_SERVICE (
+    VerifyEKUsInPkcs7Signature,
+    (Pkcs7Signature,
+     SignatureSize, RequiredEKUs, RequiredEKUsSize, RequireAllPresent),
+    FALSE
+    );
 }
 
 /**
@@ -3072,7 +3307,12 @@ Pkcs7GetAttachedContent (
   OUT UINTN        *ContentSize
   )
 {
-  CALL_CRYPTO_SERVICE (Pkcs7GetAttachedContent, (P7Data, P7Length, Content, ContentSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    Pkcs7GetAttachedContent,
+    (P7Data, P7Length, Content,
+     ContentSize),
+    FALSE
+    );
 }
 
 /**
@@ -3110,7 +3350,12 @@ AuthenticodeVerify (
   IN  UINTN        HashSize
   )
 {
-  CALL_CRYPTO_SERVICE (AuthenticodeVerify, (AuthData, DataSize, TrustedCert, CertSize, ImageHash, HashSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    AuthenticodeVerify,
+    (AuthData, DataSize, TrustedCert,
+     CertSize, ImageHash, HashSize),
+    FALSE
+    );
 }
 
 /**
@@ -3143,7 +3388,12 @@ ImageTimestampVerify (
   OUT EFI_TIME     *SigningTime
   )
 {
-  CALL_CRYPTO_SERVICE (ImageTimestampVerify, (AuthData, DataSize, TsaCert, CertSize, SigningTime), FALSE);
+  CALL_CRYPTO_SERVICE (
+    ImageTimestampVerify,
+    (AuthData, DataSize, TsaCert,
+     CertSize, SigningTime),
+    FALSE
+    );
 }
 
 // =====================================================================================
@@ -3217,7 +3467,12 @@ DhGenerateParameter (
   OUT     UINT8  *Prime
   )
 {
-  CALL_CRYPTO_SERVICE (DhGenerateParameter, (DhContext, Generator, PrimeLength, Prime), FALSE);
+  CALL_CRYPTO_SERVICE (
+    DhGenerateParameter,
+    (DhContext, Generator, PrimeLength,
+     Prime),
+    FALSE
+    );
 }
 
 /**
@@ -3252,7 +3507,12 @@ DhSetParameter (
   IN      CONST UINT8  *Prime
   )
 {
-  CALL_CRYPTO_SERVICE (DhSetParameter, (DhContext, Generator, PrimeLength, Prime), FALSE);
+  CALL_CRYPTO_SERVICE (
+    DhSetParameter,
+    (DhContext, Generator, PrimeLength,
+     Prime),
+    FALSE
+    );
 }
 
 /**
@@ -3287,7 +3547,11 @@ DhGenerateKey (
   IN OUT  UINTN  *PublicKeySize
   )
 {
-  CALL_CRYPTO_SERVICE (DhGenerateKey, (DhContext, PublicKey, PublicKeySize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    DhGenerateKey,
+    (DhContext, PublicKey, PublicKeySize),
+    FALSE
+    );
 }
 
 /**
@@ -3326,7 +3590,12 @@ DhComputeKey (
   IN OUT  UINTN        *KeySize
   )
 {
-  CALL_CRYPTO_SERVICE (DhComputeKey, (DhContext, PeerPublicKey, PeerPublicKeySize, Key, KeySize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    DhComputeKey,
+    (DhContext, PeerPublicKey,
+     PeerPublicKeySize, Key, KeySize),
+    FALSE
+    );
 }
 
 // =====================================================================================
@@ -3418,7 +3687,12 @@ HkdfSha256ExtractAndExpand (
   IN   UINTN        OutSize
   )
 {
-  CALL_CRYPTO_SERVICE (HkdfSha256ExtractAndExpand, (Key, KeySize, Salt, SaltSize, Info, InfoSize, Out, OutSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    HkdfSha256ExtractAndExpand,
+    (Key, KeySize, Salt,
+     SaltSize, Info, InfoSize, Out, OutSize),
+    FALSE
+    );
 }
 
 /**
@@ -3446,7 +3720,12 @@ HkdfSha256Extract (
   UINTN           PrkOutSize
   )
 {
-  CALL_CRYPTO_SERVICE (HkdfSha256Extract, (Key, KeySize, Salt, SaltSize, PrkOut, PrkOutSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    HkdfSha256Extract,
+    (Key, KeySize, Salt, SaltSize, PrkOut,
+     PrkOutSize),
+    FALSE
+    );
 }
 
 /**
@@ -3474,7 +3753,12 @@ HkdfSha256Expand (
   IN   UINTN        OutSize
   )
 {
-  CALL_CRYPTO_SERVICE (HkdfSha256Expand, (Prk, PrkSize, Info, InfoSize, Out, OutSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    HkdfSha256Expand,
+    (Prk, PrkSize, Info, InfoSize, Out,
+     OutSize),
+    FALSE
+    );
 }
 
 /**
@@ -3506,7 +3790,12 @@ HkdfSha384ExtractAndExpand (
   IN   UINTN        OutSize
   )
 {
-  CALL_CRYPTO_SERVICE (HkdfSha384ExtractAndExpand, (Key, KeySize, Salt, SaltSize, Info, InfoSize, Out, OutSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    HkdfSha384ExtractAndExpand,
+    (Key, KeySize, Salt,
+     SaltSize, Info, InfoSize, Out, OutSize),
+    FALSE
+    );
 }
 
 /**
@@ -3534,7 +3823,12 @@ HkdfSha384Extract (
   UINTN           PrkOutSize
   )
 {
-  CALL_CRYPTO_SERVICE (HkdfSha384Extract, (Key, KeySize, Salt, SaltSize, PrkOut, PrkOutSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    HkdfSha384Extract,
+    (Key, KeySize, Salt, SaltSize, PrkOut,
+     PrkOutSize),
+    FALSE
+    );
 }
 
 /**
@@ -3562,7 +3856,12 @@ HkdfSha384Expand (
   IN   UINTN        OutSize
   )
 {
-  CALL_CRYPTO_SERVICE (HkdfSha384Expand, (Prk, PrkSize, Info, InfoSize, Out, OutSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    HkdfSha384Expand,
+    (Prk, PrkSize, Info, InfoSize, Out,
+     OutSize),
+    FALSE
+    );
 }
 
 /**
@@ -3717,7 +4016,12 @@ TlsDoHandshake (
   IN OUT UINTN  *BufferOutSize
   )
 {
-  CALL_CRYPTO_SERVICE (TlsDoHandshake, (Tls, BufferIn, BufferInSize, BufferOut, BufferOutSize), EFI_UNSUPPORTED);
+  CALL_CRYPTO_SERVICE (
+    TlsDoHandshake,
+    (Tls, BufferIn, BufferInSize, BufferOut,
+     BufferOutSize),
+    EFI_UNSUPPORTED
+    );
 }
 
 /**
@@ -3755,7 +4059,12 @@ TlsHandleAlert (
   IN OUT UINTN  *BufferOutSize
   )
 {
-  CALL_CRYPTO_SERVICE (TlsHandleAlert, (Tls, BufferIn, BufferInSize, BufferOut, BufferOutSize), EFI_UNSUPPORTED);
+  CALL_CRYPTO_SERVICE (
+    TlsHandleAlert,
+    (Tls, BufferIn, BufferInSize, BufferOut,
+     BufferOutSize),
+    EFI_UNSUPPORTED
+    );
 }
 
 /**
@@ -3784,7 +4093,11 @@ TlsCloseNotify (
   IN OUT UINTN  *BufferSize
   )
 {
-  CALL_CRYPTO_SERVICE (TlsCloseNotify, (Tls, Buffer, BufferSize), EFI_UNSUPPORTED);
+  CALL_CRYPTO_SERVICE (
+    TlsCloseNotify,
+    (Tls, Buffer, BufferSize),
+    EFI_UNSUPPORTED
+    );
 }
 
 /**
@@ -3933,7 +4246,11 @@ TlsSetVersion (
   IN     UINT8  MinorVer
   )
 {
-  CALL_CRYPTO_SERVICE (TlsSetVersion, (Tls, MajorVer, MinorVer), EFI_UNSUPPORTED);
+  CALL_CRYPTO_SERVICE (
+    TlsSetVersion,
+    (Tls, MajorVer, MinorVer),
+    EFI_UNSUPPORTED
+    );
 }
 
 /**
@@ -3985,7 +4302,11 @@ TlsSetCipherList (
   IN     UINTN   CipherNum
   )
 {
-  CALL_CRYPTO_SERVICE (TlsSetCipherList, (Tls, CipherId, CipherNum), EFI_UNSUPPORTED);
+  CALL_CRYPTO_SERVICE (
+    TlsSetCipherList,
+    (Tls, CipherId, CipherNum),
+    EFI_UNSUPPORTED
+    );
 }
 
 /**
@@ -4048,7 +4369,11 @@ TlsSetVerifyHost (
   IN     CHAR8   *HostName
   )
 {
-  CALL_CRYPTO_SERVICE (TlsSetVerifyHost, (Tls, Flags, HostName), EFI_UNSUPPORTED);
+  CALL_CRYPTO_SERVICE (
+    TlsSetVerifyHost,
+    (Tls, Flags, HostName),
+    EFI_UNSUPPORTED
+    );
 }
 
 /**
@@ -4074,7 +4399,11 @@ TlsSetSessionId (
   IN     UINT16  SessionIdLen
   )
 {
-  CALL_CRYPTO_SERVICE (TlsSetSessionId, (Tls, SessionId, SessionIdLen), EFI_UNSUPPORTED);
+  CALL_CRYPTO_SERVICE (
+    TlsSetSessionId,
+    (Tls, SessionId, SessionIdLen),
+    EFI_UNSUPPORTED
+    );
 }
 
 /**
@@ -4102,7 +4431,11 @@ TlsSetCaCertificate (
   IN     UINTN  DataSize
   )
 {
-  CALL_CRYPTO_SERVICE (TlsSetCaCertificate, (Tls, Data, DataSize), EFI_UNSUPPORTED);
+  CALL_CRYPTO_SERVICE (
+    TlsSetCaCertificate,
+    (Tls, Data, DataSize),
+    EFI_UNSUPPORTED
+    );
 }
 
 /**
@@ -4130,7 +4463,11 @@ TlsSetHostPublicCert (
   IN     UINTN  DataSize
   )
 {
-  CALL_CRYPTO_SERVICE (TlsSetHostPublicCert, (Tls, Data, DataSize), EFI_UNSUPPORTED);
+  CALL_CRYPTO_SERVICE (
+    TlsSetHostPublicCert,
+    (Tls, Data, DataSize),
+    EFI_UNSUPPORTED
+    );
 }
 
 /**
@@ -4160,7 +4497,11 @@ TlsSetHostPrivateKeyEx (
   IN     VOID   *Password  OPTIONAL
   )
 {
-  CALL_CRYPTO_SERVICE (TlsSetHostPrivateKeyEx, (Tls, Data, DataSize, Password), EFI_UNSUPPORTED);
+  CALL_CRYPTO_SERVICE (
+    TlsSetHostPrivateKeyEx,
+    (Tls, Data, DataSize, Password),
+    EFI_UNSUPPORTED
+    );
 }
 
 /**
@@ -4187,7 +4528,11 @@ TlsSetHostPrivateKey (
   IN     UINTN  DataSize
   )
 {
-  CALL_CRYPTO_SERVICE (TlsSetHostPrivateKey, (Tls, Data, DataSize), EFI_UNSUPPORTED);
+  CALL_CRYPTO_SERVICE (
+    TlsSetHostPrivateKey,
+    (Tls, Data, DataSize),
+    EFI_UNSUPPORTED
+    );
 }
 
 /**
@@ -4211,7 +4556,11 @@ TlsSetCertRevocationList (
   IN     UINTN  DataSize
   )
 {
-  CALL_CRYPTO_SERVICE (TlsSetCertRevocationList, (Data, DataSize), EFI_UNSUPPORTED);
+  CALL_CRYPTO_SERVICE (
+    TlsSetCertRevocationList,
+    (Data, DataSize),
+    EFI_UNSUPPORTED
+    );
 }
 
 /**
@@ -4239,7 +4588,11 @@ TlsSetSignatureAlgoList (
   IN     UINTN  DataSize
   )
 {
-  CALL_CRYPTO_SERVICE (TlsSetSignatureAlgoList, (Tls, Data, DataSize), EFI_UNSUPPORTED);
+  CALL_CRYPTO_SERVICE (
+    TlsSetSignatureAlgoList,
+    (Tls, Data, DataSize),
+    EFI_UNSUPPORTED
+    );
 }
 
 /**
@@ -4264,7 +4617,11 @@ TlsSetEcCurve (
   IN     UINTN  DataSize
   )
 {
-  CALL_CRYPTO_SERVICE (TlsSetSignatureAlgoList, (Tls, Data, DataSize), EFI_UNSUPPORTED);
+  CALL_CRYPTO_SERVICE (
+    TlsSetSignatureAlgoList,
+    (Tls, Data, DataSize),
+    EFI_UNSUPPORTED
+    );
 }
 
 /**
@@ -4358,7 +4715,11 @@ TlsGetCurrentCompressionId (
   IN OUT UINT8  *CompressionId
   )
 {
-  CALL_CRYPTO_SERVICE (TlsGetCurrentCompressionId, (Tls, CompressionId), EFI_UNSUPPORTED);
+  CALL_CRYPTO_SERVICE (
+    TlsGetCurrentCompressionId,
+    (Tls, CompressionId),
+    EFI_UNSUPPORTED
+    );
 }
 
 /**
@@ -4406,7 +4767,11 @@ TlsGetSessionId (
   IN OUT UINT16  *SessionIdLen
   )
 {
-  CALL_CRYPTO_SERVICE (TlsGetSessionId, (Tls, SessionId, SessionIdLen), EFI_UNSUPPORTED);
+  CALL_CRYPTO_SERVICE (
+    TlsGetSessionId,
+    (Tls, SessionId, SessionIdLen),
+    EFI_UNSUPPORTED
+    );
 }
 
 /**
@@ -4499,7 +4864,11 @@ TlsGetCaCertificate (
   IN OUT UINTN  *DataSize
   )
 {
-  CALL_CRYPTO_SERVICE (TlsGetCaCertificate, (Tls, Data, DataSize), EFI_UNSUPPORTED);
+  CALL_CRYPTO_SERVICE (
+    TlsGetCaCertificate,
+    (Tls, Data, DataSize),
+    EFI_UNSUPPORTED
+    );
 }
 
 /**
@@ -4527,7 +4896,11 @@ TlsGetHostPublicCert (
   IN OUT UINTN  *DataSize
   )
 {
-  CALL_CRYPTO_SERVICE (TlsGetHostPublicCert, (Tls, Data, DataSize), EFI_UNSUPPORTED);
+  CALL_CRYPTO_SERVICE (
+    TlsGetHostPublicCert,
+    (Tls, Data, DataSize),
+    EFI_UNSUPPORTED
+    );
 }
 
 /**
@@ -4554,7 +4927,11 @@ TlsGetHostPrivateKey (
   IN OUT UINTN  *DataSize
   )
 {
-  CALL_CRYPTO_SERVICE (TlsGetHostPrivateKey, (Tls, Data, DataSize), EFI_UNSUPPORTED);
+  CALL_CRYPTO_SERVICE (
+    TlsGetHostPrivateKey,
+    (Tls, Data, DataSize),
+    EFI_UNSUPPORTED
+    );
 }
 
 /**
@@ -4579,7 +4956,11 @@ TlsGetCertRevocationList (
   IN OUT UINTN  *DataSize
   )
 {
-  CALL_CRYPTO_SERVICE (TlsGetCertRevocationList, (Data, DataSize), EFI_UNSUPPORTED);
+  CALL_CRYPTO_SERVICE (
+    TlsGetCertRevocationList,
+    (Data, DataSize),
+    EFI_UNSUPPORTED
+    );
 }
 
 /**
@@ -5156,7 +5537,11 @@ EcGroupGetCurve (
   IN VOID        *BnCtx
   )
 {
-  CALL_CRYPTO_SERVICE (EcGroupGetCurve, (EcGroup, BnPrime, BnA, BnB, BnCtx), FALSE);
+  CALL_CRYPTO_SERVICE (
+    EcGroupGetCurve,
+    (EcGroup, BnPrime, BnA, BnB, BnCtx),
+    FALSE
+    );
 }
 
 /**
@@ -5254,7 +5639,12 @@ EcPointGetAffineCoordinates (
   IN VOID        *BnCtx
   )
 {
-  CALL_CRYPTO_SERVICE (EcPointGetAffineCoordinates, (EcGroup, EcPoint, BnX, BnY, BnCtx), FALSE);
+  CALL_CRYPTO_SERVICE (
+    EcPointGetAffineCoordinates,
+    (EcGroup, EcPoint, BnX, BnY,
+     BnCtx),
+    FALSE
+    );
 }
 
 /**
@@ -5279,7 +5669,12 @@ EcPointSetAffineCoordinates (
   IN VOID        *BnCtx
   )
 {
-  CALL_CRYPTO_SERVICE (EcPointSetAffineCoordinates, (EcGroup, EcPoint, BnX, BnY, BnCtx), FALSE);
+  CALL_CRYPTO_SERVICE (
+    EcPointSetAffineCoordinates,
+    (EcGroup, EcPoint, BnX, BnY,
+     BnCtx),
+    FALSE
+    );
 }
 
 /**
@@ -5305,7 +5700,12 @@ EcPointAdd (
   IN VOID        *BnCtx
   )
 {
-  CALL_CRYPTO_SERVICE (EcPointAdd, (EcGroup, EcPointResult, EcPointA, EcPointB, BnCtx), FALSE);
+  CALL_CRYPTO_SERVICE (
+    EcPointAdd,
+    (EcGroup, EcPointResult, EcPointA, EcPointB,
+     BnCtx),
+    FALSE
+    );
 }
 
 /**
@@ -5331,7 +5731,12 @@ EcPointMul (
   IN VOID        *BnCtx
   )
 {
-  CALL_CRYPTO_SERVICE (EcPointMul, (EcGroup, EcPointResult, EcPoint, BnPScalar, BnCtx), FALSE);
+  CALL_CRYPTO_SERVICE (
+    EcPointMul,
+    (EcGroup, EcPointResult, EcPoint, BnPScalar,
+     BnCtx),
+    FALSE
+    );
 }
 
 /**
@@ -5415,7 +5820,11 @@ EcPointEqual (
   IN VOID        *BnCtx
   )
 {
-  CALL_CRYPTO_SERVICE (EcPointEqual, (EcGroup, EcPointA, EcPointB, BnCtx), FALSE);
+  CALL_CRYPTO_SERVICE (
+    EcPointEqual,
+    (EcGroup, EcPointA, EcPointB, BnCtx),
+    FALSE
+    );
 }
 
 /**
@@ -5445,7 +5854,12 @@ EcPointSetCompressedCoordinates (
   IN VOID        *BnCtx
   )
 {
-  CALL_CRYPTO_SERVICE (EcPointSetCompressedCoordinates, (EcGroup, EcPoint, BnX, YBit, BnCtx), FALSE);
+  CALL_CRYPTO_SERVICE (
+    EcPointSetCompressedCoordinates,
+    (EcGroup, EcPoint, BnX,
+     YBit, BnCtx),
+    FALSE
+    );
 }
 
 /**
@@ -5513,7 +5927,11 @@ EcGenerateKey (
   IN OUT  UINTN  *PublicKeySize
   )
 {
-  CALL_CRYPTO_SERVICE (EcGenerateKey, (EcContext, PublicKey, PublicKeySize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    EcGenerateKey,
+    (EcContext, PublicKey, PublicKeySize),
+    FALSE
+    );
 }
 
 /**
@@ -5538,7 +5956,11 @@ EcGetPubKey (
   IN OUT  UINTN  *PublicKeySize
   )
 {
-  CALL_CRYPTO_SERVICE (EcGetPubKey, (EcContext, PublicKey, PublicKeySize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    EcGetPubKey,
+    (EcContext, PublicKey, PublicKeySize),
+    FALSE
+    );
 }
 
 /**
@@ -5577,7 +5999,12 @@ EcDhComputeKey (
   IN OUT  UINTN        *KeySize
   )
 {
-  CALL_CRYPTO_SERVICE (EcDhComputeKey, (EcContext, PeerPublic, PeerPublicSize, CompressFlag, Key, KeySize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    EcDhComputeKey,
+    (EcContext, PeerPublic, PeerPublicSize,
+     CompressFlag, Key, KeySize),
+    FALSE
+    );
 }
 
 /**
@@ -5604,7 +6031,11 @@ EcGetPublicKeyFromX509 (
   OUT  VOID         **EcContext
   )
 {
-  CALL_CRYPTO_SERVICE (EcGetPublicKeyFromX509, (Cert, CertSize, EcContext), FALSE);
+  CALL_CRYPTO_SERVICE (
+    EcGetPublicKeyFromX509,
+    (Cert, CertSize, EcContext),
+    FALSE
+    );
 }
 
 /**
@@ -5633,7 +6064,12 @@ EcGetPrivateKeyFromPem (
   OUT  VOID         **EcContext
   )
 {
-  CALL_CRYPTO_SERVICE (EcGetPrivateKeyFromPem, (PemData, PemSize, Password, EcContext), FALSE);
+  CALL_CRYPTO_SERVICE (
+    EcGetPrivateKeyFromPem,
+    (PemData, PemSize, Password,
+     EcContext),
+    FALSE
+    );
 }
 
 /**
@@ -5676,7 +6112,12 @@ EcDsaSign (
   IN OUT  UINTN        *SigSize
   )
 {
-  CALL_CRYPTO_SERVICE (EcDsaSign, (EcContext, HashNid, MessageHash, HashSize, Signature, SigSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    EcDsaSign,
+    (EcContext, HashNid, MessageHash, HashSize,
+     Signature, SigSize),
+    FALSE
+    );
 }
 
 /**
@@ -5713,5 +6154,10 @@ EcDsaVerify (
   IN  UINTN        SigSize
   )
 {
-  CALL_CRYPTO_SERVICE (EcDsaVerify, (EcContext, HashNid, MessageHash, HashSize, Signature, SigSize), FALSE);
+  CALL_CRYPTO_SERVICE (
+    EcDsaVerify,
+    (EcContext, HashNid, MessageHash, HashSize,
+     Signature, SigSize),
+    FALSE
+    );
 }

@@ -175,7 +175,9 @@ Pkcs1v2Encrypt (
   //
   // Encrypt Data.
   //
-  if (EVP_PKEY_encrypt (PkeyCtx, OutData, &OutDataSize, InData, InDataSize) <= 0) {
+  if (EVP_PKEY_encrypt (PkeyCtx, OutData, &OutDataSize, InData, InDataSize) <=
+      0)
+  {
     //
     // Fail to encrypt data, need to free the output buffer.
     //

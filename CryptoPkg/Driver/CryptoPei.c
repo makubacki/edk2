@@ -81,7 +81,10 @@ CryptoPeiEntry (
       //
       // CryptoPei was also dispatched before gEfiPeiMemoryDiscoveredPpiGuid
       //
-      DEBUG ((DEBUG_INFO, "CryptoPeiEntry: ReInstall Post-Memmory Crypto PPI\n"));
+      DEBUG ((
+        DEBUG_INFO,
+        "CryptoPeiEntry: ReInstall Post-Memmory Crypto PPI\n"
+        ));
       Status = PeiServicesReInstallPpi (
                  EdkiiCryptoPpiDescriptor,
                  &mEdkiiCryptoPpiList

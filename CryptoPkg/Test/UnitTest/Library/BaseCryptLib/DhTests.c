@@ -101,7 +101,8 @@ TEST_DESC  mDhTest[] = {
   //
   // -----Description--------------------------------Class---------------------Function----------------Pre-----------------Post------------Context
   //
-  { "TestVerifyDhGenerateKey()", "CryptoPkg.BaseCryptLib.Dh", TestVerifyDhGenerateKey, TestVerifyDhPreReq, TestVerifyDhCleanUp, NULL },
+  { "TestVerifyDhGenerateKey()", "CryptoPkg.BaseCryptLib.Dh",
+    TestVerifyDhGenerateKey, TestVerifyDhPreReq, TestVerifyDhCleanUp, NULL },
 };
 
 UINTN  mDhTestNum = ARRAY_SIZE (mDhTest);

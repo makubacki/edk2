@@ -58,7 +58,11 @@ DxeCryptLibConstructor (
                   );
 
   if (EFI_ERROR (Status) || (mCryptoProtocol == NULL)) {
-    DEBUG ((DEBUG_ERROR, "[DxeCryptLib] Failed to locate Crypto Protocol. Status = %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "[DxeCryptLib] Failed to locate Crypto Protocol. Status = %r\n",
+      Status
+      ));
     ASSERT_EFI_ERROR (Status);
     ASSERT (mCryptoProtocol != NULL);
     mCryptoProtocol = NULL;
@@ -67,7 +71,11 @@ DxeCryptLibConstructor (
 
   Version = mCryptoProtocol->GetVersion ();
   if (Version < EDKII_CRYPTO_VERSION) {
-    DEBUG ((DEBUG_ERROR, "[DxeCryptLib] Crypto Protocol unsupported version %d\n", Version));
+    DEBUG ((
+      DEBUG_ERROR,
+      "[DxeCryptLib] Crypto Protocol unsupported version %d\n",
+      Version
+      ));
     ASSERT (Version >= EDKII_CRYPTO_VERSION);
     mCryptoProtocol = NULL;
     return EFI_NOT_FOUND;

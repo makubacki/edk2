@@ -141,7 +141,13 @@ RsaPssSign (
     goto _Exit;
   }
 
-  Result = EVP_DigestSignInit (EvpVerifyCtx, &KeyCtx, HashAlg, NULL, EvpRsaKey) > 0;
+  Result = EVP_DigestSignInit (
+             EvpVerifyCtx,
+             &KeyCtx,
+             HashAlg,
+             NULL,
+             EvpRsaKey
+             ) > 0;
   if (KeyCtx == NULL) {
     goto _Exit;
   }

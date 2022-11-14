@@ -120,7 +120,13 @@ RsaPssVerify (
     goto _Exit;
   }
 
-  Result = EVP_DigestVerifyInit (EvpVerifyCtx, &KeyCtx, HashAlg, NULL, EvpRsaKey) > 0;
+  Result = EVP_DigestVerifyInit (
+             EvpVerifyCtx,
+             &KeyCtx,
+             HashAlg,
+             NULL,
+             EvpRsaKey
+             ) > 0;
   if (KeyCtx == NULL) {
     goto _Exit;
   }
@@ -138,11 +144,13 @@ RsaPssVerify (
   }
 
   if (Result) {
-    Result = EVP_DigestVerifyUpdate (EvpVerifyCtx, Message, (UINT32)MsgSize) > 0;
+    Result = EVP_DigestVerifyUpdate (EvpVerifyCtx, Message, (UINT32)MsgSize) >
+             0;
   }
 
   if (Result) {
-    Result = EVP_DigestVerifyFinal (EvpVerifyCtx, Signature, (UINT32)SigSize) > 0;
+    Result = EVP_DigestVerifyFinal (EvpVerifyCtx, Signature, (UINT32)SigSize) >
+             0;
   }
 
 _Exit:
