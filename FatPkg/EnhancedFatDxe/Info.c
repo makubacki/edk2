@@ -220,7 +220,9 @@ FatSetVolumeInfo (
 
   Info = (EFI_FILE_SYSTEM_INFO *)Buffer;
 
-  if ((BufferSize < SIZE_OF_EFI_FILE_SYSTEM_INFO + 2) || (Info->Size > BufferSize)) {
+  if ((BufferSize < SIZE_OF_EFI_FILE_SYSTEM_INFO + 2) || (Info->Size >
+                                                          BufferSize))
+  {
     return EFI_BAD_BUFFER_SIZE;
   }
 
@@ -317,11 +319,14 @@ FatSetFileInfo (
   // Make sure there's a valid input buffer
   //
   NewInfo = Buffer;
-  if ((BufferSize < SIZE_OF_EFI_FILE_INFO + 2) || (NewInfo->Size > BufferSize)) {
+  if ((BufferSize < SIZE_OF_EFI_FILE_INFO + 2) || (NewInfo->Size >
+                                                   BufferSize))
+  {
     return EFI_BAD_BUFFER_SIZE;
   }
 
-  ReadOnly = (BOOLEAN)(IFile->ReadOnly || (DirEnt->Entry.Attributes & EFI_FILE_READ_ONLY));
+  ReadOnly = (BOOLEAN)(IFile->ReadOnly || (DirEnt->Entry.Attributes &
+                                           EFI_FILE_READ_ONLY));
   //
   // if a zero time is specified, then the original time is preserved
   //
@@ -335,13 +340,18 @@ FatSetFileInfo (
     }
   }
 
-  if (CompareMem (&ZeroTime, &NewInfo->ModificationTime, sizeof (EFI_TIME)) != 0) {
+  if (CompareMem (&ZeroTime, &NewInfo->ModificationTime, sizeof (EFI_TIME)) !=
+      0)
+  {
     if (!FatIsValidTime (&NewInfo->ModificationTime)) {
       return EFI_INVALID_PARAMETER;
     }
 
     if (!ReadOnly) {
-      FatEfiTimeToFatTime (&NewInfo->ModificationTime, &DirEnt->Entry.FileModificationTime);
+      FatEfiTimeToFatTime (
+        &NewInfo->ModificationTime,
+        &DirEnt->Entry.FileModificationTime
+        );
     }
 
     OFile->PreserveLastModification = TRUE;
@@ -362,11 +372,17 @@ FatSetFileInfo (
   //
   // Set the current attributes even if the IFile->ReadOnly is TRUE
   //
-  DirEnt->Entry.Attributes = (UINT8)((DirEnt->Entry.Attributes &~EFI_FILE_VALID_ATTR) | NewAttribute);
+  DirEnt->Entry.Attributes = (UINT8)((DirEnt->Entry.Attributes &
+                                      ~EFI_FILE_VALID_ATTR) | NewAttribute);
   //
   // Open the filename and see if it refers to an existing file
   //
-  Status = FatLocateOFile (&Parent, NewInfo->FileName, DirEnt->Entry.Attributes, NewFileName);
+  Status = FatLocateOFile (
+             &Parent,
+             NewInfo->FileName,
+             DirEnt->Entry.Attributes,
+             NewFileName
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -392,7 +408,12 @@ FatSetFileInfo (
     //
     // Create new dirent
     //
-    Status = FatCreateDirEnt (Parent, NewFileName, DirEnt->Entry.Attributes, &TempDirEnt);
+    Status = FatCreateDirEnt (
+               Parent,
+               NewFileName,
+               DirEnt->Entry.Attributes,
+               &TempDirEnt
+               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -414,9 +435,14 @@ FatSetFileInfo (
       //
       FatResetODirCursor (OFile);
       ASSERT (OFile->Parent != NULL);
-      for (DotOFile = OFile; DotOFile != OFile->Parent->Parent; DotOFile = DotOFile->Parent) {
+      for (DotOFile = OFile; DotOFile != OFile->Parent->Parent; DotOFile =
+             DotOFile->Parent)
+      {
         Status = FatGetNextDirEnt (OFile, &DirEnt);
-        if (EFI_ERROR (Status) || (DirEnt == NULL) || !FatIsDotDirEnt (DirEnt)) {
+        if (EFI_ERROR (Status) || (DirEnt == NULL) || !FatIsDotDirEnt (
+                                                         DirEnt
+                                                         ))
+        {
           return EFI_VOLUME_CORRUPTED;
         }
 
@@ -518,15 +544,26 @@ FatSetOrGetInfo (
     Status = EFI_UNSUPPORTED;
     if (IsSet) {
       if (CompareGuid (Type, &gEfiFileInfoGuid)) {
-        Status = Volume->ReadOnly ? EFI_WRITE_PROTECTED : FatSetFileInfo (Volume, IFile, OFile, *BufferSize, Buffer);
+        Status = Volume->ReadOnly ? EFI_WRITE_PROTECTED : FatSetFileInfo (
+                                                            Volume,
+                                                            IFile,
+                                                            OFile,
+                                                            *BufferSize,
+                                                            Buffer
+                                                            );
       }
 
       if (CompareGuid (Type, &gEfiFileSystemInfoGuid)) {
-        Status = Volume->ReadOnly ? EFI_WRITE_PROTECTED : FatSetVolumeInfo (Volume, *BufferSize, Buffer);
+        Status = Volume->ReadOnly ? EFI_WRITE_PROTECTED : FatSetVolumeInfo (
+                                                            Volume,
+                                                            *BufferSize,
+                                                            Buffer
+                                                            );
       }
 
       if (CompareGuid (Type, &gEfiFileSystemVolumeLabelInfoIdGuid)) {
-        Status = Volume->ReadOnly ? EFI_WRITE_PROTECTED : FatSetVolumeLabelInfo (Volume, *BufferSize, Buffer);
+        Status = Volume->ReadOnly ? EFI_WRITE_PROTECTED :
+                 FatSetVolumeLabelInfo (Volume, *BufferSize, Buffer);
       }
     } else {
       if (CompareGuid (Type, &gEfiFileInfoGuid)) {

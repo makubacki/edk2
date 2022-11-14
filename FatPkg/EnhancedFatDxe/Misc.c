@@ -154,7 +154,10 @@ FatQueueTask (
   // they may check the validity of doubly-linked lists by traversing them. These APIs cannot
   // handle list elements being removed during the traverse.
   //
-  for ( Link = GetFirstNode (&Task->Subtasks), NextLink = GetNextNode (&Task->Subtasks, Link)
+  for ( Link = GetFirstNode (&Task->Subtasks), NextLink = GetNextNode (
+                                                            &Task->Subtasks,
+                                                            Link
+                                                            )
         ; Link != &Task->Subtasks
         ; Link = NextLink, NextLink = Link->ForwardLink
         )
@@ -236,7 +239,14 @@ FatAccessVolumeDirty (
   UINTN  WriteCount;
 
   WriteCount = Volume->FatEntrySize;
-  return FatDiskIo (Volume, IoMode, Volume->FatPos + WriteCount, WriteCount, DirtyValue, NULL);
+  return FatDiskIo (
+           Volume,
+           IoMode,
+           Volume->FatPos + WriteCount,
+           WriteCount,
+           DirtyValue,
+           NULL
+           );
 }
 
 /**
@@ -335,7 +345,15 @@ FatDiskIo (
       //
       // Access cache
       //
-      Status = FatAccessCache (Volume, CACHE_TYPE (IoMode), RAW_ACCESS (IoMode), Offset, BufferSize, Buffer, Task);
+      Status = FatAccessCache (
+                 Volume,
+                 CACHE_TYPE (IoMode),
+                 RAW_ACCESS (IoMode),
+                 Offset,
+                 BufferSize,
+                 Buffer,
+                 Task
+                 );
     } else {
       //
       // Access disk directly
@@ -345,8 +363,15 @@ FatDiskIo (
         // Blocking access
         //
         DiskIo     = Volume->DiskIo;
-        IoFunction = (IoMode == ReadDisk) ? DiskIo->ReadDisk : DiskIo->WriteDisk;
-        Status     = IoFunction (DiskIo, Volume->MediaId, Offset, BufferSize, Buffer);
+        IoFunction = (IoMode == ReadDisk) ? DiskIo->ReadDisk :
+                     DiskIo->WriteDisk;
+        Status = IoFunction (
+                   DiskIo,
+                   Volume->MediaId,
+                   Offset,
+                   BufferSize,
+                   Buffer
+                   );
       } else {
         //
         // Non-blocking access

@@ -189,7 +189,13 @@ FatGetCachePage (
   // Write dirty cache page back to disk
   //
   if ((CacheTag->RealSize > 0) && CacheTag->Dirty) {
-    Status = FatExchangeCachePage (Volume, CacheDataType, WriteDisk, CacheTag, NULL);
+    Status = FatExchangeCachePage (
+               Volume,
+               CacheDataType,
+               WriteDisk,
+               CacheTag,
+               NULL
+               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -199,7 +205,13 @@ FatGetCachePage (
   // Load new data from disk;
   //
   CacheTag->PageNo = PageNo;
-  Status           = FatExchangeCachePage (Volume, CacheDataType, ReadDisk, CacheTag, NULL);
+  Status           = FatExchangeCachePage (
+                       Volume,
+                       CacheDataType,
+                       ReadDisk,
+                       CacheTag,
+                       NULL
+                       );
 
   return Status;
 }
@@ -245,7 +257,8 @@ FatAccessUnalignedCachePage (
   CacheTag  = &DiskCache->CacheTag[GroupNo];
   Status    = FatGetCachePage (Volume, CacheDataType, PageNo, CacheTag);
   if (!EFI_ERROR (Status)) {
-    Source      = DiskCache->CacheBase + (GroupNo << DiskCache->PageAlignment) + Offset;
+    Source = DiskCache->CacheBase + (GroupNo << DiskCache->PageAlignment) +
+             Offset;
     Destination = Buffer;
     if (IoMode != ReadDisk) {
       CacheTag->Dirty  = TRUE;
@@ -329,7 +342,15 @@ FatAccessCache (
       Length = BufferSize;
     }
 
-    Status = FatAccessUnalignedCachePage (Volume, CacheDataType, IoMode, PageNo, UnderRun, Length, Buffer);
+    Status = FatAccessUnalignedCachePage (
+               Volume,
+               CacheDataType,
+               IoMode,
+               PageNo,
+               UnderRun,
+               Length,
+               Buffer
+               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -352,7 +373,14 @@ FatAccessCache (
 
     EntryPos    = Volume->RootPos + LShiftU64 (PageNo, PageAlignment);
     AlignedSize = AlignedPageCount << PageAlignment;
-    Status      = FatDiskIo (Volume, IoMode, EntryPos, AlignedSize, Buffer, Task);
+    Status      = FatDiskIo (
+                    Volume,
+                    IoMode,
+                    EntryPos,
+                    AlignedSize,
+                    Buffer,
+                    Task
+                    );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -374,7 +402,15 @@ FatAccessCache (
     //
     // Last read is not a complete page
     //
-    Status = FatAccessUnalignedCachePage (Volume, CacheDataType, IoMode, OverRunPageNo, 0, OverRun, Buffer);
+    Status = FatAccessUnalignedCachePage (
+               Volume,
+               CacheDataType,
+               IoMode,
+               OverRunPageNo,
+               0,
+               OverRun,
+               Buffer
+               );
   }
 
   return Status;
@@ -404,7 +440,9 @@ FatVolumeFlushCache (
   DISK_CACHE       *DiskCache;
   CACHE_TAG        *CacheTag;
 
-  for (CacheDataType = (CACHE_DATA_TYPE)0; CacheDataType < CacheMaxType; CacheDataType++) {
+  for (CacheDataType = (CACHE_DATA_TYPE)0; CacheDataType < CacheMaxType;
+       CacheDataType++)
+  {
     DiskCache = &Volume->DiskCache[CacheDataType];
     if (DiskCache->Dirty) {
       //
@@ -417,7 +455,13 @@ FatVolumeFlushCache (
           //
           // Write back all Dirty Data Cache Page to disk
           //
-          Status = FatExchangeCachePage (Volume, CacheDataType, WriteDisk, CacheTag, Task);
+          Status = FatExchangeCachePage (
+                     Volume,
+                     CacheDataType,
+                     WriteDisk,
+                     CacheTag,
+                     Task
+                     );
           if (EFI_ERROR (Status)) {
             return Status;
           }
@@ -476,8 +520,10 @@ FatInitializeDiskCache (
   DiskCache[CacheFat].GroupMask     = FatCacheGroupCount - 1;
   DiskCache[CacheFat].BaseAddress   = Volume->FatPos;
   DiskCache[CacheFat].LimitAddress  = Volume->FatPos + Volume->FatSize;
-  FatCacheSize                      = FatCacheGroupCount << DiskCache[CacheFat].PageAlignment;
-  DataCacheSize                     = FAT_DATACACHE_GROUP_COUNT << DiskCache[CacheData].PageAlignment;
+  FatCacheSize                      = FatCacheGroupCount <<
+                                      DiskCache[CacheFat].PageAlignment;
+  DataCacheSize = FAT_DATACACHE_GROUP_COUNT <<
+                  DiskCache[CacheData].PageAlignment;
   //
   // Allocate the Fat Cache buffer
   //

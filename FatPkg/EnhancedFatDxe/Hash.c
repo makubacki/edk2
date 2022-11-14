@@ -33,7 +33,11 @@ FatHashLongName (
     ARRAY_SIZE (UpCasedLongFileName) - 1
     );
   FatStrUpr (UpCasedLongFileName);
-  gBS->CalculateCrc32 (UpCasedLongFileName, StrSize (UpCasedLongFileName), &HashValue);
+  gBS->CalculateCrc32 (
+         UpCasedLongFileName,
+         StrSize (UpCasedLongFileName),
+         &HashValue
+         );
   return (HashValue & HASH_TABLE_MASK);
 }
 
@@ -76,7 +80,9 @@ FatLongNameHashSearch (
 {
   FAT_DIRENT  **PreviousHashNode;
 
-  for (PreviousHashNode   = &ODir->LongNameHashTable[FatHashLongName (LongNameString)];
+  for (PreviousHashNode   = &ODir->LongNameHashTable[FatHashLongName (
+                                                       LongNameString
+                                                       )];
        *PreviousHashNode != NULL;
        PreviousHashNode   = &(*PreviousHashNode)->LongNameForwardLink
        )
@@ -107,12 +113,19 @@ FatShortNameHashSearch (
 {
   FAT_DIRENT  **PreviousHashNode;
 
-  for (PreviousHashNode   = &ODir->ShortNameHashTable[FatHashShortName (ShortNameString)];
+  for (PreviousHashNode   = &ODir->ShortNameHashTable[FatHashShortName (
+                                                        ShortNameString
+                                                        )];
        *PreviousHashNode != NULL;
        PreviousHashNode   = &(*PreviousHashNode)->ShortNameForwardLink
        )
   {
-    if (CompareMem (ShortNameString, (*PreviousHashNode)->Entry.FileName, FAT_NAME_LEN) == 0) {
+    if (CompareMem (
+          ShortNameString,
+          (*PreviousHashNode)->Entry.FileName,
+          FAT_NAME_LEN
+          ) == 0)
+    {
       break;
     }
   }
@@ -167,6 +180,8 @@ FatDeleteFromHashTable (
   IN FAT_DIRENT  *DirEnt
   )
 {
-  *FatShortNameHashSearch (ODir, DirEnt->Entry.FileName) = DirEnt->ShortNameForwardLink;
-  *FatLongNameHashSearch (ODir, DirEnt->FileString)      = DirEnt->LongNameForwardLink;
+  *FatShortNameHashSearch (ODir, DirEnt->Entry.FileName) =
+    DirEnt->ShortNameForwardLink;
+  *FatLongNameHashSearch (ODir, DirEnt->FileString) =
+    DirEnt->LongNameForwardLink;
 }

@@ -77,7 +77,9 @@ UpdateBlocksAndVolumes (
   // Find out all Block Io Ppi instances within the system
   // Assuming all device Block Io Peims are dispatched already
   //
-  for (BlockIoPpiInstance = 0; BlockIoPpiInstance < PEI_FAT_MAX_BLOCK_IO_PPI; BlockIoPpiInstance++) {
+  for (BlockIoPpiInstance = 0; BlockIoPpiInstance < PEI_FAT_MAX_BLOCK_IO_PPI;
+       BlockIoPpiInstance++)
+  {
     if (BlockIo2) {
       Status = PeiServicesLocatePpi (
                  &gEfiPeiVirtualBlockIo2PpiGuid,
@@ -119,7 +121,9 @@ UpdateBlocksAndVolumes (
       continue;
     }
 
-    for (Index = 1; Index <= NumberBlockDevices && PrivateData->BlockDeviceCount < PEI_FAT_MAX_BLOCK_DEVICE; Index++) {
+    for (Index = 1; Index <= NumberBlockDevices &&
+         PrivateData->BlockDeviceCount < PEI_FAT_MAX_BLOCK_DEVICE; Index++)
+    {
       if (BlockIo2) {
         Status = BlockIo2Ppi->GetBlockDeviceMediaInfo (
                                 PeiServices,
@@ -131,10 +135,14 @@ UpdateBlocksAndVolumes (
           continue;
         }
 
-        PrivateData->BlockDevice[PrivateData->BlockDeviceCount].BlockIo2      = BlockIo2Ppi;
-        PrivateData->BlockDevice[PrivateData->BlockDeviceCount].InterfaceType = Media2.InterfaceType;
-        PrivateData->BlockDevice[PrivateData->BlockDeviceCount].LastBlock     = Media2.LastBlock;
-        PrivateData->BlockDevice[PrivateData->BlockDeviceCount].BlockSize     = Media2.BlockSize;
+        PrivateData->BlockDevice[PrivateData->BlockDeviceCount].BlockIo2 =
+          BlockIo2Ppi;
+        PrivateData->BlockDevice[PrivateData->BlockDeviceCount].InterfaceType =
+          Media2.InterfaceType;
+        PrivateData->BlockDevice[PrivateData->BlockDeviceCount].LastBlock =
+          Media2.LastBlock;
+        PrivateData->BlockDevice[PrivateData->BlockDeviceCount].BlockSize =
+          Media2.BlockSize;
       } else {
         Status = BlockIoPpi->GetBlockDeviceMediaInfo (
                                PeiServices,
@@ -146,20 +154,27 @@ UpdateBlocksAndVolumes (
           continue;
         }
 
-        PrivateData->BlockDevice[PrivateData->BlockDeviceCount].BlockIo   = BlockIoPpi;
-        PrivateData->BlockDevice[PrivateData->BlockDeviceCount].DevType   = Media.DeviceType;
-        PrivateData->BlockDevice[PrivateData->BlockDeviceCount].LastBlock = Media.LastBlock;
-        PrivateData->BlockDevice[PrivateData->BlockDeviceCount].BlockSize = (UINT32)Media.BlockSize;
+        PrivateData->BlockDevice[PrivateData->BlockDeviceCount].BlockIo =
+          BlockIoPpi;
+        PrivateData->BlockDevice[PrivateData->BlockDeviceCount].DevType =
+          Media.DeviceType;
+        PrivateData->BlockDevice[PrivateData->BlockDeviceCount].LastBlock =
+          Media.LastBlock;
+        PrivateData->BlockDevice[PrivateData->BlockDeviceCount].BlockSize =
+          (UINT32)Media.BlockSize;
       }
 
       PrivateData->BlockDevice[PrivateData->BlockDeviceCount].IoAlign = 0;
       //
       // Not used here
       //
-      PrivateData->BlockDevice[PrivateData->BlockDeviceCount].Logical          = FALSE;
-      PrivateData->BlockDevice[PrivateData->BlockDeviceCount].PartitionChecked = FALSE;
+      PrivateData->BlockDevice[PrivateData->BlockDeviceCount].Logical =
+        FALSE;
+      PrivateData->BlockDevice[PrivateData->BlockDeviceCount].PartitionChecked =
+        FALSE;
 
-      PrivateData->BlockDevice[PrivateData->BlockDeviceCount].PhysicalDevNo = (UINT8)Index;
+      PrivateData->BlockDevice[PrivateData->BlockDeviceCount].PhysicalDevNo =
+        (UINT8)Index;
       PrivateData->BlockDeviceCount++;
     }
   }
@@ -277,11 +292,15 @@ FatPeimEntry (
   //
   // Installs Ppi
   //
-  PrivateData->DeviceRecoveryPpi.GetNumberRecoveryCapsules = GetNumberRecoveryCapsules;
-  PrivateData->DeviceRecoveryPpi.GetRecoveryCapsuleInfo    = GetRecoveryCapsuleInfo;
-  PrivateData->DeviceRecoveryPpi.LoadRecoveryCapsule       = LoadRecoveryCapsule;
+  PrivateData->DeviceRecoveryPpi.GetNumberRecoveryCapsules =
+    GetNumberRecoveryCapsules;
+  PrivateData->DeviceRecoveryPpi.GetRecoveryCapsuleInfo =
+    GetRecoveryCapsuleInfo;
+  PrivateData->DeviceRecoveryPpi.LoadRecoveryCapsule =
+    LoadRecoveryCapsule;
 
-  PrivateData->PpiDescriptor.Flags = (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST);
+  PrivateData->PpiDescriptor.Flags = (EFI_PEI_PPI_DESCRIPTOR_PPI |
+                                      EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST);
   PrivateData->PpiDescriptor.Guid  = &gEfiPeiDeviceRecoveryModulePpiGuid;
   PrivateData->PpiDescriptor.Ppi   = &PrivateData->DeviceRecoveryPpi;
 
@@ -366,7 +385,14 @@ GetNumberRecoveryCapsules (
   //
   RecoveryCapsuleCount = 0;
   for (Index = 0; Index < PrivateData->VolumeCount; Index++) {
-    Status = FindRecoveryFile (PrivateData, Index, (CHAR16 *)PcdGetPtr (PcdRecoveryFileName), &Handle);
+    Status = FindRecoveryFile (
+               PrivateData,
+               Index,
+               (CHAR16 *)PcdGetPtr (
+                           PcdRecoveryFileName
+                           ),
+               &Handle
+               );
     if (EFI_ERROR (Status)) {
       continue;
     }
@@ -426,7 +452,11 @@ GetRecoveryCapsuleInfo (
   PEI_FILE_HANDLE       Handle;
   UINTN                 NumberRecoveryCapsules;
 
-  Status = GetNumberRecoveryCapsules (PeiServices, This, &NumberRecoveryCapsules);
+  Status = GetNumberRecoveryCapsules (
+             PeiServices,
+             This,
+             &NumberRecoveryCapsules
+             );
 
   if (EFI_ERROR (Status)) {
     return Status;
@@ -443,7 +473,14 @@ GetRecoveryCapsuleInfo (
   //
   RecoveryCapsuleCount = 0;
   for (Index = 0; Index < PrivateData->VolumeCount; Index++) {
-    Status = FindRecoveryFile (PrivateData, Index, (CHAR16 *)PcdGetPtr (PcdRecoveryFileName), &Handle);
+    Status = FindRecoveryFile (
+               PrivateData,
+               Index,
+               (CHAR16 *)PcdGetPtr (
+                           PcdRecoveryFileName
+                           ),
+               &Handle
+               );
 
     if (EFI_ERROR (Status)) {
       continue;
@@ -459,7 +496,9 @@ GetRecoveryCapsuleInfo (
       // Find corresponding physical block device
       //
       BlockDeviceNo = PrivateData->Volume[Index].BlockDeviceNo;
-      while (PrivateData->BlockDevice[BlockDeviceNo].Logical && BlockDeviceNo < PrivateData->BlockDeviceCount) {
+      while (PrivateData->BlockDevice[BlockDeviceNo].Logical && BlockDeviceNo <
+             PrivateData->BlockDeviceCount)
+      {
         BlockDeviceNo = PrivateData->BlockDevice[BlockDeviceNo].ParentDevNo;
       }
 
@@ -551,7 +590,11 @@ LoadRecoveryCapsule (
   PEI_FILE_HANDLE       Handle;
   UINTN                 NumberRecoveryCapsules;
 
-  Status = GetNumberRecoveryCapsules (PeiServices, This, &NumberRecoveryCapsules);
+  Status = GetNumberRecoveryCapsules (
+             PeiServices,
+             This,
+             &NumberRecoveryCapsules
+             );
 
   if (EFI_ERROR (Status)) {
     return Status;
@@ -568,7 +611,14 @@ LoadRecoveryCapsule (
   //
   RecoveryCapsuleCount = 0;
   for (Index = 0; Index < PrivateData->VolumeCount; Index++) {
-    Status = FindRecoveryFile (PrivateData, Index, (CHAR16 *)PcdGetPtr (PcdRecoveryFileName), &Handle);
+    Status = FindRecoveryFile (
+               PrivateData,
+               Index,
+               (CHAR16 *)PcdGetPtr (
+                           PcdRecoveryFileName
+                           ),
+               &Handle
+               );
     if (EFI_ERROR (Status)) {
       continue;
     }
@@ -631,10 +681,13 @@ FindRecoveryFile (
   // Construct root directory file
   //
   ZeroMem (&Parent, sizeof (PEI_FAT_FILE));
-  Parent.IsFixedRootDir  = (BOOLEAN)((PrivateData->Volume[VolumeIndex].FatType == Fat32) ? FALSE : TRUE);
-  Parent.Attributes      = FAT_ATTR_DIRECTORY;
-  Parent.CurrentPos      = 0;
-  Parent.CurrentCluster  = Parent.IsFixedRootDir ? 0 : PrivateData->Volume[VolumeIndex].RootDirCluster;
+  Parent.IsFixedRootDir =
+    (BOOLEAN)((PrivateData->Volume[VolumeIndex].FatType == Fat32) ? FALSE :
+              TRUE);
+  Parent.Attributes     = FAT_ATTR_DIRECTORY;
+  Parent.CurrentPos     = 0;
+  Parent.CurrentCluster = Parent.IsFixedRootDir ? 0 :
+                          PrivateData->Volume[VolumeIndex].RootDirCluster;
   Parent.StartingCluster = Parent.CurrentCluster;
   Parent.Volume          = &PrivateData->Volume[VolumeIndex];
 

@@ -80,7 +80,9 @@ FatGetBpbInfo (
   //
   // Filter out those not a FAT
   //
-  if ((Bpb.Ia32Jump[0] != 0xe9) && (Bpb.Ia32Jump[0] != 0xeb) && (Bpb.Ia32Jump[0] != 0x49)) {
+  if ((Bpb.Ia32Jump[0] != 0xe9) && (Bpb.Ia32Jump[0] != 0xeb) &&
+      (Bpb.Ia32Jump[0] != 0x49))
+  {
     return EFI_NOT_FOUND;
   }
 
@@ -101,7 +103,9 @@ FatGetBpbInfo (
     return EFI_NOT_FOUND;
   }
 
-  if ((Volume->FatType == Fat32) && ((SectorsPerFat == 0) || (BpbEx.FsVersion != 0))) {
+  if ((Volume->FatType == Fat32) && ((SectorsPerFat == 0) || (BpbEx.FsVersion !=
+                                                              0)))
+  {
     return EFI_NOT_FOUND;
   }
 
@@ -143,7 +147,8 @@ FatGetBpbInfo (
   Volume->RootEntries = Bpb.RootEntries;
   Volume->SectorSize  = Bpb.SectorSize;
 
-  RootDirSectors = ((Volume->RootEntries * sizeof (FAT_DIRECTORY_ENTRY)) + (Volume->SectorSize - 1)) / Volume->SectorSize;
+  RootDirSectors = ((Volume->RootEntries * sizeof (FAT_DIRECTORY_ENTRY)) +
+                    (Volume->SectorSize - 1)) / Volume->SectorSize;
 
   FatLba          = Bpb.ReservedSectors;
   RootLba         = Bpb.NoFats * SectorsPerFat + FatLba;
@@ -153,8 +158,9 @@ FatGetBpbInfo (
   Volume->FatPos          = MultU64x32 (FatLba, Volume->SectorSize);
   Volume->RootDirPos      = MultU64x32 (RootLba, Volume->SectorSize);
   Volume->FirstClusterPos = MultU64x32 (FirstClusterLba, Volume->SectorSize);
-  Volume->MaxCluster      = (UINT32)(Sectors - FirstClusterLba) / Bpb.SectorsPerCluster;
-  Volume->RootDirCluster  = BpbEx.RootDirFirstCluster;
+  Volume->MaxCluster      = (UINT32)(Sectors - FirstClusterLba) /
+                            Bpb.SectorsPerCluster;
+  Volume->RootDirCluster = BpbEx.RootDirFirstCluster;
 
   //
   // If this is not a fat32, determine if it's a fat16 or fat12
@@ -200,7 +206,13 @@ FatGetNextCluster (
   if (Volume->FatType == Fat32) {
     FatEntryPos = Volume->FatPos + MultU64x32 (4, Cluster);
 
-    Status        = FatReadDisk (PrivateData, Volume->BlockDeviceNo, FatEntryPos, 4, NextCluster);
+    Status = FatReadDisk (
+               PrivateData,
+               Volume->BlockDeviceNo,
+               FatEntryPos,
+               4,
+               NextCluster
+               );
     *NextCluster &= 0x0fffffff;
 
     //
@@ -212,7 +224,13 @@ FatGetNextCluster (
   } else if (Volume->FatType == Fat16) {
     FatEntryPos = Volume->FatPos + MultU64x32 (2, Cluster);
 
-    Status = FatReadDisk (PrivateData, Volume->BlockDeviceNo, FatEntryPos, 2, NextCluster);
+    Status = FatReadDisk (
+               PrivateData,
+               Volume->BlockDeviceNo,
+               FatEntryPos,
+               2,
+               NextCluster
+               );
 
     //
     // Pad high bits for our FAT_CLUSTER_... macro definitions to work
@@ -221,9 +239,19 @@ FatGetNextCluster (
       *NextCluster |= (-1 &~0xf);
     }
   } else {
-    FatEntryPos = Volume->FatPos + DivU64x32Remainder (MultU64x32 (3, Cluster), 2, &Dummy);
+    FatEntryPos = Volume->FatPos + DivU64x32Remainder (
+                                     MultU64x32 (3, Cluster),
+                                     2,
+                                     &Dummy
+                                     );
 
-    Status = FatReadDisk (PrivateData, Volume->BlockDeviceNo, FatEntryPos, 2, NextCluster);
+    Status = FatReadDisk (
+               PrivateData,
+               Volume->BlockDeviceNo,
+               FatEntryPos,
+               2,
+               NextCluster
+               );
 
     if ((Cluster & 0x01) != 0) {
       *NextCluster = (*NextCluster) >> 4;
@@ -278,7 +306,10 @@ FatSetFilePos (
     }
 
     File->CurrentPos        += Pos;
-    File->StraightReadAmount = (UINT32)(MultU64x32 (File->Volume->RootEntries, 32) - File->CurrentPos);
+    File->StraightReadAmount = (UINT32)(MultU64x32 (
+                                          File->Volume->RootEntries,
+                                          32
+                                          ) - File->CurrentPos);
   } else {
     DivU64x32Remainder (File->CurrentPos, File->Volume->ClusterSize, &Offset);
     AlignedPos = (UINT32)File->CurrentPos - (UINT32)Offset;
@@ -315,7 +346,12 @@ FatSetFilePos (
     while (!FAT_CLUSTER_FUNCTIONAL (Cluster)) {
       File->StraightReadAmount += File->Volume->ClusterSize;
       PrevCluster               = Cluster;
-      Status                    = FatGetNextCluster (PrivateData, File->Volume, Cluster, &Cluster);
+      Status                    = FatGetNextCluster (
+                                    PrivateData,
+                                    File->Volume,
+                                    Cluster,
+                                    &Cluster
+                                    );
       if (EFI_ERROR (Status)) {
         return EFI_DEVICE_ERROR;
       }
@@ -365,7 +401,9 @@ FatReadFile (
     //
     // This is the fixed root dir in FAT12 and FAT16
     //
-    if (File->CurrentPos + Size > File->Volume->RootEntries * sizeof (FAT_DIRECTORY_ENTRY)) {
+    if (File->CurrentPos + Size > File->Volume->RootEntries *
+        sizeof (FAT_DIRECTORY_ENTRY))
+    {
       return EFI_INVALID_PARAMETER;
     }
 
@@ -380,7 +418,8 @@ FatReadFile (
     return Status;
   } else {
     if ((File->Attributes & FAT_ATTR_DIRECTORY) == 0) {
-      Size = Size < (File->FileSize - File->CurrentPos) ? Size : (File->FileSize - File->CurrentPos);
+      Size = Size < (File->FileSize - File->CurrentPos) ? Size :
+             (File->FileSize - File->CurrentPos);
     }
 
     //
@@ -388,7 +427,10 @@ FatReadFile (
     //
     while (Size != 0) {
       DivU64x32Remainder (File->CurrentPos, File->Volume->ClusterSize, &Offset);
-      PhysicalAddr = File->Volume->FirstClusterPos + MultU64x32 (File->Volume->ClusterSize, File->CurrentCluster - 2);
+      PhysicalAddr = File->Volume->FirstClusterPos + MultU64x32 (
+                                                       File->Volume->ClusterSize,
+                                                       File->CurrentCluster - 2
+                                                       );
 
       Amount = File->StraightReadAmount;
       Amount = Size > Amount ? Amount : Size;
@@ -464,7 +506,9 @@ FatReadNextDirectoryEntry (
     // We only search for *FILE* in root directory
     // Long file name entry is *NOT* supported
     //
-    if (((DirEntry.Attributes & FAT_ATTR_DIRECTORY) == FAT_ATTR_DIRECTORY) || (DirEntry.Attributes == FAT_ATTR_LFN)) {
+    if (((DirEntry.Attributes & FAT_ATTR_DIRECTORY) == FAT_ATTR_DIRECTORY) ||
+        (DirEntry.Attributes == FAT_ATTR_LFN))
+    {
       continue;
     }
 

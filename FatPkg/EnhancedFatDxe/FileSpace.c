@@ -103,20 +103,24 @@ FatGetFatEntry (
     case Fat12:
       En12  = Pos;
       Accum = En12[0] | (En12[1] << 8);
-      Accum = FAT_ODD_CLUSTER_FAT12 (Index) ? (Accum >> 4) : (Accum & FAT_CLUSTER_MASK_FAT12);
-      Accum = Accum | ((Accum >= FAT_CLUSTER_SPECIAL_FAT12) ? FAT_CLUSTER_SPECIAL_EXT : 0);
+      Accum = FAT_ODD_CLUSTER_FAT12 (Index) ? (Accum >> 4) : (Accum &
+                                                              FAT_CLUSTER_MASK_FAT12);
+      Accum = Accum | ((Accum >= FAT_CLUSTER_SPECIAL_FAT12) ?
+                       FAT_CLUSTER_SPECIAL_EXT : 0);
       break;
 
     case Fat16:
       En16  = Pos;
       Accum = *En16;
-      Accum = Accum | ((Accum >= FAT_CLUSTER_SPECIAL_FAT16) ? FAT_CLUSTER_SPECIAL_EXT : 0);
+      Accum = Accum | ((Accum >= FAT_CLUSTER_SPECIAL_FAT16) ?
+                       FAT_CLUSTER_SPECIAL_EXT : 0);
       break;
 
     default:
       En32  = Pos;
       Accum = *En32 & FAT_CLUSTER_MASK_FAT32;
-      Accum = Accum | ((Accum >= FAT_CLUSTER_SPECIAL_FAT32) ? FAT_CLUSTER_SPECIAL_EXT : 0);
+      Accum = Accum | ((Accum >= FAT_CLUSTER_SPECIAL_FAT32) ?
+                       FAT_CLUSTER_SPECIAL_EXT : 0);
   }
 
   return Accum;
@@ -198,7 +202,8 @@ FatSetFatEntry (
 
     default:
       En32  = Pos;
-      *En32 = (*En32 & FAT_CLUSTER_UNMASK_FAT32) | (UINT32)(Value & FAT_CLUSTER_MASK_FAT32);
+      *En32 = (*En32 & FAT_CLUSTER_UNMASK_FAT32) | (UINT32)(Value &
+                                                            FAT_CLUSTER_MASK_FAT32);
   }
 
   //
@@ -247,7 +252,10 @@ FatFreeClusters (
 
   while (!FAT_END_OF_FAT_CHAIN (Cluster)) {
     if ((Cluster == FAT_CLUSTER_FREE) || (Cluster >= FAT_CLUSTER_SPECIAL)) {
-      DEBUG ((DEBUG_INIT | DEBUG_ERROR, "FatShrinkEof: cluster chain corrupt\n"));
+      DEBUG ((
+        DEBUG_INIT | DEBUG_ERROR,
+        "FatShrinkEof: cluster chain corrupt\n"
+        ));
       return EFI_VOLUME_CORRUPTED;
     }
 
@@ -288,17 +296,25 @@ FatAllocateCluster (
     // If the end of the list, return no available cluster
     //
     if (Volume->FatInfoSector.FreeInfo.NextCluster > (Volume->MaxCluster + 1)) {
-      if (Volume->FreeInfoValid && (0 < (INT32)(Volume->FatInfoSector.FreeInfo.ClusterCount))) {
+      if (Volume->FreeInfoValid && (0 <
+                                    (INT32)(Volume->FatInfoSector.FreeInfo.
+                                              ClusterCount)))
+      {
         Volume->FreeInfoValid = FALSE;
       }
 
       FatComputeFreeInfo (Volume);
-      if (Volume->FatInfoSector.FreeInfo.NextCluster > (Volume->MaxCluster + 1)) {
+      if (Volume->FatInfoSector.FreeInfo.NextCluster > (Volume->MaxCluster +
+                                                        1))
+      {
         return (UINTN)FAT_CLUSTER_LAST;
       }
     }
 
-    Cluster = FatGetFatEntry (Volume, Volume->FatInfoSector.FreeInfo.NextCluster);
+    Cluster = FatGetFatEntry (
+                Volume,
+                Volume->FatInfoSector.FreeInfo.NextCluster
+                );
     if (Cluster == FAT_CLUSTER_FREE) {
       break;
     }
@@ -309,7 +325,8 @@ FatAllocateCluster (
     Volume->FatInfoSector.FreeInfo.NextCluster += 1;
   }
 
-  Cluster                                     = Volume->FatInfoSector.FreeInfo.NextCluster;
+  Cluster =
+    Volume->FatInfoSector.FreeInfo.NextCluster;
   Volume->FatInfoSector.FreeInfo.NextCluster += 1;
   return Cluster;
 }
@@ -376,7 +393,10 @@ FatShrinkEof (
   if (NewSize != 0) {
     for (CurSize = 0; CurSize < NewSize; CurSize++) {
       if ((Cluster == FAT_CLUSTER_FREE) || (Cluster >= FAT_CLUSTER_SPECIAL)) {
-        DEBUG ((DEBUG_INIT | DEBUG_ERROR, "FatShrinkEof: cluster chain corrupt\n"));
+        DEBUG ((
+          DEBUG_INIT | DEBUG_ERROR,
+          "FatShrinkEof: cluster chain corrupt\n"
+          ));
         return EFI_VOLUME_CORRUPTED;
       }
 
@@ -505,7 +525,9 @@ FatGrowEof (
         goto Done;
       }
 
-      if ((NewCluster < FAT_MIN_CLUSTER) || (NewCluster > Volume->MaxCluster + 1)) {
+      if ((NewCluster < FAT_MIN_CLUSTER) || (NewCluster > Volume->MaxCluster +
+                                             1))
+      {
         Status = EFI_VOLUME_CORRUPTED;
         goto Done;
       }
@@ -606,7 +628,11 @@ FatOFilePosition (
     while (StartPos + ClusterSize <= Position) {
       StartPos += ClusterSize;
       if ((Cluster == FAT_CLUSTER_FREE) || (Cluster >= FAT_CLUSTER_SPECIAL)) {
-        DEBUG ((DEBUG_INIT | DEBUG_ERROR, "FatOFilePosition:" " cluster chain corrupt\n"));
+        DEBUG ((
+          DEBUG_INIT | DEBUG_ERROR,
+          "FatOFilePosition:"
+          " cluster chain corrupt\n"
+          ));
         return EFI_VOLUME_CORRUPTED;
       }
 
@@ -618,7 +644,10 @@ FatOFilePosition (
     }
 
     OFile->PosDisk = Volume->FirstClusterPos +
-                     LShiftU64 (Cluster - FAT_MIN_CLUSTER, Volume->ClusterAlignment) +
+                     LShiftU64 (
+                       Cluster - FAT_MIN_CLUSTER,
+                       Volume->ClusterAlignment
+                       ) +
                      Position - StartPos;
     OFile->FileCurrentCluster = Cluster;
     OFile->Position           = StartPos;
@@ -628,7 +657,9 @@ FatOFilePosition (
     //
     Run = StartPos + ClusterSize - Position;
     if (!FAT_END_OF_FAT_CHAIN (Cluster)) {
-      while ((FatGetFatEntry (Volume, Cluster) == Cluster + 1) && Run < PosLimit) {
+      while ((FatGetFatEntry (Volume, Cluster) == Cluster + 1) && Run <
+             PosLimit)
+      {
         Run     += ClusterSize;
         Cluster += 1;
       }

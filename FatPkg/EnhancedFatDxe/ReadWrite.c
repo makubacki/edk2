@@ -309,7 +309,14 @@ FatIFileAccess (
         }
       }
 
-      Status           = FatAccessOFile (OFile, IoMode, (UINTN)IFile->Position, BufferSize, Buffer, Task);
+      Status = FatAccessOFile (
+                 OFile,
+                 IoMode,
+                 (UINTN)IFile->Position,
+                 BufferSize,
+                 Buffer,
+                 Task
+                 );
       IFile->Position += *BufferSize;
     }
   }
@@ -386,7 +393,13 @@ FatReadEx (
   IN OUT EFI_FILE_IO_TOKEN  *Token
   )
 {
-  return FatIFileAccess (FHand, ReadData, &Token->BufferSize, Token->Buffer, Token);
+  return FatIFileAccess (
+           FHand,
+           ReadData,
+           &Token->BufferSize,
+           Token->Buffer,
+           Token
+           );
 }
 
 /**
@@ -437,7 +450,13 @@ FatWriteEx (
   IN OUT EFI_FILE_IO_TOKEN  *Token
   )
 {
-  return FatIFileAccess (FHand, WriteData, &Token->BufferSize, Token->Buffer, Token);
+  return FatIFileAccess (
+           FHand,
+           WriteData,
+           &Token->BufferSize,
+           Token->Buffer,
+           Token
+           );
 }
 
 /**
@@ -593,9 +612,17 @@ FatWriteZeroPool (
   }
 
   do {
-    WriteSize     = AppendedSize > BufferSize ? BufferSize : (UINTN)AppendedSize;
+    WriteSize = AppendedSize > BufferSize ? BufferSize :
+                (UINTN)AppendedSize;
     AppendedSize -= WriteSize;
-    Status        = FatAccessOFile (OFile, WriteData, WritePos, &WriteSize, ZeroBuffer, NULL);
+    Status        = FatAccessOFile (
+                      OFile,
+                      WriteData,
+                      WritePos,
+                      &WriteSize,
+                      ZeroBuffer,
+                      NULL
+                      );
     if (EFI_ERROR (Status)) {
       break;
     }

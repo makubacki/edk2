@@ -97,7 +97,11 @@ FatFindEltoritoPartitions (
     // Check for valid volume descriptor signature
     //
     if ((VolDescriptor->Unknown.Type == CDVOL_TYPE_END) ||
-        (CompareMem (VolDescriptor->Unknown.Id, CDVOL_ID, sizeof (VolDescriptor->Unknown.Id)) != 0)
+        (CompareMem (
+           VolDescriptor->Unknown.Id,
+           CDVOL_ID,
+           sizeof (VolDescriptor->Unknown.Id)
+           ) != 0)
         )
     {
       //
@@ -148,13 +152,17 @@ FatFindEltoritoPartitions (
     // We don't care too much about the Catalog header's contents, but we do want
     // to make sure it looks like a Catalog header
     //
-    if ((Catalog->Catalog.Indicator != ELTORITO_ID_CATALOG) || (Catalog->Catalog.Id55AA != 0xAA55)) {
+    if ((Catalog->Catalog.Indicator != ELTORITO_ID_CATALOG) ||
+        (Catalog->Catalog.Id55AA != 0xAA55))
+    {
       continue;
     }
 
     Check       = 0;
     CheckBuffer = (UINT16 *)Catalog;
-    for (Index = 0; Index < sizeof (ELTORITO_CATALOG) / sizeof (UINT16); Index += 1) {
+    for (Index = 0; Index < sizeof (ELTORITO_CATALOG) / sizeof (UINT16);
+         Index += 1)
+    {
       Check += CheckBuffer[Index];
     }
 
@@ -172,7 +180,9 @@ FatFindEltoritoPartitions (
       //
       // Check this entry
       //
-      if ((Catalog->Boot.Indicator != ELTORITO_ID_SECTION_BOOTABLE) || (Catalog->Boot.Lba == 0)) {
+      if ((Catalog->Boot.Indicator != ELTORITO_ID_SECTION_BOOTABLE) ||
+          (Catalog->Boot.Lba == 0))
+      {
         continue;
       }
 
@@ -207,7 +217,10 @@ FatFindEltoritoPartitions (
       }
 
       if (SectorCount < 2) {
-        SectorCount = (VolSpaceSize > ParentBlockDev->LastBlock + 1) ? (UINT32)(ParentBlockDev->LastBlock - Catalog->Boot.Lba + 1) : (UINT32)(VolSpaceSize - Catalog->Boot.Lba);
+        SectorCount = (VolSpaceSize > ParentBlockDev->LastBlock + 1) ?
+                      (UINT32)(ParentBlockDev->LastBlock - Catalog->Boot.Lba +
+                               1) :
+                      (UINT32)(VolSpaceSize - Catalog->Boot.Lba);
       }
 
       //
@@ -223,8 +236,11 @@ FatFindEltoritoPartitions (
         BlockDev->IoAlign          = ParentBlockDev->IoAlign;
         BlockDev->Logical          = TRUE;
         BlockDev->PartitionChecked = FALSE;
-        BlockDev->StartingPos      = MultU64x32 (Catalog->Boot.Lba, ParentBlockDev->BlockSize);
-        BlockDev->ParentDevNo      = ParentBlockDevNo;
+        BlockDev->StartingPos      = MultU64x32 (
+                                       Catalog->Boot.Lba,
+                                       ParentBlockDev->BlockSize
+                                       );
+        BlockDev->ParentDevNo = ParentBlockDevNo;
 
         PrivateData->BlockDeviceCount++;
       }

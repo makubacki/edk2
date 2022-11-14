@@ -43,13 +43,19 @@ PartitionValidMbr (
   //
   MbrValid = FALSE;
   for (Index1 = 0; Index1 < MAX_MBR_PARTITIONS; Index1++) {
-    if ((Mbr->Partition[Index1].OSIndicator == 0x00) || (UNPACK_UINT32 (Mbr->Partition[Index1].SizeInLBA) == 0)) {
+    if ((Mbr->Partition[Index1].OSIndicator == 0x00) || (UNPACK_UINT32 (
+                                                           Mbr->Partition[Index1
+                                                           ].SizeInLBA
+                                                           ) == 0))
+    {
       continue;
     }
 
     MbrValid    = TRUE;
     StartingLBA = UNPACK_UINT32 (Mbr->Partition[Index1].StartingLBA);
-    EndingLBA   = StartingLBA + UNPACK_UINT32 (Mbr->Partition[Index1].SizeInLBA) - 1;
+    EndingLBA   = StartingLBA + UNPACK_UINT32 (
+                                  Mbr->Partition[Index1].SizeInLBA
+                                  ) - 1;
     if (EndingLBA > LastLba) {
       //
       // Compatibility Errata:
@@ -66,12 +72,21 @@ PartitionValidMbr (
     }
 
     for (Index2 = Index1 + 1; Index2 < MAX_MBR_PARTITIONS; Index2++) {
-      if ((Mbr->Partition[Index2].OSIndicator == 0x00) || (UNPACK_INT32 (Mbr->Partition[Index2].SizeInLBA) == 0)) {
+      if ((Mbr->Partition[Index2].OSIndicator == 0x00) || (UNPACK_INT32 (
+                                                             Mbr->Partition[
+                                                                                       Index2
+                                                             ].SizeInLBA
+                                                             ) == 0))
+      {
         continue;
       }
 
-      NewEndingLBA = UNPACK_UINT32 (Mbr->Partition[Index2].StartingLBA) + UNPACK_UINT32 (Mbr->Partition[Index2].SizeInLBA) - 1;
-      if ((NewEndingLBA >= StartingLBA) && (UNPACK_UINT32 (Mbr->Partition[Index2].StartingLBA) <= EndingLBA)) {
+      NewEndingLBA = UNPACK_UINT32 (Mbr->Partition[Index2].StartingLBA) +
+                     UNPACK_UINT32 (Mbr->Partition[Index2].SizeInLBA) - 1;
+      if ((NewEndingLBA >= StartingLBA) && (UNPACK_UINT32 (
+                                              Mbr->Partition[Index2].StartingLBA
+                                              ) <= EndingLBA))
+      {
         //
         // This region overlaps with the Index1'th region
         //
@@ -118,7 +133,11 @@ FatFindMbrPartitions (
   ParentBlockDev = &(PrivateData->BlockDevice[ParentBlockDevNo]);
 
   if (ParentBlockDev->BlockSize > PEI_FAT_MAX_BLOCK_SIZE) {
-    DEBUG ((DEBUG_ERROR, "Device BlockSize %x exceeds FAT_MAX_BLOCK_SIZE\n", ParentBlockDev->BlockSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Device BlockSize %x exceeds FAT_MAX_BLOCK_SIZE\n",
+      ParentBlockDev->BlockSize
+      ));
     return FALSE;
   }
 
@@ -133,7 +152,11 @@ FatFindMbrPartitions (
              Mbr
              );
 
-  if (EFI_ERROR (Status) || !PartitionValidMbr (Mbr, ParentBlockDev->LastBlock)) {
+  if (EFI_ERROR (Status) || !PartitionValidMbr (
+                               Mbr,
+                               ParentBlockDev->LastBlock
+                               ))
+  {
     goto Done;
   }
 
@@ -141,7 +164,11 @@ FatFindMbrPartitions (
   // We have a valid mbr - add each partition
   //
   for (Index = 0; Index < MAX_MBR_PARTITIONS; Index++) {
-    if ((Mbr->Partition[Index].OSIndicator == 0x00) || (UNPACK_INT32 (Mbr->Partition[Index].SizeInLBA) == 0)) {
+    if ((Mbr->Partition[Index].OSIndicator == 0x00) || (UNPACK_INT32 (
+                                                          Mbr->Partition[Index].
+                                                            SizeInLBA
+                                                          ) == 0))
+    {
       //
       // Don't use null MBR entries
       //
@@ -156,13 +183,17 @@ FatFindMbrPartitions (
 
       BlockDev = &(PrivateData->BlockDevice[PrivateData->BlockDeviceCount]);
 
-      BlockDev->BlockSize        = MBR_SIZE;
-      BlockDev->LastBlock        = UNPACK_INT32 (Mbr->Partition[Index].SizeInLBA) - 1;
+      BlockDev->BlockSize = MBR_SIZE;
+      BlockDev->LastBlock = UNPACK_INT32 (
+                              Mbr->Partition[Index].SizeInLBA
+                              ) - 1;
       BlockDev->IoAlign          = ParentBlockDev->IoAlign;
       BlockDev->Logical          = TRUE;
       BlockDev->PartitionChecked = FALSE;
       BlockDev->StartingPos      = MultU64x32 (
-                                     UNPACK_INT32 (Mbr->Partition[Index].StartingLBA),
+                                     UNPACK_INT32 (
+                                       Mbr->Partition[Index].StartingLBA
+                                       ),
                                      ParentBlockDev->BlockSize
                                      );
       BlockDev->ParentDevNo = ParentBlockDevNo;

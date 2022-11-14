@@ -13,13 +13,14 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // Definitions
 //
-#define FAT_ATTR_READ_ONLY  0x01
-#define FAT_ATTR_HIDDEN     0x02
-#define FAT_ATTR_SYSTEM     0x04
-#define FAT_ATTR_VOLUME_ID  0x08
-#define FAT_ATTR_DIRECTORY  0x10
-#define FAT_ATTR_ARCHIVE    0x20
-#define FAT_ATTR_LFN        (FAT_ATTR_READ_ONLY | FAT_ATTR_HIDDEN | FAT_ATTR_SYSTEM | FAT_ATTR_VOLUME_ID)
+#define FAT_ATTR_READ_ONLY        0x01
+#define FAT_ATTR_HIDDEN           0x02
+#define FAT_ATTR_SYSTEM           0x04
+#define FAT_ATTR_VOLUME_ID        0x08
+#define FAT_ATTR_DIRECTORY        0x10
+#define FAT_ATTR_ARCHIVE          0x20
+#define FAT_ATTR_LFN        \
+                                  (FAT_ATTR_READ_ONLY | FAT_ATTR_HIDDEN | FAT_ATTR_SYSTEM | FAT_ATTR_VOLUME_ID)
 
 #define FAT_CLUSTER_SPECIAL   ((MAX_UINT32 &~0xF) | 0x7)
 #define FAT_CLUSTER_FREE      0
@@ -30,8 +31,10 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define DELETE_ENTRY_MARK  0xE5
 #define EMPTY_ENTRY_MARK   0x00
 
-#define FAT_CLUSTER_FUNCTIONAL(Cluster)    (((Cluster) == 0) || ((Cluster) >= FAT_CLUSTER_SPECIAL))
-#define FAT_CLUSTER_END_OF_CHAIN(Cluster)  ((Cluster) > (FAT_CLUSTER_SPECIAL))
+#define FAT_CLUSTER_FUNCTIONAL( \
+                              Cluster)    \
+                                             (((Cluster) == 0) || ((Cluster) >= FAT_CLUSTER_SPECIAL))
+#define FAT_CLUSTER_END_OF_CHAIN(Cluster)    ((Cluster) > (FAT_CLUSTER_SPECIAL))
 
 //
 // Directory Entry

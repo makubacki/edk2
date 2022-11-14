@@ -69,7 +69,11 @@ FatReadBlock (
   Status   = EFI_SUCCESS;
   BlockDev = &(PrivateData->BlockDevice[BlockDeviceNo]);
 
-  if (BufferSize > MultU64x32 (BlockDev->LastBlock - Lba + 1, BlockDev->BlockSize)) {
+  if (BufferSize > MultU64x32 (
+                     BlockDev->LastBlock - Lba + 1,
+                     BlockDev->BlockSize
+                     ))
+  {
     return EFI_DEVICE_ERROR;
   }
 
@@ -80,7 +84,8 @@ FatReadBlock (
     //
     if (BlockDev->BlockIo2 != NULL) {
       Status = BlockDev->BlockIo2->ReadBlocks (
-                                     (EFI_PEI_SERVICES **)GetPeiServicesTablePointer (),
+                                     (EFI_PEI_SERVICES **)
+                                     GetPeiServicesTablePointer (),
                                      BlockDev->BlockIo2,
                                      BlockDev->PhysicalDevNo,
                                      Lba,
@@ -89,7 +94,8 @@ FatReadBlock (
                                      );
     } else {
       Status = BlockDev->BlockIo->ReadBlocks (
-                                    (EFI_PEI_SERVICES **)GetPeiServicesTablePointer (),
+                                    (EFI_PEI_SERVICES **)
+                                    GetPeiServicesTablePointer (),
                                     BlockDev->BlockIo,
                                     BlockDev->PhysicalDevNo,
                                     Lba,
@@ -145,7 +151,9 @@ FatGetCacheBlock (
   //
   for (Index = 0; Index < PEI_FAT_CACHE_SIZE; Index++) {
     CacheBuffer = &(PrivateData->CacheBuffer[Index]);
-    if (CacheBuffer->Valid && (CacheBuffer->BlockDeviceNo == BlockDeviceNo) && (CacheBuffer->Lba == Lba)) {
+    if (CacheBuffer->Valid && (CacheBuffer->BlockDeviceNo == BlockDeviceNo) &&
+        (CacheBuffer->Lba == Lba))
+    {
       break;
     }
   }
@@ -182,7 +190,8 @@ FatGetCacheBlock (
 
   CacheBuffer->BlockDeviceNo = BlockDeviceNo;
   CacheBuffer->Lba           = Lba;
-  CacheBuffer->Size          = PrivateData->BlockDevice[BlockDeviceNo].BlockSize;
+  CacheBuffer->Size          =
+    PrivateData->BlockDevice[BlockDeviceNo].BlockSize;
 
   //
   // Read in the data
@@ -277,7 +286,12 @@ FatReadDisk (
   // Read overrun
   //
   if (Offset != 0) {
-    Status = FatGetCacheBlock (PrivateData, BlockDeviceNo, OverRunLba, &CachePtr);
+    Status = FatGetCacheBlock (
+               PrivateData,
+               BlockDeviceNo,
+               OverRunLba,
+               &CachePtr
+               );
     if (EFI_ERROR (Status)) {
       return EFI_DEVICE_ERROR;
     }

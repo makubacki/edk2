@@ -158,7 +158,10 @@ FatOFileOpen (
   // read-write, then the access is denied.
   //
   FileAttributes = OFile->DirEnt->Entry.Attributes;
-  if (((FileAttributes & EFI_FILE_READ_ONLY) != 0) && ((FileAttributes & FAT_ATTRIBUTE_DIRECTORY) == 0) && WriteMode) {
+  if (((FileAttributes & EFI_FILE_READ_ONLY) != 0) && ((FileAttributes &
+                                                        FAT_ATTRIBUTE_DIRECTORY)
+                                                       == 0) && WriteMode)
+  {
     return EFI_ACCESS_DENIED;
   }
 
@@ -235,7 +238,11 @@ FatOpenEx (
   //
   // Check for valid Attributes for file creation case.
   //
-  if (((OpenMode & EFI_FILE_MODE_CREATE) != 0) && ((Attributes & (EFI_FILE_READ_ONLY | (~EFI_FILE_VALID_ATTR))) != 0)) {
+  if (((OpenMode & EFI_FILE_MODE_CREATE) != 0) && ((Attributes &
+                                                    (EFI_FILE_READ_ONLY |
+                                                     (~EFI_FILE_VALID_ATTR))) !=
+                                                   0))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -268,7 +275,13 @@ FatOpenEx (
   //
   // Open the file
   //
-  Status = FatOFileOpen (OFile, &NewIFile, FileName, OpenMode, (UINT8)Attributes);
+  Status = FatOFileOpen (
+             OFile,
+             &NewIFile,
+             FileName,
+             OpenMode,
+             (UINT8)Attributes
+             );
 
   //
   // If the file was opened, return the handle to the caller

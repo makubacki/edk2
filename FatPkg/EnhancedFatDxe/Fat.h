@@ -49,15 +49,25 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #define DIRENT_FROM_LINK(a)  CR (a, FAT_DIRENT, Link, FAT_DIRENT_SIGNATURE)
 
-#define VOLUME_FROM_ROOT_DIRENT(a)  CR (a, FAT_VOLUME, RootDirEnt, FAT_VOLUME_SIGNATURE)
+#define VOLUME_FROM_ROOT_DIRENT( \
+                               a)  \
+  CR (a, FAT_VOLUME, RootDirEnt, FAT_VOLUME_SIGNATURE)
 
-#define VOLUME_FROM_VOL_INTERFACE(a)  CR (a, FAT_VOLUME, VolumeInterface, FAT_VOLUME_SIGNATURE);
+#define VOLUME_FROM_VOL_INTERFACE( \
+                                 a)  \
+  CR (a, FAT_VOLUME, VolumeInterface, FAT_VOLUME_SIGNATURE);
 
-#define ODIR_FROM_DIRCACHELINK(a)  CR (a, FAT_ODIR, DirCacheLink, FAT_ODIR_SIGNATURE)
+#define ODIR_FROM_DIRCACHELINK( \
+                              a)  \
+  CR (a, FAT_ODIR, DirCacheLink, FAT_ODIR_SIGNATURE)
 
-#define OFILE_FROM_CHECKLINK(a)  CR (a, FAT_OFILE, CheckLink, FAT_OFILE_SIGNATURE)
+#define OFILE_FROM_CHECKLINK( \
+                            a)  \
+  CR (a, FAT_OFILE, CheckLink, FAT_OFILE_SIGNATURE)
 
-#define OFILE_FROM_CHILDLINK(a)  CR (a, FAT_OFILE, ChildLink, FAT_OFILE_SIGNATURE)
+#define OFILE_FROM_CHILDLINK( \
+                            a)  \
+  CR (a, FAT_OFILE, ChildLink, FAT_OFILE_SIGNATURE)
 
 //
 // Minimum sector size is 512B, Maximum sector size is 4096B
@@ -70,7 +80,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // Efi Time Definition
 //
-#define IS_LEAP_YEAR(a)  (((a) % 4 == 0) && (((a) % 100 != 0) || ((a) % 400 == 0)))
+#define IS_LEAP_YEAR( \
+                    a)  \
+  (((a) % 4 == 0) && (((a) % 100 != 0) || ((a) % 400 == 0)))
 
 //
 // Minimum fat page size is 8K, maximum fat page alignment is 32K

@@ -108,11 +108,26 @@ FatStoreDirEnt (
         LfnEntry.Ordinal |= FAT_LFN_LAST;
       }
 
-      CopyMem (LfnEntry.Name1, LfnBufferPointer, sizeof (CHAR16) * LFN_CHAR1_LEN);
+      CopyMem (
+        LfnEntry.Name1,
+        LfnBufferPointer,
+        sizeof (CHAR16) *
+        LFN_CHAR1_LEN
+        );
       LfnBufferPointer += LFN_CHAR1_LEN;
-      CopyMem (LfnEntry.Name2, LfnBufferPointer, sizeof (CHAR16) * LFN_CHAR2_LEN);
+      CopyMem (
+        LfnEntry.Name2,
+        LfnBufferPointer,
+        sizeof (CHAR16) *
+        LFN_CHAR2_LEN
+        );
       LfnBufferPointer += LFN_CHAR2_LEN;
-      CopyMem (LfnEntry.Name3, LfnBufferPointer, sizeof (CHAR16) * LFN_CHAR3_LEN);
+      CopyMem (
+        LfnEntry.Name3,
+        LfnBufferPointer,
+        sizeof (CHAR16) *
+        LFN_CHAR3_LEN
+        );
       LfnBufferPointer += LFN_CHAR3_LEN;
       EntryPos--;
       if (DirEnt->Invalid) {
@@ -372,7 +387,10 @@ FatLoadNextDirEnt (
       return Status;
     }
 
-    if (((UINT8)Entry.FileName[0] != DELETE_ENTRY_MARK) && ((Entry.Attributes & FAT_ATTRIBUTE_VOLUME_ID) == 0)) {
+    if (((UINT8)Entry.FileName[0] != DELETE_ENTRY_MARK) && ((Entry.Attributes &
+                                                             FAT_ATTRIBUTE_VOLUME_ID)
+                                                            == 0))
+    {
       //
       // We get a valid directory entry, then handle it
       //
@@ -483,7 +501,11 @@ FatGetDirEntInfo (
     }
 
     ZeroMem (&FatLastAccess.Time, sizeof (FatLastAccess.Time));
-    CopyMem (&FatLastAccess.Date, &Entry->FileLastAccess, sizeof (FatLastAccess.Date));
+    CopyMem (
+      &FatLastAccess.Date,
+      &Entry->FileLastAccess,
+      sizeof (FatLastAccess.Date)
+      );
     FatFatTimeToEfiTime (&FatLastAccess, &Info->LastAccessTime);
     FatFatTimeToEfiTime (&Entry->FileCreateTime, &Info->CreateTime);
     FatFatTimeToEfiTime (&Entry->FileModificationTime, &Info->ModificationTime);
@@ -551,7 +573,12 @@ FatSearchODir (
           break;
         }
 
-        if (PossibleShortName && (CompareMem (File8Dot3Name, DirEnt->Entry.FileName, FAT_NAME_LEN) == 0)) {
+        if (PossibleShortName && (CompareMem (
+                                    File8Dot3Name,
+                                    DirEnt->Entry.FileName,
+                                    FAT_NAME_LEN
+                                    ) == 0))
+        {
           break;
         }
       }
@@ -688,7 +715,8 @@ FatSetEntryCount (
       // The file name is not a valid 8.3 name we need to generate an 8.3 name for it
       //
       FatCreate8Dot3Name (OFile, DirEnt);
-      DirEnt->EntryCount = (UINT8)(LFN_ENTRY_NUMBER (StrLen (FileString)) + DirEnt->EntryCount);
+      DirEnt->EntryCount = (UINT8)(LFN_ENTRY_NUMBER (StrLen (FileString)) +
+                                   DirEnt->EntryCount);
     }
   }
 }
@@ -743,7 +771,10 @@ FatSeekVolumeId (
       return Status;
     }
 
-    if (((UINT8)Entry->FileName[0] != DELETE_ENTRY_MARK) && (((Entry->Attributes) & (~FAT_ATTRIBUTE_ARCHIVE)) == FAT_ATTRIBUTE_VOLUME_ID)) {
+    if (((UINT8)Entry->FileName[0] != DELETE_ENTRY_MARK) &&
+        (((Entry->Attributes) & (~FAT_ATTRIBUTE_ARCHIVE)) ==
+         FAT_ATTRIBUTE_VOLUME_ID))
+    {
       DirEnt->EntryPos   = (UINT16)EntryPos;
       DirEnt->EntryCount = 1;
       DirEnt->Invalid    = FALSE;
@@ -873,11 +904,21 @@ FatNewEntryPos (
   // We will append this entry to the end of directory
   //
   FatGetCurrentFatTime (&DirEnt->Entry.FileCreateTime);
-  CopyMem (&DirEnt->Entry.FileModificationTime, &DirEnt->Entry.FileCreateTime, sizeof (FAT_DATE_TIME));
-  CopyMem (&DirEnt->Entry.FileLastAccess, &DirEnt->Entry.FileCreateTime.Date, sizeof (FAT_DATE));
+  CopyMem (
+    &DirEnt->Entry.FileModificationTime,
+    &DirEnt->Entry.FileCreateTime,
+    sizeof (FAT_DATE_TIME)
+    );
+  CopyMem (
+    &DirEnt->Entry.FileLastAccess,
+    &DirEnt->Entry.FileCreateTime.Date,
+    sizeof (FAT_DATE)
+    );
   NewEndPos = ODir->CurrentEndPos + DirEnt->EntryCount;
   if (NewEndPos * sizeof (FAT_DIRECTORY_ENTRY) > OFile->FileSize) {
-    if (NewEndPos >= (OFile->IsFixedRootDir ? OFile->Volume->RootEntries : FAT_MAX_DIRENTRY_COUNT)) {
+    if (NewEndPos >= (OFile->IsFixedRootDir ? OFile->Volume->RootEntries :
+                      FAT_MAX_DIRENTRY_COUNT))
+    {
       //
       // We try to use fist fit algorithm to insert this directory entry
       //
@@ -1078,7 +1119,11 @@ FatCreateDirEnt (
   FatAddDirEnt (ODir, DirEnt);
   DirEnt->Entry.Attributes = Attributes;
   *PtrDirEnt               = DirEnt;
-  DEBUG ((DEBUG_INFO, "FSOpen: Created new directory entry '%S'\n", DirEnt->FileString));
+  DEBUG ((
+    DEBUG_INFO,
+    "FSOpen: Created new directory entry '%S'\n",
+    DirEnt->FileString
+    ));
   return FatStoreDirEnt (OFile, DirEnt);
 
 Done:
@@ -1166,8 +1211,11 @@ FatOpenDirEnt (
       // The newly created OFile is not root
       //
       Volume             = Parent->Volume;
-      OFile->FullPathLen = Parent->FullPathLen + 1 + StrLen (DirEnt->FileString);
-      OFile->FileCluster = ((DirEnt->Entry.FileClusterHigh) << 16) | (DirEnt->Entry.FileCluster);
+      OFile->FullPathLen = Parent->FullPathLen + 1 + StrLen (
+                                                       DirEnt->FileString
+                                                       );
+      OFile->FileCluster = ((DirEnt->Entry.FileClusterHigh) << 16) |
+                           (DirEnt->Entry.FileCluster);
       InsertTailList (&Parent->ChildHead, &OFile->ChildLink);
     } else {
       //

@@ -64,7 +64,9 @@ FatCheckIs8Dot3Name (
   // to check if there exists any extra blanks and dots
   //
   while (--TempName >= FileName) {
-    if (((*TempName == L'.') || (*TempName == L' ')) && (TempName != SeparateDot)) {
+    if (((*TempName == L'.') || (*TempName == L' ')) && (TempName !=
+                                                         SeparateDot))
+    {
       //
       // There exist extra blanks and dots
       //
@@ -90,7 +92,13 @@ FatCheckIs8Dot3Name (
     PossibleShortName = FALSE;
   }
 
-  if (FatStrToFat (ExtendName, ExtendNameLen, File8Dot3Name + FAT_MAIN_NAME_LEN)) {
+  if (FatStrToFat (
+        ExtendName,
+        ExtendNameLen,
+        File8Dot3Name +
+        FAT_MAIN_NAME_LEN
+        ))
+  {
     PossibleShortName = FALSE;
   }
 
@@ -212,7 +220,11 @@ FatCreate8Dot3Name (
       // We use new algorithm to generate 8.3 name
       //
       ASSERT (DirEnt->FileString != NULL);
-      gBS->CalculateCrc32 (DirEnt->FileString, StrSize (DirEnt->FileString), &HashValue.Crc);
+      gBS->CalculateCrc32 (
+             DirEnt->FileString,
+             StrSize (DirEnt->FileString),
+             &HashValue.Crc
+             );
 
       if (BaseTagLen > HASH_BASE_TAG_LEN) {
         BaseTagLen = HASH_BASE_TAG_LEN;
@@ -317,10 +329,16 @@ FatSetCaseFlag (
   if (ExtendName != NULL) {
     *ExtendName = 0;
     ExtendName++;
-    CaseFlag = (UINT8)(CaseFlag | FatCheckNameCase (ExtendName, FAT_CASE_EXT_LOWER));
+    CaseFlag = (UINT8)(CaseFlag | FatCheckNameCase (
+                                    ExtendName,
+                                    FAT_CASE_EXT_LOWER
+                                    ));
   }
 
-  CaseFlag = (UINT8)(CaseFlag | FatCheckNameCase (LfnBuffer, FAT_CASE_NAME_LOWER));
+  CaseFlag = (UINT8)(CaseFlag | FatCheckNameCase (
+                                  LfnBuffer,
+                                  FAT_CASE_NAME_LOWER
+                                  ));
   if ((CaseFlag & FAT_CASE_MIXED) == 0) {
     //
     // We just need one directory entry to store this file name entry
@@ -361,8 +379,19 @@ FatGetFileNameViaCaseFlag (
   CaseFlag      = DirEnt->Entry.CaseFlag;
   File8Dot3Name = DirEnt->Entry.FileName;
 
-  FatNameToStr (File8Dot3Name, FAT_MAIN_NAME_LEN, CaseFlag & FAT_CASE_NAME_LOWER, FileString);
-  FatNameToStr (File8Dot3Name + FAT_MAIN_NAME_LEN, FAT_EXTEND_NAME_LEN, CaseFlag & FAT_CASE_EXT_LOWER, &TempExt[1]);
+  FatNameToStr (
+    File8Dot3Name,
+    FAT_MAIN_NAME_LEN,
+    CaseFlag &
+    FAT_CASE_NAME_LOWER,
+    FileString
+    );
+  FatNameToStr (
+    File8Dot3Name + FAT_MAIN_NAME_LEN,
+    FAT_EXTEND_NAME_LEN,
+    CaseFlag & FAT_CASE_EXT_LOWER,
+    &TempExt[1]
+    );
   if (TempExt[1] != 0) {
     TempExt[0] = L'.';
     StrCatS (FileString, FileStringMax, TempExt);
@@ -388,7 +417,8 @@ FatCheckSum (
 
   Sum = 0;
   for (ShortNameLen = FAT_NAME_LEN; ShortNameLen != 0; ShortNameLen--) {
-    Sum = (UINT8)((((Sum & 1) != 0) ? 0x80 : 0) + (Sum >> 1) + *ShortNameString++);
+    Sum = (UINT8)((((Sum & 1) != 0) ? 0x80 : 0) + (Sum >> 1) +
+                  *ShortNameString++);
   }
 
   return Sum;

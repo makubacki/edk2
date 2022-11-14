@@ -193,7 +193,11 @@ FatUnload (
   }
 
   for (Index = 0; Index < DeviceHandleCount; Index++) {
-    Status = EfiTestManagedDevice (DeviceHandleBuffer[Index], ImageHandle, &gEfiDiskIoProtocolGuid);
+    Status = EfiTestManagedDevice (
+               DeviceHandleBuffer[Index],
+               ImageHandle,
+               &gEfiDiskIoProtocolGuid
+               );
     if (!EFI_ERROR (Status)) {
       Status = gBS->DisconnectController (
                       DeviceHandleBuffer[Index],
@@ -210,12 +214,20 @@ FatUnload (
     //
     // Driver is stopped successfully.
     //
-    Status = gBS->HandleProtocol (ImageHandle, &gEfiComponentNameProtocolGuid, &ComponentName);
+    Status = gBS->HandleProtocol (
+                    ImageHandle,
+                    &gEfiComponentNameProtocolGuid,
+                    &ComponentName
+                    );
     if (EFI_ERROR (Status)) {
       ComponentName = NULL;
     }
 
-    Status = gBS->HandleProtocol (ImageHandle, &gEfiComponentName2ProtocolGuid, &ComponentName2);
+    Status = gBS->HandleProtocol (
+                    ImageHandle,
+                    &gEfiComponentName2ProtocolGuid,
+                    &ComponentName2
+                    );
     if (EFI_ERROR (Status)) {
       ComponentName2 = NULL;
     }

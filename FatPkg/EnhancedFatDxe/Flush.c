@@ -407,7 +407,14 @@ FatCleanupVolume (
     // indicates this a FAT32 volume
     //
     if (Volume->FreeInfoValid && Volume->FatDirty && Volume->FreeInfoPos) {
-      Status = FatDiskIo (Volume, WriteDisk, Volume->FreeInfoPos, sizeof (FAT_INFO_SECTOR), &Volume->FatInfoSector, Task);
+      Status = FatDiskIo (
+                 Volume,
+                 WriteDisk,
+                 Volume->FreeInfoPos,
+                 sizeof (FAT_INFO_SECTOR),
+                 &Volume->FatInfoSector,
+                 Task
+                 );
       if (EFI_ERROR (Status)) {
         return Status;
       }
@@ -418,7 +425,11 @@ FatCleanupVolume (
     //
     if (Volume->FatDirty && (Volume->FatType != Fat12)) {
       Volume->FatDirty = FALSE;
-      Status           = FatAccessVolumeDirty (Volume, WriteFat, &Volume->NotDirtyValue);
+      Status           = FatAccessVolumeDirty (
+                           Volume,
+                           WriteFat,
+                           &Volume->NotDirtyValue
+                           );
       if (EFI_ERROR (Status)) {
         return Status;
       }
@@ -474,7 +485,9 @@ FatSetVolumeError (
   //
   // Set the error on each child OFile
   //
-  for (Link = OFile->ChildHead.ForwardLink; Link != &OFile->ChildHead; Link = Link->ForwardLink) {
+  for (Link = OFile->ChildHead.ForwardLink; Link != &OFile->ChildHead; Link =
+         Link->ForwardLink)
+  {
     ChildOFile = OFILE_FROM_CHILDLINK (Link);
     FatSetVolumeError (ChildOFile, Status);
   }

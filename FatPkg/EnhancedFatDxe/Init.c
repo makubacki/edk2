@@ -218,7 +218,13 @@ FatOpenDevice (
   // Others use FatDiskIo which utilizes a Cache.
   //
   DiskIo = Volume->DiskIo;
-  Status = DiskIo->ReadDisk (DiskIo, Volume->MediaId, 0, sizeof (FatBs), &FatBs);
+  Status = DiskIo->ReadDisk (
+                     DiskIo,
+                     Volume->MediaId,
+                     0,
+                     sizeof (FatBs),
+                     &FatBs
+                     );
 
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INIT, "FatOpenDevice: read of part_lba failed %r\n", Status));
@@ -247,7 +253,9 @@ FatOpenDevice (
   // know if the sector is Fat16 or Fat12 until later when we can compute
   // the volume size)
   //
-  if ((FatBs.FatBsb.ReservedSectors == 0) || (FatBs.FatBsb.NumFats == 0) || (Sectors == 0)) {
+  if ((FatBs.FatBsb.ReservedSectors == 0) || (FatBs.FatBsb.NumFats == 0) ||
+      (Sectors == 0))
+  {
     return EFI_UNSUPPORTED;
   }
 
@@ -256,15 +264,21 @@ FatOpenDevice (
   }
 
   BlockAlignment = (UINT8)HighBitSet32 (FatBs.FatBsb.SectorSize);
-  if ((BlockAlignment > MAX_BLOCK_ALIGNMENT) || (BlockAlignment < MIN_BLOCK_ALIGNMENT)) {
+  if ((BlockAlignment > MAX_BLOCK_ALIGNMENT) || (BlockAlignment <
+                                                 MIN_BLOCK_ALIGNMENT))
+  {
     return EFI_UNSUPPORTED;
   }
 
-  if ((FatBs.FatBsb.SectorsPerCluster & (FatBs.FatBsb.SectorsPerCluster - 1)) != 0) {
+  if ((FatBs.FatBsb.SectorsPerCluster & (FatBs.FatBsb.SectorsPerCluster - 1)) !=
+      0)
+  {
     return EFI_UNSUPPORTED;
   }
 
-  SectorsPerClusterAlignment = (UINT8)HighBitSet32 (FatBs.FatBsb.SectorsPerCluster);
+  SectorsPerClusterAlignment = (UINT8)HighBitSet32 (
+                                        FatBs.FatBsb.SectorsPerCluster
+                                        );
   if (SectorsPerClusterAlignment > MAX_SECTORS_PER_CLUSTER_ALIGNMENT) {
     return EFI_UNSUPPORTED;
   }
@@ -294,7 +308,9 @@ FatOpenDevice (
     //
     // If this is fat32, refuse to mount mirror-disabled volumes
     //
-    if (((SectorsPerFat == 0) || (FatBs.FatBse.Fat32Bse.FsVersion != 0)) || (FatBs.FatBse.Fat32Bse.ExtendedFlags & 0x80)) {
+    if (((SectorsPerFat == 0) || (FatBs.FatBse.Fat32Bse.FsVersion != 0)) ||
+        (FatBs.FatBse.Fat32Bse.ExtendedFlags & 0x80))
+    {
       return EFI_UNSUPPORTED;
     }
 
@@ -309,7 +325,8 @@ FatOpenDevice (
   // Compute some fat locations
   //
   BlockSize      = FatBs.FatBsb.SectorSize;
-  RootDirSectors = ((Volume->RootEntries * sizeof (FAT_DIRECTORY_ENTRY)) + (BlockSize - 1)) / BlockSize;
+  RootDirSectors = ((Volume->RootEntries * sizeof (FAT_DIRECTORY_ENTRY)) +
+                    (BlockSize - 1)) / BlockSize;
 
   FatLba          = FatBs.FatBsb.ReservedSectors;
   RootLba         = FatBs.FatBsb.NumFats * SectorsPerFat + FatLba;
@@ -318,11 +335,13 @@ FatOpenDevice (
   Volume->FatPos  = FatLba * BlockSize;
   Volume->FatSize = SectorsPerFat * BlockSize;
 
-  Volume->VolumeSize       = LShiftU64 (Sectors, BlockAlignment);
-  Volume->RootPos          = LShiftU64 (RootLba, BlockAlignment);
-  Volume->FirstClusterPos  = LShiftU64 (FirstClusterLba, BlockAlignment);
-  Volume->MaxCluster       = (Sectors - FirstClusterLba) >> SectorsPerClusterAlignment;
-  Volume->ClusterAlignment = (UINT8)(BlockAlignment + SectorsPerClusterAlignment);
+  Volume->VolumeSize      = LShiftU64 (Sectors, BlockAlignment);
+  Volume->RootPos         = LShiftU64 (RootLba, BlockAlignment);
+  Volume->FirstClusterPos = LShiftU64 (FirstClusterLba, BlockAlignment);
+  Volume->MaxCluster      = (Sectors - FirstClusterLba) >>
+                            SectorsPerClusterAlignment;
+  Volume->ClusterAlignment = (UINT8)(BlockAlignment +
+                                     SectorsPerClusterAlignment);
   Volume->ClusterSize      = (UINTN)1 << (Volume->ClusterAlignment);
 
   //
@@ -371,9 +390,17 @@ FatOpenDevice (
   if (FatType == Fat32) {
     Volume->FreeInfoPos = FatBs.FatBse.Fat32Bse.FsInfoSector * BlockSize;
     if (FatBs.FatBse.Fat32Bse.FsInfoSector != 0) {
-      FatDiskIo (Volume, ReadDisk, Volume->FreeInfoPos, sizeof (FAT_INFO_SECTOR), &Volume->FatInfoSector, NULL);
+      FatDiskIo (
+        Volume,
+        ReadDisk,
+        Volume->FreeInfoPos,
+        sizeof (FAT_INFO_SECTOR),
+        &Volume->FatInfoSector,
+        NULL
+        );
       if ((Volume->FatInfoSector.Signature == FAT_INFO_SIGNATURE) &&
-          (Volume->FatInfoSector.InfoBeginSignature == FAT_INFO_BEGIN_SIGNATURE) &&
+          (Volume->FatInfoSector.InfoBeginSignature ==
+           FAT_INFO_BEGIN_SIGNATURE) &&
           (Volume->FatInfoSector.InfoEndSignature == FAT_INFO_END_SIGNATURE) &&
           (Volume->FatInfoSector.FreeInfo.ClusterCount <= Volume->MaxCluster)
           )
