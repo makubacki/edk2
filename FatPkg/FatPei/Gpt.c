@@ -305,7 +305,8 @@ PartitionCheckGptEntryArray (
   PartitionEntryBuffer = (EFI_PARTITION_ENTRY *)AllocatePages (
                                                   EFI_SIZE_TO_PAGES (
                                                     (UINTN)
-                                                    PartitionEntryArraySize)
+                                                    PartitionEntryArraySize
+                                                    )
                                                   );
   if (PartitionEntryBuffer == NULL) {
     DEBUG ((DEBUG_ERROR, "Allocate memory error!\n"));
@@ -318,7 +319,7 @@ PartitionCheckGptEntryArray (
                                                              NumberOfPartitionEntries
                                                            *
                                                            sizeof (
-                                                                                                                                    EFI_PARTITION_ENTRY_STATUS)
+                                                                   EFI_PARTITION_ENTRY_STATUS)
                                                            )
                                                          );
   if (PartitionEntryStatus == NULL) {

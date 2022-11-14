@@ -342,7 +342,7 @@ FatOpenDevice (
                             SectorsPerClusterAlignment;
   Volume->ClusterAlignment = (UINT8)(BlockAlignment +
                                      SectorsPerClusterAlignment);
-  Volume->ClusterSize      = (UINTN)1 << (Volume->ClusterAlignment);
+  Volume->ClusterSize = (UINTN)1 << (Volume->ClusterAlignment);
 
   //
   // If this is not a fat32, determine if it's a fat16 or fat12

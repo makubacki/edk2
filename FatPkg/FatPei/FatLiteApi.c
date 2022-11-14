@@ -301,8 +301,8 @@ FatPeimEntry (
 
   PrivateData->PpiDescriptor.Flags = (EFI_PEI_PPI_DESCRIPTOR_PPI |
                                       EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST);
-  PrivateData->PpiDescriptor.Guid  = &gEfiPeiDeviceRecoveryModulePpiGuid;
-  PrivateData->PpiDescriptor.Ppi   = &PrivateData->DeviceRecoveryPpi;
+  PrivateData->PpiDescriptor.Guid = &gEfiPeiDeviceRecoveryModulePpiGuid;
+  PrivateData->PpiDescriptor.Ppi  = &PrivateData->DeviceRecoveryPpi;
 
   Status = PeiServicesInstallPpi (&PrivateData->PpiDescriptor);
   if (EFI_ERROR (Status)) {
