@@ -601,8 +601,8 @@ handleMouseDown (
   }
 
   if ( ev->xbutton.button == Button2 ) {
-    Drv->pointer_state_changed     = (Drv->pointer_state.RightButton !=
-                                      Pressed);
+    Drv->pointer_state_changed = (Drv->pointer_state.RightButton !=
+                                  Pressed);
     Drv->pointer_state.RightButton = Pressed;
   }
 }
@@ -887,10 +887,10 @@ X11Blt (
 
   switch (BltOperation) {
     case EfiUgaVideoToBltBuffer:
-      Blt          = (EFI_UGA_PIXEL *)((UINT8 *)BltBuffer +
-                                       (Args->DestinationY * Args->Delta) +
-                                       Args->DestinationX *
-                                       sizeof (EFI_UGA_PIXEL));
+      Blt = (EFI_UGA_PIXEL *)((UINT8 *)BltBuffer +
+                              (Args->DestinationY * Args->Delta) +
+                              Args->DestinationX *
+                              sizeof (EFI_UGA_PIXEL));
       Args->Delta -= Args->Width * sizeof (EFI_UGA_PIXEL);
       for (SrcY = Args->SourceY; SrcY < (Args->Height + Args->SourceY);
            SrcY++)
@@ -913,9 +913,9 @@ X11Blt (
 
       break;
     case EfiUgaBltBufferToVideo:
-      Blt          = (EFI_UGA_PIXEL *)((UINT8 *)BltBuffer + (Args->SourceY *
-                                                             Args->Delta) +
-                                       Args->SourceX * sizeof (EFI_UGA_PIXEL));
+      Blt = (EFI_UGA_PIXEL *)((UINT8 *)BltBuffer + (Args->SourceY *
+                                                    Args->Delta) +
+                              Args->SourceX * sizeof (EFI_UGA_PIXEL));
       Args->Delta -= Args->Width * sizeof (EFI_UGA_PIXEL);
       for (DstY = Args->DestinationY; DstY < (Args->Height +
                                               Args->DestinationY); DstY++)

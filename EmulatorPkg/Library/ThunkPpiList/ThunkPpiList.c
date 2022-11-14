@@ -26,8 +26,8 @@ GetThunkPpiList (
     return NULL;
   }
 
-  Index                       = (gThunkPpiListSize/
-                                 sizeof (EFI_PEI_PPI_DESCRIPTOR)) - 1;
+  Index = (gThunkPpiListSize/
+           sizeof (EFI_PEI_PPI_DESCRIPTOR)) - 1;
   gThunkPpiList[Index].Flags |= EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST;
 
   return gThunkPpiList;
@@ -52,8 +52,8 @@ AddThunkPpi (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Index                      = (gThunkPpiListSize/
-                                sizeof (EFI_PEI_PPI_DESCRIPTOR));
+  Index = (gThunkPpiListSize/
+           sizeof (EFI_PEI_PPI_DESCRIPTOR));
   gThunkPpiList[Index].Flags = Flags;
   gThunkPpiList[Index].Guid  = Guid;
   gThunkPpiList[Index].Ppi   = Ppi;

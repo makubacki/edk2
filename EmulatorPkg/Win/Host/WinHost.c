@@ -93,12 +93,12 @@ WinPeiAutoScan (
   gSystemMemory[Index].Memory = (EFI_PHYSICAL_ADDRESS)(UINTN)VirtualAlloc (
                                                                NULL,
                                                                (SIZE_T)(
-                                                                                         gSystemMemory
-                                                                                         [
-                                                                                                       Index
-                                                                                         ]
-                                                                                           .
-                                                                                           Size),
+                                                                        gSystemMemory
+                                                                        [
+                                                                         Index
+                                                                        ]
+                                                                          .
+                                                                          Size),
                                                                MEM_COMMIT,
                                                                PAGE_EXECUTE_READWRITE
                                                                );
@@ -827,15 +827,15 @@ SecPeCoffGetEntryPoint (
   ImageContext.ImageAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)VirtualAlloc (
                                                              NULL,
                                                              (SIZE_T)(
-                                                                                       ImageContext
-                                                                                         .
-                                                                                         ImageSize
-                                                                                       + (
-                                                                                                                 ImageContext
-                                                                                                                   .
-                                                                                                                   SectionAlignment
-                                                                                                                 *
-                                                                                                                 2)),
+                                                                      ImageContext
+                                                                        .
+                                                                        ImageSize
+                                                                      + (
+                                                                         ImageContext
+                                                                           .
+                                                                           SectionAlignment
+                                                                         *
+                                                                         2)),
                                                              MEM_COMMIT,
                                                              PAGE_EXECUTE_READWRITE
                                                              );

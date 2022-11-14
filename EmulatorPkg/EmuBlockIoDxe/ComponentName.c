@@ -164,8 +164,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
 };
 
 EFI_UNICODE_STRING_TABLE  mEmuBlockIoDriverNameTable[] = {
-  { "eng;en", L"Emu Block I/O Driver"     },
-  { NULL,     NULL                        }
+  { "eng;en", L"Emu Block I/O Driver" },
+  { NULL,     NULL                    }
 };
 
 /**

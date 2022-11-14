@@ -568,7 +568,7 @@ EmuGopSimpleTextInExRegisterKeyNotify (
   //
   NewNotify = (EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY *)AllocateZeroPool (
                                                    sizeof (
-                                                                          EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY)
+                                                           EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY)
                                                    );
   if (NewNotify == NULL) {
     return EFI_OUT_OF_RESOURCES;

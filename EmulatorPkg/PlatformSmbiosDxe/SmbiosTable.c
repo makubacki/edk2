@@ -96,19 +96,19 @@ CHAR8               *gSmbiosType0Strings[] = {
 
 SMBIOS_TABLE_TYPE1  gSmbiosType1Template = {
   { EFI_SMBIOS_TYPE_SYSTEM_INFORMATION, sizeof (SMBIOS_TABLE_TYPE1),
-                                                            0              },
+      0 },
   1,    // Manufacturer String
   2,    // ProductName String
   3,    // Version String
   4,    // SerialNumber String
   { 0x25EF0280,                         0xEC82,
-                                                            0x42B0,
-                                                            { 0x8F,
-                                                            0xB6,
-                                                            0x10, 0xAD, 0xCC,
-                                                            0xC6,
-                                                            0x7C,
-                                                            0x02 }
+      0x42B0,
+      { 0x8F,
+      0xB6,
+      0x10, 0xAD, 0xCC,
+      0xC6,
+      0x7C,
+      0x02 }
   },
   SystemWakeupTypePowerSwitch,
   5,    // SKUNumber String
@@ -157,7 +157,7 @@ CHAR8               *gSmbiosType2Strings[] = {
 
 SMBIOS_TABLE_TYPE3  gSmbiosType3Template = {
   { EFI_SMBIOS_TYPE_SYSTEM_ENCLOSURE, sizeof (SMBIOS_TABLE_TYPE3),
-      0                },
+      0 },
   1,                                                                    // Manufacturer String
   MiscChassisTypeLapTop,                                                // Type;
   2,                                                                    // Version String
@@ -167,8 +167,8 @@ SMBIOS_TABLE_TYPE3  gSmbiosType3Template = {
   ChassisStateSafe,                                                     // PowerSupplyState;
   ChassisStateSafe,                                                     // ThermalState;
   ChassisSecurityStatusNone,                                            // SecurityStatus;
-  { 0,                                0,                               0,
-      0             },                                                  // OemDefined[4];
+  { 0,                                0,                          0,
+      0 },                                                              // OemDefined[4];
   0,                                                                    // Height;
   0,                                                                    // NumberofPowerCords;
   0,                                                                    // ContainedElementCount;
@@ -431,53 +431,53 @@ SMBIOS_TABLE_TYPE23  gSmbiosType23Template = {
 
 SMBIOS_TABLE_TYPE32  gSmbiosType32Template = {
   { EFI_SMBIOS_TYPE_SYSTEM_BOOT_INFORMATION, sizeof (SMBIOS_TABLE_TYPE32),
-    0                                             },
+    0 },
   { 0,                                       0,
-    0,  0, 0, 0                                    },                           // Reserved[6];
+    0, 0, 0, 0 },                                                               // Reserved[6];
   BootInformationStatusNoError                                                  // BootStatus
 };
 
 SMBIOS_TEMPLATE_ENTRY  gSmbiosTemplate[] = {
   { (SMBIOS_STRUCTURE *)&gSmbiosType0Template,
-    gSmbiosType0Strings                                                                                                                                                                                                                                                                            },
+    gSmbiosType0Strings },
   { (SMBIOS_STRUCTURE *)&gSmbiosType1Template,
-    gSmbiosType1Strings                                                                                                                                                                                                                                                                                                                   },
+    gSmbiosType1Strings },
   { (SMBIOS_STRUCTURE *)&gSmbiosType2Template,
-    gSmbiosType2Strings                                                                                                                                                                                                                                                                                                                                                         },
+    gSmbiosType2Strings },
   { (SMBIOS_STRUCTURE *)&gSmbiosType3Template,
-    gSmbiosType3Strings                                                                                                                                                                                                                                                                                                                                                                                               },
+    gSmbiosType3Strings },
   { (SMBIOS_STRUCTURE *)&gSmbiosType8Template1,
-    gSmbiosType8Strings1                                                                                                                                                                                                                                                                                                                                                                                                                                    },
+    gSmbiosType8Strings1 },
   { (SMBIOS_STRUCTURE *)&gSmbiosType8Template2,
-    gSmbiosType8Strings2                                                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+    gSmbiosType8Strings2 },
   { (SMBIOS_STRUCTURE *)&gSmbiosType8Template3,
-    gSmbiosType8Strings3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                },
+    gSmbiosType8Strings3 },
   { (SMBIOS_STRUCTURE *)&gSmbiosType8Template4,
-    gSmbiosType8Strings4                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      },
+    gSmbiosType8Strings4 },
   { (SMBIOS_STRUCTURE *)&gSmbiosType8Template5,
-    gSmbiosType8Strings5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            },
+    gSmbiosType8Strings5 },
   { (SMBIOS_STRUCTURE *)&gSmbiosType8Template6,
-    gSmbiosType8Strings6                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+    gSmbiosType8Strings6 },
   { (SMBIOS_STRUCTURE *)&gSmbiosType8Template7,
-    gSmbiosType8Strings7                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        },
+    gSmbiosType8Strings7 },
   { (SMBIOS_STRUCTURE *)&gSmbiosType8Template8,
-    gSmbiosType8Strings8                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              },
+    gSmbiosType8Strings8 },
   { (SMBIOS_STRUCTURE *)&gSmbiosType8Template9,
-    gSmbiosType8Strings9                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    },
+    gSmbiosType8Strings9 },
   { (SMBIOS_STRUCTURE *)&gSmbiosType9Template,
-    gSmbiosType9Strings                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           },
+    gSmbiosType9Strings },
   { (SMBIOS_STRUCTURE *)&gSmbiosType11Template,
-    gSmbiosType11Strings                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                },
+    gSmbiosType11Strings },
   { (SMBIOS_STRUCTURE *)&gSmbiosType12Template,
-    gSmbiosType12Strings                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      },
+    gSmbiosType12Strings },
   { (SMBIOS_STRUCTURE *)&gSmbiosType16Template,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            },
+    NULL },
   { (SMBIOS_STRUCTURE *)&gSmbiosType17Template,
-    gSmbiosType17Strings                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+    gSmbiosType17Strings },
   { (SMBIOS_STRUCTURE *)&gSmbiosType23Template,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        },
+    NULL },
   { (SMBIOS_STRUCTURE *)&gSmbiosType32Template,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              },
+    NULL },
   { NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              }
+    NULL }
 };

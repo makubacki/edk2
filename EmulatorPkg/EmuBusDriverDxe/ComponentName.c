@@ -51,8 +51,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
 
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
   mEmuBusDriverNameTable[] = {
-  { "eng", L"Emu Bus Driver"  },
-  { NULL,  NULL               }
+  { "eng", L"Emu Bus Driver" },
+  { NULL,  NULL              }
 };
 
 /**

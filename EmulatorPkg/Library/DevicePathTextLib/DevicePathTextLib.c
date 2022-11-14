@@ -160,7 +160,7 @@ DevPathFromTextEmuFs (
                                             HARDWARE_DEVICE_PATH,
                                             HW_VENDOR_DP,
                                             (UINT16)sizeof (
-                                                           EMU_VENDOR_DEVICE_PATH_NODE)
+                                                            EMU_VENDOR_DEVICE_PATH_NODE)
                                             );
   CopyGuid (&Vendor->VendorDevicePath.Guid, &gEfiSimpleFileSystemProtocolGuid);
   Vendor->Instance = (UINT32)StrDecimalToUintn (Str);

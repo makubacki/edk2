@@ -1280,7 +1280,7 @@ Returns:
 
     BufferSize += (sizeof (EFI_FW_VOL_INSTANCE) + FwVolHeader->HeaderLength -
                    sizeof (EFI_FIRMWARE_VOLUME_HEADER));
-    FvHob.Raw   = GET_NEXT_HOB (FvHob);
+    FvHob.Raw = GET_NEXT_HOB (FvHob);
   }
 
   //

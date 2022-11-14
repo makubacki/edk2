@@ -641,15 +641,15 @@ WinNtGopThreadWindowProc (
       if (Private->PointerPreviousX != PosX) {
         Private->PointerState.RelativeMovementX += (PosX -
                                                     Private->PointerPreviousX);
-        Private->PointerPreviousX                = PosX;
-        Private->PointerStateChanged             = TRUE;
+        Private->PointerPreviousX    = PosX;
+        Private->PointerStateChanged = TRUE;
       }
 
       if (Private->PointerPreviousY != PosY) {
         Private->PointerState.RelativeMovementY += (PosY -
                                                     Private->PointerPreviousY);
-        Private->PointerPreviousY                = PosY;
-        Private->PointerStateChanged             = TRUE;
+        Private->PointerPreviousY    = PosY;
+        Private->PointerStateChanged = TRUE;
       }
 
       Private->PointerState.RelativeMovementZ = 0;

@@ -21,11 +21,11 @@ Abstract:
 EFI_EVENT  mGopScreenExitBootServicesEvent;
 
 GOP_MODE_DATA  mGopModeData[] = {
-  { 800,  600,  0,  0  },
-  { 640,  480,  0,  0  },
-  { 720,  400,  0,  0  },
-  { 1024, 768,  0,  0  },
-  { 1280, 1024, 0,  0  }
+  { 800,  600,  0, 0 },
+  { 640,  480,  0, 0 },
+  { 720,  400,  0, 0 },
+  { 1024, 768,  0, 0 },
+  { 1280, 1024, 0, 0 }
 };
 
 /**
@@ -336,7 +336,7 @@ EmuGopConstructor (
 
   Private->GraphicsOutput.Mode->Info = AllocatePool (
                                          sizeof (
-                                                            EFI_GRAPHICS_OUTPUT_MODE_INFORMATION)
+                                                 EFI_GRAPHICS_OUTPUT_MODE_INFORMATION)
                                          );
   if (Private->GraphicsOutput.Mode->Info == NULL) {
     return EFI_OUT_OF_RESOURCES;

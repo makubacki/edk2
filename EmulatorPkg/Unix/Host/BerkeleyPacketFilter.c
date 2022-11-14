@@ -105,8 +105,10 @@ EmuSnpCreateMapping (
 
 static struct bpf_insn  mFilterInstructionTemplate[] = {
   // Load 4 bytes from the destination MAC address.
-  BPF_STMT (BPF_LD + BPF_W + BPF_ABS,
-    OFFSET_OF (ETHERNET_HEADER,               DstAddr[0])),
+  BPF_STMT (
+    BPF_LD + BPF_W + BPF_ABS,
+    OFFSET_OF (ETHERNET_HEADER,DstAddr[0])
+    ),
 
   // Compare to first 4 bytes of fake MAC address.
   BPF_JUMP (
@@ -117,8 +119,10 @@ static struct bpf_insn  mFilterInstructionTemplate[] = {
     ),
 
   // Load remaining 2 bytes from the destination MAC address.
-  BPF_STMT (BPF_LD + BPF_H + BPF_ABS,
-    OFFSET_OF (ETHERNET_HEADER,               DstAddr[4])),
+  BPF_STMT (
+    BPF_LD + BPF_H + BPF_ABS,
+    OFFSET_OF (ETHERNET_HEADER,DstAddr[4])
+    ),
 
   // Compare to remaining 2 bytes of fake MAC address.
   BPF_JUMP (
@@ -129,8 +133,10 @@ static struct bpf_insn  mFilterInstructionTemplate[] = {
     ),
 
   // Load 4 bytes from the destination MAC address.
-  BPF_STMT (BPF_LD + BPF_W + BPF_ABS,
-    OFFSET_OF (ETHERNET_HEADER,               DstAddr[0])),
+  BPF_STMT (
+    BPF_LD + BPF_W + BPF_ABS,
+    OFFSET_OF (ETHERNET_HEADER,DstAddr[0])
+    ),
 
   // Compare to first 4 bytes of broadcast MAC address.
   BPF_JUMP (
@@ -141,8 +147,10 @@ static struct bpf_insn  mFilterInstructionTemplate[] = {
     ),
 
   // Load remaining 2 bytes from the destination MAC address.
-  BPF_STMT (BPF_LD + BPF_H + BPF_ABS,
-    OFFSET_OF (ETHERNET_HEADER,               DstAddr[4])),
+  BPF_STMT (
+    BPF_LD + BPF_H + BPF_ABS,
+    OFFSET_OF (ETHERNET_HEADER,DstAddr[4])
+    ),
 
   // Compare to remaining 2 bytes of broadcast MAC address.
   BPF_JUMP (
@@ -153,10 +161,10 @@ static struct bpf_insn  mFilterInstructionTemplate[] = {
     ),
 
   // Reject packet.
-  BPF_STMT (BPF_RET + BPF_K,                0),
+  BPF_STMT (BPF_RET + BPF_K,   0),
 
   // Receive entire packet.
-  BPF_STMT (BPF_RET + BPF_K,                -1)
+  BPF_STMT (BPF_RET + BPF_K,   -1)
 };
 
 EFI_STATUS
@@ -340,8 +348,8 @@ EmuSnpStart (
     CopyMem (&Temp16, &Private->Mode->CurrentAddress.Addr[4], sizeof (UINT16));
     FilterProgram[3].k = NTOHS (Temp16);
 
-    BpfProgram.bf_len   = sizeof (mFilterInstructionTemplate) / sizeof (struct
-                                                                        bpf_insn);
+    BpfProgram.bf_len = sizeof (mFilterInstructionTemplate) / sizeof (struct
+                                                                      bpf_insn);
     BpfProgram.bf_insns = FilterProgram;
 
     if (ioctl (Private->BpfFd, BIOCSETF, &BpfProgram) < 0) {

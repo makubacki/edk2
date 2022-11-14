@@ -41,15 +41,21 @@ CreatePlatformSmbiosMemoryRecords (
   EFI_SMBIOS_HANDLE         PhyscialMemoryArrayHandle;
   EFI_SMBIOS_HANDLE         SmbiosHandle;
 
-  Smbios16.Hdr = SmbiosLibGetRecord (EFI_SMBIOS_TYPE_PHYSICAL_MEMORY_ARRAY, 0,
-                   &PhyscialMemoryArrayHandle);
+  Smbios16.Hdr = SmbiosLibGetRecord (
+                   EFI_SMBIOS_TYPE_PHYSICAL_MEMORY_ARRAY,
+                   0,
+                   &PhyscialMemoryArrayHandle
+                   );
   if (Smbios16.Hdr == NULL) {
     // Only make a Type19 entry if a Type16 entry exists.
     return;
   }
 
-  Smbios17.Hdr = SmbiosLibGetRecord (EFI_SMBIOS_TYPE_MEMORY_DEVICE, 0,
-                   &SmbiosHandle);
+  Smbios17.Hdr = SmbiosLibGetRecord (
+                   EFI_SMBIOS_TYPE_MEMORY_DEVICE,
+                   0,
+                   &SmbiosHandle
+                   );
   if (Smbios17.Hdr == NULL) {
     // if type17 exits update with type16 Smbios handle
     Smbios17.Type17->MemoryArrayHandle = PhyscialMemoryArrayHandle;
@@ -58,8 +64,11 @@ CreatePlatformSmbiosMemoryRecords (
   // Generate Type16 records
   gSmbiosType19Template.MemoryArrayHandle = PhyscialMemoryArrayHandle;
   HobPtr.Raw                              = GetHobList ();
-  while ((HobPtr.Raw = GetNextHob (EFI_HOB_TYPE_RESOURCE_DESCRIPTOR,
-                         HobPtr.Raw)) != NULL) {
+  while ((HobPtr.Raw = GetNextHob (
+                         EFI_HOB_TYPE_RESOURCE_DESCRIPTOR,
+                         HobPtr.Raw
+                         )) != NULL)
+  {
     if (HobPtr.ResourceDescriptor->ResourceType == EFI_RESOURCE_SYSTEM_MEMORY) {
       gSmbiosType19Template.ExtendedStartingAddress =
         HobPtr.ResourceDescriptor->PhysicalStart;
@@ -103,13 +112,20 @@ PlatformSmbiosDriverEntryPoint (
 
   // Phase 2 - Patch SMBIOS table entries
 
-  Smbios.Hdr = SmbiosLibGetRecord (EFI_SMBIOS_TYPE_BIOS_INFORMATION, 0,
-                 &SmbiosHandle);
+  Smbios.Hdr = SmbiosLibGetRecord (
+                 EFI_SMBIOS_TYPE_BIOS_INFORMATION,
+                 0,
+                 &SmbiosHandle
+                 );
   if (Smbios.Type0 != NULL) {
     // 64K * (n+1) bytes
-    Smbios.Type0->BiosSize = (UINT8)DivU64x32 (FixedPcdGet64 (
-                                                 PcdEmuFirmwareFdSize), 64*
-                                      1024) - 1;
+    Smbios.Type0->BiosSize = (UINT8)DivU64x32 (
+                                      FixedPcdGet64 (
+                                        PcdEmuFirmwareFdSize
+                                        ),
+                                      64*
+                                      1024
+                                      ) - 1;
 
     SmbiosLibUpdateUnicodeString (
       SmbiosHandle,

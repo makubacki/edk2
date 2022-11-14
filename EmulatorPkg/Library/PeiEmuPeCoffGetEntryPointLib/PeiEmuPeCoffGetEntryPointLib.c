@@ -167,7 +167,7 @@ PeCoffLoaderGetPdbPointer (
       DebugEntry    = (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY *)((UINTN)Hdr.Te +
                                                           Hdr.Te->DataDirectory
                                                           [
-                                                                                EFI_TE_IMAGE_DIRECTORY_ENTRY_DEBUG
+                                                           EFI_TE_IMAGE_DIRECTORY_ENTRY_DEBUG
                                                           ].VirtualAddress +
                                                           TEImageAdjust);
     }
@@ -205,7 +205,7 @@ PeCoffLoaderGetPdbPointer (
       NumberOfRvaAndSizes = Hdr.Pe32->OptionalHeader.NumberOfRvaAndSizes;
       DirectoryEntry      =
         (EFI_IMAGE_DATA_DIRECTORY *)&(Hdr.Pe32->OptionalHeader.DataDirectory[
-                                                                                                  EFI_IMAGE_DIRECTORY_ENTRY_DEBUG
+                                                                             EFI_IMAGE_DIRECTORY_ENTRY_DEBUG
                                       ]);
       DebugEntry =
         (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY *)((UINTN)Pe32Data +
@@ -218,7 +218,7 @@ PeCoffLoaderGetPdbPointer (
       DirectoryEntry      =
         (EFI_IMAGE_DATA_DIRECTORY *)&(Hdr.Pe32Plus->OptionalHeader.DataDirectory
                                       [
-                                                            EFI_IMAGE_DIRECTORY_ENTRY_DEBUG
+                                       EFI_IMAGE_DIRECTORY_ENTRY_DEBUG
                                       ]);
       DebugEntry =
         (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY *)((UINTN)Pe32Data +

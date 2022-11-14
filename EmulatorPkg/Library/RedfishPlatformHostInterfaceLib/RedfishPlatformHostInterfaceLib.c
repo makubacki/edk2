@@ -181,7 +181,7 @@ RedfishPlatformHostInterfaceProtocolData (
       (MC_HOST_INTERFACE_PROTOCOL_RECORD *)AllocatePool (
                                              mRedfishProtocolDataSize +
                                              sizeof (
-                                                                                                                                   MC_HOST_INTERFACE_PROTOCOL_RECORD)
+                                                     MC_HOST_INTERFACE_PROTOCOL_RECORD)
                                              - 1
                                              );
     ThisProtocolRecord->ProtocolType =
