@@ -205,7 +205,8 @@ TcpDriverEntryPoint (
   //
   Seed            = NetRandomInitSeed ();
   mTcpGlobalIss   = NET_RANDOM (Seed) % mTcpGlobalIss;
-  mTcp4RandomPort = (UINT16)(TCP_PORT_KNOWN + (NET_RANDOM (Seed) % TCP_PORT_KNOWN));
+  mTcp4RandomPort = (UINT16)(TCP_PORT_KNOWN + (NET_RANDOM (Seed) %
+                                               TCP_PORT_KNOWN));
   mTcp6RandomPort = mTcp4RandomPort;
 
   return EFI_SUCCESS;
@@ -373,12 +374,25 @@ TcpDestroyChildEntryInHandleBuffer (
     return EFI_INVALID_PARAMETER;
   }
 
-  Sock              = NET_LIST_USER_STRUCT_S (Entry, SOCKET, Link, SOCK_SIGNATURE);
-  ServiceBinding    = ((TCP_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ServiceBinding;
-  NumberOfChildren  = ((TCP_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->NumberOfChildren;
-  ChildHandleBuffer = ((TCP_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ChildHandleBuffer;
+  Sock = NET_LIST_USER_STRUCT_S (
+           Entry,
+           SOCKET,
+           Link,
+           SOCK_SIGNATURE
+           );
+  ServiceBinding =
+    ((TCP_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ServiceBinding;
+  NumberOfChildren =
+    ((TCP_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->NumberOfChildren;
+  ChildHandleBuffer =
+    ((TCP_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ChildHandleBuffer;
 
-  if (!NetIsInHandleBuffer (Sock->SockHandle, NumberOfChildren, ChildHandleBuffer)) {
+  if (!NetIsInHandleBuffer (
+         Sock->SockHandle,
+         NumberOfChildren,
+         ChildHandleBuffer
+         ))
+  {
     return EFI_SUCCESS;
   }
 
@@ -568,7 +582,11 @@ Tcp4DriverBindingStart (
 {
   EFI_STATUS  Status;
 
-  Status = TcpCreateService (ControllerHandle, This->DriverBindingHandle, IP_VERSION_4);
+  Status = TcpCreateService (
+             ControllerHandle,
+             This->DriverBindingHandle,
+             IP_VERSION_4
+             );
   if ((Status == EFI_ALREADY_STARTED) || (Status == EFI_UNSUPPORTED)) {
     Status = EFI_SUCCESS;
   }
@@ -685,7 +703,11 @@ Tcp6DriverBindingStart (
 {
   EFI_STATUS  Status;
 
-  Status = TcpCreateService (ControllerHandle, This->DriverBindingHandle, IP_VERSION_6);
+  Status = TcpCreateService (
+             ControllerHandle,
+             This->DriverBindingHandle,
+             IP_VERSION_6
+             );
   if ((Status == EFI_ALREADY_STARTED) || (Status == EFI_UNSUPPORTED)) {
     Status = EFI_SUCCESS;
   }

@@ -343,20 +343,34 @@ HttpBootDns (
   //
   // Get DNS server list from EFI IPv6 Configuration protocol.
   //
-  Status = gBS->HandleProtocol (Private->Controller, &gEfiIp6ConfigProtocolGuid, (VOID **)&Ip6Config);
+  Status = gBS->HandleProtocol (
+                  Private->Controller,
+                  &gEfiIp6ConfigProtocolGuid,
+                  (VOID **)&Ip6Config
+                  );
   if (!EFI_ERROR (Status)) {
     //
     // Get the required size.
     //
     DataSize = 0;
-    Status   = Ip6Config->GetData (Ip6Config, Ip6ConfigDataTypeDnsServer, &DataSize, NULL);
+    Status   = Ip6Config->GetData (
+                            Ip6Config,
+                            Ip6ConfigDataTypeDnsServer,
+                            &DataSize,
+                            NULL
+                            );
     if (Status == EFI_BUFFER_TOO_SMALL) {
       DnsServerList = AllocatePool (DataSize);
       if (DnsServerList == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }
 
-      Status = Ip6Config->GetData (Ip6Config, Ip6ConfigDataTypeDnsServer, &DataSize, DnsServerList);
+      Status = Ip6Config->GetData (
+                            Ip6Config,
+                            Ip6ConfigDataTypeDnsServer,
+                            &DataSize,
+                            DnsServerList
+                            );
       if (EFI_ERROR (Status)) {
         FreePool (DnsServerList);
         DnsServerList = NULL;
@@ -446,7 +460,9 @@ HttpBootDns (
       goto Exit;
     }
 
-    if ((Token.RspData.H2AData->IpCount == 0) || (Token.RspData.H2AData->IpList == NULL)) {
+    if ((Token.RspData.H2AData->IpCount == 0) ||
+        (Token.RspData.H2AData->IpList == NULL))
+    {
       Status = EFI_DEVICE_ERROR;
       goto Exit;
     }
@@ -535,7 +551,12 @@ HttpBootCheckUriScheme (
   //
   // Return EFI_INVALID_PARAMETER if the URI is not HTTP or HTTPS.
   //
-  if ((AsciiStrnCmp (Uri, "http://", 7) != 0) && (AsciiStrnCmp (Uri, "https://", 8) != 0)) {
+  if ((AsciiStrnCmp (Uri, "http://", 7) != 0) && (AsciiStrnCmp (
+                                                    Uri,
+                                                    "https://",
+                                                    8
+                                                    ) != 0))
+  {
     DEBUG ((DEBUG_ERROR, "HttpBootCheckUriScheme: Invalid Uri.\n"));
     return EFI_INVALID_PARAMETER;
   }
@@ -543,7 +564,12 @@ HttpBootCheckUriScheme (
   //
   // HTTP is disabled, return EFI_ACCESS_DENIED if the URI is HTTP.
   //
-  if (!PcdGetBool (PcdAllowHttpConnections) && (AsciiStrnCmp (Uri, "http://", 7) == 0)) {
+  if (!PcdGetBool (PcdAllowHttpConnections) && (AsciiStrnCmp (
+                                                  Uri,
+                                                  "http://",
+                                                  7
+                                                  ) == 0))
+  {
     DEBUG ((DEBUG_ERROR, "HttpBootCheckUriScheme: HTTP is disabled.\n"));
     return EFI_ACCESS_DENIED;
   }
@@ -593,7 +619,8 @@ HttpBootParseFilePath (
       // UEFI Spec doesn't require the URI to be a NULL-terminated string
       // So we allocate a new buffer and always append a '\0' to it.
       //
-      UriStrLength = DevicePathNodeLength (UriDevicePath) - sizeof (EFI_DEVICE_PATH_PROTOCOL);
+      UriStrLength = DevicePathNodeLength (UriDevicePath) -
+                     sizeof (EFI_DEVICE_PATH_PROTOCOL);
       if (UriStrLength == 0) {
         //
         // return a NULL UriAddress if it's a empty URI device path node.
@@ -606,8 +633,14 @@ HttpBootParseFilePath (
         return EFI_OUT_OF_RESOURCES;
       }
 
-      CopyMem (Uri, UriDevicePath->Uri, DevicePathNodeLength (UriDevicePath) - sizeof (EFI_DEVICE_PATH_PROTOCOL));
-      Uri[DevicePathNodeLength (UriDevicePath) - sizeof (EFI_DEVICE_PATH_PROTOCOL)] = '\0';
+      CopyMem (
+        Uri,
+        UriDevicePath->Uri,
+        DevicePathNodeLength (UriDevicePath) -
+        sizeof (EFI_DEVICE_PATH_PROTOCOL)
+        );
+      Uri[DevicePathNodeLength (UriDevicePath) -
+          sizeof (EFI_DEVICE_PATH_PROTOCOL)] = '\0';
 
       *UriAddress = Uri;
     }
@@ -668,10 +701,14 @@ HttpBootCheckImageType (
     if (AsciiStriCmp (Header->FieldValue, HTTP_CONTENT_TYPE_APP_EFI) == 0) {
       *ImageType = ImageTypeEfi;
       return EFI_SUCCESS;
-    } else if (AsciiStriCmp (Header->FieldValue, HTTP_CONTENT_TYPE_APP_ISO) == 0) {
+    } else if (AsciiStriCmp (Header->FieldValue, HTTP_CONTENT_TYPE_APP_ISO) ==
+               0)
+    {
       *ImageType = ImageTypeVirtualCd;
       return EFI_SUCCESS;
-    } else if (AsciiStriCmp (Header->FieldValue, HTTP_CONTENT_TYPE_APP_IMG) == 0) {
+    } else if (AsciiStriCmp (Header->FieldValue, HTTP_CONTENT_TYPE_APP_IMG) ==
+               0)
+    {
       *ImageType = ImageTypeVirtualDisk;
       return EFI_SUCCESS;
     }
@@ -739,9 +776,17 @@ HttpBootRegisterRamDisk (
   ASSERT (Buffer != NULL);
   ASSERT (BufferSize != 0);
 
-  Status = gBS->LocateProtocol (&gEfiRamDiskProtocolGuid, NULL, (VOID **)&RamDisk);
+  Status = gBS->LocateProtocol (
+                  &gEfiRamDiskProtocolGuid,
+                  NULL,
+                  (VOID **)&RamDisk
+                  );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "HTTP Boot: Couldn't find the RAM Disk protocol - %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "HTTP Boot: Couldn't find the RAM Disk protocol - %r\n",
+      Status
+      ));
     return Status;
   }
 
@@ -757,11 +802,16 @@ HttpBootRegisterRamDisk (
                       (UINTN)Buffer,
                       (UINT64)BufferSize,
                       RamDiskType,
-                      Private->UsingIpv6 ? Private->Ip6Nic->DevicePath : Private->Ip4Nic->DevicePath,
+                      Private->UsingIpv6 ? Private->Ip6Nic->DevicePath :
+                      Private->Ip4Nic->DevicePath,
                       &DevicePath
                       );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "HTTP Boot: Failed to register RAM Disk - %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "HTTP Boot: Failed to register RAM Disk - %r\n",
+      Status
+      ));
   }
 
   return Status;

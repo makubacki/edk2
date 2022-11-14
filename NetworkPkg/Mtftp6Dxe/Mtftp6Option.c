@@ -194,7 +194,9 @@ Mtftp6ParseExtensionOption (
       //
       // tsize option, the biggest transfer supported is 4GB with block size option
       //
-      ExtInfo->Tsize   = (UINT32)AsciiStrDecimalToUintn ((CHAR8 *)Opt->ValueStr);
+      ExtInfo->Tsize = (UINT32)AsciiStrDecimalToUintn (
+                                 (CHAR8 *)Opt->ValueStr
+                                 );
       ExtInfo->BitMap |= MTFTP6_OPT_TSIZE_BIT;
     } else if (AsciiStriCmp ((CHAR8 *)Opt->OptionStr, "multicast") == 0) {
       //
@@ -404,7 +406,12 @@ Mtftp6ParseStart (
   // Parse packet with allocated buffer for the second time to fill the pointer array
   // of the options in the packet.
   //
-  Status = Mtftp6ParsePacketOption (Packet, PacketLen, OptionCount, *OptionList);
+  Status = Mtftp6ParsePacketOption (
+             Packet,
+             PacketLen,
+             OptionCount,
+             *OptionList
+             );
 
   if (EFI_ERROR (Status)) {
     return Status;

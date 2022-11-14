@@ -93,7 +93,9 @@ TlsEncryptPacket (
   BufferInPtr = BufferIn;
   while ((UINTN)BufferInPtr < (UINTN)BufferIn + BufferInSize) {
     RecordHeaderIn = (TLS_RECORD_HEADER *)BufferInPtr;
-    if ((RecordHeaderIn->ContentType != TlsContentTypeApplicationData) || (RecordHeaderIn->Length > TLS_PLAINTEXT_RECORD_MAX_PAYLOAD_LENGTH)) {
+    if ((RecordHeaderIn->ContentType != TlsContentTypeApplicationData) ||
+        (RecordHeaderIn->Length > TLS_PLAINTEXT_RECORD_MAX_PAYLOAD_LENGTH))
+    {
       Status = EFI_INVALID_PARAMETER;
       goto ERROR;
     }
@@ -105,7 +107,10 @@ TlsEncryptPacket (
   //
   // Allocate enough buffer to hold TLS Ciphertext.
   //
-  BufferOut = AllocateZeroPool (RecordCount * (TLS_RECORD_HEADER_LENGTH + TLS_CIPHERTEXT_RECORD_MAX_PAYLOAD_LENGTH));
+  BufferOut = AllocateZeroPool (
+                RecordCount * (TLS_RECORD_HEADER_LENGTH +
+                               TLS_CIPHERTEXT_RECORD_MAX_PAYLOAD_LENGTH)
+                );
   if (BufferOut == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ERROR;
@@ -121,9 +126,17 @@ TlsEncryptPacket (
 
     ThisPlainMessageSize = RecordHeaderIn->Length;
 
-    TlsWrite (TlsInstance->TlsConn, (UINT8 *)(RecordHeaderIn + 1), ThisPlainMessageSize);
+    TlsWrite (
+      TlsInstance->TlsConn,
+      (UINT8 *)(RecordHeaderIn + 1),
+      ThisPlainMessageSize
+      );
 
-    Ret = TlsCtrlTrafficOut (TlsInstance->TlsConn, (UINT8 *)(TempRecordHeader), TLS_RECORD_HEADER_LENGTH + TLS_CIPHERTEXT_RECORD_MAX_PAYLOAD_LENGTH);
+    Ret = TlsCtrlTrafficOut (
+            TlsInstance->TlsConn,
+            (UINT8 *)(TempRecordHeader),
+            TLS_RECORD_HEADER_LENGTH + TLS_CIPHERTEXT_RECORD_MAX_PAYLOAD_LENGTH
+            );
 
     if (Ret > 0) {
       ThisMessageSize = (UINT16)Ret;
@@ -139,7 +152,8 @@ TlsEncryptPacket (
     BufferOutSize += ThisMessageSize;
 
     BufferInPtr     += TLS_RECORD_HEADER_LENGTH + ThisPlainMessageSize;
-    TempRecordHeader = (TLS_RECORD_HEADER *)((UINT8 *)TempRecordHeader + ThisMessageSize);
+    TempRecordHeader = (TLS_RECORD_HEADER *)((UINT8 *)TempRecordHeader +
+                                             ThisMessageSize);
   }
 
   FreePool (BufferIn);
@@ -259,7 +273,10 @@ TlsDecryptPacket (
   BufferInPtr = BufferIn;
   while ((UINTN)BufferInPtr < (UINTN)BufferIn + BufferInSize) {
     RecordHeaderIn = (TLS_RECORD_HEADER *)BufferInPtr;
-    if ((RecordHeaderIn->ContentType != TlsContentTypeApplicationData) || (NTOHS (RecordHeaderIn->Length) > TLS_CIPHERTEXT_RECORD_MAX_PAYLOAD_LENGTH)) {
+    if ((RecordHeaderIn->ContentType != TlsContentTypeApplicationData) ||
+        (NTOHS (RecordHeaderIn->Length) >
+         TLS_CIPHERTEXT_RECORD_MAX_PAYLOAD_LENGTH))
+    {
       Status = EFI_INVALID_PARAMETER;
       goto ERROR;
     }
@@ -271,7 +288,10 @@ TlsDecryptPacket (
   //
   // Allocate enough buffer to hold TLS Plaintext.
   //
-  BufferOut = AllocateZeroPool (RecordCount * (TLS_RECORD_HEADER_LENGTH + TLS_PLAINTEXT_RECORD_MAX_PAYLOAD_LENGTH));
+  BufferOut = AllocateZeroPool (
+                RecordCount * (TLS_RECORD_HEADER_LENGTH +
+                               TLS_PLAINTEXT_RECORD_MAX_PAYLOAD_LENGTH)
+                );
   if (BufferOut == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ERROR;
@@ -287,7 +307,11 @@ TlsDecryptPacket (
 
     ThisCipherMessageSize = NTOHS (RecordHeaderIn->Length);
 
-    Ret = TlsCtrlTrafficIn (TlsInstance->TlsConn, (UINT8 *)(RecordHeaderIn), TLS_RECORD_HEADER_LENGTH + ThisCipherMessageSize);
+    Ret = TlsCtrlTrafficIn (
+            TlsInstance->TlsConn,
+            (UINT8 *)(RecordHeaderIn),
+            TLS_RECORD_HEADER_LENGTH + ThisCipherMessageSize
+            );
     if (Ret != TLS_RECORD_HEADER_LENGTH + ThisCipherMessageSize) {
       TlsInstance->TlsSessionState = EfiTlsSessionError;
       Status                       = EFI_ABORTED;
@@ -295,7 +319,11 @@ TlsDecryptPacket (
     }
 
     Ret = 0;
-    Ret = TlsRead (TlsInstance->TlsConn, (UINT8 *)(TempRecordHeader + 1), TLS_PLAINTEXT_RECORD_MAX_PAYLOAD_LENGTH);
+    Ret = TlsRead (
+            TlsInstance->TlsConn,
+            (UINT8 *)(TempRecordHeader + 1),
+            TLS_PLAINTEXT_RECORD_MAX_PAYLOAD_LENGTH
+            );
 
     if (Ret > 0) {
       ThisPlainMessageSize = (UINT16)Ret;
@@ -313,7 +341,9 @@ TlsDecryptPacket (
     BufferOutSize           += TLS_RECORD_HEADER_LENGTH + ThisPlainMessageSize;
 
     BufferInPtr     += TLS_RECORD_HEADER_LENGTH + ThisCipherMessageSize;
-    TempRecordHeader = (TLS_RECORD_HEADER *)((UINT8 *)TempRecordHeader + TLS_RECORD_HEADER_LENGTH + ThisPlainMessageSize);
+    TempRecordHeader = (TLS_RECORD_HEADER *)((UINT8 *)TempRecordHeader +
+                                             TLS_RECORD_HEADER_LENGTH +
+                                             ThisPlainMessageSize);
   }
 
   FreePool (BufferIn);

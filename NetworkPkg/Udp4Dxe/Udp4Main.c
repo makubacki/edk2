@@ -152,7 +152,11 @@ Udp4Configure (
   OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
 
   if (UdpConfigData != NULL) {
-    CopyMem (&StationAddress, &UdpConfigData->StationAddress, sizeof (IP4_ADDR));
+    CopyMem (
+      &StationAddress,
+      &UdpConfigData->StationAddress,
+      sizeof (IP4_ADDR)
+      );
     CopyMem (&SubnetMask, &UdpConfigData->SubnetMask, sizeof (IP4_ADDR));
     CopyMem (&RemoteAddress, &UdpConfigData->RemoteAddress, sizeof (IP4_ADDR));
 
@@ -162,7 +166,10 @@ Udp4Configure (
 
     if (!UdpConfigData->UseDefaultAddress &&
         (!IP4_IS_VALID_NETMASK (SubnetMask) ||
-         !((StationAddress == 0) || ((SubnetMask != 0) && NetIp4IsUnicast (StationAddress, SubnetMask))) ||
+         !((StationAddress == 0) || ((SubnetMask != 0) && NetIp4IsUnicast (
+                                                            StationAddress,
+                                                            SubnetMask
+                                                            ))) ||
          IP4_IS_LOCAL_BROADCAST (RemoteAddress)))
     {
       //
@@ -218,9 +225,19 @@ Udp4Configure (
       //
       // Save the configuration data.
       //
-      CopyMem (&Instance->ConfigData, UdpConfigData, sizeof (Instance->ConfigData));
-      IP4_COPY_ADDRESS (&Instance->ConfigData.StationAddress, &Ip4ConfigData.StationAddress);
-      IP4_COPY_ADDRESS (&Instance->ConfigData.SubnetMask, &Ip4ConfigData.SubnetMask);
+      CopyMem (
+        &Instance->ConfigData,
+        UdpConfigData,
+        sizeof (Instance->ConfigData)
+        );
+      IP4_COPY_ADDRESS (
+        &Instance->ConfigData.StationAddress,
+        &Ip4ConfigData.StationAddress
+        );
+      IP4_COPY_ADDRESS (
+        &Instance->ConfigData.SubnetMask,
+        &Ip4ConfigData.SubnetMask
+        );
 
       //
       // Try to allocate the required port resource.
@@ -237,8 +254,16 @@ Udp4Configure (
       //
       // Pre calculate the checksum for the pseudo head, ignore the UDP length first.
       //
-      CopyMem (&LocalAddr, &Instance->ConfigData.StationAddress, sizeof (IP4_ADDR));
-      CopyMem (&RemoteAddr, &Instance->ConfigData.RemoteAddress, sizeof (IP4_ADDR));
+      CopyMem (
+        &LocalAddr,
+        &Instance->ConfigData.StationAddress,
+        sizeof (IP4_ADDR)
+        );
+      CopyMem (
+        &RemoteAddr,
+        &Instance->ConfigData.RemoteAddress,
+        sizeof (IP4_ADDR)
+        );
       Instance->HeadSum = NetPseudoHeadChecksum (
                             LocalAddr,
                             RemoteAddr,
@@ -448,7 +473,13 @@ Udp4Routes (
   //
   // Invoke the Ip instance the Udp4 instance consumes to do the actual operation.
   //
-  return Ip->Routes (Ip, DeleteRoute, SubnetAddress, SubnetMask, GatewayAddress);
+  return Ip->Routes (
+               Ip,
+               DeleteRoute,
+               SubnetAddress,
+               SubnetMask,
+               GatewayAddress
+               );
 }
 
 /**
@@ -562,7 +593,11 @@ Udp4Transmit (
   Udp4Service                       = Instance->Udp4Service;
   *((UINTN *)&Packet->ProtoData[0]) = (UINTN)(Udp4Service->IpIo);
 
-  Udp4Header = (EFI_UDP_HEADER *)NetbufAllocSpace (Packet, UDP4_HEADER_SIZE, TRUE);
+  Udp4Header = (EFI_UDP_HEADER *)NetbufAllocSpace (
+                                   Packet,
+                                   UDP4_HEADER_SIZE,
+                                   TRUE
+                                   );
   ASSERT (Udp4Header != NULL);
 
   ConfigData = &Instance->ConfigData;
@@ -576,7 +611,10 @@ Udp4Transmit (
   Udp4Header->Checksum = 0;
 
   UdpSessionData = TxData->UdpSessionData;
-  IP4_COPY_ADDRESS (&Override.Ip4OverrideData.SourceAddress, &ConfigData->StationAddress);
+  IP4_COPY_ADDRESS (
+    &Override.Ip4OverrideData.SourceAddress,
+    &ConfigData->StationAddress
+    );
 
   if (UdpSessionData != NULL) {
     //
@@ -584,7 +622,10 @@ Udp4Transmit (
     // UdpSessionData.
     //
     if (!EFI_IP4_EQUAL (&UdpSessionData->SourceAddress, &mZeroIp4Addr)) {
-      IP4_COPY_ADDRESS (&Override.Ip4OverrideData.SourceAddress, &UdpSessionData->SourceAddress);
+      IP4_COPY_ADDRESS (
+        &Override.Ip4OverrideData.SourceAddress,
+        &UdpSessionData->SourceAddress
+        );
     }
 
     if (UdpSessionData->SourcePort != 0) {
@@ -595,8 +636,16 @@ Udp4Transmit (
       Udp4Header->DstPort = HTONS (UdpSessionData->DestinationPort);
     }
 
-    CopyMem (&Source, &Override.Ip4OverrideData.SourceAddress, sizeof (IP4_ADDR));
-    CopyMem (&Destination, &UdpSessionData->DestinationAddress, sizeof (IP4_ADDR));
+    CopyMem (
+      &Source,
+      &Override.Ip4OverrideData.SourceAddress,
+      sizeof (IP4_ADDR)
+      );
+    CopyMem (
+      &Destination,
+      &UdpSessionData->DestinationAddress,
+      sizeof (IP4_ADDR)
+      );
 
     //
     // calculate the pseudo head checksum using the overridden parameters.
@@ -631,9 +680,15 @@ Udp4Transmit (
   // Fill the IpIo Override data.
   //
   if (TxData->GatewayAddress != NULL) {
-    IP4_COPY_ADDRESS (&Override.Ip4OverrideData.GatewayAddress, TxData->GatewayAddress);
+    IP4_COPY_ADDRESS (
+      &Override.Ip4OverrideData.GatewayAddress,
+      TxData->GatewayAddress
+      );
   } else {
-    ZeroMem (&Override.Ip4OverrideData.GatewayAddress, sizeof (EFI_IPv4_ADDRESS));
+    ZeroMem (
+      &Override.Ip4OverrideData.GatewayAddress,
+      sizeof (EFI_IPv4_ADDRESS)
+      );
   }
 
   Override.Ip4OverrideData.Protocol      = EFI_IP_PROTO_UDP;

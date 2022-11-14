@@ -246,7 +246,10 @@ SockProcessSndToken (
   // to determine if process a send token using
   // socket layer flow control policy
   //
-  while ((FreeSpace >= Sock->SndBuffer.LowWater) && !IsListEmpty (&Sock->SndTokenList)) {
+  while ((FreeSpace >= Sock->SndBuffer.LowWater) && !IsListEmpty (
+                                                       &Sock->SndTokenList
+                                                       ))
+  {
     SockToken = NET_LIST_HEAD (
                   &(Sock->SndTokenList),
                   SOCK_TOKEN,
@@ -486,7 +489,11 @@ SockWakeListenToken (
 
   Parent = Sock->Parent;
 
-  ASSERT ((Parent != NULL) && SOCK_IS_LISTENING (Parent) && SOCK_IS_CONNECTED (Sock));
+  ASSERT (
+    (Parent != NULL) && SOCK_IS_LISTENING (Parent) && SOCK_IS_CONNECTED (
+                                                        Sock
+                                                        )
+    );
 
   if (!IsListEmpty (&Parent->ListenTokenList)) {
     SockToken = NET_LIST_HEAD (
@@ -642,7 +649,10 @@ SockCreate (
 
   ASSERT ((SockInitData != NULL) && (SockInitData->ProtoHandler != NULL));
   ASSERT (SockInitData->Type == SockStream);
-  ASSERT ((SockInitData->ProtoData != NULL) && (SockInitData->DataSize <= PROTO_RESERVED_LEN));
+  ASSERT (
+    (SockInitData->ProtoData != NULL) && (SockInitData->DataSize <=
+                                          PROTO_RESERVED_LEN)
+    );
 
   if (SockInitData->IpVersion == IP_VERSION_4) {
     TcpProtocolGuid = &gEfiTcp4ProtocolGuid;
@@ -728,7 +738,11 @@ SockCreate (
   //
   // copy the protodata into socket
   //
-  CopyMem (Sock->ProtoReserved, SockInitData->ProtoData, SockInitData->DataSize);
+  CopyMem (
+    Sock->ProtoReserved,
+    SockInitData->ProtoData,
+    SockInitData->DataSize
+    );
 
   Status = gBS->InstallMultipleProtocolInterfaces (
                   &Sock->SockHandle,

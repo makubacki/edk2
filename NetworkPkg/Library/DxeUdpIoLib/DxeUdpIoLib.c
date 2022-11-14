@@ -89,9 +89,19 @@ UdpIoOnDgramSentDpc (
   RemoveEntryList (&TxToken->Link);
 
   if (TxToken->UdpIo->UdpVersion == UDP_IO_UDP4_VERSION) {
-    TxToken->CallBack (TxToken->Packet, NULL, TxToken->Token.Udp4.Status, TxToken->Context);
+    TxToken->CallBack (
+               TxToken->Packet,
+               NULL,
+               TxToken->Token.Udp4.Status,
+               TxToken->Context
+               );
   } else {
-    TxToken->CallBack (TxToken->Packet, NULL, TxToken->Token.Udp6.Status, TxToken->Context);
+    TxToken->CallBack (
+               TxToken->Packet,
+               NULL,
+               TxToken->Token.Udp6.Status,
+               TxToken->Context
+               );
   }
 
   UdpIoFreeTxToken (TxToken);
@@ -306,10 +316,16 @@ UdpIoOnDgramRcvdDpc (
 Resume:
   if (RxToken->UdpIo->UdpVersion == UDP_IO_UDP4_VERSION) {
     gBS->SignalEvent (((EFI_UDP4_RECEIVE_DATA *)RxData)->RecycleSignal);
-    RxToken->UdpIo->Protocol.Udp4->Receive (RxToken->UdpIo->Protocol.Udp4, &RxToken->Token.Udp4);
+    RxToken->UdpIo->Protocol.Udp4->Receive (
+                                     RxToken->UdpIo->Protocol.Udp4,
+                                     &RxToken->Token.Udp4
+                                     );
   } else {
     gBS->SignalEvent (((EFI_UDP6_RECEIVE_DATA *)RxData)->RecycleSignal);
-    RxToken->UdpIo->Protocol.Udp6->Receive (RxToken->UdpIo->Protocol.Udp6, &RxToken->Token.Udp6);
+    RxToken->UdpIo->Protocol.Udp6->Receive (
+                                     RxToken->UdpIo->Protocol.Udp6,
+                                     &RxToken->Token.Udp6
+                                     );
   }
 }
 
@@ -446,9 +462,11 @@ UdpIoCreateTxToken (
     );
 
   if (UdpIo->UdpVersion == UDP_IO_UDP4_VERSION) {
-    Size = sizeof (UDP_TX_TOKEN) + sizeof (EFI_UDP4_FRAGMENT_DATA) * (Packet->BlockOpNum - 1);
+    Size = sizeof (UDP_TX_TOKEN) + sizeof (EFI_UDP4_FRAGMENT_DATA) *
+           (Packet->BlockOpNum - 1);
   } else {
-    Size = sizeof (UDP_TX_TOKEN) + sizeof (EFI_UDP6_FRAGMENT_DATA) * (Packet->BlockOpNum - 1);
+    Size = sizeof (UDP_TX_TOKEN) + sizeof (EFI_UDP6_FRAGMENT_DATA) *
+           (Packet->BlockOpNum - 1);
   }
 
   TxToken = AllocatePool (Size);
@@ -516,7 +534,8 @@ UdpIoCreateTxToken (
 
       TxToken->Session.Udp4.SourcePort                 = EndPoint->LocalPort;
       TxToken->Session.Udp4.DestinationPort            = EndPoint->RemotePort;
-      ((EFI_UDP4_TRANSMIT_DATA *)Data)->UdpSessionData = &(TxToken->Session.Udp4);
+      ((EFI_UDP4_TRANSMIT_DATA *)Data)->UdpSessionData =
+        &(TxToken->Session.Udp4);
     }
 
     if ((Gateway != NULL) && (Gateway->Addr[0] != 0)) {
@@ -568,7 +587,8 @@ UdpIoCreateTxToken (
 
       TxToken->Session.Udp6.SourcePort                 = EndPoint->LocalPort;
       TxToken->Session.Udp6.DestinationPort            = EndPoint->RemotePort;
-      ((EFI_UDP6_TRANSMIT_DATA *)Data)->UdpSessionData = &(TxToken->Session.Udp6);
+      ((EFI_UDP6_TRANSMIT_DATA *)Data)->UdpSessionData =
+        &(TxToken->Session.Udp6);
     }
   }
 
@@ -611,7 +631,10 @@ UdpIoCreateIo (
   EFI_STATUS  Status;
 
   ASSERT (Configure != NULL);
-  ASSERT ((UdpVersion == UDP_IO_UDP4_VERSION) || (UdpVersion == UDP_IO_UDP6_VERSION));
+  ASSERT (
+    (UdpVersion == UDP_IO_UDP4_VERSION) || (UdpVersion ==
+                                            UDP_IO_UDP6_VERSION)
+    );
 
   UdpIo = AllocatePool (sizeof (UDP_IO));
 
@@ -720,9 +743,19 @@ UdpIoCreateIo (
 
 CLOSE_PROTOCOL:
   if (UdpVersion == UDP_IO_UDP4_VERSION) {
-    gBS->CloseProtocol (UdpIo->UdpHandle, &gEfiUdp4ProtocolGuid, ImageHandle, Controller);
+    gBS->CloseProtocol (
+           UdpIo->UdpHandle,
+           &gEfiUdp4ProtocolGuid,
+           ImageHandle,
+           Controller
+           );
   } else {
-    gBS->CloseProtocol (UdpIo->UdpHandle, &gEfiUdp6ProtocolGuid, ImageHandle, Controller);
+    gBS->CloseProtocol (
+           UdpIo->UdpHandle,
+           &gEfiUdp6ProtocolGuid,
+           ImageHandle,
+           Controller
+           );
   }
 
 FREE_CHILD:
@@ -783,9 +816,15 @@ UdpIoCancelDgrams (
 
     if ((ToCancel == NULL) || (ToCancel (TxToken, Context))) {
       if (UdpIo->UdpVersion == UDP_IO_UDP4_VERSION) {
-        UdpIo->Protocol.Udp4->Cancel (UdpIo->Protocol.Udp4, &TxToken->Token.Udp4);
+        UdpIo->Protocol.Udp4->Cancel (
+                                UdpIo->Protocol.Udp4,
+                                &TxToken->Token.Udp4
+                                );
       } else {
-        UdpIo->Protocol.Udp6->Cancel (UdpIo->Protocol.Udp6, &TxToken->Token.Udp6);
+        UdpIo->Protocol.Udp6->Cancel (
+                                UdpIo->Protocol.Udp6,
+                                &TxToken->Token.Udp6
+                                );
       }
     }
   }
@@ -830,7 +869,10 @@ UdpIoFreeIo (
 
   if (UdpIo->UdpVersion == UDP_IO_UDP4_VERSION) {
     if ((RxToken = UdpIo->RecvRequest) != NULL) {
-      Status = UdpIo->Protocol.Udp4->Cancel (UdpIo->Protocol.Udp4, &RxToken->Token.Udp4);
+      Status = UdpIo->Protocol.Udp4->Cancel (
+                                       UdpIo->Protocol.Udp4,
+                                       &RxToken->Token.Udp4
+                                       );
       if (EFI_ERROR (Status)) {
         return Status;
       }
@@ -860,7 +902,10 @@ UdpIoFreeIo (
     }
   } else {
     if ((RxToken = UdpIo->RecvRequest) != NULL) {
-      Status = UdpIo->Protocol.Udp6->Cancel (UdpIo->Protocol.Udp6, &RxToken->Token.Udp6);
+      Status = UdpIo->Protocol.Udp6->Cancel (
+                                       UdpIo->Protocol.Udp6,
+                                       &RxToken->Token.Udp6
+                                       );
       if (EFI_ERROR (Status)) {
         return Status;
       }
@@ -985,7 +1030,14 @@ UdpIoSendDatagram (
     (UdpIo->UdpVersion == UDP_IO_UDP6_VERSION)
     );
 
-  TxToken = UdpIoCreateTxToken (UdpIo, Packet, EndPoint, Gateway, CallBack, Context);
+  TxToken = UdpIoCreateTxToken (
+              UdpIo,
+              Packet,
+              EndPoint,
+              Gateway,
+              CallBack,
+              Context
+              );
 
   if (TxToken == NULL) {
     return EFI_OUT_OF_RESOURCES;
@@ -998,9 +1050,15 @@ UdpIoSendDatagram (
   InsertHeadList (&UdpIo->SentDatagram, &TxToken->Link);
 
   if (UdpIo->UdpVersion == UDP_IO_UDP4_VERSION) {
-    Status = UdpIo->Protocol.Udp4->Transmit (UdpIo->Protocol.Udp4, &TxToken->Token.Udp4);
+    Status = UdpIo->Protocol.Udp4->Transmit (
+                                     UdpIo->Protocol.Udp4,
+                                     &TxToken->Token.Udp4
+                                     );
   } else {
-    Status = UdpIo->Protocol.Udp6->Transmit (UdpIo->Protocol.Udp6, &TxToken->Token.Udp6);
+    Status = UdpIo->Protocol.Udp6->Transmit (
+                                     UdpIo->Protocol.Udp6,
+                                     &TxToken->Token.Udp6
+                                     );
   }
 
   if (EFI_ERROR (Status)) {
@@ -1108,9 +1166,15 @@ UdpIoRecvDatagram (
 
   UdpIo->RecvRequest = RxToken;
   if (UdpIo->UdpVersion == UDP_IO_UDP4_VERSION) {
-    Status = UdpIo->Protocol.Udp4->Receive (UdpIo->Protocol.Udp4, &RxToken->Token.Udp4);
+    Status = UdpIo->Protocol.Udp4->Receive (
+                                     UdpIo->Protocol.Udp4,
+                                     &RxToken->Token.Udp4
+                                     );
   } else {
-    Status = UdpIo->Protocol.Udp6->Receive (UdpIo->Protocol.Udp6, &RxToken->Token.Udp6);
+    Status = UdpIo->Protocol.Udp6->Receive (
+                                     UdpIo->Protocol.Udp6,
+                                     &RxToken->Token.Udp6
+                                     );
   }
 
   if (EFI_ERROR (Status)) {

@@ -148,22 +148,40 @@ Tcp4Configure (
       return EFI_INVALID_PARAMETER;
     }
 
-    if (TcpConfigData->AccessPoint.ActiveFlag && ((0 == TcpConfigData->AccessPoint.RemotePort) || (Ip == 0))) {
+    if (TcpConfigData->AccessPoint.ActiveFlag && ((0 ==
+                                                   TcpConfigData->AccessPoint.
+                                                     RemotePort) || (Ip == 0)))
+    {
       return EFI_INVALID_PARAMETER;
     }
 
     if (!TcpConfigData->AccessPoint.UseDefaultAddress) {
-      CopyMem (&Ip, &TcpConfigData->AccessPoint.StationAddress, sizeof (IP4_ADDR));
-      CopyMem (&SubnetMask, &TcpConfigData->AccessPoint.SubnetMask, sizeof (IP4_ADDR));
+      CopyMem (
+        &Ip,
+        &TcpConfigData->AccessPoint.StationAddress,
+        sizeof (IP4_ADDR)
+        );
+      CopyMem (
+        &SubnetMask,
+        &TcpConfigData->AccessPoint.SubnetMask,
+        sizeof (IP4_ADDR)
+        );
       if (!IP4_IS_VALID_NETMASK (NTOHL (SubnetMask)) ||
-          ((SubnetMask != 0) && !NetIp4IsUnicast (NTOHL (Ip), NTOHL (SubnetMask))))
+          ((SubnetMask != 0) && !NetIp4IsUnicast (
+                                   NTOHL (Ip),
+                                   NTOHL (
+                                     SubnetMask
+                                     )
+                                   )))
       {
         return EFI_INVALID_PARAMETER;
       }
     }
 
     Option = TcpConfigData->ControlOption;
-    if ((NULL != Option) && (Option->EnableSelectiveAck || Option->EnablePathMtuDiscovery)) {
+    if ((NULL != Option) && (Option->EnableSelectiveAck ||
+                             Option->EnablePathMtuDiscovery))
+    {
       return EFI_UNSUPPORTED;
     }
   }
@@ -263,7 +281,10 @@ Tcp4Connect (
 {
   SOCKET  *Sock;
 
-  if ((NULL == This) || (NULL == ConnectionToken) || (NULL == ConnectionToken->CompletionToken.Event)) {
+  if ((NULL == This) || (NULL == ConnectionToken) || (NULL ==
+                                                      ConnectionToken->
+                                                        CompletionToken.Event))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -301,7 +322,10 @@ Tcp4Accept (
 {
   SOCKET  *Sock;
 
-  if ((NULL == This) || (NULL == ListenToken) || (NULL == ListenToken->CompletionToken.Event)) {
+  if ((NULL == This) || (NULL == ListenToken) || (NULL ==
+                                                  ListenToken->CompletionToken.
+                                                    Event))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -471,7 +495,10 @@ Tcp4Close (
 {
   SOCKET  *Sock;
 
-  if ((NULL == This) || (NULL == CloseToken) || (NULL == CloseToken->CompletionToken.Event)) {
+  if ((NULL == This) || (NULL == CloseToken) || (NULL ==
+                                                 CloseToken->CompletionToken.
+                                                   Event))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -686,7 +713,8 @@ Tcp6Configure (
     }
 
     if (Tcp6ConfigData->AccessPoint.ActiveFlag &&
-        ((0 == Tcp6ConfigData->AccessPoint.RemotePort) || NetIp6IsUnspecifiedAddr (Ip))
+        ((0 == Tcp6ConfigData->AccessPoint.RemotePort) ||
+         NetIp6IsUnspecifiedAddr (Ip))
         )
     {
       return EFI_INVALID_PARAMETER;
@@ -698,7 +726,9 @@ Tcp6Configure (
     }
 
     Option = Tcp6ConfigData->ControlOption;
-    if ((NULL != Option) && (Option->EnableSelectiveAck || Option->EnablePathMtuDiscovery)) {
+    if ((NULL != Option) && (Option->EnableSelectiveAck ||
+                             Option->EnablePathMtuDiscovery))
+    {
       return EFI_UNSUPPORTED;
     }
   }
@@ -757,7 +787,10 @@ Tcp6Connect (
 {
   SOCKET  *Sock;
 
-  if ((NULL == This) || (NULL == ConnectionToken) || (NULL == ConnectionToken->CompletionToken.Event)) {
+  if ((NULL == This) || (NULL == ConnectionToken) || (NULL ==
+                                                      ConnectionToken->
+                                                        CompletionToken.Event))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -810,7 +843,10 @@ Tcp6Accept (
 {
   SOCKET  *Sock;
 
-  if ((NULL == This) || (NULL == ListenToken) || (NULL == ListenToken->CompletionToken.Event)) {
+  if ((NULL == This) || (NULL == ListenToken) || (NULL ==
+                                                  ListenToken->CompletionToken.
+                                                    Event))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1008,7 +1044,10 @@ Tcp6Close (
 {
   SOCKET  *Sock;
 
-  if ((NULL == This) || (NULL == CloseToken) || (NULL == CloseToken->CompletionToken.Event)) {
+  if ((NULL == This) || (NULL == CloseToken) || (NULL ==
+                                                 CloseToken->CompletionToken.
+                                                   Event))
+  {
     return EFI_INVALID_PARAMETER;
   }
 

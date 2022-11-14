@@ -135,7 +135,9 @@
   @retval FALSE              The socket is not configured to active mode.
 
 **/
-#define SOCK_IS_CONFIGURED_ACTIVE(Sock)  ((Sock)->ConfigureState == SO_CONFIGURED_ACTIVE)
+#define SOCK_IS_CONFIGURED_ACTIVE( \
+                                 Sock)  \
+  ((Sock)->ConfigureState == SO_CONFIGURED_ACTIVE)
 
 /**
   Check whether the socket is configured to passive mode.
@@ -146,7 +148,9 @@
   @retval FALSE              The socket is not configured to passive mode.
 
 **/
-#define SOCK_IS_CONNECTED_PASSIVE(Sock)  ((Sock)->ConfigureState == SO_CONFIGURED_PASSIVE)
+#define SOCK_IS_CONNECTED_PASSIVE( \
+                                 Sock)  \
+  ((Sock)->ConfigureState == SO_CONFIGURED_PASSIVE)
 
 /**
   Check whether the socket is mapped.
@@ -317,7 +321,9 @@
 
 #define SOCK_FROM_TOKEN(Token)  (((SOCK_TOKEN *) (Token))->Sock)
 
-#define PROTO_TOKEN_FORM_SOCK(SockToken, Type)  ((Type *) (((SOCK_TOKEN *) (SockToken))->Token))
+#define PROTO_TOKEN_FORM_SOCK(SockToken, \
+                              Type)  \
+  ((Type *) (((SOCK_TOKEN *) (SockToken))->Token))
 
 typedef struct _TCP_SOCKET SOCKET;
 

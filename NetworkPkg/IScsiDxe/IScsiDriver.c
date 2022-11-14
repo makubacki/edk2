@@ -58,7 +58,9 @@ IScsiIsDevicePathSupported (
   CurrentDevicePath = RemainingDevicePath;
   if (CurrentDevicePath != NULL) {
     while (!IsDevicePathEnd (CurrentDevicePath)) {
-      if ((CurrentDevicePath->Type == MESSAGING_DEVICE_PATH) && (CurrentDevicePath->SubType == MSG_ISCSI_DP)) {
+      if ((CurrentDevicePath->Type == MESSAGING_DEVICE_PATH) &&
+          (CurrentDevicePath->SubType == MSG_ISCSI_DP))
+      {
         return EFI_SUCCESS;
       }
 
@@ -140,7 +142,11 @@ IScsiCheckAip (
 
     InfoTypesBuffer     = NULL;
     InfoTypeBufferCount = 0;
-    Status              = Aip->GetSupportedTypes (Aip, &InfoTypesBuffer, &InfoTypeBufferCount);
+    Status              = Aip->GetSupportedTypes (
+                                 Aip,
+                                 &InfoTypesBuffer,
+                                 &InfoTypeBufferCount
+                                 );
     if (EFI_ERROR (Status) || (InfoTypesBuffer == NULL)) {
       continue;
     }
@@ -150,7 +156,11 @@ IScsiCheckAip (
     //
     Supported = FALSE;
     for (TypeIndex = 0; TypeIndex < InfoTypeBufferCount; TypeIndex++) {
-      if (CompareGuid (&InfoTypesBuffer[TypeIndex], &gEfiAdapterInfoNetworkBootGuid)) {
+      if (CompareGuid (
+            &InfoTypesBuffer[TypeIndex],
+            &gEfiAdapterInfoNetworkBootGuid
+            ))
+      {
         Supported = TRUE;
         break;
       }
@@ -166,7 +176,12 @@ IScsiCheckAip (
     //
     InfoBlock     = NULL;
     InfoBlockSize = 0;
-    Status        = Aip->GetInformation (Aip, &gEfiAdapterInfoNetworkBootGuid, &InfoBlock, &InfoBlockSize);
+    Status        = Aip->GetInformation (
+                           Aip,
+                           &gEfiAdapterInfoNetworkBootGuid,
+                           &InfoBlock,
+                           &InfoBlockSize
+                           );
     if (EFI_ERROR (Status) || (InfoBlock == NULL)) {
       continue;
     }
@@ -521,8 +536,14 @@ IScsiStart (
   if (mPrivate->OneSessionEstablished && mPrivate->EnableMpio) {
     AttemptConfigData = NULL;
     NET_LIST_FOR_EACH (Entry, &mPrivate->AttemptConfigs) {
-      AttemptConfigData = NET_LIST_USER_STRUCT (Entry, ISCSI_ATTEMPT_CONFIG_NVDATA, Link);
-      if (AttemptConfigData->SessionConfigData.Enabled == ISCSI_ENABLED_FOR_MPIO) {
+      AttemptConfigData = NET_LIST_USER_STRUCT (
+                            Entry,
+                            ISCSI_ATTEMPT_CONFIG_NVDATA,
+                            Link
+                            );
+      if (AttemptConfigData->SessionConfigData.Enabled ==
+          ISCSI_ENABLED_FOR_MPIO)
+      {
         break;
       }
     }
@@ -557,7 +578,9 @@ IScsiStart (
     // Find ExtScsiPassThru protocol instance produced by this driver.
     //
     ExistIScsiExtScsiPassThru = NULL;
-    for (Index = 0; Index < NumberOfHandles && ExistIScsiExtScsiPassThru == NULL; Index++) {
+    for (Index = 0; Index < NumberOfHandles && ExistIScsiExtScsiPassThru ==
+         NULL; Index++)
+    {
       Status = gBS->HandleProtocol (
                       HandleBuffer[Index],
                       &gEfiDevicePathProtocolGuid,
@@ -568,7 +591,9 @@ IScsiStart (
       }
 
       while (!IsDevicePathEnd (DevicePath)) {
-        if ((DevicePath->Type == MESSAGING_DEVICE_PATH) && (DevicePath->SubType == MSG_MAC_ADDR_DP)) {
+        if ((DevicePath->Type == MESSAGING_DEVICE_PATH) &&
+            (DevicePath->SubType == MSG_MAC_ADDR_DP))
+        {
           //
           // Get the ExtScsiPassThru protocol instance.
           //
@@ -592,7 +617,9 @@ IScsiStart (
       goto ON_ERROR;
     }
 
-    ExistPrivate = ISCSI_DRIVER_DATA_FROM_EXT_SCSI_PASS_THRU (ExistIScsiExtScsiPassThru);
+    ExistPrivate = ISCSI_DRIVER_DATA_FROM_EXT_SCSI_PASS_THRU (
+                     ExistIScsiExtScsiPassThru
+                     );
 
     Status = gBS->UninstallProtocolInterface (
                     ExistPrivate->ExtScsiPassThruHandle,
@@ -620,7 +647,11 @@ IScsiStart (
   BootSelected = 0;
 
   NET_LIST_FOR_EACH_SAFE (Entry, NextEntry, &mPrivate->AttemptConfigs) {
-    AttemptConfigData = NET_LIST_USER_STRUCT (Entry, ISCSI_ATTEMPT_CONFIG_NVDATA, Link);
+    AttemptConfigData = NET_LIST_USER_STRUCT (
+                          Entry,
+                          ISCSI_ATTEMPT_CONFIG_NVDATA,
+                          Link
+                          );
     //
     // Don't process the attempt that does not associate with the current NIC or
     // this attempt is disabled or established.
@@ -637,7 +668,8 @@ IScsiStart (
     // In default single path mode, don't process attempts configured for multipath.
     //
     if ((mPrivate->EnableMpio &&
-         (AttemptConfigData->SessionConfigData.Enabled != ISCSI_ENABLED_FOR_MPIO)) ||
+         (AttemptConfigData->SessionConfigData.Enabled !=
+          ISCSI_ENABLED_FOR_MPIO)) ||
         (!mPrivate->EnableMpio &&
          (AttemptConfigData->SessionConfigData.Enabled != ISCSI_ENABLED)))
     {
@@ -712,7 +744,8 @@ IScsiStart (
       );
 
     if (Session->AuthType == ISCSI_AUTH_TYPE_CHAP) {
-      Session->AuthData.CHAP.AuthConfig = &AttemptConfigData->AuthConfigData.CHAP;
+      Session->AuthData.CHAP.AuthConfig =
+        &AttemptConfigData->AuthConfigData.CHAP;
     }
 
     IScsiSessionInit (Session, FALSE);
@@ -737,7 +770,11 @@ IScsiStart (
     NvData = &AttemptConfigData->SessionConfigData;
     if (NvData->RedirectFlag) {
       NvData->TargetPort = NvData->OriginalTargetPort;
-      CopyMem (&NvData->TargetIp, &NvData->OriginalTargetIp, sizeof (EFI_IP_ADDRESS));
+      CopyMem (
+        &NvData->TargetIp,
+        &NvData->OriginalTargetIp,
+        sizeof (EFI_IP_ADDRESS)
+        );
       NvData->RedirectFlag = FALSE;
 
       gRT->SetVariable (
@@ -1286,7 +1323,11 @@ IScsiIp4DriverBindingStart (
 {
   EFI_STATUS  Status;
 
-  Status = IScsiStart (This->DriverBindingHandle, ControllerHandle, IP_VERSION_4);
+  Status = IScsiStart (
+             This->DriverBindingHandle,
+             ControllerHandle,
+             IP_VERSION_4
+             );
   if (Status == EFI_ALREADY_STARTED) {
     Status = EFI_SUCCESS;
   }
@@ -1441,7 +1482,11 @@ IScsiIp6DriverBindingStart (
 {
   EFI_STATUS  Status;
 
-  Status = IScsiStart (This->DriverBindingHandle, ControllerHandle, IP_VERSION_6);
+  Status = IScsiStart (
+             This->DriverBindingHandle,
+             ControllerHandle,
+             IP_VERSION_6
+             );
   if (Status == EFI_ALREADY_STARTED) {
     Status = EFI_SUCCESS;
   }

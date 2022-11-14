@@ -23,7 +23,8 @@
 //
 // String token ID of VConfig command help message text.
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_STRING_ID  mStringVConfigHelpTokenId = STRING_TOKEN (STR_VCONFIG_HELP);
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_STRING_ID  mStringVConfigHelpTokenId =
+  STRING_TOKEN (STR_VCONFIG_HELP);
 
 #define INVALID_NIC_INDEX  0xffff
 #define INVALID_VLAN_ID    0xffff
@@ -83,7 +84,14 @@ LocateNicHandleBuffer (
                   HandleBuffer
                   );
   if (EFI_ERROR (Status)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_VCONFIG_LOCATE_FAIL), mHiiHandle, Status);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_VCONFIG_LOCATE_FAIL),
+      mHiiHandle,
+      Status
+      );
   }
 }
 
@@ -148,7 +156,14 @@ NicNameToHandle (
 
   Index = NicNameToIndex (Name);
   if (Index >= NumberOfHandles) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_VCONFIG_INVALID_IF), mHiiHandle, Name);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_VCONFIG_INVALID_IF),
+      mHiiHandle,
+      Name
+      );
     Handle = NULL;
   } else {
     Handle = HandleBuffer[Index];
@@ -233,18 +248,46 @@ ShowNicVlanInfo (
   MacStr = NULL;
   Status = NetLibGetMacString (Handle, mImageHandle, &MacStr);
   if (EFI_ERROR (Status)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_VCONFIG_MAC_FAIL), mHiiHandle, Status);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_VCONFIG_MAC_FAIL),
+      mHiiHandle,
+      Status
+      );
     goto Exit;
   }
 
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_VCONFIG_ETH_MAC), mHiiHandle, NicIndex, MacStr);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (STR_VCONFIG_ETH_MAC),
+    mHiiHandle,
+    NicIndex,
+    MacStr
+    );
 
   Status = VlanConfig->Find (VlanConfig, NULL, &NumberOfVlan, &VlanData);
   if (EFI_ERROR (Status)) {
     if (Status == EFI_NOT_FOUND) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_VCONFIG_NO_VLAN), mHiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_VCONFIG_NO_VLAN),
+        mHiiHandle
+        );
     } else {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_VCONFIG_FIND_FAIL), mHiiHandle, Status);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_VCONFIG_FIND_FAIL),
+        mHiiHandle,
+        Status
+        );
     }
 
     goto Exit;
@@ -375,7 +418,13 @@ AddVlan (
   Priority   = 0;
 
   if (ParamStr == NULL) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_VCONFIG_NO_IF), mHiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_VCONFIG_NO_IF),
+      mHiiHandle
+      );
     return;
   }
 
@@ -435,13 +484,26 @@ AddVlan (
   // Check VLAN ID.
   //
   if ((VlanIdStr == NULL) || (*VlanIdStr == 0)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_VCONFIG_NO_VID), mHiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_VCONFIG_NO_VID),
+      mHiiHandle
+      );
     goto Exit;
   }
 
   VlanId = StrToVlanId (VlanIdStr);
   if (VlanId > 4094) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_VCONFIG_INVALID_VID), mHiiHandle, VlanIdStr);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_VCONFIG_INVALID_VID),
+      mHiiHandle,
+      VlanIdStr
+      );
     goto Exit;
   }
 
@@ -451,7 +513,16 @@ AddVlan (
   if ((PriorityStr != NULL) && (*PriorityStr != 0)) {
     Priority = StrDecimalToUintn (PriorityStr);
     if (Priority > 7) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_VCONFIG_INVALID_PRIORITY), mHiiHandle, PriorityStr);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_VCONFIG_INVALID_PRIORITY
+          ),
+        mHiiHandle,
+        PriorityStr
+        );
       goto Exit;
     }
   }
@@ -461,7 +532,14 @@ AddVlan (
   //
   Status = VlanConfig->Set (VlanConfig, (UINT16)VlanId, (UINT8)Priority);
   if (EFI_ERROR (Status)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_VCONFIG_SET_FAIL), mHiiHandle, Status);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_VCONFIG_SET_FAIL),
+      mHiiHandle,
+      Status
+      );
     goto Exit;
   }
 
@@ -473,7 +551,13 @@ AddVlan (
     gBS->ConnectController (VlanHandle, NULL, NULL, TRUE);
   }
 
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_VCONFIG_SET_SUCCESS), mHiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (STR_VCONFIG_SET_SUCCESS),
+    mHiiHandle
+    );
 
 Exit:
   if (VlanConfig != NULL) {
@@ -507,7 +591,13 @@ DeleteVlan (
   VlanConfig = NULL;
 
   if (ParamStr == NULL) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_VCONFIG_NO_IF), mHiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_VCONFIG_NO_IF),
+      mHiiHandle
+      );
     return;
   }
 
@@ -542,13 +632,26 @@ DeleteVlan (
   // Check VLAN ID
   //
   if ((VlanIdStr == NULL) || (*VlanIdStr == 0)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_VCONFIG_NO_VID), mHiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_VCONFIG_NO_VID),
+      mHiiHandle
+      );
     goto Exit;
   }
 
   VlanId = StrToVlanId (VlanIdStr);
   if (VlanId > 4094) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_VCONFIG_INVALID_VID), mHiiHandle, VlanIdStr);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_VCONFIG_INVALID_VID),
+      mHiiHandle,
+      VlanIdStr
+      );
     goto Exit;
   }
 
@@ -558,9 +661,22 @@ DeleteVlan (
   Status = VlanConfig->Remove (VlanConfig, (UINT16)VlanId);
   if (EFI_ERROR (Status)) {
     if (Status == EFI_NOT_FOUND) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_VCONFIG_NOT_FOUND), mHiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_VCONFIG_NOT_FOUND),
+        mHiiHandle
+        );
     } else {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_VCONFIG_REMOVE_FAIL), mHiiHandle, Status);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_VCONFIG_REMOVE_FAIL),
+        mHiiHandle,
+        Status
+        );
     }
 
     goto Exit;
@@ -579,7 +695,13 @@ DeleteVlan (
     FreePool (VlanData);
   }
 
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_VCONFIG_REMOVE_SUCCESS), mHiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (STR_VCONFIG_REMOVE_SUCCESS),
+    mHiiHandle
+    );
 
 Exit:
   if (VlanConfig != NULL) {
@@ -648,7 +770,13 @@ VlanConfigMain (
   List = NULL;
   ShellCommandLineParseEx (mParamList, &List, NULL, FALSE, FALSE);
   if (List == NULL) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_VCONFIG_NO_ARG), mHiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_VCONFIG_NO_ARG),
+      mHiiHandle
+      );
     goto Exit;
   }
 

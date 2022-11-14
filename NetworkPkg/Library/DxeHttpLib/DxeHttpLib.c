@@ -49,7 +49,10 @@ UriPercentDecode (
   while (Index < BufferLength) {
     if (Buffer[Index] == '%') {
       if ((Index + 1 >= BufferLength) || (Index + 2 >= BufferLength) ||
-          !NET_IS_HEX_CHAR (Buffer[Index+1]) || !NET_IS_HEX_CHAR (Buffer[Index+2]))
+          !NET_IS_HEX_CHAR (Buffer[Index+1]) || !NET_IS_HEX_CHAR (
+                                                   Buffer[Index+
+                                                          2]
+                                                   ))
       {
         return EFI_INVALID_PARAMETER;
       }
@@ -751,7 +754,12 @@ HttpUrlGetPort (
     Index++;
   }
 
-  Status =  AsciiStrDecimalToUintnS (Url + Parser->FieldData[HTTP_URI_FIELD_PORT].Offset, (CHAR8 **)NULL, &Data);
+  Status =  AsciiStrDecimalToUintnS (
+              Url +
+              Parser->FieldData[HTTP_URI_FIELD_PORT].Offset,
+              (CHAR8 **)NULL,
+              &Data
+              );
 
   if (Data > HTTP_URI_PORT_MAX_NUM) {
     Status = EFI_INVALID_PARAMETER;
@@ -952,7 +960,11 @@ HttpIoParseContentLengthHeader (
     return EFI_NOT_FOUND;
   }
 
-  return AsciiStrDecimalToUintnS (Header->FieldValue, (CHAR8 **)NULL, ContentLength);
+  return AsciiStrDecimalToUintnS (
+           Header->FieldValue,
+           (CHAR8 **)NULL,
+           ContentLength
+           );
 }
 
 /**
@@ -1087,7 +1099,11 @@ HttpInitMsgParser (
   //
   // 3. Check whether the message has a Content-Length header field.
   //
-  Status = HttpIoParseContentLengthHeader (HeaderCount, Headers, &Parser->ContentLength);
+  Status = HttpIoParseContentLengthHeader (
+             HeaderCount,
+             Headers,
+             &Parser->ContentLength
+             );
   if (!EFI_ERROR (Status)) {
     Parser->ContentLengthIsValid = TRUE;
   }
@@ -1257,7 +1273,8 @@ HttpParseMessageBody (
           return EFI_INVALID_PARAMETER;
         }
 
-        Parser->CurrentChunkSize = Parser->CurrentChunkSize * 16 + HttpIoHexCharToUintn (*Char);
+        Parser->CurrentChunkSize = Parser->CurrentChunkSize * 16 +
+                                   HttpIoHexCharToUintn (*Char);
         Char++;
         break;
 
@@ -1343,7 +1360,11 @@ HttpParseMessageBody (
         // First byte of chunk-data, the chunk data also might be truncated.
         //
         RemainderLengthInThis = BodyLength - (Char - Body);
-        LengthForCallback     = MIN (Parser->CurrentChunkSize - Parser->CurrentChunkParsedSize, RemainderLengthInThis);
+        LengthForCallback     = MIN (
+                                  Parser->CurrentChunkSize -
+                                  Parser->CurrentChunkParsedSize,
+                                  RemainderLengthInThis
+                                  );
         if (Parser->Callback != NULL) {
           Status = Parser->Callback (
                              BodyParseEventOnData,
@@ -1808,7 +1829,8 @@ HttpGenRequestMessage (
       ((Message->Data.Request != NULL) && (Url == NULL)) ||
       ((Message->Data.Request != NULL) && (Message->HeaderCount == 0)) ||
       ((Message->Data.Request == NULL) && (Message->HeaderCount != 0)) ||
-      ((Message->Data.Request == NULL) && (Message->HeaderCount == 0) && (Message->BodyLength == 0)))
+      ((Message->Data.Request == NULL) && (Message->HeaderCount == 0) &&
+       (Message->BodyLength == 0)))
   {
     return EFI_INVALID_PARAMETER;
   }
@@ -1824,14 +1846,21 @@ HttpGenRequestMessage (
                     );
 
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "Failed to locate Http Utilities protocol. Status = %r.\n", Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "Failed to locate Http Utilities protocol. Status = %r.\n",
+        Status
+        ));
       return Status;
     }
 
     //
     // Build AppendList to send into HttpUtilitiesBuild
     //
-    AppendList = AllocateZeroPool (sizeof (EFI_HTTP_HEADER *) * (Message->HeaderCount));
+    AppendList = AllocateZeroPool (
+                   sizeof (EFI_HTTP_HEADER *) *
+                   (Message->HeaderCount)
+                   );
     if (AppendList == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -1873,7 +1902,8 @@ HttpGenRequestMessage (
   // If we have a request line, account for the fields.
   //
   if (Message->Data.Request != NULL) {
-    MsgSize += HTTP_METHOD_MAXIMUM_LEN + AsciiStrLen (HTTP_VERSION_CRLF_STR) + AsciiStrLen (Url);
+    MsgSize += HTTP_METHOD_MAXIMUM_LEN + AsciiStrLen (HTTP_VERSION_CRLF_STR) +
+               AsciiStrLen (Url);
   }
 
   //
@@ -2147,7 +2177,10 @@ HttpIoCreateHeader (
     return NULL;
   }
 
-  HttpIoHeader = AllocateZeroPool (sizeof (HTTP_IO_HEADER) + MaxHeaderCount * sizeof (EFI_HTTP_HEADER));
+  HttpIoHeader = AllocateZeroPool (
+                   sizeof (HTTP_IO_HEADER) + MaxHeaderCount *
+                   sizeof (EFI_HTTP_HEADER)
+                   );
   if (HttpIoHeader == NULL) {
     return NULL;
   }
@@ -2175,7 +2208,12 @@ HttpIoFreeHeader (
     if (HttpIoHeader->HeaderCount != 0) {
       for (Index = 0; Index < HttpIoHeader->HeaderCount; Index++) {
         FreePool (HttpIoHeader->Headers[Index].FieldName);
-        ZeroMem (HttpIoHeader->Headers[Index].FieldValue, AsciiStrSize (HttpIoHeader->Headers[Index].FieldValue));
+        ZeroMem (
+          HttpIoHeader->Headers[Index].FieldValue,
+          AsciiStrSize (
+            HttpIoHeader->Headers[Index].FieldValue
+            )
+          );
         FreePool (HttpIoHeader->Headers[Index].FieldValue);
       }
     }
@@ -2212,7 +2250,11 @@ HttpIoSetHeader (
     return EFI_INVALID_PARAMETER;
   }
 
-  Header = HttpFindHeader (HttpIoHeader->HeaderCount, HttpIoHeader->Headers, FieldName);
+  Header = HttpFindHeader (
+             HttpIoHeader->HeaderCount,
+             HttpIoHeader->Headers,
+             FieldName
+             );
   if (Header == NULL) {
     //
     // Add a new header.

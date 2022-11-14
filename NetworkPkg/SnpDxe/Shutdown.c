@@ -44,7 +44,12 @@ PxeShutdown (
     //
     // UNDI could not be shutdown. Return UNDI error.
     //
-    DEBUG ((DEBUG_WARN, "\nsnp->undi.shutdown()  %xh:%xh\n", Snp->Cdb.StatFlags, Snp->Cdb.StatCode));
+    DEBUG ((
+      DEBUG_WARN,
+      "\nsnp->undi.shutdown()  %xh:%xh\n",
+      Snp->Cdb.StatFlags,
+      Snp->Cdb.StatCode
+      ));
 
     return EFI_DEVICE_ERROR;
   }

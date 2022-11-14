@@ -189,7 +189,10 @@ Ip4Config2StrToIpList (
   while (*(Str + Index) != L'\0') {
     if (*(Str + Index) == L' ') {
       if (!SpaceTag) {
-        StrTemp = AllocateZeroPool ((EndIndex - BeginIndex + 1) * sizeof (CHAR16));
+        StrTemp = AllocateZeroPool (
+                    (EndIndex - BeginIndex + 1) *
+                    sizeof (CHAR16)
+                    );
         if (StrTemp == NULL) {
           FreePool (*PtrIpList);
           *PtrIpList = NULL;
@@ -197,10 +200,17 @@ Ip4Config2StrToIpList (
           return EFI_OUT_OF_RESOURCES;
         }
 
-        CopyMem (StrTemp, Str + BeginIndex, (EndIndex - BeginIndex) * sizeof (CHAR16));
+        CopyMem (
+          StrTemp,
+          Str + BeginIndex,
+          (EndIndex - BeginIndex) *
+          sizeof (CHAR16)
+          );
         *(StrTemp + (EndIndex - BeginIndex)) = L'\0';
 
-        if (Ip4Config2StrToIp (StrTemp, &((*PtrIpList)[IpIndex])) != EFI_SUCCESS) {
+        if (Ip4Config2StrToIp (StrTemp, &((*PtrIpList)[IpIndex])) !=
+            EFI_SUCCESS)
+        {
           FreePool (StrTemp);
           FreePool (*PtrIpList);
           *PtrIpList = NULL;
@@ -226,7 +236,10 @@ Ip4Config2StrToIpList (
 
     if (*(Str + Index) == L'\0') {
       if (!SpaceTag) {
-        StrTemp = AllocateZeroPool ((EndIndex - BeginIndex + 1) * sizeof (CHAR16));
+        StrTemp = AllocateZeroPool (
+                    (EndIndex - BeginIndex + 1) *
+                    sizeof (CHAR16)
+                    );
         if (StrTemp == NULL) {
           FreePool (*PtrIpList);
           *PtrIpList = NULL;
@@ -234,10 +247,17 @@ Ip4Config2StrToIpList (
           return EFI_OUT_OF_RESOURCES;
         }
 
-        CopyMem (StrTemp, Str + BeginIndex, (EndIndex - BeginIndex) * sizeof (CHAR16));
+        CopyMem (
+          StrTemp,
+          Str + BeginIndex,
+          (EndIndex - BeginIndex) *
+          sizeof (CHAR16)
+          );
         *(StrTemp + (EndIndex - BeginIndex)) = L'\0';
 
-        if (Ip4Config2StrToIp (StrTemp, &((*PtrIpList)[IpIndex])) != EFI_SUCCESS) {
+        if (Ip4Config2StrToIp (StrTemp, &((*PtrIpList)[IpIndex])) !=
+            EFI_SUCCESS)
+        {
           FreePool (StrTemp);
           FreePool (*PtrIpList);
           *PtrIpList = NULL;
@@ -608,41 +628,93 @@ Ip4Config2ConvertIfrNvDataToConfigNvData (
     Ip4NvData->Policy = Ip4Config2PolicyStatic;
 
     Status = Ip4Config2StrToIp (IfrFormNvData->SubnetMask, &SubnetMask.v4);
-    if (EFI_ERROR (Status) || ((SubnetMask.Addr[0] != 0) && (GetSubnetMaskPrefixLength (&SubnetMask.v4) == 0))) {
-      CreatePopUp (EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE, &Key, L"Invalid Subnet Mask!", NULL);
+    if (EFI_ERROR (Status) || ((SubnetMask.Addr[0] != 0) &&
+                               (GetSubnetMaskPrefixLength (&SubnetMask.v4) ==
+                                0)))
+    {
+      CreatePopUp (
+        EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE,
+        &Key,
+        L"Invalid Subnet Mask!",
+        NULL
+        );
       return EFI_INVALID_PARAMETER;
     }
 
-    Status = Ip4Config2StrToIp (IfrFormNvData->StationAddress, &StationAddress.v4);
+    Status = Ip4Config2StrToIp (
+               IfrFormNvData->StationAddress,
+               &StationAddress.v4
+               );
     if (EFI_ERROR (Status) ||
-        ((SubnetMask.Addr[0] != 0) && !NetIp4IsUnicast (NTOHL (StationAddress.Addr[0]), NTOHL (SubnetMask.Addr[0]))) ||
-        !Ip4StationAddressValid (NTOHL (StationAddress.Addr[0]), NTOHL (SubnetMask.Addr[0])))
+        ((SubnetMask.Addr[0] != 0) && !NetIp4IsUnicast (
+                                         NTOHL (
+                                           StationAddress.Addr[0]
+                                           ),
+                                         NTOHL (SubnetMask.Addr[0])
+                                         )) ||
+        !Ip4StationAddressValid (
+           NTOHL (StationAddress.Addr[0]),
+           NTOHL (
+             SubnetMask.Addr[0]
+             )
+           ))
     {
-      CreatePopUp (EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE, &Key, L"Invalid IP address!", NULL);
+      CreatePopUp (
+        EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE,
+        &Key,
+        L"Invalid IP address!",
+        NULL
+        );
       return EFI_INVALID_PARAMETER;
     }
 
     Status = Ip4Config2StrToIp (IfrFormNvData->GatewayAddress, &Gateway.v4);
     if (EFI_ERROR (Status) ||
-        ((Gateway.Addr[0] != 0) && (SubnetMask.Addr[0] != 0) && !NetIp4IsUnicast (NTOHL (Gateway.Addr[0]), NTOHL (SubnetMask.Addr[0]))))
+        ((Gateway.Addr[0] != 0) && (SubnetMask.Addr[0] != 0) &&
+         !NetIp4IsUnicast (NTOHL (Gateway.Addr[0]), NTOHL (
+                                                      SubnetMask.Addr[0]))))
     {
-      CreatePopUp (EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE, &Key, L"Invalid Gateway!", NULL);
+      CreatePopUp (
+        EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE,
+        &Key,
+        L"Invalid Gateway!",
+        NULL
+        );
       return EFI_INVALID_PARAMETER;
     }
 
-    Status = Ip4Config2StrToIpList (IfrFormNvData->DnsAddress, &DnsAddress, &DnsCount);
+    Status = Ip4Config2StrToIpList (
+               IfrFormNvData->DnsAddress,
+               &DnsAddress,
+               &DnsCount
+               );
     if (!EFI_ERROR (Status) && (DnsCount > 0)) {
       for (Index = 0; Index < DnsCount; Index++) {
         CopyMem (&Ip, &DnsAddress[Index], sizeof (IP4_ADDR));
-        if (IP4_IS_UNSPECIFIED (NTOHL (Ip)) || IP4_IS_LOCAL_BROADCAST (NTOHL (Ip))) {
-          CreatePopUp (EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE, &Key, L"Invalid Dns Server!", NULL);
+        if (IP4_IS_UNSPECIFIED (NTOHL (Ip)) || IP4_IS_LOCAL_BROADCAST (
+                                                 NTOHL (
+                                                   Ip
+                                                   )
+                                                 ))
+        {
+          CreatePopUp (
+            EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE,
+            &Key,
+            L"Invalid Dns Server!",
+            NULL
+            );
           FreePool (DnsAddress);
           return EFI_INVALID_PARAMETER;
         }
       }
     } else {
       if (EFI_ERROR (Status)) {
-        CreatePopUp (EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE, &Key, L"Invalid Dns Server!", NULL);
+        CreatePopUp (
+          EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE,
+          &Key,
+          L"Invalid Dns Server!",
+          NULL
+          );
       }
     }
 
@@ -651,7 +723,9 @@ Ip4Config2ConvertIfrNvDataToConfigNvData (
     }
 
     Ip4NvData->ManualAddressCount = 1;
-    Ip4NvData->ManualAddress      = AllocateZeroPool (sizeof (EFI_IP4_CONFIG2_MANUAL_ADDRESS));
+    Ip4NvData->ManualAddress      = AllocateZeroPool (
+                                      sizeof (EFI_IP4_CONFIG2_MANUAL_ADDRESS)
+                                      );
     if (Ip4NvData->ManualAddress == NULL) {
       if (DnsAddress != NULL) {
         FreePool (DnsAddress);
@@ -660,15 +734,25 @@ Ip4Config2ConvertIfrNvDataToConfigNvData (
       return EFI_OUT_OF_RESOURCES;
     }
 
-    CopyMem (&Ip4NvData->ManualAddress->Address, &StationAddress.v4, sizeof (EFI_IPv4_ADDRESS));
-    CopyMem (&Ip4NvData->ManualAddress->SubnetMask, &SubnetMask.v4, sizeof (EFI_IPv4_ADDRESS));
+    CopyMem (
+      &Ip4NvData->ManualAddress->Address,
+      &StationAddress.v4,
+      sizeof (EFI_IPv4_ADDRESS)
+      );
+    CopyMem (
+      &Ip4NvData->ManualAddress->SubnetMask,
+      &SubnetMask.v4,
+      sizeof (EFI_IPv4_ADDRESS)
+      );
 
     if (Ip4NvData->GatewayAddress != NULL) {
       FreePool (Ip4NvData->GatewayAddress);
     }
 
     Ip4NvData->GatewayAddressCount = 1;
-    Ip4NvData->GatewayAddress      = AllocateZeroPool (sizeof (EFI_IPv4_ADDRESS));
+    Ip4NvData->GatewayAddress      = AllocateZeroPool (
+                                       sizeof (EFI_IPv4_ADDRESS)
+                                       );
     if (Ip4NvData->GatewayAddress == NULL) {
       if (DnsAddress != NULL) {
         FreePool (DnsAddress);
@@ -738,13 +822,14 @@ Ip4Config2ConvertIfrNvDataToConfigNvData (
     //
     // Set ManualAddress.
     //
-    DataSize = Ip4NvData->ManualAddressCount * sizeof (EFI_IP4_CONFIG2_MANUAL_ADDRESS);
-    Status   = Ip4Cfg2->SetData (
-                          Ip4Cfg2,
-                          Ip4Config2DataTypeManualAddress,
-                          DataSize,
-                          (VOID *)Ip4NvData->ManualAddress
-                          );
+    DataSize = Ip4NvData->ManualAddressCount *
+               sizeof (EFI_IP4_CONFIG2_MANUAL_ADDRESS);
+    Status = Ip4Cfg2->SetData (
+                        Ip4Cfg2,
+                        Ip4Config2DataTypeManualAddress,
+                        DataSize,
+                        (VOID *)Ip4NvData->ManualAddress
+                        );
 
     if (Status == EFI_NOT_READY) {
       gBS->SetTimer (TimeoutEvent, TimerRelative, 50000000);
@@ -904,13 +989,21 @@ Ip4FormExtractConfig (
   //
   // Check Request data in <ConfigHdr>.
   //
-  if ((Request == NULL) || HiiIsConfigHdrMatch (Request, &gIp4Config2NvDataGuid, mIp4Config2StorageName)) {
+  if ((Request == NULL) || HiiIsConfigHdrMatch (
+                             Request,
+                             &gIp4Config2NvDataGuid,
+                             mIp4Config2StorageName
+                             ))
+  {
     IfrFormNvData = AllocateZeroPool (sizeof (IP4_CONFIG2_IFR_NVDATA));
     if (IfrFormNvData == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
 
-    Ip4Config2ConvertConfigNvDataToIfrNvData (Ip4Config2Instance, IfrFormNvData);
+    Ip4Config2ConvertConfigNvDataToIfrNvData (
+      Ip4Config2Instance,
+      IfrFormNvData
+      );
 
     if ((Request == NULL) || (StrStr (Request, L"OFFSET") == NULL)) {
       //
@@ -918,9 +1011,13 @@ Ip4FormExtractConfig (
       // Allocate and fill a buffer large enough to hold the <ConfigHdr> template
       // followed by "&OFFSET=0&WIDTH=WWWWWWWWWWWWWWWW" followed by a Null-terminator
       //
-      ConfigRequestHdr = HiiConstructConfigHdr (&gIp4Config2NvDataGuid, mIp4Config2StorageName, Private->ChildHandle);
-      Size             = (StrLen (ConfigRequestHdr) + 32 + 1) * sizeof (CHAR16);
-      ConfigRequest    = AllocateZeroPool (Size);
+      ConfigRequestHdr = HiiConstructConfigHdr (
+                           &gIp4Config2NvDataGuid,
+                           mIp4Config2StorageName,
+                           Private->ChildHandle
+                           );
+      Size          = (StrLen (ConfigRequestHdr) + 32 + 1) * sizeof (CHAR16);
+      ConfigRequest = AllocateZeroPool (Size);
       if (ConfigRequest == NULL) {
         Status = EFI_OUT_OF_RESOURCES;
         goto Failure;
@@ -928,7 +1025,13 @@ Ip4FormExtractConfig (
 
       AllocatedRequest = TRUE;
 
-      UnicodeSPrint (ConfigRequest, Size, L"%s&OFFSET=0&WIDTH=%016LX", ConfigRequestHdr, (UINT64)BufferSize);
+      UnicodeSPrint (
+        ConfigRequest,
+        Size,
+        L"%s&OFFSET=0&WIDTH=%016LX",
+        ConfigRequestHdr,
+        (UINT64)BufferSize
+        );
       FreePool (ConfigRequestHdr);
     }
 
@@ -959,7 +1062,12 @@ Ip4FormExtractConfig (
     }
   }
 
-  if ((Request == NULL) || HiiIsConfigHdrMatch (Request, &gIp4Config2NvDataGuid, mIp4Config2StorageName)) {
+  if ((Request == NULL) || HiiIsConfigHdrMatch (
+                             Request,
+                             &gIp4Config2NvDataGuid,
+                             mIp4Config2StorageName
+                             ))
+  {
     *Results = FormResult;
   } else {
     return EFI_NOT_FOUND;
@@ -1040,7 +1148,12 @@ Ip4FormRouteConfig (
   //
   // Check Routing data in <ConfigHdr>.
   //
-  if (HiiIsConfigHdrMatch (Configuration, &gIp4Config2NvDataGuid, mIp4Config2StorageName)) {
+  if (HiiIsConfigHdrMatch (
+        Configuration,
+        &gIp4Config2NvDataGuid,
+        mIp4Config2StorageName
+        ))
+  {
     //
     // Convert buffer data to <ConfigResp> by helper function BlockToConfig()
     //
@@ -1070,7 +1183,10 @@ Ip4FormRouteConfig (
                                   Progress
                                   );
     if (!EFI_ERROR (Status)) {
-      Status = Ip4Config2ConvertIfrNvDataToConfigNvData (IfrFormNvData, Ip4Config2Instance);
+      Status = Ip4Config2ConvertIfrNvDataToConfigNvData (
+                 IfrFormNvData,
+                 Ip4Config2Instance
+                 );
     }
 
     FreePool (IfrFormNvData);
@@ -1149,7 +1265,13 @@ Ip4FormCallback (
     //
     // Retrieve uncommitted data from Browser
     //
-    if (!HiiGetBrowserData (&gIp4Config2NvDataGuid, mIp4Config2StorageName, sizeof (IP4_CONFIG2_IFR_NVDATA), (UINT8 *)IfrFormNvData)) {
+    if (!HiiGetBrowserData (
+           &gIp4Config2NvDataGuid,
+           mIp4Config2StorageName,
+           sizeof (IP4_CONFIG2_IFR_NVDATA),
+           (UINT8 *)IfrFormNvData
+           ))
+    {
       FreePool (IfrFormNvData);
       return EFI_NOT_FOUND;
     }
@@ -1158,9 +1280,26 @@ Ip4FormCallback (
 
     switch (QuestionId) {
       case KEY_LOCAL_IP:
-        Status = Ip4Config2StrToIp (IfrFormNvData->StationAddress, &StationAddress.v4);
-        if (EFI_ERROR (Status) || IP4_IS_UNSPECIFIED (NTOHL (StationAddress.Addr[0])) || IP4_IS_LOCAL_BROADCAST (NTOHL (StationAddress.Addr[0]))) {
-          CreatePopUp (EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE, &Key, L"Invalid IP address!", NULL);
+        Status = Ip4Config2StrToIp (
+                   IfrFormNvData->StationAddress,
+                   &StationAddress.v4
+                   );
+        if (EFI_ERROR (Status) || IP4_IS_UNSPECIFIED (
+                                    NTOHL (
+                                      StationAddress.Addr[0]
+                                      )
+                                    ) || IP4_IS_LOCAL_BROADCAST (
+                                           NTOHL (
+                                             StationAddress.Addr[0]
+                                             )
+                                           ))
+        {
+          CreatePopUp (
+            EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE,
+            &Key,
+            L"Invalid IP address!",
+            NULL
+            );
           Status = EFI_INVALID_PARAMETER;
         }
 
@@ -1168,8 +1307,16 @@ Ip4FormCallback (
 
       case KEY_SUBNET_MASK:
         Status = Ip4Config2StrToIp (IfrFormNvData->SubnetMask, &SubnetMask.v4);
-        if (EFI_ERROR (Status) || ((SubnetMask.Addr[0] != 0) && (GetSubnetMaskPrefixLength (&SubnetMask.v4) == 0))) {
-          CreatePopUp (EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE, &Key, L"Invalid Subnet Mask!", NULL);
+        if (EFI_ERROR (Status) || ((SubnetMask.Addr[0] != 0) &&
+                                   (GetSubnetMaskPrefixLength (
+                                      &SubnetMask.v4) == 0)))
+        {
+          CreatePopUp (
+            EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE,
+            &Key,
+            L"Invalid Subnet Mask!",
+            NULL
+            );
           Status = EFI_INVALID_PARAMETER;
         }
 
@@ -1177,27 +1324,54 @@ Ip4FormCallback (
 
       case KEY_GATE_WAY:
         Status = Ip4Config2StrToIp (IfrFormNvData->GatewayAddress, &Gateway.v4);
-        if (EFI_ERROR (Status) || IP4_IS_LOCAL_BROADCAST (NTOHL (Gateway.Addr[0]))) {
-          CreatePopUp (EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE, &Key, L"Invalid Gateway!", NULL);
+        if (EFI_ERROR (Status) || IP4_IS_LOCAL_BROADCAST (
+                                    NTOHL (
+                                      Gateway.Addr[0]
+                                      )
+                                    ))
+        {
+          CreatePopUp (
+            EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE,
+            &Key,
+            L"Invalid Gateway!",
+            NULL
+            );
           Status = EFI_INVALID_PARAMETER;
         }
 
         break;
 
       case KEY_DNS:
-        Status = Ip4Config2StrToIpList (IfrFormNvData->DnsAddress, &DnsAddress, &DnsCount);
+        Status = Ip4Config2StrToIpList (
+                   IfrFormNvData->DnsAddress,
+                   &DnsAddress,
+                   &DnsCount
+                   );
         if (!EFI_ERROR (Status) && (DnsCount > 0)) {
           for (Index = 0; Index < DnsCount; Index++) {
             CopyMem (&Ip, &DnsAddress[Index], sizeof (IP4_ADDR));
-            if (IP4_IS_UNSPECIFIED (NTOHL (Ip)) || IP4_IS_LOCAL_BROADCAST (NTOHL (Ip))) {
-              CreatePopUp (EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE, &Key, L"Invalid Dns Server!", NULL);
+            if (IP4_IS_UNSPECIFIED (NTOHL (Ip)) || IP4_IS_LOCAL_BROADCAST (
+                                                     NTOHL (Ip)
+                                                     ))
+            {
+              CreatePopUp (
+                EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE,
+                &Key,
+                L"Invalid Dns Server!",
+                NULL
+                );
               Status = EFI_INVALID_PARAMETER;
               break;
             }
           }
         } else {
           if (EFI_ERROR (Status)) {
-            CreatePopUp (EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE, &Key, L"Invalid Dns Server!", NULL);
+            CreatePopUp (
+              EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE,
+              &Key,
+              L"Invalid Dns Server!",
+              NULL
+              );
           }
         }
 
@@ -1208,7 +1382,10 @@ Ip4FormCallback (
         break;
 
       case KEY_SAVE_CHANGES:
-        Status         = Ip4Config2ConvertIfrNvDataToConfigNvData (IfrFormNvData, Instance);
+        Status = Ip4Config2ConvertIfrNvDataToConfigNvData (
+                   IfrFormNvData,
+                   Instance
+                   );
         *ActionRequest = EFI_BROWSER_ACTION_REQUEST_SUBMIT;
         break;
 
@@ -1281,10 +1458,14 @@ Ip4Config2FormInit (
 
   CopyGuid (&VendorDeviceNode.Guid, &gEfiCallerIdGuid);
 
-  SetDevicePathNodeLength (&VendorDeviceNode.Header, sizeof (VENDOR_DEVICE_PATH));
+  SetDevicePathNodeLength (
+    &VendorDeviceNode.Header,
+    sizeof (VENDOR_DEVICE_PATH)
+    );
   CallbackInfo->HiiVendorDevicePath = AppendDevicePathNode (
                                         ParentDevicePath,
-                                        (EFI_DEVICE_PATH_PROTOCOL *)&VendorDeviceNode
+                                        (EFI_DEVICE_PATH_PROTOCOL *)&
+                                        VendorDeviceNode
                                         );
   if (CallbackInfo->HiiVendorDevicePath == NULL) {
     Status = EFI_OUT_OF_RESOURCES;

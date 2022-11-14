@@ -243,7 +243,12 @@ Ip6IsValidProtocol (
   }
 
   NET_LIST_FOR_EACH (Entry, &IpSb->Children) {
-    IpInstance = NET_LIST_USER_STRUCT_S (Entry, IP6_PROTOCOL, Link, IP6_PROTOCOL_SIGNATURE);
+    IpInstance = NET_LIST_USER_STRUCT_S (
+                   Entry,
+                   IP6_PROTOCOL,
+                   Link,
+                   IP6_PROTOCOL_SIGNATURE
+                   );
     if (IpInstance->State == IP6_STATE_CONFIGED) {
       if (IpInstance->ConfigData.DefaultProtocol == NextHeader) {
         return TRUE;
@@ -326,7 +331,9 @@ Ip6IsExtsValid (
     return TRUE;
   }
 
-  if (((ExtHdrs == NULL) && (ExtHdrsLen != 0)) || ((ExtHdrs != NULL) && (ExtHdrsLen == 0))) {
+  if (((ExtHdrs == NULL) && (ExtHdrsLen != 0)) || ((ExtHdrs != NULL) &&
+                                                   (ExtHdrsLen == 0)))
+  {
     return FALSE;
   }
 
@@ -394,7 +401,14 @@ Ip6IsExtsValid (
         Option++;
         Offset++;
 
-        if ((IpSb != NULL) && (Packet != NULL) && !Ip6IsOptionValid (IpSb, Packet, Option, OptionLen, Offset)) {
+        if ((IpSb != NULL) && (Packet != NULL) && !Ip6IsOptionValid (
+                                                     IpSb,
+                                                     Packet,
+                                                     Option,
+                                                     OptionLen,
+                                                     Offset
+                                                     ))
+        {
           return FALSE;
         }
 

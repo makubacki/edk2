@@ -197,10 +197,17 @@ HttpIoCreateIo (
       HttpConfigData.HttpVersion        = ConfigData->Config4.HttpVersion;
       HttpConfigData.TimeOutMillisec    = ConfigData->Config4.RequestTimeOut;
 
-      Http4AccessPoint.UseDefaultAddress = ConfigData->Config4.UseDefaultAddress;
-      Http4AccessPoint.LocalPort         = ConfigData->Config4.LocalPort;
-      IP4_COPY_ADDRESS (&Http4AccessPoint.LocalAddress, &ConfigData->Config4.LocalIp);
-      IP4_COPY_ADDRESS (&Http4AccessPoint.LocalSubnet, &ConfigData->Config4.SubnetMask);
+      Http4AccessPoint.UseDefaultAddress =
+        ConfigData->Config4.UseDefaultAddress;
+      Http4AccessPoint.LocalPort = ConfigData->Config4.LocalPort;
+      IP4_COPY_ADDRESS (
+        &Http4AccessPoint.LocalAddress,
+        &ConfigData->Config4.LocalIp
+        );
+      IP4_COPY_ADDRESS (
+        &Http4AccessPoint.LocalSubnet,
+        &ConfigData->Config4.SubnetMask
+        );
       HttpConfigData.AccessPoint.IPv4Node = &Http4AccessPoint;
     } else {
       HttpConfigData.LocalAddressIsIPv6 = TRUE;
@@ -208,7 +215,10 @@ HttpIoCreateIo (
       HttpConfigData.TimeOutMillisec    = ConfigData->Config6.RequestTimeOut;
 
       Http6AccessPoint.LocalPort = ConfigData->Config6.LocalPort;
-      IP6_COPY_ADDRESS (&Http6AccessPoint.LocalAddress, &ConfigData->Config6.LocalIp);
+      IP6_COPY_ADDRESS (
+        &Http6AccessPoint.LocalAddress,
+        &ConfigData->Config6.LocalIp
+        );
       HttpConfigData.AccessPoint.IPv6Node = &Http6AccessPoint;
     }
 
@@ -397,7 +407,12 @@ HttpIoRecvResponse (
   //
   // Start the timer, and wait Timeout seconds to receive the header packet.
   //
-  Status = gBS->SetTimer (HttpIo->TimeoutEvent, TimerRelative, HttpIo->Timeout * TICKS_PER_MS);
+  Status = gBS->SetTimer (
+                  HttpIo->TimeoutEvent,
+                  TimerRelative,
+                  HttpIo->Timeout *
+                  TICKS_PER_MS
+                  );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -418,7 +433,12 @@ HttpIoRecvResponse (
   //
   // Poll the network until receive finish.
   //
-  while (!HttpIo->IsRxDone && EFI_ERROR (gBS->CheckEvent (HttpIo->TimeoutEvent))) {
+  while (!HttpIo->IsRxDone && EFI_ERROR (
+                                gBS->CheckEvent (
+                                       HttpIo->TimeoutEvent
+                                       )
+                                ))
+  {
     Http->Poll (Http);
   }
 
@@ -441,7 +461,8 @@ HttpIoRecvResponse (
   }
 
   if ((HttpIo->Callback != NULL) &&
-      ((HttpIo->RspToken.Status == EFI_SUCCESS) || (HttpIo->RspToken.Status == EFI_HTTP_ERROR)))
+      ((HttpIo->RspToken.Status == EFI_SUCCESS) || (HttpIo->RspToken.Status ==
+                                                    EFI_HTTP_ERROR)))
   {
     Status = HttpIo->Callback (
                        HttpIoResponse,
@@ -489,7 +510,11 @@ HttpIoGetContentLength (
     return EFI_NOT_FOUND;
   }
 
-  return AsciiStrDecimalToUintnS (Header->FieldValue, (CHAR8 **)NULL, ContentLength);
+  return AsciiStrDecimalToUintnS (
+           Header->FieldValue,
+           (CHAR8 **)NULL,
+           ContentLength
+           );
 }
 
 /**
@@ -529,25 +554,44 @@ HttpIoSendChunkedTransfer (
 
   switch (*SendChunkProcess) {
     case HttpIoSendChunkHeaderZeroContent:
-      ContentLengthHeader = HttpFindHeader (RequestMessage->HeaderCount, RequestMessage->Headers, HTTP_HEADER_CONTENT_LENGTH);
+      ContentLengthHeader = HttpFindHeader (
+                              RequestMessage->HeaderCount,
+                              RequestMessage->Headers,
+                              HTTP_HEADER_CONTENT_LENGTH
+                              );
       if (ContentLengthHeader == NULL) {
         AddNewHeader = 1;
       }
 
-      NewHeaders = AllocateZeroPool ((RequestMessage->HeaderCount + AddNewHeader) * sizeof (EFI_HTTP_HEADER));
-      CopyMem ((VOID *)NewHeaders, (VOID *)RequestMessage->Headers, RequestMessage->HeaderCount * sizeof (EFI_HTTP_HEADER));
+      NewHeaders = AllocateZeroPool (
+                     (RequestMessage->HeaderCount +
+                      AddNewHeader) * sizeof (EFI_HTTP_HEADER)
+                     );
+      CopyMem (
+        (VOID *)NewHeaders,
+        (VOID *)RequestMessage->Headers,
+        RequestMessage->HeaderCount * sizeof (EFI_HTTP_HEADER)
+        );
       if (AddNewHeader == 0) {
         //
         // Override content-length to Transfer-Encoding.
         //
-        ContentLengthHeader             = HttpFindHeader (RequestMessage->HeaderCount, NewHeaders, HTTP_HEADER_CONTENT_LENGTH);
+        ContentLengthHeader = HttpFindHeader (
+                                RequestMessage->HeaderCount,
+                                NewHeaders,
+                                HTTP_HEADER_CONTENT_LENGTH
+                                );
         ContentLengthHeader->FieldName  = NULL;
         ContentLengthHeader->FieldValue = NULL;
       } else {
         ContentLengthHeader = NewHeaders + RequestMessage->HeaderCount;
       }
 
-      HttpSetFieldNameAndValue (ContentLengthHeader, HTTP_HEADER_TRANSFER_ENCODING, HTTP_HEADER_TRANSFER_ENCODING_CHUNKED);
+      HttpSetFieldNameAndValue (
+        ContentLengthHeader,
+        HTTP_HEADER_TRANSFER_ENCODING,
+        HTTP_HEADER_TRANSFER_ENCODING_CHUNKED
+        );
       HeaderCount       = RequestMessage->HeaderCount + AddNewHeader;
       MessageBodyLength = 0;
       MessageBody       = NULL;
@@ -583,14 +627,21 @@ HttpIoSendChunkedTransfer (
       // Build up the chunk transfer paylaod.
       //
       CopyMem (MessageBody, ChunkLengthStr, ChunkLength);
-      CopyMem (MessageBody + ChunkLength, RequestMessage->Body, MessageBodyLength);
-      *(MessageBody + ChunkLength + MessageBodyLength)     = CHUNKED_TRANSFER_CODING_CR;
-      *(MessageBody + ChunkLength + MessageBodyLength + 1) = CHUNKED_TRANSFER_CODING_LF;
+      CopyMem (
+        MessageBody + ChunkLength,
+        RequestMessage->Body,
+        MessageBodyLength
+        );
+      *(MessageBody + ChunkLength + MessageBodyLength) =
+        CHUNKED_TRANSFER_CODING_CR;
+      *(MessageBody + ChunkLength + MessageBodyLength + 1) =
+        CHUNKED_TRANSFER_CODING_LF;
       //
       // Change variables for the next chunk trasnfer.
       //
       RequestMessage->BodyLength -= MessageBodyLength;
-      RequestMessage->Body        = (VOID *)((CHAR8 *)RequestMessage->Body + MessageBodyLength);
+      RequestMessage->Body        = (VOID *)((CHAR8 *)RequestMessage->Body +
+                                             MessageBodyLength);
       MessageBodyLength          += (ChunkLength + 2);
       if (RequestMessage->BodyLength == 0) {
         *SendChunkProcess = HttpIoSendChunkEndChunk;
@@ -699,12 +750,18 @@ HttpIoGetChunkedTransferContent (
   }
 
   *ContentLength = 0;
-  Header         = HttpFindHeader (HeaderCount, Headers, HTTP_HEADER_TRANSFER_ENCODING);
+  Header         = HttpFindHeader (
+                     HeaderCount,
+                     Headers,
+                     HTTP_HEADER_TRANSFER_ENCODING
+                     );
   if (Header == NULL) {
     return EFI_NOT_FOUND;
   }
 
-  if (AsciiStrCmp (Header->FieldValue, HTTP_HEADER_TRANSFER_ENCODING_CHUNKED) != 0) {
+  if (AsciiStrCmp (Header->FieldValue, HTTP_HEADER_TRANSFER_ENCODING_CHUNKED) !=
+      0)
+  {
     return EFI_NOT_FOUND;
   }
 
@@ -738,7 +795,11 @@ HttpIoGetChunkedTransferContent (
     // Decoding Chunked Transfer Coding.
     // Only decode chunk-size and last chunk.
     //
-    DEBUG ((DEBUG_INFO, "     Chunk HTTP Response StatusCode - %d\n", ResponseData.Response.StatusCode));
+    DEBUG ((
+      DEBUG_INFO,
+      "     Chunk HTTP Response StatusCode - %d\n",
+      ResponseData.Response.StatusCode
+      ));
     //
     // Break if this is last chunk.
     //
@@ -772,7 +833,11 @@ HttpIoGetChunkedTransferContent (
         goto ExitDeleteChunks;
       }
 
-      CopyMem ((UINT8 *)ThisChunk->Data, (UINT8 *)ResponseData.Body + 1, ThisChunk->Length);
+      CopyMem (
+        (UINT8 *)ThisChunk->Data,
+        (UINT8 *)ResponseData.Body + 1,
+        ThisChunk->Length
+        );
       TotalLength += ThisChunk->Length;
       InsertTailList (HttpChunks, &ThisChunk->NextChunk);
       break;
@@ -782,7 +847,8 @@ HttpIoGetChunkedTransferContent (
     // Get the chunk length
     //
     Index = 0;
-    while ((ChunkSizeAscii[Index] != CHUNKED_TRANSFER_CODING_EXTENSION_SEPARATOR) &&
+    while ((ChunkSizeAscii[Index] !=
+            CHUNKED_TRANSFER_CODING_EXTENSION_SEPARATOR) &&
            (ChunkSizeAscii[Index] != (CHAR8)CHUNKED_TRANSFER_CODING_CR) &&
            (Index != HTTP_IO_CHUNKED_TRANSFER_CODING_DATA_LENGTH))
     {
@@ -855,7 +921,10 @@ HttpIoGetChunkedTransferContent (
 
     TotalLength += *ContentLength;
     if (TotalLength > MaxTotalLength) {
-      DEBUG ((DEBUG_ERROR, "     Total chunk transfer payload exceeds the size defined by PcdMaxHttpChunkTransfer.\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "     Total chunk transfer payload exceeds the size defined by PcdMaxHttpChunkTransfer.\n"
+        ));
       goto ExitDeleteChunks;
     }
   }

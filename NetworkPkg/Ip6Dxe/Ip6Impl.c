@@ -75,9 +75,14 @@ EfiIp6GetModeData (
     // IsStarted is "whether the EfiIp6Configure has been called".
     // IsConfigured is "whether the station address has been configured"
     //
-    Ip6ModeData->IsStarted     = (BOOLEAN)(IpInstance->State == IP6_STATE_CONFIGED);
+    Ip6ModeData->IsStarted     = (BOOLEAN)(IpInstance->State ==
+                                           IP6_STATE_CONFIGED);
     Ip6ModeData->MaxPacketSize = IpSb->MaxPacketSize;
-    CopyMem (&Ip6ModeData->ConfigData, &IpInstance->ConfigData, sizeof (EFI_IP6_CONFIG_DATA));
+    CopyMem (
+      &Ip6ModeData->ConfigData,
+      &IpInstance->ConfigData,
+      sizeof (EFI_IP6_CONFIG_DATA)
+      );
     Ip6ModeData->IsConfigured = FALSE;
 
     Ip6ModeData->AddressCount = 0;
@@ -97,7 +102,8 @@ EfiIp6GetModeData (
 
     Ip6ModeData->IcmpTypeCount = 23;
     Ip6ModeData->IcmpTypeList  = AllocateCopyPool (
-                                   Ip6ModeData->IcmpTypeCount * sizeof (EFI_IP6_ICMP_TYPE),
+                                   Ip6ModeData->IcmpTypeCount *
+                                   sizeof (EFI_IP6_ICMP_TYPE),
                                    mIp6SupportedIcmp
                                    );
     if (Ip6ModeData->IcmpTypeList == NULL) {
@@ -126,7 +132,10 @@ EfiIp6GetModeData (
     if (Ip6ModeData->IsStarted) {
       Config = &Ip6ModeData->ConfigData;
 
-      if (IpIf->Configured || NetIp6IsUnspecifiedAddr (&Config->DestinationAddress)) {
+      if (IpIf->Configured || NetIp6IsUnspecifiedAddr (
+                                &Config->DestinationAddress
+                                ))
+      {
         Ip6ModeData->IsConfigured = TRUE;
       } else {
         Ip6ModeData->IsConfigured = FALSE;
@@ -152,7 +161,8 @@ EfiIp6GetModeData (
       //
       if (IpInstance->GroupCount != 0) {
         Ip6ModeData->GroupTable = AllocateCopyPool (
-                                    IpInstance->GroupCount * sizeof (EFI_IPv6_ADDRESS),
+                                    IpInstance->GroupCount *
+                                    sizeof (EFI_IPv6_ADDRESS),
                                     IpInstance->GroupList
                                     );
         if (Ip6ModeData->GroupTable == NULL) {
@@ -277,11 +287,16 @@ Ip6IsIllegalProtocol (
   IN UINT8  Protocol
   )
 {
-  if ((Protocol == IP6_HOP_BY_HOP) || (Protocol == EFI_IP_PROTO_ICMP) || (Protocol == IP4_PROTO_IGMP)) {
+  if ((Protocol == IP6_HOP_BY_HOP) || (Protocol == EFI_IP_PROTO_ICMP) ||
+      (Protocol == IP4_PROTO_IGMP))
+  {
     return TRUE;
   }
 
-  if ((Protocol == 41) || (Protocol == 43) || (Protocol == 44) || (Protocol == 59) || (Protocol == 60) || (Protocol == 124)) {
+  if ((Protocol == 41) || (Protocol == 43) || (Protocol == 44) || (Protocol ==
+                                                                   59) ||
+      (Protocol == 60) || (Protocol == 124))
+  {
     return TRUE;
   }
 
@@ -309,7 +324,11 @@ Ip6InitProtocol (
   IpInstance->State     = IP6_STATE_UNCONFIGED;
   IpInstance->Service   = IpSb;
   IpInstance->GroupList = NULL;
-  CopyMem (&IpInstance->Ip6Proto, &mEfiIp6ProtocolTemplete, sizeof (EFI_IP6_PROTOCOL));
+  CopyMem (
+    &IpInstance->Ip6Proto,
+    &mEfiIp6ProtocolTemplete,
+    sizeof (EFI_IP6_PROTOCOL)
+    );
 
   NetMapInit (&IpInstance->RxTokens);
   NetMapInit (&IpInstance->TxTokens);
@@ -389,7 +408,10 @@ Ip6ConfigProtocol (
 
     NET_GET_REF (IpSb->DefaultInterface);
     IpInstance->Interface = IpSb->DefaultInterface;
-    InsertTailList (&IpSb->DefaultInterface->IpInstances, &IpInstance->AddrLink);
+    InsertTailList (
+      &IpSb->DefaultInterface->IpInstances,
+      &IpInstance->AddrLink
+      );
 
     CopyMem (Current, Config, sizeof (EFI_IP6_CONFIG_DATA));
     IpInstance->State = IP6_STATE_CONFIGED;
@@ -398,7 +420,11 @@ Ip6ConfigProtocol (
   }
 
   if (StationZero && !DestZero) {
-    Status = Ip6SelectSourceAddress (IpSb, &Config->DestinationAddress, &Source);
+    Status = Ip6SelectSourceAddress (
+               IpSb,
+               &Config->DestinationAddress,
+               &Source
+               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -662,12 +688,19 @@ EfiIp6Configure (
     if (IpInstance->State == IP6_STATE_CONFIGED) {
       Current = &IpInstance->ConfigData;
 
-      if (!EFI_IP6_EQUAL (&Current->StationAddress, &Ip6ConfigData->StationAddress)) {
+      if (!EFI_IP6_EQUAL (
+             &Current->StationAddress,
+             &Ip6ConfigData->StationAddress
+             ))
+      {
         Status = EFI_ALREADY_STARTED;
         goto Exit;
       }
 
-      if (NetIp6IsUnspecifiedAddr (&Current->StationAddress) && IP6_NO_MAPPING (IpInstance)) {
+      if (NetIp6IsUnspecifiedAddr (&Current->StationAddress) && IP6_NO_MAPPING (
+                                                                  IpInstance
+                                                                  ))
+      {
         Status = EFI_NO_MAPPING;
         goto Exit;
       }
@@ -864,7 +897,11 @@ EfiIp6Routes (
     }
 
     if (!NetIp6IsUnspecifiedAddr (GatewayAddress) &&
-        !NetIp6IsNetEqual (GatewayAddress, &IpInstance->ConfigData.StationAddress, PrefixLength)
+        !NetIp6IsNetEqual (
+           GatewayAddress,
+           &IpInstance->ConfigData.StationAddress,
+           PrefixLength
+           )
         )
     {
       return EFI_INVALID_PARAMETER;
@@ -877,9 +914,19 @@ EfiIp6Routes (
   // Update the route table
   //
   if (DeleteRoute) {
-    Status = Ip6DelRoute (IpSb->RouteTable, Destination, PrefixLength, GatewayAddress);
+    Status = Ip6DelRoute (
+               IpSb->RouteTable,
+               Destination,
+               PrefixLength,
+               GatewayAddress
+               );
   } else {
-    Status = Ip6AddRoute (IpSb->RouteTable, Destination, PrefixLength, GatewayAddress);
+    Status = Ip6AddRoute (
+               IpSb->RouteTable,
+               Destination,
+               PrefixLength,
+               GatewayAddress
+               );
   }
 
   gBS->RestoreTPL (OldTpl);
@@ -984,9 +1031,21 @@ EfiIp6Neighbors (
   }
 
   if (DeleteFlag) {
-    Status = Ip6DelNeighbor (IpInstance->Service, TargetIp6Address, TargetLinkAddress, Timeout, Override);
+    Status = Ip6DelNeighbor (
+               IpInstance->Service,
+               TargetIp6Address,
+               TargetLinkAddress,
+               Timeout,
+               Override
+               );
   } else {
-    Status = Ip6AddNeighbor (IpInstance->Service, TargetIp6Address, TargetLinkAddress, Timeout, Override);
+    Status = Ip6AddNeighbor (
+               IpInstance->Service,
+               TargetIp6Address,
+               TargetLinkAddress,
+               Timeout,
+               Override
+               );
   }
 
 Exit:
@@ -1054,7 +1113,9 @@ Ip6TxTokenValid (
 
   TxData = Token->Packet.TxData;
 
-  if ((TxData == NULL) || ((TxData->ExtHdrsLength != 0) && (TxData->ExtHdrs == NULL))) {
+  if ((TxData == NULL) || ((TxData->ExtHdrsLength != 0) && (TxData->ExtHdrs ==
+                                                            NULL)))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1063,7 +1124,9 @@ Ip6TxTokenValid (
   }
 
   for (DataLength = 0, Index = 0; Index < TxData->FragmentCount; Index++) {
-    if ((TxData->FragmentTable[Index].FragmentLength == 0) || (TxData->FragmentTable[Index].FragmentBuffer == NULL)) {
+    if ((TxData->FragmentTable[Index].FragmentLength == 0) ||
+        (TxData->FragmentTable[Index].FragmentBuffer == NULL))
+    {
       return EFI_INVALID_PARAMETER;
     }
 
@@ -1348,7 +1411,10 @@ EfiIp6Transmit (
     Head.FlowLabelH = (UINT8)((Config->FlowLabel >> 16) & 0x0F);
   }
 
-  Head.PayloadLength = HTONS ((UINT16)(TxData->ExtHdrsLength + TxData->DataLength));
+  Head.PayloadLength = HTONS (
+                         (UINT16)(TxData->ExtHdrsLength +
+                                  TxData->DataLength)
+                         );
 
   //
   // OK, it survives all the validation check. Wrap the token in
@@ -1396,7 +1462,10 @@ EfiIp6Transmit (
   // the original data in EFI_IP6_COMPLETION_TOKEN.
   //
   if ((TxData->ExtHdrsLength != 0) && (TxData->ExtHdrs != NULL)) {
-    ExtHdrs = (UINT8 *)AllocateCopyPool (TxData->ExtHdrsLength, TxData->ExtHdrs);
+    ExtHdrs = (UINT8 *)AllocateCopyPool (
+                         TxData->ExtHdrsLength,
+                         TxData->ExtHdrs
+                         );
     if (ExtHdrs == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
       goto Exit;
@@ -1708,7 +1777,10 @@ Ip6Cancel (
   // If Token == NULL, cancel all the tokens. return error if not
   // all of them are cancelled.
   //
-  if (!NetMapIsEmpty (&IpInstance->TxTokens) || !NetMapIsEmpty (&IpInstance->RxTokens)) {
+  if (!NetMapIsEmpty (&IpInstance->TxTokens) || !NetMapIsEmpty (
+                                                   &IpInstance->RxTokens
+                                                   ))
+  {
     return EFI_DEVICE_ERROR;
   }
 

@@ -24,9 +24,11 @@ Ip6UpdateReachableTime (
 {
   UINT32  Random;
 
-  Random              = (NetRandomInitSeed () / 4294967295UL) * IP6_RANDOM_FACTOR_SCALE;
+  Random = (NetRandomInitSeed () / 4294967295UL) *
+           IP6_RANDOM_FACTOR_SCALE;
   Random              = Random + IP6_MIN_RANDOM_FACTOR_SCALED;
-  IpSb->ReachableTime = (IpSb->BaseReachableTime * Random) / IP6_RANDOM_FACTOR_SCALE;
+  IpSb->ReachableTime = (IpSb->BaseReachableTime * Random) /
+                        IP6_RANDOM_FACTOR_SCALE;
 }
 
 /**
@@ -84,7 +86,10 @@ Ip6BuildEfiNeighborCache (
 
     EfiNeighborCache->State = Neighbor->State;
     IP6_COPY_ADDRESS (&EfiNeighborCache->Neighbor, &Neighbor->Neighbor);
-    IP6_COPY_LINK_ADDRESS (&EfiNeighborCache->LinkAddress, &Neighbor->LinkAddress);
+    IP6_COPY_LINK_ADDRESS (
+      &EfiNeighborCache->LinkAddress,
+      &Neighbor->LinkAddress
+      );
 
     Count++;
   }
@@ -192,7 +197,9 @@ Ip6CreatePrefixListEntry (
   LIST_ENTRY             *Entry;
   IP6_PREFIX_LIST_ENTRY  *TmpPrefixEntry;
 
-  if ((Prefix == NULL) || (PreferredLifetime > ValidLifetime) || (PrefixLength > IP6_PREFIX_MAX)) {
+  if ((Prefix == NULL) || (PreferredLifetime > ValidLifetime) || (PrefixLength >
+                                                                  IP6_PREFIX_MAX))
+  {
     return NULL;
   }
 
@@ -278,7 +285,9 @@ Ip6DestroyPrefixListEntry (
   IP6_INTERFACE  *IpIf;
   EFI_STATUS     Status;
 
-  if ((!ImmediateDelete) && (PrefixEntry->RefCnt > 0) && ((--PrefixEntry->RefCnt) > 0)) {
+  if ((!ImmediateDelete) && (PrefixEntry->RefCnt > 0) &&
+      ((--PrefixEntry->RefCnt) > 0))
+  {
     return;
   }
 
@@ -299,9 +308,20 @@ Ip6DestroyPrefixListEntry (
     // Remove the corresponding addresses generated from this autonomous prefix.
     //
     NET_LIST_FOR_EACH (Entry, &IpSb->Interfaces) {
-      IpIf = NET_LIST_USER_STRUCT_S (Entry, IP6_INTERFACE, Link, IP6_INTERFACE_SIGNATURE);
+      IpIf = NET_LIST_USER_STRUCT_S (
+               Entry,
+               IP6_INTERFACE,
+               Link,
+               IP6_INTERFACE_SIGNATURE
+               );
 
-      Ip6RemoveAddr (IpSb, &IpIf->AddressList, &IpIf->AddressCount, &PrefixEntry->Prefix, PrefixEntry->PrefixLength);
+      Ip6RemoveAddr (
+        IpSb,
+        &IpIf->AddressList,
+        &IpIf->AddressCount,
+        &PrefixEntry->Prefix,
+        PrefixEntry->PrefixLength
+        );
     }
   }
 
@@ -359,7 +379,12 @@ Ip6FindPrefixListEntry (
       // Perform the longest prefix match. The list is already sorted with
       // the longest length prefix put at the head of the list.
       //
-      if (NetIp6IsNetEqual (&PrefixList->Prefix, Prefix, PrefixList->PrefixLength)) {
+      if (NetIp6IsNetEqual (
+            &PrefixList->Prefix,
+            Prefix,
+            PrefixList->PrefixLength
+            ))
+      {
         return PrefixList;
       }
     }
@@ -429,8 +454,21 @@ Ip6OnArpResolved (
   // and ARP queue itself. Ip6FreeArpQue will call the frame's
   // owner back.
   //
-  if (NET_MAC_EQUAL (&ArpQue->LinkAddress, &mZeroMacAddress, IpSb->SnpMode.HwAddressSize)) {
-    Ip6FreeNeighborEntry (IpSb, ArpQue, FALSE, TRUE, EFI_NO_MAPPING, NULL, NULL);
+  if (NET_MAC_EQUAL (
+        &ArpQue->LinkAddress,
+        &mZeroMacAddress,
+        IpSb->SnpMode.HwAddressSize
+        ))
+  {
+    Ip6FreeNeighborEntry (
+      IpSb,
+      ArpQue,
+      FALSE,
+      TRUE,
+      EFI_NO_MAPPING,
+      NULL,
+      NULL
+      );
     return;
   }
 
@@ -625,7 +663,10 @@ Ip6FreeNeighborEntry (
   NET_LIST_FOR_EACH_SAFE (Entry, Next, &NeighborCache->Frames) {
     TxToken = NET_LIST_USER_STRUCT (Entry, IP6_LINK_TX_TOKEN, Link);
 
-    if (SendIcmpError && !IP6_IS_MULTICAST (&TxToken->Packet->Ip.Ip6->DestinationAddress)) {
+    if (SendIcmpError && !IP6_IS_MULTICAST (
+                            &TxToken->Packet->Ip.Ip6->DestinationAddress
+                            ))
+    {
       Ip6SendIcmpError (
         IpSb,
         TxToken->Packet,
@@ -758,7 +799,11 @@ Ip6CleanDefaultRouterList (
   IP6_DEFAULT_ROUTER  *DefaultRouter;
 
   while (!IsListEmpty (&IpSb->DefaultRouterList)) {
-    DefaultRouter = NET_LIST_HEAD (&IpSb->DefaultRouterList, IP6_DEFAULT_ROUTER, Link);
+    DefaultRouter = NET_LIST_HEAD (
+                      &IpSb->DefaultRouterList,
+                      IP6_DEFAULT_ROUTER,
+                      Link
+                      );
     Ip6DestroyDefaultRouter (IpSb, DefaultRouter);
   }
 }
@@ -1013,8 +1058,10 @@ Ip6InitDADProcess (
   Entry->MaxTransmit = DadXmits->DupAddrDetectTransmits;
   Entry->Transmit    = 0;
   Entry->Receive     = 0;
-  MaxDelayTick       = IP6_MAX_RTR_SOLICITATION_DELAY / IP6_TIMER_INTERVAL_IN_MS;
-  Entry->RetransTick = (MaxDelayTick * ((NET_RANDOM (NetRandomInitSeed ()) % 5) + 1)) / 5;
+  MaxDelayTick       = IP6_MAX_RTR_SOLICITATION_DELAY /
+                       IP6_TIMER_INTERVAL_IN_MS;
+  Entry->RetransTick = (MaxDelayTick * ((NET_RANDOM (NetRandomInitSeed ()) %
+                                         5) + 1)) / 5;
   Entry->AddressInfo = AddressInfo;
   Entry->Callback    = Callback;
   Entry->Context     = Context;
@@ -1059,8 +1106,13 @@ Ip6FindDADEntry (
     IpIf = NET_LIST_USER_STRUCT (Entry, IP6_INTERFACE, Link);
 
     NET_LIST_FOR_EACH (Entry2, &IpIf->DupAddrDetectList) {
-      DupAddrDetect = NET_LIST_USER_STRUCT_S (Entry2, IP6_DAD_ENTRY, Link, IP6_DAD_ENTRY_SIGNATURE);
-      AddrInfo      = DupAddrDetect->AddressInfo;
+      DupAddrDetect = NET_LIST_USER_STRUCT_S (
+                        Entry2,
+                        IP6_DAD_ENTRY,
+                        Link,
+                        IP6_DAD_ENTRY_SIGNATURE
+                        );
+      AddrInfo = DupAddrDetect->AddressInfo;
       if (EFI_IP6_EQUAL (&AddrInfo->Address, Target)) {
         if (Interface != NULL) {
           *Interface = IpIf;
@@ -1147,7 +1199,11 @@ Ip6SendRouterSolicit (
   if (DestinationAddress != NULL) {
     IP6_COPY_ADDRESS (&Head.DestinationAddress, DestinationAddress);
   } else {
-    Ip6SetToAllNodeMulticast (TRUE, IP6_LINK_LOCAL_SCOPE, &Head.DestinationAddress);
+    Ip6SetToAllNodeMulticast (
+      TRUE,
+      IP6_LINK_LOCAL_SCOPE,
+      &Head.DestinationAddress
+      );
   }
 
   NetbufReserve (Packet, sizeof (EFI_IP6_HEADER));
@@ -1156,7 +1212,11 @@ Ip6SendRouterSolicit (
   // Fill in the ICMP header, and Source link-layer address if contained.
   //
 
-  IcmpHead = (IP6_ICMP_INFORMATION_HEAD *)NetbufAllocSpace (Packet, sizeof (IP6_ICMP_INFORMATION_HEAD), FALSE);
+  IcmpHead = (IP6_ICMP_INFORMATION_HEAD *)NetbufAllocSpace (
+                                            Packet,
+                                            sizeof (IP6_ICMP_INFORMATION_HEAD),
+                                            FALSE
+                                            );
   ASSERT (IcmpHead != NULL);
   ZeroMem (IcmpHead, sizeof (IP6_ICMP_INFORMATION_HEAD));
   IcmpHead->Head.Type = ICMP_V6_ROUTER_SOLICIT;
@@ -1178,7 +1238,17 @@ Ip6SendRouterSolicit (
   //
   // Transmit the packet
   //
-  return Ip6Output (IpSb, IpIf, NULL, Packet, &Head, NULL, 0, Ip6SysPacketSent, NULL);
+  return Ip6Output (
+           IpSb,
+           IpIf,
+           NULL,
+           Packet,
+           &Head,
+           NULL,
+           0,
+           Ip6SysPacketSent,
+           NULL
+           );
 }
 
 /**
@@ -1230,9 +1300,14 @@ Ip6SendNeighborAdvertise (
   // responding to unicast solicitation. It also must include such option as unsolicited
   // advertisement.
   //
-  ASSERT (DestinationAddress != NULL && TargetIp6Address != NULL && TargetLinkAddress != NULL);
+  ASSERT (
+    DestinationAddress != NULL && TargetIp6Address != NULL &&
+    TargetLinkAddress != NULL
+    );
 
-  PayloadLen = (UINT16)(sizeof (IP6_ICMP_INFORMATION_HEAD) + sizeof (EFI_IPv6_ADDRESS) + sizeof (IP6_ETHER_ADDR_OPTION));
+  PayloadLen = (UINT16)(sizeof (IP6_ICMP_INFORMATION_HEAD) +
+                        sizeof (EFI_IPv6_ADDRESS) +
+                        sizeof (IP6_ETHER_ADDR_OPTION));
 
   //
   // Generate the packet to be sent
@@ -1262,7 +1337,11 @@ Ip6SendNeighborAdvertise (
   // Set the Router flag, Solicited flag and Override flag.
   //
 
-  IcmpHead = (IP6_ICMP_INFORMATION_HEAD *)NetbufAllocSpace (Packet, sizeof (IP6_ICMP_INFORMATION_HEAD), FALSE);
+  IcmpHead = (IP6_ICMP_INFORMATION_HEAD *)NetbufAllocSpace (
+                                            Packet,
+                                            sizeof (IP6_ICMP_INFORMATION_HEAD),
+                                            FALSE
+                                            );
   ASSERT (IcmpHead != NULL);
   ZeroMem (IcmpHead, sizeof (IP6_ICMP_INFORMATION_HEAD));
   IcmpHead->Head.Type = ICMP_V6_NEIGHBOR_ADVERTISE;
@@ -1280,7 +1359,11 @@ Ip6SendNeighborAdvertise (
     IcmpHead->Fourth |= IP6_OVERRIDE_FLAG;
   }
 
-  Target = (EFI_IPv6_ADDRESS *)NetbufAllocSpace (Packet, sizeof (EFI_IPv6_ADDRESS), FALSE);
+  Target = (EFI_IPv6_ADDRESS *)NetbufAllocSpace (
+                                 Packet,
+                                 sizeof (EFI_IPv6_ADDRESS),
+                                 FALSE
+                                 );
   ASSERT (Target != NULL);
   IP6_COPY_ADDRESS (Target, TargetIp6Address);
 
@@ -1297,7 +1380,17 @@ Ip6SendNeighborAdvertise (
   //
   // Transmit the packet
   //
-  return Ip6Output (IpSb, NULL, NULL, Packet, &Head, NULL, 0, Ip6SysPacketSent, NULL);
+  return Ip6Output (
+           IpSb,
+           NULL,
+           NULL,
+           Packet,
+           &Head,
+           NULL,
+           0,
+           Ip6SysPacketSent,
+           NULL
+           );
 }
 
 /**
@@ -1346,7 +1439,9 @@ Ip6SendNeighborSolicit (
 
   IsDAD = FALSE;
 
-  if ((SourceAddress == NULL) || ((SourceAddress != NULL) && NetIp6IsUnspecifiedAddr (SourceAddress))) {
+  if ((SourceAddress == NULL) || ((SourceAddress != NULL) &&
+                                  NetIp6IsUnspecifiedAddr (SourceAddress)))
+  {
     IsDAD = TRUE;
   }
 
@@ -1355,7 +1450,8 @@ Ip6SendNeighborSolicit (
   // if the solicitation is not sent by performing DAD - Duplicate Address Detection.
   // Otherwise must not include it.
   //
-  PayloadLen = (UINT16)(sizeof (IP6_ICMP_INFORMATION_HEAD) + sizeof (EFI_IPv6_ADDRESS));
+  PayloadLen = (UINT16)(sizeof (IP6_ICMP_INFORMATION_HEAD) +
+                        sizeof (EFI_IPv6_ADDRESS));
 
   if (!IsDAD) {
     if (SourceLinkAddress == NULL) {
@@ -1396,13 +1492,21 @@ Ip6SendNeighborSolicit (
   //
   // Fill in the ICMP header, Target address, and Source link-layer address.
   //
-  IcmpHead = (IP6_ICMP_INFORMATION_HEAD *)NetbufAllocSpace (Packet, sizeof (IP6_ICMP_INFORMATION_HEAD), FALSE);
+  IcmpHead = (IP6_ICMP_INFORMATION_HEAD *)NetbufAllocSpace (
+                                            Packet,
+                                            sizeof (IP6_ICMP_INFORMATION_HEAD),
+                                            FALSE
+                                            );
   ASSERT (IcmpHead != NULL);
   ZeroMem (IcmpHead, sizeof (IP6_ICMP_INFORMATION_HEAD));
   IcmpHead->Head.Type = ICMP_V6_NEIGHBOR_SOLICIT;
   IcmpHead->Head.Code = 0;
 
-  Target = (EFI_IPv6_ADDRESS *)NetbufAllocSpace (Packet, sizeof (EFI_IPv6_ADDRESS), FALSE);
+  Target = (EFI_IPv6_ADDRESS *)NetbufAllocSpace (
+                                 Packet,
+                                 sizeof (EFI_IPv6_ADDRESS),
+                                 FALSE
+                                 );
   ASSERT (Target != NULL);
   IP6_COPY_ADDRESS (Target, TargetIp6Address);
 
@@ -1429,7 +1533,12 @@ Ip6SendNeighborSolicit (
   if (!IsDAD && Ip6IsSNMulticastAddr (DestinationAddress)) {
     Neighbor = Ip6FindNeighborEntry (IpSb, TargetIp6Address);
     if (Neighbor == NULL) {
-      Neighbor = Ip6CreateNeighborEntry (IpSb, Ip6OnArpResolved, TargetIp6Address, NULL);
+      Neighbor = Ip6CreateNeighborEntry (
+                   IpSb,
+                   Ip6OnArpResolved,
+                   TargetIp6Address,
+                   NULL
+                   );
       ASSERT (Neighbor != NULL);
     }
   }
@@ -1437,7 +1546,17 @@ Ip6SendNeighborSolicit (
   //
   // Transmit the packet
   //
-  return Ip6Output (IpSb, IpSb->DefaultInterface, NULL, Packet, &Head, NULL, 0, Ip6SysPacketSent, NULL);
+  return Ip6Output (
+           IpSb,
+           IpSb->DefaultInterface,
+           NULL,
+           Packet,
+           &Head,
+           NULL,
+           0,
+           Ip6SysPacketSent,
+           NULL
+           );
 }
 
 /**
@@ -1491,7 +1610,9 @@ Ip6ProcessNeighborSolicit (
   //
   Status = EFI_INVALID_PARAMETER;
 
-  if ((Head->HopLimit != IP6_HOP_LIMIT) || (Icmp.Head.Code != 0) || !NetIp6IsValidUnicast (&Target)) {
+  if ((Head->HopLimit != IP6_HOP_LIMIT) || (Icmp.Head.Code != 0) ||
+      !NetIp6IsValidUnicast (&Target))
+  {
     goto Exit;
   }
 
@@ -1620,7 +1741,12 @@ Ip6ProcessNeighborSolicit (
     UpdateCache = FALSE;
 
     if (Neighbor == NULL) {
-      Neighbor = Ip6CreateNeighborEntry (IpSb, Ip6OnArpResolved, &Head->SourceAddress, NULL);
+      Neighbor = Ip6CreateNeighborEntry (
+                   IpSb,
+                   Ip6OnArpResolved,
+                   &Head->SourceAddress,
+                   NULL
+                   );
       if (Neighbor == NULL) {
         Status = EFI_OUT_OF_RESOURCES;
         goto Exit;
@@ -1628,7 +1754,12 @@ Ip6ProcessNeighborSolicit (
 
       UpdateCache = TRUE;
     } else {
-      if (CompareMem (Neighbor->LinkAddress.Addr, LinkLayerOption.EtherAddr, 6) != 0) {
+      if (CompareMem (
+            Neighbor->LinkAddress.Addr,
+            LinkLayerOption.EtherAddr,
+            6
+            ) != 0)
+      {
         UpdateCache = TRUE;
       }
     }
@@ -1722,7 +1853,9 @@ Ip6ProcessNeighborAdvertise (
   // ICMP Code is 0.
   // Target Address is not a multicast address.
   //
-  if ((Head->HopLimit != IP6_HOP_LIMIT) || (Icmp.Head.Code != 0) || !NetIp6IsValidUnicast (&Target)) {
+  if ((Head->HopLimit != IP6_HOP_LIMIT) || (Icmp.Head.Code != 0) ||
+      !NetIp6IsValidUnicast (&Target))
+  {
     goto Exit;
   }
 
@@ -1813,7 +1946,11 @@ Ip6ProcessNeighborAdvertise (
 
   Compare = 0;
   if (Provided) {
-    Compare = CompareMem (Neighbor->LinkAddress.Addr, LinkLayerOption.EtherAddr, 6);
+    Compare = CompareMem (
+                Neighbor->LinkAddress.Addr,
+                LinkLayerOption.EtherAddr,
+                6
+                );
   }
 
   if (!Neighbor->IsRouter && IsRouter) {
@@ -2018,7 +2155,11 @@ Ip6ProcessRouterAdvertise (
   DefaultRouter = Ip6FindDefaultRouter (IpSb, &Head->SourceAddress);
   if (DefaultRouter == NULL) {
     if (RouterLifetime != 0) {
-      DefaultRouter = Ip6CreateDefaultRouter (IpSb, &Head->SourceAddress, RouterLifetime);
+      DefaultRouter = Ip6CreateDefaultRouter (
+                        IpSb,
+                        &Head->SourceAddress,
+                        RouterLifetime
+                        );
       if (DefaultRouter == NULL) {
         Status = EFI_OUT_OF_RESOURCES;
         goto Exit;
@@ -2031,7 +2172,10 @@ Ip6ProcessRouterAdvertise (
       // Check the corresponding neighbor cache entry here.
       //
       if (DefaultRouter->NeighborCache == NULL) {
-        DefaultRouter->NeighborCache = Ip6FindNeighborEntry (IpSb, &Head->SourceAddress);
+        DefaultRouter->NeighborCache = Ip6FindNeighborEntry (
+                                         IpSb,
+                                         &Head->SourceAddress
+                                         );
       }
     } else {
       //
@@ -2049,7 +2193,9 @@ Ip6ProcessRouterAdvertise (
 
   Mflag = FALSE;
   Oflag = FALSE;
-  if ((*((UINT8 *)&Fourth + 2) & IP6_M_ADDR_CONFIG_FLAG) == IP6_M_ADDR_CONFIG_FLAG) {
+  if ((*((UINT8 *)&Fourth + 2) & IP6_M_ADDR_CONFIG_FLAG) ==
+      IP6_M_ADDR_CONFIG_FLAG)
+  {
     Mflag = TRUE;
   } else {
     if ((*((UINT8 *)&Fourth + 2) & IP6_O_CONFIG_FLAG) == IP6_O_CONFIG_FLAG) {
@@ -2068,7 +2214,12 @@ Ip6ProcessRouterAdvertise (
   // Process Reachable Time and Retrans Timer fields.
   //
   NetbufCopy (Packet, sizeof (Icmp), sizeof (UINT32), (UINT8 *)&ReachableTime);
-  NetbufCopy (Packet, sizeof (Icmp) + sizeof (UINT32), sizeof (UINT32), (UINT8 *)&RetransTimer);
+  NetbufCopy (
+    Packet,
+    sizeof (Icmp) + sizeof (UINT32),
+    sizeof (UINT32),
+    (UINT8 *)&RetransTimer
+    );
   ReachableTime = NTOHL (ReachableTime);
   RetransTimer  = NTOHL (RetransTimer);
 
@@ -2112,13 +2263,21 @@ Ip6ProcessRouterAdvertise (
         //
         // Update the neighbor cache
         //
-        NetbufCopy (Packet, Offset, sizeof (IP6_ETHER_ADDR_OPTION), (UINT8 *)&LinkLayerOption);
+        NetbufCopy (
+          Packet,
+          Offset,
+          sizeof (IP6_ETHER_ADDR_OPTION),
+          (UINT8 *)&LinkLayerOption
+          );
 
         //
         // Option size validity ensured by Ip6IsNDOptionValid().
         //
         ASSERT (LinkLayerOption.Length != 0);
-        ASSERT (Offset + (UINT32)LinkLayerOption.Length * 8 <= (UINT32)Head->PayloadLength);
+        ASSERT (
+          Offset + (UINT32)LinkLayerOption.Length * 8 <=
+          (UINT32)Head->PayloadLength
+          );
 
         ZeroMem (&LinkLayerAddress, sizeof (EFI_MAC_ADDRESS));
         CopyMem (&LinkLayerAddress, LinkLayerOption.EtherAddr, 6);
@@ -2139,14 +2298,20 @@ Ip6ProcessRouterAdvertise (
           NeighborCache->State    = EfiNeighborStale;
           NeighborCache->Ticks    = (UINT32)IP6_INFINIT_LIFETIME;
         } else {
-          Result = CompareMem (&LinkLayerAddress, &NeighborCache->LinkAddress, 6);
+          Result = CompareMem (
+                     &LinkLayerAddress,
+                     &NeighborCache->LinkAddress,
+                     6
+                     );
 
           //
           // If the link-local address is the same as that already in the cache,
           // the cache entry's state remains unchanged. Otherwise update the
           // reachability state to STALE.
           //
-          if ((NeighborCache->State == EfiNeighborInComplete) || (Result != 0)) {
+          if ((NeighborCache->State == EfiNeighborInComplete) || (Result !=
+                                                                  0))
+          {
             CopyMem (&NeighborCache->LinkAddress, &LinkLayerAddress, 6);
 
             NeighborCache->Ticks = (UINT32)IP6_INFINIT_LIFETIME;
@@ -2166,13 +2331,21 @@ Ip6ProcessRouterAdvertise (
         Offset += (UINT32)LinkLayerOption.Length * 8;
         break;
       case Ip6OptionPrefixInfo:
-        NetbufCopy (Packet, Offset, sizeof (IP6_PREFIX_INFO_OPTION), (UINT8 *)&PrefixOption);
+        NetbufCopy (
+          Packet,
+          Offset,
+          sizeof (IP6_PREFIX_INFO_OPTION),
+          (UINT8 *)&PrefixOption
+          );
 
         //
         // Option size validity ensured by Ip6IsNDOptionValid().
         //
         ASSERT (PrefixOption.Length == 4);
-        ASSERT (Offset + (UINT32)PrefixOption.Length * 8 <= (UINT32)Head->PayloadLength);
+        ASSERT (
+          Offset + (UINT32)PrefixOption.Length * 8 <=
+          (UINT32)Head->PayloadLength
+          );
 
         PrefixOption.ValidLifetime     = NTOHL (PrefixOption.ValidLifetime);
         PrefixOption.PreferredLifetime = NTOHL (PrefixOption.PreferredLifetime);
@@ -2186,7 +2359,9 @@ Ip6ProcessRouterAdvertise (
         }
 
         Autonomous = FALSE;
-        if ((PrefixOption.Reserved1 & IP6_AUTO_CONFIG_FLAG) == IP6_AUTO_CONFIG_FLAG) {
+        if ((PrefixOption.Reserved1 & IP6_AUTO_CONFIG_FLAG) ==
+            IP6_AUTO_CONFIG_FLAG)
+        {
           Autonomous = TRUE;
         }
 
@@ -2243,7 +2418,9 @@ Ip6ProcessRouterAdvertise (
         //
         // Do following if Autonomous flag is set according to RFC4862.
         //
-        if (Autonomous && (PrefixOption.PreferredLifetime <= PrefixOption.ValidLifetime)) {
+        if (Autonomous && (PrefixOption.PreferredLifetime <=
+                           PrefixOption.ValidLifetime))
+        {
           PrefixList = Ip6FindPrefixListEntry (
                          IpSb,
                          FALSE,
@@ -2264,7 +2441,11 @@ Ip6ProcessRouterAdvertise (
             // Form the address in network order.
             //
             CopyMem (&StatelessAddress, &PrefixOption.Prefix, sizeof (UINT64));
-            CopyMem (&StatelessAddress.Addr[8], IpSb->InterfaceId, sizeof (UINT64));
+            CopyMem (
+              &StatelessAddress.Addr[8],
+              IpSb->InterfaceId,
+              sizeof (UINT64)
+              );
 
             //
             // If the address is not yet in the assigned address list, adds it into.
@@ -2339,13 +2520,21 @@ Ip6ProcessRouterAdvertise (
         Offset += sizeof (IP6_PREFIX_INFO_OPTION);
         break;
       case Ip6OptionMtu:
-        NetbufCopy (Packet, Offset, sizeof (IP6_MTU_OPTION), (UINT8 *)&MTUOption);
+        NetbufCopy (
+          Packet,
+          Offset,
+          sizeof (IP6_MTU_OPTION),
+          (UINT8 *)&MTUOption
+          );
 
         //
         // Option size validity ensured by Ip6IsNDOptionValid().
         //
         ASSERT (MTUOption.Length == 1);
-        ASSERT (Offset + (UINT32)MTUOption.Length * 8 <= (UINT32)Head->PayloadLength);
+        ASSERT (
+          Offset + (UINT32)MTUOption.Length * 8 <=
+          (UINT32)Head->PayloadLength
+          );
 
         //
         // Use IPv6 minimum link MTU 1280 bytes as the maximum packet size in order
@@ -2533,7 +2722,11 @@ Ip6ProcessRedirect (
   // The IP source address of the Redirect is the same as the current
   // first-hop router for the specified ICMP Destination Address.
   //
-  RouteCache = Ip6FindRouteCache (IpSb->RouteTable, IcmpDest, &Head->DestinationAddress);
+  RouteCache = Ip6FindRouteCache (
+                 IpSb->RouteTable,
+                 IcmpDest,
+                 &Head->DestinationAddress
+                 );
   if (RouteCache != NULL) {
     if (!EFI_IP6_EQUAL (&RouteCache->NextHop, &Head->SourceAddress)) {
       //
@@ -2587,7 +2780,10 @@ Ip6ProcessRedirect (
     // Insert the newly created route cache entry.
     //
     Index = IP6_ROUTE_CACHE_HASH (IcmpDest, &Head->DestinationAddress);
-    InsertHeadList (&IpSb->RouteTable->Cache.CacheBucket[Index], &RouteCache->Link);
+    InsertHeadList (
+      &IpSb->RouteTable->Cache.CacheBucket[Index],
+      &RouteCache->Link
+      );
   }
 
   //
@@ -2602,7 +2798,12 @@ Ip6ProcessRedirect (
       //
       ZeroMem (&Mac, sizeof (EFI_MAC_ADDRESS));
       CopyMem (&Mac, LinkLayerOption->EtherAddr, 6);
-      NeighborCache = Ip6CreateNeighborEntry (IpSb, Ip6OnArpResolved, Target, &Mac);
+      NeighborCache = Ip6CreateNeighborEntry (
+                        IpSb,
+                        Ip6OnArpResolved,
+                        Target,
+                        &Mac
+                        );
       if (NeighborCache == NULL) {
         //
         // Just report a success here. The neighbor cache can be created in
@@ -2615,7 +2816,11 @@ Ip6ProcessRedirect (
       NeighborCache->State = EfiNeighborStale;
       NeighborCache->Ticks = (UINT32)IP6_INFINIT_LIFETIME;
     } else {
-      Result = CompareMem (LinkLayerOption->EtherAddr, &NeighborCache->LinkAddress, 6);
+      Result = CompareMem (
+                 LinkLayerOption->EtherAddr,
+                 &NeighborCache->LinkAddress,
+                 6
+                 );
 
       //
       // If the link-local address is the same as that already in the cache,
@@ -2703,7 +2908,12 @@ Ip6AddNeighbor (
       return EFI_NOT_FOUND;
     }
 
-    Neighbor = Ip6CreateNeighborEntry (IpSb, Ip6OnArpResolved, TargetIp6Address, TargetLinkAddress);
+    Neighbor = Ip6CreateNeighborEntry (
+                 IpSb,
+                 Ip6OnArpResolved,
+                 TargetIp6Address,
+                 TargetLinkAddress
+                 );
     if (Neighbor == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -2848,7 +3058,9 @@ Ip6NdFasterTimerTicking (
     NET_LIST_FOR_EACH_SAFE (Entry2, Next, &IpIf->DupAddrDetectList) {
       DupAddrDetect = NET_LIST_USER_STRUCT (Entry2, IP6_DAD_ENTRY, Link);
 
-      if ((DupAddrDetect->RetransTick == 0) || (--DupAddrDetect->RetransTick == 0)) {
+      if ((DupAddrDetect->RetransTick == 0) || (--DupAddrDetect->RetransTick ==
+                                                0))
+      {
         //
         // The timer expires, check the remaining transmit counts.
         //
@@ -2913,7 +3125,11 @@ Ip6NdFasterTimerTicking (
             // for RetransTimer and then remove entry if no response is received.
             //
             Ip6CreateSNMulticastAddr (&NeighborCache->Neighbor, &Destination);
-            Status = Ip6SelectSourceAddress (IpSb, &NeighborCache->Neighbor, &Source);
+            Status = Ip6SelectSourceAddress (
+                       IpSb,
+                       &NeighborCache->Neighbor,
+                       &Source
+                       );
             if (EFI_ERROR (Status)) {
               return;
             }
@@ -2964,7 +3180,9 @@ Ip6NdFasterTimerTicking (
         // This entry is inserted by EfiIp6Neighbors() as static entry
         // and will not timeout.
         //
-        if (!NeighborCache->Dynamic && (NeighborCache->Ticks == IP6_INFINIT_LIFETIME)) {
+        if (!NeighborCache->Dynamic && (NeighborCache->Ticks ==
+                                        IP6_INFINIT_LIFETIME))
+        {
           break;
         }
 
@@ -3002,7 +3220,11 @@ Ip6NdFasterTimerTicking (
           //
           // Send out unicast neighbor solicitation for Neighbor Unreachability Detection
           //
-          Status = Ip6SelectSourceAddress (IpSb, &NeighborCache->Neighbor, &Source);
+          Status = Ip6SelectSourceAddress (
+                     IpSb,
+                     &NeighborCache->Neighbor,
+                     &Source
+                     );
           if (EFI_ERROR (Status)) {
             return;
           }
@@ -3039,7 +3261,11 @@ Ip6NdFasterTimerTicking (
             // Detection. After last neighbor solicitation message has been sent out,
             // wait for RetransTimer and then remove entry if no response is received.
             //
-            Status = Ip6SelectSourceAddress (IpSb, &NeighborCache->Neighbor, &Source);
+            Status = Ip6SelectSourceAddress (
+                       IpSb,
+                       &NeighborCache->Neighbor,
+                       &Source
+                       );
             if (EFI_ERROR (Status)) {
               return;
             }
@@ -3129,7 +3355,9 @@ Ip6NdTimerTicking (
   NET_LIST_FOR_EACH_SAFE (Entry, Next, &IpSb->AutonomousPrefix) {
     PrefixOption = NET_LIST_USER_STRUCT (Entry, IP6_PREFIX_LIST_ENTRY, Link);
     if (PrefixOption->ValidLifetime != (UINT32)IP6_INFINIT_LIFETIME) {
-      if ((PrefixOption->ValidLifetime > 0) && (--PrefixOption->ValidLifetime > 0)) {
+      if ((PrefixOption->ValidLifetime > 0) && (--PrefixOption->ValidLifetime >
+                                                0))
+      {
         if ((PrefixOption->PreferredLifetime != (UINT32)IP6_INFINIT_LIFETIME) &&
             (PrefixOption->PreferredLifetime > 0)
             )
@@ -3145,7 +3373,9 @@ Ip6NdTimerTicking (
   NET_LIST_FOR_EACH_SAFE (Entry, Next, &IpSb->OnlinkPrefix) {
     PrefixOption = NET_LIST_USER_STRUCT (Entry, IP6_PREFIX_LIST_ENTRY, Link);
     if (PrefixOption->ValidLifetime != (UINT32)IP6_INFINIT_LIFETIME) {
-      if ((PrefixOption->ValidLifetime == 0) || (--PrefixOption->ValidLifetime == 0)) {
+      if ((PrefixOption->ValidLifetime == 0) ||
+          (--PrefixOption->ValidLifetime == 0))
+      {
         Ip6DestroyPrefixListEntry (IpSb, PrefixOption, TRUE, TRUE);
       }
     }

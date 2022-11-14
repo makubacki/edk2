@@ -75,13 +75,17 @@ PxeBcSelectBootPrompt (
   TimeoutEvent = NULL;
   DescendEvent = NULL;
   Mode         = Private->PxeBc.Mode;
-  Cache        = Mode->ProxyOfferReceived ? &Private->ProxyOffer : &Private->DhcpAck;
-  OfferType    = Mode->UsingIpv6 ? Cache->Dhcp6.OfferType : Cache->Dhcp4.OfferType;
+  Cache        = Mode->ProxyOfferReceived ? &Private->ProxyOffer :
+                 &Private->DhcpAck;
+  OfferType = Mode->UsingIpv6 ? Cache->Dhcp6.OfferType :
+              Cache->Dhcp4.OfferType;
 
   //
   // Only DhcpPxe10 and ProxyPxe10 offer needs boot prompt.
   //
-  if ((OfferType != PxeOfferTypeProxyPxe10) && (OfferType != PxeOfferTypeDhcpPxe10)) {
+  if ((OfferType != PxeOfferTypeProxyPxe10) && (OfferType !=
+                                                PxeOfferTypeDhcpPxe10))
+  {
     return EFI_NOT_FOUND;
   }
 
@@ -280,19 +284,23 @@ PxeBcSelectBootMenu (
   PXEBC_BOOT_MENU_ENTRY    *MenuItem;
   PXEBC_BOOT_MENU_ENTRY    *MenuArray[PXEBC_MENU_MAX_NUM];
 
-  Finish    = FALSE;
-  Select    = 0;
-  Index     = 0;
-  *Type     = 0;
-  Mode      = Private->PxeBc.Mode;
-  Cache     = Mode->ProxyOfferReceived ? &Private->ProxyOffer : &Private->DhcpAck;
+  Finish = FALSE;
+  Select = 0;
+  Index  = 0;
+  *Type  = 0;
+  Mode   = Private->PxeBc.Mode;
+  Cache  = Mode->ProxyOfferReceived ? &Private->ProxyOffer :
+           &Private->DhcpAck;
   OfferType = Mode->UsingIpv6 ? Cache->Dhcp6.OfferType : Cache->Dhcp4.OfferType;
 
   //
   // There is no specified DhcpPxe10/ProxyPxe10 for IPv6 in PXE and UEFI spec.
   //
   ASSERT (!Mode->UsingIpv6);
-  ASSERT (OfferType == PxeOfferTypeProxyPxe10 || OfferType == PxeOfferTypeDhcpPxe10);
+  ASSERT (
+    OfferType == PxeOfferTypeProxyPxe10 || OfferType ==
+    PxeOfferTypeDhcpPxe10
+    );
 
   VendorOpt = &Cache->Dhcp4.VendorOpt;
   if (!IS_VALID_BOOT_MENU (VendorOpt->BitMap)) {
@@ -315,7 +323,8 @@ PxeBcSelectBootMenu (
     ASSERT (MenuItem != NULL);
     MenuArray[Index] = MenuItem;
     MenuSize         = (UINT8)(MenuSize - (MenuItem->DescLen + 3));
-    MenuItem         = (PXEBC_BOOT_MENU_ENTRY *)((UINT8 *)MenuItem + MenuItem->DescLen + 3);
+    MenuItem         = (PXEBC_BOOT_MENU_ENTRY *)((UINT8 *)MenuItem +
+                                                 MenuItem->DescLen + 3);
     Index++;
   }
 
@@ -342,13 +351,22 @@ PxeBcSelectBootMenu (
     //
     // Highlight selected row.
     //
-    gST->ConOut->SetAttribute (gST->ConOut, EFI_TEXT_ATTR (EFI_BLACK, EFI_LIGHTGRAY));
+    gST->ConOut->SetAttribute (
+                   gST->ConOut,
+                   EFI_TEXT_ATTR (
+                     EFI_BLACK,
+                     EFI_LIGHTGRAY
+                     )
+                   );
     gST->ConOut->SetCursorPosition (gST->ConOut, 0, TopRow + Select);
     ASSERT (Select < PXEBC_MENU_MAX_NUM);
     ASSERT (MenuArray[Select] != NULL);
     Blank[MenuArray[Select]->DescLen] = 0;
     AsciiPrint ("%a\r", Blank);
-    PxeBcDisplayBootItem (MenuArray[Select]->DescStr, MenuArray[Select]->DescLen);
+    PxeBcDisplayBootItem (
+      MenuArray[Select]->DescStr,
+      MenuArray[Select]->DescLen
+      );
     gST->ConOut->SetCursorPosition (gST->ConOut, 0, TopRow + MenuNum);
     LastSelect = Select;
 
@@ -419,13 +437,22 @@ PxeBcSelectBootMenu (
     //
     // Unhighlight the last selected row.
     //
-    gST->ConOut->SetAttribute (gST->ConOut, EFI_TEXT_ATTR (EFI_LIGHTGRAY, EFI_BLACK));
+    gST->ConOut->SetAttribute (
+                   gST->ConOut,
+                   EFI_TEXT_ATTR (
+                     EFI_LIGHTGRAY,
+                     EFI_BLACK
+                     )
+                   );
     gST->ConOut->SetCursorPosition (gST->ConOut, 0, TopRow + LastSelect);
     ASSERT (LastSelect < PXEBC_MENU_MAX_NUM);
     ASSERT (MenuArray[LastSelect] != NULL);
     Blank[MenuArray[LastSelect]->DescLen] = 0;
     AsciiPrint ("%a\r", Blank);
-    PxeBcDisplayBootItem (MenuArray[LastSelect]->DescStr, MenuArray[LastSelect]->DescLen);
+    PxeBcDisplayBootItem (
+      MenuArray[LastSelect]->DescStr,
+      MenuArray[LastSelect]->DescLen
+      );
     gST->ConOut->SetCursorPosition (gST->ConOut, 0, TopRow + MenuNum);
   } while (!Finish);
 
@@ -502,9 +529,13 @@ PxeBcDhcp4BootInfo (
   // If all these fields are not available, use option 54 instead.
   //
   VendorOpt = &Cache4->VendorOpt;
-  if (IS_DISABLE_PROMPT_MENU (VendorOpt->DiscoverCtrl) && IS_VALID_BOOT_SERVERS (VendorOpt->BitMap)) {
+  if (IS_DISABLE_PROMPT_MENU (VendorOpt->DiscoverCtrl) &&
+      IS_VALID_BOOT_SERVERS (VendorOpt->BitMap))
+  {
     Entry = VendorOpt->BootSvr;
-    if ((VendorOpt->BootSvrLen >= sizeof (PXEBC_BOOT_SVR_ENTRY)) && (Entry->IpCnt > 0)) {
+    if ((VendorOpt->BootSvrLen >= sizeof (PXEBC_BOOT_SVR_ENTRY)) &&
+        (Entry->IpCnt > 0))
+    {
       CopyMem (
         &Private->ServerIp,
         &Entry->IpAddr[0],
@@ -545,7 +576,11 @@ PxeBcDhcp4BootInfo (
     //
     // Parse the boot file size by option.
     //
-    CopyMem (&Value, Cache4->OptList[PXEBC_DHCP4_TAG_INDEX_BOOTFILE_LEN]->Data, sizeof (Value));
+    CopyMem (
+      &Value,
+      Cache4->OptList[PXEBC_DHCP4_TAG_INDEX_BOOTFILE_LEN]->Data,
+      sizeof (Value)
+      );
     Value = NTOHS (Value);
     //
     // The field of boot file size is 512 bytes in unit.
@@ -668,7 +703,10 @@ PxeBcDhcp6BootInfo (
     //
     // Parse it out if have the boot file parameter option.
     //
-    Status = PxeBcExtractBootFileParam ((CHAR8 *)Cache6->OptList[PXEBC_DHCP6_IDX_BOOT_FILE_PARAM]->Data, &Value);
+    Status = PxeBcExtractBootFileParam (
+               (CHAR8 *)Cache6->OptList[PXEBC_DHCP6_IDX_BOOT_FILE_PARAM]->Data,
+               &Value
+               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -755,16 +793,24 @@ PxeBcExtractDiscoverInfo (
     //
     // There is no vendor options specified in DHCPv6, so take BootFileUrl in the last cached packet.
     //
-    CopyMem (&Info->SrvList[0].IpAddr, &Private->ServerIp, sizeof (EFI_IP_ADDRESS));
+    CopyMem (
+      &Info->SrvList[0].IpAddr,
+      &Private->ServerIp,
+      sizeof (EFI_IP_ADDRESS)
+      );
 
     *SrvList = Info->SrvList;
   } else {
-    Entry     = NULL;
-    IsFound   = FALSE;
-    Cache4    = (Mode->ProxyOfferReceived) ? &Private->ProxyOffer.Dhcp4 : &Private->DhcpAck.Dhcp4;
+    Entry   = NULL;
+    IsFound = FALSE;
+    Cache4  = (Mode->ProxyOfferReceived) ? &Private->ProxyOffer.Dhcp4 :
+              &Private->DhcpAck.Dhcp4;
     VendorOpt = &Cache4->VendorOpt;
 
-    if (!Mode->DhcpAckReceived || !IS_VALID_DISCOVER_VENDOR_OPTION (VendorOpt->BitMap)) {
+    if (!Mode->DhcpAckReceived || !IS_VALID_DISCOVER_VENDOR_OPTION (
+                                     VendorOpt->BitMap
+                                     ))
+    {
       //
       // Address is not acquired or no discovery options.
       //
@@ -774,16 +820,26 @@ PxeBcExtractDiscoverInfo (
     //
     // Parse the boot server entry from the vendor option in the last cached packet.
     //
-    Info->UseMCast    = (BOOLEAN) !IS_DISABLE_MCAST_DISCOVER (VendorOpt->DiscoverCtrl);
-    Info->UseBCast    = (BOOLEAN) !IS_DISABLE_BCAST_DISCOVER (VendorOpt->DiscoverCtrl);
-    Info->MustUseList = (BOOLEAN)IS_ENABLE_USE_SERVER_LIST (VendorOpt->DiscoverCtrl);
-    Info->UseUCast    = (BOOLEAN)IS_VALID_BOOT_SERVERS (VendorOpt->BitMap);
+    Info->UseMCast = (BOOLEAN) !IS_DISABLE_MCAST_DISCOVER (
+                                  VendorOpt->DiscoverCtrl
+                                  );
+    Info->UseBCast = (BOOLEAN) !IS_DISABLE_BCAST_DISCOVER (
+                                  VendorOpt->DiscoverCtrl
+                                  );
+    Info->MustUseList = (BOOLEAN)IS_ENABLE_USE_SERVER_LIST (
+                                   VendorOpt->DiscoverCtrl
+                                   );
+    Info->UseUCast = (BOOLEAN)IS_VALID_BOOT_SERVERS (VendorOpt->BitMap);
 
     if (Info->UseMCast) {
       //
       // Get the multicast discover ip address from vendor option if has.
       //
-      CopyMem (&Info->ServerMCastIp.v4, &VendorOpt->DiscoverMcastIp, sizeof (EFI_IPv4_ADDRESS));
+      CopyMem (
+        &Info->ServerMCastIp.v4,
+        &VendorOpt->DiscoverMcastIp,
+        sizeof (EFI_IPv4_ADDRESS)
+        );
     }
 
     Info->IpCnt = 0;
@@ -806,7 +862,10 @@ PxeBcExtractDiscoverInfo (
 
       Info->IpCnt = Entry->IpCnt;
       if (Info->IpCnt >= 1) {
-        *DiscoverInfo = AllocatePool (sizeof (*Info) + (Info->IpCnt - 1) * sizeof (**SrvList));
+        *DiscoverInfo = AllocatePool (
+                          sizeof (*Info) + (Info->IpCnt - 1) *
+                          sizeof (**SrvList)
+                          );
         if (*DiscoverInfo == NULL) {
           return EFI_OUT_OF_RESOURCES;
         }
@@ -816,7 +875,11 @@ PxeBcExtractDiscoverInfo (
       }
 
       for (Index = 0; Index < Info->IpCnt; Index++) {
-        CopyMem (&Info->SrvList[Index].IpAddr, &Entry->IpAddr[Index], sizeof (EFI_IPv4_ADDRESS));
+        CopyMem (
+          &Info->SrvList[Index].IpAddr,
+          &Entry->IpAddr[Index],
+          sizeof (EFI_IPv4_ADDRESS)
+          );
         Info->SrvList[Index].AcceptAnyResponse = !Info->MustUseList;
         Info->SrvList[Index].Type              = NTOHS (Entry->Type);
       }
@@ -1011,7 +1074,8 @@ PxeBcInstallCallback (
   //
   PxeBc  = &Private->PxeBc;
   Status = gBS->HandleProtocol (
-                  Private->Mode.UsingIpv6 ? Private->Ip6Nic->Controller : Private->Ip4Nic->Controller,
+                  Private->Mode.UsingIpv6 ? Private->Ip6Nic->Controller :
+                  Private->Ip4Nic->Controller,
                   &gEfiPxeBaseCodeCallbackProtocolGuid,
                   (VOID **)&Private->PxeBcCallback
                   );
@@ -1026,7 +1090,8 @@ PxeBcInstallCallback (
     // Install a default callback if user didn't offer one.
     //
     Status = gBS->InstallProtocolInterface (
-                    Private->Mode.UsingIpv6 ? &Private->Ip6Nic->Controller : &Private->Ip4Nic->Controller,
+                    Private->Mode.UsingIpv6 ? &Private->Ip6Nic->Controller :
+                    &Private->Ip4Nic->Controller,
                     &gEfiPxeBaseCodeCallbackProtocolGuid,
                     EFI_NATIVE_INTERFACE,
                     &Private->LoadFileCallback
@@ -1034,7 +1099,14 @@ PxeBcInstallCallback (
 
     (*NewMakeCallback) = (BOOLEAN)(Status == EFI_SUCCESS);
 
-    Status = PxeBc->SetParameters (PxeBc, NULL, NULL, NULL, NULL, NewMakeCallback);
+    Status = PxeBc->SetParameters (
+                      PxeBc,
+                      NULL,
+                      NULL,
+                      NULL,
+                      NULL,
+                      NewMakeCallback
+                      );
     if (EFI_ERROR (Status)) {
       PxeBc->Stop (PxeBc);
       return Status;
@@ -1068,7 +1140,8 @@ PxeBcUninstallCallback (
     PxeBc->SetParameters (PxeBc, NULL, NULL, NULL, NULL, &NewMakeCallback);
 
     gBS->UninstallProtocolInterface (
-           Private->Mode.UsingIpv6 ? Private->Ip6Nic->Controller : Private->Ip4Nic->Controller,
+           Private->Mode.UsingIpv6 ? Private->Ip6Nic->Controller :
+           Private->Ip4Nic->Controller,
            &gEfiPxeBaseCodeCallbackProtocolGuid,
            &Private->LoadFileCallback
            );
@@ -1245,7 +1318,9 @@ ON_EXIT:
     AsciiPrint ("\n  NBP file downloaded successfully.\n");
     return EFI_SUCCESS;
   } else if ((Status == EFI_BUFFER_TOO_SMALL) && (Buffer != NULL)) {
-    AsciiPrint ("\n  PXE-E05: Buffer size is smaller than the requested file.\n");
+    AsciiPrint (
+      "\n  PXE-E05: Buffer size is smaller than the requested file.\n"
+      );
   } else if (Status == EFI_DEVICE_ERROR) {
     AsciiPrint ("\n  PXE-E07: Network device error.\n");
   } else if (Status == EFI_OUT_OF_RESOURCES) {

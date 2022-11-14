@@ -155,7 +155,8 @@ Ip4WrapLinkTxToken (
 
   Token = AllocatePool (
             sizeof (IP4_LINK_TX_TOKEN) + \
-            (Packet->BlockOpNum - 1) * sizeof (EFI_MANAGED_NETWORK_FRAGMENT_DATA)
+            (Packet->BlockOpNum - 1) *
+            sizeof (EFI_MANAGED_NETWORK_FRAGMENT_DATA)
             );
 
   if (Token == NULL) {
@@ -402,7 +403,13 @@ Ip4CancelFrameArp (
     if ((FrameToCancel == NULL) || FrameToCancel (Token, Context)) {
       RemoveEntryList (Entry);
 
-      Token->CallBack (Token->IpInstance, Token->Packet, IoStatus, 0, Token->Context);
+      Token->CallBack (
+               Token->IpInstance,
+               Token->Packet,
+               IoStatus,
+               0,
+               Token->Context
+               );
       Ip4FreeLinkTxToken (Token);
     }
   }
@@ -521,7 +528,11 @@ Ip4CreateInterface (
   }
 
   CopyMem (&Interface->Mac, &SnpMode.CurrentAddress, sizeof (Interface->Mac));
-  CopyMem (&Interface->BroadcastMac, &SnpMode.BroadcastAddress, sizeof (Interface->BroadcastMac));
+  CopyMem (
+    &Interface->BroadcastMac,
+    &SnpMode.BroadcastAddress,
+    sizeof (Interface->BroadcastMac)
+    );
   Interface->HwaddrLen = SnpMode.HwAddressSize;
 
   InitializeListHead (&Interface->IpInstances);
@@ -815,11 +826,23 @@ Ip4SendFrameToDefaultRoute (
     //
     RtCacheEntry = NULL;
     if (Token->IpInstance != NULL) {
-      RtCacheEntry = Ip4FindRouteCache (Token->IpInstance->RouteTable, NTOHL (ArpQue->Ip), Token->Interface->Ip);
+      RtCacheEntry = Ip4FindRouteCache (
+                       Token->IpInstance->RouteTable,
+                       NTOHL (
+                         ArpQue->Ip
+                         ),
+                       Token->Interface->Ip
+                       );
     }
 
     if (RtCacheEntry == NULL) {
-      RtCacheEntry = Ip4FindRouteCache (Token->IpSb->DefaultRouteTable, NTOHL (ArpQue->Ip), Token->Interface->Ip);
+      RtCacheEntry = Ip4FindRouteCache (
+                       Token->IpSb->DefaultRouteTable,
+                       NTOHL (
+                         ArpQue->Ip
+                         ),
+                       Token->Interface->Ip
+                       );
     }
 
     if (RtCacheEntry == NULL) {
@@ -846,7 +869,15 @@ Ip4SendFrameToDefaultRoute (
     }
 
     RtCacheEntry->NextHop = Gateway;
-    Status                = Ip4SendFrame (Token->Interface, Token->IpInstance, Token->Packet, Gateway, Token->CallBack, Token->Context, Token->IpSb);
+    Status                = Ip4SendFrame (
+                              Token->Interface,
+                              Token->IpInstance,
+                              Token->Packet,
+                              Gateway,
+                              Token->CallBack,
+                              Token->Context,
+                              Token->IpSb
+                              );
     if (EFI_ERROR (Status)) {
       Status = EFI_NO_MAPPING;
       goto ON_ERROR;
@@ -898,7 +929,12 @@ Ip4OnArpResolvedDpc (
   //
   // ARP resolve failed for some reason.
   //
-  if (NET_MAC_EQUAL (&ArpQue->Mac, &mZeroMacAddress, ArpQue->Interface->HwaddrLen)) {
+  if (NET_MAC_EQUAL (
+        &ArpQue->Mac,
+        &mZeroMacAddress,
+        ArpQue->Interface->HwaddrLen
+        ))
+  {
     if (ArpQue->Interface->SubnetMask != IP4_ALLONE_ADDRESS) {
       //
       // Release all the frame and ARP queue itself. Ip4FreeArpQue will call the frame's
@@ -942,7 +978,13 @@ Ip4OnArpResolvedDpc (
     Status = Interface->Mnp->Transmit (Interface->Mnp, &Token->MnpToken);
     if (EFI_ERROR (Status)) {
       RemoveEntryList (&Token->Link);
-      Token->CallBack (Token->IpInstance, Token->Packet, Status, 0, Token->Context);
+      Token->CallBack (
+               Token->IpInstance,
+               Token->Packet,
+               Status,
+               0,
+               Token->Context
+               );
 
       Ip4FreeLinkTxToken (Token);
       continue;
@@ -1067,7 +1109,14 @@ Ip4SendFrame (
 
   ASSERT (Interface->Configured);
 
-  Token = Ip4WrapLinkTxToken (Interface, IpInstance, Packet, CallBack, Context, IpSb);
+  Token = Ip4WrapLinkTxToken (
+            Interface,
+            IpInstance,
+            Packet,
+            CallBack,
+            Context,
+            IpSb
+            );
 
   if (Token == NULL) {
     return EFI_OUT_OF_RESOURCES;
@@ -1144,7 +1193,12 @@ Ip4SendFrame (
     goto ON_ERROR;
   }
 
-  Status = Arp->Request (Arp, &ArpQue->Ip, ArpQue->OnResolved, ArpQue->Mac.Addr);
+  Status = Arp->Request (
+                  Arp,
+                  &ArpQue->Ip,
+                  ArpQue->OnResolved,
+                  ArpQue->Mac.Addr
+                  );
 
   if (EFI_ERROR (Status) && (Status != EFI_NOT_READY)) {
     Ip4FreeArpQue (ArpQue, EFI_NO_MAPPING);
@@ -1233,7 +1287,13 @@ Ip4OnFrameReceivedDpc (
   MnpRxData = MnpToken->Packet.RxData;
 
   if (EFI_ERROR (MnpToken->Status) || (MnpRxData == NULL)) {
-    Token->CallBack (Token->IpInstance, NULL, MnpToken->Status, 0, Token->Context);
+    Token->CallBack (
+             Token->IpInstance,
+             NULL,
+             MnpToken->Status,
+             0,
+             Token->Context
+             );
     Ip4FreeFrameRxToken (Token);
 
     return;
@@ -1246,12 +1306,25 @@ Ip4OnFrameReceivedDpc (
   Netfrag.Len  = MnpRxData->DataLength;
   Netfrag.Bulk = MnpRxData->PacketData;
 
-  Packet = NetbufFromExt (&Netfrag, 1, 0, IP4_MAX_HEADLEN, Ip4RecycleFrame, Token);
+  Packet = NetbufFromExt (
+             &Netfrag,
+             1,
+             0,
+             IP4_MAX_HEADLEN,
+             Ip4RecycleFrame,
+             Token
+             );
 
   if (Packet == NULL) {
     gBS->SignalEvent (MnpRxData->RecycleEvent);
 
-    Token->CallBack (Token->IpInstance, NULL, EFI_OUT_OF_RESOURCES, 0, Token->Context);
+    Token->CallBack (
+             Token->IpInstance,
+             NULL,
+             EFI_OUT_OF_RESOURCES,
+             0,
+             Token->Context
+             );
     Ip4FreeFrameRxToken (Token);
 
     return;
@@ -1261,7 +1334,13 @@ Ip4OnFrameReceivedDpc (
   Flag |= (MnpRxData->MulticastFlag ? IP4_LINK_MULTICAST : 0);
   Flag |= (MnpRxData->PromiscuousFlag ? IP4_LINK_PROMISC : 0);
 
-  Token->CallBack (Token->IpInstance, Packet, EFI_SUCCESS, Flag, Token->Context);
+  Token->CallBack (
+           Token->IpInstance,
+           Packet,
+           EFI_SUCCESS,
+           Flag,
+           Token->Context
+           );
 }
 
 /**
@@ -1323,7 +1402,10 @@ Ip4ReceiveFrame (
   }
 
   Interface->RecvRequest = Token;
-  Status                 = Interface->Mnp->Receive (Interface->Mnp, &Token->MnpToken);
+  Status                 = Interface->Mnp->Receive (
+                                             Interface->Mnp,
+                                             &Token->MnpToken
+                                             );
   if (EFI_ERROR (Status)) {
     Interface->RecvRequest = NULL;
     Ip4FreeFrameRxToken (Token);

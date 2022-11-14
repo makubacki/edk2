@@ -135,7 +135,11 @@ TcpInitTcbPeer (
 
   Tcb->RcvWl2 = Tcb->RcvNxt;
 
-  if (TCP_FLG_ON (Opt->Flag, TCP_OPTION_RCVD_WS) && !TCP_FLG_ON (Tcb->CtrlFlag, TCP_CTRL_NO_WS)) {
+  if (TCP_FLG_ON (Opt->Flag, TCP_OPTION_RCVD_WS) && !TCP_FLG_ON (
+                                                       Tcb->CtrlFlag,
+                                                       TCP_CTRL_NO_WS
+                                                       ))
+  {
     Tcb->SndWndScale = Opt->WndScale;
 
     Tcb->RcvWndScale = TcpComputeScale (Tcb);
@@ -147,7 +151,11 @@ TcpInitTcbPeer (
     Tcb->RcvWndScale = 0;
   }
 
-  if (TCP_FLG_ON (Opt->Flag, TCP_OPTION_RCVD_TS) && !TCP_FLG_ON (Tcb->CtrlFlag, TCP_CTRL_NO_TS)) {
+  if (TCP_FLG_ON (Opt->Flag, TCP_OPTION_RCVD_TS) && !TCP_FLG_ON (
+                                                       Tcb->CtrlFlag,
+                                                       TCP_CTRL_NO_TS
+                                                       ))
+  {
     TCP_SET_FLG (Tcb->CtrlFlag, TCP_CTRL_SND_TS);
     TCP_SET_FLG (Tcb->CtrlFlag, TCP_CTRL_RCVD_TS);
 
@@ -946,7 +954,13 @@ TcpResetConnection (
   Nhead->Urg      = 0;
   Nhead->Checksum = TcpChecksum (Nbuf, Tcb->HeadSum);
 
-  TcpSendIpPacket (Tcb, Nbuf, &Tcb->LocalEnd.Ip, &Tcb->RemoteEnd.Ip, Tcb->Sk->IpVersion);
+  TcpSendIpPacket (
+    Tcb,
+    Nbuf,
+    &Tcb->LocalEnd.Ip,
+    &Tcb->RemoteEnd.Ip,
+    Tcb->Sk->IpVersion
+    );
 
   NetbufFree (Nbuf);
 }

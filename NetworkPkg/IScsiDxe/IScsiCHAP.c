@@ -577,7 +577,12 @@ IScsiCHAPToSendReq (
         // CHAP_I=<I>
         //
         IScsiGenRandom ((UINT8 *)&AuthData->OutIdentifier, 1);
-        AsciiSPrint (ValueStr, sizeof (ValueStr), "%d", AuthData->OutIdentifier);
+        AsciiSPrint (
+          ValueStr,
+          sizeof (ValueStr),
+          "%d",
+          AuthData->OutIdentifier
+          );
         IScsiAddKeyValuePair (Pdu, ISCSI_KEY_CHAP_IDENTIFIER, ValueStr);
         //
         // CHAP_C=<C>

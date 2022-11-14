@@ -77,7 +77,12 @@ Mtftp6WrqSendBlock (
     // Get data from PacketNeeded
     //
     DataBuf = NULL;
-    Status  = Token->PacketNeeded (&Instance->Mtftp6, Token, &DataLen, (VOID *)&DataBuf);
+    Status  = Token->PacketNeeded (
+                       &Instance->Mtftp6,
+                       Token,
+                       &DataLen,
+                       (VOID *)&DataBuf
+                       );
 
     if (EFI_ERROR (Status) || (DataLen > Instance->BlkSize)) {
       if (DataBuf != NULL) {
@@ -165,7 +170,12 @@ Mtftp6WrqHandleAck (
   // tell the Mtftp6WrqInput to finish the transfer. This is the last
   // block number if the block range are empty.
   //
-  Mtftp6RemoveBlockNum (&Instance->BlkList, AckNum, *IsCompleted, &BlockCounter);
+  Mtftp6RemoveBlockNum (
+    &Instance->BlkList,
+    AckNum,
+    *IsCompleted,
+    &BlockCounter
+    );
 
   Expected = Mtftp6GetNextBlockNum (&Instance->BlkList);
 
@@ -241,8 +251,10 @@ Mtftp6WrqOackValid (
   // Server can only specify a smaller block size to be used and
   // return the timeout matches that requested.
   //
-  if ((((ReplyInfo->BitMap & MTFTP6_OPT_BLKSIZE_BIT) != 0) && (ReplyInfo->BlkSize > RequestInfo->BlkSize)) ||
-      (((ReplyInfo->BitMap & MTFTP6_OPT_TIMEOUT_BIT) != 0) && (ReplyInfo->Timeout != RequestInfo->Timeout))
+  if ((((ReplyInfo->BitMap & MTFTP6_OPT_BLKSIZE_BIT) != 0) &&
+       (ReplyInfo->BlkSize > RequestInfo->BlkSize)) ||
+      (((ReplyInfo->BitMap & MTFTP6_OPT_TIMEOUT_BIT) != 0) &&
+       (ReplyInfo->Timeout != RequestInfo->Timeout))
       )
   {
     return FALSE;
@@ -307,9 +319,19 @@ Mtftp6WrqHandleOack (
 
   ASSERT (Options != NULL);
 
-  Status = Mtftp6ParseExtensionOption (Options, Count, FALSE, Instance->Operation, &ExtInfo);
+  Status = Mtftp6ParseExtensionOption (
+             Options,
+             Count,
+             FALSE,
+             Instance->Operation,
+             &ExtInfo
+             );
 
-  if (EFI_ERROR (Status) || !Mtftp6WrqOackValid (&ExtInfo, &Instance->ExtInfo)) {
+  if (EFI_ERROR (Status) || !Mtftp6WrqOackValid (
+                               &ExtInfo,
+                               &Instance->ExtInfo
+                               ))
+  {
     //
     // Don't send a MTFTP error packet when out of resource, it can
     // only make it worse.
@@ -446,7 +468,8 @@ Mtftp6WrqInput (
   // if CheckPacket returns an EFI_ERROR code.
   //
   if ((Instance->Token->CheckPacket != NULL) &&
-      ((Opcode == EFI_MTFTP6_OPCODE_OACK) || (Opcode == EFI_MTFTP6_OPCODE_ERROR))
+      ((Opcode == EFI_MTFTP6_OPCODE_OACK) || (Opcode ==
+                                              EFI_MTFTP6_OPCODE_ERROR))
       )
   {
     Status = Instance->Token->CheckPacket (
@@ -494,7 +517,13 @@ Mtftp6WrqInput (
       //
       // Handle the Ack packet of Wrq.
       //
-      Status = Mtftp6WrqHandleAck (Instance, Packet, Len, &UdpPacket, &IsCompleted);
+      Status = Mtftp6WrqHandleAck (
+                 Instance,
+                 Packet,
+                 Len,
+                 &UdpPacket,
+                 &IsCompleted
+                 );
       break;
 
     case EFI_MTFTP6_OPCODE_OACK:
@@ -505,7 +534,13 @@ Mtftp6WrqInput (
       //
       // Handle the Oack packet of Wrq.
       //
-      Status = Mtftp6WrqHandleOack (Instance, Packet, Len, &UdpPacket, &IsCompleted);
+      Status = Mtftp6WrqHandleOack (
+                 Instance,
+                 Packet,
+                 Len,
+                 &UdpPacket,
+                 &IsCompleted
+                 );
       break;
 
     default:

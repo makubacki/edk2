@@ -14,91 +14,237 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 /// DHCP_OPTION_FORMAT structure.
 ///
 DHCP_OPTION_FORMAT  DhcpOptionFormats[] = {
-  { DHCP4_TAG_NETMASK,         DHCP_OPTION_IP,     1, 1,  TRUE  },
-  { DHCP4_TAG_TIME_OFFSET,     DHCP_OPTION_INT32,  1, 1,  FALSE },
-  { DHCP4_TAG_ROUTER,          DHCP_OPTION_IP,     1, -1, TRUE  },
-  { DHCP4_TAG_TIME_SERVER,     DHCP_OPTION_IP,     1, -1, FALSE },
-  { DHCP4_TAG_NAME_SERVER,     DHCP_OPTION_IP,     1, -1, FALSE },
-  { DHCP4_TAG_DNS_SERVER,      DHCP_OPTION_IP,     1, -1, FALSE },
-  { DHCP4_TAG_LOG_SERVER,      DHCP_OPTION_IP,     1, -1, FALSE },
-  { DHCP4_TAG_COOKIE_SERVER,   DHCP_OPTION_IP,     1, -1, FALSE },
-  { DHCP4_TAG_LPR_SERVER,      DHCP_OPTION_IP,     1, -1, FALSE },
-  { DHCP4_TAG_IMPRESS_SERVER,  DHCP_OPTION_IP,     1, -1, FALSE },
-  { DHCP4_TAG_RL_SERVER,       DHCP_OPTION_IP,     1, -1, FALSE },
-  { DHCP4_TAG_HOSTNAME,        DHCP_OPTION_INT8,   1, -1, FALSE },
-  { DHCP4_TAG_BOOTFILE_LEN,    DHCP_OPTION_INT16,  1, 1,  FALSE },
-  { DHCP4_TAG_DUMP,            DHCP_OPTION_INT8,   1, -1, FALSE },
-  { DHCP4_TAG_DOMAINNAME,      DHCP_OPTION_INT8,   1, -1, FALSE },
-  { DHCP4_TAG_SWAP_SERVER,     DHCP_OPTION_IP,     1, 1,  FALSE },
-  { DHCP4_TAG_ROOTPATH,        DHCP_OPTION_INT8,   1, -1, FALSE },
-  { DHCP4_TAG_EXTEND_PATH,     DHCP_OPTION_INT8,   1, -1, FALSE },
+  { DHCP4_TAG_NETMASK,         DHCP_OPTION_IP,                 1,
+    1,      TRUE    },
+  { DHCP4_TAG_TIME_OFFSET,     DHCP_OPTION_INT32,              1,
+    1,                   FALSE        },
+  { DHCP4_TAG_ROUTER,          DHCP_OPTION_IP,                 1,
+    -1,                 TRUE                           },
+  { DHCP4_TAG_TIME_SERVER,     DHCP_OPTION_IP,                 1,
+    -1,                 FALSE                                           },
+  { DHCP4_TAG_NAME_SERVER,     DHCP_OPTION_IP,                 1,
+    -1,
+    FALSE                                                            },
+  { DHCP4_TAG_DNS_SERVER,      DHCP_OPTION_IP,                 1,
+    -1,
+    FALSE                                                                             },
+  { DHCP4_TAG_LOG_SERVER,      DHCP_OPTION_IP,                 1,
+    -1,
+    FALSE                                                                                              },
+  { DHCP4_TAG_COOKIE_SERVER,   DHCP_OPTION_IP,                 1,
+    -1,
+    FALSE                                                                                                               },
+  { DHCP4_TAG_LPR_SERVER,      DHCP_OPTION_IP,                 1,
+    -1,
+    FALSE                                                                                                                                },
+  { DHCP4_TAG_IMPRESS_SERVER,  DHCP_OPTION_IP,                 1,
+    -1,
+    FALSE                                                                                                                                                 },
+  { DHCP4_TAG_RL_SERVER,       DHCP_OPTION_IP,                 1,
+    -1,
+    FALSE                                                                                                                                                                  },
+  { DHCP4_TAG_HOSTNAME,        DHCP_OPTION_INT8,               1,
+    -1,
+    FALSE                                                                                                                                                                                   },
+  { DHCP4_TAG_BOOTFILE_LEN,    DHCP_OPTION_INT16,              1,
+    1,
+    FALSE                                                                                                                                                                                                    },
+  { DHCP4_TAG_DUMP,            DHCP_OPTION_INT8,               1,
+    -1,
+    FALSE                                                                                                                                                                                                                     },
+  { DHCP4_TAG_DOMAINNAME,      DHCP_OPTION_INT8,               1,
+    -1,
+    FALSE                                                                                                                                                                                                                                      },
+  { DHCP4_TAG_SWAP_SERVER,     DHCP_OPTION_IP,                 1,
+    1,
+    FALSE                                                                                                                                                                                                                                                       },
+  { DHCP4_TAG_ROOTPATH,        DHCP_OPTION_INT8,               1,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                        },
+  { DHCP4_TAG_EXTEND_PATH,     DHCP_OPTION_INT8,               1,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                                         },
 
-  { DHCP4_TAG_IPFORWARD,       DHCP_OPTION_SWITCH, 1, 1,  FALSE },
-  { DHCP4_TAG_NONLOCAL_SRR,    DHCP_OPTION_SWITCH, 1, 1,  FALSE },
-  { DHCP4_TAG_POLICY_SRR,      DHCP_OPTION_IPPAIR, 1, -1, FALSE },
-  { DHCP4_TAG_EMTU,            DHCP_OPTION_INT16,  1, 1,  FALSE },
-  { DHCP4_TAG_TTL,             DHCP_OPTION_INT8,   1, 1,  FALSE },
-  { DHCP4_TAG_PATHMTU_AGE,     DHCP_OPTION_INT32,  1, 1,  FALSE },
-  { DHCP4_TAG_PATHMTU_PLATEAU, DHCP_OPTION_INT16,  1, -1, FALSE },
+  { DHCP4_TAG_IPFORWARD,       DHCP_OPTION_SWITCH,             1,
+    1,
+    FALSE                                                                                                                                                                                                                                                                                                          },
+  { DHCP4_TAG_NONLOCAL_SRR,    DHCP_OPTION_SWITCH,             1,
+    1,
+    FALSE                                                                                                                                                                                                                                                                                                                           },
+  { DHCP4_TAG_POLICY_SRR,      DHCP_OPTION_IPPAIR,             1,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                                                                                            },
+  { DHCP4_TAG_EMTU,            DHCP_OPTION_INT16,              1,
+    1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                             },
+  { DHCP4_TAG_TTL,             DHCP_OPTION_INT8,               1,
+    1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                              },
+  { DHCP4_TAG_PATHMTU_AGE,     DHCP_OPTION_INT32,              1,
+    1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                               },
+  { DHCP4_TAG_PATHMTU_PLATEAU, DHCP_OPTION_INT16,              1,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                },
 
-  { DHCP4_TAG_IFMTU,           DHCP_OPTION_INT16,  1, 1,  FALSE },
-  { DHCP4_TAG_SUBNET_LOCAL,    DHCP_OPTION_SWITCH, 1, 1,  FALSE },
-  { DHCP4_TAG_BROADCAST,       DHCP_OPTION_IP,     1, 1,  FALSE },
-  { DHCP4_TAG_DISCOVER_MASK,   DHCP_OPTION_SWITCH, 1, 1,  FALSE },
-  { DHCP4_TAG_SUPPLY_MASK,     DHCP_OPTION_SWITCH, 1, 1,  FALSE },
-  { DHCP4_TAG_DISCOVER_ROUTE,  DHCP_OPTION_SWITCH, 1, 1,  FALSE },
-  { DHCP4_TAG_ROUTER_SOLICIT,  DHCP_OPTION_IP,     1, 1,  FALSE },
-  { DHCP4_TAG_STATIC_ROUTE,    DHCP_OPTION_IPPAIR, 1, -1, FALSE },
+  { DHCP4_TAG_IFMTU,           DHCP_OPTION_INT16,              1,
+    1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                 },
+  { DHCP4_TAG_SUBNET_LOCAL,    DHCP_OPTION_SWITCH,             1,
+    1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+  { DHCP4_TAG_BROADCAST,       DHCP_OPTION_IP,                 1,
+    1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                   },
+  { DHCP4_TAG_DISCOVER_MASK,   DHCP_OPTION_SWITCH,             1,
+    1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    },
+  { DHCP4_TAG_SUPPLY_MASK,     DHCP_OPTION_SWITCH,             1,
+    1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     },
+  { DHCP4_TAG_DISCOVER_ROUTE,  DHCP_OPTION_SWITCH,             1,
+    1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      },
+  { DHCP4_TAG_ROUTER_SOLICIT,  DHCP_OPTION_IP,                 1,
+    1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       },
+  { DHCP4_TAG_STATIC_ROUTE,    DHCP_OPTION_IPPAIR,             1,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        },
 
-  { DHCP4_TAG_TRAILER,         DHCP_OPTION_SWITCH, 1, 1,  FALSE },
-  { DHCP4_TAG_ARPAGE,          DHCP_OPTION_INT32,  1, 1,  FALSE },
-  { DHCP4_TAG_ETHER_ENCAP,     DHCP_OPTION_SWITCH, 1, 1,  FALSE },
+  { DHCP4_TAG_TRAILER,         DHCP_OPTION_SWITCH,             1,
+    1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         },
+  { DHCP4_TAG_ARPAGE,          DHCP_OPTION_INT32,              1,
+    1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+  { DHCP4_TAG_ETHER_ENCAP,     DHCP_OPTION_SWITCH,             1,
+    1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           },
 
-  { DHCP4_TAG_TCP_TTL,         DHCP_OPTION_INT8,   1, 1,  FALSE },
-  { DHCP4_TAG_KEEP_INTERVAL,   DHCP_OPTION_INT32,  1, 1,  FALSE },
-  { DHCP4_TAG_KEEP_GARBAGE,    DHCP_OPTION_SWITCH, 1, 1,  FALSE },
+  { DHCP4_TAG_TCP_TTL,         DHCP_OPTION_INT8,               1,
+    1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            },
+  { DHCP4_TAG_KEEP_INTERVAL,   DHCP_OPTION_INT32,              1,
+    1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             },
+  { DHCP4_TAG_KEEP_GARBAGE,    DHCP_OPTION_SWITCH,             1,
+    1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              },
 
-  { DHCP4_TAG_NIS_DOMAIN,      DHCP_OPTION_INT8,   1, -1, FALSE },
-  { DHCP4_TAG_NIS_SERVER,      DHCP_OPTION_IP,     1, -1, FALSE },
-  { DHCP4_TAG_NTP_SERVER,      DHCP_OPTION_IP,     1, -1, FALSE },
-  { DHCP4_TAG_VENDOR,          DHCP_OPTION_INT8,   1, -1, FALSE },
-  { DHCP4_TAG_NBNS,            DHCP_OPTION_IP,     1, -1, FALSE },
-  { DHCP4_TAG_NBDD,            DHCP_OPTION_IP,     1, -1, FALSE },
-  { DHCP4_TAG_NBTYPE,          DHCP_OPTION_INT8,   1, 1,  FALSE },
-  { DHCP4_TAG_NBSCOPE,         DHCP_OPTION_INT8,   1, -1, FALSE },
-  { DHCP4_TAG_XFONT,           DHCP_OPTION_IP,     1, -1, FALSE },
-  { DHCP4_TAG_XDM,             DHCP_OPTION_IP,     1, -1, FALSE },
+  { DHCP4_TAG_NIS_DOMAIN,      DHCP_OPTION_INT8,               1,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               },
+  { DHCP4_TAG_NIS_SERVER,      DHCP_OPTION_IP,                 1,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                },
+  { DHCP4_TAG_NTP_SERVER,      DHCP_OPTION_IP,                 1,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 },
+  { DHCP4_TAG_VENDOR,          DHCP_OPTION_INT8,               1,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+  { DHCP4_TAG_NBNS,            DHCP_OPTION_IP,                 1,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   },
+  { DHCP4_TAG_NBDD,            DHCP_OPTION_IP,                 1,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    },
+  { DHCP4_TAG_NBTYPE,          DHCP_OPTION_INT8,               1,
+    1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     },
+  { DHCP4_TAG_NBSCOPE,         DHCP_OPTION_INT8,               1,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      },
+  { DHCP4_TAG_XFONT,           DHCP_OPTION_IP,                 1,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       },
+  { DHCP4_TAG_XDM,             DHCP_OPTION_IP,                 1,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        },
 
-  { DHCP4_TAG_REQUEST_IP,      DHCP_OPTION_IP,     1, 1,  FALSE },
-  { DHCP4_TAG_LEASE,           DHCP_OPTION_INT32,  1, 1,  TRUE  },
-  { DHCP4_TAG_OVERLOAD,        DHCP_OPTION_INT8,   1, 1,  TRUE  },
-  { DHCP4_TAG_MSG_TYPE,        DHCP_OPTION_INT8,   1, 1,  TRUE  },
-  { DHCP4_TAG_SERVER_ID,       DHCP_OPTION_IP,     1, 1,  TRUE  },
-  { DHCP4_TAG_PARA_LIST,       DHCP_OPTION_INT8,   1, -1, FALSE },
-  { DHCP4_TAG_MESSAGE,         DHCP_OPTION_INT8,   1, -1, FALSE },
-  { DHCP4_TAG_MAXMSG,          DHCP_OPTION_INT16,  1, 1,  FALSE },
-  { DHCP4_TAG_T1,              DHCP_OPTION_INT32,  1, 1,  TRUE  },
-  { DHCP4_TAG_T2,              DHCP_OPTION_INT32,  1, 1,  TRUE  },
-  { DHCP4_TAG_VENDOR_CLASS_ID, DHCP_OPTION_INT8,   1, -1, FALSE },
-  { DHCP4_TAG_CLIENT_ID,       DHCP_OPTION_INT8,   2, -1, FALSE },
+  { DHCP4_TAG_REQUEST_IP,      DHCP_OPTION_IP,                 1,
+    1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         },
+  { DHCP4_TAG_LEASE,           DHCP_OPTION_INT32,              1,
+    1,
+    TRUE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           },
+  { DHCP4_TAG_OVERLOAD,        DHCP_OPTION_INT8,               1,
+    1,
+    TRUE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            },
+  { DHCP4_TAG_MSG_TYPE,        DHCP_OPTION_INT8,               1,
+    1,
+    TRUE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             },
+  { DHCP4_TAG_SERVER_ID,       DHCP_OPTION_IP,                 1,
+    1,
+    TRUE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              },
+  { DHCP4_TAG_PARA_LIST,       DHCP_OPTION_INT8,               1,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              },
+  { DHCP4_TAG_MESSAGE,         DHCP_OPTION_INT8,               1,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               },
+  { DHCP4_TAG_MAXMSG,          DHCP_OPTION_INT16,              1,
+    1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                },
+  { DHCP4_TAG_T1,              DHCP_OPTION_INT32,              1,
+    1,
+    TRUE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+  { DHCP4_TAG_T2,              DHCP_OPTION_INT32,              1,
+    1,
+    TRUE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   },
+  { DHCP4_TAG_VENDOR_CLASS_ID, DHCP_OPTION_INT8,               1,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+  { DHCP4_TAG_CLIENT_ID,       DHCP_OPTION_INT8,               2,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
 
-  { DHCP4_TAG_NISPLUS,         DHCP_OPTION_INT8,   1, -1, FALSE },
-  { DHCP4_TAG_NISPLUS_SERVER,  DHCP_OPTION_IP,     1, -1, FALSE },
+  { DHCP4_TAG_NISPLUS,         DHCP_OPTION_INT8,               1,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+  { DHCP4_TAG_NISPLUS_SERVER,  DHCP_OPTION_IP,                 1,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
 
-  { DHCP4_TAG_TFTP,            DHCP_OPTION_INT8,   1, -1, FALSE },
-  { DHCP4_TAG_BOOTFILE,        DHCP_OPTION_INT8,   1, -1, FALSE },
+  { DHCP4_TAG_TFTP,            DHCP_OPTION_INT8,               1,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+  { DHCP4_TAG_BOOTFILE,        DHCP_OPTION_INT8,               1,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
 
-  { DHCP4_TAG_MOBILEIP,        DHCP_OPTION_IP,     0, -1, FALSE },
-  { DHCP4_TAG_SMTP,            DHCP_OPTION_IP,     1, -1, FALSE },
-  { DHCP4_TAG_POP3,            DHCP_OPTION_IP,     1, -1, FALSE },
-  { DHCP4_TAG_NNTP,            DHCP_OPTION_IP,     1, -1, FALSE },
-  { DHCP4_TAG_WWW,             DHCP_OPTION_IP,     1, -1, FALSE },
-  { DHCP4_TAG_FINGER,          DHCP_OPTION_IP,     1, -1, FALSE },
-  { DHCP4_TAG_IRC,             DHCP_OPTION_IP,     1, -1, FALSE },
-  { DHCP4_TAG_STTALK,          DHCP_OPTION_IP,     1, -1, FALSE },
-  { DHCP4_TAG_STDA,            DHCP_OPTION_IP,     1, -1, FALSE },
+  { DHCP4_TAG_MOBILEIP,        DHCP_OPTION_IP,                 0,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+  { DHCP4_TAG_SMTP,            DHCP_OPTION_IP,                 1,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+  { DHCP4_TAG_POP3,            DHCP_OPTION_IP,                 1,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+  { DHCP4_TAG_NNTP,            DHCP_OPTION_IP,                 1,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+  { DHCP4_TAG_WWW,             DHCP_OPTION_IP,                 1,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+  { DHCP4_TAG_FINGER,          DHCP_OPTION_IP,                 1,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+  { DHCP4_TAG_IRC,             DHCP_OPTION_IP,                 1,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+  { DHCP4_TAG_STTALK,          DHCP_OPTION_IP,                 1,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+  { DHCP4_TAG_STDA,            DHCP_OPTION_IP,                 1,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
 
-  { DHCP4_TAG_CLASSLESS_ROUTE, DHCP_OPTION_INT8,   5, -1, FALSE },
+  { DHCP4_TAG_CLASSLESS_ROUTE, DHCP_OPTION_INT8,               5,
+    -1,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
 };
 
 /**
@@ -350,7 +496,15 @@ DhcpIterateBufferOptions (
       *Overload = Buffer[Cur];
     }
 
-    if ((Check != NULL) && EFI_ERROR (Check (Tag, Len, Buffer + Cur, Context))) {
+    if ((Check != NULL) && EFI_ERROR (
+                             Check (
+                               Tag,
+                               Len,
+                               Buffer + Cur,
+                               Context
+                               )
+                             ))
+    {
       return EFI_INVALID_PARAMETER;
     }
 
@@ -402,7 +556,9 @@ DhcpIterateOptions (
     return Status;
   }
 
-  if ((Overload == DHCP_OVERLOAD_FILENAME) || (Overload == DHCP_OVERLOAD_BOTH)) {
+  if ((Overload == DHCP_OVERLOAD_FILENAME) || (Overload ==
+                                               DHCP_OVERLOAD_BOTH))
+  {
     Status = DhcpIterateBufferOptions (
                (UINT8 *)Packet->Dhcp4.Header.BootFileName,
                128,
@@ -600,7 +756,10 @@ DhcpParseOption (
   // Allocate a buffer to hold the DHCP options, and after that, a
   // continuous buffer to put all the options' data.
   //
-  Options = AllocateZeroPool ((UINTN)(OptNum * sizeof (DHCP_OPTION)) + TotalLen);
+  Options = AllocateZeroPool (
+              (UINTN)(OptNum * sizeof (DHCP_OPTION)) +
+              TotalLen
+              );
 
   if (Options == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
@@ -690,7 +849,12 @@ DhcpValidateOptions (
     //
     if (Format->Alert && (Para != NULL)) {
       Updated = TRUE;
-      Status  = DhcpGetParameter (Option->Tag, Option->Len, Option->Data, &Parameter);
+      Status  = DhcpGetParameter (
+                  Option->Tag,
+                  Option->Len,
+                  Option->Data,
+                  &Parameter
+                  );
 
       if (EFI_ERROR (Status)) {
         goto ON_EXIT;
@@ -855,13 +1019,22 @@ DhcpBuild (
 
   Packet->Size   = Len;
   Packet->Length = 0;
-  CopyMem (&Packet->Dhcp4.Header, &SeedPacket->Dhcp4.Header, sizeof (Packet->Dhcp4.Header));
+  CopyMem (
+    &Packet->Dhcp4.Header,
+    &SeedPacket->Dhcp4.Header,
+    sizeof (Packet->Dhcp4.Header)
+    );
   Packet->Dhcp4.Magik = DHCP_OPTION_MAGIC;
   Buf                 = Packet->Dhcp4.Option;
 
   for (Index = 0; Index < DHCP_MAX_OPTIONS; Index++) {
     if (Mark[Index].Len != 0) {
-      Buf = DhcpAppendOption (Buf, Mark[Index].Tag, Mark[Index].Len, Mark[Index].Data);
+      Buf = DhcpAppendOption (
+              Buf,
+              Mark[Index].Tag,
+              Mark[Index].Len,
+              Mark[Index].Data
+              );
     }
   }
 

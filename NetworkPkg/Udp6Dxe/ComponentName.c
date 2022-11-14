@@ -141,7 +141,8 @@ Udp6ComponentNameGetControllerName (
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gUdp6ComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gUdp6ComponentName =
+{
   Udp6ComponentNameGetDriverName,
   Udp6ComponentNameGetControllerName,
   "eng"
@@ -150,13 +151,15 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gUdp6ComponentName = 
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gUdp6ComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gUdp6ComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)Udp6ComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)Udp6ComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mUdp6DriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mUdp6DriverNameTable[] =
+{
   {
     "eng;en",
     L"UDP6 Network Service Driver"
@@ -167,7 +170,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mUdp6DriverNameTable[] =
   }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  *gUdp6ControllerNameTable = NULL;
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  *
+  gUdp6ControllerNameTable = NULL;
 
 /**
   Retrieves a Unicode string that is the user-readable name of the driver.

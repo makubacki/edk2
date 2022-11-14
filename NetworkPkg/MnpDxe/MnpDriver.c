@@ -163,14 +163,25 @@ MnpDriverBindingStart (
   //
   MnpDeviceData = AllocateZeroPool (sizeof (MNP_DEVICE_DATA));
   if (MnpDeviceData == NULL) {
-    DEBUG ((DEBUG_ERROR, "MnpDriverBindingStart(): Failed to allocate the Mnp Device Data.\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "MnpDriverBindingStart(): Failed to allocate the Mnp Device Data.\n"
+      ));
 
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Status = MnpInitializeDeviceData (MnpDeviceData, This->DriverBindingHandle, ControllerHandle);
+  Status = MnpInitializeDeviceData (
+             MnpDeviceData,
+             This->DriverBindingHandle,
+             ControllerHandle
+             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "MnpDriverBindingStart: MnpInitializeDeviceData failed, %r.\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "MnpDriverBindingStart: MnpInitializeDeviceData failed, %r.\n",
+      Status
+      ));
 
     FreePool (MnpDeviceData);
     return Status;
@@ -195,7 +206,8 @@ MnpDriverBindingStart (
     MnpDeviceData->NumberOfVlan = 0;
     ZeroMem (&MnpDeviceData->VlanConfig, sizeof (EFI_VLAN_CONFIG_PROTOCOL));
     MnpServiceData = MnpCreateServiceData (MnpDeviceData, 0, 0);
-    Status         = (MnpServiceData != NULL) ? EFI_SUCCESS : EFI_OUT_OF_RESOURCES;
+    Status         = (MnpServiceData != NULL) ? EFI_SUCCESS :
+                     EFI_OUT_OF_RESOURCES;
     goto Exit;
   }
 
@@ -216,14 +228,19 @@ MnpDriverBindingStart (
   // Get current VLAN configuration from EFI Variable
   //
   NumberOfVlan = 0;
-  Status       = MnpGetVlanVariable (MnpDeviceData, &NumberOfVlan, &VlanVariable);
+  Status       = MnpGetVlanVariable (
+                   MnpDeviceData,
+                   &NumberOfVlan,
+                   &VlanVariable
+                   );
   if (EFI_ERROR (Status)) {
     //
     // No VLAN is set, create a default MNP service data for untagged frame
     //
     MnpDeviceData->NumberOfVlan = 0;
     MnpServiceData              = MnpCreateServiceData (MnpDeviceData, 0, 0);
-    Status                      = (MnpServiceData != NULL) ? EFI_SUCCESS : EFI_OUT_OF_RESOURCES;
+    Status                      = (MnpServiceData != NULL) ? EFI_SUCCESS :
+                                  EFI_OUT_OF_RESOURCES;
     goto Exit;
   }
 
@@ -341,7 +358,10 @@ MnpDriverBindingStop (
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "MnpDriverBindingStop: try to stop unknown Controller.\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "MnpDriverBindingStop: try to stop unknown Controller.\n"
+        ));
       return EFI_DEVICE_ERROR;
     }
 
@@ -449,7 +469,10 @@ MnpServiceBindingCreateChild (
   //
   Instance = AllocateZeroPool (sizeof (MNP_INSTANCE_DATA));
   if (Instance == NULL) {
-    DEBUG ((DEBUG_ERROR, "MnpServiceBindingCreateChild: Failed to allocate memory for the new instance.\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "MnpServiceBindingCreateChild: Failed to allocate memory for the new instance.\n"
+      ));
 
     return EFI_OUT_OF_RESOURCES;
   }

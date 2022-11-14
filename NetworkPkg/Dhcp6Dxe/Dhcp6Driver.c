@@ -340,7 +340,12 @@ Dhcp6DestroyChildEntry (
     return EFI_INVALID_PARAMETER;
   }
 
-  Instance       = NET_LIST_USER_STRUCT_S (Entry, DHCP6_INSTANCE, Link, DHCP6_INSTANCE_SIGNATURE);
+  Instance = NET_LIST_USER_STRUCT_S (
+               Entry,
+               DHCP6_INSTANCE,
+               Link,
+               DHCP6_INSTANCE_SIGNATURE
+               );
   ServiceBinding = (EFI_SERVICE_BINDING_PROTOCOL *)Context;
 
   return ServiceBinding->DestroyChild (ServiceBinding, Instance->Handle);

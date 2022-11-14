@@ -47,12 +47,25 @@ Udp4DestroyChildEntryInHandleBuffer (
     return EFI_INVALID_PARAMETER;
   }
 
-  Instance          = NET_LIST_USER_STRUCT_S (Entry, UDP4_INSTANCE_DATA, Link, UDP4_INSTANCE_DATA_SIGNATURE);
-  ServiceBinding    = ((UDP4_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ServiceBinding;
-  NumberOfChildren  = ((UDP4_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->NumberOfChildren;
-  ChildHandleBuffer = ((UDP4_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ChildHandleBuffer;
+  Instance = NET_LIST_USER_STRUCT_S (
+               Entry,
+               UDP4_INSTANCE_DATA,
+               Link,
+               UDP4_INSTANCE_DATA_SIGNATURE
+               );
+  ServiceBinding =
+    ((UDP4_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ServiceBinding;
+  NumberOfChildren =
+    ((UDP4_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->NumberOfChildren;
+  ChildHandleBuffer =
+    ((UDP4_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ChildHandleBuffer;
 
-  if (!NetIsInHandleBuffer (Instance->ChildHandle, NumberOfChildren, ChildHandleBuffer)) {
+  if (!NetIsInHandleBuffer (
+         Instance->ChildHandle,
+         NumberOfChildren,
+         ChildHandleBuffer
+         ))
+  {
     return EFI_SUCCESS;
   }
 
@@ -154,7 +167,11 @@ Udp4DriverBindingStart (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Status = Udp4CreateService (Udp4Service, This->DriverBindingHandle, ControllerHandle);
+  Status = Udp4CreateService (
+             Udp4Service,
+             This->DriverBindingHandle,
+             ControllerHandle
+             );
   if (EFI_ERROR (Status)) {
     FreePool (Udp4Service);
     return Status;
@@ -571,7 +588,8 @@ Udp4DriverEntryPoint (
     //
     // Initialize the UDP random port.
     //
-    mUdp4RandomPort = (UINT16)(((UINT16)NetRandomInitSeed ()) % UDP4_PORT_KNOWN + UDP4_PORT_KNOWN);
+    mUdp4RandomPort = (UINT16)(((UINT16)NetRandomInitSeed ()) %
+                               UDP4_PORT_KNOWN + UDP4_PORT_KNOWN);
   }
 
   return Status;

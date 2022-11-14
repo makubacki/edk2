@@ -129,9 +129,12 @@ PxeBcBuildDhcp6Options (
   //
   // Append vendor class option to store the PXE class identifier.
   //
-  OptList[Index]->OpCode       = HTONS (DHCP6_OPT_VENDOR_CLASS);
-  OptList[Index]->OpLen        = HTONS ((UINT16)sizeof (PXEBC_DHCP6_OPTION_VENDOR_CLASS));
-  OptEnt.VendorClass           = (PXEBC_DHCP6_OPTION_VENDOR_CLASS *)OptList[Index]->Data;
+  OptList[Index]->OpCode = HTONS (DHCP6_OPT_VENDOR_CLASS);
+  OptList[Index]->OpLen  = HTONS (
+                             (UINT16)sizeof (PXEBC_DHCP6_OPTION_VENDOR_CLASS)
+                             );
+  OptEnt.VendorClass =
+    (PXEBC_DHCP6_OPTION_VENDOR_CLASS *)OptList[Index]->Data;
   OptEnt.VendorClass->Vendor   = HTONL (PXEBC_DHCP6_ENTERPRISE_NUM);
   OptEnt.VendorClass->ClassLen = HTONS ((UINT16)sizeof (PXEBC_CLASS_ID));
   CopyMem (
@@ -307,7 +310,9 @@ PxeBcDns6 (
       goto Exit;
     }
 
-    if ((Token.RspData.H2AData->IpCount == 0) || (Token.RspData.H2AData->IpList == NULL)) {
+    if ((Token.RspData.H2AData->IpCount == 0) ||
+        (Token.RspData.H2AData->IpList == NULL))
+    {
       Status = EFI_DEVICE_ERROR;
       goto Exit;
     }
@@ -445,7 +450,9 @@ PxeBcExtractBootFileUrl (
   if (*ServerAddressOption == PXEBC_ADDR_START_DELIMITER) {
     ServerAddressOption++;
     ServerAddress = ServerAddressOption;
-    while (*ServerAddress != '\0' && *ServerAddress != PXEBC_ADDR_END_DELIMITER) {
+    while (*ServerAddress != '\0' && *ServerAddress !=
+           PXEBC_ADDR_END_DELIMITER)
+    {
       ServerAddress++;
     }
 
@@ -467,7 +474,9 @@ PxeBcExtractBootFileUrl (
   } else {
     IpExpressedUrl = FALSE;
     ServerAddress  = ServerAddressOption;
-    while (*ServerAddress != '\0' && *ServerAddress != PXEBC_TFTP_URL_SEPARATOR) {
+    while (*ServerAddress != '\0' && *ServerAddress !=
+           PXEBC_TFTP_URL_SEPARATOR)
+    {
       ServerAddress++;
     }
 
@@ -514,14 +523,17 @@ PxeBcExtractBootFileUrl (
     ++BootFileNamePtr;
   }
 
-  BootFileNameLen = (UINT16)(Length - (UINT16)((UINTN)BootFileNamePtr - (UINTN)TmpStr) + 1);
+  BootFileNameLen = (UINT16)(Length - (UINT16)((UINTN)BootFileNamePtr -
+                                               (UINTN)TmpStr) + 1);
   if ((BootFileNameLen != 0) || (FileName != NULL)) {
     //
     // Remove trailing mode=octet if present and ignore.  All other modes are
     // invalid for netboot6, so reject them.
     //
     ModeStr = AsciiStrStr (BootFileNamePtr, ";mode=octet");
-    if ((ModeStr != NULL) && (*(ModeStr + AsciiStrLen (";mode=octet")) == '\0')) {
+    if ((ModeStr != NULL) && (*(ModeStr + AsciiStrLen (";mode=octet")) ==
+                              '\0'))
+    {
       *ModeStr = '\0';
     } else if (AsciiStrStr (BootFileNamePtr, ";mode=") != NULL) {
       FreePool (TmpStr);
@@ -546,7 +558,9 @@ PxeBcExtractBootFileUrl (
       if (*BootFileNamePtr == '%') {
         TmpChar               = *(BootFileNamePtr+ 3);
         *(BootFileNamePtr+ 3) = '\0';
-        *BootFileName         = (UINT8)AsciiStrHexToUintn ((CHAR8 *)(BootFileNamePtr + 1));
+        *BootFileName         = (UINT8)AsciiStrHexToUintn (
+                                         (CHAR8 *)(BootFileNamePtr + 1)
+                                         );
         BootFileName++;
         *(BootFileNamePtr+ 3) = TmpChar;
         BootFileNamePtr      += 3;
@@ -795,7 +809,10 @@ PxeBcCopyDhcp6Proxy (
   //
   // Cache the proxy offer packet and parse it.
   //
-  Status = PxeBcCacheDhcp6Packet (&Private->ProxyOffer.Dhcp6.Packet.Offer, Offer);
+  Status = PxeBcCacheDhcp6Packet (
+             &Private->ProxyOffer.Dhcp6.Packet.Offer,
+             Offer
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -965,7 +982,12 @@ PxeBcRequestBootService (
              );
   if (Option != NULL) {
     CalcElapsedTime (Private);
-    WriteUnaligned16 ((UINT16 *)(Option + 4), HTONS ((UINT16)Private->ElapsedTime));
+    WriteUnaligned16 (
+      (UINT16 *)(Option + 4),
+      HTONS (
+        (UINT16)Private->ElapsedTime
+        )
+      );
   }
 
   Status = PxeBc->UdpWrite (
@@ -996,14 +1018,18 @@ PxeBcRequestBootService (
   //
   // Start Udp6Read instance
   //
-  Status = Private->Udp6Read->Configure (Private->Udp6Read, &Private->Udp6CfgData);
+  Status = Private->Udp6Read->Configure (
+                                Private->Udp6Read,
+                                &Private->Udp6CfgData
+                                );
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
 
   Status = PxeBc->UdpRead (
                     PxeBc,
-                    EFI_PXE_BASE_CODE_UDP_OPFLAGS_ANY_SRC_IP | EFI_PXE_BASE_CODE_UDP_OPFLAGS_ANY_DEST_IP,
+                    EFI_PXE_BASE_CODE_UDP_OPFLAGS_ANY_SRC_IP |
+                    EFI_PXE_BASE_CODE_UDP_OPFLAGS_ANY_DEST_IP,
                     NULL,
                     &SrcPort,
                     &Private->ServerIp,
@@ -1184,9 +1210,12 @@ PxeBcCacheDhcp6Offer (
       //
       // Cache all proxy BINL offers.
       //
-      Private->OfferIndex[OfferType][Private->OfferCount[OfferType]] = Private->OfferNum;
+      Private->OfferIndex[OfferType][Private->OfferCount[OfferType]] =
+        Private->OfferNum;
       Private->OfferCount[OfferType]++;
-    } else if (((OfferType == PxeOfferTypeProxyPxe10) || (OfferType == PxeOfferTypeProxyWfm11a)) &&
+    } else if (  ((OfferType == PxeOfferTypeProxyPxe10) || (OfferType ==
+                                                          PxeOfferTypeProxyWfm11a))
+              &&
                (Private->OfferCount[OfferType] < 1))
     {
       //
@@ -1201,7 +1230,8 @@ PxeBcCacheDhcp6Offer (
     //
     // It's a DHCPv6 offer with yiaddr, and cache them all.
     //
-    Private->OfferIndex[OfferType][Private->OfferCount[OfferType]] = Private->OfferNum;
+    Private->OfferIndex[OfferType][Private->OfferCount[OfferType]] =
+      Private->OfferNum;
     Private->OfferCount[OfferType]++;
   }
 
@@ -1247,7 +1277,8 @@ PxeBcSelectDhcp6Offer (
       //
       // 3. DhcpOnly offer and ProxyPxe10 offer.
       //
-      Private->SelectIndex     = Private->OfferIndex[PxeOfferTypeDhcpOnly][0] + 1;
+      Private->SelectIndex = Private->OfferIndex[PxeOfferTypeDhcpOnly][0] +
+                             1;
       Private->SelectProxyType = PxeOfferTypeProxyPxe10;
     } else if ((Private->OfferCount[PxeOfferTypeDhcpOnly] > 0) &&
                (Private->OfferCount[PxeOfferTypeProxyWfm11a] > 0))
@@ -1255,7 +1286,8 @@ PxeBcSelectDhcp6Offer (
       //
       // 4. DhcpOnly offer and ProxyWfm11a offer.
       //
-      Private->SelectIndex     = Private->OfferIndex[PxeOfferTypeDhcpOnly][0] + 1;
+      Private->SelectIndex = Private->OfferIndex[PxeOfferTypeDhcpOnly][0] +
+                             1;
       Private->SelectProxyType = PxeOfferTypeProxyWfm11a;
     } else if (Private->OfferCount[PxeOfferTypeDhcpBinl] > 0) {
       //
@@ -1268,15 +1300,21 @@ PxeBcSelectDhcp6Offer (
       //
       // 6. DhcpOnly offer and ProxyBinl offer.
       //
-      Private->SelectIndex     = Private->OfferIndex[PxeOfferTypeDhcpOnly][0] + 1;
+      Private->SelectIndex = Private->OfferIndex[PxeOfferTypeDhcpOnly][0] +
+                             1;
       Private->SelectProxyType = PxeOfferTypeProxyBinl;
     } else {
       //
       // 7. DhcpOnly offer with bootfilename.
       //
-      for (Index = 0; Index < Private->OfferCount[PxeOfferTypeDhcpOnly]; Index++) {
+      for (Index = 0; Index < Private->OfferCount[PxeOfferTypeDhcpOnly];
+           Index++)
+      {
         OfferIndex = Private->OfferIndex[PxeOfferTypeDhcpOnly][Index];
-        if (Private->OfferBuffer[OfferIndex].Dhcp6.OptList[PXEBC_DHCP6_IDX_BOOT_FILE_URL] != NULL) {
+        if (Private->OfferBuffer[OfferIndex].Dhcp6.OptList[
+                                                          PXEBC_DHCP6_IDX_BOOT_FILE_URL
+            ] != NULL)
+        {
           Private->SelectIndex = OfferIndex + 1;
           break;
         }
@@ -1298,7 +1336,9 @@ PxeBcSelectDhcp6Offer (
 
       if (!Private->IsProxyRecved &&
           (OfferType == PxeOfferTypeDhcpOnly) &&
-          (Private->OfferBuffer[Index].Dhcp6.OptList[PXEBC_DHCP6_IDX_BOOT_FILE_URL] == NULL))
+          (Private->OfferBuffer[Index].Dhcp6.OptList[
+                                                    PXEBC_DHCP6_IDX_BOOT_FILE_URL
+           ] == NULL))
       {
         //
         // Skip if DhcpOnly offer without any other proxy offers or bootfilename.
@@ -1345,12 +1385,20 @@ PxeBcHandleDhcp6Offer (
   // First try to cache DNS server address if DHCP6 offer provides.
   //
   if (Cache6->OptList[PXEBC_DHCP6_IDX_DNS_SERVER] != NULL) {
-    Private->DnsServer = AllocateZeroPool (NTOHS (Cache6->OptList[PXEBC_DHCP6_IDX_DNS_SERVER]->OpLen));
+    Private->DnsServer = AllocateZeroPool (
+                           NTOHS (
+                             Cache6->OptList[PXEBC_DHCP6_IDX_DNS_SERVER]->OpLen
+                             )
+                           );
     if (Private->DnsServer == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
 
-    CopyMem (Private->DnsServer, Cache6->OptList[PXEBC_DHCP6_IDX_DNS_SERVER]->Data, sizeof (EFI_IPv6_ADDRESS));
+    CopyMem (
+      Private->DnsServer,
+      Cache6->OptList[PXEBC_DHCP6_IDX_DNS_SERVER]->Data,
+      sizeof (EFI_IPv6_ADDRESS)
+      );
   }
 
   if (Cache6->OfferType == PxeOfferTypeDhcpBinl) {
@@ -1377,7 +1425,9 @@ PxeBcHandleDhcp6Offer (
           //
           // Try all the cached ProxyBinl offer one by one to request bootfilename.
           //
-          for (Index = 0; Index < Private->OfferCount[Private->SelectProxyType]; Index++) {
+          for (Index = 0; Index < Private->OfferCount[Private->SelectProxyType];
+               Index++)
+          {
             ProxyIndex = Private->OfferIndex[Private->SelectProxyType][Index];
             if (!EFI_ERROR (PxeBcRetryDhcp6Binl (Private, ProxyIndex))) {
               break;
@@ -1425,7 +1475,9 @@ PxeBcHandleDhcp6Offer (
         }
       }
 
-      if (!EFI_ERROR (Status) && (Private->SelectProxyType != PxeOfferTypeProxyBinl)) {
+      if (!EFI_ERROR (Status) && (Private->SelectProxyType !=
+                                  PxeOfferTypeProxyBinl))
+      {
         //
         // Success to try to request by a ProxyPxe10 or ProxyWfm11a offer, copy and parse it.
         //
@@ -1443,7 +1495,11 @@ PxeBcHandleDhcp6Offer (
     //
     // All PXE boot information is ready by now.
     //
-    Status                                 = PxeBcCopyDhcp6Ack (Private, &Private->DhcpAck.Dhcp6.Packet.Ack, TRUE);
+    Status = PxeBcCopyDhcp6Ack (
+               Private,
+               &Private->DhcpAck.Dhcp6.Packet.Ack,
+               TRUE
+               );
     Private->PxeBc.Mode->DhcpDiscoverValid = TRUE;
   }
 
@@ -1518,7 +1574,12 @@ PxeBcCheckRouteTable (
     // Find out the gateway address which can route the message which send to ServerIp.
     //
     for (Index = 0; Index < Ip6ModeData.RouteCount; Index++) {
-      if (NetIp6IsNetEqual (&Private->ServerIp.v6, &Ip6ModeData.RouteTable[Index].Destination, Ip6ModeData.RouteTable[Index].PrefixLength)) {
+      if (NetIp6IsNetEqual (
+            &Private->ServerIp.v6,
+            &Ip6ModeData.RouteTable[Index].Destination,
+            Ip6ModeData.RouteTable[Index].PrefixLength
+            ))
+      {
         IP6_COPY_ADDRESS (GatewayAddr, &Ip6ModeData.RouteTable[Index].Gateway);
         GatewayIsFound = TRUE;
         break;
@@ -1642,7 +1703,11 @@ PxeBcRegisterIp6Address (
   //
   // Retrieve the gateway address from IP6 route table.
   //
-  Status = PxeBcCheckRouteTable (Private, PXEBC_IP6_ROUTE_TABLE_TIMEOUT, &GatewayAddr);
+  Status = PxeBcCheckRouteTable (
+             Private,
+             PXEBC_IP6_ROUTE_TABLE_TIMEOUT,
+             &GatewayAddr
+             );
   if (EFI_ERROR (Status)) {
     NoGateway = TRUE;
   }
@@ -1738,7 +1803,9 @@ PxeBcRegisterIp6Address (
     }
 
     for (Index = 0; Index < DataSize / sizeof (EFI_IPv6_ADDRESS); Index++) {
-      if (CompareMem (Ip6Addr + Index, Address, sizeof (EFI_IPv6_ADDRESS)) == 0) {
+      if (CompareMem (Ip6Addr + Index, Address, sizeof (EFI_IPv6_ADDRESS)) ==
+          0)
+      {
         break;
       }
     }
@@ -1854,8 +1921,16 @@ PxeBcSetIp6Address (
 
   Dhcp6 = Private->Dhcp6;
 
-  CopyMem (&Private->StationIp.v6, &Private->TmpStationIp.v6, sizeof (EFI_IPv6_ADDRESS));
-  CopyMem (&Private->PxeBc.Mode->StationIp.v6, &Private->StationIp.v6, sizeof (EFI_IPv6_ADDRESS));
+  CopyMem (
+    &Private->StationIp.v6,
+    &Private->TmpStationIp.v6,
+    sizeof (EFI_IPv6_ADDRESS)
+    );
+  CopyMem (
+    &Private->PxeBc.Mode->StationIp.v6,
+    &Private->StationIp.v6,
+    sizeof (EFI_IPv6_ADDRESS)
+    );
 
   Status = PxeBcRegisterIp6Address (Private, &Private->StationIp.v6);
   if (EFI_ERROR (Status)) {
@@ -1931,7 +2006,8 @@ PxeBcDhcp6CallBack (
   // Callback to user when any traffic occurred if has.
   //
   if ((Dhcp6Event != Dhcp6SelectAdvertise) && (Callback != NULL)) {
-    Received = (BOOLEAN)(Dhcp6Event == Dhcp6RcvdAdvertise || Dhcp6Event == Dhcp6RcvdReply);
+    Received = (BOOLEAN)(Dhcp6Event == Dhcp6RcvdAdvertise || Dhcp6Event ==
+                         Dhcp6RcvdReply);
     Status   = Callback->Callback (
                            Callback,
                            Private->Function,
@@ -2023,7 +2099,8 @@ PxeBcDhcp6CallBack (
         Status = EFI_ABORTED;
       } else {
         ASSERT (NewPacket != NULL);
-        SelectAd   = &Private->OfferBuffer[Private->SelectIndex - 1].Dhcp6.Packet.Offer;
+        SelectAd   = &Private->OfferBuffer[Private->SelectIndex -
+                                           1].Dhcp6.Packet.Offer;
         *NewPacket = AllocateZeroPool (SelectAd->Size);
         ASSERT (*NewPacket != NULL);
         if (*NewPacket == NULL) {
@@ -2177,7 +2254,10 @@ PxeBcDhcp6Discover (
   //
   // Start Udp6Read instance
   //
-  Status = Private->Udp6Read->Configure (Private->Udp6Read, &Private->Udp6CfgData);
+  Status = Private->Udp6Read->Configure (
+                                Private->Udp6Read,
+                                &Private->Udp6CfgData
+                                );
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
@@ -2327,8 +2407,9 @@ PxeBcDhcp6Sarr (
       return Status;
     }
 
-    GetMappingTimeOut = TICKS_PER_SECOND * DadXmits.DupAddrDetectTransmits + PXEBC_DAD_ADDITIONAL_DELAY;
-    Status            = gBS->SetTimer (Timer, TimerRelative, GetMappingTimeOut);
+    GetMappingTimeOut = TICKS_PER_SECOND * DadXmits.DupAddrDetectTransmits +
+                        PXEBC_DAD_ADDITIONAL_DELAY;
+    Status = gBS->SetTimer (Timer, TimerRelative, GetMappingTimeOut);
     if (EFI_ERROR (Status)) {
       gBS->CloseEvent (Timer);
       Dhcp6->Configure (Dhcp6, NULL);
@@ -2371,7 +2452,11 @@ PxeBcDhcp6Sarr (
   // Automatic, until we get the server IP address. This could let IP6 driver finish the router discovery
   // to find a valid router address.
   //
-  CopyMem (&Private->TmpStationIp.v6, &Mode.Ia->IaAddress[0].IpAddress, sizeof (EFI_IPv6_ADDRESS));
+  CopyMem (
+    &Private->TmpStationIp.v6,
+    &Mode.Ia->IaAddress[0].IpAddress,
+    sizeof (EFI_IPv6_ADDRESS)
+    );
   if (Mode.ClientId != NULL) {
     FreePool (Mode.ClientId);
   }

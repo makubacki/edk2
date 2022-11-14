@@ -37,7 +37,8 @@
                               (TCP_OPTION_WS << 16)  | \
                               (TCP_OPTION_WS_LEN << 8))
 
-#define TCP_OPTION_MSS_FAST  ((TCP_OPTION_MSS << 24) | (TCP_OPTION_MSS_LEN << 16))
+#define TCP_OPTION_MSS_FAST  \
+  ((TCP_OPTION_MSS << 24) | (TCP_OPTION_MSS_LEN << 16))
 
 //
 // Other misc definitions

@@ -144,7 +144,11 @@ Udp6DriverBindingStart (
     goto EXIT;
   }
 
-  Status = Udp6CreateService (Udp6Service, This->DriverBindingHandle, ControllerHandle);
+  Status = Udp6CreateService (
+             Udp6Service,
+             This->DriverBindingHandle,
+             ControllerHandle
+             );
   if (EFI_ERROR (Status)) {
     goto EXIT;
   }
@@ -199,12 +203,25 @@ Udp6DestroyChildEntryInHandleBuffer (
     return EFI_INVALID_PARAMETER;
   }
 
-  Instance          = NET_LIST_USER_STRUCT_S (Entry, UDP6_INSTANCE_DATA, Link, UDP6_INSTANCE_DATA_SIGNATURE);
-  ServiceBinding    = ((UDP6_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ServiceBinding;
-  NumberOfChildren  = ((UDP6_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->NumberOfChildren;
-  ChildHandleBuffer = ((UDP6_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ChildHandleBuffer;
+  Instance = NET_LIST_USER_STRUCT_S (
+               Entry,
+               UDP6_INSTANCE_DATA,
+               Link,
+               UDP6_INSTANCE_DATA_SIGNATURE
+               );
+  ServiceBinding =
+    ((UDP6_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ServiceBinding;
+  NumberOfChildren =
+    ((UDP6_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->NumberOfChildren;
+  ChildHandleBuffer =
+    ((UDP6_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ChildHandleBuffer;
 
-  if (!NetIsInHandleBuffer (Instance->ChildHandle, NumberOfChildren, ChildHandleBuffer)) {
+  if (!NetIsInHandleBuffer (
+         Instance->ChildHandle,
+         NumberOfChildren,
+         ChildHandleBuffer
+         ))
+  {
     return EFI_SUCCESS;
   }
 

@@ -144,7 +144,9 @@ TcpIoCreateSocket (
   EFI_TCP6_PROTOCOL      *Tcp6;
   EFI_TCP4_RECEIVE_DATA  *RxData;
 
-  if ((Image == NULL) || (Controller == NULL) || (ConfigData == NULL) || (TcpIo == NULL)) {
+  if ((Image == NULL) || (Controller == NULL) || (ConfigData == NULL) ||
+      (TcpIo == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -285,7 +287,10 @@ TcpIoCreateSocket (
     AccessPoint6->RemotePort  = ConfigData->Tcp6IoConfigData.RemotePort;
     AccessPoint6->ActiveFlag  = ConfigData->Tcp6IoConfigData.ActiveFlag;
 
-    IP6_COPY_ADDRESS (&AccessPoint6->RemoteAddress, &ConfigData->Tcp6IoConfigData.RemoteIp);
+    IP6_COPY_ADDRESS (
+      &AccessPoint6->RemoteAddress,
+      &ConfigData->Tcp6IoConfigData.RemoteIp
+      );
 
     ASSERT (Tcp6 != NULL);
     //
@@ -356,7 +361,9 @@ TcpIoCreateSocket (
 
   TcpIo->RxToken.Tcp4Token.CompletionToken.Event = Event;
 
-  RxData = (EFI_TCP4_RECEIVE_DATA *)AllocateZeroPool (sizeof (EFI_TCP4_RECEIVE_DATA));
+  RxData = (EFI_TCP4_RECEIVE_DATA *)AllocateZeroPool (
+                                      sizeof (EFI_TCP4_RECEIVE_DATA)
+                                      );
   if (RxData == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ON_ERROR;
@@ -563,7 +570,10 @@ TcpIoConnect (
     return Status;
   }
 
-  while (!TcpIo->IsConnDone && ((Timeout == NULL) || EFI_ERROR (gBS->CheckEvent (Timeout)))) {
+  while (!TcpIo->IsConnDone && ((Timeout == NULL) || EFI_ERROR (
+                                                       gBS->CheckEvent (Timeout)
+                                                       )))
+  {
     if (TcpIo->TcpVersion == TCP_VERSION_4) {
       Tcp4->Poll (Tcp4);
     } else {
@@ -639,7 +649,11 @@ TcpIoAccept (
     return Status;
   }
 
-  while (!TcpIo->IsListenDone && ((Timeout == NULL) || EFI_ERROR (gBS->CheckEvent (Timeout)))) {
+  while (!TcpIo->IsListenDone && ((Timeout == NULL) || EFI_ERROR (
+                                                         gBS->CheckEvent (
+                                                                Timeout)
+                                                         )))
+  {
     if (TcpIo->TcpVersion == TCP_VERSION_4) {
       Tcp4->Poll (Tcp4);
     } else {
@@ -710,11 +724,19 @@ TcpIoReset (
   if (TcpIo->TcpVersion == TCP_VERSION_4) {
     TcpIo->CloseToken.Tcp4Token.AbortOnClose = TRUE;
     Tcp4                                     = TcpIo->Tcp.Tcp4;
-    Status                                   = Tcp4->Close (Tcp4, &TcpIo->CloseToken.Tcp4Token);
+    Status                                   = Tcp4->Close (
+                                                       Tcp4,
+                                                       &TcpIo->CloseToken.
+                                                         Tcp4Token
+                                                       );
   } else if (TcpIo->TcpVersion == TCP_VERSION_6) {
     TcpIo->CloseToken.Tcp6Token.AbortOnClose = TRUE;
     Tcp6                                     = TcpIo->Tcp.Tcp6;
-    Status                                   = Tcp6->Close (Tcp6, &TcpIo->CloseToken.Tcp6Token);
+    Status                                   = Tcp6->Close (
+                                                       Tcp6,
+                                                       &TcpIo->CloseToken.
+                                                         Tcp6Token
+                                                       );
   } else {
     return;
   }
@@ -951,7 +973,10 @@ TcpIoReceive (
       goto ON_EXIT;
     }
 
-    while (!TcpIo->IsRxDone && ((Timeout == NULL) || EFI_ERROR (gBS->CheckEvent (Timeout)))) {
+    while (!TcpIo->IsRxDone && ((Timeout == NULL) || EFI_ERROR (
+                                                       gBS->CheckEvent (Timeout)
+                                                       )))
+    {
       //
       // Poll until some data is received or an error occurs.
       //

@@ -71,10 +71,14 @@ Dhcp6EnqueueRetry (
         TxCb->RetryCtl.Mrt = DHCP6_SOL_MRT;
         TxCb->RetryCtl.Mrd = DHCP6_SOL_MRD;
       } else {
-        TxCb->RetryCtl.Irt = (RetryCtl->Irt != 0) ? RetryCtl->Irt : DHCP6_SOL_IRT;
-        TxCb->RetryCtl.Mrc = (RetryCtl->Mrc != 0) ? RetryCtl->Mrc : DHCP6_SOL_MRC;
-        TxCb->RetryCtl.Mrt = (RetryCtl->Mrt != 0) ? RetryCtl->Mrt : DHCP6_SOL_MRT;
-        TxCb->RetryCtl.Mrd = (RetryCtl->Mrd != 0) ? RetryCtl->Mrd : DHCP6_SOL_MRD;
+        TxCb->RetryCtl.Irt = (RetryCtl->Irt != 0) ? RetryCtl->Irt :
+                             DHCP6_SOL_IRT;
+        TxCb->RetryCtl.Mrc = (RetryCtl->Mrc != 0) ? RetryCtl->Mrc :
+                             DHCP6_SOL_MRC;
+        TxCb->RetryCtl.Mrt = (RetryCtl->Mrt != 0) ? RetryCtl->Mrt :
+                             DHCP6_SOL_MRT;
+        TxCb->RetryCtl.Mrd = (RetryCtl->Mrd != 0) ? RetryCtl->Mrd :
+                             DHCP6_SOL_MRD;
       }
 
       TxCb->RetryExp = Dhcp6CalculateExpireTime (
@@ -185,10 +189,14 @@ Dhcp6EnqueueRetry (
         TxCb->RetryCtl.Mrt = DHCP6_INF_MRT;
         TxCb->RetryCtl.Mrd = DHCP6_INF_MRD;
       } else {
-        TxCb->RetryCtl.Irt = (RetryCtl->Irt != 0) ? RetryCtl->Irt : DHCP6_INF_IRT;
-        TxCb->RetryCtl.Mrc = (RetryCtl->Mrc != 0) ? RetryCtl->Mrc : DHCP6_INF_MRC;
-        TxCb->RetryCtl.Mrt = (RetryCtl->Mrt != 0) ? RetryCtl->Mrt : DHCP6_INF_MRT;
-        TxCb->RetryCtl.Mrd = (RetryCtl->Mrd != 0) ? RetryCtl->Mrd : DHCP6_INF_MRD;
+        TxCb->RetryCtl.Irt = (RetryCtl->Irt != 0) ? RetryCtl->Irt :
+                             DHCP6_INF_IRT;
+        TxCb->RetryCtl.Mrc = (RetryCtl->Mrc != 0) ? RetryCtl->Mrc :
+                             DHCP6_INF_MRC;
+        TxCb->RetryCtl.Mrt = (RetryCtl->Mrt != 0) ? RetryCtl->Mrt :
+                             DHCP6_INF_MRT;
+        TxCb->RetryCtl.Mrd = (RetryCtl->Mrd != 0) ? RetryCtl->Mrd :
+                             DHCP6_INF_MRD;
       }
 
       TxCb->RetryExp = Dhcp6CalculateExpireTime (
@@ -610,7 +618,8 @@ Dhcp6UpdateIaInfo (
     }
 
     IaInnerOpt = Option + 16;
-    IaInnerLen = (UINT16)(NTOHS (ReadUnaligned16 ((UINT16 *)(Option + 2))) - 12);
+    IaInnerLen = (UINT16)(NTOHS (ReadUnaligned16 ((UINT16 *)(Option + 2))) -
+                          12);
   } else {
     T1         = 0;
     T2         = 0;
@@ -757,10 +766,12 @@ Dhcp6SeekStsOption (
   //
   if (Instance->Config->IaDescriptor.Type == Dhcp6OptIana) {
     IaInnerOpt = *Option + 16;
-    IaInnerLen = (UINT16)(NTOHS (ReadUnaligned16 ((UINT16 *)(*Option + 2))) - 12);
+    IaInnerLen = (UINT16)(NTOHS (ReadUnaligned16 ((UINT16 *)(*Option + 2))) -
+                          12);
   } else {
     IaInnerOpt = *Option + 8;
-    IaInnerLen = (UINT16)(NTOHS (ReadUnaligned16 ((UINT16 *)(*Option + 2))) - 4);
+    IaInnerLen = (UINT16)(NTOHS (ReadUnaligned16 ((UINT16 *)(*Option + 2))) -
+                          4);
   }
 
   //
@@ -1300,7 +1311,13 @@ Dhcp6SendDeclineMsg (
              ServerId->Duid
              );
 
-  Cursor = Dhcp6AppendIaOption (Cursor, DecIa, 0, 0, Packet->Dhcp6.Header.MessageType);
+  Cursor = Dhcp6AppendIaOption (
+             Cursor,
+             DecIa,
+             0,
+             0,
+             Packet->Dhcp6.Header.MessageType
+             );
 
   //
   // Determine the size/length of packet.
@@ -1436,7 +1453,13 @@ Dhcp6SendReleaseMsg (
              &Elapsed
              );
 
-  Cursor = Dhcp6AppendIaOption (Cursor, RelIa, 0, 0, Packet->Dhcp6.Header.MessageType);
+  Cursor = Dhcp6AppendIaOption (
+             Cursor,
+             RelIa,
+             0,
+             0,
+             Packet->Dhcp6.Header.MessageType
+             );
 
   //
   // Determine the size/length of packet
@@ -1532,9 +1555,10 @@ Dhcp6SendRenewRebindMsg (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Packet->Size                       = DHCP6_BASE_PACKET_SIZE + UserLen;
-  Packet->Length                     = sizeof (EFI_DHCP6_HEADER);
-  Packet->Dhcp6.Header.MessageType   = RebindRequest ? Dhcp6MsgRebind : Dhcp6MsgRenew;
+  Packet->Size                     = DHCP6_BASE_PACKET_SIZE + UserLen;
+  Packet->Length                   = sizeof (EFI_DHCP6_HEADER);
+  Packet->Dhcp6.Header.MessageType = RebindRequest ? Dhcp6MsgRebind :
+                                     Dhcp6MsgRenew;
   Packet->Dhcp6.Header.TransactionId = Service->Xid++;
 
   //
@@ -1631,7 +1655,8 @@ Dhcp6SendRenewRebindMsg (
   // renew/rebind actively.
   //
   Instance->IaCb.Ia->State = State;
-  Instance->IaCb.LeaseTime = (RebindRequest) ? Instance->IaCb.T2 : Instance->IaCb.T1;
+  Instance->IaCb.LeaseTime = (RebindRequest) ? Instance->IaCb.T2 :
+                             Instance->IaCb.T1;
   //
   // Clear initial time for current transaction.
   //
@@ -2069,7 +2094,11 @@ Dhcp6HandleReplyMsg (
              Dhcp6OptRapidCommit
              );
 
-  if (((Option != NULL) && !Instance->Config->RapidCommit) || ((Option == NULL) && Instance->Config->RapidCommit)) {
+  if (((Option != NULL) && !Instance->Config->RapidCommit) || ((Option ==
+                                                                NULL) &&
+                                                               Instance->Config
+                                                                 ->RapidCommit))
+  {
     return EFI_DEVICE_ERROR;
   }
 
@@ -2106,7 +2135,9 @@ Dhcp6HandleReplyMsg (
   // the client considers the decline/release event completed regardless of the
   // status code.
   //
-  if ((Instance->IaCb.Ia->State == Dhcp6Declining) || (Instance->IaCb.Ia->State == Dhcp6Releasing)) {
+  if ((Instance->IaCb.Ia->State == Dhcp6Declining) ||
+      (Instance->IaCb.Ia->State == Dhcp6Releasing))
+  {
     if (Instance->IaCb.Ia->IaAddressCount != 0) {
       Instance->IaCb.Ia->State = Dhcp6Bound;
     } else {
@@ -2255,7 +2286,9 @@ Dhcp6HandleReplyMsg (
         break;
 
       case Dhcp6StsNoBinding:
-        if ((Instance->IaCb.Ia->State == Dhcp6Renewing) || (Instance->IaCb.Ia->State == Dhcp6Rebinding)) {
+        if ((Instance->IaCb.Ia->State == Dhcp6Renewing) ||
+            (Instance->IaCb.Ia->State == Dhcp6Rebinding))
+        {
           //
           // Refer to RFC3315 Chapter 18.1.8, for each IA in the original Renew or Rebind message, the client
           // sends a Request message if the IA contained a Status Code option with the NoBinding status.
@@ -2412,7 +2445,9 @@ Dhcp6HandleAdvertiseMsg (
              Dhcp6OptRapidCommit
              );
 
-  if ((Option != NULL) && Instance->Config->RapidCommit && (Packet->Dhcp6.Header.MessageType == Dhcp6MsgReply)) {
+  if ((Option != NULL) && Instance->Config->RapidCommit &&
+      (Packet->Dhcp6.Header.MessageType == Dhcp6MsgReply))
+  {
     return Dhcp6HandleReplyMsg (Instance, Packet);
   }
 
@@ -2483,7 +2518,9 @@ Dhcp6HandleAdvertiseMsg (
                Dhcp6OptPreference
                );
 
-    if ((Instance->AdSelect == NULL) || ((Option != NULL) && (*(Option + 4) > Instance->AdPref))) {
+    if ((Instance->AdSelect == NULL) || ((Option != NULL) && (*(Option + 4) >
+                                                              Instance->AdPref)))
+    {
       //
       // No advertisements received before or preference is more than other
       // advertisements received before. Then store the new packet and the
@@ -2562,7 +2599,9 @@ Dhcp6HandleStateful (
   //
   // Discard the packet if not advertisement or reply packet.
   //
-  if ((Packet->Dhcp6.Header.MessageType != Dhcp6MsgAdvertise) && (Packet->Dhcp6.Header.MessageType != Dhcp6MsgReply)) {
+  if ((Packet->Dhcp6.Header.MessageType != Dhcp6MsgAdvertise) &&
+      (Packet->Dhcp6.Header.MessageType != Dhcp6MsgReply))
+  {
     goto ON_CONTINUE;
   }
 
@@ -2575,7 +2614,12 @@ Dhcp6HandleStateful (
              Dhcp6OptClientId
              );
 
-  if ((Option == NULL) || (CompareMem (Option + 4, ClientId->Duid, ClientId->Length) != 0)) {
+  if ((Option == NULL) || (CompareMem (
+                             Option + 4,
+                             ClientId->Duid,
+                             ClientId->Length
+                             ) != 0))
+  {
     goto ON_CONTINUE;
   }
 
@@ -2971,7 +3015,9 @@ Dhcp6OnTimerTick (
       //
       // Handle the first rt in the transmission of solicit specially.
       //
-      if (((TxCb->RetryCnt == 0) || TxCb->SolicitRetry) && (TxCb->TxPacket->Dhcp6.Header.MessageType == Dhcp6MsgSolicit)) {
+      if (((TxCb->RetryCnt == 0) || TxCb->SolicitRetry) &&
+          (TxCb->TxPacket->Dhcp6.Header.MessageType == Dhcp6MsgSolicit))
+      {
         if (Instance->AdSelect == NULL) {
           //
           // Set adpref as 0xff here to indicate select any advertisement
@@ -3070,7 +3116,9 @@ Dhcp6OnTimerTick (
     return;
   }
 
-  if ((IaCb->Ia->State == Dhcp6Bound) || (IaCb->Ia->State == Dhcp6Renewing) || (IaCb->Ia->State == Dhcp6Rebinding)) {
+  if ((IaCb->Ia->State == Dhcp6Bound) || (IaCb->Ia->State == Dhcp6Renewing) ||
+      (IaCb->Ia->State == Dhcp6Rebinding))
+  {
     IaCb->LeaseTime++;
 
     if ((IaCb->LeaseTime > IaCb->T2) && (IaCb->Ia->State == Dhcp6Bound)) {
@@ -3078,7 +3126,9 @@ Dhcp6OnTimerTick (
       // Exceed t2, send rebind packet to extend the Ia lease.
       //
       Dhcp6SendRenewRebindMsg (Instance, TRUE);
-    } else if ((IaCb->LeaseTime > IaCb->T1) && (IaCb->Ia->State == Dhcp6Bound)) {
+    } else if ((IaCb->LeaseTime > IaCb->T1) && (IaCb->Ia->State ==
+                                                Dhcp6Bound))
+    {
       //
       // Exceed t1, send renew packet to extend the Ia lease.
       //

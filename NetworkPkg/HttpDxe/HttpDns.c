@@ -50,20 +50,34 @@ HttpDns4 (
   //
   // Get DNS server list from EFI IPv4 Configuration II protocol.
   //
-  Status = gBS->HandleProtocol (Service->ControllerHandle, &gEfiIp4Config2ProtocolGuid, (VOID **)&Ip4Config2);
+  Status = gBS->HandleProtocol (
+                  Service->ControllerHandle,
+                  &gEfiIp4Config2ProtocolGuid,
+                  (VOID **)&Ip4Config2
+                  );
   if (!EFI_ERROR (Status)) {
     //
     // Get the required size.
     //
     DataSize = 0;
-    Status   = Ip4Config2->GetData (Ip4Config2, Ip4Config2DataTypeDnsServer, &DataSize, NULL);
+    Status   = Ip4Config2->GetData (
+                             Ip4Config2,
+                             Ip4Config2DataTypeDnsServer,
+                             &DataSize,
+                             NULL
+                             );
     if (Status == EFI_BUFFER_TOO_SMALL) {
       DnsServerList = AllocatePool (DataSize);
       if (DnsServerList == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }
 
-      Status = Ip4Config2->GetData (Ip4Config2, Ip4Config2DataTypeDnsServer, &DataSize, DnsServerList);
+      Status = Ip4Config2->GetData (
+                             Ip4Config2,
+                             Ip4Config2DataTypeDnsServer,
+                             &DataSize,
+                             DnsServerList
+                             );
       if (EFI_ERROR (Status)) {
         FreePool (DnsServerList);
         DnsServerList = NULL;
@@ -111,8 +125,14 @@ HttpDns4 (
   Dns4CfgData.RetryInterval      = PcdGet32 (PcdHttpDnsRetryInterval);
   Dns4CfgData.RetryCount         = PcdGet32 (PcdHttpDnsRetryCount);
   if (!Dns4CfgData.UseDefaultSetting) {
-    IP4_COPY_ADDRESS (&Dns4CfgData.StationIp, &HttpInstance->IPv4Node.LocalAddress);
-    IP4_COPY_ADDRESS (&Dns4CfgData.SubnetMask, &HttpInstance->IPv4Node.LocalSubnet);
+    IP4_COPY_ADDRESS (
+      &Dns4CfgData.StationIp,
+      &HttpInstance->IPv4Node.LocalAddress
+      );
+    IP4_COPY_ADDRESS (
+      &Dns4CfgData.SubnetMask,
+      &HttpInstance->IPv4Node.LocalSubnet
+      );
   }
 
   Dns4CfgData.EnableDnsCache = TRUE;
@@ -164,7 +184,9 @@ HttpDns4 (
       goto Exit;
     }
 
-    if ((Token.RspData.H2AData->IpCount == 0) || (Token.RspData.H2AData->IpList == NULL)) {
+    if ((Token.RspData.H2AData->IpCount == 0) ||
+        (Token.RspData.H2AData->IpList == NULL))
+    {
       Status = EFI_DEVICE_ERROR;
       goto Exit;
     }
@@ -261,20 +283,34 @@ HttpDns6 (
   //
   // Get DNS server list from EFI IPv6 Configuration protocol.
   //
-  Status = gBS->HandleProtocol (Service->ControllerHandle, &gEfiIp6ConfigProtocolGuid, (VOID **)&Ip6Config);
+  Status = gBS->HandleProtocol (
+                  Service->ControllerHandle,
+                  &gEfiIp6ConfigProtocolGuid,
+                  (VOID **)&Ip6Config
+                  );
   if (!EFI_ERROR (Status)) {
     //
     // Get the required size.
     //
     DataSize = 0;
-    Status   = Ip6Config->GetData (Ip6Config, Ip6ConfigDataTypeDnsServer, &DataSize, NULL);
+    Status   = Ip6Config->GetData (
+                            Ip6Config,
+                            Ip6ConfigDataTypeDnsServer,
+                            &DataSize,
+                            NULL
+                            );
     if (Status == EFI_BUFFER_TOO_SMALL) {
       DnsServerList = AllocatePool (DataSize);
       if (DnsServerList == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }
 
-      Status = Ip6Config->GetData (Ip6Config, Ip6ConfigDataTypeDnsServer, &DataSize, DnsServerList);
+      Status = Ip6Config->GetData (
+                            Ip6Config,
+                            Ip6ConfigDataTypeDnsServer,
+                            &DataSize,
+                            DnsServerList
+                            );
       if (EFI_ERROR (Status)) {
         FreePool (DnsServerList);
         DnsServerList = NULL;
@@ -319,7 +355,10 @@ HttpDns6 (
   Dns6ConfigData.Protocol       = EFI_IP_PROTO_UDP;
   Dns6ConfigData.RetryInterval  = PcdGet32 (PcdHttpDnsRetryInterval);
   Dns6ConfigData.RetryCount     = PcdGet32 (PcdHttpDnsRetryCount);
-  IP6_COPY_ADDRESS (&Dns6ConfigData.StationIp, &HttpInstance->Ipv6Node.LocalAddress);
+  IP6_COPY_ADDRESS (
+    &Dns6ConfigData.StationIp,
+    &HttpInstance->Ipv6Node.LocalAddress
+    );
   Status = Dns6->Configure (
                    Dns6,
                    &Dns6ConfigData
@@ -366,7 +405,9 @@ HttpDns6 (
       goto Exit;
     }
 
-    if ((Token.RspData.H2AData->IpCount == 0) || (Token.RspData.H2AData->IpList == NULL)) {
+    if ((Token.RspData.H2AData->IpCount == 0) ||
+        (Token.RspData.H2AData->IpList == NULL))
+    {
       Status = EFI_DEVICE_ERROR;
       goto Exit;
     }

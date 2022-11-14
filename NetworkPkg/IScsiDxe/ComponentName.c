@@ -11,7 +11,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gIScsiComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gIScsiComponentName =
+{
   IScsiComponentNameGetDriverName,
   IScsiComponentNameGetControllerName,
   "eng"
@@ -20,13 +21,15 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gIScsiComponentName =
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gIScsiComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gIScsiComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)IScsiComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)IScsiComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mIScsiDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mIScsiDriverNameTable[] = {
   {
     "eng;en",
     L"iSCSI Driver"
@@ -37,7 +40,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mIScsiDriverNameTable[] 
   }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  *gIScsiControllerNameTable = NULL;
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  *
+  gIScsiControllerNameTable = NULL;
 
 /**
   Retrieves a Unicode string that is the user readable name of the driver.
@@ -251,12 +255,18 @@ IScsiComponentNameGetControllerName (
   //
   // Get the handle of the controller we are controlling.
   //
-  IScsiController = NetLibGetNicHandle (ControllerHandle, &gEfiTcp4ProtocolGuid);
+  IScsiController = NetLibGetNicHandle (
+                      ControllerHandle,
+                      &gEfiTcp4ProtocolGuid
+                      );
   if (IScsiController != NULL) {
     IScsiPrivateGuid = &gIScsiV4PrivateGuid;
     Ipv6Flag         = FALSE;
   } else {
-    IScsiController = NetLibGetNicHandle (ControllerHandle, &gEfiTcp6ProtocolGuid);
+    IScsiController = NetLibGetNicHandle (
+                        ControllerHandle,
+                        &gEfiTcp6ProtocolGuid
+                        );
     if (IScsiController != NULL) {
       IScsiPrivateGuid = &gIScsiV6PrivateGuid;
       Ipv6Flag         = TRUE;

@@ -373,7 +373,11 @@ MnpGroups (
   }
 
   if ((!Instance->ConfigData.EnableMulticastReceive) ||
-      ((MacAddress != NULL) && !NET_MAC_IS_MULTICAST (MacAddress, &SnpMode->BroadcastAddress, SnpMode->HwAddressSize)))
+      ((MacAddress != NULL) && !NET_MAC_IS_MULTICAST (
+                                  MacAddress,
+                                  &SnpMode->BroadcastAddress,
+                                  SnpMode->HwAddressSize
+                                  )))
   {
     //
     // The instance isn't configured to do multicast receive. OR
@@ -544,7 +548,12 @@ MnpTransmit (
   //
   // Build the tx packet
   //
-  Status = MnpBuildTxPacket (MnpServiceData, Token->Packet.TxData, &PktBuf, &PktLen);
+  Status = MnpBuildTxPacket (
+             MnpServiceData,
+             Token->Packet.TxData,
+             &PktBuf,
+             &PktLen
+             );
   if (EFI_ERROR (Status)) {
     goto ON_EXIT;
   }
@@ -705,7 +714,11 @@ MnpCancel (
   //
   // Iterate the RxTokenMap to cancel the specified Token.
   //
-  Status = NetMapIterate (&Instance->RxTokenMap, MnpCancelTokens, (VOID *)Token);
+  Status = NetMapIterate (
+             &Instance->RxTokenMap,
+             MnpCancelTokens,
+             (VOID *)Token
+             );
   if (Token != NULL) {
     Status = (Status == EFI_ABORTED) ? EFI_SUCCESS : EFI_NOT_FOUND;
   }

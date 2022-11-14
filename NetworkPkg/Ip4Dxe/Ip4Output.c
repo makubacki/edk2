@@ -58,7 +58,13 @@ Ip4PrependHead (
     return EFI_BAD_BUFFER_SIZE;
   }
 
-  Ip4CopyOption (Option, OptLen, FirstFragment, (UINT8 *)(PacketHead + 1), &Len);
+  Ip4CopyOption (
+    Option,
+    OptLen,
+    FirstFragment,
+    (UINT8 *)(PacketHead + 1),
+    &Len
+    );
 
   //
   // Set the head up, convert the host byte order to network byte order
@@ -74,7 +80,10 @@ Ip4PrependHead (
   PacketHead->Protocol = Head->Protocol;
   PacketHead->Src      = HTONL (Head->Src);
   PacketHead->Dst      = HTONL (Head->Dst);
-  PacketHead->Checksum = (UINT16)(~NetblockChecksum ((UINT8 *)PacketHead, HeadLen));
+  PacketHead->Checksum = (UINT16)(~NetblockChecksum (
+                           (UINT8 *)PacketHead,
+                           HeadLen
+                           ));
 
   Packet->Ip.Ip4 = PacketHead;
   return EFI_SUCCESS;
@@ -278,7 +287,9 @@ Ip4Output (
   }
 
   Dest = Head->Dst;
-  if (IP4_IS_BROADCAST (Ip4GetNetCast (Dest, IpIf)) || (Dest == IP4_ALLONE_ADDRESS)) {
+  if (IP4_IS_BROADCAST (Ip4GetNetCast (Dest, IpIf)) || (Dest ==
+                                                        IP4_ALLONE_ADDRESS))
+  {
     //
     // Set the gateway to local broadcast if the Dest is
     // the broadcast address for the connected network or
@@ -297,15 +308,33 @@ Ip4Output (
     // Route the packet unless overridden, that is, GateWay isn't zero.
     //
     if (IpInstance == NULL) {
-      CacheEntry = Ip4Route (IpSb->DefaultRouteTable, Head->Dst, Head->Src, IpIf->SubnetMask, TRUE);
+      CacheEntry = Ip4Route (
+                     IpSb->DefaultRouteTable,
+                     Head->Dst,
+                     Head->Src,
+                     IpIf->SubnetMask,
+                     TRUE
+                     );
     } else {
-      CacheEntry = Ip4Route (IpInstance->RouteTable, Head->Dst, Head->Src, IpIf->SubnetMask, FALSE);
+      CacheEntry = Ip4Route (
+                     IpInstance->RouteTable,
+                     Head->Dst,
+                     Head->Src,
+                     IpIf->SubnetMask,
+                     FALSE
+                     );
       //
       // If failed to route the packet by using the instance's route table,
       // try to use the default route table.
       //
       if (CacheEntry == NULL) {
-        CacheEntry = Ip4Route (IpSb->DefaultRouteTable, Head->Dst, Head->Src, IpIf->SubnetMask, TRUE);
+        CacheEntry = Ip4Route (
+                       IpSb->DefaultRouteTable,
+                       Head->Dst,
+                       Head->Src,
+                       IpIf->SubnetMask,
+                       TRUE
+                       );
       }
     }
 
@@ -418,7 +447,15 @@ Ip4Output (
   //    upper layer's packets.
   //
   Ip4PrependHead (Packet, Head, Option, OptLen);
-  Status = Ip4SendFrame (IpIf, IpInstance, Packet, GateWay, Callback, Context, IpSb);
+  Status = Ip4SendFrame (
+             IpIf,
+             IpInstance,
+             Packet,
+             GateWay,
+             Callback,
+             Context,
+             IpSb
+             );
 
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;

@@ -190,7 +190,10 @@ Ip4SendIgmpMessage (
   Igmp->MaxRespTime = 0;
   Igmp->Checksum    = 0;
   Igmp->Group       = HTONL (Group);
-  Igmp->Checksum    = (UINT16)(~NetblockChecksum ((UINT8 *)Igmp, sizeof (IGMP_HEAD)));
+  Igmp->Checksum    = (UINT16)(~NetblockChecksum (
+                        (UINT8 *)Igmp,
+                        sizeof (IGMP_HEAD)
+                        ));
 
   Head.Tos      = 0;
   Head.Protocol = IP4_PROTO_IGMP;
@@ -377,7 +380,12 @@ Ip4LeaveGroup (
   // and we are talking IGMPv2.
   //
   if (Group->ReportByUs && (IgmpCtrl->Igmpv1QuerySeen == 0)) {
-    Ip4SendIgmpMessage (IpSb, IP4_ALLROUTER_ADDRESS, IGMP_LEAVE_GROUP, Group->Address);
+    Ip4SendIgmpMessage (
+      IpSb,
+      IP4_ALLROUTER_ADDRESS,
+      IGMP_LEAVE_GROUP,
+      Group->Address
+      );
   }
 
   RemoveEntryList (&Group->Link);
@@ -461,7 +469,9 @@ Ip4IgmpHandle (
           // If the timer is pending, only update it if the time left
           // is longer than the MaxRespTime. TODO: randomize the DelayTime.
           //
-          if ((Group->DelayTime == 0) || (Group->DelayTime > Igmp.MaxRespTime)) {
+          if ((Group->DelayTime == 0) || (Group->DelayTime >
+                                          Igmp.MaxRespTime))
+          {
             Group->DelayTime = MAX (1, Igmp.MaxRespTime);
           }
         }

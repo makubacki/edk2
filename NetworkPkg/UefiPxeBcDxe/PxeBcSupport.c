@@ -39,8 +39,16 @@ PxeBcFlushStationIp (
     //
     // Overwrite Udp6CfgData/Ip6CfgData StationAddress.
     //
-    CopyMem (&Private->Udp6CfgData.StationAddress, StationIp, sizeof (EFI_IPv6_ADDRESS));
-    CopyMem (&Private->Ip6CfgData.StationAddress, StationIp, sizeof (EFI_IPv6_ADDRESS));
+    CopyMem (
+      &Private->Udp6CfgData.StationAddress,
+      StationIp,
+      sizeof (EFI_IPv6_ADDRESS)
+      );
+    CopyMem (
+      &Private->Ip6CfgData.StationAddress,
+      StationIp,
+      sizeof (EFI_IPv6_ADDRESS)
+      );
 
     //
     // Reconfigure the Ip6 instance to capture background ICMP6 packets with new station Ip address.
@@ -69,24 +77,41 @@ PxeBcFlushStationIp (
       //
       // Overwrite Udp4CfgData/Ip4CfgData StationAddress.
       //
-      CopyMem (&Private->Udp4CfgData.StationAddress, StationIp, sizeof (EFI_IPv4_ADDRESS));
-      CopyMem (&Private->Ip4CfgData.StationAddress, StationIp, sizeof (EFI_IPv4_ADDRESS));
+      CopyMem (
+        &Private->Udp4CfgData.StationAddress,
+        StationIp,
+        sizeof (EFI_IPv4_ADDRESS)
+        );
+      CopyMem (
+        &Private->Ip4CfgData.StationAddress,
+        StationIp,
+        sizeof (EFI_IPv4_ADDRESS)
+        );
     }
 
     if (SubnetMask != NULL) {
       //
       // Overwrite Udp4CfgData/Ip4CfgData SubnetMask.
       //
-      CopyMem (&Private->Udp4CfgData.SubnetMask, SubnetMask, sizeof (EFI_IPv4_ADDRESS));
-      CopyMem (&Private->Ip4CfgData.SubnetMask, SubnetMask, sizeof (EFI_IPv4_ADDRESS));
+      CopyMem (
+        &Private->Udp4CfgData.SubnetMask,
+        SubnetMask,
+        sizeof (EFI_IPv4_ADDRESS)
+        );
+      CopyMem (
+        &Private->Ip4CfgData.SubnetMask,
+        SubnetMask,
+        sizeof (EFI_IPv4_ADDRESS)
+        );
     }
 
     if ((StationIp != NULL) && (SubnetMask != NULL)) {
       //
       // Updated the route table.
       //
-      Mode->RouteTableEntries                = 1;
-      Mode->RouteTable[0].IpAddr.Addr[0]     = StationIp->Addr[0] & SubnetMask->Addr[0];
+      Mode->RouteTableEntries            = 1;
+      Mode->RouteTable[0].IpAddr.Addr[0] = StationIp->Addr[0] &
+                                           SubnetMask->Addr[0];
       Mode->RouteTable[0].SubnetMask.Addr[0] = SubnetMask->Addr[0];
       Mode->RouteTable[0].GwAddr.Addr[0]     = 0;
     }
@@ -281,8 +306,19 @@ PxeBcIcmpErrorDpcHandle (
 
   if ((EFI_IP4 (RxData->Header->SourceAddress) != 0) &&
       (NTOHL (Mode->SubnetMask.Addr[0]) != 0) &&
-      IP4_NET_EQUAL (NTOHL (Mode->StationIp.Addr[0]), EFI_NTOHL (RxData->Header->SourceAddress), NTOHL (Mode->SubnetMask.Addr[0])) &&
-      !NetIp4IsUnicast (EFI_NTOHL (RxData->Header->SourceAddress), NTOHL (Mode->SubnetMask.Addr[0])))
+      IP4_NET_EQUAL (
+        NTOHL (Mode->StationIp.Addr[0]),
+        EFI_NTOHL (
+          RxData->Header->SourceAddress
+          ),
+        NTOHL (Mode->SubnetMask.Addr[0])
+        ) &&
+      !NetIp4IsUnicast (
+         EFI_NTOHL (RxData->Header->SourceAddress),
+         NTOHL (
+           Mode->SubnetMask.Addr[0]
+           )
+         ))
   {
     //
     // The source address of the received packet should be a valid unicast address.
@@ -290,7 +326,11 @@ PxeBcIcmpErrorDpcHandle (
     goto ON_RECYCLE;
   }
 
-  if (!EFI_IP4_EQUAL (&RxData->Header->DestinationAddress, &Mode->StationIp.v4)) {
+  if (!EFI_IP4_EQUAL (
+         &RxData->Header->DestinationAddress,
+         &Mode->StationIp.v4
+         ))
+  {
     //
     // The destination address of the received packet should be equal to the host address.
     //
@@ -659,8 +699,9 @@ PxeBcUdp4Write (
   // Arrange one fragment buffer for data, and another fragment buffer for header if has.
   //
   FragCount = (HeaderSize != NULL) ? 2 : 1;
-  TxLength  = sizeof (EFI_UDP4_TRANSMIT_DATA) + (FragCount - 1) * sizeof (EFI_UDP4_FRAGMENT_DATA);
-  TxData    = (EFI_UDP4_TRANSMIT_DATA *)AllocateZeroPool (TxLength);
+  TxLength  = sizeof (EFI_UDP4_TRANSMIT_DATA) + (FragCount - 1) *
+              sizeof (EFI_UDP4_FRAGMENT_DATA);
+  TxData = (EFI_UDP4_TRANSMIT_DATA *)AllocateZeroPool (TxLength);
   if (TxData == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -764,8 +805,9 @@ PxeBcUdp6Write (
   // Arrange one fragment buffer for data, and another fragment buffer for header if has.
   //
   FragCount = (HeaderSize != NULL) ? 2 : 1;
-  TxLength  = sizeof (EFI_UDP6_TRANSMIT_DATA) + (FragCount - 1) * sizeof (EFI_UDP6_FRAGMENT_DATA);
-  TxData    = (EFI_UDP6_TRANSMIT_DATA *)AllocateZeroPool (TxLength);
+  TxLength  = sizeof (EFI_UDP6_TRANSMIT_DATA) + (FragCount - 1) *
+              sizeof (EFI_UDP6_FRAGMENT_DATA);
+  TxData = (EFI_UDP6_TRANSMIT_DATA *)AllocateZeroPool (TxLength);
   if (TxData == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -874,7 +916,8 @@ PxeBcCheckByIpFilter (
     EFI_NTOHL (DestinationIp);
   }
 
-  if (((Mode->IpFilter.Filters & EFI_PXE_BASE_CODE_IP_FILTER_PROMISCUOUS_MULTICAST) != 0) &&
+  if (((Mode->IpFilter.Filters &
+        EFI_PXE_BASE_CODE_IP_FILTER_PROMISCUOUS_MULTICAST) != 0) &&
       (IP4_IS_MULTICAST (DestinationIp.Addr[0]) ||
        IP6_IS_MULTICAST (&DestinationIp)))
   {
@@ -888,7 +931,8 @@ PxeBcCheckByIpFilter (
     return TRUE;
   }
 
-  if (((Mode->IpFilter.Filters & EFI_PXE_BASE_CODE_IP_FILTER_STATION_IP) != 0) &&
+  if (((Mode->IpFilter.Filters & EFI_PXE_BASE_CODE_IP_FILTER_STATION_IP) !=
+       0) &&
       (EFI_IP4_EQUAL (&Mode->StationIp.v4, &DestinationIp) ||
        EFI_IP6_EQUAL (&Mode->StationIp.v6, &DestinationIp)))
   {
@@ -956,15 +1000,27 @@ PxeBcCheckByDestIp (
 
     return TRUE;
   } else if ((DestIp != NULL) &&
-             (EFI_IP4_EQUAL (DestIp, &((EFI_UDP4_SESSION_DATA *)Session)->DestinationAddress) ||
-              EFI_IP6_EQUAL (DestIp, &((EFI_UDP6_SESSION_DATA *)Session)->DestinationAddress)))
+             (EFI_IP4_EQUAL (
+                DestIp,
+                &((EFI_UDP4_SESSION_DATA *)Session)->DestinationAddress
+                ) ||
+              EFI_IP6_EQUAL (
+                DestIp,
+                &((EFI_UDP6_SESSION_DATA *)Session)->DestinationAddress
+                )))
   {
     //
     // The destination address in the received packet is matched if present.
     //
     return TRUE;
-  } else if (EFI_IP4_EQUAL (&Mode->StationIp, &((EFI_UDP4_SESSION_DATA *)Session)->DestinationAddress) ||
-             EFI_IP6_EQUAL (&Mode->StationIp, &((EFI_UDP6_SESSION_DATA *)Session)->DestinationAddress))
+  } else if (EFI_IP4_EQUAL (
+               &Mode->StationIp,
+               &((EFI_UDP4_SESSION_DATA *)Session)->DestinationAddress
+               ) ||
+             EFI_IP6_EQUAL (
+               &Mode->StationIp,
+               &((EFI_UDP6_SESSION_DATA *)Session)->DestinationAddress
+               ))
   {
     //
     // The destination address in the received packet is equal to the host address.
@@ -1065,8 +1121,14 @@ PxeBcFilterBySrcIp (
 
     return TRUE;
   } else if ((SrcIp != NULL) &&
-             (EFI_IP4_EQUAL (SrcIp, &((EFI_UDP4_SESSION_DATA *)Session)->SourceAddress) ||
-              EFI_IP6_EQUAL (SrcIp, &((EFI_UDP6_SESSION_DATA *)Session)->SourceAddress)))
+             (EFI_IP4_EQUAL (
+                SrcIp,
+                &((EFI_UDP4_SESSION_DATA *)Session)->SourceAddress
+                ) ||
+              EFI_IP6_EQUAL (
+                SrcIp,
+                &((EFI_UDP6_SESSION_DATA *)Session)->SourceAddress
+                )))
   {
     //
     // The source address in the received packet is matched if present.
@@ -1506,7 +1568,9 @@ CalcElapsedTime (
   ZeroMem (&Time, sizeof (EFI_TIME));
   gRT->GetTime (&Time, NULL);
   CurrentStamp = MultU64x32 (
-                   ((((UINT32)(Time.Year - 1900) * 360 + (Time.Month - 1) * 30 + (Time.Day - 1)) * 24 + Time.Hour) * 60 + Time.Minute) * 60 + Time.Second,
+                   ((((UINT32)(Time.Year - 1900) * 360 + (Time.Month - 1) * 30 +
+                      (Time.Day - 1)) * 24 + Time.Hour) * 60 + Time.Minute) *
+                   60 + Time.Second,
                    100
                    ) +
                  DivU64x32 (

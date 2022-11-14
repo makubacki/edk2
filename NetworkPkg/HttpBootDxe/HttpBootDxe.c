@@ -85,7 +85,11 @@ HttpBootCheckIpv6Support (
 
   InfoTypesBuffer     = NULL;
   InfoTypeBufferCount = 0;
-  Status              = Aip->GetSupportedTypes (Aip, &InfoTypesBuffer, &InfoTypeBufferCount);
+  Status              = Aip->GetSupportedTypes (
+                               Aip,
+                               &InfoTypesBuffer,
+                               &InfoTypeBufferCount
+                               );
   if (EFI_ERROR (Status) || (InfoTypesBuffer == NULL)) {
     FreePool (InfoTypesBuffer);
     return EFI_NOT_FOUND;
@@ -93,7 +97,11 @@ HttpBootCheckIpv6Support (
 
   Supported = FALSE;
   for (TypeIndex = 0; TypeIndex < InfoTypeBufferCount; TypeIndex++) {
-    if (CompareGuid (&InfoTypesBuffer[TypeIndex], &gEfiAdapterInfoUndiIpv6SupportGuid)) {
+    if (CompareGuid (
+          &InfoTypesBuffer[TypeIndex],
+          &gEfiAdapterInfoUndiIpv6SupportGuid
+          ))
+    {
       Supported = TRUE;
       break;
     }
@@ -109,7 +117,12 @@ HttpBootCheckIpv6Support (
   //
   InfoBlock     = NULL;
   InfoBlockSize = 0;
-  Status        = Aip->GetInformation (Aip, &gEfiAdapterInfoUndiIpv6SupportGuid, &InfoBlock, &InfoBlockSize);
+  Status        = Aip->GetInformation (
+                         Aip,
+                         &gEfiAdapterInfoUndiIpv6SupportGuid,
+                         &InfoBlock,
+                         &InfoBlockSize
+                         );
   if (EFI_ERROR (Status) || (InfoBlock == NULL)) {
     FreePool (InfoBlock);
     return EFI_NOT_FOUND;
@@ -544,7 +557,10 @@ HttpBootIp4DxeDriverBindingStart (
   Node->Ipv4.Header.SubType = MSG_IPv4_DP;
   SetDevicePathNodeLength (Node, sizeof (IPv4_DEVICE_PATH));
   Node->Ipv4.StaticIpAddress = FALSE;
-  DevicePath                 = AppendDevicePathNode (Private->ParentDevicePath, (EFI_DEVICE_PATH_PROTOCOL *)Node);
+  DevicePath                 = AppendDevicePathNode (
+                                 Private->ParentDevicePath,
+                                 (EFI_DEVICE_PATH_PROTOCOL *)Node
+                                 );
   FreePool (Node);
   if (DevicePath == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
@@ -563,7 +579,10 @@ HttpBootIp4DxeDriverBindingStart (
   Node->DevPath.Type    = MESSAGING_DEVICE_PATH;
   Node->DevPath.SubType = MSG_URI_DP;
   SetDevicePathNodeLength (Node, sizeof (EFI_DEVICE_PATH_PROTOCOL));
-  Private->Ip4Nic->DevicePath = AppendDevicePathNode (DevicePath, (EFI_DEVICE_PATH_PROTOCOL *)Node);
+  Private->Ip4Nic->DevicePath = AppendDevicePathNode (
+                                  DevicePath,
+                                  (EFI_DEVICE_PATH_PROTOCOL *)Node
+                                  );
   FreePool (Node);
   FreePool (DevicePath);
   if (Private->Ip4Nic->DevicePath == NULL) {
@@ -574,7 +593,11 @@ HttpBootIp4DxeDriverBindingStart (
   //
   // Create a child handle for the HTTP boot and install DevPath and Load file protocol on it.
   //
-  CopyMem (&Private->Ip4Nic->LoadFile, &gHttpBootDxeLoadFile, sizeof (EFI_LOAD_FILE_PROTOCOL));
+  CopyMem (
+    &Private->Ip4Nic->LoadFile,
+    &gHttpBootDxeLoadFile,
+    sizeof (EFI_LOAD_FILE_PROTOCOL)
+    );
   Status = gBS->InstallMultipleProtocolInterfaces (
                   &Private->Ip4Nic->Controller,
                   &gEfiLoadFileProtocolGuid,
@@ -1076,7 +1099,10 @@ HttpBootIp6DxeDriverBindingStart (
   Node->Ipv6.Header.SubType = MSG_IPv6_DP;
   Node->Ipv6.PrefixLength   = IP6_PREFIX_LENGTH;
   SetDevicePathNodeLength (Node, sizeof (IPv6_DEVICE_PATH));
-  DevicePath = AppendDevicePathNode (Private->ParentDevicePath, (EFI_DEVICE_PATH *)Node);
+  DevicePath = AppendDevicePathNode (
+                 Private->ParentDevicePath,
+                 (EFI_DEVICE_PATH *)Node
+                 );
   FreePool (Node);
   if (DevicePath == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
@@ -1095,7 +1121,10 @@ HttpBootIp6DxeDriverBindingStart (
   Node->DevPath.Type    = MESSAGING_DEVICE_PATH;
   Node->DevPath.SubType = MSG_URI_DP;
   SetDevicePathNodeLength (Node, sizeof (EFI_DEVICE_PATH_PROTOCOL));
-  Private->Ip6Nic->DevicePath = AppendDevicePathNode (DevicePath, (EFI_DEVICE_PATH_PROTOCOL *)Node);
+  Private->Ip6Nic->DevicePath = AppendDevicePathNode (
+                                  DevicePath,
+                                  (EFI_DEVICE_PATH_PROTOCOL *)Node
+                                  );
   FreePool (Node);
   FreePool (DevicePath);
   if (Private->Ip6Nic->DevicePath == NULL) {
@@ -1106,7 +1135,11 @@ HttpBootIp6DxeDriverBindingStart (
   //
   // Create a child handle for the HTTP boot and install DevPath and Load file protocol on it.
   //
-  CopyMem (&Private->Ip6Nic->LoadFile, &gHttpBootDxeLoadFile, sizeof (Private->LoadFile));
+  CopyMem (
+    &Private->Ip6Nic->LoadFile,
+    &gHttpBootDxeLoadFile,
+    sizeof (Private->LoadFile)
+    );
   Status = gBS->InstallMultipleProtocolInterfaces (
                   &Private->Ip6Nic->Controller,
                   &gEfiLoadFileProtocolGuid,

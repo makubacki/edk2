@@ -75,7 +75,11 @@ Udp6GetModeData (
     //
     // Set the Udp6ConfigData.
     //
-    CopyMem (Udp6ConfigData, &Instance->ConfigData, sizeof (EFI_UDP6_CONFIG_DATA));
+    CopyMem (
+      Udp6ConfigData,
+      &Instance->ConfigData,
+      sizeof (EFI_UDP6_CONFIG_DATA)
+      );
   }
 
   Ip = Instance->IpInfo->Ip.Ip6;
@@ -163,8 +167,12 @@ Udp6Configure (
     IP6_COPY_ADDRESS (&StationAddress, &UdpConfigData->StationAddress);
     IP6_COPY_ADDRESS (&RemoteAddress, &UdpConfigData->RemoteAddress);
 
-    if ((!NetIp6IsUnspecifiedAddr (&StationAddress) && !NetIp6IsValidUnicast (&StationAddress)) ||
-        (!NetIp6IsUnspecifiedAddr (&RemoteAddress) && !NetIp6IsValidUnicast (&RemoteAddress))
+    if ((!NetIp6IsUnspecifiedAddr (&StationAddress) && !NetIp6IsValidUnicast (
+                                                          &StationAddress
+                                                          )) ||
+        (!NetIp6IsUnspecifiedAddr (&RemoteAddress) && !NetIp6IsValidUnicast (
+                                                         &RemoteAddress
+                                                         ))
         )
     {
       //
@@ -224,7 +232,10 @@ Udp6Configure (
         UdpConfigData,
         sizeof (EFI_UDP6_CONFIG_DATA)
         );
-      IP6_COPY_ADDRESS (&Instance->ConfigData.StationAddress, &Ip6ConfigData.StationAddress);
+      IP6_COPY_ADDRESS (
+        &Instance->ConfigData.StationAddress,
+        &Ip6ConfigData.StationAddress
+        );
       //
       // Try to allocate the required port resource.
       //
@@ -371,7 +382,11 @@ Udp6Groups (
   if (JoinFlag) {
     Status = NetMapInsertTail (&Instance->McastIps, (VOID *)McastIp, NULL);
   } else {
-    Status = NetMapIterate (&Instance->McastIps, Udp6LeaveGroup, MulticastAddress);
+    Status = NetMapIterate (
+               &Instance->McastIps,
+               Udp6LeaveGroup,
+               MulticastAddress
+               );
     if ((MulticastAddress != NULL) && (Status == EFI_ABORTED)) {
       Status = EFI_SUCCESS;
     }
@@ -518,7 +533,11 @@ Udp6Transmit (
   Udp6Service                       = Instance->Udp6Service;
   *((UINTN *)&Packet->ProtoData[0]) = (UINTN)(Udp6Service->IpIo);
 
-  Udp6Header = (EFI_UDP_HEADER *)NetbufAllocSpace (Packet, UDP6_HEADER_SIZE, TRUE);
+  Udp6Header = (EFI_UDP_HEADER *)NetbufAllocSpace (
+                                   Packet,
+                                   UDP6_HEADER_SIZE,
+                                   TRUE
+                                   );
   ASSERT (Udp6Header != NULL);
   if (Udp6Header == NULL) {
     Status = EFI_OUT_OF_RESOURCES;

@@ -16,7 +16,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define IP4_ROUTE_CACHE_HASH_VALUE  31
 #define IP4_ROUTE_CACHE_MAX         64 // Max NO. of cache entry per hash bucket
 
-#define IP4_ROUTE_CACHE_HASH(Dst, Src)  (((Dst) ^ (Src)) % IP4_ROUTE_CACHE_HASH_VALUE)
+#define IP4_ROUTE_CACHE_HASH(Dst, \
+                             Src)  \
+  (((Dst) ^ (Src)) % IP4_ROUTE_CACHE_HASH_VALUE)
 
 ///
 /// The route entry in the route table. Dest/Netmask is the destion

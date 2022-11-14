@@ -42,7 +42,11 @@ ArpInitInstance (
   Instance->Signature  = ARP_INSTANCE_DATA_SIGNATURE;
   Instance->ArpService = ArpService;
 
-  CopyMem (&Instance->ArpProto, &mEfiArpProtocolTemplate, sizeof (Instance->ArpProto));
+  CopyMem (
+    &Instance->ArpProto,
+    &mEfiArpProtocolTemplate,
+    sizeof (Instance->ArpProto)
+    );
 
   Instance->Configured = FALSE;
   Instance->InDestroy  = FALSE;
@@ -122,7 +126,9 @@ ArpOnFrameRcvdDpc (
   Head->ProtoType = NTOHS (Head->ProtoType);
   Head->OpCode    = NTOHS (Head->OpCode);
 
-  if (RxData->DataLength < (sizeof (ARP_HEAD) + 2 * Head->HwAddrLen + 2 * Head->ProtoAddrLen)) {
+  if (RxData->DataLength < (sizeof (ARP_HEAD) + 2 * Head->HwAddrLen + 2 *
+                            Head->ProtoAddrLen))
+  {
     goto RECYCLE_RXDATA;
   }
 
@@ -366,7 +372,11 @@ ArpOnFrameSentDpc (
 
   DEBUG_CODE_BEGIN ();
   if (EFI_ERROR (TxToken->Status)) {
-    DEBUG ((DEBUG_ERROR, "ArpOnFrameSent: TxToken->Status, %r.\n", TxToken->Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "ArpOnFrameSent: TxToken->Status, %r.\n",
+      TxToken->Status
+      ));
   }
 
   DEBUG_CODE_END ();
@@ -458,12 +468,17 @@ ArpTimerHandler (
         ASSERT (!IsListEmpty (&CacheEntry->UserRequestList));
 
         ContextEntry   = CacheEntry->UserRequestList.ForwardLink;
-        RequestContext = NET_LIST_USER_STRUCT (ContextEntry, USER_REQUEST_CONTEXT, List);
+        RequestContext = NET_LIST_USER_STRUCT (
+                           ContextEntry,
+                           USER_REQUEST_CONTEXT,
+                           List
+                           );
 
         ArpSendFrame (RequestContext->Instance, CacheEntry, ARP_OPCODE_REQUEST);
 
         CacheEntry->RetryCount--;
-        CacheEntry->NextRetryTime = RequestContext->Instance->ConfigData.RetryTimeOut;
+        CacheEntry->NextRetryTime =
+          RequestContext->Instance->ConfigData.RetryTimeOut;
       }
     } else {
       //
@@ -604,14 +619,20 @@ ArpFindNextCacheEntryInTable (
     StartEntry = CacheTable;
   }
 
-  for (Entry = StartEntry->ForwardLink; Entry != CacheTable; Entry = Entry->ForwardLink) {
+  for (Entry = StartEntry->ForwardLink; Entry != CacheTable; Entry =
+         Entry->ForwardLink)
+  {
     CacheEntry = NET_LIST_USER_STRUCT (Entry, ARP_CACHE_ENTRY, List);
 
     if ((FindOpType & MATCH_SW_ADDRESS) != 0) {
       //
       // Find by the software address.
       //
-      if (!ArpMatchAddress (ProtocolAddress, &CacheEntry->Addresses[Protocol])) {
+      if (!ArpMatchAddress (
+             ProtocolAddress,
+             &CacheEntry->Addresses[Protocol]
+             ))
+      {
         //
         // The ProtocolAddress doesn't match, continue to the next cache entry.
         //
@@ -623,7 +644,11 @@ ArpFindNextCacheEntryInTable (
       //
       // Find by the hardware address.
       //
-      if (!ArpMatchAddress (HardwareAddress, &CacheEntry->Addresses[Hardware])) {
+      if (!ArpMatchAddress (
+             HardwareAddress,
+             &CacheEntry->Addresses[Hardware]
+             ))
+      {
         //
         // The HardwareAddress doesn't match, continue to the next cache entry.
         //
@@ -745,7 +770,10 @@ ArpAllocCacheEntry (
   //
   // Zero the hardware address first.
   //
-  ZeroMem (CacheEntry->Addresses[Hardware].AddressPtr, ARP_MAX_HARDWARE_ADDRESS_LEN);
+  ZeroMem (
+    CacheEntry->Addresses[Hardware].AddressPtr,
+    ARP_MAX_HARDWARE_ADDRESS_LEN
+    );
 
   if (Instance != NULL) {
     //
@@ -952,7 +980,9 @@ ArpConfigureInstance (
       //
       CopyMem (OldConfigData, ConfigData, sizeof (*OldConfigData));
 
-      OldConfigData->StationAddress = AllocatePool (OldConfigData->SwAddressLength);
+      OldConfigData->StationAddress = AllocatePool (
+                                        OldConfigData->SwAddressLength
+                                        );
       if (OldConfigData->StationAddress == NULL) {
         DEBUG ((
           DEBUG_ERROR,
@@ -981,13 +1011,16 @@ ArpConfigureInstance (
     // Use the implementation specific values if the following field is zero.
     //
     OldConfigData->EntryTimeOut = (ConfigData->EntryTimeOut == 0) ?
-                                  ARP_DEFAULT_TIMEOUT_VALUE : ConfigData->EntryTimeOut;
+                                  ARP_DEFAULT_TIMEOUT_VALUE :
+                                  ConfigData->EntryTimeOut;
 
     OldConfigData->RetryCount = (ConfigData->RetryCount == 0) ?
-                                ARP_DEFAULT_RETRY_COUNT : ConfigData->RetryCount;
+                                ARP_DEFAULT_RETRY_COUNT :
+                                ConfigData->RetryCount;
 
     OldConfigData->RetryTimeOut = (ConfigData->RetryTimeOut == 0) ?
-                                  ARP_DEFAULT_RETRY_INTERVAL : ConfigData->RetryTimeOut;
+                                  ARP_DEFAULT_RETRY_INTERVAL :
+                                  ConfigData->RetryTimeOut;
   } else {
     //
     // Reset the configuration.
@@ -1048,7 +1081,10 @@ ArpSendFrame (
   //
   TxToken = AllocatePool (sizeof (EFI_MANAGED_NETWORK_COMPLETION_TOKEN));
   if (TxToken == NULL) {
-    DEBUG ((DEBUG_ERROR, "ArpSendFrame: Allocate memory for TxToken failed.\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "ArpSendFrame: Allocate memory for TxToken failed.\n"
+      ));
     return;
   }
 
@@ -1067,7 +1103,10 @@ ArpSendFrame (
                   &TxToken->Event
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "ArpSendFrame: CreateEvent failed for TxToken->Event.\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "ArpSendFrame: CreateEvent failed for TxToken->Event.\n"
+      ));
     goto CLEAN_EXIT;
   }
 
@@ -1585,7 +1624,8 @@ ArpFindCacheEntry (
   //
   // Found the entry length, make sure its 8 bytes alignment.
   //
-  FoundEntryLength = (((sizeof (EFI_ARP_FIND_DATA) + Instance->ConfigData.SwAddressLength +
+  FoundEntryLength = (((sizeof (EFI_ARP_FIND_DATA) +
+                        Instance->ConfigData.SwAddressLength +
                         ArpService->SnpMode.HwAddressSize) + 3) & ~(0x3));
 
   if (EntryLength != NULL) {
@@ -1631,7 +1671,8 @@ ArpFindCacheEntry (
     // Set the fields in FindData.
     //
     FindData->Size            = FoundEntryLength;
-    FindData->DenyFlag        = (BOOLEAN)(CacheTable == &ArpService->DeniedCacheTable);
+    FindData->DenyFlag        = (BOOLEAN)(CacheTable ==
+                                          &ArpService->DeniedCacheTable);
     FindData->StaticFlag      = (BOOLEAN)(CacheEntry->DefaultDecayTime == 0);
     FindData->HwAddressType   = ArpService->SnpMode.IfType;
     FindData->SwAddressType   = Instance->ConfigData.SwAddressType;

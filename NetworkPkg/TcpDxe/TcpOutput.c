@@ -201,7 +201,10 @@ TcpDataToSend (
   // buffer. The later can be non-zero if the peer shrinks
   // its advertised window.
   //
-  Left = GET_SND_DATASIZE (Sk) + TCP_SUB_SEQ (TcpGetMaxSndNxt (Tcb), Tcb->SndNxt);
+  Left = GET_SND_DATASIZE (Sk) + TCP_SUB_SEQ (
+                                   TcpGetMaxSndNxt (Tcb),
+                                   Tcb->SndNxt
+                                   );
 
   Len = MIN (Win, Left);
 
@@ -230,7 +233,10 @@ TcpDataToSend (
   }
 
   if ((Len == Left) &&
-      ((Tcb->SndNxt == Tcb->SndUna) || TCP_FLG_ON (Tcb->CtrlFlag, TCP_CTRL_NO_NAGLE))
+      ((Tcb->SndNxt == Tcb->SndUna) || TCP_FLG_ON (
+                                         Tcb->CtrlFlag,
+                                         TCP_CTRL_NO_NAGLE
+                                         ))
       )
   {
     return Len;
@@ -341,7 +347,11 @@ TcpTransmitSegment (
   //
   TCP_CLEAR_FLG (Seg->Flag, TCP_FLG_URG);
 
-  if (TCP_FLG_ON (Tcb->CtrlFlag, TCP_CTRL_SND_URG) && TCP_SEQ_LEQ (Seg->Seq, Tcb->SndUp)) {
+  if (TCP_FLG_ON (Tcb->CtrlFlag, TCP_CTRL_SND_URG) && TCP_SEQ_LEQ (
+                                                        Seg->Seq,
+                                                        Tcb->SndUp
+                                                        ))
+  {
     TCP_SET_FLG (Seg->Flag, TCP_FLG_URG);
 
     if (TCP_SEQ_LT (Tcb->SndUp, Seg->End)) {
@@ -374,7 +384,13 @@ TcpTransmitSegment (
   //
   Tcb->DelayedAck = 0;
 
-  return TcpSendIpPacket (Tcb, Nbuf, &Tcb->LocalEnd.Ip, &Tcb->RemoteEnd.Ip, Tcb->Sk->IpVersion);
+  return TcpSendIpPacket (
+           Tcb,
+           Nbuf,
+           &Tcb->LocalEnd.Ip,
+           &Tcb->RemoteEnd.Ip,
+           Tcb->Sk->IpVersion
+           );
 }
 
 /**
@@ -653,7 +669,13 @@ TcpRetransmit (
   //   as the original segment was in window when it was sent.
   //
   if ((Tcb->SndWndScale != 0) &&
-      (TCP_SEQ_GT (Seq, Tcb->RetxmitSeqMax) || TCP_SEQ_BETWEEN (Tcb->SndWl2 + Tcb->SndWnd, Seq, Tcb->SndWl2 + Tcb->SndWnd + (1 << Tcb->SndWndScale))))
+      (TCP_SEQ_GT (Seq, Tcb->RetxmitSeqMax) || TCP_SEQ_BETWEEN (
+                                                 Tcb->SndWl2 +
+                                                 Tcb->SndWnd,
+                                                 Seq,
+                                                 Tcb->SndWl2 + Tcb->SndWnd +
+                                                 (1 << Tcb->SndWndScale)
+                                                 )))
   {
     Len = TCP_SUB_SEQ (Tcb->SndNxt, Seq);
     DEBUG (
@@ -790,7 +812,11 @@ TcpToSendData (
 
   Sent = 0;
 
-  if ((Tcb->State == TCP_CLOSED) || TCP_FLG_ON (Tcb->CtrlFlag, TCP_CTRL_FIN_SENT)) {
+  if ((Tcb->State == TCP_CLOSED) || TCP_FLG_ON (
+                                      Tcb->CtrlFlag,
+                                      TCP_CTRL_FIN_SENT
+                                      ))
+  {
     return 0;
   }
 
@@ -867,7 +893,9 @@ TcpToSendData (
     Seg->End  = End;
     Seg->Flag = Flag;
 
-    if ((TcpVerifySegment (Nbuf) == 0) || (TcpCheckSndQue (&Tcb->SndQue) == 0)) {
+    if ((TcpVerifySegment (Nbuf) == 0) || (TcpCheckSndQue (&Tcb->SndQue) ==
+                                           0))
+    {
       DEBUG (
         (DEBUG_ERROR,
          "TcpToSendData: discard a broken segment for TCB %p\n",
@@ -933,7 +961,11 @@ TcpToSendData (
     // Enable RTT measurement only if not in retransmit.
     // Karn's algorithm requires not to update RTT when in loss.
     //
-    if ((Tcb->CongestState == TCP_CONGEST_OPEN) && !TCP_FLG_ON (Tcb->CtrlFlag, TCP_CTRL_RTT_ON)) {
+    if ((Tcb->CongestState == TCP_CONGEST_OPEN) && !TCP_FLG_ON (
+                                                      Tcb->CtrlFlag,
+                                                      TCP_CTRL_RTT_ON
+                                                      ))
+    {
       DEBUG (
         (DEBUG_NET,
          "TcpToSendData: set RTT measure sequence %d for TCB %p\n",

@@ -291,7 +291,11 @@ Udp4CreateService (
   // Set the OpenData used to open the IpIo.
   //
   Ip4ConfigData = &OpenData.IpConfigData.Ip4CfgData;
-  CopyMem (Ip4ConfigData, &mIp4IoDefaultIpConfigData, sizeof (EFI_IP4_CONFIG_DATA));
+  CopyMem (
+    Ip4ConfigData,
+    &mIp4IoDefaultIpConfigData,
+    sizeof (EFI_IP4_CONFIG_DATA)
+    );
   Ip4ConfigData->AcceptBroadcast = TRUE;
   OpenData.RcvdContext           = (VOID *)Udp4Service;
   OpenData.SndContext            = NULL;
@@ -579,7 +583,11 @@ Udp4Bind (
 
   if (ConfigData->StationPort != 0) {
     if (!ConfigData->AllowDuplicatePort &&
-        Udp4FindInstanceByPort (InstanceList, StationAddress, ConfigData->StationPort))
+        Udp4FindInstanceByPort (
+          InstanceList,
+          StationAddress,
+          ConfigData->StationPort
+          ))
     {
       //
       // Do not allow duplicate port and the port is already used by other instance.
@@ -599,7 +607,12 @@ Udp4Bind (
     } else {
       StartPort = mUdp4RandomPort;
 
-      while (Udp4FindInstanceByPort (InstanceList, StationAddress, mUdp4RandomPort)) {
+      while (Udp4FindInstanceByPort (
+               InstanceList,
+               StationAddress,
+               mUdp4RandomPort
+               ))
+      {
         mUdp4RandomPort++;
         if (mUdp4RandomPort == 0) {
           mUdp4RandomPort = UDP4_PORT_KNOWN;
@@ -674,8 +687,14 @@ Udp4IsReconfigurable (
     }
 
     if (!NewConfigData->UseDefaultAddress &&
-        (!EFI_IP4_EQUAL (&NewConfigData->StationAddress, &OldConfigData->StationAddress) ||
-         !EFI_IP4_EQUAL (&NewConfigData->SubnetMask, &OldConfigData->SubnetMask))
+        (!EFI_IP4_EQUAL (
+            &NewConfigData->StationAddress,
+            &OldConfigData->StationAddress
+            ) ||
+         !EFI_IP4_EQUAL (
+            &NewConfigData->SubnetMask,
+            &OldConfigData->SubnetMask
+            ))
         )
     {
       //
@@ -686,7 +705,11 @@ Udp4IsReconfigurable (
     }
   }
 
-  if (!EFI_IP4_EQUAL (&NewConfigData->RemoteAddress, &OldConfigData->RemoteAddress)) {
+  if (!EFI_IP4_EQUAL (
+         &NewConfigData->RemoteAddress,
+         &OldConfigData->RemoteAddress
+         ))
+  {
     //
     // The remoteaddress is not the same.
     //
@@ -728,8 +751,16 @@ Udp4BuildIp4ConfigData (
   Ip4ConfigData->AcceptBroadcast   = Udp4ConfigData->AcceptBroadcast;
   Ip4ConfigData->AcceptPromiscuous = Udp4ConfigData->AcceptPromiscuous;
   Ip4ConfigData->UseDefaultAddress = Udp4ConfigData->UseDefaultAddress;
-  CopyMem (&Ip4ConfigData->StationAddress, &Udp4ConfigData->StationAddress, sizeof (EFI_IPv4_ADDRESS));
-  CopyMem (&Ip4ConfigData->SubnetMask, &Udp4ConfigData->SubnetMask, sizeof (EFI_IPv4_ADDRESS));
+  CopyMem (
+    &Ip4ConfigData->StationAddress,
+    &Udp4ConfigData->StationAddress,
+    sizeof (EFI_IPv4_ADDRESS)
+    );
+  CopyMem (
+    &Ip4ConfigData->SubnetMask,
+    &Udp4ConfigData->SubnetMask,
+    sizeof (EFI_IPv4_ADDRESS)
+    );
 
   //
   // use the -1 magic number to disable the receiving process of the ip instance.
@@ -814,7 +845,12 @@ Udp4ValidateTxToken (
 
     if (!Instance->ConfigData.UseDefaultAddress &&
         (EFI_NTOHL (Instance->ConfigData.SubnetMask) != 0) &&
-        !NetIp4IsUnicast (NTOHL (GatewayAddress), EFI_NTOHL (Instance->ConfigData.SubnetMask)))
+        !NetIp4IsUnicast (
+           NTOHL (GatewayAddress),
+           EFI_NTOHL (
+             Instance->ConfigData.SubnetMask
+             )
+           ))
     {
       //
       // The specified GatewayAddress is not a unicast IPv4 address while it's not 0.
@@ -832,7 +868,12 @@ Udp4ValidateTxToken (
     if ((SourceAddress != 0) &&
         !Instance->ConfigData.UseDefaultAddress &&
         (EFI_NTOHL (Instance->ConfigData.SubnetMask) != 0) &&
-        !NetIp4IsUnicast (HTONL (SourceAddress), EFI_NTOHL (Instance->ConfigData.SubnetMask)))
+        !NetIp4IsUnicast (
+           HTONL (SourceAddress),
+           EFI_NTOHL (
+             Instance->ConfigData.SubnetMask
+             )
+           ))
     {
       //
       // Check whether SourceAddress is a valid IPv4 address in case it's not zero.
@@ -841,7 +882,9 @@ Udp4ValidateTxToken (
       return EFI_INVALID_PARAMETER;
     }
 
-    if ((UdpSessionData->DestinationPort == 0) && (ConfigData->RemotePort == 0)) {
+    if ((UdpSessionData->DestinationPort == 0) && (ConfigData->RemotePort ==
+                                                   0))
+    {
       //
       // Ambiguous, no available DestinationPort for this token.
       //
@@ -1041,7 +1084,12 @@ Udp4DgramRcvd (
     //
     // Handle the ICMP_ERROR packet.
     //
-    Udp4IcmpHandler ((UDP4_SERVICE_DATA *)Context, IcmpError, NetSession, Packet);
+    Udp4IcmpHandler (
+      (UDP4_SERVICE_DATA *)Context,
+      IcmpError,
+      NetSession,
+      Packet
+      );
   }
 
   //
@@ -1270,8 +1318,10 @@ Udp4MatchDgram (
     return TRUE;
   }
 
-  if ((!ConfigData->AcceptAnyPort && (Udp4Session->DestinationPort != ConfigData->StationPort)) ||
-      ((ConfigData->RemotePort != 0) && (Udp4Session->SourcePort != ConfigData->RemotePort))
+  if ((!ConfigData->AcceptAnyPort && (Udp4Session->DestinationPort !=
+                                      ConfigData->StationPort)) ||
+      ((ConfigData->RemotePort != 0) && (Udp4Session->SourcePort !=
+                                         ConfigData->RemotePort))
       )
   {
     //
@@ -1291,7 +1341,10 @@ Udp4MatchDgram (
   }
 
   if (EFI_IP4_EQUAL (&ConfigData->StationAddress, &mZeroIp4Addr) ||
-      EFI_IP4_EQUAL (&Udp4Session->DestinationAddress, &ConfigData->StationAddress)
+      EFI_IP4_EQUAL (
+        &Udp4Session->DestinationAddress,
+        &ConfigData->StationAddress
+        )
       )
   {
     //
@@ -1511,7 +1564,10 @@ Udp4InstanceDeliverDgram (
 
     NetListRemoveHead (&Instance->RcvdDgramQue);
 
-    Token = (EFI_UDP4_COMPLETION_TOKEN *)NetMapRemoveHead (&Instance->RxTokens, NULL);
+    Token = (EFI_UDP4_COMPLETION_TOKEN *)NetMapRemoveHead (
+                                           &Instance->RxTokens,
+                                           NULL
+                                           );
 
     //
     // Build the FragmentTable and set the FragmentCount in RxData.
@@ -1625,8 +1681,16 @@ Udp4Demultiplex (
   Udp4Session->SourcePort      = NTOHS (Udp4Header->SrcPort);
   Udp4Session->DestinationPort = NTOHS (Udp4Header->DstPort);
 
-  CopyMem (&Udp4Session->SourceAddress, &NetSession->Source, sizeof (EFI_IPv4_ADDRESS));
-  CopyMem (&Udp4Session->DestinationAddress, &NetSession->Dest, sizeof (EFI_IPv4_ADDRESS));
+  CopyMem (
+    &Udp4Session->SourceAddress,
+    &NetSession->Source,
+    sizeof (EFI_IPv4_ADDRESS)
+    );
+  CopyMem (
+    &Udp4Session->DestinationAddress,
+    &NetSession->Dest,
+    sizeof (EFI_IPv4_ADDRESS)
+    );
 
   //
   // Trim the UDP header.
@@ -1700,7 +1764,8 @@ Udp4SendPortUnreach (
   // Calculate the required length of the icmp error message.
   //
   Len = sizeof (IP4_ICMP_ERROR_HEAD) + (EFI_IP4_HEADER_LEN (IpHdr) -
-                                        sizeof (IP4_HEAD)) + ICMP_ERROR_PACKET_LENGTH;
+                                        sizeof (IP4_HEAD)) +
+        ICMP_ERROR_PACKET_LENGTH;
 
   //
   // Allocate buffer for the icmp error message.
@@ -1748,7 +1813,11 @@ Udp4SendPortUnreach (
   Override.Ip4OverrideData.TimeToLive    = 255;
   Override.Ip4OverrideData.Protocol      = EFI_IP_PROTO_ICMP;
 
-  CopyMem (&Override.Ip4OverrideData.SourceAddress, &NetSession->Dest, sizeof (EFI_IPv4_ADDRESS));
+  CopyMem (
+    &Override.Ip4OverrideData.SourceAddress,
+    &NetSession->Dest,
+    sizeof (EFI_IPv4_ADDRESS)
+    );
   ZeroMem (&Override.Ip4OverrideData.GatewayAddress, sizeof (EFI_IPv4_ADDRESS));
 
   //
@@ -1791,8 +1860,16 @@ Udp4IcmpHandler (
   Udp4Header = (EFI_UDP_HEADER *)NetbufGetByte (Packet, 0, NULL);
   ASSERT (Udp4Header != NULL);
 
-  CopyMem (&Udp4Session.SourceAddress, &NetSession->Source, sizeof (EFI_IPv4_ADDRESS));
-  CopyMem (&Udp4Session.DestinationAddress, &NetSession->Dest, sizeof (EFI_IPv4_ADDRESS));
+  CopyMem (
+    &Udp4Session.SourceAddress,
+    &NetSession->Source,
+    sizeof (EFI_IPv4_ADDRESS)
+    );
+  CopyMem (
+    &Udp4Session.DestinationAddress,
+    &NetSession->Dest,
+    sizeof (EFI_IPv4_ADDRESS)
+    );
 
   Udp4Session.SourcePort      = NTOHS (Udp4Header->DstPort);
   Udp4Session.DestinationPort = NTOHS (Udp4Header->SrcPort);
@@ -1811,7 +1888,12 @@ Udp4IcmpHandler (
       //
       // Translate the Icmp Error code according to the udp spec.
       //
-      Instance->IcmpError = IpIoGetIcmpErrStatus (IcmpError, IP_VERSION_4, NULL, NULL);
+      Instance->IcmpError = IpIoGetIcmpErrStatus (
+                              IcmpError,
+                              IP_VERSION_4,
+                              NULL,
+                              NULL
+                              );
 
       if (IcmpError > ICMP_ERR_UNREACH_PORT) {
         Instance->IcmpError = EFI_ICMP_ERROR;
@@ -1853,7 +1935,10 @@ Udp4ReportIcmpError (
     //
     // Try to get a RxToken from the RxTokens map.
     //
-    Token = (EFI_UDP4_COMPLETION_TOKEN *)NetMapRemoveHead (&Instance->RxTokens, NULL);
+    Token = (EFI_UDP4_COMPLETION_TOKEN *)NetMapRemoveHead (
+                                           &Instance->RxTokens,
+                                           NULL
+                                           );
 
     if (Token != NULL) {
       //

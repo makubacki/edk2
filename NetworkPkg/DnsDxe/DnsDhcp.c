@@ -35,7 +35,11 @@ DnsInitSeedPacket (
   Header->OpCode    = DHCP4_OPCODE_REQUEST;
   Header->HwType    = InterfaceInfo->IfType;
   Header->HwAddrLen = (UINT8)InterfaceInfo->HwAddressSize;
-  CopyMem (Header->ClientHwAddr, &(InterfaceInfo->HwAddress), Header->HwAddrLen);
+  CopyMem (
+    Header->ClientHwAddr,
+    &(InterfaceInfo->HwAddress),
+    Header->HwAddrLen
+    );
 
   Seed->Dhcp4.Magik     = DHCP4_MAGIC;
   Seed->Dhcp4.Option[0] = DHCP4_TAG_EOP;
@@ -119,7 +123,9 @@ ParseDhcp4Ack (
     // Get DNS server addresses
     //
     if (OptionList[Index]->OpCode == DHCP4_TAG_DNS_SERVER) {
-      if (((OptionList[Index]->Length & 0x3) != 0) || (OptionList[Index]->Length == 0)) {
+      if (((OptionList[Index]->Length & 0x3) != 0) ||
+          (OptionList[Index]->Length == 0))
+      {
         Status = EFI_DEVICE_ERROR;
         break;
       }
@@ -131,7 +137,11 @@ ParseDhcp4Ack (
       }
 
       for (Count = 0; Count < ServerCount; Count++) {
-        CopyMem (ServerList + Count, &OptionList[Index]->Data[4 * Count], sizeof (EFI_IPv4_ADDRESS));
+        CopyMem (
+          ServerList + Count,
+          &OptionList[Index]->Data[4 * Count],
+          sizeof (EFI_IPv4_ADDRESS)
+          );
       }
 
       *(DnsServerInfor->ServerCount) = ServerCount;
@@ -189,7 +199,10 @@ ParseDhcp6Ack (
     return EFI_DEVICE_ERROR;
   }
 
-  OptionList = AllocateZeroPool (OptionCount * sizeof (EFI_DHCP6_PACKET_OPTION *));
+  OptionList = AllocateZeroPool (
+                 OptionCount *
+                 sizeof (EFI_DHCP6_PACKET_OPTION *)
+                 );
   if (OptionList == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -210,7 +223,9 @@ ParseDhcp6Ack (
     // Get DNS server addresses from this reply packet.
     //
     if (OptionList[Index]->OpCode == DHCP6_TAG_DNS_SERVER) {
-      if (((OptionList[Index]->OpLen & 0xf) != 0) || (OptionList[Index]->OpLen == 0)) {
+      if (((OptionList[Index]->OpLen & 0xf) != 0) ||
+          (OptionList[Index]->OpLen == 0))
+      {
         Status = EFI_DEVICE_ERROR;
         gBS->FreePool (OptionList);
         return Status;
@@ -224,7 +239,11 @@ ParseDhcp6Ack (
       }
 
       for (Count = 0; Count < ServerCount; Count++) {
-        CopyMem (ServerList + Count, &OptionList[Index]->Data[16 * Count], sizeof (EFI_IPv6_ADDRESS));
+        CopyMem (
+          ServerList + Count,
+          &OptionList[Index]->Data[16 * Count],
+          sizeof (EFI_IPv6_ADDRESS)
+          );
       }
 
       *(DnsServerInfor->ServerCount) = ServerCount;
@@ -308,7 +327,11 @@ GetDns4ServerFromDhcp4 (
   // Check media.
   //
   MediaStatus = EFI_SUCCESS;
-  NetLibDetectMediaWaitTimeout (Controller, DNS_CHECK_MEDIA_GET_DHCP_WAITING_TIME, &MediaStatus);
+  NetLibDetectMediaWaitTimeout (
+    Controller,
+    DNS_CHECK_MEDIA_GET_DHCP_WAITING_TIME,
+    &MediaStatus
+    );
   if (MediaStatus != EFI_SUCCESS) {
     return EFI_NO_MEDIA;
   }
@@ -382,12 +405,21 @@ GetDns4ServerFromDhcp4 (
   //
   // Get Ip4Config2 instance info.
   //
-  Status = gBS->HandleProtocol (Controller, &gEfiIp4Config2ProtocolGuid, (VOID **)&Ip4Config2);
+  Status = gBS->HandleProtocol (
+                  Controller,
+                  &gEfiIp4Config2ProtocolGuid,
+                  (VOID **)&Ip4Config2
+                  );
   if (EFI_ERROR (Status)) {
     goto ON_EXIT;
   }
 
-  Status = Ip4Config2->GetData (Ip4Config2, Ip4Config2DataTypeInterfaceInfo, &DataSize, Data);
+  Status = Ip4Config2->GetData (
+                         Ip4Config2,
+                         Ip4Config2DataTypeInterfaceInfo,
+                         &DataSize,
+                         Data
+                         );
   if (EFI_ERROR (Status) && (Status != EFI_BUFFER_TOO_SMALL)) {
     goto ON_EXIT;
   }
@@ -398,7 +430,12 @@ GetDns4ServerFromDhcp4 (
     goto ON_EXIT;
   }
 
-  Status = Ip4Config2->GetData (Ip4Config2, Ip4Config2DataTypeInterfaceInfo, &DataSize, Data);
+  Status = Ip4Config2->GetData (
+                         Ip4Config2,
+                         Ip4Config2DataTypeInterfaceInfo,
+                         &DataSize,
+                         Data
+                         );
   if (EFI_ERROR (Status)) {
     goto ON_EXIT;
   }
@@ -425,18 +462,37 @@ GetDns4ServerFromDhcp4 (
 
   Token.ListenPointCount = 1;
 
-  Token.ListenPoints = AllocateZeroPool (Token.ListenPointCount * sizeof (EFI_DHCP4_LISTEN_POINT));
+  Token.ListenPoints = AllocateZeroPool (
+                         Token.ListenPointCount *
+                         sizeof (EFI_DHCP4_LISTEN_POINT)
+                         );
   if (Token.ListenPoints == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ON_EXIT;
   }
 
   if (Instance->Dns4CfgData.UseDefaultSetting) {
-    CopyMem (&(Token.ListenPoints[0].ListenAddress), &(InterfaceInfo->StationAddress), sizeof (EFI_IPv4_ADDRESS));
-    CopyMem (&(Token.ListenPoints[0].SubnetMask), &(InterfaceInfo->SubnetMask), sizeof (EFI_IPv4_ADDRESS));
+    CopyMem (
+      &(Token.ListenPoints[0].ListenAddress),
+      &(InterfaceInfo->StationAddress),
+      sizeof (EFI_IPv4_ADDRESS)
+      );
+    CopyMem (
+      &(Token.ListenPoints[0].SubnetMask),
+      &(InterfaceInfo->SubnetMask),
+      sizeof (EFI_IPv4_ADDRESS)
+      );
   } else {
-    CopyMem (&(Token.ListenPoints[0].ListenAddress), &(Instance->Dns4CfgData.StationIp), sizeof (EFI_IPv4_ADDRESS));
-    CopyMem (&(Token.ListenPoints[0].SubnetMask), &(Instance->Dns4CfgData.SubnetMask), sizeof (EFI_IPv4_ADDRESS));
+    CopyMem (
+      &(Token.ListenPoints[0].ListenAddress),
+      &(Instance->Dns4CfgData.StationIp),
+      sizeof (EFI_IPv4_ADDRESS)
+      );
+    CopyMem (
+      &(Token.ListenPoints[0].SubnetMask),
+      &(Instance->Dns4CfgData.SubnetMask),
+      sizeof (EFI_IPv4_ADDRESS)
+      );
   }
 
   Token.ListenPoints[0].ListenPort = 68;
@@ -465,19 +521,39 @@ GetDns4ServerFromDhcp4 (
   ParaList[1]->Length  = 1;
   ParaList[1]->Data[0] = DHCP4_TAG_DNS_SERVER;
 
-  Status = Dhcp4->Build (Dhcp4, &SeedPacket, 0, NULL, 2, ParaList, &Token.Packet);
+  Status = Dhcp4->Build (
+                    Dhcp4,
+                    &SeedPacket,
+                    0,
+                    NULL,
+                    2,
+                    ParaList,
+                    &Token.Packet
+                    );
 
   Token.Packet->Dhcp4.Header.Xid = HTONL (NET_RANDOM (NetRandomInitSeed ()));
 
   Token.Packet->Dhcp4.Header.Reserved = HTONS ((UINT16)0x8000);
 
   if (Instance->Dns4CfgData.UseDefaultSetting) {
-    CopyMem (&(Token.Packet->Dhcp4.Header.ClientAddr), &(InterfaceInfo->StationAddress), sizeof (EFI_IPv4_ADDRESS));
+    CopyMem (
+      &(Token.Packet->Dhcp4.Header.ClientAddr),
+      &(InterfaceInfo->StationAddress),
+      sizeof (EFI_IPv4_ADDRESS)
+      );
   } else {
-    CopyMem (&(Token.Packet->Dhcp4.Header.ClientAddr), &(Instance->Dns4CfgData.StationIp), sizeof (EFI_IPv4_ADDRESS));
+    CopyMem (
+      &(Token.Packet->Dhcp4.Header.ClientAddr),
+      &(Instance->Dns4CfgData.StationIp),
+      sizeof (EFI_IPv4_ADDRESS)
+      );
   }
 
-  CopyMem (Token.Packet->Dhcp4.Header.ClientHwAddr, &(InterfaceInfo->HwAddress), InterfaceInfo->HwAddressSize);
+  CopyMem (
+    Token.Packet->Dhcp4.Header.ClientHwAddr,
+    &(InterfaceInfo->HwAddress),
+    InterfaceInfo->HwAddressSize
+    );
 
   Token.Packet->Dhcp4.Header.HwAddrLen = (UINT8)(InterfaceInfo->HwAddressSize);
 
@@ -501,7 +577,11 @@ GetDns4ServerFromDhcp4 (
   //
   if (IsDone && !EFI_ERROR (Token.Status)) {
     for (Index = 0; Index < Token.ResponseCount; Index++) {
-      Status = ParseDhcp4Ack (Dhcp4, &Token.ResponseList[Index], &DnsServerInfor);
+      Status = ParseDhcp4Ack (
+                 Dhcp4,
+                 &Token.ResponseList[Index],
+                 &DnsServerInfor
+                 );
       if (!EFI_ERROR (Status)) {
         break;
       }
@@ -627,7 +707,11 @@ GetDns6ServerFromDhcp6 (
   // Check media status before doing DHCP.
   //
   MediaStatus = EFI_SUCCESS;
-  NetLibDetectMediaWaitTimeout (Controller, DNS_CHECK_MEDIA_GET_DHCP_WAITING_TIME, &MediaStatus);
+  NetLibDetectMediaWaitTimeout (
+    Controller,
+    DNS_CHECK_MEDIA_GET_DHCP_WAITING_TIME,
+    &MediaStatus
+    );
   if (MediaStatus != EFI_SUCCESS) {
     return EFI_NO_MEDIA;
   }

@@ -101,7 +101,11 @@ EfiDhcp6Start (
   // Check Media Status.
   //
   MediaStatus = EFI_SUCCESS;
-  NetLibDetectMediaWaitTimeout (Service->Controller, DHCP_CHECK_MEDIA_WAITING_TIME, &MediaStatus);
+  NetLibDetectMediaWaitTimeout (
+    Service->Controller,
+    DHCP_CHECK_MEDIA_WAITING_TIME,
+    &MediaStatus
+    );
   if (MediaStatus != EFI_SUCCESS) {
     Status = EFI_NO_MEDIA;
     goto ON_ERROR;
@@ -274,7 +278,9 @@ EfiDhcp6GetModeData (
   UINT32          IaSize;
   UINT32          IdSize;
 
-  if ((This == NULL) || ((Dhcp6ModeData == NULL) && (Dhcp6ConfigData == NULL))) {
+  if ((This == NULL) || ((Dhcp6ModeData == NULL) && (Dhcp6ConfigData ==
+                                                     NULL)))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -328,7 +334,8 @@ EfiDhcp6GetModeData (
       //
       // Duplicate a copy of EFI_DHCP6_IA for configured Ia.
       //
-      IaSize = sizeof (EFI_DHCP6_IA) + (Ia->IaAddressCount -1) * sizeof (EFI_DHCP6_IA_ADDRESS);
+      IaSize = sizeof (EFI_DHCP6_IA) + (Ia->IaAddressCount -1) *
+               sizeof (EFI_DHCP6_IA_ADDRESS);
 
       Dhcp6ModeData->Ia = AllocateZeroPool (IaSize);
       if (Dhcp6ModeData->Ia == NULL) {
@@ -345,7 +352,9 @@ EfiDhcp6GetModeData (
       // Duplicate a copy of reply packet if has.
       //
       if (Ia->ReplyPacket != NULL) {
-        Dhcp6ModeData->Ia->ReplyPacket = AllocateZeroPool (Ia->ReplyPacket->Size);
+        Dhcp6ModeData->Ia->ReplyPacket = AllocateZeroPool (
+                                           Ia->ReplyPacket->Size
+                                           );
         if (Dhcp6ModeData->Ia->ReplyPacket == NULL) {
           goto ON_ERROR;
         }
@@ -440,7 +449,8 @@ EfiDhcp6Configure (
       for (Index = 0; Index < Dhcp6CfgData->OptionCount; Index++) {
         if ((Dhcp6CfgData->OptionList[Index]->OpCode == Dhcp6OptClientId) ||
             (Dhcp6CfgData->OptionList[Index]->OpCode == Dhcp6OptRapidCommit) ||
-            (Dhcp6CfgData->OptionList[Index]->OpCode == Dhcp6OptReconfigureAccept) ||
+            (Dhcp6CfgData->OptionList[Index]->OpCode ==
+             Dhcp6OptReconfigureAccept) ||
             (Dhcp6CfgData->OptionList[Index]->OpCode == Dhcp6OptIana) ||
             (Dhcp6CfgData->OptionList[Index]->OpCode == Dhcp6OptIata)
             )
@@ -457,7 +467,9 @@ EfiDhcp6Configure (
       return EFI_INVALID_PARAMETER;
     }
 
-    if ((Dhcp6CfgData->IaInfoEvent == NULL) && (Dhcp6CfgData->SolicitRetransmission == NULL)) {
+    if ((Dhcp6CfgData->IaInfoEvent == NULL) &&
+        (Dhcp6CfgData->SolicitRetransmission == NULL))
+    {
       return EFI_INVALID_PARAMETER;
     }
 
@@ -475,7 +487,8 @@ EfiDhcp6Configure (
     NET_LIST_FOR_EACH (Entry, &Service->Child) {
       Other = NET_LIST_USER_STRUCT (Entry, DHCP6_INSTANCE, Link);
       if ((Other->IaCb.Ia != NULL) &&
-          (Other->IaCb.Ia->Descriptor.Type == Dhcp6CfgData->IaDescriptor.Type) &&
+          (Other->IaCb.Ia->Descriptor.Type ==
+           Dhcp6CfgData->IaDescriptor.Type) &&
           (Other->IaCb.Ia->Descriptor.IaId == Dhcp6CfgData->IaDescriptor.IaId)
           )
       {
@@ -619,11 +632,15 @@ EfiDhcp6InfoRequest (
   EFI_STATUS      TimerStatus;
   UINTN           GetMappingTimeOut;
 
-  if ((This == NULL) || (OptionRequest == NULL) || (Retransmission == NULL) || (ReplyCallback == NULL)) {
+  if ((This == NULL) || (OptionRequest == NULL) || (Retransmission == NULL) ||
+      (ReplyCallback == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((Retransmission != NULL) && (Retransmission->Mrc == 0) && (Retransmission->Mrd == 0)) {
+  if ((Retransmission != NULL) && (Retransmission->Mrc == 0) &&
+      (Retransmission->Mrd == 0))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -633,7 +650,9 @@ EfiDhcp6InfoRequest (
 
   if (OptionList != NULL) {
     for (Index = 0; Index < OptionCount; Index++) {
-      if ((OptionList[Index]->OpCode == Dhcp6OptClientId) || (OptionList[Index]->OpCode == Dhcp6OptRequestOption)) {
+      if ((OptionList[Index]->OpCode == Dhcp6OptClientId) ||
+          (OptionList[Index]->OpCode == Dhcp6OptRequestOption))
+      {
         return EFI_INVALID_PARAMETER;
       }
     }
@@ -1168,7 +1187,9 @@ EfiDhcp6Parse (
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((Packet->Length > Packet->Size) || (Packet->Length < sizeof (EFI_DHCP6_HEADER))) {
+  if ((Packet->Length > Packet->Size) || (Packet->Length <
+                                          sizeof (EFI_DHCP6_HEADER)))
+  {
     return EFI_INVALID_PARAMETER;
   }
 

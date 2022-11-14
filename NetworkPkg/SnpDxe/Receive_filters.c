@@ -132,7 +132,9 @@ PxeRecvFilterDisable (
   Snp->Cdb.IFnum     = Snp->IfNum;
   Snp->Cdb.Control   = PXE_CONTROL_LAST_CDB_IN_LIST;
 
-  Snp->Cdb.OpFlags = (UINT16)((DisableFlags != 0) ? PXE_OPFLAGS_RECEIVE_FILTER_DISABLE : PXE_OPFLAGS_NOT_USED);
+  Snp->Cdb.OpFlags = (UINT16)((DisableFlags != 0) ?
+                              PXE_OPFLAGS_RECEIVE_FILTER_DISABLE :
+                              PXE_OPFLAGS_NOT_USED);
 
   if (ResetMCastList) {
     Snp->Cdb.OpFlags |= PXE_OPFLAGS_RECEIVE_FILTER_RESET_MCAST_LIST;
@@ -199,7 +201,8 @@ PxeRecvFilterRead (
   Snp->Cdb.OpCode  = PXE_OPCODE_RECEIVE_FILTERS;
   Snp->Cdb.OpFlags = PXE_OPFLAGS_RECEIVE_FILTER_READ;
   Snp->Cdb.CPBsize = PXE_CPBSIZE_NOT_USED;
-  Snp->Cdb.DBsize  = (UINT16)(Snp->Mode.MaxMCastFilterCount * sizeof (EFI_MAC_ADDRESS));
+  Snp->Cdb.DBsize  = (UINT16)(Snp->Mode.MaxMCastFilterCount *
+                              sizeof (EFI_MAC_ADDRESS));
   Snp->Cdb.CPBaddr = PXE_CPBADDR_NOT_USED;
   if (Snp->Cdb.DBsize == 0) {
     Snp->Cdb.DBaddr = (UINT64)(UINTN)NULL;
@@ -249,10 +252,13 @@ PxeRecvFilterRead (
   }
 
   if ((Snp->Cdb.StatFlags & PXE_STATFLAGS_RECEIVE_FILTER_ALL_MULTICAST) != 0) {
-    Snp->Mode.ReceiveFilterSetting |= EFI_SIMPLE_NETWORK_RECEIVE_PROMISCUOUS_MULTICAST;
+    Snp->Mode.ReceiveFilterSetting |=
+      EFI_SIMPLE_NETWORK_RECEIVE_PROMISCUOUS_MULTICAST;
   }
 
-  if ((Snp->Cdb.StatFlags & PXE_STATFLAGS_RECEIVE_FILTER_FILTERED_MULTICAST) != 0) {
+  if ((Snp->Cdb.StatFlags & PXE_STATFLAGS_RECEIVE_FILTER_FILTERED_MULTICAST) !=
+      0)
+  {
     Snp->Mode.ReceiveFilterSetting |= EFI_SIMPLE_NETWORK_RECEIVE_MULTICAST;
   }
 
@@ -427,7 +433,8 @@ SnpUndi32ReceiveFilters (
   }
 
   if (ResetMCastFilter) {
-    Disable       |= EFI_SIMPLE_NETWORK_RECEIVE_MULTICAST & Snp->Mode.ReceiveFilterMask;
+    Disable |= EFI_SIMPLE_NETWORK_RECEIVE_MULTICAST &
+               Snp->Mode.ReceiveFilterMask;
     MCastFilterCnt = 0;
     MCastFilter    = NULL;
   } else {
@@ -441,12 +448,16 @@ SnpUndi32ReceiveFilters (
     }
   }
 
-  if ((Enable == 0) && (Disable == 0) && !ResetMCastFilter && (MCastFilterCnt == 0)) {
+  if ((Enable == 0) && (Disable == 0) && !ResetMCastFilter && (MCastFilterCnt ==
+                                                               0))
+  {
     Status = EFI_SUCCESS;
     goto ON_EXIT;
   }
 
-  if (((Enable & EFI_SIMPLE_NETWORK_RECEIVE_MULTICAST) != 0) && (MCastFilterCnt == 0)) {
+  if (((Enable & EFI_SIMPLE_NETWORK_RECEIVE_MULTICAST) != 0) &&
+      (MCastFilterCnt == 0))
+  {
     Status = EFI_INVALID_PARAMETER;
     goto ON_EXIT;
   }

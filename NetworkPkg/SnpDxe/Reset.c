@@ -96,7 +96,11 @@ SnpUndi32Reset (
   // Resolve Warning 4 unreferenced parameter problem
   //
   ExtendedVerification = 0;
-  DEBUG ((DEBUG_WARN, "ExtendedVerification = %d is not implemented!\n", ExtendedVerification));
+  DEBUG ((
+    DEBUG_WARN,
+    "ExtendedVerification = %d is not implemented!\n",
+    ExtendedVerification
+    ));
 
   if (This == NULL) {
     return EFI_INVALID_PARAMETER;

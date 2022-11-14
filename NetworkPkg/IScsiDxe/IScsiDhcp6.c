@@ -88,7 +88,9 @@ IScsiDhcp6ExtractRootPath (
   Fields[RP_FIELD_IDX_SERVERNAME].Str = &TmpStr[Index];
 
   if (!ConfigNvData->DnsMode) {
-    while ((TmpStr[Index] != ISCSI_ROOT_PATH_ADDR_END_DELIMITER) && (Index < Length)) {
+    while ((TmpStr[Index] != ISCSI_ROOT_PATH_ADDR_END_DELIMITER) && (Index <
+                                                                     Length))
+    {
       Index++;
     }
 
@@ -98,7 +100,9 @@ IScsiDhcp6ExtractRootPath (
     TmpStr[Index] = '\0';
     Index        += 2;
   } else {
-    while ((TmpStr[Index] != ISCSI_ROOT_PATH_FIELD_DELIMITER) && (Index < Length)) {
+    while ((TmpStr[Index] != ISCSI_ROOT_PATH_FIELD_DELIMITER) && (Index <
+                                                                  Length))
+    {
       Index++;
     }
 
@@ -109,17 +113,24 @@ IScsiDhcp6ExtractRootPath (
     Index        += 1;
   }
 
-  Fields[RP_FIELD_IDX_SERVERNAME].Len = (UINT8)AsciiStrLen (Fields[RP_FIELD_IDX_SERVERNAME].Str);
+  Fields[RP_FIELD_IDX_SERVERNAME].Len = (UINT8)AsciiStrLen (
+                                                 Fields[RP_FIELD_IDX_SERVERNAME]
+                                                   .Str
+                                                 );
 
   //
   // Extract others fields in the Root Path option string.
   //
-  for (FieldIndex = 1; (FieldIndex < RP_FIELD_IDX_MAX) && (Index < Length); FieldIndex++) {
+  for (FieldIndex = 1; (FieldIndex < RP_FIELD_IDX_MAX) && (Index < Length);
+       FieldIndex++)
+  {
     if (TmpStr[Index] != ISCSI_ROOT_PATH_FIELD_DELIMITER) {
       Fields[FieldIndex].Str = &TmpStr[Index];
     }
 
-    while ((TmpStr[Index] != ISCSI_ROOT_PATH_FIELD_DELIMITER) && (Index < Length)) {
+    while ((TmpStr[Index] != ISCSI_ROOT_PATH_FIELD_DELIMITER) && (Index <
+                                                                  Length))
+    {
       Index++;
     }
 
@@ -286,7 +297,10 @@ IScsiDhcp6ParseReply (
     return EFI_NOT_READY;
   }
 
-  OptionList = AllocateZeroPool (OptionCount * sizeof (EFI_DHCP6_PACKET_OPTION *));
+  OptionList = AllocateZeroPool (
+                 OptionCount *
+                 sizeof (EFI_DHCP6_PACKET_OPTION *)
+                 );
   if (OptionList == NULL) {
     return EFI_NOT_READY;
   }
@@ -307,7 +321,9 @@ IScsiDhcp6ParseReply (
     // Get DNS server addresses from this reply packet.
     //
     if (OptionList[Index]->OpCode == DHCP6_OPT_DNS_SERVERS) {
-      if (((OptionList[Index]->OpLen & 0xf) != 0) || (OptionList[Index]->OpLen == 0)) {
+      if (((OptionList[Index]->OpLen & 0xf) != 0) ||
+          (OptionList[Index]->OpLen == 0))
+      {
         Status = EFI_UNSUPPORTED;
         goto Exit;
       }
@@ -315,13 +331,21 @@ IScsiDhcp6ParseReply (
       //
       // Primary DNS server address.
       //
-      CopyMem (&ConfigData->PrimaryDns, &OptionList[Index]->Data[0], sizeof (EFI_IPv6_ADDRESS));
+      CopyMem (
+        &ConfigData->PrimaryDns,
+        &OptionList[Index]->Data[0],
+        sizeof (EFI_IPv6_ADDRESS)
+        );
 
       if (OptionList[Index]->OpLen > 16) {
         //
         // Secondary DNS server address
         //
-        CopyMem (&ConfigData->SecondaryDns, &OptionList[Index]->Data[16], sizeof (EFI_IPv6_ADDRESS));
+        CopyMem (
+          &ConfigData->SecondaryDns,
+          &OptionList[Index]->Data[16],
+          sizeof (EFI_IPv6_ADDRESS)
+          );
       }
     } else if (OptionList[Index]->OpCode == DHCP6_OPT_BOOT_FILE_URL) {
       //
@@ -346,7 +370,11 @@ IScsiDhcp6ParseReply (
         goto Exit;
       }
 
-      CopyMem (&ConfigData->DhcpServer, &OptionList[Index]->Data[2], sizeof (EFI_IPv6_ADDRESS));
+      CopyMem (
+        &ConfigData->DhcpServer,
+        &OptionList[Index]->Data[2],
+        sizeof (EFI_IPv6_ADDRESS)
+        );
     }
   }
 
@@ -407,7 +435,11 @@ IScsiDoDhcp6 (
   // Check media status before doing DHCP.
   //
   MediaStatus = EFI_SUCCESS;
-  NetLibDetectMediaWaitTimeout (Controller, ISCSI_CHECK_MEDIA_GET_DHCP_WAITING_TIME, &MediaStatus);
+  NetLibDetectMediaWaitTimeout (
+    Controller,
+    ISCSI_CHECK_MEDIA_GET_DHCP_WAITING_TIME,
+    &MediaStatus
+    );
   if (MediaStatus != EFI_SUCCESS) {
     AsciiPrint ("\n  Error: Could not detect network connection.\n");
     return EFI_NO_MEDIA;

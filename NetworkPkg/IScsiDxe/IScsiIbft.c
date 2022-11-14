@@ -51,9 +51,12 @@ IScsiInitControlSection (
 
   Control = (EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_CONTROL_STRUCTURE *)(Table + 1);
 
-  Control->Header.StructureId = EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_CONTROL_STRUCTURE_ID;
-  Control->Header.Version     = EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_CONTROL_STRUCTURE_VERSION;
-  Control->Header.Length      = (UINT16)sizeof (EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_CONTROL_STRUCTURE);
+  Control->Header.StructureId =
+    EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_CONTROL_STRUCTURE_ID;
+  Control->Header.Version =
+    EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_CONTROL_STRUCTURE_VERSION;
+  Control->Header.Length =
+    (UINT16)sizeof (EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_CONTROL_STRUCTURE);
 
   //
   // If in multipathing mode, enable the Boot Failover Flag.
@@ -78,7 +81,8 @@ IScsiInitControlSection (
     // Need expand the control section if more than 2 NIC/Target attempts
     // exist.
     //
-    Control->Header.Length = (UINT16)(Control->Header.Length + (NumOffset - 4) * sizeof (UINT16));
+    Control->Header.Length = (UINT16)(Control->Header.Length + (NumOffset - 4) *
+                                      sizeof (UINT16));
   }
 }
 
@@ -133,16 +137,24 @@ IScsiFillInitiatorSection (
 
   Control->InitiatorOffset = (UINT16)((UINTN)Initiator - (UINTN)Table);
 
-  Initiator->Header.StructureId = EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_INITIATOR_STRUCTURE_ID;
-  Initiator->Header.Version     = EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_INITIATOR_STRUCTURE_VERSION;
-  Initiator->Header.Length      = (UINT16)sizeof (EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_INITIATOR_STRUCTURE);
-  Initiator->Header.Flags       = EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_INITIATOR_STRUCTURE_FLAG_BLOCK_VALID |
-                                  EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_INITIATOR_STRUCTURE_FLAG_BOOT_SELECTED;
+  Initiator->Header.StructureId =
+    EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_INITIATOR_STRUCTURE_ID;
+  Initiator->Header.Version =
+    EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_INITIATOR_STRUCTURE_VERSION;
+  Initiator->Header.Length =
+    (UINT16)sizeof (EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_INITIATOR_STRUCTURE);
+  Initiator->Header.Flags =
+    EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_INITIATOR_STRUCTURE_FLAG_BLOCK_VALID |
+    EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_INITIATOR_STRUCTURE_FLAG_BOOT_SELECTED;
 
   //
   // Fill the iSCSI Initiator Name into the heap.
   //
-  IScsiAddHeapItem (Heap, mPrivate->InitiatorName, mPrivate->InitiatorNameLength - 1);
+  IScsiAddHeapItem (
+    Heap,
+    mPrivate->InitiatorName,
+    mPrivate->InitiatorNameLength - 1
+    );
 
   Initiator->IScsiNameLength = (UINT16)(mPrivate->InitiatorNameLength - 1);
   Initiator->IScsiNameOffset = (UINT16)((UINTN)*Heap - (UINTN)Table);
@@ -205,9 +217,17 @@ IScsiFillNICAndTargetSections (
   //
   Control = (EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_CONTROL_STRUCTURE *)(Table + 1);
   Nic     = (EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_NIC_STRUCTURE *)((UINTN)Table +
-                                                                 Control->InitiatorOffset + IBFT_ROUNDUP (sizeof (EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_INITIATOR_STRUCTURE)));
+                                                                 Control->
+                                                                   InitiatorOffset
+                                                                 + IBFT_ROUNDUP (
+                                                                     sizeof (
+                                                                                               EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_INITIATOR_STRUCTURE)
+                                                                     ));
   Target = (EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_TARGET_STRUCTURE *)((UINTN)Nic +
-                                                                   IBFT_ROUNDUP (sizeof (EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_NIC_STRUCTURE)));
+                                                                   IBFT_ROUNDUP (
+                                                                     sizeof (
+                                                                                        EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_NIC_STRUCTURE)
+                                                                     ));
 
   SectionOffset = &Control->NIC0Offset;
 
@@ -219,7 +239,9 @@ IScsiFillNICAndTargetSections (
       //
       // First entry should be boot selected entry.
       //
-      Attempt = IScsiConfigGetAttemptByConfigIndex (mPrivate->BootSelectedIndex);
+      Attempt = IScsiConfigGetAttemptByConfigIndex (
+                  mPrivate->BootSelectedIndex
+                  );
       if (Attempt == NULL) {
         //
         // First boot selected entry can not be found.
@@ -254,7 +276,9 @@ IScsiFillNICAndTargetSections (
     //
     // If multipath mode is enabled, only the attempts in MPIO will be recorded in iBFT.
     //
-    if (mPrivate->EnableMpio && (Attempt->SessionConfigData.Enabled != ISCSI_ENABLED_FOR_MPIO)) {
+    if (mPrivate->EnableMpio && (Attempt->SessionConfigData.Enabled !=
+                                 ISCSI_ENABLED_FOR_MPIO))
+    {
       continue;
     }
 
@@ -272,15 +296,20 @@ IScsiFillNICAndTargetSections (
     // Fill the Nic section.
     //
 
-    Nic->Header.StructureId = EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_NIC_STRUCTURE_ID;
-    Nic->Header.Version     = EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_NIC_STRUCTURE_VERSION;
-    Nic->Header.Length      = (UINT16)sizeof (EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_NIC_STRUCTURE);
-    Nic->Header.Index       = (UINT8)Index;
-    Nic->Header.Flags       = EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_NIC_STRUCTURE_FLAG_BLOCK_VALID |
-                              EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_NIC_STRUCTURE_FLAG_GLOBAL;
+    Nic->Header.StructureId =
+      EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_NIC_STRUCTURE_ID;
+    Nic->Header.Version =
+      EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_NIC_STRUCTURE_VERSION;
+    Nic->Header.Length =
+      (UINT16)sizeof (EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_NIC_STRUCTURE);
+    Nic->Header.Index = (UINT8)Index;
+    Nic->Header.Flags =
+      EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_NIC_STRUCTURE_FLAG_BLOCK_VALID |
+      EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_NIC_STRUCTURE_FLAG_GLOBAL;
 
     if (Index == 0) {
-      Nic->Header.Flags |= EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_NIC_STRUCTURE_FLAG_BOOT_SELECTED;
+      Nic->Header.Flags |=
+        EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_NIC_STRUCTURE_FLAG_BOOT_SELECTED;
     }
 
     if (NvData->InitiatorInfoFromDhcp) {
@@ -289,11 +318,15 @@ IScsiFillNICAndTargetSections (
       Nic->Origin = IpPrefixOriginManual;
     }
 
-    if ((NvData->IpMode == IP_MODE_IP4) || (NvData->IpMode == IP_MODE_AUTOCONFIG)) {
+    if ((NvData->IpMode == IP_MODE_IP4) || (NvData->IpMode ==
+                                            IP_MODE_AUTOCONFIG))
+    {
       //
       // Get the subnet mask prefix length.
       //
-      Nic->SubnetMaskPrefixLength = IScsiGetSubnetMaskPrefixLength (&NvData->SubnetMask);
+      Nic->SubnetMaskPrefixLength = IScsiGetSubnetMaskPrefixLength (
+                                      &NvData->SubnetMask
+                                      );
 
       //
       // Map the various v4 addresses into v6 addresses.
@@ -303,13 +336,27 @@ IScsiFillNICAndTargetSections (
       IScsiMapV4ToV6Addr (&Attempt->PrimaryDns.v4, &Nic->PrimaryDns);
       IScsiMapV4ToV6Addr (&Attempt->SecondaryDns.v4, &Nic->SecondaryDns);
       IScsiMapV4ToV6Addr (&Attempt->DhcpServer.v4, &Nic->DhcpServer);
-    } else if ((NvData->IpMode == IP_MODE_IP6) || (NvData->IpMode == IP_MODE_AUTOCONFIG)) {
+    } else if ((NvData->IpMode == IP_MODE_IP6) || (NvData->IpMode ==
+                                                   IP_MODE_AUTOCONFIG))
+    {
       Nic->SubnetMaskPrefixLength = NvData->PrefixLength;
       CopyMem (&Nic->Ip, &NvData->LocalIp, sizeof (EFI_IPv6_ADDRESS));
       CopyMem (&Nic->Gateway, &NvData->Gateway, sizeof (EFI_IPv6_ADDRESS));
-      CopyMem (&Nic->PrimaryDns, &Attempt->PrimaryDns, sizeof (EFI_IPv6_ADDRESS));
-      CopyMem (&Nic->SecondaryDns, &Attempt->SecondaryDns, sizeof (EFI_IPv6_ADDRESS));
-      CopyMem (&Nic->DhcpServer, &Attempt->DhcpServer, sizeof (EFI_IPv6_ADDRESS));
+      CopyMem (
+        &Nic->PrimaryDns,
+        &Attempt->PrimaryDns,
+        sizeof (EFI_IPv6_ADDRESS)
+        );
+      CopyMem (
+        &Nic->SecondaryDns,
+        &Attempt->SecondaryDns,
+        sizeof (EFI_IPv6_ADDRESS)
+        );
+      CopyMem (
+        &Nic->DhcpServer,
+        &Attempt->DhcpServer,
+        sizeof (EFI_IPv6_ADDRESS)
+        );
     } else {
       ASSERT (FALSE);
     }
@@ -323,7 +370,8 @@ IScsiFillNICAndTargetSections (
     Nic->VLanTag = NicInfo->VlanId;
     CopyMem (Nic->Mac, &NicInfo->PermanentAddress, sizeof (Nic->Mac));
     Nic->PciLocation = (UINT16)((NicInfo->BusNumber << 8)    |
-                                (NicInfo->DeviceNumber << 3) | NicInfo->FunctionNumber);
+                                (NicInfo->DeviceNumber << 3) |
+                                NicInfo->FunctionNumber);
     *SectionOffset = (UINT16)((UINTN)Nic - (UINTN)Table);
     SectionOffset++;
 
@@ -331,33 +379,45 @@ IScsiFillNICAndTargetSections (
     // Fill the Target section.
     //
 
-    Target->Header.StructureId = EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_TARGET_STRUCTURE_ID;
-    Target->Header.Version     = EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_TARGET_STRUCTURE_VERSION;
-    Target->Header.Length      = (UINT16)sizeof (EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_TARGET_STRUCTURE);
-    Target->Header.Index       = (UINT8)Index;
-    Target->Header.Flags       = EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_TARGET_STRUCTURE_FLAG_BLOCK_VALID;
+    Target->Header.StructureId =
+      EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_TARGET_STRUCTURE_ID;
+    Target->Header.Version =
+      EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_TARGET_STRUCTURE_VERSION;
+    Target->Header.Length =
+      (UINT16)sizeof (EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_TARGET_STRUCTURE);
+    Target->Header.Index = (UINT8)Index;
+    Target->Header.Flags =
+      EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_TARGET_STRUCTURE_FLAG_BLOCK_VALID;
 
     if (Index == 0) {
-      Target->Header.Flags |= EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_TARGET_STRUCTURE_FLAG_BOOT_SELECTED;
+      Target->Header.Flags |=
+        EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_TARGET_STRUCTURE_FLAG_BOOT_SELECTED;
     }
 
     Target->Port = NvData->TargetPort;
 
     if (Attempt->AuthenticationType == ISCSI_AUTH_TYPE_CHAP) {
       if (AuthConfig->CHAPType == ISCSI_CHAP_UNI) {
-        Target->CHAPType = EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_TARGET_STRUCTURE_CHAP_TYPE_CHAP;
+        Target->CHAPType =
+          EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_TARGET_STRUCTURE_CHAP_TYPE_CHAP;
       } else if (AuthConfig->CHAPType == ISCSI_CHAP_MUTUAL) {
-        Target->CHAPType = EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_TARGET_STRUCTURE_CHAP_TYPE_MUTUAL_CHAP;
+        Target->CHAPType =
+          EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_TARGET_STRUCTURE_CHAP_TYPE_MUTUAL_CHAP;
       }
     } else if (Attempt->AuthenticationType == ISCSI_AUTH_TYPE_NONE) {
-      Target->CHAPType = EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_TARGET_STRUCTURE_CHAP_TYPE_NO_CHAP;
+      Target->CHAPType =
+        EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_TARGET_STRUCTURE_CHAP_TYPE_NO_CHAP;
     }
 
     Target->NicIndex = (UINT8)Index;
 
-    if ((NvData->IpMode == IP_MODE_IP4) || (NvData->IpMode == IP_MODE_AUTOCONFIG)) {
+    if ((NvData->IpMode == IP_MODE_IP4) || (NvData->IpMode ==
+                                            IP_MODE_AUTOCONFIG))
+    {
       IScsiMapV4ToV6Addr (&NvData->TargetIp.v4, &Target->Ip);
-    } else if ((NvData->IpMode == IP_MODE_IP6) || (NvData->IpMode == IP_MODE_AUTOCONFIG)) {
+    } else if ((NvData->IpMode == IP_MODE_IP6) || (NvData->IpMode ==
+                                                   IP_MODE_AUTOCONFIG))
+    {
       CopyMem (&Target->Ip, &NvData->TargetIp, sizeof (EFI_IPv6_ADDRESS));
     } else {
       ASSERT (FALSE);
@@ -391,7 +451,9 @@ IScsiFillNICAndTargetSections (
       Target->CHAPSecretLength = Length;
       Target->CHAPSecretOffset = (UINT16)((UINTN)*Heap - (UINTN)Table);
 
-      if (Target->CHAPType == EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_TARGET_STRUCTURE_CHAP_TYPE_MUTUAL_CHAP) {
+      if (Target->CHAPType ==
+          EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_TARGET_STRUCTURE_CHAP_TYPE_MUTUAL_CHAP)
+      {
         //
         // Reverse CHAP Name.
         //
@@ -417,9 +479,16 @@ IScsiFillNICAndTargetSections (
     // Advance to the next NIC/Target pair.
     //
     Nic = (EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_NIC_STRUCTURE *)((UINTN)Target +
-                                                               IBFT_ROUNDUP (sizeof (EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_TARGET_STRUCTURE)));
-    Target = (EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_TARGET_STRUCTURE *)((UINTN)Nic +
-                                                                     IBFT_ROUNDUP (sizeof (EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_NIC_STRUCTURE)));
+                                                               IBFT_ROUNDUP (
+                                                                 sizeof (
+                                                                                    EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_TARGET_STRUCTURE)
+                                                                 ));
+    Target =
+      (EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_TARGET_STRUCTURE *)((UINTN)Nic +
+                                                              IBFT_ROUNDUP (
+                                                                sizeof (
+                                                                                          EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_NIC_STRUCTURE)
+                                                                ));
 
     Index++;
   }
@@ -447,7 +516,11 @@ IScsiPublishIbft (
   Rsdt = NULL;
   Xsdt = NULL;
 
-  Status = gBS->LocateProtocol (&gEfiAcpiTableProtocolGuid, NULL, (VOID **)&AcpiTableProtocol);
+  Status = gBS->LocateProtocol (
+                  &gEfiAcpiTableProtocolGuid,
+                  NULL,
+                  (VOID **)&AcpiTableProtocol
+                  );
   if (EFI_ERROR (Status)) {
     return;
   }
@@ -457,12 +530,18 @@ IScsiPublishIbft (
   //
   Status = EfiGetSystemConfigurationTable (&gEfiAcpiTableGuid, (VOID **)&Rsdp);
   if (EFI_ERROR (Status)) {
-    Status = EfiGetSystemConfigurationTable (&gEfiAcpi10TableGuid, (VOID **)&Rsdp);
+    Status = EfiGetSystemConfigurationTable (
+               &gEfiAcpi10TableGuid,
+               (VOID **)&Rsdp
+               );
   }
 
   if (EFI_ERROR (Status) || (Rsdp == NULL)) {
     return;
-  } else if ((Rsdp->Revision >= EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER_REVISION) && (Rsdp->XsdtAddress != 0)) {
+  } else if ((Rsdp->Revision >=
+              EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER_REVISION) &&
+             (Rsdp->XsdtAddress != 0))
+  {
     Xsdt = (EFI_ACPI_DESCRIPTION_HEADER *)(UINTN)Rsdp->XsdtAddress;
   } else if (Rsdp->RsdtAddress != 0) {
     Rsdt = (EFI_ACPI_DESCRIPTION_HEADER *)(UINTN)Rsdp->RsdtAddress;
@@ -488,7 +567,8 @@ IScsiPublishIbft (
   // If there is no valid attempt configuration, just return.
   //
   if ((!mPrivate->EnableMpio && (mPrivate->ValidSinglePathCount == 0)) ||
-      (mPrivate->EnableMpio && (mPrivate->MpioCount <= mPrivate->Krb5MpioCount)))
+      (mPrivate->EnableMpio && (mPrivate->MpioCount <=
+                                mPrivate->Krb5MpioCount)))
   {
     return;
   }

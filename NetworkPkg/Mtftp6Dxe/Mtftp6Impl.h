@@ -43,8 +43,12 @@ typedef struct _MTFTP6_INSTANCE  MTFTP6_INSTANCE;
 #define MTFTP6_DEFAULT_WINDOWSIZE       1
 #define MTFTP6_TICK_PER_SECOND          10000000U
 
-#define MTFTP6_SERVICE_FROM_THIS(a)   CR (a, MTFTP6_SERVICE, ServiceBinding, MTFTP6_SERVICE_SIGNATURE)
-#define MTFTP6_INSTANCE_FROM_THIS(a)  CR (a, MTFTP6_INSTANCE, Mtftp6, MTFTP6_INSTANCE_SIGNATURE)
+#define MTFTP6_SERVICE_FROM_THIS( \
+                                a)   \
+      CR (a, MTFTP6_SERVICE, ServiceBinding, MTFTP6_SERVICE_SIGNATURE)
+#define MTFTP6_INSTANCE_FROM_THIS( \
+                                 a)  \
+      CR (a, MTFTP6_INSTANCE, Mtftp6, MTFTP6_INSTANCE_SIGNATURE)
 
 extern EFI_MTFTP6_PROTOCOL  gMtftp6ProtocolTemplate;
 

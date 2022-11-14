@@ -137,7 +137,8 @@ PxeBcComponentNameGetControllerName (
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gPxeBcComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gPxeBcComponentName =
+{
   PxeBcComponentNameGetDriverName,
   PxeBcComponentNameGetControllerName,
   "eng"
@@ -146,13 +147,15 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gPxeBcComponentName =
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gPxeBcComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gPxeBcComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)PxeBcComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)PxeBcComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mPxeBcDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mPxeBcDriverNameTable[] = {
   {
     "eng;en",
     L"UEFI PXE Base Code Driver"
@@ -163,7 +166,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mPxeBcDriverNameTable[] 
   }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mPxeBcControllerNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mPxeBcControllerNameTable[] = {
   {
     "eng;en",
     L"PXE Controller"

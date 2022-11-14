@@ -139,7 +139,8 @@ UdpComponentNameGetControllerName (
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gUdp4ComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gUdp4ComponentName =
+{
   UdpComponentNameGetDriverName,
   UdpComponentNameGetControllerName,
   "eng"
@@ -148,13 +149,15 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gUdp4ComponentName = 
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gUdp4ComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gUdp4ComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)UdpComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)UdpComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mUdpDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mUdpDriverNameTable[] =
+{
   {
     "eng;en",
     L"UDP Network Service Driver"
@@ -165,7 +168,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mUdpDriverNameTable[] = 
   }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  *gUdpControllerNameTable = NULL;
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  *gUdpControllerNameTable
+  = NULL;
 
 /**
   Retrieves a Unicode string that is the user readable name of the driver.

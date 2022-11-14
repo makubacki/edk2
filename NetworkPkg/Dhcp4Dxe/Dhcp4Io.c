@@ -27,7 +27,10 @@ DhcpInitRequest (
 {
   EFI_STATUS  Status;
 
-  ASSERT ((DhcpSb->DhcpState == Dhcp4Init) || (DhcpSb->DhcpState == Dhcp4InitReboot));
+  ASSERT (
+    (DhcpSb->DhcpState == Dhcp4Init) || (DhcpSb->DhcpState ==
+                                         Dhcp4InitReboot)
+    );
 
   //
   // Clear initial time to make sure that elapsed-time is set to 0 for first Discover or REQUEST message.
@@ -338,7 +341,10 @@ DhcpConfigLeaseIoPort (
 
   ZeroMem (&UdpConfigData.RemoteAddress, sizeof (EFI_IPv4_ADDRESS));
 
-  Status = UdpIo->Protocol.Udp4->Configure (UdpIo->Protocol.Udp4, &UdpConfigData);
+  Status = UdpIo->Protocol.Udp4->Configure (
+                                   UdpIo->Protocol.Udp4,
+                                   &UdpConfigData
+                                   );
 
   if (EFI_ERROR (Status)) {
     return Status;
@@ -353,7 +359,13 @@ DhcpConfigLeaseIoPort (
     Ip = HTONL (DhcpSb->Para->Router);
     CopyMem (&Gateway, &Ip, sizeof (EFI_IPv4_ADDRESS));
 
-    UdpIo->Protocol.Udp4->Routes (UdpIo->Protocol.Udp4, FALSE, &Subnet, &Subnet, &Gateway);
+    UdpIo->Protocol.Udp4->Routes (
+                            UdpIo->Protocol.Udp4,
+                            FALSE,
+                            &Subnet,
+                            &Subnet,
+                            &Gateway
+                            );
   }
 
   return EFI_SUCCESS;
@@ -501,7 +513,12 @@ DhcpChooseOffer (
   // use the last offer, otherwise use the provided packet.
   //
   NewPacket = NULL;
-  Status    = DhcpCallUser (DhcpSb, Dhcp4SelectOffer, DhcpSb->LastOffer, &NewPacket);
+  Status    = DhcpCallUser (
+                DhcpSb,
+                Dhcp4SelectOffer,
+                DhcpSb->LastOffer,
+                &NewPacket
+                );
 
   if (EFI_ERROR (Status)) {
     return Status;
@@ -509,7 +526,13 @@ DhcpChooseOffer (
 
   Selected = DhcpSb->LastOffer;
 
-  if ((NewPacket != NULL) && !EFI_ERROR (DhcpValidateOptions (NewPacket, NULL))) {
+  if ((NewPacket != NULL) && !EFI_ERROR (
+                                DhcpValidateOptions (
+                                  NewPacket,
+                                  NULL
+                                  )
+                                ))
+  {
     TempPacket = (EFI_DHCP4_PACKET *)AllocatePool (NewPacket->Size);
     if (TempPacket != NULL) {
       CopyMem (TempPacket, NewPacket, NewPacket->Size);
@@ -548,7 +571,13 @@ DhcpChooseOffer (
     return Status;
   }
 
-  return DhcpSendMessage (DhcpSb, Selected, DhcpSb->Para, DHCP_MSG_REQUEST, NULL);
+  return DhcpSendMessage (
+           DhcpSb,
+           Selected,
+           DhcpSb->Para,
+           DHCP_MSG_REQUEST,
+           NULL
+           );
 }
 
 /**
@@ -737,7 +766,13 @@ DhcpHandleRequest (
   return EFI_SUCCESS;
 
 REJECT:
-  DhcpSendMessage (DhcpSb, DhcpSb->Selected, DhcpSb->Para, DHCP_MSG_DECLINE, Message);
+  DhcpSendMessage (
+    DhcpSb,
+    DhcpSb->Selected,
+    DhcpSb->Para,
+    DHCP_MSG_DECLINE,
+    Message
+    );
 
 ON_EXIT:
   FreePool (Packet);
@@ -967,7 +1002,8 @@ DhcpInput (
   //
   // Copy the DHCP message to a continuous memory block
   //
-  Len    = sizeof (EFI_DHCP4_PACKET) + UdpPacket->TotalSize - sizeof (EFI_DHCP4_HEADER);
+  Len = sizeof (EFI_DHCP4_PACKET) + UdpPacket->TotalSize -
+        sizeof (EFI_DHCP4_HEADER);
   Packet = (EFI_DHCP4_PACKET *)AllocatePool (Len);
 
   if (Packet == NULL) {
@@ -976,7 +1012,12 @@ DhcpInput (
 
   Packet->Size   = Len;
   Head           = &Packet->Dhcp4.Header;
-  Packet->Length = NetbufCopy (UdpPacket, 0, UdpPacket->TotalSize, (UINT8 *)Head);
+  Packet->Length = NetbufCopy (
+                     UdpPacket,
+                     0,
+                     UdpPacket->TotalSize,
+                     (UINT8 *)Head
+                     );
 
   if (Packet->Length != UdpPacket->TotalSize) {
     goto RESTART;
@@ -987,7 +1028,11 @@ DhcpInput (
   //
   if ((Head->OpCode != BOOTP_REPLY) ||
       (NTOHL (Head->Xid) != DhcpSb->Xid) ||
-      (CompareMem (DhcpSb->ClientAddressSendOut, Head->ClientHwAddr, Head->HwAddrLen) != 0))
+      (CompareMem (
+         DhcpSb->ClientAddressSendOut,
+         Head->ClientHwAddr,
+         Head->HwAddrLen
+         ) != 0))
   {
     goto RESTART;
   }
@@ -1177,7 +1222,9 @@ DhcpSendMessage (
 
   if ((Type == DHCP_MSG_DECLINE) || (Type == DHCP_MSG_RELEASE)) {
     Head->Seconds = 0;
-  } else if ((Type == DHCP_MSG_REQUEST) && (DhcpSb->DhcpState == Dhcp4Requesting)) {
+  } else if ((Type == DHCP_MSG_REQUEST) && (DhcpSb->DhcpState ==
+                                            Dhcp4Requesting))
+  {
     //
     // Use the same value as the original DHCPDISCOVER message.
     //
@@ -1395,7 +1442,10 @@ DhcpRetransmit (
   // For REQUEST message in Dhcp4Requesting state, do not change the secs fields.
   //
   if (DhcpSb->DhcpState != Dhcp4Requesting) {
-    SetElapsedTime (&DhcpSb->LastPacket->Dhcp4.Header.Seconds, DhcpSb->ActiveChild);
+    SetElapsedTime (
+      &DhcpSb->LastPacket->Dhcp4.Header.Seconds,
+      DhcpSb->ActiveChild
+      );
   }
 
   //

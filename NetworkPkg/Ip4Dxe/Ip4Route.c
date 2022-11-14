@@ -311,7 +311,9 @@ Ip4AddRoute (
   NET_LIST_FOR_EACH (Entry, Head) {
     RtEntry = NET_LIST_USER_STRUCT (Entry, IP4_ROUTE_ENTRY, Link);
 
-    if (IP4_NET_EQUAL (RtEntry->Dest, Dest, Netmask) && (RtEntry->NextHop == Gateway)) {
+    if (IP4_NET_EQUAL (RtEntry->Dest, Dest, Netmask) && (RtEntry->NextHop ==
+                                                         Gateway))
+    {
       return EFI_ACCESS_DENIED;
     }
   }
@@ -366,7 +368,9 @@ Ip4DelRoute (
   NET_LIST_FOR_EACH_SAFE (Entry, Next, Head) {
     RtEntry = NET_LIST_USER_STRUCT (Entry, IP4_ROUTE_ENTRY, Link);
 
-    if (IP4_NET_EQUAL (RtEntry->Dest, Dest, Netmask) && (RtEntry->NextHop == Gateway)) {
+    if (IP4_NET_EQUAL (RtEntry->Dest, Dest, Netmask) && (RtEntry->NextHop ==
+                                                         Gateway))
+    {
       Ip4PurgeRouteCache (&RtTable->Cache, (UINTN)RtEntry);
       RemoveEntryList (Entry);
       Ip4FreeRouteEntry (RtEntry);
@@ -534,7 +538,9 @@ Ip4Route (
   // When using /32 subnet mask, the packet will always be sent to the direct
   // destination first, if we can't find a matching route cache.
   //
-  if ((SubnetMask == IP4_ALLONE_ADDRESS) || ((RtEntry->Flag & IP4_DIRECT_ROUTE) != 0)) {
+  if ((SubnetMask == IP4_ALLONE_ADDRESS) || ((RtEntry->Flag &
+                                              IP4_DIRECT_ROUTE) != 0))
+  {
     NextHop = Dest;
   } else {
     NextHop = RtEntry->NextHop;
@@ -635,11 +641,16 @@ Ip4BuildEfiRouteTable (
   Count = 0;
 
   for (Index = IP4_MASK_MAX; Index >= 0; Index--) {
-    for (RtTable = IpInstance->RouteTable; RtTable != NULL; RtTable = RtTable->Next) {
+    for (RtTable = IpInstance->RouteTable; RtTable != NULL; RtTable =
+           RtTable->Next)
+    {
       NET_LIST_FOR_EACH (Entry, &(RtTable->RouteArea[Index])) {
         RtEntry = NET_LIST_USER_STRUCT (Entry, IP4_ROUTE_ENTRY, Link);
 
-        EFI_IP4 (Table[Count].SubnetAddress)  = HTONL (RtEntry->Dest & RtEntry->Netmask);
+        EFI_IP4 (Table[Count].SubnetAddress) = HTONL (
+                                                 RtEntry->Dest &
+                                                 RtEntry->Netmask
+                                                 );
         EFI_IP4 (Table[Count].SubnetMask)     = HTONL (RtEntry->Netmask);
         EFI_IP4 (Table[Count].GatewayAddress) = HTONL (RtEntry->NextHop);
 

@@ -239,7 +239,11 @@ Dhcp4CreateService (
 
   DhcpSb->HwLen  = (UINT8)DhcpSb->UdpIo->SnpMode.HwAddressSize;
   DhcpSb->HwType = DhcpSb->UdpIo->SnpMode.IfType;
-  CopyMem (&DhcpSb->Mac, &DhcpSb->UdpIo->SnpMode.CurrentAddress, sizeof (DhcpSb->Mac));
+  CopyMem (
+    &DhcpSb->Mac,
+    &DhcpSb->UdpIo->SnpMode.CurrentAddress,
+    sizeof (DhcpSb->Mac)
+    );
 
   *Service = DhcpSb;
   return EFI_SUCCESS;
@@ -296,7 +300,11 @@ Dhcp4DriverBindingStart (
     return EFI_ALREADY_STARTED;
   }
 
-  Status = Dhcp4CreateService (ControllerHandle, This->DriverBindingHandle, &DhcpSb);
+  Status = Dhcp4CreateService (
+             ControllerHandle,
+             This->DriverBindingHandle,
+             &DhcpSb
+             );
 
   if (EFI_ERROR (Status)) {
     return Status;
@@ -365,7 +373,12 @@ Dhcp4DestroyChildEntry (
     return EFI_INVALID_PARAMETER;
   }
 
-  Instance       = NET_LIST_USER_STRUCT_S (Entry, DHCP_PROTOCOL, Link, DHCP_PROTOCOL_SIGNATURE);
+  Instance = NET_LIST_USER_STRUCT_S (
+               Entry,
+               DHCP_PROTOCOL,
+               Link,
+               DHCP_PROTOCOL_SIGNATURE
+               );
   ServiceBinding = (EFI_SERVICE_BINDING_PROTOCOL *)Context;
 
   return ServiceBinding->DestroyChild (ServiceBinding, Instance->Handle);
@@ -490,7 +503,11 @@ DhcpInitProtocol (
   )
 {
   Instance->Signature = DHCP_PROTOCOL_SIGNATURE;
-  CopyMem (&Instance->Dhcp4Protocol, &mDhcp4ProtocolTemplate, sizeof (Instance->Dhcp4Protocol));
+  CopyMem (
+    &Instance->Dhcp4Protocol,
+    &mDhcp4ProtocolTemplate,
+    sizeof (Instance->Dhcp4Protocol)
+    );
   InitializeListHead (&Instance->Link);
   Instance->Handle           = NULL;
   Instance->Service          = DhcpSb;

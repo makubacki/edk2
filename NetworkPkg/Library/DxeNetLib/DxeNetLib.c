@@ -32,8 +32,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/PrintLib.h>
 #include <Library/UefiLib.h>
 
-#define NIC_ITEM_CONFIG_SIZE  (sizeof (NIC_IP4_CONFIG_INFO) + sizeof (EFI_IP4_ROUTE_TABLE) * MAX_IP4_CONFIG_IN_VARIABLE)
-#define DEFAULT_ZERO_START    ((UINTN) ~0)
+#define NIC_ITEM_CONFIG_SIZE  \
+                                          (sizeof (NIC_IP4_CONFIG_INFO) + sizeof (EFI_IP4_ROUTE_TABLE) * MAX_IP4_CONFIG_IN_VARIABLE)
+#define DEFAULT_ZERO_START                ((UINTN) ~0)
 
 //
 // All the supported IP4 masks in host byte order.
@@ -93,9 +94,11 @@ GLOBAL_REMOVE_IF_UNREFERENCED UINT32  mSyslogPacketSeq  = 0xDEADBEEF;
 // here to direct the syslog packets to the syslog deamon. The
 // default is broadcast to both the ethernet and IP.
 //
-GLOBAL_REMOVE_IF_UNREFERENCED UINT8   mSyslogDstMac[NET_ETHER_ADDR_LEN] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
-GLOBAL_REMOVE_IF_UNREFERENCED UINT32  mSyslogDstIp                      = 0xffffffff;
-GLOBAL_REMOVE_IF_UNREFERENCED UINT32  mSyslogSrcIp                      = 0;
+GLOBAL_REMOVE_IF_UNREFERENCED UINT8   mSyslogDstMac[NET_ETHER_ADDR_LEN] = {
+  0xff, 0xff, 0xff, 0xff, 0xff, 0xff
+};
+GLOBAL_REMOVE_IF_UNREFERENCED UINT32  mSyslogDstIp = 0xffffffff;
+GLOBAL_REMOVE_IF_UNREFERENCED UINT32  mSyslogSrcIp = 0;
 
 GLOBAL_REMOVE_IF_UNREFERENCED CHAR8  *mMonthName[] = {
   "Jan",
@@ -1177,7 +1180,8 @@ NetDestroyLinkList (
       }
     }
 
-    for (Length = 0, Ptr = List->ForwardLink; Ptr != List; Length++, Ptr = Ptr->ForwardLink) {
+    for (Length = 0, Ptr = List->ForwardLink; Ptr != List; Length++, Ptr =
+           Ptr->ForwardLink) {
     }
   } while (Length != PreviousLength);
 
@@ -1983,7 +1987,8 @@ NetLibGetSnpHandle (
   // Try to open SNP from ServiceHandle
   //
   SnpInstance = NULL;
-  Status      = gBS->HandleProtocol (ServiceHandle, &gEfiSimpleNetworkProtocolGuid, (VOID **)&SnpInstance);
+  Status      = gBS->HandleProtocol (ServiceHandle,
+                       &gEfiSimpleNetworkProtocolGuid, (VOID **)&SnpInstance);
   if (!EFI_ERROR (Status)) {
     if (Snp != NULL) {
       *Snp = SnpInstance;
@@ -2001,7 +2006,8 @@ NetLibGetSnpHandle (
   }
 
   SnpHandle = NULL;
-  Status    = gBS->LocateDevicePath (&gEfiSimpleNetworkProtocolGuid, &DevicePath, &SnpHandle);
+  Status    = gBS->LocateDevicePath (&gEfiSimpleNetworkProtocolGuid,
+                     &DevicePath, &SnpHandle);
   if (EFI_ERROR (Status)) {
     //
     // Failed to find SNP handle
@@ -2009,7 +2015,8 @@ NetLibGetSnpHandle (
     return NULL;
   }
 
-  Status = gBS->HandleProtocol (SnpHandle, &gEfiSimpleNetworkProtocolGuid, (VOID **)&SnpInstance);
+  Status = gBS->HandleProtocol (SnpHandle, &gEfiSimpleNetworkProtocolGuid,
+                  (VOID **)&SnpInstance);
   if (!EFI_ERROR (Status)) {
     if (Snp != NULL) {
       *Snp = SnpInstance;
@@ -2050,7 +2057,8 @@ NetLibGetVlanId (
 
   Node = DevicePath;
   while (!IsDevicePathEnd (Node)) {
-    if ((Node->Type == MESSAGING_DEVICE_PATH) && (Node->SubType == MSG_VLAN_DP)) {
+    if ((Node->Type == MESSAGING_DEVICE_PATH) && (Node->SubType ==
+                                                  MSG_VLAN_DP)) {
       return ((VLAN_DEVICE_PATH *)Node)->VlanId;
     }
 
@@ -2228,7 +2236,8 @@ NetLibGetMacAddress (
   }
 
   *AddressSize = SnpMode->HwAddressSize;
-  CopyMem (MacAddress->Addr, SnpMode->CurrentAddress.Addr, SnpMode->HwAddressSize);
+  CopyMem (MacAddress->Addr, SnpMode->CurrentAddress.Addr,
+    SnpMode->HwAddressSize);
 
   return EFI_SUCCESS;
 }
@@ -2309,7 +2318,9 @@ NetLibGetMacString (
       *(HwAddress++),
       2
       );
-    String += StrnLenS (String, (BufferSize - ((UINTN)String - (UINTN)*MacString)) / sizeof (CHAR16));
+    String += StrnLenS (String, (BufferSize - ((UINTN)String -
+                                               (UINTN)*MacString)) /
+                sizeof (CHAR16));
   }
 
   //
@@ -2325,7 +2336,9 @@ NetLibGetMacString (
       VlanId,
       4
       );
-    String += StrnLenS (String, (BufferSize - ((UINTN)String - (UINTN)*MacString)) / sizeof (CHAR16));
+    String += StrnLenS (String, (BufferSize - ((UINTN)String -
+                                               (UINTN)*MacString)) /
+                sizeof (CHAR16));
   }
 
   //
@@ -2643,7 +2656,8 @@ NetLibDetectMediaWaitTimeout (
   if (!EFI_ERROR (Status)) {
     *MediaState = MediaInfo->MediaState;
     FreePool (MediaInfo);
-    if ((*MediaState != EFI_NOT_READY) || (Timeout < MEDIA_STATE_DETECT_TIME_INTERVAL)) {
+    if ((*MediaState != EFI_NOT_READY) || (Timeout <
+                                           MEDIA_STATE_DETECT_TIME_INTERVAL)) {
       return EFI_SUCCESS;
     }
   } else {
@@ -2716,10 +2730,12 @@ NetLibDetectMediaWaitTimeout (
         }
       }
     } while (TimerStatus == EFI_NOT_READY);
-  } while (*MediaState == EFI_NOT_READY && TimeRemained >= MEDIA_STATE_DETECT_TIME_INTERVAL);
+  } while (*MediaState == EFI_NOT_READY && TimeRemained >=
+           MEDIA_STATE_DETECT_TIME_INTERVAL);
 
   gBS->CloseEvent (Timer);
-  if ((*MediaState == EFI_NOT_READY) && (TimeRemained < MEDIA_STATE_DETECT_TIME_INTERVAL)) {
+  if ((*MediaState == EFI_NOT_READY) && (TimeRemained <
+                                         MEDIA_STATE_DETECT_TIME_INTERVAL)) {
     return EFI_TIMEOUT;
   } else {
     return EFI_SUCCESS;
@@ -2761,12 +2777,14 @@ NetLibDefaultAddressIsStatic (
   //
   // Get Ip4Config2 policy.
   //
-  Status = gBS->HandleProtocol (Controller, &gEfiIp4Config2ProtocolGuid, (VOID **)&Ip4Config2);
+  Status = gBS->HandleProtocol (Controller, &gEfiIp4Config2ProtocolGuid,
+                  (VOID **)&Ip4Config2);
   if (EFI_ERROR (Status)) {
     goto ON_EXIT;
   }
 
-  Status = Ip4Config2->GetData (Ip4Config2, Ip4Config2DataTypePolicy, &DataSize, &Policy);
+  Status = Ip4Config2->GetData (Ip4Config2, Ip4Config2DataTypePolicy, &DataSize,
+                         &Policy);
   if (EFI_ERROR (Status)) {
     goto ON_EXIT;
   }
@@ -3158,7 +3176,10 @@ NetLibIp6ToStr (
       }
     } else {
       if (CurrentZerosStart != DEFAULT_ZERO_START) {
-        if ((CurrentZerosLength > 2) && ((LongestZerosStart == (DEFAULT_ZERO_START)) || (CurrentZerosLength > LongestZerosLength))) {
+        if ((CurrentZerosLength > 2) && ((LongestZerosStart ==
+                                          (DEFAULT_ZERO_START)) ||
+                                         (CurrentZerosLength >
+                                          LongestZerosLength))) {
           LongestZerosStart  = CurrentZerosStart;
           LongestZerosLength = CurrentZerosLength;
         }
@@ -3170,7 +3191,8 @@ NetLibIp6ToStr (
   }
 
   if ((CurrentZerosStart != DEFAULT_ZERO_START) && (CurrentZerosLength > 2)) {
-    if ((LongestZerosStart == DEFAULT_ZERO_START) || (LongestZerosLength < CurrentZerosLength)) {
+    if ((LongestZerosStart == DEFAULT_ZERO_START) || (LongestZerosLength <
+                                                      CurrentZerosLength)) {
       LongestZerosStart  = CurrentZerosStart;
       LongestZerosLength = CurrentZerosLength;
     }
@@ -3178,7 +3200,9 @@ NetLibIp6ToStr (
 
   Ptr = Buffer;
   for (Index = 0; Index < 8; Index++) {
-    if ((LongestZerosStart != DEFAULT_ZERO_START) && (Index >= LongestZerosStart) && (Index < LongestZerosStart + LongestZerosLength)) {
+    if ((LongestZerosStart != DEFAULT_ZERO_START) && (Index >=
+                                                      LongestZerosStart) &&
+        (Index < LongestZerosStart + LongestZerosLength)) {
       if (Index == LongestZerosStart) {
         *Ptr++ = L':';
       }
@@ -3193,7 +3217,8 @@ NetLibIp6ToStr (
     Ptr += UnicodeSPrint (Ptr, 10, L"%x", Ip6Addr[Index]);
   }
 
-  if ((LongestZerosStart != DEFAULT_ZERO_START) && (LongestZerosStart + LongestZerosLength == 8)) {
+  if ((LongestZerosStart != DEFAULT_ZERO_START) && (LongestZerosStart +
+                                                    LongestZerosLength == 8)) {
     *Ptr++ = L':';
   }
 
@@ -3235,18 +3260,22 @@ NetLibGetSystemGuid (
   ASSERT (SystemGuid != NULL);
 
   SmbiosTable = NULL;
-  Status      = EfiGetSystemConfigurationTable (&gEfiSmbios3TableGuid, (VOID **)&Smbios30Table);
+  Status      = EfiGetSystemConfigurationTable (&gEfiSmbios3TableGuid,
+                  (VOID **)&Smbios30Table);
   if (!(EFI_ERROR (Status) || (Smbios30Table == NULL))) {
     Smbios.Hdr    = (SMBIOS_STRUCTURE *)(UINTN)Smbios30Table->TableAddress;
-    SmbiosEnd.Raw = (UINT8 *)(UINTN)(Smbios30Table->TableAddress + Smbios30Table->TableMaximumSize);
+    SmbiosEnd.Raw = (UINT8 *)(UINTN)(Smbios30Table->TableAddress +
+                                     Smbios30Table->TableMaximumSize);
   } else {
-    Status = EfiGetSystemConfigurationTable (&gEfiSmbiosTableGuid, (VOID **)&SmbiosTable);
+    Status = EfiGetSystemConfigurationTable (&gEfiSmbiosTableGuid,
+               (VOID **)&SmbiosTable);
     if (EFI_ERROR (Status) || (SmbiosTable == NULL)) {
       return EFI_NOT_FOUND;
     }
 
     Smbios.Hdr    = (SMBIOS_STRUCTURE *)(UINTN)SmbiosTable->TableAddress;
-    SmbiosEnd.Raw = (UINT8 *)((UINTN)SmbiosTable->TableAddress + SmbiosTable->TableLength);
+    SmbiosEnd.Raw = (UINT8 *)((UINTN)SmbiosTable->TableAddress +
+                              SmbiosTable->TableLength);
   }
 
   do {

@@ -129,7 +129,12 @@ Ip6SetAddress (
     NET_LIST_FOR_EACH (Entry, &IpSb->OnlinkPrefix) {
       PrefixEntry = NET_LIST_USER_STRUCT (Entry, IP6_PREFIX_LIST_ENTRY, Link);
 
-      if (NetIp6IsNetEqual (&PrefixEntry->Prefix, &AddressInfo->Address, PrefixEntry->PrefixLength)) {
+      if (NetIp6IsNetEqual (
+            &PrefixEntry->Prefix,
+            &AddressInfo->Address,
+            PrefixEntry->PrefixLength
+            ))
+      {
         AddressInfo->PrefixLength = PrefixEntry->PrefixLength;
         break;
       }
@@ -144,7 +149,12 @@ Ip6SetAddress (
     NET_LIST_FOR_EACH (Entry, &IpSb->AutonomousPrefix) {
       PrefixEntry = NET_LIST_USER_STRUCT (Entry, IP6_PREFIX_LIST_ENTRY, Link);
 
-      if (NetIp6IsNetEqual (&PrefixEntry->Prefix, &AddressInfo->Address, PrefixEntry->PrefixLength)) {
+      if (NetIp6IsNetEqual (
+            &PrefixEntry->Prefix,
+            &AddressInfo->Address,
+            PrefixEntry->PrefixLength
+            ))
+      {
         AddressInfo->PrefixLength = PrefixEntry->PrefixLength;
         break;
       }
@@ -168,13 +178,18 @@ Ip6SetAddress (
   Delay = MultU64x32 (Delay, IP6_ONE_SECOND_IN_MS);
   Delay = RShiftU64 (Delay, 32);
 
-  DelayNode = (IP6_DELAY_JOIN_LIST *)AllocatePool (sizeof (IP6_DELAY_JOIN_LIST));
+  DelayNode = (IP6_DELAY_JOIN_LIST *)AllocatePool (
+                                       sizeof (IP6_DELAY_JOIN_LIST)
+                                       );
   if (DelayNode == NULL) {
     FreePool (AddressInfo);
     return EFI_OUT_OF_RESOURCES;
   }
 
-  DelayNode->DelayTime   = (UINT32)(DivU64x32 (Delay, IP6_TIMER_INTERVAL_IN_MS));
+  DelayNode->DelayTime   = (UINT32)(DivU64x32 (
+                                      Delay,
+                                      IP6_TIMER_INTERVAL_IN_MS
+                                      ));
   DelayNode->Interface   = Interface;
   DelayNode->AddressInfo = AddressInfo;
   DelayNode->DadCallback = DadCallback;
@@ -225,7 +240,8 @@ Ip6CreateInterface (
   InitializeListHead (&Interface->ArpQues);
   InitializeListHead (&Interface->SentFrames);
 
-  Interface->DupAddrDetect = IpSb->Ip6ConfigInstance.DadXmits.DupAddrDetectTransmits;
+  Interface->DupAddrDetect =
+    IpSb->Ip6ConfigInstance.DadXmits.DupAddrDetectTransmits;
   InitializeListHead (&Interface->DupAddrDetectList);
 
   InitializeListHead (&Interface->DelayJoinList);
@@ -318,18 +334,32 @@ Ip6CleanInterface (
   ASSERT (IsListEmpty (&Interface->SentFrames));
 
   while (!IsListEmpty (&Interface->DupAddrDetectList)) {
-    Duplicate = NET_LIST_HEAD (&Interface->DupAddrDetectList, IP6_DAD_ENTRY, Link);
+    Duplicate = NET_LIST_HEAD (
+                  &Interface->DupAddrDetectList,
+                  IP6_DAD_ENTRY,
+                  Link
+                  );
     NetListRemoveHead (&Interface->DupAddrDetectList);
     FreePool (Duplicate);
   }
 
   while (!IsListEmpty (&Interface->DelayJoinList)) {
-    Delay = NET_LIST_HEAD (&Interface->DelayJoinList, IP6_DELAY_JOIN_LIST, Link);
+    Delay = NET_LIST_HEAD (
+              &Interface->DelayJoinList,
+              IP6_DELAY_JOIN_LIST,
+              Link
+              );
     NetListRemoveHead (&Interface->DelayJoinList);
     FreePool (Delay);
   }
 
-  Ip6RemoveAddr (Interface->Service, &Interface->AddressList, &Interface->AddressCount, NULL, 0);
+  Ip6RemoveAddr (
+    Interface->Service,
+    &Interface->AddressList,
+    &Interface->AddressCount,
+    NULL,
+    0
+    );
 
   RemoveEntryList (&Interface->Link);
   FreePool (Interface);
@@ -364,7 +394,10 @@ Ip6CreateLinkTxToken (
   EFI_STATUS                            Status;
   UINT32                                Count;
 
-  Token = AllocatePool (sizeof (IP6_LINK_TX_TOKEN) + (Packet->BlockOpNum - 1) * sizeof (EFI_MANAGED_NETWORK_FRAGMENT_DATA));
+  Token = AllocatePool (
+            sizeof (IP6_LINK_TX_TOKEN) + (Packet->BlockOpNum - 1) *
+            sizeof (EFI_MANAGED_NETWORK_FRAGMENT_DATA)
+            );
 
   if (Token == NULL) {
     return NULL;
@@ -378,7 +411,10 @@ Ip6CreateLinkTxToken (
   Token->Packet     = Packet;
   Token->Context    = Context;
   ZeroMem (&Token->DstMac, sizeof (EFI_MAC_ADDRESS));
-  IP6_COPY_LINK_ADDRESS (&Token->SrcMac, &Interface->Service->SnpMode.CurrentAddress);
+  IP6_COPY_LINK_ADDRESS (
+    &Token->SrcMac,
+    &Interface->Service->SnpMode.CurrentAddress
+    );
 
   MnpToken         = &(Token->MnpToken);
   MnpToken->Status = EFI_NOT_READY;
@@ -501,7 +537,14 @@ Ip6OnFrameReceivedDpc (
   Netfrag.Len  = MnpRxData->DataLength;
   Netfrag.Bulk = MnpRxData->PacketData;
 
-  Packet = NetbufFromExt (&Netfrag, 1, IP6_MAX_HEADLEN, 0, Ip6RecycleFrame, Token->MnpToken.Packet.RxData);
+  Packet = NetbufFromExt (
+             &Netfrag,
+             1,
+             IP6_MAX_HEADLEN,
+             0,
+             Ip6RecycleFrame,
+             Token->MnpToken.Packet.RxData
+             );
 
   if (Packet == NULL) {
     gBS->SignalEvent (MnpRxData->RecycleEvent);
@@ -669,7 +712,13 @@ Ip6SendFrame (
     ASSERT (Interface->Configured);
   }
 
-  Token = Ip6CreateLinkTxToken (Interface, IpInstance, Packet, CallBack, Context);
+  Token = Ip6CreateLinkTxToken (
+            Interface,
+            IpInstance,
+            Packet,
+            CallBack,
+            Context
+            );
 
   if (Token == NULL) {
     return EFI_OUT_OF_RESOURCES;
@@ -687,7 +736,11 @@ Ip6SendFrame (
   //
   // If send to itself, directly send out
   //
-  if (EFI_IP6_EQUAL (&Packet->Ip.Ip6->DestinationAddress, &Packet->Ip.Ip6->SourceAddress)) {
+  if (EFI_IP6_EQUAL (
+        &Packet->Ip.Ip6->DestinationAddress,
+        &Packet->Ip.Ip6->SourceAddress
+        ))
+  {
     IP6_COPY_LINK_ADDRESS (&Token->DstMac, &IpSb->SnpMode.CurrentAddress);
     goto SendNow;
   }

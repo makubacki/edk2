@@ -47,7 +47,12 @@ IScsiDhcpExtractRootPath (
   //
   IScsiRootPathIdLen = (UINT8)AsciiStrLen (ISCSI_ROOT_PATH_ID);
 
-  if ((Length <= IScsiRootPathIdLen) || (CompareMem (RootPath, ISCSI_ROOT_PATH_ID, IScsiRootPathIdLen) != 0)) {
+  if ((Length <= IScsiRootPathIdLen) || (CompareMem (
+                                           RootPath,
+                                           ISCSI_ROOT_PATH_ID,
+                                           IScsiRootPathIdLen
+                                           ) != 0))
+  {
     return EFI_NOT_FOUND;
   }
 
@@ -72,12 +77,16 @@ IScsiDhcpExtractRootPath (
   //
   // Extract the fields in the Root Path option string.
   //
-  for (FieldIndex = RP_FIELD_IDX_SERVERNAME; (FieldIndex < RP_FIELD_IDX_MAX) && (Index < Length); FieldIndex++) {
+  for (FieldIndex = RP_FIELD_IDX_SERVERNAME; (FieldIndex < RP_FIELD_IDX_MAX) &&
+       (Index < Length); FieldIndex++)
+  {
     if (TmpStr[Index] != ISCSI_ROOT_PATH_FIELD_DELIMITER) {
       Fields[FieldIndex].Str = &TmpStr[Index];
     }
 
-    while ((TmpStr[Index] != ISCSI_ROOT_PATH_FIELD_DELIMITER) && (Index < Length)) {
+    while ((TmpStr[Index] != ISCSI_ROOT_PATH_FIELD_DELIMITER) && (Index <
+                                                                  Length))
+    {
       Index++;
     }
 
@@ -314,14 +323,31 @@ IScsiParseDhcpAck (
 
   NvData = &ConfigData->SessionConfigData;
 
-  CopyMem (&NvData->LocalIp, &Dhcp4ModeData.ClientAddress, sizeof (EFI_IPv4_ADDRESS));
-  CopyMem (&NvData->SubnetMask, &Dhcp4ModeData.SubnetMask, sizeof (EFI_IPv4_ADDRESS));
-  CopyMem (&NvData->Gateway, &Dhcp4ModeData.RouterAddress, sizeof (EFI_IPv4_ADDRESS));
+  CopyMem (
+    &NvData->LocalIp,
+    &Dhcp4ModeData.ClientAddress,
+    sizeof (EFI_IPv4_ADDRESS)
+    );
+  CopyMem (
+    &NvData->SubnetMask,
+    &Dhcp4ModeData.SubnetMask,
+    sizeof (EFI_IPv4_ADDRESS)
+    );
+  CopyMem (
+    &NvData->Gateway,
+    &Dhcp4ModeData.RouterAddress,
+    sizeof (EFI_IPv4_ADDRESS)
+    );
 
   OptionCount = 0;
   OptionList  = NULL;
 
-  Status = Dhcp4->Parse (Dhcp4, Dhcp4ModeData.ReplyPacket, &OptionCount, OptionList);
+  Status = Dhcp4->Parse (
+                    Dhcp4,
+                    Dhcp4ModeData.ReplyPacket,
+                    &OptionCount,
+                    OptionList
+                    );
   if (Status != EFI_BUFFER_TOO_SMALL) {
     return EFI_DEVICE_ERROR;
   }
@@ -331,7 +357,12 @@ IScsiParseDhcpAck (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Status = Dhcp4->Parse (Dhcp4, Dhcp4ModeData.ReplyPacket, &OptionCount, OptionList);
+  Status = Dhcp4->Parse (
+                    Dhcp4,
+                    Dhcp4ModeData.ReplyPacket,
+                    &OptionCount,
+                    OptionList
+                    );
   if (EFI_ERROR (Status)) {
     FreePool (OptionList);
     return EFI_DEVICE_ERROR;
@@ -342,7 +373,9 @@ IScsiParseDhcpAck (
     // Get DNS server addresses and DHCP server address from this offer.
     //
     if (OptionList[Index]->OpCode == DHCP4_TAG_DNS_SERVER) {
-      if (((OptionList[Index]->Length & 0x3) != 0) || (OptionList[Index]->Length == 0)) {
+      if (((OptionList[Index]->Length & 0x3) != 0) ||
+          (OptionList[Index]->Length == 0))
+      {
         Status = EFI_INVALID_PARAMETER;
         break;
       }
@@ -350,13 +383,21 @@ IScsiParseDhcpAck (
       //
       // Primary DNS server address.
       //
-      CopyMem (&ConfigData->PrimaryDns, &OptionList[Index]->Data[0], sizeof (EFI_IPv4_ADDRESS));
+      CopyMem (
+        &ConfigData->PrimaryDns,
+        &OptionList[Index]->Data[0],
+        sizeof (EFI_IPv4_ADDRESS)
+        );
 
       if (OptionList[Index]->Length > 4) {
         //
         // Secondary DNS server address.
         //
-        CopyMem (&ConfigData->SecondaryDns, &OptionList[Index]->Data[4], sizeof (EFI_IPv4_ADDRESS));
+        CopyMem (
+          &ConfigData->SecondaryDns,
+          &OptionList[Index]->Data[4],
+          sizeof (EFI_IPv4_ADDRESS)
+          );
       }
     } else if (OptionList[Index]->OpCode == DHCP4_TAG_SERVER_ID) {
       if (OptionList[Index]->Length != 4) {
@@ -364,7 +405,11 @@ IScsiParseDhcpAck (
         break;
       }
 
-      CopyMem (&ConfigData->DhcpServer, &OptionList[Index]->Data[0], sizeof (EFI_IPv4_ADDRESS));
+      CopyMem (
+        &ConfigData->DhcpServer,
+        &OptionList[Index]->Data[0],
+        sizeof (EFI_IPv4_ADDRESS)
+        );
     }
   }
 
@@ -456,7 +501,11 @@ IScsiDoDhcp (
   // Check media status before doing DHCP.
   //
   MediaStatus = EFI_SUCCESS;
-  NetLibDetectMediaWaitTimeout (Controller, ISCSI_CHECK_MEDIA_GET_DHCP_WAITING_TIME, &MediaStatus);
+  NetLibDetectMediaWaitTimeout (
+    Controller,
+    ISCSI_CHECK_MEDIA_GET_DHCP_WAITING_TIME,
+    &MediaStatus
+    );
   if (MediaStatus != EFI_SUCCESS) {
     AsciiPrint ("\n  Error: Could not detect network connection.\n");
     return EFI_NO_MEDIA;
@@ -469,7 +518,11 @@ IScsiDoDhcp (
   // will not be in the right state for the iSCSI to start a new round D.O.R.A.
   // So, we need to switch its policy to static.
   //
-  Status = gBS->HandleProtocol (Controller, &gEfiIp4Config2ProtocolGuid, (VOID **)&Ip4Config2);
+  Status = gBS->HandleProtocol (
+                  Controller,
+                  &gEfiIp4Config2ProtocolGuid,
+                  (VOID **)&Ip4Config2
+                  );
   if (!EFI_ERROR (Status)) {
     Status = IScsiSetIp4Policy (Ip4Config2);
     if (EFI_ERROR (Status)) {

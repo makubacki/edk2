@@ -17,7 +17,8 @@ extern EFI_GUID  mEfiWifiMgrPrivateGuid;
 GLOBAL_REMOVE_IF_UNREFERENCED
 EFI_COMPONENT_NAME_PROTOCOL  gWifiMgrDxeComponentName = {
   (EFI_COMPONENT_NAME_GET_DRIVER_NAME)WifiMgrDxeComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME_GET_CONTROLLER_NAME)WifiMgrDxeComponentNameGetControllerName,
+  (EFI_COMPONENT_NAME_GET_CONTROLLER_NAME)
+  WifiMgrDxeComponentNameGetControllerName,
   "eng"
 };
 

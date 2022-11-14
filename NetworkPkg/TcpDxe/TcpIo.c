@@ -33,7 +33,12 @@ TcpRxCallback (
   )
 {
   if (EFI_SUCCESS == Status) {
-    TcpInput (Pkt, &NetSession->Source, &NetSession->Dest, NetSession->IpVersion);
+    TcpInput (
+      Pkt,
+      &NetSession->Source,
+      &NetSession->Dest,
+      NetSession->IpVersion
+      );
   } else {
     TcpIcmpInput (
       Pkt,
@@ -117,8 +122,15 @@ TcpSendIpPacket (
     Override.Ip4OverrideData.TimeToLive    = 255;
     Override.Ip4OverrideData.DoNotFragment = FALSE;
     Override.Ip4OverrideData.Protocol      = EFI_IP_PROTO_TCP;
-    ZeroMem (&Override.Ip4OverrideData.GatewayAddress, sizeof (EFI_IPv4_ADDRESS));
-    CopyMem (&Override.Ip4OverrideData.SourceAddress, Src, sizeof (EFI_IPv4_ADDRESS));
+    ZeroMem (
+      &Override.Ip4OverrideData.GatewayAddress,
+      sizeof (EFI_IPv4_ADDRESS)
+      );
+    CopyMem (
+      &Override.Ip4OverrideData.SourceAddress,
+      Src,
+      sizeof (EFI_IPv4_ADDRESS)
+      );
   } else {
     Override.Ip6OverrideData.Protocol  = EFI_IP_PROTO_TCP;
     Override.Ip6OverrideData.HopLimit  = 255;

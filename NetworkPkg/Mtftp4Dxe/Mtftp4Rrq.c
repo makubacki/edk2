@@ -167,7 +167,12 @@ Mtftp4RrqSaveBlock (
   // to accept transfers of unlimited size. So BlockCounter is memorised as
   // continuous block counter.
   //
-  Status = Mtftp4RemoveBlockNum (&Instance->Blocks, Block, Completed, &BlockCounter);
+  Status = Mtftp4RemoveBlockNum (
+             &Instance->Blocks,
+             Block,
+             Completed,
+             &BlockCounter
+             );
 
   if (Status == EFI_NOT_FOUND) {
     return EFI_SUCCESS;
@@ -311,7 +316,9 @@ Mtftp4RrqHandleData (
       BlockNum = (UINT16)(Expected - 1);
     }
 
-    if ((Instance->WindowSize == (Instance->TotalBlock - Instance->AckedBlock)) || (Expected < 0)) {
+    if ((Instance->WindowSize == (Instance->TotalBlock -
+                                  Instance->AckedBlock)) || (Expected < 0))
+    {
       Status = Mtftp4RrqSendAck (Instance, BlockNum);
     }
   }
@@ -354,9 +361,13 @@ Mtftp4RrqOackValid (
   // Server can only specify a smaller block size and window size to be used and
   // return the timeout matches that requested.
   //
-  if ((((Reply->Exist & MTFTP4_BLKSIZE_EXIST) != 0) && (Reply->BlkSize > Request->BlkSize)) ||
-      (((Reply->Exist & MTFTP4_WINDOWSIZE_EXIST) != 0) && (Reply->WindowSize > Request->WindowSize)) ||
-      (((Reply->Exist & MTFTP4_TIMEOUT_EXIST) != 0) && (Reply->Timeout != Request->Timeout))
+  if (  (((Reply->Exist & MTFTP4_BLKSIZE_EXIST) != 0) && (Reply->BlkSize >
+                                                        Request->BlkSize)) ||
+      (((Reply->Exist & MTFTP4_WINDOWSIZE_EXIST) != 0) && (Reply->WindowSize >
+                                                           Request->WindowSize))
+     ||
+      (((Reply->Exist & MTFTP4_TIMEOUT_EXIST) != 0) && (Reply->Timeout !=
+                                                        Request->Timeout))
       )
   {
     return FALSE;
@@ -426,7 +437,10 @@ Mtftp4RrqConfigMcastPort (
   Ip = HTONL (Instance->ServerIp);
   IP4_COPY_ADDRESS (&UdpConfig.RemoteAddress, &Ip);
 
-  Status = McastIo->Protocol.Udp4->Configure (McastIo->Protocol.Udp4, &UdpConfig);
+  Status = McastIo->Protocol.Udp4->Configure (
+                                     McastIo->Protocol.Udp4,
+                                     &UdpConfig
+                                     );
 
   if (EFI_ERROR (Status)) {
     return Status;
@@ -583,7 +597,12 @@ Mtftp4RrqHandleOack (
         return EFI_DEVICE_ERROR;
       }
 
-      Status = UdpIoRecvDatagram (Instance->McastUdpPort, Mtftp4RrqInput, Instance, 0);
+      Status = UdpIoRecvDatagram (
+                 Instance->McastUdpPort,
+                 Mtftp4RrqInput,
+                 Instance,
+                 0
+                 );
 
       if (EFI_ERROR (Status)) {
         Mtftp4SendError (
@@ -723,7 +742,8 @@ Mtftp4RrqInput (
   // if CheckPacket returns an EFI_ERROR code.
   //
   if ((Instance->Token->CheckPacket != NULL) &&
-      ((Opcode == EFI_MTFTP4_OPCODE_OACK) || (Opcode == EFI_MTFTP4_OPCODE_ERROR)))
+      ((Opcode == EFI_MTFTP4_OPCODE_OACK) || (Opcode ==
+                                              EFI_MTFTP4_OPCODE_ERROR)))
   {
     Status = Instance->Token->CheckPacket (
                                 &Instance->Mtftp4,
@@ -757,7 +777,13 @@ Mtftp4RrqInput (
         goto ON_EXIT;
       }
 
-      Status = Mtftp4RrqHandleData (Instance, Packet, Len, Multicast, &Completed);
+      Status = Mtftp4RrqHandleData (
+                 Instance,
+                 Packet,
+                 Len,
+                 Multicast,
+                 &Completed
+                 );
       break;
 
     case EFI_MTFTP4_OPCODE_OACK:
@@ -765,7 +791,13 @@ Mtftp4RrqInput (
         goto ON_EXIT;
       }
 
-      Status = Mtftp4RrqHandleOack (Instance, Packet, Len, Multicast, &Completed);
+      Status = Mtftp4RrqHandleOack (
+                 Instance,
+                 Packet,
+                 Len,
+                 Multicast,
+                 &Completed
+                 );
       break;
 
     case EFI_MTFTP4_OPCODE_ERROR:
@@ -792,9 +824,19 @@ ON_EXIT:
 
   if (!EFI_ERROR (Status) && !Completed) {
     if (Multicast) {
-      Status = UdpIoRecvDatagram (Instance->McastUdpPort, Mtftp4RrqInput, Instance, 0);
+      Status = UdpIoRecvDatagram (
+                 Instance->McastUdpPort,
+                 Mtftp4RrqInput,
+                 Instance,
+                 0
+                 );
     } else {
-      Status = UdpIoRecvDatagram (Instance->UnicastPort, Mtftp4RrqInput, Instance, 0);
+      Status = UdpIoRecvDatagram (
+                 Instance->UnicastPort,
+                 Mtftp4RrqInput,
+                 Instance,
+                 0
+                 );
     }
   }
 

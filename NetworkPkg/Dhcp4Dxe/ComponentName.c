@@ -139,7 +139,8 @@ DhcpComponentNameGetControllerName (
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gDhcp4ComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gDhcp4ComponentName =
+{
   DhcpComponentNameGetDriverName,
   DhcpComponentNameGetControllerName,
   "eng"
@@ -148,13 +149,15 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gDhcp4ComponentName =
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gDhcp4ComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gDhcp4ComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)DhcpComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)DhcpComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mDhcpDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mDhcpDriverNameTable[] =
+{
   {
     "eng;en",
     L"DHCP Protocol Driver"
@@ -165,7 +168,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mDhcpDriverNameTable[] =
   }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  *gDhcpControllerNameTable = NULL;
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  *
+  gDhcpControllerNameTable = NULL;
 
 CHAR16  *mDhcp4ControllerName[] = {
   L"DHCPv4 (State=0, Stopped)",

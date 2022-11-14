@@ -206,11 +206,13 @@ HttpBootStart (
   ZeroMem (Private->OfferBuffer, sizeof (Private->OfferBuffer));
   if (!Private->UsingIpv6) {
     for (Index = 0; Index < HTTP_BOOT_OFFER_MAX_NUM; Index++) {
-      Private->OfferBuffer[Index].Dhcp4.Packet.Offer.Size = HTTP_CACHED_DHCP4_PACKET_MAX_SIZE;
+      Private->OfferBuffer[Index].Dhcp4.Packet.Offer.Size =
+        HTTP_CACHED_DHCP4_PACKET_MAX_SIZE;
     }
   } else {
     for (Index = 0; Index < HTTP_BOOT_OFFER_MAX_NUM; Index++) {
-      Private->OfferBuffer[Index].Dhcp6.Packet.Offer.Size = HTTP_CACHED_DHCP6_PACKET_MAX_SIZE;
+      Private->OfferBuffer[Index].Dhcp6.Packet.Offer.Size =
+        HTTP_CACHED_DHCP6_PACKET_MAX_SIZE;
     }
   }
 
@@ -330,7 +332,9 @@ HttpBootLoadFile (
     //
     Status = HttpBootDiscoverBootInfo (Private);
     if (EFI_ERROR (Status)) {
-      AsciiPrint ("\n  Error: Could not retrieve NBP file size from HTTP server.\n");
+      AsciiPrint (
+        "\n  Error: Could not retrieve NBP file size from HTTP server.\n"
+        );
       goto ON_EXIT;
     }
   }
@@ -384,7 +388,9 @@ HttpBootLoadFile (
                  &Private->ImageType
                  );
       if (EFI_ERROR (Status) && (Status != EFI_BUFFER_TOO_SMALL)) {
-        AsciiPrint ("\n  Error: Could not retrieve NBP file size from HTTP server.\n");
+        AsciiPrint (
+          "\n  Error: Could not retrieve NBP file size from HTTP server.\n"
+          );
         goto ON_EXIT;
       }
     }
@@ -413,9 +419,13 @@ ON_EXIT:
 
   if (EFI_ERROR (Status)) {
     if (Status == EFI_ACCESS_DENIED) {
-      AsciiPrint ("\n  Error: Could not establish connection with HTTP server.\n");
+      AsciiPrint (
+        "\n  Error: Could not establish connection with HTTP server.\n"
+        );
     } else if ((Status == EFI_BUFFER_TOO_SMALL) && (Buffer != NULL)) {
-      AsciiPrint ("\n  Error: Buffer size is smaller than the requested file.\n");
+      AsciiPrint (
+        "\n  Error: Buffer size is smaller than the requested file.\n"
+        );
     } else if (Status == EFI_OUT_OF_RESOURCES) {
       AsciiPrint ("\n  Error: Could not allocate I/O buffers.\n");
     } else if (Status == EFI_DEVICE_ERROR) {
@@ -598,7 +608,11 @@ HttpBootDxeLoadFile (
   // Check media status before HTTP boot start
   //
   MediaStatus = EFI_SUCCESS;
-  NetLibDetectMediaWaitTimeout (Private->Controller, HTTP_BOOT_CHECK_MEDIA_WAITING_TIME, &MediaStatus);
+  NetLibDetectMediaWaitTimeout (
+    Private->Controller,
+    HTTP_BOOT_CHECK_MEDIA_WAITING_TIME,
+    &MediaStatus
+    );
   if (MediaStatus != EFI_SUCCESS) {
     AsciiPrint ("\n  Error: Could not detect network connection.\n");
     return EFI_NO_MEDIA;
@@ -626,7 +640,11 @@ HttpBootDxeLoadFile (
   ImageType = ImageTypeMax;
   Status    = HttpBootLoadFile (Private, BufferSize, Buffer, &ImageType);
   if (EFI_ERROR (Status)) {
-    if ((Status == EFI_BUFFER_TOO_SMALL) && ((ImageType == ImageTypeVirtualCd) || (ImageType == ImageTypeVirtualDisk))) {
+    if ((Status == EFI_BUFFER_TOO_SMALL) && ((ImageType ==
+                                              ImageTypeVirtualCd) ||
+                                             (ImageType ==
+                                              ImageTypeVirtualDisk)))
+    {
       Status = EFI_WARN_FILE_SYSTEM;
     } else if (Status != EFI_BUFFER_TOO_SMALL) {
       HttpBootStop (Private);
@@ -638,7 +656,9 @@ HttpBootDxeLoadFile (
   //
   // Register the RAM Disk to the system if needed.
   //
-  if ((ImageType == ImageTypeVirtualCd) || (ImageType == ImageTypeVirtualDisk)) {
+  if ((ImageType == ImageTypeVirtualCd) || (ImageType ==
+                                            ImageTypeVirtualDisk))
+  {
     Status = HttpBootRegisterRamDisk (Private, *BufferSize, Buffer, ImageType);
     if (!EFI_ERROR (Status)) {
       Status = EFI_WARN_FILE_SYSTEM;
@@ -723,7 +743,10 @@ HttpBootCallback (
         HttpMessage = (EFI_HTTP_MESSAGE *)Data;
 
         if (HttpMessage->Data.Response != NULL) {
-          if (HttpBootIsHttpRedirectStatusCode (HttpMessage->Data.Response->StatusCode)) {
+          if (HttpBootIsHttpRedirectStatusCode (
+                HttpMessage->Data.Response->StatusCode
+                ))
+          {
             //
             // Server indicates the resource has been redirected to a different URL
             // according to the section 6.4 of RFC7231 and the RFC 7538.
@@ -735,7 +758,10 @@ HttpBootCallback (
                            HTTP_HEADER_LOCATION
                            );
             if (HttpHeader != NULL) {
-              Print (L"\n  HTTP ERROR: Resource Redirected.\n  New Location: %a\n", HttpHeader->FieldValue);
+              Print (
+                L"\n  HTTP ERROR: Resource Redirected.\n  New Location: %a\n",
+                HttpHeader->FieldValue
+                );
             }
 
             break;
@@ -748,7 +774,9 @@ HttpBootCallback (
                        HTTP_HEADER_CONTENT_LENGTH
                        );
         if (HttpHeader != NULL) {
-          Private->FileSize     = AsciiStrDecimalToUintn (HttpHeader->FieldValue);
+          Private->FileSize = AsciiStrDecimalToUintn (
+                                HttpHeader->FieldValue
+                                );
           Private->ReceivedSize = 0;
           Private->Percentage   = 0;
         }
@@ -767,7 +795,14 @@ HttpBootCallback (
           }
 
           Private->ReceivedSize += DataLength;
-          Percentage             = (UINT32)DivU64x64Remainder (MultU64x32 (Private->ReceivedSize, 100), Private->FileSize, NULL);
+          Percentage             = (UINT32)DivU64x64Remainder (
+                                             MultU64x32 (
+                                               Private->ReceivedSize,
+                                               100
+                                               ),
+                                             Private->FileSize,
+                                             NULL
+                                             );
           if (Private->Percentage != Percentage) {
             Private->Percentage = Percentage;
             Print (L"\r  Downloading...%d%%", Percentage);

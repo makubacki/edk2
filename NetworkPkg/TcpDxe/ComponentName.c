@@ -147,13 +147,15 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gTcpComponentName = {
 ///
 /// EFI Component Name 2 Protocol
 ///
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gTcpComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gTcpComponentName2 =
+{
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)TcpComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)TcpComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mTcpDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mTcpDriverNameTable[] =
+{
   {
     "eng;en",
     L"TCP Network Service Driver"
@@ -164,7 +166,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mTcpDriverNameTable[] = 
   }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  *gTcpControllerNameTable = NULL;
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  *gTcpControllerNameTable
+  = NULL;
 
 /**
   Retrieves a Unicode string that is the user-readable name of the driver.

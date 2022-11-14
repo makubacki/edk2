@@ -192,7 +192,11 @@ Ip6SendMldReport (
   //
   // Fill in MLD message - Report
   //
-  MldHead = (IP6_MLD_HEAD *)NetbufAllocSpace (Packet, sizeof (IP6_MLD_HEAD), FALSE);
+  MldHead = (IP6_MLD_HEAD *)NetbufAllocSpace (
+                              Packet,
+                              sizeof (IP6_MLD_HEAD),
+                              FALSE
+                              );
   ASSERT (MldHead != NULL);
   ZeroMem (MldHead, sizeof (IP6_MLD_HEAD));
   MldHead->Head.Type = ICMP_V6_LISTENER_REPORT;
@@ -207,12 +211,25 @@ Ip6SendMldReport (
                      sizeof (IP6_MLD_HEAD)
                      );
 
-  MldHead->Head.Checksum = (UINT16) ~NetAddChecksum (HeadChecksum, PseudoChecksum);
+  MldHead->Head.Checksum = (UINT16) ~NetAddChecksum (
+                     HeadChecksum,
+                     PseudoChecksum
+                     );
 
   //
   // Transmit the packet
   //
-  return Ip6Output (IpSb, Interface, NULL, Packet, &Head, NULL, 0, Ip6SysPacketSent, NULL);
+  return Ip6Output (
+           IpSb,
+           Interface,
+           NULL,
+           Packet,
+           &Head,
+           NULL,
+           0,
+           Ip6SysPacketSent,
+           NULL
+           );
 }
 
 /**
@@ -296,7 +313,11 @@ Ip6SendMldDone (
   //
   // Fill in MLD message - Done
   //
-  MldHead = (IP6_MLD_HEAD *)NetbufAllocSpace (Packet, sizeof (IP6_MLD_HEAD), FALSE);
+  MldHead = (IP6_MLD_HEAD *)NetbufAllocSpace (
+                              Packet,
+                              sizeof (IP6_MLD_HEAD),
+                              FALSE
+                              );
   ASSERT (MldHead != NULL);
   ZeroMem (MldHead, sizeof (IP6_MLD_HEAD));
   MldHead->Head.Type = ICMP_V6_LISTENER_DONE;
@@ -311,12 +332,25 @@ Ip6SendMldDone (
                      sizeof (IP6_MLD_HEAD)
                      );
 
-  MldHead->Head.Checksum = (UINT16) ~NetAddChecksum (HeadChecksum, PseudoChecksum);
+  MldHead->Head.Checksum = (UINT16) ~NetAddChecksum (
+                     HeadChecksum,
+                     PseudoChecksum
+                     );
 
   //
   // Transmit the packet
   //
-  return Ip6Output (IpSb, NULL, NULL, Packet, &Head, NULL, 0, Ip6SysPacketSent, NULL);
+  return Ip6Output (
+           IpSb,
+           NULL,
+           NULL,
+           Packet,
+           &Head,
+           NULL,
+           0,
+           Ip6SysPacketSent,
+           NULL
+           );
 }
 
 /**
@@ -457,7 +491,11 @@ Ip6RemoveGroup (
   }
 
   while (Index < Count - 1) {
-    IP6_COPY_ADDRESS (IpInstance->GroupList + Index, IpInstance->GroupList + Index + 1);
+    IP6_COPY_ADDRESS (
+      IpInstance->GroupList + Index,
+      IpInstance->GroupList +
+      Index + 1
+      );
     Index++;
   }
 
@@ -715,7 +753,9 @@ Ip6UpdateDelayTimer (
   // is less than the remaining value of the running timer.
   //
   if ((Group->DelayTimer == 0) || (Delay < Group->DelayTimer)) {
-    Group->DelayTimer = Delay / 4294967295UL * NET_RANDOM (NetRandomInitSeed ());
+    Group->DelayTimer = Delay / 4294967295UL * NET_RANDOM (
+                                                 NetRandomInitSeed ()
+                                                 );
   }
 
   return EFI_SUCCESS;
@@ -752,7 +792,9 @@ Ip6ProcessMldQuery (
   //
   // Check the validity of the packet, generic query or specific query
   //
-  if (!NetIp6IsUnspecifiedAddr (&Head->SourceAddress) && !NetIp6IsLinkLocalAddr (&Head->SourceAddress)) {
+  if (!NetIp6IsUnspecifiedAddr (&Head->SourceAddress) &&
+      !NetIp6IsLinkLocalAddr (&Head->SourceAddress))
+  {
     goto Exit;
   }
 
@@ -798,7 +840,12 @@ Ip6ProcessMldQuery (
   //
   NET_LIST_FOR_EACH (Entry, &IpSb->MldCtrl.Groups) {
     Group  = NET_LIST_USER_STRUCT (Entry, IP6_MLD_GROUP, Link);
-    Status = Ip6UpdateDelayTimer (IpSb, MldPacket.MaxRespDelay, &Group->Address, Group);
+    Status = Ip6UpdateDelayTimer (
+               IpSb,
+               MldPacket.MaxRespDelay,
+               &Group->Address,
+               Group
+               );
     if (EFI_ERROR (Status)) {
       goto Exit;
     }
@@ -839,7 +886,9 @@ Ip6ProcessMldReport (
   //
   // Validate the incoming message, if invalid, drop it.
   //
-  if (!NetIp6IsUnspecifiedAddr (&Head->SourceAddress) && !NetIp6IsLinkLocalAddr (&Head->SourceAddress)) {
+  if (!NetIp6IsUnspecifiedAddr (&Head->SourceAddress) &&
+      !NetIp6IsLinkLocalAddr (&Head->SourceAddress))
+  {
     goto Exit;
   }
 

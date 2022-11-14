@@ -184,7 +184,9 @@ SnpUndi32Statistics (
   Stp  = (UINT64 *)StatisticsTable;
   Size = 0;
 
-  for (Index = 0, Mask = 1; Index < 64; Index++, Mask = LShiftU64 (Mask, 1), Stp++) {
+  for (Index = 0, Mask = 1; Index < 64; Index++, Mask = LShiftU64 (Mask, 1),
+       Stp++)
+  {
     //
     // There must be room for a full UINT64.  Partial
     // numbers will not be stored.

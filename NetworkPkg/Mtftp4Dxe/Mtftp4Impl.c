@@ -147,7 +147,11 @@ Mtftp4GetInfoCheckPacket (
   // Allocate buffer then copy the packet over. Use gBS->AllocatePool
   // in case AllocatePool will implements something tricky.
   //
-  Status = gBS->AllocatePool (EfiBootServicesData, PacketLen, (VOID **)State->Packet);
+  Status = gBS->AllocatePool (
+                  EfiBootServicesData,
+                  PacketLen,
+                  (VOID **)State->Packet
+                  );
 
   if (EFI_ERROR (Status)) {
     State->Status = EFI_OUT_OF_RESOURCES;
@@ -202,7 +206,9 @@ Mtftp4OverrideValid (
     Netmask = NTOHL (Netmask);
     Ip      = NTOHL (Ip);
 
-    if (((Netmask != 0) && !NetIp4IsUnicast (Gateway, Netmask)) || !IP4_NET_EQUAL (Gateway, Ip, Netmask)) {
+    if (((Netmask != 0) && !NetIp4IsUnicast (Gateway, Netmask)) ||
+        !IP4_NET_EQUAL (Gateway, Ip, Netmask))
+    {
       return FALSE;
     }
   }
@@ -308,11 +314,20 @@ Mtftp4ConfigUnicastPort (
 
   Status = UdpIo->Protocol.Udp4->Configure (UdpIo->Protocol.Udp4, &UdpConfig);
 
-  if ((Status == EFI_NO_MAPPING) && Mtftp4GetMapping (Instance, UdpIo, &UdpConfig)) {
+  if ((Status == EFI_NO_MAPPING) && Mtftp4GetMapping (
+                                      Instance,
+                                      UdpIo,
+                                      &UdpConfig
+                                      ))
+  {
     return EFI_SUCCESS;
   }
 
-  if (!Config->UseDefaultSetting && !EFI_IP4_EQUAL (&mZeroIp4Addr, &Config->GatewayIp)) {
+  if (!Config->UseDefaultSetting && !EFI_IP4_EQUAL (
+                                       &mZeroIp4Addr,
+                                       &Config->GatewayIp
+                                       ))
+  {
     //
     // The station IP address is manually configured and the Gateway IP is not 0.
     // Add the default route for this UDP instance.
@@ -372,7 +387,8 @@ Mtftp4Start (
   //
   // User must provide at least one method to collect the data for download.
   //
-  if (((Operation == EFI_MTFTP4_OPCODE_RRQ) || (Operation == EFI_MTFTP4_OPCODE_DIR)) &&
+  if (((Operation == EFI_MTFTP4_OPCODE_RRQ) || (Operation ==
+                                                EFI_MTFTP4_OPCODE_DIR)) &&
       ((Token->Buffer == NULL) && (Token->CheckPacket == NULL)))
   {
     return EFI_INVALID_PARAMETER;
@@ -402,7 +418,11 @@ Mtftp4Start (
     Status = EFI_ACCESS_DENIED;
   }
 
-  if ((Token->OverrideData != NULL) && !Mtftp4OverrideValid (Instance, Token->OverrideData)) {
+  if ((Token->OverrideData != NULL) && !Mtftp4OverrideValid (
+                                          Instance,
+                                          Token->OverrideData
+                                          ))
+  {
     Status = EFI_INVALID_PARAMETER;
   }
 
@@ -669,20 +689,24 @@ EfiMtftp4Configure (
     }
 
     if (!ConfigData->UseDefaultSetting &&
-        ((!IP4_IS_VALID_NETMASK (Netmask) || ((Netmask != 0) && !NetIp4IsUnicast (Ip, Netmask)))))
+        ((!IP4_IS_VALID_NETMASK (Netmask) || ((Netmask != 0) &&
+                                              !NetIp4IsUnicast (Ip, Netmask)))))
     {
       return EFI_INVALID_PARAMETER;
     }
 
     if ((Gateway != 0) &&
-        (((Netmask != 0xFFFFFFFF) && !IP4_NET_EQUAL (Gateway, Ip, Netmask)) || ((Netmask != 0) && !NetIp4IsUnicast (Gateway, Netmask))))
+        (((Netmask != 0xFFFFFFFF) && !IP4_NET_EQUAL (Gateway, Ip, Netmask)) ||
+         ((Netmask != 0) && !NetIp4IsUnicast (Gateway, Netmask))))
     {
       return EFI_INVALID_PARAMETER;
     }
 
     OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
 
-    if ((Instance->State == MTFTP4_STATE_CONFIGED) && (Instance->Operation != 0)) {
+    if ((Instance->State == MTFTP4_STATE_CONFIGED) && (Instance->Operation !=
+                                                       0))
+    {
       gBS->RestoreTPL (OldTpl);
       return EFI_ACCESS_DENIED;
     }

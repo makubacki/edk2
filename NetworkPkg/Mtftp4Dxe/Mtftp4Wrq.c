@@ -43,7 +43,11 @@ Mtftp4WrqSendBlock (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Packet = (EFI_MTFTP4_PACKET *)NetbufAllocSpace (UdpPacket, MTFTP4_DATA_HEAD_LEN, FALSE);
+  Packet = (EFI_MTFTP4_PACKET *)NetbufAllocSpace (
+                                  UdpPacket,
+                                  MTFTP4_DATA_HEAD_LEN,
+                                  FALSE
+                                  );
   ASSERT (Packet != NULL);
 
   Packet->Data.OpCode = HTONS (EFI_MTFTP4_OPCODE_DATA);
@@ -221,8 +225,10 @@ Mtftp4WrqOackValid (
   // Server can only specify a smaller block size to be used and
   // return the timeout matches that requested.
   //
-  if ((((Reply->Exist & MTFTP4_BLKSIZE_EXIST) != 0) && (Reply->BlkSize > Request->BlkSize)) ||
-      (((Reply->Exist & MTFTP4_TIMEOUT_EXIST) != 0) && (Reply->Timeout != Request->Timeout)))
+  if ((((Reply->Exist & MTFTP4_BLKSIZE_EXIST) != 0) && (Reply->BlkSize >
+                                                        Request->BlkSize)) ||
+      (((Reply->Exist & MTFTP4_TIMEOUT_EXIST) != 0) && (Reply->Timeout !=
+                                                        Request->Timeout)))
   {
     return FALSE;
   }
@@ -275,7 +281,11 @@ Mtftp4WrqHandleOack (
   ZeroMem (&Reply, sizeof (MTFTP4_OPTION));
   Status = Mtftp4ParseOptionOack (Packet, Len, Instance->Operation, &Reply);
 
-  if (EFI_ERROR (Status) || !Mtftp4WrqOackValid (&Reply, &Instance->RequestOption)) {
+  if (EFI_ERROR (Status) || !Mtftp4WrqOackValid (
+                               &Reply,
+                               &Instance->RequestOption
+                               ))
+  {
     //
     // Don't send a MTFTP error packet when out of resource, it can
     // only make it worse.
@@ -397,7 +407,8 @@ Mtftp4WrqInput (
   // if CheckPacket returns an EFI_ERROR code.
   //
   if ((Instance->Token->CheckPacket != NULL) &&
-      ((Opcode == EFI_MTFTP4_OPCODE_OACK) || (Opcode == EFI_MTFTP4_OPCODE_ERROR)))
+      ((Opcode == EFI_MTFTP4_OPCODE_OACK) || (Opcode ==
+                                              EFI_MTFTP4_OPCODE_ERROR)))
   {
     Status = Instance->Token->CheckPacket (
                                 &Instance->Mtftp4,
@@ -462,7 +473,12 @@ ON_EXIT:
   }
 
   if (!EFI_ERROR (Status) && !Completed) {
-    Status = UdpIoRecvDatagram (Instance->UnicastPort, Mtftp4WrqInput, Instance, 0);
+    Status = UdpIoRecvDatagram (
+               Instance->UnicastPort,
+               Mtftp4WrqInput,
+               Instance,
+               0
+               );
   }
 
   //

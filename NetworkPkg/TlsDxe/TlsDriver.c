@@ -65,7 +65,11 @@ TlsCreateInstance (
   TlsInstance->Service   = Service;
 
   CopyMem (&TlsInstance->Tls, &mTlsProtocol, sizeof (TlsInstance->Tls));
-  CopyMem (&TlsInstance->TlsConfig, &mTlsConfigurationProtocol, sizeof (TlsInstance->TlsConfig));
+  CopyMem (
+    &TlsInstance->TlsConfig,
+    &mTlsConfigurationProtocol,
+    sizeof (TlsInstance->TlsConfig)
+    );
 
   TlsInstance->TlsSessionState = EfiTlsSessionNotStarted;
 
@@ -128,7 +132,11 @@ TlsCreateService (
   // Initialize TLS Service Data
   //
   TlsService->Signature = TLS_SERVICE_SIGNATURE;
-  CopyMem (&TlsService->ServiceBinding, &mTlsServiceBinding, sizeof (TlsService->ServiceBinding));
+  CopyMem (
+    &TlsService->ServiceBinding,
+    &mTlsServiceBinding,
+    sizeof (TlsService->ServiceBinding)
+    );
   TlsService->TlsChildrenNum = 0;
   InitializeListHead (&TlsService->TlsChildrenList);
   TlsService->ImageHandle = Image;
@@ -260,7 +268,10 @@ TlsDriverEntryPoint (
   // Create a new SSL_CTX object as framework to establish TLS/SSL enabled
   // connections. TLS 1.0 is used as the default version.
   //
-  TlsService->TlsCtx = TlsCtxNew (TLS10_PROTOCOL_VERSION_MAJOR, TLS10_PROTOCOL_VERSION_MINOR);
+  TlsService->TlsCtx = TlsCtxNew (
+                         TLS10_PROTOCOL_VERSION_MAJOR,
+                         TLS10_PROTOCOL_VERSION_MINOR
+                         );
   if (TlsService->TlsCtx == NULL) {
     FreePool (TlsService);
     return EFI_ABORTED;

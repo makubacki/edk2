@@ -64,7 +64,8 @@ PxeBcMtftp6CheckPacket (
       (CHAR8 *)Packet->Error.ErrorMessage,
       PXE_MTFTP_ERROR_STRING_LENGTH - 1
       );
-    Private->Mode.TftpError.ErrorString[PXE_MTFTP_ERROR_STRING_LENGTH - 1] = '\0';
+    Private->Mode.TftpError.ErrorString[PXE_MTFTP_ERROR_STRING_LENGTH - 1] =
+      '\0';
   }
 
   if (Callback != NULL) {
@@ -153,17 +154,31 @@ PxeBcMtftp6GetFileSize (
   ReqOpt[0].ValueStr = OptBuf;
 
   if (BlockSize != NULL) {
-    ReqOpt[OptCnt].OptionStr = (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_BLKSIZE_INDEX];
-    ReqOpt[OptCnt].ValueStr  = (UINT8 *)(ReqOpt[OptCnt-1].ValueStr + AsciiStrLen ((CHAR8 *)ReqOpt[OptCnt-1].ValueStr) + 1);
-    OptBufSize              -= (AsciiStrLen ((CHAR8 *)ReqOpt[OptCnt-1].ValueStr) + 1);
+    ReqOpt[OptCnt].OptionStr =
+      (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_BLKSIZE_INDEX];
+    ReqOpt[OptCnt].ValueStr = (UINT8 *)(ReqOpt[OptCnt-1].ValueStr +
+                                        AsciiStrLen ((CHAR8 *)ReqOpt[OptCnt-
+                                                                     1].ValueStr)
+                                        + 1);
+    OptBufSize             -= (AsciiStrLen (
+                                 (CHAR8 *)ReqOpt[OptCnt-
+                                                 1].ValueStr
+                                 ) + 1);
     PxeBcUintnToAscDec (*BlockSize, ReqOpt[OptCnt].ValueStr, OptBufSize);
     OptCnt++;
   }
 
   if (WindowSize != NULL) {
-    ReqOpt[OptCnt].OptionStr = (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_WINDOWSIZE_INDEX];
-    ReqOpt[OptCnt].ValueStr  = (UINT8 *)(ReqOpt[OptCnt-1].ValueStr + AsciiStrLen ((CHAR8 *)ReqOpt[OptCnt-1].ValueStr) + 1);
-    OptBufSize              -= (AsciiStrLen ((CHAR8 *)ReqOpt[OptCnt-1].ValueStr) + 1);
+    ReqOpt[OptCnt].OptionStr =
+      (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_WINDOWSIZE_INDEX];
+    ReqOpt[OptCnt].ValueStr = (UINT8 *)(ReqOpt[OptCnt-1].ValueStr +
+                                        AsciiStrLen ((CHAR8 *)ReqOpt[OptCnt-
+                                                                     1].ValueStr)
+                                        + 1);
+    OptBufSize             -= (AsciiStrLen (
+                                 (CHAR8 *)ReqOpt[OptCnt-
+                                                 1].ValueStr
+                                 ) + 1);
     PxeBcUintnToAscDec (*WindowSize, ReqOpt[OptCnt].ValueStr, OptBufSize);
     OptCnt++;
   }
@@ -191,7 +206,8 @@ PxeBcMtftp6GetFileSize (
         (CHAR8 *)Packet->Error.ErrorMessage,
         PXE_MTFTP_ERROR_STRING_LENGTH - 1
         );
-      Private->Mode.TftpError.ErrorString[PXE_MTFTP_ERROR_STRING_LENGTH - 1] = '\0';
+      Private->Mode.TftpError.ErrorString[PXE_MTFTP_ERROR_STRING_LENGTH - 1] =
+        '\0';
     }
 
     goto ON_ERROR;
@@ -218,8 +234,11 @@ PxeBcMtftp6GetFileSize (
   Status = EFI_NOT_FOUND;
   while (OptCnt != 0) {
     if (AsciiStrnCmp ((CHAR8 *)Option[OptCnt - 1].OptionStr, "tsize", 5) == 0) {
-      *BufferSize = AsciiStrDecimalToUint64 ((CHAR8 *)(Option[OptCnt - 1].ValueStr));
-      Status      = EFI_SUCCESS;
+      *BufferSize = AsciiStrDecimalToUint64 (
+                      (CHAR8 *)(Option[OptCnt -
+                                       1].ValueStr)
+                      );
+      Status = EFI_SUCCESS;
     }
 
     OptCnt--;
@@ -285,16 +304,26 @@ PxeBcMtftp6ReadFile (
   }
 
   if (BlockSize != NULL) {
-    ReqOpt[OptCnt].OptionStr = (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_BLKSIZE_INDEX];
-    ReqOpt[OptCnt].ValueStr  = BlksizeBuf;
-    PxeBcUintnToAscDec (*BlockSize, ReqOpt[OptCnt].ValueStr, sizeof (BlksizeBuf));
+    ReqOpt[OptCnt].OptionStr =
+      (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_BLKSIZE_INDEX];
+    ReqOpt[OptCnt].ValueStr = BlksizeBuf;
+    PxeBcUintnToAscDec (
+      *BlockSize,
+      ReqOpt[OptCnt].ValueStr,
+      sizeof (BlksizeBuf)
+      );
     OptCnt++;
   }
 
   if (WindowSize != NULL) {
-    ReqOpt[OptCnt].OptionStr = (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_WINDOWSIZE_INDEX];
-    ReqOpt[OptCnt].ValueStr  = WindowsizeBuf;
-    PxeBcUintnToAscDec (*WindowSize, ReqOpt[OptCnt].ValueStr, sizeof (WindowsizeBuf));
+    ReqOpt[OptCnt].OptionStr =
+      (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_WINDOWSIZE_INDEX];
+    ReqOpt[OptCnt].ValueStr = WindowsizeBuf;
+    PxeBcUintnToAscDec (
+      *WindowSize,
+      ReqOpt[OptCnt].ValueStr,
+      sizeof (WindowsizeBuf)
+      );
     OptCnt++;
   }
 
@@ -374,9 +403,14 @@ PxeBcMtftp6WriteFile (
   }
 
   if (BlockSize != NULL) {
-    ReqOpt[0].OptionStr = (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_BLKSIZE_INDEX];
-    ReqOpt[0].ValueStr  = OptBuf;
-    PxeBcUintnToAscDec (*BlockSize, ReqOpt[0].ValueStr, PXE_MTFTP_OPTBUF_MAXNUM_INDEX);
+    ReqOpt[0].OptionStr =
+      (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_BLKSIZE_INDEX];
+    ReqOpt[0].ValueStr = OptBuf;
+    PxeBcUintnToAscDec (
+      *BlockSize,
+      ReqOpt[0].ValueStr,
+      PXE_MTFTP_OPTBUF_MAXNUM_INDEX
+      );
     OptCnt++;
   }
 
@@ -451,16 +485,26 @@ PxeBcMtftp6ReadDirectory (
   }
 
   if (BlockSize != NULL) {
-    ReqOpt[OptCnt].OptionStr = (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_BLKSIZE_INDEX];
-    ReqOpt[OptCnt].ValueStr  = BlksizeBuf;
-    PxeBcUintnToAscDec (*BlockSize, ReqOpt[OptCnt].ValueStr, sizeof (BlksizeBuf));
+    ReqOpt[OptCnt].OptionStr =
+      (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_BLKSIZE_INDEX];
+    ReqOpt[OptCnt].ValueStr = BlksizeBuf;
+    PxeBcUintnToAscDec (
+      *BlockSize,
+      ReqOpt[OptCnt].ValueStr,
+      sizeof (BlksizeBuf)
+      );
     OptCnt++;
   }
 
   if (WindowSize != NULL) {
-    ReqOpt[OptCnt].OptionStr = (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_WINDOWSIZE_INDEX];
-    ReqOpt[OptCnt].ValueStr  = WindowsizeBuf;
-    PxeBcUintnToAscDec (*WindowSize, ReqOpt[OptCnt].ValueStr, sizeof (WindowsizeBuf));
+    ReqOpt[OptCnt].OptionStr =
+      (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_WINDOWSIZE_INDEX];
+    ReqOpt[OptCnt].ValueStr = WindowsizeBuf;
+    PxeBcUintnToAscDec (
+      *WindowSize,
+      ReqOpt[OptCnt].ValueStr,
+      sizeof (WindowsizeBuf)
+      );
     OptCnt++;
   }
 
@@ -542,7 +586,8 @@ PxeBcMtftp4CheckPacket (
       (CHAR8 *)Packet->Error.ErrorMessage,
       PXE_MTFTP_ERROR_STRING_LENGTH - 1
       );
-    Private->Mode.TftpError.ErrorString[PXE_MTFTP_ERROR_STRING_LENGTH - 1] = '\0';
+    Private->Mode.TftpError.ErrorString[PXE_MTFTP_ERROR_STRING_LENGTH - 1] =
+      '\0';
   }
 
   if (Callback != NULL) {
@@ -631,17 +676,31 @@ PxeBcMtftp4GetFileSize (
   ReqOpt[0].ValueStr = OptBuf;
 
   if (BlockSize != NULL) {
-    ReqOpt[OptCnt].OptionStr = (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_BLKSIZE_INDEX];
-    ReqOpt[OptCnt].ValueStr  = (UINT8 *)(ReqOpt[OptCnt-1].ValueStr + AsciiStrLen ((CHAR8 *)ReqOpt[OptCnt-1].ValueStr) + 1);
-    OptBufSize              -= (AsciiStrLen ((CHAR8 *)ReqOpt[OptCnt-1].ValueStr) + 1);
+    ReqOpt[OptCnt].OptionStr =
+      (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_BLKSIZE_INDEX];
+    ReqOpt[OptCnt].ValueStr = (UINT8 *)(ReqOpt[OptCnt-1].ValueStr +
+                                        AsciiStrLen ((CHAR8 *)ReqOpt[OptCnt-
+                                                                     1].ValueStr)
+                                        + 1);
+    OptBufSize             -= (AsciiStrLen (
+                                 (CHAR8 *)ReqOpt[OptCnt-
+                                                 1].ValueStr
+                                 ) + 1);
     PxeBcUintnToAscDec (*BlockSize, ReqOpt[OptCnt].ValueStr, OptBufSize);
     OptCnt++;
   }
 
   if (WindowSize != NULL) {
-    ReqOpt[OptCnt].OptionStr = (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_WINDOWSIZE_INDEX];
-    ReqOpt[OptCnt].ValueStr  = (UINT8 *)(ReqOpt[OptCnt-1].ValueStr + AsciiStrLen ((CHAR8 *)ReqOpt[OptCnt-1].ValueStr) + 1);
-    OptBufSize              -= (AsciiStrLen ((CHAR8 *)ReqOpt[OptCnt-1].ValueStr) + 1);
+    ReqOpt[OptCnt].OptionStr =
+      (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_WINDOWSIZE_INDEX];
+    ReqOpt[OptCnt].ValueStr = (UINT8 *)(ReqOpt[OptCnt-1].ValueStr +
+                                        AsciiStrLen ((CHAR8 *)ReqOpt[OptCnt-
+                                                                     1].ValueStr)
+                                        + 1);
+    OptBufSize             -= (AsciiStrLen (
+                                 (CHAR8 *)ReqOpt[OptCnt-
+                                                 1].ValueStr
+                                 ) + 1);
     PxeBcUintnToAscDec (*WindowSize, ReqOpt[OptCnt].ValueStr, OptBufSize);
     OptCnt++;
   }
@@ -669,7 +728,8 @@ PxeBcMtftp4GetFileSize (
         (CHAR8 *)Packet->Error.ErrorMessage,
         PXE_MTFTP_ERROR_STRING_LENGTH - 1
         );
-      Private->Mode.TftpError.ErrorString[PXE_MTFTP_ERROR_STRING_LENGTH - 1] = '\0';
+      Private->Mode.TftpError.ErrorString[PXE_MTFTP_ERROR_STRING_LENGTH - 1] =
+        '\0';
     }
 
     goto ON_ERROR;
@@ -696,8 +756,11 @@ PxeBcMtftp4GetFileSize (
   Status = EFI_NOT_FOUND;
   while (OptCnt != 0) {
     if (AsciiStrnCmp ((CHAR8 *)Option[OptCnt - 1].OptionStr, "tsize", 5) == 0) {
-      *BufferSize = AsciiStrDecimalToUint64 ((CHAR8 *)(Option[OptCnt - 1].ValueStr));
-      Status      = EFI_SUCCESS;
+      *BufferSize = AsciiStrDecimalToUint64 (
+                      (CHAR8 *)(Option[OptCnt -
+                                       1].ValueStr)
+                      );
+      Status = EFI_SUCCESS;
     }
 
     OptCnt--;
@@ -763,16 +826,26 @@ PxeBcMtftp4ReadFile (
   }
 
   if (BlockSize != NULL) {
-    ReqOpt[OptCnt].OptionStr = (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_BLKSIZE_INDEX];
-    ReqOpt[OptCnt].ValueStr  = BlksizeBuf;
-    PxeBcUintnToAscDec (*BlockSize, ReqOpt[OptCnt].ValueStr, sizeof (BlksizeBuf));
+    ReqOpt[OptCnt].OptionStr =
+      (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_BLKSIZE_INDEX];
+    ReqOpt[OptCnt].ValueStr = BlksizeBuf;
+    PxeBcUintnToAscDec (
+      *BlockSize,
+      ReqOpt[OptCnt].ValueStr,
+      sizeof (BlksizeBuf)
+      );
     OptCnt++;
   }
 
   if (WindowSize != NULL) {
-    ReqOpt[OptCnt].OptionStr = (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_WINDOWSIZE_INDEX];
-    ReqOpt[OptCnt].ValueStr  = WindowsizeBuf;
-    PxeBcUintnToAscDec (*WindowSize, ReqOpt[OptCnt].ValueStr, sizeof (WindowsizeBuf));
+    ReqOpt[OptCnt].OptionStr =
+      (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_WINDOWSIZE_INDEX];
+    ReqOpt[OptCnt].ValueStr = WindowsizeBuf;
+    PxeBcUintnToAscDec (
+      *WindowSize,
+      ReqOpt[OptCnt].ValueStr,
+      sizeof (WindowsizeBuf)
+      );
     OptCnt++;
   }
 
@@ -852,9 +925,14 @@ PxeBcMtftp4WriteFile (
   }
 
   if (BlockSize != NULL) {
-    ReqOpt[0].OptionStr = (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_BLKSIZE_INDEX];
-    ReqOpt[0].ValueStr  = OptBuf;
-    PxeBcUintnToAscDec (*BlockSize, ReqOpt[0].ValueStr, PXE_MTFTP_OPTBUF_MAXNUM_INDEX);
+    ReqOpt[0].OptionStr =
+      (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_BLKSIZE_INDEX];
+    ReqOpt[0].ValueStr = OptBuf;
+    PxeBcUintnToAscDec (
+      *BlockSize,
+      ReqOpt[0].ValueStr,
+      PXE_MTFTP_OPTBUF_MAXNUM_INDEX
+      );
     OptCnt++;
   }
 
@@ -929,16 +1007,26 @@ PxeBcMtftp4ReadDirectory (
   }
 
   if (BlockSize != NULL) {
-    ReqOpt[OptCnt].OptionStr = (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_BLKSIZE_INDEX];
-    ReqOpt[OptCnt].ValueStr  = BlksizeBuf;
-    PxeBcUintnToAscDec (*BlockSize, ReqOpt[OptCnt].ValueStr, sizeof (BlksizeBuf));
+    ReqOpt[OptCnt].OptionStr =
+      (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_BLKSIZE_INDEX];
+    ReqOpt[OptCnt].ValueStr = BlksizeBuf;
+    PxeBcUintnToAscDec (
+      *BlockSize,
+      ReqOpt[OptCnt].ValueStr,
+      sizeof (BlksizeBuf)
+      );
     OptCnt++;
   }
 
   if (WindowSize != NULL) {
-    ReqOpt[OptCnt].OptionStr = (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_WINDOWSIZE_INDEX];
-    ReqOpt[OptCnt].ValueStr  = WindowsizeBuf;
-    PxeBcUintnToAscDec (*WindowSize, ReqOpt[OptCnt].ValueStr, sizeof (WindowsizeBuf));
+    ReqOpt[OptCnt].OptionStr =
+      (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_WINDOWSIZE_INDEX];
+    ReqOpt[OptCnt].ValueStr = WindowsizeBuf;
+    PxeBcUintnToAscDec (
+      *WindowSize,
+      ReqOpt[OptCnt].ValueStr,
+      sizeof (WindowsizeBuf)
+      );
     OptCnt++;
   }
 

@@ -62,7 +62,12 @@ Ip6CandidateSource (
     IpIf = NET_LIST_USER_STRUCT (Entry, IP6_INTERFACE, Link);
 
     NET_LIST_FOR_EACH (Entry2, &IpIf->AddressList) {
-      AddrInfo = NET_LIST_USER_STRUCT_S (Entry2, IP6_ADDRESS_INFO, Link, IP6_ADDR_INFO_SIGNATURE);
+      AddrInfo = NET_LIST_USER_STRUCT_S (
+                   Entry2,
+                   IP6_ADDRESS_INFO,
+                   Link,
+                   IP6_ADDR_INFO_SIGNATURE
+                   );
 
       if (AddrInfo->IsAnycast) {
         //
@@ -227,7 +232,13 @@ Ip6SelectSourceAddress (
   NET_LIST_FOR_EACH (Entry, &IpSb->AutonomousPrefix) {
     Prefix = NET_LIST_USER_STRUCT (Entry, IP6_PREFIX_LIST_ENTRY, Link);
     if (Prefix->PreferredLifetime == 0) {
-      Ip6RemoveAddr (NULL, &SourceList, &SourceCount, &Prefix->Prefix, Prefix->PrefixLength);
+      Ip6RemoveAddr (
+        NULL,
+        &SourceList,
+        &SourceCount,
+        &Prefix->Prefix,
+        Prefix->PrefixLength
+        );
 
       if (SourceCount == 1) {
         goto Exit;
@@ -248,8 +259,15 @@ Ip6SelectSourceAddress (
   LastCommonLength = Ip6CommonPrefixLen (Source, Destination);
   TmpAddress       = NULL;
 
-  for (Entry = SourceList.ForwardLink; Entry != &SourceList; Entry = Entry->ForwardLink) {
-    AddrInfo = NET_LIST_USER_STRUCT_S (Entry, IP6_ADDRESS_INFO, Link, IP6_ADDR_INFO_SIGNATURE);
+  for (Entry = SourceList.ForwardLink; Entry != &SourceList; Entry =
+         Entry->ForwardLink)
+  {
+    AddrInfo = NET_LIST_USER_STRUCT_S (
+                 Entry,
+                 IP6_ADDRESS_INFO,
+                 Link,
+                 IP6_ADDR_INFO_SIGNATURE
+                 );
 
     CurrentCommonLength = Ip6CommonPrefixLen (&AddrInfo->Address, Destination);
     if (CurrentCommonLength > LastCommonLength) {
@@ -388,7 +406,11 @@ Ip6PrependHead (
   // HeadLen is the length of the fixed part of the sequences of fragments, i.e.
   // the unfragment part.
   //
-  PacketHead = (EFI_IP6_HEADER *)NetbufAllocSpace (Packet, HeadLen, NET_BUF_HEAD);
+  PacketHead = (EFI_IP6_HEADER *)NetbufAllocSpace (
+                                   Packet,
+                                   HeadLen,
+                                   NET_BUF_HEAD
+                                   );
   if (PacketHead == NULL) {
     return EFI_BAD_BUFFER_SIZE;
   }
@@ -397,8 +419,11 @@ Ip6PrependHead (
   // Set the head up, convert the host byte order to network byte order
   //
   CopyMem (PacketHead, Head, sizeof (EFI_IP6_HEADER));
-  PacketHead->PayloadLength = HTONS ((UINT16)(Packet->TotalSize - sizeof (EFI_IP6_HEADER)));
-  Packet->Ip.Ip6            = PacketHead;
+  PacketHead->PayloadLength = HTONS (
+                                (UINT16)(Packet->TotalSize -
+                                         sizeof (EFI_IP6_HEADER))
+                                );
+  Packet->Ip.Ip6 = PacketHead;
 
   Len              = HeadLen - sizeof (EFI_IP6_HEADER);
   UnFragExtHdrsLen = Len - sizeof (IP6_FRAGMENT_HEADER);
@@ -558,7 +583,11 @@ Ip6Output (
     // and destinationaddress is unspecified.
     //
     if ((IpInstance == NULL) || (IpInstance->Interface == NULL)) {
-      IpIf = Ip6SelectInterface (IpSb, &Head->DestinationAddress, &Head->SourceAddress);
+      IpIf = Ip6SelectInterface (
+               IpSb,
+               &Head->DestinationAddress,
+               &Head->SourceAddress
+               );
       if (IpInstance != NULL) {
         IpInstance->Interface = IpIf;
       }
@@ -700,7 +729,11 @@ Ip6Output (
       //
       // Not in Neighbor Cache, check Router cache
       //
-      RouteCache = Ip6Route (IpSb, &Head->DestinationAddress, &Head->SourceAddress);
+      RouteCache = Ip6Route (
+                     IpSb,
+                     &Head->DestinationAddress,
+                     &Head->SourceAddress
+                     );
       if (RouteCache == NULL) {
         return EFI_NOT_FOUND;
       }
@@ -714,10 +747,19 @@ Ip6Output (
   // Examines the Neighbor Cache for link-layer information about that neighbor.
   // DO NOT create neighbor cache if neighbor is itself - when reporting ICMP error.
   //
-  if (!IP6_IS_MULTICAST (&NextHop) && !EFI_IP6_EQUAL (&Head->DestinationAddress, &Head->SourceAddress)) {
+  if (!IP6_IS_MULTICAST (&NextHop) && !EFI_IP6_EQUAL (
+                                         &Head->DestinationAddress,
+                                         &Head->SourceAddress
+                                         ))
+  {
     NeighborCache = Ip6FindNeighborEntry (IpSb, &NextHop);
     if (NeighborCache == NULL) {
-      NeighborCache = Ip6CreateNeighborEntry (IpSb, Ip6OnArpResolved, &NextHop, NULL);
+      NeighborCache = Ip6CreateNeighborEntry (
+                        IpSb,
+                        Ip6OnArpResolved,
+                        &NextHop,
+                        NULL
+                        );
 
       if (NeighborCache == NULL) {
         return EFI_OUT_OF_RESOURCES;
@@ -842,7 +884,12 @@ Ip6Output (
       // to form a new NET_BUF. This NET_BUF contains all the buffer which will
       // be fragmented below.
       //
-      TmpPacket = NetbufGetFragment (Packet, 0, Packet->TotalSize, FragmentHdrsLen);
+      TmpPacket = NetbufGetFragment (
+                    Packet,
+                    0,
+                    Packet->TotalSize,
+                    FragmentHdrsLen
+                    );
       ASSERT (TmpPacket != NULL);
 
       //
@@ -863,7 +910,8 @@ Ip6Output (
     // The unfragment part which appears in every fragmented IPv6 packet includes
     // the IPv6 header, the unfragmentable extension hdrs and the fragment header.
     //
-    UnFragmentLen = sizeof (EFI_IP6_HEADER) + UnFragmentHdrsLen + sizeof (IP6_FRAGMENT_HEADER);
+    UnFragmentLen = sizeof (EFI_IP6_HEADER) + UnFragmentHdrsLen +
+                    sizeof (IP6_FRAGMENT_HEADER);
 
     //
     // Mtu now is the length of the fragment part in a full-length fragment.
@@ -942,7 +990,11 @@ Ip6Output (
   //
   // Need not fragment the packet, send it in one frame.
   //
-  PacketHead = (EFI_IP6_HEADER *)NetbufAllocSpace (Packet, HeadLen, NET_BUF_HEAD);
+  PacketHead = (EFI_IP6_HEADER *)NetbufAllocSpace (
+                                   Packet,
+                                   HeadLen,
+                                   NET_BUF_HEAD
+                                   );
   if (PacketHead == NULL) {
     Status = EFI_BAD_BUFFER_SIZE;
     goto Error;

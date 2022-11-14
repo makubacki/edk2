@@ -151,13 +151,15 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gIp6ComponentName = {
 //
 // EFI Component Name 2 Protocol.
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gIp6ComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gIp6ComponentName2 =
+{
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)Ip6ComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)Ip6ComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mIp6DriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mIp6DriverNameTable[] =
+{
   {
     "eng;en",
     L"IP6 Network Service Driver"
@@ -168,7 +170,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mIp6DriverNameTable[] = 
   }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  *gIp6ControllerNameTable = NULL;
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  *gIp6ControllerNameTable
+  = NULL;
 
 /**
   Retrieves a Unicode string that is the user-readable name of the driver.
@@ -283,7 +286,11 @@ UpdateName (
   }
 
   if (!EFI_ERROR (Status) && Ip6ModeData.IsStarted) {
-    Status = NetLibIp6ToStr (&Ip6ModeData.ConfigData.StationAddress, Address, sizeof (Address));
+    Status = NetLibIp6ToStr (
+               &Ip6ModeData.ConfigData.StationAddress,
+               Address,
+               sizeof (Address)
+               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -294,7 +301,11 @@ UpdateName (
                 L"IPv6(StationAddress=%s, ",
                 Address
                 );
-    Status = NetLibIp6ToStr (&Ip6ModeData.ConfigData.DestinationAddress, Address, sizeof (Address));
+    Status = NetLibIp6ToStr (
+               &Ip6ModeData.ConfigData.DestinationAddress,
+               Address,
+               sizeof (Address)
+               );
     if (EFI_ERROR (Status)) {
       return Status;
     }

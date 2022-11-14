@@ -35,53 +35,94 @@ extern ISCSI_FORM_CALLBACK_INFO  *mCallbackInfo;
 //
 // Define QuestionId and OffSet for Keywords.
 //
-#define ATTEMPT_MAC_ADDR_VAR_OFFSET                 VAR_OFFSET  (ISCSIMacAddr)
-#define ATTEMPT_ATTEMPT_NAME_QUESTION_ID            QUESTION_ID (ISCSIAttemptName)
-#define ATTEMPT_ATTEMPT_NAME_VAR_OFFSET             VAR_OFFSET  (ISCSIAttemptName)
-#define ATTEMPT_BOOTENABLE_QUESTION_ID              QUESTION_ID (ISCSIBootEnableList)
-#define ATTEMPT_BOOTENABLE_VAR_OFFSET               VAR_OFFSET  (ISCSIBootEnableList)
-#define ATTEMPT_ADDRESS_TYPE_QUESTION_ID            QUESTION_ID (ISCSIIpAddressTypeList)
-#define ATTEMPT_ADDRESS_TYPE_VAR_OFFSET             VAR_OFFSET  (ISCSIIpAddressTypeList)
-#define ATTEMPT_CONNECT_RETRY_QUESTION_ID           QUESTION_ID (ISCSIConnectRetry)
-#define ATTEMPT_CONNECT_RETRY_VAR_OFFSET            VAR_OFFSET  (ISCSIConnectRetry)
-#define ATTEMPT_CONNECT_TIMEOUT_QUESTION_ID         QUESTION_ID (ISCSIConnectTimeout)
-#define ATTEMPT_CONNECT_TIMEOUT_VAR_OFFSET          VAR_OFFSET  (ISCSIConnectTimeout)
-#define ATTEMPT_ISID_QUESTION_ID                    QUESTION_ID (Keyword->ISCSIIsId)
-#define ATTEMPT_ISID_VAR_OFFSET                     VAR_OFFSET  (Keyword->ISCSIIsId)
-#define ATTEMPT_INITIATOR_VIA_DHCP_QUESTION_ID      QUESTION_ID (ISCSIInitiatorInfoViaDHCP)
-#define ATTEMPT_INITIATOR_VIA_DHCP_VAR_OFFSET       VAR_OFFSET  (ISCSIInitiatorInfoViaDHCP)
-#define ATTEMPT_INITIATOR_IP_ADDRESS_QUESTION_ID    QUESTION_ID (Keyword->ISCSIInitiatorIpAddress)
-#define ATTEMPT_INITIATOR_IP_ADDRESS_VAR_OFFSET     VAR_OFFSET  (Keyword->ISCSIInitiatorIpAddress)
-#define ATTEMPT_INITIATOR_NET_MASK_QUESTION_ID      QUESTION_ID (Keyword->ISCSIInitiatorNetmask)
-#define ATTEMPT_INITIATOR_NET_MASK_VAR_OFFSET       VAR_OFFSET  (Keyword->ISCSIInitiatorNetmask)
-#define ATTEMPT_INITIATOR_GATE_WAY_QUESTION_ID      QUESTION_ID (Keyword->ISCSIInitiatorGateway)
-#define ATTEMPT_INITIATOR_GATE_WAY_VAR_OFFSET       VAR_OFFSET  (Keyword->ISCSIInitiatorGateway)
-#define ATTEMPT_TARGET_VIA_DHCP_QUESTION_ID         QUESTION_ID (ISCSITargetInfoViaDHCP)
-#define ATTEMPT_TARGET_VIA_DHCP_VAR_OFFSET          VAR_OFFSET  (ISCSITargetInfoViaDHCP)
-#define ATTEMPT_TARGET_NAME_QUESTION_ID             QUESTION_ID (Keyword->ISCSITargetName)
-#define ATTEMPT_TARGET_NAME_VAR_OFFSET              VAR_OFFSET  (Keyword->ISCSITargetName)
-#define ATTEMPT_TARGET_IP_ADDRESS_QUESTION_ID       QUESTION_ID (Keyword->ISCSITargetIpAddress)
-#define ATTEMPT_TARGET_IP_ADDRESS_VAR_OFFSET        VAR_OFFSET  (Keyword->ISCSITargetIpAddress)
-#define ATTEMPT_TARGET_TCP_PORT_QUESTION_ID         QUESTION_ID (ISCSITargetTcpPort)
-#define ATTEMPT_TARGET_TCP_PORT_VAR_OFFSET          VAR_OFFSET  (ISCSITargetTcpPort)
-#define ATTEMPT_LUN_QUESTION_ID                     QUESTION_ID (Keyword->ISCSILun)
-#define ATTEMPT_LUN_VAR_OFFSET                      VAR_OFFSET  (Keyword->ISCSILun)
-#define ATTEMPT_AUTHENTICATION_METHOD_QUESTION_ID   QUESTION_ID (ISCSIAuthenticationMethod)
-#define ATTEMPT_AUTHENTICATION_METHOD_VAR_OFFSET    VAR_OFFSET  (ISCSIAuthenticationMethod)
-#define ATTEMPT_CHARTYPE_QUESTION_ID                QUESTION_ID (ISCSIChapType)
-#define ATTEMPT_CHARTYPE_VAR_OFFSET                 VAR_OFFSET  (ISCSIChapType)
-#define ATTEMPT_CHAR_USER_NAME_QUESTION_ID          QUESTION_ID (Keyword->ISCSIChapUsername)
-#define ATTEMPT_CHAR_USER_NAME_VAR_OFFSET           VAR_OFFSET  (Keyword->ISCSIChapUsername)
-#define ATTEMPT_CHAR_SECRET_QUESTION_ID             QUESTION_ID (Keyword->ISCSIChapSecret)
-#define ATTEMPT_CHAR_SECRET_VAR_OFFSET              VAR_OFFSET  (Keyword->ISCSIChapSecret)
-#define ATTEMPT_CHAR_REVERSE_USER_NAME_QUESTION_ID  QUESTION_ID (Keyword->ISCSIReverseChapUsername)
-#define ATTEMPT_CHAR_REVERSE_USER_NAME_VAR_OFFSET   VAR_OFFSET  (Keyword->ISCSIReverseChapUsername)
-#define ATTEMPT_CHAR_REVERSE_SECRET_QUESTION_ID     QUESTION_ID (Keyword->ISCSIReverseChapSecret)
-#define ATTEMPT_CHAR_REVERSE_SECRET_VAR_OFFSET      VAR_OFFSET  (Keyword->ISCSIReverseChapSecret)
+#define ATTEMPT_MAC_ADDR_VAR_OFFSET     VAR_OFFSET  (ISCSIMacAddr)
+#define ATTEMPT_ATTEMPT_NAME_QUESTION_ID            \
+                                        QUESTION_ID (ISCSIAttemptName)
+#define ATTEMPT_ATTEMPT_NAME_VAR_OFFSET             \
+                                        VAR_OFFSET  (ISCSIAttemptName)
+#define ATTEMPT_BOOTENABLE_QUESTION_ID              \
+                                        QUESTION_ID (ISCSIBootEnableList)
+#define ATTEMPT_BOOTENABLE_VAR_OFFSET               \
+                                        VAR_OFFSET  (ISCSIBootEnableList)
+#define ATTEMPT_ADDRESS_TYPE_QUESTION_ID            \
+                                        QUESTION_ID (ISCSIIpAddressTypeList)
+#define ATTEMPT_ADDRESS_TYPE_VAR_OFFSET             \
+                                        VAR_OFFSET  (ISCSIIpAddressTypeList)
+#define ATTEMPT_CONNECT_RETRY_QUESTION_ID           \
+                                        QUESTION_ID (ISCSIConnectRetry)
+#define ATTEMPT_CONNECT_RETRY_VAR_OFFSET            \
+                                        VAR_OFFSET  (ISCSIConnectRetry)
+#define ATTEMPT_CONNECT_TIMEOUT_QUESTION_ID         \
+                                        QUESTION_ID (ISCSIConnectTimeout)
+#define ATTEMPT_CONNECT_TIMEOUT_VAR_OFFSET          \
+                                        VAR_OFFSET  (ISCSIConnectTimeout)
+#define ATTEMPT_ISID_QUESTION_ID                    \
+                                        QUESTION_ID (Keyword->ISCSIIsId)
+#define ATTEMPT_ISID_VAR_OFFSET                     \
+                                        VAR_OFFSET  (Keyword->ISCSIIsId)
+#define ATTEMPT_INITIATOR_VIA_DHCP_QUESTION_ID      \
+                                        QUESTION_ID (ISCSIInitiatorInfoViaDHCP)
+#define ATTEMPT_INITIATOR_VIA_DHCP_VAR_OFFSET       \
+                                        VAR_OFFSET  (ISCSIInitiatorInfoViaDHCP)
+#define ATTEMPT_INITIATOR_IP_ADDRESS_QUESTION_ID    \
+                                        QUESTION_ID (Keyword->ISCSIInitiatorIpAddress)
+#define ATTEMPT_INITIATOR_IP_ADDRESS_VAR_OFFSET     \
+                                        VAR_OFFSET  (Keyword->ISCSIInitiatorIpAddress)
+#define ATTEMPT_INITIATOR_NET_MASK_QUESTION_ID      \
+                                        QUESTION_ID (Keyword->ISCSIInitiatorNetmask)
+#define ATTEMPT_INITIATOR_NET_MASK_VAR_OFFSET       \
+                                        VAR_OFFSET  (Keyword->ISCSIInitiatorNetmask)
+#define ATTEMPT_INITIATOR_GATE_WAY_QUESTION_ID      \
+                                        QUESTION_ID (Keyword->ISCSIInitiatorGateway)
+#define ATTEMPT_INITIATOR_GATE_WAY_VAR_OFFSET       \
+                                        VAR_OFFSET  (Keyword->ISCSIInitiatorGateway)
+#define ATTEMPT_TARGET_VIA_DHCP_QUESTION_ID         \
+                                        QUESTION_ID (ISCSITargetInfoViaDHCP)
+#define ATTEMPT_TARGET_VIA_DHCP_VAR_OFFSET          \
+                                        VAR_OFFSET  (ISCSITargetInfoViaDHCP)
+#define ATTEMPT_TARGET_NAME_QUESTION_ID             \
+                                        QUESTION_ID (Keyword->ISCSITargetName)
+#define ATTEMPT_TARGET_NAME_VAR_OFFSET              \
+                                        VAR_OFFSET  (Keyword->ISCSITargetName)
+#define ATTEMPT_TARGET_IP_ADDRESS_QUESTION_ID       \
+                                        QUESTION_ID (Keyword->ISCSITargetIpAddress)
+#define ATTEMPT_TARGET_IP_ADDRESS_VAR_OFFSET        \
+                                        VAR_OFFSET  (Keyword->ISCSITargetIpAddress)
+#define ATTEMPT_TARGET_TCP_PORT_QUESTION_ID         \
+                                        QUESTION_ID (ISCSITargetTcpPort)
+#define ATTEMPT_TARGET_TCP_PORT_VAR_OFFSET          \
+                                        VAR_OFFSET  (ISCSITargetTcpPort)
+#define ATTEMPT_LUN_QUESTION_ID                     \
+                                        QUESTION_ID (Keyword->ISCSILun)
+#define ATTEMPT_LUN_VAR_OFFSET                      \
+                                        VAR_OFFSET  (Keyword->ISCSILun)
+#define ATTEMPT_AUTHENTICATION_METHOD_QUESTION_ID   \
+                                        QUESTION_ID (ISCSIAuthenticationMethod)
+#define ATTEMPT_AUTHENTICATION_METHOD_VAR_OFFSET    \
+                                        VAR_OFFSET  (ISCSIAuthenticationMethod)
+#define ATTEMPT_CHARTYPE_QUESTION_ID    QUESTION_ID (ISCSIChapType)
+#define ATTEMPT_CHARTYPE_VAR_OFFSET     VAR_OFFSET  (ISCSIChapType)
+#define ATTEMPT_CHAR_USER_NAME_QUESTION_ID          \
+                                        QUESTION_ID (Keyword->ISCSIChapUsername)
+#define ATTEMPT_CHAR_USER_NAME_VAR_OFFSET           \
+                                        VAR_OFFSET  (Keyword->ISCSIChapUsername)
+#define ATTEMPT_CHAR_SECRET_QUESTION_ID             \
+                                        QUESTION_ID (Keyword->ISCSIChapSecret)
+#define ATTEMPT_CHAR_SECRET_VAR_OFFSET              \
+                                        VAR_OFFSET  (Keyword->ISCSIChapSecret)
+#define ATTEMPT_CHAR_REVERSE_USER_NAME_QUESTION_ID  \
+                                        QUESTION_ID (Keyword->ISCSIReverseChapUsername)
+#define ATTEMPT_CHAR_REVERSE_USER_NAME_VAR_OFFSET   \
+                                        VAR_OFFSET  (Keyword->ISCSIReverseChapUsername)
+#define ATTEMPT_CHAR_REVERSE_SECRET_QUESTION_ID     \
+                                        QUESTION_ID (Keyword->ISCSIReverseChapSecret)
+#define ATTEMPT_CHAR_REVERSE_SECRET_VAR_OFFSET      \
+                                        VAR_OFFSET  (Keyword->ISCSIReverseChapSecret)
 
 #define ISCSI_INITATOR_NAME_VAR_NAME  L"I_NAME"
 
-#define ISCSI_CONFIG_VAR_ATTR  (EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_NON_VOLATILE)
+#define ISCSI_CONFIG_VAR_ATTR  \
+  (EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_NON_VOLATILE)
 
 #define ISCSI_FORM_CALLBACK_INFO_SIGNATURE  SIGNATURE_32 ('I', 'f', 'c', 'i')
 

@@ -600,7 +600,11 @@ Udp6Bind (
 
   if (ConfigData->StationPort != 0) {
     if (!ConfigData->AllowDuplicatePort &&
-        Udp6FindInstanceByPort (InstanceList, StationAddress, ConfigData->StationPort)
+        Udp6FindInstanceByPort (
+          InstanceList,
+          StationAddress,
+          ConfigData->StationPort
+          )
         )
     {
       //
@@ -620,7 +624,12 @@ Udp6Bind (
     } else {
       StartPort = mUdp6RandomPort;
 
-      while (Udp6FindInstanceByPort (InstanceList, StationAddress, mUdp6RandomPort)) {
+      while (Udp6FindInstanceByPort (
+               InstanceList,
+               StationAddress,
+               mUdp6RandomPort
+               ))
+      {
         mUdp6RandomPort++;
         if (mUdp6RandomPort == 0) {
           mUdp6RandomPort = UDP6_PORT_KNOWN;
@@ -685,14 +694,22 @@ Udp6IsReconfigurable (
     return FALSE;
   }
 
-  if (!EFI_IP6_EQUAL (&NewConfigData->StationAddress, &OldConfigData->StationAddress)) {
+  if (!EFI_IP6_EQUAL (
+         &NewConfigData->StationAddress,
+         &OldConfigData->StationAddress
+         ))
+  {
     //
     //  The StationAddress is not the same.
     //
     return FALSE;
   }
 
-  if (!EFI_IP6_EQUAL (&NewConfigData->RemoteAddress, &OldConfigData->RemoteAddress)) {
+  if (!EFI_IP6_EQUAL (
+         &NewConfigData->RemoteAddress,
+         &OldConfigData->RemoteAddress
+         ))
+  {
     //
     // The remoteaddress is not the same.
     //
@@ -735,8 +752,14 @@ Udp6BuildIp6ConfigData (
     );
   Ip6ConfigData->DefaultProtocol   = EFI_IP_PROTO_UDP;
   Ip6ConfigData->AcceptPromiscuous = Udp6ConfigData->AcceptPromiscuous;
-  IP6_COPY_ADDRESS (&Ip6ConfigData->StationAddress, &Udp6ConfigData->StationAddress);
-  IP6_COPY_ADDRESS (&Ip6ConfigData->DestinationAddress, &Udp6ConfigData->RemoteAddress);
+  IP6_COPY_ADDRESS (
+    &Ip6ConfigData->StationAddress,
+    &Udp6ConfigData->StationAddress
+    );
+  IP6_COPY_ADDRESS (
+    &Ip6ConfigData->DestinationAddress,
+    &Udp6ConfigData->RemoteAddress
+    );
   //
   // Use the -1 magic number to disable the receiving process of the ip instance.
   //
@@ -821,7 +844,9 @@ Udp6ValidateTxToken (
   UdpSessionData = TxData->UdpSessionData;
 
   if (UdpSessionData != NULL) {
-    if ((UdpSessionData->DestinationPort == 0) && (ConfigData->RemotePort == 0)) {
+    if ((UdpSessionData->DestinationPort == 0) && (ConfigData->RemotePort ==
+                                                   0))
+    {
       //
       // Ambiguous; no available DestinationPort for this token.
       //
@@ -1045,7 +1070,12 @@ Udp6DgramRcvd (
     //
     // Handle the ICMP6 Error packet.
     //
-    Udp6IcmpHandler ((UDP6_SERVICE_DATA *)Context, IcmpError, NetSession, Packet);
+    Udp6IcmpHandler (
+      (UDP6_SERVICE_DATA *)Context,
+      IcmpError,
+      NetSession,
+      Packet
+      );
   }
 
   //
@@ -1281,8 +1311,10 @@ Udp6MatchDgram (
     return TRUE;
   }
 
-  if ((!ConfigData->AcceptAnyPort && (Udp6Session->DestinationPort != ConfigData->StationPort)) ||
-      ((ConfigData->RemotePort != 0) && (Udp6Session->SourcePort != ConfigData->RemotePort))
+  if ((!ConfigData->AcceptAnyPort && (Udp6Session->DestinationPort !=
+                                      ConfigData->StationPort)) ||
+      ((ConfigData->RemotePort != 0) && (Udp6Session->SourcePort !=
+                                         ConfigData->RemotePort))
       )
   {
     //
@@ -1302,7 +1334,10 @@ Udp6MatchDgram (
   }
 
   if (NetIp6IsUnspecifiedAddr (&ConfigData->StationAddress) ||
-      EFI_IP6_EQUAL (&Udp6Session->DestinationAddress, &ConfigData->StationAddress)
+      EFI_IP6_EQUAL (
+        &Udp6Session->DestinationAddress,
+        &ConfigData->StationAddress
+        )
       )
   {
     //
@@ -1516,7 +1551,10 @@ Udp6InstanceDeliverDgram (
 
     NetListRemoveHead (&Instance->RcvdDgramQue);
 
-    Token = (EFI_UDP6_COMPLETION_TOKEN *)NetMapRemoveHead (&Instance->RxTokens, NULL);
+    Token = (EFI_UDP6_COMPLETION_TOKEN *)NetMapRemoveHead (
+                                           &Instance->RxTokens,
+                                           NULL
+                                           );
 
     //
     // Build the FragmentTable and set the FragmentCount in RxData.
@@ -1789,12 +1827,14 @@ Udp6SendPortUnreach (
   // for pointer movement that fact should be considered.
   //
   Ptr = (VOID *)&IcmpErrHdr->Head;
-  Ptr = (UINT8 *)(UINTN)((UINTN)Ptr + sizeof (IP6_ICMP_ERROR_HEAD) - sizeof (EFI_IP6_HEADER));
+  Ptr = (UINT8 *)(UINTN)((UINTN)Ptr + sizeof (IP6_ICMP_ERROR_HEAD) -
+                         sizeof (EFI_IP6_HEADER));
   CopyMem (Ptr, NetSession->IpHdr.Ip6Hdr, NetSession->IpHdrLen);
   CopyMem (
     Ptr + NetSession->IpHdrLen,
     Udp6Header,
-    Len - NetSession->IpHdrLen - sizeof (IP6_ICMP_ERROR_HEAD) + sizeof (EFI_IP6_HEADER)
+    Len - NetSession->IpHdrLen - sizeof (IP6_ICMP_ERROR_HEAD) +
+    sizeof (EFI_IP6_HEADER)
     );
 
   //
@@ -1878,7 +1918,12 @@ Udp6IcmpHandler (
       //
       // Translate the Icmp Error code according to the udp spec.
       //
-      Instance->IcmpError = IpIoGetIcmpErrStatus (IcmpError, IP_VERSION_6, NULL, NULL);
+      Instance->IcmpError = IpIoGetIcmpErrStatus (
+                              IcmpError,
+                              IP_VERSION_6,
+                              NULL,
+                              NULL
+                              );
 
       if (IcmpError > ICMP_ERR_UNREACH_PORT) {
         Instance->IcmpError = EFI_ICMP_ERROR;
@@ -1920,7 +1965,10 @@ Udp6ReportIcmpError (
     //
     // Try to get a RxToken from the RxTokens map.
     //
-    Token = (EFI_UDP6_COMPLETION_TOKEN *)NetMapRemoveHead (&Instance->RxTokens, NULL);
+    Token = (EFI_UDP6_COMPLETION_TOKEN *)NetMapRemoveHead (
+                                           &Instance->RxTokens,
+                                           NULL
+                                           );
 
     if (Token != NULL) {
       //

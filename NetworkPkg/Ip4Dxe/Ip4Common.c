@@ -104,7 +104,9 @@ Ip4GetHostCast (
     if ((IpIf != NULL) && !IP4_IS_BROADCAST (Ip4GetNetCast (Src, IpIf))) {
       return IP4_LOCAL_BROADCAST;
     }
-  } else if (IP4_IS_MULTICAST (Dst) && (Ip4FindGroup (&IpSb->IgmpCtrl, Dst) != NULL)) {
+  } else if (IP4_IS_MULTICAST (Dst) && (Ip4FindGroup (&IpSb->IgmpCtrl, Dst) !=
+                                        NULL))
+  {
     return IP4_MULTICAST;
   }
 

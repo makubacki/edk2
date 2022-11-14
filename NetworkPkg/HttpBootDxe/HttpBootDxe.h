@@ -262,14 +262,22 @@ struct _HTTP_BOOT_PRIVATE_DATA {
   HTTP_BOOT_DHCP_PACKET_CACHE    OfferBuffer[HTTP_BOOT_OFFER_MAX_NUM];
   UINT32                         OfferNum;
   UINT32                         OfferCount[HttpOfferTypeMax];
-  UINT32                         OfferIndex[HttpOfferTypeMax][HTTP_BOOT_OFFER_MAX_NUM];
+  UINT32                         OfferIndex[HttpOfferTypeMax][
+                                                              HTTP_BOOT_OFFER_MAX_NUM
+  ];
 };
 
 #define HTTP_BOOT_PRIVATE_DATA_SIGNATURE  SIGNATURE_32 ('H', 'B', 'P', 'D')
 #define HTTP_BOOT_VIRTUAL_NIC_SIGNATURE   SIGNATURE_32 ('H', 'B', 'V', 'N')
-#define HTTP_BOOT_PRIVATE_DATA_FROM_LOADFILE(a)  CR (a, HTTP_BOOT_PRIVATE_DATA, LoadFile, HTTP_BOOT_PRIVATE_DATA_SIGNATURE)
-#define HTTP_BOOT_PRIVATE_DATA_FROM_ID(a)        CR (a, HTTP_BOOT_PRIVATE_DATA, Id, HTTP_BOOT_PRIVATE_DATA_SIGNATURE)
-#define HTTP_BOOT_VIRTUAL_NIC_FROM_LOADFILE(a)   CR (a, HTTP_BOOT_VIRTUAL_NIC, LoadFile, HTTP_BOOT_VIRTUAL_NIC_SIGNATURE)
+#define HTTP_BOOT_PRIVATE_DATA_FROM_LOADFILE( \
+                                            a)  \
+      CR (a, HTTP_BOOT_PRIVATE_DATA, LoadFile, HTTP_BOOT_PRIVATE_DATA_SIGNATURE)
+#define HTTP_BOOT_PRIVATE_DATA_FROM_ID( \
+                                      a)        \
+      CR (a, HTTP_BOOT_PRIVATE_DATA, Id, HTTP_BOOT_PRIVATE_DATA_SIGNATURE)
+#define HTTP_BOOT_VIRTUAL_NIC_FROM_LOADFILE( \
+                                           a)   \
+      CR (a, HTTP_BOOT_VIRTUAL_NIC, LoadFile, HTTP_BOOT_VIRTUAL_NIC_SIGNATURE)
 extern EFI_LOAD_FILE_PROTOCOL  gHttpBootDxeLoadFile;
 
 /**

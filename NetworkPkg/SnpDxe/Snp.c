@@ -148,7 +148,11 @@ SimpleNetworkDriverSupported (
 
   if (EFI_ERROR (Status)) {
     if (Status == EFI_ALREADY_STARTED) {
-      DEBUG ((DEBUG_INFO, "Support(): Already Started. on handle %p\n", Controller));
+      DEBUG ((
+        DEBUG_INFO,
+        "Support(): Already Started. on handle %p\n",
+        Controller
+        ));
     }
 
     return Status;
@@ -194,7 +198,9 @@ SimpleNetworkDriverSupported (
     DEBUG ((DEBUG_NET, "\n!PXE.MajorVer is not supported.\n"));
     Status = EFI_UNSUPPORTED;
     goto Done;
-  } else if ((Pxe->hw.MajorVer == PXE_ROMID_MAJORVER) && (Pxe->hw.MinorVer < PXE_ROMID_MINORVER)) {
+  } else if ((Pxe->hw.MajorVer == PXE_ROMID_MAJORVER) && (Pxe->hw.MinorVer <
+                                                          PXE_ROMID_MINORVER))
+  {
     DEBUG ((DEBUG_NET, "\n!PXE.MinorVer is not supported."));
     Status = EFI_UNSUPPORTED;
     goto Done;
@@ -342,14 +348,19 @@ SimpleNetworkDriverStart (
     //
     //  We can get any packets.
     //
-  } else if ((Pxe->hw.Implementation & PXE_ROMID_IMP_BROADCAST_RX_SUPPORTED) != 0) {
+  } else if ((Pxe->hw.Implementation & PXE_ROMID_IMP_BROADCAST_RX_SUPPORTED) !=
+             0)
+  {
     //
     //  We need to be able to get broadcast packets for DHCP.
     //  If we do not have promiscuous support, we must at least have
     //  broadcast support or we cannot do DHCP!
     //
   } else {
-    DEBUG ((DEBUG_NET, "\nUNDI does not have promiscuous or broadcast support."));
+    DEBUG ((
+      DEBUG_NET,
+      "\nUNDI does not have promiscuous or broadcast support."
+      ));
     goto NiiError;
   }
 
@@ -401,7 +412,10 @@ SimpleNetworkDriverStart (
   Snp->TxRxBufferSize = 0;
   Snp->TxRxBuffer     = NULL;
 
-  Snp->RecycledTxBuf = AllocatePool (sizeof (UINT64) * SNP_TX_BUFFER_INCREASEMENT);
+  Snp->RecycledTxBuf = AllocatePool (
+                         sizeof (UINT64) *
+                         SNP_TX_BUFFER_INCREASEMENT
+                         );
   if (Snp->RecycledTxBuf == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Error_DeleteSNP;
@@ -425,7 +439,8 @@ SimpleNetworkDriverStart (
     if ((Pxe->sw.Implementation & PXE_ROMID_IMP_SW_VIRT_ADDR) != 0) {
       Snp->IssueUndi32Command = (ISSUE_UNDI32_COMMAND)(UINTN)Pxe->sw.EntryPoint;
     } else {
-      Snp->IssueUndi32Command = (ISSUE_UNDI32_COMMAND)(UINTN)((UINT8)(UINTN)Pxe + Pxe->sw.EntryPoint);
+      Snp->IssueUndi32Command =
+        (ISSUE_UNDI32_COMMAND)(UINTN)((UINT8)(UINTN)Pxe + Pxe->sw.EntryPoint);
     }
   }
 
@@ -486,10 +501,14 @@ SimpleNetworkDriverStart (
       goto Error_DeleteSNP;
     }
 
-    if ((!FoundMemoryBar) && (BarDesc->ResType == ACPI_ADDRESS_SPACE_TYPE_MEM)) {
+    if ((!FoundMemoryBar) && (BarDesc->ResType ==
+                              ACPI_ADDRESS_SPACE_TYPE_MEM))
+    {
       Snp->MemoryBarIndex = BarIndex;
       FoundMemoryBar      = TRUE;
-    } else if ((!FoundIoBar) && (BarDesc->ResType == ACPI_ADDRESS_SPACE_TYPE_IO)) {
+    } else if ((!FoundIoBar) && (BarDesc->ResType ==
+                                 ACPI_ADDRESS_SPACE_TYPE_IO))
+    {
       Snp->IoBarIndex = BarIndex;
       FoundIoBar      = TRUE;
     }
@@ -532,7 +551,12 @@ SimpleNetworkDriverStart (
   InitStatFlags = Snp->Cdb.StatFlags;
 
   if (Snp->Cdb.StatCode != PXE_STATCODE_SUCCESS) {
-    DEBUG ((DEBUG_NET, "\nSnp->undi.init_info()  %xh:%xh\n", Snp->Cdb.StatFlags, Snp->Cdb.StatCode));
+    DEBUG ((
+      DEBUG_NET,
+      "\nSnp->undi.init_info()  %xh:%xh\n",
+      Snp->Cdb.StatFlags,
+      Snp->Cdb.StatCode
+      ));
     PxeStop (Snp);
     goto Error_DeleteSNP;
   }
@@ -540,12 +564,13 @@ SimpleNetworkDriverStart (
   //
   //  Initialize simple network protocol mode structure
   //
-  Snp->Mode.State               = EfiSimpleNetworkStopped;
-  Snp->Mode.HwAddressSize       = Snp->InitInfo.HWaddrLen;
-  Snp->Mode.MediaHeaderSize     = Snp->InitInfo.MediaHeaderLen;
-  Snp->Mode.MaxPacketSize       = Snp->InitInfo.FrameDataLen;
-  Snp->Mode.NvRamAccessSize     = Snp->InitInfo.NvWidth;
-  Snp->Mode.NvRamSize           = Snp->InitInfo.NvCount * Snp->Mode.NvRamAccessSize;
+  Snp->Mode.State           = EfiSimpleNetworkStopped;
+  Snp->Mode.HwAddressSize   = Snp->InitInfo.HWaddrLen;
+  Snp->Mode.MediaHeaderSize = Snp->InitInfo.MediaHeaderLen;
+  Snp->Mode.MaxPacketSize   = Snp->InitInfo.FrameDataLen;
+  Snp->Mode.NvRamAccessSize = Snp->InitInfo.NvWidth;
+  Snp->Mode.NvRamSize       = Snp->InitInfo.NvCount *
+                              Snp->Mode.NvRamAccessSize;
   Snp->Mode.IfType              = Snp->InitInfo.IFtype;
   Snp->Mode.MaxMCastFilterCount = Snp->InitInfo.MCastFilterCnt;
   Snp->Mode.MCastFilterCount    = 0;
@@ -588,8 +613,11 @@ SimpleNetworkDriverStart (
 
   Snp->Mode.ReceiveFilterMask = EFI_SIMPLE_NETWORK_RECEIVE_UNICAST;
 
-  if ((Pxe->hw.Implementation & PXE_ROMID_IMP_PROMISCUOUS_MULTICAST_RX_SUPPORTED) != 0) {
-    Snp->Mode.ReceiveFilterMask |= EFI_SIMPLE_NETWORK_RECEIVE_PROMISCUOUS_MULTICAST;
+  if ((Pxe->hw.Implementation &
+       PXE_ROMID_IMP_PROMISCUOUS_MULTICAST_RX_SUPPORTED) != 0)
+  {
+    Snp->Mode.ReceiveFilterMask |=
+      EFI_SIMPLE_NETWORK_RECEIVE_PROMISCUOUS_MULTICAST;
   }
 
   if ((Pxe->hw.Implementation & PXE_ROMID_IMP_PROMISCUOUS_RX_SUPPORTED) != 0) {
@@ -600,12 +628,17 @@ SimpleNetworkDriverStart (
     Snp->Mode.ReceiveFilterMask |= EFI_SIMPLE_NETWORK_RECEIVE_BROADCAST;
   }
 
-  if ((Pxe->hw.Implementation & PXE_ROMID_IMP_FILTERED_MULTICAST_RX_SUPPORTED) != 0) {
+  if ((Pxe->hw.Implementation &
+       PXE_ROMID_IMP_FILTERED_MULTICAST_RX_SUPPORTED) != 0)
+  {
     Snp->Mode.ReceiveFilterMask |= EFI_SIMPLE_NETWORK_RECEIVE_MULTICAST;
   }
 
-  if ((Pxe->hw.Implementation & PXE_ROMID_IMP_PROMISCUOUS_MULTICAST_RX_SUPPORTED) != 0) {
-    Snp->Mode.ReceiveFilterMask |= EFI_SIMPLE_NETWORK_RECEIVE_PROMISCUOUS_MULTICAST;
+  if ((Pxe->hw.Implementation &
+       PXE_ROMID_IMP_PROMISCUOUS_MULTICAST_RX_SUPPORTED) != 0)
+  {
+    Snp->Mode.ReceiveFilterMask |=
+      EFI_SIMPLE_NETWORK_RECEIVE_PROMISCUOUS_MULTICAST;
   }
 
   Snp->Mode.ReceiveFilterSetting = 0;
@@ -615,7 +648,10 @@ SimpleNetworkDriverStart (
   // initialize the UNDI first for this.
   //
   Snp->TxRxBufferSize = Snp->InitInfo.MemoryRequired;
-  Status              = PxeInit (Snp, PXE_OPFLAGS_INITIALIZE_DO_NOT_DETECT_CABLE);
+  Status              = PxeInit (
+                          Snp,
+                          PXE_OPFLAGS_INITIALIZE_DO_NOT_DETECT_CABLE
+                          );
 
   if (EFI_ERROR (Status)) {
     PxeStop (Snp);

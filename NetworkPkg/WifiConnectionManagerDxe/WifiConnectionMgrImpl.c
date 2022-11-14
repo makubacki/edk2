@@ -112,15 +112,27 @@ WifiMgrOnScanFinished (
       CipherSuiteSupported = FALSE;
     }
 
-    AsciiSSId = (CHAR8 *)AllocateZeroPool (sizeof (CHAR8) * (Network->SSId.SSIdLen + 1));
+    AsciiSSId = (CHAR8 *)AllocateZeroPool (
+                           sizeof (CHAR8) *
+                           (Network->SSId.SSIdLen + 1)
+                           );
     if (AsciiSSId == NULL) {
       continue;
     }
 
-    CopyMem (AsciiSSId, (CHAR8 *)Network->SSId.SSId, sizeof (CHAR8) * Network->SSId.SSIdLen);
+    CopyMem (
+      AsciiSSId,
+      (CHAR8 *)Network->SSId.SSId,
+      sizeof (CHAR8) *
+      Network->SSId.SSIdLen
+      );
     *(AsciiSSId + Network->SSId.SSIdLen) = '\0';
 
-    Profile = WifiMgrGetProfileByAsciiSSId (AsciiSSId, SecurityType, &Nic->ProfileList);
+    Profile = WifiMgrGetProfileByAsciiSSId (
+                AsciiSSId,
+                SecurityType,
+                &Nic->ProfileList
+                );
     if (Profile == NULL) {
       if (Nic->MaxProfileIndex >= NETWORK_LIST_COUNT_MAX) {
         FreePool (AsciiSSId);
@@ -170,11 +182,13 @@ WifiMgrOnScanFinished (
         if (Network->AKMSuite->AKMSuiteCount == 0) {
           DataSize = sizeof (EFI_80211_AKM_SUITE_SELECTOR);
         } else {
-          DataSize = sizeof (EFI_80211_AKM_SUITE_SELECTOR) + sizeof (EFI_80211_SUITE_SELECTOR)
+          DataSize = sizeof (EFI_80211_AKM_SUITE_SELECTOR) +
+                     sizeof (EFI_80211_SUITE_SELECTOR)
                      * (Network->AKMSuite->AKMSuiteCount - 1);
         }
 
-        Profile->Network.AKMSuite = (EFI_80211_AKM_SUITE_SELECTOR *)AllocateZeroPool (DataSize);
+        Profile->Network.AKMSuite =
+          (EFI_80211_AKM_SUITE_SELECTOR *)AllocateZeroPool (DataSize);
         if (Profile->Network.AKMSuite == NULL) {
           continue;
         }
@@ -189,11 +203,13 @@ WifiMgrOnScanFinished (
         if (Network->CipherSuite->CipherSuiteCount == 0) {
           DataSize = sizeof (EFI_80211_CIPHER_SUITE_SELECTOR);
         } else {
-          DataSize = sizeof (EFI_80211_CIPHER_SUITE_SELECTOR) + sizeof (EFI_80211_SUITE_SELECTOR)
+          DataSize = sizeof (EFI_80211_CIPHER_SUITE_SELECTOR) +
+                     sizeof (EFI_80211_SUITE_SELECTOR)
                      * (Network->CipherSuite->CipherSuiteCount - 1);
         }
 
-        Profile->Network.CipherSuite = (EFI_80211_CIPHER_SUITE_SELECTOR *)AllocateZeroPool (DataSize);
+        Profile->Network.CipherSuite =
+          (EFI_80211_CIPHER_SUITE_SELECTOR *)AllocateZeroPool (DataSize);
         if (Profile->Network.CipherSuite == NULL) {
           continue;
         }
@@ -218,7 +234,9 @@ WifiMgrOnScanFinished (
   // The current connected network should always be available until disconnection
   // happens in Wifi FW layer, even when it is not in this time's scan result.
   //
-  if ((Nic->ConnectState == WifiMgrConnectedToAp) && (Nic->CurrentOperateNetwork != NULL)) {
+  if ((Nic->ConnectState == WifiMgrConnectedToAp) &&
+      (Nic->CurrentOperateNetwork != NULL))
+  {
     if (!Nic->CurrentOperateNetwork->IsAvailable) {
       Nic->CurrentOperateNetwork->IsAvailable = TRUE;
       Nic->AvailableCount++;
@@ -281,7 +299,9 @@ WifiMgrStartScan (
 
   ConfigToken->Type                   = TokenTypeGetNetworksToken;
   ConfigToken->Nic                    = Nic;
-  ConfigToken->Token.GetNetworksToken = AllocateZeroPool (sizeof (EFI_80211_GET_NETWORKS_TOKEN));
+  ConfigToken->Token.GetNetworksToken = AllocateZeroPool (
+                                          sizeof (EFI_80211_GET_NETWORKS_TOKEN)
+                                          );
   if (ConfigToken->Token.GetNetworksToken == NULL) {
     WifiMgrFreeToken (ConfigToken);
     gBS->RestoreTPL (OldTpl);
@@ -294,7 +314,10 @@ WifiMgrStartScan (
   // There are some hidden networks to scan, add them into scan list
   //
   if (HiddenSSIdCount > 0) {
-    HiddenSSIdList = AllocateZeroPool (HiddenSSIdCount * sizeof (EFI_80211_SSID));
+    HiddenSSIdList = AllocateZeroPool (
+                       HiddenSSIdCount *
+                       sizeof (EFI_80211_SSID)
+                       );
     if (HiddenSSIdList == NULL) {
       WifiMgrFreeToken (ConfigToken);
       gBS->RestoreTPL (OldTpl);
@@ -309,7 +332,9 @@ WifiMgrStartScan (
                         Link,
                         WIFI_MGR_HIDDEN_NETWORK_SIGNATURE
                         );
-      HiddenSSIdList[HiddenSSIdIndex].SSIdLen = (UINT8)StrLen (HiddenNetwork->SSId);
+      HiddenSSIdList[HiddenSSIdIndex].SSIdLen = (UINT8)StrLen (
+                                                         HiddenNetwork->SSId
+                                                         );
       UnicodeStrToAsciiStrS (
         HiddenNetwork->SSId,
         (CHAR8 *)HiddenSSIdList[HiddenSSIdIndex].SSId,
@@ -329,10 +354,17 @@ WifiMgrStartScan (
     }
 
     GetNetworksToken->Data->NumOfSSID = HiddenSSIdCount;
-    CopyMem (GetNetworksToken->Data->SSIDList, HiddenSSIdList, HiddenSSIdCount * sizeof (EFI_80211_SSID));
+    CopyMem (
+      GetNetworksToken->Data->SSIDList,
+      HiddenSSIdList,
+      HiddenSSIdCount *
+      sizeof (EFI_80211_SSID)
+      );
     FreePool (HiddenSSIdList);
   } else {
-    GetNetworksToken->Data = AllocateZeroPool (sizeof (EFI_80211_GET_NETWORKS_DATA));
+    GetNetworksToken->Data = AllocateZeroPool (
+                               sizeof (EFI_80211_GET_NETWORKS_DATA)
+                               );
     if (GetNetworksToken->Data == NULL) {
       WifiMgrFreeToken (ConfigToken);
       gBS->RestoreTPL (OldTpl);
@@ -406,7 +438,11 @@ WifiMgrConfigPassword (
   // Set SSId to supplicant
   //
   SSId.SSIdLen = Profile->Network.SSId.SSIdLen;
-  CopyMem (SSId.SSId, Profile->Network.SSId.SSId, sizeof (Profile->Network.SSId.SSId));
+  CopyMem (
+    SSId.SSId,
+    Profile->Network.SSId.SSId,
+    sizeof (Profile->Network.SSId.SSId)
+    );
   Status = Supplicant->SetData (
                          Supplicant,
                          EfiSupplicant80211TargetSSIDName,
@@ -424,12 +460,19 @@ WifiMgrConfigPassword (
     return EFI_NOT_FOUND;
   }
 
-  AsciiPassword = AllocateZeroPool ((StrLen (Profile->Password) + 1) * sizeof (UINT8));
+  AsciiPassword = AllocateZeroPool (
+                    (StrLen (Profile->Password) + 1) *
+                    sizeof (UINT8)
+                    );
   if (AsciiPassword == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
-  UnicodeStrToAsciiStrS (Profile->Password, (CHAR8 *)AsciiPassword, PASSWORD_STORAGE_SIZE);
+  UnicodeStrToAsciiStrS (
+    Profile->Password,
+    (CHAR8 *)AsciiPassword,
+    PASSWORD_STORAGE_SIZE
+    );
   Status = Supplicant->SetData (
                          Supplicant,
                          EfiSupplicant80211PskPassword,
@@ -601,7 +644,9 @@ WifiMgrConfigEap (
     return Status;
   }
 
-  if ((EapAuthMethod == EFI_EAP_TYPE_TTLS) || (EapAuthMethod == EFI_EAP_TYPE_PEAP)) {
+  if ((EapAuthMethod == EFI_EAP_TYPE_TTLS) || (EapAuthMethod ==
+                                               EFI_EAP_TYPE_PEAP))
+  {
     Status = EapConfig->SetData (
                           EapConfig,
                           EapAuthMethod,
@@ -617,7 +662,11 @@ WifiMgrConfigEap (
     // Set Password to Eap peer
     //
     if (StrLen (Profile->EapPassword) < PASSWORD_MIN_LEN) {
-      DEBUG ((DEBUG_ERROR, "[WiFi Connection Manager] Error: No Eap Password for Network: %s.\n", Profile->SSId));
+      DEBUG ((
+        DEBUG_ERROR,
+        "[WiFi Connection Manager] Error: No Eap Password for Network: %s.\n",
+        Profile->SSId
+        ));
       return EFI_INVALID_PARAMETER;
     }
 
@@ -699,7 +748,11 @@ WifiMgrConfigEap (
     // Set Private key to Eap peer
     //
     if (Profile->PrivateKeyData == NULL) {
-      DEBUG ((DEBUG_ERROR, "[WiFi Connection Manager]  Error: No Private Key for Network: %s.\n", Profile->SSId));
+      DEBUG ((
+        DEBUG_ERROR,
+        "[WiFi Connection Manager]  Error: No Private Key for Network: %s.\n",
+        Profile->SSId
+        ));
       return EFI_INVALID_PARAMETER;
     }
 
@@ -721,7 +774,11 @@ WifiMgrConfigEap (
         return EFI_OUT_OF_RESOURCES;
       }
 
-      UnicodeStrToAsciiStrS (Profile->PrivateKeyPassword, AsciiEncryptPassword, EncryptPasswordLen + 1);
+      UnicodeStrToAsciiStrS (
+        Profile->PrivateKeyPassword,
+        AsciiEncryptPassword,
+        EncryptPasswordLen + 1
+        );
       Status = EapConfig->SetData (
                             EapConfig,
                             EFI_EAP_TYPE_EAPTLS,
@@ -854,7 +911,11 @@ WifiMgrPrepareConnection (
         if (EFI_ERROR (Status)) {
           if (Status == EFI_NOT_FOUND) {
             if (Nic->OneTimeConnectRequest) {
-              WifiMgrUpdateConnectMessage (Nic, FALSE, L"Connect Failed: Invalid Password!");
+              WifiMgrUpdateConnectMessage (
+                Nic,
+                FALSE,
+                L"Connect Failed: Invalid Password!"
+                );
             }
           }
 
@@ -870,7 +931,11 @@ WifiMgrPrepareConnection (
         if (EFI_ERROR (Status)) {
           if (Status == EFI_INVALID_PARAMETER) {
             if (Nic->OneTimeConnectRequest) {
-              WifiMgrUpdateConnectMessage (Nic, FALSE, L"Connect Failed: Invalid Configuration!");
+              WifiMgrUpdateConnectMessage (
+                Nic,
+                FALSE,
+                L"Connect Failed: Invalid Configuration!"
+                );
             }
           }
 
@@ -931,9 +996,17 @@ WifiMgrOnConnectFinished (
       // Only update message for user triggered connection
       //
       if (ConfigToken->Token.ConnectNetworkToken->Status == EFI_ACCESS_DENIED) {
-        WifiMgrUpdateConnectMessage (ConfigToken->Nic, FALSE, L"Connect Failed: Permission Denied!");
+        WifiMgrUpdateConnectMessage (
+          ConfigToken->Nic,
+          FALSE,
+          L"Connect Failed: Permission Denied!"
+          );
       } else {
-        WifiMgrUpdateConnectMessage (ConfigToken->Nic, FALSE, L"Connect Failed!");
+        WifiMgrUpdateConnectMessage (
+          ConfigToken->Nic,
+          FALSE,
+          L"Connect Failed!"
+          );
       }
 
       ConfigToken->Nic->OneTimeConnectRequest = FALSE;
@@ -945,10 +1018,20 @@ WifiMgrOnConnectFinished (
 
   if (ConfigToken->Token.ConnectNetworkToken->ResultCode != ConnectSuccess) {
     if (ConfigToken->Nic->OneTimeConnectRequest) {
-      if (ConfigToken->Token.ConnectNetworkToken->ResultCode == ConnectFailedReasonUnspecified) {
-        WifiMgrUpdateConnectMessage (ConfigToken->Nic, FALSE, L"Connect Failed: Wrong Password or Unexpected Error!");
+      if (ConfigToken->Token.ConnectNetworkToken->ResultCode ==
+          ConnectFailedReasonUnspecified)
+      {
+        WifiMgrUpdateConnectMessage (
+          ConfigToken->Nic,
+          FALSE,
+          L"Connect Failed: Wrong Password or Unexpected Error!"
+          );
       } else {
-        WifiMgrUpdateConnectMessage (ConfigToken->Nic, FALSE, L"Connect Failed!");
+        WifiMgrUpdateConnectMessage (
+          ConfigToken->Nic,
+          FALSE,
+          L"Connect Failed!"
+          );
       }
     }
 
@@ -981,7 +1064,8 @@ WifiMgrOnConnectFinished (
     SecurityType = SECURITY_TYPE_UNKNOWN;
   }
 
-  SSIdLen   = ConfigToken->Token.ConnectNetworkToken->Data->Network->SSId.SSIdLen;
+  SSIdLen =
+    ConfigToken->Token.ConnectNetworkToken->Data->Network->SSId.SSIdLen;
   AsciiSSId = (CHAR8 *)AllocateZeroPool (sizeof (CHAR8) * (SSIdLen + 1));
   if (AsciiSSId == NULL) {
     ConfigToken->Nic->HasDisconnectPendingNetwork = TRUE;
@@ -989,10 +1073,18 @@ WifiMgrOnConnectFinished (
     goto Exit;
   }
 
-  CopyMem (AsciiSSId, ConfigToken->Token.ConnectNetworkToken->Data->Network->SSId.SSId, SSIdLen);
+  CopyMem (
+    AsciiSSId,
+    ConfigToken->Token.ConnectNetworkToken->Data->Network->SSId.SSId,
+    SSIdLen
+    );
   *(AsciiSSId + SSIdLen) = '\0';
 
-  ConnectedProfile = WifiMgrGetProfileByAsciiSSId (AsciiSSId, SecurityType, &ConfigToken->Nic->ProfileList);
+  ConnectedProfile = WifiMgrGetProfileByAsciiSSId (
+                       AsciiSSId,
+                       SecurityType,
+                       &ConfigToken->Nic->ProfileList
+                       );
   FreePool (AsciiSSId);
   if (ConnectedProfile == NULL) {
     ConfigToken->Nic->HasDisconnectPendingNetwork = TRUE;
@@ -1070,13 +1162,18 @@ WifiMgrConnectToNetwork (
 
   ConfigToken->Type                      = TokenTypeConnectNetworkToken;
   ConfigToken->Nic                       = Nic;
-  ConfigToken->Token.ConnectNetworkToken = AllocateZeroPool (sizeof (EFI_80211_CONNECT_NETWORK_TOKEN));
+  ConfigToken->Token.ConnectNetworkToken = AllocateZeroPool (
+                                             sizeof (
+                                                                    EFI_80211_CONNECT_NETWORK_TOKEN)
+                                             );
   if (ConfigToken->Token.ConnectNetworkToken == NULL) {
     goto Exit;
   }
 
   ConnectToken       = ConfigToken->Token.ConnectNetworkToken;
-  ConnectToken->Data = AllocateZeroPool (sizeof (EFI_80211_CONNECT_NETWORK_DATA));
+  ConnectToken->Data = AllocateZeroPool (
+                         sizeof (EFI_80211_CONNECT_NETWORK_DATA)
+                         );
   if (ConnectToken->Data == NULL) {
     goto Exit;
   }
@@ -1086,7 +1183,11 @@ WifiMgrConnectToNetwork (
     goto Exit;
   }
 
-  CopyMem (ConnectToken->Data->Network, &Profile->Network, sizeof (EFI_80211_NETWORK));
+  CopyMem (
+    ConnectToken->Data->Network,
+    &Profile->Network,
+    sizeof (EFI_80211_NETWORK)
+    );
 
   //
   // Add event handle and start to connect
@@ -1126,9 +1227,17 @@ WifiMgrConnectToNetwork (
 
       if (Nic->OneTimeConnectRequest) {
         if (Status == EFI_NOT_FOUND) {
-          WifiMgrUpdateConnectMessage (Nic, FALSE, L"Connect Failed: Not Available!");
+          WifiMgrUpdateConnectMessage (
+            Nic,
+            FALSE,
+            L"Connect Failed: Not Available!"
+            );
         } else {
-          WifiMgrUpdateConnectMessage (Nic, FALSE, L"Connect Failed: Unexpected Error!");
+          WifiMgrUpdateConnectMessage (
+            Nic,
+            FALSE,
+            L"Connect Failed: Unexpected Error!"
+            );
         }
       }
     }
@@ -1144,7 +1253,11 @@ Exit:
 
   gBS->RestoreTPL (OldTpl);
 
-  DEBUG ((DEBUG_INFO, "[WiFi Connection Manager] WifiMgrConnectToNetwork: %r\n", Status));
+  DEBUG ((
+    DEBUG_INFO,
+    "[WiFi Connection Manager] WifiMgrConnectToNetwork: %r\n",
+    Status
+    ));
   return Status;
 }
 
@@ -1231,7 +1344,10 @@ WifiMgrDisconnectToNetwork (
 
   ConfigToken->Type                         = TokenTypeDisconnectNetworkToken;
   ConfigToken->Nic                          = Nic;
-  ConfigToken->Token.DisconnectNetworkToken = AllocateZeroPool (sizeof (EFI_80211_DISCONNECT_NETWORK_TOKEN));
+  ConfigToken->Token.DisconnectNetworkToken = AllocateZeroPool (
+                                                sizeof (
+                                                                       EFI_80211_DISCONNECT_NETWORK_TOKEN)
+                                                );
   if (ConfigToken->Token.DisconnectNetworkToken == NULL) {
     WifiMgrFreeToken (ConfigToken);
     gBS->RestoreTPL (OldTpl);
@@ -1274,7 +1390,11 @@ WifiMgrDisconnectToNetwork (
       Status = EFI_SUCCESS;
     } else {
       if (Nic->OneTimeDisconnectRequest) {
-        WifiMgrUpdateConnectMessage (ConfigToken->Nic, FALSE, L"Disconnect Failed: Unexpected Error!");
+        WifiMgrUpdateConnectMessage (
+          ConfigToken->Nic,
+          FALSE,
+          L"Disconnect Failed: Unexpected Error!"
+          );
       }
 
       Nic->ConnectState = WifiMgrConnectedToAp;
@@ -1317,12 +1437,17 @@ WifiMgrOnTimerTick (
 
   Status = WifiMgrGetLinkState (Nic, &LinkState);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "[WiFi Connection Manager] Error: Failed to get link state!\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "[WiFi Connection Manager] Error: Failed to get link state!\n"
+      ));
     return;
   }
 
   if (Nic->LastLinkState.MediaState != LinkState.MediaState) {
-    if ((Nic->LastLinkState.MediaState == EFI_SUCCESS) && (LinkState.MediaState == EFI_NO_MEDIA)) {
+    if ((Nic->LastLinkState.MediaState == EFI_SUCCESS) &&
+        (LinkState.MediaState == EFI_NO_MEDIA))
+    {
       Nic->HasDisconnectPendingNetwork = TRUE;
     }
 
@@ -1370,7 +1495,9 @@ WifiMgrOnTimerTick (
 
       case WifiMgrConnectedToAp:
 
-        if ((Nic->ConnectPendingNetwork != NULL) || Nic->HasDisconnectPendingNetwork) {
+        if ((Nic->ConnectPendingNetwork != NULL) ||
+            Nic->HasDisconnectPendingNetwork)
+        {
           Status = WifiMgrDisconnectToNetwork (Nic);
           if (EFI_ERROR (Status)) {
             //

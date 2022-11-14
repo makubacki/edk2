@@ -66,20 +66,34 @@ IScsiDns4 (
   //
   // Get DNS server list from EFI IPv4 Configuration II protocol.
   //
-  Status = gBS->HandleProtocol (Controller, &gEfiIp4Config2ProtocolGuid, (VOID **)&Ip4Config2);
+  Status = gBS->HandleProtocol (
+                  Controller,
+                  &gEfiIp4Config2ProtocolGuid,
+                  (VOID **)&Ip4Config2
+                  );
   if (!EFI_ERROR (Status)) {
     //
     // Get the required size.
     //
     DataSize = 0;
-    Status   = Ip4Config2->GetData (Ip4Config2, Ip4Config2DataTypeDnsServer, &DataSize, NULL);
+    Status   = Ip4Config2->GetData (
+                             Ip4Config2,
+                             Ip4Config2DataTypeDnsServer,
+                             &DataSize,
+                             NULL
+                             );
     if (Status == EFI_BUFFER_TOO_SMALL) {
       DnsServerList = AllocatePool (DataSize);
       if (DnsServerList == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }
 
-      Status = Ip4Config2->GetData (Ip4Config2, Ip4Config2DataTypeDnsServer, &DataSize, DnsServerList);
+      Status = Ip4Config2->GetData (
+                             Ip4Config2,
+                             Ip4Config2DataTypeDnsServer,
+                             &DataSize,
+                             DnsServerList
+                             );
       if (EFI_ERROR (Status)) {
         FreePool (DnsServerList);
         DnsServerList = NULL;
@@ -183,7 +197,9 @@ IScsiDns4 (
       goto Exit;
     }
 
-    if ((Token.RspData.H2AData->IpCount == 0) || (Token.RspData.H2AData->IpList == NULL)) {
+    if ((Token.RspData.H2AData->IpCount == 0) ||
+        (Token.RspData.H2AData->IpList == NULL))
+    {
       Status = EFI_DEVICE_ERROR;
       goto Exit;
     }
@@ -273,20 +289,34 @@ IScsiDns6 (
   //
   // Get DNS server list from EFI IPv6 Configuration protocol.
   //
-  Status = gBS->HandleProtocol (Controller, &gEfiIp6ConfigProtocolGuid, (VOID **)&Ip6Config);
+  Status = gBS->HandleProtocol (
+                  Controller,
+                  &gEfiIp6ConfigProtocolGuid,
+                  (VOID **)&Ip6Config
+                  );
   if (!EFI_ERROR (Status)) {
     //
     // Get the required size.
     //
     DataSize = 0;
-    Status   = Ip6Config->GetData (Ip6Config, Ip6ConfigDataTypeDnsServer, &DataSize, NULL);
+    Status   = Ip6Config->GetData (
+                            Ip6Config,
+                            Ip6ConfigDataTypeDnsServer,
+                            &DataSize,
+                            NULL
+                            );
     if (Status == EFI_BUFFER_TOO_SMALL) {
       DnsServerList = AllocatePool (DataSize);
       if (DnsServerList == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }
 
-      Status = Ip6Config->GetData (Ip6Config, Ip6ConfigDataTypeDnsServer, &DataSize, DnsServerList);
+      Status = Ip6Config->GetData (
+                            Ip6Config,
+                            Ip6ConfigDataTypeDnsServer,
+                            &DataSize,
+                            DnsServerList
+                            );
       if (EFI_ERROR (Status)) {
         FreePool (DnsServerList);
         DnsServerList = NULL;
@@ -385,7 +415,9 @@ IScsiDns6 (
       goto Exit;
     }
 
-    if ((Token.RspData.H2AData->IpCount == 0) || (Token.RspData.H2AData->IpList == NULL)) {
+    if ((Token.RspData.H2AData->IpCount == 0) ||
+        (Token.RspData.H2AData->IpList == NULL))
+    {
       Status = EFI_DEVICE_ERROR;
       goto Exit;
     }

@@ -211,7 +211,10 @@ Mtftp6RemoveBlockNum (
       *BlockCounter = Num;
 
       if (Range->Round > 0) {
-        *BlockCounter += Range->Bound +  MultU64x32 (Range->Round - 1, (UINT32)(Range->Bound + 1)) + 1;
+        *BlockCounter += Range->Bound +  MultU64x32 (
+                                           Range->Round - 1,
+                                           (UINT32)(Range->Bound + 1)
+                                           ) + 1;
       }
 
       if (Range->Start > Range->Bound) {
@@ -537,12 +540,20 @@ Mtftp6SendRequest (
     OptionStrLength = AsciiStrLen ((CHAR8 *)Options[Index].OptionStr);
     ValueStrLength  = AsciiStrLen ((CHAR8 *)Options[Index].ValueStr);
 
-    Status = AsciiStrCpyS ((CHAR8 *)Cur, BufferLength, (CHAR8 *)Options[Index].OptionStr);
+    Status = AsciiStrCpyS (
+               (CHAR8 *)Cur,
+               BufferLength,
+               (CHAR8 *)Options[Index].OptionStr
+               );
     ASSERT_EFI_ERROR (Status);
     BufferLength -= (UINT32)(OptionStrLength + 1);
     Cur          += OptionStrLength + 1;
 
-    Status = AsciiStrCpyS ((CHAR8 *)Cur, BufferLength, (CHAR8 *)Options[Index].ValueStr);
+    Status = AsciiStrCpyS (
+               (CHAR8 *)Cur,
+               BufferLength,
+               (CHAR8 *)Options[Index].ValueStr
+               );
     ASSERT_EFI_ERROR (Status);
     BufferLength -= (UINT32)(ValueStrLength + 1);
     Cur          += ValueStrLength + 1;
@@ -587,7 +598,8 @@ Mtftp6SendError (
   //
   // Allocate a packet then copy the data.
   //
-  Len  = (UINT32)(AsciiStrLen ((CHAR8 *)ErrInfo) + sizeof (EFI_MTFTP6_ERROR_HEADER));
+  Len  = (UINT32)(AsciiStrLen ((CHAR8 *)ErrInfo) +
+                  sizeof (EFI_MTFTP6_ERROR_HEADER));
   Nbuf = NetbufAlloc (Len);
 
   if (Nbuf == NULL) {
@@ -604,7 +616,13 @@ Mtftp6SendError (
   TftpError->OpCode          = HTONS (EFI_MTFTP6_OPCODE_ERROR);
   TftpError->Error.ErrorCode = HTONS (ErrCode);
 
-  AsciiStrCpyS ((CHAR8 *)TftpError->Error.ErrorMessage, AsciiStrLen ((CHAR8 *)ErrInfo) + 1, (CHAR8 *)ErrInfo);
+  AsciiStrCpyS (
+    (CHAR8 *)TftpError->Error.ErrorMessage,
+    AsciiStrLen (
+      (CHAR8 *)ErrInfo
+      ) + 1,
+    (CHAR8 *)ErrInfo
+    );
 
   //
   // Save the packet buf for retransmit
@@ -670,7 +688,8 @@ Mtftp6TransmitPacket (
   //
   // Set the live time of the packet.
   //
-  Instance->PacketToLive = Instance->IsMaster ? Instance->Timeout : (Instance->Timeout * 2);
+  Instance->PacketToLive = Instance->IsMaster ? Instance->Timeout :
+                           (Instance->Timeout * 2);
 
   Temp = (UINT16 *)NetbufGetByte (Packet, 0, NULL);
   ASSERT (Temp != NULL);
@@ -678,7 +697,9 @@ Mtftp6TransmitPacket (
   Value  = *Temp;
   OpCode = NTOHS (Value);
 
-  if ((OpCode == EFI_MTFTP6_OPCODE_RRQ) || (OpCode == EFI_MTFTP6_OPCODE_DIR) || (OpCode == EFI_MTFTP6_OPCODE_WRQ)) {
+  if ((OpCode == EFI_MTFTP6_OPCODE_RRQ) || (OpCode == EFI_MTFTP6_OPCODE_DIR) ||
+      (OpCode == EFI_MTFTP6_OPCODE_WRQ))
+  {
     //
     // For the Rrq, Dir, Wrq requests of the operation, configure the Udp6Io as
     // (serverip, 69, localip, localport) to send.
@@ -994,7 +1015,9 @@ Mtftp6OperationStart (
       (Token == NULL) ||
       (Token->Filename == NULL) ||
       ((Token->OptionCount != 0) && (Token->OptionList == NULL)) ||
-      ((Token->OverrideData != NULL) && !NetIp6IsValidUnicast (&Token->OverrideData->ServerIp))
+      ((Token->OverrideData != NULL) && !NetIp6IsValidUnicast (
+                                           &Token->OverrideData->ServerIp
+                                           ))
       )
   {
     return EFI_INVALID_PARAMETER;
@@ -1003,7 +1026,8 @@ Mtftp6OperationStart (
   //
   // At least define one method to collect the data for download.
   //
-  if (((OpCode == EFI_MTFTP6_OPCODE_RRQ) || (OpCode == EFI_MTFTP6_OPCODE_DIR)) &&
+  if (((OpCode == EFI_MTFTP6_OPCODE_RRQ) || (OpCode ==
+                                             EFI_MTFTP6_OPCODE_DIR)) &&
       (Token->Buffer == NULL) &&
       (Token->CheckPacket == NULL)
       )
@@ -1014,7 +1038,9 @@ Mtftp6OperationStart (
   //
   // At least define one method to provide the data for upload.
   //
-  if ((OpCode == EFI_MTFTP6_OPCODE_WRQ) && (Token->Buffer == NULL) && (Token->PacketNeeded == NULL)) {
+  if ((OpCode == EFI_MTFTP6_OPCODE_WRQ) && (Token->Buffer == NULL) &&
+      (Token->PacketNeeded == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 

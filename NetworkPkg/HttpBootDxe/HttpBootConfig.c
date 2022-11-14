@@ -64,7 +64,12 @@ HttpBootAddBootOption (
   //
   // Only accept empty URI, or http and https URI.
   //
-  if ((StrLen (Uri) != 0) && (StrnCmp (Uri, L"http://", 7) != 0) && (StrnCmp (Uri, L"https://", 8) != 0)) {
+  if ((StrLen (Uri) != 0) && (StrnCmp (Uri, L"http://", 7) != 0) && (StrnCmp (
+                                                                       Uri,
+                                                                       L"https://",
+                                                                       8
+                                                                       ) != 0))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -94,7 +99,10 @@ HttpBootAddBootOption (
     SetDevicePathNodeLength (Node, sizeof (IPv6_DEVICE_PATH));
   }
 
-  TmpDevicePath = AppendDevicePathNode (Private->ParentDevicePath, (EFI_DEVICE_PATH_PROTOCOL *)Node);
+  TmpDevicePath = AppendDevicePathNode (
+                    Private->ParentDevicePath,
+                    (EFI_DEVICE_PATH_PROTOCOL *)Node
+                    );
   FreePool (Node);
   if (TmpDevicePath == NULL) {
     return EFI_OUT_OF_RESOURCES;
@@ -115,8 +123,15 @@ HttpBootAddBootOption (
   Node->DevPath.Type    = MESSAGING_DEVICE_PATH;
   Node->DevPath.SubType = MSG_URI_DP;
   SetDevicePathNodeLength (Node, Length);
-  CopyMem ((UINT8 *)Node + sizeof (EFI_DEVICE_PATH_PROTOCOL), AsciiUri, AsciiStrSize (AsciiUri));
-  NewDevicePath = AppendDevicePathNode (TmpDevicePath, (EFI_DEVICE_PATH_PROTOCOL *)Node);
+  CopyMem (
+    (UINT8 *)Node + sizeof (EFI_DEVICE_PATH_PROTOCOL),
+    AsciiUri,
+    AsciiStrSize (AsciiUri)
+    );
+  NewDevicePath = AppendDevicePathNode (
+                    TmpDevicePath,
+                    (EFI_DEVICE_PATH_PROTOCOL *)Node
+                    );
   FreePool (Node);
   FreePool (TmpDevicePath);
   if (NewDevicePath == NULL) {
@@ -246,7 +261,12 @@ HttpBootFormExtractConfig (
   }
 
   *Progress = Request;
-  if ((Request != NULL) && !HiiIsConfigHdrMatch (Request, &gHttpBootConfigGuid, mHttpBootConfigStorageName)) {
+  if ((Request != NULL) && !HiiIsConfigHdrMatch (
+                              Request,
+                              &gHttpBootConfigGuid,
+                              mHttpBootConfigStorageName
+                              ))
+  {
     return EFI_NOT_FOUND;
   }
 
@@ -261,7 +281,12 @@ HttpBootFormExtractConfig (
   //
   BufferSize = sizeof (HTTP_BOOT_CONFIG_IFR_NVDATA);
   ZeroMem (&CallbackInfo->HttpBootNvData, BufferSize);
-  StrCpyS (CallbackInfo->HttpBootNvData.Description, DESCRIPTION_STR_MAX_SIZE / sizeof (CHAR16), HTTP_BOOT_DEFAULT_DESCRIPTION_STR);
+  StrCpyS (
+    CallbackInfo->HttpBootNvData.Description,
+    DESCRIPTION_STR_MAX_SIZE /
+    sizeof (CHAR16),
+    HTTP_BOOT_DEFAULT_DESCRIPTION_STR
+    );
 
   ConfigRequest = Request;
   if ((Request == NULL) || (StrStr (Request, L"OFFSET") == NULL)) {
@@ -270,15 +295,25 @@ HttpBootFormExtractConfig (
     // Allocate and fill a buffer large enough to hold the <ConfigHdr> template
     // followed by "&OFFSET=0&WIDTH=WWWWWWWWWWWWWWWW" followed by a Null-terminator
     //
-    ConfigRequestHdr = HiiConstructConfigHdr (&gHttpBootConfigGuid, mHttpBootConfigStorageName, CallbackInfo->ChildHandle);
-    Size             = (StrLen (ConfigRequestHdr) + 32 + 1) * sizeof (CHAR16);
-    ConfigRequest    = AllocateZeroPool (Size);
+    ConfigRequestHdr = HiiConstructConfigHdr (
+                         &gHttpBootConfigGuid,
+                         mHttpBootConfigStorageName,
+                         CallbackInfo->ChildHandle
+                         );
+    Size          = (StrLen (ConfigRequestHdr) + 32 + 1) * sizeof (CHAR16);
+    ConfigRequest = AllocateZeroPool (Size);
     if (ConfigRequest == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
 
     AllocatedRequest = TRUE;
-    UnicodeSPrint (ConfigRequest, Size, L"%s&OFFSET=0&WIDTH=%016LX", ConfigRequestHdr, (UINT64)BufferSize);
+    UnicodeSPrint (
+      ConfigRequest,
+      Size,
+      L"%s&OFFSET=0&WIDTH=%016LX",
+      ConfigRequestHdr,
+      (UINT64)BufferSize
+      );
     FreePool (ConfigRequestHdr);
   }
 
@@ -378,7 +413,12 @@ HttpBootFormRouteConfig (
   // Check routing data in <ConfigHdr>.
   // Note: there is no name for Name/Value storage, only GUID will be checked
   //
-  if (!HiiIsConfigHdrMatch (Configuration, &gHttpBootConfigGuid, mHttpBootConfigStorageName)) {
+  if (!HiiIsConfigHdrMatch (
+         Configuration,
+         &gHttpBootConfigGuid,
+         mHttpBootConfigStorageName
+         ))
+  {
     return EFI_NOT_FOUND;
   }
 
@@ -404,7 +444,8 @@ HttpBootFormRouteConfig (
   //
   HttpBootAddBootOption (
     Private,
-    (CallbackInfo->HttpBootNvData.IpVersion == HTTP_BOOT_IP_VERSION_6) ? TRUE : FALSE,
+    (CallbackInfo->HttpBootNvData.IpVersion == HTTP_BOOT_IP_VERSION_6) ? TRUE :
+    FALSE,
     CallbackInfo->HttpBootNvData.Description,
     CallbackInfo->HttpBootNvData.Uri
     );
@@ -574,10 +615,14 @@ HttpBootConfigFormInit (
   VendorDeviceNode.Header.Type    = HARDWARE_DEVICE_PATH;
   VendorDeviceNode.Header.SubType = HW_VENDOR_DP;
   CopyGuid (&VendorDeviceNode.Guid, &gEfiCallerIdGuid);
-  SetDevicePathNodeLength (&VendorDeviceNode.Header, sizeof (VENDOR_DEVICE_PATH));
+  SetDevicePathNodeLength (
+    &VendorDeviceNode.Header,
+    sizeof (VENDOR_DEVICE_PATH)
+    );
   CallbackInfo->HiiVendorDevicePath = AppendDevicePathNode (
                                         Private->ParentDevicePath,
-                                        (EFI_DEVICE_PATH_PROTOCOL *)&VendorDeviceNode
+                                        (EFI_DEVICE_PATH_PROTOCOL *)&
+                                        VendorDeviceNode
                                         );
   if (CallbackInfo->HiiVendorDevicePath == NULL) {
     Status = EFI_OUT_OF_RESOURCES;

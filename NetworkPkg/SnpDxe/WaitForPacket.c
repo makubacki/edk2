@@ -47,12 +47,13 @@ SnpWaitForPacketNotify (
   //
   // Fill in CDB for UNDI GetStatus().
   //
-  ((SNP_DRIVER *)SnpPtr)->Cdb.OpCode    = PXE_OPCODE_GET_STATUS;
-  ((SNP_DRIVER *)SnpPtr)->Cdb.OpFlags   = 0;
-  ((SNP_DRIVER *)SnpPtr)->Cdb.CPBsize   = PXE_CPBSIZE_NOT_USED;
-  ((SNP_DRIVER *)SnpPtr)->Cdb.CPBaddr   = PXE_CPBADDR_NOT_USED;
-  ((SNP_DRIVER *)SnpPtr)->Cdb.DBsize    = (UINT16)(sizeof (UINT32) * 2);
-  ((SNP_DRIVER *)SnpPtr)->Cdb.DBaddr    = (UINT64)(UINTN)(((SNP_DRIVER *)SnpPtr)->Db);
+  ((SNP_DRIVER *)SnpPtr)->Cdb.OpCode  = PXE_OPCODE_GET_STATUS;
+  ((SNP_DRIVER *)SnpPtr)->Cdb.OpFlags = 0;
+  ((SNP_DRIVER *)SnpPtr)->Cdb.CPBsize = PXE_CPBSIZE_NOT_USED;
+  ((SNP_DRIVER *)SnpPtr)->Cdb.CPBaddr = PXE_CPBADDR_NOT_USED;
+  ((SNP_DRIVER *)SnpPtr)->Cdb.DBsize  = (UINT16)(sizeof (UINT32) * 2);
+  ((SNP_DRIVER *)SnpPtr)->Cdb.DBaddr  =
+    (UINT64)(UINTN)(((SNP_DRIVER *)SnpPtr)->Db);
   ((SNP_DRIVER *)SnpPtr)->Cdb.StatCode  = PXE_STATCODE_INITIALIZE;
   ((SNP_DRIVER *)SnpPtr)->Cdb.StatFlags = PXE_STATFLAGS_INITIALIZE;
   ((SNP_DRIVER *)SnpPtr)->Cdb.IFnum     = ((SNP_DRIVER *)SnpPtr)->IfNum;
@@ -66,7 +67,9 @@ SnpWaitForPacketNotify (
   //
   // Issue UNDI command and check result.
   //
-  (*((SNP_DRIVER *)SnpPtr)->IssueUndi32Command)((UINT64)(UINTN)&((SNP_DRIVER *)SnpPtr)->Cdb);
+  (*((SNP_DRIVER *)SnpPtr)->IssueUndi32Command)(
+    (UINT64)(UINTN)&((SNP_DRIVER *)SnpPtr)->Cdb
+  );
 
   if (((SNP_DRIVER *)SnpPtr)->Cdb.StatCode != EFI_SUCCESS) {
     return;

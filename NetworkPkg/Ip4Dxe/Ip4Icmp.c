@@ -9,56 +9,56 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 IP4_ICMP_CLASS
   mIcmpClass[] = {
-  { ICMP_ECHO_REPLY,        ICMP_QUERY_MESSAGE   },
-  { 1,                      ICMP_INVALID_MESSAGE },
-  { 2,                      ICMP_INVALID_MESSAGE },
-  { ICMP_DEST_UNREACHABLE,  ICMP_ERROR_MESSAGE   },
-  { ICMP_SOURCE_QUENCH,     ICMP_ERROR_MESSAGE   },
-  { ICMP_REDIRECT,          ICMP_ERROR_MESSAGE   },
-  { 6,                      ICMP_INVALID_MESSAGE },
-  { 7,                      ICMP_INVALID_MESSAGE },
-  { ICMP_ECHO_REQUEST,      ICMP_QUERY_MESSAGE   },
-  { 9,                      ICMP_INVALID_MESSAGE },
-  { 10,                     ICMP_INVALID_MESSAGE },
-  { ICMP_TIME_EXCEEDED,     ICMP_ERROR_MESSAGE   },
-  { ICMP_PARAMETER_PROBLEM, ICMP_ERROR_MESSAGE   },
-  { ICMP_TIMESTAMP,         ICMP_QUERY_MESSAGE   },
-  { 14,                     ICMP_INVALID_MESSAGE },
-  { ICMP_INFO_REQUEST,      ICMP_QUERY_MESSAGE   },
-  { ICMP_INFO_REPLY,        ICMP_QUERY_MESSAGE   },
+  { ICMP_ECHO_REPLY,        ICMP_QUERY_MESSAGE                        },
+  { 1,                      ICMP_INVALID_MESSAGE                      },
+  { 2,                      ICMP_INVALID_MESSAGE                      },
+  { ICMP_DEST_UNREACHABLE,  ICMP_ERROR_MESSAGE                        },
+  { ICMP_SOURCE_QUENCH,     ICMP_ERROR_MESSAGE                        },
+  { ICMP_REDIRECT,          ICMP_ERROR_MESSAGE                        },
+  { 6,                      ICMP_INVALID_MESSAGE                      },
+  { 7,                      ICMP_INVALID_MESSAGE                      },
+  { ICMP_ECHO_REQUEST,      ICMP_QUERY_MESSAGE                        },
+  { 9,                      ICMP_INVALID_MESSAGE                      },
+  { 10,                     ICMP_INVALID_MESSAGE                      },
+  { ICMP_TIME_EXCEEDED,     ICMP_ERROR_MESSAGE                        },
+  { ICMP_PARAMETER_PROBLEM, ICMP_ERROR_MESSAGE                        },
+  { ICMP_TIMESTAMP,         ICMP_QUERY_MESSAGE                        },
+  { 14,                     ICMP_INVALID_MESSAGE                      },
+  { ICMP_INFO_REQUEST,      ICMP_QUERY_MESSAGE                        },
+  { ICMP_INFO_REPLY,        ICMP_QUERY_MESSAGE                        },
 };
 
 EFI_IP4_ICMP_TYPE
   mIp4SupportedIcmp[23] = {
-  { ICMP_ECHO_REPLY,        ICMP_DEFAULT_CODE         },
+  { ICMP_ECHO_REPLY,        ICMP_DEFAULT_CODE                  },
 
-  { ICMP_DEST_UNREACHABLE,  ICMP_NET_UNREACHABLE      },
-  { ICMP_DEST_UNREACHABLE,  ICMP_HOST_UNREACHABLE     },
-  { ICMP_DEST_UNREACHABLE,  ICMP_PROTO_UNREACHABLE    },
-  { ICMP_DEST_UNREACHABLE,  ICMP_PORT_UNREACHABLE     },
-  { ICMP_DEST_UNREACHABLE,  ICMP_FRAGMENT_FAILED      },
-  { ICMP_DEST_UNREACHABLE,  ICMP_SOURCEROUTE_FAILED   },
-  { ICMP_DEST_UNREACHABLE,  ICMP_NET_UNKNOWN          },
-  { ICMP_DEST_UNREACHABLE,  ICMP_HOST_UNKNOWN         },
-  { ICMP_DEST_UNREACHABLE,  ICMP_SOURCE_ISOLATED      },
-  { ICMP_DEST_UNREACHABLE,  ICMP_NET_PROHIBITED       },
-  { ICMP_DEST_UNREACHABLE,  ICMP_HOST_PROHIBITED      },
-  { ICMP_DEST_UNREACHABLE,  ICMP_NET_UNREACHABLE_TOS  },
-  { ICMP_DEST_UNREACHABLE,  ICMP_HOST_UNREACHABLE_TOS },
+  { ICMP_DEST_UNREACHABLE,  ICMP_NET_UNREACHABLE               },
+  { ICMP_DEST_UNREACHABLE,  ICMP_HOST_UNREACHABLE              },
+  { ICMP_DEST_UNREACHABLE,  ICMP_PROTO_UNREACHABLE             },
+  { ICMP_DEST_UNREACHABLE,  ICMP_PORT_UNREACHABLE              },
+  { ICMP_DEST_UNREACHABLE,  ICMP_FRAGMENT_FAILED               },
+  { ICMP_DEST_UNREACHABLE,  ICMP_SOURCEROUTE_FAILED            },
+  { ICMP_DEST_UNREACHABLE,  ICMP_NET_UNKNOWN                   },
+  { ICMP_DEST_UNREACHABLE,  ICMP_HOST_UNKNOWN                  },
+  { ICMP_DEST_UNREACHABLE,  ICMP_SOURCE_ISOLATED               },
+  { ICMP_DEST_UNREACHABLE,  ICMP_NET_PROHIBITED                },
+  { ICMP_DEST_UNREACHABLE,  ICMP_HOST_PROHIBITED               },
+  { ICMP_DEST_UNREACHABLE,  ICMP_NET_UNREACHABLE_TOS           },
+  { ICMP_DEST_UNREACHABLE,  ICMP_HOST_UNREACHABLE_TOS          },
 
-  { ICMP_SOURCE_QUENCH,     ICMP_DEFAULT_CODE         },
+  { ICMP_SOURCE_QUENCH,     ICMP_DEFAULT_CODE                  },
 
-  { ICMP_REDIRECT,          ICMP_NET_REDIRECT         },
-  { ICMP_REDIRECT,          ICMP_HOST_REDIRECT        },
-  { ICMP_REDIRECT,          ICMP_NET_TOS_REDIRECT     },
-  { ICMP_REDIRECT,          ICMP_HOST_TOS_REDIRECT    },
+  { ICMP_REDIRECT,          ICMP_NET_REDIRECT                  },
+  { ICMP_REDIRECT,          ICMP_HOST_REDIRECT                 },
+  { ICMP_REDIRECT,          ICMP_NET_TOS_REDIRECT              },
+  { ICMP_REDIRECT,          ICMP_HOST_TOS_REDIRECT             },
 
-  { ICMP_ECHO_REQUEST,      ICMP_DEFAULT_CODE         },
+  { ICMP_ECHO_REQUEST,      ICMP_DEFAULT_CODE                  },
 
-  { ICMP_TIME_EXCEEDED,     ICMP_TIMEOUT_IN_TRANSIT   },
-  { ICMP_TIME_EXCEEDED,     ICMP_TIMEOUT_REASSEMBLE   },
+  { ICMP_TIME_EXCEEDED,     ICMP_TIMEOUT_IN_TRANSIT            },
+  { ICMP_TIME_EXCEEDED,     ICMP_TIMEOUT_REASSEMBLE            },
 
-  { ICMP_PARAMETER_PROBLEM, ICMP_DEFAULT_CODE         },
+  { ICMP_PARAMETER_PROBLEM, ICMP_DEFAULT_CODE                  },
 };
 
 /**
@@ -233,7 +233,10 @@ Ip4IcmpReplyEcho (
   ASSERT (Icmp != NULL);
   Icmp->Head.Type     = ICMP_ECHO_REPLY;
   Icmp->Head.Checksum = 0;
-  Icmp->Head.Checksum = (UINT16)(~NetblockChecksum ((UINT8 *)Icmp, Data->TotalSize));
+  Icmp->Head.Checksum = (UINT16)(~NetblockChecksum (
+    (UINT8 *)Icmp,
+    Data->TotalSize
+    ));
 
   ReplyHead.Tos      = 0;
   ReplyHead.Fragment = 0;

@@ -49,9 +49,15 @@ PxeBcGetNicByIp4Children (
     if (NicHandle == NULL) {
       NicHandle = NetLibGetNicHandle (ControllerHandle, &gEfiUdp4ProtocolGuid);
       if (NicHandle == NULL) {
-        NicHandle = NetLibGetNicHandle (ControllerHandle, &gEfiDhcp4ProtocolGuid);
+        NicHandle = NetLibGetNicHandle (
+                      ControllerHandle,
+                      &gEfiDhcp4ProtocolGuid
+                      );
         if (NicHandle == NULL) {
-          NicHandle = NetLibGetNicHandle (ControllerHandle, &gEfiMtftp4ProtocolGuid);
+          NicHandle = NetLibGetNicHandle (
+                        ControllerHandle,
+                        &gEfiMtftp4ProtocolGuid
+                        );
           if (NicHandle == NULL) {
             return NULL;
           }
@@ -84,7 +90,10 @@ PxeBcGetNicByIp6Children (
     if (NicHandle == NULL) {
       NicHandle = NetLibGetNicHandle (ControllerHandle, &gEfiDhcp6ProtocolGuid);
       if (NicHandle == NULL) {
-        NicHandle = NetLibGetNicHandle (ControllerHandle, &gEfiMtftp6ProtocolGuid);
+        NicHandle = NetLibGetNicHandle (
+                      ControllerHandle,
+                      &gEfiMtftp6ProtocolGuid
+                      );
         if (NicHandle == NULL) {
           return NULL;
         }
@@ -499,7 +508,11 @@ PxeBcCheckIpv6Support (
 
   InfoTypesBuffer     = NULL;
   InfoTypeBufferCount = 0;
-  Status              = Aip->GetSupportedTypes (Aip, &InfoTypesBuffer, &InfoTypeBufferCount);
+  Status              = Aip->GetSupportedTypes (
+                               Aip,
+                               &InfoTypesBuffer,
+                               &InfoTypeBufferCount
+                               );
   if (EFI_ERROR (Status) || (InfoTypesBuffer == NULL)) {
     FreePool (InfoTypesBuffer);
     return EFI_NOT_FOUND;
@@ -507,7 +520,11 @@ PxeBcCheckIpv6Support (
 
   Supported = FALSE;
   for (TypeIndex = 0; TypeIndex < InfoTypeBufferCount; TypeIndex++) {
-    if (CompareGuid (&InfoTypesBuffer[TypeIndex], &gEfiAdapterInfoUndiIpv6SupportGuid)) {
+    if (CompareGuid (
+          &InfoTypesBuffer[TypeIndex],
+          &gEfiAdapterInfoUndiIpv6SupportGuid
+          ))
+    {
       Supported = TRUE;
       break;
     }
@@ -523,7 +540,12 @@ PxeBcCheckIpv6Support (
   //
   InfoBlock     = NULL;
   InfoBlockSize = 0;
-  Status        = Aip->GetInformation (Aip, &gEfiAdapterInfoUndiIpv6SupportGuid, &InfoBlock, &InfoBlockSize);
+  Status        = Aip->GetInformation (
+                         Aip,
+                         &gEfiAdapterInfoUndiIpv6SupportGuid,
+                         &InfoBlock,
+                         &InfoBlockSize
+                         );
   if (EFI_ERROR (Status) || (InfoBlock == NULL)) {
     FreePool (InfoBlock);
     return EFI_NOT_FOUND;
@@ -758,7 +780,10 @@ PxeBcCreateIp4Children (
 
   SetDevicePathNodeLength (&Ip4Node.Header, sizeof (Ip4Node));
 
-  Private->Ip4Nic->DevicePath = AppendDevicePathNode (Private->DevicePath, &Ip4Node.Header);
+  Private->Ip4Nic->DevicePath = AppendDevicePathNode (
+                                  Private->DevicePath,
+                                  &Ip4Node.Header
+                                  );
 
   if (Private->Ip4Nic->DevicePath == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
@@ -940,7 +965,8 @@ PxeBcCreateIp6Children (
   Private->IaId = NET_RANDOM (NetRandomInitSeed ());
   if (Private->Snp != NULL) {
     for (Index = 0; Index < Private->Snp->Mode->HwAddressSize; Index++) {
-      Private->IaId |= (Private->Snp->Mode->CurrentAddress.Addr[Index] << ((Index << 3) & 31));
+      Private->IaId |= (Private->Snp->Mode->CurrentAddress.Addr[Index] <<
+                        ((Index << 3) & 31));
     }
   }
 
@@ -1100,7 +1126,10 @@ PxeBcCreateIp6Children (
 
   SetDevicePathNodeLength (&Ip6Node.Header, sizeof (Ip6Node));
 
-  Private->Ip6Nic->DevicePath = AppendDevicePathNode (Private->DevicePath, &Ip6Node.Header);
+  Private->Ip6Nic->DevicePath = AppendDevicePathNode (
+                                  Private->DevicePath,
+                                  &Ip6Node.Header
+                                  );
 
   if (Private->Ip6Nic->DevicePath == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
@@ -1183,7 +1212,11 @@ PxeBcCreateIp6Children (
   // Set IPv6 available flag and set default configure data for
   // Udp6Read and Ip6 instance.
   //
-  Status = PxeBcCheckIpv6Support (ControllerHandle, Private, &Private->Mode.Ipv6Available);
+  Status = PxeBcCheckIpv6Support (
+             ControllerHandle,
+             Private,
+             &Private->Mode.Ipv6Available
+             );
   if (EFI_ERROR (Status)) {
     //
     // Fail to get the data whether UNDI supports IPv6. Set default value.
@@ -1237,7 +1270,10 @@ PxeBcDriverEntryPoint (
 {
   EFI_STATUS  Status;
 
-  if ((PcdGet8 (PcdIPv4PXESupport) == PXE_DISABLED) && (PcdGet8 (PcdIPv6PXESupport) == PXE_DISABLED)) {
+  if ((PcdGet8 (PcdIPv4PXESupport) == PXE_DISABLED) && (PcdGet8 (
+                                                          PcdIPv6PXESupport
+                                                          ) == PXE_DISABLED))
+  {
     return EFI_UNSUPPORTED;
   }
 

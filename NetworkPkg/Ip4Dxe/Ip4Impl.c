@@ -388,7 +388,11 @@ EfiIp4GetModeData (
     // IsConfigured is "whether the station address has been configured"
     //
     Ip4ModeData->IsStarted = (BOOLEAN)(IpInstance->State == IP4_STATE_CONFIGED);
-    CopyMem (&Ip4ModeData->ConfigData, &IpInstance->ConfigData, sizeof (Ip4ModeData->ConfigData));
+    CopyMem (
+      &Ip4ModeData->ConfigData,
+      &IpInstance->ConfigData,
+      sizeof (Ip4ModeData->ConfigData)
+      );
     Ip4ModeData->IsConfigured = FALSE;
 
     Ip4ModeData->GroupCount = IpInstance->GroupCount;
@@ -539,7 +543,11 @@ Ip4InitProtocol (
   ZeroMem (IpInstance, sizeof (IP4_PROTOCOL));
 
   IpInstance->Signature = IP4_PROTOCOL_SIGNATURE;
-  CopyMem (&IpInstance->Ip4Proto, &mEfiIp4ProtocolTemplete, sizeof (IpInstance->Ip4Proto));
+  CopyMem (
+    &IpInstance->Ip4Proto,
+    &mEfiIp4ProtocolTemplete,
+    sizeof (IpInstance->Ip4Proto)
+    );
   IpInstance->State     = IP4_STATE_UNCONFIGED;
   IpInstance->InDestroy = FALSE;
   IpInstance->Service   = IpSb;
@@ -924,7 +932,10 @@ EfiIp4Configure (
       }
 
       if (!Current->UseDefaultAddress &&
-          (!EFI_IP4_EQUAL (&Current->StationAddress, &IpConfigData->StationAddress) ||
+          (!EFI_IP4_EQUAL (
+              &Current->StationAddress,
+              &IpConfigData->StationAddress
+              ) ||
            !EFI_IP4_EQUAL (&Current->SubnetMask, &IpConfigData->SubnetMask)))
       {
         Status = EFI_ALREADY_STARTED;
@@ -1011,7 +1022,11 @@ Ip4Groups (
       }
     }
 
-    Members = Ip4CombineGroups (IpInstance->Groups, IpInstance->GroupCount, Group);
+    Members = Ip4CombineGroups (
+                IpInstance->Groups,
+                IpInstance->GroupCount,
+                Group
+                );
 
     if (Members == NULL) {
       return EFI_OUT_OF_RESOURCES;
@@ -1248,7 +1263,11 @@ EfiIp4Routes (
   // the gateway address must be a unicast on the connected network if not zero.
   //
   if ((Nexthop != IP4_ALLZERO_ADDRESS) &&
-      (((IpIf->SubnetMask != IP4_ALLONE_ADDRESS) && !IP4_NET_EQUAL (Nexthop, IpIf->Ip, IpIf->SubnetMask)) ||
+      (((IpIf->SubnetMask != IP4_ALLONE_ADDRESS) && !IP4_NET_EQUAL (
+                                                       Nexthop,
+                                                       IpIf->Ip,
+                                                       IpIf->SubnetMask
+                                                       )) ||
        IP4_IS_BROADCAST (Ip4GetNetCast (Nexthop, IpIf))))
   {
     Status = EFI_INVALID_PARAMETER;
@@ -1328,7 +1347,9 @@ Ip4TxTokenValid (
   UINT32                 Index;
   UINT32                 HeadLen;
 
-  if ((Token == NULL) || (Token->Event == NULL) || (Token->Packet.TxData == NULL)) {
+  if ((Token == NULL) || (Token->Event == NULL) || (Token->Packet.TxData ==
+                                                    NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1377,7 +1398,12 @@ Ip4TxTokenValid (
       return EFI_INVALID_PARAMETER;
     }
 
-    if (!Ip4OptionIsValid (TxData->OptionsBuffer, TxData->OptionsLength, FALSE)) {
+    if (!Ip4OptionIsValid (
+           TxData->OptionsBuffer,
+           TxData->OptionsLength,
+           FALSE
+           ))
+    {
       return EFI_INVALID_PARAMETER;
     }
   }
@@ -1673,8 +1699,10 @@ EfiIp4Transmit (
     //
     // Trim off IPv4 header and options from first fragment.
     //
-    TxData->FragmentTable[0].FragmentBuffer = (UINT8 *)FirstFragment + RawHdrLen;
-    TxData->FragmentTable[0].FragmentLength = TxData->FragmentTable[0].FragmentLength - RawHdrLen;
+    TxData->FragmentTable[0].FragmentBuffer = (UINT8 *)FirstFragment +
+                                              RawHdrLen;
+    TxData->FragmentTable[0].FragmentLength =
+      TxData->FragmentTable[0].FragmentLength - RawHdrLen;
   } else {
     CopyMem (&Head.Dst, &TxData->DestinationAddress, sizeof (IP4_ADDR));
     Head.Dst = NTOHL (Head.Dst);
@@ -1710,7 +1738,9 @@ EfiIp4Transmit (
   //
   // If don't fragment and fragment needed, return error
   //
-  if (DontFragment && (TxData->TotalDataLength + HeadLen > IpSb->MaxPacketSize)) {
+  if (DontFragment && (TxData->TotalDataLength + HeadLen >
+                       IpSb->MaxPacketSize))
+  {
     Status = EFI_BAD_BUFFER_SIZE;
     goto ON_EXIT;
   }
@@ -2296,7 +2326,9 @@ Ip4TimerReconfigChecking (
   //
   // Media transimit Unpresent to Present means new link movement is detected.
   //
-  if (!OldMediaPresent && IpSb->MediaPresent && (IpSb->Ip4Config2Instance.Policy == Ip4Config2PolicyDhcp)) {
+  if (!OldMediaPresent && IpSb->MediaPresent &&
+      (IpSb->Ip4Config2Instance.Policy == Ip4Config2PolicyDhcp))
+  {
     //
     // Signal the IP4 to run the dhcp configuration again. IP4 driver will free
     // old IP address related resource, such as route table and Interface, then

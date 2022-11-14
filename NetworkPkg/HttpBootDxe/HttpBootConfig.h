@@ -19,7 +19,8 @@ extern   UINT8  HttpBootConfigVfrBin[];
 
 #pragma pack()
 
-#define HTTP_BOOT_FORM_CALLBACK_INFO_SIGNATURE  SIGNATURE_32 ('H', 'B', 'f', 'c')
+#define HTTP_BOOT_FORM_CALLBACK_INFO_SIGNATURE  \
+  SIGNATURE_32 ('H', 'B', 'f', 'c')
 
 #define HTTP_BOOT_FORM_CALLBACK_INFO_FROM_CONFIG_ACCESS(Callback) \
   CR ( \

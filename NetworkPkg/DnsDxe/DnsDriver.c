@@ -150,12 +150,25 @@ DnsDestroyChildEntryInHandleBuffer (
     return EFI_INVALID_PARAMETER;
   }
 
-  Instance          = NET_LIST_USER_STRUCT_S (Entry, DNS_INSTANCE, Link, DNS_INSTANCE_SIGNATURE);
-  ServiceBinding    = ((DNS_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ServiceBinding;
-  NumberOfChildren  = ((DNS_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->NumberOfChildren;
-  ChildHandleBuffer = ((DNS_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ChildHandleBuffer;
+  Instance = NET_LIST_USER_STRUCT_S (
+               Entry,
+               DNS_INSTANCE,
+               Link,
+               DNS_INSTANCE_SIGNATURE
+               );
+  ServiceBinding =
+    ((DNS_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ServiceBinding;
+  NumberOfChildren =
+    ((DNS_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->NumberOfChildren;
+  ChildHandleBuffer =
+    ((DNS_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ChildHandleBuffer;
 
-  if (!NetIsInHandleBuffer (Instance->ChildHandle, NumberOfChildren, ChildHandleBuffer)) {
+  if (!NetIsInHandleBuffer (
+         Instance->ChildHandle,
+         NumberOfChildren,
+         ChildHandleBuffer
+         ))
+  {
     return EFI_SUCCESS;
   }
 
@@ -382,7 +395,11 @@ DnsUnload (
     while (!IsListEmpty (&mDriverData->Dns4ServerList)) {
       Entry = NetListRemoveHead (&mDriverData->Dns4ServerList);
       ASSERT (Entry != NULL);
-      ItemServerIp4 = NET_LIST_USER_STRUCT (Entry, DNS4_SERVER_IP, AllServerLink);
+      ItemServerIp4 = NET_LIST_USER_STRUCT (
+                        Entry,
+                        DNS4_SERVER_IP,
+                        AllServerLink
+                        );
       FreePool (ItemServerIp4);
     }
 
@@ -398,7 +415,11 @@ DnsUnload (
     while (!IsListEmpty (&mDriverData->Dns6ServerList)) {
       Entry = NetListRemoveHead (&mDriverData->Dns6ServerList);
       ASSERT (Entry != NULL);
-      ItemServerIp6 = NET_LIST_USER_STRUCT (Entry, DNS6_SERVER_IP, AllServerLink);
+      ItemServerIp6 = NET_LIST_USER_STRUCT (
+                        Entry,
+                        DNS6_SERVER_IP,
+                        AllServerLink
+                        );
       FreePool (ItemServerIp6);
     }
 
@@ -646,7 +667,12 @@ Dns4DriverBindingStart (
   DNS_SERVICE  *DnsSb;
   EFI_STATUS   Status;
 
-  Status = DnsCreateService (ControllerHandle, This->DriverBindingHandle, IP_VERSION_4, &DnsSb);
+  Status = DnsCreateService (
+             ControllerHandle,
+             This->DriverBindingHandle,
+             IP_VERSION_4,
+             &DnsSb
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -910,7 +936,12 @@ Dns6DriverBindingStart (
   DNS_SERVICE  *DnsSb;
   EFI_STATUS   Status;
 
-  Status = DnsCreateService (ControllerHandle, This->DriverBindingHandle, IP_VERSION_6, &DnsSb);
+  Status = DnsCreateService (
+             ControllerHandle,
+             This->DriverBindingHandle,
+             IP_VERSION_6,
+             &DnsSb
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }

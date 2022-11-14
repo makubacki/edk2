@@ -145,8 +145,11 @@ MnpRemoveVlanTag (
     return FALSE;
   }
 
-  VlanTag.Uint16 = NTOHS (*(UINT16 *)(Packet + ProtocolOffset + sizeof (ProtocolType)));
-  *VlanId        = VlanTag.Bits.Vid;
+  VlanTag.Uint16 = NTOHS (
+                     *(UINT16 *)(Packet + ProtocolOffset +
+                                 sizeof (ProtocolType))
+                     );
+  *VlanId = VlanTag.Bits.Vid;
 
   //
   // Move hardware address (DA + SA) 4 bytes right to override VLAN tag
@@ -195,7 +198,8 @@ MnpInsertVlanTag (
   *Length       = *Length + NET_VLAN_TAG_LEN;
   *Packet       = *Packet - NET_VLAN_TAG_LEN;
 
-  Tpid    = (UINT16 *)(*Packet + SnpMode->MediaHeaderSize - sizeof (*ProtocolType));
+  Tpid    = (UINT16 *)(*Packet + SnpMode->MediaHeaderSize -
+                       sizeof (*ProtocolType));
   VlanTci = (VLAN_TCI *)(UINTN)(Tpid + 1);
   if (TxData->HeaderLength != 0) {
     //
@@ -339,7 +343,13 @@ MnpGetVlanVariable (
     return Status;
   }
 
-  Status = MnpCheckVlanVariable (MnpDeviceData, Buffer, BufferSize / sizeof (VLAN_TCI), &NewNumberOfVlan);
+  Status = MnpCheckVlanVariable (
+             MnpDeviceData,
+             Buffer,
+             BufferSize /
+             sizeof (VLAN_TCI),
+             &NewNumberOfVlan
+             );
   if (!EFI_ERROR (Status)) {
     *NumberOfVlan = NewNumberOfVlan;
     *VlanVariable = Buffer;
@@ -569,7 +579,9 @@ VlanConfigFind (
   LIST_ENTRY          *Entry;
   EFI_VLAN_FIND_DATA  *VlanData;
 
-  if ((This == NULL) || ((VlanId != NULL) && (*VlanId > 4094)) || (NumberOfVlan == NULL) || (Entries == NULL)) {
+  if ((This == NULL) || ((VlanId != NULL) && (*VlanId > 4094)) ||
+      (NumberOfVlan == NULL) || (Entries == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -586,7 +598,10 @@ VlanConfigFind (
     // Return all current VLAN configuration
     //
     *NumberOfVlan = (UINT16)MnpDeviceData->NumberOfVlan;
-    VlanData      = AllocateZeroPool (*NumberOfVlan * sizeof (EFI_VLAN_FIND_DATA));
+    VlanData      = AllocateZeroPool (
+                      *NumberOfVlan *
+                      sizeof (EFI_VLAN_FIND_DATA)
+                      );
     if (VlanData == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -706,7 +721,10 @@ VlanConfigRemove (
   //
   VlanVariable = NULL;
   if (MnpDeviceData->NumberOfVlan != 0) {
-    VlanVariable = AllocatePool (MnpDeviceData->NumberOfVlan * sizeof (VLAN_TCI));
+    VlanVariable = AllocatePool (
+                     MnpDeviceData->NumberOfVlan *
+                     sizeof (VLAN_TCI)
+                     );
     if (VlanVariable == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -721,7 +739,11 @@ VlanConfigRemove (
     }
   }
 
-  Status = MnpSetVlanVariable (MnpDeviceData, MnpDeviceData->NumberOfVlan, VlanVariable);
+  Status = MnpSetVlanVariable (
+             MnpDeviceData,
+             MnpDeviceData->NumberOfVlan,
+             VlanVariable
+             );
 
   if (VlanVariable != NULL) {
     FreePool (VlanVariable);

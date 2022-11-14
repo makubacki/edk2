@@ -106,7 +106,10 @@ HttpUtilitiesBuild (
   // Handle DeleteList
   //
   if ((SeedFieldCount != 0) && (DeleteCount != 0)) {
-    TempHeaderFields = AllocateZeroPool (SeedFieldCount * sizeof (EFI_HTTP_HEADER));
+    TempHeaderFields = AllocateZeroPool (
+                         SeedFieldCount *
+                         sizeof (EFI_HTTP_HEADER)
+                         );
     if (TempHeaderFields == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
       goto ON_EXIT;
@@ -116,7 +119,12 @@ HttpUtilitiesBuild (
       //
       // Check whether each SeedHeaderFields member is in DeleteList
       //
-      if (HttpIsValidHttpHeader (DeleteList, DeleteCount, SeedHeaderFields[Index].FieldName)) {
+      if (HttpIsValidHttpHeader (
+            DeleteList,
+            DeleteCount,
+            SeedHeaderFields[Index].FieldName
+            ))
+      {
         Status = HttpSetFieldNameAndValue (
                    &TempHeaderFields[TempFieldCount],
                    SeedHeaderFields[Index].FieldName,
@@ -137,7 +145,10 @@ HttpUtilitiesBuild (
   //
   // Handle AppendList
   //
-  NewHeaderFields = AllocateZeroPool ((TempFieldCount + AppendCount) * sizeof (EFI_HTTP_HEADER));
+  NewHeaderFields = AllocateZeroPool (
+                      (TempFieldCount + AppendCount) *
+                      sizeof (EFI_HTTP_HEADER)
+                      );
   if (NewHeaderFields == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ON_EXIT;
@@ -157,7 +168,11 @@ HttpUtilitiesBuild (
   NewFieldCount = TempFieldCount;
 
   for (Index = 0; Index < AppendCount; Index++) {
-    HttpHeader = HttpFindHeader (NewFieldCount, NewHeaderFields, AppendList[Index]->FieldName);
+    HttpHeader = HttpFindHeader (
+                   NewFieldCount,
+                   NewHeaderFields,
+                   AppendList[Index]->FieldName
+                   );
     if (HttpHeader != NULL) {
       Status = HttpSetFieldNameAndValue (
                  HttpHeader,
@@ -304,7 +319,9 @@ HttpUtilitiesParse (
   FieldValue      = NULL;
   Index           = 0;
 
-  if ((This == NULL) || (HttpMessage == NULL) || (HeaderFields == NULL) || (FieldCount == NULL)) {
+  if ((This == NULL) || (HttpMessage == NULL) || (HeaderFields == NULL) ||
+      (FieldCount == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -367,7 +384,11 @@ HttpUtilitiesParse (
       break;
     }
 
-    Status = HttpSetFieldNameAndValue (&(*HeaderFields)[Index], FieldName, FieldValue);
+    Status = HttpSetFieldNameAndValue (
+               &(*HeaderFields)[Index],
+               FieldName,
+               FieldValue
+               );
     if (EFI_ERROR (Status)) {
       *FieldCount = 0;
       HttpFreeHeaderFields (*HeaderFields, Index);

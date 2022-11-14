@@ -254,7 +254,12 @@ NetbufClone (
   Clone->Vector     = Nbuf->Vector;
   Clone->BlockOpNum = Nbuf->BlockOpNum;
   Clone->TotalSize  = Nbuf->TotalSize;
-  CopyMem (Clone->BlockOp, Nbuf->BlockOp, sizeof (NET_BLOCK_OP) * Nbuf->BlockOpNum);
+  CopyMem (
+    Clone->BlockOp,
+    Nbuf->BlockOp,
+    sizeof (NET_BLOCK_OP) *
+    Nbuf->BlockOpNum
+    );
 
   return Clone;
 }
@@ -826,7 +831,12 @@ NetbufFromExt (
   }
 
   for ( ; Index < ExtNum; Index++) {
-    NetbufSetBlock (Nbuf, ExtFragment[Index].Bulk, ExtFragment[Index].Len, CurBlock);
+    NetbufSetBlock (
+      Nbuf,
+      ExtFragment[Index].Bulk,
+      ExtFragment[Index].Len,
+      CurBlock
+      );
     TotalLen += ExtFragment[Index].Len;
     CurBlock++;
   }

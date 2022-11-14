@@ -34,10 +34,14 @@ EFI_GUID  mEfiWifiMgrPrivateGuid = EFI_WIFIMGR_PRIVATE_GUID;
 //
 // The Hii config guids
 //
-EFI_GUID  gWifiConfigFormSetGuid            = WIFI_CONNECTION_MANAGER_CONFIG_GUID;
-EFI_GUID  mWifiConfigNetworkListRefreshGuid = WIFI_CONFIG_NETWORK_LIST_REFRESH_GUID;
-EFI_GUID  mWifiConfigConnectFormRefreshGuid = WIFI_CONFIG_CONNECT_FORM_REFRESH_GUID;
-EFI_GUID  mWifiConfigMainFormRefreshGuid    = WIFI_CONFIG_MAIN_FORM_REFRESH_GUID;
+EFI_GUID  gWifiConfigFormSetGuid =
+  WIFI_CONNECTION_MANAGER_CONFIG_GUID;
+EFI_GUID  mWifiConfigNetworkListRefreshGuid =
+  WIFI_CONFIG_NETWORK_LIST_REFRESH_GUID;
+EFI_GUID  mWifiConfigConnectFormRefreshGuid =
+  WIFI_CONFIG_CONNECT_FORM_REFRESH_GUID;
+EFI_GUID  mWifiConfigMainFormRefreshGuid =
+  WIFI_CONFIG_MAIN_FORM_REFRESH_GUID;
 
 /**
   Tests to see if this driver supports a given controller. If a child device is provided,
@@ -261,7 +265,11 @@ WifiMgrDxeDriverBindingStart (
     goto ERROR2;
   }
 
-  Status = gBS->SetTimer (Nic->TickTimer, TimerPeriodic, EFI_TIMER_PERIOD_MILLISECONDS (500));
+  Status = gBS->SetTimer (
+                  Nic->TickTimer,
+                  TimerPeriodic,
+                  EFI_TIMER_PERIOD_MILLISECONDS (500)
+                  );
   if (EFI_ERROR (Status)) {
     goto ERROR3;
   }
@@ -492,7 +500,10 @@ WifiMgrDxeDriverBindingStop (
   WifiMgrFreeProfileList (&Nic->ProfileList);
   FreePool (Nic);
 
-  DEBUG ((DEBUG_INFO, "[WiFi Connection Manager] Device Controller has been Disconnected!\n"));
+  DEBUG ((
+    DEBUG_INFO,
+    "[WiFi Connection Manager] Device Controller has been Disconnected!\n"
+    ));
   return EFI_SUCCESS;
 }
 

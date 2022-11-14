@@ -41,7 +41,8 @@ extern EFI_COMPONENT_NAME_PROTOCOL   gVlanConfigComponentName;
 extern UINT8  VlanConfigBin[];
 extern UINT8  VlanConfigDxeStrings[];
 
-#define VLAN_LIST_VAR_OFFSET  ((UINT16) OFFSET_OF (VLAN_CONFIGURATION, VlanList))
+#define VLAN_LIST_VAR_OFFSET  \
+  ((UINT16) OFFSET_OF (VLAN_CONFIGURATION, VlanList))
 
 typedef struct {
   UINTN                             Signature;
@@ -62,7 +63,9 @@ typedef struct {
 } VLAN_CONFIG_PRIVATE_DATA;
 
 #define VLAN_CONFIG_PRIVATE_DATA_SIGNATURE  SIGNATURE_32 ('V', 'C', 'P', 'D')
-#define VLAN_CONFIG_PRIVATE_DATA_FROM_THIS(a)  CR (a, VLAN_CONFIG_PRIVATE_DATA, ConfigAccess, VLAN_CONFIG_PRIVATE_DATA_SIGNATURE)
+#define VLAN_CONFIG_PRIVATE_DATA_FROM_THIS( \
+                                          a)  \
+  CR (a, VLAN_CONFIG_PRIVATE_DATA, ConfigAccess, VLAN_CONFIG_PRIVATE_DATA_SIGNATURE)
 
 extern VLAN_CONFIG_PRIVATE_DATA  mVlanConfigPrivateDateTemplate;
 

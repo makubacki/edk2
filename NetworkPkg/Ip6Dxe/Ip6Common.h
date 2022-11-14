@@ -10,7 +10,9 @@
 #ifndef __EFI_IP6_COMMON_H__
 #define __EFI_IP6_COMMON_H__
 
-#define IP6_LINK_EQUAL(Mac1, Mac2)  (CompareMem ((Mac1), (Mac2), sizeof (EFI_MAC_ADDRESS)) == 0)
+#define IP6_LINK_EQUAL(Mac1, \
+                       Mac2)  \
+  (CompareMem ((Mac1), (Mac2), sizeof (EFI_MAC_ADDRESS)) == 0)
 
 //
 // Convert the Microsecond to second. IP transmit/receive time is

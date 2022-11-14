@@ -25,7 +25,8 @@ STATIC UINT32  mAKMSuitePreference[] = {
 
   IEEE_80211_AKM_SUITE_OWE                          // AKM Suite 18
 };
-#define AKM_SUITE_PREFERENCE_COUNT  (sizeof (mAKMSuitePreference)  / sizeof (UINT32))
+#define AKM_SUITE_PREFERENCE_COUNT  \
+  (sizeof (mAKMSuitePreference)  / sizeof (UINT32))
 
 /**
   Empty function for event process function.
@@ -184,7 +185,9 @@ WifiMgrGetProfileByUnicodeSSId (
                 Link,
                 WIFI_MGR_PROFILE_SIGNATURE
                 );
-    if ((StrCmp (SSId, Profile->SSId) == 0) && (SecurityType == Profile->SecurityType)) {
+    if ((StrCmp (SSId, Profile->SSId) == 0) && (SecurityType ==
+                                                Profile->SecurityType))
+    {
       return Profile;
     }
   }
@@ -215,11 +218,17 @@ WifiMgrGetProfileByAsciiSSId (
     return NULL;
   }
 
-  if (AsciiStrToUnicodeStrS (SSId, SSIdUniCode, SSID_STORAGE_SIZE) != RETURN_SUCCESS) {
+  if (AsciiStrToUnicodeStrS (SSId, SSIdUniCode, SSID_STORAGE_SIZE) !=
+      RETURN_SUCCESS)
+  {
     return NULL;
   }
 
-  return WifiMgrGetProfileByUnicodeSSId (SSIdUniCode, SecurityType, ProfileList);
+  return WifiMgrGetProfileByUnicodeSSId (
+           SSIdUniCode,
+           SecurityType,
+           ProfileList
+           );
 }
 
 /**
@@ -363,7 +372,9 @@ WifiMgrCheckRSN (
   UINT16                           AKMIndex;
   UINT16                           CipherIndex;
 
-  if ((Nic == NULL) || (AKMList == NULL) || (CipherList == NULL) || (SecurityType == NULL)) {
+  if ((Nic == NULL) || (AKMList == NULL) || (CipherList == NULL) ||
+      (SecurityType == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -391,8 +402,16 @@ WifiMgrCheckRSN (
 
   for (AKMIndex = 0; AKMIndex < AKM_SUITE_PREFERENCE_COUNT; AKMIndex++) {
     AKMSuite = mAKMSuitePreference + AKMIndex;
-    if (WifiMgrSupportAKMSuite (AKMList->AKMSuiteCount, (UINT32 *)AKMList->AKMSuiteList, AKMSuite) &&
-        WifiMgrSupportAKMSuite (SupportedAKMSuites->AKMSuiteCount, (UINT32 *)SupportedAKMSuites->AKMSuiteList, AKMSuite))
+    if (WifiMgrSupportAKMSuite (
+          AKMList->AKMSuiteCount,
+          (UINT32 *)AKMList->AKMSuiteList,
+          AKMSuite
+          ) &&
+        WifiMgrSupportAKMSuite (
+          SupportedAKMSuites->AKMSuiteCount,
+          (UINT32 *)SupportedAKMSuites->AKMSuiteList,
+          AKMSuite
+          ))
     {
       if ((AKMSuiteSupported != NULL) && (CipherSuiteSupported != NULL)) {
         *AKMSuiteSupported = TRUE;
@@ -412,7 +431,9 @@ WifiMgrCheckRSN (
         }
       }
 
-      for (CipherIndex = 0; CipherIndex < CipherList->CipherSuiteCount; CipherIndex++) {
+      for (CipherIndex = 0; CipherIndex < CipherList->CipherSuiteCount;
+           CipherIndex++)
+      {
         CipherSuite = CipherList->CipherSuiteList + CipherIndex;
 
         if (SupportedSwCipherSuites != NULL) {
@@ -422,10 +443,15 @@ WifiMgrCheckRSN (
                 (UINT32 *)CipherSuite
                 ))
           {
-            *SecurityType = WifiMgrGetSecurityType ((UINT32 *)AKMSuite, (UINT32 *)CipherSuite);
+            *SecurityType = WifiMgrGetSecurityType (
+                              (UINT32 *)AKMSuite,
+                              (UINT32 *)CipherSuite
+                              );
 
             if (*SecurityType != SECURITY_TYPE_UNKNOWN) {
-              if ((AKMSuiteSupported != NULL) && (CipherSuiteSupported != NULL)) {
+              if ((AKMSuiteSupported != NULL) && (CipherSuiteSupported !=
+                                                  NULL))
+              {
                 *CipherSuiteSupported = TRUE;
               }
 
@@ -441,10 +467,15 @@ WifiMgrCheckRSN (
                 (UINT32 *)CipherSuite
                 ))
           {
-            *SecurityType = WifiMgrGetSecurityType ((UINT32 *)AKMSuite, (UINT32 *)CipherSuite);
+            *SecurityType = WifiMgrGetSecurityType (
+                              (UINT32 *)AKMSuite,
+                              (UINT32 *)CipherSuite
+                              );
 
             if (*SecurityType != SECURITY_TYPE_UNKNOWN) {
-              if ((AKMSuiteSupported != NULL) && (CipherSuiteSupported != NULL)) {
+              if ((AKMSuiteSupported != NULL) && (CipherSuiteSupported !=
+                                                  NULL))
+              {
                 *CipherSuiteSupported = TRUE;
               }
 
@@ -590,7 +621,12 @@ WifiMgrGetSupportedSuites (
   Supplicant = Nic->Supplicant;
 
   DataSize = 0;
-  Status   = Supplicant->GetData (Supplicant, EfiSupplicant80211SupportedAKMSuites, NULL, &DataSize);
+  Status   = Supplicant->GetData (
+                           Supplicant,
+                           EfiSupplicant80211SupportedAKMSuites,
+                           NULL,
+                           &DataSize
+                           );
   if ((Status == EFI_BUFFER_TOO_SMALL) && (DataSize > 0)) {
     SupportedAKMSuites = AllocateZeroPool (DataSize);
     if (SupportedAKMSuites == NULL) {
@@ -613,7 +649,12 @@ WifiMgrGetSupportedSuites (
   }
 
   DataSize = 0;
-  Status   = Supplicant->GetData (Supplicant, EfiSupplicant80211SupportedSoftwareCipherSuites, NULL, &DataSize);
+  Status   = Supplicant->GetData (
+                           Supplicant,
+                           EfiSupplicant80211SupportedSoftwareCipherSuites,
+                           NULL,
+                           &DataSize
+                           );
   if ((Status == EFI_BUFFER_TOO_SMALL) && (DataSize > 0)) {
     SupportedSwCipherSuites = AllocateZeroPool (DataSize);
     if (SupportedSwCipherSuites == NULL) {
@@ -636,7 +677,12 @@ WifiMgrGetSupportedSuites (
   }
 
   DataSize = 0;
-  Status   = Supplicant->GetData (Supplicant, EfiSupplicant80211SupportedHardwareCipherSuites, NULL, &DataSize);
+  Status   = Supplicant->GetData (
+                           Supplicant,
+                           EfiSupplicant80211SupportedHardwareCipherSuites,
+                           NULL,
+                           &DataSize
+                           );
   if ((Status == EFI_BUFFER_TOO_SMALL) && (DataSize > 0)) {
     SupportedHwCipherSuites = AllocateZeroPool (DataSize);
     if (SupportedHwCipherSuites == NULL) {
@@ -674,7 +720,11 @@ WifiMgrCleanProfileSecrets (
 {
   ZeroMem (Profile->Password, sizeof (CHAR16) * PASSWORD_STORAGE_SIZE);
   ZeroMem (Profile->EapPassword, sizeof (CHAR16) * PASSWORD_STORAGE_SIZE);
-  ZeroMem (Profile->PrivateKeyPassword, sizeof (CHAR16) * PASSWORD_STORAGE_SIZE);
+  ZeroMem (
+    Profile->PrivateKeyPassword,
+    sizeof (CHAR16) *
+    PASSWORD_STORAGE_SIZE
+    );
 
   if (Profile->CACertData != NULL) {
     ZeroMem (Profile->CACertData, Profile->CACertSize);

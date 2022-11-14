@@ -140,7 +140,8 @@ Mtftp4ComponentNameGetControllerName (
 ///
 /// EFI Component Name Protocol
 ///
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gMtftp4ComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gMtftp4ComponentName = {
   Mtftp4ComponentNameGetDriverName,
   Mtftp4ComponentNameGetControllerName,
   "eng"
@@ -149,13 +150,15 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gMtftp4ComponentName 
 ///
 /// EFI Component Name 2 Protocol
 ///
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gMtftp4ComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gMtftp4ComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)Mtftp4ComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)Mtftp4ComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mMtftp4DriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mMtftp4DriverNameTable[] = {
   {
     "eng;en",
     L"MTFTP4 Network Service"
@@ -166,7 +169,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mMtftp4DriverNameTable[]
   }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  *gMtftp4ControllerNameTable = NULL;
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  *
+  gMtftp4ControllerNameTable = NULL;
 
 /**
   Retrieves a Unicode string that is the user readable name of the driver.

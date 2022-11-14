@@ -114,9 +114,18 @@ Tcp4GetMode (
       Option->KeepAliveTime     = Tcb->KeepAliveIdle / TCP_TICK_HZ;
       Option->KeepAliveInterval = Tcb->KeepAlivePeriod / TCP_TICK_HZ;
 
-      Option->EnableNagle         = (BOOLEAN)(!TCP_FLG_ON (Tcb->CtrlFlag, TCP_CTRL_NO_NAGLE));
-      Option->EnableTimeStamp     = (BOOLEAN)(!TCP_FLG_ON (Tcb->CtrlFlag, TCP_CTRL_NO_TS));
-      Option->EnableWindowScaling = (BOOLEAN)(!TCP_FLG_ON (Tcb->CtrlFlag, TCP_CTRL_NO_WS));
+      Option->EnableNagle         = (BOOLEAN)(!TCP_FLG_ON (
+                                                 Tcb->CtrlFlag,
+                                                 TCP_CTRL_NO_NAGLE
+                                                 ));
+      Option->EnableTimeStamp     = (BOOLEAN)(!TCP_FLG_ON (
+                                                 Tcb->CtrlFlag,
+                                                 TCP_CTRL_NO_TS
+                                                 ));
+      Option->EnableWindowScaling = (BOOLEAN)(!TCP_FLG_ON (
+                                                 Tcb->CtrlFlag,
+                                                 TCP_CTRL_NO_WS
+                                                 ));
 
       Option->EnableSelectiveAck     = FALSE;
       Option->EnablePathMtuDiscovery = FALSE;
@@ -126,7 +135,12 @@ Tcp4GetMode (
   Ip = Tcb->IpInfo->Ip.Ip4;
   ASSERT (Ip != NULL);
 
-  return Ip->GetModeData (Ip, Mode->Ip4ModeData, Mode->MnpConfigData, Mode->SnpModeData);
+  return Ip->GetModeData (
+               Ip,
+               Mode->Ip4ModeData,
+               Mode->MnpConfigData,
+               Mode->SnpModeData
+               );
 }
 
 /**
@@ -191,9 +205,18 @@ Tcp6GetMode (
       Option->KeepAliveTime     = Tcb->KeepAliveIdle / TCP_TICK_HZ;
       Option->KeepAliveInterval = Tcb->KeepAlivePeriod / TCP_TICK_HZ;
 
-      Option->EnableNagle         = (BOOLEAN)(!TCP_FLG_ON (Tcb->CtrlFlag, TCP_CTRL_NO_NAGLE));
-      Option->EnableTimeStamp     = (BOOLEAN)(!TCP_FLG_ON (Tcb->CtrlFlag, TCP_CTRL_NO_TS));
-      Option->EnableWindowScaling = (BOOLEAN)(!TCP_FLG_ON (Tcb->CtrlFlag, TCP_CTRL_NO_WS));
+      Option->EnableNagle         = (BOOLEAN)(!TCP_FLG_ON (
+                                                 Tcb->CtrlFlag,
+                                                 TCP_CTRL_NO_NAGLE
+                                                 ));
+      Option->EnableTimeStamp     = (BOOLEAN)(!TCP_FLG_ON (
+                                                 Tcb->CtrlFlag,
+                                                 TCP_CTRL_NO_TS
+                                                 ));
+      Option->EnableWindowScaling = (BOOLEAN)(!TCP_FLG_ON (
+                                                 Tcb->CtrlFlag,
+                                                 TCP_CTRL_NO_WS
+                                                 ));
 
       Option->EnableSelectiveAck     = FALSE;
       Option->EnablePathMtuDiscovery = FALSE;
@@ -203,7 +226,12 @@ Tcp6GetMode (
   Ip = Tcb->IpInfo->Ip.Ip6;
   ASSERT (Ip != NULL);
 
-  return Ip->GetModeData (Ip, Mode->Ip6ModeData, Mode->MnpConfigData, Mode->SnpModeData);
+  return Ip->GetModeData (
+               Ip,
+               Mode->Ip6ModeData,
+               Mode->MnpConfigData,
+               Mode->SnpModeData
+               );
 }
 
 /**
@@ -463,11 +491,16 @@ TcpConfigurePcb (
     //
     // Add Ip for send pkt to the peer
     //
-    CopyMem (&IpCfgData.Ip4CfgData, &mIp4IoDefaultIpConfigData, sizeof (EFI_IP4_CONFIG_DATA));
+    CopyMem (
+      &IpCfgData.Ip4CfgData,
+      &mIp4IoDefaultIpConfigData,
+      sizeof (EFI_IP4_CONFIG_DATA)
+      );
     IpCfgData.Ip4CfgData.DefaultProtocol   = EFI_IP_PROTO_TCP;
     IpCfgData.Ip4CfgData.TypeOfService     = CfgData->Tcp4CfgData.TypeOfService;
     IpCfgData.Ip4CfgData.TimeToLive        = CfgData->Tcp4CfgData.TimeToLive;
-    IpCfgData.Ip4CfgData.UseDefaultAddress = CfgData->Tcp4CfgData.AccessPoint.UseDefaultAddress;
+    IpCfgData.Ip4CfgData.UseDefaultAddress =
+      CfgData->Tcp4CfgData.AccessPoint.UseDefaultAddress;
     IP4_COPY_ADDRESS (
       &IpCfgData.Ip4CfgData.SubnetMask,
       &CfgData->Tcp4CfgData.AccessPoint.SubnetMask
@@ -480,7 +513,11 @@ TcpConfigurePcb (
   } else {
     ASSERT (Sk->IpVersion == IP_VERSION_6);
 
-    CopyMem (&IpCfgData.Ip6CfgData, &mIp6IoDefaultIpConfigData, sizeof (EFI_IP6_CONFIG_DATA));
+    CopyMem (
+      &IpCfgData.Ip6CfgData,
+      &mIp6IoDefaultIpConfigData,
+      sizeof (EFI_IP6_CONFIG_DATA)
+      );
     IpCfgData.Ip6CfgData.DefaultProtocol = EFI_IP_PROTO_TCP;
     IpCfgData.Ip6CfgData.TrafficClass    = CfgData->Tcp6CfgData.TrafficClass;
     IpCfgData.Ip6CfgData.HopLimit        = CfgData->Tcp6CfgData.HopLimit;
@@ -581,11 +618,22 @@ TcpConfigurePcb (
 
     Tcb->UseDefaultAddr = CfgData->Tcp4CfgData.AccessPoint.UseDefaultAddress;
 
-    CopyMem (&Tcb->LocalEnd.Ip, &CfgData->Tcp4CfgData.AccessPoint.StationAddress, sizeof (IP4_ADDR));
+    CopyMem (
+      &Tcb->LocalEnd.Ip,
+      &CfgData->Tcp4CfgData.AccessPoint.StationAddress,
+      sizeof (IP4_ADDR)
+      );
     Tcb->LocalEnd.Port = HTONS (CfgData->Tcp4CfgData.AccessPoint.StationPort);
-    IP4_COPY_ADDRESS (&Tcb->SubnetMask, &CfgData->Tcp4CfgData.AccessPoint.SubnetMask);
+    IP4_COPY_ADDRESS (
+      &Tcb->SubnetMask,
+      &CfgData->Tcp4CfgData.AccessPoint.SubnetMask
+      );
 
-    CopyMem (&Tcb->RemoteEnd.Ip, &CfgData->Tcp4CfgData.AccessPoint.RemoteAddress, sizeof (IP4_ADDR));
+    CopyMem (
+      &Tcb->RemoteEnd.Ip,
+      &CfgData->Tcp4CfgData.AccessPoint.RemoteAddress,
+      sizeof (IP4_ADDR)
+      );
     Tcb->RemoteEnd.Port = HTONS (CfgData->Tcp4CfgData.AccessPoint.RemotePort);
 
     Option = CfgData->Tcp4CfgData.ControlOption;
@@ -593,10 +641,16 @@ TcpConfigurePcb (
     Tcb->Ttl = CfgData->Tcp6CfgData.HopLimit;
     Tcb->Tos = CfgData->Tcp6CfgData.TrafficClass;
 
-    IP6_COPY_ADDRESS (&Tcb->LocalEnd.Ip, &CfgData->Tcp6CfgData.AccessPoint.StationAddress);
+    IP6_COPY_ADDRESS (
+      &Tcb->LocalEnd.Ip,
+      &CfgData->Tcp6CfgData.AccessPoint.StationAddress
+      );
     Tcb->LocalEnd.Port = HTONS (CfgData->Tcp6CfgData.AccessPoint.StationPort);
 
-    IP6_COPY_ADDRESS (&Tcb->RemoteEnd.Ip, &CfgData->Tcp6CfgData.AccessPoint.RemoteAddress);
+    IP6_COPY_ADDRESS (
+      &Tcb->RemoteEnd.Ip,
+      &CfgData->Tcp6CfgData.AccessPoint.RemoteAddress
+      );
     Tcb->RemoteEnd.Port = HTONS (CfgData->Tcp6CfgData.AccessPoint.RemotePort);
 
     //
@@ -717,8 +771,10 @@ TcpConfigurePcb (
   //
   // update state of Tcb and socket
   //
-  if (((Sk->IpVersion == IP_VERSION_4) && !CfgData->Tcp4CfgData.AccessPoint.ActiveFlag) ||
-      ((Sk->IpVersion == IP_VERSION_6) && !CfgData->Tcp6CfgData.AccessPoint.ActiveFlag)
+  if (((Sk->IpVersion == IP_VERSION_4) &&
+       !CfgData->Tcp4CfgData.AccessPoint.ActiveFlag) ||
+      ((Sk->IpVersion == IP_VERSION_6) &&
+       !CfgData->Tcp6CfgData.AccessPoint.ActiveFlag)
       )
   {
     TcpSetState (Tcb, TCP_LISTEN);
@@ -776,9 +832,15 @@ TcpDispatcher (
   switch (Request) {
     case SOCK_POLL:
       if (Tcb->Sk->IpVersion == IP_VERSION_4) {
-        ProtoData->TcpService->IpIo->Ip.Ip4->Poll (ProtoData->TcpService->IpIo->Ip.Ip4);
+        ProtoData->TcpService->IpIo->Ip.Ip4->Poll (
+                                               ProtoData->TcpService->IpIo->Ip.
+                                                 Ip4
+                                               );
       } else {
-        ProtoData->TcpService->IpIo->Ip.Ip6->Poll (ProtoData->TcpService->IpIo->Ip.Ip6);
+        ProtoData->TcpService->IpIo->Ip.Ip6->Poll (
+                                               ProtoData->TcpService->IpIo->Ip.
+                                                 Ip6
+                                               );
       }
 
       break;
@@ -870,7 +932,10 @@ TcpDispatcher (
 
     case SOCK_ROUTE:
 
-      ASSERT ((Data != NULL) && (Tcb != NULL) && (Tcb->Sk->IpVersion == IP_VERSION_4));
+      ASSERT (
+        (Data != NULL) && (Tcb != NULL) && (Tcb->Sk->IpVersion ==
+                                            IP_VERSION_4)
+        );
 
       return Tcp4Route (Tcb, (TCP4_ROUTE_INFO *)Data);
 

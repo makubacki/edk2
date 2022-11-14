@@ -210,7 +210,10 @@ Mtftp4RemoveBlockNum (
       *BlockCounter = Num;
 
       if (Range->Round > 0) {
-        *BlockCounter += Range->Bound +  MultU64x32 ((UINTN)(Range->Round -1), (UINT32)(Range->Bound + 1)) + 1;
+        *BlockCounter += Range->Bound +  MultU64x32 (
+                                           (UINTN)(Range->Round -1),
+                                           (UINT32)(Range->Bound + 1)
+                                           ) + 1;
       }
 
       if (Range->Start > Range->Bound) {
@@ -322,12 +325,20 @@ Mtftp4SendRequest (
     OptionStrLength = AsciiStrLen ((CHAR8 *)Options[Index].OptionStr);
     ValueStrLength  = AsciiStrLen ((CHAR8 *)Options[Index].ValueStr);
 
-    Status = AsciiStrCpyS ((CHAR8 *)Cur, BufferLength, (CHAR8 *)Options[Index].OptionStr);
+    Status = AsciiStrCpyS (
+               (CHAR8 *)Cur,
+               BufferLength,
+               (CHAR8 *)Options[Index].OptionStr
+               );
     ASSERT_EFI_ERROR (Status);
     BufferLength -= (UINT32)(OptionStrLength + 1);
     Cur          += OptionStrLength + 1;
 
-    Status = AsciiStrCpyS ((CHAR8 *)Cur, BufferLength, (CHAR8 *)Options[Index].ValueStr);
+    Status = AsciiStrCpyS (
+               (CHAR8 *)Cur,
+               BufferLength,
+               (CHAR8 *)Options[Index].ValueStr
+               );
     ASSERT_EFI_ERROR (Status);
     BufferLength -= (UINT32)(ValueStrLength + 1);
     Cur          += ValueStrLength + 1;
@@ -359,7 +370,8 @@ Mtftp4SendError (
   EFI_MTFTP4_PACKET  *TftpError;
   UINT32             Len;
 
-  Len    = (UINT32)(AsciiStrLen ((CHAR8 *)ErrInfo) + sizeof (EFI_MTFTP4_ERROR_HEADER));
+  Len    = (UINT32)(AsciiStrLen ((CHAR8 *)ErrInfo) +
+                    sizeof (EFI_MTFTP4_ERROR_HEADER));
   Packet = NetbufAlloc (Len);
   if (Packet == NULL) {
     return EFI_OUT_OF_RESOURCES;

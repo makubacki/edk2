@@ -20,20 +20,23 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gArpComponentName = {
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gArpComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gArpComponentName2 =
+{
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)ArpComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)ArpComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mArpDriverNameTable[] = {
-  { "eng;en", L"ARP Network Service Driver" },
-  { NULL,     NULL                          }
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mArpDriverNameTable[] =
+{
+  { "eng;en", L"ARP Network Service Driver"     },
+  { NULL,     NULL                              }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mArpControllerNameTable[] = {
-  { "eng;en", L"ARP Controller" },
-  { NULL,     NULL              }
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mArpControllerNameTable[] = {
+  { "eng;en", L"ARP Controller"     },
+  { NULL,     NULL                  }
 };
 
 /**

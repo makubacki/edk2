@@ -46,12 +46,24 @@ HttpBootUpdateDevicePath (
     Node->Ipv4.Header.Type    = MESSAGING_DEVICE_PATH;
     Node->Ipv4.Header.SubType = MSG_IPv4_DP;
     SetDevicePathNodeLength (Node, sizeof (IPv4_DEVICE_PATH));
-    CopyMem (&Node->Ipv4.LocalIpAddress, &Private->StationIp, sizeof (EFI_IPv4_ADDRESS));
+    CopyMem (
+      &Node->Ipv4.LocalIpAddress,
+      &Private->StationIp,
+      sizeof (EFI_IPv4_ADDRESS)
+      );
     Node->Ipv4.RemotePort      = Private->Port;
     Node->Ipv4.Protocol        = EFI_IP_PROTO_TCP;
     Node->Ipv4.StaticIpAddress = FALSE;
-    CopyMem (&Node->Ipv4.GatewayIpAddress, &Private->GatewayIp, sizeof (EFI_IPv4_ADDRESS));
-    CopyMem (&Node->Ipv4.SubnetMask, &Private->SubnetMask, sizeof (EFI_IPv4_ADDRESS));
+    CopyMem (
+      &Node->Ipv4.GatewayIpAddress,
+      &Private->GatewayIp,
+      sizeof (EFI_IPv4_ADDRESS)
+      );
+    CopyMem (
+      &Node->Ipv4.SubnetMask,
+      &Private->SubnetMask,
+      sizeof (EFI_IPv4_ADDRESS)
+      );
   } else {
     Node = AllocateZeroPool (sizeof (IPv6_DEVICE_PATH));
     if (Node == NULL) {
@@ -65,12 +77,27 @@ HttpBootUpdateDevicePath (
     Node->Ipv6.RemotePort      = Private->Port;
     Node->Ipv6.Protocol        = EFI_IP_PROTO_TCP;
     Node->Ipv6.IpAddressOrigin = 0;
-    CopyMem (&Node->Ipv6.LocalIpAddress, &Private->StationIp.v6, sizeof (EFI_IPv6_ADDRESS));
-    CopyMem (&Node->Ipv6.RemoteIpAddress, &Private->ServerIp.v6, sizeof (EFI_IPv6_ADDRESS));
-    CopyMem (&Node->Ipv6.GatewayIpAddress, &Private->GatewayIp.v6, sizeof (EFI_IPv6_ADDRESS));
+    CopyMem (
+      &Node->Ipv6.LocalIpAddress,
+      &Private->StationIp.v6,
+      sizeof (EFI_IPv6_ADDRESS)
+      );
+    CopyMem (
+      &Node->Ipv6.RemoteIpAddress,
+      &Private->ServerIp.v6,
+      sizeof (EFI_IPv6_ADDRESS)
+      );
+    CopyMem (
+      &Node->Ipv6.GatewayIpAddress,
+      &Private->GatewayIp.v6,
+      sizeof (EFI_IPv6_ADDRESS)
+      );
   }
 
-  TmpIpDevicePath = AppendDevicePathNode (Private->ParentDevicePath, (EFI_DEVICE_PATH_PROTOCOL *)Node);
+  TmpIpDevicePath = AppendDevicePathNode (
+                      Private->ParentDevicePath,
+                      (EFI_DEVICE_PATH_PROTOCOL *)Node
+                      );
   FreePool (Node);
   if (TmpIpDevicePath == NULL) {
     return EFI_OUT_OF_RESOURCES;
@@ -80,8 +107,9 @@ HttpBootUpdateDevicePath (
   // Update the DNS node with DNS server IP list if existed.
   //
   if (Private->DnsServerIp != NULL) {
-    Length = sizeof (EFI_DEVICE_PATH_PROTOCOL) + sizeof (Node->Dns.IsIPv6) + Private->DnsServerCount * sizeof (EFI_IP_ADDRESS);
-    Node   = AllocatePool (Length);
+    Length = sizeof (EFI_DEVICE_PATH_PROTOCOL) + sizeof (Node->Dns.IsIPv6) +
+             Private->DnsServerCount * sizeof (EFI_IP_ADDRESS);
+    Node = AllocatePool (Length);
     if (Node == NULL) {
       FreePool (TmpIpDevicePath);
       return EFI_OUT_OF_RESOURCES;
@@ -91,9 +119,18 @@ HttpBootUpdateDevicePath (
     Node->DevPath.SubType = MSG_DNS_DP;
     SetDevicePathNodeLength (Node, Length);
     Node->Dns.IsIPv6 = Private->UsingIpv6 ? 0x01 : 0x00;
-    CopyMem ((UINT8 *)Node + sizeof (EFI_DEVICE_PATH_PROTOCOL) + sizeof (Node->Dns.IsIPv6), Private->DnsServerIp, Private->DnsServerCount * sizeof (EFI_IP_ADDRESS));
+    CopyMem (
+      (UINT8 *)Node + sizeof (EFI_DEVICE_PATH_PROTOCOL) +
+      sizeof (Node->Dns.IsIPv6),
+      Private->DnsServerIp,
+      Private->DnsServerCount *
+      sizeof (EFI_IP_ADDRESS)
+      );
 
-    TmpDnsDevicePath = AppendDevicePathNode (TmpIpDevicePath, (EFI_DEVICE_PATH_PROTOCOL *)Node);
+    TmpDnsDevicePath = AppendDevicePathNode (
+                         TmpIpDevicePath,
+                         (EFI_DEVICE_PATH_PROTOCOL *)Node
+                         );
     FreePool (Node);
     FreePool (TmpIpDevicePath);
     TmpIpDevicePath = NULL;
@@ -105,8 +142,10 @@ HttpBootUpdateDevicePath (
   //
   // Update the URI node with the boot file URI.
   //
-  Length = sizeof (EFI_DEVICE_PATH_PROTOCOL) + AsciiStrSize (Private->BootFileUri);
-  Node   = AllocatePool (Length);
+  Length = sizeof (EFI_DEVICE_PATH_PROTOCOL) + AsciiStrSize (
+                                                 Private->BootFileUri
+                                                 );
+  Node = AllocatePool (Length);
   if (Node == NULL) {
     if (TmpIpDevicePath != NULL) {
       FreePool (TmpIpDevicePath);
@@ -122,14 +161,24 @@ HttpBootUpdateDevicePath (
   Node->DevPath.Type    = MESSAGING_DEVICE_PATH;
   Node->DevPath.SubType = MSG_URI_DP;
   SetDevicePathNodeLength (Node, Length);
-  CopyMem ((UINT8 *)Node + sizeof (EFI_DEVICE_PATH_PROTOCOL), Private->BootFileUri, AsciiStrSize (Private->BootFileUri));
+  CopyMem (
+    (UINT8 *)Node + sizeof (EFI_DEVICE_PATH_PROTOCOL),
+    Private->BootFileUri,
+    AsciiStrSize (Private->BootFileUri)
+    );
 
   if (TmpDnsDevicePath != NULL) {
-    NewDevicePath = AppendDevicePathNode (TmpDnsDevicePath, (EFI_DEVICE_PATH_PROTOCOL *)Node);
+    NewDevicePath = AppendDevicePathNode (
+                      TmpDnsDevicePath,
+                      (EFI_DEVICE_PATH_PROTOCOL *)Node
+                      );
     FreePool (TmpDnsDevicePath);
   } else {
     ASSERT (TmpIpDevicePath != NULL);
-    NewDevicePath = AppendDevicePathNode (TmpIpDevicePath, (EFI_DEVICE_PATH_PROTOCOL *)Node);
+    NewDevicePath = AppendDevicePathNode (
+                      TmpIpDevicePath,
+                      (EFI_DEVICE_PATH_PROTOCOL *)Node
+                      );
     FreePool (TmpIpDevicePath);
   }
 
@@ -227,7 +276,8 @@ HttpBootDhcp4ExtractUriInfo (
     }
 
     Private->BootFileUriParser = HttpOffer->UriParser;
-    Private->BootFileUri       = (CHAR8 *)HttpOffer->OptList[HTTP_BOOT_DHCP4_TAG_INDEX_BOOTFILE]->Data;
+    Private->BootFileUri       =
+      (CHAR8 *)HttpOffer->OptList[HTTP_BOOT_DHCP4_TAG_INDEX_BOOTFILE]->Data;
   } else {
     //
     // In Home environment the BootFileUri comes from the FilePath.
@@ -245,7 +295,9 @@ HttpBootDhcp4ExtractUriInfo (
     if (Status == EFI_INVALID_PARAMETER) {
       AsciiPrint ("\n  Error: Invalid URI address.\n");
     } else if (Status == EFI_ACCESS_DENIED) {
-      AsciiPrint ("\n  Error: Access forbidden, only HTTPS connection is allowed.\n");
+      AsciiPrint (
+        "\n  Error: Access forbidden, only HTTPS connection is allowed.\n"
+        );
     }
 
     return Status;
@@ -263,13 +315,22 @@ HttpBootDhcp4ExtractUriInfo (
     //
     Private->DnsServerCount = (Option->Length) / sizeof (EFI_IPv4_ADDRESS);
 
-    Private->DnsServerIp = AllocateZeroPool (Private->DnsServerCount * sizeof (EFI_IP_ADDRESS));
+    Private->DnsServerIp = AllocateZeroPool (
+                             Private->DnsServerCount *
+                             sizeof (EFI_IP_ADDRESS)
+                             );
     if (Private->DnsServerIp == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
 
-    for (DnsServerIndex = 0; DnsServerIndex < Private->DnsServerCount; DnsServerIndex++) {
-      CopyMem (&(Private->DnsServerIp[DnsServerIndex].v4), &(((EFI_IPv4_ADDRESS *)Option->Data)[DnsServerIndex]), sizeof (EFI_IPv4_ADDRESS));
+    for (DnsServerIndex = 0; DnsServerIndex < Private->DnsServerCount;
+         DnsServerIndex++)
+    {
+      CopyMem (
+        &(Private->DnsServerIp[DnsServerIndex].v4),
+        &(((EFI_IPv4_ADDRESS *)Option->Data)[DnsServerIndex]),
+        sizeof (EFI_IPv4_ADDRESS)
+        );
     }
 
     //
@@ -371,7 +432,8 @@ HttpBootDhcp6ExtractUriInfo (
     }
 
     Private->BootFileUriParser = HttpOffer->UriParser;
-    Private->BootFileUri       = (CHAR8 *)HttpOffer->OptList[HTTP_BOOT_DHCP6_IDX_BOOT_FILE_URL]->Data;
+    Private->BootFileUri       =
+      (CHAR8 *)HttpOffer->OptList[HTTP_BOOT_DHCP6_IDX_BOOT_FILE_URL]->Data;
   } else {
     //
     // In Home environment the BootFileUri comes from the FilePath.
@@ -389,7 +451,9 @@ HttpBootDhcp6ExtractUriInfo (
     if (Status == EFI_INVALID_PARAMETER) {
       AsciiPrint ("\n  Error: Invalid URI address.\n");
     } else if (Status == EFI_ACCESS_DENIED) {
-      AsciiPrint ("\n  Error: Access forbidden, only HTTPS connection is allowed.\n");
+      AsciiPrint (
+        "\n  Error: Access forbidden, only HTTPS connection is allowed.\n"
+        );
     }
 
     return Status;
@@ -423,13 +487,22 @@ HttpBootDhcp6ExtractUriInfo (
     //
     Private->DnsServerCount = HTONS (Option->OpLen) / sizeof (EFI_IPv6_ADDRESS);
 
-    Private->DnsServerIp = AllocateZeroPool (Private->DnsServerCount * sizeof (EFI_IP_ADDRESS));
+    Private->DnsServerIp = AllocateZeroPool (
+                             Private->DnsServerCount *
+                             sizeof (EFI_IP_ADDRESS)
+                             );
     if (Private->DnsServerIp == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
 
-    for (DnsServerIndex = 0; DnsServerIndex < Private->DnsServerCount; DnsServerIndex++) {
-      CopyMem (&(Private->DnsServerIp[DnsServerIndex].v6), &(((EFI_IPv6_ADDRESS *)Option->Data)[DnsServerIndex]), sizeof (EFI_IPv6_ADDRESS));
+    for (DnsServerIndex = 0; DnsServerIndex < Private->DnsServerCount;
+         DnsServerIndex++)
+    {
+      CopyMem (
+        &(Private->DnsServerIp[DnsServerIndex].v6),
+        &(((EFI_IPv6_ADDRESS *)Option->Data)[DnsServerIndex]),
+        sizeof (EFI_IPv6_ADDRESS)
+        );
     }
 
     //
@@ -484,7 +557,9 @@ HttpBootDhcp6ExtractUriInfo (
     Status = HttpBootDns (Private, HostNameStr, &IpAddr);
     FreePool (HostNameStr);
     if (EFI_ERROR (Status)) {
-      AsciiPrint ("\n  Error: Could not retrieve the host address from DNS server.\n");
+      AsciiPrint (
+        "\n  Error: Could not retrieve the host address from DNS server.\n"
+        );
       goto Error;
     }
   }
@@ -585,8 +660,11 @@ HttpBootHttpIoCallback (
   if (Private->HttpBootCallback != NULL) {
     Status = Private->HttpBootCallback->Callback (
                                           Private->HttpBootCallback,
-                                          EventType == HttpIoRequest ? HttpBootHttpRequest : HttpBootHttpResponse,
-                                          EventType == HttpIoRequest ? FALSE : TRUE,
+                                          EventType == HttpIoRequest ?
+                                          HttpBootHttpRequest :
+                                          HttpBootHttpResponse,
+                                          EventType == HttpIoRequest ? FALSE :
+                                          TRUE,
                                           sizeof (EFI_HTTP_MESSAGE),
                                           (VOID *)Message
                                           );
@@ -767,7 +845,9 @@ HttpBootGetFileFromCache (
   HTTP_BOOT_ENTITY_DATA    *EntityData;
   UINTN                    CopyedSize;
 
-  if ((Uri == NULL) || (BufferSize == NULL) || (Buffer == NULL) || (ImageType == NULL)) {
+  if ((Uri == NULL) || (BufferSize == NULL) || (Buffer == NULL) || (ImageType ==
+                                                                    NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -876,7 +956,11 @@ HttpBootGetBootFileCallback (
       Data,
       MIN (Length, CallbackData->BufferSize - CallbackData->CopyedSize)
       );
-    CallbackData->CopyedSize += MIN (Length, CallbackData->BufferSize - CallbackData->CopyedSize);
+    CallbackData->CopyedSize += MIN (
+                                  Length,
+                                  CallbackData->BufferSize -
+                                  CallbackData->CopyedSize
+                                  );
   }
 
   //
@@ -978,7 +1062,13 @@ HttpBootGetBootFile (
 
   AsciiStrToUnicodeStrS (Private->BootFileUri, Url, UrlSize);
   if (!HeaderOnly && (Buffer != NULL)) {
-    Status = HttpBootGetFileFromCache (Private, Url, BufferSize, Buffer, ImageType);
+    Status = HttpBootGetFileFromCache (
+               Private,
+               Url,
+               BufferSize,
+               Buffer,
+               ImageType
+               );
     if (Status != EFI_NOT_FOUND) {
       FreePool (Url);
       return Status;
@@ -1074,7 +1164,12 @@ HttpBootGetBootFile (
   if (Private->AuthData != NULL) {
     ASSERT (HttpIoHeader->MaxHeaderCount == 4);
 
-    if ((Private->AuthScheme != NULL) && (CompareMem (Private->AuthScheme, "Basic", 5) != 0)) {
+    if ((Private->AuthScheme != NULL) && (CompareMem (
+                                            Private->AuthScheme,
+                                            "Basic",
+                                            5
+                                            ) != 0))
+    {
       Status = EFI_UNSUPPORTED;
       goto ERROR_3;
     }
@@ -1178,7 +1273,10 @@ HttpBootGetBootFile (
         // Server indicates the user has to provide a user-id and password as a means of identification.
         //
         if (Private->HttpBootCallback != NULL) {
-          Data = AllocateZeroPool (sizeof (CHAR8) * HTTP_BOOT_AUTHENTICATION_INFO_MAX_LEN);
+          Data = AllocateZeroPool (
+                   sizeof (CHAR8) *
+                   HTTP_BOOT_AUTHENTICATION_INFO_MAX_LEN
+                   );
           if (Data == NULL) {
             Status = EFI_OUT_OF_RESOURCES;
             goto ERROR_4;
@@ -1208,12 +1306,22 @@ HttpBootGetBootFile (
                        HTTP_HEADER_WWW_AUTHENTICATE
                        );
         if (HttpHeader != NULL) {
-          Private->AuthScheme = AllocateZeroPool (AsciiStrLen (HttpHeader->FieldValue) + 1);
+          Private->AuthScheme = AllocateZeroPool (
+                                  AsciiStrLen (
+                                    HttpHeader->FieldValue
+                                    ) + 1
+                                  );
           if (Private->AuthScheme == NULL) {
             return EFI_OUT_OF_RESOURCES;
           }
 
-          CopyMem (Private->AuthScheme, HttpHeader->FieldValue, AsciiStrLen (HttpHeader->FieldValue));
+          CopyMem (
+            Private->AuthScheme,
+            HttpHeader->FieldValue,
+            AsciiStrLen (
+              HttpHeader->FieldValue
+              )
+            );
         }
 
         Status = EFI_ACCESS_DENIED;

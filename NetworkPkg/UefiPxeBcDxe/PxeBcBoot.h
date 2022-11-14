@@ -14,7 +14,9 @@
 #define PXEBC_DEFAULT_UDP_OVERHEAD_SIZE   8
 #define PXEBC_DEFAULT_TFTP_OVERHEAD_SIZE  4
 
-#define PXEBC_IS_SIZE_OVERFLOWED(x)  ((sizeof (UINTN) < sizeof (UINT64)) && ((x) > 0xFFFFFFFF))
+#define PXEBC_IS_SIZE_OVERFLOWED( \
+                                x)  \
+  ((sizeof (UINTN) < sizeof (UINT64)) && ((x) > 0xFFFFFFFF))
 
 /**
   Extract the discover information and boot server entry from the

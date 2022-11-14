@@ -117,11 +117,12 @@ EFI_COMPONENT_NAME2_PROTOCOL  gDnsComponentName2 = {
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
 EFI_UNICODE_STRING_TABLE  mDnsDriverNameTable[] = {
-  { "eng;en", (CHAR16 *)L"DNS Network Service Driver" },
-  { NULL,     NULL                                    }
+  { "eng;en", (CHAR16 *)L"DNS Network Service Driver"     },
+  { NULL,     NULL                                        }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  *gDnsControllerNameTable = NULL;
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  *gDnsControllerNameTable
+  = NULL;
 
 /**
   Retrieves a Unicode string that is the user-readable name of the EFI Driver.
@@ -271,7 +272,11 @@ UpdateDns6Name (
     return Status;
   }
 
-  Status = NetLibIp6ToStr (&ModeData.DnsConfigData.StationIp, Address, sizeof (Address));
+  Status = NetLibIp6ToStr (
+             &ModeData.DnsConfigData.StationIp,
+             Address,
+             sizeof (Address)
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }

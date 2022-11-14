@@ -259,12 +259,25 @@ HttpDestroyChildEntryInHandleBuffer (
     return EFI_INVALID_PARAMETER;
   }
 
-  HttpInstance      = NET_LIST_USER_STRUCT_S (Entry, HTTP_PROTOCOL, Link, HTTP_PROTOCOL_SIGNATURE);
-  ServiceBinding    = ((HTTP_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ServiceBinding;
-  NumberOfChildren  = ((HTTP_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->NumberOfChildren;
-  ChildHandleBuffer = ((HTTP_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ChildHandleBuffer;
+  HttpInstance = NET_LIST_USER_STRUCT_S (
+                   Entry,
+                   HTTP_PROTOCOL,
+                   Link,
+                   HTTP_PROTOCOL_SIGNATURE
+                   );
+  ServiceBinding =
+    ((HTTP_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ServiceBinding;
+  NumberOfChildren =
+    ((HTTP_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->NumberOfChildren;
+  ChildHandleBuffer =
+    ((HTTP_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ChildHandleBuffer;
 
-  if (!NetIsInHandleBuffer (HttpInstance->Handle, NumberOfChildren, ChildHandleBuffer)) {
+  if (!NetIsInHandleBuffer (
+         HttpInstance->Handle,
+         NumberOfChildren,
+         ChildHandleBuffer
+         ))
+  {
     return EFI_SUCCESS;
   }
 
@@ -464,7 +477,9 @@ ON_ERROR:
 
   if (HttpService != NULL) {
     HttpCleanService (HttpService, UsingIpv6);
-    if ((HttpService->Tcp4ChildHandle == NULL) && (HttpService->Tcp6ChildHandle == NULL)) {
+    if ((HttpService->Tcp4ChildHandle == NULL) &&
+        (HttpService->Tcp6ChildHandle == NULL))
+    {
       FreePool (HttpService);
     }
   }
@@ -552,7 +567,9 @@ HttpDxeStop (
     } else {
       HttpCleanService (HttpService, UsingIpv6);
 
-      if ((HttpService->Tcp4ChildHandle == NULL) && (HttpService->Tcp6ChildHandle == NULL)) {
+      if ((HttpService->Tcp4ChildHandle == NULL) &&
+          (HttpService->Tcp6ChildHandle == NULL))
+      {
         gBS->UninstallProtocolInterface (
                NicHandle,
                &gEfiHttpServiceBindingProtocolGuid,

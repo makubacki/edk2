@@ -226,13 +226,19 @@ Ip4Reassemble (
   // First: find the related assemble entry
   //
   Assemble = NULL;
-  Index    = IP4_ASSEMBLE_HASH (IpHead->Dst, IpHead->Src, IpHead->Id, IpHead->Protocol);
+  Index    = IP4_ASSEMBLE_HASH (
+               IpHead->Dst,
+               IpHead->Src,
+               IpHead->Id,
+               IpHead->Protocol
+               );
 
   NET_LIST_FOR_EACH (Cur, &Table->Bucket[Index]) {
     Assemble = NET_LIST_USER_STRUCT (Cur, IP4_ASSEMBLE_ENTRY, Link);
 
     if ((Assemble->Dst == IpHead->Dst) && (Assemble->Src == IpHead->Src) &&
-        (Assemble->Id == IpHead->Id)   && (Assemble->Protocol == IpHead->Protocol))
+        (Assemble->Id == IpHead->Id)   && (Assemble->Protocol ==
+                                           IpHead->Protocol))
     {
       break;
     }
@@ -584,7 +590,9 @@ Ip4IpSecProcessPacket (
     goto ON_EXIT;
   }
 
-  if ((OriginalFragmentTable == FragmentTable) && (OriginalFragmentCount == FragmentCount)) {
+  if ((OriginalFragmentTable == FragmentTable) && (OriginalFragmentCount ==
+                                                   FragmentCount))
+  {
     //
     // For ByPass Packet
     //
@@ -650,7 +658,12 @@ Ip4IpSecProcessPacket (
       goto ON_EXIT;
     }
 
-    if ((Direction == EfiIPsecInBound) && (0 != CompareMem (*Head, &ZeroHead, sizeof (IP4_HEAD)))) {
+    if ((Direction == EfiIPsecInBound) && (0 != CompareMem (
+                                                  *Head,
+                                                  &ZeroHead,
+                                                  sizeof (IP4_HEAD)
+                                                  )))
+    {
       Ip4PrependHead (Packet, *Head, *Options, *OptionsLen);
       Ip4NtohHead (Packet->Ip.Ip4);
       NetbufTrim (Packet, ((*Head)->HeadLen << 2), TRUE);
@@ -1015,7 +1028,10 @@ Ip4InstanceFrameAcceptable (
   //
   Proto = Head->Protocol;
 
-  if ((Proto == EFI_IP_PROTO_ICMP) && (!Config->AcceptAnyProtocol) && (Proto != Config->DefaultProtocol)) {
+  if ((Proto == EFI_IP_PROTO_ICMP) && (!Config->AcceptAnyProtocol) && (Proto !=
+                                                                       Config->
+                                                                         DefaultProtocol))
+  {
     NetbufCopy (Packet, 0, sizeof (Icmp.Head), (UINT8 *)&Icmp.Head);
 
     if (mIcmpClass[Icmp.Head.Type].IcmpClass == ICMP_ERROR_MESSAGE) {
@@ -1052,7 +1068,9 @@ Ip4InstanceFrameAcceptable (
     //
     // Receive the multicast if the instance wants to receive all packets.
     //
-    if (!IpInstance->ConfigData.UseDefaultAddress && (IpInstance->Interface->Ip == 0)) {
+    if (!IpInstance->ConfigData.UseDefaultAddress &&
+        (IpInstance->Interface->Ip == 0))
+    {
       return TRUE;
     }
 
@@ -1233,7 +1251,11 @@ Ip4WrapRxData (
   // Build the fragment table to be delivered up.
   //
   RxData->FragmentCount = Packet->BlockOpNum;
-  NetbufBuildExt (Packet, (NET_FRAGMENT *)RxData->FragmentTable, &RxData->FragmentCount);
+  NetbufBuildExt (
+    Packet,
+    (NET_FRAGMENT *)RxData->FragmentTable,
+    &RxData->FragmentCount
+    );
 
   return Wrap;
 }
@@ -1385,7 +1407,9 @@ Ip4InterfaceEnquePacket (
   LocalType = 0;
   Info      = IP4_GET_CLIP_INFO (Packet);
 
-  if ((Info->CastType == IP4_MULTICAST) || (Info->CastType == IP4_LOCAL_BROADCAST)) {
+  if ((Info->CastType == IP4_MULTICAST) || (Info->CastType ==
+                                            IP4_LOCAL_BROADCAST))
+  {
     //
     // If the CastType is multicast, don't need to filter against
     // the group address here, Ip4InstanceFrameAcceptable will do
@@ -1432,7 +1456,9 @@ Ip4InterfaceEnquePacket (
     //
     // In RawData mode, add IPv4 headers and options back to packet.
     //
-    if ((IpInstance->ConfigData.RawData) && (Option != NULL) && (OptionLen != 0)) {
+    if ((IpInstance->ConfigData.RawData) && (Option != NULL) && (OptionLen !=
+                                                                 0))
+    {
       Ip4PrependHead (Packet, Head, Option, OptionLen);
     }
 

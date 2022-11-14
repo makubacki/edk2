@@ -150,7 +150,9 @@ typedef struct {
   UINT32       RecycledTxBufCount;
 } SNP_DRIVER;
 
-#define EFI_SIMPLE_NETWORK_DEV_FROM_THIS(a)  CR (a, SNP_DRIVER, Snp, SNP_DRIVER_SIGNATURE)
+#define EFI_SIMPLE_NETWORK_DEV_FROM_THIS( \
+                                        a)  \
+  CR (a, SNP_DRIVER, Snp, SNP_DRIVER_SIGNATURE)
 
 //
 // Global Variables

@@ -90,29 +90,40 @@ PxeGetStatus (
   // report the values back..
   //
   if (InterruptStatusPtr != NULL) {
-    InterruptFlags = (UINT16)(Snp->Cdb.StatFlags & PXE_STATFLAGS_GET_STATUS_INTERRUPT_MASK);
+    InterruptFlags = (UINT16)(Snp->Cdb.StatFlags &
+                              PXE_STATFLAGS_GET_STATUS_INTERRUPT_MASK);
 
     *InterruptStatusPtr = 0;
 
-    if ((InterruptFlags & PXE_STATFLAGS_GET_STATUS_RECEIVE) == PXE_STATFLAGS_GET_STATUS_RECEIVE) {
+    if ((InterruptFlags & PXE_STATFLAGS_GET_STATUS_RECEIVE) ==
+        PXE_STATFLAGS_GET_STATUS_RECEIVE)
+    {
       *InterruptStatusPtr |= EFI_SIMPLE_NETWORK_RECEIVE_INTERRUPT;
     }
 
-    if ((InterruptFlags & PXE_STATFLAGS_GET_STATUS_TRANSMIT) == PXE_STATFLAGS_GET_STATUS_TRANSMIT) {
+    if ((InterruptFlags & PXE_STATFLAGS_GET_STATUS_TRANSMIT) ==
+        PXE_STATFLAGS_GET_STATUS_TRANSMIT)
+    {
       *InterruptStatusPtr |= EFI_SIMPLE_NETWORK_TRANSMIT_INTERRUPT;
     }
 
-    if ((InterruptFlags & PXE_STATFLAGS_GET_STATUS_COMMAND) == PXE_STATFLAGS_GET_STATUS_COMMAND) {
+    if ((InterruptFlags & PXE_STATFLAGS_GET_STATUS_COMMAND) ==
+        PXE_STATFLAGS_GET_STATUS_COMMAND)
+    {
       *InterruptStatusPtr |= EFI_SIMPLE_NETWORK_COMMAND_INTERRUPT;
     }
 
-    if ((InterruptFlags & PXE_STATFLAGS_GET_STATUS_SOFTWARE) == PXE_STATFLAGS_GET_STATUS_SOFTWARE) {
+    if ((InterruptFlags & PXE_STATFLAGS_GET_STATUS_SOFTWARE) ==
+        PXE_STATFLAGS_GET_STATUS_SOFTWARE)
+    {
       *InterruptStatusPtr |= EFI_SIMPLE_NETWORK_COMMAND_INTERRUPT;
     }
   }
 
   if (GetTransmittedBuf) {
-    if ((Snp->Cdb.StatFlags & PXE_STATFLAGS_GET_STATUS_NO_TXBUFS_WRITTEN) == 0) {
+    if ((Snp->Cdb.StatFlags & PXE_STATFLAGS_GET_STATUS_NO_TXBUFS_WRITTEN) ==
+        0)
+    {
       //
       // UNDI has written some transmitted buffer addresses into the DB. Store them into Snp->RecycledTxBuf.
       //
@@ -122,16 +133,26 @@ PxeGetStatus (
             //
             // Snp->RecycledTxBuf is full, reallocate a new one.
             //
-            if ((Snp->MaxRecycledTxBuf + SNP_TX_BUFFER_INCREASEMENT) >= SNP_MAX_TX_BUFFER_NUM) {
+            if ((Snp->MaxRecycledTxBuf + SNP_TX_BUFFER_INCREASEMENT) >=
+                SNP_MAX_TX_BUFFER_NUM)
+            {
               return EFI_DEVICE_ERROR;
             }
 
-            Tmp = AllocatePool (sizeof (UINT64) * (Snp->MaxRecycledTxBuf + SNP_TX_BUFFER_INCREASEMENT));
+            Tmp = AllocatePool (
+                    sizeof (UINT64) * (Snp->MaxRecycledTxBuf +
+                                       SNP_TX_BUFFER_INCREASEMENT)
+                    );
             if (Tmp == NULL) {
               return EFI_DEVICE_ERROR;
             }
 
-            CopyMem (Tmp, Snp->RecycledTxBuf, sizeof (UINT64) * Snp->RecycledTxBufCount);
+            CopyMem (
+              Tmp,
+              Snp->RecycledTxBuf,
+              sizeof (UINT64) *
+              Snp->RecycledTxBufCount
+              );
             FreePool (Snp->RecycledTxBuf);
             Snp->RecycledTxBuf     =  Tmp;
             Snp->MaxRecycledTxBuf += SNP_TX_BUFFER_INCREASEMENT;
@@ -150,7 +171,8 @@ PxeGetStatus (
   //
   if (Snp->MediaStatusSupported) {
     Snp->Snp.Mode->MediaPresent =
-      (BOOLEAN)(((Snp->Cdb.StatFlags & PXE_STATFLAGS_GET_STATUS_NO_MEDIA) != 0) ? FALSE : TRUE);
+      (BOOLEAN)(((Snp->Cdb.StatFlags & PXE_STATFLAGS_GET_STATUS_NO_MEDIA) !=
+                 0) ? FALSE : TRUE);
   }
 
   return EFI_SUCCESS;

@@ -10,7 +10,9 @@
 #ifndef __EFI_IP6_ND_H__
 #define __EFI_IP6_ND_H__
 
-#define IP6_GET_TICKS(Ms)  (((Ms) + IP6_TIMER_INTERVAL_IN_MS - 1) / IP6_TIMER_INTERVAL_IN_MS)
+#define IP6_GET_TICKS( \
+                     Ms)  \
+  (((Ms) + IP6_TIMER_INTERVAL_IN_MS - 1) / IP6_TIMER_INTERVAL_IN_MS)
 
 enum {
   IP6_INF_ROUTER_LIFETIME = 0xFFFF,
@@ -61,7 +63,10 @@ typedef struct _IP6_OPTION_HEADER {
   UINT8    Length;
 } IP6_OPTION_HEADER;
 
-STATIC_ASSERT (sizeof (IP6_OPTION_HEADER) == 2, "IP6_OPTION_HEADER is expected to be exactly 2 bytes long.");
+STATIC_ASSERT (
+  sizeof (IP6_OPTION_HEADER) == 2,
+  "IP6_OPTION_HEADER is expected to be exactly 2 bytes long."
+  );
 
 typedef struct _IP6_ETHE_ADDR_OPTION {
   UINT8    Type;
@@ -69,7 +74,10 @@ typedef struct _IP6_ETHE_ADDR_OPTION {
   UINT8    EtherAddr[6];
 } IP6_ETHER_ADDR_OPTION;
 
-STATIC_ASSERT (sizeof (IP6_ETHER_ADDR_OPTION) == 8, "IP6_ETHER_ADDR_OPTION is expected to be exactly 8 bytes long.");
+STATIC_ASSERT (
+  sizeof (IP6_ETHER_ADDR_OPTION) == 8,
+  "IP6_ETHER_ADDR_OPTION is expected to be exactly 8 bytes long."
+  );
 
 typedef struct _IP6_MTU_OPTION {
   UINT8     Type;
@@ -78,7 +86,10 @@ typedef struct _IP6_MTU_OPTION {
   UINT32    Mtu;
 } IP6_MTU_OPTION;
 
-STATIC_ASSERT (sizeof (IP6_MTU_OPTION) == 8, "IP6_MTU_OPTION is expected to be exactly 8 bytes long.");
+STATIC_ASSERT (
+  sizeof (IP6_MTU_OPTION) == 8,
+  "IP6_MTU_OPTION is expected to be exactly 8 bytes long."
+  );
 
 typedef struct _IP6_PREFIX_INFO_OPTION {
   UINT8               Type;
@@ -91,7 +102,10 @@ typedef struct _IP6_PREFIX_INFO_OPTION {
   EFI_IPv6_ADDRESS    Prefix;
 } IP6_PREFIX_INFO_OPTION;
 
-STATIC_ASSERT (sizeof (IP6_PREFIX_INFO_OPTION) == 32, "IP6_PREFIX_INFO_OPTION is expected to be exactly 32 bytes long.");
+STATIC_ASSERT (
+  sizeof (IP6_PREFIX_INFO_OPTION) == 32,
+  "IP6_PREFIX_INFO_OPTION is expected to be exactly 32 bytes long."
+  );
 
 typedef
 VOID

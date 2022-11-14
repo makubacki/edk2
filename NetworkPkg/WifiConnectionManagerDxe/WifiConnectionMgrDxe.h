@@ -87,14 +87,22 @@ typedef enum {
   // ...
 } IEEE_80211_PAIRWISE_CIPHER_SUITE;
 
-#define IEEE_80211_PAIRWISE_CIPHER_SUITE_USE_GROUP  (OUI_IEEE_80211I | (Ieee80211PairwiseCipherSuiteUseGroupCipherSuite << 24))
-#define IEEE_80211_PAIRWISE_CIPHER_SUITE_WEP40      (OUI_IEEE_80211I | (Ieee80211PairwiseCipherSuiteWEP40 << 24))
-#define IEEE_80211_PAIRWISE_CIPHER_SUITE_TKIP       (OUI_IEEE_80211I | (Ieee80211PairwiseCipherSuiteTKIP << 24))
-#define IEEE_80211_PAIRWISE_CIPHER_SUITE_CCMP       (OUI_IEEE_80211I | (Ieee80211PairwiseCipherSuiteCCMP << 24))
-#define IEEE_80211_PAIRWISE_CIPHER_SUITE_WEP104     (OUI_IEEE_80211I | (Ieee80211PairwiseCipherSuiteWEP104 << 24))
-#define IEEE_80211_PAIRWISE_CIPHER_SUITE_BIP        (OUI_IEEE_80211I | (Ieee80211PairwiseCipherSuiteBIP << 24))
-#define IEEE_80211_PAIRWISE_CIPHER_SUITE_GCMP       (OUI_IEEE_80211I | (Ieee80211PairwiseCipherSuiteGCMP << 24))
-#define IEEE_80211_PAIRWISE_CIPHER_SUITE_GCMP256    (OUI_IEEE_80211I | (Ieee80211PairwiseCipherSuiteGCMP256 << 24))
+#define IEEE_80211_PAIRWISE_CIPHER_SUITE_USE_GROUP  \
+      (OUI_IEEE_80211I | (Ieee80211PairwiseCipherSuiteUseGroupCipherSuite << 24))
+#define IEEE_80211_PAIRWISE_CIPHER_SUITE_WEP40      \
+      (OUI_IEEE_80211I | (Ieee80211PairwiseCipherSuiteWEP40 << 24))
+#define IEEE_80211_PAIRWISE_CIPHER_SUITE_TKIP       \
+      (OUI_IEEE_80211I | (Ieee80211PairwiseCipherSuiteTKIP << 24))
+#define IEEE_80211_PAIRWISE_CIPHER_SUITE_CCMP       \
+      (OUI_IEEE_80211I | (Ieee80211PairwiseCipherSuiteCCMP << 24))
+#define IEEE_80211_PAIRWISE_CIPHER_SUITE_WEP104     \
+      (OUI_IEEE_80211I | (Ieee80211PairwiseCipherSuiteWEP104 << 24))
+#define IEEE_80211_PAIRWISE_CIPHER_SUITE_BIP        \
+      (OUI_IEEE_80211I | (Ieee80211PairwiseCipherSuiteBIP << 24))
+#define IEEE_80211_PAIRWISE_CIPHER_SUITE_GCMP       \
+      (OUI_IEEE_80211I | (Ieee80211PairwiseCipherSuiteGCMP << 24))
+#define IEEE_80211_PAIRWISE_CIPHER_SUITE_GCMP256    \
+      (OUI_IEEE_80211I | (Ieee80211PairwiseCipherSuiteGCMP256 << 24))
 
 typedef enum {
   Ieee80211AkmSuite8021XOrPMKSA       = 1,
@@ -108,14 +116,22 @@ typedef enum {
   // ...
 } IEEE_80211_AKM_SUITE;
 
-#define IEEE_80211_AKM_SUITE_8021X_OR_PMKSA         (OUI_IEEE_80211I | (Ieee80211AkmSuite8021XOrPMKSA << 24))
-#define IEEE_80211_AKM_SUITE_PSK                    (OUI_IEEE_80211I | (Ieee80211AkmSuitePSK << 24))
-#define IEEE_80211_AKM_SUITE_8021X_OR_PMKSA_SHA256  (OUI_IEEE_80211I | (Ieee80211AkmSuite8021XOrPMKSASHA256 << 24))
-#define IEEE_80211_AKM_SUITE_PSK_SHA256             (OUI_IEEE_80211I | (Ieee80211AkmSuitePSKSHA256 << 24))
-#define IEEE_80211_AKM_SUITE_SAE                    (OUI_IEEE_80211I | (Ieee80211AkmSuiteSAE << 24))
-#define IEEE_80211_AKM_SUITE_8021X_SUITE_B          (OUI_IEEE_80211I | (Ieee80211AkmSuite8021XSuiteB << 24))
-#define IEEE_80211_AKM_SUITE_8021X_SUITE_B192       (OUI_IEEE_80211I | (Ieee80211AkmSuite8021XSuiteB192 << 24))
-#define IEEE_80211_AKM_SUITE_OWE                    (OUI_IEEE_80211I | (Ieee80211AkmSuiteOWE << 24))
+#define IEEE_80211_AKM_SUITE_8021X_OR_PMKSA         \
+      (OUI_IEEE_80211I | (Ieee80211AkmSuite8021XOrPMKSA << 24))
+#define IEEE_80211_AKM_SUITE_PSK                    \
+      (OUI_IEEE_80211I | (Ieee80211AkmSuitePSK << 24))
+#define IEEE_80211_AKM_SUITE_8021X_OR_PMKSA_SHA256  \
+      (OUI_IEEE_80211I | (Ieee80211AkmSuite8021XOrPMKSASHA256 << 24))
+#define IEEE_80211_AKM_SUITE_PSK_SHA256             \
+      (OUI_IEEE_80211I | (Ieee80211AkmSuitePSKSHA256 << 24))
+#define IEEE_80211_AKM_SUITE_SAE                    \
+      (OUI_IEEE_80211I | (Ieee80211AkmSuiteSAE << 24))
+#define IEEE_80211_AKM_SUITE_8021X_SUITE_B          \
+      (OUI_IEEE_80211I | (Ieee80211AkmSuite8021XSuiteB << 24))
+#define IEEE_80211_AKM_SUITE_8021X_SUITE_B192       \
+      (OUI_IEEE_80211I | (Ieee80211AkmSuite8021XSuiteB192 << 24))
+#define IEEE_80211_AKM_SUITE_OWE                    \
+      (OUI_IEEE_80211I | (Ieee80211AkmSuiteOWE << 24))
 
 //
 // Protocol instances

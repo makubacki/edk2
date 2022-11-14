@@ -221,7 +221,9 @@ IScsiCreateConnection (
   Conn->PartialRspRcvd  = FALSE;
   Conn->ParamNegotiated = FALSE;
   Conn->Cid             = Session->NextCid++;
-  Conn->Ipv6Flag        = NvData->IpMode == IP_MODE_IP6 || Session->ConfigData->AutoConfigureMode == IP_MODE_AUTOCONFIG_IP6;
+  Conn->Ipv6Flag        = NvData->IpMode == IP_MODE_IP6 ||
+                          Session->ConfigData->AutoConfigureMode ==
+                          IP_MODE_AUTOCONFIG_IP6;
 
   Status = gBS->CreateEvent (
                   EVT_TIMER,
@@ -255,7 +257,10 @@ IScsiCreateConnection (
     }
 
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "The configuration of Target address or DNS server address is invalid!\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "The configuration of Target address or DNS server address is invalid!\n"
+        ));
       FreePool (Conn);
       return NULL;
     }
@@ -264,10 +269,26 @@ IScsiCreateConnection (
   if (!Conn->Ipv6Flag) {
     Tcp4IoConfig = &TcpIoConfig.Tcp4IoConfigData;
 
-    CopyMem (&Tcp4IoConfig->LocalIp, &NvData->LocalIp, sizeof (EFI_IPv4_ADDRESS));
-    CopyMem (&Tcp4IoConfig->SubnetMask, &NvData->SubnetMask, sizeof (EFI_IPv4_ADDRESS));
-    CopyMem (&Tcp4IoConfig->Gateway, &NvData->Gateway, sizeof (EFI_IPv4_ADDRESS));
-    CopyMem (&Tcp4IoConfig->RemoteIp, &NvData->TargetIp, sizeof (EFI_IPv4_ADDRESS));
+    CopyMem (
+      &Tcp4IoConfig->LocalIp,
+      &NvData->LocalIp,
+      sizeof (EFI_IPv4_ADDRESS)
+      );
+    CopyMem (
+      &Tcp4IoConfig->SubnetMask,
+      &NvData->SubnetMask,
+      sizeof (EFI_IPv4_ADDRESS)
+      );
+    CopyMem (
+      &Tcp4IoConfig->Gateway,
+      &NvData->Gateway,
+      sizeof (EFI_IPv4_ADDRESS)
+      );
+    CopyMem (
+      &Tcp4IoConfig->RemoteIp,
+      &NvData->TargetIp,
+      sizeof (EFI_IPv4_ADDRESS)
+      );
 
     Tcp4IoConfig->RemotePort  = NvData->TargetPort;
     Tcp4IoConfig->ActiveFlag  = TRUE;
@@ -275,7 +296,11 @@ IScsiCreateConnection (
   } else {
     Tcp6IoConfig = &TcpIoConfig.Tcp6IoConfigData;
 
-    CopyMem (&Tcp6IoConfig->RemoteIp, &NvData->TargetIp, sizeof (EFI_IPv6_ADDRESS));
+    CopyMem (
+      &Tcp6IoConfig->RemoteIp,
+      &NvData->TargetIp,
+      sizeof (EFI_IPv6_ADDRESS)
+      );
     Tcp6IoConfig->RemotePort  = NvData->TargetPort;
     Tcp6IoConfig->ActiveFlag  = TRUE;
     Tcp6IoConfig->StationPort = 0;
@@ -368,7 +393,11 @@ IScsiGetIp6NicInfo (
 
   NvData->PrefixLength = 0;
   for (Index = 0; Index < Ip6ModeData.AddressCount; Index++) {
-    if (EFI_IP6_EQUAL (&NvData->LocalIp.v6, &Ip6ModeData.AddressList[Index].Address)) {
+    if (EFI_IP6_EQUAL (
+          &NvData->LocalIp.v6,
+          &Ip6ModeData.AddressList[Index].Address
+          ))
+    {
       NvData->PrefixLength = Ip6ModeData.AddressList[Index].PrefixLength;
       break;
     }
@@ -377,7 +406,12 @@ IScsiGetIp6NicInfo (
   SubnetPrefixLength = 0;
   RouteEntry         = Ip6ModeData.RouteCount;
   for (Index = 0; Index < Ip6ModeData.RouteCount; Index++) {
-    if (NetIp6IsNetEqual (TargetIp, &Ip6ModeData.RouteTable[Index].Destination, Ip6ModeData.RouteTable[Index].PrefixLength)) {
+    if (NetIp6IsNetEqual (
+          TargetIp,
+          &Ip6ModeData.RouteTable[Index].Destination,
+          Ip6ModeData.RouteTable[Index].PrefixLength
+          ))
+    {
       if (SubnetPrefixLength < Ip6ModeData.RouteTable[Index].PrefixLength) {
         SubnetPrefixLength = Ip6ModeData.RouteTable[Index].PrefixLength;
         RouteEntry         = Index;
@@ -386,7 +420,10 @@ IScsiGetIp6NicInfo (
   }
 
   if (RouteEntry != Ip6ModeData.RouteCount) {
-    IP6_COPY_ADDRESS (&NvData->Gateway, &Ip6ModeData.RouteTable[RouteEntry].Gateway);
+    IP6_COPY_ADDRESS (
+      &NvData->Gateway,
+      &Ip6ModeData.RouteTable[RouteEntry].Gateway
+      );
   }
 
 ON_EXIT:
@@ -464,7 +501,11 @@ IScsiSessionLogin (
   // Check media status before session login.
   //
   MediaStatus = EFI_SUCCESS;
-  NetLibDetectMediaWaitTimeout (Session->Private->Controller, ISCSI_CHECK_MEDIA_LOGIN_WAITING_TIME, &MediaStatus);
+  NetLibDetectMediaWaitTimeout (
+    Session->Private->Controller,
+    ISCSI_CHECK_MEDIA_LOGIN_WAITING_TIME,
+    &MediaStatus
+    );
   if (MediaStatus != EFI_SUCCESS) {
     return EFI_NO_MEDIA;
   }
@@ -491,7 +532,10 @@ IScsiSessionLogin (
     // Login through the newly created connection.
     //
     IScsiSessionResetAuthData (Session);
-    Status = IScsiConnLogin (Conn, Session->ConfigData->SessionConfigData.ConnectTimeout);
+    Status = IScsiConnLogin (
+               Conn,
+               Session->ConfigData->SessionConfigData.ConnectTimeout
+               );
     if (EFI_ERROR (Status)) {
       IScsiConnReset (Conn);
       IScsiDetatchConnection (Conn);
@@ -503,7 +547,8 @@ IScsiSessionLogin (
     }
 
     RetryCount++;
-  } while (RetryCount <= Session->ConfigData->SessionConfigData.ConnectRetryCount);
+  } while (RetryCount <=
+           Session->ConfigData->SessionConfigData.ConnectRetryCount);
 
   if (!EFI_ERROR (Status)) {
     Session->State = SESSION_STATE_LOGGED_IN;
@@ -757,12 +802,19 @@ IScsiPrepareLoginReq (
 
   Session = Conn->Session;
 
-  Nbuf = NetbufAlloc (sizeof (ISCSI_LOGIN_REQUEST) + DEFAULT_MAX_RECV_DATA_SEG_LEN);
+  Nbuf = NetbufAlloc (
+           sizeof (ISCSI_LOGIN_REQUEST) +
+           DEFAULT_MAX_RECV_DATA_SEG_LEN
+           );
   if (Nbuf == NULL) {
     return NULL;
   }
 
-  LoginReq = (ISCSI_LOGIN_REQUEST *)NetbufAllocSpace (Nbuf, sizeof (ISCSI_LOGIN_REQUEST), NET_BUF_TAIL);
+  LoginReq = (ISCSI_LOGIN_REQUEST *)NetbufAllocSpace (
+                                      Nbuf,
+                                      sizeof (ISCSI_LOGIN_REQUEST),
+                                      NET_BUF_TAIL
+                                      );
   if (LoginReq == NULL) {
     NetbufFree (Nbuf);
     return NULL;
@@ -843,7 +895,10 @@ IScsiPrepareLoginReq (
     //
     // Check whether we will issue the stage transition signal?
     //
-    Conn->TransitInitiated = ISCSI_FLAG_ON (LoginReq, ISCSI_LOGIN_REQ_PDU_FLAG_TRANSIT);
+    Conn->TransitInitiated = ISCSI_FLAG_ON (
+                               LoginReq,
+                               ISCSI_LOGIN_REQ_PDU_FLAG_TRANSIT
+                               );
   }
 
   return Nbuf;
@@ -957,7 +1012,8 @@ IScsiProcessLoginRsp (
       (CurrentStage != Conn->CurrentStage) ||
       (!Conn->TransitInitiated && Transit) ||
       (Transit && (NextStage != Conn->NextStage)) ||
-      (CompareMem (Session->Isid, LoginRsp->Isid, sizeof (LoginRsp->Isid)) != 0) ||
+      (CompareMem (Session->Isid, LoginRsp->Isid, sizeof (LoginRsp->Isid)) !=
+       0) ||
       (LoginRsp->InitiatorTaskTag != Session->InitiatorTaskTag)
       )
   {
@@ -976,12 +1032,16 @@ IScsiProcessLoginRsp (
   LoginRsp->ExpCmdSN = NTOHL (LoginRsp->ExpCmdSN);
   LoginRsp->MaxCmdSN = NTOHL (LoginRsp->MaxCmdSN);
 
-  if ((Conn->CurrentStage == ISCSI_SECURITY_NEGOTIATION) && (Conn->AuthStep == ISCSI_AUTH_INITIAL)) {
+  if ((Conn->CurrentStage == ISCSI_SECURITY_NEGOTIATION) && (Conn->AuthStep ==
+                                                             ISCSI_AUTH_INITIAL))
+  {
     //
     // If the Login Request is a leading Login Request, the target MUST use
     // the value presented in CmdSN as the target value for ExpCmdSN.
     //
-    if ((Session->State == SESSION_STATE_FREE) && (Session->CmdSN != LoginRsp->ExpCmdSN)) {
+    if ((Session->State == SESSION_STATE_FREE) && (Session->CmdSN !=
+                                                   LoginRsp->ExpCmdSN))
+    {
       return EFI_PROTOCOL_ERROR;
     }
 
@@ -1123,7 +1183,10 @@ IScsiUpdateTargetAddress (
   NvData = &Session->ConfigData->SessionConfigData;
 
   while (TRUE) {
-    TargetAddress = IScsiGetValueByKeyFromList (KeyValueList, ISCSI_KEY_TARGET_ADDRESS);
+    TargetAddress = IScsiGetValueByKeyFromList (
+                      KeyValueList,
+                      ISCSI_KEY_TARGET_ADDRESS
+                      );
     if (TargetAddress == NULL) {
       break;
     }
@@ -1139,7 +1202,9 @@ IScsiUpdateTargetAddress (
       //
       IpStr = TargetAddress;
 
-      while ((*TargetAddress != '\0') && (*TargetAddress != ':') && (*TargetAddress != ',')) {
+      while ((*TargetAddress != '\0') && (*TargetAddress != ':') &&
+             (*TargetAddress != ','))
+      {
         //
         // NULL, ':', or ',' ends the IPv4 string.
         //
@@ -1151,7 +1216,9 @@ IScsiUpdateTargetAddress (
       //
       TargetAddress++;
       IpStr = TargetAddress;
-      while ((*TargetAddress != '\0') && (*TargetAddress != ISCSI_REDIRECT_ADDR_END_DELIMITER)) {
+      while ((*TargetAddress != '\0') && (*TargetAddress !=
+                                          ISCSI_REDIRECT_ADDR_END_DELIMITER))
+      {
         //
         // ']' ends the IPv6 string.
         //
@@ -1170,7 +1237,9 @@ IScsiUpdateTargetAddress (
       //
       IpStr = TargetAddress;
 
-      while ((*TargetAddress != '\0') && (*TargetAddress != ':') && (*TargetAddress != ',')) {
+      while ((*TargetAddress != '\0') && (*TargetAddress != ':') &&
+             (*TargetAddress != ','))
+      {
         TargetAddress++;
       }
 
@@ -1209,7 +1278,11 @@ IScsiUpdateTargetAddress (
     //
     // Save the original user setting which specifies the proxy/virtual iSCSI target.
     //
-    CopyMem (&NvData->OriginalTargetIp, &NvData->TargetIp, sizeof (EFI_IP_ADDRESS));
+    CopyMem (
+      &NvData->OriginalTargetIp,
+      &NvData->TargetIp,
+      sizeof (EFI_IP_ADDRESS)
+      );
 
     //
     // Update the target IP address.
@@ -1225,11 +1298,17 @@ IScsiUpdateTargetAddress (
       // Target address is expressed as URL format, just save it and
       // do DNS resolution when creating a TCP connection.
       //
-      if (AsciiStrSize (IpStr) > sizeof (Session->ConfigData->SessionConfigData.TargetUrl)) {
+      if (AsciiStrSize (IpStr) >
+          sizeof (Session->ConfigData->SessionConfigData.TargetUrl))
+      {
         return EFI_INVALID_PARAMETER;
       }
 
-      CopyMem (&Session->ConfigData->SessionConfigData.TargetUrl, IpStr, AsciiStrSize (IpStr));
+      CopyMem (
+        &Session->ConfigData->SessionConfigData.TargetUrl,
+        IpStr,
+        AsciiStrSize (IpStr)
+        );
     } else {
       Status = IScsiAsciiStrToIp (
                  IpStr,
@@ -1410,7 +1489,14 @@ IScsiReceivePdu (
         FragmentCount = 1;
       }
 
-      DataSeg = NetbufFromExt (&Fragment[0], FragmentCount, 0, 0, IScsiNbufExtFree, NULL);
+      DataSeg = NetbufFromExt (
+                  &Fragment[0],
+                  FragmentCount,
+                  0,
+                  0,
+                  IScsiNbufExtFree,
+                  NULL
+                  );
       if (DataSeg == NULL) {
         Status = EFI_OUT_OF_RESOURCES;
         goto ON_EXIT;
@@ -1576,7 +1662,10 @@ IScsiCheckOpParams (
   //
   // ErrorRecoveryLevel: result function is Minimum.
   //
-  Value = IScsiGetValueByKeyFromList (KeyValueList, ISCSI_KEY_ERROR_RECOVERY_LEVEL);
+  Value = IScsiGetValueByKeyFromList (
+            KeyValueList,
+            ISCSI_KEY_ERROR_RECOVERY_LEVEL
+            );
   if (Value == NULL) {
     goto ON_ERROR;
   }
@@ -1586,7 +1675,10 @@ IScsiCheckOpParams (
     goto ON_ERROR;
   }
 
-  Session->ErrorRecoveryLevel = (UINT8)MIN (Session->ErrorRecoveryLevel, NumericValue);
+  Session->ErrorRecoveryLevel = (UINT8)MIN (
+                                         Session->ErrorRecoveryLevel,
+                                         NumericValue
+                                         );
 
   //
   // InitialR2T: result function is OR.
@@ -1608,12 +1700,17 @@ IScsiCheckOpParams (
     goto ON_ERROR;
   }
 
-  Session->ImmediateData = (BOOLEAN)(Session->ImmediateData && (BOOLEAN)(AsciiStrCmp (Value, "Yes") == 0));
+  Session->ImmediateData = (BOOLEAN)(Session->ImmediateData &&
+                                     (BOOLEAN)(AsciiStrCmp (Value, "Yes") ==
+                                               0));
 
   //
   // MaxRecvDataSegmentLength is declarative.
   //
-  Value = IScsiGetValueByKeyFromList (KeyValueList, ISCSI_KEY_MAX_RECV_DATA_SEGMENT_LENGTH);
+  Value = IScsiGetValueByKeyFromList (
+            KeyValueList,
+            ISCSI_KEY_MAX_RECV_DATA_SEGMENT_LENGTH
+            );
   if (Value != NULL) {
     Conn->MaxRecvDataSegmentLength = (UINT32)IScsiNetNtoi (Value);
   }
@@ -1634,13 +1731,19 @@ IScsiCheckOpParams (
   // ImmediateData=No.
   //
   if (!(Session->InitialR2T && !Session->ImmediateData)) {
-    Value = IScsiGetValueByKeyFromList (KeyValueList, ISCSI_KEY_FIRST_BURST_LENGTH);
+    Value = IScsiGetValueByKeyFromList (
+              KeyValueList,
+              ISCSI_KEY_FIRST_BURST_LENGTH
+              );
     if (Value == NULL) {
       goto ON_ERROR;
     }
 
     NumericValue              = IScsiNetNtoi (Value);
-    Session->FirstBurstLength = (UINT32)MIN (Session->FirstBurstLength, NumericValue);
+    Session->FirstBurstLength = (UINT32)MIN (
+                                          Session->FirstBurstLength,
+                                          NumericValue
+                                          );
   }
 
   //
@@ -1662,7 +1765,10 @@ IScsiCheckOpParams (
   // DataPDUInOrder: result function is OR.
   //
   if (!Session->DataPDUInOrder) {
-    Value = IScsiGetValueByKeyFromList (KeyValueList, ISCSI_KEY_DATA_PDU_IN_ORDER);
+    Value = IScsiGetValueByKeyFromList (
+              KeyValueList,
+              ISCSI_KEY_DATA_PDU_IN_ORDER
+              );
     if (Value == NULL) {
       goto ON_ERROR;
     }
@@ -1674,7 +1780,10 @@ IScsiCheckOpParams (
   // DataSequenceInorder: result function is OR.
   //
   if (!Session->DataSequenceInOrder) {
-    Value = IScsiGetValueByKeyFromList (KeyValueList, ISCSI_KEY_DATA_SEQUENCE_IN_ORDER);
+    Value = IScsiGetValueByKeyFromList (
+              KeyValueList,
+              ISCSI_KEY_DATA_SEQUENCE_IN_ORDER
+              );
     if (Value == NULL) {
       goto ON_ERROR;
     }
@@ -1685,7 +1794,10 @@ IScsiCheckOpParams (
   //
   // DefaultTime2Wait: result function is Maximum.
   //
-  Value = IScsiGetValueByKeyFromList (KeyValueList, ISCSI_KEY_DEFAULT_TIME2WAIT);
+  Value = IScsiGetValueByKeyFromList (
+            KeyValueList,
+            ISCSI_KEY_DEFAULT_TIME2WAIT
+            );
   if (Value == NULL) {
     goto ON_ERROR;
   }
@@ -1696,13 +1808,19 @@ IScsiCheckOpParams (
   } else if (NumericValue > 3600) {
     goto ON_ERROR;
   } else {
-    Session->DefaultTime2Wait = (UINT32)MAX (Session->DefaultTime2Wait, NumericValue);
+    Session->DefaultTime2Wait = (UINT32)MAX (
+                                          Session->DefaultTime2Wait,
+                                          NumericValue
+                                          );
   }
 
   //
   // DefaultTime2Retain: result function is Minimum.
   //
-  Value = IScsiGetValueByKeyFromList (KeyValueList, ISCSI_KEY_DEFAULT_TIME2RETAIN);
+  Value = IScsiGetValueByKeyFromList (
+            KeyValueList,
+            ISCSI_KEY_DEFAULT_TIME2RETAIN
+            );
   if (Value == NULL) {
     goto ON_ERROR;
   }
@@ -1713,13 +1831,19 @@ IScsiCheckOpParams (
   } else if (NumericValue > 3600) {
     goto ON_ERROR;
   } else {
-    Session->DefaultTime2Retain = (UINT32)MIN (Session->DefaultTime2Retain, NumericValue);
+    Session->DefaultTime2Retain = (UINT32)MIN (
+                                            Session->DefaultTime2Retain,
+                                            NumericValue
+                                            );
   }
 
   //
   // MaxOutstandingR2T: result function is Minimum.
   //
-  Value = IScsiGetValueByKeyFromList (KeyValueList, ISCSI_KEY_MAX_OUTSTANDING_R2T);
+  Value = IScsiGetValueByKeyFromList (
+            KeyValueList,
+            ISCSI_KEY_MAX_OUTSTANDING_R2T
+            );
   if (Value == NULL) {
     goto ON_ERROR;
   }
@@ -1729,7 +1853,10 @@ IScsiCheckOpParams (
     goto ON_ERROR;
   }
 
-  Session->MaxOutstandingR2T = (UINT16)MIN (Session->MaxOutstandingR2T, NumericValue);
+  Session->MaxOutstandingR2T = (UINT16)MIN (
+                                         Session->MaxOutstandingR2T,
+                                         NumericValue
+                                         );
 
   //
   // Remove declarative key-value pairs, if any.
@@ -1786,10 +1913,22 @@ IScsiFillOpParams (
 
   Session = Conn->Session;
 
-  AsciiSPrint (Value, sizeof (Value), "%a", (Conn->HeaderDigest == IScsiDigestCRC32) ? "None,CRC32" : "None");
+  AsciiSPrint (
+    Value,
+    sizeof (Value),
+    "%a",
+    (Conn->HeaderDigest ==
+     IScsiDigestCRC32) ? "None,CRC32" : "None"
+    );
   IScsiAddKeyValuePair (Pdu, ISCSI_KEY_HEADER_DIGEST, Value);
 
-  AsciiSPrint (Value, sizeof (Value), "%a", (Conn->DataDigest == IScsiDigestCRC32) ? "None,CRC32" : "None");
+  AsciiSPrint (
+    Value,
+    sizeof (Value),
+    "%a",
+    (Conn->DataDigest ==
+     IScsiDigestCRC32) ? "None,CRC32" : "None"
+    );
   IScsiAddKeyValuePair (Pdu, ISCSI_KEY_DATA_DIGEST, Value);
 
   AsciiSPrint (Value, sizeof (Value), "%d", Session->ErrorRecoveryLevel);
@@ -1798,7 +1937,13 @@ IScsiFillOpParams (
   AsciiSPrint (Value, sizeof (Value), "%a", Session->InitialR2T ? "Yes" : "No");
   IScsiAddKeyValuePair (Pdu, ISCSI_KEY_INITIAL_R2T, Value);
 
-  AsciiSPrint (Value, sizeof (Value), "%a", Session->ImmediateData ? "Yes" : "No");
+  AsciiSPrint (
+    Value,
+    sizeof (Value),
+    "%a",
+    Session->ImmediateData ? "Yes" :
+    "No"
+    );
   IScsiAddKeyValuePair (Pdu, ISCSI_KEY_IMMEDIATE_DATA, Value);
 
   AsciiSPrint (Value, sizeof (Value), "%d", MAX_RECV_DATA_SEG_LEN_IN_FFP);
@@ -1813,10 +1958,22 @@ IScsiFillOpParams (
   AsciiSPrint (Value, sizeof (Value), "%d", Session->MaxConnections);
   IScsiAddKeyValuePair (Pdu, ISCSI_KEY_MAX_CONNECTIONS, Value);
 
-  AsciiSPrint (Value, sizeof (Value), "%a", Session->DataPDUInOrder ? "Yes" : "No");
+  AsciiSPrint (
+    Value,
+    sizeof (Value),
+    "%a",
+    Session->DataPDUInOrder ? "Yes" :
+    "No"
+    );
   IScsiAddKeyValuePair (Pdu, ISCSI_KEY_DATA_PDU_IN_ORDER, Value);
 
-  AsciiSPrint (Value, sizeof (Value), "%a", Session->DataSequenceInOrder ? "Yes" : "No");
+  AsciiSPrint (
+    Value,
+    sizeof (Value),
+    "%a",
+    Session->DataSequenceInOrder ?
+    "Yes" : "No"
+    );
   IScsiAddKeyValuePair (Pdu, ISCSI_KEY_DATA_SEQUENCE_IN_ORDER, Value);
 
   AsciiSPrint (Value, sizeof (Value), "%d", Session->DefaultTime2Wait);
@@ -2147,7 +2304,14 @@ IScsiNewDataSegment (
     FragmentCount = 1;
   }
 
-  DataSeg = NetbufFromExt (&Fragment[0], FragmentCount, 0, 0, IScsiNbufExtFree, NULL);
+  DataSeg = NetbufFromExt (
+              &Fragment[0],
+              FragmentCount,
+              0,
+              0,
+              IScsiNbufExtFree,
+              NULL
+              );
 
   return DataSeg;
 }
@@ -2197,7 +2361,8 @@ IScsiNewScsiCmdPdu (
     //
     // The CDB exceeds 16 bytes. An extended CDB AHS is required.
     //
-    AHSLength = (UINT8)(AHSLength + ISCSI_ROUNDUP (Packet->CdbLength - 16) + sizeof (ISCSI_ADDITIONAL_HEADER));
+    AHSLength = (UINT8)(AHSLength + ISCSI_ROUNDUP (Packet->CdbLength - 16) +
+                        sizeof (ISCSI_ADDITIONAL_HEADER));
   }
 
   Length    = sizeof (SCSI_COMMAND) + AHSLength;
@@ -2234,17 +2399,23 @@ IScsiNewScsiCmdPdu (
       break;
 
     case DataBi:
-      ISCSI_SET_FLAG (ScsiCmd, SCSI_CMD_PDU_FLAG_READ | SCSI_CMD_PDU_FLAG_WRITE);
+      ISCSI_SET_FLAG (
+        ScsiCmd,
+        SCSI_CMD_PDU_FLAG_READ |
+        SCSI_CMD_PDU_FLAG_WRITE
+        );
       ScsiCmd->ExpDataXferLength = NTOHL (Packet->OutTransferLength);
 
       //
       // Fill the bidirectional expected read data length AHS.
       //
       BiExpReadDataLenAHS = (ISCSI_BI_EXP_READ_DATA_LEN_AHS *)Header;
-      Header              = (ISCSI_ADDITIONAL_HEADER *)(BiExpReadDataLenAHS + 1);
+      Header              = (ISCSI_ADDITIONAL_HEADER *)(BiExpReadDataLenAHS +
+                                                        1);
 
-      BiExpReadDataLenAHS->Length            = NTOHS (5);
-      BiExpReadDataLenAHS->Type              = ISCSI_AHS_TYPE_BI_EXP_READ_DATA_LEN;
+      BiExpReadDataLenAHS->Length = NTOHS (5);
+      BiExpReadDataLenAHS->Type   =
+        ISCSI_AHS_TYPE_BI_EXP_READ_DATA_LEN;
       BiExpReadDataLenAHS->ExpReadDataLength = NTOHL (Packet->InTransferLength);
 
       break;
@@ -2275,8 +2446,14 @@ IScsiNewScsiCmdPdu (
     // data is the minimum of FirstBurstLength, the data length to be xfered, and
     // the MaxRecvdataSegmentLength on this connection.
     //
-    ImmediateDataLen = MIN (Session->FirstBurstLength, Packet->OutTransferLength);
-    ImmediateDataLen = MIN (ImmediateDataLen, Tcb->Conn->MaxRecvDataSegmentLength);
+    ImmediateDataLen = MIN (
+                         Session->FirstBurstLength,
+                         Packet->OutTransferLength
+                         );
+    ImmediateDataLen = MIN (
+                         ImmediateDataLen,
+                         Tcb->Conn->MaxRecvDataSegmentLength
+                         );
 
     //
     // Update the data segment length in the PDU header.
@@ -2286,7 +2463,11 @@ IScsiNewScsiCmdPdu (
     //
     // Create the data segment.
     //
-    DataSeg = IScsiNewDataSegment ((UINT8 *)Packet->OutDataBuffer, ImmediateDataLen, FALSE);
+    DataSeg = IScsiNewDataSegment (
+                (UINT8 *)Packet->OutDataBuffer,
+                ImmediateDataLen,
+                FALSE
+                );
     if (DataSeg == NULL) {
       NetbufFree (PduHeader);
       Pdu = NULL;
@@ -2382,7 +2563,11 @@ IScsiNewDataOutPdu (
   //
   InsertTailList (NbufList, &PduHdr->List);
 
-  DataOutHdr = (ISCSI_SCSI_DATA_OUT *)NetbufAllocSpace (PduHdr, sizeof (ISCSI_SCSI_DATA_OUT), NET_BUF_TAIL);
+  DataOutHdr = (ISCSI_SCSI_DATA_OUT *)NetbufAllocSpace (
+                                        PduHdr,
+                                        sizeof (ISCSI_SCSI_DATA_OUT),
+                                        NET_BUF_TAIL
+                                        );
   if (DataOutHdr == NULL) {
     IScsiFreeNbufList (NbufList);
     return NULL;
@@ -2614,7 +2799,11 @@ IScsiOnDataInRcvd (
   //
   // Update the command related sequence numbers.
   //
-  IScsiUpdateCmdSN (Tcb->Conn->Session, DataInHdr->MaxCmdSN, DataInHdr->ExpCmdSN);
+  IScsiUpdateCmdSN (
+    Tcb->Conn->Session,
+    DataInHdr->MaxCmdSN,
+    DataInHdr->ExpCmdSN
+    );
 
   if (ISCSI_FLAG_ON (DataInHdr, SCSI_DATA_IN_PDU_FLAG_STATUS_VALID)) {
     if (!ISCSI_FLAG_ON (DataInHdr, ISCSI_BHS_FLAG_FINAL)) {
@@ -2626,7 +2815,12 @@ IScsiOnDataInRcvd (
 
     Tcb->StatusXferd = TRUE;
 
-    if (ISCSI_FLAG_ON (DataInHdr, SCSI_DATA_IN_PDU_FLAG_OVERFLOW | SCSI_DATA_IN_PDU_FLAG_UNDERFLOW)) {
+    if (ISCSI_FLAG_ON (
+          DataInHdr,
+          SCSI_DATA_IN_PDU_FLAG_OVERFLOW |
+          SCSI_DATA_IN_PDU_FLAG_UNDERFLOW
+          ))
+    {
       //
       // Underflow and Overflow are mutual flags.
       //
@@ -2695,7 +2889,12 @@ IScsiOnR2TRcvd (
   R2THdr->BufferOffset              = NTOHL (R2THdr->BufferOffset);
   R2THdr->DesiredDataTransferLength = NTOHL (R2THdr->DesiredDataTransferLength);
 
-  if ((R2THdr->InitiatorTaskTag != Tcb->InitiatorTaskTag) || !ISCSI_SEQ_EQ (R2THdr->StatSN, Tcb->Conn->ExpStatSN)) {
+  if ((R2THdr->InitiatorTaskTag != Tcb->InitiatorTaskTag) || !ISCSI_SEQ_EQ (
+                                                                R2THdr->StatSN,
+                                                                Tcb->Conn->
+                                                                  ExpStatSN
+                                                                ))
+  {
     return EFI_PROTOCOL_ERROR;
   }
 
@@ -2712,7 +2911,8 @@ IScsiOnR2TRcvd (
   XferContext->Offset            = R2THdr->BufferOffset;
   XferContext->DesiredLength     = R2THdr->DesiredDataTransferLength;
 
-  if (((XferContext->Offset + XferContext->DesiredLength) > Packet->OutTransferLength) ||
+  if (((XferContext->Offset + XferContext->DesiredLength) >
+       Packet->OutTransferLength) ||
       (XferContext->DesiredLength > Tcb->Conn->Session->MaxBurstLength)
       )
   {
@@ -2772,19 +2972,33 @@ IScsiOnScsiRspRcvd (
 
   ScsiRspHdr->MaxCmdSN = NTOHL (ScsiRspHdr->MaxCmdSN);
   ScsiRspHdr->ExpCmdSN = NTOHL (ScsiRspHdr->ExpCmdSN);
-  IScsiUpdateCmdSN (Tcb->Conn->Session, ScsiRspHdr->MaxCmdSN, ScsiRspHdr->ExpCmdSN);
+  IScsiUpdateCmdSN (
+    Tcb->Conn->Session,
+    ScsiRspHdr->MaxCmdSN,
+    ScsiRspHdr->ExpCmdSN
+    );
 
   Tcb->StatusXferd = TRUE;
 
   Packet->HostAdapterStatus = ScsiRspHdr->Response;
-  if (Packet->HostAdapterStatus != ISCSI_SERVICE_RSP_COMMAND_COMPLETE_AT_TARGET) {
+  if (Packet->HostAdapterStatus !=
+      ISCSI_SERVICE_RSP_COMMAND_COMPLETE_AT_TARGET)
+  {
     return EFI_SUCCESS;
   }
 
   Packet->TargetStatus = ScsiRspHdr->Status;
 
-  if (ISCSI_FLAG_ON (ScsiRspHdr, SCSI_RSP_PDU_FLAG_BI_READ_OVERFLOW | SCSI_RSP_PDU_FLAG_BI_READ_UNDERFLOW) ||
-      ISCSI_FLAG_ON (ScsiRspHdr, SCSI_RSP_PDU_FLAG_OVERFLOW | SCSI_RSP_PDU_FLAG_UNDERFLOW)
+  if (ISCSI_FLAG_ON (
+        ScsiRspHdr,
+        SCSI_RSP_PDU_FLAG_BI_READ_OVERFLOW |
+        SCSI_RSP_PDU_FLAG_BI_READ_UNDERFLOW
+        ) ||
+      ISCSI_FLAG_ON (
+        ScsiRspHdr,
+        SCSI_RSP_PDU_FLAG_OVERFLOW |
+        SCSI_RSP_PDU_FLAG_UNDERFLOW
+        )
       )
   {
     return EFI_PROTOCOL_ERROR;
@@ -2819,14 +3033,21 @@ IScsiOnScsiRspRcvd (
 
   DataSegLen = ISCSI_GET_DATASEG_LEN (ScsiRspHdr);
   if (DataSegLen != 0) {
-    SenseData = (ISCSI_SENSE_DATA *)NetbufGetByte (Pdu, sizeof (SCSI_RESPONSE), NULL);
+    SenseData = (ISCSI_SENSE_DATA *)NetbufGetByte (
+                                      Pdu,
+                                      sizeof (SCSI_RESPONSE),
+                                      NULL
+                                      );
     if (SenseData == NULL) {
       return EFI_PROTOCOL_ERROR;
     }
 
     SenseData->Length = NTOHS (SenseData->Length);
 
-    Packet->SenseDataLength = (UINT8)MIN (SenseData->Length, Packet->SenseDataLength);
+    Packet->SenseDataLength = (UINT8)MIN (
+                                       SenseData->Length,
+                                       Packet->SenseDataLength
+                                       );
     if (Packet->SenseDataLength != 0) {
       CopyMem (Packet->SenseData, &SenseData->Data[0], Packet->SenseDataLength);
     }
@@ -2991,7 +3212,8 @@ IScsiExecuteScsiCommand (
     XferContext->TargetTransferTag = ISCSI_RESERVED_TAG;
     XferContext->DesiredLength     = MIN (
                                        Session->FirstBurstLength,
-                                       Packet->OutTransferLength - XferContext->Offset
+                                       Packet->OutTransferLength -
+                                       XferContext->Offset
                                        );
 
     Data   = (UINT8 *)Packet->OutDataBuffer + XferContext->Offset;
@@ -3020,7 +3242,14 @@ IScsiExecuteScsiCommand (
     //
     // Try to receive PDU from target.
     //
-    Status = IScsiReceivePdu (Conn, &Pdu, &InBufferContext, FALSE, FALSE, TimeoutEvent);
+    Status = IScsiReceivePdu (
+               Conn,
+               &Pdu,
+               &InBufferContext,
+               FALSE,
+               FALSE,
+               TimeoutEvent
+               );
     if (EFI_ERROR (Status)) {
       goto ON_EXIT;
     }

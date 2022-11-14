@@ -75,7 +75,9 @@ TlsSetSessionData (
 
   Instance = TLS_INSTANCE_FROM_PROTOCOL (This);
 
-  if ((DataType != EfiTlsSessionState) && (Instance->TlsSessionState != EfiTlsSessionNotStarted)) {
+  if ((DataType != EfiTlsSessionState) && (Instance->TlsSessionState !=
+                                           EfiTlsSessionNotStarted))
+  {
     Status = EFI_NOT_READY;
     goto ON_EXIT;
   }
@@ -90,7 +92,11 @@ TlsSetSessionData (
         goto ON_EXIT;
       }
 
-      Status = TlsSetVersion (Instance->TlsConn, ((EFI_TLS_VERSION *)Data)->Major, ((EFI_TLS_VERSION *)Data)->Minor);
+      Status = TlsSetVersion (
+                 Instance->TlsConn,
+                 ((EFI_TLS_VERSION *)Data)->Major,
+                 ((EFI_TLS_VERSION *)Data)->Minor
+                 );
       break;
     case EfiTlsConnectionEnd:
       if (DataSize != sizeof (EFI_TLS_CONNECTION_END)) {
@@ -98,7 +104,10 @@ TlsSetSessionData (
         goto ON_EXIT;
       }
 
-      Status = TlsSetConnectionEnd (Instance->TlsConn, *((EFI_TLS_CONNECTION_END *)Data));
+      Status = TlsSetConnectionEnd (
+                 Instance->TlsConn,
+                 *((EFI_TLS_CONNECTION_END *)Data)
+                 );
       break;
     case EfiTlsCipherList:
       if (DataSize % sizeof (EFI_TLS_CIPHER) != 0) {
@@ -134,7 +143,9 @@ TlsSetSessionData (
       // Applications for non-public use may agree on certain compression methods.
       // Using different compression methods with the same identifier will lead to connection failure.
       //
-      for (Index = 0; Index < DataSize / sizeof (EFI_TLS_COMPRESSION); Index++) {
+      for (Index = 0; Index < DataSize / sizeof (EFI_TLS_COMPRESSION);
+           Index++)
+      {
         Status = TlsSetCompressionMethod (*((UINT8 *)Data + Index));
         if (EFI_ERROR (Status)) {
           break;
@@ -161,22 +172,31 @@ TlsSetSessionData (
 
       TlsVerifyHost = (CONST EFI_TLS_VERIFY_HOST *)Data;
 
-      if (((TlsVerifyHost->Flags & EFI_TLS_VERIFY_FLAG_ALWAYS_CHECK_SUBJECT) != 0) &&
-          ((TlsVerifyHost->Flags & EFI_TLS_VERIFY_FLAG_NEVER_CHECK_SUBJECT) != 0))
+      if (((TlsVerifyHost->Flags & EFI_TLS_VERIFY_FLAG_ALWAYS_CHECK_SUBJECT) !=
+           0) &&
+          ((TlsVerifyHost->Flags & EFI_TLS_VERIFY_FLAG_NEVER_CHECK_SUBJECT) !=
+           0))
       {
         Status = EFI_INVALID_PARAMETER;
         goto ON_EXIT;
       }
 
       if (((TlsVerifyHost->Flags & EFI_TLS_VERIFY_FLAG_NO_WILDCARDS) != 0) &&
-          (((TlsVerifyHost->Flags & EFI_TLS_VERIFY_FLAG_NO_PARTIAL_WILDCARDS) != 0) ||
-           ((TlsVerifyHost->Flags & EFI_TLS_VERIFY_FLAG_MULTI_LABEL_WILDCARDS) != 0)))
+          (((TlsVerifyHost->Flags & EFI_TLS_VERIFY_FLAG_NO_PARTIAL_WILDCARDS) !=
+            0) ||
+           ((TlsVerifyHost->Flags &
+             EFI_TLS_VERIFY_FLAG_MULTI_LABEL_WILDCARDS) != 0)))
       {
         Status = EFI_INVALID_PARAMETER;
         goto ON_EXIT;
       }
 
-      Status = This->GetSessionData (This, EfiTlsVerifyMethod, &VerifyMethod, &VerifyMethodSize);
+      Status = This->GetSessionData (
+                       This,
+                       EfiTlsVerifyMethod,
+                       &VerifyMethod,
+                       &VerifyMethodSize
+                       );
       if (EFI_ERROR (Status)) {
         goto ON_EXIT;
       }
@@ -186,7 +206,11 @@ TlsSetSessionData (
         goto ON_EXIT;
       }
 
-      Status = TlsSetVerifyHost (Instance->TlsConn, TlsVerifyHost->Flags, TlsVerifyHost->HostName);
+      Status = TlsSetVerifyHost (
+                 Instance->TlsConn,
+                 TlsVerifyHost->Flags,
+                 TlsVerifyHost->HostName
+                 );
 
       break;
     case EfiTlsSessionID:
@@ -272,7 +296,9 @@ TlsGetSessionData (
 
   Status = EFI_SUCCESS;
 
-  if ((This == NULL) || (DataSize == NULL) || ((Data == NULL) && (*DataSize != 0))) {
+  if ((This == NULL) || (DataSize == NULL) || ((Data == NULL) && (*DataSize !=
+                                                                  0)))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -319,8 +345,11 @@ TlsGetSessionData (
         goto ON_EXIT;
       }
 
-      *DataSize         = sizeof (EFI_TLS_CIPHER);
-      Status            = TlsGetCurrentCipher (Instance->TlsConn, (UINT16 *)Data);
+      *DataSize = sizeof (EFI_TLS_CIPHER);
+      Status    = TlsGetCurrentCipher (
+                    Instance->TlsConn,
+                    (UINT16 *)Data
+                    );
       *((UINT16 *)Data) = HTONS (*((UINT16 *)Data));
       break;
     case EfiTlsCompressionMethod:
@@ -580,7 +609,10 @@ TlsBuildResponsePacket (
       //
       // Must be alert message, Decrypt it and build the ResponsePacket.
       //
-      ASSERT (((TLS_RECORD_HEADER *)RequestBuffer)->ContentType == TlsContentTypeAlert);
+      ASSERT (
+        ((TLS_RECORD_HEADER *)RequestBuffer)->ContentType ==
+        TlsContentTypeAlert
+        );
 
       Status = TlsHandleAlert (
                  Instance->TlsConn,

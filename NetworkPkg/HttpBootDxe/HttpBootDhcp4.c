@@ -53,9 +53,10 @@ HttpBootBuildDhcp4Options (
   //
   // Append parameter request list option.
   //
-  OptList[Index]->OpCode    = DHCP4_TAG_PARA_LIST;
-  OptList[Index]->Length    = 27;
-  OptEnt.Para               = (HTTP_BOOT_DHCP4_OPTION_PARA *)OptList[Index]->Data;
+  OptList[Index]->OpCode = DHCP4_TAG_PARA_LIST;
+  OptList[Index]->Length = 27;
+  OptEnt.Para            =
+    (HTTP_BOOT_DHCP4_OPTION_PARA *)OptList[Index]->Data;
   OptEnt.Para->ParaList[0]  = DHCP4_TAG_NETMASK;
   OptEnt.Para->ParaList[1]  = DHCP4_TAG_TIME_OFFSET;
   OptEnt.Para->ParaList[2]  = DHCP4_TAG_ROUTER;
@@ -151,9 +152,21 @@ HttpBootBuildDhcp4Options (
     );
 
   if (Private->Nii != NULL) {
-    CopyMem (OptEnt.Clid->InterfaceName, Private->Nii->StringId, sizeof (OptEnt.Clid->InterfaceName));
-    HttpBootUintnToAscDecWithFormat (Private->Nii->MajorVer, OptEnt.Clid->UndiMajor, sizeof (OptEnt.Clid->UndiMajor));
-    HttpBootUintnToAscDecWithFormat (Private->Nii->MinorVer, OptEnt.Clid->UndiMinor, sizeof (OptEnt.Clid->UndiMinor));
+    CopyMem (
+      OptEnt.Clid->InterfaceName,
+      Private->Nii->StringId,
+      sizeof (OptEnt.Clid->InterfaceName)
+      );
+    HttpBootUintnToAscDecWithFormat (
+      Private->Nii->MajorVer,
+      OptEnt.Clid->UndiMajor,
+      sizeof (OptEnt.Clid->UndiMajor)
+      );
+    HttpBootUintnToAscDecWithFormat (
+      Private->Nii->MinorVer,
+      OptEnt.Clid->UndiMinor,
+      sizeof (OptEnt.Clid->UndiMinor)
+      );
   }
 
   Index++;
@@ -358,14 +371,20 @@ HttpBootParseDhcp4Packet (
     if (*(Ptr8 - 1) != '\0') {
       *Ptr8 = '\0';
     }
-  } else if (!FileFieldOverloaded && (Offer->Dhcp4.Header.BootFileName[0] != 0)) {
+  } else if (!FileFieldOverloaded && (Offer->Dhcp4.Header.BootFileName[0] !=
+                                      0))
+  {
     //
     // If the bootfile is not present and bootfilename is present in DHCPv4 packet, just parse it.
     // Do not count dhcp option header here, or else will destroy the serverhostname.
     //
     Options[HTTP_BOOT_DHCP4_TAG_INDEX_BOOTFILE] = (EFI_DHCP4_PACKET_OPTION *)
-                                                  (&Offer->Dhcp4.Header.BootFileName[0] -
-                                                   OFFSET_OF (EFI_DHCP4_PACKET_OPTION, Data[0]));
+                                                  (&Offer->Dhcp4.Header.
+                                                     BootFileName[0] -
+                                                   OFFSET_OF (
+                                                     EFI_DHCP4_PACKET_OPTION,
+                                                     Data[0]
+                                                     ));
   }
 
   //
@@ -381,7 +400,10 @@ HttpBootParseDhcp4Packet (
   if (IsHttpOffer) {
     Status = HttpParseUrl (
                (CHAR8 *)Options[HTTP_BOOT_DHCP4_TAG_INDEX_BOOTFILE]->Data,
-               (UINT32)AsciiStrLen ((CHAR8 *)Options[HTTP_BOOT_DHCP4_TAG_INDEX_BOOTFILE]->Data),
+               (UINT32)AsciiStrLen (
+                         (CHAR8 *)Options[HTTP_BOOT_DHCP4_TAG_INDEX_BOOTFILE]->
+                           Data
+                         ),
                FALSE,
                &Cache4->UriParser
                );
@@ -405,11 +427,13 @@ HttpBootParseDhcp4Packet (
       if (IsProxyOffer) {
         OfferType = HttpOfferTypeProxyIpUri;
       } else {
-        OfferType = IsDnsOffer ? HttpOfferTypeDhcpIpUriDns : HttpOfferTypeDhcpIpUri;
+        OfferType = IsDnsOffer ? HttpOfferTypeDhcpIpUriDns :
+                    HttpOfferTypeDhcpIpUri;
       }
     } else {
       if (!IsProxyOffer) {
-        OfferType = IsDnsOffer ? HttpOfferTypeDhcpNameUriDns : HttpOfferTypeDhcpNameUri;
+        OfferType = IsDnsOffer ? HttpOfferTypeDhcpNameUriDns :
+                    HttpOfferTypeDhcpNameUri;
       } else {
         OfferType = HttpOfferTypeProxyNameUri;
       }
@@ -475,7 +499,8 @@ HttpBootCacheDhcp4Offer (
   OfferType = Cache4->OfferType;
   ASSERT (OfferType < HttpOfferTypeMax);
   ASSERT (Private->OfferCount[OfferType] < HTTP_BOOT_OFFER_MAX_NUM);
-  Private->OfferIndex[OfferType][Private->OfferCount[OfferType]] = Private->OfferNum;
+  Private->OfferIndex[OfferType][Private->OfferCount[OfferType]] =
+    Private->OfferNum;
   Private->OfferCount[OfferType]++;
   Private->OfferNum++;
 
@@ -505,9 +530,11 @@ HttpBootSelectDhcpOffer (
     if (Private->OfferCount[HttpOfferTypeDhcpDns] > 0) {
       Private->SelectIndex = Private->OfferIndex[HttpOfferTypeDhcpDns][0] + 1;
     } else if (Private->OfferCount[HttpOfferTypeDhcpIpUriDns] > 0) {
-      Private->SelectIndex = Private->OfferIndex[HttpOfferTypeDhcpIpUriDns][0] + 1;
+      Private->SelectIndex = Private->OfferIndex[HttpOfferTypeDhcpIpUriDns][0] +
+                             1;
     } else if (Private->OfferCount[HttpOfferTypeDhcpNameUriDns] > 0) {
-      Private->SelectIndex = Private->OfferIndex[HttpOfferTypeDhcpNameUriDns][0] + 1;
+      Private->SelectIndex =
+        Private->OfferIndex[HttpOfferTypeDhcpNameUriDns][0] + 1;
     } else if (Private->OfferCount[HttpOfferTypeDhcpOnly] > 0) {
       Private->SelectIndex = Private->OfferIndex[HttpOfferTypeDhcpOnly][0] + 1;
     } else if (Private->OfferCount[HttpOfferTypeDhcpIpUri] > 0) {
@@ -527,28 +554,34 @@ HttpBootSelectDhcpOffer (
     if (Private->OfferCount[HttpOfferTypeDhcpIpUri] > 0) {
       Private->SelectIndex = Private->OfferIndex[HttpOfferTypeDhcpIpUri][0] + 1;
     } else if (Private->OfferCount[HttpOfferTypeDhcpIpUriDns] > 0) {
-      Private->SelectIndex = Private->OfferIndex[HttpOfferTypeDhcpIpUriDns][0] + 1;
+      Private->SelectIndex = Private->OfferIndex[HttpOfferTypeDhcpIpUriDns][0] +
+                             1;
     } else if (Private->OfferCount[HttpOfferTypeDhcpNameUriDns] > 0) {
-      Private->SelectIndex = Private->OfferIndex[HttpOfferTypeDhcpNameUriDns][0] + 1;
+      Private->SelectIndex =
+        Private->OfferIndex[HttpOfferTypeDhcpNameUriDns][0] + 1;
     } else if ((Private->OfferCount[HttpOfferTypeDhcpOnly] > 0) &&
                (Private->OfferCount[HttpOfferTypeProxyIpUri] > 0))
     {
-      Private->SelectIndex     = Private->OfferIndex[HttpOfferTypeDhcpOnly][0] + 1;
+      Private->SelectIndex = Private->OfferIndex[HttpOfferTypeDhcpOnly][0] +
+                             1;
       Private->SelectProxyType = HttpOfferTypeProxyIpUri;
     } else if ((Private->OfferCount[HttpOfferTypeDhcpDns] > 0) &&
                (Private->OfferCount[HttpOfferTypeProxyIpUri] > 0))
     {
-      Private->SelectIndex     = Private->OfferIndex[HttpOfferTypeDhcpDns][0] + 1;
+      Private->SelectIndex = Private->OfferIndex[HttpOfferTypeDhcpDns][0] +
+                             1;
       Private->SelectProxyType = HttpOfferTypeProxyIpUri;
     } else if ((Private->OfferCount[HttpOfferTypeDhcpDns] > 0) &&
                (Private->OfferCount[HttpOfferTypeProxyNameUri] > 0))
     {
-      Private->SelectIndex     = Private->OfferIndex[HttpOfferTypeDhcpDns][0] + 1;
+      Private->SelectIndex = Private->OfferIndex[HttpOfferTypeDhcpDns][0] +
+                             1;
       Private->SelectProxyType = HttpOfferTypeProxyNameUri;
     } else if ((Private->OfferCount[HttpOfferTypeDhcpDns] > 0) &&
                (Private->OfferCount[HttpOfferTypeDhcpNameUri] > 0))
     {
-      Private->SelectIndex     = Private->OfferIndex[HttpOfferTypeDhcpDns][0] + 1;
+      Private->SelectIndex = Private->OfferIndex[HttpOfferTypeDhcpDns][0] +
+                             1;
       Private->SelectProxyType = HttpOfferTypeDhcpNameUri;
     }
   }
@@ -619,7 +652,8 @@ HttpBootDhcp4CallBack (
   // Callback to user if any packets sent or received.
   //
   if ((Private->HttpBootCallback != NULL) && (Dhcp4Event != Dhcp4SelectOffer)) {
-    Received = (BOOLEAN)(Dhcp4Event == Dhcp4RcvdOffer || Dhcp4Event == Dhcp4RcvdAck);
+    Received = (BOOLEAN)(Dhcp4Event == Dhcp4RcvdOffer || Dhcp4Event ==
+                         Dhcp4RcvdAck);
     Status   = Private->HttpBootCallback->Callback (
                                             Private->HttpBootCallback,
                                             HttpBootDhcp4,
@@ -664,7 +698,8 @@ HttpBootDhcp4CallBack (
       if (Private->SelectIndex == 0) {
         Status = EFI_ABORTED;
       } else {
-        *NewPacket = &Private->OfferBuffer[Private->SelectIndex - 1].Dhcp4.Packet.Offer;
+        *NewPacket = &Private->OfferBuffer[Private->SelectIndex -
+                                           1].Dhcp4.Packet.Offer;
       }
 
       break;

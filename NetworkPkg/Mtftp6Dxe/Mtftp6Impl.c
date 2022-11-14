@@ -142,7 +142,10 @@ EfiMtftp6Configure (
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((MtftpConfigData != NULL) && !NetIp6IsValidUnicast (&MtftpConfigData->ServerIp)) {
+  if ((MtftpConfigData != NULL) && !NetIp6IsValidUnicast (
+                                      &MtftpConfigData->ServerIp
+                                      ))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -177,7 +180,11 @@ EfiMtftp6Configure (
       goto ON_EXIT;
     }
 
-    CopyMem (Instance->Config, MtftpConfigData, sizeof (EFI_MTFTP6_CONFIG_DATA));
+    CopyMem (
+      Instance->Config,
+      MtftpConfigData,
+      sizeof (EFI_MTFTP6_CONFIG_DATA)
+      );
 
     //
     // Don't configure the udpio here because each operation might override
@@ -338,7 +345,9 @@ EfiMtftp6GetInfo (
       (Filename == NULL) ||
       (PacketLength == NULL) ||
       ((OptionCount != 0) && (OptionList == NULL)) ||
-      ((OverrideData != NULL) && !NetIp6IsValidUnicast (&OverrideData->ServerIp))
+      ((OverrideData != NULL) && !NetIp6IsValidUnicast (
+                                    &OverrideData->ServerIp
+                                    ))
       )
   {
     return EFI_INVALID_PARAMETER;

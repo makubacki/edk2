@@ -116,7 +116,9 @@ TlsConfigurationGetData (
 
   Status = EFI_SUCCESS;
 
-  if ((This == NULL) || (DataSize == NULL) || ((Data == NULL) && (*DataSize != 0))) {
+  if ((This == NULL) || (DataSize == NULL) || ((Data == NULL) && (*DataSize !=
+                                                                  0)))
+  {
     return EFI_INVALID_PARAMETER;
   }
 

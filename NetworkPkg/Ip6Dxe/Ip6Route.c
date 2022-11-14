@@ -134,12 +134,22 @@ Ip6FindRouteEntry (
       RtEntry = NET_LIST_USER_STRUCT (Entry, IP6_ROUTE_ENTRY, Link);
 
       if (Destination != NULL) {
-        if (NetIp6IsNetEqual (Destination, &RtEntry->Destination, RtEntry->PrefixLength)) {
+        if (NetIp6IsNetEqual (
+              Destination,
+              &RtEntry->Destination,
+              RtEntry->PrefixLength
+              ))
+        {
           NET_GET_REF (RtEntry);
           return RtEntry;
         }
       } else if (NextHop != NULL) {
-        if (NetIp6IsNetEqual (NextHop, &RtEntry->NextHop, RtEntry->PrefixLength)) {
+        if (NetIp6IsNetEqual (
+              NextHop,
+              &RtEntry->NextHop,
+              RtEntry->PrefixLength
+              ))
+        {
           NET_GET_REF (RtEntry);
           return RtEntry;
         }
@@ -235,7 +245,12 @@ Ip6FindRouteCache (
   NET_LIST_FOR_EACH (Entry, &RtTable->Cache.CacheBucket[Index]) {
     RtCacheEntry = NET_LIST_USER_STRUCT (Entry, IP6_ROUTE_CACHE_ENTRY, Link);
 
-    if (EFI_IP6_EQUAL (Dest, &RtCacheEntry->Destination) && EFI_IP6_EQUAL (Src, &RtCacheEntry->Source)) {
+    if (EFI_IP6_EQUAL (Dest, &RtCacheEntry->Destination) && EFI_IP6_EQUAL (
+                                                              Src,
+                                                              &RtCacheEntry->
+                                                                Source
+                                                              ))
+    {
       NET_GET_REF (RtCacheEntry);
       return RtCacheEntry;
     }
@@ -522,11 +537,20 @@ Ip6DelRoute (
   NET_LIST_FOR_EACH_SAFE (Entry, Next, ListHead) {
     Route = NET_LIST_USER_STRUCT (Entry, IP6_ROUTE_ENTRY, Link);
 
-    if ((Destination != NULL) && !NetIp6IsNetEqual (Destination, &Route->Destination, PrefixLength)) {
+    if ((Destination != NULL) && !NetIp6IsNetEqual (
+                                    Destination,
+                                    &Route->Destination,
+                                    PrefixLength
+                                    ))
+    {
       continue;
     }
 
-    if ((GatewayAddress != NULL) && !EFI_IP6_EQUAL (GatewayAddress, &Route->NextHop)) {
+    if ((GatewayAddress != NULL) && !EFI_IP6_EQUAL (
+                                       GatewayAddress,
+                                       &Route->NextHop
+                                       ))
+    {
       continue;
     }
 

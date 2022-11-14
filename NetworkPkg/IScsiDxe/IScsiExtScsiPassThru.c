@@ -150,7 +150,12 @@ IScsiExtScsiPassThruGetNextTargetLun (
   Private      = ISCSI_DRIVER_DATA_FROM_EXT_SCSI_PASS_THRU (This);
   ConfigNvData = &Private->Session->ConfigData->SessionConfigData;
 
-  if (((*Target)[0] == 0) && (CompareMem (Lun, ConfigNvData->BootLun, sizeof (UINT64)) == 0)) {
+  if (((*Target)[0] == 0) && (CompareMem (
+                                Lun,
+                                ConfigNvData->BootLun,
+                                sizeof (UINT64)
+                                ) == 0))
+  {
     //
     // Only one <Target, Lun> pair per iSCSI Driver instance.
     //
@@ -227,8 +232,10 @@ IScsiExtScsiPassThruBuildDevicePath (
     return EFI_NOT_FOUND;
   }
 
-  DevPathNodeLen = sizeof (ISCSI_DEVICE_PATH) + AsciiStrLen (ConfigNvData->TargetName) + 1;
-  Node           = AllocateZeroPool (DevPathNodeLen);
+  DevPathNodeLen = sizeof (ISCSI_DEVICE_PATH) + AsciiStrLen (
+                                                  ConfigNvData->TargetName
+                                                  ) + 1;
+  Node = AllocateZeroPool (DevPathNodeLen);
   if (Node == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -265,7 +272,13 @@ IScsiExtScsiPassThruBuildDevicePath (
 
   CopyMem (&Node->Iscsi.Lun, ConfigNvData->BootLun, sizeof (UINT64));
   Node->Iscsi.TargetPortalGroupTag = Session->TargetPortalGroupTag;
-  AsciiStrCpyS ((CHAR8 *)Node + sizeof (ISCSI_DEVICE_PATH), AsciiStrLen (ConfigNvData->TargetName) + 1, ConfigNvData->TargetName);
+  AsciiStrCpyS (
+    (CHAR8 *)Node + sizeof (ISCSI_DEVICE_PATH),
+    AsciiStrLen (
+      ConfigNvData->TargetName
+      ) + 1,
+    ConfigNvData->TargetName
+    );
 
   *DevicePath = (EFI_DEVICE_PATH_PROTOCOL *)Node;
 
@@ -323,7 +336,12 @@ IScsiExtScsiPassThruGetTargetLun (
   SetMem (*Target, TARGET_MAX_BYTES, 0xFF);
   (*Target)[0] = 0;
 
-  if (AsciiStrCmp (ConfigNvData->TargetName, (CHAR8 *)DevicePath + sizeof (ISCSI_DEVICE_PATH)) != 0) {
+  if (AsciiStrCmp (
+        ConfigNvData->TargetName,
+        (CHAR8 *)DevicePath +
+        sizeof (ISCSI_DEVICE_PATH)
+        ) != 0)
+  {
     return EFI_UNSUPPORTED;
   }
 

@@ -69,7 +69,12 @@ Ip6BuildEfiAddressList (
   Count = 1;
 
   NET_LIST_FOR_EACH (Entry, &IpSb->DefaultInterface->AddressList) {
-    AddrInfo = NET_LIST_USER_STRUCT_S (Entry, IP6_ADDRESS_INFO, Link, IP6_ADDR_INFO_SIGNATURE);
+    AddrInfo = NET_LIST_USER_STRUCT_S (
+                 Entry,
+                 IP6_ADDRESS_INFO,
+                 Link,
+                 IP6_ADDR_INFO_SIGNATURE
+                 );
 
     IP6_COPY_ADDRESS (&EfiAddrInfo->Address, &AddrInfo->Address);
     EfiAddrInfo->PrefixLength = AddrInfo->PrefixLength;
@@ -343,11 +348,23 @@ Ip6DestroyChildEntryByAddr (
   EFI_SERVICE_BINDING_PROTOCOL  *ServiceBinding;
   EFI_IPv6_ADDRESS              *Address;
 
-  Instance       = NET_LIST_USER_STRUCT_S (Entry, IP6_PROTOCOL, Link, IP6_PROTOCOL_SIGNATURE);
-  ServiceBinding = ((IP6_DESTROY_CHILD_BY_ADDR_CALLBACK_CONTEXT *)Context)->ServiceBinding;
-  Address        = ((IP6_DESTROY_CHILD_BY_ADDR_CALLBACK_CONTEXT *)Context)->Address;
+  Instance = NET_LIST_USER_STRUCT_S (
+               Entry,
+               IP6_PROTOCOL,
+               Link,
+               IP6_PROTOCOL_SIGNATURE
+               );
+  ServiceBinding =
+    ((IP6_DESTROY_CHILD_BY_ADDR_CALLBACK_CONTEXT *)Context)->ServiceBinding;
+  Address =
+    ((IP6_DESTROY_CHILD_BY_ADDR_CALLBACK_CONTEXT *)Context)->Address;
 
-  if ((Instance->State == IP6_STATE_CONFIGED) && EFI_IP6_EQUAL (&Instance->ConfigData.StationAddress, Address)) {
+  if ((Instance->State == IP6_STATE_CONFIGED) && EFI_IP6_EQUAL (
+                                                   &Instance->ConfigData.
+                                                     StationAddress,
+                                                   Address
+                                                   ))
+  {
     return ServiceBinding->DestroyChild (ServiceBinding, Instance->Handle);
   }
 
@@ -422,18 +439,29 @@ Ip6RemoveAddr (
   IP6_ADDRESS_INFO  *AddrInfo;
   EFI_IPv6_ADDRESS  SnMCastAddr;
 
-  if (IsListEmpty (AddressList) || (*AddressCount < 1) || (PrefixLength > IP6_PREFIX_MAX)) {
+  if (IsListEmpty (AddressList) || (*AddressCount < 1) || (PrefixLength >
+                                                           IP6_PREFIX_MAX))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
   Status = EFI_NOT_FOUND;
 
   NET_LIST_FOR_EACH_SAFE (Entry, Next, AddressList) {
-    AddrInfo = NET_LIST_USER_STRUCT_S (Entry, IP6_ADDRESS_INFO, Link, IP6_ADDR_INFO_SIGNATURE);
+    AddrInfo = NET_LIST_USER_STRUCT_S (
+                 Entry,
+                 IP6_ADDRESS_INFO,
+                 Link,
+                 IP6_ADDR_INFO_SIGNATURE
+                 );
 
     if ((Prefix == NULL) ||
         ((PrefixLength == 128) && EFI_IP6_EQUAL (Prefix, &AddrInfo->Address)) ||
-        ((PrefixLength == AddrInfo->PrefixLength) && NetIp6IsNetEqual (Prefix, &AddrInfo->Address, PrefixLength))
+        ((PrefixLength == AddrInfo->PrefixLength) && NetIp6IsNetEqual (
+                                                       Prefix,
+                                                       &AddrInfo->Address,
+                                                       PrefixLength
+                                                       ))
         )
     {
       if (IpSb != NULL) {
@@ -529,10 +557,20 @@ Ip6IsOneOfSetAddress (
   }
 
   NET_LIST_FOR_EACH (Entry, &IpSb->Interfaces) {
-    IpIf = NET_LIST_USER_STRUCT_S (Entry, IP6_INTERFACE, Link, IP6_INTERFACE_SIGNATURE);
+    IpIf = NET_LIST_USER_STRUCT_S (
+             Entry,
+             IP6_INTERFACE,
+             Link,
+             IP6_INTERFACE_SIGNATURE
+             );
 
     NET_LIST_FOR_EACH (Entry2, &IpIf->AddressList) {
-      TmpAddressInfo = NET_LIST_USER_STRUCT_S (Entry2, IP6_ADDRESS_INFO, Link, IP6_ADDR_INFO_SIGNATURE);
+      TmpAddressInfo = NET_LIST_USER_STRUCT_S (
+                         Entry2,
+                         IP6_ADDRESS_INFO,
+                         Link,
+                         IP6_ADDR_INFO_SIGNATURE
+                         );
 
       if (EFI_IP6_EQUAL (&TmpAddressInfo->Address, Address)) {
         if (Interface != NULL) {
@@ -572,7 +610,9 @@ Ip6IsValidLinkAddress (
   //
   // TODO: might be updated later to be more acceptable.
   //
-  for (Index = IpSb->SnpMode.HwAddressSize; Index < sizeof (EFI_MAC_ADDRESS); Index++) {
+  for (Index = IpSb->SnpMode.HwAddressSize; Index < sizeof (EFI_MAC_ADDRESS);
+       Index++)
+  {
     if (LinkAddress->Addr[Index] != 0) {
       return FALSE;
     }

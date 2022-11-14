@@ -98,7 +98,11 @@ ArpCreateService (
   //
   // Get the underlayer Snp mode data.
   //
-  Status = ArpService->Mnp->GetModeData (ArpService->Mnp, NULL, &ArpService->SnpMode);
+  Status = ArpService->Mnp->GetModeData (
+                              ArpService->Mnp,
+                              NULL,
+                              &ArpService->SnpMode
+                              );
   if ((Status != EFI_NOT_STARTED) && EFI_ERROR (Status)) {
     goto ERROR_EXIT;
   }
@@ -128,7 +132,10 @@ ArpCreateService (
   //
   // Configure the Mnp child.
   //
-  Status = ArpService->Mnp->Configure (ArpService->Mnp, &ArpService->MnpConfigData);
+  Status = ArpService->Mnp->Configure (
+                              ArpService->Mnp,
+                              &ArpService->MnpConfigData
+                              );
   if (EFI_ERROR (Status)) {
     goto ERROR_EXIT;
   }
@@ -257,7 +264,12 @@ ArpDestroyChildEntryInHandleBuffer (
     return EFI_INVALID_PARAMETER;
   }
 
-  Instance       = NET_LIST_USER_STRUCT_S (Entry, ARP_INSTANCE_DATA, List, ARP_INSTANCE_DATA_SIGNATURE);
+  Instance = NET_LIST_USER_STRUCT_S (
+               Entry,
+               ARP_INSTANCE_DATA,
+               List,
+               ARP_INSTANCE_DATA_SIGNATURE
+               );
   ServiceBinding = (EFI_SERVICE_BINDING_PROTOCOL *)Context;
 
   return ServiceBinding->DestroyChild (ServiceBinding, Instance->Handle);
@@ -385,7 +397,11 @@ ArpDriverBindingStart (
   //
   // Initialize the arp service context data.
   //
-  Status = ArpCreateService (This->DriverBindingHandle, ControllerHandle, ArpService);
+  Status = ArpCreateService (
+             This->DriverBindingHandle,
+             ControllerHandle,
+             ArpService
+             );
   if (EFI_ERROR (Status)) {
     goto ERROR;
   }
@@ -471,7 +487,10 @@ ArpDriverBindingStop (
   //
   // Get the NicHandle which the arp servicebinding is installed on.
   //
-  NicHandle = NetLibGetNicHandle (ControllerHandle, &gEfiManagedNetworkProtocolGuid);
+  NicHandle = NetLibGetNicHandle (
+                ControllerHandle,
+                &gEfiManagedNetworkProtocolGuid
+                );
   if (NicHandle == NULL) {
     return EFI_SUCCESS;
   }
@@ -488,7 +507,11 @@ ArpDriverBindingStop (
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "ArpDriverBindingStop: Open ArpSb failed, %r.\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "ArpDriverBindingStop: Open ArpSb failed, %r.\n",
+      Status
+      ));
     return EFI_DEVICE_ERROR;
   }
 
@@ -574,7 +597,10 @@ ArpServiceBindingCreateChild (
   //
   Instance = AllocateZeroPool (sizeof (ARP_INSTANCE_DATA));
   if (Instance == NULL) {
-    DEBUG ((DEBUG_ERROR, "ArpSBCreateChild: Failed to allocate memory for Instance.\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "ArpSBCreateChild: Failed to allocate memory for Instance.\n"
+      ));
 
     return EFI_OUT_OF_RESOURCES;
   }
@@ -594,7 +620,11 @@ ArpServiceBindingCreateChild (
                   NULL
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "ArpSBCreateChild: failed to install ARP protocol, %r.\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "ArpSBCreateChild: failed to install ARP protocol, %r.\n",
+      Status
+      ));
 
     FreePool (Instance);
     return Status;

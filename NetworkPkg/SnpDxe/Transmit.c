@@ -321,7 +321,9 @@ SnpUndi32Transmit (
   // we need the destination address and the protocol
   //
   if (HeaderSize != 0) {
-    if ((HeaderSize != Snp->Mode.MediaHeaderSize) || (DestAddr == 0) || (Protocol == 0)) {
+    if ((HeaderSize != Snp->Mode.MediaHeaderSize) || (DestAddr == 0) ||
+        (Protocol == 0))
+    {
       Status = EFI_INVALID_PARAMETER;
       goto ON_EXIT;
     }

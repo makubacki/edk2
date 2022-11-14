@@ -118,7 +118,12 @@ Mtftp6RrqSaveBlock (
   // to accept transfers of unlimited size. So BlockCounter is memorised as
   // continuous block counter.
   //
-  Status = Mtftp6RemoveBlockNum (&Instance->BlkList, Block, Completed, &BlockCounter);
+  Status = Mtftp6RemoveBlockNum (
+             &Instance->BlkList,
+             Block,
+             Completed,
+             &BlockCounter
+             );
 
   if (Status == EFI_NOT_FOUND) {
     return EFI_SUCCESS;
@@ -294,7 +299,9 @@ Mtftp6RrqHandleData (
     NetbufFree (*UdpPacket);
     *UdpPacket = NULL;
 
-    if ((Instance->WindowSize == (Instance->TotalBlock - Instance->AckedBlock)) || (Expected < 0)) {
+    if ((Instance->WindowSize == (Instance->TotalBlock -
+                                  Instance->AckedBlock)) || (Expected < 0))
+    {
       Status = Mtftp6RrqSendAck (Instance, BlockNum);
     }
   }
@@ -336,9 +343,12 @@ Mtftp6RrqOackValid (
   // Server can only specify a smaller block size and windowsize to be used and
   // return the timeout matches that requested.
   //
-  if ((((ReplyInfo->BitMap & MTFTP6_OPT_BLKSIZE_BIT) != 0) && (ReplyInfo->BlkSize > RequestInfo->BlkSize)) ||
-      (((ReplyInfo->BitMap & MTFTP6_OPT_WINDOWSIZE_BIT) != 0) && (ReplyInfo->BlkSize > RequestInfo->BlkSize)) ||
-      (((ReplyInfo->BitMap & MTFTP6_OPT_TIMEOUT_BIT) != 0) && (ReplyInfo->Timeout != RequestInfo->Timeout))
+  if ((((ReplyInfo->BitMap & MTFTP6_OPT_BLKSIZE_BIT) != 0) &&
+       (ReplyInfo->BlkSize > RequestInfo->BlkSize)) ||
+      (((ReplyInfo->BitMap & MTFTP6_OPT_WINDOWSIZE_BIT) != 0) &&
+       (ReplyInfo->BlkSize > RequestInfo->BlkSize)) ||
+      (((ReplyInfo->BitMap & MTFTP6_OPT_TIMEOUT_BIT) != 0) &&
+       (ReplyInfo->Timeout != RequestInfo->Timeout))
       )
   {
     return FALSE;
@@ -349,17 +359,22 @@ Mtftp6RrqOackValid (
   // setting. But if it use the specific multicast channel, it can't
   // change the setting.
   //
-  if (((ReplyInfo->BitMap & MTFTP6_OPT_MCAST_BIT) != 0) && !NetIp6IsUnspecifiedAddr (&Instance->McastIp)) {
+  if (((ReplyInfo->BitMap & MTFTP6_OPT_MCAST_BIT) != 0) &&
+      !NetIp6IsUnspecifiedAddr (&Instance->McastIp))
+  {
     if (!NetIp6IsUnspecifiedAddr (&ReplyInfo->McastIp) && (CompareMem (
                                                              &ReplyInfo->McastIp,
                                                              &Instance->McastIp,
-                                                             sizeof (EFI_IPv6_ADDRESS)
+                                                             sizeof (
+                                                                    EFI_IPv6_ADDRESS)
                                                              ) != 0))
     {
       return FALSE;
     }
 
-    if ((ReplyInfo->McastPort != 0) && (ReplyInfo->McastPort != Instance->McastPort)) {
+    if ((ReplyInfo->McastPort != 0) && (ReplyInfo->McastPort !=
+                                        Instance->McastPort))
+    {
       return FALSE;
     }
   }
@@ -493,9 +508,20 @@ Mtftp6RrqHandleOack (
   //
   // Parse the extensive options in the packet.
   //
-  Status = Mtftp6ParseExtensionOption (Options, Count, FALSE, Instance->Operation, &ExtInfo);
+  Status = Mtftp6ParseExtensionOption (
+             Options,
+             Count,
+             FALSE,
+             Instance->Operation,
+             &ExtInfo
+             );
 
-  if (EFI_ERROR (Status) || !Mtftp6RrqOackValid (Instance, &ExtInfo, &Instance->ExtInfo)) {
+  if (EFI_ERROR (Status) || !Mtftp6RrqOackValid (
+                               Instance,
+                               &ExtInfo,
+                               &Instance->ExtInfo
+                               ))
+  {
     //
     // Don't send an ERROR packet if the error is EFI_OUT_OF_RESOURCES.
     //
@@ -528,7 +554,9 @@ Mtftp6RrqHandleOack (
     Instance->IsMaster = ExtInfo.IsMaster;
 
     if (NetIp6IsUnspecifiedAddr (&Instance->McastIp)) {
-      if (NetIp6IsUnspecifiedAddr (&ExtInfo.McastIp) || (ExtInfo.McastPort == 0)) {
+      if (NetIp6IsUnspecifiedAddr (&ExtInfo.McastIp) || (ExtInfo.McastPort ==
+                                                         0))
+      {
         //
         // Free the received packet before send new packet in ReceiveNotify,
         // since the udpio might need to be reconfigured.
@@ -768,7 +796,8 @@ Mtftp6RrqInput (
   // if CheckPacket returns an EFI_ERROR code.
   //
   if ((Instance->Token->CheckPacket != NULL) &&
-      ((Opcode == EFI_MTFTP6_OPCODE_OACK) || (Opcode == EFI_MTFTP6_OPCODE_ERROR))
+      ((Opcode == EFI_MTFTP6_OPCODE_OACK) || (Opcode ==
+                                              EFI_MTFTP6_OPCODE_ERROR))
       )
   {
     Status = Instance->Token->CheckPacket (
@@ -809,7 +838,10 @@ Mtftp6RrqInput (
   //
   switch (Opcode) {
     case EFI_MTFTP6_OPCODE_DATA:
-      if ((Len > (UINT32)(MTFTP6_DATA_HEAD_LEN + Instance->BlkSize)) || (Len < (UINT32)MTFTP6_DATA_HEAD_LEN)) {
+      if ((Len > (UINT32)(MTFTP6_DATA_HEAD_LEN + Instance->BlkSize)) || (Len <
+                                                                         (UINT32)
+                                                                         MTFTP6_DATA_HEAD_LEN))
+      {
         goto ON_EXIT;
       }
 

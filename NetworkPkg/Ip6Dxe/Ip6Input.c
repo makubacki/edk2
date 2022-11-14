@@ -186,7 +186,11 @@ Ip6Reassemble (
   // Find the corresponding assemble entry by (Dst, Src, Id)
   //
   Assemble = NULL;
-  Index    = IP6_ASSEMBLE_HASH (&Head->DestinationAddress, &Head->SourceAddress, This->Id);
+  Index    = IP6_ASSEMBLE_HASH (
+               &Head->DestinationAddress,
+               &Head->SourceAddress,
+               This->Id
+               );
 
   NET_LIST_FOR_EACH (Cur, &Table->Bucket[Index]) {
     Entry = NET_LIST_USER_STRUCT (Cur, IP6_ASSEMBLE_ENTRY, Link);
@@ -429,7 +433,11 @@ Ip6Reassemble (
 
     NewPacket->Ip.Ip6 = Assemble->Head;
 
-    CopyMem (IP6_GET_CLIP_INFO (NewPacket), Assemble->Info, sizeof (IP6_CLIP_INFO));
+    CopyMem (
+      IP6_GET_CLIP_INFO (NewPacket),
+      Assemble->Info,
+      sizeof (IP6_CLIP_INFO)
+      );
 
     return NewPacket;
   }
@@ -555,7 +563,11 @@ Ip6IpSecProcessPacket (
   //
   // Bypass all multicast inbound or outbound traffic.
   //
-  if (IP6_IS_MULTICAST (&(*Head)->DestinationAddress) || IP6_IS_MULTICAST (&(*Head)->SourceAddress)) {
+  if (IP6_IS_MULTICAST (&(*Head)->DestinationAddress) || IP6_IS_MULTICAST (
+                                                           &(*Head)->
+                                                             SourceAddress
+                                                           ))
+  {
     goto ON_EXIT;
   }
 
@@ -569,7 +581,11 @@ Ip6IpSecProcessPacket (
     goto ON_EXIT;
   }
 
-  Status                = NetbufBuildExt (Packet, FragmentTable, &FragmentCount);
+  Status = NetbufBuildExt (
+             Packet,
+             FragmentTable,
+             &FragmentCount
+             );
   OriginalFragmentTable = FragmentTable;
   OriginalFragmentCount = FragmentCount;
 
@@ -606,7 +622,9 @@ Ip6IpSecProcessPacket (
     goto ON_EXIT;
   }
 
-  if ((OriginalFragmentCount == FragmentCount) && (OriginalFragmentTable == FragmentTable)) {
+  if ((OriginalFragmentCount == FragmentCount) && (OriginalFragmentTable ==
+                                                   FragmentTable))
+  {
     //
     // For ByPass Packet
     //
@@ -671,7 +689,12 @@ Ip6IpSecProcessPacket (
       goto ON_EXIT;
     }
 
-    if ((Direction == EfiIPsecInBound) && (0 != CompareMem (&ZeroHead, *Head, sizeof (EFI_IP6_HEADER)))) {
+    if ((Direction == EfiIPsecInBound) && (0 != CompareMem (
+                                                  &ZeroHead,
+                                                  *Head,
+                                                  sizeof (EFI_IP6_HEADER)
+                                                  )))
+    {
       PacketHead = (EFI_IP6_HEADER *)NetbufAllocSpace (
                                        Packet,
                                        sizeof (EFI_IP6_HEADER) + *ExtHdrsLen,
@@ -779,7 +802,11 @@ Ip6PreProcessPacket (
   //
   ZeroMem (&Loopback, sizeof (EFI_IPv6_ADDRESS));
   Loopback.Addr[15] = 0x1;
-  if ((CompareMem (&Loopback, &(*Head)->DestinationAddress, sizeof (EFI_IPv6_ADDRESS)) == 0) ||
+  if ((CompareMem (
+         &Loopback,
+         &(*Head)->DestinationAddress,
+         sizeof (EFI_IPv6_ADDRESS)
+         ) == 0) ||
       (NetIp6IsUnspecifiedAddr (&(*Head)->DestinationAddress)))
   {
     return EFI_INVALID_PARAMETER;
@@ -873,7 +900,11 @@ Ip6PreProcessPacket (
     //
     // Get the fragment offset from the Fragment header
     //
-    FragmentHead = (IP6_FRAGMENT_HEADER *)NetbufGetByte (*Packet, HeadLen, NULL);
+    FragmentHead = (IP6_FRAGMENT_HEADER *)NetbufGetByte (
+                                            *Packet,
+                                            HeadLen,
+                                            NULL
+                                            );
     if (FragmentHead == NULL) {
       return EFI_INVALID_PARAMETER;
     }
@@ -1246,7 +1277,11 @@ Ip6WrapRxData (
   // Build the fragment table to be delivered up.
   //
   RxData->FragmentCount = Packet->BlockOpNum;
-  NetbufBuildExt (Packet, (NET_FRAGMENT *)RxData->FragmentTable, &RxData->FragmentCount);
+  NetbufBuildExt (
+    Packet,
+    (NET_FRAGMENT *)RxData->FragmentTable,
+    &RxData->FragmentCount
+    );
 
   return Wrap;
 }
@@ -1323,7 +1358,10 @@ Ip6InstanceFrameAcceptable (
   // The upper layer driver may want to receive the ICMPv6 error packet
   // invoked by its packet, like UDP.
   //
-  if ((*Proto == IP6_ICMP) && (!Config->AcceptAnyProtocol) && (*Proto != Config->DefaultProtocol)) {
+  if ((*Proto == IP6_ICMP) && (!Config->AcceptAnyProtocol) && (*Proto !=
+                                                               Config->
+                                                                 DefaultProtocol))
+  {
     NetbufCopy (Packet, 0, sizeof (Icmp), (UINT8 *)&Icmp);
 
     if (Icmp.Head.Type <= ICMP_V6_ERROR_MAX) {
@@ -1381,7 +1419,11 @@ Ip6InstanceFrameAcceptable (
     }
 
     for (Index = 0; Index < IpInstance->GroupCount; Index++) {
-      if (EFI_IP6_EQUAL (IpInstance->GroupList + Index, &Head->DestinationAddress)) {
+      if (EFI_IP6_EQUAL (
+            IpInstance->GroupList + Index,
+            &Head->DestinationAddress
+            ))
+      {
         break;
       }
     }
@@ -1476,7 +1518,10 @@ Ip6InstanceDeliverPacket (
   //
   // Deliver a packet if there are both a packet and a receive token.
   //
-  while (!IsListEmpty (&IpInstance->Received) && !NetMapIsEmpty (&IpInstance->RxTokens)) {
+  while (!IsListEmpty (&IpInstance->Received) && !NetMapIsEmpty (
+                                                    &IpInstance->RxTokens
+                                                    ))
+  {
     Packet = NET_LIST_HEAD (&IpInstance->Received, NET_BUF, List);
 
     if (!NET_BUF_SHARED (Packet)) {

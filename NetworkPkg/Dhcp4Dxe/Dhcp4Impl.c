@@ -374,8 +374,16 @@ EfiDhcp4GetModeData (
   // no matter whether it is the active child or not.
   //
   Dhcp4ModeData->State = (EFI_DHCP4_STATE)DhcpSb->DhcpState;
-  CopyMem (&Dhcp4ModeData->ConfigData, &DhcpSb->ActiveConfig, sizeof (Dhcp4ModeData->ConfigData));
-  CopyMem (&Dhcp4ModeData->ClientMacAddress, &DhcpSb->Mac, sizeof (Dhcp4ModeData->ClientMacAddress));
+  CopyMem (
+    &Dhcp4ModeData->ConfigData,
+    &DhcpSb->ActiveConfig,
+    sizeof (Dhcp4ModeData->ConfigData)
+    );
+  CopyMem (
+    &Dhcp4ModeData->ClientMacAddress,
+    &DhcpSb->Mac,
+    sizeof (Dhcp4ModeData->ClientMacAddress)
+    );
 
   Ip = HTONL (DhcpSb->ClientAddr);
   CopyMem (&Dhcp4ModeData->ClientAddress, &Ip, sizeof (EFI_IPv4_ADDRESS));
@@ -514,7 +522,11 @@ DhcpCopyConfigure (
     SrcOptions = Src->OptionList;
 
     for (Index = 0; Index < Src->OptionCount; Index++) {
-      Len = sizeof (EFI_DHCP4_PACKET_OPTION) + MAX (SrcOptions[Index]->Length - 1, 0);
+      Len = sizeof (EFI_DHCP4_PACKET_OPTION) + MAX (
+                                                 SrcOptions[Index]->Length -
+                                                 1,
+                                                 0
+                                                 );
 
       DstOptions[Index] = AllocatePool (Len);
 
@@ -636,15 +648,21 @@ EfiDhcp4Configure (
   }
 
   if (Dhcp4CfgData != NULL) {
-    if ((Dhcp4CfgData->DiscoverTryCount != 0) && (Dhcp4CfgData->DiscoverTimeout == NULL)) {
+    if ((Dhcp4CfgData->DiscoverTryCount != 0) &&
+        (Dhcp4CfgData->DiscoverTimeout == NULL))
+    {
       return EFI_INVALID_PARAMETER;
     }
 
-    if ((Dhcp4CfgData->RequestTryCount != 0) && (Dhcp4CfgData->RequestTimeout == NULL)) {
+    if ((Dhcp4CfgData->RequestTryCount != 0) && (Dhcp4CfgData->RequestTimeout ==
+                                                 NULL))
+    {
       return EFI_INVALID_PARAMETER;
     }
 
-    if ((Dhcp4CfgData->OptionCount != 0) && (Dhcp4CfgData->OptionList == NULL)) {
+    if ((Dhcp4CfgData->OptionCount != 0) && (Dhcp4CfgData->OptionList ==
+                                             NULL))
+    {
       return EFI_INVALID_PARAMETER;
     }
 
@@ -792,7 +810,9 @@ EfiDhcp4Start (
     goto ON_ERROR;
   }
 
-  if ((DhcpSb->DhcpState != Dhcp4Init) && (DhcpSb->DhcpState != Dhcp4InitReboot)) {
+  if ((DhcpSb->DhcpState != Dhcp4Init) && (DhcpSb->DhcpState !=
+                                           Dhcp4InitReboot))
+  {
     Status = EFI_ALREADY_STARTED;
     goto ON_ERROR;
   }
@@ -801,7 +821,11 @@ EfiDhcp4Start (
   // Check Media Status.
   //
   MediaStatus = EFI_SUCCESS;
-  NetLibDetectMediaWaitTimeout (DhcpSb->Controller, DHCP_CHECK_MEDIA_WAITING_TIME, &MediaStatus);
+  NetLibDetectMediaWaitTimeout (
+    DhcpSb->Controller,
+    DHCP_CHECK_MEDIA_WAITING_TIME,
+    &MediaStatus
+    );
   if (MediaStatus != EFI_SUCCESS) {
     Status = EFI_NO_MEDIA;
     goto ON_ERROR;
@@ -1015,7 +1039,9 @@ EfiDhcp4Release (
   OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
   DhcpSb = Instance->Service;
 
-  if ((DhcpSb->DhcpState != Dhcp4InitReboot) && (DhcpSb->DhcpState != Dhcp4Bound)) {
+  if ((DhcpSb->DhcpState != Dhcp4InitReboot) && (DhcpSb->DhcpState !=
+                                                 Dhcp4Bound))
+  {
     Status = EFI_ACCESS_DENIED;
     goto ON_EXIT;
   }
@@ -1228,7 +1254,9 @@ Dhcp4InstanceConfigUdpIo (
   Ip = HTONL (SubnetMask);
   CopyMem (&UdpConfigData.SubnetMask, &Ip, sizeof (EFI_IPv4_ADDRESS));
 
-  if ((Token->ListenPointCount == 0) || (Token->ListenPoints[0].ListenPort == 0)) {
+  if ((Token->ListenPointCount == 0) || (Token->ListenPoints[0].ListenPort ==
+                                         0))
+  {
     UdpConfigData.StationPort = DHCP_CLIENT_PORT;
   } else {
     UdpConfigData.StationPort = Token->ListenPoints[0].ListenPort;
@@ -1352,7 +1380,11 @@ PxeDhcpInput (
   // Copy the DHCP message to a continuous memory block, make the buffer size
   // of the EFI_DHCP4_PACKET a multiple of 4-byte.
   //
-  Len  = NET_ROUNDUP (sizeof (EFI_DHCP4_PACKET) + UdpPacket->TotalSize - sizeof (EFI_DHCP4_HEADER), 4);
+  Len = NET_ROUNDUP (
+          sizeof (EFI_DHCP4_PACKET) + UdpPacket->TotalSize -
+          sizeof (EFI_DHCP4_HEADER),
+          4
+          );
   Wrap = NetbufAlloc (Len);
   if (Wrap == NULL) {
     goto RESTART;
@@ -1363,7 +1395,12 @@ PxeDhcpInput (
 
   Packet->Size   = Len;
   Head           = &Packet->Dhcp4.Header;
-  Packet->Length = NetbufCopy (UdpPacket, 0, UdpPacket->TotalSize, (UINT8 *)Head);
+  Packet->Length = NetbufCopy (
+                     UdpPacket,
+                     0,
+                     UdpPacket->TotalSize,
+                     (UINT8 *)Head
+                     );
 
   if (Packet->Length != UdpPacket->TotalSize) {
     goto RESTART;
@@ -1374,7 +1411,11 @@ PxeDhcpInput (
   //
   if ((Head->OpCode != BOOTP_REPLY) ||
       (Head->Xid != Token->Packet->Dhcp4.Header.Xid) ||
-      (CompareMem (&Token->Packet->Dhcp4.Header.ClientHwAddr[0], Head->ClientHwAddr, Head->HwAddrLen) != 0))
+      (CompareMem (
+         &Token->Packet->Dhcp4.Header.ClientHwAddr[0],
+         Head->ClientHwAddr,
+         Head->HwAddrLen
+         ) != 0))
   {
     goto RESTART;
   }
@@ -1426,7 +1467,9 @@ PxeDhcpDone (
 
   Token->ResponseCount = Instance->ResponseQueue.BufNum;
   if (Token->ResponseCount != 0) {
-    Token->ResponseList = (EFI_DHCP4_PACKET *)AllocatePool (Instance->ResponseQueue.BufSize);
+    Token->ResponseList = (EFI_DHCP4_PACKET *)AllocatePool (
+                                                Instance->ResponseQueue.BufSize
+                                                );
     if (Token->ResponseList == NULL) {
       Token->Status = EFI_OUT_OF_RESOURCES;
       goto SIGNAL_USER;
@@ -1435,7 +1478,12 @@ PxeDhcpDone (
     //
     // Copy the received DHCP responses.
     //
-    NetbufQueCopy (&Instance->ResponseQueue, 0, Instance->ResponseQueue.BufSize, (UINT8 *)Token->ResponseList);
+    NetbufQueCopy (
+      &Instance->ResponseQueue,
+      0,
+      Instance->ResponseQueue.BufSize,
+      (UINT8 *)Token->ResponseList
+      );
     Token->Status = EFI_SUCCESS;
   } else {
     Token->ResponseList = NULL;
@@ -1593,7 +1641,12 @@ EfiDhcp4TransmitReceive (
   // Get the gateway.
   //
   ZeroMem (&Gateway, sizeof (Gateway));
-  if (!IP4_NET_EQUAL (ClientAddr, EndPoint.RemoteAddr.Addr[0], DhcpSb->Netmask)) {
+  if (!IP4_NET_EQUAL (
+         ClientAddr,
+         EndPoint.RemoteAddr.Addr[0],
+         DhcpSb->Netmask
+         ))
+  {
     CopyMem (&Gateway.v4, &Token->GatewayAddress, sizeof (EFI_IPv4_ADDRESS));
     Gateway.Addr[0] = NTOHL (Gateway.Addr[0]);
   }
@@ -1601,7 +1654,14 @@ EfiDhcp4TransmitReceive (
   //
   // Transmit the DHCP packet.
   //
-  Status = UdpIoSendDatagram (Instance->UdpIo, Wrap, &EndPoint, &Gateway, DhcpOnPacketSent, NULL);
+  Status = UdpIoSendDatagram (
+             Instance->UdpIo,
+             Wrap,
+             &EndPoint,
+             &Gateway,
+             DhcpOnPacketSent,
+             NULL
+             );
   if (EFI_ERROR (Status)) {
     NetbufFree (Wrap);
     goto ON_ERROR;
@@ -1688,7 +1748,11 @@ Dhcp4ParseCheckOption (
     // the EFI_DHCP4_PACKET_OPTION->Data because DhcpIterateOptions only
     // pass in the point to option data.
     //
-    Parse->Option[Parse->Index - 1] = BASE_CR (Data, EFI_DHCP4_PACKET_OPTION, Data);
+    Parse->Option[Parse->Index - 1] = BASE_CR (
+                                        Data,
+                                        EFI_DHCP4_PACKET_OPTION,
+                                        Data
+                                        );
   }
 
   return EFI_SUCCESS;

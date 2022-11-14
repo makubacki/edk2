@@ -203,7 +203,12 @@ WifiMgrShowNicList (
   }
 
   NET_LIST_FOR_EACH (Entry, &Private->NicList) {
-    Nic = NET_LIST_USER_STRUCT_S (Entry, WIFI_MGR_DEVICE_DATA, Link, WIFI_MGR_DEVICE_DATA_SIGNATURE);
+    Nic = NET_LIST_USER_STRUCT_S (
+            Entry,
+            WIFI_MGR_DEVICE_DATA,
+            Link,
+            WIFI_MGR_DEVICE_DATA_SIGNATURE
+            );
     WifiMgrMacAddrToStr (&Nic->MacAddress, sizeof (MacString), MacString);
     UnicodeSPrint (PortString, sizeof (PortString), L"MAC %s", MacString);
     PortTitleToken = HiiSetString (
@@ -283,8 +288,11 @@ WifiMgrGetStrAKMList (
     //
     // Current AKM Suite is between 1-18
     //
-    AKMListDisplay = (CHAR16 *)AllocateZeroPool (sizeof (CHAR16) * (AKMSuiteCount * 3 + 1));
-    Length         = 0;
+    AKMListDisplay = (CHAR16 *)AllocateZeroPool (
+                                 sizeof (CHAR16) *
+                                 (AKMSuiteCount * 3 + 1)
+                                 );
+    Length = 0;
     if (AKMListDisplay != NULL) {
       for (Index = 0; Index < AKMSuiteCount; Index++) {
         //
@@ -341,7 +349,10 @@ WifiMgrGetStrCipherList (
     //
     // Current Cipher Suite is between 1-9
     //
-    CipherListDisplay = (CHAR16 *)AllocateZeroPool (sizeof (CHAR16) * (CipherSuiteCount * 2 + 1));
+    CipherListDisplay = (CHAR16 *)AllocateZeroPool (
+                                    sizeof (CHAR16) *
+                                    (CipherSuiteCount * 2 + 1)
+                                    );
     if (CipherListDisplay != NULL) {
       for (Index = 0; Index < CipherSuiteCount; Index++) {
         //
@@ -447,14 +458,35 @@ WifiMgrRefreshNetworkList (
         goto Exit;
       }
 
-      UnicodeSPrint (PortString, PortStringSize, L"%s (Connected)", Profile->SSId);
-      PortPromptToken = HiiSetString (Private->RegisteredHandle, 0, PortString, NULL);
+      UnicodeSPrint (
+        PortString,
+        PortStringSize,
+        L"%s (Connected)",
+        Profile->SSId
+        );
+      PortPromptToken = HiiSetString (
+                          Private->RegisteredHandle,
+                          0,
+                          PortString,
+                          NULL
+                          );
 
       if (Profile->SecurityType == SECURITY_TYPE_NONE) {
         PortHelpToken = 0;
       } else {
-        UnicodeSPrint (PortString, PortStringSize, L"AKMSuite: %s CipherSuite: %s", AKMListDisplay, CipherListDisplay);
-        PortHelpToken = HiiSetString (Private->RegisteredHandle, 0, PortString, NULL);
+        UnicodeSPrint (
+          PortString,
+          PortStringSize,
+          L"AKMSuite: %s CipherSuite: %s",
+          AKMListDisplay,
+          CipherListDisplay
+          );
+        PortHelpToken = HiiSetString (
+                          Private->RegisteredHandle,
+                          0,
+                          PortString,
+                          NULL
+                          );
       }
 
       FreePool (AKMListDisplay);
@@ -479,7 +511,12 @@ WifiMgrRefreshNetworkList (
         mSecurityType[Profile->SecurityType],
         RSSI_TO_SIGNAL_STRENGTH_BAR (Profile->NetworkQuality)
         );
-      PortTextToken = HiiSetString (Private->RegisteredHandle, 0, PortString, NULL);
+      PortTextToken = HiiSetString (
+                        Private->RegisteredHandle,
+                        0,
+                        PortString,
+                        NULL
+                        );
 
       HiiCreateTextOpCode (
         StartOpCodeHandle,
@@ -523,7 +560,12 @@ WifiMgrRefreshNetworkList (
         goto Exit;
       }
 
-      PortPromptToken = HiiSetString (Private->RegisteredHandle, 0, Profile->SSId, NULL);
+      PortPromptToken = HiiSetString (
+                          Private->RegisteredHandle,
+                          0,
+                          Profile->SSId,
+                          NULL
+                          );
       if (PortPromptToken == 0) {
         Status = EFI_OUT_OF_RESOURCES;
         goto Exit;
@@ -539,7 +581,12 @@ WifiMgrRefreshNetworkList (
           AKMListDisplay,
           CipherListDisplay
           );
-        PortHelpToken = HiiSetString (Private->RegisteredHandle, 0, PortString, NULL);
+        PortHelpToken = HiiSetString (
+                          Private->RegisteredHandle,
+                          0,
+                          PortString,
+                          NULL
+                          );
         if (PortHelpToken == 0) {
           Status = EFI_OUT_OF_RESOURCES;
           goto Exit;
@@ -568,7 +615,12 @@ WifiMgrRefreshNetworkList (
         mSecurityType[Profile->SecurityType],
         RSSI_TO_SIGNAL_STRENGTH_BAR (Profile->NetworkQuality)
         );
-      PortTextToken = HiiSetString (Private->RegisteredHandle, 0, PortString, NULL);
+      PortTextToken = HiiSetString (
+                        Private->RegisteredHandle,
+                        0,
+                        PortString,
+                        NULL
+                        );
       if (PortTextToken == 0) {
         Status = EFI_OUT_OF_RESOURCES;
         goto Exit;
@@ -612,7 +664,12 @@ WifiMgrRefreshNetworkList (
         goto Exit;
       }
 
-      PortPromptToken = HiiSetString (Private->RegisteredHandle, 0, Profile->SSId, NULL);
+      PortPromptToken = HiiSetString (
+                          Private->RegisteredHandle,
+                          0,
+                          Profile->SSId,
+                          NULL
+                          );
 
       if (Profile->AKMSuiteSupported) {
         UnicodeSPrint (
@@ -637,7 +694,12 @@ WifiMgrRefreshNetworkList (
       AKMListDisplay    = NULL;
       CipherListDisplay = NULL;
 
-      PortHelpToken = HiiSetString (Private->RegisteredHandle, 0, PortString, NULL);
+      PortHelpToken = HiiSetString (
+                        Private->RegisteredHandle,
+                        0,
+                        PortString,
+                        NULL
+                        );
 
       HiiCreateGotoOpCode (
         StartOpCodeHandle,
@@ -656,7 +718,12 @@ WifiMgrRefreshNetworkList (
         mSecurityType[Profile->SecurityType],
         RSSI_TO_SIGNAL_STRENGTH_BAR (Profile->NetworkQuality)
         );
-      PortTextToken = HiiSetString (Private->RegisteredHandle, 0, PortString, NULL);
+      PortTextToken = HiiSetString (
+                        Private->RegisteredHandle,
+                        0,
+                        PortString,
+                        NULL
+                        );
 
       HiiCreateTextOpCode (
         StartOpCodeHandle,
@@ -690,7 +757,10 @@ Exit:
   HiiFreeOpCodeHandle (StartOpCodeHandle);
   HiiFreeOpCodeHandle (EndOpCodeHandle);
 
-  DEBUG ((DEBUG_INFO, "[WiFi Connection Manager] Network List is Refreshed!\n"));
+  DEBUG ((
+    DEBUG_INFO,
+    "[WiFi Connection Manager] Network List is Refreshed!\n"
+    ));
   return Status;
 }
 
@@ -740,7 +810,12 @@ WifiMgrRefreshHiddenList (
                       Link,
                       WIFI_MGR_HIDDEN_NETWORK_SIGNATURE
                       );
-    StringId = HiiSetString (Private->RegisteredHandle, 0, HiddenNetwork->SSId, NULL);
+    StringId = HiiSetString (
+                 Private->RegisteredHandle,
+                 0,
+                 HiddenNetwork->SSId,
+                 NULL
+                 );
 
     HiiCreateCheckBoxOpCode (
       StartOpCodeHandle,
@@ -799,7 +874,12 @@ WifiMgrSelectNic (
   Private->CurrentNic = Nic;
 
   WifiMgrMacAddrToStr (&Nic->MacAddress, sizeof (MacString), MacString);
-  HiiSetString (Private->RegisteredHandle, STRING_TOKEN (STR_MAC_ADDRESS), MacString, NULL);
+  HiiSetString (
+    Private->RegisteredHandle,
+    STRING_TOKEN (STR_MAC_ADDRESS),
+    MacString,
+    NULL
+    );
   return EFI_SUCCESS;
 }
 
@@ -940,7 +1020,12 @@ WifiMgrUpdateConnectMessage (
   // Update Connection Status Bar
   //
   if (ConnectStatusMessage != NULL) {
-    HiiSetString (Private->RegisteredHandle, STRING_TOKEN (STR_CONNECT_STATUS), ConnectStatusMessage, NULL);
+    HiiSetString (
+      Private->RegisteredHandle,
+      STRING_TOKEN (STR_CONNECT_STATUS),
+      ConnectStatusMessage,
+      NULL
+      );
   } else {
     if (Nic->ConnectState == WifiMgrConnectedToAp) {
       UnicodeSPrint (
@@ -949,9 +1034,23 @@ WifiMgrUpdateConnectMessage (
         L"Connected to %s",
         Nic->CurrentOperateNetwork->SSId
         );
-      HiiSetString (Private->RegisteredHandle, STRING_TOKEN (STR_CONNECT_STATUS), ConnectStatusStr, NULL);
+      HiiSetString (
+        Private->RegisteredHandle,
+        STRING_TOKEN (
+          STR_CONNECT_STATUS
+          ),
+        ConnectStatusStr,
+        NULL
+        );
     } else if (Nic->ConnectState == WifiMgrDisconnected) {
-      HiiSetString (Private->RegisteredHandle, STRING_TOKEN (STR_CONNECT_STATUS), L"Disconnected", NULL);
+      HiiSetString (
+        Private->RegisteredHandle,
+        STRING_TOKEN (
+          STR_CONNECT_STATUS
+          ),
+        L"Disconnected",
+        NULL
+        );
     } else if (Nic->ConnectState == WifiMgrConnectingToAp) {
       UnicodeSPrint (
         ConnectStatusStr,
@@ -959,7 +1058,14 @@ WifiMgrUpdateConnectMessage (
         L"Connecting to %s ...",
         Nic->CurrentOperateNetwork->SSId
         );
-      HiiSetString (Private->RegisteredHandle, STRING_TOKEN (STR_CONNECT_STATUS), ConnectStatusStr, NULL);
+      HiiSetString (
+        Private->RegisteredHandle,
+        STRING_TOKEN (
+          STR_CONNECT_STATUS
+          ),
+        ConnectStatusStr,
+        NULL
+        );
     } else if (Nic->ConnectState == WifiMgrDisconnectingToAp) {
       UnicodeSPrint (
         ConnectStatusStr,
@@ -967,7 +1073,14 @@ WifiMgrUpdateConnectMessage (
         L"Disconnecting from %s ...",
         Nic->CurrentOperateNetwork->SSId
         );
-      HiiSetString (Private->RegisteredHandle, STRING_TOKEN (STR_CONNECT_STATUS), ConnectStatusStr, NULL);
+      HiiSetString (
+        Private->RegisteredHandle,
+        STRING_TOKEN (
+          STR_CONNECT_STATUS
+          ),
+        ConnectStatusStr,
+        NULL
+        );
     } else {
       return;
     }
@@ -976,7 +1089,9 @@ WifiMgrUpdateConnectMessage (
   //
   // Update Connect Button
   //
-  if ((Nic->ConnectState == WifiMgrConnectedToAp) && (Nic->UserSelectedProfile == Nic->CurrentOperateNetwork)) {
+  if ((Nic->ConnectState == WifiMgrConnectedToAp) &&
+      (Nic->UserSelectedProfile == Nic->CurrentOperateNetwork))
+  {
     HiiSetString (
       Private->RegisteredHandle,
       STRING_TOKEN (STR_CONNECT_NOW),
@@ -984,7 +1099,12 @@ WifiMgrUpdateConnectMessage (
       NULL
       );
   } else {
-    HiiSetString (Private->RegisteredHandle, STRING_TOKEN (STR_CONNECT_NOW), L"Connect to this Network", NULL);
+    HiiSetString (
+      Private->RegisteredHandle,
+      STRING_TOKEN (STR_CONNECT_NOW),
+      L"Connect to this Network",
+      NULL
+      );
   }
 
   gBS->SignalEvent (Private->ConnectFormRefreshEvent);
@@ -994,7 +1114,14 @@ WifiMgrUpdateConnectMessage (
   //
   if (ConnectStateChanged) {
     if (Nic->ConnectState == WifiMgrConnectedToAp) {
-      HiiSetString (Private->RegisteredHandle, STRING_TOKEN (STR_CONNECTION_INFO), L"Connected to", NULL);
+      HiiSetString (
+        Private->RegisteredHandle,
+        STRING_TOKEN (
+          STR_CONNECTION_INFO
+          ),
+        L"Connected to",
+        NULL
+        );
       HiiSetString (
         Private->RegisteredHandle,
         STRING_TOKEN (STR_CONNECTED_SSID),
@@ -1002,8 +1129,22 @@ WifiMgrUpdateConnectMessage (
         NULL
         );
     } else {
-      HiiSetString (Private->RegisteredHandle, STRING_TOKEN (STR_CONNECTION_INFO), L"Disconnected", NULL);
-      HiiSetString (Private->RegisteredHandle, STRING_TOKEN (STR_CONNECTED_SSID), L"", NULL);
+      HiiSetString (
+        Private->RegisteredHandle,
+        STRING_TOKEN (
+          STR_CONNECTION_INFO
+          ),
+        L"Disconnected",
+        NULL
+        );
+      HiiSetString (
+        Private->RegisteredHandle,
+        STRING_TOKEN (
+          STR_CONNECTED_SSID
+          ),
+        L"",
+        NULL
+        );
     }
 
     gBS->SignalEvent (Private->NetworkListRefreshEvent);
@@ -1152,7 +1293,11 @@ WifiMgrDxeHiiConfigAccessExtractConfig (
 
   *Progress = Request;
   if ((Request != NULL) &&
-      !HiiIsConfigHdrMatch (Request, &gWifiConfigFormSetGuid, mVendorStorageName))
+      !HiiIsConfigHdrMatch (
+         Request,
+         &gWifiConfigFormSetGuid,
+         mVendorStorageName
+         ))
   {
     return EFI_NOT_FOUND;
   }
@@ -1302,7 +1447,12 @@ WifiMgrDxeHiiConfigAccessRouteConfig (
   BufferSize = sizeof (WIFI_MANAGER_IFR_NVDATA);
   Private    = WIFI_MGR_PRIVATE_DATA_FROM_CONFIG_ACCESS (This);
 
-  if (!HiiIsConfigHdrMatch (Configuration, &gWifiConfigFormSetGuid, mVendorStorageName)) {
+  if (!HiiIsConfigHdrMatch (
+         Configuration,
+         &gWifiConfigFormSetGuid,
+         mVendorStorageName
+         ))
+  {
     return EFI_NOT_FOUND;
   }
 
@@ -1412,7 +1562,12 @@ WifiMgrDxeHiiConfigAccessCallback (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  HiiGetBrowserData (&gWifiConfigFormSetGuid, mVendorStorageName, BufferSize, (UINT8 *)IfrNvData);
+  HiiGetBrowserData (
+    &gWifiConfigFormSetGuid,
+    mVendorStorageName,
+    BufferSize,
+    (UINT8 *)IfrNvData
+    );
 
   if (Action == EFI_BROWSER_ACTION_FORM_OPEN) {
     switch (QuestionId) {
@@ -1450,7 +1605,13 @@ WifiMgrDxeHiiConfigAccessCallback (
         // Enter the network connection configuration page
         // Recovery from restored data
         //
-        if (HiiSetString (Private->RegisteredHandle, STRING_TOKEN (STR_SSID), Profile->SSId, NULL) == 0) {
+        if (HiiSetString (
+              Private->RegisteredHandle,
+              STRING_TOKEN (STR_SSID),
+              Profile->SSId,
+              NULL
+              ) == 0)
+        {
           return EFI_OUT_OF_RESOURCES;
         }
 
@@ -1470,7 +1631,11 @@ WifiMgrDxeHiiConfigAccessCallback (
         {
           IfrNvData->EapAuthMethod       = Profile->EapAuthMethod;
           IfrNvData->EapSecondAuthMethod = Profile->EapSecondAuthMethod;
-          StrCpyS (IfrNvData->EapIdentity, EAP_IDENTITY_SIZE, Profile->EapIdentity);
+          StrCpyS (
+            IfrNvData->EapIdentity,
+            EAP_IDENTITY_SIZE,
+            Profile->EapIdentity
+            );
         }
 
         break;
@@ -1489,15 +1654,43 @@ WifiMgrDxeHiiConfigAccessCallback (
         //
         if (Private->FileType == FileTypeCACert) {
           if (Profile->CACertData != NULL) {
-            HiiSetString (Private->RegisteredHandle, STRING_TOKEN (STR_EAP_ENROLLED_CERT_NAME), Profile->CACertName, NULL);
+            HiiSetString (
+              Private->RegisteredHandle,
+              STRING_TOKEN (
+                STR_EAP_ENROLLED_CERT_NAME
+                ),
+              Profile->CACertName,
+              NULL
+              );
           } else {
-            HiiSetString (Private->RegisteredHandle, STRING_TOKEN (STR_EAP_ENROLLED_CERT_NAME), L"", NULL);
+            HiiSetString (
+              Private->RegisteredHandle,
+              STRING_TOKEN (
+                STR_EAP_ENROLLED_CERT_NAME
+                ),
+              L"",
+              NULL
+              );
           }
         } else if (Private->FileType == FileTypeClientCert) {
           if (Profile->ClientCertData != NULL) {
-            HiiSetString (Private->RegisteredHandle, STRING_TOKEN (STR_EAP_ENROLLED_CERT_NAME), Profile->ClientCertName, NULL);
+            HiiSetString (
+              Private->RegisteredHandle,
+              STRING_TOKEN (
+                STR_EAP_ENROLLED_CERT_NAME
+                ),
+              Profile->ClientCertName,
+              NULL
+              );
           } else {
-            HiiSetString (Private->RegisteredHandle, STRING_TOKEN (STR_EAP_ENROLLED_CERT_NAME), L"", NULL);
+            HiiSetString (
+              Private->RegisteredHandle,
+              STRING_TOKEN (
+                STR_EAP_ENROLLED_CERT_NAME
+                ),
+              L"",
+              NULL
+              );
           }
         }
 
@@ -1512,9 +1705,23 @@ WifiMgrDxeHiiConfigAccessCallback (
         Profile = Private->CurrentNic->UserSelectedProfile;
 
         if (Profile->PrivateKeyData != NULL) {
-          HiiSetString (Private->RegisteredHandle, STRING_TOKEN (STR_EAP_ENROLLED_PRIVATE_KEY_NAME), Profile->PrivateKeyName, NULL);
+          HiiSetString (
+            Private->RegisteredHandle,
+            STRING_TOKEN (
+              STR_EAP_ENROLLED_PRIVATE_KEY_NAME
+              ),
+            Profile->PrivateKeyName,
+            NULL
+            );
         } else {
-          HiiSetString (Private->RegisteredHandle, STRING_TOKEN (STR_EAP_ENROLLED_PRIVATE_KEY_NAME), L"", NULL);
+          HiiSetString (
+            Private->RegisteredHandle,
+            STRING_TOKEN (
+              STR_EAP_ENROLLED_PRIVATE_KEY_NAME
+              ),
+            L"",
+            NULL
+            );
         }
 
         break;
@@ -1540,7 +1747,11 @@ WifiMgrDxeHiiConfigAccessCallback (
         {
           Profile->EapAuthMethod       = IfrNvData->EapAuthMethod;
           Profile->EapSecondAuthMethod = IfrNvData->EapSecondAuthMethod;
-          StrCpyS (Profile->EapIdentity, EAP_IDENTITY_SIZE, IfrNvData->EapIdentity);
+          StrCpyS (
+            Profile->EapIdentity,
+            EAP_IDENTITY_SIZE,
+            IfrNvData->EapIdentity
+            );
         }
 
         break;
@@ -1576,9 +1787,17 @@ WifiMgrDxeHiiConfigAccessCallback (
           TempPassword = Profile->PrivateKeyPassword;
         }
 
-        Status = WifiMgrRecordPassword (Private, Value->string, TempPassword, PASSWORD_STORAGE_SIZE);
+        Status = WifiMgrRecordPassword (
+                   Private,
+                   Value->string,
+                   TempPassword,
+                   PASSWORD_STORAGE_SIZE
+                   );
         if (EFI_ERROR (Status)) {
-          DEBUG ((DEBUG_ERROR, "[WiFi Connection Manager] Error: Failed to input password!"));
+          DEBUG ((
+            DEBUG_ERROR,
+            "[WiFi Connection Manager] Error: Failed to input password!"
+            ));
           break;
         }
 
@@ -1614,7 +1833,8 @@ WifiMgrDxeHiiConfigAccessCallback (
               // For Open network, connect directly.
               //
               ProfileToConnect = Profile;
-            } else if ((Profile->SecurityType == SECURITY_TYPE_WPA2_ENTERPRISE) ||
+            } else if ((Profile->SecurityType ==
+                        SECURITY_TYPE_WPA2_ENTERPRISE) ||
                        (Profile->SecurityType == SECURITY_TYPE_WPA3_ENTERPRISE))
             {
               //
@@ -1622,15 +1842,22 @@ WifiMgrDxeHiiConfigAccessCallback (
               // Only EAP-TLS, TTLS and PEAP is supported now!
               //
               Profile->EapAuthMethod = IfrNvData->EapAuthMethod;
-              StrCpyS (Profile->EapIdentity, EAP_IDENTITY_SIZE, IfrNvData->EapIdentity);
+              StrCpyS (
+                Profile->EapIdentity,
+                EAP_IDENTITY_SIZE,
+                IfrNvData->EapIdentity
+                );
 
-              if ((IfrNvData->EapAuthMethod == EAP_AUTH_METHOD_TTLS) || (IfrNvData->EapAuthMethod == EAP_AUTH_METHOD_PEAP)) {
+              if ((IfrNvData->EapAuthMethod == EAP_AUTH_METHOD_TTLS) ||
+                  (IfrNvData->EapAuthMethod == EAP_AUTH_METHOD_PEAP))
+              {
                 Profile->EapSecondAuthMethod = IfrNvData->EapSecondAuthMethod;
                 ProfileToConnect             = Profile;
               } else if (IfrNvData->EapAuthMethod == EAP_AUTH_METHOD_TLS) {
                 ProfileToConnect = Profile;
               } else {
-                ErrorMessage = L"ERROR: Only EAP-TLS, TTLS or PEAP is supported now!";
+                ErrorMessage =
+                  L"ERROR: Only EAP-TLS, TTLS or PEAP is supported now!";
               }
             } else {
               ErrorMessage = L"ERROR: Can't connect to this network!";
@@ -1701,7 +1928,8 @@ WifiMgrDxeHiiConfigAccessCallback (
 
       case KEY_SAVE_PRIVATE_KEY_TO_MEM:
 
-        if ((Private->FileContext != NULL) && (Private->FileContext->FHandle != NULL) &&
+        if ((Private->FileContext != NULL) && (Private->FileContext->FHandle !=
+                                               NULL) &&
             (Private->CurrentNic->UserSelectedProfile != NULL))
         {
           //
@@ -1731,7 +1959,11 @@ WifiMgrDxeHiiConfigAccessCallback (
 
             Profile->PrivateKeyData     = TempData;
             Profile->PrivateKeyDataSize = TempDataSize;
-            StrCpyS (Profile->PrivateKeyName, WIFI_FILENAME_STR_MAX_SIZE, Private->FileContext->FileName);
+            StrCpyS (
+              Profile->PrivateKeyName,
+              WIFI_FILENAME_STR_MAX_SIZE,
+              Private->FileContext->FileName
+              );
 
             DEBUG ((
               DEBUG_INFO,
@@ -1746,7 +1978,8 @@ WifiMgrDxeHiiConfigAccessCallback (
 
       case KEY_SAVE_CERT_TO_MEM:
 
-        if ((Private->FileContext != NULL) && (Private->FileContext->FHandle != NULL) &&
+        if ((Private->FileContext != NULL) && (Private->FileContext->FHandle !=
+                                               NULL) &&
             (Private->CurrentNic->UserSelectedProfile != NULL))
         {
           //
@@ -1787,7 +2020,11 @@ WifiMgrDxeHiiConfigAccessCallback (
             if (Private->FileType == FileTypeCACert) {
               Profile->CACertData = TempData;
               Profile->CACertSize = TempDataSize;
-              StrCpyS (Profile->CACertName, WIFI_FILENAME_STR_MAX_SIZE, Private->FileContext->FileName);
+              StrCpyS (
+                Profile->CACertName,
+                WIFI_FILENAME_STR_MAX_SIZE,
+                Private->FileContext->FileName
+                );
               DEBUG ((
                 DEBUG_INFO,
                 "[WiFi Connection Manager] CA Cert: %s has been enrolled! Size: %d\n",
@@ -1797,7 +2034,11 @@ WifiMgrDxeHiiConfigAccessCallback (
             } else {
               Profile->ClientCertData = TempData;
               Profile->ClientCertSize = TempDataSize;
-              StrCpyS (Profile->ClientCertName, WIFI_FILENAME_STR_MAX_SIZE, Private->FileContext->FileName);
+              StrCpyS (
+                Profile->ClientCertName,
+                WIFI_FILENAME_STR_MAX_SIZE,
+                Private->FileContext->FileName
+                );
               DEBUG ((
                 DEBUG_INFO,
                 "[WiFi Connection Manager] Client Cert: %s has been enrolled! Size: %d\n",
@@ -1838,7 +2079,10 @@ WifiMgrDxeHiiConfigAccessCallback (
           }
         }
 
-        HiddenNetwork = (WIFI_HIDDEN_NETWORK_DATA *)AllocateZeroPool (sizeof (WIFI_HIDDEN_NETWORK_DATA));
+        HiddenNetwork = (WIFI_HIDDEN_NETWORK_DATA *)AllocateZeroPool (
+                                                      sizeof (
+                                                                             WIFI_HIDDEN_NETWORK_DATA)
+                                                      );
         if (HiddenNetwork == NULL) {
           Status = EFI_OUT_OF_RESOURCES;
           break;
@@ -1862,8 +2106,13 @@ WifiMgrDxeHiiConfigAccessCallback (
         RemoveCount = 0;
         for (Index = 0; Index < Private->HiddenNetworkCount; Index++) {
           if (IfrNvData->HiddenNetworkList[Index] != 0) {
-            HiddenNetwork = NET_LIST_USER_STRUCT_S (Entry, WIFI_HIDDEN_NETWORK_DATA, Link, WIFI_MGR_HIDDEN_NETWORK_SIGNATURE);
-            Entry         = RemoveEntryList (Entry);
+            HiddenNetwork = NET_LIST_USER_STRUCT_S (
+                              Entry,
+                              WIFI_HIDDEN_NETWORK_DATA,
+                              Link,
+                              WIFI_MGR_HIDDEN_NETWORK_SIGNATURE
+                              );
+            Entry = RemoveEntryList (Entry);
             RemoveCount++;
 
             FreePool (HiddenNetwork);
@@ -1878,7 +2127,10 @@ WifiMgrDxeHiiConfigAccessCallback (
 
       default:
 
-        if ((QuestionId >= KEY_MAC_ENTRY_BASE) && (QuestionId < KEY_MAC_ENTRY_BASE + Private->NicCount)) {
+        if ((QuestionId >= KEY_MAC_ENTRY_BASE) && (QuestionId <
+                                                   KEY_MAC_ENTRY_BASE +
+                                                   Private->NicCount))
+        {
           //
           // User selects a wireless NIC.
           //
@@ -1893,9 +2145,14 @@ WifiMgrDxeHiiConfigAccessCallback (
           }
         } else if (Private->CurrentNic != NULL) {
           if ((QuestionId >= KEY_AVAILABLE_NETWORK_ENTRY_BASE) &&
-              (QuestionId <= KEY_AVAILABLE_NETWORK_ENTRY_BASE + Private->CurrentNic->MaxProfileIndex))
+              (QuestionId <= KEY_AVAILABLE_NETWORK_ENTRY_BASE +
+               Private->CurrentNic->MaxProfileIndex))
           {
-            Status = WifiMgrUserSelectProfileToConnect (Private, QuestionId - KEY_AVAILABLE_NETWORK_ENTRY_BASE);
+            Status = WifiMgrUserSelectProfileToConnect (
+                       Private,
+                       QuestionId -
+                       KEY_AVAILABLE_NETWORK_ENTRY_BASE
+                       );
             if (!EFI_ERROR (Status)) {
               WifiMgrUpdateConnectMessage (Private->CurrentNic, FALSE, NULL);
             }
@@ -1949,7 +2206,13 @@ WifiMgrDxeHiiConfigAccessCallback (
     // Pass changed uncommitted data back to Form Browser.
     //
     BufferSize = sizeof (WIFI_MANAGER_IFR_NVDATA);
-    HiiSetBrowserData (&gWifiConfigFormSetGuid, mVendorStorageName, BufferSize, (UINT8 *)IfrNvData, NULL);
+    HiiSetBrowserData (
+      &gWifiConfigFormSetGuid,
+      mVendorStorageName,
+      BufferSize,
+      (UINT8 *)IfrNvData,
+      NULL
+      );
   }
 
   ZeroMem (IfrNvData, sizeof (WIFI_MANAGER_IFR_NVDATA));

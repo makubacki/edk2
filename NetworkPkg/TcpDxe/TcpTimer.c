@@ -200,7 +200,11 @@ TcpRexmitTimeout (
   Tcb->LossRecover = Tcb->SndNxt;
 
   Tcb->LossTimes++;
-  if ((Tcb->LossTimes > Tcb->MaxRexmit) && !TCP_TIMER_ON (Tcb->EnabledTimer, TCP_TIMER_CONNECT)) {
+  if ((Tcb->LossTimes > Tcb->MaxRexmit) && !TCP_TIMER_ON (
+                                              Tcb->EnabledTimer,
+                                              TCP_TIMER_CONNECT
+                                              ))
+  {
     DEBUG (
       (DEBUG_ERROR,
        "TcpRexmitTimeout: connection closed because too many timeouts for TCB %p\n",
@@ -517,7 +521,9 @@ TcpTickingDpc (
     //
     // No timer is active or no timer expired
     //
-    if (!TCP_FLG_ON (Tcb->CtrlFlag, TCP_CTRL_TIMER_ON) || ((--Tcb->NextExpire) > 0)) {
+    if (!TCP_FLG_ON (Tcb->CtrlFlag, TCP_CTRL_TIMER_ON) || ((--Tcb->NextExpire) >
+                                                           0))
+    {
       continue;
     }
 
@@ -525,7 +531,11 @@ TcpTickingDpc (
     // Call the timeout handler for each expired timer.
     //
     for (Index = 0; Index < TCP_TIMER_NUMBER; Index++) {
-      if (TCP_TIMER_ON (Tcb->EnabledTimer, Index) && TCP_TIME_LEQ (Tcb->Timer[Index], mTcpTick)) {
+      if (TCP_TIMER_ON (Tcb->EnabledTimer, Index) && TCP_TIME_LEQ (
+                                                       Tcb->Timer[Index],
+                                                       mTcpTick
+                                                       ))
+      {
         //
         // disable the timer before calling the handler
         // in case the handler enables it again.

@@ -34,7 +34,12 @@ Dhcp6GenerateClientId (
   // Attempt to get client Id from variable to keep it constant.
   // See details in section-9 of rfc-3315.
   //
-  GetVariable2 (L"ClientId", &gEfiDhcp6ServiceBindingProtocolGuid, (VOID **)&Duid, NULL);
+  GetVariable2 (
+    L"ClientId",
+    &gEfiDhcp6ServiceBindingProtocolGuid,
+    (VOID **)&Duid,
+    NULL
+    );
   if (Duid != NULL) {
     return Duid;
   }
@@ -56,7 +61,13 @@ Dhcp6GenerateClientId (
   //
   // If System UUID is found from SMBIOS Table, use DUID-UUID type.
   //
-  if ((PcdGet8 (PcdDhcp6UidType) == Dhcp6DuidTypeUuid) && !EFI_ERROR (NetLibGetSystemGuid (&Uuid)) && !CompareGuid (&Uuid, &gZeroGuid)) {
+  if ((PcdGet8 (PcdDhcp6UidType) == Dhcp6DuidTypeUuid) && !EFI_ERROR (
+                                                             NetLibGetSystemGuid (
+                                                               &Uuid)
+                                                             ) && !CompareGuid (
+                                                                     &Uuid,
+                                                                     &gZeroGuid))
+  {
     //
     //
     //  The format of DUID-UUID:
@@ -113,7 +124,8 @@ Dhcp6GenerateClientId (
     gRT->GetTime (&Time, NULL);
     Stamp = (UINT32)
             (
-             ((((UINT32)(Time.Year - 2000) * 360 + (Time.Month - 1) * 30 + (Time.Day - 1)) * 24 + Time.Hour) * 60 + Time.Minute) *
+             ((((UINT32)(Time.Year - 2000) * 360 + (Time.Month - 1) * 30 +
+                (Time.Day - 1)) * 24 + Time.Hour) * 60 + Time.Minute) *
              60 +
              Time.Second
             );
@@ -134,9 +146,27 @@ Dhcp6GenerateClientId (
     //
     // Set the Duid-type, hardware-type, time and copy the hardware address.
     //
-    WriteUnaligned16 ((UINT16 *)((UINT8 *)Duid + OFFSET_OF (EFI_DHCP6_DUID, Duid)), HTONS (Dhcp6DuidTypeLlt));
-    WriteUnaligned16 ((UINT16 *)((UINT8 *)Duid + OFFSET_OF (EFI_DHCP6_DUID, Duid) + 2), HTONS (NET_IFTYPE_ETHERNET));
-    WriteUnaligned32 ((UINT32 *)((UINT8 *)Duid + OFFSET_OF (EFI_DHCP6_DUID, Duid) + 4), HTONL (Stamp));
+    WriteUnaligned16 (
+      (UINT16 *)((UINT8 *)Duid + OFFSET_OF (
+                                   EFI_DHCP6_DUID,
+                                   Duid
+                                   )),
+      HTONS (Dhcp6DuidTypeLlt)
+      );
+    WriteUnaligned16 (
+      (UINT16 *)((UINT8 *)Duid + OFFSET_OF (
+                                   EFI_DHCP6_DUID,
+                                   Duid
+                                   ) + 2),
+      HTONS (NET_IFTYPE_ETHERNET)
+      );
+    WriteUnaligned32 (
+      (UINT32 *)((UINT8 *)Duid + OFFSET_OF (
+                                   EFI_DHCP6_DUID,
+                                   Duid
+                                   ) + 4),
+      HTONL (Stamp)
+      );
 
     CopyMem (Duid->Duid + 8, &Mode->CurrentAddress, Mode->HwAddressSize);
   }
@@ -182,7 +212,9 @@ Dhcp6CopyConfigData (
   // Allocate another buffer for solicitretransmission, and copy it.
   //
   if (SorCfg->SolicitRetransmission != NULL) {
-    DstCfg->SolicitRetransmission = AllocateZeroPool (sizeof (EFI_DHCP6_RETRANSMISSION));
+    DstCfg->SolicitRetransmission = AllocateZeroPool (
+                                      sizeof (EFI_DHCP6_RETRANSMISSION)
+                                      );
 
     if (DstCfg->SolicitRetransmission == NULL) {
       //
@@ -199,7 +231,8 @@ Dhcp6CopyConfigData (
   }
 
   if ((SorCfg->OptionList != NULL) && (SorCfg->OptionCount != 0)) {
-    OptionListSize     = SorCfg->OptionCount * sizeof (EFI_DHCP6_PACKET_OPTION *);
+    OptionListSize = SorCfg->OptionCount *
+                     sizeof (EFI_DHCP6_PACKET_OPTION *);
     DstCfg->OptionList = AllocateZeroPool (OptionListSize);
 
     if (DstCfg->OptionList == NULL) {
@@ -473,8 +506,9 @@ Dhcp6DepriveAddress (
 
   ASSERT (AddressCount != 0);
 
-  IaCopySize = sizeof (EFI_DHCP6_IA) + (AddressCount - 1) * sizeof (EFI_DHCP6_IA_ADDRESS);
-  IaCopy     = AllocateZeroPool (IaCopySize);
+  IaCopySize = sizeof (EFI_DHCP6_IA) + (AddressCount - 1) *
+               sizeof (EFI_DHCP6_IA_ADDRESS);
+  IaCopy = AllocateZeroPool (IaCopySize);
 
   if (IaCopy == NULL) {
     return NULL;
@@ -766,7 +800,11 @@ Dhcp6AppendIaOption (
   //
   for (Index = 0; Index < Ia->IaAddressCount; Index++) {
     AddrOpt = (UINT8 *)Ia->IaAddress + Index * sizeof (EFI_DHCP6_IA_ADDRESS);
-    Buf     = Dhcp6AppendIaAddrOption (Buf, (EFI_DHCP6_IA_ADDRESS *)AddrOpt, MessageType);
+    Buf     = Dhcp6AppendIaAddrOption (
+                Buf,
+                (EFI_DHCP6_IA_ADDRESS *)AddrOpt,
+                MessageType
+                );
   }
 
   //
@@ -852,7 +890,9 @@ SetElapsedTime (
   //
   gRT->GetTime (&Time, NULL);
   CurrentStamp = MultU64x32 (
-                   ((((UINT32)(Time.Year - 2000) * 360 + (Time.Month - 1) * 30 + (Time.Day - 1)) * 24 + Time.Hour) * 60 + Time.Minute) * 60 + Time.Second,
+                   ((((UINT32)(Time.Year - 2000) * 360 + (Time.Month - 1) * 30 +
+                      (Time.Day - 1)) * 24 + Time.Hour) * 60 + Time.Minute) *
+                   60 + Time.Second,
                    100
                    ) +
                  DivU64x32 (
@@ -992,7 +1032,11 @@ Dhcp6AddrIsInCurrentIa (
   ASSERT (IaAddr != NULL && CurrentIa != NULL);
 
   for (Index = 0; Index < CurrentIa->IaAddressCount; Index++) {
-    if (EFI_IP6_EQUAL (&IaAddr->IpAddress, &CurrentIa->IaAddress[Index].IpAddress)) {
+    if (EFI_IP6_EQUAL (
+          &IaAddr->IpAddress,
+          &CurrentIa->IaAddress[Index].IpAddress
+          ))
+    {
       return TRUE;
     }
   }
@@ -1075,7 +1119,9 @@ Dhcp6ParseAddrOption (
         CopyMem (AddrBuf, IaAddr, sizeof (EFI_DHCP6_IA_ADDRESS));
         AddrBuf->PreferredLifetime = PreferredLt;
         AddrBuf->ValidLifetime     = ValidLt;
-        AddrBuf                    = (EFI_DHCP6_IA_ADDRESS *)((UINT8 *)AddrBuf + sizeof (EFI_DHCP6_IA_ADDRESS));
+        AddrBuf                    = (EFI_DHCP6_IA_ADDRESS *)((UINT8 *)AddrBuf +
+                                                              sizeof (
+                                                                                        EFI_DHCP6_IA_ADDRESS));
       }
 
       (*AddrNum)++;
@@ -1122,7 +1168,13 @@ Dhcp6GenerateIaCb (
   // Calculate the number of addresses for this Ia, excluding the addresses with
   // the value 0 of valid lifetime.
   //
-  Dhcp6ParseAddrOption (Instance->IaCb.Ia, IaInnerOpt, IaInnerLen, &AddrNum, NULL);
+  Dhcp6ParseAddrOption (
+    Instance->IaCb.Ia,
+    IaInnerOpt,
+    IaInnerLen,
+    &AddrNum,
+    NULL
+    );
 
   if (AddrNum == 0) {
     return EFI_NOT_FOUND;
@@ -1131,8 +1183,9 @@ Dhcp6GenerateIaCb (
   //
   // Allocate for new IA.
   //
-  IaSize = sizeof (EFI_DHCP6_IA) + (AddrNum - 1) * sizeof (EFI_DHCP6_IA_ADDRESS);
-  Ia     = AllocateZeroPool (IaSize);
+  IaSize = sizeof (EFI_DHCP6_IA) + (AddrNum - 1) *
+           sizeof (EFI_DHCP6_IA_ADDRESS);
+  Ia = AllocateZeroPool (IaSize);
 
   if (Ia == NULL) {
     return EFI_OUT_OF_RESOURCES;
@@ -1143,8 +1196,18 @@ Dhcp6GenerateIaCb (
   //
   Ia->State          = Instance->IaCb.Ia->State;
   Ia->IaAddressCount = AddrNum;
-  CopyMem (&Ia->Descriptor, &Instance->Config->IaDescriptor, sizeof (EFI_DHCP6_IA_DESCRIPTOR));
-  Dhcp6ParseAddrOption (Instance->IaCb.Ia, IaInnerOpt, IaInnerLen, &AddrNum, Ia->IaAddress);
+  CopyMem (
+    &Ia->Descriptor,
+    &Instance->Config->IaDescriptor,
+    sizeof (EFI_DHCP6_IA_DESCRIPTOR)
+    );
+  Dhcp6ParseAddrOption (
+    Instance->IaCb.Ia,
+    IaInnerOpt,
+    IaInnerLen,
+    &AddrNum,
+    Ia->IaAddress
+    );
 
   //
   // Free original IA resource.
@@ -1196,7 +1259,8 @@ Dhcp6CacheIa (
     //
     // Cache the current IA.
     //
-    IaSize = sizeof (EFI_DHCP6_IA) + (Ia->IaAddressCount - 1) * sizeof (EFI_DHCP6_IA_ADDRESS);
+    IaSize = sizeof (EFI_DHCP6_IA) + (Ia->IaAddressCount - 1) *
+             sizeof (EFI_DHCP6_IA_ADDRESS);
 
     Instance->CacheIa = AllocateZeroPool (IaSize);
     if (Instance->CacheIa == NULL) {
@@ -1235,13 +1299,16 @@ Dhcp6AppendCacheIa (
     //
     // There are old addresses existing. Merge with current addresses.
     //
-    NewIaSize = sizeof (EFI_DHCP6_IA) + (Ia->IaAddressCount + CacheIa->IaAddressCount - 1) * sizeof (EFI_DHCP6_IA_ADDRESS);
-    NewIa     = AllocateZeroPool (NewIaSize);
+    NewIaSize = sizeof (EFI_DHCP6_IA) + (Ia->IaAddressCount +
+                                         CacheIa->IaAddressCount - 1) *
+                sizeof (EFI_DHCP6_IA_ADDRESS);
+    NewIa = AllocateZeroPool (NewIaSize);
     if (NewIa == NULL) {
       return;
     }
 
-    IaSize = sizeof (EFI_DHCP6_IA) + (Ia->IaAddressCount - 1) * sizeof (EFI_DHCP6_IA_ADDRESS);
+    IaSize = sizeof (EFI_DHCP6_IA) + (Ia->IaAddressCount - 1) *
+             sizeof (EFI_DHCP6_IA_ADDRESS);
     CopyMem (NewIa, Ia, IaSize);
 
     //
@@ -1253,7 +1320,12 @@ Dhcp6AppendCacheIa (
 
     NewIa->IaAddressCount += CacheIa->IaAddressCount;
     Ptr                    = (UINT8 *)&NewIa->IaAddress[Ia->IaAddressCount];
-    CopyMem (Ptr, CacheIa->IaAddress, CacheIa->IaAddressCount * sizeof (EFI_DHCP6_IA_ADDRESS));
+    CopyMem (
+      Ptr,
+      CacheIa->IaAddress,
+      CacheIa->IaAddressCount *
+      sizeof (EFI_DHCP6_IA_ADDRESS)
+      );
 
     //
     // Migrate to the NewIa and free previous.
@@ -1299,7 +1371,8 @@ Dhcp6GetMappingTimeOut (
     return Status;
   }
 
-  *TimeOut = TICKS_PER_SECOND * DadXmits.DupAddrDetectTransmits + DHCP6_DAD_ADDITIONAL_DELAY;
+  *TimeOut = TICKS_PER_SECOND * DadXmits.DupAddrDetectTransmits +
+             DHCP6_DAD_ADDITIONAL_DELAY;
 
   return EFI_SUCCESS;
 }

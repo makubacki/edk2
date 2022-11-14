@@ -140,7 +140,8 @@ SimpleNetworkComponentNameGetControllerName (
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gSimpleNetworkComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gSimpleNetworkComponentName = {
   SimpleNetworkComponentNameGetDriverName,
   SimpleNetworkComponentNameGetControllerName,
   "eng"
@@ -149,13 +150,16 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gSimpleNetworkCompone
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gSimpleNetworkComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gSimpleNetworkComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)SimpleNetworkComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)SimpleNetworkComponentNameGetControllerName,
+  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)
+  SimpleNetworkComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mSimpleNetworkDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mSimpleNetworkDriverNameTable[] = {
   {
     "eng;en",
     L"Simple Network Protocol Driver"
@@ -166,7 +170,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mSimpleNetworkDriverName
   }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  *gSimpleNetworkControllerNameTable = NULL;
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  *
+  gSimpleNetworkControllerNameTable = NULL;
 
 /**
   Retrieves a Unicode string that is the user readable name of the driver.

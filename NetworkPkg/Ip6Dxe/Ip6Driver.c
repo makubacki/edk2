@@ -41,7 +41,11 @@ IpSec2InstalledCallback (
   // Test if protocol was even found.
   // Notification function will be called at least once.
   //
-  Status = gBS->LocateProtocol (&gEfiIpSec2ProtocolGuid, NULL, (VOID **)&mIpSec);
+  Status = gBS->LocateProtocol (
+                  &gEfiIpSec2ProtocolGuid,
+                  NULL,
+                  (VOID **)&mIpSec
+                  );
   if ((Status == EFI_SUCCESS) && (mIpSec != NULL)) {
     //
     // Close the event so it does not get called again.
@@ -235,8 +239,20 @@ Ip6CleanService (
   // Free the Neighbor Discovery resources
   //
   while (!IsListEmpty (&IpSb->NeighborTable)) {
-    NeighborCache = NET_LIST_HEAD (&IpSb->NeighborTable, IP6_NEIGHBOR_ENTRY, Link);
-    Ip6FreeNeighborEntry (IpSb, NeighborCache, FALSE, TRUE, EFI_SUCCESS, NULL, NULL);
+    NeighborCache = NET_LIST_HEAD (
+                      &IpSb->NeighborTable,
+                      IP6_NEIGHBOR_ENTRY,
+                      Link
+                      );
+    Ip6FreeNeighborEntry (
+      IpSb,
+      NeighborCache,
+      FALSE,
+      TRUE,
+      EFI_SUCCESS,
+      NULL,
+      NULL
+      );
   }
 
   return EFI_SUCCESS;
@@ -537,7 +553,11 @@ Ip6DriverBindingStart (
     return EFI_ALREADY_STARTED;
   }
 
-  Status = Ip6CreateService (ControllerHandle, This->DriverBindingHandle, &IpSb);
+  Status = Ip6CreateService (
+             ControllerHandle,
+             This->DriverBindingHandle,
+             &IpSb
+             );
 
   if (EFI_ERROR (Status)) {
     return Status;
@@ -592,7 +612,10 @@ Ip6DriverBindingStart (
                          0,
                          NULL
                          );
-      DEBUG ((DEBUG_WARN, "Ip6DriverBindingStart: Clean the invalid ManualAddress configuration.\n"));
+      DEBUG ((
+        DEBUG_WARN,
+        "Ip6DriverBindingStart: Clean the invalid ManualAddress configuration.\n"
+        ));
     }
   }
 
@@ -617,7 +640,10 @@ Ip6DriverBindingStart (
                          0,
                          NULL
                          );
-      DEBUG ((DEBUG_WARN, "Ip6DriverBindingStart: Clean the invalid Gateway configuration.\n"));
+      DEBUG ((
+        DEBUG_WARN,
+        "Ip6DriverBindingStart: Clean the invalid Gateway configuration.\n"
+        ));
     }
   }
 
@@ -702,12 +728,25 @@ Ip6DestroyChildEntryInHandleBuffer (
     return EFI_INVALID_PARAMETER;
   }
 
-  IpInstance        = NET_LIST_USER_STRUCT_S (Entry, IP6_PROTOCOL, Link, IP6_PROTOCOL_SIGNATURE);
-  ServiceBinding    = ((IP6_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ServiceBinding;
-  NumberOfChildren  = ((IP6_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->NumberOfChildren;
-  ChildHandleBuffer = ((IP6_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ChildHandleBuffer;
+  IpInstance = NET_LIST_USER_STRUCT_S (
+                 Entry,
+                 IP6_PROTOCOL,
+                 Link,
+                 IP6_PROTOCOL_SIGNATURE
+                 );
+  ServiceBinding =
+    ((IP6_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ServiceBinding;
+  NumberOfChildren =
+    ((IP6_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->NumberOfChildren;
+  ChildHandleBuffer =
+    ((IP6_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ChildHandleBuffer;
 
-  if (!NetIsInHandleBuffer (IpInstance->Handle, NumberOfChildren, ChildHandleBuffer)) {
+  if (!NetIsInHandleBuffer (
+         IpInstance->Handle,
+         NumberOfChildren,
+         ChildHandleBuffer
+         ))
+  {
     return EFI_SUCCESS;
   }
 
@@ -747,7 +786,10 @@ Ip6DriverBindingStop (
   IP6_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT  Context;
 
   IsDhcp6   = FALSE;
-  NicHandle = NetLibGetNicHandle (ControllerHandle, &gEfiManagedNetworkProtocolGuid);
+  NicHandle = NetLibGetNicHandle (
+                ControllerHandle,
+                &gEfiManagedNetworkProtocolGuid
+                );
   if (NicHandle == NULL) {
     NicHandle = NetLibGetNicHandle (ControllerHandle, &gEfiDhcp6ProtocolGuid);
     if (NicHandle != NULL) {

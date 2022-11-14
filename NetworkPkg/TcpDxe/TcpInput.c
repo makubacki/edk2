@@ -985,7 +985,11 @@ TcpInput (
 
         ASSERT (Tcb->SndNxt == Tcb->Iss + 1);
 
-        if ((TcpAdjustSndQue (Tcb, Tcb->SndNxt) == 0) || (TcpTrimInWnd (Tcb, Nbuf) == 0)) {
+        if ((TcpAdjustSndQue (Tcb, Tcb->SndNxt) == 0) || (TcpTrimInWnd (
+                                                            Tcb,
+                                                            Nbuf
+                                                            ) == 0))
+        {
           DEBUG (
             (DEBUG_ERROR,
              "TcpInput: discard a broken segment for TCB %p\n",
@@ -1115,7 +1119,12 @@ TcpInput (
     goto DISCARD;
   } else {
     if ((Tcb->IpInfo->IpVersion == IP_VERSION_6) && (Tcb->Tick == 0)) {
-      Tcp6RefreshNeighbor (Tcb, Src, TCP6_KEEP_NEIGHBOR_TIME * TICKS_PER_SECOND);
+      Tcp6RefreshNeighbor (
+        Tcb,
+        Src,
+        TCP6_KEEP_NEIGHBOR_TIME *
+        TICKS_PER_SECOND
+        );
       Tcb->Tick = TCP6_REFRESH_NEIGHBOR_TICK;
     }
   }

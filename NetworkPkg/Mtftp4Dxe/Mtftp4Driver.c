@@ -285,7 +285,11 @@ Mtftp4DriverBindingStart (
     return EFI_ALREADY_STARTED;
   }
 
-  Status = Mtftp4CreateService (Controller, This->DriverBindingHandle, &MtftpSb);
+  Status = Mtftp4CreateService (
+             Controller,
+             This->DriverBindingHandle,
+             &MtftpSb
+             );
 
   if (EFI_ERROR (Status)) {
     return Status;
@@ -299,7 +303,11 @@ Mtftp4DriverBindingStart (
     goto ON_ERROR;
   }
 
-  Status = gBS->SetTimer (MtftpSb->TimerNotifyLevel, TimerPeriodic, TICKS_PER_SECOND);
+  Status = gBS->SetTimer (
+                  MtftpSb->TimerNotifyLevel,
+                  TimerPeriodic,
+                  TICKS_PER_SECOND
+                  );
 
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
@@ -354,12 +362,25 @@ Mtftp4DestroyChildEntryInHandleBuffer (
     return EFI_INVALID_PARAMETER;
   }
 
-  Instance          = NET_LIST_USER_STRUCT_S (Entry, MTFTP4_PROTOCOL, Link, MTFTP4_PROTOCOL_SIGNATURE);
-  ServiceBinding    = ((MTFTP4_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ServiceBinding;
-  NumberOfChildren  = ((MTFTP4_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->NumberOfChildren;
-  ChildHandleBuffer = ((MTFTP4_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ChildHandleBuffer;
+  Instance = NET_LIST_USER_STRUCT_S (
+               Entry,
+               MTFTP4_PROTOCOL,
+               Link,
+               MTFTP4_PROTOCOL_SIGNATURE
+               );
+  ServiceBinding =
+    ((MTFTP4_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ServiceBinding;
+  NumberOfChildren =
+    ((MTFTP4_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->NumberOfChildren;
+  ChildHandleBuffer =
+    ((MTFTP4_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ChildHandleBuffer;
 
-  if (!NetIsInHandleBuffer (Instance->Handle, NumberOfChildren, ChildHandleBuffer)) {
+  if (!NetIsInHandleBuffer (
+         Instance->Handle,
+         NumberOfChildren,
+         ChildHandleBuffer
+         ))
+  {
     return EFI_SUCCESS;
   }
 
@@ -475,7 +496,11 @@ Mtftp4InitProtocol (
 
   Instance->Signature = MTFTP4_PROTOCOL_SIGNATURE;
   InitializeListHead (&Instance->Link);
-  CopyMem (&Instance->Mtftp4, &gMtftp4ProtocolTemplate, sizeof (Instance->Mtftp4));
+  CopyMem (
+    &Instance->Mtftp4,
+    &gMtftp4ProtocolTemplate,
+    sizeof (Instance->Mtftp4)
+    );
   Instance->State   = MTFTP4_STATE_UNCONFIGED;
   Instance->Service = MtftpSb;
 

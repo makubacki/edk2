@@ -18,7 +18,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define IBFT_MAX_SIZE        4096
 #define IBFT_HEAP_OFFSET     2048
 
-#define IBFT_ROUNDUP(size)  NET_ROUNDUP ((size), EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_STRUCTURE_ALIGNMENT)
+#define IBFT_ROUNDUP( \
+                    size)  \
+  NET_ROUNDUP ((size), EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_STRUCTURE_ALIGNMENT)
 
 /**
   Publish and remove the iSCSI Boot Firmware Table according to the iSCSI

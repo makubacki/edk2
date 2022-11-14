@@ -79,9 +79,12 @@ HttpBootBuildDhcp6Options (
   //
   // Append vendor class identify option.
   //
-  OptList[Index]->OpCode       = HTONS (DHCP6_OPT_VENDOR_CLASS);
-  OptList[Index]->OpLen        = HTONS ((UINT16)sizeof (HTTP_BOOT_DHCP6_OPTION_VENDOR_CLASS));
-  OptEnt.VendorClass           = (HTTP_BOOT_DHCP6_OPTION_VENDOR_CLASS *)OptList[Index]->Data;
+  OptList[Index]->OpCode = HTONS (DHCP6_OPT_VENDOR_CLASS);
+  OptList[Index]->OpLen  = HTONS (
+                             (UINT16)sizeof (HTTP_BOOT_DHCP6_OPTION_VENDOR_CLASS)
+                             );
+  OptEnt.VendorClass =
+    (HTTP_BOOT_DHCP6_OPTION_VENDOR_CLASS *)OptList[Index]->Data;
   OptEnt.VendorClass->Vendor   = HTONL (HTTP_BOOT_DHCP6_ENTERPRISE_NUM);
   OptEnt.VendorClass->ClassLen = HTONS ((UINT16)sizeof (HTTP_BOOT_CLASS_ID));
   CopyMem (
@@ -269,7 +272,10 @@ HttpBootParseDhcp6Packet (
   if (IsHttpOffer) {
     Status = HttpParseUrl (
                (CHAR8 *)Options[HTTP_BOOT_DHCP6_IDX_BOOT_FILE_URL]->Data,
-               (UINT32)AsciiStrLen ((CHAR8 *)Options[HTTP_BOOT_DHCP6_IDX_BOOT_FILE_URL]->Data),
+               (UINT32)AsciiStrLen (
+                         (CHAR8 *)Options[HTTP_BOOT_DHCP6_IDX_BOOT_FILE_URL]->
+                           Data
+                         ),
                FALSE,
                &Cache6->UriParser
                );
@@ -293,11 +299,13 @@ HttpBootParseDhcp6Packet (
       if (IsProxyOffer) {
         OfferType = HttpOfferTypeProxyIpUri;
       } else {
-        OfferType = IsDnsOffer ? HttpOfferTypeDhcpIpUriDns : HttpOfferTypeDhcpIpUri;
+        OfferType = IsDnsOffer ? HttpOfferTypeDhcpIpUriDns :
+                    HttpOfferTypeDhcpIpUri;
       }
     } else {
       if (!IsProxyOffer) {
-        OfferType = IsDnsOffer ? HttpOfferTypeDhcpNameUriDns : HttpOfferTypeDhcpNameUri;
+        OfferType = IsDnsOffer ? HttpOfferTypeDhcpNameUriDns :
+                    HttpOfferTypeDhcpNameUri;
       } else {
         OfferType = HttpOfferTypeProxyNameUri;
       }
@@ -385,7 +393,8 @@ HttpBootCacheDhcp6Offer (
   OfferType = Cache6->OfferType;
   ASSERT (OfferType < HttpOfferTypeMax);
   ASSERT (Private->OfferCount[OfferType] < HTTP_BOOT_OFFER_MAX_NUM);
-  Private->OfferIndex[OfferType][Private->OfferCount[OfferType]] = Private->OfferNum;
+  Private->OfferIndex[OfferType][Private->OfferCount[OfferType]] =
+    Private->OfferNum;
   Private->OfferCount[OfferType]++;
   Private->OfferNum++;
 
@@ -440,8 +449,11 @@ HttpBootDhcp6CallBack (
 
   Private = (HTTP_BOOT_PRIVATE_DATA *)Context;
   Status  = EFI_SUCCESS;
-  if ((Private->HttpBootCallback != NULL) && (Dhcp6Event != Dhcp6SelectAdvertise)) {
-    Received = (BOOLEAN)(Dhcp6Event == Dhcp6RcvdAdvertise || Dhcp6Event == Dhcp6RcvdReply);
+  if ((Private->HttpBootCallback != NULL) && (Dhcp6Event !=
+                                              Dhcp6SelectAdvertise))
+  {
+    Received = (BOOLEAN)(Dhcp6Event == Dhcp6RcvdAdvertise || Dhcp6Event ==
+                         Dhcp6RcvdReply);
     Status   = Private->HttpBootCallback->Callback (
                                             Private->HttpBootCallback,
                                             HttpBootDhcp6,
@@ -486,7 +498,8 @@ HttpBootDhcp6CallBack (
         Status = EFI_ABORTED;
       } else {
         ASSERT (NewPacket != NULL);
-        SelectAd   = &Private->OfferBuffer[Private->SelectIndex - 1].Dhcp6.Packet.Offer;
+        SelectAd   = &Private->OfferBuffer[Private->SelectIndex -
+                                           1].Dhcp6.Packet.Offer;
         *NewPacket = AllocateZeroPool (SelectAd->Size);
         if (*NewPacket == NULL) {
           return EFI_OUT_OF_RESOURCES;
@@ -554,7 +567,12 @@ HttpBootCheckRouteTable (
     // Find out the gateway address which can route the message which send to ServerIp.
     //
     for (Index = 0; Index < Ip6ModeData.RouteCount; Index++) {
-      if (NetIp6IsNetEqual (&Private->ServerIp.v6, &Ip6ModeData.RouteTable[Index].Destination, Ip6ModeData.RouteTable[Index].PrefixLength)) {
+      if (NetIp6IsNetEqual (
+            &Private->ServerIp.v6,
+            &Ip6ModeData.RouteTable[Index].Destination,
+            Ip6ModeData.RouteTable[Index].PrefixLength
+            ))
+      {
         IP6_COPY_ADDRESS (GatewayAddr, &Ip6ModeData.RouteTable[Index].Gateway);
         GatewayIsFound = TRUE;
         break;
@@ -738,7 +756,10 @@ HttpBootSetIp6Gateway (
   //
   // Set the default gateway address.
   //
-  if (!Private->NoGateway && !NetIp6IsUnspecifiedAddr (&Private->GatewayIp.v6)) {
+  if (!Private->NoGateway && !NetIp6IsUnspecifiedAddr (
+                                &Private->GatewayIp.v6
+                                ))
+  {
     Status = Ip6Config->SetData (
                           Ip6Config,
                           Ip6ConfigDataTypeGateway,
@@ -806,7 +827,11 @@ HttpBootSetIp6Address (
   //
   // Retrieve the gateway address from IP6 route table.
   //
-  Status = HttpBootCheckRouteTable (Private, HTTP_BOOT_IP6_ROUTE_TABLE_TIMEOUT, &GatewayAddr);
+  Status = HttpBootCheckRouteTable (
+             Private,
+             HTTP_BOOT_IP6_ROUTE_TABLE_TIMEOUT,
+             &GatewayAddr
+             );
   if (EFI_ERROR (Status)) {
     Private->NoGateway = TRUE;
   } else {
@@ -901,7 +926,9 @@ HttpBootSetIp6Address (
     }
 
     for (Index = 0; Index < DataSize / sizeof (EFI_IPv6_ADDRESS); Index++) {
-      if (CompareMem (Ip6Addr + Index, &CfgAddr, sizeof (EFI_IPv6_ADDRESS)) == 0) {
+      if (CompareMem (Ip6Addr + Index, &CfgAddr, sizeof (EFI_IPv6_ADDRESS)) ==
+          0)
+      {
         break;
       }
     }
@@ -1018,7 +1045,11 @@ HttpBootDhcp6Sarr (
   }
 
   ASSERT (Mode.Ia->State == Dhcp6Bound);
-  CopyMem (&Private->StationIp.v6, &Mode.Ia->IaAddress[0].IpAddress, sizeof (EFI_IPv6_ADDRESS));
+  CopyMem (
+    &Private->StationIp.v6,
+    &Mode.Ia->IaAddress[0].IpAddress,
+    sizeof (EFI_IPv6_ADDRESS)
+    );
 
   AsciiPrint ("\n  Station IPv6 address is ");
   HttpBootShowIp6Addr (&Private->StationIp.v6);

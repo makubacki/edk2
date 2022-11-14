@@ -239,10 +239,12 @@ TlsCreateTxRxEvent (
     HttpInstance->Tcp4TlsTxData.Urgent                          = FALSE;
     HttpInstance->Tcp4TlsTxData.DataLength                      = 0;
     HttpInstance->Tcp4TlsTxData.FragmentCount                   = 1;
-    HttpInstance->Tcp4TlsTxData.FragmentTable[0].FragmentLength = HttpInstance->Tcp4TlsTxData.DataLength;
+    HttpInstance->Tcp4TlsTxData.FragmentTable[0].FragmentLength =
+      HttpInstance->Tcp4TlsTxData.DataLength;
     HttpInstance->Tcp4TlsTxData.FragmentTable[0].FragmentBuffer = NULL;
-    HttpInstance->Tcp4TlsTxToken.Packet.TxData                  = &HttpInstance->Tcp4TlsTxData;
-    HttpInstance->Tcp4TlsTxToken.CompletionToken.Status         = EFI_NOT_READY;
+    HttpInstance->Tcp4TlsTxToken.Packet.TxData                  =
+      &HttpInstance->Tcp4TlsTxData;
+    HttpInstance->Tcp4TlsTxToken.CompletionToken.Status = EFI_NOT_READY;
 
     //
     // For Tcp4TlsRxToken.
@@ -260,10 +262,12 @@ TlsCreateTxRxEvent (
 
     HttpInstance->Tcp4TlsRxData.DataLength                      = 0;
     HttpInstance->Tcp4TlsRxData.FragmentCount                   = 1;
-    HttpInstance->Tcp4TlsRxData.FragmentTable[0].FragmentLength = HttpInstance->Tcp4TlsRxData.DataLength;
+    HttpInstance->Tcp4TlsRxData.FragmentTable[0].FragmentLength =
+      HttpInstance->Tcp4TlsRxData.DataLength;
     HttpInstance->Tcp4TlsRxData.FragmentTable[0].FragmentBuffer = NULL;
-    HttpInstance->Tcp4TlsRxToken.Packet.RxData                  = &HttpInstance->Tcp4TlsRxData;
-    HttpInstance->Tcp4TlsRxToken.CompletionToken.Status         = EFI_NOT_READY;
+    HttpInstance->Tcp4TlsRxToken.Packet.RxData                  =
+      &HttpInstance->Tcp4TlsRxData;
+    HttpInstance->Tcp4TlsRxToken.CompletionToken.Status = EFI_NOT_READY;
   } else {
     //
     // For Tcp6TlsTxToken.
@@ -283,10 +287,12 @@ TlsCreateTxRxEvent (
     HttpInstance->Tcp6TlsTxData.Urgent                          = FALSE;
     HttpInstance->Tcp6TlsTxData.DataLength                      = 0;
     HttpInstance->Tcp6TlsTxData.FragmentCount                   = 1;
-    HttpInstance->Tcp6TlsTxData.FragmentTable[0].FragmentLength = HttpInstance->Tcp6TlsTxData.DataLength;
+    HttpInstance->Tcp6TlsTxData.FragmentTable[0].FragmentLength =
+      HttpInstance->Tcp6TlsTxData.DataLength;
     HttpInstance->Tcp6TlsTxData.FragmentTable[0].FragmentBuffer = NULL;
-    HttpInstance->Tcp6TlsTxToken.Packet.TxData                  = &HttpInstance->Tcp6TlsTxData;
-    HttpInstance->Tcp6TlsTxToken.CompletionToken.Status         = EFI_NOT_READY;
+    HttpInstance->Tcp6TlsTxToken.Packet.TxData                  =
+      &HttpInstance->Tcp6TlsTxData;
+    HttpInstance->Tcp6TlsTxToken.CompletionToken.Status = EFI_NOT_READY;
 
     //
     // For Tcp6TlsRxToken.
@@ -304,10 +310,12 @@ TlsCreateTxRxEvent (
 
     HttpInstance->Tcp6TlsRxData.DataLength                      = 0;
     HttpInstance->Tcp6TlsRxData.FragmentCount                   = 1;
-    HttpInstance->Tcp6TlsRxData.FragmentTable[0].FragmentLength = HttpInstance->Tcp6TlsRxData.DataLength;
+    HttpInstance->Tcp6TlsRxData.FragmentTable[0].FragmentLength =
+      HttpInstance->Tcp6TlsRxData.DataLength;
     HttpInstance->Tcp6TlsRxData.FragmentTable[0].FragmentBuffer = NULL;
-    HttpInstance->Tcp6TlsRxToken.Packet.RxData                  = &HttpInstance->Tcp6TlsRxData;
-    HttpInstance->Tcp6TlsRxToken.CompletionToken.Status         = EFI_NOT_READY;
+    HttpInstance->Tcp6TlsRxToken.Packet.RxData                  =
+      &HttpInstance->Tcp6TlsRxData;
+    HttpInstance->Tcp6TlsRxToken.CompletionToken.Status = EFI_NOT_READY;
   }
 
   return Status;
@@ -515,8 +523,11 @@ TlsConfigCertificate (
   ItemDataSize = (UINT32)CACertSize;
   CertList     = (EFI_SIGNATURE_LIST *)CACert;
   while ((ItemDataSize > 0) && (ItemDataSize >= CertList->SignatureListSize)) {
-    Cert      = (EFI_SIGNATURE_DATA *)((UINT8 *)CertList + sizeof (EFI_SIGNATURE_LIST) + CertList->SignatureHeaderSize);
-    CertCount = (CertList->SignatureListSize - sizeof (EFI_SIGNATURE_LIST) - CertList->SignatureHeaderSize) / CertList->SignatureSize;
+    Cert      = (EFI_SIGNATURE_DATA *)((UINT8 *)CertList +
+                                       sizeof (EFI_SIGNATURE_LIST) +
+                                       CertList->SignatureHeaderSize);
+    CertCount = (CertList->SignatureListSize - sizeof (EFI_SIGNATURE_LIST) -
+                 CertList->SignatureHeaderSize) / CertList->SignatureSize;
     for (Index = 0; Index < CertCount; Index++) {
       //
       // EfiTlsConfigDataTypeCACertificate
@@ -525,7 +536,8 @@ TlsConfigCertificate (
                                                  HttpInstance->TlsConfiguration,
                                                  EfiTlsConfigDataTypeCACertificate,
                                                  Cert->SignatureData,
-                                                 CertList->SignatureSize - sizeof (Cert->SignatureOwner)
+                                                 CertList->SignatureSize -
+                                                 sizeof (Cert->SignatureOwner)
                                                  );
       if (EFI_ERROR (Status)) {
         goto FreeCACert;
@@ -535,7 +547,8 @@ TlsConfigCertificate (
     }
 
     ItemDataSize -= CertList->SignatureListSize;
-    CertList      = (EFI_SIGNATURE_LIST *)((UINT8 *)CertList + CertList->SignatureListSize);
+    CertList      = (EFI_SIGNATURE_LIST *)((UINT8 *)CertList +
+                                           CertList->SignatureListSize);
   }
 
 FreeCACert:
@@ -794,7 +807,10 @@ TlsCommonTransmit (
     //
     // Transmit the packet.
     //
-    Status = HttpInstance->Tcp4->Transmit (HttpInstance->Tcp4, &HttpInstance->Tcp4TlsTxToken);
+    Status = HttpInstance->Tcp4->Transmit (
+                                   HttpInstance->Tcp4,
+                                   &HttpInstance->Tcp4TlsTxToken
+                                   );
     if (EFI_ERROR (Status)) {
       goto ON_EXIT;
     }
@@ -804,7 +820,8 @@ TlsCommonTransmit (
     }
 
     HttpInstance->TlsIsTxDone = FALSE;
-    Status                    = HttpInstance->Tcp4TlsTxToken.CompletionToken.Status;
+    Status                    =
+      HttpInstance->Tcp4TlsTxToken.CompletionToken.Status;
   } else {
     ((EFI_TCP6_TRANSMIT_DATA *)Data)->Push       = TRUE;
     ((EFI_TCP6_TRANSMIT_DATA *)Data)->Urgent     = FALSE;
@@ -828,7 +845,10 @@ TlsCommonTransmit (
     //
     // Transmit the packet.
     //
-    Status = HttpInstance->Tcp6->Transmit (HttpInstance->Tcp6, &HttpInstance->Tcp6TlsTxToken);
+    Status = HttpInstance->Tcp6->Transmit (
+                                   HttpInstance->Tcp6,
+                                   &HttpInstance->Tcp6TlsTxToken
+                                   );
     if (EFI_ERROR (Status)) {
       goto ON_EXIT;
     }
@@ -838,7 +858,8 @@ TlsCommonTransmit (
     }
 
     HttpInstance->TlsIsTxDone = FALSE;
-    Status                    = HttpInstance->Tcp6TlsTxToken.CompletionToken.Status;
+    Status                    =
+      HttpInstance->Tcp6TlsTxToken.CompletionToken.Status;
   }
 
 ON_EXIT:
@@ -916,22 +937,40 @@ TlsCommonReceive (
 
   while (CurrentFragment < FragmentCount) {
     if (!HttpInstance->LocalAddressIsIPv6) {
-      Tcp4RxData->DataLength                      = Fragment[CurrentFragment].Len;
-      Tcp4RxData->FragmentTable[0].FragmentLength = Fragment[CurrentFragment].Len;
-      Tcp4RxData->FragmentTable[0].FragmentBuffer = Fragment[CurrentFragment].Bulk;
-      Status                                      = HttpInstance->Tcp4->Receive (HttpInstance->Tcp4, &HttpInstance->Tcp4TlsRxToken);
+      Tcp4RxData->DataLength =
+        Fragment[CurrentFragment].Len;
+      Tcp4RxData->FragmentTable[0].FragmentLength =
+        Fragment[CurrentFragment].Len;
+      Tcp4RxData->FragmentTable[0].FragmentBuffer =
+        Fragment[CurrentFragment].Bulk;
+      Status =
+        HttpInstance->Tcp4->Receive (
+                              HttpInstance->Tcp4,
+                              &HttpInstance->Tcp4TlsRxToken
+                              );
     } else {
-      Tcp6RxData->DataLength                      = Fragment[CurrentFragment].Len;
-      Tcp6RxData->FragmentTable[0].FragmentLength = Fragment[CurrentFragment].Len;
-      Tcp6RxData->FragmentTable[0].FragmentBuffer = Fragment[CurrentFragment].Bulk;
-      Status                                      = HttpInstance->Tcp6->Receive (HttpInstance->Tcp6, &HttpInstance->Tcp6TlsRxToken);
+      Tcp6RxData->DataLength =
+        Fragment[CurrentFragment].Len;
+      Tcp6RxData->FragmentTable[0].FragmentLength =
+        Fragment[CurrentFragment].Len;
+      Tcp6RxData->FragmentTable[0].FragmentBuffer =
+        Fragment[CurrentFragment].Bulk;
+      Status =
+        HttpInstance->Tcp6->Receive (
+                              HttpInstance->Tcp6,
+                              &HttpInstance->Tcp6TlsRxToken
+                              );
     }
 
     if (EFI_ERROR (Status)) {
       goto ON_EXIT;
     }
 
-    while (!HttpInstance->TlsIsRxDone && ((Timeout == NULL) || EFI_ERROR (gBS->CheckEvent (Timeout)))) {
+    while (!HttpInstance->TlsIsRxDone && ((Timeout == NULL) || EFI_ERROR (
+                                                                 gBS->CheckEvent (
+                                                                        Timeout)
+                                                                 )))
+    {
       //
       // Poll until some data is received or an error occurs.
       //
@@ -947,9 +986,15 @@ TlsCommonReceive (
       // Timeout occurs, cancel the receive request.
       //
       if (!HttpInstance->LocalAddressIsIPv6) {
-        HttpInstance->Tcp4->Cancel (HttpInstance->Tcp4, &HttpInstance->Tcp4TlsRxToken.CompletionToken);
+        HttpInstance->Tcp4->Cancel (
+                              HttpInstance->Tcp4,
+                              &HttpInstance->Tcp4TlsRxToken.CompletionToken
+                              );
       } else {
-        HttpInstance->Tcp6->Cancel (HttpInstance->Tcp6, &HttpInstance->Tcp6TlsRxToken.CompletionToken);
+        HttpInstance->Tcp6->Cancel (
+                              HttpInstance->Tcp6,
+                              &HttpInstance->Tcp6TlsRxToken.CompletionToken
+                              );
       }
 
       Status = EFI_TIMEOUT;
@@ -964,11 +1009,13 @@ TlsCommonReceive (
         goto ON_EXIT;
       }
 
-      Fragment[CurrentFragment].Len -= Tcp4RxData->FragmentTable[0].FragmentLength;
+      Fragment[CurrentFragment].Len -=
+        Tcp4RxData->FragmentTable[0].FragmentLength;
       if (Fragment[CurrentFragment].Len == 0) {
         CurrentFragment++;
       } else {
-        Fragment[CurrentFragment].Bulk += Tcp4RxData->FragmentTable[0].FragmentLength;
+        Fragment[CurrentFragment].Bulk +=
+          Tcp4RxData->FragmentTable[0].FragmentLength;
       }
     } else {
       Status = HttpInstance->Tcp6TlsRxToken.CompletionToken.Status;
@@ -976,11 +1023,13 @@ TlsCommonReceive (
         goto ON_EXIT;
       }
 
-      Fragment[CurrentFragment].Len -= Tcp6RxData->FragmentTable[0].FragmentLength;
+      Fragment[CurrentFragment].Len -=
+        Tcp6RxData->FragmentTable[0].FragmentLength;
       if (Fragment[CurrentFragment].Len == 0) {
         CurrentFragment++;
       } else {
-        Fragment[CurrentFragment].Bulk += Tcp6RxData->FragmentTable[0].FragmentLength;
+        Fragment[CurrentFragment].Bulk +=
+          Tcp6RxData->FragmentTable[0].FragmentLength;
       }
     }
   }
@@ -1175,8 +1224,10 @@ TlsConnectSession (
   Status                        = HttpInstance->Tls->SetSessionData (
                                                        HttpInstance->Tls,
                                                        EfiTlsSessionState,
-                                                       &(HttpInstance->TlsSessionState),
-                                                       sizeof (EFI_TLS_SESSION_STATE)
+                                                       &(HttpInstance->
+                                                           TlsSessionState),
+                                                       sizeof (
+                                                              EFI_TLS_SESSION_STATE)
                                                        );
   if (EFI_ERROR (Status)) {
     return Status;
@@ -1311,7 +1362,11 @@ TlsConnectSession (
       // Transmit the response packet.
       //
       PacketOut = NetbufAlloc ((UINT32)BufferOutSize);
-      DataOut   = NetbufAllocSpace (PacketOut, (UINT32)BufferOutSize, NET_BUF_TAIL);
+      DataOut   = NetbufAllocSpace (
+                    PacketOut,
+                    (UINT32)BufferOutSize,
+                    NET_BUF_TAIL
+                    );
       if (DataOut == NULL) {
         FreePool (BufferOut);
         return EFI_OUT_OF_RESOURCES;
@@ -1369,7 +1424,8 @@ TlsConnectSession (
     }
 
     ASSERT (GetSessionDataBufferSize == sizeof (EFI_TLS_SESSION_STATE));
-    HttpInstance->TlsSessionState = *(EFI_TLS_SESSION_STATE *)GetSessionDataBuffer;
+    HttpInstance->TlsSessionState =
+      *(EFI_TLS_SESSION_STATE *)GetSessionDataBuffer;
 
     FreePool (GetSessionDataBuffer);
 
@@ -1537,7 +1593,10 @@ TlsProcessMessage (
   // Rebuild fragment table from BufferIn.
   //
   FragmentCount = 1;
-  FragmentTable = AllocateZeroPool (FragmentCount * sizeof (EFI_TLS_FRAGMENT_DATA));
+  FragmentTable = AllocateZeroPool (
+                    FragmentCount *
+                    sizeof (EFI_TLS_FRAGMENT_DATA)
+                    );
   if (FragmentTable == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ON_EXIT;
@@ -1756,7 +1815,11 @@ HttpsReceive (
 
         if (BufferOutSize != 0) {
           PacketOut = NetbufAlloc ((UINT32)BufferOutSize);
-          DataOut   = NetbufAllocSpace (PacketOut, (UINT32)BufferOutSize, NET_BUF_TAIL);
+          DataOut   = NetbufAllocSpace (
+                        PacketOut,
+                        (UINT32)BufferOutSize,
+                        NET_BUF_TAIL
+                        );
           if (DataOut == NULL) {
             FreePool (BufferOut);
             return EFI_OUT_OF_RESOURCES;
@@ -1784,7 +1847,10 @@ HttpsReceive (
     //
     // Parsing buffer.
     //
-    ASSERT (((TLS_RECORD_HEADER *)(TempFragment.Bulk))->ContentType == TlsContentTypeApplicationData);
+    ASSERT (
+      ((TLS_RECORD_HEADER *)(TempFragment.Bulk))->ContentType ==
+      TlsContentTypeApplicationData
+      );
 
     BufferInSize = ((TLS_RECORD_HEADER *)(TempFragment.Bulk))->Length;
     BufferIn     = AllocateZeroPool (BufferInSize);
@@ -1793,7 +1859,11 @@ HttpsReceive (
       return Status;
     }
 
-    CopyMem (BufferIn, TempFragment.Bulk + TLS_RECORD_HEADER_LENGTH, BufferInSize);
+    CopyMem (
+      BufferIn,
+      TempFragment.Bulk + TLS_RECORD_HEADER_LENGTH,
+      BufferInSize
+      );
 
     //
     // Free the buffer in TempFragment.
@@ -1848,7 +1918,11 @@ HttpsReceive (
 
     if (BufferOutSize != 0) {
       PacketOut = NetbufAlloc ((UINT32)BufferOutSize);
-      DataOut   = NetbufAllocSpace (PacketOut, (UINT32)BufferOutSize, NET_BUF_TAIL);
+      DataOut   = NetbufAllocSpace (
+                    PacketOut,
+                    (UINT32)BufferOutSize,
+                    NET_BUF_TAIL
+                    );
       if (DataOut == NULL) {
         FreePool (BufferOut);
         return EFI_OUT_OF_RESOURCES;
@@ -1901,7 +1975,8 @@ HttpsReceive (
     }
 
     ASSERT (GetSessionDataBufferSize == sizeof (EFI_TLS_SESSION_STATE));
-    HttpInstance->TlsSessionState = *(EFI_TLS_SESSION_STATE *)GetSessionDataBuffer;
+    HttpInstance->TlsSessionState =
+      *(EFI_TLS_SESSION_STATE *)GetSessionDataBuffer;
 
     FreePool (GetSessionDataBuffer);
 

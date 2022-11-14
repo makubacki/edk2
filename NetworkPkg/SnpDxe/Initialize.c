@@ -101,7 +101,8 @@ PxeInit (
   // Second is the CDB.StatCode field. After command execution completes, either successfully or not,
   // the CDB.StatCode field contains the result of the command execution.
   //
-  if ((((Snp->Cdb.StatFlags) & PXE_STATFLAGS_STATUS_MASK) == PXE_STATFLAGS_COMMAND_COMPLETE) &&
+  if ((((Snp->Cdb.StatFlags) & PXE_STATFLAGS_STATUS_MASK) ==
+       PXE_STATFLAGS_COMMAND_COMPLETE) &&
       (Snp->Cdb.StatCode == PXE_STATCODE_SUCCESS))
   {
     //
@@ -110,7 +111,9 @@ PxeInit (
     // device are still initialized.
     //
     if (CableDetectFlag == PXE_OPFLAGS_INITIALIZE_DETECT_CABLE) {
-      if (((Snp->Cdb.StatFlags) & PXE_STATFLAGS_INITIALIZED_NO_MEDIA) != PXE_STATFLAGS_INITIALIZED_NO_MEDIA) {
+      if (((Snp->Cdb.StatFlags) & PXE_STATFLAGS_INITIALIZED_NO_MEDIA) !=
+          PXE_STATFLAGS_INITIALIZED_NO_MEDIA)
+      {
         Snp->Mode.MediaPresent = TRUE;
       } else {
         Snp->Mode.MediaPresent = FALSE;
@@ -243,7 +246,8 @@ SnpUndi32Initialize (
   //
   // Compute tx/rx buffer sizes based on UNDI init info and parameters.
   //
-  Snp->TxRxBufferSize = (UINT32)(Snp->InitInfo.MemoryRequired + ExtraRxBufferSize + ExtraTxBufferSize);
+  Snp->TxRxBufferSize = (UINT32)(Snp->InitInfo.MemoryRequired +
+                                 ExtraRxBufferSize + ExtraTxBufferSize);
 
   //
   // If UNDI support cable detect for INITIALIZE command, try it first.

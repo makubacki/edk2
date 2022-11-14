@@ -194,9 +194,13 @@
     (TcpIsIpZero (&((Pb)->Ip), Ver) || TcpIsIpEqual (&((Pb)->Ip), &((Pa)->Ip), Ver)) \
   )
 
-#define TCP_TIMER_ON(Flag, Timer)     ((Flag) & (1 << (Timer)))
-#define TCP_SET_TIMER(Flag, Timer)    ((Flag) = (UINT16) ((Flag) | (1 << (Timer))))
-#define TCP_CLEAR_TIMER(Flag, Timer)  ((Flag) = (UINT16) ((Flag) & (~(1 << (Timer)))))
+#define TCP_TIMER_ON(Flag, Timer)        ((Flag) & (1 << (Timer)))
+#define TCP_SET_TIMER(Flag, \
+                      Timer)    \
+                                         ((Flag) = (UINT16) ((Flag) | (1 << (Timer))))
+#define TCP_CLEAR_TIMER(Flag, \
+                        Timer)  \
+                                         ((Flag) = (UINT16) ((Flag) & (~(1 << (Timer)))))
 
 #define TCP_TIME_LT(Ta, Tb)   ((INT32) ((Ta) - (Tb)) < 0)
 #define TCP_TIME_LEQ(Ta, Tb)  ((INT32) ((Ta) - (Tb)) <= 0)

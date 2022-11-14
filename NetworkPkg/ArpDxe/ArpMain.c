@@ -141,7 +141,8 @@ ArpAdd (
     return EFI_INVALID_PARAMETER;
   }
 
-  if (((!DenyFlag) && ((TargetHwAddress == NULL) || (TargetSwAddress == NULL))) ||
+  if (((!DenyFlag) && ((TargetHwAddress == NULL) || (TargetSwAddress ==
+                                                     NULL))) ||
       (DenyFlag && (TargetHwAddress != NULL) && (TargetSwAddress != NULL)) ||
       ((TargetHwAddress == NULL) && (TargetSwAddress == NULL)))
   {
@@ -229,7 +230,10 @@ ArpAdd (
     CacheEntry = ArpAllocCacheEntry (Instance);
 
     if (CacheEntry == NULL) {
-      DEBUG ((DEBUG_ERROR, "ArpAdd: Failed to allocate pool for CacheEntry.\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "ArpAdd: Failed to allocate pool for CacheEntry.\n"
+        ));
       Status = EFI_OUT_OF_RESOURCES;
       goto UNLOCK_EXIT;
     }
@@ -511,7 +515,11 @@ ArpRequest (
     //
     // Return the hardware broadcast address.
     //
-    CopyMem (TargetHwAddress, &SnpMode->BroadcastAddress, SnpMode->HwAddressSize);
+    CopyMem (
+      TargetHwAddress,
+      &SnpMode->BroadcastAddress,
+      SnpMode->HwAddressSize
+      );
 
     goto SIGNAL_USER;
   }
@@ -589,7 +597,10 @@ ArpRequest (
   //
   RequestContext = AllocatePool (sizeof (USER_REQUEST_CONTEXT));
   if (RequestContext == NULL) {
-    DEBUG ((DEBUG_ERROR, "ArpRequest: Allocate memory for RequestContext failed.\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "ArpRequest: Allocate memory for RequestContext failed.\n"
+      ));
 
     Status = EFI_OUT_OF_RESOURCES;
     goto UNLOCK_EXIT;
@@ -619,7 +630,10 @@ ArpRequest (
     //
     CacheEntry = ArpAllocCacheEntry (Instance);
     if (CacheEntry == NULL) {
-      DEBUG ((DEBUG_ERROR, "ArpRequest: Allocate memory for CacheEntry failed.\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "ArpRequest: Allocate memory for CacheEntry failed.\n"
+        ));
       FreePool (RequestContext);
 
       Status = EFI_OUT_OF_RESOURCES;

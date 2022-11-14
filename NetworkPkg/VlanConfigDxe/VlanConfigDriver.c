@@ -168,7 +168,10 @@ VlanConfigDriverBindingStart (
   //
   // Create a private data for this network device
   //
-  PrivateData = AllocateCopyPool (sizeof (VLAN_CONFIG_PRIVATE_DATA), &mVlanConfigPrivateDateTemplate);
+  PrivateData = AllocateCopyPool (
+                  sizeof (VLAN_CONFIG_PRIVATE_DATA),
+                  &mVlanConfigPrivateDateTemplate
+                  );
   if (PrivateData == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ErrorExit;
@@ -268,7 +271,9 @@ VlanConfigDriverBindingStop (
   ASSERT (PrivateData->Signature == VLAN_CONFIG_PRIVATE_DATA_SIGNATURE);
 
   if (NumberOfChildren != 0) {
-    if ((NumberOfChildren != 1) || (ChildHandleBuffer[0] != PrivateData->DriverHandle)) {
+    if ((NumberOfChildren != 1) || (ChildHandleBuffer[0] !=
+                                    PrivateData->DriverHandle))
+    {
       return EFI_DEVICE_ERROR;
     }
 

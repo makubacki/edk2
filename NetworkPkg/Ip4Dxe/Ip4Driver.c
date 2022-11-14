@@ -41,7 +41,11 @@ IpSec2InstalledCallback (
   // Test if protocol was even found.
   // Notification function will be called at least once.
   //
-  Status = gBS->LocateProtocol (&gEfiIpSec2ProtocolGuid, NULL, (VOID **)&mIpSec);
+  Status = gBS->LocateProtocol (
+                  &gEfiIpSec2ProtocolGuid,
+                  NULL,
+                  (VOID **)&mIpSec
+                  );
   if ((Status == EFI_SUCCESS) && (mIpSec != NULL)) {
     //
     // Close the event so it does not get called again.
@@ -345,13 +349,21 @@ Ip4CreateService (
   }
 
   IpSb->MacString = NULL;
-  Status          = NetLibGetMacString (IpSb->Controller, IpSb->Image, &IpSb->MacString);
+  Status          = NetLibGetMacString (
+                      IpSb->Controller,
+                      IpSb->Image,
+                      &IpSb->MacString
+                      );
 
   if (EFI_ERROR (Status)) {
     goto ON_ERROR;
   }
 
-  IpSb->DefaultInterface = Ip4CreateInterface (IpSb->Mnp, Controller, ImageHandle);
+  IpSb->DefaultInterface = Ip4CreateInterface (
+                             IpSb->Mnp,
+                             Controller,
+                             ImageHandle
+                             );
 
   if (IpSb->DefaultInterface == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
@@ -506,12 +518,25 @@ Ip4DestroyChildEntryInHandleBuffer (
     return EFI_INVALID_PARAMETER;
   }
 
-  IpInstance        = NET_LIST_USER_STRUCT_S (Entry, IP4_PROTOCOL, Link, IP4_PROTOCOL_SIGNATURE);
-  ServiceBinding    = ((IP4_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ServiceBinding;
-  NumberOfChildren  = ((IP4_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->NumberOfChildren;
-  ChildHandleBuffer = ((IP4_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ChildHandleBuffer;
+  IpInstance = NET_LIST_USER_STRUCT_S (
+                 Entry,
+                 IP4_PROTOCOL,
+                 Link,
+                 IP4_PROTOCOL_SIGNATURE
+                 );
+  ServiceBinding =
+    ((IP4_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ServiceBinding;
+  NumberOfChildren =
+    ((IP4_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->NumberOfChildren;
+  ChildHandleBuffer =
+    ((IP4_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT *)Context)->ChildHandleBuffer;
 
-  if (!NetIsInHandleBuffer (IpInstance->Handle, NumberOfChildren, ChildHandleBuffer)) {
+  if (!NetIsInHandleBuffer (
+         IpInstance->Handle,
+         NumberOfChildren,
+         ChildHandleBuffer
+         ))
+  {
     return EFI_SUCCESS;
   }
 
@@ -570,7 +595,11 @@ Ip4DriverBindingStart (
     return EFI_ALREADY_STARTED;
   }
 
-  Status = Ip4CreateService (ControllerHandle, This->DriverBindingHandle, &IpSb);
+  Status = Ip4CreateService (
+             ControllerHandle,
+             This->DriverBindingHandle,
+             &IpSb
+             );
 
   if (EFI_ERROR (Status)) {
     return Status;
@@ -600,7 +629,10 @@ Ip4DriverBindingStart (
   // Read the config data from NV variable again.
   // The default data can be changed by other drivers.
   //
-  Status = Ip4Config2ReadConfigData (IpSb->MacString, &IpSb->Ip4Config2Instance);
+  Status = Ip4Config2ReadConfigData (
+             IpSb->MacString,
+             &IpSb->Ip4Config2Instance
+             );
   if (EFI_ERROR (Status)) {
     goto UNINSTALL_PROTOCOL;
   }
@@ -608,7 +640,9 @@ Ip4DriverBindingStart (
   //
   // Consume the installed EFI_IP4_CONFIG2_PROTOCOL to set the default data items.
   //
-  for (Index = Ip4Config2DataTypePolicy; Index < Ip4Config2DataTypeMaximum; Index++) {
+  for (Index = Ip4Config2DataTypePolicy; Index < Ip4Config2DataTypeMaximum;
+       Index++)
+  {
     DataItem = &IpSb->Ip4Config2Instance.DataItem[Index];
     if (DataItem->Data.Ptr != NULL) {
       Status = Ip4Cfg2->SetData (
@@ -621,7 +655,9 @@ Ip4DriverBindingStart (
         goto UNINSTALL_PROTOCOL;
       }
 
-      if ((Index == Ip4Config2DataTypePolicy) && (*(DataItem->Data.Policy) == Ip4Config2PolicyDhcp)) {
+      if ((Index == Ip4Config2DataTypePolicy) && (*(DataItem->Data.Policy) ==
+                                                  Ip4Config2PolicyDhcp))
+      {
         break;
       }
     }
@@ -644,7 +680,12 @@ Ip4DriverBindingStart (
     goto UNINSTALL_PROTOCOL;
   }
 
-  Status = gBS->SetTimer (IpSb->ReconfigCheckTimer, TimerPeriodic, 500 * TICKS_PER_MS);
+  Status = gBS->SetTimer (
+                  IpSb->ReconfigCheckTimer,
+                  TimerPeriodic,
+                  500 *
+                  TICKS_PER_MS
+                  );
 
   if (EFI_ERROR (Status)) {
     goto UNINSTALL_PROTOCOL;
@@ -714,7 +755,10 @@ Ip4DriverBindingStop (
 
   IsDhcp4 = FALSE;
 
-  NicHandle = NetLibGetNicHandle (ControllerHandle, &gEfiManagedNetworkProtocolGuid);
+  NicHandle = NetLibGetNicHandle (
+                ControllerHandle,
+                &gEfiManagedNetworkProtocolGuid
+                );
   if (NicHandle == NULL) {
     NicHandle = NetLibGetNicHandle (ControllerHandle, &gEfiArpProtocolGuid);
     if (NicHandle == NULL) {

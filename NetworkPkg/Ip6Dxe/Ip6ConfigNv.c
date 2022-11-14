@@ -161,7 +161,9 @@ Ip6ToStr (
         Str  = Str + 1;
       }
 
-      while ((Index < 15) && (Ip6->Addr[Index] == 0) && (Ip6->Addr[Index + 1] == 0)) {
+      while ((Index < 15) && (Ip6->Addr[Index] == 0) && (Ip6->Addr[Index + 1] ==
+                                                         0))
+      {
         Index = Index + 2;
       }
 
@@ -179,7 +181,12 @@ Ip6ToStr (
     ASSERT (Index < 15);
 
     if (Ip6->Addr[Index] == 0) {
-      Number = UnicodeSPrint (Str, 2 * IP6_STR_MAX_SIZE, L"%x:", (UINTN)Ip6->Addr[Index + 1]);
+      Number = UnicodeSPrint (
+                 Str,
+                 2 * IP6_STR_MAX_SIZE,
+                 L"%x:",
+                 (UINTN)Ip6->Addr[Index + 1]
+                 );
     } else {
       if (Ip6->Addr[Index + 1] < 0x10) {
         CopyMem (FormatString, L"%x0%x:", StrSize (L"%x0%x:"));
@@ -335,7 +342,10 @@ Ip6CreateOpCode (
   EFI_IFR_GUID_LABEL  *InternalStartLabel;
   EFI_IFR_GUID_LABEL  *InternalEndLabel;
 
-  if ((StartOpCodeHandle == NULL) || (StartLabel == NULL) || (EndOpCodeHandle == NULL) || (EndLabel == NULL)) {
+  if ((StartOpCodeHandle == NULL) || (StartLabel == NULL) || (EndOpCodeHandle ==
+                                                              NULL) ||
+      (EndLabel == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -499,7 +509,9 @@ Ip6ConvertAddressListToString (
     Ip6ToStr (Address, String);
     TempStr = String + StrLen (String);
 
-    if ((AddressType == Ip6ConfigNvHostAddress) || (AddressType == Ip6ConfigNvRouteTable)) {
+    if ((AddressType == Ip6ConfigNvHostAddress) || (AddressType ==
+                                                    Ip6ConfigNvRouteTable))
+    {
       if (AddressType == Ip6ConfigNvHostAddress) {
         PrefixLength = ((EFI_IP6_ADDRESS_INFO *)AddressInfo)->PrefixLength;
       } else {
@@ -622,7 +634,11 @@ Ip6ParseAddressListFromString (
 
     *LocalString = L'\0';
 
-    Status = NetLibStrToIp6andPrefix (TempStr, &AddressInfo.Address, &AddressInfo.PrefixLength);
+    Status = NetLibStrToIp6andPrefix (
+               TempStr,
+               &AddressInfo.Address,
+               &AddressInfo.PrefixLength
+               );
     if (EFI_ERROR (Status)) {
       goto Error;
     }
@@ -715,7 +731,11 @@ Ip6ConvertInterfaceInfoToString (
   if (IfInfo->IfType == Ip6InterfaceTypeEthernet) {
     CopyMem (PortString, IP6_ETHERNET, sizeof (IP6_ETHERNET));
   } else if (IfInfo->IfType == Ip6InterfaceTypeExperimentalEthernet) {
-    CopyMem (PortString, IP6_EXPERIMENTAL_ETHERNET, sizeof (IP6_EXPERIMENTAL_ETHERNET));
+    CopyMem (
+      PortString,
+      IP6_EXPERIMENTAL_ETHERNET,
+      sizeof (IP6_EXPERIMENTAL_ETHERNET)
+      );
   } else {
     //
     // Refer to RFC1700, chapter Number Hardware Type.
@@ -818,7 +838,8 @@ Ip6BuildNvAddressInfo (
 
   if (AddressType == Ip6ConfigNvHostAddress) {
     ListHead = &Ip6NvData->ManualAddress;
-    DataSize = sizeof (EFI_IP6_CONFIG_MANUAL_ADDRESS) * Ip6NvData->ManualAddressCount;
+    DataSize = sizeof (EFI_IP6_CONFIG_MANUAL_ADDRESS) *
+               Ip6NvData->ManualAddressCount;
   } else if (AddressType == Ip6ConfigNvGatewayAddress) {
     ListHead = &Ip6NvData->GatewayAddress;
     DataSize = sizeof (EFI_IPv6_ADDRESS) * Ip6NvData->GatewayAddressCount;
@@ -842,7 +863,8 @@ Ip6BuildNvAddressInfo (
       ManualAddress = (EFI_IP6_CONFIG_MANUAL_ADDRESS *)AddressList;
       IP6_COPY_ADDRESS (&ManualAddress->Address, &Node->AddrInfo.Address);
       ManualAddress->PrefixLength = Node->AddrInfo.PrefixLength;
-      AddressList                 = (UINT8 *)AddressList + sizeof (EFI_IP6_CONFIG_MANUAL_ADDRESS);
+      AddressList                 = (UINT8 *)AddressList +
+                                    sizeof (EFI_IP6_CONFIG_MANUAL_ADDRESS);
     } else {
       Ip6Address = (EFI_IPv6_ADDRESS *)AddressList;
       IP6_COPY_ADDRESS (Ip6Address, &Node->AddrInfo.Address);
@@ -934,7 +956,10 @@ Ip6ConvertConfigNvDataToIfrNvData (
     goto Exit;
   }
 
-  Ip6ConvertInterfaceIdToString (IfrNvData->InterfaceId, &Ip6NvData->InterfaceId);
+  Ip6ConvertInterfaceIdToString (
+    IfrNvData->InterfaceId,
+    &Ip6NvData->InterfaceId
+    );
 
   //
   // Get current policy.
@@ -1025,7 +1050,8 @@ Ip6ConvertIfrNvDataToConfigNvDataGeneral (
     Ip6NvData->Policy = Ip6ConfigPolicyManual;
   }
 
-  Ip6NvData->DadTransmitCount.DupAddrDetectTransmits = IfrNvData->DadTransmitCount;
+  Ip6NvData->DadTransmitCount.DupAddrDetectTransmits =
+    IfrNvData->DadTransmitCount;
 
   //
   // Set the configured policy.
@@ -1160,7 +1186,9 @@ Ip6ConvertIfrNvDataToConfigNvDataAdvanced (
   //
   // Set the manual address list. This is an asynchronous process.
   //
-  if (!IsListEmpty (&Ip6NvData->ManualAddress) && (Ip6NvData->ManualAddressCount != 0)) {
+  if (!IsListEmpty (&Ip6NvData->ManualAddress) &&
+      (Ip6NvData->ManualAddressCount != 0))
+  {
     Status = Ip6BuildNvAddressInfo (
                Instance,
                Ip6ConfigNvHostAddress,
@@ -1212,7 +1240,9 @@ Ip6ConvertIfrNvDataToConfigNvDataAdvanced (
   //
   // Set gateway address list.
   //
-  if (!IsListEmpty (&Ip6NvData->GatewayAddress) && (Ip6NvData->GatewayAddressCount != 0)) {
+  if (!IsListEmpty (&Ip6NvData->GatewayAddress) &&
+      (Ip6NvData->GatewayAddressCount != 0))
+  {
     Status = Ip6BuildNvAddressInfo (
                Instance,
                Ip6ConfigNvGatewayAddress,
@@ -1240,7 +1270,9 @@ Ip6ConvertIfrNvDataToConfigNvDataAdvanced (
   //
   // Set DNS server address list.
   //
-  if (!IsListEmpty (&Ip6NvData->DnsAddress) && (Ip6NvData->DnsAddressCount != 0)) {
+  if (!IsListEmpty (&Ip6NvData->DnsAddress) && (Ip6NvData->DnsAddressCount !=
+                                                0))
+  {
     Status = Ip6BuildNvAddressInfo (
                Instance,
                Ip6ConfigNvDnsAddress,
@@ -1371,7 +1403,11 @@ Ip6FormExtractConfig (
 
   *Progress = Request;
   if ((Request != NULL) &&
-      !HiiIsConfigHdrMatch (Request, &gIp6ConfigNvDataGuid, mIp6ConfigStorageName))
+      !HiiIsConfigHdrMatch (
+         Request,
+         &gIp6ConfigNvDataGuid,
+         mIp6ConfigStorageName
+         ))
   {
     return EFI_NOT_FOUND;
   }
@@ -1504,7 +1540,12 @@ Ip6FormRouteConfig (
   // Check routing data in <ConfigHdr>.
   // Note: if only one Storage is used, then this checking could be skipped.
   //
-  if (!HiiIsConfigHdrMatch (Configuration, &gIp6ConfigNvDataGuid, mIp6ConfigStorageName)) {
+  if (!HiiIsConfigHdrMatch (
+         Configuration,
+         &gIp6ConfigNvDataGuid,
+         mIp6ConfigStorageName
+         ))
+  {
     *Progress = Configuration;
     return EFI_NOT_FOUND;
   }
@@ -1723,11 +1764,15 @@ Ip6FormCallback (
   Instance  = IP6_CONFIG_INSTANCE_FROM_FORM_CALLBACK (Private);
   Ip6NvData = &Instance->Ip6NvData;
 
-  if ((Action == EFI_BROWSER_ACTION_FORM_OPEN) || (Action == EFI_BROWSER_ACTION_FORM_CLOSE)) {
+  if ((Action == EFI_BROWSER_ACTION_FORM_OPEN) || (Action ==
+                                                   EFI_BROWSER_ACTION_FORM_CLOSE))
+  {
     return EFI_SUCCESS;
   }
 
-  if ((Action != EFI_BROWSER_ACTION_CHANGING) && (Action != EFI_BROWSER_ACTION_CHANGED)) {
+  if ((Action != EFI_BROWSER_ACTION_CHANGING) && (Action !=
+                                                  EFI_BROWSER_ACTION_CHANGED))
+  {
     return EFI_UNSUPPORTED;
   }
 
@@ -1761,7 +1806,10 @@ Ip6FormCallback (
   } else if (Action == EFI_BROWSER_ACTION_CHANGED) {
     switch (QuestionId) {
       case KEY_SAVE_CONFIG_CHANGES:
-        Status = Ip6ConvertIfrNvDataToConfigNvDataAdvanced (IfrNvData, Instance);
+        Status = Ip6ConvertIfrNvDataToConfigNvDataAdvanced (
+                   IfrNvData,
+                   Instance
+                   );
         if (EFI_ERROR (Status)) {
           break;
         }
@@ -1793,7 +1841,10 @@ Ip6FormCallback (
         break;
 
       case KEY_INTERFACE_ID:
-        Status = Ip6ParseInterfaceIdFromString (IfrNvData->InterfaceId, &Ip6NvData->InterfaceId);
+        Status = Ip6ParseInterfaceIdFromString (
+                   IfrNvData->InterfaceId,
+                   &Ip6NvData->InterfaceId
+                   );
         if (EFI_ERROR (Status)) {
           CreatePopUp (
             EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE,
@@ -1926,10 +1977,14 @@ Ip6ConfigFormInit (
 
   CopyGuid (&VendorDeviceNode.Guid, &gEfiCallerIdGuid);
 
-  SetDevicePathNodeLength (&VendorDeviceNode.Header, sizeof (VENDOR_DEVICE_PATH));
+  SetDevicePathNodeLength (
+    &VendorDeviceNode.Header,
+    sizeof (VENDOR_DEVICE_PATH)
+    );
   CallbackInfo->HiiVendorDevicePath = AppendDevicePathNode (
                                         ParentDevicePath,
-                                        (EFI_DEVICE_PATH_PROTOCOL *)&VendorDeviceNode
+                                        (EFI_DEVICE_PATH_PROTOCOL *)&
+                                        VendorDeviceNode
                                         );
   if (CallbackInfo->HiiVendorDevicePath == NULL) {
     Status = EFI_OUT_OF_RESOURCES;

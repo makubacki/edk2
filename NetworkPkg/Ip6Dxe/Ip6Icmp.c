@@ -647,7 +647,11 @@ Ip6SendIcmpError (
   //
   // Fill in the ICMP error message head
   //
-  IcmpHead = (IP6_ICMP_INFORMATION_HEAD *)NetbufAllocSpace (ErrorMsg, sizeof (IP6_ICMP_INFORMATION_HEAD), FALSE);
+  IcmpHead = (IP6_ICMP_INFORMATION_HEAD *)NetbufAllocSpace (
+                                            ErrorMsg,
+                                            sizeof (IP6_ICMP_INFORMATION_HEAD),
+                                            FALSE
+                                            );
   if (IcmpHead == NULL) {
     NetbufFree (ErrorMsg);
     return EFI_OUT_OF_RESOURCES;
@@ -674,5 +678,15 @@ Ip6SendIcmpError (
   //
   // Transmit the packet
   //
-  return Ip6Output (IpSb, NULL, NULL, ErrorMsg, &Head, NULL, 0, Ip6SysPacketSent, NULL);
+  return Ip6Output (
+           IpSb,
+           NULL,
+           NULL,
+           ErrorMsg,
+           &Head,
+           NULL,
+           0,
+           Ip6SysPacketSent,
+           NULL
+           );
 }

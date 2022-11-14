@@ -69,7 +69,9 @@ SockTokenExisted (
     return TRUE;
   }
 
-  if ((Sock->ConnectionToken != NULL) && (Sock->ConnectionToken->Event == Event)) {
+  if ((Sock->ConnectionToken != NULL) && (Sock->ConnectionToken->Event ==
+                                          Event))
+  {
     return TRUE;
   }
 
@@ -661,7 +663,10 @@ SockSend (
                   );
 
     if (NULL == SockToken) {
-      DEBUG ((DEBUG_ERROR, "SockSend: Failed to buffer IO token into socket processing SndToken List\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "SockSend: Failed to buffer IO token into socket processing SndToken List\n"
+        ));
 
       Status = EFI_OUT_OF_RESOURCES;
       goto Exit;
@@ -964,7 +969,9 @@ SockCancel (
   //
   // 1. Check ConnectionToken.
   //
-  if ((Token == NULL) || ((SOCK_COMPLETION_TOKEN *)Token == Sock->ConnectionToken)) {
+  if ((Token == NULL) || ((SOCK_COMPLETION_TOKEN *)Token ==
+                          Sock->ConnectionToken))
+  {
     if (Sock->ConnectionToken != NULL) {
       SIGNAL_TOKEN (Sock->ConnectionToken, EFI_ABORTED);
       Sock->ConnectionToken = NULL;

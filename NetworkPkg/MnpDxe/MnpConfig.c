@@ -65,7 +65,10 @@ MnpAddFreeNbuf (
 
   Status = EFI_SUCCESS;
   for (Index = 0; Index < Count; Index++) {
-    Nbuf = NetbufAlloc (MnpDeviceData->BufferLength + MnpDeviceData->PaddingSize);
+    Nbuf = NetbufAlloc (
+             MnpDeviceData->BufferLength +
+             MnpDeviceData->PaddingSize
+             );
     if (Nbuf == NULL) {
       DEBUG ((DEBUG_ERROR, "MnpAddFreeNbuf: NetBufAlloc failed.\n"));
 
@@ -118,7 +121,9 @@ MnpAllocNbuf (
   // Check whether there are available buffers, or else try to add some.
   //
   if (FreeNbufQue->BufNum == 0) {
-    if ((MnpDeviceData->NbufCnt + MNP_NET_BUFFER_INCREASEMENT) > MNP_MAX_NET_BUFFER_NUM) {
+    if ((MnpDeviceData->NbufCnt + MNP_NET_BUFFER_INCREASEMENT) >
+        MNP_MAX_NET_BUFFER_NUM)
+    {
       DEBUG (
         (DEBUG_ERROR,
          "MnpAllocNbuf: The maximum NET_BUF size is reached for MNP driver instance %p.\n",
@@ -226,7 +231,12 @@ MnpAddFreeTxBuf (
 
   Status = EFI_SUCCESS;
   for (Index = 0; Index < Count; Index++) {
-    TxBufWrap = (MNP_TX_BUF_WRAP *)AllocatePool (OFFSET_OF (MNP_TX_BUF_WRAP, TxBuf) + MnpDeviceData->BufferLength);
+    TxBufWrap = (MNP_TX_BUF_WRAP *)AllocatePool (
+                                     OFFSET_OF (
+                                       MNP_TX_BUF_WRAP,
+                                       TxBuf
+                                       ) + MnpDeviceData->BufferLength
+                                     );
     if (TxBufWrap == NULL) {
       DEBUG ((DEBUG_ERROR, "MnpAddFreeTxBuf: TxBuf Alloc failed.\n"));
 
@@ -234,7 +244,12 @@ MnpAddFreeTxBuf (
       break;
     }
 
-    DEBUG ((DEBUG_INFO, "MnpAddFreeTxBuf: Add TxBufWrap %p, TxBuf %p\n", TxBufWrap, TxBufWrap->TxBuf));
+    DEBUG ((
+      DEBUG_INFO,
+      "MnpAddFreeTxBuf: Add TxBufWrap %p, TxBuf %p\n",
+      TxBufWrap,
+      TxBufWrap->TxBuf
+      ));
     TxBufWrap->Signature = MNP_TX_BUF_WRAP_SIGNATURE;
     TxBufWrap->InUse     = FALSE;
     InsertTailList (&MnpDeviceData->FreeTxBufList, &TxBufWrap->WrapEntry);
@@ -285,7 +300,9 @@ MnpAllocTxBuf (
     // If still no free TX buffer, allocate more.
     //
     if (IsListEmpty (&MnpDeviceData->FreeTxBufList)) {
-      if ((MnpDeviceData->TxBufCount + MNP_TX_BUFFER_INCREASEMENT) > MNP_MAX_TX_BUFFER_NUM) {
+      if ((MnpDeviceData->TxBufCount + MNP_TX_BUFFER_INCREASEMENT) >
+          MNP_MAX_TX_BUFFER_NUM)
+      {
         DEBUG (
           (DEBUG_ERROR,
            "MnpAllocTxBuf: The maximum TxBuf size is reached for MNP driver instance %p.\n",
@@ -313,7 +330,12 @@ MnpAllocTxBuf (
   ASSERT (!IsListEmpty (&MnpDeviceData->FreeTxBufList));
   Entry = MnpDeviceData->FreeTxBufList.ForwardLink;
   RemoveEntryList (MnpDeviceData->FreeTxBufList.ForwardLink);
-  TxBufWrap        = NET_LIST_USER_STRUCT_S (Entry, MNP_TX_BUF_WRAP, WrapEntry, MNP_TX_BUF_WRAP_SIGNATURE);
+  TxBufWrap = NET_LIST_USER_STRUCT_S (
+                Entry,
+                MNP_TX_BUF_WRAP,
+                WrapEntry,
+                MNP_TX_BUF_WRAP_SIGNATURE
+                );
   TxBufWrap->InUse = TRUE;
   TxBuf            = TxBufWrap->TxBuf;
 
@@ -434,7 +456,11 @@ MnpInitializeDeviceData (
   //
   // Copy the MNP Protocol interfaces from the template.
   //
-  CopyMem (&MnpDeviceData->VlanConfig, &mVlanConfigProtocolTemplate, sizeof (EFI_VLAN_CONFIG_PROTOCOL));
+  CopyMem (
+    &MnpDeviceData->VlanConfig,
+    &mVlanConfigProtocolTemplate,
+    sizeof (EFI_VLAN_CONFIG_PROTOCOL)
+    );
 
   //
   // Open the Simple Network protocol.
@@ -468,18 +494,24 @@ MnpInitializeDeviceData (
   // from SNP. Do this before fill the FreeNetBufQue.
   //
   //
-  MnpDeviceData->BufferLength = SnpMode->MediaHeaderSize + NET_VLAN_TAG_LEN + SnpMode->MaxPacketSize + NET_ETHER_FCS_SIZE;
+  MnpDeviceData->BufferLength = SnpMode->MediaHeaderSize + NET_VLAN_TAG_LEN +
+                                SnpMode->MaxPacketSize + NET_ETHER_FCS_SIZE;
 
   //
   // Make sure the protocol headers immediately following the media header
   // 4-byte aligned, and also preserve additional space for VLAN tag
   //
-  MnpDeviceData->PaddingSize = ((4 - SnpMode->MediaHeaderSize) & 0x3) + NET_VLAN_TAG_LEN;
+  MnpDeviceData->PaddingSize = ((4 - SnpMode->MediaHeaderSize) & 0x3) +
+                               NET_VLAN_TAG_LEN;
 
   //
   // Initialize MAC string which will be used as VLAN configuration variable name
   //
-  Status = NetLibGetMacString (ControllerHandle, ImageHandle, &MnpDeviceData->MacString);
+  Status = NetLibGetMacString (
+             ControllerHandle,
+             ImageHandle,
+             &MnpDeviceData->MacString
+             );
   if (EFI_ERROR (Status)) {
     goto ERROR;
   }
@@ -490,7 +522,11 @@ MnpInitializeDeviceData (
   NetbufQueInit (&MnpDeviceData->FreeNbufQue);
   Status = MnpAddFreeNbuf (MnpDeviceData, MNP_INIT_NET_BUFFER_NUM);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "MnpInitializeDeviceData: MnpAddFreeNbuf failed, %r.\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "MnpInitializeDeviceData: MnpAddFreeNbuf failed, %r.\n",
+      Status
+      ));
 
     goto ERROR;
   }
@@ -523,7 +559,10 @@ MnpInitializeDeviceData (
                   &MnpDeviceData->PollTimer
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "MnpInitializeDeviceData: CreateEvent for poll timer failed.\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "MnpInitializeDeviceData: CreateEvent for poll timer failed.\n"
+      ));
 
     goto ERROR;
   }
@@ -539,7 +578,10 @@ MnpInitializeDeviceData (
                   &MnpDeviceData->TimeoutCheckTimer
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "MnpInitializeDeviceData: CreateEvent for packet timeout check failed.\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "MnpInitializeDeviceData: CreateEvent for packet timeout check failed.\n"
+      ));
 
     goto ERROR;
   }
@@ -555,7 +597,10 @@ MnpInitializeDeviceData (
                   &MnpDeviceData->MediaDetectTimer
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "MnpInitializeDeviceData: CreateEvent for media detection failed.\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "MnpInitializeDeviceData: CreateEvent for media detection failed.\n"
+      ));
 
     goto ERROR;
   }
@@ -704,7 +749,10 @@ MnpCreateServiceData (
   //
   MnpServiceData = AllocateZeroPool (sizeof (MNP_SERVICE_DATA));
   if (MnpServiceData == NULL) {
-    DEBUG ((DEBUG_ERROR, "MnpCreateServiceData: Failed to allocate memory for the new Mnp Service Data.\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "MnpCreateServiceData: Failed to allocate memory for the new Mnp Service Data.\n"
+      ));
 
     return NULL;
   }
@@ -720,7 +768,11 @@ MnpCreateServiceData (
   //
   // Copy the ServiceBinding structure.
   //
-  CopyMem (&MnpServiceData->ServiceBinding, &mMnpServiceBindingProtocol, sizeof (EFI_SERVICE_BINDING_PROTOCOL));
+  CopyMem (
+    &MnpServiceData->ServiceBinding,
+    &mMnpServiceBindingProtocol,
+    sizeof (EFI_SERVICE_BINDING_PROTOCOL)
+    );
 
   //
   // Initialize the lists.
@@ -739,7 +791,10 @@ MnpCreateServiceData (
                          &MnpServiceData->DevicePath
                          );
     if (MnpServiceHandle == NULL) {
-      DEBUG ((DEBUG_ERROR, "MnpCreateServiceData: Failed to create child handle.\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "MnpCreateServiceData: Failed to create child handle.\n"
+        ));
 
       return NULL;
     }
@@ -886,7 +941,12 @@ MnpDestoryChildEntry (
   EFI_SERVICE_BINDING_PROTOCOL  *ServiceBinding;
 
   ServiceBinding = (EFI_SERVICE_BINDING_PROTOCOL *)Context;
-  Instance       = CR (Entry, MNP_INSTANCE_DATA, InstEntry, MNP_INSTANCE_DATA_SIGNATURE);
+  Instance       = CR (
+                     Entry,
+                     MNP_INSTANCE_DATA,
+                     InstEntry,
+                     MNP_INSTANCE_DATA_SIGNATURE
+                     );
   return ServiceBinding->DestroyChild (ServiceBinding, Instance->Handle);
 }
 
@@ -979,12 +1039,20 @@ MnpInitializeInstanceData (
   //
   // Copy the MNP Protocol interfaces from the template.
   //
-  CopyMem (&Instance->ManagedNetwork, &mMnpProtocolTemplate, sizeof (Instance->ManagedNetwork));
+  CopyMem (
+    &Instance->ManagedNetwork,
+    &mMnpProtocolTemplate,
+    sizeof (Instance->ManagedNetwork)
+    );
 
   //
   // Copy the default config data.
   //
-  CopyMem (&Instance->ConfigData, &mMnpDefaultConfigData, sizeof (Instance->ConfigData));
+  CopyMem (
+    &Instance->ConfigData,
+    &mMnpDefaultConfigData,
+    sizeof (Instance->ConfigData)
+    );
 
   //
   // Initialize the lists.
@@ -1265,9 +1333,17 @@ MnpStart (
     //
     TimerOpType = EnableSystemPoll ? TimerPeriodic : TimerCancel;
 
-    Status = gBS->SetTimer (MnpDeviceData->PollTimer, TimerOpType, MNP_SYS_POLL_INTERVAL);
+    Status = gBS->SetTimer (
+                    MnpDeviceData->PollTimer,
+                    TimerOpType,
+                    MNP_SYS_POLL_INTERVAL
+                    );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "MnpStart: gBS->SetTimer for PollTimer failed, %r.\n", Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "MnpStart: gBS->SetTimer for PollTimer failed, %r.\n",
+        Status
+        ));
 
       goto ErrorExit;
     }
@@ -1330,7 +1406,11 @@ MnpStop (
     //
     //  The system poll in on, cancel the poll timer.
     //
-    Status                          = gBS->SetTimer (MnpDeviceData->PollTimer, TimerCancel, 0);
+    Status = gBS->SetTimer (
+                    MnpDeviceData->PollTimer,
+                    TimerCancel,
+                    0
+                    );
     MnpDeviceData->EnableSystemPoll = FALSE;
   }
 
@@ -1373,7 +1453,11 @@ MnpFlushRcvdDataQueue (
     //
     // Remove all the Wraps.
     //
-    RxDataWrap = NET_LIST_HEAD (&Instance->RcvdPacketQueue, MNP_RXDATA_WRAP, WrapEntry);
+    RxDataWrap = NET_LIST_HEAD (
+                   &Instance->RcvdPacketQueue,
+                   MNP_RXDATA_WRAP,
+                   WrapEntry
+                   );
 
     //
     // Recycle the RxDataWrap.
@@ -1578,7 +1662,9 @@ MnpConfigReceiveFilters (
   MCastFilterCnt    = 0;
   ResetMCastFilters = TRUE;
 
-  if ((MnpDeviceData->MulticastCount != 0) && (MnpDeviceData->GroupAddressCount != 0)) {
+  if ((MnpDeviceData->MulticastCount != 0) &&
+      (MnpDeviceData->GroupAddressCount != 0))
+  {
     //
     // There are instances configured to receive multicast and already some group
     // addresses are joined.
@@ -1600,7 +1686,10 @@ MnpConfigReceiveFilters (
       MCastFilterCnt = MnpDeviceData->GroupAddressCount;
       MCastFilter    = AllocatePool (sizeof (EFI_MAC_ADDRESS) * MCastFilterCnt);
       if (MCastFilter == NULL) {
-        DEBUG ((DEBUG_ERROR, "MnpConfigReceiveFilters: Failed to allocate memory resource for MCastFilter.\n"));
+        DEBUG ((
+          DEBUG_ERROR,
+          "MnpConfigReceiveFilters: Failed to allocate memory resource for MCastFilter.\n"
+          ));
 
         return EFI_OUT_OF_RESOURCES;
       }
@@ -1610,8 +1699,16 @@ MnpConfigReceiveFilters (
       //
       Index = 0;
       NET_LIST_FOR_EACH (Entry, &MnpDeviceData->GroupAddressList) {
-        GroupAddress = NET_LIST_USER_STRUCT (Entry, MNP_GROUP_ADDRESS, AddrEntry);
-        CopyMem (MCastFilter + Index, &GroupAddress->Address, sizeof (*(MCastFilter + Index)));
+        GroupAddress = NET_LIST_USER_STRUCT (
+                         Entry,
+                         MNP_GROUP_ADDRESS,
+                         AddrEntry
+                         );
+        CopyMem (
+          MCastFilter + Index,
+          &GroupAddress->Address,
+          sizeof (*(MCastFilter + Index))
+          );
         Index++;
 
         ASSERT (Index <= MCastFilterCnt);
@@ -1622,7 +1719,9 @@ MnpConfigReceiveFilters (
       // multicast.
       //
 
-      if ((Snp->Mode->ReceiveFilterMask & EFI_SIMPLE_NETWORK_RECEIVE_PROMISCUOUS_MULTICAST) != 0) {
+      if ((Snp->Mode->ReceiveFilterMask &
+           EFI_SIMPLE_NETWORK_RECEIVE_PROMISCUOUS_MULTICAST) != 0)
+      {
         EnableFilterBits |= EFI_SIMPLE_NETWORK_RECEIVE_PROMISCUOUS_MULTICAST;
       } else {
         //
@@ -1717,12 +1816,19 @@ MnpGroupOpAddCtrlBlk (
     //
     GroupAddress = AllocatePool (sizeof (MNP_GROUP_ADDRESS));
     if (GroupAddress == NULL) {
-      DEBUG ((DEBUG_ERROR, "MnpGroupOpFormCtrlBlk: Failed to allocate memory resource.\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "MnpGroupOpFormCtrlBlk: Failed to allocate memory resource.\n"
+        ));
 
       return EFI_OUT_OF_RESOURCES;
     }
 
-    CopyMem (&GroupAddress->Address, MacAddress, sizeof (GroupAddress->Address));
+    CopyMem (
+      &GroupAddress->Address,
+      MacAddress,
+      sizeof (GroupAddress->Address)
+      );
     GroupAddress->RefCnt = 0;
     InsertTailList (
       &MnpDeviceData->GroupAddressList,
@@ -1847,7 +1953,10 @@ MnpGroupOp (
     //
     NewCtrlBlk = AllocatePool (sizeof (MNP_GROUP_CONTROL_BLOCK));
     if (NewCtrlBlk == NULL) {
-      DEBUG ((DEBUG_ERROR, "MnpGroupOp: Failed to allocate memory resource.\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "MnpGroupOp: Failed to allocate memory resource.\n"
+        ));
 
       return EFI_OUT_OF_RESOURCES;
     }
@@ -1857,7 +1966,12 @@ MnpGroupOp (
       // Check whether the MacAddress is already joined by other instances.
       //
       GroupAddress = NET_LIST_USER_STRUCT (Entry, MNP_GROUP_ADDRESS, AddrEntry);
-      if (CompareMem (MacAddress, &GroupAddress->Address, SnpMode->HwAddressSize) == 0) {
+      if (CompareMem (
+            MacAddress,
+            &GroupAddress->Address,
+            SnpMode->HwAddressSize
+            ) == 0)
+      {
         AddressExist = TRUE;
         break;
       }

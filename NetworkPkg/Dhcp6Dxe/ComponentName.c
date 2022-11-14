@@ -137,7 +137,8 @@ Dhcp6ComponentNameGetControllerName (
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gDhcp6ComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gDhcp6ComponentName =
+{
   Dhcp6ComponentNameGetDriverName,
   Dhcp6ComponentNameGetControllerName,
   "eng"
@@ -146,13 +147,15 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gDhcp6ComponentName =
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gDhcp6ComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gDhcp6ComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)Dhcp6ComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)Dhcp6ComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mDhcp6DriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mDhcp6DriverNameTable[] = {
   {
     "eng;en",
     L"DHCP6 Protocol Driver"
@@ -163,7 +166,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mDhcp6DriverNameTable[] 
   }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  *gDhcp6ControllerNameTable = NULL;
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  *
+  gDhcp6ControllerNameTable = NULL;
 
 CHAR16  *mDhcp6ControllerName[] = {
   L"DHCPv6 (State=0, Init)",

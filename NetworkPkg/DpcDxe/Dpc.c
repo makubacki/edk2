@@ -39,7 +39,9 @@ UINTN  mMaxDpcQueueDepth = 0;
 // If the free list is empty and a DPC is queued, the free list is grown by allocating
 // an additional set of DPC entries.
 //
-LIST_ENTRY  mDpcEntryFreeList = INITIALIZE_LIST_HEAD_VARIABLE (mDpcEntryFreeList);
+LIST_ENTRY  mDpcEntryFreeList = INITIALIZE_LIST_HEAD_VARIABLE (
+                                  mDpcEntryFreeList
+                                  );
 
 //
 // An array of DPC queues.  A DPC queue is allocated for every level EFI_TPL value.

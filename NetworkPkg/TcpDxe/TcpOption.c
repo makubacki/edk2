@@ -85,7 +85,9 @@ TcpComputeScale (
   BufSize = GET_RCV_BUFFSIZE (Tcb->Sk);
 
   Scale = 0;
-  while ((Scale < TCP_OPTION_MAX_WS) && ((UINT32)(TCP_OPTION_MAX_WIN << Scale) < BufSize)) {
+  while ((Scale < TCP_OPTION_MAX_WS) && ((UINT32)(TCP_OPTION_MAX_WIN << Scale) <
+                                         BufSize))
+  {
     Scale++;
   }
 
@@ -254,7 +256,9 @@ TcpParseOption (
   //
   // Fast process of the timestamp option.
   //
-  if ((TotalLen == TCP_OPTION_TS_ALIGNED_LEN) && (TcpGetUint32 (Head) == TCP_OPTION_TS_FAST)) {
+  if ((TotalLen == TCP_OPTION_TS_ALIGNED_LEN) && (TcpGetUint32 (Head) ==
+                                                  TCP_OPTION_TS_FAST))
+  {
     Option->TSVal = TcpGetUint32 (Head + 4);
     Option->TSEcr = TcpGetUint32 (Head + 8);
     Option->Flag  = TCP_OPTION_RCVD_TS;
@@ -274,7 +278,9 @@ TcpParseOption (
       case TCP_OPTION_MSS:
         Len = Head[Cur + 1];
 
-        if ((Len != TCP_OPTION_MSS_LEN) || (TotalLen - Cur < TCP_OPTION_MSS_LEN)) {
+        if ((Len != TCP_OPTION_MSS_LEN) || (TotalLen - Cur <
+                                            TCP_OPTION_MSS_LEN))
+        {
           return -1;
         }
 
@@ -287,7 +293,9 @@ TcpParseOption (
       case TCP_OPTION_WS:
         Len = Head[Cur + 1];
 
-        if ((Len != TCP_OPTION_WS_LEN) || (TotalLen - Cur < TCP_OPTION_WS_LEN)) {
+        if ((Len != TCP_OPTION_WS_LEN) || (TotalLen - Cur <
+                                           TCP_OPTION_WS_LEN))
+        {
           return -1;
         }
 
@@ -300,7 +308,9 @@ TcpParseOption (
       case TCP_OPTION_TS:
         Len = Head[Cur + 1];
 
-        if ((Len != TCP_OPTION_TS_LEN) || (TotalLen - Cur < TCP_OPTION_TS_LEN)) {
+        if ((Len != TCP_OPTION_TS_LEN) || (TotalLen - Cur <
+                                           TCP_OPTION_TS_LEN))
+        {
           return -1;
         }
 

@@ -8,7 +8,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "IScsiImpl.h"
 
-GLOBAL_REMOVE_IF_UNREFERENCED CONST CHAR8  IScsiHexString[] = "0123456789ABCDEFabcdef";
+GLOBAL_REMOVE_IF_UNREFERENCED CONST CHAR8  IScsiHexString[] =
+  "0123456789ABCDEFabcdef";
 
 /**
   Removes (trims) specified leading and trailing characters from a string.
@@ -54,7 +55,9 @@ IScsiStrTrim (
     *Pointer2 = 0;
   }
 
-  for (Pointer1 = Str + StrLen (Str) - 1; Pointer1 >= Str && *Pointer1 == CharC; Pointer1--) {
+  for (Pointer1 = Str + StrLen (Str) - 1; Pointer1 >= Str && *Pointer1 == CharC;
+       Pointer1--)
+  {
   }
 
   if (Pointer1 !=  Str + StrLen (Str) - 1) {
@@ -82,7 +85,8 @@ IScsiGetSubnetMaskPrefixLength (
   //
   // The SubnetMask is in network byte order.
   //
-  ReverseMask = (SubnetMask->Addr[0] << 24) | (SubnetMask->Addr[1] << 16) | (SubnetMask->Addr[2] << 8) | (SubnetMask->Addr[3]);
+  ReverseMask = (SubnetMask->Addr[0] << 24) | (SubnetMask->Addr[1] << 16) |
+                (SubnetMask->Addr[2] << 8) | (SubnetMask->Addr[3]);
 
   //
   // Reverse it.
@@ -296,7 +300,12 @@ IScsiMacAddrToStr (
 
   String = &Str[3 * Index - 1];
   if (VlanId != 0) {
-    String += UnicodeSPrint (String, 6 * sizeof (CHAR16), L"\\%04x", (UINTN)VlanId);
+    String += UnicodeSPrint (
+                String,
+                6 * sizeof (CHAR16),
+                L"\\%04x",
+                (UINTN)VlanId
+                );
   }
 
   *String = L'\0';
@@ -558,7 +567,11 @@ IScsiCheckIpv6Support (
 
   InfoTypesBuffer     = NULL;
   InfoTypeBufferCount = 0;
-  Status              = Aip->GetSupportedTypes (Aip, &InfoTypesBuffer, &InfoTypeBufferCount);
+  Status              = Aip->GetSupportedTypes (
+                               Aip,
+                               &InfoTypesBuffer,
+                               &InfoTypeBufferCount
+                               );
   if (EFI_ERROR (Status) || (InfoTypesBuffer == NULL)) {
     FreePool (InfoTypesBuffer);
     return EFI_NOT_FOUND;
@@ -566,7 +579,11 @@ IScsiCheckIpv6Support (
 
   Supported = FALSE;
   for (TypeIndex = 0; TypeIndex < InfoTypeBufferCount; TypeIndex++) {
-    if (CompareGuid (&InfoTypesBuffer[TypeIndex], &gEfiAdapterInfoUndiIpv6SupportGuid)) {
+    if (CompareGuid (
+          &InfoTypesBuffer[TypeIndex],
+          &gEfiAdapterInfoUndiIpv6SupportGuid
+          ))
+    {
       Supported = TRUE;
       break;
     }
@@ -582,7 +599,12 @@ IScsiCheckIpv6Support (
   //
   InfoBlock     = NULL;
   InfoBlockSize = 0;
-  Status        = Aip->GetInformation (Aip, &gEfiAdapterInfoUndiIpv6SupportGuid, &InfoBlock, &InfoBlockSize);
+  Status        = Aip->GetInformation (
+                         Aip,
+                         &gEfiAdapterInfoUndiIpv6SupportGuid,
+                         &InfoBlock,
+                         &InfoBlockSize
+                         );
   if (EFI_ERROR (Status) || (InfoBlock == NULL)) {
     FreePool (InfoBlock);
     return EFI_NOT_FOUND;
@@ -637,7 +659,8 @@ IScsiAddNic (
   NET_LIST_FOR_EACH (Entry, &mPrivate->NicInfoList) {
     NicInfo = NET_LIST_USER_STRUCT (Entry, ISCSI_NIC_INFO, Link);
     if ((NicInfo->HwAddressSize == HwAddressSize) &&
-        (CompareMem (&NicInfo->PermanentAddress, MacAddr.Addr, HwAddressSize) == 0) &&
+        (CompareMem (&NicInfo->PermanentAddress, MacAddr.Addr, HwAddressSize) ==
+         0) &&
         (NicInfo->VlanId == VlanId))
     {
       mPrivate->CurrentNic = NicInfo->NicIndex;
@@ -645,7 +668,11 @@ IScsiAddNic (
       //
       // Set IPv6 available flag.
       //
-      Status = IScsiCheckIpv6Support (Controller, Image, &NicInfo->Ipv6Available);
+      Status = IScsiCheckIpv6Support (
+                 Controller,
+                 Image,
+                 &NicInfo->Ipv6Available
+                 );
       if (EFI_ERROR (Status)) {
         //
         // Fail to get the data whether UNDI supports IPv6.
@@ -751,7 +778,8 @@ IScsiRemoveNic (
   NET_LIST_FOR_EACH (Entry, &mPrivate->NicInfoList) {
     NicInfo = NET_LIST_USER_STRUCT (Entry, ISCSI_NIC_INFO, Link);
     if ((NicInfo->HwAddressSize == HwAddressSize) &&
-        (CompareMem (&NicInfo->PermanentAddress, MacAddr.Addr, HwAddressSize) == 0) &&
+        (CompareMem (&NicInfo->PermanentAddress, MacAddr.Addr, HwAddressSize) ==
+         0) &&
         (NicInfo->VlanId == VlanId))
     {
       ThisNic = NicInfo;
@@ -773,20 +801,30 @@ IScsiRemoveNic (
   // Remove all attempts related to this NIC.
   //
   NET_LIST_FOR_EACH_SAFE (Entry, NextEntry, &mPrivate->AttemptConfigs) {
-    AttemptConfigData = NET_LIST_USER_STRUCT (Entry, ISCSI_ATTEMPT_CONFIG_NVDATA, Link);
+    AttemptConfigData = NET_LIST_USER_STRUCT (
+                          Entry,
+                          ISCSI_ATTEMPT_CONFIG_NVDATA,
+                          Link
+                          );
     if (AttemptConfigData->NicIndex == mPrivate->CurrentNic) {
       RemoveEntryList (&AttemptConfigData->Link);
       mPrivate->AttemptCount--;
 
-      if ((AttemptConfigData->SessionConfigData.Enabled == ISCSI_ENABLED_FOR_MPIO) && (mPrivate->MpioCount > 0)) {
+      if ((AttemptConfigData->SessionConfigData.Enabled ==
+           ISCSI_ENABLED_FOR_MPIO) && (mPrivate->MpioCount > 0))
+      {
         if (--mPrivate->MpioCount == 0) {
           mPrivate->EnableMpio = FALSE;
         }
 
-        if ((AttemptConfigData->AuthenticationType == ISCSI_AUTH_TYPE_KRB) && (mPrivate->Krb5MpioCount > 0)) {
+        if ((AttemptConfigData->AuthenticationType == ISCSI_AUTH_TYPE_KRB) &&
+            (mPrivate->Krb5MpioCount > 0))
+        {
           mPrivate->Krb5MpioCount--;
         }
-      } else if ((AttemptConfigData->SessionConfigData.Enabled == ISCSI_ENABLED) && (mPrivate->SinglePathCount > 0)) {
+      } else if ((AttemptConfigData->SessionConfigData.Enabled ==
+                  ISCSI_ENABLED) && (mPrivate->SinglePathCount > 0))
+      {
         mPrivate->SinglePathCount--;
 
         if (mPrivate->ValidSinglePathCount > 0) {
@@ -911,7 +949,11 @@ IScsiCreateAttempts (
       L"Attempt %d",
       (UINTN)AttemptConfigData->AttemptConfigIndex
       );
-    UnicodeStrToAsciiStrS (mPrivate->PortString, AttemptConfigData->AttemptName, ATTEMPT_NAME_SIZE);
+    UnicodeStrToAsciiStrS (
+      mPrivate->PortString,
+      AttemptConfigData->AttemptName,
+      ATTEMPT_NAME_SIZE
+      );
 
     Status = gRT->SetVariable (
                     mPrivate->PortString,
@@ -977,20 +1019,37 @@ IScsiCreateKeywords (
     //
     // Create iSCSIAttemptName Keyword.
     //
-    UnicodeSPrint (StringId, sizeof (StringId), L"STR_ISCSI_ATTEMPTT_NAME_PROMPT%d", Index);
+    UnicodeSPrint (
+      StringId,
+      sizeof (StringId),
+      L"STR_ISCSI_ATTEMPTT_NAME_PROMPT%d",
+      Index
+      );
     StringToken =  HiiSetString (
                      mCallbackInfo->RegisteredHandle,
                      0,
                      StringId,
                      NULL
                      );
-    UnicodeSPrint (KeywordId, sizeof (KeywordId), L"iSCSIAttemptName:%d", Index);
-    HiiSetString (mCallbackInfo->RegisteredHandle, StringToken, KeywordId, "x-UEFI-ns");
+    UnicodeSPrint (
+      KeywordId,
+      sizeof (KeywordId),
+      L"iSCSIAttemptName:%d",
+      Index
+      );
+    HiiSetString (
+      mCallbackInfo->RegisteredHandle,
+      StringToken,
+      KeywordId,
+      "x-UEFI-ns"
+      );
     HiiCreateStringOpCode (
       StartOpCodeHandle,
       (EFI_QUESTION_ID)(ATTEMPT_ATTEMPT_NAME_QUESTION_ID + (Index - 1)),
       CONFIGURATION_VARSTORE_ID,
-      (UINT16)(ATTEMPT_ATTEMPT_NAME_VAR_OFFSET + ATTEMPT_NAME_SIZE * (Index - 1) * sizeof (CHAR16)),
+      (UINT16)(ATTEMPT_ATTEMPT_NAME_VAR_OFFSET + ATTEMPT_NAME_SIZE * (Index -
+                                                                      1) *
+               sizeof (CHAR16)),
       StringToken,
       StringToken,
       EFI_IFR_FLAG_READ_ONLY,
@@ -1003,7 +1062,12 @@ IScsiCreateKeywords (
     //
     // Create iSCSIBootEnable Keyword.
     //
-    UnicodeSPrint (StringId, sizeof (StringId), L"STR_ISCSI_MODE_PROMPT%d", Index);
+    UnicodeSPrint (
+      StringId,
+      sizeof (StringId),
+      L"STR_ISCSI_MODE_PROMPT%d",
+      Index
+      );
     StringToken =  HiiSetString (
                      mCallbackInfo->RegisteredHandle,
                      0,
@@ -1011,7 +1075,12 @@ IScsiCreateKeywords (
                      NULL
                      );
     UnicodeSPrint (KeywordId, sizeof (KeywordId), L"iSCSIBootEnable:%d", Index);
-    HiiSetString (mCallbackInfo->RegisteredHandle, StringToken, KeywordId, "x-UEFI-ns");
+    HiiSetString (
+      mCallbackInfo->RegisteredHandle,
+      StringToken,
+      KeywordId,
+      "x-UEFI-ns"
+      );
     HiiCreateNumericOpCode (
       StartOpCodeHandle,
       (EFI_QUESTION_ID)(ATTEMPT_BOOTENABLE_QUESTION_ID + (Index - 1)),
@@ -1030,15 +1099,30 @@ IScsiCreateKeywords (
     //
     // Create iSCSIIpAddressType Keyword.
     //
-    UnicodeSPrint (StringId, sizeof (StringId), L"STR_ISCSI_IP_MODE_PROMPT%d", Index);
+    UnicodeSPrint (
+      StringId,
+      sizeof (StringId),
+      L"STR_ISCSI_IP_MODE_PROMPT%d",
+      Index
+      );
     StringToken =  HiiSetString (
                      mCallbackInfo->RegisteredHandle,
                      0,
                      StringId,
                      NULL
                      );
-    UnicodeSPrint (KeywordId, sizeof (KeywordId), L"iSCSIIpAddressType:%d", Index);
-    HiiSetString (mCallbackInfo->RegisteredHandle, StringToken, KeywordId, "x-UEFI-ns");
+    UnicodeSPrint (
+      KeywordId,
+      sizeof (KeywordId),
+      L"iSCSIIpAddressType:%d",
+      Index
+      );
+    HiiSetString (
+      mCallbackInfo->RegisteredHandle,
+      StringToken,
+      KeywordId,
+      "x-UEFI-ns"
+      );
     HiiCreateNumericOpCode (
       StartOpCodeHandle,
       (EFI_QUESTION_ID)(ATTEMPT_ADDRESS_TYPE_QUESTION_ID + (Index - 1)),
@@ -1057,15 +1141,30 @@ IScsiCreateKeywords (
     //
     // Create iSCSIConnectRetry Keyword.
     //
-    UnicodeSPrint (StringId, sizeof (StringId), L"STR_ISCSI_CONNECT_RETRY_PROMPT%d", Index);
+    UnicodeSPrint (
+      StringId,
+      sizeof (StringId),
+      L"STR_ISCSI_CONNECT_RETRY_PROMPT%d",
+      Index
+      );
     StringToken =  HiiSetString (
                      mCallbackInfo->RegisteredHandle,
                      0,
                      StringId,
                      NULL
                      );
-    UnicodeSPrint (KeywordId, sizeof (KeywordId), L"iSCSIConnectRetry:%d", Index);
-    HiiSetString (mCallbackInfo->RegisteredHandle, StringToken, KeywordId, "x-UEFI-ns");
+    UnicodeSPrint (
+      KeywordId,
+      sizeof (KeywordId),
+      L"iSCSIConnectRetry:%d",
+      Index
+      );
+    HiiSetString (
+      mCallbackInfo->RegisteredHandle,
+      StringToken,
+      KeywordId,
+      "x-UEFI-ns"
+      );
     HiiCreateNumericOpCode (
       StartOpCodeHandle,
       (EFI_QUESTION_ID)(ATTEMPT_CONNECT_RETRY_QUESTION_ID + (Index - 1)),
@@ -1084,15 +1183,30 @@ IScsiCreateKeywords (
     //
     // Create iSCSIConnectTimeout Keyword.
     //
-    UnicodeSPrint (StringId, sizeof (StringId), L"STR_ISCSI_CONNECT_TIMEOUT_PROMPT%d", Index);
+    UnicodeSPrint (
+      StringId,
+      sizeof (StringId),
+      L"STR_ISCSI_CONNECT_TIMEOUT_PROMPT%d",
+      Index
+      );
     StringToken =  HiiSetString (
                      mCallbackInfo->RegisteredHandle,
                      0,
                      StringId,
                      NULL
                      );
-    UnicodeSPrint (KeywordId, sizeof (KeywordId), L"iSCSIConnectTimeout:%d", Index);
-    HiiSetString (mCallbackInfo->RegisteredHandle, StringToken, KeywordId, "x-UEFI-ns");
+    UnicodeSPrint (
+      KeywordId,
+      sizeof (KeywordId),
+      L"iSCSIConnectTimeout:%d",
+      Index
+      );
+    HiiSetString (
+      mCallbackInfo->RegisteredHandle,
+      StringToken,
+      KeywordId,
+      "x-UEFI-ns"
+      );
     HiiCreateNumericOpCode (
       StartOpCodeHandle,
       (EFI_QUESTION_ID)(ATTEMPT_CONNECT_TIMEOUT_QUESTION_ID + (Index - 1)),
@@ -1111,7 +1225,12 @@ IScsiCreateKeywords (
     //
     // Create ISID Keyword.
     //
-    UnicodeSPrint (StringId, sizeof (StringId), L"STR_ISCSI_ISID_PROMPT%d", Index);
+    UnicodeSPrint (
+      StringId,
+      sizeof (StringId),
+      L"STR_ISCSI_ISID_PROMPT%d",
+      Index
+      );
     StringToken =  HiiSetString (
                      mCallbackInfo->RegisteredHandle,
                      0,
@@ -1119,7 +1238,12 @@ IScsiCreateKeywords (
                      NULL
                      );
     UnicodeSPrint (KeywordId, sizeof (KeywordId), L"iSCSIISID:%d", Index);
-    HiiSetString (mCallbackInfo->RegisteredHandle, StringToken, KeywordId, "x-UEFI-ns");
+    HiiSetString (
+      mCallbackInfo->RegisteredHandle,
+      StringToken,
+      KeywordId,
+      "x-UEFI-ns"
+      );
     HiiCreateStringOpCode (
       StartOpCodeHandle,
       (EFI_QUESTION_ID)(ATTEMPT_ISID_QUESTION_ID + (Index - 1)),
@@ -1137,15 +1261,30 @@ IScsiCreateKeywords (
     //
     // Create iSCSIInitiatorInfoViaDHCP Keyword.
     //
-    UnicodeSPrint (StringId, sizeof (StringId), L"STR_ISCSI_INITIATOR_VIA_DHCP_PROMPT%d", Index);
+    UnicodeSPrint (
+      StringId,
+      sizeof (StringId),
+      L"STR_ISCSI_INITIATOR_VIA_DHCP_PROMPT%d",
+      Index
+      );
     StringToken =  HiiSetString (
                      mCallbackInfo->RegisteredHandle,
                      0,
                      StringId,
                      NULL
                      );
-    UnicodeSPrint (KeywordId, sizeof (KeywordId), L"iSCSIInitiatorInfoViaDHCP:%d", Index);
-    HiiSetString (mCallbackInfo->RegisteredHandle, StringToken, KeywordId, "x-UEFI-ns");
+    UnicodeSPrint (
+      KeywordId,
+      sizeof (KeywordId),
+      L"iSCSIInitiatorInfoViaDHCP:%d",
+      Index
+      );
+    HiiSetString (
+      mCallbackInfo->RegisteredHandle,
+      StringToken,
+      KeywordId,
+      "x-UEFI-ns"
+      );
     HiiCreateNumericOpCode (
       StartOpCodeHandle,
       (EFI_QUESTION_ID)(ATTEMPT_INITIATOR_VIA_DHCP_QUESTION_ID + (Index - 1)),
@@ -1164,20 +1303,36 @@ IScsiCreateKeywords (
     //
     // Create iSCSIInitiatorIpAddress Keyword.
     //
-    UnicodeSPrint (StringId, sizeof (StringId), L"STR_ISCSI_INITIATOR_IP_ADDRESS_PROMPT%d", Index);
+    UnicodeSPrint (
+      StringId,
+      sizeof (StringId),
+      L"STR_ISCSI_INITIATOR_IP_ADDRESS_PROMPT%d",
+      Index
+      );
     StringToken =  HiiSetString (
                      mCallbackInfo->RegisteredHandle,
                      0,
                      StringId,
                      NULL
                      );
-    UnicodeSPrint (KeywordId, sizeof (KeywordId), L"iSCSIInitiatorIpAddress:%d", Index);
-    HiiSetString (mCallbackInfo->RegisteredHandle, StringToken, KeywordId, "x-UEFI-ns");
+    UnicodeSPrint (
+      KeywordId,
+      sizeof (KeywordId),
+      L"iSCSIInitiatorIpAddress:%d",
+      Index
+      );
+    HiiSetString (
+      mCallbackInfo->RegisteredHandle,
+      StringToken,
+      KeywordId,
+      "x-UEFI-ns"
+      );
     HiiCreateStringOpCode (
       StartOpCodeHandle,
       (EFI_QUESTION_ID)(ATTEMPT_INITIATOR_IP_ADDRESS_QUESTION_ID + (Index - 1)),
       CONFIGURATION_VARSTORE_ID,
-      (UINT16)(ATTEMPT_INITIATOR_IP_ADDRESS_VAR_OFFSET + sizeof (KEYWORD_STR) * (Index - 1)),
+      (UINT16)(ATTEMPT_INITIATOR_IP_ADDRESS_VAR_OFFSET + sizeof (KEYWORD_STR) *
+               (Index - 1)),
       StringToken,
       StringToken,
       0,
@@ -1190,20 +1345,36 @@ IScsiCreateKeywords (
     //
     // Create iSCSIInitiatorNetmask Keyword.
     //
-    UnicodeSPrint (StringId, sizeof (StringId), L"STR_ISCSI_INITIATOR_NET_MASK_PROMPT%d", Index);
+    UnicodeSPrint (
+      StringId,
+      sizeof (StringId),
+      L"STR_ISCSI_INITIATOR_NET_MASK_PROMPT%d",
+      Index
+      );
     StringToken =  HiiSetString (
                      mCallbackInfo->RegisteredHandle,
                      0,
                      StringId,
                      NULL
                      );
-    UnicodeSPrint (KeywordId, sizeof (KeywordId), L"iSCSIInitiatorNetmask:%d", Index);
-    HiiSetString (mCallbackInfo->RegisteredHandle, StringToken, KeywordId, "x-UEFI-ns");
+    UnicodeSPrint (
+      KeywordId,
+      sizeof (KeywordId),
+      L"iSCSIInitiatorNetmask:%d",
+      Index
+      );
+    HiiSetString (
+      mCallbackInfo->RegisteredHandle,
+      StringToken,
+      KeywordId,
+      "x-UEFI-ns"
+      );
     HiiCreateStringOpCode (
       StartOpCodeHandle,
       (EFI_QUESTION_ID)(ATTEMPT_INITIATOR_NET_MASK_QUESTION_ID + (Index - 1)),
       CONFIGURATION_VARSTORE_ID,
-      (UINT16)(ATTEMPT_INITIATOR_NET_MASK_VAR_OFFSET + sizeof (KEYWORD_STR) * (Index - 1)),
+      (UINT16)(ATTEMPT_INITIATOR_NET_MASK_VAR_OFFSET + sizeof (KEYWORD_STR) *
+               (Index - 1)),
       StringToken,
       StringToken,
       0,
@@ -1216,20 +1387,36 @@ IScsiCreateKeywords (
     //
     // Create iSCSIInitiatorGateway Keyword.
     //
-    UnicodeSPrint (StringId, sizeof (StringId), L"STR_ISCSI_INITIATOR_GATE_PROMPT%d", Index);
+    UnicodeSPrint (
+      StringId,
+      sizeof (StringId),
+      L"STR_ISCSI_INITIATOR_GATE_PROMPT%d",
+      Index
+      );
     StringToken =  HiiSetString (
                      mCallbackInfo->RegisteredHandle,
                      0,
                      StringId,
                      NULL
                      );
-    UnicodeSPrint (KeywordId, sizeof (KeywordId), L"iSCSIInitiatorGateway:%d", Index);
-    HiiSetString (mCallbackInfo->RegisteredHandle, StringToken, KeywordId, "x-UEFI-ns");
+    UnicodeSPrint (
+      KeywordId,
+      sizeof (KeywordId),
+      L"iSCSIInitiatorGateway:%d",
+      Index
+      );
+    HiiSetString (
+      mCallbackInfo->RegisteredHandle,
+      StringToken,
+      KeywordId,
+      "x-UEFI-ns"
+      );
     HiiCreateStringOpCode (
       StartOpCodeHandle,
       (EFI_QUESTION_ID)(ATTEMPT_INITIATOR_GATE_WAY_QUESTION_ID + (Index - 1)),
       CONFIGURATION_VARSTORE_ID,
-      (UINT16)(ATTEMPT_INITIATOR_GATE_WAY_VAR_OFFSET + sizeof (KEYWORD_STR) * (Index - 1)),
+      (UINT16)(ATTEMPT_INITIATOR_GATE_WAY_VAR_OFFSET + sizeof (KEYWORD_STR) *
+               (Index - 1)),
       StringToken,
       StringToken,
       0,
@@ -1242,15 +1429,30 @@ IScsiCreateKeywords (
     //
     // Create iSCSITargetInfoViaDHCP Keyword.
     //
-    UnicodeSPrint (StringId, sizeof (StringId), L"STR_ISCSI_TARGET_VIA_DHCP_PROMPT%d", Index);
+    UnicodeSPrint (
+      StringId,
+      sizeof (StringId),
+      L"STR_ISCSI_TARGET_VIA_DHCP_PROMPT%d",
+      Index
+      );
     StringToken =  HiiSetString (
                      mCallbackInfo->RegisteredHandle,
                      0,
                      StringId,
                      NULL
                      );
-    UnicodeSPrint (KeywordId, sizeof (KeywordId), L"iSCSITargetInfoViaDHCP:%d", Index);
-    HiiSetString (mCallbackInfo->RegisteredHandle, StringToken, KeywordId, "x-UEFI-ns");
+    UnicodeSPrint (
+      KeywordId,
+      sizeof (KeywordId),
+      L"iSCSITargetInfoViaDHCP:%d",
+      Index
+      );
+    HiiSetString (
+      mCallbackInfo->RegisteredHandle,
+      StringToken,
+      KeywordId,
+      "x-UEFI-ns"
+      );
     HiiCreateNumericOpCode (
       StartOpCodeHandle,
       (EFI_QUESTION_ID)(ATTEMPT_TARGET_VIA_DHCP_QUESTION_ID + (Index - 1)),
@@ -1269,15 +1471,30 @@ IScsiCreateKeywords (
     //
     // Create iSCSITargetTcpPort Keyword.
     //
-    UnicodeSPrint (StringId, sizeof (StringId), L"STR_ISCSI_TARGET_TCP_PORT_PROMPT%d", Index);
+    UnicodeSPrint (
+      StringId,
+      sizeof (StringId),
+      L"STR_ISCSI_TARGET_TCP_PORT_PROMPT%d",
+      Index
+      );
     StringToken =  HiiSetString (
                      mCallbackInfo->RegisteredHandle,
                      0,
                      StringId,
                      NULL
                      );
-    UnicodeSPrint (KeywordId, sizeof (KeywordId), L"iSCSITargetTcpPort:%d", Index);
-    HiiSetString (mCallbackInfo->RegisteredHandle, StringToken, KeywordId, "x-UEFI-ns");
+    UnicodeSPrint (
+      KeywordId,
+      sizeof (KeywordId),
+      L"iSCSITargetTcpPort:%d",
+      Index
+      );
+    HiiSetString (
+      mCallbackInfo->RegisteredHandle,
+      StringToken,
+      KeywordId,
+      "x-UEFI-ns"
+      );
     HiiCreateNumericOpCode (
       StartOpCodeHandle,
       (EFI_QUESTION_ID)(ATTEMPT_TARGET_TCP_PORT_QUESTION_ID + (Index - 1)),
@@ -1296,7 +1513,12 @@ IScsiCreateKeywords (
     //
     // Create iSCSITargetName Keyword.
     //
-    UnicodeSPrint (StringId, sizeof (StringId), L"STR_ISCSI_TARGET_NAME_PROMPT%d", Index);
+    UnicodeSPrint (
+      StringId,
+      sizeof (StringId),
+      L"STR_ISCSI_TARGET_NAME_PROMPT%d",
+      Index
+      );
     StringToken =  HiiSetString (
                      mCallbackInfo->RegisteredHandle,
                      0,
@@ -1304,12 +1526,18 @@ IScsiCreateKeywords (
                      NULL
                      );
     UnicodeSPrint (KeywordId, sizeof (KeywordId), L"iSCSITargetName:%d", Index);
-    HiiSetString (mCallbackInfo->RegisteredHandle, StringToken, KeywordId, "x-UEFI-ns");
+    HiiSetString (
+      mCallbackInfo->RegisteredHandle,
+      StringToken,
+      KeywordId,
+      "x-UEFI-ns"
+      );
     HiiCreateStringOpCode (
       StartOpCodeHandle,
       (EFI_QUESTION_ID)(ATTEMPT_TARGET_NAME_QUESTION_ID + (Index - 1)),
       CONFIGURATION_VARSTORE_ID,
-      (UINT16)(ATTEMPT_TARGET_NAME_VAR_OFFSET + sizeof (KEYWORD_STR) * (Index - 1)),
+      (UINT16)(ATTEMPT_TARGET_NAME_VAR_OFFSET + sizeof (KEYWORD_STR) * (Index -
+                                                                        1)),
       StringToken,
       StringToken,
       0,
@@ -1322,20 +1550,36 @@ IScsiCreateKeywords (
     //
     // Create iSCSITargetIpAddress Keyword.
     //
-    UnicodeSPrint (StringId, sizeof (StringId), L"STR_ISCSI_TARGET_IP_ADDRESS_PROMPT%d", Index);
+    UnicodeSPrint (
+      StringId,
+      sizeof (StringId),
+      L"STR_ISCSI_TARGET_IP_ADDRESS_PROMPT%d",
+      Index
+      );
     StringToken =  HiiSetString (
                      mCallbackInfo->RegisteredHandle,
                      0,
                      StringId,
                      NULL
                      );
-    UnicodeSPrint (KeywordId, sizeof (KeywordId), L"iSCSITargetIpAddress:%d", Index);
-    HiiSetString (mCallbackInfo->RegisteredHandle, StringToken, KeywordId, "x-UEFI-ns");
+    UnicodeSPrint (
+      KeywordId,
+      sizeof (KeywordId),
+      L"iSCSITargetIpAddress:%d",
+      Index
+      );
+    HiiSetString (
+      mCallbackInfo->RegisteredHandle,
+      StringToken,
+      KeywordId,
+      "x-UEFI-ns"
+      );
     HiiCreateStringOpCode (
       StartOpCodeHandle,
       (EFI_QUESTION_ID)(ATTEMPT_TARGET_IP_ADDRESS_QUESTION_ID + (Index - 1)),
       CONFIGURATION_VARSTORE_ID,
-      (UINT16)(ATTEMPT_TARGET_IP_ADDRESS_VAR_OFFSET + sizeof (KEYWORD_STR) * (Index - 1)),
+      (UINT16)(ATTEMPT_TARGET_IP_ADDRESS_VAR_OFFSET + sizeof (KEYWORD_STR) *
+               (Index - 1)),
       StringToken,
       StringToken,
       0,
@@ -1348,7 +1592,12 @@ IScsiCreateKeywords (
     //
     // Create iSCSILUN Keyword.
     //
-    UnicodeSPrint (StringId, sizeof (StringId), L"STR_ISCSI_LUN_PROMPT%d", Index);
+    UnicodeSPrint (
+      StringId,
+      sizeof (StringId),
+      L"STR_ISCSI_LUN_PROMPT%d",
+      Index
+      );
     StringToken =  HiiSetString (
                      mCallbackInfo->RegisteredHandle,
                      0,
@@ -1356,7 +1605,12 @@ IScsiCreateKeywords (
                      NULL
                      );
     UnicodeSPrint (KeywordId, sizeof (KeywordId), L"iSCSILUN:%d", Index);
-    HiiSetString (mCallbackInfo->RegisteredHandle, StringToken, KeywordId, "x-UEFI-ns");
+    HiiSetString (
+      mCallbackInfo->RegisteredHandle,
+      StringToken,
+      KeywordId,
+      "x-UEFI-ns"
+      );
     HiiCreateStringOpCode (
       StartOpCodeHandle,
       (EFI_QUESTION_ID)(ATTEMPT_LUN_QUESTION_ID + (Index - 1)),
@@ -1374,18 +1628,34 @@ IScsiCreateKeywords (
     //
     // Create iSCSIAuthenticationMethod Keyword.
     //
-    UnicodeSPrint (StringId, sizeof (StringId), L"STR_ISCSI_AUTHENTICATION_METHOD_PROMPT%d", Index);
+    UnicodeSPrint (
+      StringId,
+      sizeof (StringId),
+      L"STR_ISCSI_AUTHENTICATION_METHOD_PROMPT%d",
+      Index
+      );
     StringToken =  HiiSetString (
                      mCallbackInfo->RegisteredHandle,
                      0,
                      StringId,
                      NULL
                      );
-    UnicodeSPrint (KeywordId, sizeof (KeywordId), L"iSCSIAuthenticationMethod:%d", Index);
-    HiiSetString (mCallbackInfo->RegisteredHandle, StringToken, KeywordId, "x-UEFI-ns");
+    UnicodeSPrint (
+      KeywordId,
+      sizeof (KeywordId),
+      L"iSCSIAuthenticationMethod:%d",
+      Index
+      );
+    HiiSetString (
+      mCallbackInfo->RegisteredHandle,
+      StringToken,
+      KeywordId,
+      "x-UEFI-ns"
+      );
     HiiCreateNumericOpCode (
       StartOpCodeHandle,
-      (EFI_QUESTION_ID)(ATTEMPT_AUTHENTICATION_METHOD_QUESTION_ID + (Index - 1)),
+      (EFI_QUESTION_ID)(ATTEMPT_AUTHENTICATION_METHOD_QUESTION_ID + (Index -
+                                                                     1)),
       CONFIGURATION_VARSTORE_ID,
       (UINT16)(ATTEMPT_AUTHENTICATION_METHOD_VAR_OFFSET + (Index - 1)),
       StringToken,
@@ -1401,7 +1671,12 @@ IScsiCreateKeywords (
     //
     // Create iSCSIChapType Keyword.
     //
-    UnicodeSPrint (StringId, sizeof (StringId), L"STR_ISCSI_CHARTYPE_PROMPT%d", Index);
+    UnicodeSPrint (
+      StringId,
+      sizeof (StringId),
+      L"STR_ISCSI_CHARTYPE_PROMPT%d",
+      Index
+      );
     StringToken =  HiiSetString (
                      mCallbackInfo->RegisteredHandle,
                      0,
@@ -1409,7 +1684,12 @@ IScsiCreateKeywords (
                      NULL
                      );
     UnicodeSPrint (KeywordId, sizeof (KeywordId), L"iSCSIChapType:%d", Index);
-    HiiSetString (mCallbackInfo->RegisteredHandle, StringToken, KeywordId, "x-UEFI-ns");
+    HiiSetString (
+      mCallbackInfo->RegisteredHandle,
+      StringToken,
+      KeywordId,
+      "x-UEFI-ns"
+      );
     HiiCreateNumericOpCode (
       StartOpCodeHandle,
       (EFI_QUESTION_ID)(ATTEMPT_CHARTYPE_QUESTION_ID + (Index - 1)),
@@ -1428,20 +1708,36 @@ IScsiCreateKeywords (
     //
     // Create iSCSIChapUsername Keyword.
     //
-    UnicodeSPrint (StringId, sizeof (StringId), L"STR_ISCSI_CHAR_USER_NAME_PROMPT%d", Index);
+    UnicodeSPrint (
+      StringId,
+      sizeof (StringId),
+      L"STR_ISCSI_CHAR_USER_NAME_PROMPT%d",
+      Index
+      );
     StringToken =  HiiSetString (
                      mCallbackInfo->RegisteredHandle,
                      0,
                      StringId,
                      NULL
                      );
-    UnicodeSPrint (KeywordId, sizeof (KeywordId), L"iSCSIChapUsername:%d", Index);
-    HiiSetString (mCallbackInfo->RegisteredHandle, StringToken, KeywordId, "x-UEFI-ns");
+    UnicodeSPrint (
+      KeywordId,
+      sizeof (KeywordId),
+      L"iSCSIChapUsername:%d",
+      Index
+      );
+    HiiSetString (
+      mCallbackInfo->RegisteredHandle,
+      StringToken,
+      KeywordId,
+      "x-UEFI-ns"
+      );
     HiiCreateStringOpCode (
       StartOpCodeHandle,
       (EFI_QUESTION_ID)(ATTEMPT_CHAR_USER_NAME_QUESTION_ID + (Index - 1)),
       CONFIGURATION_VARSTORE_ID,
-      (UINT16)(ATTEMPT_CHAR_USER_NAME_VAR_OFFSET + sizeof (KEYWORD_STR) * (Index - 1)),
+      (UINT16)(ATTEMPT_CHAR_USER_NAME_VAR_OFFSET + sizeof (KEYWORD_STR) *
+               (Index - 1)),
       StringToken,
       StringToken,
       0,
@@ -1454,7 +1750,12 @@ IScsiCreateKeywords (
     //
     // Create iSCSIChapSecret Keyword.
     //
-    UnicodeSPrint (StringId, sizeof (StringId), L"STR_ISCSI_CHAR_SECRET_PROMPT%d", Index);
+    UnicodeSPrint (
+      StringId,
+      sizeof (StringId),
+      L"STR_ISCSI_CHAR_SECRET_PROMPT%d",
+      Index
+      );
     StringToken =  HiiSetString (
                      mCallbackInfo->RegisteredHandle,
                      0,
@@ -1462,12 +1763,18 @@ IScsiCreateKeywords (
                      NULL
                      );
     UnicodeSPrint (KeywordId, sizeof (KeywordId), L"iSCSIChapSecret:%d", Index);
-    HiiSetString (mCallbackInfo->RegisteredHandle, StringToken, KeywordId, "x-UEFI-ns");
+    HiiSetString (
+      mCallbackInfo->RegisteredHandle,
+      StringToken,
+      KeywordId,
+      "x-UEFI-ns"
+      );
     HiiCreateStringOpCode (
       StartOpCodeHandle,
       (EFI_QUESTION_ID)(ATTEMPT_CHAR_SECRET_QUESTION_ID + (Index - 1)),
       CONFIGURATION_VARSTORE_ID,
-      (UINT16)(ATTEMPT_CHAR_SECRET_VAR_OFFSET + sizeof (KEYWORD_STR) * (Index - 1)),
+      (UINT16)(ATTEMPT_CHAR_SECRET_VAR_OFFSET + sizeof (KEYWORD_STR) * (Index -
+                                                                        1)),
       StringToken,
       StringToken,
       0,
@@ -1480,20 +1787,37 @@ IScsiCreateKeywords (
     //
     // Create iSCSIReverseChapUsername Keyword.
     //
-    UnicodeSPrint (StringId, sizeof (StringId), L"STR_ISCSI_CHAR_REVERSE_USER_NAME_PROMPT%d", Index);
+    UnicodeSPrint (
+      StringId,
+      sizeof (StringId),
+      L"STR_ISCSI_CHAR_REVERSE_USER_NAME_PROMPT%d",
+      Index
+      );
     StringToken =  HiiSetString (
                      mCallbackInfo->RegisteredHandle,
                      0,
                      StringId,
                      NULL
                      );
-    UnicodeSPrint (KeywordId, sizeof (KeywordId), L"iSCSIReverseChapUsername:%d", Index);
-    HiiSetString (mCallbackInfo->RegisteredHandle, StringToken, KeywordId, "x-UEFI-ns");
+    UnicodeSPrint (
+      KeywordId,
+      sizeof (KeywordId),
+      L"iSCSIReverseChapUsername:%d",
+      Index
+      );
+    HiiSetString (
+      mCallbackInfo->RegisteredHandle,
+      StringToken,
+      KeywordId,
+      "x-UEFI-ns"
+      );
     HiiCreateStringOpCode (
       StartOpCodeHandle,
-      (EFI_QUESTION_ID)(ATTEMPT_CHAR_REVERSE_USER_NAME_QUESTION_ID + (Index - 1)),
+      (EFI_QUESTION_ID)(ATTEMPT_CHAR_REVERSE_USER_NAME_QUESTION_ID + (Index -
+                                                                      1)),
       CONFIGURATION_VARSTORE_ID,
-      (UINT16)(ATTEMPT_CHAR_REVERSE_USER_NAME_VAR_OFFSET + sizeof (KEYWORD_STR) * (Index - 1)),
+      (UINT16)(ATTEMPT_CHAR_REVERSE_USER_NAME_VAR_OFFSET +
+               sizeof (KEYWORD_STR) * (Index - 1)),
       StringToken,
       StringToken,
       0,
@@ -1506,20 +1830,36 @@ IScsiCreateKeywords (
     //
     // Create iSCSIReverseChapSecret Keyword.
     //
-    UnicodeSPrint (StringId, sizeof (StringId), L"STR_ISCSI_CHAR_REVERSE_SECRET_PROMPT%d", Index);
+    UnicodeSPrint (
+      StringId,
+      sizeof (StringId),
+      L"STR_ISCSI_CHAR_REVERSE_SECRET_PROMPT%d",
+      Index
+      );
     StringToken =  HiiSetString (
                      mCallbackInfo->RegisteredHandle,
                      0,
                      StringId,
                      NULL
                      );
-    UnicodeSPrint (KeywordId, sizeof (KeywordId), L"iSCSIReverseChapSecret:%d", Index);
-    HiiSetString (mCallbackInfo->RegisteredHandle, StringToken, KeywordId, "x-UEFI-ns");
+    UnicodeSPrint (
+      KeywordId,
+      sizeof (KeywordId),
+      L"iSCSIReverseChapSecret:%d",
+      Index
+      );
+    HiiSetString (
+      mCallbackInfo->RegisteredHandle,
+      StringToken,
+      KeywordId,
+      "x-UEFI-ns"
+      );
     HiiCreateStringOpCode (
       StartOpCodeHandle,
       (EFI_QUESTION_ID)(ATTEMPT_CHAR_REVERSE_SECRET_QUESTION_ID + (Index - 1)),
       CONFIGURATION_VARSTORE_ID,
-      (UINT16)(ATTEMPT_CHAR_REVERSE_SECRET_VAR_OFFSET + sizeof (KEYWORD_STR) * (Index - 1)),
+      (UINT16)(ATTEMPT_CHAR_REVERSE_SECRET_VAR_OFFSET + sizeof (KEYWORD_STR) *
+               (Index - 1)),
       StringToken,
       StringToken,
       0,
@@ -1670,7 +2010,11 @@ IScsiGetNICPciLocation (
     return 0;
   }
 
-  Status = gBS->HandleProtocol (PciIoHandle, &gEfiPciIoProtocolGuid, (VOID **)&PciIo);
+  Status = gBS->HandleProtocol (
+                  PciIoHandle,
+                  &gEfiPciIoProtocolGuid,
+                  (VOID **)&PciIo
+                  );
   if (EFI_ERROR (Status)) {
     return 0;
   }
@@ -1783,15 +2127,21 @@ IScsiCreateDriverData (
   }
 
   Private->ExtScsiPassThruHandle = NULL;
-  CopyMem (&Private->IScsiExtScsiPassThru, &gIScsiExtScsiPassThruProtocolTemplate, sizeof (EFI_EXT_SCSI_PASS_THRU_PROTOCOL));
+  CopyMem (
+    &Private->IScsiExtScsiPassThru,
+    &gIScsiExtScsiPassThruProtocolTemplate,
+    sizeof (EFI_EXT_SCSI_PASS_THRU_PROTOCOL)
+    );
 
   //
   // 0 is designated to the TargetId, so use another value for the AdapterId.
   //
   Private->ExtScsiPassThruMode.AdapterId  = 2;
-  Private->ExtScsiPassThruMode.Attributes = EFI_EXT_SCSI_PASS_THRU_ATTRIBUTES_PHYSICAL | EFI_EXT_SCSI_PASS_THRU_ATTRIBUTES_LOGICAL;
-  Private->ExtScsiPassThruMode.IoAlign    = 4;
-  Private->IScsiExtScsiPassThru.Mode      = &Private->ExtScsiPassThruMode;
+  Private->ExtScsiPassThruMode.Attributes =
+    EFI_EXT_SCSI_PASS_THRU_ATTRIBUTES_PHYSICAL |
+    EFI_EXT_SCSI_PASS_THRU_ATTRIBUTES_LOGICAL;
+  Private->ExtScsiPassThruMode.IoAlign = 4;
+  Private->IScsiExtScsiPassThru.Mode   = &Private->ExtScsiPassThruMode;
 
   return Private;
 }
@@ -1925,15 +2275,24 @@ IScsiDhcpIsConfigured (
     }
 
     if ((AttemptTmp->SessionConfigData.IpMode != IP_MODE_AUTOCONFIG) &&
-        (AttemptTmp->SessionConfigData.IpMode != ((IpVersion == IP_VERSION_4) ? IP_MODE_IP4 : IP_MODE_IP6)))
+        (AttemptTmp->SessionConfigData.IpMode != ((IpVersion == IP_VERSION_4) ?
+                                                  IP_MODE_IP4 : IP_MODE_IP6)))
     {
       FreePool (AttemptTmp);
       continue;
     }
 
-    AsciiStrToUnicodeStrS (AttemptTmp->MacString, AttemptMacString, sizeof (AttemptMacString) / sizeof (AttemptMacString[0]));
+    AsciiStrToUnicodeStrS (
+      AttemptTmp->MacString,
+      AttemptMacString,
+      sizeof (AttemptMacString) / sizeof (AttemptMacString[0])
+      );
 
-    if ((AttemptTmp->Actived == ISCSI_ACTIVE_DISABLED) || StrCmp (MacString, AttemptMacString)) {
+    if ((AttemptTmp->Actived == ISCSI_ACTIVE_DISABLED) || StrCmp (
+                                                            MacString,
+                                                            AttemptMacString
+                                                            ))
+    {
       continue;
     }
 
@@ -2022,14 +2381,24 @@ IScsiDnsIsConfigured (
 
     ASSERT (AttemptConfigOrder[Index] == AttemptTmp->AttemptConfigIndex);
 
-    AsciiStrToUnicodeStrS (AttemptTmp->MacString, AttemptMacString, sizeof (AttemptMacString) / sizeof (AttemptMacString[0]));
+    AsciiStrToUnicodeStrS (
+      AttemptTmp->MacString,
+      AttemptMacString,
+      sizeof (AttemptMacString) / sizeof (AttemptMacString[0])
+      );
 
-    if ((AttemptTmp->SessionConfigData.Enabled == ISCSI_DISABLED) || StrCmp (MacString, AttemptMacString)) {
+    if ((AttemptTmp->SessionConfigData.Enabled == ISCSI_DISABLED) || StrCmp (
+                                                                       MacString,
+                                                                       AttemptMacString
+                                                                       ))
+    {
       FreePool (AttemptTmp);
       continue;
     }
 
-    if (AttemptTmp->SessionConfigData.DnsMode || AttemptTmp->SessionConfigData.TargetInfoFromDhcp) {
+    if (AttemptTmp->SessionConfigData.DnsMode ||
+        AttemptTmp->SessionConfigData.TargetInfoFromDhcp)
+    {
       FreePool (AttemptTmp);
       FreePool (AttemptConfigOrder);
       return TRUE;
@@ -2088,7 +2457,8 @@ IScsiGetConfigData (
   mPrivate->InitiatorNameLength = ISCSI_NAME_MAX_SIZE;
   Status                        = gIScsiInitiatorName.Get (
                                                         &gIScsiInitiatorName,
-                                                        &mPrivate->InitiatorNameLength,
+                                                        &mPrivate->
+                                                          InitiatorNameLength,
                                                         mPrivate->InitiatorName
                                                         );
   if (EFI_ERROR (Status)) {
@@ -2103,9 +2473,13 @@ IScsiGetConfigData (
     // Check whether the attempt exists in AttemptConfig.
     //
     AttemptTmp = IScsiConfigGetAttemptByConfigIndex (AttemptConfigOrder[Index]);
-    if ((AttemptTmp != NULL) && (AttemptTmp->SessionConfigData.Enabled == ISCSI_DISABLED)) {
+    if ((AttemptTmp != NULL) && (AttemptTmp->SessionConfigData.Enabled ==
+                                 ISCSI_DISABLED))
+    {
       continue;
-    } else if ((AttemptTmp != NULL) && (AttemptTmp->SessionConfigData.Enabled != ISCSI_DISABLED)) {
+    } else if ((AttemptTmp != NULL) && (AttemptTmp->SessionConfigData.Enabled !=
+                                        ISCSI_DISABLED))
+    {
       //
       // Check the autoconfig path to see whether it should be retried.
       //
@@ -2131,7 +2505,8 @@ IScsiGetConfigData (
           // Try another approach for this autoconfigure path.
           //
           AttemptTmp->AutoConfigureMode =
-            (UINT8)(mPrivate->Ipv6Flag ? IP_MODE_AUTOCONFIG_IP6 : IP_MODE_AUTOCONFIG_IP4);
+            (UINT8)(mPrivate->Ipv6Flag ? IP_MODE_AUTOCONFIG_IP6 :
+                    IP_MODE_AUTOCONFIG_IP4);
           AttemptTmp->SessionConfigData.InitiatorInfoFromDhcp = TRUE;
           AttemptTmp->SessionConfigData.TargetInfoFromDhcp    = TRUE;
           AttemptTmp->DhcpSuccess                             = FALSE;
@@ -2140,12 +2515,20 @@ IScsiGetConfigData (
           // Get some information from the dhcp server.
           //
           if (!mPrivate->Ipv6Flag) {
-            Status = IScsiDoDhcp (Private->Image, Private->Controller, AttemptTmp);
+            Status = IScsiDoDhcp (
+                       Private->Image,
+                       Private->Controller,
+                       AttemptTmp
+                       );
             if (!EFI_ERROR (Status)) {
               AttemptTmp->DhcpSuccess = TRUE;
             }
           } else {
-            Status = IScsiDoDhcp6 (Private->Image, Private->Controller, AttemptTmp);
+            Status = IScsiDoDhcp6 (
+                       Private->Image,
+                       Private->Controller,
+                       AttemptTmp
+                       );
             if (!EFI_ERROR (Status)) {
               AttemptTmp->DhcpSuccess = TRUE;
             }
@@ -2180,13 +2563,25 @@ IScsiGetConfigData (
         // get DHCP information for already added, but failed, attempt.
         //
         AttemptTmp->DhcpSuccess = FALSE;
-        if (!mPrivate->Ipv6Flag && (AttemptTmp->SessionConfigData.IpMode == IP_MODE_IP4)) {
-          Status = IScsiDoDhcp (Private->Image, Private->Controller, AttemptTmp);
+        if (!mPrivate->Ipv6Flag && (AttemptTmp->SessionConfigData.IpMode ==
+                                    IP_MODE_IP4))
+        {
+          Status = IScsiDoDhcp (
+                     Private->Image,
+                     Private->Controller,
+                     AttemptTmp
+                     );
           if (!EFI_ERROR (Status)) {
             AttemptTmp->DhcpSuccess = TRUE;
           }
-        } else if (mPrivate->Ipv6Flag && (AttemptTmp->SessionConfigData.IpMode == IP_MODE_IP6)) {
-          Status = IScsiDoDhcp6 (Private->Image, Private->Controller, AttemptTmp);
+        } else if (mPrivate->Ipv6Flag &&
+                   (AttemptTmp->SessionConfigData.IpMode == IP_MODE_IP6))
+        {
+          Status = IScsiDoDhcp6 (
+                     Private->Image,
+                     Private->Controller,
+                     AttemptTmp
+                     );
           if (!EFI_ERROR (Status)) {
             AttemptTmp->DhcpSuccess = TRUE;
           }
@@ -2222,7 +2617,12 @@ IScsiGetConfigData (
 
     NicInfo = IScsiGetNicInfoByIndex (mPrivate->CurrentNic);
     ASSERT (NicInfo != NULL);
-    IScsiMacAddrToStr (&NicInfo->PermanentAddress, NicInfo->HwAddressSize, NicInfo->VlanId, MacString);
+    IScsiMacAddrToStr (
+      &NicInfo->PermanentAddress,
+      NicInfo->HwAddressSize,
+      NicInfo->VlanId,
+      MacString
+      );
     UnicodeSPrint (
       mPrivate->PortString,
       (UINTN)ISCSI_NAME_IFR_MAX_SIZE,
@@ -2236,9 +2636,14 @@ IScsiGetConfigData (
       (VOID **)&AttemptConfigData,
       NULL
       );
-    AsciiStrToUnicodeStrS (AttemptConfigData->MacString, AttemptMacString, sizeof (AttemptMacString) / sizeof (AttemptMacString[0]));
+    AsciiStrToUnicodeStrS (
+      AttemptConfigData->MacString,
+      AttemptMacString,
+      sizeof (AttemptMacString) / sizeof (AttemptMacString[0])
+      );
 
-    if ((AttemptConfigData == NULL) || (AttemptConfigData->Actived == ISCSI_ACTIVE_DISABLED) ||
+    if ((AttemptConfigData == NULL) || (AttemptConfigData->Actived ==
+                                        ISCSI_ACTIVE_DISABLED) ||
         StrCmp (MacString, AttemptMacString))
     {
       continue;
@@ -2248,7 +2653,8 @@ IScsiGetConfigData (
 
     AttemptConfigData->NicIndex      = NicInfo->NicIndex;
     AttemptConfigData->DhcpSuccess   = FALSE;
-    AttemptConfigData->ValidiBFTPath = (BOOLEAN)(mPrivate->EnableMpio ? TRUE : FALSE);
+    AttemptConfigData->ValidiBFTPath = (BOOLEAN)(mPrivate->EnableMpio ? TRUE :
+                                                 FALSE);
     AttemptConfigData->ValidPath     = FALSE;
 
     if (AttemptConfigData->SessionConfigData.IpMode == IP_MODE_AUTOCONFIG) {
@@ -2256,7 +2662,8 @@ IScsiGetConfigData (
       AttemptConfigData->SessionConfigData.TargetInfoFromDhcp    = TRUE;
 
       AttemptConfigData->AutoConfigureMode =
-        (UINT8)(mPrivate->Ipv6Flag ? IP_MODE_AUTOCONFIG_IP6 : IP_MODE_AUTOCONFIG_IP4);
+        (UINT8)(mPrivate->Ipv6Flag ? IP_MODE_AUTOCONFIG_IP6 :
+                IP_MODE_AUTOCONFIG_IP4);
       AttemptConfigData->AutoConfigureSuccess = FALSE;
     }
 
@@ -2270,15 +2677,25 @@ IScsiGetConfigData (
           ((AttemptConfigData->SessionConfigData.IpMode == IP_MODE_IP4) ||
            (AttemptConfigData->AutoConfigureMode == IP_MODE_AUTOCONFIG_IP4)))
       {
-        Status = IScsiDoDhcp (Private->Image, Private->Controller, AttemptConfigData);
+        Status = IScsiDoDhcp (
+                   Private->Image,
+                   Private->Controller,
+                   AttemptConfigData
+                   );
         if (!EFI_ERROR (Status)) {
           AttemptConfigData->DhcpSuccess = TRUE;
         }
       } else if (mPrivate->Ipv6Flag &&
-                 ((AttemptConfigData->SessionConfigData.IpMode == IP_MODE_IP6) ||
-                  (AttemptConfigData->AutoConfigureMode == IP_MODE_AUTOCONFIG_IP6)))
+                 ((AttemptConfigData->SessionConfigData.IpMode ==
+                   IP_MODE_IP6) ||
+                  (AttemptConfigData->AutoConfigureMode ==
+                   IP_MODE_AUTOCONFIG_IP6)))
       {
-        Status = IScsiDoDhcp6 (Private->Image, Private->Controller, AttemptConfigData);
+        Status = IScsiDoDhcp6 (
+                   Private->Image,
+                   Private->Controller,
+                   AttemptConfigData
+                   );
         if (!EFI_ERROR (Status)) {
           AttemptConfigData->DhcpSuccess = TRUE;
         }
@@ -2311,7 +2728,9 @@ IScsiGetConfigData (
       UnicodeSPrint (IScsiMode, 64, L"Disabled");
     } else if (AttemptConfigData->SessionConfigData.Enabled == ISCSI_ENABLED) {
       UnicodeSPrint (IScsiMode, 64, L"Enabled");
-    } else if (AttemptConfigData->SessionConfigData.Enabled == ISCSI_ENABLED_FOR_MPIO) {
+    } else if (AttemptConfigData->SessionConfigData.Enabled ==
+               ISCSI_ENABLED_FOR_MPIO)
+    {
       UnicodeSPrint (IScsiMode, 64, L"Enabled for MPIO");
     }
 
@@ -2319,7 +2738,9 @@ IScsiGetConfigData (
       UnicodeSPrint (IpMode, 64, L"IP4");
     } else if (AttemptConfigData->SessionConfigData.IpMode == IP_MODE_IP6) {
       UnicodeSPrint (IpMode, 64, L"IP6");
-    } else if (AttemptConfigData->SessionConfigData.IpMode == IP_MODE_AUTOCONFIG) {
+    } else if (AttemptConfigData->SessionConfigData.IpMode ==
+               IP_MODE_AUTOCONFIG)
+    {
       UnicodeSPrint (IpMode, 64, L"Autoconfigure");
     }
 
@@ -2351,7 +2772,9 @@ IScsiGetConfigData (
     InsertTailList (&mPrivate->AttemptConfigs, &AttemptConfigData->Link);
     mPrivate->AttemptCount++;
 
-    if (AttemptConfigData->SessionConfigData.Enabled == ISCSI_ENABLED_FOR_MPIO) {
+    if (AttemptConfigData->SessionConfigData.Enabled ==
+        ISCSI_ENABLED_FOR_MPIO)
+    {
       mPrivate->MpioCount++;
       mPrivate->EnableMpio = TRUE;
 
@@ -2367,7 +2790,9 @@ IScsiGetConfigData (
   // Reorder the AttemptConfig by the configured order.
   //
   for (Index = 0; Index < AttemptConfigOrderSize / sizeof (UINT8); Index++) {
-    AttemptConfigData = IScsiConfigGetAttemptByConfigIndex (AttemptConfigOrder[Index]);
+    AttemptConfigData = IScsiConfigGetAttemptByConfigIndex (
+                          AttemptConfigOrder[Index]
+                          );
     if (AttemptConfigData == NULL) {
       continue;
     }
@@ -2449,11 +2874,14 @@ IScsiGetTcpConnDevicePath (
 
   while (!IsDevicePathEnd (&DPathNode->DevPath)) {
     if (DevicePathType (&DPathNode->DevPath) == MESSAGING_DEVICE_PATH) {
-      if (!Conn->Ipv6Flag && (DevicePathSubType (&DPathNode->DevPath) == MSG_IPv4_DP)) {
+      if (!Conn->Ipv6Flag && (DevicePathSubType (&DPathNode->DevPath) ==
+                              MSG_IPv4_DP))
+      {
         DPathNode->Ipv4.LocalPort = 0;
 
         DPathNode->Ipv4.StaticIpAddress =
-          (BOOLEAN)(!Session->ConfigData->SessionConfigData.InitiatorInfoFromDhcp);
+          (BOOLEAN)(!Session->ConfigData->SessionConfigData.
+                      InitiatorInfoFromDhcp);
 
         //
         //  Add a judgement here to support previous versions of IPv4_DEVICE_PATH.
@@ -2477,7 +2905,9 @@ IScsiGetTcpConnDevicePath (
         }
 
         break;
-      } else if (Conn->Ipv6Flag && (DevicePathSubType (&DPathNode->DevPath) == MSG_IPv6_DP)) {
+      } else if (Conn->Ipv6Flag && (DevicePathSubType (&DPathNode->DevPath) ==
+                                    MSG_IPv6_DP))
+      {
         DPathNode->Ipv6.LocalPort = 0;
 
         //
@@ -2493,14 +2923,18 @@ IScsiGetTcpConnDevicePath (
         if (PathLen == IP6_NODE_LEN_NEW_VERSIONS ) {
           DPathNode->Ipv6.IpAddressOrigin = 0;
           DPathNode->Ipv6.PrefixLength    = IP6_PREFIX_LENGTH;
-          ZeroMem (&DPathNode->Ipv6.GatewayIpAddress, sizeof (EFI_IPv6_ADDRESS));
+          ZeroMem (
+            &DPathNode->Ipv6.GatewayIpAddress,
+            sizeof (EFI_IPv6_ADDRESS)
+            );
         } else if (PathLen == IP6_NODE_LEN_OLD_VERSIONS) {
           //
           //  StaticIPAddress is a field in old versions of IPv6_DEVICE_PATH, while ignored in new
           //  version. Set StaticIPAddress through its' offset in old IPv6_DEVICE_PATH.
           //
           *((UINT8 *)(&DPathNode->Ipv6) + IP6_OLD_IPADDRESS_OFFSET) =
-            (BOOLEAN)(!Session->ConfigData->SessionConfigData.InitiatorInfoFromDhcp);
+            (BOOLEAN)(!Session->ConfigData->SessionConfigData.
+                        InitiatorInfoFromDhcp);
         }
 
         break;

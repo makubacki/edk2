@@ -35,7 +35,9 @@ MnpIsValidTxToken (
 
   TxData = Token->Packet.TxData;
 
-  if ((Token->Event == NULL) || (TxData == NULL) || (TxData->FragmentCount == 0)) {
+  if ((Token->Event == NULL) || (TxData == NULL) || (TxData->FragmentCount ==
+                                                     0))
+  {
     //
     // The token is invalid if the Event is NULL, or the TxData is NULL, or
     // the fragment count is zero.
@@ -49,25 +51,35 @@ MnpIsValidTxToken (
     // The token is invalid if the HeaderLength isn't zero while the DestinationAddress
     // is NULL (The destination address is already put into the packet).
     //
-    DEBUG ((DEBUG_WARN, "MnpIsValidTxToken: DestinationAddress isn't NULL, HeaderLength must be 0.\n"));
+    DEBUG ((
+      DEBUG_WARN,
+      "MnpIsValidTxToken: DestinationAddress isn't NULL, HeaderLength must be 0.\n"
+      ));
     return FALSE;
   }
 
   TotalLength   = 0;
   FragmentTable = TxData->FragmentTable;
   for (Index = 0; Index < TxData->FragmentCount; Index++) {
-    if ((FragmentTable[Index].FragmentLength == 0) || (FragmentTable[Index].FragmentBuffer == NULL)) {
+    if ((FragmentTable[Index].FragmentLength == 0) ||
+        (FragmentTable[Index].FragmentBuffer == NULL))
+    {
       //
       // The token is invalid if any FragmentLength is zero or any FragmentBuffer is NULL.
       //
-      DEBUG ((DEBUG_WARN, "MnpIsValidTxToken: Invalid FragmentLength or FragmentBuffer.\n"));
+      DEBUG ((
+        DEBUG_WARN,
+        "MnpIsValidTxToken: Invalid FragmentLength or FragmentBuffer.\n"
+        ));
       return FALSE;
     }
 
     TotalLength += FragmentTable[Index].FragmentLength;
   }
 
-  if ((TxData->DestinationAddress == NULL) && (FragmentTable[0].FragmentLength < TxData->HeaderLength)) {
+  if ((TxData->DestinationAddress == NULL) && (FragmentTable[0].FragmentLength <
+                                               TxData->HeaderLength))
+  {
     //
     // Media header is split between fragments.
     //
@@ -79,7 +91,10 @@ MnpIsValidTxToken (
     // The length calculated from the fragment information doesn't equal to the
     // sum of the DataLength and the HeaderLength.
     //
-    DEBUG ((DEBUG_WARN, "MnpIsValidTxData: Invalid Datalength compared with the sum of fragment length.\n"));
+    DEBUG ((
+      DEBUG_WARN,
+      "MnpIsValidTxData: Invalid Datalength compared with the sum of fragment length.\n"
+      ));
     return FALSE;
   }
 
@@ -317,7 +332,10 @@ MnpInstanceDeliverPacket (
   MnpDeviceData = Instance->MnpServiceData->MnpDeviceData;
   NET_CHECK_SIGNATURE (MnpDeviceData, MNP_DEVICE_DATA_SIGNATURE);
 
-  if (NetMapIsEmpty (&Instance->RxTokenMap) || IsListEmpty (&Instance->RcvdPacketQueue)) {
+  if (NetMapIsEmpty (&Instance->RxTokenMap) || IsListEmpty (
+                                                 &Instance->RcvdPacketQueue
+                                                 ))
+  {
     //
     // No pending received data or no available receive token, return.
     //
@@ -326,7 +344,11 @@ MnpInstanceDeliverPacket (
 
   ASSERT (Instance->RcvdPacketQueueSize != 0);
 
-  RxDataWrap = NET_LIST_HEAD (&Instance->RcvdPacketQueue, MNP_RXDATA_WRAP, WrapEntry);
+  RxDataWrap = NET_LIST_HEAD (
+                 &Instance->RcvdPacketQueue,
+                 MNP_RXDATA_WRAP,
+                 WrapEntry
+                 );
   if (RxDataWrap->Nbuf->RefCnt > 2) {
     //
     // There are other instances share this Nbuf, duplicate to get a
@@ -334,7 +356,10 @@ MnpInstanceDeliverPacket (
     //
     DupNbuf = MnpAllocNbuf (MnpDeviceData);
     if (DupNbuf == NULL) {
-      DEBUG ((DEBUG_WARN, "MnpDeliverPacket: Failed to allocate a free Nbuf.\n"));
+      DEBUG ((
+        DEBUG_WARN,
+        "MnpDeliverPacket: Failed to allocate a free Nbuf.\n"
+        ));
 
       return EFI_OUT_OF_RESOURCES;
     }
@@ -361,8 +386,10 @@ MnpInstanceDeliverPacket (
   //
   RxData->MediaHeader        = NetbufGetByte (RxDataWrap->Nbuf, 0, NULL);
   RxData->DestinationAddress = RxData->MediaHeader;
-  RxData->SourceAddress      = (UINT8 *)RxData->MediaHeader + SnpMode->HwAddressSize;
-  RxData->PacketData         = (UINT8 *)RxData->MediaHeader + SnpMode->MediaHeaderSize;
+  RxData->SourceAddress      = (UINT8 *)RxData->MediaHeader +
+                               SnpMode->HwAddressSize;
+  RxData->PacketData = (UINT8 *)RxData->MediaHeader +
+                       SnpMode->MediaHeaderSize;
 
   //
   // Insert this RxDataWrap into the delivered queue.
@@ -480,7 +507,10 @@ MnpQueueRcvdPacket (
   // from the head.
   //
   if (Instance->RcvdPacketQueueSize == MNP_MAX_RCVD_PACKET_QUE_SIZE) {
-    DEBUG ((DEBUG_WARN, "MnpQueueRcvdPacket: Drop one packet bcz queue size limit reached.\n"));
+    DEBUG ((
+      DEBUG_WARN,
+      "MnpQueueRcvdPacket: Drop one packet bcz queue size limit reached.\n"
+      ));
 
     //
     // Get the oldest packet.
@@ -543,7 +573,9 @@ MnpMatchPacket (
   //
   // Check the protocol type.
   //
-  if ((ConfigData->ProtocolTypeFilter != 0) && (ConfigData->ProtocolTypeFilter != RxData->ProtocolType)) {
+  if ((ConfigData->ProtocolTypeFilter != 0) &&
+      (ConfigData->ProtocolTypeFilter != RxData->ProtocolType))
+  {
     return FALSE;
   }
 
@@ -568,7 +600,11 @@ MnpMatchPacket (
     ASSERT (GroupAddress != NULL);
 
     NET_LIST_FOR_EACH (Entry, &Instance->GroupCtrlBlkList) {
-      GroupCtrlBlk = NET_LIST_USER_STRUCT (Entry, MNP_GROUP_CONTROL_BLOCK, CtrlBlkEntry);
+      GroupCtrlBlk = NET_LIST_USER_STRUCT (
+                       Entry,
+                       MNP_GROUP_CONTROL_BLOCK,
+                       CtrlBlkEntry
+                       );
       if (GroupCtrlBlk->GroupAddress == GroupAddress) {
         //
         // The instance is configured to receiveing packets destinated to this
@@ -631,13 +667,23 @@ MnpAnalysePacket (
   RxData->PromiscuousFlag = FALSE;
   *PktAttr                = UNICAST_PACKET;
 
-  if (!NET_MAC_EQUAL (&SnpMode->CurrentAddress, BufPtr, SnpMode->HwAddressSize)) {
+  if (!NET_MAC_EQUAL (
+         &SnpMode->CurrentAddress,
+         BufPtr,
+         SnpMode->HwAddressSize
+         ))
+  {
     //
     // This packet isn't destinated to our current mac address, it't not unicast.
     //
     *PktAttr = 0;
 
-    if (NET_MAC_EQUAL (&SnpMode->BroadcastAddress, BufPtr, SnpMode->HwAddressSize)) {
+    if (NET_MAC_EQUAL (
+          &SnpMode->BroadcastAddress,
+          BufPtr,
+          SnpMode->HwAddressSize
+          ))
+    {
       //
       // It's broadcast.
       //
@@ -648,8 +694,17 @@ MnpAnalysePacket (
       // It's multicast, try to match the multicast filters.
       //
       NET_LIST_FOR_EACH (Entry, &MnpDeviceData->GroupAddressList) {
-        *GroupAddress = NET_LIST_USER_STRUCT (Entry, MNP_GROUP_ADDRESS, AddrEntry);
-        if (NET_MAC_EQUAL (BufPtr, &((*GroupAddress)->Address), SnpMode->HwAddressSize)) {
+        *GroupAddress = NET_LIST_USER_STRUCT (
+                          Entry,
+                          MNP_GROUP_ADDRESS,
+                          AddrEntry
+                          );
+        if (NET_MAC_EQUAL (
+              BufPtr,
+              &((*GroupAddress)->Address),
+              SnpMode->HwAddressSize
+              ))
+        {
           RxData->MulticastFlag = TRUE;
           break;
         }
@@ -684,7 +739,10 @@ MnpAnalysePacket (
   RxData->HeaderLength  = SnpMode->MediaHeaderSize;
   RxData->AddressLength = SnpMode->HwAddressSize;
   RxData->DataLength    = RxData->PacketLength - RxData->HeaderLength;
-  RxData->ProtocolType  = NTOHS (*(UINT16 *)(BufPtr + 2 * SnpMode->HwAddressSize));
+  RxData->ProtocolType  = NTOHS (
+                            *(UINT16 *)(BufPtr + 2 *
+                                        SnpMode->HwAddressSize)
+                            );
 }
 
 /**
@@ -710,7 +768,10 @@ MnpWrapRxData (
   //
   RxDataWrap = AllocatePool (sizeof (MNP_RXDATA_WRAP));
   if (RxDataWrap == NULL) {
-    DEBUG ((DEBUG_ERROR, "MnpDispatchPacket: Failed to allocate a MNP_RXDATA_WRAP.\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "MnpDispatchPacket: Failed to allocate a MNP_RXDATA_WRAP.\n"
+      ));
     return NULL;
   }
 
@@ -732,7 +793,11 @@ MnpWrapRxData (
                   &RxDataWrap->RxData.RecycleEvent
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "MnpDispatchPacket: gBS->CreateEvent failed, %r.\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "MnpDispatchPacket: gBS->CreateEvent failed, %r.\n",
+      Status
+      ));
 
     FreePool (RxDataWrap);
     return NULL;
@@ -769,7 +834,9 @@ MnpEnqueuePacket (
   //
   MnpAnalysePacket (MnpServiceData, Nbuf, &RxData, &GroupAddress, &PktAttr);
 
-  if (RxData.PromiscuousFlag && (MnpServiceData->MnpDeviceData->PromiscuousCount == 0)) {
+  if (RxData.PromiscuousFlag &&
+      (MnpServiceData->MnpDeviceData->PromiscuousCount == 0))
+  {
     //
     // No receivers, no more action need.
     //
@@ -953,7 +1020,10 @@ MnpReceivePacket (
     Nbuf                       = MnpAllocNbuf (MnpDeviceData);
     MnpDeviceData->RxNbufCache = Nbuf;
     if (Nbuf == NULL) {
-      DEBUG ((DEBUG_ERROR, "MnpReceivePacket: Alloc packet for receiving cache failed.\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "MnpReceivePacket: Alloc packet for receiving cache failed.\n"
+        ));
       return EFI_DEVICE_ERROR;
     }
 
@@ -1019,7 +1089,9 @@ MnpCheckPacketTimeout (
       Instance = NET_LIST_USER_STRUCT (Entry, MNP_INSTANCE_DATA, InstEntry);
       NET_CHECK_SIGNATURE (Instance, MNP_INSTANCE_DATA_SIGNATURE);
 
-      if (!Instance->Configured || (Instance->ConfigData.ReceivedQueueTimeoutValue == 0)) {
+      if (!Instance->Configured ||
+          (Instance->ConfigData.ReceivedQueueTimeoutValue == 0))
+      {
         //
         // This instance is not configured or there is no receive time out,
         // just skip to the next instance.
@@ -1041,7 +1113,10 @@ MnpCheckPacketTimeout (
           //
           // Drop the timeout packet.
           //
-          DEBUG ((DEBUG_WARN, "MnpCheckPacketTimeout: Received packet timeout.\n"));
+          DEBUG ((
+            DEBUG_WARN,
+            "MnpCheckPacketTimeout: Received packet timeout.\n"
+            ));
           MnpRecycleRxData (NULL, RxDataWrap);
           Instance->RcvdPacketQueueSize--;
         }
