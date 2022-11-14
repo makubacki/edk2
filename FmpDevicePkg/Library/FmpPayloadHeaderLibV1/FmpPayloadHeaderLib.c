@@ -66,8 +66,10 @@ GetFmpPayloadHeaderSize (
   }
 
   FmpPayloadHeader = (FMP_PAYLOAD_HEADER *)Header;
-  if (((UINTN)FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) < (UINTN)FmpPayloadHeader) ||
-      ((UINTN)FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) >= (UINTN)FmpPayloadHeader + FmpPayloadSize) ||
+  if (((UINTN)FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) <
+       (UINTN)FmpPayloadHeader) ||
+      ((UINTN)FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) >=
+       (UINTN)FmpPayloadHeader + FmpPayloadSize) ||
       (FmpPayloadHeader->HeaderSize < sizeof (FMP_PAYLOAD_HEADER)))
   {
     return EFI_INVALID_PARAMETER;
@@ -112,8 +114,10 @@ GetFmpPayloadHeaderVersion (
   }
 
   FmpPayloadHeader = (FMP_PAYLOAD_HEADER *)Header;
-  if (((UINTN)FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) < (UINTN)FmpPayloadHeader) ||
-      ((UINTN)FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) >= (UINTN)FmpPayloadHeader + FmpPayloadSize) ||
+  if (((UINTN)FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) <
+       (UINTN)FmpPayloadHeader) ||
+      ((UINTN)FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) >=
+       (UINTN)FmpPayloadHeader + FmpPayloadSize) ||
       (FmpPayloadHeader->HeaderSize < sizeof (FMP_PAYLOAD_HEADER)))
   {
     return EFI_INVALID_PARAMETER;
@@ -158,8 +162,10 @@ GetFmpPayloadHeaderLowestSupportedVersion (
   }
 
   FmpPayloadHeader = (FMP_PAYLOAD_HEADER *)Header;
-  if (((UINTN)FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) < (UINTN)FmpPayloadHeader) ||
-      ((UINTN)FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) >= (UINTN)FmpPayloadHeader + FmpPayloadSize) ||
+  if (((UINTN)FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) <
+       (UINTN)FmpPayloadHeader) ||
+      ((UINTN)FmpPayloadHeader + sizeof (FMP_PAYLOAD_HEADER) >=
+       (UINTN)FmpPayloadHeader + FmpPayloadSize) ||
       (FmpPayloadHeader->HeaderSize < sizeof (FMP_PAYLOAD_HEADER)))
   {
     return EFI_INVALID_PARAMETER;

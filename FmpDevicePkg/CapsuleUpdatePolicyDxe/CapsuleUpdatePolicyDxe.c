@@ -160,7 +160,10 @@ CapsuleUpdatePolicyInitialize (
 {
   EFI_STATUS  Status;
 
-  ASSERT_PROTOCOL_ALREADY_INSTALLED (NULL, &gEdkiiCapsuleUpdatePolicyProtocolGuid);
+  ASSERT_PROTOCOL_ALREADY_INSTALLED (
+    NULL,
+    &gEdkiiCapsuleUpdatePolicyProtocolGuid
+    );
   Status = gBS->InstallMultipleProtocolInterfaces (
                   &mHandle,
                   &gEdkiiCapsuleUpdatePolicyProtocolGuid,

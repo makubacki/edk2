@@ -61,12 +61,14 @@
 ///
 /// The minimum value allowed for FmpDependencyCheckLib related errors.
 ///
-#define LAST_ATTEMPT_STATUS_FMP_DEPENDENCY_CHECK_LIB_MIN_ERROR_CODE_VALUE  0x10A0
+#define LAST_ATTEMPT_STATUS_FMP_DEPENDENCY_CHECK_LIB_MIN_ERROR_CODE_VALUE  \
+  0x10A0
 
 ///
 /// The maximum value allowed for FmpDependencyCheckLib related errors.
 ///
-#define LAST_ATTEMPT_STATUS_FMP_DEPENDENCY_CHECK_LIB_MAX_ERROR_CODE_VALUE  0x10BF
+#define LAST_ATTEMPT_STATUS_FMP_DEPENDENCY_CHECK_LIB_MAX_ERROR_CODE_VALUE  \
+  0x10BF
 
 ///
 /// The minimum value allowed for FMP device library errors.

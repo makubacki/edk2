@@ -53,7 +53,9 @@ DetectTestKey (
   // If PcdFmpDevicePkcs7CertBufferXdr is invalid, then skip test key detection
   //
   PublicKeyDataXdr    = PcdGetPtr (PcdFmpDevicePkcs7CertBufferXdr);
-  PublicKeyDataXdrEnd = PublicKeyDataXdr + PcdGetSize (PcdFmpDevicePkcs7CertBufferXdr);
+  PublicKeyDataXdrEnd = PublicKeyDataXdr + PcdGetSize (
+                                             PcdFmpDevicePkcs7CertBufferXdr
+                                             );
   if ((PublicKeyDataXdr == NULL) || (PublicKeyDataXdr == PublicKeyDataXdrEnd)) {
     return;
   }
@@ -115,7 +117,12 @@ DetectTestKey (
     //
     // Check if SHA256 hash of public key matches SHA256 hash of test key
     //
-    if (CompareMem (Digest, PcdGetPtr (PcdFmpDeviceTestKeySha256Digest), SHA256_DIGEST_SIZE) == 0) {
+    if (CompareMem (
+          Digest,
+          PcdGetPtr (PcdFmpDeviceTestKeySha256Digest),
+          SHA256_DIGEST_SIZE
+          ) == 0)
+    {
       TestKeyUsed = TRUE;
       break;
     }
@@ -124,7 +131,10 @@ DetectTestKey (
     // Point to start of next key
     //
     PublicKeyDataXdr += PublicKeyDataLength;
-    PublicKeyDataXdr  = (UINT8 *)ALIGN_POINTER (PublicKeyDataXdr, sizeof (UINT32));
+    PublicKeyDataXdr  = (UINT8 *)ALIGN_POINTER (
+                                   PublicKeyDataXdr,
+                                   sizeof (UINT32)
+                                   );
   }
 
   //
@@ -140,9 +150,17 @@ DetectTestKey (
   // set PcdTestKeyUsed to TRUE.
   //
   if (TestKeyUsed) {
-    DEBUG ((DEBUG_INFO, "FmpDxe(%s): Test key detected in PcdFmpDevicePkcs7CertBufferXdr.\n", mImageIdName));
+    DEBUG ((
+      DEBUG_INFO,
+      "FmpDxe(%s): Test key detected in PcdFmpDevicePkcs7CertBufferXdr.\n",
+      mImageIdName
+      ));
     PcdSetBoolS (PcdTestKeyUsed, TRUE);
   } else {
-    DEBUG ((DEBUG_INFO, "FmpDxe(%s): No test key detected in PcdFmpDevicePkcs7CertBufferXdr.\n", mImageIdName));
+    DEBUG ((
+      DEBUG_INFO,
+      "FmpDxe(%s): No test key detected in PcdFmpDevicePkcs7CertBufferXdr.\n",
+      mImageIdName
+      ));
   }
 }

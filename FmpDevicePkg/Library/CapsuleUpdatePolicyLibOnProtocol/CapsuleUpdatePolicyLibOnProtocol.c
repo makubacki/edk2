@@ -97,7 +97,10 @@ CheckSystemThermal (
   )
 {
   if (LookupCapsuleUpdatePolicyProtocol ()) {
-    return mCapsuleUpdatePolicy->CheckSystemThermal (mCapsuleUpdatePolicy, Good);
+    return mCapsuleUpdatePolicy->CheckSystemThermal (
+                                   mCapsuleUpdatePolicy,
+                                   Good
+                                   );
   }
 
   *Good = TRUE;
@@ -124,7 +127,10 @@ CheckSystemEnvironment (
   )
 {
   if (LookupCapsuleUpdatePolicyProtocol ()) {
-    return mCapsuleUpdatePolicy->CheckSystemEnvironment (mCapsuleUpdatePolicy, Good);
+    return mCapsuleUpdatePolicy->CheckSystemEnvironment (
+                                   mCapsuleUpdatePolicy,
+                                   Good
+                                   );
   }
 
   *Good = TRUE;
@@ -148,7 +154,9 @@ IsLowestSupportedVersionCheckRequired (
   )
 {
   if (LookupCapsuleUpdatePolicyProtocol ()) {
-    return mCapsuleUpdatePolicy->IsLowestSupportedVersionCheckRequired (mCapsuleUpdatePolicy);
+    return mCapsuleUpdatePolicy->IsLowestSupportedVersionCheckRequired (
+                                   mCapsuleUpdatePolicy
+                                   );
   }
 
   return TRUE;
@@ -171,7 +179,9 @@ IsLockFmpDeviceAtLockEventGuidRequired (
   )
 {
   if (LookupCapsuleUpdatePolicyProtocol ()) {
-    return mCapsuleUpdatePolicy->IsLockFmpDeviceAtLockEventGuidRequired (mCapsuleUpdatePolicy);
+    return mCapsuleUpdatePolicy->IsLockFmpDeviceAtLockEventGuidRequired (
+                                   mCapsuleUpdatePolicy
+                                   );
   }
 
   return TRUE;

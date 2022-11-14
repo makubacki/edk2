@@ -75,7 +75,10 @@ GrowDepexStack (
 
   NewStack = AllocatePool (Size * sizeof (DEPEX_ELEMENT));
   if (NewStack == NULL) {
-    DEBUG ((DEBUG_ERROR, "GrowDepexStack: Cannot allocate memory for dependency evaluation stack!\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "GrowDepexStack: Cannot allocate memory for dependency evaluation stack!\n"
+      ));
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -86,7 +89,8 @@ GrowDepexStack (
     CopyMem (
       NewStack,
       mDepexEvaluationStack,
-      (mDepexEvaluationStackEnd - mDepexEvaluationStack) * sizeof (DEPEX_ELEMENT)
+      (mDepexEvaluationStackEnd - mDepexEvaluationStack) *
+      sizeof (DEPEX_ELEMENT)
       );
 
     //
@@ -98,7 +102,8 @@ GrowDepexStack (
   //
   // Make the Stack pointer point to the old data in the new stack
   //
-  mDepexEvaluationStackPointer = NewStack + (mDepexEvaluationStackPointer - mDepexEvaluationStack);
+  mDepexEvaluationStackPointer = NewStack + (mDepexEvaluationStackPointer -
+                                             mDepexEvaluationStack);
   mDepexEvaluationStack        = NewStack;
   mDepexEvaluationStackEnd     = NewStack + Size;
 
@@ -188,7 +193,10 @@ Pop (
   mDepexEvaluationStackPointer--;
   *Element = *mDepexEvaluationStackPointer;
   if ((*Element).Type != Type) {
-    DEBUG ((DEBUG_ERROR, "EvaluateDependency: Popped element type is mismatched!\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EvaluateDependency: Popped element type is mismatched!\n"
+      ));
     return EFI_INVALID_PARAMETER;
   }
 
@@ -258,9 +266,15 @@ EvaluateDependency (
   while (Iterator < (UINT8 *)Dependencies->Dependencies + DependenciesSize) {
     switch (*Iterator) {
       case EFI_FMP_DEP_PUSH_GUID:
-        if (Iterator + sizeof (EFI_GUID) >= (UINT8 *)Dependencies->Dependencies + DependenciesSize) {
-          DEBUG ((DEBUG_ERROR, "EvaluateDependency: GUID extends beyond end of dependency expression!\n"));
-          LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_GUID_BEYOND_DEPEX;
+        if (Iterator + sizeof (EFI_GUID) >=
+            (UINT8 *)Dependencies->Dependencies + DependenciesSize)
+        {
+          DEBUG ((
+            DEBUG_ERROR,
+            "EvaluateDependency: GUID extends beyond end of dependency expression!\n"
+            ));
+          LocalLastAttemptStatus =
+            LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_GUID_BEYOND_DEPEX;
           goto Error;
         }
 
@@ -271,7 +285,8 @@ EvaluateDependency (
           if (CompareGuid (&FmpVersions[Index].ImageTypeId, &ImageTypeId)) {
             Status = Push (FmpVersions[Index].Version, VersionType);
             if (EFI_ERROR (Status)) {
-              LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_PUSH_FAILURE;
+              LocalLastAttemptStatus =
+                LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_PUSH_FAILURE;
               goto Error;
             }
 
@@ -280,33 +295,55 @@ EvaluateDependency (
         }
 
         if (Index == FmpVersionsCount) {
-          DEBUG ((DEBUG_ERROR, "EvaluateDependency: %g is not found!\n", &ImageTypeId));
-          LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_FMP_NOT_FOUND;
+          DEBUG ((
+            DEBUG_ERROR,
+            "EvaluateDependency: %g is not found!\n",
+            &ImageTypeId
+            ));
+          LocalLastAttemptStatus =
+            LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_FMP_NOT_FOUND;
           goto Error;
         }
 
         break;
       case EFI_FMP_DEP_PUSH_VERSION:
-        if (Iterator + sizeof (UINT32) >= (UINT8 *)Dependencies->Dependencies + DependenciesSize ) {
-          DEBUG ((DEBUG_ERROR, "EvaluateDependency: VERSION extends beyond end of dependency expression!\n"));
-          LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_VERSION_BEYOND_DEPEX;
+        if (Iterator + sizeof (UINT32) >= (UINT8 *)Dependencies->Dependencies +
+            DependenciesSize )
+        {
+          DEBUG ((
+            DEBUG_ERROR,
+            "EvaluateDependency: VERSION extends beyond end of dependency expression!\n"
+            ));
+          LocalLastAttemptStatus =
+            LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_VERSION_BEYOND_DEPEX;
           goto Error;
         }
 
         Version = *(UINT32 *)(Iterator + 1);
         Status  = Push (Version, VersionType);
         if (EFI_ERROR (Status)) {
-          LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_PUSH_FAILURE;
+          LocalLastAttemptStatus =
+            LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_PUSH_FAILURE;
           goto Error;
         }
 
         Iterator = Iterator + sizeof (UINT32);
         break;
       case EFI_FMP_DEP_VERSION_STR:
-        Iterator += AsciiStrnLenS ((CHAR8 *)Iterator, DependenciesSize - (Iterator - Dependencies->Dependencies));
-        if (Iterator == (UINT8 *)Dependencies->Dependencies + DependenciesSize) {
-          DEBUG ((DEBUG_ERROR, "EvaluateDependency: STRING extends beyond end of dependency expression!\n"));
-          LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_VERSION_STR_BEYOND_DEPEX;
+        Iterator += AsciiStrnLenS (
+                      (CHAR8 *)Iterator,
+                      DependenciesSize -
+                      (Iterator - Dependencies->Dependencies)
+                      );
+        if (Iterator == (UINT8 *)Dependencies->Dependencies +
+            DependenciesSize)
+        {
+          DEBUG ((
+            DEBUG_ERROR,
+            "EvaluateDependency: STRING extends beyond end of dependency expression!\n"
+            ));
+          LocalLastAttemptStatus =
+            LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_VERSION_STR_BEYOND_DEPEX;
           goto Error;
         }
 
@@ -314,19 +351,25 @@ EvaluateDependency (
       case EFI_FMP_DEP_AND:
         Status = Pop (&Element1, BooleanType);
         if (EFI_ERROR (Status)) {
-          LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
+          LocalLastAttemptStatus =
+            LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
           goto Error;
         }
 
         Status = Pop (&Element2, BooleanType);
         if (EFI_ERROR (Status)) {
-          LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
+          LocalLastAttemptStatus =
+            LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
           goto Error;
         }
 
-        Status = Push (Element1.Value.Boolean & Element2.Value.Boolean, BooleanType);
+        Status = Push (
+                   Element1.Value.Boolean & Element2.Value.Boolean,
+                   BooleanType
+                   );
         if (EFI_ERROR (Status)) {
-          LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_PUSH_FAILURE;
+          LocalLastAttemptStatus =
+            LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_PUSH_FAILURE;
           goto Error;
         }
 
@@ -334,19 +377,25 @@ EvaluateDependency (
       case EFI_FMP_DEP_OR:
         Status = Pop (&Element1, BooleanType);
         if (EFI_ERROR (Status)) {
-          LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
+          LocalLastAttemptStatus =
+            LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
           goto Error;
         }
 
         Status = Pop (&Element2, BooleanType);
         if (EFI_ERROR (Status)) {
-          LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
+          LocalLastAttemptStatus =
+            LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
           goto Error;
         }
 
-        Status = Push (Element1.Value.Boolean | Element2.Value.Boolean, BooleanType);
+        Status = Push (
+                   Element1.Value.Boolean | Element2.Value.Boolean,
+                   BooleanType
+                   );
         if (EFI_ERROR (Status)) {
-          LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_PUSH_FAILURE;
+          LocalLastAttemptStatus =
+            LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_PUSH_FAILURE;
           goto Error;
         }
 
@@ -354,13 +403,15 @@ EvaluateDependency (
       case EFI_FMP_DEP_NOT:
         Status = Pop (&Element1, BooleanType);
         if (EFI_ERROR (Status)) {
-          LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
+          LocalLastAttemptStatus =
+            LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
           goto Error;
         }
 
         Status = Push (!(Element1.Value.Boolean), BooleanType);
         if (EFI_ERROR (Status)) {
-          LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_PUSH_FAILURE;
+          LocalLastAttemptStatus =
+            LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_PUSH_FAILURE;
           goto Error;
         }
 
@@ -368,7 +419,8 @@ EvaluateDependency (
       case EFI_FMP_DEP_TRUE:
         Status = Push (TRUE, BooleanType);
         if (EFI_ERROR (Status)) {
-          LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_PUSH_FAILURE;
+          LocalLastAttemptStatus =
+            LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_PUSH_FAILURE;
           goto Error;
         }
 
@@ -376,7 +428,8 @@ EvaluateDependency (
       case EFI_FMP_DEP_FALSE:
         Status = Push (FALSE, BooleanType);
         if (EFI_ERROR (Status)) {
-          LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_PUSH_FAILURE;
+          LocalLastAttemptStatus =
+            LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_PUSH_FAILURE;
           goto Error;
         }
 
@@ -384,19 +437,26 @@ EvaluateDependency (
       case EFI_FMP_DEP_EQ:
         Status = Pop (&Element1, VersionType);
         if (EFI_ERROR (Status)) {
-          LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
+          LocalLastAttemptStatus =
+            LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
           goto Error;
         }
 
         Status = Pop (&Element2, VersionType);
         if (EFI_ERROR (Status)) {
-          LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
+          LocalLastAttemptStatus =
+            LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
           goto Error;
         }
 
-        Status = (Element1.Value.Version == Element2.Value.Version) ? Push (TRUE, BooleanType) : Push (FALSE, BooleanType);
+        Status = (Element1.Value.Version == Element2.Value.Version) ? Push (
+                                                                        TRUE,
+                                                                        BooleanType
+                                                                        ) :
+                 Push (FALSE, BooleanType);
         if (EFI_ERROR (Status)) {
-          LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_PUSH_FAILURE;
+          LocalLastAttemptStatus =
+            LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_PUSH_FAILURE;
           goto Error;
         }
 
@@ -404,19 +464,26 @@ EvaluateDependency (
       case EFI_FMP_DEP_GT:
         Status = Pop (&Element1, VersionType);
         if (EFI_ERROR (Status)) {
-          LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
+          LocalLastAttemptStatus =
+            LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
           goto Error;
         }
 
         Status = Pop (&Element2, VersionType);
         if (EFI_ERROR (Status)) {
-          LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
+          LocalLastAttemptStatus =
+            LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
           goto Error;
         }
 
-        Status = (Element1.Value.Version >  Element2.Value.Version) ? Push (TRUE, BooleanType) : Push (FALSE, BooleanType);
+        Status = (Element1.Value.Version >  Element2.Value.Version) ? Push (
+                                                                        TRUE,
+                                                                        BooleanType
+                                                                        ) :
+                 Push (FALSE, BooleanType);
         if (EFI_ERROR (Status)) {
-          LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_PUSH_FAILURE;
+          LocalLastAttemptStatus =
+            LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_PUSH_FAILURE;
           goto Error;
         }
 
@@ -424,19 +491,26 @@ EvaluateDependency (
       case EFI_FMP_DEP_GTE:
         Status = Pop (&Element1, VersionType);
         if (EFI_ERROR (Status)) {
-          LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
+          LocalLastAttemptStatus =
+            LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
           goto Error;
         }
 
         Status = Pop (&Element2, VersionType);
         if (EFI_ERROR (Status)) {
-          LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
+          LocalLastAttemptStatus =
+            LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
           goto Error;
         }
 
-        Status = (Element1.Value.Version >= Element2.Value.Version) ? Push (TRUE, BooleanType) : Push (FALSE, BooleanType);
+        Status = (Element1.Value.Version >= Element2.Value.Version) ? Push (
+                                                                        TRUE,
+                                                                        BooleanType
+                                                                        ) :
+                 Push (FALSE, BooleanType);
         if (EFI_ERROR (Status)) {
-          LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_PUSH_FAILURE;
+          LocalLastAttemptStatus =
+            LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_PUSH_FAILURE;
           goto Error;
         }
 
@@ -444,19 +518,26 @@ EvaluateDependency (
       case EFI_FMP_DEP_LT:
         Status = Pop (&Element1, VersionType);
         if (EFI_ERROR (Status)) {
-          LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
+          LocalLastAttemptStatus =
+            LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
           goto Error;
         }
 
         Status = Pop (&Element2, VersionType);
         if (EFI_ERROR (Status)) {
-          LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
+          LocalLastAttemptStatus =
+            LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
           goto Error;
         }
 
-        Status = (Element1.Value.Version <  Element2.Value.Version) ? Push (TRUE, BooleanType) : Push (FALSE, BooleanType);
+        Status = (Element1.Value.Version <  Element2.Value.Version) ? Push (
+                                                                        TRUE,
+                                                                        BooleanType
+                                                                        ) :
+                 Push (FALSE, BooleanType);
         if (EFI_ERROR (Status)) {
-          LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_PUSH_FAILURE;
+          LocalLastAttemptStatus =
+            LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_PUSH_FAILURE;
           goto Error;
         }
 
@@ -464,19 +545,26 @@ EvaluateDependency (
       case EFI_FMP_DEP_LTE:
         Status = Pop (&Element1, VersionType);
         if (EFI_ERROR (Status)) {
-          LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
+          LocalLastAttemptStatus =
+            LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
           goto Error;
         }
 
         Status = Pop (&Element2, VersionType);
         if (EFI_ERROR (Status)) {
-          LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
+          LocalLastAttemptStatus =
+            LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
           goto Error;
         }
 
-        Status = (Element1.Value.Version <= Element2.Value.Version) ? Push (TRUE, BooleanType) : Push (FALSE, BooleanType);
+        Status = (Element1.Value.Version <= Element2.Value.Version) ? Push (
+                                                                        TRUE,
+                                                                        BooleanType
+                                                                        ) :
+                 Push (FALSE, BooleanType);
         if (EFI_ERROR (Status)) {
-          LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_PUSH_FAILURE;
+          LocalLastAttemptStatus =
+            LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_PUSH_FAILURE;
           goto Error;
         }
 
@@ -484,22 +572,32 @@ EvaluateDependency (
       case EFI_FMP_DEP_END:
         Status = Pop (&Element1, BooleanType);
         if (EFI_ERROR (Status)) {
-          LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
+          LocalLastAttemptStatus =
+            LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_POP_FAILURE;
           goto Error;
         }
 
         return Element1.Value.Boolean;
       default:
-        DEBUG ((DEBUG_ERROR, "EvaluateDependency: Unknown Opcode - %02x!\n", *Iterator));
-        LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_UNKNOWN_OPCODE;
+        DEBUG ((
+          DEBUG_ERROR,
+          "EvaluateDependency: Unknown Opcode - %02x!\n",
+          *Iterator
+          ));
+        LocalLastAttemptStatus =
+          LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_UNKNOWN_OPCODE;
         goto Error;
     }
 
     Iterator++;
   }
 
-  DEBUG ((DEBUG_ERROR, "EvaluateDependency: No EFI_FMP_DEP_END Opcode in expression!\n"));
-  LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_NO_END_OPCODE;
+  DEBUG ((
+    DEBUG_ERROR,
+    "EvaluateDependency: No EFI_FMP_DEP_END Opcode in expression!\n"
+    ));
+  LocalLastAttemptStatus =
+    LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_NO_END_OPCODE;
 
 Error:
   if (LastAttemptStatus != NULL) {
@@ -553,7 +651,11 @@ ValidateDependency (
         Depex += sizeof (UINT32) + 1;
         break;
       case EFI_FMP_DEP_VERSION_STR:
-        Depex += AsciiStrnLenS ((CHAR8 *)Depex, Dependencies->Dependencies + MaxDepexSize - Depex) + 1;
+        Depex += AsciiStrnLenS (
+                   (CHAR8 *)Depex,
+                   Dependencies->Dependencies +
+                   MaxDepexSize - Depex
+                   ) + 1;
         break;
       case EFI_FMP_DEP_AND:
       case EFI_FMP_DEP_OR:
@@ -619,21 +721,27 @@ GetImageDependency (
   //
   // Check to make sure that operation can be safely performed.
   //
-  if ((((UINTN)Image + sizeof (Image->MonotonicCount) + Image->AuthInfo.Hdr.dwLength) < (UINTN)Image) || \
-      (((UINTN)Image + sizeof (Image->MonotonicCount) + Image->AuthInfo.Hdr.dwLength) >= (UINTN)Image + ImageSize))
+  if ((((UINTN)Image + sizeof (Image->MonotonicCount) +
+        Image->AuthInfo.Hdr.dwLength) < (UINTN)Image) || \
+      (((UINTN)Image + sizeof (Image->MonotonicCount) +
+        Image->AuthInfo.Hdr.dwLength) >= (UINTN)Image + ImageSize))
   {
     //
     // Pointer overflow. Invalid image.
     //
     if (LastAttemptStatus != NULL) {
-      *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_GET_DEPEX_FAILURE;
+      *LastAttemptStatus =
+        LAST_ATTEMPT_STATUS_DEPENDENCY_LIB_ERROR_GET_DEPEX_FAILURE;
     }
 
     return NULL;
   }
 
-  Depex        = (EFI_FIRMWARE_IMAGE_DEP *)((UINT8 *)Image + sizeof (Image->MonotonicCount) + Image->AuthInfo.Hdr.dwLength);
-  MaxDepexSize = ImageSize - (sizeof (Image->MonotonicCount) + Image->AuthInfo.Hdr.dwLength);
+  Depex        = (EFI_FIRMWARE_IMAGE_DEP *)((UINT8 *)Image +
+                                            sizeof (Image->MonotonicCount) +
+                                            Image->AuthInfo.Hdr.dwLength);
+  MaxDepexSize = ImageSize - (sizeof (Image->MonotonicCount) +
+                              Image->AuthInfo.Hdr.dwLength);
 
   //
   // Validate the dependency and get the size of dependency

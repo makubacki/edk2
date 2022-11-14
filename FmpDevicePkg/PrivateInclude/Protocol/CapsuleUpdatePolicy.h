@@ -15,7 +15,8 @@
     0x487784c5, 0x6299, 0x4ba6, { 0xb0, 0x96, 0x5c, 0xc5, 0x27, 0x7c, 0xf7, 0x57 } \
   }
 
-typedef struct _EDKII_CAPSULE_UPDATE_POLICY_PROTOCOL EDKII_CAPSULE_UPDATE_POLICY_PROTOCOL;
+typedef struct _EDKII_CAPSULE_UPDATE_POLICY_PROTOCOL
+EDKII_CAPSULE_UPDATE_POLICY_PROTOCOL;
 
 /**
   Determine if the system power state supports a capsule update.
@@ -120,11 +121,16 @@ BOOLEAN
 /// This protocol provides platform policy services used during a capsule update.
 ///
 struct _EDKII_CAPSULE_UPDATE_POLICY_PROTOCOL {
-  EDKII_CAPSULE_UPDATE_POLICY_CHECK_SYSTEM_POWER                            CheckSystemPower;
-  EDKII_CAPSULE_UPDATE_POLICY_CHECK_SYSTEM_THERMAL                          CheckSystemThermal;
-  EDKII_CAPSULE_UPDATE_POLICY_CHECK_SYSTEM_ENVIRONMENT                      CheckSystemEnvironment;
-  EDKII_CAPSULE_UPDATE_POLICY_IS_LOWEST_SUPPORTED_VERSION_CHECK_REQUIRED    IsLowestSupportedVersionCheckRequired;
-  EDKII_CAPSULE_UPDATE_POLICY_IS_FMP_DEVICE_AT_LOCK_EVENT_REQUIRED          IsLockFmpDeviceAtLockEventGuidRequired;
+  EDKII_CAPSULE_UPDATE_POLICY_CHECK_SYSTEM_POWER
+        CheckSystemPower;
+  EDKII_CAPSULE_UPDATE_POLICY_CHECK_SYSTEM_THERMAL
+        CheckSystemThermal;
+  EDKII_CAPSULE_UPDATE_POLICY_CHECK_SYSTEM_ENVIRONMENT
+        CheckSystemEnvironment;
+  EDKII_CAPSULE_UPDATE_POLICY_IS_LOWEST_SUPPORTED_VERSION_CHECK_REQUIRED
+        IsLowestSupportedVersionCheckRequired;
+  EDKII_CAPSULE_UPDATE_POLICY_IS_FMP_DEVICE_AT_LOCK_EVENT_REQUIRED
+        IsLockFmpDeviceAtLockEventGuidRequired;
 };
 
 extern EFI_GUID  gEdkiiCapsuleUpdatePolicyProtocolGuid;

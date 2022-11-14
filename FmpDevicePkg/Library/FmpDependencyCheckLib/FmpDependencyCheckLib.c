@@ -85,37 +85,52 @@ CheckFmpDependency (
                   &HandleBuffer
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "CheckFmpDependency: Get Firmware Management Protocol failed. (%r)", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "CheckFmpDependency: Get Firmware Management Protocol failed. (%r)",
+      Status
+      ));
     IsSatisfied            = FALSE;
-    LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_CHECK_LIB_ERROR_FMP_PROTOCOL_NOT_FOUND;
+    LocalLastAttemptStatus =
+      LAST_ATTEMPT_STATUS_DEPENDENCY_CHECK_LIB_ERROR_FMP_PROTOCOL_NOT_FOUND;
     goto cleanup;
   }
 
-  FmpImageInfoBuf = AllocateZeroPool (sizeof (EFI_FIRMWARE_IMAGE_DESCRIPTOR *) * NumberOfFmpInstance);
+  FmpImageInfoBuf = AllocateZeroPool (
+                      sizeof (EFI_FIRMWARE_IMAGE_DESCRIPTOR *) *
+                      NumberOfFmpInstance
+                      );
   if (FmpImageInfoBuf == NULL) {
     IsSatisfied            = FALSE;
-    LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_CHECK_LIB_ERROR_MEM_ALLOC_FMP_INFO_BUFFER_FAILED;
+    LocalLastAttemptStatus =
+      LAST_ATTEMPT_STATUS_DEPENDENCY_CHECK_LIB_ERROR_MEM_ALLOC_FMP_INFO_BUFFER_FAILED;
     goto cleanup;
   }
 
   DescriptorVer = AllocateZeroPool (sizeof (UINT32) * NumberOfFmpInstance);
   if (DescriptorVer == NULL ) {
     IsSatisfied            = FALSE;
-    LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_CHECK_LIB_ERROR_MEM_ALLOC_DESC_VER_BUFFER_FAILED;
+    LocalLastAttemptStatus =
+      LAST_ATTEMPT_STATUS_DEPENDENCY_CHECK_LIB_ERROR_MEM_ALLOC_DESC_VER_BUFFER_FAILED;
     goto cleanup;
   }
 
   DescriptorSize = AllocateZeroPool (sizeof (UINTN) * NumberOfFmpInstance);
   if (DescriptorSize == NULL ) {
     IsSatisfied            = FALSE;
-    LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_CHECK_LIB_ERROR_MEM_ALLOC_DESC_SIZE_BUFFER_FAILED;
+    LocalLastAttemptStatus =
+      LAST_ATTEMPT_STATUS_DEPENDENCY_CHECK_LIB_ERROR_MEM_ALLOC_DESC_SIZE_BUFFER_FAILED;
     goto cleanup;
   }
 
-  FmpVersions = AllocateZeroPool (sizeof (FMP_DEPEX_CHECK_VERSION_DATA) * NumberOfFmpInstance);
+  FmpVersions = AllocateZeroPool (
+                  sizeof (FMP_DEPEX_CHECK_VERSION_DATA) *
+                  NumberOfFmpInstance
+                  );
   if (FmpVersions == NULL) {
     IsSatisfied            = FALSE;
-    LocalLastAttemptStatus = LAST_ATTEMPT_STATUS_DEPENDENCY_CHECK_LIB_ERROR_MEM_ALLOC_FMP_VER_BUFFER_FAILED;
+    LocalLastAttemptStatus =
+      LAST_ATTEMPT_STATUS_DEPENDENCY_CHECK_LIB_ERROR_MEM_ALLOC_FMP_VER_BUFFER_FAILED;
     goto cleanup;
   }
 
@@ -170,7 +185,10 @@ CheckFmpDependency (
       PackageVersionName = NULL;
     }
 
-    CopyGuid (&FmpVersions[FmpVersionsCount].ImageTypeId, &FmpImageInfoBuf[Index]->ImageTypeId);
+    CopyGuid (
+      &FmpVersions[FmpVersionsCount].ImageTypeId,
+      &FmpImageInfoBuf[Index]->ImageTypeId
+      );
     FmpVersions[FmpVersionsCount].Version = FmpImageInfoBuf[Index]->Version;
     FmpVersionsCount++;
   }
@@ -179,11 +197,21 @@ CheckFmpDependency (
   // Evaluate firmware image's depex, against the version of other Fmp instances.
   //
   if (Dependencies != NULL) {
-    IsSatisfied = EvaluateDependency (Dependencies, DependenciesSize, FmpVersions, FmpVersionsCount, &LocalLastAttemptStatus);
+    IsSatisfied = EvaluateDependency (
+                    Dependencies,
+                    DependenciesSize,
+                    FmpVersions,
+                    FmpVersionsCount,
+                    &LocalLastAttemptStatus
+                    );
   }
 
   if (!IsSatisfied) {
-    DEBUG ((DEBUG_ERROR, "CheckFmpDependency: %g\'s dependency is not satisfied!\n", ImageTypeId));
+    DEBUG ((
+      DEBUG_ERROR,
+      "CheckFmpDependency: %g\'s dependency is not satisfied!\n",
+      ImageTypeId
+      ));
     goto cleanup;
   }
 

@@ -45,7 +45,8 @@
 ///
 ///
 ///
-#define FIRMWARE_MANAGEMENT_PRIVATE_DATA_SIGNATURE  SIGNATURE_32 ('f','m','p','p')
+#define FIRMWARE_MANAGEMENT_PRIVATE_DATA_SIGNATURE  \
+  SIGNATURE_32 ('f','m','p','p')
 
 typedef struct {
   UINTN                               Signature;
