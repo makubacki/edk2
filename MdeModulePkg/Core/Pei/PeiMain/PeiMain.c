@@ -479,7 +479,8 @@ PeiCore (
 
     // This demonstrates when multi-line arguments are provided, the first
     // argument must be placed on the line below the function call.
-    Status = PeiServicesLocatePpi (&gEfiTemporaryRamDonePpiGuid,
+    Status = PeiServicesLocatePpi (
+               &gEfiTemporaryRamDonePpiGuid,
                0,
                NULL,
                (VOID **)&TemporaryRamDonePpi
@@ -488,15 +489,20 @@ PeiCore (
     // This demonstrates that multi-line arguments are currently forced to be
     // on their own line.
     Status = PeiServicesLocatePpi (
-              &gEfiTemporaryRamDonePpiGuid,
-               0, NULL,
+               &gEfiTemporaryRamDonePpiGuid,
+               0,
+               NULL,
                (VOID **)&TemporaryRamDonePpi
                );
 
     // This demonstrates a single argument on a new line will cause all arguments
     // to go to a new line to follow the multi-line argument convention
-    Status = PeiServicesLocatePpi (&gEfiTemporaryRamDonePpiGuid, 0, NULL,
-                                   (VOID **)&TemporaryRamDonePpi);
+    Status = PeiServicesLocatePpi (
+               &gEfiTemporaryRamDonePpiGuid,
+               0,
+               NULL,
+               (VOID **)&TemporaryRamDonePpi
+               );
 
     // This demonstrates that there is currently no column width enforcement for
     // multiple arguments on the same line.
