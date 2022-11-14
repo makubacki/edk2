@@ -31,7 +31,9 @@ FspApiCallingCheck (
     //
     // NotifyPhase check
     //
-    if ((FspData == NULL) || ((UINTN)FspData == MAX_ADDRESS) || ((UINTN)FspData == MAX_UINT32)) {
+    if ((FspData == NULL) || ((UINTN)FspData == MAX_ADDRESS) ||
+        ((UINTN)FspData == MAX_UINT32))
+    {
       Status = EFI_UNSUPPORTED;
     } else {
       if (FspData->Signature != FSP_GLOBAL_DATA_SIGNATURE) {
@@ -53,18 +55,24 @@ FspApiCallingCheck (
     //
     // TempRamExit check
     //
-    if ((FspData == NULL) || ((UINTN)FspData == MAX_ADDRESS) || ((UINTN)FspData == MAX_UINT32)) {
+    if ((FspData == NULL) || ((UINTN)FspData == MAX_ADDRESS) ||
+        ((UINTN)FspData == MAX_UINT32))
+    {
       Status = EFI_UNSUPPORTED;
     } else {
       if (FspData->Signature != FSP_GLOBAL_DATA_SIGNATURE) {
         Status = EFI_UNSUPPORTED;
       }
     }
-  } else if ((ApiIdx == FspSiliconInitApiIndex) || (ApiIdx == FspMultiPhaseSiInitApiIndex)) {
+  } else if ((ApiIdx == FspSiliconInitApiIndex) || (ApiIdx ==
+                                                    FspMultiPhaseSiInitApiIndex))
+  {
     //
     // FspSiliconInit check
     //
-    if ((FspData == NULL) || ((UINTN)FspData == MAX_ADDRESS) || ((UINTN)FspData == MAX_UINT32)) {
+    if ((FspData == NULL) || ((UINTN)FspData == MAX_ADDRESS) ||
+        ((UINTN)FspData == MAX_UINT32))
+    {
       Status = EFI_UNSUPPORTED;
     } else {
       if (FspData->Signature != FSP_GLOBAL_DATA_SIGNATURE) {
@@ -72,7 +80,13 @@ FspApiCallingCheck (
       } else if (ApiIdx == FspSiliconInitApiIndex) {
         if (ApiParam == NULL) {
           Status = EFI_SUCCESS;
-        } else if (EFI_ERROR (FspUpdSignatureCheck (FspSiliconInitApiIndex, ApiParam))) {
+        } else if (EFI_ERROR (
+                     FspUpdSignatureCheck (
+                       FspSiliconInitApiIndex,
+                       ApiParam
+                       )
+                     ))
+        {
           Status = EFI_INVALID_PARAMETER;
         }
 
@@ -83,21 +97,31 @@ FspApiCallingCheck (
       }
     }
   } else if (ApiIdx == FspMultiPhaseMemInitApiIndex) {
-    if ((FspData == NULL) || ((UINTN)FspData == MAX_ADDRESS) || ((UINTN)FspData == MAX_UINT32)) {
+    if ((FspData == NULL) || ((UINTN)FspData == MAX_ADDRESS) ||
+        ((UINTN)FspData == MAX_UINT32))
+    {
       Status = EFI_UNSUPPORTED;
     }
   } else if (ApiIdx == FspSmmInitApiIndex) {
     //
     // FspSmmInitApiIndex check
     //
-    if ((FspData == NULL) || ((UINTN)FspData == MAX_ADDRESS) || ((UINTN)FspData == MAX_UINT32)) {
+    if ((FspData == NULL) || ((UINTN)FspData == MAX_ADDRESS) ||
+        ((UINTN)FspData == MAX_UINT32))
+    {
       Status = EFI_UNSUPPORTED;
     } else {
       if (FspData->Signature != FSP_GLOBAL_DATA_SIGNATURE) {
         Status = EFI_UNSUPPORTED;
       } else if (ApiParam == NULL) {
         Status = EFI_SUCCESS;
-      } else if (EFI_ERROR (FspUpdSignatureCheck (FspSmmInitApiIndex, ApiParam))) {
+      } else if (EFI_ERROR (
+                   FspUpdSignatureCheck (
+                     FspSmmInitApiIndex,
+                     ApiParam
+                     )
+                   ))
+      {
         Status = EFI_INVALID_PARAMETER;
       }
     }

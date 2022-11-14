@@ -124,7 +124,11 @@ FspSiliconInitDone2 (
     case EFI_DEVICE_ERROR:
       break;
     default:
-      DEBUG ((DEBUG_INFO | DEBUG_INIT, "FspSiliconInitApi() Invalid Error - [Status: 0x%08X]\n", Status));
+      DEBUG ((
+        DEBUG_INFO | DEBUG_INIT,
+        "FspSiliconInitApi() Invalid Error - [Status: 0x%08X]\n",
+        Status
+        ));
       Status = EFI_DEVICE_ERROR;  // Force to known error.
       break;
   }
@@ -134,15 +138,34 @@ FspSiliconInitDone2 (
   // Give control back to the boot loader
   //
   SetFspMeasurePoint (FSP_PERF_ID_API_FSP_SILICON_INIT_EXIT);
-  DEBUG ((DEBUG_INFO | DEBUG_INIT, "FspSiliconInitApi() - [Status: 0x%08X] - End\n", Status));
-  PERF_END_EX (&gFspPerformanceDataGuid, "EventRec", NULL, 0, FSP_STATUS_CODE_SILICON_INIT | FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_EXIT);
-  REPORT_STATUS_CODE (EFI_PROGRESS_CODE, FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_EXIT);
+  DEBUG ((
+    DEBUG_INFO | DEBUG_INIT,
+    "FspSiliconInitApi() - [Status: 0x%08X] - End\n",
+    Status
+    ));
+  PERF_END_EX (
+    &gFspPerformanceDataGuid,
+    "EventRec",
+    NULL,
+    0,
+    FSP_STATUS_CODE_SILICON_INIT | FSP_STATUS_CODE_COMMON_CODE |
+    FSP_STATUS_CODE_API_EXIT
+    );
+  REPORT_STATUS_CODE (
+    EFI_PROGRESS_CODE,
+    FSP_STATUS_CODE_COMMON_CODE |
+    FSP_STATUS_CODE_API_EXIT
+    );
   if (GetFspGlobalDataPointer ()->FspMode == FSP_IN_API_MODE) {
     do {
       SetFspApiReturnStatus (Status);
       Pei2LoaderSwitchStack ();
       if (Status != EFI_SUCCESS) {
-        DEBUG ((DEBUG_ERROR, "!!!ERROR: FspSiliconInitApi() - [Status: 0x%08X] - Error encountered during previous API and cannot proceed further\n", Status));
+        DEBUG ((
+          DEBUG_ERROR,
+          "!!!ERROR: FspSiliconInitApi() - [Status: 0x%08X] - Error encountered during previous API and cannot proceed further\n",
+          Status
+          ));
       }
     } while (FspStatus != EFI_SUCCESS);
   }
@@ -188,7 +211,11 @@ FspMemoryInitDone2 (
     case EFI_OUT_OF_RESOURCES:
       break;
     default:
-      DEBUG ((DEBUG_INFO | DEBUG_INIT, "FspMemoryInitApi() Invalid Error [Status: 0x%08X]\n", Status));
+      DEBUG ((
+        DEBUG_INFO | DEBUG_INIT,
+        "FspMemoryInitApi() Invalid Error [Status: 0x%08X]\n",
+        Status
+        ));
       Status = EFI_DEVICE_ERROR;  // Force to known error.
       break;
   }
@@ -197,20 +224,60 @@ FspMemoryInitDone2 (
   // This is the end of the FspMemoryInit API
   // Give control back to the boot loader
   //
-  DEBUG ((DEBUG_INFO | DEBUG_INIT, "FspMemoryInitApi() - [Status: 0x%08X] - End\n", Status));
+  DEBUG ((
+    DEBUG_INFO | DEBUG_INIT,
+    "FspMemoryInitApi() - [Status: 0x%08X] - End\n",
+    Status
+    ));
   SetFspMeasurePoint (FSP_PERF_ID_API_FSP_MEMORY_INIT_EXIT);
   FspData = GetFspGlobalDataPointer ();
-  PERF_START_EX (&gFspPerformanceDataGuid, "EventRec", NULL, (FspData->PerfData[0] & FSP_PERFORMANCE_DATA_TIMER_MASK), FSP_STATUS_CODE_TEMP_RAM_INIT | FSP_STATUS_CODE_COMMON_CODE| FSP_STATUS_CODE_API_ENTRY);
-  PERF_END_EX (&gFspPerformanceDataGuid, "EventRec", NULL, (FspData->PerfData[1] & FSP_PERFORMANCE_DATA_TIMER_MASK), FSP_STATUS_CODE_TEMP_RAM_INIT | FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_EXIT);
-  PERF_START_EX (&gFspPerformanceDataGuid, "EventRec", NULL, (FspData->PerfData[2] & FSP_PERFORMANCE_DATA_TIMER_MASK), FSP_STATUS_CODE_MEMORY_INIT | FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_ENTRY);
-  PERF_END_EX (&gFspPerformanceDataGuid, "EventRec", NULL, 0, FSP_STATUS_CODE_MEMORY_INIT | FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_EXIT);
-  REPORT_STATUS_CODE (EFI_PROGRESS_CODE, FSP_STATUS_CODE_MEMORY_INIT | FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_EXIT);
+  PERF_START_EX (
+    &gFspPerformanceDataGuid,
+    "EventRec",
+    NULL,
+    (FspData->PerfData[0] & FSP_PERFORMANCE_DATA_TIMER_MASK),
+    FSP_STATUS_CODE_TEMP_RAM_INIT | FSP_STATUS_CODE_COMMON_CODE|
+    FSP_STATUS_CODE_API_ENTRY
+    );
+  PERF_END_EX (
+    &gFspPerformanceDataGuid,
+    "EventRec",
+    NULL,
+    (FspData->PerfData[1] & FSP_PERFORMANCE_DATA_TIMER_MASK),
+    FSP_STATUS_CODE_TEMP_RAM_INIT | FSP_STATUS_CODE_COMMON_CODE |
+    FSP_STATUS_CODE_API_EXIT
+    );
+  PERF_START_EX (
+    &gFspPerformanceDataGuid,
+    "EventRec",
+    NULL,
+    (FspData->PerfData[2] & FSP_PERFORMANCE_DATA_TIMER_MASK),
+    FSP_STATUS_CODE_MEMORY_INIT | FSP_STATUS_CODE_COMMON_CODE |
+    FSP_STATUS_CODE_API_ENTRY
+    );
+  PERF_END_EX (
+    &gFspPerformanceDataGuid,
+    "EventRec",
+    NULL,
+    0,
+    FSP_STATUS_CODE_MEMORY_INIT | FSP_STATUS_CODE_COMMON_CODE |
+    FSP_STATUS_CODE_API_EXIT
+    );
+  REPORT_STATUS_CODE (
+    EFI_PROGRESS_CODE,
+    FSP_STATUS_CODE_MEMORY_INIT |
+    FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_EXIT
+    );
   if (GetFspGlobalDataPointer ()->FspMode == FSP_IN_API_MODE) {
     do {
       SetFspApiReturnStatus (Status);
       Pei2LoaderSwitchStack ();
       if (Status != EFI_SUCCESS) {
-        DEBUG ((DEBUG_ERROR, "!!!ERROR: FspMemoryInitApi() - [Status: 0x%08X] - Error encountered during previous API and cannot proceed further\n", Status));
+        DEBUG ((
+          DEBUG_ERROR,
+          "!!!ERROR: FspMemoryInitApi() - [Status: 0x%08X] - Error encountered during previous API and cannot proceed further\n",
+          Status
+          ));
       }
     } while (FspStatus != EFI_SUCCESS);
   }
@@ -221,14 +288,36 @@ FspMemoryInitDone2 (
   if (GetFspApiCallingIndex () == TempRamExitApiIndex) {
     SetPhaseStatusCode (FSP_STATUS_CODE_TEMP_RAM_EXIT);
     SetFspMeasurePoint (FSP_PERF_ID_API_TEMP_RAM_EXIT_ENTRY);
-    PERF_START_EX (&gFspPerformanceDataGuid, "EventRec", NULL, 0, FSP_STATUS_CODE_TEMP_RAM_EXIT | FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_ENTRY);
-    REPORT_STATUS_CODE (EFI_PROGRESS_CODE, FSP_STATUS_CODE_TEMP_RAM_EXIT | FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_ENTRY);
+    PERF_START_EX (
+      &gFspPerformanceDataGuid,
+      "EventRec",
+      NULL,
+      0,
+      FSP_STATUS_CODE_TEMP_RAM_EXIT | FSP_STATUS_CODE_COMMON_CODE |
+      FSP_STATUS_CODE_API_ENTRY
+      );
+    REPORT_STATUS_CODE (
+      EFI_PROGRESS_CODE,
+      FSP_STATUS_CODE_TEMP_RAM_EXIT |
+      FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_ENTRY
+      );
     DEBUG ((DEBUG_INFO | DEBUG_INIT, "TempRamExitApi() - Begin\n"));
   } else {
     SetPhaseStatusCode (FSP_STATUS_CODE_SILICON_INIT);
     SetFspMeasurePoint (FSP_PERF_ID_API_FSP_SILICON_INIT_ENTRY);
-    PERF_START_EX (&gFspPerformanceDataGuid, "EventRec", NULL, 0, FSP_STATUS_CODE_SILICON_INIT | FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_ENTRY);
-    REPORT_STATUS_CODE (EFI_PROGRESS_CODE, FSP_STATUS_CODE_SILICON_INIT | FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_ENTRY);
+    PERF_START_EX (
+      &gFspPerformanceDataGuid,
+      "EventRec",
+      NULL,
+      0,
+      FSP_STATUS_CODE_SILICON_INIT | FSP_STATUS_CODE_COMMON_CODE |
+      FSP_STATUS_CODE_API_ENTRY
+      );
+    REPORT_STATUS_CODE (
+      EFI_PROGRESS_CODE,
+      FSP_STATUS_CODE_SILICON_INIT |
+      FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_ENTRY
+      );
     DEBUG ((DEBUG_INFO | DEBUG_INIT, "FspSiliconInitApi() - Begin\n"));
   }
 }
@@ -258,7 +347,11 @@ FspTempRamExitDone2 (
     case EFI_DEVICE_ERROR:
       break;
     default:
-      DEBUG ((DEBUG_INFO | DEBUG_INIT, "TempRamExitApi() Invalid Error - [Status: 0x%08X]\n", Status));
+      DEBUG ((
+        DEBUG_INFO | DEBUG_INIT,
+        "TempRamExitApi() Invalid Error - [Status: 0x%08X]\n",
+        Status
+        ));
       Status = EFI_DEVICE_ERROR;  // Force to known error.
       break;
   }
@@ -267,24 +360,54 @@ FspTempRamExitDone2 (
   // This is the end of the TempRamExit API
   // Give control back to the boot loader
   //
-  DEBUG ((DEBUG_INFO | DEBUG_INIT, "TempRamExitApi() - [Status: 0x%08X] - End\n", Status));
+  DEBUG ((
+    DEBUG_INFO | DEBUG_INIT,
+    "TempRamExitApi() - [Status: 0x%08X] - End\n",
+    Status
+    ));
   SetFspMeasurePoint (FSP_PERF_ID_API_TEMP_RAM_EXIT_EXIT);
-  PERF_END_EX (&gFspPerformanceDataGuid, "EventRec", NULL, 0, FSP_STATUS_CODE_TEMP_RAM_EXIT | FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_EXIT);
-  REPORT_STATUS_CODE (EFI_PROGRESS_CODE, FSP_STATUS_CODE_TEMP_RAM_EXIT | FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_EXIT);
+  PERF_END_EX (
+    &gFspPerformanceDataGuid,
+    "EventRec",
+    NULL,
+    0,
+    FSP_STATUS_CODE_TEMP_RAM_EXIT | FSP_STATUS_CODE_COMMON_CODE |
+    FSP_STATUS_CODE_API_EXIT
+    );
+  REPORT_STATUS_CODE (
+    EFI_PROGRESS_CODE,
+    FSP_STATUS_CODE_TEMP_RAM_EXIT |
+    FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_EXIT
+    );
   if (GetFspGlobalDataPointer ()->FspMode == FSP_IN_API_MODE) {
     do {
       SetFspApiReturnStatus (Status);
       Pei2LoaderSwitchStack ();
       if (Status != EFI_SUCCESS) {
-        DEBUG ((DEBUG_ERROR, "!!!ERROR: TempRamExitApi() - [Status: 0x%08X] - Error encountered during previous API and cannot proceed further\n", Status));
+        DEBUG ((
+          DEBUG_ERROR,
+          "!!!ERROR: TempRamExitApi() - [Status: 0x%08X] - Error encountered during previous API and cannot proceed further\n",
+          Status
+          ));
       }
     } while (FspStatus != EFI_SUCCESS);
   }
 
   SetPhaseStatusCode (FSP_STATUS_CODE_SILICON_INIT);
   SetFspMeasurePoint (FSP_PERF_ID_API_FSP_SILICON_INIT_ENTRY);
-  PERF_START_EX (&gFspPerformanceDataGuid, "EventRec", NULL, 0, FSP_STATUS_CODE_SILICON_INIT | FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_ENTRY);
-  REPORT_STATUS_CODE (EFI_PROGRESS_CODE, FSP_STATUS_CODE_SILICON_INIT | FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_ENTRY);
+  PERF_START_EX (
+    &gFspPerformanceDataGuid,
+    "EventRec",
+    NULL,
+    0,
+    FSP_STATUS_CODE_SILICON_INIT | FSP_STATUS_CODE_COMMON_CODE |
+    FSP_STATUS_CODE_API_ENTRY
+    );
+  REPORT_STATUS_CODE (
+    EFI_PROGRESS_CODE,
+    FSP_STATUS_CODE_SILICON_INIT |
+    FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_ENTRY
+    );
   DEBUG ((DEBUG_INFO | DEBUG_INIT, "SiliconInitApi() - Begin\n"));
 }
 
@@ -313,20 +436,60 @@ FspWaitForNotify (
 
     if (NotificationCount == 0) {
       SetPhaseStatusCode (FSP_STATUS_CODE_POST_PCIE_ENUM_NOTIFICATION);
-      PERF_START_EX (&gFspPerformanceDataGuid, "EventRec", NULL, 0, FSP_STATUS_CODE_POST_PCIE_ENUM_NOTIFICATION | FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_ENTRY);
-      REPORT_STATUS_CODE (EFI_PROGRESS_CODE, FSP_STATUS_CODE_POST_PCIE_ENUM_NOTIFICATION | FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_ENTRY);
+      PERF_START_EX (
+        &gFspPerformanceDataGuid,
+        "EventRec",
+        NULL,
+        0,
+        FSP_STATUS_CODE_POST_PCIE_ENUM_NOTIFICATION |
+        FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_ENTRY
+        );
+      REPORT_STATUS_CODE (
+        EFI_PROGRESS_CODE,
+        FSP_STATUS_CODE_POST_PCIE_ENUM_NOTIFICATION |
+        FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_ENTRY
+        );
     } else if (NotificationCount == 1) {
       SetPhaseStatusCode (FSP_STATUS_CODE_READY_TO_BOOT_NOTIFICATION);
-      PERF_START_EX (&gFspPerformanceDataGuid, "EventRec", NULL, 0, FSP_STATUS_CODE_READY_TO_BOOT_NOTIFICATION | FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_ENTRY);
-      REPORT_STATUS_CODE (EFI_PROGRESS_CODE, FSP_STATUS_CODE_READY_TO_BOOT_NOTIFICATION | FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_ENTRY);
+      PERF_START_EX (
+        &gFspPerformanceDataGuid,
+        "EventRec",
+        NULL,
+        0,
+        FSP_STATUS_CODE_READY_TO_BOOT_NOTIFICATION |
+        FSP_STATUS_CODE_COMMON_CODE |
+        FSP_STATUS_CODE_API_ENTRY
+        );
+      REPORT_STATUS_CODE (
+        EFI_PROGRESS_CODE,
+        FSP_STATUS_CODE_READY_TO_BOOT_NOTIFICATION |
+        FSP_STATUS_CODE_COMMON_CODE |
+        FSP_STATUS_CODE_API_ENTRY
+        );
     } else if (NotificationCount == 2) {
       SetPhaseStatusCode (FSP_STATUS_CODE_END_OF_FIRMWARE_NOTIFICATION);
-      PERF_START_EX (&gFspPerformanceDataGuid, "EventRec", NULL, 0, FSP_STATUS_CODE_END_OF_FIRMWARE_NOTIFICATION | FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_ENTRY);
-      REPORT_STATUS_CODE (EFI_PROGRESS_CODE, FSP_STATUS_CODE_END_OF_FIRMWARE_NOTIFICATION | FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_ENTRY);
+      PERF_START_EX (
+        &gFspPerformanceDataGuid,
+        "EventRec",
+        NULL,
+        0,
+        FSP_STATUS_CODE_END_OF_FIRMWARE_NOTIFICATION |
+        FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_ENTRY
+        );
+      REPORT_STATUS_CODE (
+        EFI_PROGRESS_CODE,
+        FSP_STATUS_CODE_END_OF_FIRMWARE_NOTIFICATION |
+        FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_ENTRY
+        );
     }
 
-    NotificationValue = ((NOTIFY_PHASE_PARAMS *)(UINTN)GetFspApiParameter ())->Phase;
-    DEBUG ((DEBUG_INFO | DEBUG_INIT, "NotifyPhaseApi() - Begin  [Phase: %08X]\n", NotificationValue));
+    NotificationValue =
+      ((NOTIFY_PHASE_PARAMS *)(UINTN)GetFspApiParameter ())->Phase;
+    DEBUG ((
+      DEBUG_INFO | DEBUG_INIT,
+      "NotifyPhaseApi() - Begin  [Phase: %08X]\n",
+      NotificationValue
+      ));
     if (mFspNotifySequence[NotificationCount] != NotificationValue) {
       //
       // Notify code does not follow the predefined order
@@ -343,18 +506,57 @@ FspWaitForNotify (
       }
     }
 
-    DEBUG ((DEBUG_INFO | DEBUG_INIT, "NotifyPhaseApi() - End  [Status: 0x%08X]\n", Status));
+    DEBUG ((
+      DEBUG_INFO | DEBUG_INIT,
+      "NotifyPhaseApi() - End  [Status: 0x%08X]\n",
+      Status
+      ));
     SetFspMeasurePoint (FSP_PERF_ID_API_NOTIFY_POST_PCI_EXIT + Count);
 
     if ((NotificationCount - 1) == 0) {
-      PERF_END_EX (&gFspPerformanceDataGuid, "EventRec", NULL, 0, FSP_STATUS_CODE_POST_PCIE_ENUM_NOTIFICATION | FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_EXIT);
-      REPORT_STATUS_CODE (EFI_PROGRESS_CODE, FSP_STATUS_CODE_POST_PCIE_ENUM_NOTIFICATION | FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_EXIT);
+      PERF_END_EX (
+        &gFspPerformanceDataGuid,
+        "EventRec",
+        NULL,
+        0,
+        FSP_STATUS_CODE_POST_PCIE_ENUM_NOTIFICATION |
+        FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_EXIT
+        );
+      REPORT_STATUS_CODE (
+        EFI_PROGRESS_CODE,
+        FSP_STATUS_CODE_POST_PCIE_ENUM_NOTIFICATION |
+        FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_EXIT
+        );
     } else if ((NotificationCount - 1) == 1) {
-      PERF_END_EX (&gFspPerformanceDataGuid, "EventRec", NULL, 0, FSP_STATUS_CODE_READY_TO_BOOT_NOTIFICATION | FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_EXIT);
-      REPORT_STATUS_CODE (EFI_PROGRESS_CODE, FSP_STATUS_CODE_READY_TO_BOOT_NOTIFICATION | FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_EXIT);
+      PERF_END_EX (
+        &gFspPerformanceDataGuid,
+        "EventRec",
+        NULL,
+        0,
+        FSP_STATUS_CODE_READY_TO_BOOT_NOTIFICATION |
+        FSP_STATUS_CODE_COMMON_CODE |
+        FSP_STATUS_CODE_API_EXIT
+        );
+      REPORT_STATUS_CODE (
+        EFI_PROGRESS_CODE,
+        FSP_STATUS_CODE_READY_TO_BOOT_NOTIFICATION |
+        FSP_STATUS_CODE_COMMON_CODE |
+        FSP_STATUS_CODE_API_EXIT
+        );
     } else if ((NotificationCount - 1) == 2) {
-      PERF_END_EX (&gFspPerformanceDataGuid, "EventRec", NULL, 0, FSP_STATUS_CODE_END_OF_FIRMWARE_NOTIFICATION | FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_EXIT);
-      REPORT_STATUS_CODE (EFI_PROGRESS_CODE, FSP_STATUS_CODE_END_OF_FIRMWARE_NOTIFICATION | FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_EXIT);
+      PERF_END_EX (
+        &gFspPerformanceDataGuid,
+        "EventRec",
+        NULL,
+        0,
+        FSP_STATUS_CODE_END_OF_FIRMWARE_NOTIFICATION |
+        FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_EXIT
+        );
+      REPORT_STATUS_CODE (
+        EFI_PROGRESS_CODE,
+        FSP_STATUS_CODE_END_OF_FIRMWARE_NOTIFICATION |
+        FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_EXIT
+        );
     }
 
     if (GetFspGlobalDataPointer ()->FspMode == FSP_IN_API_MODE) {
@@ -363,7 +565,12 @@ FspWaitForNotify (
         SetFspApiReturnStatus (Status);
         Pei2LoaderSwitchStack ();
         if (Status != EFI_SUCCESS) {
-          DEBUG ((DEBUG_ERROR, "!!!ERROR: NotifyPhaseApi() [Phase: %08X] - Failed - [Status: 0x%08X]\n", NotificationValue, Status));
+          DEBUG ((
+            DEBUG_ERROR,
+            "!!!ERROR: NotifyPhaseApi() [Phase: %08X] - Failed - [Status: 0x%08X]\n",
+            NotificationValue,
+            Status
+            ));
         }
       } while (FspStatus != EFI_SUCCESS);
     }

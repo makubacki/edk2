@@ -59,7 +59,9 @@ typedef struct {
   UINT64    ApiRet;         // 64bit stack format is different from the 32bit one due to x64 calling convention
 } CONTEXT_STACK_64;
 
-#define CONTEXT_STACK_OFFSET(x)  (sizeof(UINTN) == sizeof (UINT32) ? (UINTN)&((CONTEXT_STACK *)(UINTN)0)->x : (UINTN)&((CONTEXT_STACK_64 *)(UINTN)0)->x)
+#define CONTEXT_STACK_OFFSET( \
+                            x)  \
+  (sizeof(UINTN) == sizeof (UINT32) ? (UINTN)&((CONTEXT_STACK *)(UINTN)0)->x : (UINTN)&((CONTEXT_STACK_64 *)(UINTN)0)->x)
 
 #pragma pack()
 
@@ -76,7 +78,8 @@ SetFspGlobalDataPointer (
   )
 {
   ASSERT (FspData != NULL);
-  *((volatile UINT32 *)(UINTN)PcdGet32 (PcdGlobalDataPointerAddress)) = (UINT32)(UINTN)FspData;
+  *((volatile UINT32 *)(UINTN)PcdGet32 (PcdGlobalDataPointerAddress)) =
+    (UINT32)(UINTN)FspData;
 }
 
 /**
@@ -160,7 +163,8 @@ SetFspApiParameter (
 {
   FSP_GLOBAL_DATA  *FspData;
 
-  FspData                                                          = GetFspGlobalDataPointer ();
+  FspData =
+    GetFspGlobalDataPointer ();
   *(UINTN *)(FspData->CoreStack + CONTEXT_STACK_OFFSET (ApiParam)) = Value;
 }
 
@@ -178,8 +182,10 @@ SetFspApiReturnStatus (
 {
   FSP_GLOBAL_DATA  *FspData;
 
-  FspData                                                              = GetFspGlobalDataPointer ();
-  *(UINTN *)(FspData->CoreStack + CONTEXT_STACK_OFFSET (Registers[7])) = ReturnStatus;
+  FspData =
+    GetFspGlobalDataPointer ();
+  *(UINTN *)(FspData->CoreStack + CONTEXT_STACK_OFFSET (Registers[7])) =
+    ReturnStatus;
 }
 
 /**
@@ -392,7 +398,9 @@ SetFspMeasurePoint (
   // Bit [63:56]  will be the ID
   //
   FspData = GetFspGlobalDataPointer ();
-  if (FspData->PerfIdx < sizeof (FspData->PerfData) / sizeof (FspData->PerfData[0])) {
+  if (FspData->PerfIdx < sizeof (FspData->PerfData) /
+      sizeof (FspData->PerfData[0]))
+  {
     FspData->PerfData[FspData->PerfIdx]                  = AsmReadTsc ();
     ((UINT8 *)(&FspData->PerfData[FspData->PerfIdx]))[7] = Id;
   }
@@ -442,7 +450,8 @@ GetFspInfoHeaderFromApiContext (
   FSP_GLOBAL_DATA  *FspData;
 
   FspData = GetFspGlobalDataPointer ();
-  return (FSP_INFO_HEADER *)(*(UINTN *)(FspData->CoreStack + CONTEXT_STACK_OFFSET (FspInfoHeader)));
+  return (FSP_INFO_HEADER *)(*(UINTN *)(FspData->CoreStack +
+                                        CONTEXT_STACK_OFFSET (FspInfoHeader)));
 }
 
 /**
@@ -459,7 +468,8 @@ GetFspCfgRegionDataPointer (
   FSP_INFO_HEADER  *FspInfoHeader;
 
   FspInfoHeader = GetFspInfoHeader ();
-  return (VOID *)(UINTN)(FspInfoHeader->ImageBase + FspInfoHeader->CfgRegionOffset);
+  return (VOID *)(UINTN)(FspInfoHeader->ImageBase +
+                         FspInfoHeader->CfgRegionOffset);
 }
 
 /**
@@ -539,7 +549,11 @@ FspApiReturnStatusReset (
   volatile BOOLEAN  LoopUntilReset;
 
   LoopUntilReset = TRUE;
-  DEBUG ((DEBUG_INFO, "FSP returning control to Bootloader with reset required return status %x\n", FspResetType));
+  DEBUG ((
+    DEBUG_INFO,
+    "FSP returning control to Bootloader with reset required return status %x\n",
+    FspResetType
+    ));
   if (GetFspGlobalDataPointer ()->FspMode == FSP_IN_API_MODE) {
     ///
     /// Below code is not an infinite loop.The control will go back to API calling function in BootLoader each time BootLoader
@@ -548,8 +562,14 @@ FspApiReturnStatusReset (
     do {
       SetFspApiReturnStatus (FspResetType);
       Pei2LoaderSwitchStack ();
-      DEBUG ((DEBUG_ERROR, "!!!ERROR: FSP has requested BootLoader for reset. But BootLoader has not honored the reset\n"));
-      DEBUG ((DEBUG_ERROR, "!!!ERROR: Please add support in BootLoader to honor the reset request from FSP\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "!!!ERROR: FSP has requested BootLoader for reset. But BootLoader has not honored the reset\n"
+        ));
+      DEBUG ((
+        DEBUG_ERROR,
+        "!!!ERROR: Please add support in BootLoader to honor the reset request from FSP\n"
+        ));
     } while (LoopUntilReset);
   }
 }

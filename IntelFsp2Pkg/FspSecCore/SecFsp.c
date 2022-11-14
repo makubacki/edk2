@@ -27,11 +27,14 @@ FspGetExceptionHandler (
   FSP_INFO_HEADER           *FspInfoHeader;
 
   ZeroMem ((VOID *)&ExceptionHandler, sizeof (IA32_IDT_GATE_DESCRIPTOR));
-  FspInfoHeader                      = (FSP_INFO_HEADER *)(UINTN)AsmGetFspInfoHeader ();
-  *(UINT64 *) &ExceptionHandler      = IdtEntryTemplate;
-  IdtGateDescriptor                  = &ExceptionHandler;
-  Entry                              = (IdtGateDescriptor->Bits.OffsetHigh << 16) | IdtGateDescriptor->Bits.OffsetLow;
-  Entry                              = FspInfoHeader->ImageBase + FspInfoHeader->ImageSize - (~Entry + 1);
+  FspInfoHeader =
+    (FSP_INFO_HEADER *)(UINTN)AsmGetFspInfoHeader ();
+  *(UINT64 *) &ExceptionHandler = IdtEntryTemplate;
+  IdtGateDescriptor             = &ExceptionHandler;
+  Entry                         = (IdtGateDescriptor->Bits.OffsetHigh <<
+                                   16) | IdtGateDescriptor->Bits.OffsetLow;
+  Entry                         = FspInfoHeader->ImageBase +
+                                  FspInfoHeader->ImageSize - (~Entry + 1);
   IdtGateDescriptor->Bits.OffsetHigh = (UINT16)(Entry >> 16);
   IdtGateDescriptor->Bits.OffsetLow  = (UINT16)Entry;
 
@@ -82,7 +85,11 @@ SecGetPlatformData (
         //
         DwordSize = 4;
         StackPtr  = StackPtr - 1 - DwordSize;
-        CopyMem (&(FspPlatformData->MicrocodeRegionBase), StackPtr, (DwordSize << 2));
+        CopyMem (
+          &(FspPlatformData->MicrocodeRegionBase),
+          StackPtr,
+          (DwordSize << 2)
+          );
         StackPtr--;
       } else if (*(StackPtr - 1) == FSP_PER0_SIGNATURE) {
         //
@@ -92,8 +99,10 @@ SecGetPlatformData (
         StackPtr  = StackPtr - 1 - DwordSize;
         CopyMem (FspData->PerfData, StackPtr, (DwordSize << 2));
 
-        ((UINT8 *)(&FspData->PerfData[0]))[7] = FSP_PERF_ID_API_TEMP_RAM_INIT_ENTRY;
-        ((UINT8 *)(&FspData->PerfData[1]))[7] = FSP_PERF_ID_API_TEMP_RAM_INIT_EXIT;
+        ((UINT8 *)(&FspData->PerfData[0]))[7] =
+          FSP_PERF_ID_API_TEMP_RAM_INIT_ENTRY;
+        ((UINT8 *)(&FspData->PerfData[1]))[7] =
+          FSP_PERF_ID_API_TEMP_RAM_INIT_EXIT;
 
         StackPtr--;
       } else {
@@ -159,7 +168,8 @@ FspGlobalDataInit (
   //
   FspmUpdDataPtr = (VOID *)GetFspApiParameter ();
   if (FspmUpdDataPtr == NULL) {
-    FspmUpdDataPtr = (VOID *)(UINTN)(PeiFspData->FspInfoHeader->ImageBase + PeiFspData->FspInfoHeader->CfgRegionOffset);
+    FspmUpdDataPtr = (VOID *)(UINTN)(PeiFspData->FspInfoHeader->ImageBase +
+                                     PeiFspData->FspInfoHeader->CfgRegionOffset);
   }
 
   SetFspUpdDataPointer (FspmUpdDataPtr);
@@ -205,10 +215,12 @@ FspGlobalDataInit (
     (PeiFspData->FspInfoHeader->ImageRevision >> 24) & 0xFF, \
     (PeiFspData->FspInfoHeader->ImageRevision >> 16) & 0xFF, \
     (PeiFspData->FspInfoHeader->HeaderRevision >= 6) ? \
-    (((PeiFspData->FspInfoHeader->ImageRevision >> 8) & 0xFF) | (PeiFspData->FspInfoHeader->ExtendedImageRevision & 0xFF00)) : \
+    (((PeiFspData->FspInfoHeader->ImageRevision >> 8) & 0xFF) |
+     (PeiFspData->FspInfoHeader->ExtendedImageRevision & 0xFF00)) : \
     ((PeiFspData->FspInfoHeader->ImageRevision >> 8) & 0xFF), \
     (PeiFspData->FspInfoHeader->HeaderRevision >= 6) ? \
-    ((PeiFspData->FspInfoHeader->ImageRevision & 0xFF) | ((PeiFspData->FspInfoHeader->ExtendedImageRevision & 0xFF) << 8)) : \
+    ((PeiFspData->FspInfoHeader->ImageRevision & 0xFF) |
+     ((PeiFspData->FspInfoHeader->ExtendedImageRevision & 0xFF) << 8)) : \
     (PeiFspData->FspInfoHeader->ImageRevision & 0xFF)
     ));
 }
@@ -227,6 +239,7 @@ FspDataPointerFixUp (
 {
   FSP_GLOBAL_DATA  *NewFspData;
 
-  NewFspData = (FSP_GLOBAL_DATA *)((UINTN)GetFspGlobalDataPointer () + (UINTN)OffsetGap);
+  NewFspData = (FSP_GLOBAL_DATA *)((UINTN)GetFspGlobalDataPointer () +
+                                   (UINTN)OffsetGap);
   SetFspGlobalDataPointer (NewFspData);
 }

@@ -118,8 +118,14 @@ SecStartup (
   AsmReadIdtr (&IdtDescriptor);
   if (IdtDescriptor.Base == 0) {
     ExceptionHandler = FspGetExceptionHandler (mIdtEntryTemplate);
-    for (Index = 0; Index < FixedPcdGet8 (PcdFspMaxInterruptSupported); Index++) {
-      CopyMem ((VOID *)&IdtTableInStack.IdtTable[Index], (VOID *)&ExceptionHandler, sizeof (IA32_IDT_GATE_DESCRIPTOR));
+    for (Index = 0; Index < FixedPcdGet8 (PcdFspMaxInterruptSupported);
+         Index++)
+    {
+      CopyMem (
+        (VOID *)&IdtTableInStack.IdtTable[Index],
+        (VOID *)&ExceptionHandler,
+        sizeof (IA32_IDT_GATE_DESCRIPTOR)
+        );
     }
 
     IdtSize = sizeof (IdtTableInStack.IdtTable);
@@ -131,7 +137,11 @@ SecStartup (
       //
       CpuDeadLoop ();
     } else {
-      CopyMem ((VOID *)(UINTN)&IdtTableInStack.IdtTable, (VOID *)IdtDescriptor.Base, IdtSize);
+      CopyMem (
+        (VOID *)(UINTN)&IdtTableInStack.IdtTable,
+        (VOID *)IdtDescriptor.Base,
+        IdtSize
+        );
     }
   }
 
@@ -150,14 +160,19 @@ SecStartup (
   //
   SecCoreData.DataSize               = sizeof (EFI_SEC_PEI_HAND_OFF);
   SecCoreData.BootFirmwareVolumeBase = BootFirmwareVolume;
-  SecCoreData.BootFirmwareVolumeSize = (UINT32)((EFI_FIRMWARE_VOLUME_HEADER *)BootFirmwareVolume)->FvLength;
+  SecCoreData.BootFirmwareVolumeSize =
+    (UINT32)((EFI_FIRMWARE_VOLUME_HEADER *)BootFirmwareVolume)->FvLength;
 
   //
   // Support FSP reserved temporary memory from the whole temporary memory provided by bootloader.
   // FSP reserved temporary memory will not be given to PeiCore.
   //
-  SecCoreData.TemporaryRamBase = (UINT8 *)(UINTN)TempRamBase  + PcdGet32 (PcdFspPrivateTemporaryRamSize);
-  SecCoreData.TemporaryRamSize = SizeOfRam - PcdGet32 (PcdFspPrivateTemporaryRamSize);
+  SecCoreData.TemporaryRamBase = (UINT8 *)(UINTN)TempRamBase  + PcdGet32 (
+                                                                  PcdFspPrivateTemporaryRamSize
+                                                                  );
+  SecCoreData.TemporaryRamSize = SizeOfRam - PcdGet32 (
+                                               PcdFspPrivateTemporaryRamSize
+                                               );
   if (PcdGet8 (PcdFspHeapSizePercentage) == 0) {
     SecCoreData.PeiTemporaryRamBase = SecCoreData.TemporaryRamBase;
     SecCoreData.PeiTemporaryRamSize = SecCoreData.TemporaryRamSize;
@@ -165,19 +180,56 @@ SecStartup (
     SecCoreData.StackSize           = 0;
   } else {
     SecCoreData.PeiTemporaryRamBase = SecCoreData.TemporaryRamBase;
-    SecCoreData.PeiTemporaryRamSize = SecCoreData.TemporaryRamSize * PcdGet8 (PcdFspHeapSizePercentage) / 100;
-    SecCoreData.StackBase           = (VOID *)(UINTN)((UINTN)SecCoreData.TemporaryRamBase + SecCoreData.PeiTemporaryRamSize);
-    SecCoreData.StackSize           = SecCoreData.TemporaryRamSize - SecCoreData.PeiTemporaryRamSize;
+    SecCoreData.PeiTemporaryRamSize = SecCoreData.TemporaryRamSize * PcdGet8 (
+                                                                       PcdFspHeapSizePercentage
+                                                                       ) / 100;
+    SecCoreData.StackBase =
+      (VOID *)(UINTN)((UINTN)SecCoreData.TemporaryRamBase +
+                      SecCoreData.PeiTemporaryRamSize);
+    SecCoreData.StackSize = SecCoreData.TemporaryRamSize -
+                            SecCoreData.PeiTemporaryRamSize;
   }
 
-  DEBUG ((DEBUG_INFO, "Fsp BootFirmwareVolumeBase - 0x%x\n", SecCoreData.BootFirmwareVolumeBase));
-  DEBUG ((DEBUG_INFO, "Fsp BootFirmwareVolumeSize - 0x%x\n", SecCoreData.BootFirmwareVolumeSize));
-  DEBUG ((DEBUG_INFO, "Fsp TemporaryRamBase       - 0x%x\n", SecCoreData.TemporaryRamBase));
-  DEBUG ((DEBUG_INFO, "Fsp TemporaryRamSize       - 0x%x\n", SecCoreData.TemporaryRamSize));
-  DEBUG ((DEBUG_INFO, "Fsp PeiTemporaryRamBase    - 0x%x\n", SecCoreData.PeiTemporaryRamBase));
-  DEBUG ((DEBUG_INFO, "Fsp PeiTemporaryRamSize    - 0x%x\n", SecCoreData.PeiTemporaryRamSize));
-  DEBUG ((DEBUG_INFO, "Fsp StackBase              - 0x%x\n", SecCoreData.StackBase));
-  DEBUG ((DEBUG_INFO, "Fsp StackSize              - 0x%x\n", SecCoreData.StackSize));
+  DEBUG ((
+    DEBUG_INFO,
+    "Fsp BootFirmwareVolumeBase - 0x%x\n",
+    SecCoreData.BootFirmwareVolumeBase
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "Fsp BootFirmwareVolumeSize - 0x%x\n",
+    SecCoreData.BootFirmwareVolumeSize
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "Fsp TemporaryRamBase       - 0x%x\n",
+    SecCoreData.TemporaryRamBase
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "Fsp TemporaryRamSize       - 0x%x\n",
+    SecCoreData.TemporaryRamSize
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "Fsp PeiTemporaryRamBase    - 0x%x\n",
+    SecCoreData.PeiTemporaryRamBase
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "Fsp PeiTemporaryRamSize    - 0x%x\n",
+    SecCoreData.PeiTemporaryRamSize
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "Fsp StackBase              - 0x%x\n",
+    SecCoreData.StackBase
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "Fsp StackSize              - 0x%x\n",
+    SecCoreData.StackSize
+    ));
 
   //
   // Call PeiCore Entry

@@ -40,7 +40,8 @@ FspGetResourceDescriptorByOwner (
   //
   while (!END_OF_HOB_LIST (Hob)) {
     if (Hob.Header->HobType == EFI_HOB_TYPE_RESOURCE_DESCRIPTOR) {
-      if ((Hob.ResourceDescriptor->ResourceType == EFI_RESOURCE_MEMORY_RESERVED) && \
+      if ((Hob.ResourceDescriptor->ResourceType ==
+           EFI_RESOURCE_MEMORY_RESERVED) && \
           (CompareGuid (&Hob.ResourceDescriptor->Owner, OwnerGuid)))
       {
         return Hob.ResourceDescriptor;
@@ -99,18 +100,23 @@ FspGetSystemMemorySize (
   //
   while (!END_OF_HOB_LIST (Hob)) {
     if (Hob.Header->HobType == EFI_HOB_TYPE_RESOURCE_DESCRIPTOR) {
-      if ((Hob.ResourceDescriptor->ResourceType == EFI_RESOURCE_SYSTEM_MEMORY) ||
-          ((Hob.ResourceDescriptor->ResourceType == EFI_RESOURCE_MEMORY_RESERVED) &&
+      if ((Hob.ResourceDescriptor->ResourceType ==
+           EFI_RESOURCE_SYSTEM_MEMORY) ||
+          ((Hob.ResourceDescriptor->ResourceType ==
+            EFI_RESOURCE_MEMORY_RESERVED) &&
            (Hob.ResourceDescriptor->ResourceAttribute == ResourceAttribute)))
       {
         //
         // Need memory above 1MB to be collected here
         //
         if ((Hob.ResourceDescriptor->PhysicalStart >= BASE_1MB) &&
-            (Hob.ResourceDescriptor->PhysicalStart < (EFI_PHYSICAL_ADDRESS)BASE_4GB))
+            (Hob.ResourceDescriptor->PhysicalStart <
+             (EFI_PHYSICAL_ADDRESS)BASE_4GB))
         {
           *LowMemoryLength += (UINT64)(Hob.ResourceDescriptor->ResourceLength);
-        } else if (Hob.ResourceDescriptor->PhysicalStart >= (EFI_PHYSICAL_ADDRESS)BASE_4GB) {
+        } else if (Hob.ResourceDescriptor->PhysicalStart >=
+                   (EFI_PHYSICAL_ADDRESS)BASE_4GB)
+        {
           *HighMemoryLength += (UINT64)(Hob.ResourceDescriptor->ResourceLength);
         }
       }

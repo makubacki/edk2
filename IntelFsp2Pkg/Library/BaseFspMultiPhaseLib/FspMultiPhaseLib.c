@@ -84,7 +84,11 @@ FspMultiPhaseWorker (
   if ((FspDataValid == TRUE) && (FspData->NumberOfPhases == 0)) {
     FspData->NumberOfPhases = PcdGet32 (PcdMultiPhaseNumberOfPhases);
     FspData->PhasesExecuted = 0;
-    if (FspMultiPhasePlatformGetNumberOfPhases (ApiIdx, &NumberOfPhasesSupported) == TRUE) {
+    if (FspMultiPhasePlatformGetNumberOfPhases (
+          ApiIdx,
+          &NumberOfPhasesSupported
+          ) == TRUE)
+    {
       //
       // Platform has implemented runtime controlling for NumberOfPhasesSupported
       //
@@ -99,17 +103,23 @@ FspMultiPhaseWorker (
   } else {
     switch (FspMultiPhaseParams->MultiPhaseAction) {
       case EnumMultiPhaseGetNumberOfPhases:
-        if ((FspMultiPhaseParams->MultiPhaseParamPtr == NULL) || (FspMultiPhaseParams->PhaseIndex != 0)) {
+        if ((FspMultiPhaseParams->MultiPhaseParamPtr == NULL) ||
+            (FspMultiPhaseParams->PhaseIndex != 0))
+        {
           return EFI_INVALID_PARAMETER;
         }
 
-        FspMultiPhaseGetNumber                 = (FSP_MULTI_PHASE_GET_NUMBER_OF_PHASES_PARAMS *)FspMultiPhaseParams->MultiPhaseParamPtr;
+        FspMultiPhaseGetNumber =
+          (FSP_MULTI_PHASE_GET_NUMBER_OF_PHASES_PARAMS *)FspMultiPhaseParams->
+            MultiPhaseParamPtr;
         FspMultiPhaseGetNumber->NumberOfPhases = FspData->NumberOfPhases;
         FspMultiPhaseGetNumber->PhasesExecuted = FspData->PhasesExecuted;
         break;
 
       case EnumMultiPhaseExecutePhase:
-        if ((FspMultiPhaseParams->PhaseIndex > FspData->PhasesExecuted) && (FspMultiPhaseParams->PhaseIndex <= FspData->NumberOfPhases)) {
+        if ((FspMultiPhaseParams->PhaseIndex > FspData->PhasesExecuted) &&
+            (FspMultiPhaseParams->PhaseIndex <= FspData->NumberOfPhases))
+        {
           FspData->PhasesExecuted = FspMultiPhaseParams->PhaseIndex;
           return Loader2PeiSwitchStack ();
         } else {
@@ -122,14 +132,16 @@ FspMultiPhaseWorker (
         //
         // return variable request info
         //
-        FspMultiPhaseParams->MultiPhaseParamPtr = FspData->VariableRequestParameterPtr;
+        FspMultiPhaseParams->MultiPhaseParamPtr =
+          FspData->VariableRequestParameterPtr;
         break;
 
       case EnumMultiPhaseCompleteVariableRequest:
         //
         // retrieve complete variable request params
         //
-        FspData->VariableRequestParameterPtr = FspMultiPhaseParams->MultiPhaseParamPtr;
+        FspData->VariableRequestParameterPtr =
+          FspMultiPhaseParams->MultiPhaseParamPtr;
         return Loader2PeiSwitchStack ();
         break;
 
